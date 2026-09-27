@@ -15,24 +15,24 @@
  * and timer-decrement scratch registers swap r2/r3; the second parameter
  * block rematerializes 0x8000 after storing scale_y instead of keeping it
  * separate from the spread literal. Further work needs a new counter or
- * parameter lifetime hypothesis, not actor/coordinate spelling sweeps. */
+ * parameter lifetime hypothesis, not actor/coordinate spelling sweeps.
+ * Family transfer (2026-09-27): exact resource_3a5:0200013c instances
+ * FIELD/COMMON/EFFECT/SPAWN.C and consumes FIELD_EFFECT.H EffectOptions.
+ * The former speed/spread members at +0x10/+0x14 are target x/y scales,
+ * not motion inputs; the +0x18 field is a signed effect type. Reuse that
+ * complete record and the canonical eight-argument void prototype here.
+ * Both 40-byte option records, the 104-byte frame, all eleven pool words
+ * and every emitted instruction are identical to the prior candidate.
+ * Whole score remains 552/552, 23 halfwords / 23 edits. This corrects the
+ * source interface but unlocks 0 DONE bytes. Stop record/prototype-only
+ * variants: the three residual regions are unchanged. Exact SPAWN.C and
+ * FIELD_EFFECT.H are reused without editing either shared owner. */
 #include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "FIELD_EFFECT.H"
 
-void Effect_Spawn();
 void SceneState_SetHalfwordB030(s32 value);
 s32 CalculatePlanarDistance(s32 *from, s32 *to);
 void OverlayObject_WaitUntilField12BelowLimit(struct FieldActor *actor, s32 limit);
-
-struct SparkleParams {
-    u8 unknown_00[8];
-    s32 scale_x;
-    s32 scale_y;
-    s32 speed;
-    s32 spread;
-    u16 sprite;
-    u8 unknown_1a[14];
-};
 
 struct LandingSpot {
     s32 x;
@@ -72,8 +72,8 @@ void Func_02000e2c(void)
     s32 pick;
     s32 distance;
     struct FieldActor *actor;
-    struct SparkleParams first;
-    struct SparkleParams second;
+    struct EffectOptions first;
+    struct EffectOptions second;
     s16 *meter;
     u16 *hold;
     s32 zero;
@@ -124,11 +124,11 @@ void Func_02000e2c(void)
     {
         struct FieldActor *actor = Engine_ActorGet(0);
 
-        first.sprite = 214;
-        first.scale_x = 0x8000;
-        first.scale_y = 0xcccc;
-        first.speed = 0x10000;
-        first.spread = 0x13333;
+        first.type = 214;
+        first.start_scale_x = 0x8000;
+        first.start_scale_y = 0xcccc;
+        first.target_scale_x = 0x10000;
+        first.target_scale_y = 0x13333;
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, 0, 0, 0x1c0000, &first);
     }
     Call3((void (*)())Engine_ActorShowEmote, 0, 0x104, 0);
@@ -152,11 +152,11 @@ void Func_02000e2c(void)
     {
         struct FieldActor *actor = Engine_ActorGet(0);
 
-        second.sprite = 214;
-        second.scale_y = 0xcccc;
-        second.scale_x = 0x8000;
-        second.speed = 0x8000;
-        second.spread = 0x13333;
+        second.type = 214;
+        second.start_scale_y = 0xcccc;
+        second.start_scale_x = 0x8000;
+        second.target_scale_x = 0x8000;
+        second.target_scale_y = 0x13333;
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, timer, timer, 0x1c0000, &second);
     }
     Engine_AudioPlayCue(0x120);

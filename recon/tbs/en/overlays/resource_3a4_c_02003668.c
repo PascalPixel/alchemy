@@ -4,8 +4,19 @@
  * allocation of the three call-crossing locals: the reference gives the loop
  * counter r8, the snapped x r9 and the snapped z sl; this draft gives z r8
  * and the counter sl (greg sorts z ahead of the counter). Twin shape of
- * resource_3a4:020035ac (the other turn direction); whatever fixes one fixes
- * both. */
+ * resource_3a4:020035ac (the other turn direction); prove it independently
+ * before adopting any shared implementation.
+ * 2026-09-27 audit: whole extent [02003668,02003724), including three-word
+ * pool, independently reproduces 188/188 bytes, 5 halfwords/5 aligned edits.
+ * Exact ROLL_OBJECT.C dispatches this on tile 97 (opposite turn on tile 98).
+ * Canonical polar/animation/cue/wait interfaces agree. Companion H1 fixed-
+ * centre record regressed to 67 halfwords/46 edits; it was not propagated
+ * here; witness 5be878f9a. H2: compiler check_dbra_loop supports count-only
+ * forward-loop reversal despite calls. Forward 0..15 iteration is retained
+ * but independently produces exactly the original candidate bytes: same
+ * five-edit n/z register exchange. Full frame, body, calls and pool checked.
+ * Stop centre-record and loop-direction axes; do not sweep declarations.
+ * Complete owner/unit registration is not adoption or credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -31,7 +42,7 @@ void Local_02003668(struct FieldActor *object)
     angle += 0x8000;
     Engine_ObjectSetAnimation(object, 6);
     Engine_AudioPlayCue(184);
-    for (n = 15; n >= 0; n--) {
+    for (n = 0; n < 16; n++) {
         angle -= 0x400;
         p[0].fixed = x;
         p[2].fixed = z;

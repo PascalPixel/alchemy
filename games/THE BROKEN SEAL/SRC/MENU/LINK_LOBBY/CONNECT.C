@@ -7,7 +7,7 @@
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
-s32 Local_020007b0(void);
+s32 LinkLobby_ExchangePartyRecords(void);
 s32 UiText_OpenMessageWindowFar(s32 message, s32 x, s32 y, s32 mode);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Main_080000d8(void *buf);
@@ -112,7 +112,7 @@ s32 LinkLobby_RunConnectionSequence(void)
             Engine_ActorWaitForMove(0);
             Actor_SetSpeed(0, 0x1999, 0xccc);
             Engine_ActorWalkTo(0, 216, 168);
-            if (Local_020007b0() < 0) {
+            if (LinkLobby_ExchangePartyRecords() < 0) {
                 Actor_SetSpeed(0, 0x10000, 0x8000);
                 Engine_ActorWalkTo(0, 216, 200);
                 Main_08009188(5);

@@ -1,4 +1,5 @@
-/* NONMATCHING: 2504/2508 bytes, 1183 differing halfwords, 310 aligned edits.
+/* NONMATCHING: 2492/2508 bytes, 1154 differing halfwords, 486 aligned edits.
+ * H2 is preserved at d73d75772; canonical plain-zero baseline restored.
  * 2026-09-27 Sol Venus Summit H2: a Value_00000000 producer prevents CSE
  * from forwarding the coordinate's low zero bits. It restores three pool
  * groups and a real load, but that SI load follows the motion store instead
@@ -39,7 +40,6 @@ void Scene_CallPairWith10(s32 actor, s32 facing);
 void Scene_SetPresentationActorState(s32 actor, s32 active);
 void Main_0808a0b0(s32 actor, const u8 *actions);
 extern const u8 Data_0200dfc4[];
-extern u8 Value_00000000;
 
 /* FAKEMATCH trial: the exact actor-transition neighbour's one-halfword
  * aggregate did not preserve HImode here; retain this completed attempt. */
@@ -134,8 +134,7 @@ void Scene_RunScriptedActorPresentation(void)
         actor->facing = shown;
     }
     actor->motion_flags = 3;
-    /* FAKEMATCH: retain the reference's independent pooled zero producer. */
-    zero.v = (u16)(u32)&Value_00000000;
+    zero.v = 0;
     Engine_AudioPlayCue(152);
     actor->velocity_y = 0x40000;
     Engine_AudioPlayCue(152);

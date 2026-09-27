@@ -1,4 +1,12 @@
 /* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704,
+ * 2026-09-27 Sol Venus Summit H1: one FieldObject union owns both actor
+ * and effect stores. Predict the reference's +48/+28/+44 store order from
+ * one aliasing owner. The complete normalized diff is identical to baseline:
+ * 4704 bytes / 1704 differing halfwords / 610 edits, still a 120-byte frame.
+ * This union already had the same alias information through the old casts;
+ * it repairs vocabulary, not emission. No counter/helper/zero permutation
+ * follows. Remaining buffer spills and particle-loop lifetimes need a new
+ * producer/consumer boundary; typed ownership alone is closed for this model.
  * 1704 differing halfwords, 610 aligned halfword edits (2026-09-27).
  * Complete return 020035a8; final pool 020035ac..020035c4. ROM frame is
  * 136 bytes: second options at sp+44, shared velocity at sp+84, first
@@ -112,7 +120,7 @@ void Scene_RunPairedActorEffectSequence(void)
     struct EffectOptions options_b;
     struct FieldActor *actor;
     struct FieldActor *origin;
-    struct FieldActor *object;
+    union FieldObject *object;
     struct FieldActor *bird;
     struct FieldSprite *sprite;
     u8 *buffer;
@@ -286,18 +294,18 @@ void Scene_RunPairedActorEffectSequence(void)
     Actor_TurnToAngle(3, 0xa000, 0);
     Actor_TurnToAngle(21, 0xd000, 0);
     Actor_TurnToAngle(6, 0, 0);
-    object = Object_Create(22, actor->x.fixed, actor->y.fixed + 0x80000, actor->z.fixed);
+    object = (union FieldObject *)Object_Create(22, actor->x.fixed, actor->y.fixed + 0x80000, actor->z.fixed);
     if (object != NULL) {
-        sprite = object->sprite;
+        sprite = object->actor.sprite;
         sprite->part_count = 0;
         sprite->full_color = 0;
         sprite->palette = 0;
         sprite->priority = 0;
-        object->priority_flags &= ~1;
-        object->motion_flags = 0;
-        object->unknown_5c = 1;
-        object->speed = 0x19999;
-        object->acceleration = 0xcccc;
+        object->actor.priority_flags &= ~1;
+        object->actor.motion_flags = 0;
+        object->actor.unknown_5c = 1;
+        object->actor.speed = 0x19999;
+        object->actor.acceleration = 0xcccc;
         buffer = Heap_Allocate(17, 0x608);
         Item_LoadIcon(220);
         Vram_Load(sprite->vram_block, 128, buffer + 0x400);
@@ -314,35 +322,35 @@ void Scene_RunPairedActorEffectSequence(void)
     bird->scale_x = 0xc000;
     bird->scale_y = 0xc000;
     if (object != NULL) {
-        object->motion_flags = 3;
-        ((union FieldObject *)object)->effect.velocity_y = 0x9999;
-        ((union FieldObject *)object)->effect.velocity_x = 0xcccc;
-        object->velocity_y = 0x80000;
-        Object_SetPosition(object, 0x1340000, 0x200000, 0xa40000);
+        object->actor.motion_flags = 3;
+        object->effect.velocity_y = 0x9999;
+        object->effect.velocity_x = 0xcccc;
+        object->actor.velocity_y = 0x80000;
+        Object_SetPosition(&object->actor, 0x1340000, 0x200000, 0xa40000);
     }
     Actor_SetPositionAndCommit(22, 0x134, 164);
     Actor_SetPosition(22, 0, 0);
     Actor_SetSpritePriority(21, 0);
     if (object != NULL) {
         Audio_PlayCue(0x135);
-        Actor_SetSpriteFlags(object, 0);
-        object->velocity_y = 0x40000;
-        Object_SetPosition(object, 0x13a0000, 0x200000, 0x890000);
-        Object_CommitPosition(object);
+        Actor_SetSpriteFlags(&object->actor, 0);
+        object->actor.velocity_y = 0x40000;
+        Object_SetPosition(&object->actor, 0x13a0000, 0x200000, 0x890000);
+        Object_CommitPosition(&object->actor);
         Audio_PlayCue(0x135);
-        object->sprite->priority = 1;
-        object->velocity_y = 0x60000;
-        Object_SetPosition(object, 0x11d0000, 0x200000, 0x920000);
-        Object_CommitPosition(object);
+        object->actor.sprite->priority = 1;
+        object->actor.velocity_y = 0x60000;
+        Object_SetPosition(&object->actor, 0x11d0000, 0x200000, 0x920000);
+        Object_CommitPosition(&object->actor);
         Audio_PlayCue(0x135);
-        object->velocity_y = 0x50000;
-        Object_SetPosition(object, 0x12c0000, 0x200000, 0x9a0000);
-        Object_CommitPosition(object);
+        object->actor.velocity_y = 0x50000;
+        Object_SetPosition(&object->actor, 0x12c0000, 0x200000, 0x9a0000);
+        Object_CommitPosition(&object->actor);
         Task_Wait(6);
-        object->x.fixed = 0;
-        object->y.fixed = 0;
-        object->z.fixed = 0;
-        Actor_ParkRecord(object);
+        object->actor.x.fixed = 0;
+        object->actor.y.fixed = 0;
+        object->actor.z.fixed = 0;
+        Actor_ParkRecord(&object->actor);
     }
     Actor_ShowEmote(21, 0x100, 0);
     Actor_ShowEmote(6, 0x100, 0);

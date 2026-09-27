@@ -118,14 +118,14 @@
       "date": "2026-09-27",
       "tbs": {"done": 1009278, "executable": 1375934},
       "tla": {"done": 42332, "executable": 1975640},
-      "models": {"Astra 6": 380}
+      "models": {"Astra 6": 385}
     }
   ],
   "figures": {
     "date": "2026-09-27",
     "tbs": {"done": 1009278, "executable": 1375934},
     "tla": {"done": 42332, "executable": 1975640},
-    "models": {"Astra 6": 380},
-    "files": "d8dd4c9d2cc8dc7b"
+    "models": {"Astra 6": 385},
+    "files": "d888fa26643a52f7"
   }
 }

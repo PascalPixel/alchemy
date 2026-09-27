@@ -1,5 +1,5 @@
-/* NONMATCHING: complete 480-byte owner, candidate 440, 226 differing
- * halfwords, 159 aligned edits (2026-09-27). Reproducible single-overlay
+/* NONMATCHING: complete 480-byte owner, candidate 472, 221 differing
+ * halfwords, 122 aligned edits (2026-09-27). Reproducible single-overlay
  * unit binds the two imports and four data symbols. ENTER_ROOM installs
  * this palette callback at runtime address 0x02009245.
  * Remaining: hand-written from the disassembly; the goto loop keeps the clamp
@@ -20,8 +20,16 @@
  * The inline call boundary still expands divide before the red numerator;
  * r5/r6/r7 tints and no caller-save frame remain. Whole diff inspected.
  * Baseline 464/222/175 is preserved before this commit. H1 is a better
- * typed RGB model, not an adoption: 0 new DONE bytes. Next evidence needed:
- * compiler division expression versus explicit service-call ownership. */
+ * typed RGB model, not an adoption: 0 new DONE bytes.
+ * Family H2: ordinary C /3 and /5, following exact COMMON/EFFECT/SPAWN.C,
+ * with __divsi3 bound to the existing 0x02009a10 veneer. All nine calls
+ * resolve to resident signed division at 0x03000380. This restores the
+ * reference four-byte caller-save frame and unshifted quarter numerator
+ * live across every /5 call, without a new accumulator or high register.
+ * Full diff: 472/221/122; red/blue take r6/r4 rather than r4/r6, red /2
+ * still follows its /3 call, and output channels coalesce into saved tint
+ * registers. Exact ADJUST_BANK separates all three component extractions
+ * before tint addition; that channel-lifetime boundary remains untested. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -62,17 +70,17 @@ loop:
         g = Data_02009f00[Data_0200adb8 + 1];
         b = Data_02009f00[Data_0200adb8 + 2];
         if (i > 47) {
-            r -= r / 2 + Math_Divide(r, 3);
-            g -= g / 2 + Math_Divide(g, 3);
-            b -= b / 2 + Math_Divide(b, 3);
+            r -= r / 2 + r / 3;
+            g -= g / 2 + g / 3;
+            b -= b / 2 + b / 3;
         } else if (i > 31) {
-            r -= Math_Divide(r, 3) + r / 4;
-            g -= Math_Divide(g, 3) + g / 4;
-            b -= Math_Divide(b, 3) + b / 4;
+            r -= r / 3 + r / 4;
+            g -= g / 3 + g / 4;
+            b -= b / 3 + b / 4;
         } else if (i > 15) {
-            r -= r / 4 + Math_Divide(r, 5);
-            g -= g / 4 + Math_Divide(g, 5);
-            b -= b / 4 + Math_Divide(b, 5);
+            r -= r / 4 + r / 5;
+            g -= g / 4 + g / 5;
+            b -= b / 4 + b / 5;
         }
         color = *src;
         red = (color & 31) + r;

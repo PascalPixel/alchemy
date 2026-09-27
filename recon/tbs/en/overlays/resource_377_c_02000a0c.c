@@ -1,8 +1,14 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 24 differing
- * halfwords, 30 wrong instructions, 24 halfword edits. Explicit first-ramp
+/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 14 differing
+ * halfwords, 28 wrong instructions, 14 halfword edits. Explicit first-ramp
  * alpha ownership removes its reload but allocates r7 instead of r5.
  * Separate counters emit identical bytes; sharing the port across both
- * ramps wrongly removes the second reload (135 halfwords / 34 instructions). */
+ * ramps wrongly removes the second reload (135 halfwords / 34 instructions).
+ * H1 (2026-09-27): transfer the initial blend-write boundary from exact
+ * TOREBI_IZUMI/OPEN_SCENE.C. A tagged scope for value then alpha address
+ * restores the complete pool order and both earlier call-scheduling ties.
+ * Full diff: 1064 bytes, 24 -> 14 halfwords/edits; 20 bytes change, 19 become
+ * reference bytes, none regress. The 8-byte frame and both ramp reload
+ * boundaries remain intact. Only port/counter register roles remain. */
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
@@ -129,8 +135,13 @@ void FieldScene_RunPaletteRampSequence(void)
     Main_08009180(65, 53, 88, 24, 2, 2);
     Main_080091a0();
     SetBlendTarget((s32)Value_00003f42);
-    alpha = &Data_04000052;
-    *alpha = (s32)Value_0000100c;
+    /* FAKEMATCH: keep the initial value/port publication boundary. */
+    do {
+        s32 value = (s32)Value_0000100c;
+
+        alpha = &Data_04000052;
+        *alpha = value;
+    } while (0);
     Main_0808a2c8();
     Data_03001ebc.work->enabled = 1;
     Main_0808a2d8();

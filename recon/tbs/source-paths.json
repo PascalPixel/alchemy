@@ -21523,6 +21523,12 @@
     "resource_3ba:02002bec": {
       "name": "Korosseo_UpdateMarker"
     },
+    "resource_3bb:02002e84": {
+      "name": "Korosseo_UpdateMarker"
+    },
+    "resource_3bc:0200391c": {
+      "name": "Korosseo_UpdateMarker"
+    },
     "resource_3cd:02000214": {
       "name": "DebugMenu_SelectItem"
     },

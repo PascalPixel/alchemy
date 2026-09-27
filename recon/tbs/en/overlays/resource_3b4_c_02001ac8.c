@@ -1,4 +1,15 @@
-/* 2026-09-27 pillars closing audit: own-ROM service veneer 080091c0 jumps
+/* 2026-09-27 H7 local return-view boundary rejected: the explicitly tagged
+ * unused ((s32 (*)())Engine_MapCopyCellAttributes)(61, 36, 1, 1, column, 42)
+ * moves r0 last, but emits r1,r2,r3,r0 rather than ROM r1,r3,r2,r0.
+ * Complete extent remains 152/152 bytes, now 2 halfwords / 2 aligned edits
+ * at +0x6a/+0x6c: movs r2,#1; movs r3,#1 versus the opposite order.
+ * Initial zero/store sequence, r6 lifetime, frame8, branches, calls and sole
+ * pool at +0x94 remain identical. Full normalized diff read; ordinary-C
+ * gate passes (forbidden=0). The service's proven void ABI is unchanged.
+ * Prediction of all three call-order edits vanishing failed. One authorized
+ * trial complete; restore the H5 direct-call canonical (3 halfwords), with
+ * no further variants and no function or alignment credit.
+ * 2026-09-27 pillars closing audit: own-ROM service veneer 080091c0 jumps
  * to 08010704, the reconstructed FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.C.
  * Its complete source and exact STAGED_ACTOR.C callers prove the existing
  * six-s32 void signature. There is no new return-type or actor-byte relation

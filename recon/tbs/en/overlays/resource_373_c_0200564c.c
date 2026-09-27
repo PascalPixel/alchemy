@@ -1,4 +1,25 @@
-/* Draft, not-yet-c. H2 success-store one-pass boundary:
+/* Draft, not-yet-c. H4 literal failure publication (2026-09-27):
+ * 224/224 bytes, 70 differing halfwords / 49 aligned edits. Transfer the
+ * exact SHIAN tracking sibling's literal-zero failure stores, retaining
+ * this owner's byte widths. CSE shares QI zero 85 across the failure call;
+ * local allocation gives it r5 and force spills. The two store tails now
+ * stay separate, but reference force r6 / pos r8 / tpos r7 is not recovered.
+ * Pool remains signed -0x1000 at 02005728. Baseline H3 was 59 HW / 39 edits.
+ * Its tails were distinct through allocation and merged in jump2 only
+ * after both failure force and success result reloaded into r3.
+ * Completion audit H3 plain-byte publication:
+ * 224/224 bytes, 59 differing halfwords / 39 aligned edits, byte-identical
+ * to H2. Exact WORLD_MAP/LINKED_EFFECTS.C plain-byte writes remove initial
+ * RTL QI zero/mask producers (old 80/90/100/110), but those had already died
+ * before allocation here: force remains r8, pos r7, tpos r6, and the final
+ * byte store still merges. Normal and diagnostic text agree. This excludes
+ * the pillar's surviving-QI-zero mechanism; no further cast/store sweep.
+ * Exact SHIAN_MURA/ACTOR_TRACKING.C is the same algorithm, but its +0x64
+ * signed-halfword state and separate failure paths differ from this owner's
+ * +0x62 byte and shared failure arm. It is not evidence to change our widths.
+ * Continue only with a new cause for the distinct success/failure byte-store
+ * ownership or position-versus-force allocation, not declaration ordering.
+ * H2 success-store one-pass boundary:
  * 224/224 bytes, 59 differing halfwords / 39 aligned edits. The boundary
  * shortens the merged tail but does not split it; force/position lifetimes
  * still differ. Signed -0x1000 pool and complete extent are preserved.
@@ -51,18 +72,20 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     dir = obj->facing & 0xf000;
     if (angle != dir && right != dir && left != dir && force == 0)
         goto miss;
-    obj->unknown_5b = 1;
+    /* FAKEMATCH: plain-byte publication, as in WORLD_MAP/LINKED_EFFECTS.C,
+     * avoids the aggregate store's synthetic QImode zero/mask producer. */
+    *(u8 *)&obj->unknown_5b = 1;
     Engine_ObjectSetAnimation(obj, 1);
     result = 1;
     /* FAKEMATCH: keep the success flag store inside its own control scope. */
     do {
-        obj->rise_counter = result;
+        *(u8 *)&obj->rise_counter = result;
     } while (0);
     goto done;
 miss:
-    obj->unknown_5b = force;
+    *(u8 *)&obj->unknown_5b = 0;
     Engine_ObjectSetAnimation(obj, 2);
-    obj->rise_counter = force;
+    *(u8 *)&obj->rise_counter = 0;
 done:
     return result;
 }

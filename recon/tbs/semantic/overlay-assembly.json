@@ -20,17 +20,6 @@
     },
     {
       "overlay": "resource_36f",
-      "start": "0x020002e8",
-      "end": "0x02000454",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_36f_overlay.s; no assembly credit."
-      ]
-    },
-    {
-      "overlay": "resource_36f",
       "start": "0x02000538",
       "end": "0x020005f8",
       "kind": "overlay_trampoline",
@@ -211,17 +200,6 @@
         "proof": "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
         "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ENTRY.INC"
       }
-    },
-    {
-      "overlay": "resource_373",
-      "start": "0x0200564c",
-      "end": "0x0200572c",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_373_overlay.s; no assembly credit."
-      ]
     },
     {
       "overlay": "resource_373",
@@ -3225,17 +3203,6 @@
         "proof": "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
         "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/ENTRY.INC"
       }
-    },
-    {
-      "overlay": "resource_3c0",
-      "start": "0x02000594",
-      "end": "0x020007fc",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_3c0_overlay.s; no assembly credit."
-      ]
     },
     {
       "overlay": "resource_3c0",

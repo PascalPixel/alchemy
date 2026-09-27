@@ -92,7 +92,8 @@
       "name": "TakaraHashira_UpdatePillarActors"
     },
     "resource_3c0:02000594": {
-      "name": "SuharaSabaku_RestoreActorScaleAndBlend"
+      "name": "SuharaSabaku_RestoreActorScaleAndBlend",
+      "source": "FIELD/SUHARA_SABAKU/RESTORE_ACTOR_SCALE.C"
     },
     "resource_3ba:02000540": {
       "name": "KorosseoKawa_MoveActorsAndMap"
@@ -126,7 +127,8 @@
       "source": "FIELD/BIRIBINO_MURA/CORNER.C"
     },
     "resource_373:0200564c": {
-      "name": "HaidiaMura_TestFacing"
+      "name": "HaidiaMura_TestFacing",
+      "source": "FIELD/HAIDIA_MURA/FACING.C"
     },
     "resource_3ca:02000194": {
       "name": "BabiFune_UpdateWaves"
@@ -545,7 +547,7 @@
     },
     "resource_36f:020001c0": {
       "name": "Title_Func020001c0",
-      "source": "MENU/TITLE/F_001C0.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_399:02000974": {
       "name": "ImiruMura_RunItemShop",
@@ -6955,7 +6957,7 @@
     },
     "resource_36f:02000044": {
       "name": "FunctionHead_02000044",
-      "source": "MENU/TITLE/MINIMAL.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_383:02002f98": {
       "name": "OverlayObject_RunObjectTwoWhenFlagged",
@@ -7732,7 +7734,7 @@
     },
     "resource_36f:02000054": {
       "name": "FunctionHead_02000054",
-      "source": "MENU/TITLE/MINIMAL.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_376:02000190": {
       "name": "Villager_AskWhySukuretaCame",
@@ -8393,7 +8395,7 @@
     },
     "resource_36f:02000038": {
       "name": "FunctionHead_02000038",
-      "source": "MENU/TITLE/MINIMAL.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_3ad:02000044": {
       "name": "Scene_GetPlacements",
@@ -8445,7 +8447,7 @@
     },
     "resource_36f:0200004c": {
       "name": "FunctionHead_0200004c",
-      "source": "MENU/TITLE/MINIMAL.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_3a3:02000338": {
       "name": "SceneActor_IsSlotZeroAngleInRange",
@@ -9233,7 +9235,7 @@
     },
     "resource_36f:0200003c": {
       "name": "FunctionHead_0200003c",
-      "source": "MENU/TITLE/MINIMAL.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_381:020028dc": {
       "name": "SceneState_ApplyRectPairByFlag",
@@ -10232,7 +10234,7 @@
     },
     "resource_36f:02000030": {
       "name": "FunctionHead_02000030",
-      "source": "MENU/TITLE/MINIMAL.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_3b9:02002b1c": {
       "name": "ActorPresentation_SetActorsTwelveToEighteen",
@@ -20987,7 +20989,7 @@
     },
     "resource_36f:02000238": {
       "name": "Title_RevealSpriteRow",
-      "source": "MENU/TITLE/SPRITE_ROW.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_394:02000a90": {
       "name": "KorimaMagari_PlaceObjects",
@@ -21533,11 +21535,12 @@
       "name": "Func_02000b24"
     },
     "resource_36f:020002e8": {
-      "name": "Func_020002e8"
+      "name": "Title_RevealScreen",
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_36f:02000454": {
       "name": "Title_LoadBackground",
-      "source": "MENU/TITLE/BG_SETUP.C"
+      "source": "MENU/TITLE/TITLE.C"
     },
     "resource_370:02000154": {
       "name": "Clear_UpdateBlend",

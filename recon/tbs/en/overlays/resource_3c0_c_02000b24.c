@@ -40,16 +40,26 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-/* NONMATCHING: 216 of 220 bytes, 71 differing halfwords / 30 aligned edits
- * (2026-09-26). Whole owner 02000b24..02000c00: return at 02000bdc,
+/* NONMATCHING: 220 of 220 bytes, 8 differing halfwords / 8 aligned edits
+ * (2026-09-27). Whole owner 02000b24..02000c00: return at 02000bdc,
  * alignment at 02000bde, eight pool words at 02000be0..02000bfc.
+ * H1: a one-pass byte-publication block admits the separate state copy
+ * after the store. It also restores the (98, 5) argument order and the
+ * exact pool placement; the complete normalized diff now contains only
+ * the a1/state r5/r6 swap. Ordinary and diagnostic assembly are identical.
+ * CSE no longer retains generated base79 across the tail: its lifetime
+ * is now 3 uses/10 instructions in one block, copied to user state36
+ * (3 uses/44 instructions/4 calls). Parameter33 still has 5 uses/42
+ * instructions/5 calls. Unlike the matched scale scene, these priorities
+ * are not tied: declaration reordering is not the indicated next action.
+ * Freeze the admitted byte-publication/copy boundary for further work.
+ * Earlier 216-byte baseline:
  * Three bounded shared-state trials: direct union rows produce 220 bytes,
  * 43 differing halfwords / 22 edits with the exact pool, but lose saved r6
  * and reload the state for the final word read. A post-store pointer and a
  * one-member pointer aggregate both reproduce the original 216-byte shape.
- * Retain the typed pointer: it preserves the frame and shared state lifetime.
- * Remaining: a1/base use r5/r6 instead of r6/r5, the store lacks the local r1
- * to saved r5 copy, and the (98, 5) call prepares its arguments in reverse.
+ * The typed pointer preserved the frame and shared state lifetime, but
+ * lacked the local-to-saved copy and reversed the (98, 5) argument setup.
  * Allocator: a1 pseudo 33 crosses five calls; base pseudo 79 crosses four.
  * No further pointer spelling sweep without evidence changing that lifetime.
  * 2026-09-27: FIELD_EVENT.H actor/flag interfaces and the typed motion_flags
@@ -80,7 +90,10 @@ void Func_02000b24(s32 a0, s32 a1)
     }
     Call2(Main_080770e8, 0x210, 0);
     Call2((void (*)())Engine_Import0808a250, 98, 5);
-    Data_02000240_t.bytes[277][1] = 3;
+    /* FAKEMATCH: publish the byte before retaining the scene pointer. */
+    do {
+        Data_02000240_t.bytes[277][1] = 3;
+    } while (0);
     state = &Data_02000240_t;
     if (state->halves[224][0] == (s32)Data_000000a5) {
         if (a1 == 11) {

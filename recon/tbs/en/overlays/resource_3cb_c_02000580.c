@@ -1,4 +1,8 @@
-/* REJECTED H8 2026-09-27 shared retry tail: 568/560 bytes, 158 differing
+/* NONMATCHING: admitted H7 restored after rejected H8 at 784af7a33.
+ * 568/560 bytes, 203 differing halfwords / 84 aligned edits. Bounded
+ * copier/phase/tail probes complete; remaining topology, map reload and
+ * copy scheduling require new evidence. Native proofs and credits unchanged.
+ * REJECTED H8 2026-09-27 shared retry tail: 568/560 bytes, 158 differing
  * halfwords / 106 aligned edits. Explicit first-to-final retry-failure
  * goto emits the desired first ble/poll topology, but jump2 merges all
  * three retry failures, including the ROM's separate second failure.
@@ -145,7 +149,8 @@ s32 LinkLobby_SendPartyRecords(void)
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
                 if (++tries > 24) {
-                    goto retry_failed;
+                    result = -1;
+                    goto done;
                 }
             }
         }
@@ -211,7 +216,6 @@ next:
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
                 if (++tries > 24) {
-retry_failed:
                     result = -1;
                     goto done;
                 }

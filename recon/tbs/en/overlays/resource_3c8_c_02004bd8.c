@@ -1,4 +1,4 @@
-/* NONMATCHING: 452 bytes, candidate 452, 156 differing halfwords, 121
+/* NONMATCHING: 452 bytes, candidate 452, 138 differing halfwords, 117
  * aligned edits (2026-09-27). VinasuHeya_DispatchPushScript, meant for
  * FIELD/VINASU_HEYA/F_04BD8.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -36,7 +36,15 @@
  * coordinate induction/cursor allocation remains different. The final
  * fifteen pool words stay aligned. This trial fails topology admission.
  * Preserve it in history before testing only whether the previously
- * observed reload can coexist with the newly recovered search shape. */
+ * observed reload can coexist with the newly recovered search shape.
+ * Sentinel H2: retain the observed volatile selection read inside the
+ * natural sentinel loop. Whole score 452/452, 138 halfwords / 117 edits.
+ * The load returns, but the scan rotates back to an entry jump into the
+ * loop: it loses H1's peeled first comparison. Three-call admission still
+ * fails, and coordinate/cursor topology is unchanged. Thus neither plain
+ * nor reload-preserving sentinel ownership reproduces both observed scan
+ * invariants. Stop after these two trials; keep the stronger 138/116 body
+ * from 90891c422 as the canonical baseline. No new DONE or adoption. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"
@@ -145,7 +153,8 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     }
 
     while ((byte = *list) != 0) {
-        if (child->selected_animation == byte) {
+        /* FAKEMATCH: the reference reads the selection again on each step. */
+        if (*(const volatile u8 *)&child->selected_animation == byte) {
             break;
         }
         list++;

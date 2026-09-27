@@ -1,4 +1,11 @@
-/* NONMATCHING: ship H1 2026-09-27, candidate 554/556, 35 differing
+/* NONMATCHING: ship H2 2026-09-27, candidate 528/556, 267 differing
+ * halfwords, 123 aligned edits. Separate nullable spawn actor lifetime,
+ * transferred from exact HAIDIA_IE/EXTENDED_SEQUENCE.C 3c4fe6cee, regresses
+ * all four height blocks: they no longer retain actor pointers in r5, and
+ * the saved-register/pool structure changes. Full normalized diff read.
+ * The ship reference instead supports one shared actor lifetime. Reject
+ * this transferred ownership axis; preserve H1 as the canonical successor.
+ * ship H1 2026-09-27, candidate 554/556, 35 differing
  * halfwords, 26 aligned edits. Direct halfword scroll transfer removes the
  * unrelated bob/r6 copy and restores second Q16 call alignment naturally.
  * Full normalized diff read: four height blocks and pool words agree;
@@ -125,21 +132,23 @@ void BabiFune_UpdateWaves(void)
         Data_02009800++;
     }
     if (Data_020097f8 != 0 && (gFrameCount & 1) != 0) {
+        struct FieldActor *obj;
+
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        actor = SpawnDriftingObject(&work, &buf, x, z);
-        if (actor != 0) {
-            actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
-            actor->unknown_64 = 60;
+        obj = SpawnDriftingObject(&work, &buf, x, z);
+        if (obj != 0) {
+            obj->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
+            obj->unknown_64 = 60;
             /* FAKEMATCH: a halfword zero retains the short literal-pool reach. */
             zero.v = 0;
-            actor->unknown_66 = 1;
-            actor->motion_flags = zero.v;
-            actor->priority_flags = 2;
-            actor->sprite->priority = 2;
-            Engine_ObjectSetBlendMode(actor, 0);
-            Engine_ObjectSetAnimation(actor, 0);
+            obj->unknown_66 = 1;
+            obj->motion_flags = zero.v;
+            obj->priority_flags = 2;
+            obj->sprite->priority = 2;
+            Engine_ObjectSetBlendMode(obj, 0);
+            Engine_ObjectSetAnimation(obj, 0);
         }
     }
 }

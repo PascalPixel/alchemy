@@ -1,4 +1,11 @@
 /* NONMATCHING H1: 192/184 bytes, 84 halfwords / 60 aligned edits.
+ * H2 (2026-09-27): pass the first destination into CopyCell from a
+ * row-local caller pointer, as the exact main-image row renderer does.
+ * Prediction: retain that base across cells while reloading both tile
+ * tables and the second destination. Full 192-byte output is identical
+ * to H1 (cmp checked), including its frame, loops and six pool words.
+ * A constant caller argument supplies no new lifetime after inlining.
+ * Reject this boundary transfer; keep H1 and stop the helper-argument axis.
  * 2026-09-27: transfer the exact main-image
  * COMMON/MAP/RENDER_METATILE_ROW.C per-cell pointer helper boundary.
  * Whole ROM owner 02000098..02000150 is 184 bytes including six pool words.

@@ -1,4 +1,45 @@
-/* Canonical direct-call/u8 model restored after H1 and H2; complete
+/* H5 direct-call canonical restored; H6 counterexample at 79c045566.
+ * H6 rejected: exact Shian Call6 emits the identical H5 candidate bytes:
+ * 152/152, 3 halfwords / 3 aligned edits. Zero publication, frame8 and pool
+ * remain exact. Inlining erases the function-pointer boundary before CSE;
+ * argument setup is still r0,r1,r2,r3, not ROM r1,r3,r2,r0. Whole normalized
+ * diff read, candidate.bin equals H5, -da/-fsched-verbose equals ordinary.
+ * Preserve this counterexample, then retain the simpler H5 direct call.
+ * One authorized model complete; no function or alignment credit.
+ * H6 Call6 transfer: exact SHIAN_MURA/SETUP.C uses an old-style void
+ * function-pointer inline boundary, unlike the rejected direct MapCopy
+ * wrapper. Predict ROM argument order r1,r3,r2,r0, freezing H5's complete
+ * zero-publication sequence, frame8, branches and pool. One trial only.
+ * CANONICAL H5: 152/152 bytes, 3 halfwords / 3 aligned edits. Scoped
+ * receiver removes H4's extra copy and entry regression; complete initial
+ * zero/store sequence, r6 lifetime, frame8, branches and pool now exact.
+ * Only MapCopy setup differs: r0,r1,r2,r3 versus ROM r1,r3,r2,r0.
+ * Full normalized diff read; -da/-fsched-verbose output equals ordinary.
+ * H3 witness at 0edc7d4c5, rejected H4 at 72986aeed. Three models complete;
+ * no new function or alignment credit. Freeze this admitted zero sequence.
+ * H5: isolate the second actor receiver in its actual publication phase.
+ * H4's multi-definition USER32 caused the extra copy and changed the entry;
+ * predict a single-use receiver collapses to r0 while zero/store order and
+ * H3's r6 lifetime remain. No map-call or width/constant spelling change.
+ * H4 rejected: 156/152 bytes, 60 halfwords / 21 aligned edits. Zero/store
+ * order fixes, but receiver reuse gives USER32 two definitions (5 uses /
+ * 6 insns), changes entry coordinate loads and adds r0->r2 publication copy.
+ * Frame8 and r6 survive; pool moves 0x94->0x98. Full diff and -da checked.
+ * H4: sched2 shows initial byte store86 and zero89 both priority1, tied
+ * by original order. Separate the actual receiver lookup from publication
+ * and initialize still between them; predict zero before the store while
+ * preserving H3's consumer-loop lifetime, frame8 and complete pool.
+ * H3 admitted: 152/152 bytes, 5 halfwords / 5 aligned edits. Zero38 now
+ * spans 40 insns / 2 calls instead of 2 insns / 0 calls; r6 is initialized
+ * before the column tests and consumed after both calls. Frame8 and pool
+ * 0x94 exact. Remaining: zero/store order and MapCopy argument scheduling.
+ * Full normalized diff read; -da/-fsched-verbose output equals ordinary.
+ * H3 inversion: zero pseudo38 survives CSE through regmove, but
+ * local-alloc update_equiv_regs sinks its sole use at depth0 to the final
+ * byte store. That move is forbidden at nonzero loop depth. Enclose the
+ * final byte publication in one pass; admission is r6 zero before column
+ * tests, retained through MapCopy and ActorGet, with frame8 and pool fixed.
+ * Canonical direct-call/u8 model restored after H1 and H2; complete
  * baseline candidate is byte-identical, including its single literal pool.
  * H2 rejected (2026-09-27): STAGED_STEP.C's Map_CopyCellAttributes inline
  * boundary emits the identical 152-byte baseline: 37 differing halfwords /
@@ -36,8 +77,12 @@ void Local_02001ac8(void)
     if (y == 0)
         Engine_ActorGet(8)->priority_flags = 2;
     SceneState_ApplyFourRectsAndSetActor8Byte85();
-    Engine_ActorGet(8)->motion_flags = 3;
-    still = 0;
+    {
+        struct FieldActor *actor = Engine_ActorGet(8);
+
+        still = 0;
+        actor->motion_flags = 3;
+    }
     if (column == 40) {
         SceneState_ApplyRectAndSetSlotEightByte35();
     } else if (column == 42) {
@@ -53,7 +98,10 @@ void Local_02001ac8(void)
             return;
     copy:
         Engine_MapCopyCellAttributes(61, 36, 1, 1, column, 42);
-        Engine_ActorGet(8)->motion_flags = still;
+        /* FAKEMATCH: keep the zero's sole consumer inside its phase. */
+        do {
+            Engine_ActorGet(8)->motion_flags = still;
+        } while (0);
         Engine_ActorGet(8)->y.fixed = 0x200000;
     }
 }

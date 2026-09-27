@@ -1,4 +1,18 @@
-/* NONMATCHING H5 (2026-09-27): direct signed halfword reset access is
+/* NONMATCHING H6 (2026-09-27): exact DRIFT's explicit byte-store address
+ * transferred only to the divergent camera motion_flags write. Prediction:
+ * remove the member read/AND-zero ancestry, decouple this byte consumer from
+ * the earlier reset HI zero, and remove the extra zero pool without losing
+ * the admitted selected reset. Initial RTL now has a plain mem:QI write,
+ * without that member read/AND sequence. But CSE still makes its source
+ * subreg:QI(HI165), the reset's zero, live across the two calls. Full binary
+ * is byte-identical to H4; full normalized diff and local-allocation dump
+ * read: 624/616 bytes, 169 differing halfwords / 53 aligned edits. The extra
+ * pool at +0x1e0, selected slot r6 instead of r5, and +8-byte extent survive.
+ * Consumer-address ancestry is therefore insufficient here. Reject this
+ * one-trial transfer; no wider byte-pointer conversion or producer sweep.
+ * Preserve the trial before restoring the simpler member store. No credit.
+ *
+ * NONMATCHING H5 (2026-09-27): direct signed halfword reset access is
  * byte-identical to H4: 624/616 bytes, 169 halfwords / 53 aligned edits.
  * Exact linked-record consumers use direct halfword access at +100. That
  * transfer removes the initial RTL member read/AND-zero/write, but the
@@ -171,7 +185,11 @@ apply_height:
         other = Engine_ActorGet(slot + 10);
         FloatingBlock_ResetMotion(other, 0);
         Camera_SetSpeed(0x30000, 0x6000);
-        Engine_EventGetViewCenter()->motion_flags = 0;
+        {
+            u8 *motion_flags = &Engine_EventGetViewCenter()->motion_flags;
+
+            *motion_flags = 0;
+        }
         Camera_MoveTo(0x880000, 0x80000, 0x1580000, 1);
         Engine_CameraWaitForMove();
         SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);

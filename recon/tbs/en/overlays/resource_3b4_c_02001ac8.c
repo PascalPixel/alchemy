@@ -1,4 +1,9 @@
-/* H1 rejected (2026-09-27): literal Half zero from MAKYURI_CHOJO/LAMP.C
+/* H2 rejected (2026-09-27): STAGED_STEP.C's Map_CopyCellAttributes inline
+ * boundary emits the identical 152-byte baseline: 37 differing halfwords /
+ * 16 aligned edits. The whole normalized diff preserves both residuals:
+ * width-before-height setup and late zero rematerialization instead of r6.
+ * The shared helper has no distinct argument-expansion boundary here.
+ * H1 rejected (2026-09-27): literal Half zero from MAKYURI_CHOJO/LAMP.C
  * emits 160/152 bytes, 55 differing halfwords / 27 aligned edits. CSE keeps
  * an HI zero pseudo, but it is loaded only at the final byte store; no r6
  * lifetime is admitted. An extra zero pool and moved division-mask pool
@@ -18,24 +23,19 @@ void SceneState_ApplyRectAndSetSlotEightByte35(void);
 void ActorPresentation_SetSceneCell58AndMarkActorEight(void);
 void SceneState_ApplyRectAndSetActor8Byte35(void);
 
-struct Half {
-    u16 value;
-};
-
 void Local_02001ac8(void)
 {
     struct FieldActor *block = Engine_ActorGet(8);
     s32 x = block->x.fixed;
     s32 y = block->y.fixed;
     s32 column = x / 0x100000;
-    struct Half still;
+    u8 still;
 
     if (y == 0)
         Engine_ActorGet(8)->priority_flags = 2;
     SceneState_ApplyFourRectsAndSetActor8Byte85();
     Engine_ActorGet(8)->motion_flags = 3;
-    /* FAKEMATCH: retain the literal zero's halfword producer across calls. */
-    still.value = 0;
+    still = 0;
     if (column == 40) {
         SceneState_ApplyRectAndSetSlotEightByte35();
     } else if (column == 42) {
@@ -50,8 +50,8 @@ void Local_02001ac8(void)
         if (column != 37)
             return;
     copy:
-        Engine_MapCopyCellAttributes(61, 36, 1, 1, column, 42);
-        Engine_ActorGet(8)->motion_flags = still.value;
+        Map_CopyCellAttributes(61, 36, 1, 1, column, 42);
+        Engine_ActorGet(8)->motion_flags = still;
         Engine_ActorGet(8)->y.fixed = 0x200000;
     }
 }

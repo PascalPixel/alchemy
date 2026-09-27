@@ -2010,7 +2010,7 @@
           "address": "0x020098a4",
           "kind": "thumb"
         },
-        "Local_020007b0": {
+        "LinkLobby_ExchangePartyRecords": {
           "address": "0x020087b0",
           "kind": "thumb"
         },
@@ -36656,6 +36656,10 @@
         }
       ],
       "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x02009c84",
+          "kind": "thumb"
+        },
         "Engine_GameFlagIsSet": {
           "address": "0x02009d44",
           "kind": "thumb"
@@ -82437,6 +82441,34 @@
       "compiler_route": "canonical-gcc296"
     },
     {
+      "id": "ovd-3a4-020035ac",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_020035ac.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Main_08000128": {"address": "0x0200bab0", "kind": "thumb"},
+        "Engine_ObjectSetAnimation": {"address": "0x0200bad0", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x0200bd20", "kind": "thumb"},
+        "Engine_TaskWait": {"address": "0x0200ba78", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x020035ac", "extent": 188, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "ovd-3a4-02003668",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_02003668.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Main_08000128": {"address": "0x0200bab0", "kind": "thumb"},
+        "Engine_ObjectSetAnimation": {"address": "0x0200bad0", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x0200bd20", "kind": "thumb"},
+        "Engine_TaskWait": {"address": "0x0200ba78", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x02003668", "extent": 188, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "scene-3a4-02003738",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLL_STEP.C",
       "overlay": "resource_3a4",
@@ -87549,6 +87581,8 @@
       "source": "recon/tbs/en/overlays/resource_39d_c_020034bc.c",
       "overlay": "resource_39d",
       "absolute_symbols": {
+        "Data_03001e70": {"address": "0x03001e70", "kind": "data"},
+        "gFrameCount": {"address": "0x03001e40", "kind": "data"},
         "Engine_ActorGet": {
           "address": "0x0200b6f0",
           "kind": "thumb"
@@ -87597,6 +87631,10 @@
       "source": "recon/tbs/en/overlays/resource_3c9_c_02005a28.c",
       "overlay": "resource_3c9",
       "absolute_symbols": {
+        "VinasuChojo_UpdateOrbitingSpark": {
+          "address": "0x0200db90",
+          "kind": "thumb"
+        },
         "Engine_ActorGet": {
           "address": "0x0200dd4c",
           "kind": "thumb"
@@ -87702,10 +87740,10 @@
     },
     {
       "id": "ovd-3cb-020007b0",
-      "source": "recon/tbs/en/overlays/resource_3cb_c_020007b0.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/EXCHANGE_PARTY.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
-        "Local_02000580": {
+        "LinkLobby_SendPartyRecords": {
           "address": "0x02008580",
           "kind": "thumb"
         },
@@ -87730,7 +87768,7 @@
         {
           "address": "0x020007b0",
           "extent": 176,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -88704,6 +88742,44 @@
           "state": "not-yet-c"
         }
       ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "vinasu-random-debris-candidate",
+      "source": "recon/tbs/en/overlays/resource_3c8_c_02004520.c",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Engine_RandomNext": {"address": "0x0200cdb4", "kind": "thumb"},
+        "Engine_MathDivide": {"address": "0x0200cd9c", "kind": "thumb"},
+        "gFrameCount": {"address": "0x03001e40", "kind": "data"}
+      },
+      "owners": [{"address": "0x02004520", "extent": 208, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "vinasu-push-dispatch-candidate",
+      "source": "recon/tbs/en/overlays/resource_3c8_c_02004bd8.c",
+      "overlay": "resource_3c8",
+      "absolute_symbols": {
+        "Engine_ObjectSetScript": {"address": "0x0200cddc", "kind": "thumb"},
+        "Value_0000ffff": {"address": "0x0000ffff", "kind": "data"},
+        "Value_000000b9": {"address": "0x000000b9", "kind": "data"},
+        "RuntimeSelectorTable": {"address": "0x02000240", "kind": "data"},
+        "Data_0200d1a4": {"address": "0x0200d1a4", "kind": "data"},
+        "Data_0200d1a8": {"address": "0x0200d1a8", "kind": "data"},
+        "Data_0200d1ac": {"address": "0x0200d1ac", "kind": "data"},
+        "Data_0200d1b0": {"address": "0x0200d1b0", "kind": "data"},
+        "Data_0200d564": {"address": "0x0200d564", "kind": "data"},
+        "Data_0200d128": {"address": "0x0200d128", "kind": "data"},
+        "Data_0200d164": {"address": "0x0200d164", "kind": "data"},
+        "Data_0200f72c": {"address": "0x0200f72c", "kind": "data"},
+        "Data_0200f78c": {"address": "0x0200f78c", "kind": "data"},
+        "Data_0200f77c": {"address": "0x0200f77c", "kind": "data"},
+        "Data_0200f7ec": {"address": "0x0200f7ec", "kind": "data"}
+      },
+      "owners": [{"address": "0x02004bd8", "extent": 452, "state": "not-yet-c"}],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     },

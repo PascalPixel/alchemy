@@ -1,4 +1,4 @@
-/* NONMATCHING: 748-byte candidate, 359 differing halfwords, 209 edits.
+/* NONMATCHING: 748-byte candidate, 358 differing halfwords, 205 edits.
  * Whole owner 752 bytes including six owned pool words.
  * Canonical draft for resource_380:0200449c and resource_381:0200301c;
  * own-ROM sibling check proves equivalent flow and per-instance bindings.
@@ -53,7 +53,14 @@
  * halfwords / 209 edits); GCC scalarizes the record into the same fp value.
  * Same residual through resource_381 bindings with --symbol 0200449c.
  * STOP: suffix/cursor/scalar-storage axis bounded without an admitted
- * ownership shape. H6 remains diagnostic C not yet exact; no new DONE. */
+ * ownership shape. H6 remains diagnostic C not yet exact; no new DONE.
+ * H8 follows the reference's initial whole-record y/z consumers and final
+ * whole-record z writeback; angles/scale still use the independent +8 view.
+ * Result 748 bytes / 358 halfwords / 205 edits, frame 68. The +8 cursor now
+ * owns sl as in reference, but scale remains fp, hold r8, and position slots
+ * remain displaced. Partial ownership witness, not an admitted exact shape.
+ * Transferred DRIFT.C 74a903e43 has no matching random variant or callback
+ * publication consumers here; those repairs were not applied. */
 #include "FIELD_EVENT.H"
 
 void *Engine_AllocateBlock(s32 id, s32 size);
@@ -117,8 +124,8 @@ void Effect_UpdateSparkRing(void)
         scale = motion->scale;
         speed = motion->scale_speed;
         x = spark->x;
-        y = motion->y;
-        z = motion->z;
+        y = spark->motion.y;
+        z = spark->motion.z;
         hold = spark->hold;
         timer = spark->timer;
         timer--;
@@ -222,7 +229,7 @@ void Effect_UpdateSparkRing(void)
         spark->hold = hold;
         spark->x = x;
         motion->y = y;
-        motion->z = z;
+        spark->motion.z = z;
         spark->timer = timer;
         spark++;
         motion = (struct SparkMotion *)((u8 *)motion + sizeof(*spark));

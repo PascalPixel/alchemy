@@ -1559,7 +1559,7 @@
     },
     {
       "id": "kuupuappu-drifting-effect",
-      "source": "recon/tbs/en/overlays/resource_382_c_020017ac.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/DRIFT.C",
       "overlay": "resource_382",
       "absolute_symbols": {
         "SceneEffect_UpdateMotionWithDamping": {
@@ -1595,7 +1595,7 @@
         {
           "address": "0x020017ac",
           "extent": 340,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

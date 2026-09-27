@@ -6296,39 +6296,51 @@
       "source": "recon/tbs/en/overlays/resource_3ca_c_02000b34.c",
       "overlay": "resource_3ca",
       "absolute_symbols": {
-        "Main_080000c0": {
+        "BabiFune_UpdateWaves": {
+          "address": "0x02008194",
+          "kind": "thumb"
+        },
+        "SceneState_CountDownEveryFortyTicks": {
+          "address": "0x02008168",
+          "kind": "thumb"
+        },
+        "BabiFune_CyclePalette": {
+          "address": "0x020080b0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
           "address": "0x0200931c",
           "kind": "thumb"
         },
-        "Main_080000d0": {
+        "Engine_TaskAddCallback": {
           "address": "0x02009324",
           "kind": "thumb"
         },
-        "Main_080000d8": {
+        "Engine_TaskRemoveCallback": {
           "address": "0x0200932c",
           "kind": "thumb"
         },
-        "Main_080091f0": {
+        "Engine_WorkSetValuesIfNonNegative": {
           "address": "0x0200939c",
           "kind": "thumb"
         },
-        "Main_0808a010": {
+        "Engine_EventWait": {
           "address": "0x020093b4",
           "kind": "thumb"
         },
-        "Main_0808a018": {
+        "Engine_EventBegin": {
           "address": "0x020093bc",
           "kind": "thumb"
         },
-        "Main_0808a020": {
+        "Engine_EventEnd": {
           "address": "0x020093c4",
           "kind": "thumb"
         },
-        "Main_0808a0d0": {
+        "Engine_ObjectMotionSetPositionAndReset": {
           "address": "0x020093f4",
           "kind": "thumb"
         },
-        "Main_0808a1b8": {
+        "Engine_ObjectMotionArmCallback": {
           "address": "0x02009434",
           "kind": "thumb"
         },
@@ -6340,7 +6352,7 @@
           "address": "0x02009494",
           "kind": "thumb"
         },
-        "Main_080f9010": {
+        "Engine_AudioPlayCue": {
           "address": "0x0200949c",
           "kind": "thumb"
         }

@@ -1,8 +1,9 @@
-/* Draft, not exact (2026-09-24): 564 of 564 bytes, 260 differing
-   halfwords (mostly a two-halfword shift). Every call, field and branch
-   lines up with the listing. Residual: the ROM keeps `earned` in fp for
-   the whole function; here it is spilled to a stack slot (sub sp, #4),
-   which shifts everything after the prologue. The ROM also reloads
+/* Draft, not exact (2026-09-27): complete extent [080c24f0,080c2724),
+   564 reference bytes. Current fixed-spread helper model: 568 bytes,
+   273 differing halfwords, 163 aligned edits; topology still different.
+   Original baseline: 564 bytes, 260 halfwords, 183 aligned edits.
+   Residual: the ROM keeps `earned` in fp for the whole function; here it
+   is spilled to a stack slot (sub sp, #4). The ROM also reloads
    unit->class_id and rec->item inside the two search loops (the first is
    still strength-reduced). Tried: separate locals per loop, goto loops,
    unsigned id test, the formation load order. */
@@ -22,6 +23,14 @@
  * as canonical despite its aggregate improvement. Preserve it in Git before
  * the single followup: separate fixed-spread coin/experience helpers, since
  * the ROM and exact level-growth family use literal multipliers per award.
+ * H2 result: 568/564 bytes, 273 differing halfwords, 163 aligned edits.
+ * Fixed-spread helpers restore both reference RNG arithmetic sequences;
+ * reward-field r9 and bonus/counter r6/r5 persist. Keep this local lifetime
+ * recovery as the best justified draft, not as evidence of a near match.
+ * Earned still spills, unit is r7 instead of r8, and spoils is r8 instead
+ * of r7. Both search loops still cache comparison fields unlike the ROM.
+ * Budget exhausted. Further award-helper spelling cannot address those
+ * independent loop/alias and whole-owner lifetime disagreements. No credit.
  */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
@@ -70,8 +79,8 @@ s32 Math_Div(s32, s32);
 u32 Math_DivU(u32, u32);
 s32 Item_EncodeBankedId(s32);
 
-static __inline__ s32 BattleEnemy_CalculateReward(
-    struct BattleUnit *unit, u16 *reward, s32 spread)
+static __inline__ s32 BattleEnemy_CalculateCoinReward(
+    struct BattleUnit *unit, u16 *reward)
 {
     s32 i;
     s32 bonus = 0;
@@ -79,7 +88,24 @@ static __inline__ s32 BattleEnemy_CalculateReward(
     s32 floor;
 
     for (i = 0; i < (u8)Math_DivU(unit->level, 10) + 1; i++)
-        bonus += ((Random16() * spread) >> 16) + 1;
+        bonus += ((Random16() * 6) >> 16) + 1;
+    base = *reward;
+    floor = Math_Div(base * 3, 10);
+    if (bonus < floor)
+        bonus = floor;
+    return bonus + base;
+}
+
+static __inline__ s32 BattleEnemy_CalculateExperienceReward(
+    struct BattleUnit *unit, u16 *reward)
+{
+    s32 i;
+    s32 bonus = 0;
+    s32 base;
+    s32 floor;
+
+    for (i = 0; i < (u8)Math_DivU(unit->level, 10) + 1; i++)
+        bonus += ((Random16() * 4) >> 16) + 1;
     base = *reward;
     floor = Math_Div(base * 3, 10);
     if (bonus < floor)
@@ -128,9 +154,9 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     rec = Owner_GetRecordFar(unit->class_id);
     if (earned != 0) {
         if (rec->coins != 0)
-            spoils->coins += BattleEnemy_CalculateReward(unit, &rec->coins, 6);
+            spoils->coins += BattleEnemy_CalculateCoinReward(unit, &rec->coins);
         if (rec->experience != 0)
-            spoils->experience += BattleEnemy_CalculateReward(unit, &rec->experience, 4);
+            spoils->experience += BattleEnemy_CalculateExperienceReward(unit, &rec->experience);
     } else {
         spoils->coins += rec->coins;
         spoils->experience += rec->experience;

@@ -48,14 +48,10 @@ void ToretoHeya_ApplyFlaggedMapPatches(void)
     s32 i;
     s32 size;
 
-    /* FAKEMATCH: retain the table's shared byte offset explicitly. */
-    for (i = 0; *(s16 *)((u8 *)Data_02009ca8 + i) != -1; i += 12) {
+    for (i = 0; Data_02009ca8[i] != -1; i += 6) {
         size = 1;
-        if (Engine_GameFlagIsSet(*(s16 *)((u8 *)Data_02009ca8 + i))
-            && *(s16 *)((u8 *)Data_02009ca8 + i + 2) != 0)
-            Map_CopyCellsTo(*(s16 *)((u8 *)Data_02009ca8 + i + 4),
-                *(s16 *)((u8 *)Data_02009ca8 + i + 6),
-                *(s16 *)((u8 *)Data_02009ca8 + i + 8),
-                *(s16 *)((u8 *)Data_02009ca8 + i + 10), size, size);
+        if (Engine_GameFlagIsSet(Data_02009ca8[i]) && Data_02009ca8[i + 1] != 0)
+            Map_CopyCellsTo(Data_02009ca8[i + 2], Data_02009ca8[i + 3],
+                Data_02009ca8[i + 4], Data_02009ca8[i + 5], size, size);
     }
 }

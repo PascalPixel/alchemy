@@ -1,4 +1,17 @@
-/* NONMATCHING P4 (2026-09-27): phased repeat/options union is byte-identical
+/* NONMATCHING P5 (2026-09-27): 612/612 bytes, 117 differing halfwords,
+ * 34 aligned edits; topology and all four pool words/offsets unchanged.
+ * Transfer exact EAST_PARTICLE_WAVE's Map_CopyCellsTo boundary to the four
+ * intervening 5x2 copies. Like the now-exact ShiftBridge, dimensions belong
+ * to inline call parameters rather than raw-call temporaries. Before:
+ * width SI95 five refs/48 insns, height SI96 five refs/46 insns, both three
+ * calls, yielding width r6/height r5. After: SI99/SI100 both five refs over
+ * 48 insns as user formals; width wins the tie and yields reference r5/r6.
+ * Both initializers and all eight stack stores now match; no other bytes
+ * changed. Freeze that admission. Remaining: r9/sl count/options ownership,
+ * missing second write-view copy and hoisted scale literal, row base/zero
+ * setup order, and final rectangle argument scheduling. No new DONE.
+ *
+ * NONMATCHING P4 (2026-09-27): phased repeat/options union is byte-identical
  * to the retained 612-byte model: 127 halfwords / 44 aligned edits, all four
  * pool words and offsets unchanged. Own ROM reuses sl for the first phase's
  * repeat count then copies persistent r9 to sl for the second write view.
@@ -90,10 +103,10 @@ void Scene_RunPairedParticleWaveSequence(void)
         offset += 0x100000;
         row++;
     } while (row <= 9);
-    Engine_MapCopyCellsTo(111, 5, 117, 5, 5, 2);
-    Engine_MapCopyCellsTo(111, 10, 117, 10, 5, 2);
-    Engine_MapCopyCellsTo(111, 7, 111, 5, 5, 2);
-    Engine_MapCopyCellsTo(111, 7, 111, 10, 5, 2);
+    Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
+    Map_CopyCellsTo(111, 10, 117, 10, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 5, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 10, 5, 2);
     row = 0;
     offset = 0;
     do {

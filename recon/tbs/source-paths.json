@@ -10792,7 +10792,8 @@
       "source": "FIELD/HAIDIA_ARASHI/STORM_SCENE_02DEC.C"
     },
     "resource_374:020017c8": {
-      "name": "Scene_RunExtendedActorSequence"
+      "name": "Scene_RunExtendedActorSequence",
+      "source": "FIELD/HAIDIA_IE/EXTENDED_SEQUENCE.C"
     },
     "resource_379:02000074": {
       "name": "RunEventScript01",

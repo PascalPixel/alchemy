@@ -1,13 +1,31 @@
 /* NONMATCHING: 11 differing halfwords, all scheduling: in state 0 the ROM
  * copies source to r1 one instruction earlier, and in state 2 it loads the
  * object pointer after the first origin store. Statement order, const,
- * temporaries and callee prototypes did not move either. */
+ * temporaries and callee prototypes did not move either.
+ * Complete owner [08095c08,08095dd0), 456 bytes including both pool words.
+ * Baseline verified: 456/456, 11 differing halfwords, 7 aligned edits.
+ * H1 ownership evidence: exact EffectSlot_Initialize records x/z together
+ * at +0x14/+0x18; UpdateOrbitAndReturn reads that saved pair, as state 3
+ * does here. Model only origin capture as a typed inline operation; leave
+ * object-flag consumers and all state changes in their original owner.
+ * Prediction: object reload stays after the first origin store, with the
+ * 12-byte frame and other states unchanged. First model <=10 minutes, one
+ * follow-up only, stop/commit by 01:15 Lisbon. Full byte equality plus
+ * compare/coverage/verify required for adoption; results stay in this header.
+ * H1 result: 456/456, unchanged 11 differing halfwords / 7 aligned edits.
+ * Complete diff read: origin-only inline ownership moves neither residual.
+ */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 
 struct EffectVector {
     s32 x;
     s32 y;
+    s32 z;
+};
+
+struct EffectOrigin {
+    s32 x;
     s32 z;
 };
 
@@ -29,8 +47,7 @@ struct PhasedParticleSlot {
     s32 z;
     s32 target_x;
     s32 target_z;
-    s32 origin_x;
-    s32 origin_z;
+    struct EffectOrigin origin;
     s32 speed;
     s32 max_speed;
     s32 acceleration;
@@ -66,6 +83,13 @@ void Audio_PlayCue(s32 cue);
 
 #define BattleFx_UpdatePhasedRadialParticle Func_08095c08
 
+/* FAKEMATCH: retain the saved x/z pair's narrow inline ownership boundary. */
+static __inline__ void EffectOrigin_Capture(struct PhasedParticleSlot *effect)
+{
+    effect->origin.x = effect->x;
+    effect->origin.z = effect->z;
+}
+
 void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
 {
     struct EffectPositionSource *source;
@@ -80,8 +104,8 @@ void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
     state = *state_pointer;
 
     if (state == 0) {
-        effect->x = effect->origin_x;
-        effect->z = effect->origin_z;
+        effect->x = effect->origin.x;
+        effect->z = effect->origin.z;
         position.x = effect->x;
         position.z = effect->z;
         RotateVectorByMagnitude(
@@ -115,8 +139,7 @@ void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
             (*state_pointer)--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0) {
-            effect->origin_x = effect->x;
-            effect->origin_z = effect->z;
+            EffectOrigin_Capture(effect);
             effect->object->flags &= -13;
             effect->flags = 4;
             effect->render = 0;
@@ -125,8 +148,8 @@ void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
         }
     } else if (state == 3) {
         effect->render = 1;
-        effect->x = effect->origin_x;
-        effect->z = effect->origin_z;
+        effect->x = effect->origin.x;
+        effect->z = effect->origin.z;
         position.x = source->position.x;
         position.y = source->position.y + 0x140000;
         position.z = source->position.z;

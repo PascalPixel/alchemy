@@ -8,7 +8,12 @@
  * the reference builds it in r0 after the item copy to sl. Calls now carry
  * their Engine_ and Main_ names (the two text calls share one legacy veneer
  * address, so Func_ names were ambiguous). Plain, declaration, s32/u8
- * zero-variable and param-copy spellings give 4 or more. */
+ * zero-variable and param-copy spellings give 4 or more.
+ * 2026-09-27 Sol spark-ring H1: a union owning scalar clear / heap buffer
+ * emits the identical 200 bytes and identical r2-to-r8 residual. The reload
+ * dump ties the initial constant to the later byte-store reload; aggregate
+ * ownership alone does not change it. Restored the smaller source model.
+ * STOP: scalar-record zero axis closed; no new exact bytes. */
 #include "TYPES.H"
 
 u8 *Engine_ObjectCreate(s32);

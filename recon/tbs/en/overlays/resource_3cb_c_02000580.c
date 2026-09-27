@@ -1,4 +1,18 @@
-/* Offer-phase H4 rejected: 560/560 bytes, 204 halfwords / 136 edits.
+/* NONMATCHING H5: 568/560 bytes, 209 differing halfwords / 87 aligned edits.
+ * Admitted: all three independent send-failure r0 stores survive loop and
+ * jump2 (insns 151/358/593); frame32, heap r8 and word compaction retained.
+ * Full normalized diff read; -da output equals ordinary assembly exactly.
+ * Remaining: retry failures form three cold blocks (ROM shares first/last
+ * near the final poll), map still reloads per iteration, and first copier
+ * setup regresses. Pools move +8. Keep this admitted exit-topology witness;
+ * H3's lower-score 556/85 model remains at 17cf30899, rejected H4 at 8684ab881.
+ * Three models complete; STOP without a new causal fact. DONE +0.
+ * Failure-boundary H5: baseline loop pass moves first send failure to cold
+ * label762; jump2 then merges all three r0 result stores. loop.c's guarded
+ * exit motion is disabled when the guard target exits the inner loop region.
+ * A one-pass send/check boundary tests that explicit source ownership;
+ * admission is three independent result stores, with frame32 and copy loop.
+ * Offer-phase H4 rejected: 560/560 bytes, 204 halfwords / 136 edits.
  * Formal map parameter coalesces back into pseudo33: 133 insns / 14 calls,
  * still stack-preferring, still reloaded in-loop. Heap/index exchange r7/r8;
  * list takes ip instead of map. Frame32 and pool offsets alone now agree,
@@ -67,23 +81,6 @@ struct LinkList {
     s32 count;
 };
 
-static __inline__ void RemapOffers(struct LinkList *list, const u8 *map)
-{
-    s32 j;
-    s32 k;
-
-    for (j = 0; j < list->count; j++) {
-        list->entries[j].owner = map[list->entries[j].owner];
-        if ((s8)list->entries[j].owner == 0) {
-            for (k = j; k < list->count - 1; k++) {
-                list->entries[k] = list->entries[k + 1];
-            }
-            list->count--;
-            j--;
-        }
-    }
-}
-
 s32 LinkLobby_SendPartyRecords(void)
 {
     s32 result;
@@ -96,6 +93,8 @@ s32 LinkLobby_SendPartyRecords(void)
     s32 timeout;
     s32 tries;
     s32 i;
+    s32 j;
+    s32 k;
     u32 size;
     struct LinkList *list;
 
@@ -113,10 +112,13 @@ s32 LinkLobby_SendPartyRecords(void)
         heap[0x12a] = 2;
         table[owners[i]] = i - 128;
         tries = 0;
-        if ((ret = Main_08000380(heap, 0x154)) == -1) {
-            result = ret;
-            goto done;
-        }
+        /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
+        do {
+            if ((ret = Main_08000380(heap, 0x154)) == -1) {
+                result = ret;
+                goto done;
+            }
+        } while (0);
         while (Main_080003a8() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
@@ -147,11 +149,14 @@ next:
     if (i <= 2) {
         heap[0x12a] = 0;
         tries = 0;
-        if ((ret = Main_08000380(heap, 0x154)) != -1) {
-            goto test;
-        }
-        result = ret;
-        goto done;
+        /* FAKEMATCH: keep this send/check boundary distinct from polling. */
+        do {
+            if ((ret = Main_08000380(heap, 0x154)) != -1) {
+                goto test;
+            }
+            result = ret;
+            goto done;
+        } while (0);
     }
     Main_08000178(heap);
     size = 0x140;
@@ -164,11 +169,23 @@ next:
         list = (struct LinkList *)(heap + 8);
         tries = 0;
         timeout = 600;
-        RemapOffers(list, table);
-        if ((ret = Main_08000380(heap, 0x140)) == -1) {
-            result = ret;
-            goto done;
+        for (j = 0; j < list->count; j++) {
+            list->entries[j].owner = table[list->entries[j].owner];
+            if ((s8)list->entries[j].owner == 0) {
+                for (k = j; k < list->count - 1; k++) {
+                    list->entries[k] = list->entries[k + 1];
+                }
+                list->count--;
+                j--;
+            }
         }
+        /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
+        do {
+            if ((ret = Main_08000380(heap, 0x140)) == -1) {
+                result = ret;
+                goto done;
+            }
+        } while (0);
         while (Main_080003a8() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {

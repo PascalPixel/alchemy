@@ -22,7 +22,13 @@
  * reload registers later: 18 halfwords, 17 edits. All four models are
  * rejected; this keeps the 11-halfword baseline. A next attempt needs an
  * independently supported lifetime for the zero/options pair, not another
- * declaration permutation or store-order sweep. */
+ * declaration permutation or store-order sweep.
+ * The dump's callback load was also tested with an explicit update pointer
+ * assigned before the flag clear, then stored to options afterwards. This
+ * does move the callback load first, but does not retain options early or
+ * put zero in r5: 284 bytes, 82 halfwords, 29 aligned edits, with a new
+ * trailing instruction-alignment halfword. Reject that lifetime model too;
+ * the 11-halfword baseline below remains unchanged. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 

@@ -670,11 +670,8 @@ fn run(args: &[String]) -> Result<(), String> {
         o.name.clone()
     };
     let aliases: Vec<String> = owners.iter().map(alias_for).collect();
-    // The unit is linked by `Func_<address>` symbols. A function defined
-    // under its registered name without an alias define gets one, so the
-    // symbol exists; a file whose definition matches neither is reported
-    // with what it does define.
-    let mut alias_defines: Vec<String> = Vec::new();
+    // The build injects the registered names' link aliases. Keep those
+    // mappings in the owner registry rather than duplicating them in C.
     for (o, alias) in owners.iter().zip(&aliases) {
         let legacy = format!("Func_{:08x}", o.address);
         let defined = functions
@@ -686,9 +683,6 @@ fn run(args: &[String]) -> Result<(), String> {
             continue;
         }
         if defined.iter().any(|k| k == alias) {
-            if !defines.contains_key(alias) {
-                alias_defines.push(format!("#define {alias} {legacy}"));
-            }
             continue;
         }
         return Err(format!(
@@ -699,16 +693,12 @@ fn run(args: &[String]) -> Result<(), String> {
         ));
     }
 
-    // Order: the shared types, then every alias define (an included header
-    // may declare through an alias, as the owners' files did), then the
-    // other includes, layouts, declarations, wrappers, and the functions.
+    // Order: shared types, macros, other includes, layouts, declarations,
+    // wrappers, and functions. Link aliases come from the build's bindings.
     let mut out: Vec<String> = vec!["#include \"TYPES.H\"".into()];
     out.push(String::new());
     for name in &define_order {
         out.push(defines[name].text.clone());
-    }
-    for define in &alias_defines {
-        out.push(define.clone());
     }
     if !define_order.is_empty() {
         out.push(String::new());
@@ -1512,8 +1502,12 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
         }
         if t.starts_with("#define") {
             let key = t.split_whitespace().nth(1).unwrap_or("").to_string();
-            push(&mut out, "define", key, &lines[i..=i]);
-            i += 1;
+            let mut end = i;
+            while lines[end].trim_end().ends_with('\\') && end + 1 < lines.len() {
+                end += 1;
+            }
+            push(&mut out, "define", key, &lines[i..=end]);
+            i = end + 1;
             continue;
         }
         if t.starts_with("/*") {
@@ -1688,6 +1682,31 @@ fn write_json(path: &Path, value: &Value) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn multiline_macro_keeps_its_body_when_items_move() {
+        let definition = r#"#define PUBLISH(value) \
+    do { \
+        target = (value); \
+    } while (0)"#;
+        let source = format!("{definition}\n\nvoid Publish(void)\n{{\n    PUBLISH(1);\n}}\n");
+        let parsed = items(&source, Path::new("PUBLISH.C"));
+        assert_eq!(parsed.len(), 2);
+        assert_eq!(parsed[0].kind, "define");
+        assert_eq!(parsed[0].key, "PUBLISH(value)");
+        assert_eq!(parsed[0].text, definition);
+        assert_eq!(parsed[1].kind, "function");
+        assert_eq!(parsed[1].key, "Publish");
+    }
+
+    #[test]
+    fn unterminated_macro_continuation_stays_one_item() {
+        let definition = "#define PUBLISH(value) \\";
+        let parsed = items(definition, Path::new("PUBLISH.C"));
+        assert_eq!(parsed.len(), 1);
+        assert_eq!(parsed[0].kind, "define");
+        assert_eq!(parsed[0].text, definition);
+    }
 
     #[test]
     fn flattening_refuses_owners_of_instanced_units() {

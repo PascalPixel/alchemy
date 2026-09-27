@@ -1,4 +1,24 @@
-/* Lifetime-transfer audit (2026-09-27): fresh complete score remains
+/* NONMATCHING: 480/480 bytes, seven differing halfwords (2026-09-27).
+ * Entry ownership H1: capture event = Data_03001ebc[0] before acquiring
+ * the palette source, then inspect event+0x17e. This gives the reference
+ * shared-base load order and changes reload ancestry through the loop:
+ * the full entry, tint loads, nine attenuation sequences and color read
+ * now match. All five pool words and frame4 remain exact. Only the final
+ * color publication/index advancement sequence differs (seven halfwords).
+ * H2 moved i++ before color construction: 480/12; it advances too early,
+ * before both shifts, and changes the store/index scratch registers.
+ * H3 first builds color, then increments i and stores color: 480/13;
+ * it changes both shift registers and the packed-color register. Full
+ * normalized diffs read; neither preserves the exact packing prefix.
+ * Retain H1, freeze its complete prefix and pool. Three models complete;
+ * no further publication spelling without new scheduling evidence. DONE +0.
+ * Compiler follow-up: H3 replaces generated result227 with the input-color
+ * user pseudo41. One distinct output-local trial tests that lifetime join;
+ * it emits the same 480/13 binary as H3, including both packing-register
+ * regressions (cmp checked). This publication-temporary axis is stopped.
+ * H1 ordinary and diagnostic assembly are identical; canonical stays H1.
+ *
+ * Lifetime-transfer audit (2026-09-27): fresh complete score remains
  * 480/480, 30 halfwords / 29 aligned edits. Ordinary and -da assembly agree.
  * CSE owns src/dst/index as user pseudos 32/33/34; global allocation already
  * gives them reference r8/r9/sl, and tints 35/36/37 get r4/r7/r6 with frame4.
@@ -103,9 +123,11 @@ void ToretoPalette_ApplyTint(void)
     s32 green;
     s32 blue;
     u32 color;
+    u8 *event;
 
+    event = Data_03001ebc[0];
     src = (u16 *)Data_03001ebc[5];
-    if (*(s16 *)(Data_03001ebc[0] + 0x17e) != 0)
+    if (*(s16 *)(event + 0x17e) != 0)
         return;
     if ((Data_03001e40 & 31) != 0)
         return;

@@ -13,7 +13,13 @@
  * Bindings and scene-row ownership agree with exact ARUTAMIRA_DOU/
  * ENTRY_STATE.C. Stable unit arutamira-room-visuals records the complete
  * owner without awarding credit. A next model must explain the two reads
- * before the blend-register store, not merely change the snapshot's type. */
+ * before the blend-register store, not merely change the snapshot's type.
+ * 2026-09-27: transferred Suhalla's one-pass publication boundary around
+ * the complete first comparison/blend-store phase. Prediction: keep the
+ * independent unsigned snapshot before the signed scene read. Full diff
+ * and binary comparison show identical 96-byte output (49 halfwords,
+ * 18 edits); this boundary does not prevent the earlier load merging.
+ * Retain the canonical source, stop the publication-block axis. DONE +0. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

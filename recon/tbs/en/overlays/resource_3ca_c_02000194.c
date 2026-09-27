@@ -1,15 +1,26 @@
-/* NONMATCHING: 556 bytes, candidate 558, 244 differing halfwords, 43 aligned
- * edits (2026-09-26). Reconstructed both Q16 waves and all four actor-height
+/* NONMATCHING: 556 bytes, candidate 558, 244 differing halfwords, 42 aligned
+ * edits (2026-09-27). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
  * Corrected BLDALPHA and all six neighbouring base-height addresses from
  * the raw listing's literal words. An addressable scroll array restores the
  * +18 slot and its address scheduling. Reusing bob for the reload keeps
  * an unwanted r6 copy; position-pointer and x lifetimes still differ.
- * Earlier structural attempts are preserved in draft commits. */
+ * H1 transfers the shared FixedPointPosition type and a typed inline spawn
+ * consumer around the second random draw. This fixes the ObjectCreate type
+ * load order (43 to 42 edits), but x still spills at +0 while the position
+ * remains r6, opposite the ROM. The scroll r6 copy, Q16 alignment padding,
+ * position load/store/call setup and resulting pool offsets remain.
+ * Correct BLDALPHA/base addresses and all spawn stores are unchanged.
+ * H2 passes the addressable PositionWork record to that consumer instead
+ * of passing only the position pointer: same full normalized diff and score.
+ * STOP: the bounded typed spawn-consumer interface did not restore the saved
+ * pointer lifetime. H1 is preserved at 148eb9259; no register-only sweeps.
+ * Earlier structural attempts are preserved in draft commits. No DONE. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
+#include "FIXED_POINT_POSITION.H"
 
 struct MapLayer {
     s32 unknown_00[3];
@@ -22,16 +33,12 @@ struct MapWork {
     struct MapLayer layers[8];
 };
 
-struct Position {
-    s32 x, y, z;
+struct Half {
+    u16 v;
 };
 
 struct PositionWork {
-    struct Position *pos;
-};
-
-struct Half {
-    u16 v;
+    struct FixedPointPosition *pos;
 };
 
 extern struct MapWork *Data_03001e70;
@@ -50,11 +57,24 @@ extern s32 Data_02009818;
 
 void BabiFune_UpdateDriftingObject(u8 *obj);
 
+/* FAKEMATCH: the inline consumer retains object-type argument setup order. */
+static __inline__ struct FieldActor *SpawnDriftingObject(struct PositionWork *work,
+    struct FixedPointPosition *pos, s32 x, s32 z)
+{
+    work->pos = pos;
+    work->pos->y = 0;
+    work->pos->x = x;
+    z += Engine_RandomNext() * 160;
+    z += 0x1e0000;
+    work->pos->z = z;
+    return Engine_ObjectCreate(0x1f7, work->pos->x, work->pos->y, z);
+}
+
 void BabiFune_UpdateWaves(void)
 {
     volatile u16 scroll[1];
     struct Half zero;
-    struct Position buf;
+    struct FixedPointPosition buf;
     struct PositionWork work;
     struct MapWork *map;
     struct FieldActor *actor;
@@ -104,13 +124,7 @@ void BabiFune_UpdateWaves(void)
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        work.pos = &buf;
-        work.pos->y = 0;
-        work.pos->x = x;
-        z += Engine_RandomNext() * 160;
-        z += 0x1e0000;
-        work.pos->z = z;
-        actor = Engine_ObjectCreate(0x1f7, work.pos->x, work.pos->y, z);
+        actor = SpawnDriftingObject(&work, &buf, x, z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->unknown_64 = 60;

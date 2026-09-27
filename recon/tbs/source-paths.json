@@ -4771,7 +4771,8 @@
       "source": "SYSTEM/LINK/SERIAL_DISABLE_SERIAL_TRANSFER.C"
     },
     "main:08006088": {
-      "name": "SerialRuntime_ExchangePayloads"
+      "name": "SerialRuntime_ExchangePayloads",
+      "source": "SYSTEM/LINK/SERIAL_EXCHANGE_PAYLOADS.C"
     },
     "main:08006358": {
       "name": "SerialRuntime_RemoveIrqHandlers"

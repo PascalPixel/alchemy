@@ -18,8 +18,8 @@
  *    Rejected. Full normalized diff reviewed for every trial.
  *
  * Remaining: choice/message exchange sl/r9; shared -1 crosses prompt calls;
- * poll-loop entry/hoisting; sum needs an upward counter retained in ip's
- * comparison, and the state+1 selection pointer must not survive RandomNext.
+ * poll-loop entry/hoisting; sum's bound must move to ip, and the state+1
+ * selection pointer must not survive RandomNext.
  * Stop these three axes; do not repeat type or declaration spelling sweeps.
  *
  * H1 (2026-09-27): exact TOREBI_IZUMI/OFFER_WHEELS.C preserves the s32
@@ -48,6 +48,18 @@
  * in TEXT/RENDER.C and WINDOW/FINALIZE.C do not justify another type trial:
  * the window already occupies the reference r6 in both phases. No new model
  * admitted; preserve 680/211/123 rather than repeat the closed searches.
+ *
+ * Guarded-do model: own-ROM 02000cbc/02000cd4 separates the entry guard
+ * from the upward back-edge; approved loop.c's variable-bound countdown
+ * conversion requires loop->vtop. Prediction/admission: an explicit guard
+ * plus do/while retains the upward counter. One compile, no spelling sweep;
+ * acceptance remains the complete 680-byte owner and compare/coverage/verify.
+ * Admitted: adds r5,#1; cmp r5,r0; blt, replacing the countdown. Complete
+ * normalized diff: still 680/211/123, all nine pool words exact. Retain this
+ * ordinary control-flow correction without credit. Negative fact: it does
+ * not move the bound to ip, change the ldrsb to ldrb/lsls/asrs, or stop r7's
+ * state+1 pointer crossing RandomNext. The bound/pointer ancestry remains
+ * missing; closed weight/type/polling axes were not reopened. Stop here.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -196,8 +208,12 @@ close:
         weights = (s8 *)&state->bytes[0][1];
         n = result * 3 + 3;
         sum = 0;
-        for (i = 0; i < n; i++) {
-            sum += weights[i + 284];
+        i = 0;
+        if (i < n) {
+            do {
+                sum += weights[i + 284];
+                i++;
+            } while (i < n);
         }
         roll = (u32)(sum * Engine_RandomNext()) >> 16;
         for (i = 0; i < 15; i++) {

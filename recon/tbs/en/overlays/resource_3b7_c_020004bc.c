@@ -42,7 +42,13 @@
  * Baseline lreg pass-1 HI costs are item 12 versus width/height 120 each,
  * not a declaration-order tie. No new ABI, conversion or control-flow fact
  * admits another trial. Keep the baseline; require evidence that changes
- * this allocation ancestry before reopening the closed dimension wrappers. */
+ * this allocation ancestry before reopening the closed dimension wrappers.
+ * Producer stop audit: fresh direct-call RTL retains item pseudo32 in r8,
+ * width34 in r6 and height35 in r5; their pass-1 HI costs are 12/120/120.
+ * The complete normalized diff preserves all 97 calls and the frame8 tail;
+ * the reference's 29 high-height copies plus its two-instruction setup
+ * account for the 60-byte extent gap. No new source model is supported by
+ * this producer fact. Preserve the 904/430/183 canonical body unchanged. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

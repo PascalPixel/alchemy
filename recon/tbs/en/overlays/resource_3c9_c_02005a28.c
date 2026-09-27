@@ -1,4 +1,10 @@
 /* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
+ * 2026-09-27 Sol Venus Summit H2: Drift's explicit byte flag store removes
+ * the generated QI zero from RTL, but does not move the Value_ zero before
+ * the angle store. Complete normalized diff: 358/55/55, second pool still
+ * 0x118 rather than 0x134; source-null/factory copies remain wrong. The flag
+ * tail loses an extra source copy but the admission invariant fails. Stop
+ * this direct-store axis; preserve trial, then restore ordinary member store.
  * 2026-09-27 Sol Venus Summit H1: type the anchor as FieldEffect, the exact
  * 5b90 callback's maintained consumer view. Full normalized comparison is
  * unchanged (358/55/55); source-null copy and factory setup prediction fails.
@@ -127,7 +133,7 @@ void VinasuChojo_SpawnRisingSparks(void)
                 *(struct FieldActor **)spark->unknown_68 = source;
                 spark->update = VinasuChojo_UpdateOrbitingSpark;
                 spark->speed = (Engine_MathSin((offset & 0xfffff) >> 4) * 24) >> 16;
-                sprite->flags = zero;
+                *(u8 *)&sprite->flags = zero;
                 sprite->priority = source->sprite->priority;
             }
         }

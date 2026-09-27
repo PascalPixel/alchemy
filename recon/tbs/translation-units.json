@@ -2,6 +2,162 @@
   "format": 5,
   "units": [
     {
+      "id": "candidate-item-icon-compose",
+      "source": "recon/tbs/en/units/item-icon-compose.c",
+      "overlay": null,
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x080022ec",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x080022fc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0801a088",
+          "extent": 540,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "candidate-380-linked-actors",
+      "source": "recon/tbs/en/overlays/resource_380_c_0200227c.c",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200c9cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200ca04",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200c99c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200c9a4",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200c8bc",
+          "kind": "thumb"
+        },
+        "gLinkedActorScript": {
+          "address": "0x0200cbd0",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200227c",
+          "extent": 388,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "candidate-resource-3b3-02000cc0",
+      "source": "recon/tbs/en/overlays/resource_3b3_c_02000cc0.c",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "gPillarMapCells": {
+          "address": "0x02010000",
+          "kind": "data"
+        },
+        "gPillarUpperTiles": {
+          "address": "0x02020000",
+          "kind": "data"
+        },
+        "gPillarLowerTiles": {
+          "address": "0x02020004",
+          "kind": "data"
+        },
+        "gPillarUpperScreen": {
+          "address": "0x06002800",
+          "kind": "data"
+        },
+        "gPillarLowerScreen": {
+          "address": "0x06002840",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000cc0",
+          "extent": 184,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "candidate-resource-3a4-02000d2c",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_02000d2c.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200bb98",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bb70",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bb78",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200ba78",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200bd20",
+          "kind": "thumb"
+        },
+        "Engine_WorkSetValuesIfNonNegative": {
+          "address": "0x0200bb38",
+          "kind": "thumb"
+        },
+        "Engine_MathSin": {
+          "address": "0x0200baa0",
+          "kind": "thumb"
+        },
+        "Engine_MathCos": {
+          "address": "0x0200baa8",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000d2c",
+          "extent": 404,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "candidate-resource-3c8-0200247c",
       "source": "recon/tbs/en/overlays/resource_3c8_c_0200247c.c",
       "overlay": "resource_3c8",
@@ -65327,7 +65483,7 @@
     },
     {
       "id": "world-map-display-transition",
-      "source": "recon/tbs/en/overlays/resource_371_c_020039fc.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/DISPLAY_TRANSITION.C",
       "overlay": "resource_371",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -65435,7 +65591,7 @@
         {
           "address": "0x020039fc",
           "extent": 1300,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -86989,7 +87145,7 @@
     },
     {
       "id": "ovd-370-02000154",
-      "source": "recon/tbs/en/overlays/resource_370_c_02000154.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/CLEAR/BLEND_FADE.C",
       "overlay": "resource_370",
       "absolute_symbols": {
         "Engine_TaskRemoveCallback": {
@@ -87001,7 +87157,7 @@
         {
           "address": "0x02000154",
           "extent": 168,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

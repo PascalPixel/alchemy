@@ -11,7 +11,17 @@
    &SERIAL_ACTIVE_B/A in r7 and 0x7f in lr (here swapped); and its first literal
    pool sits after the own->flags test (0x48), which lengthens the early
    branches into beq/b pairs. A reassigned address local and pointer-plus-index
-   spellings did not stop the fold. */
+   spellings did not stop the fold.
+   2026-09-27 family-interface probe: named independent send/receive globals
+   plus external peer/own aggregates preserve peer->data as ip+4, but not
+   the early pool or receive-address lifetime. A u16 linked one gives
+   552/572 bytes, 277 differing halfwords, 138 aligned edits; plain u8 one
+   folds into the known flags==1 path instead of remaining in r8 (552/134
+   edits). Neither restores the reference's long early branches. Stopped
+   this constant/interface axis and retained the baseline. Beware that
+   gLinkPeerSignatures is 0x02002024, four bytes into the block table, not
+   the table's base 0x02002020; the first probe used it incorrectly and was
+   rejected (556/145 edits). */
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
 

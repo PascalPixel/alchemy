@@ -1,6 +1,6 @@
-/* NONMATCHING: shared callee return types audited on 2026-09-26.
- * 432 of 432 bytes, 122 differing halfwords, 87 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
+/* NONMATCHING: 428/432 bytes, 195 differing halfwords, 137 aligned edits.
+ * The proven menu copy/fill interface recovers per-call VRAM loads, but
+ * keeps backup in r6 and hoists a zero into fp; not an exact model. */
 /*
  * RunAssetSelectionScreen (main:080a24d0, 432 bytes)
  *
@@ -18,6 +18,26 @@
  * spellings alike).
  */
 #include "TYPES.H"
+
+/* H1 (2026-09-27): whole [080a24d0,080a2680), 432 bytes with both pools;
+ * caller SELECTION_RUN_TOP_SELECTION.C and exact callee RUN_COMMANDS.C
+ * audited. The earlier return-type audit only changed scheduler calls.
+ * OPEN_ACTION_MENU.C, OPEN_BACKDROP_SCREEN.C and RUN_COMMANDS.C agree on
+ * value-returning, destination-first resident copy/fill interfaces and
+ * inline wrappers. Own-ROM resident copier stores through r0, reads r1.
+ * Transfer that proven call shape, not another global-pointer spelling.
+ * Prediction: per-call VRAM rematerialization and backup retention match
+ * the reference r7/fp roles. Read full loops/frame/pools and normalized
+ * diff. Gate: full exact extent plus compare/test/coverage/verify. Budget:
+ * one model plus at most two justified follow-ups, stop by 00:30 Lisbon;
+ * every result is retained in this header and its own commit.
+ * H1 result: 428/432, 195 differing halfwords, 137 aligned edits; full
+ * normalized diff read. Per-call VRAM loads are recovered, but the common
+ * zero takes fp, size moves to sl, copy to r9, and backup remains r6.
+ * The process-cell address is still missing. No further justified call
+ * shape follows from these facts; stop this axis rather than repeating
+ * the prior global-pointer or declaration-order attempts. Zero new DONE.
+ */
 
 struct AssetSelectionGlobals {
     struct { u16 unk0; u16 unk2; s16 busy; } *display_state;
@@ -41,8 +61,18 @@ struct AssetSelectionScreen {
 
 extern struct AssetSelectionGlobals Data_03001e68;
 
-typedef void (*CopyFn)(const void *src, void *dst, s32 size);
-typedef void (*FillFn)(void *dst, s32 size, u32 value);
+typedef s32 (*CopyFn)(void *dst, const void *src, s32 size);
+typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
+
+static __inline__ s32 CopyWords(CopyFn copy, void *dst, const void *src, s32 size)
+{
+    return copy(dst, src, size);
+}
+
+static __inline__ s32 FillWords(FillFn fill, void *dst, s32 size, u32 value)
+{
+    return fill(dst, size, value);
+}
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct AssetSelectionScreen *Runtime_AllocateHeapBlock(s32 id, s32 size);
@@ -100,8 +130,8 @@ s32 RunAssetSelectionScreen(void)
     screen->window = UiWindow_CreateFar(13, 0, 17, 3, 2);
     Scheduler_EnableOverlayCallbacksWithFlags();
     copy = (CopyFn)0x03001388;
-    copy(backup, (void *)0x06004000, size);
-    ((FillFn)0x03000168)((void *)0x06004000, size, 0x33333333);
+    CopyWords(copy, backup, (void *)0x06004000, size);
+    FillWords((FillFn)0x03000168, (void *)0x06004000, size, 0x33333333);
     Func_080153e0(1);
     Menu_CancelSoundReset();
     result = ItemMenu_RunCommands(&category, &value, &index);
@@ -127,7 +157,7 @@ s32 RunAssetSelectionScreen(void)
     globals->display_state->busy = 0;
     Func_080152a8();
     Func_080153e0(0);
-    copy((void *)0x06004000, backup, size);
+    CopyWords(copy, (void *)0x06004000, backup, size);
     globals->process_state[0xea6] = 0;
     Runtime_BumpFree(backup);
     WaitFrames(1);

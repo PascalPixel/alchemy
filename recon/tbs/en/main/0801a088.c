@@ -1,13 +1,20 @@
-/* Draft, not exact: 105 differing halfwords, 540-byte candidate for the 540-byte
-   owner (2026-09-23), scored as a unit binding __divsi3 0x080022ec and
+/* Draft, not exact: 108 differing halfwords / 75 aligned edits, 540-byte
+   candidate for the 540-byte owner, freshly scored as a unit binding
+   __divsi3 0x080022ec and
    __modsi3 0x080022fc. Residual: register allocation only; the reference
    spills the item code to sp+8 and keeps the layer mask in fp, this
    candidate keeps the code in fp and spills the item pointer and overlay
-   flag. Declaration order does not change it. */
+   flag. Declaration order does not change it.
+   Score as --unit candidate-item-icon-compose: compiler division/modulo
+   helpers are bound to the two calls proved by the owner's listing.
+   Explicit Math_Mod/Math_Div calls and a cached quotient give 536 bytes /
+   81 aligned edits; count spills and code still occupies fp. A volatile
+   code parameter adds an address register and grows the frame from 12 to
+   16 bytes (544 bytes / 108 edits), not the reference's ordinary spill.
+   Keep the operator model; neither experiment establishes the missing
+   lifetime relationship. No exact bytes claimed. */
 
 #include "ITEM.H"
-
-struct ItemDefinition *Item_GetData(s32 item);
 
 /* A 16x16 icon composed from layered compressed glyphs. */
 struct UiGlyph {
@@ -41,7 +48,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
 
     overlay = 0;
     count = 0;
-    item = Item_GetData(code & 0x1ff);
+    item = Item_Get(code & 0x1ff);
     glyph = Data_03001e94;
     if (glyph == NULL)
         return -1;

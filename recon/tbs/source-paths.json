@@ -25,6 +25,15 @@
     "main:0801f200": {
       "name": "UiWindow_DrawPartyStatusContents"
     },
+    "resource_380:0200227c": {
+      "name": "Local_0200227c"
+    },
+    "resource_3b3:02000cc0": {
+      "name": "TakaraHashira_CopyCellBlock"
+    },
+    "resource_3a4:02000d2c": {
+      "name": "ArutinYama_SwingActorIntoSetPiece"
+    },
     "resource_3c8:0200247c": {
       "name": "VinasuHeya_ResolveFloatingBlock"
     },
@@ -4762,7 +4771,8 @@
       "source": "SYSTEM/LINK/SERIAL_DISABLE_SERIAL_TRANSFER.C"
     },
     "main:08006088": {
-      "name": "SerialRuntime_ExchangePayloads"
+      "name": "SerialRuntime_ExchangePayloads",
+      "source": "SYSTEM/LINK/SERIAL_EXCHANGE_PAYLOADS.C"
     },
     "main:08006358": {
       "name": "SerialRuntime_RemoveIrqHandlers"
@@ -12004,7 +12014,8 @@
       "source": "MENU/SELECTION_OPEN_WINDOW.C"
     },
     "resource_371:020039fc": {
-      "name": "Scene_RunScene371SequenceA"
+      "name": "Scene_RunScene371SequenceA",
+      "source": "FIELD/WORLD_MAP/DISPLAY_TRANSITION.C"
     },
     "resource_374:02000bbc": {
       "name": "FieldScene_RunElderAidEvent",
@@ -20241,7 +20252,8 @@
       "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
     "main:0801a66c": {
-      "name": "UiGlyph_ResetWorkState"
+      "name": "UiGlyph_ResetWorkState",
+      "source": "GRAPHICS/GLYPH/RESET_WORK.C"
     },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines",
@@ -21489,7 +21501,8 @@
       "source": "MENU/TITLE/BG_SETUP.C"
     },
     "resource_370:02000154": {
-      "name": "Func_02000154"
+      "name": "Clear_UpdateBlend",
+      "source": "MENU/CLEAR/BLEND_FADE.C"
     },
     "resource_370:02000054": {
       "name": "Clear_LoadBackground",

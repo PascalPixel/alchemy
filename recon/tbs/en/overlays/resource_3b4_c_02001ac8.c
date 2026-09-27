@@ -1,4 +1,15 @@
-/* H4 rejected: 156/152 bytes, 60 halfwords / 21 aligned edits. Zero/store
+/* CANONICAL H5: 152/152 bytes, 3 halfwords / 3 aligned edits. Scoped
+ * receiver removes H4's extra copy and entry regression; complete initial
+ * zero/store sequence, r6 lifetime, frame8, branches and pool now exact.
+ * Only MapCopy setup differs: r0,r1,r2,r3 versus ROM r1,r3,r2,r0.
+ * Full normalized diff read; -da/-fsched-verbose output equals ordinary.
+ * H3 witness at 0edc7d4c5, rejected H4 at 72986aeed. Three models complete;
+ * no new function or alignment credit. Freeze this admitted zero sequence.
+ * H5: isolate the second actor receiver in its actual publication phase.
+ * H4's multi-definition USER32 caused the extra copy and changed the entry;
+ * predict a single-use receiver collapses to r0 while zero/store order and
+ * H3's r6 lifetime remain. No map-call or width/constant spelling change.
+ * H4 rejected: 156/152 bytes, 60 halfwords / 21 aligned edits. Zero/store
  * order fixes, but receiver reuse gives USER32 two definitions (5 uses /
  * 6 insns), changes entry coordinate loads and adds r0->r2 publication copy.
  * Frame8 and r6 survive; pool moves 0x94->0x98. Full diff and -da checked.
@@ -54,9 +65,12 @@ void Local_02001ac8(void)
     if (y == 0)
         Engine_ActorGet(8)->priority_flags = 2;
     SceneState_ApplyFourRectsAndSetActor8Byte85();
-    block = Engine_ActorGet(8);
-    still = 0;
-    block->motion_flags = 3;
+    {
+        struct FieldActor *actor = Engine_ActorGet(8);
+
+        still = 0;
+        actor->motion_flags = 3;
+    }
     if (column == 40) {
         SceneState_ApplyRectAndSetSlotEightByte35();
     } else if (column == 42) {

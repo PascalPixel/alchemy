@@ -25,7 +25,32 @@
  * still use induction pointers instead of scaled indices. This explains
  * the gain but does not satisfy the three-call topology admission check.
  * Stop after the one follow-up; preserve both complete models. No DONE.
- * No exact neighbour or shared header was edited. */
+ * No exact neighbour or shared header was edited.
+ * 2026-09-27 sentinel H1: the complete listing distinguishes the initial
+ * zero test, first animation comparison and later list-advance back edge.
+ * Replace the manually peeled scan with a natural zero-terminated search
+ * that breaks on the selected animation; remove its forced volatile view.
+ * Whole score 452/452, 156 halfwords / 121 edits. The first comparison is
+ * now peeled, but selected_animation is hoisted into ip, so the back edge
+ * lacks the reference's load. Inner failure still shares the success call;
+ * coordinate induction/cursor allocation remains different. The final
+ * fifteen pool words stay aligned. This trial fails topology admission.
+ * Preserve it in history before testing only whether the previously
+ * observed reload can coexist with the newly recovered search shape.
+ * Sentinel H2: retain the observed volatile selection read inside the
+ * natural sentinel loop. Whole score 452/452, 138 halfwords / 117 edits.
+ * The load returns, but the scan rotates back to an entry jump into the
+ * loop: it loses H1's peeled first comparison. Three-call admission still
+ * fails, and coordinate/cursor topology is unchanged. Thus neither plain
+ * nor reload-preserving sentinel ownership reproduces both observed scan
+ * invariants. Stop after these two trials; keep the stronger 138/116 body
+ * from 90891c422 as the canonical baseline. No new DONE or adoption.
+ * Restored that baseline after preserving H1 at bf187891d and H2 at
+ * b9798f615. The two H2-vs-baseline changes are only the zero-exit branch
+ * destinations at +0x76/+0x84, not an admitted ownership correction. Both
+ * trial pools at +0x188..+0x1c4 compare exactly. Keep the first-test plus
+ * per-step selection load and the distinct inner failure call as required
+ * topology for any future, independently supported source model. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"

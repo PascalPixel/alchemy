@@ -1,4 +1,13 @@
-/* Canonical 284/11 restored after publication P1 (74e203d9a) and P2
+/* 2026-09-27 babi-land final audit: whole 284-byte extent and five pool
+ * words rescored: 11 differing halfwords / 11 normalized edits. Exact
+ * KUUPUAPPU_MURA/DRIFT.C publishes its callback to a constructor-owned leaf
+ * actor while retaining a separate source actor and sprite. Here the
+ * callback belongs to the stack EffectOptions consumed by Effect_Spawn;
+ * the leader and its flag address remain live. Those records and the exact
+ * MAP_INIT.C callback agree with FIELD_EFFECT.H. DRIFT supplies no shared
+ * halfword zero producer here; do not transfer volatile zeros or reopen
+ * the recorded callback/publication axes. DONE +0, alignment +0.
+ * Canonical 284/11 restored after publication P1 (74e203d9a) and P2
  * (1646e59e6): neither admits early options plus saved-to-store copy and
  * reference zero lifetime together. Stop this boundary axis; SetFlagBits
  * remains proven for the opening OR only, not a remedy for this hunk.

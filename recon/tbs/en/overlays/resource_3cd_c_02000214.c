@@ -1,4 +1,11 @@
-/* NONMATCHING: 668 bytes, candidate 668, 22 differing halfwords (2026-09-25).
+/* NONMATCHING 2026-09-27 label/index ownership: 668/668 bytes, 19 differing
+ * halfwords / 19 aligned edits. Transfer MENU_TEST/SELECT_ITEM.C's
+ * label-before-index source order: the capacity branch now emits its ands
+ * after r2/r3 argument setup exactly. Full normalized diff and pool read;
+ * only the reciprocal direction/redraw r8/sl assignment remains. The paired
+ * ability's signed-consumer probe emits identical allocation, so that byte
+ * representation axis is closed. No DONE or alignment credit.
+ * NONMATCHING: 668 bytes, candidate 668, 22 differing halfwords (2026-09-25).
  * DebugMenu_SelectItem, meant for DEBUG/ITEM_LEVEL/ITEM_SELECT.C as a
  * single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: only the dir and redraw
@@ -74,8 +81,8 @@ void DebugMenu_SelectItem(void)
             UiText_DrawStringInWindowFar(gDebugItemPrompt, window, 0, 0);
             UiText_DrawNumberAtOffsetFar(item, 0, window, 80, 0);
             if (PartyInventory_HasSpace()) {
-                index = item & 0x1ff;
                 UiText_DrawStringInWindowFar(gDebugItemCapacityLabel, window, 0, 32);
+                index = item & 0x1ff;
                 Engine_DebugGetItem(index);
                 UiText_DrawCharacterAtOffsetFar(index + (s32)&Value_00000182, window, 120, 0);
                 UiText_DrawCharacterAtOffsetFar(index + (s32)&Value_00000075, window, 0, 16);

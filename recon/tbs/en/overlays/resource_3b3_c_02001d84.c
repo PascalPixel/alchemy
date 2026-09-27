@@ -1,4 +1,19 @@
 /* NONMATCHING: 588 of 592 bytes, 226 differing halfwords, 52 aligned edits.
+ * 2026-09-27 pillars H1: exact SETUP's five-word slot table, retaining a
+ * typed pointer only for its X/kind consumers, emits identical candidate
+ * bytes to the scalar-record baseline. Full normalized diff read: the first
+ * X and second Z loads still fold to pointer accesses; cell/offset/slot
+ * remain fp/r9/sl instead of r9/sl/fp. Frame20 and all five pool words agree.
+ * The table-view hypothesis is rejected; typed record restored for H2.
+ * H2 tests independently advancing the slot pointer alongside the actor id.
+ * Predict indexed X/Z loads, a separately advanced slot and frame20; one
+ * trial, full extent/pool comparison mandatory before adoption.
+ * H2 rejected: 596/592 bytes, 287 halfwords / 81 aligned edits. Indexed
+ * first X and second Z loads are admitted, but slot spills at sp+12,
+ * frame grows to 24 and the priority-bit one lives in fp across calls.
+ * Full normalized diff read; this confirms pointer/index independence can
+ * recover the load form but exceeds the reference's pressure budget. Stop
+ * this axis rather than permuting declarations; 588-byte body restored.
  * Own-ROM extent 0x02001d84..0x02001fd4 includes the five-word pool.
  * SETUP calls this four-pillar frame driver; the final call sorts the actors.
  * 2026-09-27 transfer from exact WORLD_MAP/LINKED_EFFECTS.C: access the four

@@ -32,6 +32,14 @@
  * Full normalized differences read for all three. The complete load/add/
  * shift/store region is not admitted; retain the original 236/5/4 body.
  * No further local/scope permutations, no adoption and no DONE credit.
+ * 2026-09-27 pillars closing audit: exact STAGED_ACTOR.C's redraw consumer
+ * confirms the same signed footprint bounds and six-word probe. No exact
+ * sibling exists. Canonical -da/-fsched-verbose=5 dump shows z-step pseudo
+ * 105 defined before probe-z 106, with both dead at sum107; local allocation
+ * consumes the first input in r3. Complete normalized baseline remains
+ * 236/236 bytes, 5 halfwords / 4 edits, all pools exact. The consumer adds
+ * no source-lifetime fact beyond the already rejected subexpression and
+ * scope transfers. No new variant, no resweep; retain the canonical body.
  */
 #include "STAGED_ACTOR.H"
 

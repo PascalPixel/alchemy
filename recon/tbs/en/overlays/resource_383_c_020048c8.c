@@ -1,5 +1,9 @@
-/* Draft, not-yet-c. Cone H2 rejected: 612/612 bytes,
- * 261 differing halfwords / 132 aligned edits, 193 wrong instructions.
+/* Draft, not-yet-c. Cone H1 restored: 612/612 bytes,
+ * 74 differing halfwords / 70 aligned edits, 114 wrong instructions.
+ * Both bounded phase trials preserved: H1 31a7f1a26, H2 8c3e32e88.
+ * Retain the unsigned INPUT boundary, complete pools, frame4/r8/no-spill
+ * and both signed loads. Whole owner remains non-exact; no new DONE.
+ * Cone H2 rejected: 612/612, 261 halfwords/132 edits/193 wrong instructions.
  * Staging slot then subtraction in the same u32 rnd recovers the load /
  * unsigned conversion / subtraction producer order, but exposes both signed
  * bounds on one user value. Initial RTL already replaces the two guards
@@ -183,10 +187,10 @@ void KuupuappuHeya_UpdateActorStops(void)
         dx >>= 16;
         dz >>= 16;
         if (work->value_19c > 0 && dx * dx + dz * dz <= 400) {
-            /* FAKEMATCH: keep the cone delta wide until its signed bounds. */
-            rnd = *(u16 *)pos;
-            rnd -= (u16)angle;
-            if ((s16)rnd > -0x1000 && (s16)rnd < 0x1000)
+            /* FAKEMATCH: stage the unsigned cone input before the short delta. */
+            rnd = (u16)angle;
+            if ((s16)(*(s16 *)pos - rnd) > -0x1000
+                && (s16)(*(s16 *)pos - rnd) < 0x1000)
                 goto keep_facing;
         }
         if (dx * dx + dz * dz > 64) {

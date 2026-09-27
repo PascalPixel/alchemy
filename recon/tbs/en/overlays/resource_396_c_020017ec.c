@@ -35,7 +35,13 @@
  * sentinel now lives in call-clobbered r4 and is rebuilt each iteration;
  * r8 and its save/restore disappear, violating the reference lifetime.
  * Full diff read. Reject and stop this phase-reuse axis; keep 96-byte
- * canonical and its three-halfword preheader residual. DONE +0. */
+ * canonical and its three-halfword preheader residual. DONE +0.
+ * Astra pretest trial (2026-09-27): test table[0] == -1 and return before
+ * i=0, size=1, then use do/body/i+=6/while(table[i] != -1). Prediction:
+ * retain the sentinel and offset before the size producer. Full comparison
+ * instead gives 108/96 bytes, 53 halfwords / 26 aligned edits: another
+ * table-base copy and saved sl, with size in r8. Reject the pretest boundary;
+ * preserve the original 96-byte body and stop this loop-preheader axis. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

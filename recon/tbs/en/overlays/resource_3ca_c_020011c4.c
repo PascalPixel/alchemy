@@ -1,5 +1,35 @@
-/* NONMATCHING: retained canonical body is 236/232 bytes, 82 differing
- * halfwords, 51 aligned edits; the rejected variants below are not retained.
+/* NONMATCHING Astra ship-row pass (2026-09-27): 232/232 bytes, 24
+ * differing halfwords / 17 aligned edits. Complete normalized differences
+ * read after every step. No exact bytes or alignment credit.
+ * Transferred TITLE.C's goto loop and advancing word writes. The counter
+ * now has word-sized 16-bit fields: this prevents HImode add-of-0xffff and
+ * reproduces the word subtract. Explicit signed/unsigned snapshots precede
+ * the test. Only the first row's read is volatile; the goto loop prevents
+ * hoisting its mask/zero/shape. A separate off temporary puts division before
+ * the zero store. Three post-increment writes in the later rows retain the
+ * original cursor alongside the compiler's induction, matching both updates.
+ * Submission advances p after the call. These are the admitted invariants.
+ * Remaining: count initialization/pool precedes tile setup instead of
+ * interleaving it; two reload scratches and the last mask/counter order.
+ * Bounded witnesses (candidate bytes / differing halfwords / aligned edits):
+ * full-width s16/u16 fields: 236/82/51, identical to the older union;
+ * s32/u32 fields: 232/78/50; pretest snapshots: 232/79/51;
+ * volatile row read in for: 228/111/66, unwanted hoisted constants and r8;
+ * absolute pointers plus union word/counter stores: 232/79/51, no alias fix;
+ * goto first row: 224/93/47; advancing all words: 228/107/25;
+ * division staged before stores: 228/109/20;
+ * count initialized before tile lookup: 232/24/17, retained below.
+ * Moving count between slot lookup and tile load restores the old 228/109/20;
+ * between id and slot lookup: 232/26/21, wrong pool order and scratches;
+ * using count again in the last row gives lr/ip correctly but retains the
+ * tail address in lr instead of reloading it: 228/109/17;
+ * one-pass count publication after slot lookup: 228/108/21, still swapped;
+ * all counter accesses volatile: 232/97/20, extra decrement read and wrong
+ * signed test. These producer/qualifier alternatives are rejected. Keep the
+ * admitted row/cursor behavior and obtain new evidence before another trial.
+ */
+/* Earlier NONMATCHING: canonical body was 236/232 bytes, 82 differing
+ * halfwords, 51 aligned edits; superseded by the Astra row/cursor model.
  * H5 ship 2026-09-27, absolute RAM pointers with the
  * sprite word/halfword union give 244/232 bytes, 87 differing halfwords,
  * 56 aligned edits. Approved alias.c treats differing symbol bases as
@@ -63,8 +93,9 @@ struct Sprite {
 };
 
 union RowCounter {
-    s16 signed_value;
-    u16 value;
+    /* FAKEMATCH: word-sized fields retain the unsigned decrement. */
+    s32 signed_value : 16;
+    u32 value : 16;
 };
 
 extern struct VramBlock Data_03001b10[];
@@ -83,35 +114,47 @@ void Local_020011c4(void)
     u32 i;
     s32 v;
     s32 y;
+    s32 active;
+    u32 remaining;
 
-    tile = Data_03001b10[Data_02009c1a].offset >> 5;
     count = &Data_02009c18;
+    tile = Data_03001b10[Data_02009c1a].offset >> 5;
     w = Data_02009af8;
-    if (count->signed_value != 0) {
-        count->signed_value = count->value - 1;
+    active = count->signed_value;
+    remaining = count->value;
+    if (active != 0) {
+        count->signed_value = remaining - 1;
     }
-    for (i = 0; i < 8; i++) {
-        v = count->signed_value;
+    /* FAKEMATCH: a row-local volatile read and the title's goto loop
+     * preserve the independent counter read without hoisting constants. */
+    i = 0;
+first_row:
+    {
+        s32 off;
+
+        v = (s16)*(volatile u16 *)count;
+        off = -v / 2;
         *w++ = 0;
-        *w++ = (-v / 2 & 0xff) | (i << 21) | 0x80004000;
+        *w++ = (off & 0xff) | (i << 21) | 0x80004000;
         *w++ = tile;
     }
+    if (++i < 8)
+        goto first_row;
     y = (v / 2 + 0x88) & 0xff;
     for (i = 0; i < 8; i++) {
-        w[0] = 0;
-        w[1] = (i << 21) | y | 0x80004000;
-        w[2] = tile;
-        w += 3;
+        *w++ = 0;
+        *w++ = (i << 21) | y | 0x80004000;
+        *w++ = tile;
     }
     y = (Data_02009c18.signed_value / 2 + 0x98) & 0xff;
     for (i = 0; i < 8; i++) {
-        w[0] = 0;
-        w[1] = (i << 21) | y | 0x80004000;
-        w[2] = tile;
-        w += 3;
+        *w++ = 0;
+        *w++ = (i << 21) | y | 0x80004000;
+        *w++ = tile;
     }
     p = (struct Sprite *)Data_02009af8;
     for (i = 0; i < 24; i++) {
-        Main_080001e8(p++, 255);
+        Main_080001e8(p, 255);
+        p++;
     }
 }

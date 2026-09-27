@@ -60,7 +60,20 @@
  * counter r8, the snapped x r9 and the snapped z sl; this draft gives z r8
  * and the counter sl (greg sorts z ahead of the counter). Twin shape of
  * resource_3a4:02003668 (the other turn direction); prove it independently
- * before adopting any shared implementation. */
+ * before adopting any shared implementation.
+ * Astra scalar-container trial (2026-09-27): only snapped z becomes one
+ * union FieldCoordinate local, and its accesses use .fixed. Prediction:
+ * remove the z/n priority reversal without changing the 12-byte frame.
+ * The complete result is baseline-identical, 188 bytes and 5 halfwords /
+ * 5 edits; the value view disappears before allocation. Reject this
+ * single-word container axis, retain the scalar model, and do not transfer
+ * the failed trial or sweep its widths.
+ * Astra wait-result trial (2026-09-27): use the ignored s32 return view
+ * of Engine_TaskWait found in MAKYURI_HEYA/FADE_TO_BLACK.C and
+ * FADE_TO_WHITE.C, keeping the shared service declaration unchanged.
+ * The complete result is again 188 bytes, 5 halfwords / 5 edits and
+ * baseline-identical. This call-result spelling does not change the
+ * counter/centre allocation. Retain the ordinary void call. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

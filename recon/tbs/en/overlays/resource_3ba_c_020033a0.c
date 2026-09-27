@@ -38,7 +38,19 @@
  * record lifetime to separate here. Typed coordinate ownership alone leaves
  * the cursor/frame/constant disagreement unchanged; this axis is closed.
  * Four scene-lane structural attempts checkpointed, zero exact function bytes
- * and zero alignment bytes. All three owners remain C not yet written. */
+ * and zero alignment bytes. All three owners remain C not yet written.
+ * Astra OAM transfer (2026-09-27): three post-increment word stores in
+ * the second loop, as in TITLE.C and the improved ship row, give 864/964
+ * bytes, 466 halfwords / 313 edits. Frame grows from 16 to the required 20,
+ * but spills tile at sp+12, not the cursor; cursor stays r7. Full diff
+ * rejects the frame alone as proof of the source layout. Adding one shared
+ * palette=0xe400 variable gives 880/460/333 and frame24, still cursor r7.
+ * A separate bounded row-phase model explicitly precomputes tile/shape,
+ * then uses goto loops (second row walks packed x by 16<<16). It gives
+ * 848/462/325, frame16, cursor r7 and lost duplicate cursor updates.
+ * Both follow-ups are rejected; retain the previous 856-byte canonical.
+ * All complete differences and literal pools were read. No twin adoption.
+ */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"

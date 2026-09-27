@@ -1,4 +1,14 @@
-/* 2026-09-27 H8 rectangle producer-depth boundary rejected: initialize
+/* Astra argument-boundary trials (2026-09-27), complete diffs read:
+ * Mogoru WAYPOINT.C's ignored s64 return-view leaves 152/152 bytes and
+ * 3 edits: r2/r3/r0/r1, not the required r1/r3/r2/r0. No ABI change lands.
+ * An s32-return view with a by-value RectangleSize {s32 width,height}
+ * correctly copies height before width, but separately assigning both 1s
+ * retains a saved r6/r7 pair: 168/152, 81 halfwords / 30 edits. Initializing
+ * the record with {1,1} instead reads a constant object: 160/35/18.
+ * Passing the same two words as ((u64)1<<32)|1 uses two extra literal
+ * pool words: 160/9/9. Reject these paired-argument models; retain H5 and
+ * the original shared void service declaration. No function credit.
+ * 2026-09-27 H8 rectangle producer-depth boundary rejected: initialize
  * s32 src_row=36 then s32 height=1 before a tagged do/while(0) containing
  * the same unused s32 return-view call (61,src_row,1,height,column,42).
  * Expansion emits USER61/USER62 producers before LOOP_BEG153. First CSE

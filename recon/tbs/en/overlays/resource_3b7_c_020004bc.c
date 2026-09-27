@@ -31,7 +31,18 @@
  * Engine_MapCopyCellsTo calls (904/430/183). No function or alignment credit;
  * no shared header, binding, compiler, tooling or other owner was changed.
  * Trial retained at 20fc789b5. Canonical BODY below is restored to the
- * direct-call baseline and its compiled candidate is byte-identical by cmp. */
+ * direct-call baseline and its compiled candidate is byte-identical by cmp.
+ *
+ * Corrected-main resumption audit (no new source trial): exact
+ * TOREBI_IZUMI/OPEN_SCENE.C awards a variable item with the same direct
+ * ItemShowFound/PartyGiveItem pair; its surrounding loop is real control flow,
+ * not evidence for adding an award-only one-pass boundary here. The complete
+ * own-ROM body keeps height in r8 even after item's final use at 020006c0.
+ * Phase-local item reuse therefore does not explain the retained high height.
+ * Baseline lreg pass-1 HI costs are item 12 versus width/height 120 each,
+ * not a declaration-order tie. No new ABI, conversion or control-flow fact
+ * admits another trial. Keep the baseline; require evidence that changes
+ * this allocation ancestry before reopening the closed dimension wrappers. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -1,4 +1,4 @@
-/* NONMATCHING: 788 bytes, candidate 788, 24 differing halfwords, 23 halfword
+/* NONMATCHING: 788 bytes, candidate 788, 24 differing halfwords, 22 halfword
  * edits (2026-09-27). FieldScene_RunMultiPhasePresentation, meant for
  * FIELD/ARUTIN_YAMA/F_01D0C.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -24,6 +24,7 @@
  * entries do not close. Callback remains 200/200 exact. H2 is still best.
  * STOP this ownership axis: no remaining evidence for grouped stores or
  * another register-spelling search. Keep the proven gravity offset fact.
+ * Checkpoint restores H2's stronger model; H3 is saved at b7f2622d1.
  * Missing EventEnd, local task and data bindings are now explicit. No DONE. */
 #include "TYPES.H"
 
@@ -93,7 +94,8 @@ void FieldScene_RunMultiPhasePresentation(void)
     delay = &actor->motion.delay;
     *(volatile s32 *)&actor->motion.active = 0;
     timer = &actor->motion.timer;
-    actor->motion.gravity = 0x6666;
+    /* Gravity; the typed-motion store alternative is recorded above. */
+    *(s32 *)&actor->actor.unknown_44[4] = 0x6666;
     *(volatile s16 *)delay = 0;
     *(volatile s16 *)timer = 0;
     actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;

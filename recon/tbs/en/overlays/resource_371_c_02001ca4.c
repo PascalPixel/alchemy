@@ -38,6 +38,20 @@
  * In particular this boundary does not admit the reference's r1 reload set.
  * Freeze the corrected flag boundary; no further call-wrapper variations
  * without independent evidence for one of those remaining ownership sites.
+ * Sol 6 2026-09-27 bounded input-family pass: H1 moved the complete midpoint
+ * formula into MidpointCoordinate(pos, anchor). Extent stays 1488, but the
+ * anchor no longer survives in fp/r7 across later position calls: one high
+ * register disappears, the first pool moves four bytes, and the normalized
+ * residual grows to 211 edits (715 differing halfwords). It still loads the
+ * negative anchors through r2, so reject it against the entry invariant.
+ * H2 limits the helper to (pos-anchor)/2, adding the anchor in the caller.
+ * This restores the baseline binary exactly, including the shared anchors,
+ * but does not admit r1. H3 returns the motion-byte pointer from an inline
+ * initializer after its six stores; binary again equals baseline exactly.
+ * Full normalized differences read for all three tests. Restore the plain
+ * source; close midpoint and motion-return boundaries. Current complete
+ * draft remains 1488 bytes / 118 halfwords / 52 edits, not-yet-c. Resume only
+ * with new scheduling or ownership evidence for the r1 reload invariant.
  */
 #include "FIELD_EVENT.H"
 

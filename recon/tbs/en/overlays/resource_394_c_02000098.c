@@ -1,4 +1,11 @@
-/* NONMATCHING kuupuappu H2 (2026-09-27): reuse source-x, destination-y
+/* NONMATCHING kuupuappu H3 (2026-09-27): one-word bounds record did
+ * not establish the predicted stack ownership: GCC promotes its row limit
+ * to r8. Complete 184/184 extent and all six pool words/offsets agree;
+ * 42 differing halfwords / 39 aligned edits remain. This is not an
+ * admitted structural improvement. Full normalized diff and identical
+ * normal/diagnostic text checked. Retain the failed experiment and close
+ * the row-bound allocation axis; no exact-byte credit.
+ * NONMATCHING kuupuappu H2 (2026-09-27): reuse source-x, destination-y
  * and height parameters as column, row and row-end. Complete 184/184 extent
  * and all six pool offsets/words now agree, with 44 halfwords / 38 edits.
  * The width/end-row/stride allocation remains wrong: height in r8 and
@@ -79,11 +86,13 @@ static __inline__ void CopySecondTile(u32 cell, s32 base)
 void Func_02000098(s32 x, s32 y, s32 width, s32 height, s32 bank, s32 dest_x, s32 dest_y)
 {
     u32 *src;
+    s32 bounds[1];
     s32 base, cell;
 
     src = (u32 *)0x02010000 + (y * 128 + x);
-    height += dest_y;
-    for (; dest_y < height; dest_y++) {
+    /* FAKEMATCH: the row limit is owned by a one-word local bounds record. */
+    bounds[0] = dest_y + height;
+    for (; dest_y < bounds[0]; dest_y++) {
         for (x = dest_x; x < dest_x + width; x++) {
             cell = *src++ & 0xfff;
             base = ((dest_y & 15) + bank * 16) * 32 + (x & 15);

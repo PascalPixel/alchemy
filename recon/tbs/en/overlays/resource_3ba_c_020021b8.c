@@ -1,4 +1,4 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 201 differing halfwords, 87
+/* NONMATCHING: 1264 bytes, candidate 1260, 183 differing halfwords, 57
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
@@ -60,7 +60,15 @@
  * independently compile to 1264 bytes with 201 differing halfwords and
  * 87 aligned edits. The queue-tail solution is shared without copying the
  * draft; the remaining interpolation and sprite lifetimes are unchanged.
- * No owner is adopted, no production instance or DONE credit is added. */
+ * No owner is adopted, no production instance or DONE credit is added.
+ * 2026-09-27 Sol renderer H1: allocator dump pseudo 54 proves that shared
+ * x owns both interpolation targets and sprite coordinates (r1, target r3).
+ * Channel-local target lifetimes recover all three endpoint/counter load
+ * sequences and the interior pool order. They also remove the extra two
+ * coordinate copies in each sprite loop. Complete diff: 1260/1264 bytes,
+ * 183 differing halfwords / 57 edits. Remaining: scale/duration fp/r9
+ * roles and independent single-sprite clipping/placement coordinates; the
+ * queue tail is structurally exact but shifted by -4 bytes. Not adopted. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -159,12 +167,12 @@ render:
         scale = Data_0200c778;
     } else {
         struct Half zero = { 0 };
-        s32 duration, start, progress;
+        s32 duration, start, progress, target;
         duration = Data_0200c754;
         start = Data_0200c768;
-        x = Data_0200c778;
+        target = Data_0200c778;
         progress = ++Data_0200c7fc;
-        scale = start + (x - start) * progress / duration;
+        scale = start + (target - start) * progress / duration;
         if (progress >= duration)
             Data_0200c754 = zero.value;
     }
@@ -172,12 +180,12 @@ render:
         blend = Data_0200c794;
     } else {
         struct Half zero = { 0 };
-        s32 duration, start, progress;
+        s32 duration, start, progress, target;
         duration = Data_0200c7a8;
         start = Data_0200c798;
-        x = Data_0200c794;
+        target = Data_0200c794;
         progress = ++Data_0200c784;
-        blend = start + (x - start) * progress / duration;
+        blend = start + (target - start) * progress / duration;
         if (progress >= duration)
             Data_0200c7a8 = zero.value;
     }
@@ -185,12 +193,12 @@ render:
         pos = Data_0200c7f8;
     } else {
         struct Half zero = { 0 };
-        s32 duration, start, progress;
+        s32 duration, start, progress, target;
         duration = Data_0200c76c;
         start = Data_0200c7f0;
-        x = Data_0200c7f8;
+        target = Data_0200c7f8;
         progress = ++Data_0200c77c;
-        pos = start + (x - start) * progress / duration;
+        pos = start + (target - start) * progress / duration;
         if (progress >= duration)
             Data_0200c76c = zero.value;
     }

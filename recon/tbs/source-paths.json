@@ -1,6 +1,30 @@
 {
   "format": 3,
   "owners": {
+    "main:0801908c": {
+      "name": "RenderOutput_UpdateScaleAnimation"
+    },
+    "main:080191cc": {
+      "name": "UiWork_AnimateSpriteSlots"
+    },
+    "main:0801a98c": {
+      "name": "MenuSelection_DrawFrame"
+    },
+    "main:0801aeec": {
+      "name": "MenuSelection_DrawSideMarker"
+    },
+    "main:080108e4": {
+      "name": "Map_WriteLayerCellTile"
+    },
+    "main:0801ef68": {
+      "name": "UiWindow_DrawColumnBorders"
+    },
+    "main:0801f088": {
+      "name": "UiWindow_DrawStatusBarTiles"
+    },
+    "main:0801f200": {
+      "name": "UiWindow_DrawPartyStatusContents"
+    },
     "resource_380:0200227c": {
       "name": "Local_0200227c"
     },
@@ -22,11 +46,17 @@
     "resource_3c5:020028a0": {
       "name": "BabiIriguchi_SetupScene"
     },
+    "main:0800b074": {
+      "name": "Render_PlaceSpritePartPair",
+      "source": "GRAPHICS/RENDER/PLACE_SPRITE_PART_PAIR.C"
+    },
     "main:08010000": {
-      "name": "Map_UpdateLayerScroll"
+      "name": "Map_UpdateLayerScroll",
+      "source": "FIELD/COMMON/MAP/UPDATE_SCROLL.C"
     },
     "main:08010230": {
-      "name": "Map_SetCameraCenter"
+      "name": "Map_SetCameraCenter",
+      "source": "FIELD/COMMON/MAP/SET_CAMERA_CENTER.C"
     },
     "main:08010424": {
       "name": "Map_CopyMetatileIndicesRect"
@@ -4009,6 +4039,10 @@
       "name": "PsynergyMenu_ReturnTrue",
       "source": "MENU/ABILITY/RETURN_TRUE.C"
     },
+    "main:080a63e4": {
+      "name": "PsynergyMenu_SelectTarget",
+      "source": "MENU/ABILITY/SELECT_TARGET.C"
+    },
     "main:080a65e4": {
       "name": "PsynergyMenu_SetShortcut",
       "source": "MENU/ABILITY/SET_SHORTCUT.C"
@@ -4737,7 +4771,8 @@
       "source": "SYSTEM/LINK/SERIAL_DISABLE_SERIAL_TRANSFER.C"
     },
     "main:08006088": {
-      "name": "SerialRuntime_ExchangePayloads"
+      "name": "SerialRuntime_ExchangePayloads",
+      "source": "SYSTEM/LINK/SERIAL_EXCHANGE_PAYLOADS.C"
     },
     "main:08006358": {
       "name": "SerialRuntime_RemoveIrqHandlers"
@@ -20217,7 +20252,8 @@
       "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
     "main:0801a66c": {
-      "name": "UiGlyph_ResetWorkState"
+      "name": "UiGlyph_ResetWorkState",
+      "source": "GRAPHICS/GLYPH/RESET_WORK.C"
     },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines",
@@ -20298,7 +20334,8 @@
       "name": "BattleUnit_ProcessTurnEnd"
     },
     "main:080a1fd4": {
-      "name": "Unnamed_080a1fd4"
+      "name": "Menu_HandlePageInput",
+      "source": "MENU/PAGE_INPUT.C"
     },
     "main:080a2144": {
       "name": "Palette_LightenBankHighlight",
@@ -21704,9 +21741,7 @@
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
-    "main:0801f200": "UiWindow_DrawPartyStatusContents",
     "main:080a2420": "UiWork_ClearMenuBusy",
-    "main:080191cc": "UiWork_AnimateSpriteSlots",
     "main:080168f4": "UiWork_StepChannelScript",
     "main:08090658": "DisplayTransition_UpdateFrame",
     "main:0808a278": "Object_GetScreenPositionFar",
@@ -21748,7 +21783,6 @@
     "main:0801a7f4": "MenuSelection_BuildEntries",
     "main:080e2974": "BattlePres_RunBurstScene",
     "main:080118c0": "Map_SetLayerEntryFlag",
-    "main:080108e4": "Map_WriteLayerCellTile",
     "main:080ad40c": "FourObjectMotion_UpdateBottomRow",
     "main:0808b3ec": "Event_SpawnObjectTable",
     "main:08091e9c": "Event_SetValue170",
@@ -21761,7 +21795,6 @@
     "main:080b5078": "BattleMotion_ApproachTargetFar",
     "main:080c9ca8": "BattleFx_RunFiveMode",
     "main:080ccc38": "BattleFx_RunTwoResource",
-    "main:0801a98c": "MenuSelection_DrawFrame",
     "main:08009288": "Runtime_RemapBytesByTableFar",
     "main:080153b0": "Menu_RunConfirmSelectionAtFar",
     "main:08077088": "OwnerAction_AddFar",

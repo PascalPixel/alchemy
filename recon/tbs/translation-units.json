@@ -2,6 +2,30 @@
   "format": 5,
   "units": [
     {
+      "id": "candidate-item-icon-compose",
+      "source": "recon/tbs/en/units/item-icon-compose.c",
+      "overlay": null,
+      "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x080022ec",
+          "kind": "thumb"
+        },
+        "__modsi3": {
+          "address": "0x080022fc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0801a088",
+          "extent": 540,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "candidate-380-linked-actors",
       "source": "recon/tbs/en/overlays/resource_380_c_0200227c.c",
       "overlay": "resource_380",

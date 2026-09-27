@@ -1,15 +1,52 @@
 #include "TYPES.H"
 
-#define UiMenu_SlideCursor Func_080a1ac0
+/* main:080a1ac0, complete 264-byte body through 080a1bc8.
+ * H1 transfers the exact position-cursor OAM bitfields and chained position
+ * stores, plus named menu/callee interfaces. The two-frame counter starts
+ * before the skip-slide guard in the ROM. Caller 080a63e4 supplies x/y;
+ * Math_Div is signed and WaitFrames returns void. Predict exact bitfield
+ * reads/writes and the original four-byte frame including literal pools.
+ * Gate: whole-owner exact bytes plus compare/test/coverage/verify.
+ * H1: 262/264 bytes, 85 aligned edits. OAM accesses match in shape, but the
+ * loop rotates WaitFrames to its head, initial pools move into the body,
+ * and y's fixed-point conversion precedes rather than follows the x divide.
+ * Budget: one corrected model and two evidence-backed variants.
+ * H2: explicit tail-wait loop avoids the diagnosed loop rotation; a u16
+ * zero in the skip path tests the short literal-pool reach recipe used by
+ * other exact halfword stores. Prediction: original loop edges and pools.
+ * H2: 256/264 bytes, 71 aligned edits, equal topology. Halfword zero puts
+ * the initial pool at the exact +0x2c boundary. The goto loop prevents
+ * the 0xffff mask from living across WaitFrames, removing the reference
+ * four-byte spill frame. Y conversion is still before the first divide.
+ * H3: counted do loop with a conditional wait retains an optimizer-visible
+ * loop without executing a wait on the last frame. Keep y in pixel units
+ * across the x divide, then convert it in place as the ROM does. Predict
+ * reference mask spill/frame, tail wait and coordinate-carrier lifetimes.
+ * H3: 264/264 bytes, 64 differing halfwords, 40 aligned edits with equal
+ * topology. Frame, early pool and tail wait now agree. Cursor/x carriers
+ * remain r5/r7 instead of r7/r5; initial OAM scheduling and a y-carrier copy
+ * before the first divide remain. STOP: three structural models exhausted;
+ * retain this draft until new lifetime evidence, not register permutations.
+ */
+
+struct CursorAttributes {
+    u16 y : 8;
+    u16 affine_mode : 2;
+    u16 object_mode : 2;
+    u16 mosaic : 1;
+    u16 palette_256 : 1;
+    u16 shape : 2;
+    u16 x : 9;
+    u16 matrix : 5;
+    u16 size : 2;
+};
 
 struct CursorIcon {
     u8 unknown_00[6];
     u16 x;                          /* 0x06 */
     u16 y;                          /* 0x08 */
     u8 unknown_0a[10];
-    u8 attr_y;                      /* 0x14 */
-    u8 unknown_15;
-    u16 attr_x;                     /* 0x16 */
+    struct CursorAttributes attributes; /* 0x14 */
 };
 
 struct CursorWindow {
@@ -26,14 +63,14 @@ struct CursorWork {
     u16 skip_slide;                 /* 0x222 */
 };
 
-extern struct CursorWork *Data_03001f2c;
+extern struct CursorWork *gMenuWork;
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
-void Func_080030f8(s32 frames);
+s32 Math_Div(s32 numerator, s32 denominator);
+void WaitFrames(s32 frames);
 
 void UiMenu_SlideCursor(s32 x, s32 y)
 {
-    struct CursorWork *work = Data_03001f2c;
+    struct CursorWork *work = gMenuWork;
     struct CursorIcon *cursor;
     struct CursorWindow *window;
     s32 cnt;
@@ -42,13 +79,15 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     s32 dx;
     s32 dy;
 
+    cnt = 2;
     if (work->skip_slide != 0) {
-        work->skip_slide = 0;
+        u16 zero = 0;
+        work->skip_slide = zero;
         return;
     }
     cursor = work->cursor;
-    cursor->x = (cursor->attr_x & 0x1ff) + 64;
-    cursor->y = cursor->attr_y + 64;
+    cursor->x = cursor->attributes.x + 64;
+    cursor->y = cursor->attributes.y + 64;
     x += 64;
     y += 64;
     if (cursor->x - 8 > 0) {
@@ -58,22 +97,20 @@ void UiMenu_SlideCursor(s32 x, s32 y)
         cursor->y -= 8;
     }
     px = cursor->x << 4;
-    py = cursor->y << 4;
-    dx = Func_080022ec((x << 4) - px + 1, 2);
-    dy = Func_080022ec((y << 4) - py + 1, 2);
-    cnt = 2;
-    for (;;) {
+    py = cursor->y;
+    dx = Math_Div((x << 4) - px + 1, 2);
+    py <<= 4;
+    dy = Math_Div((y << 4) - py + 1, 2);
+    do {
         window = work->window;
         px += dx;
-        cursor->x = (px >> 4) + (window->tile_x << 3) - 56;
-        cursor->attr_x = (cursor->attr_x & ~0x1ff) | (cursor->x & 0x1ff);
+        cursor->attributes.x = cursor->x =
+            (px >> 4) + (window->tile_x << 3) - 56;
         py += dy;
-        cursor->y = (py >> 4) + (window->tile_y << 3) - 56;
-        cursor->attr_y = cursor->y;
+        cursor->attributes.y = cursor->y =
+            (py >> 4) + (window->tile_y << 3) - 56;
         cnt--;
-        if (cnt == 0) {
-            break;
-        }
-        Func_080030f8(1);
-    }
+        if (cnt != 0)
+            WaitFrames(1);
+    } while (cnt != 0);
 }

@@ -1,5 +1,5 @@
-/* NONMATCHING: 888 bytes, candidate 848, 401 differing halfwords, 251
- * halfword edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
+/* NONMATCHING: 888 bytes, candidate 852, 394 differing halfwords, 235
+ * aligned edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Remaining: Fresh reconstruction corrects actor stride,
@@ -38,7 +38,18 @@
  * compares the signed halfword just written to EFFECT_PHASE, but this draft
  * compares the full-width quotient. Also counter +0x232 and limit +0x22c
  * use two differently typed global aliases, unlike exact Field_ProcessStep.
- * These are the only admitted follow-up; no timer/mask spelling sweep. */
+ * These are the only admitted follow-up; no timer/mask spelling sweep.
+ * Interface H2: one TravelState replaces the two aliases, and a block-local
+ * s16 phase records the quotient before its signed comparison. Result is
+ * 852/888, 394 halfwords / 235 aligned edits; frame remains 12. The exact
+ * entry prefix grows from 8 to 22 instructions. The counter/limit arithmetic
+ * at reference 01a84..01a9e now has the same registers and operations, apart
+ * from relocated pool-load displacements. Narrow phase semantics are fixed,
+ * but sign extension before its store still differs from the reference's
+ * shifted comparison after the store. Colour-loop mask/counter lifetime,
+ * the timer's paired signed/unsigned reads, fill-loop precheck, sprite array
+ * cursor and pool positions remain nonmatching. Retain this semantic model;
+ * stop after ABI/layout model plus one follow-up. No new DONE bytes. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "TYPES.H"
@@ -53,8 +64,15 @@ union HalfWord {
     s16 signed_value;
 };
 
-extern u32 Data_02000240[];
-extern s16 Data_02000240_t[][2];
+struct TravelState {
+    u8 unknown_000[0x22c];
+    s16 limit;
+    s16 mode;
+    s16 damage;
+    s16 steps;
+};
+
+extern struct TravelState Data_02000240_t;
 extern u32 gFrameCount;
 
 void *Main_08000168(s32 size);
@@ -181,11 +199,15 @@ void FieldScene_RunScene3a5SequenceA(void)
         Main_08000320(palette, *colors);
     }
 
-    frame = *(s16 *)((u8 *)Data_02000240 + 0x232);
-    angle = (((frame << 4) - frame) << 3) / Data_02000240_t[139][0];
-    EFFECT_PHASE = angle;
-    if (angle > 118)
-        EFFECT_SCROLL = 0x77;
+    {
+        s16 phase;
+
+        frame = Data_02000240_t.steps;
+        phase = (((frame << 4) - frame) << 3) / Data_02000240_t.limit;
+        EFFECT_PHASE = phase;
+        if (phase > 118)
+            EFFECT_SCROLL = 0x77;
+    }
     if (EFFECT_SCROLL != 0) {
         EFFECT_PHASE = EFFECT_SCROLL;
         EFFECT_SCROLL -= 8;

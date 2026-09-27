@@ -1,4 +1,16 @@
-/* REJECTED H1: 892/892 bytes, 5 halfwords / 5 aligned edits (2026-09-27).
+/* NONMATCHING admitted reload witness: 896/892 bytes, 9 halfwords / 6 edits.
+ * 2026-09-27 repeat is byte-identical to historical sun-east-3b1-preload.
+ * Complete normalized diff: the extra numeric 0xa01b pool word and its four
+ * dependent literal offsets only. The independent r5 then r0 loads survive;
+ * frame, calls, branches and all other instructions retain reference shape.
+ * -da assembly equals normal compilation. Fourteen pool words versus thirteen.
+ * Keep the symbol-backed saved request distinct from the numeric call
+ * operand, as in the historical preload output. The r0 pool load is the
+ * admission invariant even with a larger whole-owner pool. The two-edit
+ * diagnostic source remains in Git at 0d2e51d86; rejected one-owner H1 at
+ * f814cb136. No new DONE bytes.
+ *
+ * REJECTED H1: 892/892 bytes, 5 halfwords / 5 aligned edits (2026-09-27).
  * One numeric owner for the packed speaker request gives exactly one SI
  * pool word, but fails reload admission. cse changes insn 885 from the
  * numeric constant to saved pseudo 38; greg assigns it r5. sched2 then
@@ -78,7 +90,7 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-enum { CabinSpeakerRequest = 0xa01b };
+extern u8 Value_0000a01b;
 
 void Func_02004254(s32 a0)
 {
@@ -112,7 +124,7 @@ void Func_02004254(s32 a0)
         Engine_EventWait(20);
         Engine_ActorFaceEachOther(27, 0, 10);
         Call1(Engine_EventSetMessage, 0x1ebc);
-        Call1(FieldScene_RunStepThen10, CabinSpeakerRequest);
+        Call1(FieldScene_RunStepThen10, (s32)&Value_0000a01b);
         Engine_ActorSetAnimationAndWait(0, 3);
         v7 = 0;
         Call3(Engine_ActorSetSpeed, 0, 0x10000, v6);
@@ -174,8 +186,10 @@ void Func_02004254(s32 a0)
         goto L_02004592;
     }
     Call1(Engine_EventSetMessage, 0x1eb7);
-    base5_a01b = CabinSpeakerRequest;
-    Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
+    /* FAKEMATCH: distinct symbolic and numeric forms preserve the two
+     * independent loads; their duplicate pool word remains nonmatching. */
+    base5_a01b = (s32)&Value_0000a01b;
+    Event_ShowMessageAndWait(0xa01b, 0, 40);
     Call3(Engine_ActorShowEmote, 27, 0x101, 60);
     FieldScene_RunStepThen10(base5_a01b);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);

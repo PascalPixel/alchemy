@@ -1,5 +1,11 @@
-/* NONMATCHING: resource_370:02000de4; 1012 / 1024 bytes, 473 differing
- * halfwords, 408 wrong instructions, 261 aligned edits (2026-09-27 Sol H2).
+/* NONMATCHING: resource_370:02000de4; 1016 / 1024 bytes, 431 differing
+ * halfwords, 398 wrong instructions, 255 aligned edits (2026-09-27 Sol H3).
+ * Sol H3 clamps through the complete typed owner record. Full normalized
+ * diff read: duplicated byte clamps and direct +15 accesses are recovered;
+ * pointer materialization and shift induction disappear. Frame stays 68/64,
+ * the quantity key still spills at sp+0, and the middle pool remains late.
+ * Three bounded structural attempts are preserved; stop this axis without
+ * exact credit. Sol H2 was 1012 bytes / 261 aligned edits.
  * Sol H2 restores the quantity helper and clamps rank through a byte
  * pointer. Full normalized diff read: the duplicated byte clamp ancestry
  * is recovered, but pointer +15 materialization and a new shift induction
@@ -98,12 +104,14 @@ static __inline__ u16 Password_FindItemQuantity(
     return quantity;
 }
 
-static __inline__ void Password_ClampRank(u8 *rank)
+/* FAKEMATCH: inline boundary recovers the duplicated byte clamp ancestry;
+ * it is not evidence of an original helper. */
+static __inline__ void Password_ClampRank(struct PasswordOwnerState *state)
 {
-    if (*rank > 99)
-        *rank = 99;
-    if (*rank == 0)
-        *rank = 1;
+    if (state->rank > 99)
+        state->rank = 99;
+    if (state->rank == 0)
+        state->rank = 1;
 }
 
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
@@ -154,7 +162,6 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         struct PasswordOwnerState *state =
             Engine_OwnerGetState(Data_020096c0[i]);
         struct PasswordStats *stats = &state->stats;
-        s32 shift;
         s32 j;
 
         if (stats->value_10 > 0x7cf)
@@ -179,9 +186,8 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         row[1] = ((u32)stats->value_1a << 22) |
                  ((u32)stats->value_1c << 12) | (stats->level_1e << 4);
 
-        shift = i * 7;
-        Password_ClampRank(&state->rank);
-        rank_bits |= state->rank << shift;
+        Password_ClampRank(state);
+        rank_bits |= state->rank << (i * 7);
 
         for (j = 0; j != 4; j++)
             value_bits += state->values_f8[j] << (j * 7);

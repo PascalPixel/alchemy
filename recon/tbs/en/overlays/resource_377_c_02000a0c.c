@@ -1,5 +1,13 @@
 /* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
  * halfwords, 16 wrong instructions, 8 aligned edits. Canonical H2 restored.
+ * 2026-09-27: greg allocates the second counter (pseudo 260) before its
+ * independent port (261); the first port has r5 preference inherited from
+ * the initial publication. Isolating only the second loop in RampBlendDown
+ * preserves frame, pools and both reload boundaries, but leaves r5/r6
+ * reversed and changes the bound from cmp 15/bls to cmp 16/bcc. It does
+ * not admit the required register roles. The whole-loop helper is preserved
+ * in 5be81839c; H2 is restored here byte-identically. Close this distinct
+ * phase-helper axis without further variants.
  * The old explicit first-ramp alpha ownership removed its reload but
  * allocated r7 instead of r5.
  * Separate counters emit identical bytes; sharing the port across both

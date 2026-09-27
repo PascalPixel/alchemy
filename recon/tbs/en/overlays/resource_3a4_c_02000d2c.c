@@ -1,4 +1,38 @@
-/* NONMATCHING: H2 408/404 bytes, 152 differing halfwords / 69 aligned edits.
+/* NONMATCHING: inversion I2 408/404 bytes, 104 differing halfwords / 41 edits.
+ * Retained canonical model (2026-09-27): structured loops with named phase
+ * exits, not break. All three ROM control-flow admission checks now pass:
+ * fall through into the update body, conditionally exit forward, then wait
+ * (and reload rotation in fall/settle) before an unconditional back-edge.
+ * The reference exit sites are 0db6/0dee/0e4c; back-edges are 0dbe/0df8/0e56.
+ * Full normalized diff: topology equal, frame 4, four pool words retained.
+ * Baseline was 408/404, 152 differing halfwords / 69 edits, topology different.
+ * I2 keeps LOOP_BEG/CONT/END annotations while goto's named label is not
+ * expand_end_loop's recognized loop-end label. loop.c reports no final
+ * conditional branch; flow2 shows each preheader falling into its update
+ * block, with the wait block returning unconditionally. Diagnostic -da
+ * assembly equals ordinary compilation. No code-generation flags changed.
+ * Residual: actor/limit r8/sl roles, first rotation-load/add ordering,
+ * settle's half-turn setup and rematerialization instead of add r0,fp,
+ * its missing accumulator copy, plus resulting displacements/alignment.
+ * Both structural trials are complete. Preserve this admitted topology;
+ * do not resume angle/ownership/declaration sweeps. No new DONE bytes.
+ *
+ * Inversion I1 404/404 bytes, 125 differing halfwords / 63 edits.
+ * Complete normalized diff inspected (2026-09-27). Explicit phase labels
+ * restore direct update-body entry, forward exit branches, and wait/reload
+ * followed by an unconditional back-edge in all three phases. Frame grows
+ * from 4 to 8; fall's 0x80000 increment is carried across its cosine call
+ * and reused to initialize settle. The fourth pool word becomes an immediate.
+ * This phase-local labeled candidate is binary-identical to old H1 at
+ * 0f0536a63, despite retaining H2's separate accumulator scopes. It supplies
+ * no new matching bytes and is a diagnostic witness, not an adoption.
+ * Baseline -da output is assembly-identical to ordinary compilation. Its
+ * initial RTL already contains the rotated loop: stmt.c expand_end_loop
+ * recognizes break's loop-end target and moves update/test behind wait;
+ * loop and flow dumps inherit that shape. The admission invariant is direct
+ * body entry and a forward exit before wait/reload/unconditional back-edge,
+ * without changing wait counts, angle arithmetic or state ownership.
+ * H2 baseline 408/404 bytes, 152 differing halfwords / 69 aligned edits.
  * Phase-local loops remove the increment spill: frame 4 now matches, as do
  * all four pool words. The compiler rotates each loop, keeps actor in r8
  * instead of sl, and rematerialises the sine half-turn instead of using fp.
@@ -53,6 +87,8 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Event_Wait(20);
+    /* FAKEMATCH: named phase exits preserve direct loop entry while keeping
+     * the structured-loop annotations needed for the four-byte frame. */
     {
         union SwingAngle acc;
 
@@ -65,9 +101,10 @@ void ArutinYama_SwingActorIntoSetPiece(void)
             actor->x.fixed = (c << 4) + x;
             angle = sprite->rotation;
             if (angle > limit)
-                break;
+                goto risen;
             Task_Wait(1);
         }
+risen:;
     }
     {
         union SwingAngle acc;
@@ -81,10 +118,11 @@ void ArutinYama_SwingActorIntoSetPiece(void)
             actor->x.fixed = (c << 4) + x;
             angle = sprite->rotation;
             if (angle <= limit)
-                break;
+                goto fallen;
             Task_Wait(1);
             angle = sprite->rotation;
         }
+fallen:;
     }
     {
         union SwingAngle acc;
@@ -101,10 +139,11 @@ void ArutinYama_SwingActorIntoSetPiece(void)
             if (sprite->rotation > half)
                 actor->y.fixed = y - (s << 3);
             if ((s32)(sprite->rotation + limit) > 0xbfff)
-                break;
+                goto settled;
             Task_Wait(1);
             angle = sprite->rotation;
         }
+settled:;
     }
     Task_Wait(1);
     {

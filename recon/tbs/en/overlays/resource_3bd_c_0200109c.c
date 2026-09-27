@@ -4,7 +4,19 @@
  * lifetime. Pointer-table ownership regressed to 199 edits, byte next-state
  * retention to 194, and shared next-state/scale lifetime to 242; retained
  * the best reconstruction. Remaining: initial saved-register lifetimes,
- * work store scheduling and the final angle-step constant lifetime. */
+ * work store scheduling and the final angle-step constant lifetime.
+ *
+ * 2026-09-27 callback-family audit: exact CALLBACK_SCHEDULER.C and
+ * FIELD_EVENT.H both give add/remove an s32 return; the old Call2/Call1
+ * wrappers erased it through void function pointers. Transfer the canonical
+ * Task_AddCallback/Task_RemoveCallback interface used by exact
+ * VINASU_CHOJO/SCRIPTED_PRESENTATION.C, binding this overlay's exact
+ * SceneEffect_UpdateStateMachine (02000f94, runtime 02008f94).
+ * One trial: 876/392/182, candidate binary identical to the retained baseline.
+ * Full normalized diff confirms the 12-byte frame versus reference 4,
+ * next-state spills, work-store ordering and angle lifetime remain unchanged.
+ * Retain the corrected interface; no follow-up without a new source fact.
+ * No state, zero, loop or counter model changed; zero new DONE bytes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -26,6 +38,7 @@ extern u8 Value_ffffcccd;
 extern u8 Value_fffff400;
 
 void SceneActor_SetPositionFromTransformedBase(s32 id, s32 x, s32 angle);
+void SceneEffect_UpdateStateMachine(void);
 void ArutamiraDou_ReleaseWallBurst(void);
 s32 Main_030003ac(s32 dividend, s32 divisor);
 void Engine_EventResetEffectCounter(void);
@@ -34,11 +47,6 @@ void Engine_EventResetEffectCounter(void);
 static __inline__ void Call1(void (*fn)(), s32 value)
 {
     fn(value);
-}
-
-static __inline__ void Call2(void (*fn)(), s32 left, s32 right)
-{
-    fn(left, right);
 }
 
 static __inline__ void Call3(void (*fn)(), s32 left, s32 middle, s32 right)
@@ -153,7 +161,7 @@ void FieldScene_RunStatefulSequence(s32 action)
         work->values[WORK_DELAY] = 0;
         work->values[WORK_SIZE] = 0x200;
         work->values[WORK_PHASE] = 0x3000;
-        Call2(Engine_TaskAddCallback, 0x02008f95, 0xc80);
+        Task_AddCallback(SceneEffect_UpdateStateMachine, TASK_PRIORITY_SCENE);
         if ((u8)count <= 2) {
             while (Data_0200bf6c->values[WORK_SHOWN] != 99)
                 Engine_TaskWait(1);
@@ -192,6 +200,6 @@ void FieldScene_RunStatefulSequence(s32 action)
             ArutamiraDou_ReleaseWallBurst();
             Engine_AudioPlayCue(80);
         }
-        Call1(Engine_TaskRemoveCallback, 0x02008f95);
+        Task_RemoveCallback(SceneEffect_UpdateStateMachine);
     }
 }

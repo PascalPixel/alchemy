@@ -1,10 +1,29 @@
-/* Draft, not-yet-c. Fresh registered-unit score 2026-09-26: 2816 of 2816
- * bytes, 639 differing halfwords, 50 wrong instructions (185 aligned edits).
+/* Draft, not-yet-c. Canonical H1 restored 2026-09-27: 2816 of 2816 bytes,
+ * 639 differing halfwords, 50 wrong instructions (185 aligned edits).
+ * Rejected H2 is preserved in 3db9eafb8: 2820 bytes/1081 halfwords/293 edits.
  * Typed callback inline scopes reproduce the prior baseline bytes exactly;
  * they restore target-ID reloads and the r5 table but lose the direct-call
  * trial's shared-constant lifetimes (16 wrong instructions in 671ed82f4).
  * The compiler's cross-call target pseudo, not pointer qualifiers alone,
- * changes the saved-register interference. Inline scopes are ruled out. */
+ * changes the saved-register interference. Inline scopes are ruled out.
+ * 2026-09-27 H1: transfer Party_GiveItem from exact HAIDIA_MURA/STAGED_MOTION.C
+ * to both rewards. The old second alias incorrectly declared its s32 result
+ * void; FIELD_EVENT.H and main:08091a58 identify the same service at both
+ * sites. Complete normalized diff and all candidate bytes remain unchanged.
+ * Keep the canonical interface, not as an allocation fix. MOTION_TARGET.C
+ * confirms the target/callback service is void; HAIDIA_IE/EXTENDED.C confirms
+ * the local facing/wait helper is void too. No return-type speculation.
+ * Allocator fact: local pseudo 232 (0x9000, 4 uses/570 insns/84 calls) starts
+ * in r6 but global allocation moves it to fp; pseudo 120 (0x5000, 11 uses/
+ * 1460 insns/209 calls) takes r6. First mismatch is still 0x1000 in r9 vs fp.
+ * No tied priorities support a declaration permutation.
+ * H2 tests one scalar reused for camera zero then persistent facing 0x9000,
+ * motivated by those two reference phases both using r6. Pseudo 37 now has
+ * 6 uses/580 insns/85 calls and two definitions; it enters global allocation
+ * and lands in sl, rather than retaining local r6. The zero moves before the
+ * camera getter and needs extra moves; 0x5000 still owns r6. Callback target
+ * reloads/table r5 survive, but whole extent grows four bytes. No admission;
+ * phase reuse is closed here, not a reason to permute its declarations. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -181,7 +200,6 @@ void Func_020043e4();
 void Func_020043f2();
 void Func_0200442a();
 void Func_02004440();
-s32 Func_02004448();
 void Func_02004458();
 void Func_0200445a();
 void Func_0200446e();
@@ -200,7 +218,6 @@ void Func_02004528();
 void Func_0200453a();
 void Func_02004542();
 void Func_02004556();
-void Func_0200455c();
 void Func_02004574();
 void Func_0200458e();
 void Func_02004590();
@@ -524,7 +541,7 @@ void Scene_RunExtendedActorSequence(void)
     Call3(Func_02004440, 16, 0x10000, 0x8000);
     Call3(Func_02004484, 16, 216, 0x320);
     Call3(Func_02004518, 16, 0x4000, 0);
-    Value2(Func_02004448, 180, 0);
+    Party_GiveItem(180, 0);
     Call3(Func_020044a6, 16, 0x108, 0x320);
     Call3(Func_0200453a, 16, 0x6000, 0);
     Call3(Func_02004556, 1, 0x102, 40);
@@ -551,7 +568,7 @@ void Scene_RunExtendedActorSequence(void)
     Call3(Func_02004590, 17, 216, 0x320);
     Call3(Func_02004624, 17, 0x4000, 0);
     Func_02004168(17, 60);
-    Func_0200455c(207, 0);
+    Party_GiveItem(207, 0);
     Func_02004592(0);
     Func_02004598(1);
     Call3(Func_020045c6, 17, 0x110, 0x330);

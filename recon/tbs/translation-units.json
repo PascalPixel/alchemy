@@ -1112,10 +1112,6 @@
           "address": "0x020099ac",
           "kind": "thumb"
         },
-        "Main_080772e0": {
-          "address": "0x02009904",
-          "kind": "thumb"
-        },
         "Engine_EventSetMessage": {
           "address": "0x02009964",
           "kind": "thumb"
@@ -1160,20 +1156,8 @@
           "address": "0x020099c4",
           "kind": "thumb"
         },
-        "Main_08077308": {
-          "address": "0x0200990c",
-          "kind": "thumb"
-        },
         "Engine_UiWorkWaitThenFinalizeCapacity": {
           "address": "0x02009934",
-          "kind": "thumb"
-        },
-        "Main_08077230": {
-          "address": "0x020098f4",
-          "kind": "thumb"
-        },
-        "Main_08077048": {
-          "address": "0x020098dc",
           "kind": "thumb"
         },
         "TorebiIzumi_Func0200173c": {
@@ -5454,6 +5438,10 @@
       "source": "recon/tbs/en/overlays/run_extended_field_scene.c",
       "overlay": "resource_374",
       "absolute_symbols": {
+        "Engine_PartyGiveItem": {
+          "address": "0x0200a6b4",
+          "kind": "thumb"
+        },
         "Func_02003f08": {
           "address": "0x0200a6c4",
           "kind": "thumb"

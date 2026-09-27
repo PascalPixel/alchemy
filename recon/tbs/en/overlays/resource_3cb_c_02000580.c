@@ -1,4 +1,29 @@
-/* NONMATCHING H5: 568/560 bytes, 209 differing halfwords / 87 aligned edits.
+/* NONMATCHING: admitted H7 restored after rejected H8 at 784af7a33.
+ * 568/560 bytes, 203 differing halfwords / 84 aligned edits. Bounded
+ * copier/phase/tail probes complete; remaining topology, map reload and
+ * copy scheduling require new evidence. Native proofs and credits unchanged.
+ * REJECTED H8 2026-09-27 shared retry tail: 568/560 bytes, 158 differing
+ * halfwords / 106 aligned edits. Explicit first-to-final retry-failure
+ * goto emits the desired first ble/poll topology, but jump2 merges all
+ * three retry failures, including the ROM's separate second failure.
+ * Heap/index exchange r7/r8: admission fails despite the lower raw count.
+ * Frame32, word compaction and three independent send-result stores
+ * survive; map still reloads. Pools remain +8. Full normalized diff read.
+ * Checkpoint this rejected source, then restore admitted H7 at 9cedc5ed6.
+ * STOP shared-tail axis without a new causal fact. DONE/alignment +0.
+ * NONMATCHING H7 2026-09-27: 568/560 bytes, 203 differing halfwords /
+ * 84 aligned edits. First retry counter now begins after Send: the exact
+ * movs r5,#0 between the -1 materialization and result compare is restored.
+ * All three independent r0 failure stores, frame32, heap r8 and word
+ * compaction survive. Full normalized diff read. Remaining: cold retry
+ * tails, map reload and copy/call ordering; literal values agree at +8.
+ * Retain this phase-lifetime fact; DONE/alignment +0.
+ * NONMATCHING H6 2026-09-27: transfer exact battle modules' inline CopyWords
+ * boundary. 568/560 bytes, 209 differing halfwords / 87 aligned edits:
+ * byte-identical to direct-call H5, including both wrong copy setups and
+ * all three independent send-failure stores. Full normalized diff read.
+ * STOP copier wrapper axis; direct callback retained, DONE/alignment +0.
+ * NONMATCHING H5: 568/560 bytes, 209 differing halfwords / 87 aligned edits.
  * Admitted: all three independent send-failure r0 stores survive loop and
  * jump2 (insns 151/358/593); frame32, heap r8 and word compaction retained.
  * Full normalized diff read; -da output equals ordinary assembly exactly.
@@ -111,10 +136,11 @@ s32 LinkLobby_SendPartyRecords(void)
         ((WordCopyFn)0x03001388)(heap, Engine_OwnerGetState(owners[i]), 0x154);
         heap[0x12a] = 2;
         table[owners[i]] = i - 128;
-        tries = 0;
         /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
         do {
-            if ((ret = Main_08000380(heap, 0x154)) == -1) {
+            ret = Main_08000380(heap, 0x154);
+            tries = 0;
+            if (ret == -1) {
                 result = ret;
                 goto done;
             }

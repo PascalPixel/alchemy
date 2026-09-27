@@ -1,4 +1,11 @@
-/* NONMATCHING: 584 bytes, candidate 584, 19 differing halfwords, 19 halfword
+/* NONMATCHING 2026-09-27 signed-consumer probe: 584/584 bytes, 19 differing
+ * halfwords / 19 aligned edits. u8 direction with explicit s8 consumers
+ * emits identical bytes and allocator lifetimes to this canonical s8 model:
+ * redraw 19 refs / 322 insns, direction 17 / 292. Complete diff and all
+ * pool words agree except the reciprocal r8/sl role assignment. No new
+ * family interface evidence changes that constraint. STOP byte-storage
+ * axis; baseline retained, no DONE or alignment credit.
+ * NONMATCHING: 584 bytes, candidate 584, 19 differing halfwords, 19 halfword
  * edits (2026-09-25). DebugMenu_SelectAbility, meant for
  * DEBUG/ITEM_LEVEL/SELECT_ABILITY.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus

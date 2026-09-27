@@ -1,6 +1,20 @@
-/* NONMATCHING: 548 bytes, candidate 544, 96 differing halfwords (2026-09-24).
+/* NONMATCHING: 548 bytes, candidate 544, 94 differing halfwords, 62 aligned
+ * edits (2026-09-27). Whole extent 02000c8c..02000eb0 includes four pool words.
+ * H1 transfers MAP_SCROLL.H's MapScrollWork.origin and signed coordinate
+ * array from exact Map_UpdateLayerScroll; OpenSeal proves the caller and
+ * GuardedStep supplies the actor import bindings. Fresh original: 544/548,
+ * 96 halfwords / 63 aligned edits. Typed ownership fixes the second branch's
+ * saved-origin load before the final coordinate store, but does not retain
+ * the two final loop-entry pointer copies. Allocator pseudo 114 still has
+ * 20 uses across 148 instructions / 21 calls and lands in r6, not r7.
+ * Admission invariant: distinct pos and loop pointers at all four loops.
+ * H1 fails it; stop this type/address axis, do not tune around the missing
+ * copies. Exact sibling/header sources remain untouched. Unit registration
+ * exposes this previously unindexed not-yet-C owner; it grants no DONE.
+ *
+ * Earlier baseline evidence (2026-09-24):
  * Single-overlay unit binding Engine_* at their import veneers. Remaining:
- * hand-written; the body matches except register choice. The reference keeps
+ * the reference keeps
  * pos in r7 and copies it into a separate pointer (r5) at every ShiftFocus
  * loop, including the two after the door flashes, with the counter in r6;
  * here the inline parameter is copied only in the first two loops (pos is
@@ -13,6 +27,7 @@
  * (2026-09-24, ovl8a). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "MAP_SCROLL.H"
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -20,12 +35,12 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 /* Moves the camera focus up or down one pixel a frame for thirty frames. */
-static __inline__ void ShiftFocus(union FieldCoordinate *p, s32 step)
+static __inline__ void ShiftFocus(s32 *p, s32 step)
 {
     s32 i;
 
     for (i = 0; i != 30; i++) {
-        p[2].fixed += step;
+        p[2] += step;
         Engine_EventWait(1);
     }
 }
@@ -45,23 +60,23 @@ static __inline__ void FlashDoor(s32 count, s32 frames)
 
 void Local_02000c8c(void)
 {
-    union FieldCoordinate **camera;
-    union FieldCoordinate *saved;
-    union FieldCoordinate pos[3];
+    struct MapScrollWork *camera;
+    s32 *saved;
+    s32 pos[3];
     struct FieldActor *leader;
     s32 side;
 
-    camera = *(union FieldCoordinate ***)0x03001e70;
+    camera = Data_03001e70;
     leader = Engine_ActorGet(0);
     if (leader->z.fixed < 0xb30000) {
         Call3((void (*)())Engine_ActorWalkToAndWait, 0, 0x23f, 132);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0x4000, 0);
         Engine_EventWait(30);
-        saved = *camera;
-        pos[0].fixed = leader->x.fixed;
-        pos[1].fixed = leader->y.fixed;
-        pos[2].fixed = leader->z.fixed;
-        *camera = pos;
+        saved = camera->origin;
+        pos[0] = leader->x.fixed;
+        pos[1] = leader->y.fixed;
+        pos[2] = leader->z.fixed;
+        camera->origin = pos;
         ShiftFocus(pos, 0x10000);
         Engine_EventWait(40);
         side = 1;
@@ -69,11 +84,11 @@ void Local_02000c8c(void)
         Call3((void (*)())Engine_ActorWalkToAndWait, 0, 0x241, 222);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0xc000, 0);
         Engine_EventWait(30);
-        pos[0].fixed = leader->x.fixed;
-        pos[1].fixed = leader->y.fixed;
-        pos[2].fixed = leader->z.fixed;
-        saved = *camera;
-        *camera = pos;
+        pos[0] = leader->x.fixed;
+        pos[1] = leader->y.fixed;
+        pos[2] = leader->z.fixed;
+        saved = camera->origin;
+        camera->origin = pos;
         ShiftFocus(pos, -0x10000);
         Engine_EventWait(40);
         side = 2;
@@ -88,5 +103,5 @@ void Local_02000c8c(void)
         ShiftFocus(pos, -0x10000);
     else if (side == 2)
         ShiftFocus(pos, 0x10000);
-    *camera = saved;
+    camera->origin = saved;
 }

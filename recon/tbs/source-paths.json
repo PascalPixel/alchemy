@@ -21588,6 +21588,9 @@
     },
     "resource_3cb:02000580": {
       "name": "LinkLobby_SendPartyRecords"
+    },
+    "resource_37b:02000c8c": {
+      "name": "Local_02000c8c"
     }
   },
   "symbols": {

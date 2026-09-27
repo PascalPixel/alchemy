@@ -7,6 +7,20 @@
  * Typed vector/camera arguments and the registered allocator/transfer
  * prototypes preserve the draft bytes. Aggregate affine-register writes
  * instead grow the extent to 920 bytes (952 with volatile); not adopted.
+ *
+ * 2026-09-27 bounded re-audit: live inventory confirms the whole owner
+ * [080109e8, 08010d48), 864 bytes including its pool. Fresh byte-mode
+ * baseline remains 34 differing halfwords / 27 aligned edits; all pool
+ * words and stack offsets match. Read the complete listing and diff,
+ * WorldMap_UpdateView, Camera_ResetSceneDefaults and Camera_ConfigureScene.
+ * Those exact neighbours use the same three-word transfer and 03000250
+ * call already covered by the rejected typed-vector/return-type axes.
+ * Fresh sched2 still puts independent resource literal load 117 before
+ * frame store 114; the store depends on the preceding work-field stores.
+ * Other residuals are independent affine-I/O, turn/camera-store, transform
+ * call, pitch-cache and display-publication scheduling sites. No new
+ * ownership dependency was established by this audit: retain the model,
+ * do not repeat those axes or blanket-wrap the initialisation sequence.
  */
 #include "TYPES.H"
 #include "DMA.H"

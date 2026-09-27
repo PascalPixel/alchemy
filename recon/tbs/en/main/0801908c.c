@@ -1,77 +1,97 @@
+/* DRAFT: complete 320-byte RenderOutput_UpdateScaleAnimation.
+ * Corrected from its own listing using Ui_ApplyTableScaleToObject's sprite
+ * attributes and AffineMatrix_BuildForEffect's eight-byte effect record.
+ * frame is +12, sprite is +16, and modes 11/12 use frame * 2 + 16.
+ * 2026-09-26: 316/320 bytes, 137 differing halfwords / 45 aligned edits.
+ * Entry and affine-effect construction match. Remaining: modes 11/12 keep
+ * old-counter copies in the reference; case 10 shares only the shift, not
+ * its table load, with case 12. Reference affine 0/1 tails share one byte
+ * store; this draft retains separate stores. Counter scratch registers and
+ * final x-load order differ. A u16 local adds redundant reads/shift masks
+ * (340 bytes, 74 edits); retain u32. No further declaration permutations.
+ * Owner was bundled with 080191cc; its complete pool ends at 080191cc.
+ */
 #include "TYPES.H"
 
-struct SubObject {
-    u8 field4;
-    u8 field5;
-    u16 field6;
-    u8 field7;
+struct ScaleEffect {
+    unsigned x : 16;
+    unsigned y : 16;
+    unsigned angle : 16;
+    unsigned unused : 16;
 };
-
-struct Object {
-    u8 field0[5];
+struct OutputSprite {
+    u32 link;
+    u8 y;
+    u8 affine : 2;
+    u8 mode : 2;
+    u8 other : 4;
+    u16 x : 9;
+    u16 affine_index : 5;
+    u16 other_x : 2;
+    u16 tile;
+};
+struct AnimatedOutput {
+    u8 unknown_00[5];
     u8 mode;
-    u16 counter;
-    u8 field8;
-    struct SubObject sub;
+    u16 x;
+    u16 y;
+    u16 unknown_0a;
+    u16 frame;
+    u8 unknown_0e[2];
+    struct OutputSprite sprite;
 };
-
 extern u16 Data_080366f8[];
-extern s32 Func_08003d28(s32 packed);
+s32 AffineMatrix_BuildForEffect(struct ScaleEffect *);
 
-void Func_0801908c(struct Object *obj)
+void RenderOutput_UpdateScaleAnimation(struct AnimatedOutput *output)
 {
-    struct SubObject *sub = &obj->sub;
-    s32 value = 256;
-    s32 counter;
-    s32 idx;
+    s32 scale = 256;
+    struct OutputSprite *sprite = &output->sprite;
+    u32 frame;
+    struct ScaleEffect effect;
 
-    switch (obj->mode) {
+    switch (output->mode) {
     case 9:
-        counter = obj->counter;
-        obj->counter = (u16)(counter + 1);
-        idx = counter & 31;
-        value = Data_080366f8[idx];
+        frame = output->frame;
+        output->frame++;
+        scale = Data_080366f8[frame & 31];
         break;
     case 10:
-        counter = obj->counter;
-        obj->counter = (u16)(counter + 1);
-        idx = counter & 31;
-        value = Data_080366f8[idx] >> 1;
+        frame = output->frame;
+        output->frame++;
+        scale = Data_080366f8[frame & 31] >> 1;
         break;
     case 11:
-        counter = obj->counter;
-        if (counter <= 7) {
-            obj->counter = (u16)(counter + 1);
-            value = Data_080366f8[8 + counter];
+        frame = output->frame;
+        if (frame <= 7) {
+            output->frame++;
+            scale = Data_080366f8[frame * 2 + 16];
         }
         break;
     case 12:
-        counter = obj->counter;
-        if (counter <= 7) {
-            obj->counter = (u16)(counter + 1);
-            value = Data_080366f8[8 + counter] >> 1;
+        frame = output->frame;
+        if (frame <= 7) {
+            output->frame++;
+            scale = Data_080366f8[frame * 2 + 16] >> 1;
         }
         break;
-    default:
-        break;
     }
-
-    if (value == 256) {
-        sub->field7 &= ~0x3f;
-        sub->field5 &= ~4;
+    if (scale == 256) {
+        sprite->affine_index = 0;
+        sprite->affine = 0;
     } else {
-        s32 packed = value | (value << 16);
-        (void)packed;
-        idx = Func_08003d28(value) & 31;
-        sub->field7 = (u8)((sub->field7 & ~0x3f) | (idx << 1));
-        if (value > 256) {
-            sub->field5 |= 3;
-            sub->field6 = (obj->counter + 0xfff8) & 0xffff;
-            sub->field4 = obj->field8 + 248;
+        effect.x = scale;
+        effect.y = scale;
+        effect.angle = 0;
+        sprite->affine_index = AffineMatrix_BuildForEffect(&effect);
+        if (scale > 256) {
+            sprite->affine = 3;
+            sprite->x = output->x + 0xfff8;
+            sprite->y = *(u8 *)&output->y + 0xf8;
             return;
         }
-        sub->field5 = (sub->field5 & ~4) | 1;
+        sprite->affine = 1;
     }
-    sub->field6 = obj->counter;
-    sub->field4 = obj->field8;
+    sprite->x = output->x;
+    sprite->y = output->y;
 }

@@ -1,11 +1,9 @@
-/* NONMATCHING: 1300 bytes, candidate 1300, 2 differing halfwords, 2 halfword
- * edits (2026-09-26). Scene_RunScene371SequenceA, meant for
- * FIELD/WORLD_MAP/F_039FC.C as a single-overlay unit binding its names at
- * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: Whole-function queue pointers and one-pass IME reads reproduce
- * every queued transfer. A void callback wrapper reproduces the argument
- * order; the callback address load precedes the saved-IME restore instead
- * of following it. The scheduler dump admits both at the merge block. */
+/* Exact 1300-byte owner, resource_371:020039fc..02003f10.
+ * Verified 2026-09-27: zero differing halfwords and equal topology.
+ * The previous two-halfword residual was callback-address loading before
+ * IME restoration. A one-pass scope around the final volatile restore keeps
+ * that publication boundary intact; all queue entries and pools still match.
+ * Reconstructed from our own ROM and the existing world-map queue model. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -38,7 +36,9 @@ void WorldMap_UpdateBlend(void);
 
 /* FAKEMATCH: the one-pass read preserves the saved-IME copy before masking.
  * Each request preserves IME while publishing one complete DMA transfer.
- * The original writes 0x0208 to IME; its enable bit is clear. */
+ * The original writes 0x0208 to IME; its enable bit is clear.
+ * FAKEMATCH: the one-pass restore keeps subsequent callback setup outside
+ * the queue-publication control boundary. */
 #define QueueTransfer(source, destination, control) \
 { \
     u32 saved; \
@@ -54,7 +54,7 @@ void WorldMap_UpdateBlend(void);
         *p++ = (u32)(destination); \
         *p = (control); \
     } \
-    *ime = saved; \
+    do { *ime = saved; } while (0); \
 }
 
 #define QueueFrame(buffer, offset) QueueTransfer((buffer) + (offset), 0x06002000, 0x84000140)

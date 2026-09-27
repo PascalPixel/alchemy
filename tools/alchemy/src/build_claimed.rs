@@ -559,7 +559,12 @@ fn materialize_unit_owner(
     let assembly = object_dir.join(format!("{stem}.s"));
     let output = text(object_dir.join(format!("{stem}.o")));
     write_file(&assembly, unit_slice(root, unit, owner, object)?.as_bytes())?;
-    let assembler = crate::compiler::routing::compiler_assembly_command(&text(assembly), &output);
+    let assembler = crate::compiler::routing::compiler_assembly_command_for_source(
+        compiler,
+        &route.to_string_lossy(),
+        &text(assembly),
+        &output,
+    );
     run(&assembler, root)?;
     if link(&output)? != linked {
         return Err(format!("{}: emitted {stem} slice changed output", unit.id));
@@ -710,7 +715,12 @@ pub fn compile_source_for_owner(
         run(command, root)?;
     }
     run(
-        &crate::compiler::routing::compiler_assembly_command(&assembly, &object),
+        &crate::compiler::routing::compiler_assembly_command_for_source(
+            compiler,
+            &options.routing_source,
+            &assembly,
+            &object,
+        ),
         root,
     )?;
     let mut defined = last_fields(&run(

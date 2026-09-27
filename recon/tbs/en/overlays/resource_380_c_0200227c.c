@@ -1,9 +1,17 @@
-/* NONMATCHING: 388 bytes, candidate 388, 15 differing halfwords (2026-09-24).
- * Single-overlay unit binding Engine_* at their import veneers. Remaining:
- * reload register choice only: the leader copy for stores to +104 takes r1 in
- * the reference for actors 5, 9 and 10 (r3 here), and the script and zero
- * high-register setup reloads through r3 then r1; the reference seems to have
- * r1 among its spill registers. Sweeps and zero placements did not help. */
+/* NONMATCHING: complete 388-byte owner; restored best baseline 388 bytes,
+ * 15 differing halfwords / 14 aligned edits (2026-09-27).
+ * Remaining: actor 5/9/10 leader stores reload through r3 instead of r1;
+ * script/zero high-register setup order; actor 14 motion/zero/call ordering.
+ * Exact PARTY_INTRO.C consumer proves linked_object at +0x68 and flag +0x5a.
+ * Typed union model with FIELD_EVENT.H interfaces and a named script:
+ * H1 400 bytes / 121 halfwords / 53 edits, preserved at 4fffb36b0.
+ * H2 one-pass script/zero initialization restored script r8 / mask r6:
+ * 388 bytes / 16 halfwords / 15 edits, preserved at ec461ea87.
+ * H2 still differed in the leader reloads, script/zero and actor 14 ordering,
+ * plus actor 13 OR destination. The stronger original baseline stays active.
+ * STOP: typed-layout/lifetime axis bounded; no new DONE.
+ * FAKEMATCH: legacy call wrappers, volatile flag read and dead final read
+ * retain the original baseline's evaluation and register lifetime choices. */
 #include "TYPES.H"
 
 s32 Engine_ActorGet();

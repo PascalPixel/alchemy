@@ -22,8 +22,9 @@
 	.set sub_080b0030, 0x080b0030
 	.set sub_080b0038, 0x080b0038
 	.set sub_080f9010, 0x080f9010
-	.global Func_08020bd8
+	.global NameEntry_EditOwnerName
 	.thumb_func
+NameEntry_EditOwnerName:
 Func_08020bd8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

@@ -1,7 +1,25 @@
-/* Draft, not exact (2026-09-24): 376 of 392 bytes, same instructions.
-   Residual: literal pool placement. The reference dumps a pool after the
-   case-0 branch and forces a second one, with a branch around it, before
-   the tile-coordinate stores; this candidate keeps one pool at the end. */
+/* Draft, not exact. Whole owner [0800c150, 0800c2d8), 392 bytes with own
+   pools. Baseline on 2026-09-26: 376 bytes, 148 differing halfwords,
+   82 aligned edits; equal topology, not merely pool placement.
+   The two direct callers at 0800ebec/0800f2f8 pass descriptor IDs 25/24
+   plus object XYZ and consume the returned object and its sprite at +80.
+   Callees: FindFreeObject returns one of 64 112-byte slots; bc70 returns
+   a sprite; 185000 returns a 20-byte descriptor; d130 sets XYZ and clears
+   motion. All four interfaces and the complete own listing were checked.
+
+   H1: separate u8 zero lifetimes should recover short-reach pool loads at
+   animation_kind and unknown_59, preserving the 8-byte frame and calls.
+   Prediction: pools after case 0 and before the tile-coordinate stores.
+   Acceptance: exact 392 bytes, then compare/coverage/verify. Diagnostic:
+   full aligned difference plus generated pool placement. One trial only;
+   retain the candidate and result here if the prediction fails.
+   H1 result: 392/392 bytes, 90 differing halfwords, 45 aligned edits.
+   All nine pool words now match at their exact offsets, including both
+   zero pools and the repeated 0xffff word. Frame/calls/topology remain.
+   Residual: case-2 list entry uses an extra copy and shifts the join by
+   two bytes; the initialization block owns the byte-store bases and
+   plain zero in different registers; final signed divide uses r2/r4.
+   The old pool-placement issue is closed, not an adopted function. */
 
 #include "DMA.H"
 
@@ -45,7 +63,6 @@ struct ObjectSpriteList {
 };
 
 extern struct ObjectSpriteList *Data_03001e68;
-extern u8 Data_00000000[];
 
 struct FieldObject *ObjectDispatch_FindFreeObject(void);
 void *Func_0800bc70(s32 id);
@@ -75,7 +92,9 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
             object->animation = sprite;
             object->radius = Func_08185000(id)->radius >> 1;
         } else {
-            object->animation_kind = (u8)(u32)Data_00000000;
+            /* FAKEMATCH: narrow zero retains its own pool-load lifetime. */
+            u8 empty_kind = 0;
+            object->animation_kind = empty_kind;
         }
         break;
     case 2:
@@ -98,6 +117,7 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
     }
     }
     if (object != NULL) {
+        u8 empty_state = 0;
         Object_SetPositionAndResetMotion(object, x, y, z);
         object->script = 0x0801358c;
         object->speed_limit = 0x20000;
@@ -108,7 +128,7 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
         object->unknown_55 = 3;
         object->unknown_48 = 0x10000;
         object->unknown_44 = 0x4000;
-        object->unknown_59 = (u8)(u32)Data_00000000;
+        object->unknown_59 = empty_state;
         object->unknown_5a = 1;
         object->unknown_4c = 0;
         object->unknown_06 = 0x4000;

@@ -7,7 +7,11 @@
    from 13 to 14. Reading the height operands back from mote fields also
    gives 14 edits: positions still get r0 and the attribute walker r2.
    Allocator evidence: position lives 11 insns, walker 8; both are low-
-   register pointer pseudos. Neither experiment changes those roles. */
+   register pointer pseudos. Neither experiment changes those roles.
+   A typed inline coordinate-copy/height helper emits identical bytes.
+   Passing the field owner instead of its position pointer keeps 13 edits:
+   it fixes the layer-zero schedule but delays the required position read
+   until after the attribute stores. Retain the original model; no credit. */
 
 #include "TYPES.H"
 #include "DMA.H"

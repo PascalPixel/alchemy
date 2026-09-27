@@ -1,23 +1,14 @@
-/* Draft, not exact (2026-09-26): 304 of 304 bytes, 80 differing halfwords.
-   21 aligned halfword edits. A named coordinate struct and writing the
-   randomized speed before lift recover the call/store order. The allocator
-   dump keeps coordinate-base pseudo 40 live across both loops, allocated
-   ahead of anchor walker 36; the ROM instead copies the coordinate base to
-   a new shard cursor. A combined anchors/position struct gave 308 bytes;
-   advancing and rewinding the shard cursor deletes the temporary stores
-   and gives 296 bytes. Retained the complete 304-byte named-vector draft.
-   Rewritten from the listing; every instruction but the register choice
-   matches. Residual: the ROM keeps the position array base in r5 and walks
-   the anchors with r7, copying r5 into r7 for the shard loop; here the base
-   takes r7 (global allocation order) and the shard loop reuses it with no
-   copy, two bytes shorter, padded back by the pool alignment. Tried:
-   pointer locals for either block, one pointer for both loops, count-down
-   and count-up loops, every declaration order. The twin at main:0809a294 is the same
-   function with the other item-break spawner. */
+/* Not-yet-C: complete 304-byte owner, two differing halfwords.
+ * A typed SpawnShard boundary recovers the position base in r5, anchor walk
+ * in r7 and later r5-to-r7 copy; all other instructions and pools match.
+ * Remaining: sched2 emits the r3-to-r8 counter copy before r5-to-r7,
+ * rather than after it. Counter insn166 precedes hoisted cursor insn356.
+ * Moving the whole shard loop into the helper gives 284 bytes / 68 edits;
+ * an explicit outer cursor loses the separate copy (304 / 21). A do-loop
+ * latch preserves this two-halfword residual. Stop those scheduling axes.
+ * The twin at 0809a294 differs only in its item-break spawner. */
 #include "TYPES.H"
 #include "SYSTEM.H"
-
-#define BattleEffect_RunItemBreakScatter Func_08098954
 
 struct BattleEffectScene {
     u8 reserved_00[4];
@@ -53,13 +44,22 @@ void ObjectDispatch_InitializeFar(void *object, s32 data);
 void Func_080090d0(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
-void BattleEffect_RunItemBreakScatter(void)
+static __inline__ struct ScatterShard *SpawnShard(
+    struct BattleEffectScene *scene, struct ScatterPosition *position)
+{
+    /* FAKEMATCH: the inline interface preserves the separate shard cursor. */
+    position->x = scene->x;
+    position->y = scene->y + 0x100000;
+    position->z = scene->z;
+    return Object_Spawn(0x11d, position->x, position->y, position->z);
+}
+
+void RunBattleEffect07(void)
 {
     struct BattleEffectScene *scene;
     struct ScatterShard *obj;
     void *anchors[2];
     struct ScatterPosition position;
-    s32 *pos;
     void **walk;
     s32 index;
     s32 magnitude;
@@ -85,12 +85,8 @@ void BattleEffect_RunItemBreakScatter(void)
 
     Object_CommitPosition(anchors[0]);
     Audio_PlayCue(134);
-    pos = &position.x;
     for (index = 23; index >= 0; index--) {
-        pos[0] = scene->x;
-        pos[1] = scene->y + 0x100000;
-        pos[2] = scene->z;
-        obj = Object_Spawn(0x11d, pos[0], pos[1], pos[2]);
+        obj = SpawnShard(scene, &position);
         if (obj != 0) {
             ObjectDispatch_InitializeFar(obj, 0x0809f0d4);
             obj->speed = Random16() + 0x20000;

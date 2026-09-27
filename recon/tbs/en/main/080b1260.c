@@ -41,6 +41,7 @@
  * the ROM; neither required mid-function pool returns, and frame stays 48.
  * Rejected: halfword storage at the caller does not imply a halfword ABI
  * parameter. Keep this negative result; do not repeat parameter narrowing.
+ * The canonical draft below restores the word-width input/replacement model.
  */
 
 extern u8 Value_00000c98[];
@@ -56,12 +57,12 @@ void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style);
 
-void Shop_DrawEquipComparison(s32 window, s32 unit_id, u16 item_id)
+void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop = SHOP_RUNTIME;
     struct BattleUnit *unit = BattleUnit_Get(unit_id);
     struct ItemDefinition *item = Item_Get(item_id);
-    s16 replaced = -1;
+    s32 replaced = -1;
     s32 slot;
     u32 saved;
     s32 i;

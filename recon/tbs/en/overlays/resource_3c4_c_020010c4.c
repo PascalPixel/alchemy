@@ -1,4 +1,15 @@
-/* NONMATCHING: 284 of 284 bytes, 11 halfword edits (2026-09-24). Hand-written
+/* Publication P1 result: 284/284 bytes, 13 halfwords / 13 aligned edits.
+ * Separate add sp16 -> r8 -> store-address copy now survives before the
+ * callback store, but after the flag clear; early-copy admission not met.
+ * Options pseudo34 shrinks 59 to 57 insns (still 4 uses / 7 calls); zero46
+ * stays QI / 2 uses / 4 insns. Two early call setups regress. Complete loop,
+ * frame56 and all five pool words remain exact. -da equals normal assembly.
+ * Publication P1: Suhalla's one-pass byte publication preserved a separate
+ * temporary-to-saved pointer copy. Baseline options pseudo34 is already a
+ * USER local but reload forms its address after the QI clear, copying late.
+ * Test clear boundary before assigning o; admission is early options r8
+ * publication with frame56, complete loop body and five pools unchanged.
+ * NONMATCHING: 284 of 284 bytes, 11 halfword edits (2026-09-24). Hand-written
  * from the resolved disassembly as a single-overlay unit binding Engine_* at
  * their import veneers plus advance_effect_motion = 0x02009068 (thumb, the
  * effect update in MAP_INIT.C). Matched: the spray velocities (vz multiplies
@@ -69,8 +80,11 @@ void BabiChika_RunLeaderSpray(void)
     leader->velocity_y = 0x40000;
     Engine_ObjectSetPosition(leader, leader->x.fixed, leader->y.fixed, leader->z.fixed + 0xc0000);
     Engine_TaskWait(6);
+    /* FAKEMATCH: separate byte publication from options-pointer ownership. */
+    do {
+        *flags = 0;
+    } while (0);
     o = &options;
-    *flags = 0;
     o->update = advance_effect_motion;
     Engine_AudioPlayCue(127);
     for (i = 0; i < 8; i++) {

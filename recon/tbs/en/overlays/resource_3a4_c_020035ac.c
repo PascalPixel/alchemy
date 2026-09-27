@@ -1,4 +1,14 @@
-/* NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits
+/* NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits.
+ * Sol H3 2026-09-27: reuse n as rounding work before the frame loop.
+ * Full normalized diff and diagnostic assembly are baseline-identical.
+ * Combine/regmove erase the earlier n values: the final allocator keeps
+ * x=5 refs/31 length, z=5/27, n=7/38, sorted z then x then n after the
+ * three low-register owners. floor_log2(refs)*refs/length gives z 10/27,
+ * n 14/38, x 10/31. The close z/n rank is a fact, not a declaration tie.
+ * Prediction n=r8 is falsified; complete extent, frame and pool unchanged.
+ * Reject reuse-counter axis after one trial. No adoption or new DONE.
+ * H3 witness body is preserved in afb77e41c; the original candidate is restored.
+ * Historical facts:
  * (2026-09-27). H2 is byte-identical to the original baseline.
  * Whole extent [020035ac,02003668), pool included. Independent twin extent
  * [02003668,02003724) also scores 188/188, 5 halfwords/5 edits.

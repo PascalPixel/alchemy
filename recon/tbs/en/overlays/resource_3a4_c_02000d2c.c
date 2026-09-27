@@ -1,4 +1,12 @@
 /* NONMATCHING: inversion I2 408/404 bytes, 104 differing halfwords / 41 edits.
+ * 2026-09-27 Sol lane audit: fresh full and aligned normalized diffs agree
+ * with I2. Complete [02000d2c,02000ec0), all four pools, frame 4 and every
+ * phase exit/back-edge checked. The extra sine half-turn rematerialization
+ * and absent accumulator copy remain, together with actor/limit r8/sl roles.
+ * DRIFT's flag-store issue and Haidia's nullable-lookup lifetime have no
+ * matching source boundary here; Actor_Get already returns FieldActor *.
+ * Do not reopen the previously rejected early rotation snapshot or scope
+ * sweeps. This owner remains C not yet written; no alignment changes.
  * Canonical I2 body restored after rejected O1 witness in 1cf42a2d3.
  * Outward O1 (2026-09-27): snapshot the u16 sprite rotation at rise-loop
  * entry before advancing acc, then add its whole part to that snapshot.

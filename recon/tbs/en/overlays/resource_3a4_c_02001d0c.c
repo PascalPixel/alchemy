@@ -1,4 +1,38 @@
-/* NONMATCHING: 788 bytes, candidate 788, 24 differing halfwords, 22 halfword
+/* NONMATCHING: canonical H2 restored: 788/788 bytes, 24 differing halfwords,
+ * 22 aligned edits, complete extent [02001d0c,02002020), pools included.
+ * Sol H5 witness is preserved in 4c3cb3e05; H4 in 7b0e8236a. Both rejected
+ * publication trials are closed. Keep the original admitted ownership and
+ * pool boundary rather than the ordered-queue model's new pointer copies.
+ * The Haidia nullable-lookup witness has no corresponding early actor
+ * lifetime disagreement here: actor r7 and later phases already agree.
+ * All remaining bytes are C not yet written; no adoption or alignment credit.
+ * Sol H5 2026-09-27: 788/788 bytes, 288 differing halfwords,
+ * 81 aligned edits. Direct callback publication restores callback r6 and
+ * timer r8. Its pool word now precedes gravity's, as in the reference.
+ * Ordered active/timer/delay/gravity writes survive, but timer's early
+ * store forces its r8 reload; pointer calculations reverse, and the movhi
+ * zero still loads through r2 rather than r3. The initial block has one
+ * extra move; pool insertion moves the second motion argument load beyond
+ * the pool and the final alignment vanishes. No ownership was changed.
+ * Full normalized diff and diagnostic assembly checked. Semantic queue
+ * ordering alone cannot explain the reference's simultaneous pointer and
+ * literal live ranges. Reject H5; publication axis exhausted after H4/H5.
+ * H2 remains the canonical admitted 788/24/22 candidate; preserve this
+ * witness before restoring it. No adopted C or alignment bytes.
+ * Sol H4 2026-09-27: 792/788 bytes, 321 differing halfwords,
+ * 94 aligned edits. Prepare the callback before the reset queue; publish
+ * active/timer/delay/gravity in observed order using volatile field writes.
+ * Full normalized diff: queue order is recovered, but explicit callback
+ * lifetime steals r8 from timer, which now occupies r6. lreg gives callback
+ * p68 3 refs/252 length and timer p33 BASE_REGS; old shared callback p72
+ * instead owned r6. The initial extra move shifts the movhi zero pool beyond
+ * the second motion call; the resulting 4-byte growth fails the extent gate.
+ * Diagnostic assembly agrees with ordinary scoring. New fact: DRIFT's
+ * prepared-callback technique does not transfer across this long callback
+ * lifetime. Reject H4; retain its witness before a direct-publication trial.
+ * H4 witness preserved in 7b0e8236a. No adopted bytes or alignment changes.
+ * Historical canonical H2 follows:
+ * 788 bytes, candidate 788, 24 differing halfwords, 22 halfword
  * edits (2026-09-27). FieldScene_RunMultiPhasePresentation, meant for
  * FIELD/ARUTIN_YAMA/F_01D0C.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).

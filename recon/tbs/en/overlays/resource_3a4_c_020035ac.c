@@ -1,4 +1,5 @@
-/* NONMATCHING: 188/188 bytes, 55 differing halfwords / 45 aligned edits.
+/* NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits.
+ * H4 negative witness is preserved in a0d14b1cb; canonical body restored.
  * Sol H4 2026-09-27: start + (n + 1) * 0x400 produces each turn angle.
  * Initial u16 facing is masked to 0/0x4000/0x8000/0xc000; start is
  * 0x8000..0x14000 and the 16 angles are 0x8400..0x18000, without s32
@@ -6,7 +7,8 @@
  * Prediction: strength reduction retains angle induction and frame 12,
  * allocates n=r8, x=r9, z=sl, with identical calls, stores and all 188 bytes.
  * One model only; reject any extra multiply, prologue, spill or pool change.
- * Result: frame 12, extent 188 and final mask pool unchanged, but gate fails.
+ * Rejected trial: 188/188 bytes, 55 differing halfwords / 45 aligned edits.
+ * Its frame 12, extent 188 and final mask pool are unchanged, but gate fails.
  * Full normalized diff: the initial angle is now r5 (not r6), p is r6
  * (not r5), and the first step folds into start + 0x400 before the loop.
  * Subsequent angle increments move to the loop tail. Centre stores also
@@ -69,7 +71,6 @@ void Local_020035ac(struct FieldActor *object)
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
     s32 angle;
-    s32 start;
     s32 x;
     s32 z;
     s32 n;
@@ -82,11 +83,11 @@ void Local_020035ac(struct FieldActor *object)
     Main_08000128(0x180000, angle, p);
     x = (p[0].fixed + 0x80000) & 0xfff00000;
     z = (p[2].fixed + 0x80000) & 0xfff00000;
-    start = angle + 0x8000;
+    angle += 0x8000;
     Engine_ObjectSetAnimation(object, 5);
     Engine_AudioPlayCue(184);
     for (n = 0; n < 16; n++) {
-        angle = start + (n + 1) * 0x400;
+        angle += 0x400;
         p[0].fixed = x;
         p[2].fixed = z;
         Main_08000128(0x180000, angle, p);

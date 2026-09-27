@@ -2,6 +2,38 @@
   "format": 5,
   "units": [
     {
+      "id": "arutamira-room-visuals",
+      "source": "recon/tbs/en/overlays/resource_3bd_c_02000bc8.c",
+      "overlay": "resource_3bd",
+      "absolute_symbols": {
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200bd58",
+          "kind": "thumb"
+        },
+        "gGameStateRows": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_00000092": {
+          "address": "0x92",
+          "kind": "data"
+        },
+        "Data_00000097": {
+          "address": "0x97",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000bc8",
+          "extent": 100,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "babi-chika-leader-spray",
       "source": "recon/tbs/en/overlays/resource_3c4_c_020010c4.c",
       "overlay": "resource_3c4",

@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bd:02000bc8": {
+      "name": "ArutamiraDou_ApplyRoomVisuals"
+    },
     "resource_3c4:020010c4": {
       "name": "BabiChika_RunLeaderSpray"
     },

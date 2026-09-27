@@ -1,4 +1,13 @@
-/* NONMATCHING H7 2026-09-27: 568/560 bytes, 203 differing halfwords /
+/* REJECTED H8 2026-09-27 shared retry tail: 568/560 bytes, 158 differing
+ * halfwords / 106 aligned edits. Explicit first-to-final retry-failure
+ * goto emits the desired first ble/poll topology, but jump2 merges all
+ * three retry failures, including the ROM's separate second failure.
+ * Heap/index exchange r7/r8: admission fails despite the lower raw count.
+ * Frame32, word compaction and three independent send-result stores
+ * survive; map still reloads. Pools remain +8. Full normalized diff read.
+ * Checkpoint this rejected source, then restore admitted H7 at 9cedc5ed6.
+ * STOP shared-tail axis without a new causal fact. DONE/alignment +0.
+ * NONMATCHING H7 2026-09-27: 568/560 bytes, 203 differing halfwords /
  * 84 aligned edits. First retry counter now begins after Send: the exact
  * movs r5,#0 between the -1 materialization and result compare is restored.
  * All three independent r0 failure stores, frame32, heap r8 and word
@@ -136,8 +145,7 @@ s32 LinkLobby_SendPartyRecords(void)
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
                 if (++tries > 24) {
-                    result = -1;
-                    goto done;
+                    goto retry_failed;
                 }
             }
         }
@@ -203,6 +211,7 @@ next:
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
                 if (++tries > 24) {
+retry_failed:
                     result = -1;
                     goto done;
                 }

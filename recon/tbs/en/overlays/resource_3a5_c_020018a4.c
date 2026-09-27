@@ -1,4 +1,4 @@
-/* NONMATCHING: 888 bytes, candidate 852, 394 differing halfwords, 235
+/* NONMATCHING: 888 bytes, candidate 852, 394 differing halfwords, 230
  * aligned edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
@@ -49,7 +49,20 @@
  * shifted comparison after the store. Colour-loop mask/counter lifetime,
  * the timer's paired signed/unsigned reads, fill-loop precheck, sprite array
  * cursor and pool positions remain nonmatching. Retain this semantic model;
- * stop after ABI/layout model plus one follow-up. No new DONE bytes. */
+ * stop after ABI/layout model plus one follow-up. No new DONE bytes.
+ * Lamakan phase H1 (2026-09-27): compare the stored signed EFFECT_PHASE,
+ * rather than a narrow local assigned before the store. Prediction: store
+ * the full quotient first, then use the shifted halfword comparison with
+ * no pre-store arithmetic-right-shift. One complete-diff trial; frame,
+ * extent and pools plus production gates remain mandatory for adoption.
+ * H1 result: 852/888, 394 halfwords / 230 aligned edits, 12-byte frame.
+ * Quotient store and shifted signed comparison at reference 01aa2..01aae
+ * now have the exact registers and instruction order, apart from relocated
+ * pool/branch displacements. The phase pointer stays in r5 throughout the
+ * exact scroll-update operations. Retain; no local-phase spelling sweep.
+ * Separate timer evidence: GCSE's mem/s:HI union view forwards the just
+ * stored unsigned timer at the branch join and keeps a u16 increment local;
+ * reference instead compares the signed stored halfword and reloads it. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "TYPES.H"
@@ -200,12 +213,9 @@ void FieldScene_RunScene3a5SequenceA(void)
     }
 
     {
-        s16 phase;
-
         frame = Data_02000240_t.steps;
-        phase = (((frame << 4) - frame) << 3) / Data_02000240_t.limit;
-        EFFECT_PHASE = phase;
-        if (phase > 118)
+        EFFECT_PHASE = (((frame << 4) - frame) << 3) / Data_02000240_t.limit;
+        if (EFFECT_PHASE > 118)
             EFFECT_SCROLL = 0x77;
     }
     if (EFFECT_SCROLL != 0) {

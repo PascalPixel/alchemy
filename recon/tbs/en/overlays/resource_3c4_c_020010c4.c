@@ -28,7 +28,21 @@
  * does move the callback load first, but does not retain options early or
  * put zero in r5: 284 bytes, 82 halfwords, 29 aligned edits, with a new
  * trailing instruction-alignment halfword. Reject that lifetime model too;
- * the 11-halfword baseline below remains unchanged. */
+ * the 11-halfword baseline below remains unchanged.
+ *
+ * 2026-09-27 Mercury transfer audit: freshly scored the full owner and pool
+ * at 284 bytes / 11 differing halfwords / 11 aligned edits. No new model
+ * admitted. LAMP.C's plain Half zero shares an earlier HI angle-store zero;
+ * this owner has only the QI flag-clear producer (CSE pseudo 46, four-insn
+ * lifetime), with no earlier HI store. Its constructor and spin-zero store
+ * belong to the separately called COMMON/EFFECT/SPAWN.C, not this RTL body.
+ * Flags 0x1000001 select only options.update, so initializing a halfword
+ * option would add an unsupported store. The exact MAP_INIT.C callback and
+ * BABI_IRIGUCHI/BRANCHING_EVENT.C consumer confirm the existing layout.
+ * A phased flags/options pointer is also unsupported: both remain live
+ * through the loop, and flags is reused after the final sprite-flags call.
+ * Keep the baseline; do not repeat signed zero/vx reuse, callback staging,
+ * or store-order models without a new producer/consumer witness. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 

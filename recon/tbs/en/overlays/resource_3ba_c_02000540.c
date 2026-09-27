@@ -1,5 +1,5 @@
-/* NONMATCHING: 772 of 752 bytes, 280 differing halfwords, 127 aligned edits
- * (2026-09-26). Whole owner 02000540..02000830, pool 02000808..02000830;
+/* NONMATCHING: 772 of 752 bytes, 280 differing halfwords, 124 aligned edits
+ * (2026-09-27). Whole owner 02000540..02000830, pool 02000808..02000830;
  * call targets and pool audited against our own ROM. Retained as
  * korosseo-river-actor-map-candidate, without byte credit.
  *
@@ -15,11 +15,23 @@
  *    local: 772/280/127. The allocation/load/call block now matches, and
  *    flag result moves to sl as in the reference. Retained best corrected C.
  *
- * Remaining: actor pointer stays in sl instead of sp+8; height 34 lives in
- * r8 rather than r6, adding moves before each six-argument map call. Flag
+ * 2026-09-27 exact KOROSSEO_KAWA/COORDINATOR.C family transfer:
+ * H1: existing Map_CopyCells/Map_CopyCellAttributes call scopes give
+ * 772/280/124, retained versus 772/280/127. The final rectangle setup is
+ * now exact; long-lived destination coordinates do not change allocation.
+ * These services take destination column/row as their fifth/sixth arguments:
+ * the locals called height/width below actually hold column 34 and row 7/38.
+ * H2: also use the neighbour's GameFlag_Set/IsSet wrappers: 780/372/160.
+ * Flag 0x301 then reloads at each call as in the ROM, but the selected actor
+ * id spills (not its pointer), fp is saved, and motion constants diverge.
+ * Rejected; restore H1. Both complete normalized diffs/pools reviewed.
+ * No missing calls or new ownership fact warrant another allocation trial.
+ *
+ * Remaining: actor pointer stays in sl instead of sp+8; destination column
+ * 34 lives in r8 rather than r6, adding moves before each map call. Flag
  * 0x301 is shared across calls; later speed/acceleration allocation and pool
- * order differ. Next structural axis, if rebriefed: call-local geometry
- * ownership / helper expansion, not declaration permutations. Budget closed.
+ * order differ. Map/flag helper expansion is now bounded and closed; no
+ * declaration permutations or register-only variants. No DONE credit.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -69,8 +81,8 @@ void KorosseoKawa_MoveActorsAndMap(void)
     Engine_EventEnd();
     height = 34;
     width = 7;
-    Engine_MapCopyCellAttributes(37, 7, 1, 4, height, width);
-    Engine_MapCopyCellAttributes(36, 7, 1, 4, 37, width);
+    Map_CopyCellAttributes(37, 7, 1, 4, height, width);
+    Map_CopyCellAttributes(36, 7, 1, 4, 37, width);
     result = Engine_GameFlagIsSet(0x301);
     if (result != 0) {
         Engine_EventBegin();
@@ -78,15 +90,15 @@ void KorosseoKawa_MoveActorsAndMap(void)
         Engine_CameraMoveTo(0x2280000, -1, 0xc80000, 1);
         width = 38;
         Engine_CameraWaitForMove();
-        Engine_MapCopyCells(96, 29, 1, 3, height, width);
+        Map_CopyCells(96, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(97, 29, 1, 3, height, width);
+        Map_CopyCells(97, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(98, 29, 1, 3, height, width);
+        Map_CopyCells(98, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(99, 29, 1, 3, height, width);
+        Map_CopyCells(99, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(100, 29, 1, 3, height, width);
+        Map_CopyCells(100, 29, 1, 3, height, width);
         Engine_EventWait(15);
         Engine_EventEnd();
     } else {
@@ -102,15 +114,15 @@ void KorosseoKawa_MoveActorsAndMap(void)
         Engine_ObjectSetPosition(object, object->x.fixed, 0x80000, object->z.fixed);
         width = 38;
         Engine_ObjectSetAnimation(object, 3);
-        Engine_MapCopyCells(96, 29, 1, 3, height, width);
+        Map_CopyCells(96, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(97, 29, 1, 3, height, width);
+        Map_CopyCells(97, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(98, 29, 1, 3, height, width);
+        Map_CopyCells(98, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(99, 29, 1, 3, height, width);
+        Map_CopyCells(99, 29, 1, 3, height, width);
         Engine_EventWait(3);
-        Engine_MapCopyCells(100, 29, 1, 3, height, width);
+        Map_CopyCells(100, 29, 1, 3, height, width);
         object = Engine_ActorGet(14);
         object->motion_flags = (u8)result;
         object->speed = 0xcccc;
@@ -119,6 +131,6 @@ void KorosseoKawa_MoveActorsAndMap(void)
         Engine_ObjectCommitPosition(object);
         Engine_EventWait(15);
         Engine_EventEnd();
-        Engine_MapCopyCellAttributes(43, 12, 1, 1, 41, 12);
+        Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
     }
 }

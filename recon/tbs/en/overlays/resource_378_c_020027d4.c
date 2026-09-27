@@ -28,6 +28,14 @@
  * named table is now hoisted and all five pool words have the reference
  * order; however cursor pseudo 48 remains r6 across four calls, displacing
  * the table into sl and adding a second high-register save. Not admitted.
+ * H2: the initialized resource handle and cursor share one frame owner;
+ * initialization writes both, updates publish the same cursor, release
+ * consumes that handle. Test this aggregate lifetime without another helper
+ * or changing the proven 12-byte object. Admission remains per-call sp+8
+ * cursor rematerialization with the original single high-register save.
+ * H2 result: 328/312 bytes, 162 halfwords, 55 aligned edits. The aggregate
+ * retains both cursor and handle addresses, adding r9/sl saves; the handle
+ * reload becomes indirect instead of sp+4. Reject this lifetime model.
  */
 #include "TYPES.H"
 
@@ -41,6 +49,11 @@ struct Work;
 
 struct TextObject {
     u8 storage[12];
+};
+
+struct TextCursorResource {
+    s32 handle;
+    struct TextObject cursor;
 };
 
 void Engine_ActorSetPosition();
@@ -79,8 +92,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 
 s32 ShindenHeya_ChooseRestartOption(void)
 {
-    struct TextObject cursor;
-    s32 handle;
+    struct TextCursorResource resource;
     struct Work *win;
     s32 text;
     s32 sel;
@@ -103,19 +115,19 @@ s32 ShindenHeya_ChooseRestartOption(void)
         Engine_DebugDrawTextResource(text + 2, win, 16, 16);
     else
         Engine_DebugDrawTextResource(text + 1, win, 16, 16);
-    UiTextResource_InitializeFar(&cursor, &handle);
-    UiTextResource_SetPositionFar(&cursor, 72, 60);
+    UiTextResource_InitializeFar(&resource.cursor, &resource.handle);
+    UiTextResource_SetPositionFar(&resource.cursor, 72, 60);
     sel = 0;
     if ((Data_03001c94 & 1) == 0) {
         tbl = Data_0200c11c;
         do {
             if ((Data_03001b04 & 192) != 0)
                 sel ^= 1;
-            UiTextResource_SetPositionFar(&cursor, tbl[(Data_03001800 >> 1) & 15] + 24, (sel << 4) + 60);
+            UiTextResource_SetPositionFar(&resource.cursor, tbl[(Data_03001800 >> 1) & 15] + 24, (sel << 4) + 60);
             Engine_EventWait(1);
         } while ((Data_03001c94 & 1) == 0);
     }
-    UiTextResource_ReleaseFar(handle);
+    UiTextResource_ReleaseFar(resource.handle);
     Engine_DebugFinalizeWindow(win, 1);
     return sel;
 }

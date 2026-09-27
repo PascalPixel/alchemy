@@ -1,5 +1,12 @@
-/* NONMATCHING: resource_370:02000de4; 1008 / 1024 bytes, 479 differing
- * halfwords, 416 wrong instructions, 258 aligned edits (2026-09-27 H2).
+/* NONMATCHING: resource_370:02000de4; 1004 / 1024 bytes, 479 differing
+ * halfwords, 444 wrong instructions, 286 aligned edits (2026-09-27 Sol H1).
+ * Sol H1 owns the complete quantity scan in the caller instead of an
+ * inline return boundary. Complete normalized diff read: the key still
+ * spills at sp+0, the inventory base still hoists, and the frame stays
+ * 68 instead of 64. Quantity truncation moves after the sign test and
+ * the pool stays late. Rejected; commit preserves this negative witness.
+ * TITLE 020002e8 was already exact at base 6b0d228d3: no new function
+ * bytes or alignment bytes. Both production ROMs compare byte-identical.
  * Complete owner 02000de4..020011e4, including both literal-pool groups.
  * The save-menu caller passes (unused, password mode, output), then adds
  * a checksum and calls exact Clear_EncodePassword. Import 02009444 calls
@@ -210,7 +217,17 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                 (struct OwnerInventoryState *)Engine_OwnerGetState(Data_020096c0[i]);
             s32 j;
             for (j = 0; j != 23; j++) {
-                u16 property = Password_FindItemQuantity(state, Data_020096ec[j]);
+                u16 property = 0;
+                u16 target = Data_020096ec[j];
+                u16 *code = state->inventory;
+                s32 k;
+
+                for (k = 0; k != 15; k++) {
+                    u32 item = *code++;
+
+                    if ((item & 0x1ff) == target)
+                        property = (item & 0xf800) >> 11;
+                }
                 if (bit < 0) {
                     out[p] += property >> -bit;
                     p++;

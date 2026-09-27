@@ -34,7 +34,8 @@
  * but member moves r7 -> r8 throughout the owner, rotating work/frame/puff
  * roles and adding 20 bytes. Reject globally; the result shows width is not
  * independently live across Trig_Sin in the reference source model.
- * Restore canonical H1 (964/964, 143 halfwords, 99 edits) after this witness.
+ * Canonical H1 restored: 964/964, 143 halfwords, 99 edits; all witnesses
+ * remain committed separately. Retain the semantic/interface corrections.
  * Three hypotheses complete. No credit and no further cursor/order sweeps.
  */
 #include "TYPES.H"
@@ -203,11 +204,9 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
                 s32 x;
                 s32 angle;
 
-                /* FAKEMATCH: choose the cell before projection to test the
-                 * reference's saved width lifetime across Trig_Sin. */
-                size = (member & 1) + 3;
                 x = ((s16 *)&particle->x)[1]
                     + ((Trig_Sin(particle->z) * 4) >> 16);
+                size = (member & 1) + 3;
                 draw[1](canvas, (u8 *)sheet + Data_080ede48[size - 1],
                     x - ((u32)size >> 1),
                     ((s16 *)&particle->y)[1] - size, size, size * 2);

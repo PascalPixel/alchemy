@@ -28,6 +28,12 @@
  * registers versus canonical 14. Setup scratches remain r2/r3; loop/tail,
  * extent and pool placement fail admission. Canonical actor-ID body restored;
  * this slot-owned model is closed, with no causal followup or adoption. */
+/* 2026-09-27 continuation: a flat signed-byte table keeps the 316-byte
+ * extent but reverses the indexed add (7 edits); actor-first indexing restores
+ * the canonical 6-edit output. An array of six-byte records changes the
+ * initial loads and shrinks to 304 bytes/49 edits. A shared inline accessor
+ * compiles to the canonical six edits. None changes the setup r2/r3 ownership;
+ * retain the two-dimensional table and the exact loop/tail draft. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

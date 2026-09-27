@@ -6,13 +6,34 @@
       "source": "recon/tbs/en/overlays/resource_3bc_c_0200004c.c",
       "overlay": "resource_3bc",
       "absolute_symbols": {
-        "Engine_ActorGet": {"address": "0x0200ca18", "kind": "thumb"},
-        "Engine_ActorSetAnimation": {"address": "0x0200ca70", "kind": "thumb"},
-        "Engine_MapCopyCellAttributes": {"address": "0x0200c940", "kind": "thumb"},
-        "gEventWork": {"address": "0x03001ebc", "kind": "data"},
-        "gGameState": {"address": "0x02000240", "kind": "data"}
+        "Engine_ActorGet": {
+          "address": "0x0200ca18",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200ca70",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellAttributes": {
+          "address": "0x0200c940",
+          "kind": "thumb"
+        },
+        "gEventWork": {
+          "address": "0x03001ebc",
+          "kind": "data"
+        },
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        }
       },
-      "owners": [{"address": "0x0200004c", "extent": 316, "state": "not-yet-c"}],
+      "owners": [
+        {
+          "address": "0x0200004c",
+          "extent": 316,
+          "state": "not-yet-c"
+        }
+      ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     },
@@ -21,16 +42,46 @@
       "source": "recon/tbs/en/overlays/resource_3b7_c_020004bc.c",
       "overlay": "resource_3b7",
       "absolute_symbols": {
-        "Engine_EventBegin": {"address": "0x0200991c", "kind": "thumb"},
-        "Engine_EventEnd": {"address": "0x02009924", "kind": "thumb"},
-        "Engine_EventWait": {"address": "0x02009914", "kind": "thumb"},
-        "Engine_AudioPlayCue": {"address": "0x020099c4", "kind": "thumb"},
-        "Engine_MapCopyCellsTo": {"address": "0x0200989c", "kind": "thumb"},
-        "Engine_ObjectMotionArmCallback": {"address": "0x0200997c", "kind": "thumb"},
-        "Engine_ItemShowFound": {"address": "0x020099a4", "kind": "thumb"},
-        "Engine_PartyGiveItem": {"address": "0x0200992c", "kind": "thumb"}
+        "Engine_EventBegin": {
+          "address": "0x0200991c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x02009924",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009914",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x020099c4",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200989c",
+          "kind": "thumb"
+        },
+        "Engine_ObjectMotionArmCallback": {
+          "address": "0x0200997c",
+          "kind": "thumb"
+        },
+        "Engine_ItemShowFound": {
+          "address": "0x020099a4",
+          "kind": "thumb"
+        },
+        "Engine_PartyGiveItem": {
+          "address": "0x0200992c",
+          "kind": "thumb"
+        }
       },
-      "owners": [{"address": "0x020004bc", "extent": 964, "state": "not-yet-c"}],
+      "owners": [
+        {
+          "address": "0x020004bc",
+          "extent": 964,
+          "state": "not-yet-c"
+        }
+      ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     },
@@ -833,7 +884,7 @@
     {
       "id": "suhara-actor-scale-blend-candidate",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3c0_c_02000594.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/RESTORE_ACTOR_SCALE.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
       "absolute_symbols": {
@@ -942,7 +993,7 @@
         {
           "address": "0x02000594",
           "extent": 616,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ]
     },
@@ -89159,20 +89210,62 @@
       "source": "recon/tbs/en/overlays/resource_3a4_c_020002cc.c",
       "overlay": "resource_3a4",
       "absolute_symbols": {
-        "Engine_ActorGet": {"address": "0x0200bb98", "kind": "thumb"},
-        "Engine_EventBegin": {"address": "0x0200bb70", "kind": "thumb"},
-        "Engine_ActorSetAnimation": {"address": "0x0200bbf0", "kind": "thumb"},
-        "Engine_EventWait": {"address": "0x0200bb68", "kind": "thumb"},
-        "Engine_AudioPlayCue": {"address": "0x0200bd20", "kind": "thumb"},
-        "Engine_ActorSetSpeed": {"address": "0x0200bba0", "kind": "thumb"},
-        "Engine_ObjectSetPosition": {"address": "0x0200baf8", "kind": "thumb"},
-        "Engine_TaskWait": {"address": "0x0200ba78", "kind": "thumb"},
-        "Engine_ActorWaitForMove": {"address": "0x0200bbe0", "kind": "thumb"},
-        "Engine_EventEnd": {"address": "0x0200bb78", "kind": "thumb"},
-        "ArutinYama_RunRollingObject": {"address": "0x0200b850", "kind": "thumb"},
-        "Main_0808a5e8": {"address": "0x0200bd18", "kind": "thumb"}
+        "Engine_ActorGet": {
+          "address": "0x0200bb98",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200bb70",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x0200bbf0",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200bb68",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200bd20",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x0200bba0",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200baf8",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200ba78",
+          "kind": "thumb"
+        },
+        "Engine_ActorWaitForMove": {
+          "address": "0x0200bbe0",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200bb78",
+          "kind": "thumb"
+        },
+        "ArutinYama_RunRollingObject": {
+          "address": "0x0200b850",
+          "kind": "thumb"
+        },
+        "Main_0808a5e8": {
+          "address": "0x0200bd18",
+          "kind": "thumb"
+        }
       },
-      "owners": [{"address": "0x020002cc", "extent": 188, "state": "not-yet-c"}],
+      "owners": [
+        {
+          "address": "0x020002cc",
+          "extent": 188,
+          "state": "not-yet-c"
+        }
+      ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     }

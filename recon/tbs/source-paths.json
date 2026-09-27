@@ -92,7 +92,8 @@
       "name": "TakaraHashira_UpdatePillarActors"
     },
     "resource_3c0:02000594": {
-      "name": "SuharaSabaku_RestoreActorScaleAndBlend"
+      "name": "SuharaSabaku_RestoreActorScaleAndBlend",
+      "source": "FIELD/SUHARA_SABAKU/RESTORE_ACTOR_SCALE.C"
     },
     "resource_3ba:02000540": {
       "name": "KorosseoKawa_MoveActorsAndMap"

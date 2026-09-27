@@ -15,7 +15,28 @@
  * Full remaining model: counter address/value r8/r6 instead of r6/r8;
  * consequently scratch copies, cue setup, idle turn-y r6/r7, branch/table
  * positions and pool reach differ. Both owners retain complete pools.
- * STOP: one model plus one structural follow-up; no complete owner exact. */
+ * STOP: one model plus one structural follow-up; no complete owner exact.
+ *
+ * 2026-09-27 central family audit, after checkpoint e2a4a087:
+ * H3 transfers FIELD_EFFECT.H's union FieldObject ownership pattern, joining
+ * the actor and bird views without changing calls, control flow or stores.
+ * Exact FUNE_KANPAN/FLY_BY_21.C and FLY_BY_22.C remain the call precedents;
+ * their Call3/Call4 boundary was already transferred above, not retried.
+ * Full own-ROM extent is [020000c4,020002ec), including the dispatch table
+ * and all seven trailing pool words. Fresh baseline and H3 both score
+ * 560/552 bytes, 240 differing halfwords, 73 aligned edits. The only H3
+ * assembly change moves the case-7 state-pointer copy past the second
+ * turn halfword store; there is no byte gain or missing-call repair.
+ * Allocator evidence: the loaded state (pseudo 34) gets r6; the persistent
+ * object+0x62 byte pointer (pseudo 36) is allocated last and gets r8.
+ * The reference instead keeps that pointer in r6 and the initial state in
+ * r8. H3 leaves this lifetime/order unchanged, hence the excess copies,
+ * 8-byte growth and shifted branch/table/pool locations. The first position
+ * call's shift order and idle turn-y pointer also remain different.
+ * Keep the coherent union model as a draft; the previous model is in Git.
+ * No second new helper boundary is supported by the exact sibling audit.
+ * STOP this ownership-union axis: no declaration, pointer or register sweep.
+ * Neither this callback nor its 020002ec twin is newly exact. DONE +0. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -27,7 +48,11 @@ struct DeckBird {
     s16 turn_y;
 };
 
-#define BIRD(obj) ((struct DeckBird *)(obj))
+/* As in FIELD_EFFECT.H, the callback owns one record with two views. */
+union DeckObject {
+    struct FieldActor actor;
+    struct DeckBird bird;
+};
 
 /* FAKEMATCH: the exact fly-by siblings pass constants through these
  * inline call interfaces to preserve argument-register construction. */
@@ -41,8 +66,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 Func_020000c4(struct FieldActor *obj)
+s32 Func_020000c4(union DeckObject *work)
 {
+    struct FieldActor *obj = &work->actor;
     u32 step;
 
     step = obj->rise_counter;
@@ -87,10 +113,10 @@ s32 Func_020000c4(struct FieldActor *obj)
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x && obj->target_z == obj->target_y) {
                 obj->speed = 0x20000;
                 obj->acceleration = 0x10000;
-                BIRD(obj)->turn_x = 0;
-                BIRD(obj)->turn_y = 0;
+                work->bird.turn_x = 0;
+                work->bird.turn_y = 0;
                 obj->rise_counter++;
-                BIRD(obj)->drift = 0;
+                work->bird.drift = 0;
             }
             break;
         case 8:
@@ -98,29 +124,29 @@ s32 Func_020000c4(struct FieldActor *obj)
             break;
         }
     } else {
-        if (BIRD(obj)->turn_x != 0) {
-            BIRD(obj)->drift -= ((u32)Engine_RandomNext() << 12) >> 16;
-            if (BIRD(obj)->drift < -0x4000) {
-                BIRD(obj)->turn_x = step;
+        if (work->bird.turn_x != 0) {
+            work->bird.drift -= ((u32)Engine_RandomNext() << 12) >> 16;
+            if (work->bird.drift < -0x4000) {
+                work->bird.turn_x = step;
             }
         } else {
-            BIRD(obj)->drift += ((u32)Engine_RandomNext() << 12) >> 16;
-            if (BIRD(obj)->drift > 0x4000) {
-                BIRD(obj)->turn_x = 1;
+            work->bird.drift += ((u32)Engine_RandomNext() << 12) >> 16;
+            if (work->bird.drift > 0x4000) {
+                work->bird.turn_x = 1;
             }
         }
         if (obj->x.fixed > 0xf80000 && obj->x.fixed < 0x1240000) {
-            obj->x.fixed += BIRD(obj)->drift;
+            obj->x.fixed += work->bird.drift;
         }
-        if (BIRD(obj)->turn_y != 0) {
+        if (work->bird.turn_y != 0) {
             obj->y.fixed = obj->y.fixed - (((u32)Engine_RandomNext() << 15) >> 16) - 0x8000;
             if (obj->y.fixed < 0) {
-                BIRD(obj)->turn_y = 0;
+                work->bird.turn_y = 0;
             }
         } else {
             obj->y.fixed = obj->y.fixed + (((u32)Engine_RandomNext() << 15) >> 16) + 0x8000;
             if (obj->y.fixed > 0x80000) {
-                BIRD(obj)->turn_y = 1;
+                work->bird.turn_y = 1;
             }
         }
     }

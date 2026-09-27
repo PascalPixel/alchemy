@@ -1,4 +1,26 @@
-/* NONMATCHING: 892 of 892 bytes, 2 differing halfwords (2026-09-24). Flag
+/* REJECTED H1: 892/892 bytes, 5 halfwords / 5 aligned edits (2026-09-27).
+ * One numeric owner for the packed speaker request gives exactly one SI
+ * pool word, but fails reload admission. cse changes insn 885 from the
+ * numeric constant to saved pseudo 38; greg assigns it r5. sched2 then
+ * hoists the r5 initialization above EventSetMessage. The complete diff
+ * has no other regions; all thirteen pool words/offsets match. -da assembly
+ * is identical to ordinary compilation. Preserve this counterexample in
+ * Git, then retain the admitted mixed-constant preload witness instead.
+ * No new DONE bytes. No wrapper/declaration/width sweep is justified.
+ *
+ * H1 hypothesis: one numeric owner for the packed speaker request.
+ * Inversion admission: reload speaker into r0 from the pool, not r5.
+ * Historical preload output reproduces this load but has two words: the
+ * numeric 40987 and Value_0000a01b. arm.c's add_minipool_forward_ref requires
+ * equal RTL code, mode and value, so linker equality cannot deduplicate them.
+ * Current CSE already shares symbol pseudo 180 before allocation; greg maps
+ * it to r5 and the call operand remains a copy. Replace the artificial link
+ * constant across this owner, retaining the explicit saved speaker lifetime.
+ * Predict one SI pool word and the r0 reload; inspect any earlier r5 hoist
+ * separately. Budget two causal models, 25 minutes. Require whole 892 bytes
+ * including pools, repeat, compare-all/coverage/verify for adoption.
+ *
+ * Previous NONMATCHING: 892 of 892 bytes, 2 differing halfwords (2026-09-24). Flag
  * branches restructured from the listing (0x92b/0x929 walk to x 0x1d6,
  * 0x92a/else to 0x19a). The 0x1b0 x coordinate lands in r8 because v7 = 0 is
  * set early in the branch (sched2 sinks it), and 0xa01b is a Value_ link
@@ -56,7 +78,7 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-extern u8 Value_0000a01b;
+enum { CabinSpeakerRequest = 0xa01b };
 
 void Func_02004254(s32 a0)
 {
@@ -90,7 +112,7 @@ void Func_02004254(s32 a0)
         Engine_EventWait(20);
         Engine_ActorFaceEachOther(27, 0, 10);
         Call1(Engine_EventSetMessage, 0x1ebc);
-        Call1(FieldScene_RunStepThen10, (s32)&Value_0000a01b);
+        Call1(FieldScene_RunStepThen10, CabinSpeakerRequest);
         Engine_ActorSetAnimationAndWait(0, 3);
         v7 = 0;
         Call3(Engine_ActorSetSpeed, 0, 0x10000, v6);
@@ -152,9 +174,9 @@ void Func_02004254(s32 a0)
         goto L_02004592;
     }
     Call1(Engine_EventSetMessage, 0x1eb7);
-    Event_ShowMessageAndWait((s32)&Value_0000a01b, 0, 40);
+    base5_a01b = CabinSpeakerRequest;
+    Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
     Call3(Engine_ActorShowEmote, 27, 0x101, 60);
-    base5_a01b = (s32)&Value_0000a01b;
     FieldScene_RunStepThen10(base5_a01b);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
     Engine_EventWait(60);

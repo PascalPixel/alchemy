@@ -1,4 +1,23 @@
-/* NONMATCHING: inversion I1 404/404 bytes, 125 differing halfwords / 63 edits.
+/* NONMATCHING: inversion I2 408/404 bytes, 104 differing halfwords / 41 edits.
+ * Retained canonical model (2026-09-27): structured loops with named phase
+ * exits, not break. All three ROM control-flow admission checks now pass:
+ * fall through into the update body, conditionally exit forward, then wait
+ * (and reload rotation in fall/settle) before an unconditional back-edge.
+ * The reference exit sites are 0db6/0dee/0e4c; back-edges are 0dbe/0df8/0e56.
+ * Full normalized diff: topology equal, frame 4, four pool words retained.
+ * Baseline was 408/404, 152 differing halfwords / 69 edits, topology different.
+ * I2 keeps LOOP_BEG/CONT/END annotations while goto's named label is not
+ * expand_end_loop's recognized loop-end label. loop.c reports no final
+ * conditional branch; flow2 shows each preheader falling into its update
+ * block, with the wait block returning unconditionally. Diagnostic -da
+ * assembly equals ordinary compilation. No code-generation flags changed.
+ * Residual: actor/limit r8/sl roles, first rotation-load/add ordering,
+ * settle's half-turn setup and rematerialization instead of add r0,fp,
+ * its missing accumulator copy, plus resulting displacements/alignment.
+ * Both structural trials are complete. Preserve this admitted topology;
+ * do not resume angle/ownership/declaration sweeps. No new DONE bytes.
+ *
+ * Inversion I1 404/404 bytes, 125 differing halfwords / 63 edits.
  * Complete normalized diff inspected (2026-09-27). Explicit phase labels
  * restore direct update-body entry, forward exit branches, and wait/reload
  * followed by an unconditional back-edge in all three phases. Frame grows
@@ -68,13 +87,14 @@ void ArutinYama_SwingActorIntoSetPiece(void)
     Audio_PlayCue(0x121);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     Event_Wait(20);
+    /* FAKEMATCH: named phase exits preserve direct loop entry while keeping
+     * the structured-loop annotations needed for the four-byte frame. */
     {
         union SwingAngle acc;
 
         acc.fixed = 0;
         limit = 0x8fff;
-rise:
-        {
+        for (;;) {
             acc.fixed += 0x80000;
             sprite->rotation += acc.part.whole;
             c = Math_Cos(sprite->rotation + 0x4000);
@@ -83,7 +103,6 @@ rise:
             if (angle > limit)
                 goto risen;
             Task_Wait(1);
-            goto rise;
         }
 risen:;
     }
@@ -92,8 +111,7 @@ risen:;
 
         acc.fixed = 0;
         limit = 0x7000;
-fall:
-        {
+        for (;;) {
             acc.fixed += 0x80000;
             sprite->rotation = angle - acc.part.whole;
             c = Math_Cos(sprite->rotation + 0x4000);
@@ -103,7 +121,6 @@ fall:
                 goto fallen;
             Task_Wait(1);
             angle = sprite->rotation;
-            goto fall;
         }
 fallen:;
     }
@@ -112,8 +129,7 @@ fallen:;
 
         half = 0x8000;
         acc.fixed = 0x80000;
-settle:
-        {
+        for (;;) {
             acc.fixed = (acc.part.whole + (acc.fixed >> 19)) << 16;
             limit = acc.part.whole;
             sprite->rotation = limit + angle;
@@ -126,7 +142,6 @@ settle:
                 goto settled;
             Task_Wait(1);
             angle = sprite->rotation;
-            goto settle;
         }
 settled:;
     }

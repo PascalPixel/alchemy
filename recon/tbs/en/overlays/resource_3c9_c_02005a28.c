@@ -1,4 +1,4 @@
-/* NONMATCHING: 360 bytes, candidate 360, 60 differing halfwords / 39 edits.
+/* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -62,7 +62,9 @@
  * source-null copy, factory arguments, zero lifetime and pool remain wrong.
  * Three bounded models exhausted; preserve each in Git, then restore the
  * simpler 358/55/55 baseline. No new source-interface fact admits another
- * trial. No DONE or alignment credit; exact consumers remain untouched. */
+ * trial. H3 is 36c683a70, H4 d71c79f84, H5 41f33c962. The canonical body
+ * below is restored and byte-compared with the initial 358/55/55 baseline.
+ * No DONE or alignment credit; exact consumers remain untouched. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -78,25 +80,13 @@ extern u8 Value_0ffff000;
 
 void VinasuChojo_UpdateOrbitingSpark(union FieldObject *object);
 
-struct Half {
-    u16 value;
-};
-
-/* FAKEMATCH: the Title destination-first boundary retains the shared HI
- * zero producer used by the exact lamp creator's angle initialization. */
-static __inline__ void InitializeAngle(struct FieldActor *destination, u32 angle, struct Half *zero)
-{
-    destination->unknown_64 = angle;
-    zero->value = 0;
-}
-
 void VinasuChojo_SpawnRisingSparks(void)
 {
     struct FieldActor *source = Engine_ActorGet(23);
     struct FieldView *view = Data_03001e70;
     s32 offset = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
     struct FieldActor *spark;
-    struct Half zero;
+    u8 zero;
     struct FieldSprite *sprite;
     u32 phase;
 
@@ -124,13 +114,13 @@ void VinasuChojo_SpawnRisingSparks(void)
                 Engine_ObjectSetScript(spark, Data_0200e734);
                 Engine_ObjectSetPalette(spark, 5);
                 spark->motion_flags = phase;
-                InitializeAngle(spark,
-                    Engine_RandomNext() & (u32)&Value_0ffff000, &zero);
+                spark->unknown_64 = Engine_RandomNext() & (u32)&Value_0ffff000;
+                zero = (u8)(u32)&Value_00000000;
                 spark->unknown_66 = phase;
                 *(struct FieldActor **)spark->unknown_68 = source;
                 spark->update = VinasuChojo_UpdateOrbitingSpark;
                 spark->speed = (Engine_MathSin((offset & 0xfffff) >> 4) * 24) >> 16;
-                sprite->flags = zero.value;
+                sprite->flags = zero;
                 sprite->priority = source->sprite->priority;
             }
         }

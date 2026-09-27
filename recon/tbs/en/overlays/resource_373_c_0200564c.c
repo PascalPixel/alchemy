@@ -1,4 +1,17 @@
-/* Draft, not-yet-c. H7 entry coordinate lifetime: 220/224, 72 HW / 49 edits.
+/* Draft, not-yet-c. H8 separate failure arms: 224/224, 9 HW / 9 edits.
+ * 2026-09-27: transfer SHIAN_MURA/ACTOR_TRACKING.C's nested condition and
+ * per-condition literal-zero publication, keeping Haidia's byte widths.
+ * Unlike H4's two-predecessor miss label, local CSE knows incoming force
+ * is zero in each separate failure arm. All four byte stores become the
+ * QI subreg of user force 35, with no independent zero producer. Force now
+ * has seven uses / 52 instructions / four calls; late tail merging recovers
+ * the ROM's shared failure arm while preserving separate success stores.
+ * Complete pool, frame, pos r8, state sl and flag r9 now match. Residual is
+ * solely force r7 versus tpos r6 (reference r6/r7): allocation order starts
+ * actor32, tpos38, force35, pos37. No exact credit; the complete role
+ * invariant remains unadmitted. Entry-lifetime H7 is preserved at 5be983472.
+ *
+ * H7 entry coordinate lifetime: 220/224, 72 HW / 49 edits.
  * 2026-09-27: transfer the exact KUUPUAPPU_MURA/FACING_RANGE.C and
  * KUUPUAPPU_MURA_SAI/MOTION_EVENT.C entry-owned coordinate pointers, keeping
  * this owner's early tracking return, byte widths and canonical void ABI.
@@ -95,38 +108,35 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     u32 dir;
 
     result = 0;
-    /* FAKEMATCH: the proximity-family coordinate owner begins at entry. */
-    pos = &obj->x.fixed;
-    tpos = &target->x.fixed;
     if (obj->unknown_5b == 1) {
         if (obj->rise_counter == 0) {
             Engine_ObjectSetAnimation(obj, 1);
             return 1;
         }
     }
-    if (Runtime_ComputeFixedPointDistance(tpos, pos) >= range && force == 0)
-        goto miss;
-    angle = (u16)Main_08000100(target->z.fixed - obj->z.fixed, *tpos - *pos);
-    left = (angle - 0x1000) & 0xf000;
-    right = (angle + 0x1000) & 0xf000;
-    angle &= 0xf000;
-    dir = obj->facing & 0xf000;
-    if (angle != dir && right != dir && left != dir && force == 0)
-        goto miss;
-    /* FAKEMATCH: plain-byte publication, as in WORLD_MAP/LINKED_EFFECTS.C,
-     * avoids the aggregate store's synthetic QImode zero/mask producer. */
-    *(u8 *)&obj->unknown_5b = 1;
-    Engine_ObjectSetAnimation(obj, 1);
-    result = 1;
-    /* FAKEMATCH: keep the success flag store inside its own control scope. */
-    do {
-        *(u8 *)&obj->rise_counter = result;
-    } while (0);
-    goto done;
-miss:
-    *(u8 *)&obj->unknown_5b = force;
-    Engine_ObjectSetAnimation(obj, 2);
-    *(u8 *)&obj->rise_counter = force;
-done:
+    pos = &obj->x.fixed;
+    tpos = &target->x.fixed;
+    if (Runtime_ComputeFixedPointDistance(tpos, pos) < range || force != 0) {
+        angle = (u16)Main_08000100(target->z.fixed - obj->z.fixed, *tpos - *pos);
+        left = (angle - 0x1000) & 0xf000;
+        right = (angle + 0x1000) & 0xf000;
+        angle &= 0xf000;
+        dir = obj->facing & 0xf000;
+        if (angle == dir || right == dir || left == dir || force != 0) {
+            /* FAKEMATCH: plain-byte publication avoids synthetic QI masks. */
+            *(u8 *)&obj->unknown_5b = 1;
+            Engine_ObjectSetAnimation(obj, 1);
+            result = 1;
+            *(u8 *)&obj->rise_counter = result;
+        } else {
+            *(u8 *)&obj->unknown_5b = 0;
+            Engine_ObjectSetAnimation(obj, 2);
+            *(u8 *)&obj->rise_counter = 0;
+        }
+    } else {
+        *(u8 *)&obj->unknown_5b = 0;
+        Engine_ObjectSetAnimation(obj, 2);
+        *(u8 *)&obj->rise_counter = 0;
+    }
     return result;
 }

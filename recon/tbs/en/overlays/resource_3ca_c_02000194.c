@@ -1,4 +1,9 @@
-/* NONMATCHING: ship H2 2026-09-27, candidate 528/556, 267 differing
+/* NONMATCHING: ship H3 2026-09-27, candidate 558/556, 244 differing
+ * halfwords, 39 aligned edits. A separate u16 reload adds sign-extension
+ * shifts before the halfword I/O store, losing H1's admitted transfer shape.
+ * Full normalized diff read. Stop the scroll-local axis after this negative
+ * result; restore H1's direct halfword transfer as the useful draft.
+ * ship H2 2026-09-27, candidate 528/556, 267 differing
  * halfwords, 123 aligned edits. Separate nullable spawn actor lifetime,
  * transferred from exact HAIDIA_IE/EXTENDED_SEQUENCE.C 3c4fe6cee, regresses
  * all four height blocks: they no longer retain actor pointers in r5, and
@@ -95,10 +100,13 @@ void BabiFune_UpdateWaves(void)
 
     map = Data_03001e70;
     if (Data_020097e8 != 0) {
+        u16 value;
+
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
         /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */
         scroll[0] = Data_020097f0 + ((bob + 8) << 8);
-        *(volatile u16 *)0x04000052 = scroll[0];
+        value = scroll[0];
+        *(volatile u16 *)0x04000052 = value;
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {
@@ -132,23 +140,21 @@ void BabiFune_UpdateWaves(void)
         Data_02009800++;
     }
     if (Data_020097f8 != 0 && (gFrameCount & 1) != 0) {
-        struct FieldActor *obj;
-
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        obj = SpawnDriftingObject(&work, &buf, x, z);
-        if (obj != 0) {
-            obj->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
-            obj->unknown_64 = 60;
+        actor = SpawnDriftingObject(&work, &buf, x, z);
+        if (actor != 0) {
+            actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
+            actor->unknown_64 = 60;
             /* FAKEMATCH: a halfword zero retains the short literal-pool reach. */
             zero.v = 0;
-            obj->unknown_66 = 1;
-            obj->motion_flags = zero.v;
-            obj->priority_flags = 2;
-            obj->sprite->priority = 2;
-            Engine_ObjectSetBlendMode(obj, 0);
-            Engine_ObjectSetAnimation(obj, 0);
+            actor->unknown_66 = 1;
+            actor->motion_flags = zero.v;
+            actor->priority_flags = 2;
+            actor->sprite->priority = 2;
+            Engine_ObjectSetBlendMode(actor, 0);
+            Engine_ObjectSetAnimation(actor, 0);
         }
     }
 }

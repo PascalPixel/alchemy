@@ -19,10 +19,25 @@
  * allocator diagnostic identifies the cursor expression as pseudo 48,
  * five uses across 43 instructions. Stop at the checkpoint; do not sweep
  * pointer spellings without another ownership/control-flow hypothesis.
+ * 2026-09-27 H1: reuse Menu_RunSelection's typed window interface and
+ * FLAG_GRID_INPUT.C's named volatile key objects, plus a named bob array.
+ * The reference retains the table in r8, not the cursor address. Prediction:
+ * this separates immutable table ownership from the per-frame cursor calls;
+ * require stack-address rematerialization and the full 312-byte/pool match.
+ * H1 result: 320/312 bytes, 158 differing halfwords, 49 aligned edits. The
+ * named table is now hoisted and all five pool words have the reference
+ * order; however cursor pseudo 48 remains r6 across four calls, displacing
+ * the table into sl and adding a second high-register save. Not admitted.
  */
 #include "TYPES.H"
 
 extern u8 Data_0000116e[];
+extern const s32 Data_0200c11c[];
+extern volatile u32 Data_03001c94;
+extern volatile u32 Data_03001b04;
+extern u32 Data_03001800;
+
+struct Work;
 
 struct TextObject {
     u8 storage[12];
@@ -32,13 +47,13 @@ void Engine_ActorSetPosition();
 void Engine_ColorBufferApplyTarget();
 void Engine_ColorBufferInterpolate();
 void Engine_EventWait();
-s32 Engine_DebugCreateWindow();
-void Engine_DebugDrawTextResource();
+struct Work *Engine_DebugCreateWindow(s32 kind, s32 x, s32 y, s32 width, s32 layer);
+void Engine_DebugDrawTextResource(s32 message, struct Work *work, s32 x, s32 y);
 s32 SaveState_CountRecordsExcludingFlaggedFar(s32 flag);
 void UiTextResource_InitializeFar(struct TextObject *object, s32 *slot);
 void UiTextResource_SetPositionFar(struct TextObject *object, s32 x, s32 y);
 void UiTextResource_ReleaseFar(s32 slot);
-void Engine_DebugFinalizeWindow();
+void Engine_DebugFinalizeWindow(struct Work *work, s32 release);
 
 
 
@@ -66,10 +81,10 @@ s32 ShindenHeya_ChooseRestartOption(void)
 {
     struct TextObject cursor;
     s32 handle;
-    s32 win;
+    struct Work *win;
     s32 text;
     s32 sel;
-    s32 *tbl;
+    const s32 *tbl;
 
     Engine_ActorSetPosition(8, 0, 0);
     Engine_ActorSetPosition(9, 0, 0);
@@ -91,14 +106,14 @@ s32 ShindenHeya_ChooseRestartOption(void)
     UiTextResource_InitializeFar(&cursor, &handle);
     UiTextResource_SetPositionFar(&cursor, 72, 60);
     sel = 0;
-    if ((*(s32 *)0x03001c94 & 1) == 0) {
-        tbl = (s32 *)0x0200c11c;
+    if ((Data_03001c94 & 1) == 0) {
+        tbl = Data_0200c11c;
         do {
-            if ((*(s32 *)0x03001b04 & 192) != 0)
+            if ((Data_03001b04 & 192) != 0)
                 sel ^= 1;
-            UiTextResource_SetPositionFar(&cursor, tbl[(*(u32 *)0x03001800 >> 1) & 15] + 24, (sel << 4) + 60);
+            UiTextResource_SetPositionFar(&cursor, tbl[(Data_03001800 >> 1) & 15] + 24, (sel << 4) + 60);
             Engine_EventWait(1);
-        } while ((*(s32 *)0x03001c94 & 1) == 0);
+        } while ((Data_03001c94 & 1) == 0);
     }
     UiTextResource_ReleaseFar(handle);
     Engine_DebugFinalizeWindow(win, 1);

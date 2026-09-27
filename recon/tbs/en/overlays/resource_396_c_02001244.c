@@ -1,8 +1,8 @@
-/* NONMATCHING: complete 480-byte owner, candidate 472, 221 differing
- * halfwords, 122 aligned edits (2026-09-27). Reproducible single-overlay
+/* NONMATCHING: complete 480-byte owner, candidate 480, 30 differing
+ * halfwords, 29 aligned edits (2026-09-27). Reproducible single-overlay
  * unit binds the two imports and four data symbols. ENTER_ROOM installs
  * this palette callback at runtime address 0x02009245.
- * Remaining: hand-written from the disassembly; the goto loop keeps the clamp
+ * Prior baseline: hand-written from the disassembly; the goto loop keeps the clamp
  * zero and 31 unhoisted as the reference does. The reference allocates the
  * red tint to r4 with caller-saves around each divide and holds the red
  * half-sum (r5) across the first divide, i.e. evaluates red/2 before the
@@ -28,8 +28,19 @@
  * live across every /5 call, without a new accumulator or high register.
  * Full diff: 472/221/122; red/blue take r6/r4 rather than r4/r6, red /2
  * still follows its /3 call, and output channels coalesce into saved tint
- * registers. Exact ADJUST_BANK separates all three component extractions
- * before tint addition; that channel-lifetime boundary remains untested. */
+ * registers.
+ * Family H3: transfer exact ADJUST_BANK's separate extraction of all three
+ * components before adding tint channels. Whole 480-byte extent and all
+ * pools now agree in layout: 30 halfwords / 29 edits. The complete nine
+ * division/attenuation sequences match, including red's unshifted half
+ * numerator, r4/r7/r6 tints and caller-saves, and no fp is introduced.
+ * Residual: initial globals/palette-source load order, destination/index
+ * setup, green/blue tint-load scheduling and index compare scratch, the
+ * source palette-load scratch, and output-store/index-increment scheduling.
+ * All three bounded family hypotheses are preserved in Git. No declaration
+ * permutations or old accumulator trial. 0 new DONE; keep this canonical
+ * typed model. Further work needs a supported palette-work/iteration
+ * ownership boundary, preserving the now-exact attenuation body and pool. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -83,9 +94,12 @@ loop:
             b -= b / 4 + b / 5;
         }
         color = *src;
-        red = (color & 31) + r;
-        green = ((color >> 5) & 31) + g;
-        blue = ((color >> 10) & 31) + b;
+        red = color & 31;
+        green = (color >> 5) & 31;
+        blue = (color >> 10) & 31;
+        red += r;
+        green += g;
+        blue += b;
         if (red > 31)
             red = 31;
         if (green > 31)

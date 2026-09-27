@@ -16,8 +16,26 @@
  * change from H1, all to reference bytes; every other byte, the complete
  * extent, frame and pools stay fixed. No exact sibling/header was edited.
  * The two-hypothesis budget is closed; preserve these four ordering fixes
- * and require new actor/sprite ownership evidence for the remaining hunks. */
+ * and require new actor/sprite ownership evidence for the remaining hunks.
+ * Store H1 (2026-09-27): transfer WORLD_MAP/LINKED_EFFECTS.C's explicit
+ * byte-access boundary only to the actor-24/25 sprite attribute-2 byte.
+ * Falsified: the 0xf3 mask becomes a separate live value from the bitfield
+ * writer's -13, the frame grows from 4 to 12 bytes, and a later pool moves
+ * eight bytes. Actor-25 facing now precedes the priority read rather than
+ * falling between its read and write. The complete normalized diff also
+ * regresses untouched actor-10 and departure blocks. Preserve this attempt
+ * in history, then restore the best typed bitfield model; no adoption.
+ * Store H2: exact MOTION_SET_POSITION_AND_RESET_MOTION.C and
+ * MOTION_SET_MOVE_TARGET.C both own the six position/target words through
+ * ObjectRuntime. Transfer that scalar view only to the 0200359c block,
+ * retaining the store sequence and every other actor/sprite access.
+ * The complete candidate binary and normalized diff are identical to the
+ * pre-H1 baseline: 2716/49 halfwords/40 edits, 4-byte frame, pools unchanged.
+ * Thus scalar versus coordinate-union ownership does not explain the early
+ * depth load. Both bounded store hypotheses are stopped; do not resweep
+ * byte-mask, record-view or camera wrappers without new writer evidence. */
 #include "FIELD_EVENT.H"
+#include "OBJECT_RUNTIME.H"
 
 struct Half {
     u16 value;
@@ -244,12 +262,18 @@ void Scene_RunActorGroupDepartureSequence(void)
     groupActor->scale_y = 0xcccc;
     groupActor->priority_flags &= 254;
     groupVisual->priority = 1;
-    actor->x.fixed = 0xc80000;
-    actor->y.fixed = 0xc80000;
-    actor->target_x = 0xc80000;
-    actor->target_y = 0xc80000;
-    actor->z.fixed = 0x3820000;
-    actor->target_z = 0x3820000;
+    {
+        /* FAKEMATCH: use the exact motion writers' scalar record view only
+         * at this position/target boundary; it compiles like the actor view. */
+        struct ObjectRuntime *object = (struct ObjectRuntime *)actor;
+
+        object->x = 0xc80000;
+        object->y = 0xc80000;
+        object->target_x = 0xc80000;
+        object->target_y = 0xc80000;
+        object->z = 0x3820000;
+        object->target_z = 0x3820000;
+    }
     step = ((u8 *)actor + 85);
     actor->motion_flags = initialStep.value;
     actor->priority_flags &= 254;

@@ -773,11 +773,11 @@
           "address": "0x02008e44",
           "kind": "thumb"
         },
-        "Engine_MathDivide": {
+        "__divsi3": {
           "address": "0x02009854",
           "kind": "thumb"
         },
-        "Engine_MathModulo": {
+        "__modsi3": {
           "address": "0x0200985c",
           "kind": "thumb"
         },
@@ -1893,7 +1893,7 @@
     {
       "id": "babi-heading-probe-candidate",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3c5_c_02002660.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/FIND_FWD.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -1910,7 +1910,7 @@
         {
           "address": "0x02002660",
           "extent": 72,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ]
     },
@@ -1929,7 +1929,7 @@
           "address": "0x0200bb68",
           "kind": "thumb"
         },
-        "Local_02003b00": {
+        "__divsi3": {
           "address": "0x0200bb00",
           "kind": "thumb"
         },
@@ -6187,6 +6187,14 @@
       "source": "recon/tbs/en/overlays/save_menu.c",
       "overlay": "resource_370",
       "absolute_symbols": {
+        "Engine_UiWorkFinalize": {
+          "address": "0x0200938c",
+          "kind": "thumb"
+        },
+        "Engine_RenderOutputPrepareForRedraw": {
+          "address": "0x0200939c",
+          "kind": "thumb"
+        },
         "Func_0200939c": {
           "address": "0x200939c",
           "kind": "thumb"
@@ -6329,39 +6337,51 @@
       "source": "recon/tbs/en/overlays/resource_3ca_c_02000b34.c",
       "overlay": "resource_3ca",
       "absolute_symbols": {
-        "Main_080000c0": {
+        "BabiFune_UpdateWaves": {
+          "address": "0x02008194",
+          "kind": "thumb"
+        },
+        "SceneState_CountDownEveryFortyTicks": {
+          "address": "0x02008168",
+          "kind": "thumb"
+        },
+        "BabiFune_CyclePalette": {
+          "address": "0x020080b0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
           "address": "0x0200931c",
           "kind": "thumb"
         },
-        "Main_080000d0": {
+        "Engine_TaskAddCallback": {
           "address": "0x02009324",
           "kind": "thumb"
         },
-        "Main_080000d8": {
+        "Engine_TaskRemoveCallback": {
           "address": "0x0200932c",
           "kind": "thumb"
         },
-        "Main_080091f0": {
+        "Engine_WorkSetValuesIfNonNegative": {
           "address": "0x0200939c",
           "kind": "thumb"
         },
-        "Main_0808a010": {
+        "Engine_EventWait": {
           "address": "0x020093b4",
           "kind": "thumb"
         },
-        "Main_0808a018": {
+        "Engine_EventBegin": {
           "address": "0x020093bc",
           "kind": "thumb"
         },
-        "Main_0808a020": {
+        "Engine_EventEnd": {
           "address": "0x020093c4",
           "kind": "thumb"
         },
-        "Main_0808a0d0": {
+        "Engine_ObjectMotionSetPositionAndReset": {
           "address": "0x020093f4",
           "kind": "thumb"
         },
-        "Main_0808a1b8": {
+        "Engine_ObjectMotionArmCallback": {
           "address": "0x02009434",
           "kind": "thumb"
         },
@@ -6373,7 +6393,7 @@
           "address": "0x02009494",
           "kind": "thumb"
         },
-        "Main_080f9010": {
+        "Engine_AudioPlayCue": {
           "address": "0x0200949c",
           "kind": "thumb"
         }
@@ -30379,7 +30399,7 @@
           "address": "0x020098c4",
           "kind": "thumb"
         },
-        "Main_08015210": {
+        "Engine_UiTextShowCenteredMessage": {
           "address": "0x020098dc",
           "kind": "thumb"
         },
@@ -30399,7 +30419,7 @@
           "address": "0x02009924",
           "kind": "thumb"
         },
-        "Main_0808a080": {
+        "Engine_ActorGet": {
           "address": "0x0200992c",
           "kind": "thumb"
         },
@@ -30407,9 +30427,21 @@
           "address": "0x02009934",
           "kind": "thumb"
         },
-        "Main_0808a098": {
+        "Engine_ActorEnableActionCallback": {
           "address": "0x0200993c",
           "kind": "thumb"
+        },
+        "HaidiaBabi_SharedAction": {
+          "address": "0x02009ab4",
+          "kind": "data"
+        },
+        "HaidiaBabi_ActorExitAction": {
+          "address": "0x02009b04",
+          "kind": "data"
+        },
+        "HaidiaBabi_LeaderExitAction": {
+          "address": "0x02009b34",
+          "kind": "data"
         },
         "Main_0808a0a0": {
           "address": "0x02009944",
@@ -30427,7 +30459,7 @@
           "address": "0x02009974",
           "kind": "thumb"
         },
-        "Main_0808a100": {
+        "Engine_ActorSetAnimation": {
           "address": "0x0200997c",
           "kind": "thumb"
         },
@@ -87770,8 +87802,12 @@
           "address": "0x0200e16c",
           "kind": "data"
         },
-        "Engine_MathModulo": {
+        "__umodsi3": {
           "address": "0x0200dbf4",
+          "kind": "thumb"
+        },
+        "SceneEffect_UpdateOrbitAroundActor": {
+          "address": "0x0200b600",
           "kind": "thumb"
         },
         "gFrameCount": {

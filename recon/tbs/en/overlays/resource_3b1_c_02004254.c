@@ -7,36 +7,22 @@
  * from the same pool entry. Numeric speaker plus an explicit saved-link
  * lifetime reproduced the load but added a separate four-byte pool entry;
  * isolating the call in a one-pass block left four halfwords different.
- * A halfword-mode speaker introduced an early pool and grew to 908 bytes. */
+ * A halfword-mode speaker introduced an early pool and grew to 908 bytes.
+ * 2026-09-27: transferred canonical FIELD_EVENT.H signatures, pointer-returning
+ * actor lookup and FieldActor coordinate accesses from exact deck scenes.
+ * H1 remains byte-identical to the 892-byte baseline (cmp), 2 halfwords/2 edits.
+ * H2 reuses Event_ShowMessageAndWait, already exact in other cabin scenes;
+ * the complete output is again byte-identical. Preserve these proven types,
+ * but stop this interface boundary: neither changes the speaker reload. */
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-void Engine_EventBegin();
 void FieldScene_RunSceneStep();
 void OverlayObject_SetPositionAndHeading();
 void FuneHeya_PlaceFoundActors();
-void Engine_TaskWait();
-void Engine_EventOpenScreen();
-void Engine_ActorSetSpeed();
-s32 Engine_ActorWalkToAndWait();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventWait();
-void Engine_ActorFaceEachOther();
-s32 Engine_GameFlagIsSet();
 s32 FuneHeya_FindFirstSetFlag();
-void Engine_EventSetMessage();
 void FieldScene_RunStepThen10();
-void Engine_ActorSetAnimationAndWait();
-void Engine_ActorFaceDirection();
-s32 Engine_ActorGet();
-void Engine_ActorSetPosition();
-void Engine_ActorSetAnimation();
-void Engine_ActorShowEmote();
 void FieldScene_CallPairWith10();
-void Engine_ActorWalkTo();
-void Engine_EventShowMessageAndWait();
-void Engine_ActorSetAttachedEffect();
-void Engine_ActorStartRepeatedMotion();
-void Engine_EventRequestExit();
 
 
 
@@ -76,7 +62,7 @@ void Func_02004254(s32 a0)
 {
     u32 i;
     s32 rec7;
-    s32 record;
+    struct FieldActor *record;
     s32 v6;
     s32 v7;
     s32 base5_a01b;
@@ -110,9 +96,9 @@ void Func_02004254(s32 a0)
         Call3(Engine_ActorSetSpeed, 0, 0x10000, v6);
         ((void (*)())Engine_ActorWalkToAndWait)(0, x, 168);
         Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
-        record = Value1(Engine_ActorGet, 0);
+        record = Engine_ActorGet(0);
         if (record != 0) {
-            Engine_ActorSetPosition(rec7, *(s32 *)(record + 8), *(s32 *)(record + 16));
+            Engine_ActorSetPosition(rec7, record->x.fixed, record->z.fixed);
         }
         Call3(Engine_ActorSetSpeed, rec7, 0x10000, v6);
         Call3(Engine_ActorWalkToAndWait, rec7, 0x1c0, 168);
@@ -166,7 +152,7 @@ void Func_02004254(s32 a0)
         goto L_02004592;
     }
     Call1(Engine_EventSetMessage, 0x1eb7);
-    Call3(Engine_EventShowMessageAndWait, (s32)&Value_0000a01b, 0, 40);
+    Event_ShowMessageAndWait((s32)&Value_0000a01b, 0, 40);
     Call3(Engine_ActorShowEmote, 27, 0x101, 60);
     base5_a01b = (s32)&Value_0000a01b;
     FieldScene_RunStepThen10(base5_a01b);

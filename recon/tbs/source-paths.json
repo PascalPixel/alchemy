@@ -144,7 +144,8 @@
       "name": "Local_02001ac8"
     },
     "resource_3c5:02002660": {
-      "name": "Func_02002660"
+      "name": "BabiIriguchi_FindActorAhead",
+      "source": "FIELD/BABI_IRIGUCHI/FIND_FWD.C"
     },
     "resource_3bb:02002ba8": {
       "name": "Korosseo_FadeInCompetitor",

@@ -35,7 +35,24 @@
  * unlike the palette caller-save witness, this body gains no new save.
  * The complete +452..+4f0 queue tail and pool remain exact. Keep the
  * proven arithmetic interface, close this axis without a spelling sweep,
- * and do not instantiate the twins or credit any bytes. */
+ * and do not instantiate the twins or credit any bytes.
+ * 2026-09-27 interpolation-source audit: rechecked the complete normalized
+ * diff and all three channels against exact SRC precedents. BLEND.C uses
+ * unsigned-byte countdown/volatile endpoints; DisplayTransition_Update-
+ * FromCentre uses signed-byte state and checks completion before advancing;
+ * BattleFx_StepRatioTransition has signed-halfword step/duration but s32
+ * endpoints and computes delta before the increment (already rejected
+ * above). Window geometry uses a fixed-point reciprocal and its caller
+ * advances the counter after rendering. None proves a new inline-channel
+ * lifetime model for this owner. Here each frame is incremented, stored as
+ * s16, then sign-extended for (target-start)*frame/duration; frame>=duration
+ * only clears duration after evaluating the result, without clamping it.
+ * The reference still differs in scale/duration r9/fp ownership, frame/
+ * endpoint loads and single-sprite clipping-coordinate lifetimes. Baseline
+ * remains 1264/1264 bytes, 201 halfwords / 87 aligned edits, with the full
+ * +0x452..+0x4f0 queue tail and pool exact. No new supported transfer was
+ * found: no variant compiled, no aggregate/register permutations, no twin
+ * propagation. Preserve the body and the 3792-byte family as not-yet-C. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 

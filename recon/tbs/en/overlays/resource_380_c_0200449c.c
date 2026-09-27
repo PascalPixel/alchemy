@@ -1,4 +1,4 @@
-/* NONMATCHING: 748-byte candidate, 354 differing halfwords, 232 edits.
+/* NONMATCHING: 748-byte candidate, 359 differing halfwords, 209 edits.
  * Whole owner 752 bytes including six owned pool words.
  * Canonical draft for resource_380:0200449c and resource_381:0200301c;
  * own-ROM sibling check proves equivalent flow and per-instance bindings.
@@ -39,19 +39,21 @@
  * 748-byte result is byte-identical to H3 (354 halfwords/232 edits).
  * FieldCoordinate union aliasing does not change the snapshot allocation;
  * stop the actor-type-only axis. Keep the proven ownership correction.
- * 2026-09-27 Sol spark-ring H5: typed motion suffix at entry+8, with an
- * explicit local pointer used for y/z/angles/scale/speed. Result 748 bytes,
- * 354 differing halfwords / 233 edits, frame 68. The compiler reunifies
- * the suffix with the whole-entry r8 induction; third sample still spills.
- * Admission failed: suffix must remain independently carried in sl while
- * whole entry spills. Restored baseline; typed suffix alone is closed. */
+ * 2026-09-27 Sol spark-ring H5 typed suffix alone: 748 bytes, 354 halfwords,
+ * 233 edits. The -dL dump shows initial loads recombined through the whole
+ * record while writeback uses the +8 suffix. H5 fails ownership admission.
+ * H6 advances whole record and typed suffix independently: 748 bytes,
+ * 359 halfwords / 209 edits, frame 68. Whole record now spills at sp+60;
+ * angle snapshots match sp+52/+48/+44 and load through the +8 suffix.
+ * Scale remains fp, hold sl, suffix r8, third random sample still spills.
+ * Not admitted as exact: remaining invariant is suffix sl / hold fp /
+ * third sample r8, with scale spilled at sp+40. Preserved as diagnostic
+ * draft before a separate scale-storage hypothesis. */
 #include "FIELD_EVENT.H"
 
 void *Engine_AllocateBlock(s32 id, s32 size);
 
-struct Spark {
-    struct FieldActor *obj;
-    s32 x;
+struct SparkMotion {
     s32 y;
     s32 z;
     s32 angle_x;
@@ -59,6 +61,12 @@ struct Spark {
     s32 angle_z;
     s32 scale;
     s32 scale_speed;
+};
+
+struct Spark {
+    struct FieldActor *obj;
+    s32 x;
+    struct SparkMotion motion;
     u8 timer;
     u8 hold;
 };
@@ -78,9 +86,12 @@ void Effect_UpdateSparkRing(void)
 {
     struct SparkWork *work;
     struct Spark *spark;
+    struct SparkMotion *motion;
     s32 i;
 
     work = Engine_AllocateBlock(33, 0x194);
+    spark = work->spark;
+    motion = &spark->motion;
     for (i = 0; i != work->count; i++) {
         struct FieldActor *obj;
         s32 ax;
@@ -94,16 +105,15 @@ void Effect_UpdateSparkRing(void)
         s32 z;
         u8 hold;
 
-        spark = &work->spark[i];
         obj = spark->obj;
-        ax = spark->angle_x;
-        ay = spark->angle_y;
-        az = spark->angle_z;
-        scale = spark->scale;
-        speed = spark->scale_speed;
+        ax = motion->angle_x;
+        ay = motion->angle_y;
+        az = motion->angle_z;
+        scale = motion->scale;
+        speed = motion->scale_speed;
         x = spark->x;
-        y = spark->y;
-        z = spark->z;
+        y = motion->y;
+        z = motion->z;
         hold = spark->hold;
         timer = spark->timer;
         timer--;
@@ -199,15 +209,17 @@ void Effect_UpdateSparkRing(void)
                 obj->target_z = obj->z.fixed;
             }
         }
-        spark->angle_x = ax;
-        spark->angle_y = ay;
-        spark->angle_z = az;
-        spark->scale = scale;
-        spark->scale_speed = speed;
+        motion->angle_x = ax;
+        motion->angle_y = ay;
+        motion->angle_z = az;
+        motion->scale = scale;
+        motion->scale_speed = speed;
         spark->hold = hold;
         spark->x = x;
-        spark->y = y;
-        spark->z = z;
+        motion->y = y;
+        motion->z = z;
         spark->timer = timer;
+        spark++;
+        motion = (struct SparkMotion *)((u8 *)motion + sizeof(*spark));
     }
 }

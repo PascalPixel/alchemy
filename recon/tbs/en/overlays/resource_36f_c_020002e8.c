@@ -5,7 +5,17 @@
  * against 33 over 3712) and takes r5; the first counter reset also swaps its
  * address and pool-zero registers. The count is block-local in the queue
  * macro and the IME pointer and queue are function-level, which fixed the
- * count and saved registers. */
+ * count and saved registers.
+ * 2026-09-27 family transfer: exact WORLD_MAP/DISPLAY_TRANSITION.C now
+ * scopes final IME restoration separately from subsequent publication/calls.
+ * Apply that boundary to the same queued triple stores here, leaving the
+ * existing read scope and IO_WRITE_QUEUE.H unchanged. Admission: IME r5,
+ * fade counter r6, then complete 364-byte owner/pool equality. One trial.
+ * Result: byte-identical to the prior candidate, 364/364 bytes and 23
+ * differing halfwords/aligned edits. All eleven pool words are exact.
+ * IME remains pseudo 35/r6 (33 uses, five sets, two crossed calls) and the
+ * fade counter r5. Final-publication scoping does not change this allocation.
+ * Stop this transfer axis; the exact world-map source was not edited. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
@@ -18,7 +28,9 @@ void Local_02000454(void);
 void Title_Func020001c0(s32 mode);
 void Title_RevealSpriteRow(void);
 
-/* Queue a register write with interrupts masked. */
+/* Queue a register write with interrupts masked.
+ * FAKEMATCH: the final one-pass restore retains the queue-publication
+ * boundary used by the exact world-map transfer family. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
         s32 count;                                                          \
@@ -36,7 +48,7 @@ void Title_RevealSpriteRow(void);
             *destination++ = (address);                                     \
             *destination = 0x20000;                                         \
         }                                                                   \
-        *ime = saved;                                                       \
+        do { *ime = saved; } while (0);                                      \
     } while (0)
 
 void Func_020002e8(void)

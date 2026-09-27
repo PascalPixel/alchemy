@@ -1,4 +1,14 @@
-/* NONMATCHING H3 (2026-09-27): local reset owner, 628/616 bytes,
+/* NONMATCHING H4 (2026-09-27): 624/616 bytes, 169 differing halfwords,
+ * 53 aligned edits. Give the immediate height-reset flag result its own
+ * block lifetime, separate from the earlier result surviving two calls.
+ * First result SI43 drops from 14 refs/25 insns/two definitions to six
+ * refs/15 insns/one definition; the new result is consumed directly in r0.
+ * Actor r6, first result r7, selected slot r7, swap-coordinate block, and
+ * final flag/loop update now match. H3's selected-reset admission remains.
+ * Full normalized diff read. Extra HI-zero pool still makes the function
+ * eight bytes too long and extends the height-test branch. No credit.
+ *
+ * NONMATCHING H3 (2026-09-27): local reset owner, 628/616 bytes,
  * 205 differing halfwords / 109 aligned edits. The two block reset sites
  * share a word-valued inline parameter for target/motion/height state.
  * Full normalized diff: the selected block's complete reset sequence now
@@ -126,11 +136,14 @@ check_height:
         if (block->z.fixed >> 20 != 19) {
             goto next;
         }
-        none = Engine_GameFlagIsSet(0x200 + i);
-        if (none != 0) {
-            goto next;
+        {
+            s32 clear = Engine_GameFlagIsSet(0x200 + i);
+
+            if (clear != 0) {
+                goto next;
+            }
+            FloatingBlock_ResetMotion(block, clear);
         }
-        FloatingBlock_ResetMotion(block, none);
         j = 0;
         slot = i;
         if (j < i) {

@@ -1,5 +1,5 @@
 /* NONMATCHING: 552 of 552 bytes, 17 differing halfwords / 17 aligned edits
- * (2026-09-26). Whole owner 02000e2c..02001054, return at 02001026 and all
+ * (2026-09-27). Whole owner 02000e2c..02001054, return at 02001026 and all
  * eleven literal words at 02001028..02001050. Complete layout/pool exact.
  * Three bounded trials: phase-local actors remove the wait and both burst
  * pointer copies (45 to 26 differing halfwords); choosing an immutable total
@@ -12,10 +12,9 @@
  * frame for 60 frames. Binds the scene unit's calls plus gFrameCount-free
  * data: Value_00000059, Value_0000005a, Data_02000240_t. Remaining: global
  * allocation swaps the spot counter and byte offset (r6/r7); the hold-store
- * and timer-decrement scratch registers swap r2/r3; the second parameter
- * block rematerializes 0x8000 after storing scale_y instead of keeping it
- * separate from the spread literal. Further work needs a new counter or
- * parameter lifetime hypothesis, not actor/coordinate spelling sweeps.
+ * and timer-decrement scratch registers swap r2/r3. The second parameter
+ * block is now exact through H4 below. Further work needs a new structural
+ * counter/hold lifetime fact, not actor/coordinate/parameter spelling sweeps.
  * Family transfer (2026-09-27): exact resource_3a5:0200013c instances
  * FIELD/COMMON/EFFECT/SPAWN.C and consumes FIELD_EFFECT.H EffectOptions.
  * The former speed/spread members at +0x10/+0x14 are target x/y scales,

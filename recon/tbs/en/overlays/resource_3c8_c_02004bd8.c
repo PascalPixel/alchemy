@@ -1,4 +1,4 @@
-/* NONMATCHING: 452 bytes, candidate 452, 172 differing halfwords, 129
+/* NONMATCHING: 452 bytes, candidate 452, 138 differing halfwords, 116
  * aligned edits (2026-09-27). VinasuHeya_DispatchPushScript, meant for
  * FIELD/VINASU_HEYA/F_04BD8.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -17,7 +17,15 @@
  * view otherwise leaves body allocation unchanged: 452/452, 172/129.
  * Full diff still has a merged success/failure call instead of three calls,
  * cached selected animation, and strength-reduced coordinate/cursor loops.
- * No DONE. No exact neighbour or shared header was edited. */
+ * H2: place validation failure before the cell dispatch and retain the
+ * selected-animation reload (tagged below). Now 452/452, 138/116: all final
+ * pool words and final success/outer-failure sites align. The interior
+ * failure still jumps to the success call, and the scan rotates rather
+ * than matching the reference's first-test-plus-loop. Coordinate searches
+ * still use induction pointers instead of scaled indices. This explains
+ * the gain but does not satisfy the three-call topology admission check.
+ * Stop after the one follow-up; preserve both complete models. No DONE.
+ * No exact neighbour or shared header was edited. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"
@@ -77,7 +85,7 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     s32 axis;
     u8 *list;
     u8 byte;
-    u8 *want_ptr;
+    const volatile u8 *want_ptr;
     u32 cell;
     u32 skip;
     u8 *cursor;
@@ -130,6 +138,7 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     if (byte == 0) {
         goto fail_mid;
     }
+    /* FAKEMATCH: retain the observed selected-animation re-read in the scan. */
     want_ptr = &child->selected_animation;
     if (*want_ptr != byte) {
         do {
@@ -140,10 +149,14 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
             }
         } while (*want_ptr != byte);
     }
-    if (byte == 0) {
-        goto fail_mid;
+    if (byte != 0) {
+        goto find_cell;
     }
+fail_mid:
+    Call2((void (*)())Engine_ObjectSetScript, (s32)actor, (s32)Data_0200d564);
+    goto done;
 
+find_cell:
     if (RuntimeSelectorTable[224] == (s32)&Value_000000b9) {
         cell = 0;
         x_cell = actor->x.fixed;
@@ -209,10 +222,6 @@ scan_other:
 
 dispatch:
     Call2((void (*)())Engine_ObjectSetScript, (s32)actor, script_row[skip]);
-    goto done;
-
-fail_mid:
-    Call2((void (*)())Engine_ObjectSetScript, (s32)actor, (s32)Data_0200d564);
     goto done;
 
 fail_tail:

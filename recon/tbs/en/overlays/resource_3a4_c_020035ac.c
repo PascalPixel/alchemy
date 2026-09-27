@@ -1,5 +1,5 @@
-/* NONMATCHING H1 witness (rejected): 188/188 bytes, 67 differing halfwords,
- * 46 aligned edits (2026-09-27). Baseline: 188/188, 5 halfwords/5 edits.
+/* NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits
+ * (2026-09-27). H2 is byte-identical to the original baseline.
  * Whole extent [020035ac,02003668), pool included. Independent twin extent
  * [02003668,02003724) also scores 188/188, 5 halfwords/5 edits.
  * ROLL_OBJECT.C dispatches these opposite 16-frame turns on tiles 98/97.
@@ -8,8 +8,16 @@
  * H1 separates fixed snapped centre into a two-coordinate record from the
  * mutable polar-position buffer. Frame stays 12, but centre occupies r6/r7,
  * displacing object/angle into high registers and moving mask operations.
- * Complete normalized diff rejects that aggregate ownership model; do not
- * tune its allocation. Negative witness retained before restoring baseline.
+ * H1 scored 188/188 bytes, 67 halfwords / 46 edits. Complete normalized diff
+ * rejects that aggregate ownership model; do not tune its allocation.
+ * Negative witness is preserved in 5be878f9a.
+ * H2: compiler loop.c check_dbra_loop reverses a forward count-only loop
+ * even with calls. Natural 0..15 frame iteration does become the reference
+ * descending loop, but both twins remain independently binary-identical
+ * to their five-edit baselines. Keep the forward source, not H1.
+ * Stop centre-record and loop-direction axes. The invariant still missing
+ * is n in r8 and snapped z in sl (x already r9); declarations are not a
+ * new hypothesis. Full frame, loop, calls, epilogue and pool were compared.
  * Missing owner/unit registrations now reproduce both complete baselines;
  * this adds no credit. The original baseline diagnosis follows.
  * Hand-written
@@ -25,17 +33,13 @@
 
 void Main_08000128(s32 distance, s32 angle, union FieldCoordinate *pos);
 
-struct RollCenter {
-    s32 x;
-    s32 z;
-};
-
 void Local_020035ac(struct FieldActor *object)
 {
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
     s32 angle;
-    struct RollCenter center;
+    s32 x;
+    s32 z;
     s32 n;
 
     angle = (object->facing + 0x4000) & 0xc000;
@@ -44,15 +48,15 @@ void Local_020035ac(struct FieldActor *object)
     p[1].fixed = object->y.fixed;
     p[2].fixed = object->z.fixed;
     Main_08000128(0x180000, angle, p);
-    center.x = (p[0].fixed + 0x80000) & 0xfff00000;
-    center.z = (p[2].fixed + 0x80000) & 0xfff00000;
+    x = (p[0].fixed + 0x80000) & 0xfff00000;
+    z = (p[2].fixed + 0x80000) & 0xfff00000;
     angle += 0x8000;
     Engine_ObjectSetAnimation(object, 5);
     Engine_AudioPlayCue(184);
-    for (n = 15; n >= 0; n--) {
+    for (n = 0; n < 16; n++) {
         angle += 0x400;
-        p[0].fixed = center.x;
-        p[2].fixed = center.z;
+        p[0].fixed = x;
+        p[2].fixed = z;
         Main_08000128(0x180000, angle, p);
         object->x.fixed = p[0].fixed;
         object->z.fixed = p[2].fixed;

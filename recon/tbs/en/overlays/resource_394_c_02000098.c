@@ -1,4 +1,10 @@
-/* NONMATCHING kuupuappu H3 (2026-09-27): one-word bounds record did
+/* Astra byte-stride ownership (2026-09-27): explicit stride=(128-width)*4
+ * and a byte-pointer row advance give 184/184 bytes, 46 halfwords / 43
+ * aligned edits. The stride is still spilled at sp+4, row end still r8;
+ * only pretest scheduling changes. Full diff preserves the six pools but
+ * falsifies the predicted ownership exchange. Reject this one trial and
+ * retain the canonical implicit stride; do not propagate to the twin.
+ * NONMATCHING kuupuappu H3 (2026-09-27): one-word bounds record did
  * not establish the predicted stack ownership: GCC promotes its row limit
  * to r8. Complete 184/184 extent and all six pool words/offsets agree;
  * 42 differing halfwords / 39 aligned edits remain. This is not an

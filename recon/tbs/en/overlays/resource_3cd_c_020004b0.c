@@ -1,4 +1,10 @@
-/* NONMATCHING 2026-09-27 redraw-flag probe: u8 redraw with the same
+/* Cross-edition identity audit (2026-09-27): German, Spanish, French
+ * and Italian retain the English core at 020004b0. The automatic Japanese
+ * anchor at 020001c8 is NOT this ability selector: its mask is 0x1ff,
+ * message base 0x182 and empty-entry test a halfword at +6, identifying
+ * the item-selection family instead. Do not treat its register roles or
+ * second window as evidence for this function. No source change admitted.
+ * NONMATCHING 2026-09-27 redraw-flag probe: u8 redraw with the same
  * 0/1 publications emits the complete baseline binary identically (cmp):
  * 584/584 bytes, 19 differing halfwords / 19 aligned edits. Unlike the
  * earlier direction-storage trial, this tested the other flag's mode;

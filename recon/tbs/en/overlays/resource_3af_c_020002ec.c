@@ -1,4 +1,19 @@
-/* NONMATCHING: complete extent 552 bytes including the trailing pool;
+/* Astra entry-call boundary (2026-09-27): call ObjectSetPosition directly
+ * in case 1, retaining the exact fly-by Call4 interface in case 5.
+ * Admission: case 1 must keep its own coordinate shifts and call, then
+ * branch to the shared increment rather than entering case 5's call tail.
+ * The complete normalized diff proves that local topology correction.
+ * Candidate is now 560/552 bytes, 239 differing halfwords / 75 aligned
+ * edits. The worse aggregate is understood: the previously missing call
+ * tail returns, while counter address/value remain r8/r6 instead of r6/r8.
+ * Initial y and z scheduling is still wrong; all other call targets and
+ * six trailing pool words remain present. Keep this ordinary direct-call
+ * boundary as the canonical structural correction, not an exact match.
+ * No DONE or padding credit. Do not restore the shorter cross-jumped model
+ * merely because it has fewer edits; the next correction must preserve
+ * the separate case-1 call and shared increment.
+ *
+ * Previous NONMATCHING: complete extent 552 bytes including the trailing pool;
  * candidate 552, 171 differing halfwords, 69 aligned edits (2026-09-27).
  * H1 transfers Call3/Call4 from exact FUNE_KANPAN/FLY_BY_21.C and
  * FLY_BY_22.C. Both callbacks share six callee bindings, actor layout and
@@ -91,7 +106,7 @@ s32 Func_020002ec(struct FieldActor *obj)
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Call4(Engine_ObjectSetPosition, (s32)obj, 0x1000000, 0x140000, 0x2800000);
+            Engine_ObjectSetPosition(obj, 0x1000000, 0x140000, 0x2800000);
             goto advance;
         case 3:
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x && obj->target_z == obj->target_y) {

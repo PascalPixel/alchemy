@@ -1,6 +1,6 @@
-/* NONMATCHING: complete 480-byte owner, candidate 488, 236 differing
- * halfwords, 49 aligned edits (2026-09-27 separate-global trial).
- * Canonical before this trial was 480/480, 30 halfwords, 29 edits.
+/* NONMATCHING: complete 480-byte owner, candidate 480, 30 differing
+ * halfwords, 29 aligned edits (2026-09-27). Separate-global trial rejected;
+ * the complete canonical body and original bindings are restored.
  * Reproducible single-overlay unit binds its imports and data symbols.
  * ENTER_ROOM installs
  * this palette callback at runtime address 0x02009245.
@@ -60,14 +60,17 @@
  * move with the two-byte entry growth. It does not repair the old loop
  * setup, tint-load, source-load or output/index scheduling residuals.
  * Reject as a match path; do not sweep tints/registers. This complete
- * trial is preserved in Git before restoring the canonical 480-byte body.
+ * trial is preserved at b056c2f0f; canonical restoration is checked against
+ * the pre-trial candidate binary, including all attenuation code and pool.
  * The ownership fact is established, but the original source expression
  * that permits the shared-base loads in the ROM remains unproven. DONE +0. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 
-extern u16 *Data_03001ed0;
+/* FAKEMATCH: array view of distinct linker-adjacent pointer cells preserves
+ * the ROM's shared address base; it does not establish one source array. */
+extern u8 *Data_03001ebc[];
 extern u32 Data_03001e40;
 /* Index of the current tint in Data_02009f00. */
 extern s32 Data_0200adb8;
@@ -89,8 +92,8 @@ void ToretoPalette_ApplyTint(void)
     s32 blue;
     u32 color;
 
-    src = Data_03001ed0;
-    if (gEventWork->psynergy_request != 0)
+    src = (u16 *)Data_03001ebc[5];
+    if (*(s16 *)(Data_03001ebc[0] + 0x17e) != 0)
         return;
     if ((Data_03001e40 & 31) != 0)
         return;

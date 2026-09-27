@@ -1,4 +1,8 @@
-/* NONMATCHING kuupuappu H2 (2026-09-27): halfword packed-color boundary
+/* Canonical restored (2026-09-27): 480/480 bytes, seven differing halfwords.
+ * The two new publication-local trials are preserved in 72730cd63 and
+ * 3a161950f. Both fail packing admission; no new supported publication
+ * boundary remains, so this axis is stopped with no exact-byte credit.
+ * NONMATCHING kuupuappu H2 (2026-09-27): halfword packed-color boundary
  * produces 480/480 bytes, 13 differing halfwords / 13 aligned edits.
  * Attenuation and clamps survive, but packing takes r2 instead of r3 and
  * both shifts swap roles, exactly the existing output-temporary failure.
@@ -136,7 +140,6 @@ void ToretoPalette_ApplyTint(void)
     s32 green;
     s32 blue;
     u32 color;
-    u16 packed;
     u8 *event;
 
     event = Data_03001ebc[0];
@@ -185,10 +188,8 @@ loop:
             green = 0;
         if (blue < 0)
             blue = 0;
-        /* FAKEMATCH: hold the halfword publication across index advancement. */
-        packed = (blue << 10) | (green << 5) | red;
+        *dst = (blue << 10) | (green << 5) | red;
         i++;
-        *dst = packed;
         dst++;
         src++;
     }

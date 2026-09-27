@@ -12,6 +12,10 @@
  * remains r6, opposite the ROM. The scroll r6 copy, Q16 alignment padding,
  * position load/store/call setup and resulting pool offsets remain.
  * Correct BLDALPHA/base addresses and all spawn stores are unchanged.
+ * H2 passes the addressable PositionWork record to that consumer instead
+ * of passing only the position pointer: same full normalized diff and score.
+ * STOP: the bounded typed spawn-consumer interface did not restore the saved
+ * pointer lifetime. H1 is preserved at 148eb9259; no register-only sweeps.
  * Earlier structural attempts are preserved in draft commits. No DONE. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -33,6 +37,10 @@ struct Half {
     u16 v;
 };
 
+struct PositionWork {
+    struct FixedPointPosition *pos;
+};
+
 extern struct MapWork *Data_03001e70;
 extern s32 Data_020097e8;
 extern s32 Data_020097ec;
@@ -49,14 +57,17 @@ extern s32 Data_02009818;
 
 void BabiFune_UpdateDriftingObject(u8 *obj);
 
-static __inline__ struct FieldActor *SpawnDriftingObject(struct FixedPointPosition *pos, s32 x, s32 z)
+/* FAKEMATCH: the inline consumer retains object-type argument setup order. */
+static __inline__ struct FieldActor *SpawnDriftingObject(struct PositionWork *work,
+    struct FixedPointPosition *pos, s32 x, s32 z)
 {
-    pos->y = 0;
-    pos->x = x;
+    work->pos = pos;
+    work->pos->y = 0;
+    work->pos->x = x;
     z += Engine_RandomNext() * 160;
     z += 0x1e0000;
-    pos->z = z;
-    return Engine_ObjectCreate(0x1f7, pos->x, pos->y, z);
+    work->pos->z = z;
+    return Engine_ObjectCreate(0x1f7, work->pos->x, work->pos->y, z);
 }
 
 void BabiFune_UpdateWaves(void)
@@ -64,6 +75,7 @@ void BabiFune_UpdateWaves(void)
     volatile u16 scroll[1];
     struct Half zero;
     struct FixedPointPosition buf;
+    struct PositionWork work;
     struct MapWork *map;
     struct FieldActor *actor;
     s32 bob;
@@ -112,7 +124,7 @@ void BabiFune_UpdateWaves(void)
         x = map->layers[4].unknown_10[0] & -0x10000;
         z = map->layers[4].unknown_10[1] & -0x10000;
         x += Engine_RandomNext() * 240;
-        actor = SpawnDriftingObject(&buf, x, z);
+        actor = SpawnDriftingObject(&work, &buf, x, z);
         if (actor != 0) {
             actor->update = (void (*)(union FieldObject *))BabiFune_UpdateDriftingObject;
             actor->unknown_64 = 60;

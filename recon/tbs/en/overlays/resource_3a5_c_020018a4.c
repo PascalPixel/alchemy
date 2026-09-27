@@ -1,5 +1,5 @@
 /* NONMATCHING: 888 bytes, candidate 848, 401 differing halfwords, 251
- * halfword edits (2026-09-26). FieldScene_RunScene3a5SequenceA, meant for
+ * halfword edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Remaining: Fresh reconstruction corrects actor stride,
@@ -8,7 +8,26 @@
  * loop bounds, frozen fill extent and sequential palette destinations.
  * Timer-view and word-mode decrement hypotheses improve 269 to 251 edits.
  * Remaining: timer reloads, channel lifetimes and sprite allocation.
- * WALL: Whole-function allocation and DMA setup ordering. */
+ * Family H1 (2026-09-27): all four divisions resolve through the overlay
+ * import to signed division at 0x03000380. Transfer ordinary C division
+ * from exact COMMON/EFFECT/SPAWN.C and the improved Toreto palette model,
+ * binding __divsi3 to that existing import. Complete normalized diff stays
+ * 848/888, 401 halfwords / 251 edits: only the final numerator shift moves
+ * after the denominator load, as required. No palette caller-save or pool
+ * improvement. Keep the natural arithmetic, stop this call-spelling axis.
+ * Distinct remaining evidence: reference loads a shared 31 extraction mask
+ * from its first colour-loop pool and keeps it in fp; the draft instead
+ * materializes 31 per iteration and keeps the loop counter in fp. Timer
+ * loads/narrow comparisons and final indexed sprite argument also differ.
+ * Family H2: a u16 shared extraction mask from Value_0000001f, following
+ * the narrow link-constant family in exact MAKYURI/PALETTE_CYCLE.C.
+ * Complete diff: 860/888, 399 halfwords / 266 edits. The mask is stored
+ * left-shifted in a new stack slot and reloaded/right-shifted per iteration;
+ * it does not displace the loop counter from fp or recreate the early pool.
+ * Frame grows from the correct 12 to 16 bytes. Reject this long-lived
+ * narrow-mask model, preserved at c04a58975; H1 is restored here. No mask
+ * declaration or scalar-order sweeps. Whole owner remains not-yet-C,
+ * with 0 new DONE bytes. */
 #include "DMA.H"
 #include "TYPES.H"
 
@@ -138,13 +157,13 @@ void FieldScene_RunScene3a5SequenceA(void)
         raw_y = (packed >> 21) & 31;
         y = (packed >> 26) & 31;
         angle = EFFECT_PHASE;
-        x += Engine_MathDivide(angle, 3);
+        x += angle / 3;
         y -= 20;
-        scroll = Engine_MathDivide(angle, 6);
+        scroll = angle / 6;
         y -= scroll;
         y += 20;
         if (angle > 60 && (FRAME_COUNT & 1) != 0)
-            raw_y = raw_y + Engine_MathDivide(angle << 6, 120) - 32;
+            raw_y = raw_y + (angle << 6) / 120 - 32;
         if ((u32)x > 31)
             x = 31;
         if ((u32)raw_y > 31)
@@ -164,8 +183,7 @@ void FieldScene_RunScene3a5SequenceA(void)
     }
 
     frame = *(s16 *)((u8 *)Data_02000240 + 0x232);
-    angle = Engine_MathDivide(((frame << 4) - frame) << 3,
-        Data_02000240_t[139][0]);
+    angle = (((frame << 4) - frame) << 3) / Data_02000240_t[139][0];
     EFFECT_PHASE = angle;
     if (angle > 118)
         EFFECT_SCROLL = 0x77;

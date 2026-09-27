@@ -1,4 +1,29 @@
-/* NONMATCHING: 612/612 bytes, 127 differing halfwords, 44 aligned edits
+/* NONMATCHING P5 (2026-09-27): 612/612 bytes, 117 differing halfwords,
+ * 34 aligned edits; topology and all four pool words/offsets unchanged.
+ * Transfer exact EAST_PARTICLE_WAVE's Map_CopyCellsTo boundary to the four
+ * intervening 5x2 copies. Like the now-exact ShiftBridge, dimensions belong
+ * to inline call parameters rather than raw-call temporaries. Before:
+ * width SI95 five refs/48 insns, height SI96 five refs/46 insns, both three
+ * calls, yielding width r6/height r5. After: SI99/SI100 both five refs over
+ * 48 insns as user formals; width wins the tie and yields reference r5/r6.
+ * Both initializers and all eight stack stores now match; no other bytes
+ * changed. Freeze that admission. Remaining: r9/sl count/options ownership,
+ * missing second write-view copy and hoisted scale literal, row base/zero
+ * setup order, and final rectangle argument scheduling. No new DONE.
+ *
+ * NONMATCHING P4 (2026-09-27): phased repeat/options union is byte-identical
+ * to the retained 612-byte model: 127 halfwords / 44 aligned edits, all four
+ * pool words and offsets unchanged. Own ROM reuses sl for the first phase's
+ * repeat count then copies persistent r9 to sl for the second write view.
+ * Reusing a union local across those phases does not preserve that copy:
+ * allocation still gives count r9/options sl and hoists scale 0x4ccc to r9.
+ * Full normalized diff read; the pointer-copy admission fails. This is not
+ * the proven 3A0 phased-value result: the redundant pointer view collapses.
+ * No follow-up without distinct pointer/dependency evidence. Trial retained
+ * at 9b9a213f4; the simpler prior canonical body is restored below.
+ * No function or alignment credit. Exact Venus neighbours are unchanged.
+ *
+ * NONMATCHING: 612/612 bytes, 127 differing halfwords, 44 aligned edits
  * (2026-09-26). Complete owner 020042bc..02004520 includes the four-word
  * pool at 02004510. All 31 calls audited; entry dispatcher 02003068 calls
  * this for scene 21. Shared EffectOptions and call bindings transferred
@@ -78,10 +103,10 @@ void Scene_RunPairedParticleWaveSequence(void)
         offset += 0x100000;
         row++;
     } while (row <= 9);
-    Engine_MapCopyCellsTo(111, 5, 117, 5, 5, 2);
-    Engine_MapCopyCellsTo(111, 10, 117, 10, 5, 2);
-    Engine_MapCopyCellsTo(111, 7, 111, 5, 5, 2);
-    Engine_MapCopyCellsTo(111, 7, 111, 10, 5, 2);
+    Map_CopyCellsTo(111, 5, 117, 5, 5, 2);
+    Map_CopyCellsTo(111, 10, 117, 10, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 5, 5, 2);
+    Map_CopyCellsTo(111, 7, 111, 10, 5, 2);
     row = 0;
     offset = 0;
     do {

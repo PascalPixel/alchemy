@@ -1,4 +1,4 @@
-/* NONMATCHING: 364 bytes, candidate 364, 59 differing halfwords, 34 aligned
+/* NONMATCHING: 364 bytes, candidate 364, 99 differing halfwords, 35 aligned
  * halfword edits (2026-09-27). The halfword zero aggregate preserves the
  * complete extent; the Value mask keeps the full-width literal and result
  * in r3. Remaining: lamp and zero reload registers, the signed height
@@ -30,7 +30,18 @@
  * The null-test copy survives into x/y but is r2, not r1; x is read before y.
  * The zero producer is still HI-to-r9 via r3 after the angle store, and
  * the second pool is still four bytes late. Keep this causal call-boundary
- * result, not a claim of exactness. No ABI, shared source or compiler edits. */
+ * result, not a claim of exactness. No ABI, shared source or compiler edits.
+ * East H2: split world spawn y = lamp->y.fixed + height from constructor
+ * input staging, retaining H1's late type load and all random/pool inputs.
+ * y is now read first, but consumes the r2 null-test copy; x needs another
+ * sl copy and z still needs r0. Full 364-byte diff is 99 halfwords/35 edits:
+ * one extra lamp copy shifts the body while consuming the former pool pad.
+ * Signed-height index and late type loading survive, but the required
+ * r1 null-test/x copy does not. Zero production still reloads HI through
+ * r3 after the angle store, so scheduling cannot move it before that store.
+ * Preserve this rejected causal follow-up; restore H1 for further work.
+ * Two-model bound reached. A new model must prove the r1 parent-copy and
+ * pre-angle r0 zero producer; y-expression or declaration sweeps are closed. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "OVERLAY_OBJECT.H"
@@ -68,6 +79,7 @@ void Func_020034bc(void)
     struct FieldSprite *sprite;
     struct LampWork *work;
     s32 height;
+    s32 y;
     s32 scale;
     s32 tick;
     struct Half zero;
@@ -96,7 +108,8 @@ void Func_020034bc(void)
     tick = gFrameCount & 15;
     if (tick != 0)
         return;
-    spark = (union ArcObject *)Object_Create(0x11c, lamp->x.fixed + 0x80000, lamp->y.fixed + height + 0x80000, lamp->z.fixed);
+    y = lamp->y.fixed + height;
+    spark = (union ArcObject *)Object_Create(0x11c, lamp->x.fixed + 0x80000, y + 0x80000, lamp->z.fixed);
     height = Engine_MathDivide(height, 0x60000);
     height <<= 16;
     if (spark == NULL)

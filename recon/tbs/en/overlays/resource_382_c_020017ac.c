@@ -1,5 +1,5 @@
 /* NONMATCHING: complete 340-byte owner including its six-word pool;
- * candidate 340, 99 differing halfwords, 48 aligned edits (2026-09-27 H1).
+ * candidate 340, 97 differing halfwords, 46 aligned edits (2026-09-27 H2).
  * Original baseline: 340/97 halfwords/47 aligned edits.
  * Three bounded hypotheses: independent branch locals gave 328/340 and
  * 91 edits; explicit coordinate updates gave 344/340 and 62 edits; reusing
@@ -14,7 +14,18 @@
  * Full-owner result 340/99/48: coordinate ancestry is unchanged; only the
  * callback publication/leader-sprite reload tail reorders. All six pool
  * words, frame and store widths remain fixed. New ownership evidence, not
- * an exact adoption. The original candidate remains in parent 43fe42fc0. */
+ * an exact adoption. The original candidate remains in parent 43fe42fc0.
+ * H2: exact BattleFx_SpawnBurstParticle (BATTLE/EFFECT/RISING_SEQUENCE.C,
+ * main 08092624) has the same random-variant -> animation/script -> drift
+ * initialization boundary. Its own-ROM 0809264a/4c pair is cmp #1; bne.
+ * Transfer its switch/case-1/default dispatch. The previously persistent
+ * 02001808/0a pair now matches; precisely two byte positions change from H1,
+ * both to reference bytes, with every other byte fixed. Topology is equal.
+ * The complete 340-byte owner remains nonmatching: 97 halfwords, 46 aligned
+ * edits, 56 wrong instructions. Freeze the admitted variant dispatch; the
+ * remaining coordinate loads, direction-mask xor and callback publication
+ * need distinct producer/consumer evidence, not pointer/zero permutations.
+ * Both structural trials are closed. No exact sibling source was edited. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -76,12 +87,17 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     if (leaf == NULL)
         return;
     sprite = leaf->actor.sprite;
-    if ((Engine_RandomNext() & 1) == 1) {
+    /* The exact burst-particle sibling dispatches the animation/script
+     * pair as one random variant, rather than as a boolean flag. */
+    switch (Engine_RandomNext() & 1) {
+    case 1:
         Engine_ObjectSetAnimation(&leaf->actor, 3);
         Engine_ObjectSetScript(&leaf->actor, (const s32 *)0x0200a8c4);
-    } else {
+        break;
+    default:
         Engine_ObjectSetAnimation(&leaf->actor, 2);
         Engine_ObjectSetScript(&leaf->actor, (const s32 *)0x0200a8dc);
+        break;
     }
     zero = 0;
     leaf->actor.motion_flags = zero;

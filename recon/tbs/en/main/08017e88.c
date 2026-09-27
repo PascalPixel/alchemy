@@ -38,6 +38,16 @@
  * not before the comparison as required. The helper also promotes the loop
  * value into signed-load/shift lowering and moves the name to r6. No tuning
  * of this failed invariant; full diff read and source preserved in commit.
+ * H1 preserved in 7f7ff6ce8. H2 restores the original append loop and moves
+ * only the prefix-skip operation behind a u32 dispatch-code interface.
+ * Prediction: the widened dispatch read can remain independent of the
+ * unchanged loop's HImode initial value. One follow-up, not an argument or
+ * declaration permutation; reject unless the paired-load invariant appears.
+ * H2 result: 432/432, 67 differing halfwords / 43 aligned edits. Dispatch
+ * becomes its own load but the returned pointer adds a selection/join copy;
+ * loop input is still after that join, not a second pre-comparison load.
+ * Both pool-position mismatches remain. Rejected after full diff inspection.
+ * Stop this axis after one model and one follow-up; no bytes adopted.
  */
 #include "TYPES.H"
 
@@ -63,21 +73,14 @@ static __inline__ void UiText_PutEntry(u16 *dst, u8 *code)
     *dst = c;
 }
 
-/* FAKEMATCH: keep the append input narrow and separate from article dispatch. */
-static __inline__ u32 UiText_AppendName(
-    u16 *name, u16 c, u32 pos, u16 *entry, s32 *suffix)
+/* FAKEMATCH: dispatch consumes a widened code; the append loop owns u16. */
+static __inline__ u16 *UiText_SkipArticlePrefix(u16 *name)
 {
-    while (c != 0) {
-        name++;
-        entry[pos] = (s16)c;
-        pos = (pos + 1) & 0x1ff;
-        if (c == 'S' || c == 's')
-            *suffix = 1;
-        else
-            *suffix = 0;
-        c = *name;
-    }
-    return pos;
+    u32 code = *name;
+
+    if (code == 29)
+        name += 2;
+    return name;
 }
 
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
@@ -86,6 +89,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     struct ArticleTable tbl;
     s32 kind;
     u16 head;
+    u16 c;
     u8 *p;
     s8 c8;
     s32 cnt;
@@ -119,10 +123,18 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
             entry[pos] = c8;
             pos = (pos + 1) & 0x1ff;
         }
-    } else if (name[0] == 29) {
-        name += 2;
+    } else {
+        name = UiText_SkipArticlePrefix(name);
     }
-    pos = UiText_AppendName(name, *name, pos, entry, suffix);
+    while (*name != 0) {
+        c = *name++;
+        entry[pos] = (s16)c;
+        pos = (pos + 1) & 0x1ff;
+        if (c == 'S' || c == 's')
+            *suffix = 1;
+        else
+            *suffix = 0;
+    }
     if (no == 2 || (no == 3 && plural != 0)) {
         if (*suffix != 0) {
             UiText_PutEntry(&entry[pos], &Value_00000065);

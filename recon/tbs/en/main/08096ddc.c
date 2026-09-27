@@ -1,5 +1,12 @@
-/* Draft, not exact (2026-09-24): 13 differing halfwords, 312 of 312 bytes.
-   The scale stores precede the link store and the sprite load comes last.
+/* NONMATCHING (2026-09-28): 312/312 bytes, 18 differing halfwords,
+   9 aligned edits. The exact descending-arc sibling's initialization order
+   restores the sprite load and link store, reducing 11 aligned edits to 9.
+   An explicit byte cursor for state/step regressed to 316 bytes/40 edits;
+   retain the typed fields. The reference still advances one state cursor
+   by 15 after strb, while this candidate materializes two addresses.
+   The sibling's u8-zero placement scored 312 bytes/11 aligned edits and
+   left both addresses separate; restore the literal zeros and tied scales.
+   Previous draft (2026-09-24): 13 differing halfwords, 11 aligned edits.
    Storing literal zeros to sprite->frame and child->phase lets GCC keep
    the byte zero in r8, loaded from the mid-loop pool, as the reference
    does (a zero local cost 121 halfwords). Residual: the reference derives
@@ -97,11 +104,11 @@ void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
         if (object == 0)
             continue;
         object->w = link->w;
+        sprite = object->sprite;
         object->state = 0;
         object->step = 0;
-        object->scale_y = object->scale_x = 0x1999;
         object->link = link;
-        sprite = object->sprite;
+        object->scale_y = object->scale_x = 0x1999;
         if (sprite == 0)
             continue;
         AnimationObjects_SelectAnimationFar(sprite, 0);

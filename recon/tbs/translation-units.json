@@ -30366,7 +30366,7 @@
           "address": "0x02009924",
           "kind": "thumb"
         },
-        "Main_0808a080": {
+        "Engine_ActorGet": {
           "address": "0x0200992c",
           "kind": "thumb"
         },
@@ -30374,9 +30374,21 @@
           "address": "0x02009934",
           "kind": "thumb"
         },
-        "Main_0808a098": {
+        "Engine_ActorEnableActionCallback": {
           "address": "0x0200993c",
           "kind": "thumb"
+        },
+        "HaidiaBabi_SharedAction": {
+          "address": "0x02009ab4",
+          "kind": "data"
+        },
+        "HaidiaBabi_ActorExitAction": {
+          "address": "0x02009b04",
+          "kind": "data"
+        },
+        "HaidiaBabi_LeaderExitAction": {
+          "address": "0x02009b34",
+          "kind": "data"
         },
         "Main_0808a0a0": {
           "address": "0x02009944",

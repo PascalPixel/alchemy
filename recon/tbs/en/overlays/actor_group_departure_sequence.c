@@ -1,7 +1,7 @@
-/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 57 differing
- * halfwords, 36 wrong instructions, 48 halfword edits. Shared FieldSprite
+/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 49 differing
+ * halfwords, 36 wrong instructions, 40 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
- * Visual reloads, two facing-store blocks and delay-address ordering remain.
+ * Visual reloads, two facing-store blocks and coordinate-store ordering remain.
  * H1 (2026-09-27): audited the import table against exact StormScene and
  * GroupDeparture siblings plus FIELD_EVENT.H. Camera speed and actor
  * animation are void, ActorGet/ViewCenter return FieldActor pointers; no
@@ -9,7 +9,14 @@
  * Camera_SetSpeed interface at all three sites: complete candidate remains
  * byte-identical to baseline (2716/57 halfwords/48 aligned edits), including
  * the 4-byte frame and every pool. Generic-call wrapping is not the cause
- * of the entry's sprite-pointer/argument ordering; stop this axis. */
+ * of the entry's sprite-pointer/argument ordering; stop this axis.
+ * H2: transfer the exact FUNE_KANPAN/RANDOM_ACTORS.C countdown initializer's
+ * signed temporary before its +100 address advance. All four +60/+100 pairs
+ * at 02003a38, 02003a7a, 02003adc and 02003b16 now match. Exactly 16 bytes
+ * change from H1, all to reference bytes; every other byte, the complete
+ * extent, frame and pools stay fixed. No exact sibling/header was edited.
+ * The two-hypothesis budget is closed; preserve these four ordering fixes
+ * and require new actor/sprite ownership evidence for the remaining hunks. */
 #include "FIELD_EVENT.H"
 
 struct Half {
@@ -423,7 +430,15 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: the exact random-deck actor initializer computes the
+         * countdown before advancing to its actor-state field. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     departureActions = Data_0200cec8;
     {
         s32 shown = 1;
@@ -440,7 +455,14 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: preserve the countdown-before-address boundary. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     *(u16 *)((((u8 *)actor + 100)) + 2) = (s32)2;
     Func_02004744(26, departureActions);
     Call3(Func_0200478c, 22, 0x980000, 0x5050000);
@@ -452,7 +474,14 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: preserve the countdown-before-address boundary. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     {
         s32 shown = 3;
 
@@ -467,7 +496,14 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: preserve the countdown-before-address boundary. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     {
         s32 shown = 4;
 

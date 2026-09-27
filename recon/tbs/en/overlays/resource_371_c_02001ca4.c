@@ -1,5 +1,5 @@
-/* NONMATCHING: not-yet-c, 1492 candidate / 1488 reference bytes;
- * 190 differing halfwords, 81 normalized edits (2026-09-26).
+/* NONMATCHING: not-yet-c, 1488 candidate / 1488 reference bytes;
+ * 118 differing halfwords, 52 normalized edits (2026-09-27).
  * Whole raw owner [02001ca4,02002274), three owned literal-pool groups.
  * Entry is referenced by the overlay's callback table as runtime 02009ca5;
  * it consumes no entry arguments. Neighbors end at 02001ca4 and begin at
@@ -21,6 +21,23 @@
  * reload set changes. Full normalized differences and allocation were read.
  * Stop this bounded pass after these two ownership hypotheses. Next work
  * needs evidence for a distinct lifetime/call boundary, not type spellings.
+ *
+ * ENTRY_STATE.C boundary transfer: exact IMIRU_MURA/ENTRY_STATE.C uses
+ * Call1 for flag clears to shorten constant/actor lifetimes. All four sets
+ * here now use Discard1, whose s32-returning function pointer preserves the
+ * canonical Engine_GameFlagSet declaration while discarding its result.
+ * One bounded trial restores 1488 bytes, 118 halfwords / 52 edits, equal
+ * topology, versus 1492 / 190 / 81 for direct sets. Full normalized and
+ * compiler-assembly differences show only the decline-tail constant
+ * sharing changed: r6/r5-held flags become per-use r0 pool loads, eliminating
+ * two early loads and restoring the final pool's address. The complete
+ * decline tail and pool [020021b0,02002274) are now byte-exact (196 bytes),
+ * but the whole owner remains not-yet-c and earns no DONE.
+ * The earlier r2 anchor reloads, r8 mode-pointer inheritance, first-pool
+ * alignment, message-base lifetime and argument scheduling are unchanged.
+ * In particular this boundary does not admit the reference's r1 reload set.
+ * Freeze the corrected flag boundary; no further call-wrapper variations
+ * without independent evidence for one of those remaining ownership sites.
  */
 #include "FIELD_EVENT.H"
 
@@ -121,6 +138,13 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     f(a0);
 }
 
+/* FAKEMATCH: transfer ENTRY_STATE.C's per-call constant boundary while
+ * retaining the flag setter's canonical s32 return type. */
+static __inline__ void Discard1(s32 (*f)(s32), s32 a0)
+{
+    f(a0);
+}
+
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -170,7 +194,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
     if (Value1(Engine_GameFlagIsSet, 0x16e) == 0) {
         /* First visit: claim the flag and play the long presentation. */
         Main_08077260(1);
-        Engine_GameFlagSet(0x16e);
+        Discard1(Engine_GameFlagSet, 0x16e);
         Engine_EventBegin();
         record = Engine_ActorGet(LEADER);
         if (record != 0) {
@@ -328,7 +352,7 @@ void WorldMap_RunVenusDjinniMeeting(void)
     Call2(Engine_EventShowMessage, ACTOR, 0);
     Engine_AudioPlayCue(111);
     Engine_UiWorkWaitThenFinalizeCapacity(0, 2);
-    Engine_GameFlagSet(0x16f);
+    Discard1(Engine_GameFlagSet, 0x16f);
     Call1(Engine_GameFlagClear, 0x171);
     Main_080a1040();
     Call1(Engine_EventSetMessage, 0xc6a);
@@ -360,8 +384,8 @@ void WorldMap_RunVenusDjinniMeeting(void)
     Engine_ActorSetAnimationAndWait(0, 3);
     Call3(Engine_ActorShowEmote, ACTOR, 0x100, 30);
     Call2(Engine_EventShowMessage, ACTOR, 0);
-    Engine_GameFlagSet(0x16f);
-    Engine_GameFlagSet(0x171);
+    Discard1(Engine_GameFlagSet, 0x16f);
+    Discard1(Engine_GameFlagSet, 0x171);
     Main_080a1040();
     Engine_ActorJump(ACTOR, 2, 20);
     Engine_EventShowMessage(ACTOR, 0);

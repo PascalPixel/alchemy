@@ -15154,6 +15154,9 @@
       "name": "FieldScene_RunStep20b",
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
     },
+    "resource_396:020017ec": {
+      "name": "ToretoHeya_ApplyFlaggedMapPatches"
+    },
     "resource_396:0200184c": {
       "name": "SceneEffect_RegisterPaletteFadeCallback",
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"

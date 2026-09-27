@@ -4,7 +4,7 @@
 
 void ToretoPalette_CaptureBank(void);
 void ToretoHeya_PlayGesture(s32 gesture);
-void Local_020017ec(void);
+void ToretoHeya_ApplyFlaggedMapPatches(void);
 void SceneState_ApplyRectsByFlag844(s32 flag);
 void ToretoHeya_RunLandingDustScene(void);
 void Main_0808a238(s32 map, s32 entrance);
@@ -65,7 +65,7 @@ s32 ToretoHeya_EnterRoom(void)
         Engine_ActorSetPosition(8, 0, 0);
     }
     if (Value1(Engine_GameFlagIsSet, 0x109))
-        Local_020017ec();
+        ToretoHeya_ApplyFlaggedMapPatches();
     globals = (u8 **)0x03001e70;
     work = globals[0];
     camera = (s32 *)(work + 260);

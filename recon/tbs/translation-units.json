@@ -2,6 +2,34 @@
   "format": 5,
   "units": [
     {
+      "id": "toreto-flagged-map-patches",
+      "source": "recon/tbs/en/overlays/resource_396_c_020017ec.c",
+      "overlay": "resource_396",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009ac8",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x02009a88",
+          "kind": "thumb"
+        },
+        "Data_02009ca8": {
+          "address": "0x02009ca8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020017ec",
+          "extent": 96,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "candidate-item-icon-compose",
       "source": "recon/tbs/en/units/item-icon-compose.c",
       "overlay": null,
@@ -84744,7 +84772,7 @@
           "address": "0x02009b18",
           "kind": "thumb"
         },
-        "Local_020017ec": {
+        "ToretoHeya_ApplyFlaggedMapPatches": {
           "address": "0x020097ec",
           "kind": "thumb"
         },

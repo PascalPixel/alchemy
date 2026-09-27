@@ -22,7 +22,14 @@
  * The whole loop after its entry and the table pool are exact. Caller and
  * FIELD_EVENT.H agree on six word arguments, with both sizes on the stack.
  * No new source boundary was established; no repeated loop/type/wrapper
- * trial was run, and no DONE credit is claimed. */
+ * trial was run, and no DONE credit is claimed.
+ * 2026-09-27 phased-value transfer from exact SHIAN_MURA/SETUP.C: use
+ * size for the -1 sentinel test, then 1 for each copy, then -1 again.
+ * Complete output is 92/96 bytes, 47 halfwords / 19 aligned edits. The
+ * sentinel now lives in call-clobbered r4 and is rebuilt each iteration;
+ * r8 and its save/restore disappear, violating the reference lifetime.
+ * Full diff read. Reject and stop this phase-reuse axis; keep 96-byte
+ * canonical and its three-halfword preheader residual. DONE +0. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

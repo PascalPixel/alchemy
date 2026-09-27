@@ -221,6 +221,9 @@ option recorded beside the file, or remain stored until it does.
 - 2026-09-24: the main-image far-call stub tables, built from the overlay
   veneer macro with whole aligned 8-byte entries, count as reconstructed
   veneers, as the overlay entry veneers already do.
+- 2026-09-27: repair model attribution after noon September 26 (Lisbon) to
+  Sol 6 or Astra 6. New trailers name the actual session model, never one
+  copied from an inherited prompt or earlier commit.
 
 ## Tooling index
 

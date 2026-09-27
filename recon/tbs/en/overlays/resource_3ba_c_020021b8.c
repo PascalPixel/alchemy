@@ -25,7 +25,7 @@
  * Stop this bounded queue axis: remaining interpolation and sprite work is
  * independent, and no complete owner is adopted or credited. This family
  * also occurs at resource_3bb:02002450 and resource_3bc:02002ee8; do not
- * propagate until the complete canonical owner is exact.
+ * adopt the twins until the complete canonical owner is exact.
  * 2026-09-27 division-interface H1: exact COMMON/EFFECT/SPAWN.C and the
  * local import table prove ordinary signed division at resident 03000380.
  * Replace all three interpolation helper calls with C / duration and bind
@@ -35,7 +35,7 @@
  * unlike the palette caller-save witness, this body gains no new save.
  * The complete +452..+4f0 queue tail and pool remain exact. Keep the
  * proven arithmetic interface, close this axis without a spelling sweep,
- * and do not instantiate the twins or credit any bytes.
+ * and do not instantiate production twins or credit any bytes.
  * 2026-09-27 interpolation-source audit: rechecked the complete normalized
  * diff and all three channels against exact SRC precedents. BLEND.C uses
  * unsigned-byte countdown/volatile endpoints; DisplayTransition_Update-
@@ -52,7 +52,15 @@
  * remains 1264/1264 bytes, 201 halfwords / 87 aligned edits, with the full
  * +0x452..+0x4f0 queue tail and pool exact. No new supported transfer was
  * found: no variant compiled, no aggregate/register permutations, no twin
- * propagation. Preserve the body and the 3792-byte family as not-yet-C. */
+ * propagation. Preserve the body and the 3792-byte family as not-yet-C.
+ * 2026-09-27 shared-draft transfer: the three ROM owners have 531 identical
+ * instruction positions and 182 pool/alignment bytes, differing only in
+ * proven calls and literal bindings. Separate not-yet-C units now score
+ * this one source at 3ba:020021b8, 3bb:02002450 and 3bc:02002ee8. All three
+ * independently compile to 1264 bytes with 201 differing halfwords and
+ * 87 aligned edits. The queue-tail solution is shared without copying the
+ * draft; the remaining interpolation and sprite lifetimes are unchanged.
+ * No owner is adopted, no production instance or DONE credit is added. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 

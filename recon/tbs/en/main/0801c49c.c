@@ -1,4 +1,5 @@
-/* Draft, not exact (2026-09-25): 848 of 864 bytes, 321 differing halfwords.
+/* Draft, not exact (2026-09-27): 864 of 864 bytes, 303 differing halfwords,
+   165 aligned edits. Baseline was 848 bytes / 321 halfwords / 193 edits.
    Written from the listing: every call, message, key test and the exit
    stores are in place; OwnerAction_AddFar returns a value (r1 before r0),
    and the loop closes with a goto after the A/B/Start chain.
@@ -17,9 +18,22 @@
    No volatile, declaration-order, compiler or flag variants attempted.
    Full diff also exposes missing pool-backed owner-name base 0x66 and
    folded output base 02000460 instead of 02000240 plus field offsets;
-   the existing PsynergyMenuGlobalState owns those two shortcut fields. */
+   the existing PsynergyMenuGlobalState owns those two shortcut fields.
+   H1 is preserved in 10d627e30; its ineffective wrapper is not retained.
+
+   H2 transfers PsynergyMenuGlobalState from PSYNERGY_MENU.H and the
+   pool-backed owner-name message base used by the text family. The two
+   typed shortcut assignments recover the reference's 02000240 base and
+   separate 0x220/0x222 field addressing. All eleven pool words at +0x334
+   through +0x35f now compare byte-for-byte, and the full size is recovered.
+   This is not an adoption: heading pseudo 85 still occupies r6 across the
+   ability-name calls, redraw remains at sp+4, and the frame stays 24 bytes.
+   The title's r5 staging, cursor store scheduling and register allocation
+   also differ. Stop after the first model and this evidence-led correction;
+   do not repeat generic label wrappers or declaration/volatile sweeps. */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
+#include "PSYNERGY_MENU.H"
 
 struct AbilityPair {
     u16 owner;
@@ -33,7 +47,6 @@ struct BattleAction {
 
 extern volatile u32 Data_03001b04;
 extern volatile u32 Data_03001c94;
-extern u8 Data_02000240[];
 extern u8 Value_00000b19[];
 extern u8 Value_00000b1e[];
 extern u8 Value_00000066[];
@@ -56,16 +69,6 @@ struct BattleAction *BattleAction_Get(s32 ability);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void UiWork_Finalize(struct RenderInput *win, s32 release);
-
-/* FAKEMATCH: keep label-number resolution local to each message draw. */
-static __inline__ void DrawPairLabel(struct RenderInput *win, s32 offset,
-                                    s32 x, s32 y)
-{
-    s32 message = (s32)Value_00000b1e;
-
-    message += offset;
-    UiText_DrawCharacterAtOffset(message, win, x, y);
-}
 
 /* Debug screen: teaches every party member a few test abilities, then lets
    the user pick two of the party's abilities (up and down choose the row,
@@ -123,13 +126,13 @@ void Debug_SelectAbilityPair(void)
                 *(u8 *)&cursor->packed = slot;
                 RenderOutput_RedrawSavedRect(win);
                 UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
-                DrawPairLabel(win, 0, 48, 0);
+                UiText_DrawCharacterAtOffset((s32)Value_00000b1e, win, 48, 0);
                 UiText_DrawCharacterAtOffset(list[first].ability + 0x333, win, 56, 16);
                 UiText_DrawCharacterAtOffset(list[second].ability + 0x333, win, 56, 32);
-                DrawPairLabel(win, -2, 16, 16);
-                DrawPairLabel(win, -1, 16, 32);
-                UiText_DrawCharacterAtOffset(list[first].owner + 0x66, win, 104, 16);
-                UiText_DrawCharacterAtOffset(list[second].owner + 0x66, win, 104, 32);
+                UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 2), win, 16, 16);
+                UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 1), win, 16, 32);
+                UiText_DrawCharacterAtOffset(list[first].owner + (s32)Value_00000066, win, 104, 16);
+                UiText_DrawCharacterAtOffset(list[second].owner + (s32)Value_00000066, win, 104, 32);
                 RenderOutput_RedrawSavedRect(info);
                 UiText_DrawCharacterAtOffset(0xaec, info, 0, 16);
                 if (row != 0) {
@@ -178,8 +181,8 @@ void Debug_SelectAbilityPair(void)
             } else {
                 goto loop;
             }
-        *(u16 *)(Data_02000240 + 0x220) = (list[first].owner << 10) | list[first].ability;
-        *(u16 *)(Data_02000240 + 0x222) = (list[second].owner << 10) | list[second].ability;
+        Data_02000240.psynergy_shortcuts[0] = (list[first].owner << 10) | list[first].ability;
+        Data_02000240.psynergy_shortcuts[1] = (list[second].owner << 10) | list[second].ability;
         UiWork_Finalize(win, 1);
         UiWork_Finalize(title, 1);
         UiWork_Finalize(info, 1);

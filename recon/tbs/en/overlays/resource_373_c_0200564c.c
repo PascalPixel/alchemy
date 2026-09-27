@@ -1,4 +1,26 @@
-/* Draft, not-yet-c. Completion audit H3 plain-byte publication:
+/* Draft, not-yet-c. Retained H3 baseline: 224/224 bytes,
+ * 59 differing halfwords / 39 aligned edits. H4 (1795299e8) and H5
+ * (7b73c2004) preserve the two rejected literal-zero models below.
+ * H5 failure zero width follow-up (2026-09-27):
+ * Explicit block-local s32 stopped = 0 retains SI pseudo 83 through CSE,
+ * rather than H4's QI pseudo 85. It still does not share the incoming force
+ * pseudo at the two-predecessor failure label. Local allocation reserves
+ * r5 for stopped; force spills. Full 224-byte output is byte-identical to
+ * H4: 70 differing halfwords / 49 aligned edits, signed pool unchanged.
+ * STOP: one model plus one causal follow-up. The useful invariant is that
+ * independent literal failure zero prevents late tail merging; its lifetime
+ * is not the reference's incoming force r6. No new source fact supports
+ * another variant. Retain H3's stronger 59 HW / 39 edits as the baseline.
+ * H4 literal failure publication (2026-09-27):
+ * 224/224 bytes, 70 differing halfwords / 49 aligned edits. Transfer the
+ * exact SHIAN tracking sibling's literal-zero failure stores, retaining
+ * this owner's byte widths. CSE shares QI zero 85 across the failure call;
+ * local allocation gives it r5 and force spills. The two store tails now
+ * stay separate, but reference force r6 / pos r8 / tpos r7 is not recovered.
+ * Pool remains signed -0x1000 at 02005728. Baseline H3 was 59 HW / 39 edits.
+ * Its tails were distinct through allocation and merged in jump2 only
+ * after both failure force and success result reloaded into r3.
+ * Completion audit H3 plain-byte publication:
  * 224/224 bytes, 59 differing halfwords / 39 aligned edits, byte-identical
  * to H2. Exact WORLD_MAP/LINKED_EFFECTS.C plain-byte writes remove initial
  * RTL QI zero/mask producers (old 80/90/100/110), but those had already died

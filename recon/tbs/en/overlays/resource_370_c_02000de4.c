@@ -1,5 +1,5 @@
 /* NONMATCHING: resource_370:02000de4; 1008 / 1024 bytes, 479 differing
- * halfwords, 416 wrong instructions, 258 aligned edits (2026-09-27 H1).
+ * halfwords, 416 wrong instructions, 258 aligned edits (2026-09-27 H2).
  * Complete owner 02000de4..020011e4, including both literal-pool groups.
  * The save-menu caller passes (unused, password mode, output), then adds
  * a checksum and calls exact Clear_EncodePassword. Import 02009444 calls
@@ -11,6 +11,12 @@
  * but fails the admission invariant: key still spills, frame still 68/64,
  * inventory base still hoists and the middle pool is still too late. No
  * exact credit. Original baseline remains in parent c8976444b.
+ * H2 puts the two-word row advance in the owner-loop increment, matching
+ * the reference's 02000fb2 boundary rather than advancing before the level
+ * clamp. Its scheduling moves to that boundary, but the complete score,
+ * 68-byte frame, key spill and pool displacement remain unchanged. H1 is
+ * preserved at 5d817e2d1. Stop after these two supported models; neither
+ * licenses a further register/zero/pointer spelling sweep.
  * Integer-domain
  * packing offset restores complete topology. The shared money union gives
  * the reference's one base and +16/+18 accesses. Frame remains 68 / 64 bytes;
@@ -60,7 +66,9 @@ struct PasswordMoney {
 
 extern struct PasswordMoney Data_02000240;
 
-/* Inventory_Find and Inventory_GetQuantity prove the shared inventory view
+/* FAKEMATCH: the inline boundary is retained from the matching experiment,
+ * not evidence of an original helper. Inventory_Find and Inventory_GetQuantity
+ * prove the shared inventory view
  * and the low-nine-bit id / high-five-bit quantity encoding. The password
  * stores quantity minus one, and its complete scan retains the last match. */
 static __inline__ u16 Password_FindItemQuantity(
@@ -123,7 +131,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
     }
 
     row = rows;
-    for (i = 0; i != 4; i++) {
+    for (i = 0; i != 4; i++, row += 2) {
         struct PasswordOwnerState *state =
             Engine_OwnerGetState(Data_020096c0[i]);
         struct PasswordStats *stats = &state->stats;
@@ -151,7 +159,6 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                  ((u32)stats->value_12 << 10) | stats->value_18;
         row[1] = ((u32)stats->value_1a << 22) |
                  ((u32)stats->value_1c << 12) | (stats->level_1e << 4);
-        row += 2;
 
         level = state->rank;
         if (level > 99)

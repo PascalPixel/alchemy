@@ -11031,7 +11031,8 @@
       "source": "FIELD/FUNE_HEYA/PROGRESS_SHOW.C"
     },
     "resource_3b1:02004254": {
-      "name": "Scene_RunConditionalActorPresentation"
+      "name": "Scene_RunConditionalActorPresentation",
+      "source": "FIELD/FUNE_HEYA/COND_ACT.C"
     },
     "resource_399:020019e8": {
       "name": "FieldScene_RunThreeActorChoreography",

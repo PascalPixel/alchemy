@@ -1,19 +1,4 @@
-/* NONMATCHING: 892 of 892 bytes, 2 differing halfwords (2026-09-24). Flag
- * branches restructured from the listing (0x92b/0x929 walk to x 0x1d6,
- * 0x92a/else to 0x19a). The 0x1b0 x coordinate lands in r8 because v7 = 0 is
- * set early in the branch (sched2 sinks it), and 0xa01b is a Value_ link
- * symbol so its r5 load is not hoisted above the message call. Remaining: the
- * ShowMessageAndWait speaker is copied from r5 where the reference reloads it
- * from the same pool entry. Numeric speaker plus an explicit saved-link
- * lifetime reproduced the load but added a separate four-byte pool entry;
- * isolating the call in a one-pass block left four halfwords different.
- * A halfword-mode speaker introduced an early pool and grew to 908 bytes.
- * 2026-09-27: transferred canonical FIELD_EVENT.H signatures, pointer-returning
- * actor lookup and FieldActor coordinate accesses from exact deck scenes.
- * H1 remains byte-identical to the 892-byte baseline (cmp), 2 halfwords/2 edits.
- * H2 reuses Event_ShowMessageAndWait, already exact in other cabin scenes;
- * the complete output is again byte-identical. Preserve these proven types,
- * but stop this interface boundary: neither changes the speaker reload. */
+/* Cabin dialogue and actor movement vary with the passenger story flags. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -56,9 +41,9 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-extern u8 Value_0000a01b;
+enum { CabinSpeakerRequest = 0xa01b };
 
-void Func_02004254(s32 a0)
+void Scene_RunConditionalActorPresentation(s32 a0)
 {
     u32 i;
     s32 rec7;
@@ -90,7 +75,7 @@ void Func_02004254(s32 a0)
         Engine_EventWait(20);
         Engine_ActorFaceEachOther(27, 0, 10);
         Call1(Engine_EventSetMessage, 0x1ebc);
-        Call1(FieldScene_RunStepThen10, (s32)&Value_0000a01b);
+        Call1(FieldScene_RunStepThen10, CabinSpeakerRequest);
         Engine_ActorSetAnimationAndWait(0, 3);
         v7 = 0;
         Call3(Engine_ActorSetSpeed, 0, 0x10000, v6);
@@ -152,9 +137,11 @@ void Func_02004254(s32 a0)
         goto L_02004592;
     }
     Call1(Engine_EventSetMessage, 0x1eb7);
-    Event_ShowMessageAndWait((s32)&Value_0000a01b, 0, 40);
+    Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
     Call3(Engine_ActorShowEmote, 27, 0x101, 60);
-    base5_a01b = (s32)&Value_0000a01b;
+    /* FAKEMATCH: start the saved speaker at repeated dialogue; the initial
+     * call must retain its independent load from the same literal word. */
+    base5_a01b = CabinSpeakerRequest;
     FieldScene_RunStepThen10(base5_a01b);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
     Engine_EventWait(60);

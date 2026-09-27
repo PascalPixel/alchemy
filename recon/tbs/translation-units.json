@@ -86877,7 +86877,7 @@
           "address": "0x03001b10",
           "kind": "data"
         },
-        "Engine_MathDivide": {
+        "__divsi3": {
           "address": "0x0200bb00",
           "kind": "thumb"
         },

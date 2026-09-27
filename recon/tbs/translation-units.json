@@ -2,6 +2,28 @@
   "format": 5,
   "units": [
     {
+      "id": "babi-chika-leader-spray",
+      "source": "recon/tbs/en/overlays/resource_3c4_c_020010c4.c",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {"address": "0x0200b10c", "kind": "thumb"},
+        "Engine_EventBegin": {"address": "0x0200b0f4", "kind": "thumb"},
+        "Engine_ObjectSetAnimation": {"address": "0x0200b054", "kind": "thumb"},
+        "Main_0808a118": {"address": "0x0200b14c", "kind": "thumb"},
+        "Engine_ActorSetSpriteFlags": {"address": "0x0200b0ac", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x0200b1ac", "kind": "thumb"},
+        "Engine_ObjectSetPosition": {"address": "0x0200b074", "kind": "thumb"},
+        "Engine_TaskWait": {"address": "0x0200b024", "kind": "thumb"},
+        "Engine_RandomNext": {"address": "0x0200b034", "kind": "thumb"},
+        "Engine_MathModulo": {"address": "0x0200b01c", "kind": "thumb"},
+        "Engine_EventEnd": {"address": "0x0200b0fc", "kind": "thumb"},
+        "advance_effect_motion": {"address": "0x02009068", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x020010c4", "extent": 284, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "takara-actor-footprint-query",
       "source": "recon/tbs/en/overlays/resource_3b3_c_02000ddc.c",
       "overlay": "resource_3b3",

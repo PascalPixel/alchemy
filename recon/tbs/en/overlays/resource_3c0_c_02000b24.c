@@ -1,3 +1,10 @@
+/* Astra 2026-09-27 phased actor-id trial: reuse a1 for state->words[125]
+ * after the 11/12 dispatch, then pass a1 to ActorGet. Whole result is
+ * 220/220 bytes, 18 differing halfwords / 12 aligned edits. The original
+ * eight r5/r6 substitutions remain; final load now targets r5 and adds a
+ * move to r0, consuming the original alignment halfword. All eight pool
+ * words remain exact. Full normalized diff rejects the predicted lifetime
+ * correction; restore the direct final lookup, with no new credit. */
 #include "FIELD_EVENT.H"
 
 /* Unit bindings for scoring (declare as absolute_symbols of a unit on

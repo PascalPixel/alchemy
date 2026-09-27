@@ -47,6 +47,14 @@
  * its successor has four uses over 78 insns/three calls. Scope boundaries
  * split the lifetime, but do not remove it. Reject both, keep the 312-byte
  * baseline and stop this boundary axis; all five pool values stay unchanged.
+ * Follow-up diagnostic: exact Menu_RunSelection retains its cursor in r8;
+ * the exact grid menu retains it in r7. Neither is a rematerialization
+ * precedent. Initial RTL has separate address expressions, merged by CSE
+ * into pseudo 48; its definition lacks REG_EQUIV while equivalence notes
+ * survive on argument copies. H1 ranks cursor, one, window, then table;
+ * scoped lifetime ranks cursor below window but still above named table.
+ * These facts do not predict eviction from combining those two models.
+ * No further trial: baseline reproduced, diagnostic and ordinary text agree.
  */
 #include "TYPES.H"
 

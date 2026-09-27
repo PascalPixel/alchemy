@@ -87782,8 +87782,12 @@
           "address": "0x0200e16c",
           "kind": "data"
         },
-        "Engine_MathModulo": {
+        "__umodsi3": {
           "address": "0x0200dbf4",
+          "kind": "thumb"
+        },
+        "SceneEffect_UpdateOrbitAroundActor": {
+          "address": "0x0200b600",
           "kind": "thumb"
         },
         "gFrameCount": {

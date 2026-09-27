@@ -1,5 +1,15 @@
 /* NONMATCHING: 548 bytes, candidate 544, 94 differing halfwords, 62 aligned
  * edits (2026-09-27). Whole extent 02000c8c..02000eb0 includes four pool words.
+ * Sol burst audit (2026-09-27): fresh full normalized comparison reproduces
+ * 544/548, 94 halfwords / 62 edits; no exact or equivalent sibling exists.
+ * The new DRIFT witness isolates an address producer to change sched2 order.
+ * This owner's missing final loop copies originate earlier, when global PRE
+ * replaces the last two frame-address producers with shared pseudo 110.
+ * The restart producer-scope transfer also failed address rematerialization.
+ * No evidence predicts that another scoped copy here will preserve all four
+ * loop-entry copies. Do not replay the closed type/inline/phase-pointer axes;
+ * retain this canonical body until a distinct pointer producer is evidenced.
+ * No function or alignment credit; both separate two-byte gaps are unchanged.
  * H1 transfers MAP_SCROLL.H's MapScrollWork.origin and signed coordinate
  * array from exact Map_UpdateLayerScroll; OpenSeal proves the caller and
  * GuardedStep supplies the actor import bindings. Fresh original: 544/548,

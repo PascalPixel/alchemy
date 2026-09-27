@@ -6,7 +6,16 @@
  * beats dir 17 over 352), plus one ands scheduled two slots early in the
  * capacity branch. The goto skip loops, count local and the duplicated
  * Engine_AudioPlayCue(113); goto done exits are what fixed the layout and
- * constant rematerialisation. */
+ * constant rematerialisation.
+ * 2026-09-27 family audit: complete 02000214..020004b0, including pool;
+ * fresh baseline 668 bytes / 22 differing halfwords / 21 aligned edits.
+ * Exact MENU_TEST/SELECT_ITEM.C, ITEM_LEVEL/RECORD_COUNT.C and the window
+ * finalize/redraw/clear and text callees confirm separate window pointers
+ * and local redraw state. Neither dir nor redraw escapes to any callee;
+ * inventory availability returns s32, item lookup returns ItemDefinition*.
+ * No new shared-state alias or prototype fact changes the r8/sl lifetime.
+ * STOP family ownership axis without another declaration/aggregate sweep;
+ * body retained unchanged. Sibling 004b0 retains its incoming-r9 close. */
 #include "FIELD_EVENT.H"
 #include "INVENTORY.H"
 #include "DMA.H"

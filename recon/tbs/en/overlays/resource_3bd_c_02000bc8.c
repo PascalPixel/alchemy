@@ -1,6 +1,19 @@
-/* NONMATCHING: 96 of 100 bytes, 18 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: 49 halfwords: the reference loads the map id twice, once zero-extended into r1 for the second test and once sign-extended for the first; ours shares one load A u16 counts[] view of the row still folds (s16)map into the first compare's ldrsh (gcse); a volatile read keeps two loads but folds the base into one pool constant and extends right after the load. */
+/* NONMATCHING: candidate 96 of 100 bytes, 49 differing halfwords,
+ * 18 aligned edits (2026-09-27). Complete extent [02000bc8,02000c2c)
+ * includes its four-word pool. The reference loads the scene twice:
+ * unsigned into r1 for the second test, then signed for the first. This
+ * draft shares one signed load and loses the later sign-extension pair.
+ * A u16 counts[] view still folds into the first compare's ldrsh; an older
+ * volatile-read trial kept two loads but folded base+offset into one pool
+ * word and sign-extended too early. Do not repeat those axes.
+ * The shared halfword-record pattern was tested as a scene snapshot:
+ * struct { u16 value; } map; map.value = rows.halves[224][0]. Its complete
+ * candidate is byte-identical to this baseline (cmp checked); it does not
+ * preserve the independent unsigned read. That type axis is now stopped.
+ * Bindings and scene-row ownership agree with exact ARUTAMIRA_DOU/
+ * ENTRY_STATE.C. Stable unit arutamira-room-visuals records the complete
+ * owner without awarding credit. A next model must explain the two reads
+ * before the blend-register store, not merely change the snapshot's type. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -13,7 +26,7 @@ union GameStateRows {
 extern union GameStateRows gGameStateRows;
 extern u8 Data_00000092[], Data_00000097[];
 
-void Local_02000bc8(void)
+void ArutamiraDou_ApplyRoomVisuals(void)
 {
     u16 map = gGameStateRows.halves[224][0];
 

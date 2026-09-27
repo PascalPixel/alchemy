@@ -1,7 +1,22 @@
-/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 57 differing
- * halfwords, 36 wrong instructions, 48 halfword edits. Shared FieldSprite
+/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 49 differing
+ * halfwords, 36 wrong instructions, 40 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
- * Visual reloads, two facing-store blocks and delay-address ordering remain. */
+ * Visual reloads, two facing-store blocks and coordinate-store ordering remain.
+ * H1 (2026-09-27): audited the import table against exact StormScene and
+ * GroupDeparture siblings plus FIELD_EVENT.H. Camera speed and actor
+ * animation are void, ActorGet/ViewCenter return FieldActor pointers; no
+ * return-type repair is supported at their residuals. Transfer the existing
+ * Camera_SetSpeed interface at all three sites: complete candidate remains
+ * byte-identical to baseline (2716/57 halfwords/48 aligned edits), including
+ * the 4-byte frame and every pool. Generic-call wrapping is not the cause
+ * of the entry's sprite-pointer/argument ordering; stop this axis.
+ * H2: transfer the exact FUNE_KANPAN/RANDOM_ACTORS.C countdown initializer's
+ * signed temporary before its +100 address advance. All four +60/+100 pairs
+ * at 02003a38, 02003a7a, 02003adc and 02003b16 now match. Exactly 16 bytes
+ * change from H1, all to reference bytes; every other byte, the complete
+ * extent, frame and pools stay fixed. No exact sibling/header was edited.
+ * The two-hypothesis budget is closed; preserve these four ordering fixes
+ * and require new actor/sprite ownership evidence for the remaining hunks. */
 #include "FIELD_EVENT.H"
 
 struct Half {
@@ -9,7 +24,6 @@ struct Half {
 };
 
 struct FieldActor *Func_0200472c();
-void Func_0200481c();
 void Func_02004824();
 void Func_0200473c();
 void Func_02004744(s32 actorId, const s32 *actions);
@@ -121,7 +135,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     groupActor = Pointer1(Func_0200472c, 27);
     groupVisual = groupActor->sprite;
     actorVisual = actor->sprite;
-    Call2(Func_0200481c, 0x10000, 0x2000);
+    Camera_SetSpeed(0x10000, 0x2000);
     Call4(Func_02004824, 0x6e0000, -1, 0x58b0000, 1);
     Call3(Func_0200473c, 8, 0x13333, 0x9999);
     Call3(Func_0200473c, 26, 0x13333, 0x9999);
@@ -216,7 +230,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Call3(Func_020046bc, 0x10000, 0x10000, 0x10000);
     Func_020046f4(1);
     Call3(Func_020046bc, -1, -1, 0xe666);
-    Call2(Func_0200481c, 0x80000, 0x80000);
+    Camera_SetSpeed(0x80000, 0x80000);
     Call4(Func_02004824, 0xd90000, -1, 0x43c0000, 1);
     Func_02004874(0, 0);
     Func_0200487c(40);
@@ -262,7 +276,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     Func_0200463c(30);
     Value2(Func_02004644, (s32)Func_02003ce4, 0xc80);
     Func_02004744(19, Data_0200cedc);
-    Call2(Func_0200481c, 0x20000, 0x7ae);
+    Camera_SetSpeed(0x20000, 0x7ae);
     Call4(Func_02004824, 0xaf0000, 0x600000, 0x43e0000, 1);
     do {
         Func_0200463c(1);
@@ -416,7 +430,15 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: the exact random-deck actor initializer computes the
+         * countdown before advancing to its actor-state field. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     departureActions = Data_0200cec8;
     {
         s32 shown = 1;
@@ -433,7 +455,14 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: preserve the countdown-before-address boundary. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     *(u16 *)((((u8 *)actor + 100)) + 2) = (s32)2;
     Func_02004744(26, departureActions);
     Call3(Func_0200478c, 22, 0x980000, 0x5050000);
@@ -445,7 +474,14 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: preserve the countdown-before-address boundary. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     {
         s32 shown = 3;
 
@@ -460,7 +496,14 @@ void Scene_RunActorGroupDepartureSequence(void)
         actor->facing = shown;
     }
     random = Func_02004654();
-    *(u16 *)(((u8 *)actor + 100)) = (Func_02004634(random, 90) + 60);
+    {
+        /* FAKEMATCH: preserve the countdown-before-address boundary. */
+        s32 delay = Func_02004634(random, 90) + 60;
+        u8 *state = (u8 *)actor;
+
+        state += 100;
+        *(u16 *)state = delay;
+    }
     {
         s32 shown = 4;
 

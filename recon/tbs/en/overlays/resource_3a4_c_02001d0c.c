@@ -1,4 +1,16 @@
-/* NONMATCHING: 788 bytes, candidate 788, 24 differing halfwords, 22 halfword
+/* NONMATCHING: Sol H4 2026-09-27: 792/788 bytes, 321 differing halfwords,
+ * 94 aligned edits. Prepare the callback before the reset queue; publish
+ * active/timer/delay/gravity in observed order using volatile field writes.
+ * Full normalized diff: queue order is recovered, but explicit callback
+ * lifetime steals r8 from timer, which now occupies r6. lreg gives callback
+ * p68 3 refs/252 length and timer p33 BASE_REGS; old shared callback p72
+ * instead owned r6. The initial extra move shifts the movhi zero pool beyond
+ * the second motion call; the resulting 4-byte growth fails the extent gate.
+ * Diagnostic assembly agrees with ordinary scoring. New fact: DRIFT's
+ * prepared-callback technique does not transfer across this long callback
+ * lifetime. Reject H4; retain its witness before a direct-publication trial.
+ * No adopted bytes or alignment changes. Historical canonical H2 follows:
+ * 788 bytes, candidate 788, 24 differing halfwords, 22 halfword
  * edits (2026-09-27). FieldScene_RunMultiPhasePresentation, meant for
  * FIELD/ARUTIN_YAMA/F_01D0C.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -89,16 +101,20 @@ void FieldScene_RunMultiPhasePresentation(void)
     Call3(Engine_ActorFaceDirection, 10, 0x8000, 40);
     Call2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
     Call4(Engine_CameraMoveTo, 0x800000, 0x400000, 0xca0000, 1);
-    /* FAKEMATCH: volatile stores keep phase before the two motion steps. */
-    zero.v = 0;
-    delay = &actor->motion.delay;
-    *(volatile s32 *)&actor->motion.active = 0;
-    timer = &actor->motion.timer;
-    /* Gravity; the typed-motion store alternative is recorded above. */
-    *(s32 *)&actor->actor.unknown_44[4] = 0x6666;
-    *(volatile s16 *)delay = 0;
-    *(volatile s16 *)timer = 0;
-    actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+    {
+        void (*update)(union FieldObject *) =
+            (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+
+        /* FAKEMATCH: retain the observed setup publication order. */
+        zero.v = 0;
+        delay = &actor->motion.delay;
+        timer = &actor->motion.timer;
+        *(volatile s32 *)&actor->motion.active = 0;
+        *(volatile s16 *)timer = 0;
+        *(volatile s16 *)delay = 0;
+        *(volatile s32 *)&actor->actor.unknown_44[4] = 0x6666;
+        actor->actor.update = update;
+    }
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 212, 200);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 103, 200);

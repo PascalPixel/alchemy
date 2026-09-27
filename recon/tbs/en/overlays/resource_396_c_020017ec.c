@@ -1,4 +1,10 @@
-/* NONMATCHING: 96 bytes, candidate 96, 3 differing halfwords (2026-09-27).
+/* NONMATCHING kuupuappu H1 (2026-09-27): explicit byte offset removes
+ * the strength-reduced logical index but emits 96/96, 15 halfwords/15 edits.
+ * Offset zero moves before the sentinel compare, and signed loads exchange
+ * their base/offset roles. Size still precedes sentinel retention. Full
+ * normalized diff and normal/diagnostic text agree. Reject this model;
+ * checkpoint its body, then restore flat indices for one preheader test.
+ * Previous NONMATCHING: 96 bytes, candidate 96, 3 differing halfwords (2026-09-27).
  * Complete entry 020017ec through the pool ending at 0200184c; the caller
  * is ENTER_ROOM.C. The candidate unit now records both import veneers.
  * H1: six s16 fields in an indexed MapPatch record produced 112 bytes,

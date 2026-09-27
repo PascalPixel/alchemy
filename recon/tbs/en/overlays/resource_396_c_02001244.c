@@ -1,4 +1,21 @@
-/* NONMATCHING: 480/480 bytes, seven differing halfwords (2026-09-27).
+/* Canonical restored (2026-09-27): 480/480 bytes, seven differing halfwords.
+ * The two new publication-local trials are preserved in 72730cd63 and
+ * 3a161950f. Both fail packing admission; no new supported publication
+ * boundary remains, so this axis is stopped with no exact-byte credit.
+ * NONMATCHING kuupuappu H2 (2026-09-27): halfword packed-color boundary
+ * produces 480/480 bytes, 13 differing halfwords / 13 aligned edits.
+ * Attenuation and clamps survive, but packing takes r2 instead of r3 and
+ * both shifts swap roles, exactly the existing output-temporary failure.
+ * Full normalized diff read. Stop publication-local axis; preserve this
+ * failed body in Git, then restore the seven-halfword canonical.
+ * NONMATCHING kuupuappu H1 (2026-09-27): 464/480 bytes, 238 differing
+ * halfwords / 113 aligned edits. Reusing blue as the partial packed-color
+ * producer moves the increment before publication but changes red's live
+ * allocation to r8, removes its four-byte caller-save frame, introduces fp,
+ * and regresses the admitted attenuation prefix. Complete normalized diff
+ * read; reject this lifetime model. H1 body preserved by this checkpoint;
+ * restore the seven-halfword canonical before the causal follow-up.
+ * Previous NONMATCHING: 480/480 bytes, seven differing halfwords (2026-09-27).
  * Entry ownership H1: capture event = Data_03001ebc[0] before acquiring
  * the palette source, then inspect event+0x17e. This gives the reference
  * shared-base load order and changes reload ancestry through the loop:

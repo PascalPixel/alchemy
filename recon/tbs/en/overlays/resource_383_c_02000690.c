@@ -1,4 +1,13 @@
-/* NONMATCHING: complete 316-byte owner including switch table and own pool;
+/* NONMATCHING kuupuappu call-identity audit (2026-09-27): displayed
+ * disassembly labels are not distinct import identities. Inspect resolves
+ * both case-4 callback sites to the same runtime veneer 0200cd8c; displayed
+ * 020054ea also labels EventEnd, whose resolved target is 0200cd4c. Forward
+ * sites lack resolved identities. Do not fabricate callback aliases from
+ * those labels to prevent merging. No experiment or new exact credit.
+ * Independent signed reads, distinct forward arms and normalization reload
+ * still need a supported producer. Existing stopped read/qualifier axes
+ * remain closed; canonical unsigned-update draft retained.
+ * NONMATCHING: complete 316-byte owner including switch table and own pool;
  * 2026-09-27 live-read contract trial: keep all unsigned update arithmetic;
  * replace switch(*side) and both table-index *side reads (including the
  * inline forward helper) with *(volatile s16 *)side. Normalize with

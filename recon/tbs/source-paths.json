@@ -9923,6 +9923,9 @@
       "name": "SceneData_FindTileRunAt",
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
     },
+    "resource_394:02000c2c": {
+      "name": "Scene_PushBlockAlongRun"
+    },
     "resource_3ca:0200007c": {
       "name": "FieldScene_ConfigureFixedPointValues",
       "source": "FIELD/BABI_FUNE/TABLE_AUDIO.C"

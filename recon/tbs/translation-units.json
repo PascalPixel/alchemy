@@ -88027,6 +88027,37 @@
       "compiler_route": "canonical-gcc296"
     },
     {
+      "id": "ovd-394-02000c2c",
+      "source": "recon/tbs/en/overlays/resource_394_c_02000c2c.c",
+      "overlay": "resource_394",
+      "absolute_symbols": {
+        "Engine_ActorGet": {"address": "0x020090ac", "kind": "thumb"},
+        "Main_08000128": {"address": "0x0200901c", "kind": "thumb"},
+        "SceneData_FindTileRunAt": {"address": "0x02008b8c", "kind": "thumb"},
+        "State_CheckFourCellRun": {"address": "0x02008be4", "kind": "thumb"},
+        "Engine_EventBegin": {"address": "0x0200909c", "kind": "thumb"},
+        "Engine_ActorSetAnimation": {"address": "0x020090dc", "kind": "thumb"},
+        "Engine_EventWait": {"address": "0x02009094", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x02009114", "kind": "thumb"},
+        "Engine_ObjectSetAnimation": {"address": "0x02009034", "kind": "thumb"},
+        "Engine_ObjectSetPosition": {"address": "0x02009054", "kind": "thumb"},
+        "Engine_AllocateBlock": {"address": "0x0200902c", "kind": "thumb"},
+        "Main_080090e0": {"address": "0x02009044", "kind": "thumb"},
+        "Engine_ActorSetSpeed": {"address": "0x020090b4", "kind": "thumb"},
+        "Engine_ActorSetDestinationOffset": {"address": "0x020090c4", "kind": "thumb"},
+        "Engine_ObjectCommitPosition": {"address": "0x0200905c", "kind": "thumb"},
+        "Engine_EventEnd": {"address": "0x020090a4", "kind": "thumb"},
+        "Data_02009164": {"address": "0x02009164", "kind": "data"},
+        "Data_02009168": {"address": "0x02009168", "kind": "data"},
+        "Data_0200916c": {"address": "0x0200916c", "kind": "data"}
+      },
+      "owners": [
+        {"address": "0x02000c2c", "extent": 568, "state": "not-yet-c"}
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "ovd-394-02000098",
       "source": "recon/tbs/en/overlays/resource_394_c_02000098.c",
       "overlay": "resource_394",

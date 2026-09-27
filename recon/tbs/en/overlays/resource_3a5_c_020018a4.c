@@ -1,4 +1,4 @@
-/* NONMATCHING: 888 bytes, candidate 852, 411 differing halfwords, 231
+/* NONMATCHING: 888 bytes, candidate 848, 355 differing halfwords, 218
  * aligned edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
@@ -115,7 +115,27 @@
  * The timer trigger and phase store/signed reload invariant are unchanged.
  * Reject admission and restore the canonical 852/888 body (231 edits).
  * Stop after one informed trial: no new fact justifies another mask
- * spelling/declaration-order sweep. No new DONE bytes; owner not-yet-C. */
+ * spelling/declaration-order sweep. No new DONE bytes; owner not-yet-C.
+ * Timer snapshots (2026-09-27): word-mode signed/unsigned bitfield views
+ * alone give 856/888, 415 halfwords / 233 edits; the unsigned read is too
+ * late. Snapshot both views before testing active, retaining the initial
+ * cast-pointer store of 2: 848/888, 355 halfwords / 219 edits, frame 12.
+ * Increment through DMA now matches, including paired reads and shifted
+ * stored comparison. The volatile join forces a fresh read but emits
+ * ldrh/lsl/asr instead of ldrsh, so the join remains nonmatching.
+ * A plain u8 extraction mask then gives 848/888, 355 halfwords / 223
+ * edits: still rematerialized per iteration, counter still in fp. Reject
+ * that mask trial; retain timer snapshots only. No new DONE credit.
+ * Fill pretest: for (i = 12; i < end; i++) gives the reference's
+ * register-bound pretest, 848/888, 355 halfwords / 218 edits, frame 12.
+ * Retain it. Reusing i for the RGB loop puts every counter in r4 with
+ * the reference's sp+0 call spill, but moves tile_offset to fp and shrinks
+ * the frame to 8 (848/888, 360 halfwords / 192 edits). Indexed sprite
+ * submission on top adds a separate cursor and moves flags into r8, but
+ * not the reference's byte offset (856/888, 360 halfwords / 192 edits).
+ * Reject both despite the lower edit score: the frame invariant fails.
+ * Their useful evidence is whole-function counter priority, not a mask
+ * width. Stop after these three structural trials; retain frame 12. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "TYPES.H"
@@ -156,11 +176,11 @@ static __inline__ s32 Value2(s32 (*fn)(), s32 a0, s32 a1)
     return fn(a0, a1);
 }
 
-/* FAKEMATCH: the word-sized step keeps subtraction out of halfword mode. */
-static __inline__ void Half_Add(s16 *dst, s32 step)
-{
-    *dst = *dst + step;
-}
+/* FAKEMATCH: word-mode views preserve the paired signed/unsigned reads. */
+union SceneTimer {
+    s32 signed_value : 16;
+    u32 value : 16;
+};
 
 void FieldScene_RunScene3a5SequenceA(void)
 {
@@ -176,29 +196,40 @@ void FieldScene_RunScene3a5SequenceA(void)
     s32 y;
     u32 i;
     u32 slot;
-    s16 *timerp;
+    union SceneTimer *timerp;
     u32 *sprite_words;
     struct Sprite *sprite;
 
     tile_offset = gVramBlockCache[(s16)MAP_LAYER].offset >> 5;
     if (MAP_MODE != 0) {
-        timerp = (s16 *)0x0200a6be;
-        *timerp = 2;
+        timerp = (union SceneTimer *)0x0200a6be;
+        *(s16 *)timerp = 2;
     } else if (Engine_GameFlagIsSet(0x104) != 0) {
-        timerp = (s16 *)0x0200a6be;
-        if (*timerp > 0)
-            Half_Add(timerp, -1);
+        timerp = (union SceneTimer *)0x0200a6be;
+        {
+            s32 active = timerp->signed_value;
+            u32 value = timerp->value;
+
+            if (active > 0)
+                timerp->signed_value = value - 1;
+        }
     } else {
-        timerp = (s16 *)0x0200a6be;
-        if (*timerp <= 1) {
-            Half_Add(timerp, 1);
-            if (*timerp == 1)
+        s32 active;
+        u32 value;
+
+        timerp = (union SceneTimer *)0x0200a6be;
+        active = timerp->signed_value;
+        value = timerp->value;
+        if (active <= 1) {
+            timerp->signed_value = value + 1;
+            if (timerp->signed_value == 1)
                 Dma_Set((const void *)0x02009f80, (void *)0x050003c0,
                     -0x7ffffff0, (volatile u32 *)0x040000d4);
         }
     }
 
-    timer = *timerp;
+    /* FAKEMATCH: the phase join reads the signed timer again. */
+    timer = *(volatile s16 *)timerp;
     if (timer == 0) {
         Main_080001c0(MAP_LAYER);
         return;
@@ -277,16 +308,12 @@ void FieldScene_RunScene3a5SequenceA(void)
         u32 end = 128 - EFFECT_PHASE;
 
         dst = (u8 *)sprite_words + 80;
-        if (12 < end) {
-            i = 12;
-            do {
-                *(u32 *)(dst + 32) = 0xeeeeeeee;
-                *(u32 *)dst = 0xeeeeeeee;
-                dst += 4;
-                if ((i & 7) == 7)
-                    dst += 32;
-                i++;
-            } while (i < end);
+        for (i = 12; i < end; i++) {
+            *(u32 *)(dst + 32) = 0xeeeeeeee;
+            *(u32 *)dst = 0xeeeeeeee;
+            dst += 4;
+            if ((i & 7) == 7)
+                dst += 32;
         }
         *(u32 *)dst = *(u32 *)sprite_words;
         *(u32 *)(dst + 32) = *(u32 *)((u8 *)sprite_words + 32);

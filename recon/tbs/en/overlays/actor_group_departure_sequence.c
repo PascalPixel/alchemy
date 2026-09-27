@@ -1,4 +1,10 @@
-/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 33 differing
+/* Astra compound-publication probe (2026-09-27): put actor 25's facing
+ * assignment inside priority &= (facing = shown, 0). The complete result
+ * remains 2716 bytes, 33 differing halfwords / 27 aligned edits, with the
+ * same normalized differences. The target read still does not precede the
+ * facing write as required. Reject this expression boundary; preserve the
+ * existing typed stores, frame and pools. No exact credit.
+ * NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 33 differing
  * halfwords, 27 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
  * Two actor facing/priority setup blocks remain.

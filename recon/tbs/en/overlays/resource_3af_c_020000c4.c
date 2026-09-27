@@ -1,5 +1,5 @@
 /* NONMATCHING: complete extent 552 bytes including the trailing pool;
- * candidate 560, 234 differing halfwords, 74 aligned edits (2026-09-27).
+ * candidate 560, 240 differing halfwords, 73 aligned edits (2026-09-27).
  * H1 transfers Call3/Call4 from exact FUNE_KANPAN/FLY_BY_21.C and
  * FLY_BY_22.C. Both callbacks share six callee bindings, actor layout and
  * state machine; only actor IDs and coordinate constants differ.
@@ -50,7 +50,11 @@
  * This disproves the named snapshot alone as cause of pointer priority;
  * direct-field spelling is now closed, not a reason to permute declarations.
  * Full normalized diff read: initial position shift order, idle pointers,
- * extra counter copies and shifted table/pool remain. No exact credit. */
+ * extra counter copies and shifted table/pool remain. No exact credit.
+ * H4 is preserved in 3f451ae66; restore the canonical H3 source below.
+ * The second callback's byte-snapshot follow-up also leaves allocation
+ * unchanged. Neither result supplies a tied allocator priority or a new
+ * supported phase/helper boundary. Stop this producer axis. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -83,9 +87,11 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 s32 Func_020000c4(union DeckObject *work)
 {
     struct FieldActor *obj = &work->actor;
+    u32 step;
 
-    if (obj->rise_counter != 0) {
-        switch (obj->rise_counter) {
+    step = obj->rise_counter;
+    if (step != 0) {
+        switch (step) {
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
@@ -139,7 +145,7 @@ s32 Func_020000c4(union DeckObject *work)
         if (work->bird.turn_x != 0) {
             work->bird.drift -= ((u32)Engine_RandomNext() << 12) >> 16;
             if (work->bird.drift < -0x4000) {
-                work->bird.turn_x = 0;
+                work->bird.turn_x = step;
             }
         } else {
             work->bird.drift += ((u32)Engine_RandomNext() << 12) >> 16;

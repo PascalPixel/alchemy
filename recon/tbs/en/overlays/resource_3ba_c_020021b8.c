@@ -1,12 +1,12 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 27 differing halfwords, 27
+/* NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
- * 0x8000). Remaining: Rebuilt command loop, three signed interpolation
- * channels, affine parameter bitfields, sprite records and IO queue from
- * disassembly. Verified helper prototypes and every literal. Complete size
- * matches; remaining register lifetimes, zero-load width, and instruction
- * scheduling differ.
+ * 0x8000). Remaining: scale occupies r9 instead of fp; the three separate
+ * duration pointers and per-case affine index occupy fp instead of r9.
+ * The dependent affine-index initialization also schedules differently.
+ * Complete extent, all literal pools, command parsing, interpolation load
+ * order, clipping/placement and both IO publications match structurally.
  * WALL: Register lifetimes across interpolation and sprite emission;
  * preserve the separate per-case shifted affine index. Separate channel
  * locals restore duration/start registers. Computing delta before the step
@@ -95,14 +95,23 @@
  * changes only its pseudo ID. ARM REG_ALLOC_ORDER is r8, sl, r9, fp: H4's
  * timer priority between tile and sprite therefore predicts the observed
  * swap exactly. Close this pointer-sharing axis and restore H2's 17-edit
- * candidate. H5's complete change was Sprite *sprite = (Sprite *)Data_c7c0
- * followed by u32 *write = sprite->words; its output is identical to H4.
+ * candidate. H5's complete change was struct Sprite *sprite =
+ * (struct Sprite *)Data_0200c7c0 followed by u32 *write = sprite->words;
+ * its output is identical to H4.
  * 2026-09-27 Sol renderer H6: work.y = work.x gives the same scale allocation
  * lifetime, 7 references / 168 instructions, not the predicted reduction.
  * It also feeds the second packed write through the first record value and
  * changes scratch roles: 1264 bytes, 27 halfwords / 27 edits, all pools exact.
  * Close the affine-record aliasing axis; H2 remains the best 17-edit source.
- * No complete owner is adopted, and no native or alignment credit is added. */
+ * No complete owner is adopted, and no native or alignment credit is added.
+ * 2026-09-27 Sol renderer closing checkpoint: restored H2 independently
+ * scores 1264 bytes, 17 halfwords / 17 edits against all three ROM owners,
+ * including every pool. For twins, select this source explicitly with
+ * score <this-file> --owner resource_3bb:02002450 (or resource_3bc:02002ee8).
+ * Owner-only resolution selects their older address-named drafts instead
+ * of this registered shared candidate. No production tooling is changed.
+ * Bounded pointer ownership/sharing and affine aliasing axes are closed;
+ * resume only with a new source-lifetime fact, not spelling permutations. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -238,7 +247,7 @@ render:
     }
     work.angle = 0;
     work.x = scale;
-    work.y = work.x;
+    work.y = scale;
     matrix = (s16)Main_080001e0(&work);
     Data_0200c770 += pos;
     pos = Data_0200c770 / 256;

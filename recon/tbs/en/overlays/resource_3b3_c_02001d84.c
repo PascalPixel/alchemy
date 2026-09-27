@@ -1,13 +1,31 @@
-/* NONMATCHING: 596 of 592 bytes, 263 differing halfwords, 150 aligned edits.
+/* NONMATCHING: 588 of 592 bytes, 226 differing halfwords, 52 aligned edits.
  * Own-ROM extent 0x02001d84..0x02001fd4 includes the five-word pool.
  * SETUP calls this four-pillar frame driver; the final call sorts the actors.
+ * 2026-09-27 transfer from exact WORLD_MAP/LINKED_EFFECTS.C: access the four
+ * priority-flag updates through a plain byte view. The old store_bit_field
+ * expansion creates QImode zero 146, live for 416 insns across 19 calls.
+ * Removing that synthetic zero restores the reference's 20-byte frame,
+ * actor r6, flags r7 and separate zero after StepDownUntilClamp. The local
+ * cell address no longer spills. This is a proved source-level correction;
+ * preserve these facts while repairing the remaining indexed slot accesses,
+ * cell/offset/pointer high-register roles and cell-kind store ordering.
+ * Full normalized diff has equal topology and the same five pool words,
+ * four bytes early. Diagnostic and ordinary compilation agree.
+ * Before that transfer, moving MapCell cell inside its only using branch
+ * produced the old 596/263/150 bytes unchanged; scope alone is not the fix.
+ * On the new byte-view model, replacing x/y/z with pos[3] is byte-identical.
+ * Delaying slot assignment until just before the second SetCellAttributes
+ * restores indexed first loads, but spills another pointer and regresses
+ * the frame to 24: 588/219/54. Reject that follow-up and close the slot-scope
+ * axis; do not combine it with declaration permutations. No DONE yet.
+ *
+ * Historical baseline: 596/592 bytes, 263 halfwords, 150 aligned edits.
  * 2026-09-26 bounded triage: indexed pos[3] plus delayed slot ownership restored
  * the initial indexed X load but grew the frame from 24 to 28 (reference 20):
  * 600 bytes, 258 halfwords, 142 edits. An inline position-clear helper emitted
  * identical bytes; zero still lives across StepDownUntilClamp. Both rejected.
  * The allocator decoder found no unique source repair; no permutation ran.
- * Retain this baseline. Remaining: slot address induction, spilled local cell,
- * and zero sharing across the staged-actor call. No exact-byte credit. */
+ * Those trials predate the proved byte-view transfer above. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
@@ -78,19 +96,21 @@ void TakaraHashira_UpdatePillarActors(void)
         if (*flags & 1) {
             if (Engine_MapQueryPosition(2, actor->x.fixed, actor->z.fixed) == 50) {
                 Engine_AudioPlayCue(189);
-                actor->priority_flags &= 254;
+                /* FAKEMATCH: plain byte stores omit the synthetic narrow
+                 * zero, as in the matched linked-effect family. */
+                *(u8 *)&actor->priority_flags &= 254;
                 TakaraHashira_LowerActorToLedge(id, 1);
-                actor->priority_flags |= 1;
+                *(u8 *)&actor->priority_flags |= 1;
             } else if (Engine_MapQueryPosition(2, actor->x.fixed, actor->z.fixed) == 51) {
                 SceneActor_WaitHeightBelowLimit(actor, 0);
                 Engine_AudioPlayCue(189);
                 actor->y.fixed = 0;
-                actor->priority_flags &= 254;
+                *(u8 *)&actor->priority_flags &= 254;
                 StagedActor_StepDownUntilClamp(id);
                 actor->x.fixed = 0;
                 actor->y.fixed = 0;
                 actor->z.fixed = 0;
-                actor->priority_flags |= 1;
+                *(u8 *)&actor->priority_flags |= 1;
             } else {
                 OverlayObject_WaitUntilSettledAndReset(actor);
             }

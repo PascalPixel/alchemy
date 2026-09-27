@@ -173,6 +173,9 @@ work than by working alone.
 - **Commit every adoption immediately** and every draft before moving on. An
   agent with no commit in 30 minutes is checked; one with none in an hour is
   stopped and its slice rebriefed.
+- **Lanes defer publication.** `make coverage` records verified counts and
+  README progress on branches; only main redraws both figures. Pre-push checks
+  fresh figures on every branch; use `--publication` for an explicit refresh.
 - **Land every 30 minutes** from one landing worktree: merge each finished
   branch, merge registries with a structural three-way JSON merge (keep both
   sides' additions), run `make compare-all`, `make test`, `make coverage` and
@@ -195,7 +198,7 @@ git submodule update --init && git config core.hooksPath .hooks
 make bootstrap       # pinned agscc/agbcc and binutils under tools/out
 make compare         # TBS: rebuild what changed, check rom.sha1 (compare-tla, compare-all)
 make test            # tooling unit tests (test-integration reads local ROMs)
-make coverage        # redraw both README images and the progress line; stage all three
+make coverage        # counts and README on lanes; both images too on main
 make verify          # the landing gate: both ROMs, owners, publication, documents
 ```
 

@@ -64,7 +64,29 @@
  * from the exact scene family; its veneer reaches Object_SetModeById.
  * Complete candidate is byte-identical to H2 (cmp checked), 1172/541/159.
  * No pool or setup order changes. Stop after these three supported models;
- * preserve H1's saved-register invariant and H2's direct flag stores. */
+ * preserve H1's saved-register invariant and H2's direct flag stores.
+ * Outward H1: full ROM/diff and initial/local/global RTL identify narrow
+ * zero ancestry, not a missing actor flag operation. Initial insn 134's
+ * HI pseudo 51 belongs to rotation's synthetic struct-store mask. CSE
+ * reuses it for byte store 176, deleting stopped's later initialization;
+ * lreg keeps it across ActorGet in r5. The short-reach load is therefore
+ * before rotation instead of after ActorGet as at ROM 02000602.
+ * A block-local u16 pointer to the existing rotation member removes that
+ * mask and recovers the zero-after-call boundary. However, sprite becomes
+ * r5, control sl, ground r8; only two high registers are saved. It is NOT
+ * admitted despite 159->85 edits (1168/1172, 158 halfwords, 88 wrong insns).
+ * Rotation also becomes an HI pool load before zero; the message remains
+ * hoisted across three calls. All four direct +90 flag stores still agree.
+ * Normal/diagnostic text is identical. Rejected model is preserved at
+ * a1990f2d7; restore admitted sprite r8/control r9/ground sl here.
+ * Outward stop: the early mask zero and correct sprite allocation are
+ * coupled, not independent spelling defects. No second supported model
+ * retains the three-register invariant. Message base insn 224 is still
+ * after focus call 221 through global allocation, but final code hoists
+ * it across focus, display setup and actor placement. The base enters the
+ * first pool only after allocation; do not re-sweep prior Call3 wrappers.
+ * Admission requires preserving all three high-register roles and direct
+ * +90 byte stores while separating the zero's producer from rotation. */
 #include "FIELD_EVENT.H"
 
 struct SceneMapState {

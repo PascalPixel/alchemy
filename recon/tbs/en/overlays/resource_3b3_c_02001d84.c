@@ -18,6 +18,10 @@
  * restores indexed first loads, but spills another pointer and regresses
  * the frame to 24: 588/219/54. Reject that follow-up and close the slot-scope
  * axis; do not combine it with declaration permutations. No DONE yet.
+ * A one-element MapCell buffer still becomes the same scalar addressof
+ * producer, high-register assignments and 20-byte frame. Its only code
+ * change moves the cell-address copy before the kind load, against the ROM:
+ * 588/226/53. Reject it; retain the scalar cell, with no buffer-size sweep.
  *
  * Historical baseline: 596/592 bytes, 263 halfwords, 150 aligned edits.
  * 2026-09-26 bounded triage: indexed pos[3] plus delayed slot ownership restored

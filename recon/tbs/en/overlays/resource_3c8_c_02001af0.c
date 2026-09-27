@@ -1,4 +1,16 @@
-/* NONMATCHING: 600/600 bytes, 7 differing halfwords (2026-09-26).
+/* NONMATCHING H4 (2026-09-27): 600/600 bytes, 2 differing halfwords,
+ * 2 aligned edits; instruction selection/topology and every pool byte exact.
+ * Transfer the exact RetractBridge/ExtendBridge call-owned dimensions:
+ * remove the draft-only pre-loop height local and pass literal 3,4 through
+ * Map_CopyCellsTo. Baseline height SI39 lived 182 instructions while width
+ * SI132 lived 170, with five references/seven calls each; width won fp.
+ * The call-owned height now wins fp and both rectangle sites are exact.
+ * Retraction independently rechecked 532/532 exact, no sibling edits.
+ * Only countdown r9 copy versus initial column r5=29 order remains.
+ * Preserve call-owned dimensions and all 600 bytes/pools in any follow-up.
+ * Full normalized diff read; no function or alignment credit yet.
+ *
+ * NONMATCHING: 600/600 bytes, 7 differing halfwords (2026-09-26).
  * Whole owner 02001af0..02001d48, including pool 02001d14..02001d48;
  * all 25 calls audited against our listing. Closest exact family members
  * are VinasuHeya_RetractBridge and VinasuHeya_ExtendBridge. Retraction
@@ -40,7 +52,6 @@ void VinasuHeya_ShiftBridge(void)
     s32 countdown;
     u32 i;
     s32 dust_x;
-    s32 height;
 
     layer = &Data_03001e70->layer;
     leader = Engine_ActorGet(0);
@@ -60,7 +71,6 @@ void VinasuHeya_ShiftBridge(void)
             Engine_EventWait(20);
             dust_x = 0x1200000;
             countdown = 40;
-            height = 4;
             x = 29;
             for (i = 0; i <= 479; i++, countdown--) {
                 layer->x += 0x3333;
@@ -77,10 +87,10 @@ void VinasuHeya_ShiftBridge(void)
                     countdown = 40;
                     if (i <= 240) {
                         x -= 4;
-                        Map_CopyCellsTo(x, 50, 15, 32, 3, height);
+                        Map_CopyCellsTo(x, 50, 15, 32, 3, 4);
                     } else {
                         x += 4;
-                        Map_CopyCellsTo(x, 45, 9, 32, 3, height);
+                        Map_CopyCellsTo(x, 45, 9, 32, 3, 4);
                     }
                 }
                 Engine_TaskWait(1);

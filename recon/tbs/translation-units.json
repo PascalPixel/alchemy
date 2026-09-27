@@ -2010,7 +2010,7 @@
           "address": "0x020098a4",
           "kind": "thumb"
         },
-        "Local_020007b0": {
+        "LinkLobby_ExchangePartyRecords": {
           "address": "0x020087b0",
           "kind": "thumb"
         },
@@ -87702,10 +87702,10 @@
     },
     {
       "id": "ovd-3cb-020007b0",
-      "source": "recon/tbs/en/overlays/resource_3cb_c_020007b0.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/EXCHANGE_PARTY.C",
       "overlay": "resource_3cb",
       "absolute_symbols": {
-        "Local_02000580": {
+        "LinkLobby_SendPartyRecords": {
           "address": "0x02008580",
           "kind": "thumb"
         },
@@ -87730,7 +87730,7 @@
         {
           "address": "0x020007b0",
           "extent": 176,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

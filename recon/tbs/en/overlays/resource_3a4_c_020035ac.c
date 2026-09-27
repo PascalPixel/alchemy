@@ -1,4 +1,27 @@
 /* NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits.
+ * H4 negative witness is preserved in a0d14b1cb; canonical body restored.
+ * Sol H4 2026-09-27: start + (n + 1) * 0x400 produces each turn angle.
+ * Initial u16 facing is masked to 0/0x4000/0x8000/0xc000; start is
+ * 0x8000..0x14000 and the 16 angles are 0x8400..0x18000, without s32
+ * overflow. Facing still truncates angle + 0x4000 to the same u16.
+ * Prediction: strength reduction retains angle induction and frame 12,
+ * allocates n=r8, x=r9, z=sl, with identical calls, stores and all 188 bytes.
+ * One model only; reject any extra multiply, prologue, spill or pool change.
+ * Rejected trial: 188/188 bytes, 55 differing halfwords / 45 aligned edits.
+ * Its frame 12, extent 188 and final mask pool are unchanged, but gate fails.
+ * Full normalized diff: the initial angle is now r5 (not r6), p is r6
+ * (not r5), and the first step folds into start + 0x400 before the loop.
+ * Subsequent angle increments move to the loop tail. Centre stores also
+ * reorder; n remains sl and z remains r8. There is no emitted multiply.
+ * -dL/-da: frame n is biv 38, angle is reduced to generated biv 82;
+ * after reduction the compiler reverses the count-only n loop. Final
+ * allocation keeps x=5 refs/31 length, z=5/27, n=7/38, exactly their prior
+ * priorities. New angle biv has 9 refs/20 length and wins r5, then p=r6,
+ * object=r7, z=r8, x=r9, n=sl. The angle derivation changes induction
+ * ancestry and placement, not the missing n/z priority. Reject this axis
+ * after one trial; do not propagate to the twin or try type/permutation
+ * variants. Both owners remain C not yet written; no DONE or alignment.
+ * Prior canonical: 188/188 bytes, 5 differing halfwords / 5 aligned edits.
  * Sol H3 2026-09-27: reuse n as rounding work before the frame loop.
  * Full normalized diff and diagnostic assembly are baseline-identical.
  * Combine/regmove erase the earlier n values: the final allocator keeps

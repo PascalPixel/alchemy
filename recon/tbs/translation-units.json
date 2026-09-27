@@ -1893,7 +1893,7 @@
     {
       "id": "babi-heading-probe-candidate",
       "game": "tbs",
-      "source": "recon/tbs/en/overlays/resource_3c5_c_02002660.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/FIND_FWD.C",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c5",
       "absolute_symbols": {
@@ -1910,7 +1910,7 @@
         {
           "address": "0x02002660",
           "extent": 72,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ]
     },
@@ -1929,7 +1929,7 @@
           "address": "0x0200bb68",
           "kind": "thumb"
         },
-        "Local_02003b00": {
+        "__divsi3": {
           "address": "0x0200bb00",
           "kind": "thumb"
         },
@@ -6337,39 +6337,51 @@
       "source": "recon/tbs/en/overlays/resource_3ca_c_02000b34.c",
       "overlay": "resource_3ca",
       "absolute_symbols": {
-        "Main_080000c0": {
+        "BabiFune_UpdateWaves": {
+          "address": "0x02008194",
+          "kind": "thumb"
+        },
+        "SceneState_CountDownEveryFortyTicks": {
+          "address": "0x02008168",
+          "kind": "thumb"
+        },
+        "BabiFune_CyclePalette": {
+          "address": "0x020080b0",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
           "address": "0x0200931c",
           "kind": "thumb"
         },
-        "Main_080000d0": {
+        "Engine_TaskAddCallback": {
           "address": "0x02009324",
           "kind": "thumb"
         },
-        "Main_080000d8": {
+        "Engine_TaskRemoveCallback": {
           "address": "0x0200932c",
           "kind": "thumb"
         },
-        "Main_080091f0": {
+        "Engine_WorkSetValuesIfNonNegative": {
           "address": "0x0200939c",
           "kind": "thumb"
         },
-        "Main_0808a010": {
+        "Engine_EventWait": {
           "address": "0x020093b4",
           "kind": "thumb"
         },
-        "Main_0808a018": {
+        "Engine_EventBegin": {
           "address": "0x020093bc",
           "kind": "thumb"
         },
-        "Main_0808a020": {
+        "Engine_EventEnd": {
           "address": "0x020093c4",
           "kind": "thumb"
         },
-        "Main_0808a0d0": {
+        "Engine_ObjectMotionSetPositionAndReset": {
           "address": "0x020093f4",
           "kind": "thumb"
         },
-        "Main_0808a1b8": {
+        "Engine_ObjectMotionArmCallback": {
           "address": "0x02009434",
           "kind": "thumb"
         },
@@ -6381,7 +6393,7 @@
           "address": "0x02009494",
           "kind": "thumb"
         },
-        "Main_080f9010": {
+        "Engine_AudioPlayCue": {
           "address": "0x0200949c",
           "kind": "thumb"
         }
@@ -88985,6 +88997,28 @@
           "state": "not-yet-c"
         }
       ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "ovd-3a4-020002cc",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_020002cc.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {"address": "0x0200bb98", "kind": "thumb"},
+        "Engine_EventBegin": {"address": "0x0200bb70", "kind": "thumb"},
+        "Engine_ActorSetAnimation": {"address": "0x0200bbf0", "kind": "thumb"},
+        "Engine_EventWait": {"address": "0x0200bb68", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x0200bd20", "kind": "thumb"},
+        "Engine_ActorSetSpeed": {"address": "0x0200bba0", "kind": "thumb"},
+        "Engine_ObjectSetPosition": {"address": "0x0200baf8", "kind": "thumb"},
+        "Engine_TaskWait": {"address": "0x0200ba78", "kind": "thumb"},
+        "Engine_ActorWaitForMove": {"address": "0x0200bbe0", "kind": "thumb"},
+        "Engine_EventEnd": {"address": "0x0200bb78", "kind": "thumb"},
+        "ArutinYama_RunRollingObject": {"address": "0x0200b850", "kind": "thumb"},
+        "Main_0808a5e8": {"address": "0x0200bd18", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x020002cc", "extent": 188, "state": "not-yet-c"}],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     }

@@ -144,7 +144,8 @@
       "name": "Local_02001ac8"
     },
     "resource_3c5:02002660": {
-      "name": "Func_02002660"
+      "name": "BabiIriguchi_FindActorAhead",
+      "source": "FIELD/BABI_IRIGUCHI/FIND_FWD.C"
     },
     "resource_3bb:02002ba8": {
       "name": "Korosseo_FadeInCompetitor",
@@ -21235,6 +21236,9 @@
     "resource_3a4:02003850": {
       "name": "ArutinYama_RunRollingObject",
       "source": "FIELD/ARUTIN_YAMA/ROLL_OBJECT.C"
+    },
+    "resource_3a4:020002cc": {
+      "name": "ArutinYama_BeginRollingRide"
     },
     "resource_3cb:02000148": {
       "name": "LinkLobby_PollPeerReady",

@@ -88194,6 +88194,10 @@
       "source": "recon/tbs/en/overlays/resource_383_c_02000690.c",
       "overlay": "resource_383",
       "absolute_symbols": {
+        "Value_ffffffff": {
+          "address": "0xffffffff",
+          "kind": "data"
+        },
         "Engine_ActorGet": {
           "address": "0x0200cd7c",
           "kind": "thumb"

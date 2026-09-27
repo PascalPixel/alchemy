@@ -6,6 +6,23 @@
    unit->class_id and rec->item inside the two search loops (the first is
    still strength-reduced). Tried: separate locals per loop, goto loops,
    unsigned id test, the formation load order. */
+/* H1 (2026-09-27): complete normalized baseline is 564/564 bytes,
+ * 260 differing halfwords, 183 aligned edits and a 4-byte spill frame.
+ * Exact AWARD_SPOILS/LEVEL_UP/APPLY_LEVEL_GAINS establish the shared reward
+ * totals, byte level and halfword reward inputs. Both ROM reward blocks keep
+ * a pointer to the selected u16 field across RNG calls, reload it afterwards,
+ * and apply the same 30-percent floor. Test that calculation as one inline
+ * helper with a field pointer, unit and random spread. Prediction: field
+ * lifetime in r9, earned retained in fp, no spill frame; preserve all calls.
+ * One coherent followup maximum; no declaration or loop spelling sweep.
+ * H1 result: 568/564 bytes, 256 differing halfwords, 165 aligned edits.
+ * The reward pointer now lives in r9 and the bonus/counter use r6/r5 as
+ * referenced, but earned still spills. The parameterized spread additionally
+ * keeps six in fp and emits MUL instead of the ROM's shifts/add. Reject H1
+ * as canonical despite its aggregate improvement. Preserve it in Git before
+ * the single followup: separate fixed-spread coin/experience helpers, since
+ * the ROM and exact level-growth family use literal multipliers per award.
+ */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
@@ -53,6 +70,23 @@ s32 Math_Div(s32, s32);
 u32 Math_DivU(u32, u32);
 s32 Item_EncodeBankedId(s32);
 
+static __inline__ s32 BattleEnemy_CalculateReward(
+    struct BattleUnit *unit, u16 *reward, s32 spread)
+{
+    s32 i;
+    s32 bonus = 0;
+    s32 base;
+    s32 floor;
+
+    for (i = 0; i < (u8)Math_DivU(unit->level, 10) + 1; i++)
+        bonus += ((Random16() * spread) >> 16) + 1;
+    base = *reward;
+    floor = Math_Div(base * 3, 10);
+    if (bonus < floor)
+        bonus = floor;
+    return bonus + base;
+}
+
 s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {
     struct BattleUnit *unit;
@@ -61,8 +95,6 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     struct BattleSpoils *spoils;
     s32 i;
     s32 slot;
-    s32 bonus;
-    s32 base;
     s32 chance;
     s32 lowest;
     s32 lowest_slot;
@@ -95,26 +127,10 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     GameFlag_SetBitFar(unit->class_id + 0x600);
     rec = Owner_GetRecordFar(unit->class_id);
     if (earned != 0) {
-        if (rec->coins != 0) {
-            bonus = 0;
-            for (i = 0; i < (u8)Math_DivU(unit->level, 10) + 1; i++)
-                bonus += ((Random16() * 6) >> 16) + 1;
-            base = rec->coins;
-            value = Math_Div(base * 3, 10);
-            if (bonus < value)
-                bonus = value;
-            spoils->coins += bonus + base;
-        }
-        if (rec->experience != 0) {
-            bonus = 0;
-            for (i = 0; i < (u8)Math_DivU(unit->level, 10) + 1; i++)
-                bonus += ((Random16() * 4) >> 16) + 1;
-            base = rec->experience;
-            value = Math_Div(base * 3, 10);
-            if (bonus < value)
-                bonus = value;
-            spoils->experience += bonus + base;
-        }
+        if (rec->coins != 0)
+            spoils->coins += BattleEnemy_CalculateReward(unit, &rec->coins, 6);
+        if (rec->experience != 0)
+            spoils->experience += BattleEnemy_CalculateReward(unit, &rec->experience, 4);
     } else {
         spoils->coins += rec->coins;
         spoils->experience += rec->experience;

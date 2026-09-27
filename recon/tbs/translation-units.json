@@ -88322,9 +88322,13 @@
     },
     {
       "id": "ovd-37f-020007d0",
-      "source": "recon/tbs/en/overlays/resource_37f_c_020007d0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/PUSH_BLOCK.C",
       "overlay": "resource_37f",
       "absolute_symbols": {
+        "gSoruPushSteps": {
+          "address": "0x0200a65c",
+          "kind": "data"
+        },
         "Main_080091d8": {
           "address": "0x02009b6c",
           "kind": "thumb"
@@ -88362,7 +88366,7 @@
         {
           "address": "0x020007d0",
           "extent": 292,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

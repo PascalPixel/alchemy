@@ -1,4 +1,9 @@
-/* NONMATCHING: 556 bytes, candidate 558, 244 differing halfwords, 42 aligned
+/* NONMATCHING: ship H1 2026-09-27, candidate 554/556, 35 differing
+ * halfwords, 26 aligned edits. Direct halfword scroll transfer removes the
+ * unrelated bob/r6 copy and restores second Q16 call alignment naturally.
+ * Full normalized diff read: four height blocks and pool words agree;
+ * scroll address/value scheduling and spawn x/position pointer lifetime
+ * remain. No DONE. Previous candidate 558, 244 differing halfwords, 42 aligned
  * edits (2026-09-27). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
@@ -86,8 +91,7 @@ void BabiFune_UpdateWaves(void)
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
         /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */
         scroll[0] = Data_020097f0 + ((bob + 8) << 8);
-        bob = scroll[0];
-        *(volatile u16 *)0x04000052 = bob;
+        *(volatile u16 *)0x04000052 = scroll[0];
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {

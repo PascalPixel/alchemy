@@ -116,7 +116,7 @@
     },
     {
       "date": "2026-09-27",
-      "tbs": {"done": 1013342, "executable": 1375934},
+      "tbs": {"done": 1013438, "executable": 1375934},
       "tla": {"done": 42338, "executable": 1975640},
       "models": {"Astra 6": 397, "GPT-6": 1, "Sol 6": 171}
     }

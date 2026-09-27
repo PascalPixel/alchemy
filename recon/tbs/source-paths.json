@@ -15189,7 +15189,8 @@
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
     },
     "resource_396:020017ec": {
-      "name": "ToretoHeya_ApplyFlaggedMapPatches"
+      "name": "ToretoHeya_ApplyFlaggedMapPatches",
+      "source": "FIELD/TORETO_HEYA/MAP_PATCH.C"
     },
     "resource_396:0200184c": {
       "name": "SceneEffect_RegisterPaletteFadeCallback",

@@ -1,4 +1,9 @@
-/* NONMATCHING H5: 568/560 bytes, 209 differing halfwords / 87 aligned edits.
+/* NONMATCHING H6 2026-09-27: transfer exact battle modules' inline CopyWords
+ * boundary. 568/560 bytes, 209 differing halfwords / 87 aligned edits:
+ * byte-identical to direct-call H5, including both wrong copy setups and
+ * all three independent send-failure stores. Full normalized diff read.
+ * STOP copier wrapper axis; direct callback retained, DONE/alignment +0.
+ * NONMATCHING H5: 568/560 bytes, 209 differing halfwords / 87 aligned edits.
  * Admitted: all three independent send-failure r0 stores survive loop and
  * jump2 (insns 151/358/593); frame32, heap r8 and word compaction retained.
  * Full normalized diff read; -da output equals ordinary assembly exactly.

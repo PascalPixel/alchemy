@@ -1,4 +1,17 @@
-/* Cursor ownership trial 1 (2026-09-27): NONMATCHING 484/480 bytes,
+/* Cursor ownership trial 2 (2026-09-27): NONMATCHING 480/480 bytes,
+ * four differing halfwords / four aligned edits. Hypothesis: a natural for
+ * header recognizes the index-derived destination induction, reproducing
+ * RUN_DUAL_TABLE.C's cursor reduction. i++ and src++ follow publication.
+ * Admission and two-trial/20-minute stop remain those of trial 1 below.
+ * Complete normalized diff read: 020013c6..020013d6 is now exact, as are
+ * all nine divisions, attenuation, clamps, frame4 and the five pool words.
+ * Only offsets 0x32/0x36/0x3a/0x3c differ: destination base takes r2 rather
+ * than r1, zero takes r1 rather than r2, and sl initializes before r9.
+ * Thus this reduces the cursor and fixes publication but regresses the
+ * frozen 02001276..02001280 preheader. Not admitted and not adopted.
+ * Preserve this four-edit diagnostic witness in Git, then restore admitted
+ * H1. Two structural trials complete; no preheader spelling sweep. DONE +0.
+ * Cursor ownership trial 1 (2026-09-27): NONMATCHING 484/480 bytes,
  * 214 differing halfwords / 43 aligned edits. Hypothesis: deriving dst
  * from current i at the goto-loop entry transfers output-cursor ownership
  * to the index, as RUN_DUAL_TABLE.C does for its column cursor. Source i++
@@ -179,9 +192,7 @@ void ToretoPalette_ApplyTint(void)
     if ((Data_03001e40 & 31) != 0)
         return;
     src += 16;
-    i = 0;
-loop:
-    {
+    for (i = 0; i <= 62; i++, src++) {
         dst = (u16 *)0x05000020 + i;
         r = Data_02009f00[Data_0200adb8];
         g = Data_02009f00[Data_0200adb8 + 1];
@@ -219,11 +230,7 @@ loop:
         if (blue < 0)
             blue = 0;
         *dst = (blue << 10) | (green << 5) | red;
-        i++;
-        src++;
     }
-    if (i <= 62)
-        goto loop;
     Data_0200adb8 += (Engine_RandomNext() & 7) * 3;
     if (Data_02009f00[Data_0200adb8] == 99)
         Data_0200adb8 = 0;

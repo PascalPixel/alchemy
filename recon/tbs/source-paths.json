@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3cb:02000580": {
+      "name": "LinkLobby_SendPartyRecords"
+    },
     "main:0801908c": {
       "name": "RenderOutput_UpdateScaleAnimation"
     },

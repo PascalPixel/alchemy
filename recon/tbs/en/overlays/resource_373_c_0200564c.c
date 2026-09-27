@@ -1,4 +1,6 @@
-/* Draft, not-yet-c. H6 reused force publication (2026-09-27):
+/* Draft, not-yet-c. Retained H3: 224/224 bytes, 59 HW / 39 edits.
+ * H6 is preserved at 4e0c098df; its required invariant was not admitted.
+ * H6 reused force publication (2026-09-27):
  * Single change from H3: force = 0 at miss, then the existing byte stores.
  * 228/224 bytes, 38 differing halfwords / 23 aligned edits. Unlike H4/H5,
  * CSE retains the second definition of incoming user pseudo 35. Its uses
@@ -108,7 +110,6 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     } while (0);
     goto done;
 miss:
-    force = 0;
     *(u8 *)&obj->unknown_5b = force;
     Engine_ObjectSetAnimation(obj, 2);
     *(u8 *)&obj->rise_counter = force;

@@ -1,4 +1,16 @@
-/* NONMATCHING kuupuappu call-identity audit (2026-09-27): displayed
+/* Astra 2026-09-27: transferred the ship row-counter's signed/unsigned
+ * word-based 16-bit union fields to the response step. Full result:
+ * 280/316 bytes, 104 halfwords / 69 aligned edits. The switch now has its
+ * ldrsh and normalization reloads memory, but the compiler hoists a second
+ * unsigned read and uses it for script indices; forward arms still merge.
+ * A volatile signed bitfield restores fresh reads but expands all signed
+ * loads to ldrh/shift pairs (284/316, 110 halfwords / 74 edits).
+ * Returning the forward step to the common store tail gives 280/316,
+ * 113 halfwords / 67 edits; it still merges the two forward arms. All three
+ * complete diffs were checked. No admitted topology improvement, so keep
+ * the previous body rather than exchanging one incomplete model for another.
+ *
+ * NONMATCHING kuupuappu call-identity audit (2026-09-27): displayed
  * disassembly labels are not distinct import identities. Inspect resolves
  * both case-4 callback sites to the same runtime veneer 0200cd8c; displayed
  * 020054ea also labels EventEnd, whose resolved target is 0200cd4c. Forward

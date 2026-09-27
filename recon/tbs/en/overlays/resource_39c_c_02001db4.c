@@ -31,7 +31,14 @@
  * confirm unchanged 636/636 bytes, 21 halfwords / 18 edits. Reload already
  * chooses r2 for the options pointer before sched2, so this producer
  * boundary cannot fix the side-zero/one argument staging. Keep the readable
- * helper as the canonical draft; close this axis. New exact bytes: 0. */
+ * helper as the canonical draft; close this axis. New exact bytes: 0.
+ * Astra 2026-09-27: replace the independent spilled options pointer and
+ * tick with one local { options, tick } work record, preserving all values
+ * and calls. Full result is 636 bytes, 243 halfwords / 144 aligned edits.
+ * The aggregate's fields are promoted, frame shrinks 64 to 56, options moves
+ * into r6 and tick into r7; the required spills disappear rather than merely
+ * changing the pointer reload. Reject the stack-record model; retain the
+ * scalar locals and their already exact frame, loop and final spawn site. */
 #include "FIELD_EFFECT.H"
 
 /* A random drift of about -0.8 to +0.8 in steps of 0.2. */

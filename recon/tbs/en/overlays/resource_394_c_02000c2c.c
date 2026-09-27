@@ -1,4 +1,12 @@
-/* NONMATCHING kuupuappu phase H1 (2026-09-27): reuse the dead layout
+/* Astra 2026-09-27: tested RUN_COMMANDS.C's conditional-copy shape on
+ * the projection cursor: initialize it to -1, then copy &pos when that
+ * address differs from -1. Unlike the menu's real input-dependent guard,
+ * this identity guard remains in machine code: 572/568 bytes, 269 halfwords
+ * / 110 aligned edits, with an extra branch and broad register changes.
+ * It does not recover the loop's r4 cursor or its call saves. Reject it;
+ * keep the earlier pointer model and do not transfer this identity guard.
+ *
+ * NONMATCHING kuupuappu phase H1 (2026-09-27): reuse the dead layout
  * parameter as the projection cursor, following actor-stops' admitted
  * dead-pointer phase ownership. Cursor stores, polar call and first test
  * load follow the reference consumers. Prediction failed: complete output

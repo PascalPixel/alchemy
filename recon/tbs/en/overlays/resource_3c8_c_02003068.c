@@ -32,6 +32,14 @@
  * baseline with only address/zero order at the first BLDCNT write differing.
  * The old four-reference/address-cross-block idea remains unsupported by
  * this witness. No new function bytes, alignment bytes or DONE. */
+/* Astra 2026-09-27: use Value_04000050 for the first blend-register
+ * address, transferring the established link-constant method. Full output
+ * remains 3964 bytes / 2 halfwords. Initializing zero before that symbolic
+ * address gives 3 edits: the order is correct but r2/r3 remain exchanged.
+ * A separate one-halfword { value } record initialized to zero forces a
+ * pool-loaded zero and an earlier pool, 3964 bytes / 529 halfwords / 196
+ * aligned edits. All complete diffs checked; neither producer admits the
+ * reference sequence. Keep the original two-halfword draft unchanged. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

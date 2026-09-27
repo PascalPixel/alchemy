@@ -57,6 +57,10 @@
  * 636 bytes / 203 HW / 121 edits; no extra flag induction variable.
  * H2 signed height-index view from exact LOWER_BLOCKS:
  * 628 bytes / 205 HW / 118 edits; both decrements now use subs, no 0xffff.
+ * Astra 2026-09-27: model index as a signed 16-bit field in a word,
+ * transferring the ship-row counter model. Result is binary-identical:
+ * 624/616 bytes, 169 halfwords / 53 edits. The HI zero still supplies the
+ * later camera byte and the extra pool survives. Retain the s16 view.
  * Both permitted variants completed. Remaining: actor/flag-result/selected
  * slot lifetimes, extra zero pool before height-index branch, and branch
  * reach. Exact SETTLE_BLOCKS rechecked at 780/780 bytes. No adoption.

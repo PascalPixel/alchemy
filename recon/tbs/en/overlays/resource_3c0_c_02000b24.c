@@ -76,7 +76,12 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
  * was applied to both GameFlagSet calls, with a1 + 0x2f9 and a1 + 0x309.
  * The complete 220-byte candidate is binary-identical: all eight r5/r6
  * differences remain. Unlike Imil, these argument expressions do not
- * shorten the actor-id lifetime. Stop this helper transfer; keep the body. */
+ * shorten the actor-id lifetime. Stop this helper transfer; keep the body.
+ * Astra 2026-09-27: express the final actor-id dispatch as a switch to
+ * test whether its shared selector changes the surviving input's lifetime.
+ * Complete result 220/220 bytes, 40 halfwords / 21 edits; five uses and
+ * the r5/r6 swap remain, with an extra branch and reversed guards.
+ * Reject the switch and retain the original nested dispatch. */
 void Func_02000b24(s32 a0, s32 a1)
 {
     u32 i;

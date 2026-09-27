@@ -59,7 +59,12 @@
  * col < dest_x + width in the for gives the reference's per-row bound
  * (196 bytes) but still hoists five constants whatever the address
  * spelling (arrays, byte sums, [base + 16]). Twin of resource_3b3:02000cc0
- * (69 edits). */
+ * (69 edits).
+ * Astra 2026-09-27: forcing the row bound to volatile memory does not
+ * reproduce an allocator spill. The one-word array gives 196/184 bytes,
+ * 89 halfwords / 53 edits; a direct scalar gives 192/184, 84/49. Both
+ * retain its address across the loop and grow the frame from 8 to 12.
+ * Reject explicit-memory forcing; keep the 184-byte nonvolatile body. */
 #include "TYPES.H"
 
 /* FAKEMATCH: the exact row renderer's helper scope gives each tile-table

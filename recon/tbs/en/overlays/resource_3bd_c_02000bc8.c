@@ -25,7 +25,15 @@
  * independent unsigned snapshot before the signed scene read. Full diff
  * and binary comparison show identical 96-byte output (49 halfwords,
  * 18 edits); this boundary does not prevent the earlier load merging.
- * Retain the canonical source, stop the publication-block axis. DONE +0. */
+ * Retain the canonical source, stop the publication-block axis. DONE +0.
+ * Astra 2026-09-27: transfer the ship counter's word-based signed 16-bit
+ * bitfield as records[112].scene for the comparison, keeping the unsigned
+ * snapshot. The complete result remains 96/100, 49 halfwords / 18 edits:
+ * the two reads still merge. Making only the snapshot a volatile u16 read
+ * keeps both loads, but folds the scene offset into the pool address and
+ * sign-extends the snapshot before the first comparison (same score).
+ * Neither recovers the reference's address and delayed conversion; retain
+ * the original body. No compiler, binding or credit change. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

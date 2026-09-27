@@ -5042,7 +5042,7 @@
     },
     {
       "id": "retained-overlay-3b1-flag-dependent-actor-pose",
-      "source": "recon/tbs/en/overlays/resource_3b1_c_02004254.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/COND_ACT.C",
       "overlay": "resource_3b1",
       "absolute_symbols": {
         "Engine_EventBegin": {
@@ -5158,7 +5158,7 @@
         {
           "address": "0x02004254",
           "extent": 892,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

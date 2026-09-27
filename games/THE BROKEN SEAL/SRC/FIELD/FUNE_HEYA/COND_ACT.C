@@ -1,4 +1,17 @@
-/* NONMATCHING admitted reload witness: 896/892 bytes, 9 halfwords / 6 edits.
+/* H2 exact (2026-09-27): 892/892 bytes including all thirteen pool words,
+ * zero differing halfwords or aligned edits. One numeric request owner and
+ * a saved lifetime beginning at repeated dialogue retain independent r5/r0
+ * literal loads from one pool word. Complete frame/calls/branches match.
+ * H1's cse dump retains pseudo 38 before the initial message call and
+ * substitutes it for r0. Numeric inline-argument temporaries themselves
+ * disappear, unlike the symbol-backed pseudo 180. Start the saved request
+ * at the subsequent repeated-dialogue sequence, after the first emote.
+ * Predict the direct numeric r0 operand survives CSE while the later saved
+ * request shares the same SI minipool value. Freeze the r0 reload and read
+ * any remaining saved-load movement separately. Second/final causal model.
+ * Admitted mixed witness is preserved at 6453a4f72.
+ *
+ * NONMATCHING admitted reload witness: 896/892 bytes, 9 halfwords / 6 edits.
  * 2026-09-27 repeat is byte-identical to historical sun-east-3b1-preload.
  * Complete normalized diff: the extra numeric 0xa01b pool word and its four
  * dependent literal offsets only. The independent r5 then r0 loads survive;
@@ -90,9 +103,9 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
     return f(a0, a1, a2);
 }
 
-extern u8 Value_0000a01b;
+enum { CabinSpeakerRequest = 0xa01b };
 
-void Func_02004254(s32 a0)
+void Scene_RunConditionalActorPresentation(s32 a0)
 {
     u32 i;
     s32 rec7;
@@ -124,7 +137,7 @@ void Func_02004254(s32 a0)
         Engine_EventWait(20);
         Engine_ActorFaceEachOther(27, 0, 10);
         Call1(Engine_EventSetMessage, 0x1ebc);
-        Call1(FieldScene_RunStepThen10, (s32)&Value_0000a01b);
+        Call1(FieldScene_RunStepThen10, CabinSpeakerRequest);
         Engine_ActorSetAnimationAndWait(0, 3);
         v7 = 0;
         Call3(Engine_ActorSetSpeed, 0, 0x10000, v6);
@@ -186,11 +199,11 @@ void Func_02004254(s32 a0)
         goto L_02004592;
     }
     Call1(Engine_EventSetMessage, 0x1eb7);
-    /* FAKEMATCH: distinct symbolic and numeric forms preserve the two
-     * independent loads; their duplicate pool word remains nonmatching. */
-    base5_a01b = (s32)&Value_0000a01b;
-    Event_ShowMessageAndWait(0xa01b, 0, 40);
+    Event_ShowMessageAndWait(CabinSpeakerRequest, 0, 40);
     Call3(Engine_ActorShowEmote, 27, 0x101, 60);
+    /* FAKEMATCH: start the saved speaker at repeated dialogue; the initial
+     * call must retain its independent load from the same literal word. */
+    base5_a01b = CabinSpeakerRequest;
     FieldScene_RunStepThen10(base5_a01b);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
     Engine_EventWait(60);

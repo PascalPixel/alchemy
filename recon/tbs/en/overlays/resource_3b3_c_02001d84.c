@@ -14,6 +14,11 @@
  * Full normalized diff read; this confirms pointer/index independence can
  * recover the load form but exceeds the reference's pressure budget. Stop
  * this axis rather than permuting declarations; 588-byte body restored.
+ * H3 (2026-09-27): create slot immediately after the position guard instead
+ * of before it. Both first indexed X/Z loads match, but slot spills and the
+ * frame grows from 20 to 28 bytes. Complete score 600/592, 286 differing
+ * halfwords / 89 aligned edits, all five pool words retained. This rejects
+ * the earlier phase boundary; the stronger 588-byte body will be restored.
  * Own-ROM extent 0x02001d84..0x02001fd4 includes the five-word pool.
  * SETUP calls this four-pillar frame driver; the final call sorts the actors.
  * 2026-09-27 transfer from exact WORLD_MAP/LINKED_EFFECTS.C: access the four
@@ -99,11 +104,11 @@ void TakaraHashira_UpdatePillarActors(void)
         actor = Engine_ActorGet(id);
         actor->unknown_22 = 2;
         i = id - 8;
-        slot = &Data_0200b6d0[i];
         if ((actor->x.fixed >> 20) == Data_0200b6d0[i].x && (actor->z.fixed >> 20) == Data_0200b6d0[i].z
             && actor->velocity_y == 0) {
             continue;
         }
+        slot = &Data_0200b6d0[i];
         Dma_Set(&actor->x, Data_0200b720, 0x84000003, (volatile u32 *)0x040000d4);
         Dma_Wait((volatile u32 *)0x040000d4);
         if (Engine_CheckMovementCollision(actor, Data_0200b720) == -1) {

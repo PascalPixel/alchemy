@@ -1,5 +1,5 @@
-/* NONMATCHING: reference 2124 bytes, candidate 2112, 953 differing
- * halfwords / 443 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
+/* NONMATCHING: reference 2124 bytes, candidate 2100, 768 differing
+ * halfwords / 172 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
  * its 22 pool words lie at 1074..1094, 136c..1384, 13a0..13a4 and
  * 168c..16a8 within resource_3b7. Initializer, placement helper, import
  * bindings and interworking sqrt calls audited against this repository/ROM.
@@ -23,10 +23,19 @@
  * reviewed. Exact SPRING_RIDE and TOPIC initializer confirm these state
  * blocks; PLACE_ACTOR consumes their leading x/y/z record. No missing call
  * was found. Do not follow this result with an allocation-spelling sweep.
- * Remaining: state/index/actor live ranges use sl/r9/r5 versus r9/r8/r6,
- * stack frame 8 versus 24 bytes; collision length stays in a saved register,
- * reaction is stored before modulo,
- * and circular hold updates share a tail. Not a register-spelling target.
+ * Sol fountain H1: chase, final-distance and collision geometry have
+ * separate block-local dx/dz/len lifetimes, as their distinct consumers in
+ * the complete reference require. Prediction admitted: chase divisor sl,
+ * collision speed r4/sp+4 and divisor r2/sp+8. State/index/actor now match
+ * r9/r8/r6, and the chase plus final-distance bodies reproduce the reference
+ * instruction sequence. Candidate 2100/768/172, retained; all 22 pool words
+ * remain in order. Full normalized diff and -da/-fsched-verbose=5 dumps read.
+ * Exact HAIDIA_IE/EXTENDED_SEQUENCE.C at 3c4fe6cee provides the independent
+ * separate-lifetime witness; its nullable FieldActor lookup is absent here,
+ * so no pointer-type transfer was applied. No new function/alignment credit.
+ * Remaining: trapezoid x/z samples and x/z bound lifetimes; frame 12 versus
+ * 24 bytes; reaction store before modulo; circular hold updates share a tail.
+ * Preserve these admitted geometry lifetimes in subsequent structural work.
  */
 #include "TYPES.H"
 
@@ -168,15 +177,10 @@ void FieldScene_RunSecondaryScript(void)
     s32 x;
     s32 z;
     s32 y;
-    s32 dx;
-    s32 dz;
-    s32 len;
     s32 tmp;
     s32 step;
     s32 mode;
-    s32 dist;
     s32 phase;
-    s32 speed;
     s32 val;
     s32 xlo;
     s32 xhi;
@@ -211,6 +215,10 @@ void FieldScene_RunSecondaryScript(void)
             }
 
             if (work->budget > 0) {
+                s32 dx;
+                s32 dz;
+                s32 len;
+
                 /* Chase the fixed target at (0x780000, 0x470000). */
                 dx = (0x780000 - work->pos[0][0]) >> 8;
                 dz = (0x470000 - work->pos[0][2]) >> 8;
@@ -242,20 +250,23 @@ void FieldScene_RunSecondaryScript(void)
                         OverlayObject_SetField54(9, 0);
                         OverlayObject_SetField54(8, 0);
                     }
-                    dx = (0x780000 - work->pos[0][0]) >> 16;
-                    dz = (0x470000 - work->pos[0][2]) >> 16;
-                    dist = dx * dx + dz * dz;
-                    Data_0200a134 = 1;
-                    if (dist <= 224) {
-                        Data_0200a138 = 0;
-                    } else if (dist <= 624) {
-                        Data_0200a138 = 1;
-                    } else if (dist <= 1088) {
-                        Data_0200a138 = 2;
-                    } else if (dist <= 1680) {
-                        Data_0200a138 = 3;
-                    } else {
-                        Data_0200a138 = 4;
+                    {
+                        s32 dx = (0x780000 - work->pos[0][0]) >> 16;
+                        s32 dz = (0x470000 - work->pos[0][2]) >> 16;
+                        s32 dist = dx * dx + dz * dz;
+
+                        Data_0200a134 = 1;
+                        if (dist <= 224) {
+                            Data_0200a138 = 0;
+                        } else if (dist <= 624) {
+                            Data_0200a138 = 1;
+                        } else if (dist <= 1088) {
+                            Data_0200a138 = 2;
+                        } else if (dist <= 1680) {
+                            Data_0200a138 = 3;
+                        } else {
+                            Data_0200a138 = 4;
+                        }
                     }
                 }
             }
@@ -454,10 +465,16 @@ void FieldScene_RunSecondaryScript(void)
 
         /* Contact test against the chased body. */
         if (REC_COOL(rec) == 0 && work->pos[0][1] == 0) {
+            s32 dx;
+            s32 dz;
+            s32 dist;
+
             dx = (REC_X(rec) - work->pos[0][0]) >> 16;
             dz = (REC_Z(rec) - work->pos[0][2]) >> 16;
             dist = dx * dx + dz * dz;
             if (dist <= 119 && work->budget > 30) {
+                s32 speed;
+
                 speed = 0x30000;
                 if (i <= 1) {
                     if (REC_HEADING(rec) == 0) {
@@ -472,6 +489,8 @@ void FieldScene_RunSecondaryScript(void)
                         }
                     }
                 } else {
+                    s32 len;
+
                     len = FixedMath_Sqrt(dist);
                     work->velocity[0] = -dx * speed / len;
                     work->velocity[2] = -dz * speed / len;

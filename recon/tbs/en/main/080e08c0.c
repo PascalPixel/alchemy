@@ -24,6 +24,18 @@
  * Splitting the seed pointer does not change allocator ancestry here;
  * reject it as a closing mechanism. Preserve the attempt before restoring
  * the simpler canonical H1 pointer model. Do not sweep local declarations.
+ * H3: reference particle size is saved r5, but H1/H2 size is caller-saved
+ * r0 and the draw cursor is r5. Test the actual call boundary: select the
+ * cell before Trig_Sin, keeping its width live across the projection call.
+ * Admission requires width r5 / cursor r6 with all calls and frame intact.
+ * This is the final structural hypothesis, not a setup-order sweep.
+ * H3 result: 984/964 bytes, 433 differing halfwords, 217 aligned edits.
+ * Width r5 / draw cursor r6 is recovered, including the draw stack stores,
+ * but member moves r7 -> r8 throughout the owner, rotating work/frame/puff
+ * roles and adding 20 bytes. Reject globally; the result shows width is not
+ * independently live across Trig_Sin in the reference source model.
+ * Restore canonical H1 (964/964, 143 halfwords, 99 edits) after this witness.
+ * Three hypotheses complete. No credit and no further cursor/order sweeps.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -109,7 +121,6 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
     member = 0;
     puff = (struct Puff *)((u8 *)work + 0x7080);
     do {
-        struct EffectStep *seed;
         s32 angle = member << 11;
 
         puff->x = (Trig_Sin(angle) * 24) >> 16;
@@ -120,19 +131,19 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
             puff->x += 32;
         puff->tick = -(member * 2);
         i = 0;
-        seed = (struct EffectStep *)((u8 *)0x02010000 + burst_offset);
+        particle = (struct EffectStep *)((u8 *)0x02010000 + burst_offset);
         {
             s32 mask = 0xffff;
 
             do {
-                seed->x = (((Random16() & 15) + puff->x) - 8) << 16;
-                seed->y = ((Random16() & 7) + 96) << 16;
-                seed->velocity_x = ((Random16() & 127) - 64) << 11;
-                seed->velocity_y = ((Random16() & 127) - 64) << 10;
-                seed->z = Random16() & mask;
-                seed->velocity_z = Random16() & mask;
+                particle->x = (((Random16() & 15) + puff->x) - 8) << 16;
+                particle->y = ((Random16() & 7) + 96) << 16;
+                particle->velocity_x = ((Random16() & 127) - 64) << 11;
+                particle->velocity_y = ((Random16() & 127) - 64) << 10;
+                particle->z = Random16() & mask;
+                particle->velocity_z = Random16() & mask;
                 i++;
-                seed++;
+                particle++;
             } while (i != 16);
         }
         member++;
@@ -192,9 +203,11 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
                 s32 x;
                 s32 angle;
 
+                /* FAKEMATCH: choose the cell before projection to test the
+                 * reference's saved width lifetime across Trig_Sin. */
+                size = (member & 1) + 3;
                 x = ((s16 *)&particle->x)[1]
                     + ((Trig_Sin(particle->z) * 4) >> 16);
-                size = (member & 1) + 3;
                 draw[1](canvas, (u8 *)sheet + Data_080ede48[size - 1],
                     x - ((u32)size >> 1),
                     ((s16 *)&particle->y)[1] - size, size, size * 2);

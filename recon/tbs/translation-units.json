@@ -88148,8 +88148,8 @@
       "compiler_route": "canonical-gcc296"
     },
     {
-      "id": "ovd-3a0-02001148",
-      "source": "recon/tbs/en/overlays/resource_3a0_c_02001148.c",
+      "id": "shian-mura-setup",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/SETUP.C",
       "overlay": "resource_3a0",
       "absolute_symbols": {
         "Main_0808a5e0": {
@@ -88209,7 +88209,7 @@
         {
           "address": "0x02001148",
           "extent": 488,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

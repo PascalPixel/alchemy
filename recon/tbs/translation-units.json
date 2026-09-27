@@ -3111,7 +3111,7 @@
           "address": "0x0200c72c",
           "kind": "thumb"
         },
-        "Func_0200481c": {
+        "Engine_CameraSetSpeed": {
           "address": "0x0200c81c",
           "kind": "thumb"
         },

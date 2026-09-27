@@ -82341,6 +82341,34 @@
       "compiler_route": "canonical-gcc296"
     },
     {
+      "id": "ovd-3a4-020035ac",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_020035ac.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Main_08000128": {"address": "0x0200bab0", "kind": "thumb"},
+        "Engine_ObjectSetAnimation": {"address": "0x0200bad0", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x0200bd20", "kind": "thumb"},
+        "Engine_TaskWait": {"address": "0x0200ba78", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x020035ac", "extent": 188, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "ovd-3a4-02003668",
+      "source": "recon/tbs/en/overlays/resource_3a4_c_02003668.c",
+      "overlay": "resource_3a4",
+      "absolute_symbols": {
+        "Main_08000128": {"address": "0x0200bab0", "kind": "thumb"},
+        "Engine_ObjectSetAnimation": {"address": "0x0200bad0", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x0200bd20", "kind": "thumb"},
+        "Engine_TaskWait": {"address": "0x0200ba78", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x02003668", "extent": 188, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "scene-3a4-02003738",
       "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLL_STEP.C",
       "overlay": "resource_3a4",

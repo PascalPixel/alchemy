@@ -1,4 +1,13 @@
-/* Astra 2026-09-27: transferred the ship row-counter's signed/unsigned
+/* Astra 2026-09-27 normalization-only follow-up: make only the final
+ * unsigned halfword read volatile, leaving the switch and script reads
+ * ordinary. Result 280/316 bytes, 104 halfwords / 67 aligned edits.
+ * The independent normalization read matches, but an unsigned index read
+ * still moves before the switch and the forward arms still merge. Reject
+ * this incomplete read contract. Raw BL decoding confirms all five callback
+ * calls reach the same 02004d8c veneer (runtime 0200cd8c); no alias split
+ * is supported. Full normalized diff inspected; canonical body unchanged.
+ *
+ * Astra 2026-09-27: transferred the ship row-counter's signed/unsigned
  * word-based 16-bit union fields to the response step. Full result:
  * 280/316 bytes, 104 halfwords / 69 aligned edits. The switch now has its
  * ldrsh and normalization reloads memory, but the compiler hoists a second

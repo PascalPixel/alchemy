@@ -1,4 +1,26 @@
-/* NONMATCHING: canonical H2 candidate 864/reference 860 bytes, 347 differing
+/* NONMATCHING Astra arithmetic recovery: 860/860 bytes, 259 differing
+ * halfwords / 95 aligned edits (2026-09-27), with the correct four-byte
+ * frame and equal branch topology. Replacing the decompiler's address-valued
+ * -0xc00 with ordinary subtraction removes its call-crossing spill and
+ * restores the complete prologue and opening actor loop (104 edits).
+ * Ordinary -0x3333 arithmetic also restores the final loop's reload rather
+ * than a saved address constant (95 edits). Keep these arithmetic facts;
+ * the ROM's complete literal pool remains part of the acceptance gate.
+ * Remaining: initial state/work load order; first angle snapshot lifetime;
+ * completion-count truncation, state/work publication order and shared zero;
+ * final angle increment. No DONE or alignment credit.
+ * Bounded transfer results: six named work fields are binary-identical to
+ * old H2 (864/347/157). An early initialized eight-bit count record gives
+ * 864/348/154 but truncates before the count store, unlike the reference.
+ * On the new arithmetic model, a phase-local s32 zero and a late initialized
+ * eight-bit count record are each binary-identical (860/259/95).
+ * A signed post-call angle shift gives 848/413/228: it moves action to r8,
+ * the loop counter to r7 and removes the required stack slot. Rejected.
+ * Full normalized differences inspected; stop these field/zero/count/angle
+ * transfers. Cross-edition check: all six editions share the same 648
+ * unmasked core bytes, so they supply no alternative core for this owner.
+ *
+ * Previous canonical H2 candidate 864/reference 860 bytes, 347 differing
  * halfwords / 157 normalized edits. Restored after rejected H3 e00832ddf;
  * this session's three structural trials are exhausted. No declaration or
  * angle-type sweep follows without new producer/consumer evidence.
@@ -57,8 +79,6 @@ enum { WORK_SHOWN, WORK_DELAY, WORK_UNUSED, WORK_ANGLE, WORK_SIZE, WORK_PHASE };
 extern struct PuzzleState Data_02001001;
 extern u8 Data_02001000;
 extern struct PuzzleWork *Data_0200bf6c;
-extern u8 Value_ffffcccd;
-extern u8 Value_fffff400;
 
 void SceneActor_SetPositionFromTransformedBase(s32 id, s32 x, s32 angle);
 void SceneEffect_UpdateStateMachine(void);
@@ -139,7 +159,7 @@ void FieldScene_RunStatefulSequence(s32 action)
                     Engine_TaskWait(1);
                     scale += 0xc00;
                 } while (actor->scale_x <= 0xffff);
-                action = ((s32)((((u32)action >> 16) + (s32)&Value_ffffcccd) << 16)) >> 16;
+                action = ((s32)((((u32)action >> 16) - 0x3333) << 16)) >> 16;
             }
             Engine_TaskWait(30);
             complete = 1;
@@ -163,7 +183,7 @@ void FieldScene_RunStatefulSequence(s32 action)
                         actor->scale_y = scale;
                         actor->scale_x = scale;
                         Engine_TaskWait(1);
-                        scale += (s32)&Value_fffff400;
+                        scale -= 0xc00;
                     } while (actor->scale_x > 0x6666);
                 }
                 Engine_ActorSetPosition(id, 0, 0);
@@ -216,9 +236,9 @@ void FieldScene_RunStatefulSequence(s32 action)
                     actor->scale_x -= 16;
                     actor->scale_y -= 16;
                     SceneActor_SetPositionFromTransformedBase(id, x, (u32)(action << 16) >> 16);
-                    action = ((s32)((((u32)(action << 16) >> 16) + (s32)&Value_ffffcccd) << 16)) >> 16;
+                    action = ((s32)((((u32)(action << 16) >> 16) - 0x3333) << 16)) >> 16;
                 }
-                x += (s32)&Value_ffffcccd;
+                x -= 0x3333;
                 action = ((s32)((((u32)(action << 16) >> 16) + 0xc00) << 16)) >> 16;
                 Engine_TaskWait(1);
             } while (x > 0);

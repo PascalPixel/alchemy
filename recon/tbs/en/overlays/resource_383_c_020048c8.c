@@ -25,7 +25,9 @@
  * with the direction address spilled across Atan2. Assigning the angle
  * difference before the guard folds the two signed bounds into one unsigned
  * interval, adding 0x0fff0000/0x1ffe0000 pools absent from ROM. Not admitted.
- * Stop this record/direction axis; no new DONE bytes. */
+ * Stop this record/direction axis; no new DONE bytes. Canonical body restored
+ * to the scalar/shared-facing baseline; retain the callee-proven record type
+ * and these rejected hypotheses, not either failed pointer representation. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -65,7 +67,6 @@ void KuupuappuHeya_UpdateActorStops(void)
     struct StopWork *work;
     struct StopRecord *entry;
     struct StopRecord *dest;
-    s16 *direction;
     s32 dx;
     s32 dz;
     s32 blocked;
@@ -81,24 +82,18 @@ void KuupuappuHeya_UpdateActorStops(void)
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
         dx = actor->x.fixed - leader->x.fixed;
         dz = actor->z.fixed - leader->z.fixed;
-        direction = &facing;
-        *direction = leader->facing;
+        facing = leader->facing;
         angle = Math_Atan2(dz, dx);
         dx >>= 16;
         dz >>= 16;
-        /* FAKEMATCH: failed cone guards share the actor-facing fallback. */
-        if (work->value_19c > 0) {
-            if (dx * dx + dz * dz > 400)
-                goto actor_facing;
-            angle = (u16)*direction - (u16)angle;
-            if (angle <= -0x1000 || angle >= 0x1000)
-                goto actor_facing;
-        } else {
-actor_facing:
-            if (dx * dx + dz * dz > 64)
-                *direction = actor->facing;
+        if (work->value_19c > 0 && dx * dx + dz * dz <= 400
+            && (s16)(facing - (u16)angle) > -0x1000
+            && (s16)(facing - (u16)angle) < 0x1000) {
+            /* Keep the leader's facing within the nearby forward cone. */
+        } else if (dx * dx + dz * dz > 64) {
+            facing = actor->facing;
         }
-        dest = KuupuappuHeya_SnapToNearestStop(entry, direction);
+        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
             SceneActor_ApplyScaledBytePairPosition(actor, dest);
             Engine_ObjectSetAnimation(actor, 2);

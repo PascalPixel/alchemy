@@ -1,4 +1,4 @@
-/* NONMATCHING: 364 bytes, candidate 364, 99 differing halfwords, 35 aligned
+/* NONMATCHING: 364 bytes, candidate 364, 59 differing halfwords, 34 aligned
  * halfword edits (2026-09-27). The halfword zero aggregate preserves the
  * complete extent; the Value mask keeps the full-width literal and result
  * in r3. Remaining: lamp and zero reload registers, the signed height
@@ -39,7 +39,7 @@
  * Signed-height index and late type loading survive, but the required
  * r1 null-test/x copy does not. Zero production still reloads HI through
  * r3 after the angle store, so scheduling cannot move it before that store.
- * Preserve this rejected causal follow-up; restore H1 for further work.
+ * Rejected H2 is preserved in 68351ea; retain H1's constructor boundary.
  * Two-model bound reached. A new model must prove the r1 parent-copy and
  * pre-angle r0 zero producer; y-expression or declaration sweeps are closed. */
 #include "TYPES.H"
@@ -79,7 +79,6 @@ void Func_020034bc(void)
     struct FieldSprite *sprite;
     struct LampWork *work;
     s32 height;
-    s32 y;
     s32 scale;
     s32 tick;
     struct Half zero;
@@ -108,8 +107,7 @@ void Func_020034bc(void)
     tick = gFrameCount & 15;
     if (tick != 0)
         return;
-    y = lamp->y.fixed + height;
-    spark = (union ArcObject *)Object_Create(0x11c, lamp->x.fixed + 0x80000, y + 0x80000, lamp->z.fixed);
+    spark = (union ArcObject *)Object_Create(0x11c, lamp->x.fixed + 0x80000, lamp->y.fixed + height + 0x80000, lamp->z.fixed);
     height = Engine_MathDivide(height, 0x60000);
     height <<= 16;
     if (spark == NULL)

@@ -1,4 +1,16 @@
-/* Draft, not-yet-c. Retained H3 baseline: 224/224 bytes,
+/* Draft, not-yet-c. H6 reused force publication (2026-09-27):
+ * Single change from H3: force = 0 at miss, then the existing byte stores.
+ * 228/224 bytes, 38 differing halfwords / 23 aligned edits. Unlike H4/H5,
+ * CSE retains the second definition of incoming user pseudo 35. Its uses
+ * rise from 5/47 insns/1 set to 6/48 insns/2 sets; allocation order changes
+ * from tpos,pos,force to tpos,force,pos. Force moves r8 to r7, pos reaches
+ * r8, tpos remains r6, and the success/failure store tails stay separate.
+ * The failure assignment survives as movs r7,#0; this extra instruction
+ * adds a padding halfword and moves the signed -0x1000 pool four bytes late.
+ * State/flag r9/sl also remain swapped. Reference force r6 / tpos r7 and
+ * complete 224-byte extent are NOT admitted. STOP after the authorized
+ * single reuse trial; preserve H3 as the baseline, not this closer score.
+ * Retained H3 baseline: 224/224 bytes,
  * 59 differing halfwords / 39 aligned edits. H4 (1795299e8) and H5
  * (7b73c2004) preserve the two rejected literal-zero models below.
  * H5 failure zero width follow-up (2026-09-27):
@@ -96,6 +108,7 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     } while (0);
     goto done;
 miss:
+    force = 0;
     *(u8 *)&obj->unknown_5b = force;
     Engine_ObjectSetAnimation(obj, 2);
     *(u8 *)&obj->rise_counter = force;

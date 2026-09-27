@@ -42,6 +42,66 @@
       "compiler_route": "canonical-gcc296"
     },
     {
+      "id": "takara-actor-footprint-query",
+      "source": "recon/tbs/en/overlays/resource_3b3_c_02000ddc.c",
+      "overlay": "resource_3b3",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200ab1c",
+          "kind": "thumb"
+        },
+        "Data_03001e70": {
+          "address": "0x03001e70",
+          "kind": "data"
+        },
+        "Data_0200ace0": {
+          "address": "0x0200ace0",
+          "kind": "data"
+        },
+        "Data_0200acf8": {
+          "address": "0x0200acf8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000ddc",
+          "extent": 236,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "toreto-flagged-map-patches",
+      "source": "recon/tbs/en/overlays/resource_396_c_020017ec.c",
+      "overlay": "resource_396",
+      "absolute_symbols": {
+        "Engine_GameFlagIsSet": {
+          "address": "0x02009ac8",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x02009a88",
+          "kind": "thumb"
+        },
+        "Data_02009ca8": {
+          "address": "0x02009ca8",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020017ec",
+          "extent": 96,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "candidate-item-icon-compose",
       "source": "recon/tbs/en/units/item-icon-compose.c",
       "overlay": null,
@@ -682,15 +742,24 @@
       ]
     },
     {
-    "id": "suhara-actor-scale-blend-candidate",
+      "id": "suhara-actor-scale-blend-candidate",
       "game": "tbs",
       "source": "recon/tbs/en/overlays/resource_3c0_c_02000594.c",
       "compiler_route": "canonical-gcc296",
       "overlay": "resource_3c0",
-    "absolute_symbols": {
-      "gGameState": {"address": "0x02000240", "kind": "data"},
-      "Data_04000208": {"address": "0x04000208", "kind": "data"},
-      "Data_02002090": {"address": "0x02002090", "kind": "data"},
+      "absolute_symbols": {
+        "gGameState": {
+          "address": "0x02000240",
+          "kind": "data"
+        },
+        "Data_04000208": {
+          "address": "0x04000208",
+          "kind": "data"
+        },
+        "Data_02002090": {
+          "address": "0x02002090",
+          "kind": "data"
+        },
         "Engine_GameFlagIsSet": {
           "address": "0x0200924c",
           "kind": "thumb"
@@ -1313,7 +1382,7 @@
       "source": "recon/tbs/en/overlays/resource_396_c_02001244.c",
       "overlay": "resource_396",
       "absolute_symbols": {
-        "Engine_MathDivide": {
+        "__divsi3": {
           "address": "0x02009a10",
           "kind": "thumb"
         },
@@ -53515,11 +53584,7 @@
           "address": "0x0200813c",
           "kind": "thumb"
         },
-        "Func_02001cc4": {
-          "address": "0x02008ddc",
-          "kind": "thumb"
-        },
-        "Func_02001d54": {
+        "FieldScene_QueryActorFootprint": {
           "address": "0x02008ddc",
           "kind": "thumb"
         },
@@ -84784,7 +84849,7 @@
           "address": "0x02009b18",
           "kind": "thumb"
         },
-        "Local_020017ec": {
+        "ToretoHeya_ApplyFlaggedMapPatches": {
           "address": "0x020097ec",
           "kind": "thumb"
         },
@@ -88440,6 +88505,54 @@
         {
           "address": "0x02001ca4",
           "extent": 1488,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "link-lobby-send-party-candidate",
+      "source": "recon/tbs/en/overlays/resource_3cb_c_02000580.c",
+      "overlay": "resource_3cb",
+      "absolute_symbols": {
+        "Main_08000170": {
+          "address": "0x0200973c",
+          "kind": "thumb"
+        },
+        "Main_08000178": {
+          "address": "0x02009744",
+          "kind": "thumb"
+        },
+        "SceneData_CopyUpToThreeEntries": {
+          "address": "0x0200853c",
+          "kind": "thumb"
+        },
+        "Engine_OwnerGetState": {
+          "address": "0x02009804",
+          "kind": "thumb"
+        },
+        "Main_08000380": {
+          "address": "0x02009764",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x02009714",
+          "kind": "thumb"
+        },
+        "Main_080003a8": {
+          "address": "0x02009774",
+          "kind": "thumb"
+        },
+        "Main_08077000": {
+          "address": "0x020097fc",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000580",
+          "extent": 560,
           "state": "not-yet-c"
         }
       ],

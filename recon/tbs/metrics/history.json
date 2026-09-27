@@ -118,14 +118,14 @@
       "date": "2026-09-27",
       "tbs": {"done": 1004276, "executable": 1375934},
       "tla": {"done": 42332, "executable": 1975640},
-      "models": {"Opus 5.5": 129}
+      "models": {"Opus 5.5": 131}
     }
   ],
   "figures": {
     "date": "2026-09-27",
     "tbs": {"done": 1004276, "executable": 1375934},
     "tla": {"done": 42332, "executable": 1975640},
-    "models": {"Opus 5.5": 129},
-    "files": "8548fb825c4bf60f"
+    "models": {"Opus 5.5": 131},
+    "files": "6a0a9a2db9a52581"
   }
 }

@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1172, 541 differing halfwords, 20
- * wrong instructions, 159 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1168, 158 differing halfwords, 88
+ * wrong instructions, 85 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -64,7 +64,21 @@
  * from the exact scene family; its veneer reaches Object_SetModeById.
  * Complete candidate is byte-identical to H2 (cmp checked), 1172/541/159.
  * No pool or setup order changes. Stop after these three supported models;
- * preserve H1's saved-register invariant and H2's direct flag stores. */
+ * preserve H1's saved-register invariant and H2's direct flag stores.
+ * Outward H1: full ROM/diff and initial/local/global RTL identify narrow
+ * zero ancestry, not a missing actor flag operation. Initial insn 134's
+ * HI pseudo 51 belongs to rotation's synthetic struct-store mask. CSE
+ * reuses it for byte store 176, deleting stopped's later initialization;
+ * lreg keeps it across ActorGet in r5. The short-reach load is therefore
+ * before rotation instead of after ActorGet as at ROM 02000602.
+ * A block-local u16 pointer to the existing rotation member removes that
+ * mask and recovers the zero-after-call boundary. However, sprite becomes
+ * r5, control sl, ground r8; only two high registers are saved. It is NOT
+ * admitted despite 159->85 edits (1168/1172, 158 halfwords, 88 wrong insns).
+ * Rotation also becomes an HI pool load before zero; the message remains
+ * hoisted across three calls. All four direct +90 flag stores still agree.
+ * Normal/diagnostic text is identical. Preserve this rejected model in
+ * its commit, then restore the admitted sprite r8/control r9/ground sl. */
 #include "FIELD_EVENT.H"
 
 struct SceneMapState {
@@ -166,7 +180,12 @@ void FieldScene_RunComplexActorSequence(void)
     do {
         ground = 0;
     } while (0);
-    sprite->rotation = 1365;
+    /* FAKEMATCH: publish the scalar rotation without a struct-store mask
+     * whose narrow zero CSE can share with the following actor flag. */
+    {
+        u16 *rotation = &sprite->rotation;
+        *rotation = 1365;
+    }
     p12 = Engine_ActorGet(17);
     /* FAKEMATCH candidate: keep the byte flag's halfword zero separate
      * from the wide scene-position zero, as the two reference loads are. */

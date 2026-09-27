@@ -1,4 +1,4 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 21 differing halfwords, 21
+/* NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
@@ -88,7 +88,14 @@
  * sl/r9 roles: 21 halfwords / 21 edits. Complete extent and every pool match.
  * Priority alone does not predict the final allocation; the finite repair
  * catalog has no unambiguous source shape for this reciprocal pointer swap.
- * This remains a negative lifetime witness, with no adoption or credit. */
+ * This remains a negative lifetime witness, with no adoption or credit.
+ * 2026-09-27 Sol renderer H5: owning the initial cursor through the typed
+ * Sprite record, then write = sprite->words, emits identical bytes to H4.
+ * Sprite remains 18 references / 680 instructions; reversing the dependency
+ * changes only its pseudo ID. ARM REG_ALLOC_ORDER is r8, sl, r9, fp: H4's
+ * timer priority between tile and sprite therefore predicts the observed
+ * swap exactly. Close this pointer-sharing axis and restore H2's 17-edit
+ * candidate; every negative body is preserved in the checkpoint history. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -142,7 +149,6 @@ void CommandInterpolationRenderer_Update(void)
     struct SpriteTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
-    s16 *timer;
 
 commands:
     if (Data_0200c79c != 0)
@@ -184,33 +190,31 @@ commands:
     goto commands;
 render:
     Data_0200c79c--;
-    timer = &Data_0200c754;
-    if (*timer == 0) {
+    if (Data_0200c754 == 0) {
         scale = Data_0200c778;
     } else {
         struct Half zero = { 0 };
         s32 duration, start, progress, target;
-        duration = *timer;
+        duration = Data_0200c754;
         start = Data_0200c768;
         target = Data_0200c778;
         progress = ++Data_0200c7fc;
         scale = start + (target - start) * progress / duration;
         if (progress >= duration)
-            *timer = zero.value;
+            Data_0200c754 = zero.value;
     }
-    timer = &Data_0200c7a8;
-    if (*timer == 0) {
+    if (Data_0200c7a8 == 0) {
         blend = Data_0200c794;
     } else {
         struct Half zero = { 0 };
         s32 duration, start, progress, target;
-        duration = *timer;
+        duration = Data_0200c7a8;
         start = Data_0200c798;
         target = Data_0200c794;
         progress = ++Data_0200c784;
         blend = start + (target - start) * progress / duration;
         if (progress >= duration)
-            *timer = zero.value;
+            Data_0200c7a8 = zero.value;
     }
     if (Data_0200c76c == 0) {
         pos = Data_0200c7f8;

@@ -39,6 +39,15 @@
  * Exact spring callers and menu siblings reveal no new input-read ownership
  * boundary beyond the already closed polling/weight models. Interface pass
  * stopped with the H1 argument-order correction retained; no new DONE bytes.
+ * Post-rewrite sibling audit: CONFIRM_SELECTION.C and the spring callers
+ * introduce no changed ABI. FUNE_HEYA/COND_ACT.C's delayed repeated-speaker
+ * lifetime has no matching one-off phase here: message is already loaded at
+ * its first repeated use. RTL insn 136 creates comparison pseudo 52 after
+ * FinalizePending; local allocation reuses it in prompt insn 253. This is
+ * not a symbolic/numeric constant split. The exact window pointer interfaces
+ * in TEXT/RENDER.C and WINDOW/FINALIZE.C do not justify another type trial:
+ * the window already occupies the reference r6 in both phases. No new model
+ * admitted; preserve 680/211/123 rather than repeat the closed searches.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

@@ -36,37 +36,29 @@
  * H2 result: 328/312 bytes, 162 halfwords, 55 aligned edits. The aggregate
  * retains both cursor and handle addresses, adding r9/sl saves; the handle
  * reload becomes indirect instead of sp+4. Reject this lifetime model.
+ * Canonical 312-byte baseline restored after preserving both experiments;
+ * no exact credit. Named-table hoisting is a separate solved fact, but does
+ * not admit a model that still caches the cursor address across calls.
  */
 #include "TYPES.H"
 
 extern u8 Data_0000116e[];
-extern const s32 Data_0200c11c[];
-extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001b04;
-extern u32 Data_03001800;
-
-struct Work;
 
 struct TextObject {
     u8 storage[12];
-};
-
-struct TextCursorResource {
-    s32 handle;
-    struct TextObject cursor;
 };
 
 void Engine_ActorSetPosition();
 void Engine_ColorBufferApplyTarget();
 void Engine_ColorBufferInterpolate();
 void Engine_EventWait();
-struct Work *Engine_DebugCreateWindow(s32 kind, s32 x, s32 y, s32 width, s32 layer);
-void Engine_DebugDrawTextResource(s32 message, struct Work *work, s32 x, s32 y);
+s32 Engine_DebugCreateWindow();
+void Engine_DebugDrawTextResource();
 s32 SaveState_CountRecordsExcludingFlaggedFar(s32 flag);
 void UiTextResource_InitializeFar(struct TextObject *object, s32 *slot);
 void UiTextResource_SetPositionFar(struct TextObject *object, s32 x, s32 y);
 void UiTextResource_ReleaseFar(s32 slot);
-void Engine_DebugFinalizeWindow(struct Work *work, s32 release);
+void Engine_DebugFinalizeWindow();
 
 
 
@@ -92,11 +84,12 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 
 s32 ShindenHeya_ChooseRestartOption(void)
 {
-    struct TextCursorResource resource;
-    struct Work *win;
+    struct TextObject cursor;
+    s32 handle;
+    s32 win;
     s32 text;
     s32 sel;
-    const s32 *tbl;
+    s32 *tbl;
 
     Engine_ActorSetPosition(8, 0, 0);
     Engine_ActorSetPosition(9, 0, 0);
@@ -115,19 +108,19 @@ s32 ShindenHeya_ChooseRestartOption(void)
         Engine_DebugDrawTextResource(text + 2, win, 16, 16);
     else
         Engine_DebugDrawTextResource(text + 1, win, 16, 16);
-    UiTextResource_InitializeFar(&resource.cursor, &resource.handle);
-    UiTextResource_SetPositionFar(&resource.cursor, 72, 60);
+    UiTextResource_InitializeFar(&cursor, &handle);
+    UiTextResource_SetPositionFar(&cursor, 72, 60);
     sel = 0;
-    if ((Data_03001c94 & 1) == 0) {
-        tbl = Data_0200c11c;
+    if ((*(s32 *)0x03001c94 & 1) == 0) {
+        tbl = (s32 *)0x0200c11c;
         do {
-            if ((Data_03001b04 & 192) != 0)
+            if ((*(s32 *)0x03001b04 & 192) != 0)
                 sel ^= 1;
-            UiTextResource_SetPositionFar(&resource.cursor, tbl[(Data_03001800 >> 1) & 15] + 24, (sel << 4) + 60);
+            UiTextResource_SetPositionFar(&cursor, tbl[(*(u32 *)0x03001800 >> 1) & 15] + 24, (sel << 4) + 60);
             Engine_EventWait(1);
-        } while ((Data_03001c94 & 1) == 0);
+        } while ((*(s32 *)0x03001c94 & 1) == 0);
     }
-    UiTextResource_ReleaseFar(resource.handle);
+    UiTextResource_ReleaseFar(handle);
     Engine_DebugFinalizeWindow(win, 1);
     return sel;
 }

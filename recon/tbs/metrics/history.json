@@ -116,16 +116,16 @@
     },
     {
       "date": "2026-09-27",
-      "tbs": {"done": 1012094, "executable": 1375934},
+      "tbs": {"done": 1012082, "executable": 1375934},
       "tla": {"done": 42332, "executable": 1975640},
-      "models": {"Astra 6": 386, "Sol 6": 31}
+      "models": {"Astra 6": 386, "Sol 6": 63}
     }
   ],
   "figures": {
     "date": "2026-09-27",
-    "tbs": {"done": 1012094, "executable": 1375934},
+    "tbs": {"done": 1012082, "executable": 1375934},
     "tla": {"done": 42332, "executable": 1975640},
-    "models": {"Astra 6": 386, "Sol 6": 31},
-    "files": "ed61c5aff76e82a2"
+    "models": {"Astra 6": 386, "Sol 6": 63},
+    "files": "d2681a3b8c530bd7"
   }
 }

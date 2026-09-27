@@ -21,6 +21,23 @@
  * zero-extended load for the == 29 test).  Loop spellings (while/for,
  * post-increment placement) and the helper argument order did not move
  * either.
+ *
+ * West audit: live inventory confirms complete [08017e88,08018038), 432B.
+ * Baseline reproduced: 432/432, 38 differing halfwords, 33 aligned edits.
+ * Existing allocator diagnostics regenerated unchanged: CSE has distinct
+ * article/loop HImode reads; combine shares pseudo 185, making the article
+ * comparison a word copy of the loop input instead of zero_extend(mem:HI).
+ * Exact RenderWideStringInWindow retains u16 code units; GetWideStringWidth
+ * widens dispatch input. H1 gives the append loop an explicit u16 first-code
+ * interface, with article dispatch outside it. Hard prediction: retain the
+ * reference's two else-path halfword loads without changing ring constants.
+ * Model <=10 minutes, one follow-up, checkpoint 01:20 Lisbon. Only complete
+ * bytes plus compare/coverage/verify permit adoption; preserve facts here.
+ * H1 result: 432/432, 124 differing halfwords / 86 aligned edits. Rejected:
+ * the article read separates, but loop input stays after the branch join,
+ * not before the comparison as required. The helper also promotes the loop
+ * value into signed-load/shift lowering and moves the name to r6. No tuning
+ * of this failed invariant; full diff read and source preserved in commit.
  */
 #include "TYPES.H"
 
@@ -46,13 +63,29 @@ static __inline__ void UiText_PutEntry(u16 *dst, u8 *code)
     *dst = c;
 }
 
+/* FAKEMATCH: keep the append input narrow and separate from article dispatch. */
+static __inline__ u32 UiText_AppendName(
+    u16 *name, u16 c, u32 pos, u16 *entry, s32 *suffix)
+{
+    while (c != 0) {
+        name++;
+        entry[pos] = (s16)c;
+        pos = (pos + 1) & 0x1ff;
+        if (c == 'S' || c == 's')
+            *suffix = 1;
+        else
+            *suffix = 0;
+        c = *name;
+    }
+    return pos;
+}
+
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
                              s32 no, s32 plural, s32 *suffix)
 {
     struct ArticleTable tbl;
     s32 kind;
     u16 head;
-    u16 c;
     u8 *p;
     s8 c8;
     s32 cnt;
@@ -89,15 +122,7 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
     } else if (name[0] == 29) {
         name += 2;
     }
-    while (*name != 0) {
-        c = *name++;
-        entry[pos] = (s16)c;
-        pos = (pos + 1) & 0x1ff;
-        if (c == 'S' || c == 's')
-            *suffix = 1;
-        else
-            *suffix = 0;
-    }
+    pos = UiText_AppendName(name, *name, pos, entry, suffix);
     if (no == 2 || (no == 3 && plural != 0)) {
         if (*suffix != 0) {
             UiText_PutEntry(&entry[pos], &Value_00000065);

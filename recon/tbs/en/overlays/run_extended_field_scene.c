@@ -1,5 +1,6 @@
-/* Draft, not-yet-c. Fresh registered-unit score 2026-09-26: 2816 of 2816
- * bytes, 639 differing halfwords, 50 wrong instructions (185 aligned edits).
+/* Draft, not-yet-c. H2 rejected: 2820 of 2816 bytes, 1081 differing
+ * halfwords, 72 wrong instructions (293 aligned edits), 2026-09-27.
+ * Canonical H1 is 2816 bytes/639 halfwords/50 wrong/185 aligned edits.
  * Typed callback inline scopes reproduce the prior baseline bytes exactly;
  * they restore target-ID reloads and the r5 table but lose the direct-call
  * trial's shared-constant lifetimes (16 wrong instructions in 671ed82f4).
@@ -15,7 +16,14 @@
  * Allocator fact: local pseudo 232 (0x9000, 4 uses/570 insns/84 calls) starts
  * in r6 but global allocation moves it to fp; pseudo 120 (0x5000, 11 uses/
  * 1460 insns/209 calls) takes r6. First mismatch is still 0x1000 in r9 vs fp.
- * No tied priorities support a declaration permutation. */
+ * No tied priorities support a declaration permutation.
+ * H2 tests one scalar reused for camera zero then persistent facing 0x9000,
+ * motivated by those two reference phases both using r6. Pseudo 37 now has
+ * 6 uses/580 insns/85 calls and two definitions; it enters global allocation
+ * and lands in sl, rather than retaining local r6. The zero moves before the
+ * camera getter and needs extra moves; 0x5000 still owns r6. Callback target
+ * reloads/table r5 survive, but whole extent grows four bytes. No admission;
+ * phase reuse is closed here, not a reason to permute its declarations. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -520,7 +528,9 @@ void Scene_RunExtendedActorSequence(void)
     Func_02004388(20);
     Func_02003fc6_a(13, 20);
     Func_02004496(0, 0, 0);
-    Func_02003ff4(1, 0x9000, 20);
+    /* FAKEMATCH: reuse the camera-zero scalar for the later facing phase. */
+    v6 = 0x9000;
+    Func_02003ff4(1, v6, 20);
     Func_02004004(0, 0xc000, 10);
     Func_02004014(1, 0xb000, 10);
     Func_02004458(0, 3);
@@ -566,7 +576,7 @@ void Scene_RunExtendedActorSequence(void)
     Call3(Func_020045c6, 17, 0x110, 0x330);
     Call3(Func_0200465a, 17, 0x8000, 0);
     Func_02004612(1, 2);
-    Func_020041c0_a(1, 0x9000, 10);
+    Func_020041c0_a(1, v6, 10);
     Func_020041b0(1, 10);
     Func_0200467e(14, 0x3000, 0);
     Func_020041dc(0, 0, 10);
@@ -604,7 +614,7 @@ void Scene_RunExtendedActorSequence(void)
     Func_020042e8(0, 0xc000, 20);
     Func_020042f2(15, 0xd000, 10);
     Func_020042e2_a(15, 10);
-    Func_02004304(15, 0x9000, 20);
+    Func_02004304(15, v6, 20);
     Func_0200430e(15, 0x5000, 10);
     Func_02004752(11, 3);
     Func_0200475a(14, 3);

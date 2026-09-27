@@ -1,5 +1,5 @@
-/* NONMATCHING: 976 bytes, candidate 960, 415 differing halfwords, 190
- * halfword edits (2026-09-25). Scene_RunScene3c8SequenceA, meant for
+/* NONMATCHING: 976 bytes, candidate 952, 414 differing halfwords, 154
+ * halfword edits (2026-09-27). Scene_RunScene3c8SequenceA, meant for
  * FIELD/VINASU_HEYA/F_02B14.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Remaining: Rebuilt the complete pillar-trigger sequence from the
@@ -8,7 +8,18 @@
  * New bounded trials (2026-09-26): coherent actor/effect union ownership
  * stayed at 190 edits; independent flag pointers gave 197, and separate
  * table-search/actor-loop counters 206. Restored the best whole candidate.
- * Remaining: actor versus loop-counter registers and pointer lifetimes. */
+ * Remaining: actor versus loop-counter registers and pointer lifetimes.
+ * 2026-09-27 audit: complete 02002b14..02002ee4, including ten final
+ * pool words. Every emitted call target and sequence agrees with own ROM;
+ * no missing call or misbound import found. Exact SETTLE_BLOCKS.C plus the
+ * 0c5c constructor establish separate switch-effect script state: active
+ * word +0 and completion byte +63. H1 owns these two effects in the final
+ * phase rather than reusing actor pointers and the block flags pointer.
+ * Baseline 960/976, 415 halfwords / 190 edits becomes 952/976, 414/154.
+ * Full normalized diff: id=sl, flags=fp, priority=r9, scan=r6 and slot=r5
+ * now match. Block=r7 versus r8 and cell offset=r8 versus r7 remain;
+ * velocity stores still reverse, and completion pointer is r7 versus r8.
+ * All calls, frame and pool values remain correct. This is not exact. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -18,12 +29,19 @@ extern s32 Data_0200d7c8[];
 extern s32 Data_0200dac8[];
 extern s32 Data_0200dd3c[];
 
+/* Exact SETTLE_BLOCKS.C and the local constructor share this script state. */
+struct SwitchEffect {
+    s32 active;
+    u8 unknown_04[0x5f];
+    u8 finished;
+};
+
 struct FieldActor *Local_02000098(s32 x, s32 y, s32 z, s32 type);
 void Local_0200094c(struct FieldActor *actor);
-struct FieldActor *Local_02000c5c(s32 x, s32 z, s32 *script);
+struct SwitchEffect *Local_02000c5c(s32 x, s32 z, s32 *script);
 void Main_080090d0(struct FieldActor *actor);
-void Main_08009148(struct FieldActor *actor);
-void Main_08009098(struct FieldActor *actor, s32 *script);
+void Main_08009148(struct SwitchEffect *effect);
+void Main_08009098(struct SwitchEffect *effect, s32 *script);
 void Main_08009178(s32 *script, s32 x, s32 z);
 void Main_0808a1e0(s32 actor, s32 priority);
 void Main_080091c0(s32 sx, s32 sy, s32 w, s32 h, s32 x, s32 z);
@@ -138,19 +156,23 @@ void Scene_RunScene3c8SequenceA(void)
         c = Actor_Get(17);
         d = Engine_ActorGet(18);
         if ((actor->priority_flags & b->priority_flags & c->priority_flags & d->priority_flags) & 2) {
+            struct SwitchEffect *first;
+            struct SwitchEffect *second;
+            u8 *finished;
+
             Camera_SetSpeed(0x10000, 0x2000);
             Engine_CameraMoveToActor(14, 1);
             Engine_CameraWaitForMove();
-            c = Local_02000c5c(136, 0x308, Data_0200d77c);
+            first = Local_02000c5c(136, 0x308, Data_0200d77c);
             Engine_EventWait(30);
             Camera_SetSpeed(0x6666, 0xccc);
             Camera_MoveTo(0xd80000, -1, 0x2780000, 1);
-            Main_08009148(c);
-            Main_08009098(c, Data_0200d7c8);
-            b = Local_02000c5c(216, 0x2f8, Data_0200dac8);
-            flags = &c->rise_enabled;
-            while (*(s32 *)c != 0 || *(s32 *)b != 0) {
-                if (*flags != 0 || b->rise_enabled != 0) {
+            Main_08009148(first);
+            Main_08009098(first, Data_0200d7c8);
+            second = Local_02000c5c(216, 0x2f8, Data_0200dac8);
+            finished = &first->finished;
+            while (first->active != 0 || second->active != 0) {
+                if (*finished != 0 || second->finished != 0) {
                     Engine_EventWait(30);
                     Main_08009178(Data_0200dd3c, 77, 35);
                     CopyCells(13, 35, 1, 1, 13, 36);

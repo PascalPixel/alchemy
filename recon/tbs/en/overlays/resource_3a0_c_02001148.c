@@ -1,4 +1,24 @@
-/* NONMATCHING: transfer T1 486/488 bytes, 22 halfwords / 6 aligned edits.
+/* NONMATCHING: transfer T2 482/488 bytes, 226 halfwords / 59 aligned edits.
+ * Retained inversion witness (2026-09-27): the corrected zero consumers
+ * plus a labeled counter loop admit all three zero-lifetime constraints:
+ * an unread r8 zero before the loop, mov r7,0 inside the motion-flags store
+ * sequence, and r7 reused for actor 19 motion_flags and actor 21 y afterward.
+ * The preheader temporary is r3, not ROM r2, and its ordering still differs.
+ * Complete normalized diff is topology equal, frame 8. All 30 service calls
+ * remain, but transition constants, sprite-priority computation/r0 restore,
+ * preheader scheduling and pool placement differ; no whole-owner match.
+ * loop dump has no recognized loop and cannot hoist x. Diagnostic -da
+ * assembly equals ordinary compilation. T1 at 1a6dced6e has only six edits
+ * but violates the loop-local-r7 admission; preserve it as the close witness,
+ * not as a reason to resume spelling sweeps. T2 is the admitted model.
+ * Exact transferred source: MAKYURI_IRIGUCHI/CROSS_DOORWAY.C's tagged
+ * pre-loop-zero OR, applied to priority_flags at +0x23 while loop x feeds
+ * motion_flags at +0x55. Its sibling source was not edited.
+ * Missing outward evidence: a source boundary retaining the desired loop
+ * optimizations without moving x's zero, not another equivalent zero spelling.
+ * One transfer and one causal follow-up exhausted. No new DONE bytes.
+ *
+ * Transfer T1 486/488 bytes, 22 halfwords / 6 aligned edits.
  * 2026-09-27: exact MAKYURI_IRIGUCHI/CROSS_DOORWAY.C supplies a pre-loop
  * zero ORed into byte flags. Here the byte accesses are priority +0x23
  * and motion +0x55. Feeding the motion store from x and ORing zero into
@@ -87,7 +107,11 @@ s32 Func_02001148(void)
         Engine_ActorSetPosition(17, 0, 0);
     }
     zero = 0;
-    for (n = 0; n <= 2; n++) {
+    n = 0;
+    /* FAKEMATCH: the named back-edge retains the loop-local motion zero;
+     * a structured for loop hoists it despite its post-loop consumers. */
+setup_actor:
+    {
         struct FieldActor *actor;
         actor = Engine_ActorGet(n + 23);
         actor->sprite->priority = 1;
@@ -99,6 +123,9 @@ s32 Func_02001148(void)
         /* FAKEMATCH: CROSS_DOORWAY.C's pre-loop zero OR preserves the
          * unused preheader value separately from the motion-flags zero. */
         actor->priority_flags = (actor->priority_flags & 254) | 2 | zero;
+        n++;
+        if (n <= 2)
+            goto setup_actor;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x202)) {
         Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);

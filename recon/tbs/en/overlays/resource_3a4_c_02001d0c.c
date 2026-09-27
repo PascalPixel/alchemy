@@ -1,35 +1,25 @@
-/* NONMATCHING: 788 bytes, candidate 788, 26 differing halfwords, 24 halfword
- * edits (2026-09-25). FieldScene_RunMultiPhasePresentation, meant for
+/* NONMATCHING: 788 bytes, candidate 788, 31 differing halfwords, 29 halfword
+ * edits (2026-09-27). FieldScene_RunMultiPhasePresentation, meant for
  * FIELD/ARUTIN_YAMA/F_01D0C.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Remaining: Phase and step stores now keep their relative order. Pointer
  * and literal scheduling at the first setup, callback store timing, final
  * call argument order and wait counter scheduling remain.
  * WALL: Initial motion setup scheduling and constant placement; typed
- * aggregate and grouped-store alternatives did not help. */
+ * aggregate and grouped-store alternatives did not help.
+ * H1 transfers the exact timed callback's signed timer/delay and active
+ * fields through ARUTIN.H, its named function address, and FIELD_EVENT's
+ * canonical prototypes. Callback still scores 200/200 bytes, zero diff.
+ * Final animation arguments now match. Separate actor/motion pointers let
+ * both state clears precede callback removal; flag OR scratch registers
+ * also change. Initial setup and wait scheduling remain. Baseline 26/24.
+ * Missing EventEnd, local task and data bindings are now explicit. No DONE. */
 #include "TYPES.H"
 
-s32 Engine_ActorGet();
-void Engine_EventBegin();
-void Engine_ActorStop();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_AudioPlayCue();
-void Engine_ActorRunRepeatedMotion();
-void Engine_EventWait();
-void Engine_ActorFaceDirection();
-void Engine_ActorSetSpeed();
-void Engine_ObjectMotionSetPositionAndCommit();
-u8 * Engine_ActorSetAnimation();
-void Engine_WorkSetValuesIfNonNegative();
-void Engine_ActorSetSpriteFlags();
-void SceneState_StoreParamsAndInstallTask();
-void Engine_GameFlagSet();
-void Engine_EventEnd();
+#include "FIELD_EFFECT.H"
+#include "ARUTIN.H"
 
-
-extern u8 Data_00000000[];
+void SceneState_StoreParamsAndInstallTask(s32 x, s32 y, s32 z, s32 angle);
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -39,11 +29,6 @@ extern u8 Data_00000000[];
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
@@ -61,27 +46,21 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-struct ActorMotion {
-    u8 pad0[100];
-    u16 step[2];
-    s32 phase;
-    s32 callback;
-};
-
 struct Half { u16 v; };
-extern u8 Value_02009771;
 extern s32 Data_03001c94;
 
-void Func_02001d0c(void)
+void FieldScene_RunMultiPhasePresentation(void)
 {
     struct Half zero;
-    u8 *p8;
-    u8 *p11;
-    u8 *rec3;
-    u8 *record;
+    s16 *timer;
+    s16 *delay;
+    struct FieldActor *actor;
+    struct SceneMotion *motion;
+    struct FieldActor *record;
     u32 n;
 
-    rec3 = (u8 *)Value1(Engine_ActorGet, 10);
+    actor = Actor_Get(10);
+    motion = (struct SceneMotion *)actor;
     Engine_EventBegin();
     Engine_ActorStop(10);
     Call2(Engine_CameraSetSpeed, 0x26666, 0x4ccc);
@@ -97,18 +76,18 @@ void Func_02001d0c(void)
     Call4(Engine_CameraMoveTo, 0x800000, 0x400000, 0xca0000, 1);
     /* FAKEMATCH: volatile stores keep phase before the two motion steps. */
     zero.v = 0;
-    p11 = rec3 + 102;
-    *(volatile s32 *)(rec3 + 104) = 0;
-    p8 = rec3 + 100;
-    *(s32 *)(rec3 + 72) = 0x6666;
-    *(volatile u16 *)p11 = 0;
-    *(volatile u16 *)p8 = 0;
-    *(s32 *)(rec3 + 108) = (s32)&Value_02009771;
+    delay = &motion->delay;
+    *(volatile s32 *)&motion->active = 0;
+    timer = &motion->timer;
+    *(s32 *)&actor->unknown_44[4] = 0x6666;
+    *(volatile s16 *)delay = 0;
+    *(volatile s16 *)timer = 0;
+    actor->update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 212, 200);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 103, 200);
-    *(s32 *)(rec3 + 108) = 0;
-    rec3[91] = zero.v;
+    actor->update = NULL;
+    motion->state = zero.v;
     Engine_EventWait(10);
     Engine_ActorSetAnimation(10, 1);
     Engine_AudioPlayCue(229);
@@ -117,18 +96,18 @@ void Func_02001d0c(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(20);
     Call3(Engine_ActorFaceDirection, 10, 0x5000, 40);
-    *(u8 *)(Engine_ActorGet(10) + 90) &= 254;
+    Engine_ActorGet(10)->unknown_5a &= 254;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     record = Engine_ActorGet(10);
-    Engine_ActorSetSpriteFlags((s32)record, 0);
+    Engine_ActorSetSpriteFlags(record, 0);
     Engine_AudioPlayCue(153);
     record = Engine_ActorGet(10);
-    *(s32 *)((s32)record + 40) = 0x40000;
+    record->velocity_y = 0x40000;
     Call2((void (*)())Engine_ActorSetAnimation, 10, 3);
     Engine_ObjectMotionSetPositionAndCommit(10, 86, 214);
     Engine_ActorSetAnimation(10, 1);
     record = Engine_ActorGet(10);
-    Engine_ActorSetSpriteFlags((s32)record, 1);
+    Engine_ActorSetSpriteFlags(record, 1);
     Engine_EventWait(10);
     Engine_AudioPlayCue(229);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0, 0x10000);
@@ -136,22 +115,22 @@ void Func_02001d0c(void)
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(40);
     {
-        u8 *record = Engine_ActorGet(10);
+        struct FieldActor *record = Engine_ActorGet(10);
         /* FAKEMATCH: preserve the flag-read ordering. */
-        u8 value = *(volatile u8 *)&record[90];
+        u8 value = *(volatile u8 *)&record->unknown_5a;
     
-        record[90] = (u8)(value | 1);
+        record->unknown_5a = (u8)(value | 1);
     }
     Call3(Engine_ActorFaceDirection, 10, 0x3000, 20);
     Engine_ActorFaceDirection(10, 0, 40);
-    *(volatile s32 *)(rec3 + 104) = 0;
-    *(volatile u16 *)p8 = 0;
-    *(volatile u16 *)p11 = 0;
-    *(s32 *)(rec3 + 108) = (s32)&Value_02009771;
+    *(volatile s32 *)&motion->active = 0;
+    *(volatile s16 *)timer = 0;
+    *(volatile s16 *)delay = 0;
+    actor->update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 120, 215);
-    *(s32 *)(rec3 + 108) = 0;
-    rec3[91] = zero.v;
+    actor->update = NULL;
+    motion->state = zero.v;
     Engine_ActorSetAnimation(10, 1);
     Engine_EventWait(16);
     Engine_AudioPlayCue(229);
@@ -176,10 +155,10 @@ void Func_02001d0c(void)
             }
         } while (Data_03001c94 == 0);
     }
-    rec3 = (u8 *)Engine_ActorGet(0);
+    actor = Engine_ActorGet(0);
     Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);
-    Engine_CameraMoveTo(*(s32 *)(rec3 + 8), *(s32 *)(rec3 + 12), *(s32 *)(rec3 + 16), 1);
+    Engine_CameraMoveTo(actor->x.fixed, actor->y.fixed, actor->z.fixed, 1);
     Engine_CameraWaitForMove();
-    Call1(Engine_GameFlagSet, 0x905);
+    Call1((void (*)())Engine_GameFlagSet, 0x905);
     Engine_EventEnd();
 }

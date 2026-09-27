@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "ARUTIN.H"
 
 /*
  * Arutin mountain: a timed actor that bobs toward the ground. While a delay
@@ -7,11 +8,6 @@
  * when the timer lapses it reactivates and starts the fall.
  */
 
-struct SceneMotion {
-    u8 unk_00[12]; s32 y; u8 unk_10[4]; s32 ground;
-    u8 unk_18[16]; s32 velocity; u8 unk_2c[47]; u8 state;
-    u8 unk_5c[8]; s16 timer, delay; s32 active;
-};
 extern void Func_020052d4();
 extern void Func_0200527a(struct SceneMotion *, s32);
 extern void Func_020054e4(s32);

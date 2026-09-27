@@ -1,4 +1,22 @@
-/* NONMATCHING: candidate 1256/reference 1240 bytes, 596 differing halfwords,
+/* NONMATCHING: H3 typed Map_CopyCellAttributes transfer retains candidate
+ * 1260/reference 1240 bytes, 598 differing halfwords / 131 normalized edits.
+ * The shared FIELD_EVENT.H void service emits the same six call sequences
+ * as Call6, but does not merge the early actor path with entrance 11's tail.
+ * Whole normalized diff and pools read (2026-09-27). Keep the established
+ * typed interface; close this tail-merging axis. This session's three
+ * structural trials are checkpointed; no new C or alignment credit.
+ * H1 narrow values: candidate 1260/reference 1240 bytes,
+ * 598 differing halfwords / 131 aligned edits (2026-09-27). A u8 zero
+ * reproduces the sprite-clear pool's 60-byte reach and early pool branch;
+ * the u16 Retreat value also forces an early pool but duplicates the word
+ * used by the later scene comparison. Remaining: initial state-offset
+ * synthesis, independent scene/actor lifetimes, shared map-copy tail,
+ * switch index copy and supplemental-call zero. Full normalized diff read.
+ * H2: separating the early actor lifetime removes its saved r5, but reload
+ * now keeps the pointer in r0 rather than admitting the reference r1 copy.
+ * Complete 1260-byte extent remains 598 halfwords / 131 edits. This actor
+ * is independent of the later y-copy actor; retain that recovered scope.
+ * Historical baseline: candidate 1256/reference 1240 bytes, 596 differing halfwords,
  * 193 aligned edits. Complete own-ROM extent 020028a0..02002d78 includes
  * the eight-entry entrance switch and pools at 2904, 29ec and 2d4c.
  * ENTRY.INC slot 0 calls this setup owner; all calls and field accesses audited.
@@ -61,6 +79,8 @@ s32 BabiIriguchi_SetupScene(void)
     s32 x;
     s32 z;
     s32 flag;
+    u16 retreat;
+    u8 zero;
 
     Engine_TaskWait(1);
     gEventWork->start_transition = 0x204;
@@ -68,14 +88,17 @@ s32 BabiIriguchi_SetupScene(void)
     scene = state->scene;
     if (scene != (s32)Data_000000b1) {
         state->retreat_entrance = 1;
-        state->retreat_scene = (s32)Data_000000b0;
+        retreat = (s32)Data_000000b0;
+        state->retreat_scene = retreat;
     } else {
+        struct FieldActor *actor;
+
         actor = Engine_ActorGet(12);
         x = actor->x.fixed >> 20;
         if (x == 20) {
             z = actor->z.fixed >> 20;
             if (z == 12) {
-                Call6(Engine_MapCopyCellAttributes, 38, 12, 1, 1, x, z);
+                Map_CopyCellAttributes(38, 12, 1, 1, x, z);
             }
         }
         return 0;
@@ -99,31 +122,32 @@ s32 BabiIriguchi_SetupScene(void)
         panel->priority_flags = 0;
         panel->delay = 0;
         ((u8 *)panel->sprite)[9] |= 12;
-        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        zero = 0;
+        ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0xc000;
         Engine_ActorSetAnimation(11, 0);
         panel = (struct PanelActor *)Engine_ActorGet(12);
-        panel->collision_flags = (s32)Data_00000000;
-        panel->priority_flags = (s32)Data_00000000;
+        panel->collision_flags = zero;
+        panel->priority_flags = zero;
         panel->delay = 30;
         ((u8 *)panel->sprite)[9] |= 12;
-        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0x4000;
         Engine_ActorSetAnimation(12, 0);
         panel = (struct PanelActor *)Engine_ActorGet(13);
-        panel->collision_flags = (s32)Data_00000000;
-        panel->priority_flags = (s32)Data_00000000;
+        panel->collision_flags = zero;
+        panel->priority_flags = zero;
         panel->delay = 60;
         ((u8 *)panel->sprite)[9] |= 12;
-        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0x8000;
         Engine_ActorSetAnimation(13, 0);
         panel = (struct PanelActor *)Engine_ActorGet(14);
-        panel->collision_flags = (s32)Data_00000000;
-        panel->priority_flags = (s32)Data_00000000;
+        panel->collision_flags = zero;
+        panel->priority_flags = zero;
         panel->delay = 90;
         ((u8 *)panel->sprite)[9] |= 12;
-        ((u8 *)panel->sprite)[38] = (s32)Data_00000000;
+        ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0x8000;
         Engine_ActorSetAnimation(14, 0);
     } else if (scene == (s32)Data_000000af) {
@@ -133,22 +157,22 @@ s32 BabiIriguchi_SetupScene(void)
         case 11:
             if (Engine_GameFlagIsSet(0x980) != 0) {
                 Call6(Engine_MapCopyCellsTo, 120, 7, 109, 7, 1, 3);
-                Call6(Engine_MapCopyCellAttributes, 45, 8, 1, 1, 45, 9);
+                Map_CopyCellAttributes(45, 8, 1, 1, 45, 9);
             }
             break;
         case 14:
             OverlayObject_SpawnConfiguredObject(0x1b80000, 0, 0x1220000, 223);
-            Call6(Engine_MapCopyCellAttributes, 22, 13, 1, 1, 27, 13);
+            Map_CopyCellAttributes(22, 13, 1, 1, 27, 13);
             FieldScene_RunScene3c5SequenceA(14);
             break;
         case 16:
             OverlayObject_SpawnConfiguredObject(0x1c00000, 0, 0x1220000, 223);
-            Call6(Engine_MapCopyCellAttributes, 22, 12, 1, 1, 28, 10);
+            Map_CopyCellAttributes(22, 12, 1, 1, 28, 10);
             FieldScene_RunScene3c5SequenceA(16);
             break;
         case 17:
             OverlayObject_SpawnConfiguredObject(0xe80000, 0, 0x2520000, 223);
-            Call6(Engine_MapCopyCellAttributes, 22, 12, 1, 1, 14, 33);
+            Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
             FieldScene_RunScene3c5SequenceA(17);
             break;
         case 12:
@@ -197,7 +221,7 @@ s32 BabiIriguchi_SetupScene(void)
             Actor_SetPosition(9, 0x1480000, 0xf00000);
             Actor_FaceDirection(8, 0x8000, 0);
             Actor_FaceDirection(9, 0, 0);
-            Call6(Engine_MapCopyCellAttributes, 81, 14, 4, 1, 17, 14);
+            Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
         }
         if (gGameState.entrance == 3) {
             flag = Engine_GameFlagIsSet(0x109);

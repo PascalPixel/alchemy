@@ -48,7 +48,12 @@
  * Scale remains fp, hold sl, suffix r8, third random sample still spills.
  * Not admitted as exact: remaining invariant is suffix sl / hold fp /
  * third sample r8, with scale spilled at sp+40. Preserved as diagnostic
- * draft before a separate scale-storage hypothesis. */
+ * draft before a separate scale-storage hypothesis.
+ * H7 scalar-record scale snapshot: byte-identical to H6 (748 bytes / 359
+ * halfwords / 209 edits); GCC scalarizes the record into the same fp value.
+ * Same residual through resource_381 bindings with --symbol 0200449c.
+ * STOP: suffix/cursor/scalar-storage axis bounded without an admitted
+ * ownership shape. H6 remains diagnostic C not yet exact; no new DONE. */
 #include "FIELD_EVENT.H"
 
 void *Engine_AllocateBlock(s32 id, s32 size);

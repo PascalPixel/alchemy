@@ -1,4 +1,15 @@
-/* Copy-interface H3 result: 556/560 bytes, 204 differing halfwords /
+/* Offer-phase H4 rejected: 560/560 bytes, 204 halfwords / 136 edits.
+ * Formal map parameter coalesces back into pseudo33: 133 insns / 14 calls,
+ * still stack-preferring, still reloaded in-loop. Heap/index exchange r7/r8;
+ * list takes ip instead of map. Frame32 and pool offsets alone now agree,
+ * but the map admission fails. Full diff read, -da equals normal assembly.
+ * Preserve this trial, then restore H3. No declaration/type follow-up.
+ * Offer-phase H4: baseline map pseudo33 spans 134 insns / 14 calls and
+ * spills at sp+0; reference reloads it once into ip before the call-free
+ * remapping loop. The entry copy is already SImode, not a BLK copy defect.
+ * Isolate this complete phase as an inline list/map operation; predict a
+ * short map parameter lifetime while retaining frame32 and word compaction.
+ * Copy-interface H3 result: 556/560 bytes, 204 differing halfwords /
  * 85 aligned edits. The first call now has the exact routine-load-before-r0
  * order; the second still differs. Full diff read: frame32, record-copy
  * loop and polling gains retained; merged exits/map reload remain. DONE +0.
@@ -56,6 +67,23 @@ struct LinkList {
     s32 count;
 };
 
+static __inline__ void RemapOffers(struct LinkList *list, const u8 *map)
+{
+    s32 j;
+    s32 k;
+
+    for (j = 0; j < list->count; j++) {
+        list->entries[j].owner = map[list->entries[j].owner];
+        if ((s8)list->entries[j].owner == 0) {
+            for (k = j; k < list->count - 1; k++) {
+                list->entries[k] = list->entries[k + 1];
+            }
+            list->count--;
+            j--;
+        }
+    }
+}
+
 s32 LinkLobby_SendPartyRecords(void)
 {
     s32 result;
@@ -68,8 +96,6 @@ s32 LinkLobby_SendPartyRecords(void)
     s32 timeout;
     s32 tries;
     s32 i;
-    s32 j;
-    s32 k;
     u32 size;
     struct LinkList *list;
 
@@ -138,16 +164,7 @@ next:
         list = (struct LinkList *)(heap + 8);
         tries = 0;
         timeout = 600;
-        for (j = 0; j < list->count; j++) {
-            list->entries[j].owner = table[list->entries[j].owner];
-            if ((s8)list->entries[j].owner == 0) {
-                for (k = j; k < list->count - 1; k++) {
-                    list->entries[k] = list->entries[k + 1];
-                }
-                list->count--;
-                j--;
-            }
-        }
+        RemapOffers(list, table);
         if ((ret = Main_08000380(heap, 0x140)) == -1) {
             result = ret;
             goto done;

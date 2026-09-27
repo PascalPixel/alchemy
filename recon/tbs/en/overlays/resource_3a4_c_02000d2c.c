@@ -1,4 +1,5 @@
-/* NONMATCHING: outward O1 408/404 bytes, 104 differing halfwords / 41 edits.
+/* NONMATCHING: inversion I2 408/404 bytes, 104 differing halfwords / 41 edits.
+ * Canonical I2 body restored after rejected O1 witness in 1cf42a2d3.
  * Outward O1 (2026-09-27): snapshot the u16 sprite rotation at rise-loop
  * entry before advancing acc, then add its whole part to that snapshot.
  * Prediction: rotation gets r2 before acc's add, whole-part extraction r3.
@@ -18,7 +19,7 @@
  * boundary explaining a reversal was established, so that axis was not tried.
  * Missing evidence: a legitimate operand/value boundary that survives
  * combine and keeps the rotation load independent of the increment register.
- * No new DONE bytes. Preserve I2 as canonical after recording this witness.
+ * No new DONE bytes. I2 remains canonical; O1 survives in Git, not here.
  *
  * Inversion I2 408/404 bytes, 104 differing halfwords / 41 edits.
  * Retained canonical model (2026-09-27): structured loops with named phase
@@ -117,11 +118,8 @@ void ArutinYama_SwingActorIntoSetPiece(void)
         acc.fixed = 0;
         limit = 0x8fff;
         for (;;) {
-            u16 rotation;
-
-            rotation = sprite->rotation;
             acc.fixed += 0x80000;
-            sprite->rotation = rotation + acc.part.whole;
+            sprite->rotation += acc.part.whole;
             c = Math_Cos(sprite->rotation + 0x4000);
             actor->x.fixed = (c << 4) + x;
             angle = sprite->rotation;

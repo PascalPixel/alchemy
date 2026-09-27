@@ -1,5 +1,12 @@
-/* NONMATCHING: 1172 bytes, candidate 1172, 541 differing halfwords, 20
- * wrong instructions, 159 halfword edits. FieldScene_RunComplexActorSequence
+/* 2026-09-27 Sol H1: staging event-work before map-work, then consuming
+ * view_center removes the extra saved-control copy and separate subtract.
+ * Root subtraction now uses r2 as the reference does. Event load precedes
+ * the r9 save instead of following it; that local scheduling tie remains.
+ * Full normalized diff and allocator read: all three high-register roles,
+ * the ground store and four direct +90 stores remain intact. Keep this
+ * admitted structural correction; first-pool and zero ancestry still differ.
+ * NONMATCHING: 1172 bytes, candidate 1172, 471 differing halfwords, 14
+ * wrong instructions, 141 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -171,8 +178,13 @@ void FieldScene_RunComplexActorSequence(void)
     s32 ground;
 
     control = &gScenePointers.control;
-    work = gScenePointers.map_work;
-    scene_actor = control->event_work->view_center;
+    /* FAKEMATCH: stage the root reads before consuming the event record. */
+    {
+        struct EventWork *event = control->event_work;
+
+        work = gScenePointers.map_work;
+        scene_actor = event->view_center;
+    }
     sprite = Engine_ActorGet(17)->sprite;
     Main_0808a018();
     Main_0808a0f0(11, 0, 0);

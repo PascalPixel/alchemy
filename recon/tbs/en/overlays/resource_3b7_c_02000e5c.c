@@ -36,6 +36,13 @@
  * Remaining: trapezoid x/z samples and x/z bound lifetimes; frame 12 versus
  * 24 bytes; reaction store before modulo; circular hold updates share a tail.
  * Preserve these admitted geometry lifetimes in subsequent structural work.
+ * H2, rejected: a pristine x sample for the far-bound and lower-edge checks,
+ * plus an independent z clipping sample, predicted x's saved copy and the
+ * reference high bound registers. CSE merges xpos into x; no saved copy or
+ * bound allocation changes. z clipping alone changes four instructions from
+ * r5 to r3, not the required r2. Still 2100/768/172; full normalized diff is
+ * unchanged outside those four clipping instructions. Trial body preserved
+ * in this checkpoint; restore H1 before testing another structural model.
  */
 #include "TYPES.H"
 
@@ -176,6 +183,8 @@ void FieldScene_RunSecondaryScript(void)
     s32 i;
     s32 x;
     s32 z;
+    s32 xpos;
+    s32 zpos;
     s32 y;
     s32 tmp;
     s32 step;
@@ -303,6 +312,7 @@ void FieldScene_RunSecondaryScript(void)
             }
 
             x = work->pos[0][0];
+            xpos = x;
             if (x < 0x5a0000) {
                 tmp = (0x5a0000 - x) * 18 / 42;
                 zlo = 0x180000 + tmp;
@@ -314,8 +324,8 @@ void FieldScene_RunSecondaryScript(void)
                     zhi = 0x660000;
                 }
             }
-            if (x > 0x960000) {
-                tmp = (x * 18 - 0xa8c0000) / 42;
+            if (xpos > 0x960000) {
+                tmp = (xpos * 18 - 0xa8c0000) / 42;
                 zlo = 0x180000 + tmp;
                 if (zlo > 0x2a0000) {
                     zlo = 0x2a0000;
@@ -327,7 +337,7 @@ void FieldScene_RunSecondaryScript(void)
             }
 
             /* Bounce off each edge with half the incoming speed. */
-            if (x < xlo) {
+            if (xpos < xlo) {
                 work->pos[0][0] = xlo;
                 if (work->velocity[0] < 0) {
                     work->velocity[0] = -work->velocity[0] / 2;
@@ -340,15 +350,15 @@ void FieldScene_RunSecondaryScript(void)
                     work->velocity[0] = -work->velocity[0] / 2;
                 }
             }
-            z = work->pos[0][2];
-            if (z < zlo) {
+            zpos = work->pos[0][2];
+            if (zpos < zlo) {
                 work->pos[0][2] = zlo;
                 if (work->velocity[2] < 0) {
                     work->velocity[2] = -work->velocity[2] / 2;
                 }
-                z = zlo;
+                zpos = zlo;
             }
-            if (z > zhi) {
+            if (zpos > zhi) {
                 work->pos[0][2] = zhi;
                 if (work->velocity[2] > 0) {
                     work->velocity[2] = -work->velocity[2] / 2;

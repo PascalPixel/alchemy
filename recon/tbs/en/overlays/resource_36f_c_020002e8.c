@@ -1,4 +1,8 @@
-/* NONMATCHING H3 direct reset: 360/364 bytes, 161 differing halfwords /
+/* NONMATCHING canonical H2: 364/364 bytes, three differing halfwords.
+ * Restored after rejected H3 at 27b227b0c; H2 source witness is 866d51e33.
+ * All queue instructions, IME/counter roles and pools are admitted.
+ *
+ * Rejected H3 direct reset: 360/364 bytes, 161 differing halfwords /
  * 37 aligned edits (2026-09-27). Folding the single-use zero into its
  * destination fixes address r2 / zero r3 and the strh operand order, while
  * preserving H2's IME/counter/queue roles. It removes the HI temporary,
@@ -94,12 +98,14 @@ static __inline__ void RestoreInterrupts(u32 saved)
 void Func_020002e8(void)
 {
     s32 i;
+    s32 zero;
     u8 *event;
     struct IoWriteQueue *q;
 
     Local_02000454();
     Engine_EventWait(30);
-    Data_0200868c = (u16)(u32)&Value_00000000;
+    zero = (u16)(u32)&Value_00000000;
+    Data_0200868c = zero;
     Title_Func020001c0(0);
     Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
     QUEUE_WRITE(0x4000000, 0x1540);

@@ -65,7 +65,12 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
  * 2026-09-27: FIELD_EVENT.H actor/flag interfaces and the typed motion_flags
  * field emit identical bytes. Transferring the direct (98, 5) call from exact
  * StoryScene_CompleteActor98 also emits identical bytes. Both axes closed;
- * the saved-state lifetime remains the residual, not an omitted argument. */
+ * the saved-state lifetime remains the residual, not an omitted argument.
+ * Transfer check: IMIRU_MURA/ENTRY_STATE.C's exact Call1 flag boundary
+ * was applied to both GameFlagSet calls, with a1 + 0x2f9 and a1 + 0x309.
+ * The complete 220-byte candidate is binary-identical: all eight r5/r6
+ * differences remain. Unlike Imil, these argument expressions do not
+ * shorten the actor-id lifetime. Stop this helper transfer; keep the body. */
 void Func_02000b24(s32 a0, s32 a1)
 {
     u32 i;

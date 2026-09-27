@@ -1,4 +1,16 @@
-/* NONMATCHING H4 (2026-09-27): 624/616 bytes, 169 differing halfwords,
+/* NONMATCHING H5 (2026-09-27): direct signed halfword reset access is
+ * byte-identical to H4: 624/616 bytes, 169 halfwords / 53 aligned edits.
+ * Exact linked-record consumers use direct halfword access at +100. That
+ * transfer removes the initial RTL member read/AND-zero/write, but the
+ * required SI-to-HI conversion (HI157) remains. CSE still turns it into
+ * the camera byte's zero producer; its two-call lifetime and extra pool
+ * survive. Full normalized diff and emitted assembly checked. Admission
+ * fails: direct access is not enough to remove this pool. Preserve trial
+ * in git, restore H4's simpler member view, and stop this three-model pass.
+ * Further work needs a distinct producer/consumer lifetime fact, not more
+ * signedness, loop, or cast spellings. No function or alignment credit.
+ *
+ * NONMATCHING H4 (2026-09-27): 624/616 bytes, 169 differing halfwords,
  * 53 aligned edits. Give the immediate height-reset flag result its own
  * block lifetime, separate from the earlier result surviving two calls.
  * First result SI43 drops from 14 refs/25 insns/two definitions to six
@@ -60,7 +72,7 @@ static __inline__ void FloatingBlock_ResetMotion(struct FieldActor *block, s32 v
     *(s32 *)block->unknown_14 = value;
     block->velocity_y = value;
     block->motion_flags = value;
-    ((struct FloatingBlockHeight *)block)->index = value;
+    *(s16 *)&block->unknown_64 = value;
 }
 
 void VinasuHeya_ResolveFloatingBlock(void)

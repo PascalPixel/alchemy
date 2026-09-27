@@ -1,38 +1,27 @@
-/* NONMATCHING: 364 bytes, candidate 364, 23 differing halfwords (2026-09-24).
- * Single-overlay unit binding Engine_* at their import veneers. Remaining:
- * global allocation order only: the reference gives the IME pointer r5 and
- * the fade counter r6, here the counter outranks it (9 refs over 56 insns
- * against 33 over 3712) and takes r5; the first counter reset also swaps its
- * address and pool-zero registers. The count is block-local in the queue
- * macro and the IME pointer and queue are function-level, which fixed the
- * count and saved registers.
- * 2026-09-27 family transfer: exact WORLD_MAP/DISPLAY_TRANSITION.C now
- * scopes final IME restoration separately from subsequent publication/calls.
- * Apply that boundary to the same queued triple stores here, leaving the
- * existing read scope and IO_WRITE_QUEUE.H unchanged. Admission: IME r5,
- * fade counter r6, then complete 364-byte owner/pool equality. One trial.
- * Result: byte-identical to the prior candidate, 364/364 bytes and 23
- * differing halfwords/aligned edits. All eleven pool words are exact.
- * IME remains pseudo 35/r6 (33 uses, five sets, two crossed calls) and the
- * fade counter r5. Final-publication scoping does not change this allocation.
- * Stop this transfer axis; the exact world-map source was not edited. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
 
 extern volatile u16 Data_04000208;
-extern u8 Value_00000000;
 extern s16 Data_0200868c;
 
-void Local_02000454(void);
+void Title_LoadBackground(void);
 void Title_Func020001c0(s32 mode);
 void Title_RevealSpriteRow(void);
+
+static __inline__ void RestoreInterrupts(u32 saved)
+{
+    /* FAKEMATCH: BLEND_FADE.C keeps this address local to restoration. */
+    do { Data_04000208 = saved; } while (0);
+}
 
 /* Queue a register write with interrupts masked.
  * FAKEMATCH: the final one-pass restore retains the queue-publication
  * boundary used by the exact world-map transfer family. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
+        volatile u16 *ime;                                                  \
+        u32 saved;                                                          \
         s32 count;                                                          \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
@@ -48,22 +37,28 @@ void Title_RevealSpriteRow(void);
             *destination++ = (address);                                     \
             *destination = 0x20000;                                         \
         }                                                                   \
-        do { *ime = saved; } while (0);                                      \
+        RestoreInterrupts(saved);                                          \
     } while (0)
 
-void Func_020002e8(void)
+/* FAKEMATCH: expand the destination first while the one-halfword record
+ * retains the short-range pool-zero producer used by PALETTE_START.C. */
+static __inline__ void ResetCounter(s16 *destination)
+{
+    struct { u16 value; } zero;
+
+    zero.value = 0;
+    *destination = zero.value;
+}
+
+void Title_RevealScreen(void)
 {
     s32 i;
-    s32 zero;
     u8 *event;
-    volatile u16 *ime;
     struct IoWriteQueue *q;
-    u32 saved;
 
-    Local_02000454();
+    Title_LoadBackground();
     Engine_EventWait(30);
-    zero = (u16)(u32)&Value_00000000;
-    Data_0200868c = zero;
+    ResetCounter(&Data_0200868c);
     Title_Func020001c0(0);
     Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
     QUEUE_WRITE(0x4000000, 0x1540);

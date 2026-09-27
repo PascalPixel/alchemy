@@ -1,4 +1,19 @@
-/* Draft, not-yet-c. Score 2026-09-26: 608 of 612 bytes, 256 differing
+/* Draft, not-yet-c. Canonical scalar body restored: 608/612 bytes,
+ * 256 differing halfwords / 117 aligned edits, byte-identical to baseline.
+ * Completion steering-output model (22125318a): 604/612 bytes,
+ * 269 differing halfwords, 127 aligned edits. A coherent inlined selection
+ * operation publishes leader facing, computes the cone/fallback, then gives
+ * the same scalar slot to the existing snap consumer. Its formal output
+ * still becomes r4 and spills across Atan2: 8-byte frame, not the required
+ * 4 bytes. Pointer stores also lose both reference signed facing producers
+ * (ldrh replaces ldrsh). Full normalized diff and allocator ancestry read;
+ * normal/diagnostic text agree. This is not an admitted invariant witness.
+ * The address changes from temporary pseudo 89 (5 uses/32 insns) to user
+ * parameter 44 (5 uses/39 insns), still one crossed call and allocated r4.
+ * Thus a formal scalar-output parameter is not the missing register cause.
+ * The failed output-interface model is committed; scalar body restored.
+ * No new lifetime fact supports another pointer/aggregate/helper variation.
+ * Baseline score 2026-09-26: 608 of 612 bytes, 256 differing
  * halfwords, 117 aligned edits. Typed actor/stop calls restore all pointers
  * and destination arguments; loaded -0x1000 and fixed-point random angles
  * replace the old container constants and incomplete decompiler expressions.

@@ -55,7 +55,16 @@
  * 20 wrong instructions. The byte count is not an adoption: first-pool
  * placement shifts the long matched body. Remaining entry and initial
  * animation order, narrow-zero/message hoisting and first pool are unchanged.
- * Do not reopen the earlier zero-width/aggregate/declaration-order axes. */
+ * Do not reopen the earlier zero-width/aggregate/declaration-order axes.
+ * H3: own veneer 08015210 reaches exact UiText_ShowCenteredMessage at
+ * 08019aa0, a void THREE-argument service, not FIELD_EVENT.H's two-argument
+ * Engine_MessageShowCentered. Bind the full prototype under its overlay
+ * Engine_UiTextShowCenteredMessage import and transfer DECK_SEQ.C's Call3
+ * boundary at the two centered messages. Also transfer Actor_SetAnimation
+ * from the exact scene family; its veneer reaches Object_SetModeById.
+ * Complete candidate is byte-identical to H2 (cmp checked), 1172/541/159.
+ * No pool or setup order changes. Stop after these three supported models;
+ * preserve H1's saved-register invariant and H2's direct flag stores. */
 #include "FIELD_EVENT.H"
 
 struct SceneMapState {
@@ -95,14 +104,13 @@ void Main_080091e0(struct FieldActor *actor, s32 flags);
 void Main_08009208();
 void Main_08009210();
 void Main_08009228(struct FieldActor *actor, s32 palette);
-void Main_08015210();
+void Engine_UiTextShowCenteredMessage(s32 message, s32 mode, s32 y_offset);
 void Main_080770c8();
 void Main_0808a010();
 void Main_0808a018();
 s32 Main_0808a070();
 void Main_0808a0a0();
 void Main_0808a0f0();
-void Main_0808a100();
 void Main_0808a110();
 void Main_0808a128();
 void Main_0808a130();
@@ -120,6 +128,13 @@ void Main_0808a360();
 void Main_0808a368();
 void Main_0808a370();
 void Main_080f9010();
+
+/* FAKEMATCH: transfer DECK_SEQ.C's centered-message call boundary so each
+ * draw owns its argument setup; this is not a recovered original helper. */
+static __inline__ void Call3(void (*f)(s32, s32, s32), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
 
 void FieldScene_RunComplexActorSequence(void)
 {
@@ -145,7 +160,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a0f0(15, 0, 0);
     Main_0808a0f0(16, 0, 0);
     Main_080091e0(Engine_ActorGet(0), 0);
-    Main_0808a100(0, 18);
+    Actor_SetAnimation(0, 18);
     /* FAKEMATCH candidate: delimit the wide position initialization from
      * the narrow actor flag so its lifetime starts in the setup phase. */
     do {
@@ -164,11 +179,11 @@ void FieldScene_RunComplexActorSequence(void)
     Main_08009208();
     Main_0808a1d8(8);
     base = 3666;
-    Main_08015210(base, 1, 0);
+    Call3(Engine_UiTextShowCenteredMessage, base, 1, 0);
     Main_0808a010(40);
     MapRender_SetValues(65536, 65536, 65536);
     Main_0808a1d8(8);
-    Main_08015210(base + 1, 1, 0);
+    Call3(Engine_UiTextShowCenteredMessage, base + 1, 1, 0);
     Main_08009210();
     Main_0808a010(40);
     *(u32 *)(work + 236) = 0x01480000;
@@ -202,7 +217,7 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a010(20);
     Main_08009188(8);
     Actor_SetSpeed(0, 65536, 32768);
-    Main_0808a100(0, 19);
+    Actor_SetAnimation(0, 19);
     Actor_MoveToAndWait(0, 557, 679);
     Main_08009190(8);
     Main_08009188(9);
@@ -249,8 +264,8 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a0a0(8);
     Actor_WalkToAndWait(8, 419, 661);
     Actor_WalkToAndWait(8, 408, 661);
-    Main_0808a100(8, 1);
-    Main_0808a100(0, 1);
+    Actor_SetAnimation(8, 1);
+    Actor_SetAnimation(0, 1);
     Actor_Jump(8, 16384, 10);
     Event_OpenMessage(32776, 0);
     if (Main_0808a070(0, 0) == 0) {
@@ -258,7 +273,7 @@ void FieldScene_RunComplexActorSequence(void)
     }
     Main_0808a010(20);
     Event_ShowMessageAndWait(32776, 0, 20);
-    Main_0808a100(0, 3);
+    Actor_SetAnimation(0, 3);
     Main_0808a110(8, 3);
     Main_0808a010(20);
     Engine_ActorEnableActionCallback(8, HaidiaBabi_ActorExitAction);

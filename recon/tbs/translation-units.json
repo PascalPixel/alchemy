@@ -30379,7 +30379,7 @@
           "address": "0x020098c4",
           "kind": "thumb"
         },
-        "Main_08015210": {
+        "Engine_UiTextShowCenteredMessage": {
           "address": "0x020098dc",
           "kind": "thumb"
         },
@@ -30439,7 +30439,7 @@
           "address": "0x02009974",
           "kind": "thumb"
         },
-        "Main_0808a100": {
+        "Engine_ActorSetAnimation": {
           "address": "0x0200997c",
           "kind": "thumb"
         },

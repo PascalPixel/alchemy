@@ -1,5 +1,5 @@
 /* NONMATCHING: complete extent 552 bytes including the trailing pool;
- * candidate 568, 254 differing halfwords, 84 aligned edits (2026-09-27).
+ * candidate 552, 171 differing halfwords, 69 aligned edits (2026-09-27).
  * H1 transfers Call3/Call4 from exact FUNE_KANPAN/FLY_BY_21.C and
  * FLY_BY_22.C. Both callbacks share six callee bindings, actor layout and
  * state machine; only actor IDs and coordinate constants differ.
@@ -8,7 +8,15 @@
  * formed too early; counter address is r8 rather than r6, loaded step r6
  * rather than r8, and case 1 duplicates the increment shared by cases
  * 2/4/6 in the ROM. These differences shift branches, table entries and
- * pool reach; zero scratch and idle turn-y registers also differ. No DONE. */
+ * pool reach; zero scratch and idle turn-y registers also differ. No DONE.
+ * H2: explicit shared advance tail, after H1 was saved at 0fd473f02.
+ * Case 1 also cross-jumps its final coordinate shift/call into case 5,
+ * unlike the ROM. Equal size hides that 6-byte merge against extra counter
+ * rematerialization and different alignment; it is not equal topology.
+ * Full remaining model: counter address/value r8/r6 instead of r6/r8;
+ * consequently scratch copies, cue setup, idle turn-y r6/r7, branch/table
+ * positions and pool reach differ. Both owners retain complete pools.
+ * STOP: one model plus one structural follow-up; no complete owner exact. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -45,8 +53,7 @@ s32 Func_020002ec(struct FieldActor *obj)
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
             Call4(Engine_ObjectSetPosition, (s32)obj, 0x1000000, 0x140000, 0x2800000);
-            obj->rise_counter++;
-            break;
+            goto advance;
         case 3:
             if (obj->target_x == ACTOR_NO_TARGET && obj->target_y == obj->target_x && obj->target_z == obj->target_y) {
                 obj->rise_counter++;
@@ -73,6 +80,8 @@ s32 Func_020002ec(struct FieldActor *obj)
         case 2:
         case 4:
         case 6:
+        advance:
+            /* FAKEMATCH: preserve the shared state-transition tail. */
             obj->rise_counter++;
             break;
         case 7:

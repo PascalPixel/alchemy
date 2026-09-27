@@ -782,17 +782,6 @@
     },
     {
       "overlay": "resource_382",
-      "start": "0x020017ac",
-      "end": "0x02001900",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_382_overlay.s; no assembly credit."
-      ]
-    },
-    {
-      "overlay": "resource_382",
       "start": "0x02001900",
       "end": "0x02001ad0",
       "kind": "overlay_trampoline",

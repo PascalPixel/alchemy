@@ -118,7 +118,8 @@
       "name": "ToretoPalette_ApplyTint"
     },
     "resource_382:020017ac": {
-      "name": "KuupuappuMura_SpawnDriftingEffect"
+      "name": "KuupuappuMura_SpawnDriftingEffect",
+      "source": "FIELD/KUUPUAPPU_MURA/DRIFT.C"
     },
     "resource_383:020048c8": {
       "name": "KuupuappuHeya_UpdateActorStops"

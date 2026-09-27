@@ -1,4 +1,15 @@
-/* NONMATCHING: 364 bytes, candidate 364, 23 differing halfwords (2026-09-24).
+/* NONMATCHING H1 single IME binding: 364/364 bytes, 28 differing halfwords
+ * and 28 aligned edits (2026-09-27). WORLD_MAP/DISPLAY_TRANSITION.C binds
+ * IME once before its queue sequence. Transferring that ownership changes
+ * pseudo 35 from five sets / 33 uses / 3712-insn lifetime to one set /
+ * 25 uses / 218-insn lifetime. The prediction fails: counter still wins r5,
+ * IME remains r6, and initial IME/queue literal order reverses. Frame and
+ * topology stay equal; all pool values survive but their first order does
+ * not. Reject the model; the 23-halfword canonical is in parent history.
+ * The allocator still ranks the 9-use / 54-insn counter before IME. This
+ * is not fixed by removing repeated IME definitions alone.
+ *
+ * Previous canonical: 364 bytes, candidate 364, 23 halfwords (2026-09-24).
  * Single-overlay unit binding Engine_* at their import veneers. Remaining:
  * global allocation order only: the reference gives the IME pointer r5 and
  * the fade counter r6, here the counter outranks it (9 refs over 56 insns
@@ -36,7 +47,6 @@ void Title_RevealSpriteRow(void);
         s32 count;                                                          \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
-            ime = &Data_04000208;                                           \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \
@@ -66,6 +76,7 @@ void Func_020002e8(void)
     Data_0200868c = zero;
     Title_Func020001c0(0);
     Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
+    ime = &Data_04000208;
     QUEUE_WRITE(0x4000000, 0x1540);
     QUEUE_WRITE(0x4000050, 0x2fce);
     QUEUE_WRITE(0x4000054, 16);

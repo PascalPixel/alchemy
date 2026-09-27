@@ -197,6 +197,56 @@ fn direct_preprocessor_command_for_target_with_minor_and_flags(
 mod tests {
     use super::*;
     #[test]
+    fn approved_arm_routes_compile_and_assemble_arm_instructions() {
+        let work = tempfile::tempdir().unwrap();
+        let input = work.path().join("input.c");
+        let assembly = work.path().join("output.s");
+        let object = work.path().join("output.o");
+        let binary = work.path().join("output.bin");
+        std::fs::write(&input, "int entry(int x) { return x + 1; }\n").unwrap();
+        for route in ["0800a0f8.c", "0800a494.c"] {
+            let options = SourceToAssemblyPlanOptions::new(
+                CompilerTarget::Tbs,
+                route,
+                input.to_string_lossy(),
+                assembly.to_string_lossy(),
+            );
+            let mut commands = source_to_assembly_plan(&options).unwrap();
+            commands.push(
+                crate::compiler::routing::compiler_assembly_command_for_source(
+                    CompilerTarget::Tbs,
+                    route,
+                    &assembly.to_string_lossy(),
+                    &object.to_string_lossy(),
+                ),
+            );
+            commands.push(vec![
+                "arm-none-eabi-objcopy".into(),
+                "-O".into(),
+                "binary".into(),
+                "-j".into(),
+                ".text".into(),
+                object.to_string_lossy().into_owned(),
+                binary.to_string_lossy().into_owned(),
+            ]);
+            for command in commands {
+                let result = std::process::Command::new(&command[0])
+                    .args(&command[1..])
+                    .output()
+                    .unwrap();
+                assert!(
+                    result.status.success(),
+                    "{}",
+                    String::from_utf8_lossy(&result.stderr)
+                );
+            }
+            let rows = crate::score::disasm::disassemble_arm(&binary.to_string_lossy(), 0).unwrap();
+            assert_eq!(rows.keys().copied().collect::<Vec<_>>(), [0, 4]);
+            assert!(rows[&0].starts_with("add\tr0, r0, #1"));
+            assert_eq!(rows[&4], "bx\tlr");
+        }
+    }
+    #[test]
     fn shipped_preprocessor_selects_one_of_six_editions() {
         let work = tempfile::tempdir().unwrap();
         let input = work.path().join("version.c");
@@ -273,6 +323,8 @@ mod tests {
         for source in [
             "games/THE BROKEN SEAL/src/080bbb0c.c",
             "games/THE BROKEN SEAL/src/08006878.c",
+            "games/THE BROKEN SEAL/src/0800a0f8.c",
+            "games/THE BROKEN SEAL/src/0800a494.c",
         ] {
             let mut options = SourceToAssemblyPlanOptions::new(
                 CompilerTarget::Tbs,
@@ -289,7 +341,14 @@ mod tests {
                 .any(|flags| flags == canonical));
             assert!(command.iter().any(|flag| flag == "-da"));
             assert!(command.iter().any(|flag| flag == "-Ilocal-headers"));
-            for flag in ["-O0", "-fno-regmove", "-ffixed-r5", "-marm"] {
+            for flag in [
+                "-O0",
+                "-fno-regmove",
+                "-ffixed-r5",
+                "-marm",
+                "-mthumb",
+                "-mno-apcs-frame",
+            ] {
                 options.support_flags = vec![flag.into()];
                 assert!(source_to_assembly_plan(&options)
                     .unwrap_err()

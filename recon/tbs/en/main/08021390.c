@@ -6,7 +6,9 @@
    pointer moves its lifetime before creation but does not close the gap.
    A three-word named display record and a one-word clear-value aggregate
    each compile identically to this draft; neither changes zero sharing
-   across the creation call or the later retained-pointer stores. */
+   across the creation call or the later retained-pointer stores. Correcting
+   the queue callee's value return and preserving its five explicit arguments
+   also leaves this candidate unchanged (56 aligned halfword edits). */
 #include "TYPES.H"
 
 struct PartyJoinWork {
@@ -28,7 +30,8 @@ s32 Localization_LookupEntryId(s32);
 void UiGlyph_LoadEntryWithPalette(u32, s32, s32 *, s32 *, s32, s32);
 void UiWork_PushValueSlot(s32, s32);
 s32 UiText_BuildRenderEntriesMode1(s32);
-void Func_080165d8(void *, s32, s32, s32, s32);
+/* FAKEMATCH: the sixth outgoing zero remains from the glyph call. */
+s32 UiText_QueueRenderEntries();
 void Audio_PlayCue(s32);
 void Runtime_PushSlotEntry(void *, s32);
 void WaitFrames(s32);
@@ -61,7 +64,7 @@ void Party_ShowJoinedMessage(s32 member)
         work->cursor = zero;
         work->scroll = zero;
         UiWork_PushValueSlot(member, 1);
-        Func_080165d8(window, UiText_BuildRenderEntriesMode1((s32)&Value_0000001b), 36, 2, zero);
+        UiText_QueueRenderEntries(window, UiText_BuildRenderEntriesMode1((s32)&Value_0000001b), 36, 2, zero);
         Audio_PlayCue(81);
         do {
             Runtime_PushSlotEntry(entry, 250);

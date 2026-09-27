@@ -1,4 +1,4 @@
-/* Draft, not exact (2026-09-25): 876 of 868 bytes, 332 differing halfwords.
+/* Draft, not exact (2026-09-26): 880 of 868 bytes, 338 differing halfwords.
    Written from the listing; the entry table at 0x08013784 is the map load
    table in FIELD/COMMON/LOAD_TABLE.JSON (resource ids biased by 0x128, which
    the ROM loads from the pool, hence Value_00000128).
@@ -8,7 +8,43 @@
    stack (sub sp, #12), the loop counter in fp and 0x03000118 in r9, stores
    base_x before base_y (here base_x is sunk after the cell pointer), builds
    0x500 with movs/lsls instead of a pool word, and loads the unconditional
-   resource offsets into r3 but the optional ones into r0. */
+   resource offsets into r3 but the optional ones into r0.
+
+   2026-09-26: complete owner [0800fb38,0800fe9c), 868 bytes including
+   both own pools. Fresh baseline: 876 bytes, 332 differing halfwords,
+   205 aligned edits, equal topology. The field far-call table at 09110
+   targets this entry; the input selects a six-resource load-table row.
+   H1 follows the audited f9f4 body: its signed size argument is the result
+   of DecodeType01 at fb92, carried in r0 directly to the next call.
+   Predict unchanged call adjacency with an explicit result dependency;
+   inspect the full normalized difference and frame/pools. Exact 868 bytes
+   plus compare/coverage/verify required. One trial for this correction,
+   at most three distinct structural hypotheses and 25 minutes total.
+   Preserve outcomes here and in commits; no argument-spelling sweep.
+   H1 result: byte-identical to baseline, 876 bytes / 205 aligned edits.
+   The missing source dependency is repaired without altering the adjacent
+   machine calls; the remaining frame/loop/I/O disagreements are independent.
+   H2: the layer initializer owns its source coordinates and temporary
+   bases, as the matched metatile family's helper owns each cell. Predict
+   earlier base-X storage and separate saved lifetimes for both scale
+   pointers, restoring the 12-byte frame. Keep all declarations/calls
+   outside that layer body unchanged; score once and read the full diff.
+   H2 result: byte-identical to H1, still 876 bytes / 205 aligned edits.
+   The helper does not change the eight-byte frame or the late base-X
+   store. Complete normalized difference inspected; this scope axis is
+   closed without further declaration or spelling variants.
+   H3: independent named BG register objects and a typed final display
+   register block own the halfword stores. Predict immediate 0500/0600/0700
+   and 0140 construction, separate BG address loads, and the shared final
+   4c/50/00 address walk. One trial, full normalized difference; then stop
+   this owner regardless of score. No loop-lifetime changes in this trial.
+   H3 result: 880 bytes, 338 differing halfwords, 197 aligned edits;
+   conditional topology equal, full normalized difference inspected.
+   Separate BG address loads appear, but 0500/0600/0700 remain pool words.
+   The final stores build 0140 immediately but add volatile member reads
+   and rematerialize the display base. The frame remains eight bytes.
+   Three hypotheses complete: stop here. Prior 876-byte draft preserved
+   in ed46b755c; no claim of an exact owner or credited bytes. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -77,12 +113,56 @@ struct SceneWork {
 extern u8 Value_00000128;
 extern struct SceneEntry Data_08013784[];
 
+struct SceneRegister {
+    u16 value;
+};
+
+struct SceneDisplay {
+    u16 control;
+    u8 unk_02[0x4a];
+    u16 mosaic;
+    u16 unk_4e;
+    u16 blend;
+};
+
+extern volatile struct SceneRegister Data_0400000e;
+extern volatile struct SceneRegister Data_0400000c;
+extern volatile struct SceneRegister Data_0400000a;
+
+/* FAKEMATCH: per-layer helper bounds the coordinate and base lifetimes. */
+static __inline__ void InitializeLayer(struct SceneLayer *layer,
+    struct SceneLayerSource *source, s32 *scale_x, s32 *scale_y)
+{
+    u32 x = source->x;
+    u32 y = source->y;
+    s32 base_x;
+    s32 base_y;
+    s32 scroll_x;
+    s32 scroll_y;
+
+    layer->base_x = base_x = x << 19;
+    layer->base_y = base_y = y << 19;
+    layer->speed_x = source->speed_x << 12;
+    layer->speed_y = source->speed_y << 12;
+    layer->period_x = source->period_x;
+    layer->period_y = source->period_y;
+    layer->phase_x = 0;
+    layer->phase_y = 0;
+    scroll_x = source->scroll_x << 12;
+    scroll_y = source->scroll_y << 12;
+    layer->scroll_x = scroll_x;
+    layer->scroll_y = scroll_y;
+    layer->cells = (u32 *)0x02010000 + (y >> 1) * 128 + (x >> 1);
+    layer->x = Iwram_MulQ16(*scale_x, scroll_x) + base_x;
+    layer->y = Iwram_MulQ16(*scale_y, scroll_y) + base_y;
+}
+
 void Blend_SetDarkenTarget0(s32 value);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 u8 *Resource_GetTableEntry(u32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
 s32 Resource_DecodeType2(const void *source, void *destination);
-void Tilemap_DecodeStagedBuffer(void);
+void Tilemap_DecodeStagedBuffer(s32 size);
 void Tilemap_ConvertBuffer(void);
 void MapAnimation_StartChannels(void *channels);
 void DisplayBlend_StartScript(void *script);
@@ -118,8 +198,8 @@ s32 Map_LoadLayeredScene(s32 index)
     work = Runtime_AllocateBlock(8, sizeof(struct SceneWork));
     ((FillWordsFn)0x03000164)(work, sizeof(struct SceneWork));
     header = (struct SceneHeader *)Resource_GetTableEntry(entry->resources[0] + (u32)&Value_00000128);
-    Resource_DecodeType01((u8 *)header + header->tiles, (void *)0x02010001);
-    Tilemap_DecodeStagedBuffer();
+    Tilemap_DecodeStagedBuffer(
+        Resource_DecodeType01((u8 *)header + header->tiles, (void *)0x02010001));
     Resource_DecodeType01((u8 *)header + header->palette, (void *)0x0202c000);
     Resource_DecodeType01((u8 *)header + header->tilemap, (void *)0x02010000);
     Tilemap_ConvertBuffer();
@@ -146,28 +226,7 @@ s32 Map_LoadLayeredScene(s32 index)
     layer = work->layers;
     source = header->layers;
     for (cnt = 2; cnt >= 0; cnt--) {
-        u32 x = source->x;
-        u32 y = source->y;
-        s32 base_x;
-        s32 base_y;
-        s32 scroll_x;
-        s32 scroll_y;
-
-        layer->base_x = base_x = x << 19;
-        layer->base_y = base_y = y << 19;
-        layer->speed_x = source->speed_x << 12;
-        layer->speed_y = source->speed_y << 12;
-        layer->period_x = source->period_x;
-        layer->period_y = source->period_y;
-        layer->phase_x = 0;
-        layer->phase_y = 0;
-        scroll_x = source->scroll_x << 12;
-        scroll_y = source->scroll_y << 12;
-        layer->scroll_x = scroll_x;
-        layer->scroll_y = scroll_y;
-        layer->cells = (u32 *)0x02010000 + (y >> 1) * 128 + (x >> 1);
-        layer->x = Iwram_MulQ16(*scale_x, scroll_x) + base_x;
-        layer->y = Iwram_MulQ16(*scale_y, scroll_y) + base_y;
+        InitializeLayer(layer, source, scale_x, scale_y);
         source++;
         layer++;
     }
@@ -178,9 +237,9 @@ s32 Map_LoadLayeredScene(s32 index)
         work->blend_control |= 0x400;
     if (work->priority[2] != 0)
         work->blend_control |= 0x200;
-    *(volatile u16 *)0x0400000e = work->priority[0] | (header->layer_screen[0] << 2) | 0x500;
-    *(volatile u16 *)0x0400000c = work->priority[1] | (header->layer_screen[1] << 2) | 0x600;
-    *(volatile u16 *)0x0400000a = work->priority[2] | (header->layer_screen[2] << 2) | 0x700;
+    Data_0400000e.value = work->priority[0] | (header->layer_screen[0] << 2) | 0x500;
+    Data_0400000c.value = work->priority[1] | (header->layer_screen[1] << 2) | 0x600;
+    Data_0400000a.value = work->priority[2] | (header->layer_screen[2] << 2) | 0x700;
     if (GameFlag_TestFar(0x170) != 0) {
         GameFlag_ClearBitFar(0x170);
     } else {
@@ -200,9 +259,13 @@ s32 Map_LoadLayeredScene(s32 index)
             Runtime_BumpFree(buf);
         }
     }
-    *(volatile u16 *)0x0400004c = 0;
-    *(volatile u16 *)0x04000050 = 0;
-    *(volatile u16 *)0x04000000 = 0x140;
+    {
+        /* FAKEMATCH: typed I/O members keep immediate halfword stores. */
+        volatile struct SceneDisplay *display = (volatile struct SceneDisplay *)0x04000000;
+        display->mosaic = 0;
+        display->blend = 0;
+        display->control = 0x140;
+    }
     Scheduler_AddOrUpdateCallback(Map_UpdateLayerScroll, 0xc85);
     return 2;
 }

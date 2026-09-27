@@ -21,6 +21,37 @@
  * zero-extended load for the == 29 test).  Loop spellings (while/for,
  * post-increment placement) and the helper argument order did not move
  * either.
+ *
+ * West audit: live inventory confirms complete [08017e88,08018038), 432B.
+ * Baseline reproduced: 432/432, 38 differing halfwords, 33 aligned edits.
+ * Existing allocator diagnostics regenerated unchanged: CSE has distinct
+ * article/loop HImode reads; combine shares pseudo 185, making the article
+ * comparison a word copy of the loop input instead of zero_extend(mem:HI).
+ * Exact RenderWideStringInWindow retains u16 code units; GetWideStringWidth
+ * widens dispatch input. H1 gives the append loop an explicit u16 first-code
+ * interface, with article dispatch outside it. Hard prediction: retain the
+ * reference's two else-path halfword loads without changing ring constants.
+ * Model <=10 minutes, one follow-up, checkpoint 01:20 Lisbon. Only complete
+ * bytes plus compare/coverage/verify permit adoption; preserve facts here.
+ * H1 result: 432/432, 124 differing halfwords / 86 aligned edits. Rejected:
+ * the article read separates, but loop input stays after the branch join,
+ * not before the comparison as required. The helper also promotes the loop
+ * value into signed-load/shift lowering and moves the name to r6. No tuning
+ * of this failed invariant; full diff read and source preserved in commit.
+ * H1 preserved in 7f7ff6ce8. H2 restores the original append loop and moves
+ * only the prefix-skip operation behind a u32 dispatch-code interface.
+ * Prediction: the widened dispatch read can remain independent of the
+ * unchanged loop's HImode initial value. One follow-up, not an argument or
+ * declaration permutation; reject unless the paired-load invariant appears.
+ * H2 result: 432/432, 67 differing halfwords / 43 aligned edits. Dispatch
+ * becomes its own load but the returned pointer adds a selection/join copy;
+ * loop input is still after that join, not a second pre-comparison load.
+ * Both pool-position mismatches remain. Rejected after full diff inspection.
+ * Stop this axis after one model and one follow-up; no bytes adopted.
+ * H2 preserved in 46ed5b44e. Canonical body restored to the better baseline
+ * (432 bytes, 38 differing halfwords / 33 aligned edits); attempts remain in
+ * their commits. The interface boundaries did not preserve the required
+ * pre-comparison loads, so no register or pool spelling sweep follows.
  */
 #include "TYPES.H"
 

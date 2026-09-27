@@ -1,6 +1,87 @@
 {
   "format": 3,
   "owners": {
+    "main:0801908c": {
+      "name": "RenderOutput_UpdateScaleAnimation"
+    },
+    "main:080191cc": {
+      "name": "UiWork_AnimateSpriteSlots"
+    },
+    "main:0801a98c": {
+      "name": "MenuSelection_DrawFrame"
+    },
+    "main:0801aeec": {
+      "name": "MenuSelection_DrawSideMarker"
+    },
+    "main:080108e4": {
+      "name": "Map_WriteLayerCellTile"
+    },
+    "main:0801ef68": {
+      "name": "UiWindow_DrawColumnBorders"
+    },
+    "main:0801f088": {
+      "name": "UiWindow_DrawStatusBarTiles"
+    },
+    "main:0801f200": {
+      "name": "UiWindow_DrawPartyStatusContents"
+    },
+    "resource_380:0200227c": {
+      "name": "Local_0200227c"
+    },
+    "resource_3b3:02000cc0": {
+      "name": "TakaraHashira_CopyCellBlock"
+    },
+    "resource_3a4:02000d2c": {
+      "name": "ArutinYama_SwingActorIntoSetPiece"
+    },
+    "resource_3c8:0200247c": {
+      "name": "VinasuHeya_ResolveFloatingBlock"
+    },
+    "resource_3c8:020042bc": {
+      "name": "Scene_RunPairedParticleWaveSequence"
+    },
+    "resource_3c8:02001af0": {
+      "name": "VinasuHeya_ShiftBridge"
+    },
+    "resource_3c5:020028a0": {
+      "name": "BabiIriguchi_SetupScene"
+    },
+    "main:0800b074": {
+      "name": "Render_PlaceSpritePartPair",
+      "source": "GRAPHICS/RENDER/PLACE_SPRITE_PART_PAIR.C"
+    },
+    "main:08010000": {
+      "name": "Map_UpdateLayerScroll",
+      "source": "FIELD/COMMON/MAP/UPDATE_SCROLL.C"
+    },
+    "main:08010230": {
+      "name": "Map_SetCameraCenter",
+      "source": "FIELD/COMMON/MAP/SET_CAMERA_CENTER.C"
+    },
+    "main:08010424": {
+      "name": "Map_CopyMetatileIndicesRect"
+    },
+    "main:08010560": {
+      "name": "Map_PlayMetatileCopySequence"
+    },
+    "main:080105d4": {
+      "name": "Map_CopyMetatileCellsRect"
+    },
+    "resource_3b3:02001d84": {
+      "name": "TakaraHashira_UpdatePillarActors"
+    },
+    "resource_3c0:02000594": {
+      "name": "SuharaSabaku_RestoreActorScaleAndBlend"
+    },
+    "resource_3ba:02000540": {
+      "name": "KorosseoKawa_MoveActorsAndMap"
+    },
+    "resource_3b7:02000ac8": {
+      "name": "TorebiIzumi_RunSpringGame"
+    },
+    "resource_3ba:020013e4": {
+      "name": "Korosseo_RunPromptMotionSequence"
+    },
     "resource_378:020027d4": {
       "name": "ShindenHeya_ChooseRestartOption"
     },
@@ -4690,7 +4771,8 @@
       "source": "SYSTEM/LINK/SERIAL_DISABLE_SERIAL_TRANSFER.C"
     },
     "main:08006088": {
-      "name": "SerialRuntime_ExchangePayloads"
+      "name": "SerialRuntime_ExchangePayloads",
+      "source": "SYSTEM/LINK/SERIAL_EXCHANGE_PAYLOADS.C"
     },
     "main:08006358": {
       "name": "SerialRuntime_RemoveIrqHandlers"
@@ -11855,6 +11937,10 @@
     "main:08096960": {
       "name": "BattleFx_DispatchRequestKind"
     },
+    "main:0800fec8": {
+      "name": "Map_RenderMetatileRow",
+      "source": "FIELD/COMMON/MAP/RENDER_METATILE_ROW.C"
+    },
     "main:0800ff54": {
       "name": "Map_RenderPaletteMappedBlock",
       "source": "FIELD/COMMON/MAP/RENDER_PALETTE_MAPPED_BLOCK.C"
@@ -11928,7 +12014,8 @@
       "source": "MENU/SELECTION_OPEN_WINDOW.C"
     },
     "resource_371:020039fc": {
-      "name": "Scene_RunScene371SequenceA"
+      "name": "Scene_RunScene371SequenceA",
+      "source": "FIELD/WORLD_MAP/DISPLAY_TRANSITION.C"
     },
     "resource_374:02000bbc": {
       "name": "FieldScene_RunElderAidEvent",
@@ -20138,7 +20225,17 @@
       "name": "UiText_LoadRemappedGlyph"
     },
     "main:0802106c": {
-      "name": "PartyTalkMenu_Choose"
+      "name": "PartyTalkMenu_Choose",
+      "source": "MENU/PARTY/TALK_CHOICE.C"
+    },
+    "main:08020bd8": {
+      "name": "NameEntry_EditOwnerName"
+    },
+    "main:08029554": {
+      "name": "DebugMenu_BrowseIcons"
+    },
+    "main:0802977c": {
+      "name": "DebugMenu_BrowseEntryGlyphs"
     },
     "main:08021228": {
       "name": "Djinn_ShowJoinedMessage"
@@ -20155,7 +20252,8 @@
       "source": "GRAPHICS/PALETTE/SCALE_COMPONENTS.C"
     },
     "main:0801a66c": {
-      "name": "UiGlyph_ResetWorkState"
+      "name": "UiGlyph_ResetWorkState",
+      "source": "GRAPHICS/GLYPH/RESET_WORK.C"
     },
     "main:0801a5a4": {
       "name": "UiGlyph_DecodeWithHeapRoutines",
@@ -21403,7 +21501,8 @@
       "source": "MENU/TITLE/BG_SETUP.C"
     },
     "resource_370:02000154": {
-      "name": "Func_02000154"
+      "name": "Clear_UpdateBlend",
+      "source": "MENU/CLEAR/BLEND_FADE.C"
     },
     "resource_370:02000054": {
       "name": "Clear_LoadBackground",
@@ -21471,6 +21570,9 @@
     "main:0801a4fc": {
       "name": "UiGlyph_LoadEntryWithPalette",
       "source": "GRAPHICS/GLYPH/LOAD_ENTRY_WITH_PALETTE.C"
+    },
+    "resource_371:02001ca4": {
+      "name": "WorldMap_RunVenusDjinniMeeting"
     }
   },
   "symbols": {
@@ -21600,6 +21702,7 @@
     "main:080a1038": "UiIcon_PrepareObjectFar",
     "main:080b0020": "ShopCursor_AdvanceFar",
     "main:080b0028": "ShopCursor_MoveTowardTargetFar",
+    "main:080b0038": "ShopCursor_SetPositionImmediateFar",
     "main:080b0048": "Unnamed_080b0840Far",
     "main:080b0050": "Shop_InitEffectFar",
     "main:080b5038": "BattlePresentation_ConfigurePaletteFadeFar",
@@ -21638,9 +21741,7 @@
     "main:08028808": "Menu_CenterResourceEntries",
     "main:08015070": "UiWindow_DrawDividerLineFar",
     "main:0808a5b0": "SaveState_CaptureObjectTableFar",
-    "main:0801f200": "UiWindow_DrawPartyStatusContents",
     "main:080a2420": "UiWork_ClearMenuBusy",
-    "main:080191cc": "UiWork_AnimateSpriteSlots",
     "main:080168f4": "UiWork_StepChannelScript",
     "main:08090658": "DisplayTransition_UpdateFrame",
     "main:0808a278": "Object_GetScreenPositionFar",
@@ -21682,9 +21783,6 @@
     "main:0801a7f4": "MenuSelection_BuildEntries",
     "main:080e2974": "BattlePres_RunBurstScene",
     "main:080118c0": "Map_SetLayerEntryFlag",
-    "main:08010000": "Map_UpdateLayerScroll",
-    "main:08010230": "Map_SetCameraCenter",
-    "main:080108e4": "Map_WriteLayerCellTile",
     "main:080ad40c": "FourObjectMotion_UpdateBottomRow",
     "main:0808b3ec": "Event_SpawnObjectTable",
     "main:08091e9c": "Event_SetValue170",
@@ -21697,7 +21795,6 @@
     "main:080b5078": "BattleMotion_ApproachTargetFar",
     "main:080c9ca8": "BattleFx_RunFiveMode",
     "main:080ccc38": "BattleFx_RunTwoResource",
-    "main:0801a98c": "MenuSelection_DrawFrame",
     "main:08009288": "Runtime_RemapBytesByTableFar",
     "main:080153b0": "Menu_RunConfirmSelectionAtFar",
     "main:08077088": "OwnerAction_AddFar",

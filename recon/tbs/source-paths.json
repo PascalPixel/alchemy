@@ -115,7 +115,8 @@
       "name": "Effect_UpdateSparkRing"
     },
     "resource_396:02001244": {
-      "name": "ToretoPalette_ApplyTint"
+      "name": "ToretoPalette_ApplyTint",
+      "source": "FIELD/TORETO_HEYA/TINT.C"
     },
     "resource_382:020017ac": {
       "name": "KuupuappuMura_SpawnDriftingEffect",

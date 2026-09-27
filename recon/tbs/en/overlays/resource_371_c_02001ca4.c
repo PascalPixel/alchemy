@@ -52,6 +52,23 @@
  * source; close midpoint and motion-return boundaries. Current complete
  * draft remains 1488 bytes / 118 halfwords / 52 edits, not-yet-c. Resume only
  * with new scheduling or ownership evidence for the r1 reload invariant.
+ *
+ * Producer/lifetime audit: complete normalized diff and entry RTL through
+ * local/global allocation read, plus exact HAIDIA_IE/HAIDIA.C scene sibling.
+ * Hypothesis: the sibling's separate nullable-actor producer could supply
+ * a missing low-register lifetime. Admission requires negative-anchor loads
+ * through r1, delayed r8 inheritance after the first mode store, and later
+ * mode reloads through r1, with tail, pools and topology unchanged. Budget:
+ * at most two source-family trials / twenty minutes; no spelling sweeps.
+ * The existing record pseudo 33 already has three disjoint lifetimes and
+ * dies at entry insn 43 (z load); allocation keeps it in r0. Anchors 47/56
+ * cross 41 calls; midpoint values 34/35 cross 87. Reload insns 26/47 use r2;
+ * mode producer 305 uses r3, copying into r8 before store 309 reloads r2.
+ * Diagnostic text equals ordinary compilation. The sibling establishes no
+ * additional producer or overlapping lifetime here, so no source trial is
+ * admitted. Missing fact: an own-ROM-supported producer/live range that
+ * changes the r1 reload admission while retaining those anchor lifetimes.
+ * Stop with the canonical 1488 / 118 / 52 draft; no newly adopted bytes.
  */
 #include "FIELD_EVENT.H"
 

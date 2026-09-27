@@ -1,4 +1,11 @@
-/* NONMATCHING 2026-09-27 signed-consumer probe: 584/584 bytes, 19 differing
+/* NONMATCHING 2026-09-27 redraw-flag probe: u8 redraw with the same
+ * 0/1 publications emits the complete baseline binary identically (cmp):
+ * 584/584 bytes, 19 differing halfwords / 19 aligned edits. Unlike the
+ * earlier direction-storage trial, this tested the other flag's mode;
+ * it changes neither lifetime nor reciprocal r8/sl roles. Reject after
+ * this one bounded full-diff comparison; restore the s32 flag and do not
+ * sweep remaining scalar widths. No new DONE or alignment credit.
+ * 2026-09-27 signed-consumer probe: 584/584 bytes, 19 differing
  * halfwords / 19 aligned edits. u8 direction with explicit s8 consumers
  * emits identical bytes and allocator lifetimes to this canonical s8 model:
  * redraw 19 refs / 322 insns, direction 17 / 292. Complete diff and all

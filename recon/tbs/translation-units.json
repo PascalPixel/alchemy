@@ -1503,7 +1503,7 @@
     },
     {
       "id": "toreto-palette-tint",
-      "source": "recon/tbs/en/overlays/resource_396_c_02001244.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TINT.C",
       "overlay": "resource_396",
       "absolute_symbols": {
         "__divsi3": {
@@ -1535,7 +1535,7 @@
         {
           "address": "0x02001244",
           "extent": 480,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

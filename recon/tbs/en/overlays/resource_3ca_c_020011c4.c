@@ -1,4 +1,28 @@
-/* NONMATCHING: H2 ship 2026-09-27, 236 of 232 bytes, 82 differing
+/* NONMATCHING: retained canonical body is 236/232 bytes, 82 differing
+ * halfwords, 51 aligned edits; the rejected variants below are not retained.
+ * H5 ship 2026-09-27, absolute RAM pointers with the
+ * sprite word/halfword union give 244/232 bytes, 87 differing halfwords,
+ * 56 aligned edits. Approved alias.c treats differing symbol bases as
+ * nonaliasing, which admitted this distinct base-identity test; replacing
+ * those bases still does not restore the word subtract or first loop
+ * reload. It also duplicates both address pool words because the tail
+ * still uses named globals. Complete normalized diff read; admission fails.
+ * Restore independent globals and plain word stores. No alias/constant
+ * spelling follow-up is supported by this counterexample.
+ * H4 ship 2026-09-27, sprite word/halfword union writes
+ * produce exactly the baseline binary (236/232 bytes, 82 differing halfwords,
+ * 51 aligned edits). This does not give the separate-global counter the
+ * aggregate state's reload/decrement shape. Restore the u32 sprite words;
+ * close this alias-view transfer after the complete normalized comparison.
+ * H3 ship 2026-09-27, capturing signed test and unsigned decrement inputs
+ * before the branch gives 236/232 bytes, 103 differing halfwords, 54 aligned
+ * edits. CSE introduces another unsigned load; the decrement still uses
+ * pooled 0xffff and forwards the first iteration. Reject pre-branch input
+ * capture: it does not satisfy the reference's two-load/word-subtract gate.
+ * The pre-branch reference invariant remains ldrsh, ldrh, compare, word
+ * subtract, strh, then an independent loop reload. No further view or
+ * temporary spelling is justified without a new ownership fact.
+ * H2 ship 2026-09-27, 236 of 232 bytes, 82 differing
  * halfwords, 51 aligned edits. Signed union destination with unsigned source
  * produces the original baseline bytes: no independent word decrement and
  * still a forwarded first iteration. Full normalized diff read. Close the

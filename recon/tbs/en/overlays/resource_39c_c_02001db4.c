@@ -9,7 +9,22 @@
  * Effect_Spawn call reload takes r2 for the spilled params pointer where the
  * reference reuses r3 after the lift store, so sched2 hoists the load and
  * reorders the stack-argument stores (reload register rotation; counter
- * types, register and a split assignment do not move it). */
+ * types, register and a split assignment do not move it).
+ * Family audit (2026-09-27): complete 02001db4..02002030 owner, 636/636,
+ * 21 halfwords / 18 aligned edits. Correct the scope above: only the side
+ * zero/one spawn sites differ; the final side branch is already exact.
+ * Outgoing words at sp+0/+4/+8/+12 are velocity_y, velocity_z, flags and
+ * options. The 0x90000 flags select palette and initial scales, not lift.
+ * The options pointer is spilled at sp+16, j at sp+20, with the 40-byte
+ * options record at sp+24 and a 64-byte frame. All these offsets agree.
+ * Exact COMMON/EFFECT/SPAWN.C reads the selected fields during the call
+ * and does not retain the record pointer. Exact MAKYURI_HEYA/OPEN_STAIR.C,
+ * FIELD_PROBE_SCENE.C dust rows and VINASU_HEYA/BRIDGE_EXTEND.C also use
+ * caller-owned records; they supply no different lifetime/ownership rule.
+ * No new admissible source-interface hypothesis follows from this audit.
+ * Preserve the canonical body and all exact regions; do not retry the
+ * closed parameter-type, inline-spawn, counter or declaration axes.
+ * This audit changes no emitted bytes and earns 0 new DONE bytes. */
 #include "FIELD_EFFECT.H"
 
 /* A random drift of about -0.8 to +0.8 in steps of 0.2. */

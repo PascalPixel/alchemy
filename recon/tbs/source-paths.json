@@ -15742,7 +15742,8 @@
       "source": "FIELD/FUNE_KANPAN/PARTY_ROSTER.C"
     },
     "resource_3af:020022c0": {
-      "name": "FieldScene_RunActorSequence"
+      "name": "FieldScene_RunActorSequence",
+      "source": "FIELD/FUNE_KANPAN/DECK_SEQ.C"
     },
     "resource_3af:02000a48": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",

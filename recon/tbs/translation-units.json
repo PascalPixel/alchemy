@@ -87501,6 +87501,10 @@
       "source": "recon/tbs/en/overlays/resource_3c9_c_02005a28.c",
       "overlay": "resource_3c9",
       "absolute_symbols": {
+        "VinasuChojo_UpdateOrbitingSpark": {
+          "address": "0x0200db90",
+          "kind": "thumb"
+        },
         "Engine_ActorGet": {
           "address": "0x0200dd4c",
           "kind": "thumb"

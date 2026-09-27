@@ -1,4 +1,11 @@
-/* NONMATCHING H4 (2026-09-27): 600/600 bytes, 2 differing halfwords,
+/* MATCHING H5 (2026-09-27): complete 600/600 bytes and pools, zero edits.
+ * Exact bridge siblings initialize the column before the countdown. Transfer
+ * that order after H4: sched2 emits r5=29 before the r9 countdown copy, with
+ * every other byte unchanged. No register declarations or widths changed.
+ * H4 at 09cccd3d5 is the admitted 2-halfword parent. Adoption still requires
+ * 30 fresh repeats, production comparison, coverage and verification.
+ *
+ * NONMATCHING H4 (2026-09-27): 600/600 bytes, 2 differing halfwords,
  * 2 aligned edits; instruction selection/topology and every pool byte exact.
  * Transfer the exact RetractBridge/ExtendBridge call-owned dimensions:
  * remove the draft-only pre-loop height local and pass literal 3,4 through
@@ -70,8 +77,8 @@ void VinasuHeya_ShiftBridge(void)
             Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
             Engine_EventWait(20);
             dust_x = 0x1200000;
-            countdown = 40;
             x = 29;
+            countdown = 40;
             for (i = 0; i <= 479; i++, countdown--) {
                 layer->x += 0x3333;
                 dust_x += -0x3333;

@@ -7,7 +7,17 @@
    with the cursor in a stack slot (20-byte frame); here the heading message
    base 0xb1e (Value_00000b1e, whose -2/-1 neighbours the ROM derives with
    subs from a fresh pool load) stays live in r6 and pushes the redraw flag
-   to the stack (24-byte frame). */
+   to the stack (24-byte frame).
+   2026-09-27 H1: audited the complete [0801c49c,0801c7fc) owner and pool,
+   exact text-render/finalize APIs, resource collector and pair restore
+   callee. An inline DrawPairLabel resolving base+offset per draw emits
+   bytes identical to the 848-byte baseline (321 halfwords, 193 aligned
+   edits). CSE already replaces later helper-local base loads with pseudo
+   88; greg assigns that surviving base to r6, retaining the 24-byte frame.
+   No volatile, declaration-order, compiler or flag variants attempted.
+   Full diff also exposes missing pool-backed owner-name base 0x66 and
+   folded output base 02000460 instead of 02000240 plus field offsets;
+   the existing PsynergyMenuGlobalState owns those two shortcut fields. */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
@@ -46,6 +56,16 @@ struct BattleAction *BattleAction_Get(s32 ability);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void UiWork_Finalize(struct RenderInput *win, s32 release);
+
+/* FAKEMATCH: keep label-number resolution local to each message draw. */
+static __inline__ void DrawPairLabel(struct RenderInput *win, s32 offset,
+                                    s32 x, s32 y)
+{
+    s32 message = (s32)Value_00000b1e;
+
+    message += offset;
+    UiText_DrawCharacterAtOffset(message, win, x, y);
+}
 
 /* Debug screen: teaches every party member a few test abilities, then lets
    the user pick two of the party's abilities (up and down choose the row,
@@ -103,11 +123,11 @@ void Debug_SelectAbilityPair(void)
                 *(u8 *)&cursor->packed = slot;
                 RenderOutput_RedrawSavedRect(win);
                 UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
-                UiText_DrawCharacterAtOffset((s32)Value_00000b1e, win, 48, 0);
+                DrawPairLabel(win, 0, 48, 0);
                 UiText_DrawCharacterAtOffset(list[first].ability + 0x333, win, 56, 16);
                 UiText_DrawCharacterAtOffset(list[second].ability + 0x333, win, 56, 32);
-                UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 2), win, 16, 16);
-                UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 1), win, 16, 32);
+                DrawPairLabel(win, -2, 16, 16);
+                DrawPairLabel(win, -1, 16, 32);
                 UiText_DrawCharacterAtOffset(list[first].owner + 0x66, win, 104, 16);
                 UiText_DrawCharacterAtOffset(list[second].owner + 0x66, win, 104, 32);
                 RenderOutput_RedrawSavedRect(info);

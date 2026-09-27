@@ -1,4 +1,10 @@
 /* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
+ * 2026-09-27 Sol Venus Summit H1: type the anchor as FieldEffect, the exact
+ * 5b90 callback's maintained consumer view. Full normalized comparison is
+ * unchanged (358/55/55); source-null copy and factory setup prediction fails.
+ * Keep the consumer-backed type without credit. Fresh RTL exposes a separate
+ * QI zero producer in sprite->flags' member-store expansion, unlike Drift's
+ * explicit byte store. One direct-store experiment is supported by that fact.
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -67,6 +73,7 @@
  * No DONE or alignment credit; exact consumers remain untouched. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_EFFECT.H"
 
 struct FieldView {
     u8 unknown_000[0xe8];
@@ -82,7 +89,7 @@ void VinasuChojo_UpdateOrbitingSpark(union FieldObject *object);
 
 void VinasuChojo_SpawnRisingSparks(void)
 {
-    struct FieldActor *source = Engine_ActorGet(23);
+    struct FieldEffect *source = (struct FieldEffect *)Engine_ActorGet(23);
     struct FieldView *view = Data_03001e70;
     s32 offset = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
     struct FieldActor *spark;
@@ -106,7 +113,7 @@ void VinasuChojo_SpawnRisingSparks(void)
     if (source != 0) {
         phase = gFrameCount & 15;
         if (phase == 0) {
-            spark = Engine_ObjectCreate(284, source->x.fixed + 0x80000, source->y.fixed + offset + 0x80000, source->z.fixed);
+            spark = Engine_ObjectCreate(284, source->x + 0x80000, source->y + offset + 0x80000, source->z);
             offset = Engine_MathDivide(offset, 0x60000);
             offset <<= 16;
             if (spark != 0) {

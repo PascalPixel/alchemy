@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1180, 561 differing halfwords, 80
- * wrong instructions, 180 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1172, 541 differing halfwords, 20
+ * wrong instructions, 159 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -44,7 +44,18 @@
  * worse length-shifted score. Remaining: workspace entry-load ordering,
  * early narrow-zero/message loads and first pool, animation setup order,
  * and four +90 byte-flag pointer copies. Callback body and tail order agree.
- * No compiler, exact sibling or shared header was changed. */
+ * No compiler, exact sibling or shared header was changed.
+ * H2: exact WORLD_MAP/BLACK_ORB_SCENE.C and HAIDIA_MURA/REPAIR_MORNING.C
+ * consume ActorGet directly in each compound +90 flag update. H1's local
+ * allocator showed one user pseudo set four times and copied at every
+ * byte-address adjustment. Transfer the direct lookup/update boundary at
+ * those four sites, removing only p67: all four copies disappear and their
+ * store/argument schedules now match. High-register roles remain exact.
+ * Full normalized diff read: 1172/1172 bytes, 541 halfwords, 159 edits,
+ * 20 wrong instructions. The byte count is not an adoption: first-pool
+ * placement shifts the long matched body. Remaining entry and initial
+ * animation order, narrow-zero/message hoisting and first pool are unchanged.
+ * Do not reopen the earlier zero-width/aggregate/declaration-order axes. */
 #include "FIELD_EVENT.H"
 
 struct SceneMapState {
@@ -115,7 +126,6 @@ void FieldScene_RunComplexActorSequence(void)
     s32 base;
     struct FieldSprite *sprite;
     struct FieldActor *p12;
-    struct FieldActor *p67;
     struct FieldActor *p89;
     u8 *work;
     struct FieldActor *scene_actor;
@@ -210,12 +220,10 @@ void FieldScene_RunComplexActorSequence(void)
     Local_020017e4();
     Main_0808a130(8, 2);
     Event_ShowMessageAndWait(36872, 0, 20);
-    p67 = Engine_ActorGet(8);
-    p67->unknown_5a &= 0xfe;
+    Engine_ActorGet(8)->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 542, 680);
     Main_0808a010(1);
-    p67 = Engine_ActorGet(8);
-    p67->unknown_5a |= 0x1;
+    Engine_ActorGet(8)->unknown_5a |= 0x1;
     Main_0808a010(10);
     Main_0808a138(8, 2);
     Main_08009228(Engine_ActorGet(0), 226);
@@ -225,12 +233,10 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a010(10);
     Main_0808a158(0, 0);
     Main_0808a010(20);
-    p67 = Engine_ActorGet(8);
-    p67->unknown_5a &= 0xfe;
+    Engine_ActorGet(8)->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 534, 688);
     Main_0808a010(1);
-    p67 = Engine_ActorGet(8);
-    p67->unknown_5a |= 0x1;
+    Engine_ActorGet(8)->unknown_5a |= 0x1;
     Main_0808a010(20);
     Actor_SetSpeed(8, 98304, 49152);
     Actor_SetSpeed(0, 98304, 49152);

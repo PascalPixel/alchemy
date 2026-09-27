@@ -1,8 +1,19 @@
-/* NONMATCHING: 364 bytes, candidate 364, 59 differing halfwords, 34 aligned
- * halfword edits (2026-09-27). The halfword zero aggregate preserves the
- * complete extent; the Value mask keeps the full-width literal and result
- * in r3. Remaining: lamp and zero reload registers, the signed height
- * access index, and a second pool four bytes later than the reference.
+/* NOT ADOPTED: registered extent 364, emitted extent 362. All 362 emitted
+ * bytes match, including both pools; only terminal alignment 00 00 at
+ * [02003626,02003628) remains outside the compiler's function extent.
+ * 2026-09-27: literal zero in the SAME Half aggregate, retaining East H1's
+ * Object_Create, closes every instruction/pool residual. History contained
+ * only symbol-valued Half and scalar-zero trials, not this combination.
+ * RTL angle-store expansion creates HI zero pseudo 99 / insn 287 before
+ * its store. CSE shares zero.value=0 with that existing producer; reload
+ * emits r0=HI0 before angle store and moves it to r9. Symbol-valued zero
+ * could not share it and instead reloaded through r3 after the store.
+ * The r1 parent copy, signed height index and pools now all match. No
+ * registry/gap/credit change: lead owns terminal alignment handling.
+ * Thirty fresh compiles reproduce the same 362 bytes, each byte-compared
+ * with the first 362 reference bytes; both pools and terminal bx match.
+ * Historical baseline: 364 emitted bytes, 59 halfwords/34 aligned edits;
+ * the symbol-zero aggregate retained size but misplaced the second pool.
  * An independent random-result local and scalar zero regress the pools.
  * 2026-09-27 H1: exact AERIE.C names the scene pointer Data_03001e70;
  * FIELD_EVENT.H owns gFrameCount. Replacing only the two literal-address
@@ -117,7 +128,7 @@ void Func_020034bc(void)
     Engine_ObjectSetPalette(&spark->actor, 3);
     spark->actor.motion_flags = tick;
     spark->arc.angle_64 = (u32)&Value_0ffff000 & Engine_RandomNext();
-    zero.value = (u16)(u32)&Value_00000000;
+    zero.value = 0;
     spark->actor.unknown_66 = tick;
     spark->arc.linked_object = (struct OverlayObject *)lamp;
     spark->actor.update = (void (*)(union FieldObject *))0x0200b461;

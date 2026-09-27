@@ -1,4 +1,14 @@
-/* Draft, not-yet-c. Cone H1 restored: 612/612 bytes,
+/* NONMATCHING kuupuappu rejection H1 (2026-09-27): explicit negative
+ * cone exits share the distance fallback, preserving the unsigned input
+ * producer instead of staging a folded delta. Prediction failed: GCC
+ * restores the same blt-to-keep plus jump-to-fallback, not reference bge
+ * to fallback plus jump-to-keep. Complete candidate remains 612/612,
+ * 74 halfwords / 70 aligned edits, byte-identical to the canonical (cmp).
+ * Full normalized diff and identical normal/diagnostic text checked.
+ * Frame4, r8 phase ownership, both signed facing producers and all pools
+ * remain admitted, but this control-flow spelling supplies no new fact.
+ * Retain the failed experiment, close this guard axis, no exact credit.
+ * Draft, not-yet-c. Cone H1 restored: 612/612 bytes,
  * 74 differing halfwords / 70 aligned edits, 114 wrong instructions.
  * Both bounded phase trials preserved: H1 31a7f1a26, H2 8c3e32e88.
  * Retain the unsigned INPUT boundary, complete pools, frame4/r8/no-spill
@@ -189,10 +199,13 @@ void KuupuappuHeya_UpdateActorStops(void)
         if (work->value_19c > 0 && dx * dx + dz * dz <= 400) {
             /* FAKEMATCH: stage the unsigned cone input before the short delta. */
             rnd = (u16)angle;
-            if ((s16)(*(s16 *)pos - rnd) > -0x1000
-                && (s16)(*(s16 *)pos - rnd) < 0x1000)
-                goto keep_facing;
+            if ((s16)(*(s16 *)pos - rnd) <= -0x1000)
+                goto reject_cone;
+            if ((s16)(*(s16 *)pos - rnd) >= 0x1000)
+                goto reject_cone;
+            goto keep_facing;
         }
+reject_cone:
         if (dx * dx + dz * dz > 64) {
             /* FAKEMATCH: retain the signed scalar producer before publication. */
             angle = actor->facing;

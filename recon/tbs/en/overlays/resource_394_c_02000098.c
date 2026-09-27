@@ -1,4 +1,27 @@
-/* NONMATCHING H1: 192/184 bytes, 84 halfwords / 60 aligned edits.
+/* NONMATCHING kuupuappu H3 (2026-09-27): one-word bounds record did
+ * not establish the predicted stack ownership: GCC promotes its row limit
+ * to r8. Complete 184/184 extent and all six pool words/offsets agree;
+ * 42 differing halfwords / 39 aligned edits remain. This is not an
+ * admitted structural improvement. Full normalized diff and identical
+ * normal/diagnostic text checked. Retain the failed experiment and close
+ * the row-bound allocation axis; no exact-byte credit.
+ * NONMATCHING kuupuappu H2 (2026-09-27): reuse source-x, destination-y
+ * and height parameters as column, row and row-end. Complete 184/184 extent
+ * and all six pool offsets/words now agree, with 44 halfwords / 38 edits.
+ * The width/end-row/stride allocation remains wrong: height in r8 and
+ * stride at sp+4. Full normalized diff and normal/diagnostic text agree.
+ * Retain this complete-extent witness; no exact-byte credit. H1 is in
+ * 3a161950f. A final test must establish row-end stack ownership explicitly,
+ * preserving the per-cell reloads and per-row column bound.
+ * NONMATCHING kuupuappu H1 (2026-09-27): 188/184 bytes,
+ * 82 differing halfwords / 43 aligned edits. In-loop column bound now
+ * recomputes per row; loop-owned first store retains the destination in lr
+ * while both tile tables and second destination reload per cell. These
+ * predicted lifetime facts hold. Width/end-row/stride roles still differ:
+ * end-row lives in r8 and stride at sp+4, opposite the reference allocation.
+ * Complete normalized diff and normal/diagnostic text read; no credit.
+ * Keep this structural witness before the width-lifetime causal follow-up.
+ * Previous NONMATCHING H1: 192/184 bytes, 84 halfwords / 60 aligned edits.
  * H2 (2026-09-27): pass the first destination into CopyCell from a
  * row-local caller pointer, as the exact main-image row renderer does.
  * Prediction: retain that base across cells while reloading both tile
@@ -41,16 +64,18 @@
 
 /* FAKEMATCH: the exact row renderer's helper scope gives each tile-table
  * pointer its own lifetime; this rectangle uses word-sized cell coordinates. */
-static __inline__ void CopyCell(u32 cell, s32 base)
+static __inline__ u32 ReadFirstTile(u32 cell)
+{
+    u32 *tiles = (u32 *)0x02020000;
+
+    return tiles[cell * 2];
+}
+
+static __inline__ void CopySecondTile(u32 cell, s32 base)
 {
     u32 *tiles;
     u32 *dest;
 
-    tiles = (u32 *)0x02020000;
-    tiles += cell * 2;
-    dest = (u32 *)0x06002800;
-    dest += base;
-    *dest = *tiles;
     tiles = (u32 *)0x02020004;
     tiles += cell * 2;
     dest = (u32 *)0x06002840;
@@ -61,16 +86,18 @@ static __inline__ void CopyCell(u32 cell, s32 base)
 void Func_02000098(s32 x, s32 y, s32 width, s32 height, s32 bank, s32 dest_x, s32 dest_y)
 {
     u32 *src;
-    s32 row, col, end_row, end_col, base, cell;
+    s32 bounds[1];
+    s32 base, cell;
 
     src = (u32 *)0x02010000 + (y * 128 + x);
-    end_row = dest_y + height;
-    for (row = dest_y; row < end_row; row++) {
-        end_col = dest_x + width;
-        for (col = dest_x; col < end_col; col++) {
+    /* FAKEMATCH: the row limit is owned by a one-word local bounds record. */
+    bounds[0] = dest_y + height;
+    for (; dest_y < bounds[0]; dest_y++) {
+        for (x = dest_x; x < dest_x + width; x++) {
             cell = *src++ & 0xfff;
-            base = ((row & 15) + bank * 16) * 32 + (col & 15);
-            CopyCell(cell, base);
+            base = ((dest_y & 15) + bank * 16) * 32 + (x & 15);
+            ((u32 *)0x06002800)[base] = ReadFirstTile(cell);
+            CopySecondTile(cell, base);
         }
         src += 128 - width;
     }

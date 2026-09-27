@@ -2,6 +2,50 @@
   "format": 5,
   "units": [
     {
+      "id": "candidate-380-linked-actors",
+      "source": "recon/tbs/en/overlays/resource_380_c_0200227c.c",
+      "overlay": "resource_380",
+      "absolute_symbols": {
+        "Engine_ActorEnableActionCallback": {
+          "address": "0x0200c9cc",
+          "kind": "thumb"
+        },
+        "Engine_ActorGet": {
+          "address": "0x0200c9bc",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetPosition": {
+          "address": "0x0200ca04",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200c99c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200c9a4",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetScript": {
+          "address": "0x0200c8bc",
+          "kind": "thumb"
+        },
+        "gLinkedActorScript": {
+          "address": "0x0200cbd0",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x0200227c",
+          "extent": 388,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "candidate-resource-3b3-02000cc0",
       "source": "recon/tbs/en/overlays/resource_3b3_c_02000cc0.c",
       "overlay": "resource_3b3",

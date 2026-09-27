@@ -1,5 +1,13 @@
 /* NONMATCHING: complete 316-byte owner including switch table and own pool;
  * candidate 284, 122 differing halfwords, 76 aligned edits (2026-09-27).
+ * Read-only alias-view audit (2026-09-27): exact PROMPT.C actor24 response
+ * uses one s16 pointer at actor+100 for indices and u16 pointer casts for
+ * updates, not a byte/halfword union. Opening-sequence and state-match
+ * writers likewise publish whole halfwords; FieldActor declares unknown_64
+ * as u16. These sources do not establish a second record view that could
+ * invalidate the cached HI or normalization forwarding. No union experiment
+ * run: it would lack the requested new caller/state ownership evidence.
+ * Required independent signed reads and post-store reload remain unresolved.
  * Completion H3: a one-pass signed read operation for switch and script
  * consumers does not admit the required independent ldrsh producers.
  * Initial read boundaries survive as notes, not memory invalidations: the

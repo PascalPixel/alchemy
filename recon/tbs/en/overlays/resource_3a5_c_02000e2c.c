@@ -1,3 +1,10 @@
+/* H5 (2026-09-27): initialize the search byte offset before choosing a
+ * landing table, testing whether its phase begins before the count's.
+ * Complete score 552/552, 240 differing halfwords / 83 aligned edits.
+ * Frame 104 and the eleven pool words remain, but the zero becomes a
+ * long-lived sl value, the count remains r6 and the selected table moves
+ * out of r8. The search and later hold block both regress. Reject this
+ * phase model and restore H4's 17-edit body after the witness commit. */
 /* NONMATCHING: 552 of 552 bytes, 17 differing halfwords / 17 aligned edits
  * (2026-09-27). Whole owner 02000e2c..02001054, return at 02001026 and all
  * eleven literal words at 02001028..02001050. Complete layout/pool exact.
@@ -124,6 +131,7 @@ void Func_02000e2c(void)
     event = gEventWork;
     timer = 60;
     best = 0xf00000;
+    offset = 0;
     Call1((void (*)())Engine_GameFlagSet, 0x200);
     SceneState_SetHalfwordB030(1);
     if (Data_02000240_t.halves[224][0] == (s32)&Value_00000059) {
@@ -139,7 +147,6 @@ void Func_02000e2c(void)
     left = count;
     spot = spots;
     if (count != 0) {
-        offset = 0;
         do {
             distance = CalculatePlanarDistance(&Engine_ActorGet(0)->x.fixed, spot);
             if (distance <= best) {

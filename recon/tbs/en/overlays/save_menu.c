@@ -1,4 +1,33 @@
 /* NONMATCHING: complete resource_370:020003cc..02000cfc, 2352 bytes.
+ * Sol phase CFG audit (2026-09-27), bounded stop: canonical body retained.
+ * Fresh retained-save-menu score reproduces 2336/2352 bytes, 1120 differing
+ * halfwords, 833 aligned edits and 777 wrong instructions. Full normalized
+ * diff and complete own-ROM control flow read; diagnostic compiler text is
+ * unchanged. No materially different phase nesting was established.
+ * Both graphs have 14 natural-loop headers and 29 backward transfers when
+ * local BL far jumps count as transfers. The shared nesting is main menu,
+ * slot selection, transfer-method selection, password-format selection,
+ * page display. Reference headers are 04a8 / 07b8 / 07dc / 09d2 / 0aaa;
+ * emitted headers are 0476 / 0772 / 0796 / 094c / 0a26 (all at 02000000).
+ * Completion's only predecessor is 0ad0 -> 0474; it closes three windows,
+ * waits one frame, then enters 04a8. Cancellation's only predecessor is
+ * 0abc -> 09a6; it closes those windows and enters 09d2. The former cleanup
+ * is outside the slot/method/format loops; the latter is inside the format
+ * loop and outside page display. The canonical C already has these two
+ * continuation owners, although the compiler places their blocks late.
+ * Current conditional backward branches are 13/12, not the older 11/12.
+ * The extra is link retry: candidate 0878 uses backward beq, whereas ROM
+ * 08ea uses forward bne followed by backward b at 08ec. No phase is missing.
+ * All 12 ROM conditional backward edges: 044e->0416, 053a->04a8,
+ * 055c->0522, 058e->04a8, 07ea->07b8, 085a->084c, 08d8->088c,
+ * 095c->092a, 0984->0978, 0b7c->0b68, 0bb2->0b92, 0c7e->0c0a.
+ * Complete remaining invariant: frame 548 (current 560); encoded size r9,
+ * page fp, page count r8, page window sl, with cleanup before the respective
+ * enclosing headers, preserved calls/key reads, and exact full 2352 bytes
+ * including every pool. Page and encoded size still spill. A loop-label
+ * move cannot establish this invariant; do not reopen closed ABI, serial,
+ * aggregate, header-union, zero or allocation spelling axes on this audit.
+ * New exact function bytes: 0. New alignment bytes: 0. Owner remains not-yet-c.
  * Sol record H3 (2026-09-27): 2336/2352 bytes, 1120 differing halfwords,
  * 833 aligned edits, 777 wrong instructions. Full normalized diff read.
  * FIELD_EVENT.H's location record shares one union with the menu header

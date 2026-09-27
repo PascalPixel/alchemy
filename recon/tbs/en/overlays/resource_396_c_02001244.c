@@ -1,4 +1,18 @@
-/* Source-restoration audit (2026-09-27): NONMATCHING 480/480 bytes,
+/* Cursor ownership trial 1 (2026-09-27): NONMATCHING 484/480 bytes,
+ * 214 differing halfwords / 43 aligned edits. Hypothesis: deriving dst
+ * from current i at the goto-loop entry transfers output-cursor ownership
+ * to the index, as RUN_DUAL_TABLE.C does for its column cursor. Source i++
+ * remains after publication. Prediction: reference mov r1,1; mov r2,r9;
+ * orr r3,r0; add sl,r1; strh r3,[r2], then both pointer advances via r3=2.
+ * Admission freezes the exact entry, attenuation, frame4 and five pool
+ * words; stop on regression, at two structural trials or after 20 minutes.
+ * Full normalized diff: dst is recomputed with lsl/add on every pass,
+ * not reduced to the reference r9 induction; the output-pointer advance
+ * disappears. sl now advances before strh, but uses r2=1 with dst in r1.
+ * Frame4 and nine division sequences survive; setup, scratch registers,
+ * branch displacements and pool location regress. Reject this body.
+ * Preserve it in Git before the natural-loop follow-up. DONE +0.
+ * Source-restoration audit (2026-09-27): NONMATCHING 480/480 bytes,
  * seven differing halfwords / seven aligned edits. Hypothesis: the admitted
  * event-before-palette H1 source was lost while restoring publication trials.
  * Admission: reference entry, nine attenuation sequences, clamps, frame4
@@ -165,10 +179,10 @@ void ToretoPalette_ApplyTint(void)
     if ((Data_03001e40 & 31) != 0)
         return;
     src += 16;
-    dst = (u16 *)0x05000020;
     i = 0;
 loop:
     {
+        dst = (u16 *)0x05000020 + i;
         r = Data_02009f00[Data_0200adb8];
         g = Data_02009f00[Data_0200adb8 + 1];
         b = Data_02009f00[Data_0200adb8 + 2];
@@ -206,7 +220,6 @@ loop:
             blue = 0;
         *dst = (blue << 10) | (green << 5) | red;
         i++;
-        dst++;
         src++;
     }
     if (i <= 62)

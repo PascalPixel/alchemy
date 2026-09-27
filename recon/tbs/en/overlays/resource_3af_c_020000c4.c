@@ -1,5 +1,5 @@
 /* NONMATCHING: complete extent 552 bytes including the trailing pool;
- * candidate 560, 240 differing halfwords, 73 aligned edits (2026-09-27).
+ * candidate 560, 234 differing halfwords, 74 aligned edits (2026-09-27).
  * H1 transfers Call3/Call4 from exact FUNE_KANPAN/FLY_BY_21.C and
  * FLY_BY_22.C. Both callbacks share six callee bindings, actor layout and
  * state machine; only actor IDs and coordinate constants differ.
@@ -36,7 +36,21 @@
  * Keep the coherent union model as a draft; the previous model is in Git.
  * No second new helper boundary is supported by the exact sibling audit.
  * STOP this ownership-union axis: no declaration, pointer or register sweep.
- * Neither this callback nor its 020002ec twin is newly exact. DONE +0. */
+ * Neither this callback nor its 020002ec twin is newly exact. DONE +0.
+ *
+ * H4 (west): exact FLY_BY_21/22 dispatch directly on their record field.
+ * Remove the named step snapshot and spell the idle reset as literal zero,
+ * retaining the union, Call3/4 and shared increment tail. Predicted admission
+ * was counter/value r6/r8 and 552 bytes. Actual: 560/552, 234 halfwords,
+ * 74 aligned edits, counter r8 and initial value r7. Rejected.
+ * CSE still uses its known-zero state for the idle turn_x store. Counter
+ * address pseudo 35 has 11 uses over 170 instructions and 15 calls; value
+ * 37 has 3 uses over 14 instructions and 1 call. Allocation orders 37 then
+ * 35, with no tie. The loop pass performs no loop transformation here.
+ * This disproves the named snapshot alone as cause of pointer priority;
+ * direct-field spelling is now closed, not a reason to permute declarations.
+ * Full normalized diff read: initial position shift order, idle pointers,
+ * extra counter copies and shifted table/pool remain. No exact credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -69,11 +83,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 s32 Func_020000c4(union DeckObject *work)
 {
     struct FieldActor *obj = &work->actor;
-    u32 step;
 
-    step = obj->rise_counter;
-    if (step != 0) {
-        switch (step) {
+    if (obj->rise_counter != 0) {
+        switch (obj->rise_counter) {
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
@@ -127,7 +139,7 @@ s32 Func_020000c4(union DeckObject *work)
         if (work->bird.turn_x != 0) {
             work->bird.drift -= ((u32)Engine_RandomNext() << 12) >> 16;
             if (work->bird.drift < -0x4000) {
-                work->bird.turn_x = step;
+                work->bird.turn_x = 0;
             }
         } else {
             work->bird.drift += ((u32)Engine_RandomNext() << 12) >> 16;

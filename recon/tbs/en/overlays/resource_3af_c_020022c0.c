@@ -1,5 +1,5 @@
-/* NONMATCHING: 856 bytes, candidate 856, 83 differing halfwords, 55 halfword
- * edits (2026-09-26). FieldScene_RunActorSequence, meant for
+/* NONMATCHING: 856 bytes, candidate 856, 3 differing halfwords, 2 halfword
+ * edits (2026-09-27). FieldScene_RunActorSequence, meant for
  * FIELD/FUNE_KANPAN/F_022C0.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Complete extent 020022c0..02002618: first zero/pool 23b8..23d4,
@@ -15,49 +15,44 @@
  * Phase-scoped actor pointers gave 848 / 211 / 94, removing the reference's
  * saved-pointer copies for actors 30 and 0; the single shared actor survives.
  * Retained the original lifetimes plus the destination-call correction.
- * Remaining: actor/counter r5/r6 versus r6/r5, second zero in r2 versus r5,
+ * Previous remaining: actor/counter r5/r6 versus r6/r5, second zero in r2 versus r5,
  * second pool four bytes early, and callback address hoisted before its
- * speed call. Stop after three trials; needs a new lifetime/CFG hypothesis. */
+ * speed call. Those lifetime-only trials are closed.
+ * New interface model: exact FIELD_EVENT.H FieldActor accesses, canonical
+ * void Engine_ActorEnableActionCallback and named Data_0200c888, supported by
+ * OBJECT/BY_ID.C and exact FUNE_KANPAN deck scenes. Keep all original local
+ * lifetimes and calls; this reduces 83 halfwords/55 edits to 3/2. Complete
+ * 856-byte owner, saved registers and all three pools now agree. Only the
+ * loop increment at 247c is early: candidate adds r5 before the scale_y
+ * store and movs r0,#1; reference adds after both, immediately before wait.
+ * No exact credit; the full normalized diff contains no other difference. */
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 extern u8 Data_00000000[];
 extern u8 Data_0200c8c4[];
 extern u8 Data_0200c8b0[];
 extern u8 Data_0200c8d8[];
+extern u8 Data_0200c888[];
 void FieldScene_RunScene3af_02000bb8();
 void FieldScene_CallPairWith10();
-s32 Engine_TaskWait();
-void Engine_ActorSetSpriteFlags();
-void ObjectDispatch_SetSingleChildField26Far(s32 object, s32 value);
-void Engine_EventBegin();
+void ObjectDispatch_SetSingleChildField26Far(struct FieldActor *object, s32 value);
 void Main_0808a030();
-s32 Engine_ActorGet();
-void Engine_ActorSetPosition();
-void Engine_ActorWalkToAndWait();
-void Engine_ActorSetChildValue();
-s32 Engine_ActorEnableActionCallback();
-void Engine_EventWait();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestination();
-void Engine_ActorStop();
 void Engine_ObjectMotionSetPositionAndCommit();
-void Engine_EventOpenScreen();
 void Main_08009208();
 void Main_08009210();
 void Main_08015210();
 void Main_0808a0b0();
-void Engine_AudioPlayCue();
 void Main_0808a1d8();
-void Engine_EventCloseScreen();
-void Engine_EventWaitForScreen();
-void Engine_EventRequestExit();
 void Event_ClearStatus1c6Far();
 void Event_WaitValue1c8FramesFar();
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+ * A value-returning call also sets r0 last of its arguments. The legacy
+ * Value2 callback calls retain that return-shape adapter around the actual
+ * void service; their unused nominal results are not game values. */
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -87,13 +82,13 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 void FieldScene_RunActorSequence(void)
 {
     u32 i;
-    u8 *rec8;
-    s32 record;
+    struct FieldActor *rec8;
+    struct FieldActor *record;
     s32 base5_200c8c4;
     s32 base5_200c8b0;
     s32 base5_200c8d8;
     s32 base5_0;
-    s32 base5_200c888;
+    const u8 *base5_200c888;
 
     Engine_EventBegin();
     Engine_ActorSetChildValue(0, 15);
@@ -108,14 +103,14 @@ void FieldScene_RunActorSequence(void)
     {
         s32 shown = 0xd000;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Call3(Engine_ActorSetPosition, 21, 0x1080000, 0x2960000);
     record = Engine_ActorGet(21);
     {
         s32 shown = 0xb000;
 
-        *(u16 *)(record + 6) = shown;
+        record->facing = shown;
     }
     Call3(Engine_ActorSetPosition, 24, 0xb80000, 0x2a00000);
     Call3(Engine_ActorSetPosition, 25, 0xca0000, 0x2b40000);
@@ -128,17 +123,17 @@ void FieldScene_RunActorSequence(void)
         struct { u16 v; } zero;
 
         zero.v = 0;
-        *(u8 *)(Engine_ActorGet(24) + 99) = zero.v;
-        *(u8 *)(Engine_ActorGet(25) + 99) = 1;
-        *(u8 *)(Engine_ActorGet(26) + 99) = zero.v;
-        *(u8 *)(Engine_ActorGet(27) + 99) = 2;
+        Engine_ActorGet(24)->rise_enabled = zero.v;
+        Engine_ActorGet(25)->rise_enabled = 1;
+        Engine_ActorGet(26)->rise_enabled = zero.v;
+        Engine_ActorGet(27)->rise_enabled = 2;
     }
     Call3(Engine_ActorSetPosition, 20, 0, 0);
-    Engine_ActorEnableActionCallback(24, (s32)Data_0200c8c4);
+    Engine_ActorEnableActionCallback(24, Data_0200c8c4);
     Value2(Engine_ActorEnableActionCallback, 25, (s32)Data_0200c8c4);
-    Engine_ActorEnableActionCallback(26, (s32)Data_0200c8b0);
+    Engine_ActorEnableActionCallback(26, Data_0200c8b0);
     Value2(Engine_ActorEnableActionCallback, 27, (s32)Data_0200c8b0);
-    Engine_ActorEnableActionCallback(28, (s32)Data_0200c8d8);
+    Engine_ActorEnableActionCallback(28, Data_0200c8d8);
     Value2(Engine_ActorEnableActionCallback, 29, (s32)Data_0200c8d8);
     Engine_ActorSetChildValue(24, 3);
     Engine_ActorSetChildValue(25, 3);
@@ -152,27 +147,27 @@ void FieldScene_RunActorSequence(void)
     Engine_EventWait(80);
     Engine_AudioPlayCue(147);
     rec8 = Engine_ActorGet(31);
-    *(s32 *)((s32)rec8 + 24) = 0x1999;
-    *(s32 *)((s32)rec8 + 28) = 0x1999;
-    *(s32 *)((s32)rec8 + 8) = 0xc20000;
-    *(s32 *)((s32)rec8 + 16) = 0x2820000;
+    rec8->scale_x = 0x1999;
+    rec8->scale_y = 0x1999;
+    rec8->x.fixed = 0xc20000;
+    rec8->z.fixed = 0x2820000;
     base5_0 = 0;
     do {
-        *(s32 *)((s32)rec8 + 24) += 0xf5c;
-        *(s32 *)((s32)rec8 + 28) += 0xf5c;
+        rec8->scale_x += 0xf5c;
+        rec8->scale_y += 0xf5c;
         base5_0 = base5_0 + 1;
         Engine_TaskWait(1);
     } while ((u32)base5_0 <= 15);
     rec8 = Engine_ActorGet(30);
-    *(s32 *)((s32)rec8 + 24) = 0x11999;
-    *(s32 *)((s32)rec8 + 28) = 0x11999;
-    *(s32 *)((s32)rec8 + 8) = 0xc20000;
-    *(s32 *)((s32)rec8 + 12) = 0x500000;
-    *(s32 *)((s32)rec8 + 16) = 0x2820000;
+    rec8->scale_x = 0x11999;
+    rec8->scale_y = 0x11999;
+    rec8->x.fixed = 0xc20000;
+    rec8->y.fixed = 0x500000;
+    rec8->z.fixed = 0x2820000;
     {
         s32 shown = 0x5000;
 
-        *(u16 *)((s32)rec8 + 6) = shown;
+        rec8->facing = shown;
     }
     *(s32 *)((s32)rec8 + 68) = 0x6666;
     *(s32 *)((s32)rec8 + 72) = 0x20000;
@@ -182,13 +177,13 @@ void FieldScene_RunActorSequence(void)
     record = Engine_ActorGet(30);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorSetSpeed, 0, 0x19999, 0xcccc);
-    rec8 = (u8 *)Engine_ActorGet(0);
+    rec8 = Engine_ActorGet(0);
     {
         /* FAKEMATCH: halfword zero retains the short literal-pool reach. */
         struct { u16 v; } zero;
 
         zero.v = 0;
-        rec8[85] = zero.v;
+        rec8->motion_flags = zero.v;
     }
     Call3(Engine_ActorSetDestination, 0, 216, 0x264);
     Call3(Engine_ActorSetSpeed, 30, 0x19999, 0xcccc);
@@ -197,7 +192,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorStop(28);
     Engine_TaskWait(1);
     Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);
-    base5_200c888 = 0x200c888;
+    base5_200c888 = Data_0200c888;
     Engine_ActorEnableActionCallback(28, base5_200c888);
     Call2(FieldScene_CallPairWith10, 30, 0xd000);
     FieldScene_RunScene3af_02000bb8();

@@ -1,9 +1,10 @@
-/* Draft, not exact (2026-09-24): 37 differing halfwords, 136 of 136 bytes.
-   The IWRAM fill now goes through an inline wrapper, so the routine is
-   reloaded per row and 0x84000000 is held in fp as in the ROM. Residual:
-   the reference computes step * 3 once and keeps shift * 4 in r8 for both
-   the source start and the fill size, (32 - shift) * 4 in sl and
-   24 - shift in r9; here the loop invariants take other high registers. */
+/* Draft, not exact: 136 of 136 bytes, 37 differing halfwords / 34 edits.
+   Fresh scoring shows the fill routine is hoisted into fp, not reloaded
+   per row as the old header claimed; the reference keeps DMA control in fp
+   and reloads the routine into r3. The row pointer and fill size therefore
+   also get different saved registers/spills. The exact item-menu pattern
+   (Value_03000000 + 0x168) emits identical bytes, as does changing the fill
+   result to void. Stop that call-address axis without new loop evidence. */
 #include "DMA.H"
 
 typedef s32 (*FillWordsFn)(void *dst, s32 size, s32 value);

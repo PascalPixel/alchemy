@@ -60,7 +60,6 @@ void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct MenuEntryIcon *icon);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 Unnamed_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
 void Audio_PlayCue(s32 cue);
 
 /*
@@ -174,7 +173,7 @@ s32 ItemMenu_RunList(s32 pane)
 
             WaitFrames(1);
             prev = state.selected_index;
-            nav = Unnamed_080a1fd4(0, state.entry_count, LIST_PAGE_SIZE,
+            nav = Menu_HandlePageInput(0, state.entry_count, LIST_PAGE_SIZE,
                 &state.row, &state.page);
             if (nav == 1) {
                 redraw = 1;

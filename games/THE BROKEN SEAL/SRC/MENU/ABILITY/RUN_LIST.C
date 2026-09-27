@@ -98,7 +98,6 @@ void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
 void UiIcon_PrepareObject(struct MenuEntryIcon *icon);
 void PsynergyMenu_CallIconRoutineWithValue(void *work, s32 value);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 Unnamed_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies);
 u8 PsynergyMenu_CollectActions(struct BattleUnit *owner, u16 *actions, s32 mode);
@@ -204,7 +203,7 @@ s32 PsynergyMenu_RunList(s32 pane)
             prev = state.selected_index;
 
             if ((INPUT_HELD_KEYS & KEY_SELECT) == 0) {
-                nav = Unnamed_080a1fd4(
+                nav = Menu_HandlePageInput(
                     0, state.entry_count, LIST_PAGE_SIZE,
                     &state.row, &state.page);
             } else {

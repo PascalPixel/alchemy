@@ -1,13 +1,18 @@
-/* NONMATCHING: 7 differing halfwords, 7 edits; 198 emitted / 200 owner bytes.
- * Six halfwords differ: +0x38/+0x3c exchange the entry copy and y store;
- * +0x44..+0x4a store zero through work+24 before the attribute word and
- * static-chain copy. The seventh is the absent final 2-byte alignment.
- * The static chain, four call targets and both literal pools match.
- * Bounded alias tests: storing tile zero through entry after attributes
- * hoists it into r8 (202 bytes / 18 edits); before attributes keeps size but
- * moves setup early (13 edits). A union entry view leaves all six code
- * halfwords unchanged. Original model retained; no match from those axes. */
+/* Not-yet-C: complete 200-byte nested stat-arrow owner.
+ * The typed sprite initializer recovers attributes+4 then tile+8 writes,
+ * and x before y, but gives 202 bytes / 19 aligned edits (89 halfwords).
+ * Zero is hoisted into r8 across the resource call, moving x to r9; the
+ * original 198-byte / seven-edit model remains in the parent revision.
+ * Returning the subrecord from the helper also swaps work/entry registers
+ * and gives 202 bytes / 35 edits. Stop this interface axis: it repairs the
+ * store ownership, not the zero lifetime. No adoption or byte credit. */
 #include "DJINN_PREVIEW.H"
+
+static __inline__ void InitializeArrow(struct PreviewSprite *entry)
+{
+    entry->attributes.word = 0x40000400;
+    entry->tile.value = 0;
+}
 extern void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising)
     __attribute__((alias("Draw_08022a7c.0")));
 
@@ -24,11 +29,10 @@ static __inline__ void Scope_08022a7c(struct RenderInput *win)
             work->one4 = 1;
             work->index = Resource_LoadIntoFreeSlot(128);
             entry = (struct PreviewSprite *)((u8 *)work + 16);
-            work->table.value = 0;
             work->sentinel = 240;
-            work->y = 120;
             work->x = 120;
-            entry->attributes.word = 0x40000400;
+            work->y = 120;
+            InitializeArrow(entry);
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
             entry->tile.bits.index = Resource_GetBuffer(

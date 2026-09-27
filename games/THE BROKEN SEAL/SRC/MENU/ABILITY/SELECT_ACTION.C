@@ -61,7 +61,6 @@ s32 PsynergyMenu_CollectActions(struct OwnerActionState *, u16 *, s32);
 void PsynergyMenu_DrawPreparedPsynergyIcons(s32 window, s32 owner);
 s32 PsynergyMenu_DrawListPage(s32 window, s32 unused, const struct MenuResult *);
 s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *);
-s32 Unnamed_080a1fd4(s32 mode, s32 count, s32 page_size, s32 *row, s32 *page);
 void UiMenu_PositionCursor(s32 x, s32 y);
 void Audio_PlayCue(s32 cue);
 s32 Math_Mod(s32 value, s32 divisor);
@@ -126,7 +125,7 @@ s32 PsynergyMenu_SelectAction(void)
                 WaitFrames(1);
             }
             WaitFrames(1);
-            nav = Unnamed_080a1fd4(0, state.entry_count, 5, &state.row, &state.page);
+            nav = Menu_HandlePageInput(0, state.entry_count, 5, &state.row, &state.page);
             menu->cursor->state = 1;
             UiMenu_PositionCursor(55, state.row * 16 + 60);
             if (nav == 1) {

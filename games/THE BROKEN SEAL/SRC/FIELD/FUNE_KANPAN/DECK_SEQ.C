@@ -1,6 +1,6 @@
-/* NONMATCHING: 856 bytes, candidate 856, 3 differing halfwords, 2 halfword
- * edits (2026-09-27). FieldScene_RunActorSequence, meant for
- * FIELD/FUNE_KANPAN/F_022C0.C as a single-overlay unit binding its names at
+/* EXACT: 856 bytes, candidate 856, 0 differing halfwords, 0 halfword
+ * edits (2026-09-27). FieldScene_RunActorSequence in
+ * FIELD/FUNE_KANPAN/DECK_SEQ.C is a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Complete extent 020022c0..02002618: first zero/pool 23b8..23d4,
  * second zero/pool 252c..2554, return 2606 and final pool 2608..2614.
@@ -25,7 +25,11 @@
  * 856-byte owner, saved registers and all three pools now agree. Only the
  * loop increment at 247c is early: candidate adds r5 before the scale_y
  * store and movs r0,#1; reference adds after both, immediately before wait.
- * No exact credit; the full normalized diff contains no other difference. */
+ * Follow-up: compiler dumps locate that independent increment before
+ * NOTE_INSN_LOOP_CONT. Make it the natural for-loop continuation after
+ * the wait instead of a pre-wait body statement. The scheduler then emits
+ * the reference store/movs/increment/call order: all 856 bytes and pools
+ * exact. No counter type, declaration-order or fixed-register changes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -151,13 +155,11 @@ void FieldScene_RunActorSequence(void)
     rec8->scale_y = 0x1999;
     rec8->x.fixed = 0xc20000;
     rec8->z.fixed = 0x2820000;
-    base5_0 = 0;
-    do {
+    for (base5_0 = 0; (u32)base5_0 < 16; base5_0++) {
         rec8->scale_x += 0xf5c;
         rec8->scale_y += 0xf5c;
-        base5_0 = base5_0 + 1;
         Engine_TaskWait(1);
-    } while ((u32)base5_0 <= 15);
+    }
     rec8 = Engine_ActorGet(30);
     rec8->scale_x = 0x11999;
     rec8->scale_y = 0x11999;

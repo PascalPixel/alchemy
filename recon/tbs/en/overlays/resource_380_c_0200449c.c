@@ -31,30 +31,20 @@
  * the reference's state ownership. Three hypotheses complete: STOP here.
  * H1 and H2 are preserved in preceding commits; H2 is the 228-edit baseline.
  * Legacy 2026-09-24 pointer/index/loop-test/operand-order sweeps exhausted
- * 226..249 edits; do not repeat those without new ownership evidence. */
-#include "TYPES.H"
+ * 226..249 edits; do not repeat those without new ownership evidence.
+ * H4 (2026-09-27): exact RING_SETUP binds the object through ActorGet,
+ * and ERUPTION_RING uses FieldActor for the same position/scale/target
+ * fields. Replace the private object view with that existing shared type:
+ * +56/+60/+64 are target coordinates, not draw coordinates. The full
+ * 748-byte result is byte-identical to H3 (354 halfwords/232 edits).
+ * FieldCoordinate union aliasing does not change the snapshot allocation;
+ * stop the actor-type-only axis. Keep the proven ownership correction. */
+#include "FIELD_EVENT.H"
 
 void *Engine_AllocateBlock(s32 id, s32 size);
-s32 Engine_RandomNext(void);
-s32 Engine_MathSin(s32 angle);
-s32 Engine_MathCos(s32 angle);
-
-struct SparkObject {
-    u8 unknown_00[8];
-    s32 x;
-    s32 y;
-    s32 z;
-    u8 unknown_14[4];
-    s32 scale_x;
-    s32 scale_y;
-    u8 unknown_20[24];
-    s32 draw_x;
-    s32 draw_y;
-    s32 draw_z;
-};
 
 struct Spark {
-    struct SparkObject *obj;
+    struct FieldActor *obj;
     s32 x;
     s32 y;
     s32 z;
@@ -86,7 +76,7 @@ void Effect_UpdateSparkRing(void)
 
     work = Engine_AllocateBlock(33, 0x194);
     for (i = 0; i != work->count; i++) {
-        struct SparkObject *obj;
+        struct FieldActor *obj;
         s32 ax;
         s32 ay;
         s32 az;
@@ -127,12 +117,12 @@ void Effect_UpdateSparkRing(void)
                 } else if (scale <= 0x1999) {
                     scale = 0x1999;
                     speed = gSparkScaleStep[i];
-                    x = obj->x;
-                    y = obj->y;
-                    z = obj->z;
-                    obj->x = 0;
-                    obj->y = 0;
-                    obj->z = 0;
+                    x = obj->x.fixed;
+                    y = obj->y.fixed;
+                    z = obj->z.fixed;
+                    obj->x.fixed = 0;
+                    obj->y.fixed = 0;
+                    obj->z.fixed = 0;
                     hold = 24;
                 }
                 obj->scale_x = scale;
@@ -183,24 +173,24 @@ void Effect_UpdateSparkRing(void)
                 y += ry;
                 z += rz;
                 if (hold == 0) {
-                    obj->x = x;
-                    obj->draw_x = x;
+                    obj->x.fixed = x;
+                    obj->target_x = x;
                     if (dy != 0) {
-                        obj->y = y;
-                        obj->draw_y = y;
+                        obj->y.fixed = y;
+                        obj->target_y = y;
                     }
-                    obj->z = z;
-                    obj->draw_z = z;
+                    obj->z.fixed = z;
+                    obj->target_z = z;
                 }
             } else {
-                obj->x += rx;
-                obj->draw_x = obj->x;
+                obj->x.fixed += rx;
+                obj->target_x = obj->x.fixed;
                 if (dy != 0) {
-                    obj->y += ry;
-                    obj->draw_y = obj->y;
+                    obj->y.fixed += ry;
+                    obj->target_y = obj->y.fixed;
                 }
-                obj->z += rz;
-                obj->draw_z = obj->z;
+                obj->z.fixed += rz;
+                obj->target_z = obj->z.fixed;
             }
         }
         spark->angle_x = ax;

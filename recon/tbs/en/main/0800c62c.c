@@ -2,20 +2,19 @@
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 
-/* main:0800c62c ObjectSystem_UpdateCamera - hand-written draft, 144 of 296
-   halfwords differ (588 of 592 bytes).
+/* main:0800c62c ObjectSystem_UpdateCamera - hand-written draft, freshly
+   scored at 588 of 592 bytes, 86 differing halfwords / 35 aligned edits.
 
    Each frame the field camera places every live object on screen: objects
    inside the view are projected through their tile's layer bits, and objects
    that leave it (or sit at the origin) fall back to their resource entry.
 
-   Residual: the first view test is emitted as "bls .+4; b far" in the ROM.
-   GCC picks that long form from its length estimate, which counts each
-   inline asm line as four bytes; the ROM needs one more estimated line per
-   Iwram_MulQ16 call than IWRAM_CALL.H has (with one extra line the branch
-   flips and 90 halfwords differ). Left beside that: the loop-constant registers (63 and the MulQ16
-   routine swap r3/r4), and the tail's flag test (ROM keeps kind in a copy:
-   "adds r3, r6, #0; ands r3, r2"). */
+   The approved IWRAM header now emits the reference's long first-view
+   branch; the old instruction-length residual no longer applies. Do not
+   change that header for this draft. Remaining: count-zero scheduling,
+   the 63/MulQ16 entry register order, tile-layer scratch r0 versus r1,
+   and the missing tail kind copy (adds r3,r6,#0; ands r3,r2). The latter
+   shortens the body and shifts its final pool. No code or byte credit added. */
 
 struct CameraTile {
     u32 unk_00 : 12;

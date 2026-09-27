@@ -25,6 +25,9 @@
     "main:0801f200": {
       "name": "UiWindow_DrawPartyStatusContents"
     },
+    "resource_380:0200227c": {
+      "name": "Local_0200227c"
+    },
     "resource_3b3:02000cc0": {
       "name": "TakaraHashira_CopyCellBlock"
     },

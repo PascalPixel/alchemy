@@ -9,6 +9,17 @@
  * function-wide r6 value loaded in the prologue: 3952 / 1529 / 351, with
  * shifted pools and jump tables. Rejected; original two-halfword body kept.
  * No further lifetime hypothesis justified here. Still not-yet-c. */
+/* 2026-09-27: reduced ordinary-C witnesses tested the required sequence
+ * independently: movs r3, #0; ldr r2, BLDCNT; strh r3, [r2]. A volatile
+ * three-u16 display-register struct adds an unwanted ldrh before the write.
+ * Its nonvolatile counterpart removes that read but still loads the address
+ * before zero. Neither admits the reference sequence; the typed-MMIO axis
+ * is closed. Full baseline rechecked: 3964 bytes, two differing halfwords,
+ * only the same instruction-order hunk; body and credit unchanged.
+ * A separate reduced witness transferred the exact serial-reset repeated
+ * local/block lifetime: zero = 0; then control = BLDCNT and zero = 0 in a
+ * second one-pass block. It still emits address before zero. That lifetime
+ * transfer is rejected too; no full-function spelling sweep followed. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

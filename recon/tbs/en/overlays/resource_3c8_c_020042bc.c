@@ -1,4 +1,13 @@
-/* NONMATCHING P6 (2026-09-27): 612/612 bytes, 116 differing halfwords,
+/* 2026-09-27 sol-venus-room bounded revalidation: full normalized diff,
+ * complete extent, allocator-order dump and all four pool words read again.
+ * Retained P6 is 612/612 bytes, 116 differing halfwords / 30 aligned edits.
+ * Count/options lifetime disagreement and second-phase pointer-view loss
+ * are unchanged; existing phased union already failed to preserve the copy.
+ * No independent pointer/dependency fact justifies reopening that axis.
+ * Keep the exact-sibling dimensions and row setup admissions unchanged.
+ * No new function bytes or alignment credit; still C not yet written.
+ *
+ * NONMATCHING P6 (2026-09-27): 612/612 bytes, 116 differing halfwords,
  * 30 aligned edits. Transfer exact EAST_PARTICLE_WAVE's row setup order:
  * initialize base z, initialize zero, then add offset, inside the already
  * admitted row <= 7 guard. GCSE retains separate user z/zero producers

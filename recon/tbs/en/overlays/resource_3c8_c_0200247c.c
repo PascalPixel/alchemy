@@ -10,7 +10,8 @@
  * pool at +0x1e0, selected slot r6 instead of r5, and +8-byte extent survive.
  * Consumer-address ancestry is therefore insufficient here. Reject this
  * one-trial transfer; no wider byte-pointer conversion or producer sweep.
- * Preserve the trial before restoring the simpler member store. No credit.
+ * Trial retained at b4cb99e0d; the simpler member store is restored below.
+ * Restoration compares byte-identically too. No credit.
  *
  * NONMATCHING H5 (2026-09-27): direct signed halfword reset access is
  * byte-identical to H4: 624/616 bytes, 169 halfwords / 53 aligned edits.
@@ -185,11 +186,7 @@ apply_height:
         other = Engine_ActorGet(slot + 10);
         FloatingBlock_ResetMotion(other, 0);
         Camera_SetSpeed(0x30000, 0x6000);
-        {
-            u8 *motion_flags = &Engine_EventGetViewCenter()->motion_flags;
-
-            *motion_flags = 0;
-        }
+        Engine_EventGetViewCenter()->motion_flags = 0;
         Camera_MoveTo(0x880000, 0x80000, 0x1580000, 1);
         Engine_CameraWaitForMove();
         SceneActor_PickHighestSlotAtSameTileAndRelease(slot + 10);

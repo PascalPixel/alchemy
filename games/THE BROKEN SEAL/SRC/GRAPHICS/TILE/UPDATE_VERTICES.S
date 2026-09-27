@@ -1,6 +1,6 @@
 @ Updates 160 vertex records (position and depth in 16.16 fixed point) for a
-@ shared rotation. It runs from a RAM copy of exactly these 644 bytes. Kept as
-@ assembly without credit: it has the shape of GCC 2.96 ARM-mode output
+@ shared rotation. It runs from a RAM copy of exactly these 644 bytes. Not-yet-C,
+@ built from its disassembly: it has the shape of GCC 2.96 ARM-mode output
 @ (register subtraction as rsb, calls through mov lr, pc; bx ip, division by
 @ 256 as cmp; addlt #255; asr #8, lr saved with r5-sl while r4 stays free).
 @ This complete not-yet-C module uses the approved ARM game-code route.

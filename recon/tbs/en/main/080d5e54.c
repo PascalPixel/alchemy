@@ -83,11 +83,15 @@
  * reopening it needs allocator dumps (alchemy build allocator 080d5e54, then
  * read the .lreg and .greg dumps), not another source spelling.
  *
- * Call targets carry the names "alchemy inspect" resolves and that the owner
- * register already holds.  The names it prints for Resource_LoadAndDecompress
- * (load_and_decompress), Func_08004458 (random_16), Func_080d6888
- * (update_members), Func_080e3944 (apply_base_and_y_offset) and Func_080e38b8
- * (advance_with_gravity_3d) are not registered symbols, so those keep their
+ * 2026-09-27: the old projection/gravity prototypes conflict with the now
+ * canonical EFFECT_STEP.H. Calls use EffectPosition_ApplyBaseAndYOffset
+ * (s32 return) and EffectStep_AdvanceWithGravity3D through that header.
+ * This restores reproducible scoring: 1712/1712 bytes, 572 differing
+ * halfwords, 445 aligned edits, equal topology. Full normalized diff read:
+ * the 164/172-byte frame and broad saved-local ownership disagreement remain.
+ * No old register-spelling axis was reopened; no DONE credit. The legacy
+ * Resource_LoadAndDecompress, Func_08004458 and Func_080d6888 declarations
+ * below remain outside this narrow interface audit and keep their
  * Func_ spelling here, as the sibling owners do.  Func_080072f4 and
  * Func_080072f0 are never named in this source: they are the compiler
  * runtime's call-via-r4 and call-via-r3 thunks and are reached only as typed
@@ -138,8 +142,6 @@ void Func_08004c6c(s32 angle);
 void SceneTransform_ApplyPosition(s32 *position);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080e3944(void *source, s32 *screen);
-void Func_080e38b8(void *source, s32 a, s32 b);
 void Func_080f9010(s32 id);
 void Func_080030f8(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 id);
@@ -272,7 +274,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                     Func_08004c6c(-spin);
                     break;
                 }
-                Func_080e3944(spark_step, screen);
+                EffectPosition_ApplyBaseAndYOffset((s32 *)spark_step, (struct EffectPosition *)screen);
                 screen[0] = screen[0] >> 1;
                 Func_08004a5c();
                 if (screen[2] < 250) {
@@ -289,7 +291,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                     screen[1] - scale,
                     scale,
                     scale * 2);
-                Func_080e38b8(spark_step, 60, 0);
+                EffectStep_AdvanceWithGravity3D(spark_step, 60, 0);
                 if (frame > slot + 30) {
                     spark_step->velocity_x += -spark_step->x >> 8;
                     spark_step->velocity_y += -spark_step->y >> 8;
@@ -305,7 +307,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
             spark[0] = 0;
             spark[1] = Func_08002322(frame << 10) << 2;
             spark[2] = 0;
-            Func_080e3944(spark, screen);
+            EffectPosition_ApplyBaseAndYOffset(spark, (struct EffectPosition *)screen);
             screen[0] = screen[0] >> 1;
             ((DrawRectangleFn)blit[1])(
                 draw_destination, work,
@@ -342,7 +344,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
             record[0] = target[0];
             record[1] = target[1];
             record[2] = target[2] + Func_08002322(frame << 11) * 40;
-            Func_080e3944(record, view);
+            EffectPosition_ApplyBaseAndYOffset(record, (struct EffectPosition *)view);
             view[0] = view[0] >> 1;
             ((DrawRectangleFn)blit[0])(
                 draw_destination, work,
@@ -399,7 +401,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                                     s32 size;
                                     u32 half;
 
-                                    Func_080e3944(grain_step, view);
+                                    EffectPosition_ApplyBaseAndYOffset((s32 *)grain_step, (struct EffectPosition *)view);
                                     view[0] = view[0] >> 1;
                                     if (view[2] < 314) {
                                         view[2] = 314;

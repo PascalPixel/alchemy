@@ -1,4 +1,11 @@
-/* NONMATCHING: 192 of 184 bytes, 84 differing halfwords (2026-09-24).
+/* NONMATCHING: restored 192/184 bytes, 84 differing halfwords / 56 aligned edits (2026-09-27).
+ * Rejected typed-table/helper transfer is committed in 0b4bfe722:
+ * 196/184 bytes, 84 differing halfwords / 71 aligned edits, frame 20 vs 8.
+ * Named strided arrays hoisted table bases into saved registers. The older
+ * direct-base model below is stronger and remains the active candidate:
+ * frame 12 versus reference 8, compared with the rejected trial's 20.
+ * STOP this transfer; no declaration or register spelling sweep.
+ * Original baseline: 192 of 184 bytes, 84 differing halfwords (2026-09-24).
  * Hand-written from the disassembly: copies a width x height block of the
  * 128-wide cell map at 0x02010000 into the BG screen block at 0x06002800 (two
  * words per cell from the table at 0x02020000). The loop shape matches;
@@ -7,7 +14,7 @@
  * and the row base, here two more values spill. */
 #include "TYPES.H"
 
-void Func_02000cc0(s32 x, s32 y, s32 width, s32 height, s32 block, s32 left, s32 top)
+void TakaraHashira_CopyCellBlock(s32 x, s32 y, s32 width, s32 height, s32 block, s32 left, s32 top)
 {
     u32 *src;
     s32 bottom;

@@ -1,28 +1,13 @@
-/* DRAFT: complete owner [08093fa0,08094154), 436 bytes including pools
- * and the final alignment halfword. Caller Battle_DispatchInputEvent handles
- * event 0xfd/up here, paired with exact FieldEffect_UpdateGridPlacement/down.
- * Baseline: 432/436 bytes, 169 differing halfwords, 72 aligned edits.
- * Full listing/diff read: 24-byte frame and all long-lived register roles
- * agree; signed grid index lowering and the pool-before-failure tail differ.
- * H1 transfers the exact adjacent GridPlacement's signed /16 indexing and
- * canonical object/action interfaces. Predict natural signed-bias lowering
- * and matching index registers without changing the full success/fail paths.
- * Gate: complete binary exactness, compare/coverage/verify before adoption.
- * One model plus one follow-up unless a new structural fact appears; stop
- * by 01:05 Lisbon and preserve every result here. No old sprite/map sweep.
- * H1 result: 432/436 bytes, 163 differing halfwords, 66 aligned edits.
- * Signed division now exactly recovers the full bias/index sequence; the
- * complete diff isolates the remaining pool-before-failure layout, initial
- * global-load order, and the two tile-plane operand registers. Not adopted.
- * H2: the activation flag feeds an OR and a byte store across two calls.
- * Model that local as u16 rather than a full-width link-symbol address;
- * predict its short constant reach restores the pool before failure cleanup.
- * H2 result: 428/436 bytes, 163 differing halfwords, 68 aligned edits.
- * The narrow literal still becomes movs #1, not the required pool load;
- * cleanup/pool placement and the unrelated load-order differences remain.
- * Rejected. H1 (432 bytes/66 edits) is preserved in b10033ad5. Stop here;
- * neither model is adopted and no bytes are credited. No spelling sweep.
- */
+/* Not-yet-C: complete [08093fa0,08094154), 436 bytes including pools.
+ * The adjacent exact grid-placement routine supplies signed /16 indexing:
+ * 432 bytes / 163 differing halfwords / 66 aligned edits, frame 24 bytes.
+ * Remaining: opening global loads, tile-plane operand registers and the
+ * pool before failure cleanup. Retain the full-width activation symbol.
+ * A u16 literal active gives 428/68 with movs, not the required pool load;
+ * a u8 link value splits the pool too early (444/74); a halfword aggregate
+ * adds extension (436/79). These pool-width axes are stopped.
+ * The raw failure tail uses .2byte directives, so topology's uncovered
+ * target is not evidence of a control-flow gap. No adoption or credit. */
 #include "OBJECT_RUNTIME.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
@@ -35,6 +20,7 @@ struct GridTileCell_08093fa0 {
 extern struct GridTileCell_08093fa0 Data_0200fe00[];
 extern struct GridTileCell_08093fa0 Data_02010000[];
 extern struct BattleWork Data_02000240;
+extern u8 Value_00000001;
 
 struct ObjectRuntime *Object_GetById(u32 object_id);
 void Battle_Reset(void);
@@ -113,8 +99,7 @@ s32 Func_08093fa0(void)
         ObjectMotion_CommitCurrentPositionAndActivate(work->object_id);
         object->flags = 3;
         {
-            /* FAKEMATCH: retain the narrow activation flag across the calls. */
-            u16 active = 1;
+            s32 active = (s32)&Value_00000001;
 
             variant |= active;
             object->terrain_height = object->y;

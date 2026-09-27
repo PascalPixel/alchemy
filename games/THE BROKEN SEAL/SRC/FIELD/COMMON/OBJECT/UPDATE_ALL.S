@@ -1,8 +1,8 @@
 @ Updates the eight 112-byte entries of an object array: runs each active
 @ entry's callback and command list, then moves it toward its target, applies
 @ gravity with bounce, checks arrival and turns it to face its motion. It runs
-@ from a heap copy of exactly these 1,256 bytes (loader 0x0800d304). Kept as
-@ assembly without credit: it has the shape of GCC 2.96 ARM-mode output
+@ from a heap copy of exactly these 1,256 bytes (loader 0x0800d304). Not-yet-C,
+@ built from its disassembly: it has the shape of GCC 2.96 ARM-mode output
 @ (register subtraction as rsb, calls through mov lr, pc; bx rN, -4096 built
 @ as mov r2, #0x80000000 then asr #19, lr saved with r5-sl while r4 stays
 @ free), followed by ldr r4; bx r4 call stubs. This complete not-yet-C module

@@ -5,7 +5,13 @@
  * setter selects movs 1 rather than a short-range halfword pool.
  * Candidate 224 bytes, equal topology, 59 aligned halfword edits. Remaining
  * table-base reuse, register lifetimes and first pool differ. Three structural
- * hypotheses stopped, no adoption or byte credit. */
+ * hypotheses stopped, no adoption or byte credit.
+ * 2026-09-27: reusing PREPARE_SEND_PACKET.C's volatile runtime pointer for
+ * every field and volatile word channel-flag accesses gives 224/228 bytes,
+ * 92 differing halfwords, 65 aligned edits (baseline 93/59). It adds reads
+ * before byte member stores, keeps the runtime in ip throughout, and still
+ * coalesces the initial packet-table reload. Whole-runtime volatility does
+ * not describe this collector's access boundaries; baseline retained. */
 #include "serial_runtime_family.h"
 #include "DMA.H"
 

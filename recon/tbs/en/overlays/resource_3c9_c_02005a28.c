@@ -1,4 +1,4 @@
-/* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords (2026-09-27).
+/* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -24,7 +24,47 @@
  * MathSin, and source null-test/coordinate copies still use the wrong
  * lifetimes. Full normalized diff reviewed. Stop after this follow-up;
  * no declaration, pointer-spelling or register-only sweep was attempted.
- * No exact source or shared header edits; no DONE credit. */
+ * No exact source or shared header edits; no DONE credit.
+ *
+ * 2026-09-27 H3 Title/Lamp boundary transfer: Title ResetCounter expands
+ * the destination before an aggregate HI zero; exact MAKYURI_CHOJO/LAMP.C
+ * shares a literal Half zero with its angle member-store producer. A local
+ * InitializeAngle(u16 *, u32, Half *) combines those boundaries. Full score
+ * is 358/360, 53 halfwords / 37 aligned edits, with the same no-frame setup.
+ * Prediction failed: the zero still loads after the angle store; second
+ * pool moved from relative 118 to 140, not reference 134. The complete
+ * normalized diff retains the source-null-copy and factory setup residuals.
+ * -da/-fsched-verbose=5 assembly is byte-identical to ordinary compilation.
+ * RTL explains the failure: the pointer store is direct mem:HI, removing
+ * the member-store's generated HI-zero producer, so aggregate zero 90 is
+ * independent and scheduled just before MathSin. This is a counterexample,
+ * not an admitted canonical or credit. One causal follow-up may restore
+ * the actor member-store boundary without changing types or call ABI.
+ *
+ * H4 restores FieldActor *destination and destination->unknown_64. Full
+ * result 358/360, 56 halfwords / 50 edits: zero and pool remain late (140).
+ * Diagnostics equal ordinary assembly. CSE substitutes the already-zero
+ * frame phase 45 into Half 90 before the angle member-store; the stored
+ * angle does not consume that producer. Local allocation restores a HI
+ * constant and sched2 places it before MathSin, not before the angle store.
+ * Admission failed again. LAMP's exact zero publication is after the angle
+ * store, which permits sharing that store's generated HI zero instead of
+ * the branch-known SI phase. One final producer-order test is supported by
+ * this ancestry difference; no other variant or null-copy sweep is admitted.
+ *
+ * H5 retains H4's actor boundary but publishes zero after the angle store,
+ * matching LAMP's actual producer order. Result 360/360, 60 halfwords /
+ * 39 aligned edits. Both pools and the full normalized diff were checked:
+ * the first pool is exact, second starts at relative 138 rather than 134,
+ * and zero still loads after strh. CSE still forwards phase 45 into the
+ * address-taken Half 90; the hoped-for angle HI producer is not retained.
+ * Diagnostic assembly equals ordinary assembly. Equal size is not a match:
+ * source-null copy, factory arguments, zero lifetime and pool remain wrong.
+ * Three bounded models exhausted; preserve each in Git, then restore the
+ * simpler 358/55/55 baseline. No new source-interface fact admits another
+ * trial. H3 is 36c683a70, H4 d71c79f84, H5 41f33c962. The canonical body
+ * below is restored and byte-compared with the initial 358/55/55 baseline.
+ * No DONE or alignment credit; exact consumers remain untouched. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

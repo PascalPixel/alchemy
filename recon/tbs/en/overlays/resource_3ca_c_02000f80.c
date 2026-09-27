@@ -25,6 +25,14 @@
  * initial multiply operands and second-axis address reuse remain wrong;
  * the candidate has eight pool words instead of nine and differs in layout.
  * Repair outward only while preserving the admitted load/spill/mask shape.
+ * One outward product trial replaced each axis's two acc assignments with
+ * acc = state->frequency_x * (state->phase_x + scroll_y), and the analogous
+ * y expression. Prediction: frequency would become the multiply accumulator
+ * as in ROM. Result 344/340 bytes, 97 halfwords / 91 aligned edits: spill
+ * and fp masks survive, but multiplication still accumulates the phase sum,
+ * and state/line/counter move to r7/r6/r4. It also adds a tenth pool word.
+ * Full diff rejects this product model; retain H2, byte-identically, and
+ * stop the expression axis rather than permuting operands or declarations.
  * Complete boundary 02000f80..020010d4: return at 020010ac,
  * alignment at 020010ae, nine pool words through 020010d0. Interleaved
  * halfword pages reproduce the second axis pointer. Staged phase arithmetic

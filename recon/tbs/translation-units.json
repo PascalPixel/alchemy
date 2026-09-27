@@ -17238,6 +17238,10 @@
           "end": "0x020000a4"
         },
         {
+          "start": "0x020000be",
+          "end": "0x020000c0"
+        },
+        {
           "start": "0x020001fa",
           "end": "0x020001fc"
         }
@@ -41817,6 +41821,10 @@
         {
           "start": "0x020004ce",
           "end": "0x020004d0"
+        },
+        {
+          "start": "0x02000b8a",
+          "end": "0x02000b8c"
         }
       ],
       "game": "tbs",
@@ -48885,6 +48893,10 @@
         {
           "start": "0x02001c06",
           "end": "0x02001c08"
+        },
+        {
+          "start": "0x02001c16",
+          "end": "0x02001c18"
         }
       ],
       "game": "tbs",
@@ -59144,6 +59156,10 @@
         {
           "start": "0x02000e8e",
           "end": "0x02000e90"
+        },
+        {
+          "start": "0x02001cb2",
+          "end": "0x02001cb4"
         }
       ],
       "game": "tbs",
@@ -68082,6 +68098,12 @@
           "state": "exact-c"
         }
       ],
+      "compiler_gaps": [
+        {
+          "start": "0x02000e5e",
+          "end": "0x02000e60"
+        }
+      ],
       "instances": {
         "resource_39c": {
           "owners": {
@@ -68460,6 +68482,12 @@
           "address": "0x02001a3c",
           "extent": 394,
           "state": "exact-c"
+        }
+      ],
+      "compiler_gaps": [
+        {
+          "start": "0x02001bc6",
+          "end": "0x02001bc8"
         }
       ],
       "instances": {
@@ -79994,6 +80022,12 @@
           "address": "0x02000958",
           "extent": 378,
           "state": "exact-c"
+        }
+      ],
+      "compiler_gaps": [
+        {
+          "start": "0x02000ad2",
+          "end": "0x02000ad4"
         }
       ],
       "game": "tbs",

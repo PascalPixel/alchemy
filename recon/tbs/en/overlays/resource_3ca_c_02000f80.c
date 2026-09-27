@@ -1,4 +1,10 @@
-/* NONMATCHING: ship H3 separate frequency input, 340/340 bytes,
+/* NONMATCHING: canonical ship H2 retained, 336/340 bytes, 111 differing
+ * halfwords, 62 aligned edits. The three product trials are closed;
+ * all attempts are preserved. Frequency owns the accumulator, signed
+ * scroll spills at sp+0, both masks occupy fp and the pool has nine words.
+ * Remaining: accumulator copy, high-register ownership and second-axis
+ * address reuse. The complete extent/pool is not exact; no DONE.
+ * Ship H3 separate frequency input, 340/340 bytes,
  * 56 differing halfwords, 51 aligned edits (2026-09-27). A distinct product
  * destination restores extent and native loop-alignment placement, but
  * copies the phase into r4, not frequency, losing the admitted H2 product
@@ -115,15 +121,14 @@ void Local_02000f80(void)
     s32 step;
     s32 amplitude;
     s32 phase;
-    s32 frequency;
 
     state = Data_03001ed8;
     scroll_y = Data_03001ad0.y;
     line = state->pages[state->page ^ 1];
     step = state->step_x;
     phase = state->phase_x + scroll_y;
-    frequency = state->frequency_x;
-    acc = frequency * phase;
+    acc = state->frequency_x;
+    acc *= phase;
     amplitude = state->amplitude_x;
     base = Data_03001ad0.x;
     {
@@ -140,8 +145,8 @@ void Local_02000f80(void)
     line = state->pages[state->page ^ 1] + 1;
     step = state->step_y;
     phase = state->phase_y + scroll_y;
-    frequency = state->frequency_y;
-    acc = frequency * phase;
+    acc = state->frequency_y;
+    acc *= phase;
     amplitude = state->amplitude_y;
     base = scroll_y;
     {

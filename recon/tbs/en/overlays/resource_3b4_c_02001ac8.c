@@ -1,4 +1,5 @@
-/* H6 rejected: exact Shian Call6 emits the identical H5 candidate bytes:
+/* H5 direct-call canonical restored; H6 counterexample at 79c045566.
+ * H6 rejected: exact Shian Call6 emits the identical H5 candidate bytes:
  * 152/152, 3 halfwords / 3 aligned edits. Zero publication, frame8 and pool
  * remain exact. Inlining erases the function-pointer boundary before CSE;
  * argument setup is still r0,r1,r2,r3, not ROM r1,r3,r2,r0. Whole normalized
@@ -65,11 +66,6 @@ void SceneState_ApplyRectAndSetSlotEightByte35(void);
 void ActorPresentation_SetSceneCell58AndMarkActorEight(void);
 void SceneState_ApplyRectAndSetActor8Byte35(void);
 
-static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
-{
-    f(a0, a1, a2, a3, a4, a5);
-}
-
 void Local_02001ac8(void)
 {
     struct FieldActor *block = Engine_ActorGet(8);
@@ -101,7 +97,7 @@ void Local_02001ac8(void)
         if (column != 37)
             return;
     copy:
-        Call6((void (*)())Engine_MapCopyCellAttributes, 61, 36, 1, 1, column, 42);
+        Engine_MapCopyCellAttributes(61, 36, 1, 1, column, 42);
         /* FAKEMATCH: keep the zero's sole consumer inside its phase. */
         do {
             Engine_ActorGet(8)->motion_flags = still;

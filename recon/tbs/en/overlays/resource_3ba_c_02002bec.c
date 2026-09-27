@@ -2,7 +2,7 @@
 
 /* Unit bindings for scoring (declare as absolute_symbols of a unit on
  * resource_3ba:02002bec):
- *   Engine_MathDivide = 0x0200bb00 (thumb)
+ *   __divsi3 = 0x0200bb00 (thumb)
  *   Engine_OamSubmitRecord = 0x0200bb90 (thumb)
  *   Korosseo_LinkedZero = 0x00000000 (data)
  *   gOamTiles = 0x03001b10 (data)
@@ -20,7 +20,6 @@
  *   Korosseo_MarkerOam = 0x0200c7b0 (data)
  */
 
-s32 Engine_MathDivide(s32 dividend, s32 divisor);
 void Engine_OamSubmitRecord(s32 *record, s32 priority);
 
 extern u8 Korosseo_LinkedZero[];
@@ -50,8 +49,9 @@ extern s16 Korosseo_MarkerBlink;
 extern s16 Korosseo_MarkerPriority;
 extern s32 Korosseo_MarkerOam[3];
 
-/* NONMATCHING: candidate 312, full reference 316 bytes, 126 differing
- * halfwords / 65 alignment edits (2026-09-26). Owner extent is
+/* NONMATCHING: restored candidate 312, reference 316 bytes, 126 differing
+ * halfwords / 65 aligned edits (2026-09-27). H1 is at db4d7dc54;
+ * rejected H2 is preserved at 0447a6b86. Owner extent is
  * resource_3ba:[02002bec,02002d28), including both literal pools.
  * Interpolates and blinks the Colosso marker through the OAM queue.
  * Typed table, reused destination pointer, advancing OAM pointer and reused
@@ -61,7 +61,24 @@ extern s32 Korosseo_MarkerOam[3];
  * did not change bytes; a one-pass setup block worsened the score to 66 edits.
  * Complete byte comparison proves only call relocations and local pool
  * addresses differ in resource_3bb:02002e84 and resource_3bc:0200391c.
- * They are not adopted from this draft. */
+ * They are not adopted from this draft.
+ * 2026-09-27 H1: ordinary signed / with __divsi3 bound to the same
+ * 0200bb00 veneer, following the 396:02001244 compiler-division witness
+ * and exact COMMON/EFFECT/SPAWN.C. Complete output is byte-identical to
+ * baseline (cmp checked): 312/316, 126 halfwords, 65 aligned edits.
+ * Both products still form in r0 without the reference step copy;
+ * neither coordinate pointer schedule nor priority pool moves. No credit.
+ * Initializer 02d8c confirms the existing start/end/step ownership; exact
+ * TITLE/SPRITE_ROW.C confirms three advancing OAM word writes.
+ * H2: own veneer 080001e8 targets exact Runtime_PushSlotEntry (08003dec),
+ * which overwrites word 0 with the previous queue head. Exact projected
+ * sprite consumers confirm the 12-byte node boundary. Giving the marker
+ * an explicit next pointer plus two payload words reaches the right size
+ * but loses both advancing stores, trades queue/duration fp-r9 roles and
+ * leaves priority in the wrong pool. Interpolation is unchanged. Reject
+ * this model despite its size: 316/316, 126 halfwords / 74 aligned edits.
+ * Restored H1's advancing word writes; its output is byte-identical.
+ * Two family hypotheses closed; no twins propagated and no DONE gained. */
 void Korosseo_UpdateMarker(void)
 {
     s32 tile;
@@ -92,14 +109,14 @@ void Korosseo_UpdateMarker(void)
         end = &Korosseo_MarkerEndY;
         diff = *end - start->signed_value;
         base = start->value;
-        base += Engine_MathDivide(step * diff, total);
+        base += step * diff / total;
         *pos = base;
         pos = &Korosseo_MarkerX;
         end = &Korosseo_MarkerEndX;
         start = &Korosseo_MarkerStartX;
         diff = *end - start->signed_value;
         base = start->value;
-        base += Engine_MathDivide(step * diff, total);
+        base += step * diff / total;
         *pos = base;
         if (step >= total) {
             zero = (u16)(u32)Korosseo_LinkedZero;

@@ -135,7 +135,15 @@
  * the zero-duration arm before the evaluator, reverses the entry branch,
  * changes all channel reload registers and one pool's order. Scale is
  * still r9 and duration fp. Reject this boundary, retain H2, and do not
- * transfer the failed phase or sweep wrappers across the other channels. */
+ * transfer the failed phase or sweep wrappers across the other channels.
+ * Astra outer-channel trial: share timer only between scale and position.
+ * Prediction: the intervening blend channel lengthens its lifetime and
+ * puts timer below sprite but above scale. Result 1264/1264, 21 halfwords /
+ * 21 edits: allocator counts only the active segments, still 6 references
+ * over 92 instructions. Sprite/timer exchange sl/r9 just as H4; the gap
+ * adds no lifetime. The finite repair command refuses the volatile source;
+ * its reciprocal catalog targets XOR temporaries, not this pointer pair.
+ * No volatile qualifier or tool guard was changed. Retain the 17-edit body. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 

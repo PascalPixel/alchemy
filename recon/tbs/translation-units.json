@@ -87,7 +87,7 @@
     },
     {
       "id": "arutamira-room-visuals",
-      "source": "recon/tbs/en/overlays/resource_3bd_c_02000bc8.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ROOM_VIS.C",
       "overlay": "resource_3bd",
       "absolute_symbols": {
         "Engine_ActorSetChildValue": {
@@ -111,7 +111,7 @@
         {
           "address": "0x02000bc8",
           "extent": 100,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -85943,24 +85943,78 @@
       "source": "recon/tbs/en/overlays/resource_3ba_c_02002bec.c",
       "overlay": "resource_3bb",
       "absolute_symbols": {
-        "gOamTiles": {"address": "0x03001b10", "kind": "data"},
-        "__divsi3": {"address": "0x0200bd98", "kind": "thumb"},
-        "Engine_OamSubmitRecord": {"address": "0x0200be28", "kind": "thumb"},
-        "Korosseo_LinkedZero": {"address": "0x00000000", "kind": "data"},
-        "Korosseo_MarkerIndex": {"address": "0x0200cb46", "kind": "data"},
-        "Korosseo_MarkerSteps": {"address": "0x0200cc2c", "kind": "data"},
-        "Korosseo_MarkerStep": {"address": "0x0200cbf0", "kind": "data"},
-        "Korosseo_MarkerY": {"address": "0x0200cc94", "kind": "data"},
-        "Korosseo_MarkerStartY": {"address": "0x0200cc44", "kind": "data"},
-        "Korosseo_MarkerEndY": {"address": "0x0200cc00", "kind": "data"},
-        "Korosseo_MarkerX": {"address": "0x0200cc20", "kind": "data"},
-        "Korosseo_MarkerStartX": {"address": "0x0200cc5c", "kind": "data"},
-        "Korosseo_MarkerEndX": {"address": "0x0200cca0", "kind": "data"},
-        "Korosseo_MarkerBlink": {"address": "0x0200cc14", "kind": "data"},
-        "Korosseo_MarkerPriority": {"address": "0x0200cbf8", "kind": "data"},
-        "Korosseo_MarkerOam": {"address": "0x0200cc50", "kind": "data"}
+        "gOamTiles": {
+          "address": "0x03001b10",
+          "kind": "data"
+        },
+        "__divsi3": {
+          "address": "0x0200bd98",
+          "kind": "thumb"
+        },
+        "Engine_OamSubmitRecord": {
+          "address": "0x0200be28",
+          "kind": "thumb"
+        },
+        "Korosseo_LinkedZero": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "Korosseo_MarkerIndex": {
+          "address": "0x0200cb46",
+          "kind": "data"
+        },
+        "Korosseo_MarkerSteps": {
+          "address": "0x0200cc2c",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStep": {
+          "address": "0x0200cbf0",
+          "kind": "data"
+        },
+        "Korosseo_MarkerY": {
+          "address": "0x0200cc94",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartY": {
+          "address": "0x0200cc44",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndY": {
+          "address": "0x0200cc00",
+          "kind": "data"
+        },
+        "Korosseo_MarkerX": {
+          "address": "0x0200cc20",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartX": {
+          "address": "0x0200cc5c",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndX": {
+          "address": "0x0200cca0",
+          "kind": "data"
+        },
+        "Korosseo_MarkerBlink": {
+          "address": "0x0200cc14",
+          "kind": "data"
+        },
+        "Korosseo_MarkerPriority": {
+          "address": "0x0200cbf8",
+          "kind": "data"
+        },
+        "Korosseo_MarkerOam": {
+          "address": "0x0200cc50",
+          "kind": "data"
+        }
       },
-      "owners": [{"address": "0x02002e84", "extent": 316, "state": "not-yet-c"}],
+      "owners": [
+        {
+          "address": "0x02002e84",
+          "extent": 316,
+          "state": "not-yet-c"
+        }
+      ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     },
@@ -85969,24 +86023,78 @@
       "source": "recon/tbs/en/overlays/resource_3ba_c_02002bec.c",
       "overlay": "resource_3bc",
       "absolute_symbols": {
-        "gOamTiles": {"address": "0x03001b10", "kind": "data"},
-        "__divsi3": {"address": "0x0200c830", "kind": "thumb"},
-        "Engine_OamSubmitRecord": {"address": "0x0200c8c8", "kind": "thumb"},
-        "Korosseo_LinkedZero": {"address": "0x00000000", "kind": "data"},
-        "Korosseo_MarkerIndex": {"address": "0x0200dace", "kind": "data"},
-        "Korosseo_MarkerSteps": {"address": "0x0200dbcc", "kind": "data"},
-        "Korosseo_MarkerStep": {"address": "0x0200db90", "kind": "data"},
-        "Korosseo_MarkerY": {"address": "0x0200dc34", "kind": "data"},
-        "Korosseo_MarkerStartY": {"address": "0x0200dbe4", "kind": "data"},
-        "Korosseo_MarkerEndY": {"address": "0x0200dba0", "kind": "data"},
-        "Korosseo_MarkerX": {"address": "0x0200dbc0", "kind": "data"},
-        "Korosseo_MarkerStartX": {"address": "0x0200dbfc", "kind": "data"},
-        "Korosseo_MarkerEndX": {"address": "0x0200dc40", "kind": "data"},
-        "Korosseo_MarkerBlink": {"address": "0x0200dbb4", "kind": "data"},
-        "Korosseo_MarkerPriority": {"address": "0x0200db98", "kind": "data"},
-        "Korosseo_MarkerOam": {"address": "0x0200dbf0", "kind": "data"}
+        "gOamTiles": {
+          "address": "0x03001b10",
+          "kind": "data"
+        },
+        "__divsi3": {
+          "address": "0x0200c830",
+          "kind": "thumb"
+        },
+        "Engine_OamSubmitRecord": {
+          "address": "0x0200c8c8",
+          "kind": "thumb"
+        },
+        "Korosseo_LinkedZero": {
+          "address": "0x00000000",
+          "kind": "data"
+        },
+        "Korosseo_MarkerIndex": {
+          "address": "0x0200dace",
+          "kind": "data"
+        },
+        "Korosseo_MarkerSteps": {
+          "address": "0x0200dbcc",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStep": {
+          "address": "0x0200db90",
+          "kind": "data"
+        },
+        "Korosseo_MarkerY": {
+          "address": "0x0200dc34",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartY": {
+          "address": "0x0200dbe4",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndY": {
+          "address": "0x0200dba0",
+          "kind": "data"
+        },
+        "Korosseo_MarkerX": {
+          "address": "0x0200dbc0",
+          "kind": "data"
+        },
+        "Korosseo_MarkerStartX": {
+          "address": "0x0200dbfc",
+          "kind": "data"
+        },
+        "Korosseo_MarkerEndX": {
+          "address": "0x0200dc40",
+          "kind": "data"
+        },
+        "Korosseo_MarkerBlink": {
+          "address": "0x0200dbb4",
+          "kind": "data"
+        },
+        "Korosseo_MarkerPriority": {
+          "address": "0x0200db98",
+          "kind": "data"
+        },
+        "Korosseo_MarkerOam": {
+          "address": "0x0200dbf0",
+          "kind": "data"
+        }
       },
-      "owners": [{"address": "0x0200391c", "extent": 316, "state": "not-yet-c"}],
+      "owners": [
+        {
+          "address": "0x0200391c",
+          "extent": 316,
+          "state": "not-yet-c"
+        }
+      ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     },

@@ -33,7 +33,12 @@
  * emitted. No new alias/prototype witness justifies a state wrapper.
  * Reference never defines r9 before Finalize(details): do not initialize
  * the unused second window or invent shared caller state to repair it.
- * STOP family ownership axis; unchanged baseline, no spelling trials. */
+ * STOP family ownership axis; unchanged baseline, no spelling trials.
+ * Astra 2026-09-27: a one-pass boundary around the final direction clear
+ * gives 584/584, 20 halfwords / 20 edits; both allocator lifetimes stay
+ * 19/322 and 17/292 and only the clear's scheduling changes. Conditional
+ * clear (if dir != 0) gives 588/584, 69/41: the extra guard survives and
+ * direction spans 372 instructions. Reject both; keep the 19-edit body. */
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"

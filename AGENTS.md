@@ -122,6 +122,8 @@ Each of these closed real owners. Try them before inventing anything new.
   byte and halfword views of the same game-state rows. When a byte-field store
   creates a zero absent from the reference, use an explicit `u8 *` store:
   `WORLD_MAP/LINKED_EFFECTS.C` and `KUUPUAPPU_MURA/DRIFT.C` are exact witnesses.
+  An initialized word-based 16-bit record can hold an unsigned snapshot until
+  its later signed use without a register copy: `ARUTAMIRA_DOU/ROOM_VIS.C`.
 - **Locals and control flow.** Reuse one local across branches and give each
   loop its own counter; declare locals in stack-slot order; one shared mask
   local when the reference keeps 255 in a register; an explicit `case 0:`

@@ -3055,17 +3055,6 @@
     },
     {
       "overlay": "resource_3bd",
-      "start": "0x02000bc8",
-      "end": "0x02000c2c",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_3bd_overlay.s; no assembly credit."
-      ]
-    },
-    {
-      "overlay": "resource_3bd",
       "start": "0x0200109c",
       "end": "0x020013f8",
       "kind": "not_yet_decompiled",

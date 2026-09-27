@@ -13,7 +13,7 @@
  * frame grows to 24 and the priority-bit one lives in fp across calls.
  * Full normalized diff read; this confirms pointer/index independence can
  * recover the load form but exceeds the reference's pressure budget. Stop
- * this axis rather than permuting declarations; restore the 588-byte body.
+ * this axis rather than permuting declarations; 588-byte body restored.
  * Own-ROM extent 0x02001d84..0x02001fd4 includes the five-word pool.
  * SETUP calls this four-pillar frame driver; the final call sorts the actors.
  * 2026-09-27 transfer from exact WORLD_MAP/LINKED_EFFECTS.C: access the four
@@ -95,10 +95,11 @@ void TakaraHashira_UpdatePillarActors(void)
     struct FieldActor *other;
     struct MapCell cell;
 
-    for (id = 8, slot = Data_0200b6d0; id <= 11; id++, slot++) {
+    for (id = 8; id <= 11; id++) {
         actor = Engine_ActorGet(id);
         actor->unknown_22 = 2;
         i = id - 8;
+        slot = &Data_0200b6d0[i];
         if ((actor->x.fixed >> 20) == Data_0200b6d0[i].x && (actor->z.fixed >> 20) == Data_0200b6d0[i].z
             && actor->velocity_y == 0) {
             continue;

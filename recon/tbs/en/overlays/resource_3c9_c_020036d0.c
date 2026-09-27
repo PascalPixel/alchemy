@@ -1,4 +1,8 @@
 /* NONMATCHING: 238 of 244 bytes, 73 differing halfwords, 16 halfword edits
+ * Sol Venus Summit recheck 2026-09-27: full normalized diff and complete
+ * extent unchanged. The existing OrbitEffect producer/consumer view already
+ * supplies Haidia's typed nullable ownership. Drift's random switch is absent;
+ * no new evidence supplies a surviving reload boundary. Prior axes stay closed.
  * (2026-09-27). Full-width Value_0ffff000 restores the separate field-store
  * addresses and mask register. The plain sprite-flags zero retains r8 and
  * both pool boundaries. Remaining: the object-type shift is early, the

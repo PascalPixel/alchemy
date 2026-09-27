@@ -1,4 +1,5 @@
 /* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
+ * H2 preserved at 164bbe5bb; ordinary sprite member store restored below.
  * 2026-09-27 Sol Venus Summit H2: Drift's explicit byte flag store removes
  * the generated QI zero from RTL, but does not move the Value_ zero before
  * the angle store. Complete normalized diff: 358/55/55, second pool still
@@ -130,10 +131,10 @@ void VinasuChojo_SpawnRisingSparks(void)
                 spark->unknown_64 = Engine_RandomNext() & (u32)&Value_0ffff000;
                 zero = (u8)(u32)&Value_00000000;
                 spark->unknown_66 = phase;
-                *(struct FieldActor **)spark->unknown_68 = source;
+                *(struct FieldEffect **)spark->unknown_68 = source;
                 spark->update = VinasuChojo_UpdateOrbitingSpark;
                 spark->speed = (Engine_MathSin((offset & 0xfffff) >> 4) * 24) >> 16;
-                *(u8 *)&sprite->flags = zero;
+                sprite->flags = zero;
                 sprite->priority = source->sprite->priority;
             }
         }

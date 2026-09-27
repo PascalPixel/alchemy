@@ -36,6 +36,7 @@
  * ends with a two-byte zero pad after bx r0; no setup call or tail operation
  * is absent. The factory type shift still precedes x/z loads, rather than
  * following them. This boundary trial did not satisfy its admission check.
+ * Failed model preserved at 5270c6cd7; restore the simpler baseline here.
  * Stop without a second spelling/prototype trial; zero DONE credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -83,12 +84,9 @@ void Func_020036d0(void)
         rise = Engine_RandomNext();
         rise <<= 6;
     }
-    /* FAKEMATCH: separate factory-result publication from script setup. */
-    do {
-        spark = (union OrbitEffect *)Engine_ObjectCreate(
-            0x11c, source->x.fixed, ((u32)rise >> 16 << 16) + source->y.fixed - 0x1c0000,
-            source->z.fixed);
-    } while (0);
+    spark = (union OrbitEffect *)Engine_ObjectCreate(
+        0x11c, source->x.fixed, ((u32)rise >> 16 << 16) + source->y.fixed - 0x1c0000,
+        source->z.fixed);
     if (spark != 0) {
         sprite = spark->actor.sprite;
         Engine_ObjectSetScript(&spark->actor, VinasuChojo_SparkScript);

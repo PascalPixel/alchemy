@@ -1,26 +1,74 @@
 /* NONMATCHING: complete 340-byte owner including its six-word pool;
- * candidate 340, 97 differing halfwords, 47 aligned edits (2026-09-26).
+ * candidate 340, 97 differing halfwords, 46 aligned edits (2026-09-27 H2).
+ * Original baseline: 340/97 halfwords/47 aligned edits.
  * Three bounded hypotheses: independent branch locals gave 328/340 and
  * 91 edits; explicit coordinate updates gave 344/340 and 62 edits; reusing
  * the initial draw as the direction mask restored r5 and kept drift counts
  * in r0. Remaining: coordinate load scheduling, cmp #0 rather than #1 at
  * the animation choice, destructive mask xor, and low-register reloads.
- * No direct caller or equivalent sibling was found in registered evidence. */
+ * No direct caller or equivalent sibling was found in the earlier audit.
+ * H1: exact installed SceneEffect_UpdateMotionWithDamping at 02001754
+ * proves +30/+34 are horizontal/vertical rates, +64 is a signed plane
+ * selector, and +38/+3c/+40 mirror position. Transfer that existing scalar
+ * record via the engine actor view, and bind its callback by registered name.
+ * Full-owner result 340/99/48: coordinate ancestry is unchanged; only the
+ * callback publication/leader-sprite reload tail reorders. All six pool
+ * words, frame and store widths remain fixed. New ownership evidence, not
+ * an exact adoption. The original candidate remains in parent 43fe42fc0.
+ * H2: exact BattleFx_SpawnBurstParticle (BATTLE/EFFECT/RISING_SEQUENCE.C,
+ * main 08092624) has the same random-variant -> animation/script -> drift
+ * initialization boundary. Its own-ROM 0809264a/4c pair is cmp #1; bne.
+ * Transfer its switch/case-1/default dispatch. The previously persistent
+ * 02001808/0a pair now matches; precisely two byte positions change from H1,
+ * both to reference bytes, with every other byte fixed. Topology is equal.
+ * The complete 340-byte owner remains nonmatching: 97 halfwords, 46 aligned
+ * edits, 56 wrong instructions. Freeze the admitted variant dispatch; the
+ * remaining coordinate loads, direction-mask xor and callback publication
+ * need distinct producer/consumer evidence, not pointer/zero permutations.
+ * Both structural trials are closed. No exact sibling source was edited. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+/* The exact damping callback owns +30/+34 as drift rates and +64 as its
+ * plane selector. Its scalar coordinates share the engine actor record. */
+struct OverlayEffectMotion {
+    u8 pad00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 pad14[28];
+    s32 horizontal_rate;
+    s32 vertical_rate;
+    s32 shadow_x;
+    s32 shadow_y;
+    s32 shadow_z;
+    u8 pad44[32];
+    s16 mode;
+};
+
+LAYOUT_OFFSET_GUARD(Drift_HorizontalRate, struct OverlayEffectMotion, horizontal_rate, 0x30);
+LAYOUT_OFFSET_GUARD(Drift_VerticalRate, struct OverlayEffectMotion, vertical_rate, 0x34);
+LAYOUT_OFFSET_GUARD(Drift_Mode, struct OverlayEffectMotion, mode, 0x64);
+
+union DriftingObject {
+    struct FieldActor actor;
+    struct OverlayEffectMotion motion;
+};
+
+void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
 
 /* Spawn a drifting effect near actor 19: bit 1 of flags picks its plane,
  * bit 0 its direction. */
 void KuupuappuMura_SpawnDriftingEffect(s32 flags)
 {
-    struct FieldActor *leader;
-    struct FieldActor *leaf;
+    union DriftingObject *leader;
+    union DriftingObject *leaf;
     struct FieldSprite *sprite;
     s32 x;
     s32 z;
     s32 zero;
 
-    leader = Engine_ActorGet(19);
+    leader = (union DriftingObject *)Engine_ActorGet(19);
     if (leader == NULL)
         return;
     x = Engine_RandomNext();
@@ -33,21 +81,26 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     z -= 4;
     x <<= 16;
     z <<= 16;
-    x += leader->x.fixed;
-    z += leader->z.fixed;
-    leaf = Engine_ObjectCreate(0xac, x, leader->y.fixed, z);
+    x += leader->motion.x;
+    z += leader->motion.z;
+    leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, leader->motion.y, z);
     if (leaf == NULL)
         return;
-    sprite = leaf->sprite;
-    if ((Engine_RandomNext() & 1) == 1) {
-        Engine_ObjectSetAnimation(leaf, 3);
-        Engine_ObjectSetScript(leaf, (const s32 *)0x0200a8c4);
-    } else {
-        Engine_ObjectSetAnimation(leaf, 2);
-        Engine_ObjectSetScript(leaf, (const s32 *)0x0200a8dc);
+    sprite = leaf->actor.sprite;
+    /* The exact burst-particle sibling dispatches the animation/script
+     * pair as one random variant, rather than as a boolean flag. */
+    switch (Engine_RandomNext() & 1) {
+    case 1:
+        Engine_ObjectSetAnimation(&leaf->actor, 3);
+        Engine_ObjectSetScript(&leaf->actor, (const s32 *)0x0200a8c4);
+        break;
+    default:
+        Engine_ObjectSetAnimation(&leaf->actor, 2);
+        Engine_ObjectSetScript(&leaf->actor, (const s32 *)0x0200a8dc);
+        break;
     }
     zero = 0;
-    leaf->motion_flags = zero;
+    leaf->actor.motion_flags = zero;
     if (flags & 2) {
         s32 cnt;
 
@@ -56,20 +109,20 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
         x = 1;
         flags &= x;
         cnt += (flags ^ x) << 2;
-        leaf->acceleration = (0x3332 * flags - 0x1999) * cnt;
+        leaf->motion.vertical_rate = (0x3332 * flags - 0x1999) * cnt;
         cnt = Engine_MathModulo(Engine_RandomNext(), 15) - 7;
-        leaf->speed = 0x1999 * cnt;
-        leaf->unknown_64 = zero;
+        leaf->motion.horizontal_rate = 0x1999 * cnt;
+        leaf->motion.mode = zero;
     } else {
         s32 cnt;
 
         cnt = Engine_MathModulo(Engine_RandomNext(), 10) + 8;
-        leaf->speed = (0x3332 * flags - 0x1999) * cnt;
+        leaf->motion.horizontal_rate = (0x3332 * flags - 0x1999) * cnt;
         cnt = Engine_MathModulo(Engine_RandomNext(), 14) + 1;
-        leaf->acceleration = 0x1999 * cnt;
-        leaf->unknown_64 = 1;
+        leaf->motion.vertical_rate = 0x1999 * cnt;
+        leaf->motion.mode = 1;
     }
-    leaf->update = (void (*)(union FieldObject *))0x02009755;
+    leaf->actor.update = (void (*)(union FieldObject *))SceneEffect_UpdateMotionWithDamping;
     sprite->flags = 0;
-    sprite->priority = leader->sprite->priority;
+    sprite->priority = leader->actor.sprite->priority;
 }

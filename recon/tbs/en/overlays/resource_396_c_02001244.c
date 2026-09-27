@@ -1,6 +1,8 @@
 /* NONMATCHING: complete 480-byte owner, candidate 480, 30 differing
- * halfwords, 29 aligned edits (2026-09-27). Reproducible single-overlay
- * unit binds the two imports and four data symbols. ENTER_ROOM installs
+ * halfwords, 29 aligned edits (2026-09-27). Separate-global trial rejected;
+ * the complete canonical body and original bindings are restored.
+ * Reproducible single-overlay unit binds its imports and data symbols.
+ * ENTER_ROOM installs
  * this palette callback at runtime address 0x02009245.
  * Prior baseline: hand-written from the disassembly; the goto loop keeps the clamp
  * zero and 31 unhoisted as the reference does. The reference allocates the
@@ -40,11 +42,34 @@
  * All three bounded family hypotheses are preserved in Git. No declaration
  * permutations or old accumulator trial. 0 new DONE; keep this canonical
  * typed model. Further work needs a supported palette-work/iteration
- * ownership boundary, preserving the now-exact attenuation body and pool. */
+ * ownership boundary, preserving the now-exact attenuation body and pool.
+ *
+ * Global-ownership H4 (Sep 27): exact ARUTIN_YAMA/PALETTE_STEP.C declares
+ * the field palette backing pointer at 03001ed0 as u16 *. Exact adjacent
+ * TORETO_HEYA/PALETTE.C captures hardware palette RAM into that buffer.
+ * FIELD_EVENT.H separately owns gEventWork at 03001ebc and the signed
+ * psynergy_request field at +0x17e. They are distinct pointer cells, not
+ * elements of an evidenced homogeneous event-work array.
+ * The own-ROM entry nevertheless loads one 03001ebc literal, then the
+ * event pointer from [r3] before the palette pointer from [r3,#20]. Its
+ * final pool has five words. One model with the two independent externs
+ * and canonical gEventWork->psynergy_request emits 488/480, 236 differing
+ * halfwords, 49 aligned edits: an extra entry load, two-byte alignment pad
+ * and sixth pool word. Whole normalized diff read. All nine attenuation
+ * sequences retain their instruction/register structure; calls and branches
+ * move with the two-byte entry growth. It does not repair the old loop
+ * setup, tint-load, source-load or output/index scheduling residuals.
+ * Reject as a match path; do not sweep tints/registers. This complete
+ * trial is preserved at b056c2f0f; canonical restoration is checked against
+ * the pre-trial candidate binary, including all attenuation code and pool.
+ * The ownership fact is established, but the original source expression
+ * that permits the shared-base loads in the ROM remains unproven. DONE +0. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 
+/* FAKEMATCH: array view of distinct linker-adjacent pointer cells preserves
+ * the ROM's shared address base; it does not establish one source array. */
 extern u8 *Data_03001ebc[];
 extern u32 Data_03001e40;
 /* Index of the current tint in Data_02009f00. */

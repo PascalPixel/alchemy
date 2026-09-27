@@ -27,7 +27,17 @@
  * interval, adding 0x0fff0000/0x1ffe0000 pools absent from ROM. Not admitted.
  * Stop this record/direction axis; no new DONE bytes. Canonical body restored
  * to the scalar/shared-facing baseline; retain the callee-proven record type
- * and these rejected hypotheses, not either failed pointer representation. */
+ * and these rejected hypotheses, not either failed pointer representation.
+ * Return-width audit (2026-09-27): own main veneer 08000100 targets
+ * 080044d1, the exact LIB/GEOMETRY.C u16 ArcTan2 implementation. Exact
+ * COMMON/KOROSSEO/PATH_RIVAL.C also declares this service u16. Correcting
+ * this draft's s32 declaration to u16 is byte-identical to its baseline:
+ * 608/612 bytes, 256 differing halfwords, 117 aligned edits, unequal topology.
+ * The complete normalized diff retains the same signed angle conversion,
+ * 8-byte frame, r4 facing-address spill and absent second zero-extension.
+ * This fixes the interface but does not admit the 4-byte/no-spill invariant.
+ * Stop after this one supported trial; do not vary angle/pointer spellings.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -58,7 +68,7 @@ struct StopRecord *SceneData_FindEntryAtPosition(s32 *pos);
 struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopRecord *set, s16 *facing);
 s32 SceneActor_CheckTileFreeOfKinds(struct StopRecord *pos);
 void SceneActor_ApplyScaledBytePairPosition(struct FieldActor *actor, struct StopRecord *pos);
-s32 Math_Atan2(s32 z, s32 x);
+u16 Math_Atan2(s32 z, s32 x);
 
 void KuupuappuHeya_UpdateActorStops(void)
 {

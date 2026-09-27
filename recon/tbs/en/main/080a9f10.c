@@ -8,6 +8,35 @@
  * aligned edits, unchanged from the byte view: the unsigned precheck is
  * right, but the first range load still follows the runtime count load.
  * The 11-halfword baseline is retained.
+ * 2026-09-27 H1 admission: this is the menu-party list (ItemMenuState's
+ * owner_ids +0x208, party_count +0x219), not BattlePlan's signed count and
+ * byte target IDs. Exact Djinn_CheckTurnBalance owns its iterator as u8;
+ * the draft instead uses u32 plus explicit truncations. Test the byte-owned
+ * iterator with index < count, retaining all range reads and effect work.
+ * Prediction: range read precedes unsigned initial bound, retaining both
+ * range copies, frame 20 and every previously matching byte. Baseline whole
+ * extent [080a9f10,080aa448): 1336B/11 halfwords/11 aligned edits; only
+ * offsets [0x40,0x56) differ. Require [0,0x40) and [0x56,0x538) unchanged.
+ * One source-width hypothesis, not a cached-range/precheck spelling sweep.
+ * Reject without a new structural fact; record result here and preserve Git.
+ * Whole exact bytes, ordinary-C lint and compare/coverage/verify gate credit.
+ * H1 result: 1336/1336B, 43 differing halfwords, 30 aligned edits, frame 20.
+ * Byte-identical to the prior explicit-precheck witness, proving u8 ownership
+ * and u32-with-truncation converge here. Range still loads after the bound;
+ * 32 formerly exact halfwords regress (57 bytes outside [0x40,0x56)).
+ * Reject H1; preserve its commit before restoring the 11-halfword baseline.
+ * Audit facts: Item_Use and Menu_ResolveSelectedAction pass four s32 values;
+ * the latter uses owner/target bytes +0x21a/+0x21b and 9 as all-party target.
+ * Item/Psynergy SelectTarget and Djinn_CountTurns consume the same menu list.
+ * BattlePres_BuildTargetList/RunActorEntries instead own BattlePlan's signed
+ * count and byte IDs; their list/call boundary cannot be transferred here.
+ * BattleAction_GetDirect returns a 16-byte ROM row, canonical range is u8;
+ * Owner_GetStateFar returns the 0x14c-byte owner record, not a target cursor.
+ * Missing evidence: a real producer/consumer or inline iteration boundary
+ * that evaluates the action range before the menu count while preserving
+ * the tail's two range copies and dynamic count reload. Current exact family
+ * provides none. Do not invent a shared cursor, const promise or ABI change.
+ * No second hypothesis without that new fact; closed with zero new credit.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -65,7 +94,7 @@ s32 BattleFx_ApplyToTargets(
     struct Object_080a9f10 *source;
     s32 later_target;
     s32 changed;
-    u32 index;
+    u8 index;
     s16 scale;
     s32 random_adjust;
     s32 random_nonone;
@@ -84,7 +113,7 @@ s32 BattleFx_ApplyToTargets(
         target = Func_08077008(0);
 
     index = 0;
-    if (runtime->target_count != 0) {
+    if (index < runtime->target_count) {
         do {
             if (effect->range == 0xff) {
                 target_id = runtime->targets[index];
@@ -300,7 +329,7 @@ s32 BattleFx_ApplyToTargets(
 
             if (effect->range != 0xff)
                 break;
-            index = (u8)(index + 1);
+            index++;
         } while (index < runtime->target_count);
     }
 
@@ -313,7 +342,7 @@ s32 BattleFx_ApplyToTargets(
     if (index < runtime->target_count) {
         do {
             Func_08077010(runtime->targets[index]);
-            index = (u8)(index + 1);
+            index++;
         } while (index < runtime->target_count);
     }
     runtime->result_code = result_code;

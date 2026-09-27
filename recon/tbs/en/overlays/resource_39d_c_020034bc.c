@@ -3,11 +3,18 @@
  * complete extent; the Value mask keeps the full-width literal and result
  * in r3. Remaining: lamp and zero reload registers, the signed height
  * access index, and a second pool four bytes later than the reference.
- * An independent random-result local and scalar zero regress the pools. */
+ * An independent random-result local and scalar zero regress the pools.
+ * 2026-09-27 H1: exact AERIE.C names the scene pointer Data_03001e70;
+ * FIELD_EVENT.H owns gFrameCount. Replacing only the two literal-address
+ * interfaces is byte-identical to baseline: 364/364, 60 halfwords/39 edits.
+ * Full normalized diff unchanged, including signed height index, source
+ * pointer reloads and late second pool. Retain the evidenced names, but
+ * stop this named-global axis. Whole extent [020034bc,02003628) includes
+ * both pools and terminal alignment; no exact bytes or gap credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-#define FrameCounter (*(u32 *)0x03001e40)
+extern u8 *Data_03001e70;
 
 extern u8 Value_00000000;
 extern u8 Value_0ffff000;
@@ -39,10 +46,10 @@ void Func_020034bc(void)
     struct Half zero;
 
     lamp = Engine_ActorGet(8);
-    work = (struct LampWork *)(*(u8 **)0x03001e70 + 0xe8);
+    work = (struct LampWork *)(Data_03001e70 + 0xe8);
     height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
     if (work->height <= 129) {
-        if (FrameCounter & 1) {
+        if (gFrameCount & 1) {
             Engine_ActorSetPosition(8, 0x1300000, 0x900000);
             actor = Engine_ActorGet(8);
             /* FAKEMATCH: keep the scale load after the actor lookup. */
@@ -59,7 +66,7 @@ void Func_020034bc(void)
     }
     if (lamp == NULL)
         return;
-    tick = FrameCounter & 15;
+    tick = gFrameCount & 15;
     if (tick != 0)
         return;
     spark = Engine_ObjectCreate(0x11c, lamp->x.fixed + 0x80000, lamp->y.fixed + height + 0x80000, lamp->z.fixed);

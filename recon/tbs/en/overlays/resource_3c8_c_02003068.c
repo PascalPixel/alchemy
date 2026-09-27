@@ -42,6 +42,11 @@
  * the one-pass block emits zero before address, but local allocation assigns
  * zero=r2 and address=r3: 3964 bytes, three differing halfwords. The loop
  * does not create the needed cross-block lifetime. Restore the two-edit body. */
+/* 2026-09-27 declaration/assignment split: declaring pointer SI480 before
+ * zero SI481, then assigning zero before pointer, still emits zero=r2 and
+ * address=r3: 3964 bytes, three halfword edits. RTL confirms pseudo numbers
+ * stayed 480/481, so declaration order alone cannot overcome the longer
+ * zero live range at local allocation. Restore the two-edit body. */
 /* Astra 2026-09-27: use Value_04000050 for the first blend-register
  * address, transferring the established link-constant method. Full output
  * remains 3964 bytes / 2 halfwords. Initializing zero before that symbolic

@@ -1,4 +1,20 @@
-/* Canonical restored (2026-09-27): 480/480 bytes, seven differing halfwords.
+/* Source-restoration audit (2026-09-27): NONMATCHING 480/480 bytes,
+ * seven differing halfwords / seven aligned edits. Hypothesis: the admitted
+ * event-before-palette H1 source was lost while restoring publication trials.
+ * Admission: reference entry, nine attenuation sequences, clamps, frame4
+ * and all five pool words; stop after comparing the committed bodies.
+ * Fresh lane-local scores of current source and 4c1e5a0f1 both give 480/7/7;
+ * their complete candidate binaries are identical (cmp), and normalized
+ * diffs were read in full. 94d13882f instead reproduces 480/30/29: its src
+ * acquisition precedes the event read. Thus H1 is present, not lost, and
+ * the older 30/29 result does not describe the current canonical body.
+ * Remaining 020013c6..020013d6: reference loads 1 into r1 before the final
+ * OR, advances sl before strh, then uses r3=2 for both pointer advances;
+ * current output stores first, advances sl with r3=1, then uses r1=2.
+ * No new semantic ownership boundary is supported by this reference.
+ * Stop with H1 unchanged; no separate-global or publication-local retry.
+ * DONE +0; this complete owner remains not-yet-c.
+ * Canonical restored (2026-09-27): 480/480 bytes, seven differing halfwords.
  * The two new publication-local trials are preserved in 72730cd63 and
  * 3a161950f. Both fail packing admission; no new supported publication
  * boundary remains, so this axis is stopped with no exact-byte credit.

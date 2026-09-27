@@ -1,4 +1,11 @@
-/* NONMATCHING: H3 typed Map_CopyCellAttributes transfer retains candidate
+/* Astra shared-copy-tail trial (2026-09-27): give the early actor path
+ * and entrance 11 explicit src_x/src_z/x/z inputs and a shared copy_cell
+ * label followed by return 0. The call merges, but stack argument stores
+ * move after the join rather than staying on both incoming paths; r0 also
+ * receives an extra r3 copy. Complete result 1252/1240 bytes, 588 halfwords
+ * / 141 aligned edits. Full diff read; reject the shared-label model and
+ * retain H3 below. No further tail spelling or new exact credit.
+ * NONMATCHING: H3 typed Map_CopyCellAttributes transfer retains candidate
  * 1260/reference 1240 bytes, 598 differing halfwords / 131 normalized edits.
  * The shared FIELD_EVENT.H void service emits the same six call sequences
  * as Call6, but does not merge the early actor path with entrance 11's tail.

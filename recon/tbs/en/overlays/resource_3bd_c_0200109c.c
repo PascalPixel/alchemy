@@ -1,4 +1,24 @@
-/* NONMATCHING Astra arithmetic recovery: 860/860 bytes, 259 differing
+/* NONMATCHING byte-publication transfer: 852/860 bytes, 339 differing
+ * halfwords / 97 aligned edits (2026-09-27). Keep the four-byte frame,
+ * arithmetic recovery and newly admitted publication boundaries. Explicit
+ * byte stores, following WORLD_MAP/LINKED_EFFECTS.C, remove the spurious
+ * zero retained across the random/remainder calls and publish the choice
+ * before reloading work. A separate u8 completed snapshot after work setup
+ * restores count truncation before the callback and cmp #2 afterwards.
+ * These local boundaries improve despite 95 -> 97 aggregate aligned edits.
+ * Remaining: early work/state load ordering, first angle lifetime, count
+ * address derivation, work scratch registers and final angle increment.
+ * Bounded negatives: early u8 count truncates before its store (852/340/99);
+ * subtracting one from the state address restores the count address but
+ * lacks valid object ownership (852/339/96), so that diagnostic is rejected.
+ * A nested owning record aligns phase to +4, not +1: invalid layout.
+ * A flat count/state/next record restores offsets 0/1/2 but gives 860/299/113,
+ * retaining another base in r8 and disrupting work stores. Reject it too.
+ * Restoring Value_ffffcccd only in the first ring gives 856/338/99, without
+ * the required retained step or shifted-angle lifetime. No further sweep.
+ * All complete normalized differences read; zero new exact credit.
+ *
+ * Previous Astra arithmetic recovery: 860/860 bytes, 259 differing
  * halfwords / 95 aligned edits (2026-09-27), with the correct four-byte
  * frame and equal branch topology. Replacing the decompiler's address-valued
  * -0xc00 with ordinary subtraction removes its call-crossing spill and
@@ -194,22 +214,25 @@ void FieldScene_RunStatefulSequence(s32 action)
             Engine_TaskWait(30);
         }
     }
-    Data_02001001.state = state;
+    /* FAKEMATCH: byte publication avoids a shared bit-field zero. */
+    *(u8 *)&Data_02001001.state = state;
     if (complete != 0) {
         u32 count = Data_02001000 + 1;
         s32 choice;
+        u8 completed;
 
         Data_02001000 = count;
         choice = Main_030003ac((s8)(((u32)(Engine_RandomNext() << 2) >> 16)
                                 + previous + 1) + 5, 5);
-        Data_02001001.next = choice;
+        *(s8 *)&Data_02001001.next = choice;
         work = Data_0200bf6c;
         work->values[WORK_SHOWN] = 0;
         work->values[WORK_DELAY] = 0;
         work->values[WORK_SIZE] = 0x200;
         work->values[WORK_PHASE] = 0x3000;
+        completed = count;
         Task_AddCallback(SceneEffect_UpdateStateMachine, TASK_PRIORITY_SCENE);
-        if ((u8)count <= 2) {
+        if (completed <= 2) {
             while (Data_0200bf6c->values[WORK_SHOWN] != 99)
                 Engine_TaskWait(1);
             Engine_TaskWait(10);

@@ -1,4 +1,28 @@
-/* NONMATCHING: 452 bytes, candidate 452, 138 differing halfwords, 116
+/* NONMATCHING call-topology H4 (2026-09-27): 444/452 bytes, 188 differing
+ * halfwords / 114 aligned edits. Entry setup's value-call cast on the
+ * success site prevents the interior failure from sharing that call.
+ * Full normalized diff read: all three script-call sites now exist, and
+ * H3's indexed coordinate searches survive. Admit these local shapes.
+ * Interior failure argument order is still ldr script before mov actor,
+ * unlike the reference. Actor/skip remain r6/r5, animation scan rotates,
+ * cursor tables use separate base+offset temporaries, and the pool is
+ * eight bytes early. Further work needs an independent lifetime witness;
+ * do not resweep sentinel spelling or value/void casts. No new DONE.
+ *
+ * NONMATCHING coordinate H3 (2026-09-27): 440/452 bytes, 190 differing
+ * halfwords / 117 aligned edits. Transfer the exact SETTLE_BLOCKS unsigned
+ * SwitchCell view and natural bounded indexed searches for both tables.
+ * Full normalized diff read: both loops now emit the required cell << 3,
+ * raw actor x followed by asr #20 at each comparison, and z offset +4.
+ * The prior induction pointers and hoisted x shift are gone. Admit that
+ * local structural correction despite the aggregate register regression.
+ * Actor/skip are r6/r5 instead of r5/r6; animation scan still rotates, the
+ * interior failure still merges with success, cursor addresses still use
+ * separate base+offset temporaries, and the fifteen-word pool is 12 bytes
+ * early. Preserve this coherent draft before one call-topology follow-up.
+ * No function or alignment credit; this remains C not yet written.
+ *
+ * Prior NONMATCHING: 452 bytes, candidate 452, 138 differing halfwords, 116
  * aligned edits (2026-09-27). VinasuHeya_DispatchPushScript, meant for
  * FIELD/VINASU_HEYA/F_04BD8.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -64,8 +88,14 @@ extern u8 Data_0200d1a8[];
 extern u8 Data_0200d1ac[];
 extern u8 Data_0200d1b0[];
 extern const u32 Data_0200d564[];
-extern struct { s32 x; s32 z; } Data_0200d128[];
-extern struct { s32 x; s32 z; } Data_0200d164[];
+/* Exact SETTLE_BLOCKS consumes these same unsigned switch-cell tables. */
+struct SwitchCell {
+    u32 x;
+    u32 z;
+};
+
+extern struct SwitchCell Data_0200d128[];
+extern struct SwitchCell Data_0200d164[];
 extern u8 *Data_0200f72c[];
 extern u8 *Data_0200f78c[];
 extern u32 *Data_0200f77c[];
@@ -114,7 +144,6 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     u32 cell;
     u32 skip;
     u8 *cursor;
-    s32 x_cell;
     u32 *script_row;
 
     pos.x = actor->x.fixed;
@@ -183,20 +212,11 @@ fail_mid:
 
 find_cell:
     if (RuntimeSelectorTable[224] == (s32)&Value_000000b9) {
-        cell = 0;
-        x_cell = actor->x.fixed;
-        if ((x_cell >> 20) == Data_0200d128[0].x
-            && (actor->z.fixed >> 20) == Data_0200d128[0].z) {
-            goto found_b9;
-        }
-        do {
-            cell++;
-            if (cell > 3) {
+        for (cell = 0; cell <= 3; cell++) {
+            if ((actor->x.fixed >> 20) == Data_0200d128[cell].x
+                && (actor->z.fixed >> 20) == Data_0200d128[cell].z)
                 break;
-            }
-        } while ((x_cell >> 20) != Data_0200d128[cell].x
-                 || (actor->z.fixed >> 20) != Data_0200d128[cell].z);
-    found_b9:
+        }
         skip = 0;
         cell <<= 2;
         goto scan_b9;
@@ -215,20 +235,11 @@ find_cell:
         goto dispatch;
     }
 
-    cell = 0;
-    x_cell = actor->x.fixed;
-    if ((x_cell >> 20) == Data_0200d164[0].x
-        && (actor->z.fixed >> 20) == Data_0200d164[0].z) {
-        goto found_other;
-    }
-    do {
-        cell++;
-        if (cell > 7) {
+    for (cell = 0; cell <= 7; cell++) {
+        if ((actor->x.fixed >> 20) == Data_0200d164[cell].x
+            && (actor->z.fixed >> 20) == Data_0200d164[cell].z)
             break;
-        }
-    } while ((x_cell >> 20) != Data_0200d164[cell].x
-             || (actor->z.fixed >> 20) != Data_0200d164[cell].z);
-found_other:
+    }
     skip = 0;
     cell <<= 2;
     goto scan_other;
@@ -246,7 +257,8 @@ scan_other:
     script_row = *(u32 **)((u8 *)Data_0200f7ec + cell);
 
 dispatch:
-    Call2((void (*)())Engine_ObjectSetScript, (s32)actor, script_row[skip]);
+    /* FAKEMATCH: entry setup's value-call form keeps failure and success apart. */
+    Value2((s32 (*)())Engine_ObjectSetScript, (s32)actor, script_row[skip]);
     goto done;
 
 fail_tail:

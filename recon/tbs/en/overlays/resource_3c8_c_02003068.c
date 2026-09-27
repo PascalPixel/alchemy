@@ -20,6 +20,18 @@
  * local/block lifetime: zero = 0; then control = BLDCNT and zero = 0 in a
  * second one-pass block. It still emits address before zero. That lifetime
  * transfer is rejected too; no full-function spelling sweep followed. */
+/* 2026-09-27 doorway lifetime audit: complete exact CROSS_DOORWAY (572 B)
+ * writer and both full compiler dumps compared, not just its zero spelling.
+ * Doorway SI33 is initialized before a real loop, flows through the byte
+ * read-mask-OR writer, crosses calls/blocks, and is globally assigned sl.
+ * Here initial RTL SI481 feeds only a HI conversion and volatile halfword
+ * store; after combine/local allocation it has REG_EQUIV zero and dies at
+ * that store, together with address SI480. There is no loop-carried writer
+ * or shared consumer. The underlying zero ancestry differs. Reject this
+ * transfer without a source trial or added stores; retain the full 3964 B
+ * baseline with only address/zero order at the first BLDCNT write differing.
+ * The old four-reference/address-cross-block idea remains unsupported by
+ * this witness. No new function bytes, alignment bytes or DONE. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -1,6 +1,4 @@
-/* NONMATCHING: resource_372:020031ac; current rejected store H1 is
- * 2720 / 2716 bytes, 492 differing halfwords, 134 wrong instructions,
- * 202 aligned edits. Retained best: 2716 / 2716 bytes, 49 differing
+/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 49 differing
  * halfwords, 36 wrong instructions, 40 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
  * Visual reloads, two facing-store blocks and coordinate-store ordering remain.
@@ -26,8 +24,18 @@
  * eight bytes. Actor-25 facing now precedes the priority read rather than
  * falling between its read and write. The complete normalized diff also
  * regresses untouched actor-10 and departure blocks. Preserve this attempt
- * in history, then restore the best typed bitfield model; no adoption. */
+ * in history, then restore the best typed bitfield model; no adoption.
+ * Store H2: exact MOTION_SET_POSITION_AND_RESET_MOTION.C and
+ * MOTION_SET_MOVE_TARGET.C both own the six position/target words through
+ * ObjectRuntime. Transfer that scalar view only to the 0200359c block,
+ * retaining the store sequence and every other actor/sprite access.
+ * The complete candidate binary and normalized diff are identical to the
+ * pre-H1 baseline: 2716/49 halfwords/40 edits, 4-byte frame, pools unchanged.
+ * Thus scalar versus coordinate-union ownership does not explain the early
+ * depth load. Both bounded store hypotheses are stopped; do not resweep
+ * byte-mask, record-view or camera wrappers without new writer evidence. */
 #include "FIELD_EVENT.H"
+#include "OBJECT_RUNTIME.H"
 
 struct Half {
     u16 value;
@@ -254,12 +262,18 @@ void Scene_RunActorGroupDepartureSequence(void)
     groupActor->scale_y = 0xcccc;
     groupActor->priority_flags &= 254;
     groupVisual->priority = 1;
-    actor->x.fixed = 0xc80000;
-    actor->y.fixed = 0xc80000;
-    actor->target_x = 0xc80000;
-    actor->target_y = 0xc80000;
-    actor->z.fixed = 0x3820000;
-    actor->target_z = 0x3820000;
+    {
+        /* FAKEMATCH: use the exact motion writers' scalar record view only
+         * at this position/target boundary; it compiles like the actor view. */
+        struct ObjectRuntime *object = (struct ObjectRuntime *)actor;
+
+        object->x = 0xc80000;
+        object->y = 0xc80000;
+        object->target_x = 0xc80000;
+        object->target_y = 0xc80000;
+        object->z = 0x3820000;
+        object->target_z = 0x3820000;
+    }
     step = ((u8 *)actor + 85);
     actor->motion_flags = initialStep.value;
     actor->priority_flags &= 254;
@@ -373,9 +387,7 @@ void Scene_RunActorGroupDepartureSequence(void)
     groupActor->priority_flags &= 254;
     groupActor->scale_x = 0x10000;
     groupActor->scale_y = 0x10000;
-    /* FAKEMATCH: preserve the attribute byte's alias boundary with facing,
-     * as the exact linked-effect family does for its sprite byte stores. */
-    ((u8 *)groupVisual)[9] &= 0xf3;
+    groupVisual->priority = 0;
     {
         s32 shown = 0xb000;
 
@@ -392,7 +404,7 @@ void Scene_RunActorGroupDepartureSequence(void)
 
         groupActor->facing = shown;
     }
-    ((u8 *)groupVisual)[9] &= 0xf3;
+    groupVisual->priority = 0;
     Func_02004794(25, 5);
     groupActor = Pointer1(Func_0200472c, 27);
     groupVisual = groupActor->sprite;

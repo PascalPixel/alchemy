@@ -97,6 +97,13 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  * without correcting result/speed lifetime. Rejected; best baseline retained.
  * No declaration permutation or register spelling sweep. Reopen only with a
  * new result/speed lifetime hypothesis, not the same typed-field conversion.
+ * 2026-09-27 result-view hypothesis: one union keeps the full decision for
+ * the branch/tail and a byte view for the four motion stores. Fresh complete
+ * normalized diff is unchanged: 504/508 bytes, 73 halfwords / 32 edits.
+ * It emits byte-identical assembly to the scalar baseline; the decision
+ * remains r6 and the speed sl. Width separation creates no new lifetime.
+ * Rejected witness is preserved at 9e5ca58a8; scalar source restored here.
+ * No function or alignment credit; stop the result-view axis here.
  */
 void Korosseo_RunPromptMotionSequence(s32 a0)
 {

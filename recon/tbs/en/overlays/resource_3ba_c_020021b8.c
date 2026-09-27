@@ -1,4 +1,4 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 28 differing halfwords, 28
+/* NONMATCHING: 1264 bytes, candidate 1264, 21 differing halfwords, 21
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
@@ -81,7 +81,14 @@
  * global.c allocno_compare uses floor_log2(n_refs)*n_refs/live_length:
  * timer 9/138 has priority 0.196, tile 15/324 0.139, sprite 18/680 0.106,
  * scale 7/168 0.083. This is a negative witness, not an accepted repair.
- * Keep the exact source topology and pools; no register spelling sweep. */
+ * Keep the exact source topology and pools; no register spelling sweep.
+ * 2026-09-27 Sol renderer H4: sharing the duration pointer for scale/blend
+ * only gives 6 references across 92 instructions, priority 0.130. Tile r8
+ * and scale fp match, but sprite r9 and duration sl exchange the reference's
+ * sl/r9 roles: 21 halfwords / 21 edits. Complete extent and every pool match.
+ * Priority alone does not predict the final allocation; the finite repair
+ * catalog has no unambiguous source shape for this reciprocal pointer swap.
+ * This remains a negative lifetime witness, with no adoption or credit. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -205,19 +212,18 @@ render:
         if (progress >= duration)
             *timer = zero.value;
     }
-    timer = &Data_0200c76c;
-    if (*timer == 0) {
+    if (Data_0200c76c == 0) {
         pos = Data_0200c7f8;
     } else {
         struct Half zero = { 0 };
         s32 duration, start, progress, target;
-        duration = *timer;
+        duration = Data_0200c76c;
         start = Data_0200c7f0;
         target = Data_0200c7f8;
         progress = ++Data_0200c77c;
         pos = start + (target - start) * progress / duration;
         if (progress >= duration)
-            *timer = zero.value;
+            Data_0200c76c = zero.value;
     }
     work.angle = 0;
     work.x = scale;

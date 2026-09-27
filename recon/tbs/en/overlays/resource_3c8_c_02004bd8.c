@@ -1,4 +1,4 @@
-/* NONMATCHING: 452 bytes, candidate 452, 138 differing halfwords, 117
+/* NONMATCHING: 452 bytes, candidate 452, 138 differing halfwords, 116
  * aligned edits (2026-09-27). VinasuHeya_DispatchPushScript, meant for
  * FIELD/VINASU_HEYA/F_04BD8.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -44,7 +44,13 @@
  * fails, and coordinate/cursor topology is unchanged. Thus neither plain
  * nor reload-preserving sentinel ownership reproduces both observed scan
  * invariants. Stop after these two trials; keep the stronger 138/116 body
- * from 90891c422 as the canonical baseline. No new DONE or adoption. */
+ * from 90891c422 as the canonical baseline. No new DONE or adoption.
+ * Restored that baseline after preserving H1 at bf187891d and H2 at
+ * b9798f615. The two H2-vs-baseline changes are only the zero-exit branch
+ * destinations at +0x76/+0x84, not an admitted ownership correction. Both
+ * trial pools at +0x188..+0x1c4 compare exactly. Keep the first-test plus
+ * per-step selection load and the distinct inner failure call as required
+ * topology for any future, independently supported source model. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"
@@ -104,6 +110,7 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     s32 axis;
     u8 *list;
     u8 byte;
+    const volatile u8 *want_ptr;
     u32 cell;
     u32 skip;
     u8 *cursor;
@@ -152,12 +159,20 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
         }
     }
 
-    while ((byte = *list) != 0) {
-        /* FAKEMATCH: the reference reads the selection again on each step. */
-        if (*(const volatile u8 *)&child->selected_animation == byte) {
-            break;
-        }
-        list++;
+    byte = list[0];
+    if (byte == 0) {
+        goto fail_mid;
+    }
+    /* FAKEMATCH: retain the observed selected-animation re-read in the scan. */
+    want_ptr = &child->selected_animation;
+    if (*want_ptr != byte) {
+        do {
+            list++;
+            byte = list[0];
+            if (byte == 0) {
+                goto fail_mid;
+            }
+        } while (*want_ptr != byte);
     }
     if (byte != 0) {
         goto find_cell;

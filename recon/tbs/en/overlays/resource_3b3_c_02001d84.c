@@ -4,7 +4,16 @@
  * bytes to the scalar-record baseline. Full normalized diff read: the first
  * X and second Z loads still fold to pointer accesses; cell/offset/slot
  * remain fp/r9/sl instead of r9/sl/fp. Frame20 and all five pool words agree.
- * The table-view hypothesis is rejected; restore the typed record next.
+ * The table-view hypothesis is rejected; typed record restored for H2.
+ * H2 tests independently advancing the slot pointer alongside the actor id.
+ * Predict indexed X/Z loads, a separately advanced slot and frame20; one
+ * trial, full extent/pool comparison mandatory before adoption.
+ * H2 rejected: 596/592 bytes, 287 halfwords / 81 aligned edits. Indexed
+ * first X and second Z loads are admitted, but slot spills at sp+12,
+ * frame grows to 24 and the priority-bit one lives in fp across calls.
+ * Full normalized diff read; this confirms pointer/index independence can
+ * recover the load form but exceeds the reference's pressure budget. Stop
+ * this axis rather than permuting declarations; restore the 588-byte body.
  * Own-ROM extent 0x02001d84..0x02001fd4 includes the five-word pool.
  * SETUP calls this four-pillar frame driver; the final call sorts the actors.
  * 2026-09-27 transfer from exact WORLD_MAP/LINKED_EFFECTS.C: access the four
@@ -56,7 +65,7 @@ struct PillarSlot {
     s32 flag;
 };
 
-extern s32 Data_0200b6d0[][5];
+extern struct PillarSlot Data_0200b6d0[];
 extern s32 Data_0200b720[];
 
 s32 Engine_CheckMovementCollision(struct FieldActor *object, s32 *pos);
@@ -86,12 +95,11 @@ void TakaraHashira_UpdatePillarActors(void)
     struct FieldActor *other;
     struct MapCell cell;
 
-    for (id = 8; id <= 11; id++) {
+    for (id = 8, slot = Data_0200b6d0; id <= 11; id++, slot++) {
         actor = Engine_ActorGet(id);
         actor->unknown_22 = 2;
         i = id - 8;
-        slot = (struct PillarSlot *)Data_0200b6d0[i];
-        if ((actor->x.fixed >> 20) == Data_0200b6d0[i][0] && (actor->z.fixed >> 20) == Data_0200b6d0[i][2]
+        if ((actor->x.fixed >> 20) == Data_0200b6d0[i].x && (actor->z.fixed >> 20) == Data_0200b6d0[i].z
             && actor->velocity_y == 0) {
             continue;
         }
@@ -101,8 +109,8 @@ void TakaraHashira_UpdatePillarActors(void)
             actor->motion_flags = 3;
         }
         flags = &actor->motion_flags;
-        TakaraHashira_SetCellAttributes(0, Data_0200b6d0[i][0], Data_0200b6d0[i][2], (struct MapCell *)&Data_0200b6d0[i][3]);
-        TakaraHashira_SetCellAttributes(2, slot->x, Data_0200b6d0[i][2], (struct MapCell *)&Data_0200b6d0[i][3]);
+        TakaraHashira_SetCellAttributes(0, Data_0200b6d0[i].x, Data_0200b6d0[i].z, &Data_0200b6d0[i].cell);
+        TakaraHashira_SetCellAttributes(2, slot->x, Data_0200b6d0[i].z, &Data_0200b6d0[i].cell);
         if (*flags & 1) {
             if (Engine_MapQueryPosition(2, actor->x.fixed, actor->z.fixed) == 50) {
                 Engine_AudioPlayCue(189);
@@ -126,25 +134,25 @@ void TakaraHashira_UpdatePillarActors(void)
             }
             *flags = 0;
         }
-        TakaraHashira_ReadMapCell(0, actor->x.fixed >> 20, actor->z.fixed >> 20, (struct MapCell *)&Data_0200b6d0[i][3]);
+        TakaraHashira_ReadMapCell(0, actor->x.fixed >> 20, actor->z.fixed >> 20, &Data_0200b6d0[i].cell);
         if (actor->y.fixed >= 0) {
             TakaraHashira_ReadMapCell(0, 27, (actor->y.fixed >> 20) + 6, &cell);
             TakaraHashira_SetCellAttributes(0, actor->x.fixed >> 20, actor->z.fixed >> 20, &cell);
             cell.kind = slot->cell.kind;
             TakaraHashira_SetCellAttributes(2, actor->x.fixed >> 20, actor->z.fixed >> 20, &cell);
         }
-        Data_0200b6d0[i][0] = actor->x.fixed >> 20;
-        Data_0200b6d0[i][1] = actor->y.fixed >> 20;
-        Data_0200b6d0[i][2] = actor->z.fixed >> 20;
+        Data_0200b6d0[i].x = actor->x.fixed >> 20;
+        Data_0200b6d0[i].y = actor->y.fixed >> 20;
+        Data_0200b6d0[i].z = actor->z.fixed >> 20;
         for (k = 0; k <= 3; k++) {
             if (k == i) {
                 continue;
             }
-            Engine_GameFlagClear(Data_0200b6d0[k][4]);
+            Engine_GameFlagClear(Data_0200b6d0[k].flag);
             other = Engine_ActorGet(k + 8);
             if ((actor->x.fixed >> 20) == (other->x.fixed >> 20) && (actor->z.fixed >> 20) == (other->z.fixed >> 20)
                 && actor->y.fixed > other->y.fixed) {
-                Engine_GameFlagSet(Data_0200b6d0[k][4]);
+                Engine_GameFlagSet(Data_0200b6d0[k].flag);
             }
         }
     }

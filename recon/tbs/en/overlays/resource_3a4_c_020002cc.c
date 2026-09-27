@@ -6,7 +6,14 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading);
 void Battle_ResetEffectCounterFar(void);
 void Main_0808a5e8(void);
 
-/* NONMATCHING: 188 of 188 bytes, 2 halfword edits (2026-09-24). sched2 orders the two
+/* Astra 2026-09-27: represent the quantized height as a word union with
+ * a 14-bit fractional field and signed 18-bit step field. This transfers
+ * ROOM_VIS.C's initialized narrow-record shape, but the complete output
+ * is binary-identical to the canonical 188-byte/two-halfword residual.
+ * The two left shifts still appear in the opposite order. Reject this
+ * record boundary and keep the ordinary arithmetic; no new exact credit.
+ *
+ * NONMATCHING: 188 of 188 bytes, 2 halfword edits (2026-09-24). sched2 orders the two
  * shifts of ((d >> 14) << 14) + 0x40000 the other way round: the reference
  * shifts d before it finishes building 0x40000.
  * 2026-09-26: allocator/sched2 dumps show reload insn 255 wins the ready-list

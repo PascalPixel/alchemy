@@ -1,12 +1,13 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 9 differing
- * halfwords, 18 wrong instructions, 9 aligned edits. Whole second-ramp trial.
+/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
+ * halfwords, 16 wrong instructions, 8 aligned edits. Canonical H2 restored.
  * 2026-09-27: greg allocates the second counter (pseudo 260) before its
  * independent port (261); the first port has r5 preference inherited from
  * the initial publication. Isolating only the second loop in RampBlendDown
  * preserves frame, pools and both reload boundaries, but leaves r5/r6
  * reversed and changes the bound from cmp 15/bls to cmp 16/bcc. It does
- * not admit the required register roles. Reject the whole-loop helper;
- * the eight-edit H2 remains in the preceding commit. No helper sweep.
+ * not admit the required register roles. The whole-loop helper is preserved
+ * in 5be81839c; H2 is restored here byte-identically. Close this distinct
+ * phase-helper axis without further variants.
  * The old explicit first-ramp alpha ownership removed its reload but
  * allocated r7 instead of r5.
  * Separate counters emit identical bytes; sharing the port across both
@@ -115,18 +116,9 @@ static __inline__ void SetBlendAlpha(u32 value)
     Data_04000052 = value;
 }
 
-static __inline__ void RampBlendDown(u32 base, u32 frames)
-{
-    u32 cnt;
-
-    for (cnt = 0; cnt < frames; cnt++) {
-        Data_04000052 = base - cnt;
-        Call1(Main_080000c0, 1);
-    }
-}
-
 void FieldScene_RunPaletteRampSequence(void)
 {
+    s32 base;
     struct FieldActor *p1;
     struct FieldSprite *sprite;
     u32 i1;
@@ -218,7 +210,15 @@ ramp:
         goto ramp;
     Call1(Main_080f9010, 202);
     Call1(Main_080000c0, 10);
-    RampBlendDown(0x100f, 16);
+    base = 0x100f;
+    {
+        u32 cnt;
+
+        for (cnt = 0; cnt <= 15; cnt++) {
+            Data_04000052 = base - cnt;
+            Call1(Main_080000c0, 1);
+        }
+    }
     Call1(Main_0808a0a0, 0);
     Call2(Main_0808a100, 8, 1);
     Call2(Main_0808a130, 8, 2);

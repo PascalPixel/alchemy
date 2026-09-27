@@ -1,10 +1,9 @@
-/* NONMATCHING: 788 bytes, candidate 788, 31 differing halfwords, 29 halfword
+/* NONMATCHING: 788 bytes, candidate 788, 24 differing halfwords, 22 halfword
  * edits (2026-09-27). FieldScene_RunMultiPhasePresentation, meant for
  * FIELD/ARUTIN_YAMA/F_01D0C.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
- * Remaining: Phase and step stores now keep their relative order. Pointer
- * and literal scheduling at the first setup, callback store timing, final
- * call argument order and wait counter scheduling remain.
+ * Remaining: first-setup pointer/literal/store scheduling, flag OR scratch
+ * registers, and wait-counter scheduling. Complete extent and pools match.
  * WALL: Initial motion setup scheduling and constant placement; typed
  * aggregate and grouped-store alternatives did not help.
  * H1 transfers the exact timed callback's signed timer/delay and active
@@ -13,6 +12,11 @@
  * Final animation arguments now match. Separate actor/motion pointers let
  * both state clears precede callback removal; flag OR scratch registers
  * also change. Initial setup and wait scheduling remain. Baseline 26/24.
+ * H2 gives the actor and callback views one union owner, without changing
+ * initialization order. Scores 788/24/22: both callback-removal/state-clear
+ * sequences and second callback publication now match. H1's canonical
+ * animation argument order stays exact. Initial setup is unchanged; no
+ * grouped-store retry. Stronger than the saved 788/26/24 baseline.
  * Missing EventEnd, local task and data bindings are now explicit. No DONE. */
 #include "TYPES.H"
 
@@ -46,6 +50,11 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
+union TimedActor {
+    struct FieldActor actor;
+    struct SceneMotion motion;
+};
+
 struct Half { u16 v; };
 extern s32 Data_03001c94;
 
@@ -54,13 +63,11 @@ void FieldScene_RunMultiPhasePresentation(void)
     struct Half zero;
     s16 *timer;
     s16 *delay;
-    struct FieldActor *actor;
-    struct SceneMotion *motion;
+    union TimedActor *actor;
     struct FieldActor *record;
     u32 n;
 
-    actor = Actor_Get(10);
-    motion = (struct SceneMotion *)actor;
+    actor = (union TimedActor *)Actor_Get(10);
     Engine_EventBegin();
     Engine_ActorStop(10);
     Call2(Engine_CameraSetSpeed, 0x26666, 0x4ccc);
@@ -76,18 +83,18 @@ void FieldScene_RunMultiPhasePresentation(void)
     Call4(Engine_CameraMoveTo, 0x800000, 0x400000, 0xca0000, 1);
     /* FAKEMATCH: volatile stores keep phase before the two motion steps. */
     zero.v = 0;
-    delay = &motion->delay;
-    *(volatile s32 *)&motion->active = 0;
-    timer = &motion->timer;
-    *(s32 *)&actor->unknown_44[4] = 0x6666;
+    delay = &actor->motion.delay;
+    *(volatile s32 *)&actor->motion.active = 0;
+    timer = &actor->motion.timer;
+    *(s32 *)&actor->actor.unknown_44[4] = 0x6666;
     *(volatile s16 *)delay = 0;
     *(volatile s16 *)timer = 0;
-    actor->update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+    actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 212, 200);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 103, 200);
-    actor->update = NULL;
-    motion->state = zero.v;
+    actor->actor.update = NULL;
+    actor->motion.state = zero.v;
     Engine_EventWait(10);
     Engine_ActorSetAnimation(10, 1);
     Engine_AudioPlayCue(229);
@@ -123,14 +130,14 @@ void FieldScene_RunMultiPhasePresentation(void)
     }
     Call3(Engine_ActorFaceDirection, 10, 0x3000, 20);
     Engine_ActorFaceDirection(10, 0, 40);
-    *(volatile s32 *)&motion->active = 0;
+    *(volatile s32 *)&actor->motion.active = 0;
     *(volatile s16 *)timer = 0;
     *(volatile s16 *)delay = 0;
-    actor->update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
+    actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 120, 215);
-    actor->update = NULL;
-    motion->state = zero.v;
+    actor->actor.update = NULL;
+    actor->motion.state = zero.v;
     Engine_ActorSetAnimation(10, 1);
     Engine_EventWait(16);
     Engine_AudioPlayCue(229);
@@ -155,9 +162,9 @@ void FieldScene_RunMultiPhasePresentation(void)
             }
         } while (Data_03001c94 == 0);
     }
-    actor = Engine_ActorGet(0);
+    actor = (union TimedActor *)Engine_ActorGet(0);
     Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);
-    Engine_CameraMoveTo(actor->x.fixed, actor->y.fixed, actor->z.fixed, 1);
+    Engine_CameraMoveTo(actor->actor.x.fixed, actor->actor.y.fixed, actor->actor.z.fixed, 1);
     Engine_CameraWaitForMove();
     Call1((void (*)())Engine_GameFlagSet, 0x905);
     Engine_EventEnd();

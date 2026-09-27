@@ -1,4 +1,13 @@
-/* NONMATCHING: 568 bytes, candidate 556, 216 differing halfwords,
+/* NONMATCHING kuupuappu phase H1 (2026-09-27): reuse the dead layout
+ * parameter as the projection cursor, following actor-stops' admitted
+ * dead-pointer phase ownership. Cursor stores, polar call and first test
+ * load follow the reference consumers. Prediction failed: complete output
+ * is byte-identical to the 556-byte baseline (cmp checked); the cursor
+ * still folds into r6 and frame stays 16, not reference 20. Full normalized
+ * diff and identical normal/diagnostic text checked: 216 halfwords / 56
+ * aligned edits, no exact credit. Retain this failed phase experiment;
+ * stop the phase/record/cursor allocation axes without further respellings.
+ * NONMATCHING: 568 bytes, candidate 556, 216 differing halfwords,
  * 56 aligned edits (2026-09-27). H2 is byte-identical to the baseline;
  * retain its named position and corrected layout-pointer interface.
  * Hand-written: push the block in front of the leader along
@@ -86,15 +95,17 @@ void Scene_PushBlockAlongRun(struct Block_394 *layout)
     block = SceneData_FindTileRunAt(layout, pos.x / 0x100000, pos.z / 0x100000);
     if (block == NULL)
         return;
+    /* FAKEMATCH: the dead layout pointer changes ownership to the loop's
+     * projection cursor, distinct from the position's function lifetime. */
+    layout = (struct Block_394 *)&pos;
     i = 0;
 next:
     {
-        struct BlockPosition *p = &pos;
-
-        p->x = block->x << 20;
-        p->z = block->z << 20;
-        Main_08000128(0x100000, dir, p);
-        if (State_CheckFourCellRun(pos.x / 0x100000, pos.z / 0x100000, block->upright) != 0)
+        ((struct BlockPosition *)layout)->x = block->x << 20;
+        ((struct BlockPosition *)layout)->z = block->z << 20;
+        Main_08000128(0x100000, dir, (struct BlockPosition *)layout);
+        if (State_CheckFourCellRun(((struct BlockPosition *)layout)->x / 0x100000,
+                                  pos.z / 0x100000, block->upright) != 0)
             goto done;
         moved = 1;
         if (block->upright == 0) {

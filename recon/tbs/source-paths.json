@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bc:0200004c": {
+      "name": "KorosseoMaruta_CycleLogPoses"
+    },
     "resource_3b7:020004bc": {
       "name": "TorebiIzumi_RevealPrize"
     },

@@ -2,6 +2,21 @@
   "format": 5,
   "units": [
     {
+      "id": "korosseo-log-poses",
+      "source": "recon/tbs/en/overlays/resource_3bc_c_0200004c.c",
+      "overlay": "resource_3bc",
+      "absolute_symbols": {
+        "Engine_ActorGet": {"address": "0x0200ca18", "kind": "thumb"},
+        "Engine_ActorSetAnimation": {"address": "0x0200ca70", "kind": "thumb"},
+        "Engine_MapCopyCellAttributes": {"address": "0x0200c940", "kind": "thumb"},
+        "gEventWork": {"address": "0x03001ebc", "kind": "data"},
+        "gGameState": {"address": "0x02000240", "kind": "data"}
+      },
+      "owners": [{"address": "0x0200004c", "extent": 316, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "torebi-prize-reveal",
       "source": "recon/tbs/en/overlays/resource_3b7_c_020004bc.c",
       "overlay": "resource_3b7",

@@ -1,5 +1,5 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 14 differing
- * halfwords, 28 wrong instructions, 14 halfword edits. Explicit first-ramp
+/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
+ * halfwords, 16 wrong instructions, 8 halfword edits. Explicit first-ramp
  * alpha ownership removes its reload but allocates r7 instead of r5.
  * Separate counters emit identical bytes; sharing the port across both
  * ramps wrongly removes the second reload (135 halfwords / 34 instructions).
@@ -8,7 +8,13 @@
  * restores the complete pool order and both earlier call-scheduling ties.
  * Full diff: 1064 bytes, 24 -> 14 halfwords/edits; 20 bytes change, 19 become
  * reference bytes, none regress. The 8-byte frame and both ramp reload
- * boundaries remain intact. Only port/counter register roles remain. */
+ * boundaries remain intact. Only port/counter register roles remain.
+ * H2: let the existing SetBlendAlpha writer own initialization and claim
+ * alpha only at the first ramp. CSE still retains the initial port, now in
+ * the reference's r5, with counter r6 and no extra reload. Complete score
+ * is 1064/8 halfwords/8 edits. All pools and the 8-byte frame remain exact;
+ * residual is first-ramp constant r3 versus r2 and the second ramp's
+ * counter/port r5/r6 versus r6/r5. The owned writer boundary is effective. */
 #include "FIELD_EVENT.H"
 
 void Main_080000c0();
@@ -139,8 +145,7 @@ void FieldScene_RunPaletteRampSequence(void)
     do {
         s32 value = (s32)Value_0000100c;
 
-        alpha = &Data_04000052;
-        *alpha = value;
+        SetBlendAlpha(value);
     } while (0);
     Main_0808a2c8();
     Data_03001ebc.work->enabled = 1;
@@ -180,6 +185,7 @@ void FieldScene_RunPaletteRampSequence(void)
     Call1(Main_080f9010, 234);
     Call1(Main_0808a010, 20);
     Call2(Main_0808a098, 10, (s32)Data_02009d38);
+    alpha = &Data_04000052;
     i1 = 0;
 ramp:
     /* FAKEMATCH: a word link constant keeps the pool after both ramps. */

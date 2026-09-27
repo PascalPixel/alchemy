@@ -1,4 +1,40 @@
-/* NONMATCHING: 490 of 488 bytes, 131 differing halfwords / 39 aligned edits
+/* NONMATCHING: transfer T2 482/488 bytes, 226 halfwords / 59 aligned edits.
+ * Retained inversion witness (2026-09-27): the corrected zero consumers
+ * plus a labeled counter loop admit all three zero-lifetime constraints:
+ * an unread r8 zero before the loop, mov r7,0 inside the motion-flags store
+ * sequence, and r7 reused for actor 19 motion_flags and actor 21 y afterward.
+ * The preheader temporary is r3, not ROM r2, and its ordering still differs.
+ * Complete normalized diff is topology equal, frame 8. All 30 service calls
+ * remain, but transition constants, sprite-priority computation/r0 restore,
+ * preheader scheduling and pool placement differ; no whole-owner match.
+ * loop dump has no recognized loop and cannot hoist x. Diagnostic -da
+ * assembly equals ordinary compilation. T1 at 1a6dced6e has only six edits
+ * but violates the loop-local-r7 admission; preserve it as the close witness,
+ * not as a reason to resume spelling sweeps. T2 is the admitted model.
+ * Exact transferred source: MAKYURI_IRIGUCHI/CROSS_DOORWAY.C's tagged
+ * pre-loop-zero OR, applied to priority_flags at +0x23 while loop x feeds
+ * motion_flags at +0x55. Its sibling source was not edited.
+ * Missing outward evidence: a source boundary retaining the desired loop
+ * optimizations without moving x's zero, not another equivalent zero spelling.
+ * One transfer and one causal follow-up exhausted. No new DONE bytes.
+ *
+ * Transfer T1 486/488 bytes, 22 halfwords / 6 aligned edits.
+ * 2026-09-27: exact MAKYURI_IRIGUCHI/CROSS_DOORWAY.C supplies a pre-loop
+ * zero ORed into byte flags. Here the byte accesses are priority +0x23
+ * and motion +0x55. Feeding the motion store from x and ORing zero into
+ * priority fixes the dead r8 preheader value and both post-loop r7 stores.
+ * All pool offsets/values now match. Complete normalized diff is topology
+ * equal; remaining edits are r7's hoisted zero, preheader order/back-edge,
+ * and the missing trailing alignment halfword. No partial-owner adoption.
+ * T1 fails the frozen local admission: r7 must be initialized in the loop
+ * at reference 020011fc, then reused at 020012a8 and 020012e0. loop.c still
+ * moves x's insn 212 (global savings 2, lifetime 147) to preheader 658.
+ * Diagnostic -da assembly equals normal compilation. The prior goto trial
+ * predated this corrected zero-consumer graph and kept the wrong r7/r8 roles.
+ * One causal control-flow follow-up is permitted; no zero/type permutations.
+ * No new DONE bytes.
+ *
+ * Previous canonical: 490 of 488 bytes, 131 halfwords / 39 aligned edits
  * (2026-09-26). Complete owner 02001148..02001330 includes the zero at
  * 020012f4, eleven pool words 020012f8..02001320, return at 0200132c and pad.
  * Three bounded structural trials: goto loop gives 488 bytes / 86 edits,
@@ -71,16 +107,25 @@ s32 Func_02001148(void)
         Engine_ActorSetPosition(17, 0, 0);
     }
     zero = 0;
-    for (n = 0; n <= 2; n++) {
+    n = 0;
+    /* FAKEMATCH: the named back-edge retains the loop-local motion zero;
+     * a structured for loop hoists it despite its post-loop consumers. */
+setup_actor:
+    {
         struct FieldActor *actor;
         actor = Engine_ActorGet(n + 23);
         actor->sprite->priority = 1;
         x = 0;
-        actor->motion_flags = zero;
+        actor->motion_flags = x;
         actor->collision_flags = 8;
         Engine_ActorSetSpriteFlags(actor, 0);
         Engine_ObjectSetPalette(actor, 15);
-        actor->priority_flags = (actor->priority_flags & 254) | 2;
+        /* FAKEMATCH: CROSS_DOORWAY.C's pre-loop zero OR preserves the
+         * unused preheader value separately from the motion-flags zero. */
+        actor->priority_flags = (actor->priority_flags & 254) | 2 | zero;
+        n++;
+        if (n <= 2)
+            goto setup_actor;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x202)) {
         Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);

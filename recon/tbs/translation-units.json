@@ -2,39 +2,95 @@
   "format": 5,
   "units": [
     {
-      "id": "soru-seal-door-focus",
-      "source": "recon/tbs/en/overlays/resource_37b_c_02000c8c.c",
-      "overlay": "resource_37b",
+      "id": "arutamira-room-visuals",
+      "source": "recon/tbs/en/overlays/resource_3bd_c_02000bc8.c",
+      "overlay": "resource_3bd",
       "absolute_symbols": {
-        "Engine_ActorGet": {
-          "address": "0x0200a46c",
+        "Engine_ActorSetChildValue": {
+          "address": "0x0200bd58",
           "kind": "thumb"
         },
-        "Engine_ActorWalkToAndWait": {
-          "address": "0x0200a494",
-          "kind": "thumb"
+        "gGameStateRows": {
+          "address": "0x02000240",
+          "kind": "data"
         },
-        "Engine_ActorFaceDirection": {
-          "address": "0x0200a4f4",
-          "kind": "thumb"
+        "Data_00000092": {
+          "address": "0x92",
+          "kind": "data"
         },
-        "Engine_EventWait": {
-          "address": "0x0200a44c",
-          "kind": "thumb"
-        },
-        "Engine_MapCopyCellsTo": {
-          "address": "0x0200a404",
-          "kind": "thumb"
-        },
-        "Data_03001e70": {
-          "address": "0x03001e70",
+        "Data_00000097": {
+          "address": "0x97",
           "kind": "data"
         }
       },
       "owners": [
         {
-          "address": "0x02000c8c",
-          "extent": 548,
+          "address": "0x02000bc8",
+          "extent": 100,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "babi-chika-leader-spray",
+      "source": "recon/tbs/en/overlays/resource_3c4_c_020010c4.c",
+      "overlay": "resource_3c4",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200b10c",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200b0f4",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x0200b054",
+          "kind": "thumb"
+        },
+        "Main_0808a118": {
+          "address": "0x0200b14c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpriteFlags": {
+          "address": "0x0200b0ac",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x0200b1ac",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x0200b074",
+          "kind": "thumb"
+        },
+        "Engine_TaskWait": {
+          "address": "0x0200b024",
+          "kind": "thumb"
+        },
+        "Engine_RandomNext": {
+          "address": "0x0200b034",
+          "kind": "thumb"
+        },
+        "Engine_MathModulo": {
+          "address": "0x0200b01c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x0200b0fc",
+          "kind": "thumb"
+        },
+        "advance_effect_motion": {
+          "address": "0x02009068",
+          "kind": "thumb"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x020010c4",
+          "extent": 284,
           "state": "not-yet-c"
         }
       ],
@@ -86853,7 +86909,7 @@
           "address": "0x03001b10",
           "kind": "data"
         },
-        "Engine_MathDivide": {
+        "__divsi3": {
           "address": "0x0200bb00",
           "kind": "thumb"
         },
@@ -88045,6 +88101,98 @@
       "compiler_route": "canonical-gcc296"
     },
     {
+      "id": "ovd-394-02000c2c",
+      "source": "recon/tbs/en/overlays/resource_394_c_02000c2c.c",
+      "overlay": "resource_394",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x020090ac",
+          "kind": "thumb"
+        },
+        "Main_08000128": {
+          "address": "0x0200901c",
+          "kind": "thumb"
+        },
+        "SceneData_FindTileRunAt": {
+          "address": "0x02008b8c",
+          "kind": "thumb"
+        },
+        "State_CheckFourCellRun": {
+          "address": "0x02008be4",
+          "kind": "thumb"
+        },
+        "Engine_EventBegin": {
+          "address": "0x0200909c",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetAnimation": {
+          "address": "0x020090dc",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x02009094",
+          "kind": "thumb"
+        },
+        "Engine_AudioPlayCue": {
+          "address": "0x02009114",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetAnimation": {
+          "address": "0x02009034",
+          "kind": "thumb"
+        },
+        "Engine_ObjectSetPosition": {
+          "address": "0x02009054",
+          "kind": "thumb"
+        },
+        "Engine_AllocateBlock": {
+          "address": "0x0200902c",
+          "kind": "thumb"
+        },
+        "Main_080090e0": {
+          "address": "0x02009044",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetSpeed": {
+          "address": "0x020090b4",
+          "kind": "thumb"
+        },
+        "Engine_ActorSetDestinationOffset": {
+          "address": "0x020090c4",
+          "kind": "thumb"
+        },
+        "Engine_ObjectCommitPosition": {
+          "address": "0x0200905c",
+          "kind": "thumb"
+        },
+        "Engine_EventEnd": {
+          "address": "0x020090a4",
+          "kind": "thumb"
+        },
+        "Data_02009164": {
+          "address": "0x02009164",
+          "kind": "data"
+        },
+        "Data_02009168": {
+          "address": "0x02009168",
+          "kind": "data"
+        },
+        "Data_0200916c": {
+          "address": "0x0200916c",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000c2c",
+          "extent": 568,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "ovd-394-02000098",
       "source": "recon/tbs/en/overlays/resource_394_c_02000098.c",
       "overlay": "resource_394",
@@ -88553,6 +88701,46 @@
         {
           "address": "0x02000580",
           "extent": 560,
+          "state": "not-yet-c"
+        }
+      ],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "soru-seal-door-focus",
+      "source": "recon/tbs/en/overlays/resource_37b_c_02000c8c.c",
+      "overlay": "resource_37b",
+      "absolute_symbols": {
+        "Engine_ActorGet": {
+          "address": "0x0200a46c",
+          "kind": "thumb"
+        },
+        "Engine_ActorWalkToAndWait": {
+          "address": "0x0200a494",
+          "kind": "thumb"
+        },
+        "Engine_ActorFaceDirection": {
+          "address": "0x0200a4f4",
+          "kind": "thumb"
+        },
+        "Engine_EventWait": {
+          "address": "0x0200a44c",
+          "kind": "thumb"
+        },
+        "Engine_MapCopyCellsTo": {
+          "address": "0x0200a404",
+          "kind": "thumb"
+        },
+        "Data_03001e70": {
+          "address": "0x03001e70",
+          "kind": "data"
+        }
+      },
+      "owners": [
+        {
+          "address": "0x02000c8c",
+          "extent": 548,
           "state": "not-yet-c"
         }
       ],

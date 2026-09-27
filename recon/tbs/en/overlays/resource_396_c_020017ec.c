@@ -12,7 +12,17 @@
  * the preheader order: the reference sets the -1 (r8), the offset 0 (r5) and
  * then size 1 (r7); here the hoisted size comes first. The loop dump shows
  * size as the first movable; for, while, goto and condition placements of
- * size did not move it after the strength-reduced offset. */
+ * size did not move it after the strength-reduced offset.
+ * Fresh inversion audit (2026-09-27): complete 96-byte score remains
+ * 3 halfwords / 2 aligned edits; ordinary and -da assembly are identical.
+ * Loop pass first moves size pseudo33, insn35 -> 203; next moves the -1
+ * producer to209, then creates shared byte-offset pseudo100 at215 when
+ * eliminating index32. Global allocation preserves this 1/-1/0 order as
+ * r7/r8/r5. Thus the divergence predates the final scheduler and call reloads.
+ * The whole loop after its entry and the table pool are exact. Caller and
+ * FIELD_EVENT.H agree on six word arguments, with both sizes on the stack.
+ * No new source boundary was established; no repeated loop/type/wrapper
+ * trial was run, and no DONE credit is claimed. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -12,14 +12,21 @@
  * H1 result: 102/96 bytes, 49 differing halfwords, 37 aligned edits.
  * The union restores the reference first flag-store/count-load order.
  * Extra high register and inner flag temporary remain; save count is wrong.
+ * H2: the value is a whole byte in the reference, not a signed bitfield;
+ * use a plain byte while retaining the newly proven alias/store boundary.
+ * H2 result: identical output to H1 (102/96 bytes, 49 differing halfwords,
+ * 37 aligned edits). The byte-field change does not affect allocation.
+ * Stop after one corrected alias model and one followup. No new DONE credit.
  */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 
+/* FAKEMATCH: shared alias view preserves observed order; physical record/
+ * child overlap is not established independently of the instruction order. */
 union MotionRecordView {
     struct {
         u8 filler_00[5];
-        s32 value : 8;
+        u8 value;
         u8 filler_06[16];
         u32 flags : 8;
     } child;

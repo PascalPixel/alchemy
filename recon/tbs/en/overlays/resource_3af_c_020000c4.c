@@ -36,7 +36,25 @@
  * Keep the coherent union model as a draft; the previous model is in Git.
  * No second new helper boundary is supported by the exact sibling audit.
  * STOP this ownership-union axis: no declaration, pointer or register sweep.
- * Neither this callback nor its 020002ec twin is newly exact. DONE +0. */
+ * Neither this callback nor its 020002ec twin is newly exact. DONE +0.
+ *
+ * H4 (west): exact FLY_BY_21/22 dispatch directly on their record field.
+ * Remove the named step snapshot and spell the idle reset as literal zero,
+ * retaining the union, Call3/4 and shared increment tail. Predicted admission
+ * was counter/value r6/r8 and 552 bytes. Actual: 560/552, 234 halfwords,
+ * 74 aligned edits, counter r8 and initial value r7. Rejected.
+ * CSE still uses its known-zero state for the idle turn_x store. Counter
+ * address pseudo 35 has 11 uses over 170 instructions and 15 calls; value
+ * 37 has 3 uses over 14 instructions and 1 call. Allocation orders 37 then
+ * 35, with no tie. The loop pass performs no loop transformation here.
+ * This disproves the named snapshot alone as cause of pointer priority;
+ * direct-field spelling is now closed, not a reason to permute declarations.
+ * Full normalized diff read: initial position shift order, idle pointers,
+ * extra counter copies and shifted table/pool remain. No exact credit.
+ * H4 is preserved in 3f451ae66; restore the canonical H3 source below.
+ * The second callback's byte-snapshot follow-up also leaves allocation
+ * unchanged. Neither result supplies a tied allocator priority or a new
+ * supported phase/helper boundary. Stop this producer axis. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

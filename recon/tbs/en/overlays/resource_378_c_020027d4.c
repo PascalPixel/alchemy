@@ -1,5 +1,13 @@
-/* NONMATCHING: not-yet-c, 312 candidate / 312 reference bytes, 48 differing
- * halfwords and 28 normalized edits (2026-09-26). Whole owner is 020027d4
+/* NONMATCHING: not-yet-c, 320 candidate / 312 reference bytes, 156 differing
+ * halfwords and 56 normalized edits (2026-09-27 isolated-address trial).
+ * The scope that closed resource_382 isolated only its address producer.
+ * Here one cursor pointer assigned inside each do/while(0) still caches:
+ * user pseudo 32 has nine uses / 21 insns / one call and lands in r5;
+ * its successor stays in sl. Per-call sp+8 rematerialization is not admitted.
+ * An extra high-register save accounts for the larger owner and pool shift.
+ * No exact or alignment credit. Stop the producer-scope transfer axis.
+ * Baseline below this trial's history: 312/312, 48 halfwords / 28 edits.
+ * Whole owner is 020027d4
  * through 0200290c, including its five pool words; no neighbor is included.
  *
  * Own-ROM call veneers lead to UiTextResource_Initialize (0801c0dc),
@@ -119,6 +127,7 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 s32 ShindenHeya_ChooseRestartOption(void)
 {
     struct TextObject cursor;
+    struct TextObject *work;
     s32 handle;
     s32 win;
     s32 text;
@@ -142,15 +151,24 @@ s32 ShindenHeya_ChooseRestartOption(void)
         Engine_DebugDrawTextResource(text + 2, win, 16, 16);
     else
         Engine_DebugDrawTextResource(text + 1, win, 16, 16);
-    UiTextResource_InitializeFar(&cursor, &handle);
-    UiTextResource_SetPositionFar(&cursor, 72, 60);
+    do {
+        work = &cursor;
+    } while (0);
+    UiTextResource_InitializeFar(work, &handle);
+    do {
+        work = &cursor;
+    } while (0);
+    UiTextResource_SetPositionFar(work, 72, 60);
     sel = 0;
     if ((*(s32 *)0x03001c94 & 1) == 0) {
         tbl = (s32 *)0x0200c11c;
         do {
             if ((*(s32 *)0x03001b04 & 192) != 0)
                 sel ^= 1;
-            UiTextResource_SetPositionFar(&cursor, tbl[(*(u32 *)0x03001800 >> 1) & 15] + 24, (sel << 4) + 60);
+            do {
+                work = &cursor;
+            } while (0);
+            UiTextResource_SetPositionFar(work, tbl[(*(u32 *)0x03001800 >> 1) & 15] + 24, (sel << 4) + 60);
             Engine_EventWait(1);
         } while ((*(s32 *)0x03001c94 & 1) == 0);
     }

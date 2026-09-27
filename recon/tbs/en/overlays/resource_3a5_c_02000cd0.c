@@ -18,7 +18,14 @@
  * CSE insn 12 loads the explicit state pointer before event insns 15/17;
  * offset 562 enters only in insn 22. Next supported boundary is direct
  * typed-global access, as Field_ProcessStep uses, not a literal-order sweep.
- * No exact credit. */
+ * H2 removed the cached state pointer and used the direct global expression
+ * Engine_MathDivide(Data_02000240_t.steps * 100, Data_02000240_t.limit).
+ * Result 304/304, nine differing halfwords / seven aligned edits: entry
+ * loads event address, state address, then 562; reference wants 562 first.
+ * Body 0cd8..0dde still exact, but all three initial loads/pool words rotate.
+ * Rejected; H1 retained. STOP after one model and one evidence-led follow-up.
+ * Future admission must emit the reference offset/event/state entry order
+ * naturally; changing struct/array access alone has been falsified. No credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

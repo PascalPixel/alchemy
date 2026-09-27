@@ -1,4 +1,10 @@
-/* Cross-edition identity audit (2026-09-27): German, Spanish, French
+/* NONMATCHING 2026-09-27: word-sized direction with signed-byte consumers
+ * places direction in r8 and redraw in sl as the ROM does, but loses four
+ * bytes and changes 163 halfwords (72 aligned edits). Moving the local
+ * redraw clear after window refresh stays 580/584 and worsens to 225
+ * halfwords (83 edits). The byte-sized direction's sign extension and its
+ * zero shared with the call are required; keep the 584/19 baseline.
+ * Cross-edition identity audit (2026-09-27): German, Spanish, French
  * and Italian retain the English core at 020004b0. The automatic Japanese
  * anchor at 020001c8 is NOT this ability selector: its mask is 0x1ff,
  * message base 0x182 and empty-entry test a halfword at +6, identifying

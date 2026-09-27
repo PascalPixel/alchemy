@@ -1479,12 +1479,8 @@
           "address": "0x02009a38",
           "kind": "thumb"
         },
-        "gEventWork": {
+        "Data_03001ebc": {
           "address": "0x03001ebc",
-          "kind": "data"
-        },
-        "Data_03001ed0": {
-          "address": "0x03001ed0",
           "kind": "data"
         },
         "Data_03001e40": {

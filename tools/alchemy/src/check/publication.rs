@@ -3105,6 +3105,53 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 mod tests {
     use super::*;
     #[test]
+    fn generated_publication_merge_driver_survives_binary_macro() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "attribute fixture").unwrap();
+        let attributes = include_str!("../../../../.gitattributes");
+        std::fs::write(root.join(".gitattributes"), attributes).unwrap();
+        let inspect = || {
+            String::from_utf8(
+                git(
+                    root,
+                    &[
+                        "-c",
+                        "core.attributesFile=/dev/null",
+                        "check-attr",
+                        "merge",
+                        "text",
+                        "diff",
+                        "--",
+                        "PROGRESS.png",
+                        "PROGRESS_CHART.png",
+                        "recon/tbs/metrics/history.json",
+                        "games/X/SRC/MAIN.C",
+                    ],
+                    "attribute fixture",
+                )
+                .unwrap(),
+            )
+            .unwrap()
+        };
+        let result = inspect();
+        for path in ["PROGRESS.png", "PROGRESS_CHART.png"] {
+            for (attribute, value) in [("merge", "generated"), ("text", "unset"), ("diff", "unset")]
+            {
+                assert!(result.contains(&format!("{path}: {attribute}: {value}\n")));
+            }
+        }
+        assert!(result.contains("recon/tbs/metrics/history.json: merge: generated\n"));
+        assert!(result.contains("games/X/SRC/MAIN.C: merge: unspecified\n"));
+        std::fs::write(
+            root.join(".gitattributes"),
+            attributes.replace("binary merge=generated", "merge=generated binary"),
+        )
+        .unwrap();
+        assert!(inspect().contains("PROGRESS.png: merge: unset\n"));
+    }
+
+    #[test]
     fn history_only_merges_scan_the_whole_tree() {
         for (file, permitted) in [("README.md", true), ("UNOWNED.md", false)] {
             let directory = tempfile::tempdir().unwrap();

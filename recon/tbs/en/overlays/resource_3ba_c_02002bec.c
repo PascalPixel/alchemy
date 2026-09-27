@@ -78,7 +78,14 @@ extern s32 Korosseo_MarkerOam[3];
  * leaves priority in the wrong pool. Interpolation is unchanged. Reject
  * this model despite its size: 316/316, 126 halfwords / 74 aligned edits.
  * Restored H1's advancing word writes; its output is byte-identical.
- * Two family hypotheses closed; no twins propagated and no DONE gained. */
+ * Two family hypotheses closed; no twins propagated and no DONE gained.
+ * Sol H3: calculate each interpolation product before reading its unsigned
+ * base. Full output remains byte-identical: 312/316 bytes, 126 halfwords,
+ * 65 aligned edits. RTL already ties the product to diff pseudo 37, whose
+ * division-result move gives r0 preference; local/global allocation keeps
+ * it in r0 and step pseudo 34 in r5. The reference instead copies step to
+ * r0 before both multiplies. Moving this product alone cannot change that
+ * interference. No adoption; close this statement-boundary axis. */
 void Korosseo_UpdateMarker(void)
 {
     s32 tile;
@@ -108,15 +115,17 @@ void Korosseo_UpdateMarker(void)
         start = &Korosseo_MarkerStartY;
         end = &Korosseo_MarkerEndY;
         diff = *end - start->signed_value;
+        diff = step * diff;
         base = start->value;
-        base += step * diff / total;
+        base += diff / total;
         *pos = base;
         pos = &Korosseo_MarkerX;
         end = &Korosseo_MarkerEndX;
         start = &Korosseo_MarkerStartX;
         diff = *end - start->signed_value;
+        diff = step * diff;
         base = start->value;
-        base += step * diff / total;
+        base += diff / total;
         *pos = base;
         if (step >= total) {
             zero = (u16)(u32)Korosseo_LinkedZero;

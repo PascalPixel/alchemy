@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1176, 344 differing halfwords, 116
- * wrong instructions, 148 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1180, 561 differing halfwords, 80
+ * wrong instructions, 180 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -31,7 +31,20 @@
  * bytes. Sprite stays r5, control sl, ground r8; reference needs sprite r8,
  * control r9, ground sl. Four later byte-flag updates retain extra pointer
  * copies. All three hypotheses preserved in commits; stop this pass here.
- * WALL: structural-topology: shared workspace lifetimes and actor setup */
+ * 2026-09-27 H1: transfer exact DECK_SEQ.C/BY_ID.C actor lookup and void
+ * action-table interfaces, bind all three callback tables from this owner's
+ * pool, and use FIELD_EVENT.H FieldSprite.rotation instead of a +30 cast.
+ * Full listing and normalized diff read. This recovers the formerly missing
+ * third high-register save: sprite r8, control r9 and ground sl all agree,
+ * as do the complete save/restore sequence and the ground-position store.
+ * The original callback was already void; do not attribute the gain to a
+ * corrected return type. This is one combined source-interface model.
+ * Compared with 1176/344/148, H1 is 1180/561/180; wrong instructions 116->80.
+ * Retain the proven high-register roles as an admission check despite the
+ * worse length-shifted score. Remaining: workspace entry-load ordering,
+ * early narrow-zero/message loads and first pool, animation setup order,
+ * and four +90 byte-flag pointer copies. Callback body and tail order agree.
+ * No compiler, exact sibling or shared header was changed. */
 #include "FIELD_EVENT.H"
 
 struct SceneMapState {
@@ -52,6 +65,9 @@ struct ScenePointerBank {
 };
 
 extern struct ScenePointerBank gScenePointers;
+extern const u8 HaidiaBabi_SharedAction[];
+extern const u8 HaidiaBabi_ActorExitAction[];
+extern const u8 HaidiaBabi_LeaderExitAction[];
 
 struct SceneHalf {
     u16 value;
@@ -73,8 +89,6 @@ void Main_080770c8();
 void Main_0808a010();
 void Main_0808a018();
 s32 Main_0808a070();
-struct FieldActor *Main_0808a080(s32 id);
-void Main_0808a098();
 void Main_0808a0a0();
 void Main_0808a0f0();
 void Main_0808a100();
@@ -112,7 +126,7 @@ void FieldScene_RunComplexActorSequence(void)
     control = &gScenePointers.control;
     work = gScenePointers.map_work;
     scene_actor = control->event_work->view_center;
-    sprite = Main_0808a080(17)->sprite;
+    sprite = Engine_ActorGet(17)->sprite;
     Main_0808a018();
     Main_0808a0f0(11, 0, 0);
     Main_0808a0f0(12, 0, 0);
@@ -120,20 +134,20 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a0f0(14, 0, 0);
     Main_0808a0f0(15, 0, 0);
     Main_0808a0f0(16, 0, 0);
-    Main_080091e0(Main_0808a080(0), 0);
+    Main_080091e0(Engine_ActorGet(0), 0);
     Main_0808a100(0, 18);
     /* FAKEMATCH candidate: delimit the wide position initialization from
      * the narrow actor flag so its lifetime starts in the setup phase. */
     do {
         ground = 0;
     } while (0);
-    *(u16 *)((u8 *)sprite + 30) = 1365;
-    p12 = Main_0808a080(17);
+    sprite->rotation = 1365;
+    p12 = Engine_ActorGet(17);
     /* FAKEMATCH candidate: keep the byte flag's halfword zero separate
      * from the wide scene-position zero, as the two reference loads are. */
     stopped.value = 0;
     p12->motion_flags = stopped.value;
-    Main_080091e0(Main_0808a080(17), 0);
+    Main_080091e0(Engine_ActorGet(17), 0);
     Main_0808a0f0(17, 37748736, 42598400);
     Main_08009188(7);
     Main_0808a0f0(8, 34996224, 45088768);
@@ -185,7 +199,7 @@ void FieldScene_RunComplexActorSequence(void)
     Actor_MoveToAndWait(0, 555, 680);
     Main_0808a010(30);
     Actor_Jump(8, 53248, 0);
-    Main_080091e0(Main_0808a080(0), 1);
+    Main_080091e0(Engine_ActorGet(0), 1);
     Main_0808a128(0, 4, 0);
     Actor_WalkToAndWait(0, 543, 674);
     Main_0808a1e0(0, 3);
@@ -196,36 +210,36 @@ void FieldScene_RunComplexActorSequence(void)
     Local_020017e4();
     Main_0808a130(8, 2);
     Event_ShowMessageAndWait(36872, 0, 20);
-    p67 = Main_0808a080(8);
+    p67 = Engine_ActorGet(8);
     p67->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 542, 680);
     Main_0808a010(1);
-    p67 = Main_0808a080(8);
+    p67 = Engine_ActorGet(8);
     p67->unknown_5a |= 0x1;
     Main_0808a010(10);
     Main_0808a138(8, 2);
-    Main_08009228(Main_0808a080(0), 226);
+    Main_08009228(Engine_ActorGet(0), 226);
     Main_080770c8(33);
     Main_080f9010(126);
     Main_0808a158(0, 7);
     Main_0808a010(10);
     Main_0808a158(0, 0);
     Main_0808a010(20);
-    p67 = Main_0808a080(8);
+    p67 = Engine_ActorGet(8);
     p67->unknown_5a &= 0xfe;
     Actor_WalkToAndWait(8, 534, 688);
     Main_0808a010(1);
-    p67 = Main_0808a080(8);
+    p67 = Engine_ActorGet(8);
     p67->unknown_5a |= 0x1;
     Main_0808a010(20);
     Actor_SetSpeed(8, 98304, 49152);
     Actor_SetSpeed(0, 98304, 49152);
     Main_0808a200(8, 1);
-    p89 = Main_0808a080(0);
+    p89 = Engine_ActorGet(0);
     p89->priority_flags |= 0x1;
-    Main_0808a098(8, 33594036);
+    Engine_ActorEnableActionCallback(8, HaidiaBabi_SharedAction);
     Main_0808a010(20);
-    Main_0808a098(0, 33594036);
+    Engine_ActorEnableActionCallback(0, HaidiaBabi_SharedAction);
     Main_0808a0a0(8);
     Actor_WalkToAndWait(8, 419, 661);
     Actor_WalkToAndWait(8, 408, 661);
@@ -241,8 +255,8 @@ void FieldScene_RunComplexActorSequence(void)
     Main_0808a100(0, 3);
     Main_0808a110(8, 3);
     Main_0808a010(20);
-    Main_0808a098(8, 33594116);
-    Main_0808a098(0, 33594164);
+    Engine_ActorEnableActionCallback(8, HaidiaBabi_ActorExitAction);
+    Engine_ActorEnableActionCallback(0, HaidiaBabi_LeaderExitAction);
     Main_0808a010(20);
     control->event_work->start_transition = 513;
     control->event_work->transition_frames = 16;

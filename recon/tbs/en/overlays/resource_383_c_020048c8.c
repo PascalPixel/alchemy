@@ -1,4 +1,14 @@
-/* Draft, not-yet-c. Score 2026-09-26: 608 of 612 bytes, 256 differing
+/* Draft, not-yet-c. Completion steering-output model: 604/612 bytes,
+ * 269 differing halfwords, 127 aligned edits. A coherent inlined selection
+ * operation publishes leader facing, computes the cone/fallback, then gives
+ * the same scalar slot to the existing snap consumer. Its formal output
+ * still becomes r4 and spills across Atan2: 8-byte frame, not the required
+ * 4 bytes. Pointer stores also lose both reference signed facing producers
+ * (ldrh replaces ldrsh). Full normalized diff and allocator ancestry read;
+ * normal/diagnostic text agree. This is not an admitted invariant witness.
+ * Preserve the failed output-interface model, then restore the scalar body.
+ * No new lifetime fact supports another pointer/aggregate/helper variation.
+ * Baseline score 2026-09-26: 608 of 612 bytes, 256 differing
  * halfwords, 117 aligned edits. Typed actor/stop calls restore all pointers
  * and destination arguments; loaded -0x1000 and fixed-point random angles
  * replace the old container constants and incomplete decompiler expressions.
@@ -88,6 +98,29 @@ s32 SceneActor_CheckTileFreeOfKinds(struct StopRecord *pos);
 void SceneActor_ApplyScaledBytePairPosition(struct FieldActor *actor, struct StopRecord *pos);
 u16 Math_Atan2(s32 z, s32 x);
 
+/* Keep the leader's facing in its nearby forward cone; otherwise a distant
+ * actor keeps its own facing. The snap operation consumes this same slot. */
+static __inline__ void SceneActor_SelectStopFacing(struct FieldActor *actor,
+    struct FieldActor *leader, struct StopWork *work, s16 *facing)
+{
+    s32 dx;
+    s32 dz;
+    s16 angle;
+
+    dx = actor->x.fixed - leader->x.fixed;
+    dz = actor->z.fixed - leader->z.fixed;
+    *facing = leader->facing;
+    angle = Math_Atan2(dz, dx);
+    dx >>= 16;
+    dz >>= 16;
+    if (work->value_19c > 0 && dx * dx + dz * dz <= 400
+        && (s16)(*facing - (u16)angle) > -0x1000
+        && (s16)(*facing - (u16)angle) < 0x1000) {
+    } else if (dx * dx + dz * dz > 64) {
+        *facing = actor->facing;
+    }
+}
+
 void KuupuappuHeya_UpdateActorStops(void)
 {
     struct FieldActor *leader;
@@ -95,10 +128,7 @@ void KuupuappuHeya_UpdateActorStops(void)
     struct StopWork *work;
     struct StopRecord *entry;
     struct StopRecord *dest;
-    s32 dx;
-    s32 dz;
     s32 blocked;
-    s16 angle;
     s16 facing;
     u32 rnd;
 
@@ -108,19 +138,7 @@ void KuupuappuHeya_UpdateActorStops(void)
     actor = Engine_ActorLookup(2);
     entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
-        dx = actor->x.fixed - leader->x.fixed;
-        dz = actor->z.fixed - leader->z.fixed;
-        facing = leader->facing;
-        angle = Math_Atan2(dz, dx);
-        dx >>= 16;
-        dz >>= 16;
-        if (work->value_19c > 0 && dx * dx + dz * dz <= 400
-            && (s16)(facing - (u16)angle) > -0x1000
-            && (s16)(facing - (u16)angle) < 0x1000) {
-            /* Keep the leader's facing within the nearby forward cone. */
-        } else if (dx * dx + dz * dz > 64) {
-            facing = actor->facing;
-        }
+        SceneActor_SelectStopFacing(actor, leader, work, &facing);
         dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
             SceneActor_ApplyScaledBytePairPosition(actor, dest);

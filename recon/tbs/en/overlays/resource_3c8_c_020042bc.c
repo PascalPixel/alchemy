@@ -1,4 +1,16 @@
-/* NONMATCHING: 612/612 bytes, 127 differing halfwords, 44 aligned edits
+/* NONMATCHING P4 (2026-09-27): phased repeat/options union is byte-identical
+ * to the retained 612-byte model: 127 halfwords / 44 aligned edits, all four
+ * pool words and offsets unchanged. Own ROM reuses sl for the first phase's
+ * repeat count then copies persistent r9 to sl for the second write view.
+ * Reusing a union local across those phases does not preserve that copy:
+ * allocation still gives count r9/options sl and hoists scale 0x4ccc to r9.
+ * Full normalized diff read; the pointer-copy admission fails. This is not
+ * the proven 3A0 phased-value result: the redundant pointer view collapses.
+ * No follow-up without distinct pointer/dependency evidence. Trial retained
+ * here for its commit; restore the simpler prior canonical body afterward.
+ * No function or alignment credit. Exact Venus neighbours are unchanged.
+ *
+ * NONMATCHING: 612/612 bytes, 127 differing halfwords, 44 aligned edits
  * (2026-09-26). Complete owner 020042bc..02004520 includes the four-word
  * pool at 02004510. All 31 calls audited; entry dispatcher 02003068 calls
  * this for scene 21. Shared EffectOptions and call bindings transferred
@@ -34,7 +46,11 @@ static __inline__ void Rubble_SetScaleAndSpin(struct EffectOptions *opts)
 void Scene_RunPairedParticleWaveSequence(void)
 {
     struct EffectOptions options;
-    u32 repeat;
+    /* FAKEMATCH: one phased local owns the repeat count, then the write view. */
+    union {
+        u32 repeat;
+        struct EffectOptions *options;
+    } phase;
     u32 row;
     s32 offset;
     u32 i;
@@ -49,7 +65,7 @@ void Scene_RunPairedParticleWaveSequence(void)
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
     Engine_AudioPlayCue(162);
-    repeat = 0;
+    phase.repeat = 0;
     row = 0;
     opts = &options;
     offset = 0;
@@ -70,8 +86,8 @@ void Scene_RunPairedParticleWaveSequence(void)
             } while (i <= 3 && row <= 7);
         }
         Engine_TaskWait(3);
-        if (row == 3 && repeat <= 2) {
-            repeat++;
+        if (row == 3 && phase.repeat <= 2) {
+            phase.repeat++;
             goto again;
         }
         Map_CopyCellsTo(48, row + 3, 54, row + 3, 3, 1);
@@ -83,9 +99,10 @@ void Scene_RunPairedParticleWaveSequence(void)
     Engine_MapCopyCellsTo(111, 7, 111, 5, 5, 2);
     Engine_MapCopyCellsTo(111, 7, 111, 10, 5, 2);
     row = 0;
+    phase.options = opts;
     offset = 0;
     do {
-        Rubble_SetScaleAndSpin(opts);
+        Rubble_SetScaleAndSpin(phase.options);
         i = 0;
         if (row <= 7) {
             s32 z = 0x300000 + offset;

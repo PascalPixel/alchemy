@@ -24,7 +24,8 @@
  * Byte-identical to the prior explicit-precheck witness, proving u8 ownership
  * and u32-with-truncation converge here. Range still loads after the bound;
  * 32 formerly exact halfwords regress (57 bytes outside [0x40,0x56)).
- * Reject H1; preserve its commit before restoring the 11-halfword baseline.
+ * Reject H1 (preserved in 7b6681362); canonical 11-halfword baseline restored
+ * and the entire 1336-byte candidate compared byte-for-byte to its witness.
  * Audit facts: Item_Use and Menu_ResolveSelectedAction pass four s32 values;
  * the latter uses owner/target bytes +0x21a/+0x21b and 9 as all-party target.
  * Item/Psynergy SelectTarget and Djinn_CountTurns consume the same menu list.
@@ -94,7 +95,7 @@ s32 BattleFx_ApplyToTargets(
     struct Object_080a9f10 *source;
     s32 later_target;
     s32 changed;
-    u8 index;
+    u32 index;
     s16 scale;
     s32 random_adjust;
     s32 random_nonone;
@@ -113,7 +114,7 @@ s32 BattleFx_ApplyToTargets(
         target = Func_08077008(0);
 
     index = 0;
-    if (index < runtime->target_count) {
+    if (runtime->target_count != 0) {
         do {
             if (effect->range == 0xff) {
                 target_id = runtime->targets[index];
@@ -329,7 +330,7 @@ s32 BattleFx_ApplyToTargets(
 
             if (effect->range != 0xff)
                 break;
-            index++;
+            index = (u8)(index + 1);
         } while (index < runtime->target_count);
     }
 
@@ -342,7 +343,7 @@ s32 BattleFx_ApplyToTargets(
     if (index < runtime->target_count) {
         do {
             Func_08077010(runtime->targets[index]);
-            index++;
+            index = (u8)(index + 1);
         } while (index < runtime->target_count);
     }
     runtime->result_code = result_code;

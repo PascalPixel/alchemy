@@ -1,4 +1,18 @@
-/* NONMATCHING: 152 of 152 bytes, 16 halfword edits (2026-09-24). Hand-written from the
+/* Canonical direct-call/u8 model restored after H1 and H2; complete
+ * baseline candidate is byte-identical, including its single literal pool.
+ * H2 rejected (2026-09-27): STAGED_STEP.C's Map_CopyCellAttributes inline
+ * boundary emits the identical 152-byte baseline: 37 differing halfwords /
+ * 16 aligned edits. The whole normalized diff preserves both residuals:
+ * width-before-height setup and late zero rematerialization instead of r6.
+ * The shared helper has no distinct argument-expansion boundary here.
+ * H1 rejected (2026-09-27): literal Half zero from MAKYURI_CHOJO/LAMP.C
+ * emits 160/152 bytes, 55 differing halfwords / 27 aligned edits. CSE keeps
+ * an HI zero pseudo, but it is loaded only at the final byte store; no r6
+ * lifetime is admitted. An extra zero pool and moved division-mask pool
+ * add two branch/pool islands. Unlike LAMP there is no earlier HI zero
+ * producer to share. Map size-argument order is unchanged. Whole normalized
+ * diff read; -da assembly equals normal output. No new DONE bytes.
+ * NONMATCHING: 152 of 152 bytes, 16 halfword edits (2026-09-24). Hand-written from the
  * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
  * their import veneers. Remaining: 37 halfwords: reference keeps the motion-flag zero in r6 from before the column tests, and loads height before width for Engine_MapCopyCellAttributes.
  * 2026-09-26: widening still from u8 to s32 did not change either residual;

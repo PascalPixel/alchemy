@@ -1,5 +1,30 @@
-/* Draft, not-yet-c. Canonical scalar body restored: 608/612 bytes,
- * 256 differing halfwords / 117 aligned edits, byte-identical to baseline.
+/* Draft, not-yet-c. Shared-pointer phase model: 608/612 bytes,
+ * 261 differing halfwords / 102 aligned edits, 166 wrong instructions.
+ * H2 causal follow-up: give fallback facing the same scalar-to-slot
+ * publication as entry, reusing angle after its last cone use. This restores
+ * the reference ldrsh at 02004986 without losing r8, frame 4 or no-spill.
+ * Pointer pseudo 32 still has nine uses/53 insns/three calls, allocated r8;
+ * scalar pseudo 40 has six uses/17 insns, three sets and no crossed calls.
+ * Whole diff read; normal/diagnostic text identical. H1 is 8e52ee57f.
+ * Residual: missing second angle zero-extension, opposite final cone guard,
+ * low-register/scheduling differences, and pool starts four bytes early.
+ * Two causal models complete. Freeze r8/frame4/both signed-facing producers;
+ * do not restart the rejected independent-pointer or aggregate variants.
+ * H1 (2026-09-27): history has separate leader/direction, aggregate, and
+ * output-helper trials, but no single source pointer reused across phases.
+ * ROM replaces the dead leader in r8 with sp+2 at 02004922. One tagged pos
+ * local now holds the leader, then the facing slot through cone/fallback
+ * and Snap. Allocator pseudo 32 is one user pointer, set twice, nine uses
+ * over 53 insns and three calls; the generated code retains it in r8.
+ * Admission achieved: frame 4, no facing-address caller-save across Atan2,
+ * initial signed leader-facing producer and pre-call halfword publication.
+ * Normal and allocator-diagnostic text are identical. Complete owner/pool
+ * was 608/612, 250 halfwords/111 aligned edits/172 wrong instructions.
+ * H1 remained non-exact: fallback facing became ldrh rather than ldrsh; angle
+ * zero-extension, cone branch, low reload registers and scheduling differ.
+ * This new lifetime witness supersedes the stopped separate-pointer axis,
+ * not its negative evidence. No new DONE bytes. Preserve this invariant.
+ * Previous canonical scalar body: 608/612 bytes, 256 halfwords / 117 edits.
  * Completion steering-output model (22125318a): 604/612 bytes,
  * 269 differing halfwords, 127 aligned edits. A coherent inlined selection
  * operation publishes leader facing, computes the cone/fallback, then gives
@@ -105,7 +130,7 @@ u16 Math_Atan2(s32 z, s32 x);
 
 void KuupuappuHeya_UpdateActorStops(void)
 {
-    struct FieldActor *leader;
+    void *pos;
     struct FieldActor *actor;
     struct StopWork *work;
     struct StopRecord *entry;
@@ -117,26 +142,32 @@ void KuupuappuHeya_UpdateActorStops(void)
     s16 facing;
     u32 rnd;
 
-    leader = Engine_ActorLookup(0);
+    pos = Engine_ActorLookup(0);
     work = gStopWork;
     blocked = 0;
     actor = Engine_ActorLookup(2);
     entry = SceneData_FindEntryAtPosition(&actor->x.fixed);
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
-        dx = actor->x.fixed - leader->x.fixed;
-        dz = actor->z.fixed - leader->z.fixed;
-        facing = leader->facing;
+        dx = actor->x.fixed - ((struct FieldActor *)pos)->x.fixed;
+        dz = actor->z.fixed - ((struct FieldActor *)pos)->z.fixed;
+        angle = ((struct FieldActor *)pos)->facing;
+        /* FAKEMATCH: one pointer changes from the dead leader to the snap
+         * output, retaining its ownership through the steering phase. */
+        pos = &facing;
+        *(s16 *)pos = angle;
         angle = Math_Atan2(dz, dx);
         dx >>= 16;
         dz >>= 16;
         if (work->value_19c > 0 && dx * dx + dz * dz <= 400
-            && (s16)(facing - (u16)angle) > -0x1000
-            && (s16)(facing - (u16)angle) < 0x1000) {
+            && (s16)(*(s16 *)pos - (u16)angle) > -0x1000
+            && (s16)(*(s16 *)pos - (u16)angle) < 0x1000) {
             /* Keep the leader's facing within the nearby forward cone. */
         } else if (dx * dx + dz * dz > 64) {
-            facing = actor->facing;
+            /* FAKEMATCH: retain the signed scalar producer before publication. */
+            angle = actor->facing;
+            *(s16 *)pos = angle;
         }
-        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
+        dest = KuupuappuHeya_SnapToNearestStop(entry, (s16 *)pos);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
             SceneActor_ApplyScaledBytePairPosition(actor, dest);
             Engine_ObjectSetAnimation(actor, 2);

@@ -12,7 +12,14 @@
  * byte-identical to the prior draft: 11 halfwords / 11 aligned edits;
  * frame and every pool word still match. Thus the real interface repair
  * does not change the initialization zero/base ancestry. No further
- * inline-initialization, allocator, zero or pointer spelling test made. */
+ * inline-initialization, allocator, zero or pointer spelling test made.
+ * Sol 6 2026-09-27: H1 transferred LINKED_EFFECTS.C's plain byte-address
+ * boundary to the object motion byte; H2 split the two OAM bitfield clears
+ * into their own inline helper. Both complete normalized differences and
+ * candidate binaries are identical to baseline: 972 bytes / 11 halfwords,
+ * frame and pool unchanged. Neither admits the required r0 +85 address,
+ * r1 zero or independent mov/neg mask. Restore the typed initializer and
+ * close this two-test boundary axis; no exact owner or alignment credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

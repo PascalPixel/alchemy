@@ -1,5 +1,5 @@
-/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 49 differing
- * halfwords, 36 wrong instructions, 40 halfword edits. Shared FieldSprite
+/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 41 differing
+ * halfwords, 30 wrong instructions, 35 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
  * Visual reloads, two facing-store blocks and coordinate-store ordering remain.
  * H1 (2026-09-27): audited the import table against exact StormScene and
@@ -33,7 +33,14 @@
  * pre-H1 baseline: 2716/49 halfwords/40 edits, 4-byte frame, pools unchanged.
  * Thus scalar versus coordinate-union ownership does not explain the early
  * depth load. Both bounded store hypotheses are stopped; do not resweep
- * byte-mask, record-view or camera wrappers without new writer evidence. */
+ * byte-mask, record-view or camera wrappers without new writer evidence.
+ * Sol 6 2026-09-27 position H1: supply position and depth as separate
+ * inline initializer inputs. Predicted early r2 depth pool load is emitted;
+ * the six stores and following +85 base reuse now match. Only eight
+ * halfwords [owner +3f0,+400) change, all to reference bytes. Every other
+ * byte, the 4-byte frame and all pools remain fixed. Full normalized diff
+ * read; remaining disagreements are entry sprite reloads and actor-24/25
+ * facing/priority lifetimes. These 16 corrected draft bytes earn no DONE. */
 #include "FIELD_EVENT.H"
 #include "OBJECT_RUNTIME.H"
 
@@ -131,6 +138,17 @@ static __inline__ struct FieldActor *Pointer0(struct FieldActor *(*f)())
 static __inline__ struct FieldActor *Pointer1(struct FieldActor *(*f)(), s32 id)
 {
     return f(id);
+}
+
+static __inline__ void PlaceDepartureActor(struct ObjectRuntime *object, s32 pos, s32 depth)
+{
+    /* FAKEMATCH: initializer inputs keep depth live before the six stores. */
+    object->x = pos;
+    object->y = pos;
+    object->target_x = pos;
+    object->target_y = pos;
+    object->z = depth;
+    object->target_z = depth;
 }
 
 void Scene_RunActorGroupDepartureSequence(void)
@@ -267,12 +285,7 @@ void Scene_RunActorGroupDepartureSequence(void)
          * at this position/target boundary; it compiles like the actor view. */
         struct ObjectRuntime *object = (struct ObjectRuntime *)actor;
 
-        object->x = 0xc80000;
-        object->y = 0xc80000;
-        object->target_x = 0xc80000;
-        object->target_y = 0xc80000;
-        object->z = 0x3820000;
-        object->target_z = 0x3820000;
+        PlaceDepartureActor(object, 0xc80000, 0x3820000);
     }
     step = ((u8 *)actor + 85);
     actor->motion_flags = initialStep.value;

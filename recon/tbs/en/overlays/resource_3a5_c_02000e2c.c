@@ -1,4 +1,4 @@
-/* NONMATCHING: 552 of 552 bytes, 23 differing halfwords / 23 aligned edits
+/* NONMATCHING: 552 of 552 bytes, 17 differing halfwords / 17 aligned edits
  * (2026-09-26). Whole owner 02000e2c..02001054, return at 02001026 and all
  * eleven literal words at 02001028..02001050. Complete layout/pool exact.
  * Three bounded trials: phase-local actors remove the wait and both burst
@@ -59,7 +59,17 @@
  * H2's admitted register invariant. This is an explained regression, not
  * an accepted shape. Preserve the negative witness in this commit, then
  * restore H2. The one remaining supported boundary is a scale user local,
- * whose lifetime crosses the start-y store rather than target-y's store. */
+ * whose lifetime crosses the start-y store rather than target-y's store.
+ * Lamakan H4, final parameter trial: make the shared x scale the user
+ * local, define it before start-y, and preserve reference store order.
+ * Prediction: the user carrier takes r2 while the two pool constants reuse
+ * r3, matching the reference option region. Result: 552/552, 17 halfwords
+ * and 17 aligned edits. Whole second option region 02000faa..02000fd8 is
+ * exact, and so are the 104-byte frame and all eleven literal pool words.
+ * H4 retained; parameter lifetime axis closed with an admitted witness.
+ * Current residual: eleven countdown/offset register halfwords and six
+ * hold/timer scratch halfwords. H1 falsifies countdown/zero phase merging;
+ * no further loop or parameter spelling sweeps. No new DONE or alignment. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -184,15 +194,15 @@ void Func_02000e2c(void)
     } while (timer != 0);
     {
         struct FieldActor *actor = Engine_ActorGet(0);
-        s32 target_y;
+        s32 scale;
 
         second.type = 214;
+        /* FAKEMATCH: share one x-scale local across the start-y store. */
+        scale = 0x8000;
         second.start_scale_y = 0xcccc;
-        /* FAKEMATCH: keep target y live across both shared x-scale stores. */
-        target_y = 0x13333;
-        second.start_scale_x = 0x8000;
-        second.target_scale_x = 0x8000;
-        second.target_scale_y = target_y;
+        second.start_scale_x = scale;
+        second.target_scale_x = scale;
+        second.target_scale_y = 0x13333;
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, timer, timer, 0x1c0000, &second);
     }
     Engine_AudioPlayCue(0x120);

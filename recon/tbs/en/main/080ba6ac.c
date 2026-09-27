@@ -19,6 +19,14 @@
  * Frame/save set remain correct. Stop at the bounded followup; this is not a
  * near match. Untried width evidence: ROM keeps the inventory item as a word,
  * and separately narrows the use-type at the second branch.
+ * H3, resumed with explicit width evidence: keep the inventory item in an
+ * s32 local after its unsigned halfword load; keep use_type in a distinct u8
+ * local. Prediction: remove the item's signed-load/extension sequence and
+ * recover the final 0x1ff mask pool without changing frame or call topology.
+ * H3 result: 612/620 bytes, 248 differing halfwords, 114 aligned edits.
+ * Both inventory predictions hold: LDRH into r5 and the 0x1ff pool/AND are
+ * restored, with unit r6, frame 88 and the saved-role set unchanged. The u8
+ * use-type still loses the reference copy and second-branch zero extension.
  * No matching-C credit claimed.
  */
 #include "TYPES.H"
@@ -90,9 +98,9 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     struct PresentationWork work;
     struct MotionObject *object;
     s32 i;
-    u16 ability;
+    s32 ability;
     struct BattleUnit *unit;
-    s32 kind;
+    u8 kind;
 
     s32 *transition = Data_03001f00;
     s32 facing = -0x2000;

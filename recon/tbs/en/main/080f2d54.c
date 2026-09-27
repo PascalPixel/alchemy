@@ -4,7 +4,15 @@
    copy of the 0x02010000 destination in r5) and both loop counters in r5;
    here the buffer takes r5, the counters r6 and the zero r7. Declaration
    orders, shared or separate counters and five buffer spellings did not
-   move it; the zero in the offset loop is what brings it from 68 to 33. */
+   move it; the zero in the offset loop is what brings it from 68 to 33.
+   2026-09-27 bounded scroll-interface trial: the exact TITLE/BG_SETUP.C
+   reset loop, scoped in an inline ResetScroll helper with its own counter,
+   removes the extra saved r7 but gives 356 bytes / 69 halfwords / 39 edits.
+   Keeping the reset counter in the caller instead gives 356 / 68 / 38.
+   Both still coalesce dst and buffer into r5, omit the reference's r6 copy,
+   and move the first zero/store; the helper also assigns its counter r2.
+   Fresh retained baseline is 356 / 33 / 27. Independent reset-zero lifetime
+   alone does not recover the resource/cursor ownership; no adoption. */
 #include "DMA.H"
 #include "SYSTEM.H"
 

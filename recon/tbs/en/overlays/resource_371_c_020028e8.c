@@ -19,7 +19,15 @@
  * candidate binaries are identical to baseline: 972 bytes / 11 halfwords,
  * frame and pool unchanged. Neither admits the required r0 +85 address,
  * r1 zero or independent mov/neg mask. Restore the typed initializer and
- * close this two-test boundary axis; no exact owner or alignment credit. */
+ * close this two-test boundary axis; no exact owner or alignment credit.
+ * Astra 2026-09-27: reuse zero in the two sprite bitfields; reuse the
+ * attribute cursor for the actor motion byte; move the complete nullable
+ * constructor/initialization block into a returning inline factory. Each
+ * complete result is baseline-identical (972/972, 11 halfwords / 11 edits).
+ * These boundaries do not preserve the constructor's r0 into the store
+ * or displace the local zero from r3. Direct literal-zero stores through
+ * the named motion_flags, flags and part_count fields also reproduce the
+ * same complete binary. Keep the original typed initializer. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

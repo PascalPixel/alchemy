@@ -73,7 +73,17 @@
  * FADE_TO_WHITE.C, keeping the shared service declaration unchanged.
  * The complete result is again 188 bytes, 5 halfwords / 5 edits and
  * baseline-identical. This call-result spelling does not change the
- * counter/centre allocation. Retain the ordinary void call. */
+ * counter/centre allocation. Retain the ordinary void call.
+ * Astra 2026-09-27: stage x rounding across the z calculation: 196/188,
+ * 70 halfwords / 32 edits. This gives n=r8, z=sl, x=r9, but adds early
+ * high-register copies and eight bytes. A separate rounded_x local gives
+ * the same binary. A one-pass animation block gives 188/11/8 without
+ * fixing the allocation; a one-word frame-counter record is baseline-
+ * identical (188/5/5). Reject all four; retain the five-edit body.
+ * A pointer-valued z carrier is also baseline-identical: its integer uses
+ * restore the same allocation. A signed word-bitfield frame count grows
+ * to 212/188 bytes, 75 halfwords / 44 edits: it prevents loop reversal
+ * and emits truncation/mask operations. Neither is a matching transfer. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -1,5 +1,13 @@
-/* Draft, not-yet-c. Canonical H1 restored 2026-09-27: 2816 of 2816 bytes,
- * 639 differing halfwords, 50 wrong instructions (185 aligned edits).
+/* Exact complete owner [020017c8,020022c8): 2816 bytes, pools included.
+ * 2026-09-27 Sol H1: FieldActor lookup results own x/z, priority_flags and
+ * motion_flags. The nullable lookup has a separate actor lifetime from the
+ * earlier child records. This typed record model resolves all 639 differing
+ * halfwords / 185 edits, preserving callback target reloads and table r5.
+ * Complete normalized diff and literal pools read; candidate/reference cmp
+ * is exact. This is not a constant spelling or register-allocation sweep.
+ * Reuse sun-west's canonical s32 Party_GiveItem interface for both rewards;
+ * that independently proven ABI correction is not the matching lever.
+ * Historical baseline and closed axes:
  * Rejected H2 is preserved in 3db9eafb8: 2820 bytes/1081 halfwords/293 edits.
  * Typed callback inline scopes reproduce the prior baseline bytes exactly;
  * they restore target-ID reloads and the r5 table but lose the direct-call
@@ -153,11 +161,11 @@ void Func_020041fc();
 void Func_02004202();
 void Func_02004202_a();
 void Func_02004204();
-u8 *Func_0200421a();
+struct FieldActor *Func_0200421a(s32 actor);
 void Func_02004228();
-u8 *Func_02004234();
+struct FieldActor *Func_02004234(s32 actor);
 void Func_02004244();
-u8 *Func_02004246();
+struct FieldActor *Func_02004246(s32 actor);
 void Func_0200424e();
 void Func_02004250();
 void Func_0200426c();
@@ -203,7 +211,7 @@ void Func_02004440();
 void Func_02004458();
 void Func_0200445a();
 void Func_0200446e();
-u8 *Func_02004476();
+struct FieldActor *Func_02004476(void);
 void Func_0200447c();
 void Func_02004484();
 void Func_02004494();
@@ -297,10 +305,10 @@ void Func_0200486e();
 void Func_02004878();
 void Func_02004882();
 void Func_0200488c();
-u8 *Func_02004892();
+struct FieldActor *Func_02004892(s32 actor);
 void Func_02004896();
 void Func_020048a0();
-u8 *Func_020048a2();
+struct FieldActor *Func_020048a2(s32 actor);
 void Func_020048aa();
 void Func_020048b4();
 void Func_020048be();
@@ -333,7 +341,7 @@ static __inline__ void Call1(void (*f)(), s32 a0)
     f(a0);
 }
 
-static __inline__ u8 *Pointer1(u8 *(*f)(), s32 a0)
+static __inline__ struct FieldActor *Pointer1(struct FieldActor *(*f)(s32), s32 a0)
 {
     return f(a0);
 }
@@ -481,14 +489,17 @@ void Scene_RunExtendedActorSequence(void)
     Func_02003e20(11, 0x5000, 60);
     Func_0200426c(11, 3);
     Func_02003e18(11, 10);
-    record = Pointer1(Func_0200421a, 30);
-    if (record != 0) {
-        Func_02004278(31, *(s32 *)((s32)record + 8), *(s32 *)((s32)record + 16));
+    {
+        struct FieldActor *actor = Pointer1(Func_0200421a, 30);
+
+        if (actor != NULL) {
+            Func_02004278(31, actor->x.fixed, actor->z.fixed);
+        }
     }
     v5 = 254;
     Func_02004156_a(2);
-    *(u8 *)(Func_02004234(30) + 35) &= v5;
-    *(u8 *)(Func_02004246(31) + 35) &= v5;
+    Func_02004234(30)->priority_flags &= v5;
+    Func_02004246(31)->priority_flags &= v5;
     Func_02004326(30, 2);
     Func_0200432e(31, 2);
     Call3(Func_02004270, 31, 0x39999, 0x1cccc);
@@ -518,7 +529,7 @@ void Scene_RunExtendedActorSequence(void)
     Func_0200433a(10);
     Call2(Func_0200445a, 0x26666, 0x4ccc);
     v6 = 0;
-    *(u8 *)(Func_02004476() + 85) = v6;
+    Func_02004476()->motion_flags = v6;
     Call4(Func_0200447c, 0xd70000, 0x100000, 0x3210000, 1);
     Func_02004362(10);
     Call2(Func_020043aa, 12, 0x200ad74);
@@ -658,12 +669,12 @@ void Scene_RunExtendedActorSequence(void)
     Call2(Func_02004826, 0x1214, 1);
     v5 = 1;
     Func_0200485c(80);
-    *(u8 *)(Func_02004892(0) + 35) |= v5;
+    Func_02004892(0)->priority_flags |= v5;
     {
-        u8 *record = Func_020048a2(1);
-        u8 value = (u8)(v5 | record[35]);
+        struct FieldActor *actor = Func_020048a2(1);
+        u8 value = (u8)(v5 | actor->priority_flags);
 
-        record[35] = value;
+        actor->priority_flags = value;
     }
     Call3(Func_0200498e, 0, 0x102, 0);
     Call3(Func_0200499a, 1, 0x102, 80);

@@ -1,5 +1,5 @@
-/* NONMATCHING: 1172 bytes, candidate 1168, 158 differing halfwords, 88
- * wrong instructions, 85 halfword edits. FieldScene_RunComplexActorSequence
+/* NONMATCHING: 1172 bytes, candidate 1172, 541 differing halfwords, 20
+ * wrong instructions, 159 halfword edits. FieldScene_RunComplexActorSequence
  * targets FIELD/COMMON/HAIDIA_BABI/F_00578.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
  * 0x8000). Pointer-taking child-flag and palette calls now consume the actor
@@ -77,8 +77,16 @@
  * admitted despite 159->85 edits (1168/1172, 158 halfwords, 88 wrong insns).
  * Rotation also becomes an HI pool load before zero; the message remains
  * hoisted across three calls. All four direct +90 flag stores still agree.
- * Normal/diagnostic text is identical. Preserve this rejected model in
- * its commit, then restore the admitted sprite r8/control r9/ground sl. */
+ * Normal/diagnostic text is identical. Rejected model is preserved at
+ * a1990f2d7; restore admitted sprite r8/control r9/ground sl here.
+ * Outward stop: the early mask zero and correct sprite allocation are
+ * coupled, not independent spelling defects. No second supported model
+ * retains the three-register invariant. Message base insn 224 is still
+ * after focus call 221 through global allocation, but final code hoists
+ * it across focus, display setup and actor placement. The base enters the
+ * first pool only after allocation; do not re-sweep prior Call3 wrappers.
+ * Admission requires preserving all three high-register roles and direct
+ * +90 byte stores while separating the zero's producer from rotation. */
 #include "FIELD_EVENT.H"
 
 struct SceneMapState {
@@ -180,12 +188,7 @@ void FieldScene_RunComplexActorSequence(void)
     do {
         ground = 0;
     } while (0);
-    /* FAKEMATCH: publish the scalar rotation without a struct-store mask
-     * whose narrow zero CSE can share with the following actor flag. */
-    {
-        u16 *rotation = &sprite->rotation;
-        *rotation = 1365;
-    }
+    sprite->rotation = 1365;
     p12 = Engine_ActorGet(17);
     /* FAKEMATCH candidate: keep the byte flag's halfword zero separate
      * from the wide scene-position zero, as the two reference loads are. */

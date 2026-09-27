@@ -1,4 +1,10 @@
-/* NONMATCHING kuupuappu H1 (2026-09-27): 464/480 bytes, 238 differing
+/* NONMATCHING kuupuappu H2 (2026-09-27): halfword packed-color boundary
+ * produces 480/480 bytes, 13 differing halfwords / 13 aligned edits.
+ * Attenuation and clamps survive, but packing takes r2 instead of r3 and
+ * both shifts swap roles, exactly the existing output-temporary failure.
+ * Full normalized diff read. Stop publication-local axis; preserve this
+ * failed body in Git, then restore the seven-halfword canonical.
+ * NONMATCHING kuupuappu H1 (2026-09-27): 464/480 bytes, 238 differing
  * halfwords / 113 aligned edits. Reusing blue as the partial packed-color
  * producer moves the increment before publication but changes red's live
  * allocation to r8, removes its four-byte caller-save frame, introduces fp,
@@ -130,6 +136,7 @@ void ToretoPalette_ApplyTint(void)
     s32 green;
     s32 blue;
     u32 color;
+    u16 packed;
     u8 *event;
 
     event = Data_03001ebc[0];
@@ -178,11 +185,10 @@ loop:
             green = 0;
         if (blue < 0)
             blue = 0;
-        /* FAKEMATCH: retain the blue-channel producer through publication. */
-        blue = (blue << 10) | (green << 5);
+        /* FAKEMATCH: hold the halfword publication across index advancement. */
+        packed = (blue << 10) | (green << 5) | red;
         i++;
-        blue |= red;
-        *dst = blue;
+        *dst = packed;
         dst++;
         src++;
     }

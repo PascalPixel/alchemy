@@ -1,4 +1,12 @@
-/* NONMATCHING H1: 192/184 bytes, 84 halfwords / 60 aligned edits.
+/* NONMATCHING kuupuappu H1 (2026-09-27): 188/184 bytes,
+ * 82 differing halfwords / 43 aligned edits. In-loop column bound now
+ * recomputes per row; loop-owned first store retains the destination in lr
+ * while both tile tables and second destination reload per cell. These
+ * predicted lifetime facts hold. Width/end-row/stride roles still differ:
+ * end-row lives in r8 and stride at sp+4, opposite the reference allocation.
+ * Complete normalized diff and normal/diagnostic text read; no credit.
+ * Keep this structural witness before the width-lifetime causal follow-up.
+ * Previous NONMATCHING H1: 192/184 bytes, 84 halfwords / 60 aligned edits.
  * H2 (2026-09-27): pass the first destination into CopyCell from a
  * row-local caller pointer, as the exact main-image row renderer does.
  * Prediction: retain that base across cells while reloading both tile
@@ -41,16 +49,18 @@
 
 /* FAKEMATCH: the exact row renderer's helper scope gives each tile-table
  * pointer its own lifetime; this rectangle uses word-sized cell coordinates. */
-static __inline__ void CopyCell(u32 cell, s32 base)
+static __inline__ u32 ReadFirstTile(u32 cell)
+{
+    u32 *tiles = (u32 *)0x02020000;
+
+    return tiles[cell * 2];
+}
+
+static __inline__ void CopySecondTile(u32 cell, s32 base)
 {
     u32 *tiles;
     u32 *dest;
 
-    tiles = (u32 *)0x02020000;
-    tiles += cell * 2;
-    dest = (u32 *)0x06002800;
-    dest += base;
-    *dest = *tiles;
     tiles = (u32 *)0x02020004;
     tiles += cell * 2;
     dest = (u32 *)0x06002840;
@@ -61,16 +71,16 @@ static __inline__ void CopyCell(u32 cell, s32 base)
 void Func_02000098(s32 x, s32 y, s32 width, s32 height, s32 bank, s32 dest_x, s32 dest_y)
 {
     u32 *src;
-    s32 row, col, end_row, end_col, base, cell;
+    s32 row, col, end_row, base, cell;
 
     src = (u32 *)0x02010000 + (y * 128 + x);
     end_row = dest_y + height;
     for (row = dest_y; row < end_row; row++) {
-        end_col = dest_x + width;
-        for (col = dest_x; col < end_col; col++) {
+        for (col = dest_x; col < dest_x + width; col++) {
             cell = *src++ & 0xfff;
             base = ((row & 15) + bank * 16) * 32 + (col & 15);
-            CopyCell(cell, base);
+            ((u32 *)0x06002800)[base] = ReadFirstTile(cell);
+            CopySecondTile(cell, base);
         }
         src += 128 - width;
     }

@@ -1,4 +1,11 @@
-/* NONMATCHING: 480/480 bytes, seven differing halfwords (2026-09-27).
+/* NONMATCHING kuupuappu H1 (2026-09-27): 464/480 bytes, 238 differing
+ * halfwords / 113 aligned edits. Reusing blue as the partial packed-color
+ * producer moves the increment before publication but changes red's live
+ * allocation to r8, removes its four-byte caller-save frame, introduces fp,
+ * and regresses the admitted attenuation prefix. Complete normalized diff
+ * read; reject this lifetime model. H1 body preserved by this checkpoint;
+ * restore the seven-halfword canonical before the causal follow-up.
+ * Previous NONMATCHING: 480/480 bytes, seven differing halfwords (2026-09-27).
  * Entry ownership H1: capture event = Data_03001ebc[0] before acquiring
  * the palette source, then inspect event+0x17e. This gives the reference
  * shared-base load order and changes reload ancestry through the loop:
@@ -171,8 +178,11 @@ loop:
             green = 0;
         if (blue < 0)
             blue = 0;
-        *dst = (blue << 10) | (green << 5) | red;
+        /* FAKEMATCH: retain the blue-channel producer through publication. */
+        blue = (blue << 10) | (green << 5);
         i++;
+        blue |= red;
+        *dst = blue;
         dst++;
         src++;
     }

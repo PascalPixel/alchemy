@@ -11,7 +11,15 @@
  * Bounded lifetime trials: separate next-redraw flag gives 584 bytes / 60
  * aligned edits, mutually exclusive direction scans 584 / 37, and resetting
  * direction before input 576 / 99. The first two keep the wrong entry sl;
- * the last removes the required entry zero. Keep the original 19-edit model. */
+ * the last removes the required entry zero. Keep the original 19-edit model.
+ * 2026-09-27 family audit: complete 020004b0..020006f8, including pool;
+ * fresh baseline 584 bytes / 19 differing halfwords / 19 aligned edits.
+ * Text/window callees never receive direction or redraw state. BattleAction
+ * lookup masks to 0x3fff; its byte +4 is the same empty-entry test already
+ * emitted. No new alias/prototype witness justifies a state wrapper.
+ * Reference never defines r9 before Finalize(details): do not initialize
+ * the unused second window or invent shared caller state to repair it.
+ * STOP family ownership axis; unchanged baseline, no spelling trials. */
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"

@@ -1,4 +1,13 @@
-/* NONMATCHING: word-sized output base, 336 of 340 bytes, 112 differing
+/* NONMATCHING: ship H1 frequency staging, 332/340 bytes, 122 differing
+ * halfwords, 70 aligned edits (2026-09-27). Assigning frequency to acc
+ * before the phase product gives r4 the reference multiply ownership,
+ * unlike the earlier fused expression. It loads frequency before phase,
+ * though, omits the reference's separate r3-to-r4 copy and changes pool
+ * membership. Signed scroll load, sp+0 spill and both fp masks survive.
+ * Full normalized diff read; this checkpoint earns no exact bytes.
+ * Next bounded hypothesis: a separate phase local computed first restores
+ * phase/frequency load order while leaving frequency as accumulator.
+ * Previous word-sized output base, 336 of 340 bytes, 112 differing
  * halfwords, 64 aligned edits (2026-09-27). Local invariant admitted;
  * the complete owner is not exact and earns no new DONE.
  * The two reference loops share their waveform calculation and interleaved
@@ -91,8 +100,8 @@ void Local_02000f80(void)
     scroll_y = Data_03001ad0.y;
     line = state->pages[state->page ^ 1];
     step = state->step_x;
-    acc = state->phase_x + scroll_y;
-    acc *= state->frequency_x;
+    acc = state->frequency_x;
+    acc *= state->phase_x + scroll_y;
     amplitude = state->amplitude_x;
     base = Data_03001ad0.x;
     {
@@ -108,8 +117,8 @@ void Local_02000f80(void)
     }
     line = state->pages[state->page ^ 1] + 1;
     step = state->step_y;
-    acc = state->phase_y + scroll_y;
-    acc *= state->frequency_y;
+    acc = state->frequency_y;
+    acc *= state->phase_y + scroll_y;
     amplitude = state->amplitude_y;
     base = scroll_y;
     {

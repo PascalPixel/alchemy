@@ -1,4 +1,17 @@
 /* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
+ * H2 preserved at 164bbe5bb; ordinary sprite member store restored below.
+ * 2026-09-27 Sol Venus Summit H2: Drift's explicit byte flag store removes
+ * the generated QI zero from RTL, but does not move the Value_ zero before
+ * the angle store. Complete normalized diff: 358/55/55, second pool still
+ * 0x118 rather than 0x134; source-null/factory copies remain wrong. The flag
+ * tail loses an extra source copy but the admission invariant fails. Stop
+ * this direct-store axis; preserve trial, then restore ordinary member store.
+ * 2026-09-27 Sol Venus Summit H1: type the anchor as FieldEffect, the exact
+ * 5b90 callback's maintained consumer view. Full normalized comparison is
+ * unchanged (358/55/55); source-null copy and factory setup prediction fails.
+ * Keep the consumer-backed type without credit. Fresh RTL exposes a separate
+ * QI zero producer in sprite->flags' member-store expansion, unlike Drift's
+ * explicit byte store. One direct-store experiment is supported by that fact.
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -67,6 +80,7 @@
  * No DONE or alignment credit; exact consumers remain untouched. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_EFFECT.H"
 
 struct FieldView {
     u8 unknown_000[0xe8];
@@ -82,7 +96,7 @@ void VinasuChojo_UpdateOrbitingSpark(union FieldObject *object);
 
 void VinasuChojo_SpawnRisingSparks(void)
 {
-    struct FieldActor *source = Engine_ActorGet(23);
+    struct FieldEffect *source = (struct FieldEffect *)Engine_ActorGet(23);
     struct FieldView *view = Data_03001e70;
     s32 offset = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
     struct FieldActor *spark;
@@ -106,7 +120,7 @@ void VinasuChojo_SpawnRisingSparks(void)
     if (source != 0) {
         phase = gFrameCount & 15;
         if (phase == 0) {
-            spark = Engine_ObjectCreate(284, source->x.fixed + 0x80000, source->y.fixed + offset + 0x80000, source->z.fixed);
+            spark = Engine_ObjectCreate(284, source->x + 0x80000, source->y + offset + 0x80000, source->z);
             offset = Engine_MathDivide(offset, 0x60000);
             offset <<= 16;
             if (spark != 0) {
@@ -117,7 +131,7 @@ void VinasuChojo_SpawnRisingSparks(void)
                 spark->unknown_64 = Engine_RandomNext() & (u32)&Value_0ffff000;
                 zero = (u8)(u32)&Value_00000000;
                 spark->unknown_66 = phase;
-                *(struct FieldActor **)spark->unknown_68 = source;
+                *(struct FieldEffect **)spark->unknown_68 = source;
                 spark->update = VinasuChojo_UpdateOrbitingSpark;
                 spark->speed = (Engine_MathSin((offset & 0xfffff) >> 4) * 24) >> 16;
                 sprite->flags = zero;

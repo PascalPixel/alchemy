@@ -1,12 +1,12 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 201 differing halfwords, 87
+/* NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
- * 0x8000). Remaining: Rebuilt command loop, three signed interpolation
- * channels, affine parameter bitfields, sprite records and IO queue from
- * disassembly. Verified helper prototypes and every literal. Complete size
- * matches; remaining register lifetimes, zero-load width, and instruction
- * scheduling differ.
+ * 0x8000). Remaining: scale occupies r9 instead of fp; the three separate
+ * duration pointers and per-case affine index occupy fp instead of r9.
+ * The dependent affine-index initialization also schedules differently.
+ * Complete extent, all literal pools, command parsing, interpolation load
+ * order, clipping/placement and both IO publications match structurally.
  * WALL: Register lifetimes across interpolation and sprite emission;
  * preserve the separate per-case shifted affine index. Separate channel
  * locals restore duration/start registers. Computing delta before the step
@@ -60,7 +60,58 @@
  * independently compile to 1264 bytes with 201 differing halfwords and
  * 87 aligned edits. The queue-tail solution is shared without copying the
  * draft; the remaining interpolation and sprite lifetimes are unchanged.
- * No owner is adopted, no production instance or DONE credit is added. */
+ * No owner is adopted, no production instance or DONE credit is added.
+ * 2026-09-27 Sol renderer H1: allocator dump pseudo 54 proves that shared
+ * x owns both interpolation targets and sprite coordinates (r1, target r3).
+ * Channel-local target lifetimes recover all three endpoint/counter load
+ * sequences and the interior pool order. They also remove the extra two
+ * coordinate copies in each sprite loop. Complete diff: 1260/1264 bytes,
+ * 183 differing halfwords / 57 edits. Remaining: scale/duration fp/r9
+ * roles and independent single-sprite clipping/placement coordinates; the
+ * queue tail is structurally exact but shifted by -4 bytes. Not adopted.
+ * 2026-09-27 Sol renderer H2: compute single-sprite left coordinates before
+ * clipping, as the loop modes do. Their independent live values reproduce
+ * both single-sprite blocks exactly and restore the full 1264-byte extent.
+ * Complete diff: 17 halfwords / 17 edits, solely the exchanged scale fp/r9
+ * and duration-pointer r9/fp roles plus the dependent affine-index moves.
+ * All pools, the command loop and complete queue tail are exact. Not adopted.
+ * 2026-09-27 Sol renderer H3: one duration pointer across all three channels
+ * puts scale in fp, but over-prioritizes the pointer into r8 and displaces
+ * tile/sprite to sl/r9 (28 halfwords / 28 edits). The approved compiler's
+ * global.c allocno_compare uses floor_log2(n_refs)*n_refs/live_length:
+ * timer 9/138 has priority 0.196, tile 15/324 0.139, sprite 18/680 0.106,
+ * scale 7/168 0.083. This is a negative witness, not an accepted repair.
+ * Keep the exact source topology and pools; no register spelling sweep.
+ * 2026-09-27 Sol renderer H4: sharing the duration pointer for scale/blend
+ * only gives 6 references across 92 instructions, priority 0.130. Tile r8
+ * and scale fp match, but sprite r9 and duration sl exchange the reference's
+ * sl/r9 roles: 21 halfwords / 21 edits. Complete extent and every pool match.
+ * Priority alone does not predict the final allocation; the finite repair
+ * catalog has no unambiguous source shape for this reciprocal pointer swap.
+ * This remains a negative lifetime witness, with no adoption or credit.
+ * 2026-09-27 Sol renderer H5: owning the initial cursor through the typed
+ * Sprite record, then write = sprite->words, emits identical bytes to H4.
+ * Sprite remains 18 references / 680 instructions; reversing the dependency
+ * changes only its pseudo ID. ARM REG_ALLOC_ORDER is r8, sl, r9, fp: H4's
+ * timer priority between tile and sprite therefore predicts the observed
+ * swap exactly. Close this pointer-sharing axis and restore H2's 17-edit
+ * candidate. H5's complete change was struct Sprite *sprite =
+ * (struct Sprite *)Data_0200c7c0 followed by u32 *write = sprite->words;
+ * its output is identical to H4.
+ * 2026-09-27 Sol renderer H6: work.y = work.x gives the same scale allocation
+ * lifetime, 7 references / 168 instructions, not the predicted reduction.
+ * It also feeds the second packed write through the first record value and
+ * changes scratch roles: 1264 bytes, 27 halfwords / 27 edits, all pools exact.
+ * Close the affine-record aliasing axis; H2 remains the best 17-edit source.
+ * No complete owner is adopted, and no native or alignment credit is added.
+ * 2026-09-27 Sol renderer closing checkpoint: restored H2 independently
+ * scores 1264 bytes, 17 halfwords / 17 edits against all three ROM owners,
+ * including every pool. For twins, select this source explicitly with
+ * score <this-file> --owner resource_3bb:02002450 (or resource_3bc:02002ee8).
+ * Owner-only resolution selects their older address-named drafts instead
+ * of this registered shared candidate. No production tooling is changed.
+ * Bounded pointer ownership/sharing and affine aliasing axes are closed;
+ * resume only with a new source-lifetime fact, not spelling permutations. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -159,12 +210,12 @@ render:
         scale = Data_0200c778;
     } else {
         struct Half zero = { 0 };
-        s32 duration, start, progress;
+        s32 duration, start, progress, target;
         duration = Data_0200c754;
         start = Data_0200c768;
-        x = Data_0200c778;
+        target = Data_0200c778;
         progress = ++Data_0200c7fc;
-        scale = start + (x - start) * progress / duration;
+        scale = start + (target - start) * progress / duration;
         if (progress >= duration)
             Data_0200c754 = zero.value;
     }
@@ -172,12 +223,12 @@ render:
         blend = Data_0200c794;
     } else {
         struct Half zero = { 0 };
-        s32 duration, start, progress;
+        s32 duration, start, progress, target;
         duration = Data_0200c7a8;
         start = Data_0200c798;
-        x = Data_0200c794;
+        target = Data_0200c794;
         progress = ++Data_0200c784;
-        blend = start + (x - start) * progress / duration;
+        blend = start + (target - start) * progress / duration;
         if (progress >= duration)
             Data_0200c7a8 = zero.value;
     }
@@ -185,12 +236,12 @@ render:
         pos = Data_0200c7f8;
     } else {
         struct Half zero = { 0 };
-        s32 duration, start, progress;
+        s32 duration, start, progress, target;
         duration = Data_0200c76c;
         start = Data_0200c7f0;
-        x = Data_0200c7f8;
+        target = Data_0200c7f8;
         progress = ++Data_0200c77c;
-        pos = start + (x - start) * progress / duration;
+        pos = start + (target - start) * progress / duration;
         if (progress >= duration)
             Data_0200c76c = zero.value;
     }
@@ -240,8 +291,9 @@ render:
     case 4:
         y = 48;
         flags = 0xc0004000;
+        left = pos + 56;
         if ((u32)(pos + 120) < 304) {
-            x = (pos + 56) & 511;
+            x = left & 511;
             *write++ = 0;
             *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
             *write++ = 0xf400 | (tile + Data_0200c764);
@@ -251,8 +303,9 @@ render:
     case 2:
         y = 48;
         flags = 0x80000000;
+        left = pos + 88;
         if ((u32)(pos + 152) < 304) {
-            x = (pos + 88) & 511;
+            x = left & 511;
             *write++ = 0;
             *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
             *write++ = 0xf400 | (tile + Data_0200c764);

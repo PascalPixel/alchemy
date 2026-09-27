@@ -6,7 +6,13 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading);
 void Battle_ResetEffectCounterFar(void);
 void Main_0808a5e8(void);
 
-/* Astra 2026-09-27: represent the quantized height as a word union with
+/* Astra initializer-input transfer (2026-09-27): an inline SetRideVelocity
+ * taking actor, quantized height and base as separate inputs still emits
+ * 188/188 bytes and the same two reversed shifts. Full normalized diff
+ * preserves every other instruction and both pool words. Unlike the
+ * departure scene's position/depth initializer, this boundary does not
+ * alter the shift scheduling. Reject; retain the plain expression.
+ * Astra 2026-09-27: represent the quantized height as a word union with
  * a 14-bit fractional field and signed 18-bit step field. This transfers
  * ROOM_VIS.C's initialized narrow-record shape, but the complete output
  * is binary-identical to the canonical 188-byte/two-halfword residual.

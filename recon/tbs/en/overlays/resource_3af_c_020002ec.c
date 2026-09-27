@@ -16,7 +16,25 @@
  * Full remaining model: counter address/value r8/r6 instead of r6/r8;
  * consequently scratch copies, cue setup, idle turn-y r6/r7, branch/table
  * positions and pool reach differ. Both owners retain complete pools.
- * STOP: one model plus one structural follow-up; no complete owner exact. */
+ * STOP: one model plus one structural follow-up; no complete owner exact.
+ *
+ * H3 (west, 2026-09-27): test a byte snapshot for the byte counter, with
+ * its promoted switch input separate from the saved idle reset value.
+ * Reference 02f8 loads the byte, 02fa saves it in r8, and 0302 copies the
+ * dispatch scratch; 0464 retrieves that saved value after the random call.
+ * Prediction was counter/value r6/r8 without changing the shared advance
+ * tail or pools. Actual full diff is byte-identical to the old draft:
+ * 552/552, 171 differing halfwords, 69 aligned edits. No admission.
+ * CSE already promotes the u8 user local to SI pseudo 33; combine deletes
+ * its redundant copy. The value remains 4 uses/15 instructions/1 call,
+ * counter-address pseudo 35 remains 10 uses/169 instructions/15 calls,
+ * allocated last. No allocation tie, and no loop-pass transformation.
+ * Case 1 still crossjumps its final coordinate shift and position call into
+ * case 5; equal total size offsets that missing code against extra counter
+ * copies and different alignment. The whole pool is present but not exact.
+ * Together with 020000c4 H4 this closes direct-field/byte-snapshot producer
+ * spellings. No new supported shared helper or source-phase boundary was
+ * found in exact FLY_BY_21/22 and DECK_SEQ. Function/alignment credit +0. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -44,7 +62,8 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 s32 Func_020002ec(struct FieldActor *obj)
 {
-    u32 step;
+    /* FAKEMATCH: retain the byte state independently of switch promotion. */
+    u8 step;
 
     step = obj->rise_counter;
     if (step != 0) {

@@ -1,4 +1,20 @@
-/* NONMATCHING: transfer T2 482/488 bytes, 226 halfwords / 59 aligned edits.
+/* NONMATCHING: outward O1 482/488 bytes, 224 halfwords / 63 aligned edits.
+ * 2026-09-27: tested IO_WRITE_QUEUE.C's one-pass do/while(0) boundary
+ * around x=0 and its motion_flags store, retaining T2's labeled outer loop
+ * and CROSS_DOORWAY.C's pre-loop-zero OR. All three zero lifetime facts
+ * survive, but complete normalized diff regresses from 59 to 63 edits.
+ * Admission alone is insufficient: the block separates motion-store
+ * scheduling from collision setup and does not repair the earlier constant
+ * or sprite-priority computations. Frame 8 and topology remain equal.
+ * New diagnostic: loop_optimize returns before register/alias setup when
+ * LOOP_BEG is absent. This block supplies it, but loop.c reports the single
+ * loop at 206..242 as phony in both passes. Initialization of the pass alone
+ * is therefore not the missing outward boundary. -da assembly equals normal.
+ * Reject this model; preserve T2 as canonical. No causally supported second
+ * wrapper placement was found. Do not sweep one-pass blocks or zero spellings.
+ * No new DONE bytes.
+ *
+ * Transfer T2 482/488 bytes, 226 halfwords / 59 aligned edits.
  * Retained inversion witness (2026-09-27): the corrected zero consumers
  * plus a labeled counter loop admit all three zero-lifetime constraints:
  * an unread r8 zero before the loop, mov r7,0 inside the motion-flags store
@@ -115,8 +131,12 @@ setup_actor:
         struct FieldActor *actor;
         actor = Engine_ActorGet(n + 23);
         actor->sprite->priority = 1;
-        x = 0;
-        actor->motion_flags = x;
+        /* FAKEMATCH: one-pass write block, as in IO_WRITE_QUEUE.C, keeps
+         * loop-pass notes without enclosing the actor iteration back-edge. */
+        do {
+            x = 0;
+            actor->motion_flags = x;
+        } while (0);
         actor->collision_flags = 8;
         Engine_ActorSetSpriteFlags(actor, 0);
         Engine_ObjectSetPalette(actor, 15);

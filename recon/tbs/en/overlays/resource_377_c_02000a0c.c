@@ -1,4 +1,9 @@
-/* 2026-09-27 Sol H1: explicit port/value inline writer creates the port
+/* 2026-09-27 Sol H2: exact OPEN_SCENE.C's literal MMIO address ownership
+ * at initialization and both ramps is byte-identical to H1 (cmp checked).
+ * The port's symbol-versus-integer origin does not change its allocation
+ * or either reload. Full normalized diff and allocator read: 1064 bytes,
+ * eight halfwords, sixteen wrong instructions. Restore the simpler baseline.
+ * Sol H1: explicit port/value inline writer creates the port
  * before the second counter (pseudos 260/261), but global allocation still
  * gives the more-used counter r5 and the port r6. Full normalized diff and
  * allocator read; candidate is byte-identical to the canonical baseline.
@@ -122,11 +127,6 @@ static __inline__ void SetBlendAlpha(u32 value)
     Data_04000052 = value;
 }
 
-static __inline__ void WriteBlendAlpha(volatile u16 *port, u32 value)
-{
-    *port = value;
-}
-
 void FieldScene_RunPaletteRampSequence(void)
 {
     s32 base;
@@ -223,11 +223,10 @@ ramp:
     Call1(Main_080000c0, 10);
     base = 0x100f;
     {
-        volatile u16 *port = &Data_04000052;
         u32 cnt;
 
         for (cnt = 0; cnt <= 15; cnt++) {
-            WriteBlendAlpha(port, base - cnt);
+            Data_04000052 = base - cnt;
             Call1(Main_080000c0, 1);
         }
     }

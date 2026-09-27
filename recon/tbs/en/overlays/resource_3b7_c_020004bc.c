@@ -9,7 +9,40 @@
  * loses the reference's high-register copy. Reusing exact scenes' Call6
  * boundary only swaps width/height low registers: 904 bytes, 432 halfwords,
  * 213 edits; rejected. No parameter-width or declaration sweep is justified
- * by the caller or allocator evidence. */
+ * by the caller or allocator evidence.
+ *
+ * 2026-09-27 fixed-callee transfer, one model only:
+ * Exact 757956aba VinasuHeya_ShiftBridge and EAST_PARTICLE_WAVE.C use
+ * FIELD_EVENT.H:Map_CopyCellsTo to give dimensions a named inline boundary.
+ * Before testing, RTL showed its six SI formals, width/height at incoming
+ * stack offsets 0/+4 and a fixed Engine_MapCopyCellsTo call, unlike generic
+ * Call6's extra function-pointer formal. Prediction: call-owned dimensions
+ * would admit item r5 / height r8 without changing the 97 calls or frame8.
+ * Changed only the 29 map calls to the existing named helper. Result is
+ * 904/964, 432 halfwords / 213 aligned edits, byte-identical by cmp to the
+ * preserved generic Call6 candidate. Full normalized diff and entire owner
+ * were read, including native tail alignment; no literal pools are present.
+ * In lreg width/height become USER SI pseudos 38/39, each 30 uses across
+ * 638 instructions and 87 calls, allocated r5/r6. Item 32 retains 3 uses /
+ * 186 instructions / 52 calls and r8. Thus the named helper changes formal
+ * ancestry but not the rejected allocation or missing high-register copies.
+ * Immediate rejection as briefed: no follow-up, parameter-width, declaration
+ * or setup sweep. Preserve this trial in Git, then restore canonical direct
+ * Engine_MapCopyCellsTo calls (904/430/183). No function or alignment credit;
+ * no shared header, binding, compiler, tooling or other owner was changed.
+ * Trial retained at 20fc789b5. Canonical BODY below is restored to the
+ * direct-call baseline and its compiled candidate is byte-identical by cmp.
+ *
+ * Corrected-main resumption audit (no new source trial): exact
+ * TOREBI_IZUMI/OPEN_SCENE.C awards a variable item with the same direct
+ * ItemShowFound/PartyGiveItem pair; its surrounding loop is real control flow,
+ * not evidence for adding an award-only one-pass boundary here. The complete
+ * own-ROM body keeps height in r8 even after item's final use at 020006c0.
+ * Phase-local item reuse therefore does not explain the retained high height.
+ * Baseline lreg pass-1 HI costs are item 12 versus width/height 120 each,
+ * not a declaration-order tie. No new ABI, conversion or control-flow fact
+ * admits another trial. Keep the baseline; require evidence that changes
+ * this allocation ancestry before reopening the closed dimension wrappers. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

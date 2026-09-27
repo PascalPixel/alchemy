@@ -5435,7 +5435,7 @@
     },
     {
       "id": "retained-field-scene-extended-sequence-374",
-      "source": "recon/tbs/en/overlays/run_extended_field_scene.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/EXTENDED_SEQUENCE.C",
       "overlay": "resource_374",
       "absolute_symbols": {
         "Engine_PartyGiveItem": {
@@ -5599,7 +5599,7 @@
         {
           "address": "0x020017c8",
           "extent": 2816,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

@@ -1,4 +1,15 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
+/* 2026-09-27 Sol H2: exact OPEN_SCENE.C's literal MMIO address ownership
+ * at initialization and both ramps is byte-identical to H1 (cmp checked).
+ * The port's symbol-versus-integer origin does not change its allocation
+ * or either reload. Full normalized diff and allocator read: 1064 bytes,
+ * eight halfwords, sixteen wrong instructions. Restore the simpler baseline.
+ * Sol H1: explicit port/value inline writer creates the port
+ * before the second counter (pseudos 260/261), but global allocation still
+ * gives the more-used counter r5 and the port r6. Full normalized diff and
+ * allocator read; candidate is byte-identical to the canonical baseline.
+ * Pseudo creation order alone does not explain this six-halfword swap.
+ * Frame, all pools and both reload boundaries remain exact; no adoption.
+ * NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
  * halfwords, 16 wrong instructions, 8 aligned edits. Canonical H2 restored.
  * 2026-09-27: greg allocates the second counter (pseudo 260) before its
  * independent port (261); the first port has r5 preference inherited from

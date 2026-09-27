@@ -19,11 +19,20 @@
  * Full normalized diff: id=sl, flags=fp, priority=r9, scan=r6 and slot=r5
  * now match. Block=r7 versus r8 and cell offset=r8 versus r7 remain;
  * velocity stores still reverse, and completion pointer is r7 versus r8.
- * All calls, frame and pool values remain correct. This is not exact. */
+ * All calls, frame and pool values remain correct. This is not exact.
+ * H2 transfers the sibling's unsigned SwitchCell { x, z } indexed table.
+ * The full candidate is byte-identical to H1 (cmp); field ownership does
+ * not change the cell-offset lifetime. Retain the evidenced views, stop
+ * both axes here. No declaration or counter permutations; no DONE credit. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
-extern s32 Data_0200d164[8][2];
+struct SwitchCell {
+    u32 x;
+    u32 z;
+};
+
+extern struct SwitchCell Data_0200d164[8];
 extern s32 Data_0200d77c[];
 extern s32 Data_0200d7c8[];
 extern s32 Data_0200dac8[];
@@ -86,8 +95,8 @@ void Scene_RunScene3c8SequenceA(void)
 
         slot = 8;
         for (i = 0; i < 8; i++) {
-            if ((actor->x.fixed >> 20) == Data_0200d164[i][0]
-                && (actor->z.fixed >> 20) == Data_0200d164[i][1]
+            if ((actor->x.fixed >> 20) == Data_0200d164[i].x
+                && (actor->z.fixed >> 20) == Data_0200d164[i].z
                 && actor->y.fixed >= 0) {
                 slot = i;
                 break;
@@ -108,7 +117,7 @@ void Scene_RunScene3c8SequenceA(void)
             continue;
 
         priority = leader->sprite->priority;
-        if ((u32)(leader->z.fixed >> 20) <= (u32)Data_0200d164[slot][1]) {
+        if ((u32)(leader->z.fixed >> 20) <= Data_0200d164[slot].z) {
             effect = Local_02000098(actor->x.fixed, actor->y.fixed,
                                    actor->z.fixed - 0x40000, 20);
             Main_0808a1e0(0, 3);
@@ -126,7 +135,7 @@ void Scene_RunScene3c8SequenceA(void)
         *motion = 3;
         ((union FieldObject *)actor)->effect.velocity_y = 0x1999;
         ((union FieldObject *)actor)->effect.velocity_x = 0;
-        CopyCells(6, 44, 1, 1, Data_0200d164[slot][0], Data_0200d164[slot][1]);
+        CopyCells(6, 44, 1, 1, Data_0200d164[slot].x, Data_0200d164[slot].z);
         Local_0200094c(actor);
         Engine_AudioPlayCue(188);
         actor->collision_flags = 0;
@@ -134,7 +143,7 @@ void Scene_RunScene3c8SequenceA(void)
         actor->y.fixed = -0x100000;
         Main_0808a1e0(id, 3);
         *flags = 2;
-        CopyCells(73, 48, 1, 1, Data_0200d164[slot][0], Data_0200d164[slot][1]);
+        CopyCells(73, 48, 1, 1, Data_0200d164[slot].x, Data_0200d164[slot].z);
         Main_0808a1e0(0, priority);
         Engine_ActorGet(0)->priority_flags |= 1;
         for (i = 15; i <= 18; i++) {

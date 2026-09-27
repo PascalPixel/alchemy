@@ -60,6 +60,19 @@
  * TextResourcePosition is an 8-byte partial view aligned to 4; initializer
  * writes offset 8. Thus the exact bitfields supply no different address
  * producer from this record. No caller trial or size/alignment sweep run.
+ * 2026-09-27 post-Haidia family audit: fresh whole-owner comparison remains
+ * 312/312, 48 halfwords / 28 edits. Own-ROM main veneers 08015228/230/238
+ * resolve to 0801c0dc/1c154/1c17c; the apparent new call addresses do not
+ * supply a different cursor ABI. Unlike Haidia's eliminated user coordinate
+ * pointers, this cursor is already a compiler-created address expression.
+ * Local CSE insn 161 defines pseudo 48 as sfp-12 in block 3; both the
+ * initialization argument (165) and first-position argument (173) use it
+ * before the input loop begins. A loop/backedge rewrite cannot prevent
+ * those two early calls from sharing this producer. Exact Menu_RunSelection
+ * and Menu_RunSelectionWithCursorObject still cache their cursor pointers.
+ * No new interface or ownership witness admits per-call sp+8 here; stop
+ * without replaying the record-layout, scope, or named-table trials. No
+ * function or alignment credit; the separate two-byte residual is untouched.
  */
 #include "TYPES.H"
 

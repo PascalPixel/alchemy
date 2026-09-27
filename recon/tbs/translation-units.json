@@ -1695,7 +1695,7 @@
     },
     {
       "id": "haidia-facing-test",
-      "source": "recon/tbs/en/overlays/resource_373_c_0200564c.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/FACING.C",
       "overlay": "resource_373",
       "absolute_symbols": {
         "Engine_ObjectSetAnimation": {
@@ -1715,7 +1715,7 @@
         {
           "address": "0x0200564c",
           "extent": 224,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

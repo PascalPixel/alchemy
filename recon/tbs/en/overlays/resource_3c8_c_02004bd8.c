@@ -1,4 +1,15 @@
-/* NONMATCHING coordinate H3 (2026-09-27): 440/452 bytes, 190 differing
+/* NONMATCHING call-topology H4 (2026-09-27): 444/452 bytes, 188 differing
+ * halfwords / 114 aligned edits. Entry setup's value-call cast on the
+ * success site prevents the interior failure from sharing that call.
+ * Full normalized diff read: all three script-call sites now exist, and
+ * H3's indexed coordinate searches survive. Admit these local shapes.
+ * Interior failure argument order is still ldr script before mov actor,
+ * unlike the reference. Actor/skip remain r6/r5, animation scan rotates,
+ * cursor tables use separate base+offset temporaries, and the pool is
+ * eight bytes early. Further work needs an independent lifetime witness;
+ * do not resweep sentinel spelling or value/void casts. No new DONE.
+ *
+ * NONMATCHING coordinate H3 (2026-09-27): 440/452 bytes, 190 differing
  * halfwords / 117 aligned edits. Transfer the exact SETTLE_BLOCKS unsigned
  * SwitchCell view and natural bounded indexed searches for both tables.
  * Full normalized diff read: both loops now emit the required cell << 3,
@@ -246,7 +257,8 @@ scan_other:
     script_row = *(u32 **)((u8 *)Data_0200f7ec + cell);
 
 dispatch:
-    Call2((void (*)())Engine_ObjectSetScript, (s32)actor, script_row[skip]);
+    /* FAKEMATCH: entry setup's value-call form keeps failure and success apart. */
+    Value2((s32 (*)())Engine_ObjectSetScript, (s32)actor, script_row[skip]);
     goto done;
 
 fail_tail:

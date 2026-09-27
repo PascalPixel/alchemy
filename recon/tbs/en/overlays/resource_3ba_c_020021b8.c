@@ -111,7 +111,24 @@
  * Owner-only resolution selects their older address-named drafts instead
  * of this registered shared candidate. No production tooling is changed.
  * Bounded pointer ownership/sharing and affine aliasing axes are closed;
- * resume only with a new source-lifetime fact, not spelling permutations. */
+ * resume only with a new source-lifetime fact, not spelling permutations.
+ * 2026-09-27 Sol renderer H7: one reusable static __inline__ s32 evaluator
+ * took s16 *timer, *from, *to, *step. It assigned a helper-local result in
+ * both branches and returned it after the late duration clear; its active
+ * branch retained Half zero, duration/start/target loads, ++*step and signed
+ * comparison. Predicted: the returned-result boundary separates channel
+ * scratch from final scale and reduces its 7-reference allocation priority.
+ * Complete diff instead gives 1248/1264 bytes, 485 differing halfwords and
+ * 141 aligned edits. Initial RTL has result 179 -> scale 49 after the clear;
+ * local allocation coalesces scale 49 into result 179: 7 references across
+ * 167 instructions, still r9 (baseline 7/168). Timer 175/204/233 remains
+ * 3 references / 46 instructions and fp. Real pointer arguments materialize
+ * endpoint/counter addresses before the branch; the first pool shifts +8,
+ * and the final sprite/queue region shifts -16. Increment/store/sign-extend
+ * semantics remain, but load order and pools fail the complete-owner gate.
+ * No allocator fact supports a follow-up that separates the returned result.
+ * Close the returned-result helper axis, restore H2, and stop this bounded
+ * experiment. All three owners remain not-yet-C; 0 function/alignment credit. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 

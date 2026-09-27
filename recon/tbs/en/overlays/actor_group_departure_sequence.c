@@ -1,4 +1,6 @@
-/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 49 differing
+/* NONMATCHING: resource_372:020031ac; current rejected store H1 is
+ * 2720 / 2716 bytes, 492 differing halfwords, 134 wrong instructions,
+ * 202 aligned edits. Retained best: 2716 / 2716 bytes, 49 differing
  * halfwords, 36 wrong instructions, 40 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
  * Visual reloads, two facing-store blocks and coordinate-store ordering remain.
@@ -16,7 +18,15 @@
  * change from H1, all to reference bytes; every other byte, the complete
  * extent, frame and pools stay fixed. No exact sibling/header was edited.
  * The two-hypothesis budget is closed; preserve these four ordering fixes
- * and require new actor/sprite ownership evidence for the remaining hunks. */
+ * and require new actor/sprite ownership evidence for the remaining hunks.
+ * Store H1 (2026-09-27): transfer WORLD_MAP/LINKED_EFFECTS.C's explicit
+ * byte-access boundary only to the actor-24/25 sprite attribute-2 byte.
+ * Falsified: the 0xf3 mask becomes a separate live value from the bitfield
+ * writer's -13, the frame grows from 4 to 12 bytes, and a later pool moves
+ * eight bytes. Actor-25 facing now precedes the priority read rather than
+ * falling between its read and write. The complete normalized diff also
+ * regresses untouched actor-10 and departure blocks. Preserve this attempt
+ * in history, then restore the best typed bitfield model; no adoption. */
 #include "FIELD_EVENT.H"
 
 struct Half {
@@ -363,7 +373,9 @@ void Scene_RunActorGroupDepartureSequence(void)
     groupActor->priority_flags &= 254;
     groupActor->scale_x = 0x10000;
     groupActor->scale_y = 0x10000;
-    groupVisual->priority = 0;
+    /* FAKEMATCH: preserve the attribute byte's alias boundary with facing,
+     * as the exact linked-effect family does for its sprite byte stores. */
+    ((u8 *)groupVisual)[9] &= 0xf3;
     {
         s32 shown = 0xb000;
 
@@ -380,7 +392,7 @@ void Scene_RunActorGroupDepartureSequence(void)
 
         groupActor->facing = shown;
     }
-    groupVisual->priority = 0;
+    ((u8 *)groupVisual)[9] &= 0xf3;
     Func_02004794(25, 5);
     groupActor = Pointer1(Func_0200472c, 27);
     groupVisual = groupActor->sprite;

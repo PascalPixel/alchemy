@@ -1,4 +1,14 @@
-/* NONMATCHING: 628/616 bytes, 205 differing halfwords, 118 aligned edits.
+/* NONMATCHING H3 (2026-09-27): local reset owner, 628/616 bytes,
+ * 205 differing halfwords / 109 aligned edits. The two block reset sites
+ * share a word-valued inline parameter for target/motion/height state.
+ * Full normalized diff: the selected block's complete reset sequence now
+ * matches, including pointer r3/zero r2. Frame and signed decrements stay
+ * admitted. The primary pool prediction FAILED: inline constant expansion
+ * still creates a dead HI zero which CSE uses for the later camera byte;
+ * the extra zero pool and +12-byte extent remain. Retain the local reset
+ * admission, not a claim of exactness. No function or alignment credit.
+ *
+ * Prior NONMATCHING: 628/616 bytes, 205 differing halfwords, 118 aligned edits.
  * 2026-09-26 own-ROM audit: 0200247c..020026e4 includes the sole pool word
  * 020026e0 = callback 0200a2a5. The 132-byte frame has a full 112-byte actor
  * scratch record at sp+20, not the old single s32 local with out-of-bounds
@@ -32,6 +42,15 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2,
                             s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
+}
+
+static __inline__ void FloatingBlock_ResetMotion(struct FieldActor *block, s32 value)
+{
+    block->target_y = ACTOR_NO_TARGET;
+    *(s32 *)block->unknown_14 = value;
+    block->velocity_y = value;
+    block->motion_flags = value;
+    ((struct FloatingBlockHeight *)block)->index = value;
 }
 
 void VinasuHeya_ResolveFloatingBlock(void)
@@ -111,11 +130,7 @@ check_height:
         if (none != 0) {
             goto next;
         }
-        block->target_y = ACTOR_NO_TARGET;
-        *(s32 *)block->unknown_14 = none;
-        block->velocity_y = none;
-        block->motion_flags = none;
-        ((struct FloatingBlockHeight *)block)->index = none;
+        FloatingBlock_ResetMotion(block, none);
         j = 0;
         slot = i;
         if (j < i) {
@@ -128,11 +143,7 @@ check_height:
         }
 apply_height:
         other = Engine_ActorGet(slot + 10);
-        other->target_y = ACTOR_NO_TARGET;
-        *(s32 *)other->unknown_14 = 0;
-        other->velocity_y = 0;
-        other->motion_flags = 0;
-        ((struct FloatingBlockHeight *)other)->index = 0;
+        FloatingBlock_ResetMotion(other, 0);
         Camera_SetSpeed(0x30000, 0x6000);
         Engine_EventGetViewCenter()->motion_flags = 0;
         Camera_MoveTo(0x880000, 0x80000, 0x1580000, 1);

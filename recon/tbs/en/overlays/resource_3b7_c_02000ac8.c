@@ -29,11 +29,21 @@
  * 212/125 to 211/123 with all nine pool words still exact. The second prompt
  * still inherits the choice-comparison -1 in r5. MENU/CONFIRM_SELECTION.C
  * confirms Menu_SelectEntry20To21 is s32(s32), unchanged by this transfer.
+ * H2: transfer INVENTORY.H and exact GAME/INVENTORY/{COUNT,ITEMS,MUTATION}.C
+ * plus GAME/PARTY/COUNTERS.C. Debit/removal had incorrect void declarations;
+ * canonical s32 calls and automatic registered-import resolution reproduce
+ * H1's complete bytes and normalized diff. Four opaque bindings are obsolete.
+ * The remaining -1 is pseudo 52 from the choice comparison (5 uses/24 insns/
+ * 2 calls), not a mismatched callee return. Choice has 15 uses/302 insns/31
+ * calls; message has 8/146/15. No allocator tie admits declaration changes.
+ * Exact spring callers and menu siblings reveal no new input-read ownership
+ * boundary beyond the already closed polling/weight models. Interface pass
+ * stopped with the H1 argument-order correction retained; no new DONE bytes.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "INVENTORY.H"
 
-s32 Main_080772e0(s32 item);
 void Main_0808a460(void);
 s32 Main_08015010(s32 x, s32 y, s32 width, s32 height, s32 flags);
 void Main_08015080(s32 text, s32 window, s32 x, s32 y);
@@ -41,9 +51,7 @@ void Main_080150b0(s32 value, s32 digits, s32 window, s32 x, s32 y);
 s32 Main_08015398(s32 choice);
 void Main_08015018(s32 window, s32 mode);
 void Main_08015140(void);
-s32 Main_08077308(void);
-void Main_08077230(s32 delta);
-void Main_08077048(s32 item);
+s32 Party_AdjustSixDigitCounterA(s32 amount);
 void Main_08015120(s32 value, s32 digits);
 s32 TorebiIzumi_Func0200173c(s32 side);
 void Func_020004bc(s32 item);
@@ -90,7 +98,7 @@ s32 TorebiIzumi_RunSpringGame(void)
     state = &Data_02000240_t;
 ask:
     coins = state->words[4];
-    tickets = Main_080772e0(229);
+    tickets = PartyInventory_CountItem(229);
     Engine_EventSetMessage(message);
     Event_OpenMessage(-1, 0);
     window = Main_08015010(0, 0, 17, 4, 2);
@@ -128,7 +136,7 @@ pressed:
     result = 0;
     goto close;
 check_room:
-    if (Main_08077308() == 0) {
+    if (PartyInventory_CountFreeSlots() == 0) {
         Engine_EventSetMessage(message + 4);
         Event_OpenMessage(-1, 0);
         if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) != 0) {
@@ -159,14 +167,14 @@ close:
         goto end;
     }
     if (choice == 0) {
-        Main_08077230(-1);
+        Party_AdjustSixDigitCounterA(-1);
     } else if (choice == 1) {
-        Main_08077048(229);
+        PartyInventory_Remove(229);
     }
     result = TorebiIzumi_Func0200173c(choice);
     if (choice == 0) {
         if (result != 4) {
-            Main_08077230(Data_0200a00c[result]);
+            Party_AdjustSixDigitCounterA(Data_0200a00c[result]);
             Engine_AudioPlayCue(91);
             Main_08015120(Data_0200a00c[result], 5);
             Engine_EventSetMessage(3654);

@@ -40,7 +40,13 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-/* NONMATCHING: 220 of 220 bytes, 8 differing halfwords / 8 aligned edits
+/* 2026-09-27 babi-land final audit: complete 220-byte extent, existing
+ * alignment and eight pool words rescored. Only eight a1/state r5/r6
+ * substitutions remain. The EventWork trigger, state-row and motion_flags
+ * accesses agree with FIELD_EVENT.H; no omitted consumer argument or
+ * supported lifetime change was found. Preserve the byte-publication
+ * boundary and stopped axes below. DONE +0, new alignment +0.
+ * NONMATCHING: 220 of 220 bytes, 8 differing halfwords / 8 aligned edits
  * (2026-09-27). Whole owner 02000b24..02000c00: return at 02000bdc,
  * alignment at 02000bde, eight pool words at 02000be0..02000bfc.
  * H1: a one-pass byte-publication block admits the separate state copy

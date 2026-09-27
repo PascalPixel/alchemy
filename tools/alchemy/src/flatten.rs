@@ -188,6 +188,7 @@ fn run(args: &[String]) -> Result<(), String> {
         check_overlay_coverage(&coverage.executable_areas, &overlay)?;
     }
     owners.sort_by_key(|o| o.address);
+    let gaps = compiler_gaps(&manifest, &overlay, &owners)?;
 
     let mut files: Vec<PathBuf> = Vec::new();
     for o in &owners {
@@ -813,7 +814,7 @@ fn run(args: &[String]) -> Result<(), String> {
         inlined.len()
     );
 
-    let entry = json!({
+    let mut entry = json!({
         "id": unit_id,
         "game": game,
         "source": source_root.join(&unit_path).strip_prefix(&root).map_err(|e| e.to_string())?,
@@ -831,6 +832,9 @@ fn run(args: &[String]) -> Result<(), String> {
         "local_symbols": [],
         "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address), "extent": o.extent, "state": "exact-c"})).collect::<Vec<_>>(),
     });
+    if !gaps.is_empty() {
+        entry["compiler_gaps"] = Value::Array(gaps);
+    }
     if !apply {
         println!(
             "manifest entry:\n{}",
@@ -873,6 +877,50 @@ fn run(args: &[String]) -> Result<(), String> {
 #[allow(clippy::too_many_arguments)]
 /// The units with instances that link any of `addresses` into `overlay`,
 /// as canonical owners or instance members.
+// Carry existing native-fill proofs only when both bounding owners move.
+fn compiler_gaps(manifest: &Value, overlay: &str, owners: &[Owner]) -> Result<Vec<Value>, String> {
+    let addresses: BTreeSet<u32> = owners.iter().map(|owner| owner.address).collect();
+    let address = |value: &Value| {
+        let text = value.as_str().ok_or("compiler gap lacks a hex address")?;
+        u32::from_str_radix(text.trim_start_matches("0x"), 16).map_err(|error| error.to_string())
+    };
+    let mut gaps = BTreeMap::new();
+    for unit in manifest["units"].as_array().ok_or("manifest lacks units")? {
+        if unit["overlay"] != overlay {
+            continue;
+        }
+        let members = unit["owners"].as_array().ok_or("unit lacks owners")?;
+        let selected = members
+            .iter()
+            .map(|member| address(&member["address"]))
+            .collect::<Result<Vec<_>, _>>()?;
+        if !selected.iter().all(|member| addresses.contains(member)) {
+            continue;
+        }
+        let Some(records) = unit.get("compiler_gaps") else {
+            continue;
+        };
+        for gap in records.as_array().ok_or("compiler_gaps must be an array")? {
+            let start = address(&gap["start"])?;
+            let end = address(&gap["end"])?;
+            if start >= end {
+                return Err("compiler gap must have positive extent".into());
+            }
+            if addresses.contains(&end)
+                && owners.iter().any(|owner| {
+                    u32::try_from(owner.extent)
+                        .ok()
+                        .and_then(|extent| owner.address.checked_add(extent))
+                        == Some(start)
+                })
+            {
+                gaps.insert((start, end), gap.clone());
+            }
+        }
+    }
+    Ok(gaps.into_values().collect())
+}
+
 fn instanced_units(manifest: &Value, overlay: &str, addresses: &BTreeSet<u32>) -> Vec<String> {
     let listed = |address: &Value| {
         address
@@ -1682,6 +1730,73 @@ fn write_json(path: &Path, value: &Value) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn flatten_preserves_existing_bounded_compiler_gaps_without_inference() {
+        let owners = [
+            Owner {
+                key: String::new(),
+                address: 0x100,
+                extent: 4,
+                name: String::new(),
+                source: PathBuf::new(),
+            },
+            Owner {
+                key: String::new(),
+                address: 0x106,
+                extent: 2,
+                name: String::new(),
+                source: PathBuf::new(),
+            },
+        ];
+        let gap = json!({"start": "0x00000104", "end": "0x00000106"});
+        let mut manifest = json!({"units": [{
+            "overlay": "resource_test", "owners": [{"address": "0x100"}, {"address": "0x106"}],
+            "compiler_gaps": [gap.clone(), gap.clone()]
+        }]});
+        assert_eq!(
+            compiler_gaps(&manifest, "resource_test", &owners).unwrap(),
+            [gap]
+        );
+        manifest["units"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("compiler_gaps");
+        assert!(compiler_gaps(&manifest, "resource_test", &owners)
+            .unwrap()
+            .is_empty());
+    }
+
+    #[test]
+    fn flatten_does_not_move_foreign_retained_or_unbounded_gap_proofs() {
+        let owners = [
+            Owner {
+                key: String::new(),
+                address: 0x100,
+                extent: 4,
+                name: String::new(),
+                source: PathBuf::new(),
+            },
+            Owner {
+                key: String::new(),
+                address: 0x106,
+                extent: 2,
+                name: String::new(),
+                source: PathBuf::new(),
+            },
+        ];
+        let manifest = json!({"units": [
+            {"overlay": "resource_other", "owners": [{"address": "0x100"}, {"address": "0x106"}],
+             "compiler_gaps": [{"start": "0x104", "end": "0x106"}]},
+            {"overlay": "resource_test", "owners": [{"address": "0x100"}, {"address": "0x106"}, {"address": "0x200"}],
+             "compiler_gaps": [{"start": "0x104", "end": "0x106"}]},
+            {"overlay": "resource_test", "owners": [{"address": "0x100"}, {"address": "0x106"}],
+             "compiler_gaps": [{"start": "0x102", "end": "0x106"}, {"start": "0x104", "end": "0x108"}]}
+        ]});
+        assert!(compiler_gaps(&manifest, "resource_test", &owners)
+            .unwrap()
+            .is_empty());
+    }
 
     #[test]
     fn multiline_macro_keeps_its_body_when_items_move() {

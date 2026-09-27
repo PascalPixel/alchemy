@@ -13,7 +13,24 @@
  * spark sl instead of beam r6, spark r7, sprite sl; pools shift by eight bytes.
  * The beam speed halfword load really follows and overwrites the sine result.
  * Next evidence needed is a source control-flow boundary spanning sprite's
- * lifetime; no further mask or aggregate spelling trials without new evidence. */
+ * lifetime; no further mask or aggregate spelling trials without new evidence.
+ *
+ * 2026-09-27 presentation-phase boundary model:
+ * Exact VINASU_CHOJO/PAIR_EFFECT.C separates object setup and final sprite
+ * presentation; the full own-ROM owner places the middle pool between its
+ * speed stores and sprite writes. Move only flags/priority to a second
+ * spark != 0 guard, retaining the mask, halfword fade aggregate and call order.
+ * Result: 856/367/164, byte-identical to the admitted baseline. The first
+ * CSE pass deletes the second guard (insn 678), merging setup/presentation
+ * before allocation. Sprite pseudo 34 still has four uses across 49 insns,
+ * six calls and one death in block 18; local allocation still gives it r6.
+ * Beam remains r7, spark sl, fade r8, and both pools remain eight bytes late.
+ * The lead's plain-byte flag-write witness does not apply: motion/phase
+ * stores share SI zero 168 and fade is HI zero 179; neither is the unwanted
+ * long-lived QI zero. No mask/type/flag variants or second unsupported
+ * boundary model; zero new DONE. No exact sibling was changed.
+ * Failed phase model is preserved at d91e62aec; retain the simpler admitted
+ * baseline body here. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

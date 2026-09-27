@@ -1,5 +1,5 @@
-/* NONMATCHING: 364 bytes, candidate 364, 60 differing halfwords, 39 aligned
- * halfword edits (2026-09-26). The halfword zero aggregate preserves the
+/* NONMATCHING: 364 bytes, candidate 364, 59 differing halfwords, 34 aligned
+ * halfword edits (2026-09-27). The halfword zero aggregate preserves the
  * complete extent; the Value mask keeps the full-width literal and result
  * in r3. Remaining: lamp and zero reload registers, the signed height
  * access index, and a second pool four bytes later than the reference.
@@ -20,7 +20,28 @@
  * Retain the evidenced record views, stop both tested axes. No changes to
  * the exact callback or shared headers; scalar-zero/random-local stopped
  * axes remain closed. Further work must explain the null-test/copy use
- * of r1 and the zero's pre-angle-store r0 load, not permute declarations. */
+ * of r1 and the zero's pre-angle-store r0 load, not permute declarations.
+ * East H1: transfer FIELD_EVENT.H Object_Create, used by exact Effect_Spawn,
+ * to stage coordinate inputs before the actual constructor's type argument.
+ * Baseline reload held r0=0x11c before all three coordinate loads and used r4
+ * for lamp. The inline boundary delays r0 until after z, fixes the signed
+ * height index to r0 and the sprite-zero consumption to r0. Full extent
+ * remains 364; normalized diff improves 60/39 to 59/34, prefix 18 to 65.
+ * The null-test copy survives into x/y but is r2, not r1; x is read before y.
+ * The zero producer is still HI-to-r9 via r3 after the angle store, and
+ * the second pool is still four bytes late. Keep this causal call-boundary
+ * result, not a claim of exactness. No ABI, shared source or compiler edits.
+ * East H2: split world spawn y = lamp->y.fixed + height from constructor
+ * input staging, retaining H1's late type load and all random/pool inputs.
+ * y is now read first, but consumes the r2 null-test copy; x needs another
+ * sl copy and z still needs r0. Full 364-byte diff is 99 halfwords/35 edits:
+ * one extra lamp copy shifts the body while consuming the former pool pad.
+ * Signed-height index and late type loading survive, but the required
+ * r1 null-test/x copy does not. Zero production still reloads HI through
+ * r3 after the angle store, so scheduling cannot move it before that store.
+ * Rejected H2 is preserved in 68351ea; retain H1's constructor boundary.
+ * Two-model bound reached. A new model must prove the r1 parent-copy and
+ * pre-angle r0 zero producer; y-expression or declaration sweeps are closed. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "OVERLAY_OBJECT.H"
@@ -86,7 +107,7 @@ void Func_020034bc(void)
     tick = gFrameCount & 15;
     if (tick != 0)
         return;
-    spark = (union ArcObject *)Engine_ObjectCreate(0x11c, lamp->x.fixed + 0x80000, lamp->y.fixed + height + 0x80000, lamp->z.fixed);
+    spark = (union ArcObject *)Object_Create(0x11c, lamp->x.fixed + 0x80000, lamp->y.fixed + height + 0x80000, lamp->z.fixed);
     height = Engine_MathDivide(height, 0x60000);
     height <<= 16;
     if (spark == NULL)

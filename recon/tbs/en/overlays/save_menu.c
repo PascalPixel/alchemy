@@ -1,5 +1,5 @@
 /* NONMATCHING: complete resource_370:020003cc..02000cfc, 2352 bytes.
- * Current H1 restored: 2340 bytes, 1144 halfwords, 935 aligned edits.
+ * Current cleanup H2: 2344 bytes, 1144 halfwords, 930 aligned edits.
  * Baseline 2026-09-27: 2368 bytes, 1145 halfwords, 903 aligned edits;
  * frame 556 rather than 548. Full listing and normalized diff read.
  * H1 tests the greeting payload boundary: four halfwords at 02002224
@@ -23,11 +23,35 @@
  * instructions. Full H1 diff and complete H1-to-H2 assembly delta read.
  * This correction is rejected and H1 restored byte-identically. The next
  * useful test needs password/menu control-flow ownership, not pool or
- * register permutations. ENTRY.INC invokes this owner at runtime 020083cd. */
+ * register permutations. ENTRY.INC invokes this owner at runtime 020083cd.
+ * Cleanup H1, 2026-09-27: explicit outer menu loop owns the completion
+ * cleanup at its continuation. 2332/2352, 1141 halfwords, 925 aligned
+ * edits, 865 wrong instructions; frame remains 556 versus 548. The whole
+ * diff and assembly delta show the cleanup moved after the password loop,
+ * not before the main-menu header as required. It does recover the help
+ * window store/reload before drawing. This does not validate the topology.
+ * Score with --unit retained-save-menu: scoring the owner alone selects
+ * the stale legacy 2368-byte draft. No serial or pool variants reopened.
+ * Cleanup H2 restores pre-H1 flow and transfers the exact workspace/flag
+ * menu volatile Data_03001c94 interface for password input, plus the
+ * void UiWork_Finalize(window, mode) interface from SELECT_RESOURCE_LAYOUT.
+ * Own veneers 08015018 -> 08016418 and 08015060 -> 08016478 establish the
+ * finalize/redraw bindings. Both password exits now use one declaration
+ * per service, instead of mixed value-returning aliases for the same call.
+ * Result: 2344/2352, 1144 halfwords, 930 aligned edits, 868 wrong
+ * instructions. The four distinct key reads and mask operations are
+ * recovered; page is still spilled, frame still 556, cleanup still late.
+ * Serial input, greeting, transfer and pool spellings are unchanged.
+ * Stop: completion/cancellation nesting and page/redraw lifetimes need a
+ * broader source model; do not repeat the outer-loop placement alone. */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
 #define SaveMenu_Run Func_020003cc
+
+extern volatile u32 Data_03001c94;
+void Engine_UiWorkFinalize(s32 window, s32 mode);
+void Engine_RenderOutputPrepareForRedraw(s32 window);
 
 extern u8 Data_02000000[];
 extern u8 Data_02000240[];
@@ -51,12 +75,10 @@ void Func_020017ca();
 s32 Func_020017d2();
 void Func_020017ee();
 void Func_02001804();
-void Func_02001812();
 void Func_02001814();
 s32 Func_02001816();
 void Func_0200939c();
 s32 Func_0200938c(s32, s32);
-s32 Func_02001822();
 s32 Func_02001830();
 void Func_0200184a();
 void Func_020094ac(void);
@@ -132,9 +154,7 @@ void Func_02009374();
 void Func_02001d1e();
 void Func_02001d2e();
 void Func_02001d36();
-void Func_02001d44();
 s32 Func_02009314(s32, s32);
-void Func_02001d54();
 void Func_02001d6e();
 void Func_020094cc(s32);
 s32 Func_020093d4(s32);
@@ -144,13 +164,11 @@ s32 Func_02001df4();
 void Func_02001e06();
 s32 Func_02001e12();
 void Func_02001e32();
-void Func_02001e44();
 void Func_02001e50();
 s32 Func_02001e6e();
 void Func_02001e76();
 void Func_02001ece();
 void Func_02001ee2();
-void Func_02001efe();
 void Func_02001f1a();
 s32 Func_02001f3c();
 s32 Func_02001f4a();
@@ -271,10 +289,10 @@ s32 SaveMenu_Run(void)
         goto L_Return;
         L_02000474:;
         Func_02001944(112);
-        Func_0200939c(page_window);
-        Func_02001812(page_window, 2);
-        Value2(Func_0200938c, help_window, 2);
-        Value2(Func_02001822, heading_window, 2);
+        Engine_RenderOutputPrepareForRedraw(page_window);
+        Engine_UiWorkFinalize(page_window, 2);
+        Engine_UiWorkFinalize(help_window, 2);
+        Engine_UiWorkFinalize(heading_window, 2);
         Func_020017c0(1);
     } else {
         *(u8 *)0x03001ca0 = started;
@@ -554,10 +572,10 @@ s32 SaveMenu_Run(void)
     goto L_020004a8;
     L_020009a6:;
     Func_02001e76(113);
-    Func_0200939c(page_window);
-    Func_02001d44(page_window, 2);
-    Func_0200938c(help_window, 2);
-    Func_02001d54(heading_window, 2);
+    Engine_RenderOutputPrepareForRedraw(page_window);
+    Engine_UiWorkFinalize(page_window, 2);
+    Engine_UiWorkFinalize(help_window, 2);
+    Engine_UiWorkFinalize(heading_window, 2);
     goto L_020009d2;
     L_020009cc:;
     if (v6 != 0) {
@@ -593,14 +611,14 @@ s32 SaveMenu_Run(void)
             Call4(Func_02001e50, 0xc81, help_window, 0, 0);
         }
         Call1(Func_02001ece, 0x6006000);
-        Func_02001e44(page_window);
+        Engine_RenderOutputPrepareForRedraw(page_window);
         page = none;
         L_02000aaa:;
         Call1(Func_02001ee2, 0x6002500);
-        if ((*(s32 *)0x03001c94 & 2) != 0) {
+        if ((Data_03001c94 & 2) != 0) {
             goto L_020009a6;
         }
-        if ((*(s32 *)0x03001c94 & 1) != 0) {
+        if ((Data_03001c94 & 1) != 0) {
             page = (page + 1);
             v7 = 1;
             if (page == page_count) {
@@ -608,7 +626,7 @@ s32 SaveMenu_Run(void)
             }
             Func_02001fa2(111);
         } else {
-            if ((*(s32 *)0x03001c94 & 32) != 0) {
+            if ((Data_03001c94 & 32) != 0) {
                 if (page_count <= 1) {
                     goto L_02000b30;
                 }
@@ -616,7 +634,7 @@ s32 SaveMenu_Run(void)
                 rec5 = Func_02001e6e(((page + page_count) - 1), page_count);
             } else {
                 L_02000b30:;
-                if ((*(s32 *)0x03001c94 & 16) == 0) {
+                if ((Data_03001c94 & 16) == 0) {
                     goto L_02000b58;
                 }
                 if (page_count <= 1) {
@@ -634,7 +652,7 @@ s32 SaveMenu_Run(void)
         } else {
             v7 = 0;
             v5 = 2;
-            Func_02001efe(page_window);
+            Engine_RenderOutputPrepareForRedraw(page_window);
             do {
                 Func_02001f1a(page_window, 0, v5, 18, v5);
                 v5 = (v5 + 2);

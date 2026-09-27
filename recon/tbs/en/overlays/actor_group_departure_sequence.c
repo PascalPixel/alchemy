@@ -1,7 +1,7 @@
-/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 41 differing
- * halfwords, 30 wrong instructions, 35 halfword edits. Shared FieldSprite
+/* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 33 differing
+ * halfwords, 27 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
- * Visual reloads and two facing-store blocks remain.
+ * Two actor facing/priority setup blocks remain.
  * H1 (2026-09-27): audited the import table against exact StormScene and
  * GroupDeparture siblings plus FIELD_EVENT.H. Camera speed and actor
  * animation are void, ActorGet/ViewCenter return FieldActor pointers; no
@@ -49,7 +49,18 @@
  * invariant. H2's better aggregate is not an admitted correction. Full
  * normalized diffs read; retain the 41-halfword canonical candidate and
  * close this two-test store-boundary axis. New actor/sprite scheduling
- * evidence is required before another last-mile pass. */
+ * evidence is required before another last-mile pass.
+ * Astra 6 entry/initializer transfer (2026-09-27): assigning each sprite in
+ * its Camera_SetSpeed argument fixes all six entry halfwords, with no other
+ * bytes changed. Initializing actor 24's facing temporary before the priority
+ * write fixes two more halfwords without breaking a matching halfword. The
+ * frame, extent and pools remain exact. An inline facing initializer gives
+ * the same binary as that simpler order. Moving facing into the raw animation
+ * call's argument changes nothing; neither does a priority-only initializer.
+ * These eight corrected halfwords remain draft improvements, not DONE.
+ * Follow-up: Call2 boundaries at both animation calls and a full typed actor
+ * initializer at actor 25 each compile to the same 33-halfword candidate.
+ * Stop this initializer axis; preserve the entry and early-facing fixes. */
 #include "FIELD_EVENT.H"
 #include "OBJECT_RUNTIME.H"
 
@@ -178,9 +189,9 @@ void Scene_RunActorGroupDepartureSequence(void)
 
     actor = Pointer1(Func_0200472c, 19);
     groupActor = Pointer1(Func_0200472c, 27);
-    groupVisual = groupActor->sprite;
-    actorVisual = actor->sprite;
-    Camera_SetSpeed(0x10000, 0x2000);
+    /* FAKEMATCH: assign each visual in its corresponding setup argument. */
+    Camera_SetSpeed((actorVisual = actor->sprite, 0x10000),
+                    (groupVisual = groupActor->sprite, 0x2000));
     Call4(Func_02004824, 0x6e0000, -1, 0x58b0000, 1);
     Call3(Func_0200473c, 8, 0x13333, 0x9999);
     Call3(Func_0200473c, 26, 0x13333, 0x9999);
@@ -409,10 +420,10 @@ void Scene_RunActorGroupDepartureSequence(void)
     groupActor->priority_flags &= 254;
     groupActor->scale_x = 0x10000;
     groupActor->scale_y = 0x10000;
-    groupVisual->priority = 0;
     {
         s32 shown = 0xb000;
 
+        groupVisual->priority = 0;
         groupActor->facing = shown;
     }
     Func_02004794(24, 5);

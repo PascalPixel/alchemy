@@ -85,7 +85,16 @@ extern s32 Korosseo_MarkerOam[3];
  * division-result move gives r0 preference; local/global allocation keeps
  * it in r0 and step pseudo 34 in r5. The reference instead copies step to
  * r0 before both multiplies. Moving this product alone cannot change that
- * interference. No adoption; close this statement-boundary axis. */
+ * interference. No adoption; close this statement-boundary axis.
+ * Astra 2026-09-27: an inline interpolation initializer with separate
+ * delta, step, unsigned base and duration inputs gives 316/316 bytes,
+ * 113 halfwords / 73 edits. It restores a multiply input copy but copies
+ * delta, not step, and swaps the saved step/base roles. Both coordinate
+ * pointer schedules and the priority pool still differ. The full extent
+ * alone is not a match; keep the stronger advancing-write baseline.
+ * Transferring ROOM_VIS.C's initialized signed 16-bit record to the step
+ * then produces the original binary exactly (312/316, 126/65). Its delay
+ * of a signed conversion does not alter this multiply's destination. */
 void Korosseo_UpdateMarker(void)
 {
     s32 tile;

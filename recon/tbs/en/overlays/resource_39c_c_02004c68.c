@@ -1,4 +1,4 @@
-/* NONMATCHING H4: current 728 / 732 bytes, 233 differing halfwords, 54 edits.
+/* NONMATCHING: current 728 / 732 bytes, 234 differing halfwords, 50 edits.
  * Whole owner [02004c68,02004f44), including ten pool words.
  * 2026-09-26 bounded H1: a lowering-phase inline routine returns speed;
  * the caller owns the clamp store. This DOES rebuild 0x04000000 at the
@@ -51,7 +51,11 @@
  * scheduler counterexample does not meet the predicted emitted sequence;
  * preserve it, then restore H2. No new exact function or alignment bytes.
  * The shared record correction is retained; clamp/reset boundary axes end
- * here until new compiler or ordinary-source evidence supplies a new fact. */
+ * here until new compiler or ordinary-source evidence supplies a new fact.
+ * Final checkpoint restores H2's canonical body. Its whole emitted extent
+ * is byte-identical to the prior baseline; only the shared map-record
+ * semantics and the recorded bounded facts remain. Both owners are C not
+ * yet written, not assembly. No adoption and no credit reclassification. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "MAP_SCROLL.H"
@@ -117,8 +121,7 @@ lowered:
     Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
     Engine_EventWait(30);
     Call3(Engine_ActorWalkToAndWait, 0, 0x2c0, 0x248);
-    /* FAKEMATCH: isolate the actor reset from animation argument setup. */
-    do { *(s32 *)Engine_ActorGet(0)->unknown_44 = 0; } while (0);
+    *(s32 *)Engine_ActorGet(0)->unknown_44 = 0;
     Engine_ActorSetAnimation(0, 6);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 7);

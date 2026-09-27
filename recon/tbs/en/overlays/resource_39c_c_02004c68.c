@@ -29,24 +29,38 @@
  * the wait, 43 halfwords); as a goto loop the layout is the reference's but
  * CSE reuses the compare's 0x4000000 for the store after the loop, which the
  * reference rebuilds (4 bytes short). One scheduling pair after the walk
- * (zero before the unknown_44 store). */
+ * (zero before the unknown_44 store).
+ * Sol Mercury H2 (2026-09-27): MAP_SCROLL.H and the exact scroll updater
+ * identify the record at map work +0x164 as layers[2], not a local layer 7.
+ * The +0x0c field is offset_y; +0x1c is speed_y. Reusing the shared record
+ * and slot declaration emits byte-identical output to the 728-byte baseline
+ * (234 differing halfwords / 50 aligned edits); complete normalized diff
+ * read and binary equality checked. Keep this semantic correction.
+ * The clamp still shares its comparison pseudo through CSE2 and reload.
+ * New exact function bytes and alignment: both 0.
+ * Sol Mercury H3: an inline clamp setter fails to rematerialize the bound.
+ * The complete diff shows the lowering wait/deceleration block moved below
+ * the actor sequence and the exit test inverted; speed remains in sl.
+ * CSE still shares r2 at the clamp. Preserve this negative candidate in its
+ * own commit, then restore H2 before testing the independent actor-store
+ * residual. Do not retry the inline clamp boundary. Credit remains 0.
+ * Sol Mercury H4: a one-iteration reset scope prevents the animation
+ * argument from preceding the store, but moves the zero before ActorGet
+ * and changes the preceding walk argument order. Complete diff read:
+ * 728/732 bytes, 233 differing halfwords / 54 aligned edits. This local
+ * scheduler counterexample does not meet the predicted emitted sequence;
+ * preserve it, then restore H2. No new exact function or alignment bytes.
+ * The shared record correction is retained; clamp/reset boundary axes end
+ * here until new compiler or ordinary-source evidence supplies a new fact.
+ * Final checkpoint restores H2's canonical body. Its whole emitted extent
+ * is byte-identical to the prior baseline; only the shared map-record
+ * semantics and the recorded bounded facts remain. Both owners are C not
+ * yet written, not assembly. No adoption and no credit reclassification. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "MAP_SCROLL.H"
 
 void Main_080091a0(void);
-
-struct MapLayer {
-    u8 unknown_00[12];
-    s32 y;
-    u8 unknown_10[12];
-    s32 unknown_1c;
-    u8 unknown_20[16];
-};
-
-struct MapWork {
-    u8 unknown_00[20];
-    struct MapLayer layers[8];
-};
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -60,14 +74,14 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 
 void Func_02004c68(void)
 {
-    struct MapLayer *layer;
+    struct MapLayerScroll *layer;
     s32 speed;
     u16 lower_height;
 
-    layer = &(*(struct MapWork **)0x03001e70)->layers[7];
+    layer = &Data_03001e70->layers[2];
     speed = 0x9c28;
-    layer->y = 0x4890000;
-    layer->unknown_1c = 0;
+    layer->offset_y = 0x4890000;
+    layer->speed_y = 0;
     Engine_ActorGet(0)->motion_flags = 0;
     Engine_ActorGet(0)->z.fixed += -0x890000;
     Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
@@ -85,12 +99,12 @@ void Func_02004c68(void)
     lower_height = 0x400;
 lower:
     {
-        layer->y -= speed;
+        layer->offset_y -= speed;
         Engine_ActorGet(0)->z.fixed += speed;
         Engine_ActorGet(0)->target_z = Engine_ActorGet(0)->z.fixed;
         Engine_ActorGet(13)->z.fixed += speed;
         Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
-        if (layer->y <= 0x4000000)
+        if (layer->offset_y <= 0x4000000)
             goto lowered;
         if ((*(u32 *)0x03001e40 & 15) == 0 && speed > 0xccb)
             speed += -0x560;
@@ -99,7 +113,7 @@ lower:
     }
 lowered:
     /* FAKEMATCH: retain the clamp's pixel-height constituent in HImode. */
-    do { layer->y = lower_height << 16; } while (0);
+    do { layer->offset_y = lower_height << 16; } while (0);
     Engine_MapRedraw();
     Engine_TaskWait(2);
     Engine_ActorGet(0)->motion_flags = 3;
@@ -132,14 +146,14 @@ raise_wait:
     Engine_TaskWait(1);
 raise:
     {
-        layer->y += speed;
+        layer->offset_y += speed;
         Engine_ActorGet(13)->z.fixed -= speed;
         Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
-        if (layer->y <= 0x488ffff) {
+        if (layer->offset_y <= 0x488ffff) {
             goto raise_wait;
         }
     }
-    layer->y = 0x4000000;
+    layer->offset_y = 0x4000000;
     Call6(Engine_MapCopyCellsTo, 45, 91, 40, 91, 5, 4);
     Call6(Engine_MapCopyCellAttributes, 104, 34, 5, 4, 40, 34);
     Engine_MapRedraw();

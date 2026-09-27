@@ -24,11 +24,23 @@
  * No new admissible source-interface hypothesis follows from this audit.
  * Preserve the canonical body and all exact regions; do not retry the
  * closed parameter-type, inline-spawn, counter or declaration axes.
- * This audit changes no emitted bytes and earns 0 new DONE bytes. */
+ * This audit changes no emitted bytes and earns 0 new DONE bytes.
+ * Sol Mercury H1 (2026-09-27): the ordinary inline drift producer keeps
+ * the unsigned random intermediate and returns its fixed-point step.
+ * Complete normalized diff and binary equality against the macro baseline
+ * confirm unchanged 636/636 bytes, 21 halfwords / 18 edits. Reload already
+ * chooses r2 for the options pointer before sched2, so this producer
+ * boundary cannot fix the side-zero/one argument staging. Keep the readable
+ * helper as the canonical draft; close this axis. New exact bytes: 0. */
 #include "FIELD_EFFECT.H"
 
 /* A random drift of about -0.8 to +0.8 in steps of 0.2. */
-#define STEP() ((s32)(((u32)Engine_RandomNext() << 3) >> 16) * 0x3333)
+static __inline__ s32 Door_DriftStep(void)
+{
+    u32 drift = (u32)Engine_RandomNext();
+
+    return ((drift << 3) >> 16) * 0x3333;
+}
 
 /* Slide one of three stone doors two cells open, with dust along its edge. */
 void Func_02001db4(s32 side)
@@ -62,11 +74,11 @@ void Func_02001db4(s32 side)
         for (; j <= 7; j++) {
             if (j & 1) {
                 if (side == 0) {
-                    Effect_Spawn(0x3180000, 0, up, STEP() + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
+                    Effect_Spawn(0x3180000, 0, up, Door_DriftStep() + -0xcccc, 0, Door_DriftStep() + -0xcccc, 0x90000, p);
                 } else if (side == 1) {
-                    Effect_Spawn(up + 0x600000, 0, 0x2ea0000, STEP() + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
+                    Effect_Spawn(up + 0x600000, 0, 0x2ea0000, Door_DriftStep() + -0xcccc, 0, Door_DriftStep() + -0xcccc, 0x90000, p);
                 } else {
-                    Effect_Spawn(down, 0, 0x2ca0000, STEP() + -0xcccc, 0, STEP() + -0xcccc, 0x90000, p);
+                    Effect_Spawn(down, 0, 0x2ca0000, Door_DriftStep() + -0xcccc, 0, Door_DriftStep() + -0xcccc, 0x90000, p);
                 }
                 Engine_EventWait(1);
             }

@@ -1,4 +1,14 @@
-/* NONMATCHING: ship H2 separate phase, 336/340 bytes, 111 differing
+/* NONMATCHING: ship H3 separate frequency input, 340/340 bytes,
+ * 56 differing halfwords, 51 aligned edits (2026-09-27). A distinct product
+ * destination restores extent and native loop-alignment placement, but
+ * copies the phase into r4, not frequency, losing the admitted H2 product
+ * ownership. Signed scroll, sp+0 spill and both fp masks still survive.
+ * All nine pool values survive, with the last two in reversed order;
+ * high-register roles and second-axis address reuse remain different.
+ * Full normalized diff read. Reject this ownership model despite its
+ * smaller edit count; retain H2 as canonical successor and close the
+ * three-attempt product axis. No exact function or alignment credit.
+ * Ship H2 separate phase, 336/340 bytes, 111 differing
  * halfwords, 62 aligned edits (2026-09-27). Computing phase first restores
  * its first-axis load order and the nine-word pool. Frequency owns the r4
  * product, but loads directly there instead of the reference r3-to-r4 copy.
@@ -105,14 +115,15 @@ void Local_02000f80(void)
     s32 step;
     s32 amplitude;
     s32 phase;
+    s32 frequency;
 
     state = Data_03001ed8;
     scroll_y = Data_03001ad0.y;
     line = state->pages[state->page ^ 1];
     step = state->step_x;
     phase = state->phase_x + scroll_y;
-    acc = state->frequency_x;
-    acc *= phase;
+    frequency = state->frequency_x;
+    acc = frequency * phase;
     amplitude = state->amplitude_x;
     base = Data_03001ad0.x;
     {
@@ -129,8 +140,8 @@ void Local_02000f80(void)
     line = state->pages[state->page ^ 1] + 1;
     step = state->step_y;
     phase = state->phase_y + scroll_y;
-    acc = state->frequency_y;
-    acc *= phase;
+    frequency = state->frequency_y;
+    acc = frequency * phase;
     amplitude = state->amplitude_y;
     base = scroll_y;
     {

@@ -55,6 +55,11 @@
  * scoped lifetime ranks cursor below window but still above named table.
  * These facts do not predict eviction from combining those two models.
  * No further trial: baseline reproduced, diagnostic and ordinary text agree.
+ * Pinned-compiler layout measurement: exact TextResourceSetup and this
+ * opaque TextObject both occupy 12 bytes aligned to 4, both BLKmode.
+ * TextResourcePosition is an 8-byte partial view aligned to 4; initializer
+ * writes offset 8. Thus the exact bitfields supply no different address
+ * producer from this record. No caller trial or size/alignment sweep run.
  */
 #include "TYPES.H"
 

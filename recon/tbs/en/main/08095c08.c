@@ -14,6 +14,17 @@
  * compare/coverage/verify required for adoption; results stay in this header.
  * H1 result: 456/456, unchanged 11 differing halfwords / 7 aligned edits.
  * Complete diff read: origin-only inline ownership moves neither residual.
+ * H1 preserved in e9b306bb2. H2 isolates only the state-0 stack-position
+ * copy and its polar-offset consumer, as exact POLAR_OFFSET.C reads/writes
+ * x/z and skips y. Exact radial/orbit siblings establish this same input.
+ * Prediction: this geometry boundary changes state-0 source-copy scheduling
+ * without absorbing target stores, flags, or the whole phase/loop. One try.
+ * H2 result: 456/456, unchanged 11 differing halfwords / 7 aligned edits.
+ * Both emitted binaries compare identical to baseline, not merely equal
+ * scores; complete diffs confirm the same state-0 and state-2 schedules.
+ * Origin-pair and coordinate-copy/consumer ownership alone do not recover
+ * either invariant. Stop after the model and one follow-up; no adoption,
+ * zero new DONE. No whole-phase wrapper, RA sweep, or toolchain changes.
  */
 #include "FIXED_MATH.H"
 #include "TYPES.H"
@@ -83,11 +94,18 @@ void Audio_PlayCue(s32 cue);
 
 #define BattleFx_UpdatePhasedRadialParticle Func_08095c08
 
-/* FAKEMATCH: retain the saved x/z pair's narrow inline ownership boundary. */
-static __inline__ void EffectOrigin_Capture(struct PhasedParticleSlot *effect)
+/* FAKEMATCH: isolate only the coordinate input and its polar consumer. */
+static __inline__ void EffectPosition_AddLaunchOffset(
+    struct PhasedParticleSlot *effect, struct EffectVector *position)
 {
-    effect->origin.x = effect->x;
-    effect->origin.z = effect->z;
+    position->x = effect->x;
+    position->z = effect->z;
+    RotateVectorByMagnitude(
+        0x780000,
+        ((Random16() * 3 << 11) >> 16)
+            - ((Random16() * 3 << 11) >> 16)
+            + 0xc000,
+        position);
 }
 
 void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
@@ -106,14 +124,7 @@ void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
     if (state == 0) {
         effect->x = effect->origin.x;
         effect->z = effect->origin.z;
-        position.x = effect->x;
-        position.z = effect->z;
-        RotateVectorByMagnitude(
-            0x780000,
-            ((Random16() * 3 << 11) >> 16)
-                - ((Random16() * 3 << 11) >> 16)
-                + 0xc000,
-            &position);
+        EffectPosition_AddLaunchOffset(effect, &position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         effect->acceleration = 0x50000;
@@ -139,7 +150,8 @@ void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
             (*state_pointer)--;
     } else if (state == 2) {
         if (EffectSlot_HasReachedTarget(effect) == 0) {
-            EffectOrigin_Capture(effect);
+            effect->origin.x = effect->x;
+            effect->origin.z = effect->z;
             effect->object->flags &= -13;
             effect->flags = 4;
             effect->render = 0;

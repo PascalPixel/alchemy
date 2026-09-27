@@ -1,4 +1,38 @@
-/* NONMATCHING: word-sized output base, 336 of 340 bytes, 112 differing
+/* NONMATCHING: canonical ship H2 retained, 336/340 bytes, 111 differing
+ * halfwords, 62 aligned edits. The three product trials are closed;
+ * all attempts are preserved. Frequency owns the accumulator, signed
+ * scroll spills at sp+0, both masks occupy fp and the pool has nine words.
+ * Remaining: accumulator copy, high-register ownership and second-axis
+ * address reuse. The complete extent/pool is not exact; no DONE.
+ * Ship H3 separate frequency input, 340/340 bytes,
+ * 56 differing halfwords, 51 aligned edits (2026-09-27). A distinct product
+ * destination restores extent and native loop-alignment placement, but
+ * copies the phase into r4, not frequency, losing the admitted H2 product
+ * ownership. Signed scroll, sp+0 spill and both fp masks still survive.
+ * All nine pool values survive, with the last two in reversed order;
+ * high-register roles and second-axis address reuse remain different.
+ * Full normalized diff read. Reject this ownership model despite its
+ * smaller edit count; retain H2 as canonical successor and close the
+ * three-attempt product axis. No exact function or alignment credit.
+ * Ship H2 separate phase, 336/340 bytes, 111 differing
+ * halfwords, 62 aligned edits (2026-09-27). Computing phase first restores
+ * its first-axis load order and the nine-word pool. Frequency owns the r4
+ * product, but loads directly there instead of the reference r3-to-r4 copy.
+ * Signed scroll, sp+0 spill, fp masks and state/line/counter roles survive.
+ * Step/amplitude/base/routine high-register ownership and second-axis
+ * address reuse remain different. Full normalized difference read.
+ * Next bounded hypothesis: a separate frequency input and fresh product
+ * destination preserve phase order but emit the reference accumulator copy.
+ * Ship H1 frequency staging, 332/340 bytes, 122 differing
+ * halfwords, 70 aligned edits (2026-09-27). Assigning frequency to acc
+ * before the phase product gives r4 the reference multiply ownership,
+ * unlike the earlier fused expression. It loads frequency before phase,
+ * though, omits the reference's separate r3-to-r4 copy and changes pool
+ * membership. Signed scroll load, sp+0 spill and both fp masks survive.
+ * Full normalized diff read; this checkpoint earns no exact bytes.
+ * Next bounded hypothesis: a separate phase local computed first restores
+ * phase/frequency load order while leaving frequency as accumulator.
+ * Previous word-sized output base, 336 of 340 bytes, 112 differing
  * halfwords, 64 aligned edits (2026-09-27). Local invariant admitted;
  * the complete owner is not exact and earns no new DONE.
  * The two reference loops share their waveform calculation and interleaved
@@ -86,13 +120,15 @@ void Local_02000f80(void)
     s32 acc;
     s32 step;
     s32 amplitude;
+    s32 phase;
 
     state = Data_03001ed8;
     scroll_y = Data_03001ad0.y;
     line = state->pages[state->page ^ 1];
     step = state->step_x;
-    acc = state->phase_x + scroll_y;
-    acc *= state->frequency_x;
+    phase = state->phase_x + scroll_y;
+    acc = state->frequency_x;
+    acc *= phase;
     amplitude = state->amplitude_x;
     base = Data_03001ad0.x;
     {
@@ -108,8 +144,9 @@ void Local_02000f80(void)
     }
     line = state->pages[state->page ^ 1] + 1;
     step = state->step_y;
-    acc = state->phase_y + scroll_y;
-    acc *= state->frequency_y;
+    phase = state->phase_y + scroll_y;
+    acc = state->frequency_y;
+    acc *= phase;
     amplitude = state->amplitude_y;
     base = scroll_y;
     {

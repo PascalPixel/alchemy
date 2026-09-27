@@ -1,4 +1,14 @@
-/* NONMATCHING: 236 of 232 bytes, 82 differing halfwords, 51 aligned edits.
+/* NONMATCHING: H2 ship 2026-09-27, 236 of 232 bytes, 82 differing
+ * halfwords, 51 aligned edits. Signed union destination with unsigned source
+ * produces the original baseline bytes: no independent word decrement and
+ * still a forwarded first iteration. Full normalized diff read. Close the
+ * volatile/view axis after two trials without the required subtract shape.
+ * H1 ship 2026-09-27, 236 of 232 bytes, 104 differing
+ * halfwords, 69 aligned edits. Volatile counter pointer restores the loop
+ * reload but adds r8 saves, a second decrement load and a 0xffff pool word;
+ * it does not emit the required unconditional ldrsh/ldrh then word subtract.
+ * Full normalized diff read. Rejected volatile-pointer ownership model.
+ * Previous baseline: 236 of 232 bytes, 82 differing halfwords, 51 aligned edits.
  * 2026-09-27: the complete pool proves the 24 twelve-byte records end at
  * count +0x120, followed by the VRAM id +0x122. Modelling these as one
  * state restores the word decrement but folds the three independent pool
@@ -54,7 +64,7 @@ void Local_020011c4(void)
     count = &Data_02009c18;
     w = Data_02009af8;
     if (count->signed_value != 0) {
-        count->value--;
+        count->signed_value = count->value - 1;
     }
     for (i = 0; i < 8; i++) {
         v = count->signed_value;

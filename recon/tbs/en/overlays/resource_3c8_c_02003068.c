@@ -38,6 +38,10 @@
  * baseline with only address/zero order at the first BLDCNT write differing.
  * The old four-reference/address-cross-block idea remains unsupported by
  * this witness. No new function bytes, alignment bytes or DONE. */
+/* 2026-09-27 zero-before-loop lifetime trial: moving the s32 zero outside
+ * the one-pass block emits zero before address, but local allocation assigns
+ * zero=r2 and address=r3: 3964 bytes, three differing halfwords. The loop
+ * does not create the needed cross-block lifetime. Restore the two-edit body. */
 /* Astra 2026-09-27: use Value_04000050 for the first blend-register
  * address, transferring the established link-constant method. Full output
  * remains 3964 bytes / 2 halfwords. Initializing zero before that symbolic

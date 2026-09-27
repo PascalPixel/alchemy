@@ -25,7 +25,7 @@
  * Prediction was counter/value r6/r8 without changing the shared advance
  * tail or pools. Actual full diff is byte-identical to the old draft:
  * 552/552, 171 differing halfwords, 69 aligned edits. No admission.
- * CSE already promotes the u8 user local to SI pseudo 33; combine deletes
+ * Initial RTL already promotes the u8 user local to SI pseudo 33; combine deletes
  * its redundant copy. The value remains 4 uses/15 instructions/1 call,
  * counter-address pseudo 35 remains 10 uses/169 instructions/15 calls,
  * allocated last. No allocation tie, and no loop-pass transformation.
@@ -34,7 +34,10 @@
  * copies and different alignment. The whole pool is present but not exact.
  * Together with 020000c4 H4 this closes direct-field/byte-snapshot producer
  * spellings. No new supported shared helper or source-phase boundary was
- * found in exact FLY_BY_21/22 and DECK_SEQ. Function/alignment credit +0. */
+ * found in exact FLY_BY_21/22 and DECK_SEQ. Function/alignment credit +0.
+ * H3 is preserved in 340f1f19d; retain the canonical word snapshot below.
+ * A future trial needs evidence changing the persistent counter-address
+ * lifetime or its real uses, not another spelling of the initial value. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -62,8 +65,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 s32 Func_020002ec(struct FieldActor *obj)
 {
-    /* FAKEMATCH: retain the byte state independently of switch promotion. */
-    u8 step;
+    u32 step;
 
     step = obj->rise_counter;
     if (step != 0) {

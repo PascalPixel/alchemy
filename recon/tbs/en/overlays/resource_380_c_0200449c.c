@@ -60,7 +60,14 @@
  * owns sl as in reference, but scale remains fp, hold r8, and position slots
  * remain displaced. Partial ownership witness, not an admitted exact shape.
  * Transferred DRIFT.C 74a903e43 has no matching random variant or callback
- * publication consumers here; those repairs were not applied. */
+ * publication consumers here; those repairs were not applied.
+ * H9 addressable nine-slot snapshot array: 796 bytes / 384 halfwords /
+ * 331 edits. Memory residence is confirmed, but it requires an aggregate
+ * base register and grows the frame from 68 to 80; the stack-slot gate fails.
+ * Rejected that storage model; H8 is the canonical diagnostic draft.
+ * STOP: tested consumer/cursor/scalar-record/array axes bounded. Next work
+ * needs new structural evidence for scale spill / hold fp / third sample r8,
+ * not allocation respellings. No new exact function or alignment bytes. */
 #include "FIELD_EVENT.H"
 
 void *Engine_AllocateBlock(s32 id, s32 size);

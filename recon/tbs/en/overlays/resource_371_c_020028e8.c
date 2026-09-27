@@ -4,7 +4,15 @@
  * sprite bitfields recover the full-width masks. Sprite initialization
  * still copies the actor base to r2, holds zero in r3 instead of r1, and
  * strength-reduces the mask from that zero. The approved allocator dump
- * and an inline initialization boundary did not close that residual. */
+ * and an inline initialization boundary did not close that residual.
+ * 2026-09-27 bounded family test: reused FUNE_HEYA/PLACE_ANCHOR.C's
+ * FIELD_EVENT.H object creation / heap-17 icon upload interface, bound to
+ * this overlay's own import veneers. In particular Vram_Load returns s32,
+ * not the old unprototyped void. The complete 972-byte candidate is
+ * byte-identical to the prior draft: 11 halfwords / 11 aligned edits;
+ * frame and every pool word still match. Thus the real interface repair
+ * does not change the initialization zero/base ancestry. No further
+ * inline-initialization, allocator, zero or pointer spelling test made. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -19,15 +27,10 @@ void Func_02006b8c();
 void Func_02006b98();
 void Func_02006ba6();
 void Func_02006baa();
-u8 *Func_02006bb4();
 void Func_02006bb8();
 void Func_02006bd6();
-u8 *Func_02006bd8();
-void Func_02006bda();
 u8 *Func_02006bf0();
-void Func_02006bfc();
 void Func_02006c36();
-void Func_02006c7c();
 void Func_02006c84();
 void Func_02006c86();
 void Func_02006c96();
@@ -201,14 +204,14 @@ void Scene_RunActorPresentation(void)
     Func_02006d2e(0, 2);
     Func_02006c84(20);
     Func_02006d1c(0, 28);
-    obj = (struct FieldActor *)Pointer4(Func_02006bd8, 22, (*(s32 *)((s32)rec7 + 8) + 0x20000), 0x260000, *(s32 *)((s32)rec7 + 16));
+    obj = Object_Create(22, (*(s32 *)((s32)rec7 + 8) + 0x20000), 0x260000, *(s32 *)((s32)rec7 + 16));
     if (obj != 0) {
         p6 = PrepareItemSprite(obj, 0);
-        tiles = Pointer2(Func_02006bb4, 17, 0x608);
-        Func_02006c7c(242);
+        tiles = Heap_Allocate(17, 0x608);
+        Engine_ItemLoadIcon(242);
         tiles += 0x400;
-        Func_02006bfc(p6[28], 128, tiles);
-        Func_02006bda(17);
+        Vram_Load(p6[28], 128, tiles);
+        Heap_Release(17);
         Func_02006cf8_a(20);
         obj->update = (void (*)(union FieldObject *))0x200813d;
         Func_02006d02(80);

@@ -88528,6 +88528,10 @@
         "ArutamiraDou_ReleaseWallBurst": {
           "address": "0x0200bad4",
           "kind": "thumb"
+        },
+        "SceneEffect_UpdateStateMachine": {
+          "address": "0x02008f94",
+          "kind": "thumb"
         }
       },
       "owners": [

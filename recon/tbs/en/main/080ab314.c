@@ -2,6 +2,15 @@
    19 differing halfwords (18 aligned edits). Typed menu, text-work, window
    and message records recover the nested loops. Remaining differences are
    argument setup, register allocation and scheduling; allocator inspected. */
+/* H1, canonical callee audit: the exact Menu_DrawAtWindowOffset definition
+ * returns s32 and takes a window pointer, not void(s32,...). Test that real
+ * call shape against the two outgoing-stack sequences. The named-text-cell
+ * idea was rejected before editing: ROM already uses menu-cell minus 0xa0,
+ * and the existing model's complete 101-instruction prefix is exact.
+ * H1 result: byte-identical to baseline (720/720 bytes, 19 differing
+ * halfwords, 18 aligned edits). Keep the canonical declaration; return and
+ * pointer shape do not affect these call sites. No matching-C credit.
+ */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -51,7 +60,7 @@ void Func_08015078(s32 message, s32 window, s32 x, s32 y);
 struct ChooserMessage **Func_080153f8(s32 window, s32 message);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 palette);
-void Menu_DrawAtWindowOffset(s32 window, s32 x, s32 y, s32 width, s32 height, s32 palette);
+s32 Menu_DrawAtWindowOffset(void *window, s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiMenu_PositionCursor(s32 x, s32 y);
 s32 Menu_GetModuloOfSum(s32 value, s32 modulus);
 void Audio_PlayCue(s32 cue);
@@ -105,8 +114,8 @@ s32 Func_080ab314(void)
         Func_08015060(win_a);
         Func_08015078(selection + (s32)&Value_00000c32, win_a, 0, 0);
         slot = Func_080153f8(win_b, selection + 0xc39);
-        Menu_DrawAtWindowOffset(list, 0, previous, 6, 1, 15);
-        Menu_DrawAtWindowOffset(list, 0, selection, 6, 1, 14);
+        Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
+        Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
         previous = selection;
         for (;;) {
             UiMenu_PositionCursor(-12, (((struct ChooserWindow *)list)->row + selection) * 8 + 8);

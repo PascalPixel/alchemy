@@ -1,4 +1,16 @@
 /* NONMATCHING: complete 316-byte owner including switch table and own pool;
+ * 2026-09-27 live-read contract trial: keep all unsigned update arithmetic;
+ * replace switch(*side) and both table-index *side reads (including the
+ * inline forward helper) with *(volatile s16 *)side. Normalize with
+ * *(u16 *)side = *(volatile u16 *)side & 3. Initial half=*side>>1 unchanged.
+ * Prediction: separate signed read producers and forward arms without the
+ * old all-signed update overhead. Require the full 316 bytes and both arms;
+ * one isolated model, full normalized diff and allocator diagnostics read.
+ * Result: 284/316, 110 halfwords/72 aligned edits. Fresh state reads and
+ * normalization reload survive, but each signed read remains ldrh plus
+ * shifts and both forward arms still merge. Thus qualifier separation does
+ * not supply the required signed-load or block producer. Reject the model,
+ * retain the unsigned-update baseline below; no type/qualifier sweep.
  * candidate 284, 122 differing halfwords, 76 aligned edits (2026-09-27).
  * Read-only alias-view audit (2026-09-27): exact PROMPT.C actor24 response
  * uses one s16 pointer at actor+100 for indices and u16 pointer casts for

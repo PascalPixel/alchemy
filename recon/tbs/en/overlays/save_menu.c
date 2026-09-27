@@ -1,5 +1,31 @@
 /* NONMATCHING: complete resource_370:020003cc..02000cfc, 2352 bytes.
- * Current cleanup H2: 2344 bytes, 1144 halfwords, 930 aligned edits.
+ * Sol record H3 (2026-09-27): 2336/2352 bytes, 1120 differing halfwords,
+ * 833 aligned edits, 777 wrong instructions. Full normalized diff read.
+ * FIELD_EVENT.H's location record shares one union with the menu header
+ * words/bytes. Prediction supported: entrance uses base +450, saved-location
+ * copies use base +452/+454, and selected actor clears through base +500,
+ * instead of folding these addresses into unrelated interior pool symbols.
+ * The entry zero now occupies r0. Frame remains 560/548, page and encoded
+ * size spill, and both cleanup blocks remain displaced. Three bounded
+ * structural models preserved; stop without allocator respellings or credit.
+ * Verified executable debt is still 2352 + 1024 function bytes and three
+ * separate 2-byte alignment gaps; complete-owner adoption refuses enlarged
+ * extents 144/112/228 for exact owners 142/110/226. Standards unchanged.
+ * Sol lifetime H2 (2026-09-27): restored separate buffers; selection,
+ * password mode and link window share one local as the reference does.
+ * 2324/2352 bytes, 1118 differing halfwords, 897 aligned edits, 846 wrong
+ * instructions. Full normalized diff read. Link-window copies disappear,
+ * but frame is 560/548, page and encoded size spill, and cleanup remains
+ * after password initialization instead of before its enclosing headers.
+ * Improved edit distance is not an exact witness; no new credit.
+ * Sol workspace H1 (2026-09-27): one typed object owns the started flag
+ * and three contiguous buffers. 2364/2352 bytes, 1160 differing halfwords,
+ * 938 aligned edits, 882 wrong instructions. Full normalized diff read.
+ * Frame grows to 564/548: object escape adds a base temporary and started
+ * reloads; buffers move to glyph +40, password +44, save data +364.
+ * Page and encoded size both spill. Cleanup topology is unchanged. Reject
+ * the object model; this commit preserves its complete negative witness.
+ * Pre-burst cleanup H2: 2344 bytes, 1144 halfwords, 930 aligned edits.
  * Baseline 2026-09-27: 2368 bytes, 1145 halfwords, 903 aligned edits;
  * frame 556 rather than 548. Full listing and normalized diff read.
  * H1 tests the greeting payload boundary: four halfwords at 02002224
@@ -46,6 +72,7 @@
  * broader source model; do not repeat the outer-loop placement alone. */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
+#include "FIELD_EVENT.H"
 
 #define SaveMenu_Run Func_020003cc
 
@@ -54,12 +81,37 @@ void Engine_UiWorkFinalize(s32 window, s32 mode);
 void Engine_RenderOutputPrepareForRedraw(s32 window);
 
 extern u8 Data_02000000[];
-extern u8 Data_02000240[];
+/* The menu consumes the saved-location fields and the same record's header
+ * words and bytes. FIELD_EVENT.H owns the shared location layout; names for
+ * the remaining bytes stay neutral until their consumers prove a meaning. */
+struct SaveMenuRecord {
+    s32 word_00;
+    s32 word_04;
+    u8 unknown_08[0x1fd];
+    u8 value_205;
+    u8 value_206;
+    u8 unknown_207[8];
+    u8 value_20f;
+    u8 unknown_210[0x1a];
+    u8 value_22a;
+};
+
+union SaveMenuState {
+    struct GameState location;
+    struct SaveMenuRecord record;
+};
+
+LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value205, struct SaveMenuRecord, value_205, 0x205);
+LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value20f, struct SaveMenuRecord, value_20f, 0x20f);
+LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value22a, struct SaveMenuRecord, value_22a, 0x22a);
+
+extern union SaveMenuState Data_02000240;
 extern u8 Data_02001100[];
 struct SaveLinkGreeting {
     u16 code[4];
     u8 reserved[16];
 };
+
 
 extern struct SaveLinkGreeting Data_02002224;
 extern struct SaveLinkGreeting Data_02002024[4];
@@ -232,7 +284,6 @@ s32 SaveMenu_Run(void)
     s32 page_window;
     s32 rec5;
     s32 rec7;
-    s32 rec8;
     s32 record;
     s32 value;
     s32 base3_2000240;
@@ -266,7 +317,7 @@ s32 SaveMenu_Run(void)
     *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = started;
     Func_020094ac();
     Func_020018c0();
-    if (*(s16 *)(Data_02000240 + 0x1c2) == 2) {
+    if (Data_02000240.location.entrance == 2) {
         do {
             Func_020017b2(0x7, 5);
             rec = Value1(Func_020094c4, 1);
@@ -275,8 +326,8 @@ s32 SaveMenu_Run(void)
                 break;
             }
             Func_020017ca((0x7 + 1), 1);
-            base3_2000240 = (s32)Data_02000240;
-            *(u8 *)((base3_2000240 + 0x20f)) = 1;
+            base3_2000240 = (s32)&Data_02000240;
+            Data_02000240.record.value_20f = 1;
             rec = Func_02001830();
             v5 = 0x7;
             v7 = rec;
@@ -299,16 +350,16 @@ s32 SaveMenu_Run(void)
     }
     L_020004a8:;
     do {
-        rec8 = Value0(Func_020018b6);
-        if (rec8 < 0) {
+        v6 = Value0(Func_020018b6);
+        if (v6 < 0) {
             if (*(u8 *)0x03001f54 != 0) {
-                base3_2000240 = (s32)Data_02000240;
-                *(u8 *)((base3_2000240 + 0x22a)) = 1;
+                base3_2000240 = (s32)&Data_02000240;
+                Data_02000240.record.value_22a = 1;
                 *(u8 *)0x03001d08 = 1;
                 Func_020093dc(0xa, 1, 8);
             }
         }
-        if (rec8 == 0) {
+        if (v6 == 0) {
             if (started == 0) {
                 Func_02001804(30);
                 Value2(Func_02001816, 0x2008155, 0xc80);
@@ -316,24 +367,24 @@ s32 SaveMenu_Run(void)
                 started = 1;
             }
         }
-        if (rec8 > 0) {
-            rec8 = Value0(Func_020018c8);
+        if (v6 > 0) {
+            v6 = Value0(Func_020018c8);
         } else {
-            rec8 = 0;
+            v6 = 0;
         }
-        if (rec8 != 0) {
+        if (v6 != 0) {
             goto L_0200057a;
         }
         Func_02001956();
-        base3_2000240 = (s32)Data_02000240;
-        base2_2000240 = (s32)Data_02000240;
-        Func_02001938(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base2_2000240 + 0x206)));
+        base3_2000240 = (s32)&Data_02000240;
+        base2_2000240 = (s32)&Data_02000240;
+        Func_02001938(Data_02000240.record.value_205, Data_02000240.record.value_206);
         v7 = 0;
         v5 = 1;
         L_02000522:;
         Func_0200184a(6);
-        rec8 = Func_02001940(v7);
-        if (rec8 != -1) {
+        v6 = Func_02001940(v7);
+        if (v6 != -1) {
             goto L_02000540;
         }
     } while (v7 == 0);
@@ -351,43 +402,43 @@ s32 SaveMenu_Run(void)
         goto L_02000522;
     }
     Func_020019dc();
-    *(u16 *)(Data_02000240 + 0x1c0) = 0x8;
+    Data_02000240.location.scene = 0x8;
     {
         s32 shown = 20;
 
-        *(u16 *)(Data_02000240 + 0x1c2) = shown;
+        Data_02000240.location.entrance = shown;
     }
     goto L_02000c96;
     L_0200057a:;
-    if (rec8 != 1) {
+    if (v6 != 1) {
     } else {
-        rec8 = Value1(Func_02001978, 1);
-        if (rec8 == -1) {
+        v6 = Value1(Func_02001978, 1);
+        if (v6 == -1) {
             goto L_020004a8;
         }
         Call1(Func_020019f0, 0x109);
-        base5_2000240 = (s32)Data_02000240;
+        base5_2000240 = (s32)&Data_02000240;
         v5 = base5_2000240;
         v5 = base5_2000240;
-        base3_2000240 = (s32)Data_02000240;
-        base3_2000240 = (s32)Data_02000240;
-        Func_020019c2(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base3_2000240 + 0x206)));
+        base3_2000240 = (s32)&Data_02000240;
+        base3_2000240 = (s32)&Data_02000240;
+        Func_020019c2(Data_02000240.record.value_205, Data_02000240.record.value_206);
         record = Func_02001a2e();
-        if (*(s32 *)base5_2000240 != record) {
-            *(u16 *)(Data_02000240 + 0x1c0) = *(u16 *)(Data_02000240 + 0x1c4);
-            *(u16 *)(Data_02000240 + 0x1c2) = *(u16 *)(Data_02000240 + 0x1c6);
+        if (Data_02000240.record.word_00 != record) {
+            Data_02000240.location.scene = Data_02000240.location.saved_scene;
+            Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
             Call1(Func_02001a38, 0x109);
         } else {
             if ((*(s32 *)0x03001ae8 & 0x208) == 0x208) {
                 if (Value0(Func_0200096c) != 0) {
                     goto L_02000664;
                 }
-                *(u16 *)(Data_02000240 + 0x1c0) = *(u16 *)(Data_02000240 + 0x1c4);
-                *(u16 *)(Data_02000240 + 0x1c2) = *(u16 *)(Data_02000240 + 0x1c6);
+                Data_02000240.location.scene = Data_02000240.location.saved_scene;
+                Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
                 Func_02009464(0x109);
                 Func_0200945c(0x13e);
             } else {
-                if (*(s32 *)(base5_2000240 + 4) != *(s32 *)Data_02001100) {
+                if (Data_02000240.record.word_04 != *(s32 *)Data_02001100) {
                     Value2(Func_020019ca, 0x4, 9);
                     Func_020019d2((0x4 + 1), 13);
                     if (Value4(Func_02001a6e, 1, 0, 0, 0) != 0) {
@@ -400,8 +451,8 @@ s32 SaveMenu_Run(void)
                         Func_020019fc(0x6, 9);
                         goto L_020004a8;
                     }
-                    *(u16 *)(Data_02000240 + 0x1c0) = *(u16 *)(Data_02000240 + 0x1c4);
-                    *(u16 *)(Data_02000240 + 0x1c2) = *(u16 *)(Data_02000240 + 0x1c6);
+                    Data_02000240.location.scene = Data_02000240.location.saved_scene;
+                    Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
                     Call1(Func_02001af2, 0x109);
                     Call1(Func_02001af0, 0x13f);
                 }
@@ -410,23 +461,23 @@ s32 SaveMenu_Run(void)
         Call1(Func_02001b00, 0x106);
         goto L_02000c96;
     }
-    if (rec8 == 2) {
+    if (v6 == 2) {
         Func_02001aa2();
         goto L_020004a8;
     }
-    if (rec8 == 3) {
+    if (v6 == 3) {
         Func_02001ab4();
         goto L_020004a8;
     }
-    if (rec8 == 4) {
-        rec8 = Func_02001b10(4);
-        if (rec8 == -1) {
+    if (v6 == 4) {
+        v6 = Func_02001b10(4);
+        if (v6 == -1) {
             goto L_020004a8;
         }
         v5 = 0x2000240;
         v5 = 0x2000240;
         v5 = 0x2000240;
-        *(s32 *)(Data_02000240 + 0x1f4) = 0;
+        Data_02000240.location.selected_actor = 0;
         if (Value1(Func_02001b8e, 0x952) != 0) {
             Func_0200948c();
             Func_02009474(0);
@@ -438,16 +489,16 @@ s32 SaveMenu_Run(void)
             Func_02001bd8(2);
             Func_02001bde(3);
         }
-        base3_2000240 = (s32)Data_02000240;
-        base3_2000240 = (s32)Data_02000240;
-        Func_02001b9e(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base3_2000240 + 0x206)));
+        base3_2000240 = (s32)&Data_02000240;
+        base3_2000240 = (s32)&Data_02000240;
+        Func_02001b9e(Data_02000240.record.value_205, Data_02000240.record.value_206);
         Call1(Func_02001bec, 0x109);
         Func_02009464(0x106);
         Func_0200945c(0x17e);
         *(u8 *)0x03001ca0 = 1;
         Func_02001c4a(0xbe, 1);
         goto L_02000c96;
-        v6 = rec8;
+
         v7 = 1;
         L_020007aa:;
         v7 = 1;
@@ -456,27 +507,27 @@ s32 SaveMenu_Run(void)
         v4 = 0;
         goto L_0200095e;
     } else {
-        if (rec8 != 5) {
+        if (v6 != 5) {
             goto L_020004a8;
         }
         do {
-            rec8 = Func_02001bb0(5);
-            if (rec8 == -1) {
+            v6 = Func_02001bb0(5);
+            if (v6 == -1) {
                 goto L_020004a8;
             }
-            base3_2000240 = (s32)Data_02000240;
-            base2_2000240 = (s32)Data_02000240;
-            Func_02001bf6(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base2_2000240 + 0x206)));
+            base3_2000240 = (s32)&Data_02000240;
+            base2_2000240 = (s32)&Data_02000240;
+            Func_02001bf6(Data_02000240.record.value_205, Data_02000240.record.value_206);
             L_020007dc:;
-            rec8 = Func_02001bb4(0);
-            v6 = rec8;
+            v6 = Func_02001bb4(0);
+
         } while (v6 == -1);
         if (v6 != 1) {
             goto L_020009cc;
         }
-        rec8 = Func_02001b84(6, 5, 18, 8, 2);
+        v6 = Func_02001b84(6, 5, 18, 8, 2);
         link_message = 0xc83;
-        v6 = rec8;
+
         Func_020093ac(link_message, v6, 0, 4);
         Func_02001bca((link_message + 1), v6, 0, 16);
         Func_02001bd6((link_message + 3), v6, 0, 36);
@@ -525,8 +576,8 @@ s32 SaveMenu_Run(void)
         if (v7 == 0) {
             goto L_020007dc;
         }
-        rec8 = Func_02001c80(5, 10, 20, 4, 2);
-        v6 = rec8;
+        v6 = Func_02001c80(5, 10, 20, 4, 2);
+
         Call4(Func_02001cb6, 0xc85, v6, 0, 4);
         Func_02001c34(10);
         Value2(Func_02001c94, (s32)Data_02000000, 0x1004);
@@ -581,8 +632,8 @@ s32 SaveMenu_Run(void)
     if (v6 != 0) {
     } else {
         L_020009d2:;
-        rec8 = Value1(Func_020093d4, 1);
-        v6 = rec8;
+        v6 = Value1(Func_020093d4, 1);
+
         if (v6 == -1) {
             goto L_020007dc;
         }

@@ -6187,6 +6187,14 @@
       "source": "recon/tbs/en/overlays/save_menu.c",
       "overlay": "resource_370",
       "absolute_symbols": {
+        "Engine_UiWorkFinalize": {
+          "address": "0x0200938c",
+          "kind": "thumb"
+        },
+        "Engine_RenderOutputPrepareForRedraw": {
+          "address": "0x0200939c",
+          "kind": "thumb"
+        },
         "Func_0200939c": {
           "address": "0x200939c",
           "kind": "thumb"

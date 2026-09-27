@@ -1,4 +1,4 @@
-/* NONMATCHING: 360 bytes, candidate 358, 58 differing halfwords (2026-09-25).
+/* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords (2026-09-27).
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -7,7 +7,24 @@
  * held in r9 for the sprite flags) schedule after the unknown_64 store instead
  * of before it, which moves the mid-function literal pool from after the
  * priority mask to after the MathSin call. Cross-jumped scale tails and the
- * scroll word >> 16 read already match. */
+ * scroll word >> 16 read already match.
+ * 2026-09-27: complete extent 02005a28..02005b90, with pools at 5aa0 and
+ * 5b5c. Exact 5b90 consumes +64 as orbit angle, +68 as source actor and
+ * +30 as radius adjustment. The old Scene_RunScene3c9 name resolves to
+ * four owners; bind the audited callback explicitly at runtime 0200db90.
+ * Fresh stable baseline is 358/360, 58 differing halfwords / 58 edits.
+ * H1 signed-mask trial is byte-identical (cmp): both source 0x0ffff000 and
+ * -0x1000 compile to pool -4096. Direct own-ROM pool read confirms the
+ * reference is 0x0ffff000, not -4096; the initial decoded-pool inference
+ * was wrong. Halfword-store simplification removes the upper mask bits.
+ * H2 transfers the proven Value_0ffff000 word-valued link constant from
+ * this overlay's 36d0 draft: 358/360, 55 differing halfwords / 55 edits.
+ * It restores the literal word and r3 mask / r2 store pointer, but does not
+ * move the pooled zero before the angle store. The pool remains after
+ * MathSin, and source null-test/coordinate copies still use the wrong
+ * lifetimes. Full normalized diff reviewed. Stop after this follow-up;
+ * no declaration, pointer-spelling or register-only sweep was attempted.
+ * No exact source or shared header edits; no DONE credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -19,8 +36,9 @@ struct FieldView {
 extern struct FieldView *Data_03001e70;
 extern u8 Data_0200e734[];
 extern u8 Value_00000000;
+extern u8 Value_0ffff000;
 
-void Scene_RunScene3c9(union FieldObject *object);
+void VinasuChojo_UpdateOrbitingSpark(union FieldObject *object);
 
 void VinasuChojo_SpawnRisingSparks(void)
 {
@@ -56,11 +74,11 @@ void VinasuChojo_SpawnRisingSparks(void)
                 Engine_ObjectSetScript(spark, Data_0200e734);
                 Engine_ObjectSetPalette(spark, 5);
                 spark->motion_flags = phase;
-                spark->unknown_64 = Engine_RandomNext() & 0x0ffff000;
+                spark->unknown_64 = Engine_RandomNext() & (u32)&Value_0ffff000;
                 zero = (u8)(u32)&Value_00000000;
                 spark->unknown_66 = phase;
                 *(struct FieldActor **)spark->unknown_68 = source;
-                spark->update = Scene_RunScene3c9;
+                spark->update = VinasuChojo_UpdateOrbitingSpark;
                 spark->speed = (Engine_MathSin((offset & 0xfffff) >> 4) * 24) >> 16;
                 sprite->flags = zero;
                 sprite->priority = source->sprite->priority;

@@ -10,6 +10,10 @@
  * H2 still differed in the leader reloads, script/zero and actor 14 ordering,
  * plus actor 13 OR destination. The stronger original baseline stays active.
  * STOP: typed-layout/lifetime axis bounded; no new DONE.
+ * 2026-09-27 Sol spark-ring: fresh full score reconfirms 388 bytes / 15
+ * halfwords / 14 edits. Allocator reports a reciprocal lifetime constraint,
+ * but its named reciprocal repair requires a scalar XOR site and refuses
+ * this draft's volatile byte read; catalogue inapplicable, no variants run.
  * FAKEMATCH: legacy call wrappers, volatile flag read and dead final read
  * retain the original baseline's evaluation and register lifetime choices. */
 #include "TYPES.H"

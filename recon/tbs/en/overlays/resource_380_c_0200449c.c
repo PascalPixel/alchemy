@@ -1,4 +1,4 @@
-/* NONMATCHING: 748-byte candidate, 354 differing halfwords, 232 edits.
+/* NONMATCHING: 748-byte candidate, 358 differing halfwords, 205 edits.
  * Whole owner 752 bytes including six owned pool words.
  * Canonical draft for resource_380:0200449c and resource_381:0200301c;
  * own-ROM sibling check proves equivalent flow and per-instance bindings.
@@ -38,14 +38,41 @@
  * +56/+60/+64 are target coordinates, not draw coordinates. The full
  * 748-byte result is byte-identical to H3 (354 halfwords/232 edits).
  * FieldCoordinate union aliasing does not change the snapshot allocation;
- * stop the actor-type-only axis. Keep the proven ownership correction. */
+ * stop the actor-type-only axis. Keep the proven ownership correction.
+ * 2026-09-27 Sol spark-ring H5 typed suffix alone: 748 bytes, 354 halfwords,
+ * 233 edits. The -dL dump shows initial loads recombined through the whole
+ * record while writeback uses the +8 suffix. H5 fails ownership admission.
+ * H6 advances whole record and typed suffix independently: 748 bytes,
+ * 359 halfwords / 209 edits, frame 68. Whole record now spills at sp+60;
+ * angle snapshots match sp+52/+48/+44 and load through the +8 suffix.
+ * Scale remains fp, hold sl, suffix r8, third random sample still spills.
+ * Not admitted as exact: remaining invariant is suffix sl / hold fp /
+ * third sample r8, with scale spilled at sp+40. Preserved as diagnostic
+ * draft before a separate scale-storage hypothesis.
+ * H7 scalar-record scale snapshot: byte-identical to H6 (748 bytes / 359
+ * halfwords / 209 edits); GCC scalarizes the record into the same fp value.
+ * Same residual through resource_381 bindings with --symbol 0200449c.
+ * STOP: suffix/cursor/scalar-storage axis bounded without an admitted
+ * ownership shape. H6 remains diagnostic C not yet exact; no new DONE.
+ * H8 follows the reference's initial whole-record y/z consumers and final
+ * whole-record z writeback; angles/scale still use the independent +8 view.
+ * Result 748 bytes / 358 halfwords / 205 edits, frame 68. The +8 cursor now
+ * owns sl as in reference, but scale remains fp, hold r8, and position slots
+ * remain displaced. Partial ownership witness, not an admitted exact shape.
+ * Transferred DRIFT.C 74a903e43 has no matching random variant or callback
+ * publication consumers here; those repairs were not applied.
+ * H9 addressable nine-slot snapshot array: 796 bytes / 384 halfwords /
+ * 331 edits. Memory residence is confirmed, but it requires an aggregate
+ * base register and grows the frame from 68 to 80; the stack-slot gate fails.
+ * Rejected that storage model; H8 is the canonical diagnostic draft.
+ * STOP: tested consumer/cursor/scalar-record/array axes bounded. Next work
+ * needs new structural evidence for scale spill / hold fp / third sample r8,
+ * not allocation respellings. No new exact function or alignment bytes. */
 #include "FIELD_EVENT.H"
 
 void *Engine_AllocateBlock(s32 id, s32 size);
 
-struct Spark {
-    struct FieldActor *obj;
-    s32 x;
+struct SparkMotion {
     s32 y;
     s32 z;
     s32 angle_x;
@@ -53,6 +80,12 @@ struct Spark {
     s32 angle_z;
     s32 scale;
     s32 scale_speed;
+};
+
+struct Spark {
+    struct FieldActor *obj;
+    s32 x;
+    struct SparkMotion motion;
     u8 timer;
     u8 hold;
 };
@@ -72,9 +105,12 @@ void Effect_UpdateSparkRing(void)
 {
     struct SparkWork *work;
     struct Spark *spark;
+    struct SparkMotion *motion;
     s32 i;
 
     work = Engine_AllocateBlock(33, 0x194);
+    spark = work->spark;
+    motion = &spark->motion;
     for (i = 0; i != work->count; i++) {
         struct FieldActor *obj;
         s32 ax;
@@ -88,16 +124,15 @@ void Effect_UpdateSparkRing(void)
         s32 z;
         u8 hold;
 
-        spark = &work->spark[i];
         obj = spark->obj;
-        ax = spark->angle_x;
-        ay = spark->angle_y;
-        az = spark->angle_z;
-        scale = spark->scale;
-        speed = spark->scale_speed;
+        ax = motion->angle_x;
+        ay = motion->angle_y;
+        az = motion->angle_z;
+        scale = motion->scale;
+        speed = motion->scale_speed;
         x = spark->x;
-        y = spark->y;
-        z = spark->z;
+        y = spark->motion.y;
+        z = spark->motion.z;
         hold = spark->hold;
         timer = spark->timer;
         timer--;
@@ -193,15 +228,17 @@ void Effect_UpdateSparkRing(void)
                 obj->target_z = obj->z.fixed;
             }
         }
-        spark->angle_x = ax;
-        spark->angle_y = ay;
-        spark->angle_z = az;
-        spark->scale = scale;
-        spark->scale_speed = speed;
+        motion->angle_x = ax;
+        motion->angle_y = ay;
+        motion->angle_z = az;
+        motion->scale = scale;
+        motion->scale_speed = speed;
         spark->hold = hold;
         spark->x = x;
-        spark->y = y;
-        spark->z = z;
+        motion->y = y;
+        spark->motion.z = z;
         spark->timer = timer;
+        spark++;
+        motion = (struct SparkMotion *)((u8 *)motion + sizeof(*spark));
     }
 }

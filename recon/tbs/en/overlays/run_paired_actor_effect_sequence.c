@@ -1,4 +1,27 @@
-/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704.
+/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4724.
+ * 2026-09-27 volatile-handle H2, one authorized causal test: make the two
+ * pointer slots volatile, leaving pointed-to image bytes ordinary. Feed the
+ * derived assignment's value directly to Vram_Load because the complete ROM
+ * trace has base-store/base-reload/derived-store and no derived-handle reload.
+ * Prediction: two handle stores and one reload, 136-byte frame, origin-x
+ * spills at sp+28/+20, preserved producer/copy/release arguments. Inspect
+ * the full normalized diff and allocator dump. One compile only; any added
+ * handle load, wrong frame, or failed admission closes H2. Preserve the
+ * counterexample in a commit, then restore d449103a6's body and stop.
+ * Adoption requires the complete 4708-byte owner/pools and all full gates;
+ * volatile retention is FAKEMATCH, never original-source evidence or credit.
+ * H2 result: 4724/4708 bytes, 1739 differing halfwords, 601 aligned edits.
+ * Both handle stores survive at sp+32/+36, but the array address also spills
+ * at sp+28 and reloads after Item_LoadIcon. The derived handle is reloaded
+ * from [r4,+4] before Vram_Load even when its assignment value is the argument.
+ * greg confirms volatile store insn 2964 and volatile reload insn 2966;
+ * this adds reads absent from the complete ROM handle trace. Frame is 132,
+ * options/velocity are sp+92/+40/+80, and neither origin-x spill survives.
+ * Producer, copy and release arguments retain their values; memory trace
+ * and frame admission fail. Preserve this tagged witness, then restore the
+ * d449103a6 body; H2 stops here without another compile or spelling change.
+ * No adoption, exact-function credit +0, alignment credit +0.
+ *
  * 2026-09-27 two-buffer H1: buffers[0] receives the one slot-17 allocation;
  * Item_LoadIcon runs before buffers[1] = buffers[0] + 0x400, then Vram_Load
  * consumes buffers[1] and Heap_Release closes the same slot. ROM stores the
@@ -142,7 +165,9 @@ void Scene_RunPairedActorEffectSequence(void)
     union FieldObject *object;
     struct FieldActor *bird;
     struct FieldSprite *sprite;
-    u8 *buffer;
+    /* FAKEMATCH: volatile handle slots retain both stores; this is a causal
+     * memory-retention witness, not evidence of original volatile declarations. */
+    u8 *volatile buffers[2];
     s32 yes;
     u32 i;
 
@@ -325,9 +350,10 @@ void Scene_RunPairedActorEffectSequence(void)
         object->actor.unknown_5c = 1;
         object->actor.speed = 0x19999;
         object->actor.acceleration = 0xcccc;
-        buffer = Heap_Allocate(17, 0x608);
+        buffers[0] = Heap_Allocate(17, 0x608);
         Item_LoadIcon(220);
-        Vram_Load(sprite->vram_block, 128, buffer + 0x400);
+        /* The assignment value feeds the copy without a derived-handle reload. */
+        Vram_Load(sprite->vram_block, 128, buffers[1] = buffers[0] + 0x400);
         Heap_Release(17);
     }
     Actor_SetSpritePriority(22, 1);

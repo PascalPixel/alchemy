@@ -19,7 +19,24 @@
  * normalized diff and both pool boundaries were checked. This clarifies
  * module ownership but does not repair factory type scheduling, the script
  * argument copy or the short tail. Stop with no second spelling trial and
- * no DONE credit. No exact consumer or shared header was changed. */
+ * no DONE credit. No exact consumer or shared header was changed.
+ *
+ * 2026-09-27 bounded producer/consumer boundary audit:
+ * Own full listing and canonical allocator dumps locate the missing script
+ * argument copy precisely: r0 = spark survives through local allocation,
+ * then reload CSE deletes it, forwarding the factory return across the
+ * fall-through null check. The approved compiler forgets those equivalences
+ * at labels, not conditional fall-throughs. A tagged one-pass boundary
+ * around factory-result publication was tested using the exact world-map
+ * DISPLAY_TRANSITION.C boundary precedent. Result: 238/73/16, binary-identical
+ * to baseline; its exit label is gone before reload and the copy is still
+ * deleted. Full normalized diff retains r8 zero and both pool shapes.
+ * The second pool remains four bytes early: the absent two-byte copy plus
+ * two-byte pool alignment account for that displacement. The reference also
+ * ends with a two-byte zero pad after bx r0; no setup call or tail operation
+ * is absent. The factory type shift still precedes x/z loads, rather than
+ * following them. This boundary trial did not satisfy its admission check.
+ * Stop without a second spelling/prototype trial; zero DONE credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -66,9 +83,12 @@ void Func_020036d0(void)
         rise = Engine_RandomNext();
         rise <<= 6;
     }
-    spark = (union OrbitEffect *)Engine_ObjectCreate(
-        0x11c, source->x.fixed, ((u32)rise >> 16 << 16) + source->y.fixed - 0x1c0000,
-        source->z.fixed);
+    /* FAKEMATCH: separate factory-result publication from script setup. */
+    do {
+        spark = (union OrbitEffect *)Engine_ObjectCreate(
+            0x11c, source->x.fixed, ((u32)rise >> 16 << 16) + source->y.fixed - 0x1c0000,
+            source->z.fixed);
+    } while (0);
     if (spark != 0) {
         sprite = spark->actor.sprite;
         Engine_ObjectSetScript(&spark->actor, VinasuChojo_SparkScript);

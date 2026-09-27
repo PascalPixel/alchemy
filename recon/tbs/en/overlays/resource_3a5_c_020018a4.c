@@ -27,14 +27,22 @@
  * Frame grows from the correct 12 to 16 bytes. Reject this long-lived
  * narrow-mask model, preserved at c04a58975; H1 is restored here. No mask
  * declaration or scalar-order sweeps. Whole owner remains not-yet-C,
- * with 0 new DONE bytes. */
+ * with 0 new DONE bytes.
+ * Interface audit (2026-09-27): RUNTIME.S proves 080001c0 -> 08003f78
+ * Resource_ActivateEntry and 080001c8 -> 08003fa4 VramBlock_LoadCached;
+ * both exact bodies return s32. FIELD_EVENT.H now supplies the latter's
+ * declaration and direct call; VRAM_BLOCK.H supplies the shared cache.
+ * This model is byte-identical to the prior 848/888, 401-halfword/251-edit
+ * candidate. The two corrected return types alone do not close allocation.
+ * Distinct semantic evidence in the complete diff: reference 01aa6..01aae
+ * compares the signed halfword just written to EFFECT_PHASE, but this draft
+ * compares the full-width quotient. Also counter +0x232 and limit +0x22c
+ * use two differently typed global aliases, unlike exact Field_ProcessStep.
+ * These are the only admitted follow-up; no timer/mask spelling sweep. */
 #include "DMA.H"
+#include "FIELD_EVENT.H"
 #include "TYPES.H"
-
-struct VramBlock {
-    u16 base;
-    u16 offset;
-};
+#include "VRAM_BLOCK.H"
 
 struct Sprite {
     u32 words[3];
@@ -45,18 +53,14 @@ union HalfWord {
     s16 signed_value;
 };
 
-extern struct VramBlock Data_03001b10[];
 extern u32 Data_02000240[];
 extern s16 Data_02000240_t[][2];
 extern u32 gFrameCount;
 
-s32 Engine_MathDivide(s32 dividend, s32 divisor);
 void *Main_08000168(s32 size);
-void Main_080001c0(s32 layer);
-void Engine_VramLoad(s32 slot, s32 size, void *src);
+s32 Main_080001c0(u32 layer);
 void Main_080001e8(struct Sprite *sprite, s32 value);
 void Main_08000320(void *dst, u32 value);
-s32 Engine_GameFlagIsSet(s32 flag);
 void Runtime_BumpFreeFar(void *allocation);
 
 #define EFFECT_TIME (*(s16 *)0x0200a6be)
@@ -71,11 +75,6 @@ void Runtime_BumpFreeFar(void *allocation);
 static __inline__ s32 Value2(s32 (*fn)(), s32 a0, s32 a1)
 {
     return fn(a0, a1);
-}
-
-static __inline__ void Call3(void (*fn)(), s32 a0, s32 a1, s32 a2)
-{
-    fn(a0, a1, a2);
 }
 
 /* FAKEMATCH: the word-sized step keeps subtraction out of halfword mode. */
@@ -102,7 +101,7 @@ void FieldScene_RunScene3a5SequenceA(void)
     u32 *sprite_words;
     struct Sprite *sprite;
 
-    tile_offset = Data_03001b10[(s16)MAP_LAYER].offset >> 5;
+    tile_offset = gVramBlockCache[(s16)MAP_LAYER].offset >> 5;
     if (MAP_MODE != 0) {
         timerp = (union HalfWord *)0x0200a6be;
         timerp->value = 2;
@@ -226,7 +225,7 @@ void FieldScene_RunScene3a5SequenceA(void)
         i++;
         dst++;
     } while (i <= 0x47f);
-    Call3(Engine_VramLoad, MAP_LAYER, 0x480, (s32)sprite_words);
+    Engine_VramLoad(MAP_LAYER, 0x480, sprite_words);
 
     {
         u32 flags = 0x80008000;

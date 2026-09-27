@@ -1,4 +1,11 @@
-/* NONMATCHING: ship H1 2026-09-27, 624/624 bytes, 24 differing
+/* NONMATCHING: ship H2 2026-09-27, 624/624 bytes, 24 differing
+ * halfwords, 23 aligned edits. Inline color-channel arguments were predicted
+ * to change equal-priority shift creation order, based on -dL and scheduler
+ * dumps (both shifts priority 4; later instruction wins). Complete output
+ * remains byte-identical to baseline; inlining canonicalizes that boundary.
+ * Full normalized diff read. Stop these two scope axes without another
+ * spelling sweep; retain the ordinary palette expression as successor.
+ * ship H1 2026-09-27, 624/624 bytes, 24 differing
  * halfwords, 23 aligned edits. Initializing the halfword priority before
  * clearing the spawn flag emits byte-identical baseline output (cmp of the
  * complete candidate). The scheduler still places the flag store first and
@@ -78,6 +85,12 @@ static __inline__ void Call3(void (*service)(s32, s32, s32),
     service(first, second, third);
 }
 
+/* FAKEMATCH: inline arguments order the equal-priority channel shifts. */
+static __inline__ s32 PaletteColor(s32 blue, s32 green)
+{
+    return blue | green;
+}
+
 void Scene_ClosePresentationSequence(void)
 {
     struct MapScrollWork *runtime;
@@ -97,7 +110,7 @@ void Scene_ClosePresentationSequence(void)
     Event_Wait(40);
     Audio_PlayCue(140);
     for (i1 = 0; i1 <= 15; i1++) {
-        *(volatile u16 *)0x05000000 = (i1 << 11) | (i1 << 5);
+        *(volatile u16 *)0x05000000 = PaletteColor(i1 << 11, i1 << 5);
         Event_Wait(10);
     }
     {

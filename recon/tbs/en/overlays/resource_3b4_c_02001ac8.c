@@ -1,4 +1,12 @@
-/* H3 admitted: 152/152 bytes, 5 halfwords / 5 aligned edits. Zero38 now
+/* H4 rejected: 156/152 bytes, 60 halfwords / 21 aligned edits. Zero/store
+ * order fixes, but receiver reuse gives USER32 two definitions (5 uses /
+ * 6 insns), changes entry coordinate loads and adds r0->r2 publication copy.
+ * Frame8 and r6 survive; pool moves 0x94->0x98. Full diff and -da checked.
+ * H4: sched2 shows initial byte store86 and zero89 both priority1, tied
+ * by original order. Separate the actual receiver lookup from publication
+ * and initialize still between them; predict zero before the store while
+ * preserving H3's consumer-loop lifetime, frame8 and complete pool.
+ * H3 admitted: 152/152 bytes, 5 halfwords / 5 aligned edits. Zero38 now
  * spans 40 insns / 2 calls instead of 2 insns / 0 calls; r6 is initialized
  * before the column tests and consumed after both calls. Frame8 and pool
  * 0x94 exact. Remaining: zero/store order and MapCopy argument scheduling.
@@ -46,8 +54,9 @@ void Local_02001ac8(void)
     if (y == 0)
         Engine_ActorGet(8)->priority_flags = 2;
     SceneState_ApplyFourRectsAndSetActor8Byte85();
-    Engine_ActorGet(8)->motion_flags = 3;
+    block = Engine_ActorGet(8);
     still = 0;
+    block->motion_flags = 3;
     if (column == 40) {
         SceneState_ApplyRectAndSetSlotEightByte35();
     } else if (column == 42) {

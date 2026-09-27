@@ -1,4 +1,24 @@
-/* NONMATCHING canonical P2 branch-owned direction bias (2026-09-27):
+/* NONMATCHING canonical P3 overlapping origin inputs (2026-09-27):
+ * Complete 340/340 bytes, 12 differing halfwords / 11 aligned edits;
+ * topology equal and instruction selection equal. P2 at 9fa801185 is kept
+ * in history. ROM needs both x/z origins live before either offset sum;
+ * baseline temporaries 39/40 did not conflict and both used r2. Reading
+ * both into block-local inputs preserves their overlap through CSE: each
+ * has two uses over six insns, allocated to r2/r1, with the leader in r0.
+ * This also recovers all sprite, zero, negative-literal and tail reload
+ * registers. The direction copy/XOR/shift admitted by P2 stays exact.
+ * All six pool words/offsets, frame, saved roles and case-1 dispatch match.
+ * Remaining 12 halfwords are scheduling only: eight in coordinate/argument
+ * preparation, two in the r9-zero copy versus motion pointer setup, two in
+ * callback publication versus sprite-flags pointer increment. sched2 block
+ * 1 chooses shift35 then reload435 then shift38; ROM needs 38/435/35.
+ * Block5 chooses zero-copy153 before pointer-copy444; ROM reverses them.
+ * Block8 chooses callback-store341 before pointer-add346; ROM reverses them.
+ * Three causal models complete. Freeze these owned-value invariants; any
+ * further model needs scheduler/dependency evidence, not declaration or
+ * equivalent-expression sweeps. No new function or alignment credit.
+ *
+ * NONMATCHING P2 branch-owned direction bias (2026-09-27):
  * 340/340 bytes, 31 differing halfwords, 29 aligned edits; topology equal.
  * P1 at 2d1b493f5 proved that a self-updating XOR/shift destination prevents
  * regmove from overwriting the dying mask. Isolating that producer as the
@@ -116,8 +136,13 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     z -= 4;
     x <<= 16;
     z <<= 16;
-    x += leader->motion.x;
-    z += leader->motion.z;
+    {
+        s32 base_x = leader->motion.x;
+        s32 base_z = leader->motion.z;
+
+        x += base_x;
+        z += base_z;
+    }
     leaf = (union DriftingObject *)Object_Create(0xac, x, leader->motion.y, z);
     if (leaf == NULL)
         return;

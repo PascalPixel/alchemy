@@ -16,6 +16,22 @@
  * local allocation swaps the z and step loads, and the sum still uses r3.
  * Stop the type/subexpression-transfer axis here. The unresolved invariant
  * is the z sum/shift/store in r2 before x is shifted, not its field layout.
+ * 2026-09-27 bounded transfer from 382's branch-owned bias and exact
+ * BATTLE/PRESENTATION/UPDATE_HBLANK_SCROLL.C's one-pass publication:
+ * H1 replaces the z expression with local step/z inputs, then step <<= 16;
+ * z += step; z >>= 20; probe->position_z = z. Complete 236/236 bytes,
+ * 8 halfwords / 7 edits: step/z loads swap r3/r2, leaving z in r3. Reject.
+ * H2 wraps only the original z assignment in do/while(0): 236/5/5. It
+ * restores publication before the x shift but still computes z in r3 and
+ * moves the earlier width-pointer copy before its shift. Reject as a whole.
+ * H3 puts local z = probe->position_z inside that one-pass block, followed
+ * by z += table[index].z0 << 16; z >>= 20; probe->position_z = z. The
+ * add/shift/store now use r2 exactly, proving this sequence is attainable,
+ * but the input load moves early and table/x change r0/r1 to r4/r0.
+ * Complete 236/18/18; all three pool words, frame and topology still agree.
+ * Full normalized differences read for all three. The complete load/add/
+ * shift/store region is not admitted; retain the original 236/5/4 body.
+ * No further local/scope permutations, no adoption and no DONE credit.
  */
 #include "STAGED_ACTOR.H"
 

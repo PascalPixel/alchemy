@@ -1,5 +1,5 @@
 /* NONMATCHING: complete resource_370:020003cc..02000cfc, 2352 bytes.
- * Current H1 restored: 2340 bytes, 1144 halfwords, 935 aligned edits.
+ * Current cleanup H1: 2332 bytes, 1141 halfwords, 925 aligned edits.
  * Baseline 2026-09-27: 2368 bytes, 1145 halfwords, 903 aligned edits;
  * frame 556 rather than 548. Full listing and normalized diff read.
  * H1 tests the greeting payload boundary: four halfwords at 02002224
@@ -23,7 +23,15 @@
  * instructions. Full H1 diff and complete H1-to-H2 assembly delta read.
  * This correction is rejected and H1 restored byte-identically. The next
  * useful test needs password/menu control-flow ownership, not pool or
- * register permutations. ENTRY.INC invokes this owner at runtime 020083cd. */
+ * register permutations. ENTRY.INC invokes this owner at runtime 020083cd.
+ * Cleanup H1, 2026-09-27: explicit outer menu loop owns the completion
+ * cleanup at its continuation. 2332/2352, 1141 halfwords, 925 aligned
+ * edits, 865 wrong instructions; frame remains 556 versus 548. The whole
+ * diff and assembly delta show the cleanup moved after the password loop,
+ * not before the main-menu header as required. It does recover the help
+ * window store/reload before drawing. This does not validate the topology.
+ * Score with --unit retained-save-menu: scoring the owner alone selects
+ * the stale legacy 2368-byte draft. No serial or pool variants reopened. */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
@@ -269,16 +277,10 @@ s32 SaveMenu_Run(void)
         Call1(Func_020018fa, 0x12c);
         Func_02001912(0x2, 72);
         goto L_Return;
-        L_02000474:;
-        Func_02001944(112);
-        Func_0200939c(page_window);
-        Func_02001812(page_window, 2);
-        Value2(Func_0200938c, help_window, 2);
-        Value2(Func_02001822, heading_window, 2);
-        Func_020017c0(1);
     } else {
         *(u8 *)0x03001ca0 = started;
     }
+    for (;;) {
     L_020004a8:;
     do {
         rec8 = Value0(Func_020018b6);
@@ -706,6 +708,14 @@ s32 SaveMenu_Run(void)
     }
     Call1(Func_02001fb4, 0x12c);
     goto L_020004a8;
+    L_02000474:;
+    Func_02001944(112);
+    Func_0200939c(page_window);
+    Func_02001812(page_window, 2);
+    Value2(Func_0200938c, help_window, 2);
+    Value2(Func_02001822, heading_window, 2);
+    Func_020017c0(1);
+    }
     L_02000c96:;
     *(u16 *)((*(u8 **)Data_03001ebc + 0x170)) = 0x3e7;
     Func_0200213c(30);

@@ -36656,6 +36656,10 @@
         }
       ],
       "absolute_symbols": {
+        "__divsi3": {
+          "address": "0x02009c84",
+          "kind": "thumb"
+        },
         "Engine_GameFlagIsSet": {
           "address": "0x02009d44",
           "kind": "thumb"

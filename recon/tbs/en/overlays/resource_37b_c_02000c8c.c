@@ -12,6 +12,26 @@
  * copies. Exact sibling/header sources remain untouched. Unit registration
  * exposes this previously unindexed not-yet-C owner; it grants no DONE.
  *
+ * Phase-reuse trial H1 (2026-09-27): one void *p owns the actor, then the
+ * local camera position, transferring Vault's proven pointer-phase model.
+ * Complete normalized diff and binary comparison are unchanged: 544/548,
+ * 94 halfwords / 62 aligned edits. Still only two loop-entry copies, so
+ * admission fails; no DONE. Normal and diagnostic compiler text agree.
+ * Local CSE retains user pseudo 34 for all four position loops. GCSE PRE
+ * then recognizes all four sfp-12 addresses: expression 4 creates shared
+ * pseudo 110, replaces the final two address producers (insns 437/478),
+ * and propagates 110 directly into their loads/stores (450/452, 491/493).
+ * The shared address has 20 uses / 148 instructions / 21 calls and gets r6;
+ * user 34 is left with only the actor lifetime. This is global expression
+ * sharing before loop optimization, not a late allocator copy decision.
+ * Flattening ShiftFocus cannot undo it: local CSE already uses parent p
+ * directly. The saved camera pointer already begins after walk/face/wait,
+ * as in the ROM; delaying that lifetime supplies no new boundary. Stop
+ * this phase-pointer axis; do not repeat inline/declaration/type variants.
+ * Rejected H1 is preserved at 92f409fb1; the canonical typed body below is
+ * restored unchanged. Continuation needs evidence for a genuinely distinct
+ * pointer producer, not another spelling of the same local array address.
+ *
  * Earlier baseline evidence (2026-09-24):
  * Single-overlay unit binding Engine_* at their import veneers. Remaining:
  * the reference keeps

@@ -1,4 +1,13 @@
-/* NONMATCHING: complete 340-byte owner including its six-word pool;
+/* NONMATCHING: H3 Object_Create boundary transfer (2026-09-27):
+ * Complete output byte-identical to H2: 340 bytes, 97 differing halfwords,
+ * 46 aligned edits. Exact same-area creators and MAKYURI_CHOJO/LAMP.C
+ * use this wrapper, but here type 0xac is already a direct r0 constant;
+ * the CSE constructor inputs retain the same x/z locals and y load.
+ * There is no LAMP-like separate expensive type producer to remove.
+ * The case-1 dispatch, frame, and all six pool words remain admitted.
+ * Stop this boundary axis; coordinate scheduling and destructive direction
+ * xor still require distinct evidence, not another wrapper spelling.
+ * NONMATCHING: complete 340-byte owner including its six-word pool;
  * candidate 340, 97 differing halfwords, 46 aligned edits (2026-09-27 H2).
  * Original baseline: 340/97 halfwords/47 aligned edits.
  * Three bounded hypotheses: independent branch locals gave 328/340 and
@@ -83,7 +92,7 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     z <<= 16;
     x += leader->motion.x;
     z += leader->motion.z;
-    leaf = (union DriftingObject *)Engine_ObjectCreate(0xac, x, leader->motion.y, z);
+    leaf = (union DriftingObject *)Object_Create(0xac, x, leader->motion.y, z);
     if (leaf == NULL)
         return;
     sprite = leaf->actor.sprite;

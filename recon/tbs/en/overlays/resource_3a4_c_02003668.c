@@ -16,7 +16,14 @@
  * but independently produces exactly the original candidate bytes: same
  * five-edit n/z register exchange. Full frame, body, calls and pool checked.
  * Stop centre-record and loop-direction axes; do not sweep declarations.
- * Complete owner/unit registration is not adoption or credit. */
+ * Complete owner/unit registration is not adoption or credit.
+ * 2026-09-27 Sol lane audit: independently scored complete 188-byte extent,
+ * including all three pool words: five halfwords/five aligned edits,
+ * topology equal. Companion counter-reuse witness afb77e41c is identical
+ * to its prior bytes, so it is not propagated to this canonical twin.
+ * DRIFT/Haidia lookup-lifetime witnesses have no analogous disagreement in
+ * this parameter-owned actor model. No new axis; leave C not yet written.
+ * Alignment and ownership unchanged. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -1,4 +1,12 @@
-/* NONMATCHING: Sol H5 2026-09-27: 788/788 bytes, 288 differing halfwords,
+/* NONMATCHING: canonical H2 restored: 788/788 bytes, 24 differing halfwords,
+ * 22 aligned edits, complete extent [02001d0c,02002020), pools included.
+ * Sol H5 witness is preserved in 4c3cb3e05; H4 in 7b0e8236a. Both rejected
+ * publication trials are closed. Keep the original admitted ownership and
+ * pool boundary rather than the ordered-queue model's new pointer copies.
+ * The Haidia nullable-lookup witness has no corresponding early actor
+ * lifetime disagreement here: actor r7 and later phases already agree.
+ * All remaining bytes are C not yet written; no adoption or alignment credit.
+ * Sol H5 2026-09-27: 788/788 bytes, 288 differing halfwords,
  * 81 aligned edits. Direct callback publication restores callback r6 and
  * timer r8. Its pool word now precedes gravity's, as in the reference.
  * Ordered active/timer/delay/gravity writes survive, but timer's early
@@ -115,14 +123,15 @@ void FieldScene_RunMultiPhasePresentation(void)
     Call3(Engine_ActorFaceDirection, 10, 0x8000, 40);
     Call2(Engine_CameraSetSpeed, 0xcccc, 0x1999);
     Call4(Engine_CameraMoveTo, 0x800000, 0x400000, 0xca0000, 1);
-    /* FAKEMATCH: retain the observed setup publication order. */
+    /* FAKEMATCH: volatile stores keep phase before the two motion steps. */
     zero.v = 0;
     delay = &actor->motion.delay;
     *(volatile s32 *)&actor->motion.active = 0;
     timer = &actor->motion.timer;
-    *(volatile s16 *)timer = 0;
+    /* Gravity; the typed-motion store alternative is recorded above. */
+    *(s32 *)&actor->actor.unknown_44[4] = 0x6666;
     *(volatile s16 *)delay = 0;
-    *(volatile s32 *)&actor->actor.unknown_44[4] = 0x6666;
+    *(volatile s16 *)timer = 0;
     actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 212, 200);

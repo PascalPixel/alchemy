@@ -20,6 +20,10 @@
  * H2 admission: transfer the proven cc960 phase-local cursor model, splitting
  * seed and draw particle pointers without changing statements or declarations
  * within either phase. Require recovered draw r6 without losing frame/calls.
+ * H2 result: byte-identical to H1 (964/964, 143 halfwords, 99 edits).
+ * Splitting the seed pointer does not change allocator ancestry here;
+ * reject it as a closing mechanism. Preserve the attempt before restoring
+ * the simpler canonical H1 pointer model. Do not sweep local declarations.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -105,6 +109,7 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
     member = 0;
     puff = (struct Puff *)((u8 *)work + 0x7080);
     do {
+        struct EffectStep *seed;
         s32 angle = member << 11;
 
         puff->x = (Trig_Sin(angle) * 24) >> 16;
@@ -115,19 +120,19 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
             puff->x += 32;
         puff->tick = -(member * 2);
         i = 0;
-        particle = (struct EffectStep *)((u8 *)0x02010000 + burst_offset);
+        seed = (struct EffectStep *)((u8 *)0x02010000 + burst_offset);
         {
             s32 mask = 0xffff;
 
             do {
-                particle->x = (((Random16() & 15) + puff->x) - 8) << 16;
-                particle->y = ((Random16() & 7) + 96) << 16;
-                particle->velocity_x = ((Random16() & 127) - 64) << 11;
-                particle->velocity_y = ((Random16() & 127) - 64) << 10;
-                particle->z = Random16() & mask;
-                particle->velocity_z = Random16() & mask;
+                seed->x = (((Random16() & 15) + puff->x) - 8) << 16;
+                seed->y = ((Random16() & 7) + 96) << 16;
+                seed->velocity_x = ((Random16() & 127) - 64) << 11;
+                seed->velocity_y = ((Random16() & 127) - 64) << 10;
+                seed->z = Random16() & mask;
+                seed->velocity_z = Random16() & mask;
                 i++;
-                particle++;
+                seed++;
             } while (i != 16);
         }
         member++;

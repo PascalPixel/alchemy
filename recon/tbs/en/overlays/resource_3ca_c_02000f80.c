@@ -1,4 +1,13 @@
-/* NONMATCHING: ship H1 frequency staging, 332/340 bytes, 122 differing
+/* NONMATCHING: ship H2 separate phase, 336/340 bytes, 111 differing
+ * halfwords, 62 aligned edits (2026-09-27). Computing phase first restores
+ * its first-axis load order and the nine-word pool. Frequency owns the r4
+ * product, but loads directly there instead of the reference r3-to-r4 copy.
+ * Signed scroll, sp+0 spill, fp masks and state/line/counter roles survive.
+ * Step/amplitude/base/routine high-register ownership and second-axis
+ * address reuse remain different. Full normalized difference read.
+ * Next bounded hypothesis: a separate frequency input and fresh product
+ * destination preserve phase order but emit the reference accumulator copy.
+ * Ship H1 frequency staging, 332/340 bytes, 122 differing
  * halfwords, 70 aligned edits (2026-09-27). Assigning frequency to acc
  * before the phase product gives r4 the reference multiply ownership,
  * unlike the earlier fused expression. It loads frequency before phase,
@@ -95,13 +104,15 @@ void Local_02000f80(void)
     s32 acc;
     s32 step;
     s32 amplitude;
+    s32 phase;
 
     state = Data_03001ed8;
     scroll_y = Data_03001ad0.y;
     line = state->pages[state->page ^ 1];
     step = state->step_x;
+    phase = state->phase_x + scroll_y;
     acc = state->frequency_x;
-    acc *= state->phase_x + scroll_y;
+    acc *= phase;
     amplitude = state->amplitude_x;
     base = Data_03001ad0.x;
     {
@@ -117,8 +128,9 @@ void Local_02000f80(void)
     }
     line = state->pages[state->page ^ 1] + 1;
     step = state->step_y;
+    phase = state->phase_y + scroll_y;
     acc = state->frequency_y;
-    acc *= state->phase_y + scroll_y;
+    acc *= phase;
     amplitude = state->amplitude_y;
     base = scroll_y;
     {

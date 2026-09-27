@@ -21,7 +21,8 @@
       "name": "BabiChika_RunLeaderSpray"
     },
     "resource_3b3:02000ddc": {
-      "name": "FieldScene_QueryActorFootprint"
+      "name": "FieldScene_QueryActorFootprint",
+      "source": "FIELD/TAKARA_HASHIRA/PROBE.C"
     },
     "main:0801908c": {
       "name": "RenderOutput_UpdateScaleAnimation"

@@ -1,4 +1,4 @@
-/* NONMATCHING: 888 bytes, candidate 852, 394 differing halfwords, 230
+/* NONMATCHING: 888 bytes, candidate 852, 411 differing halfwords, 232
  * aligned edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
@@ -62,7 +62,19 @@
  * exact scroll-update operations. Retain; no local-phase spelling sweep.
  * Separate timer evidence: GCSE's mem/s:HI union view forwards the just
  * stored unsigned timer at the branch join and keeps a u16 increment local;
- * reference instead compares the signed stored halfword and reloads it. */
+ * reference instead compares the signed stored halfword and reloads it.
+ * Lamakan timer H2: one signed timer object replaces the union's unsigned
+ * arithmetic view and the u16 shadow. Compare the stored halfword after
+ * incrementing it. Prediction: pooled initial 2, paired signed/unsigned
+ * loads, shifted comparison after the store and a fresh branch-join read.
+ * One trial, complete normalized diff; retain the phase H1 invariant.
+ * H2 result: 852/888, 411 halfwords / 232 aligned edits, 12-byte frame.
+ * The initial 2 is now pooled, but the two timer views still collapse and
+ * the branch join still forwards its value. Reject this reload prediction;
+ * no signed/unsigned timer declaration sweep. Full diff exposes a new
+ * phase fact: reference 01920 shifts 128 by 9, comparing the incremented
+ * signed timer to 1, whereas this draft compares it to 2 (shift by 10).
+ * One follow-up may correct that phase condition; other timer axes stop. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "TYPES.H"
@@ -70,11 +82,6 @@
 
 struct Sprite {
     u32 words[3];
-};
-
-union HalfWord {
-    u16 value;
-    s16 signed_value;
 };
 
 struct TravelState {
@@ -109,9 +116,9 @@ static __inline__ s32 Value2(s32 (*fn)(), s32 a0, s32 a1)
 }
 
 /* FAKEMATCH: the word-sized step keeps subtraction out of halfword mode. */
-static __inline__ void Half_Add(union HalfWord *dst, s32 step)
+static __inline__ void Half_Add(s16 *dst, s32 step)
 {
-    dst->value = dst->value + step;
+    *dst = *dst + step;
 }
 
 void FieldScene_RunScene3a5SequenceA(void)
@@ -128,31 +135,29 @@ void FieldScene_RunScene3a5SequenceA(void)
     s32 y;
     u32 i;
     u32 slot;
-    union HalfWord *timerp;
+    s16 *timerp;
     u32 *sprite_words;
     struct Sprite *sprite;
 
     tile_offset = gVramBlockCache[(s16)MAP_LAYER].offset >> 5;
     if (MAP_MODE != 0) {
-        timerp = (union HalfWord *)0x0200a6be;
-        timerp->value = 2;
+        timerp = (s16 *)0x0200a6be;
+        *timerp = 2;
     } else if (Engine_GameFlagIsSet(0x104) != 0) {
-        timerp = (union HalfWord *)0x0200a6be;
-        if (timerp->signed_value > 0)
+        timerp = (s16 *)0x0200a6be;
+        if (*timerp > 0)
             Half_Add(timerp, -1);
     } else {
-        timerp = (union HalfWord *)0x0200a6be;
-        if (timerp->signed_value <= 1) {
-            u16 value = timerp->value + 1;
-
-            timerp->value = value;
-            if (value == 2)
+        timerp = (s16 *)0x0200a6be;
+        if (*timerp <= 1) {
+            Half_Add(timerp, 1);
+            if (*timerp == 2)
                 Dma_Set((const void *)0x02009f80, (void *)0x050003c0,
                     -0x7ffffff0, (volatile u32 *)0x040000d4);
         }
     }
 
-    timer = timerp->signed_value;
+    timer = *timerp;
     if (timer == 0) {
         Main_080001c0(MAP_LAYER);
         return;

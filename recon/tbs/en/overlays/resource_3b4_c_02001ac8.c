@@ -1,4 +1,6 @@
-/* H2 rejected (2026-09-27): STAGED_STEP.C's Map_CopyCellAttributes inline
+/* Canonical direct-call/u8 model restored after H1 and H2; complete
+ * baseline candidate is byte-identical, including its single literal pool.
+ * H2 rejected (2026-09-27): STAGED_STEP.C's Map_CopyCellAttributes inline
  * boundary emits the identical 152-byte baseline: 37 differing halfwords /
  * 16 aligned edits. The whole normalized diff preserves both residuals:
  * width-before-height setup and late zero rematerialization instead of r6.
@@ -50,7 +52,7 @@ void Local_02001ac8(void)
         if (column != 37)
             return;
     copy:
-        Map_CopyCellAttributes(61, 36, 1, 1, column, 42);
+        Engine_MapCopyCellAttributes(61, 36, 1, 1, column, 42);
         Engine_ActorGet(8)->motion_flags = still;
         Engine_ActorGet(8)->y.fixed = 0x200000;
     }

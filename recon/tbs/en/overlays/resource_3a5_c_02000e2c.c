@@ -38,7 +38,18 @@
  * pointer to r7, and shifts all code after the clamp entry by two bytes.
  * Reject: a shared source local does not recreate the reference phases.
  * This commit preserves the rejected witness; restore the 23-edit baseline
- * before testing a distinct parameter lifetime. No new DONE bytes. */
+ * before testing a distinct parameter lifetime. No new DONE bytes.
+ * Lamakan H2: baseline restored. CSE pseudos 134/136/140 separately hold
+ * start y, shared x scale and target y; both x stores precede target-y's
+ * definition, allowing all three constants to reuse r3. Extend the shared
+ * x scale across the target-y store. Prediction: scale and target-y become
+ * interfering pseudos, admitting r2/r3 and the reference's interleaved pool
+ * load without disturbing the first burst, frame or layout. Result: 552/552,
+ * 19 halfwords / 19 edits. The predicted r2 shared x scale and early r3
+ * target-y load are exact, with two final option stores still swapped.
+ * Every other block and all pools are unchanged from the 23-edit baseline.
+ * Retain this admitted constant-interference witness. A scalar target-y
+ * temporary before the x stores can now test the reference store order. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -88,6 +99,7 @@ void Func_02000e2c(void)
     struct EffectOptions second;
     s16 *meter;
     u16 *hold;
+    s32 zero;
     s32 hold_frames = 600;
 
     event = gEventWork;
@@ -146,14 +158,14 @@ void Func_02000e2c(void)
     Engine_ActorSetAnimation(0, 18);
     hold = (u16 *)((u8 *)event + 0xcba);
     meter = Data_02000240_t.halves[281];
-    count = 0;
+    zero = 0;
     do {
         *hold = hold_frames;
         timer--;
         if (*meter != 0) {
             *meter -= 5;
             if (*meter <= 0) {
-                *meter = count;
+                *meter = zero;
             } else if (timer == 0) {
                 timer = 1;
             }
@@ -166,8 +178,9 @@ void Func_02000e2c(void)
         second.type = 214;
         second.start_scale_y = 0xcccc;
         second.start_scale_x = 0x8000;
-        second.target_scale_x = 0x8000;
+        /* FAKEMATCH: extend the shared x-scale lifetime over target y. */
         second.target_scale_y = 0x13333;
+        second.target_scale_x = 0x8000;
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, timer, timer, 0x1c0000, &second);
     }
     Engine_AudioPlayCue(0x120);

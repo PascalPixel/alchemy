@@ -1,5 +1,5 @@
-/* NONMATCHING: 964 bytes including alignment, candidate 904, 432 differing
- * halfwords, 213 aligned edits (2026-09-27). Unit: torebi-prize-reveal.
+/* NONMATCHING: 964 bytes including alignment, candidate 904, 430 differing
+ * halfwords, 183 aligned edits (2026-09-27). Unit: torebi-prize-reveal.
  * Corrected the 97-call sequence: wait 8 follows frame (100,20), not the
  * final (100,29) frame. The caller loads item from a word table without
  * narrowing, so keep its s32 argument and the registered service types.
@@ -29,7 +29,9 @@
  * Immediate rejection as briefed: no follow-up, parameter-width, declaration
  * or setup sweep. Preserve this trial in Git, then restore canonical direct
  * Engine_MapCopyCellsTo calls (904/430/183). No function or alignment credit;
- * no shared header, binding, compiler, tooling or other owner was changed. */
+ * no shared header, binding, compiler, tooling or other owner was changed.
+ * Trial retained at 20fc789b5. Canonical BODY below is restored to the
+ * direct-call baseline and its compiled candidate is byte-identical by cmp. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -42,49 +44,49 @@ void TorebiIzumi_RevealPrize(s32 item)
     Engine_ObjectMotionArmCallback(0, 0xc000, 0);
     Engine_EventWait(40);
 
-    Map_CopyCellsTo(82, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 20, 70, 0, 3, 8);
     Engine_EventWait(3);
-    Map_CopyCellsTo(85, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(97, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(100, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(100, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
 
-    Map_CopyCellsTo(79, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(79, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(82, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(85, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(97, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(100, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(100, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
 
     Engine_EventWait(70);
@@ -93,46 +95,46 @@ void TorebiIzumi_RevealPrize(s32 item)
     Engine_PartyGiveItem(item, 0);
     Engine_EventWait(20);
 
-    Map_CopyCellsTo(97, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(85, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(82, 29, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 29, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(100, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(100, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(97, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(97, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(94, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(94, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(91, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(91, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(88, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(88, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(85, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(85, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(82, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(82, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
-    Map_CopyCellsTo(79, 20, 70, 0, 3, 8);
+    Engine_MapCopyCellsTo(79, 20, 70, 0, 3, 8);
     Engine_AudioPlayCue(154);
     Engine_EventWait(8);
     Engine_EventEnd();

@@ -1,4 +1,17 @@
-/* Draft, not-yet-c. Retained H3: 224/224 bytes, 59 HW / 39 edits.
+/* Draft, not-yet-c. H7 entry coordinate lifetime: 220/224, 72 HW / 49 edits.
+ * 2026-09-27: transfer the exact KUUPUAPPU_MURA/FACING_RANGE.C and
+ * KUUPUAPPU_MURA_SAI/MOTION_EVENT.C entry-owned coordinate pointers, keeping
+ * this owner's early tracking return, byte widths and canonical void ABI.
+ * Allocation explains the change: pos/tpos pseudos 37/38 grow from 13/11
+ * instructions to 20/18, with three uses and one crossed call unchanged.
+ * Force 35 remains five uses over 47 insns, but now ranks before both;
+ * force reaches r6 and the two final byte-store tails remain separate.
+ * NOT admitted: pos/tpos become fp/sl, state/flag become r8/r7, and address
+ * producers move before the fast path. The pool is four bytes early.
+ * Thus entry ownership proves the force-ranking cause, not a matching
+ * source model. Do not tune declaration order or move producer statements
+ * around the early branch without new semantic ownership evidence.
+ * Prior retained H3: 224/224 bytes, 59 HW / 39 edits.
  * H6 is preserved at 4e0c098df; its required invariant was not admitted.
  * H6 reused force publication (2026-09-27):
  * Single change from H3: force = 0 at miss, then the existing byte stores.
@@ -82,14 +95,15 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     u32 dir;
 
     result = 0;
+    /* FAKEMATCH: the proximity-family coordinate owner begins at entry. */
+    pos = &obj->x.fixed;
+    tpos = &target->x.fixed;
     if (obj->unknown_5b == 1) {
         if (obj->rise_counter == 0) {
             Engine_ObjectSetAnimation(obj, 1);
             return 1;
         }
     }
-    pos = &obj->x.fixed;
-    tpos = &target->x.fixed;
     if (Runtime_ComputeFixedPointDistance(tpos, pos) >= range && force == 0)
         goto miss;
     angle = (u16)Main_08000100(target->z.fixed - obj->z.fixed, *tpos - *pos);

@@ -1,4 +1,4 @@
-/* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords (2026-09-27).
+/* NONMATCHING: 360 bytes, candidate 358, 53 differing halfwords / 37 edits.
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -24,7 +24,22 @@
  * MathSin, and source null-test/coordinate copies still use the wrong
  * lifetimes. Full normalized diff reviewed. Stop after this follow-up;
  * no declaration, pointer-spelling or register-only sweep was attempted.
- * No exact source or shared header edits; no DONE credit. */
+ * No exact source or shared header edits; no DONE credit.
+ *
+ * 2026-09-27 H3 Title/Lamp boundary transfer: Title ResetCounter expands
+ * the destination before an aggregate HI zero; exact MAKYURI_CHOJO/LAMP.C
+ * shares a literal Half zero with its angle member-store producer. A local
+ * InitializeAngle(u16 *, u32, Half *) combines those boundaries. Full score
+ * is 358/360, 53 halfwords / 37 aligned edits, with the same no-frame setup.
+ * Prediction failed: the zero still loads after the angle store; second
+ * pool moved from relative 118 to 140, not reference 134. The complete
+ * normalized diff retains the source-null-copy and factory setup residuals.
+ * -da/-fsched-verbose=5 assembly is byte-identical to ordinary compilation.
+ * RTL explains the failure: the pointer store is direct mem:HI, removing
+ * the member-store's generated HI-zero producer, so aggregate zero 90 is
+ * independent and scheduled just before MathSin. This is a counterexample,
+ * not an admitted canonical or credit. One causal follow-up may restore
+ * the actor member-store boundary without changing types or call ABI. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -40,13 +55,25 @@ extern u8 Value_0ffff000;
 
 void VinasuChojo_UpdateOrbitingSpark(union FieldObject *object);
 
+struct Half {
+    u16 value;
+};
+
+/* FAKEMATCH: the Title destination-first boundary retains the shared HI
+ * zero producer used by the exact lamp creator's angle initialization. */
+static __inline__ void InitializeAngle(u16 *destination, u32 angle, struct Half *zero)
+{
+    zero->value = 0;
+    *destination = angle;
+}
+
 void VinasuChojo_SpawnRisingSparks(void)
 {
     struct FieldActor *source = Engine_ActorGet(23);
     struct FieldView *view = Data_03001e70;
     s32 offset = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
     struct FieldActor *spark;
-    u8 zero;
+    struct Half zero;
     struct FieldSprite *sprite;
     u32 phase;
 
@@ -74,13 +101,13 @@ void VinasuChojo_SpawnRisingSparks(void)
                 Engine_ObjectSetScript(spark, Data_0200e734);
                 Engine_ObjectSetPalette(spark, 5);
                 spark->motion_flags = phase;
-                spark->unknown_64 = Engine_RandomNext() & (u32)&Value_0ffff000;
-                zero = (u8)(u32)&Value_00000000;
+                InitializeAngle(&spark->unknown_64,
+                    Engine_RandomNext() & (u32)&Value_0ffff000, &zero);
                 spark->unknown_66 = phase;
                 *(struct FieldActor **)spark->unknown_68 = source;
                 spark->update = VinasuChojo_UpdateOrbitingSpark;
                 spark->speed = (Engine_MathSin((offset & 0xfffff) >> 4) * 24) >> 16;
-                sprite->flags = zero;
+                sprite->flags = zero.value;
                 sprite->priority = source->sprite->priority;
             }
         }

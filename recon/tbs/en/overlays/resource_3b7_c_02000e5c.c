@@ -1,5 +1,5 @@
-/* NONMATCHING: reference 2124 bytes, candidate 2112, 953 differing
- * halfwords / 443 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
+/* NONMATCHING: reference 2124 bytes, candidate 2104, 772 differing
+ * halfwords / 165 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
  * its 22 pool words lie at 1074..1094, 136c..1384, 13a0..13a4 and
  * 168c..16a8 within resource_3b7. Initializer, placement helper, import
  * bindings and interworking sqrt calls audited against this repository/ROM.
@@ -23,10 +23,45 @@
  * reviewed. Exact SPRING_RIDE and TOPIC initializer confirm these state
  * blocks; PLACE_ACTOR consumes their leading x/y/z record. No missing call
  * was found. Do not follow this result with an allocation-spelling sweep.
- * Remaining: state/index/actor live ranges use sl/r9/r5 versus r9/r8/r6,
- * stack frame 8 versus 24 bytes; collision length stays in a saved register,
- * reaction is stored before modulo,
- * and circular hold updates share a tail. Not a register-spelling target.
+ * Sol fountain H1: chase, final-distance and collision geometry have
+ * separate block-local dx/dz/len lifetimes, as their distinct consumers in
+ * the complete reference require. Prediction admitted: chase divisor sl,
+ * collision speed r4/sp+4 and divisor r2/sp+8. State/index/actor now match
+ * r9/r8/r6, and the chase plus final-distance bodies reproduce the reference
+ * instruction sequence. Candidate 2100/768/172, retained; all 22 pool words
+ * remain in order. Full normalized diff and -da/-fsched-verbose=5 dumps read.
+ * Exact HAIDIA_IE/EXTENDED_SEQUENCE.C at 3c4fe6cee provides the independent
+ * separate-lifetime witness; its nullable FieldActor lookup is absent here,
+ * so no pointer-type transfer was applied. No new function/alignment credit.
+ * H1 remaining: trapezoid x/z samples and x/z bound lifetimes; frame 12
+ * versus 24 bytes; reaction store before modulo; circular counter tail.
+ * Preserve these admitted geometry lifetimes in subsequent structural work.
+ * H2, rejected: a pristine x sample for the far-bound and lower-edge checks,
+ * plus an independent z clipping sample, predicted x's saved copy and the
+ * reference high bound registers. CSE merges xpos into x; no saved copy or
+ * bound allocation changes. z clipping alone changes four instructions from
+ * r5 to r3, not the required r2. Still 2100/768/172; full normalized diff is
+ * unchanged outside those four clipping instructions. Trial body preserved
+ * at 6afa2a78f; canonical H1 bounds restored before the next model.
+ * H3, prepare actor updates before publishing their fields: next_mode owns
+ * the modulo result separately from the reaction constant. This reproduces
+ * the complete modulo/reaction/mode/cooldown sequence without disturbing H1
+ * geometry. Prepared circular heading/hold values use u16 destination width:
+ * s32 produced signed loads (2108/733/180), whereas u16 restores the paired
+ * unsigned loads and shared hold-store tail (2104/772/165). Retained partial
+ * model; heading loads before the z store, not after it as in the reference.
+ * Remaining: bounds/sample lifetimes, frame 12 versus 24, and circular load
+ * scheduling/operand choice. All pools and the full normalized diff reviewed.
+ * H4, rejected: inline clamp call boundaries predicted independent bound
+ * rematerialization after divisions while preserving H1/H3. The first near-z
+ * threshold now reloads, but CSE still shares its 0x300000 base with xlo;
+ * clamp return temporaries add limit reloads/copies and move zlo to r8.
+ * Result 2128/768/197, frame still 12, all 22 pool words still in order.
+ * Full normalized diff plus CSE/loop/scheduler dumps read. Trial preserved at
+ * bd8019bfe; canonical H3 restored. No exact credit. Closed axes: coordinate
+ * copies alone and inline clamps cannot explain complete bound ownership.
+ * Probe stop gate: the bounded lifetime, update-publication and clamp models
+ * are exhausted; resume only with a new bound-ownership or scheduling fact.
  */
 #include "TYPES.H"
 
@@ -168,15 +203,10 @@ void FieldScene_RunSecondaryScript(void)
     s32 x;
     s32 z;
     s32 y;
-    s32 dx;
-    s32 dz;
-    s32 len;
     s32 tmp;
     s32 step;
     s32 mode;
-    s32 dist;
     s32 phase;
-    s32 speed;
     s32 val;
     s32 xlo;
     s32 xhi;
@@ -211,6 +241,10 @@ void FieldScene_RunSecondaryScript(void)
             }
 
             if (work->budget > 0) {
+                s32 dx;
+                s32 dz;
+                s32 len;
+
                 /* Chase the fixed target at (0x780000, 0x470000). */
                 dx = (0x780000 - work->pos[0][0]) >> 8;
                 dz = (0x470000 - work->pos[0][2]) >> 8;
@@ -242,20 +276,23 @@ void FieldScene_RunSecondaryScript(void)
                         OverlayObject_SetField54(9, 0);
                         OverlayObject_SetField54(8, 0);
                     }
-                    dx = (0x780000 - work->pos[0][0]) >> 16;
-                    dz = (0x470000 - work->pos[0][2]) >> 16;
-                    dist = dx * dx + dz * dz;
-                    Data_0200a134 = 1;
-                    if (dist <= 224) {
-                        Data_0200a138 = 0;
-                    } else if (dist <= 624) {
-                        Data_0200a138 = 1;
-                    } else if (dist <= 1088) {
-                        Data_0200a138 = 2;
-                    } else if (dist <= 1680) {
-                        Data_0200a138 = 3;
-                    } else {
-                        Data_0200a138 = 4;
+                    {
+                        s32 dx = (0x780000 - work->pos[0][0]) >> 16;
+                        s32 dz = (0x470000 - work->pos[0][2]) >> 16;
+                        s32 dist = dx * dx + dz * dz;
+
+                        Data_0200a134 = 1;
+                        if (dist <= 224) {
+                            Data_0200a138 = 0;
+                        } else if (dist <= 624) {
+                            Data_0200a138 = 1;
+                        } else if (dist <= 1088) {
+                            Data_0200a138 = 2;
+                        } else if (dist <= 1680) {
+                            Data_0200a138 = 3;
+                        } else {
+                            Data_0200a138 = 4;
+                        }
                     }
                 }
             }
@@ -421,11 +458,16 @@ void FieldScene_RunSecondaryScript(void)
             if (REC_REACT(rec) > 0) {
                 Engine_ObjectSetAnimation(Engine_ActorGet(20), 3);
             } else {
+                u16 heading;
+                u16 hold;
+
                 Engine_ObjectSetAnimation(Engine_ActorGet(20), 2);
                 REC_X(rec) = Engine_MathCos(REC_HEADING(rec)) * 48 + 0x700000;
                 REC_Z(rec) = Engine_MathSin(REC_HEADING(rec)) * 40 + 0x480000;
-                REC_HEADING(rec) = REC_HEADING(rec) + step;
-                REC_HOLD(rec) = REC_HOLD(rec) + 1;
+                heading = REC_HEADING(rec) + step;
+                hold = REC_HOLD(rec) + 1;
+                REC_HEADING(rec) = heading;
+                REC_HOLD(rec) = hold;
             }
         } else {
             /* Record 3 turns the other way and rests for the last 128 counts
@@ -454,10 +496,17 @@ void FieldScene_RunSecondaryScript(void)
 
         /* Contact test against the chased body. */
         if (REC_COOL(rec) == 0 && work->pos[0][1] == 0) {
+            s32 dx;
+            s32 dz;
+            s32 dist;
+
             dx = (REC_X(rec) - work->pos[0][0]) >> 16;
             dz = (REC_Z(rec) - work->pos[0][2]) >> 16;
             dist = dx * dx + dz * dz;
             if (dist <= 119 && work->budget > 30) {
+                s32 speed;
+                s32 next_mode;
+
                 speed = 0x30000;
                 if (i <= 1) {
                     if (REC_HEADING(rec) == 0) {
@@ -472,15 +521,18 @@ void FieldScene_RunSecondaryScript(void)
                         }
                     }
                 } else {
+                    s32 len;
+
                     len = FixedMath_Sqrt(dist);
                     work->velocity[0] = -dx * speed / len;
                     work->velocity[2] = -dz * speed / len;
                     work->budget = work->budget - 100;
                 }
                 Engine_AudioPlayCue(301);
+                next_mode = (REC_MODE(rec) + 1) % 3;
                 val = 36;
                 REC_REACT(rec) = val;
-                REC_MODE(rec) = (REC_MODE(rec) + 1) % 3;
+                REC_MODE(rec) = next_mode;
                 val = 30;
                 REC_COOL(rec) = val;
             }

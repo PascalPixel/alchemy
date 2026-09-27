@@ -1,4 +1,4 @@
-/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4696.
+/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704.
  * 2026-09-27 two-buffer H1: buffers[0] receives the one slot-17 allocation;
  * Item_LoadIcon runs before buffers[1] = buffers[0] + 0x400, then Vram_Load
  * consumes buffers[1] and Heap_Release closes the same slot. ROM stores the
@@ -13,8 +13,9 @@
  * (initial insn 2948), keeping derived address pseudo 623 as Vram_Load arg.
  * greg spills only the first word at sp+36. No derived-handle store survives.
  * Calls and copy arguments are preserved, but the two-store admission gate
- * fails. This checkpoint preserves the negative experiment before restoring
- * the 4704/1704/610 canonical body. No origin-lifetime follow-up is admitted;
+ * fails. Commit 1483b3e0e preserves the negative experiment; this body is
+ * restored to the 4704/1704/610 canonical baseline. The buffer-owner axis
+ * is closed. No origin-lifetime follow-up is admitted;
  * no index, record, declaration or scalar permutations. DONE +0; alignment +0.
  *
  * 2026-09-27 Sol Venus Summit H1: one FieldObject union owns both actor
@@ -141,8 +142,7 @@ void Scene_RunPairedActorEffectSequence(void)
     union FieldObject *object;
     struct FieldActor *bird;
     struct FieldSprite *sprite;
-    /* FAKEMATCH: retain the icon allocation and tile handles in two local slots. */
-    u8 *buffers[2];
+    u8 *buffer;
     s32 yes;
     u32 i;
 
@@ -325,10 +325,9 @@ void Scene_RunPairedActorEffectSequence(void)
         object->actor.unknown_5c = 1;
         object->actor.speed = 0x19999;
         object->actor.acceleration = 0xcccc;
-        buffers[0] = Heap_Allocate(17, 0x608);
+        buffer = Heap_Allocate(17, 0x608);
         Item_LoadIcon(220);
-        buffers[1] = buffers[0] + 0x400;
-        Vram_Load(sprite->vram_block, 128, buffers[1]);
+        Vram_Load(sprite->vram_block, 128, buffer + 0x400);
         Heap_Release(17);
     }
     Actor_SetSpritePriority(22, 1);

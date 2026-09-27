@@ -1,6 +1,14 @@
-/* NONMATCHING: 568 of 526 bytes, 111 halfword edits (2026-09-24). Hand-written from the
- * resolved jump-table disassembly as a single-overlay unit binding Engine_* at
- * their import veneers. Remaining: twin of 020000c4 (actor 22, other positions) with the same allocation residual: the rise_counter address lands in r8 instead of r6. The reviewed span (526) stops before the function's own 24-byte literal pool; the complete extent is 552. */
+/* NONMATCHING: complete extent 552 bytes including the trailing pool;
+ * candidate 568, 254 differing halfwords, 84 aligned edits (2026-09-27).
+ * H1 transfers Call3/Call4 from exact FUNE_KANPAN/FLY_BY_21.C and
+ * FLY_BY_22.C. Both callbacks share six callee bindings, actor layout and
+ * state machine; only actor IDs and coordinate constants differ.
+ * Baseline aligned edits were 98; facing/emote and case-5 position
+ * argument construction now match. Remaining: first position-call y is
+ * formed too early; counter address is r8 rather than r6, loaded step r6
+ * rather than r8, and case 1 duplicates the increment shared by cases
+ * 2/4/6 in the ROM. These differences shift branches, table entries and
+ * pool reach; zero scratch and idle turn-y registers also differ. No DONE. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -14,6 +22,18 @@ struct DeckBird {
 
 #define BIRD(obj) ((struct DeckBird *)(obj))
 
+/* FAKEMATCH: the exact fly-by siblings pass constants through these
+ * inline call interfaces to preserve argument-register construction. */
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
 s32 Func_020002ec(struct FieldActor *obj)
 {
     u32 step;
@@ -24,7 +44,7 @@ s32 Func_020002ec(struct FieldActor *obj)
         case 1:
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Engine_ObjectSetPosition(obj, 0x1000000, 0x140000, 0x2800000);
+            Call4(Engine_ObjectSetPosition, (s32)obj, 0x1000000, 0x140000, 0x2800000);
             obj->rise_counter++;
             break;
         case 3:
@@ -32,23 +52,23 @@ s32 Func_020002ec(struct FieldActor *obj)
                 obj->rise_counter++;
                 Engine_AudioPlayCue(146);
                 if (obj->rise_enabled != 0) {
-                    Engine_ActorFaceDirection(22, 0xd000, 0);
+                    Call3(Engine_ActorFaceDirection, 22, 0xd000, 0);
                 } else {
-                    Engine_ActorFaceDirection(22, 0xb000, 0);
+                    Call3(Engine_ActorFaceDirection, 22, 0xb000, 0);
                 }
                 if (((u32)Engine_RandomNext() << 2) >> 16 != 0) {
                     Engine_ActorGet(22)->velocity_y = 0x20000;
                 } else {
-                    Engine_ActorShowEmote(22, 0x103, 0);
+                    Call3(Engine_ActorShowEmote, 22, 0x103, 0);
                     Engine_ActorGet(22)->velocity_y = 0x60000;
                 }
             }
             break;
         case 5:
             if (obj->rise_enabled != 0) {
-                Engine_ObjectSetPosition(obj, 0x1080000, 0, 0x2580000);
+                Call4(Engine_ObjectSetPosition, (s32)obj, 0x1080000, 0, 0x2580000);
             } else {
-                Engine_ObjectSetPosition(obj, 0xf20000, 0, 0x25c0000);
+                Call4(Engine_ObjectSetPosition, (s32)obj, 0xf20000, 0, 0x25c0000);
             }
         case 2:
         case 4:

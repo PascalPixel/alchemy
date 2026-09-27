@@ -48,6 +48,10 @@
  * loop input is still after that join, not a second pre-comparison load.
  * Both pool-position mismatches remain. Rejected after full diff inspection.
  * Stop this axis after one model and one follow-up; no bytes adopted.
+ * H2 preserved in 46ed5b44e. Canonical body restored to the better baseline
+ * (432 bytes, 38 differing halfwords / 33 aligned edits); attempts remain in
+ * their commits. The interface boundaries did not preserve the required
+ * pre-comparison loads, so no register or pool spelling sweep follows.
  */
 #include "TYPES.H"
 
@@ -71,16 +75,6 @@ static __inline__ void UiText_PutEntry(u16 *dst, u8 *code)
     s32 c = (u16)(s32)code;
 
     *dst = c;
-}
-
-/* FAKEMATCH: dispatch consumes a widened code; the append loop owns u16. */
-static __inline__ u16 *UiText_SkipArticlePrefix(u16 *name)
-{
-    u32 code = *name;
-
-    if (code == 29)
-        name += 2;
-    return name;
 }
 
 u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
@@ -123,8 +117,8 @@ u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry,
             entry[pos] = c8;
             pos = (pos + 1) & 0x1ff;
         }
-    } else {
-        name = UiText_SkipArticlePrefix(name);
+    } else if (name[0] == 29) {
+        name += 2;
     }
     while (*name != 0) {
         c = *name++;

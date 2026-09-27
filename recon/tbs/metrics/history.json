@@ -118,14 +118,14 @@
       "date": "2026-09-27",
       "tbs": {"done": 1012434, "executable": 1375934},
       "tla": {"done": 42332, "executable": 1975640},
-      "models": {"Astra 6": 386, "Sol 6": 91}
+      "models": {"Astra 6": 386, "Sol 6": 96}
     }
   ],
   "figures": {
     "date": "2026-09-27",
     "tbs": {"done": 1012434, "executable": 1375934},
     "tla": {"done": 42332, "executable": 1975640},
-    "models": {"Astra 6": 386, "Sol 6": 91},
-    "files": "967782c34c3d9219"
+    "models": {"Astra 6": 386, "Sol 6": 96},
+    "files": "f2236058b84b29ca"
   }
 }

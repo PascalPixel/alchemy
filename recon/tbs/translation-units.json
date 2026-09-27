@@ -5655,23 +5655,23 @@
           "address": "0x200c364",
           "kind": "thumb"
         },
-        "Func_02006bd8": {
+        "Engine_ObjectCreate": {
           "address": "0x200c20c",
           "kind": "thumb"
         },
-        "Func_02006bb4": {
+        "Engine_HeapAllocate": {
           "address": "0x200c1b4",
           "kind": "thumb"
         },
-        "Func_02006c7c": {
+        "Engine_ItemLoadIcon": {
           "address": "0x200c274",
           "kind": "thumb"
         },
-        "Func_02006bfc": {
+        "Engine_VramLoad": {
           "address": "0x200c1e4",
           "kind": "thumb"
         },
-        "Func_02006bda": {
+        "Engine_HeapRelease": {
           "address": "0x200c1bc",
           "kind": "thumb"
         },
@@ -13180,7 +13180,7 @@
           "address": "0x020096ec",
           "kind": "data"
         },
-        "Engine_DebugGetItem": {
+        "Func_08077018": {
           "address": "0x02009444",
           "kind": "thumb"
         },

@@ -15,7 +15,14 @@
  * 878 wrong instructions. The greeting now has one base and offsets
  * 0/2/4/6, receive records advance by 24, and SIOCNT uses the reference's
  * shift pair. Struct stores expose a new discrepancy: immediate 0x30
- * replaces the reference's two word-pool loads. Not an overall match. */
+ * replaces the reference's two word-pool loads. Not an overall match.
+ * H2 witness: a shared word link value restores pool identity but CSE
+ * removes the second required load and reverses the first value/base pair.
+ * Result 2344/2352 bytes, 1146 halfwords, 940 aligned edits, 886 wrong
+ * instructions. Full H1 diff and complete H1-to-H2 assembly delta read.
+ * This correction is rejected; preserve it before restoring H1. The next
+ * useful test needs password/menu control-flow ownership, not pool or
+ * register permutations. ENTRY.INC invokes this owner at runtime 020083cd. */
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
 
@@ -31,6 +38,7 @@ struct SaveLinkGreeting {
 
 extern struct SaveLinkGreeting Data_02002224;
 extern struct SaveLinkGreeting Data_02002024[4];
+extern u8 Value_00000030[];
 extern u8 Data_03001ebc[];
 void Func_02000438();
 s32 Func_0200096c();
@@ -456,10 +464,11 @@ s32 SaveMenu_Run(void)
         Func_02001bd6((link_message + 3), v6, 0, 36);
         Func_02001b9a();
         Func_02001b58(10);
-        Data_02002224.code[0] = 0x30;
-        Data_02002224.code[1] = 0x30;
-        Data_02002224.code[2] = 0x30;
-        Data_02002224.code[3] = 0x30;
+        /* FAKEMATCH: preserve the greeting's word-pool value at each write. */
+        Data_02002224.code[0] = (u32)Value_00000030;
+        Data_02002224.code[1] = (u32)Value_00000030;
+        Data_02002224.code[2] = (u32)Value_00000030;
+        Data_02002224.code[3] = (u32)Value_00000030;
         v5 = 3;
         v7 = 0;
         v1 = 0;
@@ -468,10 +477,10 @@ s32 SaveMenu_Run(void)
 
             do {
                 v1 = (v1 + 1);
-                greeting->code[0] = 0x30;
-                greeting->code[1] = 0x30;
-                greeting->code[2] = 0x30;
-                greeting->code[3] = 0x30;
+                greeting->code[0] = (u32)Value_00000030;
+                greeting->code[1] = (u32)Value_00000030;
+                greeting->code[2] = (u32)Value_00000030;
+                greeting->code[3] = (u32)Value_00000030;
                 greeting++;
             } while (v1 != 4);
         }

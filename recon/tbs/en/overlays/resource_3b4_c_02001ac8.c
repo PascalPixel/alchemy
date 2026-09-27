@@ -1,4 +1,14 @@
-/* Canonical direct-call/u8 model restored after H1 and H2; complete
+/* H3 admitted: 152/152 bytes, 5 halfwords / 5 aligned edits. Zero38 now
+ * spans 40 insns / 2 calls instead of 2 insns / 0 calls; r6 is initialized
+ * before the column tests and consumed after both calls. Frame8 and pool
+ * 0x94 exact. Remaining: zero/store order and MapCopy argument scheduling.
+ * Full normalized diff read; -da/-fsched-verbose output equals ordinary.
+ * H3 inversion: zero pseudo38 survives CSE through regmove, but
+ * local-alloc update_equiv_regs sinks its sole use at depth0 to the final
+ * byte store. That move is forbidden at nonzero loop depth. Enclose the
+ * final byte publication in one pass; admission is r6 zero before column
+ * tests, retained through MapCopy and ActorGet, with frame8 and pool fixed.
+ * Canonical direct-call/u8 model restored after H1 and H2; complete
  * baseline candidate is byte-identical, including its single literal pool.
  * H2 rejected (2026-09-27): STAGED_STEP.C's Map_CopyCellAttributes inline
  * boundary emits the identical 152-byte baseline: 37 differing halfwords /
@@ -53,7 +63,10 @@ void Local_02001ac8(void)
             return;
     copy:
         Engine_MapCopyCellAttributes(61, 36, 1, 1, column, 42);
-        Engine_ActorGet(8)->motion_flags = still;
+        /* FAKEMATCH: keep the zero's sole consumer inside its phase. */
+        do {
+            Engine_ActorGet(8)->motion_flags = still;
+        } while (0);
         Engine_ActorGet(8)->y.fixed = 0x200000;
     }
 }

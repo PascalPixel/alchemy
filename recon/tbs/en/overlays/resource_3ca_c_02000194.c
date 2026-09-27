@@ -1,4 +1,8 @@
-/* NONMATCHING: ship H3 2026-09-27, candidate 558/556, 244 differing
+/* NONMATCHING: canonical ship H1 retained at 554/556 bytes, 35 differing
+ * halfwords, 26 aligned edits. Bounded scroll/spawn axes closed. Direct
+ * transfer and shared actor lifetime remain; x still spills instead of the
+ * position pointer. H2 and H3 are preserved in their respective commits.
+ * ship H3 2026-09-27, candidate 558/556, 244 differing
  * halfwords, 39 aligned edits. A separate u16 reload adds sign-extension
  * shifts before the halfword I/O store, losing H1's admitted transfer shape.
  * Full normalized diff read. Stop the scroll-local axis after this negative
@@ -100,13 +104,10 @@ void BabiFune_UpdateWaves(void)
 
     map = Data_03001e70;
     if (Data_020097e8 != 0) {
-        u16 value;
-
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
         /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */
         scroll[0] = Data_020097f0 + ((bob + 8) << 8);
-        value = scroll[0];
-        *(volatile u16 *)0x04000052 = value;
+        *(volatile u16 *)0x04000052 = scroll[0];
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {

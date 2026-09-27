@@ -1,4 +1,10 @@
-/* NONMATCHING: 624 bytes, candidate 624, 24 differing halfwords, 23
+/* NONMATCHING: ship H1 2026-09-27, 624/624 bytes, 24 differing
+ * halfwords, 23 aligned edits. Initializing the halfword priority before
+ * clearing the spawn flag emits byte-identical baseline output (cmp of the
+ * complete candidate). The scheduler still places the flag store first and
+ * keeps priority/stack-address roles reversed. Full normalized diff read;
+ * source-level initializer order does not own this scheduling boundary.
+ * Previous baseline: 624 bytes, candidate 624, 24 differing halfwords, 23
  * halfword edits (2026-09-27). Scene_ClosePresentationSequence, meant for
  * FIELD/BABI_FUNE/F_00B34.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -135,12 +141,12 @@ void Scene_ClosePresentationSequence(void)
         Task_Wait(1);
     } while (phase <= 0x59ffff);
     Task_RemoveCallback(SceneState_CountDownEveryFortyTicks);
-    Data_020097f8 = 0;
     {
         /* FAKEMATCH: halfword priority locals retain the short pool reach. */
         struct Half { u16 v; } three, two;
 
         three.v = 3;
+        Data_020097f8 = 0;
         cnt = (*(volatile u16 *)0x0400000e & 0xfffc) | three.v;
         *(volatile u16 *)0x0400000e = cnt;
         cnt = (*(volatile u16 *)0x0400000c & 0xfffc) | three.v;

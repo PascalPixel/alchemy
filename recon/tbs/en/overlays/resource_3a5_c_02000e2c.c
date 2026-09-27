@@ -49,7 +49,17 @@
  * target-y load are exact, with two final option stores still swapped.
  * Every other block and all pools are unchanged from the 23-edit baseline.
  * Retain this admitted constant-interference witness. A scalar target-y
- * temporary before the x stores can now test the reference store order. */
+ * temporary before the x stores can now test the reference store order.
+ * Lamakan H3: keep target y in a scalar defined before the x stores;
+ * consume it after both x stores. Prediction: retain H2's interfering
+ * constants while restoring target-x then target-y stores. One follow-up;
+ * exact extent, pools and production gates remain the acceptance contract.
+ * H3 result: 552/552, 23 halfwords / 23 edits. Store order is restored,
+ * but target_y's user pseudo takes r2 while shared scale takes r3, losing
+ * H2's admitted register invariant. This is an explained regression, not
+ * an accepted shape. Preserve the negative witness in this commit, then
+ * restore H2. The one remaining supported boundary is a scale user local,
+ * whose lifetime crosses the start-y store rather than target-y's store. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -174,13 +184,15 @@ void Func_02000e2c(void)
     } while (timer != 0);
     {
         struct FieldActor *actor = Engine_ActorGet(0);
+        s32 target_y;
 
         second.type = 214;
         second.start_scale_y = 0xcccc;
+        /* FAKEMATCH: keep target y live across both shared x-scale stores. */
+        target_y = 0x13333;
         second.start_scale_x = 0x8000;
-        /* FAKEMATCH: extend the shared x-scale lifetime over target y. */
-        second.target_scale_y = 0x13333;
         second.target_scale_x = 0x8000;
+        second.target_scale_y = target_y;
         Effect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, 0, timer, timer, 0x1c0000, &second);
     }
     Engine_AudioPlayCue(0x120);

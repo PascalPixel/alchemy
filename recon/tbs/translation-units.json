@@ -58700,6 +58700,14 @@
           "end": "0x02002450"
         },
         {
+          "start": "0x020024c6",
+          "end": "0x020024c8"
+        },
+        {
+          "start": "0x02002982",
+          "end": "0x02002984"
+        },
+        {
           "start": "0x02002d0a",
           "end": "0x02002d0c"
         },
@@ -78348,6 +78356,12 @@
           "state": "exact-c"
         }
       ],
+      "compiler_gaps": [
+        {
+          "start": "0x02002b7e",
+          "end": "0x02002b80"
+        }
+      ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     },
@@ -78386,6 +78400,12 @@
           "address": "0x02002984",
           "extent": 274,
           "state": "exact-c"
+        }
+      ],
+      "compiler_gaps": [
+        {
+          "start": "0x02002a96",
+          "end": "0x02002a98"
         }
       ],
       "game": "tbs",
@@ -78428,6 +78448,12 @@
           "state": "exact-c"
         }
       ],
+      "compiler_gaps": [
+        {
+          "start": "0x020025ee",
+          "end": "0x020025f0"
+        }
+      ],
       "game": "tbs",
       "compiler_route": "canonical-gcc296"
     },
@@ -78466,6 +78492,12 @@
           "address": "0x02002700",
           "extent": 326,
           "state": "exact-c"
+        }
+      ],
+      "compiler_gaps": [
+        {
+          "start": "0x02002846",
+          "end": "0x02002848"
         }
       ],
       "game": "tbs",

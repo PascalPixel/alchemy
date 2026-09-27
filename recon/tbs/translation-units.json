@@ -215,7 +215,7 @@
     },
     {
       "id": "toreto-flagged-map-patches",
-      "source": "recon/tbs/en/overlays/resource_396_c_020017ec.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/MAP_PATCH.C",
       "overlay": "resource_396",
       "absolute_symbols": {
         "Engine_GameFlagIsSet": {
@@ -235,7 +235,7 @@
         {
           "address": "0x020017ec",
           "extent": 96,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

@@ -1,19 +1,5 @@
-/* NONMATCHING: reference/candidate 616 bytes, 8 differing halfwords and
- * 8 aligned edits (2026-09-26). Complete owner 02000594..020007fc, pool
- * 020007e0..020007fc; late actor wrappers pass IDs 8..12. Own-ROM imports
- * audited against FIELD_EVENT.H and the matching visit/altar blend owners.
- * Three structural hypotheses, closed:
- * 1. Typed queue plus advance-in-place frame: 596 bytes, 295 raw / 103
- *    aligned differences; queue writes matched but lost persistent IME.
- * 2. Persistent IME and distinct next frame across TaskWait: 612 bytes,
- *    286 raw / 62 aligned differences; queue and loop instructions matched.
- * 3. Shared GameState selector and typed FieldActor coordinates: retained
- *    616/8/8. Baseline was 616/288/92. Remaining: saved x/z are fp/r9
- *    instead of r9/fp (six halfwords), and the bit-0 byte update reverses
- *    r2/r3 (two). Do not reopen with declaration or register spelling sweeps.
- * FAKEMATCH: the queue keeps the matched one-pass IME wrappers and a signed
- * variable limit, like VISIT_BLEND.C; the byte-flag read remains volatile.
- */
+/* FAKEMATCH: one-pass IME wrappers and a signed queue limit preserve the
+ * queued write order, as in VISIT_BLEND.C. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
@@ -41,6 +27,11 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
+static __inline__ void SetFlagBits(u8 *flags, u8 bits)
+{
+    *flags |= bits;
+}
+
 void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
 {
     s32 i;
@@ -52,8 +43,9 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     s32 limit;
     s32 p10;
     s32 p10b;
-    s32 p11;
+    /* FAKEMATCH: x precedes z to break their equal allocation priority. */
     s32 p9;
+    s32 p11;
     s32 p9b;
     struct FieldActor *rec;
     s32 rec2;
@@ -123,12 +115,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             Engine_ActorGet(0)->unknown_5a &= 254;
             Engine_ActorWalkToAndWait(0, (p9 + 8), (p11 - 40));
             Engine_EventWait(1);
-            {
-                struct FieldActor *record = Engine_ActorGet(0);
-                u8 value = *(volatile u8 *)&record->unknown_5a;
-            
-                record->unknown_5a = (u8)(value | 1);
-            }
+            SetFlagBits(&Engine_ActorGet(0)->unknown_5a, 1);
             Engine_ActorSetAnimation(13, 1);
             Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
             Call1(Engine_EventSetMessage, 0x262e);

@@ -28,7 +28,9 @@
  * The lead's plain-byte flag-write witness does not apply: motion/phase
  * stores share SI zero 168 and fade is HI zero 179; neither is the unwanted
  * long-lived QI zero. No mask/type/flag variants or second unsupported
- * boundary model; zero new DONE. No exact sibling was changed. */
+ * boundary model; zero new DONE. No exact sibling was changed.
+ * Failed phase model is preserved at d91e62aec; retain the simpler admitted
+ * baseline body here. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -155,11 +157,9 @@ void Func_020056a0(void)
             spark->update = (void (*)(union FieldObject *))Effect_UpdateCounterDrivenOrbit;
             spark->speed = Engine_MathSin(((u32)Engine_RandomNext() * 0xffff) >> 20) * 24;
             spark->speed = ((union FieldCoordinate *)&beam->speed)->part.pixel;
+            sprite->flags = fade.value;
+            sprite->priority = 1;
         }
-    }
-    if (spark != 0) {
-        sprite->flags = fade.value;
-        sprite->priority = 1;
     }
     SUMMIT_FRAME++;
     Effect_AdvanceGatedRiseCounter(Engine_ActorGet(0));

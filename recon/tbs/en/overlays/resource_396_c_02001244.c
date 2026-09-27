@@ -1,5 +1,5 @@
-/* NONMATCHING: complete 480-byte owner, candidate 464, 222 differing
- * halfwords, 175 aligned edits (2026-09-26). Reproducible single-overlay
+/* NONMATCHING: complete 480-byte owner, candidate 440, 226 differing
+ * halfwords, 159 aligned edits (2026-09-27). Reproducible single-overlay
  * unit binds the two imports and four data symbols. ENTER_ROOM installs
  * this palette callback at runtime address 0x02009245.
  * Remaining: hand-written from the disassembly; the goto loop keeps the clamp
@@ -12,8 +12,16 @@
  * Bounded negative result: sharing the red output local as the attenuation
  * accumulator gave 488 bytes, 239 differing halfwords and 180 edits. It
  * kept the partial sums in r5 but introduced fp, moved blue to r8 and kept
- * the shifts before the divide. The better direct-expression draft stays;
- * the next hypothesis must explain the unshifted numerator across calls. */
+ * the shifts before the divide. That rejected model is not repeated.
+ * Family H1: FIELD_EVENT.H Math_Divide boundary from exact KORIMA_KI and
+ * KORIMA_HIROBA palette consumers, plus u32 color from exact ADJUST_BANK
+ * and COPY_BANKS_WITH_BRIGHTNESS_OFFSET. The word local restores ldrh and
+ * simple channel masks and moves all five literals to the final pool.
+ * The inline call boundary still expands divide before the red numerator;
+ * r5/r6/r7 tints and no caller-save frame remain. Whole diff inspected.
+ * Baseline 464/222/175 is preserved before this commit. H1 is a better
+ * typed RGB model, not an adoption: 0 new DONE bytes. Next evidence needed:
+ * compiler division expression versus explicit service-call ownership. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -38,7 +46,7 @@ void ToretoPalette_ApplyTint(void)
     s32 red;
     s32 green;
     s32 blue;
-    u16 color;
+    u32 color;
 
     src = (u16 *)Data_03001ebc[5];
     if (*(s16 *)(Data_03001ebc[0] + 0x17e) != 0)
@@ -54,17 +62,17 @@ loop:
         g = Data_02009f00[Data_0200adb8 + 1];
         b = Data_02009f00[Data_0200adb8 + 2];
         if (i > 47) {
-            r -= r / 2 + Engine_MathDivide(r, 3);
-            g -= g / 2 + Engine_MathDivide(g, 3);
-            b -= b / 2 + Engine_MathDivide(b, 3);
+            r -= r / 2 + Math_Divide(r, 3);
+            g -= g / 2 + Math_Divide(g, 3);
+            b -= b / 2 + Math_Divide(b, 3);
         } else if (i > 31) {
-            r -= Engine_MathDivide(r, 3) + r / 4;
-            g -= Engine_MathDivide(g, 3) + g / 4;
-            b -= Engine_MathDivide(b, 3) + b / 4;
+            r -= Math_Divide(r, 3) + r / 4;
+            g -= Math_Divide(g, 3) + g / 4;
+            b -= Math_Divide(b, 3) + b / 4;
         } else if (i > 15) {
-            r -= r / 4 + Engine_MathDivide(r, 5);
-            g -= g / 4 + Engine_MathDivide(g, 5);
-            b -= b / 4 + Engine_MathDivide(b, 5);
+            r -= r / 4 + Math_Divide(r, 5);
+            g -= g / 4 + Math_Divide(g, 5);
+            b -= b / 4 + Math_Divide(b, 5);
         }
         color = *src;
         red = (color & 31) + r;

@@ -1,4 +1,8 @@
-/* NONMATCHING: rejected H3 candidate 876/reference 860 bytes, 411 differing
+/* NONMATCHING: canonical H2 candidate 864/reference 860 bytes, 347 differing
+ * halfwords / 157 normalized edits. Restored after rejected H3 e00832ddf;
+ * this session's three structural trials are exhausted. No declaration or
+ * angle-type sweep follows without new producer/consumer evidence.
+ * Rejected H3 candidate 876/reference 860 bytes, 411 differing
  * halfwords / 244 normalized edits (2026-09-27). A separate s16 angle
  * preserves behavior but rotates the first-loop counter into r8 and hoists
  * a shifted angle induction variable in the last loop. It fails the admitted
@@ -83,7 +87,6 @@ void FieldScene_RunStatefulSequence(s32 action)
     s32 next;
     s32 scale;
     s32 x;
-    s16 angle;
     struct PuzzleWork *work;
 
     Engine_EventBegin();
@@ -120,11 +123,12 @@ void FieldScene_RunStatefulSequence(s32 action)
             state = 2;
             Engine_AudioPlayCue(110);
             Engine_TaskWait(30);
-            angle = Data_0200bf6c->values[WORK_ANGLE];
+            action = Data_0200bf6c->values[WORK_ANGLE];
             for (i = 0; i <= 4; i++) {
                 s32 id = i + 11;
 
-                Call3(SceneActor_SetPositionFromTransformedBase, id, 0x180000, (u16)angle);
+                action <<= 16;
+                Call3(SceneActor_SetPositionFromTransformedBase, id, 0x180000, (u32)action >> 16);
                 Engine_AudioPlayCue(151);
                 actor = Engine_ActorGet(id);
                 actor->scale_x = 0;
@@ -135,7 +139,7 @@ void FieldScene_RunStatefulSequence(s32 action)
                     Engine_TaskWait(1);
                     scale += 0xc00;
                 } while (actor->scale_x <= 0xffff);
-                angle += (s32)&Value_ffffcccd;
+                action = ((s32)((((u32)action >> 16) + (s32)&Value_ffffcccd) << 16)) >> 16;
             }
             Engine_TaskWait(30);
             complete = 1;
@@ -203,7 +207,7 @@ void FieldScene_RunStatefulSequence(s32 action)
             Data_0200bf6c->values[WORK_SHOWN] = 99;
             Engine_AudioPlayCue(190);
             x = 0x180000;
-            angle = Data_0200bf6c->values[WORK_ANGLE];
+            action = Data_0200bf6c->values[WORK_ANGLE];
             do {
                 for (i = 0; i <= 4; i++) {
                     s32 id = i + 11;
@@ -211,11 +215,11 @@ void FieldScene_RunStatefulSequence(s32 action)
                     actor = Engine_ActorGet(id);
                     actor->scale_x -= 16;
                     actor->scale_y -= 16;
-                    SceneActor_SetPositionFromTransformedBase(id, x, (u16)angle);
-                    angle += (s32)&Value_ffffcccd;
+                    SceneActor_SetPositionFromTransformedBase(id, x, (u32)(action << 16) >> 16);
+                    action = ((s32)((((u32)(action << 16) >> 16) + (s32)&Value_ffffcccd) << 16)) >> 16;
                 }
                 x += (s32)&Value_ffffcccd;
-                angle += 0xc00;
+                action = ((s32)((((u32)(action << 16) >> 16) + 0xc00) << 16)) >> 16;
                 Engine_TaskWait(1);
             } while (x > 0);
             for (i = 0; i <= 4; i++)

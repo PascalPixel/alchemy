@@ -1,4 +1,11 @@
-/* NONMATCHING: H1 narrow values: candidate 1260/reference 1240 bytes,
+/* NONMATCHING: H3 typed Map_CopyCellAttributes transfer retains candidate
+ * 1260/reference 1240 bytes, 598 differing halfwords / 131 normalized edits.
+ * The shared FIELD_EVENT.H void service emits the same six call sequences
+ * as Call6, but does not merge the early actor path with entrance 11's tail.
+ * Whole normalized diff and pools read (2026-09-27). Keep the established
+ * typed interface; close this tail-merging axis. This session's three
+ * structural trials are checkpointed; no new C or alignment credit.
+ * H1 narrow values: candidate 1260/reference 1240 bytes,
  * 598 differing halfwords / 131 aligned edits (2026-09-27). A u8 zero
  * reproduces the sprite-clear pool's 60-byte reach and early pool branch;
  * the u16 Retreat value also forces an early pool but duplicates the word
@@ -91,7 +98,7 @@ s32 BabiIriguchi_SetupScene(void)
         if (x == 20) {
             z = actor->z.fixed >> 20;
             if (z == 12) {
-                Call6(Engine_MapCopyCellAttributes, 38, 12, 1, 1, x, z);
+                Map_CopyCellAttributes(38, 12, 1, 1, x, z);
             }
         }
         return 0;
@@ -150,22 +157,22 @@ s32 BabiIriguchi_SetupScene(void)
         case 11:
             if (Engine_GameFlagIsSet(0x980) != 0) {
                 Call6(Engine_MapCopyCellsTo, 120, 7, 109, 7, 1, 3);
-                Call6(Engine_MapCopyCellAttributes, 45, 8, 1, 1, 45, 9);
+                Map_CopyCellAttributes(45, 8, 1, 1, 45, 9);
             }
             break;
         case 14:
             OverlayObject_SpawnConfiguredObject(0x1b80000, 0, 0x1220000, 223);
-            Call6(Engine_MapCopyCellAttributes, 22, 13, 1, 1, 27, 13);
+            Map_CopyCellAttributes(22, 13, 1, 1, 27, 13);
             FieldScene_RunScene3c5SequenceA(14);
             break;
         case 16:
             OverlayObject_SpawnConfiguredObject(0x1c00000, 0, 0x1220000, 223);
-            Call6(Engine_MapCopyCellAttributes, 22, 12, 1, 1, 28, 10);
+            Map_CopyCellAttributes(22, 12, 1, 1, 28, 10);
             FieldScene_RunScene3c5SequenceA(16);
             break;
         case 17:
             OverlayObject_SpawnConfiguredObject(0xe80000, 0, 0x2520000, 223);
-            Call6(Engine_MapCopyCellAttributes, 22, 12, 1, 1, 14, 33);
+            Map_CopyCellAttributes(22, 12, 1, 1, 14, 33);
             FieldScene_RunScene3c5SequenceA(17);
             break;
         case 12:
@@ -214,7 +221,7 @@ s32 BabiIriguchi_SetupScene(void)
             Actor_SetPosition(9, 0x1480000, 0xf00000);
             Actor_FaceDirection(8, 0x8000, 0);
             Actor_FaceDirection(9, 0, 0);
-            Call6(Engine_MapCopyCellAttributes, 81, 14, 4, 1, 17, 14);
+            Map_CopyCellAttributes(81, 14, 4, 1, 17, 14);
         }
         if (gGameState.entrance == 3) {
             flag = Engine_GameFlagIsSet(0x109);

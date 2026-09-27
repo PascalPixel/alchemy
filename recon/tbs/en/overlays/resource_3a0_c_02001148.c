@@ -1,4 +1,18 @@
-/* NONMATCHING: transfer T2 482/488 bytes, 226 halfwords / 59 aligned edits.
+/* NONMATCHING P1 phased priority/motion value: 496/488 bytes, 237 differing
+ * halfwords / 49 aligned edits (2026-09-27). RUNPA_MURA/EFFECT.C confirms
+ * the complete priority/motion/collision/palette initialization sequence.
+ * Reusing x for priority 1 then motion 0, with the natural for loop, leaves
+ * both SI pseudo-35 definitions through loop optimization (193=1, 226=0).
+ * It no longer hoists the loop-local motion zero. The entire loop body,
+ * transition arithmetic and post-loop r7 consumers now match.
+ * New remaining fact: loop.c hoists synthetic QI zero 89 (235 -> 672),
+ * which is ORed into the typed priority_flags store at insn 321. It survives
+ * alongside explicit pre-loop zero 34, producing dead r8 AND sl zeros and
+ * an extra saved register. The old CROSS_DOORWAY zero workaround may now
+ * duplicate the newly retained producer; one removal follow-up is justified.
+ * Pool is eight bytes late; complete-owner admission still fails. No credit.
+ *
+ * Previous admitted transfer T2: 482/488 bytes, 226 halfwords / 59 edits.
  * Admitted T2 restored; failed outward O1 is preserved at 9b5ca9554.
  * Outward O1: 482/488 bytes, 224 halfwords / 63 aligned edits.
  * 2026-09-27: tested IO_WRITE_QUEUE.C's one-pass do/while(0) boundary
@@ -125,14 +139,11 @@ s32 Func_02001148(void)
         Engine_ActorSetPosition(17, 0, 0);
     }
     zero = 0;
-    n = 0;
-    /* FAKEMATCH: the named back-edge retains the loop-local motion zero;
-     * a structured for loop hoists it despite its post-loop consumers. */
-setup_actor:
-    {
+    for (n = 0; n <= 2; n++) {
         struct FieldActor *actor;
         actor = Engine_ActorGet(n + 23);
-        actor->sprite->priority = 1;
+        x = 1;
+        actor->sprite->priority = x;
         x = 0;
         actor->motion_flags = x;
         actor->collision_flags = 8;
@@ -141,9 +152,6 @@ setup_actor:
         /* FAKEMATCH: CROSS_DOORWAY.C's pre-loop zero OR preserves the
          * unused preheader value separately from the motion-flags zero. */
         actor->priority_flags = (actor->priority_flags & 254) | 2 | zero;
-        n++;
-        if (n <= 2)
-            goto setup_actor;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x202)) {
         Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);

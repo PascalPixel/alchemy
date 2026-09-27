@@ -1,4 +1,9 @@
-/* NONMATCHING: complete 388-byte owner; restored best baseline 388 bytes,
+/* 2026-09-27 halfword-zero transfer from exact TORETO_HEYA/MAP_PATCH.C:
+ * a one-halfword record for the actor-14 zero emits 376/388 bytes,
+ * 189 differing halfwords / 53 aligned edits. The missing saved high
+ * register changes the prologue and every later pool reach. Reject this
+ * storage model; restore the 388-byte, 15-halfword canonical draft.
+ * NONMATCHING: complete 388-byte owner; restored best baseline 388 bytes,
  * 15 differing halfwords / 14 aligned edits (2026-09-27).
  * Remaining: actor 5/9/10 leader stores reload through r3 instead of r1;
  * script/zero high-register setup order; actor 14 motion/zero/call ordering.

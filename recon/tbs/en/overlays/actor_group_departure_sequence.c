@@ -1,7 +1,7 @@
 /* NONMATCHING: resource_372:020031ac; 2716 / 2716 bytes, 41 differing
  * halfwords, 30 wrong instructions, 35 halfword edits. Shared FieldSprite
  * and FieldActor ownership restores both pools and most store scheduling.
- * Visual reloads, two facing-store blocks and coordinate-store ordering remain.
+ * Visual reloads and two facing-store blocks remain.
  * H1 (2026-09-27): audited the import table against exact StormScene and
  * GroupDeparture siblings plus FIELD_EVENT.H. Camera speed and actor
  * animation are void, ActorGet/ViewCenter return FieldActor pointers; no
@@ -40,7 +40,16 @@
  * halfwords [owner +3f0,+400) change, all to reference bytes. Every other
  * byte, the 4-byte frame and all pools remain fixed. Full normalized diff
  * read; remaining disagreements are entry sprite reloads and actor-24/25
- * facing/priority lifetimes. These 16 corrected draft bytes earn no DONE. */
+ * facing/priority lifetimes. These 16 corrected draft bytes earn no DONE.
+ * Sol 6 store-boundary H2/H3: transfer the exact CAMERA_OFFSET.C do/while
+ * boundary separately to actor 25's facing store and priority writer.
+ * H2 gives 2716 bytes / 39 halfwords / 33 edits; H3 gives 2716 / 42 / 34.
+ * Both preserve the position witness, frame and pools, but both place facing
+ * before the priority-byte load, failing the required load/facing/write
+ * invariant. H2's better aggregate is not an admitted correction. Full
+ * normalized diffs read; retain the 41-halfword canonical candidate and
+ * close this two-test store-boundary axis. New actor/sprite scheduling
+ * evidence is required before another last-mile pass. */
 #include "FIELD_EVENT.H"
 #include "OBJECT_RUNTIME.H"
 

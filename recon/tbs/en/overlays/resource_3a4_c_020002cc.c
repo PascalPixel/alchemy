@@ -34,7 +34,14 @@ void Main_0808a5e8(void);
  * [020002cc,02000388) owner as not-yet-c, including both pool words.
  * Result is again 188/188, two halfwords/two edits, topology equal and
  * every other instruction exact. The service ABI is not the shift cause.
- * No adoption or new DONE bytes; stop after this complete interface model. */
+ * No adoption or new DONE bytes; stop after this complete interface model.
+ * 2026-09-27 Sol lane audit: fresh whole-extent score remains 188/188,
+ * two halfwords/two edits, equal topology, no wrong instructions. Full
+ * normalized diff isolates only the two shifts at 02000316/02000318.
+ * Diagnostic sched2 agrees with the ordinary output. Both lookup results
+ * already have independent FieldActor lifetimes; the Haidia witness does
+ * not predict a correction to this scheduling hunk. No new quantization
+ * hypothesis, no repeated sweep, no C adoption or alignment credit. */
 void ArutinYama_BeginRollingRide(s32 a0)
 {
     u32 i;

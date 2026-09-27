@@ -5403,6 +5403,10 @@
       "source": "recon/tbs/en/overlays/run_extended_field_scene.c",
       "overlay": "resource_374",
       "absolute_symbols": {
+        "Engine_PartyGiveItem": {
+          "address": "0x0200a6b4",
+          "kind": "thumb"
+        },
         "Func_02003f08": {
           "address": "0x0200a6c4",
           "kind": "thumb"

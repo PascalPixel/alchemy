@@ -1,14 +1,18 @@
-/* NONMATCHING: complete 388-byte owner; typed candidate 400 bytes,
- * 121 differing halfwords / 53 aligned edits (2026-09-27).
+/* NONMATCHING: complete 388-byte owner; typed candidate 388 bytes,
+ * 16 differing halfwords / 15 aligned edits (2026-09-27).
  * The exact UpdateOverlayObjectAngle consumer in PARTY_INTRO.C establishes
  * linked_object at +0x68 and the orientation flag at +0x5a.
  * Baseline is 388 bytes / 15 differing halfwords / 14 aligned edits.
  * H1 transfers that owned layout and FIELD_EVENT.H call interfaces,
  * including void EventEnd, while naming the existing shared script.
- * First leader-pointer store now uses the correct r1. Remaining: the script
- * takes r6 and the flag mask r8, opposite the reference; repeated mask
- * copies add 12 bytes. Actor 9/10 leader reloads, script/zero setup, actor
- * 14 motion/zero ordering, and actor 13 final OR still differ. No DONE. */
+ * H1 scored 400 bytes / 121 halfwords / 53 aligned edits: the script took
+ * r6 and flag mask r8, adding 12 bytes of repeated mask copies.
+ * H2 initializes a persistent script local with zero in a one-pass block.
+ * This restores script r8 / mask r6 and the complete size/pool layout.
+ * Full residual: leader reloads r3 not r1 for actors 5/9/10; first script
+ * and zero setup order; actor 14 motion/zero/call setup order; actor 13
+ * final OR destination. This is one edit worse than the old baseline.
+ * STOP: bounded typed-layout and lifetime hypotheses exhausted. No DONE. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "OVERLAY_OBJECT.H"
@@ -31,6 +35,7 @@ void Local_0200227c(void)
     struct OverlayObject *leader;
     union LinkedActor *special;
     union LinkedActor *actor;
+    const s32 *script;
     s32 none;
 
     leader = (struct OverlayObject *)Engine_ActorGet(0);
@@ -50,20 +55,24 @@ void Local_0200227c(void)
     actor = (union LinkedActor *)Engine_ActorGet(5);
     actor->link.linked_object = leader;
     actor->link.unknown_5a |= 1;
-    none = 0;
-    Engine_ObjectSetScript(&actor->actor, gLinkedActorScript);
+    /* FAKEMATCH: preserve the script/zero initialization boundary. */
+    do {
+        script = gLinkedActorScript;
+        none = 0;
+    } while (0);
+    Engine_ObjectSetScript(&actor->actor, script);
     actor = (union LinkedActor *)Engine_ActorGet(9);
     actor->link.linked_object = leader;
     actor->link.unknown_5a |= 1;
-    Engine_ObjectSetScript(&actor->actor, gLinkedActorScript);
+    Engine_ObjectSetScript(&actor->actor, script);
     actor = (union LinkedActor *)Engine_ActorGet(11);
     actor->link.linked_object = leader;
     actor->link.unknown_5a |= 1;
-    Engine_ObjectSetScript(&actor->actor, gLinkedActorScript);
+    Engine_ObjectSetScript(&actor->actor, script);
     actor = (union LinkedActor *)Engine_ActorGet(10);
     actor->link.linked_object = leader;
     actor->link.unknown_5a |= 1;
-    Engine_ObjectSetScript(&actor->actor, gLinkedActorScript);
+    Engine_ObjectSetScript(&actor->actor, script);
     special = (union LinkedActor *)Engine_ActorGet(14);
     special->link.linked_object = leader;
     special->link.unknown_5a |= 1;
@@ -71,7 +80,7 @@ void Local_0200227c(void)
     special->actor.scale_y = 0x10000;
     special->actor.motion_flags = Engine_ActorGet(11)->motion_flags;
     special->actor.y.fixed = none;
-    Engine_ObjectSetScript(&special->actor, gLinkedActorScript);
+    Engine_ObjectSetScript(&special->actor, script);
     actor = (union LinkedActor *)Engine_ActorGet(13);
     actor->link.linked_object = leader;
     {
@@ -79,6 +88,6 @@ void Local_0200227c(void)
     
         actor->link.unknown_5a = (u8)(value | 1);
     }
-    Engine_ObjectSetScript(&actor->actor, gLinkedActorScript);
+    Engine_ObjectSetScript(&actor->actor, script);
     Engine_EventEnd();
 }

@@ -1,4 +1,10 @@
-/* Canonical after cursor pass (2026-09-27): NONMATCHING 480/480 bytes,
+/* NONMATCHING pointer-induction H1: 480/480 bytes, seven differing
+ * halfwords; explicit destination initialization and header advances
+ * reproduce the admitted baseline binary. The indexed-store witness uses
+ * a generated cursor; an ordinary for loop alone does not transfer it.
+ * Complete diff and all five pools checked. Preserve this negative body
+ * before the distinct post-increment publication test.
+ * Canonical after cursor pass (2026-09-27): NONMATCHING 480/480 bytes,
  * seven differing halfwords / seven aligned edits; admitted H1 restored.
  * Trial 1's complete body is f8859f58e (484/214/43); trial 2's is
  * 71cb1fd61 (480/4/4). The natural for/index-derived cursor makes the
@@ -202,8 +208,7 @@ void ToretoPalette_ApplyTint(void)
     src += 16;
     dst = (u16 *)0x05000020;
     i = 0;
-loop:
-    {
+    for (; i <= 62; i++, dst++, src++) {
         r = Data_02009f00[Data_0200adb8];
         g = Data_02009f00[Data_0200adb8 + 1];
         b = Data_02009f00[Data_0200adb8 + 2];
@@ -240,12 +245,7 @@ loop:
         if (blue < 0)
             blue = 0;
         *dst = (blue << 10) | (green << 5) | red;
-        i++;
-        dst++;
-        src++;
     }
-    if (i <= 62)
-        goto loop;
     Data_0200adb8 += (Engine_RandomNext() & 7) * 3;
     if (Data_02009f00[Data_0200adb8] == 99)
         Data_0200adb8 = 0;

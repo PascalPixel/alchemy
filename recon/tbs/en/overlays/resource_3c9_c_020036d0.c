@@ -1,4 +1,8 @@
-/* NONMATCHING: 238 of 244 bytes, 73 differing halfwords, 16 halfword edits
+/* NONMATCHING 2026-09-27: early return for a null factory result compiles to
+ * the identical 238/244-byte draft (73 differing halfwords, 16 aligned edits).
+ * The fall-through still forwards r0 past the null branch, omitting the
+ * reference's r7-to-r0 copy before sprite load. Restore the simpler branch.
+ * NONMATCHING: 238 of 244 bytes, 73 differing halfwords, 16 halfword edits
  * Sol Venus Summit recheck 2026-09-27: full normalized diff and complete
  * extent unchanged. The existing OrbitEffect producer/consumer view already
  * supplies Haidia's typed nullable ownership. Drift's random switch is absent;

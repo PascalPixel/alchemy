@@ -7,6 +7,12 @@
     "resource_3c8:02004bd8": {
       "name": "VinasuHeya_DispatchPushScript"
     },
+    "resource_3bd:02000bc8": {
+      "name": "ArutamiraDou_ApplyRoomVisuals"
+    },
+    "resource_3c4:020010c4": {
+      "name": "BabiChika_RunLeaderSpray"
+    },
     "resource_3b3:02000ddc": {
       "name": "FieldScene_QueryActorFootprint"
     },
@@ -9925,6 +9931,9 @@
     "resource_394:02000b8c": {
       "name": "SceneData_FindTileRunAt",
       "source": "FIELD/KORIMA_MAGARI/PRESET_LAYOUT.C"
+    },
+    "resource_394:02000c2c": {
+      "name": "Scene_PushBlockAlongRun"
     },
     "resource_3ca:0200007c": {
       "name": "FieldScene_ConfigureFixedPointValues",
@@ -21588,6 +21597,9 @@
     },
     "resource_3cb:02000580": {
       "name": "LinkLobby_SendPartyRecords"
+    },
+    "resource_37b:02000c8c": {
+      "name": "Local_02000c8c"
     }
   },
   "symbols": {

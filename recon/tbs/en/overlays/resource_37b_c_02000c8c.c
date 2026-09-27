@@ -28,6 +28,9 @@
  * directly. The saved camera pointer already begins after walk/face/wait,
  * as in the ROM; delaying that lifetime supplies no new boundary. Stop
  * this phase-pointer axis; do not repeat inline/declaration/type variants.
+ * Rejected H1 is preserved at 92f409fb1; the canonical typed body below is
+ * restored unchanged. Continuation needs evidence for a genuinely distinct
+ * pointer producer, not another spelling of the same local array address.
  *
  * Earlier baseline evidence (2026-09-24):
  * Single-overlay unit binding Engine_* at their import veneers. Remaining:
@@ -80,36 +83,33 @@ void Local_02000c8c(void)
     struct MapScrollWork *camera;
     s32 *saved;
     s32 pos[3];
-    void *p;
+    struct FieldActor *leader;
     s32 side;
 
     camera = Data_03001e70;
-    p = Engine_ActorGet(0);
-    if (((struct FieldActor *)p)->z.fixed < 0xb30000) {
+    leader = Engine_ActorGet(0);
+    if (leader->z.fixed < 0xb30000) {
         Call3((void (*)())Engine_ActorWalkToAndWait, 0, 0x23f, 132);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0x4000, 0);
         Engine_EventWait(30);
         saved = camera->origin;
-        pos[0] = ((struct FieldActor *)p)->x.fixed;
-        pos[1] = ((struct FieldActor *)p)->y.fixed;
-        pos[2] = ((struct FieldActor *)p)->z.fixed;
+        pos[0] = leader->x.fixed;
+        pos[1] = leader->y.fixed;
+        pos[2] = leader->z.fixed;
         camera->origin = pos;
-        /* FAKEMATCH: reuse the actor pointer for the camera-focus phase. */
-        p = pos;
-        ShiftFocus(p, 0x10000);
+        ShiftFocus(pos, 0x10000);
         Engine_EventWait(40);
         side = 1;
     } else {
         Call3((void (*)())Engine_ActorWalkToAndWait, 0, 0x241, 222);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0xc000, 0);
         Engine_EventWait(30);
-        pos[0] = ((struct FieldActor *)p)->x.fixed;
-        pos[1] = ((struct FieldActor *)p)->y.fixed;
-        pos[2] = ((struct FieldActor *)p)->z.fixed;
+        pos[0] = leader->x.fixed;
+        pos[1] = leader->y.fixed;
+        pos[2] = leader->z.fixed;
         saved = camera->origin;
         camera->origin = pos;
-        p = pos;
-        ShiftFocus(p, -0x10000);
+        ShiftFocus(pos, -0x10000);
         Engine_EventWait(40);
         side = 2;
     }
@@ -119,12 +119,9 @@ void Local_02000c8c(void)
     Engine_MapCopyCellsTo(2, 28, 34, 10, 4, 2);
     Engine_MapCopyCellsTo(8, 55, 32, 40, 8, 4);
     Engine_EventWait(60);
-    if (side == 1) {
-        p = pos;
-        ShiftFocus(p, -0x10000);
-    } else if (side == 2) {
-        p = pos;
-        ShiftFocus(p, 0x10000);
-    }
+    if (side == 1)
+        ShiftFocus(pos, -0x10000);
+    else if (side == 2)
+        ShiftFocus(pos, 0x10000);
     camera->origin = saved;
 }

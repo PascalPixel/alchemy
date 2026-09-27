@@ -1,3 +1,17 @@
+/* NONMATCHING: candidate 976 of 964 bytes, 474 differing halfwords,
+ * 392 aligned edits (2026-09-27 complete own-ROM normalized comparison).
+ * Complete extent 02003638..020039fc includes eight final pool words.
+ * Equivalent complete ROM twins: resource_3ba:020033a0, resource_3bc:020040d0.
+ * This scalar recovery draft still expands cursor increments incorrectly:
+ * its first position/tile stores land at +8/+20 rather than +4/+8. Its DMA
+ * stores also need the established Dma_Set interface. The typed ordinary-C
+ * candidate and four bounded lifetime facts live in resource_3ba_c_020033a0.c;
+ * its H4 FieldActor/nullable-scope trial emits exactly H3's bytes. Haidia's
+ * earlier child-record lifetime does not occur in this triplet;
+ * transfer that single solution with local bindings once its full extent is
+ * exact. Do not replay its closed cursor-array, volatile-cursor, return-type,
+ * counter-timing or aggregate-layout trials here. This owner is C not yet
+ * written, with no new exact or alignment bytes in this checkpoint. */
 #include "TYPES.H"
 
 s32 Func_020074bc();

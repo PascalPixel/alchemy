@@ -1,8 +1,19 @@
-/* NONMATCHING: 964 bytes, candidate 880, 469 differing halfwords (2026-09-24).
+/* NONMATCHING: 964 bytes, candidate 880, 469 differing halfwords,
+ * 331 aligned edits (2026-09-27 complete own-ROM normalized comparison).
  * Structure follows the ROM: seven OAM entries written through a cursor, one
  * register call per entry. The ROM spills the cursor to sp+12 and holds the
  * shape bits (0x8000, 0x40000000) and 0xe400 in r9/sl across calls; this
- * build keeps the cursor in r7 and rematerialises the constants. */
+ * build keeps the cursor in r7 and rematerialises the constants.
+ * Complete extent 020040d0..02004494 includes eight final pool words.
+ * Equivalent complete ROM twins: resource_3ba:020033a0, resource_3bb:02003638.
+ * The canonical typed ordinary-C candidate and four bounded lifetime facts
+ * live in resource_3ba_c_020033a0.c. Typed post-increment submission moves
+ * entry advancement before calls; counter timing and a typed work OAM array
+ * still do not recover the spilled write cursor and independent constants.
+ * Its H4 FieldActor/nullable-scope trial is byte-identical to H3; Haidia's
+ * earlier child-record lifetime does not occur in this triplet.
+ * Transfer one instanced source when exact; do not replay closed trials here.
+ * This owner remains C not yet written, with zero new exact/alignment bytes. */
 #include "TYPES.H"
 #include "DMA.H"
 

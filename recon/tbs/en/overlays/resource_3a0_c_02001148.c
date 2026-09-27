@@ -1,4 +1,14 @@
-/* NONMATCHING P1 phased priority/motion value: 496/488 bytes, 237 differing
+/* P2: all 486 function/pool bytes exact; reviewed 488-byte span includes
+ * the separate trailing alignment halfword (2026-09-27). No instruction or
+ * pool differences remain. Removing the explicit pre-loop zero and its OR
+ * leaves synthetic QI zero 88 (loop insn 663) as the sole dead r8 producer.
+ * x remains SI 34: priority 1 then motion 0 inside the loop, later actor 19
+ * motion and actor 21 y stores use its r7 zero. The natural for loop now
+ * matches the entire owner. Approved production placement must prove the
+ * final native alignment; raw score is 486/488, one missing halfword.
+ * Prior P1 is preserved at 30cb1ea97. No gap registry or compiler changes.
+ *
+ * NONMATCHING P1 phased priority/motion value: 496/488 bytes, 237 differing
  * halfwords / 49 aligned edits (2026-09-27). RUNPA_MURA/EFFECT.C confirms
  * the complete priority/motion/collision/palette initialization sequence.
  * Reusing x for priority 1 then motion 0, with the natural for loop, leaves
@@ -119,7 +129,6 @@ s32 Func_02001148(void)
 {
     struct FieldActor *actor;
     u32 n;
-    s32 zero;
     s32 x;
 
     gEventWork->start_transition = 0x100;
@@ -138,7 +147,6 @@ s32 Func_02001148(void)
     if (Engine_GameFlagIsSet(0x8b0)) {
         Engine_ActorSetPosition(17, 0, 0);
     }
-    zero = 0;
     for (n = 0; n <= 2; n++) {
         struct FieldActor *actor;
         actor = Engine_ActorGet(n + 23);
@@ -149,9 +157,7 @@ s32 Func_02001148(void)
         actor->collision_flags = 8;
         Engine_ActorSetSpriteFlags(actor, 0);
         Engine_ObjectSetPalette(actor, 15);
-        /* FAKEMATCH: CROSS_DOORWAY.C's pre-loop zero OR preserves the
-         * unused preheader value separately from the motion-flags zero. */
-        actor->priority_flags = (actor->priority_flags & 254) | 2 | zero;
+        actor->priority_flags = (actor->priority_flags & 254) | 2;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x202)) {
         Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);

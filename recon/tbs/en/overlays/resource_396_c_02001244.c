@@ -1,4 +1,16 @@
-/* NONMATCHING: complete 480-byte owner, candidate 480, 30 differing
+/* Lifetime-transfer audit (2026-09-27): fresh complete score remains
+ * 480/480, 30 halfwords / 29 aligned edits. Ordinary and -da assembly agree.
+ * CSE owns src/dst/index as user pseudos 32/33/34; global allocation already
+ * gives them reference r8/r9/sl, and tints 35/36/37 get r4/r7/r6 with frame4.
+ * Unlike COND_ACT's late speaker lifetime or Vault's dead-leader-to-slot
+ * transition, all three pointer/index values stay live together throughout
+ * this loop. The entry event-pointer temporary dies while src remains live;
+ * there is no demonstrated shared saved-register phase boundary to transfer.
+ * Source load insn12 is reloaded into r2 then r8; event load17 reuses r3.
+ * All nine attenuation sequences and five pool words remain admitted.
+ * No new model tested: need evidence for the entry expression/reload or
+ * iteration ownership, not another tint ordering or separate-global trial.
+ * NONMATCHING: complete 480-byte owner, candidate 480, 30 differing
  * halfwords, 29 aligned edits (2026-09-27). Separate-global trial rejected;
  * the complete canonical body and original bindings are restored.
  * Reproducible single-overlay unit binds its imports and data symbols.

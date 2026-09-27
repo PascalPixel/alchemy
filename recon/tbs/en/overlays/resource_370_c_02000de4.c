@@ -1,5 +1,9 @@
-/* NONMATCHING: resource_370:02000de4; 1004 / 1024 bytes, 479 differing
- * halfwords, 444 wrong instructions, 286 aligned edits (2026-09-27 Sol H1).
+/* NONMATCHING: resource_370:02000de4; 1012 / 1024 bytes, 473 differing
+ * halfwords, 408 wrong instructions, 261 aligned edits (2026-09-27 Sol H2).
+ * Sol H2 restores the quantity helper and clamps rank through a byte
+ * pointer. Full normalized diff read: the duplicated byte clamp ancestry
+ * is recovered, but pointer +15 materialization and a new shift induction
+ * remain. Frame 68/64 and quantity-key spill remain; not an exact witness.
  * Sol H1 owns the complete quantity scan in the caller instead of an
  * inline return boundary. Complete normalized diff read: the key still
  * spills at sp+0, the inventory base still hoists, and the frame stays
@@ -94,6 +98,14 @@ static __inline__ u16 Password_FindItemQuantity(
     return quantity;
 }
 
+static __inline__ void Password_ClampRank(u8 *rank)
+{
+    if (*rank > 99)
+        *rank = 99;
+    if (*rank == 0)
+        *rank = 1;
+}
+
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
     s32 length = 11;
@@ -142,7 +154,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         struct PasswordOwnerState *state =
             Engine_OwnerGetState(Data_020096c0[i]);
         struct PasswordStats *stats = &state->stats;
-        u32 level;
+        s32 shift;
         s32 j;
 
         if (stats->value_10 > 0x7cf)
@@ -167,12 +179,9 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         row[1] = ((u32)stats->value_1a << 22) |
                  ((u32)stats->value_1c << 12) | (stats->level_1e << 4);
 
-        level = state->rank;
-        if (level > 99)
-            state->rank = level = 99;
-        if (level == 0)
-            state->rank = 1;
-        rank_bits |= state->rank << (i * 7);
+        shift = i * 7;
+        Password_ClampRank(&state->rank);
+        rank_bits |= state->rank << shift;
 
         for (j = 0; j != 4; j++)
             value_bits += state->values_f8[j] << (j * 7);
@@ -217,17 +226,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
                 (struct OwnerInventoryState *)Engine_OwnerGetState(Data_020096c0[i]);
             s32 j;
             for (j = 0; j != 23; j++) {
-                u16 property = 0;
-                u16 target = Data_020096ec[j];
-                u16 *code = state->inventory;
-                s32 k;
-
-                for (k = 0; k != 15; k++) {
-                    u32 item = *code++;
-
-                    if ((item & 0x1ff) == target)
-                        property = (item & 0xf800) >> 11;
-                }
+                u16 property = Password_FindItemQuantity(state, Data_020096ec[j]);
                 if (bit < 0) {
                     out[p] += property >> -bit;
                     p++;

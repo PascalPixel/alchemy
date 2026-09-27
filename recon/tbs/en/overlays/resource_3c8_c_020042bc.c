@@ -1,4 +1,12 @@
-/* 2026-09-27 sol-venus-room bounded revalidation: full normalized diff,
+/* Astra 2026-09-27 scalar phase transfer: after the first wave, assign
+ * repeat = (u32)opts and use that scalar's pointer view for the second
+ * scale/spin writer. Unlike Takara PROBE.C's memory-produced coordinate,
+ * this pointer copy disappears: complete candidate is byte-identical to
+ * P6 (cmp), 612/612, 116 halfwords / 30 aligned edits. Count/options still
+ * occupy r9/sl and the second write-view copy is absent. Full normalized
+ * diff rejects admission; restore P6 and stop the scalar phase axis.
+ * No new function or alignment credit.
+ * 2026-09-27 sol-venus-room bounded revalidation: full normalized diff,
  * complete extent, allocator-order dump and all four pool words read again.
  * Retained P6 is 612/612 bytes, 116 differing halfwords / 30 aligned edits.
  * Count/options lifetime disagreement and second-phase pointer-view loss

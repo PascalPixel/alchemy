@@ -1,4 +1,11 @@
-/* NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits.
+/* Astra 2026-09-27 branch-lifetime test: duplicate the x-position store
+ * in if(n == 0)/else, predicting an extra counter use until late tail
+ * merging. Complete result remains 188/188, five halfwords / five edits;
+ * counter is still sl and z is still r8. Initial RTL has the conditional
+ * (insn 100), but the first jump pass already removes it, before allocation.
+ * This gives no counter lifetime and no matching transfer to the twin.
+ * Full normalized diff read; restore the unconditional store and stop.
+ * NONMATCHING: 188/188 bytes, 5 differing halfwords / 5 aligned edits.
  * Astra rounding-order transfer (2026-09-27): calculating snapped z before
  * snapped x emits 188 bytes, 8 halfwords / 8 edits. The counter remains sl;
  * z becomes r9 and x r8, with reversed field loads. Frame stays 12. Full

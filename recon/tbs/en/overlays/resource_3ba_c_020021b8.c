@@ -128,7 +128,14 @@
  * semantics remain, but load order and pools fail the complete-owner gate.
  * No allocator fact supports a follow-up that separates the returned result.
  * Close the returned-result helper axis, restore H2, and stop this bounded
- * experiment. All three owners remain not-yet-C; 0 function/alignment credit. */
+ * experiment. All three owners remain not-yet-C; 0 function/alignment credit.
+ * Astra phase trial (2026-09-27): wrap only the first complete scale
+ * evaluator in do/while(0), transferring the proven one-pass boundary.
+ * Full result 1264/1264 bytes, 66 halfwords / 65 aligned edits: GCC moves
+ * the zero-duration arm before the evaluator, reverses the entry branch,
+ * changes all channel reload registers and one pool's order. Scale is
+ * still r9 and duration fp. Reject this boundary, retain H2, and do not
+ * transfer the failed phase or sweep wrappers across the other channels. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 

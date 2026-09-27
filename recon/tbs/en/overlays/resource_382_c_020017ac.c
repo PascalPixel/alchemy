@@ -1,4 +1,16 @@
-/* NONMATCHING P1 phased coordinate/direction bias (2026-09-27):
+/* NONMATCHING canonical P2 branch-owned direction bias (2026-09-27):
+ * 340/340 bytes, 31 differing halfwords, 29 aligned edits; topology equal.
+ * P1 at 2d1b493f5 proved that a self-updating XOR/shift destination prevents
+ * regmove from overwriting the dying mask. Isolating that producer as the
+ * branch-local bias restores local r3 allocation and the exact sequence
+ * flags -> r3; r3 ^= r5; r3 <<= 2, leaving r5 intact. This is admitted.
+ * All six pool words/offsets, frame, saved roles and case-1 dispatch match.
+ * Remaining: coordinate input-load overlap/reload base, sprite and zero
+ * low-register reloads, negative-rate literal reloads, and callback-store
+ * scheduling. No new function or alignment bytes. Do not collapse the
+ * two-step bias into one expression or reuse the cross-block z owner.
+ *
+ * NONMATCHING P1 phased coordinate/direction bias (2026-09-27):
  * 344/340 bytes, 148 differing halfwords, 57 aligned edits; topology equal.
  * H3 baseline is preserved at 815f4834c. CSE's temporary XOR result was
  * folded into x/r5 by regmove at insn 199. Giving z the XOR then updating
@@ -126,14 +138,15 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     leaf->actor.motion_flags = zero;
     if (flags & 2) {
         s32 cnt;
+        s32 bias;
 
         cnt = Engine_MathModulo(Engine_RandomNext(), 10) + 5;
         /* FAKEMATCH: reuse the coordinate local for the direction mask. */
         x = 1;
         flags &= x;
-        z = flags ^ x;
-        z <<= 2;
-        cnt += z;
+        bias = flags ^ x;
+        bias <<= 2;
+        cnt += bias;
         leaf->motion.vertical_rate = (0x3332 * flags - 0x1999) * cnt;
         cnt = Engine_MathModulo(Engine_RandomNext(), 15) - 7;
         leaf->motion.horizontal_rate = 0x1999 * cnt;

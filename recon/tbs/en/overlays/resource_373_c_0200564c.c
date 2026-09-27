@@ -1,4 +1,7 @@
-/* Draft, not-yet-c. H5 failure zero width follow-up (2026-09-27):
+/* Draft, not-yet-c. Retained H3 baseline: 224/224 bytes,
+ * 59 differing halfwords / 39 aligned edits. H4 (1795299e8) and H5
+ * (7b73c2004) preserve the two rejected literal-zero models below.
+ * H5 failure zero width follow-up (2026-09-27):
  * Explicit block-local s32 stopped = 0 retains SI pseudo 83 through CSE,
  * rather than H4's QI pseudo 85. It still does not share the incoming force
  * pseudo at the two-predecessor failure label. Local allocation reserves
@@ -93,13 +96,9 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     } while (0);
     goto done;
 miss:
-    {
-        s32 stopped = 0;
-
-        *(u8 *)&obj->unknown_5b = stopped;
-        Engine_ObjectSetAnimation(obj, 2);
-        *(u8 *)&obj->rise_counter = stopped;
-    }
+    *(u8 *)&obj->unknown_5b = force;
+    Engine_ObjectSetAnimation(obj, 2);
+    *(u8 *)&obj->rise_counter = force;
 done:
     return result;
 }

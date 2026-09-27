@@ -23,7 +23,16 @@
  * to its prior bytes, so it is not propagated to this canonical twin.
  * DRIFT/Haidia lookup-lifetime witnesses have no analogous disagreement in
  * this parameter-owned actor model. No new axis; leave C not yet written.
- * Alignment and ownership unchanged. */
+ * Alignment and ownership unchanged.
+ * 2026-09-27 H4 sign audit: (u16 facing - 0x4000) & 0xc000 gives the
+ * same four quarter turns as the complete ROM mask. After +0x8000,
+ * start - (n + 1) * 0x400 yields 0x4000..0x13c00 for n=0..15, without
+ * s32 overflow; each facing store truncates angle - 0x4000 to u16.
+ * Companion frame-produced-angle trial a0d14b1cb failed its mandatory
+ * register/loop gate (55 halfwords/45 edits, n still sl and z still r8).
+ * The first owner is not exact, so no twin trial is authorized by that
+ * conditional gate. Canonical body remains unchanged; both owners are C
+ * not yet written. Stop the one model without type/permutation variants. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

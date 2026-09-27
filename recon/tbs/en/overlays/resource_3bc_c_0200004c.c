@@ -11,7 +11,16 @@
  * table pointer gets the right setup scratch pair but changes signed-byte
  * indexing and argument copies (320 bytes, 128 halfwords/28 edits). Flattening
  * that pointer changes no useful structure; this pointer axis is closed.
- * Prior phase-pointer and phase-index respellings also regressed. */
+ * Prior phase-pointer and phase-index respellings also regressed.
+ * Bounded slot-ownership trial: signed slots 0..4 in both loops, deriving
+ * actor IDs 18+slot/23+slot, produced 332 bytes, 133 differing halfwords and
+ * 51 aligned edits. Witness: ac99dbaa8. The -dL dump keeps first-loop BIV 42
+ * initialized to zero; slot+18/slot+23 GIVs are not worth reducing (0 vs
+ * 38/37). The second loop reverses and retains a separate position BIV
+ * initialized to 37748736 with step 2097152. Global allocation needs 16
+ * registers versus canonical 14. Setup scratches remain r2/r3; loop/tail,
+ * extent and pool placement fail admission. Canonical actor-ID body restored;
+ * this slot-owned model is closed, with no causal followup or adoption. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

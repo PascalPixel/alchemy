@@ -1,4 +1,4 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
+/* NONMATCHING: 1264 bytes, candidate 1264, 28 differing halfwords, 28
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
@@ -74,7 +74,14 @@
  * both single-sprite blocks exactly and restore the full 1264-byte extent.
  * Complete diff: 17 halfwords / 17 edits, solely the exchanged scale fp/r9
  * and duration-pointer r9/fp roles plus the dependent affine-index moves.
- * All pools, the command loop and complete queue tail are exact. Not adopted. */
+ * All pools, the command loop and complete queue tail are exact. Not adopted.
+ * 2026-09-27 Sol renderer H3: one duration pointer across all three channels
+ * puts scale in fp, but over-prioritizes the pointer into r8 and displaces
+ * tile/sprite to sl/r9 (28 halfwords / 28 edits). The approved compiler's
+ * global.c allocno_compare uses floor_log2(n_refs)*n_refs/live_length:
+ * timer 9/138 has priority 0.196, tile 15/324 0.139, sprite 18/680 0.106,
+ * scale 7/168 0.083. This is a negative witness, not an accepted repair.
+ * Keep the exact source topology and pools; no register spelling sweep. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -128,6 +135,7 @@ void CommandInterpolationRenderer_Update(void)
     struct SpriteTransform work;
     struct IoWriteQueue *queue;
     volatile u16 *ime;
+    s16 *timer;
 
 commands:
     if (Data_0200c79c != 0)
@@ -169,44 +177,47 @@ commands:
     goto commands;
 render:
     Data_0200c79c--;
-    if (Data_0200c754 == 0) {
+    timer = &Data_0200c754;
+    if (*timer == 0) {
         scale = Data_0200c778;
     } else {
         struct Half zero = { 0 };
         s32 duration, start, progress, target;
-        duration = Data_0200c754;
+        duration = *timer;
         start = Data_0200c768;
         target = Data_0200c778;
         progress = ++Data_0200c7fc;
         scale = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Data_0200c754 = zero.value;
+            *timer = zero.value;
     }
-    if (Data_0200c7a8 == 0) {
+    timer = &Data_0200c7a8;
+    if (*timer == 0) {
         blend = Data_0200c794;
     } else {
         struct Half zero = { 0 };
         s32 duration, start, progress, target;
-        duration = Data_0200c7a8;
+        duration = *timer;
         start = Data_0200c798;
         target = Data_0200c794;
         progress = ++Data_0200c784;
         blend = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Data_0200c7a8 = zero.value;
+            *timer = zero.value;
     }
-    if (Data_0200c76c == 0) {
+    timer = &Data_0200c76c;
+    if (*timer == 0) {
         pos = Data_0200c7f8;
     } else {
         struct Half zero = { 0 };
         s32 duration, start, progress, target;
-        duration = Data_0200c76c;
+        duration = *timer;
         start = Data_0200c7f0;
         target = Data_0200c7f8;
         progress = ++Data_0200c77c;
         pos = start + (target - start) * progress / duration;
         if (progress >= duration)
-            Data_0200c76c = zero.value;
+            *timer = zero.value;
     }
     work.angle = 0;
     work.x = scale;

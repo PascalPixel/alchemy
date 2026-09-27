@@ -1,4 +1,4 @@
-/* NONMATCHING: 452 bytes, candidate 452, 138 differing halfwords, 116
+/* NONMATCHING: 452 bytes, candidate 452, 156 differing halfwords, 121
  * aligned edits (2026-09-27). VinasuHeya_DispatchPushScript, meant for
  * FIELD/VINASU_HEYA/F_04BD8.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
@@ -25,7 +25,18 @@
  * still use induction pointers instead of scaled indices. This explains
  * the gain but does not satisfy the three-call topology admission check.
  * Stop after the one follow-up; preserve both complete models. No DONE.
- * No exact neighbour or shared header was edited. */
+ * No exact neighbour or shared header was edited.
+ * 2026-09-27 sentinel H1: the complete listing distinguishes the initial
+ * zero test, first animation comparison and later list-advance back edge.
+ * Replace the manually peeled scan with a natural zero-terminated search
+ * that breaks on the selected animation; remove its forced volatile view.
+ * Whole score 452/452, 156 halfwords / 121 edits. The first comparison is
+ * now peeled, but selected_animation is hoisted into ip, so the back edge
+ * lacks the reference's load. Inner failure still shares the success call;
+ * coordinate induction/cursor allocation remains different. The final
+ * fifteen pool words stay aligned. This trial fails topology admission.
+ * Preserve it in history before testing only whether the previously
+ * observed reload can coexist with the newly recovered search shape. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"
@@ -85,7 +96,6 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
     s32 axis;
     u8 *list;
     u8 byte;
-    const volatile u8 *want_ptr;
     u32 cell;
     u32 skip;
     u8 *cursor;
@@ -134,20 +144,11 @@ s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
         }
     }
 
-    byte = list[0];
-    if (byte == 0) {
-        goto fail_mid;
-    }
-    /* FAKEMATCH: retain the observed selected-animation re-read in the scan. */
-    want_ptr = &child->selected_animation;
-    if (*want_ptr != byte) {
-        do {
-            list++;
-            byte = list[0];
-            if (byte == 0) {
-                goto fail_mid;
-            }
-        } while (*want_ptr != byte);
+    while ((byte = *list) != 0) {
+        if (child->selected_animation == byte) {
+            break;
+        }
+        list++;
     }
     if (byte != 0) {
         goto find_cell;

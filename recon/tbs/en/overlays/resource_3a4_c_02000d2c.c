@@ -1,4 +1,19 @@
-/* NONMATCHING: H2 408/404 bytes, 152 differing halfwords / 69 aligned edits.
+/* NONMATCHING: inversion I1 404/404 bytes, 125 differing halfwords / 63 edits.
+ * Complete normalized diff inspected (2026-09-27). Explicit phase labels
+ * restore direct update-body entry, forward exit branches, and wait/reload
+ * followed by an unconditional back-edge in all three phases. Frame grows
+ * from 4 to 8; fall's 0x80000 increment is carried across its cosine call
+ * and reused to initialize settle. The fourth pool word becomes an immediate.
+ * This phase-local labeled candidate is binary-identical to old H1 at
+ * 0f0536a63, despite retaining H2's separate accumulator scopes. It supplies
+ * no new matching bytes and is a diagnostic witness, not an adoption.
+ * Baseline -da output is assembly-identical to ordinary compilation. Its
+ * initial RTL already contains the rotated loop: stmt.c expand_end_loop
+ * recognizes break's loop-end target and moves update/test behind wait;
+ * loop and flow dumps inherit that shape. The admission invariant is direct
+ * body entry and a forward exit before wait/reload/unconditional back-edge,
+ * without changing wait counts, angle arithmetic or state ownership.
+ * H2 baseline 408/404 bytes, 152 differing halfwords / 69 aligned edits.
  * Phase-local loops remove the increment spill: frame 4 now matches, as do
  * all four pool words. The compiler rotates each loop, keeps actor in r8
  * instead of sl, and rematerialises the sine half-turn instead of using fp.
@@ -58,40 +73,47 @@ void ArutinYama_SwingActorIntoSetPiece(void)
 
         acc.fixed = 0;
         limit = 0x8fff;
-        for (;;) {
+rise:
+        {
             acc.fixed += 0x80000;
             sprite->rotation += acc.part.whole;
             c = Math_Cos(sprite->rotation + 0x4000);
             actor->x.fixed = (c << 4) + x;
             angle = sprite->rotation;
             if (angle > limit)
-                break;
+                goto risen;
             Task_Wait(1);
+            goto rise;
         }
+risen:;
     }
     {
         union SwingAngle acc;
 
         acc.fixed = 0;
         limit = 0x7000;
-        for (;;) {
+fall:
+        {
             acc.fixed += 0x80000;
             sprite->rotation = angle - acc.part.whole;
             c = Math_Cos(sprite->rotation + 0x4000);
             actor->x.fixed = (c << 4) + x;
             angle = sprite->rotation;
             if (angle <= limit)
-                break;
+                goto fallen;
             Task_Wait(1);
             angle = sprite->rotation;
+            goto fall;
         }
+fallen:;
     }
     {
         union SwingAngle acc;
 
         half = 0x8000;
         acc.fixed = 0x80000;
-        for (;;) {
+settle:
+        {
             acc.fixed = (acc.part.whole + (acc.fixed >> 19)) << 16;
             limit = acc.part.whole;
             sprite->rotation = limit + angle;
@@ -101,10 +123,12 @@ void ArutinYama_SwingActorIntoSetPiece(void)
             if (sprite->rotation > half)
                 actor->y.fixed = y - (s << 3);
             if ((s32)(sprite->rotation + limit) > 0xbfff)
-                break;
+                goto settled;
             Task_Wait(1);
             angle = sprite->rotation;
+            goto settle;
         }
+settled:;
     }
     Task_Wait(1);
     {

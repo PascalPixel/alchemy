@@ -1,4 +1,13 @@
-/* NONMATCHING: 556/560 bytes, 205 differing halfwords, 86 aligned edits.
+/* Copy-interface H3 result: 556/560 bytes, 204 differing halfwords /
+ * 85 aligned edits. The first call now has the exact routine-load-before-r0
+ * order; the second still differs. Full diff read: frame32, record-copy
+ * loop and polling gains retained; merged exits/map reload remain. DONE +0.
+ * Copy-interface H3: exact PROCESS_PENDING_GRAPHICS_TRANSFER.C and
+ * QUEUE_SORT_BY_PRIORITY.C use a value-returning resident word copier.
+ * The own callee advances r0 and returns through lr. Transfer that interface;
+ * predict routine-load-before-destination setup at both calls, without
+ * changing the admitted frame, copy extents or packet polling behavior.
+ * NONMATCHING: 556/560 bytes, 205 differing halfwords, 86 aligned edits.
  * Complete owner 02000580..020007b0; return 020007a6, pool 020007a8..7b0.
  * Caller 007b0, exact RECEIVE_PARTY.C and DIGIT_VALUE.C, transfer start/
  * active-query callees, allocator and offer-state interfaces audited.
@@ -31,7 +40,7 @@ void Engine_TaskWait(s32 frames);
 s32 Main_080003a8(void);
 u8 *Main_08077000(s32 mode);
 
-typedef void (*WordCopyFn)(void *destination, const void *source, u32 size);
+typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
 #define LINK_STAT (*(volatile u16 *)0x03001f64)
 

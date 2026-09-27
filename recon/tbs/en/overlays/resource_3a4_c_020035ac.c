@@ -3,7 +3,7 @@
  * 68 differing halfwords / 42 aligned edits. The frame stays 12, but the
  * compiler adds an X stack store, the mask pool shifts four bytes, and the
  * counter remains sl while Z remains r8. Reject this memory producer model;
- * restore the five-edit body after the witness commit. Do not transfer it to
+ * the five-edit body is restored below. Do not transfer it to
  * the 02003668 twin. */
 /* Astra 2026-09-27 branch-lifetime test: duplicate the x-position store
  * in if(n == 0)/else, predicting an extra counter use until late tail
@@ -123,9 +123,8 @@ void Local_020035ac(struct FieldActor *object)
     p[1].fixed = object->y.fixed;
     p[2].fixed = object->z.fixed;
     Main_08000128(0x180000, angle, p);
-    p[0].fixed += 0x80000;
+    x = (p[0].fixed + 0x80000) & 0xfff00000;
     z = (p[2].fixed + 0x80000) & 0xfff00000;
-    x = p[0].fixed & 0xfff00000;
     angle += 0x8000;
     Engine_ObjectSetAnimation(object, 5);
     Engine_AudioPlayCue(184);

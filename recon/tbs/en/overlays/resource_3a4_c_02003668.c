@@ -4,8 +4,14 @@
  * allocation of the three call-crossing locals: the reference gives the loop
  * counter r8, the snapped x r9 and the snapped z sl; this draft gives z r8
  * and the counter sl (greg sorts z ahead of the counter). Twin shape of
- * resource_3a4:020035ac (the other turn direction); whatever fixes one fixes
- * both. */
+ * resource_3a4:020035ac (the other turn direction); prove it independently
+ * before adopting any shared implementation.
+ * 2026-09-27 audit: whole extent [02003668,02003724), including three-word
+ * pool, independently reproduces 188/188 bytes, 5 halfwords/5 aligned edits.
+ * Exact ROLL_OBJECT.C dispatches this on tile 97 (opposite turn on tile 98).
+ * Canonical polar/animation/cue/wait interfaces agree. Companion H1 fixed-
+ * centre record regressed to 67 halfwords/46 edits; it was not propagated
+ * here. Complete owner/unit registration is not adoption or credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

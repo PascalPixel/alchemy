@@ -1,16 +1,44 @@
-/* Save selection, link transfer and password display. */
+/* NONMATCHING: complete resource_370:020003cc..02000cfc, 2352 bytes.
+ * Current H1 restored: 2340 bytes, 1144 halfwords, 935 aligned edits.
+ * Baseline 2026-09-27: 2368 bytes, 1145 halfwords, 903 aligned edits;
+ * frame 556 rather than 548. Full listing and normalized diff read.
+ * H1 tests the greeting payload boundary: four halfwords at 02002224
+ * and four 24-byte receive records at 02002024. Exact serial packet
+ * preparation copies 24 payload bytes; PollStatus/PollAndTransfer prove
+ * the unsigned full-word SIOCNT peer extraction. Its canonical volatile
+ * gSerialSendSource owns the transfer-active word, formerly an array cast.
+ * No menu-flow or local
+ * allocation permutations are included in this test.
+ * The legacy resource_370_c_020003cc.c is the unchanged baseline witness.
+ * Larger remaining problems: displaced password cleanup blocks, merged
+ * key reads, 11 versus 12 backedges, frame and literal-pool ownership.
+ * H1 result: 2340/2352 bytes, 1144 differing halfwords, 935 aligned edits,
+ * 878 wrong instructions. The greeting now has one base and offsets
+ * 0/2/4/6, receive records advance by 24, and SIOCNT uses the reference's
+ * shift pair. Struct stores expose a new discrepancy: immediate 0x30
+ * replaces the reference's two word-pool loads. Not an overall match.
+ * H2 (f507603de): a shared word link value restores pool identity but CSE
+ * removes the second required load and reverses the first value/base pair.
+ * Result 2344/2352 bytes, 1146 halfwords, 940 aligned edits, 886 wrong
+ * instructions. Full H1 diff and complete H1-to-H2 assembly delta read.
+ * This correction is rejected and H1 restored byte-identically. The next
+ * useful test needs password/menu control-flow ownership, not pool or
+ * register permutations. ENTRY.INC invokes this owner at runtime 020083cd. */
 #include "TYPES.H"
+#include "SERIAL_RUNTIME.H"
 
 #define SaveMenu_Run Func_020003cc
 
 extern u8 Data_02000000[];
 extern u8 Data_02000240[];
 extern u8 Data_02001100[];
-extern u8 Data_02002080[];
-extern u8 Data_02002224[];
-extern u8 Data_02002226[];
-extern u8 Data_02002228[];
-extern u8 Data_0200222a[];
+struct SaveLinkGreeting {
+    u16 code[4];
+    u8 reserved[16];
+};
+
+extern struct SaveLinkGreeting Data_02002224;
+extern struct SaveLinkGreeting Data_02002024[4];
 extern u8 Data_03001ebc[];
 void Func_02000438();
 s32 Func_0200096c();
@@ -436,26 +464,30 @@ s32 SaveMenu_Run(void)
         Func_02001bd6((link_message + 3), v6, 0, 36);
         Func_02001b9a();
         Func_02001b58(10);
-        *(u16 *)Data_02002224 = 0x30;
-        *(u16 *)Data_02002226 = 0x30;
-        *(u16 *)Data_02002228 = 0x30;
-        *(u16 *)Data_0200222a = 0x30;
+        Data_02002224.code[0] = 0x30;
+        Data_02002224.code[1] = 0x30;
+        Data_02002224.code[2] = 0x30;
+        Data_02002224.code[3] = 0x30;
         v5 = 3;
         v7 = 0;
         v1 = 0;
-        v3 = 0x2002024;
-        do {
-            v1 = (v1 + 1);
-            *(u16 *)(v3) = 0x30;
-            *(u16 *)(v3 + 2) = 0x30;
-            *(u16 *)(v3 + 4) = 0x30;
-            *(u16 *)(v3 + 6) = 0x30;
-            v3 = (v3 + 24);
-        } while (v1 != 4);
+        {
+            struct SaveLinkGreeting *greeting = Data_02002024;
+
+            do {
+                v1 = (v1 + 1);
+                greeting->code[0] = 0x30;
+                greeting->code[1] = 0x30;
+                greeting->code[2] = 0x30;
+                greeting->code[3] = 0x30;
+                greeting++;
+            } while (v1 != 4);
+        }
         while ((*(s32 *)0x03001c94 & 2) == 0) {
             if ((3 & *(u16 *)0x03001f64) == 3) {
-                u32 peer = ((*(volatile u32 *)0x04000128 >> 4) & 3) ^ 1;
-                u16 *received = (u16 *)(0x02002024 + peer * 24);
+                u32 control = REG_SIOCNT;
+                u32 peer = ((control << 26) >> 30) ^ 1;
+                u16 *received = Data_02002024[peer].code;
 
                 if (received[0] == 85) {
                     if (received[1] == 86) {
@@ -496,7 +528,7 @@ s32 SaveMenu_Run(void)
             if (missing_link_frames == 10) {
                 goto L_020007ae;
             }
-            if (*(s32 *)Data_02002080 == 0) {
+            if (gSerialSendSource == 0) {
                 break;
             }
             Func_02001c56(1);

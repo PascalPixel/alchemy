@@ -1,4 +1,13 @@
-/* NONMATCHING: 204 of 208 bytes, 99 halfword edits (2026-09-24). Structure
+/* 2026-09-27 sol-venus-room bounded revalidation: full normalized diff and
+ * allocator-order dump read, with the complete three-word pool accounted.
+ * Retained H1 is 204/208 bytes, 99 differing halfwords / 35 aligned edits.
+ * The observed named options lifetime still outranks x; the four missing
+ * bytes are the consequence of the reversed carriers, not missing stores.
+ * Exact siblings already reject omitted initialization and wrong call ABI.
+ * Keep the existing typed options model without a declaration/order sweep.
+ * No new function bytes or alignment credit; still C not yet written.
+ *
+ * NONMATCHING: 204 of 208 bytes, 99 halfword edits (2026-09-24). Structure
  * matches; global allocation gives the options pointer r7 and the x parameter
  * r8, the reverse of the reference (x in r7, options in r8 reloaded through
  * r2/r3), which also costs the four missing movs. Needs

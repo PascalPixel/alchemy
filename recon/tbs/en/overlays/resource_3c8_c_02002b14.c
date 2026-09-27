@@ -1,4 +1,29 @@
-/* NONMATCHING: 976 bytes, candidate 952, 414 differing halfwords, 154
+/* 2026-09-27 lane stop: H3/H4 carrier trials are preserved in commits
+ * 70d14bfc9 and 266293aa5. Both fail actor-r8/cell-r7 admission; restore
+ * this typed canonical body rather than retain an unexplained one-edit
+ * score gain. Current full baseline: 952/976 bytes, 414 halfwords/154 edits.
+ * No DONE or alignment changes. A new allocation/interference fact is
+ * required before reopening the pointer-phase axis. */
+/* NONMATCHING H4 (2026-09-27): scalar byte-pointer carrier emits the
+ * identical complete object to H3 (cmp), 952/976 bytes, 414 halfwords /
+ * 153 aligned edits. Full normalized diff read; the completion address
+ * still receives a separate pseudo. Thus union member expansion alone
+ * does not explain the r7/r8 inversion. Both carrier representations fail
+ * the mandatory actor-r8/cell-r7 admission. Stop this two-trial axis; keep
+ * the typed H3 and scalar H4 in history, then restore the prior canonical
+ * actor/effect model. No function or alignment credit.
+ *
+ * NONMATCHING H3 (2026-09-27): phased actor/priority/completion pointer
+ * union, 952/976 bytes, 414 differing halfwords / 153 aligned edits.
+ * Own listing reuses r8 across these three nonoverlapping pointer phases.
+ * The union reconstructs the in-place priority-byte transition, but GCC
+ * scalarizes actor SI33 (77 refs/242 insns/23 calls) and completion SI281
+ * separately; actor remains r7 and cell offset r8. Full normalized diff
+ * read: frame, calls and pool values retained; required r8 carrier fails.
+ * Preserve this negative witness before the one scalar-carrier follow-up.
+ * No function or alignment credit; all six owners remain not-yet-c.
+ *
+ * Prior NONMATCHING: 976 bytes, candidate 952, 414 differing halfwords, 154
  * halfword edits (2026-09-27). Scene_RunScene3c8SequenceA, meant for
  * FIELD/VINASU_HEYA/F_02B14.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).

@@ -33,14 +33,20 @@
  * and state/line/counter move to r7/r6/r4. It also adds a tenth pool word.
  * Full diff rejects this product model; retain H2, byte-identically, and
  * stop the expression axis rather than permuting operands or declarations.
+ * Output-view follow-up: keep u32 base but spell both stores as
+ * *line = off + (u16)base. Prediction: a distinct narrow output view might
+ * lower the shared base priority without losing the scroll spill or masks.
+ * The complete result is byte-identical to H2 (336/112/64); the conversion
+ * is absorbed by the halfword store. Close this view axis, with H2 retained.
  * Complete boundary 02000f80..020010d4: return at 020010ac,
  * alignment at 020010ae, nine pool words through 020010d0. Interleaved
- * halfword pages reproduce the second axis pointer. Staged phase arithmetic
- * restores state r6, line r5, accumulator r4 and counter r7. Remaining:
+ * halfword pages reproduce the second axis pointer. Historical 332-byte
+ * baseline: staged phase arithmetic restored state r6, line r5, accumulator
+ * r4 and counter r7, but retained these now-superseded differences:
  * scroll_y stays in fp instead of spilling its shifted value; the first
  * loop rematerialises 255, multiply operands and second-axis setup differ.
  * Three structural trials: halfword pages alone 340 bytes/99 edits;
- * staged accumulator 332/52 (retained); axis-local masks 328/56 and changed
+ * staged accumulator 332/52; axis-local masks 328/56 and changed
  * topology. Earlier: shared mask 336; separate loop counters unchanged;
  * packed scroll 316/64 lost the required signed load. */
 #include "TYPES.H"

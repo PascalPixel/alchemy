@@ -773,11 +773,11 @@
           "address": "0x02008e44",
           "kind": "thumb"
         },
-        "Engine_MathDivide": {
+        "__divsi3": {
           "address": "0x02009854",
           "kind": "thumb"
         },
-        "Engine_MathModulo": {
+        "__modsi3": {
           "address": "0x0200985c",
           "kind": "thumb"
         },

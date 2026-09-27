@@ -1,5 +1,5 @@
-/* NONMATCHING: reference 2124 bytes, candidate 2112, 964 differing
- * halfwords / 445 aligned edits (2026-09-26). Whole owner 02000e5c..020016a8;
+/* NONMATCHING: reference 2124 bytes, candidate 2112, 953 differing
+ * halfwords / 443 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
  * its 22 pool words lie at 1074..1094, 136c..1384, 13a0..13a4 and
  * 168c..16a8 within resource_3b7. Initializer, placement helper, import
  * bindings and interworking sqrt calls audited against this repository/ROM.
@@ -12,9 +12,20 @@
  *    versus the original 2112/992/504. Airborne and hold tails now follow
  *    the reference topology. The countdown zero was already reused by
  *    the baseline compiler; no redundant zero-spelling trial was run.
+ * 2026-09-27 arithmetic-interface transfer, one bounded model:
+ * Exact COMMON/EFFECT/SPAWN.C uses ordinary C division. Own import veneers
+ * 02009854/0200985c enter signed divide/modulo at 03000380/030003ac, so bind
+ * __divsi3/__modsi3 there and replace all eight opaque divides plus modulo
+ * with C operators. Result 2112/953/443 versus prior 2112/964/445, retained.
+ * Chase velocity now survives the second divide without the former reload;
+ * the collision divisor still uses r4/sp+4, not reference r2/sp+8, and the
+ * reaction store still precedes modulo. Full normalized diff and all pools
+ * reviewed. Exact SPRING_RIDE and TOPIC initializer confirm these state
+ * blocks; PLACE_ACTOR consumes their leading x/y/z record. No missing call
+ * was found. Do not follow this result with an allocation-spelling sweep.
  * Remaining: state/index/actor live ranges use sl/r9/r5 versus r9/r8/r6,
- * stack frame 8 versus 24 bytes; chase velocity is reloaded, collision
- * length stays in a saved register, reaction is stored before modulo,
+ * stack frame 8 versus 24 bytes; collision length stays in a saved register,
+ * reaction is stored before modulo,
  * and circular hold updates share a tail. Not a register-spelling target.
  */
 #include "TYPES.H"
@@ -77,11 +88,9 @@
  * value (0x030001d8) meaningful.
  *
  * Uncertainties.
- *  - The divide and modulo helpers are spelled as explicit calls rather than
- *    `/` and `%`.  The reference reaches them through overlay veneers, and the
- *    approved route has no binding for the libgcc names, so the veneer symbol
- *    is the only spelling that links.  Power-of-two divisions are left as `/`
- *    because the compiler emits them inline, exactly as the reference does.
+ *  - The divide and modulo operators bind their compiler-generated libcalls
+ *    to the existing overlay veneers, without changing the compiler or ABI.
+ *    Power-of-two divisions emit inline, as in the reference.
  *  - Which of 0x08000118 / 0x08000120 is cosine and which is sine is inferred
  *    from the axis each result is stored to, not from the callee.
  *  - Field roles at record +0x0e, +0x12 and +0x14 are read off their uses as
@@ -108,8 +117,6 @@ u8 *Engine_ActorGet(s32 id);
 void Engine_ObjectSetAnimation(u8 *rec, s32 mode);
 void TorebiIzumi_PlaceActor(s32 id, void *pos, s32 angle, s32 frame, s32 unk);
 void OverlayObject_SetField54(s32 id, s32 value);
-s32 Engine_MathDivide(s32 num, s32 den);
-s32 Engine_MathModulo(s32 num, s32 den);
 s32 Engine_MathCos(s32 angle);
 s32 Engine_MathSin(s32 angle);
 void Engine_AudioPlayCue(s32 cue);
@@ -208,8 +215,8 @@ void FieldScene_RunSecondaryScript(void)
                 dx = (0x780000 - work->pos[0][0]) >> 8;
                 dz = (0x470000 - work->pos[0][2]) >> 8;
                 len = FixedMath_Sqrt(dx * dx + dz * dz);
-                work->velocity[0] += Engine_MathDivide(6553 * dx, len);
-                work->velocity[2] += Engine_MathDivide(6553 * dz, len);
+                work->velocity[0] += 6553 * dx / len;
+                work->velocity[2] += 6553 * dz / len;
                 work->velocity[0] = work->velocity[0] * 253 / 256;
                 work->velocity[2] = work->velocity[2] * 253 / 256;
                 work->budget = work->budget - 1;
@@ -262,7 +269,7 @@ void FieldScene_RunSecondaryScript(void)
 
             z = work->pos[0][2];
             if (z < 0x2a0000) {
-                tmp = Engine_MathDivide((0x2a0000 - z) * 42, 18);
+                tmp = (0x2a0000 - z) * 42 / 18;
                 xlo = 0x300000 + tmp;
                 if (xlo > 0x5a0000) {
                     xlo = 0x5a0000;
@@ -273,7 +280,7 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
             if (z > 0x660000) {
-                tmp = Engine_MathDivide(z * 42 - 0x10bc0000, 18);
+                tmp = (z * 42 - 0x10bc0000) / 18;
                 xlo = 0x300000 + tmp;
                 if (xlo > 0x5a0000) {
                     xlo = 0x5a0000;
@@ -286,7 +293,7 @@ void FieldScene_RunSecondaryScript(void)
 
             x = work->pos[0][0];
             if (x < 0x5a0000) {
-                tmp = Engine_MathDivide((0x5a0000 - x) * 18, 42);
+                tmp = (0x5a0000 - x) * 18 / 42;
                 zlo = 0x180000 + tmp;
                 if (zlo > 0x2a0000) {
                     zlo = 0x2a0000;
@@ -297,7 +304,7 @@ void FieldScene_RunSecondaryScript(void)
                 }
             }
             if (x > 0x960000) {
-                tmp = Engine_MathDivide(x * 18 - 0xa8c0000, 42);
+                tmp = (x * 18 - 0xa8c0000) / 42;
                 zlo = 0x180000 + tmp;
                 if (zlo > 0x2a0000) {
                     zlo = 0x2a0000;
@@ -466,14 +473,14 @@ void FieldScene_RunSecondaryScript(void)
                     }
                 } else {
                     len = FixedMath_Sqrt(dist);
-                    work->velocity[0] = Engine_MathDivide(-dx * speed, len);
-                    work->velocity[2] = Engine_MathDivide(-dz * speed, len);
+                    work->velocity[0] = -dx * speed / len;
+                    work->velocity[2] = -dz * speed / len;
                     work->budget = work->budget - 100;
                 }
                 Engine_AudioPlayCue(301);
                 val = 36;
                 REC_REACT(rec) = val;
-                REC_MODE(rec) = Engine_MathModulo(REC_MODE(rec) + 1, 3);
+                REC_MODE(rec) = (REC_MODE(rec) + 1) % 3;
                 val = 30;
                 REC_COOL(rec) = val;
             }

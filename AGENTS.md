@@ -142,6 +142,9 @@ Each of these closed real owners. Try them before inventing anything new.
   reduction) dumps before sweeping spellings.
 - **Last resort, tagged:** a `do { } while (0);` around one or two statements,
   a statement swap, or a temporary that fixes one evaluation order.
+- **Overlay alignment is automatic.** The build proves native halfword fill
+  between exact C and its next C or maintained veneer boundary; adoption and
+  flattening need no hand-added padding records.
 
 ## Making the C read like Camelot's
 

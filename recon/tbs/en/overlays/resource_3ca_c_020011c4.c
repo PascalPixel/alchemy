@@ -1,4 +1,15 @@
-/* NONMATCHING: H4 ship 2026-09-27, sprite word/halfword union writes
+/* NONMATCHING: retained canonical body is 236/232 bytes, 82 differing
+ * halfwords, 51 aligned edits; the rejected variants below are not retained.
+ * H5 ship 2026-09-27, absolute RAM pointers with the
+ * sprite word/halfword union give 244/232 bytes, 87 differing halfwords,
+ * 56 aligned edits. Approved alias.c treats differing symbol bases as
+ * nonaliasing, which admitted this distinct base-identity test; replacing
+ * those bases still does not restore the word subtract or first loop
+ * reload. It also duplicates both address pool words because the tail
+ * still uses named globals. Complete normalized diff read; admission fails.
+ * Restore independent globals and plain word stores. No alias/constant
+ * spelling follow-up is supported by this counterexample.
+ * H4 ship 2026-09-27, sprite word/halfword union writes
  * produce exactly the baseline binary (236/232 bytes, 82 differing halfwords,
  * 51 aligned edits). This does not give the separate-global counter the
  * aggregate state's reload/decrement shape. Restore the u32 sprite words;

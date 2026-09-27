@@ -1,4 +1,4 @@
-/* NONMATCHING H3: current 728 / 732 bytes, 247 differing halfwords, 79 edits.
+/* NONMATCHING H4: current 728 / 732 bytes, 233 differing halfwords, 54 edits.
  * Whole owner [02004c68,02004f44), including ten pool words.
  * 2026-09-26 bounded H1: a lowering-phase inline routine returns speed;
  * the caller owns the clamp store. This DOES rebuild 0x04000000 at the
@@ -43,17 +43,20 @@
  * the actor sequence and the exit test inverted; speed remains in sl.
  * CSE still shares r2 at the clamp. Preserve this negative candidate in its
  * own commit, then restore H2 before testing the independent actor-store
- * residual. Do not retry the inline clamp boundary. Credit remains 0. */
+ * residual. Do not retry the inline clamp boundary. Credit remains 0.
+ * Sol Mercury H4: a one-iteration reset scope prevents the animation
+ * argument from preceding the store, but moves the zero before ActorGet
+ * and changes the preceding walk argument order. Complete diff read:
+ * 728/732 bytes, 233 differing halfwords / 54 aligned edits. This local
+ * scheduler counterexample does not meet the predicted emitted sequence;
+ * preserve it, then restore H2. No new exact function or alignment bytes.
+ * The shared record correction is retained; clamp/reset boundary axes end
+ * here until new compiler or ordinary-source evidence supplies a new fact. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "MAP_SCROLL.H"
 
 void Main_080091a0(void);
-
-static __inline__ void Layer_ClampLowered(struct MapLayerScroll *layer)
-{
-    layer->offset_y = 0x4000000;
-}
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -69,6 +72,7 @@ void Func_02004c68(void)
 {
     struct MapLayerScroll *layer;
     s32 speed;
+    u16 lower_height;
 
     layer = &Data_03001e70->layers[2];
     speed = 0x9c28;
@@ -88,6 +92,7 @@ void Func_02004c68(void)
     Engine_EventWait(60);
     Main_080091a0();
     Engine_AudioPlayCue(223);
+    lower_height = 0x400;
 lower:
     {
         layer->offset_y -= speed;
@@ -103,7 +108,8 @@ lower:
         goto lower;
     }
 lowered:
-    Layer_ClampLowered(layer);
+    /* FAKEMATCH: retain the clamp's pixel-height constituent in HImode. */
+    do { layer->offset_y = lower_height << 16; } while (0);
     Engine_MapRedraw();
     Engine_TaskWait(2);
     Engine_ActorGet(0)->motion_flags = 3;
@@ -111,7 +117,8 @@ lowered:
     Engine_ActorGet(13)->target_z = Engine_ActorGet(13)->z.fixed;
     Engine_EventWait(30);
     Call3(Engine_ActorWalkToAndWait, 0, 0x2c0, 0x248);
-    *(s32 *)Engine_ActorGet(0)->unknown_44 = 0;
+    /* FAKEMATCH: isolate the actor reset from animation argument setup. */
+    do { *(s32 *)Engine_ActorGet(0)->unknown_44 = 0; } while (0);
     Engine_ActorSetAnimation(0, 6);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 7);

@@ -1,4 +1,50 @@
-/* NONMATCHING: H3 Object_Create boundary transfer (2026-09-27):
+/* NONMATCHING canonical P3 overlapping origin inputs (2026-09-27):
+ * Complete 340/340 bytes, 12 differing halfwords / 11 aligned edits;
+ * topology equal and instruction selection equal. P2 at 9fa801185 is kept
+ * in history. ROM needs both x/z origins live before either offset sum;
+ * baseline temporaries 39/40 did not conflict and both used r2. Reading
+ * both into block-local inputs preserves their overlap through CSE: each
+ * has two uses over six insns, allocated to r2/r1, with the leader in r0.
+ * This also recovers all sprite, zero, negative-literal and tail reload
+ * registers. The direction copy/XOR/shift admitted by P2 stays exact.
+ * All six pool words/offsets, frame, saved roles and case-1 dispatch match.
+ * Remaining 12 halfwords are scheduling only: eight in coordinate/argument
+ * preparation, two in the r9-zero copy versus motion pointer setup, two in
+ * callback publication versus sprite-flags pointer increment. sched2 block
+ * 1 chooses shift35 then reload435 then shift38; ROM needs 38/435/35.
+ * Block5 chooses zero-copy153 before pointer-copy444; ROM reverses them.
+ * Block8 chooses callback-store341 before pointer-add346; ROM reverses them.
+ * Three causal models complete. Freeze these owned-value invariants; any
+ * further model needs scheduler/dependency evidence, not declaration or
+ * equivalent-expression sweeps. No new function or alignment credit.
+ *
+ * NONMATCHING P2 branch-owned direction bias (2026-09-27):
+ * 340/340 bytes, 31 differing halfwords, 29 aligned edits; topology equal.
+ * P1 at 2d1b493f5 proved that a self-updating XOR/shift destination prevents
+ * regmove from overwriting the dying mask. Isolating that producer as the
+ * branch-local bias restores local r3 allocation and the exact sequence
+ * flags -> r3; r3 ^= r5; r3 <<= 2, leaving r5 intact. This is admitted.
+ * All six pool words/offsets, frame, saved roles and case-1 dispatch match.
+ * Remaining: coordinate input-load overlap/reload base, sprite and zero
+ * low-register reloads, negative-rate literal reloads, and callback-store
+ * scheduling. No new function or alignment bytes. Do not collapse the
+ * two-step bias into one expression or reuse the cross-block z owner.
+ *
+ * NONMATCHING P1 phased coordinate/direction bias (2026-09-27):
+ * 344/340 bytes, 148 differing halfwords, 57 aligned edits; topology equal.
+ * H3 baseline is preserved at 815f4834c. CSE's temporary XOR result was
+ * folded into x/r5 by regmove at insn 199. Giving z the XOR then updating
+ * z with its shift stops fixup_match_1: the destination is set again before
+ * its death, so the pass inserts the flags copy and retains the r5 mask.
+ * However z now spans two basic blocks: SI37 has 18 uses/29 insns/9 sets
+ * and is globally allocated to r4, not locally to r3. The constructor gains
+ * a copy, drift arithmetic schedules around r4, and the pool moves +4.
+ * Case-1 dispatch, six pool values and saved roles remain. The exact r3
+ * admission fails; one causal branch-local bias follow-up is justified.
+ * Keep the two-stage XOR/shift producer, remove only its cross-block owner.
+ * No new function or alignment bytes credited.
+ *
+ * NONMATCHING: H3 Object_Create boundary transfer (2026-09-27):
  * Complete output byte-identical to H2: 340 bytes, 97 differing halfwords,
  * 46 aligned edits. Exact same-area creators and MAKYURI_CHOJO/LAMP.C
  * use this wrapper, but here type 0xac is already a direct r0 constant;
@@ -90,8 +136,13 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     z -= 4;
     x <<= 16;
     z <<= 16;
-    x += leader->motion.x;
-    z += leader->motion.z;
+    {
+        s32 base_x = leader->motion.x;
+        s32 base_z = leader->motion.z;
+
+        x += base_x;
+        z += base_z;
+    }
     leaf = (union DriftingObject *)Object_Create(0xac, x, leader->motion.y, z);
     if (leaf == NULL)
         return;
@@ -112,12 +163,15 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     leaf->actor.motion_flags = zero;
     if (flags & 2) {
         s32 cnt;
+        s32 bias;
 
         cnt = Engine_MathModulo(Engine_RandomNext(), 10) + 5;
         /* FAKEMATCH: reuse the coordinate local for the direction mask. */
         x = 1;
         flags &= x;
-        cnt += (flags ^ x) << 2;
+        bias = flags ^ x;
+        bias <<= 2;
+        cnt += bias;
         leaf->motion.vertical_rate = (0x3332 * flags - 0x1999) * cnt;
         cnt = Engine_MathModulo(Engine_RandomNext(), 15) - 7;
         leaf->motion.horizontal_rate = 0x1999 * cnt;

@@ -1,5 +1,14 @@
 /* NONMATCHING: not-yet-c, 312 candidate / 312 reference bytes, 48 differing
- * halfwords and 28 normalized edits (2026-09-26). Whole owner is 020027d4
+ * halfwords and 28 normalized edits (canonical baseline, 2026-09-27).
+ * Rejected isolated-address trial is preserved at 589210b81: 320/312 bytes,
+ * 156 differing halfwords / 56 normalized edits. Baseline restored below.
+ * The scope that closed resource_382 isolated only its address producer.
+ * Here one cursor pointer assigned inside each do/while(0) still caches:
+ * user pseudo 32 has nine uses / 21 insns / one call and lands in r5;
+ * its successor stays in sl. Per-call sp+8 rematerialization is not admitted.
+ * An extra high-register save accounts for the larger owner and pool shift.
+ * No exact or alignment credit. Stop the producer-scope transfer axis.
+ * Whole owner is 020027d4
  * through 0200290c, including its five pool words; no neighbor is included.
  *
  * Own-ROM call veneers lead to UiTextResource_Initialize (0801c0dc),

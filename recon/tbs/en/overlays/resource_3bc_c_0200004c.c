@@ -1,11 +1,17 @@
-/* NONMATCHING: 316 bytes, candidate 316, 7 differing halfwords (2026-09-25).
- * KorosseoMaruta_CycleLogPoses, meant for FIELD/KOROSSEO_MARUTA/LOG_POSES.C as
- * a single-overlay unit binding Engine_* and Main_* at their import veneers
- * (runtime = listing offset + 0x8000). Remaining: a reciprocal register swap
- * in the pose loop: the reference gives the Data_0200d480 address r8 and the
- * hoisted row coordinate 11 sl, here they trade (allocator priority 5 uses
- * over 74 insns against 5 over 72). Pointer and index respellings of the phase
- * regress. */
+/* NONMATCHING: 316 bytes, candidate 316, 6 differing halfwords/6 aligned
+ * edits (2026-09-27). Unit: korosseo-log-poses.
+ * Reused LOG_ROLLING_SETUP.C's explicit map row local. Setting row before
+ * the counters fixes the former r8/sl swap: the complete loop and tail now
+ * match, including phase address r8, table r9 and row sl. Keep that invariant.
+ * Remaining: setup loads table into r2 and row into r3, instead of r3/r2;
+ * the row and counter copies also have different order. Reload emits the row
+ * scratch before the table scratch; sched2 moves the table load first but
+ * retains those registers. Initializing row before the phase update gives
+ * 12 halfwords; after the counters loses the invariant (9). An explicit
+ * table pointer gets the right setup scratch pair but changes signed-byte
+ * indexing and argument copies (320 bytes, 128 halfwords/28 edits). Flattening
+ * that pointer changes no useful structure; this pointer axis is closed.
+ * Prior phase-pointer and phase-index respellings also regressed. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -28,14 +34,17 @@ void KorosseoMaruta_CycleLogPoses(void)
     s32 pose;
 
     if (Data_0200d484 == 0) {
+        s32 row;
+
         Data_0200d480 = (Data_0200d480 + 1) & 3;
+        row = 11;
         for (i = 18, x = 33; i <= 22; i++, x += 2) {
             pose = Data_0200cc20[Data_0200d480][i - 18];
             Engine_ActorSetAnimation(i, pose);
             Engine_ActorSetAnimation(i + 5, pose + 8);
-            Call6((void (*)())Engine_MapCopyCellAttributes, 32, 11, 1, 2, x, 11);
+            Call6((void (*)())Engine_MapCopyCellAttributes, 32, 11, 1, 2, x, row);
             if (pose != 7) {
-                Call6((void (*)())Engine_MapCopyCellAttributes, 74, 12, 1, 1, x, 11);
+                Call6((void (*)())Engine_MapCopyCellAttributes, 74, 12, 1, 1, x, row);
             }
         }
         Engine_ActorSetAnimation(28, Data_0200cc20[Data_0200d480][5]);

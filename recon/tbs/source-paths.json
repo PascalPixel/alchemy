@@ -1,6 +1,12 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bc:0200004c": {
+      "name": "KorosseoMaruta_CycleLogPoses"
+    },
+    "resource_3b7:020004bc": {
+      "name": "TorebiIzumi_RevealPrize"
+    },
     "resource_3c8:02004520": {
       "name": "VinasuHeya_SpawnRandomParticles"
     },
@@ -15737,7 +15743,8 @@
       "source": "FIELD/FUNE_KANPAN/PARTY_ROSTER.C"
     },
     "resource_3af:020022c0": {
-      "name": "FieldScene_RunActorSequence"
+      "name": "FieldScene_RunActorSequence",
+      "source": "FIELD/FUNE_KANPAN/DECK_SEQ.C"
     },
     "resource_3af:02000a48": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
@@ -21575,7 +21582,8 @@
       "name": "Func_02000098"
     },
     "resource_37f:020007d0": {
-      "name": "Func_020007d0"
+      "name": "SoruIriguchi_PushFacedBlock",
+      "source": "FIELD/SORU_IRIGUCHI/PUSH_BLOCK.C"
     },
     "resource_39a:02001c18": {
       "name": "Effect_Spawn",

@@ -2,6 +2,39 @@
   "format": 5,
   "units": [
     {
+      "id": "korosseo-log-poses",
+      "source": "recon/tbs/en/overlays/resource_3bc_c_0200004c.c",
+      "overlay": "resource_3bc",
+      "absolute_symbols": {
+        "Engine_ActorGet": {"address": "0x0200ca18", "kind": "thumb"},
+        "Engine_ActorSetAnimation": {"address": "0x0200ca70", "kind": "thumb"},
+        "Engine_MapCopyCellAttributes": {"address": "0x0200c940", "kind": "thumb"},
+        "gEventWork": {"address": "0x03001ebc", "kind": "data"},
+        "gGameState": {"address": "0x02000240", "kind": "data"}
+      },
+      "owners": [{"address": "0x0200004c", "extent": 316, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
+      "id": "torebi-prize-reveal",
+      "source": "recon/tbs/en/overlays/resource_3b7_c_020004bc.c",
+      "overlay": "resource_3b7",
+      "absolute_symbols": {
+        "Engine_EventBegin": {"address": "0x0200991c", "kind": "thumb"},
+        "Engine_EventEnd": {"address": "0x02009924", "kind": "thumb"},
+        "Engine_EventWait": {"address": "0x02009914", "kind": "thumb"},
+        "Engine_AudioPlayCue": {"address": "0x020099c4", "kind": "thumb"},
+        "Engine_MapCopyCellsTo": {"address": "0x0200989c", "kind": "thumb"},
+        "Engine_ObjectMotionArmCallback": {"address": "0x0200997c", "kind": "thumb"},
+        "Engine_ItemShowFound": {"address": "0x020099a4", "kind": "thumb"},
+        "Engine_PartyGiveItem": {"address": "0x0200992c", "kind": "thumb"}
+      },
+      "owners": [{"address": "0x020004bc", "extent": 964, "state": "not-yet-c"}],
+      "game": "tbs",
+      "compiler_route": "canonical-gcc296"
+    },
+    {
       "id": "arutamira-room-visuals",
       "source": "recon/tbs/en/overlays/resource_3bd_c_02000bc8.c",
       "overlay": "resource_3bd",
@@ -5622,23 +5655,23 @@
           "address": "0x200c364",
           "kind": "thumb"
         },
-        "Func_02006bd8": {
+        "Engine_ObjectCreate": {
           "address": "0x200c20c",
           "kind": "thumb"
         },
-        "Func_02006bb4": {
+        "Engine_HeapAllocate": {
           "address": "0x200c1b4",
           "kind": "thumb"
         },
-        "Func_02006c7c": {
+        "Engine_ItemLoadIcon": {
           "address": "0x200c274",
           "kind": "thumb"
         },
-        "Func_02006bfc": {
+        "Engine_VramLoad": {
           "address": "0x200c1e4",
           "kind": "thumb"
         },
-        "Func_02006bda": {
+        "Engine_HeapRelease": {
           "address": "0x200c1bc",
           "kind": "thumb"
         },
@@ -13159,7 +13192,7 @@
           "address": "0x020096ec",
           "kind": "data"
         },
-        "Engine_DebugGetItem": {
+        "Func_08077018": {
           "address": "0x02009444",
           "kind": "thumb"
         },
@@ -33932,7 +33965,7 @@
     },
     {
       "id": "retained-overlay-3af-020022c0",
-      "source": "recon/tbs/en/overlays/resource_3af_c_020022c0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_SEQ.C",
       "overlay": "resource_3af",
       "absolute_symbols": {
         "Engine_ActorEnableActionCallback": {
@@ -34036,7 +34069,7 @@
         {
           "address": "0x020022c0",
           "extent": 856,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -88301,9 +88334,13 @@
     },
     {
       "id": "ovd-37f-020007d0",
-      "source": "recon/tbs/en/overlays/resource_37f_c_020007d0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/PUSH_BLOCK.C",
       "overlay": "resource_37f",
       "absolute_symbols": {
+        "gSoruPushSteps": {
+          "address": "0x0200a65c",
+          "kind": "data"
+        },
         "Main_080091d8": {
           "address": "0x02009b6c",
           "kind": "thumb"
@@ -88341,7 +88378,7 @@
         {
           "address": "0x020007d0",
           "extent": 292,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

@@ -5,8 +5,9 @@
  * required SI-to-HI conversion (HI157) remains. CSE still turns it into
  * the camera byte's zero producer; its two-call lifetime and extra pool
  * survive. Full normalized diff and emitted assembly checked. Admission
- * fails: direct access is not enough to remove this pool. Preserve trial
- * in git, restore H4's simpler member view, and stop this three-model pass.
+ * fails: direct access is not enough to remove this pool. Trial is retained
+ * at 6ddaa41d4; H4's simpler member view is restored below. This three-model
+ * pass is stopped.
  * Further work needs a distinct producer/consumer lifetime fact, not more
  * signedness, loop, or cast spellings. No function or alignment credit.
  *
@@ -72,7 +73,7 @@ static __inline__ void FloatingBlock_ResetMotion(struct FieldActor *block, s32 v
     *(s32 *)block->unknown_14 = value;
     block->velocity_y = value;
     block->motion_flags = value;
-    *(s16 *)&block->unknown_64 = value;
+    ((struct FloatingBlockHeight *)block)->index = value;
 }
 
 void VinasuHeya_ResolveFloatingBlock(void)

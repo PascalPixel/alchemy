@@ -1,4 +1,4 @@
-/* NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
+/* NONMATCHING: 1264 bytes, candidate 1264, 27 differing halfwords, 27
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
@@ -95,7 +95,14 @@
  * changes only its pseudo ID. ARM REG_ALLOC_ORDER is r8, sl, r9, fp: H4's
  * timer priority between tile and sprite therefore predicts the observed
  * swap exactly. Close this pointer-sharing axis and restore H2's 17-edit
- * candidate; every negative body is preserved in the checkpoint history. */
+ * candidate. H5's complete change was Sprite *sprite = (Sprite *)Data_c7c0
+ * followed by u32 *write = sprite->words; its output is identical to H4.
+ * 2026-09-27 Sol renderer H6: work.y = work.x gives the same scale allocation
+ * lifetime, 7 references / 168 instructions, not the predicted reduction.
+ * It also feeds the second packed write through the first record value and
+ * changes scratch roles: 1264 bytes, 27 halfwords / 27 edits, all pools exact.
+ * Close the affine-record aliasing axis; H2 remains the best 17-edit source.
+ * No complete owner is adopted, and no native or alignment credit is added. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -231,7 +238,7 @@ render:
     }
     work.angle = 0;
     work.x = scale;
-    work.y = scale;
+    work.y = work.x;
     matrix = (s16)Main_080001e0(&work);
     Data_0200c770 += pos;
     pos = Data_0200c770 / 256;

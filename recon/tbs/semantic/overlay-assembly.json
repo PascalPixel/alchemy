@@ -1767,17 +1767,6 @@
     },
     {
       "overlay": "resource_39d",
-      "start": "0x020034bc",
-      "end": "0x02003628",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_39d_overlay.s; no assembly credit."
-      ]
-    },
-    {
-      "overlay": "resource_39d",
       "start": "0x02003628",
       "end": "0x02003848",
       "kind": "overlay_trampoline",

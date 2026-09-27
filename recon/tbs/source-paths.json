@@ -21550,7 +21550,8 @@
       "name": "Func_02004c68"
     },
     "resource_39d:020034bc": {
-      "name": "Func_020034bc"
+      "name": "MakyuriChojo_SpawnLampSpark",
+      "source": "FIELD/MAKYURI_CHOJO/LAMP.C"
     },
     "resource_3c9:02005a28": {
       "name": "VinasuChojo_SpawnRisingSparks"

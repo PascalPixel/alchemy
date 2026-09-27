@@ -87721,7 +87721,7 @@
     },
     {
       "id": "ovd-39d-020034bc",
-      "source": "recon/tbs/en/overlays/resource_39d_c_020034bc.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/LAMP.C",
       "overlay": "resource_39d",
       "absolute_symbols": {
         "Data_03001e70": {
@@ -87769,7 +87769,7 @@
         {
           "address": "0x020034bc",
           "extent": 364,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

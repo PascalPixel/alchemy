@@ -1,3 +1,8 @@
+/* 2026-09-28 inline store-boundary trial: a value-first helper emits the
+ * reference's zero-before-address order, but uses r2 for zero and r3 for
+ * the address (3 differing halfwords). Reversing the helper arguments
+ * reproduces the two-halfword baseline. Neither recovers the required
+ * r3-zero/r2-address allocation; keep the original one-pass store. */
 /* 2026-09-27 outer-z lifetime trial: reusing the function-scope z for the
  * first BLDCNT zero keeps 3964 bytes but raises the complete difference to
  * nine halfwords. The first three instructions become movs r4; ldr r3;

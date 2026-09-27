@@ -1,4 +1,4 @@
-/* NONMATCHING: 864 of 964 bytes, 464 differing halfwords, 322 aligned edits.
+/* NONMATCHING: 856 of 964 bytes, 465 differing halfwords, 320 aligned edits.
  * Complete own-ROM extent 020033a0..02003764 includes eight final pool words.
  * Verified equivalent twins: resource_3bb:02003638 and resource_3bc:020040d0.
  * 2026-09-26 audited all imports and preserved this baseline. The address-owned
@@ -18,7 +18,12 @@
  * submission reproduce entry advancement before the call. A phase-shared shape
  * local still folds y|0x8000 across the middle calls; allocation dumps retain
  * the write cursor in r7, state at sp+12 and a 16-byte frame, not the required
- * cursor/state at sp+12/sp+16 and 20-byte frame. No complete owner is exact. */
+ * cursor/state at sp+12/sp+16 and 20-byte frame. No complete owner is exact.
+ * H2: initialize the shared counter before the first submit and advance it
+ * before first-loop submission, as observed in the ROM. The first-loop counter
+ * now advances before the call but lives in sl; the shape spills at sp+4.
+ * The write cursor remains r7 and the frame remains 16 bytes. Counter timing
+ * alone cannot recover the cursor/constant lifetime; this axis is closed. */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -106,12 +111,14 @@ void Scene_RunScene3baSequenceA(void)
     *p++ = 0;
     *p++ = ((104 - count * 16) << 16) | y | shape;
     *p++ = tile | 0xe400;
+    i = 0;
     Engine_OamSubmitRecord(entry++, 255);
-    shape = 0x40000000;
-    for (i = 0; i < count; i++) {
+    for (; i < count;) {
+        shape = 0x40000000;
         *p++ = 0;
         *p++ = ((96 - i * 16) << 16) | y | shape;
         *p++ = (tile + 2) | 0xe400;
+        i++;
         Engine_OamSubmitRecord(entry++, 255);
     }
     i = 0;
@@ -124,8 +131,8 @@ void Scene_RunScene3baSequenceA(void)
     *p++ = (120 << 16) | y | shape | 0x10000000;
     *p++ = (tile + 6) | 0xe400;
     Engine_OamSubmitRecord(entry++, 255);
-    shape = 0x40000000;
     for (; i < count; i++) {
+        shape = 0x40000000;
         p[0] = 0;
         p[1] = ((128 + i * 16) << 16) | y | shape | 0x10000000;
         p[2] = (tile + 2) | 0xe400;

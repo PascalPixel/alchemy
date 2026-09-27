@@ -1,5 +1,17 @@
-/* Draft, not-yet-c. Shared-pointer phase model: 608/612 bytes,
- * 261 differing halfwords / 102 aligned edits, 166 wrong instructions.
+/* Draft, not-yet-c. Unsigned cone phase: 612/612 bytes,
+ * 74 differing halfwords / 70 aligned edits, 114 wrong instructions.
+ * Cone H1 (2026-09-27): the nested short subtraction had no zero extension
+ * even in initial RTL. CSE removed HI copies and fed signed pseudo 40
+ * directly to subtraction 115; combine retained that ancestry. Staging the
+ * unsigned cone input in existing u32 rnd after distance admission creates
+ * a real SI producer: shifts 113/114 survive CSE and combine into user 42.
+ * The missing pair restores size 612 and pool words/offsets 0x258/25c/260.
+ * r8 facing ownership, frame 4, no spill and both signed-facing loads remain.
+ * Normal/diagnostic text agree; entire normalized difference read. The pair
+ * currently precedes the slot read and reuses r0, whereas ROM loads slot
+ * first and converts angle into r3. Other residuals are the cone guard,
+ * low-register roles and scheduling, not a pool-size or pointer-spill wall.
+ * Previous shared-pointer phase: 608/612, 261 halfwords/102 edits/166 insns.
  * H2 causal follow-up: give fallback facing the same scalar-to-slot
  * publication as entry, reusing angle after its last cone use. This restores
  * the reference ldrsh at 02004986 without losing r8, frame 4 or no-spill.
@@ -158,15 +170,19 @@ void KuupuappuHeya_UpdateActorStops(void)
         angle = Math_Atan2(dz, dx);
         dx >>= 16;
         dz >>= 16;
-        if (work->value_19c > 0 && dx * dx + dz * dz <= 400
-            && (s16)(*(s16 *)pos - (u16)angle) > -0x1000
-            && (s16)(*(s16 *)pos - (u16)angle) < 0x1000) {
-            /* Keep the leader's facing within the nearby forward cone. */
-        } else if (dx * dx + dz * dz > 64) {
+        if (work->value_19c > 0 && dx * dx + dz * dz <= 400) {
+            /* FAKEMATCH: stage the unsigned cone input before the short delta. */
+            rnd = (u16)angle;
+            if ((s16)(*(s16 *)pos - rnd) > -0x1000
+                && (s16)(*(s16 *)pos - rnd) < 0x1000)
+                goto keep_facing;
+        }
+        if (dx * dx + dz * dz > 64) {
             /* FAKEMATCH: retain the signed scalar producer before publication. */
             angle = actor->facing;
             *(s16 *)pos = angle;
         }
+keep_facing:
         dest = KuupuappuHeya_SnapToNearestStop(entry, (s16 *)pos);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
             SceneActor_ApplyScaledBytePairPosition(actor, dest);

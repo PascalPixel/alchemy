@@ -6,17 +6,31 @@
  * 2026-09-26: a link-symbol offset combined into indexed ldrsh and shrank to
  * 300 bytes; reading the numerator before event work retained 304 bytes but
  * left 10 aligned edits. The original six-halfword draft is retained with
- * verified import bindings. */
+ * verified import bindings.
+ * 2026-09-27 H1: exact RAMAKAN_SABAKU/TRAVEL_DUST increments +0x232;
+ * ENTER_AREA initializes +0x22c to 600, and exact Field_ProcessStep uses
+ * these as step counter/limit, with mode and damage between them. This is
+ * not an HP numerator despite the historical candidate-unit name.
+ * Transferring that signed-halfword record, retaining the cached pointer,
+ * is byte-identical to the old candidate: 304/304, six differing halfwords.
+ * Whole extent [02000cd0,02000e00), return at 0dde, eight pool words at
+ * 0de0..0dfc. Everything from 0cd8 through the return remains exact.
+ * CSE insn 12 loads the explicit state pointer before event insns 15/17;
+ * offset 562 enters only in insn 22. Next supported boundary is direct
+ * typed-global access, as Field_ProcessStep uses, not a literal-order sweep.
+ * No exact credit. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
+struct TravelState {
+    u8 unknown_000[0x22c];
+    s16 limit;
+    s16 mode;
+    s16 damage;
+    s16 steps;
 };
 
-extern union GameStateRows Data_02000240_t;
+extern struct TravelState Data_02000240_t;
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -34,10 +48,10 @@ void Local_02000cd0(void)
     s32 percent;
 
     {
-        s16 *rows = Data_02000240_t.halves[0];
+        struct TravelState *state = &Data_02000240_t;
 
         event = gEventWork;
-        percent = Engine_MathDivide(rows[281] * 100, rows[278]);
+        percent = Engine_MathDivide(state->steps * 100, state->limit);
     }
     if (Engine_GameFlagIsSet(0x201)) {
         return;

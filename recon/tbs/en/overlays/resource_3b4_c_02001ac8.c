@@ -1,4 +1,10 @@
-/* H5 direct-call canonical restored; H6 counterexample at 79c045566.
+/* 2026-09-27 pillars closing audit: own-ROM service veneer 080091c0 jumps
+ * to 08010704, the reconstructed FIELD/COMMON/MAP/COPY_CELL_ATTRIBUTE_RECT.C.
+ * Its complete source and exact STAGED_ACTOR.C callers prove the existing
+ * six-s32 void signature. There is no new return-type or actor-byte relation
+ * to reopen H5's 3-halfword call-order residual. Preserve its admitted zero
+ * publication, frame8 and sole pool; no new variant or alignment credit.
+ * H5 direct-call canonical restored; H6 counterexample at 79c045566.
  * H6 rejected: exact Shian Call6 emits the identical H5 candidate bytes:
  * 152/152, 3 halfwords / 3 aligned edits. Zero publication, frame8 and pool
  * remain exact. Inlining erases the function-pointer boundary before CSE;

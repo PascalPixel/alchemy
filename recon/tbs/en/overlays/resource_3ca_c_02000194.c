@@ -1,4 +1,25 @@
-/* NONMATCHING: 556 bytes, candidate 558, 244 differing halfwords, 42 aligned
+/* NONMATCHING: canonical ship H1 retained at 554/556 bytes, 35 differing
+ * halfwords, 26 aligned edits. Bounded scroll/spawn axes closed. Direct
+ * transfer and shared actor lifetime remain; x still spills instead of the
+ * position pointer. H2 and H3 are preserved in their respective commits.
+ * ship H3 2026-09-27, candidate 558/556, 244 differing
+ * halfwords, 39 aligned edits. A separate u16 reload adds sign-extension
+ * shifts before the halfword I/O store, losing H1's admitted transfer shape.
+ * Full normalized diff read. Stop the scroll-local axis after this negative
+ * result; restore H1's direct halfword transfer as the useful draft.
+ * ship H2 2026-09-27, candidate 528/556, 267 differing
+ * halfwords, 123 aligned edits. Separate nullable spawn actor lifetime,
+ * transferred from exact HAIDIA_IE/EXTENDED_SEQUENCE.C 3c4fe6cee, regresses
+ * all four height blocks: they no longer retain actor pointers in r5, and
+ * the saved-register/pool structure changes. Full normalized diff read.
+ * The ship reference instead supports one shared actor lifetime. Reject
+ * this transferred ownership axis; preserve H1 as the canonical successor.
+ * ship H1 2026-09-27, candidate 554/556, 35 differing
+ * halfwords, 26 aligned edits. Direct halfword scroll transfer removes the
+ * unrelated bob/r6 copy and restores second Q16 call alignment naturally.
+ * Full normalized diff read: four height blocks and pool words agree;
+ * scroll address/value scheduling and spawn x/position pointer lifetime
+ * remain. No DONE. Previous candidate 558, 244 differing halfwords, 42 aligned
  * edits (2026-09-27). Reconstructed both Q16 waves and all four actor-height
  * blocks. The complete topology now agrees. Remaining: halfword scroll
  * reload and stack-slot ownership, saved position pointer, and spawn stores.
@@ -86,8 +107,7 @@ void BabiFune_UpdateWaves(void)
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
         /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */
         scroll[0] = Data_020097f0 + ((bob + 8) << 8);
-        bob = scroll[0];
-        *(volatile u16 *)0x04000052 = bob;
+        *(volatile u16 *)0x04000052 = scroll[0];
         Data_020097ec++;
     }
     if (Data_020097fc != 0) {

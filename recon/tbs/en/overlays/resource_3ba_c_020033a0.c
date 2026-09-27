@@ -23,7 +23,15 @@
  * before first-loop submission, as observed in the ROM. The first-loop counter
  * now advances before the call but lives in sl; the shape spills at sp+4.
  * The write cursor remains r7 and the frame remains 16 bytes. Counter timing
- * alone cannot recover the cursor/constant lifetime; this axis is closed. */
+ * alone cannot recover the cursor/constant lifetime; this axis is closed.
+ * H3: the work's first 216 bytes are eighteen typed OAM records; deriving
+ * entry and the write cursor from that array emits exactly H2's bytes.
+ * Complete normalized diffs and allocation dumps close this aggregate axis.
+ * All three ROM extents are equivalent (including eight pool words); do not
+ * replay these trials on 3bb/3bc. The required unresolved invariant is a
+ * write cursor at sp+12, saved state at sp+16, y in r7, entry in r8, and
+ * separate shape/palette lifetimes in r9/sl, with a 20-byte frame.
+ * Three scene-lane structural attempts checkpointed, zero exact bytes. */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -44,8 +52,10 @@ struct KawaActor {
     s32 z;
 };
 
+struct OamEntry { u32 header, pos, tile; };
+
 struct KawaState {
-    u8 unknown_00[216];
+    struct OamEntry oam[18];
     s16 id;
     s16 rise;
     s16 raised;
@@ -62,9 +72,7 @@ struct TileEntry {
     u16 tile;
 };
 
-struct OamEntry { u32 header, pos, tile; };
-
-extern struct OamEntry *Data_03001f3c;
+extern struct KawaState *Data_03001f3c;
 extern struct TileEntry Data_03001b10[];
 extern u32 Data_03001e40;
 
@@ -84,9 +92,9 @@ void Scene_RunScene3baSequenceA(void)
     u8 *buffer;
     struct KawaActor *actor;
 
-    entry = Data_03001f3c;
-    p = (u32 *)entry;
-    state = (struct KawaState *)entry;
+    state = Data_03001f3c;
+    entry = state->oam;
+    p = &entry->header;
     id = &state->id;
     tile = Data_03001b10[*id].tile >> 5;
     count = state->count;

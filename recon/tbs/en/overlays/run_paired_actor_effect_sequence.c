@@ -1,4 +1,48 @@
-/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704,
+/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704.
+ * 2026-09-27 volatile-handle H2, one authorized causal test: make the two
+ * pointer slots volatile, leaving pointed-to image bytes ordinary. Feed the
+ * derived assignment's value directly to Vram_Load because the complete ROM
+ * trace has base-store/base-reload/derived-store and no derived-handle reload.
+ * Prediction: two handle stores and one reload, 136-byte frame, origin-x
+ * spills at sp+28/+20, preserved producer/copy/release arguments. Inspect
+ * the full normalized diff and allocator dump. One compile only; any added
+ * handle load, wrong frame, or failed admission closes H2. Preserve the
+ * counterexample in a commit, then restore d449103a6's body and stop.
+ * Adoption requires the complete 4708-byte owner/pools and all full gates;
+ * volatile retention is FAKEMATCH, never original-source evidence or credit.
+ * H2 result: 4724/4708 bytes, 1739 differing halfwords, 601 aligned edits.
+ * Both handle stores survive at sp+32/+36, but the array address also spills
+ * at sp+28 and reloads after Item_LoadIcon. The derived handle is reloaded
+ * from [r4,+4] before Vram_Load even when its assignment value is the argument.
+ * greg confirms volatile store insn 2964 and volatile reload insn 2966;
+ * this adds reads absent from the complete ROM handle trace. Frame is 132,
+ * options/velocity are sp+92/+40/+80, and neither origin-x spill survives.
+ * Producer, copy and release arguments retain their values; memory trace
+ * and frame admission fail. Commit 5229f1010 preserves this tagged witness;
+ * the d449103a6 body is restored. H2 stops without another trial or spelling
+ * change. Its canonical residual remains 4704/4708 bytes, 1704 differing
+ * halfwords and 610 aligned edits; restoring it changes only this header.
+ * No adoption, exact-function credit +0, alignment credit +0.
+ *
+ * 2026-09-27 two-buffer H1: buffers[0] receives the one slot-17 allocation;
+ * Item_LoadIcon runs before buffers[1] = buffers[0] + 0x400, then Vram_Load
+ * consumes buffers[1] and Heap_Release closes the same slot. ROM stores the
+ * base at 020029d0/sp+40 and reloads at 020029da, then stores the derived
+ * handle at 020029e6/sp+36; the whole owner has no later derived-handle read.
+ * Prediction: both handle stores/reload, +8 frame bytes, unchanged calls.
+ * Full normalized result: 4696/4708 bytes, 2100 differing halfwords,
+ * 808 aligned halfword edits. Frame grows 120 -> 136 (+16, not +8), options
+ * and velocity reach the ROM's sp+96/+44/+84, and origin x spills appear
+ * at sp+28/+20 with low r7 counters. Neither origin call setup is exact.
+ * RTL models buffers as DI pseudo 37; lreg deletes its second-word write
+ * (initial insn 2948), keeping derived address pseudo 623 as Vram_Load arg.
+ * greg spills only the first word at sp+36. No derived-handle store survives.
+ * Calls and copy arguments are preserved, but the two-store admission gate
+ * fails. Commit 1483b3e0e preserves the negative experiment; this body is
+ * restored to the 4704/1704/610 canonical baseline. The buffer-owner axis
+ * is closed. No origin-lifetime follow-up is admitted;
+ * no index, record, declaration or scalar permutations. DONE +0; alignment +0.
+ *
  * 2026-09-27 Sol Venus Summit H1: one FieldObject union owns both actor
  * and effect stores. Predict the reference's +48/+28/+44 store order from
  * one aliasing owner. The complete normalized diff is identical to baseline:

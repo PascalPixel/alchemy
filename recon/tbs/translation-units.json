@@ -1273,7 +1273,7 @@
       "source": "recon/tbs/en/overlays/resource_396_c_02001244.c",
       "overlay": "resource_396",
       "absolute_symbols": {
-        "Engine_MathDivide": {
+        "__divsi3": {
           "address": "0x02009a10",
           "kind": "thumb"
         },

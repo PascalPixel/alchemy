@@ -25,7 +25,14 @@
  * Body 0cd8..0dde still exact, but all three initial loads/pool words rotate.
  * Rejected; H1 retained. STOP after one model and one evidence-led follow-up.
  * Future admission must emit the reference offset/event/state entry order
- * naturally; changing struct/array access alone has been falsified. No credit. */
+ * naturally; changing struct/array access alone has been falsified. No credit.
+ * Transfer check: TITLE.C's inline argument boundary was applied as
+ * ReadStepCount(s32 offset, struct TravelState *state), returning
+ * *(s16 *)((u8 *)state + offset), called with (0x232, state).
+ * Complete output shrinks to 300/304 bytes, 147 differing halfwords and
+ * 42 aligned edits. The addition/zero-load pair folds into indexed ldrsh;
+ * offset still follows event/state. It does not admit the required entry,
+ * and the shifted pool is not a gain. Keep 304-byte body; stop this axis. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -1,4 +1,4 @@
-/* NONMATCHING: 888 bytes, candidate 852, 411 differing halfwords, 232
+/* NONMATCHING: 888 bytes, candidate 852, 411 differing halfwords, 231
  * aligned edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
@@ -72,9 +72,24 @@
  * The initial 2 is now pooled, but the two timer views still collapse and
  * the branch join still forwards its value. Reject this reload prediction;
  * no signed/unsigned timer declaration sweep. Full diff exposes a new
- * phase fact: reference 01920 shifts 128 by 9, comparing the incremented
+ * phase fact: reference 0191e shifts 128 by 9, comparing the incremented
  * signed timer to 1, whereas this draft compares it to 2 (shift by 10).
- * One follow-up may correct that phase condition; other timer axes stop. */
+ * One follow-up may correct that phase condition; other timer axes stop.
+ * Lamakan timer H3, final phase trial: the increment from 0 to 1 starts
+ * the palette DMA, rather than the subsequent increment from 1 to 2.
+ * Prediction: the comparison constant shifts 128 by 9, matching reference
+ * 0191e, with unchanged 852-byte extent and 12-byte frame. One condition
+ * change, whole normalized diff, both-ROM compare and full final gate;
+ * no further timer-view or reload spelling experiments.
+ * H3 result: 852/888, 411 halfwords / 231 aligned edits, 12-byte frame.
+ * Only the predicted comparison constant changes from H2. Retain the
+ * reference-proven 0-to-1 palette trigger despite the signed-view model's
+ * explained one-edit regression versus H1's semantically wrong trigger.
+ * The stored EFFECT_PHASE comparison and scroll-update invariants remain.
+ * Bounded timer/phase axes are exhausted; remaining work is paired timer
+ * reads and join reload, shared colour-mask/counter lifetimes, fill-loop
+ * precheck/counter lifetime, sprite array cursor, and resulting pools.
+ * Whole owner remains not-yet-C; no exact-function or alignment credit. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "TYPES.H"
@@ -151,7 +166,7 @@ void FieldScene_RunScene3a5SequenceA(void)
         timerp = (s16 *)0x0200a6be;
         if (*timerp <= 1) {
             Half_Add(timerp, 1);
-            if (*timerp == 2)
+            if (*timerp == 1)
                 Dma_Set((const void *)0x02009f80, (void *)0x050003c0,
                     -0x7ffffff0, (volatile u32 *)0x040000d4);
         }

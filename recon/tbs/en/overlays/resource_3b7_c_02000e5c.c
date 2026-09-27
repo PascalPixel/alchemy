@@ -1,5 +1,5 @@
-/* NONMATCHING: reference 2124 bytes, candidate 2128, 768 differing
- * halfwords / 197 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
+/* NONMATCHING: reference 2124 bytes, candidate 2104, 772 differing
+ * halfwords / 165 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
  * its 22 pool words lie at 1074..1094, 136c..1384, 13a0..13a4 and
  * 168c..16a8 within resource_3b7. Initializer, placement helper, import
  * bindings and interworking sqrt calls audited against this repository/ROM.
@@ -57,9 +57,11 @@
  * threshold now reloads, but CSE still shares its 0x300000 base with xlo;
  * clamp return temporaries add limit reloads/copies and move zlo to r8.
  * Result 2128/768/197, frame still 12, all 22 pool words still in order.
- * Full normalized diff plus CSE/loop/scheduler dumps read. No exact credit;
- * checkpoint this trial before restoring H3. Closed axes: coordinate copies
- * alone and inline clamps cannot explain the complete bound ownership model.
+ * Full normalized diff plus CSE/loop/scheduler dumps read. Trial preserved at
+ * bd8019bfe; canonical H3 restored. No exact credit. Closed axes: coordinate
+ * copies alone and inline clamps cannot explain complete bound ownership.
+ * Probe stop gate: the bounded lifetime, update-publication and clamp models
+ * are exhausted; resume only with a new bound-ownership or scheduling fact.
  */
 #include "TYPES.H"
 
@@ -193,22 +195,6 @@ extern s32 Data_0200a138;  /* proximity band, 0 (closest) .. 4 */
 #define REC_REACT(rec) ((rec)->react)
 #define REC_COOL(rec) ((rec)->cool)
 
-static __inline__ s32 Spring_ClampUpper(s32 val, s32 limit)
-{
-    if (val > limit) {
-        val = limit;
-    }
-    return val;
-}
-
-static __inline__ s32 Spring_ClampLower(s32 val, s32 limit)
-{
-    if (val < limit) {
-        val = limit;
-    }
-    return val;
-}
-
 void FieldScene_RunSecondaryScript(void)
 {
     struct SpringFrameState *work;
@@ -321,25 +307,49 @@ void FieldScene_RunSecondaryScript(void)
             z = work->pos[0][2];
             if (z < 0x2a0000) {
                 tmp = (0x2a0000 - z) * 42 / 18;
-                xlo = Spring_ClampUpper(0x300000 + tmp, 0x5a0000);
-                xhi = Spring_ClampLower(0xc00000 - tmp, 0x960000);
+                xlo = 0x300000 + tmp;
+                if (xlo > 0x5a0000) {
+                    xlo = 0x5a0000;
+                }
+                xhi = 0xc00000 - tmp;
+                if (xhi < 0x960000) {
+                    xhi = 0x960000;
+                }
             }
             if (z > 0x660000) {
                 tmp = (z * 42 - 0x10bc0000) / 18;
-                xlo = Spring_ClampUpper(0x300000 + tmp, 0x5a0000);
-                xhi = Spring_ClampLower(0xc00000 - tmp, 0x960000);
+                xlo = 0x300000 + tmp;
+                if (xlo > 0x5a0000) {
+                    xlo = 0x5a0000;
+                }
+                xhi = 0xc00000 - tmp;
+                if (xhi < 0x960000) {
+                    xhi = 0x960000;
+                }
             }
 
             x = work->pos[0][0];
             if (x < 0x5a0000) {
                 tmp = (0x5a0000 - x) * 18 / 42;
-                zlo = Spring_ClampUpper(0x180000 + tmp, 0x2a0000);
-                zhi = Spring_ClampLower(0x780000 - tmp, 0x660000);
+                zlo = 0x180000 + tmp;
+                if (zlo > 0x2a0000) {
+                    zlo = 0x2a0000;
+                }
+                zhi = 0x780000 - tmp;
+                if (zhi < 0x660000) {
+                    zhi = 0x660000;
+                }
             }
             if (x > 0x960000) {
                 tmp = (x * 18 - 0xa8c0000) / 42;
-                zlo = Spring_ClampUpper(0x180000 + tmp, 0x2a0000);
-                zhi = Spring_ClampLower(0x780000 - tmp, 0x660000);
+                zlo = 0x180000 + tmp;
+                if (zlo > 0x2a0000) {
+                    zlo = 0x2a0000;
+                }
+                zhi = 0x780000 - tmp;
+                if (zhi < 0x660000) {
+                    zhi = 0x660000;
+                }
             }
 
             /* Bounce off each edge with half the incoming speed. */

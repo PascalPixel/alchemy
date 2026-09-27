@@ -19,6 +19,26 @@
  * allocator diagnostic identifies the cursor expression as pseudo 48,
  * five uses across 43 instructions. Stop at the checkpoint; do not sweep
  * pointer spellings without another ownership/control-flow hypothesis.
+ * 2026-09-27 H1: reuse Menu_RunSelection's typed window interface and
+ * FLAG_GRID_INPUT.C's named volatile key objects, plus a named bob array.
+ * The reference retains the table in r8, not the cursor address. Prediction:
+ * this separates immutable table ownership from the per-frame cursor calls;
+ * require stack-address rematerialization and the full 312-byte/pool match.
+ * H1 result: 320/312 bytes, 158 differing halfwords, 49 aligned edits. The
+ * named table is now hoisted and all five pool words have the reference
+ * order; however cursor pseudo 48 remains r6 across four calls, displacing
+ * the table into sl and adding a second high-register save. Not admitted.
+ * H2: the initialized resource handle and cursor share one frame owner;
+ * initialization writes both, updates publish the same cursor, release
+ * consumes that handle. Test this aggregate lifetime without another helper
+ * or changing the proven 12-byte object. Admission remains per-call sp+8
+ * cursor rematerialization with the original single high-register save.
+ * H2 result: 328/312 bytes, 162 halfwords, 55 aligned edits. The aggregate
+ * retains both cursor and handle addresses, adding r9/sl saves; the handle
+ * reload becomes indirect instead of sp+4. Reject this lifetime model.
+ * Canonical 312-byte baseline restored after preserving both experiments;
+ * no exact credit. Named-table hoisting is a separate solved fact, but does
+ * not admit a model that still caches the cursor address across calls.
  */
 #include "TYPES.H"
 

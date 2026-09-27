@@ -38,7 +38,13 @@
  * +56/+60/+64 are target coordinates, not draw coordinates. The full
  * 748-byte result is byte-identical to H3 (354 halfwords/232 edits).
  * FieldCoordinate union aliasing does not change the snapshot allocation;
- * stop the actor-type-only axis. Keep the proven ownership correction. */
+ * stop the actor-type-only axis. Keep the proven ownership correction.
+ * 2026-09-27 Sol spark-ring H5: typed motion suffix at entry+8, with an
+ * explicit local pointer used for y/z/angles/scale/speed. Result 748 bytes,
+ * 354 differing halfwords / 233 edits, frame 68. The compiler reunifies
+ * the suffix with the whole-entry r8 induction; third sample still spills.
+ * Admission failed: suffix must remain independently carried in sl while
+ * whole entry spills. Restored baseline; typed suffix alone is closed. */
 #include "FIELD_EVENT.H"
 
 void *Engine_AllocateBlock(s32 id, s32 size);

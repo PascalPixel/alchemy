@@ -20,13 +20,7 @@
  *   Korosseo_MarkerOam = 0x0200c7b0 (data)
  */
 
-struct MarkerRecord {
-    struct MarkerRecord *next;
-    u32 position;
-    u32 tile;
-};
-
-void Engine_OamSubmitRecord(struct MarkerRecord *record, s32 priority);
+void Engine_OamSubmitRecord(s32 *record, s32 priority);
 
 extern u8 Korosseo_LinkedZero[];
 
@@ -53,11 +47,11 @@ extern union MarkerCoordinate Korosseo_MarkerStartX;
 extern s16 Korosseo_MarkerEndX;
 extern s16 Korosseo_MarkerBlink;
 extern s16 Korosseo_MarkerPriority;
-extern struct MarkerRecord Korosseo_MarkerOam;
+extern s32 Korosseo_MarkerOam[3];
 
-/* NONMATCHING H2: candidate 316, reference 316 bytes, 126 differing
- * halfwords / 74 aligned edits (2026-09-27). Stronger H1 is at db4d7dc54:
- * 312 bytes, 126 differing halfwords / 65 aligned edits. Owner extent is
+/* NONMATCHING: restored candidate 312, reference 316 bytes, 126 differing
+ * halfwords / 65 aligned edits (2026-09-27). H1 is at db4d7dc54;
+ * rejected H2 is preserved at 0447a6b86. Owner extent is
  * resource_3ba:[02002bec,02002d28), including both literal pools.
  * Interpolates and blinks the Colosso marker through the OAM queue.
  * Typed table, reused destination pointer, advancing OAM pointer and reused
@@ -82,7 +76,8 @@ extern struct MarkerRecord Korosseo_MarkerOam;
  * an explicit next pointer plus two payload words reaches the right size
  * but loses both advancing stores, trades queue/duration fp-r9 roles and
  * leaves priority in the wrong pool. Interpolation is unchanged. Reject
- * this model despite its size; preserve the attempt and restore H1.
+ * this model despite its size: 316/316, 126 halfwords / 74 aligned edits.
+ * Restored H1's advancing word writes; its output is byte-identical.
  * Two family hypotheses closed; no twins propagated and no DONE gained. */
 void Korosseo_UpdateMarker(void)
 {
@@ -90,11 +85,12 @@ void Korosseo_UpdateMarker(void)
     s32 total;
     s32 step;
     s32 base;
-    struct MarkerRecord *oam;
+    s32 *oam;
     s32 diff;
     s32 zero;
     s16 *steps;
     s16 *pos;
+    s32 *dst;
     s32 x;
     s32 y;
     s32 word;
@@ -105,7 +101,7 @@ void Korosseo_UpdateMarker(void)
     tile = gOamTiles[Korosseo_MarkerIndex].tile >> 5;
     steps = &Korosseo_MarkerSteps;
     total = *steps;
-    oam = &Korosseo_MarkerOam;
+    oam = Korosseo_MarkerOam;
     if (total != 0) {
         step = ++Korosseo_MarkerStep;
         pos = &Korosseo_MarkerY;
@@ -132,13 +128,14 @@ void Korosseo_UpdateMarker(void)
     if (++Korosseo_MarkerBlink <= 13) {
         y = Korosseo_MarkerY;
         x = Korosseo_MarkerX;
-        oam->next = 0;
+        dst = oam;
+        *dst++ = 0;
         priority = &Korosseo_MarkerPriority;
         word = (x - 8) | ((y - 8) << 16);
         word |= 0x40000000;
         word |= *priority << 28;
-        oam->position = word;
-        oam->tile = tile | 0x400;
+        *dst++ = word;
+        *dst = tile | 0x400;
         Engine_OamSubmitRecord(oam, 255);
     } else if (Korosseo_MarkerBlink > 19) {
         *(u16 *)&Korosseo_MarkerBlink = 0;

@@ -20,17 +20,6 @@
     },
     {
       "overlay": "resource_36f",
-      "start": "0x020002e8",
-      "end": "0x02000454",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_36f_overlay.s; no assembly credit."
-      ]
-    },
-    {
-      "overlay": "resource_36f",
       "start": "0x02000538",
       "end": "0x020005f8",
       "kind": "overlay_trampoline",
@@ -1849,17 +1838,6 @@
         "proof": "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC",
         "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/ENTRY.INC"
       }
-    },
-    {
-      "overlay": "resource_3a0",
-      "start": "0x02001148",
-      "end": "0x02001330",
-      "kind": "not_yet_decompiled",
-      "retention": "not_yet_c",
-      "confidence": "strong",
-      "evidence": [
-        "Complete not-yet-C owner retained in recon/tbs/raw/overlays/resource_3a0_overlay.s; no assembly credit."
-      ]
     },
     {
       "overlay": "resource_3a0",

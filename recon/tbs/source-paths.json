@@ -21535,7 +21535,8 @@
       "name": "Func_02000b24"
     },
     "resource_36f:020002e8": {
-      "name": "Func_020002e8"
+      "name": "Title_RevealScreen",
+      "source": "MENU/TITLE/REVEAL.C"
     },
     "resource_36f:02000454": {
       "name": "Title_LoadBackground",
@@ -21574,7 +21575,8 @@
       "name": "Func_020056a0"
     },
     "resource_3a0:02001148": {
-      "name": "Func_02001148"
+      "name": "ShianMura_SetupScene",
+      "source": "FIELD/SHIAN_MURA/SETUP.C"
     },
     "resource_3af:020000c4": {
       "name": "Func_020000c4"

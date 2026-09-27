@@ -87564,10 +87564,10 @@
     },
     {
       "id": "ovd-36f-020002e8",
-      "source": "recon/tbs/en/overlays/resource_36f_c_020002e8.c",
+      "source": "games/THE BROKEN SEAL/SRC/MENU/TITLE/REVEAL.C",
       "overlay": "resource_36f",
       "absolute_symbols": {
-        "Local_02000454": {
+        "Title_LoadBackground": {
           "address": "0x02008454",
           "kind": "thumb"
         },
@@ -87596,7 +87596,7 @@
         {
           "address": "0x020002e8",
           "extent": 364,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",
@@ -88231,8 +88231,8 @@
       "compiler_route": "canonical-gcc296"
     },
     {
-      "id": "ovd-3a0-02001148",
-      "source": "recon/tbs/en/overlays/resource_3a0_c_02001148.c",
+      "id": "shian-mura-setup",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/SETUP.C",
       "overlay": "resource_3a0",
       "absolute_symbols": {
         "Main_0808a5e0": {
@@ -88292,7 +88292,7 @@
         {
           "address": "0x02001148",
           "extent": 488,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

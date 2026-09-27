@@ -15,7 +15,17 @@
  * and r4 direction-address spill survive; member storage also changes the
  * initial signed facing loads to ldrh. Thus the record layout is supported,
  * but a direction aggregate does not recover the missing lifetime boundary.
- * Exact siblings were read only; no adoption credit. */
+ * Exact siblings were read only; no adoption credit.
+ * H2: restore scalar facing and expose the snap's in/out pointer across
+ * steering, with a common fallback for failed leader-cone guards. H1's
+ * allocator gives its generated address pseudo 166 r4: five uses over 32
+ * instructions and one call. Test an explicit direction lifetime instead;
+ * preserve the 4-byte/no-spill admission check and complete-owner gate.
+ * H2 result: 600/612, 273 halfwords, 126 aligned edits, still 8-byte frame
+ * with the direction address spilled across Atan2. Assigning the angle
+ * difference before the guard folds the two signed bounds into one unsigned
+ * interval, adding 0x0fff0000/0x1ffe0000 pools absent from ROM. Not admitted.
+ * Stop this record/direction axis; no new DONE bytes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -30,11 +40,6 @@ struct StopRecord {
     u8 z;
     u8 unknown_02[2];
     struct Stop stops[3];
-};
-
-struct StopDirection {
-    /* FAKEMATCH: test halfword result ownership at the snap interface. */
-    s16 value;
 };
 
 struct StopWork {
@@ -60,11 +65,12 @@ void KuupuappuHeya_UpdateActorStops(void)
     struct StopWork *work;
     struct StopRecord *entry;
     struct StopRecord *dest;
+    s16 *direction;
     s32 dx;
     s32 dz;
     s32 blocked;
     s16 angle;
-    struct StopDirection facing;
+    s16 facing;
     u32 rnd;
 
     leader = Engine_ActorLookup(0);
@@ -75,18 +81,24 @@ void KuupuappuHeya_UpdateActorStops(void)
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
         dx = actor->x.fixed - leader->x.fixed;
         dz = actor->z.fixed - leader->z.fixed;
-        facing.value = leader->facing;
+        direction = &facing;
+        *direction = leader->facing;
         angle = Math_Atan2(dz, dx);
         dx >>= 16;
         dz >>= 16;
-        if (work->value_19c > 0 && dx * dx + dz * dz <= 400
-            && (s16)(facing.value - (u16)angle) > -0x1000
-            && (s16)(facing.value - (u16)angle) < 0x1000) {
-            /* Keep the leader's facing within the nearby forward cone. */
-        } else if (dx * dx + dz * dz > 64) {
-            facing.value = actor->facing;
+        /* FAKEMATCH: failed cone guards share the actor-facing fallback. */
+        if (work->value_19c > 0) {
+            if (dx * dx + dz * dz > 400)
+                goto actor_facing;
+            angle = (u16)*direction - (u16)angle;
+            if (angle <= -0x1000 || angle >= 0x1000)
+                goto actor_facing;
+        } else {
+actor_facing:
+            if (dx * dx + dz * dz > 64)
+                *direction = actor->facing;
         }
-        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing.value);
+        dest = KuupuappuHeya_SnapToNearestStop(entry, direction);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
             SceneActor_ApplyScaledBytePairPosition(actor, dest);
             Engine_ObjectSetAnimation(actor, 2);
@@ -100,11 +112,11 @@ void KuupuappuHeya_UpdateActorStops(void)
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
         rnd = (u32)Engine_RandomNext() * 2 >> 16;
         rnd = (rnd * 0x60000000 - 0x30000000) >> 16;
-        facing.value = actor->facing + rnd;
-        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing.value);
+        facing = actor->facing + rnd;
+        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
-            facing.value = actor->facing + 0x8000;
-            dest = KuupuappuHeya_SnapToNearestStop(entry, &facing.value);
+            facing = actor->facing + 0x8000;
+            dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
             if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
                 Engine_ActorSetAttachedEffect(24, 2);
                 goto move_first;
@@ -123,11 +135,11 @@ move_first:
     if (entry != NULL && actor->target_x == ACTOR_NO_TARGET) {
         rnd = (u32)Engine_RandomNext() * 3 >> 16;
         rnd = (rnd * 0x30000000 - 0x30000000) >> 16;
-        facing.value = actor->facing + rnd;
-        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing.value);
+        facing = actor->facing + rnd;
+        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
-            facing.value = actor->facing + 0x8000;
-            dest = KuupuappuHeya_SnapToNearestStop(entry, &facing.value);
+            facing = actor->facing + 0x8000;
+            dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
             if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
                 Engine_ActorSetAttachedEffect(25, 2);
                 goto move_second;

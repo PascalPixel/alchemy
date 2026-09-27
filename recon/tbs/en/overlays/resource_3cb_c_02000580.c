@@ -1,4 +1,11 @@
-/* NONMATCHING H6 2026-09-27: transfer exact battle modules' inline CopyWords
+/* NONMATCHING H7 2026-09-27: 568/560 bytes, 203 differing halfwords /
+ * 84 aligned edits. First retry counter now begins after Send: the exact
+ * movs r5,#0 between the -1 materialization and result compare is restored.
+ * All three independent r0 failure stores, frame32, heap r8 and word
+ * compaction survive. Full normalized diff read. Remaining: cold retry
+ * tails, map reload and copy/call ordering; literal values agree at +8.
+ * Retain this phase-lifetime fact; DONE/alignment +0.
+ * NONMATCHING H6 2026-09-27: transfer exact battle modules' inline CopyWords
  * boundary. 568/560 bytes, 209 differing halfwords / 87 aligned edits:
  * byte-identical to direct-call H5, including both wrong copy setups and
  * all three independent send-failure stores. Full normalized diff read.
@@ -116,10 +123,11 @@ s32 LinkLobby_SendPartyRecords(void)
         ((WordCopyFn)0x03001388)(heap, Engine_OwnerGetState(owners[i]), 0x154);
         heap[0x12a] = 2;
         table[owners[i]] = i - 128;
-        tries = 0;
         /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
         do {
-            if ((ret = Main_08000380(heap, 0x154)) == -1) {
+            ret = Main_08000380(heap, 0x154);
+            tries = 0;
+            if (ret == -1) {
                 result = ret;
                 goto done;
             }

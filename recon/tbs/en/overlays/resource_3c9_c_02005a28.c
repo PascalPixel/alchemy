@@ -1,4 +1,4 @@
-/* NONMATCHING: 360 bytes, candidate 358, 53 differing halfwords / 37 edits.
+/* NONMATCHING: 360 bytes, candidate 358, 56 differing halfwords / 50 edits.
  * VinasuChojo_SpawnRisingSparks, meant for FIELD/VINASU_CHOJO/RISING_SPARKS.C
  * as a single-overlay unit binding Engine_* and Main_* at their import veneers
  * (runtime = listing offset + 0x8000). Remaining: the null test on the source
@@ -39,7 +39,18 @@
  * the member-store's generated HI-zero producer, so aggregate zero 90 is
  * independent and scheduled just before MathSin. This is a counterexample,
  * not an admitted canonical or credit. One causal follow-up may restore
- * the actor member-store boundary without changing types or call ABI. */
+ * the actor member-store boundary without changing types or call ABI.
+ *
+ * H4 restores FieldActor *destination and destination->unknown_64. Full
+ * result 358/360, 56 halfwords / 50 edits: zero and pool remain late (140).
+ * Diagnostics equal ordinary assembly. CSE substitutes the already-zero
+ * frame phase 45 into Half 90 before the angle member-store; the stored
+ * angle does not consume that producer. Local allocation restores a HI
+ * constant and sched2 places it before MathSin, not before the angle store.
+ * Admission failed again. LAMP's exact zero publication is after the angle
+ * store, which permits sharing that store's generated HI zero instead of
+ * the branch-known SI phase. One final producer-order test is supported by
+ * this ancestry difference; no other variant or null-copy sweep is admitted. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -61,10 +72,10 @@ struct Half {
 
 /* FAKEMATCH: the Title destination-first boundary retains the shared HI
  * zero producer used by the exact lamp creator's angle initialization. */
-static __inline__ void InitializeAngle(u16 *destination, u32 angle, struct Half *zero)
+static __inline__ void InitializeAngle(struct FieldActor *destination, u32 angle, struct Half *zero)
 {
     zero->value = 0;
-    *destination = angle;
+    destination->unknown_64 = angle;
 }
 
 void VinasuChojo_SpawnRisingSparks(void)
@@ -101,7 +112,7 @@ void VinasuChojo_SpawnRisingSparks(void)
                 Engine_ObjectSetScript(spark, Data_0200e734);
                 Engine_ObjectSetPalette(spark, 5);
                 spark->motion_flags = phase;
-                InitializeAngle(&spark->unknown_64,
+                InitializeAngle(spark,
                     Engine_RandomNext() & (u32)&Value_0ffff000, &zero);
                 spark->unknown_66 = phase;
                 *(struct FieldActor **)spark->unknown_68 = source;

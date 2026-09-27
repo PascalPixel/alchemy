@@ -1,4 +1,16 @@
-/* Draft, not-yet-c. Unsigned cone phase: 612/612 bytes,
+/* Draft, not-yet-c. Cone H2 rejected: 612/612 bytes,
+ * 261 differing halfwords / 132 aligned edits, 193 wrong instructions.
+ * Staging slot then subtraction in the same u32 rnd recovers the load /
+ * unsigned conversion / subtraction producer order, but exposes both signed
+ * bounds on one user value. Initial RTL already replaces the two guards
+ * with unsigned (delta + 4095) <= 8190. Combine leaves 0x00000fff and
+ * 0x1ffe0000 pool words instead of the reference -0x1000; first pool moves
+ * to 0x254. Frame4/r8/both signed loads survive, but this violates the frozen
+ * cone/pool admission. Normal and diagnostic text agree; whole diff read.
+ * Preserve rejection, then restore H1 (31a7f1a26). No further delta/type
+ * variants: independently staged unsigned INPUT is the useful boundary;
+ * staging the whole delta reopens the already-known range-folding failure.
+ * Admitted unsigned cone H1: 612/612 bytes,
  * 74 differing halfwords / 70 aligned edits, 114 wrong instructions.
  * Cone H1 (2026-09-27): the nested short subtraction had no zero extension
  * even in initial RTL. CSE removed HI copies and fed signed pseudo 40
@@ -171,10 +183,10 @@ void KuupuappuHeya_UpdateActorStops(void)
         dx >>= 16;
         dz >>= 16;
         if (work->value_19c > 0 && dx * dx + dz * dz <= 400) {
-            /* FAKEMATCH: stage the unsigned cone input before the short delta. */
-            rnd = (u16)angle;
-            if ((s16)(*(s16 *)pos - rnd) > -0x1000
-                && (s16)(*(s16 *)pos - rnd) < 0x1000)
+            /* FAKEMATCH: keep the cone delta wide until its signed bounds. */
+            rnd = *(u16 *)pos;
+            rnd -= (u16)angle;
+            if ((s16)rnd > -0x1000 && (s16)rnd < 0x1000)
                 goto keep_facing;
         }
         if (dx * dx + dz * dz > 64) {

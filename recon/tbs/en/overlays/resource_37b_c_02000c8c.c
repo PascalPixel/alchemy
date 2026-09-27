@@ -12,6 +12,23 @@
  * copies. Exact sibling/header sources remain untouched. Unit registration
  * exposes this previously unindexed not-yet-C owner; it grants no DONE.
  *
+ * Phase-reuse trial H1 (2026-09-27): one void *p owns the actor, then the
+ * local camera position, transferring Vault's proven pointer-phase model.
+ * Complete normalized diff and binary comparison are unchanged: 544/548,
+ * 94 halfwords / 62 aligned edits. Still only two loop-entry copies, so
+ * admission fails; no DONE. Normal and diagnostic compiler text agree.
+ * Local CSE retains user pseudo 34 for all four position loops. GCSE PRE
+ * then recognizes all four sfp-12 addresses: expression 4 creates shared
+ * pseudo 110, replaces the final two address producers (insns 437/478),
+ * and propagates 110 directly into their loads/stores (450/452, 491/493).
+ * The shared address has 20 uses / 148 instructions / 21 calls and gets r6;
+ * user 34 is left with only the actor lifetime. This is global expression
+ * sharing before loop optimization, not a late allocator copy decision.
+ * Flattening ShiftFocus cannot undo it: local CSE already uses parent p
+ * directly. The saved camera pointer already begins after walk/face/wait,
+ * as in the ROM; delaying that lifetime supplies no new boundary. Stop
+ * this phase-pointer axis; do not repeat inline/declaration/type variants.
+ *
  * Earlier baseline evidence (2026-09-24):
  * Single-overlay unit binding Engine_* at their import veneers. Remaining:
  * the reference keeps
@@ -63,33 +80,36 @@ void Local_02000c8c(void)
     struct MapScrollWork *camera;
     s32 *saved;
     s32 pos[3];
-    struct FieldActor *leader;
+    void *p;
     s32 side;
 
     camera = Data_03001e70;
-    leader = Engine_ActorGet(0);
-    if (leader->z.fixed < 0xb30000) {
+    p = Engine_ActorGet(0);
+    if (((struct FieldActor *)p)->z.fixed < 0xb30000) {
         Call3((void (*)())Engine_ActorWalkToAndWait, 0, 0x23f, 132);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0x4000, 0);
         Engine_EventWait(30);
         saved = camera->origin;
-        pos[0] = leader->x.fixed;
-        pos[1] = leader->y.fixed;
-        pos[2] = leader->z.fixed;
+        pos[0] = ((struct FieldActor *)p)->x.fixed;
+        pos[1] = ((struct FieldActor *)p)->y.fixed;
+        pos[2] = ((struct FieldActor *)p)->z.fixed;
         camera->origin = pos;
-        ShiftFocus(pos, 0x10000);
+        /* FAKEMATCH: reuse the actor pointer for the camera-focus phase. */
+        p = pos;
+        ShiftFocus(p, 0x10000);
         Engine_EventWait(40);
         side = 1;
     } else {
         Call3((void (*)())Engine_ActorWalkToAndWait, 0, 0x241, 222);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0xc000, 0);
         Engine_EventWait(30);
-        pos[0] = leader->x.fixed;
-        pos[1] = leader->y.fixed;
-        pos[2] = leader->z.fixed;
+        pos[0] = ((struct FieldActor *)p)->x.fixed;
+        pos[1] = ((struct FieldActor *)p)->y.fixed;
+        pos[2] = ((struct FieldActor *)p)->z.fixed;
         saved = camera->origin;
         camera->origin = pos;
-        ShiftFocus(pos, -0x10000);
+        p = pos;
+        ShiftFocus(p, -0x10000);
         Engine_EventWait(40);
         side = 2;
     }
@@ -99,9 +119,12 @@ void Local_02000c8c(void)
     Engine_MapCopyCellsTo(2, 28, 34, 10, 4, 2);
     Engine_MapCopyCellsTo(8, 55, 32, 40, 8, 4);
     Engine_EventWait(60);
-    if (side == 1)
-        ShiftFocus(pos, -0x10000);
-    else if (side == 2)
-        ShiftFocus(pos, 0x10000);
+    if (side == 1) {
+        p = pos;
+        ShiftFocus(p, -0x10000);
+    } else if (side == 2) {
+        p = pos;
+        ShiftFocus(p, 0x10000);
+    }
     camera->origin = saved;
 }

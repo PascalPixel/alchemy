@@ -1,11 +1,23 @@
 /* NONMATCHING: 452 bytes, candidate 452, 172 differing halfwords, 129
- * halfword edits (2026-09-25). VinasuHeya_Func02004bd8, meant for
+ * aligned edits (2026-09-27). VinasuHeya_DispatchPushScript, meant for
  * FIELD/VINASU_HEYA/F_04BD8.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Remaining: hand-written push-script dispatch from velocity+switch cells;
  * shared fail paths and FindSlot Value2 in place
  * WALL: copy_versus_rematerialise: child/list/cell-index register sharing
- * and pool rematerialise of cursor-table bases resist further spelling */
+ * and pool rematerialise of cursor-table bases resist further spelling.
+ * Complete extent 02004bd8..02004d9c includes the final fifteen pool words.
+ * H1: exact AnimationObjects_SelectAnimation and AnimationObject_Allocate
+ * establish selected_animation +24 and animation-object resource id at
+ * sprite +28 -> +0; this is not animation progress. Exact staged probes
+ * independently confirm the nested view. Own 032c returns an actor and
+ * ignores the caller's second argument. Retain that observed zero argument.
+ * Canonical Engine_ObjectSetScript at overlay veneer 0200cddc fixes both
+ * emitted script calls that the old main-address alias misbound. The typed
+ * view otherwise leaves body allocation unchanged: 452/452, 172/129.
+ * Full diff still has a merged success/failure call instead of three calls,
+ * cached selected animation, and strength-reduced coordinate/cursor loops.
+ * No DONE. No exact neighbour or shared header was edited. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIXED_POINT_POSITION.H"
@@ -26,8 +38,20 @@ extern u8 *Data_0200f78c[];
 extern u32 *Data_0200f77c[];
 extern u32 *Data_0200f7ec[];
 
-s32 *SceneData_FindSlotAtPosition(struct FixedPointPosition *pos, s32 unused);
-void ObjectDispatch_InitializeFar(struct FieldActor *object, const void *script);
+/* Animation selection's exact consumer establishes +24 as the selected
+ * animation and +28 as the first animation object, whose first field is id. */
+struct VinasuAnimationObject {
+    s16 id;
+};
+
+struct VinasuSpriteAnimation {
+    u8 unknown_00[0x24];
+    u8 selected_animation;
+    u8 unknown_25[3];
+    struct VinasuAnimationObject *entries[4];
+};
+
+struct FieldActor *SceneData_FindSlotAtPosition(struct FixedPointPosition *pos, s32 unused);
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
@@ -39,13 +63,13 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
     f(a0, a1);
 }
 
-/* Probe one unit below the actor for a mid-animation slot and dispatch a
- * push script from velocity direction plus the scene's switch-cell tables. */
-s32 VinasuHeya_Func02004bd8(struct FieldActor *actor)
+/* Probe one unit below the actor for animation resource 0x100 and dispatch
+ * a push script from its selected animation and the scene's switch cells. */
+s32 VinasuHeya_DispatchPushScript(struct FieldActor *actor)
 {
     struct FixedPointPosition pos;
     struct FieldActor *slot;
-    u8 *child;
+    struct VinasuSpriteAnimation *child;
     s32 vx;
     s32 vz;
     s32 abs_x;
@@ -64,8 +88,8 @@ s32 VinasuHeya_Func02004bd8(struct FieldActor *actor)
     pos.y = actor->y.fixed + (s32)0xfff00000;
     pos.z = actor->z.fixed;
     slot = (struct FieldActor *)Value2((s32 (*)())SceneData_FindSlotAtPosition, (s32)&pos, 0);
-    child = (u8 *)slot->sprite;
-    if (*(s16 *)*(s32 *)(child + 0x28) != 0x100) {
+    child = (struct VinasuSpriteAnimation *)slot->sprite;
+    if (child->entries[0]->id != 0x100) {
         goto fail_tail;
     }
 
@@ -106,7 +130,7 @@ s32 VinasuHeya_Func02004bd8(struct FieldActor *actor)
     if (byte == 0) {
         goto fail_mid;
     }
-    want_ptr = child + 0x24;
+    want_ptr = &child->selected_animation;
     if (*want_ptr != byte) {
         do {
             list++;
@@ -146,7 +170,7 @@ s32 VinasuHeya_Func02004bd8(struct FieldActor *actor)
         if (cursor[0] == 0) {
             goto fail_mid;
         }
-        if (cursor[0] != *((u8 *)slot->sprite + 0x24)) {
+        if (cursor[0] != ((struct VinasuSpriteAnimation *)slot->sprite)->selected_animation) {
             goto advance_b9;
         }
         script_row = *(u32 **)((u8 *)Data_0200f77c + cell);
@@ -178,21 +202,21 @@ scan_other:
     if (cursor[0] == 0) {
         goto fail_mid;
     }
-    if (cursor[0] != *((u8 *)slot->sprite + 0x24)) {
+    if (cursor[0] != ((struct VinasuSpriteAnimation *)slot->sprite)->selected_animation) {
         goto advance_other;
     }
     script_row = *(u32 **)((u8 *)Data_0200f7ec + cell);
 
 dispatch:
-    Call2((void (*)())ObjectDispatch_InitializeFar, (s32)actor, script_row[skip]);
+    Call2((void (*)())Engine_ObjectSetScript, (s32)actor, script_row[skip]);
     goto done;
 
 fail_mid:
-    Call2((void (*)())ObjectDispatch_InitializeFar, (s32)actor, (s32)Data_0200d564);
+    Call2((void (*)())Engine_ObjectSetScript, (s32)actor, (s32)Data_0200d564);
     goto done;
 
 fail_tail:
-    Call2((void (*)())ObjectDispatch_InitializeFar, (s32)actor, (s32)Data_0200d564);
+    Call2((void (*)())Engine_ObjectSetScript, (s32)actor, (s32)Data_0200d564);
 done:
     return 0;
 }

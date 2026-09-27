@@ -7,7 +7,10 @@
  * identical bytes. Both still promoted the cursor, failing that invariant.
  * A tagged volatile cursor gave 952/468/346 and the reference's 20-byte frame,
  * but introduced repeated cursor reads absent from the reference. Rejected.
- * Three trials closed; no declaration permutations and no new DONE bytes.
+ * 2026-09-27: canonical value-returning Engine_VramLoad is byte-identical
+ * to this baseline. A one-element cursor array is also byte-identical: no
+ * stack cursor writebacks appear. Both axes are closed without new bytes.
+ * Three earlier trials closed; no declaration permutations and no new DONE bytes.
  * The reference separates the entry walker, sprite cursor and state pointer,
  * and holds OAM shape/palette constants across calls. This source still folds
  * those roles. Reopen only with new alias/lifetime evidence, not a size gain. */
@@ -17,7 +20,7 @@
 s32 Engine_GameFlagIsSet(s32 flag);
 s32 Engine_BumpAllocateAlternatePool(s32 size);
 void Engine_ResourceDecodeType01(const void *source, void *destination);
-void Engine_VramLoad(s32 id, s32 size, void *buffer);
+s32 Engine_VramLoad(s32 id, s32 size, const void *buffer);
 void Engine_BumpFree(void *buffer);
 void Engine_VramRelease(s32 id);
 void Engine_OamSubmitRecord(void *entry, s32 mode);

@@ -1,4 +1,14 @@
-/* NONMATCHING H2 restoration ownership: 364/364 bytes, three differing
+/* NONMATCHING H3 direct reset: 360/364 bytes, 161 differing halfwords /
+ * 37 aligned edits (2026-09-27). Folding the single-use zero into its
+ * destination fixes address r2 / zero r3 and the strh operand order, while
+ * preserving H2's IME/counter/queue roles. It removes the HI temporary,
+ * however: both loads are now ordinary SI producers and the early pool
+ * moves to the tail. Reject full-owner admission. H2 at 866d51e33 is the
+ * stronger canonical. Further work must retain destination-first expansion
+ * and a real HI producer together; do not trade pool reach for local order.
+ * Three structural models are complete; no function/alignment credit.
+ *
+ * Admitted H2 restoration ownership: 364/364 bytes, three differing
  * halfwords / aligned edits (2026-09-27). Exact MENU/CLEAR/BLEND_FADE.C's
  * local IME/save pair plus RestoreInterrupts produces the reference's r5
  * IME, r6 fade counter, r7 queue and all eleven pool words. First IME
@@ -84,14 +94,12 @@ static __inline__ void RestoreInterrupts(u32 saved)
 void Func_020002e8(void)
 {
     s32 i;
-    s32 zero;
     u8 *event;
     struct IoWriteQueue *q;
 
     Local_02000454();
     Engine_EventWait(30);
-    zero = (u16)(u32)&Value_00000000;
-    Data_0200868c = zero;
+    Data_0200868c = (u16)(u32)&Value_00000000;
     Title_Func020001c0(0);
     Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
     QUEUE_WRITE(0x4000000, 0x1540);

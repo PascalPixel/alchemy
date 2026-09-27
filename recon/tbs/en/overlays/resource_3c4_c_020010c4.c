@@ -1,4 +1,29 @@
-/* NONMATCHING: 284 of 284 bytes, 11 halfword edits (2026-09-24). Hand-written
+/* Canonical 284/11 restored after publication P1 (74e203d9a) and P2
+ * (1646e59e6): neither admits early options plus saved-to-store copy and
+ * reference zero lifetime together. Stop this boundary axis; SetFlagBits
+ * remains proven for the opening OR only, not a remedy for this hunk.
+ * Publication P2 result: 284/284 bytes, 90 halfwords / 29 aligned edits.
+ * Options reaches r8 before the clear, but via r2, which also remains the
+ * callback-store base: the required saved-to-r0 copy disappears. Body is
+ * two bytes short with a new trailing pad; all five pool words agree.
+ * Zero46 is still QI / 2 uses / 4 insns; options34 remains 4 uses / 59 insns /
+ * 7 calls. No zero-lifetime admission. Full diff read; -da equals ordinary.
+ * Preserve both negative models in Git, then restore 284/11 baseline.
+ * Publication P2: P1's boundary preserves the address copy, but the copy
+ * follows the clear. Publish o before the isolated clear, so its saved
+ * lifetime crosses that region; require r8 publication before the clear.
+ * Publication P1 result: 284/284 bytes, 13 halfwords / 13 aligned edits.
+ * Separate add sp16 -> r8 -> store-address copy now survives before the
+ * callback store, but after the flag clear; early-copy admission not met.
+ * Options pseudo34 shrinks 59 to 57 insns (still 4 uses / 7 calls); zero46
+ * stays QI / 2 uses / 4 insns. Two early call setups regress. Complete loop,
+ * frame56 and all five pool words remain exact. -da equals normal assembly.
+ * Publication P1: Suhalla's one-pass byte publication preserved a separate
+ * temporary-to-saved pointer copy. Baseline options pseudo34 is already a
+ * USER local but reload forms its address after the QI clear, copying late.
+ * Test clear boundary before assigning o; admission is early options r8
+ * publication with frame56, complete loop body and five pools unchanged.
+ * NONMATCHING: 284 of 284 bytes, 11 halfword edits (2026-09-24). Hand-written
  * from the resolved disassembly as a single-overlay unit binding Engine_* at
  * their import veneers plus advance_effect_motion = 0x02009068 (thumb, the
  * effect update in MAP_INIT.C). Matched: the spray velocities (vz multiplies

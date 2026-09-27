@@ -37,6 +37,24 @@
  * 8-byte frame, r4 facing-address spill and absent second zero-extension.
  * This fixes the interface but does not admit the 4-byte/no-spill invariant.
  * Stop after this one supported trial; do not vary angle/pointer spellings.
+ *
+ * Producer/publication inversion audit: initial RTL already creates facing
+ * address pseudo 89 (insn 152) and the halfword store (155) before Atan2
+ * (71); this is not a late scheduler hoist. Local allocation records five
+ * uses over 32 insns, one crossed call, LO_REGS cost 4 versus HI_REGS 24.
+ * Global allocation gives it r4, then inserts caller-save insn 673 at sp+0;
+ * the resulting facing slot is sp+6 and the frame grows from 4 to 8 bytes.
+ * The approved route treats r4 as call-used; no route change was attempted.
+ * ROM independently requires the early signed leader-facing load at
+ * 0200491c, halfword publication at 02004928 before Atan2 at 0200492c,
+ * unsigned slot reload at 0200495a, and signed actor fallback at 02004986.
+ * Its r8 changes ownership from dead leader to facing address at 02004922.
+ * Thus keeping only a scalar until Snap would remove reference accesses,
+ * not recover a demonstrated producer boundary. No such trial was run.
+ * Diagnostic output equals normal output and the previous 608/256/117
+ * candidate byte-for-byte. Stop with this causal fact; any future inversion
+ * must preserve these accesses and establish the 4-byte/no-spill admission
+ * without repeating the rejected aggregate or explicit-pointer models.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"

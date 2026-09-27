@@ -1,4 +1,12 @@
-/* NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
+/* Astra 2026-09-27 phase-producer test: transfer ROOM_VIS.C's initialized
+ * word-based unsigned 16-bit record to the frame phase, including both
+ * zero stores. Complete candidate is byte-identical to the scalar baseline
+ * (cmp): 358/360, 55 halfwords / 55 aligned edits. The pooled zero still
+ * follows the angle store and the second pool remains at 0x118, not 0x134.
+ * This representation does not alter the branch-known zero ancestry.
+ * Full normalized diff read; restore scalar phase and stop this axis.
+ * No new DONE or alignment credit.
+ * NONMATCHING: 360 bytes, candidate 358, 55 differing halfwords / 55 edits.
  * H2 preserved at 164bbe5bb; ordinary sprite member store restored below.
  * 2026-09-27 Sol Venus Summit H2: Drift's explicit byte flag store removes
  * the generated QI zero from RTL, but does not move the Value_ zero before

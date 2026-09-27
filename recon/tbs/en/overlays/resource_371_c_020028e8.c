@@ -1,4 +1,11 @@
-/* Draft, not-yet-c. Score 2026-09-26: 972 of 972 bytes, 11 differing
+/* Astra 2026-09-27 one-pass publication transfer: move motion_flags = 0
+ * from PrepareItemSprite into a do/while(0) before that call. Whole score
+ * stays 972/972, 11 halfwords / 11 aligned edits. Only address/zero order
+ * changes: the copied base remains r2, zero r3, and the mask still derives
+ * from zero. Full normalized diff rejects constructor-r0/zero-r1 admission;
+ * frame and pools remain exact. Restore the canonical initializer and stop
+ * this boundary transfer. No DONE or alignment credit.
+ * Draft, not-yet-c. Score 2026-09-26: 972 of 972 bytes, 11 differing
  * halfwords (11 aligned edits). Separate object lifetimes and an inline
  * destination call recover the reference's return-register reuse. Typed
  * sprite bitfields recover the full-width masks. Sprite initialization

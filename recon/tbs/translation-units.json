@@ -543,7 +543,7 @@
     },
     {
       "id": "vinasu-first-bridge-candidate",
-      "source": "recon/tbs/en/overlays/resource_3c8_c_02001af0.c",
+      "source": "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/BRIDGE_SHIFT.C",
       "overlay": "resource_3c8",
       "absolute_symbols": {
         "Engine_ActorGet": {
@@ -623,7 +623,7 @@
         {
           "address": "0x02001af0",
           "extent": 600,
-          "state": "not-yet-c"
+          "state": "exact-c"
         }
       ],
       "game": "tbs",

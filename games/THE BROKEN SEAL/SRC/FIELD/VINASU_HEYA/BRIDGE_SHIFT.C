@@ -1,19 +1,3 @@
-/* NONMATCHING: 600/600 bytes, 7 differing halfwords (2026-09-26).
- * Whole owner 02001af0..02001d48, including pool 02001d14..02001d48;
- * all 25 calls audited against our listing. Closest exact family members
- * are VinasuHeya_RetractBridge and VinasuHeya_ExtendBridge. Retraction
- * rechecks at 532/532 bytes, zero differences. No missing calls found.
- * H1: transfer their existing Map_CopyCellsTo helper to both loop sites:
- * 596/600 bytes, 196 differing halfwords / 48 aligned edits -> 600/600,
- * 7 halfwords. All calls, frame, remaining instructions and pool match.
- * Residual: fp holds width 3 instead of height 4; two call sites copy the
- * wrong dimension and the initial countdown/column moves exchange order.
- * H2: share height with both x +=/-= steps: identical 600/600, 7 halfwords.
- * H3: first branch u16 width = 3, second branch literal 3, retaining the
- * shared height: identical 600/600, 7 halfwords. H1 retained below.
- * Existing allocator decoder reports no unique source repair. Three
- * structural trials exhausted; no declaration or generic RA sweep. This
- * remains not-yet-c and earns no DONE bytes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
@@ -30,6 +14,8 @@ struct MapWork {
 
 extern struct MapWork *Data_03001e70;
 
+/* The first bridge slides beneath the leader while its map columns are
+ * copied into place and dust trails along the moving edge. */
 void VinasuHeya_ShiftBridge(void)
 {
     struct EffectOptions options;
@@ -40,7 +26,6 @@ void VinasuHeya_ShiftBridge(void)
     s32 countdown;
     u32 i;
     s32 dust_x;
-    s32 height;
 
     layer = &Data_03001e70->layer;
     leader = Engine_ActorGet(0);
@@ -59,9 +44,8 @@ void VinasuHeya_ShiftBridge(void)
             Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
             Engine_EventWait(20);
             dust_x = 0x1200000;
-            countdown = 40;
-            height = 4;
             x = 29;
+            countdown = 40;
             for (i = 0; i <= 479; i++, countdown--) {
                 layer->x += 0x3333;
                 dust_x += -0x3333;
@@ -77,10 +61,10 @@ void VinasuHeya_ShiftBridge(void)
                     countdown = 40;
                     if (i <= 240) {
                         x -= 4;
-                        Map_CopyCellsTo(x, 50, 15, 32, 3, height);
+                        Map_CopyCellsTo(x, 50, 15, 32, 3, 4);
                     } else {
                         x += 4;
-                        Map_CopyCellsTo(x, 45, 9, 32, 3, height);
+                        Map_CopyCellsTo(x, 45, 9, 32, 3, 4);
                     }
                 }
                 Engine_TaskWait(1);

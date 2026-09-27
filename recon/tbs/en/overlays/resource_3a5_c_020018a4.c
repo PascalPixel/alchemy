@@ -89,7 +89,33 @@
  * Bounded timer/phase axes are exhausted; remaining work is paired timer
  * reads and join reload, shared colour-mask/counter lifetimes, fill-loop
  * precheck/counter lifetime, sprite array cursor, and resulting pools.
- * Whole owner remains not-yet-C; no exact-function or alignment credit. */
+ * Whole owner remains not-yet-C; no exact-function or alignment credit.
+ * Lamakan word-mask H1 (2026-09-27): reference 019a6 word-loads 31
+ * from 019e4 and 019ae retains it in fp across the RGB loop's calls;
+ * 019c4..019ca reuse it only for the two upper-channel extractions.
+ * The three clamps still compare/materialize immediate 31. Test one u32
+ * opaque link-symbol producer for those extraction consumers, unlike the
+ * rejected u16 producer's left-shifted stack reload. Prediction: shared
+ * word pool before the RGB phase, mask in fp and counter in r4/sp+0.
+ * Admission: frame 12, correct shared mask/pool and preserved 0-to-1
+ * timer trigger plus phase store/signed comparison. Exact adoption also
+ * requires all 888 bytes and compare/coverage/verify. Read the full
+ * normalized diff, extent, frame, mask and counter liveness. Budget:
+ * at most three informed trials/30 minutes; stop this producer axis on
+ * failed admission without a new structural fact. Record result here.
+ * H1 result: 856/888, 411 differing halfwords / 236 aligned edits,
+ * frame 12. Trial source was u32 mask = (u32)&Value_0000001f before
+ * the loop, consumed by (packed >> 21) & mask and (packed >> 26) & mask;
+ * clamps retained literal 31. Full diff and generated assembly show the
+ * word mask reloaded into r0 inside every iteration from the later pool,
+ * immediately beside the phase-pointer load. fp still holds the counter;
+ * no r4 spill at either RGB division and no first-colour-loop pool appear.
+ * Unlike the u16 trial it adds no shifted stack slot, but producer width
+ * alone does not establish the reference's call-spanning mask lifetime.
+ * The timer trigger and phase store/signed reload invariant are unchanged.
+ * Reject admission and restore the canonical 852/888 body (231 edits).
+ * Stop after one informed trial: no new fact justifies another mask
+ * spelling/declaration-order sweep. No new DONE bytes; owner not-yet-C. */
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "TYPES.H"

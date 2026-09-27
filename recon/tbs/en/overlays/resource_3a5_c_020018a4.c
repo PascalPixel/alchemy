@@ -1,4 +1,4 @@
-/* NONMATCHING: 888 bytes, candidate 860, 399 differing halfwords, 266
+/* NONMATCHING: 888 bytes, candidate 848, 401 differing halfwords, 251
  * halfword edits (2026-09-27). FieldScene_RunScene3a5SequenceA, meant for
  * FIELD/RAMAKAN_SABAKU/F_018A4.C as a single-overlay unit binding its names
  * at their runtime addresses (an import veneer's listing offset plus
@@ -25,7 +25,7 @@
  * left-shifted in a new stack slot and reloaded/right-shifted per iteration;
  * it does not displace the loop counter from fp or recreate the early pool.
  * Frame grows from the correct 12 to 16 bytes. Reject this long-lived
- * narrow-mask model; preserve the witness before restoring H1. No mask
+ * narrow-mask model, preserved at c04a58975; H1 is restored here. No mask
  * declaration or scalar-order sweeps. Whole owner remains not-yet-C,
  * with 0 new DONE bytes. */
 #include "DMA.H"
@@ -49,7 +49,6 @@ extern struct VramBlock Data_03001b10[];
 extern u32 Data_02000240[];
 extern s16 Data_02000240_t[][2];
 extern u32 gFrameCount;
-extern u8 Value_0000001f;
 
 s32 Engine_MathDivide(s32 dividend, s32 divisor);
 void *Main_08000168(s32 size);
@@ -99,7 +98,6 @@ void FieldScene_RunScene3a5SequenceA(void)
     s32 y;
     u32 i;
     u32 slot;
-    u16 channel_mask;
     union HalfWord *timerp;
     u32 *sprite_words;
     struct Sprite *sprite;
@@ -149,9 +147,6 @@ void FieldScene_RunScene3a5SequenceA(void)
         (volatile u32 *)0x040000d4);
 
     tile = (u16 *)((u8 *)sprite_words + 12);
-    /* FAKEMATCH: the narrow link constant retains the shared extraction
-     * mask and its short-reach pool, as in the Mercury palette family. */
-    channel_mask = (u16)(u32)&Value_0000001f;
     for (slot = 6; slot <= 11; slot++, tile++) {
         u32 packed;
         s32 raw_y;
@@ -159,8 +154,8 @@ void FieldScene_RunScene3a5SequenceA(void)
 
         packed = (u32)(s16)*tile << 16;
         x = (packed & 0x1f0000) >> 16;
-        raw_y = (packed >> 21) & channel_mask;
-        y = (packed >> 26) & channel_mask;
+        raw_y = (packed >> 21) & 31;
+        y = (packed >> 26) & 31;
         angle = EFFECT_PHASE;
         x += angle / 3;
         y -= 20;

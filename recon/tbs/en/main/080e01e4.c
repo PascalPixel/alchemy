@@ -24,7 +24,8 @@
  * topology/frame 40 retained. The shared counter does recover sl throughout
  * all three traversals, but work moves r9 -> fp, frame remains spilled,
  * ring stays r8, and code grows eight bytes. Reject the whole-owner result.
- * Preserve H2 separately, then restore H1 with its corrected semantics.
+ * H2 is preserved separately; canonical H1 restored with corrected semantics
+ * (832/832 bytes, 233 differing halfwords, 171 aligned edits, frame 40).
  * Counter reuse alone is not a closing mechanism; no counter/order sweeps.
  * No credit until whole-owner match, ordinary-C lint, compare/coverage/verify.
  */
@@ -69,6 +70,7 @@ void Func_080e01e4(struct BattleEffectArgument *effect)
     struct EffectStep *ring;
     struct EffectStep *particle;
     s32 i;
+    s32 member;
     s32 frame;
     s32 angle;
     s32 member_offset;
@@ -132,9 +134,9 @@ void Func_080e01e4(struct BattleEffectArgument *effect)
 
         ring = (struct EffectStep *)((u8 *)work + 0x7080);
         member_offset = 0;
-        i = 0;
+        member = 0;
         do {
-            if (frame >= i * 4 + 8 && ring->y <= 95) {
+            if (frame >= member * 4 + 8 && ring->y <= 95) {
                 callbacks[0](canvas, (u8 *)work + 0x320,
                     ring->x - 20, ring->y - 32, 40, 64);
                 ring->x -= 6;
@@ -173,10 +175,10 @@ void Func_080e01e4(struct BattleEffectArgument *effect)
                     }
                 }
             }
-            i++;
+            member++;
             member_offset += 32 * sizeof(struct EffectStep);
             ring++;
-        } while (i != 8);
+        } while (member != 8);
 
         particle = (struct EffectStep *)0x02010000;
         for (i = 0; i != 512; i++) {

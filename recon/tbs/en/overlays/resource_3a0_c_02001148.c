@@ -1,4 +1,6 @@
-/* NONMATCHING: outward O1 482/488 bytes, 224 halfwords / 63 aligned edits.
+/* NONMATCHING: transfer T2 482/488 bytes, 226 halfwords / 59 aligned edits.
+ * Admitted T2 restored; failed outward O1 is preserved at 9b5ca9554.
+ * Outward O1: 482/488 bytes, 224 halfwords / 63 aligned edits.
  * 2026-09-27: tested IO_WRITE_QUEUE.C's one-pass do/while(0) boundary
  * around x=0 and its motion_flags store, retaining T2's labeled outer loop
  * and CROSS_DOORWAY.C's pre-loop-zero OR. All three zero lifetime facts
@@ -131,12 +133,8 @@ setup_actor:
         struct FieldActor *actor;
         actor = Engine_ActorGet(n + 23);
         actor->sprite->priority = 1;
-        /* FAKEMATCH: one-pass write block, as in IO_WRITE_QUEUE.C, keeps
-         * loop-pass notes without enclosing the actor iteration back-edge. */
-        do {
-            x = 0;
-            actor->motion_flags = x;
-        } while (0);
+        x = 0;
+        actor->motion_flags = x;
         actor->collision_flags = 8;
         Engine_ActorSetSpriteFlags(actor, 0);
         Engine_ObjectSetPalette(actor, 15);

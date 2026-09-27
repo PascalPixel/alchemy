@@ -1,4 +1,11 @@
 /* NONMATCHING: 2492/2508 bytes, 1154 differing halfwords, 486 aligned edits.
+ * 2026-09-27 Sol Venus Summit H1: reuse the initial actor local for the
+ * lead actor, transferring Haidia's typed lookup lifetime model. Prediction:
+ * lead base r6 and motion-field pointer r5, with the initial zero retained
+ * separately from the later camera zero. Complete normalized diff is
+ * byte-identical to baseline: lead r5, motion pointer sl, missing first
+ * zero pool. Both lookups were already typed; variable reuse supplies no
+ * new alias information. Close this axis; keep the simpler shared local.
  * 2026-09-26 corrected model: equal control-flow topology, no stack frame;
  * first zero literal pool missing, early actor/flag ownership differs.
  * H1: u16 zero instead of s32 gives byte-identical output: no improvement.
@@ -55,7 +62,6 @@ void Scene_RunScriptedActorPresentation(void)
 {
     struct Half zero;
     struct FieldActor *actor;
-    struct FieldActor *lead_actor;
     struct FieldActor *record;
     s32 initial_flags;
     s32 active_mask;
@@ -85,8 +91,8 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_ActorSetSpriteFlags(record, 0);
     Engine_ActorSetSpritePriority(18, 1);
     Call3(Engine_ActorSetPosition, 18, 0x2440000, 0x1520000);
-    lead_actor = Engine_ActorGet(0);
-    lead_actor->motion_flags = initial_flags;
+    actor = Engine_ActorGet(0);
+    actor->motion_flags = initial_flags;
     Engine_ActorSetSpritePriority(0, 1);
     Call3(Engine_ActorSetPosition, 0, 0x2450000, 0x1200000);
     Engine_TaskWait(1);
@@ -110,18 +116,18 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_EventWait(20);
     Engine_ActorSetAnimation(0, 6);
     Engine_ActorStop(0);
-    lead_actor->x.fixed = 0x2040000;
-    lead_actor->y.fixed = 0x80000;
-    lead_actor->z.fixed = 0x940000;
+    actor->x.fixed = 0x2040000;
+    actor->y.fixed = 0x80000;
+    actor->z.fixed = 0x940000;
     {
         s32 shown = 0x8000;
 
-        lead_actor->facing = shown;
+        actor->facing = shown;
     }
-    lead_actor->motion_flags = 3;
+    actor->motion_flags = 3;
     zero.v = 0;
     Engine_AudioPlayCue(152);
-    lead_actor->velocity_y = 0x40000;
+    actor->velocity_y = 0x40000;
     Engine_AudioPlayCue(152);
     record = Engine_ActorGet(0);
     Engine_ActorSetSpriteFlags(record, 1);
@@ -129,11 +135,11 @@ void Scene_RunScriptedActorPresentation(void)
     active_mask = 1;
     Engine_EventWait(10);
     Engine_ActorGet(0)->unknown_5a |= active_mask;
-    lead_actor->y.fixed = -0x200000;
+    actor->y.fixed = -0x200000;
     {
         s32 shown = 0x4000;
 
-        lead_actor->facing = shown;
+        actor->facing = shown;
     }
     Engine_EventWait(20);
     Call1(Engine_AudioPlayCue, 0x134);

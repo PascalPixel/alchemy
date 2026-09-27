@@ -229,7 +229,7 @@
     },
     "resource_374:02002440": {
       "name": "HaidiaIe_SpawnEffectPair",
-      "source": "FIELD/HAIDIA_IE/SPAWN_PAIR.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_383:020047bc": {
       "name": "KuupuappuHeya_IsRecordNearPoint",
@@ -621,7 +621,7 @@
     },
     "resource_374:02001084": {
       "name": "HaidiaIe_RunScriptScene",
-      "source": "FIELD/HAIDIA_IE/SCRIPT_SCENE.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_381:0200330c": {
       "name": "SoruStar_SetupElementalRings",
@@ -657,7 +657,7 @@
     },
     "resource_374:02000940": {
       "name": "HaidiaIe_RestoreEntryState",
-      "source": "FIELD/HAIDIA_IE/ENTRY_STATE.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_377:020003f8": {
       "name": "HaidiaBabi_RestoreEntryState",
@@ -665,7 +665,7 @@
     },
     "resource_374:020015b4": {
       "name": "HaidiaIe_RunScene015B4",
-      "source": "FIELD/HAIDIA_IE/FAMILY_SCENE_015B4.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_37b:020016dc": {
       "name": "SoruSekizo_RunStatueDropScene",
@@ -4405,15 +4405,15 @@
     },
     "resource_374:02000030": {
       "name": "Object_UpdateFacingTowardTarget",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:0200239c": {
       "name": "SceneEffect_AnimateVerticalPositive",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:020023ec": {
       "name": "SceneEffect_AnimateVerticalNegative",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_385:02000030": {
       "name": "SetEffectRecordMode",
@@ -6987,7 +6987,7 @@
     },
     "resource_374:0200010c": {
       "name": "Scene_CheckPsynergyStone",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3ac:0200014c": {
       "name": "InnClerk_Talk",
@@ -7119,7 +7119,7 @@
     },
     "resource_374:02002580": {
       "name": "FieldScene_RunStep15",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3c9:020038dc": {
       "name": "Scene_RunBracketedSceneWithFlag282",
@@ -7276,7 +7276,7 @@
     },
     "resource_374:020005e8": {
       "name": "SceneDialogue_ShowLineEB1OrEB0",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_38e:0200012c": {
       "name": "FieldScene_RunStepWithValue29de",
@@ -7292,7 +7292,7 @@
     },
     "resource_374:020022f8": {
       "name": "OverlayObject_UpdateOnFrameBit1",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3b9:0200050c": {
       "name": "SceneDialogue_ShowLine2118WithActor15Steps",
@@ -7368,7 +7368,7 @@
     },
     "resource_374:02002590": {
       "name": "FieldScene_RunStep17",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3c8:02004600": {
       "name": "FieldScene_CallWith560And44",
@@ -7508,7 +7508,7 @@
     },
     "resource_374:0200021c": {
       "name": "Villager_AskAboutTheTravelers",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_381:02002c9c": {
       "name": "SceneState_ConfigureEightCornerRegions",
@@ -7644,7 +7644,7 @@
     },
     "resource_374:020008dc": {
       "name": "FieldScene_RunStep7BThen8",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3b1:020037b4": {
       "name": "SceneActor_SetFlagBit3ForActors28To35",
@@ -7821,7 +7821,7 @@
     },
     "resource_374:020022c8": {
       "name": "Event_SayThenWait",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3b0:02001130": {
       "name": "SceneData_GetDifferenceOfPairSums",
@@ -8057,7 +8057,7 @@
     },
     "resource_374:02000444": {
       "name": "Scene_StoneFellOnTheHut",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3c6:0200004c": {
       "name": "SceneData_GetTable98c4",
@@ -8081,7 +8081,7 @@
     },
     "resource_374:020001f0": {
       "name": "Villager_RecallThreeYearsAgo",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3c8:02003050": {
       "name": "SceneState_ApplyStepToSlots15To18",
@@ -8109,7 +8109,7 @@
     },
     "resource_374:020025a0": {
       "name": "FieldScene_RunStep20",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_385:0200056c": {
       "name": "SceneDialogue_ShowLine1CB0ForActor13",
@@ -8209,11 +8209,11 @@
     },
     "resource_374:02002370": {
       "name": "SceneEffect_UpdateByFrameBit",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:02002334": {
       "name": "SceneEffect_UpdateByFrameBits",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3ca:020003c0": {
       "name": "SceneState_StoreSlotZeroField12",
@@ -8245,11 +8245,11 @@
     },
     "resource_374:02000930": {
       "name": "SceneState_ApplyFlag90d",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:02002564": {
       "name": "SceneState_ApplyPair140And0",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3b6:0200085c": {
       "name": "SceneDialogue_RunActor25FlaggedLine",
@@ -8293,7 +8293,7 @@
     },
     "resource_374:020003b4": {
       "name": "SceneDialogue_RunFlagGatedMessageStep",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_371:02000570": {
       "name": "SceneState_ApplyValues151And25And54",
@@ -8405,7 +8405,7 @@
     },
     "resource_374:02000088": {
       "name": "SceneData_GetTableAfa0",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3c9:02002344": {
       "name": "Scene_ForwardValue81fc",
@@ -8481,7 +8481,7 @@
     },
     "resource_374:02000920": {
       "name": "SceneState_ApplyFlag90c",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_37d:02000038": {
       "name": "SceneData_ReturnZero",
@@ -8493,7 +8493,7 @@
     },
     "resource_374:02002574": {
       "name": "FieldScene_Forward4dac",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3c8:020005e4": {
       "name": "SceneEffect_SpawnRandomEveryEightFramesB",
@@ -8601,7 +8601,7 @@
     },
     "resource_374:020001c4": {
       "name": "Villager_AskAboutMeditation",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_399:02000510": {
       "name": "SceneDialogue_RunActor12Line",
@@ -8625,7 +8625,7 @@
     },
     "resource_374:020022e0": {
       "name": "SceneActor_SetPairZeroAndValue",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_397:02000118": {
       "name": "Scene_ApplyOffset0Pos6",
@@ -8701,7 +8701,7 @@
     },
     "resource_374:02000714": {
       "name": "SceneState_SetWork1c0AndRun",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3b6:0200073c": {
       "name": "SceneDialogue_RunActorLine23a1",
@@ -8949,7 +8949,7 @@
     },
     "resource_374:02000910": {
       "name": "SceneState_ApplyFlag90b",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_380:0200036c": {
       "name": "SceneData_GetTableCd88",
@@ -8985,7 +8985,7 @@
     },
     "resource_374:020008f0": {
       "name": "SceneState_ApplyFlag815Branch",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_385:0200050c": {
       "name": "SceneDialogue_RunActor11Line",
@@ -9477,7 +9477,7 @@
     },
     "resource_374:020025b0": {
       "name": "SceneState_SetValues352_365_2116_2117_40",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_387:02000048": {
       "name": "OvObj_PrepareObject",
@@ -9557,7 +9557,7 @@
     },
     "resource_374:02000674": {
       "name": "Scene_PsynergyStoneIsGone",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_381:02001084": {
       "name": "SceneState_InitStateWordsAndSlots",
@@ -9741,7 +9741,7 @@
     },
     "resource_374:02000094": {
       "name": "SceneData_SelectTableByFlag834",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_372:02001684": {
       "name": "FieldScene_RunActor22SceneWhenFlag836Only",
@@ -10076,7 +10076,7 @@
     },
     "resource_374:020000b8": {
       "name": "SceneData_SelectTableByFlags834And87a",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3cd:02000038": {
       "name": "SceneData_ReturnZero",
@@ -10088,7 +10088,7 @@
     },
     "resource_374:02000158": {
       "name": "SceneData_SelectTableByFlags87a_815_834",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3c8:020018f8": {
       "name": "FieldScene_PlaceAndPinSlots8To10",
@@ -10136,7 +10136,7 @@
     },
     "resource_374:02000090": {
       "name": "get_tertiary_default_result",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_398:02000094": {
       "name": "get_followup_default_result",
@@ -10794,7 +10794,7 @@
     },
     "resource_374:020017c8": {
       "name": "Scene_RunExtendedActorSequence",
-      "source": "FIELD/HAIDIA_IE/EXTENDED_SEQUENCE.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_379:02000074": {
       "name": "RunEventScript01",
@@ -11223,7 +11223,7 @@
     },
     "resource_374:02000248": {
       "name": "Villager_ShowOffPsynergy",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3b1:0200366c": {
       "name": "RunSceneSelectionChain",
@@ -11235,7 +11235,7 @@
     },
     "resource_374:020004d4": {
       "name": "FieldScene_RunMiddleAuxiliarySequence",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3ba:0200004c": {
       "name": "FieldScene_RunOpeningAuxiliarySequence",
@@ -11274,7 +11274,7 @@
     },
     "resource_374:02000750": {
       "name": "FieldScene_RunSupplementalSequenceOne",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_372:0200150c": {
       "name": "FieldScene_RunScene372SequenceA",
@@ -11333,27 +11333,27 @@
     },
     "resource_374:02000780": {
       "name": "FieldScene_RunSupplementalSequenceTwo",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:020007ec": {
       "name": "FieldScene_RunSupplementalSequenceThree",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:0200081c": {
       "name": "FieldScene_RunSupplementalSequenceFour",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:0200084c": {
       "name": "FieldScene_RunSupplementalSequenceFive",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:0200087c": {
       "name": "FieldScene_RunSupplementalSequenceSix",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_374:020008ac": {
       "name": "FieldScene_RunSupplementalSequenceSeven",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_383:020019a4": {
       "name": "FieldScene_RunOpeningSequenceHead",
@@ -11812,7 +11812,7 @@
     },
     "resource_374:02000634": {
       "name": "Villager_WelcomeBack",
-      "source": "FIELD/HAIDIA_IE/EXTENDED.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3ad:020001b0": {
       "name": "GatePuddle_Freeze",
@@ -12050,7 +12050,7 @@
     },
     "resource_374:02000bbc": {
       "name": "FieldScene_RunElderAidEvent",
-      "source": "FIELD/HAIDIA_IE/ELDER_AID_EVENT.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3cb:020012e0": {
       "name": "LinkLobby_RunRoundResult",
@@ -12079,7 +12079,7 @@
     },
     "resource_374:02001274": {
       "name": "FieldScene_RunGroupChoreography",
-      "source": "FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.C"
+      "source": "FIELD/HAIDIA_IE/HAIDIA.C"
     },
     "resource_3cb:02000860": {
       "name": "LinkLobby_RunConnectionSequence",

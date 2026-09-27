@@ -1,4 +1,26 @@
-/* NONMATCHING: inversion I2 408/404 bytes, 104 differing halfwords / 41 edits.
+/* NONMATCHING: outward O1 408/404 bytes, 104 differing halfwords / 41 edits.
+ * Outward O1 (2026-09-27): snapshot the u16 sprite rotation at rise-loop
+ * entry before advancing acc, then add its whole part to that snapshot.
+ * Prediction: rotation gets r2 before acc's add, whole-part extraction r3.
+ * Admission: all three phase entries/back-edges, frame 4 and four pools.
+ * New diagnostic fact: I2 local allocation gives whole-part p56 r2 and
+ * loaded rotation p57 r3; sched2 cannot issue that load until the increment
+ * in r3 has been consumed by add r7,r7,r3. This is a register dependence,
+ * not merely the scheduler choosing a different order among ready insns.
+ * O1's early load (insn 120) survives through life, but combine deletes
+ * 120/121/122 and folds the memory value into later zero-extension 137,
+ * after acc's add 129 and shift 135. Final bytes are identical to I2.
+ * Full normalized diff and byte comparison confirm every admission is
+ * preserved, but the predicted local shape is not. Diagnostic -da output
+ * equals ordinary assembly. Reject O1; one-trial budget exhausted.
+ * Actor/limit are not a declaration-order tie: both have 12 weighted uses,
+ * with life lengths 95/122; global allocation ranks actor first. No source
+ * boundary explaining a reversal was established, so that axis was not tried.
+ * Missing evidence: a legitimate operand/value boundary that survives
+ * combine and keeps the rotation load independent of the increment register.
+ * No new DONE bytes. Preserve I2 as canonical after recording this witness.
+ *
+ * Inversion I2 408/404 bytes, 104 differing halfwords / 41 edits.
  * Retained canonical model (2026-09-27): structured loops with named phase
  * exits, not break. All three ROM control-flow admission checks now pass:
  * fall through into the update body, conditionally exit forward, then wait
@@ -95,8 +117,11 @@ void ArutinYama_SwingActorIntoSetPiece(void)
         acc.fixed = 0;
         limit = 0x8fff;
         for (;;) {
+            u16 rotation;
+
+            rotation = sprite->rotation;
             acc.fixed += 0x80000;
-            sprite->rotation += acc.part.whole;
+            sprite->rotation = rotation + acc.part.whole;
             c = Math_Cos(sprite->rotation + 0x4000);
             actor->x.fixed = (c << 4) + x;
             angle = sprite->rotation;

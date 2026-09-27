@@ -1,4 +1,12 @@
-/* Cursor ownership trial 2 (2026-09-27): NONMATCHING 480/480 bytes,
+/* Canonical after cursor pass (2026-09-27): NONMATCHING 480/480 bytes,
+ * seven differing halfwords / seven aligned edits; admitted H1 restored.
+ * Trial 1's complete body is f8859f58e (484/214/43); trial 2's is
+ * 71cb1fd61 (480/4/4). The natural for/index-derived cursor makes the
+ * publication latch exact and its entire suffix from 02001282 matches
+ * byte for byte (cmp), but four frozen preheader halfwords regress.
+ * Keep that strongest diagnostic witness in Git and the admitted H1 here.
+ * Two structural trials complete; stop without new DONE or owner adoption.
+ * Cursor ownership trial 2 (2026-09-27): NONMATCHING 480/480 bytes,
  * four differing halfwords / four aligned edits. Hypothesis: a natural for
  * header recognizes the index-derived destination induction, reproducing
  * RUN_DUAL_TABLE.C's cursor reduction. i++ and src++ follow publication.
@@ -192,8 +200,10 @@ void ToretoPalette_ApplyTint(void)
     if ((Data_03001e40 & 31) != 0)
         return;
     src += 16;
-    for (i = 0; i <= 62; i++, src++) {
-        dst = (u16 *)0x05000020 + i;
+    dst = (u16 *)0x05000020;
+    i = 0;
+loop:
+    {
         r = Data_02009f00[Data_0200adb8];
         g = Data_02009f00[Data_0200adb8 + 1];
         b = Data_02009f00[Data_0200adb8 + 2];
@@ -230,7 +240,12 @@ void ToretoPalette_ApplyTint(void)
         if (blue < 0)
             blue = 0;
         *dst = (blue << 10) | (green << 5) | red;
+        i++;
+        dst++;
+        src++;
     }
+    if (i <= 62)
+        goto loop;
     Data_0200adb8 += (Engine_RandomNext() & 7) * 3;
     if (Data_02009f00[Data_0200adb8] == 99)
         Data_0200adb8 = 0;

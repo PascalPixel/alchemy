@@ -37,7 +37,25 @@
  * found in exact FLY_BY_21/22 and DECK_SEQ. Function/alignment credit +0.
  * H3 is preserved in 340f1f19d; retain the canonical word snapshot below.
  * A future trial needs evidence changing the persistent counter-address
- * lifetime or its real uses, not another spelling of the initial value. */
+ * lifetime or its real uses, not another spelling of the initial value.
+ *
+ * 2026-09-27 sol-deck closing audit: fresh full normalized diff reproduces
+ * 552/552 bytes, 171 differing halfwords, 69 aligned edits. The case-1
+ * branch at candidate +0x60 enters case 5's coordinate-shift/call tail;
+ * reference +0x5a shifts its own z, +0x62 calls, then +0x66 enters the
+ * shared phase increment. Candidate size equality therefore does not
+ * prove the call blocks, dispatch addresses or complete pool exact.
+ * Initial state pseudo 33 still has 4 uses across 15 instructions and
+ * 1 call, allocated r6; phase address is r8. The first callback's H5
+ * control record (042b1d5f3) increases real pointer consumers to 20 but
+ * gets r7, loses r8 preservation and merges the separate mode/turn
+ * addresses. It fails admission and is not blindly transferred here.
+ * Existing Call3/4, word snapshot and shared advance remain canonical.
+ * STOP: no supported new phase boundary follows from exact FLY_BY_21/22
+ * or DECK_SEQ. Qualified pointers, local declarations, direct dispatch,
+ * byte snapshots and the rejected control-record consumer axis stay
+ * closed. Both owners remain C not yet written. Function and alignment
+ * credit +0; bindings, padding and compiler gaps remain unchanged. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -54,7 +54,30 @@
  * H4 is preserved in 3f451ae66; restore the canonical H3 source below.
  * The second callback's byte-snapshot follow-up also leaves allocation
  * unchanged. Neither result supplies a tied allocator priority or a new
- * supported phase/helper boundary. Stop this producer axis. */
+ * supported phase/helper boundary. Stop this producer axis.
+ *
+ * H5 (sol-deck): a control record beginning at object+0x62 owns phase,
+ * mode and both signed turn fields. All four fields use that record, so
+ * this changes real pointer consumers rather than the snapshot spelling.
+ * Admission predicted counter pointer r6, saved state r8 and the existing
+ * shared advance tail. Actual complete diff: 516/552 bytes, 262 differing
+ * halfwords, 101 aligned edits. Pointer pseudo 34 has 20 uses across 163
+ * instructions and 15 calls, allocated r7; state pseudo 35 has 4 uses
+ * across 14 instructions and 1 call, allocated r6. The r8 save disappears.
+ * Mode reads become [ctrl,#1], turn accesses [ctrl,#2]/[ctrl,#4]; case 7
+ * hoists its phase load over both turn stores. The shared advance tail
+ * survives, but its pointer and all separate idle field addresses fail
+ * admission. A nested control member also aligned to object+0x64; this
+ * corrected trial takes the control view at the known phase byte +0x62.
+ * STOP the control-record consumer axis; no transfer to the twin or
+ * pointer/declaration variants. Function credit +0, alignment credit +0.
+ * Rejected H5 is preserved in 042b1d5f3; canonical H3 is restored below.
+ * Fresh near-sibling recall is complete: no exact, equivalent or near
+ * source sibling is registered for this owner. Exact FLY_BY_21/22 remain
+ * call/layout evidence, not a second unresolved-pointer solution.
+ * The admitted tail and all source bindings, padding and compiler gaps
+ * remain unchanged. Resume only with a new supported pointer producer or
+ * phase boundary; bounded ownership axes are exhausted. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

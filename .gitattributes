@@ -6,5 +6,6 @@
 *.TOKENS binary
 
 # The README figures are redrawn by `make coverage`; keep either side of a merge.
-/PROGRESS.png merge=generated binary
-/PROGRESS_CHART.png merge=generated binary
+/PROGRESS.png binary merge=generated
+/PROGRESS_CHART.png binary merge=generated
+/recon/tbs/metrics/history.json merge=generated

@@ -1,5 +1,5 @@
-/* NONMATCHING: 680 of 680 bytes, 212 differing halfwords, 125 aligned edits
- * (2026-09-26). Whole owner 02000ac8..02000d70; pool 02000d4c..02000d70.
+/* NONMATCHING: 680 of 680 bytes, 211 differing halfwords, 123 aligned edits
+ * (2026-09-27). Whole owner 02000ac8..02000d70; pool 02000d4c..02000d70.
  * Own-ROM callees/pool audited. WalkLeaderToSpring calls this controller;
  * its side argument is passed to the separately matched RunSpringRide.
  * Registered as torebi-spring-game-candidate, not credited.
@@ -21,6 +21,14 @@
  * poll-loop entry/hoisting; sum needs an upward counter retained in ip's
  * comparison, and the state+1 selection pointer must not survive RandomNext.
  * Stop these three axes; do not repeat type or declaration spelling sweeps.
+ *
+ * H1 (2026-09-27): exact TOREBI_IZUMI/OFFER_WHEELS.C preserves the s32
+ * Engine_EventOpenMessage result contract. Replace both old void function
+ * pointer casts with FIELD_EVENT.H's Event_OpenMessage. The first prompt's
+ * r1-before-final-r0 argument setup now matches; full owner improves from
+ * 212/125 to 211/123 with all nine pool words still exact. The second prompt
+ * still inherits the choice-comparison -1 in r5. MENU/CONFIRM_SELECTION.C
+ * confirms Menu_SelectEntry20To21 is s32(s32), unchanged by this transfer.
  */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -84,7 +92,7 @@ ask:
     coins = state->words[4];
     tickets = Main_080772e0(229);
     Engine_EventSetMessage(message);
-    Call2((void (*)())Engine_EventOpenMessage, -1, 0);
+    Event_OpenMessage(-1, 0);
     window = Main_08015010(0, 0, 17, 4, 2);
     text = (s32)Value_00000e49;
     Main_08015080(text, window, 0, 0);
@@ -122,7 +130,7 @@ pressed:
 check_room:
     if (Main_08077308() == 0) {
         Engine_EventSetMessage(message + 4);
-        Call2((void (*)())Engine_EventOpenMessage, -1, 0);
+        Event_OpenMessage(-1, 0);
         if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) != 0) {
             goto end;
         }

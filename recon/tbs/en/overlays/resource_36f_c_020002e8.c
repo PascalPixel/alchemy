@@ -1,4 +1,15 @@
-/* NONMATCHING H1 single IME binding: 364/364 bytes, 28 differing halfwords
+/* NONMATCHING H2 restoration ownership: 364/364 bytes, three differing
+ * halfwords / aligned edits (2026-09-27). Exact MENU/CLEAR/BLEND_FADE.C's
+ * local IME/save pair plus RestoreInterrupts produces the reference's r5
+ * IME, r6 fade counter, r7 queue and all eleven pool words. First IME
+ * pseudo 43 now spans 170 instructions with one set / 18 uses; the queue
+ * remains function-owned. Complete queue, loop, calls and tail are exact.
+ * Remaining: initial halfword reset swaps destination r2 and zero r3.
+ * CSE shows the standalone zero user pseudo is created before the address;
+ * folding that sole consumer into the halfword assignment is the next
+ * isolated producer-boundary hypothesis, with all H2 bytes frozen.
+ *
+ * Rejected H1 single IME binding: 364/364 bytes, 28 differing halfwords
  * and 28 aligned edits (2026-09-27). WORLD_MAP/DISPLAY_TRANSITION.C binds
  * IME once before its queue sequence. Transferring that ownership changes
  * pseudo 35 from five sets / 33 uses / 3712-insn lifetime to one set /
@@ -39,14 +50,23 @@ void Local_02000454(void);
 void Title_Func020001c0(s32 mode);
 void Title_RevealSpriteRow(void);
 
+static __inline__ void RestoreInterrupts(u32 saved)
+{
+    /* FAKEMATCH: BLEND_FADE.C keeps this address local to restoration. */
+    do { Data_04000208 = saved; } while (0);
+}
+
 /* Queue a register write with interrupts masked.
  * FAKEMATCH: the final one-pass restore retains the queue-publication
  * boundary used by the exact world-map transfer family. */
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
+        volatile u16 *ime;                                                  \
+        u32 saved;                                                          \
         s32 count;                                                          \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
+            ime = &Data_04000208;                                           \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \
@@ -58,7 +78,7 @@ void Title_RevealSpriteRow(void);
             *destination++ = (address);                                     \
             *destination = 0x20000;                                         \
         }                                                                   \
-        do { *ime = saved; } while (0);                                      \
+        RestoreInterrupts(saved);                                          \
     } while (0)
 
 void Func_020002e8(void)
@@ -66,9 +86,7 @@ void Func_020002e8(void)
     s32 i;
     s32 zero;
     u8 *event;
-    volatile u16 *ime;
     struct IoWriteQueue *q;
-    u32 saved;
 
     Local_02000454();
     Engine_EventWait(30);
@@ -76,7 +94,6 @@ void Func_020002e8(void)
     Data_0200868c = zero;
     Title_Func020001c0(0);
     Engine_TaskAddCallback(Title_RevealSpriteRow, 0xc80);
-    ime = &Data_04000208;
     QUEUE_WRITE(0x4000000, 0x1540);
     QUEUE_WRITE(0x4000050, 0x2fce);
     QUEUE_WRITE(0x4000054, 16);

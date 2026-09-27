@@ -1,4 +1,11 @@
-/* NONMATCHING: H1 candidate 872/reference 860 bytes, 357 differing
+/* NONMATCHING: H2 candidate 864/reference 860 bytes, 347 differing
+ * halfwords / 157 normalized edits (2026-09-27). A scoped early PuzzleWork
+ * pointer admits early work in r5, signed choice in r6, complete in r9 and
+ * previous in fp. The initial previous spill disappears; frame drops to 8.
+ * Residual: the shrink decrement is hoisted across TaskWait and spilled,
+ * angle truncation lifetime, work/state store order and count truncation.
+ * Complete normalized diff read; no C or alignment credit.
+ * H1 candidate 872/reference 860 bytes, 357 differing
  * halfwords / 177 normalized edits (2026-09-27). Separating the late random
  * choice from the initial signed choice removes its stack spill and keeps
  * the initial signed choice in r5. Prediction of a four-byte frame failed:
@@ -84,10 +91,13 @@ void FieldScene_RunStatefulSequence(s32 action)
         actor->scale_y = 0x10000;
     }
     state = Data_02001001.state;
-    work = Data_0200bf6c;
-    next = Data_02001001.next;
-    previous = (u8)Data_02001001.next;
-    work->values[WORK_ANGLE] = Engine_MathDivide(next << 16, 5) + 0x4000;
+    {
+        struct PuzzleWork *work = Data_0200bf6c;
+
+        next = Data_02001001.next;
+        previous = (u8)Data_02001001.next;
+        work->values[WORK_ANGLE] = Engine_MathDivide(next << 16, 5) + 0x4000;
+    }
     if ((s8)state == 0) {
         if (action == 16) {
             state = 1;

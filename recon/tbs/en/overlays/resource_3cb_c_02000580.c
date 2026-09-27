@@ -1,4 +1,38 @@
-/* NONMATCHING: 556/560 bytes, 205 differing halfwords, 86 aligned edits.
+/* NONMATCHING H5: 568/560 bytes, 209 differing halfwords / 87 aligned edits.
+ * Admitted: all three independent send-failure r0 stores survive loop and
+ * jump2 (insns 151/358/593); frame32, heap r8 and word compaction retained.
+ * Full normalized diff read; -da output equals ordinary assembly exactly.
+ * Remaining: retry failures form three cold blocks (ROM shares first/last
+ * near the final poll), map still reloads per iteration, and first copier
+ * setup regresses. Pools move +8. Keep this admitted exit-topology witness;
+ * H3's lower-score 556/85 model remains at 17cf30899, rejected H4 at 8684ab881.
+ * Three models complete; STOP without a new causal fact. DONE +0.
+ * Failure-boundary H5: baseline loop pass moves first send failure to cold
+ * label762; jump2 then merges all three r0 result stores. loop.c's guarded
+ * exit motion is disabled when the guard target exits the inner loop region.
+ * A one-pass send/check boundary tests that explicit source ownership;
+ * admission is three independent result stores, with frame32 and copy loop.
+ * Offer-phase H4 rejected: 560/560 bytes, 204 halfwords / 136 edits.
+ * Formal map parameter coalesces back into pseudo33: 133 insns / 14 calls,
+ * still stack-preferring, still reloaded in-loop. Heap/index exchange r7/r8;
+ * list takes ip instead of map. Frame32 and pool offsets alone now agree,
+ * but the map admission fails. Full diff read, -da equals normal assembly.
+ * Preserve this trial, then restore H3. No declaration/type follow-up.
+ * Offer-phase H4: baseline map pseudo33 spans 134 insns / 14 calls and
+ * spills at sp+0; reference reloads it once into ip before the call-free
+ * remapping loop. The entry copy is already SImode, not a BLK copy defect.
+ * Isolate this complete phase as an inline list/map operation; predict a
+ * short map parameter lifetime while retaining frame32 and word compaction.
+ * Copy-interface H3 result: 556/560 bytes, 204 differing halfwords /
+ * 85 aligned edits. The first call now has the exact routine-load-before-r0
+ * order; the second still differs. Full diff read: frame32, record-copy
+ * loop and polling gains retained; merged exits/map reload remain. DONE +0.
+ * Copy-interface H3: exact PROCESS_PENDING_GRAPHICS_TRANSFER.C and
+ * QUEUE_SORT_BY_PRIORITY.C use a value-returning resident word copier.
+ * The own callee advances r0 and returns through lr. Transfer that interface;
+ * predict routine-load-before-destination setup at both calls, without
+ * changing the admitted frame, copy extents or packet polling behavior.
+ * NONMATCHING: 556/560 bytes, 205 differing halfwords, 86 aligned edits.
  * Complete owner 02000580..020007b0; return 020007a6, pool 020007a8..7b0.
  * Caller 007b0, exact RECEIVE_PARTY.C and DIGIT_VALUE.C, transfer start/
  * active-query callees, allocator and offer-state interfaces audited.
@@ -31,7 +65,7 @@ void Engine_TaskWait(s32 frames);
 s32 Main_080003a8(void);
 u8 *Main_08077000(s32 mode);
 
-typedef void (*WordCopyFn)(void *destination, const void *source, u32 size);
+typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
 #define LINK_STAT (*(volatile u16 *)0x03001f64)
 
@@ -78,10 +112,13 @@ s32 LinkLobby_SendPartyRecords(void)
         heap[0x12a] = 2;
         table[owners[i]] = i - 128;
         tries = 0;
-        if ((ret = Main_08000380(heap, 0x154)) == -1) {
-            result = ret;
-            goto done;
-        }
+        /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
+        do {
+            if ((ret = Main_08000380(heap, 0x154)) == -1) {
+                result = ret;
+                goto done;
+            }
+        } while (0);
         while (Main_080003a8() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {
@@ -112,11 +149,14 @@ next:
     if (i <= 2) {
         heap[0x12a] = 0;
         tries = 0;
-        if ((ret = Main_08000380(heap, 0x154)) != -1) {
-            goto test;
-        }
-        result = ret;
-        goto done;
+        /* FAKEMATCH: keep this send/check boundary distinct from polling. */
+        do {
+            if ((ret = Main_08000380(heap, 0x154)) != -1) {
+                goto test;
+            }
+            result = ret;
+            goto done;
+        } while (0);
     }
     Main_08000178(heap);
     size = 0x140;
@@ -139,10 +179,13 @@ next:
                 j--;
             }
         }
-        if ((ret = Main_08000380(heap, 0x140)) == -1) {
-            result = ret;
-            goto done;
-        }
+        /* FAKEMATCH: one-pass send/check boundary retains its failure exit. */
+        do {
+            if ((ret = Main_08000380(heap, 0x140)) == -1) {
+                result = ret;
+                goto done;
+            }
+        } while (0);
         while (Main_080003a8() != 0) {
             Engine_TaskWait(1);
             if (--timeout < 0 || (LINK_STAT & 3) != 3) {

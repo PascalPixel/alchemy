@@ -1,4 +1,20 @@
-/* NONMATCHING: 490 of 488 bytes, 131 differing halfwords / 39 aligned edits
+/* NONMATCHING: transfer T1 486/488 bytes, 22 halfwords / 6 aligned edits.
+ * 2026-09-27: exact MAKYURI_IRIGUCHI/CROSS_DOORWAY.C supplies a pre-loop
+ * zero ORed into byte flags. Here the byte accesses are priority +0x23
+ * and motion +0x55. Feeding the motion store from x and ORing zero into
+ * priority fixes the dead r8 preheader value and both post-loop r7 stores.
+ * All pool offsets/values now match. Complete normalized diff is topology
+ * equal; remaining edits are r7's hoisted zero, preheader order/back-edge,
+ * and the missing trailing alignment halfword. No partial-owner adoption.
+ * T1 fails the frozen local admission: r7 must be initialized in the loop
+ * at reference 020011fc, then reused at 020012a8 and 020012e0. loop.c still
+ * moves x's insn 212 (global savings 2, lifetime 147) to preheader 658.
+ * Diagnostic -da assembly equals normal compilation. The prior goto trial
+ * predated this corrected zero-consumer graph and kept the wrong r7/r8 roles.
+ * One causal control-flow follow-up is permitted; no zero/type permutations.
+ * No new DONE bytes.
+ *
+ * Previous canonical: 490 of 488 bytes, 131 halfwords / 39 aligned edits
  * (2026-09-26). Complete owner 02001148..02001330 includes the zero at
  * 020012f4, eleven pool words 020012f8..02001320, return at 0200132c and pad.
  * Three bounded structural trials: goto loop gives 488 bytes / 86 edits,
@@ -76,11 +92,13 @@ s32 Func_02001148(void)
         actor = Engine_ActorGet(n + 23);
         actor->sprite->priority = 1;
         x = 0;
-        actor->motion_flags = zero;
+        actor->motion_flags = x;
         actor->collision_flags = 8;
         Engine_ActorSetSpriteFlags(actor, 0);
         Engine_ObjectSetPalette(actor, 15);
-        actor->priority_flags = (actor->priority_flags & 254) | 2;
+        /* FAKEMATCH: CROSS_DOORWAY.C's pre-loop zero OR preserves the
+         * unused preheader value separately from the motion-flags zero. */
+        actor->priority_flags = (actor->priority_flags & 254) | 2 | zero;
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x202)) {
         Call3((void (*)())Engine_ActorSetPosition, 14, 0x920000, 0x1380000);

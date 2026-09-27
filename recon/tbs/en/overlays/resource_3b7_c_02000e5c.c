@@ -62,6 +62,24 @@
  * copies alone and inline clamps cannot explain complete bound ownership.
  * Probe stop gate: the bounded lifetime, update-publication and clamp models
  * are exhausted; resume only with a new bound-ownership or scheduling fact.
+ * H5 publication/consumer audit, stopped without a source trial:
+ * Hypothesis: an independently witnessed actor-record consumer constrains
+ * heading to load after z publication. Admission requires that boundary,
+ * the record-2 tail below, preserved H1/H3 and all pools; adoption additionally
+ * requires a whole-owner exact score, compare, coverage and staged verify.
+ * Budget: one complete reference/diff and exact shared-source audit; stop
+ * without a new boundary. TOPIC.C initializes disjoint x/z words at +0/+8
+ * and heading/hold halfwords at +12/+14; PLACE_ACTOR.C consumes only x/y/z.
+ * No call intervenes between the z store and heading load. Record 3 already
+ * emits store-z then load-heading with this typed record; no alias or missing
+ * consumer is established by these witnesses. No new trial was admitted.
+ * Unresolved record-2 invariant at 0200135c..02001368: str r3,[r6,#8];
+ * ldrh r3,[r6,#12]; adds r2,r3,r5; ldrh r3,[r6,#14]; adds r3,#1;
+ * strh r2,[r6,#12]; branch to shared hold store. Canonical instead loads
+ * heading into r2 before the z store and adds it after the hold load.
+ * Complete normalized diff reviewed: 2104/772/165 and frame 12 versus 24
+ * remain unchanged; bounds/sample lifetimes also remain unresolved. Preserve
+ * canonical H1/H3 until evidence explains the ordinary source dependency.
  */
 #include "TYPES.H"
 

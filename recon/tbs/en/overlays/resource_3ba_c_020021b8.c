@@ -1,4 +1,4 @@
-/* NONMATCHING: 1264 bytes, candidate 1260, 183 differing halfwords, 57
+/* NONMATCHING: 1264 bytes, candidate 1264, 17 differing halfwords, 17
  * halfword edits (2026-09-27). CommandInterpolationRenderer_Update, meant
  * for FIELD/KOROSSEO_KAWA/F_021B8.C as a single-overlay unit binding its
  * names at their runtime addresses (an import veneer's listing offset plus
@@ -68,7 +68,13 @@
  * coordinate copies in each sprite loop. Complete diff: 1260/1264 bytes,
  * 183 differing halfwords / 57 edits. Remaining: scale/duration fp/r9
  * roles and independent single-sprite clipping/placement coordinates; the
- * queue tail is structurally exact but shifted by -4 bytes. Not adopted. */
+ * queue tail is structurally exact but shifted by -4 bytes. Not adopted.
+ * 2026-09-27 Sol renderer H2: compute single-sprite left coordinates before
+ * clipping, as the loop modes do. Their independent live values reproduce
+ * both single-sprite blocks exactly and restore the full 1264-byte extent.
+ * Complete diff: 17 halfwords / 17 edits, solely the exchanged scale fp/r9
+ * and duration-pointer r9/fp roles plus the dependent affine-index moves.
+ * All pools, the command loop and complete queue tail are exact. Not adopted. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -248,8 +254,9 @@ render:
     case 4:
         y = 48;
         flags = 0xc0004000;
+        left = pos + 56;
         if ((u32)(pos + 120) < 304) {
-            x = (pos + 56) & 511;
+            x = left & 511;
             *write++ = 0;
             *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
             *write++ = 0xf400 | (tile + Data_0200c764);
@@ -259,8 +266,9 @@ render:
     case 2:
         y = 48;
         flags = 0x80000000;
+        left = pos + 88;
         if ((u32)(pos + 152) < 304) {
-            x = (pos + 88) & 511;
+            x = left & 511;
             *write++ = 0;
             *write++ = (x << 16) | y | flags | (matrix << 25) | 0x700;
             *write++ = 0xf400 | (tile + Data_0200c764);

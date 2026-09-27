@@ -25,7 +25,17 @@
  * Stop this bounded queue axis: remaining interpolation and sprite work is
  * independent, and no complete owner is adopted or credited. This family
  * also occurs at resource_3bb:02002450 and resource_3bc:02002ee8; do not
- * propagate until the complete canonical owner is exact. */
+ * propagate until the complete canonical owner is exact.
+ * 2026-09-27 division-interface H1: exact COMMON/EFFECT/SPAWN.C and the
+ * local import table prove ordinary signed division at resident 03000380.
+ * Replace all three interpolation helper calls with C / duration and bind
+ * __divsi3 to the same 0200bb00 veneer. The full 1264-byte candidate is
+ * byte-identical to the prior model (cmp): 201 halfwords / 87 edits. Thus
+ * the scale r9/fp and counter/endpoint scratch lifetimes do not change;
+ * unlike the palette caller-save witness, this body gains no new save.
+ * The complete +452..+4f0 queue tail and pool remain exact. Keep the
+ * proven arithmetic interface, close this axis without a spelling sweep,
+ * and do not instantiate the twins or credit any bytes. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -46,7 +56,6 @@ extern s16 *Data_0200c7a0;
 extern u32 Data_0200c7c0[];
 extern s32 Main_080000d8(void (*fn)(void));
 extern void Main_080001b8(s32 slot);
-extern s32 Local_02003b00(s32 left, s32 right);
 extern s32 Main_080001e0(struct SpriteTransform *work);
 extern void Main_080001e8(void *sprite, s32 priority);
 
@@ -130,7 +139,7 @@ render:
         start = Data_0200c768;
         x = Data_0200c778;
         progress = ++Data_0200c7fc;
-        scale = start + Local_02003b00((x - start) * progress, duration);
+        scale = start + (x - start) * progress / duration;
         if (progress >= duration)
             Data_0200c754 = zero.value;
     }
@@ -143,7 +152,7 @@ render:
         start = Data_0200c798;
         x = Data_0200c794;
         progress = ++Data_0200c784;
-        blend = start + Local_02003b00((x - start) * progress, duration);
+        blend = start + (x - start) * progress / duration;
         if (progress >= duration)
             Data_0200c7a8 = zero.value;
     }
@@ -156,7 +165,7 @@ render:
         start = Data_0200c7f0;
         x = Data_0200c7f8;
         progress = ++Data_0200c77c;
-        pos = start + Local_02003b00((x - start) * progress, duration);
+        pos = start + (x - start) * progress / duration;
         if (progress >= duration)
             Data_0200c76c = zero.value;
     }

@@ -1896,7 +1896,7 @@
           "address": "0x0200bb68",
           "kind": "thumb"
         },
-        "Local_02003b00": {
+        "__divsi3": {
           "address": "0x0200bb00",
           "kind": "thumb"
         },

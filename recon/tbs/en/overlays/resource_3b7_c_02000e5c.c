@@ -1,5 +1,5 @@
-/* NONMATCHING: reference 2124 bytes, candidate 2100, 768 differing
- * halfwords / 172 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
+/* NONMATCHING: reference 2124 bytes, candidate 2104, 772 differing
+ * halfwords / 165 aligned edits (2026-09-27). Whole owner 02000e5c..020016a8;
  * its 22 pool words lie at 1074..1094, 136c..1384, 13a0..13a4 and
  * 168c..16a8 within resource_3b7. Initializer, placement helper, import
  * bindings and interworking sqrt calls audited against this repository/ROM.
@@ -33,8 +33,8 @@
  * Exact HAIDIA_IE/EXTENDED_SEQUENCE.C at 3c4fe6cee provides the independent
  * separate-lifetime witness; its nullable FieldActor lookup is absent here,
  * so no pointer-type transfer was applied. No new function/alignment credit.
- * Remaining: trapezoid x/z samples and x/z bound lifetimes; frame 12 versus
- * 24 bytes; reaction store before modulo; circular hold updates share a tail.
+ * H1 remaining: trapezoid x/z samples and x/z bound lifetimes; frame 12
+ * versus 24 bytes; reaction store before modulo; circular counter tail.
  * Preserve these admitted geometry lifetimes in subsequent structural work.
  * H2, rejected: a pristine x sample for the far-bound and lower-edge checks,
  * plus an independent z clipping sample, predicted x's saved copy and the
@@ -42,7 +42,16 @@
  * bound allocation changes. z clipping alone changes four instructions from
  * r5 to r3, not the required r2. Still 2100/768/172; full normalized diff is
  * unchanged outside those four clipping instructions. Trial body preserved
- * in this checkpoint; restore H1 before testing another structural model.
+ * at 6afa2a78f; canonical H1 bounds restored before the next model.
+ * H3, prepare actor updates before publishing their fields: next_mode owns
+ * the modulo result separately from the reaction constant. This reproduces
+ * the complete modulo/reaction/mode/cooldown sequence without disturbing H1
+ * geometry. Prepared circular heading/hold values use u16 destination width:
+ * s32 produced signed loads (2108/733/180), whereas u16 restores the paired
+ * unsigned loads and shared hold-store tail (2104/772/165). Retained partial
+ * model; heading loads before the z store, not after it as in the reference.
+ * Remaining: bounds/sample lifetimes, frame 12 versus 24, and circular load
+ * scheduling/operand choice. All pools and the full normalized diff reviewed.
  */
 #include "TYPES.H"
 
@@ -183,8 +192,6 @@ void FieldScene_RunSecondaryScript(void)
     s32 i;
     s32 x;
     s32 z;
-    s32 xpos;
-    s32 zpos;
     s32 y;
     s32 tmp;
     s32 step;
@@ -312,7 +319,6 @@ void FieldScene_RunSecondaryScript(void)
             }
 
             x = work->pos[0][0];
-            xpos = x;
             if (x < 0x5a0000) {
                 tmp = (0x5a0000 - x) * 18 / 42;
                 zlo = 0x180000 + tmp;
@@ -324,8 +330,8 @@ void FieldScene_RunSecondaryScript(void)
                     zhi = 0x660000;
                 }
             }
-            if (xpos > 0x960000) {
-                tmp = (xpos * 18 - 0xa8c0000) / 42;
+            if (x > 0x960000) {
+                tmp = (x * 18 - 0xa8c0000) / 42;
                 zlo = 0x180000 + tmp;
                 if (zlo > 0x2a0000) {
                     zlo = 0x2a0000;
@@ -337,7 +343,7 @@ void FieldScene_RunSecondaryScript(void)
             }
 
             /* Bounce off each edge with half the incoming speed. */
-            if (xpos < xlo) {
+            if (x < xlo) {
                 work->pos[0][0] = xlo;
                 if (work->velocity[0] < 0) {
                     work->velocity[0] = -work->velocity[0] / 2;
@@ -350,15 +356,15 @@ void FieldScene_RunSecondaryScript(void)
                     work->velocity[0] = -work->velocity[0] / 2;
                 }
             }
-            zpos = work->pos[0][2];
-            if (zpos < zlo) {
+            z = work->pos[0][2];
+            if (z < zlo) {
                 work->pos[0][2] = zlo;
                 if (work->velocity[2] < 0) {
                     work->velocity[2] = -work->velocity[2] / 2;
                 }
-                zpos = zlo;
+                z = zlo;
             }
-            if (zpos > zhi) {
+            if (z > zhi) {
                 work->pos[0][2] = zhi;
                 if (work->velocity[2] > 0) {
                     work->velocity[2] = -work->velocity[2] / 2;
@@ -442,11 +448,16 @@ void FieldScene_RunSecondaryScript(void)
             if (REC_REACT(rec) > 0) {
                 Engine_ObjectSetAnimation(Engine_ActorGet(20), 3);
             } else {
+                u16 heading;
+                u16 hold;
+
                 Engine_ObjectSetAnimation(Engine_ActorGet(20), 2);
                 REC_X(rec) = Engine_MathCos(REC_HEADING(rec)) * 48 + 0x700000;
                 REC_Z(rec) = Engine_MathSin(REC_HEADING(rec)) * 40 + 0x480000;
-                REC_HEADING(rec) = REC_HEADING(rec) + step;
-                REC_HOLD(rec) = REC_HOLD(rec) + 1;
+                heading = REC_HEADING(rec) + step;
+                hold = REC_HOLD(rec) + 1;
+                REC_HEADING(rec) = heading;
+                REC_HOLD(rec) = hold;
             }
         } else {
             /* Record 3 turns the other way and rests for the last 128 counts
@@ -484,6 +495,7 @@ void FieldScene_RunSecondaryScript(void)
             dist = dx * dx + dz * dz;
             if (dist <= 119 && work->budget > 30) {
                 s32 speed;
+                s32 next_mode;
 
                 speed = 0x30000;
                 if (i <= 1) {
@@ -507,9 +519,10 @@ void FieldScene_RunSecondaryScript(void)
                     work->budget = work->budget - 100;
                 }
                 Engine_AudioPlayCue(301);
+                next_mode = (REC_MODE(rec) + 1) % 3;
                 val = 36;
                 REC_REACT(rec) = val;
-                REC_MODE(rec) = (REC_MODE(rec) + 1) % 3;
+                REC_MODE(rec) = next_mode;
                 val = 30;
                 REC_COOL(rec) = val;
             }

@@ -1,6 +1,12 @@
 {
   "format": 3,
   "owners": {
+    "resource_3bd:02000bc8": {
+      "name": "ArutamiraDou_ApplyRoomVisuals"
+    },
+    "resource_3c4:020010c4": {
+      "name": "BabiChika_RunLeaderSpray"
+    },
     "resource_3b3:02000ddc": {
       "name": "FieldScene_QueryActorFootprint"
     },
@@ -21591,6 +21597,9 @@
     },
     "resource_3cb:02000580": {
       "name": "LinkLobby_SendPartyRecords"
+    },
+    "resource_37b:02000c8c": {
+      "name": "Local_02000c8c"
     }
   },
   "symbols": {

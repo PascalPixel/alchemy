@@ -7,7 +7,28 @@
  * the byte into r3 and the 2 into r2 (the reference swaps them), and the
  * block after the six-frame wait: the reference takes &options into r8 first
  * and stores the zero flag byte from r5 after loading the update address;
- * this draft stores the zero from r3 first. */
+ * this draft stores the zero from r3 first.
+ *
+ * 2026-09-27: registered as babi-chika-leader-spray. FIELD_EFFECT.H supplies
+ * the same options and actor layouts as BABI_IRIGUCHI/BRANCHING_EVENT.C;
+ * the callback is the exact BABI_CHIKA/MAP_INIT.C motion updater.
+ * Canonical -da dumps show the flag-clear zero is a block-local QImode
+ * pseudo (46), while options (34) spans seven calls. Reusing one signed
+ * local for that zero and later vx keeps a saved register but rotates the
+ * leader/counter/velocity registers: 41 halfwords; also using it for the
+ * earlier OR gives 39. Moving options.update before the clear leaves the
+ * same size but 23 aligned edits and a two-byte-shorter instruction body.
+ * Makyuri's inline SetFlagBits fixes the opening OR exactly, but changes
+ * reload registers later: 18 halfwords, 17 edits. All four models are
+ * rejected; this keeps the 11-halfword baseline. A next attempt needs an
+ * independently supported lifetime for the zero/options pair, not another
+ * declaration permutation or store-order sweep.
+ * The dump's callback load was also tested with an explicit update pointer
+ * assigned before the flag clear, then stored to options afterwards. This
+ * does move the callback load first, but does not retain options early or
+ * put zero in r5: 284 bytes, 82 halfwords, 29 aligned edits, with a new
+ * trailing instruction-alignment halfword. Reject that lifetime model too;
+ * the 11-halfword baseline below remains unchanged. */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
@@ -15,7 +36,7 @@ s32 Engine_MathModulo(s32 value, s32 divisor);
 void Main_0808a118(s32 mode);
 void advance_effect_motion(union FieldObject *object);
 
-void Local_020010c4(void)
+void BabiChika_RunLeaderSpray(void)
 {
     struct FieldActor *leader = Engine_ActorGet(0);
     u8 *flags;

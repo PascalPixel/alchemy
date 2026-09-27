@@ -1,4 +1,22 @@
-/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4704,
+/* NONMATCHING: 4708-byte owner 02002360..020035c4, candidate 4696.
+ * 2026-09-27 two-buffer H1: buffers[0] receives the one slot-17 allocation;
+ * Item_LoadIcon runs before buffers[1] = buffers[0] + 0x400, then Vram_Load
+ * consumes buffers[1] and Heap_Release closes the same slot. ROM stores the
+ * base at 020029d0/sp+40 and reloads at 020029da, then stores the derived
+ * handle at 020029e6/sp+36; the whole owner has no later derived-handle read.
+ * Prediction: both handle stores/reload, +8 frame bytes, unchanged calls.
+ * Full normalized result: 4696/4708 bytes, 2100 differing halfwords,
+ * 808 aligned halfword edits. Frame grows 120 -> 136 (+16, not +8), options
+ * and velocity reach the ROM's sp+96/+44/+84, and origin x spills appear
+ * at sp+28/+20 with low r7 counters. Neither origin call setup is exact.
+ * RTL models buffers as DI pseudo 37; lreg deletes its second-word write
+ * (initial insn 2948), keeping derived address pseudo 623 as Vram_Load arg.
+ * greg spills only the first word at sp+36. No derived-handle store survives.
+ * Calls and copy arguments are preserved, but the two-store admission gate
+ * fails. This checkpoint preserves the negative experiment before restoring
+ * the 4704/1704/610 canonical body. No origin-lifetime follow-up is admitted;
+ * no index, record, declaration or scalar permutations. DONE +0; alignment +0.
+ *
  * 2026-09-27 Sol Venus Summit H1: one FieldObject union owns both actor
  * and effect stores. Predict the reference's +48/+28/+44 store order from
  * one aliasing owner. The complete normalized diff is identical to baseline:
@@ -123,7 +141,8 @@ void Scene_RunPairedActorEffectSequence(void)
     union FieldObject *object;
     struct FieldActor *bird;
     struct FieldSprite *sprite;
-    u8 *buffer;
+    /* FAKEMATCH: retain the icon allocation and tile handles in two local slots. */
+    u8 *buffers[2];
     s32 yes;
     u32 i;
 
@@ -306,9 +325,10 @@ void Scene_RunPairedActorEffectSequence(void)
         object->actor.unknown_5c = 1;
         object->actor.speed = 0x19999;
         object->actor.acceleration = 0xcccc;
-        buffer = Heap_Allocate(17, 0x608);
+        buffers[0] = Heap_Allocate(17, 0x608);
         Item_LoadIcon(220);
-        Vram_Load(sprite->vram_block, 128, buffer + 0x400);
+        buffers[1] = buffers[0] + 0x400;
+        Vram_Load(sprite->vram_block, 128, buffers[1]);
         Heap_Release(17);
     }
     Actor_SetSpritePriority(22, 1);

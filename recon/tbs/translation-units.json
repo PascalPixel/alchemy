@@ -25613,6 +25613,10 @@
         {
           "start": "0x0200487e",
           "end": "0x02004880"
+        },
+        {
+          "start": "0x020037d6",
+          "end": "0x020037d8"
         }
       ],
       "game": "tbs",
@@ -40087,6 +40091,10 @@
         {
           "start": "0x02000b22",
           "end": "0x02000b24"
+        },
+        {
+          "start": "0x02002f16",
+          "end": "0x02002f18"
         }
       ],
       "game": "tbs",
@@ -42239,6 +42247,16 @@
     },
     {
       "id": "overlays-scene-actor-facing-gated",
+      "compiler_gaps": [
+        {
+          "start": "0x0200274e",
+          "end": "0x02002750"
+        },
+        {
+          "start": "0x02003096",
+          "end": "0x02003098"
+        }
+      ],
       "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/FACING_GATED.C",
       "overlay": "resource_378",
       "absolute_symbols": {
@@ -53579,6 +53597,14 @@
         {
           "start": "0x02005b46",
           "end": "0x02005b48"
+        },
+        {
+          "start": "0x0200594e",
+          "end": "0x02005950"
+        },
+        {
+          "start": "0x02005d66",
+          "end": "0x02005d68"
         }
       ],
       "game": "tbs",
@@ -77597,6 +77623,12 @@
     },
     {
       "id": "scene-3b1-0200012c",
+      "compiler_gaps": [
+        {
+          "start": "0x02000282",
+          "end": "0x02000284"
+        }
+      ],
       "source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/WALKER_STEP.C",
       "overlay": "resource_3b1",
       "absolute_symbols": {
@@ -80887,6 +80919,12 @@
     },
     {
       "id": "scene-378-02000848",
+      "compiler_gaps": [
+        {
+          "start": "0x0200088a",
+          "end": "0x0200088c"
+        }
+      ],
       "source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/LEADER_PRIORITY.C",
       "overlay": "resource_378",
       "absolute_symbols": {

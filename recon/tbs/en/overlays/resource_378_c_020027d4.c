@@ -39,6 +39,14 @@
  * Canonical 312-byte baseline restored after preserving both experiments;
  * no exact credit. Named-table hoisting is a separate solved fact, but does
  * not admit a model that still caches the cursor address across calls.
+ * 2026-09-27 completion pass: one-pass scopes around initialization and the
+ * first position call produce 316/312 bytes, 56 halfwords / 29 edits.
+ * Initialization alone gives 316/312, 56 halfwords / 26 edits. Both restore
+ * window r7 but cache the cursor through r5 then r8, not per-call sp+8.
+ * The initial address pseudo now has three uses over six insns/one call;
+ * its successor has four uses over 78 insns/three calls. Scope boundaries
+ * split the lifetime, but do not remove it. Reject both, keep the 312-byte
+ * baseline and stop this boundary axis; all five pool values stay unchanged.
  */
 #include "TYPES.H"
 

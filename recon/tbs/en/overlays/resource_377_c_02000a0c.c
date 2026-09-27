@@ -1,4 +1,10 @@
-/* NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
+/* 2026-09-27 Sol H1: explicit port/value inline writer creates the port
+ * before the second counter (pseudos 260/261), but global allocation still
+ * gives the more-used counter r5 and the port r6. Full normalized diff and
+ * allocator read; candidate is byte-identical to the canonical baseline.
+ * Pseudo creation order alone does not explain this six-halfword swap.
+ * Frame, all pools and both reload boundaries remain exact; no adoption.
+ * NONMATCHING: resource_377:02000a0c; 1064 / 1064 bytes, 8 differing
  * halfwords, 16 wrong instructions, 8 aligned edits. Canonical H2 restored.
  * 2026-09-27: greg allocates the second counter (pseudo 260) before its
  * independent port (261); the first port has r5 preference inherited from
@@ -116,6 +122,11 @@ static __inline__ void SetBlendAlpha(u32 value)
     Data_04000052 = value;
 }
 
+static __inline__ void WriteBlendAlpha(volatile u16 *port, u32 value)
+{
+    *port = value;
+}
+
 void FieldScene_RunPaletteRampSequence(void)
 {
     s32 base;
@@ -212,10 +223,11 @@ ramp:
     Call1(Main_080000c0, 10);
     base = 0x100f;
     {
+        volatile u16 *port = &Data_04000052;
         u32 cnt;
 
         for (cnt = 0; cnt <= 15; cnt++) {
-            Data_04000052 = base - cnt;
+            WriteBlendAlpha(port, base - cnt);
             Call1(Main_080000c0, 1);
         }
     }

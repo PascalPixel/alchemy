@@ -1,4 +1,9 @@
-/* NONMATCHING: 236 of 232 bytes, 82 differing halfwords, 51 aligned edits.
+/* NONMATCHING: H1 ship 2026-09-27, 236 of 232 bytes, 104 differing
+ * halfwords, 69 aligned edits. Volatile counter pointer restores the loop
+ * reload but adds r8 saves, a second decrement load and a 0xffff pool word;
+ * it does not emit the required unconditional ldrsh/ldrh then word subtract.
+ * Full normalized diff read. Rejected volatile-pointer ownership model.
+ * Previous baseline: 236 of 232 bytes, 82 differing halfwords, 51 aligned edits.
  * 2026-09-27: the complete pool proves the 24 twelve-byte records end at
  * count +0x120, followed by the VRAM id +0x122. Modelling these as one
  * state restores the word decrement but folds the three independent pool
@@ -44,7 +49,7 @@ void Local_020011c4(void)
 {
     u32 *w;
     struct Sprite *p;
-    union RowCounter *count;
+    volatile union RowCounter *count;
     s32 tile;
     u32 i;
     s32 v;

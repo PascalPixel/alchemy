@@ -1,9 +1,9 @@
-/* NONMATCHING: 788 bytes, candidate 788, 24 differing halfwords, 22 halfword
+/* NONMATCHING: 788 bytes, candidate 788, 24 differing halfwords, 23 halfword
  * edits (2026-09-27). FieldScene_RunMultiPhasePresentation, meant for
  * FIELD/ARUTIN_YAMA/F_01D0C.C as a single-overlay unit binding its names at
  * their runtime addresses (an import veneer's listing offset plus 0x8000).
  * Remaining: first-setup pointer/literal/store scheduling, flag OR scratch
- * registers, and wait-counter scheduling. Complete extent and pools match.
+ * registers, and wait-counter scheduling. Full extent/pool positions kept.
  * WALL: Initial motion setup scheduling and constant placement; typed
  * aggregate and grouped-store alternatives did not help.
  * H1 transfers the exact timed callback's signed timer/delay and active
@@ -17,6 +17,13 @@
  * sequences and second callback publication now match. H1's canonical
  * animation argument order stays exact. Initial setup is unchanged; no
  * grouped-store retry. Stronger than the saved 788/26/24 baseline.
+ * H3: Object_UpdateAllMotion proves +0x48 is gravity, not effect velocity.
+ * Exposing it in SceneMotion and using actor->motion.gravity, with every
+ * store left in place, yields 788/24/23. Only the early gravity store shifts
+ * one instruction; zero/pointer order, timer/delay order and swapped pool
+ * entries do not close. Callback remains 200/200 exact. H2 is still best.
+ * STOP this ownership axis: no remaining evidence for grouped stores or
+ * another register-spelling search. Keep the proven gravity offset fact.
  * Missing EventEnd, local task and data bindings are now explicit. No DONE. */
 #include "TYPES.H"
 
@@ -86,7 +93,7 @@ void FieldScene_RunMultiPhasePresentation(void)
     delay = &actor->motion.delay;
     *(volatile s32 *)&actor->motion.active = 0;
     timer = &actor->motion.timer;
-    *(s32 *)&actor->actor.unknown_44[4] = 0x6666;
+    actor->motion.gravity = 0x6666;
     *(volatile s16 *)delay = 0;
     *(volatile s16 *)timer = 0;
     actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;

@@ -37,7 +37,26 @@
  * is absent. The factory type shift still precedes x/z loads, rather than
  * following them. This boundary trial did not satisfy its admission check.
  * Failed model preserved at 5270c6cd7; restore the simpler baseline here.
- * Stop without a second spelling/prototype trial; zero DONE credit. */
+ * Stop without a second spelling/prototype trial; zero DONE credit.
+ *
+ * 2026-09-27 paired-spawn transfer audit (no source model admitted):
+ * Fresh full baseline remains 238/244, 73 halfwords / 16 aligned edits.
+ * Own task registration in the paired-actor scene supplies no arguments;
+ * exact 3600 consumes the existing radius/angle view. The main dispatch
+ * implementation and 08009098 veneer confirm a void script initializer.
+ * Exact LAMP and sibling 5a28 have MathDivide between ObjectCreate and
+ * script setup; that real call invalidates the factory r0 equivalence.
+ * There is no such call or other clobber in this owner's complete ROM.
+ * Reproduced -da/-fsched-verbose=5 assembly equals the ordinary baseline:
+ * lreg insn 151 still sets r0 from spark 33; greg deletes that instruction.
+ * reload_cse_noop_set_p compares cselib values; cselib_process_insn forgets
+ * them at a CODE_LABEL or call, not a fall-through conditional. The earlier
+ * one-pass publication label was already proved absent before this pass.
+ * Neither Title's HI-zero boundary nor the exact callback introduces the
+ * missing control-flow/call boundary. No new wrapper, null test, declaration
+ * or compilation variant is justified by these sources. Preserve canonical
+ * and stop; missing evidence is a source boundary surviving through reload
+ * while retaining the reference's fall-through null test and all calls. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

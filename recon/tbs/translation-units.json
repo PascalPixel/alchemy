@@ -13147,7 +13147,7 @@
           "address": "0x020096ec",
           "kind": "data"
         },
-        "Engine_DebugGetItem": {
+        "Func_08077018": {
           "address": "0x02009444",
           "kind": "thumb"
         },

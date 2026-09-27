@@ -1,10 +1,24 @@
-/* NONMATCHING: resource_370:02000de4; 1004 / 1024 bytes, 479 differing
- * halfwords, 442 wrong instructions, 286 halfword edits. Integer-domain
+/* NONMATCHING: resource_370:02000de4; 1008 / 1024 bytes, 479 differing
+ * halfwords, 416 wrong instructions, 258 aligned edits (2026-09-27 H1).
+ * Complete owner 02000de4..020011e4, including both literal-pool groups.
+ * The save-menu caller passes (unused, password mode, output), then adds
+ * a checksum and calls exact Clear_EncodePassword. Import 02009444 calls
+ * Item_Get, not a debug routine: canonical ITEM.H pointer return retained.
+ * Transfer from exact Inventory_Find / Inventory_GetQuantity: shared
+ * OwnerInventoryState, id low nine bits, quantity high five bits. A local
+ * complete last-match scan returns the encoded quantity to the bit writer.
+ * H1 improves 1004 bytes / 286 edits to 1008 / 258, notably the pack tail,
+ * but fails the admission invariant: key still spills, frame still 68/64,
+ * inventory base still hoists and the middle pool is still too late. No
+ * exact credit. Original baseline remains in parent c8976444b.
+ * Integer-domain
  * packing offset restores complete topology. The shared money union gives
  * the reference's one base and +16/+18 accesses. Frame remains 68 / 64 bytes;
  * a word item temporary restores unsigned ldrh without extension. Property
  * key spill, counter allocation and rank reloads remain. */
 #include "TYPES.H"
+#include "ITEM.H"
+#include "OWNER_STATE.H"
 
 struct PasswordStats {
     s16 value_10;
@@ -28,7 +42,6 @@ struct PasswordOwnerState {
 
 s32 Engine_GameFlagIsSet(s32 flag);
 struct PasswordOwnerState *Engine_OwnerGetState(s32 owner);
-void Engine_DebugGetItem(s32 item);
 extern u16 Data_020096d0[6];
 extern s32 Data_020096c0[4];
 extern u16 Data_020096dc[8];
@@ -46,6 +59,25 @@ struct PasswordMoney {
 };
 
 extern struct PasswordMoney Data_02000240;
+
+/* Inventory_Find and Inventory_GetQuantity prove the shared inventory view
+ * and the low-nine-bit id / high-five-bit quantity encoding. The password
+ * stores quantity minus one, and its complete scan retains the last match. */
+static __inline__ u16 Password_FindItemQuantity(
+    struct OwnerInventoryState *state, s32 target)
+{
+    u16 *code = state->inventory;
+    u16 quantity = 0;
+    s32 k;
+
+    for (k = 0; k != 15; k++) {
+        u32 item = *code++;
+
+        if ((item & 0x1ff) == target)
+            quantity = (item & 0xf800) >> 11;
+    }
+    return quantity;
+}
 
 s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
 {
@@ -151,7 +183,7 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
             for (j = 0; j != 15; j++) {
                 s32 item;
 
-                Engine_DebugGetItem(state->item_codes[j]);
+                Item_Get(state->item_codes[j]);
                 item = state->item_codes[j] & 0x1ff;
                 out[p] += item >> (bit + 1);
                 out[p + 1] += item << (7 - bit);
@@ -167,18 +199,11 @@ s32 Func_02000de4(s32 unused, s32 mode, u8 *out)
         p = 107;
         bit = -1;
         for (i = 0; i != 4; i++) {
-            struct PasswordOwnerState *state =
-                (struct PasswordOwnerState *)Engine_OwnerGetState(Data_020096c0[i]);
+            struct OwnerInventoryState *state =
+                (struct OwnerInventoryState *)Engine_OwnerGetState(Data_020096c0[i]);
             s32 j;
             for (j = 0; j != 23; j++) {
-                u16 property = 0;
-                u16 *code = state->item_codes;
-                s32 k;
-                for (k = 0; k != 15; k++) {
-                    u32 item = *code++;
-                    if ((item & 0x1ff) == Data_020096ec[j])
-                        property = (item & 0xf800) >> 11;
-                }
+                u16 property = Password_FindItemQuantity(state, Data_020096ec[j]);
                 if (bit < 0) {
                     out[p] += property >> -bit;
                     p++;

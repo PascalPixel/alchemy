@@ -1,4 +1,14 @@
-/* Draft, not-yet-c. H4 literal failure publication (2026-09-27):
+/* Draft, not-yet-c. H5 failure zero width follow-up (2026-09-27):
+ * Explicit block-local s32 stopped = 0 retains SI pseudo 83 through CSE,
+ * rather than H4's QI pseudo 85. It still does not share the incoming force
+ * pseudo at the two-predecessor failure label. Local allocation reserves
+ * r5 for stopped; force spills. Full 224-byte output is byte-identical to
+ * H4: 70 differing halfwords / 49 aligned edits, signed pool unchanged.
+ * STOP: one model plus one causal follow-up. The useful invariant is that
+ * independent literal failure zero prevents late tail merging; its lifetime
+ * is not the reference's incoming force r6. No new source fact supports
+ * another variant. Retain H3's stronger 59 HW / 39 edits as the baseline.
+ * H4 literal failure publication (2026-09-27):
  * 224/224 bytes, 70 differing halfwords / 49 aligned edits. Transfer the
  * exact SHIAN tracking sibling's literal-zero failure stores, retaining
  * this owner's byte widths. CSE shares QI zero 85 across the failure call;
@@ -83,9 +93,13 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
     } while (0);
     goto done;
 miss:
-    *(u8 *)&obj->unknown_5b = 0;
-    Engine_ObjectSetAnimation(obj, 2);
-    *(u8 *)&obj->rise_counter = 0;
+    {
+        s32 stopped = 0;
+
+        *(u8 *)&obj->unknown_5b = stopped;
+        Engine_ObjectSetAnimation(obj, 2);
+        *(u8 *)&obj->rise_counter = stopped;
+    }
 done:
     return result;
 }

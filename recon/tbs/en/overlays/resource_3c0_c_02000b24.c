@@ -1,4 +1,4 @@
-#include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 /* Unit bindings for scoring (declare as absolute_symbols of a unit on
  * resource_3c0:02000b24):
@@ -11,13 +11,8 @@
  *   Engine_ActorGet = 0x0200928c (thumb)
  */
 
-void Engine_GameFlagClear();
-void Engine_GameFlagSet();
-void Main_080770e8();
-void Engine_Import0808a250();
-void Engine_ActorStop();
-void Engine_ActorSetPosition();
-s32 Engine_ActorGet();
+void Main_080770e8(s32 counter, s32 value);
+void Engine_Import0808a250(s32 actor, s32 mode);
 
 
 extern u8 Data_000000a4[];
@@ -56,7 +51,11 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
  * Remaining: a1/base use r5/r6 instead of r6/r5, the store lacks the local r1
  * to saved r5 copy, and the (98, 5) call prepares its arguments in reverse.
  * Allocator: a1 pseudo 33 crosses five calls; base pseudo 79 crosses four.
- * No further pointer spelling sweep without evidence changing that lifetime. */
+ * No further pointer spelling sweep without evidence changing that lifetime.
+ * 2026-09-27: FIELD_EVENT.H actor/flag interfaces and the typed motion_flags
+ * field emit identical bytes. Transferring the direct (98, 5) call from exact
+ * StoryScene_CompleteActor98 also emits identical bytes. Both axes closed;
+ * the saved-state lifetime remains the residual, not an omitted argument. */
 void Func_02000b24(s32 a0, s32 a1)
 {
     u32 i;
@@ -94,5 +93,5 @@ void Func_02000b24(s32 a0, s32 a1)
             }
         }
     }
-    *(u8 *)(Engine_ActorGet(state->words[125]) + 85) = 3;
+    Engine_ActorGet(state->words[125])->motion_flags = 3;
 }

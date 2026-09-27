@@ -1,4 +1,11 @@
 /* NONMATCHING: complete resource_370:020003cc..02000cfc, 2352 bytes.
+ * Sol workspace H1 (2026-09-27): one typed object owns the started flag
+ * and three contiguous buffers. 2364/2352 bytes, 1160 differing halfwords,
+ * 938 aligned edits, 882 wrong instructions. Full normalized diff read.
+ * Frame grows to 564/548: object escape adds a base temporary and started
+ * reloads; buffers move to glyph +40, password +44, save data +364.
+ * Page and encoded size both spill. Cleanup topology is unchanged. Reject
+ * the object model; this commit preserves its complete negative witness.
  * Current cleanup H2: 2344 bytes, 1144 halfwords, 930 aligned edits.
  * Baseline 2026-09-27: 2368 bytes, 1145 halfwords, 903 aligned edits;
  * frame 556 rather than 548. Full listing and normalized diff read.
@@ -59,6 +66,13 @@ extern u8 Data_02001100[];
 struct SaveLinkGreeting {
     u16 code[4];
     u8 reserved[16];
+};
+
+struct SaveMenuWorkspace {
+    s32 started;
+    u8 glyph[4];
+    u8 password[320];
+    u8 save_data[200];
 };
 
 extern struct SaveLinkGreeting Data_02002224;
@@ -252,18 +266,15 @@ s32 SaveMenu_Run(void)
     s32 page_message;
     s32 page;
     s32 x;
-    s32 started;
     s32 slot4;
     s32 heading_window;
     s32 help_window;
-    u8 save_data[200];
-    u8 password[320];
-    u8 glyph[4];
+    struct SaveMenuWorkspace work;
 
-    started = 0;
+    work.started = 0;
     Func_02000438();
     Value2(Func_0200171a, 0x20081fd, 0xc80);
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = started;
+    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = work.started;
     Func_020094ac();
     Func_020018c0();
     if (*(s16 *)(Data_02000240 + 0x1c2) == 2) {
@@ -295,7 +306,7 @@ s32 SaveMenu_Run(void)
         Engine_UiWorkFinalize(heading_window, 2);
         Func_020017c0(1);
     } else {
-        *(u8 *)0x03001ca0 = started;
+        *(u8 *)0x03001ca0 = work.started;
     }
     L_020004a8:;
     do {
@@ -309,11 +320,11 @@ s32 SaveMenu_Run(void)
             }
         }
         if (rec8 == 0) {
-            if (started == 0) {
+            if (work.started == 0) {
                 Func_02001804(30);
                 Value2(Func_02001816, 0x2008155, 0xc80);
                 Func_02001814(1);
-                started = 1;
+                work.started = 1;
             }
         }
         if (rec8 > 0) {
@@ -586,11 +597,11 @@ s32 SaveMenu_Run(void)
         if (v6 == -1) {
             goto L_020007dc;
         }
-        encoded_size = Value3(Func_020017d2, 0, v6, save_data);
-        value = Func_02001cbe(encoded_size, save_data);
-        *(u8 *)(save_data + encoded_size) = ((u32)(value << 16) >> 24);
-        *(u8 *)(save_data + (encoded_size + 1)) = ((value << 16) >> 16);
-        encoded_size = Value3(Func_02001bf8, save_data, (encoded_size + 2), password);
+        encoded_size = Value3(Func_020017d2, 0, v6, work.save_data);
+        value = Func_02001cbe(encoded_size, work.save_data);
+        *(u8 *)(work.save_data + encoded_size) = ((u32)(value << 16) >> 24);
+        *(u8 *)(work.save_data + (encoded_size + 1)) = ((value << 16) >> 16);
+        encoded_size = Value3(Func_02001bf8, work.save_data, (encoded_size + 2), work.password);
         v6 = 2;
         Func_02001d6e();
         page_window = Func_02001dae(5, 4, 20, 12, v6);
@@ -688,10 +699,10 @@ s32 SaveMenu_Run(void)
                 v4 = 0;
                 v7 = (page * 50);
                 do {
-                    v3 = password;
+                    v3 = work.password;
                     v3 = *(u8 *)(v3 + v7);
                     slot4 = v4;
-                    Func_02000f0c((63 & v3), glyph);
+                    Func_02000f0c((63 & v3), work.glyph);
                     record = Func_02001f3c(v7, 10);
                     v4 = slot4;
                     if (record > 4) {
@@ -711,7 +722,7 @@ s32 SaveMenu_Run(void)
                         v3 = (v3 << 4);
                     }
                     v3 = (v3 + 2);
-                    Func_02002030(glyph, page_window, x, v3);
+                    Func_02002030(work.glyph, page_window, x, v3);
                     v4 = slot4;
                     v7 = (v7 + 1);
                     v4 = (v4 + 1);

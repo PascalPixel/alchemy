@@ -7,7 +7,7 @@
  * n 14/38, x 10/31. The close z/n rank is a fact, not a declaration tie.
  * Prediction n=r8 is falsified; complete extent, frame and pool unchanged.
  * Reject reuse-counter axis after one trial. No adoption or new DONE.
- * H3 witness body is checkpointed before restoring the original candidate.
+ * H3 witness body is preserved in afb77e41c; the original candidate is restored.
  * Historical facts:
  * (2026-09-27). H2 is byte-identical to the original baseline.
  * Whole extent [020035ac,02003668), pool included. Independent twin extent
@@ -58,11 +58,8 @@ void Local_020035ac(struct FieldActor *object)
     p[1].fixed = object->y.fixed;
     p[2].fixed = object->z.fixed;
     Main_08000128(0x180000, angle, p);
-    /* FAKEMATCH: reuse the frame counter as coordinate-rounding work. */
-    n = p[0].fixed + 0x80000;
-    x = n & -0x100000;
-    n = p[2].fixed + 0x80000;
-    z = n & -0x100000;
+    x = (p[0].fixed + 0x80000) & 0xfff00000;
+    z = (p[2].fixed + 0x80000) & 0xfff00000;
     angle += 0x8000;
     Engine_ObjectSetAnimation(object, 5);
     Engine_AudioPlayCue(184);

@@ -1,4 +1,18 @@
-/* NONMATCHING P5 (2026-09-27): 612/612 bytes, 117 differing halfwords,
+/* NONMATCHING P6 (2026-09-27): 612/612 bytes, 116 differing halfwords,
+ * 30 aligned edits. Transfer exact EAST_PARTICLE_WAVE's row setup order:
+ * initialize base z, initialize zero, then add offset, inside the already
+ * admitted row <= 7 guard. GCSE retains separate user z/zero producers
+ * (SI75/SI76 and SI146/SI147), followed by the z += offset update. Both
+ * emitted blocks now have reference base/zero/add order. Full normalized
+ * diff read: only those two instruction swaps changed from P5; dimensions,
+ * topology, and all four pool words/offsets remain admitted. Retain P6.
+ * Remaining: r9/sl count/options roles, absent second write-view copy with
+ * hoisted scale literal, and the last rectangle's argument order. Code is
+ * still two bytes short before native alignment; complete extent is 612.
+ * P4/P5/P6 finish this bounded family pass. No further model without new
+ * pointer/dependency evidence; no function or separate alignment credit.
+ *
+ * NONMATCHING P5 (2026-09-27): 612/612 bytes, 117 differing halfwords,
  * 34 aligned edits; topology and all four pool words/offsets unchanged.
  * Transfer exact EAST_PARTICLE_WAVE's Map_CopyCellsTo boundary to the four
  * intervening 5x2 copies. Like the now-exact ShiftBridge, dimensions belong
@@ -85,9 +99,10 @@ void Scene_RunPairedParticleWaveSequence(void)
     again:
         i = 0;
         if (row <= 7) {
-            s32 z = 0x300000 + offset;
+            s32 z = 0x300000;
             s32 zero = 0;
 
+            z += offset;
             do {
                 Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3600000, 0, z, 0, zero, zero, 0x880000, opts);
                 z += 0x40000;
@@ -113,9 +128,10 @@ void Scene_RunPairedParticleWaveSequence(void)
         Rubble_SetScaleAndSpin(opts);
         i = 0;
         if (row <= 7) {
-            s32 z = 0x300000 + offset;
+            s32 z = 0x300000;
             s32 zero = 0;
 
+            z += offset;
             do {
                 Effect_Spawn((((u32)(Engine_RandomNext() * 7) >> 16) << 19) + 0x3000000, 0, z, 0, zero, zero, 0x880000, opts);
                 z += 0x40000;

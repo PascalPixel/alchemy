@@ -10,6 +10,14 @@
  * H1 result: byte-identical to baseline (720/720 bytes, 19 differing
  * halfwords, 18 aligned edits). Keep the canonical declaration; return and
  * pointer shape do not affect these call sites. No matching-C credit.
+ * H2, remaining canonical interface: veneer 080153f8 dispatches to exact
+ * UiText_OpenEntryMessage (080175c0), whose result is s32. Use that return
+ * type and cast the returned slot at its consumer, rather than declaring
+ * a pointer-returning callee. Complete normalized comparison is unchanged:
+ * 720/720 bytes, 19 differing halfwords, 18 aligned edits, equal topology,
+ * frame 32 and the first 101 instructions exact. These two real interface
+ * corrections do not explain the six residual runs. Stop this axis; no
+ * statement or declaration sweep and no matching-C credit.
  */
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -57,7 +65,7 @@ void RenderOutput_ClearListFar(s32 window);
 void Func_08015060(s32 window);
 void Func_080152a8(void);
 void Func_08015078(s32 message, s32 window, s32 x, s32 y);
-struct ChooserMessage **Func_080153f8(s32 window, s32 message);
+s32 Func_080153f8(s32 window, s32 message);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 palette);
 s32 Menu_DrawAtWindowOffset(void *window, s32 x, s32 y, s32 width, s32 height, s32 palette);
@@ -113,7 +121,7 @@ s32 Func_080ab314(void)
     do {
         Func_08015060(win_a);
         Func_08015078(selection + (s32)&Value_00000c32, win_a, 0, 0);
-        slot = Func_080153f8(win_b, selection + 0xc39);
+        slot = (struct ChooserMessage **)Func_080153f8(win_b, selection + 0xc39);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
         Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);
         previous = selection;

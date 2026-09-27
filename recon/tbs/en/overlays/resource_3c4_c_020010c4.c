@@ -1,4 +1,8 @@
-/* Publication P2 result: 284/284 bytes, 90 halfwords / 29 aligned edits.
+/* Canonical 284/11 restored after publication P1 (74e203d9a) and P2
+ * (1646e59e6): neither admits early options plus saved-to-store copy and
+ * reference zero lifetime together. Stop this boundary axis; SetFlagBits
+ * remains proven for the opening OR only, not a remedy for this hunk.
+ * Publication P2 result: 284/284 bytes, 90 halfwords / 29 aligned edits.
  * Options reaches r8 before the clear, but via r2, which also remains the
  * callback-store base: the required saved-to-r0 copy disappears. Body is
  * two bytes short with a new trailing pad; all five pool words agree.
@@ -91,10 +95,7 @@ void BabiChika_RunLeaderSpray(void)
     Engine_ObjectSetPosition(leader, leader->x.fixed, leader->y.fixed, leader->z.fixed + 0xc0000);
     Engine_TaskWait(6);
     o = &options;
-    /* FAKEMATCH: preserve options ownership across the byte publication. */
-    do {
-        *flags = 0;
-    } while (0);
+    *flags = 0;
     o->update = advance_effect_motion;
     Engine_AudioPlayCue(127);
     for (i = 0; i < 8; i++) {

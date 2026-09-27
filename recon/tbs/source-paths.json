@@ -1,6 +1,9 @@
 {
   "format": 3,
   "owners": {
+    "resource_3b3:02000ddc": {
+      "name": "FieldScene_QueryActorFootprint"
+    },
     "main:0801908c": {
       "name": "RenderOutput_UpdateScaleAnimation"
     },
@@ -15157,6 +15160,9 @@
       "name": "FieldScene_RunStep20b",
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
     },
+    "resource_396:020017ec": {
+      "name": "ToretoHeya_ApplyFlaggedMapPatches"
+    },
     "resource_396:0200184c": {
       "name": "SceneEffect_RegisterPaletteFadeCallback",
       "source": "FIELD/TORETO_HEYA/FOUR_ENCOUNTER.C"
@@ -21576,6 +21582,9 @@
     },
     "resource_371:02001ca4": {
       "name": "WorldMap_RunVenusDjinniMeeting"
+    },
+    "resource_3cb:02000580": {
+      "name": "LinkLobby_SendPartyRecords"
     }
   },
   "symbols": {

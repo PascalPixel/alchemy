@@ -4,12 +4,45 @@
  * replace the old container constants and incomplete decompiler expressions.
  * Remaining: facing pointer spills through r4 (8-byte frame instead of 4),
  * first steering-branch shape and reload registers. Separate block-local
- * facings instead allocate a 12-byte frame; that ownership trial is ruled out. */
+ * facings instead allocate a 12-byte frame; that ownership trial is ruled out.
+ * H1 (2026-09-27): one scene record owns its byte position and three stops;
+ * one halfword direction result is reused by every snap. NEAREST_STOP.C and
+ * PROMPT.C establish the 16-byte record and in/out direction contract.
+ * Admission: 4-byte frame, first direction address retained across Atan2
+ * without a spill; whole 612-byte owner and pool must be exact to adopt.
+ * Baseline 608/612, 256 halfwords, 117 aligned edits.
+ * H1 result: 604/612, 269 halfwords, 127 aligned edits. The 8-byte frame
+ * and r4 direction-address spill survive; member storage also changes the
+ * initial signed facing loads to ldrh. Thus the record layout is supported,
+ * but a direction aggregate does not recover the missing lifetime boundary.
+ * Exact siblings were read only; no adoption credit.
+ * H2: restore scalar facing and expose the snap's in/out pointer across
+ * steering, with a common fallback for failed leader-cone guards. H1's
+ * allocator gives its generated address pseudo 166 r4: five uses over 32
+ * instructions and one call. Test an explicit direction lifetime instead;
+ * preserve the 4-byte/no-spill admission check and complete-owner gate.
+ * H2 result: 600/612, 273 halfwords, 126 aligned edits, still 8-byte frame
+ * with the direction address spilled across Atan2. Assigning the angle
+ * difference before the guard folds the two signed bounds into one unsigned
+ * interval, adding 0x0fff0000/0x1ffe0000 pools absent from ROM. Not admitted.
+ * Stop this record/direction axis; no new DONE bytes. Canonical body restored
+ * to the scalar/shared-facing baseline; retain the callee-proven record type
+ * and these rejected hypotheses, not either failed pointer representation. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-struct StopSet;
-struct StopRecord;
+struct Stop {
+    u8 id;
+    u8 pos;
+    u8 unknown_02[2];
+};
+
+struct StopRecord {
+    u8 x;
+    u8 z;
+    u8 unknown_02[2];
+    struct Stop stops[3];
+};
 
 struct StopWork {
     u8 unknown_000[0x182];
@@ -21,10 +54,10 @@ struct StopWork {
 extern struct StopWork *gStopWork;
 extern u16 gBlockedFrames;
 
-u8 *SceneData_FindEntryAtPosition(s32 *pos);
-struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *facing);
-s32 SceneActor_CheckTileFreeOfKinds(u8 *pos);
-void SceneActor_ApplyScaledBytePairPosition(s32 actor, u8 *pos);
+struct StopRecord *SceneData_FindEntryAtPosition(s32 *pos);
+struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopRecord *set, s16 *facing);
+s32 SceneActor_CheckTileFreeOfKinds(struct StopRecord *pos);
+void SceneActor_ApplyScaledBytePairPosition(struct FieldActor *actor, struct StopRecord *pos);
 s32 Math_Atan2(s32 z, s32 x);
 
 void KuupuappuHeya_UpdateActorStops(void)
@@ -32,8 +65,8 @@ void KuupuappuHeya_UpdateActorStops(void)
     struct FieldActor *leader;
     struct FieldActor *actor;
     struct StopWork *work;
-    u8 *entry;
-    u8 *dest;
+    struct StopRecord *entry;
+    struct StopRecord *dest;
     s32 dx;
     s32 dz;
     s32 blocked;
@@ -60,9 +93,9 @@ void KuupuappuHeya_UpdateActorStops(void)
         } else if (dx * dx + dz * dz > 64) {
             facing = actor->facing;
         }
-        dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
-            SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+            SceneActor_ApplyScaledBytePairPosition(actor, dest);
             Engine_ObjectSetAnimation(actor, 2);
         } else {
             Engine_ObjectSetAnimation(actor, 1);
@@ -75,10 +108,10 @@ void KuupuappuHeya_UpdateActorStops(void)
         rnd = (u32)Engine_RandomNext() * 2 >> 16;
         rnd = (rnd * 0x60000000 - 0x30000000) >> 16;
         facing = actor->facing + rnd;
-        dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
             facing = actor->facing + 0x8000;
-            dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+            dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
             if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
                 Engine_ActorSetAttachedEffect(24, 2);
                 goto move_first;
@@ -87,7 +120,7 @@ void KuupuappuHeya_UpdateActorStops(void)
             blocked = 1;
         } else {
 move_first:
-            SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+            SceneActor_ApplyScaledBytePairPosition(actor, dest);
             Engine_ObjectSetAnimation(actor, 2);
         }
     }
@@ -98,10 +131,10 @@ move_first:
         rnd = (u32)Engine_RandomNext() * 3 >> 16;
         rnd = (rnd * 0x30000000 - 0x30000000) >> 16;
         facing = actor->facing + rnd;
-        dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+        dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
         if (SceneActor_CheckTileFreeOfKinds(dest) != 0) {
             facing = actor->facing + 0x8000;
-            dest = (u8 *)KuupuappuHeya_SnapToNearestStop((struct StopSet *)entry, &facing);
+            dest = KuupuappuHeya_SnapToNearestStop(entry, &facing);
             if (SceneActor_CheckTileFreeOfKinds(dest) == 0) {
                 Engine_ActorSetAttachedEffect(25, 2);
                 goto move_second;
@@ -110,7 +143,7 @@ move_first:
             blocked += 2;
         } else {
 move_second:
-            SceneActor_ApplyScaledBytePairPosition((s32)actor, dest);
+            SceneActor_ApplyScaledBytePairPosition(actor, dest);
             Engine_ObjectSetAnimation(actor, 2);
         }
     }

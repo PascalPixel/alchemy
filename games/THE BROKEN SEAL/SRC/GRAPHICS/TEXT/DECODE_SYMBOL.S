@@ -101,3 +101,5 @@ Func_08015430:
 	pop	{r5, r6}
 	bx	lr
 	.4byte 0x0803842c
+	.global Text_DecodeSymbolCodeSize
+	.set Text_DecodeSymbolCodeSize, . - Func_08015430

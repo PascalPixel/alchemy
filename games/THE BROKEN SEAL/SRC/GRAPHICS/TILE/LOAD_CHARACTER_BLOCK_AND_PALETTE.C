@@ -16,7 +16,7 @@ extern const u8 SentouKouka_Tenkai[];
 extern volatile u16 RegIme;
 
 extern void *Data_03001e50[];
-extern u8 Value_00000230[];
+extern u8 SentouKouka_TenkaiCodeSize[];
 
 void Graphics_ClearCharacterBlockAndPalette(s32 alternate);
 u8 *Resource_GetTableEntry(u32 resource);
@@ -49,7 +49,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
         vram = 0x06008000;
         palette = 0x05000100;
     }
-    size = (u32)Value_00000230;
+    size = (u32)SentouKouka_TenkaiCodeSize;
     decoder = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     ((PackedDecoder)Data_03001e50[49])(data + 256, vram, fill);

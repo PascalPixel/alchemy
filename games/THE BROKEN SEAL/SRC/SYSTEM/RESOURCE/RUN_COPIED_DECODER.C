@@ -9,13 +9,13 @@ struct RuntimeCells {
 };
 
 extern struct RuntimeCells gWorkSlot;
-extern u8 Value_0000027c[];
+extern u8 TileMap_DrawRowsCodeSize[];
 extern u8 gDecodeBuffer[];
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 
-/* Copies the ARM decoder at 0x08009e7c (Value_0000027c bytes) to a heap
-   block and runs the decoder installed at 0x03001f14 on a and b. */
+/* Copies the map-row renderer (DRAW_MAP.S) to a heap block and runs the
+   routine installed at 0x03001f14 on a and b. */
 void Resource_RunCopiedDecoder(s32 a, s32 b)
 {
     u8 *base;
@@ -24,7 +24,7 @@ void Resource_RunCopiedDecoder(s32 a, s32 b)
 
     base = gDecodeBuffer;
     /* FAKEMATCH: the do-whiles order the size load and the call. */
-    do { size = (u32)Value_0000027c; } while (0);
+    do { size = (u32)TileMap_DrawRowsCodeSize; } while (0);
     code = Runtime_AllocateHeapBlock(49, size);
     Dma_Set((const void *)TileMap_DrawRows, code, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     do { gWorkSlot.decode(a, b, (void *)0x0203c000, base + 0x1000); } while (0);

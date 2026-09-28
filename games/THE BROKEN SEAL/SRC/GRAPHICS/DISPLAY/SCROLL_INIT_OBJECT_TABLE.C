@@ -3,7 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 
 void Unnamed_080f0538(void);
-void Unnamed_080f0614(void);
+void DisplayScroll_RenderEnteringLine(void);
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 s32 Func_080f07f0(void *resource, s32 offset, s32 mode);
@@ -73,7 +73,7 @@ void DisplayScroll_InitObjectTable(void)
     Data_02004c08 = 0;
     Data_02004c04 = 0;
     Scheduler_AddOrUpdateCallback((s32)Unnamed_080f0538, 0x480);
-    Scheduler_AddOrUpdateCallback((s32)Unnamed_080f0614, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
     for (i = 0; i < 32; i++)
         Func_080f07f0(*(void **)0x080f1220, i * 24, 1);
 }

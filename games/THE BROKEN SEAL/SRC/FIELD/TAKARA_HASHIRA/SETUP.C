@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void FieldScene_RedrawActorFootprint();
 void Engine_MapCopyCells();
@@ -58,7 +59,7 @@ s32 TakaraHashira_SetupArea(void)
     s32 v5;
     s32 v0;
 
-    *(s32 *)(*(s32 *)0x03001ebc + 0x1c0) = 0x204;
+    *(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x204;
     if (Data_02000240_t[224][0] == (s32)Data_00000074) {
         FieldScene_RedrawActorFootprint(8);
         FieldScene_RedrawActorFootprint(9);

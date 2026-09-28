@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 gKeyState[];
+extern u8 gKeysRepeat[];
 
 extern s32 Data_02000240_t[][1];
 
@@ -35,19 +37,19 @@ s32 LinkLobby_RunChoicePrompt(s32 id)
             Main_080150a0(choice, 3, window, 0, 0);
             shown = choice;
         }
-        if (*(volatile u32 *)0x03001b04 & 32) {
+        if (*(volatile u32 *)gKeysRepeat & 32) {
             choice--;
         }
-        if (*(volatile u32 *)0x03001b04 & 16) {
+        if (*(volatile u32 *)gKeysRepeat & 16) {
             choice++;
         }
         if (choice < 0) {
             choice = 0;
         }
-        if (*(volatile u32 *)0x03001c94 & 1) {
+        if (*(volatile u32 *)gKeyState & 1) {
             break;
         }
-        if (*(volatile u32 *)0x03001c94 & 2) {
+        if (*(volatile u32 *)gKeyState & 2) {
             choice = -1;
             break;
         }

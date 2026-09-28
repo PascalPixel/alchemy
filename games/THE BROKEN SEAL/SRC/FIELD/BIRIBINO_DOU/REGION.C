@@ -14,6 +14,7 @@
 #define DefaultOverlayData Data_020089bc
 
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+extern struct MapRenderWork *gMapWork;
 
 extern s16 Data_02000240[];
 extern unsigned char Value_00000031;
@@ -369,13 +370,13 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
 void SceneState_SetGlobalByte17(void)
 {
 
-    FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 1;
+    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 1;
 }
 
 void SceneState_ClearRuntimeByte17(void)
 {
 
-    FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 0;
+    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 0;
 }
 
 /*

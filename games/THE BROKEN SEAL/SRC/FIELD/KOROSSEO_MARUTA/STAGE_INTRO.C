@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void Local_0200288c();
 void Engine_EventBegin();
@@ -78,7 +79,7 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
         Engine_EventBegin();
         rec8 = Value2(ColossoLogRollingStage_RunStateInteraction, a0, 3);
         if (rec8 == 0) {
-            p8 = *(s32 *)0x03001ebc;
+            p8 = *(s32 *)&gEventWork;
             Call1(Engine_EventSetMessage, 0x20bb);
             Local_02000188();
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);

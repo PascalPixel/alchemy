@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 Data_03001ecc[];
+extern u8 gEffectWork[];
 
 void Engine_ColorBufferApplySource();
 void Engine_ColorBufferApplyTarget();
@@ -32,8 +34,8 @@ void ImiruFuchin_StartFadeIn(void)
     u8 *work;
 
     if (Data_02000240_t[225][0] <= 6) {
-        fade = *(struct FadeWork **)0x03001f30;
-        work = *(u8 **)0x03001ecc;
+        fade = *(struct FadeWork **)gEffectWork;
+        work = *(u8 **)Data_03001ecc;
         fade->active = 1;
         work[0x53e] = 0;
         work[0x53c] = 1;

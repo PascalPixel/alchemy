@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_PROGRESS.H"
+extern struct GameState gGameState;
 
 struct PartyCounterWork {
     u8 unknown_00[0x10];
@@ -12,7 +13,7 @@ s32 Party_AdjustSixDigitCounterA(s32 amount)
     struct PartyCounterWork *work;
     struct PartyCounterWork *store;
 
-    work = (struct PartyCounterWork *)0x02000240;
+    work = (struct PartyCounterWork *)&gGameState;
     value = work->value;
     value = (s32)((u32)value + (u32)amount);
     store = work;

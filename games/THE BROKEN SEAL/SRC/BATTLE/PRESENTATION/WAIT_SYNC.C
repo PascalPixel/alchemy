@@ -3,6 +3,7 @@
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
+extern u8 gLinkPeerSignatures[];
 
 extern u8 gBattleWork[];
 extern u8 gLinkStatus[];
@@ -19,7 +20,7 @@ struct LinkWork {
 };
 
 #define LINK_WORK (*(struct LinkWork **)gBattleWork)
-#define LINK_REC 0x02002024
+#define LINK_REC (u32)gLinkPeerSignatures
 #define LINK_LOCAL ((u16 *)0x02002224)
 #define LINK_STAT (*(u16 *)gLinkStatus)
 

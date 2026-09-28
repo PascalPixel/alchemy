@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct MapRenderWork *gMapWork;
 
 struct FieldActor {
     u8 unknown_00[8];
@@ -50,7 +51,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
     s32 z;
     s32 id;
 
-    list = *(u8 **)(*(u8 **)0x03001e70 + 16);
+    list = *(u8 **)(*(u8 **)&gMapWork + 16);
     actor = ObjectTable_Get(gGameState.leader);
     actor_x = actor->x >> 20;
     actor_z = actor->z >> 20;

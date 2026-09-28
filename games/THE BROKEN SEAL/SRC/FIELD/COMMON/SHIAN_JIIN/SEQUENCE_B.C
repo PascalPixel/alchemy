@@ -78,7 +78,7 @@ void Scene_RunScene39eSequenceB(void)
             Actor_SetAnimationAndWait(8, 3);
             Event_ShowMessage(8, 0);
         } else {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 2;
+            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 2;
             Event_ShowMessage(8, 0);
         }
         Actor_SetAnimationAndWait(8, 3);
@@ -95,9 +95,9 @@ void Scene_RunScene39eSequenceB(void)
             FieldScene_FinishSequence();
             Event_Wait(30);
             Event_ShowMessage(8, 0);
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         } else {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
             Event_Wait(20);
             Actor_SetAnimationAndWait(8, 3);
             Event_Wait(20);

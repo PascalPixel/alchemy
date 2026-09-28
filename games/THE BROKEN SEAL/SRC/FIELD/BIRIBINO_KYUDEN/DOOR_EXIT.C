@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 s32 Engine_GameFlagIsSet();
 void Engine_AudioPlayCue();
@@ -35,7 +36,7 @@ void BiribinoKyuden_RunDoorExitScene(void)
     u8 *work;
     s32 lock;
 
-    work = *(u8 **)0x03001ebc;
+    work = *(u8 **)&gEventWork;
     lock = 0;
     if (*(s16 *)(work + 0x16c) == 9) {
         if (Engine_GameFlagIsSet(0x200) == 0) {

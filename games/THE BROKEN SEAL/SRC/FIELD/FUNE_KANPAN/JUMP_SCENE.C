@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void Engine_EventBegin();
 void Main_0808a030();
@@ -85,7 +86,7 @@ void FuneKanpan_RunJumpScene(void)
     
         *(u16 *)(record + 6) = shown;
     }
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x202;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x202;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);

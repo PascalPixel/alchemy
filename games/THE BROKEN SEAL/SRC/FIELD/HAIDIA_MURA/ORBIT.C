@@ -2,7 +2,7 @@
 
 void Effect_PlayStepSound(void)
 {
-    if ((*(u32 *)0x03001e40 & 15) == 0)
+    if ((*(u32 *)&gFrameCount & 15) == 0)
         Audio_PlayCue(0x83);
 }
 

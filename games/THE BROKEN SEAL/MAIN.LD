@@ -1589,7 +1589,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_BUILD_HBLANK_WORD_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_STEP_POSITION_EVERY_FOUR_FRAMES.o"(.text)
         "*/recon/tbs/raw/080f03f0.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080f0538.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_UPDATE_OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_RENDER_ENTERING_LINE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SCROLL_INIT_OBJECT_TABLE.o"(.text)
         "*/recon/tbs/raw/080f07f0.o"(.text .rodata .data .padding)

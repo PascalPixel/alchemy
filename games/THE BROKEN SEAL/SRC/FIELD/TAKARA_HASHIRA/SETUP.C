@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 TakaraHashira_PillarSlots[];
 extern struct EventWork *gEventWork;
 
 void FieldScene_RedrawActorFootprint();
@@ -112,7 +113,7 @@ s32 TakaraHashira_SetupArea(void)
             OverlayObject_SetCallbackAndMode2(10);
             OverlayObject_SetCallbackAndMode2(11);
             {
-                s32 *entry = (s32 *)0x200b6d0;
+                s32 *entry = (s32 *)TakaraHashira_PillarSlots;
 
                 for (v1 = 0; (u32)v1 <= 3; v1++) {
                     entry[0] = 0;

@@ -3,6 +3,8 @@ extern u32 gFrameCount;
 extern u8 Data_03001cfc[];
 extern u8 gDecodeBuffer[];
 extern u8 gMapCellBuffer[];
+void MapAnimation_Update(void);
+void MapAnimation_PresentFrame(void);
 
 struct MapAnimationWork {
     u8 unknown_000[0xfc];
@@ -28,11 +30,11 @@ void MapAnimation_Start(void)
     s32 one = 1;
 
     work->active = one;
-    Scheduler_EnableCallbacks((void (*)(void))0x0801179d);
+    Scheduler_EnableCallbacks(MapAnimation_Update);
     Dma_Set((const void *)0x06004000, (void *)gDecodeBuffer, 0x84000800, (volatile u32 *)0x040000d4);
     WaitFrames(1);
     Resource_RunCopiedDecoder(pages + (*(u32 *)&gFrameCount & one) * 0x1400 + 0xc80, (void *)gMapCellBuffer);
     work->timer = 200;
     work->limit = 255;
-    *(u32 *)Data_03001cfc = 0x08011569;
+    *(u32 *)Data_03001cfc = (u32)MapAnimation_PresentFrame;
 }

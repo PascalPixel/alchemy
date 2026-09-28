@@ -1,12 +1,12 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Engine_ObjectCommitPosition(struct FieldActor *object);
-void Main_080090e0(s32 handle, struct FieldActor *object);
+void Object_CommitPosition(struct FieldActor *object);
+void ObjectDispatch_InitFromTable4WithArgument(s32 handle, struct FieldActor *object);
 void *Engine_AllocateBlock(s32 slot, s32 size);
 
 /* The log's rolling animation for each quarter of the pusher's heading. */
-extern u8 Data_0200c0c0[];
+extern u8 KorosseoKabe_RollLogScript[];
 
 /* The leader rolls log id to cell (column / 2, row) on the Board Walk: the
  * log rolls there with the animation for the push direction while the
@@ -35,18 +35,18 @@ void KorosseoKabe_RollLogToCell(s32 id, s32 column, s32 row)
     Engine_EventWait(6);
     log->speed = 0x8000;
     log->acceleration = 0x3333;
-    Engine_ObjectSetAnimation(log, Data_0200c0c0[heading / 0x4000]);
+    Engine_ObjectSetAnimation(log, KorosseoKabe_RollLogScript[heading / 0x4000]);
     Engine_ObjectSetPosition(log, column, 0, row);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(pusher, 2);
-    Main_080090e0(*(s32 *)((u8 *)Engine_AllocateBlock(27, 0xccc) + 480), log);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)((u8 *)Engine_AllocateBlock(27, 0xccc) + 480), log);
     Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
     Engine_ObjectSetAnimation(leader, 2);
     Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0, leader->z.fixed + dz);
     Engine_AudioPlayCue(239);
-    Engine_ObjectCommitPosition(leader);
+    Object_CommitPosition(leader);
     Engine_ObjectSetAnimation(leader, 1);
-    Engine_ObjectCommitPosition(log);
+    Object_CommitPosition(log);
     Engine_AudioPlayCue(288);
     Engine_AudioPlayCue(213);
     Engine_ObjectSetAnimation(log, 1);

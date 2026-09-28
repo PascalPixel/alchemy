@@ -8,7 +8,7 @@ void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
 void Engine_EventShowMessage();
-s32 Local_02002ba8();
+s32 Korosseo_FadeInCompetitor();
 void Engine_ActorSetSpeed();
 s32 SceneActor_PlaceWithScale14000();
 void Engine_EventWait();
@@ -22,8 +22,7 @@ s32 FieldScene_RunMiddleSequence();
 void Engine_EventEnd();
 
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern s16 gCell[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -67,7 +66,7 @@ void KorosseoKabe_RunStageIntro(s32 a0)
     s32 rec;
     s32 record;
 
-    if (Data_02000240_t[225][0] == 2) {
+    if (gCell[225] == 2) {
         Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
@@ -78,7 +77,7 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             Call4(Engine_CameraMoveTo, 0x4c80000, -1, 0xb80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
-            Value3(Local_02002ba8, 0, 0x4f8, 168);
+            Value3(Korosseo_FadeInCompetitor, 0, 0x4f8, 168);
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
             SceneActor_PlaceWithScale14000(0, 0x508, 184);
             SceneActor_PlaceWithScale14000(0, 0x508, 216);

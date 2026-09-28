@@ -1,39 +1,22 @@
 #include "TYPES.H"
 
-#define HaidiaArashi_RunEventSequence Func_02000f38
 
-void Func_020020a8();
-s32 Func_02002aa6();
-s32 Func_02002abc();
-void Func_020055b2();
-s32 Func_0200561a();
-void Func_02005626();
-s32 Func_0200562a();
-void Func_02005644();
-s32 Func_02005684();
-void Func_020056ae();
-void Func_020056ba();
-void Func_020056d2();
-void Func_020056e4();
-s32 Func_020056ec();
-void Func_020056ee();
-s32 Func_020056f6();
-s32 Func_02005702();
-void Func_02005714();
-void Func_0200572a();
-void Func_02005740();
-void Func_0200574e();
-void Func_02005754();
-s32 Func_0200575c();
-void Func_02005772();
-void Func_020057ba();
-void Func_020057c8();
-void Func_020057d0();
-void Func_020057de();
-void Func_02005824();
-void Func_02005830();
-void Func_02005898();
-void Func_020058a6();
+void ActorPresentation_SetEightSceneCells();
+s32 SceneActor_RunActor22PlacementSequence();
+void Engine_TaskWait();
+s32 Engine_GameFlagIsSet();
+void Engine_WorkSetValuesIfNonNegative();
+void Engine_EventBegin();
+s32 Engine_ActorGet();
+void Engine_MapWaitWorkValuesBelow256();
+void Engine_EventWait();
+void Engine_GameFlagSet();
+void Engine_ActorSetPosition();
+void Engine_ActorWalkToAndWait();
+void Engine_EventEnd();
+void ObjectMotion_SetActionVariant();
+void Engine_AudioPlayCue();
+void BattleFx_PlayQueuedSound();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -66,51 +49,51 @@ void HaidiaArashi_RunEventSequence(void)
     s32 record;
     s32 v3;
 
-    if (Value1(Func_0200561a, 0x311) != 0) {
+    if (Value1(Engine_GameFlagIsSet, 0x311) != 0) {
     } else {
-        Func_02005644();
-        if (Value1(Func_0200562a, 0x831) == 0) {
-            rec7 = Func_02005684(12);
-            Call3(Func_02005626, 0x40000, 0x40000, 0x10000);
-            Func_02005824(141);
-            Func_020055b2(40);
-            Func_02005830(145);
-            Call3(Func_02005714, 12, 0x17d0000, 0x3280000);
+        Engine_EventBegin();
+        if (Value1(Engine_GameFlagIsSet, 0x831) == 0) {
+            rec7 = Engine_ActorGet(12);
+            Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
+            Engine_AudioPlayCue(141);
+            Engine_TaskWait(40);
+            Engine_AudioPlayCue(145);
+            Call3(Engine_ActorSetPosition, 12, 0x17d0000, 0x3280000);
             *(s32 *)(rec7 + 48) = 0x18000;
             *(s32 *)(rec7 + 52) = 0x18000;
             v3 = (*(s32 *)(rec7 + 12) + 0x1000000);
             *(s32 *)(rec7 + 12) += 0x1000000;
             *(s32 *)(rec7 + 60) = v3;
             *(s32 *)(rec7 + 68) = 0x8000;
-            Call3(Func_0200572a, 12, 0x122, 0x341);
-            Func_020057ba(12, 1);
-            Call3(Func_02005740, 12, 0x102, 0x354);
-            Func_020057d0(12, 2);
-            Call3(Func_02005754, 12, 224, 0x368);
-            Func_020056d2(40);
-            Call1(Func_02005898, 0x121);
-            Call3(Func_020056ae, -1, -1, 0xe666);
-            Func_020056ba();
-            Func_020058a6();
-            Call1(Func_020056e4, 0x831);
+            Call3(Engine_ActorWalkToAndWait, 12, 0x122, 0x341);
+            ObjectMotion_SetActionVariant(12, 1);
+            Call3(Engine_ActorWalkToAndWait, 12, 0x102, 0x354);
+            ObjectMotion_SetActionVariant(12, 2);
+            Call3(Engine_ActorWalkToAndWait, 12, 224, 0x368);
+            Engine_EventWait(40);
+            Call1(Engine_AudioPlayCue, 0x121);
+            Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
+            Engine_MapWaitWorkValuesBelow256();
+            BattleFx_PlayQueuedSound();
+            Call1(Engine_GameFlagSet, 0x831);
         }
-        Func_020020a8();
-        Call1(Func_020056ee, 0x311);
-        if (Value1(Func_020056ec, 0x837) != 0) {
-            if (Value1(Func_020056f6, 0x841) == 0) {
-                if (Value1(Func_02005702, 0x30c) == 0) {
-                    record = Func_0200575c(0);
+        ActorPresentation_SetEightSceneCells();
+        Call1(Engine_GameFlagSet, 0x311);
+        if (Value1(Engine_GameFlagIsSet, 0x837) != 0) {
+            if (Value1(Engine_GameFlagIsSet, 0x841) == 0) {
+                if (Value1(Engine_GameFlagIsSet, 0x30c) == 0) {
+                    record = Engine_ActorGet(0);
                     if (*(s32 *)(record + 12) > 0x800000) {
-                        Value2(Func_02002aa6, 219, 0x34b);
-                        Call3(Func_020057c8, 0, 179, 0x33d);
+                        Value2(SceneActor_RunActor22PlacementSequence, 219, 0x34b);
+                        Call3(Engine_ActorWalkToAndWait, 0, 179, 0x33d);
                     } else {
-                        Value2(Func_02002abc, 214, 0x38c);
-                        Call3(Func_020057de, 0, 219, 0x38f);
+                        Value2(SceneActor_RunActor22PlacementSequence, 214, 0x38c);
+                        Call3(Engine_ActorWalkToAndWait, 0, 219, 0x38f);
                     }
-                    Call1(Func_0200574e, 0x30c);
+                    Call1(Engine_GameFlagSet, 0x30c);
                 }
             }
         }
-        Func_02005772();
+        Engine_EventEnd();
     }
 }

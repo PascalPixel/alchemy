@@ -693,7 +693,26 @@ fn midi_reason(data: &[u8]) -> Option<&'static str> {
     if !closed {
         return Some(MALFORMED);
     }
-    data_uri_reason(&text).or_else(|| encoded_reason(&text, false))
+    placement_reason(&text)
+        .or_else(|| data_uri_reason(&text))
+        .or_else(|| encoded_reason(&text, false))
+}
+/// A sequence's text names its own labels and events; where the song lands
+/// and what its tone bank's address is belong to the build. A hexadecimal
+/// literal of four or more digits, or a placement field, is refused.
+fn placement_reason(text: &str) -> Option<&'static str> {
+    let address = text.match_indices("0x").any(|(index, _)| {
+        text[index + 2..]
+            .bytes()
+            .take_while(u8::is_ascii_hexdigit)
+            .count()
+            >= 4
+    });
+    let placement = ["\"base\"", "\"externals\""]
+        .iter()
+        .any(|field| text.contains(field));
+    (address || placement)
+        .then_some("MIDI records a ROM address or placement; the build supplies it")
 }
 /// The binary build inputs a game may track, each parsed exactly as the asset
 /// build reads it; everything else is text.
@@ -2442,6 +2461,29 @@ fn binary_fixtures() -> Vec<Fixture> {
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.MID",
             meta(0x7f, &directive),
             None,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/SKELETON.MID",
+            meta(
+                0x01,
+                br#"{"format":1,"engine":"smsh-sequence","layout":[{"kind":"stream","label":"track_1"}]}"#,
+            ),
+            None,
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/PLACED.MID",
+            meta(0x01, br#"{"format":1,"base":"0x08000000","layout":[]}"#),
+            Some("ROM address or placement"),
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/TONE_BANK.MID",
+            meta(0x01, br#"{"externals":{"tone_bank":"tone_bank"}}"#),
+            Some("ROM address or placement"),
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/LITERAL.MID",
+            meta(0x06, br#"["goto","0x0815fb78"]"#),
+            Some("ROM address or placement"),
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE_00.PCM4",

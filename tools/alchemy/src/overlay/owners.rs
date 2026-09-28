@@ -47,44 +47,6 @@ pub fn assembly_target(path: &Path) -> DecompTarget {
         .unwrap_or_else(|| target_for(DEFAULT_TARGET))
 }
 
-/// The overlay a listing file name holds: `resource_3c8_overlay.s` holds
-/// `resource_3c8`.
-pub fn listing_overlay(file_name: &str) -> Option<&str> {
-    file_name
-        .strip_suffix("_overlay.s")
-        .filter(|overlay| overlay.starts_with("resource_"))
-}
-
-/// The not-yet-C owners of the target's game: each reviewed owner whose
-/// listing has no `AlchemyC_` placeholder yet, with a `Func_` name and its
-/// reviewed extent.
-pub fn listed_owners(
-    root: &Path,
-    target: DecompTarget,
-) -> Result<BTreeMap<SourceOwner, (String, usize)>, String> {
-    let mut placeholders: BTreeMap<String, BTreeMap<u32, usize>> = BTreeMap::new();
-    let mut owners = BTreeMap::new();
-    for (owner, extent) in reviewed_spans(root, target)? {
-        let overlay = owner
-            .overlay_id()
-            .ok_or_else(|| format!("{} is not an overlay owner", owner.id()))?;
-        if !placeholders.contains_key(&overlay) {
-            let path = root.join(target.overlay_assembly(&overlay));
-            let text = std::fs::read_to_string(&path)
-                .map_err(|error| format!("{}: {error}", path.display()))?;
-            placeholders.insert(
-                overlay.clone(),
-                crate::compiler::overlay::placeholder_extents(&text),
-            );
-        }
-        if placeholders[&overlay].contains_key(&owner.address()) {
-            continue;
-        }
-        owners.insert(owner, (format!("Func_{:08x}", owner.address()), extent));
-    }
-    Ok(owners)
-}
-
 /// `recon/<game>/semantic/regions.json`.
 pub fn register_path(root: &Path, target: DecompTarget) -> PathBuf {
     root.join(target.recon_dir()).join("semantic/regions.json")
@@ -164,37 +126,6 @@ mod tests {
             reviewed_spans(work.path(), target).unwrap(),
             crate::compiler::translation_units::reviewed_overlay_spans(work.path()).unwrap()
         );
-    }
-
-    #[test]
-    fn listed_owners_are_the_reviewed_owners_without_placeholders() {
-        let work = tempfile::tempdir().unwrap();
-        let target = production_target(CompilerTarget::Tla);
-        let path = register_path(work.path(), target);
-        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        std::fs::write(
-            &path,
-            r#"{"format":1,"manual_regions":[
-                {"overlay":"resource_64e","entry":"0x02000080","span_bytes":36},
-                {"overlay":"resource_64e","entry":"0x020000a4","span_bytes":16}]}"#,
-        )
-        .unwrap();
-        let listing = work.path().join(target.overlay_assembly("resource_64e"));
-        std::fs::create_dir_all(listing.parent().unwrap()).unwrap();
-        std::fs::write(
-            &listing,
-            "\t.space 0x80\n\t.space 0x24\nAlchemyC_020000a4:\n\t.space 0x10\n",
-        )
-        .unwrap();
-        let owners = listed_owners(work.path(), target).unwrap();
-        let owner = SourceOwner::parse("resource_64e:02000080").unwrap();
-        assert_eq!(owners.len(), 1);
-        assert_eq!(owners[&owner], ("Func_02000080".to_string(), 36));
-        assert_eq!(
-            listing_overlay("resource_64e_overlay.s"),
-            Some("resource_64e")
-        );
-        assert_eq!(listing_overlay("resource_64e.s"), None);
     }
 
     #[test]

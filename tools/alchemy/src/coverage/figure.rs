@@ -106,15 +106,23 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     let (left, top) = (40, 32);
     let (right, bottom) = (WIDTH - 8 - label_room, height - footer);
     let (plot_w, plot_h) = (right - left, bottom - top);
-    if pending.iter().any(|pending| *pending) {
-        canvas.text(
-            letters,
-            left,
-            top - 16,
-            "Historical measurements; current DONE pending audit",
-            MUTED,
-            Some(SHADOW),
-        );
+    // A game without a byte-identical build keeps its historical line.
+    let waiting = series
+        .iter()
+        .zip(pending)
+        .filter(|(_, pending)| *pending)
+        .map(|((_, name, _), _)| *name)
+        .collect::<Vec<_>>();
+    if !waiting.is_empty() {
+        let note = if waiting.len() == series.len() {
+            "Historical measurements; current DONE pending matching builds".to_string()
+        } else {
+            format!(
+                "{}: historical measurement; pending a matching build",
+                waiting[0]
+            )
+        };
+        canvas.text(letters, left, top - 16, &note, MUTED, Some(SHADOW));
     }
     let span = (last - began) as i32;
     let x_of = |day: i64| left + ((day - began) as i32 * (plot_w - 1) + span / 2) / span;

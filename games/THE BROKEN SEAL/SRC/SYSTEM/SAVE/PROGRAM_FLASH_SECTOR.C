@@ -1,8 +1,3 @@
-/*
- * Draft: this code matches, but its translation unit is not the original one:
- * the library's constant block at 0x08007a50 (its .rodata) is not reproduced.
- * Links as recon/tbs/raw/08006f84.s until the unit is rebuilt.
- */
 #include "FLASH.H"
 
 struct FlashChipInfo {

@@ -1,9 +1,3 @@
-/*
- * Draft: this code matches, but its translation unit is not the original one:
- * the library's constant block at 0x08007a50 (its .rodata) is not reproduced.
- * Links as recon/tbs/raw/08007028.s until the unit is rebuilt.
- */
-/* The wait callback is read from the flash runtime cell at 0x02004c00. */
 #include "FLASH.H"
 #include "FLASH_DATA.H"
 
@@ -13,6 +7,8 @@ struct FlashConfig08007028 {
     u16 wait;
 };
 
+extern FlashWaitProc Flash_Handler3;
+
 /* チップ全消去。復帰用の手続きを退避してから WAITCNT の SRAM 待ちを
    設定表の値に替え、0x5555/0x2aaa へ解除列と消去命令 0x10 を書く。
    0x2aaa の番地は最初の 0xAA を書いた後に作る。 */
@@ -20,7 +16,6 @@ u16 EraseAtmelFlashChip(void)
 {
     u8 savedCode[64];
     u16 result;
-    FlashWaitProc *wait;
     volatile u8 *command;
     volatile u8 *unlock;
 
@@ -39,8 +34,7 @@ u16 EraseAtmelFlashChip(void)
     *unlock = 0x55;
     *command = 0x10;
 
-    wait = (FlashWaitProc *)0x02004C00;
-    result = (*wait)(3, (u8 *)0x0E000000, 255);
+    result = Flash_Handler3(3, (u8 *)0x0E000000, 255);
 
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xFFFC) | 3;

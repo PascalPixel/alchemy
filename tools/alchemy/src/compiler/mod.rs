@@ -13,5 +13,3 @@ mod routing_data;
 pub(crate) mod runtime;
 pub(crate) mod sha256;
 pub(crate) mod source_inputs;
-pub(crate) mod source_paths;
-pub(crate) mod translation_units;

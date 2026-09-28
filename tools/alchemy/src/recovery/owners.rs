@@ -1,10 +1,10 @@
-//! Owner lookup against the repository: the retained module register,
-//! the source register, the canonical ROM, and the overlay scorer.
+//! Owner lookup for the recovery aids: the verified ROM holds an owner's
+//! bytes, and the images `alchemy build rom` links name and bound it. No
+//! register, placeholder or recorded extent is read.
 
 use crate::compiler::build_io::read as read_file;
-use crate::compiler::source_paths::{SourceOwner, SourcePaths};
 use crate::targets::DecompTarget;
-use serde::Deserialize;
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
@@ -16,219 +16,134 @@ pub fn root() -> PathBuf {
         .to_path_buf()
 }
 
-#[derive(Debug, Clone)]
-pub struct Module {
-    pub overlay: String,
-    pub entry: u32,
-    pub span: u32,
-    pub kind: String,
-    pub registered: bool,
+/// An owner named on the command line: a main-image address, or an address
+/// in resource coordinates inside one overlay.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Owner {
+    Main(u32),
+    Overlay { resource: u16, address: u32 },
 }
-
-impl Module {
-    pub fn key(&self) -> String {
-        format!("{}:{:08x}", self.overlay, self.entry)
+impl Owner {
+    /// `ADDR`, `main:ADDR` or `resource_XXX:ADDR`, hexadecimal; an overlay
+    /// address below the resource base is an offset into the overlay.
+    pub fn parse_argument(input: &str) -> Result<Self, String> {
+        let (space, address) = input.split_once(':').unwrap_or(("main", input));
+        let mut address = u32::from_str_radix(address.trim_start_matches("0x"), 16)
+            .map_err(|_| format!("{input}: address must be hexadecimal"))?;
+        if space == "main" {
+            return Ok(Self::Main(address));
+        }
+        let resource = space
+            .strip_prefix("resource_")
+            .and_then(|id| u16::from_str_radix(id, 16).ok())
+            .ok_or_else(|| format!("{input}: expected main:ADDR or resource_XXX:ADDR"))?;
+        if address < 0x0200_0000 {
+            address += 0x0200_0000;
+        }
+        Ok(Self::Overlay { resource, address })
+    }
+    pub fn id(self) -> String {
+        match self {
+            Self::Main(address) => format!("main:{address:08x}"),
+            Self::Overlay { resource, address } => {
+                format!("resource_{resource:03x}:{address:08x}")
+            }
+        }
+    }
+    pub fn address(self) -> u32 {
+        match self {
+            Self::Main(address) | Self::Overlay { address, .. } => address,
+        }
+    }
+    pub fn overlay_id(self) -> Option<String> {
+        match self {
+            Self::Main(_) => None,
+            Self::Overlay { resource, .. } => Some(format!("resource_{resource:03x}")),
+        }
     }
 }
 
-#[derive(Deserialize)]
-struct Assembly {
-    regions: Vec<Region>,
-}
-
-#[derive(Deserialize)]
-struct Region {
-    overlay: String,
-    start: String,
-    end: String,
-    kind: String,
-}
-
-fn parse_hex(text: &str) -> Result<u32, String> {
-    u32::from_str_radix(text.trim_start_matches("0x"), 16).map_err(|_| format!("{text}: not hex"))
-}
-
-/// Every retained overlay module, in register order.
-pub fn modules(root: &Path) -> Result<Vec<Module>, String> {
-    let path = root.join("recon/tbs/semantic/overlay-assembly.json");
-    let assembly: Assembly = crate::compiler::build_io::read_json(&path)?;
-    let sources = SourcePaths::load(root)?;
-    let mut modules = Vec::new();
-    for region in assembly.regions {
-        let entry = parse_hex(&region.start)?;
-        let end = parse_hex(&region.end)?;
-        let owner = SourceOwner::parse(&format!("{}:{entry:08x}", region.overlay))?;
-        modules.push(Module {
-            registered: sources.mapped_relative_path(owner).is_some(),
-            overlay: region.overlay,
-            entry,
-            span: end.saturating_sub(entry),
-            kind: region.kind,
-        });
-    }
-    Ok(modules)
-}
-
-/// Parses `<overlay>:<hex>` into its parts.
-pub fn parse_owner(owner: &str) -> Result<(String, u32), String> {
-    let resolved = SourceOwner::parse_argument(owner)?;
-    let overlay = resolved
-        .overlay_id()
-        .ok_or_else(|| format!("{owner}: expected <overlay>:<addressHex>"))?;
-    Ok((overlay, resolved.address()))
-}
-
-/// Resolve an overlay owner from reviewed bounds or its installed C placeholder.
-/// A caller-supplied span confirms the extent; it cannot establish a new owner.
-pub fn span_for(
-    root: &Path,
-    overlay: &str,
-    entry: u32,
-    requested: Option<u32>,
-) -> Result<u32, String> {
-    span_for_target(root, default_target(), overlay, entry, requested)
-}
-
-/// The production default target, `tbs-en`, which every legacy entry point assumes.
+/// The production default target, `tbs-en`.
 pub fn default_target() -> DecompTarget {
     crate::targets::target_for(crate::targets::DEFAULT_TARGET)
 }
 
-/// The reviewed owner register of the target's game. A game with no
-/// `semantic/regions.json` yet has no reviewed owners: an empty register, so a
-/// caller-supplied `--span` still cannot establish one.
-fn reviewed_spans(
-    root: &Path,
-    target: DecompTarget,
-) -> Result<std::collections::BTreeMap<SourceOwner, usize>, String> {
-    let register = root.join(target.recon_dir()).join("semantic/regions.json");
-    if !register.is_file() {
-        return Ok(Default::default());
-    }
-    crate::compiler::translation_units::reviewed_overlay_spans_for_game(root, target.recon_dir())
+/// The main image `alchemy build rom` links for `target`.
+pub fn main_elf(root: &Path, target: DecompTarget) -> PathBuf {
+    root.join(target.output_dir)
+        .join(format!("{}.elf", target.id))
 }
 
-/// `span_for` against one registered target's reviewed register and retained assembly.
-pub fn span_for_target(
+/// One overlay as `alchemy build rom` links it, at its load address.
+pub fn overlay_elf(root: &Path, target: DecompTarget, overlay: &str) -> PathBuf {
+    root.join(target.output_dir)
+        .join("overlays")
+        .join(format!("{overlay}.elf"))
+}
+
+/// Every code label a linked image defines, by address: the names its C
+/// definitions and assembly labels give the bytes. An image not built yet
+/// names nothing.
+pub fn linked_names(root: &Path, elf: &Path) -> Result<BTreeMap<u32, String>, String> {
+    if !elf.is_file() {
+        return Ok(BTreeMap::new());
+    }
+    let table = psynergy::process::run(
+        &["arm-none-eabi-nm", "--defined-only", &elf.to_string_lossy()],
+        root,
+    )?;
+    Ok(code_labels(&table))
+}
+
+/// The text symbols of an `nm` table, the first name at each address.
+fn code_labels(table: &str) -> BTreeMap<u32, String> {
+    let mut names = BTreeMap::new();
+    for line in table.lines() {
+        let mut fields = line.split_whitespace();
+        let (Some(value), Some(kind), Some(name)) = (fields.next(), fields.next(), fields.next())
+        else {
+            continue;
+        };
+        if !matches!(kind, "T" | "t") || name.starts_with(['.', '$']) {
+            continue;
+        }
+        if let Ok(value) = u32::from_str_radix(value, 16) {
+            names.entry(value & !1).or_insert_with(|| name.to_owned());
+        }
+    }
+    names
+}
+
+/// An overlay owner's extent: from its label in the linked overlay to the
+/// next label, or to the end of the image.
+fn overlay_extent(
     root: &Path,
     target: DecompTarget,
     overlay: &str,
     entry: u32,
-    requested: Option<u32>,
+    image: usize,
 ) -> Result<u32, String> {
-    let owner = SourceOwner::parse(&format!("{overlay}:{entry:08x}"))?;
-    let reviewed = reviewed_spans(root, target)?;
-    let paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
-    let installed = if paths
-        .mapped_source_path(owner)
-        .is_some_and(|path| path.is_file())
-    {
-        let path = root.join(target.overlay_assembly(overlay));
-        let text = std::fs::read_to_string(&path)
-            .map_err(|error| format!("{}: {error}", path.display()))?;
-        crate::compiler::overlay::placeholder_extent(&text, entry)
-    } else {
-        None
-    };
-    let span = crate::compiler::translation_units::resolve_overlay_span(
-        &reviewed,
-        owner,
-        installed,
-        requested.map(|span| span as usize),
-    )?;
-    u32::try_from(span).map_err(|_| format!("{}: owner extent exceeds address space", owner.id()))
-}
-
-#[derive(Debug, Clone)]
-pub struct Score {
-    pub candidate: u32,
-    pub reference: u32,
-    pub differing: u32,
-}
-
-/// Re-enter the unified executable, falling back to Cargo before installation.
-pub fn tool_command(root: &Path, group: &str) -> Command {
-    let built = root.join("tools/out/cargo-target/release/alchemy");
-    let mut command = if built.is_file() {
-        Command::new(built)
-    } else {
-        let mut command = Command::new("cargo");
-        command.args([
-            "run",
-            "--offline",
-            "--quiet",
-            "--release",
-            "--manifest-path",
-            &root.join("tools/alchemy/Cargo.toml").to_string_lossy(),
-            "--",
-        ]);
-        command
-    };
-    if !group.is_empty() {
-        command.arg(group);
+    let elf = overlay_elf(root, target, overlay);
+    if !elf.is_file() {
+        return Err(format!(
+            "{overlay} is not linked yet; run alchemy build rom --target {} or pass --span",
+            target.id
+        ));
     }
-    command
-}
-
-/// Scores a candidate source against an owner through the overlay scorer.
-pub fn score(root: &Path, source: &Path, owner: &str, span: u32) -> Result<Score, String> {
-    score_in(root, source, owner, span, None)
-}
-
-/// Scores in a named work directory. An empty one holds no compile cache, so
-/// the compiler runs again rather than answering from an earlier result.
-pub fn score_in(
-    root: &Path,
-    source: &Path,
-    owner: &str,
-    span: u32,
-    work: Option<&Path>,
-) -> Result<Score, String> {
-    let owner = SourceOwner::parse_argument(owner)?;
-    let extent_flag = if owner.is_main() { "--size" } else { "--span" };
-    let mut command = tool_command(root, "");
-    command.current_dir(root).arg("score").arg(source).args([
-        "--owner",
-        &owner.id(),
-        extent_flag,
-        &span.to_string(),
-        "--align",
-    ]);
-    if let Some(work) = work {
-        command.arg("--work").arg(work);
+    let loaded =
+        entry - crate::compiler::overlay::RESOURCE_BASE + crate::compiler::overlay::RUNTIME_BASE;
+    let end = crate::compiler::overlay::RUNTIME_BASE + image as u32;
+    let labels = linked_names(root, &elf)?;
+    if !labels.contains_key(&loaded) {
+        return Err(format!(
+            "{overlay}:{entry:08x} is not a label of the linked overlay; pass --span"
+        ));
     }
-    let output = command.output().map_err(|error| format!("diff: {error}"))?;
-    let report = format!(
-        "{}{}",
-        String::from_utf8_lossy(&output.stdout),
-        String::from_utf8_lossy(&output.stderr)
-    );
-    let line = report
-        .lines()
-        .find(|line| line.starts_with("candidate="))
-        .ok_or_else(|| {
-            let tail: Vec<&str> = report
-                .lines()
-                .filter(|line| line.contains("error") || line.contains("cand"))
-                .take(4)
-                .collect();
-            format!("no score line; {}", tail.join(" | "))
-        })?;
-    let mut fields = line.split_whitespace().filter_map(|field| {
-        field
-            .split_once('=')
-            .and_then(|(_, value)| value.parse::<u32>().ok())
-    });
-    let candidate = fields.next().ok_or("score line lacks candidate")?;
-    let reference = fields.next().ok_or("score line lacks reference")?;
-    let differing = fields
+    let next = labels
+        .range(loaded + 1..end)
         .next()
-        .ok_or("score line lacks differing_halfwords")?;
-    Ok(Score {
-        candidate,
-        reference,
-        differing,
-    })
+        .map_or(end, |(address, _)| *address);
+    Ok(next - loaded)
 }
 
 /// Read one complete owner window, independent of its address space.
@@ -240,22 +155,24 @@ pub fn image_window(
     image_window_for(root, default_target(), owner, span)
 }
 
-/// `image_window` against one registered target's ROM, register and assembly.
+/// `image_window` against one target's ROM and linked images. An explicit
+/// `span` bounds the window; otherwise a main owner is its retained
+/// listing's size and an overlay owner reaches its linked label's successor.
 pub fn image_window_for(
     root: &Path,
     target: DecompTarget,
     owner: &str,
     span: Option<u32>,
 ) -> Result<(Vec<u8>, u32, u32, u32), String> {
-    let owner = SourceOwner::parse_argument(owner)?;
+    let owner = Owner::parse_argument(owner)?;
     let entry = owner.address();
     let (image, base, extent) = if let Some(overlay) = owner.overlay_id() {
-        let extent = span_for_target(root, target, &overlay, entry, span)?;
-        (
-            crate::overlay::rom::canonical_overlay_for(root, target, &overlay)?,
-            psynergy::decode::OVERLAY_BASE,
-            extent,
-        )
+        let image = crate::overlay::rom::canonical_overlay_for(root, target, &overlay)?;
+        let extent = match span {
+            Some(span) => span,
+            None => overlay_extent(root, target, &overlay, entry, image.len())?,
+        };
+        (image, psynergy::decode::OVERLAY_BASE, extent)
     } else {
         let extent = match span {
             Some(span) => span,
@@ -274,31 +191,6 @@ pub fn image_window_for(
         return Err(format!("{}: owner extent is outside the image", owner.id()));
     }
     Ok((image, base, entry, extent))
-}
-
-#[cfg(test)]
-mod owner_tests {
-    use super::*;
-
-    #[test]
-    fn retained_regions_and_requested_spans_cannot_create_owners() {
-        let root = tempfile::tempdir().unwrap();
-        let semantic = root.path().join("recon/tbs/semantic");
-        std::fs::create_dir_all(&semantic).unwrap();
-        std::fs::write(semantic.join("regions.json"), r#"{"manual_regions":[{"overlay":"resource_374","entry":"0x02001000","span_bytes":512}]}"#).unwrap();
-        std::fs::write(semantic.join("overlay-assembly.json"), r#"{"regions":[{"overlay":"resource_374","start":"0x02001010","end":"0x02001030","kind":"structured_scene_module"}]}"#).unwrap();
-        assert_eq!(
-            span_for(root.path(), "resource_374", 0x02001000, None).unwrap(),
-            512
-        );
-        assert_eq!(
-            span_for(root.path(), "resource_374", 0x02001000, Some(512)).unwrap(),
-            512
-        );
-        assert!(span_for(root.path(), "resource_374", 0x02001000, Some(32)).is_err());
-        let error = image_window(root.path(), "resource_374:02001010", Some(32)).unwrap_err();
-        assert!(error.contains("reviewed"), "{error}");
-    }
 }
 
 /// The extent of a main owner: its retained assembly under the target's `asm`
@@ -337,4 +229,57 @@ pub fn main_extent_for(root: &Path, target: DecompTarget, address: u32) -> Resul
         .map_err(|error| format!("{}: {error}", binary.display()))?
         .len();
     Ok(size as u32)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn owners_parse_main_and_overlay_forms() {
+        assert_eq!(
+            Owner::parse_argument("08001234").unwrap(),
+            Owner::Main(0x0800_1234)
+        );
+        assert_eq!(
+            Owner::parse_argument("main:0x08001234").unwrap(),
+            Owner::Main(0x0800_1234)
+        );
+        let overlay = Owner::parse_argument("resource_3bf:0200034c").unwrap();
+        assert_eq!(overlay, Owner::parse_argument("resource_3bf:34c").unwrap());
+        assert_eq!(overlay.id(), "resource_3bf:0200034c");
+        assert_eq!(overlay.overlay_id().as_deref(), Some("resource_3bf"));
+        for invalid in ["xyz", "resource_3bf:zz", "overlay:02000000", "resource_:0"] {
+            assert!(Owner::parse_argument(invalid).is_err(), "{invalid}");
+        }
+    }
+
+    #[test]
+    fn code_labels_keep_text_names_and_skip_markers_and_absolutes() {
+        let table = "02008000 A gOverlayArea\n02008030 t .gcc2_compiled.\n02008030 T FixedPoint_Distance\n0200806d T Thumb_Entry\n020080c4 a *ABS*0x20080c4\n020080c4 t Local_Helper\n";
+        let labels = code_labels(table);
+        assert_eq!(
+            labels.into_iter().collect::<Vec<_>>(),
+            [
+                (0x0200_8030, "FixedPoint_Distance".to_owned()),
+                (0x0200_806c, "Thumb_Entry".to_owned()),
+                (0x0200_80c4, "Local_Helper".to_owned()),
+            ]
+        );
+    }
+
+    #[test]
+    fn an_unlinked_overlay_owner_needs_an_explicit_span() {
+        let root = tempfile::tempdir().unwrap();
+        let target = default_target();
+        let error =
+            overlay_extent(root.path(), target, "resource_374", 0x0200_1000, 0x100).unwrap_err();
+        assert!(error.contains("--span"), "{error}");
+        assert!(linked_names(
+            root.path(),
+            &overlay_elf(root.path(), target, "resource_374")
+        )
+        .unwrap()
+        .is_empty());
+    }
 }

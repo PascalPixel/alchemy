@@ -4,10 +4,10 @@
 //! is particular to that site. The real target is `symbol - site - 2` into
 //! the image: a veneer (`ldr r4, [pc]; bx r4; .word main`) names an import
 //! from the main image, and a prologue names a function of the overlay
-//! itself. Registered names come from the source register.
+//! itself. Names come from the labels of the images `alchemy build rom`
+//! links, when they are built.
 
-use super::owners::image_window_for;
-use crate::compiler::source_paths::{SourceOwner, SourcePaths};
+use super::owners::{image_window_for, linked_names, main_elf, overlay_elf, Owner};
 use crate::targets::DecompTarget;
 use psynergy::decode::{decode_window_at, Kind, MAIN_BASE, OVERLAY_BASE};
 use std::path::Path;
@@ -25,7 +25,7 @@ pub struct Import {
     pub kind: &'static str,
     /// The main-image function a veneer imports.
     pub main: Option<u32>,
-    /// The registered name of the import or overlay function, if any.
+    /// The label the linked image defines at the target, if it is built.
     pub name: Option<String>,
 }
 
@@ -33,18 +33,21 @@ fn read_u16(image: &[u8], at: usize) -> Option<u16> {
     Some(u16::from_le_bytes([*image.get(at)?, *image.get(at + 1)?]))
 }
 
-/// Resolves every call site of an owner's window against one registered
-/// target's ROM and source register.
+/// Resolves every call site of an owner's window against one target's ROM
+/// and linked images.
 pub fn imports_for(
     root: &Path,
     target: DecompTarget,
     owner: &str,
     span: Option<u32>,
 ) -> Result<Vec<Import>, String> {
-    let resolved = SourceOwner::parse_argument(owner)?;
-    let overlay = resolved.overlay_id();
+    let resolved = Owner::parse_argument(owner)?;
     let (image, base, entry, span) = image_window_for(root, target, owner, span)?;
-    let sources = SourcePaths::load_for_game(root, target.compiler.as_str())?;
+    let main_names = linked_names(root, &main_elf(root, target))?;
+    let overlay_names = match resolved.overlay_id() {
+        Some(overlay) => linked_names(root, &overlay_elf(root, target, &overlay))?,
+        None => Default::default(),
+    };
     let ins = decode_window_at(&image, base, entry, span);
     let mut found = Vec::new();
     for x in &ins {
@@ -52,14 +55,13 @@ pub fn imports_for(
             continue;
         };
         if base == MAIN_BASE {
-            let target = SourceOwner::parse_argument(&format!("main:{symbol:08x}"))?;
             found.push(Import {
                 site: x.addr,
                 symbol: format!("Func_{symbol:08x}"),
                 target: symbol,
                 kind: "direct",
                 main: Some(symbol),
-                name: sources.registered_name(target).map(str::to_string),
+                name: main_names.get(&symbol).cloned(),
             });
             continue;
         }
@@ -78,12 +80,10 @@ pub fn imports_for(
             ("other", None)
         };
         let name = match main {
-            Some(main) => SourceOwner::parse(&format!("main:{main:08x}"))
-                .ok()
-                .and_then(|o| sources.registered_name(o).map(str::to_string)),
-            None => SourceOwner::parse(&format!("{}:{target:08x}", overlay.as_deref().unwrap()))
-                .ok()
-                .and_then(|o| sources.registered_name(o).map(str::to_string)),
+            Some(main) => main_names.get(&main).cloned(),
+            None => overlay_names
+                .get(&(crate::compiler::overlay::RUNTIME_BASE + offset as u32))
+                .cloned(),
         };
         found.push(Import {
             site: x.addr,

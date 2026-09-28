@@ -5811,10 +5811,9 @@ fn build_entry_native_tail(
         "golden-sun-message-archive" => {
             if entry_source.to_ascii_lowercase().ends_with(".po") {
                 let source = crate::text_catalog::read_source(&source_path(entry_source)?)?;
-                if source.address != address {
-                    return Err("message catalog identity differs".into());
-                }
-                let archive = crate::text_catalog::encode(&source)?;
+                // The region places the archive; the catalog records no address.
+                let base = u32::try_from(address).map_err(|_| "archive address exceeds u32")?;
+                let archive = crate::text_catalog::encode(&source, base)?;
                 return Ok((
                     archive.bytes,
                     vec![entry_source.to_string()],

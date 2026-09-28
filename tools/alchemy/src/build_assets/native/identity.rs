@@ -250,7 +250,8 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
     let english = fs::read(root.join(english_target.rom)).map_err(|e| e.to_string())?;
     let japanese = fs::read(root.join(japanese_target.rom)).map_err(|e| e.to_string())?;
     let archive = crate::text_catalog::read_source(&root.join(edition.archive))?;
-    let layout = crate::text_catalog::encode(&archive)?;
+    let base = crate::text_catalog::locate(&archive, &english)?;
+    let layout = crate::text_catalog::encode(&archive, base)?;
     let mut reader = MessageReader::new(
         &english,
         ROM_BASE as u32,

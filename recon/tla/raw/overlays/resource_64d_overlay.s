@@ -1,6 +1,7 @@
 .syntax unified
 .include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
+	.set sub_020026b6, 0x020026b6
 	.set sub_020028c2, 0x020028c2
 	.set sub_02002924, 0x02002924
 	.set sub_02002938, 0x02002938
@@ -789,14 +790,29 @@
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.INC"
-AlchemyC_02000038:
-	.space 0x8
-AlchemyC_02000040:
-	.space 0x4
-AlchemyC_02000044:
-	.space 0x8
-AlchemyC_0200004c:
-	.space 0x8
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x0200ad20
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
+	movs r0, #0
+	bx lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x0200adf8
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x0200ae08
 	push	{r5, lr}
 	movs	r1, #128
 	lsls	r1, r1, #7
@@ -822,8 +838,29 @@ AlchemyC_0200004c:
 	movs	r0, #8
 	bl	sub_02002ad4
 	pop	{r5, pc}
-AlchemyC_0200009c:
-	.space 0x2a
+	.global Func_0200009c
+	.thumb_func
+Func_0200009c:
+	push {r5, lr}
+	adds r5, r0, #0
+	ldr r2, [r5, #12]
+	ldr r3, [r5, #16]
+	ldr r1, [r5, #8]
+	adds r5, #100
+	bl sub_020026b6
+	ldrh r2, [r5]
+	movs r3, #224
+	adds r2, #1
+	strh r2, [r5]
+	lsls r3, r3, #11
+	lsls r2, r2, #16
+	ands r3, r2
+	cmp r3, #0
+	bne .L_0200009c_0
+	movs r0, #125
+	bl sub_02002b26
+.L_0200009c_0:
+	pop {r5, pc}
 	.2byte 0x0000
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -863,8 +900,12 @@ AlchemyC_0200009c:
 	.2byte 0x0000
 	.2byte 0x809d
 	.2byte 0x0200
-AlchemyC_02000120:
-	.space 0x8
+	.global Func_02000120
+	.thumb_func
+Func_02000120:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x0200af88
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -1070,8 +1111,11 @@ AlchemyC_02000120:
 	.4byte 0x02000240
 	.2byte 0x0004
 	.2byte 0x0000
-AlchemyC_02000308:
-	.space 0x4
+	.global Func_02000308
+	.thumb_func
+Func_02000308:
+	movs r0, #0
+	bx lr
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}

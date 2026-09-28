@@ -1,6 +1,7 @@
 .syntax unified
 .include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
+	.set sub_020000b0, 0x020000b0
 	.set sub_0200033e, 0x0200033e
 	.set sub_02000368, 0x02000368
 	.set sub_02000378, 0x02000378
@@ -40,31 +41,322 @@
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/ENTRY.INC"
-AlchemyC_02000030:
-	.space 0x2a
+	.global Func_02000030
+	.thumb_func
+Func_02000030:
+	push {r5, lr}
+	movs r3, #0
+	movs r5, #2
+	movs r4, #1
+	movs r1, #105
+	movs r2, #110
+.L_02000030_2:
+	strb r5, [r0, #22]
+	str r4, [r0, #4]
+	strh r1, [r0]
+	cmp r3, #4
+	beq .L_02000030_0
+	cmp r3, #7
+	bne .L_02000030_1
+.L_02000030_0:
+	strh r2, [r0]
+.L_02000030_1:
+	adds r3, #1
+	adds r0, #24
+	cmp r3, #14
+	bls .L_02000030_2
+	pop {r5}
+	pop {r0}
+	bx r0
 	.2byte 0x0000
-AlchemyC_0200005c:
-	.space 0x8
-AlchemyC_02000064:
-	.space 0x4
-AlchemyC_02000068:
-	.space 0x8
-AlchemyC_02000070:
-	.space 0x2c
-AlchemyC_0200009c:
-	.space 0x14
+	.global Func_0200005c
+	.thumb_func
+Func_0200005c:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x02008318
+	.global Func_02000064
+	.thumb_func
+Func_02000064:
+	movs r0, #0
+	bx lr
+	.global Func_02000068
+	.thumb_func
+Func_02000068:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x02008498
+	.global Func_02000070
+	.thumb_func
+Func_02000070:
+	push {r5, lr}
+	ldr r0, [pc, #32]
+	bl sub_0200033e
+	cmp r0, #0
+	bne .L_02000070_0
+	ldr r0, [pc, #24]
+	bl sub_020000b0
+.L_02000070_0:
+	ldr r5, [pc, #20]
+	adds r0, r5, #0
+	bl sub_02000368
+	adds r0, r5, #0
+	pop {r5}
+	pop {r1}
+	bx r1
+	.2byte 0x0000
+	.4byte 0x00000845
+	.4byte 0x020084d8
+	.global Func_0200009c
+	.thumb_func
+Func_0200009c:
+	push {r5, lr}
+	movs r0, #0
+	bl sub_0200038a
+	ldrh r5, [r0, #6]
+	bl sub_02000378
+	ldr r3, [pc, #44]
+	adds r5, r5, r3
+	ldr r3, [pc, #44]
 .L_020000b0:
-	.space 0x34
-AlchemyC_020000e4:
-	.space 0x48
-AlchemyC_0200012c:
-	.space 0x48
-AlchemyC_02000174:
-	.space 0x48
-AlchemyC_020001bc:
-	.space 0x8
-AlchemyC_020001c4:
-	.space 0xf4
+	cmp r5, r3
+	bhi .L_020000b0_0
+	movs r0, #13
+	movs r1, #16
+	bl sub_020003c2
+	b .L_020000b0_1
+.L_020000b0_0:
+	ldr r0, [pc, #32]
+	bl sub_020003ba
+	movs r0, #16
+	movs r1, #0
+	bl sub_020003ca
+.L_020000b0_1:
+	bl sub_020003a6
+	pop {r5}
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+	.2byte 0x5fff
+	.2byte 0xffff
+	.2byte 0x3ffe
+	.2byte 0x0000
+	.4byte 0x000016ad
+	.global Func_020000e4
+	.thumb_func
+Func_020000e4:
+	push {r5, lr}
+	movs r0, #0
+	bl sub_020003d2
+	ldrh r5, [r0, #6]
+	bl sub_020003c0
+	ldr r3, [pc, #44]
+	adds r5, r5, r3
+	ldr r3, [pc, #44]
+	cmp r5, r3
+	bhi .L_020000e4_0
+	movs r0, #14
+	movs r1, #17
+	bl sub_0200040a
+	b .L_020000e4_1
+.L_020000e4_0:
+	ldr r0, [pc, #32]
+	bl sub_02000402
+	movs r0, #17
+	movs r1, #0
+	bl sub_02000412
+.L_020000e4_1:
+	bl sub_020003ee
+	pop {r5}
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+	.4byte 0xffff5fff
+	.4byte 0x00003ffe
+	.4byte 0x000016af
+	.global Func_0200012c
+	.thumb_func
+Func_0200012c:
+	push {r5, lr}
+	movs r0, #0
+	bl sub_0200041a
+	ldrh r5, [r0, #6]
+	bl sub_02000408
+	ldr r3, [pc, #44]
+	adds r5, r5, r3
+	ldr r3, [pc, #44]
+	cmp r5, r3
+	bhi .L_0200012c_0
+	movs r0, #15
+	movs r1, #18
+	bl sub_02000452
+	b .L_0200012c_1
+.L_0200012c_0:
+	ldr r0, [pc, #32]
+	bl sub_0200044a
+	movs r0, #18
+	movs r1, #0
+	bl sub_0200045a
+.L_0200012c_1:
+	bl sub_02000436
+	pop {r5}
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+	.4byte 0xffff5fff
+	.4byte 0x00003ffe
+	.4byte 0x000016b1
+	.global Func_02000174
+	.thumb_func
+Func_02000174:
+	push {r5, lr}
+	movs r0, #0
+	bl sub_02000462
+	ldrh r5, [r0, #6]
+	bl sub_02000450
+	ldr r3, [pc, #44]
+	adds r5, r5, r3
+	ldr r3, [pc, #44]
+	cmp r5, r3
+	bhi .L_02000174_0
+	movs r0, #3
+	movs r1, #19
+	bl sub_020004a2
+	b .L_02000174_1
+.L_02000174_0:
+	ldr r0, [pc, #32]
+	bl sub_02000492
+	movs r0, #19
+	movs r1, #0
+	bl sub_020004a2
+.L_02000174_1:
+	bl sub_0200047e
+	pop {r5}
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+	.4byte 0xffff5fff
+	.4byte 0x00003ffe
+	.4byte 0x000016b7
+	.global Func_020001bc
+	.thumb_func
+Func_020001bc:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x02008658
+	.global Func_020001c4
+	.thumb_func
+Func_020001c4:
+	push {r5, r6, lr}
+	ldr r3, [pc, #224]
+	movs r1, #224
+	ldr r3, [r3]
+	lsls r1, r1, #1
+	ldr r2, [pc, #220]
+	adds r3, r3, r1
+	str r2, [r3]
+	ldr r0, [pc, #216]
+	sub sp, #8
+	bl sub_020004a2
+	cmp r0, #0
+	bne .L_020001c4_0
+	movs r5, #8
+.L_020001c4_1:
+	adds r0, r5, #0
+	bl sub_020004ce
+	adds r5, #1
+	movs r1, #0
+	bl sub_020004ae
+	cmp r5, #22
+	bls .L_020001c4_1
+.L_020001c4_0:
+	ldr r3, [pc, #188]
+	movs r2, #225
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	ldrh r2, [r3]
+	movs r1, #0
+	ldrsh r3, [r3, r1]
+	cmp r3, #7
+	bne .L_020001c4_2
+	movs r5, #13
+	movs r6, #8
+	movs r0, #34
+	movs r1, #34
+	movs r2, #18
+	movs r3, #16
+	str r5, [sp, #0]
+	str r6, [sp, #4]
+	bl sub_020004d0
+	movs r0, #34
+	movs r1, #94
+	movs r2, #18
+	movs r3, #76
+	str r5, [sp, #0]
+	str r6, [sp, #4]
+	bl sub_020004e0
+	movs r0, #94
+	movs r1, #34
+	movs r2, #78
+	movs r3, #16
+	str r5, [sp, #0]
+	str r6, [sp, #4]
+	bl sub_020004f0
+	b .L_020001c4_3
+.L_020001c4_2:
+	adds r3, r2, #0
+	subs r3, #8
+	movs r2, #128
+	lsls r3, r3, #16
+	lsls r2, r2, #9
+	cmp r3, r2
+	bhi .L_020001c4_3
+	movs r5, #11
+	movs r6, #8
+	movs r0, #34
+	movs r1, #43
+	movs r2, #19
+	movs r3, #23
+	str r5, [sp, #0]
+	str r6, [sp, #4]
+	bl sub_02000514
+	movs r0, #34
+	movs r1, #94
+	movs r2, #19
+	movs r3, #83
+	str r5, [sp, #0]
+	str r6, [sp, #4]
+	bl sub_02000524
+	movs r3, #23
+	movs r0, #94
+	movs r1, #34
+	movs r2, #79
+	str r5, [sp, #0]
+	str r6, [sp, #4]
+	bl sub_02000534
+	movs r0, #10
+	movs r1, #0
+	movs r2, #0
+	bl sub_02000576
+	movs r0, #11
+	movs r1, #0
+	movs r2, #0
+	bl sub_02000580
+	movs r0, #12
+	movs r1, #0
+	movs r2, #0
+	bl sub_0200058a
+.L_020001c4_3:
+	movs r0, #0
+	sub sp, #-8
+	pop {r5, r6}
+	pop {r1}
+	bx r1
+	.2byte 0x0000
+	.4byte 0x03001ebc
+	.4byte 0x00000209
+	.4byte 0x00000845
+	.4byte 0x02000240
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/IMPORT.INC"
 	.4byte 0xffff0000
 	.4byte 0x000000ac

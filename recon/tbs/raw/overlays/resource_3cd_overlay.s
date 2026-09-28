@@ -1,6 +1,10 @@
 .syntax unified
 .include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
+	.set sub_02000140, 0x02000140
+	.set sub_0200017e, 0x0200017e
+	.set sub_02000250, 0x02000250
+	.set sub_02000268, 0x02000268
 	.set sub_020008f2, 0x020008f2
 	.set sub_020008f8, 0x020008f8
 	.set sub_02000902, 0x02000902
@@ -102,28 +106,246 @@
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/ENTRY.INC"
-AlchemyC_02000030:
-	.space 0x8
-AlchemyC_02000038:
-	.space 0x4
-AlchemyC_0200003c:
-	.space 0x8
-AlchemyC_02000044:
-	.space 0x8
-AlchemyC_0200004c:
-	.space 0x24
-AlchemyC_02000070:
-	.space 0x28
-AlchemyC_02000098:
-	.space 0x8
-AlchemyC_020000a0:
-	.space 0x20
-AlchemyC_020000c0:
-	.space 0x2c
-AlchemyC_020000ec:
-	.space 0x92
+	.global Func_02000030
+	.thumb_func
+Func_02000030:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x02008964
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
+	movs r0, #0
+	bx lr
+	.global Func_0200003c
+	.thumb_func
+Func_0200003c:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x02008994
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x02008998
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
+	push {lr}
+	ldr r0, [pc, #28]
+	bl sub_020008f2
+	movs r1, #129
+	movs r0, #13
+	lsls r1, r1, #1
+	movs r2, #0
+	bl sub_0200090e
+	movs r0, #13
+	movs r1, #0
+	bl sub_0200090e
+	pop {r0}
+	bx r0
+	.4byte 0x000023cd
+	.global Func_02000070
+	.thumb_func
+Func_02000070:
+	push {lr}
+	ldr r1, [pc, #28]
+	movs r2, #0
+	movs r0, #13
+	bl sub_0200092a
+	ldr r0, [pc, #20]
+	bl sub_02000920
+	movs r0, #13
+	movs r1, #0
+	bl sub_02000930
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+	.4byte 0x00000105
+	.4byte 0x000023cd
+	.global Func_02000098
+	.thumb_func
+Func_02000098:
+	ldr r0, [pc, #0]
+	bx lr
+	.4byte 0x02008a58
+	.global Func_020000a0
+	.thumb_func
+Func_020000a0:
+	push {r5, r6, lr}
+	adds r5, r0, #0
+	adds r6, r1, #0
+	bl sub_020008f8
+	ldrb r1, [r0, #15]
+	adds r0, r5, #0
+	adds r1, r1, r6
+	bl sub_02000932
+	adds r0, r5, #0
+	bl sub_02000910
+	pop {r5, r6}
+	pop {r0}
+	bx r0
+	.global Func_020000c0
+	.thumb_func
+Func_020000c0:
+	push {r5, r6, r7, lr}
+	sub sp, #32
+	adds r7, r0, #0
+	mov r0, sp
+	bl sub_02000942
+	cmp r0, #0
+	ble .L_020000c0_0
+	mov r6, sp
+	adds r5, r0, #0
+.L_020000c0_1:
+	ldrh r0, [r6]
+	adds r1, r7, #0
+	subs r5, #1
+	adds r6, #2
+	bl sub_0200017e
+	cmp r5, #0
+	bne .L_020000c0_1
+.L_020000c0_0:
+	sub sp, #-32
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+	.global Func_020000ec
+	.thumb_func
+Func_020000ec:
+	push {r5, r6, r7, lr}
+	mov r7, r8
+	push {r7}
+	ldr r3, [pc, #272]
+	movs r2, #250
+	lsls r2, r2, #1
+	adds r3, r3, r2
+	ldr r0, [r3]
+	sub sp, #4
+	bl sub_02000950
+	movs r3, #2
+	str r3, [sp, #0]
+	movs r1, #0
+	movs r2, #30
+	movs r3, #9
+	mov r8, r0
+	movs r0, #0
+	bl sub_02000902
+	ldr r5, [pc, #240]
+	adds r6, r0, #0
+	adds r1, r6, #0
+	adds r0, r5, #0
+	movs r2, #0
+	movs r3, #0
+	bl sub_02000922
+	adds r0, r5, #1
+	adds r1, r6, #0
+	movs r2, #0
+	movs r3, #16
+	adds r5, #2
+	bl sub_02000930
+	adds r0, r5, #0
+	adds r1, r6, #0
+	movs r2, #0
+	movs r3, #32
+	movs r7, #1
+	bl sub_0200093e
+	cmp r7, #0
+	beq .L_020000ec_0
+	adds r0, r6, #0
+	bl sub_02000978
+	mov r0, r8
+	adds r1, r6, #0
+	movs r2, #0
+	movs r3, #48
+	bl sub_02000964
+	ldr r0, [pc, #180]
+	adds r1, r6, #0
+	movs r2, #48
+	movs r3, #48
+	bl sub_02000978
+	mov r3, r8
+	ldrb r0, [r3, #15]
+	movs r3, #48
+	str r3, [sp, #0]
+	movs r1, #0
+	adds r2, r6, #0
+	movs r3, #72
+	movs r7, #0
+	bl sub_0200099c
+.L_020000ec_0:
+	ldr r5, [pc, #152]
+	ldr r3, [r5]
+	movs r2, #8
+	ands r3, r2
 .L_0200017e:
-	.space 0x96
+	cmp r3, #0
+	bne .L_0200017e_0
+	ldr r3, [r5]
+	movs r2, #4
+	ands r3, r2
+	cmp r3, #0
+	beq .L_0200017e_1
+.L_0200017e_0:
+	movs r0, #5
+	bl sub_02000250
+	movs r0, #93
+	bl sub_02000a5e
+	movs r7, #1
+.L_0200017e_1:
+	ldr r3, [r5]
+	movs r2, #1
+	ands r3, r2
+	cmp r3, #0
+	beq .L_0200017e_2
+	movs r0, #1
+	bl sub_02000268
+	movs r0, #91
+	bl sub_02000a76
+	movs r7, #1
+.L_0200017e_2:
+	ldr r3, [r5]
+	movs r2, #2
+	ands r3, r2
+	cmp r3, #0
+	beq .L_0200017e_3
+	movs r0, #113
+	bl sub_02000a88
+	adds r0, r6, #0
+	bl sub_020009f6
+	movs r0, #1
+	bl sub_020009b4
+	movs r1, #1
+	adds r0, r6, #0
+	bl sub_020009cc
+	movs r0, #0
+	bl sub_02000a32
+	movs r0, #1
+	bl sub_02000a38
+	movs r0, #3
+	bl sub_02000a3e
+	movs r0, #2
+	bl sub_02000a44
+	sub sp, #-4
+	pop {r3}
+	mov r8, r3
+	pop {r5, r6, r7}
+	pop {r0}
+	bx r0
+.L_0200017e_3:
+	movs r0, #1
+	bl sub_020009e6
+	b sub_02000140
+	.2byte 0x0000
+	.2byte 0x0240
+	.2byte 0x0200
+	.2byte 0x0c20
+	.2byte 0x0000
+	.2byte 0x88d0
+	.2byte 0x0200
+	.2byte 0x1c94
+	.2byte 0x0300
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -694,19 +916,121 @@ AlchemyC_020000ec:
 	.4byte 0x0000010d
 	.2byte 0x010f
 	.2byte 0x0000
-AlchemyC_020006f8:
-	.space 0x24
-AlchemyC_0200071c:
-	.space 0x4c
-AlchemyC_02000768:
-	.space 0x50
-AlchemyC_020007b8:
-	.space 0x10
-AlchemyC_020007c8:
-	.space 0xa
+	.global Func_020006f8
+	.thumb_func
+Func_020006f8:
+	push {lr}
+	ldr r3, [pc, #28]
+	ldr r1, [r3]
+	movs r3, #224
+	lsls r3, r3, #1
+	adds r2, r1, r3
+	adds r3, #65
+	str r3, [r2]
+	subs r3, #57
+	adds r2, r1, r3
+	movs r3, #24
+	str r3, [r2]
+	bl sub_02000fca
+	pop {r0}
+	bx r0
+	.4byte 0x03001ebc
+	.global Func_0200071c
+	.thumb_func
+Func_0200071c:
+	push {r5, lr}
+	ldr r3, [pc, #64]
+	ldr r1, [r3]
+	movs r3, #224
+	lsls r3, r3, #1
+	adds r2, r1, r3
+	adds r3, #68
+	str r3, [r2]
+	subs r3, #60
+	adds r2, r1, r3
+	movs r3, #24
+	str r3, [r2]
+	movs r0, #11
+	bl sub_02000fc8
+	ldr r5, [pc, #40]
+	str r5, [r0, #28]
+	movs r0, #11
+	bl sub_02000fd2
+	movs r1, #5
+	str r5, [r0, #24]
+	movs r0, #13
+	bl sub_02000fe4
+	movs r0, #14
+	movs r1, #2
+	bl sub_02000fec
+	movs r0, #0
+	pop {r5}
+	pop {r1}
+	bx r1
 	.2byte 0x0000
-AlchemyC_020007d4:
-	.space 0xa
+	.4byte 0x03001ebc
+	.4byte 0x00019999
+	.global Func_02000768
+	.thumb_func
+Func_02000768:
+	push {r5, lr}
+	sub sp, #36
+	movs r3, #2
+	str r3, [sp, #0]
+	movs r1, #13
+	movs r2, #30
+	movs r3, #6
+	movs r0, #0
+	bl sub_02000f6a
+	adds r5, r0, #0
+	adds r1, r5, #0
+	ldr r0, [pc, #40]
+	movs r2, #0
+	movs r3, #0
+	bl sub_02000fa0
+	adds r1, r5, #0
+	ldr r0, [pc, #32]
+	movs r2, #0
+	movs r3, #8
+	bl sub_02000fac
+	ldr r0, [pc, #28]
+	adds r1, r5, #0
+	movs r2, #0
+	movs r3, #16
+	bl sub_02000fb8
+	sub sp, #-36
+	pop {r5}
+	pop {r0}
+	bx r0
+	.2byte 0x0000
+	.4byte 0x02008920
+	.4byte 0x0200893c
+	.4byte 0x02008958
+	.global Func_020007b8
+	.thumb_func
+Func_020007b8:
+	ldr r3, [pc, #8]
+	ldr r3, [r3]
+	movs r2, #1
+	adds r3, #53
+	strb r2, [r3]
+	bx lr
+	.4byte 0x03001f30
+	.global Func_020007c8
+	.thumb_func
+Func_020007c8:
+	push {lr}
+	bl sub_0200100c
+	pop {r1}
+	bx r1
+	.2byte 0x0000
+	.global Func_020007d4
+	.thumb_func
+Func_020007d4:
+	push {lr}
+	bl sub_02001020
+	pop {r1}
+	bx r1
 	.2byte 0x0000
 	.include "games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/IMPORT.INC"
 	.4byte 0x0000764c

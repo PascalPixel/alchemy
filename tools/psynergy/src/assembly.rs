@@ -96,24 +96,14 @@ fn validate_extent(image: &[u8], image_base: u32, entry: u32, span: u32) -> Resu
         .ok_or_else(|| "extent address overflow".into())
 }
 
-fn render(
+/// The literal-pool words that the extent's own loads read.
+fn pool_words(
     image: &[u8],
     image_base: u32,
     entry: u32,
     span: u32,
     instructions: &[Ins],
-) -> Result<String, String> {
-    let by_address: BTreeMap<u32, _> = instructions.iter().map(|ins| (ins.addr, ins)).collect();
-    let mut labels = BTreeMap::new();
-    for ins in instructions {
-        if let Some(target) = branch_target(&ins.kind) {
-            if entry <= target && target < entry + span {
-                let next = labels.len();
-                labels.entry(target).or_insert_with(|| format!(".L{next}"));
-            }
-        }
-    }
-
+) -> Result<BTreeSet<u32>, String> {
     let mut pool_words = BTreeSet::new();
     for ins in instructions {
         if matches!(ins.kind, Kind::LdrPool { .. }) {
@@ -122,6 +112,60 @@ fn render(
             let address = ((ins.addr + 4) & !3) + u32::from(half & 0xff) * 4;
             if entry <= address && address + 4 <= entry + span {
                 pool_words.insert(address);
+            }
+        }
+    }
+    Ok(pool_words)
+}
+
+/// The addresses at which rendering starts a row, stepping as `render` does.
+fn row_starts(
+    entry: u32,
+    span: u32,
+    by_address: &BTreeMap<u32, &Ins>,
+    pool_words: &BTreeSet<u32>,
+) -> BTreeSet<u32> {
+    let mut rows = BTreeSet::new();
+    let mut cursor = entry;
+    while cursor < entry + span {
+        rows.insert(cursor);
+        cursor += if pool_words.contains(&cursor) {
+            4
+        } else {
+            by_address.get(&cursor).map_or(2, |ins| ins.size)
+        };
+    }
+    rows
+}
+
+/// A multiple transfer whose base register is also in its list: ARMv4T leaves
+/// the result UNPREDICTABLE and GAS refuses or warns, so it stays a halfword.
+fn unpredictable(kind: &Kind) -> bool {
+    match *kind {
+        Kind::Ldmia { rn, list } => list & (1 << rn) != 0,
+        Kind::Stmia { rn, list } => list & (1 << rn) != 0 && list & ((1 << rn) - 1) != 0,
+        _ => false,
+    }
+}
+
+fn render(
+    image: &[u8],
+    image_base: u32,
+    entry: u32,
+    span: u32,
+    instructions: &[Ins],
+) -> Result<String, String> {
+    let by_address: BTreeMap<u32, _> = instructions.iter().map(|ins| (ins.addr, ins)).collect();
+    let pool_words = pool_words(image, image_base, entry, span, instructions)?;
+    // Only a row the rendering will start can carry a label; any other
+    // target stays an absolute address.
+    let rows = row_starts(entry, span, &by_address, &pool_words);
+    let mut labels = BTreeMap::new();
+    for ins in instructions {
+        if let Some(target) = branch_target(&ins.kind) {
+            if entry <= target && target < entry + span && rows.contains(&target) {
+                let next = labels.len();
+                labels.entry(target).or_insert_with(|| format!(".L{next}"));
             }
         }
     }
@@ -145,7 +189,10 @@ fn render(
             cursor += 4;
             continue;
         }
-        if let Some(ins) = by_address.get(&cursor) {
+        if let Some(ins) = by_address
+            .get(&cursor)
+            .filter(|ins| !unpredictable(&ins.kind))
+        {
             let mut text = match ins.kind {
                 Kind::LdrPool { rd, .. } => {
                     let half = u16_at(image, (cursor - image_base) as usize)?;
@@ -176,6 +223,27 @@ mod tests {
     use super::{thumb_source, thumb_source_from_instructions};
     use crate::discovery::{Discovery, Mode};
     use std::collections::BTreeSet;
+
+    #[test]
+    fn an_unpredictable_multiple_transfer_stays_a_halfword() {
+        let image = [
+            0x8e, 0xc9, // ldmia r1!, {r1, r2, r3, r7}
+            0x70, 0x47, // bx lr
+        ];
+        let source = thumb_source(&image, 0x08000100, 0x08000100, 4).unwrap();
+        assert!(source.contains(".2byte 0xc98e"), "{source}");
+    }
+
+    #[test]
+    fn a_branch_into_the_middle_of_a_row_keeps_its_absolute_target() {
+        let image = [
+            0xff, 0xf7, 0xff, 0xff, // bl 0x08000102, the second half of this bl
+            0x70, 0x47, // bx lr
+        ];
+        let source = thumb_source(&image, 0x08000100, 0x08000100, 6).unwrap();
+        assert!(source.contains("bl 0x08000102"), "{source}");
+        assert!(!source.contains(".L0"), "{source}");
+    }
 
     #[test]
     fn discovered_register_call_keeps_its_continuation_and_pool() {

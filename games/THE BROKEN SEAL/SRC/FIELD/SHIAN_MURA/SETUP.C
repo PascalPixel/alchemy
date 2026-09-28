@@ -1,11 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_0808a5e0(s32 music);
+void BattleFx_SetQueuedSoundAndPlay(s32 music);
 
-extern s16 Data_02000240_t[][1];
-extern u8 Value_02008325;
-extern u8 Value_02008501;
+
+void Actor_UpdatePresentationFlag(void);
+void ShianMura_WatchGateTrigger(union FieldObject *object);
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -39,8 +39,8 @@ s32 ShianMura_SetupScene(void)
     s32 x;
 
     gEventWork->start_transition = 0x100;
-    Main_0808a5e0(169);
-    if (Data_02000240_t[225][0] > 9) {
+    BattleFx_SetQueuedSoundAndPlay(169);
+    if (gGameState.entrance > 9) {
         Call1((void (*)())Engine_GameFlagClear, 0x12f);
     }
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x895)) {
@@ -79,10 +79,10 @@ s32 ShianMura_SetupScene(void)
 
             Call6((void (*)())Engine_MapCopyCellAttributes, 3, 17, 1, 1, px >> 20, Engine_ActorGet(20)->z.fixed >> 20);
         }
-        Call2((void (*)())Engine_TaskAddCallback, (s32)&Value_02008325, 0xc80);
+        Call2((void (*)())Engine_TaskAddCallback, (s32)Actor_UpdatePresentationFlag, 0xc80);
     }
     Engine_ActorSetChildValue(18, 2);
-    Engine_ActorGet(18)->update = (void (*)(union FieldObject *))&Value_02008501;
+    Engine_ActorGet(18)->update = ShianMura_WatchGateTrigger;
     actor = Engine_ActorGet(19);
     actor->motion_flags = x;
     actor->y.fixed = 0x100000;

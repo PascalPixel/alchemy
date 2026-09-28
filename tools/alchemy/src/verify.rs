@@ -31,10 +31,13 @@ pub const WAVES: &[&[&str]] = &[
 ];
 
 const USAGE: &str = "usage: alchemy verify\n\
-Runs the landing gate (make verify): every gate in dependency waves, concurrently within a wave,\n\
-one line per passing gate and the whole output of a failing one. Logs: out/verify/<gate>.log.\n\
+Runs every gate (make verify) in dependency waves, concurrently within a wave, one line per\n\
+passing gate and the whole output of a failing one. Logs: out/verify/<gate>.log.\n\
+       alchemy verify --land\n\
+On main, before committing a landing (make land): the staged checks, the tests, both games\n\
+built and compared, and README and both progress figures written and staged.\n\
        alchemy verify --pre-commit\n\
-Runs staged checks on every branch; main also tests, builds, publishes and verifies both games.\n\
+The commit hooks' staged checks, on every branch; they build and publish nothing.\n\
        alchemy verify --pre-push\n\
 Checks outgoing publication history and the existing verified publication of an outgoing main tip.";
 
@@ -68,12 +71,16 @@ pub fn entry(arguments: &[String]) -> ExitCode {
             }
         };
     }
-    let pre_commit = arguments == ["--pre-commit"];
-    if !arguments.is_empty() && !pre_commit {
-        eprintln!("{USAGE}");
-        return ExitCode::from(2);
-    }
-    match run(crate::compiler::routing::root(), pre_commit) {
+    let mode = match arguments {
+        [] => Mode::Verify,
+        [flag] if flag == "--pre-commit" => Mode::Staged,
+        [flag] if flag == "--land" => Mode::Land,
+        _ => {
+            eprintln!("{USAGE}");
+            return ExitCode::from(2);
+        }
+    };
+    match run(crate::compiler::routing::root(), mode) {
         Ok(true) => ExitCode::SUCCESS,
         Ok(false) => ExitCode::FAILURE,
         Err(error) => {
@@ -240,10 +247,28 @@ fn stage_publication(root: &Path) -> Result<(), String> {
     Ok(())
 }
 
-fn run(root: &Path, pre_commit: bool) -> Result<bool, String> {
+/// What a run of the gates is for.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Mode {
+    /// Every gate, publishing nothing.
+    Verify,
+    /// The commit hooks: staged checks only.
+    Staged,
+    /// A landing on main, run before its commit: every gate, the tests and
+    /// the publication, staged for the commit.
+    Land,
+}
+
+fn run(root: &Path, mode: Mode) -> Result<bool, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
-    let main = !pre_commit || is_main(root)?;
-    run_waves(root, &executable, pre_commit, main)
+    match mode {
+        Mode::Verify => run_waves(root, &executable, false, true),
+        Mode::Staged => run_waves(root, &executable, true, false),
+        Mode::Land if !is_main(root)? => {
+            Err("make land publishes main's progress: run it on main".into())
+        }
+        Mode::Land => run_waves(root, &executable, true, true),
+    }
 }
 
 fn run_waves(root: &Path, executable: &Path, pre_commit: bool, main: bool) -> Result<bool, String> {

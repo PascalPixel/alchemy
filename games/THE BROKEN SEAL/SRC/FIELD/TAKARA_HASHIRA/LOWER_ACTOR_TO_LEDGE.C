@@ -4,7 +4,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-s32 Main_080091a8(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 s32 OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 void SceneActor_WaitHeightBelowLimit(struct FieldActor *actor, s32 limit);
 
@@ -26,7 +26,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
     found = 0;
     object = found;
     Engine_ActorSetSpriteFlags(actor, found);
-    height = Main_080091a8(2, actor->x.fixed, actor->z.fixed);
+    height = Map_GetTerrainHeightFar(2, actor->x.fixed, actor->z.fixed);
     level = height / 0x100000;
     rows = level;
     if (level < 0) {
@@ -34,7 +34,7 @@ s32 TakaraHashira_LowerActorToLedge(s32 id, s32 far)
     }
     rows++;
     for (row = 0; row <= rows; row++) {
-        top = Main_080091a8(actor->unknown_22, actor->x.fixed, (row << 20) + actor->z.fixed);
+        top = Map_GetTerrainHeightFar(actor->unknown_22, actor->x.fixed, (row << 20) + actor->z.fixed);
         top /= 0x100000;
         if (level < top) {
             x = ((actor->x.fixed >> 20) << 20) + 0x80000;

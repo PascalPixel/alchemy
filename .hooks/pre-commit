@@ -1,3 +1,3 @@
 #!/bin/sh
-# Main publishes a verified landing; other branches run the staged checks.
+# Every commit runs the staged checks; land main with `make land` first.
 exec make --no-print-directory precommit

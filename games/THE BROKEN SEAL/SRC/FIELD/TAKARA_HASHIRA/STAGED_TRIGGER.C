@@ -4,7 +4,7 @@
 s32 StagedActor_FindAtTile(s32 *pos, struct FieldActor *actor);
 void FieldScene_RunScene3b3_02001fd4(void);
 s32 FieldScene_RunScene3b3SequenceD(void);
-void Main_0808a2a8(void);
+void FieldEffect_UpdateGridPlacement(void);
 
 /* Runs the scene when a staged actor stands in the cell a step further along z,
  * otherwise falls back to sequence D. */
@@ -20,6 +20,6 @@ void TakaraHashira_RunStagedCellScene(void)
     if (StagedActor_FindAtTile(p, leader) != 0) {
         FieldScene_RunScene3b3_02001fd4();
     } else if (FieldScene_RunScene3b3SequenceD() == 0) {
-        Main_0808a2a8();
+        FieldEffect_UpdateGridPlacement();
     }
 }

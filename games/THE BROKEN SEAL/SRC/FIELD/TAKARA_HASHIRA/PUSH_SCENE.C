@@ -9,7 +9,7 @@ s32 StagedActor_FindClearPosition(struct Probe *probe);
 void SceneActor_MoveAndRedraw(struct Probe probe);
 void StagedActor_PlaceAtObjectTenCell();
 void StagedActor_AdvancePair();
-void Local_020024cc();
+void TakaraHashira_DropActorTen();
 void Engine_EventEnd();
 
 
@@ -36,7 +36,7 @@ void TakaraHashira_RunPushScene(void)
     } else {
         StagedActor_PlaceAtObjectTenCell();
         StagedActor_AdvancePair();
-        Local_020024cc();
+        TakaraHashira_DropActorTen();
     }
     Engine_EventEnd();
 }

@@ -6,9 +6,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-
-#define WORKSPACE (*(u8 **)0x03001ebc)
-
 #include "RESOURCE_386_STATE.H"
 
 enum {
@@ -34,24 +31,18 @@ enum PlacementMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
-extern s16 Data_02000240[];
+extern u8 *gWork;
 
-void Func_020006d4(u8 *);
-void Func_020006da(s32);
-s32 Func_02000898();
-s32 Func_0200096c(void);
-u8 *Func_020009ea(s32);
-u8 *Func_02000a32(s32);
-u8 *Func_02000a7a(s32);
-u8 *Func_02000ac2(s32);
-u8  *Func_02000b80();
-u8  *Func_02000b8c();
-u8  *Func_02000b94();
-void Func_02000b34();
-u8 *Func_02000b76(s32);
-u8 *Func_02000b98(s32, s32);
+/* The scene's tables, laid out after the code. */
+extern u8 Placement_Scripts[];
+extern u8 Placement_Messages[];
+extern u8 Placement_Actors[];
+extern u8 Placement_Effects[];
 
-/* Each Func_ name is a loader-relocated call word, not a runtime address. */
+void FieldScene_PrepareActors(u8 *);
+s32 PartyInventory_HasSpace(void);
+void SceneState_CheckPositionWindow(void);
+void OverlayObject_InitObject22(s32, s32, s32, s32);
 
 /*
  * Call sites spelled through these wrappers pass their constants straight
@@ -101,13 +92,13 @@ void SceneState_CheckPositionWindow(void)
     s32 v1;
     s32 v0;
 
-    v0 = ((struct Resource386FirstView *)Resource386_GetFirstView(0))->sample_08;
-    v1 = (s32)((struct Resource386SecondView *)Resource386_GetSecondView(0))->sample_10 >> 0x14;
+    v0 = ((struct Resource386FirstView *)Actor_Get(0))->sample_08;
+    v1 = (s32)((struct Resource386SecondView *)Actor_Get(0))->sample_10 >> 0x14;
     if (((u32)((v0 >> 0x14) - 0x22) <= 1U) && (v1 > 0x28) && (v1 <= 0x2A)) {
-        Resource386_OnWindowMatch(0x250);
+        GameFlag_Set(0x250);
         return;
     }
-    Resource386_OnWindowMiss(0x250);
+    GameFlag_Clear(0x250);
 }
 
 /*
@@ -116,7 +107,7 @@ void SceneState_CheckPositionWindow(void)
  */
 u8 *SceneData_GetScriptTable(void)
 {
-    return (u8 *)0x020086dc;
+    return Placement_Scripts;
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
@@ -128,20 +119,20 @@ s32 SceneData_ReturnZero(void)
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetMessageTable(void)
 {
-    return (u8 *)0x020087cc;
+    return Placement_Messages;
 }
 
-u8 *SceneData_InitAndGetTable87f4(void)
+u8 *SceneData_GetPreparedActors(void)
 {
-    u8 *slot = (u8 *)0x020087F4;
+    u8 *slot = Placement_Actors;
 
-    Func_020006d4(slot);
+    FieldScene_PrepareActors(slot);
     return slot;
 }
 
 void SceneActor_RunActorStep(s32 arg0)
 {
-    Func_020006da(arg0);
+    Event_Begin();
     Actor_SetAnimation(arg0, 1);
     Event_ShowMessage(arg0, 0);
     Event_End();
@@ -235,7 +226,7 @@ void FieldScene_RunActor18FlaggedSequence(void)
         Event_Wait(20);
         Actor_RunRepeatedMotion(18, 2);
         Event_Wait(20);
-        if (Value0(Func_02000898) == 0) {
+        if (Value0(PartyInventory_HasSpace) == 0) {
             Actor_SetAnimationAndWait(18, 4);
             Event_Wait(20);
             Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
@@ -259,19 +250,16 @@ void FieldScene_RunActor18FlaggedSequence(void)
 
 void SceneActor_RunActor16StepWithFlag91(void)
 {
-    u8 *Func_02000976_a(s32);
-    u8 *Func_02000986(s32);
-
     u8 *slot;
     u8 clear = 0;
 
     Event_Begin();
     Actor_RunRepeatedMotion(16, 1);
     Event_End();
-    slot = Func_02000976_a(16) + 91;
+    slot = (u8 *)Actor_Get(16) + 91;
     *slot = 1;
     FieldScene_RunActor16Sequence();
-    slot = Func_02000986(16) + 91;
+    slot = (u8 *)Actor_Get(16) + 91;
     *slot = clear;
     Actor_EnableActionCallback(16, 2);
 }
@@ -283,7 +271,7 @@ void FieldScene_RunActor18ConditionalCue(void)
 
     Event_Begin();
 
-    if (Func_0200096c() == 0) {
+    if (PartyInventory_HasSpace() == 0) {
         Actor_SetAnimationAndWait(18, 4);
         Event_Wait(20);
         Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
@@ -302,7 +290,7 @@ void FieldScene_RunActor19StepByPlace(void)
 
     u32 place;
 
-    place = *(u16 *)(Func_020009ea(0) + 6);
+    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
     Event_Begin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -319,7 +307,7 @@ void FieldScene_RunActor20StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)(Func_02000a32(0) + 6);
+    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
     Event_Begin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -336,7 +324,7 @@ void FieldScene_RunActor21StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)(Func_02000a7a(0) + 6);
+    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
     Event_Begin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -353,7 +341,7 @@ void FieldScene_RunActor22StepByPlace(void)
 {
     u32 place;
 
-    place = *(u16 *)(Func_02000ac2(0) + 6);
+    place = *(u16 *)((u8 *)Actor_Get(0) + 6);
     Event_Begin();
 
     if (place + 0xFFFF5FFF <= 0x3FFE) {
@@ -385,24 +373,20 @@ u8 *SceneData_GetEffectTable(void)
 {
     s32 GameFlag_IsSet(s32);
 
-    return (u8 *)0x0200898c;
+    return Placement_Effects;
 }
 
 /*
  * Overlay entry point: selects the scene from the global block and runs the
- * matching setup. It returns a constant zero status.
- *
- * Data_02000240 is the cross-overlay RAM global block rather than an in-image
- * address, and the signed halfword read out of it selects the scene.
+ * matching setup. It returns a constant zero status. The entrance the party
+ * came in by selects the scene.
  */
 s32 FieldScene_InitSceneStateByStep(void)
 {
-    void Func_02000abe_a();
-
     s32 scene;
     s32 zero;
 
-    *(s32 *)(WORKSPACE + 448) = 521;
+    *(s32 *)(gWork + 448) = 521;
     scene = gGameState.entrance;
 
     if (scene == 5) {
@@ -415,27 +399,21 @@ s32 FieldScene_InitSceneStateByStep(void)
          */
         Map_CopyCellsTo(0, 120, 8, 67, fifth, sixth);
         zero = 0;
-        Func_02000b80(8)[0x55] = zero;
-        *(s32 *)(Func_02000b8c(8) + 12) = zero;
-        *(s32 *)(Func_02000b94(8) + 20) = zero;
+        ((u8 *)Actor_Get(8))[0x55] = zero;
+        *(s32 *)((u8 *)Actor_Get(8) + 12) = zero;
+        *(s32 *)((u8 *)Actor_Get(8) + 20) = zero;
     } else if (scene == 7 || scene == 11) {
         /* Built by shifts: 142 << 18, 128 << 13, 168 << 18. */
-        Func_02000abe_a(0xe7, 0x02380000, 0x00100000, 0x02a00000);
-        /*
-         * 0x02008031 is Func_02000030 plus the Thumb bit, a task callback
-         * rather than data; 200 << 4 is the period.
-         */
-        Func_02000b34(0x02008031, 0xc80);
+        OverlayObject_InitObject22(0xe7, 0x02380000, 0x00100000, 0x02a00000);
+        /* 200 << 4 is the period. */
+        Task_AddCallback(SceneState_CheckPositionWindow, 0xc80);
     }
 
     return 0;
 }
 
-/*
- * Prepare object 22 for display. Call sites set three further registers that
- * this function does not read.
- */
-void OverlayObject_InitObject22(s32 a)
+/* Creates object 22 where given and shows the item's icon on it. */
+void OverlayObject_InitObject22(s32 a, s32 fixed_x, s32 fixed_y, s32 fixed_z)
 {
     u8 *o;
     u8 *q;
@@ -445,7 +423,7 @@ void OverlayObject_InitObject22(s32 a)
     s32 m;
 
     z = 0;
-    o = Func_02000b76(22);
+    o = (u8 *)Object_Create(22, fixed_x, fixed_y, fixed_z);
     if (o != 0) {
         q = *(u8 **)(o + 0x50);
         p = q + 38;
@@ -458,7 +436,7 @@ void OverlayObject_InitObject22(s32 a)
         q[9] &= 15;
         o[0x55] = z;
         o[0x5c] = 1;
-        v = Func_02000b98(17, 0x608);
+        v = Heap_Allocate(17, 0x608);
         Item_LoadIcon(a);
         v += 0x400;
         Vram_Load(q[28], 0x80, v);

@@ -1,3 +1,95 @@
-	.irp EntryTarget, 0x03000380, 0x080000c1, 0x080000d1, 0x080000f9, 0x08000119, 0x08000121, 0x08000129, 0x08009081, 0x08009099, 0x080090c9, 0x080090d1, 0x08009129, 0x08009149, 0x08009151, 0x08009159, 0x08009179, 0x08009181, 0x080091a1, 0x080091b9, 0x080091c1, 0x080091d9, 0x080091e1, 0x080091e9, 0x080091f1, 0x080091f9, 0x08009279, 0x08015041, 0x080770c1, 0x080770c9, 0x080770d1, 0x0808a011, 0x0808a019, 0x0808a021, 0x0808a039, 0x0808a081, 0x0808a091, 0x0808a099, 0x0808a0a1, 0x0808a0b9, 0x0808a0c1, 0x0808a0d1, 0x0808a0e1, 0x0808a0e9, 0x0808a0f1, 0x0808a101, 0x0808a109, 0x0808a111, 0x0808a139, 0x0808a141, 0x0808a149, 0x0808a151, 0x0808a159, 0x0808a161, 0x0808a171, 0x0808a181, 0x0808a189, 0x0808a1b9, 0x0808a1e1, 0x0808a1e9, 0x0808a1f1, 0x0808a209, 0x0808a211, 0x0808a219, 0x0808a221, 0x0808a229, 0x0808a249, 0x0808a331, 0x0808a339, 0x0808a349, 0x0808a361, 0x0808a369, 0x0808a371, 0x0808a409, 0x0808a581, 0x0808a5e1, 0x0808a5e9, 0x080f9011
-	overlay_veneer \EntryTarget
-	.endr
+	.global IwramSignedDivideEntry
+	.thumb_func
+IwramSignedDivideEntry:
+	overlay_veneer 0x03000380
+	overlay_veneer 0x080000c1
+	overlay_veneer 0x080000d1
+	overlay_veneer 0x080000f9
+	overlay_veneer 0x08000119
+	overlay_veneer 0x08000121
+	overlay_veneer 0x08000129
+	.global Engine_ObjectSetAnimation
+	.thumb_func
+Engine_ObjectSetAnimation:
+	overlay_veneer 0x08009081
+	.global Engine_ObjectSetScript
+	.thumb_func
+Engine_ObjectSetScript:
+	overlay_veneer 0x08009099
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
+	overlay_veneer 0x080090c9
+	overlay_veneer 0x080090d1
+	overlay_veneer 0x08009129
+	overlay_veneer 0x08009149
+	overlay_veneer 0x08009151
+	overlay_veneer 0x08009159
+	overlay_veneer 0x08009179
+	overlay_veneer 0x08009181
+	overlay_veneer 0x080091a1
+	overlay_veneer 0x080091b9
+	overlay_veneer 0x080091c1
+	overlay_veneer 0x080091d9
+	overlay_veneer 0x080091e1
+	overlay_veneer 0x080091e9
+	overlay_veneer 0x080091f1
+	overlay_veneer 0x080091f9
+	overlay_veneer 0x08009279
+	overlay_veneer 0x08015041
+	overlay_veneer 0x080770c1
+	overlay_veneer 0x080770c9
+	overlay_veneer 0x080770d1
+	overlay_veneer 0x0808a011
+	overlay_veneer 0x0808a019
+	overlay_veneer 0x0808a021
+	overlay_veneer 0x0808a039
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
+	overlay_veneer 0x0808a081
+	overlay_veneer 0x0808a091
+	overlay_veneer 0x0808a099
+	overlay_veneer 0x0808a0a1
+	overlay_veneer 0x0808a0b9
+	overlay_veneer 0x0808a0c1
+	overlay_veneer 0x0808a0d1
+	overlay_veneer 0x0808a0e1
+	overlay_veneer 0x0808a0e9
+	overlay_veneer 0x0808a0f1
+	overlay_veneer 0x0808a101
+	overlay_veneer 0x0808a109
+	overlay_veneer 0x0808a111
+	overlay_veneer 0x0808a139
+	overlay_veneer 0x0808a141
+	overlay_veneer 0x0808a149
+	overlay_veneer 0x0808a151
+	overlay_veneer 0x0808a159
+	.global Engine_ObjectSetPalette
+	.thumb_func
+Engine_ObjectSetPalette:
+	overlay_veneer 0x0808a161
+	overlay_veneer 0x0808a171
+	overlay_veneer 0x0808a181
+	overlay_veneer 0x0808a189
+	overlay_veneer 0x0808a1b9
+	overlay_veneer 0x0808a1e1
+	overlay_veneer 0x0808a1e9
+	overlay_veneer 0x0808a1f1
+	overlay_veneer 0x0808a209
+	overlay_veneer 0x0808a211
+	overlay_veneer 0x0808a219
+	overlay_veneer 0x0808a221
+	overlay_veneer 0x0808a229
+	overlay_veneer 0x0808a249
+	overlay_veneer 0x0808a331
+	overlay_veneer 0x0808a339
+	overlay_veneer 0x0808a349
+	overlay_veneer 0x0808a361
+	overlay_veneer 0x0808a369
+	overlay_veneer 0x0808a371
+	overlay_veneer 0x0808a409
+	overlay_veneer 0x0808a581
+	overlay_veneer 0x0808a5e1
+	overlay_veneer 0x0808a5e9
+	overlay_veneer 0x080f9011

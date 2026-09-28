@@ -1,3 +1,7 @@
+/* NONMATCHING: resource_3b0 0x020090a0, FuneHobashira_UpdateSway, formerly
+ * FIELD/FUNE_HOBASHIRA/SWAY.C (2026-09-28).
+ * Keeps its angles and drift totals at 0x02009920..0x02009943, the overlay's
+ * work RAM past the loaded image, which nothing names. Remaining: those names. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

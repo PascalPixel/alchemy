@@ -1,3 +1,10 @@
+/* NONMATCHING: resource_3b0 0x02008030, Object_PlaceFromCameraOffset, formerly
+ * FIELD/FUNE_HOBASHIRA/CAMERA_OFFSET.C (2026-09-28).
+ * Reads the camera through 0x03001e70 (the main image names it gCam and
+ * gMapWork) and the two coordinate pairs at 0x02009930 and 0x02009938, which lie
+ * just past the loaded image in the overlay's own work RAM. The main image has
+ * no name there and the overlay defines none, so those references cannot be
+ * named honestly yet. Remaining: name the overlay's work RAM. */
 #include "TYPES.H"
 
 struct Other {

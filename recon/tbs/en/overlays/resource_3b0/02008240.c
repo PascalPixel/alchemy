@@ -1,3 +1,9 @@
+/* NONMATCHING: resource_3b0 0x02008240, FuneHobashira_ApplyEntryState, formerly
+ * FIELD/FUNE_HOBASHIRA/ENTRY_STATE.C (2026-09-28).
+ * Stores scene 0x6f loaded from a literal (a link-time value; a plain constant
+ * becomes movs #0x6f) and writes the sway angles at 0x02009928 and 0x02009940
+ * in the overlay's work RAM past the image, which nothing names. Remaining:
+ * the scene id and the work RAM names. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

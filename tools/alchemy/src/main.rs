@@ -1,10 +1,8 @@
 use std::process::ExitCode;
 
-mod allocator;
 mod assets;
 mod bootstrap;
 mod build;
-mod build_assets;
 mod build_rom;
 mod candidate;
 mod check;
@@ -12,7 +10,6 @@ mod compiler;
 mod coverage;
 mod disasm;
 mod format;
-mod generated_files;
 mod overlay;
 mod parallel;
 mod raw;

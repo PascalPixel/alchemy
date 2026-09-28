@@ -71,7 +71,7 @@ const NUMERIC_ELEMENTS_MAX: usize = 2_048;
 /// Byte values one flat JSON array may hold before only a named typed table
 /// explains it; the tracked tree peaks at 518 in `action_modes`.
 const JSON_BYTE_ARRAY_MIN: usize = 256;
-/// Element types of a typed table segment, as `build_assets::typed_table` reads them.
+/// Element types of a typed table segment, as `assets::table::typed_table` reads them.
 const TYPED_ELEMENTS: &[&str] = &[
     "u8",
     "s8",

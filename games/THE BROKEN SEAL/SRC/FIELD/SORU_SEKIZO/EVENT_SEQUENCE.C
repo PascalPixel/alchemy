@@ -1,18 +1,14 @@
 #include "TYPES.H"
 
-#define SoruSekizo_RunEventSequence Func_02001b44
 
-void Func_02003fb0();
-void Func_02003fe0();
-s32 Func_02003fe8();
-void Func_02003fea();
-s32 Func_0200401c();
-void Func_0200402a();
-void Func_02004038();
-void Func_02004042();
-void Func_0200405e();
-void Func_02004076();
-void Func_020040c6();
+void Engine_EventBegin();
+void Engine_ActorSetSpeed();
+s32 Engine_ActorGet();
+s32 Engine_ActorSetDestination();
+void Engine_EventEnd();
+void Engine_ActorSetAnimation();
+void Engine_ActorWaitForMove();
+void Engine_AudioPlayCue();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -43,19 +39,19 @@ void SoruSekizo_RunEventSequence(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4)
     p9 = a0;
     p8 = a1;
     p10 = a2;
-    Func_02003fb0();
-    Func_020040c6(185);
-    Call3(Func_02003fe0, p9, 0x3333, 0x1999);
-    Call3(Func_02003fea, 0, 0x3333, 0x1999);
-    *(u8 *)(Func_02003fe8(p9) + 90) &= 254;
-    Func_02004042(0, 8);
-    Value3(Func_0200401c, 0, ((a3 << 4) + 8), ((a4 << 4) + 8));
+    Engine_EventBegin();
+    Engine_AudioPlayCue(185);
+    Call3(Engine_ActorSetSpeed, p9, 0x3333, 0x1999);
+    Call3(Engine_ActorSetSpeed, 0, 0x3333, 0x1999);
+    *(u8 *)(Engine_ActorGet(p9) + 90) &= 254;
+    Engine_ActorSetAnimation(0, 8);
+    Value3(Engine_ActorSetDestination, 0, ((a3 << 4) + 8), ((a4 << 4) + 8));
     p8b = ((s32)p8 << 4);
     p10b = ((s32)p10 << 4);
-    Func_02004038(p9, (p8b + 8), (p10b + 8));
-    Func_0200405e(p9);
-    Func_02004076(0, 1);
-    Func_0200402a();
+    Engine_ActorSetDestination(p9, (p8b + 8), (p10b + 8));
+    Engine_ActorWaitForMove(p9);
+    Engine_ActorSetAnimation(0, 1);
+    Engine_EventEnd();
     p9b = ((a3 << 4) + 8);
     p10c = ((a4 << 4) + 8);
 }

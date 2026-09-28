@@ -223,6 +223,9 @@ Func_08009248:
 	.thumb_func
 ObjectGroup_SetChildValueUnlessFifteenFar:
 	overlay_veneer 0x0800b685
+	.global ScriptObject_CheckOverlapFar
+	.thumb_func
+ScriptObject_CheckOverlapFar:
 	overlay_veneer 0x0800d925
 	overlay_veneer 0x080108c5
 	.global ResourceMetadata_SumCommandLengthsFar

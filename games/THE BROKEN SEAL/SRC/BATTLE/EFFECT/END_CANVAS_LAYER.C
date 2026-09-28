@@ -14,6 +14,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
 
+void Palette_StepFadeTransfer(void);
+
 void Audio_PlayCue(s32);
 void WaitFrames(s32);
 void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
@@ -79,7 +81,7 @@ void BattleFx_EndCanvasLayer(void)
     gProjection.unk10 = 120;
     *(volatile u16 *)0x0400000c = 0x787;
     ((FillWordsFn)0x03000164)((void *)0x06004000, 0x4000);
-    Scheduler_RemoveCallback(0x080cd4b5);
+    Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);
     scroll->unk06 = 32;
     QUEUE_DISPLAY_CONTROL(0x7341);
     *(volatile u16 *)0x04000050 = 0;

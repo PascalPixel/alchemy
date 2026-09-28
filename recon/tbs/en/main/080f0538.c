@@ -1,9 +1,15 @@
-/* NONMATCHING: 224 of 220 bytes, 24 aligned edits. A u32 frame snapshot
-   restores the unsigned load, mask, and signed group calculation. Keeping
-   the row's x separate from the next x restores both high-register saves,
-   but advances x before the inner loop and changes register priorities.
-   The reference keeps x in lr, row x in ip, the column step in r7 and row
-   count in r6. Explicit negation gives 25 edits; retain this closer model. */
+/* Draft, not exact (2026-09-28): 220 of 220 bytes, 8 differing halfwords.
+   Writes the 16x6 object-attribute strip for the scrolling frame, then
+   DMAs it to OAM and advances the frame counter every fourth tick.
+   The row x is the loop giv row * 8 + 16 - fine: strength reduction gives
+   the reference's x in lr and the per-row copy in ip, and an up-counting
+   column loop is reversed into its 5..0 counter. Every loop body and the
+   tail are exact. Residual, preheader order only: the reference computes
+   16 - fine before loading the 0x300 tile limit, and copies lr to ip
+   between the two halves of the 0x180000 row start; here loop pass 1
+   hoists the 0x300 compare constant ahead of the giv initialisation. The
+   tile-wrap spelling (==, >, -=, compound, reordered), loop bound forms
+   and declaration placement do not move it. */
 #include "TYPES.H"
 #include "DMA.H"
 
@@ -13,19 +19,16 @@ void Func_080f0538(void)
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
     u32 *entry = (u32 *)(*(u8 **)0x02004c0c + 192);
-    s32 x = 16 - fine;
     s32 row;
 
     for (row = 0; row <= 15; row++) {
-        u32 row_x = x;
         s32 y = 0x180000;
         s32 col;
 
-        x += 8;
-        for (col = 5; col >= 0; col--) {
+        for (col = 0; col < 6; col++) {
             u32 *q = entry;
 
-            *q++ = row_x | y | 0x40004000;
+            *q++ = (row * 8 + 16 - fine) | y | 0x40004000;
             *q = tile;
             tile += 4;
             entry += 2;

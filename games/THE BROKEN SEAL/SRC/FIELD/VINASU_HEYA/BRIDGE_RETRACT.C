@@ -12,7 +12,7 @@ struct MapWork {
     struct ScrollLayer layer;
 };
 
-extern struct MapWork *Data_03001e70;
+extern struct MapWork *gMapWork;
 
 /* The far end of the bridge: the first time the leader steps on it, the
  * bridge rolls back the other way in a spray of dust. */
@@ -28,7 +28,7 @@ void VinasuHeya_RetractBridge(void)
     u32 i;
     s32 dust_x;
 
-    layer = &Data_03001e70->layer;
+    layer = &gMapWork->layer;
     leader = Engine_ActorGet(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
@@ -69,7 +69,7 @@ void VinasuHeya_RetractBridge(void)
             Engine_AudioPlayCue(288);
             Engine_AudioPlayCue(188);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Engine_MapWaitWorkValuesBelow256();
+            Engine_MapRenderWaitForValues();
             gEventWork->start_transition = 0x202;
             Engine_EventRequestExit(18);
             Engine_EventEnd();

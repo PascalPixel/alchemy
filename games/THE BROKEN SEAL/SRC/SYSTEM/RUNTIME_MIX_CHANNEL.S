@@ -9,7 +9,6 @@
 @ credit: handwritten — IWRAM runtime channel mixing
 .syntax unified
 	.thumb_func
-	.set	.L_audio_0ba0, 0x03000ba0
 	.arm
 .L_audio_channel_end:
 	ldr	r2, [sp, #24]
@@ -17,7 +16,8 @@
 	ldrne	r3, [sp, #20]
 	movne	pc, lr
 	pop	{r4, r9}
-.L_audio_09bc:
+	.global IwramSoundEndChannel
+IwramSoundEndChannel:
 	strb	r6, [r4]
 	b	.L_audio_0ad4
 .L_audio_09c4:
@@ -42,7 +42,8 @@
 	lsls	r6, sl, #8
 .L_audio_09f8:
 	asrs	r6, r6, #24
-.L_audio_pcm_block:
+	.global IwramSoundMixBlock
+IwramSoundMixBlock:
 	push	{r4, r9}
 .L_audio_0a00:
 	mov	lr, r2
@@ -107,7 +108,8 @@ AlchemyUncreditedEnd_080011f0:
 	subs	r8, r8, #4, 0
 	bgt	.L_audio_0a00
 	pop	{r4, r9}
-.L_audio_0acc:
+	.global IwramSoundSaveChannel
+IwramSoundSaveChannel:
 	str	r2, [r4, #24]
 	str	r3, [r4, #40]
 .L_audio_0ad4:
@@ -116,7 +118,8 @@ AlchemyUncreditedEnd_080011f0:
 
 @ 音源反復を進め、全音源の処理後にアーム初期化部へ渡す。
 	.thumb
-.L_audio_0adc:
+	.global IwramSoundMixNextChannel
+IwramSoundMixNextChannel:
 	ldr	r0, [sp, #4]
 	subs	r0, #1
 	ble.n	.L_audio_0ae6
@@ -161,4 +164,4 @@ IwramSoundNormalizeChannels:
 	mov	lr, #-2147483648
 	orr	lr, lr, lr, lsr #16
 	str	lr, [pc]
-	b	.L_audio_0ba0
+	b	IwramSoundRenderOutput

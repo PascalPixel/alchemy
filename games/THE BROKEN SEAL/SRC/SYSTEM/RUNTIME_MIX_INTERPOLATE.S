@@ -5,8 +5,6 @@
 @ return that no compiler emits.
 @ credit: handwritten — IWRAM runtime interpolation templates and sample fetch
 .syntax unified
-	.set	.L_audio_0acc, 0x03000acc
-	.set	.L_audio_09bc, 0x030009bc
 	.arm
 	asr	r9, r9, #22
 	adds	r9, r9, r6, lsl #1
@@ -26,7 +24,8 @@
 	ldrsb	r6, [r3, ip]!
 	ldrsb	ip, [r3, #1]!
 	subs	ip, ip, r6
-.L_audio_091c:
+	.global IwramSoundMixInterpolated
+IwramSoundMixInterpolated:
 	add	r5, r5, r8, lsl #2
 .L_audio_0920:
 	mul	r9, r7, ip
@@ -49,11 +48,12 @@
 .L_audio_0964:
 	subs	r8, r8, #1, 0
 	bgt	.L_audio_0920
-.L_audio_096c:
+	.global IwramSoundMixDone
+IwramSoundMixDone:
 	sub	r3, r3, #1, 0
 	pop	{r4, r9, ip}
 	str	r7, [r4, #28]
-	b	.L_audio_0acc
+	b	IwramSoundSaveChannel
 .L_audio_refill_source:
 	add	r3, sp, #24, 0
 	ldm	r3, {r3, r6}
@@ -62,4 +62,4 @@
 	addne	r2, r6, r2
 	addne	pc, lr, #8, 0
 	pop	{r4, r9, ip}
-	b	.L_audio_09bc
+	b	IwramSoundEndChannel

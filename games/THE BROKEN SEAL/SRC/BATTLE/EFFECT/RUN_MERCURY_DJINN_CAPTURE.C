@@ -1,5 +1,10 @@
 #include "TYPES.H"
 
+extern u8 gEffectWork[];
+
+void BattleFx_HalveDistanceToTarget(void);
+void BattleFx_UpdateRandomTargetParticle(void);
+
 /* The Mercury Djinni capture: the Djinni bounces three times, splits into
    eight linked copies of itself, rises out of view, and a ring of slot
    particles closes the scene. */
@@ -88,7 +93,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)0x03001F30;
+    effect_slots = *(void **)gEffectWork;
     Unnamed_080b0840Far(0x204084);
     WaitFrames(30);
     djinni->visible = 0;
@@ -118,7 +123,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
             copy->mode = 0;
             copy->priority_flags = 2;
             copy->collision_flags |= 1;
-            copy->callback = (void *)0x08096575;
+            copy->callback = (void *)BattleFx_HalveDistanceToTarget;
             copy->facing = djinni->facing;
             Animation_ApplyChildValuesFar(copy, 9);
             Object_SetMode(copy, 0);
@@ -157,7 +162,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 240, position.x, position.z);
-        EffectSlot_SetCallback(slot, (void *)0x0809641d);
+        EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRandomTargetParticle);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 9);
         remaining--;

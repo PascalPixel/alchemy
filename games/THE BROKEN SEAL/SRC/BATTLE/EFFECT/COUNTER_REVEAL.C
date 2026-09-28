@@ -4,6 +4,11 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+extern u8 gBattleFxWork[];
+
+void BattleFx_ArmBg2AffineHBlankDma(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+
 /*
  * Battle-presentation sub-effect at 0x080cfef4, structurally related to the
  * "0x03001eec battle work" family already recovered in
@@ -72,7 +77,7 @@ void BattleFx_RunCounterReveal(void *object)
     s32 zero_val;
     s32 frame;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -94,10 +99,10 @@ void BattleFx_RunCounterReveal(void *object)
     status = BattleEffect_LoadWork(47, 7, 7, 7, 1);
     second_rectangle = heap_cache[8];
     rectangle[1] = second_rectangle;
-    Scheduler_AddOrUpdateCallback(0x080DBB9D, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 1;
     (*(s32 *)((u8 *)(work) + (0x7784))) = zero_val;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     draw_enabled = 1;
     if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))) == 1) {
         curve[0] = -0x500000;
@@ -256,8 +261,8 @@ void BattleFx_RunCounterReveal(void *object)
         (*(s32 *)((u8 *)(work) + (0x7824))) = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((void *)0x080CD261);
-    Scheduler_RemoveCallback((void *)0x080DBB9D);
+    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback((void *)BattleFx_ArmBg2AffineHBlankDma);
     BattleBackground_LoadFar(1, (*(u16 *)((u8 *)(gBattleWork) + (0x648))), 24);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);

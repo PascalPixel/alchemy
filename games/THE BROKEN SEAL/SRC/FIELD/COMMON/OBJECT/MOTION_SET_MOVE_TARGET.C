@@ -5,10 +5,6 @@ s32 FixedSqrt(s32 value);
 
 #define Iwram_SqrtInt ((s32 (*)(s32))0x030001d8)
 #define Iwram_DivQ16 ((s32 (*)(s32, s32))0x0300013c)
-/* FAKEMATCH: the multiply routine is named by its link symbol so its address
- * is not reused to form the divide routine's. */
-extern u8 Value_03000118[];
-#define MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
 
 /*
  * Aims an object at a point. A point closer than one unit is taken at once;
@@ -33,7 +29,7 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
         dx = x - object->x;
         dist = y - object->y;
         dz = z - object->z;
-        dist = FixedSqrt(MulQ16(dx, dx) + MulQ16(dist, dist) + MulQ16(dz, dz));
+        dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dist, dist) + Iwram_MulQ16(dz, dz));
     }
     if (dist < 0x10000) {
         object->x = x;
@@ -48,15 +44,15 @@ void Object_SetMoveTarget(struct ObjectRuntime *object, s32 x, s32 y, s32 z)
         s32 brake;
 
         brake = Iwram_DivQ16(object->acceleration,
-                             MulQ16(object->speed_limit, object->speed_limit));
+                             Iwram_MulQ16(object->speed_limit, object->speed_limit));
         if (dist > brake)
             brake = dist - brake / 2;
         else
             brake = dist / 2;
         dist = Iwram_DivQ16(dist, brake);
-        x = object->x + MulQ16(x - object->x, dist);
-        y = object->y + MulQ16(y - object->y, dist);
-        z = object->z + MulQ16(z - object->z, dist);
+        x = object->x + Iwram_MulQ16(x - object->x, dist);
+        y = object->y + Iwram_MulQ16(y - object->y, dist);
+        z = object->z + Iwram_MulQ16(z - object->z, dist);
     }
     object->target_x = x;
     object->target_y = y;

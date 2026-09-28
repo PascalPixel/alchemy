@@ -37,8 +37,8 @@ void SceneActor_ResetActorRun(s32 first, u32 count, s32 mode);
  * An actor climbs between the yard and the ledge in front of the house at
  * x 392, playing one animation for each half of the climb.
  */
-void HouseScene_ClimbUp(s32 actor, s32 animation, s32 next_animation, s32 grounded);
-void HouseScene_ClimbDown(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, s32 grounded);
 
 void HouseScene_RunRepairMorning(void)
 {
@@ -178,7 +178,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_Jump(ACTOR_DORA, 2, 20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
-    HouseScene_ClimbUp(ACTOR_DORA, 5, 6, 0);
+    HaidiaMura_RunWalkScene032B0(ACTOR_DORA, 5, 6, 0);
     Actor_SetSpeed(ACTOR_DORA, 0x4ccc, 0x2666);
     Actor_WalkToAndWait(ACTOR_DORA, 397, 832);
     Event_Wait(20);
@@ -262,7 +262,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_WalkTo(ACTOR_GERALD, 369, 904);
     Actor_WalkToAndWait(ACTOR_JASMINE, 392, 904);
     Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
-    HouseScene_ClimbUp(ACTOR_JASMINE, 10, 11, 0);
+    HaidiaMura_RunWalkScene032B0(ACTOR_JASMINE, 10, 11, 0);
     Actor_FaceDirection(ACTOR_JASMINE, FACING_NORTHWEST, 0);
     Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -284,7 +284,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-    HouseScene_ClimbUp(ACTOR_GERALD, 10, 11, 0);
+    HaidiaMura_RunWalkScene032B0(ACTOR_GERALD, 10, 11, 0);
     Actor_SetSpeed(ACTOR_JASMINE, 0x4ccc, 0x2666);
     Actor_SetSpeed(ACTOR_GERALD, 0x4ccc, 0x2666);
     Actor_WalkTo(ACTOR_GERALD, 392, 843);
@@ -571,11 +571,11 @@ void HouseScene_RunRepairMorning(void)
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Party_AddMembers(ACTOR_GERALD, ACTOR_JASMINE);
     Camera_MoveTo(PIXELS(377), PIXELS(160), PIXELS(887), 1);
-    HouseScene_ClimbDown(ACTOR_PARTY_LEADER, 13, 10, 0);
+    HaidiaMura_RunWalkScene03380(ACTOR_PARTY_LEADER, 13, 10, 0);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 912);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     Actor_Get(ACTOR_DORA)->unknown_5a |= 1;
-    HouseScene_ClimbDown(ACTOR_DORA, 6, 5, 0);
+    HaidiaMura_RunWalkScene03380(ACTOR_DORA, 6, 5, 0);
     Actor_WalkToAndWait(ACTOR_DORA, 373, 887);
     Actor_FaceDirection(ACTOR_DORA, FACING_SOUTH, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);

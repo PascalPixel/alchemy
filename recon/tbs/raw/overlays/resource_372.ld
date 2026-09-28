@@ -1,23 +1,37 @@
-/* resource_372: its listing with maintained code
-   linked in place, as pret links objects in ROM order. */
+/* resource_372: its listing with maintained code linked in place,
+   as pret links objects in ROM order. The overlay's own work follows the image. */
 SECTIONS
 {
     .text 0x2008000 :
     {
         "*/resource_372_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.o"(.text)
+        "*/resource_372_overlay.o"(.text.x02008a10)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/STORM_SCENE_00D5C.o"(.text)
-        "*/resource_372_overlay.o"(.text.x02008ec4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_B.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/EVENT_SEQUENCE.o"(.text)
-        "*/resource_372_overlay.o"(.text.x020090a4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_C.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/SECOND_EVENT_SEQUENCE.o"(.text)
-        "*/resource_372_overlay.o"(.text.x02009498)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_D.o"(.text)
+        "*/resource_372_overlay.o"(.text.x0200950c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_J.o"(.text)
+        "*/resource_372_overlay.o"(.text.x020096cc)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_K.o"(.text)
+        "*/resource_372_overlay.o"(.text.x0200a180)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_I.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/STORM_SCENE_02DEC.o"(.text)
         "*/resource_372_overlay.o"(.text.x0200b1ac)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_F.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/PULSING_GLOW.o"(.text)
-        "*/resource_372_overlay.o"(.text.x0200be18)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_G.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/SPAWN_PAIR.o"(.text)
-        "*/resource_372_overlay.o"(.text.x0200c550)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_H.o"(.text)
+        "*/resource_372_overlay.o"(.text.x0200c618)
         "*/resource_372_overlay.o"(.rodata)
+    }
+    .bss (NOLOAD) :
+    {
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_K.o"(.bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

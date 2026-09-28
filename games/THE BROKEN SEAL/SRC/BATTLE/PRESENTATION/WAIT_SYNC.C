@@ -4,6 +4,9 @@
 #include "BATTLE_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
 
+extern u8 gBattleWork[];
+extern u8 gLinkStatus[];
+
 /* battle/pres_wait_sync.c */
 /* battle/presentation/misc/wait_sync.c */
 struct LinkWork {
@@ -15,10 +18,10 @@ struct LinkWork {
     u8 paused;
 };
 
-#define LINK_WORK (*(struct LinkWork **)0x03001e74)
+#define LINK_WORK (*(struct LinkWork **)gBattleWork)
 #define LINK_REC 0x02002024
 #define LINK_LOCAL ((u16 *)0x02002224)
-#define LINK_STAT (*(u16 *)0x03001f64)
+#define LINK_STAT (*(u16 *)gLinkStatus)
 
 s32 BattlePres_WaitSync(void)
 {

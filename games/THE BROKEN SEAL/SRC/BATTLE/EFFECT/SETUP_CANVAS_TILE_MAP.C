@@ -7,6 +7,8 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
+extern u8 gBattleWork[];
+
 typedef s32 (*ClearFn)(void *dst, s32 size);
 typedef s32 (*FillFn)(void *dst, s32 size, s32 value);
 
@@ -36,7 +38,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32 mode, s32 fade, s32 arg);
 
 void BattleFx_SetupCanvasTileMap(void)
 {
-    u8 **cells = (u8 **)0x03001e74;
+    u8 **cells = (u8 **)gBattleWork;
     void *canvas = cells[31];
     struct BattleScreen *screen = (struct BattleScreen *)cells[0];
     struct BattleLayer *layer = (struct BattleLayer *)cells[35];

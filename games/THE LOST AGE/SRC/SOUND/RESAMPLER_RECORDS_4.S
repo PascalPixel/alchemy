@@ -5,7 +5,8 @@
 @ credit: handwritten — TLA fixed-size ARM sound resampler records
 .syntax unified
 	.arm
-.L_08000550:
+	.global Sound_ResamplerRecord3
+Sound_ResamplerRecord3:
 	and	r7, r7, r8
 	add	r7, r7, r7, lsr #7
 	asrs	r4, ip, #24

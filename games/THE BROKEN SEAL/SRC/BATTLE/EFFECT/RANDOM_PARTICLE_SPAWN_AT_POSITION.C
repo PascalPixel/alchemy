@@ -2,6 +2,8 @@
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
 
+extern const u8 BattleFx_ParticleScript[];
+
 struct Values_0808f28c {
     u32 first;
     u32 second;
@@ -48,7 +50,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
         s32 mask;
         u8 flags;
 
-        ObjectDispatch_InitializeFar(object, (void *)0x0809E87C);
+        ObjectDispatch_InitializeFar(object, (void *)BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

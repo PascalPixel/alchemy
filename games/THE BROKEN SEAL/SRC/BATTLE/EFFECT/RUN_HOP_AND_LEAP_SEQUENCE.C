@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+void ObjectMotion_MoveHalfwayTowardTarget(void);
+
 /* An event actor turns its back on the leader, hops three times, splits
    into eight linked copies of itself and leaps away in the leader's
    direction, then comes to rest with its motion cleared. */
@@ -124,7 +126,7 @@ void EventActor_RunHopAndLeapSequence(s32 arg)
             copy->mode = 0;
             copy->priority_flags = 2;
             copy->collision_flags |= 1;
-            copy->callback = (void *)0x08095349;
+            copy->callback = (void *)ObjectMotion_MoveHalfwayTowardTarget;
             copy->facing = actor->facing;
             copy->sprite->priority = 0;
             Animation_ApplyChildValuesFar(copy, value);

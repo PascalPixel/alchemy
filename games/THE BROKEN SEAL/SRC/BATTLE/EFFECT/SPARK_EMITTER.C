@@ -2,6 +2,8 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+extern const u8 BattleFx_CommonParticleScript[];
+
 struct SparkObject {
     u8 unknown_00[8];
     s32 x;
@@ -74,7 +76,7 @@ void BattleFx_RunSparkEmitter(struct SparkObject *object)
             spark->anchor_x = spark->x;
             Animation_ApplyChildValuesFar(spark, 9);
             spark->unknown_5e = 72;
-            ObjectDispatch_InitializeFar(spark, 0x0809f0b0);
+            ObjectDispatch_InitializeFar(spark, (s32)BattleFx_CommonParticleScript);
         }
     }
 }

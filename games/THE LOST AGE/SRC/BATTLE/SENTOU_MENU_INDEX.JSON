@@ -6,7 +6,6 @@
       "format": 1,
       "kind": "typed-table",
       "id": "range_0810c348",
-      "address": "0x0810c348",
       "end": "0x0810c3ca",
       "size": 130,
       "segments": [
@@ -19,8 +18,7 @@
           "values": [
             0, 1, 2, 3, 32, 33, 34, 35, 64, 65, 66, 67, 96, 97, 98, 99, 128, 129, 130, 131, 160, 161, 162, 163, 192,
             193, 194, 195, 224, 225
-          ],
-          "address": "0x0810c348"
+          ]
         },
         {
           "name": "row_offsets",
@@ -28,8 +26,7 @@
           "consumers": ["recon/tla/raw/08108690.s"],
           "element": "le-u16",
           "stride": 2,
-          "values": [192, 144, 128, 80, 64],
-          "address": "0x0810c384"
+          "values": [192, 144, 128, 80, 64]
         },
         {
           "name": "thresholds",
@@ -40,8 +37,7 @@
           "values": [
             300, 300, 300, 300, 300, 500, 500, 500, 500, 500, 1000, 1000, 1000, 1000, 1000, 2000, 2000, 2000, 2000,
             2000, 4000, 4000, 4000, 4000, 4000, 8000, 8000, 8000, 8000, 8000
-          ],
-          "address": "0x0810c38e"
+          ]
         }
       ]
     },
@@ -49,7 +45,6 @@
       "format": 1,
       "kind": "typed-table",
       "id": "range_0810c3f4",
-      "address": "0x0810c3f4",
       "end": "0x08118000",
       "size": 48140,
       "segments": [
@@ -101,8 +96,7 @@
               "counted_items": [111, 0, 0, 0, 183, 186, 189],
               "group": 3
             }
-          ],
-          "address": "0x0810c3f4"
+          ]
         },
         {
           "name": "weighted_item_results",
@@ -138,8 +132,7 @@
             {"item": 426, "halfword_2": 1, "results": [317], "weights": [100]},
             {"item": 427, "halfword_2": 1, "results": [318], "weights": [100]},
             {"item": -1}
-          ],
-          "address": "0x0810cc34"
+          ]
         },
         {
           "name": "sound_ids",
@@ -147,8 +140,7 @@
           "consumers": ["recon/tla/raw/0810b1b4.s"],
           "element": "s8",
           "stride": 1,
-          "values": [82, 84, 88, 87],
-          "address": "0x0810cf28"
+          "values": [82, 84, 88, 87]
         },
         {
           "name": "multipliers",
@@ -156,10 +148,9 @@
           "consumers": ["recon/tla/raw/0810b1b4.s"],
           "element": "s8",
           "stride": 1,
-          "values": [2, 4, 7, 8, 8, 10, 12, 16, 14, 15, 18, 20, 20, 22, 25],
-          "address": "0x0810cf2c"
+          "values": [2, 4, 7, 8, 8, 10, 12, 16, 14, 15, 18, 20, 20, 22, 25]
         },
-        {"name": "alignment", "end": "0x08118000", "element": "u8", "stride": 1, "fill": 0, "address": "0x0810cf3b"}
+        {"name": "alignment", "end": "0x08118000", "element": "u8", "stride": 1, "fill": 0}
       ]
     }
   ]

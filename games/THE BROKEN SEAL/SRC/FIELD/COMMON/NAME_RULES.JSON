@@ -1,7 +1,6 @@
 {
   "format": 1,
   "kind": "typed-table",
-  "address": "0x0809ddd8",
   "end": "0x0809e1d8",
   "size": 1024,
   "segments": [
@@ -144,8 +143,7 @@
         {"selector_a": 70, "selector_b": 32767, "result": 107},
         {"selector_a": -1, "selector_b": -1, "result": 4294967295},
         {"selector_a": 0, "selector_b": 0, "result": 0}
-      ],
-      "address": "0x0809ddd8"
+      ]
     }
   ]
 }

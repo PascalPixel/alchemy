@@ -4,7 +4,6 @@
   "regions": [
     {
       "name": "range_080f39ab",
-      "address": "0x080f39ab",
       "end": "0x080f4000",
       "format": 1,
       "kind": "typed-table",
@@ -18,8 +17,7 @@
           "source_kind": "u8_table",
           "count": 6,
           "element": "u8",
-          "stride": 1,
-          "address": "0x080f39ab"
+          "stride": 1
         },
         {
           "name": "henka_hyou",
@@ -33,8 +31,7 @@
           "source_kind": "u8_table",
           "count": 60,
           "element": "u8",
-          "stride": 1,
-          "address": "0x080f39b1"
+          "stride": 1
         },
         {
           "name": "soroe_080f39ed",
@@ -43,8 +40,7 @@
           "source_kind": "unresolved_fill",
           "element": "u8",
           "stride": 1,
-          "fill": 0,
-          "address": "0x080f39ed"
+          "fill": 0
         },
         {
           "name": "iro_henka_00",
@@ -57,8 +53,7 @@
           "source_kind": "u16_table",
           "count": 32,
           "element": "le-u16",
-          "stride": 2,
-          "address": "0x080f39ee"
+          "stride": 2
         },
         {
           "name": "iro_henka_01",
@@ -71,8 +66,7 @@
           "source_kind": "u16_table",
           "count": 32,
           "element": "le-u16",
-          "stride": 2,
-          "address": "0x080f3a2e"
+          "stride": 2
         },
         {
           "name": "iro_henka_02",
@@ -85,8 +79,7 @@
           "source_kind": "u16_table",
           "count": 32,
           "element": "le-u16",
-          "stride": 2,
-          "address": "0x080f3a6e"
+          "stride": 2
         },
         {
           "name": "aki_080f3aae",
@@ -95,14 +88,12 @@
           "source_kind": "unresolved_fill",
           "element": "u8",
           "stride": 1,
-          "fill": 0,
-          "address": "0x080f3aae"
+          "fill": 0
         }
       ]
     },
     {
       "name": "range_080f541a",
-      "address": "0x080f541a",
       "end": "0x080f6000",
       "format": 1,
       "kind": "typed-table",
@@ -116,8 +107,7 @@
           "source_kind": "s16_table",
           "count": 6,
           "element": "le-s16",
-          "stride": 2,
-          "address": "0x080f541a"
+          "stride": 2
         },
         {
           "name": "aki_080f5426",
@@ -126,14 +116,12 @@
           "source_kind": "unresolved_fill",
           "element": "u8",
           "stride": 1,
-          "fill": 0,
-          "address": "0x080f5426"
+          "fill": 0
         }
       ]
     },
     {
       "name": "range_080f86f8",
-      "address": "0x080f86f8",
       "end": "0x080f9000",
       "format": 1,
       "kind": "typed-table",
@@ -147,8 +135,7 @@
           "source_kind": "u16_table",
           "count": 10,
           "element": "le-u16",
-          "stride": 2,
-          "address": "0x080f86f8"
+          "stride": 2
         },
         {
           "name": "hyouji_shoki_hyou",
@@ -158,8 +145,7 @@
           "source_kind": "u8_table",
           "count": 6,
           "element": "u8",
-          "stride": 1,
-          "address": "0x080f870c"
+          "stride": 1
         },
         {
           "name": "haba_hyou_00",
@@ -169,8 +155,7 @@
           "source_kind": "u8_table",
           "count": 8,
           "element": "u8",
-          "stride": 1,
-          "address": "0x080f8712"
+          "stride": 1
         },
         {
           "name": "haichi_hyou_00",
@@ -180,8 +165,7 @@
           "source_kind": "u8_table",
           "count": 14,
           "element": "u8",
-          "stride": 1,
-          "address": "0x080f871a"
+          "stride": 1
         },
         {
           "name": "haichi_hyou_01",
@@ -191,8 +175,7 @@
           "source_kind": "u8_table",
           "count": 14,
           "element": "u8",
-          "stride": 1,
-          "address": "0x080f8728"
+          "stride": 1
         },
         {
           "name": "haba_hyou_01",
@@ -202,8 +185,7 @@
           "source_kind": "u8_table",
           "count": 8,
           "element": "u8",
-          "stride": 1,
-          "address": "0x080f8736"
+          "stride": 1
         },
         {
           "name": "aki_080f873e",
@@ -212,8 +194,7 @@
           "source_kind": "unresolved_fill",
           "element": "u8",
           "stride": 1,
-          "fill": 0,
-          "address": "0x080f873e"
+          "fill": 0
         }
       ]
     }

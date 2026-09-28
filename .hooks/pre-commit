@@ -1,3 +1,3 @@
 #!/bin/sh
-# Quick gate: compare the games the staged change reaches, plus quick checks.
+# Main publishes a verified landing; other branches run the staged checks.
 exec make --no-print-directory precommit

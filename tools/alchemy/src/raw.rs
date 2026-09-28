@@ -121,7 +121,7 @@ fn status(root: &Path, target: DecompTarget, target_name: &str) -> Result<(), St
 
 fn rebuild(root: &Path, target: DecompTarget, target_name: &str) -> Result<(), String> {
     let units = TranslationUnits::declared_game(root, target.compiler)?;
-    let holes = overlay_holes(&units)?;
+    let holes = overlay_holes(root, target)?;
     let runtime = runtime_windows(root, target)?;
     let veneer_includes = veneer_includes(root, target)?;
     let rom = CanonicalRom::load_target(root, target)?;
@@ -592,11 +592,9 @@ fn rebuild_main(
             maintained.push(range);
         }
     }
-    let gaps = executable_gap_ranges(root, target)?;
     let mut cuts = maintained;
     cuts.extend(declared_asset_ranges(root, target)?);
     cuts.extend(retained.iter().copied());
-    cuts.extend(gaps);
     let mut ranges = subtract_ranges(unresolved, cuts.clone());
     ranges.extend(retained.iter().copied());
     ranges.sort_unstable();
@@ -837,32 +835,6 @@ fn declared_asset_ranges(root: &Path, target: DecompTarget) -> Result<Vec<(i64, 
     Ok(ranges)
 }
 
-fn executable_gap_ranges(root: &Path, target: DecompTarget) -> Result<Vec<(i64, i64)>, String> {
-    let directory = root.join(target.asm_dir).join("executable_gaps");
-    if !directory.is_dir() {
-        return Ok(Vec::new());
-    }
-    let mut ranges = Vec::new();
-    for entry in walkdir::WalkDir::new(directory) {
-        let entry = entry.map_err(|e| e.to_string())?;
-        if !entry.file_type().is_file()
-            || entry.path().extension().and_then(|e| e.to_str()) != Some("s")
-        {
-            continue;
-        }
-        let stem = entry
-            .path()
-            .file_stem()
-            .and_then(|s| s.to_str())
-            .ok_or("executable gap has no address name")?;
-        let start = i64::from_str_radix(stem, 16).map_err(|e| e.to_string())?;
-        let source = std::fs::read_to_string(entry.path()).map_err(|e| e.to_string())?;
-        let bytes = assemble_overlay_raw(&OverlaySource::text(source), start)?;
-        ranges.push((start, start + bytes.len() as i64));
-    }
-    Ok(merge_ranges(ranges))
-}
-
 fn veneer_includes(root: &Path, target: DecompTarget) -> Result<Vec<(String, String)>, String> {
     let mut includes = Vec::new();
     for entry in walkdir::WalkDir::new(root.join(target.source_dir)) {
@@ -907,67 +879,53 @@ struct Hole {
     kind: HoleKind,
 }
 
+/// The C and data placeholders each tracked listing already reserves: the
+/// listing is the record of what C fills, so a rebuild keeps every one.
 fn overlay_holes(
-    units: &TranslationUnits,
+    root: &Path,
+    target: DecompTarget,
 ) -> Result<std::collections::BTreeMap<String, Vec<Hole>>, String> {
-    let mut by_image: std::collections::BTreeMap<String, Vec<Hole>> =
-        std::collections::BTreeMap::new();
-    for unit in &units.units {
-        if let Some(image) = &unit.overlay {
-            for owner in &unit.owners {
-                if owner.state == OwnerState::ExactC {
-                    by_image.entry(image.clone()).or_default().push(Hole {
-                        start: i64::from(owner.address),
-                        end: i64::from(owner.address) + owner.extent as i64,
-                        kind: HoleKind::Code,
-                    });
-                }
-            }
-            if unit.exact() {
-                by_image
-                    .entry(image.clone())
-                    .or_default()
-                    .extend(unit.local_symbols.iter().map(|symbol| Hole {
-                        start: i64::from(symbol.address),
-                        end: i64::from(symbol.address) + symbol.extent as i64,
-                        kind: HoleKind::Code,
-                    }));
-                if let Some(data) = unit.data {
-                    by_image.entry(image.clone()).or_default().push(Hole {
-                        start: i64::from(data.address),
-                        end: i64::from(data.address) + data.extent as i64,
-                        kind: HoleKind::Data,
-                    });
-                }
-            }
-        }
-        if unit.exact() {
-            for (image, instance) in &unit.instances {
-                if image == "main" {
-                    continue;
-                }
-                by_image
-                    .entry(image.clone())
-                    .or_default()
-                    .extend(instance.owners.values().map(|owner| Hole {
-                        start: i64::from(owner.address),
-                        end: i64::from(owner.address) + owner.extent as i64,
-                        kind: HoleKind::Code,
-                    }));
-            }
-        }
-    }
-    for (image, holes) in &mut by_image {
+    let mut by_image = std::collections::BTreeMap::new();
+    let directory = root.join(target.overlay_dir());
+    let Ok(entries) = std::fs::read_dir(&directory) else {
+        return Ok(by_image);
+    };
+    for entry in entries {
+        let path = entry.map_err(|error| error.to_string())?.path();
+        let Some(overlay) = path
+            .file_name()
+            .and_then(|name| name.to_str())
+            .and_then(crate::overlay::owners::listing_overlay)
+        else {
+            continue;
+        };
+        let text = std::fs::read_to_string(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+        let code = crate::compiler::overlay::placeholder_extents(&text)
+            .into_iter()
+            .map(|(address, extent)| (address, extent, HoleKind::Code));
+        let data = text
+            .lines()
+            .filter_map(|line| {
+                let hex = line
+                    .trim()
+                    .strip_prefix("AlchemyData_")?
+                    .strip_suffix(':')?;
+                let address = u32::from_str_radix(hex, 16).ok()?;
+                let extent = crate::compiler::overlay::data_placeholder_extent(&text, address)?;
+                Some((address, extent, HoleKind::Data))
+            })
+            .collect::<Vec<_>>();
+        let mut holes = code
+            .chain(data)
+            .map(|(address, extent, kind)| Hole {
+                start: i64::from(address),
+                end: i64::from(address) + extent as i64,
+                kind,
+            })
+            .collect::<Vec<_>>();
         holes.sort_by_key(|hole| (hole.start, hole.end));
-        holes.dedup();
-        for pair in holes.windows(2) {
-            if pair[0].end > pair[1].start {
-                return Err(format!(
-                    "{image}: declared C ranges overlap at {:#x}..{:#x}",
-                    pair[1].start, pair[0].end
-                ));
-            }
-        }
+        by_image.insert(overlay.to_string(), holes);
     }
     Ok(by_image)
 }

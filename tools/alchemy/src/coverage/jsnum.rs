@@ -41,8 +41,8 @@ pub fn done_bytes(proven_c: i64, proven_asm: i64) -> i64 {
 pub fn done_percent(proven_c: i64, proven_asm: i64, executable: i64) -> f64 {
     floor_percent(done_bytes(proven_c, proven_asm), executable)
 }
-/// DONE as a whole percentage, rounded down: the commit-subject prefix.
-/// Closing the last functions is the hardest part, so 99.9% stays 99%.
+/// The former whole-percent display, retained for the accounting tests.
+#[cfg(test)]
 pub fn done_percent_whole(proven_c: i64, proven_asm: i64, executable: i64) -> i64 {
     if executable == 0 {
         0

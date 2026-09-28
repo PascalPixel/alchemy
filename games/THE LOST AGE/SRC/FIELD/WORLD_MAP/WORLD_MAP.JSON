@@ -4,7 +4,6 @@
   "chunk_directory": {
     "format": 1,
     "kind": "typed-table",
-    "address": "0x088f1748",
     "size": "0x2000",
     "segments": [
       {
@@ -12,8 +11,7 @@
         "end": "0x088f3748",
         "stride": 4,
         "element": "le-u32",
-        "stream_offsets": {"streams": "/chunks", "first": "0x2000"},
-        "address": "0x088f1748"
+        "stream_offsets": {"streams": "/chunks", "first": "0x2000"}
       }
     ]
   },

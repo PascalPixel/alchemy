@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x085e6820",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x085e682c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 68, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x085e6820"
+            "values": [0, 0, 128, 68, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x085e6844",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [17408, 4112, 0, 65535]],
-            "address": "0x085e682c"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [17408, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x085e685c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1328", "0x1330", "0x2460", "0x2468", "0x2480"],
-            "address": "0x085e6844"
+            "values": ["0x3c", "0x1328", "0x1330", "0x2460", "0x2468", "0x2480"]
           }
         ]
       },
@@ -84,7 +80,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x085e8ca0",
         "size": "0xc",
         "record_size": 3,
         "segments": [
@@ -93,17 +88,9 @@
             "end": "0x085e8ca9",
             "stride": 3,
             "element": "u8",
-            "values": [[9, 21, 102], [10, 24, 100], [54, 25, 101]],
-            "address": "0x085e8ca0"
+            "values": [[9, 21, 102], [10, 24, 100], [54, 25, 101]]
           },
-          {
-            "name": "terminator",
-            "end": "0x085e8cac",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x085e8ca9"
-          }
+          {"name": "terminator", "end": "0x085e8cac", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TORETO_HEYA.BIN",

@@ -46,6 +46,31 @@ pub(crate) static ARCHIVES: std::sync::LazyLock<Vec<ArchiveSpec>> =
         .collect()
     });
 
+/// The sha256 of an edition's reference ROM as `recon/<game>/text.json`
+/// under `root` registers it: the one tracked record of each ROM's identity.
+pub(crate) fn reference_sha256(root: &Path, target: &str) -> Result<String, String> {
+    let game = target.split('-').next().unwrap_or_default();
+    let path = format!("recon/{game}/text.json");
+    let text = fs::read_to_string(root.join(&path)).map_err(|e| format!("{path}: {e}"))?;
+    let specs: Vec<serde_json::Value> =
+        serde_json::from_str(&text).map_err(|e| format!("{path}: {e}"))?;
+    specs
+        .iter()
+        .find(|spec| spec["target"] == target)
+        .and_then(|spec| spec["rom_sha256"].as_str())
+        .map(str::to_owned)
+        .ok_or_else(|| format!("{path} registers no reference ROM for {target}"))
+}
+/// Refuse `rom` unless it is `target`'s registered reference ROM.
+pub(crate) fn verify_reference(root: &Path, target: &str, rom: &[u8]) -> Result<(), String> {
+    if crate::compiler::sha256::hex(rom) != reference_sha256(root, target)? {
+        return Err(format!(
+            "ROM differs from the {target} reference ROM text.json registers"
+        ));
+    }
+    Ok(())
+}
+
 pub(crate) fn archives(game: &str) -> &'static [ArchiveSpec] {
     match game {
         "tbs" => &ARCHIVES[..6],

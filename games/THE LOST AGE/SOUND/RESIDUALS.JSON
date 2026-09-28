@@ -7,7 +7,6 @@
       "format": 1,
       "kind": "typed-table",
       "id": "sound_empty",
-      "address": "0x081c5e30",
       "end": "0x081c5e34",
       "size": 4,
       "note": "Track-less, bank-less SMSH sequence header selected by every sound-table slot in SONG_TABLE.JSON that has no sequence.",
@@ -23,8 +22,7 @@
             {"name": "priority", "element": "u8"},
             {"name": "reverb", "element": "u8"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 0}],
-          "address": "0x081c5e30"
+          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 0}]
         }
       ]
     },
@@ -32,7 +30,6 @@
       "format": 1,
       "kind": "typed-table",
       "id": "sound_000",
-      "address": "0x082ba798",
       "end": "0x082ba7a0",
       "size": 8,
       "note": "Track-less SMSH sequence header selected by sound-table slot 0 in SONG_TABLE.JSON.",
@@ -49,8 +46,7 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}],
-          "address": "0x082ba798"
+          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}]
         }
       ]
     },
@@ -58,7 +54,6 @@
       "format": 1,
       "kind": "typed-table",
       "id": "sound_095",
-      "address": "0x082dadb0",
       "end": "0x082dadb8",
       "size": 8,
       "note": "Track-less SMSH sequence header selected by sound-table slot 95 in SONG_TABLE.JSON.",
@@ -75,8 +70,7 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}],
-          "address": "0x082dadb0"
+          "records": [{"track_count": 0, "block_count": 0, "priority": 0, "reverb": 178, "tone_bank": "0x081c3714"}]
         }
       ]
     },
@@ -84,7 +78,6 @@
       "format": 1,
       "kind": "typed-table",
       "id": "sound_288",
-      "address": "0x082ddf68",
       "end": "0x082ddf70",
       "size": 8,
       "note": "Track-less SMSH sequence header selected by sound-table slot 288 in SONG_TABLE.JSON.",
@@ -101,8 +94,7 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}],
-          "address": "0x082ddf68"
+          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}]
         }
       ]
     },
@@ -110,7 +102,6 @@
       "format": 1,
       "kind": "typed-table",
       "id": "sound_298",
-      "address": "0x082de094",
       "end": "0x082de09c",
       "size": 8,
       "note": "Track-less SMSH sequence header selected by sound-table slot 298 in SONG_TABLE.JSON.",
@@ -127,8 +118,7 @@
             {"name": "reverb", "element": "u8"},
             {"name": "tone_bank", "element": "le-u32"}
           ],
-          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}],
-          "address": "0x082de094"
+          "records": [{"track_count": 0, "block_count": 0, "priority": 120, "reverb": 0, "tone_bank": "0x081c3de0"}]
         }
       ]
     }

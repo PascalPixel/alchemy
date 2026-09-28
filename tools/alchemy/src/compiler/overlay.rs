@@ -5,7 +5,7 @@
 //! banks.
 use crate::compiler::routing::CompilerTarget;
 use crate::compiler::source_paths::SourcePaths;
-use crate::compiler::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind, CompilerGap};
+use crate::compiler::translation_units::{AbsoluteSymbol, AbsoluteSymbolKind};
 use psynergy::decode::MAIN_BASE;
 use psynergy::thumb::veneer_target;
 use std::collections::{BTreeMap, BTreeSet};
@@ -13,6 +13,8 @@ use std::sync::OnceLock;
 
 pub const RESOURCE_BASE: u32 = 0x0200_0000;
 pub const RUNTIME_BASE: u32 = 0x0200_8000;
+/// The GBA's 32 KiB internal work RAM holds the ARM arithmetic imports.
+const IWRAM: std::ops::Range<u32> = 0x0300_0000..0x0300_8000;
 
 use psynergy::thumb::bl_displacement as displacement;
 
@@ -66,74 +68,47 @@ pub fn placeholder_block(lines: &[&str], address: i64) -> Option<Placeholder> {
     }
     (span > 0).then_some(Placeholder { start, end, span })
 }
+/// Every `AlchemyC_` placeholder's address and extent, as `placeholder_extent`
+/// reads each; a placeholder spelled twice or without space is left out.
+pub fn placeholder_extents(text: &str) -> BTreeMap<u32, usize> {
+    let lines = text.lines().collect::<Vec<_>>();
+    let mut extents = BTreeMap::new();
+    let mut refused = BTreeSet::new();
+    for (index, line) in lines.iter().enumerate() {
+        let Some(address) = line
+            .trim()
+            .strip_prefix("AlchemyC_")
+            .and_then(|rest| rest.strip_suffix(':'))
+            .and_then(|hex| u32::from_str_radix(hex, 16).ok())
+        else {
+            continue;
+        };
+        let mut span = Some(0i64);
+        for line in lines[index + 1..].iter().map(|line| line.trim()) {
+            if line.starts_with(".space ") {
+                span = span
+                    .zip(space_size(line))
+                    .and_then(|(span, size)| span.checked_add(size));
+            } else if !(line.starts_with(".L_") && line.ends_with(':')) {
+                break;
+            }
+        }
+        match span
+            .filter(|span| *span > 0)
+            .and_then(|span| usize::try_from(span).ok())
+        {
+            Some(span) if extents.insert(address, span).is_none() => {}
+            _ => {
+                refused.insert(address);
+            }
+        }
+    }
+    extents.retain(|address, _| !refused.contains(address));
+    extents
+}
 pub fn placeholder_extent(text: &str, address: u32) -> Option<usize> {
     let lines = text.lines().collect::<Vec<_>>();
     usize::try_from(placeholder_block(&lines, i64::from(address))?.span).ok()
-}
-
-/// Boundaries already built from C or maintained import veneers. A retained
-/// function is deliberately absent until its own C placeholder is installed.
-pub fn alignment_boundaries(
-    assembly: &str,
-    registry: &serde_json::Value,
-    image: &str,
-    source_dir: &str,
-    veneer_macro: &str,
-) -> BTreeSet<u32> {
-    let mut boundaries = placeholder_addresses(assembly);
-    for row in registry["regions"].as_array().into_iter().flatten() {
-        let Some(source) = row["provenance"]["source"].as_str() else {
-            continue;
-        };
-        if row["overlay"] != image
-            || row["kind"] != "overlay_trampoline"
-            || row["confidence"] != "proven"
-            || row["provenance"]["credit"] != "reconstructed_veneer"
-            || row["provenance"]["proof"] != veneer_macro
-            || !source.starts_with(&format!("{source_dir}/"))
-            || !assembly
-                .lines()
-                .any(|line| line.trim() == format!(".include \"{source}\""))
-        {
-            continue;
-        }
-        if let Some(start) = row["start"]
-            .as_str()
-            .and_then(|s| u32::from_str_radix(s.trim_start_matches("0x"), 16).ok())
-        {
-            boundaries.insert(start);
-        }
-    }
-    boundaries
-}
-
-/// Candidates only: production linking must still emit and compare every
-/// halfword. Function extents stay unchanged; this owns the intervening fill.
-pub fn native_alignment_gaps(
-    assembly: &str,
-    owners: &[(u32, usize)],
-    boundaries: &BTreeSet<u32>,
-) -> Vec<CompilerGap> {
-    let lines = assembly.lines().collect::<Vec<_>>();
-    owners
-        .iter()
-        .filter_map(|&(address, extent)| {
-            let block = placeholder_block(&lines, i64::from(address))?;
-            if usize::try_from(block.span).ok()? != extent {
-                return None;
-            }
-            let start = address.checked_add(u32::try_from(extent).ok()?)?;
-            let end = start.checked_add(2)?;
-            let fill = lines.get(block.end)?.trim();
-            if end & 3 != 0
-                || !boundaries.contains(&end)
-                || !matches!(fill, ".2byte 0x0000" | ".2byte 0" | ".short 0")
-            {
-                return None;
-            }
-            Some(CompilerGap { start, end })
-        })
-        .collect()
 }
 /// The one `AlchemyData_<address>:` block a unit's read-only data fills: a
 /// label followed only by positive `.space` lines, as for C placeholders.
@@ -347,8 +322,8 @@ pub fn main_image(target: CompilerTarget) -> Result<&'static [u8], String> {
         .map_err(Clone::clone)
 }
 
-/// Each main-image import veneer of an overlay, by runtime address, with the
-/// main addresses a call through it passes: its target, then each far-call
+/// Each ROM or IWRAM import veneer of an overlay, by runtime address, with the
+/// addresses a call through it passes: its target, then each far-call
 /// veneer (`SYSTEM/FAR_CALL/OBJECT.S`) up to the final function. The loader never
 /// rewrites a veneer, so either image form serves.
 pub fn import_veneers(reference: &[u8], main: &[u8]) -> Vec<(u64, Vec<u32>)> {
@@ -365,6 +340,10 @@ fn main_call_chain(main: &[u8], mut target: u32) -> Vec<u32> {
     let mut chain = Vec::new();
     loop {
         let address = target & !1;
+        if IWRAM.contains(&address) {
+            chain.push(address);
+            break;
+        }
         let Some(offset) = address
             .checked_sub(MAIN_BASE)
             .map(|offset| offset as usize)
@@ -533,57 +512,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn native_fill_candidates_follow_complete_c_placeholders_only() {
-        let assembly =
-            "AlchemyC_02000100:\n .space 0x6\n .2byte 0x0000\nAlchemyC_02000108:\n .space 4\n";
-        let gaps = |text: &str, extent| {
-            native_alignment_gaps(text, &[(0x02000100, extent)], &placeholder_addresses(text))
-                .into_iter()
-                .map(|gap| (gap.start, gap.end))
-                .collect::<Vec<_>>()
-        };
-        assert_eq!(gaps(assembly, 6), [(0x02000106, 0x02000108)]);
-        assert!(gaps(assembly, 4).is_empty());
-        assert!(gaps(&assembly.replace(".2byte 0x0000", ".2byte 0x46c0"), 6).is_empty());
-        assert!(gaps(&assembly.replace(".2byte 0x0000", ".4byte 0"), 6).is_empty());
-        assert!(gaps(&assembly.replace("AlchemyC_02000108", "Func_02000108"), 6).is_empty());
-        assert!(gaps(&assembly.replace("02000108", "0200010a"), 6).is_empty());
-        assert!(gaps(&assembly.replace("02000100", "02000102"), 6).is_empty());
-        assert!(gaps(&format!("{assembly}{assembly}"), 6).is_empty());
-    }
-
-    #[test]
-    fn native_fill_can_precede_this_images_maintained_veneer_table() {
-        let source = "games/TBS/SRC/FIELD/IMPORT.INC";
-        let proof = "games/TBS/SRC/SYSTEM/OVERLAY.INC";
-        let assembly =
-            format!("AlchemyC_02000100:\n .space 6\n .2byte 0x0000\n .include \"{source}\"\n");
-        let registry = serde_json::json!({"regions": [{
-            "overlay": "resource_374", "start": "0x02000108", "end": "0x02000110",
-            "kind": "overlay_trampoline", "confidence": "proven",
-            "provenance": {"source": source, "proof": proof, "credit": "reconstructed_veneer"}
-        }]});
-        let candidates = |text: &str, registry: &serde_json::Value, image: &str| {
-            let bounds = alignment_boundaries(text, registry, image, "games/TBS/SRC", proof);
-            native_alignment_gaps(text, &[(0x02000100, 6)], &bounds)
-        };
-        assert_eq!(candidates(&assembly, &registry, "resource_374").len(), 1);
-        assert!(candidates(&assembly, &registry, "resource_375").is_empty());
-        assert!(candidates(
-            &assembly.replace(".include", "@ .include"),
-            &registry,
-            "resource_374"
-        )
-        .is_empty());
-        let mut uncredited = registry.clone();
-        uncredited["regions"][0]["provenance"]["credit"] = serde_json::Value::Null;
-        assert!(candidates(&assembly, &uncredited, "resource_374").is_empty());
-        let mut wrong_macro = registry.clone();
-        wrong_macro["regions"][0]["provenance"]["proof"] = "unreviewed.inc".into();
-        assert!(candidates(&assembly, &wrong_macro, "resource_374").is_empty());
-    }
-
-    #[test]
     fn placeholder_extents_are_unique_positive_and_include_local_aliases() {
         let text = "AlchemyC_02000100:\n .space 2\n.L_02000102:\n .space 0x6\n bx lr\n";
         let lines = text.lines().collect::<Vec<_>>();
@@ -695,6 +623,17 @@ mod tests {
     }
 
     #[test]
+    fn import_veneers_preserve_iwram_arithmetic_targets() {
+        let mut reference = veneer(0x0300_03ac);
+        reference.extend(veneer(0x0200_8101));
+        reference.extend(veneer(0x0400_0000));
+        assert_eq!(
+            import_veneers(&reference, &[]),
+            [(u64::from(RUNTIME_BASE), vec![0x0300_03ac])]
+        );
+    }
+
+    #[test]
     fn import_veneer_chain_resolves_through_main_far_call_veneer() {
         let mut main = vec![0; 0x100];
         main[0x40..0x48].copy_from_slice(&veneer(0x0800_0081));
@@ -751,12 +690,11 @@ mod tests {
                 names: &names,
             };
             let list = std::fs::read_to_string(root.join(image.import_list())).unwrap();
-            // Imports of IWRAM routines are veneers too, but reach no main owner.
+            // Compare every listed import, including the IWRAM arithmetic entries.
             let listed = list
                 .split(|c: char| c == ',' || c.is_whitespace())
                 .filter_map(|word| u32::from_str_radix(word.strip_prefix("0x")?, 16).ok())
                 .map(|target| target & !1)
-                .filter(|target| (MAIN_BASE..MAIN_BASE + main.len() as u32).contains(target))
                 .collect::<Vec<_>>();
             let found = import_veneers(&reference, main)
                 .into_iter()

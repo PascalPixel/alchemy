@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0851c56c",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x0851c578",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 104, 80, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x0851c56c"
+            "values": [0, 0, 104, 80, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0851c590",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [20480, 4112, 0, 65535], [104, 4112, 0, 65535]],
-            "address": "0x0851c578"
+            "values": [[0, 4112, 0, 65535], [20480, 4112, 0, 65535], [104, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0851c5a8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x3c4", "0x3cc", "0xcb4", "0xcf8", "0xd20"],
-            "address": "0x0851c590"
+            "values": ["0x3c", "0x3c4", "0x3cc", "0xcb4", "0xcf8", "0xd20"]
           }
         ]
       },
@@ -91,26 +87,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0851d28c",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x0851d28f",
-            "stride": 3,
-            "element": "u8",
-            "values": [[15, 10, 100]],
-            "address": "0x0851d28c"
-          },
-          {
-            "name": "terminator",
-            "end": "0x0851d292",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0851d28f"
-          }
+          {"name": "records", "end": "0x0851d28f", "stride": 3, "element": "u8", "values": [[15, 10, 100]]},
+          {"name": "terminator", "end": "0x0851d292", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/SORU_MEIRO.BIN",

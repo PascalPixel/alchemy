@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08649cc8",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x08649cd4",
             "stride": 12,
             "element": "u8",
-            "values": [10, 4, 67, 67, 3, 1, 2, 0, 2, 2, 0, 0],
-            "address": "0x08649cc8"
+            "values": [10, 4, 67, 67, 3, 1, 2, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08649cec",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
-            "address": "0x08649cd4"
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08649d04",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x27cc", "0x2814", "0x3ee0", "0x404c", "0x4054"],
-            "address": "0x08649cec"
+            "values": ["0x3c", "0x27cc", "0x2814", "0x3ee0", "0x404c", "0x4054"]
           }
         ]
       },
@@ -119,7 +115,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0864dd1c",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -128,17 +123,9 @@
             "end": "0x0864dd22",
             "stride": 3,
             "element": "u8",
-            "values": [[27, 20, 100], [10, 22, 101]],
-            "address": "0x0864dd1c"
+            "values": [[27, 20, 100], [10, 22, 101]]
           },
-          {
-            "name": "terminator",
-            "end": "0x0864dd25",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0864dd22"
-          }
+          {"name": "terminator", "end": "0x0864dd25", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/SHIAN_MURA.BIN",

@@ -1,5 +1,5 @@
 {
-  "format": 5,
+  "format": 6,
   "units": [
     {
       "id": "tla-audio-resume-direct-sound",
@@ -2936,7 +2936,5 @@
       "game": "tla",
       "compiler_route": "canonical-gcc296"
     }
-  ],
-  "kind": "reconstruction-composition-contracts",
-  "original_translation_units": "unknown"
+  ]
 }

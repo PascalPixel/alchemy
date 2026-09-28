@@ -5,7 +5,6 @@
     "before": {
       "format": 1,
       "kind": "typed-table",
-      "address": "0x0809c610",
       "end": "0x0809ddd8",
       "size": 6088,
       "segments": [
@@ -645,8 +644,7 @@
               "weighted_results": [376, 376, 377, 377, 377, 378, 379, 0],
               "result_weights": [10, 10, 10, 10, 10, 10, 10, 0]
             }
-          ],
-          "address": "0x0809c610"
+          ]
         },
         {
           "name": "rule_table_0",
@@ -859,8 +857,7 @@
             {"selector_a": 185, "selector_b": -1, "condition": 32767, "result": 96},
             {"selector_a": 186, "selector_b": -1, "condition": 32767, "result": 97},
             {"selector_a": -1, "selector_b": -1, "condition": 0, "result": 0}
-          ],
-          "address": "0x0809d170"
+          ]
         },
         {
           "name": "rule_table_1",
@@ -907,8 +904,7 @@
             {"selector_a": 6, "selector_b": 1, "condition": -1, "result": 80},
             {"selector_a": 6, "selector_b": 2, "condition": -1, "result": 81},
             {"selector_a": -1, "selector_b": 0, "condition": 0, "result": 0}
-          ],
-          "address": "0x0809d7a8"
+          ]
         },
         {
           "name": "rule_table_2",
@@ -997,8 +993,7 @@
             {"value": 103, "phase": 1},
             {"value": 103, "phase": 2},
             {"value": 103, "phase": 3}
-          ],
-          "address": "0x0809d8b0"
+          ]
         },
         {
           "name": "rule_table_3",
@@ -1137,15 +1132,13 @@
             {"selector_a": 59, "selector_b": 32767, "condition": -1, "result": 9},
             {"selector_a": 60, "selector_b": 32767, "condition": -1, "result": 9},
             {"selector_a": -1, "selector_b": -1, "condition": -1, "result": 0}
-          ],
-          "address": "0x0809d9f0"
+          ]
         }
       ]
     },
     "after": {
       "format": 1,
       "kind": "typed-table",
-      "address": "0x0809e1d8",
       "end": "0x0809e4ce",
       "size": 758,
       "segments": [
@@ -1180,8 +1173,7 @@
             {"selector_a": 178, "selector_b": -1, "value_a": 179, "value_b": 12},
             {"selector_a": 190, "selector_b": -1, "value_a": 190, "value_b": 1},
             {"selector_a": -1, "selector_b": -1, "value_a": 65535, "value_b": 65535}
-          ],
-          "address": "0x0809e1d8"
+          ]
         },
         {
           "name": "rule_table_6",
@@ -1324,8 +1316,7 @@
             {"value": 187},
             {"value": 2147483695},
             {"value": 0}
-          ],
-          "address": "0x0809e270"
+          ]
         },
         {
           "name": "rule_table_7",
@@ -1369,8 +1360,7 @@
             {"value": 578},
             {"value": 32818},
             {"value": 0}
-          ],
-          "address": "0x0809e488"
+          ]
         }
       ]
     }

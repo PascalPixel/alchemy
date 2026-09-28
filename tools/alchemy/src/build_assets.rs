@@ -33,7 +33,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --review-images OUTPUT [--update-baseline | --target TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --locations [TARGET] | --verify-text [TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 pub(crate) fn identified_regions(
     root: &Path,
@@ -1580,11 +1580,11 @@ fn atlas_frames_select_order_and_feed_pixel_codecs() {
 fn typed_table_components_serialize_tables_inside_streams() {
     let root = tempfile::tempdir().unwrap();
     let table = serde_json::json!({"format":1,"kind":"typed-table","address":"0x0","size":"0x7","segments":[
-        {"name":"offsets","address":"0x0","end":"0x2","stride":2,"element":"le-u16","values":["entries_end"]},
-        {"name":"entries","address":"0x2","end":"0x6","stride":2,"element":"record",
+        {"name":"offsets","end":"0x2","stride":2,"element":"le-u16","values":["entries_end"]},
+        {"name":"entries","end":"0x6","stride":2,"element":"record",
             "fields":[{"name":"entry","element":"s8"},{"name":"value","element":"u8"}],
             "records":[{"entry":-1,"value":7},{"entry":2,"value":9}]},
-        {"name":"entries_end","address":"0x6","end":"0x7","stride":1,"element":"u8","values":[255]}]});
+        {"name":"entries_end","end":"0x7","stride":1,"element":"u8","values":[255]}]});
     fs::write(
         root.path().join("map.json"),
         serde_json::to_vec(&serde_json::json!({"maps":{"1":{"table":table}}})).unwrap(),
@@ -1644,7 +1644,7 @@ fn typed_table_bitmap_fields_pack_rows_from_the_atlas() {
     )
     .unwrap();
     let mut document = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":32,"segments":[
-        {"address":0,"end":32,"stride":32,"element":"record",
+        {"end":32,"stride":32,"element":"record",
          "image":{"source":"glyphs.png","frame_width":16,"frame_height":16,"columns":1,"frames":1},
          "fields":[{"name":"advance","element":"le-u16"},{"name":"glyph","element":"1bpp-rows","rows":15}],
          "records":[{"advance":6,"glyph":0}]}]});
@@ -1995,8 +1995,8 @@ fn typed_pointer_tables_use_the_owner_register() {
     )
     .unwrap();
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":12,"segments":[
-        {"address":0,"end":8,"stride":4,"element":"thumb-pointer","values":["Callback_Run",null]},
-        {"address":8,"end":12,"stride":4,"element":"le-s32","values":[-2]}
+        {"end":8,"stride":4,"element":"thumb-pointer","values":["Callback_Run",null]},
+        {"end":12,"stride":4,"element":"le-s32","values":[-2]}
     ]});
     let mut resolved = source.clone();
     resolve_table_symbols(&mut resolved, &symbols).unwrap();
@@ -2030,8 +2030,8 @@ fn typed_pointer_tables_use_their_own_games_register() {
     }
     fs::write(
         root.join("TABLE.JSON"),
-        r#"{"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
-            {"address":0,"end":4,"stride":4,"element":"thumb-pointer","values":["Callback_Run"]}]}"#,
+        r#"{"format":1,"kind":"typed-table","size":4,"segments":[
+            {"end":4,"stride":4,"element":"thumb-pointer","values":["Callback_Run"]}]}"#,
     )
     .unwrap();
     let entry =
@@ -2043,6 +2043,20 @@ fn typed_pointer_tables_use_their_own_games_register() {
         let mut ctx = Context::for_game(root, crate::targets::target_for(id));
         assert_eq!(build_entry(&mut ctx, &entry).unwrap().0, expected, "{id}");
     }
+    // The region places the table; a table that records its own address is refused.
+    fs::write(
+        root.join("PLACED.JSON"),
+        r#"{"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
+            {"end":4,"stride":4,"element":"le-u32","values":[0]}]}"#,
+    )
+    .unwrap();
+    let placed =
+        serde_json::json!({"kind":"typed-table","source":"PLACED.JSON","address":0,"size":4});
+    let mut ctx = Context::for_game(
+        root,
+        crate::targets::target_for(crate::targets::DecompTargetId::TbsEn),
+    );
+    assert!(build_entry(&mut ctx, &placed).is_err());
 }
 
 /// Derive a stream directory: one `le-u32` word per index giving where that
@@ -2051,9 +2065,12 @@ fn typed_pointer_tables_use_their_own_games_register() {
 /// source document, keyed by decimal index) follow one another from
 /// `stream_offsets.first` in index order, each `encoded_size` bytes long.
 fn resolve_stream_offsets(table: &mut Value, source: &Value) -> Result<(), String> {
-    for segment in table["segments"]
+    let starts = segment_starts(table)?;
+    for (segment, start) in table["segments"]
         .as_array_mut()
         .ok_or("table segments missing")?
+        .iter_mut()
+        .zip(starts)
     {
         let Some(spec) = segment.get("stream_offsets").cloned() else {
             continue;
@@ -2066,7 +2083,7 @@ fn resolve_stream_offsets(table: &mut Value, source: &Value) -> Result<(), Strin
             .and_then(Value::as_object)
             .ok_or("stream offsets pointer is absent")?;
         let size = number(&segment["end"], "segment end")?
-            .checked_sub(number(&segment["address"], "segment address")?)
+            .checked_sub(start)
             .ok_or("segment ends before it starts")?;
         let count = size / 4;
         if streams.keys().any(|key| {
@@ -2099,7 +2116,7 @@ fn resolve_stream_offsets(table: &mut Value, source: &Value) -> Result<(), Strin
 fn stream_directories_derive_offsets_from_encoded_sizes() {
     let source = serde_json::json!({"streams":{"1":{"encoded_size":3},"3":{"encoded_size":5}},
         "table":{"format":1,"kind":"typed-table","address":0,"size":16,"segments":[
-            {"address":0,"end":16,"stride":4,"element":"le-u32","stream_offsets":{"streams":"/streams","first":16}}]}});
+            {"end":16,"stride":4,"element":"le-u32","stream_offsets":{"streams":"/streams","first":16}}]}});
     let mut table = source["table"].clone();
     resolve_stream_offsets(&mut table, &source).unwrap();
     assert_eq!(
@@ -2186,23 +2203,116 @@ fn resolve_table_bitmaps(document: &mut Value, root: &Path) -> Result<Vec<String
     Ok(sources)
 }
 
-fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
-    if document["format"] != 1 || document["kind"] != "typed-table" {
-        return Err("typed table identity differs".into());
+/// Where the registries place each table: `(source, pointer)` to address,
+/// the pointer empty for a whole document. Container parts follow one another
+/// from their container's address, as the builder lays them out; parts inside
+/// a compressed stream have no ROM address. A placed table records no address
+/// of its own.
+pub(crate) fn placements(root: &Path) -> Result<BTreeMap<(String, String), usize>, String> {
+    fn walk(
+        root: &Path,
+        region: &Value,
+        address: Option<usize>,
+        placed: &mut BTreeMap<(String, String), usize>,
+    ) -> Result<(), String> {
+        let source = region["source"].as_str();
+        if let (Some(source), Some(address)) = (source, address) {
+            let pointer = region.get("pointer").and_then(Value::as_str).unwrap_or("");
+            placed.insert((source.to_string(), pointer.to_string()), address);
+        }
+        if region["kind"] != "components" {
+            return Ok(());
+        }
+        let parts = match (&region["components"], source) {
+            (Value::Array(parts), _) => parts.clone(),
+            (_, Some(source)) => {
+                let pointer = region
+                    .get("pointer")
+                    .and_then(Value::as_str)
+                    .unwrap_or("/components");
+                json(&root_path(root, source)?)?
+                    .pointer(pointer)
+                    .and_then(Value::as_array)
+                    .cloned()
+                    .unwrap_or_default()
+            }
+            _ => Vec::new(),
+        };
+        let mut at = address;
+        for part in &parts {
+            walk(root, part, at, placed)?;
+            at = match at {
+                Some(at) => Some(at + number(&part["size"], "component size")?),
+                None => None,
+            };
+        }
+        Ok(())
     }
+    let mut placed = BTreeMap::new();
+    for target in native::games() {
+        for registry in [
+            format!("{}/assets.json", target.recon_dir()),
+            native::NativePaths::of(&target).index,
+        ] {
+            let document = json(&root.join(&registry))?;
+            for region in ["regions", "edition_regions"]
+                .iter()
+                .flat_map(|key| document[*key].as_array().into_iter().flatten())
+            {
+                let address = number(&region["address"], "region address")?;
+                walk(root, region, Some(address), &mut placed)?;
+            }
+        }
+    }
+    Ok(placed)
+}
+/// Where the registries place the table at `source` and `pointer`.
+pub(crate) fn placed_address(root: &Path, source: &str, pointer: &str) -> Result<usize, String> {
+    placements(root)?
+        .get(&(source.to_string(), pointer.to_string()))
+        .copied()
+        .ok_or_else(|| format!("no region places {source}{pointer}"))
+}
+
+/// Where each segment of a typed table starts. Segments follow one another
+/// from the table's address, so each records only its end.
+pub(crate) fn segment_starts(document: &Value) -> Result<Vec<usize>, String> {
     let mut address = number(&document["address"], "table address")?;
-    let labels = table_labels(document)?;
-    let mut output = Vec::new();
-    let mut pools: HashMap<String, Vec<usize>> = HashMap::new();
+    let mut starts = Vec::new();
     for segment in document["segments"]
         .as_array()
         .ok_or("table segments missing")?
     {
-        let start = number(&segment["address"], "segment address")?;
-        let end = number(&segment["end"], "segment end")?;
-        if start != address || end <= start {
-            return Err("table segments are not contiguous".into());
+        if segment.get("address").is_some() {
+            return Err(
+                "a table segment starts where the one before it ends and records no address".into(),
+            );
         }
+        let end = number(&segment["end"], "segment end")?;
+        if end <= address {
+            return Err("table segment ends before it starts".into());
+        }
+        starts.push(address);
+        address = end;
+    }
+    Ok(starts)
+}
+
+fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
+    if document["format"] != 1 || document["kind"] != "typed-table" {
+        return Err("typed table identity differs".into());
+    }
+    let starts = segment_starts(document)?;
+    let labels = table_labels(document)?;
+    let mut output = Vec::new();
+    let mut pools: HashMap<String, Vec<usize>> = HashMap::new();
+    for (segment, &start) in document["segments"]
+        .as_array()
+        .ok_or("table segments missing")?
+        .iter()
+        .zip(&starts)
+    {
+        let end = number(&segment["end"], "segment end")?;
         let size = end - start;
         let stride = number(&segment["stride"], "segment stride")?;
         let (kind, width) = match segment["element"].as_str() {
@@ -2378,7 +2488,6 @@ fn typed_table(document: &Value) -> Result<Vec<u8>, String> {
             return Err("permutation requires index_count".into());
         }
         output.extend(bytes);
-        address = end;
     }
     if output.len() != number(&document["size"], "table size")? {
         return Err("table size differs".into());
@@ -2421,7 +2530,7 @@ fn generated_values(
 #[test]
 fn generated_reciprocals_follow_their_formula_and_width() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":24,"segments":[
-        {"name":"divide_reciprocals","address":0,"end":24,"element":"le-u32","stride":4,
+        {"name":"divide_reciprocals","end":24,"element":"le-u32","stride":4,
          "generator":{"formula":"ceiling-reciprocal","numerator_bits":32}}
     ]});
     let words: Vec<u32> = typed_table(&source)
@@ -2464,13 +2573,14 @@ struct TableLabels {
 
 fn table_labels(document: &Value) -> Result<TableLabels, String> {
     let mut segments = std::collections::BTreeMap::new();
-    for segment in document["segments"]
+    for (segment, start) in document["segments"]
         .as_array()
         .ok_or("table segments missing")?
+        .iter()
+        .zip(segment_starts(document)?)
     {
         if let Some(name) = segment.get("name") {
             let name = json_string(name, "segment name")?;
-            let start = number(&segment["address"], "segment address")?;
             let stride = number(&segment["stride"], "segment stride")?;
             segments
                 .entry(name.to_string())
@@ -2636,7 +2746,7 @@ fn table_values(
 #[test]
 fn typed_byte_tables_check_index_ranges_and_permutations() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":4,"segments":[
-        {"address":0,"end":4,"element":"u8","stride":1,"values":[2,0,3,1],"index_count":4,"permutation":true}
+        {"end":4,"element":"u8","stride":1,"values":[2,0,3,1],"index_count":4,"permutation":true}
     ]});
     assert_eq!(typed_table(&source).unwrap(), [2, 0, 3, 1]);
     for (pointer, value) in [
@@ -2658,11 +2768,11 @@ fn typed_byte_tables_check_index_ranges_and_permutations() {
 #[test]
 fn typed_records_preserve_names_termination_bounds_and_signedness() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":10,"segments":[
-        {"address":0,"end":8,"stride":8,"element":"record","fields":[
+        {"end":8,"stride":8,"element":"record","fields":[
             {"name":"ids","element":"le-u16","terminated_capacity":3,"min":1,"max":100,"unique":true},
             {"name":"offset","element":"le-s16"}
         ],"records":[{"ids":[2,3],"offset":-2}]},
-        {"address":8,"end":10,"stride":1,"element":"u8","fill":255}
+        {"end":10,"stride":1,"element":"u8","fill":255}
     ]});
     assert_eq!(
         typed_table(&source).unwrap(),
@@ -2685,7 +2795,7 @@ fn typed_records_preserve_names_termination_bounds_and_signedness() {
         ),
         ("/segments/0/fields/1/name", serde_json::json!("ids")),
         ("/segments/1/fill", serde_json::json!(256)),
-        ("/segments/1/address", serde_json::json!(7)),
+        ("/segments/1/end", serde_json::json!(7)),
     ] {
         let mut bad = source.clone();
         *bad.pointer_mut(pointer).unwrap() = value;
@@ -2696,14 +2806,14 @@ fn typed_records_preserve_names_termination_bounds_and_signedness() {
 #[test]
 fn typed_tables_resolve_symbolic_values_and_pad_capacities() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":4096,"size":28,"names":{"stop":239},"segments":[
-        {"name":"script","address":4096,"end":4102,"stride":2,"element":"u8","values":[[1,2],[3,4],["stop",0]]},
-        {"name":"directory","address":4102,"end":4110,"stride":4,"element":"le-u32","values":["script[2]","directory"]},
-        {"name":"record","address":4110,"end":4116,"stride":6,"element":"record","fields":[
+        {"name":"script","end":4102,"stride":2,"element":"u8","values":[[1,2],[3,4],["stop",0]]},
+        {"name":"directory","end":4110,"stride":4,"element":"le-u32","values":["script[2]","directory"]},
+        {"name":"record","end":4116,"stride":6,"element":"record","fields":[
             {"name":"kind","element":"u8","names":{"wide":7}},
             {"name":"slots","element":"u8","capacity":3},
             {"name":"target","element":"le-u16"}
         ],"records":[{"kind":"wide","slots":[9],"target":"0x1002"}]},
-        {"address":4116,"end":4124,"stride":1,"element":"ascii-fixed","text":"ab\n"}
+        {"end":4124,"stride":1,"element":"ascii-fixed","text":"ab\n"}
     ]});
     assert_eq!(
         typed_table(&source).unwrap(),
@@ -2732,7 +2842,7 @@ fn typed_tables_resolve_symbolic_values_and_pad_capacities() {
 #[test]
 fn typed_records_apply_defaults_capacities_and_labels() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":12,"segments":[
-        {"address":0,"end":12,"stride":6,"element":"record","label":"name","fields":[
+        {"end":12,"stride":6,"element":"record","label":"name","fields":[
             {"name":"id","element":"le-u16"},
             {"name":"slots","element":"u8","capacity":3,"default":[]},
             {"name":"kind","element":"u8","default":4,"max":4}
@@ -2823,17 +2933,17 @@ fn tiled_atlas_serializes_frames_before_tile_rows() {
 #[test]
 fn typed_tables_check_layout_width_and_text() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":16,"size":12,"segments":[
-        {"address":16,"end":18,"element":"s8","stride":1,"values":[-128,127]},
-        {"address":18,"end":20,"element":"le-u16","stride":2,"values":[4660]},
-        {"address":20,"end":24,"element":"le-u32","stride":4,"values":[305419896]},
-        {"address":24,"end":28,"element":"ascii-fixed","stride":1,"text":"AB"}
+        {"end":18,"element":"s8","stride":1,"values":[-128,127]},
+        {"end":20,"element":"le-u16","stride":2,"values":[4660]},
+        {"end":24,"element":"le-u32","stride":4,"values":[305419896]},
+        {"end":28,"element":"ascii-fixed","stride":1,"text":"AB"}
     ]});
     assert_eq!(
         typed_table(&source).unwrap(),
         [128, 127, 52, 18, 120, 86, 52, 18, 65, 66, 0, 0]
     );
     for (pointer, value) in [
-        ("/segments/0/address", serde_json::json!(15)),
+        ("/segments/0/end", serde_json::json!(15)),
         ("/segments/1/stride", serde_json::json!(0)),
         ("/segments/1/values/0", serde_json::json!(65536)),
         ("/segments/2/values/0", serde_json::json!(-1)),
@@ -2846,13 +2956,17 @@ fn typed_tables_check_layout_width_and_text() {
         *invalid.pointer_mut(pointer).unwrap() = value;
         assert!(typed_table(&invalid).is_err(), "{pointer}");
     }
+    // A segment starts where the one before it ends; it records no address.
+    let mut placed = source.clone();
+    placed["segments"][0]["address"] = serde_json::json!(16);
+    assert!(typed_table(&placed).is_err());
 }
 
 #[test]
 fn typed_text_pools_resolve_aligned_string_pointers() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":256,"size":26,"segments":[
-        {"address":256,"end":270,"stride":1,"element":"ascii-pool","name":"names","alignment":4,"texts":["AB","","CDEFG"]},
-        {"address":270,"end":282,"stride":4,"element":"pool-pointer","pool":"names","values":[2,0],"terminated_capacity":3}
+        {"end":270,"stride":1,"element":"ascii-pool","name":"names","alignment":4,"texts":["AB","","CDEFG"]},
+        {"end":282,"stride":4,"element":"pool-pointer","pool":"names","values":[2,0],"terminated_capacity":3}
     ]});
     assert_eq!(
         typed_table(&source).unwrap(),
@@ -2878,9 +2992,7 @@ fn typed_text_pools_resolve_aligned_string_pointers() {
     assert!(typed_table(&marked).is_err());
     let mut reversed = source.clone();
     reversed["segments"].as_array_mut().unwrap().reverse();
-    reversed["segments"][0]["address"] = Value::from(256);
     reversed["segments"][0]["end"] = Value::from(268);
-    reversed["segments"][1]["address"] = Value::from(268);
     reversed["segments"][1]["end"] = Value::from(282);
     assert!(typed_table(&reversed).is_err());
 }
@@ -2888,8 +3000,8 @@ fn typed_text_pools_resolve_aligned_string_pointers() {
 #[test]
 fn typed_fields_pack_named_bit_widths_lsb_first() {
     let source = serde_json::json!({"format":1,"kind":"typed-table","address":0,"size":6,"segments":[
-        {"address":0,"end":4,"element":"le-u16","stride":2,"bits":{"id":9,"class":7},"values":[[1,0],[15,1]]},
-        {"address":4,"end":6,"element":"le-u16","stride":2,"bits":{"low":12,"high":4},"values":[4095,0]}
+        {"end":4,"element":"le-u16","stride":2,"bits":{"id":9,"class":7},"values":[[1,0],[15,1]]},
+        {"end":6,"element":"le-u16","stride":2,"bits":{"low":12,"high":4},"values":[4095,0]}
     ]});
     assert_eq!(typed_table(&source).unwrap(), [1, 0, 15, 2, 255, 15]);
     for (pointer, value) in [
@@ -3505,6 +3617,22 @@ fn manifest_fill_is_a_byte_value_not_a_rom_lookup() {
     assert!(build_entry(&mut context, &entry).is_err());
     entry["value"] = Value::from(-1);
     assert!(build_entry(&mut context, &entry).is_err());
+}
+/// The manifest's resource directory with the address its region places it at.
+fn resource_directory(ctx: &Context, manifest: &Value) -> Result<Option<Value>, String> {
+    let Some(name) = manifest.get("resource_directory") else {
+        return Ok(None);
+    };
+    let name = json_string(name, "resource directory")?;
+    let mut directory = json(&ctx.source(name)?)?;
+    let region = manifest["regions"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .find(|region| region["source"] == name && region.get("pointer").is_none())
+        .ok_or("no region places the resource directory")?;
+    directory["address"] = region["address"].clone();
+    Ok(Some(directory))
 }
 /// A fill the manifest lists by itself is the linker's zero padding before a
 /// fixed placement: it must end at a module base the resource directory
@@ -4389,13 +4517,17 @@ fn build_entry(ctx: &mut Context, entry: &Value) -> Result<(Vec<u8>, Vec<String>
             if document["format"] != 1 || document["kind"] != kind {
                 return Err("table identity differs".into());
             }
-            if kind == "pointer-table" && number(&document["address"], "table address")? != address
-            {
-                return Err("table address differs from manifest".into());
-            }
             let built = if kind == "record-table" {
                 record_table(&document)?
             } else {
+                // The region places the table; the table records no address.
+                if document.get("address").is_some() {
+                    return Err(format!(
+                        "the table placed at {address:#x} records its own address; its region places it"
+                    ));
+                }
+                let mut document = document.clone();
+                document["address"] = Value::from(address);
                 pointer_table(&document)?
             };
             Ok((
@@ -6116,10 +6248,14 @@ fn build_entry_native_tail(
             } else {
                 &source
             };
-            if number(&document["address"], "table address")? != address {
-                return Err("table address differs from manifest".into());
+            // The region places the table; the table itself records no address.
+            if document.get("address").is_some() {
+                return Err(format!(
+                    "the table placed at {address:#x} records its own address; its region places it"
+                ));
             }
             let mut document = document.clone();
+            document["address"] = Value::from(address);
             resolve_stream_offsets(&mut document, &source)?;
             let has_symbols = document["segments"]
                 .as_array()
@@ -6696,9 +6832,8 @@ fn reusable_asset_manifest(
     Some((regions.len(), total, inputs))
 }
 /// Every piece of game material tracked under the manifest's game must be an
-/// input this build read, or named by the game's declared review plan. Code
-/// and the registries of the game's `recon` scaffolding are exempt by
-/// category (`generated_files::unconsumed_material`); nothing else is.
+/// input this build read. Code and the registries of the game's `recon`
+/// scaffolding are exempt by category (`generated_files::unconsumed_material`); nothing else is.
 /// Another edition's own asset, such as a Japanese font: built from its
 /// tracked sources by the same rules as a region and compared byte for byte
 /// with that edition's ROM, which the game's own ROM does not contain.
@@ -6745,7 +6880,6 @@ fn audit_material_consumers(
     let directory = game.game_dir();
     let mut consumed = inputs.into_iter().collect::<BTreeSet<_>>();
     consumed.insert(game.asset_manifest.to_string());
-    consumed.extend(native::review_plan_inputs(root, directory)?);
     let mut unconsumed = Vec::new();
     for tree in [directory, game.recon_dir()] {
         unconsumed.extend(
@@ -6838,8 +6972,9 @@ fn align_streams<'a>(
     failures: &mut Vec<String>,
 ) -> Result<Vec<(&'a Value, BuiltRegion)>, String> {
     let mut aligned = match manifest.get("resource_directory") {
-        Some(name) => {
-            let directory = json(&ctx.source(json_string(name, "resource directory")?)?)?;
+        Some(_) => {
+            let directory =
+                resource_directory(ctx, manifest)?.ok_or("resource directory absent")?;
             let machine = json(&ctx.source(json_string(
                 &manifest["machine"],
                 "reference machine definition",
@@ -6952,12 +7087,7 @@ fn native_asset_main(arguments: &[String]) -> Result<(), String> {
         .and_then(Value::as_array)
         .cloned()
         .unwrap_or_default();
-    let directory = match manifest.get("resource_directory") {
-        Some(name) => Some(json(
-            &ctx.source(json_string(name, "resource directory")?)?,
-        )?),
-        None => None,
-    };
+    let directory = resource_directory(&ctx, &manifest)?;
     check_fill_placements(&entries, directory.as_ref(), ROM_BASE + rom_size)?;
     expand_closure_packages(&mut ctx, &manifest, &mut entries)?;
     expand_series(&mut ctx, &manifest, &mut entries)?;
@@ -7108,22 +7238,15 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
         );
         return Ok(ExitCode::SUCCESS);
     }
-    if arguments.first().map(String::as_str) == Some("--review-images") {
-        let update = arguments.len() == 3 && arguments[2] == "--update-baseline";
-        let target = (arguments.len() == 4 && arguments[2] == "--target")
-            .then(|| crate::targets::decomp_target(Some(&arguments[3])))
-            .transpose()?;
-        if arguments.len() != 2 && !update && target.is_none() {
+    if arguments.first().map(String::as_str) == Some("--locations") {
+        if arguments.len() > 2 {
             return Err(USAGE.into());
         }
-        // The Broken Seal keeps its registered review plan; other games review
-        // the field maps their private-inputs.json scenes load.
-        match target.filter(|t| t.source_dir != native::broken_seal().source) {
-            Some(target) => {
-                native::export_field_review(&repository_root(), Path::new(&arguments[1]), &target)?
-            }
-            None => native::export_review(&repository_root(), Path::new(&arguments[1]), update)?,
-        }
+        let target = crate::targets::decomp_target(arguments.get(1).map(String::as_str))?;
+        println!(
+            "locations={}",
+            crate::coverage::places::write(&repository_root(), &target)?
+        );
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--network") {

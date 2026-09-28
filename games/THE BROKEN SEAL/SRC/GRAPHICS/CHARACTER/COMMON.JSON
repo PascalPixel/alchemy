@@ -45,7 +45,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081ac6d4",
-        "address": "0x081b0448",
         "slot_count": 61,
         "slots": [
           "0x081ac6d4", "0x081ac83a", "0x081ac991", "0x081acaed", "0x081acc4e", "0x081acda8", "0x081acde2",
@@ -105,7 +104,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081b053c",
-        "address": "0x081b2754",
         "slot_count": 38,
         "slots": [
           "0x081b053c", "0x081b0697", "0x081b07be", "0x081b0904", "0x081b092e", "0x081b0943", "0x081b094e",
@@ -162,7 +160,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081b27ec",
-        "address": "0x081b76c4",
         "slot_count": 101,
         "slots": [
           "0x081b27ec", "0x081b28f7", "0x081b29e5", "0x081b2ae2", "0x081b2bfc", "0x081b2d05", "0x081b2d20",
@@ -228,7 +225,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081b7858",
-        "address": "0x081ba688",
         "slot_count": 61,
         "slots": [
           "0x081b7858", "0x081b7963", "0x081b7a4f", "0x081b7b4b", "0x081b7c6e", "0x081b7d5b", "0x081b7d86",
@@ -288,7 +284,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081ba77c",
-        "address": "0x081bbdcc",
         "slot_count": 34,
         "slots": [
           "0x081ba77c", "0x081ba86c", "0x081ba930", "0x081baa0f", "0x081bab08", "0x081babef", "0x081bac9c",
@@ -344,7 +339,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081bbe54",
-        "address": "0x081be028",
         "slot_count": 35,
         "slots": [
           "0x081bbe54", "0x081bbfc7", "0x081bc117", "0x081bc24f", "0x081bc270", "0x081bc280", "0x081bc336",
@@ -400,7 +394,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081be0b4",
-        "address": "0x081c1184",
         "slot_count": 44,
         "slots": [
           "0x081be0b4", "0x081be244", "0x081be3b3", "0x081be547", "0x081be578", "0x081be58e", "0x081be599",
@@ -458,7 +451,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081c1234",
-        "address": "0x081c42b0",
         "slot_count": 40,
         "slots": [
           "0x081c1234", "0x081c13ad", "0x081c14f4", "0x081c1678", "0x081c17a0", "0x081c188c", "0x081c1897",
@@ -515,7 +507,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081c4350",
-        "address": "0x081c6258",
         "slot_count": 31,
         "slots": [
           "0x081c4350", "0x081c44b6", "0x081c45ed", "0x081c4745", "0x081c47f5", "0x081c48bc", "0x081c4991",
@@ -571,7 +562,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081c62d4",
-        "address": "0x081c928c",
         "slot_count": 46,
         "slots": [
           "0x081c62d4", "0x081c644f", "0x081c659c", "0x081c6709", "0x081c6742", "0x081c675a", "0x081c6765",
@@ -629,7 +619,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081c9344",
-        "address": "0x081cb578",
         "slot_count": 36,
         "slots": [
           "0x081c9344", "0x081c94aa", "0x081c95dc", "0x081c9734", "0x081c9758", "0x081c976f", "0x081c977a",
@@ -684,7 +673,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081cb608",
-        "address": "0x081cb804",
         "slot_count": 4,
         "slots": ["0x081cb608", "0x081cb665", "0x081cb733", "null"]
       },
@@ -734,7 +722,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081cb814",
-        "address": "0x081cd518",
         "slot_count": 34,
         "slots": [
           "0x081cb814", "0x081cb935", "0x081cba2d", "0x081cbb4a", "0x081cbc15", "0x081cbcbb", "0x081cbd7e",
@@ -789,7 +776,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081cd5a0",
-        "address": "0x081cf9fc",
         "slot_count": 34,
         "slots": [
           "0x081cd5a0", "0x081cd713", "0x081cd8a1", "0x081cda2b", "0x081cda53", "0x081cda6c", "0x081cda77",
@@ -845,7 +831,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081cfa84",
-        "address": "0x081d2f1c",
         "slot_count": 42,
         "slots": [
           "0x081cfa84", "0x081cfbf3", "0x081cfd60", "0x081cfec5", "0x081cfff9", "0x081d0100", "0x081d01f1",
@@ -902,7 +887,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081d2fc4",
-        "address": "0x081d4e5c",
         "slot_count": 34,
         "slots": [
           "0x081d2fc4", "0x081d3116", "0x081d3245", "0x081d338c", "0x081d33aa", "0x081d33bc", "0x081d33c7",
@@ -958,7 +942,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081d4ee4",
-        "address": "0x081d76ec",
         "slot_count": 38,
         "slots": [
           "0x081d4ee4", "0x081d505c", "0x081d5185", "0x081d52ba", "0x081d53ba", "0x081d5484", "0x081d5582",
@@ -1014,7 +997,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081d7784",
-        "address": "0x081d9cec",
         "slot_count": 34,
         "slots": [
           "0x081d7784", "0x081d78ce", "0x081d7a27", "0x081d7b71", "0x081d7c6a", "0x081d7d52", "0x081d7e21",
@@ -1070,7 +1052,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081d9d74",
-        "address": "0x081dc598",
         "slot_count": 36,
         "slots": [
           "0x081d9d74", "0x081d9ee2", "0x081da028", "0x081da18e", "0x081da27e", "0x081da360", "0x081da432",
@@ -1126,7 +1107,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081dc628",
-        "address": "0x081dead4",
         "slot_count": 35,
         "slots": [
           "0x081dc628", "0x081dc76d", "0x081dc8bc", "0x081dc9fb", "0x081dcaed", "0x081dcbda", "0x081dccac",
@@ -1181,7 +1161,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081deb60",
-        "address": "0x081e1184",
         "slot_count": 34,
         "slots": [
           "0x081deb60", "0x081decd2", "0x081dee0d", "0x081def79", "0x081df08f", "0x081df159", "0x081df23b",
@@ -1237,7 +1216,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081e120c",
-        "address": "0x081e3638",
         "slot_count": 34,
         "slots": [
           "0x081e120c", "0x081e1374", "0x081e14b8", "0x081e1604", "0x081e1710", "0x081e17ec", "0x081e18a5",
@@ -1293,7 +1271,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081e36c0",
-        "address": "0x081e5544",
         "slot_count": 34,
         "slots": [
           "0x081e36c0", "0x081e3807", "0x081e3904", "0x081e3a07", "0x081e3af5", "0x081e3b93", "0x081e3c7b",
@@ -1349,7 +1326,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081e55cc",
-        "address": "0x081e71a4",
         "slot_count": 35,
         "slots": [
           "0x081e55cc", "0x081e56f8", "0x081e5813", "0x081e5933", "0x081e5958", "0x081e596e", "0x081e5978",
@@ -1405,7 +1381,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081e7230",
-        "address": "0x081e97f8",
         "slot_count": 34,
         "slots": [
           "0x081e7230", "0x081e73b2", "0x081e7511", "0x081e768b", "0x081e7793", "0x081e7868", "0x081e7943",
@@ -1461,7 +1436,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081e9880",
-        "address": "0x081ebc8c",
         "slot_count": 38,
         "slots": [
           "0x081e9880", "0x081e99e5", "0x081e9b20", "0x081e9c79", "0x081e9c9b", "0x081e9cb4", "0x081e9cc2",
@@ -1518,7 +1492,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081ebd24",
-        "address": "0x081ee474",
         "slot_count": 36,
         "slots": [
           "0x081ebd24", "0x081ebe95", "0x081ebfd3", "0x081ec13a", "0x081ec228", "0x081ec31a", "0x081ec422",
@@ -1574,7 +1547,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081ee504",
-        "address": "0x081f07d8",
         "slot_count": 36,
         "slots": [
           "0x081ee504", "0x081ee697", "0x081ee82d", "0x081ee990", "0x081ee9b4", "0x081ee9cc", "0x081ee9d7",
@@ -1629,7 +1601,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081f0868",
-        "address": "0x081f2b60",
         "slot_count": 35,
         "slots": [
           "0x081f0868", "0x081f09bf", "0x081f0ad6", "0x081f0c1d", "0x081f0d2c", "0x081f0deb", "0x081f0ea1",
@@ -1684,7 +1655,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081f2bec",
-        "address": "0x081f48e0",
         "slot_count": 34,
         "slots": [
           "0x081f2bec", "0x081f2d42", "0x081f2e58", "0x081f2f98", "0x081f2fba", "0x081f2fcb", "0x081f2fd6",
@@ -1740,7 +1710,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081f67e4",
-        "address": "0x081f8e6c",
         "slot_count": 34,
         "slots": [
           "0x081f67e4", "0x081f6932", "0x081f6a8b", "0x081f6c03", "0x081f6cf2", "0x081f6dc6", "0x081f6eaf",
@@ -1796,7 +1765,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081f8ef4",
-        "address": "0x081fb548",
         "slot_count": 34,
         "slots": [
           "0x081f8ef4", "0x081f9072", "0x081f91ba", "0x081f9333", "0x081f943d", "0x081f950e", "0x081f95f3",
@@ -1852,7 +1820,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081fb5d0",
-        "address": "0x081fd720",
         "slot_count": 36,
         "slots": [
           "0x081fb5d0", "0x081fb73d", "0x081fb869", "0x081fb9c9", "0x081fb9f0", "0x081fba01", "0x081fba0c",
@@ -1908,7 +1875,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081fd7b0",
-        "address": "0x081ffc94",
         "slot_count": 36,
         "slots": [
           "0x081fd7b0", "0x081fd945", "0x081fdaa1", "0x081fdc2a", "0x081fdc51", "0x081fdc66", "0x081fdc71",
@@ -1963,7 +1929,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x081ffd24",
-        "address": "0x08202310",
         "slot_count": 36,
         "slots": [
           "0x081ffd24", "0x081ffe9e", "0x081ffffe", "0x08200161", "0x08200188", "0x08200197", "0x082001a2",
@@ -2019,7 +1984,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082023a0",
-        "address": "0x0820542c",
         "slot_count": 40,
         "slots": [
           "0x082023a0", "0x0820254a", "0x082026b5", "0x0820283f", "0x08202909", "0x082029ec", "0x08202ab8",
@@ -2075,7 +2039,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082054cc",
-        "address": "0x08209b80",
         "slot_count": 68,
         "slots": [
           "0x082054cc", "0x0820563d", "0x0820577b", "0x082058ea", "0x082059da", "0x08205aa3", "0x08205b7d",
@@ -2092,7 +2055,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08209b80_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08209b80_SHEET.PNG"
     },
     "0820e300": {
       "format": 1,
@@ -2136,7 +2099,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08209c90",
-        "address": "0x0820e300",
         "slot_count": 68,
         "slots": [
           "0x08209c90", "0x08209e01", "0x08209f3f", "0x0820a0ae", "0x0820a19b", "0x0820a272", "0x0820a32d",
@@ -2197,7 +2159,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0820e410",
-        "address": "0x08210614",
         "slot_count": 34,
         "slots": [
           "0x0820e410", "0x0820e5a3", "0x0820e739", "0x0820e89c", "0x0820e8c0", "0x0820e8d8", "0x0820e8e3",
@@ -2253,7 +2214,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0821069c",
-        "address": "0x08212f0c",
         "slot_count": 35,
         "slots": [
           "0x0821069c", "0x08210821", "0x08210951", "0x08210ac9", "0x08210bd9", "0x08210ca9", "0x08210dae",
@@ -2265,7 +2225,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08212f0c_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08212f0c_SHEET.PNG"
     },
     "082154ec": {
       "format": 1,
@@ -2310,7 +2270,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08212f98",
-        "address": "0x082154ec",
         "slot_count": 35,
         "slots": [
           "0x08212f98", "0x0821310a", "0x0821322b", "0x08213382", "0x082134a6", "0x0821356d", "0x08213649",
@@ -2366,7 +2325,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08215578",
-        "address": "0x08217b34",
         "slot_count": 40,
         "slots": [
           "0x08215578", "0x082156a3", "0x082157b1", "0x082158d0", "0x082159a6", "0x08215a6d", "0x08215b2f",
@@ -2379,7 +2337,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08217b34_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08217b34_SHEET.PNG"
     },
     "0821a1c4": {
       "format": 1,
@@ -2423,7 +2381,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08217bd4",
-        "address": "0x0821a1c4",
         "slot_count": 34,
         "slots": [
           "0x08217bd4", "0x08217d33", "0x08217e7c", "0x08217fc9", "0x082180bd", "0x082181a6", "0x08218281",
@@ -2479,7 +2436,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0821a24c",
-        "address": "0x0821c568",
         "slot_count": 34,
         "slots": [
           "0x0821a24c", "0x0821a38c", "0x0821a4b0", "0x0821a5f0", "0x0821a6e1", "0x0821a79a", "0x0821a85b",
@@ -2535,7 +2491,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0821c5f0",
-        "address": "0x0821e300",
         "slot_count": 35,
         "slots": [
           "0x0821c5f0", "0x0821c723", "0x0821c83c", "0x0821c96b", "0x0821c98f", "0x0821c9a6", "0x0821c9b1",
@@ -2590,7 +2545,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0821e38c",
-        "address": "0x082200d8",
         "slot_count": 34,
         "slots": [
           "0x0821e38c", "0x0821e4da", "0x0821e5d7", "0x0821e714", "0x0821e73a", "0x0821e751", "0x0821e75c",
@@ -2646,7 +2600,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08220160",
-        "address": "0x082221a8",
         "slot_count": 42,
         "slots": [
           "0x08220160", "0x082202b4", "0x082203da", "0x08220501", "0x08220523", "0x08220534", "0x0822053f",
@@ -2703,7 +2656,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08222250",
-        "address": "0x08223138",
         "slot_count": 34,
         "slots": [
           "0x08222250", "0x082222d3", "0x08222366", "0x082223da", "0x0822242a", "0x08222470", "0x082224ce",
@@ -2759,7 +2711,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082231c0",
-        "address": "0x0822552c",
         "slot_count": 38,
         "slots": [
           "0x082231c0", "0x0822330e", "0x08223461", "0x082235ad", "0x082235d6", "0x082235ea", "0x082235f5",
@@ -2816,7 +2767,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082255c4",
-        "address": "0x08227158",
         "slot_count": 40,
         "slots": [
           "0x082255c4", "0x082256d5", "0x082257bd", "0x082258c1", "0x082258f3", "0x08225908", "0x08225910",
@@ -2873,7 +2823,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082271f8",
-        "address": "0x082298d8",
         "slot_count": 45,
         "slots": [
           "0x082271f8", "0x08227339", "0x08227449", "0x08227583", "0x082275ac", "0x082275cc", "0x082275d7",
@@ -2931,7 +2880,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0822998c",
-        "address": "0x0822b5a0",
         "slot_count": 34,
         "slots": [
           "0x0822998c", "0x08229af6", "0x08229c18", "0x08229d72", "0x08229d94", "0x08229da9", "0x08229db4",
@@ -2986,7 +2934,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0822b628",
-        "address": "0x0822d0e4",
         "slot_count": 35,
         "slots": [
           "0x0822b628", "0x0822b754", "0x0822b882", "0x0822b97f", "0x0822b998", "0x0822b9a8", "0x0822ba38",
@@ -3042,7 +2989,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0822d170",
-        "address": "0x0822f23c",
         "slot_count": 39,
         "slots": [
           "0x0822d170", "0x0822d2ea", "0x0822d40e", "0x0822d558", "0x0822d579", "0x0822d58e", "0x0822d599",
@@ -3099,7 +3045,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0822f2d8",
-        "address": "0x082312b8",
         "slot_count": 36,
         "slots": [
           "0x0822f2d8", "0x0822f447", "0x0822f58d", "0x0822f6e6", "0x0822f70f", "0x0822f733", "0x0822f73e",
@@ -3155,7 +3100,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08231348",
-        "address": "0x082335d4",
         "slot_count": 38,
         "slots": [
           "0x08231348", "0x082314a6", "0x082315b1", "0x08231702", "0x0823178c", "0x082317fa", "0x0823187b",
@@ -3212,7 +3156,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0823366c",
-        "address": "0x082352fc",
         "slot_count": 34,
         "slots": [
           "0x0823366c", "0x082337e1", "0x0823392d", "0x08233a66", "0x08233a82", "0x08233a98", "0x08233aa3",
@@ -3268,7 +3211,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08235384",
-        "address": "0x082379c8",
         "slot_count": 40,
         "slots": [
           "0x08235384", "0x082354bf", "0x08235629", "0x08235780", "0x082357ae", "0x082357c4", "0x082357cf",
@@ -3324,7 +3266,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08237a68",
-        "address": "0x082396d0",
         "slot_count": 34,
         "slots": [
           "0x08237a68", "0x08237bcd", "0x08237cdb", "0x08237e1e", "0x08237e38", "0x08237e4a", "0x08237e55",
@@ -3380,7 +3321,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08239758",
-        "address": "0x0823b74c",
         "slot_count": 34,
         "slots": [
           "0x08239758", "0x082398b8", "0x08239a05", "0x08239b5a", "0x08239b84", "0x08239b9d", "0x08239ba8",
@@ -3436,7 +3376,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0823b7d4",
-        "address": "0x0823dfb8",
         "slot_count": 31,
         "slots": [
           "0x0823b7d4", "0x0823b979", "0x0823bb08", "0x0823bcb7", "0x0823bdfc", "0x0823bf36", "0x0823c038",
@@ -3492,7 +3431,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0823e034",
-        "address": "0x08240e8c",
         "slot_count": 35,
         "slots": [
           "0x0823e034", "0x0823e20c", "0x0823e3a1", "0x0823e575", "0x0823e69e", "0x0823e77a", "0x0823e86b",
@@ -3504,7 +3442,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08240e8c_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08240e8c_SHEET.PNG"
     },
     "08242a4c": {
       "format": 1,
@@ -3549,7 +3487,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08240f18",
-        "address": "0x08242a4c",
         "slot_count": 34,
         "slots": [
           "0x08240f18", "0x0824106c", "0x0824115b", "0x0824129c", "0x082412c1", "0x08241331", "0x0824133c",
@@ -3561,7 +3498,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08242a4c_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08242a4c_SHEET.PNG"
     },
     "08244f38": {
       "format": 1,
@@ -3605,7 +3542,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08242ad4",
-        "address": "0x08244f38",
         "slot_count": 34,
         "slots": [
           "0x08242ad4", "0x08242c33", "0x08242d7d", "0x08242ec1", "0x08243036", "0x08243140", "0x08243257",
@@ -3617,7 +3553,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08244f38_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08244f38_SHEET.PNG"
     },
     "08247618": {
       "format": 1,
@@ -3662,7 +3598,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08244fc8",
-        "address": "0x08247618",
         "slot_count": 34,
         "slots": [
           "0x08244fc8", "0x0824512d", "0x0824527d", "0x082453f2", "0x0824555a", "0x0824567e", "0x082457be",
@@ -3718,7 +3653,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082476a0",
-        "address": "0x08249828",
         "slot_count": 37,
         "slots": [
           "0x082476a0", "0x08247808", "0x0824794e", "0x08247a92", "0x08247aed", "0x08247b5c", "0x08247b87",
@@ -3775,7 +3709,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082498bc",
-        "address": "0x0824c2f4",
         "slot_count": 43,
         "slots": [
           "0x082498bc", "0x08249a23", "0x08249b5e", "0x08249c9f", "0x08249e06", "0x08249f3a", "0x0824a078",
@@ -3832,7 +3765,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0824c3a0",
-        "address": "0x0824e6d8",
         "slot_count": 28,
         "slots": [
           "0x0824c3a0", "0x0824c53a", "0x0824c6bb", "0x0824c828", "0x0824c93a", "0x0824ca39", "0x0824cb29",
@@ -3887,7 +3819,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0824e748",
-        "address": "0x08251b28",
         "slot_count": 52,
         "slots": [
           "0x0824e748", "0x0824e892", "0x0824e9be", "0x0824eafd", "0x0824ec23", "0x0824ed26", "0x0824ee5e",
@@ -3902,7 +3833,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08251b28_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08251b28_SHEET.PNG"
     },
     "082542e0": {
       "format": 1,
@@ -3947,7 +3878,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08251bf8",
-        "address": "0x082542e0",
         "slot_count": 32,
         "slots": [
           "0x08251bf8", "0x08251d8d", "0x08251f03", "0x08252063", "0x08252185", "0x0825228b", "0x08252374",
@@ -4003,7 +3933,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08254360",
-        "address": "0x08256394",
         "slot_count": 38,
         "slots": [
           "0x08254360", "0x0825449a", "0x082545bf", "0x082546e6", "0x0825478f", "0x0825480f", "0x082548a5",
@@ -4060,7 +3989,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0825642c",
-        "address": "0x08258a10",
         "slot_count": 35,
         "slots": [
           "0x0825642c", "0x082565b4", "0x082566e0", "0x08256852", "0x0825694a", "0x08256a03", "0x08256ad4",
@@ -4072,7 +4000,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08258a10_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08258a10_SHEET.PNG"
     },
     "0825b0c4": {
       "format": 1,
@@ -4117,7 +4045,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08258a9c",
-        "address": "0x0825b0c4",
         "slot_count": 34,
         "slots": [
           "0x08258a9c", "0x08258c66", "0x08258df4", "0x08258fa0", "0x08258fc5", "0x08258fda", "0x08258fe5",
@@ -4172,7 +4099,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0825b14c",
-        "address": "0x0825c034",
         "slot_count": 28,
         "slots": [
           "0x0825b14c", "0x0825b1d3", "0x0825b276", "0x0825b321", "0x0825b391", "0x0825b42f", "0x0825b4bc",
@@ -4226,7 +4152,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0825c0a4",
-        "address": "0x0825e0b0",
         "slot_count": 34,
         "slots": [
           "0x0825c0a4", "0x0825c22a", "0x0825c36b", "0x0825c4d6", "0x0825c4f7", "0x0825c507", "0x0825c512",
@@ -4282,7 +4207,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0825e138",
-        "address": "0x08260438",
         "slot_count": 39,
         "slots": [
           "0x0825e138", "0x0825e294", "0x0825e3aa", "0x0825e4e7", "0x0825e50d", "0x0825e522", "0x0825e52d",
@@ -4339,7 +4263,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082604d4",
-        "address": "0x0826241c",
         "slot_count": 34,
         "slots": [
           "0x082604d4", "0x0826064c", "0x08260763", "0x082608b4", "0x082608d6", "0x082608ee", "0x082608f9",
@@ -4395,7 +4318,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082624a4",
-        "address": "0x08264314",
         "slot_count": 34,
         "slots": [
           "0x082624a4", "0x0826262b", "0x08262746", "0x0826289d", "0x082628c4", "0x082628dc", "0x082628e7",
@@ -4451,7 +4373,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0826439c",
-        "address": "0x082666c8",
         "slot_count": 39,
         "slots": [
           "0x0826439c", "0x08264510", "0x08264621", "0x08264776", "0x08264799", "0x082647ae", "0x082647b9",
@@ -4508,13 +4429,12 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08266764",
-        "address": "0x08266c4c",
         "slot_count": 4,
         "slots": ["0x08266764", "0x0826693b", "0x08266ac2", "null"]
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08266c4c_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08266c4c_SHEET.PNG"
     },
     "08266f58": {
       "format": 1,
@@ -4559,13 +4479,12 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08266c5c",
-        "address": "0x08266f58",
         "slot_count": 4,
         "slots": ["0x08266c5c", "0x08266d68", "0x08266e55", "null"]
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08266f58_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08266f58_SHEET.PNG"
     },
     "0826950c": {
       "format": 1,
@@ -4610,7 +4529,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08266f68",
-        "address": "0x0826950c",
         "slot_count": 38,
         "slots": [
           "0x08266f68", "0x082670ac", "0x082671d9", "0x0826730e", "0x08267405", "0x082674c0", "0x0826756d",
@@ -4666,7 +4584,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082695a4",
-        "address": "0x0826b89c",
         "slot_count": 39,
         "slots": [
           "0x082695a4", "0x08269723", "0x0826986e", "0x082699e7", "0x08269a07", "0x08269a17", "0x08269a22",
@@ -4722,7 +4639,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0826b938",
-        "address": "0x0826dd34",
         "slot_count": 41,
         "slots": [
           "0x0826b938", "0x0826bab3", "0x0826bc03", "0x0826bd58", "0x0826bdc7", "0x0826bdf0", "0x0826bdfc",
@@ -4778,7 +4694,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0826ddd8",
-        "address": "0x0826fce0",
         "slot_count": 34,
         "slots": [
           "0x0826ddd8", "0x0826df2c", "0x0826e03e", "0x0826e179", "0x0826e258", "0x0826e2f4", "0x0826e3a7",
@@ -4834,7 +4749,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0826fd68",
-        "address": "0x08271db4",
         "slot_count": 34,
         "slots": [
           "0x0826fd68", "0x0826ff14", "0x08270060", "0x082701b8", "0x082701ec", "0x082701fb", "0x08270206",
@@ -4846,7 +4760,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08271db4_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08271db4_SHEET.PNG"
     },
     "08273694": {
       "format": 1,
@@ -4891,7 +4805,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08271e3c",
-        "address": "0x08273694",
         "slot_count": 34,
         "slots": [
           "0x08271e3c", "0x08271f3a", "0x08272002", "0x082720d1", "0x0827218b", "0x082721f9", "0x082722ab",
@@ -4946,7 +4859,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0827371c",
-        "address": "0x08275bb0",
         "slot_count": 35,
         "slots": [
           "0x0827371c", "0x082738d3", "0x08273a2e", "0x08273b78", "0x08273b9e", "0x08273bb2", "0x08273bbd",
@@ -4958,7 +4870,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08275bb0_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08275bb0_SHEET.PNG"
     },
     "08277f14": {
       "format": 1,
@@ -5003,7 +4915,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08275c3c",
-        "address": "0x08277f14",
         "slot_count": 37,
         "slots": [
           "0x08275c3c", "0x08275e0c", "0x08275f88", "0x082760ec", "0x08276111", "0x08276126", "0x08276131",
@@ -5016,7 +4927,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08277f14_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08277f14_SHEET.PNG"
     },
     "082780d8": {
       "format": 1,
@@ -5061,7 +4972,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08277fa8",
-        "address": "0x082780d8",
         "slot_count": 4,
         "slots": ["0x08277fa8", "0x08278021", "0x08278081", "null"]
       },
@@ -5111,7 +5021,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082780e8",
-        "address": "0x0827a3a0",
         "slot_count": 41,
         "slots": [
           "0x082780e8", "0x08278214", "0x0827831a", "0x0827840a", "0x082784ad", "0x08278532", "0x082785fb",
@@ -5168,7 +5077,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0827a444",
-        "address": "0x0827c670",
         "slot_count": 34,
         "slots": [
           "0x0827a444", "0x0827a59f", "0x0827a6c2", "0x0827a809", "0x0827a8fb", "0x0827a9c9", "0x0827aa7b",
@@ -5224,7 +5132,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0827c6f8",
-        "address": "0x0827ed50",
         "slot_count": 35,
         "slots": [
           "0x0827c6f8", "0x0827c85f", "0x0827c97a", "0x0827cab4", "0x0827cbcb", "0x0827cca1", "0x0827cd87",
@@ -5280,7 +5187,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0827eddc",
-        "address": "0x08280cf8",
         "slot_count": 34,
         "slots": [
           "0x0827eddc", "0x0827ef58", "0x0827f079", "0x0827f1ce", "0x0827f1f4", "0x0827f204", "0x0827f20f",
@@ -5292,7 +5198,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08280cf8_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08280cf8_SHEET.PNG"
     },
     "08283484": {
       "format": 1,
@@ -5337,7 +5243,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08280d80",
-        "address": "0x08283484",
         "slot_count": 34,
         "slots": [
           "0x08280d80", "0x08280f11", "0x08281069", "0x082811f4", "0x08281305", "0x082813dd", "0x082814e4",
@@ -5393,7 +5298,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0828350c",
-        "address": "0x082859ac",
         "slot_count": 34,
         "slots": [
           "0x0828350c", "0x082836b8", "0x08283811", "0x0828395e", "0x082839bd", "0x08283a02", "0x08283a2b",
@@ -5449,7 +5353,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08285a34",
-        "address": "0x082876ec",
         "slot_count": 34,
         "slots": [
           "0x08285a34", "0x08285b72", "0x08285cab", "0x08285dd8", "0x08285dfc", "0x08285e09", "0x08285e14",
@@ -5504,7 +5407,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08287774",
-        "address": "0x0828b014",
         "slot_count": 58,
         "slots": [
           "0x08287774", "0x082878cb", "0x082879fa", "0x08287b43", "0x08287c65", "0x08287d47", "0x08287e47",
@@ -5564,7 +5466,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0828b0fc",
-        "address": "0x0828cf50",
         "slot_count": 34,
         "slots": [
           "0x0828b0fc", "0x0828b25d", "0x0828b3a8", "0x0828b4df", "0x0828b502", "0x0828b526", "0x0828b531",
@@ -5619,7 +5520,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0828cfd8",
-        "address": "0x0828f6ec",
         "slot_count": 40,
         "slots": [
           "0x0828cfd8", "0x0828d111", "0x0828d231", "0x0828d371", "0x0828d45d", "0x0828d51c", "0x0828d5f4",
@@ -5676,7 +5576,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0828f78c",
-        "address": "0x082911e0",
         "slot_count": 34,
         "slots": [
           "0x0828f78c", "0x0828f88e", "0x0828f969", "0x0828fa59", "0x0828fb1c", "0x0828fbaf", "0x0828fc50",
@@ -5732,7 +5631,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08291268",
-        "address": "0x08292e78",
         "slot_count": 34,
         "slots": [
           "0x08291268", "0x08291371", "0x0829144a", "0x0829154e", "0x082915f2", "0x08291689", "0x08291735",
@@ -5744,7 +5642,7 @@
       },
       "identity": null,
       "identity_status": "runtime name association not established",
-      "presentation_review": "GRAPHICS/REVIEW.JSON#FIELD_SPRITE_0x08292e78_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#FIELD_SPRITE_0x08292e78_SHEET.PNG"
     },
     "08295198": {
       "format": 1,
@@ -5789,7 +5687,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08292f00",
-        "address": "0x08295198",
         "slot_count": 34,
         "slots": [
           "0x08292f00", "0x08293095", "0x082931e1", "0x0829332c", "0x0829341b", "0x082934cb", "0x0829357f",
@@ -5845,7 +5742,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08295220",
-        "address": "0x082986b0",
         "slot_count": 42,
         "slots": [
           "0x08295220", "0x082953c7", "0x08295598", "0x08295766", "0x08295885", "0x08295992", "0x08295a89",
@@ -5901,7 +5797,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08298758",
-        "address": "0x08299f00",
         "slot_count": 31,
         "slots": [
           "0x08298758", "0x0829884a", "0x08298943", "0x08298a45", "0x08298b0b", "0x08298bd5", "0x08298c9e",
@@ -5957,7 +5852,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08299f7c",
-        "address": "0x0829b68c",
         "slot_count": 28,
         "slots": [
           "0x08299f7c", "0x0829a089", "0x0829a18a", "0x0829a29f", "0x0829a359", "0x0829a411", "0x0829a504",
@@ -6012,7 +5906,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0829b6fc",
-        "address": "0x0829d2d8",
         "slot_count": 31,
         "slots": [
           "0x0829b6fc", "0x0829b81e", "0x0829b935", "0x0829ba29", "0x0829bb07", "0x0829bbfb", "0x0829bcc9",
@@ -6067,7 +5960,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0829d354",
-        "address": "0x0829ee4c",
         "slot_count": 28,
         "slots": [
           "0x0829d354", "0x0829d46f", "0x0829d5b6", "0x0829d6cd", "0x0829d7a7", "0x0829d8b8", "0x0829d9a2",
@@ -6122,7 +6014,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0829eebc",
-        "address": "0x082a0ae4",
         "slot_count": 19,
         "slots": [
           "0x0829eebc", "0x0829f04c", "0x0829f248", "0x0829f40b", "0x0829f557", "0x0829f6dd", "0x0829f844",
@@ -6175,7 +6066,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a0b30",
-        "address": "0x082a1988",
         "slot_count": 10,
         "slots": [
           "0x082a0b30", "0x082a0d59", "0x082a0f45", "0x082a10cb", "0x082a125f", "0x082a13f1", "0x082a155e",
@@ -6228,7 +6118,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a19b0",
-        "address": "0x082a2698",
         "slot_count": 6,
         "slots": ["0x082a19b0", "0x082a1c98", "0x082a1f27", "0x082a21d6", "0x082a2442", "null"]
       },
@@ -6278,7 +6167,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a26b0",
-        "address": "0x082a3000",
         "slot_count": 10,
         "slots": [
           "0x082a26b0", "0x082a27d0", "0x082a28d9", "0x082a2a4a", "0x082a2b2a", "0x082a2c04", "0x082a2d26",
@@ -6331,7 +6219,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a3028",
-        "address": "0x082a481c",
         "slot_count": 4,
         "slots": ["0x082a3028", "0x082a3837", "0x082a4045", "null"]
       },
@@ -6381,7 +6268,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a482c",
-        "address": "0x082a5870",
         "slot_count": 8,
         "slots": [
           "0x082a482c", "0x082a4b01", "0x082a4d77", "0x082a4f97", "0x082a51cc", "0x082a53e2", "0x082a562f", "null"
@@ -6433,7 +6319,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a5890",
-        "address": "0x082a5cb4",
         "slot_count": 10,
         "slots": [
           "0x082a5890", "0x082a58ff", "0x082a597a", "0x082a5a0c", "0x082a5a80", "0x082a5ae8", "0x082a5b82",
@@ -6486,7 +6371,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a5cdc",
-        "address": "0x082a679c",
         "slot_count": 10,
         "slots": [
           "0x082a5cdc", "0x082a5e0f", "0x082a5f58", "0x082a60fb", "0x082a61fd", "0x082a6324", "0x082a6445",
@@ -6539,7 +6423,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a67c4",
-        "address": "0x082a75ac",
         "slot_count": 10,
         "slots": [
           "0x082a67c4", "0x082a6940", "0x082a6aa0", "0x082a6c46", "0x082a6dbf", "0x082a6f50", "0x082a710c",
@@ -6592,7 +6475,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082a9804",
-        "address": "0x082aa518",
         "slot_count": 10,
         "slots": [
           "0x082a9804", "0x082a99ea", "0x082a9b9b", "0x082a9d16", "0x082a9e77", "0x082a9fa5", "0x082aa11a",
@@ -6645,7 +6527,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082aa540",
-        "address": "0x082ab988",
         "slot_count": 8,
         "slots": [
           "0x082aa540", "0x082aa81c", "0x082aaa76", "0x082aad74", "0x082aaff0", "0x082ab2b1", "0x082ab6b0", "null"
@@ -6697,7 +6578,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ab9a8",
-        "address": "0x082abea4",
         "slot_count": 3,
         "slots": ["0x082ab9a8", "0x082abc2c", "null"]
       },
@@ -6747,7 +6627,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082abeb0",
-        "address": "0x082ac304",
         "slot_count": 2,
         "slots": ["0x082abeb0", "null"]
       },
@@ -6796,7 +6675,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ac30c",
-        "address": "0x082ac64c",
         "slot_count": 2,
         "slots": ["0x082ac30c", "null"]
       },
@@ -6845,7 +6723,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ac654",
-        "address": "0x082aef30",
         "slot_count": 25,
         "slots": [
           "0x082ac654", "0x082ac996", "0x082ac9a6", "0x082ac9b6", "0x082acbac", "0x082acd6b", "0x082acf2a",
@@ -6900,7 +6777,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082aef94",
-        "address": "0x082af154",
         "slot_count": 2,
         "slots": ["0x082aef94", "null"]
       },
@@ -6950,7 +6826,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082af15c",
-        "address": "0x082af1cc",
         "slot_count": 2,
         "slots": ["0x082af15c", "null"]
       },
@@ -6999,7 +6874,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082af1d4",
-        "address": "0x082b0f7c",
         "slot_count": 15,
         "slots": [
           "0x082af1d4", "0x082af565", "0x082af736", "0x082af8d5", "0x082afa66", "0x082afc29", "0x082afded",
@@ -7052,7 +6926,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b0fb8",
-        "address": "0x082b3e40",
         "slot_count": 15,
         "slots": [
           "0x082b0fb8", "0x082b144b", "0x082b16be", "0x082b194a", "0x082b1bf6", "0x082b1ef8", "0x082b2223",
@@ -7105,7 +6978,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b3e7c",
-        "address": "0x082b3f68",
         "slot_count": 7,
         "slots": ["0x082b3e7c", "0x082b3ec1", "0x082b3f00", "0x082b3f0b", "0x082b3f1d", "0x082b3f38", "null"]
       },
@@ -7155,7 +7027,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b3f84",
-        "address": "0x082b4060",
         "slot_count": 6,
         "slots": ["0x082b3f84", "0x082b3fb2", "0x082b3ff8", "0x082b4035", "0x082b4055", "null"]
       },
@@ -7204,7 +7075,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b4078",
-        "address": "0x082b4430",
         "slot_count": 4,
         "slots": ["0x082b4078", "0x082b41b6", "0x082b42ee", "null"]
       },
@@ -7254,7 +7124,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b4a18",
-        "address": "0x082b4b84",
         "slot_count": 2,
         "slots": ["0x082b4a18", "null"]
       },
@@ -7304,7 +7173,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b4b8c",
-        "address": "0x082b4db4",
         "slot_count": 2,
         "slots": ["0x082b4b8c", "null"]
       },
@@ -7354,7 +7222,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b4dbc",
-        "address": "0x082b502c",
         "slot_count": 13,
         "slots": [
           "0x082b4dbc", "0x082b4dcf", "0x082b4df5", "0x082b4e2c", "0x082b4e74", "0x082b4ebe", "0x082b4f0a",
@@ -7407,7 +7274,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b5060",
-        "address": "0x082b5194",
         "slot_count": 7,
         "slots": ["0x082b5060", "0x082b5090", "0x082b50b9", "0x082b50d9", "0x082b5127", "0x082b5172", "null"]
       },
@@ -7457,7 +7323,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b51b0",
-        "address": "0x082b5734",
         "slot_count": 16,
         "slots": [
           "0x082b51b0", "0x082b5232", "0x082b52a8", "0x082b5310", "0x082b53b6", "0x082b5447", "0x082b54a6",
@@ -7510,7 +7375,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b5774",
-        "address": "0x082b59f8",
         "slot_count": 2,
         "slots": ["0x082b5774", "null"]
       },
@@ -7559,7 +7423,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b5a00",
-        "address": "0x082b63fc",
         "slot_count": 10,
         "slots": [
           "0x082b5a00", "0x082b5c52", "0x082b5d1d", "0x082b5d4d", "0x082b5d80", "0x082b5db4", "0x082b5f98",
@@ -7612,7 +7475,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b6424",
-        "address": "0x082b6bc0",
         "slot_count": 7,
         "slots": ["0x082b6424", "0x082b658e", "0x082b6696", "0x082b6805", "0x082b6940", "0x082b6aaa", "null"]
       },
@@ -7662,7 +7524,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b6bdc",
-        "address": "0x082b7950",
         "slot_count": 12,
         "slots": [
           "0x082b6bdc", "0x082b6db8", "0x082b705c", "0x082b71d1", "0x082b729a", "0x082b7313", "0x082b749a",
@@ -7715,7 +7576,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b7980",
-        "address": "0x082b8670",
         "slot_count": 13,
         "slots": [
           "0x082b7980", "0x082b7b94", "0x082b7ca6", "0x082b7ddb", "0x082b7efb", "0x082b7ffc", "0x082b811f",
@@ -7768,7 +7628,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b86a4",
-        "address": "0x082b88ec",
         "slot_count": 6,
         "slots": ["0x082b86a4", "0x082b872c", "0x082b8797", "0x082b8845", "0x082b88b3", "null"]
       },
@@ -7817,7 +7676,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b8904",
-        "address": "0x082b8d30",
         "slot_count": 8,
         "slots": [
           "0x082b8904", "0x082b89c4", "0x082b8a59", "0x082b8ae9", "0x082b8b84", "0x082b8c15", "0x082b8cc7", "null"
@@ -7869,7 +7727,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b8d50",
-        "address": "0x082b91a0",
         "slot_count": 8,
         "slots": [
           "0x082b8d50", "0x082b8da5", "0x082b8e42", "0x082b8ee1", "0x082b8fa5", "0x082b905e", "0x082b90f7", "null"
@@ -7921,7 +7778,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b91c0",
-        "address": "0x082b94b8",
         "slot_count": 7,
         "slots": ["0x082b91c0", "0x082b926d", "0x082b931a", "0x082b9390", "0x082b942e", "0x082b948a", "null"]
       },
@@ -7970,7 +7826,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b94d4",
-        "address": "0x082b9924",
         "slot_count": 6,
         "slots": ["0x082b94d4", "0x082b959f", "0x082b969a", "0x082b977c", "0x082b9874", "null"]
       },
@@ -8020,7 +7875,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b993c",
-        "address": "0x082b9990",
         "slot_count": 2,
         "slots": ["0x082b993c", "null"]
       },
@@ -8070,7 +7924,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b9998",
-        "address": "0x082b9ca0",
         "slot_count": 9,
         "slots": [
           "0x082b9998", "0x082b9a46", "0x082b9ab9", "0x082b9b21", "0x082b9bad", "0x082b9c1b", "0x082b9c5d",
@@ -8123,7 +7976,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082b9cc4",
-        "address": "0x082ba134",
         "slot_count": 2,
         "slots": ["0x082b9cc4", "null"]
       },
@@ -8173,7 +8025,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ba13c",
-        "address": "0x082ba3d0",
         "slot_count": 2,
         "slots": ["0x082ba13c", "null"]
       },
@@ -8223,7 +8074,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ba3d8",
-        "address": "0x082bab68",
         "slot_count": 8,
         "slots": [
           "0x082ba3d8", "0x082ba486", "0x082ba521", "0x082ba61a", "0x082ba756", "0x082ba939", "0x082bab1f", "null"
@@ -8274,7 +8124,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bab88",
-        "address": "0x082bb4c8",
         "slot_count": 36,
         "slots": [
           "0x082bab88", "0x082babd6", "0x082bac2b", "0x082baca2", "0x082bacd7", "0x082bad5c", "0x082bad8c",
@@ -8330,7 +8179,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bb558",
-        "address": "0x082bbce0",
         "slot_count": 5,
         "slots": ["0x082bb558", "0x082bb97a", "0x082bba63", "0x082bbba8", "null"]
       },
@@ -8379,7 +8227,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bbcf4",
-        "address": "0x082bc464",
         "slot_count": 5,
         "slots": ["0x082bbcf4", "0x082bc128", "0x082bc1e1", "0x082bc337", "null"]
       },
@@ -8429,7 +8276,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bc478",
-        "address": "0x082bc544",
         "slot_count": 2,
         "slots": ["0x082bc478", "null"]
       },
@@ -8479,7 +8325,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bc54c",
-        "address": "0x082bdca4",
         "slot_count": 24,
         "slots": [
           "0x082bc54c", "0x082bc739", "0x082bc918", "0x082bca76", "0x082bca76", "0x082bcb57", "0x082bcbc4",
@@ -8533,7 +8378,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bdd04",
-        "address": "0x082bec10",
         "slot_count": 10,
         "slots": [
           "0x082bdd04", "0x082bdeba", "0x082be071", "0x082be262", "0x082be437", "0x082be599", "0x082be756",
@@ -8586,7 +8430,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bec38",
-        "address": "0x082bed80",
         "slot_count": 2,
         "slots": ["0x082bec38", "null"]
       },
@@ -8635,7 +8478,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bed88",
-        "address": "0x082bf5f8",
         "slot_count": 6,
         "slots": ["0x082bed88", "0x082beff2", "0x082bf123", "0x082bf308", "0x082bf49f", "null"]
       },
@@ -8685,7 +8527,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082bf610",
-        "address": "0x082c04bc",
         "slot_count": 6,
         "slots": ["0x082bf610", "0x082bf8e0", "0x082bfa62", "0x082bfdfa", "0x082c0200", "null"]
       },
@@ -8734,7 +8575,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c04d4",
-        "address": "0x082c0a10",
         "slot_count": 8,
         "slots": [
           "0x082c04d4", "0x082c0561", "0x082c05a6", "0x082c060c", "0x082c06aa", "0x082c079a", "0x082c08d3", "null"
@@ -8786,7 +8626,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c0a30",
-        "address": "0x082c0da8",
         "slot_count": 4,
         "slots": ["0x082c0a30", "0x082c0bfe", "0x082c0cc8", "null"]
       },
@@ -8835,7 +8674,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c0db8",
-        "address": "0x082c0e00",
         "slot_count": 2,
         "slots": ["0x082c0db8", "null"]
       },
@@ -8884,7 +8722,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c0e08",
-        "address": "0x082c11c8",
         "slot_count": 3,
         "slots": ["0x082c0e08", "0x082c1188", "null"]
       },
@@ -8934,7 +8771,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c11d4",
-        "address": "0x082c12c8",
         "slot_count": 2,
         "slots": ["0x082c11d4", "null"]
       },
@@ -8984,7 +8820,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c12d0",
-        "address": "0x082c16ac",
         "slot_count": 2,
         "slots": ["0x082c12d0", "null"]
       },
@@ -9033,7 +8868,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c3a60",
-        "address": "0x082c49a4",
         "slot_count": 10,
         "slots": [
           "0x082c3a60", "0x082c3bf1", "0x082c3db3", "0x082c3f61", "0x082c4118", "0x082c42d1", "0x082c448e",
@@ -9086,7 +8920,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c49cc",
-        "address": "0x082c4bfc",
         "slot_count": 6,
         "slots": ["0x082c49cc", "0x082c4a36", "0x082c4aa9", "0x082c4b1d", "0x082c4b79", "null"]
       },
@@ -9136,7 +8969,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c4c14",
-        "address": "0x082c4dc8",
         "slot_count": 2,
         "slots": ["0x082c4c14", "null"]
       },
@@ -9186,7 +9018,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c4dd0",
-        "address": "0x082c4e8c",
         "slot_count": 7,
         "slots": ["0x082c4dd0", "0x082c4deb", "0x082c4e08", "0x082c4e2d", "0x082c4e4a", "0x082c4e6a", "null"]
       },
@@ -9236,7 +9067,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c4ea8",
-        "address": "0x082c5048",
         "slot_count": 6,
         "slots": ["0x082c4ea8", "0x082c4fc6", "0x082c4fe0", "0x082c5000", "0x082c5024", "null"]
       },
@@ -9285,7 +9115,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c5060",
-        "address": "0x082c50c4",
         "slot_count": 2,
         "slots": ["0x082c5060", "null"]
       },
@@ -9335,7 +9164,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c50cc",
-        "address": "0x082c78a8",
         "slot_count": 18,
         "slots": [
           "0x082c50cc", "0x082c53be", "0x082c5644", "0x082c5896", "0x082c5afe", "0x082c5d39", "0x082c5ef4",
@@ -9389,7 +9217,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c7c34",
-        "address": "0x082c7cd4",
         "slot_count": 2,
         "slots": ["0x082c7c34", "null"]
       },
@@ -9439,7 +9266,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c7cdc",
-        "address": "0x082c7ed4",
         "slot_count": 4,
         "slots": ["0x082c7cdc", "0x082c7da5", "0x082c7e6f", "null"]
       },
@@ -9489,7 +9315,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c7ee4",
-        "address": "0x082c853c",
         "slot_count": 9,
         "slots": [
           "0x082c7ee4", "0x082c7fa6", "0x082c805b", "0x082c811d", "0x082c81f9", "0x082c82cf", "0x082c8397",
@@ -9541,7 +9366,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c8560",
-        "address": "0x082c8604",
         "slot_count": 2,
         "slots": ["0x082c8560", "null"]
       },
@@ -9591,7 +9415,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c860c",
-        "address": "0x082c88b4",
         "slot_count": 2,
         "slots": ["0x082c860c", "null"]
       },
@@ -9640,7 +9463,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c88bc",
-        "address": "0x082c8b84",
         "slot_count": 5,
         "slots": ["0x082c88bc", "0x082c89ea", "0x082c8a20", "0x082c8ade", "null"]
       },
@@ -9690,7 +9512,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c8b98",
-        "address": "0x082c9040",
         "slot_count": 11,
         "slots": [
           "0x082c8b98", "0x082c8ca3", "0x082c8d18", "0x082c8d78", "0x082c8df7", "0x082c8e9a", "0x082c8f4d",
@@ -9743,7 +9564,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c906c",
-        "address": "0x082c92b0",
         "slot_count": 5,
         "slots": ["0x082c906c", "0x082c9139", "0x082c91aa", "0x082c922d", "null"]
       },
@@ -9793,7 +9613,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c92c4",
-        "address": "0x082c9470",
         "slot_count": 3,
         "slots": ["0x082c92c4", "0x082c9396", "null"]
       },
@@ -9842,7 +9661,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c947c",
-        "address": "0x082c995c",
         "slot_count": 5,
         "slots": ["0x082c947c", "0x082c9583", "0x082c9719", "0x082c989a", "null"]
       },
@@ -9892,7 +9710,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c9970",
-        "address": "0x082c9da4",
         "slot_count": 4,
         "slots": ["0x082c9970", "0x082c9b21", "0x082c9c8d", "null"]
       },
@@ -9941,7 +9758,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c9db4",
-        "address": "0x082c9f98",
         "slot_count": 2,
         "slots": ["0x082c9db4", "null"]
       },
@@ -9991,7 +9807,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082c9fa0",
-        "address": "0x082ca128",
         "slot_count": 2,
         "slots": ["0x082c9fa0", "null"]
       },
@@ -10041,7 +9856,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ca130",
-        "address": "0x082ca734",
         "slot_count": 5,
         "slots": ["0x082ca130", "0x082ca4fa", "0x082ca5c4", "0x082ca681", "null"]
       },
@@ -10091,7 +9905,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ca748",
-        "address": "0x082cacec",
         "slot_count": 5,
         "slots": ["0x082ca748", "0x082cab18", "0x082cabc9", "0x082cac5b", "null"]
       },
@@ -10141,7 +9954,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082cad00",
-        "address": "0x082cb204",
         "slot_count": 5,
         "slots": ["0x082cad00", "0x082cae19", "0x082caf64", "0x082cb0b4", "null"]
       },
@@ -10190,7 +10002,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082cb218",
-        "address": "0x082cb730",
         "slot_count": 3,
         "slots": ["0x082cb218", "0x082cb4a4", "null"]
       },
@@ -10240,7 +10051,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082cda18",
-        "address": "0x082cfc10",
         "slot_count": 10,
         "slots": [
           "0x082cda18", "0x082cdea3", "0x082ce4da", "0x082ce744", "0x082cea29", "0x082ced69", "0x082ceff6",
@@ -10292,7 +10102,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082cfc38",
-        "address": "0x082cfdb4",
         "slot_count": 3,
         "slots": ["0x082cfc38", "0x082cfd46", "null"]
       },
@@ -10342,7 +10151,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d117c",
-        "address": "0x082d1b6c",
         "slot_count": 10,
         "slots": [
           "0x082d117c", "0x082d12b4", "0x082d1481", "0x082d1569", "0x082d1674", "0x082d17ba", "0x082d1883",
@@ -10394,7 +10202,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d1b94",
-        "address": "0x082d47dc",
         "slot_count": 38,
         "slots": [
           "0x082d1b94", "0x082d1d08", "0x082d1e56", "0x082d1fc2", "0x082d20c6", "0x082d21af", "0x082d228c",
@@ -10451,7 +10258,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d4874",
-        "address": "0x082d6f38",
         "slot_count": 26,
         "slots": [
           "0x082d4874", "0x082d4a6a", "0x082d4c5b", "0x082d4e57", "0x082d4fde", "0x082d515b", "0x082d52fa",
@@ -10505,7 +10311,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d6fa0",
-        "address": "0x082d72c4",
         "slot_count": 2,
         "slots": ["0x082d6fa0", "null"]
       },
@@ -10555,7 +10360,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d72cc",
-        "address": "0x082d7404",
         "slot_count": 2,
         "slots": ["0x082d72cc", "null"]
       },
@@ -10604,7 +10408,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d740c",
-        "address": "0x082d7638",
         "slot_count": 8,
         "slots": [
           "0x082d740c", "0x082d7434", "0x082d746f", "0x082d74a6", "0x082d7520", "0x082d75a2", "0x082d7615", "null"
@@ -10656,7 +10459,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d7d68",
-        "address": "0x082d877c",
         "slot_count": 9,
         "slots": [
           "0x082d7d68", "0x082d7eb7", "0x082d7fbb", "0x082d8059", "0x082d8136", "0x082d8223", "0x082d82e3",
@@ -10709,7 +10511,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d87a0",
-        "address": "0x082d8c40",
         "slot_count": 11,
         "slots": [
           "0x082d87a0", "0x082d8886", "0x082d88ef", "0x082d8977", "0x082d89e6", "0x082d8a22", "0x082d8ac7",
@@ -10762,7 +10563,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082d8c6c",
-        "address": "0x082d8c78",
         "slot_count": 2,
         "slots": ["0x082d8c6c", "null"]
       },
@@ -10812,7 +10612,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082deb08",
-        "address": "0x082df718",
         "slot_count": 21,
         "slots": [
           "0x082deb08", "0x082dec0d", "0x082dec91", "0x082ded20", "0x082ded8f", "0x082dee13", "0x082dee74",
@@ -10866,7 +10665,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082df76c",
-        "address": "0x082e0c18",
         "slot_count": 21,
         "slots": [
           "0x082df76c", "0x082df8bc", "0x082dfa2b", "0x082dfb19", "0x082dfc0a", "0x082dfcdd", "0x082dfdc9",
@@ -10920,7 +10718,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082e0c6c",
-        "address": "0x082e1e00",
         "slot_count": 21,
         "slots": [
           "0x082e0c6c", "0x082e0d96", "0x082e0e76", "0x082e0f28", "0x082e0fdd", "0x082e1089", "0x082e1127",
@@ -10973,7 +10770,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082e8ab4",
-        "address": "0x082ea38c",
         "slot_count": 21,
         "slots": [
           "0x082e8ab4", "0x082e8c4b", "0x082e8dad", "0x082e8eb3", "0x082e8fca", "0x082e90b1", "0x082e91b3",
@@ -11027,7 +10823,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082ea3e0",
-        "address": "0x082eb7e8",
         "slot_count": 21,
         "slots": [
           "0x082ea3e0", "0x082ea558", "0x082ea6e6", "0x082ea7cf", "0x082ea89e", "0x082ea966", "0x082eaa40",
@@ -11081,7 +10876,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082eb83c",
-        "address": "0x082ec9d8",
         "slot_count": 21,
         "slots": [
           "0x082eb83c", "0x082eb97f", "0x082eba88", "0x082ebb57", "0x082ebc08", "0x082ebccf", "0x082ebd83",
@@ -11135,7 +10929,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082f1c90",
-        "address": "0x082f2aac",
         "slot_count": 21,
         "slots": [
           "0x082f1c90", "0x082f1de3", "0x082f1ea9", "0x082f1f4c", "0x082f1f8d", "0x082f2038", "0x082f2083",
@@ -11189,7 +10982,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082f2b00",
-        "address": "0x082f3288",
         "slot_count": 21,
         "slots": [
           "0x082f2b00", "0x082f2be4", "0x082f2c3e", "0x082f2c92", "0x082f2cca", "0x082f2d14", "0x082f2d4e",
@@ -11243,7 +11035,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082f8dc4",
-        "address": "0x082f9f68",
         "slot_count": 21,
         "slots": [
           "0x082f8dc4", "0x082f8f3a", "0x082f9034", "0x082f9152", "0x082f920c", "0x082f9327", "0x082f93e5",
@@ -11296,7 +11087,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x082f9fbc",
-        "address": "0x082faa78",
         "slot_count": 21,
         "slots": [
           "0x082f9fbc", "0x082fa0af", "0x082fa123", "0x082fa1cc", "0x082fa209", "0x082fa2a6", "0x082fa2ef",
@@ -11350,7 +11140,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08300f74",
-        "address": "0x08301ed4",
         "slot_count": 21,
         "slots": [
           "0x08300f74", "0x083010b4", "0x0830116b", "0x0830122e", "0x083012a8", "0x0830135e", "0x083013d5",
@@ -11404,7 +11193,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08301f28",
-        "address": "0x083029dc",
         "slot_count": 21,
         "slots": [
           "0x08301f28", "0x08302027", "0x0830209c", "0x08302133", "0x08302180", "0x0830220b", "0x08302256",
@@ -11458,7 +11246,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08302a30",
-        "address": "0x08307034",
         "slot_count": 21,
         "slots": [
           "0x08302a30", "0x08302df3", "0x08303181", "0x08303483", "0x0830374a", "0x08303a1e", "0x08303cc1",
@@ -11512,7 +11299,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08307088",
-        "address": "0x0830bcd4",
         "slot_count": 21,
         "slots": [
           "0x08307088", "0x083074a7", "0x083078fd", "0x08307c4e", "0x08307f52", "0x0830827f", "0x083085a4",
@@ -11566,7 +11352,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0830bd28",
-        "address": "0x0830c904",
         "slot_count": 10,
         "slots": [
           "0x0830bd28", "0x0830beb7", "0x0830c07b", "0x0830c136", "0x0830c26f", "0x0830c4e9", "0x0830c665",
@@ -11619,7 +11404,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0830c92c",
-        "address": "0x0830d788",
         "slot_count": 10,
         "slots": [
           "0x0830c92c", "0x0830caff", "0x0830ccc9", "0x0830cd36", "0x0830ce78", "0x0830d0c0", "0x0830d27f",
@@ -11672,7 +11456,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0830d7b0",
-        "address": "0x0830ecf8",
         "slot_count": 13,
         "slots": [
           "0x0830d7b0", "0x0830d81a", "0x0830da73", "0x0830dc15", "0x0830dda3", "0x0830df3b", "0x0830e0ec",
@@ -11724,7 +11507,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0830ed2c",
-        "address": "0x0830fbb4",
         "slot_count": 10,
         "slots": [
           "0x0830ed2c", "0x0830eef0", "0x0830f104", "0x0830f30a", "0x0830f447", "0x0830f673", "0x0830f84e",
@@ -11776,7 +11558,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0830fbdc",
-        "address": "0x08311060",
         "slot_count": 13,
         "slots": [
           "0x0830fbdc", "0x0830fd2a", "0x0830febf", "0x08310029", "0x0831022f", "0x0831042c", "0x08310555",
@@ -11829,7 +11610,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08311094",
-        "address": "0x08311b18",
         "slot_count": 10,
         "slots": [
           "0x08311094", "0x08311128", "0x08311345", "0x0831145a", "0x08311591", "0x0831175a", "0x08311911",
@@ -11882,7 +11662,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08311b40",
-        "address": "0x08312eb0",
         "slot_count": 13,
         "slots": [
           "0x08311b40", "0x08311d34", "0x08311f10", "0x08312094", "0x083121d4", "0x08312404", "0x083125d6",
@@ -11935,7 +11714,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08312ee4",
-        "address": "0x08313828",
         "slot_count": 9,
         "slots": [
           "0x08312ee4", "0x0831307e", "0x08313220", "0x08313320", "0x0831339c", "0x08313514", "0x083136d2",
@@ -11988,7 +11766,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831384c",
-        "address": "0x08314504",
         "slot_count": 10,
         "slots": [
           "0x0831384c", "0x08313969", "0x08313aaa", "0x08313c63", "0x08313d5a", "0x08313f5d", "0x08314107",
@@ -12041,7 +11818,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831452c",
-        "address": "0x083157b8",
         "slot_count": 13,
         "slots": [
           "0x0831452c", "0x08314570", "0x083146c4", "0x0831498a", "0x08314a4a", "0x08314ba2", "0x08314e28",
@@ -12093,7 +11869,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x083157ec",
-        "address": "0x08315d20",
         "slot_count": 2,
         "slots": ["0x083157ec", "null"]
       },
@@ -12143,7 +11918,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08315d28",
-        "address": "0x08318844",
         "slot_count": 49,
         "slots": [
           "0x08315d28", "0x08315e11", "0x08315ee2", "0x08315f3d", "0x08315ffa", "0x083160eb", "0x083163ac",
@@ -12201,7 +11975,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08318908",
-        "address": "0x08318db8",
         "slot_count": 4,
         "slots": ["0x08318908", "0x08318a91", "0x08318c2a", "null"]
       },
@@ -12250,7 +12023,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08318dc8",
-        "address": "0x08319134",
         "slot_count": 7,
         "slots": ["0x08318dc8", "0x08318ed8", "0x08318f58", "0x08318f60", "0x08318fe2", "0x0831909e", "null"]
       },
@@ -12300,7 +12072,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08319150",
-        "address": "0x08319784",
         "slot_count": 9,
         "slots": [
           "0x08319150", "0x083192af", "0x083193b5", "0x0831942a", "0x08319514", "0x08319582", "0x0831966a",
@@ -12353,7 +12124,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x083197a8",
-        "address": "0x08319a04",
         "slot_count": 20,
         "slots": [
           "0x083197a8", "0x083197e0", "0x08319810", "0x0831983c", "0x08319858", "0x08319863", "0x08319882",
@@ -12407,7 +12177,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08319a54",
-        "address": "0x08319cb0",
         "slot_count": 20,
         "slots": [
           "0x08319a54", "0x08319a8c", "0x08319abc", "0x08319ae8", "0x08319b04", "0x08319b0f", "0x08319b2e",
@@ -12461,7 +12230,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x08319d00",
-        "address": "0x0831ac34",
         "slot_count": 11,
         "slots": [
           "0x08319d00", "0x08319dd1", "0x08319f24", "0x0831a0c5", "0x0831a319", "0x0831a621", "0x0831a8c5",
@@ -12514,7 +12282,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ac60",
-        "address": "0x0831ad38",
         "slot_count": 9,
         "slots": [
           "0x0831ac60", "0x0831ac9d", "0x0831accb", "0x0831acf1", "0x0831ad09", "0x0831ad1d", "0x0831ad27",
@@ -12567,7 +12334,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ad5c",
-        "address": "0x0831adf4",
         "slot_count": 9,
         "slots": [
           "0x0831ad5c", "0x0831ad87", "0x0831ada7", "0x0831adbc", "0x0831add0", "0x0831adda", "0x0831ade4",
@@ -12620,7 +12386,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ae18",
-        "address": "0x0831aec4",
         "slot_count": 9,
         "slots": [
           "0x0831ae18", "0x0831ae43", "0x0831ae66", "0x0831ae84", "0x0831ae98", "0x0831aeac", "0x0831aeb6",
@@ -12673,7 +12438,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831aee8",
-        "address": "0x0831af50",
         "slot_count": 2,
         "slots": ["0x0831aee8", "null"]
       },
@@ -12722,7 +12486,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831af58",
-        "address": "0x0831af8c",
         "slot_count": 2,
         "slots": ["0x0831af58", "null"]
       },
@@ -12772,7 +12535,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831af94",
-        "address": "0x0831b010",
         "slot_count": 6,
         "slots": ["0x0831af94", "0x0831afaf", "0x0831afca", "0x0831afe5", "0x0831affd", "null"]
       },
@@ -12822,7 +12584,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831b028",
-        "address": "0x0831b04c",
         "slot_count": 2,
         "slots": ["0x0831b028", "null"]
       },
@@ -12871,7 +12632,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831b054",
-        "address": "0x0831b37c",
         "slot_count": 5,
         "slots": ["0x0831b054", "0x0831b0b5", "0x0831b194", "0x0831b288", "null"]
       },
@@ -12921,7 +12681,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831b390",
-        "address": "0x0831b3d8",
         "slot_count": 2,
         "slots": ["0x0831b390", "null"]
       },
@@ -12971,7 +12730,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831b3e0",
-        "address": "0x0831b478",
         "slot_count": 2,
         "slots": ["0x0831b3e0", "null"]
       },
@@ -13020,7 +12778,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831b480",
-        "address": "0x0831b578",
         "slot_count": 2,
         "slots": ["0x0831b480", "null"]
       },
@@ -13070,7 +12827,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831b580",
-        "address": "0x0831c254",
         "slot_count": 4,
         "slots": ["0x0831b580", "0x0831bbff", "0x0831bf88", "null"]
       },
@@ -13120,7 +12876,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831c264",
-        "address": "0x0831c380",
         "slot_count": 2,
         "slots": ["0x0831c264", "null"]
       },
@@ -13169,7 +12924,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831c388",
-        "address": "0x0831c3d4",
         "slot_count": 2,
         "slots": ["0x0831c388", "null"]
       },
@@ -13219,7 +12973,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831c3dc",
-        "address": "0x0831c59c",
         "slot_count": 5,
         "slots": ["0x0831c3dc", "0x0831c4c7", "0x0831c4f7", "0x0831c55d", "null"]
       },
@@ -13269,7 +13022,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831c5b0",
-        "address": "0x0831c770",
         "slot_count": 5,
         "slots": ["0x0831c5b0", "0x0831c69b", "0x0831c6cb", "0x0831c731", "null"]
       },
@@ -13319,7 +13071,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831c784",
-        "address": "0x0831ca18",
         "slot_count": 5,
         "slots": ["0x0831c784", "0x0831c8aa", "0x0831c930", "0x0831c9a3", "null"]
       },
@@ -13369,7 +13120,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ca2c",
-        "address": "0x0831cc90",
         "slot_count": 5,
         "slots": ["0x0831ca2c", "0x0831cb5d", "0x0831cbdc", "0x0831cc23", "null"]
       },
@@ -13419,7 +13169,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831cca4",
-        "address": "0x0831cfac",
         "slot_count": 5,
         "slots": ["0x0831cca4", "0x0831ce02", "0x0831ce9d", "0x0831cf23", "null"]
       },
@@ -13469,7 +13218,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831cfc0",
-        "address": "0x0831d41c",
         "slot_count": 5,
         "slots": ["0x0831cfc0", "0x0831d21a", "0x0831d2e1", "0x0831d340", "null"]
       },
@@ -13519,7 +13267,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831d430",
-        "address": "0x0831d6b4",
         "slot_count": 6,
         "slots": ["0x0831d430", "0x0831d4f5", "0x0831d581", "0x0831d60e", "0x0831d685", "null"]
       },
@@ -13569,7 +13316,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831d6cc",
-        "address": "0x0831d780",
         "slot_count": 3,
         "slots": ["0x0831d6cc", "0x0831d764", "null"]
       },
@@ -13618,7 +13364,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831d78c",
-        "address": "0x0831d890",
         "slot_count": 3,
         "slots": ["0x0831d78c", "0x0831d844", "null"]
       },
@@ -13668,7 +13413,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831d89c",
-        "address": "0x0831d9e0",
         "slot_count": 3,
         "slots": ["0x0831d89c", "0x0831d971", "null"]
       },
@@ -13717,7 +13461,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831d9ec",
-        "address": "0x0831db4c",
         "slot_count": 3,
         "slots": ["0x0831d9ec", "0x0831dae6", "null"]
       },
@@ -13767,7 +13510,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831db58",
-        "address": "0x0831dcdc",
         "slot_count": 3,
         "slots": ["0x0831db58", "0x0831dc6f", "null"]
       },
@@ -13817,7 +13559,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831dce8",
-        "address": "0x0831de84",
         "slot_count": 3,
         "slots": ["0x0831dce8", "0x0831de24", "null"]
       },
@@ -13867,7 +13608,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831de90",
-        "address": "0x0831e050",
         "slot_count": 3,
         "slots": ["0x0831de90", "0x0831dfe4", "null"]
       },
@@ -13917,7 +13657,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831e05c",
-        "address": "0x0831e18c",
         "slot_count": 5,
         "slots": ["0x0831e05c", "0x0831e0cc", "0x0831e10c", "0x0831e15b", "null"]
       },
@@ -13967,7 +13706,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831e1a0",
-        "address": "0x0831e2d0",
         "slot_count": 5,
         "slots": ["0x0831e1a0", "0x0831e210", "0x0831e250", "0x0831e29f", "null"]
       },
@@ -14017,7 +13755,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831e2e4",
-        "address": "0x0831e58c",
         "slot_count": 5,
         "slots": ["0x0831e2e4", "0x0831e3bf", "0x0831e45f", "0x0831e4f3", "null"]
       },
@@ -14067,7 +13804,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831e5a0",
-        "address": "0x0831e728",
         "slot_count": 5,
         "slots": ["0x0831e5a0", "0x0831e63d", "0x0831e69e", "0x0831e6cd", "null"]
       },
@@ -14117,7 +13853,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831e73c",
-        "address": "0x0831e8d8",
         "slot_count": 5,
         "slots": ["0x0831e73c", "0x0831e7ee", "0x0831e840", "0x0831e887", "null"]
       },
@@ -14166,7 +13901,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831e8ec",
-        "address": "0x0831eacc",
         "slot_count": 5,
         "slots": ["0x0831e8ec", "0x0831e9b9", "0x0831ea21", "0x0831ea5b", "null"]
       },
@@ -14216,7 +13950,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831eae0",
-        "address": "0x0831ebe0",
         "slot_count": 6,
         "slots": ["0x0831eae0", "0x0831eb15", "0x0831eb46", "0x0831eb8e", "0x0831ebc3", "null"]
       },
@@ -14266,7 +13999,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ebf8",
-        "address": "0x0831ec3c",
         "slot_count": 3,
         "slots": ["0x0831ebf8", "0x0831ec26", "null"]
       },
@@ -14316,7 +14048,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ec48",
-        "address": "0x0831eca0",
         "slot_count": 3,
         "slots": ["0x0831ec48", "0x0831ec81", "null"]
       },
@@ -14366,7 +14097,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ecac",
-        "address": "0x0831ed20",
         "slot_count": 3,
         "slots": ["0x0831ecac", "0x0831ecf4", "null"]
       },
@@ -14416,7 +14146,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ed2c",
-        "address": "0x0831edb4",
         "slot_count": 3,
         "slots": ["0x0831ed2c", "0x0831ed81", "null"]
       },
@@ -14466,7 +14195,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831edc0",
-        "address": "0x0831ee5c",
         "slot_count": 3,
         "slots": ["0x0831edc0", "0x0831ee24", "null"]
       },
@@ -14516,7 +14244,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ee68",
-        "address": "0x0831ef08",
         "slot_count": 3,
         "slots": ["0x0831ee68", "0x0831eeda", "null"]
       },
@@ -14566,7 +14293,6 @@
         "format": 1,
         "kind": "pointer-table",
         "base_address": "0x0831ef14",
-        "address": "0x0831efcc",
         "slot_count": 3,
         "slots": ["0x0831ef14", "0x0831ef95", "null"]
       },
@@ -15275,7 +15001,7 @@
           "identity_status": "runtime name association not established"
         }
       ],
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082ddc74_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#BATTLE_SPRITE_0x082ddc74_SHEET.PNG"
     },
     "082e7a1c": {
       "kind": "components",
@@ -15309,7 +15035,7 @@
           "identity_status": "runtime name association not established"
         }
       ],
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082e7a1c_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#BATTLE_SPRITE_0x082e7a1c_SHEET.PNG"
     },
     "082f1c3c": {
       "kind": "components",
@@ -15343,7 +15069,7 @@
           "identity_status": "runtime name association not established"
         }
       ],
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082f1c3c_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#BATTLE_SPRITE_0x082f1c3c_SHEET.PNG"
     },
     "082f813c": {
       "kind": "components",
@@ -15377,7 +15103,7 @@
           "identity_status": "runtime name association not established"
         }
       ],
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x082f813c_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#BATTLE_SPRITE_0x082f813c_SHEET.PNG"
     },
     "083000bc": {
       "kind": "components",
@@ -15411,7 +15137,7 @@
           "identity_status": "runtime name association not established"
         }
       ],
-      "presentation_review": "GRAPHICS/REVIEW.JSON#BATTLE_SPRITE_0x083000bc_SHEET.PNG"
+      "presentation_review": "recon/tbs/graphics-review.json#BATTLE_SPRITE_0x083000bc_SHEET.PNG"
     },
     "081f67cc": {
       "kind": "components",

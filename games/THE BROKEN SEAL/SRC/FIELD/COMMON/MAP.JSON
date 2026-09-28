@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x084ba758",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x084ba764",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0],
-            "address": "0x084ba758"
+            "values": [0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x084ba77c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]],
-            "address": "0x084ba764"
+            "values": [[0, 4112, 0, 65535], [0, 4112, 0, 65535], [0, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x084ba794",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"],
-            "address": "0x084ba77c"
+            "values": ["0x3c", "0x44", "0x4c", "0x0", "0x0", "0x348"]
           }
         ]
       },
@@ -60,19 +56,9 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x084baaa0",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "end": "0x084baaa3",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x084baaa0"
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x084baaa3", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
       "grid_offset": 296928,
@@ -87,7 +73,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x084c9b2c",
         "size": "0x3c",
         "segments": [
           {
@@ -95,24 +80,21 @@
             "end": "0x084c9b38",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 60, 188, 3, 2, 1, 1, 2, 2, 0, 0],
-            "address": "0x084c9b2c"
+            "values": [0, 0, 60, 188, 3, 2, 1, 1, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x084c9b50",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]],
-            "address": "0x084c9b38"
+            "values": [[0, 4112, 0, 65535], [60, 4112, 0, 65535], [120, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x084c9b68",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x2e38", "0x2f24", "0x50ac", "0x0", "0x51bc"],
-            "address": "0x084c9b50"
+            "values": ["0x3c", "0x2e38", "0x2f24", "0x50ac", "0x0", "0x51bc"]
           }
         ]
       },
@@ -188,7 +170,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x084cece8",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -197,17 +178,9 @@
             "end": "0x084cecee",
             "stride": 3,
             "element": "u8",
-            "values": [[24, 55, 100], [53, 56, 101]],
-            "address": "0x084cece8"
+            "values": [[24, 55, 100], [53, 56, 101]]
           },
-          {
-            "name": "terminator",
-            "end": "0x084cecf1",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x084cecee"
-          }
+          {"name": "terminator", "end": "0x084cecf1", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
@@ -223,7 +196,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0852e044",
         "size": "0x3c",
         "segments": [
           {
@@ -231,24 +203,21 @@
             "end": "0x0852e050",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x0852e044"
+            "values": [0, 0, 64, 64, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0852e068",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]],
-            "address": "0x0852e050"
+            "values": [[0, 4112, 0, 65535], [64, 4112, 0, 65535], [16384, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0852e080",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x11ac", "0x11f4", "0x0", "0x0", "0x1f40"],
-            "address": "0x0852e068"
+            "values": ["0x3c", "0x11ac", "0x11f4", "0x0", "0x0", "0x1f40"]
           }
         ]
       },
@@ -281,26 +250,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0852ff84",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x0852ff87",
-            "stride": 3,
-            "element": "u8",
-            "values": [[4, 9, 101]],
-            "address": "0x0852ff84"
-          },
-          {
-            "name": "terminator",
-            "end": "0x0852ff8a",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0852ff87"
-          }
+          {"name": "records", "end": "0x0852ff87", "stride": 3, "element": "u8", "values": [[4, 9, 101]]},
+          {"name": "terminator", "end": "0x0852ff8a", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
@@ -316,7 +270,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086c992c",
         "size": "0x3c",
         "segments": [
           {
@@ -324,24 +277,21 @@
             "end": "0x086c9938",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x086c992c"
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x086c9950",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x086c9938"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x086c9968",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x514", "0x528", "0x11c0", "0x11c8", "0x11d8"],
-            "address": "0x086c9950"
+            "values": ["0x3c", "0x514", "0x528", "0x11c0", "0x11c8", "0x11d8"]
           }
         ]
       },
@@ -392,7 +342,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086cab04",
         "size": "0xf",
         "record_size": 3,
         "segments": [
@@ -401,17 +350,9 @@
             "end": "0x086cab10",
             "stride": 3,
             "element": "u8",
-            "values": [[47, 26, 100], [41, 29, 103], [42, 42, 102], [55, 43, 101]],
-            "address": "0x086cab04"
+            "values": [[47, 26, 100], [41, 29, 103], [42, 42, 102], [55, 43, 101]]
           },
-          {
-            "name": "terminator",
-            "end": "0x086cab13",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x086cab10"
-          }
+          {"name": "terminator", "end": "0x086cab13", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",
@@ -427,7 +368,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x085392d4",
         "size": "0x3c",
         "segments": [
           {
@@ -435,24 +375,21 @@
             "end": "0x085392e0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
-            "address": "0x085392d4"
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x085392f8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
-            "address": "0x085392e0"
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08539310",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1164", "0x1194", "0x25cc", "0x26cc", "0x26dc"],
-            "address": "0x085392f8"
+            "values": ["0x3c", "0x1164", "0x1194", "0x25cc", "0x26cc", "0x26dc"]
           }
         ]
       },
@@ -536,7 +473,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0853b9b0",
         "size": "0x21",
         "record_size": 3,
         "segments": [
@@ -548,17 +484,9 @@
             "values": [
               [8, 3, 201], [9, 3, 201], [10, 3, 201], [4, 6, 200], [5, 6, 200], [6, 6, 200], [29, 6, 101], [14, 8, 100],
               [50, 9, 102], [29, 43, 103]
-            ],
-            "address": "0x0853b9b0"
+            ]
           },
-          {
-            "name": "terminator",
-            "end": "0x0853b9d1",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0853b9ce"
-          }
+          {"name": "terminator", "end": "0x0853b9d1", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.BIN",

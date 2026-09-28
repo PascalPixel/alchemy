@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08635960",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x0863596c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 106, 80, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x08635960"
+            "values": [0, 0, 106, 80, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08635984",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]],
-            "address": "0x0863596c"
+            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0863599c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1bcc", "0x1bf0", "0x3100", "0x0", "0x31c4"],
-            "address": "0x08635984"
+            "values": ["0x3c", "0x1bcc", "0x1bf0", "0x3100", "0x0", "0x31c4"]
           }
         ]
       },
@@ -93,19 +89,9 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08638b24",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "end": "0x08638b27",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08638b24"
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x08638b27", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",
       "grid_offset": 78600,
@@ -120,7 +106,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0863eedc",
         "size": "0x3c",
         "segments": [
           {
@@ -128,24 +113,21 @@
             "end": "0x0863eee8",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 106, 80, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x0863eedc"
+            "values": [0, 0, 106, 80, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0863ef00",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]],
-            "address": "0x0863eee8"
+            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0863ef18",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1e28", "0x1e4c", "0x3508", "0x0", "0x35cc"],
-            "address": "0x0863ef00"
+            "values": ["0x3c", "0x1e28", "0x1e4c", "0x3508", "0x0", "0x35cc"]
           }
         ]
       },
@@ -206,26 +188,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086424a8",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x086424ab",
-            "stride": 3,
-            "element": "u8",
-            "values": [[8, 20, 100]],
-            "address": "0x086424a8"
-          },
-          {
-            "name": "terminator",
-            "end": "0x086424ae",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x086424ab"
-          }
+          {"name": "records", "end": "0x086424ab", "stride": 3, "element": "u8", "values": [[8, 20, 100]]},
+          {"name": "terminator", "end": "0x086424ae", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",
@@ -241,7 +208,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086424b0",
         "size": "0x3c",
         "segments": [
           {
@@ -249,24 +215,21 @@
             "end": "0x086424bc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 106, 80, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x086424b0"
+            "values": [0, 0, 106, 80, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x086424d4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]],
-            "address": "0x086424bc"
+            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x086424ec",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x20f4", "0x211c", "0x3a3c", "0x0", "0x3b00"],
-            "address": "0x086424d4"
+            "values": ["0x3c", "0x20f4", "0x211c", "0x3a3c", "0x0", "0x3b00"]
           }
         ]
       },
@@ -328,26 +291,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08645fb0",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x08645fb3",
-            "stride": 3,
-            "element": "u8",
-            "values": [[43, 2, 100]],
-            "address": "0x08645fb0"
-          },
-          {
-            "name": "terminator",
-            "end": "0x08645fb6",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08645fb3"
-          }
+          {"name": "records", "end": "0x08645fb3", "stride": 3, "element": "u8", "values": [[43, 2, 100]]},
+          {"name": "terminator", "end": "0x08645fb6", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",
@@ -363,7 +311,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08645fb8",
         "size": "0x3c",
         "segments": [
           {
@@ -371,24 +318,21 @@
             "end": "0x08645fc4",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 108, 90, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x08645fb8"
+            "values": [0, 0, 108, 90, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08645fdc",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]],
-            "address": "0x08645fc4"
+            "values": [[0, 4112, 0, 65535], [108, 4112, 0, 65535], [23040, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08645ff4",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x2108", "0x2114", "0x0", "0x0", "0x3d08"],
-            "address": "0x08645fdc"
+            "values": ["0x3c", "0x2108", "0x2114", "0x0", "0x0", "0x3d08"]
           }
         ]
       },
@@ -416,26 +360,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08649cc0",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x08649cc3",
-            "stride": 3,
-            "element": "u8",
-            "values": [[8, 34, 100]],
-            "address": "0x08649cc0"
-          },
-          {
-            "name": "terminator",
-            "end": "0x08649cc6",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08649cc3"
-          }
+          {"name": "records", "end": "0x08649cc3", "stride": 3, "element": "u8", "values": [[8, 34, 100]]},
+          {"name": "terminator", "end": "0x08649cc6", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/MOGORU_MORI.BIN",

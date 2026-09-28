@@ -2,7 +2,6 @@
   "format": 1,
   "kind": "typed-table",
   "edition": "ja",
-  "address": "0x08032470",
   "size": 8560,
   "first_code": 32,
   "segments": [
@@ -243,8 +242,7 @@
         {"advance": 10, "glyph": 221},
         {"advance": 10, "glyph": 222},
         {"advance": 10, "glyph": 223}
-      ],
-      "address": "0x08032470"
+      ]
     },
     {
       "end": "0x080345e0",
@@ -375,8 +373,7 @@
         {"glyph": 111},
         {"glyph": 112},
         {"glyph": 113}
-      ],
-      "address": "0x08033b30"
+      ]
     }
   ]
 }

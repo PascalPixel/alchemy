@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08623a10",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x08623a1c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 55, 68, 3, 1, 2, 0, 2, 2, 0, 0],
-            "address": "0x08623a10"
+            "values": [0, 0, 55, 68, 3, 1, 2, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08623a34",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
-            "address": "0x08623a1c"
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08623a4c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x1cf0", "0x1d38", "0x2e04", "0x2f70", "0x2f78"],
-            "address": "0x08623a34"
+            "values": ["0x3c", "0x1cf0", "0x1d38", "0x2e04", "0x2f70", "0x2f78"]
           }
         ]
       },
@@ -118,26 +114,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08626988",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x0862698b",
-            "stride": 3,
-            "element": "u8",
-            "values": [[24, 17, 110]],
-            "address": "0x08626988"
-          },
-          {
-            "name": "terminator",
-            "end": "0x0862698e",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0862698b"
-          }
+          {"name": "records", "end": "0x0862698b", "stride": 3, "element": "u8", "values": [[24, 17, 110]]},
+          {"name": "terminator", "end": "0x0862698e", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/SHIAN_JIIN.BIN",
@@ -153,7 +134,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08628d08",
         "size": "0x3c",
         "segments": [
           {
@@ -161,24 +141,21 @@
             "end": "0x08628d14",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
-            "address": "0x08628d08"
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08628d2c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]],
-            "address": "0x08628d14"
+            "values": [[0, 4112, 0, 65535], [30720, 4112, 0, 65535], [120, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08628d44",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x754", "0x770", "0xf0c", "0xfb8", "0xfc8"],
-            "address": "0x08628d2c"
+            "values": ["0x3c", "0x754", "0x770", "0xf0c", "0xfb8", "0xfc8"]
           }
         ]
       },
@@ -247,7 +224,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08629cd0",
         "size": "0xc",
         "record_size": 3,
         "segments": [
@@ -256,17 +232,9 @@
             "end": "0x08629cd9",
             "stride": 3,
             "element": "u8",
-            "values": [[6, 14, 100], [12, 27, 101], [27, 27, 102]],
-            "address": "0x08629cd0"
+            "values": [[6, 14, 100], [12, 27, 101], [27, 27, 102]]
           },
-          {
-            "name": "terminator",
-            "end": "0x08629cdc",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08629cd9"
-          }
+          {"name": "terminator", "end": "0x08629cdc", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/SHIAN_JIIN.BIN",

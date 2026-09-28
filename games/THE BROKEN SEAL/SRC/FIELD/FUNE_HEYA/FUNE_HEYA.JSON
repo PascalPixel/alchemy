@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086bfe14",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x086bfe20",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0],
-            "address": "0x086bfe14"
+            "values": [0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x086bfe38",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]],
-            "address": "0x086bfe20"
+            "values": [[0, 4112, 0, 65535], [120, 4112, 0, 65535], [30720, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x086bfe50",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x8ac", "0x8f0", "0x12d8", "0x133c", "0x134c"],
-            "address": "0x086bfe38"
+            "values": ["0x3c", "0x8ac", "0x8f0", "0x12d8", "0x133c", "0x134c"]
           }
         ]
       },
@@ -98,7 +94,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086c1160",
         "size": "0xc",
         "record_size": 3,
         "segments": [
@@ -107,17 +102,9 @@
             "end": "0x086c1169",
             "stride": 3,
             "element": "u8",
-            "values": [[10, 19, 100], [9, 35, 101], [26, 40, 102]],
-            "address": "0x086c1160"
+            "values": [[10, 19, 100], [9, 35, 101], [26, 40, 102]]
           },
-          {
-            "name": "terminator",
-            "end": "0x086c116c",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x086c1169"
-          }
+          {"name": "terminator", "end": "0x086c116c", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/FUNE_HEYA.BIN",

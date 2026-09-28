@@ -1,6 +1,6 @@
 mod cli;
 
-use psynergy::{assembly, compare, decode, discovery, lift, repair, unit};
+use psynergy::{decode, lift, unit};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
@@ -9,33 +9,10 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: psynergy <command> [args]\n\
   decompile INPUT       recover draft C from an explicit Thumb image\n\
   disassemble INPUT     decode a bounded Thumb image\n\
-  reconstruct-asm INPUT emit standalone ARMv4T assembly for a bounded Thumb extent\n\
-  discover INPUT        discover ARM/Thumb functions, pools and jump tables in a GBA image\n\
-  diff ACTUAL EXPECTED  compare bytes without compiling or resolving owners\n\
-  repair SOURCE         enumerate or emit a named C repair\n\
-  inspect allocator DIR read existing GCC allocation dumps\n\
-  convert FORMAT        convert explicit files (convert --help lists formats)\n\
   decode-lz INPUT       decode one tagged LZ stream at --offset\n\
 No default ROM, project registry, compiler route, or adoption authority.";
 const CODE_USAGE: &str = "usage: psynergy decompile INPUT --base ADDRESS --entry ADDRESS --span BYTES [--name NAME] [--out FILE]\n\
-       psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]\n\
-       psynergy reconstruct-asm INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]";
-const DIFF_USAGE: &str = "usage: psynergy diff ACTUAL EXPECTED [--width 1|2|4]\nExit status: 0 identical, 1 different, 2 invalid input. No compilation or relocation.";
-const REPAIR_USAGE: &str = "usage: psynergy repair SOURCE --repair OPERATION [OPERANDS] [--repair OPERATION [OPERANDS]] [--choice N] [--out FILE]\n\
-Without --choice, report the finite search space. --choice 0 is the original source.\n\
-Operations (one or two per plan):\n\
-  swap-declarations LEFT RIGHT\n\
-  split-lifetime NAME\n\
-  merge-zero-carrier\n\
-  reciprocal-role-swap NAME\n\
-  preload-adjacent-halfwords DEST1 SRC1 DEST2 SRC2 CARRIER\n\
-  materialize-message-and-merge-count VALUE MESSAGE COORDINATE COUNT\n\
-  split-opposite-side-and-scaled-offset SIDE OPPOSITE\n\
-  merge-carrier-phases EARLIER LATER\n\
-  mirror-relational-guards\n\
-Repairs require caller evidence; emitted C is not compiled, scored, or adopted.";
-const INSPECT_USAGE: &str = "usage: psynergy inspect allocator DIR\nReads one .rtl, .lreg and .greg dump from DIR; does not run a compiler.";
-const DISCOVER_USAGE: &str = "usage: psynergy discover INPUT [--details] [--out FILE]\nRuns fixed-point ARMv4T discovery over an explicit GBA image at 0x08000000.";
+       psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]";
 const KEYWORDS: &[&str] = &[
     "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else",
     "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long", "register",
@@ -151,13 +128,11 @@ fn code(command: &str, arguments: &[String]) -> Result<String, String> {
         let symbols = |_: u32, _: lift::ReferenceKind| None;
         let (body, tables) = unit::bodies(&instructions, &symbols);
         unit::compose(entry, &name, &body, &tables)
-    } else if command == "disassemble" {
+    } else {
         instructions
             .iter()
             .map(|ins| format!("{:08x}: {}\n", ins.addr, ins.text))
             .collect()
-    } else {
-        assembly::thumb_source(&image, base, entry, span)?
     };
     output(source, out)
 }
@@ -180,177 +155,6 @@ fn output(source: String, out: Option<PathBuf>) -> Result<String, String> {
     }
 }
 
-fn diff(arguments: &[String]) -> Result<(String, u8), String> {
-    if arguments.len() != 2 && arguments.len() != 4 {
-        return Err(DIFF_USAGE.into());
-    }
-    let width = if arguments.len() == 4 {
-        if arguments[2] != "--width" {
-            return Err(DIFF_USAGE.into());
-        }
-        match arguments[3].as_str() {
-            "1" => 1,
-            "2" => 2,
-            "4" => 4,
-            _ => return Err(DIFF_USAGE.into()),
-        }
-    } else {
-        1
-    };
-    let read = |path: &str| fs::read(path).map_err(|error| format!("{path}: {error}"));
-    let actual = read(&arguments[0])?;
-    let expected = read(&arguments[1])?;
-    let differences = compare::differing_offsets(&actual, &expected, width);
-    let mut text = format!(
-        "actual={} expected={} unit_width={width} differing_units={} identical={}\n",
-        actual.len(),
-        expected.len(),
-        differences.len(),
-        differences.is_empty()
-    );
-    for offset in differences.iter().take(32) {
-        text.push_str(&format!("offset=0x{offset:x}\n"));
-    }
-    if differences.len() > 32 {
-        text.push_str(&format!("omitted={}\n", differences.len() - 32));
-    }
-    Ok((text, u8::from(!differences.is_empty())))
-}
-
-fn repair_operation(args: &mut std::slice::Iter<'_, String>) -> Result<repair::Repair, String> {
-    use repair::Repair;
-    let name = args.next().ok_or("--repair needs an operation")?;
-    let mut operand = || {
-        args.next()
-            .filter(|arg| !arg.starts_with("--"))
-            .cloned()
-            .ok_or_else(|| format!("missing operand for {name}"))
-    };
-    Ok(match name.as_str() {
-        "swap-declarations" => Repair::SwapDeclarations {
-            left: operand()?,
-            right: operand()?,
-        },
-        "split-lifetime" => Repair::SplitLifetime { name: operand()? },
-        "merge-zero-carrier" => Repair::MergeZeroCarrier,
-        "reciprocal-role-swap" => Repair::ReciprocalRoleSwap { name: operand()? },
-        "preload-adjacent-halfwords" => Repair::PreloadAdjacentHalfwords {
-            first_destination: operand()?,
-            first_source: operand()?,
-            second_destination: operand()?,
-            second_source: operand()?,
-            carrier: operand()?,
-        },
-        "materialize-message-and-merge-count" => Repair::MaterializeMessageAndMergeCount {
-            indexed_value: operand()?,
-            message: operand()?,
-            coordinate: operand()?,
-            count: operand()?,
-        },
-        "split-opposite-side-and-scaled-offset" => Repair::SplitOppositeSideAndScaledOffset {
-            side: operand()?,
-            opposite: operand()?,
-        },
-        "merge-carrier-phases" => Repair::MergeCarrierPhases {
-            earlier: operand()?,
-            later: operand()?,
-        },
-        "mirror-relational-guards" => Repair::MirrorRelationalGuards,
-        _ => return Err(format!("unknown repair {name}\n{REPAIR_USAGE}")),
-    })
-}
-
-fn repair(arguments: &[String]) -> Result<String, String> {
-    let path = arguments.first().ok_or(REPAIR_USAGE)?;
-    let mut args = arguments[1..].iter();
-    let mut repairs = Vec::new();
-    let mut choice = None;
-    let mut out = None;
-    while let Some(flag) = args.next() {
-        match flag.as_str() {
-            "--repair" => repairs.push(repair_operation(&mut args)?),
-            "--choice" if choice.is_none() => {
-                choice = Some(
-                    number(args.next().ok_or("--choice needs an index")?, "--choice")? as usize,
-                )
-            }
-            "--out" if out.is_none() => {
-                out = Some(PathBuf::from(args.next().ok_or("--out needs a path")?))
-            }
-            _ => return Err(format!("unknown or repeated option {flag}\n{REPAIR_USAGE}")),
-        }
-    }
-    if out.is_some() && choice.is_none() {
-        return Err("--out requires --choice".into());
-    }
-    let plan = repair::RepairPlan::try_from_repairs(repairs)?;
-    let source = fs::read_to_string(path).map_err(|error| format!("{path}: {error}"))?;
-    let permutation = repair::enumerate(&source, &plan)?;
-    let report = format!(
-        "repair={} raw_choices={} unique_choices={}\n",
-        plan.label(),
-        permutation.raw_count(),
-        permutation.count()
-    );
-    match choice {
-        None => Ok(report),
-        Some(choice) => {
-            let text = permutation.evaluate(choice)?;
-            let result = output(text, out)?;
-            eprint!("{report}");
-            Ok(result)
-        }
-    }
-}
-
-fn discover(arguments: &[String]) -> Result<String, String> {
-    let input = arguments.first().ok_or(DISCOVER_USAGE)?;
-    let mut details = false;
-    let mut out = None;
-    let mut index = 1;
-    while index < arguments.len() {
-        match arguments[index].as_str() {
-            "--details" if !details => details = true,
-            "--out" if out.is_none() => {
-                index += 1;
-                out = Some(PathBuf::from(
-                    arguments.get(index).ok_or("--out needs a path")?,
-                ));
-            }
-            flag => {
-                return Err(format!(
-                    "unknown or repeated option {flag}\n{DISCOVER_USAGE}"
-                ))
-            }
-        }
-        index += 1;
-    }
-    let image = fs::read(input).map_err(|error| format!("{input}: {error}"))?;
-    let mut found = discovery::Discovery::new(&image, discovery::ROM_BASE);
-    let entry = found.run();
-    let report = format!(
-        "{}\n",
-        discovery::json::canonical_json(&found.report(entry, details))
-    );
-    let summary = format!(
-        "functions={} instructions={} calls={} external_calls={} unresolved={} jump_tables={} conflicts={}\n",
-        found.function_count(),
-        found.instructions.len(),
-        found.call_count(),
-        found.external_call_count(),
-        found.unresolved.len(),
-        found.jump_tables.len(),
-        found.conflicts.len(),
-    );
-    match out {
-        Some(path) => {
-            output(report, Some(path))?;
-            Ok(summary)
-        }
-        None => Ok(report),
-    }
-}
-
 fn main() -> ExitCode {
     let arguments: Vec<String> = std::env::args().skip(1).collect();
     if arguments.is_empty() || arguments == ["--help"] || arguments == ["-h"] {
@@ -365,34 +169,18 @@ fn main() -> ExitCode {
     let rest = &arguments[1..];
     let help = rest == ["--help"] || rest == ["-h"];
     let result = match command {
-        "decompile" | "disassemble" | "reconstruct-asm" if help => Ok((CODE_USAGE.into(), 0)),
-        "decompile" | "disassemble" | "reconstruct-asm" => {
-            code(command, rest).map(|text| (text, 0))
-        }
-        "discover" if help => Ok((DISCOVER_USAGE.into(), 0)),
-        "discover" => discover(rest).map(|text| (text, 0)),
-        "diff" if help => Ok((DIFF_USAGE.into(), 0)),
-        "diff" => diff(rest),
-        "repair" if help => Ok((REPAIR_USAGE.into(), 0)),
-        "repair" => repair(rest).map(|text| (text, 0)),
-        "inspect" if help || rest == ["allocator", "--help"] || rest == ["allocator", "-h"] => {
-            Ok((INSPECT_USAGE.into(), 0))
-        }
-        "inspect" if rest.len() == 2 && rest[0] == "allocator" => {
-            psynergy::allocator::inspect(std::path::Path::new(&rest[1])).map(|text| (text, 0))
-        }
-        "inspect" => Err(INSPECT_USAGE.into()),
-        "decode-lz" if help => Ok((cli::decode_lz::USAGE.into(), 0)),
-        "decode-lz" => cli::decode_lz::run(rest).map(|text| (text, 0)),
-        "convert" => psynergy::convert::run(rest).map(|_| (String::new(), 0)),
+        "decompile" | "disassemble" if help => Ok(CODE_USAGE.into()),
+        "decompile" | "disassemble" => code(command, rest),
+        "decode-lz" if help => Ok(cli::decode_lz::USAGE.into()),
+        "decode-lz" => cli::decode_lz::run(rest),
         _ => Err(format!("unknown psynergy command: {command}\n{USAGE}")),
     };
     match result {
-        Ok((source, status)) => {
+        Ok(source) => {
             if !source.is_empty() {
                 print!("{source}");
             }
-            ExitCode::from(status)
+            ExitCode::SUCCESS
         }
         Err(error) => {
             eprintln!("{error}");

@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0872f690",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x0872f69c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 128, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x0872f690"
+            "values": [0, 0, 64, 128, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0872f6b4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65407], [64, 4112, 0, 65407], [128, 5140, 9095, 7967]],
-            "address": "0x0872f69c"
+            "values": [[0, 4112, 0, 65407], [64, 4112, 0, 65407], [128, 5140, 9095, 7967]]
           },
           {
             "name": "component_offsets",
             "end": "0x0872f6cc",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xca4", "0xcb4", "0x209c", "0x0", "0x2234"],
-            "address": "0x0872f6b4"
+            "values": ["0x3c", "0xca4", "0xcb4", "0x209c", "0x0", "0x2234"]
           }
         ]
       },
@@ -116,7 +112,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x087318c4",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -125,17 +120,9 @@
             "end": "0x087318ca",
             "stride": 3,
             "element": "u8",
-            "values": [[26, 27, 103], [18, 45, 102]],
-            "address": "0x087318c4"
+            "values": [[26, 27, 103], [18, 45, 102]]
           },
-          {
-            "name": "terminator",
-            "end": "0x087318cd",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x087318ca"
-          }
+          {"name": "terminator", "end": "0x087318cd", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SUHARA_SABAKU.BIN",
@@ -151,7 +138,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x087319c8",
         "size": "0x3c",
         "segments": [
           {
@@ -159,24 +145,21 @@
             "end": "0x087319d4",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 64, 192, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x087319c8"
+            "values": [0, 0, 64, 192, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x087319ec",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65407], [64, 4112, 0, 65407], [192, 5140, 9095, 7967]],
-            "address": "0x087319d4"
+            "values": [[0, 4112, 0, 65407], [64, 4112, 0, 65407], [192, 5140, 9095, 7967]]
           },
           {
             "name": "component_offsets",
             "end": "0x08731a04",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x10e8", "0x1110", "0x0", "0x0", "0x2a64"],
-            "address": "0x087319ec"
+            "values": ["0x3c", "0x10e8", "0x1110", "0x0", "0x0", "0x2a64"]
           }
         ]
       },
@@ -208,7 +191,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0873442c",
         "size": "0xc",
         "record_size": 3,
         "segments": [
@@ -217,17 +199,9 @@
             "end": "0x08734435",
             "stride": 3,
             "element": "u8",
-            "values": [[28, 8, 104], [12, 14, 101], [12, 71, 100]],
-            "address": "0x0873442c"
+            "values": [[28, 8, 104], [12, 14, 101], [12, 71, 100]]
           },
-          {
-            "name": "terminator",
-            "end": "0x08734438",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08734435"
-          }
+          {"name": "terminator", "end": "0x08734438", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SUHARA_SABAKU.BIN",
@@ -243,7 +217,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08734438",
         "size": "0x3c",
         "segments": [
           {
@@ -251,24 +224,21 @@
             "end": "0x08734444",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0],
-            "address": "0x08734438"
+            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0873445c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x08734444"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08734474",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x7a4", "0x7b4", "0x178c", "0x18c4", "0x18d4"],
-            "address": "0x0873445c"
+            "values": ["0x3c", "0x7a4", "0x7b4", "0x178c", "0x18c4", "0x18d4"]
           }
         ]
       },
@@ -353,19 +323,9 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08735d0c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "end": "0x08735d0f",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08735d0c"
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x08735d0f", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SUHARA_SABAKU.BIN",
       "grid_offset": 72328,

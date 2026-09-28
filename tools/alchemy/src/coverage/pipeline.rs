@@ -386,6 +386,7 @@ pub(crate) fn authoritative_inventory(
 
 /// A target's generated executable inventory in a checkout, with the
 /// intervals [`validated_inventory`] admits. A revision has none.
+#[cfg(test)]
 fn read_inventory(
     tree: &SourceTree,
     target: DecompTarget,
@@ -456,8 +457,7 @@ fn candidate_overlay(
         let source = text(unit, "source");
         registered.insert(source.clone());
         let id = text(unit, "overlay");
-        if text(unit, "game") != target.compiler.as_str()
-            || !executable.contains_key(&id)
+        if !executable.contains_key(&id)
             || !source.starts_with(&format!("{directory}/"))
             || !(source.ends_with(".c") || source.ends_with(".C"))
             || !tree.read(&source).is_some_and(|code| canonical(&code))
@@ -465,11 +465,10 @@ fn candidate_overlay(
             continue;
         }
         for owner in array(unit, "owners") {
-            if text(owner, "state") != "not-yet-c" {
+            let Some(entry) = address(owner, "address") else {
                 continue;
-            }
-            let (Some(entry), Some(size)) = (address(owner, "address"), integer(owner, "extent"))
-            else {
+            };
+            let Some(size) = extents.get(&(id.clone(), entry)).copied() else {
                 continue;
             };
             let Some(end) = entry.checked_add(size).filter(|end| *end > entry) else {
@@ -570,31 +569,10 @@ fn exact_overlay_for(
             .collect::<Vec<_>>();
         let units_path = format!("{}/translation-units.json", target.recon_dir());
         if let Some(units) = json(tree, &units_path) {
-            let assembly = tree
-                .read(&format!("{overlay_dir}/{name}"))
-                .unwrap_or_default();
-            let registry = json(
-                tree,
-                &format!("{}/semantic/overlay-assembly.json", target.recon_dir()),
-            )
-            .unwrap_or(Value::Null);
-            let mut boundaries = crate::compiler::overlay::alignment_boundaries(
-                &assembly,
-                &registry,
-                id,
-                target.source_dir,
-                &target.overlay_macro(),
-            );
-            let placeholders = crate::compiler::overlay::placeholder_addresses(&assembly);
-            boundaries.retain(|entry| {
-                !placeholders.contains(entry)
-                    || list.iter().any(|owner| owner.entry == i64::from(*entry))
-            });
             // Each placeholder already credits its owner once, in its own
             // overlay; an instance adds only the fill it declares there.
             let linked = array(&units, "units")
                 .iter()
-                .filter(|unit| text(unit, "game") == target.compiler.as_str())
                 .filter_map(|unit| match text(unit, "overlay") == *id {
                     true => Some((unit, unit)),
                     false => unit
@@ -604,38 +582,16 @@ fn exact_overlay_for(
                 })
                 .collect::<Vec<_>>();
             for (unit, layout) in linked {
-                let source = text(unit, "source");
-                let members = list
-                    .iter()
-                    .filter(|owner| owner.source == source)
-                    .filter_map(|owner| {
-                        let entry = u32::try_from(owner.entry).ok()?;
-                        let extent =
-                            crate::compiler::overlay::placeholder_extent(&assembly, entry)?;
-                        Some((entry, extent))
-                    })
-                    .collect::<Vec<_>>();
-                let mut gaps = crate::compiler::overlay::native_alignment_gaps(
-                    &assembly,
-                    &members,
-                    &boundaries,
-                )
-                .into_iter()
-                .map(|gap| (i64::from(gap.start), i64::from(gap.end)))
-                .collect::<Vec<_>>();
                 for gap in array(layout, "compiler_gaps") {
-                    gaps.push((
-                        address(gap, "start").ok_or("compiler alignment gap has invalid bounds")?,
-                        address(gap, "end").ok_or("compiler alignment gap has invalid bounds")?,
-                    ));
-                }
-                gaps.sort_unstable();
-                gaps.dedup();
-                for (start, end) in gaps {
+                    let (Some(start), Some(end)) = (address(gap, "start"), address(gap, "end"))
+                    else {
+                        return Err("compiler alignment gap has invalid bounds".into());
+                    };
+                    let source = text(unit, "source");
                     let preceding = list.iter().any(|owner| {
                         owner.source == source && owner.spans.iter().any(|span| span.end == start)
                     });
-                    let following = u32::try_from(end).is_ok_and(|end| boundaries.contains(&end));
+                    let following = list.iter().any(|owner| owner.entry == end);
                     let span = Span::new(start, end);
                     if end - start != 2
                         || end & 3 != 0
@@ -647,7 +603,7 @@ fn exact_overlay_for(
                     }
                     list.push(Owner {
                         label: format!("{} compiler alignment", text(unit, "id")),
-                        source: source.clone(),
+                        source,
                         entry: start,
                         spans: vec![span],
                     });
@@ -883,24 +839,6 @@ fn main_assembly_classification_for(
             }
         }
     }
-    if let Some(value) = json(
-        tree,
-        &format!("{}/semantic/main-regions.json", target.recon_dir()),
-    ) {
-        for region in array(&value, "non_c_ranges") {
-            if matches!(
-                text(region, "kind").as_str(),
-                "literal_pool" | "alignment_padding" | "lookup_table"
-            ) && !text(region, "evidence").trim().is_empty()
-            {
-                if let (Some(address), Some(size)) =
-                    (address(region, "address"), integer(region, "size"))
-                {
-                    proven.push(Span::new(address, address + size));
-                }
-            }
-        }
-    }
     (normalize(&proven), normalize(&draft), normalize(&credited))
 }
 fn overlay_assembly_classification_for(
@@ -965,10 +903,7 @@ fn overlay_assembly_classification_document_for(
                         .iter()
                         .filter(|region| {
                             !region.evidence.trim().is_empty()
-                                && matches!(
-                                    region.kind.as_str(),
-                                    "veneer" | "executable_alignment" | "hand_written_thumb"
-                                )
+                                && matches!(region.kind.as_str(), "veneer" | "executable_alignment")
                         })
                         .map(|region| region.span)
                         .collect::<Vec<_>>(),
@@ -1287,25 +1222,26 @@ struct Stream {
     rom: i64,
     source: Option<String>,
 }
-fn atlas_source(game_dir: &str, locations: &str, id: &str) -> Option<String> {
-    let resource_id = format!("resource_{id}");
-    locations.lines().find_map(|line| {
-        let fields: Vec<_> = line.split('\t').collect();
-        (fields.first().copied() == Some(resource_id.as_str()))
-            .then(|| fields.get(6).copied())
-            .flatten()
-            .filter(|path| !path.is_empty())
-            .map(|path| format!("{game_dir}/{path}/"))
-    })
+/// Each field overlay's source directory, as `{game_dir}/SRC/.../`.
+fn atlas_sources(tree: &SourceTree, target: &DecompTarget) -> BTreeMap<i64, String> {
+    super::places::places(tree, target)
+        .unwrap_or_default()
+        .into_iter()
+        .filter_map(|place| {
+            let home = place.home?;
+            Some((
+                place.overlay as i64,
+                format!("{}/{home}/", target.game_dir()),
+            ))
+        })
+        .collect()
 }
 fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
     let Some(manifest) = json(tree, target.asset_manifest) else {
         return Vec::new();
     };
     let mut out = Vec::new();
-    let locations = tree
-        .read(&format!("{}/locations.tsv", target.recon_dir()))
-        .unwrap_or_default();
+    let sources = atlas_sources(tree, target);
     for series in array(&manifest, "series") {
         if text(series, "kind") != "golden-sun-thumb-overlay-series" {
             continue;
@@ -1321,7 +1257,7 @@ fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
             let start = items[1].as_str().and_then(hex).unwrap_or(0);
             let rom = items[2].as_str().and_then(hex).unwrap_or(0);
             if rom > 0 {
-                let source = atlas_source(target.game_dir(), &locations, &id);
+                let source = hex(&id).and_then(|id| sources.get(&id)).cloned();
                 out.push(Stream {
                     id: format!("resource_{id}"),
                     start,
@@ -1338,22 +1274,18 @@ fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String>
     let scenes = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON")?;
     let maps = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/LOAD_TABLE.JSON")?;
     let directory = read("games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.JSON")?;
-    let locations = tree
-        .read("recon/tbs/locations.tsv")
-        .ok_or("missing Atlas locations")?;
+    let sources = atlas_sources(
+        tree,
+        &crate::targets::target_for(crate::targets::DecompTargetId::TbsEn),
+    );
     let scenes = array(&scenes, "segments")
-        .iter()
-        .find(|row| text(row, "address") == "0x0809f1a8")
+        .first()
         .ok_or("missing Atlas scene table")?;
     let mut users: BTreeMap<i64, BTreeSet<String>> = BTreeMap::new();
     // The loader indexes 201 scene records into the map loading table.
     for scene in array(scenes, "records").iter().take(201) {
         let resource = integer(scene, "resource_id").ok_or("invalid scene resource")?;
-        let Some(area) = atlas_source(
-            "games/THE BROKEN SEAL",
-            &locations,
-            &format!("{resource:x}"),
-        ) else {
+        let Some(area) = sources.get(&resource).cloned() else {
             continue;
         };
         let map = array(&maps, "records")
@@ -2553,8 +2485,8 @@ mod tests {
             std::fs::write(path, source).unwrap();
         };
         write(
-            "recon/tbs/locations.tsv",
-            "resource_3a0\tXian\t\t\t\t\tSRC/FIELD/XIAN\n".into(),
+            "recon/tbs/overlay-homes.tsv",
+            "resource_3a0\tSRC/FIELD/XIAN\n".into(),
         );
         write(
             "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON",
@@ -3189,33 +3121,39 @@ mod tests {
         withheld_for(root, &genuine, "no independent verification");
     }
 
-    /// The exploit an adversarial verification found: each game's committed
-    /// ledger copied into its inventory path, beside that game's real
+    /// The exploit an adversarial verification found: a hand-kept ledger
+    /// copied into a game's inventory path, beside that game's real
     /// verification record and a byte-identical full build, earns no score.
+    /// The ledger here is the genuine count as a person would have edited it:
+    /// promoted to `verified`, stripped of its provenance and reclassified.
     #[test]
     fn a_copied_ledger_is_never_scored() {
-        let checkout = crate::compiler::routing::root();
-        for (target, game) in [("tbs-en", "tbs"), ("tla-en", "tla")] {
-            let game_target = crate::targets::decomp_target(Some(target)).unwrap();
+        use crate::targets::DecompTargetId::{TbsEn, TlaEn};
+        for id in [TbsEn, TlaEn] {
+            let game_target = crate::targets::target_for(id);
+            let target = id.as_str();
             let directory = tempfile::tempdir().unwrap();
             let root = directory.path();
-            let copy = |from: String, to: String| {
-                std::fs::create_dir_all(root.join(&to).parent().unwrap()).unwrap();
-                std::fs::copy(checkout.join(from), root.join(to)).unwrap();
-            };
-            let record = format!("recon/{game}/metrics/audit-verification.json");
-            copy(record.clone(), record);
-            copy(
-                format!("recon/{game}/metrics/executable.json"),
-                format!("out/{target}/reports/executable.json"),
+            let (_, genuine) = crate::coverage::audit::authoritative_fixture(
+                root,
+                game_target,
+                &[(0x0800_0100, 0x0800_0104)],
+                json!([{"id": "resource_test", "decoded_bytes": 8, "intervals": [
+                    {"start": 0x0200_0000, "end": 0x0200_0004, "kind": "thumb"}
+                ]}]),
             );
-            let report = root.join(format!("out/{target}/full/rebuilt.json"));
-            std::fs::create_dir_all(report.parent().unwrap()).unwrap();
-            std::fs::write(
-                &report,
-                r#"{"byte_identical":true,"unowned_bytes":0,"rom_fallback_bytes":0}"#,
-            )
-            .unwrap();
+            assert!(
+                authoritative_inventory(root, game_target)
+                    .unwrap()
+                    .is_some(),
+                "{target}"
+            );
+            let mut ledger = genuine;
+            ledger["state"] = json!("verified");
+            ledger.as_object_mut().unwrap().remove("verification");
+            ledger["overlays"][0]["intervals"][0]["kind"] = json!("hand_written_thumb");
+            let path = root.join(format!("out/{target}/reports/executable.json"));
+            std::fs::write(&path, ledger.to_string()).unwrap();
             assert!(
                 authoritative_inventory(root, game_target)
                     .unwrap()
@@ -3605,10 +3543,10 @@ mod tests {
         );
         let units = |gap: (&str, &str)| {
             json!({"units": [{
-                "id": "staged-actor", "game": "tbs", "source": source, "overlay": "resource_3bf",
+                "id": "staged-actor", "source": source, "overlay": "resource_3bf",
                 "owners": [
-                    {"address": "0x0200034c", "extent": 1394, "state": "exact-c"},
-                    {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
+                    {"address": "0x0200034c", "extent": 1394},
+                    {"address": "0x020008c0", "extent": 284}
                 ],
                 "instances": {"resource_39b": {
                     "owners": {
@@ -3647,8 +3585,7 @@ mod tests {
             entries("resource_3bf"),
             [
                 ("FieldScene_FindActorRegion", 0x0200_034c, 1394),
-                ("FieldScene_RedrawActorFootprint", 0x0200_08c0, 284),
-                ("staged-actor compiler alignment", 0x0200_08be, 2)
+                ("FieldScene_RedrawActorFootprint", 0x0200_08c0, 284)
             ]
         );
         assert_eq!(
@@ -3659,7 +3596,7 @@ mod tests {
                 ("staged-actor compiler alignment", 0x0200_0ba2, 2)
             ]
         );
-        assert_eq!(bytes(&spans["resource_3bf"]), 1394 + 2 + 284);
+        assert_eq!(bytes(&spans["resource_3bf"]), 1394 + 284);
         assert_eq!(spans["resource_39b"], [Span::new(0x0200_0630, 0x0200_0cc0)]);
         // Fill that no two adjacent exact owners bound is refused.
         write(
@@ -3681,42 +3618,48 @@ mod tests {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, source).unwrap();
         };
-        for name in [
-            "actor_sequence",
-            "unregistered",
-            "resource_test_c_02000160",
-            "resource_test_c_02000180",
-        ] {
+        for name in ["actor_sequence", "unregistered", "resource_test_c_02000160"] {
             write(
                 &format!("{directory}/{name}.c"),
                 "void Actor_Run(void) {}\n",
             );
         }
         write(&format!("{directory}/uncanonical.c"), "M2C_ERROR\n");
-        let owner =
-            |entry, extent, state| json!({"address": entry, "extent": extent, "state": state});
+        // The reviewed register bounds each not-yet-C owner.
+        write(
+            "recon/tbs/raw/overlays/resource_test_overlay.s",
+            "\t.space 0x1b0\n",
+        );
+        let region = |entry: &str, span: usize| json!({"overlay": "resource_test", "entry": entry, "span_bytes": span});
+        write(
+            "recon/tbs/semantic/regions.json",
+            &json!({"format": 1, "manual_regions": [
+                region("0x02000100", 0x20),
+                region("0x02000120", 0x20),
+                region("0x02000160", 0x10),
+                region("0x02000190", 0x10),
+                region("0x020001a0", 0x10)
+            ]})
+            .to_string(),
+        );
+        let owner = |entry| json!({"address": entry});
         let unit = |name, owners| {
             json!({
-                "game": "tbs", "overlay": "resource_test",
+                "overlay": "resource_test",
                 "source": format!("{directory}/{name}.c"), "owners": owners
             })
         };
         let named = unit(
             "actor_sequence",
-            json!([
-                owner("0x02000100", 0x20, "not-yet-c"),
-                owner("0x02000120", 0x20, "not-yet-c"),
-                owner("0x02000140", 0x20, "exact-c")
-            ]),
+            json!([owner("0x02000100"), owner("0x02000120")]),
         );
         write(
             "recon/tbs/translation-units.json",
             &json!({"units": [
                 named.clone(), named,
-                unit("resource_test_c_02000160", json!([owner("0x02000160", 0x10, "not-yet-c")])),
-                unit("resource_test_c_02000180", json!([owner("0x02000180", 0x10, "exact-c")])),
-                unit("missing", json!([owner("0x02000190", 0x10, "not-yet-c")])),
-                unit("uncanonical", json!([owner("0x020001a0", 0x10, "not-yet-c")]))
+                unit("resource_test_c_02000160", json!([owner("0x02000160")])),
+                unit("missing", json!([owner("0x02000190")])),
+                unit("uncanonical", json!([owner("0x020001a0")]))
             ]})
             .to_string(),
         );
@@ -3850,10 +3793,30 @@ mod tests {
     }
 
     #[test]
-    fn stream_ids_resolve_locations_resource_keys() {
-        let locations = "resource_36f\tTitle\ttitle\t0\t0x99b\tevidence\tSRC/MENU/TITLE\n";
+    fn stream_ids_resolve_overlay_homes() {
+        let root = tempfile::tempdir().unwrap();
+        let write = |path: &str, text: String| {
+            let path = root.path().join(path);
+            std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+            std::fs::write(path, text).unwrap();
+        };
+        write(
+            "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON",
+            json!({"segments":[{"records":[{"resource_id":879,"map_index":0}]}]}).to_string(),
+        );
+        write(
+            "recon/tbs/overlay-homes.tsv",
+            "resource_36f\tSRC/MENU/TITLE\n".into(),
+        );
+        let tree = SourceTree::Work {
+            id: "fixture".into(),
+            root: root.path().into(),
+        };
+        let target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
         assert_eq!(
-            atlas_source("games/THE BROKEN SEAL", locations, "36f").as_deref(),
+            atlas_sources(&tree, &target)
+                .get(&0x36f)
+                .map(String::as_str),
             Some("games/THE BROKEN SEAL/SRC/MENU/TITLE/")
         );
     }

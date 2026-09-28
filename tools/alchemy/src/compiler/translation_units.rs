@@ -7,7 +7,7 @@ use serde::de::{Error, MapAccess, Visitor};
 use serde::{Deserialize, Deserializer};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::{Component, Path, PathBuf};
-pub const FORMAT: u32 = 5;
+pub const FORMAT: u32 = 6;
 const EDITIONS: [&str; 6] = ["ja", "en", "de", "es", "fr", "it"];
 
 #[derive(Deserialize)]
@@ -119,10 +119,13 @@ pub struct AbsoluteSymbol {
     pub address: u64,
     pub kind: AbsoluteSymbolKind,
 }
-#[derive(Clone, Copy, Debug, Deserialize, Eq, PartialEq)]
-#[serde(rename_all = "kebab-case")]
+/// Where the image places an owner decides what it is: exact C fills an
+/// `AlchemyC_` placeholder in its overlay listing, or has no `raw/<addr>.s`
+/// in the main image; anything still built from its listing is not yet C.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub enum OwnerState {
     ExactC,
+    #[default]
     NotYetC,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
@@ -132,8 +135,15 @@ pub struct TranslationOwner {
     pub address: u32,
     #[serde(skip)]
     pub canonical_name: String,
+    /// Declared for a main-image owner; an overlay owner's comes from its
+    /// listing, as its placeholder or its label's bounds.
+    #[serde(default)]
     pub extent: usize,
+    #[serde(skip)]
     pub state: OwnerState,
+    /// Older lane tooling still writes a state; placement decides it.
+    #[serde(default, rename = "state")]
+    pub _declared_state: Option<serde_json::Value>,
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq)]
 #[serde(deny_unknown_fields)]
@@ -171,6 +181,8 @@ pub struct UnitInstance {
 pub struct InstanceOwner {
     #[serde(deserialize_with = "hex32")]
     pub address: u32,
+    /// Declared in the main image; an overlay's placeholder bounds it there.
+    #[serde(default)]
     pub extent: usize,
 }
 /// A member where one image links it.
@@ -216,9 +228,19 @@ pub struct UnitData {
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnit {
     pub id: String,
+    /// The game whose manifest declares the unit.
+    #[serde(skip)]
     pub game: String,
+    /// Older lane tooling still writes these; the manifest file and the
+    /// routing tables decide them.
+    #[serde(default, rename = "game")]
+    pub _declared_game: Option<serde_json::Value>,
+    #[serde(default, rename = "compiler_route")]
+    pub _declared_route: Option<serde_json::Value>,
+    /// The C file the unit compiles. A main-image unit of drafts alone
+    /// declares none: its source is the composite `draft_composite` writes.
+    #[serde(default)]
     pub source: PathBuf,
-    pub compiler_route: String,
     pub overlay: Option<String>,
     #[serde(default, deserialize_with = "unique_keys")]
     pub absolute_symbols: BTreeMap<String, AbsoluteSymbol>,
@@ -369,6 +391,13 @@ impl TranslationUnit {
             }
             for (_, name, extent) in self.symbols() {
                 let placed = instance.owners[name];
+                if placed.extent == 0 && image != "main" {
+                    return Err(format!(
+                        "{}: instance owner {} is not an AlchemyC_ placeholder in its overlay listing",
+                        self.id,
+                        self.source_owner(image, placed.address)?.id()
+                    ));
+                }
                 let end = u32::try_from(placed.extent)
                     .ok()
                     .and_then(|n| placed.address.checked_add(n));
@@ -703,13 +732,12 @@ impl TranslationUnit {
 #[serde(deny_unknown_fields)]
 pub struct TranslationUnits {
     format: u32,
-    kind: String,
-    original_translation_units: String,
     pub units: Vec<TranslationUnit>,
 }
 impl TranslationUnits {
-    /// The manifest as written, before any check across units, registers or
-    /// listings: what an adoption consults while its placeholder is absent.
+    /// The manifest as written, before any check across units or registers,
+    /// with each owner's state, and each overlay owner's extent, read from its
+    /// placement: what an adoption consults while its placeholder is absent.
     pub fn declared(root: &Path) -> Result<Self, String> {
         Self::declared_game(root, CompilerTarget::Tbs)
     }
@@ -721,32 +749,46 @@ impl TranslationUnits {
         if game != CompilerTarget::Tbs && !path.is_file() {
             return Ok(Self {
                 format: FORMAT,
-                kind: "reconstruction-composition-contracts".into(),
-                original_translation_units: "unknown".into(),
                 units: Vec::new(),
             });
         }
-        let document: Self = crate::compiler::build_io::read_json(&path)?;
-        if let Some(unit) = document
-            .units
-            .iter()
-            .find(|unit| unit.game != game.as_str())
-        {
-            return Err(format!(
-                "{}: {} unit declared in the {} manifest",
-                unit.id,
-                unit.game,
-                game.as_str()
-            ));
+        let mut document: Self = crate::compiler::build_io::read_json(&path)?;
+        if document.format != FORMAT {
+            return Err(format!("{}: expected format {FORMAT}", path.display()));
         }
-        if document.format != FORMAT
-            || document.kind != "reconstruction-composition-contracts"
-            || document.original_translation_units != "unknown"
-        {
-            return Err(format!(
-                "{}: expected reconstruction-composition format {FORMAT}",
-                path.display()
-            ));
+        let mut placement = Placement::new(root, game);
+        for unit in &mut document.units {
+            unit.game = game.as_str().to_owned();
+            for owner in &mut unit.owners {
+                let Some(overlay) = &unit.overlay else {
+                    owner.state = match root
+                        .join(game.recon())
+                        .join(format!("raw/{:08x}.s", owner.address))
+                        .is_file()
+                    {
+                        true => OwnerState::NotYetC,
+                        false => OwnerState::ExactC,
+                    };
+                    continue;
+                };
+                // A declared extent (older lane tooling still writes one) is
+                // ignored: the listing bounds every overlay owner.
+                (owner.state, owner.extent) = match placement.placeholder(overlay, owner.address) {
+                    Some(extent) => (OwnerState::ExactC, extent),
+                    None => (OwnerState::NotYetC, placement.label(overlay, owner.address)),
+                };
+            }
+            for (image, instance) in &mut unit.instances {
+                if image == "main" {
+                    continue;
+                }
+                for owner in instance.owners.values_mut() {
+                    owner.extent = placement.placeholder(image, owner.address).unwrap_or(0);
+                }
+            }
+            if unit.source.as_os_str().is_empty() {
+                unit.source = draft_composite(root, game, unit)?;
+            }
         }
         Ok(document)
     }
@@ -780,15 +822,8 @@ impl TranslationUnits {
             }
         }
         for unit in &mut document.units {
-            if !unit_id(&unit.id)
-                || !ids.insert(&unit.id)
-                || unit.compiler_route != "canonical-gcc296"
-                || unit.owners.is_empty()
-            {
-                return Err(format!(
-                    "{}: invalid id, route, or empty owner list",
-                    unit.id
-                ));
+            if !unit_id(&unit.id) || !ids.insert(&unit.id) || unit.owners.is_empty() {
+                return Err(format!("{}: invalid id or empty owner list", unit.id));
             }
             if unit.source.is_absolute()
                 || unit
@@ -1178,17 +1213,18 @@ fn validate_production_state(
             })
         };
         if requires_direct && matches!(member.state, OwnerState::NotYetC) {
-            let parent = source.parent().unwrap_or(root);
-            let candidate = parent.join(format!("../main/{:08x}.c", member.address));
-            if !candidate
+            let draft = root
+                .join(crate::compiler::routing::recon_directory(&unit.game))
+                .join(format!("en/main/{:08x}.c", member.address));
+            if !draft
                 .canonicalize()
                 .is_ok_and(|path| direct_includes.contains(&path))
             {
                 return Err(format!(
-                    "{}: {} retained C body must be included from ../main/{:08x}.c",
+                    "{}: {} retained C body must be included from {}",
                     unit.id,
                     owner.id(),
-                    member.address
+                    draft.display()
                 ));
             }
         }
@@ -1205,6 +1241,100 @@ fn validate_production_state(
         }
     }
     Ok(())
+}
+/// The composite a unit of main-image drafts compiles: each owner's draft,
+/// `recon/<game>/en/main/<address>.c`, included in address order. It is
+/// derived from the manifest, so it is written under `out/` and never
+/// tracked; an exact owner compiles from its own registered source instead.
+fn draft_composite(
+    root: &Path,
+    game: CompilerTarget,
+    unit: &TranslationUnit,
+) -> Result<PathBuf, String> {
+    if !unit_id(&unit.id) || unit.overlay.is_some() {
+        return Err(format!(
+            "{}: only a main-image unit may omit its source",
+            unit.id
+        ));
+    }
+    let mut owners = unit.owners.iter().collect::<Vec<_>>();
+    owners.sort_by_key(|owner| owner.address);
+    let mut text = format!(
+        "/* Generated from {}/translation-units.json: the drafts of unit {}. */\n",
+        game.recon(),
+        unit.id
+    );
+    for owner in owners {
+        let draft = format!("{}/en/main/{:08x}.c", game.recon(), owner.address);
+        if owner.state != OwnerState::NotYetC || !root.join(&draft).is_file() {
+            return Err(format!(
+                "{}: 0x{:08x} is not a not-yet-C owner with a draft at {draft}",
+                unit.id, owner.address
+            ));
+        }
+        text.push_str(&format!("#include \"../../../{draft}\"\n"));
+    }
+    let relative = PathBuf::from(format!("out/units/{}/{}.c", game.as_str(), unit.id));
+    let path = root.join(&relative);
+    if std::fs::read_to_string(&path).ok().as_deref() != Some(text.as_str()) {
+        let directory = path.parent().expect("composite directory");
+        std::fs::create_dir_all(directory)
+            .map_err(|error| format!("{}: {error}", directory.display()))?;
+        // Written whole and renamed, so a concurrent reader never sees a
+        // partial composite.
+        let staged = directory.join(format!(".{}.{}", unit.id, std::process::id()));
+        std::fs::write(&staged, &text)
+            .and_then(|()| std::fs::rename(&staged, &path))
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+    }
+    Ok(relative)
+}
+/// Each overlay listing's layout as the manifest reads it, read once. Without
+/// its listing nothing is placed: the owner stays unbounded and not yet C,
+/// and loading then refuses the unit for want of that listing.
+struct Placement<'a> {
+    root: &'a Path,
+    game: CompilerTarget,
+    placeholders: BTreeMap<String, BTreeMap<u32, usize>>,
+    reviewed: Option<BTreeMap<SourceOwner, usize>>,
+}
+impl<'a> Placement<'a> {
+    fn new(root: &'a Path, game: CompilerTarget) -> Self {
+        Self {
+            root,
+            game,
+            placeholders: BTreeMap::new(),
+            reviewed: None,
+        }
+    }
+    /// The extent of the `AlchemyC_` placeholder at `address`.
+    fn placeholder(&mut self, overlay: &str, address: u32) -> Option<usize> {
+        let (root, game) = (self.root, self.game);
+        self.placeholders
+            .entry(overlay.to_owned())
+            .or_insert_with(|| {
+                overlay_listing(root, game.as_str(), overlay)
+                    .map(|text| crate::compiler::overlay::placeholder_extents(&text))
+                    .unwrap_or_default()
+            })
+            .get(&address)
+            .copied()
+    }
+    /// The reviewed extent of the not-yet-C owner at `address`, from the
+    /// game's `semantic/regions.json`.
+    fn label(&mut self, overlay: &str, address: u32) -> usize {
+        let (root, game) = (self.root, self.game);
+        let Ok(owner) = SourceOwner::parse(&format!("{overlay}:{address:08x}")) else {
+            return 0;
+        };
+        self.reviewed
+            .get_or_insert_with(|| {
+                reviewed_overlay_spans_for_game(root, game.recon()).unwrap_or_default()
+            })
+            .get(&owner)
+            .copied()
+            .unwrap_or(0)
+    }
 }
 fn overlay_listing(root: &Path, game: &str, overlay: &str) -> Result<String, String> {
     let assembly = root
@@ -1284,7 +1414,7 @@ pub(crate) mod fixture {
                 ("resource_389", 0x0200_034c, 0x0200_08c0),
                 ("resource_39b", 0x0200_0630, 0x0200_0ba4),
             ] {
-                repository.listing(image, &[find, redraw]);
+                repository.listing(image, &[(find, 296), (redraw, 284)]);
                 for (address, name) in [(find, FIND), (redraw, REDRAW)] {
                     let record = json!({"name": name, "source": STAGED_ACTOR});
                     owners.insert(format!("{image}:{address:08x}"), record);
@@ -1302,10 +1432,10 @@ pub(crate) mod fixture {
             std::fs::create_dir_all(path.parent().unwrap()).unwrap();
             std::fs::write(path, text).unwrap();
         }
-        pub fn listing(&self, image: &str, placeholders: &[u32]) {
+        pub fn listing(&self, image: &str, placeholders: &[(u32, usize)]) {
             let text = placeholders
                 .iter()
-                .map(|address| format!("AlchemyC_{address:08x}:\n\t.space 4\n"))
+                .map(|(address, extent)| format!("AlchemyC_{address:08x}:\n\t.space {extent}\n"))
                 .collect::<String>();
             self.write(&format!("recon/tbs/raw/overlays/{image}_overlay.s"), &text);
         }
@@ -1321,8 +1451,6 @@ pub(crate) mod fixture {
                 "recon/tbs/translation-units.json",
                 &json!({
                     "format": FORMAT,
-                    "kind": "reconstruction-composition-contracts",
-                    "original_translation_units": "unknown",
                     "units": units
                 })
                 .to_string(),
@@ -1353,24 +1481,22 @@ pub(crate) mod fixture {
     pub fn staged_actor() -> Value {
         json!({
             "id": "staged-actor",
-            "game": "tbs",
             "source": format!("games/THE BROKEN SEAL/SRC/{STAGED_ACTOR}"),
-            "compiler_route": "canonical-gcc296",
             "overlay": "resource_3bf",
             "absolute_symbols": {TABLE: {"address": "0x0200df18", "kind": "data"}},
             "owners": [
-                {"address": "0x0200034c", "extent": 296, "state": "exact-c"},
-                {"address": "0x020008c0", "extent": 284, "state": "exact-c"}
+                {"address": "0x0200034c"},
+                {"address": "0x020008c0"}
             ],
             "instances": {
                 "resource_389": {"owners": {
-                    FIND: {"address": "0x0200034c", "extent": 296},
-                    REDRAW: {"address": "0x020008c0", "extent": 284}
+                    FIND: {"address": "0x0200034c"},
+                    REDRAW: {"address": "0x020008c0"}
                 }},
                 "resource_39b": {
                     "owners": {
-                        FIND: {"address": "0x02000630", "extent": 296},
-                        REDRAW: {"address": "0x02000ba4", "extent": 284}
+                        FIND: {"address": "0x02000630"},
+                        REDRAW: {"address": "0x02000ba4"}
                     },
                     "absolute_symbols": {TABLE: {"address": "0x0200e214", "kind": "data"}},
                     "editions": {"ja": {
@@ -1459,25 +1585,11 @@ mod tests {
         .is_err());
     }
     #[test]
-    fn each_game_manifest_declares_only_its_own_units() {
+    fn a_game_without_a_manifest_declares_nothing() {
         let work = tempfile::tempdir().unwrap();
         let empty = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap();
         assert!(empty.units.is_empty());
         assert!(TranslationUnits::load_game(work.path(), CompilerTarget::Tbs).is_err());
-        let path = work.path().join("recon/tla/translation-units.json");
-        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
-        std::fs::write(
-            &path,
-            format!(
-                r#"{{"format":{FORMAT},"kind":"reconstruction-composition-contracts","original_translation_units":"unknown","units":[{{"id":"wrong-game","game":"tbs","source":"a.c","compiler_route":"canonical-gcc296","overlay":"resource_650","absolute_symbols":{{}},"local_symbols":[],"owners":[{{"address":"0x02000038","extent":8,"state":"exact-c"}}]}}]}}"#
-            ),
-        )
-        .unwrap();
-        let error = TranslationUnits::load_game(work.path(), CompilerTarget::Tla).unwrap_err();
-        assert!(
-            error.contains("tbs unit declared in the tla manifest"),
-            "{error}"
-        );
     }
 
     /// The loaded staged-actor unit after `edit`, checked as `load` checks it.
@@ -1668,8 +1780,7 @@ mod tests {
             ],
         );
         // A repeated key is refused, never collapsed to its last value.
-        let error = repository
-            .repeated(r#""FieldScene_FindActorRegion":{"address":"0x02000630","extent":296}"#);
+        let error = repository.repeated(r#""FieldScene_FindActorRegion":{"address":"0x02000630"}"#);
         assert!(
             error.contains("duplicate key \"FieldScene_FindActorRegion\""),
             "{error}"
@@ -1717,6 +1828,7 @@ mod tests {
         // A second unit whose resource_389 instance repeats the first one's.
         repository.record("resource_39c:02000630", json!({"name": FIND}));
         repository.record("resource_39c:02000ba4", json!({"name": REDRAW}));
+        repository.listing("resource_39c", &[(0x0200_0630, 296), (0x0200_0ba4, 284)]);
         let mut copy = staged_actor();
         copy["id"] = "staged-actor-copy".into();
         copy["overlay"] = "resource_39c".into();
@@ -1724,7 +1836,7 @@ mod tests {
             .as_object()
             .unwrap()
             .values()
-            .map(|owner| json!({"address": owner["address"], "extent": owner["extent"], "state": "exact-c"}))
+            .map(|owner| json!({"address": owner["address"]}))
             .collect();
         copy["instances"]
             .as_object_mut()
@@ -1780,12 +1892,14 @@ mod tests {
         for (address, extent) in [
             (0x0200_0631, 296),
             (0x0800_0630, 296),
-            (0x0200_0630, 0),
             (0x0200_0630, usize::MAX),
         ] {
             let error = placed(296, address, extent).unwrap_err();
             assert!(error.contains("invalid address or extent"), "{error}");
         }
+        // An owner no placeholder bounds is not placed.
+        let error = placed(296, 0x0200_0630, 0).unwrap_err();
+        assert!(error.contains("is not an AlchemyC_ placeholder"), "{error}");
         let error = placed(296, 0x0200_0ba0, 296).unwrap_err();
         assert!(
             error.contains("instance resource_39b owners overlap"),
@@ -1827,7 +1941,7 @@ mod tests {
         assert!(error.contains(disagree), "{error}");
 
         let repository = Repository::new();
-        repository.listing("resource_39b", &[0x0200_0630]);
+        repository.listing("resource_39b", &[(0x0200_0630, 296)]);
         let error = repository.load().unwrap_err();
         assert!(
             error.contains("staged-actor: instance owner resource_39b:02000ba4 is not an AlchemyC_ placeholder in its overlay listing"),
@@ -1837,7 +1951,7 @@ mod tests {
         std::fs::remove_file(repository.0.path().join(listing)).unwrap();
         let error = repository.load().unwrap_err();
         assert!(
-            error.contains("staged-actor: instance resource_39b: "),
+            error.contains("staged-actor: instance owner resource_39b:02000630 is not an AlchemyC_ placeholder"),
             "{error}"
         );
 

@@ -9,15 +9,14 @@ use sha2::{Digest, Sha256};
 use std::path::{Path, PathBuf};
 
 /// Modules that read build outputs but never produce a cached one: checks,
-/// coverage and progress, the dashboard, matching searches, recovery aids,
-/// formatting and the command dispatch. Everything else, including every
-/// Psynergy source and the lockfile, is part of the implementation.
+/// coverage and progress, the dashboard, recovery aids, formatting and the
+/// command dispatch. Everything else, including every Psynergy source and the
+/// lockfile, is part of the implementation.
 const OUTSIDE: &[&str] = &[
     "alchemy/src/check",
     "alchemy/src/check.rs",
     "alchemy/src/coverage",
     "alchemy/src/dashboard",
-    "alchemy/src/matching",
     "alchemy/src/recovery",
     "alchemy/src/allocator.rs",
     "alchemy/src/build_full.rs",

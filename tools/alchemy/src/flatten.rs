@@ -188,7 +188,6 @@ fn run(args: &[String]) -> Result<(), String> {
         check_overlay_coverage(&coverage.executable_areas, &overlay)?;
     }
     owners.sort_by_key(|o| o.address);
-    let gaps = compiler_gaps(&manifest, &overlay, &owners)?;
 
     let mut files: Vec<PathBuf> = Vec::new();
     for o in &owners {
@@ -671,8 +670,11 @@ fn run(args: &[String]) -> Result<(), String> {
         o.name.clone()
     };
     let aliases: Vec<String> = owners.iter().map(alias_for).collect();
-    // The build injects the registered names' link aliases. Keep those
-    // mappings in the owner registry rather than duplicating them in C.
+    // The unit is linked by `Func_<address>` symbols. A function defined
+    // under its registered name without an alias define gets one, so the
+    // symbol exists; a file whose definition matches neither is reported
+    // with what it does define.
+    let mut alias_defines: Vec<String> = Vec::new();
     for (o, alias) in owners.iter().zip(&aliases) {
         let legacy = format!("Func_{:08x}", o.address);
         let defined = functions
@@ -684,6 +686,9 @@ fn run(args: &[String]) -> Result<(), String> {
             continue;
         }
         if defined.iter().any(|k| k == alias) {
+            if !defines.contains_key(alias) {
+                alias_defines.push(format!("#define {alias} {legacy}"));
+            }
             continue;
         }
         return Err(format!(
@@ -694,12 +699,16 @@ fn run(args: &[String]) -> Result<(), String> {
         ));
     }
 
-    // Order: shared types, macros, other includes, layouts, declarations,
-    // wrappers, and functions. Link aliases come from the build's bindings.
+    // Order: the shared types, then every alias define (an included header
+    // may declare through an alias, as the owners' files did), then the
+    // other includes, layouts, declarations, wrappers, and the functions.
     let mut out: Vec<String> = vec!["#include \"TYPES.H\"".into()];
     out.push(String::new());
     for name in &define_order {
         out.push(defines[name].text.clone());
+    }
+    for define in &alias_defines {
+        out.push(define.clone());
     }
     if !define_order.is_empty() {
         out.push(String::new());
@@ -814,11 +823,9 @@ fn run(args: &[String]) -> Result<(), String> {
         inlined.len()
     );
 
-    let mut entry = json!({
+    let entry = json!({
         "id": unit_id,
-        "game": game,
         "source": source_root.join(&unit_path).strip_prefix(&root).map_err(|e| e.to_string())?,
-        "compiler_route": "canonical-gcc296",
         "overlay": overlay,
         "absolute_symbols": split
             .iter()
@@ -830,11 +837,8 @@ fn run(args: &[String]) -> Result<(), String> {
             })
             .collect::<Map<String, Value>>(),
         "local_symbols": [],
-        "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address), "extent": o.extent, "state": "exact-c"})).collect::<Vec<_>>(),
+        "owners": owners.iter().map(|o| json!({"address": format!("0x{:08x}", o.address)})).collect::<Vec<_>>(),
     });
-    if !gaps.is_empty() {
-        entry["compiler_gaps"] = Value::Array(gaps);
-    }
     if !apply {
         println!(
             "manifest entry:\n{}",
@@ -877,50 +881,6 @@ fn run(args: &[String]) -> Result<(), String> {
 #[allow(clippy::too_many_arguments)]
 /// The units with instances that link any of `addresses` into `overlay`,
 /// as canonical owners or instance members.
-// Carry existing native-fill proofs only when both bounding owners move.
-fn compiler_gaps(manifest: &Value, overlay: &str, owners: &[Owner]) -> Result<Vec<Value>, String> {
-    let addresses: BTreeSet<u32> = owners.iter().map(|owner| owner.address).collect();
-    let address = |value: &Value| {
-        let text = value.as_str().ok_or("compiler gap lacks a hex address")?;
-        u32::from_str_radix(text.trim_start_matches("0x"), 16).map_err(|error| error.to_string())
-    };
-    let mut gaps = BTreeMap::new();
-    for unit in manifest["units"].as_array().ok_or("manifest lacks units")? {
-        if unit["overlay"] != overlay {
-            continue;
-        }
-        let members = unit["owners"].as_array().ok_or("unit lacks owners")?;
-        let selected = members
-            .iter()
-            .map(|member| address(&member["address"]))
-            .collect::<Result<Vec<_>, _>>()?;
-        if !selected.iter().all(|member| addresses.contains(member)) {
-            continue;
-        }
-        let Some(records) = unit.get("compiler_gaps") else {
-            continue;
-        };
-        for gap in records.as_array().ok_or("compiler_gaps must be an array")? {
-            let start = address(&gap["start"])?;
-            let end = address(&gap["end"])?;
-            if start >= end {
-                return Err("compiler gap must have positive extent".into());
-            }
-            if addresses.contains(&end)
-                && owners.iter().any(|owner| {
-                    u32::try_from(owner.extent)
-                        .ok()
-                        .and_then(|extent| owner.address.checked_add(extent))
-                        == Some(start)
-                })
-            {
-                gaps.insert((start, end), gap.clone());
-            }
-        }
-    }
-    Ok(gaps.into_values().collect())
-}
-
 fn instanced_units(manifest: &Value, overlay: &str, addresses: &BTreeSet<u32>) -> Vec<String> {
     let listed = |address: &Value| {
         address
@@ -1550,12 +1510,8 @@ fn items(text: &str, file: &Path) -> Vec<Item> {
         }
         if t.starts_with("#define") {
             let key = t.split_whitespace().nth(1).unwrap_or("").to_string();
-            let mut end = i;
-            while lines[end].trim_end().ends_with('\\') && end + 1 < lines.len() {
-                end += 1;
-            }
-            push(&mut out, "define", key, &lines[i..=end]);
-            i = end + 1;
+            push(&mut out, "define", key, &lines[i..=i]);
+            i += 1;
             continue;
         }
         if t.starts_with("/*") {
@@ -1730,98 +1686,6 @@ fn write_json(path: &Path, value: &Value) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn flatten_preserves_existing_bounded_compiler_gaps_without_inference() {
-        let owners = [
-            Owner {
-                key: String::new(),
-                address: 0x100,
-                extent: 4,
-                name: String::new(),
-                source: PathBuf::new(),
-            },
-            Owner {
-                key: String::new(),
-                address: 0x106,
-                extent: 2,
-                name: String::new(),
-                source: PathBuf::new(),
-            },
-        ];
-        let gap = json!({"start": "0x00000104", "end": "0x00000106"});
-        let mut manifest = json!({"units": [{
-            "overlay": "resource_test", "owners": [{"address": "0x100"}, {"address": "0x106"}],
-            "compiler_gaps": [gap.clone(), gap.clone()]
-        }]});
-        assert_eq!(
-            compiler_gaps(&manifest, "resource_test", &owners).unwrap(),
-            [gap]
-        );
-        manifest["units"][0]
-            .as_object_mut()
-            .unwrap()
-            .remove("compiler_gaps");
-        assert!(compiler_gaps(&manifest, "resource_test", &owners)
-            .unwrap()
-            .is_empty());
-    }
-
-    #[test]
-    fn flatten_does_not_move_foreign_retained_or_unbounded_gap_proofs() {
-        let owners = [
-            Owner {
-                key: String::new(),
-                address: 0x100,
-                extent: 4,
-                name: String::new(),
-                source: PathBuf::new(),
-            },
-            Owner {
-                key: String::new(),
-                address: 0x106,
-                extent: 2,
-                name: String::new(),
-                source: PathBuf::new(),
-            },
-        ];
-        let manifest = json!({"units": [
-            {"overlay": "resource_other", "owners": [{"address": "0x100"}, {"address": "0x106"}],
-             "compiler_gaps": [{"start": "0x104", "end": "0x106"}]},
-            {"overlay": "resource_test", "owners": [{"address": "0x100"}, {"address": "0x106"}, {"address": "0x200"}],
-             "compiler_gaps": [{"start": "0x104", "end": "0x106"}]},
-            {"overlay": "resource_test", "owners": [{"address": "0x100"}, {"address": "0x106"}],
-             "compiler_gaps": [{"start": "0x102", "end": "0x106"}, {"start": "0x104", "end": "0x108"}]}
-        ]});
-        assert!(compiler_gaps(&manifest, "resource_test", &owners)
-            .unwrap()
-            .is_empty());
-    }
-
-    #[test]
-    fn multiline_macro_keeps_its_body_when_items_move() {
-        let definition = r#"#define PUBLISH(value) \
-    do { \
-        target = (value); \
-    } while (0)"#;
-        let source = format!("{definition}\n\nvoid Publish(void)\n{{\n    PUBLISH(1);\n}}\n");
-        let parsed = items(&source, Path::new("PUBLISH.C"));
-        assert_eq!(parsed.len(), 2);
-        assert_eq!(parsed[0].kind, "define");
-        assert_eq!(parsed[0].key, "PUBLISH(value)");
-        assert_eq!(parsed[0].text, definition);
-        assert_eq!(parsed[1].kind, "function");
-        assert_eq!(parsed[1].key, "Publish");
-    }
-
-    #[test]
-    fn unterminated_macro_continuation_stays_one_item() {
-        let definition = "#define PUBLISH(value) \\";
-        let parsed = items(definition, Path::new("PUBLISH.C"));
-        assert_eq!(parsed.len(), 1);
-        assert_eq!(parsed[0].kind, "define");
-        assert_eq!(parsed[0].text, definition);
-    }
 
     #[test]
     fn flattening_refuses_owners_of_instanced_units() {

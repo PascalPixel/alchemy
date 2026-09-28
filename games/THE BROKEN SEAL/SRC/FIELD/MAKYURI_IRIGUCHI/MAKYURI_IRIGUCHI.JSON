@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08611cb4",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x08611cc0",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0],
-            "address": "0x08611cb4"
+            "values": [0, 0, 128, 128, 3, 1, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08611cd8",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x08611cc0"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08611cf0",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x854", "0x860", "0x1774", "0x19dc", "0x1a04"],
-            "address": "0x08611cd8"
+            "values": ["0x3c", "0x854", "0x860", "0x1774", "0x19dc", "0x1a04"]
           }
         ]
       },
@@ -139,7 +135,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x086136b8",
         "size": "0x9",
         "record_size": 3,
         "segments": [
@@ -148,17 +143,9 @@
             "end": "0x086136be",
             "stride": 3,
             "element": "u8",
-            "values": [[57, 19, 100], [47, 54, 101]],
-            "address": "0x086136b8"
+            "values": [[57, 19, 100], [47, 54, 101]]
           },
-          {
-            "name": "terminator",
-            "end": "0x086136c1",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x086136be"
-          }
+          {"name": "terminator", "end": "0x086136c1", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/MAKYURI_IRIGUCHI.BIN",

@@ -10622,7 +10622,8 @@
       "name": "BattlePresentation_BuildSortedUnitEntries"
     },
     "main:080b88d0": {
-      "name": "BattlePresentation_RunPairedUnitTransition"
+      "name": "BattlePresentation_RunPairedUnitTransition",
+      "source": "BATTLE/PRESENTATION/PAIRED_TRANS.C"
     },
     "main:080b920c": {
       "name": "BattlePres_BuildUnitEntries"
@@ -21903,6 +21904,7 @@
     "main:080b50d0": "Camera_ConfigureSceneFar",
     "main:08015030": "UiText_CopyMessageStringFar",
     "main:080150b8": "UiWork_SetParamNibbleFar",
-    "main:080f9008": "Audio_InitializeRuntimeDefaultsFar"
+    "main:080f9008": "Audio_InitializeRuntimeDefaultsFar",
+    "main:080c9010": "BattleFx_InitializeModeFar"
   }
 }

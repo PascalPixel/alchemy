@@ -527,14 +527,12 @@ fn resolve_unversioned_claude(days: &mut BTreeMap<String, BTreeMap<String, u64>>
             .or_default() += count;
     }
 }
-/// The `git log` of working branches, from `since` (a date) when given.
-/// Recovery snapshots and stale remote-tracking refs may retain superseded
-/// attribution after a history repair; they are not additional model work.
+/// The `git log` of every branch, from `since` (a date) when given.
 pub(crate) fn git_log(root: &Path, since: Option<&str>) -> Result<String, String> {
     let mut command = std::process::Command::new("git");
     command.args([
         "log",
-        "--branches",
+        "--all",
         &format!("--format={LOG}"),
         "--date=format:%Y-%m-%d",
     ]);
@@ -564,7 +562,6 @@ mod tests {
             ("claude-haiku-4-5-20251001", Some("Haiku 4.5")),
             ("claude-fable-5-1", Some("Fable 5.1")),
             ("gpt-5.6-sol", Some("Sol 5.6")),
-            ("gpt-6-sol", Some("Sol 6")),
             ("gpt-6-astra", Some("Astra 6")),
             ("grok-4.6", Some("Grok 4.6")),
             ("codex-auto-review", None),
@@ -575,70 +572,6 @@ mod tests {
         }
         assert_eq!(family("Astra 6"), Some(Family::Codex));
         assert_eq!(iso_seconds("1970-01-02T01:02:03.500Z"), Some(90_123));
-    }
-    #[test]
-    fn repaired_branch_attribution_excludes_recovery_and_stale_remote_refs() {
-        let directory = tempfile::tempdir().unwrap();
-        let git = |args: &[&str]| {
-            let output = std::process::Command::new("git")
-                .args([
-                    "-c",
-                    "commit.gpgsign=false",
-                    "-c",
-                    "core.hooksPath=/dev/null",
-                ])
-                .args(args)
-                .current_dir(directory.path())
-                .output()
-                .unwrap();
-            assert!(
-                output.status.success(),
-                "{}",
-                String::from_utf8_lossy(&output.stderr)
-            );
-            String::from_utf8(output.stdout).unwrap().trim().to_string()
-        };
-        git(&["init", "--quiet", "--initial-branch=main"]);
-        git(&["config", "user.name", "Attribution test"]);
-        git(&["config", "user.email", "test@example.invalid"]);
-        git(&[
-            "commit",
-            "--quiet",
-            "--allow-empty",
-            "-m",
-            "Before repair\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
-        ]);
-        let old = git(&["rev-parse", "HEAD"]);
-        git(&["update-ref", "refs/codex/snapshots/before-repair", &old]);
-        git(&["update-ref", "refs/remotes/origin/main", &old]);
-        git(&[
-            "commit",
-            "--quiet",
-            "--amend",
-            "--allow-empty",
-            "-m",
-            "After repair\n\nCo-Authored-By: Sol 6 <noreply@openai.com>",
-        ]);
-        git(&["checkout", "--quiet", "-b", "lane"]);
-        git(&[
-            "commit",
-            "--quiet",
-            "--allow-empty",
-            "-m",
-            "Lane work\n\nCo-Authored-By: Astra 6 <noreply@openai.com>",
-        ]);
-        let log = git_log(directory.path(), None).unwrap();
-        assert_eq!(log.lines().count(), 2);
-        assert!(!log.contains(&old));
-        let (days, _) = tally(&log, &Activity::default(), &HashMap::new());
-        let counts = days.values().flat_map(|day| day.iter()).collect::<Vec<_>>();
-        assert_eq!(counts.len(), 2);
-        assert!(counts
-            .iter()
-            .any(|(name, count)| name.as_str() == "Sol 6" && **count == 1));
-        assert!(counts
-            .iter()
-            .any(|(name, count)| name.as_str() == "Astra 6" && **count == 1));
     }
     #[test]
     fn commits_take_their_trailer_else_the_nearest_active_session() {

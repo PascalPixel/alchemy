@@ -1,7 +1,6 @@
 {
   "format": 1,
   "kind": "typed-table",
-  "address": "0x0805a4e0",
   "size": 7168,
   "first_code": 32,
   "segments": [
@@ -242,8 +241,7 @@
         {"advance": 0, "glyph": 221},
         {"advance": 0, "glyph": 222},
         {"advance": 7, "glyph": 223}
-      ],
-      "address": "0x0805a4e0"
+      ]
     }
   ]
 }

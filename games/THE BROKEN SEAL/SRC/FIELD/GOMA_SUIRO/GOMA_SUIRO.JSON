@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0855f2ac",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x0855f2b8",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 96, 115, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x0855f2ac"
+            "values": [0, 0, 96, 115, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0855f2d0",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [29440, 4112, 0, 65535], [100, 4112, 0, 65535]],
-            "address": "0x0855f2b8"
+            "values": [[0, 4112, 0, 65535], [29440, 4112, 0, 65535], [100, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0855f2e8",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xb58", "0xb88", "0x1bc8", "0x1d04", "0x1d1c"],
-            "address": "0x0855f2d0"
+            "values": ["0x3c", "0xb58", "0xb88", "0x1bc8", "0x1d04", "0x1d1c"]
           }
         ]
       },
@@ -123,26 +119,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08560fc8",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x08560fcb",
-            "stride": 3,
-            "element": "u8",
-            "values": [[38, 41, 100]],
-            "address": "0x08560fc8"
-          },
-          {
-            "name": "terminator",
-            "end": "0x08560fce",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08560fcb"
-          }
+          {"name": "records", "end": "0x08560fcb", "stride": 3, "element": "u8", "values": [[38, 41, 100]]},
+          {"name": "terminator", "end": "0x08560fce", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/GOMA_SUIRO.BIN",
@@ -158,7 +139,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08560fd0",
         "size": "0x3c",
         "segments": [
           {
@@ -166,24 +146,21 @@
             "end": "0x08560fdc",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x08560fd0"
+            "values": [0, 0, 96, 60, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08560ff4",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [15360, 4112, 0, 65535], [100, 4112, 0, 65535]],
-            "address": "0x08560fdc"
+            "values": [[0, 4112, 0, 65535], [15360, 4112, 0, 65535], [100, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0856100c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x4dc", "0x508", "0xe08", "0xf28", "0xf40"],
-            "address": "0x08560ff4"
+            "values": ["0x3c", "0x4dc", "0x508", "0xe08", "0xf28", "0xf40"]
           }
         ]
       },
@@ -270,19 +247,9 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08561f10",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "end": "0x08561f13",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08561f10"
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x08561f13", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/GOMA_SUIRO.BIN",
       "grid_offset": 70208,

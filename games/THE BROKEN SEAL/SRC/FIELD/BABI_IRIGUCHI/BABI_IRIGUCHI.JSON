@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0875b138",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x0875b144",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x0875b138"
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0875b15c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x0875b144"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0875b174",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x3e4", "0x3f4", "0xc88", "0xc90", "0xc98"],
-            "address": "0x0875b15c"
+            "values": ["0x3c", "0x3e4", "0x3f4", "0xc88", "0xc90", "0xc98"]
           }
         ]
       },
@@ -81,26 +77,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0875bdd0",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x0875bdd3",
-            "stride": 3,
-            "element": "u8",
-            "values": [[23, 12, 100]],
-            "address": "0x0875bdd0"
-          },
-          {
-            "name": "terminator",
-            "end": "0x0875bdd6",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0875bdd3"
-          }
+          {"name": "records", "end": "0x0875bdd3", "stride": 3, "element": "u8", "values": [[23, 12, 100]]},
+          {"name": "terminator", "end": "0x0875bdd6", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
@@ -116,7 +97,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08750b58",
         "size": "0x3c",
         "segments": [
           {
@@ -124,24 +104,21 @@
             "end": "0x08750b64",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x08750b58"
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08750b7c",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x08750b64"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08750b94",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xdf4", "0xe1c", "0x1ebc", "0x1ec4", "0x1ecc"],
-            "address": "0x08750b7c"
+            "values": ["0x3c", "0xdf4", "0xe1c", "0x1ebc", "0x1ec4", "0x1ecc"]
           }
         ]
       },
@@ -194,7 +171,6 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08752a24",
         "size": "0xf",
         "record_size": 3,
         "segments": [
@@ -203,17 +179,9 @@
             "end": "0x08752a30",
             "stride": 3,
             "element": "u8",
-            "values": [[38, 9, 102], [50, 11, 101], [40, 16, 103], [43, 30, 100]],
-            "address": "0x08752a24"
+            "values": [[38, 9, 102], [50, 11, 101], [40, 16, 103], [43, 30, 100]]
           },
-          {
-            "name": "terminator",
-            "end": "0x08752a33",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x08752a30"
-          }
+          {"name": "terminator", "end": "0x08752a33", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
@@ -229,7 +197,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08752d30",
         "size": "0x3c",
         "segments": [
           {
@@ -237,24 +204,21 @@
             "end": "0x08752d3c",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0],
-            "address": "0x08752d30"
+            "values": [0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08752d54",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x08752d3c"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08752d6c",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0x2dc", "0x2f4", "0xa38", "0x0", "0xc3c"],
-            "address": "0x08752d54"
+            "values": ["0x3c", "0x2dc", "0x2f4", "0xa38", "0x0", "0xc3c"]
           }
         ]
       },
@@ -360,19 +324,9 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0875396c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "end": "0x0875396f",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0875396c"
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0875396f", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/BABI_IRIGUCHI.BIN",
       "grid_offset": 70880,

@@ -7,7 +7,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x08561f14",
         "size": "0x3c",
         "segments": [
           {
@@ -15,24 +14,21 @@
             "end": "0x08561f20",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0],
-            "address": "0x08561f14"
+            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x08561f38",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x08561f20"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x08561f50",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xda8", "0xdd4", "0x289c", "0x29d0", "0x29e0"],
-            "address": "0x08561f38"
+            "values": ["0x3c", "0xda8", "0xdd4", "0x289c", "0x29d0", "0x29e0"]
           }
         ]
       },
@@ -120,26 +116,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x085648f4",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x085648f7",
-            "stride": 3,
-            "element": "u8",
-            "values": [[16, 47, 100]],
-            "address": "0x085648f4"
-          },
-          {
-            "name": "terminator",
-            "end": "0x085648fa",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x085648f7"
-          }
+          {"name": "records", "end": "0x085648f7", "stride": 3, "element": "u8", "values": [[16, 47, 100]]},
+          {"name": "terminator", "end": "0x085648fa", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/KUUPUAPPU_DOU.BIN",
@@ -155,7 +136,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0856b834",
         "size": "0x3c",
         "segments": [
           {
@@ -163,24 +143,21 @@
             "end": "0x0856b840",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0],
-            "address": "0x0856b834"
+            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0856b858",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x0856b840"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0856b870",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xc64", "0xc90", "0x2df4", "0x2f28", "0x2f38"],
-            "address": "0x0856b858"
+            "values": ["0x3c", "0xc64", "0xc90", "0x2df4", "0x2f28", "0x2f38"]
           }
         ]
       },
@@ -269,26 +246,11 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0856e76c",
         "size": "0x6",
         "record_size": 3,
         "segments": [
-          {
-            "name": "records",
-            "end": "0x0856e76f",
-            "stride": 3,
-            "element": "u8",
-            "values": [[33, 5, 100]],
-            "address": "0x0856e76c"
-          },
-          {
-            "name": "terminator",
-            "end": "0x0856e772",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0856e76f"
-          }
+          {"name": "records", "end": "0x0856e76f", "stride": 3, "element": "u8", "values": [[33, 5, 100]]},
+          {"name": "terminator", "end": "0x0856e772", "stride": 1, "element": "u8", "fill": 255}
         ]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/KUUPUAPPU_DOU.BIN",
@@ -304,7 +266,6 @@
       "header": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0856e774",
         "size": "0x3c",
         "segments": [
           {
@@ -312,24 +273,21 @@
             "end": "0x0856e780",
             "stride": 12,
             "element": "u8",
-            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0],
-            "address": "0x0856e774"
+            "values": [0, 0, 128, 128, 3, 1, 2, 1, 1, 2, 0, 0]
           },
           {
             "name": "records",
             "end": "0x0856e798",
             "stride": 8,
             "element": "le-u16",
-            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]],
-            "address": "0x0856e780"
+            "values": [[0, 4112, 0, 65535], [128, 4112, 0, 65535], [32768, 4112, 0, 65535]]
           },
           {
             "name": "component_offsets",
             "end": "0x0856e7b0",
             "stride": 4,
             "element": "le-u32",
-            "values": ["0x3c", "0xa18", "0xa2c", "0x2c84", "0x2db8", "0x2dc8"],
-            "address": "0x0856e798"
+            "values": ["0x3c", "0xa18", "0xa2c", "0x2c84", "0x2db8", "0x2dc8"]
           }
         ]
       },
@@ -413,19 +371,9 @@
       "sparse_cells": {
         "format": 1,
         "kind": "typed-table",
-        "address": "0x0857153c",
         "size": "0x3",
         "record_size": 3,
-        "segments": [
-          {
-            "name": "terminator",
-            "end": "0x0857153f",
-            "stride": 1,
-            "element": "u8",
-            "fill": 255,
-            "address": "0x0857153c"
-          }
-        ]
+        "segments": [{"name": "terminator", "end": "0x0857153f", "stride": 1, "element": "u8", "fill": 255}]
       },
       "grid_source": "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/KUUPUAPPU_DOU.BIN",
       "grid_offset": 72952,

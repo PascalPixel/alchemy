@@ -1,4 +1,5 @@
 #include "TYPES.H"
+void BattleFx_SpawnRandomParticleAtPosition();
 extern struct MapRenderWork *gMapWork;
 
 struct FieldActor {
@@ -90,7 +91,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
                             if (actor != 0) {
                                 ObjectDispatch_InitializeFar((s32)actor, 0x0809e8a0);
                                 ObjectDispatch_SetSingleChildField26Far((s32)actor, 0);
-                                *(s32 *)((u8 *)actor + 108) = 0x0808f28d;
+                                *(s32 *)((u8 *)actor + 108) = (s32)BattleFx_SpawnRandomParticleAtPosition;
                             }
                         }
                         break;

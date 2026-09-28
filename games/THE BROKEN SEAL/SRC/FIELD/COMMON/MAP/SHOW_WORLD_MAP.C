@@ -11,6 +11,7 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
+void Map_UpdateWorldMapMarkers(void);
 extern u8 gMapCellBuffer[];
 
 struct MapLayerEntry {
@@ -97,13 +98,13 @@ void Map_ShowWorldMap(void)
         *(volatile u16 *)0x04000000 = v;
     }
     BattleFx_SetupResourcesAndWindow();
-    Scheduler_AddOrUpdateCallback(0x0809bcf9, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Map_UpdateWorldMapMarkers, 0xc80);
     if (GameFlag_TestFar(284))
         UiText_ShowPositionedMessageAndWaitFar(0x985, 1);
     do {
         WaitFrames(1);
     } while ((gKeysRepeat & 3) == 0);
-    Scheduler_RemoveCallback(0x0809bcf9);
+    Scheduler_RemoveCallback((u32)Map_UpdateWorldMapMarkers);
     BattleFx_CleanupResourcesAndWindow();
     {
         s32 v;

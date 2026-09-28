@@ -42,10 +42,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
     void Map_ClearLayerEntryFlag();
 
-    u8 *work = *(u8 **)Data_03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
@@ -112,9 +111,8 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
-    extern u8 Data_03001ebc[];
 
-    *(u16 *)(*(u8 **)Data_03001ebc + 0x1d8) += amount;
+    *(u16 *)(*(u8 **)&gEventWork + 0x1d8) += amount;
 }
 
 void SceneDialogue_RunActor13Message1b83(void)

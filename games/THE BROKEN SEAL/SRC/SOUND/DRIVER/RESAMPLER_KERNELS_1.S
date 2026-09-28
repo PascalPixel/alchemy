@@ -7,7 +7,6 @@
 .syntax unified
 	.set	.Lrecord_2, 0x08000534
 	.arm
-	.set AlchemyLoadAddress, 0x0800049c
 .Lrecord_1:
 	asrs	r7, fp, #19
 	adds	r7, r7, ip, asr #20

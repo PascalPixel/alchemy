@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080b6a60, 0x080b6a60
-	.set sub_080b6f44, 0x080b6f44
-	.set sub_080b7424, 0x080b7424
-	.set sub_080b7dd0, 0x080b7dd0
 	.global BattleUnit_RefreshPlacement
 	.global Func_080b75dc
 	.thumb_func
@@ -26,7 +22,7 @@ Func_080b75dc:
 	mov	sl, r3
 	str	r2, [sp, #0]
 	mov	r9, r1
-	bl	sub_080b6a60
+	bl	BattleParty_PrepareActiveOwners
 	ldr	r3, [pc, #256]
 	adds	r5, r0, #0
 	movs	r2, #255
@@ -70,14 +66,14 @@ Func_080b75dc:
 	mov	r1, sl
 	strb	r2, [r1, r3]
 	adds	r0, r5, #0
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	mov	r3, fp
 	ldrsb	r2, [r6, r3]
 	mov	r1, fp
 	adds	r3, r6, #1
 	ldrsb	r3, [r3, r1]
 	adds	r1, r5, #0
-	bl	sub_080b6f44
+	bl	BattlePresentation_SpawnActorObject
 	subs	r7, #1
 	movs	r2, #1
 	adds	r6, #2
@@ -120,7 +116,7 @@ Func_080b75dc:
 	adds	r1, r5, #0
 	mov	r2, r9
 	mov	r3, sl
-	bl	sub_080b7424
+	bl	Summon_LayoutPositions
 	cmp	r5, #0
 	ble.n	.L_080b76ee
 	movs	r3, #0
@@ -134,13 +130,13 @@ Func_080b75dc:
 	cmp	r5, #254
 	beq.n	.L_080b76e2
 	adds	r0, r5, #0
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	mov	r1, r9
 	ldr	r2, [r6, r1]
 	mov	r1, sl
 	ldr	r3, [r6, r1]
 	adds	r1, r5, #0
-	bl	sub_080b6f44
+	bl	BattlePresentation_SpawnActorObject
 .L_080b76e2:
 	movs	r2, #2
 	subs	r7, #1

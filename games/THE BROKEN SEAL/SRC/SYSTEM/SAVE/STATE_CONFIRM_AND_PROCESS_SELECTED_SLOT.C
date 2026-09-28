@@ -4,6 +4,18 @@
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+s32 UiText_OpenMessageWindow(s32, s32, s32, s32);
+s32 SaveMenu_SelectSlot(s16, s32);
+s32 Menu_RunConfirmSelection(s32, s32, s32, s32);
+s32 SaveState_ProcessSelectedSlot(void);
+void UiText_ShowPositionedMessageAndWait(s32, s32);
+s32 SaveState_InitializeWorkspace(void);
+void SaveState_LoadSummaryRecords(void);
+u32 SaveState_ReadRecordPayload(s32, void *);
+u32 SaveState_FindFreeSummarySlot(void);
+u32 SaveState_WriteRecord(s32, void *);
+u32 SaveState_ReleaseWorkspace(void);
+u32 SaveState_DeleteRecord(s32);
 
 /* save/state/confirm_and_process_selected_slot.c */
 /* save/state/state_confirm_and_process_selected_slot.c */

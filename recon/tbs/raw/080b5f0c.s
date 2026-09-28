@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004970, 0x08004970
-	.set sub_080063bc, 0x080063bc
-	.set sub_08006458, 0x08006458
-	.set sub_080072f0, 0x080072f0
-	.set sub_08077000, 0x08077000
-	.set sub_08077008, 0x08077008
-	.set sub_080b6a60, 0x080b6a60
 	.global Func_080b5f0c
 	.thumb_func
 Func_080b5f0c:
@@ -23,7 +14,7 @@ Func_080b5f0c:
 	lsls	r5, r5, #1
 	adds	r0, r5, #0
 	sub	sp, #16
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r3, [pc, #316]
 	ldr	r3, [r3, #0]
 	adds	r6, r0, #0
@@ -39,7 +30,7 @@ Func_080b5f0c:
 	bge.n	.L_080b5f34
 	mov	r7, sp
 	adds	r0, r7, #0
-	bl	sub_080b6a60
+	bl	BattleParty_PrepareActiveOwners
 	movs	r5, #0
 	mov	r8, r0
 	cmp	r5, r8
@@ -53,13 +44,13 @@ Func_080b5f0c:
 .L_080b5f5a:
 	mov	r2, sl
 	ldrh	r0, [r7, r2]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r2, #170
 	adds	r1, r0, #0
 	lsls	r2, r2, #1
 	ldr	r3, [pc, #252]
 	adds	r0, r6, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r3, #2
 	mov	r4, fp
 	mov	r1, sl
@@ -73,15 +64,15 @@ Func_080b5f0c:
 	lsls	r1, r1, #1
 	strb	r2, [r4, r3]
 	adds	r0, r6, #0
-	bl	sub_080063bc
+	bl	SerialRuntime_BeginTransferA
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_080b5fa8
-	bl	sub_08006458
+	bl	SerialRuntime_WaitForTransferA
 	adds	r5, #1
 	movs	r0, #2
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r7, #2
 	cmp	r5, r8
 	blt.n	.L_080b5f5a
@@ -93,9 +84,9 @@ Func_080b5f0c:
 	mov	r8, r3
 	b.n	.L_080b5fc0
 .L_080b5fb4:
-	bl	sub_08006458
+	bl	SerialRuntime_WaitForTransferA
 	movs	r0, #2
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r5, #1
 .L_080b5fc0:
 	cmp	r5, #2
@@ -105,7 +96,7 @@ Func_080b5f0c:
 	lsls	r1, r1, #1
 	strb	r4, [r7, #0]
 	adds	r0, r6, #0
-	bl	sub_080063bc
+	bl	SerialRuntime_BeginTransferA
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1
@@ -114,17 +105,17 @@ Func_080b5f0c:
 	movs	r5, #160
 	adds	r0, r6, #0
 	lsls	r5, r5, #1
-	bl	sub_08002df0
+	bl	Party_Do
 	adds	r0, r5, #0
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r6, r0, #0
 	movs	r0, #0
-	bl	sub_08077000
+	bl	Trade_GetOfferStateFar
 	ldr	r3, [pc, #116]
 	adds	r1, r0, #0
 	adds	r2, r5, #0
 	adds	r0, r6, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r4, r6, #0
 	movs	r3, #132
 	lsls	r3, r3, #1
@@ -151,19 +142,19 @@ Func_080b5f0c:
 	movs	r1, #160
 	lsls	r1, r1, #1
 	adds	r0, r6, #0
-	bl	sub_080063bc
+	bl	SerialRuntime_BeginTransferA
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_080b604a
-	bl	sub_08006458
+	bl	SerialRuntime_WaitForTransferA
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #2
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b604a:
 	adds	r0, r6, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

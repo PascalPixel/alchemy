@@ -1,10 +1,6 @@
 .syntax unified
 .include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_02000110, 0x02000110
-	.set sub_0200012a, 0x0200012a
-	.set sub_0200012c, 0x0200012c
-	.set sub_0200013a, 0x0200013a
 	.global Overlay_02000000
 Overlay_02000000:
 	.irp EntryTarget, 0x02008065, 0x02008039, 0x02008045, 0x0200804d, 0x0200805d, 0x02008041, 0x020080a5
@@ -25,7 +21,7 @@ Overlay_02000000:
 	.2byte 0x8100
 	.2byte 0x0200
 	push	{lr}
-	bl	sub_02000110
+	bl 0x020080b8
 	pop	{pc}
 	ldr	r0, [pc, #0]
 	bx	lr
@@ -42,16 +38,16 @@ Overlay_02000000:
 	str	r2, [r3, #0]
 	movs	r1, #2
 	movs	r0, #8
-	bl	sub_0200012c
+	bl 0x020080b0
 	movs	r0, #8
-	bl	sub_0200012a
+	bl 0x020080a8
 	adds	r0, #89
 	ldrb	r2, [r0, #0]
 	movs	r3, #4
 	orrs	r3, r2
 	strb	r3, [r0, #0]
 	movs	r0, #8
-	bl	sub_0200013a
+	bl 0x020080a8
 	adds	r0, #89
 	ldrb	r2, [r0, #0]
 	movs	r3, #16
@@ -65,6 +61,7 @@ Overlay_02000000:
 	.irp EntryTarget, 0x080c8089, 0x080c8201, 0x08108011
 	overlay_veneer \EntryTarget
 	.endr
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004278, 0x08004278
-	.set sub_080072f0, 0x080072f0
 	.global DisplayTransition_UpdateFrame
 	.global Func_08090658
 	.thumb_func
@@ -26,7 +24,7 @@ Func_08090658:
 	movs	r3, #0
 	strb	r3, [r4, #0]
 	ldr	r0, [pc, #252]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	ldr	r2, [pc, #252]
 	ldr	r3, [pc, #252]
 	ldrh	r1, [r2, #10]
@@ -57,7 +55,7 @@ Func_08090658:
 	movs	r1, #0
 	ldrsb	r1, [r4, r1]
 	ldr	r3, [pc, #216]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r3, #0
 	ldrsb	r3, [r5, r3]
 	subs	r7, #17

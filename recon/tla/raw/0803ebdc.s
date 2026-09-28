@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_0803e5a8, 0x0803e5a8
-	.set sub_0803ef48, 0x0803ef48
-	.set sub_0803ef8c, 0x0803ef8c
-	.set sub_0803f004, 0x0803f004
-	.set sub_0803f2e4, 0x0803f2e4
 	.global Func_0803ebdc
 	.thumb_func
 Func_0803ebdc:
@@ -20,7 +14,7 @@ Func_0803ebdc:
 	adds	r5, r7, r0
 	ldrh	r1, [r5, #0]
 	adds	r0, r7, #0
-	bl	sub_0803ef48
+	bl	Func_0803ef48
 	movs	r1, #192
 	lsls	r1, r1, #2
 	adds	r1, #162
@@ -30,7 +24,7 @@ Func_0803ebdc:
 	movs	r3, #33
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldrh	r3, [r5, #0]
 	movs	r0, #229
 	adds	r3, #1
@@ -105,7 +99,7 @@ Func_0803ebdc:
 	beq.n	.L_0803eca8
 .L_0803ec96:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r1, #24
 	ldrsh	r2, [r5, r1]
 	movs	r0, #16
@@ -127,7 +121,7 @@ Func_0803ebdc:
 	ldrh	r1, [r6, #32]
 	adds	r2, r5, #0
 	movs	r3, #1
-	bl	sub_0803f2e4
+	bl	0x0803f2e4
 	ldr	r5, [r5, #4]
 	adds	r6, #2
 	cmp	r5, #0
@@ -183,7 +177,7 @@ Func_0803ebdc:
 	movs	r1, #1
 	adds	r3, #1
 	strh	r3, [r6, #0]
-	bl	sub_0803f004
+	bl	0x0803f004
 	ldrh	r2, [r5, #0]
 	ldrh	r3, [r6, #0]
 	mov	r0, r8
@@ -218,18 +212,18 @@ Func_0803ebdc:
 	adds	r3, r7, r0
 	ldrh	r1, [r3, #0]
 	adds	r0, r7, #0
-	bl	sub_0803ef8c
+	bl	0x0803ef8c
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r1, #210
 	lsls	r1, r1, #2
 	adds	r3, r7, r1
 	ldr	r3, [r3, #0]
 	movs	r1, #0
 	ldrh	r0, [r3, #10]
-	bl	sub_0803e5a8
+	bl	Func_0803e5a8
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

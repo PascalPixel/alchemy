@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072f0, 0x080072f0
 	.global SceneTransform_ApplyPosition
 	.global Func_08004cb4
 	.thumb_func
@@ -27,7 +26,7 @@ Func_08004cb4:
 	adds	r0, r5, #0
 	str	r3, [r5, #44]
 	ldr	r3, [pc, #12]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	add	sp, #48
 	pop	{r5, r6}
 	pop	{r0}

@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801314c, 0x0801314c
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_08014d00, 0x08014d00
-	.set sub_0815e3ac, 0x0815e3ac
-	.set sub_0815e9f4, 0x0815e9f4
-	.set sub_0815f16c, 0x0815f16c
-	.set sub_0818f5cc, 0x0818f5cc
 	.global Func_0815e320
 	.thumb_func
 Func_0815e320:
@@ -16,16 +9,16 @@ Func_0815e320:
 	adds	r5, r0, #0
 	adds	r1, #14
 	movs	r0, #100
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r1, #246
 	lsls	r1, r1, #7
 	adds	r1, #124
 	movs	r0, #92
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	movs	r1, #128
 	lsls	r1, r1, #7
 	movs	r0, #96
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #92]
@@ -46,7 +39,7 @@ Func_0815e320:
 	cmp	r1, #100
 	bhi.n	.L_0815e374
 	adds	r0, r5, #0
-	bl	sub_0815f16c
+	bl	Func_0815f16c
 	b.n	.L_0815e396
 .L_0815e374:
 	cmp	r3, #210
@@ -55,23 +48,23 @@ Func_0815e320:
 	bne.n	.L_0815e384
 .L_0815e37c:
 	adds	r0, r5, #0
-	bl	sub_0818f5cc
+	bl	0x0818f5cc
 	b.n	.L_0815e396
 .L_0815e384:
 	cmp	r3, #199
 	ble.n	.L_0815e390
 	adds	r0, r5, #0
-	bl	sub_0815e9f4
+	bl	0x0815e9f4
 	b.n	.L_0815e396
 .L_0815e390:
 	adds	r0, r5, #0
-	bl	sub_0815e3ac
+	bl	Func_0815e3ac
 .L_0815e396:
 	movs	r0, #96
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	movs	r0, #92
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	movs	r0, #100
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	pop	{r5, pc}
 	.2byte 0x0000

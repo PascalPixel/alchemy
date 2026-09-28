@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
 	.global UiText_MeasureEntryDimensions
 	.global Func_08018850
 	.thumb_func
@@ -244,7 +243,7 @@ Func_08018850:
 	lsls	r0, r0, #8
 	subs	r1, #1
 	str	r2, [sp, #4]
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r1, #192
 	lsls	r1, r1, #4
 	ldr	r2, [sp, #4]

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 #if defined(TBS_EDITION_JA)
 #define WORK_NO 0x8BE
@@ -11,7 +12,7 @@
 /* 連続する2要素へ0x3e7を設定する。 */
 void UiWork_SetTwoEntriesTo999(void)
 {
-    s16 *work = (s16 *)*(void **)ADDR_03001E8C;
+    s16 *work = (s16 *)*(void **)((u32)&Data_03001e8c);
     s32 no = WORK_NO;
 
     do {

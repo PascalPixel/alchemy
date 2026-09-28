@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e74[];
 
 s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
 {
@@ -9,7 +10,7 @@ s32 BattleMotion_ReleaseObjectSlotByValue(s32 value)
     s32 index;
     s16 item;
 
-    base = *(u8 **)ADDR_03001E74;
+    base = *(u8 **)((u32)&Data_03001e74);
     index = 0;
     do {
         offset = index * 2 + 4;

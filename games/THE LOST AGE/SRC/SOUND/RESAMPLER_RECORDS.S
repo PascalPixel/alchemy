@@ -12,7 +12,6 @@
 @ credit: handwritten — TLA fixed-size ARM sound resampler record
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x0800046c
 	.set	.L_080004b8, 0x080004b8
 	.global Sound_ResamplerRecords
 Sound_ResamplerRecords:

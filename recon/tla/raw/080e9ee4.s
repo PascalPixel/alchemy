@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002090, 0x08002090
-	.set sub_08002096, 0x08002096
-	.set sub_0801489c, 0x0801489c
-	.set sub_080148e8, 0x080148e8
-	.set sub_080c8978, 0x080c8978
-	.set sub_080eb01c, 0x080eb01c
-	.set sub_080eb298, 0x080eb298
 	.global Func_080e9ee4
 	.thumb_func
 Func_080e9ee4:
@@ -28,12 +20,12 @@ Func_080e9ee4:
 	mov	r9, r2
 	adds	r1, r6, #0
 	mov	r0, r9
-	bl	sub_080148e8
+	bl	0x080148e8
 	adds	r5, r0, #0
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
 	adds	r0, r5, #0
-	bl	sub_08002090
+	bl	Math_Cosine
 	ldr	r3, [pc, #76]
 	mov	r1, sl
 	mov	r8, r3
@@ -43,7 +35,7 @@ Func_080e9ee4:
 	adds	r3, r3, r0
 	str	r3, [r7, #0]
 	adds	r0, r5, #0
-	bl	sub_08002096
+	bl	Math_Sine
 	mov	r1, sl
 	mov	lr, r8
 	.2byte 0xf800
@@ -118,7 +110,7 @@ Func_080e9ee4:
 	ldr	r0, [r3, #0]
 	adds	r2, r6, #0
 	ldr	r1, [r5, #0]
-	bl	sub_0801489c
+	bl	0x0801489c
 	movs	r7, #132
 	ldr	r3, [r6, #0]
 	lsls	r7, r7, #5
@@ -156,7 +148,7 @@ Func_080e9ee4:
 	adds	r3, #80
 	add	r3, r8
 	ldr	r0, [r3, #0]
-	bl	sub_0801489c
+	bl	0x0801489c
 	ldr	r3, [r7, #24]
 .L_080ea00a:
 	adds	r3, #1
@@ -198,7 +190,7 @@ Func_080e9ee4:
 	str	r3, [r5, #12]
 	ldr	r3, [r7, #4]
 	str	r3, [r5, #16]
-	bl	sub_080eb01c
+	bl	0x080eb01c
 	ldr	r3, [r7, #24]
 .L_080ea05c:
 	adds	r3, #1
@@ -216,7 +208,7 @@ Func_080e9ee4:
 	str	r3, [r5, #12]
 	ldr	r3, [r7, #4]
 	str	r3, [r5, #16]
-	bl	sub_080eb01c
+	bl	0x080eb01c
 	b.n	.L_080ea0bc
 .L_080ea080:
 	cmp	r3, #3
@@ -247,7 +239,7 @@ Func_080e9ee4:
 	str	r3, [r5, #12]
 	ldr	r3, [r7, #4]
 	str	r3, [r5, #16]
-	bl	sub_080eb01c
+	bl	0x080eb01c
 .L_080ea0bc:
 	movs	r2, #1
 	negs	r2, r2
@@ -274,7 +266,7 @@ Func_080e9ee4:
 	cmp	r0, #19
 	bhi.n	.L_080ea130
 	movs	r1, #5
-	bl	sub_08002054
+	bl	Math_Div
 	ldrh	r1, [r6, #0]
 	movs	r3, #7
 	ands	r3, r0
@@ -289,11 +281,11 @@ Func_080e9ee4:
 	orrs	r3, r1
 	strh	r3, [r5, #8]
 	adds	r1, r7, #0
-	bl	sub_080eb298
+	bl	Func_080eb298
 	adds	r0, r7, #0
 	movs	r1, #63
 	ldr	r2, [pc, #20]
-	bl	sub_080c8978
+	bl	BattleFx_IntegrateVector3
 	ldr	r3, [r7, #24]
 	adds	r3, #1
 	str	r3, [r7, #24]

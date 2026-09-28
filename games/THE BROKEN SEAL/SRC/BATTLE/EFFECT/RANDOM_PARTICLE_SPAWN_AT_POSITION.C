@@ -25,7 +25,7 @@ struct Object_0808f28c {
 
 extern void Vector_AddPolarOffset(s32, s32, struct Values_0808f28c *);
 extern struct Object_0808f28c *Object_Spawn(s32, u32, u32, u32);
-extern void Object_SetCallback(struct Object_0808f28c *, void *);
+extern void ObjectDispatch_InitializeFar(struct Object_0808f28c *, void *);
 extern void Object_SetMode(struct Object_0808f28c *, s32);
 
 void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source)
@@ -48,7 +48,7 @@ void BattleFx_SpawnRandomParticleAtPosition(const struct Source_0808f28c *source
         s32 mask;
         u8 flags;
 
-        Object_SetCallback(object, (void *)0x0809E87C);
+        ObjectDispatch_InitializeFar(object, (void *)0x0809E87C);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

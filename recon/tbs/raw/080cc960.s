@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004458, 0x08004458
-	.set sub_080049ac, 0x080049ac
-	.set sub_08004bd4, 0x08004bd4
-	.set sub_08004c1c, 0x08004c1c
-	.set sub_08004c6c, 0x08004c6c
-	.set sub_080cde90, 0x080cde90
-	.set sub_080e3944, 0x080e3944
 	.global Unnamed_080cc960
 	.global Func_080cc960
 	.thumb_func
@@ -37,7 +30,7 @@ Func_080cc960:
 	ldr	r5, [pc, #340]
 	mov	sl, r2
 .L_080cc990:
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #15
 	ands	r0, r3
 	adds	r3, r0, #0
@@ -45,13 +38,13 @@ Func_080cc960:
 	adds	r0, #40
 	str	r3, [r5, #0]
 	str	r0, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	str	r0, [r5, #12]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	str	r0, [r5, #16]
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #1
 	movs	r1, #128
 	ands	r0, r6
@@ -83,16 +76,16 @@ Func_080cc960:
 	ldr	r3, [r1, #0]
 	cmp	r3, #0
 	ble.n	.L_080ccaae
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	mov	r2, r8
 	ldr	r0, [r2, #20]
-	bl	sub_08004c6c
+	bl	SceneTransform_ApplyRoll
 	mov	r3, r8
 	ldr	r0, [r3, #12]
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 	mov	r1, r8
 	ldr	r0, [r1, #16]
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	add	r4, sp, #24
@@ -101,7 +94,7 @@ Func_080cc960:
 	mov	r0, r9
 	adds	r1, r4, #0
 	str	r4, [sp, #4]
-	bl	sub_080e3944
+	bl	EffectPosition_ApplyBaseAndYOffset
 	ldr	r4, [sp, #4]
 	ldr	r3, [r4, #0]
 	adds	r3, #64
@@ -116,7 +109,7 @@ Func_080cc960:
 	str	r3, [r1, #0]
 	mov	r0, r9
 	adds	r1, r7, #0
-	bl	sub_080e3944
+	bl	EffectPosition_ApplyBaseAndYOffset
 	ldr	r3, [r7, #0]
 	adds	r3, #64
 	str	r3, [r7, #0]
@@ -153,7 +146,7 @@ Func_080cc960:
 	adds	r6, #48
 	str	r4, [sp, #4]
 	str	r6, [sp, #0]
-	bl	sub_080cde90
+	bl	Func_080cde90
 	ldr	r4, [sp, #4]
 	ldr	r1, [r7, #4]
 	ldr	r3, [r4, #4]
@@ -162,7 +155,7 @@ Func_080cc960:
 	subs	r1, #1
 	subs	r3, #1
 	str	r6, [sp, #0]
-	bl	sub_080cde90
+	bl	Func_080cde90
 	ldr	r4, [sp, #4]
 	ldr	r0, [r7, #0]
 	ldr	r1, [r7, #4]
@@ -170,7 +163,7 @@ Func_080cc960:
 	ldr	r3, [r4, #4]
 	adds	r5, #56
 	str	r5, [sp, #0]
-	bl	sub_080cde90
+	bl	Func_080cde90
 .L_080ccaae:
 	movs	r1, #1
 	add	sl, r1

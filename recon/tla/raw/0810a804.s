@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080ad100, 0x080ad100
-	.set sub_0810a7dc, 0x0810a7dc
 	.global Func_0810a804
 	.thumb_func
 Func_0810a804:
@@ -9,7 +7,7 @@ Func_0810a804:
 	sub	sp, #32
 	mov	r6, sp
 	adds	r0, r6, #0
-	bl	sub_080ad100
+	bl	0x080ad100
 	movs	r5, #0
 	adds	r7, r0, #0
 	cmp	r5, r7
@@ -17,7 +15,7 @@ Func_0810a804:
 .L_0810a818:
 	ldrh	r0, [r6, #0]
 	adds	r6, #2
-	bl	sub_0810a7dc
+	bl	0x0810a7dc
 	cmp	r0, #0
 	beq.n	.L_0810a828
 	movs	r0, #1

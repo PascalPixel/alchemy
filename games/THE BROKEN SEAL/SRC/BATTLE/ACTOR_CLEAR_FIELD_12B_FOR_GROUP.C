@@ -4,6 +4,10 @@
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_ESCAPE.H"
+s32 Battle_CollectPartyCommandsFar(void *entries, u16 *excluded_units, s32 excluded_count);
+void Runtime_BumpFree(void *ptr);
+extern u8 Data_03001e74[];
+s32 BattleParty_ListActorIds(s32 groups, u16 *ids);
 
 /* battle/actor/clear_field_12b_for_group.c */
 u8 *Owner_GetStateFar(s32);
@@ -20,7 +24,7 @@ void BattleUnit_ClearField12bForGroup(void)
     s32 count;
     s32 index;
 
-    count = Actor_Apply(3, ids);
+    count = BattleParty_ListActorIds(3, ids);
     for (index = 0; index < count; index++) {
         struct ActorState_080b90ac *actor;
 
@@ -54,7 +58,7 @@ s32 BattleEscape_CheckSuccess(void)
     struct BattleEscapeState *escape_state;
 
     escaped = 0;
-    escape_state = *(struct BattleEscapeState **)ADDR_03001E74;
+    escape_state = *(struct BattleEscapeState **)((u32)&Data_03001e74);
     if (escape_state->guaranteed == 1) {
         escaped = 1;
     } else {

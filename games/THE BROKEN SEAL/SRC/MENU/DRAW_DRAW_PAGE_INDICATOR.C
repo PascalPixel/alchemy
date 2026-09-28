@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
+void UiWindow_SetTilemapEntryFar(s32 window, s32 tile, s32 x, s32 y, s32 style);
 
 #define PAGE_LABEL_FIRST 49
 #define PAGE_CAP_LEFT 0xf128
@@ -27,17 +28,17 @@ void Menu_DrawPageIndicator(
 
     x -= page_count;
     if (page_count > 1) {
-        Menu_SetRange(window, PAGE_CAP_LEFT, x - 1, -1, 0);
+        UiWindow_SetTilemapEntryFar(window, PAGE_CAP_LEFT, x - 1, -1, 0);
 
         for (page = 0; page < page_count; page++) {
             if (page == selected_page)
-                Menu_SetRange(window, tile, x, -1, 2);
+                UiWindow_SetTilemapEntryFar(window, tile, x, -1, 2);
             else
-                Menu_SetRange(window, tile, x, -1, 3);
+                UiWindow_SetTilemapEntryFar(window, tile, x, -1, 3);
             tile++;
             x++;
         }
 
-        Menu_SetRange(window, PAGE_CAP_RIGHT, x, -1, 0);
+        UiWindow_SetTilemapEntryFar(window, PAGE_CAP_RIGHT, x, -1, 0);
     }
 }

@@ -5,6 +5,9 @@
 	.thumb_func
 SerialRuntime_BeginTransferB:
 Func_08006408:
+	.global Party_Check
+	.thumb_func
+Party_Check:
 	push	{r5, r6, lr}
 	ldr	r5, [pc, #56]
 	ldr	r4, [r5, #0]

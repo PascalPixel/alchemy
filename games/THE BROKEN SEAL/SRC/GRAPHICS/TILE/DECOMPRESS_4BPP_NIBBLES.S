@@ -4,7 +4,7 @@
 @ ldm r5, {r2, r3}. A data table carries no credit; TLA's copy of the
 @ decoder leaves the same 8 bytes outside its credit.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08015b30
 	.4byte 0xfedcba98
 	.4byte 0x76543210

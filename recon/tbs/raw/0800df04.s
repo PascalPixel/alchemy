@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004458, 0x08004458
-	.set sub_0800447c, 0x0800447c
-	.set sub_080044d0, 0x080044d0
-	.set sub_0800d14c, 0x0800d14c
-	.set sub_0800d924, 0x0800d924
-	.set sub_080120dc, 0x080120dc
 	.global ScriptObject_WanderNearHome
 	.global Func_0800df04
 	.thumb_func
@@ -93,7 +87,7 @@ Func_0800df04:
 	ble.n	.L_0800df9e
 	b.n	.L_0800e146
 .L_0800df9e:
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [pc, #624]
 	ldr	r1, [sp, #20]
 	movs	r0, r0
@@ -102,9 +96,9 @@ Func_0800df04:
 	ldr	r4, [sp, #24]
 	adds	r4, r4, r0
 	mov	r8, r4
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [r6, #8]
 	add	r7, sp, #40
 	ldr	r1, [sp, #12]
@@ -126,10 +120,10 @@ Func_0800df04:
 	lsls	r0, r0, #12
 	adds	r2, r7, #0
 	str	r4, [sp, #0]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	sub_0800d924
+	bl	ScriptObject_CheckOverlap
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_0800df92
@@ -142,10 +136,10 @@ Func_0800df04:
 	str	r3, [r7, #8]
 	mov	r0, r8
 	adds	r2, r7, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	sub_080120dc
+	bl	Func_080120dc
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_0800df92
@@ -162,10 +156,10 @@ Func_0800df04:
 	str	r3, [r5, #8]
 	mov	r0, r8
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080120dc
+	bl	Func_080120dc
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_0800df92
@@ -180,10 +174,10 @@ Func_0800df04:
 	adds	r1, r4, r3
 	mov	r0, r8
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080120dc
+	bl	Func_080120dc
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_0800df92
@@ -197,10 +191,10 @@ Func_0800df04:
 	str	r3, [r5, #8]
 	mov	r0, r8
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080120dc
+	bl	Func_080120dc
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_0800e098
@@ -217,10 +211,10 @@ Func_0800df04:
 	str	r3, [r5, #8]
 	mov	r0, r8
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080120dc
+	bl	Func_080120dc
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_0800e0c2
@@ -236,10 +230,10 @@ Func_0800df04:
 	mov	r0, r8
 	adds	r1, r4, r3
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080120dc
+	bl	Func_080120dc
 	cmp	r0, #0
 	beq.n	.L_0800e0e8
 	b.n	.L_0800df92
@@ -291,14 +285,14 @@ Func_0800df04:
 	ldr	r2, [r7, #4]
 	adds	r0, r6, #0
 	adds	r3, r4, #0
-	bl	sub_0800d14c
+	bl	Object_SetMoveTarget
 	b.n	.L_0800e1f6
 .L_0800e146:
 	movs	r1, #0
 	mov	sl, r1
 	mov	r0, r9
 	mov	r1, fp
-	bl	sub_080044d0
+	bl	ArcTan2
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2
@@ -311,17 +305,17 @@ Func_0800df04:
 	mov	r4, sl
 	cmp	r4, #7
 	bgt.n	.L_0800e1f6
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [pc, #164]
 	ldr	r1, [sp, #20]
 	mov	ip, pc
 	bx	r3
 	ldr	r5, [sp, #24]
 	adds	r5, r5, r0
-	bl	sub_08004458
+	bl	Random16
 	mov	r8, r5
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	ldr	r1, [sp, #12]
 	lsls	r2, r1, #16
 	ldr	r3, [r6, #8]
@@ -342,10 +336,10 @@ Func_0800df04:
 	adds	r1, r7, #0
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_0800d924
+	bl	ScriptObject_CheckOverlap
 	cmp	r0, #0
 	bne.n	.L_0800e15e
 	ldr	r3, [r6, #8]
@@ -357,10 +351,10 @@ Func_0800df04:
 	adds	r1, r7, #0
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080120dc
+	bl	Func_080120dc
 	cmp	r0, #0
 	bne.n	.L_0800e15e
 	adds	r1, r6, #0
@@ -373,7 +367,7 @@ Func_0800df04:
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #4]
 	ldr	r3, [r5, #8]
-	bl	sub_0800d14c
+	bl	Object_SetMoveTarget
 .L_0800e1f6:
 	ldrh	r3, [r6, #4]
 	adds	r3, #4

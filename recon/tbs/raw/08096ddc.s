@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_08009020, 0x08009020
-	.set sub_080090c8, 0x080090c8
 	.global BattleFx_SpawnScaledArcObjects
 	.global Func_08096ddc
 	.thumb_func
@@ -33,7 +30,7 @@ Func_08096ddc:
 	ldr	r3, [r6, #16]
 	ldr	r2, [r6, #12]
 	movs	r0, #26
-	bl	sub_080090c8
+	bl	Engine_ObjectCreate
 	lsls	r3, r7, #2
 	mov	r1, r9
 	str	r0, [r3, r1]
@@ -65,13 +62,13 @@ Func_08096ddc:
 .L_08096e4c:
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	sub_08009020
+	bl	AnimationObjects_SelectAnimationFar
 	adds	r3, r5, #0
 	adds	r3, #38
 	mov	r2, r8
 	strb	r2, [r3, #0]
 	ldrb	r0, [r5, #28]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	mov	r3, sl
 	adds	r3, #70
 	ldrh	r3, [r3, #0]

@@ -11,7 +11,6 @@
 @ uncredited, apart from the 41 relocated case addresses of its tables.
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080388fc
 	.global Tile_BuildMetatiles
 	.thumb_func
 Tile_BuildMetatiles:

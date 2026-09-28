@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016f94, 0x08016f94
-	.set sub_0801700c, 0x0801700c
-	.set sub_0801787c, 0x0801787c
 	.global Func_08017054
 	.thumb_func
 Func_08017054:
@@ -46,7 +43,7 @@ Func_08017054:
 	movs	r0, #0
 	mov	r8, r0
 	adds	r0, r4, #0
-	bl	sub_08016f94
+	bl	0x08016f94
 	ldr	r7, [pc, #8]
 	movs	r0, #192
 	lsls	r0, r0, #8
@@ -76,7 +73,7 @@ Func_08017054:
 .L_080170dc:
 	ldr	r1, [r7, #0]
 	adds	r0, r5, #0
-	bl	sub_0801787c
+	bl	_call_via_r1
 	lsls	r0, r0, #24
 	lsrs	r0, r0, #24
 	cmp	r0, r6
@@ -87,13 +84,13 @@ Func_08017054:
 	beq.n	.L_080170dc
 	ldr	r1, [r7, #0]
 	adds	r0, r5, #0
-	bl	sub_0801787c
+	bl	_call_via_r1
 	lsls	r0, r0, #24
 	lsrs	r0, r0, #24
 	cmp	r0, r6
 	bne.n	.L_080170b8
 .L_08017104:
-	bl	sub_0801700c
+	bl	0x0801700c
 	mov	r0, r8
 	pop	{r3}
 	mov	r8, r3

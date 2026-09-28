@@ -8,8 +8,8 @@
 @ a run-time buffer are data, so this module carries no credit; TLA leaves
 @ the same 236 bytes after its DECODE_FRAME.S links outside their credit.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08009d90
 	.4byte 0x00000000
 	.4byte 0x080091d8
 	.4byte 0x080091b8

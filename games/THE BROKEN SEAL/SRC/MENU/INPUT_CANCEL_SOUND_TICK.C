@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
+extern u8 Data_03001c94[];
 
 /* menu/input/cancel_sound_tick.c */
 /* menu/input/cancel_sound_tick.c */
@@ -11,7 +12,7 @@ s32 Audio_PlayCue(s32);
 
 void Menu_CancelSoundTick(void)
 {
-    if (*(s32 *)ADDR_03001C94 & 8) {
+    if (*(s32 *)((u32)&Data_03001c94) & 8) {
         Audio_PlayCue(SOUND_MENU_CANCEL);
         GameFlag_SetBitFar(0x150);
         Scheduler_RemoveCallback((s32)Menu_CancelSoundTick);

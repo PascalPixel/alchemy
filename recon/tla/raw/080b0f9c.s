@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080afe78, 0x080afe78
 	.global Party_SumDjinnCounts
 	.global Func_080b0f9c
 	.thumb_func
@@ -13,7 +11,7 @@ Func_080b0f9c:
 	adds	r7, r0, #0
 	adds	r0, r6, #0
 	movs	r5, #0
-	bl	sub_080afe78
+	bl	Party_ListActiveOwners
 	cmp	r5, r0
 	bge.n	.L_080b0ffc
 	adds	r1, r6, #0
@@ -22,7 +20,7 @@ Func_080b0f9c:
 	ldrh	r0, [r1, #0]
 	adds	r1, #2
 	str	r1, [sp, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r2, r0, #0
 	movs	r0, #1
 	negs	r0, r0

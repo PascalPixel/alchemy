@@ -1,20 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004080, 0x08004080
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016478, 0x08016478
-	.set sub_08019da8, 0x08019da8
-	.set sub_08019fcc, 0x08019fcc
-	.set sub_0801a2ec, 0x0801a2ec
-	.set sub_0801a404, 0x0801a404
-	.set sub_0801a4fc, 0x0801a4fc
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_0801e940, 0x0801e940
-	.set sub_0801ea08, 0x0801ea08
-	.set sub_0801eadc, 0x0801eadc
 	.global DebugMenu_BrowseIcons
 	.thumb_func
 DebugMenu_BrowseIcons:
@@ -39,7 +24,7 @@ Func_08029554:
 	ldrh	r1, [r1, #0]
 	movs	r0, #1
 	strh	r1, [r3, #4]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_08029580:
 	ldr	r2, [pc, #480]
 	ldr	r3, [r2, #0]
@@ -124,17 +109,17 @@ Func_08029554:
 	movs	r1, #3
 	adds	r0, #3
 	mov	fp, r2
-	bl	sub_080022fc
+	bl	__modsi3
 	movs	r1, #2
 	mov	r9, r0
 	mov	r0, sl
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #0
 	movs	r0, #10
 	movs	r2, #18
 	movs	r3, #12
 	str	r5, [sp, #0]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	mov	r1, r9
 	mov	sl, r0
 	cmp	r1, #0
@@ -150,27 +135,27 @@ Func_08029554:
 	mov	r1, sl
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_0801e940
+	bl	UiText_DrawStringInWindow
 	b.n	.L_0802965e
 .L_08029652:
 	ldr	r0, [pc, #284]
 	mov	r1, sl
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_0801e940
+	bl	UiText_DrawStringInWindow
 .L_0802965e:
 	ldr	r0, [pc, #276]
 	mov	r1, sl
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_0801e940
+	bl	UiText_DrawStringInWindow
 	movs	r3, #8
 	str	r3, [sp, #0]
 	mov	r0, fp
 	movs	r1, #0
 	mov	r2, sl
 	movs	r3, #40
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	mov	r1, fp
 	lsls	r1, r1, #5
 	mov	r8, r1
@@ -180,12 +165,12 @@ Func_08029554:
 	movs	r1, #3
 	mov	r2, sl
 	movs	r3, #64
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r0, [pc, #228]
 	mov	r1, sl
 	movs	r2, #88
 	movs	r3, #8
-	bl	sub_0801e940
+	bl	UiText_DrawStringInWindow
 	movs	r3, #8
 	mov	r0, r8
 	str	r3, [sp, #0]
@@ -193,7 +178,7 @@ Func_08029554:
 	movs	r1, #3
 	mov	r2, sl
 	movs	r3, #96
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	movs	r5, #0
 .L_080296b0:
 	movs	r3, #1
@@ -220,7 +205,7 @@ Func_08029554:
 	add	r2, sp, #12
 	movs	r1, #1
 	add	r3, sp, #8
-	bl	sub_08019fcc
+	bl	UiIcon_BuildItemIconTiles
 	b.n	.L_080296fc
 .L_080296e4:
 	mov	r3, r9
@@ -233,7 +218,7 @@ Func_08029554:
 	movs	r1, #1
 	add	r2, sp, #12
 	add	r3, sp, #8
-	bl	sub_0801a404
+	bl	UiIcon_BuildAbilityIconTiles
 .L_080296fc:
 	movs	r1, #128
 	ldr	r0, [sp, #12]
@@ -241,34 +226,34 @@ Func_08029554:
 	mov	r2, sl
 	adds	r3, r7, #0
 	str	r6, [sp, #0]
-	bl	sub_0801eadc
+	bl	RenderOutput_Create
 	b.n	.L_0802972e
 .L_0802970e:
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	movs	r1, #0
 	adds	r2, r0, #0
 	adds	r0, r5, #0
 	str	r2, [sp, #12]
-	bl	sub_0801a2ec
+	bl	Ui_BuildPatternToSlot
 	movs	r1, #128
 	ldr	r0, [sp, #12]
 	lsls	r1, r1, #23
 	mov	r2, sl
 	adds	r3, r7, #0
 	str	r6, [sp, #0]
-	bl	sub_0801eadc
+	bl	RenderOutput_Create
 .L_0802972e:
 	adds	r5, #1
 	cmp	r5, #31
 	ble.n	.L_080296b0
 .L_08029734:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_08029580
 .L_0802973c:
 	mov	r0, sl
 	movs	r1, #2
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	ldr	r3, [pc, #24]
 	ldr	r2, [r3, #0]
 	movs	r3, #0

@@ -1,38 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080040b4, 0x080040b4
-	.set sub_080040d0, 0x080040d0
-	.set sub_08004938, 0x08004938
-	.set sub_080072f0, 0x080072f0
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016498, 0x08016498
-	.set sub_08016738, 0x08016738
-	.set sub_08017248, 0x08017248
-	.set sub_08017aa4, 0x08017aa4
-	.set sub_08019000, 0x08019000
-	.set sub_0801965c, 0x0801965c
-	.set sub_08019908, 0x08019908
-	.set sub_0801e318, 0x0801e318
-	.set sub_0801e41c, 0x0801e41c
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_0801e8b0, 0x0801e8b0
-	.set sub_0801ea08, 0x0801ea08
-	.set sub_0801f200, 0x0801f200
-	.set sub_08021ab0, 0x08021ab0
-	.set sub_08021b80, 0x08021b80
-	.set sub_08022768, 0x08022768
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_080771f8, 0x080771f8
-	.set sub_08077258, 0x08077258
-	.set sub_08077290, 0x08077290
-	.set sub_080b5098, 0x080b5098
-	.set sub_080f9010, 0x080f9010
 	.global Func_08023178
 	.thumb_func
 Func_08023178:
@@ -57,12 +24,12 @@ Func_08023178:
 	str	r1, [sp, #80]
 	mov	sl, r2
 	str	r3, [sp, #68]
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	movs	r4, #0
 	str	r0, [sp, #52]
 	ldr	r0, [sp, #68]
 	str	r4, [sp, #48]
-	bl	sub_08077290
+	bl	Party_SumDjinnCountsFar
 	str	r0, [sp, #44]
 	adds	r5, #168
 	ldr	r5, [r5, #0]
@@ -71,12 +38,12 @@ Func_08023178:
 	str	r1, [r5, #72]
 	cmp	r0, #0
 	beq.n	.L_080231ca
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	ldr	r2, [sp, #48]
 	str	r2, [r5, #68]
 .L_080231ca:
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r6, #4
 	movs	r2, #0
 	add	r3, sp, #100
@@ -92,7 +59,7 @@ Func_08023178:
 	str	r3, [r2, #12]
 	str	r3, [r2, #16]
 	movs	r0, #128
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	movs	r3, #142
 	movs	r4, #136
 	lsls	r3, r3, #1
@@ -110,7 +77,7 @@ Func_08023178:
 	movs	r6, #10
 .L_0802320e:
 	movs	r0, #128
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	subs	r6, #1
 	mov	r2, r8
 	strb	r2, [r5, #0]
@@ -156,7 +123,7 @@ Func_08023178:
 	movs	r0, #0
 	str	r1, [sp, #56]
 	str	r1, [sp, #60]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r3, #10
 	str	r0, [sp, #76]
 	str	r3, [sp, #0]
@@ -164,9 +131,9 @@ Func_08023178:
 	movs	r2, #30
 	movs	r3, #6
 	movs	r0, #0
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #72]
-	bl	sub_0801e318
+	bl	UiWindow_MarkVisibleTileAttributes
 	movs	r3, #170
 	movs	r4, #164
 	mov	r2, sp
@@ -192,7 +159,7 @@ Func_08023178:
 	str	r3, [r2, #8]
 	ldr	r1, [sp, #52]
 	ldr	r0, [sp, #84]
-	bl	sub_08021b80
+	bl	Ui_LoadEntryForKind
 	ldr	r3, [pc, #52]
 	ands	r0, r3
 	ldr	r3, [sp, #28]
@@ -230,7 +197,7 @@ Func_08023178:
 	.2byte 0xfe00
 	.2byte 0xffff
 .L_0802330c:
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r3, [sp, #104]
 	cmp	r3, #21
 	bhi.n	.L_08023378
@@ -296,7 +263,7 @@ Func_08023178:
 	ldrh	r1, [r1, #14]
 	ldrh	r3, [r3, #10]
 	str	r4, [sp, #0]
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 	ldr	r4, [sp, #48]
 	cmp	r4, #0
 	bne.n	.L_080233c2
@@ -315,7 +282,7 @@ Func_08023178:
 	movs	r2, #0
 	movs	r0, #111
 	str	r2, [sp, #40]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r3, [r6, #20]
 	adds	r5, #1
 	cmp	r5, r3
@@ -333,7 +300,7 @@ Func_08023178:
 	movs	r0, #111
 	subs	r5, #1
 	str	r1, [sp, #40]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	cmp	r5, #0
 	bge.n	.L_080234c8
 	ldr	r3, [r6, #20]
@@ -355,7 +322,7 @@ Func_08023178:
 	movs	r3, #0
 	movs	r0, #111
 	str	r3, [sp, #40]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r1, [r6, #16]
 	movs	r3, #2
 	eors	r1, r3
@@ -424,7 +391,7 @@ Func_08023178:
 	ldrsb	r5, [r6, r5]
 .L_080234a6:
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080234c8
 .L_080234ae:
 	ldr	r4, [sp, #40]
@@ -438,7 +405,7 @@ Func_08023178:
 	str	r1, [r6, #16]
 	movs	r5, #0
 	ldrsb	r5, [r6, r5]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080234c8:
 	add	r2, sp, #96
 	ldr	r3, [r2, #16]
@@ -476,7 +443,7 @@ Func_08023178:
 	str	r3, [sp, #0]
 	adds	r1, #1
 	movs	r3, #1
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 	b.n	.L_08023544
 .L_08023512:
 	cmp	r2, #1
@@ -520,7 +487,7 @@ Func_08023178:
 	ldr	r0, [sp, #84]
 	lsls	r3, r3, #3
 	str	r3, [sp, #60]
-	bl	sub_080b5098
+	bl	GetBattleObjectSlotFar
 	ldr	r3, [r0, #0]
 	ldr	r4, [sp, #8]
 	ldr	r2, [r3, #80]
@@ -553,14 +520,14 @@ Func_08023178:
 	strb	r3, [r4, #4]
 	ldr	r0, [sp, #8]
 	movs	r1, #240
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r3, [pc, #56]
 	ldr	r1, [sp, #12]
 	str	r3, [r1, #4]
 	str	r7, [r1, #8]
 	ldr	r0, [sp, #64]
 	ldr	r1, [pc, #48]
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r4, [sp, #12]
 	ldrh	r3, [r4, #8]
 	mov	r2, r8
@@ -627,17 +594,17 @@ Func_08023178:
 	.2byte 0x0300
 .L_08023648:
 	movs	r1, #241
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	mov	r2, sl
 	cmp	r2, #0
 	bne.n	.L_08023656
 	b.n	.L_08023cfa
 .L_08023656:
 	ldr	r0, [sp, #84]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	r9, r0
-	bl	sub_0801e318
-	bl	sub_08016738
+	bl	UiWindow_MarkVisibleTileAttributes
+	bl	Ui_FillVramBlockPattern
 	movs	r3, #1
 	mov	r4, sl
 	ands	r3, r4
@@ -646,7 +613,7 @@ Func_08023178:
 	b.n	.L_08023b42
 .L_08023672:
 	ldr	r0, [sp, #76]
-	bl	sub_08016498
+	bl	RenderOutput_RedrawSavedRect
 	ldr	r1, [sp, #72]
 	ldr	r3, [sp, #72]
 	ldrh	r0, [r1, #12]
@@ -654,37 +621,37 @@ Func_08023178:
 	ldrh	r1, [r1, #14]
 	ldrh	r3, [r3, #10]
 	str	r7, [sp, #0]
-	bl	sub_08017248
+	bl	UiWindow_MapTextCanvasTiles
 	movs	r3, #14
 	str	r3, [sp, #0]
 	ldr	r0, [sp, #76]
 	movs	r1, #0
 	movs	r2, #14
 	movs	r3, #29
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	mov	r0, r9
 	ldr	r1, [sp, #76]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_0801e8b0
+	bl	UiText_DrawStringAtOffset
 	ldr	r0, [pc, #616]
 	ldr	r1, [sp, #76]
 	movs	r2, #56
 	movs	r3, #0
-	bl	sub_0801e8b0
+	bl	UiText_DrawStringAtOffset
 	mov	r4, r9
 	ldr	r2, [sp, #76]
 	ldrb	r0, [r4, #15]
 	movs	r1, #2
 	movs	r3, #72
 	str	r7, [sp, #0]
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r7, [pc, #592]
 	ldr	r1, [sp, #76]
 	adds	r0, r7, #0
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	movs	r3, #146
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -694,12 +661,12 @@ Func_08023178:
 	ldr	r2, [sp, #76]
 	movs	r1, #8
 	movs	r3, #40
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r0, [pc, #560]
 	ldr	r1, [sp, #76]
 	movs	r2, #40
 	movs	r3, #24
-	bl	sub_0801e8b0
+	bl	UiText_DrawStringAtOffset
 	movs	r3, #24
 	mov	r2, r9
 	movs	r1, #56
@@ -709,13 +676,13 @@ Func_08023178:
 	ldr	r2, [sp, #76]
 	movs	r1, #4
 	movs	r3, #56
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r5, [pc, #528]
 	ldr	r1, [sp, #76]
 	adds	r0, r5, #0
 	movs	r2, #88
 	movs	r3, #24
-	bl	sub_0801e8b0
+	bl	UiText_DrawStringAtOffset
 	mov	r1, r9
 	mov	r2, r8
 	movs	r4, #52
@@ -724,12 +691,12 @@ Func_08023178:
 	str	r2, [sp, #0]
 	movs	r1, #4
 	ldr	r2, [sp, #76]
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	movs	r3, #32
 	ldr	r1, [sp, #76]
 	ldr	r0, [pc, #496]
 	movs	r2, #40
-	bl	sub_0801e8b0
+	bl	UiText_DrawStringAtOffset
 	mov	r4, r9
 	ldr	r2, [sp, #76]
 	movs	r3, #58
@@ -738,12 +705,12 @@ Func_08023178:
 	movs	r1, #4
 	movs	r3, #56
 	str	r6, [sp, #0]
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	adds	r0, r5, #0
 	ldr	r1, [sp, #76]
 	movs	r2, #88
 	movs	r3, #32
-	bl	sub_0801e8b0
+	bl	UiText_DrawStringAtOffset
 	mov	r2, r9
 	movs	r1, #54
 	ldrsh	r0, [r2, r1]
@@ -751,13 +718,13 @@ Func_08023178:
 	ldr	r2, [sp, #76]
 	movs	r1, #4
 	str	r6, [sp, #0]
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	adds	r0, r7, #0
 	ldr	r1, [sp, #76]
 	subs	r0, #10
 	movs	r2, #136
 	movs	r3, #16
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	mov	r3, r9
 	ldrh	r0, [r3, #60]
 	movs	r3, #16
@@ -765,13 +732,13 @@ Func_08023178:
 	ldr	r2, [sp, #76]
 	movs	r1, #3
 	movs	r3, #184
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	adds	r0, r7, #0
 	ldr	r1, [sp, #76]
 	subs	r0, #9
 	movs	r2, #136
 	movs	r3, #24
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	mov	r4, r9
 	mov	r1, r8
 	ldrh	r0, [r4, #62]
@@ -779,13 +746,13 @@ Func_08023178:
 	str	r1, [sp, #0]
 	movs	r3, #184
 	movs	r1, #3
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	adds	r0, r7, #0
 	ldr	r1, [sp, #76]
 	subs	r0, #8
 	movs	r2, #136
 	movs	r3, #32
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	mov	r3, r9
 	adds	r3, #64
 	ldr	r2, [sp, #76]
@@ -793,12 +760,12 @@ Func_08023178:
 	movs	r1, #3
 	movs	r3, #184
 	str	r6, [sp, #0]
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	subs	r0, r7, #7
 	ldr	r1, [sp, #76]
 	movs	r2, #136
 	movs	r3, #40
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	mov	r3, r9
 	adds	r3, #66
 	ldrb	r0, [r3, #0]
@@ -807,7 +774,7 @@ Func_08023178:
 	ldr	r2, [sp, #76]
 	movs	r1, #3
 	movs	r3, #184
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r3, [pc, #312]
 	add	r3, r9
 	ldrb	r0, [r3, #0]
@@ -816,7 +783,7 @@ Func_08023178:
 	adds	r0, r0, r3
 	ldr	r1, [sp, #76]
 	movs	r3, #48
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r2, [sp, #44]
 	cmp	r2, #0
 	beq.n	.L_0802380e
@@ -824,24 +791,24 @@ Func_08023178:
 	ldr	r1, [sp, #76]
 	movs	r2, #0
 	movs	r3, #72
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 .L_0802380e:
 	ldr	r1, [sp, #76]
 	subs	r0, r7, #5
 	movs	r2, #0
 	movs	r3, #80
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	subs	r0, r7, #4
 	ldr	r1, [sp, #76]
 	movs	r2, #0
 	movs	r3, #88
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	movs	r6, #140
 	subs	r0, r7, #3
 	ldr	r1, [sp, #76]
 	movs	r2, #0
 	movs	r3, #96
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	lsls	r6, r6, #1
 	movs	r3, #72
 	movs	r1, #40
@@ -868,7 +835,7 @@ Func_08023178:
 	mov	r2, sl
 	lsls	r5, r4, #2
 	str	r4, [sp, #4]
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	ldr	r3, [sp, #44]
 	ldr	r4, [sp, #4]
 	cmp	r3, #0
@@ -879,12 +846,12 @@ Func_08023178:
 	mov	r3, r8
 	str	r1, [sp, #0]
 	movs	r1, #1
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r0, [pc, #152]
 	ldr	r1, [sp, #76]
 	adds	r2, r7, #0
 	movs	r3, #72
-	bl	sub_0801e8b0
+	bl	UiText_DrawStringAtOffset
 	mov	r2, fp
 	adds	r3, r7, #0
 	ldrb	r0, [r6, #0]
@@ -892,19 +859,19 @@ Func_08023178:
 	str	r2, [sp, #0]
 	movs	r1, #1
 	ldr	r2, [sp, #76]
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r4, [sp, #4]
 .L_080238a0:
 	adds	r1, r4, #0
 	ldr	r0, [sp, #84]
 	str	r4, [sp, #4]
-	bl	sub_080771f8
+	bl	0x080771f8
 	movs	r3, #80
 	str	r3, [sp, #0]
 	ldr	r2, [sp, #76]
 	movs	r1, #2
 	adds	r3, r7, #0
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	adds	r5, #72
 	mov	r3, r9
 	ldrsh	r0, [r3, r5]
@@ -913,7 +880,7 @@ Func_08023178:
 	str	r3, [sp, #0]
 	movs	r1, #3
 	mov	r3, r8
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	add	r5, r9
 	movs	r3, #96
 	movs	r2, #2
@@ -922,7 +889,7 @@ Func_08023178:
 	str	r3, [sp, #0]
 	ldr	r2, [sp, #76]
 	mov	r3, r8
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r4, [sp, #4]
 	movs	r3, #32
 	movs	r1, #4
@@ -1203,7 +1170,7 @@ Func_08023178:
 	asrs	r0, r0, #24
 	ldmia	r7!, {r1}
 	str	r4, [sp, #4]
-	bl	sub_08021ab0
+	bl	Resource_LoadTableEntryToBuffer
 	ldr	r4, [sp, #4]
 	subs	r4, #1
 	adds	r5, #1
@@ -1251,11 +1218,11 @@ Func_08023178:
 	ldr	r1, [sp, #76]
 	movs	r2, #112
 	movs	r3, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 .L_08023b42:
 	movs	r0, #128
 	lsls	r0, r0, #1
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	ldr	r3, [sp, #104]
 	str	r0, [sp, #36]
 	cmp	r3, #13
@@ -1280,14 +1247,14 @@ Func_08023178:
 	lsls	r4, r4, #1
 	mov	r8, r4
 	mov	r0, r8
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	movs	r4, #0
 	str	r4, [sp, #4]
 	mov	r1, r9
 	mov	r2, r8
 	ldr	r3, [pc, #260]
 	adds	r6, r0, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r3, [pc, #224]
 	ldr	r4, [sp, #4]
 	mov	r5, r9
@@ -1308,7 +1275,7 @@ Func_08023178:
 	ldr	r0, [sp, #84]
 	mov	sl, r1
 	mov	fp, r2
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	mov	r1, r9
 	ldrh	r3, [r1, #60]
 	mov	r2, sl
@@ -1324,9 +1291,9 @@ Func_08023178:
 	subs	r7, r7, r3
 	mov	r0, r9
 	ldr	r3, [pc, #180]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r0, r6, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	ldr	r3, [sp, #32]
 	subs	r3, #8
 	ldr	r4, [sp, #4]
@@ -1376,7 +1343,7 @@ Func_08023178:
 .L_08023c4e:
 	adds	r0, r4, #0
 	movs	r1, #5
-	bl	sub_08019908
+	bl	UiWork_PushValueSlot
 	ldr	r0, [pc, #56]
 	ldr	r3, [sp, #32]
 	ldr	r1, [sp, #36]
@@ -1406,19 +1373,19 @@ Func_08023178:
 	adds	r1, r3, #0
 	adds	r1, #1
 	ldr	r0, [sp, #84]
-	bl	sub_08077258
+	bl	Owner_GetLevelThresholdFar
 	movs	r3, #146
 	lsls	r3, r3, #1
 	add	r3, r9
 	ldr	r3, [r3, #0]
 	movs	r1, #5
 	subs	r0, r0, r3
-	bl	sub_08019908
+	bl	UiWork_PushValueSlot
 	ldr	r0, [pc, #12]
 	ldr	r1, [sp, #36]
 .L_08023cbe:
 	movs	r2, #128
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	b.n	.L_08023cda
 	movs	r0, r0
 	.2byte 0x08bf
@@ -1429,15 +1396,15 @@ Func_08023178:
 	ldr	r1, [sp, #36]
 	adds	r0, r0, r3
 	movs	r2, #128
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 .L_08023cda:
 	ldr	r0, [sp, #36]
 	ldr	r1, [sp, #72]
 	movs	r2, #0
 	movs	r3, #4
-	bl	sub_08017aa4
+	bl	UiText_RenderWideStringAtOffset
 	ldr	r0, [sp, #36]
-	bl	sub_08002df0
+	bl	Party_Do
 	ldr	r4, [pc, #100]
 	ldr	r3, [sp, #80]
 	adds	r2, r3, r4
@@ -1498,7 +1465,7 @@ Func_08023178:
 	adds	r0, r5, #0
 	movs	r1, #240
 	str	r4, [sp, #4]
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r4, [sp, #4]
 .L_08023d70:
 	adds	r6, #1
@@ -1542,7 +1509,7 @@ Func_08023178:
 	movs	r0, #111
 	str	r3, [sp, #84]
 	mov	sl, r2
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_08023df6
 .L_08023dc6:
 	movs	r3, #128
@@ -1568,10 +1535,10 @@ Func_08023178:
 	movs	r0, #111
 	str	r3, [sp, #84]
 	mov	sl, r2
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_08023df6:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	bl	.L_080232a0
 .L_08023e00:
 	ldr	r5, [sp, #16]
@@ -1579,33 +1546,33 @@ Func_08023178:
 .L_08023e04:
 	ldmia	r5!, {r0}
 	subs	r6, #1
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	cmp	r6, #0
 	bge.n	.L_08023e04
 	ldr	r0, [sp, #52]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	ldr	r0, [sp, #64]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	movs	r0, #1
-	bl	sub_080030f8
-	bl	sub_0801e318
+	bl	WaitFrames
+	bl	UiWindow_MarkVisibleTileAttributes
 	movs	r1, #1
 	ldr	r0, [sp, #76]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #1
 	ldr	r0, [sp, #72]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	ldr	r5, [pc, #52]
 	ldr	r3, [r5, #0]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
 	adds	r5, #192
-	bl	sub_0801f200
+	bl	UiWindow_DrawPartyStatusContents
 	ldr	r2, [r5, #0]
 	movs	r3, #0
 	str	r3, [r2, #72]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #0
 	add	sp, #352
 	pop	{r3, r5, r6, r7}

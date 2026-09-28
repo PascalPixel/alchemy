@@ -1,6 +1,7 @@
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_RUNTIME.H"
 #include "SYSTEM.H"
+extern u8 Data_03001ebc[];
 
 void Object_SetMode(struct ObjectRuntime *, s32);
 void ObjectDispatch_SetSingleChildField26Far(struct ObjectRuntime *, s32);

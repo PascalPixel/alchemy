@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004458, 0x08004458
-	.set sub_08009098, 0x08009098
-	.set sub_080090d0, 0x080090d0
-	.set sub_08009158, 0x08009158
-	.set sub_08096bec, 0x08096bec
-	.set sub_08096c80, 0x08096c80
-	.set sub_08097384, 0x08097384
-	.set sub_0809748c, 0x0809748c
-	.set sub_0809a3c4, 0x0809a3c4
-	.set sub_080f9010, 0x080f9010
 	.global RunBattleEffect11
 	.global Func_0809a294
 	.thumb_func
@@ -27,7 +16,7 @@ Func_0809a294:
 	ldr	r3, [r3, #0]
 	sub	sp, #20
 	mov	sl, r3
-	bl	sub_08097384
+	bl	BattleEffect_InitializeSharedScene
 	mov	r3, sl
 	ldr	r0, [r3, #4]
 	add	r5, sp, #8
@@ -45,7 +34,7 @@ Func_0809a294:
 	movs	r3, #128
 	str	r2, [r5, #8]
 	lsls	r3, r3, #8
-	bl	sub_0809a3c4
+	bl	BattleFx_SpawnItemBreakMode1
 	ldr	r3, [pc, #224]
 	str	r0, [sp, #0]
 	ldr	r0, [r5, #0]
@@ -53,11 +42,11 @@ Func_0809a294:
 	adds	r0, r0, r3
 	ldr	r2, [r5, #8]
 	movs	r3, #0
-	bl	sub_0809a3c4
+	bl	BattleFx_SpawnItemBreakMode1
 	str	r0, [sp, #4]
 	movs	r0, #15
 	mov	fp, sp
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #1
 	mov	r7, fp
 	mov	r8, r0
@@ -69,7 +58,7 @@ Func_0809a294:
 	ldrh	r2, [r6, #6]
 	adds	r0, r6, #0
 	lsls	r1, r1, #13
-	bl	sub_08096bec
+	bl	Motion_SetTargetPositionFromMagnitudeAngle
 .L_0809a308:
 	movs	r3, #1
 	negs	r3, r3
@@ -78,9 +67,9 @@ Func_0809a294:
 	cmp	r0, #0
 	bge.n	.L_0809a2f6
 	ldr	r0, [sp, #0]
-	bl	sub_08009158
+	bl	Object_CommitPosition
 	movs	r0, #134
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #128
 	movs	r3, #23
 	lsls	r0, r0, #10
@@ -99,13 +88,13 @@ Func_0809a294:
 	ldr	r3, [r3, #12]
 	ldr	r0, [pc, #124]
 	str	r3, [r7, #8]
-	bl	sub_08096c80
+	bl	Object_Spawn
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_0809a384
 	ldr	r1, [pc, #112]
-	bl	sub_08009098
-	bl	sub_08004458
+	bl	Engine_ObjectSetScript
+	bl	Random16
 	mov	r3, r9
 	adds	r2, r6, #0
 	adds	r2, #85
@@ -114,18 +103,18 @@ Func_0809a294:
 	movs	r3, #0
 	str	r0, [r6, #48]
 	strb	r3, [r2, #0]
-	bl	sub_08004458
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r0
-	bl	sub_08004458
+	bl	Random16
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08096bec
+	bl	Motion_SetTargetPositionFromMagnitudeAngle
 .L_0809a384:
 	movs	r3, #1
 	negs	r3, r3
@@ -134,11 +123,11 @@ Func_0809a294:
 	cmp	r0, #0
 	bge.n	.L_0809a32c
 	ldr	r0, [sp, #0]
-	bl	sub_080090d0
+	bl	Object_Destroy
 	mov	r3, fp
 	ldr	r0, [r3, #4]
-	bl	sub_080090d0
-	bl	sub_0809748c
+	bl	Object_Destroy
+	bl	BattleFx_PrepareBufferInterpolation
 	add	sp, #20
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

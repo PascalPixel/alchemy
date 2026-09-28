@@ -14,9 +14,7 @@
 @ SENTOU_KOUKA_TENKAI_TABLES.S and carry no credit, as in TBS.
 @ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, battle-effect link
 .syntax unified
-	.set SentouKouka_TenkaiYomi, 0x081a0124
 	.thumb
-	.set AlchemyLoadAddress, 0x081a004c
 	.global SentouKouka_Tenkai
 	.thumb_func
 SentouKouka_Tenkai:

@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c0788, 0x081c0788
-	.set sub_081c08cc, 0x081c08cc
-	.set sub_081c0a68, 0x081c0a68
-	.set sub_081c0c0c, 0x081c0c0c
 	.global Audio_NoopStubWorkCopy
 	.global Func_081c048c
 	.thumb_func
@@ -52,11 +48,11 @@ Func_081c048c:
 .L_081c04da:
 	bl	.L_081c04da
 	ldr	r0, [pc, #76]
-	bl	sub_081c08cc
+	bl	0x081c08cc
 	ldr	r0, [pc, #72]
-	bl	sub_081c0788
+	bl	0x081c0788
 	ldr	r0, [pc, #72]
-	bl	sub_081c0a68
+	bl	0x081c0a68
 	ldr	r0, [pc, #68]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
@@ -69,7 +65,7 @@ Func_081c048c:
 	ldr	r1, [r5, #4]
 	ldrb	r2, [r5, #8]
 	adds	r0, r4, #0
-	bl	sub_081c0c0c
+	bl	0x081c0c0c
 	ldrh	r0, [r5, #10]
 	strb	r0, [r4, #11]
 	ldr	r0, [pc, #48]

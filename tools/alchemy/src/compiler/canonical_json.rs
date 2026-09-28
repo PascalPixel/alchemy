@@ -129,8 +129,13 @@ pub fn canonical_json(value: &Value) -> String {
 }
 
 pub fn write_canonical(path: &Path, value: &Value) -> Result<(), String> {
-    std::fs::write(path, format!("{}\n", canonical_json(value)))
-        .map_err(|error| format!("{}: {error}", path.display()))
+    let temporary =
+        tempfile::NamedTempFile::new_in(path.parent().ok_or("JSON output has no parent")?)
+            .map_err(|error| error.to_string())?;
+    std::fs::write(temporary.path(), format!("{}\n", canonical_json(value)))
+        .map_err(|error| format!("{}: {error}", path.display()))?;
+    temporary.persist(path).map_err(|error| error.to_string())?;
+    Ok(())
 }
 
 /// Checkers accept three spellings while the migration runs: the canonical

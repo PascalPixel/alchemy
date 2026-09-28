@@ -10,10 +10,9 @@
 @ credit: library — TBS/TLA common sound driver guarded ROM-to-IWRAM frame entry (mixer entry)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c128c
-	.global SoundDriver_EnterMixer
+	.global AudioEngine_RunMixerTick
 	.thumb_func
-SoundDriver_EnterMixer:
+AudioEngine_RunMixerTick:
 	ldr	r0, [pc, #104]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #104]
@@ -47,11 +46,11 @@ SoundDriver_EnterMixer:
 	cmp	r3, #0
 	beq.n	.L_081c12ce
 	ldr	r0, [r0, #36]
-	bl	Func_081c16ae
+	bl	Mixer_CallViaR3Rom
 	ldr	r0, [sp, #24]
 .L_081c12ce:
 	ldr	r3, [r0, #40]
-	bl	Func_081c16ae
+	bl	Mixer_CallViaR3Rom
 	ldr	r0, [sp, #24]
 	ldr	r3, [r0, #16]
 	mov	r8, r3

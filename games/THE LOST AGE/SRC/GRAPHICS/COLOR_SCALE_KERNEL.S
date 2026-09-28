@@ -9,7 +9,6 @@
 @ state. TBS has no such kernel.
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08118394
 	.global ColorBuffer_ScaleKernel
 	.thumb_func
 ColorBuffer_ScaleKernel:

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 Data_03001cb4[];
 
 /* runtime/blank_display_load_value_and_run.c */
 s32 Audio_PlayCue(s32);
@@ -12,7 +13,7 @@ s32 Runtime_BlankDisplayLoadValueAndRun(void)
   {
     *((s16 *) 0x04000000) = 0x40;
     src = (u8 *)((void *) 0x02000240);
-    p = (s32 *)ADDR_03001CB4;
+    p = (s32 *)((u32)&Data_03001cb4);
     *p = *((s32 *)(src + 4));
   }
   Audio_PlayCue(9);

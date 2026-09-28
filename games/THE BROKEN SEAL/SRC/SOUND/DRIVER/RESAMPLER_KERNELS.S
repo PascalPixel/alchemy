@@ -17,6 +17,8 @@
 	.global IwramCodeRecords
 Func_08000404:
 IwramCodeRecords:
+	.global Data_08000404
+Data_08000404:
 	asrs	r1, fp, #20
 	bicpl	r1, r1, #31
 	adds	r1, r1, ip, asr #20

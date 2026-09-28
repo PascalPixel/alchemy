@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "PSYNERGY_MENU.H"
 #include "SYSTEM.H"
+extern u8 Data_03001f2c[];
 
 /* menu/psynergy_menu/classify_selected_psynergy.c */
 u8 *BattleAction_Get(s32 action);
@@ -14,7 +15,7 @@ s32 PsynergyMenu_ClassifySelectedPsynergy(void)
 
     psynergy = BattleAction_Get(
         (s32)(0x3fff &
-              (*(struct PsynergyMenuState **)ADDR_03001F2C)
+              (*(struct PsynergyMenuState **)((u32)&Data_03001f2c))
                   ->selected_psynergy));
     if (BattleFx_HasMatchingEvent5Far(psynergy[0x0c]) != 0) {
         return 0;

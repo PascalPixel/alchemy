@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
 	.global Func_080aeaa0
 	.thumb_func
 Func_080aeaa0:
@@ -21,7 +20,7 @@ Func_080aeaa0:
 	movs	r3, #52
 	ldrsh	r1, [r5, r3]
 	asrs	r0, r0, #2
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -47,7 +46,7 @@ Func_080aeaa0:
 	movs	r2, #54
 	ldrsh	r1, [r5, r2]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -87,7 +86,7 @@ Func_080aeaa0:
 	lsls	r0, r0, #14
 	movs	r2, #52
 	ldrsh	r1, [r5, r2]
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -113,7 +112,7 @@ Func_080aeaa0:
 	movs	r2, #54
 	ldrsh	r1, [r5, r2]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3

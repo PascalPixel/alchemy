@@ -3,34 +3,22 @@ use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy <extract|inspect|adopt> OWNER [options] [--target GAME-EDITION]\nextract also accepts a bare overlay (resource_XXX) to write its complete loaded image.\nUse psynergy for portable decompilation and disassembly; alchemy score compiles a project owner.";
+const USAGE: &str = "usage: alchemy <extract|inspect> OWNER [options] [--target GAME-EDITION]\nextract also accepts a bare overlay (resource_XXX) to write its complete loaded image.\nUse psynergy for portable decompilation and disassembly.";
 
 struct Options {
     asm: bool,
-    siblings: bool,
-    near: bool,
-    json: Option<PathBuf>,
     positional: Vec<String>,
     span: Option<u32>,
-    name: Option<String>,
     out: Option<PathBuf>,
-    path: Option<String>,
-    source: Option<PathBuf>,
     target: crate::targets::DecompTarget,
 }
 
 fn parse(arguments: &[String]) -> Result<Options, String> {
     let mut options = Options {
         asm: false,
-        siblings: false,
-        near: false,
-        json: None,
         positional: Vec::new(),
         span: None,
-        name: None,
         out: None,
-        path: None,
-        source: None,
         target: owners::default_target(),
     };
     let mut iter = arguments.iter();
@@ -42,9 +30,6 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
         };
         match argument.as_str() {
             "--asm" => options.asm = true,
-            "--siblings" => options.siblings = true,
-            "--near" => options.near = true,
-            "--json" => options.json = Some(PathBuf::from(value("--json")?)),
             "--span" => {
                 options.span = Some(
                     value("--span")?
@@ -52,10 +37,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
                         .map_err(|_| "--span wants a byte count")?,
                 )
             }
-            "--name" => options.name = Some(value("--name")?),
             "--out" => options.out = Some(PathBuf::from(value("--out")?)),
-            "--path" => options.path = Some(value("--path")?),
-            "--source" => options.source = Some(PathBuf::from(value("--source")?)),
             "--target" => {
                 options.target = crate::targets::decomp_target(Some(&value("--target")?))?
             }
@@ -144,18 +126,7 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     let root = owners::root();
     let result = parse(&arguments[1..]).and_then(|options| match command {
         "extract" => extract(&root, &options).map(|_| 0),
-        "adopt" => adopt_owner(&root, &options).map(|_| 0),
         "inspect" if options.asm => disasm(&root, &options).map(|_| 0),
-        "inspect" if options.siblings => crate::siblings::inspect(
-            &root,
-            owner_argument(&options)?,
-            options.near,
-            options.json.as_deref(),
-        )
-        .map(|_| 0),
-        "inspect" if options.near || options.json.is_some() => {
-            Err("--near and --json belong to inspect --siblings".into())
-        }
         "inspect" => imports_owner(&root, &options),
         "-h" | "--help" => {
             println!("{USAGE}");
@@ -184,7 +155,7 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     let binary = work.path().join("owner.bin");
     let start = (entry - base) as usize;
     std::fs::write(&binary, &image[start..start + span as usize]).map_err(|e| e.to_string())?;
-    let rows = crate::score::disasm::disassemble(&binary.to_string_lossy(), entry)?;
+    let rows = crate::disasm::disassemble(&binary.to_string_lossy(), entry)?;
     let calls = super::imports::imports_for(root, options.target, owner, Some(span))?;
     for (address, instruction) in rows {
         let annotation = calls
@@ -199,28 +170,6 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
             })
             .unwrap_or_default();
         println!("{address:08x}: {instruction}{annotation}");
-    }
-    Ok(())
-}
-
-fn adopt_owner(root: &Path, options: &Options) -> Result<(), String> {
-    let owner = owner_argument(options)?;
-    if options.target.id != crate::targets::DEFAULT_TARGET {
-        return Err(format!(
-            "adopt writes the {} registers only; --target {} is not adoptable yet",
-            crate::targets::DEFAULT_TARGET,
-            options.target.id
-        ));
-    }
-    let request = super::adopt::Request {
-        owner,
-        span: options.span,
-        name: options.name.as_deref(),
-        path: options.path.as_deref(),
-        source: options.source.as_deref(),
-    };
-    for line in super::adopt::adopt(root, &request)? {
-        println!("{line}");
     }
     Ok(())
 }

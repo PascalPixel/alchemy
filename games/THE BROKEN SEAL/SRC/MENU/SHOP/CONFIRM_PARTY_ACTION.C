@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "UI.H"
+extern u8 Data_03001f2c[];
 
 s32 Object_GetByIdFar(s32 unit_id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 x, s32 y, s32 flags);

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 BattleFx_IsReviveFar(void *);
 
 /* battle/classify_entry_kind.c */
 s32 Battle_ClassifyEntryKind(const u8 *entry)

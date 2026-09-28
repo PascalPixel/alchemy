@@ -3,6 +3,7 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_INTERFACES.H"
+extern u8 Data_03001e8c[];
 
 /* ui/render/output_list/acquire_free.c */
 void *RenderOutput_AcquireFree(void)
@@ -10,7 +11,7 @@ void *RenderOutput_AcquireFree(void)
   void **p;
   void *state;
   /* Detach and return the head of the free list. */
-  state = *((void **)ADDR_03001E8C);
+  state = *((void **)((u32)&Data_03001e8c));
   p = *((void ***)(((u8 *)state) + RENDER_FREE_HEAD_OFS));
   if (p != ((void *) 0))
   {

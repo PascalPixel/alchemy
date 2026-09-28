@@ -1,17 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015040, 0x08015040
-	.set sub_08015120, 0x08015120
-	.set sub_08015140, 0x08015140
-	.set sub_08077008, 0x08077008
-	.set sub_08077018, 0x08077018
-	.set sub_08077020, 0x08077020
-	.set sub_08077030, 0x08077030
-	.set sub_08077240, 0x08077240
-	.set sub_080772b0, 0x080772b0
-	.set sub_08091d84, 0x08091d84
-	.set sub_080b0058, 0x080b0058
-	.set sub_080f9010, 0x080f9010
 	.global PartyInventory_GiveItem
 	.global Func_08091a58
 	.thumb_func
@@ -35,7 +23,7 @@ Func_08091a58:
 	sub	sp, #12
 	str	r2, [sp, #0]
 	adds	r6, r0, #0
-	bl	sub_08077030
+	bl	Func_08077030
 	movs	r2, #1
 	mov	r8, r0
 	negs	r2, r2
@@ -45,13 +33,13 @@ Func_08091a58:
 .L_08091a8c:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #368]
 	movs	r1, #1
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	ldr	r0, [pc, #364]
 	movs	r1, #1
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	movs	r3, #8
 	movs	r2, #4
 	add	r3, sp
@@ -62,17 +50,17 @@ Func_08091a58:
 	ldr	r7, [pc, #348]
 	movs	r1, #1
 	adds	r0, r7, #0
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	mov	r0, r9
 	mov	r1, sl
-	bl	sub_080b0058
+	bl	0x080b0058
 	movs	r3, #1
 	adds	r5, r0, #0
 	negs	r3, r3
 	cmp	r5, r3
 	bne.n	.L_08091b34
 	adds	r0, r6, #0
-	bl	sub_08077018
+	bl	Item_Get
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2
@@ -80,33 +68,33 @@ Func_08091a58:
 	beq.n	.L_08091aee
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #4
 	movs	r1, #1
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	b.n	.L_08091ab0
 .L_08091aee:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #1
 	movs	r1, #5
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	movs	r0, #1
-	bl	sub_08091d84
+	bl	Object_CallSpawnRoutineAtOrigin
 	adds	r5, r0, #0
-	bl	sub_08015140
+	bl	UiWork_FinalizePendingCoreFar
 	cmp	r5, #0
 	bne.n	.L_08091ab0
 	movs	r1, #1
 	adds	r0, r6, #0
-	bl	sub_08077240
+	bl	Ability_GetMaximum
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	adds	r0, r7, #2
 	movs	r1, #1
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	movs	r3, #236
 	mov	r2, sp
 	lsls	r3, r3, #1
@@ -116,10 +104,10 @@ Func_08091a58:
 	b.n	.L_08091bee
 .L_08091b34:
 	ldr	r0, [sp, #8]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r1, [sp, #4]
 	ldr	r0, [sp, #8]
-	bl	sub_08077020
+	bl	Shop_GetSelectionState
 	cmp	r0, #0
 	ble.n	.L_08091b56
 	adds	r5, r0, #0
@@ -127,15 +115,15 @@ Func_08091a58:
 	ldr	r0, [sp, #8]
 	ldr	r1, [sp, #4]
 	subs	r5, #1
-	bl	sub_080772b0
+	bl	Func_080772b0
 	cmp	r5, #0
 	bne.n	.L_08091b48
 .L_08091b56:
 	adds	r0, r6, #0
-	bl	sub_08077030
+	bl	Func_08077030
 	mov	r8, r0
 	movs	r0, #83
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r3, [pc, #172]
 	movs	r2, #250
 	lsls	r2, r2, #1
@@ -145,21 +133,21 @@ Func_08091a58:
 	bne.n	.L_08091b84
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #140]
 	movs	r1, #3
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	b.n	.L_08091b9c
 .L_08091b84:
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	mov	r0, r8
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #128]
 	movs	r1, #3
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 .L_08091b9c:
 	movs	r3, #236
 	mov	r2, sp
@@ -170,14 +158,14 @@ Func_08091a58:
 	b.n	.L_08091bee
 .L_08091baa:
 	movs	r0, #83
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r5, [pc, #76]
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	ldr	r3, [pc, #80]
 	movs	r2, #250
 	lsls	r2, r2, #1
@@ -187,13 +175,13 @@ Func_08091a58:
 	beq.n	.L_08091be8
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	mov	r0, r8
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	adds	r0, r5, #1
 	movs	r1, #3
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 .L_08091be8:
 	mov	r3, sp
 	ldrh	r3, [r3, #0]

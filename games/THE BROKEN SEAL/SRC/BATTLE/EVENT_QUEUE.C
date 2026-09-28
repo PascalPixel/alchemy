@@ -1,12 +1,14 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_EVENT.H"
+extern u8 Data_03001ee4[];
+extern u8 Data_03001e74[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 void BattleEv_SetRuntimeField8(void)
 {
-    FIELD_AT_OFFSET(*(void **)ADDR_03001EE4, s32 *, 8) = 1;
+    FIELD_AT_OFFSET(*(void **)((u32)&Data_03001ee4), s32 *, 8) = 1;
 }
 
 struct BattleEventActor {
@@ -137,7 +139,7 @@ u32 BattleEv_DispatchQueued(void)
 
 u32 BattleEv_Push(u32 opcode, u32 operand)
 {
-    u8 *base = *(u8 **)ADDR_03001E74;
+    u8 *base = *(u8 **)((u32)&Data_03001e74);
     struct BattleEventQueue *queue =
         (struct BattleEventQueue *)(base + 1720);
     u32 *count = (u32 *)&queue->count;

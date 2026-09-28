@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
 	.global Inventory_GetQuantity
 	.global Func_080aeca4
 	.thumb_func
@@ -8,7 +7,7 @@ Inventory_GetQuantity:
 Func_080aeca4:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	lsls	r5, r5, #1
 	adds	r5, #216
 	ldrh	r0, [r0, r5]

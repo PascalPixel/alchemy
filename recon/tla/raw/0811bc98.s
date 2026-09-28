@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080200c8, 0x080200c8
 	.global Func_0811bc98
 	.thumb_func
 Func_0811bc98:
@@ -40,7 +39,7 @@ Func_0811bc98:
 	cmp	r3, #0
 	beq.n	.L_0811bce2
 	ldr	r0, [r5, #0]
-	bl	sub_080200c8
+	bl	0x080200c8
 	movs	r3, #0
 	str	r3, [r5, #0]
 	strh	r3, [r5, #40]

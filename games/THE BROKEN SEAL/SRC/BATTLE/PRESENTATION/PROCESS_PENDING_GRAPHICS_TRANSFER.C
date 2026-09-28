@@ -21,10 +21,10 @@ static __inline__ void FillWords(void *destination, s32 size, s32 value)
     ((FillWordsFn)0x03000168)(destination, size, value);
 }
 
-void Func_08005534(void *source, void *destination, s32 size);
-void Func_080054e4(void *source, void *destination, s32 size);
-void Func_08005490(void *source, s32 amount, void *destination, s32 size);
-void Func_0800543c(void *source, s32 amount, void *destination, s32 size);
+void ColorBuffer_BackupAndHalve(void *source, void *destination, s32 size);
+void ColorBuffer_BackupAndScaleThreeQuarters(void *source, void *destination, s32 size);
+void ColorBuffer_BackupAndDarken(void *source, s32 amount, void *destination, s32 size);
+void ColorBuffer_BackupAndBrighten(void *source, s32 amount, void *destination, s32 size);
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
@@ -46,17 +46,17 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void)
             break;
         case 2:
             if (FIELD(work, s32, 0x7784) == 50) {
-                Func_08005534(source, (void *)0x06004000, 0x4000);
+                ColorBuffer_BackupAndHalve(source, (void *)0x06004000, 0x4000);
             } else {
-                Func_080054e4(source, (void *)0x06004000, 0x4000);
+                ColorBuffer_BackupAndScaleThreeQuarters(source, (void *)0x06004000, 0x4000);
             }
             break;
         case 3:
-            Func_08005490(source, FIELD(work, s32, 0x7784),
+            ColorBuffer_BackupAndDarken(source, FIELD(work, s32, 0x7784),
                 (void *)0x06004000, 0x4000);
             break;
         case 4:
-            Func_0800543c(source, FIELD(work, s32, 0x7784),
+            ColorBuffer_BackupAndBrighten(source, FIELD(work, s32, 0x7784),
                 (void *)0x06004000, 0x4000);
             break;
         }

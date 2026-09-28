@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
+extern u8 Data_03001f2c[];
 
 /* Repairs one item for a party member at the shop: refuses items that
    cannot be repaired, are not broken or cost more than the party has, and

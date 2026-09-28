@@ -11,7 +11,8 @@
 @ credit: handwritten — ARM colour-buffer fade kernels with backup, copied to the stack
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08001a14
+	.global ColorBuffer_ScaleThreeQuartersKernelCode
+ColorBuffer_ScaleThreeQuartersKernelCode:
 	.global ColorBuffer_ScaleThreeQuartersKernel
 	.thumb_func
 ColorBuffer_ScaleThreeQuartersKernel:
@@ -70,6 +71,8 @@ AlchemyUncreditedEnd_08001a14:
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
 	.thumb
+	.global ColorBuffer_HalveKernelCode
+ColorBuffer_HalveKernelCode:
 	.global ColorBuffer_HalveKernel
 	.thumb_func
 ColorBuffer_HalveKernel:
@@ -112,6 +115,8 @@ AlchemyUncreditedEnd_08001ad4:
 	pop	{r5, r6, r7, r8, r9, sl}
 	bx	lr
 	.thumb
+	.global ColorBuffer_DarkenKernelCode
+ColorBuffer_DarkenKernelCode:
 	.global ColorBuffer_DarkenKernel
 	.thumb_func
 ColorBuffer_DarkenKernel:

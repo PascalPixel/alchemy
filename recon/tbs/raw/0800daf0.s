@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080045d4, 0x080045d4
-	.set sub_080072f0, 0x080072f0
-	.set sub_08007310, 0x08007310
 	.global Camera_FollowLeaderInBounds
 	.global Func_0800daf0
 	.thumb_func
@@ -129,7 +126,7 @@ Func_0800daf0:
 	muls	r3, r6
 	adds	r0, r0, r3
 	ldr	r3, [pc, #256]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r4, r8
 	ldr	r3, [r4, #8]
 	mov	r2, fp
@@ -160,7 +157,7 @@ Func_0800daf0:
 	bx	r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 	adds	r7, r0, #0
 .L_0800dc16:
 	adds	r1, r7, #0
@@ -192,7 +189,7 @@ Func_0800daf0:
 	mov	r1, sl
 	mov	fp, r3
 	adds	r0, r7, #0
-	bl	sub_08007310
+	bl	_call_via_fp
 	ldr	r3, [pc, #132]
 	adds	r1, r5, #0
 	movs	r0, r0
@@ -202,7 +199,7 @@ Func_0800daf0:
 	str	r3, [sp, #0]
 	mov	sl, r0
 	adds	r0, r7, #0
-	bl	sub_08007310
+	bl	_call_via_fp
 	adds	r1, r5, #0
 	ldr	r3, [sp, #0]
 	mov	ip, pc

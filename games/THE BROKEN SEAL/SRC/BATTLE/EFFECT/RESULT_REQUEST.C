@@ -1,5 +1,6 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
+extern struct EventRuntime *Data_03001ebc;
 
 struct ResultWork {
     u8 unknown_000[0x1d6];
@@ -23,7 +24,7 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 {
     register s32 first = arg0;
     register s32 second = arg1;
-    register struct EventRuntime *runtime = gEventWork;
+    register struct EventRuntime *runtime = Data_03001ebc;
 
     runtime->value_17c = BattleFx_GetWeightedResult(first, second);
     if (first == 98 && second == 0)
@@ -39,7 +40,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     struct ResultWork *shared;
     s32 high;
 
-    state = gEventWork;
+    state = Data_03001ebc;
     high = flags & 0x800;
     flags &= 0xff;
 

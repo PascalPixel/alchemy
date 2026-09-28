@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080aec04, 0x080aec04
 	.global Func_080b0460
 	.thumb_func
 Func_080b0460:
@@ -23,7 +22,7 @@ Func_080b0460:
 	beq.n	.L_080b04a2
 	ldrh	r0, [r5, r7]
 	str	r1, [sp, #0]
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldr	r1, [sp, #0]
 	adds	r0, #24
 	movs	r2, #3

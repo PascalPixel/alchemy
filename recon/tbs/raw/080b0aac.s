@@ -1,37 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080022fc, 0x080022fc
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015010, 0x08015010
-	.set sub_08015018, 0x08015018
-	.set sub_08015120, 0x08015120
-	.set sub_08015270, 0x08015270
-	.set sub_08077018, 0x08077018
-	.set sub_08077028, 0x08077028
-	.set sub_08077058, 0x08077058
-	.set sub_08077220, 0x08077220
-	.set sub_08077238, 0x08077238
-	.set sub_08077240, 0x08077240
-	.set sub_08077248, 0x08077248
-	.set sub_080a1028, 0x080a1028
-	.set sub_080a1030, 0x080a1030
-	.set sub_080b0070, 0x080b0070
-	.set sub_080b04dc, 0x080b04dc
-	.set sub_080b0574, 0x080b0574
-	.set sub_080b0634, 0x080b0634
-	.set sub_080b0a6c, 0x080b0a6c
-	.set sub_080b0fa4, 0x080b0fa4
-	.set sub_080b10cc, 0x080b10cc
-	.set sub_080b110c, 0x080b110c
-	.set sub_080b11a4, 0x080b11a4
-	.set sub_080b11c4, 0x080b11c4
-	.set sub_080b1260, 0x080b1260
-	.set sub_080b1470, 0x080b1470
-	.set sub_080b153c, 0x080b153c
-	.set sub_080b17e4, 0x080b17e4
-	.set sub_080b24e4, 0x080b24e4
-	.set sub_080f9010, 0x080f9010
 	.global Shop_SelBuy
 	.global Func_080b0aac
 	.thumb_func
@@ -59,16 +27,16 @@ Func_080b0aac:
 	movs	r2, #12
 	movs	r0, #18
 	str	r5, [sp, #0]
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	mov	r2, sl
 	str	r0, [r2, #12]
-	bl	sub_080b10cc
+	bl	Func_080b10cc
 	movs	r0, #0
 	movs	r1, #8
 	movs	r2, #15
 	movs	r3, #4
 	str	r5, [sp, #0]
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	str	r0, [sp, #32]
 .L_080b0af4:
 	movs	r5, #2
@@ -78,7 +46,7 @@ Func_080b0aac:
 	movs	r0, #0
 	ldr	r7, [sp, #16]
 	str	r5, [sp, #0]
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	movs	r3, #224
 	str	r0, [sp, #28]
 	lsls	r3, r3, #2
@@ -96,7 +64,7 @@ Func_080b0aac:
 	movs	r1, #17
 	movs	r2, #30
 	str	r5, [sp, #0]
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	movs	r3, #1
 	str	r0, [sp, #24]
 	mov	fp, r3
@@ -116,19 +84,19 @@ Func_080b0aac:
 	add	r2, sl
 	ldrsh	r5, [r3, r2]
 	adds	r0, r5, #0
-	bl	sub_08077018
+	bl	Item_Get
 	movs	r2, #0
 	adds	r6, r0, #0
 	movs	r1, #7
 	adds	r0, r7, #0
 	mov	fp, r2
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r1, r0, #0
 	lsls	r1, r1, #5
 	ldr	r0, [sp, #28]
 	subs	r1, #8
 	movs	r2, #8
-	bl	sub_080b0a6c
+	bl	Func_080b0a6c
 	movs	r2, #234
 	lsls	r2, r2, #2
 	movs	r3, #4
@@ -136,19 +104,19 @@ Func_080b0aac:
 	strb	r3, [r2, #0]
 	ldr	r0, [sp, #28]
 	adds	r1, r7, #0
-	bl	sub_080b0fa4
+	bl	Shop_DrawStock
 	ldr	r1, [pc, #580]
 	ldr	r0, [sp, #24]
 	adds	r1, r5, r1
-	bl	sub_080b11a4
+	bl	Shop_DrawMsg
 	ldr	r0, [sp, #32]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #0
 	ldrsh	r2, [r6, r3]
 	ldr	r0, [sp, #32]
 	adds	r1, r5, #0
 	movs	r3, #0
-	bl	sub_080b110c
+	bl	Func_080b110c
 .L_080b0ba0:
 	ldr	r1, [pc, #552]
 	ldr	r3, [r1, #0]
@@ -175,12 +143,12 @@ Func_080b0aac:
 	mov	r8, r7
 	subs	r7, #1
 	adds	r0, r7, r1
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r7, r0, #0
 	cmp	r8, r7
 	beq.n	.L_080b0be2
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	mov	fp, r2
 .L_080b0be2:
@@ -194,12 +162,12 @@ Func_080b0aac:
 	mov	r8, r7
 	adds	r7, #1
 	adds	r0, r7, r1
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r7, r0, #0
 	cmp	r8, r7
 	beq.n	.L_080b0c0a
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	mov	fp, r2
 .L_080b0c0a:
@@ -225,7 +193,7 @@ Func_080b0aac:
 	mov	r0, r9
 	adds	r0, #6
 	movs	r1, #7
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r3, r0, #3
 	adds	r5, r7, #7
 	subs	r3, r3, r0
@@ -242,17 +210,17 @@ Func_080b0aac:
 	adds	r7, r0, #0
 .L_080b0c52:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080b0b32
 .L_080b0c5a:
 	ldr	r0, [sp, #24]
 	movs	r1, #2
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r1, #2
 	ldr	r0, [sp, #28]
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	mov	r0, r8
 	cmp	r0, #0
 	beq.n	.L_080b0c78
@@ -269,9 +237,9 @@ Func_080b0aac:
 	add	r5, sl
 	strh	r3, [r5, #0]
 	ldr	r0, [pc, #328]
-	bl	sub_080b04dc
+	bl	UiMessage_ShowAndWait
 	ldrh	r0, [r5, #0]
-	bl	sub_08077018
+	bl	Item_Get
 	movs	r1, #1
 	str	r0, [sp, #8]
 	str	r1, [sp, #12]
@@ -283,7 +251,7 @@ Func_080b0aac:
 	movs	r0, #0
 	str	r6, [sp, #4]
 	str	r5, [sp, #0]
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	movs	r3, #224
 	str	r0, [sp, #20]
 	lsls	r3, r3, #2
@@ -302,13 +270,13 @@ Func_080b0aac:
 	movs	r1, #2
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_080a1028
+	bl	PsynergyMenu_InitializeEntryObjectsFar
 	movs	r3, #9
 	movs	r0, #16
 	movs	r1, #11
 	movs	r2, #14
 	str	r5, [sp, #0]
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	movs	r3, #1
 	movs	r7, #0
 	mov	r9, r0
@@ -320,7 +288,7 @@ Func_080b0aac:
 	movs	r1, #0
 	ldr	r0, [pc, #220]
 	str	r1, [sp, #4]
-	bl	sub_080b04dc
+	bl	UiMessage_ShowAndWait
 	movs	r2, #1
 	mov	fp, r2
 .L_080b0d04:
@@ -334,7 +302,7 @@ Func_080b0aac:
 	movs	r0, #0
 	mov	fp, r0
 	adds	r0, r7, r1
-	bl	sub_080022fc
+	bl	__modsi3
 	movs	r3, #219
 	adds	r7, r0, #0
 	lsls	r1, r7, #1
@@ -348,7 +316,7 @@ Func_080b0aac:
 	subs	r1, #12
 	ldr	r0, [sp, #20]
 	movs	r2, #0
-	bl	sub_080b0a6c
+	bl	Func_080b0a6c
 	movs	r2, #234
 	lsls	r2, r2, #2
 	add	r2, sl
@@ -359,21 +327,21 @@ Func_080b0aac:
 	ldr	r0, [sp, #20]
 	ldrh	r2, [r5, #0]
 	adds	r1, r7, #0
-	bl	sub_080b11c4
+	bl	Shop_DrawParty
 	ldrh	r0, [r5, #0]
-	bl	sub_08077238
+	bl	Item_GetEquipmentGroupFar
 	cmp	r0, #0
 	bne.n	.L_080b0d68
 	ldrh	r2, [r5, #0]
 	mov	r0, r9
 	adds	r1, r6, #0
-	bl	sub_080b1470
+	bl	Shop_DrawUnitItem
 	b.n	.L_080b0d72
 .L_080b0d68:
 	ldrh	r2, [r5, #0]
 	mov	r0, r9
 	adds	r1, r6, #0
-	bl	sub_080b1260
+	bl	Shop_DrawEquipComparison
 .L_080b0d72:
 	ldr	r1, [pc, #88]
 	ldr	r2, [r1, #0]
@@ -385,28 +353,28 @@ Func_080b0aac:
 	add	r5, sl
 	ldrh	r1, [r5, #0]
 	adds	r0, r6, #0
-	bl	sub_08077028
+	bl	Inventory_AddItemFar
 	adds	r1, r0, #0
 	cmp	r1, #0
 	bge.n	.L_080b0de8
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldrh	r0, [r5, #0]
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	adds	r0, r6, #0
-	bl	sub_08077248
+	bl	Ability_GetAvailability
 	cmp	r0, #15
 	bne.n	.L_080b0db8
 	ldr	r0, [pc, #44]
-	bl	sub_080b04dc
+	bl	UiMessage_ShowAndWait
 	b.n	.L_080b0cf0
 .L_080b0db8:
 	ldr	r0, [pc, #40]
-	bl	sub_080b04dc
+	bl	UiMessage_ShowAndWait
 	b.n	.L_080b0cf0
 	.4byte 0x03001f2c
 	.4byte 0x000003a6
@@ -421,7 +389,7 @@ Func_080b0aac:
 	.2byte 0x0000
 .L_080b0de8:
 	adds	r0, r6, #0
-	bl	sub_08077058
+	bl	Inventory_RemoveFar
 	ldr	r2, [sp, #8]
 	movs	r1, #0
 	ldrsh	r3, [r2, r1]
@@ -433,16 +401,16 @@ Func_080b0aac:
 .L_080b0dfe:
 	ldrh	r1, [r5, #0]
 	adds	r0, r6, #0
-	bl	sub_08077220
+	bl	Item_IsCompatibleWithOwnerFar
 	cmp	r0, #0
 	bne.n	.L_080b0e28
 	movs	r1, #1
 	adds	r0, r6, #0
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #372]
-	bl	sub_080b04dc
+	bl	UiMessage_ShowAndWait
 	movs	r0, #0
-	bl	sub_080b0634
+	bl	UiMessage_ShowChoice
 	movs	r3, #1
 	str	r3, [sp, #4]
 	cmp	r0, #0
@@ -451,13 +419,13 @@ Func_080b0aac:
 .L_080b0e28:
 	ldr	r5, [pc, #352]
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	add	r5, sl
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldrh	r1, [r5, #0]
 	adds	r0, r6, #0
-	bl	sub_080b153c
+	bl	Shop_SelBuyNum
 	str	r0, [sp, #12]
 	movs	r2, #1
 	ldr	r1, [sp, #12]
@@ -471,10 +439,10 @@ Func_080b0aac:
 	ldrh	r1, [r5, #0]
 	adds	r0, r6, #0
 	ldr	r2, [sp, #12]
-	bl	sub_080b17e4
+	bl	Shop_BuyDone
 	mov	r1, r9
 	ldr	r0, [sp, #20]
-	bl	sub_080b24e4
+	bl	Shop_BuySpecialItem
 	movs	r3, #0
 	mov	r8, r3
 	b.n	.L_080b0eaa
@@ -491,7 +459,7 @@ Func_080b0aac:
 	cmp	r3, #0
 	beq.n	.L_080b0e8c
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #1
 	subs	r7, #1
 	mov	fp, r0
@@ -502,24 +470,24 @@ Func_080b0aac:
 	cmp	r3, #0
 	beq.n	.L_080b0ea2
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	adds	r7, #1
 	mov	fp, r1
 .L_080b0ea2:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080b0cf0
 .L_080b0eaa:
-	bl	sub_080a1030
+	bl	Menu_ReleaseEntryObjectsFar
 	mov	r0, r9
 	movs	r1, #2
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r1, #2
 	ldr	r0, [sp, #20]
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	mov	r2, r8
 	cmp	r2, #0
 	bne.n	.L_080b0f10
@@ -541,11 +509,11 @@ Func_080b0aac:
 	ldrh	r0, [r6, #0]
 	negs	r1, r1
 	subs	r5, #1
-	bl	sub_08077240
+	bl	Ability_GetMaximum
 	cmp	r5, #0
 	bne.n	.L_080b0ee4
 .L_080b0ef4:
-	bl	sub_080b0070
+	bl	AbilityMenu_BuildAvailableList
 	cmp	r0, #0
 	beq.n	.L_080b0f56
 	ldr	r3, [pc, #152]
@@ -560,27 +528,27 @@ Func_080b0aac:
 	str	r3, [sp, #16]
 .L_080b0f10:
 	ldr	r0, [pc, #136]
-	bl	sub_080b04dc
+	bl	UiMessage_ShowAndWait
 	b.n	.L_080b0af4
 .L_080b0f18:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	negs	r1, r1
 	mov	r8, r1
 	b.n	.L_080b0eaa
 .L_080b0f26:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r0, [pc, #112]
-	bl	sub_080b0574
+	bl	UiMessage_ShowAndRestoreState
 	movs	r2, #1
 	negs	r2, r2
 	mov	r8, r2
 	b.n	.L_080b0eaa
 .L_080b0f3a:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	negs	r3, r3
 	mov	r8, r3
@@ -588,20 +556,20 @@ Func_080b0aac:
 .L_080b0f48:
 	movs	r0, #112
 	str	r7, [sp, #16]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #0
 	mov	r8, r0
 	b.n	.L_080b0c5a
 .L_080b0f56:
 	ldr	r0, [sp, #32]
 	movs	r1, #2
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r1, sl
 	ldr	r0, [r1, #12]
 	movs	r1, #2
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #0
 	add	sp, #36
 	pop	{r3, r5, r6, r7}

@@ -1,27 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004080, 0x08004080
-	.set sub_0800479c, 0x0800479c
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016478, 0x08016478
-	.set sub_08019d2c, 0x08019d2c
-	.set sub_08019da8, 0x08019da8
-	.set sub_08019e48, 0x08019e48
-	.set sub_0801e41c, 0x0801e41c
-	.set sub_0801eadc, 0x0801eadc
-	.set sub_080209d0, 0x080209d0
-	.set sub_08020a60, 0x08020a60
-	.set sub_08020b14, 0x08020b14
-	.set sub_08020b64, 0x08020b64
-	.set sub_08077008, 0x08077008
-	.set sub_080b0020, 0x080b0020
-	.set sub_080b0028, 0x080b0028
-	.set sub_080b0030, 0x080b0030
-	.set sub_080b0038, 0x080b0038
-	.set sub_080f9010, 0x080f9010
 	.global NameEntry_EditOwnerName
 	.thumb_func
 NameEntry_EditOwnerName:
@@ -43,7 +21,7 @@ Func_08020bd8:
 	add	r6, sp, #80
 	str	r2, [sp, #24]
 	str	r0, [sp, #44]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r3, [pc, #340]
 	str	r0, [sp, #20]
 	ldr	r3, [r3, #0]
@@ -51,38 +29,38 @@ Func_08020bd8:
 	movs	r3, #1
 	str	r3, [sp, #12]
 	mov	r9, r3
-	bl	sub_0800479c
+	bl	Ui_LoadWindowGraphics
 	movs	r5, #2
 	movs	r1, #6
 	movs	r2, #24
 	movs	r3, #9
 	movs	r0, #3
 	str	r5, [sp, #0]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r1, #3
 	mov	r8, r0
 	movs	r2, #8
 	movs	r3, #3
 	movs	r0, #8
 	str	r5, [sp, #0]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #40]
 	ldr	r0, [sp, #44]
-	bl	sub_08019d2c
+	bl	Localization_LookupEntryId
 	movs	r2, #3
 	movs	r3, #1
 	movs	r1, #0
-	bl	sub_08019da8
+	bl	UiWindow_CreateWithSideObject
 	ldr	r1, [pc, #276]
 	mov	r0, r8
-	bl	sub_080209d0
+	bl	UiWindow_CopyTilemapRegion
 	movs	r3, #7
 	str	r3, [sp, #0]
 	mov	r0, r8
 	movs	r1, #18
 	movs	r2, #0
 	movs	r3, #18
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	ldr	r2, [pc, #256]
 	ldr	r1, [sp, #16]
 	adds	r3, r1, r2
@@ -117,8 +95,8 @@ Func_08020bd8:
 	strb	r3, [r1, #14]
 	ldr	r0, [sp, #40]
 	ldr	r1, [sp, #20]
-	bl	sub_08020b64
-	bl	sub_08004080
+	bl	UiText_DrawPaddedLabel
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	movs	r6, #18
 	movs	r7, #5
@@ -126,14 +104,14 @@ Func_08020bd8:
 	bgt.n	.L_08020ce2
 	ldr	r2, [pc, #176]
 	movs	r1, #128
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	movs	r1, #128
 	movs	r3, #0
 	lsls	r1, r1, #23
 	adds	r0, r5, #0
 	mov	r2, r8
 	str	r3, [sp, #0]
-	bl	sub_0801eadc
+	bl	RenderOutput_Create
 	add	r2, sp, #64
 	adds	r5, r0, #0
 	str	r5, [r2, #0]
@@ -146,26 +124,26 @@ Func_08020bd8:
 	adds	r1, #140
 	adds	r2, #52
 	mov	r0, fp
-	bl	sub_080b0038
+	bl	ShopCursor_SetPositionImmediateFar
 	b.n	.L_08020ce6
 .L_08020ce2:
 	add	r1, sp, #64
 	mov	fp, r1
 .L_08020ce6:
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	cmp	r5, #95
 	bgt.n	.L_08020d68
 	ldr	r2, [pc, #112]
 	movs	r1, #128
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	movs	r1, #128
 	lsls	r1, r1, #23
 	movs	r3, #0
 	adds	r0, r5, #0
 	mov	r2, r8
 	str	r3, [sp, #0]
-	bl	sub_0801eadc
+	bl	RenderOutput_Create
 	movs	r2, #48
 	adds	r5, r0, #0
 	add	r2, sp
@@ -179,12 +157,12 @@ Func_08020bd8:
 	ands	r3, r2
 	strb	r3, [r5, #25]
 	ldr	r0, [sp, #24]
-	bl	sub_08020b14
+	bl	UiText_SetRenderString
 	adds	r1, r0, #0
 	adds	r1, #70
 	mov	r0, sl
 	movs	r2, #22
-	bl	sub_080b0038
+	bl	ShopCursor_SetPositionImmediateFar
 	b.n	.L_08020d6c
 .L_08020d34:
 	mov	r3, sl
@@ -192,12 +170,12 @@ Func_08020bd8:
 	movs	r3, #13
 	strb	r3, [r2, #5]
 	ldr	r0, [sp, #40]
-	bl	sub_08016478
+	bl	RenderOutput_PrepareForRedraw
 	ldr	r0, [sp, #40]
 	ldr	r1, [sp, #20]
-	bl	sub_08020b64
+	bl	UiText_DrawPaddedLabel
 	movs	r0, #10
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_08021034
 	movs	r0, r0
 	.4byte 0x03001e8c
@@ -251,9 +229,9 @@ Func_08020bd8:
 	adds	r2, r7, #0
 	adds	r3, r5, #0
 	mov	r0, r8
-	bl	sub_08020a60
+	bl	UiWindow_SetTileAttributeRect
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r2, #1
 	movs	r3, #15
 	str	r2, [sp, #0]
@@ -262,7 +240,7 @@ Func_08020bd8:
 	adds	r3, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r7, #0
-	bl	sub_08020a60
+	bl	UiWindow_SetTileAttributeRect
 	mov	r3, r9
 	cmp	r3, #0
 	beq.n	.L_08020e02
@@ -279,7 +257,7 @@ Func_08020bd8:
 	adds	r2, #15
 	mov	r0, fp
 	movs	r3, #3
-	bl	sub_080b0030
+	bl	Shop_SetCursorFar
 .L_08020e02:
 	ldr	r3, [sp, #12]
 	cmp	r3, #0
@@ -287,18 +265,18 @@ Func_08020bd8:
 	movs	r1, #0
 	ldr	r0, [sp, #24]
 	str	r1, [sp, #12]
-	bl	sub_08020b14
+	bl	UiText_SetRenderString
 	adds	r1, r0, #0
 	adds	r1, #70
 	mov	r0, sl
 	movs	r2, #22
 	movs	r3, #3
-	bl	sub_080b0030
+	bl	Shop_SetCursorFar
 .L_08020e20:
 	mov	r0, fp
-	bl	sub_080b0020
+	bl	ShopCursor_AdvanceFar
 	mov	r0, sl
-	bl	sub_080b0028
+	bl	ShopCursor_MoveTowardTargetFar
 	ldr	r3, [pc, #68]
 	ldr	r0, [r3, #0]
 	mov	r3, sl
@@ -339,7 +317,7 @@ Func_08020bd8:
 	.2byte 0x0300
 .L_08020e80:
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	mov	r9, r2
 	subs	r7, #1
@@ -366,7 +344,7 @@ Func_08020bd8:
 	cmp	r2, #0
 	beq.n	.L_08020ed8
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	mov	r9, r1
 	adds	r7, #1
@@ -390,7 +368,7 @@ Func_08020bd8:
 	cmp	r2, #0
 	beq.n	.L_08020f12
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	movs	r2, #1
 	subs	r6, #1
@@ -421,7 +399,7 @@ Func_08020bd8:
 	cmp	r2, #0
 	beq.n	.L_08020f4a
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	adds	r6, #1
 	movs	r1, #1
 	mov	r9, r1
@@ -453,7 +431,7 @@ Func_08020bd8:
 	cmp	r2, #0
 	beq.n	.L_08020f64
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	mov	r9, r2
 	movs	r6, #18
@@ -466,7 +444,7 @@ Func_08020bd8:
 	cmp	r5, #0
 	beq.n	.L_08020fa6
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_08020f76:
 	ldr	r3, [sp, #28]
 	cmp	r3, #0
@@ -479,10 +457,10 @@ Func_08020bd8:
 	str	r1, [sp, #8]
 	strb	r3, [r1, #0]
 	ldr	r0, [sp, #40]
-	bl	sub_08016478
+	bl	RenderOutput_PrepareForRedraw
 	ldr	r0, [sp, #40]
 	ldr	r1, [sp, #24]
-	bl	sub_08020b64
+	bl	UiText_DrawPaddedLabel
 	movs	r2, #1
 	str	r2, [sp, #12]
 	b.n	.L_08020d86
@@ -500,7 +478,7 @@ Func_08020bd8:
 	b.n	.L_08020d86
 .L_08020fb2:
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	cmp	r6, #18
 	bne.n	.L_08020fe6
 	cmp	r7, #5
@@ -561,24 +539,24 @@ Func_08020bd8:
 	mov	r9, r2
 .L_08021020:
 	ldr	r0, [sp, #40]
-	bl	sub_08016478
+	bl	RenderOutput_PrepareForRedraw
 	ldr	r0, [sp, #40]
 	ldr	r1, [sp, #24]
-	bl	sub_08020b64
+	bl	UiText_DrawPaddedLabel
 	movs	r3, #1
 	str	r3, [sp, #12]
 	b.n	.L_08020d86
 .L_08021034:
 	mov	r0, r8
 	movs	r1, #2
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #40]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	ldr	r0, [sp, #44]
-	bl	sub_08019e48
+	bl	UiWork_FinalizeEntityMatchingLocalizedId
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r0, [sp, #36]
 	add	sp, #96
 	pop	{r3, r5, r6, r7}

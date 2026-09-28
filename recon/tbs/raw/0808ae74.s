@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004458, 0x08004458
-	.set sub_080072f0, 0x080072f0
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_080772c8, 0x080772c8
-	.set sub_0808b320, 0x0808b320
 	.global Encounter_SelectEnemyGroup
 	.global Func_0808ae74
 	.thumb_func
@@ -25,18 +19,18 @@ Func_0808ae74:
 	ldr	r3, [r3, #0]
 	ldr	r0, [pc, #388]
 	mov	fp, r3
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808ae9a
 	b.n	.L_0808afa0
 .L_0808ae9a:
 	movs	r0, #176
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808af26
 	ldr	r0, [pc, #368]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808af26
 	ldr	r2, [sp, #4]
@@ -68,11 +62,11 @@ Func_0808ae74:
 	b.n	.L_0808affc
 .L_0808aee2:
 	movs	r0, #5
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808aefe
 	movs	r0, #5
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r3, #146
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
@@ -80,7 +74,7 @@ Func_0808ae74:
 	cmp	r0, #130
 	bgt.n	.L_0808af26
 .L_0808aefe:
-	bl	sub_080772c8
+	bl	0x080772c8
 	mov	r2, r9
 	ldrh	r3, [r2, #2]
 	subs	r0, r0, r3
@@ -115,13 +109,13 @@ Func_0808ae74:
 	mov	sl, r3
 	cmp	r5, #0
 	bne.n	.L_0808af66
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	mov	r8, r0
-	bl	sub_08004458
+	bl	Random16
 	adds	r6, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	mov	r2, r8
 	subs	r5, r5, r2
 	adds	r5, r5, r6
@@ -140,7 +134,7 @@ Func_0808ae74:
 	adds	r0, r0, r3
 	lsls	r1, r1, #13
 	ldr	r3, [pc, #172]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r3, [pc, #172]
 	ldr	r1, [sp, #0]
 	movs	r0, r0
@@ -180,7 +174,7 @@ Func_0808ae74:
 	movs	r0, #0
 	cmp	r5, #0
 	beq.n	.L_0808affc
-	bl	sub_08004458
+	bl	Random16
 	adds	r3, r5, #0
 	muls	r3, r0
 	mov	r2, r9
@@ -206,7 +200,7 @@ Func_0808ae74:
 	mov	r2, r9
 	ldrh	r5, [r2, r3]
 	ldr	r0, [sp, #4]
-	bl	sub_0808b320
+	bl	BattleFx_SelectBattleCue
 	adds	r0, r5, #0
 .L_0808affc:
 	add	sp, #8

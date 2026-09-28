@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016544, 0x08016544
-	.set sub_080165b4, 0x080165b4
 	.global Func_08016348
 	.thumb_func
 Func_08016348:
@@ -75,9 +73,9 @@ Func_08016348:
 	strb	r3, [r7, #1]
 .L_080163ce:
 	mov	r0, ip
-	bl	sub_080165b4
+	bl	0x080165b4
 	mov	r0, r8
-	bl	sub_08016544
+	bl	0x08016544
 	ldr	r7, [pc, #20]
 	b.n	.L_080163f4
 	movs	r0, r0

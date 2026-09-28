@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+s32 Menu_RunWorkspaceSelectionLoop(void);
+s32 Save_WriteSelectedSlot(void);
+void UiText_ShowPositionedMessageAndWait(s32, s32);
+s32 Menu_RunWorkspaceOptions(void);
 
 #if defined(TBS_EDITION_DE)
 #define RESULT_CELL_ADDR 0x03001CD8

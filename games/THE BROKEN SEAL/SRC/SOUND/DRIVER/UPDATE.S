@@ -13,6 +13,9 @@
 	.global Func_080f9c44
 	.thumb_func
 Func_080f9c44:
+	.global Sound_TickDmaRestartTimer
+	.thumb_func
+Sound_TickDmaRestartTimer:
 	ldr r0, [pc, #680]
 	ldr r0, [r0, #0]
 	ldr r2, [pc, #680]
@@ -63,6 +66,9 @@ AlchemyUncreditedEnd_080f9c86:
 	.global Func_080f9c90
 	.thumb_func
 Func_080f9c90:
+	.global MusicPlayer_Tick
+	.thumb_func
+MusicPlayer_Tick:
 	ldr	r2, [pc, #608]
 	ldr	r3, [r0, #52]
 	cmp	r2, r3
@@ -95,7 +101,7 @@ Func_080f9c90:
 	ldr	r0, [r0, #0]
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	Func_080fab7c
+	bl	MusicPlayer_StepFade
 	ldr	r0, [r7, #4]
 	cmp	r0, #0
 	bge.n	.L4
@@ -140,7 +146,7 @@ Func_080f9c90:
 	b.n	.L10
 .L9:
 	adds	r0, r4, #0
-	bl	Func_080fa678
+	bl	AudioCommand_InvokeSlot34
 .L10:
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
@@ -151,7 +157,7 @@ Func_080f9c90:
 	tst	r0, r3
 	beq.n	.L12
 	adds	r0, r5, #0
-	bl	Func_080fa68c
+	bl	AudioCommand_InvokeSlot35
 	movs	r0, #128
 	strb	r0, [r5, #0]
 	movs	r0, #2
@@ -306,7 +312,7 @@ Func_080f9c90:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	Func_080fac44
+	bl	MusicTrack_CalcOutput
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L30
@@ -316,7 +322,7 @@ Func_080f9c90:
 	tst	r0, r1
 	bne.n	.L31
 	adds	r0, r4, #0
-	bl	Func_080fa678
+	bl	AudioCommand_InvokeSlot34
 	b.n	.L32
 .L31:
 	ldrb	r0, [r4, #1]
@@ -363,7 +369,7 @@ Func_080f9c90:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
-	bl	Func_080fa1fc
+	bl	Pcm_KeyToFrequency
 	str	r0, [r4, #32]
 .L32:
 	ldr	r4, [r4, #52]
@@ -391,6 +397,8 @@ Func_080f9c90:
 	mov	fp, r3
 	pop	{r3}
 .L1:
+	.global SoundDriver_CallViaR3
+SoundDriver_CallViaR3:
 	bx	r3
 AlchemyUncredited_080f9eea:
 	.2byte	0x0000

@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004458, 0x08004458
-	.set sub_0800fec8, 0x0800fec8
-	.set sub_0800ff54, 0x0800ff54
-	.set sub_08010424, 0x08010424
 	.global Map_CopyMetatileIndicesRect
 	.thumb_func
 Map_CopyMetatileIndicesRect:

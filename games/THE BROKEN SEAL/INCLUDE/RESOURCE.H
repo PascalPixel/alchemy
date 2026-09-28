@@ -3,8 +3,8 @@
 
 #include "TYPES.H"
 
-#define GetResource Func_08002f40
-void *GetResource(s32 resource_id);
+#define Resource_GetTableEntry Resource_GetTableEntry
+void *Resource_GetTableEntry(s32 resource_id);
 
 /* Index of a free resource table entry. */
 s32 Resource_FindFreeEntry(void);

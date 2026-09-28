@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0804d0dc, 0x0804d0dc
-	.set sub_0804d118, 0x0804d118
-	.set sub_0804d16c, 0x0804d16c
-	.set sub_0804d38c, 0x0804d38c
-	.set sub_0804d3e8, 0x0804d3e8
-	.set sub_080ad250, 0x080ad250
 	.global Menu_SelectTopEntry
 	.global Func_0804d4f8
 	.thumb_func
@@ -16,7 +10,7 @@ Func_0804d4f8:
 	movs	r0, #1
 	negs	r0, r0
 	movs	r6, #0
-	bl	sub_080ad250
+	bl	0x080ad250
 	cmp	r0, #0
 	bne.n	.L_0804d50c
 	movs	r6, #1
@@ -32,26 +26,26 @@ Func_0804d4f8:
 	bge.n	.L_0804d520
 	movs	r5, #0
 .L_0804d520:
-	bl	sub_0804d0dc
+	bl	0x0804d0dc
 	movs	r0, #1
-	bl	sub_0804d38c
+	bl	0x0804d38c
 	cmp	r6, #0
 	bne.n	.L_0804d534
 	movs	r0, #15
-	bl	sub_0804d38c
+	bl	0x0804d38c
 .L_0804d534:
 	movs	r0, #2
-	bl	sub_0804d38c
+	bl	0x0804d38c
 	movs	r0, #7
-	bl	sub_0804d38c
+	bl	0x0804d38c
 	movs	r0, #17
 	movs	r1, #7
 	movs	r2, #0
-	bl	sub_0804d3e8
+	bl	0x0804d3e8
 	adds	r0, r5, #0
-	bl	sub_0804d16c
+	bl	0x0804d16c
 	adds	r5, r0, #0
-	bl	sub_0804d118
+	bl	0x0804d118
 	cmp	r5, #0
 	blt.n	.L_0804d562
 	ldr	r2, [pc, #16]

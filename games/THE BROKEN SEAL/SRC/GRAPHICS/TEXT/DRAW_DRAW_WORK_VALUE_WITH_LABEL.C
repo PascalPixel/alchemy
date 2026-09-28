@@ -14,7 +14,7 @@ extern struct SharedWork080a23c0 gGameState;
 
 void UiText_DrawWorkValueWithLabel(s32 work)
 {
-    Ui_SetRange(gGameState.resource, 7, work, 8, 0);
+    UiText_DrawNumberAtOffsetFar(gGameState.resource, 7, work, 8, 0);
     UiText_DrawCharacterAtOffsetFar(0xB0B, work, 0x40, 0);
 }
 

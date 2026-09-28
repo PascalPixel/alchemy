@@ -1,36 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080022fc, 0x080022fc
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08002f40, 0x08002f40
-	.set sub_080030f8, 0x080030f8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_08004458, 0x08004458
-	.set sub_080049ac, 0x080049ac
-	.set sub_08004bd4, 0x08004bd4
-	.set sub_08004c1c, 0x08004c1c
-	.set sub_08004c6c, 0x08004c6c
-	.set sub_08004cb4, 0x08004cb4
-	.set sub_080051d8, 0x080051d8
-	.set sub_08005340, 0x08005340
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072f4, 0x080072f4
-	.set sub_080b5098, 0x080b5098
-	.set sub_080b50e8, 0x080b50e8
-	.set sub_080cd52c, 0x080cd52c
-	.set sub_080cd594, 0x080cd594
-	.set sub_080cdbc0, 0x080cdbc0
-	.set sub_080cef64, 0x080cef64
-	.set sub_080d6888, 0x080d6888
-	.set sub_080de2f8, 0x080de2f8
-	.set sub_080e0524, 0x080e0524
-	.set sub_080e3944, 0x080e3944
-	.set sub_080e396c, 0x080e396c
-	.set sub_080f9010, 0x080f9010
 	.global BattleEffectA
 	.global Func_080d89ac
 	.thumb_func
@@ -60,7 +29,7 @@ Func_080d89ac:
 	str	r1, [sp, #48]
 	movs	r0, #0
 	str	r6, [r5, #0]
-	bl	sub_080cd594
+	bl	BattleFx_BeginCanvasLayer
 	ldr	r5, [r5, #0]
 	ldr	r3, [r5, #28]
 	cmp	r3, #1
@@ -85,7 +54,7 @@ Func_080d89ac:
 	str	r3, [sp, #4]
 	adds	r0, r6, #0
 	movs	r3, #0
-	bl	sub_080de2f8
+	bl	BattleFx_PrepareCanvasEffect
 	b.n	.L_080d8a26
 .L_080d8a14:
 	add	r3, sp, #88
@@ -95,7 +64,7 @@ Func_080d89ac:
 	str	r3, [sp, #4]
 	adds	r0, r6, #0
 	movs	r3, #1
-	bl	sub_080de2f8
+	bl	BattleFx_PrepareCanvasEffect
 .L_080d8a26:
 	ldr	r1, [sp, #72]
 	ldr	r2, [pc, #68]
@@ -115,7 +84,7 @@ Func_080d89ac:
 	movs	r2, #36
 	ldrsh	r0, [r3, r2]
 	adds	r1, r5, #0
-	bl	sub_080e396c
+	bl	EffectPosition_ApplyStepAndYOffset
 	ldr	r2, [r5, #0]
 	movs	r3, #64
 	subs	r3, r3, r2
@@ -143,12 +112,12 @@ Func_080d89ac:
 	ldr	r0, [pc, #836]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 	ldr	r0, [pc, #828]
 	ldr	r1, [sp, #72]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 	mov	r1, sl
 	cmp	r1, #1
 	bls.n	.L_080d8aa6
@@ -180,14 +149,14 @@ Func_080d89ac:
 .L_080d8ac6:
 	ldr	r0, [pc, #788]
 .L_080d8ac8:
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r2, r0, #0
 	movs	r0, #160
 	adds	r1, r2, #0
 	ldr	r3, [pc, #780]
 	movs	r2, #128
 	lsls	r0, r0, #19
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r2, [sp, #44]
 	cmp	r2, #0
 	bne.n	.L_080d8af0
@@ -208,7 +177,7 @@ Func_080d89ac:
 .L_080d8afa:
 	ldr	r0, [pc, #752]
 .L_080d8afc:
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r2, r0, #0
 	ldr	r3, [sp, #72]
 	movs	r0, #128
@@ -216,7 +185,7 @@ Func_080d89ac:
 	lsls	r0, r0, #5
 	adds	r1, r3, r0
 	adds	r0, r2, #0
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	ldr	r2, [pc, #696]
 	ldr	r1, [sp, #72]
 	adds	r3, r1, r2
@@ -226,7 +195,7 @@ Func_080d89ac:
 	adds	r3, #76
 	adds	r1, r3, #0
 	str	r3, [sp, #40]
-	bl	sub_080cef64
+	bl	BattleFx_FetchRectangleBlitters
 	mov	r0, sl
 	cmp	r0, #0
 	beq.n	.L_080d8b32
@@ -238,18 +207,18 @@ Func_080d89ac:
 	mov	r8, r1
 	movs	r6, #255
 .L_080d8b3a:
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #127
 	ands	r3, r0
 	adds	r3, #64
 	lsls	r3, r3, #15
 	str	r3, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #0
 	ands	r0, r6
 	str	r3, [r5, #24]
@@ -280,17 +249,17 @@ Func_080d89ac:
 	mov	r8, r3
 	movs	r6, #255
 .L_080d8b90:
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
@@ -320,15 +289,15 @@ Func_080d89ac:
 	ldr	r7, [pc, #528]
 	mov	r8, r2
 .L_080d8be2:
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [pc, #524]
 	adds	r6, r0, #0
 	ands	r6, r3
-	bl	sub_08004458
+	bl	Random16
 	movs	r5, #63
 	ands	r5, r0
 	adds	r0, r6, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	adds	r5, #32
 	adds	r3, r5, #0
 	muls	r3, r0
@@ -336,11 +305,11 @@ Func_080d89ac:
 	ldr	r3, [pc, #500]
 	adds	r0, r6, #0
 	str	r3, [r7, #4]
-	bl	sub_0800231c
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	str	r3, [r7, #8]
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #31
 	ands	r3, r0
 	adds	r3, #32
@@ -372,17 +341,17 @@ Func_080d89ac:
 	mov	r8, r0
 	movs	r6, #255
 .L_080d8c50:
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #14
 	str	r0, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	movs	r1, #1
@@ -406,17 +375,17 @@ Func_080d89ac:
 	mov	r8, r2
 	movs	r6, #255
 .L_080d8c96:
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
@@ -471,7 +440,7 @@ Func_080d89ac:
 	lsls	r1, r1, #3
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #232]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r1, [sp, #64]
 	movs	r0, #0
 	mov	fp, r0
@@ -488,7 +457,7 @@ Func_080d89ac:
 	cmp	r2, #40
 	bne.n	.L_080d8d3a
 	movs	r0, #0
-	bl	sub_080b50e8
+	bl	BattleEventRuntime_BeginPhaseFar
 .L_080d8d3a:
 	ldr	r0, [sp, #72]
 	ldr	r1, [pc, #140]
@@ -503,7 +472,7 @@ Func_080d89ac:
 	cmp	r2, #0
 	bne.n	.L_080d8e08
 	ldr	r0, [sp, #12]
-	bl	sub_08002322
+	bl	Trig_Sin
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	ldr	r2, [sp, #88]
@@ -515,7 +484,7 @@ Func_080d89ac:
 	subs	r3, #20
 	ldr	r0, [sp, #12]
 	mov	r8, r3
-	bl	sub_0800231c
+	bl	Trig_Cos
 	lsls	r0, r0, #2
 	ldr	r3, [sp, #84]
 	asrs	r0, r0, #16
@@ -542,7 +511,7 @@ Func_080d89ac:
 	adds	r1, r7, #0
 	mov	r2, r8
 	adds	r3, r5, #0
-	bl	sub_080072f4
+	bl	_call_via_r4
 	mov	r0, fp
 	cmp	r0, #3
 	bgt.n	.L_080d8e80
@@ -554,7 +523,7 @@ Func_080d89ac:
 	mov	r2, r8
 	adds	r1, r7, #0
 	adds	r3, r5, #0
-	bl	sub_080072f4
+	bl	_call_via_r4
 	b.n	.L_080d8e80
 	movs	r0, r0
 	.4byte 0x00000073
@@ -577,7 +546,7 @@ Func_080d89ac:
 	.2byte 0x0300
 .L_080d8e08:
 	ldr	r0, [sp, #12]
-	bl	sub_08002322
+	bl	Trig_Sin
 	ldr	r3, [sp, #88]
 	lsls	r2, r0, #2
 	adds	r2, r2, r0
@@ -590,7 +559,7 @@ Func_080d89ac:
 	subs	r2, #10
 	ldr	r0, [sp, #12]
 	mov	r9, r2
-	bl	sub_0800231c
+	bl	Trig_Cos
 	lsls	r0, r0, #2
 	ldr	r3, [sp, #84]
 	asrs	r0, r0, #16
@@ -619,7 +588,7 @@ Func_080d89ac:
 	ldr	r0, [sp, #68]
 	adds	r1, r6, #0
 	adds	r3, r5, #0
-	bl	sub_080072f4
+	bl	_call_via_r4
 	mov	r2, fp
 	cmp	r2, #3
 	bgt.n	.L_080d8e80
@@ -632,7 +601,7 @@ Func_080d89ac:
 	mov	r2, r9
 	ldr	r0, [sp, #68]
 	adds	r3, r5, #0
-	bl	sub_080072f4
+	bl	_call_via_r4
 .L_080d8e80:
 	movs	r1, #0
 	str	r1, [sp, #60]
@@ -663,15 +632,15 @@ Func_080d89ac:
 	ldr	r1, [sp, #16]
 	ldr	r3, [r6, #0]
 	ldrsh	r0, [r3, r1]
-	bl	sub_080b5098
+	bl	GetBattleObjectSlotFar
 	ldr	r3, [sp, #60]
 	lsls	r3, r3, #3
 	ldr	r5, [r0, #0]
 	mov	r9, r3
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	ldr	r0, [sp, #36]
 	ldr	r1, [sp, #32]
-	bl	sub_080051d8
+	bl	Graphics_PrepareTransferInIwramWork
 	ldr	r3, [r5, #8]
 	ldr	r0, [sp, #28]
 	str	r3, [r0, #0]
@@ -681,13 +650,13 @@ Func_080d89ac:
 	ldr	r3, [r5, #16]
 	str	r3, [r0, #8]
 	ldr	r0, [sp, #28]
-	bl	sub_08004cb4
+	bl	SceneTransform_ApplyPosition
 	mov	r3, r9
 	adds	r3, #20
 	cmp	fp, r3
 	bne.n	.L_080d8ef2
 	movs	r0, #126
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080d8ef2:
 	mov	r3, r9
 	adds	r3, #36
@@ -702,7 +671,7 @@ Func_080d89ac:
 	movs	r1, #7
 	negs	r2, r2
 	ldr	r3, [sp, #60]
-	bl	sub_080d6888
+	bl	ObjectGroup_UpdateMembers
 .L_080d8f10:
 	cmp	fp, r9
 	bgt.n	.L_080d8f16
@@ -719,9 +688,9 @@ Func_080d89ac:
 	mov	r1, fp
 	lsls	r5, r1, #9
 	adds	r0, r5, #0
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 	adds	r0, r5, #0
-	bl	sub_08004c6c
+	bl	SceneTransform_ApplyRoll
 	b.n	.L_080d8f6c
 .L_080d8f38:
 	mov	r2, sl
@@ -734,7 +703,7 @@ Func_080d89ac:
 	mov	r1, fp
 	subs	r0, r1, r0
 	lsls	r0, r0, #9
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	b.n	.L_080d8f6c
 .L_080d8f52:
 	mov	r2, sl
@@ -742,13 +711,13 @@ Func_080d89ac:
 	bne.n	.L_080d8f60
 .L_080d8f58:
 	ldr	r0, [sp, #20]
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	b.n	.L_080d8f6c
 .L_080d8f60:
 	ldr	r0, [sp, #20]
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	ldr	r0, [sp, #20]
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 .L_080d8f6c:
 	ldr	r0, [sp, #52]
 	movs	r3, #0
@@ -810,14 +779,14 @@ Func_080d89ac:
 	adds	r3, r1, #0
 	adds	r0, r0, r3
 	ldr	r3, [pc, #404]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	asrs	r7, r0, #9
 	cmp	r7, #0
 	beq.n	.L_080d90d6
 	add	r5, sp, #104
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080e3944
+	bl	EffectPosition_ApplyBaseAndYOffset
 	mov	r2, sl
 	cmp	r2, #0
 	bne.n	.L_080d8ff8
@@ -864,7 +833,7 @@ Func_080d89ac:
 	lsls	r0, r2, #2
 	add	r0, fp
 	movs	r1, #9
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r4, r0, #0
 	b.n	.L_080d9052
 .L_080d9044:
@@ -893,7 +862,7 @@ Func_080d89ac:
 	subs	r3, r3, r4
 	ldr	r4, [r0, #4]
 	ldr	r0, [sp, #68]
-	bl	sub_080072f4
+	bl	_call_via_r4
 	b.n	.L_080d90a2
 .L_080d907a:
 	lsls	r0, r4, #1
@@ -914,7 +883,7 @@ Func_080d89ac:
 	subs	r3, r3, r4
 	ldr	r4, [r0, #4]
 	ldr	r0, [sp, #68]
-	bl	sub_080072f4
+	bl	_call_via_r4
 .L_080d90a2:
 	mov	r1, sl
 	cmp	r1, #2
@@ -925,19 +894,19 @@ Func_080d89ac:
 	ldr	r5, [r6, #0]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	str	r5, [r6, #0]
 	ldr	r5, [r6, #4]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	str	r5, [r6, #4]
 	ldr	r5, [r6, #8]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	str	r5, [r6, #8]
 .L_080d90d6:
@@ -972,14 +941,14 @@ Func_080d89ac:
 	beq.n	.L_080d9110
 	b.n	.L_080d8eac
 .L_080d9110:
-	bl	sub_080cd52c
+	bl	ObjectGroup_TickMemberTimers
 	ldr	r3, [pc, #116]
 	ldr	r1, [sp, #72]
 	adds	r2, r1, r3
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #128
 	ldr	r0, [sp, #12]
 	lsls	r1, r1, #4
@@ -993,12 +962,12 @@ Func_080d89ac:
 	b.n	.L_080d8d28
 .L_080d913a:
 	ldr	r0, [pc, #84]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	movs	r0, #47
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #46
-	bl	sub_08002dd8
-	bl	sub_080cdbc0
+	bl	Runtime_ReleaseHeapBlock
+	bl	BattleFx_EndCanvasLayer
 	add	sp, #128
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

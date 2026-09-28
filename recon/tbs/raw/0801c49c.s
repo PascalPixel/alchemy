@@ -1,28 +1,13 @@
 .syntax unified
 	.thumb
-	.set sub_08002304, 0x08002304
-	.set sub_08002df0, 0x08002df0
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004080, 0x08004080
-	.set sub_08004938, 0x08004938
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016498, 0x08016498
-	.set sub_0801c7fc, 0x0801c7fc
-	.set sub_0801c8a0, 0x0801c8a0
-	.set sub_0801e41c, 0x0801e41c
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_0801e9d4, 0x0801e9d4
-	.set sub_0801eadc, 0x0801eadc
-	.set sub_08077080, 0x08077080
-	.set sub_08077088, 0x08077088
-	.set sub_080f9010, 0x080f9010
 	.global Debug_SelectAbilityPair
 	.global Func_0801c49c
 	.thumb_func
 Debug_SelectAbilityPair:
 Func_0801c49c:
+	.global Menu_Check
+	.thumb_func
+Menu_Check:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -38,34 +23,34 @@ Func_0801c49c:
 	movs	r1, #1
 	lsls	r0, r0, #3
 	mov	fp, r1
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	movs	r1, #140
 	adds	r7, r0, #0
 	movs	r0, #0
-	bl	sub_08077088
+	bl	OwnerAction_AddFar
 	movs	r1, #140
 	movs	r0, #1
-	bl	sub_08077088
+	bl	OwnerAction_AddFar
 	movs	r1, #140
 	movs	r0, #2
-	bl	sub_08077088
+	bl	OwnerAction_AddFar
 	movs	r1, #141
 	movs	r0, #2
-	bl	sub_08077088
+	bl	OwnerAction_AddFar
 	movs	r1, #78
 	movs	r0, #2
-	bl	sub_08077088
+	bl	OwnerAction_AddFar
 	movs	r1, #93
 	movs	r0, #3
-	bl	sub_08077088
+	bl	OwnerAction_AddFar
 	movs	r1, #140
 	movs	r0, #5
-	bl	sub_08077088
+	bl	OwnerAction_AddFar
 	movs	r3, #0
 	adds	r0, r7, #0
 	str	r3, [sp, #12]
 	str	r3, [sp, #16]
-	bl	sub_0801c7fc
+	bl	Object_CollectResources
 	mov	sl, r0
 	cmp	r0, #0
 	bne.n	.L_0801c50c
@@ -74,36 +59,36 @@ Func_0801c49c:
 	add	r0, sp, #16
 	add	r1, sp, #12
 	adds	r2, r7, #0
-	bl	sub_0801c8a0
+	bl	Func_0801c8a0
 	movs	r5, #2
 	movs	r1, #6
 	movs	r2, #20
 	movs	r3, #7
 	movs	r0, #4
 	str	r5, [sp, #0]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r1, #3
 	movs	r2, #20
 	movs	r3, #3
 	adds	r6, r0, #0
 	movs	r0, #4
 	str	r5, [sp, #0]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r1, #14
 	str	r0, [sp, #8]
 	movs	r2, #20
 	movs	r3, #5
 	movs	r0, #4
 	str	r5, [sp, #0]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	mov	r9, r0
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0801c56e
 	ldr	r2, [pc, #636]
 	movs	r1, #128
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	movs	r0, #0
 	movs	r1, #128
 	str	r0, [sp, #0]
@@ -111,7 +96,7 @@ Func_0801c49c:
 	adds	r0, r5, #0
 	adds	r2, r6, #0
 	movs	r3, #0
-	bl	sub_0801eadc
+	bl	RenderOutput_Create
 	str	r0, [sp, #4]
 .L_0801c56e:
 	ldr	r5, [pc, #612]
@@ -119,7 +104,7 @@ Func_0801c49c:
 	adds	r0, r5, #0
 	movs	r2, #16
 	movs	r3, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 .L_0801c57c:
 	mov	r1, fp
 	cmp	r1, #0
@@ -131,12 +116,12 @@ Func_0801c49c:
 	mov	r1, sl
 	add	r0, sl
 	mov	fp, r3
-	bl	sub_08002304
+	bl	__umodsi3
 	str	r0, [sp, #16]
 	ldr	r0, [sp, #12]
 	mov	r1, sl
 	add	r0, sl
-	bl	sub_08002304
+	bl	__umodsi3
 	mov	r2, r8
 	adds	r2, #2
 	lsrs	r3, r2, #31
@@ -155,19 +140,19 @@ Func_0801c49c:
 	strh	r2, [r0, #8]
 	strb	r2, [r0, #20]
 	adds	r0, r6, #0
-	bl	sub_08016498
+	bl	RenderOutput_RedrawSavedRect
 	movs	r3, #2
 	str	r3, [sp, #0]
 	adds	r0, r6, #0
 	movs	r1, #1
 	movs	r2, #2
 	movs	r3, #17
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	ldr	r0, [pc, #512]
 	adds	r1, r6, #0
 	movs	r2, #48
 	movs	r3, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r3, [sp, #16]
 	lsls	r3, r3, #2
 	adds	r3, r3, r7
@@ -177,7 +162,7 @@ Func_0801c49c:
 	adds	r0, r0, r5
 	movs	r2, #56
 	movs	r3, #16
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r3, [sp, #12]
 	lsls	r3, r3, #2
 	adds	r3, r3, r7
@@ -186,19 +171,19 @@ Func_0801c49c:
 	adds	r0, r0, r5
 	movs	r2, #56
 	movs	r3, #32
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r0, [pc, #456]
 	adds	r1, r6, #0
 	subs	r0, #2
 	movs	r2, #16
 	movs	r3, #16
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r0, [pc, #444]
 	adds	r1, r6, #0
 	subs	r0, #1
 	movs	r2, #16
 	movs	r3, #32
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r3, [sp, #16]
 	lsls	r3, r3, #2
 	ldrh	r0, [r3, r7]
@@ -207,7 +192,7 @@ Func_0801c49c:
 	adds	r0, r0, r5
 	movs	r2, #104
 	movs	r3, #16
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r3, [sp, #12]
 	lsls	r3, r3, #2
 	ldrh	r0, [r3, r7]
@@ -215,14 +200,14 @@ Func_0801c49c:
 	movs	r2, #104
 	movs	r3, #32
 	adds	r0, r0, r5
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	mov	r0, r9
-	bl	sub_08016498
+	bl	RenderOutput_RedrawSavedRect
 	mov	r1, r9
 	ldr	r0, [pc, #396]
 	movs	r2, #0
 	movs	r3, #16
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	mov	r1, r8
 	cmp	r1, #0
 	beq.n	.L_0801c676
@@ -230,7 +215,7 @@ Func_0801c49c:
 	lsls	r3, r3, #2
 	adds	r3, r3, r7
 	ldrh	r0, [r3, #2]
-	bl	sub_08077080
+	bl	Ability_GetData
 	ldr	r3, [sp, #12]
 	b.n	.L_0801c684
 .L_0801c676:
@@ -238,7 +223,7 @@ Func_0801c49c:
 	lsls	r3, r3, #2
 	adds	r3, r3, r7
 	ldrh	r0, [r3, #2]
-	bl	sub_08077080
+	bl	Ability_GetData
 	ldr	r3, [sp, #16]
 .L_0801c684:
 	lsls	r3, r3, #2
@@ -250,16 +235,16 @@ Func_0801c49c:
 	movs	r1, #2
 	mov	r2, r9
 	movs	r3, #64
-	bl	sub_0801e9d4
+	bl	UiText_DrawNumberAtOffset
 	ldr	r0, [pc, #332]
 	mov	r1, r9
 	adds	r0, r5, r0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 .L_0801c6a8:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r5, [pc, #316]
 	ldr	r3, [r5, #0]
 	movs	r2, #32
@@ -267,7 +252,7 @@ Func_0801c49c:
 	cmp	r3, #0
 	beq.n	.L_0801c6da
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r3, r8
 	cmp	r3, #0
 	beq.n	.L_0801c6ce
@@ -290,7 +275,7 @@ Func_0801c49c:
 	cmp	r3, #0
 	beq.n	.L_0801c704
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r1, r8
 	cmp	r1, #0
 	beq.n	.L_0801c6f8
@@ -313,7 +298,7 @@ Func_0801c49c:
 	cmp	r3, #0
 	beq.n	.L_0801c71e
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #1
 	negs	r0, r0
 	movs	r1, #1
@@ -326,7 +311,7 @@ Func_0801c49c:
 	cmp	r3, #0
 	beq.n	.L_0801c734
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	add	r8, r3
 	mov	fp, r3
@@ -338,7 +323,7 @@ Func_0801c49c:
 	cmp	r3, #0
 	beq.n	.L_0801c748
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_0801c76c
 .L_0801c748:
 	ldr	r3, [r1, #0]
@@ -347,7 +332,7 @@ Func_0801c49c:
 	cmp	r3, #0
 	beq.n	.L_0801c75a
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_0801c76c
 .L_0801c75a:
 	ldr	r3, [r1, #0]
@@ -358,7 +343,7 @@ Func_0801c49c:
 	b.n	.L_0801c57c
 .L_0801c766:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_0801c76c:
 	ldr	r3, [sp, #16]
 	lsls	r3, r3, #2
@@ -384,18 +369,18 @@ Func_0801c49c:
 	strh	r2, [r1, #0]
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #1
 	ldr	r0, [sp, #8]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	mov	r0, r9
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_0801c7b6:
 	adds	r0, r7, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	add	sp, #20
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

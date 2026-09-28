@@ -2,6 +2,8 @@
 #include "SCENE.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
+unsigned char Ui_FillVramBlockPattern(void);
+void UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 
 #if defined(TBS_EDITION_JA)
 #define TEXT_COUNT 32

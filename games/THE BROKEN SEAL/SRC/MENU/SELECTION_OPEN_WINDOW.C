@@ -23,8 +23,8 @@ struct Screen {
 };
 
 extern struct Screen *gResQueueWork;
-extern u8 gVal[];
-extern u8 gVal2[];
+extern u8 Value_00000050[];
+extern u8 Value_00000051[];
 
 struct UiWork *UiWindow_Create(s32, s32, s32, s32, s32);
 
@@ -69,10 +69,10 @@ void Menu_OpenSelectionWindow(s32 mode, u32 count)
     } else {
         switch (mode) {
         case 4:
-            UiText_DrawCharacterAtOffset((s32)gVal2, screen->window, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)Value_00000051, screen->window, 0, 0);
             break;
         case 2:
-            UiText_DrawCharacterAtOffset((s32)gVal, screen->window, 0, 0);
+            UiText_DrawCharacterAtOffset((s32)Value_00000050, screen->window, 0, 0);
             break;
         }
     }

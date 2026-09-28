@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0803911c, 0x0803911c
-	.set sub_08039418, 0x08039418
-	.set sub_08039430, 0x08039430
 	.global Func_0803939c
 	.thumb_func
 Func_0803939c:
@@ -30,7 +27,7 @@ Func_0803939c:
 	asrs	r1, r1, #16
 	ldrh	r2, [r5, #8]
 	ldrh	r3, [r5, #10]
-	bl	sub_0803911c
+	bl	0x0803911c
 	str	r6, [r5, #0]
 	str	r6, [r5, #4]
 	strh	r6, [r5, #8]
@@ -62,9 +59,9 @@ Func_0803939c:
 	ands	r3, r2
 	cmp	r3, #0
 	bne.n	.L_08039414
-	bl	sub_08039418
+	bl	Func_08039418
 	adds	r0, r5, #0
-	bl	sub_08039430
+	bl	Func_08039430
 .L_08039414:
 	pop	{r5, pc}
 	.2byte 0x0000

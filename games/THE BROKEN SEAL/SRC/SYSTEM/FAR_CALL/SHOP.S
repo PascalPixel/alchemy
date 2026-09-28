@@ -9,20 +9,40 @@
 	.global Func_080b0000
 	.thumb_func
 Func_080b0000:
-	.irp target, 0x080b0445, 0x080b0279, 0x080b29a9, 0x080b3285
-	overlay_veneer \target
-	.endr
+	overlay_veneer 0x080b0445
+	overlay_veneer 0x080b0279
+	overlay_veneer 0x080b29a9
+	overlay_veneer 0x080b3285
 	.global ShopCursor_AdvanceFar
 	.global Func_080b0020
 	.thumb_func
 ShopCursor_AdvanceFar:
 Func_080b0020:
-	.irp target, 0x080b08b9, 0x080b0959, 0x080b09fd, 0x080b0a21
-	overlay_veneer \target
-	.endr
-	.irp target, 0x080b06c1, 0x080b0841, 0x080b0895, 0x080b3445
-	overlay_veneer \target
-	.endr
-	.irp target, 0x080b04c5, 0x080b3399
-	overlay_veneer \target
-	.endr
+	overlay_veneer 0x080b08b9
+	.global ShopCursor_MoveTowardTargetFar
+	.thumb_func
+ShopCursor_MoveTowardTargetFar:
+	overlay_veneer 0x080b0959
+	.global Shop_SetCursorFar
+	.thumb_func
+Shop_SetCursorFar:
+	overlay_veneer 0x080b09fd
+	.global Func_080b0038
+	.thumb_func
+Func_080b0038:
+	.global ShopCursor_SetPositionImmediateFar
+	.thumb_func
+ShopCursor_SetPositionImmediateFar:
+	overlay_veneer 0x080b0a21
+	overlay_veneer 0x080b06c1
+	.global Unnamed_080b0840Far
+	.thumb_func
+Unnamed_080b0840Far:
+	overlay_veneer 0x080b0841
+	.global Shop_InitEffectFar
+	.thumb_func
+Shop_InitEffectFar:
+	overlay_veneer 0x080b0895
+	overlay_veneer 0x080b3445
+	overlay_veneer 0x080b04c5
+	overlay_veneer 0x080b3399

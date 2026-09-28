@@ -1,29 +1,25 @@
 .syntax unified
 	.thumb
-	.set sub_08015778, 0x08015778
-	.set sub_081180a8, 0x081180a8
-	.set sub_081180b0, 0x081180b0
-	.set sub_0815e288, 0x0815e288
 	.global Func_0815e1ec
 	.thumb_func
 Func_0815e1ec:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_08015778
+	bl	Func_08015778
 	ldr	r3, [r5, #4]
 	subs	r3, #16
 	str	r3, [r5, #4]
 	pop	{r5, pc}
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_0815e288
+	bl	Func_0815e288
 	ldr	r3, [r5, #4]
 	subs	r3, #16
 	str	r3, [r5, #4]
 	pop	{r5, pc}
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_081180b0
+	bl	0x081180b0
 	ldr	r3, [r5, #4]
 	subs	r3, #16
 	str	r3, [r5, #4]
@@ -31,7 +27,7 @@ Func_0815e1ec:
 .L_0815e21c:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_081180a8
+	bl	0x081180a8
 	ldr	r3, [r5, #4]
 	subs	r3, #16
 	str	r3, [r5, #4]

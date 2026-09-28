@@ -2,10 +2,8 @@
 mod compression_plan;
 mod derive_index;
 pub(crate) use compression_plan::LzMachine;
-pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
 mod gba_header;
 mod native;
-pub(crate) use native::{icon_bank_source, raw_palette_bank, ICON_BANKS, ICON_PALETTE_BANK};
 mod packer;
 use crate::compiler::build_io::{relative, text};
 use crate::compiler::bundle::{
@@ -33,209 +31,9 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --locations [TARGET] | --verify-text [TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
-pub(crate) fn identified_regions(
-    root: &Path,
-    rom: &[u8],
-    target: &crate::targets::DecompTarget,
-) -> Result<(Vec<Value>, Vec<Value>), String> {
-    let (mut rows, mut failures) = native::character_inventory(rom, target)?;
-    let (field, issues) = derive_index::inventory(root, rom, target)?;
-    rows.extend(field);
-    failures.extend(issues);
-    rows.extend(sound_inventory(root, rom, target)?);
-    Ok((rows, failures))
-}
 
-fn sound_inventory(
-    root: &Path,
-    rom: &[u8],
-    target: &crate::targets::DecompTarget,
-) -> Result<Vec<Value>, String> {
-    let registry = format!("{}/translation-units.json", target.recon_dir());
-    let units = json(&root.join(&registry))?;
-    let units = units
-        .as_array()
-        .or_else(|| units["units"].as_array())
-        .ok_or("unit registry has no units")?;
-    let symbol = units
-        .iter()
-        .find_map(|u| u["absolute_symbols"]["Sound_SongTable"].get("address"));
-    let Some(symbol) = symbol else {
-        return Ok(vec![]);
-    };
-    let table = number(symbol, "song table")?
-        .checked_sub(ROM_BASE)
-        .ok_or("song table outside ROM")?;
-    let word = |offset: usize| -> Option<usize> {
-        Some(u32::from_le_bytes(rom.get(offset..offset.checked_add(4)?)?.try_into().ok()?) as usize)
-    };
-    let pointer = |offset: usize| -> Option<usize> {
-        word(offset)?
-            .checked_sub(ROM_BASE)
-            .filter(|p| *p < rom.len())
-    };
-    let mut rows = vec![];
-    let mut banks = BTreeSet::new();
-    let mut sequences = BTreeMap::<usize, (usize, Vec<usize>)>::new();
-    // SongEntry and SequenceHeader are the structures consumed by the shared
-    // byte-exact Sound and MusicPlayer units. Stop at the first invalid entry.
-    for slot in 0..2048 {
-        let at = table + slot * 8;
-        let Some(header) = pointer(at) else { break };
-        let Some(&tracks) = rom.get(header) else {
-            break;
-        };
-        let Some(entry) = rom.get(at..at + 8) else {
-            break;
-        };
-        if u16::from_le_bytes([entry[4], entry[5]]) >= 8 || tracks > 16 {
-            break;
-        }
-        let size = 8 + usize::from(tracks) * 4;
-        if header + size > rom.len() {
-            break;
-        }
-        if (0..usize::from(tracks)).any(|i| pointer(header + 8 + i * 4).is_none()) {
-            break;
-        }
-        rows.push(serde_json::json!({"start":ROM_BASE+at,"end":ROM_BASE+at+8,"kind":"record-table","label":"Sound selection table","evidence":registry}));
-        rows.push(serde_json::json!({"start":ROM_BASE+header,"end":ROM_BASE+header+size,"kind":"record-table","label":"Music sequence header","evidence":format!("Sound_SongTable entry {slot}; SequenceHeader")}));
-        sequences.entry(header).or_insert_with(|| {
-            (
-                size,
-                (0..usize::from(tracks))
-                    .filter_map(|index| pointer(header + 8 + index * 4))
-                    .collect(),
-            )
-        });
-        if let Some(bank) = pointer(header + 4) {
-            banks.insert(bank);
-        }
-    }
-    let sequence_headers = sequences.keys().copied().collect::<Vec<_>>();
-    for pair in sequence_headers.windows(2) {
-        let (header, next) = (pair[0], pair[1]);
-        let (size, _) = &sequences[&header];
-        let (_, tracks) = &sequences[&next];
-        let Some(start) = tracks.iter().copied().min() else {
-            continue;
-        };
-        if start < header + size || tracks.iter().any(|track| *track >= next) {
-            continue;
-        }
-        rows.push(serde_json::json!({
-            "start":ROM_BASE+start,
-            "end":ROM_BASE+next,
-            "kind":"golden-sun-sound-sequence",
-            "label":"Music sequence tracks",
-            "evidence":format!("SequenceHeader at 0x{:08x}: every track pointer lies after the preceding physical header at 0x{:08x} and before this owning header",ROM_BASE+next,ROM_BASE+header)
-        }));
-    }
-    let mut pending = banks.into_iter().collect::<Vec<_>>();
-    let mut visited = BTreeSet::new();
-    while let Some(bank) = pending.pop() {
-        if !visited.insert(bank) {
-            continue;
-        }
-        for voice in 0..128 {
-            let at = bank + voice * 12;
-            let Some(record) = rom.get(at..at + 12) else {
-                continue;
-            };
-            if record.iter().all(|byte| *byte == 0) {
-                continue;
-            }
-            let kind = record[0];
-            if !matches!(kind, 0 | 1 | 2 | 3 | 4 | 8 | 9 | 10 | 11 | 12 | 64 | 128) {
-                continue;
-            }
-            let Some(target) = pointer(at + 4) else {
-                continue;
-            };
-            rows.push(serde_json::json!({
-                "start":ROM_BASE+at,
-                "end":ROM_BASE+at+12,
-                "kind":"golden-sun-sound-voice",
-                "label":"Sound voice record",
-                "evidence":format!("SequenceHeader voice bank 0x{:08x}, voice {voice}; recognized voice kind {kind} and in-ROM target",ROM_BASE+bank)
-            }));
-            if matches!(kind, 64 | 128) {
-                pending.push(target);
-                continue;
-            }
-            if !matches!(kind, 0 | 8) {
-                continue;
-            }
-            let (Some(control), Some(frequency), Some(loop_start), Some(last)) = (
-                word(target),
-                word(target + 4),
-                word(target + 8),
-                word(target + 12),
-            ) else {
-                continue;
-            };
-            let Some(end) = target
-                .checked_add(17)
-                .and_then(|n| n.checked_add(last))
-                .filter(|end| *end <= rom.len())
-            else {
-                continue;
-            };
-            if control & 0x3fffffff != 0
-                || frequency == 0
-                || frequency > 192000 * 1024
-                || (control & 0xc0000000 != 0 && loop_start > last)
-            {
-                continue;
-            }
-            rows.push(serde_json::json!({"start":ROM_BASE+target,"end":ROM_BASE+end,"kind":"golden-sun-pcm-wave","label":"PCM sample","evidence":format!("SequenceHeader voice bank 0x{:08x}, voice {voice}; 16-byte wave header and {} samples",ROM_BASE+bank,last+1)}));
-        }
-    }
-    Ok(rows)
-}
-
-#[test]
-fn sound_index_follows_registered_voices_and_checks_sample_extents() {
-    let root = tempfile::tempdir().unwrap();
-    let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
-    let registry = root.path().join(target.recon_dir());
-    fs::create_dir_all(&registry).unwrap();
-    fs::write(
-        registry.join("translation-units.json"),
-        r#"{"units":[{"absolute_symbols":{"Sound_SongTable":{"address":"0x08000100"}}}]}"#,
-    )
-    .unwrap();
-    let mut rom = vec![0u8; 0x1100];
-    for (at, value) in [
-        (0x100, 0x08000200u32),
-        (0x204, 0x08000300),
-        (0x304, 0x08001000),
-        (0x1004, 8192000),
-        (0x100c, 9),
-    ] {
-        rom[at..at + 4].copy_from_slice(&value.to_le_bytes());
-    }
-    let sample = |rom: &[u8]| {
-        sound_inventory(root.path(), rom, &target)
-            .unwrap()
-            .into_iter()
-            .find(|r| r["kind"] == "golden-sun-pcm-wave")
-    };
-    let row = sample(&rom).unwrap();
-    assert_eq!(row["start"], 0x08001000);
-    assert_eq!(row["end"], 0x0800101a);
-    let voices = sound_inventory(root.path(), &rom, &target)
-        .unwrap()
-        .into_iter()
-        .filter(|row| row["kind"] == "golden-sun-sound-voice")
-        .collect::<Vec<_>>();
-    assert_eq!(voices.len(), 1);
-    assert_eq!(voices[0]["start"], 0x08000300);
-    rom[0x100c..0x1010].copy_from_slice(&0xffffu32.to_le_bytes());
-    assert!(sample(&rom).is_none());
-}
 fn repository_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
         .parent()
@@ -3301,28 +3099,6 @@ pub(crate) fn encode_overlay_stream(
         general
     })
 }
-/// Every ROM range `manifest` declares, expanded as the asset build expands
-/// it: its regions, closure packages and series, as `(start, end)` addresses.
-/// Nothing is built or read from a ROM.
-pub(crate) fn declared_ranges(root: &Path, manifest: &str) -> Result<Vec<(usize, usize)>, String> {
-    let mut ctx = Context::new(root);
-    let manifest = json(&ctx.source(manifest)?)?;
-    let mut entries = manifest
-        .get("regions")
-        .and_then(Value::as_array)
-        .cloned()
-        .unwrap_or_default();
-    expand_closure_packages(&mut ctx, &manifest, &mut entries)?;
-    expand_series(&mut ctx, &manifest, &mut entries)?;
-    entries
-        .iter()
-        .map(|entry| {
-            let address = number(&entry["address"], "asset address")?;
-            let size = number(&entry["size"], "asset size")?;
-            Ok((address, address + size))
-        })
-        .collect()
-}
 /// The LZSS compressors of the reference machine that `target`'s asset
 /// manifest names.
 pub(crate) fn target_lz_machine(
@@ -3440,29 +3216,6 @@ fn build_general_lz_cached(
     ))
 }
 fn closure_self_test() -> Result<String, String> {
-    let root = repository_root();
-    let missing = root.join("out/__self_test_missing__/index.json");
-    if missing.exists() {
-        return Err("closure package self-test path exists".to_string());
-    }
-    let mut present_regions = 0;
-    for game in ["THE BROKEN SEAL", "THE LOST AGE"] {
-        let index = root
-            .join("games")
-            .join(game)
-            .join("SOUND/SAMPLE/SAMPLES.TSV");
-        let text = fs::read_to_string(index)
-            .map_err(|error| format!("{game} PCM self-test index: {error}"))?;
-        let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-        if rows.next() != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource") {
-            return Err(format!("{game} PCM self-test index differs"));
-        }
-        let count = rows.count();
-        if count == 0 {
-            return Err(format!("{game} PCM self-test index is empty"));
-        }
-        present_regions += count;
-    }
     let overlapping = serde_json::json!([
         {"address": "0x08001000", "size": 16},
         {"address": "0x08001008", "size": 16}
@@ -3470,9 +3223,7 @@ fn closure_self_test() -> Result<String, String> {
     if closure_coverage(overlapping.as_array().unwrap(), "self-test").is_ok() {
         return Err("overlapping closure coverage was accepted".to_string());
     }
-    Ok(format!(
-        "self-test=ok optional=skipped present_regions={present_regions} provenance=verified"
-    ))
+    Ok("self-test=ok".into())
 }
 struct Context {
     root: PathBuf,
@@ -4008,56 +3759,6 @@ fn expand_series(
                     return Err("sequence table is empty".to_string());
                 }
             }
-            "golden-sun-pcm-wave-series" => {
-                let index_name = json_string(&series["index"], "PCM index")?;
-                if !index_name.to_ascii_lowercase().ends_with(".tsv") {
-                    return Err("PCM series requires its canonical TSV table".into());
-                }
-                let index_path = ctx.source(index_name)?;
-                let text = fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
-                let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-                if rows.next()
-                    != Some("sample\taddress\tfrequency\tloop_start\tsample_count\tsource")
-                {
-                    return Err("PCM table header differs".to_string());
-                }
-                let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
-                for (sample, row) in rows.enumerate() {
-                    let fields = row.split('\t').collect::<Vec<_>>();
-                    if fields.len() != 6 || fields[0] != sample.to_string() {
-                        return Err(format!("PCM table row {sample} identity differs"));
-                    }
-                    let frequency = fields[2]
-                        .parse::<u32>()
-                        .map_err(|_| format!("PCM table row {sample} frequency differs"))?;
-                    let loop_start =
-                        if fields[3].is_empty() {
-                            Value::Null
-                        } else {
-                            Value::from(fields[3].parse::<u32>().map_err(|_| {
-                                format!("PCM table row {sample} loop point differs")
-                            })?)
-                        };
-                    let sample_count = fields[4]
-                        .parse::<usize>()
-                        .map_err(|_| format!("PCM table row {sample} extent differs"))?;
-                    let size = (16usize + sample_count + 3) & !3;
-                    let source = directory
-                        .join(fields[5])
-                        .to_string_lossy()
-                        .replace('\\', "/");
-                    ctx.source(&source)?;
-                    entries.push(serde_json::json!({
-                        "address":fields[1],
-                        "size":size,
-                        "frequency":frequency,
-                        "loop_start":loop_start,
-                        "kind":"golden-sun-pcm-wave",
-                        "source":source,
-                        "index":index_name,
-                    }));
-                }
-            }
             _ => return Err(format!("unsupported asset series: {kind}")),
         }
     }
@@ -4183,21 +3884,12 @@ fn sound_series_use_only_the_canonical_tables() {
     let mut ctx = Context::new(directory.path());
     let sequence =
         "sound_id\tclass\taddress\tsize\tsource\n0\tmusic\t0x08000000\t16\tsongs/opening.mid\n";
-    let samples = "sample\taddress\tfrequency\tloop_start\tsample_count\tsource\n0\t0x08000010\t8000\t\t5\tsamples/flute.wav\n";
-    for (kind, table, source, expected_size) in [
-        (
-            "sound-sequence",
-            sequence,
-            "songs/opening.mid",
-            serde_json::json!("16"),
-        ),
-        (
-            "pcm-wave",
-            samples,
-            "samples/flute.wav",
-            serde_json::json!(24),
-        ),
-    ] {
+    for (kind, table, source, expected_size) in [(
+        "sound-sequence",
+        sequence,
+        "songs/opening.mid",
+        serde_json::json!("16"),
+    )] {
         let manifest = serde_json::json!({"series":[{
             "kind":format!("golden-sun-{kind}-series"), "index":"index.tsv"
         }]});
@@ -4255,7 +3947,7 @@ fn expand_closure_packages(
     manifest: &Value,
     entries: &mut Vec<Value>,
 ) -> Result<(), String> {
-    let supported = ["golden-sun-asset-fragment", "golden-sun-pcm-wave-series"];
+    let supported = ["golden-sun-asset-fragment"];
     for package in manifest
         .get("closure_packages")
         .and_then(Value::as_array)
@@ -5498,7 +5190,7 @@ fn read_midi_stream(
         meter,
     )?)
 }
-fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), String> {
+pub(crate) fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), String> {
     let midi =
         read_sequence_midi(&fs::read(source).map_err(|e| format!("{}: {e}", source.display()))?)?;
     let skeleton = midi
@@ -5854,110 +5546,74 @@ fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
     assert!(read_sequence_midi(&retired).is_err());
 }
 
-fn build_pcm_record(entry: &Value, wav: &[u8]) -> Result<(Vec<u8>, Value), String> {
-    let word = |v: &Value, label: &str| {
-        u32::try_from(number(v, label)?).map_err(|_| format!("{label} exceeds u32"))
-    };
-    let header = entry.get("header");
-    let frequency = word(&entry["frequency"], "wave frequency")?;
-    let (rate, samples) = psynergy::assets::wav::wav_pcm8(wav).map_err(|e| e.to_string())?;
-    if samples.is_empty() || u64::from(rate) != (u64::from(frequency) + 512) / 1024 {
-        return Err("WAV sample count or rate differs from catalog".into());
+pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<(Vec<u8>, Value), String> {
+    let wave = psynergy::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
+    let last_sample = u32::try_from(
+        wave.samples
+            .len()
+            .checked_sub(1)
+            .ok_or("WAV has no samples")?,
+    )
+    .map_err(|_| "wave sample count exceeds u32")?;
+    let pitch = (wave.playback_rate(60) * 1024.0).round();
+    if !pitch.is_finite() || !(1.0..=f64::from(u32::MAX)).contains(&pitch) {
+        return Err("WAV playback pitch exceeds the native wave format".into());
     }
-    let catalog_loop = entry
-        .get("loop_start")
-        .filter(|v| !v.is_null())
-        .map(|v| word(v, "wave loop start"))
-        .transpose()?;
-    let (control, loop_start) = if let Some(header) = header {
-        if word(&header["frequency"], "header frequency")? != frequency
-            || number(&header["sample_count"], "sample count")? != samples.len()
-        {
-            return Err("wave header differs from catalog or WAV data".into());
+    let frequency = pitch as u32;
+    let (control, loop_start) = if let Some((start, end)) = wave.loop_range {
+        if end != last_sample {
+            return Err("native PCM requires its forward loop to end at the last sample".into());
         }
-        (
-            word(&header["control"], "wave control")?,
-            word(&header["loop_start"], "wave loop start")?,
-        )
+        (0x4000_0000u32, start)
     } else {
-        (
-            if catalog_loop.is_some() {
-                0x40000000
-            } else {
-                0
-            },
-            catalog_loop.unwrap_or(0),
-        )
+        (0, 0)
     };
-    let looped = control & 0xc0000000 != 0;
-    if (header.is_some() && catalog_loop != looped.then_some(loop_start))
-        || (looped && loop_start as usize >= samples.len())
-    {
-        return Err("wave loop differs or starts beyond samples".into());
-    }
-    let size = number(&entry["size"], "wave size")?;
-    let padding = size
-        .checked_sub(16)
-        .and_then(|n| n.checked_sub(samples.len()))
-        .ok_or("wave record is shorter than samples")?;
-    let fill = if header.is_some() {
-        if number(&entry["padding"]["size"], "padding size")? != padding {
-            return Err("wave padding size differs".into());
-        }
-        u8::try_from(number(&entry["padding"]["fill"], "padding fill")?)
-            .map_err(|_| "padding exceeds u8")?
-    } else {
-        if padding > 3 {
-            return Err("wave alignment exceeds three bytes".into());
-        }
-        0
-    };
-    let last_sample =
-        u32::try_from(samples.len() - 1).map_err(|_| "wave sample count exceeds u32")?;
+    let size = wave
+        .samples
+        .len()
+        .checked_add(19)
+        .ok_or("wave alignment overflows")?
+        & !3;
+    let padding = size - 16 - wave.samples.len();
     let mut bytes = Vec::with_capacity(size);
     for value in [control, frequency, loop_start, last_sample] {
         bytes.extend(value.to_le_bytes());
     }
-    bytes.extend(&samples);
-    bytes.resize(size, fill);
+    bytes.extend(&wave.samples);
+    bytes.resize(size, 0);
     Ok((
         bytes,
-        serde_json::json!({"samples":samples.len(),"rate":rate,"frequency":frequency,"control":control,
-        "looped":looped,"loop_start":looped.then_some(loop_start),"padding_bytes":padding,"padding_fill":fill}),
+        serde_json::json!({"samples":wave.samples.len(),"rate":wave.rate,"frequency":frequency,"control":control,
+        "loop_start":wave.loop_range.map(|(start,_)|start),"padding_bytes":padding}),
     ))
 }
 
 #[test]
-fn pcm_records_preserve_exact_headers_loops_and_padding() {
-    let mut wav=Vec::from(&b"RIFF\x27\0\0\0WAVEfmt \x10\0\0\0\x01\0\x01\0\x40\x1f\0\0\x40\x1f\0\0\x01\0\x08\0data\x03\0\0\0"[..]);
-    wav.extend([0, 128, 255]);
-    let source = serde_json::json!({"frequency":8192511,"loop_start":1,"size":20});
-    let (built, report) = build_pcm_record(&source, &wav).unwrap();
-    assert_eq!(&built[16..], &[128, 0, 127, 0]);
-    assert_eq!(u32::from_le_bytes(built[12..16].try_into().unwrap()), 2);
-    assert_eq!(report["control"], 0x40000000);
-    let mut exact = source.clone();
-    exact["header"] = serde_json::json!({"frequency":8192511,"control":0x80000000_u32,"loop_start":1,"sample_count":3});
-    exact["padding"] = serde_json::json!({"size":1,"fill":165});
-    let (built, report) = build_pcm_record(&exact, &wav).unwrap();
-    assert_eq!(built[19], 165);
-    assert_eq!(report["control"], 0x80000000_u32);
-    for (pointer, value) in [
-        ("/header/frequency", serde_json::json!(8192512)),
-        ("/header/sample_count", serde_json::json!(2)),
-        ("/header/loop_start", serde_json::json!(3)),
-        ("/header/control", serde_json::json!(0)),
-        ("/padding/size", serde_json::json!(2)),
-        ("/padding/fill", serde_json::json!(256)),
-        ("/size", serde_json::json!(18)),
-    ] {
-        let mut bad = exact.clone();
-        *bad.pointer_mut(pointer).unwrap() = value;
-        assert!(build_pcm_record(&bad, &wav).is_err(), "{pointer}");
+fn pcm_records_derive_header_pitch_and_alignment_from_the_wav() {
+    use psynergy::assets::wav::{write_pcm8, Pcm8};
+    let mut wave = Pcm8 {
+        rate: 8_000,
+        samples: vec![128, 0, 127],
+        unity_note: 48,
+        pitch_fraction: 0,
+        loop_range: Some((1, 2)),
+    };
+    let (built, report) = build_pcm_record(&write_pcm8(&wave).unwrap()).unwrap();
+    let mut expected = Vec::new();
+    for value in [0x4000_0000u32, 16_384_000, 1, 2] {
+        expected.extend(value.to_le_bytes());
     }
-    let mut bad = source;
-    bad["size"] = serde_json::json!(23);
-    assert!(build_pcm_record(&bad, &wav).is_err());
+    expected.extend([128, 0, 127, 0]);
+    assert_eq!(built, expected);
+    assert_eq!(report["samples"], 3);
+    assert_eq!(report["padding_bytes"], 1);
+    wave.loop_range = Some((1, 1));
+    assert!(build_pcm_record(&write_pcm8(&wave).unwrap()).is_err());
+    wave.loop_range = None;
+    let (built, _) = build_pcm_record(&write_pcm8(&wave).unwrap()).unwrap();
+    assert_eq!(&built[..4], &[0; 4]);
+    wave.samples.clear();
+    assert!(build_pcm_record(&write_pcm8(&wave).unwrap()).is_err());
 }
 
 /// Message markup is printable ASCII text and `{"command": name}` atoms from
@@ -6110,13 +5766,8 @@ fn build_entry_native_tail(
         }
         "golden-sun-pcm-wave" => {
             let wav = fs::read(source_path(entry_source)?).map_err(|error| error.to_string())?;
-            let (built, report) = build_pcm_record(entry, &wav)?;
-            let mut sources = vec![entry_source.to_string()];
-            if let Some(index) = entry.get("index").and_then(Value::as_str) {
-                ctx.source(index)?;
-                sources.insert(0, index.to_string());
-            }
-            Ok((built, sources, report))
+            let (built, report) = build_pcm_record(&wav)?;
+            Ok((built, vec![entry_source.to_string()], report))
         }
         "golden-sun-delta7-still" => {
             if entry.get("source_rect").is_some() {
@@ -6160,23 +5811,10 @@ fn build_entry_native_tail(
         "golden-sun-message-archive" => {
             if entry_source.to_ascii_lowercase().ends_with(".po") {
                 let source = crate::text_catalog::read_source(&source_path(entry_source)?)?;
-                if source.address != address
-                    || source.size != number(&entry["size"], "archive size")?
-                {
+                if source.address != address {
                     return Err("message catalog identity differs".into());
                 }
-                let base = u32::try_from(address).map_err(|_| "archive address exceeds u32")?;
-                let archive = psynergy::assets::huffman_archive::encode_huffman_archive(
-                    base,
-                    source.symbol_count,
-                    &source.banks,
-                )
-                .map_err(|error| error.to_string())?;
-                if archive.context_directory != source.contexts as u32
-                    || archive.directory != source.directory as u32
-                {
-                    return Err("message catalog pointers differ from its archive headers".into());
-                }
+                let archive = crate::text_catalog::encode(&source)?;
                 return Ok((
                     archive.bytes,
                     vec![entry_source.to_string()],
@@ -6625,7 +6263,7 @@ fn asset_stamp_tracks_sound_and_included_overlay_sources() {
         fs::create_dir_all(root.join(name)).unwrap();
     }
     let manifest = root.join("recon/tbs/assets.json");
-    let sound = root.join("games/THE BROKEN SEAL/SOUND/SEQUENCE/SEQUENCES.TSV");
+    let sound = root.join("games/THE BROKEN SEAL/SOUND/SEQUENCE/BGM_000.MID");
     let header = root.join("games/THE BROKEN SEAL/SRC/shared.h");
     let unit = root.join("recon/tbs/translation-units.json");
     let machine = root.join("recon/tbs/machine.json");
@@ -6735,9 +6373,23 @@ fn material_audit_reports_only_game_material_no_build_read() {
     assert!(error.contains("has no build consumer"), "{error}");
     assert_eq!(
         error.lines().skip(1).map(str::trim).collect::<Vec<_>>(),
-        [format!("{game}/SRC/B.JSON")]
+        [
+            format!("{game}/SRC/B.JSON"),
+            format!("{}/source-paths.json", target.recon_dir())
+        ]
     );
     let everything = [format!("{game}/SRC/A.JSON"), format!("{game}/SRC/B.JSON")];
+    assert!(
+        audit_material_consumers(root, &manifest, everything.clone())
+            .unwrap_err()
+            .contains("source-paths.json")
+    );
+    git(&[
+        "rm",
+        "--cached",
+        "--",
+        &format!("{}/source-paths.json", target.recon_dir()),
+    ]);
     audit_material_consumers(root, &manifest, everything).unwrap();
     // A manifest that is not a game's own reads no game's material.
     fs::write(root.join("OTHER.JSON"), "{}\n").unwrap();
@@ -7235,17 +6887,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
         println!(
             "{}",
             crate::text_catalog::extract(&repository_root(), arguments.get(1).map(String::as_str))?
-        );
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--locations") {
-        if arguments.len() > 2 {
-            return Err(USAGE.into());
-        }
-        let target = crate::targets::decomp_target(arguments.get(1).map(String::as_str))?;
-        println!(
-            "locations={}",
-            crate::coverage::places::write(&repository_root(), &target)?
         );
         return Ok(ExitCode::SUCCESS);
     }

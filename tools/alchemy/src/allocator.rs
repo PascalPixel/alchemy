@@ -23,26 +23,6 @@ mod tests {
         }
         assert!(super::run(&["--help".into()]).is_ok());
     }
-    #[test]
-    fn overlay_owners_resolve_a_candidate_rather_than_being_refused() {
-        let repo = crate::compiler::routing::root();
-        let main = super::SourceOwner::parse_argument("080bbb0c").expect("main owner");
-        assert_eq!(
-            super::default_source(&repo, main).expect("main default"),
-            "recon/tbs/en/main/080bbb0c.c"
-        );
-        let overlay =
-            super::SourceOwner::parse_argument("resource_3ba:02002910").expect("overlay owner");
-        let path = super::default_source(&repo, overlay).expect("overlay default");
-        assert!(repo.join(&path).is_file(), "{path}");
-        assert!(
-            std::path::Path::new(&path)
-                .extension()
-                .and_then(|extension| extension.to_str())
-                .is_some_and(|extension| extension.eq_ignore_ascii_case("c")),
-            "{path}"
-        );
-    }
 }
 
 pub fn entry(args: &[String]) -> ExitCode {

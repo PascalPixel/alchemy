@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080f8888, 0x080f8888
 	.global Func_080facd8
 	.thumb_func
 Func_080facd8:
@@ -24,7 +23,7 @@ Func_080facd8:
 	bne.n	.L_080fad0a
 	ldr	r0, [r6, r7]
 	str	r2, [sp, #0]
-	bl	sub_080f8888
+	bl	0x080f8888
 	ldr	r3, [r6, r7]
 	mov	r1, r8
 	strb	r1, [r3, #5]

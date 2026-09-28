@@ -7,7 +7,6 @@
 @ credit: handwritten — unsigned high-word multiply and multiply-accumulate helpers
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08002074
 	.global Math_UnsignedMulHigh
 	.thumb_func
 Math_UnsignedMulHigh:

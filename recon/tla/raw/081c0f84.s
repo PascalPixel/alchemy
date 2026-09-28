@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_081c20f4, 0x081c20f4
-	.set sub_081c212c, 0x081c212c
-	.set sub_081c25c4, 0x081c25c4
-	.set sub_081c2f68, 0x081c2f68
 	.global Func_081c0f84
 	.thumb_func
 Func_081c0f84:
@@ -15,7 +10,7 @@ Func_081c0f84:
 	ldr	r0, [pc, #16]
 	lsrs	r2, r2, #16
 	movs	r1, #255
-	bl	sub_081c2f68
+	bl	MusicPlayer_SetVolume
 	ldr	r3, [pc, #12]
 	strh	r5, [r3, #0]
 	ldr	r3, [pc, #12]
@@ -35,10 +30,10 @@ Func_081c0f84:
 	.2byte 0x5810
 	.2byte 0x0200
 	push	{lr}
-	bl	sub_081c20f4
+	bl	Audio_StopAllPlayers
 	pop	{pc}
 	push	{lr}
-	bl	sub_081c212c
+	bl	Audio_ResumeAllPlayers
 	pop	{pc}
 	ldr	r3, [pc, #4]
 	ldrb	r0, [r3, #0]
@@ -54,7 +49,7 @@ Func_081c0f84:
 	cmp	r3, #0
 	beq.n	.L_081c0ff8
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r3, #44
 	adds	r5, #1
 	adds	r3, #255
@@ -66,7 +61,7 @@ Func_081c0f84:
 	.2byte 0x5800
 	.2byte 0x0200
 	push	{lr}
-	bl	sub_081c25c4
+	bl	AudioEngine_SuspendDirectSound
 	pop	{pc}
 	svc	27
 	bx	lr

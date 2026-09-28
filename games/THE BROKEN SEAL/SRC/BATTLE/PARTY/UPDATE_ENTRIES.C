@@ -3,6 +3,12 @@
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_PARTY.H"
 #include "OWNER_STATE.H"
+s32 Trade_CanOfferDjinnFar(s32 id, s32 x, s32 y);
+void Trade_AddOfferFar(s32 id, s32 x, s32 y);
+s32 GameFlag_TestFar(s32 message);
+s32 Djinn_ActivateFar(s32 id, s32 x, s32 y);
+s32 Trade_RemoveOfferFar(s32 id, s32 x, s32 y);
+s32 BattleParty_PrepareActiveOwners(u16 *owners);
 
 /* battle/placement/update_entries.c */
 struct PlacementEntry {

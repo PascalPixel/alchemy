@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c0010, 0x081c0010
 	.global Func_080d2c64
 	.thumb_func
 Func_080d2c64:
@@ -25,9 +24,9 @@ Func_080d2c64:
 .L_080d2c88:
 	movs	r0, #149
 	lsls	r0, r0, #1
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	adds	r0, r5, #0
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	pop	{r5, pc}
 	bx	lr
 	.2byte 0x0000

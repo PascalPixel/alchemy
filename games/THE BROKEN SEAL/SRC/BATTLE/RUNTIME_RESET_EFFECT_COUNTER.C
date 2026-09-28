@@ -1,5 +1,6 @@
 #include "EFFECT_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ebc[];
 
 s32 BattleFx_ExecutePackedAbilityEffect(s32);
 void Battle_ResetEffectCounter(void)
@@ -8,7 +9,7 @@ void Battle_ResetEffectCounter(void)
   void **cell;
   u8 *counter;
   int zero;
-  cell = (void **)ADDR_03001EBC;
+  cell = (void **)((u32)&Data_03001ebc);
   runtime = *cell;
   counter = ((u8 *)runtime) + 0xCB6;
   zero = 0;

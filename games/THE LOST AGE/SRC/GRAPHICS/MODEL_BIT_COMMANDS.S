@@ -7,7 +7,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, model bit commands
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08118284
 	.global Model_BitCommands
 Model_BitCommands:
 	lsr	r3, r3, #2

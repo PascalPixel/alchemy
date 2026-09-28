@@ -42,3 +42,5 @@ Func_08002d5c:
 .L_08002dd0:
 	pop	{r5, r6}
 	bx	lr
+	.global Resource_PatchThumbBranchCodeSize
+	.set Resource_PatchThumbBranchCodeSize, . - Func_08002d5c

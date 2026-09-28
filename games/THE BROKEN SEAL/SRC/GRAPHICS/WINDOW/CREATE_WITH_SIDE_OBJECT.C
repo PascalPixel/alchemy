@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 #define FIELD_AT_OFFSET(base, type, ofs)     (*(type *)((u8 *)(base) + (ofs)))
 
@@ -15,7 +16,7 @@ s32 UiWindow_CreateWithSideObject(s32 arg0, s32 arg1, s32 x, s32 y)
     s32 ofs;
     void *work;
 
-    work = *(void **)ADDR_03001E8C;
+    work = *(void **)((u32)&Data_03001e8c);
     if (Localization_LookupEntryId(arg0) == -1) {
         return 0;
     }

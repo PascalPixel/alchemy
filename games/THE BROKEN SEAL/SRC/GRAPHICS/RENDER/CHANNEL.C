@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e8c[];
 
 struct UiChannelWork {
     u8 padding00[0x14];
@@ -146,7 +147,7 @@ void UiWork_CopyParamsToRenderWork(void *work)
     u32 z0;
     void *render;
 
-    render = *(void **)ADDR_03001E8C;
+    render = *(void **)((u32)&Data_03001e8c);
     p0 = (s32)(FIELD_AT_OFFSET(work, u16 *, 0x16)); FIELD_AT_OFFSET(render, u16 *, RENDER_PARAM_OFS) = (u16)p0;
     p1 = (s32)(FIELD_AT_OFFSET(work, u16 *, 0x18)); (s32)z0 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD_OFS) = (u16)p1;
     p2 = (FIELD_AT_OFFSET(work, u16 *, 0x1A)); (s32)z1 = 0; FIELD_AT_OFFSET(render, u16 *, RENDER_WORD2_OFS) = (u16)p2;

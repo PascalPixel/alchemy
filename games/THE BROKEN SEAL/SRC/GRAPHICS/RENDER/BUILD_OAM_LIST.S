@@ -9,7 +9,6 @@
 @ credit: handwritten — ARM object-attribute list builder copied to the heap
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08001dc8
 	.global Render_BuildOamList
 Render_BuildOamList:
 	push	{r5, r6, r7, r8, r9, lr}
@@ -73,3 +72,5 @@ Render_BuildOamList:
 	.4byte	0x03000168
 	.4byte	0x03001d00
 	.4byte	0x03001d40
+	.global LoadedRuntime_Size
+	.set LoadedRuntime_Size, . - Render_BuildOamList

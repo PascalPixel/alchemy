@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_08002f40, 0x08002f40
-	.set sub_08004938, 0x08004938
-	.set sub_080072f0, 0x080072f0
 	.global UiText_RenderStringTiles
 	.global Func_0801de5c
 	.thumb_func
@@ -27,10 +23,10 @@ Func_0801de5c:
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	mov	fp, r3
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	str	r0, [sp, #8]
 	ldr	r0, [pc, #708]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r3, [pc, #704]
 	str	r0, [sp, #4]
 	add	r3, fp
@@ -40,7 +36,7 @@ Func_0801de5c:
 	movs	r1, #16
 	ldr	r3, [pc, #696]
 	add	r0, sp, #20
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r2, #240
 	ldr	r1, [sp, #0]
 	lsls	r2, r2, #8
@@ -63,7 +59,7 @@ Func_0801de5c:
 	ldr	r3, [pc, #660]
 	adds	r1, r5, #0
 	ldr	r2, [pc, #660]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	b.n	.L_0801def6
 .L_0801ded4:
 	ldr	r3, [pc, #640]
@@ -81,7 +77,7 @@ Func_0801de5c:
 	adds	r1, r5, #0
 	ldr	r2, [pc, #632]
 	mov	sl, r7
-	bl	sub_080072f0
+	bl	_call_via_r3
 .L_0801def6:
 	cmp	r6, #0
 	bne.n	.L_0801defc
@@ -479,7 +475,7 @@ Func_0801de5c:
 	b.n	.L_0801e0d0
 .L_0801e22a:
 	ldr	r0, [sp, #8]
-	bl	sub_08002df0
+	bl	Party_Do
 	adds	r0, r6, #0
 	add	sp, #68
 	pop	{r3, r5, r6, r7}

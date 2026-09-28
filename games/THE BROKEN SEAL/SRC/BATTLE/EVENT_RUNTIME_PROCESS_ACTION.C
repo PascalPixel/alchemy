@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ebc[];
 
 extern u8 gGameState;
 #define PARTY_STATE gGameState
@@ -19,10 +20,10 @@ s32 BattleEventRuntime_ProcessAction(s32 object_id, s32 action_id)
     result = Inventory_PromptAndSetObjectMode(*(void **)(global_table + 500), 0);
     if (result == 0) {
         BattleEv_RunWait(object_id, action_id);
-        runtime = *(u8 **)ADDR_03001EBC;
+        runtime = *(u8 **)((u32)&Data_03001ebc);
         *(u16 *)(runtime + 472) += 1;
     } else {
-        runtime = *(u8 **)ADDR_03001EBC;
+        runtime = *(u8 **)((u32)&Data_03001ebc);
         *(u16 *)(runtime + 472) += 1;
         BattleEv_RunWait(object_id, action_id);
     }

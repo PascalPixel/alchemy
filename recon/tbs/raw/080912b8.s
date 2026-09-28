@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003dec, 0x08003dec
-	.set sub_080091a8, 0x080091a8
 	.global Object_EffectSpawnCallback
 	.global Func_080912b8
 	.thumb_func
@@ -56,14 +54,14 @@ Func_080912b8:
 	adds	r1, r7, #0
 	mov	r0, r8
 	mov	r9, r3
-	bl	sub_080091a8
+	bl	Map_GetTerrainHeightFar
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r6, r0, #16
 	add	r2, sl
 	mov	r0, r8
 	adds	r1, r7, #0
-	bl	sub_080091a8
+	bl	Map_GetTerrainHeightFar
 	asrs	r0, r0, #16
 	subs	r0, #16
 	cmp	r0, r6
@@ -134,7 +132,7 @@ Func_080912b8:
 	strb	r3, [r5, #4]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_080913c8:
 	movs	r2, #128
 	lsls	r2, r2, #13
@@ -142,14 +140,14 @@ Func_080912b8:
 	adds	r1, r7, #0
 	add	r2, sl
 	mov	r0, r8
-	bl	sub_080091a8
+	bl	Map_GetTerrainHeightFar
 	movs	r2, #128
 	lsls	r2, r2, #14
 	asrs	r6, r0, #16
 	add	r2, sl
 	mov	r0, r8
 	adds	r1, r7, #0
-	bl	sub_080091a8
+	bl	Map_GetTerrainHeightFar
 	asrs	r0, r0, #16
 	mov	r5, fp
 	subs	r0, #16
@@ -221,7 +219,7 @@ Func_080912b8:
 	strb	r3, [r5, #4]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_08091480:
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

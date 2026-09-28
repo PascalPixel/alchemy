@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
 	.global Func_080cde90
 	.thumb_func
 Func_080cde90:
@@ -76,7 +75,7 @@ Func_080cde90:
 	bge.n	.L_080cdf0e
 	subs	r1, r5, r6
 .L_080cdf0e:
-	bl	sub_080022ec
+	bl	__divsi3
 	mov	ip, r0
 	adds	r0, r5, #0
 	mov	r1, r8
@@ -159,7 +158,7 @@ Func_080cde90:
 	blt.n	.L_080cdfae
 	adds	r1, r7, #0
 	str	r4, [sp, #0]
-	bl	sub_080022ec
+	bl	__divsi3
 	mov	ip, r0
 	ldr	r4, [sp, #0]
 	b.n	.L_080cdfbc
@@ -167,7 +166,7 @@ Func_080cde90:
 	mov	r3, r8
 	subs	r1, r3, r4
 	str	r4, [sp, #0]
-	bl	sub_080022ec
+	bl	__divsi3
 	ldr	r4, [sp, #0]
 	mov	ip, r0
 .L_080cdfbc:

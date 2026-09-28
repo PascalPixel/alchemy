@@ -9,8 +9,6 @@
 @ credit: handwritten — IWRAM runtime division helpers
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000af0
-	.set AlchemyRunAddress, 0x03000380
 
 @ コンパイラ実行時系と同型の符号付き除算。
 	.global IwramSignedDivide

@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0802471c, 0x0802471c
-	.set sub_0802d45c, 0x0802d45c
 	.global Func_08024fe0
 	.thumb_func
 Func_08024fe0:
@@ -17,7 +15,7 @@ Func_08024fe0:
 	ldmia	r3!, {r5}
 	ldr	r3, [r3, #0]
 	adds	r2, r5, #0
-	bl	sub_0802471c
+	bl	Object_SetPositionAndResetMotion
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r5, r3
@@ -34,7 +32,7 @@ Func_08024fe0:
 	ldrb	r0, [r3, #0]
 	ldr	r2, [r6, #16]
 	ldr	r1, [r6, #8]
-	bl	sub_0802d45c
+	bl	0x0802d45c
 	ldr	r3, [r6, #12]
 	ldr	r2, [r6, #20]
 	str	r0, [r6, #20]

@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014878, 0x08014878
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080ad008, 0x080ad008
-	.set sub_080ad140, 0x080ad140
-	.set sub_080ad280, 0x080ad280
-	.set sub_0811b4d8, 0x0811b4d8
-	.set sub_0811be3c, 0x0811be3c
 	.global Func_0811f66c
 	.thumb_func
 Func_0811f66c:
@@ -172,7 +165,7 @@ Func_0811f66c:
 	lsls	r3, r3, #2
 	ldr	r0, [r4, r3]
 	mov	r9, r3
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r5, r0, #0
 	ldrb	r0, [r7, #3]
 	movs	r6, #0
@@ -641,7 +634,7 @@ Func_0811f66c:
 	lsls	r3, r1, #16
 	cmp	r3, #0
 	bne.n	.L_0811fbb0
-	bl	sub_080ad280
+	bl	0x080ad280
 	cmp	r0, #0
 	bne.n	.L_0811fbb0
 	movs	r6, #0
@@ -757,12 +750,12 @@ Func_0811f66c:
 	b.n	.L_0811fe00
 .L_0811fc8e:
 	ldr	r0, [sp, #28]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r4, #165
 	lsls	r4, r4, #1
 	adds	r3, r0, r4
 	ldrh	r0, [r3, #0]
-	bl	sub_080ad140
+	bl	0x080ad140
 	adds	r0, #43
 	movs	r3, #0
 	ldrsb	r3, [r0, r3]
@@ -815,18 +808,18 @@ Func_0811f66c:
 	ldr	r2, [sp, #16]
 	str	r1, [sp, #0]
 	ldr	r0, [r5, r2]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	mov	r8, r0
 	ldr	r0, [r7, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r6, r0, #0
 	ldr	r0, [sp, #28]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r4, #165
 	lsls	r4, r4, #1
 	adds	r3, r0, r4
 	ldrh	r0, [r3, #0]
-	bl	sub_080ad140
+	bl	0x080ad140
 	adds	r0, #43
 	movs	r3, #0
 	ldrsb	r3, [r0, r3]
@@ -904,7 +897,7 @@ Func_0811f66c:
 	beq.n	.L_0811fdd2
 	b.n	.L_0811fdf4
 .L_0811fdaa:
-	bl	sub_08014878
+	bl	0x08014878
 	movs	r3, #11
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -915,7 +908,7 @@ Func_0811f66c:
 	movs	r1, #1
 	b.n	.L_0811fdf4
 .L_0811fdbe:
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r3, r0, #4
 	subs	r3, r3, r0
 	lsrs	r1, r3, #16
@@ -925,7 +918,7 @@ Func_0811f66c:
 	bgt.n	.L_0811fdee
 	b.n	.L_0811fdba
 .L_0811fdd2:
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r3, r0, #3
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -967,7 +960,7 @@ Func_0811f66c:
 	adds	r2, #32
 	str	r2, [sp, #12]
 .L_0811fe16:
-	bl	sub_08014878
+	bl	0x08014878
 	ldr	r4, [sp, #20]
 	ldr	r6, [sp, #12]
 	adds	r3, r4, #0
@@ -988,7 +981,7 @@ Func_0811f66c:
 	.2byte 0x0811
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r4, #48
 	adds	r1, r0, #0
 	adds	r4, #255
@@ -1077,11 +1070,11 @@ Func_0811f66c:
 	adds	r2, r1, r4
 	strb	r3, [r2, #0]
 	adds	r0, r5, #0
-	bl	sub_080ad008
+	bl	0x080ad008
 	adds	r0, r5, #0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	sub_0811b4d8
+	bl	Func_0811b4d8
 	pop	{r5, pc}
 	.2byte 0x0000

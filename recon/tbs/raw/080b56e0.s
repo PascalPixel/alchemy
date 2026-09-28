@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800403c, 0x0800403c
-	.set sub_080040e8, 0x080040e8
-	.set sub_08004760, 0x08004760
-	.set sub_0800479c, 0x0800479c
-	.set sub_08004858, 0x08004858
-	.set sub_08077010, 0x08077010
-	.set sub_08077098, 0x08077098
-	.set sub_080770c8, 0x080770c8
-	.set sub_080770d0, 0x080770d0
-	.set sub_080b5368, 0x080b5368
-	.set sub_080b5534, 0x080b5534
-	.set sub_080b63c8, 0x080b63c8
-	.set sub_080c2a08, 0x080c2a08
 	.global Unnamed_080b56e0
 	.global Func_080b56e0
 	.thumb_func
@@ -28,17 +14,17 @@ Func_080b56e0:
 	push	{r7}
 	movs	r2, #0
 	mov	sl, r2
-	bl	sub_08077098
+	bl	0x08077098
 .L_080b56f6:
 	movs	r5, #181
 	lsls	r5, r5, #1
-	bl	sub_0800479c
-	bl	sub_08004760
-	bl	sub_080040e8
-	bl	sub_08004858
-	bl	sub_0800403c
+	bl	Ui_LoadWindowGraphics
+	bl	Bg0_ClearTilemap
+	bl	Scheduler_ResetTaskTable
+	bl	Runtime_InitializeHeap
+	bl	Resource_InitializeTable
 	adds	r0, r5, #0
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #312]
 	ldr	r3, [r3, #0]
 	movs	r2, #128
@@ -52,7 +38,7 @@ Func_080b56e0:
 	negs	r3, r3
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	ldr	r2, [pc, #292]
 	movs	r3, #85
 	mov	r9, r2
@@ -63,9 +49,9 @@ Func_080b56e0:
 	mov	fp, r3
 .L_080b5740:
 	movs	r0, #32
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080b579a
 .L_080b574e:
 	ldr	r3, [r5, #0]
@@ -73,14 +59,14 @@ Func_080b56e0:
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_080b575c
-	bl	sub_080b5534
+	bl	Unnamed_080b5534
 .L_080b575c:
 	ldr	r3, [r5, #0]
 	movs	r2, #4
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_080b576a
-	bl	sub_080c2a08
+	bl	Battle_ReservedNoOp2A08
 .L_080b576a:
 	ldr	r3, [r5, #0]
 	movs	r2, #2
@@ -99,13 +85,13 @@ Func_080b56e0:
 .L_080b5784:
 	cmp	r7, r8
 	beq.n	.L_080b5794
-	bl	sub_08077098
+	bl	0x08077098
 	adds	r0, r7, #0
-	bl	sub_080b5368
+	bl	DebugParty_LoadPreset
 	mov	r8, r7
 .L_080b5794:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b579a:
 	ldr	r3, [r5, #0]
 	movs	r2, #16
@@ -163,10 +149,10 @@ Func_080b56e0:
 	beq.n	.L_080b5802
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 .L_080b5802:
 	movs	r0, #0
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	ldr	r3, [pc, #84]
 	mov	r2, fp
 	strh	r3, [r2, #0]
@@ -174,25 +160,25 @@ Func_080b56e0:
 	bne.n	.L_080b581a
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 .L_080b581a:
 	movs	r0, #177
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	adds	r0, r6, #0
-	bl	sub_080b63c8
-	bl	sub_0800479c
-	bl	sub_08004760
-	bl	sub_080040e8
-	bl	sub_08004858
-	bl	sub_0800403c
+	bl	Func_080b63c8
+	bl	Ui_LoadWindowGraphics
+	bl	Bg0_ClearTilemap
+	bl	Scheduler_ResetTaskTable
+	bl	Runtime_InitializeHeap
+	bl	Resource_InitializeTable
 	b.n	.L_080b5740
 .L_080b583e:
 	movs	r0, #177
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	ldr	r0, [pc, #12]
-	bl	sub_080b63c8
+	bl	Func_080b63c8
 	b.n	.L_080b56f6
 	movs	r0, r0
 	.4byte 0x03001ae8

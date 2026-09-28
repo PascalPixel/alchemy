@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_080044d0, 0x080044d0
-	.set sub_080045d4, 0x080045d4
-	.set sub_080072f0, 0x080072f0
-	.set sub_0809ba5c, 0x0809ba5c
 	.global EffectSlot_UpdateMotion
 	.global Func_0809b8f4
 	.thumb_func
@@ -55,7 +49,7 @@ Func_0809b8f4:
 	adds	r3, r2, #0
 	adds	r0, r0, r3
 	ldr	r3, [pc, #228]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r3, #128
 	lsls	r0, r0, #16
 	lsls	r3, r3, #16
@@ -75,7 +69,7 @@ Func_0809b8f4:
 	bx	r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 .L_0809b974:
 	movs	r2, #128
 	lsls	r2, r2, #12
@@ -84,12 +78,12 @@ Func_0809b8f4:
 	ldr	r1, [r6, #12]
 	ldr	r2, [r6, #16]
 	adds	r0, r6, #0
-	bl	sub_0809ba5c
+	bl	EffectSlot_SetPosition
 	b.n	.L_0809ba1e
 .L_0809b988:
 	adds	r0, r5, #0
 	adds	r1, r7, #0
-	bl	sub_080044d0
+	bl	ArcTan2
 	adds	r3, r6, #0
 	adds	r3, #66
 	ldrb	r3, [r3, #0]
@@ -147,7 +141,7 @@ Func_0809b8f4:
 	adds	r0, r4, #0
 	str	r7, [r6, #28]
 	str	r4, [sp, #0]
-	bl	sub_0800231c
+	bl	Trig_Cos
 	ldr	r5, [pc, #48]
 	adds	r1, r7, #0
 	mov	ip, pc
@@ -157,7 +151,7 @@ Func_0809b8f4:
 	adds	r3, r3, r0
 	adds	r0, r4, #0
 	str	r3, [r6, #4]
-	bl	sub_08002322
+	bl	Trig_Sin
 	adds	r1, r7, #0
 	mov	ip, pc
 	bx	r5

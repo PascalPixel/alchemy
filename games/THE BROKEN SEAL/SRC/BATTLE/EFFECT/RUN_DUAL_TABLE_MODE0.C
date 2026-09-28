@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 BattleFx_RunDualTable(s32, s32);
 
 /* battle/effects/dual_table/run_mode0.c */
 void BattleFx_RunDualTableMode0(s32 arg0)

@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f40, 0x08002f40
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003b70, 0x08003b70
-	.set sub_08003bb4, 0x08003bb4
-	.set sub_08003ce0, 0x08003ce0
-	.set sub_080040e8, 0x080040e8
-	.set sub_08004760, 0x08004760
-	.set sub_0800479c, 0x0800479c
-	.set sub_08005340, 0x08005340
-	.set sub_080f9010, 0x080f9010
 	.global Title_ShowSplashScreen
 	.global Func_080f2b70
 	.thumb_func
@@ -20,17 +10,17 @@ Func_080f2b70:
 	push	{r7}
 	mov	r8, r0
 	movs	r0, #110
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r2, [pc, #88]
 	movs	r3, #1
 	strb	r3, [r2, #0]
 	ldr	r5, [pc, #84]
-	bl	sub_080040e8
+	bl	Scheduler_ResetTaskTable
 	movs	r0, #1
-	bl	sub_08003b70
-	bl	sub_08004760
+	bl	Blend_SetDarkenTarget16
+	bl	Bg0_ClearTilemap
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #68]
 	ldr	r3, [pc, #48]
 	strh	r3, [r2, #0]
@@ -41,7 +31,7 @@ Func_080f2b70:
 	movs	r6, #0
 	strh	r6, [r3, #10]
 	adds	r0, r5, #0
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	movs	r1, #160
 	ldr	r7, [pc, #48]
 	adds	r4, r0, #0
@@ -69,7 +59,7 @@ Func_080f2b70:
 	.2byte 0x0000
 	.2byte 0x0201
 .L_080f2bf8:
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	ldr	r3, [pc, #132]
 	adds	r0, r5, #0
 	ldr	r1, [pc, #132]
@@ -117,8 +107,8 @@ Func_080f2b70:
 	ldr	r2, [pc, #76]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	sub_0800479c
-	bl	sub_08004760
+	bl	Ui_LoadWindowGraphics
+	bl	Bg0_ClearTilemap
 	ldr	r3, [pc, #32]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -127,8 +117,8 @@ Func_080f2b70:
 	cmp	r3, #0
 	bne.n	.L_080f2cc2
 	movs	r0, #1
-	bl	sub_08003bb4
-	bl	sub_08003ce0
+	bl	Blend_SetDarkenTarget0
+	bl	Blend_WaitForTransition
 	ldr	r3, [pc, #40]
 	ldr	r3, [r3, #0]
 	movs	r2, #9
@@ -148,7 +138,7 @@ Func_080f2b70:
 .L_080f2ca4:
 	movs	r0, #1
 	adds	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #119
 	bhi.n	.L_080f2d42
 	ldr	r3, [pc, #156]
@@ -171,7 +161,7 @@ Func_080f2b70:
 .L_080f2cce:
 	movs	r0, #1
 	adds	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #59
 	bhi.n	.L_080f2cea
 	ldr	r3, [pc, #116]
@@ -187,13 +177,13 @@ Func_080f2b70:
 	cmp	r6, #0
 	beq.n	.L_080f2cf6
 	movs	r0, #8
-	bl	sub_08003bb4
+	bl	Blend_SetDarkenTarget0
 	b.n	.L_080f2cfc
 .L_080f2cf6:
 	movs	r0, #60
-	bl	sub_08003bb4
+	bl	Blend_SetDarkenTarget0
 .L_080f2cfc:
-	bl	sub_08003ce0
+	bl	Blend_WaitForTransition
 	cmp	r6, #0
 	bne.n	.L_080f2d30
 	ldr	r3, [pc, #72]
@@ -205,7 +195,7 @@ Func_080f2b70:
 .L_080f2d10:
 	movs	r0, #1
 	adds	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #179
 	bhi.n	.L_080f2d2c
 	ldr	r3, [pc, #48]
@@ -222,13 +212,13 @@ Func_080f2b70:
 	beq.n	.L_080f2d38
 .L_080f2d30:
 	movs	r0, #8
-	bl	sub_08003b70
+	bl	Blend_SetDarkenTarget16
 	b.n	.L_080f2d3e
 .L_080f2d38:
 	movs	r0, #60
-	bl	sub_08003b70
+	bl	Blend_SetDarkenTarget16
 .L_080f2d3e:
-	bl	sub_08003ce0
+	bl	Blend_WaitForTransition
 .L_080f2d42:
 	adds	r0, r6, #0
 	pop	{r3}

@@ -1,6 +1,6 @@
 mod cli;
 
-use psynergy::{decode, lift, unit};
+use psynergy::{assembly, decode, lift, unit};
 use std::fs::{self, OpenOptions};
 use std::io::Write;
 use std::path::PathBuf;
@@ -12,7 +12,8 @@ const USAGE: &str = "usage: psynergy <command> [args]\n\
   decode-lz INPUT       decode one tagged LZ stream at --offset\n\
 No default ROM, project registry, compiler route, or adoption authority.";
 const CODE_USAGE: &str = "usage: psynergy decompile INPUT --base ADDRESS --entry ADDRESS --span BYTES [--name NAME] [--out FILE]\n\
-       psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--out FILE]";
+       psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--source] [--out FILE]\n\
+--source prints assembler source for the extent (literal pools as .4byte) instead of a listing.";
 const KEYWORDS: &[&str] = &[
     "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else",
     "enum", "extern", "float", "for", "goto", "if", "inline", "int", "long", "register",
@@ -46,6 +47,7 @@ fn code(command: &str, arguments: &[String]) -> Result<String, String> {
     let mut span = None;
     let mut name = None;
     let mut out = None;
+    let mut assembly_source = false;
     let mut i = 1;
     while i < arguments.len() {
         let flag = &arguments[i];
@@ -54,6 +56,11 @@ fn code(command: &str, arguments: &[String]) -> Result<String, String> {
                 .get(at)
                 .ok_or_else(|| format!("{flag} needs a value"))
         };
+        if flag == "--source" {
+            assembly_source = true;
+            i += 1;
+            continue;
+        }
         match flag.as_str() {
             "--base" => {
                 if base.is_some() {
@@ -104,6 +111,9 @@ fn code(command: &str, arguments: &[String]) -> Result<String, String> {
     entry
         .checked_add(span)
         .ok_or_else(|| "--entry plus --span overflows 32-bit address space".to_string())?;
+    if command == "decompile" && assembly_source {
+        return Err("--source applies only to disassemble".into());
+    }
     if command != "decompile" && name.is_some() {
         return Err("--name applies only to decompile".into());
     }
@@ -122,6 +132,9 @@ fn code(command: &str, arguments: &[String]) -> Result<String, String> {
             "--entry/--span exceed input ({image_len} bytes)",
             image_len = image.len()
         ));
+    }
+    if assembly_source {
+        return output(assembly::thumb_source(&image, base, entry, span)?, out);
     }
     let instructions = decode::decode_window_at(&image, base, entry, span);
     let source = if command == "decompile" {

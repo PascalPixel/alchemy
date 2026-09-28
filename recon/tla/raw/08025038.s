@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0802471c, 0x0802471c
-	.set sub_08024738, 0x08024738
-	.set sub_0802d45c, 0x0802d45c
 	.global Func_08025038
 	.thumb_func
 Func_08025038:
@@ -11,7 +8,7 @@ Func_08025038:
 	ldr	r2, [r5, #12]
 	movs	r3, #0
 	movs	r1, #0
-	bl	sub_0802471c
+	bl	Object_SetPositionAndResetMotion
 	adds	r3, r5, #0
 	adds	r3, #85
 	ldrb	r2, [r3, #0]
@@ -24,7 +21,7 @@ Func_08025038:
 	ldrb	r0, [r3, #0]
 	ldr	r2, [r5, #16]
 	ldr	r1, [r5, #8]
-	bl	sub_0802d45c
+	bl	0x0802d45c
 	ldr	r3, [r5, #12]
 	ldr	r2, [r5, #20]
 	str	r0, [r5, #20]
@@ -48,7 +45,7 @@ Func_08025038:
 	ldmia	r3!, {r1}
 	ldmia	r3!, {r2}
 	ldr	r3, [r3, #0]
-	bl	sub_08024738
+	bl	Func_08024738
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #4
@@ -65,7 +62,7 @@ Func_08025038:
 	ldmia	r3!, {r1}
 	ldr	r2, [r5, #12]
 	ldr	r3, [r3, #0]
-	bl	sub_08024738
+	bl	Func_08024738
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #3
@@ -89,7 +86,7 @@ Func_08025038:
 	adds	r2, r2, r0
 	adds	r3, r3, r4
 	adds	r0, r5, #0
-	bl	sub_08024738
+	bl	Func_08024738
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #4

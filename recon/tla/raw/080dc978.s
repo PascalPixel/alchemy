@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800206c, 0x0800206c
-	.set sub_0801314c, 0x0801314c
-	.set sub_080145a8, 0x080145a8
-	.set sub_08014644, 0x08014644
-	.set sub_08014d00, 0x08014d00
-	.set sub_080d170c, 0x080d170c
-	.set sub_080d17ac, 0x080d17ac
-	.set sub_080d2d84, 0x080d2d84
-	.set sub_080dc294, 0x080dc294
-	.set sub_080dc384, 0x080dc384
-	.set sub_080dcadc, 0x080dcadc
-	.set sub_080dce60, 0x080dce60
-	.set sub_080dcf2c, 0x080dcf2c
 	.global Func_080dc978
 	.thumb_func
 Func_080dc978:
@@ -25,7 +12,7 @@ Func_080dc978:
 	lsls	r1, r1, #2
 	movs	r0, #88
 	sub	sp, #4
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r3, #0
 	adds	r5, r0, #0
 	mov	r0, sp
@@ -44,7 +31,7 @@ Func_080dc978:
 	ldr	r0, [r3, #0]
 	lsls	r1, r1, #1
 	lsls	r0, r0, #1
-	bl	sub_0800206c
+	bl	0x0800206c
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #142
@@ -68,8 +55,8 @@ Func_080dc978:
 	adds	r2, #255
 	adds	r3, r5, r2
 	strb	r1, [r3, #0]
-	bl	sub_080dc294
-	bl	sub_080dce60
+	bl	0x080dc294
+	bl	0x080dce60
 	movs	r2, #199
 	lsls	r2, r2, #1
 	adds	r2, #255
@@ -101,14 +88,14 @@ Func_080dc978:
 	movs	r3, #128
 	lsls	r3, r3, #14
 	orrs	r0, r3
-	bl	sub_080d170c
+	bl	0x080d170c
 	movs	r0, #8
-	bl	sub_080d17ac
+	bl	0x080d17ac
 	bl	.L_080dca84
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
-	bl	sub_080145a8
+	bl	0x080145a8
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3
@@ -120,19 +107,19 @@ Func_080dc978:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r5, [r3, #88]
-	bl	sub_080dcadc
+	bl	Func_080dcadc
 	ldr	r0, [pc, #32]
-	bl	sub_08014644
+	bl	Func_08014644
 	movs	r3, #164
 	lsls	r3, r3, #2
 	adds	r5, r5, r3
 	ldrh	r0, [r5, #0]
-	bl	sub_080d2d84
+	bl	Object_GetById
 	movs	r1, #1
-	bl	sub_080dcf2c
-	bl	sub_080dc384
+	bl	0x080dcf2c
+	bl	0x080dc384
 	movs	r0, #88
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	pop	{r5, pc}
 	.2byte 0xcb45
 	.2byte 0x080d
@@ -170,7 +157,7 @@ Func_080dc978:
 	strh	r2, [r3, #0]
 	adds	r1, #108
 	ldr	r0, [pc, #12]
-	bl	sub_080145a8
+	bl	0x080145a8
 	b.n	.L_080dcad8
 	.4byte 0x0000739c
 	.4byte 0x050001e2

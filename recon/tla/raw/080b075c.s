@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080b0028, 0x080b0028
-	.set sub_080b039c, 0x080b039c
-	.set sub_080b0514, 0x080b0514
-	.set sub_080b06a8, 0x080b06a8
-	.set sub_080b06c8, 0x080b06c8
-	.set sub_080b06e8, 0x080b06e8
-	.set sub_080b0740, 0x080b0740
 	.global Func_080b075c
 	.thumb_func
 Func_080b075c:
@@ -25,7 +16,7 @@ Func_080b075c:
 	mov	r0, fp
 	mov	r8, r3
 	str	r2, [sp, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	mov	r1, r8
 	adds	r6, r0, #0
 	movs	r0, #1
@@ -36,7 +27,7 @@ Func_080b075c:
 	lsls	r2, r2, #1
 	adds	r3, r6, r2
 	ldrh	r0, [r3, #0]
-	bl	sub_080b06a8
+	bl	0x080b06a8
 	b.n	.L_080b0a82
 .L_080b0794:
 	mov	r3, r8
@@ -46,11 +37,11 @@ Func_080b075c:
 	lsls	r4, r4, #1
 	adds	r3, r6, r4
 	ldrh	r0, [r3, #0]
-	bl	sub_080b06c8
+	bl	0x080b06c8
 	b.n	.L_080b0a82
 .L_080b07a8:
 	mov	r0, r8
-	bl	sub_080b0740
+	bl	Func_080b0740
 	cmp	r0, #0
 	beq.n	.L_080b07be
 	movs	r7, #56
@@ -293,17 +284,17 @@ Func_080b075c:
 	beq.n	.L_080b0a82
 .L_080b09fc:
 	mov	r0, r8
-	bl	sub_080b0514
+	bl	0x080b0514
 	adds	r7, r0, #0
 	cmp	r7, #0
 	ble.n	.L_080b0a3e
 	ldr	r1, [sp, #0]
 	adds	r0, r5, #0
-	bl	sub_080b0028
+	bl	0x080b0028
 	adds	r5, r0, #0
 	ldr	r1, [sp, #0]
 	mov	r0, fp
-	bl	sub_080b0028
+	bl	0x080b0028
 	mov	r4, sl
 	ldrb	r3, [r4, #0]
 	subs	r5, r5, r0
@@ -314,7 +305,7 @@ Func_080b075c:
 	adds	r0, r6, #0
 	mov	r1, r8
 	adds	r7, r7, r3
-	bl	sub_080b06e8
+	bl	0x080b06e8
 	cmp	r0, #0
 	beq.n	.L_080b0a40
 	adds	r7, #25
@@ -351,9 +342,9 @@ Func_080b075c:
 .L_080b0a68:
 	adds	r0, r7, #0
 	movs	r1, #100
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r5, r0, #0
-	bl	sub_080b039c
+	bl	0x080b039c
 	cmp	r5, r0
 	bge.n	.L_080b0a3a
 	adds	r6, #1

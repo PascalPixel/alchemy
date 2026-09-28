@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080a17c4, 0x080a17c4
 	.global Menu_SetPageIcons
 	.global Func_080a2324
 	.thumb_func
@@ -57,7 +56,7 @@ Func_080a2324:
 	strh	r7, [r5, #8]
 	adds	r0, r5, #0
 	str	r2, [sp, #0]
-	bl	sub_080a17c4
+	bl	UiIcon_PrepareObject
 	adds	r6, #1
 	movs	r3, #1
 	strb	r3, [r5, #5]

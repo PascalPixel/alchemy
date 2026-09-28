@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_080ad3f8, 0x080ad3f8
-	.set sub_080afdbc, 0x080afdbc
-	.set sub_080afdd8, 0x080afdd8
-	.set sub_080afe1c, 0x080afe1c
-	.set sub_080b0b78, 0x080b0b78
-	.set sub_080b0c9c, 0x080b0c9c
-	.set sub_080b0e40, 0x080b0e40
 	.global Func_080ae0f0
 	.thumb_func
 Func_080ae0f0:
@@ -22,11 +11,11 @@ Func_080ae0f0:
 	movs	r2, #4
 	str	r2, [r3, #0]
 	movs	r0, #4
-	bl	sub_080afdd8
+	bl	0x080afdd8
 	movs	r0, #5
-	bl	sub_080afe1c
+	bl	0x080afe1c
 	movs	r0, #6
-	bl	sub_080afe1c
+	bl	0x080afe1c
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x0240
@@ -37,21 +26,21 @@ Func_080ae0f0:
 	adds	r0, r6, #0
 	subs	r5, r6, #1
 	adds	r0, #67
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	movs	r1, #1
 	adds	r2, r5, #0
 	movs	r0, #7
-	bl	sub_080b0b78
+	bl	Djinn_AddToOwner
 	adds	r6, #1
 	movs	r0, #7
 	movs	r1, #1
 	adds	r2, r5, #0
-	bl	sub_080b0c9c
+	bl	Djinn_Activate
 	cmp	r6, #11
 	ble.n	.L_080ae11c
 	movs	r0, #0
 	bl	.L_080ae358
-	bl	sub_080afdbc
+	bl	0x080afdbc
 	cmp	r0, #0
 	ble.n	.L_080ae166
 	ldr	r3, [pc, #24]
@@ -63,7 +52,7 @@ Func_080ae0f0:
 	ldrb	r0, [r5, #0]
 	subs	r6, #1
 	adds	r5, #1
-	bl	sub_080ad3f8
+	bl	Func_080ad3f8
 	cmp	r6, #0
 	bne.n	.L_080ae158
 .L_080ae166:
@@ -74,7 +63,7 @@ Func_080ae0f0:
 	mov	r7, r8
 	push	{r7}
 	mov	r8, r0
-	bl	sub_080afdbc
+	bl	0x080afdbc
 	movs	r6, #0
 	adds	r7, r0, #0
 	cmp	r6, r7
@@ -85,7 +74,7 @@ Func_080ae0f0:
 	lsls	r1, r1, #2
 	adds	r3, r6, r1
 	ldrb	r0, [r2, r3]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r5, r0, #0
 	ldrh	r1, [r5, #52]
 	ldrh	r3, [r5, #54]
@@ -94,7 +83,7 @@ Func_080ae0f0:
 	lsls	r1, r1, #16
 	asrs	r1, r1, #16
 	lsls	r0, r1, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -120,7 +109,7 @@ Func_080ae0f0:
 	movs	r2, #54
 	ldrsh	r1, [r5, r2]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -166,7 +155,7 @@ Func_080ae0f0:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
-	bl	sub_080afdbc
+	bl	0x080afdbc
 	movs	r7, #0
 	mov	r8, r0
 	cmp	r7, r8
@@ -184,7 +173,7 @@ Func_080ae0f0:
 	bne.n	.L_080ae258
 	movs	r0, #136
 	lsls	r0, r0, #1
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #137
@@ -193,13 +182,13 @@ Func_080ae0f0:
 .L_080ae258:
 	movs	r0, #18
 	adds	r0, #255
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080ae270
 	movs	r0, #20
 	adds	r0, #255
 .L_080ae268:
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080ae272
 .L_080ae270:
@@ -208,7 +197,7 @@ Func_080ae0f0:
 	cmp	r5, #0
 	beq.n	.L_080ae2e6
 	adds	r0, r6, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r5, r0, #0
 	ldrh	r3, [r5, #54]
 	strh	r3, [r5, #58]
@@ -217,7 +206,7 @@ Func_080ae0f0:
 	movs	r3, #52
 	ldrsh	r1, [r5, r3]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -243,7 +232,7 @@ Func_080ae0f0:
 	movs	r3, #54
 	ldrsh	r1, [r5, r3]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -282,7 +271,7 @@ Func_080ae0f0:
 	push	{r6, r7}
 	mov	r8, r1
 	mov	sl, r2
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r6, #1
 	adds	r7, r0, #0
 	negs	r6, r6
@@ -334,7 +323,7 @@ Func_080ae0f0:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #12
-	bl	sub_080afdbc
+	bl	0x080afdbc
 	mov	fp, r0
 .L_080ae36e:
 	movs	r2, #0
@@ -355,7 +344,7 @@ Func_080ae0f0:
 	ldrb	r5, [r7, #0]
 	str	r4, [sp, #0]
 	adds	r0, r5, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r3, #140
 	ldr	r4, [sp, #0]
 	lsls	r3, r3, #1
@@ -399,7 +388,7 @@ Func_080ae0f0:
 	ldr	r2, [sp, #4]
 	mov	r0, sl
 	mov	r3, r9
-	bl	sub_080b0e40
+	bl	Djinn_Transfer
 	b.n	.L_080ae36e
 .L_080ae3ea:
 	add	sp, #12

@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08014274, 0x08014274
-	.set sub_0803d4e4, 0x0803d4e4
-	.set sub_0803deac, 0x0803deac
-	.set sub_0803f2e4, 0x0803f2e4
-	.set sub_0803f6c8, 0x0803f6c8
-	.set sub_081180e0, 0x081180e0
 	.global Func_0803ef48
 	.thumb_func
 Func_0803ef48:
@@ -40,7 +33,7 @@ Func_0803ef48:
 	add	r2, sp, #8
 	add	r3, sp, #4
 	movs	r1, #0
-	bl	sub_0803d4e4
+	bl	Func_0803d4e4
 .L_0803ef82:
 	add	sp, #12
 	pop	{pc}
@@ -77,8 +70,8 @@ Func_0803ef48:
 	add	r2, sp, #8
 	add	r3, sp, #4
 	movs	r1, #0
-	bl	sub_0803d4e4
-	bl	sub_0803f6c8
+	bl	Func_0803d4e4
+	bl	0x0803f6c8
 .L_0803efca:
 	add	sp, #12
 	pop	{pc}
@@ -105,7 +98,7 @@ Func_0803ef48:
 	lsls	r2, r2, #1
 	strh	r3, [r0, r2]
 	movs	r1, #0
-	bl	sub_081180e0
+	bl	0x081180e0
 	add	sp, #12
 	pop	{pc}
 	.2byte 0x00ff
@@ -134,7 +127,7 @@ Func_0803ef48:
 	movs	r0, #0
 	adds	r3, r2, r4
 	ldrh	r6, [r7, r3]
-	bl	sub_0803deac
+	bl	Func_0803deac
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_0803f040
@@ -144,7 +137,7 @@ Func_0803ef48:
 	adds	r0, r6, #0
 	mov	r1, r8
 	movs	r3, #0
-	bl	sub_0803f2e4
+	bl	0x0803f2e4
 	movs	r0, #192
 	lsls	r0, r0, #2
 	adds	r0, #150
@@ -207,7 +200,7 @@ Func_0803ef48:
 	ldr	r5, [r3, #0]
 .L_0803f0c0:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r1, #34
 	ldrsh	r6, [r5, r1]
 	cmp	r6, #0
@@ -218,7 +211,7 @@ Func_0803ef48:
 	ldr	r2, [r5, #4]
 	str	r2, [r3, #0]
 	ldrh	r0, [r5, #12]
-	bl	sub_08014274
+	bl	0x08014274
 	strh	r6, [r5, #10]
 	ldr	r5, [r5, #4]
 	str	r6, [r5, #0]
@@ -239,7 +232,7 @@ Func_0803ef48:
 	movs	r0, #0
 	adds	r3, r2, r1
 	ldrh	r6, [r7, r3]
-	bl	sub_0803deac
+	bl	Func_0803deac
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0803f1ca
@@ -247,7 +240,7 @@ Func_0803ef48:
 	adds	r0, r6, #0
 	mov	r1, r8
 	movs	r3, #0
-	bl	sub_0803f2e4
+	bl	0x0803f2e4
 	movs	r2, #192
 	lsls	r2, r2, #2
 	adds	r2, #150
@@ -318,7 +311,7 @@ Func_0803ef48:
 	lsls	r6, r6, #1
 .L_0803f19e:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r2, #34
 	ldrsh	r3, [r5, r2]
 	cmp	r3, r6
@@ -334,7 +327,7 @@ Func_0803ef48:
 	bne.n	.L_0803f1b2
 .L_0803f1bc:
 	ldrh	r0, [r5, #12]
-	bl	sub_08014274
+	bl	0x08014274
 	ldr	r3, [r5, #0]
 	movs	r2, #0
 	strh	r2, [r5, #10]

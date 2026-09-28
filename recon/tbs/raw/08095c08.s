@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004458, 0x08004458
-	.set sub_0800447c, 0x0800447c
-	.set sub_08092054, 0x08092054
-	.set sub_080974d8, 0x080974d8
-	.set sub_0809ba34, 0x0809ba34
-	.set sub_0809bb34, 0x0809bb34
-	.set sub_080f9010, 0x080f9010
 	.global BattleEffect_UpdatePhasedRadialParticle
 	.global Func_08095c08
 	.thumb_func
@@ -24,7 +17,7 @@ Func_08095c08:
 	adds	r7, r0, #0
 	ldr	r0, [r3, #0]
 	sub	sp, #12
-	bl	sub_08092054
+	bl	Engine_ActorGet
 	movs	r2, #64
 	adds	r2, r2, r7
 	movs	r6, #0
@@ -40,9 +33,9 @@ Func_08095c08:
 	mov	r8, sp
 	str	r2, [sp, #0]
 	str	r3, [sp, #8]
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	lsls	r1, r5, #1
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
@@ -58,7 +51,7 @@ Func_08095c08:
 	adds	r1, r1, r3
 	lsls	r0, r0, #15
 	mov	r2, r8
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	mov	r1, r8
 	ldr	r3, [r1, #0]
 	str	r3, [r7, #12]
@@ -98,7 +91,7 @@ Func_08095c08:
 	cmp	r3, #0
 	beq.n	.L_08095db6
 	movs	r0, #134
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_08095db6
 .L_08095cc2:
 	cmp	r6, #1
@@ -122,7 +115,7 @@ Func_08095c08:
 	cmp	r6, #2
 	bne.n	.L_08095d22
 	adds	r0, r7, #0
-	bl	sub_0809ba34
+	bl	BattleFx_HasReachedTarget
 	cmp	r0, #0
 	bne.n	.L_08095db6
 	ldr	r3, [r7, #4]
@@ -174,13 +167,13 @@ Func_08095c08:
 	ldr	r3, [r1, #16]
 	adds	r0, r5, #0
 	str	r3, [r5, #8]
-	bl	sub_080974d8
-	bl	sub_08004458
+	bl	Camera_WorldToScreen
+	bl	Random16
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r5, #0
 	lsls	r0, r0, #11
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	ldr	r3, [r5, #0]
 	str	r3, [r7, #12]
 	ldr	r3, [r5, #8]
@@ -196,14 +189,14 @@ Func_08095c08:
 	cmp	r3, #0
 	beq.n	.L_08095db6
 	movs	r0, #145
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_08095db6
 .L_08095d8a:
 	cmp	r6, #4
 	bne.n	.L_08095da2
 .L_08095d8e:
 	adds	r0, r7, #0
-	bl	sub_0809ba34
+	bl	BattleFx_HasReachedTarget
 	cmp	r0, #0
 	bne.n	.L_08095db6
 	mov	r1, sl
@@ -215,11 +208,11 @@ Func_08095c08:
 	cmp	r6, #5
 	bne.n	.L_08095db6
 	adds	r0, r7, #0
-	bl	sub_0809ba34
+	bl	BattleFx_HasReachedTarget
 	cmp	r0, #0
 	bne.n	.L_08095db6
 	adds	r0, r7, #0
-	bl	sub_0809bb34
+	bl	BattleFx_ClearOwnedSlot
 .L_08095db6:
 	add	sp, #12
 	pop	{r3, r5, r6}

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e74[];
 
 struct State080c1084 {
     u8 padding_000[0x64e];
@@ -8,11 +9,11 @@ struct State080c1084 {
     u16 field_650;
 };
 
-extern s8 gRom[];
+extern s8 Data_080c5c10[];
 
 void Graphics_AdvancePaletteCycle(void)
 {
-    s32 _c0 = ADDR_03001E74;
+    s32 _c0 = ((u32)&Data_03001e74);
     s8 *table;
     u16 index;
     s32 next;
@@ -22,7 +23,7 @@ void Graphics_AdvancePaletteCycle(void)
     if ((state != NULL) && (state->field_650 != 0)) {
         FIELD_AT_OFFSET((void *)0x04000050, s16 *, 0) = 0x3F90;
         FIELD_AT_OFFSET((void *)0x04000050, s16 *, 2) = 0x10;
-        table = gRom;
+        table = Data_080c5c10;
         *(s16 *)0x04000054 = table[state->index];
         index = state->index;
         next = (index + 1) & 0xF;

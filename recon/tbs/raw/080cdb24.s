@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080cd594, 0x080cd594
 	.global BattleFx_BeginTiledCanvas
 	.global Func_080cdb24
 	.thumb_func
@@ -11,7 +10,7 @@ Func_080cdb24:
 	mov	r6, r8
 	push	{r6, r7}
 	adds	r5, r0, #0
-	bl	sub_080cd594
+	bl	BattleFx_BeginCanvasLayer
 	ldr	r3, [pc, #36]
 	orrs	r5, r3
 	ldr	r3, [pc, #36]

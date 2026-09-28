@@ -5,7 +5,6 @@
 
 void EquipmentMenu_UpdateCompatibilityIndicators(void);
 void EquipmentMenu_StartCompatibilityIndicators(void);
-extern u8 Data_080a3c09;
-#define EquipmentMenu_CompatibilityUpdateEntry Data_080a3c09
+#define EquipmentMenu_CompatibilityUpdateEntry EquipmentMenu_UpdateCompatibilityIndicators
 
 #endif

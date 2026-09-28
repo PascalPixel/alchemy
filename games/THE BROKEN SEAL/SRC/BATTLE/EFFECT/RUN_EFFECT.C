@@ -1,5 +1,20 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 BattleEffect_SelectNearbyTargetObject(s32 obj_id, s32 battle_mode);
+s32 BattleFx_FindDescriptorWithOverride(s32 obj_id);
+void BattleFx_MarkChildAndRunFallbackTransition(s32 obj_id);
+void BattleEffect_RunFallbackObjectTransition(void);
+void FunctionHead_08097c3c(s32);
+void BattleEffect_RunTargetedItemBreak(s32);
+void Battle_unk3_2(s32);
+void BattleFx_CallEffect04(s32);
+void BattleFx_CallEffect05(s32);
+void BattleFx_StartOrbitingParticles(s32);
+void BattleFx_RunBurstParticleMainObject(s32);
+void BattleFx_CallEffect03AndStop(s32);
+void BattleFx_CallEffect14(s32);
+void BattleFx_RunEffect13Hook(s32);
+void BattleFx_FinishSceneAndReleaseHeapBlock(void);
 
 /* battle/effects/run/run_effect.c */
 struct BattleEffectRequest {
@@ -27,7 +42,7 @@ struct BattleEffectGlobals {
 extern struct BattleEffectRequest *gEffectWork;
 extern struct BattleEffectGlobals gGameState;
 
-void RunBattleEffect01(void);
+void BattleFx_RunItemBreakSequence(void);
 void RunSceneTransitionEffect(s32 source_id, s32 target_id);
 void RunBattleEffect03(void);
 void RunBattleEffect04(void);
@@ -67,7 +82,7 @@ void BattleFx_Run(void)
 
     switch (battle_mode) {
     case 1:
-        RunBattleEffect01();
+        BattleFx_RunItemBreakSequence();
         return;
     case 7:
         RunBattleEffect07();
@@ -154,7 +169,7 @@ void BattleFx_DispatchRequestKind(void)
         FunctionHead_08097c3c(target_id);
         break;
     case 7:
-        BattleFx_RunTargetedItemBreak(target_id);
+        BattleEffect_RunTargetedItemBreak(target_id);
         break;
     case 11:
         Battle_unk3_2(target_id);

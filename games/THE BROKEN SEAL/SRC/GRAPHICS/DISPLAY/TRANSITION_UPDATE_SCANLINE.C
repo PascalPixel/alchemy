@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e70[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -10,7 +11,7 @@ void DisplayTransition_UpdateScanline(void)
     u16 value;
 
     line = *(volatile u16 *)0x04000006;
-    state = *(u8 **)ADDR_03001E70;
+    state = *(u8 **)((u32)&Data_03001e70);
 
 again:
     switch (FIELD(state, u16, 0x108)) {

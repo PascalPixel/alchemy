@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f40, 0x08002f40
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003b70, 0x08003b70
-	.set sub_08003c3c, 0x08003c3c
-	.set sub_08003ce0, 0x08003ce0
-	.set sub_080040e8, 0x080040e8
-	.set sub_08004760, 0x08004760
-	.set sub_0800479c, 0x0800479c
-	.set sub_08005340, 0x08005340
 	.global Unnamed_080f2d54
 	.global Func_080f2d54
 	.thumb_func
@@ -21,12 +12,12 @@ Func_080f2d54:
 	movs	r3, #1
 	strb	r3, [r2, #0]
 	ldr	r6, [pc, #88]
-	bl	sub_080040e8
+	bl	Scheduler_ResetTaskTable
 	movs	r0, #1
-	bl	sub_08003b70
-	bl	sub_08004760
+	bl	Blend_SetDarkenTarget16
+	bl	Bg0_ClearTilemap
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #72]
 	ldr	r3, [pc, #52]
 	strh	r3, [r2, #0]
@@ -39,9 +30,9 @@ Func_080f2d54:
 	ldr	r5, [pc, #60]
 	adds	r0, r6, #0
 	mov	r8, r3
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	adds	r6, r5, #0
 	movs	r1, #160
 	ldr	r3, [pc, #44]
@@ -99,11 +90,11 @@ Func_080f2d54:
 	ldr	r2, [pc, #76]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	sub_0800479c
-	bl	sub_08004760
+	bl	Ui_LoadWindowGraphics
+	bl	Bg0_ClearTilemap
 	movs	r0, #1
-	bl	sub_08003c3c
-	bl	sub_08003ce0
+	bl	Blend_SetBrightenTarget0
+	bl	Blend_WaitForTransition
 	ldr	r3, [pc, #20]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -130,7 +121,7 @@ Func_080f2d54:
 .L_080f2e68:
 	movs	r0, #1
 	adds	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #119
 	bhi.n	.L_080f2e98
 	ldr	r3, [pc, #44]

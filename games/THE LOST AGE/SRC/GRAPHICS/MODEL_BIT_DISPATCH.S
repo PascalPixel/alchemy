@@ -10,7 +10,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, model bit-command dispatcher
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08118238
 	.global Model_DispatchBitCommand
 Model_DispatchBitCommand:
 	and	ip, r3, #7

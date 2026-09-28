@@ -1,13 +1,10 @@
 .syntax unified
 	.thumb
-	.set sub_08002064, 0x08002064
-	.set sub_080ad078, 0x080ad078
-	.set sub_080f93b8, 0x080f93b8
 	.global Func_08100d58
 	.thumb_func
 Func_08100d58:
 	push	{lr}
-	bl	sub_080ad078
+	bl	0x080ad078
 	ldrb	r3, [r0, #1]
 	movs	r2, #15
 	ands	r2, r3
@@ -18,10 +15,10 @@ Func_08100d58:
 	b.n	.L_08100d7c
 .L_08100d6e:
 	movs	r0, #126
-	bl	sub_080f93b8
+	bl	Func_080f93b8
 .L_08100d74:
 	movs	r0, #126
-	bl	sub_080f93b8
+	bl	Func_080f93b8
 	b.n	.L_08100e22
 .L_08100d7c:
 	ldrb	r3, [r0, #3]
@@ -66,20 +63,20 @@ Func_08100d58:
 	.2byte 0x0e22
 	.2byte 0x0810
 	movs	r0, #82
-	bl	sub_080f93b8
+	bl	Func_080f93b8
 	b.n	.L_08100e22
 	movs	r0, #84
-	bl	sub_080f93b8
+	bl	Func_080f93b8
 	b.n	.L_08100e22
 .L_08100e1c:
 	movs	r0, #91
-	bl	sub_080f93b8
+	bl	Func_080f93b8
 .L_08100e22:
 	pop	{pc}
 	.2byte 0x0d8c
 	.2byte 0x0810
 	push	{lr}
 	adds	r0, r0, r1
-	bl	sub_08002064
+	bl	0x08002064
 	pop	{pc}
 	.2byte 0x0000

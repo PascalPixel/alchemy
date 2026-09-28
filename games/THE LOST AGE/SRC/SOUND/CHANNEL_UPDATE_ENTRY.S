@@ -14,7 +14,6 @@
 @ credit: handwritten — TLA sound driver guarded ROM-to-IWRAM frame entry
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08000630
 	.global SoundDriver_EnterFrameUpdate
 	.thumb_func
 SoundDriver_EnterFrameUpdate:

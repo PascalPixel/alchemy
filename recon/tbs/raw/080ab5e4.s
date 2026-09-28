@@ -1,40 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022f4, 0x080022f4
-	.set sub_08002304, 0x08002304
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015018, 0x08015018
-	.set sub_08015038, 0x08015038
-	.set sub_08015048, 0x08015048
-	.set sub_08015068, 0x08015068
-	.set sub_08015078, 0x08015078
-	.set sub_08015080, 0x08015080
-	.set sub_08015090, 0x08015090
-	.set sub_080150b0, 0x080150b0
-	.set sub_08015120, 0x08015120
-	.set sub_08015270, 0x08015270
-	.set sub_08015278, 0x08015278
-	.set sub_08015280, 0x08015280
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_080771b0, 0x080771b0
-	.set sub_080771b8, 0x080771b8
-	.set sub_080771c0, 0x080771c0
-	.set sub_080771c8, 0x080771c8
-	.set sub_08077208, 0x08077208
-	.set sub_08077210, 0x08077210
-	.set sub_080a1a40, 0x080a1a40
-	.set sub_080a1ac0, 0x080a1ac0
-	.set sub_080aa538, 0x080aa538
-	.set sub_080aafb8, 0x080aafb8
-	.set sub_080ab1f4, 0x080ab1f4
-	.set sub_080ab2ec, 0x080ab2ec
-	.set sub_080ad5b4, 0x080ad5b4
-	.set sub_080ad5f4, 0x080ad5f4
-	.set sub_080ad608, 0x080ad608
-	.set sub_080ae714, 0x080ae714
-	.set sub_080b50f8, 0x080b50f8
-	.set sub_080f9010, 0x080f9010
 	.global DjinnMenu_SelectDjinn
 	.global Func_080ab5e4
 	.thumb_func
@@ -69,13 +34,13 @@ Func_080ab5e4:
 	ldrh	r5, [r7, r3]
 	movs	r1, #10
 	adds	r0, r5, #0
-	bl	sub_08002304
+	bl	__umodsi3
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	str	r0, [sp, #56]
 	movs	r1, #10
 	adds	r0, r5, #0
-	bl	sub_080022f4
+	bl	__udivsi3
 	mov	r2, sp
 	adds	r2, #100
 	lsls	r0, r0, #16
@@ -104,7 +69,7 @@ Func_080ab5e4:
 	cmp	r7, #0
 	bne.n	.L_080ab6d8
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	ldr	r3, [pc, #384]
 	movs	r0, #0
 	ldr	r1, [sp, #76]
@@ -154,7 +119,7 @@ Func_080ab5e4:
 	adds	r0, #1
 	str	r0, [sp, #56]
 	ldrb	r1, [r5, #0]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	str	r0, [sp, #56]
 .L_080ab6ca:
 	ldr	r1, [sp, #68]
@@ -170,7 +135,7 @@ Func_080ab5e4:
 	movs	r1, #28
 	ldrsb	r1, [r2, r1]
 	adds	r0, r5, #0
-	bl	sub_080ae714
+	bl	Djinn_MarkBalancedEntries
 	movs	r3, #0
 	ldr	r7, [sp, #76]
 	ldr	r0, [pc, #256]
@@ -234,11 +199,11 @@ Func_080ab5e4:
 	ldrh	r6, [r3, #0]
 	movs	r1, #10
 	adds	r0, r6, #0
-	bl	sub_08002304
+	bl	__umodsi3
 	movs	r1, #10
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_080022f4
+	bl	__udivsi3
 	lsls	r5, r5, #16
 	lsrs	r5, r5, #16
 	ldr	r3, [sp, #76]
@@ -256,7 +221,7 @@ Func_080ab5e4:
 	adds	r1, r6, #0
 	movs	r3, #6
 	str	r5, [sp, #0]
-	bl	sub_080ab1f4
+	bl	Menu_DrawAtWindowOffset
 	ldr	r7, [sp, #76]
 	movs	r3, #7
 	ldr	r0, [r7, #48]
@@ -265,7 +230,7 @@ Func_080ab5e4:
 	movs	r2, #2
 	movs	r3, #6
 	str	r3, [sp, #4]
-	bl	sub_080ab2ec
+	bl	UiWindow_ApplyRectAtObjectOrigin
 	ldr	r0, [pc, #72]
 	adds	r3, r7, r0
 	ldrb	r3, [r3, #0]
@@ -316,7 +281,7 @@ Func_080ab5e4:
 	adds	r2, r6, #0
 	movs	r3, #8
 	ldr	r1, [r7, #48]
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r0, [pc, #832]
 	adds	r3, r7, r0
 	ldrb	r3, [r3, #0]
@@ -330,7 +295,7 @@ Func_080ab5e4:
 	lsls	r2, r2, #1
 	adds	r3, r1, r2
 	ldr	r0, [r3, #0]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r3, [sp, #76]
 	ldr	r2, [r3, #20]
 	movs	r3, #1
@@ -368,16 +333,16 @@ Func_080ab5e4:
 	adds	r3, r3, r2
 	ldr	r6, [r0, #16]
 	ldrh	r0, [r0, r3]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r7, [pc, #736]
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	adds	r3, r5, r7
 	ldrb	r0, [r3, #0]
 	ldr	r3, [pc, #712]
@@ -385,19 +350,19 @@ Func_080ab5e4:
 	adds	r0, r0, r3
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r0, [pc, #704]
 	adds	r1, r6, #0
 	movs	r2, #48
 	movs	r3, #0
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r1, [sp, #72]
 	ldrb	r0, [r5, #15]
 	adds	r2, r6, #0
 	str	r1, [sp, #0]
 	movs	r3, #72
 	movs	r1, #2
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r2, [sp, #80]
 	cmp	r2, #0
 	bne.n	.L_080ab8c4
@@ -405,7 +370,7 @@ Func_080ab5e4:
 	adds	r1, r6, #0
 	movs	r2, #0
 	movs	r3, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080ab8c4:
 	movs	r7, #1
 	ldr	r3, [sp, #60]
@@ -429,7 +394,7 @@ Func_080ab5e4:
 	adds	r2, r2, r3
 	ldr	r0, [r2, #0]
 	mov	r8, r2
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r5, [sp, #80]
 	cmp	r5, #1
 	bne.n	.L_080ab980
@@ -438,7 +403,7 @@ Func_080ab5e4:
 	adds	r3, r0, r1
 	ldrb	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r4, [pc, #604]
 	mov	r2, r8
 	adds	r0, r4, #0
@@ -446,7 +411,7 @@ Func_080ab5e4:
 	movs	r3, #0
 	movs	r2, #0
 	str	r4, [sp, #8]
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r5, #188
 	ldr	r3, [sp, #76]
 	lsls	r5, r5, #1
@@ -466,7 +431,7 @@ Func_080ab5e4:
 	lsls	r1, r1, #1
 	adds	r0, r0, r1
 	movs	r1, #4
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldrh	r3, [r6, #0]
 	ands	r5, r3
 	ldr	r3, [pc, #544]
@@ -479,14 +444,14 @@ Func_080ab5e4:
 	str	r1, [sp, #0]
 	movs	r2, #6
 	adds	r1, r5, #0
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r4, [sp, #8]
 	mov	r2, r8
 	adds	r0, r4, #1
 	ldr	r1, [r2, #0]
 	movs	r3, #0
 	movs	r2, #56
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r4, [sp, #8]
 	mov	r3, r8
 	adds	r4, #2
@@ -494,7 +459,7 @@ Func_080ab5e4:
 	adds	r0, r4, #0
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080ab980:
 	ldr	r5, [sp, #60]
 	cmp	r5, r7
@@ -503,7 +468,7 @@ Func_080ab5e4:
 	movs	r1, #0
 	movs	r2, #200
 	movs	r3, #0
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 	b.n	.L_080abc14
 .L_080ab994:
 	ldr	r7, [sp, #80]
@@ -522,7 +487,7 @@ Func_080ab5e4:
 	ldr	r0, [pc, #444]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	b.n	.L_080ab9c6
 .L_080ab9b8:
 	mov	r3, r8
@@ -530,7 +495,7 @@ Func_080ab5e4:
 	ldr	r0, [pc, #432]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080ab9c6:
 	ldr	r5, [sp, #40]
 	movs	r3, #240
@@ -546,32 +511,32 @@ Func_080ab5e4:
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	adds	r2, r7, #0
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	cmp	r0, #0
 	bne.n	.L_080ab9f8
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	adds	r2, r7, #0
-	bl	sub_08077208
+	bl	Func_08077208
 	cmp	r0, #0
 	beq.n	.L_080aba32
 .L_080ab9f8:
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	adds	r2, r7, #0
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	cmp	r0, #0
 	beq.n	.L_080aba12
 	ldr	r0, [sp, #80]
 	adds	r1, r5, #0
 	movs	r2, #1
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 	b.n	.L_080aba1c
 .L_080aba12:
 	ldr	r0, [sp, #80]
 	adds	r1, r5, #0
 	movs	r2, #2
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 .L_080aba1c:
 	ldr	r2, [sp, #24]
 	ldr	r3, [sp, #56]
@@ -581,7 +546,7 @@ Func_080ab5e4:
 	ldr	r0, [sp, #80]
 	movs	r2, #62
 	movs	r3, #0
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 	b.n	.L_080aba64
 .L_080aba32:
 	ldr	r7, [sp, #76]
@@ -592,11 +557,11 @@ Func_080ab5e4:
 	ldr	r0, [pc, #308]
 	movs	r3, #16
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r1, r5, #0
 	movs	r2, #1
 	ldr	r0, [sp, #80]
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 	ldr	r2, [sp, #24]
 	ldr	r3, [sp, #56]
 	subs	r1, r2, r3
@@ -605,7 +570,7 @@ Func_080ab5e4:
 	ldr	r0, [sp, #80]
 	movs	r2, #62
 	movs	r3, #1
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 .L_080aba64:
 	mov	r5, sl
 	lsrs	r3, r5, #1
@@ -618,7 +583,7 @@ Func_080ab5e4:
 	movs	r2, #0
 	movs	r3, #0
 	str	r4, [sp, #8]
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #240
 	ldr	r0, [sp, #40]
 	lsls	r3, r3, #4
@@ -632,14 +597,14 @@ Func_080ab5e4:
 	adds	r1, r7, #0
 	adds	r0, r5, #0
 	adds	r2, r6, #0
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	bne.n	.L_080abab0
 	adds	r0, r5, #0
 	adds	r1, r7, #0
 	adds	r2, r6, #0
-	bl	sub_08077208
+	bl	Func_08077208
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080abb0a
@@ -648,7 +613,7 @@ Func_080ab5e4:
 	adds	r1, r7, #0
 	adds	r2, r6, #0
 	str	r4, [sp, #8]
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080abadc
@@ -657,11 +622,11 @@ Func_080ab5e4:
 	adds	r0, r4, #3
 	movs	r2, #0
 	movs	r3, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r0, #0
 	adds	r1, r7, #0
 	movs	r2, #1
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 	b.n	.L_080abaf4
 .L_080abadc:
 	mov	r3, r8
@@ -669,11 +634,11 @@ Func_080ab5e4:
 	adds	r0, r4, #2
 	movs	r2, #0
 	movs	r3, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r0, #0
 	adds	r1, r7, #0
 	movs	r2, #2
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 .L_080abaf4:
 	ldr	r5, [sp, #24]
 	ldr	r7, [sp, #56]
@@ -683,7 +648,7 @@ Func_080ab5e4:
 	ldr	r0, [sp, #80]
 	movs	r2, #62
 	movs	r3, #0
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 	b.n	.L_080abb36
 .L_080abb0a:
 	mov	r2, r8
@@ -691,11 +656,11 @@ Func_080ab5e4:
 	ldr	r1, [r2, #0]
 	movs	r3, #16
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r1, r7, #0
 	movs	r2, #1
 	movs	r0, #0
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 	ldr	r3, [sp, #24]
 	ldr	r5, [sp, #56]
 	subs	r1, r3, r5
@@ -704,7 +669,7 @@ Func_080ab5e4:
 	movs	r0, #0
 	movs	r2, #62
 	movs	r3, #1
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 .L_080abb36:
 	mov	r7, sl
 	lsrs	r3, r7, #1
@@ -713,7 +678,7 @@ Func_080ab5e4:
 	beq.n	.L_080abc14
 	ldr	r0, [sp, #80]
 	movs	r1, #0
-	bl	sub_080ad5f4
+	bl	FourObjectMotion_SetSlotPhase
 	b.n	.L_080abc14
 	lsrs	r1, r6, #14
 	movs	r0, r0
@@ -745,32 +710,32 @@ Func_080ab5e4:
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	adds	r2, r7, #0
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	cmp	r0, #0
 	bne.n	.L_080abbac
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	adds	r2, r7, #0
-	bl	sub_08077208
+	bl	Func_08077208
 	cmp	r0, #0
 	beq.n	.L_080abbe6
 .L_080abbac:
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	adds	r2, r7, #0
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	cmp	r0, #0
 	beq.n	.L_080abbc6
 	ldr	r0, [sp, #80]
 	adds	r1, r5, #0
 	movs	r2, #1
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 	b.n	.L_080abbd0
 .L_080abbc6:
 	ldr	r0, [sp, #80]
 	adds	r1, r5, #0
 	movs	r2, #2
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 .L_080abbd0:
 	ldr	r2, [sp, #24]
 	ldr	r3, [sp, #56]
@@ -780,13 +745,13 @@ Func_080ab5e4:
 	ldr	r0, [sp, #80]
 	movs	r2, #54
 	movs	r3, #0
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 	b.n	.L_080abc04
 .L_080abbe6:
 	adds	r1, r5, #0
 	movs	r2, #1
 	ldr	r0, [sp, #80]
-	bl	sub_080ad608
+	bl	FourObjectMotion_ReplaceSlot
 	ldr	r5, [sp, #24]
 	ldr	r7, [sp, #56]
 	subs	r1, r5, r7
@@ -795,7 +760,7 @@ Func_080ab5e4:
 	ldr	r0, [sp, #80]
 	movs	r2, #54
 	movs	r3, #1
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 .L_080abc04:
 	mov	r0, sl
 	lsrs	r3, r0, #1
@@ -803,11 +768,11 @@ Func_080ab5e4:
 	beq.n	.L_080abc14
 	ldr	r0, [sp, #80]
 	movs	r1, #0
-	bl	sub_080ad5f4
+	bl	FourObjectMotion_SetSlotPhase
 .L_080abc14:
 	ldr	r1, [sp, #76]
 	ldr	r0, [r1, #48]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	movs	r3, #1
 	ldr	r2, [sp, #60]
 	negs	r3, r3
@@ -818,14 +783,14 @@ Func_080ab5e4:
 	ldr	r1, [r5, #48]
 	movs	r2, #0
 	movs	r3, #80
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #104
 	ldr	r0, [r5, #48]
 	movs	r1, #0
 	str	r3, [sp, #0]
 	movs	r2, #96
 	movs	r3, #224
-	bl	sub_08015068
+	bl	UiWindow_ClearInteriorTilesFar
 	ldr	r7, [sp, #40]
 	movs	r3, #224
 	ands	r3, r7
@@ -841,7 +806,7 @@ Func_080ab5e4:
 	adds	r0, r0, r3
 	movs	r2, #0
 	movs	r3, #96
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080abc66:
 	ldr	r0, [sp, #28]
 	ldr	r1, [sp, #56]
@@ -862,7 +827,7 @@ Func_080ab5e4:
 	adds	r2, #2
 	movs	r3, #6
 	str	r5, [sp, #0]
-	bl	sub_080ab1f4
+	bl	Menu_DrawAtWindowOffset
 .L_080abc90:
 	ldr	r3, [pc, #812]
 	ldr	r7, [pc, #816]
@@ -882,7 +847,7 @@ Func_080ab5e4:
 	lsls	r0, r0, #3
 	subs	r0, #8
 	movs	r1, #52
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	b.n	.L_080abccc
 .L_080abcb8:
 	ldr	r3, [sp, #24]
@@ -893,10 +858,10 @@ Func_080ab5e4:
 	lsls	r1, r7, #3
 	subs	r0, #8
 	adds	r1, #60
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 .L_080abccc:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [pc, #756]
 	movs	r2, #128
 	ldr	r3, [r3, #0]
@@ -989,9 +954,9 @@ Func_080ab5e4:
 .L_080abdb0:
 	movs	r0, #150
 	movs	r1, #26
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [r6, #0]
 	ands	r3, r5
 	cmp	r3, #0
@@ -1011,7 +976,7 @@ Func_080ab5e4:
 	movs	r3, #1
 	ldr	r0, [pc, #516]
 	movs	r1, #9
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	ldr	r2, [pc, #512]
 	movs	r3, #131
 	lsls	r3, r3, #2
@@ -1022,23 +987,23 @@ Func_080ab5e4:
 	b.n	.L_080abdfa
 .L_080abdf4:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080abdfa:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	beq.n	.L_080abdf4
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r2, #9
 	movs	r3, #1
 	ldr	r0, [pc, #464]
 	movs	r1, #9
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	movs	r7, #131
 	ldr	r2, [pc, #448]
 	lsls	r7, r7, #2
@@ -1049,33 +1014,33 @@ Func_080ab5e4:
 	b.n	.L_080abe38
 .L_080abe32:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080abe38:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	beq.n	.L_080abe32
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	ldr	r2, [pc, #396]
 	movs	r3, #0
 	add	r2, r9
 	str	r3, [r2, #0]
-	bl	sub_080b50f8
-	bl	sub_080b50f8
-	bl	sub_080b50f8
+	bl	Func_080b50f8
+	bl	Func_080b50f8
+	bl	Func_080b50f8
 	movs	r1, #0
 	movs	r2, #0
 	movs	r0, #0
-	bl	sub_080771b8
+	bl	Func_080771b8
 	movs	r1, #0
 	movs	r2, #0
 	movs	r0, #0
-	bl	sub_080771c8
+	bl	Trade_AddOfferFar
 	movs	r0, #0
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	movs	r0, #2
 	mov	fp, r0
 	b.n	.L_080ac1b6
@@ -1091,7 +1056,7 @@ Func_080ab5e4:
 	movs	r3, #1
 	ldr	r0, [pc, #344]
 	str	r4, [sp, #8]
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	ldr	r2, [pc, #328]
 	movs	r1, #131
 	lsls	r1, r1, #2
@@ -1103,19 +1068,19 @@ Func_080ab5e4:
 .L_080abeac:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080abeb4:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080abeac
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	ldr	r2, [pc, #264]
 	movs	r3, #0
 	add	r2, r9
@@ -1168,7 +1133,7 @@ Func_080ab5e4:
 	movs	r3, #1
 	ldr	r0, [pc, #196]
 	str	r4, [sp, #8]
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	movs	r7, #131
 	ldr	r2, [pc, #172]
 	lsls	r7, r7, #2
@@ -1180,19 +1145,19 @@ Func_080ab5e4:
 .L_080abf46:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080abf4e:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080abf46
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	ldr	r2, [pc, #112]
 	movs	r3, #0
 	add	r2, r9
@@ -1269,20 +1234,20 @@ Func_080ab5e4:
 	movs	r3, #1
 	ldr	r0, [pc, #824]
 	str	r4, [sp, #8]
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	movs	r1, #146
 	adds	r5, r0, #0
 	movs	r0, #2
-	bl	sub_080a1ac0
+	bl	UiMenu_SlideCursor
 	b.n	.L_080ac032
 .L_080ac02a:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080ac032:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080ac02a
@@ -1298,9 +1263,9 @@ Func_080ab5e4:
 	movs	r0, #2
 	movs	r1, #146
 	str	r4, [sp, #8]
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [r7, #0]
 	ands	r3, r6
 	ldr	r4, [sp, #8]
@@ -1310,26 +1275,26 @@ Func_080ab5e4:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #9
 	movs	r2, #9
 	movs	r3, #1
 	ldr	r0, [pc, #720]
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	adds	r5, r0, #0
 	b.n	.L_080ac098
 .L_080ac090:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080ac098:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080ac090
@@ -1345,9 +1310,9 @@ Func_080ab5e4:
 	movs	r0, #2
 	movs	r1, #146
 	str	r4, [sp, #8]
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [r7, #0]
 	ands	r3, r6
 	ldr	r4, [sp, #8]
@@ -1357,26 +1322,26 @@ Func_080ab5e4:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #9
 	movs	r2, #9
 	movs	r3, #1
 	ldr	r0, [pc, #620]
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	adds	r5, r0, #0
 	b.n	.L_080ac0fe
 .L_080ac0f6:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080ac0fe:
 	ldr	r4, [sp, #8]
 	str	r4, [sp, #8]
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080ac0f6
@@ -1392,9 +1357,9 @@ Func_080ab5e4:
 	movs	r0, #2
 	movs	r1, #146
 	str	r4, [sp, #8]
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [r7, #0]
 	ands	r3, r6
 	ldr	r4, [sp, #8]
@@ -1404,11 +1369,11 @@ Func_080ab5e4:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #504]
 	movs	r3, #0
 	add	r2, r9
@@ -1503,14 +1468,14 @@ Func_080ab5e4:
 	adds	r0, r7, #0
 	adds	r2, r6, #0
 	str	r4, [sp, #8]
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	bne.n	.L_080ac214
 	adds	r0, r7, #0
 	adds	r1, r5, #0
 	adds	r2, r6, #0
-	bl	sub_08077208
+	bl	Func_08077208
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	beq.n	.L_080ac218
@@ -1527,22 +1492,22 @@ Func_080ab5e4:
 	cmp	r3, #0
 	bne.n	.L_080ac25a
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r5, [sp, #76]
 	ldr	r0, [r5, #48]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	movs	r3, #104
 	ldr	r0, [r5, #48]
 	movs	r1, #0
 	str	r3, [sp, #0]
 	movs	r2, #80
 	movs	r3, #216
-	bl	sub_08015068
+	bl	UiWindow_ClearInteriorTilesFar
 	ldr	r0, [pc, #288]
 	ldr	r1, [r5, #48]
 	movs	r2, #0
 	movs	r3, #96
-	bl	sub_08015078
+	bl	UiText_DrawMessageAt
 	movs	r7, #1
 	str	r7, [sp, #72]
 	bl	.L_080ab834
@@ -1553,7 +1518,7 @@ Func_080ab5e4:
 	beq.n	.L_080ac298
 	movs	r0, #175
 	str	r4, [sp, #8]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r5, #240
 	ldr	r1, [sp, #40]
 	lsls	r5, r5, #4
@@ -1568,17 +1533,17 @@ Func_080ab5e4:
 	adds	r1, r6, #0
 	adds	r0, r5, #0
 	str	r3, [sp, #12]
-	bl	sub_080771b8
+	bl	Func_080771b8
 	ldr	r3, [sp, #12]
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r3, #0
-	bl	sub_080771c8
+	bl	Trade_AddOfferFar
 	b.n	.L_080ac2cc
 .L_080ac298:
 	movs	r0, #139
 	str	r4, [sp, #8]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r5, #240
 	ldr	r2, [sp, #40]
 	lsls	r5, r5, #4
@@ -1593,12 +1558,12 @@ Func_080ab5e4:
 	adds	r1, r6, #0
 	adds	r0, r5, #0
 	str	r3, [sp, #12]
-	bl	sub_080771b0
+	bl	Djinn_ActivateFar
 	ldr	r3, [sp, #12]
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r3, #0
-	bl	sub_080771c0
+	bl	Trade_RemoveOfferFar
 .L_080ac2cc:
 	ldr	r4, [sp, #8]
 	ldr	r3, [sp, #40]
@@ -1607,9 +1572,9 @@ Func_080ab5e4:
 	ands	r0, r3
 	lsrs	r0, r0, #8
 	str	r4, [sp, #8]
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	movs	r5, #1
 	str	r5, [sp, #72]
 	ldr	r4, [sp, #8]
@@ -1624,7 +1589,7 @@ Func_080ab5e4:
 	beq.n	.L_080ac304
 	movs	r0, #112
 	movs	r5, #7
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080ac86a
 .L_080ac304:
 	movs	r3, #1
@@ -1659,7 +1624,7 @@ Func_080ab5e4:
 	bne.n	.L_080ac36c
 .L_080ac33c:
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	bl	.L_080ab834
 	movs	r0, r0
 	movs	r1, #40
@@ -1696,13 +1661,13 @@ Func_080ab5e4:
 	adds	r0, r7, #0
 	adds	r1, r6, #0
 	adds	r2, r5, #0
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	cmp	r0, #0
 	bne.n	.L_080ac3a0
 	adds	r0, r7, #0
 	adds	r1, r6, #0
 	adds	r2, r5, #0
-	bl	sub_08077208
+	bl	Func_08077208
 	cmp	r0, #0
 	beq.n	.L_080ac3a4
 .L_080ac3a0:
@@ -1713,22 +1678,22 @@ Func_080ab5e4:
 	cmp	r5, #0
 	bne.n	.L_080ac3d8
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r7, [sp, #76]
 	ldr	r0, [r7, #48]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	movs	r3, #104
 	ldr	r0, [r7, #48]
 	movs	r1, #0
 	str	r3, [sp, #0]
 	movs	r2, #80
 	movs	r3, #216
-	bl	sub_08015068
+	bl	UiWindow_ClearInteriorTilesFar
 	ldr	r0, [pc, #828]
 	ldr	r1, [r7, #48]
 	movs	r2, #0
 	movs	r3, #96
-	bl	sub_08015078
+	bl	UiText_DrawMessageAt
 	bl	.L_080ab834
 .L_080ac3d8:
 	ldr	r0, [sp, #80]
@@ -1766,7 +1731,7 @@ Func_080ab5e4:
 	movs	r5, #1
 .L_080ac416:
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080ac86a
 .L_080ac41e:
 	movs	r3, #8
@@ -1784,7 +1749,7 @@ Func_080ab5e4:
 	movs	r0, #113
 	movs	r5, #1
 .L_080ac438:
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	negs	r5, r5
 	b.n	.L_080ac86a
 .L_080ac440:
@@ -1811,11 +1776,11 @@ Func_080ab5e4:
 	cmp	r5, #0
 	beq.n	.L_080ac46e
 	movs	r0, #139
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080ac474
 .L_080ac46e:
 	movs	r0, #175
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080ac474:
 	movs	r7, #0
 	ldr	r0, [sp, #76]
@@ -1866,14 +1831,14 @@ Func_080ab5e4:
 	adds	r1, r6, #0
 	adds	r2, r5, #0
 	str	r4, [sp, #8]
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	ldr	r4, [sp, #8]
 	cmp	r0, #0
 	bne.n	.L_080ac4e8
 	adds	r0, r4, #0
 	adds	r1, r6, #0
 	adds	r2, r5, #0
-	bl	sub_08077208
+	bl	Func_08077208
 	cmp	r0, #0
 	beq.n	.L_080ac4ec
 .L_080ac4e8:
@@ -1904,14 +1869,14 @@ Func_080ab5e4:
 	adds	r1, r6, #0
 	adds	r0, r5, #0
 	str	r3, [sp, #12]
-	bl	sub_080771b0
+	bl	Djinn_ActivateFar
 	ldr	r3, [sp, #12]
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r3, #0
-	bl	sub_080771c0
+	bl	Trade_RemoveOfferFar
 	adds	r0, r5, #0
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	b.n	.L_080ac56e
 .L_080ac534:
 	lsrs	r3, r7, #15
@@ -1932,14 +1897,14 @@ Func_080ab5e4:
 	adds	r1, r6, #0
 	adds	r0, r5, #0
 	str	r3, [sp, #12]
-	bl	sub_080771b8
+	bl	Func_080771b8
 	ldr	r3, [sp, #12]
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r3, #0
-	bl	sub_080771c8
+	bl	Trade_AddOfferFar
 	adds	r0, r5, #0
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 .L_080ac56e:
 	ldr	r1, [sp, #64]
 	adds	r1, #1
@@ -1968,7 +1933,7 @@ Func_080ab5e4:
 	b.n	.L_080ac48e
 .L_080ac59e:
 	mov	r0, r9
-	bl	sub_080aafb8
+	bl	DjinnMenu_DrawElementList
 	movs	r7, #1
 	str	r7, [sp, #72]
 	b.n	.L_080ac5d2
@@ -1986,10 +1951,10 @@ Func_080ab5e4:
 	adds	r1, #1
 	adds	r2, #2
 	movs	r3, #6
-	bl	sub_080ab1f4
+	bl	Menu_DrawAtWindowOffset
 	movs	r0, #112
 	movs	r5, #10
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080ac86a
 .L_080ac5d2:
 	movs	r3, #64
@@ -1998,7 +1963,7 @@ Func_080ab5e4:
 	cmp	r3, #0
 	beq.n	.L_080ac682
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r7, [sp, #28]
 	ldr	r0, [sp, #56]
 	movs	r5, #4
@@ -2022,7 +1987,7 @@ Func_080ab5e4:
 	movs	r3, #6
 	movs	r6, #1
 	str	r6, [sp, #0]
-	bl	sub_080ab1f4
+	bl	Menu_DrawAtWindowOffset
 	ldr	r0, [sp, #56]
 	ldrb	r2, [r7, r0]
 	adds	r3, r5, #0
@@ -2072,7 +2037,7 @@ Func_080ab5e4:
 	movs	r1, #1
 .L_080ac670:
 	ldr	r0, [sp, #48]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	movs	r3, #2
 	str	r0, [sp, #48]
 	str	r0, [sp, #44]
@@ -2085,7 +2050,7 @@ Func_080ab5e4:
 	cmp	r3, #0
 	beq.n	.L_080ac738
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r7, [sp, #28]
 	ldr	r0, [sp, #56]
 	movs	r5, #4
@@ -2109,7 +2074,7 @@ Func_080ab5e4:
 	movs	r3, #6
 	movs	r6, #1
 	str	r6, [sp, #0]
-	bl	sub_080ab1f4
+	bl	Menu_DrawAtWindowOffset
 	ldr	r7, [sp, #48]
 	ldr	r3, [sp, #56]
 	adds	r7, #1
@@ -2122,7 +2087,7 @@ Func_080ab5e4:
 	movs	r1, #1
 .L_080ac6d8:
 	ldr	r0, [sp, #48]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	ldr	r3, [sp, #56]
 	str	r0, [sp, #48]
 	ldr	r1, [sp, #28]
@@ -2175,7 +2140,7 @@ Func_080ab5e4:
 	cmp	r3, #0
 	beq.n	.L_080ac7bc
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r3, [sp, #28]
 	ldr	r5, [sp, #56]
 	ldrb	r2, [r3, r5]
@@ -2195,7 +2160,7 @@ Func_080ab5e4:
 	adds	r1, #1
 	adds	r2, #2
 	movs	r3, #6
-	bl	sub_080ab1f4
+	bl	Menu_DrawAtWindowOffset
 .L_080ac772:
 	ldr	r3, [sp, #56]
 	ldr	r7, [sp, #76]
@@ -2205,7 +2170,7 @@ Func_080ab5e4:
 	adds	r5, r7, r0
 	ldrb	r1, [r5, #0]
 	adds	r0, r3, #0
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	ldr	r1, [sp, #80]
 	str	r0, [sp, #56]
 	cmp	r1, #0
@@ -2224,7 +2189,7 @@ Func_080ab5e4:
 	subs	r0, #1
 	str	r0, [sp, #56]
 	ldrb	r1, [r5, #0]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	str	r0, [sp, #56]
 .L_080ac7ae:
 	ldr	r1, [sp, #68]
@@ -2243,7 +2208,7 @@ Func_080ab5e4:
 	bl	.L_080ab834
 .L_080ac7ca:
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r3, [sp, #28]
 	ldr	r5, [sp, #56]
 	ldrb	r2, [r3, r5]
@@ -2263,7 +2228,7 @@ Func_080ab5e4:
 	adds	r1, #1
 	adds	r2, #2
 	movs	r3, #6
-	bl	sub_080ab1f4
+	bl	Menu_DrawAtWindowOffset
 .L_080ac7fa:
 	ldr	r3, [sp, #56]
 	ldr	r7, [sp, #76]
@@ -2273,7 +2238,7 @@ Func_080ab5e4:
 	adds	r5, r7, r0
 	ldrb	r1, [r5, #0]
 	adds	r0, r3, #0
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	ldr	r1, [sp, #80]
 	str	r0, [sp, #56]
 	cmp	r1, #0
@@ -2292,7 +2257,7 @@ Func_080ab5e4:
 	adds	r0, #1
 	str	r0, [sp, #56]
 	ldrb	r1, [r5, #0]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	str	r0, [sp, #56]
 .L_080ac836:
 	ldr	r1, [sp, #68]
@@ -2313,7 +2278,7 @@ Func_080ab5e4:
 	movs	r1, #1
 .L_080ac854:
 	ldr	r0, [sp, #48]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	str	r0, [sp, #48]
 	ldr	r0, [sp, #56]
 	movs	r7, #2

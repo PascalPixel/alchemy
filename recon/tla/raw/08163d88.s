@@ -1,22 +1,15 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08014878, 0x08014878
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08020090, 0x08020090
-	.set sub_08020138, 0x08020138
-	.set sub_08020148, 0x08020148
-	.set sub_08118098, 0x08118098
 	.global Func_08163d88
 	.thumb_func
 Func_08163d88:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
-	bl	sub_08118098
+	bl	0x08118098
 	adds	r7, r0, #0
 	adds	r0, r5, #0
 	ldr	r6, [r7, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -34,7 +27,7 @@ Func_08163d88:
 	adds	r2, #7
 	cmp	r0, r2
 	beq.n	.L_08163df6
-	bl	sub_08014878
+	bl	0x08014878
 	movs	r3, #128
 	lsls	r3, r3, #12
 	str	r3, [r6, #52]
@@ -47,18 +40,18 @@ Func_08163d88:
 	ands	r5, r0
 	str	r3, [r6, #40]
 	adds	r0, r6, #0
-	bl	sub_08020138
+	bl	Object_ResetMotion
 	ldr	r3, [r7, #12]
 	adds	r5, #130
 	adds	r0, r5, #0
 	muls	r0, r3
 	movs	r1, #100
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r3, [r7, #16]
 	adds	r1, r0, #0
 	movs	r2, #0
 	adds	r0, r6, #0
-	bl	sub_08020148
+	bl	Object_SetPosition
 .L_08163df6:
 	movs	r3, #153
 	lsls	r3, r3, #8
@@ -71,6 +64,6 @@ Func_08163d88:
 	adds	r0, r6, #0
 	strb	r3, [r2, #0]
 	movs	r1, #5
-	bl	sub_08020090
+	bl	Object_SetMode
 	pop	{r5, r6, r7, pc}
 	.2byte 0x0000

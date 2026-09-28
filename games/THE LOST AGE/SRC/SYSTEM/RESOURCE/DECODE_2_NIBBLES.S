@@ -3,7 +3,7 @@
 @ into sl and fp with add ip, pc, #36; ldm ip, {sl, fp}. A data table
 @ carries no credit, as TBS SYSTEM/RESOURCE/DECODE_2_NIBBLES.S.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08012bb4
 	.4byte	0xfedcba98
 	.4byte	0x76543210

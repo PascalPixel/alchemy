@@ -6,8 +6,6 @@
 @ credit: library — TBS/TLA common IWRAM runtime 16.16 multiply
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080007d4
-	.set AlchemyRunAddress, 0x0300021c
 AlchemyUncredited_080007d4:
 	bx	pc
 	.2byte	0x0200

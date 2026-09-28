@@ -8,8 +8,6 @@
 	.set	.L_audio_0acc, 0x03000acc
 	.set	.L_audio_09bc, 0x030009bc
 	.arm
-	.set AlchemyLoadAddress, 0x08001044
-	.set AlchemyRunAddress, 0x030008d4
 	asr	r9, r9, #22
 	adds	r9, r9, r6, lsl #1
 	adds	r7, r7, r4

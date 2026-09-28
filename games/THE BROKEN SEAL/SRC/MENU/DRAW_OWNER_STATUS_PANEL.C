@@ -59,7 +59,7 @@ s32 SideObject_CreateFar(s32 owner, s32 a, s32 b, s32 window, s32 c, s32 d);
 void Ui_DrawValuePairRows(struct PanelOwner *unit, s32 window);
 s32 Item_CanOwnerEquip(s32 owner, s32 item);
 void *Runtime_BumpAllocate(s32 size);
-s32 Func_080072f0(void *, void *, s32, void *);
+s32 _call_via_r3(void *, void *, s32, void *);
 void Inventory_EquipFar(s32 owner, s32 slot);
 void Owner_RecalculateStatsFar(s32 owner);
 void UiText_DrawStatComparison(struct PanelOwner *unit, void *backup, s32 window);
@@ -67,7 +67,7 @@ void Runtime_BumpFree(void *block);
 
 static inline void Owner_Copy(void *dst, void *src)
 {
-    Func_080072f0(dst, src, 0x14c, Data_03001388);
+    _call_via_r3(dst, src, 0x14c, Data_03001388);
 }
 
 void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)

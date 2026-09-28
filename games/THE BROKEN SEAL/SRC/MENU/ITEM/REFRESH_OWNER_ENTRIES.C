@@ -1,5 +1,6 @@
 #include "M7_INTERFACES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f2c[];
 
 void ItemMenu_RefreshEntry(s32 layout)
 {
@@ -10,7 +11,7 @@ void ItemMenu_RefreshEntry(s32 layout)
     s32 origin_y;
     s32 base;
 
-    base = *(s32 *)ADDR_03001F2C;
+    base = *(s32 *)((u32)&Data_03001f2c);
     origin_y = 0x38;
     if (layout != 1) {
         origin_y = 0x28;

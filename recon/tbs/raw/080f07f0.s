@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_08004970, 0x08004970
-	.set sub_080072f0, 0x080072f0
-	.set sub_080770c0, 0x080770c0
-	.set sub_080770c8, 0x080770c8
 	.global Unnamed_080f07f0
 	.global Func_080f07f0
 	.thumb_func
@@ -24,7 +19,7 @@ Func_080f07f0:
 	adds	r0, r6, #0
 	str	r1, [sp, #8]
 	adds	r7, r2, #0
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	movs	r1, #0
 	movs	r2, #192
 	mov	r3, sl
@@ -40,16 +35,16 @@ Func_080f07f0:
 	movs	r5, #128
 	lsls	r5, r5, #2
 	adds	r0, r5, #0
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080f0848
 	ldr	r3, [pc, #496]
 	ldr	r0, [sp, #4]
 	adds	r1, r6, #0
 	movs	r2, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r0, r5, #0
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	b.n	.L_080f086e
 .L_080f0848:
 	ldr	r4, [sp, #4]
@@ -60,7 +55,7 @@ Func_080f07f0:
 	ldr	r3, [pc, #472]
 	lsls	r2, r2, #1
 	adds	r0, r4, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r2, #128
 	ldr	r1, [sp, #4]
 	lsls	r2, r2, #1
@@ -68,7 +63,7 @@ Func_080f07f0:
 	ldr	r3, [pc, #448]
 	adds	r1, r5, #0
 	movs	r2, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 .L_080f086e:
 	mov	r4, sl
 	ldrb	r0, [r4, #0]
@@ -296,7 +291,7 @@ Func_080f07f0:
 	bne.n	.L_080f0994
 .L_080f0a0e:
 	ldr	r0, [sp, #4]
-	bl	sub_08002df0
+	bl	Party_Do
 	movs	r0, #0
 .L_080f0a16:
 	add	sp, #44

@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08020090, 0x08020090
-	.set sub_080200a8, 0x080200a8
-	.set sub_080200e8, 0x080200e8
-	.set sub_080cad84, 0x080cad84
-	.set sub_080d2d94, 0x080d2d94
-	.set sub_080d2fc8, 0x080d2fc8
-	.set sub_080d3214, 0x080d3214
 	.global Func_080d3070
 	.thumb_func
 Func_080d3070:
@@ -18,7 +11,7 @@ Func_080d3070:
 	adds	r7, r1, #0
 	mov	r8, r2
 	mov	sl, r3
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080d30e6
@@ -29,35 +22,35 @@ Func_080d3070:
 	adds	r2, #102
 	adds	r1, #204
 	adds	r0, r6, #0
-	bl	sub_080d2d94
+	bl	ObjectMotion_SetSpeedParameters
 	ldr	r3, [pc, #80]
 	movs	r0, #133
 	lsls	r0, r0, #2
 	adds	r3, r3, r0
 	ldr	r1, [r3, #0]
 	adds	r0, r6, #0
-	bl	sub_080d3214
+	bl	0x080d3214
 	ldr	r3, [r5, #16]
 	ldr	r0, [pc, #68]
 	ldr	r1, [r5, #8]
 	adds	r3, r3, r0
 	ldr	r2, [r5, #12]
 	adds	r0, r5, #0
-	bl	sub_080200e8
+	bl	Func_080200e8
 	adds	r2, r5, #0
 	movs	r3, #0
 	adds	r2, #91
 	strb	r3, [r2, #0]
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	sub_08020090
+	bl	Object_SetMode
 	mov	r2, r8
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	sub_080d2fc8
+	bl	ObjectMotion_OffsetPositionAndResetMotion
 	ldr	r1, [pc, #32]
 	adds	r0, r5, #0
-	bl	sub_080200a8
+	bl	Object_SetCallback
 	adds	r3, r5, #0
 	adds	r3, #100
 	mov	r2, sl

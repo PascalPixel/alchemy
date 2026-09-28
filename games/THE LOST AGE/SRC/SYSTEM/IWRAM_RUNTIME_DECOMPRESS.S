@@ -12,8 +12,6 @@
 @ credit: library — TBS/TLA common IWRAM runtime decompressor
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000c4c
-	.set AlchemyRunAddress, 0x03000694
 	.thumb
 AlchemyUncredited_08000c4c:
 	bx	pc

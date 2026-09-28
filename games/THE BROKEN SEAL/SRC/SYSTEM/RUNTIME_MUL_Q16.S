@@ -4,8 +4,6 @@
 @ credit: library — TBS/TLA common IWRAM runtime 16.16 multiply
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x0800089c
-	.set AlchemyRunAddress, 0x0300012c
 
 	.global IwramMulQ16
 IwramMulQ16:

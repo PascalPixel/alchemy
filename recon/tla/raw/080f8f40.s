@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002064, 0x08002064
-	.set sub_080138a8, 0x080138a8
-	.set sub_08038270, 0x08038270
-	.set sub_080383f8, 0x080383f8
-	.set sub_081c0010, 0x081c0010
 	.global Func_080f8f40
 	.thumb_func
 Func_080f8f40:
@@ -78,14 +72,14 @@ Func_080f8f40:
 	b.n	.L_080f90f6
 .L_080f8fbe:
 	ldr	r0, [pc, #320]
-	bl	sub_080383f8
+	bl	0x080383f8
 	adds	r1, r7, #0
 	mov	r0, r8
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r1, r7, #0
 	mov	r9, r0
 	mov	r0, r8
-	bl	sub_08002064
+	bl	0x08002064
 	cmp	r0, #0
 	beq.n	.L_080f8fde
 	movs	r3, #1
@@ -124,7 +118,7 @@ Func_080f8f40:
 	cmp	r5, #0
 	beq.n	.L_080f904c
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	mov	r1, sl
 	ldr	r3, [r1, #0]
 	subs	r3, #1
@@ -152,7 +146,7 @@ Func_080f8f40:
 	cmp	r2, #0
 	beq.n	.L_080f9096
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	mov	r2, sl
 	ldr	r3, [r2, #0]
 	adds	r3, #1
@@ -184,14 +178,14 @@ Func_080f8f40:
 	ble.n	.L_080f908e
 	str	r1, [r6, #0]
 .L_080f908e:
-	bl	sub_080138a8
+	bl	0x080138a8
 	movs	r0, #1
 	b.n	.L_080f90f6
 .L_080f9096:
 	cmp	r1, #0
 	beq.n	.L_080f90c4
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	ldr	r3, [r6, #0]
 	subs	r3, #1
 	str	r3, [r6, #0]
@@ -216,7 +210,7 @@ Func_080f8f40:
 	cmp	r4, #0
 	beq.n	.L_080f90f6
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	ldr	r2, [r6, #0]
 	mov	r1, sl
 	adds	r2, #1
@@ -317,11 +311,11 @@ Func_080f8f40:
 	movs	r3, #49
 	ldr	r7, [sp, #36]
 	mov	sl, r3
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r1, r6, #0
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	sub_08002064
+	bl	0x08002064
 	cmp	r0, #0
 	beq.n	.L_080f91a8
 	movs	r3, #1
@@ -341,7 +335,7 @@ Func_080f8f40:
 	negs	r3, r3
 	mov	r0, r9
 	movs	r5, #0
-	bl	sub_08038270
+	bl	0x08038270
 	cmp	r5, r8
 	bge.n	.L_080f91fe
 .L_080f91cc:
@@ -353,7 +347,7 @@ Func_080f8f40:
 	mov	r1, sl
 	adds	r2, r7, #0
 	subs	r3, #3
-	bl	sub_08038270
+	bl	0x08038270
 	b.n	.L_080f91f2
 .L_080f91e2:
 	movs	r3, #3
@@ -362,7 +356,7 @@ Func_080f8f40:
 	mov	r1, sl
 	adds	r2, r7, #0
 	subs	r3, #4
-	bl	sub_08038270
+	bl	0x08038270
 .L_080f91f2:
 	movs	r3, #1
 	adds	r5, #1
@@ -380,7 +374,7 @@ Func_080f8f40:
 	negs	r3, r3
 	mov	r0, r9
 	adds	r2, r7, #0
-	bl	sub_08038270
+	bl	0x08038270
 .L_080f9214:
 	add	sp, #4
 	pop	{r3, r5, r6, r7}

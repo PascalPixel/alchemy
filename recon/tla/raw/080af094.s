@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080aec04, 0x080aec04
 	.global Inventory_GetEquippedItem
 	.global Func_080af094
 	.thumb_func
@@ -28,7 +27,7 @@ Func_080af094:
 	cmp	r3, #0
 	beq.n	.L_080af0d0
 	ldrh	r0, [r5, #0]
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r3, [r0, #2]
 	cmp	r3, r7
 	bne.n	.L_080af0d0

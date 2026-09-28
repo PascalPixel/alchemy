@@ -5,6 +5,7 @@
 @ table rewritten at run time and the addresses it is built from are data
 @ and carry no credit, as TBS BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_TABLES.S.
 .syntax unified
+	.section .data,"aw",%progbits
 	.set	.L_081a0170, 0x081a0170
 	.set	.L_081a018c, 0x081a018c
 	.set	.L_081a022c, 0x081a022c
@@ -13,7 +14,6 @@
 	.set	.L_081a025c, 0x081a025c
 	.set	.L_081a0204, 0x081a0204
 	.arm
-	.set AlchemyLoadAddress, 0x081a0130
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 	.4byte	.L_081a0170
 	.4byte	.L_081a018c

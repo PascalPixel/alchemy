@@ -1,6 +1,7 @@
 #include "EFFECT_0809B11C.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
+u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
 struct EffectVector {
     s32 x;

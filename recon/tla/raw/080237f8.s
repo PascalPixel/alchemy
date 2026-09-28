@@ -1,26 +1,21 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08014694, 0x08014694
-	.set sub_0801475c, 0x0801475c
-	.set sub_080c8378, 0x080c8378
-	.set sub_080c8390, 0x080c8390
 	.global Func_080237f8
 	.thumb_func
 Func_080237f8:
 	push	{lr}
 	ldr	r0, [pc, #60]
-	bl	sub_08014694
+	bl	0x08014694
 	ldr	r0, [pc, #56]
-	bl	sub_08014694
+	bl	0x08014694
 	movs	r0, #128
 	movs	r1, #1
 	lsls	r0, r0, #9
-	bl	sub_080c8378
+	bl	Func_080c8378
 	movs	r0, #1
-	bl	sub_080c8390
+	bl	Func_080c8390
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r1, #128
 	lsls	r1, r1, #19
 	ldrh	r2, [r1, #0]
@@ -39,9 +34,9 @@ Func_080237f8:
 	.2byte 0x0802
 	push	{lr}
 	ldr	r0, [pc, #28]
-	bl	sub_0801475c
+	bl	0x0801475c
 	ldr	r0, [pc, #24]
-	bl	sub_0801475c
+	bl	0x0801475c
 	movs	r1, #128
 	lsls	r1, r1, #19
 	ldrh	r2, [r1, #0]

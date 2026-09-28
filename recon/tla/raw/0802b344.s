@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0802b1a0, 0x0802b1a0
 	.global Func_0802b344
 	.thumb_func
 Func_0802b344:
@@ -22,7 +21,7 @@ Func_0802b344:
 	adds	r3, r6, #0
 	mov	r8, r0
 	mov	sl, r1
-	bl	sub_0802b1a0
+	bl	0x0802b1a0
 	mov	r0, r8
 	mov	r1, sl
 	mov	r2, r9

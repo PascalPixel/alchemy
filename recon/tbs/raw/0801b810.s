@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_0801b010, 0x0801b010
-	.set sub_0801b9a8, 0x0801b9a8
-	.set sub_0801b9ec, 0x0801b9ec
-	.set sub_0801ba68, 0x0801ba68
-	.set sub_0801bd98, 0x0801bd98
 	.global Menu_StepLeft
 	.global Func_0801b810
 	.thumb_func
@@ -16,13 +10,13 @@ Func_0801b810:
 	adds	r7, r0, #0
 	adds	r6, r7, r1
 	ldrh	r1, [r6, #0]
-	bl	sub_0801b9a8
+	bl	Menu_ReloadNodeResource
 	ldr	r3, [pc, #376]
 	adds	r2, r7, r3
 	movs	r3, #33
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #229
 	lsls	r1, r1, #2
 	adds	r3, r7, r1
@@ -55,7 +49,7 @@ Func_0801b810:
 	strh	r3, [r5, #0]
 	adds	r0, r7, #0
 	movs	r1, #0
-	bl	sub_0801ba68
+	bl	Menu_ScrollSelectionList
 	ldrh	r3, [r5, #0]
 	cmp	r3, #0
 	bne.n	.L_0801b876
@@ -101,7 +95,7 @@ Func_0801b810:
 	b.n	.L_0801b8c0
 .L_0801b8ba:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_0801b8c0:
 	movs	r3, #16
 	ldrsh	r2, [r5, r3]
@@ -147,7 +141,7 @@ Func_0801b810:
 	ldrh	r1, [r6, #32]
 	adds	r2, r5, #0
 	movs	r3, #1
-	bl	sub_0801bd98
+	bl	MenuSelection_SetupEntry
 	ldr	r5, [r5, #4]
 	adds	r6, #2
 	cmp	r5, #0
@@ -198,18 +192,18 @@ Func_0801b810:
 	adds	r3, r7, r1
 	ldrh	r1, [r3, #0]
 	adds	r0, r7, #0
-	bl	sub_0801b9ec
+	bl	Menu_LoadSelectionNodeResource
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r2, #210
 	lsls	r2, r2, #2
 	adds	r3, r7, r2
 	ldr	r3, [r3, #0]
 	movs	r1, #0
 	ldrh	r0, [r3, #10]
-	bl	sub_0801b010
+	bl	Menu_OpenSelectionWindow
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0

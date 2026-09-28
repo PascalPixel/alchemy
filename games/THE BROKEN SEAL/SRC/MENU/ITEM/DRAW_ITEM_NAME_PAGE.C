@@ -1,6 +1,7 @@
 #include "INVENTORY_MENU.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001f2c[];
 
 #if defined(TBS_EDITION_JA)
 #define PAGE_X  120
@@ -24,7 +25,7 @@ s32 ItemMenu_DrawNamePage(
     const struct MenuResult *state)
 {
     struct InventoryMenuState *menu =
-        *(struct InventoryMenuState **)ADDR_03001F2C;
+        *(struct InventoryMenuState **)((u32)&Data_03001f2c);
     u32 page;
     u32 first_entry;
     u32 visible_count;

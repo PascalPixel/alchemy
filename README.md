@@ -34,16 +34,18 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 ## Progress
 
-**☀️ 73.69% · ⚓️ 2.14%**
+**☀️ 18.37% · ⚓️ 1.92%**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 
 <img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
 
-The chart shows how far each game has come, day by day: The Broken Seal in
-gold, The Lost Age in blue. The two dips mark days the rules for what counts
-got stricter, not lost work. The Broken Seal is well past halfway. The Lost Age has only just begun, but it is built much like the first
-game, which gives it a head start.
+The chart preserves past measurements: The Broken Seal in gold, The Lost Age
+in blue. Progress is the share of each game's code that is built from readable
+source, measured only when the rebuilt game is identical to the original; a game
+stays pending until it is. The drop on 28 September is a stricter count, not
+lost work: stored answers and generated bookkeeping were removed, and code now
+counts only once the game is linked from its source.
 
 ## Acknowledgements
 
@@ -61,7 +63,3 @@ Thank you to:
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy
   measures itself against, and whose [agbcc](https://github.com/pret/agbcc)
   Alchemy builds the games' library code with.
-- Brankale and Pokefan531, for the
-  [Handheld Color Space Project](https://github.com/Brankale/Handheld-Color-Space-Project),
-  whose screen measurements drive the map viewer's GBA, GBA SP and Game Boy
-  Micro colour filters.

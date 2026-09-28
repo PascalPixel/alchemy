@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801314c, 0x0801314c
-	.set sub_080142d4, 0x080142d4
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_08038248, 0x08038248
 	.global Func_0802372c
 	.thumb_func
 Func_0802372c:
@@ -28,20 +24,20 @@ Func_0802372c:
 	movs	r1, #193
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	sub_08038248
+	bl	Func_08038248
 	movs	r3, #128
 	lsls	r3, r3, #3
 	adds	r5, r5, r3
 	adds	r2, r5, #0
 	movs	r1, #128
 	ldrb	r0, [r6, #16]
-	bl	sub_080142d4
+	bl	0x080142d4
 	adds	r5, r0, #0
 	movs	r0, #68
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	mov	r3, r8
 	strb	r3, [r6, #27]
 	strb	r3, [r6, #25]

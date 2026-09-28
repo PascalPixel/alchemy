@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080148e8, 0x080148e8
-	.set sub_080149e0, 0x080149e0
-	.set sub_08024f20, 0x08024f20
-	.set sub_0802d45c, 0x0802d45c
 	.global Func_08023f64
 	.thumb_func
 Func_08023f64:
@@ -246,7 +242,7 @@ Func_08023f64:
 	.2byte 0x19ad
 	adds	r5, r5, r0
 	adds	r0, r5, #0
-	bl	sub_080149e0
+	bl	0x080149e0
 	ldr	r1, [r7, #48]
 	cmp	r0, r1
 	bgt.n	.L_08024126
@@ -298,7 +294,7 @@ Func_08023f64:
 	.2byte 0x19ad
 	adds	r5, r5, r0
 	adds	r0, r5, #0
-	bl	sub_080149e0
+	bl	0x080149e0
 	cmp	r0, #0
 	beq.n	.L_080241ba
 	ldr	r3, [r7, #52]
@@ -395,7 +391,7 @@ Func_08023f64:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	sub_080149e0
+	bl	0x080149e0
 .L_0802423e:
 	cmp	r0, #0
 	bne.n	.L_0802424c
@@ -440,7 +436,7 @@ Func_08023f64:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	sub_080149e0
+	bl	0x080149e0
 	ldr	r1, [r7, #48]
 	cmp	r0, r1
 	ble.n	.L_0802431c
@@ -474,7 +470,7 @@ Func_08023f64:
 	.2byte 0xf800
 	.2byte 0x182d
 	adds	r0, r5, #0
-	bl	sub_080149e0
+	bl	0x080149e0
 	cmp	r0, #0
 	beq.n	.L_08024318
 	ldr	r3, [r7, #52]
@@ -602,7 +598,7 @@ Func_08023f64:
 	ldrb	r0, [r3, #0]
 	mov	r1, sl
 	mov	r2, r9
-	bl	sub_0802d45c
+	bl	0x0802d45c
 	str	r0, [sp, #12]
 .L_080243d6:
 	ldr	r3, [r7, #20]
@@ -672,7 +668,7 @@ Func_08023f64:
 	.2byte 0x19ad
 	adds	r5, r5, r0
 	adds	r0, r5, #0
-	bl	sub_080149e0
+	bl	0x080149e0
 	cmp	r0, #0
 	beq.n	.L_08024492
 	mov	r3, r8
@@ -822,7 +818,7 @@ Func_08023f64:
 	ldr	r4, [sp, #16]
 	adds	r0, r7, #0
 	str	r4, [r1, #8]
-	bl	sub_08024f20
+	bl	Func_08024f20
 	cmp	r0, #0
 	beq.n	.L_0802457e
 	ldr	r6, [sp, #0]
@@ -958,7 +954,7 @@ Func_08023f64:
 .L_0802466a:
 	ldr	r0, [sp, #16]
 	ldr	r1, [sp, #24]
-	bl	sub_080148e8
+	bl	0x080148e8
 	ldrh	r3, [r7, #6]
 	movs	r2, #128
 	subs	r0, r0, r3

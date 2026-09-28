@@ -1,26 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002df0, 0x08002df0
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800352c, 0x0800352c
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004970, 0x08004970
-	.set sub_080072f0, 0x080072f0
-	.set sub_08015060, 0x08015060
-	.set sub_08015080, 0x08015080
-	.set sub_08015270, 0x08015270
-	.set sub_08015278, 0x08015278
-	.set sub_08015280, 0x08015280
-	.set sub_08077008, 0x08077008
-	.set sub_080a10d0, 0x080a10d0
-	.set sub_080a1114, 0x080a1114
-	.set sub_080aa538, 0x080aa538
-	.set sub_080aae14, 0x080aae14
-	.set sub_080acab8, 0x080acab8
-	.set sub_080ad5b4, 0x080ad5b4
-	.set sub_080f9010, 0x080f9010
 	.global Unnamed_080ae2f4
 	.global Func_080ae2f4
 	.thumb_func
@@ -69,25 +48,25 @@ Func_080ae2f4:
 	bge.n	.L_080ae33c
 	mov	r1, r9
 	ldr	r0, [r1, #48]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	add	r2, sp, #68
 	movs	r7, #1
 	str	r7, [sp, #68]
 	movs	r0, #96
 	str	r7, [r2, #4]
 	mov	fp, r2
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r5, r0, #0
 	movs	r0, #166
 	lsls	r0, r0, #1
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r3, [pc, #856]
 	add	r3, r9
 	adds	r6, r0, #0
 	ldrb	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r1, r0, #0
 	add	r2, sp, #60
 	adds	r1, #88
@@ -95,18 +74,18 @@ Func_080ae2f4:
 	str	r2, [sp, #0]
 	adds	r0, r1, #0
 	adds	r2, r5, #0
-	bl	sub_080aae14
+	bl	OwnerAction_DiffSlots
 	mov	r3, fp
 	str	r0, [sp, #68]
 	str	r0, [r3, #4]
 	adds	r0, r6, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	adds	r0, r5, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	ldr	r0, [sp, #68]
 	movs	r1, #6
 	subs	r0, #1
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r0, #1
 	str	r0, [sp, #68]
 	cmp	r0, #0
@@ -117,7 +96,7 @@ Func_080ae2f4:
 	ldr	r0, [r1, #4]
 	movs	r1, #6
 	subs	r0, #1
-	bl	sub_080022ec
+	bl	__divsi3
 	mov	r2, fp
 	adds	r0, #1
 	str	r0, [r2, #4]
@@ -136,7 +115,7 @@ Func_080ae2f4:
 	movs	r3, #15
 	str	r5, [sp, #4]
 	str	r6, [sp, #0]
-	bl	sub_080a10d0
+	bl	UiWindow_UpdateOrCreate
 	mov	r0, r9
 	movs	r2, #5
 	movs	r1, #15
@@ -145,29 +124,29 @@ Func_080ae2f4:
 	str	r5, [sp, #4]
 	str	r0, [sp, #40]
 	str	r6, [sp, #0]
-	bl	sub_080a10d0
+	bl	UiWindow_UpdateOrCreate
 	movs	r3, #134
 	lsls	r3, r3, #1
 	add	r3, r9
 	ldr	r0, [r3, #0]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r1, r9
 	ldr	r0, [r1, #16]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r5, [pc, #700]
 	mov	r2, r9
 	ldr	r1, [r2, #16]
 	adds	r0, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r5, #2
 	mov	r3, r9
 	ldr	r1, [r3, #16]
 	adds	r0, r5, #0
 	movs	r2, #0
 	movs	r3, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r2, #150
 	lsls	r2, r2, #2
 	ldr	r1, [sp, #20]
@@ -196,10 +175,10 @@ Func_080ae2f4:
 	strb	r2, [r5, #0]
 	mov	r3, r9
 	ldr	r0, [r3, #36]
-	bl	sub_08015060
+	bl	UiWindow_Clear
 	mov	r1, r9
 	ldr	r0, [r1, #52]
-	bl	sub_08015060
+	bl	UiWindow_Clear
 	mov	r2, r9
 	ldr	r1, [sp, #24]
 	ldr	r0, [r2, #36]
@@ -214,7 +193,7 @@ Func_080ae2f4:
 	str	r2, [sp, #16]
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_080acab8
+	bl	DjinnMenu_DrawStatPreview
 	ldr	r1, [sp, #24]
 	mov	r2, r8
 	mov	r3, r9
@@ -231,7 +210,7 @@ Func_080ae2f4:
 	str	r2, [sp, #16]
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_080acab8
+	bl	DjinnMenu_DrawStatPreview
 	mov	r3, r8
 	strb	r3, [r5, #0]
 .L_080ae4b6:
@@ -272,7 +251,7 @@ Func_080ae2f4:
 	negs	r3, r3
 	subs	r2, #2
 	adds	r0, r6, #0
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r3, [r7, #0]
 	adds	r5, #1
 	cmp	r5, r3
@@ -291,7 +270,7 @@ Func_080ae2f4:
 	adds	r3, r5, #0
 	subs	r2, #3
 	ldr	r1, [pc, #460]
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldrh	r2, [r6, #8]
 	mov	r3, r8
 	str	r3, [sp, #0]
@@ -299,7 +278,7 @@ Func_080ae2f4:
 	adds	r0, r6, #0
 	ldr	r1, [pc, #448]
 	adds	r3, r5, #0
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r0, [sp, #36]
 	ldr	r2, [pc, #440]
 	adds	r1, r0, r2
@@ -316,13 +295,13 @@ Func_080ae2f4:
 	adds	r0, r3, #0
 	movs	r1, #60
 	str	r3, [sp, #48]
-	bl	sub_080022fc
+	bl	__modsi3
 	subs	r0, #5
 	movs	r0, #0
 	movs	r1, #32
 	movs	r2, #200
 	movs	r3, #0
-	bl	sub_080ad5b4
+	bl	FourObjectMotion_SetSlotPosition
 	ldr	r0, [sp, #52]
 	cmp	r0, #0
 	beq.n	.L_080ae57a
@@ -330,7 +309,7 @@ Func_080ae2f4:
 	str	r1, [sp, #52]
 	ldr	r0, [sp, #56]
 	movs	r1, #2
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	str	r0, [sp, #56]
 .L_080ae57a:
 	ldr	r3, [sp, #48]
@@ -347,14 +326,14 @@ Func_080ae2f4:
 	ldr	r0, [pc, #360]
 	ldr	r1, [pc, #364]
 	movs	r2, #32
-	bl	sub_080072f0
+	bl	_call_via_r3
 	b.n	.L_080ae5a8
 .L_080ae59c:
 	ldr	r3, [pc, #356]
 	ldr	r0, [pc, #348]
 	movs	r1, #32
 	ldr	r2, [pc, #356]
-	bl	sub_080072f0
+	bl	_call_via_r3
 .L_080ae5a8:
 	ldr	r1, [sp, #32]
 	movs	r3, #8
@@ -373,7 +352,7 @@ Func_080ae2f4:
 	movs	r0, #113
 	movs	r7, #1
 .L_080ae5c6:
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	negs	r7, r7
 	b.n	.L_080ae638
 .L_080ae5ce:
@@ -389,12 +368,12 @@ Func_080ae2f4:
 	mov	r2, r8
 	mov	r3, fp
 	ldr	r1, [r2, r3]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	mov	r1, sl
 	str	r0, [r1, #0]
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_0800352c
+	bl	Audio_PlayCue
+	bl	Runtime_SetMainState19
 	movs	r2, #1
 	str	r2, [sp, #52]
 	b.n	.L_080ae630
@@ -409,8 +388,8 @@ Func_080ae2f4:
 	adds	r3, #1
 	str	r3, [r1, #0]
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_0800352c
+	bl	Audio_PlayCue
+	bl	Runtime_SetMainState19
 	movs	r2, #1
 	str	r2, [sp, #52]
 	mov	r3, sl
@@ -418,18 +397,18 @@ Func_080ae2f4:
 	mov	r2, r8
 	mov	r3, fp
 	ldr	r1, [r2, r3]
-	bl	sub_080aa538
+	bl	Menu_GetModuloOfSum
 	mov	r1, sl
 	str	r0, [r1, #0]
 .L_080ae630:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080ae43c
 .L_080ae638:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #208]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r2, [pc, #140]
 	movs	r5, #134
 	mov	r8, r2
@@ -443,9 +422,9 @@ Func_080ae2f4:
 	strb	r3, [r2, r6]
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_080a1114
+	bl	UiWindow_CloseIfOpen
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #5
 	str	r3, [sp, #0]
 	movs	r3, #2
@@ -454,29 +433,29 @@ Func_080ae2f4:
 	movs	r3, #17
 	adds	r0, r5, #0
 	movs	r1, #13
-	bl	sub_080a10d0
+	bl	UiWindow_UpdateOrCreate
 	movs	r1, #1
 	ldr	r0, [sp, #44]
-	bl	sub_080a1114
+	bl	UiWindow_CloseIfOpen
 	movs	r1, #1
 	ldr	r0, [sp, #40]
-	bl	sub_080a1114
+	bl	UiWindow_CloseIfOpen
 	mov	r1, r9
 	ldr	r0, [r1, #48]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r2, r9
 	ldr	r0, [r2, #40]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r3, r9
 	ldr	r0, [r3, #16]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r0, r8
 	ldr	r3, [r0, #0]
 	mov	r1, sl
 	adds	r3, r3, r6
 	strb	r1, [r3, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r0, r7, #0
 	add	sp, #84
 	pop	{r3, r5, r6, r7}

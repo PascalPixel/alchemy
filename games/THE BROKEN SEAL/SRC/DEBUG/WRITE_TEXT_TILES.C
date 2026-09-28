@@ -1,10 +1,12 @@
 #include "LOW_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ac4[];
+extern u8 Data_03001cbc[];
 
 void Runtime_WriteDebugTextTiles(const u8 *src)
 {
-    if (*(u8 *)ADDR_03001AC4 != 0) {
-        u32 addr = ADDR_03001CBC;
+    if (*(u8 *)((u32)&Data_03001ac4) != 0) {
+        u32 addr = ((u32)&Data_03001cbc);
         u32 c = *src;
         u16 *dst = *(u16 **)addr;
         u32 cnt = 0;
@@ -22,7 +24,7 @@ void Runtime_WriteDebugTextTiles(const u8 *src)
                     break;
                 c = *src++;
             } while (c != 0);
-            addr = ADDR_03001CBC;
+            addr = ((u32)&Data_03001cbc);
         }
         *(u16 **)addr = dst;
     }

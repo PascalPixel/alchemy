@@ -1,27 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002df0, 0x08002df0
-	.set sub_0800307c, 0x0800307c
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800387c, 0x0800387c
-	.set sub_08003d28, 0x08003d28
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080040b4, 0x080040b4
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_08004970, 0x08004970
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016478, 0x08016478
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_08021d88, 0x08021d88
-	.set sub_08021e48, 0x08021e48
-	.set sub_08077000, 0x08077000
-	.set sub_080b5128, 0x080b5128
-	.set sub_080b5130, 0x080b5130
-	.set sub_080f9010, 0x080f9010
 	.global Ui_RunSelectionScreen
 	.global Func_08021e6c
 	.thumb_func
@@ -41,7 +19,7 @@ Func_08021e6c:
 	ldr	r3, [r3, #0]
 	lsls	r0, r0, #3
 	str	r3, [sp, #48]
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	adds	r7, r0, #0
 	movs	r0, #1
 	str	r0, [sp, #44]
@@ -49,7 +27,7 @@ Func_08021e6c:
 	movs	r1, #0
 	lsls	r0, r0, #1
 	str	r1, [sp, #40]
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	mov	r9, r0
 	mov	r3, r9
 	movs	r2, #255
@@ -83,7 +61,7 @@ Func_08021e6c:
 	movs	r1, #17
 	movs	r2, #8
 .L_08021eda:
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r3, #214
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -141,7 +119,7 @@ Func_08021e6c:
 	b.n	.L_0802260c
 .L_08021f48:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #1
 	negs	r0, r0
 	mov	sl, r0
@@ -174,7 +152,7 @@ Func_08021e6c:
 	movs	r5, #1
 	str	r5, [r1, r3]
 	movs	r0, #0
-	bl	sub_08077000
+	bl	Trade_GetOfferStateFar
 	ldr	r3, [r0, #0]
 	movs	r5, #2
 	cmp	r3, #0
@@ -182,7 +160,7 @@ Func_08021e6c:
 	add	r5, sp, #56
 	movs	r0, #0
 	adds	r1, r5, #0
-	bl	sub_080b5130
+	bl	0x080b5130
 	mov	r2, sp
 	adds	r2, #59
 .L_08021fa6:
@@ -248,7 +226,7 @@ Func_08021e6c:
 .L_08022018:
 	mov	r0, r9
 	mov	r1, r8
-	bl	sub_08021d88
+	bl	Func_08021d88
 	movs	r4, #1
 	add	r8, r4
 	mov	r0, r8
@@ -323,11 +301,11 @@ Func_08021e6c:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #148]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r2, [pc, #144]
 	movs	r0, #2
 	movs	r1, #136
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	movs	r0, #216
 	movs	r2, #224
 	lsls	r0, r0, #1
@@ -698,7 +676,7 @@ Func_08021e6c:
 	lsls	r5, r5, #1
 	add	r5, r9
 	ldr	r0, [r5, #0]
-	bl	sub_08016478
+	bl	RenderOutput_PrepareForRedraw
 	ldr	r2, [r6, #0]
 	lsls	r3, r2, #3
 	subs	r3, r3, r2
@@ -713,7 +691,7 @@ Func_08021e6c:
 	adds	r0, r0, r3
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	ldr	r3, [r6, #0]
 	str	r3, [r7, #0]
 	ldr	r1, [r6, #0]
@@ -724,12 +702,12 @@ Func_08021e6c:
 	mov	r4, r9
 	ldr	r2, [r4, r3]
 	mov	r0, r9
-	bl	sub_08021d88
+	bl	Func_08021d88
 .L_080223c4:
 	movs	r0, #218
 	lsls	r0, r0, #1
 	add	r0, r9
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r3, #222
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -804,7 +782,7 @@ Func_08021e6c:
 	strb	r3, [r5, #4]
 	adds	r0, r5, #0
 	movs	r1, #241
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	b.n	.L_08022490
 	.4byte 0x000001ff
 	.2byte 0x01ff
@@ -918,15 +896,15 @@ Func_08021e6c:
 .L_08022530:
 	movs	r1, #15
 	movs	r2, #8
-	bl	sub_08021e48
+	bl	UiText_ShowMessageAndWaitComplete
 	str	r0, [sp, #20]
 .L_0802253a:
 	movs	r1, #155
 	movs	r0, #102
-	bl	sub_080b5128
+	bl	Func_080b5128
 	movs	r1, #1
 	ldr	r0, [sp, #20]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	mov	r1, r8
 	ldr	r3, [r1, #0]
 	adds	r3, #1
@@ -984,13 +962,13 @@ Func_08021e6c:
 	cmp	r3, #0
 	beq.n	.L_080225c2
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r4, [sp, #24]
 	ldr	r5, [sp, #16]
 	ldr	r0, [r4, #0]
 	ldr	r1, [r5, #0]
 	adds	r0, #1
-	bl	sub_080022fc
+	bl	__modsi3
 	ldr	r6, [sp, #24]
 	str	r0, [r6, #0]
 	b.n	.L_080225f0
@@ -1000,14 +978,14 @@ Func_08021e6c:
 	cmp	r3, #0
 	beq.n	.L_080225e4
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r7, [sp, #24]
 	ldr	r2, [sp, #16]
 	ldr	r0, [r7, #0]
 	ldr	r1, [r2, #0]
 	adds	r0, r0, r1
 	subs	r0, #1
-	bl	sub_080022fc
+	bl	__modsi3
 	str	r0, [r7, #0]
 	b.n	.L_080225f0
 .L_080225e4:
@@ -1021,14 +999,14 @@ Func_08021e6c:
 	movs	r0, #128
 	lsls	r0, r0, #19
 	ldr	r1, [pc, #332]
-	bl	sub_0800387c
+	bl	QueueIoWriteDelay2
 	ldr	r5, [pc, #332]
 	ldr	r4, [sp, #48]
 	movs	r6, #0
 	adds	r3, r4, r5
 	strb	r6, [r3, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080220ce
 .L_0802260c:
 	ldr	r7, [sp, #52]
@@ -1065,7 +1043,7 @@ Func_08021e6c:
 	add	r5, r9
 .L_08022648:
 	ldrh	r0, [r5, #0]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	movs	r1, #1
 	ldr	r3, [r6, #0]
 	add	r8, r1
@@ -1086,7 +1064,7 @@ Func_08021e6c:
 	ldr	r0, [r3, #0]
 	movs	r1, #1
 	ldr	r7, [pc, #220]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	mov	ip, r5
 	movs	r4, #0
 	movs	r5, #0
@@ -1128,13 +1106,13 @@ Func_08021e6c:
 	adds	r2, r3, r4
 	movs	r3, #1
 	strb	r3, [r2, #0]
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r0, [pc, #140]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	movs	r0, #2
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	ldr	r1, [pc, #128]
 	ldr	r0, [pc, #132]
 	ldrh	r3, [r0, #0]
@@ -1161,14 +1139,14 @@ Func_08021e6c:
 .L_08022706:
 	strh	r4, [r0, #0]
 	mov	r0, r9
-	bl	sub_08002df0
+	bl	Party_Do
 	ldr	r6, [pc, #56]
 	ldr	r5, [sp, #48]
 	movs	r3, #0
 	adds	r2, r5, r6
 	strb	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	mov	r0, sl
 	add	sp, #60
 	pop	{r3, r5, r6, r7}

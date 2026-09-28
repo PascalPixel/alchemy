@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "ITEM_MENU.H"
 #include "FIXED_MATH.H"
+extern u8 Data_03001f2c[];
 
 /* menu/item_menu/page_result.c */
 s32 Owner_GetStateFar(s32);
@@ -19,7 +20,7 @@ static __inline__ s8 LoadSignedByte(s32 base, s32 offset)
 s32 ItemMenu_PageResult(struct MenuResult *result, s32 index)
 {
     s32 encoded;
-    s32 base = *(s32 *)ADDR_03001F2C;
+    s32 base = *(s32 *)((u32)&Data_03001f2c);
     s32 offset = index + 0x218;
     s32 entries = base + 2;
     s32 limit;

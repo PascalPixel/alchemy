@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_080ca3f4, 0x080ca3f4
 	.global Func_080c9694
 	.thumb_func
 Func_080c9694:
@@ -50,7 +45,7 @@ Func_080c9694:
 	negs	r1, r1
 	cmp	r0, r1
 	beq.n	.L_080c96ea
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080c96f0
 .L_080c96ea:
@@ -148,7 +143,7 @@ Func_080c9694:
 	lsls	r4, r4, #2
 	adds	r3, r1, r4
 	ldr	r0, [r3, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r6, r0, #0
 	movs	r5, #56
 	ldrsh	r3, [r6, r5]
@@ -160,7 +155,7 @@ Func_080c9694:
 	movs	r0, #52
 	ldrsh	r1, [r6, r0]
 	adds	r0, r5, #0
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r1, #128
 	lsls	r1, r1, #7
 	cmp	r0, r1
@@ -186,7 +181,7 @@ Func_080c9694:
 	movs	r4, #54
 	ldrsh	r1, [r6, r4]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -282,7 +277,7 @@ Func_080c9694:
 	adds	r3, r2, r5
 	movs	r2, #0
 	ldrsh	r1, [r3, r2]
-	bl	sub_080ca3f4
+	bl	0x080ca3f4
 	b.n	.L_080c9918
 .L_080c98a2:
 	movs	r5, #247
@@ -345,7 +340,7 @@ Func_080c9694:
 	adds	r2, r1, r0
 	strh	r3, [r2, #0]
 	subs	r0, #217
-	bl	sub_08016cfc
+	bl	0x08016cfc
 .L_080c9918:
 	pop	{r5, r6, pc}
 	movs	r0, r0

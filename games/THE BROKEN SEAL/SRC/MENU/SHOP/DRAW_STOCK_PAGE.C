@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "FIXED_MATH.H"
+extern u8 Data_03001f2c[];
 
 void UiWindow_Clear(s32 window);
 u8 *RenderOutput_CreateFar(u16 no, u32 flags, s32 window, s32 x, s32 y);

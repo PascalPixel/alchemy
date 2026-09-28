@@ -1,36 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08002df0, 0x08002df0
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800352c, 0x0800352c
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080040b4, 0x080040b4
-	.set sub_080040d0, 0x080040d0
-	.set sub_08004970, 0x08004970
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072fc, 0x080072fc
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016498, 0x08016498
-	.set sub_080164ac, 0x080164ac
-	.set sub_08016738, 0x08016738
-	.set sub_08017aa4, 0x08017aa4
-	.set sub_08019000, 0x08019000
-	.set sub_0801965c, 0x0801965c
-	.set sub_080198dc, 0x080198dc
-	.set sub_08019908, 0x08019908
-	.set sub_0801e318, 0x0801e318
-	.set sub_0801e3c8, 0x0801e3c8
-	.set sub_0801e71c, 0x0801e71c
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_0801e9d4, 0x0801e9d4
-	.set sub_08022768, 0x08022768
-	.set sub_08022b44, 0x08022b44
-	.set sub_08077000, 0x08077000
-	.set sub_08077008, 0x08077008
-	.set sub_080f9010, 0x080f9010
 	.global Func_08023e70
 	.thumb_func
 Func_08023e70:
@@ -52,11 +21,11 @@ Func_08023e70:
 	str	r1, [sp, #72]
 	str	r2, [sp, #68]
 	str	r3, [sp, #64]
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	str	r0, [sp, #60]
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r2, [sp, #64]
 	movs	r1, #0
 	movs	r3, #42
@@ -74,17 +43,17 @@ Func_08023e70:
 	str	r6, [sp, #80]
 	str	r6, [sp, #28]
 	str	r6, [sp, #24]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #44]
 	movs	r0, #1
-	bl	sub_0801e3c8
+	bl	UiWork_SetAltFlagAndClearTable
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #9
 	movs	r2, #9
 	movs	r3, #11
 	movs	r0, #21
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	mov	r9, r0
 	adds	r5, #168
 	ldr	r3, [r5, #0]
@@ -95,7 +64,7 @@ Func_08023e70:
 	mov	sl, r2
 	str	r3, [sp, #36]
 	ldr	r0, [sp, #76]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r0, #248
 	movs	r7, #0
 	mov	r8, r0
@@ -132,7 +101,7 @@ Func_08023e70:
 	bls.n	.L_08023f38
 	movs	r0, #1
 .L_08023f38:
-	bl	sub_08077000
+	bl	Trade_GetOfferStateFar
 	movs	r2, #132
 	adds	r3, r0, #0
 	lsls	r2, r2, #1
@@ -269,22 +238,22 @@ Func_08023e70:
 	adds	r0, #1
 	subs	r2, #2
 	movs	r3, #1
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 	ldr	r1, [sp, #32]
 	cmp	r1, #0
 	beq.n	.L_08024064
 	ldr	r0, [sp, #44]
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r3, #42
 	str	r3, [sp, #0]
 	movs	r0, #0
 	movs	r1, #4
 	movs	r2, #30
 	movs	r3, #4
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #44]
-	bl	sub_08016738
+	bl	Ui_FillVramBlockPattern
 .L_08024064:
 	ldr	r3, [sp, #52]
 	movs	r2, #0
@@ -293,7 +262,7 @@ Func_08023e70:
 	bne.n	.L_08024070
 	b.n	.L_080241a0
 .L_08024070:
-	bl	sub_080198dc
+	bl	UiWork_ClearValueNameTables
 	movs	r1, #0
 	str	r1, [sp, #24]
 	ldr	r0, [pc, #276]
@@ -326,13 +295,13 @@ Func_08023e70:
 	movs	r2, #52
 	ldr	r0, [pc, #228]
 	adds	r1, r6, #0
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	ldr	r2, [sp, #68]
 	cmp	r2, #0
 	beq.n	.L_080241ac
 	adds	r0, r2, #0
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r3, #0
 	str	r3, [sp, #68]
 	str	r3, [sp, #32]
@@ -350,7 +319,7 @@ Func_08023e70:
 	beq.n	.L_0802411e
 	lsrs	r0, r0, #17
 	movs	r1, #5
-	bl	sub_08019908
+	bl	UiWork_PushValueSlot
 	movs	r3, #240
 	lsls	r3, r3, #4
 	ands	r3, r5
@@ -366,13 +335,13 @@ Func_08023e70:
 	adds	r1, r6, #0
 	adds	r0, r0, r3
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	ldr	r1, [sp, #68]
 	cmp	r1, #0
 	beq.n	.L_080241ac
 	adds	r0, r1, #0
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r2, #0
 	str	r2, [sp, #68]
 	str	r2, [sp, #32]
@@ -384,13 +353,13 @@ Func_08023e70:
 	adds	r2, r5, #0
 	ldr	r3, [sp, #32]
 	ldr	r0, [sp, #68]
-	bl	sub_08022b44
+	bl	DjinnMenu_ShowChangePreview
 	ldr	r6, [sp, #12]
 	str	r0, [sp, #68]
 	adds	r1, r6, #0
 	ldr	r0, [pc, #100]
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	movs	r3, #240
 	lsls	r3, r3, #4
 	ands	r5, r3
@@ -406,7 +375,7 @@ Func_08023e70:
 	ldr	r1, [sp, #76]
 	ldr	r3, [sp, #32]
 	ldr	r0, [sp, #68]
-	bl	sub_08022b44
+	bl	DjinnMenu_ShowChangePreview
 	movs	r3, #240
 	lsls	r3, r3, #4
 	ands	r3, r5
@@ -423,7 +392,7 @@ Func_08023e70:
 	adds	r0, r0, r3
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	b.n	.L_080241ac
 	movs	r0, r0
 	.4byte 0x03001e8c
@@ -439,7 +408,7 @@ Func_08023e70:
 	ldr	r0, [pc, #824]
 	adds	r1, r6, #0
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 .L_080241ac:
 	ldr	r2, [sp, #72]
 	ldr	r3, [pc, #816]
@@ -453,14 +422,14 @@ Func_08023e70:
 	strb	r3, [r5, #0]
 	ldr	r0, [sp, #44]
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r3, #42
 	str	r3, [sp, #0]
 	movs	r0, #0
 	movs	r3, #4
 	movs	r1, #4
 	movs	r2, #30
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #44]
 	add	r3, sp, #32
 	ldrb	r3, [r3, #0]
@@ -470,14 +439,14 @@ Func_08023e70:
 	movs	r2, #0
 	adds	r0, r6, #0
 	movs	r3, #4
-	bl	sub_08017aa4
+	bl	UiText_RenderWideStringAtOffset
 	ldr	r2, [sp, #48]
 	mov	r1, sl
 	str	r1, [sp, #64]
 	cmp	fp, r2
 	beq.n	.L_080242ae
 	mov	r0, r9
-	bl	sub_08016498
+	bl	RenderOutput_RedrawSavedRect
 	mov	r1, fp
 	ldr	r2, [sp, #56]
 	lsls	r3, r1, #2
@@ -501,14 +470,14 @@ Func_08023e70:
 	lsls	r3, r7, #1
 	mov	r0, r9
 	str	r2, [sp, #0]
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	movs	r3, #248
 	lsls	r3, r3, #14
 	ands	r3, r6
 	cmp	r3, #0
 	beq.n	.L_0802423e
 	movs	r0, #4
-	bl	sub_0801e71c
+	bl	UiWork_SetParamNibble
 	b.n	.L_0802424e
 .L_0802423e:
 	movs	r3, #128
@@ -517,7 +486,7 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_0802424e
 	movs	r0, #2
-	bl	sub_0801e71c
+	bl	UiWork_SetParamNibble
 .L_0802424e:
 	movs	r1, #240
 	lsls	r1, r1, #4
@@ -536,7 +505,7 @@ Func_08023e70:
 	mov	r1, r9
 	movs	r2, #8
 	adds	r3, r5, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	movs	r0, #248
 	lsls	r0, r0, #14
 	ands	r0, r6
@@ -547,11 +516,11 @@ Func_08023e70:
 	mov	r2, r9
 	movs	r3, #48
 	str	r5, [sp, #0]
-	bl	sub_0801e9d4
+	bl	UiText_DrawNumberAtOffset
 .L_0802428c:
 	movs	r0, #15
 	adds	r7, #1
-	bl	sub_0801e71c
+	bl	UiWork_SetParamNibble
 	cmp	r7, #4
 	bgt.n	.L_080242a8
 	movs	r2, #4
@@ -579,7 +548,7 @@ Func_08023e70:
 	mov	r0, fp
 	movs	r1, #5
 	adds	r6, r7, r2
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r7, r0
 	bne.n	.L_080242d0
 	ldr	r3, [pc, #544]
@@ -595,12 +564,12 @@ Func_08023e70:
 	mov	r0, r9
 	adds	r1, r6, #0
 	subs	r3, #1
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	adds	r7, #1
 .L_080242ea:
 	mov	r0, r8
 	movs	r1, #5
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r5, r0, #0
 	cmp	r7, r5
 	blt.n	.L_080242bc
@@ -619,7 +588,7 @@ Func_08023e70:
 	str	r3, [sp, #0]
 	adds	r0, #1
 	movs	r3, #1
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 	ldr	r1, [sp, #8]
 	movs	r3, #1
 	strb	r3, [r1, #0]
@@ -655,7 +624,7 @@ Func_08023e70:
 .L_08024354:
 	mov	r0, fp
 	movs	r1, #5
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r7, r0
 	bne.n	.L_08024364
 	ldr	r2, [pc, #396]
@@ -665,7 +634,7 @@ Func_08023e70:
 	movs	r1, #5
 	mov	r0, r8
 	ldrh	r5, [r3, #8]
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	adds	r5, r5, r7
 	movs	r1, #0
@@ -676,12 +645,12 @@ Func_08023e70:
 	adds	r1, r6, #0
 	adds	r2, r5, #0
 	negs	r3, r3
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	adds	r7, #1
 .L_0802438a:
 	mov	r0, r8
 	movs	r1, #5
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r7, r0
 	blt.n	.L_08024336
 	ldr	r3, [pc, #348]
@@ -700,7 +669,7 @@ Func_08023e70:
 	ldr	r1, [pc, #328]
 	negs	r3, r3
 	str	r5, [sp, #0]
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	mov	r1, r9
 	ldrh	r2, [r1, #8]
 	movs	r3, #1
@@ -709,7 +678,7 @@ Func_08023e70:
 	ldr	r1, [pc, #312]
 	negs	r3, r3
 	str	r5, [sp, #0]
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	b.n	.L_080243fe
 .L_080243d0:
 	mov	r3, r9
@@ -722,7 +691,7 @@ Func_08023e70:
 	mov	r0, r9
 	ldr	r1, [pc, #288]
 	negs	r3, r3
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	mov	r3, r9
 	ldrh	r2, [r3, #8]
 	movs	r1, #0
@@ -732,7 +701,7 @@ Func_08023e70:
 	mov	r0, r9
 	ldr	r1, [pc, #272]
 	negs	r3, r3
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 .L_080243fe:
 	mov	r2, r9
 	ldrh	r3, [r2, #14]
@@ -786,7 +755,7 @@ Func_08023e70:
 .L_0802445a:
 	movs	r0, #113
 	movs	r6, #1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	negs	r6, r6
 	b.n	.L_080248a0
 .L_08024466:
@@ -824,23 +793,23 @@ Func_08023e70:
 	cmp	r2, #0
 	bne.n	.L_080244ce
 	ands	r5, r6
-	bl	sub_08016738
-	bl	sub_080198dc
+	bl	Ui_FillVramBlockPattern
+	bl	UiWork_ClearValueNameTables
 	lsrs	r0, r5, #17
 	movs	r1, #5
-	bl	sub_08019908
+	bl	UiWork_PushValueSlot
 	movs	r2, #52
 	ldr	r1, [sp, #12]
 	ldr	r0, [pc, #88]
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	movs	r2, #0
 	ldr	r0, [sp, #12]
 	ldr	r1, [sp, #44]
 	movs	r3, #4
-	bl	sub_08017aa4
+	bl	UiText_RenderWideStringAtOffset
 .L_080244ce:
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_0802451c
 .L_080244d6:
 	movs	r6, #1
@@ -874,7 +843,7 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_08024550
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	add	sl, r1
 	mov	r2, sl
@@ -898,7 +867,7 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_08024590
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	negs	r1, r1
 	add	sl, r1
@@ -908,7 +877,7 @@ Func_08023e70:
 	ldr	r0, [sp, #52]
 	movs	r1, #5
 	subs	r0, #1
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	cmp	fp, r3
@@ -966,7 +935,7 @@ Func_08023e70:
 	ldr	r0, [sp, #68]
 	subs	r2, #2
 	subs	r3, #1
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	ldr	r0, [sp, #80]
 	adds	r5, #1
 	cmp	r5, r0
@@ -981,7 +950,7 @@ Func_08023e70:
 	subs	r2, #3
 	ldr	r1, [pc, #320]
 	subs	r3, #1
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	ldr	r1, [sp, #68]
 	ldrh	r2, [r1, #8]
 	movs	r3, #0
@@ -990,7 +959,7 @@ Func_08023e70:
 	subs	r2, #2
 	ldr	r1, [pc, #304]
 	subs	r3, #1
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	ldr	r1, [sp, #68]
 	ldrh	r2, [r1, #14]
 	ldr	r1, [sp, #8]
@@ -1011,7 +980,7 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_0802463a
 	adds	r0, r3, #0
-	bl	sub_080164ac
+	bl	RenderOutput_ClearList
 .L_0802463a:
 	movs	r1, #1
 	str	r1, [sp, #32]
@@ -1035,7 +1004,7 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_08024672
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r1, [sp, #32]
 	ldr	r3, [sp, #80]
 	adds	r1, #1
@@ -1050,7 +1019,7 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_08024766
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r1, [sp, #32]
 	subs	r1, #1
 	str	r1, [sp, #32]
@@ -1071,7 +1040,7 @@ Func_08023e70:
 	cmp	r2, #0
 	beq.n	.L_080246a6
 	adds	r0, r2, #0
-	bl	sub_080164ac
+	bl	RenderOutput_ClearList
 .L_080246a6:
 	movs	r3, #0
 	movs	r1, #1
@@ -1084,8 +1053,8 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_08024708
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_0800352c
+	bl	Audio_PlayCue
+	bl	Runtime_SetMainState19
 	mov	r3, fp
 	ldr	r2, [sp, #52]
 	adds	r3, #5
@@ -1106,7 +1075,7 @@ Func_08023e70:
 	subs	r0, #1
 	movs	r1, #5
 	mov	sl, r3
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	cmp	fp, r3
@@ -1127,8 +1096,8 @@ Func_08023e70:
 	cmp	r3, #0
 	beq.n	.L_08024766
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_0800352c
+	bl	Audio_PlayCue
+	bl	Runtime_SetMainState19
 	mov	r1, fp
 	cmp	r1, #0
 	beq.n	.L_08024740
@@ -1148,7 +1117,7 @@ Func_08023e70:
 	ldr	r0, [sp, #52]
 	movs	r1, #5
 	subs	r0, #1
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r3, r0, #2
 	ldr	r1, [sp, #36]
 	adds	r3, r3, r0
@@ -1184,7 +1153,7 @@ Func_08023e70:
 	str	r2, [r1, #8]
 	ldr	r0, [sp, #60]
 	ldr	r1, [pc, #72]
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #52]
 	ldr	r1, [sp, #4]
 	ands	r0, r3
@@ -1235,7 +1204,7 @@ Func_08023e70:
 	beq.n	.L_08024804
 	ldr	r0, [sp, #4]
 	movs	r1, #242
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_08024804:
 	ldr	r3, [pc, #260]
 	ldr	r3, [r3, #0]
@@ -1277,7 +1246,7 @@ Func_08023e70:
 	movs	r2, #2
 	movs	r3, #2
 	adds	r5, #1
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 	cmp	r5, #3
 	ble.n	.L_0802481a
 .L_08024858:
@@ -1292,26 +1261,26 @@ Func_08023e70:
 	adds	r1, r5, #0
 	ldr	r6, [pc, #180]
 	ldr	r0, [pc, #180]
-	bl	sub_080072fc
+	bl	_call_via_r6
 	ldr	r0, [pc, #180]
 	adds	r1, r5, #0
 	movs	r2, #32
-	bl	sub_080072fc
+	bl	_call_via_r6
 	b.n	.L_08024896
 .L_0802487e:
 	ldr	r3, [pc, #172]
 	movs	r1, #32
 	ldr	r2, [pc, #172]
 	ldr	r0, [pc, #156]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r3, [pc, #148]
 	ldr	r0, [pc, #152]
 	ldr	r1, [pc, #140]
 	movs	r2, #32
-	bl	sub_080072f0
+	bl	_call_via_r3
 .L_08024896:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	bl	.L_08023ff4
 .L_080248a0:
 	ldr	r3, [pc, #104]
@@ -1330,26 +1299,26 @@ Func_08023e70:
 	adds	r1, #1
 	movs	r2, #4
 	movs	r3, #4
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 .L_080248c4:
 	ldr	r0, [sp, #60]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	movs	r1, #1
 	ldr	r0, [sp, #44]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #1
 	ldr	r0, [sp, #68]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #1
 	mov	r0, r9
-	bl	sub_08016418
-	bl	sub_0801e318
+	bl	UiWork_Finalize
+	bl	UiWindow_MarkVisibleTileAttributes
 	movs	r0, #0
-	bl	sub_0801e3c8
+	bl	UiWork_SetAltFlagAndClearTable
 	ldr	r0, [sp, #56]
-	bl	sub_08002df0
+	bl	Party_Do
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #224
 	pop	{r3, r5, r6, r7}

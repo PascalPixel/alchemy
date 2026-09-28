@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080f7db4, 0x080f7db4
-	.set sub_080f7e60, 0x080f7e60
-	.set sub_080f7f30, 0x080f7f30
 	.global Func_080f7f78
 	.thumb_func
 Func_080f7f78:
@@ -22,7 +19,7 @@ Func_080f7f78:
 	str	r0, [sp, #32]
 	str	r3, [r5, #0]
 	adds	r6, r2, #0
-	bl	sub_080f7db4
+	bl	AudioTrack_ResetSlotBuckets
 	ldr	r2, [r5, #0]
 	ldr	r1, [pc, #728]
 	adds	r3, r2, r1
@@ -55,7 +52,7 @@ Func_080f7f78:
 	lsls	r1, r1, #2
 	ldr	r2, [sp, #40]
 	movs	r0, #0
-	bl	sub_080f7e60
+	bl	AudioTrack_ConsumeSlotBytes
 	ldr	r2, [r5, #0]
 	ldr	r3, [r2, r6]
 	ldr	r1, [pc, #676]
@@ -878,7 +875,7 @@ Func_080f7f78:
 	adds	r0, r0, r1
 	ldr	r2, [sp, #40]
 	ldr	r1, [r3, r6]
-	bl	sub_080f7e60
+	bl	AudioTrack_ConsumeSlotBytes
 	ldr	r1, [r7, #0]
 	adds	r5, r1, r5
 	ldr	r2, [r1, r6]
@@ -896,7 +893,7 @@ Func_080f7f78:
 	cmp	r5, #0
 	bne.n	.L_080f8670
 	ldr	r0, [sp, #36]
-	bl	sub_080f7f30
+	bl	AudioTrack_CopyBufferedBytes
 	ldr	r2, [r7, #0]
 	movs	r4, #208
 	lsls	r4, r4, #6
@@ -949,7 +946,7 @@ Func_080f7f78:
 	strb	r5, [r4, r0]
 	str	r3, [r1, #0]
 	ldr	r0, [sp, #36]
-	bl	sub_080f7f30
+	bl	AudioTrack_CopyBufferedBytes
 	ldr	r3, [r6, #0]
 	ldr	r4, [pc, #48]
 	adds	r3, r3, r4

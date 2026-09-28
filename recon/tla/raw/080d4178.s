@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08038038, 0x08038038
-	.set sub_08038050, 0x08038050
 	.global Func_080d4178
 	.thumb_func
 Func_080d4178:
@@ -48,15 +45,15 @@ Func_080d4178:
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
 	movs	r3, #1
-	bl	sub_08038038
+	bl	0x08038038
 	adds	r5, r0, #0
 	b.n	.L_080d41ce
 .L_080d41c8:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 .L_080d41ce:
 	adds	r0, r5, #0
-	bl	sub_08038050
+	bl	0x08038050
 	cmp	r0, #0
 	beq.n	.L_080d41c8
 	movs	r0, #226

@@ -1,12 +1,10 @@
 //! Compiler routing; `routing_data` is the sole table source.
 //!
-//! A source routes to exactly one compiler family, and every member of a
-//! family compiles with that family's one flag set. There is no per-file
-//! flag: a function that is not exact under its family's flags is not exact,
-//! and stays retained assembly until an ordinary C spelling reproduces it.
+//! A whole source file routes to exactly one compiler family and flag set.
+//! Compiler decisions name the ordinary build inputs, never functions or
+//! calculated owner inventories.
 use crate::compiler::routing_data::*;
-use crate::compiler::source_paths::SourceOwner;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use std::sync::OnceLock;
 /// Repository root: `<crate>/../..`.
 pub fn root() -> &'static Path {
@@ -146,14 +144,8 @@ pub(crate) fn include_flag(target: CompilerTarget) -> String {
 }
 /// Whether the game's own code was built to interwork with ARM callers.
 ///
-/// This is a per-game build fact read off the shipped images, not a tuning.
-/// TBS interworks: 1174 of its 1195 located tbs-en functions return through
-/// `pop {rN}; bx rN`. TLA does not: 1539 of 1581 tla-en functions return with
-/// `pop {..., pc}`, which arm.c `thumb_exit` reaches only when TARGET_INTERWORK
-/// is clear, and the battle owner's epilogue at 08120454+0x2054 matches that
-/// output byte for byte while TBS's owner matches the interworking output.
-/// TLA's remaining interworking returns sit in objects inherited from the TBS
-/// build, which keep the Agbcc family and its own flag set.
+/// This is a per-game build decision: TBS interworks and TLA does not.
+/// TLA's inherited library files keep the Agbcc family's interworking flags.
 fn interworks(target: CompilerTarget) -> bool {
     match target {
         CompilerTarget::Tbs => true,
@@ -212,35 +204,52 @@ pub fn runtime_library_cflags() -> Vec<String> {
 pub fn cflags_for_target(target: CompilerTarget) -> Vec<String> {
     base_cflags(target)
 }
-/// `basename(source, extname(source))` for POSIX paths.
-fn source_stem_ref(source: &str) -> &str {
-    let base = source.rsplit('/').next().unwrap_or(source);
-    // node:path extname ignores a leading dot.
-    match base.rfind('.') {
-        Some(index) if index > 0 => &base[..index],
-        _ => base,
+/// Repository, absolute repository, and game-SRC-relative paths all name
+/// the same ordinary source file. Synthetic address paths have no family
+/// declaration and receive the game default.
+fn natural_source(target: CompilerTarget, source: &str) -> Option<PathBuf> {
+    let path = Path::new(source);
+    let path = if path.is_absolute() {
+        path.strip_prefix(root()).ok()?
+    } else {
+        path
+    };
+    if path
+        .components()
+        .any(|part| matches!(part, Component::ParentDir))
+    {
+        return None;
+    }
+    let path = path
+        .components()
+        .filter(|part| !matches!(part, Component::CurDir))
+        .collect::<PathBuf>();
+    let game = Path::new("games").join(target.directory()).join("SRC");
+    if path.starts_with("games") {
+        (path.starts_with(&game) || path.starts_with("games/COMMON/SRC")).then_some(path)
+    } else {
+        Some(game.join(path.strip_prefix("SRC").unwrap_or(&path)))
     }
 }
-/// The owner a routing source names. Routing sources are the synthetic
-/// owner routes (`SourceOwner::routing_path_for_game`), whose stem is the
-/// owner's legacy stem; any other path names no owner and routes as game code.
-fn routed_owner(source: &str) -> Option<String> {
-    SourceOwner::from_legacy_stem(source_stem_ref(source)).map(SourceOwner::id)
-}
-fn has(table: &'static [&'static str], owner: Option<&str>) -> bool {
-    owner.is_some_and(|owner| table.contains(&owner))
+fn has(table: &[&str], source: &Path) -> bool {
+    table.iter().any(|entry| source == Path::new(entry))
 }
 pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily {
-    let owner = routed_owner(source);
-    let owner = owner.as_deref();
-    let agbcc: &[&str] = match target {
-        CompilerTarget::Tbs => AGBCC_SOURCES,
-        CompilerTarget::Tla => TLA_AGBCC_SOURCES,
+    let Some(source) = natural_source(target, source) else {
+        return CompilerFamily::Game;
     };
-    if has(agbcc, owner) {
+    if has(AGBCC_SOURCES, &source)
+        || (source
+            .extension()
+            .and_then(|ext| ext.to_str())
+            .is_some_and(|ext| ext.eq_ignore_ascii_case("c"))
+            && AGBCC_DIRECTORIES
+                .iter()
+                .any(|directory| source.starts_with(directory)))
+    {
         return CompilerFamily::Agbcc;
     }
-    if target == CompilerTarget::Tbs && has(AGBCC_FLASH_SOURCES, owner) {
+    if has(AGBCC_FLASH_SOURCES, &source) {
         return CompilerFamily::AgbccFlash;
     }
     CompilerFamily::Game
@@ -311,13 +320,12 @@ mod target_tests {
                 .any(|flag| flag == "-mthumb-inline-register-call"));
         }
     }
-    /// The images disagree about interworking, so the two Game routes do too.
-    /// TLA keeps the -fcall-used-r4 ABI: only 29 of 1414 measured tla-en
-    /// functions save r4, and all of those are inherited Agbcc-family objects.
+    /// The games' interworking decisions differ; inherited library files
+    /// retain their library flag set.
     #[test]
     fn only_tbs_game_code_interworks() {
-        let tbs = cflags_for_target_source(CompilerTarget::Tbs, "080bbb0c.c");
-        let tla = cflags_for_target_source(CompilerTarget::Tla, "08120454.c");
+        let tbs = cflags_for_target_source(CompilerTarget::Tbs, "MENU/INPUT_CANCEL_SOUND_TICK.C");
+        let tla = cflags_for_target_source(CompilerTarget::Tla, "GAME/FLAGS/GET_BYTE.C");
         assert!(tbs.iter().any(|flag| flag == "-mthumb-interwork"));
         assert!(!tla.iter().any(|flag| flag == "-mthumb-interwork"));
         assert!(tla.iter().any(|flag| flag == "-mgs2"));
@@ -326,9 +334,12 @@ mod target_tests {
             bundle_for(CompilerTarget::Tbs),
             bundle_for(CompilerTarget::Tla)
         );
-        assert!(!cflags_for_target_source(CompilerTarget::Tla, "081c2168.c")
-            .iter()
-            .any(|flag| flag == "-mgs2"));
+        assert!(!cflags_for_target_source(
+            CompilerTarget::Tla,
+            "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C"
+        )
+        .iter()
+        .any(|flag| flag == "-mgs2"));
         for flags in [&tbs, &tla] {
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-mthumb"));
@@ -336,19 +347,19 @@ mod target_tests {
     }
     #[test]
     fn game_code_always_compiles_with_the_canonical_flags() {
-        for owner in [
-            "080040e8.c",
-            "080f9ef8.c",
-            "080994d0.c",
-            "080114a0.c",
-            "0800307c.c",
-            "games/THE BROKEN SEAL/src/resource_3ab_c_020007f4.c",
-            "games/THE BROKEN SEAL/src/resource_381_c_02002e0c.c",
+        for source in [
+            "SOUND/COMMAND.C",
+            "SOUND/PLAY_PLAY_CUE_RETURN_ONE.C",
+            "SYSTEM/SAVE/STATE.C",
+            "SYSTEM/SAVE/WRITE_PAIR.C",
+            "SYSTEM/SAVE/SUMMARY.C",
+            "MENU/INPUT_CANCEL_SOUND_TICK.C",
+            "FIELD/ARUTAMIRA_DOU/ROOM_VIS.C",
         ] {
             assert_eq!(
-                cflags_for_target_source(CompilerTarget::Tbs, owner),
+                cflags_for_target_source(CompilerTarget::Tbs, source),
                 cflags(),
-                "per-file override for {owner}"
+                "unexpected compiler family for {source}"
             );
         }
     }
@@ -361,75 +372,89 @@ mod target_tests {
         for flag in ["-O2", "-mthumb", "-mcpu=arm7tdmi"] {
             assert!(flags.iter().any(|candidate| candidate == flag));
         }
-        // The former overlay soft-float owners now route as ordinary game
-        // code: no tracked C claims them; the container builds them.
-        assert_eq!(
-            family_for_source(
-                CompilerTarget::Tbs,
-                "games/THE BROKEN SEAL/src/resource_3a7_c_0200142c.c"
-            ),
-            CompilerFamily::Game
-        );
     }
-    /// Tables are keyed by canonical owner IDs. Membership is provenance, so an
-    /// owner stays listed when its C is retired to assembly.
     #[test]
-    fn family_tables_name_canonical_owners() {
-        for table in [AGBCC_SOURCES, TLA_AGBCC_SOURCES] {
+    fn family_tables_name_existing_whole_files_without_duplicate_routes() {
+        let mut files = std::collections::BTreeSet::new();
+        for table in [AGBCC_SOURCES, AGBCC_FLASH_SOURCES] {
             for entry in table {
-                let owner = SourceOwner::parse(entry).expect("canonical owner id");
-                assert_eq!(owner.id(), *entry);
+                assert!(
+                    entry.starts_with("games/") && entry.contains("/SRC/") && entry.ends_with(".C")
+                );
+                assert!(
+                    root().join(entry).is_file(),
+                    "missing routed source {entry}"
+                );
+                assert!(files.insert(*entry), "duplicate family for {entry}");
             }
         }
+        for directory in AGBCC_DIRECTORIES {
+            assert!(root().join(directory).is_dir());
+            assert!(!files
+                .iter()
+                .any(|file| Path::new(file).starts_with(directory)));
+        }
     }
-    /// An owner route claims only its own owner: a main address does not
-    /// claim the overlay function linked at the same number, nor the other game.
     #[test]
-    fn family_follows_the_owner_route() {
+    fn natural_paths_route_the_same_whole_file_and_respect_game_boundaries() {
+        let source = "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C";
+        for path in [
+            source.to_string(),
+            format!("./{source}"),
+            root().join(source).to_string_lossy().into_owned(),
+            "SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C".into(),
+            "SYSTEM/SAVE/IDENTIFY_FLASH.C".into(),
+        ] {
+            assert_eq!(
+                family_for_source(CompilerTarget::Tbs, &path),
+                CompilerFamily::AgbccFlash
+            );
+        }
         assert_eq!(
-            family_for_source(
-                CompilerTarget::Tla,
-                &SourceOwner::Main(0x081c_2168)
-                    .routing_path_for_game("tla")
-                    .to_string_lossy()
-            ),
-            CompilerFamily::Agbcc
-        );
-        assert_eq!(
-            family_for_source(CompilerTarget::Tbs, "081c2168.c"),
+            family_for_source(CompilerTarget::Tla, source),
             CompilerFamily::Game
         );
         assert_eq!(
-            family_for_source(CompilerTarget::Tla, "080fb670.c"),
+            family_for_source(CompilerTarget::Tla, "SYSTEM/SAVE/IDENTIFY_FLASH.C"),
             CompilerFamily::Game
         );
-        assert_eq!(
-            family_for_source(CompilerTarget::Tbs, "resource_3a8_c_0200142c.c"),
-            CompilerFamily::Game
-        );
-        assert_eq!(
-            family_for_source(CompilerTarget::Tbs, "0200142c.c"),
-            CompilerFamily::Game
-        );
-        assert_eq!(
-            family_for_source(CompilerTarget::Tla, "SOUND/FADE_MUSIC_PLAYER.C"),
-            CompilerFamily::Game
-        );
+        for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+            assert_eq!(
+                family_for_source(target, "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C"),
+                CompilerFamily::Agbcc
+            );
+            for source in [
+                "games/COMMON/SRC/SOUND_EFFECT/SCHEDULE.C",
+                "games/COMMON/SRC/SOUND/../GAME/FLAGS.C",
+                "games/COMMON/SRC/SOUND/DRIVER/UPDATE.S",
+                "08006878.c",
+                "resource_3a8_c_0200142c.c",
+            ] {
+                assert_eq!(
+                    family_for_source(target, source),
+                    CompilerFamily::Game,
+                    "unexpected route for {source}"
+                );
+            }
+        }
     }
     #[test]
     fn agbcc_families_keep_their_flag_sets() {
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Tbs, "08006878.c"),
+            cflags_for_target_source(CompilerTarget::Tbs, "SYSTEM/SAVE/IDENTIFY_FLASH.C"),
             agbcc_flash_cflags()
         );
-        for owner in ["080fb670.c", "080fa514.c"] {
+        for source in [
+            "SOUND/CGB_UPDATE_CHANNELS.C",
+            "SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
+        ] {
             assert_eq!(
-                cflags_for_target_source(CompilerTarget::Tbs, owner),
+                cflags_for_target_source(CompilerTarget::Tbs, source),
                 agbcc_cflags()
             );
         }
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Tla, "081c2168.c"),
+            cflags_for_target_source(CompilerTarget::Tla, "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"),
             agbcc_cflags()
         );
     }

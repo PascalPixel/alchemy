@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
 	.global Curve_LookupScaledValue
 	.global Func_08079b24
 	.thumb_func
@@ -71,7 +70,7 @@ Func_08079b24:
 	subs	r2, r2, r5
 	subs	r0, r6, r0
 	muls	r0, r2
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r0, r0, r5
 .L_08079b9e:
 	mov	r7, r8

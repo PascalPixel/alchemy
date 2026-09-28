@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004458, 0x08004458
-	.set sub_0800447c, 0x0800447c
-	.set sub_08009080, 0x08009080
-	.set sub_08009098, 0x08009098
-	.set sub_08009150, 0x08009150
-	.set sub_080091e0, 0x080091e0
-	.set sub_08009240, 0x08009240
-	.set sub_08096c80, 0x08096c80
-	.set sub_08097384, 0x08097384
-	.set sub_080f9010, 0x080f9010
 	.global BattleEffect_SpawnBurstParticleField
 	.global Func_08098698
 	.thumb_func
@@ -28,7 +17,7 @@ Func_08098698:
 	sub	sp, #12
 	mov	r9, r3
 	ldr	r7, [r3, #16]
-	bl	sub_08097384
+	bl	BattleEffect_InitializeSharedScene
 	movs	r0, #23
 	mov	r8, sp
 	mov	sl, r8
@@ -80,7 +69,7 @@ Func_08098698:
 	mov	r2, r9
 	ldr	r1, [r2, #0]
 	mov	r2, sl
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 .L_08098716:
 	mov	r3, sl
 	movs	r0, #142
@@ -88,7 +77,7 @@ Func_08098698:
 	ldr	r2, [r3, #4]
 	lsls	r0, r0, #1
 	ldr	r3, [r3, #8]
-	bl	sub_08096c80
+	bl	Object_Spawn
 	adds	r6, r0, #0
 	ldr	r4, [r6, #80]
 	ldrb	r3, [r4, #5]
@@ -153,16 +142,16 @@ Func_08098698:
 	.2byte 0x0000
 .L_080987a4:
 	movs	r1, #11
-	bl	sub_08009240
+	bl	Animation_ApplyChildValuesFar
 	adds	r0, r6, #0
 	movs	r1, #7
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	adds	r0, r6, #0
 	ldr	r1, [pc, #140]
-	bl	sub_08009098
+	bl	Engine_ObjectSetScript
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r0, r9
 	ldr	r3, [r0, #4]
 	mov	r2, r8
@@ -178,32 +167,32 @@ Func_08098698:
 	bne.n	.L_080987e4
 	movs	r0, #224
 	lsls	r0, r0, #12
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 .L_080987e4:
-	bl	sub_08004458
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r0, #128
 	lsls	r0, r0, #11
 	lsls	r5, r5, #1
 	adds	r5, r5, r0
-	bl	sub_08004458
+	bl	Random16
 	mov	r2, r8
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	mov	r5, r8
 	mov	r2, r8
 	ldr	r1, [r2, #0]
 	ldr	r3, [r5, #8]
 	ldr	r2, [r2, #4]
 	adds	r0, r6, #0
-	bl	sub_08009150
+	bl	Object_SetPosition
 .L_08098812:
 	movs	r0, #131
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #2
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #1
 	negs	r0, r0
 	add	fp, r0
@@ -213,7 +202,7 @@ Func_08098698:
 	b.n	.L_080986bc
 .L_0809882c:
 	movs	r0, #8
-	bl	sub_080030f8
+	bl	WaitFrames
 	add	sp, #12
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

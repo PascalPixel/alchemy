@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014274, 0x08014274
-	.set sub_080142d4, 0x080142d4
-	.set sub_080143ac, 0x080143ac
-	.set sub_08021918, 0x08021918
-	.set sub_080229ac, 0x080229ac
 	.global Func_08022d1c
 	.thumb_func
 Func_08022d1c:
@@ -35,9 +30,9 @@ Func_08022d1c:
 	movs	r2, #0
 	mov	r8, r2
 	mov	sl, r0
-	bl	sub_08021918
+	bl	Func_08021918
 	adds	r7, r0, #0
-	bl	sub_080143ac
+	bl	Func_080143ac
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r5, [r3, #16]
@@ -71,7 +66,7 @@ Func_08022d1c:
 	adds	r0, r6, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_080142d4
+	bl	0x080142d4
 	mov	ip, r0
 	cmp	r0, #0
 	bne.n	.L_08022da0
@@ -185,7 +180,7 @@ Func_08022d1c:
 	str	r3, [r2, #36]
 	adds	r0, r5, #0
 	mov	r1, sl
-	bl	sub_080229ac
+	bl	ResourceMetadata_Register
 	movs	r3, #1
 	negs	r3, r3
 	mov	r0, r8
@@ -211,7 +206,7 @@ Func_08022d1c:
 	cmp	r3, #0
 	bne.n	.L_08022eaa
 	ldrb	r0, [r7, #16]
-	bl	sub_08014274
+	bl	0x08014274
 .L_08022eaa:
 	adds	r5, r7, #0
 	adds	r5, #40
@@ -240,7 +235,7 @@ Func_08022d1c:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r5, r2, #0
-	bl	sub_08021918
+	bl	Func_08021918
 	ldrb	r3, [r0, #5]
 	movs	r7, #0
 	cmp	r6, r3

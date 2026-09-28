@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004458, 0x08004458
-	.set sub_080151c8, 0x080151c8
-	.set sub_08077008, 0x08077008
-	.set sub_080b6b40, 0x080b6b40
-	.set sub_080b7e60, 0x080b7e60
-	.set sub_080b8064, 0x080b8064
-	.set sub_080bac6c, 0x080bac6c
-	.set sub_080bb65c, 0x080bb65c
-	.set sub_080c10e8, 0x080c10e8
 	.global BattlePresentation_RunEncounterOrUnitTrigger
 	.global Func_080b9dc4
 	.thumb_func
@@ -32,7 +22,7 @@ Func_080b9dc4:
 	movs	r0, #0
 	movs	r1, #0
 	sub	sp, #32
-	bl	sub_080c10e8
+	bl	BattlePres_SetActorModes
 	ldrb	r3, [r5, #0]
 	movs	r7, #0
 	cmp	r3, #7
@@ -48,14 +38,14 @@ Func_080b9dc4:
 	cmp	r2, #0
 	bne.n	.L_080b9e10
 	ldr	r0, [pc, #176]
-	bl	sub_080151c8
-	bl	sub_080bb65c
+	bl	UiText_ShowMessageAndWaitCoreFar
+	bl	BattlePresentation_WaitForAdvance
 	b.n	.L_080b9ea0
 .L_080b9e10:
 	add	r7, sp, #4
 	movs	r0, #1
 	adds	r1, r7, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	movs	r2, #1
 	subs	r6, r0, #1
 	negs	r2, r2
@@ -64,7 +54,7 @@ Func_080b9dc4:
 	lsls	r5, r6, #1
 .L_080b9e26:
 	ldrsh	r0, [r7, r5]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r1, [pc, #140]
 	adds	r2, r0, #0
 	adds	r3, r2, r1
@@ -77,9 +67,9 @@ Func_080b9dc4:
 	cmp	r3, #0
 	bne.n	.L_080b9e4e
 	ldrsh	r0, [r5, r7]
-	bl	sub_080b8064
+	bl	BattleMotion_SetupEscapeObject
 	movs	r0, #8
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b9e4e:
 	movs	r3, #1
 	subs	r6, #1
@@ -89,11 +79,11 @@ Func_080b9dc4:
 	bne.n	.L_080b9e26
 .L_080b9e5a:
 	movs	r0, #22
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r7, #1
 	b.n	.L_080b9ea0
 .L_080b9e64:
-	bl	sub_08004458
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -105,18 +95,18 @@ Func_080b9dc4:
 	movs	r3, #255
 	strh	r0, [r2, #0]
 	strh	r3, [r2, #2]
-	bl	sub_080b8064
+	bl	BattleMotion_SetupEscapeObject
 	movs	r0, #8
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldrb	r0, [r5, #0]
-	bl	sub_080bac6c
+	bl	BattleActor_RemoveFromLists
 	ldrb	r0, [r5, #0]
-	bl	sub_080b7e60
+	bl	ActivateBattleObjectSlot
 	b.n	.L_080b9ea0
 .L_080b9e96:
 	ldr	r0, [pc, #32]
-	bl	sub_080151c8
-	bl	sub_080bb65c
+	bl	UiText_ShowMessageAndWaitCoreFar
+	bl	BattlePresentation_WaitForAdvance
 .L_080b9ea0:
 	movs	r3, #0
 	mov	r1, r8

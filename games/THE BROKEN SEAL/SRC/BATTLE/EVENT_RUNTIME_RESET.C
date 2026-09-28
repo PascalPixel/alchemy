@@ -1,4 +1,5 @@
 #include "RUNTIME_1E74.H"
+extern u8 Data_03001e74[];
 
 void BattleEventRuntime_Reset(void)
 {

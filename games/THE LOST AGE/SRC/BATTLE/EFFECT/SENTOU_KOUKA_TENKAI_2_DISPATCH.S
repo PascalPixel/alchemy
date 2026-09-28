@@ -10,7 +10,6 @@
 @ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, bit-command dispatcher
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x081a0374
 	.global SentouKouka_TenkaiYomi2
 SentouKouka_TenkaiYomi2:
 	and	ip, r3, #7

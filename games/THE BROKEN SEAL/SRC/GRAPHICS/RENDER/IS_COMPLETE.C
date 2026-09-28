@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e8c[];
 
 struct Work {
     u8 padding00[0x14];
@@ -18,7 +19,7 @@ s32 UiWork_IsComplete(void)
     struct WorkSlot *channel;
     struct Work *work;
 
-    channel = (struct WorkSlot *)(*(u8 **)ADDR_03001E8C + 0x620);
+    channel = (struct WorkSlot *)(*(u8 **)((u32)&Data_03001e8c) + 0x620);
     channel_index = 0;
 next_channel:
     work = channel->work;

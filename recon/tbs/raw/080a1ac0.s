@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080030f8, 0x080030f8
 	.global UiMenu_SlideCursor
 	.global Func_080a1ac0
 	.thumb_func
@@ -71,7 +69,7 @@ Func_080a1ac0:
 	subs	r0, r0, r5
 	movs	r1, #2
 	adds	r0, #1
-	bl	sub_080022ec
+	bl	__divsi3
 	mov	r3, r8
 	mov	fp, r0
 	lsls	r6, r6, #4
@@ -79,7 +77,7 @@ Func_080a1ac0:
 	subs	r0, r0, r6
 	adds	r0, #1
 	movs	r1, #2
-	bl	sub_080022ec
+	bl	__divsi3
 	ldr	r4, [pc, #52]
 	mov	r8, r0
 .L_080a1b56:
@@ -125,7 +123,7 @@ Func_080a1ac0:
 	beq.n	.L_080a1bb6
 	movs	r0, #1
 	str	r4, [sp, #0]
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r4, [sp, #0]
 	b.n	.L_080a1b56
 .L_080a1bb6:

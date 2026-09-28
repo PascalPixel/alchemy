@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003dec, 0x08003dec
-	.set sub_08004458, 0x08004458
-	.set sub_080091a8, 0x080091a8
-	.set sub_080770c0, 0x080770c0
 	.global Unnamed_08094820
 	.global Func_08094820
 	.thumb_func
@@ -47,7 +43,7 @@ Func_08094820:
 .L_08094864:
 	movs	r0, #179
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_08094876
 	ldrh	r3, [r7, #28]
@@ -153,21 +149,21 @@ Func_08094820:
 	strb	r3, [r7, #7]
 	adds	r0, r7, #0
 	movs	r1, #240
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_08094946:
 	ldrh	r3, [r7, #28]
 	cmp	r3, #0
 	bne.n	.L_08094984
 	mov	r1, sl
 	ldr	r6, [r1, #0]
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [r6, #0]
 	lsls	r0, r0, #8
 	ldr	r5, [pc, #72]
 	adds	r3, r3, r0
 	adds	r1, r3, r5
 	str	r1, [sp, #0]
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [r6, #8]
 	lsls	r0, r0, #8
 	adds	r3, r3, r0
@@ -178,7 +174,7 @@ Func_08094820:
 	asrs	r2, r0, #16
 	asrs	r1, r1, #16
 	movs	r0, #0
-	bl	sub_080091a8
+	bl	Map_GetTerrainHeightFar
 	movs	r3, #16
 	lsls	r0, r0, #16
 	str	r0, [r7, #16]

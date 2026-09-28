@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002074, 0x08002074
-	.set sub_08002080, 0x08002080
-	.set sub_0801314c, 0x0801314c
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_0803c274, 0x0803c274
-	.set sub_0803ca20, 0x0803ca20
-	.set sub_0803cca8, 0x0803cca8
-	.set sub_0803cd08, 0x0803cd08
-	.set sub_0803d178, 0x0803d178
-	.set sub_080c8648, 0x080c8648
 	.global Func_0803acd4
 	.thumb_func
 Func_0803acd4:
@@ -120,7 +109,7 @@ Func_0803acd4:
 	mov	r0, r9
 	adds	r1, r5, #0
 	str	r4, [sp, #4]
-	bl	sub_0803c274
+	bl	Func_0803c274
 	movs	r0, #255
 	lsls	r0, r0, #8
 	adds	r0, #34
@@ -186,12 +175,12 @@ Func_0803acd4:
 	adds	r0, r6, #0
 	mov	r1, r8
 	negs	r2, r2
-	bl	sub_08002080
+	bl	Math_UnsignedMulHighAdd
 	adds	r0, #48
 	strb	r0, [r5, #0]
 	mov	r1, r8
 	adds	r0, r6, #0
-	bl	sub_08002074
+	bl	Math_UnsignedMulHigh
 	subs	r5, #1
 	adds	r6, r0, #0
 	cmp	r5, r9
@@ -553,7 +542,7 @@ Func_0803acd4:
 	ldr	r5, [pc, #228]
 	movs	r0, #200
 	adds	r1, r5, #0
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	movs	r2, #132
 	movs	r3, #128
 	lsrs	r5, r5, #2
@@ -574,7 +563,7 @@ Func_0803acd4:
 	mov	r0, sl
 	ldr	r1, [sp, #48]
 	mov	r9, r3
-	bl	sub_0803d178
+	bl	0x0803d178
 	mov	r3, sp
 	adds	r3, #84
 	str	r3, [sp, #12]
@@ -666,7 +655,7 @@ Func_0803acd4:
 	movs	r0, #6
 .L_0803b1c6:
 	mov	r1, fp
-	bl	sub_0803cd08
+	bl	Func_0803cd08
 	b.n	.L_0803b71c
 .L_0803b1ce:
 	mov	r0, sl
@@ -956,7 +945,7 @@ Func_0803acd4:
 .L_0803b3cc:
 	mov	r1, fp
 	movs	r0, #5
-	bl	sub_0803cd08
+	bl	Func_0803cd08
 	adds	r1, r0, #0
 	adds	r3, r1, #0
 	cmp	r1, #0
@@ -1016,13 +1005,13 @@ Func_0803acd4:
 	.2byte 0x4659
 	subs	r5, r0, #1
 	movs	r0, #3
-	bl	sub_0803cd08
+	bl	Func_0803cd08
 	adds	r2, r0, #0
 	ldr	r0, [pc, #484]
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	sub_0803ca20
+	bl	0x0803ca20
 	ldr	r3, [sp, #24]
 	adds	r2, r6, #0
 	str	r3, [sp, #4]
@@ -1040,7 +1029,7 @@ Func_0803acd4:
 	.2byte 0x4659
 	subs	r5, r0, #1
 	movs	r0, #2
-	bl	sub_0803cd08
+	bl	Func_0803cd08
 	adds	r2, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #1
@@ -1050,7 +1039,7 @@ Func_0803acd4:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	sub_0803ca20
+	bl	0x0803ca20
 	ldr	r1, [sp, #24]
 	add	r3, sp, #52
 	str	r1, [sp, #4]
@@ -1064,13 +1053,13 @@ Func_0803acd4:
 .L_0803b49e:
 	mov	r1, fp
 	movs	r0, #4
-	bl	sub_0803cd08
+	bl	Func_0803cd08
 	adds	r2, r0, #0
 	ldr	r0, [pc, #392]
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	sub_0803ca20
+	bl	0x0803ca20
 	ldr	r1, [sp, #12]
 	adds	r0, r6, #0
 	ldrh	r2, [r1, #0]
@@ -1095,14 +1084,14 @@ Func_0803acd4:
 .L_0803b4dc:
 	mov	r1, fp
 	movs	r0, #6
-	bl	sub_0803cd08
+	bl	Func_0803cd08
 	movs	r1, #1
-	bl	sub_080c8648
+	bl	Func_080c8648
 	ldr	r3, [pc, #332]
 	ldr	r1, [sp, #12]
 	adds	r0, r0, r3
 	movs	r2, #24
-	bl	sub_0803ca20
+	bl	0x0803ca20
 	ldr	r1, [sp, #12]
 	adds	r0, r6, #0
 	ldrh	r2, [r1, #0]
@@ -1130,7 +1119,7 @@ Func_0803acd4:
 	lsls	r0, r0, #2
 	adds	r3, r3, r0
 	ldr	r0, [r3, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	add	r1, sp, #84
 	adds	r2, r1, #0
 	movs	r4, #0
@@ -1150,8 +1139,8 @@ Func_0803acd4:
 	.2byte 0x4659
 	subs	r5, r0, #1
 	movs	r0, #1
-	bl	sub_0803cd08
-	bl	sub_08016ca4
+	bl	Func_0803cd08
+	bl	OwnerState_Get
 	add	r1, sp, #84
 	adds	r2, r1, #0
 	movs	r4, #0
@@ -1178,7 +1167,7 @@ Func_0803acd4:
 	.2byte 0xf800
 	.2byte 0x1e42
 	adds	r0, r2, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	add	r1, sp, #84
 	adds	r2, r1, #0
 	movs	r4, #0
@@ -1210,7 +1199,7 @@ Func_0803acd4:
 	.2byte 0xf800
 	.2byte 0x1e42
 	adds	r0, r2, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r5, r0, #0
 	mov	r0, sl
 	mov	lr, r9
@@ -1425,7 +1414,7 @@ Func_0803acd4:
 	adds	r2, r0, r1
 	strh	r3, [r2, #0]
 	movs	r0, #200
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	movs	r5, #152
 	ldr	r2, [sp, #44]
 	add	r0, sp, #32
@@ -1441,7 +1430,7 @@ Func_0803acd4:
 	mov	r1, fp
 	cmp	r1, #0
 	beq.n	.L_0803b782
-	bl	sub_0803cca8
+	bl	0x0803cca8
 .L_0803b782:
 	ldr	r0, [sp, #32]
 	add	sp, #132

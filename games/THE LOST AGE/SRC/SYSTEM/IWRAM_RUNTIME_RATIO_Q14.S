@@ -10,8 +10,6 @@
 @ credit: handwritten — TLA IWRAM runtime Q14 ratio multiply
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080007e8
-	.set AlchemyRunAddress, 0x03000230
 AlchemyUncredited_080007e8:
 	bx	pc
 	.2byte	0x0200

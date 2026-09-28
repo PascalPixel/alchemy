@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003d28, 0x08003d28
-	.set sub_08003dec, 0x08003dec
 	.global AffineEffect_UpdateFrame
 	.global Func_08028194
 	.thumb_func
@@ -51,7 +49,7 @@ Func_08028194:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r2, #142
 	add	r2, r8
 	movs	r4, #0
@@ -153,7 +151,7 @@ Func_08028194:
 .L_080282a4:
 	adds	r0, r6, #0
 	str	r4, [sp, #0]
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r4, [sp, #0]
 .L_080282ae:
 	mov	r1, sl

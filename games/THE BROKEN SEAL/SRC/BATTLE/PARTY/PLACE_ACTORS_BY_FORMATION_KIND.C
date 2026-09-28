@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void Render_ApplyProjectedPlacement(void *object, s32 *position, s32 *scale, u32 mode);
 
 struct BattleCells {
     u8 *actors;   /* 56-byte actor records */

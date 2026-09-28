@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c06e6, 0x081c06e6
-	.set sub_081c0c84, 0x081c0c84
 	.global Func_081c0550
 	.thumb_func
 Func_081c0550:
@@ -19,7 +17,7 @@ Func_081c0550:
 	ldr	r2, [r1, #0]
 	ldr	r1, [r0, #0]
 	adds	r0, r2, #0
-	bl	sub_081c0c84
+	bl	0x081c0c84
 	pop	{r0}
 	bx	r0
 	.4byte 0x00000000
@@ -43,7 +41,7 @@ Func_081c0550:
 	beq.n	.L_081c05b0
 	adds	r0, r1, #0
 	adds	r1, r2, #0
-	bl	sub_081c0c84
+	bl	0x081c0c84
 	b.n	.L_081c05c4
 	.2byte 0x0000
 	.4byte 0x00000000
@@ -59,7 +57,7 @@ Func_081c0550:
 .L_081c05bc:
 	adds	r0, r1, #0
 	adds	r1, r3, #0
-	bl	sub_081c0c84
+	bl	0x081c0c84
 .L_081c05c4:
 	pop	{r0}
 	bx	r0
@@ -76,6 +74,6 @@ Func_081c0550:
 	bx	pc
 	nop
 	adds	r0, #145
-	b.n	sub_081c06e6
+	b.n	0x081c06e6
 	.2byte 0xff1e
 	.2byte 0xe12f

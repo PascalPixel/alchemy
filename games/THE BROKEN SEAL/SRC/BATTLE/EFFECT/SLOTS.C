@@ -4,6 +4,7 @@
 #include "GLOBAL_CELLS.H"
 #include "EFFECT_0809B11C.H"
 #include "SYSTEM.H"
+extern u8 Data_03001f30[];
 
 void *Runtime_AllocateHeapBlock(s32, s32);
 void BattleFx_ClearOwnedSlot(struct EffectSlot *);
@@ -18,7 +19,7 @@ void BattleFx_UpdateAllSlots(void)
     s32 slot;
     s32 remaining_slots;
 
-    slot = *(s32 *)ADDR_03001F30 + 0x58;
+    slot = *(s32 *)((u32)&Data_03001f30) + 0x58;
     remaining_slots = 0x17;
     do {
         remaining_slots -= 1;
@@ -39,7 +40,7 @@ void BattleFx_InitializeSlots(void)
 
 void BattleFx_ClearActiveSlotsAndScheduleUpdates(void)
 {
-    struct EffectScene *scene = *(struct EffectScene **)ADDR_03001F30;
+    struct EffectScene *scene = *(struct EffectScene **)((u32)&Data_03001f30);
     struct EffectSlot *slot;
     s32 i;
 

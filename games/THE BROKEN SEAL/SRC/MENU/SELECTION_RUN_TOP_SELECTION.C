@@ -3,6 +3,11 @@
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+void UiWindow_OpenMode1AndWaitFrame(void);
+s32 Menu_SelectTopEntry(s32);
+s32 UiWork_CloseAndRelease(void);
+s32 ItemMenu_Open(void);
+s32 Menu_OpenActionFlow(void);
 
 /* menu/selection/run_top_selection.c */
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \

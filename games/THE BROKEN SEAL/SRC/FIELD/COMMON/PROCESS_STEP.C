@@ -96,7 +96,7 @@ s32 Func_080b50f8(void);
 void Audio_PlayCue(s32 cue);
 void Event_ClearInvalidPackedValues(void);
 s32 BattleParty_ApplyStatusDamage(void);
-void Func_08093874(s32 actor, s32 event);
+void BattleFx_ConfigureLinkedObject(s32 actor, s32 event);
 void BattleParty_ApplyHealthDelta(s32 amount, s32 flags);
 
 void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
@@ -194,9 +194,9 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
     if (Data_02000240.unknown_22e == 1) {
         Data_02000240.unknown_232++;
         if (Data_02000240.unknown_232 == Data_02000240.unknown_22c / 2)
-            Func_08093874(selected, 0x101);
+            BattleFx_ConfigureLinkedObject(selected, 0x101);
         if (Data_02000240.unknown_232 == Data_02000240.unknown_22c)
-            Func_08093874(selected, 0x100);
+            BattleFx_ConfigureLinkedObject(selected, 0x100);
     }
     if (Data_02000240.unknown_232 >= Data_02000240.unknown_22c) {
         n = Data_02000240.unknown_230;
@@ -209,7 +209,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         work->fallen_count = 0;
         work->standing_count = 0;
         actor->unknown_28 = 0x40000;
-        Func_08093874(selected, 0x102);
+        BattleFx_ConfigureLinkedObject(selected, 0x102);
         for (i = 0; i < count; i++) {
             owner = Owner_GetStateFar(Data_02000240.party[i]);
             if (owner->hp > 0) {

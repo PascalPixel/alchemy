@@ -9,7 +9,7 @@ struct Triple08099340 {
 
 extern s32 *gEffectWork;
 void Vector_AddPolarOffset(s32, s32, struct Triple08099340 *);
-void Object_SetCallback(void *, void *);
+void ObjectDispatch_InitializeFar(void *, void *);
 
 void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
 {
@@ -33,7 +33,7 @@ void BattleFx_UpdateShrinkingOrbitObject(u8 *arg)
             *(s32 *)(arg + 12) = local.y;
             *(s32 *)(arg + 16) = local.z;
         } else {
-            Object_SetCallback(arg, BattleFx_CommonParticleScript);
+            ObjectDispatch_InitializeFar(arg, BattleFx_CommonParticleScript);
         }
     }
 }

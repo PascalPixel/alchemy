@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800206c, 0x0800206c
-	.set sub_08002090, 0x08002090
-	.set sub_08002096, 0x08002096
-	.set sub_0801314c, 0x0801314c
-	.set sub_0801401c, 0x0801401c
-	.set sub_08014128, 0x08014128
-	.set sub_080142d4, 0x080142d4
-	.set sub_08014878, 0x08014878
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_0803b094, 0x0803b094
-	.set sub_0803d178, 0x0803d178
 	.global Func_0803c40c
 	.thumb_func
 Func_0803c40c:
@@ -114,7 +103,7 @@ Func_0803c40c:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	sub_0801401c
+	bl	0x0801401c
 	movs	r3, #31
 	ldrb	r2, [r5, #7]
 	ands	r0, r3
@@ -257,7 +246,7 @@ Func_0803c40c:
 	adds	r2, r2, r3
 	ldrh	r0, [r1, #0]
 	movs	r1, #128
-	bl	sub_080142d4
+	bl	0x080142d4
 	ldr	r3, [pc, #60]
 	ldrh	r2, [r7, #8]
 	ands	r0, r3
@@ -300,7 +289,7 @@ Func_0803c40c:
 	movs	r1, #80
 	str	r2, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_0800206c
+	bl	0x0800206c
 	ldr	r2, [sp, #4]
 	mov	r1, r8
 	ldrb	r3, [r2, r0]
@@ -323,9 +312,9 @@ Func_0803c40c:
 	bne.n	.L_0803c688
 	b.n	.L_0803c922
 .L_0803c688:
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r5, r0, #0
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -344,9 +333,9 @@ Func_0803c40c:
 	ands	r3, r2
 	orrs	r3, r1
 	strh	r3, [r7, #6]
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r5, r0, #0
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -386,7 +375,7 @@ Func_0803c40c:
 	ldr	r3, [r0, #4]
 	ands	r3, r1
 	str	r3, [r0, #4]
-	bl	sub_0801401c
+	bl	0x0801401c
 	ldrb	r2, [r7, #7]
 	movs	r3, #31
 	ands	r0, r3
@@ -460,7 +449,7 @@ Func_0803c40c:
 	strh	r3, [r6, #12]
 	strh	r3, [r5, #4]
 	adds	r0, r5, #0
-	bl	sub_0801401c
+	bl	0x0801401c
 	ldrb	r2, [r7, #7]
 	movs	r3, #31
 	ands	r0, r3
@@ -481,7 +470,7 @@ Func_0803c40c:
 	lsls	r2, r2, #8
 	strb	r3, [r7, #5]
 	adds	r0, r0, r2
-	bl	sub_08002096
+	bl	Math_Sine
 	ldrh	r2, [r6, #6]
 	asrs	r0, r0, #14
 	ldr	r3, [pc, #40]
@@ -497,7 +486,7 @@ Func_0803c40c:
 	movs	r3, #208
 	lsls	r3, r3, #7
 	adds	r0, r0, r3
-	bl	sub_08002090
+	bl	Math_Cosine
 	ldrb	r3, [r6, #8]
 	asrs	r0, r0, #14
 	subs	r3, r3, r0
@@ -520,7 +509,7 @@ Func_0803c40c:
 	ldrh	r0, [r6, #12]
 	movs	r1, #20
 	str	r4, [sp, #0]
-	bl	sub_0800206c
+	bl	0x0800206c
 	ldr	r4, [sp, #0]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #15
@@ -536,7 +525,7 @@ Func_0803c40c:
 	strh	r3, [r7, #6]
 	movs	r1, #20
 	ldrh	r0, [r6, #12]
-	bl	sub_0800206c
+	bl	0x0800206c
 	lsls	r0, r0, #16
 	ldr	r4, [sp, #0]
 	lsrs	r0, r0, #15
@@ -650,7 +639,7 @@ Func_0803c40c:
 	beq.n	.L_0803c974
 	adds	r0, r7, #0
 	movs	r1, #255
-	bl	sub_08014128
+	bl	0x08014128
 	b.n	.L_0803c974
 .L_0803c940:
 	cmp	r3, #19
@@ -670,14 +659,14 @@ Func_0803c40c:
 	bhi.n	.L_0803c974
 	ldrb	r1, [r6, #15]
 	adds	r0, r7, #0
-	bl	sub_08014128
+	bl	0x08014128
 	b.n	.L_0803c974
 .L_0803c968:
 	cmp	r3, #13
 	beq.n	.L_0803c974
 	ldrb	r1, [r6, #15]
 	adds	r0, r7, #0
-	bl	sub_08014128
+	bl	0x08014128
 .L_0803c974:
 	ldr	r3, [pc, #48]
 	ldr	r6, [r6, #0]
@@ -730,7 +719,7 @@ Func_0803c40c:
 	adds	r7, r1, #0
 	strh	r3, [r2, #0]
 	movs	r1, #1
-	bl	sub_0803b094
+	bl	0x0803b094
 	subs	r5, #1
 	movs	r0, #0
 	cmp	r0, r5
@@ -791,7 +780,7 @@ Func_0803c40c:
 	ldr	r5, [pc, #192]
 	movs	r0, #200
 	adds	r1, r5, #0
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	movs	r2, #132
 	movs	r3, #128
 	lsrs	r5, r5, #2
@@ -810,7 +799,7 @@ Func_0803c40c:
 	mov	r1, r9
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	sub_0803d178
+	bl	0x0803d178
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -879,7 +868,7 @@ Func_0803c40c:
 	cmp	r3, #0
 	bne.n	.L_0803caee
 	movs	r0, #200
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 .L_0803caee:
 	ldr	r3, [pc, #16]
 	add	sp, #12

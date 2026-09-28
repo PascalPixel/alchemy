@@ -269,7 +269,7 @@ mod tests {
     fn uppercase_c_preserves_the_c_route_and_codegen_flags() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tbs,
-            "games/THE BROKEN SEAL/src/080bbb0c.c",
+            "games/THE BROKEN SEAL/SRC/MENU/INPUT_CANCEL_SOUND_TICK.C",
             "candidate.c",
             "candidate.s",
         );
@@ -286,8 +286,8 @@ mod tests {
     #[test]
     fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
         for source in [
-            "games/THE BROKEN SEAL/src/080bbb0c.c",
-            "games/THE BROKEN SEAL/src/08006878.c",
+            "games/THE BROKEN SEAL/SRC/MENU/INPUT_CANCEL_SOUND_TICK.C",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
         ] {
             let mut options = SourceToAssemblyPlanOptions::new(
                 CompilerTarget::Tbs,
@@ -329,7 +329,7 @@ mod tests {
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tbs,
-            "games/THE BROKEN SEAL/src/08006878.c",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
             "candidate.c",
             "candidate.s",
         );
@@ -346,7 +346,7 @@ mod tests {
     fn edition_define_reaches_gcc296_driver() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tla,
-            "games/THE LOST AGE/SRC/08120450.c",
+            "games/THE LOST AGE/SRC/GAME/FLAGS/GET_BYTE.C",
             "candidate.c",
             "candidate.s",
         );
@@ -358,10 +358,10 @@ mod tests {
             .any(|argument| argument == "-DTLA_EDITION_IT=1"));
     }
     #[test]
-    fn shared_tla_audio_owner_routes_through_old_agbcc() {
+    fn shared_tla_audio_file_routes_through_old_agbcc() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tla,
-            "games/THE LOST AGE/SRC/081c28e0.c",
+            "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C",
             "candidate.c",
             "candidate.s",
         );

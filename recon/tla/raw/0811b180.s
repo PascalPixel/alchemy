@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_0811be3c, 0x0811be3c
-	.set sub_081280fc, 0x081280fc
 	.global Func_0811b180
 	.thumb_func
 Func_0811b180:
@@ -58,13 +55,13 @@ Func_0811b180:
 	cmp	r3, r1
 	bls.n	.L_0811b23a
 	ldrh	r0, [r6, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r5, r0, #0
 	adds	r3, r5, r2
 	ldrh	r0, [r3, #0]
-	bl	sub_081280fc
+	bl	0x081280fc
 	movs	r2, #27
 	cmp	r0, #0
 	bne.n	.L_0811b1fc
@@ -120,12 +117,12 @@ Func_0811b180:
 	cmp	r3, r1
 	bls.n	.L_0811b274
 	ldrh	r0, [r6, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	sub_081280fc
+	bl	0x081280fc
 	movs	r2, #27
 	cmp	r0, #0
 	bne.n	.L_0811b274
@@ -159,7 +156,7 @@ Func_0811b180:
 	adds	r6, r5, #0
 	adds	r6, #128
 	adds	r0, r6, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #149
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
@@ -252,7 +249,7 @@ Func_0811b180:
 	adds	r5, #2
 	cmp	r0, #254
 	beq.n	.L_0811b364
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	mov	r1, r9
 	ldr	r3, [r6, r1]
 	mov	r2, r8

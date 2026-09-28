@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f40, 0x08002f40
-	.set sub_08005340, 0x08005340
-	.set sub_08185000, 0x08185000
 	.global ResourceSlot_Load
 	.global Func_0800b6b8
 	.thumb_func
@@ -29,7 +26,7 @@ Func_0800b6b8:
 	lsls	r3, r6, #3
 	adds	r5, r5, r3
 	str	r4, [sp, #0]
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	ldr	r4, [sp, #0]
 	ldr	r2, [pc, #168]
 	lsls	r3, r6, #12
@@ -62,9 +59,9 @@ Func_0800b6b8:
 	adds	r1, #4
 	b.n	.L_0800b700
 .L_0800b71e:
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r1, r7, #0
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	ldr	r3, [r7, #0]
 	adds	r4, r7, #0
 	movs	r5, #0

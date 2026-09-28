@@ -1,17 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800387c, 0x0800387c
-	.set sub_080072f0, 0x080072f0
-	.set sub_080b845c, 0x080b845c
-	.set sub_080c0774, 0x080c0774
-	.set sub_080c1470, 0x080c1470
-	.set sub_080c16d0, 0x080c16d0
-	.set sub_080c1724, 0x080c1724
-	.set sub_080c9020, 0x080c9020
-	.set sub_080c9030, 0x080c9030
-	.set sub_080c9038, 0x080c9038
-	.set sub_080c9040, 0x080c9040
 	.global BattleFx_PlayUnitElementEffect
 	.global Func_080c1798
 	.thumb_func
@@ -35,7 +23,7 @@ Func_080c1798:
 	str	r3, [sp, #4]
 	mov	fp, r1
 	adds	r5, r2, #0
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #201
 	ldr	r0, [sp, #4]
 	lsls	r1, r1, #3
@@ -43,24 +31,24 @@ Func_080c1798:
 	movs	r2, #0
 	ldrh	r1, [r3, #0]
 	movs	r0, #1
-	bl	sub_080c0774
+	bl	BattlePresentation_ConfigurePaletteFade
 	movs	r1, #128
 	ldr	r3, [pc, #476]
 	lsls	r1, r1, #7
 	ldr	r0, [pc, #476]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r0, #128
 	lsls	r0, r0, #19
 	ldr	r1, [pc, #472]
-	bl	sub_0800387c
+	bl	QueueIoWriteDelay2
 	ldr	r0, [pc, #468]
 	ldr	r1, [pc, #472]
-	bl	sub_0800387c
+	bl	QueueIoWriteDelay2
 	ldr	r1, [pc, #468]
 	ldr	r0, [pc, #472]
-	bl	sub_0800387c
+	bl	QueueIoWriteDelay2
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r2, #240
 	ldr	r3, [pc, #460]
 	strh	r2, [r3, #0]
@@ -77,9 +65,9 @@ Func_080c1798:
 	bne.n	.L_080c18ce
 	ldr	r0, [pc, #444]
 	ldr	r1, [pc, #444]
-	bl	sub_0800387c
+	bl	QueueIoWriteDelay2
 	mov	r0, fp
-	bl	sub_080c1470
+	bl	BattleFx_InitializeStarField
 	ldr	r4, [pc, #436]
 	ldr	r3, [sp, #4]
 	adds	r4, r3, r4
@@ -107,11 +95,11 @@ Func_080c1798:
 	movs	r3, #128
 	adds	r0, r4, r1
 	ldr	r1, [pc, #404]
-	bl	sub_080c1724
+	bl	Graphics_ScaleRgb555Clamped
 .L_080c1860:
 	adds	r1, r6, #0
 	mov	r0, sl
-	bl	sub_080b845c
+	bl	BattleMotion_ProjectScaledPosition
 	ldr	r3, [r6, #0]
 	movs	r4, #64
 	ldr	r2, [pc, #388]
@@ -151,7 +139,7 @@ Func_080c1798:
 	movs	r3, #1
 	movs	r0, #1
 	str	r3, [r2, #0]
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #1
 	ldr	r4, [pc, #336]
 	add	r8, r0
@@ -160,13 +148,13 @@ Func_080c1798:
 	cmp	r1, #44
 	ble.n	.L_080c183a
 	mov	r0, fp
-	bl	sub_080c16d0
+	bl	Graphics_ResetVramBlockAndReleaseHeapBlocks
 	b.n	.L_080c199e
 .L_080c18ce:
 	cmp	r5, #1
 	bne.n	.L_080c1958
 	mov	r0, fp
-	bl	sub_080c9038
+	bl	0x080c9038
 	ldr	r2, [pc, #288]
 	movs	r3, #39
 	movs	r4, #64
@@ -180,7 +168,7 @@ Func_080c1798:
 	adds	r1, r7, #0
 	ldr	r5, [r0, #0]
 	mov	r0, sl
-	bl	sub_080b845c
+	bl	BattleMotion_ProjectScaledPosition
 	ldr	r3, [r7, #0]
 	mov	r4, fp
 	ldr	r2, [pc, #248]
@@ -221,14 +209,14 @@ Func_080c1798:
 	adds	r2, r5, r0
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #1
 	negs	r1, r1
 	add	r8, r1
 	mov	r2, r8
 	cmp	r2, #0
 	bge.n	.L_080c18e8
-	bl	sub_080c9040
+	bl	0x080c9040
 	b.n	.L_080c199e
 .L_080c1958:
 	cmp	r5, #2
@@ -247,7 +235,7 @@ Func_080c1798:
 	str	r4, [r0, #12]
 	str	r3, [r0, #20]
 	str	r3, [r0, #16]
-	bl	sub_080c9020
+	bl	0x080c9020
 	b.n	.L_080c199e
 .L_080c197e:
 	add	r0, sp, #8
@@ -264,7 +252,7 @@ Func_080c1798:
 	strh	r4, [r0, #36]
 	str	r3, [r0, #20]
 	str	r3, [r0, #16]
-	bl	sub_080c9030
+	bl	0x080c9030
 .L_080c199e:
 	add	sp, #240
 	pop	{r3, r5, r6, r7}

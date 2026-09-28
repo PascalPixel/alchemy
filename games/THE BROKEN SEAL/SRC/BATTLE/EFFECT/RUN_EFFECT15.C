@@ -4,6 +4,7 @@
 #include "EFFECT_0809B11C.H"
 #include "OBJECT_LOOKUP.H"
 #include "SYSTEM.H"
+u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
 /* battle/effects/runtime/upd/update_spin_angle.c */
 void BattleFx_UpdateSpinAngle(void *object)
@@ -125,7 +126,7 @@ struct EffectObject {
 extern u8 gGameState[];
 
 void Battle_Reset(void);
-void Object_PlaceWithinCameraBounds(s32, s32, s32, s32);
+void Motion_CamBounds(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void ObjectMotion_ArmCallback(s32, s32, s32);
 void Audio_PlayCue(s32);
@@ -135,7 +136,7 @@ void ObjectDispatch_SetSingleChildField26Far(void *, s32);
 void EffectSlot_Initialize(void *, s32, s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(void *, s32);
 void BattleFx_PrepareBufferInterpolation(void);
-void Animation_ApplyRandomChildValues(void);
+void ObjectGroup_ApplyRandomChildValues(void);
 
 void BattleFx_RunEffect15(void)
 {
@@ -149,12 +150,12 @@ void BattleFx_RunEffect15(void)
     u32 index;
 
     Battle_Reset();
-    Object_PlaceWithinCameraBounds(-1, -1, -1, 0);
+    Motion_CamBounds(-1, -1, -1, 0);
     BattleEffect_InitializeSharedScene();
     WaitFrames(10);
     ObjectMotion_ArmCallback(*(s16 *)(scene + 24), 0x4000, 0);
     WaitFrames(30);
-    *(void (**)(void))(main_object + 108) = Animation_ApplyRandomChildValues;
+    *(void (**)(void))(main_object + 108) = ObjectGroup_ApplyRandomChildValues;
     Audio_PlayCue(0x83);
     Object_SetMode(main_object, 28);
     WaitFrames(40);

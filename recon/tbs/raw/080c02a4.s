@@ -1,23 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_0800307c, 0x0800307c
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800387c, 0x0800387c
-	.set sub_0800393c, 0x0800393c
-	.set sub_080039fc, 0x080039fc
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_080048b0, 0x080048b0
-	.set sub_08015128, 0x08015128
-	.set sub_08077008, 0x08077008
-	.set sub_080b595c, 0x080b595c
-	.set sub_080b6c08, 0x080b6c08
-	.set sub_080b7b6c, 0x080b7b6c
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_080c0cec, 0x080c0cec
-	.set sub_080c0f98, 0x080c0f98
-	.set sub_080c9028, 0x080c9028
 	.global Func_080c02a4
 	.thumb_func
 Func_080c02a4:
@@ -35,7 +17,7 @@ Func_080c02a4:
 	movs	r0, #42
 	movs	r1, #4
 	ldr	r7, [r6, #0]
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r1, [pc, #188]
 	mov	fp, r0
 	cmp	r5, r1
@@ -164,7 +146,7 @@ Func_080c02a4:
 	strh	r5, [r6, #6]
 	strh	r3, [r6, #4]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [pc, #52]
 	ldr	r3, [pc, #68]
 	ldr	r2, [pc, #52]
@@ -184,7 +166,7 @@ Func_080c02a4:
 	strh	r3, [r2, #0]
 	lsls	r0, r0, #19
 	ldr	r1, [pc, #44]
-	bl	sub_0800387c
+	bl	QueueIoWriteDelay2
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
@@ -201,7 +183,7 @@ Func_080c02a4:
 	.2byte 0x7741
 	.2byte 0x0000
 .L_080c0434:
-	bl	sub_080c0cec
+	bl	BattlePres_SetupTransitionScene
 	ldr	r3, [pc, #120]
 	mov	r2, fp
 	mov	r1, r9
@@ -210,46 +192,46 @@ Func_080c02a4:
 	movs	r1, #200
 	lsls	r1, r1, #4
 	mov	r0, sl
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r1, [pc, #104]
 	mov	r8, r1
 	movs	r1, #144
 	lsls	r1, r1, #3
 	mov	r0, r8
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r2, [pc, #96]
 	movs	r1, #32
 	movs	r0, #2
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	strh	r5, [r6, #2]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [pc, #80]
 	ldr	r3, [r3, #0]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
 	ldr	r5, [pc, #76]
-	bl	sub_08015128
+	bl	0x08015128
 	movs	r0, #20
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	sub_080039fc
+	bl	QueueIoWriteDelay10
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	sub_0800393c
+	bl	QueueIoWriteDelay6
 	ldr	r0, [sp, #0]
-	bl	sub_080b595c
+	bl	BattleIntro_AnnounceEncounter
 	mov	r0, sl
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	mov	r0, r8
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	mov	r2, r9
 	strh	r2, [r6, #2]
 	movs	r0, #2
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	b.n	.L_080c069c
 	movs	r0, r0
 	.4byte 0x080c01bd
@@ -269,7 +251,7 @@ Func_080c02a4:
 	str	r3, [r7, #16]
 	add	r1, sp, #32
 	movs	r0, #3
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	movs	r6, #0
 	mov	r8, r0
 	cmp	r0, #0
@@ -282,10 +264,10 @@ Func_080c02a4:
 	adds	r5, r6, #0
 .L_080c04f2:
 	adds	r0, r5, #0
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r3, #148
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
@@ -325,7 +307,7 @@ Func_080c02a4:
 .L_080c0544:
 	strh	r4, [r0, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #201
 	ldr	r2, [pc, #104]
 	lsls	r3, r3, #3
@@ -337,7 +319,7 @@ Func_080c02a4:
 	adds	r1, r6, #0
 	movs	r0, #2
 	add	r5, sp, #60
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	ldr	r2, [pc, #60]
 	str	r0, [r5, #20]
 	mov	sl, r2
@@ -347,21 +329,21 @@ Func_080c02a4:
 	strh	r3, [r5, r0]
 	movs	r1, #0
 	adds	r0, r6, #0
-	bl	sub_080b7b6c
+	bl	BattleActor_SpawnObjectsForList
 	adds	r0, r5, #0
-	bl	sub_080c9028
+	bl	0x080c9028
 	movs	r3, #100
 	movs	r0, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_080c0cec
+	bl	BattlePres_SetupTransitionScene
 	mov	r1, r8
 	mov	r2, fp
 	str	r1, [r2, #0]
 	movs	r0, #2
 	ldr	r2, [pc, #36]
 	movs	r1, #32
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	movs	r0, #1
 	b.n	.L_080c05c0
 	movs	r0, r0
@@ -374,21 +356,21 @@ Func_080c02a4:
 	.2byte 0x0299
 	.2byte 0x080c
 .L_080c05c0:
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #20
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [pc, #88]
 	ldr	r3, [r3, #0]
 	ldr	r5, [pc, #88]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	sub_08015128
+	bl	0x08015128
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	sub_080039fc
+	bl	QueueIoWriteDelay10
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_0800393c
+	bl	QueueIoWriteDelay6
 	ldr	r2, [pc, #64]
 	ldr	r3, [pc, #52]
 	strh	r3, [r2, #0]
@@ -396,7 +378,7 @@ Func_080c02a4:
 	mov	r8, r3
 	mov	r1, r8
 	movs	r0, #3
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	adds	r7, r0, #0
 	lsls	r3, r7, #1
 	mov	r2, sl
@@ -404,10 +386,10 @@ Func_080c02a4:
 	strh	r2, [r1, r3]
 	mov	r0, r8
 	movs	r1, #0
-	bl	sub_080b7b6c
+	bl	BattleActor_SpawnObjectsForList
 	movs	r0, #1
 	mov	r1, r8
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	adds	r7, r0, #0
 	movs	r6, #0
 	cmp	r7, #0
@@ -424,7 +406,7 @@ Func_080c02a4:
 	movs	r1, #1
 	adds	r6, #1
 	adds	r5, #2
-	bl	sub_080c0f98
+	bl	BattlePres_SetActorRecordMode
 	cmp	r6, r7
 	bne.n	.L_080c0630
 .L_080c0640:
@@ -439,7 +421,7 @@ Func_080c02a4:
 	strh	r3, [r1, #0]
 	movs	r0, #1
 	adds	r6, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r6, #16
 	bne.n	.L_080c0648
 	movs	r6, #0
@@ -456,31 +438,31 @@ Func_080c02a4:
 	movs	r1, #0
 	adds	r6, #1
 	adds	r5, #2
-	bl	sub_080c0f98
+	bl	BattlePres_SetActorRecordMode
 	cmp	r6, r7
 	bne.n	.L_080c0670
 .L_080c0680:
 	ldr	r0, [sp, #0]
-	bl	sub_080b595c
+	bl	BattleIntro_AnnounceEncounter
 	ldr	r2, [pc, #88]
 	movs	r3, #0
 	strh	r3, [r2, #2]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #2
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 .L_080c069c:
 	ldr	r6, [pc, #68]
 	ldr	r5, [pc, #56]
 	movs	r1, #0
 	movs	r2, #0
 	movs	r0, #2
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	strh	r5, [r6, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	strh	r5, [r6, #0]
 	ldr	r1, [pc, #48]
 	ldr	r3, [pc, #52]
@@ -495,7 +477,7 @@ Func_080c02a4:
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
 	movs	r0, #42
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #148
 	b.n	.L_080c06f0
 	movs	r0, r0

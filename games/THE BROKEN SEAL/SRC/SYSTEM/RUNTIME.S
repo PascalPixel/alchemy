@@ -10,11 +10,11 @@
 .syntax unified
 	.arm
 	.align 2
-	.set AlchemyLoadAddress, 0x08000770
-	.set AlchemyRunAddress, 0x03000000
 
 	.global IwramIrqMain
 IwramIrqMain:
+	.global Data_03000000
+Data_03000000:
 	mov	r3, #0x04000000
 	ldr	r2, [r3, #0x200]!
 	ldrh	r1, [r3, #8]

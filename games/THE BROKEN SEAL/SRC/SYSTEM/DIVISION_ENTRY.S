@@ -3,10 +3,6 @@
 	.global Func_080022ec
 Func_080022ec:
 
-	.set IwramSignedDivide, 0x03000380
-	.set IwramSignedRemainder, 0x030003ac
-	.set IwramUnsignedRemainder, 0x030003e0
-	.set IwramUnsignedDivide, 0x030003f0
 
 	.macro IwramEntry name, target
 	.global \name
@@ -18,7 +14,25 @@ Func_080022ec:
 	.4byte \target
 	.endm
 
+	.global FixedPoint_Ratio
+	.thumb_func
+FixedPoint_Ratio:
+	.global Math_Div
+	.thumb_func
+Math_Div:
 	IwramEntry IwramSignedDivideEntry, IwramSignedDivide
+	.global Math_DivU
+	.thumb_func
+Math_DivU:
 	IwramEntry IwramUnsignedDivideEntry, IwramUnsignedDivide
+	.global Func_080022fc
+	.thumb_func
+Func_080022fc:
+	.global Math_Mod
+	.thumb_func
+Math_Mod:
 	IwramEntry IwramSignedRemainderEntry, IwramSignedRemainder
+	.global Math_ModU
+	.thumb_func
+Math_ModU:
 	IwramEntry IwramUnsignedRemainderEntry, IwramUnsignedRemainder

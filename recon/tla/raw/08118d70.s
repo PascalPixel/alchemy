@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080ad000, 0x080ad000
-	.set sub_080ad008, 0x080ad008
-	.set sub_080ad170, 0x080ad170
-	.set sub_080ad1b8, 0x080ad1b8
-	.set sub_0811a038, 0x0811a038
-	.set sub_0811a0b0, 0x0811a0b0
-	.set sub_0811a31c, 0x0811a31c
 	.global Func_08118d70
 	.thumb_func
 Func_08118d70:
@@ -19,11 +11,11 @@ Func_08118d70:
 	sub	sp, #20
 	mov	r8, sp
 	mov	r0, r8
-	bl	sub_0811a038
+	bl	0x0811a038
 	adds	r7, r0, #0
 	lsls	r0, r7, #1
 	add	r0, r8
-	bl	sub_0811a0b0
+	bl	0x0811a0b0
 	adds	r7, r7, r0
 	movs	r0, #0
 	mov	sl, r0
@@ -36,7 +28,7 @@ Func_08118d70:
 .L_08118da0:
 	mov	r3, r8
 	ldrh	r0, [r6, r3]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r2, r0, #0
 	movs	r0, #48
 	adds	r0, #255
@@ -119,7 +111,7 @@ Func_08118d70:
 	adds	r3, r2, r0
 	strb	r5, [r3, #0]
 	ldrh	r0, [r6, r1]
-	bl	sub_080ad008
+	bl	0x080ad008
 	movs	r3, #1
 	add	sl, r3
 	adds	r6, #2
@@ -136,23 +128,23 @@ Func_08118d70:
 	sub	sp, #32
 	mov	r6, sp
 	adds	r0, r6, #0
-	bl	sub_0811a038
+	bl	0x0811a038
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r6, r0
-	bl	sub_0811a0b0
+	bl	0x0811a0b0
 	adds	r5, r5, r0
 	lsls	r1, r5, #1
 	adds	r1, r6, r1
 	movs	r0, #2
-	bl	sub_0811a31c
+	bl	0x0811a31c
 	adds	r5, r5, r0
 	cmp	r5, #0
 	ble.n	.L_08118eac
 	movs	r7, #0
 .L_08118e8e:
 	ldrh	r0, [r6, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #44
 	adds	r2, r0, #0
 	adds	r1, #255
@@ -176,7 +168,7 @@ Func_08118d70:
 	sub	sp, #20
 	mov	r5, sp
 	adds	r0, r5, #0
-	bl	sub_0811a038
+	bl	0x0811a038
 	movs	r2, #0
 	mov	sl, r0
 	mov	r8, r2
@@ -193,7 +185,7 @@ Func_08118d70:
 	adds	r0, r7, #0
 	adds	r1, r6, #0
 	adds	r2, r5, #0
-	bl	sub_080ad1b8
+	bl	0x080ad1b8
 	cmp	r0, #0
 	beq.n	.L_08118f46
 	movs	r0, #0
@@ -201,7 +193,7 @@ Func_08118d70:
 	bls.n	.L_08118eee
 	movs	r0, #1
 .L_08118eee:
-	bl	sub_080ad000
+	bl	Func_080ad000
 	movs	r2, #148
 	adds	r3, r0, #0
 	lsls	r2, r2, #1
@@ -244,7 +236,7 @@ Func_08118d70:
 	adds	r0, r7, #0
 	adds	r1, r6, #0
 	adds	r2, r5, #0
-	bl	sub_080ad170
+	bl	0x080ad170
 .L_08118f46:
 	adds	r5, #1
 	cmp	r5, #19

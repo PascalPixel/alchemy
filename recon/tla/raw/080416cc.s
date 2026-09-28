@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013164, 0x08013164
-	.set sub_08013300, 0x08013300
-	.set sub_08014d78, 0x08014d78
 	.global Func_080416cc
 	.thumb_func
 Func_080416cc:
@@ -25,10 +22,10 @@ Func_080416cc:
 	adds	r6, r0, #0
 	adds	r0, r5, #0
 	mov	fp, r3
-	bl	sub_08014d78
+	bl	Func_08014d78
 	str	r0, [sp, #8]
 	ldr	r0, [pc, #720]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	str	r0, [sp, #4]
 	mov	r1, fp
 	ldrb	r3, [r1, #7]
@@ -493,7 +490,7 @@ Func_080416cc:
 	b.n	.L_08041954
 .L_08041aa6:
 	ldr	r0, [sp, #8]
-	bl	sub_08013164
+	bl	Func_08013164
 	adds	r0, r6, #0
 	add	sp, #68
 	pop	{r3, r5, r6, r7}

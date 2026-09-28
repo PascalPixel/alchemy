@@ -5,6 +5,7 @@
 @ table rewritten at run time and the addresses it is built from are data
 @ and carry no credit, as SENTOU_KOUKA_TENKAI_TABLES.S.
 .syntax unified
+	.section .data,"aw",%progbits
 	.set	.L_081a03c0, 0x081a03c0
 	.set	.L_081a03dc, 0x081a03dc
 	.set	.L_081a047c, 0x081a047c
@@ -13,7 +14,6 @@
 	.set	.L_081a04ac, 0x081a04ac
 	.set	.L_081a0454, 0x081a0454
 	.arm
-	.set AlchemyLoadAddress, 0x081a0380
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
 	.4byte	.L_081a03c0
 	.4byte	.L_081a03dc

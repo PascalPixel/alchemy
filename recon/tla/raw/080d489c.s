@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08020090, 0x08020090
-	.set sub_080200a8, 0x080200a8
-	.set sub_080200c0, 0x080200c0
-	.set sub_080200c8, 0x080200c8
-	.set sub_08020218, 0x08020218
-	.set sub_080cad84, 0x080cad84
-	.set sub_080d4868, 0x080d4868
 	.global Func_080d489c
 	.thumb_func
 Func_080d489c:
@@ -16,7 +9,7 @@ Func_080d489c:
 	push	{r6, r7}
 	mov	sl, r0
 	mov	r8, r1
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r7, r0, #0
 	movs	r5, #0
 	movs	r6, #0
@@ -30,7 +23,7 @@ Func_080d489c:
 	cmp	r3, #2
 	beq.n	.L_080d48ce
 	ldr	r0, [r7, #104]
-	bl	sub_080d4868
+	bl	0x080d4868
 	cmp	r0, #0
 	beq.n	.L_080d48f0
 .L_080d48ce:
@@ -39,7 +32,7 @@ Func_080d489c:
 	ldr	r1, [r7, #8]
 	ldr	r2, [r7, #12]
 	ldr	r3, [r7, #16]
-	bl	sub_080200c0
+	bl	Func_080200c0
 	adds	r5, r0, #0
 	b.n	.L_080d48f0
 .L_080d48e0:
@@ -47,7 +40,7 @@ Func_080d489c:
 	cmp	r5, #0
 	beq.n	.L_080d4984
 	adds	r0, r5, #0
-	bl	sub_080200c8
+	bl	0x080200c8
 	str	r6, [r7, #104]
 	b.n	.L_080d4984
 .L_080d48f0:
@@ -64,7 +57,7 @@ Func_080d489c:
 .L_080d4904:
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 	adds	r3, r5, #0
 	adds	r3, #100
 	str	r5, [r7, #104]
@@ -73,10 +66,10 @@ Func_080d489c:
 .L_080d4916:
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r1, [pc, #72]
 	adds	r0, r5, #0
-	bl	sub_080200a8
+	bl	Object_SetCallback
 	adds	r2, r5, #0
 	adds	r2, #100
 	movs	r3, #1
@@ -132,7 +125,7 @@ Func_080d489c:
 	push	{r5, lr}
 	movs	r1, #0
 	adds	r5, r0, #0
-	bl	sub_08020218
+	bl	0x08020218
 	adds	r5, #89
 	movs	r3, #0
 	strb	r3, [r5, #0]
@@ -140,7 +133,7 @@ Func_080d489c:
 	pop	{r5, pc}
 	push	{lr}
 	movs	r1, #0
-	bl	sub_08020218
+	bl	0x08020218
 	movs	r0, #0
 	pop	{pc}
 	adds	r0, #35

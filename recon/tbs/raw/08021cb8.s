@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08002df0, 0x08002df0
-	.set sub_08002f40, 0x08002f40
-	.set sub_080048b0, 0x080048b0
-	.set sub_08004938, 0x08004938
-	.set sub_080053e8, 0x080053e8
 	.global UiText_LoadRemappedGlyph
 	.global Func_08021cb8
 	.thumb_func
@@ -21,10 +15,10 @@ Func_08021cb8:
 	adds	r7, r0, #0
 	movs	r0, #17
 	mov	r8, r2
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	adds	r6, r0, #0
 	ldr	r0, [pc, #156]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r3, [pc, #152]
 	lsls	r5, r5, #1
 	adds	r2, r6, r3
@@ -32,10 +26,10 @@ Func_08021cb8:
 	adds	r0, r0, r3
 	str	r0, [r2, #0]
 	adds	r1, r6, #0
-	bl	sub_080053e8
+	bl	Resource_DecodeByteLz
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	movs	r2, #0
 	mov	lr, r0
 	mov	r5, lr
@@ -91,9 +85,9 @@ Func_08021cb8:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	mov	r0, lr
-	bl	sub_08002df0
+	bl	Party_Do
 	movs	r0, #17
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

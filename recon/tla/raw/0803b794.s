@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0803b094, 0x0803b094
-	.set sub_0803b918, 0x0803b918
-	.set sub_0803bb58, 0x0803bb58
 	.global Func_0803b794
 	.thumb_func
 Func_0803b794:
@@ -37,13 +34,13 @@ Func_0803b794:
 	adds	r1, r7, #0
 	mov	r2, r8
 	adds	r3, r4, #0
-	bl	sub_0803bb58
+	bl	Func_0803bb58
 	b.n	.L_0803b7e0
 .L_0803b7d6:
 	adds	r1, r7, #0
 	mov	r2, r8
 	adds	r3, r4, #0
-	bl	sub_0803b918
+	bl	0x0803b918
 .L_0803b7e0:
 	ldr	r1, [r7, #0]
 	cmp	r1, #0
@@ -126,11 +123,11 @@ Func_0803b794:
 	adds	r5, r1, #0
 	adds	r6, r2, #0
 	movs	r1, #0
-	bl	sub_0803b094
+	bl	0x0803b094
 	adds	r1, r5, #0
 	adds	r2, r6, #0
 	movs	r3, #0
-	bl	sub_0803b918
+	bl	0x0803b918
 	pop	{r5, r6, pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
@@ -143,7 +140,7 @@ Func_0803b794:
 	ldr	r5, [r3, #60]
 	adds	r7, r2, #0
 	sub	sp, #12
-	bl	sub_0803b094
+	bl	0x0803b094
 	movs	r2, #244
 	lsls	r3, r0, #1
 	lsls	r2, r2, #4

@@ -2,6 +2,8 @@
 #include "SCENE.H"
 #include "OWNER_STATE.H"
 #include "PARTY_STATE.H"
+s32 GameState_InitDefaults();
+s32 Game_ResetForNewGameFar(s32);
 
 /* owner/refresh_and_reset_zero.c */
 void Owner_RefreshAndResetZero(void)
@@ -36,7 +38,7 @@ u32 Party_GetAverageLevel(void)
     }
     for (i = 0; i < count; i++) {
         total += ((u8 *)OwnerState_Get(
-            gGameState.active_owners[i]))[15];
+            Data_02000240.active_owners[i]))[15];
     }
     total = Math_Div(total, count);
     return total;

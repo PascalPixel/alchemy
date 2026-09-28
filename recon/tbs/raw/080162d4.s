@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08016230, 0x08016230
-	.set sub_080163ec, 0x080163ec
-	.set sub_080173ac, 0x080173ac
 	.global UiWindow_Create
 	.global Func_080162d4
 	.thumb_func
@@ -64,7 +60,7 @@ Func_080162d4:
 	str	r4, [r5, #4]
 	strh	r7, [r5, #16]
 	strh	r7, [r5, #22]
-	bl	sub_080173ac
+	bl	UiWork_ResetCounters
 	movs	r0, #8
 	adds	r3, r6, #0
 	ands	r3, r0
@@ -136,16 +132,16 @@ Func_080162d4:
 .L_080163c4:
 	strh	r7, [r5, #26]
 	adds	r0, r5, #0
-	bl	sub_08016230
+	bl	UiWork_DrawByAttributes
 	b.n	.L_080163e0
 .L_080163ce:
 	movs	r3, #7
 	strh	r0, [r5, #26]
 	strh	r3, [r5, #24]
 	adds	r0, r5, #0
-	bl	sub_080163ec
+	bl	UiWork_WaitUntilField1aClear
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080163e0:
 	adds	r0, r5, #0
 	pop	{r3}

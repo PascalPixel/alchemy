@@ -7,7 +7,6 @@
 .syntax unified
 	.set	.L_08000550, 0x08000550
 	.arm
-	.set AlchemyLoadAddress, 0x08000504
 .L_08000504:
 	and	r7, r7, r8
 	add	r7, r7, r7, lsr #7

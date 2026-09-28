@@ -1,20 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080045e8, 0x080045e8
-	.set sub_08016178, 0x08016178
-	.set sub_08016498, 0x08016498
-	.set sub_080170f8, 0x080170f8
-	.set sub_08018efc, 0x08018efc
-	.set sub_08019000, 0x08019000
-	.set sub_0801e71c, 0x0801e71c
-	.set sub_0801e8b0, 0x0801e8b0
-	.set sub_0801ea3c, 0x0801ea3c
-	.set sub_0801eea0, 0x0801eea0
-	.set sub_08077008, 0x08077008
-	.set sub_08077148, 0x08077148
-	.set sub_080b50c8, 0x080b50c8
-	.set sub_080b5130, 0x080b5130
 	.global UiWindow_DrawStatusBarTiles
 	.global Func_0801f088
 	.thumb_func
@@ -43,7 +28,7 @@ Func_0801f088:
 	adds	r5, r2, #0
 	cmp	r3, #0
 	bne.n	.L_0801f0ca
-	bl	sub_080045e8
+	bl	Runtime_GetLowTableAddress
 	ldr	r3, [pc, #280]
 	ldr	r1, [pc, #284]
 	ldr	r2, [pc, #284]

@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800307c, 0x0800307c
-	.set sub_0800651c, 0x0800651c
 	.global SerialRuntime_Initialize
 	.global Func_08005d10
 	.thumb_func
@@ -17,11 +15,11 @@ Func_08005d10:
 	movs	r0, #7
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	movs	r0, #6
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	ldr	r4, [pc, #32]
 	adds	r3, r6, #0
 	strh	r4, [r3, #0]
@@ -142,7 +140,7 @@ Func_08005d10:
 	str	r0, [r3, #0]
 	ldr	r3, [pc, #52]
 	strh	r0, [r3, #0]
-	bl	sub_0800651c
+	bl	BattleLink_ResetTransferState
 	strh	r7, [r5, #0]
 	add	sp, #4
 	b.n	.L_08005e68

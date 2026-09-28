@@ -1,37 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002322, 0x08002322
-	.set sub_0800393c, 0x0800393c
-	.set sub_080039fc, 0x080039fc
-	.set sub_08003dec, 0x08003dec
-	.set sub_080040d0, 0x080040d0
-	.set sub_08009020, 0x08009020
-	.set sub_08009080, 0x08009080
-	.set sub_080090f8, 0x080090f8
-	.set sub_08015048, 0x08015048
-	.set sub_08015118, 0x08015118
-	.set sub_08015120, 0x08015120
-	.set sub_08015130, 0x08015130
-	.set sub_080151d0, 0x080151d0
-	.set sub_080152b8, 0x080152b8
-	.set sub_08077008, 0x08077008
-	.set sub_080b6cd0, 0x080b6cd0
-	.set sub_080b78e4, 0x080b78e4
-	.set sub_080b7aac, 0x080b7aac
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_080b7e60, 0x080b7e60
-	.set sub_080b7f70, 0x080b7f70
-	.set sub_080ba918, 0x080ba918
-	.set sub_080bac6c, 0x080bac6c
-	.set sub_080bb588, 0x080bb588
-	.set sub_080bb8e8, 0x080bb8e8
-	.set sub_080bb928, 0x080bb928
-	.set sub_080bbb0c, 0x080bbb0c
-	.set sub_080bd850, 0x080bd850
-	.set sub_080c2368, 0x080c2368
-	.set sub_080c24f0, 0x080c24f0
-	.set sub_080f9010, 0x080f9010
 	.global BattleEvent_Playback
 	.global Func_080bd898
 	.thumb_func
@@ -95,7 +63,7 @@ Func_080bd898:
 	ldr	r2, [pc, #704]
 	adds	r0, r1, r2
 	ldr	r1, [r6, #0]
-	bl	sub_080bbb0c
+	bl	Battle_ResolveTargetAction
 	ldr	r3, [r6, #0]
 	adds	r3, #1
 	str	r3, [r6, #0]
@@ -164,25 +132,25 @@ Func_080bd898:
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r1, [r7, r3]
 	adds	r0, r7, #0
-	bl	sub_080bb928
+	bl	Battle_SetRuntimeFlagBit0
 	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	movs	r1, #5
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
@@ -197,7 +165,7 @@ Func_080bd898:
 	movs	r1, #4
 .L_080bd9e8:
 	ands	r0, r3
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	b.n	.L_080bdb3e
 	ldr	r3, [pc, #480]
 	ldr	r2, [r3, #0]
@@ -209,7 +177,7 @@ Func_080bd898:
 	ldr	r0, [r7, r3]
 	cmp	r0, #0
 	blt.n	.L_080bda08
-	bl	sub_080151d0
+	bl	UiText_PrepareMessageWorkFar
 .L_080bda08:
 	movs	r4, #164
 	lsls	r4, r4, #1
@@ -223,7 +191,7 @@ Func_080bd898:
 	ldr	r0, [r7, r3]
 	cmp	r0, #0
 	blt.n	.L_080bda24
-	bl	sub_080151d0
+	bl	UiText_PrepareMessageWorkFar
 .L_080bda24:
 	movs	r1, #164
 	lsls	r1, r1, #1
@@ -231,12 +199,12 @@ Func_080bd898:
 	movs	r3, #13
 	str	r3, [r2, #0]
 	b.n	.L_080bdb3e
-	bl	sub_08015118
+	bl	UiWork_ClearValueNameTablesFar
 	b.n	.L_080bdb3e
 	lsls	r3, r6, #2
 	adds	r3, #64
 	ldr	r0, [r7, r3]
-	bl	sub_080bb8e8
+	bl	BattleActor_DestroyTemporaryObject
 	b.n	.L_080bdb3e
 	movs	r2, #180
 	lsls	r2, r2, #1
@@ -244,7 +212,7 @@ Func_080bd898:
 	ldr	r0, [r3, #0]
 	cmp	r0, #0
 	ble.n	.L_080bda52
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080bda52:
 	movs	r3, #178
 	lsls	r3, r3, #1
@@ -253,10 +221,10 @@ Func_080bd898:
 	adds	r3, #64
 	ldr	r0, [r7, r3]
 	str	r0, [r2, #0]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	movs	r1, #5
 	ldr	r0, [r0, #0]
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r4, #164
 	lsls	r4, r4, #1
 	movs	r1, #168
@@ -280,11 +248,11 @@ Func_080bd898:
 	str	r0, [r5, #0]
 	adds	r3, r7, r4
 	ldr	r1, [r3, #0]
-	bl	sub_080c24f0
+	bl	BattleEnemy_RecordDefeat
 	ldr	r0, [r5, #0]
-	bl	sub_080bb588
+	bl	BattleActor_ResetRuntimeFields
 	ldr	r0, [r5, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r5, #0
 	adds	r6, r0, #0
 	b.n	.L_080bdaca
@@ -296,11 +264,11 @@ Func_080bd898:
 	cmp	r3, #1
 	beq.n	.L_080bdac2
 	movs	r1, #4
-	bl	sub_08009020
+	bl	AnimationObjects_SelectAnimationFar
 	b.n	.L_080bdac8
 .L_080bdac2:
 	movs	r1, #5
-	bl	sub_08009020
+	bl	AnimationObjects_SelectAnimationFar
 .L_080bdac8:
 	adds	r5, #1
 .L_080bdaca:
@@ -308,10 +276,10 @@ Func_080bd898:
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	sub_080b7f70
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_080bdaae
 	movs	r4, #149
@@ -334,25 +302,25 @@ Func_080bd898:
 	ldr	r3, [r3, #0]
 	adds	r3, #65
 	ldrb	r0, [r3, #0]
-	bl	sub_08015130
+	bl	UiWindow_DrawPartyStatusContentsFar
 	b.n	.L_080bdb3e
 	lsls	r5, r6, #2
 	adds	r5, #64
 	ldr	r0, [r7, r5]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r1, r0, #0
 	ldr	r0, [r7, r5]
-	bl	sub_080b78e4
+	bl	BattleUnit_BuildStatusFlags
 	ldr	r0, [r7, r5]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r6, r0, #0
 	ldr	r0, [r7, r5]
-	bl	sub_080b6cd0
+	bl	BattleMotion_GetSlotField14
 	adds	r1, r0, #0
 	ldr	r0, [r6, #0]
-	bl	sub_080ba918
+	bl	Unnamed_080ba918
 	ldr	r0, [r7, r5]
-	bl	sub_080b7aac
+	bl	BattlePres_SetActorModeAndAction
 .L_080bdb3e:
 	movs	r3, #166
 	lsls	r3, r3, #1
@@ -392,7 +360,7 @@ Func_080bd898:
 	cmp	r3, #13
 	bne.n	.L_080bdbe0
 .L_080bdb82:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	bne.n	.L_080bdb8c
 	b.n	.L_080bdfb4
@@ -471,13 +439,13 @@ Func_080bd898:
 	str	r3, [r6, #0]
 .L_080bdc26:
 	ldr	r5, [pc, #112]
-	bl	sub_08015118
+	bl	UiWork_ClearValueNameTablesFar
 	adds	r0, r5, #0
 	movs	r1, #4
-	bl	sub_080039fc
+	bl	QueueIoWriteDelay10
 	adds	r0, r5, #0
 	movs	r1, #16
-	bl	sub_0800393c
+	bl	QueueIoWriteDelay6
 	movs	r3, #160
 	mov	r2, r9
 	lsls	r3, r3, #8
@@ -486,7 +454,7 @@ Func_080bd898:
 	str	r3, [r2, #8]
 	mov	r1, sl
 	ldr	r0, [r6, #0]
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #48]
 	mov	r4, r9
 	ldrh	r2, [r4, #8]
@@ -529,7 +497,7 @@ Func_080bd898:
 	mov	r4, r9
 	strh	r3, [r4, #6]
 	lsls	r0, r0, #12
-	bl	sub_08002322
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_080bdcbc
 	ldr	r2, [pc, #784]
@@ -574,7 +542,7 @@ Func_080bd898:
 	beq.n	.L_080bdd22
 .L_080bdd06:
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #164
 	lsls	r1, r1, #1
 	adds	r2, r7, r1
@@ -590,7 +558,7 @@ Func_080bd898:
 .L_080bdd22:
 	mov	r0, r9
 	movs	r1, #240
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	b.n	.L_080bdfb4
 .L_080bdd2c:
 	cmp	r3, #10
@@ -615,13 +583,13 @@ Func_080bd898:
 	adds	r3, #101
 	adds	r5, r7, r3
 	ldr	r0, [r5, #0]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r6, r0, #0
 	ldr	r0, [r5, #0]
-	bl	sub_080b6cd0
+	bl	BattleMotion_GetSlotField14
 	adds	r1, r0, #0
 	ldr	r0, [r6, #0]
-	bl	sub_080ba918
+	bl	Unnamed_080ba918
 	b.n	.L_080bdd90
 .L_080bdd6e:
 	movs	r1, #178
@@ -635,13 +603,13 @@ Func_080bd898:
 	movs	r3, #255
 	strh	r0, [r2, #0]
 	strh	r3, [r4, #2]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	movs	r1, #7
 	ldr	r0, [r0, #0]
-	bl	sub_080ba918
+	bl	Unnamed_080ba918
 .L_080bdd90:
 	mov	r0, r9
-	bl	sub_080152b8
+	bl	BattleLayout_HighlightPartyPanelsFar
 .L_080bdd96:
 	movs	r2, #168
 	lsls	r2, r2, #1
@@ -691,12 +659,12 @@ Func_080bd898:
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r3, #148
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
 	ldrb	r0, [r0, #0]
-	bl	sub_080c2368
+	bl	Summon_GetEntryByte3Kind
 	cmp	r0, #0
 	blt.n	.L_080bde10
 	subs	r0, #1
@@ -705,7 +673,7 @@ Func_080bd898:
 	movs	r0, #0
 .L_080bde0a:
 	adds	r0, #146
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080bde10:
 	movs	r4, #168
 	lsls	r4, r4, #1
@@ -730,16 +698,16 @@ Func_080bd898:
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r2, #148
 	lsls	r2, r2, #1
 	adds	r0, r0, r2
 	ldrb	r0, [r0, #0]
-	bl	sub_080c2368
+	bl	Summon_GetEntryByte3Kind
 	cmp	r0, #0
 	blt.n	.L_080bde54
 	adds	r0, #146
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080bde54:
 	movs	r4, #168
 	lsls	r4, r4, #1
@@ -758,7 +726,7 @@ Func_080bd898:
 .L_080bde70:
 	asrs	r0, r0, #3
 	movs	r1, #5
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r0, #1
 	mov	sl, r0
 .L_080bde7c:
@@ -795,10 +763,10 @@ Func_080bd898:
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r1, r6, #0
 	ldr	r0, [r0, #0]
-	bl	sub_080b7f70
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_080bde9e
 	b.n	.L_080bdfa2
@@ -809,7 +777,7 @@ Func_080bd898:
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
 	ldr	r0, [r3, #0]
-	bl	sub_080bac6c
+	bl	BattleActor_RemoveFromLists
 	ldr	r3, [r5, #0]
 	b.n	.L_080bdfb0
 .L_080bdede:
@@ -819,7 +787,7 @@ Func_080bd898:
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	movs	r3, #1
 	adds	r6, r0, #0
 	movs	r2, #0
@@ -833,7 +801,7 @@ Func_080bd898:
 	adds	r1, r2, #0
 	ldr	r0, [r6, #0]
 	str	r2, [sp, #0]
-	bl	sub_080b7f70
+	bl	GetMotionRecord
 	ldr	r2, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_080bdefa
@@ -858,7 +826,7 @@ Func_080bd898:
 	mov	r9, r2
 	movs	r1, #0
 	subs	r5, #1
-	bl	sub_080bd850
+	bl	0x080bd850
 	cmp	r5, #0
 	bne.n	.L_080bdf2c
 .L_080bdf3e:
@@ -866,7 +834,7 @@ Func_080bd898:
 	lsls	r4, r4, #1
 	adds	r3, r7, r4
 	ldr	r0, [r3, #0]
-	bl	sub_080b7e60
+	bl	ActivateBattleObjectSlot
 	movs	r1, #164
 	lsls	r1, r1, #1
 	adds	r2, r7, r1
@@ -896,17 +864,17 @@ Func_080bd898:
 .L_080bdf7c:
 	ldr	r0, [r5, #0]
 	mov	r1, r8
-	bl	sub_080090f8
+	bl	render_animated_tile_frameFar
 	ldr	r0, [r5, #0]
 	mov	r1, fp
-	bl	sub_080090f8
+	bl	render_animated_tile_frameFar
 	ldr	r0, [r5, #0]
 	mov	r1, r9
-	bl	sub_080090f8
+	bl	render_animated_tile_frameFar
 	subs	r6, #1
 	ldmia	r5!, {r0}
 	mov	r1, sl
-	bl	sub_080090f8
+	bl	render_animated_tile_frameFar
 	cmp	r6, #0
 	bne.n	.L_080bdf7c
 .L_080bdfa2:

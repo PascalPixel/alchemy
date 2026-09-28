@@ -3,7 +3,7 @@
 
 void ObjectMotion_SetActionVariant(u32, s32);
 void ObjectMotion_SetHorizontalPositionWithTerrain(u32, s32, s32);
-void Object_SetCallback(struct ObjectRuntime *, const void *);
+void ObjectDispatch_InitializeFar(struct ObjectRuntime *, const void *);
 void ObjectDispatch_ApplyValueToChildrenFar(struct ObjectRuntime *, s32);
 s32 Map_GetTerrainHeightFar(u8, s32, s32);
 void Battle_WaitMode0(s32);
@@ -224,7 +224,7 @@ void Motion_LaunchFromFocusedObject(u32 arg0, s32 arg1, s32 arg2, s32 arg3)
         object->movement_state = 0;
         Object_SetMode(object, 2);
         ObjectMotion_OffsetPositionAndResetMotion(arg0, arg1, arg2);
-        Object_SetCallback(object, &ObjectMotion_LaunchScript);
+        ObjectDispatch_InitializeFar(object, &ObjectMotion_LaunchScript);
         object->action = arg3;
     }
 }
@@ -393,7 +393,7 @@ void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
         if (variant > 3) {
             variant = 3;
         }
-        Object_SetCallback(object,
+        ObjectDispatch_InitializeFar(object,
             ObjectMotion_VariantScripts + ((3 - variant) << 7));
     }
 }

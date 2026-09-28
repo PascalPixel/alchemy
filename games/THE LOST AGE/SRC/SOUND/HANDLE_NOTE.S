@@ -10,7 +10,6 @@
 @ credit: handwritten — sound driver stereo-volume helper and note handler (TLA revision)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c0772
 .L_081c0772:
 	movs	r0, #255
 	b.n	.L_081c0790
@@ -187,6 +186,9 @@ MusicTrack_HandleNote:
 	bne.n	.L_081c08a6
 	subs	r0, #1
 	beq.n	.L_081c0912
+	.global Func_081c08a4
+	.thumb_func
+Func_081c08a4:
 	adds	r6, r4, #0
 .L_081c08a6:
 	lsrs	r1, r1, #7
@@ -252,7 +254,7 @@ MusicTrack_HandleNote:
 	beq.n	.L_081c09b8
 .L_081c0912:
 	adds	r0, r4, #0
-	bl	Func_081c0738
+	bl	SoundChannel_Unlink
 	movs	r1, #0
 	str	r1, [r4, #48]
 	ldr	r3, [r5, #32]
@@ -272,7 +274,7 @@ MusicTrack_HandleNote:
 .L_081c0938:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	Func_081c28e0
+	bl	MusicTrack_CalcOutput
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]
@@ -327,7 +329,7 @@ MusicTrack_HandleNote:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	Func_081c05f0
+	bl	SoundDriver_MidiKeyToFrequency
 .L_081c09aa:
 	str	r0, [r4, #32]
 	movs	r0, #128

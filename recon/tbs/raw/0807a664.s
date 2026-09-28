@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08077394, 0x08077394
-	.set sub_08077428, 0x08077428
-	.set sub_0807808c, 0x0807808c
-	.set sub_08078414, 0x08078414
-	.set sub_08079358, 0x08079358
-	.set sub_08079ae8, 0x08079ae8
-	.set sub_0807a628, 0x0807a628
 	.global Func_0807a664
 	.thumb_func
 Func_0807a664:
@@ -46,7 +39,7 @@ Func_0807a664:
 	mov	sl, r1
 .L_0807a6a6:
 	mov	r0, sl
-	bl	sub_08077394
+	bl	Owner_GetState
 	adds	r7, r0, #0
 	adds	r2, r7, #0
 	adds	r2, #216
@@ -67,7 +60,7 @@ Func_0807a664:
 .L_0807a6cc:
 	ldrh	r0, [r6, r7]
 	str	r2, [sp, #0]
-	bl	sub_08078414
+	bl	Func_08078414
 	ldrb	r3, [r0, #2]
 	ldr	r2, [sp, #0]
 	cmp	r3, #6
@@ -122,9 +115,9 @@ Func_0807a664:
 	.2byte 0x0000
 .L_0807a73c:
 	mov	r0, sl
-	bl	sub_08079ae8
+	bl	Owner_RefreshDerivedData
 	mov	r0, sl
-	bl	sub_08077428
+	bl	Owner_RecalculateStats
 	movs	r2, #1
 	add	sl, r2
 	mov	r3, sl
@@ -148,12 +141,12 @@ Func_0807a664:
 	movs	r0, #0
 	strh	r3, [r2, #2]
 	movs	r1, #16
-	bl	sub_0807a628
+	bl	Inventory_AddAndEquip
 	ldr	r0, [pc, #32]
-	bl	sub_08079358
+	bl	GameFlag_SetBit
 .L_0807a780:
 	movs	r0, #1
-	bl	sub_0807808c
+	bl	Owner_RefreshActiveRatios
 	add	sp, #4
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

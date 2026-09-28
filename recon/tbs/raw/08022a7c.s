@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080040b4, 0x080040b4
-	.set sub_080040d0, 0x080040d0
-	.set sub_08015e8c, 0x08015e8c
-	.set sub_08016584, 0x08016584
 	.global DjinnMenu_DrawStatArrow
 	.global Func_08022a7c
 	.thumb_func
@@ -23,7 +19,7 @@ Func_08022a7c:
 	mov	r8, r0
 	mov	sl, r1
 	mov	fp, r2
-	bl	sub_08015e8c
+	bl	RenderOutput_AcquireFree
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_08022b30
@@ -31,7 +27,7 @@ Func_08022a7c:
 	strb	r3, [r6, #5]
 	strb	r3, [r6, #4]
 	movs	r0, #128
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	movs	r3, #240
 	strb	r3, [r6, #15]
 	movs	r3, #120
@@ -75,7 +71,7 @@ Func_08022a7c:
 .L_08022b04:
 	ldr	r1, [pc, #32]
 .L_08022b06:
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #24]
 	ldrh	r2, [r7, #8]
 	ands	r0, r3
@@ -85,7 +81,7 @@ Func_08022a7c:
 	strh	r3, [r7, #8]
 	ldr	r0, [r5, #0]
 	adds	r1, r6, #0
-	bl	sub_08016584
+	bl	RenderOutput_AppendToList
 	b.n	.L_08022b30
 	movs	r0, r0
 	.4byte 0x000003ff

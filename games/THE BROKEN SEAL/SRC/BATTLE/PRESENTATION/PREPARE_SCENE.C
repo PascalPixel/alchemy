@@ -1,5 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 BattleFx_RunTwoResource(s32, s32);
+s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
 
 /* battle/presentation/misc/prepare.c */
 /*
@@ -30,7 +34,7 @@ extern u8 Value_000000be;
 
 void *Resource_GetTableEntry(s32 id);
 void Unnamed_080cc960(void);
-void BattlePres_ProcessPendingGraphicsTransfer(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 void BattlePresentation_PrepareScene(s32 kind)
 {
@@ -68,27 +72,25 @@ void BattlePresentation_PrepareScene(s32 kind)
     *(s32 *)(work + 0x7780) = 3;
     *(s32 *)(work + 0x7784) = 0x06060606;
     Scheduler_AddOrUpdateCallback((s32)Unnamed_080cc960, 0xC80);
-    Scheduler_AddOrUpdateCallback((s32)BattlePres_ProcessPendingGraphicsTransfer, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 }
 
 /* battle/effects/runtime/misc/schedule_callbacks_and_release_blocks.c */
 extern void Scheduler_RemoveCallback(void (*)(void));
 
 typedef void (*Transfer)(void *, s32);
-extern u8 gRom;
-extern u8 gRom2;
-extern u8 gRom3;
+extern u8 Palette_StepFadeTransfer;
 
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 {
-    Scheduler_RemoveCallback((void (*)(void))&gRom);
-    Scheduler_RemoveCallback((void (*)(void))&gRom2);
+    Scheduler_RemoveCallback((void (*)(void))&Unnamed_080cc960);
+    Scheduler_RemoveCallback((void (*)(void))&BattlePresentation_ProcessPendingGraphicsTransfer);
     {
         Transfer transfer = (Transfer)0x03000164;
 
         transfer((void *)0x06004000, 0x4000);
     }
-    Scheduler_RemoveCallback((void (*)(void))&gRom3);
+    Scheduler_RemoveCallback((void (*)(void))&Palette_StepFadeTransfer);
     Runtime_ReleaseHeapBlock(40);
     Runtime_ReleaseHeapBlock(39);
 }

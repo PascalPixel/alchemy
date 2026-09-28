@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void Runtime_ReleaseHeapBlock(u32 value);
 
 struct Node_0801b148 {
     u32 value0;
@@ -11,7 +12,7 @@ struct Node_0801b148 {
 
 struct Work;
 
-extern u8 *gIw;
+extern u8 *gResQueueWork;
 
 void Resource_ScheduleOwnerReset(void);
 void UiWork_Finalize(struct Work *work, s32 release);
@@ -21,7 +22,7 @@ void Resource_ResetPendingTransfer(void);
 
 void Resource_ResetOwnerEntries(void)
 {
-    u8 *state = gIw;
+    u8 *state = gResQueueWork;
     struct Node_0801b148 *node;
 
     Resource_ScheduleOwnerReset();
@@ -51,5 +52,5 @@ void Resource_ResetOwnerEntries(void)
         }
     }
     Resource_ResetEntry(*(u16 *)(state + 0x2e4));
-    Sys_Do(18);
+    Runtime_ReleaseHeapBlock(18);
 }

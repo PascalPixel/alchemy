@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void UiWindow_SetTilemapEntry(s32, s32, s32, s32, s32);
 
 /* ui/apply_table_scale_to_object.c */
 struct Effect {
@@ -62,7 +63,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
     return word ^ mask;
 }
 
-extern const struct TileMask MaskTbl[];
+extern const struct TileMask Data_08037250[];
 
 #define FillWords ((FillProc)0x03000168)
 
@@ -90,8 +91,8 @@ s32 Menu_BuildLocalizedPatternTiles(void)
                         mi = 0;
                     }
                 }
-                tile[x] = XorWord(tile[x], MaskTbl[mi].word0);
-                tile[x + 8] = XorWord(tile[x + 8], MaskTbl[mi].word1);
+                tile[x] = XorWord(tile[x], Data_08037250[mi].word0);
+                tile[x + 8] = XorWord(tile[x + 8], Data_08037250[mi].word1);
             }
         }
     }
@@ -103,7 +104,7 @@ int UiWindow_DrawThreeTileColumn(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
     s32 tile_offset = arg3 * 2;
     s32 tile = tile_offset + 0xF315;
 
-    Ui_SetRange(arg0, 0x400 | tile, arg1, arg2, 0);
-    Ui_SetRange(arg0, tile_offset + 0xF314, arg1 + 1, arg2, 0);
-    Ui_SetRange(arg0, tile, arg1 + 2, arg2, 0);
+    UiWindow_SetTilemapEntry(arg0, 0x400 | tile, arg1, arg2, 0);
+    UiWindow_SetTilemapEntry(arg0, tile_offset + 0xF314, arg1 + 1, arg2, 0);
+    UiWindow_SetTilemapEntry(arg0, tile, arg1 + 2, arg2, 0);
 }

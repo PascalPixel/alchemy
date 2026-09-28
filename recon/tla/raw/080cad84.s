@@ -1,13 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_08020090, 0x08020090
-	.set sub_08020138, 0x08020138
-	.set sub_08020218, 0x08020218
-	.set sub_080cdf5c, 0x080cdf5c
 	.global Func_080cad84
 	.thumb_func
 Func_080cad84:
 .L_080cad84:
+	.global ObjectTable_Get
+	.thumb_func
+ObjectTable_Get:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -180,11 +179,11 @@ Func_080cad84:
 	ldr	r2, [sp, #4]
 	adds	r0, r6, #0
 	ldrb	r1, [r2, #0]
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r3, [sp, #0]
 	adds	r0, r6, #0
 	ldrb	r1, [r3, #0]
-	bl	sub_08020218
+	bl	0x08020218
 	mov	r2, fp
 	ldrb	r1, [r2, #0]
 	movs	r3, #3
@@ -203,7 +202,7 @@ Func_080cad84:
 	ands	r3, r2
 	orrs	r3, r1
 	strb	r3, [r5, #0]
-	bl	sub_080cdf5c
+	bl	0x080cdf5c
 	cmp	r7, r0
 	bne.n	.L_080caf32
 	movs	r2, #192
@@ -226,7 +225,7 @@ Func_080cad84:
 	str	r3, [r1, #16]
 	str	r2, [r0, #4]
 	adds	r0, r6, #0
-	bl	sub_08020138
+	bl	Object_ResetMotion
 .L_080caf32:
 	ldr	r2, [sp, #4]
 	movs	r3, #128

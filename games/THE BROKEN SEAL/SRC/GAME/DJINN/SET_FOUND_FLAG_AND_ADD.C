@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 Djinn_AddToOwnerFar(s32, s32, s32);
 
 s32 GameFlag_SetBitFar(s32);
 

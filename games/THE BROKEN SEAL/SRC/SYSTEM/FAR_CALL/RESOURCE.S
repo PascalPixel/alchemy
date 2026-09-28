@@ -11,6 +11,4 @@
 	.thumb_func
 Resource_GetMetadataRecordFar:
 Func_08185000:
-	.irp target, 0x08185009
-	overlay_veneer \target
-	.endr
+	overlay_veneer 0x08185009

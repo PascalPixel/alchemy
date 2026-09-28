@@ -7,12 +7,11 @@
 @ credit: library — TBS/TLA common sound command-byte reader and setters (setters)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c1e70
 	.global MusicTrack_SetLfoSpeedFromCommand
 	.thumb_func
 MusicTrack_SetLfoSpeedFromCommand:
 	mov	ip, lr
-	bl	Func_081c1e64
+	bl	MusicTrack_ReadCommandByte
 	strb	r3, [r1, #25]
 	cmp	r3, #0
 	bne.n	.L_081c1e80
@@ -26,7 +25,7 @@ AlchemyUncredited_081c1e82:
 MusicTrack_SetModulationFromCommand:
 AlchemyUncreditedEnd_081c1e82:
 	mov	ip, lr
-	bl	Func_081c1e64
+	bl	MusicTrack_ReadCommandByte
 	strb	r3, [r1, #23]
 	cmp	r3, #0
 	bne.n	.L_081c1e94

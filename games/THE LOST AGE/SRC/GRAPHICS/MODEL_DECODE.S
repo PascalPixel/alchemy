@@ -12,9 +12,7 @@
 @ Its 4-byte Thumb entry, which is TLA's own, carries no credit.
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, model decoder
 .syntax unified
-	.set Model_DispatchBitCommand, 0x08118238
 	.thumb
-	.set AlchemyLoadAddress, 0x08118160
 	.global Model_Decode
 	.thumb_func
 Model_Decode:

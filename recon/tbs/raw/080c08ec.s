@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08002f40, 0x08002f40
-	.set sub_080041d8, 0x080041d8
-	.set sub_080048b0, 0x080048b0
-	.set sub_080072f0, 0x080072f0
-	.set sub_080c0098, 0x080c0098
-	.set sub_080c00d8, 0x080c00d8
-	.set sub_080c1724, 0x080c1724
 	.global Func_080c08ec
 	.thumb_func
 Func_080c08ec:
@@ -22,7 +14,7 @@ Func_080c08ec:
 	mov	r9, r0
 	adds	r0, r1, #0
 	mov	sl, r2
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r3, [pc, #200]
 	subs	r3, #140
 	ldr	r6, [r3, #0]
@@ -30,7 +22,7 @@ Func_080c08ec:
 	ldr	r5, [pc, #196]
 	movs	r0, #49
 	adds	r1, r5, #0
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #132
 	lsrs	r5, r5, #2
 	lsls	r2, r2, #24
@@ -46,9 +38,9 @@ Func_080c08ec:
 	ldr	r3, [r2, #20]
 	ldr	r1, [pc, #172]
 	add	r0, r8
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r0, #49
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [pc, #160]
 	adds	r4, r6, r3
 	mov	r0, r8
@@ -73,7 +65,7 @@ Func_080c08ec:
 	ldr	r1, [pc, #132]
 	adds	r0, r4, #0
 	movs	r3, #128
-	bl	sub_080c1724
+	bl	Graphics_ScaleRgb555Clamped
 .L_080c0974:
 	ldr	r3, [pc, #96]
 	ldr	r0, [pc, #124]
@@ -86,20 +78,20 @@ Func_080c08ec:
 	ldrh	r3, [r3, #0]
 	ldr	r0, [pc, #128]
 	strh	r3, [r2, #0]
-	bl	sub_080c0098
+	bl	Graphics_BuildSequentialTileTable
 	ldr	r0, [pc, #124]
-	bl	sub_080c00d8
+	bl	BattlePresentation_BuildTilemap
 	ldr	r3, [pc, #120]
 	ldr	r0, [pc, #124]
 	movs	r1, #64
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r2, sl
 	ldr	r3, [r2, #8]
 	cmp	r3, #0
 	bne.n	.L_080c09ae
 	ldr	r0, [pc, #112]
 	ldr	r1, [pc, #112]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 .L_080c09ae:
 	mov	r3, r9
 	mov	r2, sl

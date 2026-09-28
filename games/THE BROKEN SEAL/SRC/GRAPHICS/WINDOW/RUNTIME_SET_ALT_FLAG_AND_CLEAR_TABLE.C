@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e8c[];
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -11,7 +12,7 @@ void UiWork_SetAltFlagAndClearTable(s32 flag)
     s8 *q;
     void *work;
 
-    work = *(void **)ADDR_03001E8C;
+    work = *(void **)((u32)&Data_03001e8c);
     if (flag != 0) {
         FIELD_AT_OFFSET(work, s8 *, 0xEA2) = 1;
         flag = 0;

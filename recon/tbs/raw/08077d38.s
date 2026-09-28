@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08077cb8, 0x08077cb8
-	.set sub_08078ee8, 0x08078ee8
-	.set sub_0807961c, 0x0807961c
 	.global GameState_InitDefaults
 	.global Func_08077d38
 	.thumb_func
@@ -57,7 +54,7 @@ Func_08077d38:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	str	r4, [sp, #0]
-	bl	sub_08078ee8
+	bl	Owner_InitRecords
 	ldr	r7, [pc, #80]
 	movs	r3, #132
 	lsls	r3, r3, #2
@@ -123,7 +120,7 @@ Func_08077d38:
 	adds	r3, r7, r1
 	str	r4, [r3, #0]
 	movs	r0, #0
-	bl	sub_0807961c
+	bl	Party_AddActiveOwner
 	movs	r2, #131
 	ldr	r4, [sp, #0]
 	ldr	r5, [pc, #56]
@@ -146,7 +143,7 @@ Func_08077d38:
 	adds	r3, r7, r1
 	strb	r6, [r3, #0]
 	str	r4, [r7, #0]
-	bl	sub_08077cb8
+	bl	Runtime_GetBuildStampTime
 	movs	r2, #174
 	lsls	r2, r2, #2
 	adds	r3, r7, r2

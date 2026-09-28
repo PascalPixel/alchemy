@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072f0, 0x080072f0
 	.global UiWork_ShiftPanelRowsLeft
 	.global Func_080167e0
 	.thumb_func
@@ -48,7 +47,7 @@ Func_080167e0:
 	add	r0, sl
 	mov	r1, r8
 	movs	r2, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r3, [sp, #0]
 	subs	r7, #1
 	adds	r3, #128

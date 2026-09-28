@@ -1,22 +1,18 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004458, 0x08004458
-	.set sub_08009098, 0x08009098
-	.set sub_080090d0, 0x080090d0
-	.set sub_08096bec, 0x08096bec
-	.set sub_08096c80, 0x08096c80
-	.set sub_080f9010, 0x080f9010
 	.global Func_080981b0
 	.thumb_func
 Func_080981b0:
+	.global UpdateRisingParticleBurst
+	.thumb_func
+UpdateRisingParticleBurst:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
 	push	{r6, r7}
 	adds	r7, r0, #0
 	movs	r0, #154
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r5, [pc, #192]
 	movs	r2, #30
 	mov	r8, r2
@@ -38,7 +34,7 @@ Func_080981b0:
 	adds	r3, r3, r5
 	str	r3, [r7, #28]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #1
 	negs	r3, r3
 	add	r8, r3
@@ -55,13 +51,13 @@ Func_080981b0:
 	ldr	r2, [r7, #12]
 	ldr	r3, [r7, #16]
 	ldr	r0, [pc, #124]
-	bl	sub_08096c80
+	bl	Object_Spawn
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_0809825e
 	ldr	r1, [pc, #116]
-	bl	sub_08009098
-	bl	sub_08004458
+	bl	Engine_ObjectSetScript
+	bl	Random16
 	mov	r3, sl
 	adds	r2, r6, #0
 	adds	r2, #85
@@ -72,23 +68,23 @@ Func_080981b0:
 	strb	r3, [r2, #0]
 	ldr	r3, [pc, #96]
 	str	r3, [r6, #72]
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	subs	r5, r5, r0
 	str	r5, [r6, #40]
-	bl	sub_08004458
+	bl	Random16
 	lsls	r5, r0, #1
 	adds	r5, r5, r0
 	movs	r2, #128
 	lsls	r2, r2, #12
 	lsls	r5, r5, #3
 	adds	r5, r5, r2
-	bl	sub_08004458
+	bl	Random16
 	adds	r1, r5, #0
 	adds	r2, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08096bec
+	bl	Motion_SetTargetPositionFromMagnitudeAngle
 .L_0809825e:
 	movs	r3, #1
 	negs	r3, r3
@@ -97,9 +93,9 @@ Func_080981b0:
 	cmp	r2, #0
 	bge.n	.L_08098202
 	movs	r0, #131
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	adds	r0, r7, #0
-	bl	sub_080090d0
+	bl	Object_Destroy
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

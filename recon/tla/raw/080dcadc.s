@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014644, 0x08014644
-	.set sub_08038348, 0x08038348
 	.global Func_080dcadc
 	.thumb_func
 Func_080dcadc:
@@ -10,7 +8,7 @@ Func_080dcadc:
 	lsls	r3, r3, #18
 	ldr	r0, [pc, #76]
 	ldr	r6, [r3, #60]
-	bl	sub_08014644
+	bl	Func_08014644
 	ldr	r2, [pc, #72]
 	ldr	r3, [pc, #48]
 	ldr	r5, [pc, #52]
@@ -34,7 +32,7 @@ Func_080dcadc:
 	adds	r2, #38
 	adds	r3, r3, r2
 	ldrb	r1, [r3, #0]
-	bl	sub_08038348
+	bl	0x08038348
 	strb	r5, [r6, #4]
 	b.n	.L_080dcb40
 	.4byte 0x00007fff

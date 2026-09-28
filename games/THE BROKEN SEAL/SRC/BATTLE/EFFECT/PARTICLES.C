@@ -4,6 +4,7 @@
 #include "OBJECT_EFFECT.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
+u8 *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 struct Vector_08099d18 {
     s32 x;
@@ -41,7 +42,7 @@ extern struct State_08099d18 *gEffectWork;
 #define Rand Random16
 void Vector_AddPolarOffset(s32, s32, struct Vector_08099d18 *);
 void Object_SetMode(u8 *, s32);
-void Object_SetCallback(u8 *, void *);
+void ObjectDispatch_InitializeFar(u8 *, void *);
 
 void BattleFx_SpawnFallingParticles(void)
 {
@@ -73,6 +74,6 @@ void BattleFx_SpawnFallingParticles(void)
         timer = (u16 *)(object + 94);
         timer_value = 12;
         *timer = timer_value;
-        Object_SetCallback(object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
     }
 }

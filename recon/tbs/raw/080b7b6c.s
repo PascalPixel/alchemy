@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080072f0, 0x080072f0
-	.set sub_08009030, 0x08009030
-	.set sub_08009048, 0x08009048
-	.set sub_08009070, 0x08009070
-	.set sub_080b770c, 0x080b770c
-	.set sub_080b78e4, 0x080b78e4
-	.set sub_080b7aac, 0x080b7aac
-	.set sub_080b7b30, 0x080b7b30
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_08185000, 0x08185000
 	.global BattleActor_SpawnObjectsForList
 	.global Func_080b7b6c
 	.thumb_func
@@ -31,7 +20,7 @@ Func_080b7b6c:
 .L_080b7b84:
 	ldr	r0, [sp, #24]
 	mov	r1, fp
-	bl	sub_080b770c
+	bl	BattlePlacement_ContainsId
 	cmp	r0, #0
 	bne.n	.L_080b7ba0
 	mov	r0, fp
@@ -41,7 +30,7 @@ Func_080b7b6c:
 	bgt.n	.L_080b7b9c
 	mov	r0, fp
 .L_080b7b9c:
-	bl	sub_080b7b30
+	bl	ReleaseBattleObjectRecords
 .L_080b7ba0:
 	movs	r3, #1
 	add	fp, r3
@@ -53,7 +42,7 @@ Func_080b7b6c:
 	cmp	r3, #0
 	bne.n	.L_080b7bb8
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b7bb8:
 	ldr	r3, [sp, #24]
 	movs	r1, #0
@@ -74,7 +63,7 @@ Func_080b7b6c:
 	b.n	.L_080b7d46
 .L_080b7bd6:
 	adds	r0, r2, #0
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r7, r0, #0
 	cmp	r7, #0
 	bne.n	.L_080b7be4
@@ -82,7 +71,7 @@ Func_080b7b6c:
 .L_080b7be4:
 	ldr	r0, [sp, #16]
 	adds	r1, r7, #0
-	bl	sub_080b78e4
+	bl	BattleUnit_BuildStatusFlags
 	ldr	r3, [r7, #0]
 	mov	r8, r3
 	cmp	r3, #0
@@ -133,9 +122,9 @@ Func_080b7b6c:
 	ldr	r3, [pc, #376]
 	movs	r1, #16
 	mov	r0, sl
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r0, r5, #0
-	bl	sub_08009030
+	bl	GetBattleEffectObject
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080b7c82
@@ -147,7 +136,7 @@ Func_080b7b6c:
 	bx	r3
 	str	r0, [r6, #24]
 	adds	r0, r5, #0
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #9]
 	mov	r1, r8
 	lsrs	r3, r3, #1
@@ -165,7 +154,7 @@ Func_080b7b6c:
 	adds	r3, #38
 	strb	r1, [r3, #0]
 	adds	r0, r5, r2
-	bl	sub_08009030
+	bl	GetBattleEffectObject
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080b7caa
@@ -186,7 +175,7 @@ Func_080b7b6c:
 .L_080b7cb4:
 	ldrh	r0, [r7, #4]
 	str	r1, [sp, #4]
-	bl	sub_08009030
+	bl	GetBattleEffectObject
 	adds	r6, r0, #0
 	ldr	r1, [sp, #4]
 	cmp	r6, #0
@@ -212,7 +201,7 @@ Func_080b7b6c:
 	adds	r1, r5, #0
 	adds	r0, r6, #0
 	str	r4, [sp, #0]
-	bl	sub_08009048
+	bl	ResourceMetadata_RegisterFar
 	ldr	r4, [sp, #0]
 	adds	r5, r0, #0
 	strb	r4, [r5, #6]
@@ -222,11 +211,11 @@ Func_080b7b6c:
 	beq.n	.L_080b7d14
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	sub_08009048
+	bl	ResourceMetadata_RegisterFar
 	adds	r5, r0, #0
 	str	r5, [r7, #32]
 	movs	r1, #0
-	bl	sub_08009070
+	bl	Animation_SetWorkEntryFar
 	movs	r3, #3
 	strb	r3, [r5, #6]
 .L_080b7d14:
@@ -242,7 +231,7 @@ Func_080b7b6c:
 .L_080b7d26:
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	sub_08009048
+	bl	ResourceMetadata_RegisterFar
 	add	r1, sp, #12
 	ldrb	r1, [r1, #0]
 	adds	r3, r6, #0
@@ -255,7 +244,7 @@ Func_080b7b6c:
 	strb	r2, [r3, #0]
 .L_080b7d40:
 	ldr	r0, [sp, #16]
-	bl	sub_080b7aac
+	bl	BattlePres_SetActorModeAndAction
 .L_080b7d46:
 	ldr	r3, [sp, #8]
 	movs	r1, #1
@@ -288,7 +277,7 @@ Func_080b7b6c:
 	cmp	r3, #254
 	beq.n	.L_080b7d9a
 	adds	r0, r5, #0
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r7, r0, #0
 	cmp	r7, #0
 	beq.n	.L_080b7d9a
@@ -298,7 +287,7 @@ Func_080b7b6c:
 	cmp	r3, #0
 	beq.n	.L_080b7d9a
 	adds	r0, r5, #0
-	bl	sub_080b7aac
+	bl	BattlePres_SetActorModeAndAction
 .L_080b7d9a:
 	movs	r1, #1
 	add	fp, r1

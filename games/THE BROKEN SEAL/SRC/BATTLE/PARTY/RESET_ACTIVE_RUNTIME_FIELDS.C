@@ -3,7 +3,7 @@
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
-s32 Func_080b6a60(u16 *owners);
+s32 BattleParty_PrepareActiveOwners(u16 *owners);
 struct BattleUnit *Func_08077008(s32 owner);
 void Func_08077010(s32 owner);
 
@@ -13,7 +13,7 @@ s32 BattleParty_ResetActiveRuntimeFields(void)
     s32 count;
     s32 i;
 
-    count = Func_080b6a60(owners);
+    count = BattleParty_PrepareActiveOwners(owners);
 
     i = 0;
     if (i < count) {

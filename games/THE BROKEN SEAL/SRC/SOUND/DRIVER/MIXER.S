@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module
 .syntax unified
 	.thumb
-	.set AlchemyRunAddress, 0x03007000
 	.global Func_080f9674
 	.thumb_func
 Func_080f9674:
@@ -377,6 +376,9 @@ AlchemyUncreditedEnd_080f980a:
 	mov	sl, r2
 	mov	fp, r3
 	pop	{r3}
+	.global Mixer_CallViaR3
+	.thumb_func
+Mixer_CallViaR3:
 	bx	r3
 	.align 2
 .L_030073a0:

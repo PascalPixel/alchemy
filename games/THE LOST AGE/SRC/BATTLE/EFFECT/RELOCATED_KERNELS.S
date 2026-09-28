@@ -15,7 +15,6 @@
 @ credit: handwritten — relocated ARM kernels 1 to 3 of the battle-effect bank
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08138fc8
 	.global Func_08138fc8
 	.thumb_func
 Func_08138fc8:

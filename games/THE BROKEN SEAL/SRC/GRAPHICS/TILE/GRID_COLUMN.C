@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "METADATA_LOOKUP.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e60[];
 
 extern u8 *gSpriteObjects;
 
@@ -56,7 +57,7 @@ void Ui_FillGridColumnFromMetadata(s32 slot, s32 value)
     struct UiGridEntry *entry;
     u8 *work;
 
-    work = *(u8 **)ADDR_03001E60;
+    work = *(u8 **)((u32)&Data_03001e60);
     count = 0;
     offset = ((3 & slot) * 4) + 0x28;
     index = 0;

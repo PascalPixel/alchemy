@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08039510, 0x08039510
 	.global Func_08039430
 	.thumb_func
 Func_08039430:
@@ -16,7 +15,7 @@ Func_08039430:
 	beq.n	.L_08039450
 .L_08039444:
 	ldr	r5, [r0, #0]
-	bl	sub_08039510
+	bl	Func_08039510
 	adds	r0, r5, #0
 	cmp	r0, #0
 	bne.n	.L_08039444

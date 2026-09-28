@@ -3,6 +3,7 @@
 #include "TBS_EDITION.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
+extern u8 Data_03001f2c[];
 
 /* menu/character_menu/build_availability.c */
 u8 *Owner_GetStateFar(s32 owner);
@@ -65,7 +66,7 @@ static __inline__ s8 LoadSignedByte(s32 base, s32 offset)
 s32 Menu_BuildPageResult(struct MenuResult *result, s32 index)
 {
     s32 encoded;
-    s32 base = *(s32 *)ADDR_03001F2C;
+    s32 base = *(s32 *)((u32)&Data_03001f2c);
     s32 offset = index + 0x218;
     s32 entries = base + 2;
     s32 limit;
@@ -111,7 +112,7 @@ static __inline__ u32 XorWord(u32 word, u32 mask)
     return word ^ mask;
 }
 
-extern const struct TileMask MaskTbl[];
+extern const struct TileMask Data_080af23c[];
 
 #define FillWords ((FillProc)0x03000168)
 
@@ -139,8 +140,8 @@ void Menu_BuildPatternTiles(void)
                         mi = 0;
                     }
                 }
-                tile[x] = XorWord(tile[x], MaskTbl[mi].word0);
-                tile[x + 8] = XorWord(tile[x + 8], MaskTbl[mi].word1);
+                tile[x] = XorWord(tile[x], Data_080af23c[mi].word0);
+                tile[x + 8] = XorWord(tile[x + 8], Data_080af23c[mi].word1);
             }
         }
     }

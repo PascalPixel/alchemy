@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08039260, 0x08039260
 	.global Menu_LayoutResourceEntries
 	.global Func_0804d484
 	.thumb_func
@@ -59,7 +58,7 @@ Func_0804d484:
 	str	r3, [sp, #0]
 	adds	r1, r6, #0
 	movs	r3, #3
-	bl	sub_08039260
+	bl	0x08039260
 	str	r0, [r5, #120]
 	add	sp, #4
 	pop	{r3}

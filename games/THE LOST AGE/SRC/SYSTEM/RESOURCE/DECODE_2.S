@@ -12,7 +12,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, compression format 2 decoder
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08012b70
 	.set	.L_08012e54, 0x08012e54
 	.set	.L_08012c7c, 0x08012c7c
 	.global Resource_Decode2

@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080cdac0, 0x080cdac0
 	.global Func_080e8cfc
 	.thumb_func
 Func_080e8cfc:
@@ -40,7 +39,7 @@ Func_080e8cfc:
 	asrs	r0, r0, #16
 	adds	r2, r7, #0
 	str	r4, [sp, #0]
-	bl	sub_080cdac0
+	bl	0x080cdac0
 	movs	r3, #1
 	negs	r3, r3
 	ldr	r4, [sp, #0]

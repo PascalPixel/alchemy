@@ -9,12 +9,18 @@
 	.global Func_080c9000
 	.thumb_func
 Func_080c9000:
-	.irp target, 0x080ed409, 0x080e3a3d, 0x080d6579, 0x080d6661
-	overlay_veneer \target
-	.endr
-	.irp target, 0x080cb7f9, 0x080cbc0d, 0x080cc5d9, 0x080ccaed
-	overlay_veneer \target
-	.endr
-	.irp target, 0x080ccbdd
-	overlay_veneer \target
-	.endr
+	overlay_veneer 0x080ed409
+	.global BattleFx_DispatchByIdRangeFar
+	.thumb_func
+BattleFx_DispatchByIdRangeFar:
+	overlay_veneer 0x080e3a3d
+	.global BattleFx_InitializeModeFar
+	.thumb_func
+BattleFx_InitializeModeFar:
+	overlay_veneer 0x080d6579
+	overlay_veneer 0x080d6661
+	overlay_veneer 0x080cb7f9
+	overlay_veneer 0x080cbc0d
+	overlay_veneer 0x080cc5d9
+	overlay_veneer 0x080ccaed
+	overlay_veneer 0x080ccbdd

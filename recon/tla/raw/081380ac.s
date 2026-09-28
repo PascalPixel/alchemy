@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08137d40, 0x08137d40
-	.set sub_08137dd4, 0x08137dd4
-	.set sub_0813922e, 0x0813922e
 	.4byte 0x02004778
 	.4byte 0xe92d47e0
 	.4byte 0xe3a03403
@@ -93,7 +90,7 @@
 	bge.n	.L_08138202
 	adds	r0, #24
 .L_08138202:
-	b.n	sub_08137d40
+	b.n	0x08137d40
 	.4byte 0xe0299003
 	.4byte 0xe0233009
 	.4byte 0xe0299003
@@ -133,7 +130,7 @@
 	.2byte 0xe1a0
 .L_08138294:
 	adds	r0, #20
-	b.n	sub_08137dd4
+	b.n	0x08137dd4
 	.4byte 0xe59d2024
 	.4byte 0xe066a004
 	.4byte 0xe5d22018
@@ -941,7 +938,7 @@
 	.4byte 0x4a000005
 	.2byte 0x31c0
 .L_08138eea:
-	b.n	sub_0813922e
+	b.n	0x0813922e
 	.4byte 0xe2004007
 	.4byte 0xe1843303
 	.4byte 0xe7d14003

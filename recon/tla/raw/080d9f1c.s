@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002096, 0x08002096
-	.set sub_080148e8, 0x080148e8
-	.set sub_080cad84, 0x080cad84
-	.set sub_080d9e74, 0x080d9e74
-	.set sub_080da22c, 0x080da22c
 	.global Func_080d9f1c
 	.thumb_func
 Func_080d9f1c:
@@ -69,7 +63,7 @@ Func_080d9f1c:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x2106
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r2, [sp, #36]
 	ldr	r3, [sp, #36]
 	lsls	r2, r2, #3
@@ -83,7 +77,7 @@ Func_080d9f1c:
 	mov	r0, sl
 	str	r2, [sp, #0]
 	mov	r8, r3
-	bl	sub_080148e8
+	bl	0x080148e8
 	ldr	r2, [sp, #20]
 	movs	r3, #0
 	lsls	r0, r0, #16
@@ -101,19 +95,19 @@ Func_080d9f1c:
 	adds	r3, #1
 	strb	r3, [r5, #17]
 	mov	r0, sl
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r1, [sp, #32]
 	adds	r0, r1, r0
 	str	r0, [r5, #4]
 	adds	r1, r6, #0
 	mov	r0, r9
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r2, [sp, #28]
 	adds	r1, r6, #0
 	adds	r0, r2, r0
 	str	r0, [r5, #8]
 	mov	r0, fp
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r3, [sp, #24]
 	adds	r0, r3, r0
 	str	r0, [r5, #12]
@@ -138,7 +132,7 @@ Func_080d9f1c:
 .L_080da01c:
 	cmp	r7, r6
 	bgt.n	.L_080da030
-	bl	sub_080d9e74
+	bl	0x080d9e74
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_080d9fcc
@@ -177,10 +171,10 @@ Func_080d9f1c:
 	adds	r5, r2, #0
 	sub	sp, #16
 	adds	r7, r3, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r5, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080da0a8
@@ -264,7 +258,7 @@ Func_080d9f1c:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x2106
-	bl	sub_08002054
+	bl	Math_Div
 	mov	r2, r9
 	lsls	r3, r2, #3
 	subs	r3, r3, r2
@@ -284,8 +278,8 @@ Func_080d9f1c:
 	mov	r2, r8
 	lsls	r0, r2, #15
 	adds	r1, r7, #0
-	bl	sub_08002054
-	bl	sub_08002096
+	bl	Math_Div
+	bl	Math_Sine
 	ldr	r3, [pc, #92]
 	ldr	r1, [sp, #68]
 	mov	lr, r3
@@ -293,20 +287,20 @@ Func_080d9f1c:
 	.2byte 0x1c39
 	adds	r5, r0, #0
 	mov	r0, sl
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r3, [sp, #20]
 	adds	r1, r7, #0
 	adds	r0, r3, r0
 	str	r0, [r6, #4]
 	mov	r0, r9
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r2, [sp, #16]
 	adds	r1, r7, #0
 	adds	r0, r2, r0
 	adds	r0, r0, r5
 	str	r0, [r6, #8]
 	mov	r0, fp
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r3, [sp, #12]
 	movs	r2, #1
 	adds	r0, r3, r0
@@ -350,10 +344,10 @@ Func_080d9f1c:
 	mov	sl, r2
 	sub	sp, #12
 	mov	r9, r3
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r5, r0, #0
 	mov	r0, sl
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r6, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080da21e
@@ -382,7 +376,7 @@ Func_080d9f1c:
 	ldr	r0, [r6, #16]
 	str	r0, [sp, #8]
 	adds	r0, r7, #0
-	bl	sub_080da22c
+	bl	Func_080da22c
 .L_080da21e:
 	add	sp, #12
 	pop	{r3, r5, r6}

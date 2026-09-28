@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0802d45c, 0x0802d45c
-	.set sub_080c8730, 0x080c8730
 	.global Func_0802d600
 	.thumb_func
 Func_0802d600:
@@ -31,7 +29,7 @@ Func_0802d600:
 	movs	r1, #0
 	adds	r0, r2, #0
 	adds	r2, r3, #0
-	bl	sub_080c8730
+	bl	Func_080c8730
 	strb	r0, [r5, #0]
 	pop	{r5, r6, pc}
 	.4byte 0xfdff0000
@@ -43,7 +41,7 @@ Func_0802d600:
 	adds	r0, r2, #0
 	adds	r1, r3, #0
 	adds	r2, r4, #0
-	bl	sub_0802d45c
+	bl	0x0802d45c
 	asrs	r0, r0, #19
 	pop	{pc}
 	push	{r5, lr}

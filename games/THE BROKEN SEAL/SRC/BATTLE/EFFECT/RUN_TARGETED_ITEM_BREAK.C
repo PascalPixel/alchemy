@@ -23,12 +23,12 @@ extern struct BattleEffectScene *gEffectWork;
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_SpawnItemBreakMode3(s32 x, s32 y, s32 z, s32 angle);
-void Object_SetCallback(void *object, const void *callback);
-void set_target_position_from_magnitude_angle(
+void ObjectDispatch_InitializeFar(void *object, const void *callback);
+void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
-void Animation_ApplyRandomChildValues(void);
+void ObjectGroup_ApplyRandomChildValues(void);
 void UpdateRisingParticleBurst(void *effect);
 void BattleFx_PrepareBufferInterpolation(void);
 
@@ -55,7 +55,7 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     BattleEffect_InitializeSharedScene();
     *(void **)((u8 *)main_object + 0x68) = child;
-    Object_SetCallback(main_object, (const void *)0x0809f0bc);
+    ObjectDispatch_InitializeFar(main_object, (const void *)0x0809f0bc);
 
     x = scene->x;
     position[0] = x;
@@ -71,12 +71,12 @@ void BattleEffect_RunTargetedItemBreak(void)
     for (index = 0; index < 2; index++) {
         void *anchor = anchors[index];
         if (anchor != 0)
-            set_target_position_from_magnitude_angle(
+            Motion_SetTargetPositionFromMagnitudeAngle(
                 anchor, 0xe0000, *(u16 *)((u8 *)anchor + 6));
     }
 
     Object_CommitPosition(anchors[0]);
-    ((struct EffectChild *)child)->callback = Animation_ApplyRandomChildValues;
+    ((struct EffectChild *)child)->callback = ObjectGroup_ApplyRandomChildValues;
     Audio_PlayCue(130);
     ((struct EffectChild *)child)->flag = 4;
 

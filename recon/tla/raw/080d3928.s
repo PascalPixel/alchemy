@@ -1,12 +1,11 @@
 .syntax unified
 	.thumb
-	.set sub_080d2d84, 0x080d2d84
 	.global Func_080d3928
 	.thumb_func
 Func_080d3928:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_080d2d84
+	bl	Object_GetById
 	ldr	r3, [r0, #80]
 	cmp	r0, #0
 	beq.n	.L_080d393c

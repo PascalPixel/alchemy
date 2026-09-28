@@ -6,7 +6,6 @@
 .syntax unified
 	.section .rodata,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08002848
 @ ニブル選択に用いる並べ替え定数。
 .L_08002848:
 	.4byte 0xfedcba98

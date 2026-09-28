@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002322, 0x08002322
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_080030f8, 0x080030f8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072f4, 0x080072f4
-	.set sub_080cd594, 0x080cd594
-	.set sub_080cdbc0, 0x080cdbc0
-	.set sub_080cef64, 0x080cef64
-	.set sub_080de2f8, 0x080de2f8
 	.global Func_080e6638
 	.thumb_func
 Func_080e6638:
@@ -33,7 +22,7 @@ Func_080e6638:
 	str	r3, [sp, #20]
 	lsls	r0, r0, #6
 	str	r6, [r5, #0]
-	bl	sub_080cd594
+	bl	BattleFx_BeginCanvasLayer
 	ldr	r3, [r5, #0]
 	ldr	r2, [r3, #4]
 	add	r3, sp, #36
@@ -43,7 +32,7 @@ Func_080e6638:
 	adds	r0, r6, #0
 	movs	r1, #6
 	movs	r3, #2
-	bl	sub_080de2f8
+	bl	BattleFx_PrepareCanvasEffect
 	ldr	r2, [pc, #76]
 	ldr	r3, [pc, #56]
 	strh	r3, [r2, #0]
@@ -56,7 +45,7 @@ Func_080e6638:
 	ldr	r3, [r5, #0]
 	add	r1, sp, #24
 	ldr	r0, [r3, #4]
-	bl	sub_080cef64
+	bl	BattleFx_FetchRectangleBlitters
 	movs	r2, #239
 	lsls	r2, r2, #7
 	add	r2, fp
@@ -69,7 +58,7 @@ Func_080e6638:
 	str	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r3, #254
 	b.n	.L_080e66d4
 	.4byte 0x00002784
@@ -120,7 +109,7 @@ Func_080e6638:
 	adds	r0, r0, r3
 	str	r4, [sp, #8]
 	ldr	r3, [pc, #244]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	lsrs	r3, r0, #31
 	adds	r3, r0, r3
 	asrs	r0, r3, #1
@@ -225,7 +214,7 @@ Func_080e6638:
 	mov	r1, fp
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_080072f4
+	bl	_call_via_r4
 	ldr	r2, [pc, #56]
 	movs	r3, #1
 	add	r2, fp
@@ -233,7 +222,7 @@ Func_080e6638:
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #52]
 	lsls	r1, r1, #3
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r2, [pc, #48]
 	ldr	r3, [pc, #48]
 	movs	r4, #0
@@ -287,7 +276,7 @@ Func_080e6638:
 .L_080e685c:
 	adds	r0, r5, #0
 	str	r4, [sp, #8]
-	bl	sub_08002322
+	bl	Trig_Sin
 	lsls	r3, r7, #18
 	lsls	r0, r0, #7
 	movs	r2, #128
@@ -350,7 +339,7 @@ Func_080e6638:
 .L_080e68d6:
 	movs	r0, #1
 	str	r4, [sp, #8]
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r4, [sp, #8]
 	movs	r2, #2
 	adds	r4, #1
@@ -360,14 +349,14 @@ Func_080e6638:
 	b.n	.L_080e67fa
 .L_080e68ec:
 	ldr	r0, [pc, #80]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	ldr	r0, [pc, #80]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	movs	r0, #47
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #46
-	bl	sub_08002dd8
-	bl	sub_080cdbc0
+	bl	Runtime_ReleaseHeapBlock
+	bl	BattleFx_EndCanvasLayer
 	add	sp, #40
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

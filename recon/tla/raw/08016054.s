@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801314c, 0x0801314c
-	.set sub_08013438, 0x08013438
-	.set sub_08015f0c, 0x08015f0c
-	.set sub_08016950, 0x08016950
-	.set sub_0801713c, 0x0801713c
 	.global Func_08016054
 	.thumb_func
 Func_08016054:
@@ -40,7 +35,7 @@ Func_08016054:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r7, #0
-	bl	sub_08015f0c
+	bl	Func_08015f0c
 	adds	r5, r0, #0
 	cmp	r5, #14
 	bhi.n	.L_080160c0
@@ -49,7 +44,7 @@ Func_08016054:
 	movs	r1, #0
 	adds	r2, r6, #0
 	movs	r3, #64
-	bl	sub_0801713c
+	bl	Func_0801713c
 	adds	r0, r5, #1
 	lsls	r0, r0, #16
 	adds	r2, r6, #0
@@ -57,7 +52,7 @@ Func_08016054:
 	lsrs	r0, r0, #16
 	adds	r2, #56
 	movs	r1, #16
-	bl	sub_0801713c
+	bl	Func_0801713c
 	movs	r3, #1
 	add	sl, r3
 .L_080160c0:
@@ -94,7 +89,7 @@ Func_08016054:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #3
-	bl	sub_08015f0c
+	bl	Func_08015f0c
 	adds	r5, r0, #0
 	cmp	r5, #14
 	bhi.n	.L_08016136
@@ -103,7 +98,7 @@ Func_08016054:
 	movs	r1, #0
 	adds	r2, r6, #0
 	movs	r3, #64
-	bl	sub_0801713c
+	bl	Func_0801713c
 	movs	r3, #196
 	adds	r0, r5, #1
 	lsls	r3, r3, #6
@@ -114,7 +109,7 @@ Func_08016054:
 	adds	r2, r7, r3
 	lsls	r1, r1, #1
 	movs	r3, #4
-	bl	sub_0801713c
+	bl	Func_0801713c
 	movs	r0, #1
 	b.n	.L_08016138
 .L_08016136:
@@ -126,9 +121,9 @@ Func_08016054:
 	movs	r0, #5
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_08013438
+	bl	0x08013438
 	movs	r0, #204
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	pop	{pc}
 	push	{lr}
 	movs	r3, #192
@@ -165,11 +160,11 @@ Func_08016054:
 	movs	r0, #7
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	sub_08013438
+	bl	0x08013438
 	movs	r0, #6
 	movs	r1, #0
 	adds	r2, r5, #0
-	bl	sub_08013438
+	bl	0x08013438
 	ldr	r4, [pc, #36]
 	adds	r3, r6, #0
 	strh	r4, [r3, #0]
@@ -293,7 +288,7 @@ Func_08016054:
 	str	r0, [r3, #0]
 	ldr	r3, [pc, #52]
 	strh	r0, [r3, #0]
-	bl	sub_08016950
+	bl	0x08016950
 	strh	r7, [r5, #0]
 	add	sp, #4
 	b.n	.L_080162d8

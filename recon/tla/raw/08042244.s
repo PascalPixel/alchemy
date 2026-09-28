@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0803ae14, 0x0803ae14
-	.set sub_08042188, 0x08042188
 	.global UiText_DrawNumberInWindow
 	.global Func_08042244
 	.thumb_func
@@ -19,11 +17,11 @@ Func_08042244:
 	adds	r6, r2, #0
 	mov	r0, sp
 	adds	r2, r5, #0
-	bl	sub_0803ae14
+	bl	0x0803ae14
 	adds	r1, r6, #0
 	mov	r2, r8
 	adds	r3, r7, #0
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	add	sp, #16
 	pop	{r3}
 	mov	r8, r3

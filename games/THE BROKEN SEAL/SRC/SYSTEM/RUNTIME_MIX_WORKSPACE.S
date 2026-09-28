@@ -5,8 +5,6 @@
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08001568
-	.set AlchemyRunAddress, 0x03000df8
 
 @ 合成中に命令雛形と一時標本を置く常駐作業域。
 .L_audio_workspace:

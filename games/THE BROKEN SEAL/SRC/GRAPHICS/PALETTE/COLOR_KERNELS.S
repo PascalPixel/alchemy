@@ -12,7 +12,6 @@
 @ credit: library — TBS/TLA common ARM colour-buffer kernels copied to the stack
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08001fb8
 	.global ColorBuffer_BrightenKernel
 ColorBuffer_BrightenKernel:
 	push	{r5, r6, r7, r8, r9}

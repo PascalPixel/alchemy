@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_080072f0, 0x080072f0
 	.global SceneTransform_ApplyRoll
 	.global Func_08004c6c
 	.thumb_func
@@ -11,10 +8,10 @@ Func_08004c6c:
 	push	{r5, r6, lr}
 	sub	sp, #48
 	adds	r5, r0, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	sub_0800231c
+	bl	Trig_Cos
 	mov	ip, r0
 	mov	r5, sp
 	adds	r0, r5, #0
@@ -34,7 +31,7 @@ Func_08004c6c:
 	str	r6, [r5, #12]
 	ldr	r3, [pc, #12]
 	adds	r0, r5, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	add	sp, #48
 	pop	{r5, r6}
 	pop	{r0}

@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08009270, 0x08009270
-	.set sub_08077008, 0x08077008
-	.set sub_080c2384, 0x080c2384
-	.set sub_080c23a0, 0x080c23a0
-	.set sub_080c23c0, 0x080c23c0
 	.global SummonSlot_RegisterActorSprites
 	.global Func_080b6d30
 	.thumb_func
@@ -21,18 +16,18 @@ Func_080b6d30:
 	sub	sp, #4
 	ldr	r6, [r3, #0]
 	mov	fp, r0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r5, #148
 	mov	r9, r0
 	lsls	r5, r5, #1
 	add	r5, r9
 	ldrb	r0, [r5, #0]
-	bl	sub_080c23c0
+	bl	Summon_IsEntryFlagged
 	movs	r1, #0
 	mov	r8, r0
 	ldrb	r0, [r5, #0]
 	mov	sl, r1
-	bl	sub_080c2384
+	bl	Summon_GetEntryValue
 	mov	r4, sl
 	adds	r7, r0, #0
 .L_080b6d68:
@@ -79,7 +74,7 @@ Func_080b6d30:
 	add	r3, r9
 	ldrb	r0, [r3, #0]
 	str	r4, [sp, #0]
-	bl	sub_080c23a0
+	bl	Summon_GetEntryFlag1Field
 	ldr	r2, [pc, #104]
 	ldr	r4, [sp, #0]
 	lsls	r1, r5, #14
@@ -87,7 +82,7 @@ Func_080b6d30:
 	adds	r1, r1, r2
 	adds	r0, r5, #0
 	adds	r2, r7, r4
-	bl	sub_08009270
+	bl	ResourceSlot_LoadFar
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_080b6dda

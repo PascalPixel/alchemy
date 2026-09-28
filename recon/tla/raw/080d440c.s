@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08014d00, 0x08014d00
-	.set sub_08020120, 0x08020120
-	.set sub_08020138, 0x08020138
-	.set sub_08020148, 0x08020148
-	.set sub_080cad84, 0x080cad84
 	.global Func_080d440c
 	.thumb_func
 Func_080d440c:
@@ -25,7 +19,7 @@ Func_080d440c:
 	movs	r0, #108
 	str	r3, [sp, #12]
 	adds	r7, r2, #0
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r1, #230
 	str	r0, [sp, #8]
 	lsls	r1, r1, #1
@@ -68,7 +62,7 @@ Func_080d440c:
 	str	r3, [r1, #0]
 	mov	r8, r3
 	mov	r9, r2
-	bl	sub_08020138
+	bl	Object_ResetMotion
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r6, r3
@@ -112,7 +106,7 @@ Func_080d440c:
 	movs	r0, #1
 	str	r2, [r5, #12]
 	str	r7, [r5, #16]
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r0, [sp, #8]
 	movs	r1, #197
 	lsls	r1, r1, #1
@@ -122,14 +116,14 @@ Func_080d440c:
 	asrs	r3, r3, #24
 	cmp	r3, #3
 	beq.n	.L_080d44f6
-	bl	sub_08020120
+	bl	Func_08020120
 	b.n	.L_080d44f6
 .L_080d44ea:
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	mov	r2, sl
 	adds	r3, r7, #0
-	bl	sub_08020148
+	bl	Object_SetPosition
 .L_080d44f6:
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
@@ -143,7 +137,7 @@ Func_080d440c:
 	.2byte 0xffc0
 	.2byte 0xb520
 	adds	r5, r1, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r3, r0, #0
 	cmp	r3, #0
 	beq.n	.L_080d4528

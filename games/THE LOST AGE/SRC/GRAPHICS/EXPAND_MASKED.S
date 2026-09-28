@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, masked tile expander
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08038d90
 	.global Tile_ExpandMasked
 	.thumb_func
 Tile_ExpandMasked:

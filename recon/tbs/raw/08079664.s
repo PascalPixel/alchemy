@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08079374, 0x08079374
-	.set sub_080795fc, 0x080795fc
 	.global Party_RemoveActiveOwner
 	.global Func_08079664
 	.thumb_func
@@ -9,10 +7,10 @@ Party_RemoveActiveOwner:
 Func_08079664:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
-	bl	sub_080795fc
+	bl	Func_080795fc
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	sub_08079374
+	bl	GameFlag_ClearBit
 	movs	r1, #0
 	cmp	r1, r6
 	bge.n	.L_08079696
@@ -49,7 +47,7 @@ Func_08079664:
 	cmp	r1, #0
 	bne.n	.L_080796a8
 .L_080796b4:
-	bl	sub_080795fc
+	bl	Func_080795fc
 	pop	{r5, r6}
 	pop	{r1}
 	bx	r1

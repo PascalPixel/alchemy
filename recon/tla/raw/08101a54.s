@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08013560, 0x08013560
-	.set sub_08038070, 0x08038070
-	.set sub_08038080, 0x08038080
-	.set sub_080380b8, 0x080380b8
-	.set sub_08038260, 0x08038260
-	.set sub_08038270, 0x08038270
-	.set sub_080ad0f0, 0x080ad0f0
-	.set sub_080ad250, 0x080ad250
-	.set sub_081019a4, 0x081019a4
-	.set sub_08101a04, 0x08101a04
 	.global Func_08101a54
 	.thumb_func
 Func_08101a54:
@@ -42,7 +31,7 @@ Func_08101a54:
 	mov	r1, r8
 	adds	r3, r7, #0
 	adds	r2, #8
-	bl	sub_08038080
+	bl	0x08038080
 	movs	r3, #160
 	lsls	r3, r3, #7
 	adds	r3, #1
@@ -64,9 +53,9 @@ Func_08101a54:
 	mov	r0, r8
 	adds	r1, r5, #0
 	adds	r2, r4, #0
-	bl	sub_08038270
+	bl	0x08038270
 	movs	r0, #15
-	bl	sub_080380b8
+	bl	0x080380b8
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3
@@ -96,34 +85,34 @@ Func_08101a54:
 	strb	r3, [r2, #6]
 	mov	fp, r0
 	ldr	r0, [sp, #20]
-	bl	sub_08038260
-	bl	sub_080ad0f0
+	bl	0x08038260
+	bl	0x080ad0f0
 	adds	r5, r0, #0
 	movs	r0, #1
 	negs	r0, r0
-	bl	sub_080ad250
+	bl	0x080ad250
 	cmp	r5, #0
 	beq.n	.L_08101b32
 	subs	r0, #1
 	adds	r1, r5, #0
-	bl	sub_08002054
+	bl	Math_Div
 	cmp	r0, #6
 	bgt.n	.L_08101b32
 	ldr	r0, [pc, #240]
 	ldr	r1, [sp, #20]
 	movs	r2, #0
 	movs	r3, #80
-	bl	sub_08038080
+	bl	0x08038080
 	movs	r3, #10
 	str	r3, [sp, #0]
 	ldr	r0, [sp, #20]
 	movs	r1, #0
 	movs	r2, #10
 	movs	r3, #28
-	bl	sub_08038070
+	bl	0x08038070
 .L_08101b32:
 	mov	r0, fp
-	bl	sub_081019a4
+	bl	0x081019a4
 	movs	r3, #8
 	str	r3, [sp, #12]
 	adds	r1, r6, #0
@@ -165,7 +154,7 @@ Func_08101a54:
 	cmp	r8, r3
 	bne.n	.L_08101bb8
 	ldrh	r0, [r5, #0]
-	bl	sub_08101a04
+	bl	Func_08101a04
 	cmp	r0, #0
 	beq.n	.L_08101b92
 	cmp	r0, #1
@@ -173,15 +162,15 @@ Func_08101a54:
 	b.n	.L_08101ba2
 .L_08101b92:
 	movs	r0, #2
-	bl	sub_080380b8
+	bl	0x080380b8
 	b.n	.L_08101ba8
 .L_08101b9a:
 	movs	r0, #15
-	bl	sub_080380b8
+	bl	0x080380b8
 	b.n	.L_08101ba8
 .L_08101ba2:
 	movs	r0, #4
-	bl	sub_080380b8
+	bl	0x080380b8
 .L_08101ba8:
 	mov	r2, r9
 	ldrh	r3, [r5, #0]
@@ -223,7 +212,7 @@ Func_08101a54:
 	strb	r3, [r1, #3]
 	strb	r2, [r1, #6]
 	movs	r0, #3
-	bl	sub_08013560
+	bl	0x08013560
 	add	sp, #28
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

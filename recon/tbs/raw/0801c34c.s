@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080041d8, 0x080041d8
-	.set sub_080162d4, 0x080162d4
-	.set sub_080187ac, 0x080187ac
-	.set sub_0801e74c, 0x0801e74c
-	.set sub_0808a5d0, 0x0808a5d0
 	.global Func_0801c34c
 	.thumb_func
 Func_0801c34c:
@@ -26,7 +21,7 @@ Func_0801c34c:
 	adds	r3, r2, r1
 	movs	r2, #0
 	ldrsh	r1, [r3, r2]
-	bl	sub_0808a5d0
+	bl	BattleFx_FindConditionResourceFar
 	ldr	r3, [pc, #104]
 	adds	r5, r0, #0
 	adds	r5, r5, r3
@@ -36,7 +31,7 @@ Func_0801c34c:
 	add	r3, sp, #8
 	str	r0, [sp, #0]
 	adds	r0, r5, #0
-	bl	sub_080187ac
+	bl	UiText_GetResourceDimensions
 	ldr	r2, [sp, #8]
 	ldr	r3, [sp, #4]
 	movs	r0, #30
@@ -49,7 +44,7 @@ Func_0801c34c:
 	str	r1, [sp, #12]
 	str	r4, [sp, #0]
 	str	r0, [sp, #16]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r2, #140
 	lsls	r2, r2, #2
 	adds	r1, r0, #0
@@ -58,7 +53,7 @@ Func_0801c34c:
 	adds	r0, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_0801e74c
+	bl	UiText_DrawResource
 	movs	r3, #141
 	lsls	r3, r3, #2
 	adds	r2, r6, r3
@@ -67,7 +62,7 @@ Func_0801c34c:
 	strh	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #24]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	add	sp, #20
 	pop	{r5, r6}
 	pop	{r0}

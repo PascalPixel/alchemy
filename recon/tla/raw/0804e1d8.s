@@ -1,20 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002064, 0x08002064
-	.set sub_08013560, 0x08013560
-	.set sub_080143ac, 0x080143ac
-	.set sub_08039260, 0x08039260
-	.set sub_0803939c, 0x0803939c
-	.set sub_080393fc, 0x080393fc
-	.set sub_0803d3c0, 0x0803d3c0
-	.set sub_0803d5c4, 0x0803d5c4
-	.set sub_0803d8f0, 0x0803d8f0
-	.set sub_0803d9bc, 0x0803d9bc
-	.set sub_0803dab0, 0x0803dab0
-	.set sub_08042010, 0x08042010
-	.set sub_08042188, 0x08042188
-	.set sub_08042244, 0x08042244
-	.set sub_08042314, 0x08042314
 	.global Func_0804e1d8
 	.thumb_func
 Func_0804e1d8:
@@ -39,7 +24,7 @@ Func_0804e1d8:
 	ldrh	r2, [r2, #0]
 	movs	r0, #1
 	strh	r2, [r3, #4]
-	bl	sub_08013560
+	bl	0x08013560
 .L_0804e206:
 	ldr	r2, [pc, #468]
 	ldr	r3, [r2, #12]
@@ -113,22 +98,22 @@ Func_0804e1d8:
 	movs	r1, #12
 	adds	r0, #12
 	str	r2, [sp, #4]
-	bl	sub_08002064
+	bl	0x08002064
 	mov	fp, r0
 	mov	r0, r9
 	movs	r1, #3
 	adds	r0, #3
-	bl	sub_08002064
+	bl	0x08002064
 	movs	r1, #2
 	mov	r9, r0
 	mov	r0, sl
-	bl	sub_0803939c
+	bl	Func_0803939c
 	movs	r3, #12
 	movs	r0, #10
 	movs	r1, #0
 	movs	r2, #18
 	str	r5, [sp, #0]
-	bl	sub_08039260
+	bl	0x08039260
 	mov	r3, r9
 	mov	sl, r0
 	cmp	r3, #0
@@ -144,27 +129,27 @@ Func_0804e1d8:
 	mov	r1, sl
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	b.n	.L_0804e2dc
 .L_0804e2d0:
 	ldr	r0, [pc, #276]
 	mov	r1, sl
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 .L_0804e2dc:
 	ldr	r0, [pc, #268]
 	mov	r1, sl
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	movs	r3, #8
 	str	r3, [sp, #0]
 	mov	r0, fp
 	movs	r1, #0
 	mov	r2, sl
 	movs	r3, #40
-	bl	sub_08042244
+	bl	UiText_DrawNumberInWindow
 	mov	r2, fp
 	lsls	r2, r2, #5
 	mov	r8, r2
@@ -174,12 +159,12 @@ Func_0804e1d8:
 	movs	r1, #3
 	mov	r2, sl
 	movs	r3, #64
-	bl	sub_08042244
+	bl	UiText_DrawNumberInWindow
 	ldr	r0, [pc, #224]
 	mov	r1, sl
 	movs	r2, #88
 	movs	r3, #8
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	movs	r2, #8
 	mov	r0, r8
 	str	r2, [sp, #0]
@@ -187,7 +172,7 @@ Func_0804e1d8:
 	movs	r1, #3
 	mov	r2, sl
 	movs	r3, #96
-	bl	sub_08042244
+	bl	UiText_DrawNumberInWindow
 	movs	r5, #0
 .L_0804e32e:
 	movs	r3, #1
@@ -214,7 +199,7 @@ Func_0804e1d8:
 	movs	r1, #1
 	add	r2, sp, #12
 	add	r3, sp, #8
-	bl	sub_0803d5c4
+	bl	Func_0803d5c4
 	b.n	.L_0804e37a
 .L_0804e362:
 	mov	r3, r9
@@ -227,7 +212,7 @@ Func_0804e1d8:
 	movs	r1, #1
 	add	r2, sp, #12
 	add	r3, sp, #8
-	bl	sub_0803d9bc
+	bl	Func_0803d9bc
 .L_0804e37a:
 	movs	r1, #128
 	ldr	r0, [sp, #12]
@@ -235,34 +220,34 @@ Func_0804e1d8:
 	mov	r2, sl
 	adds	r3, r7, #0
 	str	r6, [sp, #0]
-	bl	sub_08042314
+	bl	0x08042314
 	b.n	.L_0804e3ac
 .L_0804e38c:
-	bl	sub_080143ac
+	bl	Func_080143ac
 	movs	r1, #0
 	adds	r2, r0, #0
 	adds	r0, r5, #0
 	str	r2, [sp, #12]
-	bl	sub_0803d8f0
+	bl	Func_0803d8f0
 	movs	r1, #128
 	ldr	r0, [sp, #12]
 	lsls	r1, r1, #23
 	mov	r2, sl
 	adds	r3, r7, #0
 	str	r6, [sp, #0]
-	bl	sub_08042314
+	bl	0x08042314
 .L_0804e3ac:
 	adds	r5, #1
 	cmp	r5, #31
 	ble.n	.L_0804e32e
 .L_0804e3b2:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	b.n	.L_0804e206
 .L_0804e3ba:
 	mov	r0, sl
 	movs	r1, #2
-	bl	sub_0803939c
+	bl	Func_0803939c
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #24]
@@ -301,7 +286,7 @@ Func_0804e1d8:
 	mov	fp, r3
 	movs	r0, #0
 	movs	r3, #5
-	bl	sub_0803d3c0
+	bl	0x0803d3c0
 	movs	r3, #2
 	movs	r2, #14
 	str	r0, [sp, #12]
@@ -309,7 +294,7 @@ Func_0804e1d8:
 	movs	r1, #10
 	movs	r3, #3
 	movs	r0, #10
-	bl	sub_08039260
+	bl	0x08039260
 	adds	r7, r0, #0
 	ldr	r0, [pc, #320]
 	movs	r5, #0
@@ -408,10 +393,10 @@ Func_0804e1d8:
 	mov	r1, sl
 	str	r0, [sp, #8]
 	adds	r0, r5, r1
-	bl	sub_08002064
+	bl	0x08002064
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	sub_080393fc
+	bl	0x080393fc
 	cmp	r5, r8
 	bge.n	.L_0804e4fa
 	ldr	r2, [pc, #128]
@@ -442,32 +427,32 @@ Func_0804e1d8:
 	add	r2, sp, #20
 	add	r3, sp, #16
 	movs	r1, #0
-	bl	sub_0803dab0
+	bl	0x0803dab0
 	movs	r3, #0
 	adds	r0, r5, #0
 	movs	r1, #2
 	adds	r2, r7, #0
 	str	r3, [sp, #0]
-	bl	sub_08042244
+	bl	UiText_DrawNumberInWindow
 	ldr	r0, [pc, #72]
 	adds	r1, r7, #0
 	adds	r0, r5, r0
 	movs	r2, #24
 	movs	r3, #0
-	bl	sub_08042010
+	bl	UiText_DrawCharacterAtOffset
 .L_0804e544:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	b.n	.L_0804e47a
 .L_0804e54c:
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	sub_0803939c
+	bl	Func_0803939c
 	movs	r1, #2
 	ldr	r0, [sp, #12]
-	bl	sub_0803939c
+	bl	Func_0803939c
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r0, #0
 	add	sp, #24
 	pop	{r3, r5, r6, r7}

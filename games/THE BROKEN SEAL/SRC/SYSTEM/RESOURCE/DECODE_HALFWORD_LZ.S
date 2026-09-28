@@ -7,7 +7,6 @@
 @ credit: library — TBS/TLA common ARM halfword-LZ decoder copied to the stack
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08002298
 	.global Resource_DecodeHalfwordLz
 Resource_DecodeHalfwordLz:
 	mov	r3, #0x80000000

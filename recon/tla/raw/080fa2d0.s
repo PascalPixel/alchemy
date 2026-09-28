@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08038010, 0x08038010
-	.set sub_080380d0, 0x080380d0
-	.set sub_08038268, 0x08038268
-	.set sub_080ad008, 0x080ad008
-	.set sub_080f88d0, 0x080f88d0
-	.set sub_080f8ce8, 0x080f8ce8
-	.set sub_08100738, 0x08100738
-	.set sub_08100d40, 0x08100d40
-	.set sub_08104fe0, 0x08104fe0
-	.set sub_081c0010, 0x081c0010
 	.global Func_080fa2d0
 	.thumb_func
 Func_080fa2d0:
@@ -33,16 +23,16 @@ Func_080fa2d0:
 	ldrb	r1, [r7, #0]
 	mov	r8, r2
 	ldrb	r2, [r2, #0]
-	bl	sub_08100738
+	bl	Func_08100738
 	movs	r3, #1
 	adds	r6, r0, #0
 	negs	r3, r3
 	cmp	r6, r3
 	bne.n	.L_080fa33a
 	movs	r0, #114
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	ldr	r0, [r5, #48]
-	bl	sub_08038268
+	bl	0x08038268
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #94
@@ -53,7 +43,7 @@ Func_080fa2d0:
 	adds	r2, r6, #0
 	adds	r0, r0, r3
 	adds	r1, r6, #0
-	bl	sub_080f8ce8
+	bl	Func_080f8ce8
 	movs	r3, #128
 	lsls	r3, r3, #2
 	adds	r3, #30
@@ -71,12 +61,12 @@ Func_080fa2d0:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	ands	r0, r3
-	bl	sub_08100d40
+	bl	Func_08100d40
 	ldrb	r0, [r7, #0]
-	bl	sub_080ad008
+	bl	0x080ad008
 	mov	r3, r8
 	ldrb	r0, [r3, #0]
-	bl	sub_080ad008
+	bl	0x080ad008
 	movs	r0, #1
 .L_080fa35e:
 	pop	{r3}
@@ -91,10 +81,10 @@ Func_080fa2d0:
 	ldr	r7, [r3, #0]
 	sub	sp, #4
 	adds	r0, r7, #0
-	bl	sub_080f88d0
+	bl	0x080f88d0
 	movs	r1, #2
 	movs	r2, #2
-	bl	sub_08104fe0
+	bl	Func_08104fe0
 	movs	r0, #151
 	ldr	r1, [pc, #8]
 	lsls	r0, r0, #1
@@ -119,7 +109,7 @@ Func_080fa2d0:
 	movs	r3, #3
 	movs	r0, #0
 	str	r6, [sp, #0]
-	bl	sub_08038010
+	bl	0x08038010
 	adds	r3, r7, #0
 	adds	r3, #244
 	str	r0, [r7, #48]
@@ -155,7 +145,7 @@ Func_080fa2d0:
 	movs	r0, #2
 	adds	r2, r7, #0
 	movs	r3, #248
-	bl	sub_080380d0
+	bl	0x080380d0
 	adds	r5, #1
 	stmia	r6!, {r0}
 	cmp	r5, #7
@@ -173,7 +163,7 @@ Func_080fa2d0:
 	movs	r0, #2
 	adds	r2, r7, #0
 	lsls	r3, r3, #1
-	bl	sub_080380d0
+	bl	0x080380d0
 	adds	r5, #1
 	stmia	r6!, {r0}
 	cmp	r5, #15
@@ -191,7 +181,7 @@ Func_080fa2d0:
 	movs	r0, #2
 	adds	r2, r7, #0
 	lsls	r3, r3, #1
-	bl	sub_080380d0
+	bl	0x080380d0
 	adds	r5, #1
 	stmia	r6!, {r0}
 	cmp	r5, #31

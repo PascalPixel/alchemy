@@ -1,22 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_080145a8, 0x080145a8
-	.set sub_08014644, 0x08014644
-	.set sub_08016d18, 0x08016d18
-	.set sub_08020090, 0x08020090
-	.set sub_08038208, 0x08038208
-	.set sub_080ad2b8, 0x080ad2b8
-	.set sub_080cad84, 0x080cad84
-	.set sub_080cdec8, 0x080cdec8
-	.set sub_080cdf5c, 0x080cdf5c
-	.set sub_080d4384, 0x080d4384
 	.global Func_080d2260
 	.thumb_func
 Func_080d2260:
 .L_080d2260:
 	push	{lr}
-	bl	sub_080cdf5c
-	bl	sub_080cad84
+	bl	0x080cdf5c
+	bl	ObjectTable_Get
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r0, #48]
@@ -39,11 +29,11 @@ Func_080d2260:
 	cmp	r3, #2
 	bne.n	.L_080d229c
 	movs	r1, #12
-	bl	sub_08020090
+	bl	Object_SetMode
 	b.n	.L_080d22a2
 .L_080d229c:
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 .L_080d22a2:
 	pop	{pc}
 	.2byte 0x0240
@@ -52,7 +42,7 @@ Func_080d2260:
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r6, [r3, #108]
-	bl	sub_08038208
+	bl	0x08038208
 	bl	.L_080d2260
 	movs	r1, #192
 	lsls	r1, r1, #4
@@ -62,7 +52,7 @@ Func_080d2260:
 	ldrsh	r3, [r3, r2]
 	cmp	r3, #0
 	beq.n	.L_080d22cc
-	bl	sub_080cdec8
+	bl	Func_080cdec8
 .L_080d22cc:
 	movs	r1, #203
 	movs	r2, #192
@@ -107,10 +97,10 @@ Func_080d2260:
 	strh	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #36]
-	bl	sub_080145a8
+	bl	0x080145a8
 	movs	r0, #153
 	lsls	r0, r0, #1
-	bl	sub_08016d18
+	bl	0x08016d18
 	ldr	r3, [pc, #28]
 	movs	r1, #240
 	lsls	r1, r1, #1
@@ -129,7 +119,7 @@ Func_080d2260:
 	.2byte 0x0200
 	push	{lr}
 	ldr	r0, [pc, #52]
-	bl	sub_08014644
+	bl	Func_08014644
 	ldr	r2, [pc, #48]
 	movs	r1, #128
 	lsls	r1, r1, #2
@@ -144,14 +134,14 @@ Func_080d2260:
 	adds	r3, r2, r1
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_080d4384
+	bl	0x080d4384
 	b.n	.L_080d2382
 .L_080d237a:
 	movs	r0, #8
 	movs	r1, #1
-	bl	sub_080d4384
+	bl	0x080d4384
 .L_080d2382:
-	bl	sub_080ad2b8
+	bl	Func_080ad2b8
 	pop	{pc}
 	.4byte 0x080d21f5
 	.2byte 0x0240

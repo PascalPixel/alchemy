@@ -1,20 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08013164, 0x08013164
-	.set sub_08014878, 0x08014878
-	.set sub_08014dac, 0x08014dac
-	.set sub_08014de4, 0x08014de4
-	.set sub_08015024, 0x08015024
-	.set sub_08015068, 0x08015068
-	.set sub_08015128, 0x08015128
-	.set sub_08015768, 0x08015768
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080381c0, 0x080381c0
-	.set sub_080ad008, 0x080ad008
-	.set sub_0811a188, 0x0811a188
-	.set sub_0811a31c, 0x0811a31c
-	.set sub_08126548, 0x08126548
 	.global Func_0811cd7c
 	.thumb_func
 Func_0811cd7c:
@@ -48,16 +33,16 @@ Func_0811cd7c:
 	str	r6, [r5, #24]
 	sub	sp, #16
 	mov	sl, r0
-	bl	sub_08014de4
+	bl	Func_08014de4
 	adds	r0, r5, #0
 	adds	r0, #12
-	bl	sub_08015128
+	bl	0x08015128
 	movs	r3, #54
 	ldrsh	r0, [r5, r3]
-	bl	sub_08015068
+	bl	0x08015068
 	movs	r2, #52
 	ldrsh	r0, [r5, r2]
-	bl	sub_08015024
+	bl	0x08015024
 	add	r0, sp, #4
 	str	r6, [r0, #0]
 	str	r6, [r0, #4]
@@ -77,7 +62,7 @@ Func_0811cd7c:
 	.2byte 0x4a14
 	adds	r1, r0, #0
 	movs	r0, #0
-	bl	sub_08015768
+	bl	Camera_StoreSceneParameters
 	ldr	r2, [pc, #76]
 	mov	r3, sl
 	adds	r3, #120
@@ -96,7 +81,7 @@ Func_0811cd7c:
 	lsls	r1, r1, #16
 	lsls	r3, r3, #4
 	movs	r2, #0
-	bl	sub_08126548
+	bl	0x08126548
 	mov	r3, r8
 	str	r5, [r3, #20]
 	str	r6, [r3, #16]
@@ -120,7 +105,7 @@ Func_0811cd7c:
 	mov	r5, sp
 	movs	r0, #3
 	adds	r1, r5, #0
-	bl	sub_0811a31c
+	bl	0x0811a31c
 	cmp	r0, #0
 	ble.n	.L_0811ce8c
 	movs	r6, #0
@@ -129,7 +114,7 @@ Func_0811cd7c:
 	adds	r5, r0, #0
 .L_0811ce6e:
 	ldrh	r0, [r6, r7]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #44
 	adds	r2, #255
 	adds	r3, r0, r2
@@ -137,7 +122,7 @@ Func_0811cd7c:
 	ldrh	r0, [r6, r7]
 	strb	r2, [r3, #0]
 	subs	r5, #1
-	bl	sub_080ad008
+	bl	0x080ad008
 	adds	r6, #2
 	cmp	r5, #0
 	bne.n	.L_0811ce6e
@@ -186,7 +171,7 @@ Func_0811cd7c:
 	mov	sl, r3
 	mov	r1, sl
 	mov	r9, r2
-	bl	sub_0811a188
+	bl	0x0811a188
 	ldr	r2, [sp, #4]
 	mov	r8, r0
 	cmp	r2, r8
@@ -197,7 +182,7 @@ Func_0811cd7c:
 .L_0811cef4:
 	mov	r3, fp
 	ldrsh	r0, [r7, r3]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, r6, r3
@@ -211,11 +196,11 @@ Func_0811cd7c:
 	adds	r0, r0, r6
 	mov	r1, r8
 	lsls	r0, r0, #2
-	bl	sub_08002054
+	bl	Math_Div
 	mov	r1, sl
 	add	r9, r0
 	movs	r0, #2
-	bl	sub_0811a188
+	bl	0x0811a188
 	movs	r6, #0
 	mov	r8, r0
 	cmp	r6, r8
@@ -225,7 +210,7 @@ Func_0811cd7c:
 .L_0811cf2e:
 	mov	r3, sl
 	ldrsh	r0, [r7, r3]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, r6, r3
@@ -239,13 +224,13 @@ Func_0811cd7c:
 	adds	r0, r0, r6
 	lsls	r0, r0, #2
 	mov	r1, r8
-	bl	sub_08002054
+	bl	Math_Div
 	mov	r3, r9
 	subs	r3, r3, r0
 	mov	r9, r3
 	cmp	r3, #0
 	ble.n	.L_0811cf72
-	bl	sub_08014878
+	bl	0x08014878
 	movs	r3, #156
 	lsls	r3, r3, #6
 	adds	r3, #16
@@ -286,12 +271,12 @@ Func_0811cd7c:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	movs	r0, #17
-	bl	sub_08014dac
+	bl	0x08014dac
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	adds	r0, r5, #0
 	movs	r2, #0
-	bl	sub_080381c0
+	bl	Func_080381c0
 	movs	r5, #1
 	negs	r5, r5
 	cmp	r0, #0
@@ -299,7 +284,7 @@ Func_0811cd7c:
 	adds	r5, r0, #0
 .L_0811cfc4:
 	adds	r0, r6, #0
-	bl	sub_08013164
+	bl	Func_08013164
 	adds	r0, r5, #0
 	pop	{r5, r6, pc}
 	.2byte 0x0000

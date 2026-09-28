@@ -1,77 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_080030f8, 0x080030f8
-	.set sub_080040e8, 0x080040e8
-	.set sub_080048f4, 0x080048f4
-	.set sub_080072e4, 0x080072e4
-	.set sub_08009078, 0x08009078
-	.set sub_08009080, 0x08009080
-	.set sub_080090a0, 0x080090a0
-	.set sub_080090a8, 0x080090a8
-	.set sub_080090b0, 0x080090b0
-	.set sub_080090b8, 0x080090b8
-	.set sub_08009110, 0x08009110
-	.set sub_08009118, 0x08009118
-	.set sub_08009128, 0x08009128
-	.set sub_08009130, 0x08009130
-	.set sub_08009138, 0x08009138
-	.set sub_08009140, 0x08009140
-	.set sub_08015000, 0x08015000
-	.set sub_08015040, 0x08015040
-	.set sub_08015120, 0x08015120
-	.set sub_080151e8, 0x080151e8
-	.set sub_08015200, 0x08015200
-	.set sub_08015208, 0x08015208
-	.set sub_08015288, 0x08015288
-	.set sub_08015290, 0x08015290
-	.set sub_08015370, 0x08015370
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_080770c8, 0x080770c8
-	.set sub_080770d0, 0x080770d0
-	.set sub_080772f0, 0x080772f0
-	.set sub_0808ace0, 0x0808ace0
-	.set sub_0808b1d8, 0x0808b1d8
-	.set sub_0808b674, 0x0808b674
-	.set sub_0808ba38, 0x0808ba38
-	.set sub_0808bb2c, 0x0808bb2c
-	.set sub_0808bc44, 0x0808bc44
-	.set sub_0808bc9c, 0x0808bc9c
-	.set sub_0808bec0, 0x0808bec0
-	.set sub_0808c44c, 0x0808c44c
-	.set sub_0808c4c0, 0x0808c4c0
-	.set sub_0808ce74, 0x0808ce74
-	.set sub_0808cf78, 0x0808cf78
-	.set sub_0808d0c8, 0x0808d0c8
-	.set sub_0808d5a4, 0x0808d5a4
-	.set sub_0808d5dc, 0x0808d5dc
-	.set sub_0808d7d8, 0x0808d7d8
-	.set sub_0808d828, 0x0808d828
-	.set sub_0808d8f0, 0x0808d8f0
-	.set sub_0808d9a4, 0x0808d9a4
-	.set sub_0808ddec, 0x0808ddec
-	.set sub_0808e118, 0x0808e118
-	.set sub_0808e23c, 0x0808e23c
-	.set sub_0808e680, 0x0808e680
-	.set sub_0808e9c0, 0x0808e9c0
-	.set sub_0808fefc, 0x0808fefc
-	.set sub_080901c0, 0x080901c0
-	.set sub_08091174, 0x08091174
-	.set sub_08091200, 0x08091200
-	.set sub_08091660, 0x08091660
-	.set sub_080919d8, 0x080919d8
-	.set sub_08091a58, 0x08091a58
-	.set sub_080941e0, 0x080941e0
-	.set sub_08094428, 0x08094428
-	.set sub_08095680, 0x08095680
-	.set sub_08095778, 0x08095778
-	.set sub_08099810, 0x08099810
-	.set sub_0809c138, 0x0809c138
-	.set sub_0809c3a4, 0x0809c3a4
-	.set sub_080f9010, 0x080f9010
-	.set sub_080f9070, 0x080f9070
 	.global Func_0808c4f8
 	.thumb_func
 Func_0808c4f8:
@@ -85,7 +13,7 @@ Func_0808c4f8:
 	ldr	r1, [pc, #744]
 	movs	r0, #27
 	sub	sp, #16
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r7, #0
 	mov	r8, r0
 	add	r0, sp, #12
@@ -96,7 +24,7 @@ Func_0808c4f8:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	ldr	r0, [pc, #728]
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	ldr	r5, [pc, #724]
 	movs	r1, #224
 	lsls	r1, r1, #1
@@ -128,9 +56,9 @@ Func_0808c4f8:
 	strh	r3, [r2, #0]
 	adds	r2, r5, r1
 	strh	r3, [r2, #0]
-	bl	sub_080040e8
+	bl	Scheduler_ResetTaskTable
 	movs	r0, #0
-	bl	sub_08095778
+	bl	Djinn_ResolvePendingEvent
 	movs	r2, #237
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -139,7 +67,7 @@ Func_0808c4f8:
 	ldr	r3, [pc, #652]
 	cmp	r0, r3
 	bne.n	.L_0808c598
-	bl	sub_08009118
+	bl	0x08009118
 	movs	r1, #137
 	lsls	r1, r1, #2
 	adds	r2, r5, r1
@@ -147,36 +75,36 @@ Func_0808c4f8:
 	strb	r3, [r2, #0]
 	movs	r0, #0
 	movs	r6, #3
-	bl	sub_0808ace0
+	bl	BattleFx_SelectLocationRule
 	b.n	.L_0808c5a4
 .L_0808c598:
-	bl	sub_08009110
+	bl	0x08009110
 	movs	r0, #1
 	movs	r6, #2
-	bl	sub_0808ace0
+	bl	BattleFx_SelectLocationRule
 .L_0808c5a4:
 	movs	r3, #207
 	lsls	r3, r3, #1
 	add	r3, r8
 	strh	r6, [r3, #0]
 	adds	r0, r6, #0
-	bl	sub_08009078
-	bl	sub_08015000
-	bl	sub_0808bc44
+	bl	0x08009078
+	bl	Func_08015000
+	bl	BattleFx_ResetCounters
 	ldr	r5, [pc, #592]
 	ldr	r0, [r5, #36]
-	bl	sub_080072e4
+	bl	_call_via_r0
 	mov	r2, r8
 	str	r0, [r2, #16]
-	bl	sub_0808cf78
+	bl	BattleMap_ApplyEntranceView
 	ldr	r0, [r5, #28]
-	bl	sub_080072e4
-	bl	sub_0808b674
+	bl	_call_via_r0
+	bl	ObjectTable_ResetForObject
 	ldr	r0, [pc, #568]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808c5e2
-	bl	sub_0808bb2c
+	bl	ObjectTable_Restore
 .L_0808c5e2:
 	ldr	r5, [pc, #540]
 	movs	r4, #141
@@ -186,11 +114,11 @@ Func_0808c4f8:
 	ldrsh	r3, [r3, r1]
 	cmp	r3, #0
 	beq.n	.L_0808c5f6
-	bl	sub_08095680
+	bl	FieldObject_PlaceSceneActors
 .L_0808c5f6:
 	cmp	r6, #3
 	bne.n	.L_0808c614
-	bl	sub_08009130
+	bl	0x08009130
 	movs	r2, #238
 	lsls	r2, r2, #1
 	movs	r4, #242
@@ -199,17 +127,17 @@ Func_0808c4f8:
 	ldr	r0, [r3, #0]
 	adds	r3, r5, r4
 	ldr	r1, [r3, #0]
-	bl	sub_08009138
+	bl	0x08009138
 	b.n	.L_0808c618
 .L_0808c614:
-	bl	sub_08009128
+	bl	Map_ApplyWorkOriginAndSpanFar
 .L_0808c618:
-	bl	sub_0808e9c0
-	bl	sub_08091174
+	bl	Battle_PlaceMapMarkers
+	bl	BattleEffect_InitializeBuffers
 	movs	r0, #128
 	movs	r1, #0
 	lsls	r0, r0, #9
-	bl	sub_08091200
+	bl	BattleFx_ApplyColorToTargetBuffer
 	movs	r2, #224
 	lsls	r2, r2, #1
 	add	r2, r8
@@ -247,7 +175,7 @@ Func_0808c4f8:
 	movs	r0, #162
 	str	r6, [r2, #0]
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 .L_0808c678:
 	movs	r3, #222
 	ldr	r1, [pc, #404]
@@ -257,10 +185,10 @@ Func_0808c4f8:
 	mov	r9, r1
 	str	r2, [r3, #0]
 	mov	r0, r9
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808c6bc
-	bl	sub_0808b1d8
+	bl	Party_ResolveTablePair
 	movs	r2, #139
 	lsls	r2, r2, #2
 	ldr	r1, [pc, #388]
@@ -282,14 +210,14 @@ Func_0808c4f8:
 	adds	r3, r5, r1
 	strh	r6, [r3, #0]
 .L_0808c6bc:
-	bl	sub_08099810
+	bl	BattleFx_ScheduleCallbackWhenValue24cSet
 	ldr	r2, [pc, #356]
 	ldr	r3, [pc, #320]
 	add	r2, r8
 	strh	r3, [r2, #0]
 	ldr	r3, [pc, #320]
 	ldr	r0, [r3, #4]
-	bl	sub_080072e4
+	bl	_call_via_r0
 	movs	r3, #184
 	lsls	r3, r3, #1
 	add	r3, r8
@@ -307,8 +235,8 @@ Func_0808c4f8:
 	b.n	.L_0808ce1c
 .L_0808c6ec:
 	mov	r0, r9
-	bl	sub_080770d0
-	bl	sub_0808bc9c
+	bl	GameFlag_ClearBitFar
+	bl	BattleFx_SumCounters
 	cmp	r0, #0
 	bne.n	.L_0808c794
 	ldrh	r5, [r7, #0]
@@ -318,13 +246,13 @@ Func_0808c4f8:
 	mov	r4, sl
 	ldr	r0, [r3, #0]
 	ldr	r1, [r4, #0]
-	bl	sub_0808fefc
+	bl	DisplayTransition_Start
 	movs	r3, #1
 	strh	r3, [r7, #0]
 	movs	r3, #160
 	lsls	r3, r3, #19
 	strh	r5, [r3, #0]
-	bl	sub_08094428
+	bl	ObjectEffect_RunPendingFlagEvent
 	cmp	r0, #0
 	bne.n	.L_0808c72e
 	mov	r1, sl
@@ -333,22 +261,22 @@ Func_0808c4f8:
 	lsrs	r3, r0, #31
 	adds	r0, r0, r3
 	asrs	r0, r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_0808c72e:
 	ldr	r5, [pc, #252]
 	adds	r0, r5, #0
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808c750
 	adds	r0, r5, #0
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	ldr	r3, [pc, #188]
 	movs	r2, #224
 	lsls	r2, r2, #1
 	adds	r3, r3, r2
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
-	bl	sub_08015200
+	bl	Func_08015200
 .L_0808c750:
 	ldr	r5, [pc, #172]
 	movs	r1, #141
@@ -359,7 +287,7 @@ Func_0808c4f8:
 	cmp	r0, #0
 	beq.n	.L_0808c76a
 	movs	r1, #1
-	bl	sub_08095778
+	bl	Djinn_ResolvePendingEvent
 	movs	r3, #0
 	strh	r3, [r6, #0]
 .L_0808c76a:
@@ -369,16 +297,16 @@ Func_0808c4f8:
 	ldrh	r3, [r5, #0]
 	cmp	r3, #0
 	beq.n	.L_0808c794
-	bl	sub_0808c44c
+	bl	Battle_SetObjectFlag5bWhenMode3
 	ldrh	r0, [r5, #0]
-	bl	sub_080919d8
+	bl	Party_CheckMemberValueTotal
 	cmp	r0, #0
 	bne.n	.L_0808c78c
 	ldrh	r0, [r5, #0]
 	movs	r1, #0
-	bl	sub_08091a58
+	bl	PartyInventory_GiveItem
 .L_0808c78c:
-	bl	sub_0808c4c0
+	bl	Battle_ClearObjectFlag5bWhenMode3
 	movs	r3, #0
 	strh	r3, [r5, #0]
 .L_0808c794:
@@ -389,7 +317,7 @@ Func_0808c4f8:
 .L_0808c79c:
 	movs	r0, #130
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	ldr	r2, [pc, #136]
 	ldr	r3, [r2, #0]
 	lsls	r3, r3, #2
@@ -398,7 +326,7 @@ Func_0808c4f8:
 	ldr	r3, [r4, r3]
 	mov	sl, r3
 	mov	r0, sl
-	bl	sub_08009140
+	bl	Object_ResetMotion
 	mov	r1, sl
 	movs	r2, #238
 	ldr	r3, [r1, #8]
@@ -477,8 +405,8 @@ Func_0808c4f8:
 	beq.n	.L_0808c86e
 	b.n	.L_0808c9d4
 .L_0808c86e:
-	bl	sub_08091660
-	bl	sub_0808c44c
+	bl	Battle_InitializeRenderObject
+	bl	Battle_SetObjectFlag5bWhenMode3
 	movs	r3, #194
 	lsls	r3, r3, #1
 	add	r3, r8
@@ -496,14 +424,14 @@ Func_0808c4f8:
 .L_0808c894:
 	mov	r0, sl
 	movs	r1, #22
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	mov	r1, r8
 	ldrsh	r0, [r5, r1]
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #80]
 	movs	r1, #1
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	movs	r3, #194
 	lsls	r3, r3, #1
 	add	r3, r8
@@ -528,17 +456,17 @@ Func_0808c4f8:
 	cmp	r3, #0
 	bne.n	.L_0808c900
 	movs	r0, #32
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808c8ec
 	mov	r0, sl
 	movs	r1, #21
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	b.n	.L_0808c908
 .L_0808c8ec:
 	mov	r0, sl
 	movs	r1, #37
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	b.n	.L_0808c908
 	movs	r0, r0
 	.4byte 0x0000091a
@@ -547,16 +475,16 @@ Func_0808c4f8:
 .L_0808c900:
 	mov	r0, sl
 	movs	r1, #19
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 .L_0808c908:
 	movs	r0, #59
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	ldr	r0, [pc, #52]
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	ldr	r3, [pc, #52]
 	ldr	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r4, [pc, #36]
 	adds	r6, r0, #0
 	strh	r4, [r6, #56]
@@ -565,7 +493,7 @@ Func_0808c4f8:
 	adds	r0, r5, #0
 	movs	r2, #52
 	ldrsh	r1, [r6, r2]
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -596,7 +524,7 @@ Func_0808c4f8:
 	movs	r3, #54
 	ldrsh	r1, [r6, r3]
 	lsls	r0, r0, #14
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -634,11 +562,11 @@ Func_0808c4f8:
 	ldrh	r3, [r3, #0]
 	ldr	r2, [pc, #20]
 	strh	r3, [r2, #0]
-	bl	sub_0808c4c0
+	bl	Battle_ClearObjectFlag5bWhenMode3
 	ldr	r7, [pc, #16]
 	b.n	.L_0808ce1c
 .L_0808c9c0:
-	bl	sub_0808c4c0
+	bl	Battle_ClearObjectFlag5bWhenMode3
 	b.n	.L_0808c9fa
 	movs	r0, r0
 	.4byte 0x00000001
@@ -649,19 +577,19 @@ Func_0808c4f8:
 	ldr	r3, [pc, #200]
 	cmp	r0, r3
 	bne.n	.L_0808c9e6
-	bl	sub_08091660
+	bl	Battle_InitializeRenderObject
 	ldr	r0, [pc, #196]
-	bl	sub_0809c138
+	bl	Map_ShowWorldMap
 	b.n	.L_0808c9fa
 .L_0808c9e6:
 	ldr	r4, [pc, #192]
 	cmp	r0, r4
 	bne.n	.L_0808c9f6
-	bl	sub_08091660
-	bl	sub_0809c3a4
+	bl	Battle_InitializeRenderObject
+	bl	BattleFx_RunVisibilityTransition
 	b.n	.L_0808c9fa
 .L_0808c9f6:
-	bl	sub_0808d7d8
+	bl	BattleFx_RunKind6DescriptorAction
 .L_0808c9fa:
 	ldr	r3, [pc, #176]
 	mov	r1, fp
@@ -682,8 +610,8 @@ Func_0808c4f8:
 	cmp	r7, #0
 	beq.n	.L_0808ca5e
 	str	r1, [sp, #4]
-	bl	sub_08091660
-	bl	sub_0808ba38
+	bl	Battle_InitializeRenderObject
+	bl	ObjectTable_Snapshot
 	ldr	r2, [pc, #136]
 	ldr	r3, [pc, #136]
 	add	r2, r9
@@ -702,7 +630,7 @@ Func_0808c4f8:
 	strh	r3, [r1, #0]
 	movs	r1, #0
 	ldrsh	r0, [r5, r1]
-	bl	sub_080941e0
+	bl	Func_080941e0
 	movs	r3, #212
 	lsls	r3, r3, #1
 	ldr	r2, [pc, #108]
@@ -726,7 +654,7 @@ Func_0808c4f8:
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
 	str	r3, [sp, #0]
-	bl	sub_0808d828
+	bl	BattleAction_RunDescriptor
 	ldr	r3, [sp, #0]
 	strh	r7, [r5, #0]
 	strh	r7, [r3, #0]
@@ -739,7 +667,7 @@ Func_0808c4f8:
 	ldrsh	r0, [r5, r3]
 	cmp	r0, #0
 	beq.n	.L_0808cac4
-	bl	sub_0808d8f0
+	bl	Battle_DispatchInputEvent
 	strh	r6, [r5, #0]
 	b.n	.L_0808cd76
 	.4byte 0x00000001
@@ -761,17 +689,17 @@ Func_0808c4f8:
 	ldrsh	r3, [r3, r4]
 	cmp	r3, #0
 	beq.n	.L_0808cb4c
-	bl	sub_08015208
+	bl	UiTimedNotice_CloseIfActiveFar
 	ldr	r1, [pc, #64]
 	ldr	r0, [r1, #0]
-	bl	sub_0808ddec
+	bl	Func_0808ddec
 	movs	r2, #1
 	adds	r5, r0, #0
 	negs	r2, r2
 	movs	r6, #0
 	cmp	r5, r2
 	beq.n	.L_0808caf6
-	bl	sub_0808d5a4
+	bl	BattleFx_FindDescriptorWithOverride
 	cmp	r0, #0
 	beq.n	.L_0808caf4
 	movs	r0, #1
@@ -797,7 +725,7 @@ Func_0808c4f8:
 	.2byte 0x0434
 	.2byte 0x0200
 .L_0808cb1c:
-	bl	sub_0808ce74
+	bl	Object_GetTriggerTileAheadOfCurrent
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_0808cb3a
@@ -830,14 +758,14 @@ Func_0808c4f8:
 	ldrsh	r7, [r3, r1]
 	cmp	r7, #0
 	beq.n	.L_0808cbe4
-	bl	sub_08015208
-	bl	sub_08091660
+	bl	UiTimedNotice_CloseIfActiveFar
+	bl	Battle_InitializeRenderObject
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_0808c44c
+	bl	Audio_PlayCue
+	bl	Battle_SetObjectFlag5bWhenMode3
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	ldr	r3, [pc, #96]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
@@ -853,11 +781,11 @@ Func_0808c4f8:
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_0808cb98
-	bl	sub_08015290
+	bl	0x08015290
 	b.n	.L_0808cbbe
 .L_0808cb98:
 	ldr	r0, [pc, #68]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808cbae
 	movs	r2, #193
@@ -871,15 +799,15 @@ Func_0808c4f8:
 	lsls	r5, r5, #4
 	add	r5, r8
 	strh	r0, [r5, #0]
-	bl	sub_080151e8
+	bl	0x080151e8
 	ldr	r2, [pc, #24]
 	strh	r2, [r5, #0]
 .L_0808cbbe:
-	bl	sub_0808c4c0
+	bl	Battle_ClearObjectFlag5bWhenMode3
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	sub_080770d0
-	bl	sub_080772f0
+	bl	GameFlag_ClearBitFar
+	bl	GameFlag_RefreshLureCapFar
 	movs	r3, #185
 	b.n	.L_0808cd6e
 	movs	r0, r0
@@ -896,11 +824,11 @@ Func_0808c4f8:
 	ldrsh	r6, [r5, r1]
 	cmp	r6, #0
 	beq.n	.L_0808cc02
-	bl	sub_0808c44c
+	bl	Battle_SetObjectFlag5bWhenMode3
 	ldrh	r3, [r5, #0]
 	ldr	r0, [pc, #36]
 	ands	r0, r3
-	bl	sub_0808d5dc
+	bl	BattleFx_RunDescriptorAction
 	b.n	.L_0808cc42
 .L_0808cc02:
 	movs	r5, #189
@@ -910,10 +838,10 @@ Func_0808c4f8:
 	ldrsh	r7, [r5, r2]
 	cmp	r7, #0
 	beq.n	.L_0808cc24
-	bl	sub_0808c44c
+	bl	Battle_SetObjectFlag5bWhenMode3
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
-	bl	sub_0808d9a4
+	bl	Func_0808d9a4
 	b.n	.L_0808cc6e
 	movs	r0, r0
 	.2byte 0x0fff
@@ -926,13 +854,13 @@ Func_0808c4f8:
 	ldrsh	r6, [r5, r4]
 	cmp	r6, #0
 	beq.n	.L_0808cc4a
-	bl	sub_08015208
-	bl	sub_0808c44c
+	bl	UiTimedNotice_CloseIfActiveFar
+	bl	Battle_SetObjectFlag5bWhenMode3
 	movs	r1, #0
 	ldrsh	r0, [r5, r1]
-	bl	sub_0808e680
+	bl	BattleCommand_ExecuteSelectedAction
 .L_0808cc42:
-	bl	sub_0808c4c0
+	bl	Battle_ClearObjectFlag5bWhenMode3
 	strh	r7, [r5, #0]
 	b.n	.L_0808cd76
 .L_0808cc4a:
@@ -943,7 +871,7 @@ Func_0808c4f8:
 	ldrsh	r3, [r5, r2]
 	cmp	r3, #0
 	beq.n	.L_0808cc76
-	bl	sub_0808c44c
+	bl	Battle_SetObjectFlag5bWhenMode3
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
 	movs	r3, #205
@@ -951,9 +879,9 @@ Func_0808c4f8:
 	add	r3, r8
 	movs	r4, #0
 	ldrsh	r1, [r3, r4]
-	bl	sub_0808e23c
+	bl	BattleCommand_ExecuteSelectedItem
 .L_0808cc6e:
-	bl	sub_0808c4c0
+	bl	Battle_ClearObjectFlag5bWhenMode3
 	strh	r6, [r5, #0]
 	b.n	.L_0808cd76
 .L_0808cc76:
@@ -965,12 +893,12 @@ Func_0808c4f8:
 	cmp	r3, #0
 	beq.n	.L_0808cd76
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_08091660
-	bl	sub_0808c44c
+	bl	Audio_PlayCue
+	bl	Battle_InitializeRenderObject
+	bl	Battle_SetObjectFlag5bWhenMode3
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	ldr	r1, [pc, #164]
 	ldrb	r3, [r1, #0]
 	cmp	r3, #0
@@ -981,7 +909,7 @@ Func_0808c4f8:
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_0808ccb4
-	bl	sub_08015288
+	bl	0x08015288
 	b.n	.L_0808cd60
 .L_0808ccb4:
 	ldrb	r3, [r1, #0]
@@ -994,11 +922,11 @@ Func_0808c4f8:
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_0808ccce
-	bl	sub_0808d0c8
+	bl	Debug_RunPaletteEditor
 	b.n	.L_0808cd60
 .L_0808ccce:
 	ldr	r0, [pc, #120]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808cce4
 	movs	r2, #193
@@ -1008,15 +936,15 @@ Func_0808c4f8:
 	strh	r3, [r2, #0]
 	b.n	.L_0808cd60
 .L_0808cce4:
-	bl	sub_0808e118
-	bl	sub_08015208
-	bl	sub_080f9070
+	bl	Battle_ResetEffectCounter
+	bl	UiTimedNotice_CloseIfActiveFar
+	bl	Func_080f9070
 	ldr	r3, [pc, #88]
 	add	r3, r9
 	strh	r0, [r3, #0]
 	movs	r0, #191
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808cd58
 	ldr	r3, [pc, #76]
@@ -1042,10 +970,10 @@ Func_0808c4f8:
 	ldr	r2, [pc, #20]
 	movs	r0, #1
 	strh	r2, [r5, #4]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_0808cd30:
 	movs	r0, #0
-	bl	sub_08015370
+	bl	Func_08015370
 	mov	r3, fp
 	strh	r3, [r5, #4]
 	b.n	.L_0808cd60
@@ -1060,12 +988,12 @@ Func_0808c4f8:
 .L_0808cd58:
 	ldr	r0, [pc, #260]
 	movs	r1, #1
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 .L_0808cd60:
-	bl	sub_0808c4c0
+	bl	Battle_ClearObjectFlag5bWhenMode3
 	movs	r0, #131
 	lsls	r0, r0, #1
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	movs	r3, #187
 .L_0808cd6e:
 	lsls	r3, r3, #1
@@ -1073,14 +1001,14 @@ Func_0808c4f8:
 	mov	r4, fp
 	strh	r4, [r3, #0]
 .L_0808cd76:
-	bl	sub_0808bc9c
+	bl	BattleFx_SumCounters
 	cmp	r0, #0
 	beq.n	.L_0808cd80
 	b.n	.L_0808c838
 .L_0808cd80:
 	movs	r0, #130
 	lsls	r0, r0, #1
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	ldr	r1, [pc, #216]
 	ldr	r3, [r1, #0]
 	lsls	r3, r3, #2
@@ -1098,13 +1026,13 @@ Func_0808c4f8:
 	cmp	r3, #2
 	bne.n	.L_0808cdb0
 	mov	r0, sl
-	bl	sub_080090b8
+	bl	0x080090b8
 	b.n	.L_0808cdd8
 .L_0808cdb0:
 	cmp	r3, #1
 	bne.n	.L_0808cdbc
 	mov	r0, sl
-	bl	sub_080090b0
+	bl	0x080090b0
 	b.n	.L_0808cdd8
 .L_0808cdbc:
 	movs	r3, #207
@@ -1115,16 +1043,16 @@ Func_0808c4f8:
 	cmp	r3, #3
 	bne.n	.L_0808cdd2
 	mov	r0, sl
-	bl	sub_080090a8
+	bl	0x080090a8
 	b.n	.L_0808cdd8
 .L_0808cdd2:
 	mov	r0, sl
-	bl	sub_080090a0
+	bl	0x080090a0
 .L_0808cdd8:
 	ldr	r5, [pc, #136]
 .L_0808cdda:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [r5, #0]
 	lsls	r3, r3, #2
 	adds	r3, #20
@@ -1136,7 +1064,7 @@ Func_0808c4f8:
 	cmp	r3, #0
 	beq.n	.L_0808cdfe
 	ldr	r0, [pc, #120]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808ce12
 .L_0808cdfe:
@@ -1148,9 +1076,9 @@ Func_0808c4f8:
 	ldr	r1, [r2, #8]
 	ldr	r3, [r4, #16]
 	ldr	r2, [r2, #12]
-	bl	sub_0808bec0
+	bl	Field_ProcessStep
 .L_0808ce12:
-	bl	sub_0808bc9c
+	bl	BattleFx_SumCounters
 	cmp	r0, #0
 	beq.n	.L_0808cdda
 	b.n	.L_0808c79c
@@ -1169,14 +1097,14 @@ Func_0808c4f8:
 	add	r5, r8
 	ldr	r0, [r3, #0]
 	ldr	r1, [r5, #0]
-	bl	sub_080901c0
+	bl	DisplayTransition_Finish
 	movs	r3, #0
 	strh	r3, [r6, #0]
 	ldr	r0, [r5, #0]
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_0808ce46:
 	movs	r0, #27
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	adds	r0, r7, #0
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

@@ -7,8 +7,6 @@
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08000a30
-	.set AlchemyRunAddress, 0x03000478
 	.4byte	0x00010000
 	.4byte	0x00000000
 	.4byte	0x00000000

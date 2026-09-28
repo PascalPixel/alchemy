@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common sound-driver mixer and clear-buffer module
 .syntax unified
 	.thumb
-	.set AlchemyRunAddress, 0x03007000
 	.global Func_080f9674
 	.thumb_func
 Func_080f9674:

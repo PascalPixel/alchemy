@@ -10,7 +10,6 @@
 	.thumb_func
 	.set	.L_08118394, 0x08118394
 	.arm
-	.set AlchemyLoadAddress, 0x08118410
 	.thumb
 	.global ColorBuffer_Scale
 	.thumb_func

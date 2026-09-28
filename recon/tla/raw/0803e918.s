@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_0803e5a8, 0x0803e5a8
-	.set sub_0803ebdc, 0x0803ebdc
-	.set sub_0803ed98, 0x0803ed98
-	.set sub_0803ef48, 0x0803ef48
-	.set sub_0803ef8c, 0x0803ef8c
-	.set sub_0803f004, 0x0803f004
-	.set sub_0803f3c8, 0x0803f3c8
-	.set sub_081c0010, 0x081c0010
 	.global Func_0803e918
 	.thumb_func
 Func_0803e918:
@@ -19,10 +10,10 @@ Func_0803e918:
 	adds	r6, r0, #0
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	sub_0803ef8c
+	bl	0x0803ef8c
 .L_0803e92a:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r2, #232
 	lsls	r2, r2, #2
 	adds	r3, r5, r2
@@ -41,7 +32,7 @@ Func_0803e918:
 	cmp	r3, #0
 	beq.n	.L_0803e95a
 	adds	r0, r5, #0
-	bl	sub_0803ebdc
+	bl	Func_0803ebdc
 	b.n	.L_0803e97e
 .L_0803e95a:
 	ldr	r3, [r1, #12]
@@ -50,7 +41,7 @@ Func_0803e918:
 	cmp	r3, #0
 	beq.n	.L_0803e96c
 	adds	r0, r5, #0
-	bl	sub_0803ed98
+	bl	Func_0803ed98
 	b.n	.L_0803e97e
 .L_0803e96c:
 	ldr	r3, [r1, #4]
@@ -59,7 +50,7 @@ Func_0803e918:
 	cmp	r3, #0
 	beq.n	.L_0803e97e
 	adds	r0, r5, #0
-	bl	sub_0803f3c8
+	bl	0x0803f3c8
 	b.n	.L_0803e992
 .L_0803e97e:
 	cmp	r6, #0
@@ -83,7 +74,7 @@ Func_0803e918:
 	adds	r7, r0, #0
 .L_0803e9a2:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r1, #232
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
@@ -102,9 +93,9 @@ Func_0803e918:
 	cmp	r3, #0
 	beq.n	.L_0803e9d8
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	adds	r0, r5, #0
-	bl	sub_0803ebdc
+	bl	Func_0803ebdc
 	b.n	.L_0803e9ee
 .L_0803e9d8:
 	ldr	r3, [r6, #12]
@@ -113,9 +104,9 @@ Func_0803e918:
 	cmp	r3, #0
 	beq.n	.L_0803e9ee
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	adds	r0, r5, #0
-	bl	sub_0803ed98
+	bl	Func_0803ed98
 .L_0803e9ee:
 	ldr	r3, [r6, #4]
 	movs	r2, #1
@@ -140,15 +131,15 @@ Func_0803e918:
 	cmp	r6, #0
 	bne.n	.L_0803ea22
 	movs	r0, #112
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	b.n	.L_0803ea30
 .L_0803ea22:
 	movs	r0, #113
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	b.n	.L_0803ea30
 .L_0803ea2a:
 	movs	r0, #112
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 .L_0803ea30:
 	adds	r0, r6, #0
 	b.n	.L_0803ea4e
@@ -162,7 +153,7 @@ Func_0803e918:
 	cmp	r3, #0
 	beq.n	.L_0803e9a2
 	movs	r0, #113
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r0, #1
 	negs	r0, r0
 .L_0803ea4e:
@@ -194,7 +185,7 @@ Func_0803e918:
 	cmp	sl, r3
 	beq.n	.L_0803eb22
 	adds	r0, r5, #0
-	bl	sub_0803ef48
+	bl	Func_0803ef48
 	movs	r3, #192
 	lsls	r3, r3, #2
 	adds	r3, #162
@@ -202,7 +193,7 @@ Func_0803e918:
 	movs	r3, #33
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldrh	r1, [r6, #0]
 	movs	r0, #128
 	adds	r3, r1, #1
@@ -228,7 +219,7 @@ Func_0803e918:
 	adds	r3, #1
 	strh	r3, [r7, #0]
 	movs	r1, #1
-	bl	sub_0803f004
+	bl	0x0803f004
 	ldrh	r2, [r6, #0]
 	ldrh	r3, [r7, #0]
 	mov	r0, r8
@@ -255,18 +246,18 @@ Func_0803e918:
 	adds	r3, r5, r2
 	ldrh	r1, [r3, #0]
 	adds	r0, r5, #0
-	bl	sub_0803ef8c
+	bl	0x0803ef8c
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r0, #210
 	lsls	r0, r0, #2
 	adds	r3, r5, r0
 	ldr	r3, [r3, #0]
 	movs	r1, #0
 	ldrh	r0, [r3, #10]
-	bl	sub_0803e5a8
+	bl	Func_0803e5a8
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 .L_0803eb22:
 	pop	{r3, r5}
 	mov	r8, r3

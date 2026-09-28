@@ -5,7 +5,6 @@
 @ credit: library — TBS/TLA common BIOS SoundGetJumpList wrapper
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c2310
 	.global Bios_SoundGetJumpList
 	.thumb_func
 Bios_SoundGetJumpList:

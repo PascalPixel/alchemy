@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0808a8d0, 0x0808a8d0
 	.global BattleFx_FindConditionResource
 	.global Func_0808b158
 	.thumb_func
@@ -14,7 +13,7 @@ Func_0808b158:
 	ldr	r5, [pc, #108]
 	mov	r8, r3
 	adds	r7, r0, #0
-	bl	sub_0808a8d0
+	bl	BattleFx_GetResourceGroup
 	ldrh	r4, [r5, #0]
 	adds	r1, r4, #0
 	lsls	r3, r1, #16

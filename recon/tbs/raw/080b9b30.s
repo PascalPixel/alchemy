@@ -1,27 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080049ac, 0x080049ac
-	.set sub_080051d8, 0x080051d8
-	.set sub_08005258, 0x08005258
-	.set sub_080072f0, 0x080072f0
-	.set sub_08077008, 0x08077008
-	.set sub_080b6c08, 0x080b6c08
-	.set sub_080b6c90, 0x080b6c90
-	.set sub_080b7e7c, 0x080b7e7c
-	.set sub_080b8000, 0x080b8000
-	.set sub_080b9dc4, 0x080b9dc4
-	.set sub_080b9ec0, 0x080b9ec0
-	.set sub_080ba27c, 0x080ba27c
-	.set sub_080ba2c0, 0x080ba2c0
-	.set sub_080ba6ac, 0x080ba6ac
-	.set sub_080ba978, 0x080ba978
-	.set sub_080bb65c, 0x080bb65c
-	.set sub_080bd424, 0x080bd424
-	.set sub_080be378, 0x080be378
-	.set sub_080bfba4, 0x080bfba4
-	.set sub_080c0774, 0x080c0774
-	.set sub_080c10e8, 0x080c10e8
 	.global BattlePresentation_DispatchAction
 	.global Func_080b9b30
 	.thumb_func
@@ -44,7 +22,7 @@ Func_080b9b30:
 	movs	r0, #0
 	b.n	.L_080b9d02
 .L_080b9b50:
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	cmp	r3, #0
@@ -60,7 +38,7 @@ Func_080b9b30:
 	bne.n	.L_080b9b74
 	mov	r0, r8
 	movs	r1, #1
-	bl	sub_080bd424
+	bl	BattleCommand_SelectAutomatic
 .L_080b9b74:
 	ldr	r2, [pc, #416]
 	ldr	r7, [r2, #0]
@@ -78,22 +56,22 @@ Func_080b9b30:
 	ldr	r5, [r2, #0]
 	lsls	r3, r3, #9
 	str	r3, [r1, #0]
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	adds	r1, r5, #0
 	adds	r1, #12
 	adds	r0, r5, #0
-	bl	sub_080051d8
+	bl	Graphics_PrepareTransferInIwramWork
 	movs	r0, #255
 	movs	r1, #192
 	ldr	r3, [pc, #376]
 	lsls	r1, r1, #8
 	lsls	r0, r0, #17
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r1, r0, #0
 	movs	r0, #255
 	ldr	r2, [pc, #364]
 	lsls	r0, r0, #17
-	bl	sub_08005258
+	bl	Camera_StoreSceneParameters
 	mov	r2, sl
 	cmp	r2, #0
 	beq.n	.L_080b9bce
@@ -101,7 +79,7 @@ Func_080b9b30:
 	lsls	r3, r3, #6
 	str	r3, [r7, #0]
 	mov	r0, sl
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b9bce:
 	mov	r2, r8
 	ldrh	r3, [r2, #0]
@@ -110,11 +88,11 @@ Func_080b9b30:
 	movs	r3, #255
 	strh	r3, [r0, #2]
 	movs	r1, #1
-	bl	sub_080c10e8
+	bl	BattlePres_SetActorModes
 	ldr	r3, [pc, #324]
 	mov	r0, r8
 	adds	r1, r6, r3
-	bl	sub_080be378
+	bl	BattleCommand_BuildPlan
 	cmp	r0, #0
 	bne.n	.L_080b9c9c
 	movs	r2, #213
@@ -141,22 +119,22 @@ Func_080b9b30:
 	ldr	r3, [pc, #252]
 	movs	r1, #0
 	adds	r0, r6, r3
-	bl	sub_080ba27c
+	bl	BattlePres_RunActorEntries
 	b.n	.L_080b9cb6
 	ldr	r2, [pc, #240]
 	movs	r1, #0
 	adds	r0, r6, r2
-	bl	sub_080ba2c0
+	bl	RunBattlePresentation
 	b.n	.L_080b9cb6
 	ldr	r3, [pc, #228]
 	movs	r1, #1
 	adds	r0, r6, r3
-	bl	sub_080b9ec0
+	bl	BattlePresentation_RunUnitTransition
 	b.n	.L_080b9cb6
 	ldr	r2, [pc, #216]
 	movs	r1, #0
 	adds	r0, r6, r2
-	bl	sub_080b9ec0
+	bl	BattlePresentation_RunUnitTransition
 	b.n	.L_080b9cb6
 	ldr	r3, [pc, #204]
 	movs	r1, #0
@@ -164,23 +142,23 @@ Func_080b9b30:
 	ldr	r2, [pc, #200]
 	movs	r1, #1
 	adds	r0, r6, r2
-	bl	sub_080ba978
+	bl	Func_080ba978
 	b.n	.L_080b9cb6
 	ldr	r3, [pc, #188]
 	movs	r1, #2
 .L_080b9c6e:
 	adds	r0, r6, r3
-	bl	sub_080ba978
+	bl	Func_080ba978
 	b.n	.L_080b9cb6
 	ldr	r2, [pc, #176]
 	movs	r1, #0
 	adds	r0, r6, r2
 	mov	r2, r8
-	bl	sub_080ba6ac
+	bl	Func_080ba6ac
 	b.n	.L_080b9cb6
 	ldr	r3, [pc, #160]
 	adds	r0, r6, r3
-	bl	sub_080b9dc4
+	bl	BattlePresentation_RunEncounterOrUnitTrigger
 	cmp	r0, #0
 	beq.n	.L_080b9c94
 	movs	r2, #1
@@ -195,23 +173,23 @@ Func_080b9b30:
 	negs	r2, r2
 	cmp	r0, r2
 	bne.n	.L_080b9cae
-	bl	sub_080bb65c
+	bl	BattlePresentation_WaitForAdvance
 	movs	r0, #3
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b9cae:
 	movs	r0, #0
 	movs	r1, #0
-	bl	sub_080c10e8
+	bl	BattlePres_SetActorModes
 .L_080b9cb6:
-	bl	sub_080b7e7c
+	bl	BattleMotion_DestroyAllSlotObjects
 	ldr	r3, [pc, #108]
 	adds	r0, r6, r3
-	bl	sub_080bfba4
-	bl	sub_080b6c90
+	bl	BattleUnit_ProcessTurnEnd
+	bl	BattleActor_CommitPlacement
 	mov	r5, sp
 	movs	r0, #3
 	adds	r1, r5, #0
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	cmp	r0, #0
 	ble.n	.L_080b9ce6
 	adds	r6, r5, #0
@@ -220,7 +198,7 @@ Func_080b9b30:
 	ldrh	r0, [r6, #0]
 	subs	r5, #1
 	adds	r6, #2
-	bl	sub_080b8000
+	bl	Actor_ResetMotionAtAnchor
 	cmp	r5, #0
 	bne.n	.L_080b9cd8
 .L_080b9ce6:
@@ -236,7 +214,7 @@ Func_080b9b30:
 	movs	r0, #2
 	ldrh	r1, [r3, #0]
 	movs	r2, #0
-	bl	sub_080c0774
+	bl	BattlePresentation_ConfigurePaletteFade
 	mov	r0, r9
 .L_080b9d02:
 	add	sp, #32

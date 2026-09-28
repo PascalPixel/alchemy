@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801314c, 0x0801314c
-	.set sub_08013300, 0x08013300
-	.set sub_0801401c, 0x0801401c
-	.set sub_080142d4, 0x080142d4
-	.set sub_080143ac, 0x080143ac
-	.set sub_08014d00, 0x08014d00
-	.set sub_0801591c, 0x0801591c
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_080202d0, 0x080202d0
-	.set sub_0803c378, 0x0803c378
-	.set sub_08042314, 0x08042314
 	.global Func_08045018
 	.thumb_func
 Func_08045018:
@@ -50,10 +39,10 @@ Func_08045018:
 	movs	r0, #56
 	mov	r1, sl
 	mov	r8, r2
-	bl	sub_08014d00
+	bl	0x08014d00
 	adds	r5, r0, #0
 	ldr	r0, [pc, #64]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	adds	r2, r0, #0
 	cmp	r7, #95
 	bgt.n	.L_0804509e
@@ -61,21 +50,21 @@ Func_08045018:
 	ldrh	r0, [r3, r2]
 	adds	r1, r5, #0
 	adds	r0, r2, r0
-	bl	sub_0801591c
+	bl	0x0801591c
 	mov	r3, r8
 	cmp	r3, #0
 	beq.n	.L_0804508e
 	movs	r1, #192
 	lsls	r1, r1, #2
 	adds	r0, r5, #0
-	bl	sub_080202d0
+	bl	0x080202d0
 .L_0804508e:
 	adds	r0, r7, #0
 	mov	r1, sl
 	adds	r2, r5, #0
-	bl	sub_080142d4
+	bl	0x080142d4
 	movs	r0, #56
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 .L_0804509e:
 	pop	{r3, r5}
 	mov	r8, r3
@@ -93,7 +82,7 @@ Func_08045018:
 	adds	r7, r1, #0
 	mov	r8, r2
 	mov	sl, r3
-	bl	sub_080143ac
+	bl	Func_080143ac
 	adds	r5, r0, #0
 	movs	r0, #0
 	cmp	r5, #96
@@ -109,7 +98,7 @@ Func_08045018:
 	mov	r3, sl
 	lsls	r1, r1, #24
 	adds	r0, r5, #0
-	bl	sub_08042314
+	bl	0x08042314
 	ldrb	r3, [r0, #21]
 	movs	r2, #32
 	orrs	r3, r2
@@ -157,7 +146,7 @@ Func_08045018:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	sub_0801401c
+	bl	0x0801401c
 	ldrb	r2, [r5, #23]
 	movs	r3, #31
 	ands	r0, r3
@@ -202,7 +191,7 @@ Func_08045018:
 	push	{lr}
 	movs	r0, #118
 	adds	r0, #255
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080451ae
 	ldr	r0, [pc, #8]
@@ -314,7 +303,7 @@ Func_08045018:
 	mov	r3, r9
 	str	r6, [sp, #0]
 	mov	sl, r0
-	bl	sub_0803c378
+	bl	0x0803c378
 	movs	r3, #243
 	lsls	r3, r3, #8
 	adds	r3, #20
@@ -325,7 +314,7 @@ Func_08045018:
 	mov	r3, r9
 	adds	r2, #1
 	str	r6, [sp, #0]
-	bl	sub_0803c378
+	bl	0x0803c378
 	movs	r3, #2
 	add	r8, r3
 	mov	r0, sl
@@ -333,7 +322,7 @@ Func_08045018:
 	mov	r2, r8
 	mov	r3, r9
 	str	r6, [sp, #0]
-	bl	sub_0803c378
+	bl	0x0803c378
 	add	sp, #4
 	pop	{r3, r5, r6}
 	mov	r8, r3

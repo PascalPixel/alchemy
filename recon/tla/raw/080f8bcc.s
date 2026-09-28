@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002064, 0x08002064
-	.set sub_080f8888, 0x080f8888
 	.global Func_080f8bcc
 	.thumb_func
 Func_080f8bcc:
@@ -59,18 +56,18 @@ Func_080f8bcc:
 	ldr	r1, [sp, #20]
 	ldr	r5, [r0, #0]
 	adds	r0, r6, #0
-	bl	sub_08002054
+	bl	Math_Div
 	lsls	r0, r0, #4
 	adds	r0, r0, r7
 	strh	r0, [r5, #8]
 	ldr	r1, [sp, #20]
 	adds	r0, r6, #0
-	bl	sub_08002064
+	bl	0x08002064
 	lsls	r0, r0, #4
 	add	r0, r8
 	strh	r0, [r5, #6]
 	adds	r0, r5, #0
-	bl	sub_080f8888
+	bl	0x080f8888
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
@@ -88,20 +85,20 @@ Func_080f8bcc:
 	ldr	r1, [sp, #20]
 	ldr	r5, [r0, #0]
 	adds	r0, r6, #0
-	bl	sub_08002054
+	bl	Math_Div
 	lsls	r0, r0, #4
 	adds	r0, r0, r7
 	strh	r0, [r5, #8]
 	ldr	r1, [sp, #20]
 	adds	r0, r6, #0
-	bl	sub_08002064
+	bl	0x08002064
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsls	r3, r3, #3
 	add	r3, r8
 	strh	r3, [r5, #6]
 	adds	r0, r5, #0
-	bl	sub_080f8888
+	bl	0x080f8888
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}

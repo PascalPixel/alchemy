@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013300, 0x08013300
-	.set sub_0801587c, 0x0801587c
-	.set sub_08021918, 0x08021918
-	.set sub_08022c98, 0x08022c98
 	.global Func_080227e0
 	.thumb_func
 Func_080227e0:
@@ -29,7 +25,7 @@ Func_080227e0:
 	lsls	r3, r6, #3
 	adds	r5, r5, r3
 	str	r4, [sp, #0]
-	bl	sub_08021918
+	bl	Func_08021918
 	ldr	r4, [sp, #0]
 	ldr	r2, [pc, #164]
 	lsls	r3, r6, #12
@@ -62,9 +58,9 @@ Func_080227e0:
 	adds	r1, #4
 	b.n	.L_0802282a
 .L_08022848:
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	adds	r1, r7, #0
-	bl	sub_0801587c
+	bl	0x0801587c
 	ldr	r3, [r7, #0]
 	adds	r4, r7, #0
 	movs	r5, #0
@@ -170,7 +166,7 @@ InitializeAnimationObjects:
 	str	r3, [sp, #4]
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
-	bl	sub_08021918
+	bl	Func_08021918
 	adds	r5, r0, #0
 	ldrb	r2, [r5, #0]
 	ldr	r1, [sp, #0]
@@ -228,7 +224,7 @@ InitializeAnimationObjects:
 	beq.n	.L_080229aa
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
-	bl	sub_08021918
+	bl	Func_08021918
 	adds	r6, r0, #0
 	ldrb	r3, [r6, #0]
 	cmp	r3, #0
@@ -284,7 +280,7 @@ ResourceMetadata_Register:
 	b.n	.L_08022a1c
 .L_080229da:
 	mov	r0, r8
-	bl	sub_08022c98
+	bl	0x08022c98
 	adds	r5, r0, #0
 	movs	r0, #0
 	cmp	r5, #0
@@ -293,7 +289,7 @@ ResourceMetadata_Register:
 	adds	r3, #40
 	mov	r0, r8
 	str	r5, [r6, r3]
-	bl	sub_08021918
+	bl	Func_08021918
 	ldrb	r3, [r6, #27]
 	cmp	r3, #0
 	bne.n	.L_08022a10

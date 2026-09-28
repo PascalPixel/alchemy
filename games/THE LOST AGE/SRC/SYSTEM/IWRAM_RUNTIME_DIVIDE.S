@@ -9,8 +9,6 @@
 @ credit: handwritten — TLA IWRAM runtime division helpers
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000a60
-	.set AlchemyRunAddress, 0x030004a8
 .L_030004a8:
 	eor	ip, r0, r1
 	movs	r2, r1

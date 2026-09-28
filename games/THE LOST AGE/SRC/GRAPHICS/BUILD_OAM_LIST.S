@@ -11,7 +11,6 @@
 @ credit: handwritten — stack-executed ARM list builder with its stack-copy wrapper
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080018b4
 	.global Render_BuildOamListKernel
 	.thumb_func
 Render_BuildOamListKernel:

@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080aed6c, 0x080aed6c
-	.set sub_080af148, 0x080af148
-	.set sub_080afe78, 0x080afe78
 	.global Func_080aee40
 	.thumb_func
 Func_080aee40:
@@ -15,7 +12,7 @@ Func_080aee40:
 	mov	r5, sp
 	mov	sl, r0
 	adds	r0, r5, #0
-	bl	sub_080afe78
+	bl	Party_ListActiveOwners
 	movs	r6, #0
 	mov	r8, r0
 	cmp	r6, r8
@@ -27,12 +24,12 @@ Func_080aee40:
 	ldrsh	r5, [r7, r2]
 	mov	r1, sl
 	adds	r0, r5, #0
-	bl	sub_080aed6c
+	bl	Inventory_Add
 	adds	r1, r0, #0
 	cmp	r1, #0
 	blt.n	.L_080aee7e
 	adds	r0, r5, #0
-	bl	sub_080af148
+	bl	Func_080af148
 	adds	r0, r5, #0
 	b.n	.L_080aee8a
 .L_080aee7e:

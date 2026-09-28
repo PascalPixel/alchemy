@@ -10,7 +10,6 @@
 @ credit: handwritten — sound driver stereo-volume helper and note handler (TLA revision)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c0772
 .L_081c0772:
 	movs	r0, #255
 	b.n	.L_081c0790

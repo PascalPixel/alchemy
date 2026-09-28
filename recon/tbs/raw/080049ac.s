@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080048f4, 0x080048f4
 	.global Render_ResetTransformState
 	.global Func_080049ac
 	.thumb_func
@@ -10,7 +9,7 @@ Func_080049ac:
 	movs	r1, #48
 	movs	r0, #2
 	ldr	r5, [pc, #40]
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	ldr	r2, [pc, #36]
 	movs	r3, #0
 	str	r3, [r2, #0]

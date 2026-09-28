@@ -18,7 +18,6 @@
 @ credit: handwritten — relocated self-modifying ARM kernel 5 of the battle-effect bank
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08139aac
 	.global Func_08139aac
 	.thumb_func
 Func_08139aac:

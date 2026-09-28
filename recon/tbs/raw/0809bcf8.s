@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003dec, 0x08003dec
-	.set sub_0800447c, 0x0800447c
-	.set sub_08015060, 0x08015060
-	.set sub_08015078, 0x08015078
-	.set sub_080153c0, 0x080153c0
-	.set sub_080770c0, 0x080770c0
-	.set sub_0808b158, 0x0808b158
-	.set sub_0808ba1c, 0x0808ba1c
 	.global Map_UpdateWorldMapMarkers
 	.global Func_0809bcf8
 	.thumb_func
@@ -54,7 +46,7 @@ Func_0809bcf8:
 	lsls	r0, r0, #1
 	adds	r7, #32
 	str	r3, [sp, #24]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0809bd9c
 	ldr	r1, [pc, #244]
@@ -65,7 +57,7 @@ Func_0809bcf8:
 	cmp	r3, #0
 	beq.n	.L_0809bd9e
 	ldr	r0, [r5, #0]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	cmp	r0, #0
 	beq.n	.L_0809be2c
 	ldr	r2, [r0, #8]
@@ -118,7 +110,7 @@ Func_0809bcf8:
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
 	ldr	r0, [r0, #24]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	movs	r1, #128
 	ldr	r3, [r5, #0]
 	lsls	r1, r1, #13
@@ -191,11 +183,11 @@ Func_0809bcf8:
 	.2byte 0xffff
 	.2byte 0x0000
 .L_0809be58:
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0809bf2e
 	adds	r0, r6, #0
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	cmp	r0, #0
 	beq.n	.L_0809bf2e
 	ldr	r2, [r0, #8]
@@ -295,7 +287,7 @@ Func_0809bcf8:
 	adds	r0, r7, #0
 	adds	r1, r4, #0
 	adds	r7, #12
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_0809bf2e:
 	adds	r6, #1
 .L_0809bf30:
@@ -311,7 +303,7 @@ Func_0809bcf8:
 	bne.n	.L_0809bf5c
 	movs	r0, #142
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0809bf2e
 	movs	r1, #0
@@ -381,7 +373,7 @@ Func_0809bcf8:
 	strb	r3, [r7, #4]
 	adds	r0, r7, #0
 	ldr	r1, [sp, #8]
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_0809bfd4:
 	ldr	r7, [pc, #24]
 	movs	r3, #63
@@ -412,7 +404,7 @@ Func_0809bcf8:
 	strb	r3, [r7, #4]
 	adds	r0, r7, #0
 	movs	r1, #246
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r1, [pc, #32]
 	ldr	r2, [sp, #20]
 	movs	r0, #18
@@ -431,7 +423,7 @@ Func_0809bcf8:
 	.2byte 0x0000
 	.2byte 0x0201
 .L_0809c040:
-	bl	sub_08015060
+	bl	UiWindow_Clear
 	movs	r1, #1
 	ldr	r0, [sp, #20]
 	negs	r1, r1
@@ -445,7 +437,7 @@ Func_0809bcf8:
 .L_0809c058:
 	ldr	r0, [sp, #0]
 	movs	r1, #1
-	bl	sub_0808b158
+	bl	BattleFx_FindConditionResource
 	ldr	r3, [pc, #188]
 	adds	r0, r0, r3
 	str	r0, [sp, #0]
@@ -453,7 +445,7 @@ Func_0809bcf8:
 	add	r1, sp, #44
 	ldr	r0, [sp, #0]
 	add	r2, sp, #40
-	bl	sub_080153c0
+	bl	0x080153c0
 	ldr	r3, [sp, #12]
 	ldr	r0, [sp, #8]
 	ldr	r1, [sp, #44]
@@ -482,7 +474,7 @@ Func_0809bcf8:
 	ldr	r1, [r0, #28]
 	mov	r3, r9
 	ldr	r0, [sp, #0]
-	bl	sub_08015078
+	bl	UiText_DrawMessageAt
 .L_0809c0a8:
 	ldr	r0, [pc, #124]
 	ldr	r1, [pc, #128]

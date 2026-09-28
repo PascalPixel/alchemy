@@ -5,6 +5,5 @@
 .syntax unified
 	.section .rodata,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08012bb4
 	.4byte	0xfedcba98
 	.4byte	0x76543210

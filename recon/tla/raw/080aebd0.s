@@ -1,14 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080aea30, 0x080aea30
 	.global Func_080aebd0
 	.thumb_func
 Func_080aebd0:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
 	adds	r7, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r6, r0, #0
 	movs	r1, #58
 	ldrsh	r3, [r6, r1]
@@ -25,7 +23,7 @@ Func_080aebd0:
 .L_080aebf4:
 	adds	r0, r7, #0
 	strh	r1, [r6, #58]
-	bl	sub_080aea30
+	bl	0x080aea30
 	movs	r2, #58
 	ldrsh	r0, [r6, r2]
 	pop	{r5, r6, r7, pc}

@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004080, 0x08004080
-	.set sub_080048f4, 0x080048f4
-	.set sub_08015080, 0x08015080
-	.set sub_08015090, 0x08015090
-	.set sub_080150b0, 0x080150b0
-	.set sub_080150c8, 0x080150c8
-	.set sub_08015270, 0x08015270
-	.set sub_08015278, 0x08015278
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_080a1a40, 0x080a1a40
-	.set sub_080a1ac0, 0x080a1ac0
-	.set sub_080a3d9c, 0x080a3d9c
-	.set sub_080a4eb8, 0x080a4eb8
-	.set sub_080b0040, 0x080b0040
-	.set sub_080f9010, 0x080f9010
 	.global ItemMenu_SelectGiveQuantity
 	.global Func_080a4f08
 	.thumb_func
@@ -42,7 +22,7 @@ Func_080a4f08:
 	mov	fp, r0
 	movs	r0, #14
 	mov	r9, r3
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r3, #0
 	movs	r2, #1
 	str	r3, [sp, #8]
@@ -52,9 +32,9 @@ Func_080a4f08:
 	add	r3, r9
 	ldr	r7, [r3, #0]
 	mov	sl, r0
-	bl	sub_080a4eb8
+	bl	ItemMenu_SetMsgWin7
 	adds	r0, r7, #0
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r2, [sp, #20]
 	mov	r8, fp
 	cmp	r2, #0
@@ -68,7 +48,7 @@ Func_080a4f08:
 	ldrh	r3, [r3, #0]
 	ldr	r1, [pc, #128]
 	ands	r1, r3
-	bl	sub_080a3d9c
+	bl	Func_080a3d9c
 	str	r0, [sp, #8]
 .L_080a4f6a:
 	ldr	r3, [pc, #124]
@@ -80,9 +60,9 @@ Func_080a4f08:
 	ldrh	r3, [r3, #0]
 	ldr	r1, [pc, #104]
 	ands	r1, r3
-	bl	sub_080a3d9c
+	bl	Func_080a3d9c
 	str	r0, [sp, #4]
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	str	r0, [sp, #16]
 	cmp	r0, #96
 	bne.n	.L_080a4f8e
@@ -91,7 +71,7 @@ Func_080a4f08:
 	movs	r1, #128
 	lsls	r1, r1, #1
 	movs	r2, #0
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	ldr	r6, [pc, #80]
 	movs	r5, #32
 	ldr	r0, [sp, #16]
@@ -99,13 +79,13 @@ Func_080a4f08:
 	adds	r2, r7, #0
 	movs	r3, #48
 	str	r5, [sp, #0]
-	bl	sub_080150c8
+	bl	RenderOutput_CreateFar
 	adds	r1, r6, #0
 	adds	r2, r7, #0
 	ldr	r0, [sp, #16]
 	movs	r3, #80
 	str	r5, [sp, #0]
-	bl	sub_080150c8
+	bl	RenderOutput_CreateFar
 	ldrh	r1, [r0, #24]
 	lsls	r2, r1, #22
 	ldr	r3, [pc, #24]
@@ -118,7 +98,7 @@ Func_080a4f08:
 	strh	r3, [r0, #24]
 	movs	r1, #40
 	movs	r0, #128
-	bl	sub_080a1ac0
+	bl	UiMenu_SlideCursor
 	b.n	.L_080a516e
 	movs	r0, r0
 	.4byte 0x000003ff
@@ -140,15 +120,15 @@ Func_080a4f08:
 	movs	r2, #0
 	add	r0, r8
 	str	r2, [sp, #12]
-	bl	sub_080022fc
+	bl	__modsi3
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r1, r7, #0
 	ldr	r0, [pc, #152]
 	movs	r2, #32
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r3, [pc, #148]
 	ldr	r0, [pc, #148]
 	mov	r1, sl
@@ -158,34 +138,34 @@ Func_080a4f08:
 	mov	r2, sl
 	movs	r0, #30
 	movs	r1, #14
-	bl	sub_080b0040
+	bl	0x080b0040
 	ldr	r0, [sp, #24]
 	movs	r1, #0
 	add	r0, fp
 	mov	r2, sl
-	bl	sub_080b0040
+	bl	0x080b0040
 	mov	r0, fp
 	add	r0, r8
 	adds	r0, #1
 	movs	r1, #10
 	mov	r2, sl
-	bl	sub_080b0040
+	bl	0x080b0040
 	mov	r0, fp
 	movs	r1, #2
 	mov	r2, sl
-	bl	sub_080b0040
+	bl	0x080b0040
 	movs	r1, #128
 	ldr	r0, [sp, #16]
 	lsls	r1, r1, #1
 	mov	r2, sl
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	mov	r0, r8
 	movs	r3, #32
 	adds	r0, #1
 	movs	r1, #2
 	adds	r2, r7, #0
 	str	r3, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	movs	r3, #188
 	lsls	r3, r3, #1
 	add	r3, r9
@@ -197,7 +177,7 @@ Func_080a4f08:
 	adds	r0, r0, r3
 	movs	r2, #16
 	movs	r3, #8
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r3, [sp, #4]
 	mov	r2, r8
 	subs	r0, r3, r2
@@ -207,7 +187,7 @@ Func_080a4f08:
 	movs	r1, #2
 	adds	r2, r7, #0
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #20]
 	cmp	r3, #0
 	bne.n	.L_080a50d6
@@ -227,27 +207,27 @@ Func_080a4f08:
 	adds	r2, r7, #0
 	movs	r3, #80
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 .L_080a50d6:
 	ldr	r3, [pc, #232]
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r2, #16
 	adds	r1, r7, #0
 	movs	r3, #16
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r2, [sp, #20]
 	cmp	r2, #0
 	bne.n	.L_080a5104
 	ldr	r3, [pc, #208]
 	add	r3, r9
 	ldrb	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r1, r7, #0
 	movs	r2, #80
 	movs	r3, #16
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 .L_080a5104:
 	ldr	r1, [pc, #192]
 	ldr	r3, [r1, #0]
@@ -256,7 +236,7 @@ Func_080a4f08:
 	cmp	r3, #0
 	beq.n	.L_080a5118
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a517c
 .L_080a5118:
 	ldr	r3, [r1, #0]
@@ -268,12 +248,12 @@ Func_080a4f08:
 	negs	r3, r3
 	movs	r0, #113
 	mov	r8, r3
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a517c
 .L_080a5130:
 	movs	r0, #128
 	movs	r1, #40
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	ldr	r5, [pc, #144]
 	ldr	r3, [r5, #0]
 	movs	r2, #32
@@ -285,7 +265,7 @@ Func_080a4f08:
 	movs	r0, #111
 	add	r8, r2
 	str	r3, [sp, #12]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080a5152:
 	ldr	r3, [r5, #0]
 	movs	r2, #16
@@ -296,24 +276,24 @@ Func_080a4f08:
 	movs	r0, #111
 	add	r8, r2
 	str	r2, [sp, #12]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080a5168:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080a516e:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080a517c
 	b.n	.L_080a4ff4
 .L_080a517c:
 	adds	r0, r7, #0
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	adds	r0, r7, #0
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	movs	r0, #14
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #135
 	lsls	r3, r3, #2
 	add	r3, r9
@@ -322,7 +302,7 @@ Func_080a4f08:
 	movs	r3, #13
 	strb	r3, [r2, #5]
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080a51ac
 	movs	r3, #1

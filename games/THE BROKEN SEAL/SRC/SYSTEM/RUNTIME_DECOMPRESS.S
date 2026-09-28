@@ -10,8 +10,6 @@
 @ credit: library — TBS/TLA common IWRAM runtime decompressor
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000d30
-	.set AlchemyRunAddress, 0x030005c0
 
 @ 制御語と後方参照を展開する常駐解凍処理。
 	.global IwramDecompress

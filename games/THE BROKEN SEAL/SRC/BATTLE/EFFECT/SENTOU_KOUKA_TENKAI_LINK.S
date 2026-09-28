@@ -9,7 +9,6 @@
 	.section .rodata,"a",%progbits
 	.set	.L_dispatch_source, 0x080f0124
 	.arm
-	.set AlchemyLoadAddress, 0x080f00f0
 .L_bias:
 	.4byte 0x80808080
 .L_dispatch_base:

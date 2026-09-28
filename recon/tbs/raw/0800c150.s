@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800bc70, 0x0800bc70
-	.set sub_0800c0cc, 0x0800c0cc
-	.set sub_0800d130, 0x0800d130
-	.set sub_08185000, 0x08185000
 	.global Func_0800c150
 	.thumb_func
 Func_0800c150:
@@ -19,7 +15,7 @@ Func_0800c150:
 	mov	fp, r3
 	mov	r9, r1
 	str	r2, [sp, #0]
-	bl	sub_0800c0cc
+	bl	ObjectDispatch_FindFreeObject
 	adds	r3, r7, #0
 	cmp	r7, #0
 	bge.n	.L_0800c176
@@ -29,7 +25,7 @@ Func_0800c150:
 	asrs	r5, r3, #12
 	ldr	r3, [pc, #76]
 	ands	r7, r3
-	bl	sub_0800c0cc
+	bl	ObjectDispatch_FindFreeObject
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_0800c188
@@ -44,7 +40,7 @@ Func_0800c150:
 	b.n	.L_0800c230
 .L_0800c196:
 	adds	r0, r7, #0
-	bl	sub_0800bc70
+	bl	Func_0800bc70
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0800c1ba
@@ -54,7 +50,7 @@ Func_0800c150:
 	strb	r3, [r2, #0]
 	adds	r0, r7, #0
 	str	r5, [r6, #80]
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #9]
 	lsrs	r3, r3, #1
 	strh	r3, [r6, #32]
@@ -95,12 +91,12 @@ Func_0800c150:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r7, #0
-	bl	sub_0800bc70
+	bl	Func_0800bc70
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0800c220
 	adds	r0, r7, #0
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #9]
 	lsrs	r3, r3, #1
 	mov	r2, r8
@@ -111,7 +107,7 @@ Func_0800c150:
 	mov	r8, r3
 .L_0800c220:
 	adds	r0, r7, #1
-	bl	sub_0800bc70
+	bl	Func_0800bc70
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0800c230
@@ -124,7 +120,7 @@ Func_0800c150:
 	mov	r1, r9
 	ldr	r2, [sp, #0]
 	mov	r3, fp
-	bl	sub_0800d130
+	bl	Object_SetPositionAndResetMotion
 	ldr	r3, [pc, #88]
 	str	r3, [r6, #0]
 	movs	r3, #128

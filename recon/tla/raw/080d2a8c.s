@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
 	.global Func_080d2a8c
 	.thumb_func
 Func_080d2a8c:
@@ -12,6 +11,6 @@ Func_080d2a8c:
 	lsls	r2, r2, #1
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	sub_08013560
+	bl	0x08013560
 	pop	{pc}
 	.2byte 0x0000

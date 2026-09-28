@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_080165d8, 0x080165d8
-	.set sub_08019908, 0x08019908
-	.set sub_08019ba0, 0x08019ba0
-	.set sub_08019d2c, 0x08019d2c
-	.set sub_0801a4fc, 0x0801a4fc
-	.set sub_0801e41c, 0x0801e41c
-	.set sub_08021360, 0x08021360
-	.set sub_080f9010, 0x080f9010
-	.set sub_080f9048, 0x080f9048
 	.global Party_ShowJoinedMessage
 	.global Func_08021390
 	.thumb_func
@@ -34,7 +20,7 @@ Func_08021390:
 	movs	r2, #26
 	movs	r3, #5
 	add	r7, sp, #16
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r6, #0
 	mov	r8, r0
 	cmp	r0, #0
@@ -43,21 +29,21 @@ Func_08021390:
 	movs	r3, #4
 	movs	r2, #0
 	str	r3, [sp, #0]
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	ldr	r3, [pc, #168]
 	adds	r2, r5, r3
 	movs	r3, #1
 	strb	r3, [r2, #0]
 	mov	r0, sl
-	bl	sub_08021360
-	bl	sub_08019d2c
+	bl	Party_LookupCharacterValueByFlag32
+	bl	Localization_LookupEntryId
 	movs	r1, #14
 	add	r2, sp, #12
 	add	r3, sp, #8
 	str	r1, [sp, #0]
 	movs	r1, #0
 	str	r6, [sp, #4]
-	bl	sub_0801a4fc
+	bl	UiGlyph_LoadEntryWithPalette
 	ldr	r3, [pc, #136]
 	str	r6, [r7, #0]
 	movs	r2, #224
@@ -74,26 +60,26 @@ Func_08021390:
 	strh	r6, [r3, #0]
 	movs	r1, #1
 	mov	r0, sl
-	bl	sub_08019908
+	bl	UiWork_PushValueSlot
 	ldr	r0, [pc, #108]
-	bl	sub_08019ba0
+	bl	UiText_BuildRenderEntriesMode1
 	movs	r2, #36
 	adds	r1, r0, #0
 	movs	r3, #2
 	mov	r0, r8
 	str	r6, [sp, #0]
-	bl	sub_080165d8
+	bl	UiText_QueueRenderEntries
 	movs	r0, #81
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r5, [pc, #88]
 	ldr	r6, [pc, #88]
 .L_0802142a:
 	adds	r0, r7, #0
 	movs	r1, #250
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	movs	r0, #1
-	bl	sub_080030f8
-	bl	sub_080f9048
+	bl	WaitFrames
+	bl	Audio_Check
 	cmp	r0, #0
 	beq.n	.L_08021448
 	ldr	r3, [r6, #0]
@@ -103,11 +89,11 @@ Func_08021390:
 .L_08021448:
 	mov	r0, r8
 	movs	r1, #2
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r0, [sp, #12]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 .L_0802145c:
 	add	sp, #28
 	pop	{r3, r5}

@@ -1,13 +1,11 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080aec04, 0x080aec04
 	.global Func_080af244
 	.thumb_func
 Func_080af244:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	lsls	r5, r5, #1
 	adds	r6, r5, #0
 	adds	r7, r0, #0
@@ -18,7 +16,7 @@ Func_080af244:
 	adds	r5, #255
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	movs	r1, #0
 	cmp	r5, #0
 	bne.n	.L_080af26e

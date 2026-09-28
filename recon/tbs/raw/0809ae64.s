@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800447c, 0x0800447c
-	.set sub_08009080, 0x08009080
-	.set sub_080090d0, 0x080090d0
-	.set sub_080090f0, 0x080090f0
-	.set sub_08009240, 0x08009240
-	.set sub_08096c80, 0x08096c80
-	.set sub_08097384, 0x08097384
-	.set sub_0809748c, 0x0809748c
-	.set sub_080f9010, 0x080f9010
 	.global RunBattleEffect13
 	.global Func_0809ae64
 	.thumb_func
@@ -59,7 +48,7 @@ Func_0809ae64:
 	str	r3, [r2, #8]
 	ldr	r1, [r5, #0]
 	mov	r9, r2
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	b.n	.L_0809aedc
 	.2byte 0x1f30
 	.2byte 0x0300
@@ -88,15 +77,15 @@ Func_0809ae64:
 	ldr	r3, [r5, #12]
 	str	r3, [r0, #8]
 	movs	r0, #215
-	bl	sub_08096c80
+	bl	Object_Spawn
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_0809aefe
 	b.n	.L_0809b092
 .L_0809aefe:
-	bl	sub_08097384
+	bl	BattleEffect_InitializeSharedScene
 	movs	r0, #138
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldrh	r3, [r7, #6]
 	strh	r3, [r6, #6]
 	ldr	r3, [pc, #36]
@@ -107,10 +96,10 @@ Func_0809ae64:
 	strb	r2, [r3, #0]
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08009240
+	bl	Animation_ApplyChildValuesFar
 	movs	r7, #0
 	mov	sl, fp
 	mov	r8, r9
@@ -127,7 +116,7 @@ Func_0809ae64:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r5, r5, r0
 	str	r5, [r6, #8]
 	mov	r2, sl
@@ -138,7 +127,7 @@ Func_0809ae64:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r5, r5, r0
 	str	r5, [r6, #12]
 	mov	r2, sl
@@ -149,7 +138,7 @@ Func_0809ae64:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r3, #192
 	lsls	r3, r3, #8
 	adds	r5, r5, r0
@@ -157,7 +146,7 @@ Func_0809ae64:
 	adds	r0, r7, #0
 	muls	r0, r3
 	str	r5, [r6, #16]
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r3, #128
 	lsls	r3, r3, #7
 	adds	r0, r0, r3
@@ -165,16 +154,16 @@ Func_0809ae64:
 	str	r0, [r6, #28]
 	adds	r7, #1
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r7, #11
 	blt.n	.L_0809af38
 	movs	r0, #10
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r0, r6, #0
 	movs	r1, #6
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r0, #15
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r5, #9
 .L_0809afba:
 	ldr	r3, [r6, #12]
@@ -183,14 +172,14 @@ Func_0809ae64:
 	str	r3, [r6, #12]
 	movs	r0, #1
 	subs	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #0
 	bge.n	.L_0809afba
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r0, #132
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r2, [sp, #0]
 	cmp	r2, #0
 	beq.n	.L_0809afee
@@ -198,10 +187,10 @@ Func_0809ae64:
 	ldr	r2, [r2, #12]
 	ldr	r0, [sp, #0]
 	adds	r1, r3, #0
-	bl	sub_080090f0
+	bl	Object_SetPositionAndResetMotionFar
 .L_0809afee:
 	movs	r0, #20
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r5, #12
 .L_0809aff6:
 	ldr	r3, [r6, #12]
@@ -211,13 +200,13 @@ Func_0809ae64:
 	str	r3, [r6, #12]
 	movs	r0, #1
 	subs	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #0
 	bge.n	.L_0809aff6
 	movs	r0, #10
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r7, #0
 	mov	sl, r9
 	mov	r8, fp
@@ -230,7 +219,7 @@ Func_0809ae64:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r5, r5, r0
 	str	r5, [r6, #8]
 	mov	r2, r8
@@ -241,7 +230,7 @@ Func_0809ae64:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r5, r5, r0
 	str	r5, [r6, #12]
 	mov	r2, r8
@@ -252,14 +241,14 @@ Func_0809ae64:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	ldr	r3, [pc, #72]
 	adds	r5, r5, r0
 	movs	r1, #10
 	adds	r0, r7, #0
 	muls	r0, r3
 	str	r5, [r6, #16]
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r2, #128
 	lsls	r2, r2, #9
 	adds	r0, r0, r2
@@ -267,12 +256,12 @@ Func_0809ae64:
 	str	r0, [r6, #28]
 	adds	r7, #1
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r7, #11
 	blt.n	.L_0809b01e
 	adds	r0, r6, #0
-	bl	sub_080090d0
-	bl	sub_0809748c
+	bl	Object_Destroy
+	bl	BattleFx_PrepareBufferInterpolation
 .L_0809b092:
 	add	sp, #40
 	pop	{r3, r5, r6, r7}

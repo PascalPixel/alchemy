@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072ec, 0x080072ec
-	.set sub_080072f0, 0x080072f0
-	.set sub_0800730c, 0x0800730c
 	.global WorldMap_BuildScanlineTable
 	.global Func_080123f4
 	.thumb_func
@@ -27,7 +24,7 @@ Func_080123f4:
 	add	r1, sp, #16
 	str	r3, [r0, #8]
 	ldr	r3, [pc, #232]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r2, sp
 	adds	r2, #16
 	str	r2, [sp, #0]
@@ -61,7 +58,7 @@ Func_080123f4:
 	lsls	r1, r1, #16
 	mov	sl, r2
 	ldr	r0, [sp, #4]
-	bl	sub_0800730c
+	bl	_call_via_sl
 	ldr	r3, [sp, #12]
 	mov	r8, r0
 	subs	r0, r0, r3
@@ -70,7 +67,7 @@ Func_080123f4:
 	movs	r0, #1
 .L_0801246c:
 	ldr	r1, [sp, #8]
-	bl	sub_0800730c
+	bl	_call_via_sl
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bge.n	.L_080124d8
@@ -83,7 +80,7 @@ Func_080123f4:
 	mov	r2, r9
 	adds	r1, r0, #0
 	ldr	r0, [r2, #0]
-	bl	sub_0800730c
+	bl	_call_via_sl
 	mov	r1, r8
 	str	r0, [r7, #0]
 	adds	r0, r5, #0
@@ -108,7 +105,7 @@ Func_080123f4:
 	adds	r3, r3, r0
 	ldr	r2, [pc, #88]
 	adds	r0, r3, #0
-	bl	sub_080072ec
+	bl	_call_via_r2
 	lsls	r0, r0, #12
 	cmp	r5, #0
 	bge.n	.L_080124ca

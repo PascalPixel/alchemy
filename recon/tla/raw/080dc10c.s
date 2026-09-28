@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08020090, 0x08020090
-	.set sub_080200c0, 0x080200c0
-	.set sub_080200c8, 0x080200c8
-	.set sub_08020218, 0x08020218
 	.global Func_080dc10c
 	.thumb_func
 Func_080dc10c:
@@ -12,7 +8,7 @@ Func_080dc10c:
 	lsls	r4, r4, #18
 	adds	r4, #224
 	ldr	r6, [r4, #0]
-	bl	sub_080200c0
+	bl	Func_080200c0
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080dc15e
@@ -21,7 +17,7 @@ Func_080dc10c:
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
 	bne.n	.L_080dc132
-	bl	sub_080200c8
+	bl	0x080200c8
 	movs	r0, #0
 	b.n	.L_080dc160
 .L_080dc132:
@@ -41,10 +37,10 @@ Func_080dc10c:
 	ands	r3, r2
 	strb	r3, [r1, #9]
 	movs	r1, #0
-	bl	sub_08020218
+	bl	0x08020218
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 .L_080dc15e:
 	adds	r0, r5, #0
 .L_080dc160:

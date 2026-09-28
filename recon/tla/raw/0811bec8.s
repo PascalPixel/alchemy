@@ -1,14 +1,10 @@
 .syntax unified
 	.thumb
-	.set sub_08020090, 0x08020090
-	.set sub_08020138, 0x08020138
-	.set sub_08020148, 0x08020148
-	.set sub_0811be3c, 0x0811be3c
 	.global Func_0811bec8
 	.thumb_func
 Func_0811bec8:
 	push	{r5, r6, lr}
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	adds	r6, r0, #0
 	ldr	r5, [r6, #0]
 	movs	r3, #128
@@ -30,16 +26,16 @@ Func_0811bec8:
 	str	r3, [r5, #68]
 	adds	r0, r5, #0
 	strb	r3, [r2, #0]
-	bl	sub_08020138
+	bl	Object_ResetMotion
 	ldr	r3, [r6, #12]
 	adds	r0, r5, #0
 	lsls	r1, r3, #1
 	adds	r1, r1, r3
 	movs	r2, #0
 	ldr	r3, [r6, #16]
-	bl	sub_08020148
+	bl	Object_SetPosition
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 	pop	{r5, r6, pc}
 	.2byte 0x0000

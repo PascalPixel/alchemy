@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080233d0, 0x080233d0
 	.global Func_08024ea8
 	.thumb_func
 Func_08024ea8:
@@ -12,7 +11,7 @@ Func_08024ea8:
 	lsls	r3, r3, #2
 	adds	r3, r3, r2
 	ldr	r1, [r3, #4]
-	bl	sub_080233d0
+	bl	ObjectDispatch_ApplyArgumentToChildren
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #2

@@ -6,8 +6,6 @@
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08000850
-	.set AlchemyRunAddress, 0x030000e0
 
 @ 起動後に常駐側から割込み先十四本を転送する表。
 IwramIrqVBlank:

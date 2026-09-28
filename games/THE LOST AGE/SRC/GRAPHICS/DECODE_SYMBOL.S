@@ -10,7 +10,6 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, symbol decoder
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08038438
 	.global Text_DecodeSymbol
 	.thumb_func
 Text_DecodeSymbol:

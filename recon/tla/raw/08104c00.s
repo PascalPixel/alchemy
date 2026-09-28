@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002064, 0x08002064
-	.set sub_08020018, 0x08020018
-	.set sub_08020030, 0x08020030
-	.set sub_08020040, 0x08020040
-	.set sub_08020048, 0x08020048
-	.set sub_080c82b8, 0x080c82b8
-	.set sub_081c0010, 0x081c0010
 	.global Func_08104c00
 	.thumb_func
 Func_08104c00:
@@ -33,7 +25,7 @@ Func_08104c00:
 	beq.n	.L_08104c32
 	subs	r6, #1
 	adds	r0, r6, r1
-	bl	sub_08002064
+	bl	0x08002064
 	adds	r6, r0, #0
 .L_08104c32:
 	ldr	r3, [r5, #12]
@@ -45,7 +37,7 @@ Func_08104c00:
 	mov	r3, r8
 	adds	r0, r6, r3
 	mov	r1, r8
-	bl	sub_08002064
+	bl	0x08002064
 	adds	r6, r0, #0
 .L_08104c4a:
 	ldr	r3, [r5, #12]
@@ -67,7 +59,7 @@ Func_08104c00:
 	adds	r0, r7, r3
 	subs	r0, #1
 	adds	r1, r7, #0
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r3, r7, #0
 	muls	r3, r0
 	adds	r5, r6, r7
@@ -84,18 +76,18 @@ Func_08104c00:
 	cmp	r9, r6
 	beq.n	.L_08104c96
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	mov	sl, r3
 .L_08104c96:
 	adds	r1, r7, #0
 	mov	r0, r9
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r1, r7, #0
 	adds	r5, r7, #0
 	muls	r5, r0
 	adds	r0, r6, #0
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r3, r7, #0
 	muls	r3, r0
 	cmp	r5, r3
@@ -292,7 +284,7 @@ Func_08104c00:
 	movs	r3, #128
 	adds	r2, r4, #0
 	lsls	r3, r3, #7
-	bl	sub_08020018
+	bl	0x08020018
 	ldr	r4, [sp, #4]
 .L_08104e22:
 	movs	r2, #1
@@ -338,7 +330,7 @@ Func_08104c00:
 	beq.n	.L_08104e82
 	adds	r0, r5, #0
 	str	r3, [sp, #0]
-	bl	sub_08020048
+	bl	0x08020048
 	ldr	r3, [sp, #0]
 	mov	r2, r9
 	str	r2, [r7, r6]
@@ -374,13 +366,13 @@ Func_08104c00:
 	cmp	r0, r3
 	beq.n	.L_08104eda
 	strh	r0, [r6, #0]
-	bl	sub_080c82b8
-	bl	sub_08020040
+	bl	0x080c82b8
+	bl	Func_08020040
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_08104ed8
 	movs	r1, #1
-	bl	sub_08020030
+	bl	Func_08020030
 	ldrb	r3, [r5, #9]
 	mov	r2, sl
 	ands	r3, r2

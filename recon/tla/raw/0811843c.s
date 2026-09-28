@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08123534, 0x08123534
 	.global Func_0811843c
 	.thumb_func
 Func_0811843c:
@@ -24,14 +22,14 @@ Func_0811843c:
 	mov	r3, r9
 	ldrb	r0, [r3, r7]
 	str	r4, [sp, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r3, #0
 	adds	r5, r0, #0
 	mov	r0, r8
 	strb	r3, [r0, r7]
 	mov	r1, r9
 	ldrb	r0, [r1, r7]
-	bl	sub_08123534
+	bl	0x08123534
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bne.n	.L_0811847c

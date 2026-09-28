@@ -17,7 +17,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, text decoder (instance 2)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080c93cc
 	.global BattleFx_DecodeFrame
 	.thumb_func
 BattleFx_DecodeFrame:

@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08009080, 0x08009080
-	.set sub_08009088, 0x08009088
-	.set sub_08015130, 0x08015130
-	.set sub_080b6b40, 0x080b6b40
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_080b8000, 0x080b8000
-	.set sub_080b8808, 0x080b8808
-	.set sub_080c9018, 0x080c9018
-	.set sub_080c9020, 0x080c9020
 	.global Func_080b8c1c
 	.thumb_func
 Func_080b8c1c:
@@ -38,14 +28,14 @@ BattlePres_RunUnitAction:
 	movs	r3, #40
 	str	r3, [r2, #4]
 	movs	r0, #40
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080b8c58
 .L_080b8c4c:
 	movs	r3, #40
 	str	r1, [r2, #0]
 	str	r3, [r2, #4]
 	movs	r0, #40
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b8c58:
 	movs	r2, #8
 	ldrsh	r3, [r5, r2]
@@ -60,7 +50,7 @@ BattlePres_RunUnitAction:
 	ldrsh	r3, [r5, r1]
 	str	r0, [r6, #8]
 	str	r3, [r6, #12]
-	bl	sub_080b8808
+	bl	BattleObject_IsValidId
 	cmp	r0, #0
 	bge.n	.L_080b8c80
 	movs	r0, #1
@@ -78,7 +68,7 @@ BattlePres_RunUnitAction:
 	movs	r0, #1
 .L_080b8c90:
 	adds	r1, r7, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	str	r0, [r6, #20]
 	ldr	r3, [pc, #280]
 	ldr	r3, [r3, #0]
@@ -87,16 +77,16 @@ BattlePres_RunUnitAction:
 	movs	r3, #2
 	negs	r3, r3
 	ands	r0, r3
-	bl	sub_08015130
+	bl	UiWindow_DrawPartyStatusContentsFar
 	ldr	r0, [r6, #8]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	ldr	r0, [r0, #0]
 	movs	r1, #3
 	mov	sl, r0
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	mov	r0, sl
 	movs	r1, #16
-	bl	sub_08009088
+	bl	ObjectDispatch_ApplyValueToChildrenFar
 	ldrh	r3, [r5, #10]
 	cmp	r3, #7
 	bhi.n	.L_080b8cda
@@ -105,7 +95,7 @@ BattlePres_RunUnitAction:
 	str	r2, [r6, #4]
 	movs	r0, #1
 	adds	r1, r7, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	mov	r3, r8
 	b.n	.L_080b8ce8
 .L_080b8cda:
@@ -113,7 +103,7 @@ BattlePres_RunUnitAction:
 	str	r3, [r6, #4]
 	movs	r0, #2
 	adds	r1, r7, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	movs	r3, #1
 .L_080b8ce8:
 	str	r3, [r6, #20]
@@ -127,7 +117,7 @@ BattlePres_RunUnitAction:
 	lsls	r3, r7, #1
 	adds	r3, #36
 	ldrsh	r0, [r2, r3]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	ldr	r3, [r0, #0]
 	ldr	r1, [r3, #80]
 	adds	r3, r1, #0
@@ -162,25 +152,25 @@ BattlePres_RunUnitAction:
 	adds	r0, r6, #0
 	str	r7, [r6, #0]
 	str	r7, [r6, #24]
-	bl	sub_080c9020
+	bl	0x080c9020
 	movs	r3, #1
 	str	r3, [r6, #0]
 	adds	r0, r6, #0
-	bl	sub_080c9020
+	bl	0x080c9020
 	movs	r3, #2
 	str	r3, [r6, #0]
 	adds	r0, r6, #0
-	bl	sub_080c9020
+	bl	0x080c9020
 	movs	r3, #3
 	str	r3, [r6, #0]
 	adds	r0, r6, #0
-	bl	sub_080c9020
+	bl	0x080c9020
 	adds	r0, r6, #0
 	str	r7, [r6, #0]
-	bl	sub_080c9018
+	bl	0x080c9018
 	mov	r0, sl
 	movs	r1, #1
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	add	r5, sp, #8
 	ldr	r3, [r5, #20]
 	adds	r2, r5, #0
@@ -191,7 +181,7 @@ BattlePres_RunUnitAction:
 	str	r2, [sp, #4]
 	ldrsh	r0, [r2, r6]
 	str	r2, [sp, #0]
-	bl	sub_080b8000
+	bl	Actor_ResetMotionAtAnchor
 	ldr	r1, [sp, #4]
 	ldr	r3, [r1, #20]
 	adds	r7, #1
@@ -201,7 +191,7 @@ BattlePres_RunUnitAction:
 	bne.n	.L_080b8d7c
 .L_080b8d94:
 	ldr	r0, [r5, #8]
-	bl	sub_080b8000
+	bl	Actor_ResetMotionAtAnchor
 	movs	r0, #0
 .L_080b8d9c:
 	add	sp, #92

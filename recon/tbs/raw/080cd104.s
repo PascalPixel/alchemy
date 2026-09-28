@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004458, 0x08004458
 	.global Unnamed_080cd104
 	.global Func_080cd104
 	.thumb_func
@@ -30,7 +28,7 @@ Func_080cd104:
 	mov	r5, fp
 	mov	r8, r3
 .L_080cd130:
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	strb	r0, [r5, #0]
 	adds	r5, #1
@@ -101,7 +99,7 @@ Func_080cd104:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #128
 	lsls	r1, r1, #1
 	cmp	r8, r1
@@ -176,7 +174,7 @@ Func_080cd104:
 	movs	r3, #1
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	mov	r1, r8
 	cmp	r1, #191
 	ble.n	.L_080cd1ca

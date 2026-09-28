@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015120, 0x08015120
-	.set sub_080151c8, 0x080151c8
-	.set sub_08077008, 0x08077008
-	.set sub_08077080, 0x08077080
 	.global BattleCommand_SelectTargets
 	.global Func_080be18c
 	.thumb_func
@@ -21,7 +17,7 @@ Func_080be18c:
 	mov	r1, r9
 	str	r1, [r3, #0]
 	mov	sl, r1
-	bl	sub_08077080
+	bl	Ability_GetData
 	movs	r3, #0
 	ldrb	r2, [r0, #0]
 	str	r3, [sp, #20]
@@ -151,7 +147,7 @@ Func_080be18c:
 	bne.n	.L_080be2a6
 	adds	r0, r5, #0
 	str	r4, [sp, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	ldr	r4, [sp, #0]
@@ -189,7 +185,7 @@ Func_080be18c:
 	bne.n	.L_080be2f0
 	adds	r0, r5, #0
 	str	r4, [sp, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r2, #56
 	ldrsh	r3, [r0, r2]
 	ldr	r4, [sp, #0]
@@ -235,9 +231,9 @@ Func_080be18c:
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #48]
-	bl	sub_080151c8
+	bl	UiText_ShowMessageAndWaitCoreFar
 	mov	r3, sl
 	subs	r3, #20
 	ldr	r3, [r3, #0]

@@ -1,17 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08005268, 0x08005268
-	.set sub_08015038, 0x08015038
-	.set sub_08015048, 0x08015048
-	.set sub_080150f8, 0x080150f8
-	.set sub_08015108, 0x08015108
-	.set sub_08015110, 0x08015110
-	.set sub_080151e0, 0x080151e0
-	.set sub_0808ba1c, 0x0808ba1c
-	.set sub_080915ac, 0x080915ac
-	.set sub_08092ba8, 0x08092ba8
-	.set sub_08094154, 0x08094154
 	.global UiText_OpenMessageAtObject
 	.global Func_08092c40
 	.thumb_func
@@ -34,7 +22,7 @@ Func_08092c40:
 	str	r3, [sp, #28]
 	mov	sl, r2
 	mov	r9, r2
-	bl	sub_08092ba8
+	bl	ObjectTable_ReadActiveValue
 	movs	r2, #240
 	lsls	r2, r2, #8
 	movs	r3, #0
@@ -59,7 +47,7 @@ Func_08092c40:
 	adds	r0, r6, #0
 	mov	r8, r1
 	str	r4, [sp, #4]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	movs	r2, #250
 	ldr	r1, [sp, #28]
 	lsls	r2, r2, #1
@@ -86,7 +74,7 @@ Func_08092c40:
 	add	r5, sp, #52
 	adds	r1, r5, #0
 	adds	r0, #8
-	bl	sub_08005268
+	bl	Render_ProjectPoint
 	ldr	r3, [r5, #0]
 	asrs	r4, r3, #3
 	ldr	r3, [r5, #4]
@@ -108,7 +96,7 @@ Func_08092c40:
 	str	r6, [sp, #24]
 	adds	r5, r3, r2
 	ldr	r0, [r5, #0]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	movs	r2, #207
 	ldr	r1, [sp, #28]
 	lsls	r2, r2, #1
@@ -120,7 +108,7 @@ Func_08092c40:
 	add	r5, sp, #52
 	adds	r1, r5, #0
 	adds	r0, #8
-	bl	sub_08005268
+	bl	Render_ProjectPoint
 	ldr	r3, [r5, #0]
 	asrs	r4, r3, #3
 	ldr	r3, [r5, #4]
@@ -131,7 +119,7 @@ Func_08092c40:
 	add	r5, sp, #52
 	adds	r1, r5, #0
 .L_08092d24:
-	bl	sub_08094154
+	bl	Object_GetScreenPosition
 	mvns	r0, r0
 	negs	r3, r0
 	orrs	r3, r0
@@ -159,7 +147,7 @@ Func_08092c40:
 	add	r1, sp, #48
 	mov	r0, r8
 	str	r4, [sp, #4]
-	bl	sub_08015110
+	bl	0x08015110
 	ldr	r3, [sp, #40]
 	lsrs	r2, r3, #31
 	adds	r3, r3, r2
@@ -250,7 +238,7 @@ Func_08092c40:
 	subs	r6, r3, #2
 .L_08092dfe:
 	ldr	r0, [sp, #24]
-	bl	sub_080151e0
+	bl	Func_080151e0
 	movs	r3, #1
 	negs	r3, r3
 	adds	r7, r0, #0
@@ -269,7 +257,7 @@ Func_08092c40:
 	mov	fp, r2
 	str	r3, [sp, #8]
 	str	r7, [sp, #0]
-	bl	sub_08015110
+	bl	0x08015110
 	ldr	r2, [sp, #44]
 	subs	r1, r2, #5
 	mov	r8, sl
@@ -305,7 +293,7 @@ Func_08092c40:
 	mov	r2, fp
 	ldr	r5, [sp, #36]
 	str	r7, [sp, #0]
-	bl	sub_08015108
+	bl	Func_08015108
 	ldr	r3, [sp, #36]
 	movs	r1, #1
 	subs	r5, r5, r3
@@ -325,7 +313,7 @@ Func_08092c40:
 	mov	r0, r8
 	add	r2, sp, #44
 	ldr	r5, [sp, #36]
-	bl	sub_08015108
+	bl	Func_08015108
 	ldr	r3, [sp, #36]
 	subs	r5, r5, r3
 	adds	r5, #1
@@ -351,7 +339,7 @@ Func_08092c40:
 	cmp	r3, #0
 	beq.n	.L_08092ee6
 	movs	r0, #8
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [sp, #20]
 	cmp	r3, #0
 	beq.n	.L_08092edc
@@ -370,7 +358,7 @@ Func_08092c40:
 	b.n	.L_08092f10
 .L_08092ee6:
 	ldr	r0, [sp, #24]
-	bl	sub_080915ac
+	bl	BattleFx_GetResourceId
 	ldr	r1, [sp, #20]
 	cmp	r1, #0
 	beq.n	.L_08092f04
@@ -392,7 +380,7 @@ Func_08092c40:
 .L_08092f0e:
 	mov	r0, r8
 .L_08092f10:
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	mov	sl, r0
 	ldr	r1, [sp, #32]
 	ldr	r2, [pc, #100]
@@ -402,14 +390,14 @@ Func_08092c40:
 	movs	r1, #0
 	adds	r2, r6, #0
 	ldr	r3, [sp, #16]
-	bl	sub_080150f8
+	bl	UiWindow_CreateWithSideObjectFar
 	mov	r9, r0
 	b.n	.L_08092f34
 .L_08092f2e:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_08092f34:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	beq.n	.L_08092f2e
 .L_08092f3c:

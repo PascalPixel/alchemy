@@ -397,6 +397,8 @@ MusicPlayer_Tick:
 	mov	fp, r3
 	pop	{r3}
 .L1:
+	.global SoundDriver_CallViaR3
+SoundDriver_CallViaR3:
 	bx	r3
 AlchemyUncredited_080f9eea:
 	.2byte	0x0000

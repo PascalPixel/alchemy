@@ -10,7 +10,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, transfer command executor
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08013060
 	.global Resource_ExecuteTransfer
 	.thumb_func
 Resource_ExecuteTransfer:

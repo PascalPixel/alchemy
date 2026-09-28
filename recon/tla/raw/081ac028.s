@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014de4, 0x08014de4
-	.set sub_08015024, 0x08015024
-	.set sub_08015068, 0x08015068
-	.set sub_08015128, 0x08015128
-	.set sub_08015768, 0x08015768
 	.global Func_081ac028
 	.thumb_func
 Func_081ac028:
@@ -29,16 +24,16 @@ Func_081ac028:
 	str	r6, [r3, #16]
 	str	r6, [r5, #24]
 	sub	sp, #12
-	bl	sub_08014de4
+	bl	Func_08014de4
 	adds	r0, r5, #0
 	adds	r0, #12
-	bl	sub_08015128
+	bl	0x08015128
 	movs	r3, #54
 	ldrsh	r0, [r5, r3]
-	bl	sub_08015068
+	bl	0x08015068
 	movs	r3, #52
 	ldrsh	r0, [r5, r3]
-	bl	sub_08015024
+	bl	0x08015024
 	mov	r0, sp
 	str	r6, [r0, #0]
 	str	r6, [r0, #4]
@@ -59,7 +54,7 @@ Func_081ac028:
 	movs	r0, #250
 	lsls	r0, r0, #16
 	ldr	r2, [pc, #20]
-	bl	sub_08015768
+	bl	Camera_StoreSceneParameters
 	add	sp, #12
 	pop	{r5, r6, pc}
 	movs	r0, r0

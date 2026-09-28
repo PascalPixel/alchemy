@@ -11,7 +11,6 @@
 @ credit: library — TBS/TLA common sound command-byte reader and setters (setters)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c0400
 	.global MusicTrack_SetLfoSpeedFromCommandLeftover
 	.thumb_func
 MusicTrack_SetLfoSpeedFromCommandLeftover:

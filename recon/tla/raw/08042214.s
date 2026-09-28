@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0803ae14, 0x0803ae14
-	.set sub_080420fc, 0x080420fc
 	.global UiText_DrawNumberAtOffset
 	.global Func_08042214
 	.thumb_func
@@ -19,11 +17,11 @@ Func_08042214:
 	adds	r6, r2, #0
 	mov	r0, sp
 	adds	r2, r5, #0
-	bl	sub_0803ae14
+	bl	0x0803ae14
 	adds	r1, r6, #0
 	mov	r2, r8
 	adds	r3, r7, #0
-	bl	sub_080420fc
+	bl	UiText_DrawStringAtOffset
 	add	sp, #16
 	pop	{r3}
 	mov	r8, r3

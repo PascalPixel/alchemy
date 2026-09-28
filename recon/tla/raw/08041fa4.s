@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0803aae4, 0x0803aae4
-	.set sub_0803b094, 0x0803b094
 	.global UiText_DrawResource
 	.global Func_08041fa4
 	.thumb_func
@@ -29,7 +27,7 @@ Func_08041fa4:
 	mov	sl, r1
 	strh	r2, [r6, #0]
 	movs	r1, #1
-	bl	sub_0803b094
+	bl	0x0803b094
 	ldrh	r3, [r6, #0]
 	movs	r1, #244
 	lsls	r1, r1, #4
@@ -47,7 +45,7 @@ Func_08041fa4:
 	mov	r1, sl
 	mov	r2, r9
 	mov	r3, fp
-	bl	sub_0803aae4
+	bl	0x0803aae4
 	b.n	.L_08042000
 	.2byte 0x01ff
 	.2byte 0x0000

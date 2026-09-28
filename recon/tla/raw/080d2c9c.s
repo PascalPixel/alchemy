@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c0010, 0x081c0010
 	.global Func_080d2c9c
 	.thumb_func
 Func_080d2c9c:
@@ -20,7 +19,7 @@ Func_080d2c9c:
 	negs	r3, r3
 	cmp	r0, r3
 	beq.n	.L_080d2cc0
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 .L_080d2cc0:
 	pop	{pc}
 	.2byte 0x0000

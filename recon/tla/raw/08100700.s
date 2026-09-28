@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080f8888, 0x080f8888
 	.global Func_08100700
 	.thumb_func
 Func_08100700:
@@ -24,7 +23,7 @@ Func_08100700:
 	mov	r3, r8
 	strh	r3, [r0, #6]
 	strh	r7, [r0, #8]
-	bl	sub_080f8888
+	bl	0x080f8888
 .L_0810072a:
 	subs	r6, #1
 	cmp	r6, #0

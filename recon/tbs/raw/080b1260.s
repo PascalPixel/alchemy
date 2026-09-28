@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015060, 0x08015060
-	.set sub_08015070, 0x08015070
-	.set sub_08015078, 0x08015078
-	.set sub_08015080, 0x08015080
-	.set sub_080150b0, 0x080150b0
-	.set sub_080150c8, 0x080150c8
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_08077018, 0x08077018
-	.set sub_08077218, 0x08077218
-	.set sub_08077228, 0x08077228
 	.global Shop_DrawEquipComparison
 	.global Func_080b1260
 	.thumb_func
@@ -31,10 +20,10 @@ Func_080b1260:
 	adds	r0, r1, #0
 	mov	r9, r2
 	str	r3, [sp, #16]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r7, r0, #0
 	mov	r0, r9
-	bl	sub_08077018
+	bl	Item_Get
 	adds	r5, r0, #0
 	movs	r0, #1
 	negs	r0, r0
@@ -45,22 +34,22 @@ Func_080b1260:
 	b.n	.L_080b1450
 .L_080b129a:
 	mov	r0, sl
-	bl	sub_08015060
+	bl	UiWindow_Clear
 	mov	r1, r9
 	ldr	r0, [sp, #20]
-	bl	sub_08077218
+	bl	Item_CanOwnerEquip
 	cmp	r0, #0
 	bne.n	.L_080b12ba
 	ldr	r0, [pc, #112]
 	mov	r1, sl
 	movs	r2, #8
 	movs	r3, #24
-	bl	sub_08015078
+	bl	UiText_DrawMessageAt
 	b.n	.L_080b1450
 .L_080b12ba:
 	ldrb	r1, [r5, #2]
 	ldr	r0, [sp, #20]
-	bl	sub_08077228
+	bl	Inventory_FindEquippedFar
 	ldr	r2, [sp, #12]
 	cmp	r0, r2
 	bne.n	.L_080b1324
@@ -99,7 +88,7 @@ Func_080b1260:
 	cmp	r5, #14
 	bgt.n	.L_080b1312
 	ldrh	r0, [r6, #0]
-	bl	sub_08077018
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	adds	r6, #2
 	cmp	r3, #6
@@ -134,7 +123,7 @@ Func_080b1260:
 	strh	r1, [r7, r5]
 	ldr	r0, [sp, #20]
 	mov	r8, r2
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	ldrh	r3, [r7, #60]
 	add	r2, sp, #24
 	str	r3, [r2, #0]
@@ -159,7 +148,7 @@ Func_080b1260:
 	strh	r0, [r7, r5]
 	ldr	r0, [sp, #20]
 	mov	fp, r2
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	ldrh	r3, [r7, #60]
 	add	r1, sp, #40
 	str	r3, [r1, #0]
@@ -203,7 +192,7 @@ Func_080b1260:
 	lsls	r1, r1, #23
 	movs	r3, #56
 	mov	r2, sl
-	bl	sub_080150c8
+	bl	RenderOutput_CreateFar
 	movs	r3, #0
 	adds	r6, r7, #0
 	strb	r3, [r0, #4]
@@ -218,7 +207,7 @@ Func_080b1260:
 	movs	r1, #3
 	movs	r3, #32
 	str	r7, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	mov	r2, r8
 	add	r0, sp, #40
 	mov	r1, fp
@@ -230,20 +219,20 @@ Func_080b1260:
 	mov	r2, sl
 	movs	r3, #72
 	str	r6, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 .L_080b140a:
 	ldr	r0, [pc, #92]
 	mov	r1, sl
 	adds	r0, r5, r0
 	movs	r2, #0
 	adds	r3, r6, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r2, [sp, #4]
 	mov	r0, sl
 	movs	r3, #13
 	movs	r1, #0
 	str	r2, [sp, #0]
-	bl	sub_08015070
+	bl	UiWindow_DrawDividerLineFar
 	ldr	r3, [sp, #4]
 	movs	r0, #4
 	adds	r3, #2
@@ -263,7 +252,7 @@ Func_080b1260:
 	adds	r0, r1, r0
 	movs	r3, #48
 	mov	r1, sl
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080b1450:
 	add	sp, #56
 	pop	{r3, r5, r6, r7}

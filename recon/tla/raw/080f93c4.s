@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080145a8, 0x080145a8
-	.set sub_08014644, 0x08014644
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_08016d18, 0x08016d18
-	.set sub_080380b8, 0x080380b8
-	.set sub_080f93f4, 0x080f93f4
-	.set sub_081c0010, 0x081c0010
 	.global Func_080f93c4
 	.thumb_func
 Func_080f93c4:
@@ -17,7 +9,7 @@ Func_080f93c4:
 	movs	r3, #3
 	ands	r3, r2
 	cmp	r3, #0
-	bne.n	sub_080f93f4
+	bne.n	0x080f93f4
 	movs	r3, #4
 	ands	r3, r2
 	cmp	r3, #0
@@ -43,12 +35,12 @@ Func_080f93c4:
 	cmp	r3, #0
 	beq.n	.L_080f9414
 	movs	r0, #113
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	ldr	r0, [pc, #52]
-	bl	sub_08014644
+	bl	Func_08014644
 .L_080f9414:
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -73,11 +65,11 @@ Func_080f93c4:
 	push	{lr}
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_08016d18
+	bl	0x08016d18
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #8]
-	bl	sub_080145a8
+	bl	0x080145a8
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x93c5
@@ -85,11 +77,11 @@ Func_080f93c4:
 	push	{lr}
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080f9478
 	ldr	r0, [pc, #8]
-	bl	sub_08014644
+	bl	Func_08014644
 .L_080f9478:
 	pop	{pc}
 	movs	r0, r0
@@ -97,6 +89,6 @@ Func_080f93c4:
 	.2byte 0x080f
 	push	{lr}
 	movs	r0, #15
-	bl	sub_080380b8
+	bl	0x080380b8
 	pop	{pc}
 	.2byte 0x0000

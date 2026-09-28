@@ -9,7 +9,6 @@
 .syntax unified
 .text
 	.arm
-	.set AlchemyLoadAddress, 0x08197230
 	.global SentouKouka_IroJun
 	.global SentouKouka_IroGyaku
 SentouKouka_IroJun:

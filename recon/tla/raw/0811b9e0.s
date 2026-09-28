@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_0811a31c, 0x0811a31c
-	.set sub_0811b598, 0x0811b598
-	.set sub_0811bdb0, 0x0811bdb0
 	.global Func_0811b9e0
 	.thumb_func
 Func_0811b9e0:
@@ -39,12 +35,12 @@ Func_0811b9e0:
 	movs	r0, #1
 	mov	r8, r1
 	mov	r9, r3
-	bl	sub_0811a31c
+	bl	0x0811a31c
 	lsls	r1, r0, #1
 	mov	fp, r0
 	add	r1, r8
 	movs	r0, #2
-	bl	sub_0811a31c
+	bl	0x0811a31c
 	str	r0, [sp, #12]
 	movs	r7, #0
 	mov	r2, r8
@@ -81,13 +77,13 @@ Func_0811b9e0:
 	beq.n	.L_0811ba9a
 	adds	r0, r5, #0
 	ldr	r6, [r5, #0]
-	bl	sub_0811b598
+	bl	0x0811b598
 	ldr	r3, [r5, #36]
 	cmp	r3, #0
 	beq.n	.L_0811ba9a
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	sub_0811bdb0
+	bl	0x0811bdb0
 	cmp	r0, #0
 	beq.n	.L_0811ba9a
 	ldr	r3, [r6, #12]
@@ -181,7 +177,7 @@ Func_0811b9e0:
 	strb	r3, [r5, #9]
 	lsls	r3, r7, #1
 	ldrh	r0, [r1, r3]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #44
 	adds	r2, #255
 	adds	r3, r0, r2
@@ -269,7 +265,7 @@ Func_0811b9e0:
 	mov	r1, r8
 	lsls	r3, r7, #1
 	ldrh	r0, [r1, r3]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #44
 	adds	r2, #255
 	adds	r3, r0, r2

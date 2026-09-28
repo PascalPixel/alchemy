@@ -8,7 +8,6 @@
 .syntax unified
 	.set	.Lrecords_end, 0x080006fc
 	.arm
-	.set AlchemyLoadAddress, 0x08000534
 .Lrecord_2:
 	asrs	r6, r4, #18
 	adds	r6, r6, fp, asr #19

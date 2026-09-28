@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_08016d18, 0x08016d18
 	.global Func_080cacec
 	.thumb_func
 Func_080cacec:
@@ -14,9 +12,9 @@ Func_080cacec:
 	lsls	r0, r0, #1
 	adds	r7, #255
 	ldr	r6, [r3, #32]
-	bl	sub_08016d18
+	bl	0x08016d18
 	adds	r0, r7, #0
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	movs	r2, #0
 	ldrsh	r3, [r5, r2]
 	movs	r2, #1

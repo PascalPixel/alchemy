@@ -1,11 +1,10 @@
 .syntax unified
 	.thumb
-	.set sub_08164cc4, 0x08164cc4
 	.global Func_08164c00
 	.thumb_func
 Func_08164c00:
 	push	{lr}
 	movs	r1, #1
-	bl	sub_08164cc4
+	bl	Func_08164cc4
 	pop	{pc}
 	.2byte 0x0000

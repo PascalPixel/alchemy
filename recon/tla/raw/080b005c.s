@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002074, 0x08002074
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080ad3a8, 0x080ad3a8
-	.set sub_080affac, 0x080affac
 	.global Func_080b005c
 	.thumb_func
 Func_080b005c:
@@ -12,7 +8,7 @@ Func_080b005c:
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	sub_080ad3a8
+	bl	0x080ad3a8
 	adds	r0, #42
 	ldrb	r1, [r0, #0]
 	cmp	r1, #47
@@ -33,7 +29,7 @@ Func_080b005c:
 	push	{r6, r7}
 	mov	sl, r1
 	sub	sp, #16
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #42
 	adds	r2, r0, #0
 	adds	r1, #255
@@ -44,7 +40,7 @@ Func_080b005c:
 	adds	r1, #33
 	adds	r3, r2, r1
 	ldrh	r0, [r3, #0]
-	bl	sub_080ad3a8
+	bl	0x080ad3a8
 	adds	r0, #42
 	ldrb	r0, [r0, #0]
 	cmp	r0, #47
@@ -76,7 +72,7 @@ Func_080b005c:
 	ldrh	r0, [r3, #0]
 	adds	r2, r5, #0
 	adds	r1, #248
-	bl	sub_080affac
+	bl	Func_080affac
 	ldr	r7, [pc, #80]
 	mov	r8, r5
 	movs	r6, #3
@@ -85,7 +81,7 @@ Func_080b005c:
 	mov	r3, r8
 	ldr	r0, [r5, r3]
 	ldr	r1, [pc, #72]
-	bl	sub_08002074
+	bl	Math_UnsignedMulHigh
 	mov	r1, r8
 	lsls	r3, r0, #2
 	ldr	r2, [r5, r1]
@@ -145,7 +141,7 @@ Func_080b005c:
 	mov	r5, sp
 	adds	r0, r7, #0
 	adds	r2, r5, #0
-	bl	sub_080affac
+	bl	Func_080affac
 	mov	ip, fp
 	mov	r0, fp
 	movs	r4, #0

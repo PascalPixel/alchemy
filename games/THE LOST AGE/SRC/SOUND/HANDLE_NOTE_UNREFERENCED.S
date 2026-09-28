@@ -8,9 +8,7 @@
 @ credit.
 @ credit: library — TBS/TLA common sound driver note-start routine
 .syntax unified
-	.set SoundDriver_CallViaR3, 0x081c1b84
 	.thumb
-	.set AlchemyLoadAddress, 0x081c1c08
 	.global MusicTrack_HandleNoteUnreferenced
 	.thumb_func
 MusicTrack_HandleNoteUnreferenced:

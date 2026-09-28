@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08004458, 0x08004458
-	.set sub_08015120, 0x08015120
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_08077080, 0x08077080
-	.set sub_08077128, 0x08077128
-	.set sub_08077190, 0x08077190
 	.global BattleEffect_ApplyToTargets
 	.global Func_080a9f10
 	.thumb_func
@@ -25,7 +17,7 @@ Func_080a9f10:
 	mov	sl, r2
 	str	r3, [sp, #8]
 	str	r0, [sp, #16]
-	bl	sub_08077080
+	bl	Ability_GetData
 	ldr	r3, [pc, #864]
 	ldr	r3, [r3, #0]
 	mov	fp, r0
@@ -43,7 +35,7 @@ Func_080a9f10:
 .L_080a9f48:
 	movs	r0, #0
 .L_080a9f4a:
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r5, r0, #0
 	mov	r3, fp
 	movs	r4, #0
@@ -69,7 +61,7 @@ Func_080a9f10:
 	ldrh	r3, [r0, r3]
 	mov	sl, r3
 	mov	r0, sl
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r5, r0, #0
 .L_080a9f84:
 	mov	r1, fp
@@ -107,7 +99,7 @@ Func_080a9f10:
 	cmp	r3, #4
 	beq.n	.L_080a9fec
 	ldr	r0, [sp, #12]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	r1, fp
 	ldrb	r3, [r1, #2]
 	lsls	r3, r3, #2
@@ -120,7 +112,7 @@ Func_080a9f10:
 	movs	r2, #128
 	adds	r0, r6, #0
 	lsls	r2, r2, #1
-	bl	sub_08077190
+	bl	Func_08077190
 	adds	r6, r0, #0
 .L_080a9ffa:
 	movs	r4, #56
@@ -170,7 +162,7 @@ Func_080a9f10:
 	movs	r7, #1
 .L_080aa04a:
 	mov	r0, sl
-	bl	sub_08077128
+	bl	Owner_RecalculateRatiosFar
 	movs	r3, #1
 	mov	r4, fp
 	mov	r9, r3
@@ -183,7 +175,7 @@ Func_080a9f10:
 	mov	r8, r0
 	movs	r7, #3
 	b.n	.L_080aa178
-	bl	sub_08004458
+	bl	Random16
 	lsls	r0, r0, #2
 	lsrs	r0, r0, #16
 	cmp	r0, #0
@@ -255,7 +247,7 @@ Func_080a9f10:
 	strh	r3, [r5, #24]
 	movs	r0, #3
 	movs	r1, #5
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	movs	r2, #1
 	movs	r7, #20
 	mov	r9, r2
@@ -266,7 +258,7 @@ Func_080a9f10:
 	strh	r3, [r5, #26]
 	movs	r0, #4
 	movs	r1, #5
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	movs	r3, #1
 	movs	r7, #21
 	mov	r9, r3
@@ -306,7 +298,7 @@ Func_080a9f10:
 	movs	r7, #6
 .L_080aa160:
 	mov	r0, sl
-	bl	sub_08077128
+	bl	Owner_RecalculateRatiosFar
 	movs	r3, #1
 	mov	r4, fp
 	mov	r9, r3
@@ -464,7 +456,7 @@ Func_080a9f10:
 	movs	r7, #6
 .L_080aa308:
 	mov	r0, sl
-	bl	sub_08077128
+	bl	Owner_RecalculateRatiosFar
 	movs	r3, #1
 	mov	r9, r3
 	b.n	.L_080aa3b0
@@ -475,7 +467,7 @@ Func_080a9f10:
 	ldrh	r3, [r5, #52]
 	mov	r0, sl
 	strh	r3, [r5, #56]
-	bl	sub_08077128
+	bl	Owner_RecalculateRatiosFar
 	movs	r0, #1
 	mov	r1, r8
 	mov	r9, r0
@@ -511,11 +503,11 @@ Func_080a9f10:
 	lsls	r0, r3, #3
 	subs	r0, r0, r3
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	strh	r0, [r5, #56]
 	mov	r0, sl
 .L_080aa372:
-	bl	sub_08077128
+	bl	Owner_RecalculateRatiosFar
 	mov	r0, r8
 	cmp	r0, #0
 	bne.n	.L_080aa3b0
@@ -596,7 +588,7 @@ Func_080a9f10:
 	ldr	r2, [sp, #4]
 	adds	r3, r3, r1
 	ldrh	r0, [r2, r3]
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	ldr	r3, [sp, #0]
 	adds	r3, #1
 	lsls	r3, r3, #24

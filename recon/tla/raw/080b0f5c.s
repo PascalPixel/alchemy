@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
 	.global Owner_SumDjinnCounts
 	.global Func_080b0f5c
 	.thumb_func
@@ -8,7 +7,7 @@ Owner_SumDjinnCounts:
 Func_080b0f5c:
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #1
 	negs	r1, r1
 	adds	r2, r0, #0

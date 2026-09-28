@@ -1,22 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_080145a8, 0x080145a8
-	.set sub_0801489c, 0x0801489c
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_08015778, 0x08015778
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08020090, 0x08020090
-	.set sub_08038040, 0x08038040
-	.set sub_08038120, 0x08038120
-	.set sub_080ad078, 0x080ad078
-	.set sub_080cad84, 0x080cad84
-	.set sub_080dc0b8, 0x080dc0b8
-	.set sub_080dc164, 0x080dc164
-	.set sub_080e1420, 0x080e1420
-	.set sub_080e15fc, 0x080e15fc
-	.set sub_080ebc30, 0x080ebc30
-	.set sub_081c0010, 0x081c0010
 	.global Func_080dc390
 	.thumb_func
 Func_080dc390:
@@ -36,7 +19,7 @@ Func_080dc390:
 	bne.n	.L_080dc3c0
 	mov	r5, sp
 	adds	r1, r5, #0
-	bl	sub_08015778
+	bl	Func_08015778
 	ldr	r3, [r5, #0]
 	lsls	r3, r3, #16
 	str	r3, [r6, #0]
@@ -80,7 +63,7 @@ Func_080dc390:
 .L_080dc400:
 	adds	r0, r5, #0
 	subs	r6, #1
-	bl	sub_080ebc30
+	bl	0x080ebc30
 	adds	r5, #72
 	cmp	r6, #0
 	bge.n	.L_080dc400
@@ -113,7 +96,7 @@ Func_080dc390:
 	adds	r5, #244
 	adds	r1, r5, #0
 	movs	r0, #224
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	adds	r6, r0, #0
 	ldr	r3, [pc, #12]
 	movs	r2, #0
@@ -134,7 +117,7 @@ Func_080dc390:
 	strh	r3, [r6, #28]
 	mov	r0, sl
 	mov	r9, r2
-	bl	sub_080ad078
+	bl	0x080ad078
 	movs	r1, #192
 	ldrb	r3, [r0, #6]
 	lsls	r1, r1, #4
@@ -147,7 +130,7 @@ Func_080dc390:
 	beq.n	.L_080dc48c
 	b.n	.L_080dc5fc
 .L_080dc48c:
-	bl	sub_080dc0b8
+	bl	0x080dc0b8
 	ldr	r3, [pc, #16]
 	adds	r2, r6, #0
 	subs	r3, r3, r0
@@ -331,11 +314,11 @@ Func_080dc390:
 	adds	r2, r7, r3
 	movs	r3, #255
 	strb	r3, [r2, #0]
-	bl	sub_080e15fc
+	bl	0x080e15fc
 	movs	r1, #144
 	ldr	r0, [pc, #48]
 	lsls	r1, r1, #3
-	bl	sub_080145a8
+	bl	0x080145a8
 .L_080dc5fc:
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -363,14 +346,14 @@ Func_080dc390:
 	strh	r0, [r6, #24]
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	strh	r5, [r6, #26]
 	lsls	r5, r5, #16
 	adds	r7, r0, #0
 	asrs	r5, r5, #16
 	str	r7, [r6, #16]
 	adds	r0, r5, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	ldrh	r1, [r7, #6]
 	movs	r2, #128
 	lsls	r2, r2, #6
@@ -436,7 +419,7 @@ Func_080dc390:
 	ldrh	r1, [r6, #0]
 	str	r3, [r6, #8]
 	adds	r2, r6, #4
-	bl	sub_0801489c
+	bl	0x0801489c
 .L_080dc6d6:
 	pop	{r5, r6, r7, pc}
 	push	{r5, r6, r7, lr}
@@ -459,7 +442,7 @@ Func_080dc390:
 	adds	r0, r6, #0
 	movs	r1, #20
 	mov	r9, r2
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r3, [r6, #8]
 	movs	r2, #0
 	str	r3, [r6, #56]
@@ -480,10 +463,10 @@ Func_080dc390:
 	cmp	r3, #0
 	beq.n	.L_080dc738
 	movs	r0, #212
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_080e1420
+	bl	0x080e1420
 .L_080dc738:
 	adds	r3, r7, #0
 	adds	r3, #35
@@ -501,10 +484,10 @@ Func_080dc390:
 	movs	r2, #0
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_080dc164
+	bl	Func_080dc164
 	mov	r0, r9
 	movs	r1, #4
-	bl	sub_08038120
+	bl	0x08038120
 	movs	r2, #224
 	lsls	r2, r2, #3
 	adds	r2, #18
@@ -512,17 +495,17 @@ Func_080dc390:
 	movs	r1, #0
 	ldrsb	r1, [r3, r1]
 	ldr	r0, [pc, #84]
-	bl	sub_08038040
+	bl	0x08038040
 	adds	r0, r6, #0
 	movs	r1, #0
 	movs	r2, #16
-	bl	sub_080dc164
+	bl	Func_080dc164
 	mov	r3, r8
 	strb	r3, [r5, #0]
 .L_080dc784:
 	movs	r0, #160
 	lsls	r0, r0, #1
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080dc7ac
 	mov	r2, sl
@@ -532,11 +515,11 @@ Func_080dc390:
 	beq.n	.L_080dc7a2
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_080e1420
+	bl	0x080e1420
 .L_080dc7a2:
 	adds	r0, r6, #0
 	movs	r1, #21
-	bl	sub_08020090
+	bl	Object_SetMode
 	b.n	.L_080dc7b0
 .L_080dc7ac:
 	bl	.L_080dc7cc
@@ -563,8 +546,8 @@ Func_080dc390:
 	ldr	r3, [r3, #0]
 	movs	r1, #0
 	ldr	r0, [r3, #16]
-	bl	sub_080e1420
+	bl	0x080e1420
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	pop	{pc}
 	.2byte 0x0000

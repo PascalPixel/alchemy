@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072f0, 0x080072f0
-	.set sub_080770c0, 0x080770c0
 	.global Func_080908e0
 	.thumb_func
 Func_080908e0:
@@ -13,7 +11,7 @@ Func_080908e0:
 	lsls	r1, r1, #5
 	lsls	r0, r0, #1
 	adds	r5, r6, r1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080908fa
 	b.n	.L_08090a44
@@ -67,7 +65,7 @@ Func_080908e0:
 	movs	r2, #168
 	ldr	r3, [pc, #72]
 	lsls	r2, r2, #4
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r3, [pc, #68]
 	adds	r2, r6, r3
 	movs	r3, #0

@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003d28, 0x08003d28
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_0801b36c, 0x0801b36c
-	.set sub_080770c0, 0x080770c0
-	.set sub_080b50b0, 0x080b50b0
 	.global MenuSelection_DrawSideMarker
 	.global Func_0801aeec
 	.thumb_func
@@ -91,7 +85,7 @@ Func_0801aeec:
 	adds	r2, r1, r2
 	ldrh	r0, [r6, r3]
 	movs	r1, #128
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #32]
 	ldrh	r2, [r5, #8]
 	ands	r0, r3
@@ -100,7 +94,7 @@ Func_0801aeec:
 	orrs	r3, r0
 	strh	r3, [r5, #8]
 	ldr	r0, [pc, #32]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0801afde
 	ldr	r1, [pc, #24]
@@ -133,7 +127,7 @@ Func_0801aeec:
 .L_0801afde:
 	movs	r1, #238
 	adds	r0, r5, #0
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	movs	r3, #52
 	mov	r2, r8
 	muls	r2, r3

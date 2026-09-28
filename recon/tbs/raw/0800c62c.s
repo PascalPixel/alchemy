@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08003f78, 0x08003f78
-	.set sub_080048b0, 0x080048b0
-	.set sub_0800b168, 0x0800b168
 	.global ObjectSystem_UpdateCamera
 	.global Func_0800c62c
 	.thumb_func
@@ -36,7 +32,7 @@ Func_0800c62c:
 	ldr	r5, [pc, #504]
 	movs	r0, #52
 	adds	r1, r5, #0
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #132
 	lsrs	r5, r5, #2
 	lsls	r2, r2, #24
@@ -99,7 +95,7 @@ Func_0800c62c:
 	ldr	r5, [r7, #72]
 	ldrb	r0, [r5, #28]
 	adds	r5, #37
-	bl	sub_08003f78
+	bl	Resource_ActivateEntry
 	strb	r6, [r5, #0]
 	b.n	.L_0800c822
 .L_0800c6e0:
@@ -239,7 +235,7 @@ Func_0800c62c:
 	ldrh	r3, [r0, #6]
 	mov	r2, ip
 	adds	r0, r5, #0
-	bl	sub_0800b168
+	bl	Render_ApplyProjectedPlacement
 	b.n	.L_0800c822
 .L_0800c7ea:
 	mov	r1, r8
@@ -267,7 +263,7 @@ Func_0800c62c:
 	cmp	r3, #0
 	bne.n	.L_0800c822
 	ldrb	r0, [r5, #28]
-	bl	sub_08003f78
+	bl	Resource_ActivateEntry
 	adds	r3, r5, #0
 	adds	r3, #37
 	strb	r6, [r3, #0]
@@ -284,7 +280,7 @@ Func_0800c62c:
 	b.n	.L_0800c696
 .L_0800c836:
 	movs	r0, #52
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	add	sp, #80
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

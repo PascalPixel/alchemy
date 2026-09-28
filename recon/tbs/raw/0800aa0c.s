@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08002df0, 0x08002df0
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_080048b0, 0x080048b0
-	.set sub_08004938, 0x08004938
-	.set sub_08005340, 0x08005340
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072f4, 0x080072f4
-	.set sub_0800a97c, 0x0800a97c
-	.set sub_0800b9f4, 0x0800b9f4
 	.global Func_0800aa0c
 	.thumb_func
 Func_0800aa0c:
@@ -39,7 +29,7 @@ Func_0800aa0c:
 	bne.n	.L_0800aa62
 	ldr	r1, [pc, #752]
 	movs	r0, #52
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r2, [pc, #748]
 	adds	r1, r0, #0
 	ldr	r0, [pc, #748]
@@ -130,7 +120,7 @@ Func_0800aa0c:
 	.2byte 0x0800
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_0800b9f4
+	bl	Animation_SetWorkEntry
 	ldr	r3, [sp, #44]
 	adds	r3, #36
 	strb	r5, [r3, #0]
@@ -386,11 +376,11 @@ Func_0800aa0c:
 	muls	r4, r2
 	adds	r0, r4, #0
 	str	r4, [sp, #36]
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	ldr	r3, [pc, #512]
 	ldr	r1, [sp, #36]
 	mov	sl, r0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r2, fp
 	ldrb	r3, [r2, #0]
 	movs	r1, #1
@@ -503,7 +493,7 @@ Func_0800aa0c:
 	lsls	r3, r3, #2
 	ldr	r0, [r3, r2]
 	mov	r1, sl
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	b.n	.L_0800af0a
 .L_0800aea4:
 	cmp	r3, #3
@@ -513,20 +503,20 @@ Func_0800aa0c:
 	beq.n	.L_0800aed8
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	ldrb	r3, [r6, #22]
 	ldr	r2, [r6, #8]
 	adds	r5, r0, #0
 	lsls	r3, r3, #2
 	ldr	r0, [r3, r2]
 	adds	r1, r5, #0
-	bl	sub_0800a97c
+	bl	Resource_DecompressLz
 	ldrb	r2, [r6, #5]
 	mov	r1, sl
 	ldr	r3, [sp, #28]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r0, r5, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	b.n	.L_0800af0a
 .L_0800aed8:
 	ldrb	r3, [r6, #22]
@@ -535,13 +525,13 @@ Func_0800aa0c:
 	ldr	r0, [r3, r2]
 	mov	r1, sl
 	ldr	r3, [pc, #232]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	cmp	r0, #0
 	beq.n	.L_0800af0a
 	mov	r1, sl
 	movs	r2, #0
 	ldr	r4, [sp, #28]
-	bl	sub_080072f4
+	bl	_call_via_r4
 	b.n	.L_0800af0a
 .L_0800aef8:
 	ldrb	r3, [r6, #22]
@@ -551,7 +541,7 @@ Func_0800aa0c:
 	mov	r1, sl
 	ldrb	r2, [r6, #5]
 	ldr	r3, [sp, #28]
-	bl	sub_080072f0
+	bl	_call_via_r3
 .L_0800af0a:
 	movs	r4, #1
 	add	r8, r4
@@ -566,7 +556,7 @@ Func_0800aa0c:
 	cmp	r3, #0
 	beq.n	.L_0800aff0
 	ldr	r0, [sp, #36]
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	str	r0, [sp, #12]
 	ldr	r3, [sp, #32]
 	ldr	r1, [sp, #20]
@@ -580,7 +570,7 @@ Func_0800aa0c:
 	ldr	r3, [pc, #140]
 	str	r4, [sp, #4]
 	ldr	r1, [sp, #36]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r1, sl
 	ldr	r2, [sp, #12]
 	adds	r3, r1, r7
@@ -673,13 +663,13 @@ Func_0800aa0c:
 	bcc.n	.L_0800afb8
 .L_0800afea:
 	ldr	r0, [sp, #12]
-	bl	sub_08002df0
+	bl	Party_Do
 .L_0800aff0:
 	ldr	r3, [sp, #44]
 	ldr	r1, [sp, #36]
 	ldrb	r0, [r3, #28]
 	movs	r2, #0
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	ldr	r4, [pc, #72]
 	adds	r5, r0, #0
 	lsls	r3, r5, #5
@@ -692,7 +682,7 @@ Func_0800aa0c:
 	ldrb	r2, [r4, #0]
 	ldr	r4, [r0, #0]
 	mov	r0, sl
-	bl	sub_080072f4
+	bl	_call_via_r4
 	ldr	r3, [pc, #40]
 	ldr	r1, [sp, #44]
 	ands	r5, r3
@@ -712,7 +702,7 @@ Func_0800aa0c:
 	adds	r3, r3, r2
 	strh	r3, [r4, #0]
 	mov	r0, sl
-	bl	sub_08002df0
+	bl	Party_Do
 	b.n	.L_0800b054
 	.4byte 0x000003ff
 	.4byte 0x06010000
@@ -724,7 +714,7 @@ Func_0800aa0c:
 	cmp	r1, #0
 	bne.n	.L_0800b060
 	movs	r0, #52
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 .L_0800b060:
 	ldr	r0, [sp, #40]
 	add	sp, #56

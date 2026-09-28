@@ -5,7 +5,5 @@
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08001040
-	.set AlchemyRunAddress, 0x030008d0
 .L_audio_template_cache:
 	.4byte 0x00000000

@@ -1,35 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08002f40, 0x08002f40
-	.set sub_080030f8, 0x080030f8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_08004458, 0x08004458
-	.set sub_080049ac, 0x080049ac
-	.set sub_08004bd4, 0x08004bd4
-	.set sub_08004c1c, 0x08004c1c
-	.set sub_08004cb4, 0x08004cb4
-	.set sub_080051d8, 0x080051d8
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072f4, 0x080072f4
-	.set sub_080b5078, 0x080b5078
-	.set sub_080b5088, 0x080b5088
-	.set sub_080b5098, 0x080b5098
-	.set sub_080b50e8, 0x080b50e8
-	.set sub_080cd52c, 0x080cd52c
-	.set sub_080cd594, 0x080cd594
-	.set sub_080cdbc0, 0x080cdbc0
-	.set sub_080d6888, 0x080d6888
-	.set sub_080e0524, 0x080e0524
-	.set sub_080e155c, 0x080e155c
-	.set sub_080e3944, 0x080e3944
-	.set sub_080e396c, 0x080e396c
-	.set sub_080ed408, 0x080ed408
-	.set sub_080f9010, 0x080f9010
 	.global Func_080d52c8
 	.thumb_func
 Func_080d52c8:
@@ -56,12 +26,12 @@ BattleFx_RenderMode:
 	str	r2, [sp, #52]
 	str	r0, [r3, #0]
 	movs	r0, #0
-	bl	sub_080cd594
+	bl	BattleFx_BeginCanvasLayer
 	movs	r3, #1
 	ldr	r0, [pc, #508]
 	mov	r1, r9
 	movs	r2, #1
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 	mov	r3, r8
 	cmp	r3, #0
 	bne.n	.L_080d530a
@@ -109,7 +79,7 @@ BattleFx_RenderMode:
 	ldr	r0, [pc, #440]
 	movs	r2, #1
 	movs	r3, #0
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 	ldr	r0, [pc, #436]
 	b.n	.L_080d536e
 .L_080d535a:
@@ -121,16 +91,16 @@ BattleFx_RenderMode:
 .L_080d5364:
 	movs	r2, #1
 	movs	r3, #0
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 	adds	r0, r5, #0
 .L_080d536e:
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r1, r0, #0
 	movs	r0, #160
 	movs	r2, #128
 	ldr	r3, [pc, #408]
 	lsls	r0, r0, #19
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r2, r8
 	cmp	r2, #4
 	bne.n	.L_080d5392
@@ -138,7 +108,7 @@ BattleFx_RenderMode:
 	mov	r1, r9
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 .L_080d5392:
 	mov	r3, r8
 	cmp	r3, #3
@@ -149,7 +119,7 @@ BattleFx_RenderMode:
 	add	r1, r9
 	movs	r2, #1
 	movs	r3, #0
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 .L_080d53a8:
 	movs	r4, #0
 	ldr	r5, [pc, #372]
@@ -168,33 +138,33 @@ BattleFx_RenderMode:
 	cmp	r0, #7
 	bne.n	.L_080d53ea
 .L_080d53c6:
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	str	r0, [r5, #0]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #14
 	str	r0, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #15
 	b.n	.L_080d540c
 .L_080d53ea:
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #13
 	str	r0, [r5, #0]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #255
 	lsls	r0, r0, #13
 	str	r0, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	ands	r0, r6
 	subs	r0, #127
 	lsls	r0, r0, #13
@@ -245,7 +215,7 @@ BattleFx_RenderMode:
 	movs	r1, #144
 	ldr	r0, [pc, #196]
 	lsls	r1, r1, #3
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 .L_080d5466:
 	movs	r2, #239
 	lsls	r2, r2, #7
@@ -259,9 +229,9 @@ BattleFx_RenderMode:
 	lsls	r1, r1, #3
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #172]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r0, #142
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r1, [sp, #60]
 	movs	r0, #0
 	str	r0, [sp, #64]
@@ -291,21 +261,21 @@ BattleFx_RenderMode:
 	ldr	r0, [r3, #8]
 	movs	r2, #16
 	movs	r3, #0
-	bl	sub_080b5078
+	bl	BattleMotion_ApproachTargetFar
 .L_080d54c2:
 	ldr	r3, [sp, #64]
 	ldr	r4, [sp, #24]
 	cmp	r3, r4
 	bne.n	.L_080d5546
 	movs	r0, #134
-	bl	sub_080b50e8
+	bl	BattleEventRuntime_BeginPhaseFar
 	ldr	r3, [pc, #28]
 	add	r3, r9
 	ldr	r3, [r3, #0]
 	movs	r1, #36
 	ldrsh	r0, [r3, r1]
 	movs	r1, #4
-	bl	sub_080b5088
+	bl	BattleMotion_ApplyVariantMotionFar
 	ldr	r2, [pc, #80]
 	movs	r3, #8
 	add	r2, r9
@@ -338,7 +308,7 @@ BattleFx_RenderMode:
 	cmp	r2, r3
 	bne.n	.L_080d5546
 	movs	r0, #133
-	bl	sub_080b50e8
+	bl	BattleEventRuntime_BeginPhaseFar
 .L_080d5546:
 	movs	r6, #211
 	ldr	r0, [sp, #64]
@@ -351,7 +321,7 @@ BattleFx_RenderMode:
 	lsls	r5, r0, #12
 .L_080d5558:
 	adds	r0, r5, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	movs	r2, #1
 	lsls	r0, r0, #2
 	subs	r0, r7, r0
@@ -395,7 +365,7 @@ BattleFx_RenderMode:
 	ldr	r3, [r5, #0]
 	ldr	r1, [sp, #16]
 	ldrsh	r0, [r3, r1]
-	bl	sub_080b5098
+	bl	GetBattleObjectSlotFar
 	ldr	r3, [sp, #56]
 	ldr	r0, [r0, #0]
 	lsls	r3, r3, #3
@@ -418,7 +388,7 @@ BattleFx_RenderMode:
 	add	r5, sp, #80
 	ldrsh	r0, [r3, r2]
 	adds	r1, r5, #0
-	bl	sub_080e396c
+	bl	EffectPosition_ApplyStepAndYOffset
 	ldr	r2, [pc, #692]
 	ldr	r7, [sp, #64]
 	movs	r0, #0
@@ -427,17 +397,17 @@ BattleFx_RenderMode:
 	ands	r7, r1
 	mov	sl, r2
 .L_080d55f2:
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [pc, #680]
 	adds	r2, r0, #0
 	ands	r2, r3
 	str	r2, [sp, #8]
-	bl	sub_08004458
+	bl	Random16
 	ldr	r2, [sp, #8]
 	movs	r5, #31
 	ands	r5, r0
 	adds	r0, r2, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	ldr	r6, [sp, #80]
 	adds	r5, #4
 	lsrs	r3, r6, #31
@@ -453,7 +423,7 @@ BattleFx_RenderMode:
 	adds	r0, r2, #0
 	lsrs	r3, r3, #1
 	subs	r6, r6, r3
-	bl	sub_0800231c
+	bl	Trig_Cos
 	adds	r3, r5, #0
 	muls	r3, r0
 	ldr	r5, [sp, #84]
@@ -463,7 +433,7 @@ BattleFx_RenderMode:
 	ldrb	r3, [r0, r7]
 	lsrs	r3, r3, #1
 	subs	r5, r5, r3
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [pc, #608]
 	movs	r1, #3
 	ands	r0, r1
@@ -475,7 +445,7 @@ BattleFx_RenderMode:
 	movs	r1, #7
 	movs	r2, #7
 	movs	r0, #47
-	bl	sub_080ed408
+	bl	Unnamed_080ed408
 	ldr	r2, [pc, #584]
 	ldr	r4, [pc, #576]
 	lsls	r3, r7, #1
@@ -495,9 +465,9 @@ BattleFx_RenderMode:
 	adds	r3, r5, #0
 	ldr	r0, [sp, #68]
 	adds	r2, r6, #0
-	bl	sub_080072f4
+	bl	_call_via_r4
 	movs	r0, #47
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	movs	r3, #1
 	add	fp, r3
 	mov	r4, fp
@@ -509,7 +479,7 @@ BattleFx_RenderMode:
 	movs	r2, #7
 	movs	r0, #46
 	str	r3, [sp, #0]
-	bl	sub_080ed408
+	bl	Unnamed_080ed408
 	ldr	r3, [sp, #40]
 	adds	r3, #184
 	ldr	r3, [r3, #0]
@@ -520,15 +490,15 @@ BattleFx_RenderMode:
 	movs	r1, #7
 	movs	r3, #3
 	movs	r0, #47
-	bl	sub_080ed408
+	bl	Unnamed_080ed408
 	ldr	r0, [pc, #492]
 	ldr	r1, [sp, #32]
 	ldr	r3, [r0, #0]
 	str	r3, [r1, #4]
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	ldr	r0, [sp, #48]
 	ldr	r1, [sp, #36]
-	bl	sub_080051d8
+	bl	Graphics_PrepareTransferInIwramWork
 	ldr	r2, [sp, #44]
 	ldr	r4, [sp, #28]
 	ldr	r3, [r2, #8]
@@ -539,7 +509,7 @@ BattleFx_RenderMode:
 	ldr	r3, [r2, #16]
 	str	r3, [r4, #8]
 	ldr	r0, [sp, #28]
-	bl	sub_08004cb4
+	bl	SceneTransform_ApplyPosition
 	ldr	r0, [sp, #64]
 	ldr	r1, [sp, #12]
 	cmp	r0, r1
@@ -548,7 +518,7 @@ BattleFx_RenderMode:
 .L_080d56f6:
 	lsls	r5, r0, #9
 	adds	r0, r5, #0
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	mov	r2, r8
 	cmp	r2, #1
 	bls.n	.L_080d5708
@@ -556,7 +526,7 @@ BattleFx_RenderMode:
 	bne.n	.L_080d570e
 .L_080d5708:
 	adds	r0, r5, #0
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 .L_080d570e:
 	ldr	r4, [sp, #52]
 	movs	r3, #0
@@ -596,7 +566,7 @@ BattleFx_RenderMode:
 	adds	r3, r4, #0
 	adds	r0, r0, r3
 	ldr	r3, [pc, #356]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	asrs	r0, r0, #9
 	mov	sl, r0
 	cmp	r0, #0
@@ -617,7 +587,7 @@ BattleFx_RenderMode:
 	asrs	r6, r1, #2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sub_080e3944
+	bl	EffectPosition_ApplyBaseAndYOffset
 	ldr	r3, [r5, #0]
 	mov	r0, r8
 	asrs	r2, r3, #1
@@ -642,7 +612,7 @@ BattleFx_RenderMode:
 	subs	r2, #20
 	subs	r3, #20
 	ldr	r0, [sp, #68]
-	bl	sub_080072f4
+	bl	_call_via_r4
 	b.n	.L_080d5828
 .L_080d57b2:
 	mov	r1, r8
@@ -661,7 +631,7 @@ BattleFx_RenderMode:
 	subs	r3, #12
 	ldr	r0, [sp, #68]
 	add	r1, r9
-	bl	sub_080072f4
+	bl	_call_via_r4
 	b.n	.L_080d5828
 .L_080d57d8:
 	mov	r1, r8
@@ -678,7 +648,7 @@ BattleFx_RenderMode:
 	subs	r3, #21
 	ldr	r0, [sp, #68]
 	mov	r1, r9
-	bl	sub_080072f4
+	bl	_call_via_r4
 	b.n	.L_080d5828
 .L_080d57fa:
 	mov	r1, fp
@@ -702,7 +672,7 @@ BattleFx_RenderMode:
 	subs	r2, #12
 	subs	r3, #24
 	ldr	r0, [sp, #68]
-	bl	sub_080072f4
+	bl	_call_via_r4
 .L_080d5828:
 	mov	r1, r8
 	cmp	r1, #1
@@ -717,19 +687,19 @@ BattleFx_RenderMode:
 	ldr	r5, [r7, #0]
 	mov	r1, sl
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	str	r5, [r7, #0]
 	ldr	r5, [r7, #4]
 	mov	r1, sl
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	str	r5, [r7, #4]
 	ldr	r5, [r7, #8]
 	mov	r1, sl
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	str	r5, [r7, #8]
 	b.n	.L_080d5870
@@ -771,19 +741,19 @@ BattleFx_RenderMode:
 	.2byte 0x01d8
 	.2byte 0x0300
 .L_080d58bc:
-	bl	sub_08004458
+	bl	Random16
 	movs	r4, #255
 	ands	r0, r4
 	subs	r0, #127
 	lsls	r0, r0, #13
 	str	r0, [r7, #0]
-	bl	sub_08004458
+	bl	Random16
 	movs	r1, #255
 	ands	r0, r1
 	subs	r0, #255
 	lsls	r0, r0, #12
 	str	r0, [r7, #4]
-	bl	sub_08004458
+	bl	Random16
 	movs	r2, #255
 	ands	r0, r2
 	subs	r0, #127
@@ -799,9 +769,9 @@ BattleFx_RenderMode:
 	b.n	.L_080d5728
 .L_080d58f4:
 	movs	r0, #47
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #46
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [sp, #12]
 	ldr	r0, [sp, #64]
 	adds	r3, #16
@@ -822,7 +792,7 @@ BattleFx_RenderMode:
 	movs	r1, #7
 	movs	r2, #5
 	ldr	r3, [sp, #56]
-	bl	sub_080d6888
+	bl	ObjectGroup_UpdateMembers
 .L_080d592a:
 	ldr	r2, [sp, #16]
 	ldr	r3, [sp, #12]
@@ -843,14 +813,14 @@ BattleFx_RenderMode:
 .L_080d594a:
 	movs	r1, #16
 	movs	r0, #16
-	bl	sub_080e155c
-	bl	sub_080cd52c
+	bl	Camera_ApplyShake
+	bl	ObjectGroup_TickMemberTimers
 	ldr	r2, [pc, #76]
 	movs	r3, #1
 	add	r2, r9
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [sp, #64]
 	ldr	r2, [sp, #60]
 	adds	r1, #1
@@ -860,16 +830,16 @@ BattleFx_RenderMode:
 	b.n	.L_080d5498
 .L_080d5972:
 	ldr	r0, [pc, #52]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	mov	r3, r8
 	cmp	r3, #1
 	bls.n	.L_080d5988
 	cmp	r3, #3
 	beq.n	.L_080d5988
 	ldr	r0, [pc, #40]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 .L_080d5988:
-	bl	sub_080cdbc0
+	bl	BattleFx_EndCanvasLayer
 	add	sp, #116
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

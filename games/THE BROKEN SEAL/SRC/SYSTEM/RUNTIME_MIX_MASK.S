@@ -4,7 +4,5 @@
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x080012cc
-	.set AlchemyRunAddress, 0x03000b5c
 .L_audio_sign_mask:
 	.4byte 0x00000000

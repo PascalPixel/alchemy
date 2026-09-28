@@ -1,21 +1,15 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080af094, 0x080af094
-	.set sub_080af4e4, 0x080af4e4
-	.set sub_080b0084, 0x080b0084
-	.set sub_080b0144, 0x080b0144
 	.global Func_080b0298
 	.thumb_func
 Func_080b0298:
 .L_080b0298:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #10
 	adds	r6, r0, #0
-	bl	sub_080af094
+	bl	Inventory_GetEquippedItem
 	movs	r1, #165
 	lsls	r1, r1, #1
 	adds	r3, r6, r1
@@ -23,17 +17,17 @@ Func_080b0298:
 	adds	r2, r0, #0
 	adds	r1, #248
 	ldrh	r0, [r3, #0]
-	bl	sub_080b0144
+	bl	0x080b0144
 	movs	r2, #42
 	adds	r2, #255
 	adds	r3, r6, r2
 	strb	r0, [r3, #0]
 	adds	r0, r5, #0
-	bl	sub_080af4e4
+	bl	Func_080af4e4
 	adds	r1, r6, #0
 	adds	r1, #36
 	adds	r0, r5, #0
-	bl	sub_080b0084
+	bl	0x080b0084
 	pop	{r5, r6, pc}
 	push	{lr}
 	bl	.L_080b0298
@@ -103,7 +97,7 @@ Func_080b0298:
 	subs	r2, r2, r5
 	subs	r0, r6, r0
 	muls	r0, r2
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r0, r0, r5
 .L_080b0356:
 	mov	r7, r8

@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013164, 0x08013164
-	.set sub_08014dac, 0x08014dac
-	.set sub_0803acd4, 0x0803acd4
 	.global UiText_DrawStringInWindow
 	.global Func_08042188
 	.thumb_func
@@ -18,7 +15,7 @@ Func_08042188:
 	adds	r7, r2, #0
 	mov	r8, r3
 	mov	sl, r1
-	bl	sub_08014dac
+	bl	0x08014dac
 	ldrb	r3, [r5, #0]
 	adds	r6, r0, #0
 	adds	r2, r6, #0
@@ -42,9 +39,9 @@ Func_08042188:
 	mov	r1, sl
 	adds	r2, r7, #0
 	mov	r8, r3
-	bl	sub_0803acd4
+	bl	Func_0803acd4
 	adds	r0, r6, #0
-	bl	sub_08013164
+	bl	Func_08013164
 	b.n	.L_080421dc
 	movs	r0, r0
 	.2byte 0x0000

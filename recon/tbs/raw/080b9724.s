@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022f4, 0x080022f4
-	.set sub_08002df0, 0x08002df0
-	.set sub_08004970, 0x08004970
-	.set sub_08006358, 0x08006358
-	.set sub_0800651c, 0x0800651c
-	.set sub_080771a0, 0x080771a0
-	.set sub_080b9554, 0x080b9554
-	.set sub_080b9604, 0x080b9604
 	.global BattlePresentation_AppendLinkedActions
 	.global Func_080b9724
 	.thumb_func
@@ -38,13 +30,13 @@ Func_080b9724:
 	movs	r1, #20
 	adds	r0, #19
 	mov	fp, r2
-	bl	sub_080022f4
+	bl	__udivsi3
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsls	r3, r3, #2
 	movs	r0, #40
 	str	r3, [sp, #12]
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	ldr	r3, [r7, #0]
 	add	r5, sp, #16
 	mov	sl, r5
@@ -100,7 +92,7 @@ Func_080b9724:
 	ldr	r2, [r3, #0]
 	ldr	r3, [r7, #0]
 	str	r3, [r2, #0]
-	bl	sub_080771a0
+	bl	BattleRandom16Far
 	mov	r1, sl
 	ldr	r3, [r1, #0]
 	str	r0, [r3, #4]
@@ -117,12 +109,12 @@ Func_080b9724:
 	strh	r1, [r2, #0]
 	add	r2, sp, #20
 	mov	r9, r2
-	bl	sub_080b9554
+	bl	0x080b9554
 	cmp	r0, #0
 	blt.n	.L_080b9890
 	add	r3, sp, #20
 	mov	r9, r3
-	bl	sub_080b9604
+	bl	0x080b9604
 	cmp	r0, #0
 	blt.n	.L_080b9890
 	ldr	r3, [r5, #0]
@@ -133,7 +125,7 @@ Func_080b9724:
 .L_080b980e:
 	add	r1, sp, #20
 	mov	r9, r1
-	bl	sub_080b9604
+	bl	0x080b9604
 	cmp	r0, #0
 	blt.n	.L_080b9890
 	mov	r3, sl
@@ -145,10 +137,10 @@ Func_080b9724:
 	add	r1, sp, #20
 	str	r3, [r2, #0]
 	mov	r9, r1
-	bl	sub_080b9554
+	bl	0x080b9554
 	cmp	r0, #0
 	blt.n	.L_080b9890
-	bl	sub_080771a0
+	bl	BattleRandom16Far
 	mov	r2, sl
 	ldr	r1, [r2, #0]
 	ldr	r3, [r1, #4]
@@ -181,7 +173,7 @@ Func_080b9724:
 	bne.n	.L_080b985e
 .L_080b9870:
 	ldr	r0, [r5, #0]
-	bl	sub_08002df0
+	bl	Party_Do
 	mov	r1, r8
 	ldr	r0, [r1, #0]
 	b.n	.L_080b98a2
@@ -192,10 +184,10 @@ Func_080b9724:
 	.2byte 0x1cb4
 	.2byte 0x0300
 .L_080b9890:
-	bl	sub_0800651c
-	bl	sub_08006358
+	bl	BattleLink_ResetTransferState
+	bl	SerialRuntime_RemoveIrqHandlers
 	ldr	r0, [r5, #0]
-	bl	sub_08002df0
+	bl	Party_Do
 	movs	r0, #1
 	negs	r0, r0
 .L_080b98a2:

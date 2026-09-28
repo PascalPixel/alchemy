@@ -1,21 +1,13 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08016180, 0x08016180
-	.set sub_080167d8, 0x080167d8
-	.set sub_0801680c, 0x0801680c
-	.set sub_08016854, 0x08016854
-	.set sub_08016bd8, 0x08016bd8
-	.set sub_08016df8, 0x08016df8
-	.set sub_081c0010, 0x081c0010
 	.global Func_08016bdc
 	.thumb_func
 Func_08016bdc:
 	push	{r5, r6, lr}
 	movs	r0, #3
 	sub	sp, #4
-	bl	sub_081c0010
-	bl	sub_08016180
+	bl	Audio_PlayCue
+	bl	0x08016180
 	ldr	r2, [pc, #152]
 	ldr	r3, [pc, #152]
 	movs	r1, #19
@@ -31,12 +23,12 @@ Func_08016bdc:
 	str	r3, [r0, #0]
 	ldr	r1, [pc, #136]
 	ldr	r2, [pc, #136]
-	bl	sub_08016df8
+	bl	Bios_CpuSet
 	movs	r0, #3
-	bl	sub_080167d8
+	bl	Func_080167d8
 .L_08016c10:
 	ldr	r0, [pc, #120]
-	bl	sub_08016854
+	bl	0x08016854
 	ldr	r6, [pc, #124]
 .L_08016c18:
 	ldr	r3, [r6, #0]
@@ -48,7 +40,7 @@ Func_08016bdc:
 	movs	r1, #160
 	lsls	r0, r0, #20
 	lsls	r1, r1, #2
-	bl	sub_0801680c
+	bl	0x0801680c
 .L_08016c2e:
 	ldr	r3, [r6, #0]
 	movs	r2, #2
@@ -58,7 +50,7 @@ Func_08016bdc:
 	movs	r1, #160
 	ldr	r0, [pc, #92]
 	lsls	r1, r1, #2
-	bl	sub_0801680c
+	bl	0x0801680c
 .L_08016c42:
 	ldr	r3, [r6, #0]
 	movs	r2, #8
@@ -70,7 +62,7 @@ Func_08016bdc:
 	adds	r5, #15
 .L_08016c52:
 	subs	r5, #1
-	bl	sub_08016bd8
+	bl	0x08016bd8
 	cmp	r5, #0
 	bge.n	.L_08016c52
 .L_08016c5c:
@@ -91,7 +83,7 @@ Func_08016bdc:
 	b.n	.L_08016c10
 .L_08016c7a:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	b.n	.L_08016c18
 	movs	r0, r0
 	.4byte 0x06002426

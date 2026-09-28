@@ -12,8 +12,6 @@
 @ credit: handwritten — IWRAM runtime vector and matrix transforms
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x080009c0
-	.set AlchemyRunAddress, 0x03000250
 
 	.global IwramTransformVector
 IwramTransformVector:

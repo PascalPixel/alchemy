@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08077008, 0x08077008
-	.set sub_080c1ebc, 0x080c1ebc
 	.global BattleActor_RemoveFromLists
 	.global Func_080bac6c
 	.thumb_func
@@ -11,7 +9,7 @@ Func_080bac6c:
 	ldr	r3, [pc, #40]
 	adds	r6, r0, #0
 	ldr	r5, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r3, #149
 	lsls	r3, r3, #1
 	adds	r2, r0, r3
@@ -56,7 +54,7 @@ Func_080bac6c:
 	.2byte 0x0000
 .L_080bacc4:
 	adds	r0, r6, #0
-	bl	sub_080c1ebc
+	bl	Summon_ReleaseCharge
 	movs	r2, #187
 	movs	r1, #0
 	movs	r0, #255

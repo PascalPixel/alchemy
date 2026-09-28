@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002304, 0x08002304
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_08003d28, 0x08003d28
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004458, 0x08004458
-	.set sub_0801908c, 0x0801908c
 	.global UiWork_AnimateSpriteSlots
 	.global Func_080191cc
 	.thumb_func
@@ -99,7 +91,7 @@ Func_080191cc:
 	adds	r2, r2, r3
 	ldrh	r0, [r1, #0]
 	movs	r1, #128
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #56]
 	ldrh	r2, [r7, #8]
 	ands	r0, r3
@@ -142,7 +134,7 @@ Func_080191cc:
 	movs	r1, #80
 	str	r2, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_08002304
+	bl	__umodsi3
 	ldr	r2, [sp, #4]
 	ldrb	r3, [r2, r0]
 	mov	r2, r8
@@ -166,9 +158,9 @@ Func_080191cc:
 	bne.n	.L_0801931e
 	b.n	.L_080195e0
 .L_0801931e:
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -187,9 +179,9 @@ Func_080191cc:
 	ands	r3, r2
 	orrs	r3, r1
 	strh	r3, [r7, #6]
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	lsls	r2, r5, #1
 	lsls	r3, r0, #1
 	adds	r2, r2, r5
@@ -229,7 +221,7 @@ Func_080191cc:
 	ldr	r3, [r0, #4]
 	ands	r3, r1
 	str	r3, [r0, #4]
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r3, #31
 	ldrb	r2, [r7, #7]
 	ands	r0, r3
@@ -278,7 +270,7 @@ Func_080191cc:
 	strh	r3, [r6, #12]
 	strh	r3, [r5, #4]
 	adds	r0, r5, #0
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r3, #31
 	ldrb	r2, [r7, #7]
 	ands	r0, r3
@@ -299,7 +291,7 @@ Func_080191cc:
 	movs	r3, #232
 	lsls	r3, r3, #8
 	adds	r0, r0, r3
-	bl	sub_08002322
+	bl	Trig_Sin
 	ldrh	r2, [r6, #6]
 	asrs	r0, r0, #14
 	subs	r2, r2, r0
@@ -315,7 +307,7 @@ Func_080191cc:
 	lsls	r2, r2, #7
 	strh	r3, [r7, #6]
 	adds	r0, r0, r2
-	bl	sub_0800231c
+	bl	Trig_Cos
 	ldrb	r3, [r6, #8]
 	asrs	r0, r0, #14
 	subs	r3, r3, r0
@@ -340,7 +332,7 @@ Func_080191cc:
 	ldrh	r0, [r6, #12]
 	movs	r1, #20
 	str	r4, [sp, #0]
-	bl	sub_08002304
+	bl	__umodsi3
 	ldr	r4, [sp, #0]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #15
@@ -356,7 +348,7 @@ Func_080191cc:
 	strh	r3, [r7, #6]
 	movs	r1, #20
 	ldrh	r0, [r6, #12]
-	bl	sub_08002304
+	bl	__umodsi3
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #15
 	ldr	r4, [sp, #0]
@@ -432,7 +424,7 @@ Func_080191cc:
 	strh	r3, [r0, #0]
 	strh	r3, [r0, #2]
 	strh	r2, [r0, #4]
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r3, #31
 	ldrb	r2, [r7, #7]
 	ands	r0, r3
@@ -493,7 +485,7 @@ Func_080191cc:
 	strb	r3, [r7, #4]
 	b.n	.L_080195e0
 	adds	r0, r6, #0
-	bl	sub_0801908c
+	bl	RenderOutput_UpdateScaleAnimation
 .L_080195e0:
 	ldrb	r3, [r6, #5]
 	cmp	r3, #2
@@ -505,14 +497,14 @@ Func_080191cc:
 	beq.n	.L_08019606
 	ldrb	r1, [r6, #15]
 	adds	r0, r7, #0
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	b.n	.L_08019606
 .L_080195fa:
 	cmp	r3, #13
 	beq.n	.L_08019606
 	ldrb	r1, [r6, #15]
 	adds	r0, r7, #0
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_08019606:
 	ldr	r3, [pc, #64]
 	ldr	r3, [r3, #0]

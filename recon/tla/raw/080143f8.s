@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002090, 0x08002090
-	.set sub_08002096, 0x08002096
-	.set sub_080142d4, 0x080142d4
 	.global Func_080143f8
 	.thumb_func
 Func_080143f8:
@@ -12,7 +8,7 @@ Func_080143f8:
 	ldr	r1, [pc, #8]
 	lsls	r3, r0, #2
 	ldrh	r1, [r1, r3]
-	bl	sub_080142d4
+	bl	0x080142d4
 	pop	{pc}
 	.2byte 0x36e0
 	.2byte 0x0200
@@ -66,28 +62,28 @@ Func_080143f8:
 	b.n	.L_080144a6
 .L_08014468:
 	adds	r0, r6, #0
-	bl	sub_08002096
+	bl	Math_Sine
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08002090
+	bl	Math_Cosine
 	mov	r1, r8
 	adds	r6, r0, #0
-	bl	sub_08002054
+	bl	Math_Div
 	mov	r1, r8
 	strh	r0, [r7, #0]
 	adds	r0, r5, #0
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r7, #2
 	negs	r5, r5
 	strh	r0, [r7, #0]
 	mov	r1, sl
 	adds	r0, r5, #0
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r7, #2
 	strh	r0, [r7, #0]
 	mov	r1, sl
 	adds	r0, r6, #0
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r7, #2
 	strh	r0, [r7, #0]
 .L_080144a6:

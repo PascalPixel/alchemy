@@ -11,7 +11,8 @@
 @ credit: library — TBS/TLA common ARM colour-buffer kernels copied to the stack
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08001d10
+	.global ColorBuffer_ScaleNonzeroThreeQuartersKernelCode
+ColorBuffer_ScaleNonzeroThreeQuartersKernelCode:
 	.global ColorBuffer_ScaleNonzeroThreeQuartersKernel
 	.thumb_func
 ColorBuffer_ScaleNonzeroThreeQuartersKernel:
@@ -46,6 +47,8 @@ AlchemyUncreditedEnd_08001d10:
 	pop	{r5, r6}
 	bx	lr
 	.thumb
+	.global ColorBuffer_HalveNonzeroKernelCode
+ColorBuffer_HalveNonzeroKernelCode:
 	.global ColorBuffer_HalveNonzeroKernel
 	.thumb_func
 ColorBuffer_HalveNonzeroKernel:
@@ -80,6 +83,8 @@ AlchemyUncreditedEnd_08001d70:
 	pop	{r5, r6}
 	bx	lr
 	.thumb
+	.global ColorBuffer_DarkenPartialKernelCode
+ColorBuffer_DarkenPartialKernelCode:
 	.global ColorBuffer_DarkenPartialKernel
 	.thumb_func
 ColorBuffer_DarkenPartialKernel:
@@ -151,6 +156,8 @@ AlchemyUncreditedEnd_08001dd0:
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
 	.thumb
+	.global ColorBuffer_BrightenPartialKernelCode
+ColorBuffer_BrightenPartialKernelCode:
 	.global ColorBuffer_BrightenPartialKernel
 	.thumb_func
 ColorBuffer_BrightenPartialKernel:

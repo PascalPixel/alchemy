@@ -8,7 +8,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, map conversion kernel
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08021704
 	.global Render_ConvertMap
 	.thumb_func
 Render_ConvertMap:

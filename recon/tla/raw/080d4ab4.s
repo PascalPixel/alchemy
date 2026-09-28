@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080200a8, 0x080200a8
-	.set sub_080cad84, 0x080cad84
-	.set sub_080d2d84, 0x080d2d84
 	.global Func_080d4ab4
 	.thumb_func
 Func_080d4ab4:
@@ -13,7 +10,7 @@ Func_080d4ab4:
 	adds	r3, r3, r2
 	adds	r5, r0, #0
 	ldr	r0, [r3, #0]
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	ldr	r3, [r0, #80]
 	ldrb	r3, [r3, #9]
 	lsls	r3, r3, #28
@@ -90,7 +87,7 @@ Object_SetActionCallback:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	sub_080d2d84
+	bl	Object_GetById
 	ldr	r1, [pc, #60]
 	str	r0, [r5, #104]
 	b.n	.L_080d4b86
@@ -105,7 +102,7 @@ Object_SetActionCallback:
 	ldr	r1, [pc, #56]
 .L_080d4b86:
 	adds	r0, r5, #0
-	bl	sub_080200a8
+	bl	Object_SetCallback
 	pop	{r5, pc}
 	movs	r0, r0
 	.4byte 0x080d4b20

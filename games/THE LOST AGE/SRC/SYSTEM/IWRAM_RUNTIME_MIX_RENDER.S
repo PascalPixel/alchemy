@@ -14,8 +14,6 @@
 @ credit: handwritten — TLA IWRAM runtime frame renderer
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080012f8
-	.set AlchemyRunAddress, 0x03000d40
 AlchemyUncredited_080012f8:
 	bx	pc
 	.2byte	0x0200

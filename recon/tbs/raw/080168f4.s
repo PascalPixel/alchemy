@@ -1,17 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_08016178, 0x08016178
-	.set sub_08016478, 0x08016478
-	.set sub_080167ac, 0x080167ac
-	.set sub_080167d8, 0x080167d8
-	.set sub_080167e0, 0x080167e0
-	.set sub_080170f8, 0x080170f8
-	.set sub_0801868c, 0x0801868c
-	.set sub_08018cac, 0x08018cac
-	.set sub_0801999c, 0x0801999c
-	.set sub_080199ec, 0x080199ec
-	.set sub_080f9010, 0x080f9010
 	.global UiWork_StepChannelScript
 	.global Func_080168f4
 	.thumb_func
@@ -64,7 +52,7 @@ Func_080168f4:
 	cmp	r3, #0
 	beq.n	.L_08016958
 	movs	r0, #1
-	bl	sub_080167e0
+	bl	UiWork_ShiftPanelRowsLeft
 	ldrh	r3, [r6, #28]
 	subs	r3, #1
 	strh	r3, [r6, #28]
@@ -151,7 +139,7 @@ Func_080168f4:
 	cmp	r2, r3
 	bls.n	.L_08016a38
 	adds	r0, r6, #0
-	bl	sub_080167d8
+	bl	UiWork_ResetChannelTransition
 	movs	r0, #1
 	str	r0, [sp, #32]
 	b.n	.L_08016d64
@@ -204,7 +192,7 @@ Func_080168f4:
 	adds	r0, r6, #0
 	ldr	r7, [pc, #44]
 	strh	r3, [r6, #20]
-	bl	sub_080199ec
+	bl	UiWork_CheckCancelByModeInput
 	cmp	r0, #0
 	bne.n	.L_08016afa
 	ldr	r0, [r6, #0]
@@ -243,7 +231,7 @@ Func_080168f4:
 	subs	r3, #16
 	movs	r1, #1
 	str	r5, [sp, #0]
-	bl	sub_08018cac
+	bl	UiText_DrawGlyph
 	strb	r5, [r7, #0]
 	b.n	.L_08016d64
 .L_08016afa:
@@ -262,7 +250,7 @@ Func_080168f4:
 	adds	r0, r5, #0
 	strb	r7, [r3, #0]
 	str	r4, [sp, #12]
-	bl	sub_08016478
+	bl	RenderOutput_PrepareForRedraw
 	ldrh	r3, [r6, #36]
 	ldr	r4, [sp, #12]
 	cmp	r3, #0
@@ -276,7 +264,7 @@ Func_080168f4:
 	ldrh	r1, [r5, #14]
 	ldrh	r2, [r5, #8]
 	ldrh	r3, [r5, #10]
-	bl	sub_08016178
+	bl	UiWindow_EraseBorderRect
 	ldr	r4, [sp, #12]
 .L_08016b3c:
 	ldr	r3, [pc, #380]
@@ -302,7 +290,7 @@ Func_080168f4:
 	ldrh	r1, [r5, #14]
 	ldrh	r2, [r5, #8]
 	ldrh	r3, [r5, #10]
-	bl	sub_08016178
+	bl	UiWindow_EraseBorderRect
 	b.n	.L_08016c06
 .L_08016b70:
 	add	r1, sp, #48
@@ -325,7 +313,7 @@ Func_080168f4:
 	str	r4, [sp, #12]
 	str	r2, [sp, #20]
 	str	r7, [sp, #8]
-	bl	sub_0801868c
+	bl	UiWindow_FitOnScreen
 	ldrh	r1, [r5, #22]
 	movs	r3, #128
 	ands	r3, r1
@@ -372,7 +360,7 @@ Func_080168f4:
 	mov	r1, fp
 	ldr	r2, [sp, #20]
 	ldr	r3, [sp, #16]
-	bl	sub_0801868c
+	bl	UiWindow_FitOnScreen
 .L_08016bf6:
 	ldr	r3, [sp, #48]
 	strh	r3, [r5, #12]
@@ -387,7 +375,7 @@ Func_080168f4:
 	ldrh	r1, [r5, #14]
 	ldrh	r2, [r5, #8]
 	ldrh	r3, [r5, #10]
-	bl	sub_080170f8
+	bl	UiWindow_DrawFrame
 .L_08016c12:
 	ldrh	r3, [r6, #30]
 	movs	r2, #0
@@ -397,7 +385,7 @@ Func_080168f4:
 	strh	r2, [r6, #16]
 	add	r5, r8
 	ldrh	r0, [r5, #0]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	movs	r3, #99
 	strh	r3, [r5, #0]
 	b.n	.L_08016d64
@@ -416,7 +404,7 @@ Func_080168f4:
 	str	r3, [r2, #0]
 .L_08016c46:
 	adds	r0, r6, #0
-	bl	sub_080199ec
+	bl	UiWork_CheckCancelByModeInput
 	cmp	r0, #0
 	beq.n	.L_08016c52
 	b.n	.L_0801696e
@@ -441,7 +429,7 @@ Func_080168f4:
 	add	r2, r8
 	strh	r3, [r2, #0]
 	adds	r0, r6, #0
-	bl	sub_0801999c
+	bl	UiWork_CheckCancelByInput
 	b.n	.L_08016d64
 	ldrh	r3, [r6, #20]
 	cmp	r3, #0
@@ -468,7 +456,7 @@ Func_080168f4:
 	ldrh	r3, [r1, r3]
 	adds	r0, r6, #0
 	strh	r3, [r6, #22]
-	bl	sub_080167ac
+	bl	UiWork_CopyParamsToRenderWork
 	b.n	.L_08016d64
 	movs	r0, r0
 	.4byte 0x000001ff
@@ -494,7 +482,7 @@ Func_080168f4:
 	ldrh	r3, [r4, r3]
 	adds	r0, r6, #0
 	strh	r3, [r6, #24]
-	bl	sub_080167ac
+	bl	UiWork_CopyParamsToRenderWork
 	b.n	.L_08016d64
 	movs	r0, r0
 	.2byte 0x01ff
@@ -521,7 +509,7 @@ Func_080168f4:
 	strh	r2, [r6, #22]
 .L_08016d24:
 	strh	r3, [r6, #26]
-	bl	sub_080167ac
+	bl	UiWork_CopyParamsToRenderWork
 	b.n	.L_08016d64
 	.2byte 0x01ff
 	.2byte 0x0000
@@ -670,7 +658,7 @@ Func_080168f4:
 	adds	r2, r5, #0
 	mov	r3, ip
 	adds	r1, r7, #0
-	bl	sub_08018cac
+	bl	UiText_DrawGlyph
 	ldr	r3, [pc, #36]
 	adds	r4, r0, #0
 	movs	r0, #131
@@ -709,7 +697,7 @@ Func_080168f4:
 	ands	r3, r7
 	adds	r0, r0, r3
 	str	r4, [sp, #12]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r1, sl
 	strh	r1, [r5, #0]
 	ldr	r4, [sp, #12]

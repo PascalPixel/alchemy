@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
 	.global ShopCursor_Advance
 	.global Func_080b08b8
 	.thumb_func
@@ -34,7 +33,7 @@ Func_080b08b8:
 	adds	r0, r6, #0
 	muls	r0, r3
 	mov	r1, sl
-	bl	sub_080022ec
+	bl	__divsi3
 	ldrh	r5, [r7, #4]
 	mov	r3, r8
 	adds	r5, r5, r0
@@ -58,7 +57,7 @@ Func_080b08b8:
 	adds	r0, r6, #0
 	muls	r0, r3
 	mov	r1, sl
-	bl	sub_080022ec
+	bl	__divsi3
 	ldrh	r5, [r7, #6]
 	mov	r2, r8
 	adds	r5, r5, r0

@@ -10,7 +10,6 @@
 @ credit: handwritten — relocated ARM kernel, battle-effect patch template
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081972a0
 	.global BattleFx_PatchTemplate
 	.thumb_func
 BattleFx_PatchTemplate:

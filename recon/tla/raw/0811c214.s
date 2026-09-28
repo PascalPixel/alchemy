@@ -1,17 +1,15 @@
 .syntax unified
 	.thumb
-	.set sub_0811be3c, 0x0811be3c
-	.set sub_0811c210, 0x0811c210
 	.global Func_0811c214
 	.thumb_func
 Func_0811c214:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	sub	sp, #12
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	ldr	r6, [r0, #0]
 	adds	r0, r5, #0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	ldr	r2, [r6, #56]
 	movs	r4, #128
 	lsls	r4, r4, #24
@@ -50,7 +48,7 @@ Func_0811c214:
 	movs	r1, #128
 	str	r3, [r0, #8]
 	lsls	r1, r1, #5
-	bl	sub_0811c210
+	bl	Func_0811c210
 	add	sp, #12
 	pop	{r5, r6, pc}
 	.2byte 0x0000

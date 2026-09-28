@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072fc, 0x080072fc
-	.set sub_08091294, 0x08091294
-	.set sub_080912a8, 0x080912a8
 	.global BattleFx_BuildBuffer
 	.global Func_08090a5c
 	.thumb_func
@@ -147,7 +142,7 @@ Func_08090a5c:
 	adds	r0, r0, r2
 	adds	r0, r0, r3
 	movs	r1, #7
-	bl	sub_080072fc
+	bl	_call_via_r6
 	adds	r4, r0, #0
 	strh	r4, [r5, #0]
 	strh	r4, [r5, #2]
@@ -187,7 +182,7 @@ Func_08090a5c:
 	str	r2, [sp, #0]
 	ldr	r3, [pc, #668]
 	movs	r1, #10
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r4, r0, #0
 	lsls	r3, r4, #2
 	adds	r6, r3, #5
@@ -273,19 +268,19 @@ Func_08090a5c:
 	movs	r1, #3
 	adds	r0, r7, #0
 	subs	r6, r6, r3
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r6, #10
 	subs	r7, r7, r0
 	adds	r0, r6, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r7, #8
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	subs	r5, #7
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r5, r0, #0
 .L_08090c7e:
 	ldr	r2, [pc, #476]
@@ -361,15 +356,15 @@ Func_08090a5c:
 	movs	r5, #26
 .L_08090cfe:
 	adds	r0, r6, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r7, #2
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r5, #2
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r5, r0, #0
 	mov	r2, fp
 	lsls	r3, r5, #1
@@ -421,8 +416,8 @@ Func_08090a5c:
 	movs	r3, #2
 	adds	r0, r0, r5
 	add	sl, r3
-	bl	sub_080022ec
-	bl	sub_08091294
+	bl	__divsi3
+	bl	BattleFx_ClampRgb555Channel
 	asrs	r3, r6, #1
 	adds	r6, r3, r0
 	asrs	r3, r7, #1
@@ -430,13 +425,13 @@ Func_08090a5c:
 	asrs	r3, r5, #1
 	adds	r5, r3, r0
 	adds	r0, r6, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r5, r0, #0
 	mov	r2, fp
 	lsls	r3, r5, #1
@@ -485,15 +480,15 @@ Func_08090a5c:
 	movs	r1, #2
 	adds	r0, r6, #0
 	add	sl, r1
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	movs	r1, #3
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r1, #3
 	subs	r7, r7, r0
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	ldr	r1, [pc, #68]
 	subs	r5, r5, r0
 	lsls	r3, r5, #1
@@ -551,19 +546,19 @@ Func_08090a5c:
 	movs	r1, #3
 	ands	r5, r2
 	subs	r6, r6, r3
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r6, #6
 	subs	r7, r7, r0
 	adds	r0, r6, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r7, #4
 	adds	r6, r0, #0
 	adds	r0, r7, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	subs	r5, #6
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	ldr	r2, [pc, #44]
 	adds	r5, r0, #0
 	lsls	r3, r5, #1
@@ -677,7 +672,7 @@ Func_08090a5c:
 	adds	r0, r0, r3
 	movs	r1, #96
 	ldr	r3, [pc, #328]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r1, [sp, #32]
 	adds	r4, r0, #0
 	adds	r7, r1, #0
@@ -688,13 +683,13 @@ Func_08090a5c:
 	muls	r6, r4
 	mov	r5, fp
 	muls	r5, r4
-	bl	sub_080912a8
+	bl	BattleFx_ClampRgb555Component
 	adds	r7, r0, #0
 	adds	r0, r6, #0
-	bl	sub_080912a8
+	bl	BattleFx_ClampRgb555Component
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	sub_080912a8
+	bl	BattleFx_ClampRgb555Component
 	mov	r3, r8
 	mov	r1, r8
 	mov	r2, r8
@@ -768,7 +763,7 @@ Func_08090a5c:
 	add	r1, fp
 	ldr	r3, [pc, #148]
 	lsls	r0, r0, #4
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r3, [sp, #24]
 	adds	r4, r0, #0
 	adds	r0, r3, #0
@@ -802,13 +797,13 @@ Func_08090a5c:
 	bx	r3
 	adds	r5, r0, #0
 	lsrs	r0, r7, #16
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r7, r0, #0
 	lsrs	r0, r6, #16
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	adds	r6, r0, #0
 	lsrs	r0, r5, #16
-	bl	sub_08091294
+	bl	BattleFx_ClampRgb555Channel
 	ldr	r1, [pc, #60]
 	adds	r5, r0, #0
 	lsls	r3, r5, #1

@@ -8,7 +8,6 @@
 @ credit: library — TBS/TLA common relocated ARM Q16 dot-product kernel, battle-effect bank copy
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x081a0280
 	.global SentouKouka_SekiWa2
 SentouKouka_SekiWa2:
 	smull	ip, r0, r1, r0

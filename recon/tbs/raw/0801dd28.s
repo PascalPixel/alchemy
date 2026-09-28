@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f40, 0x08002f40
 	.global Func_0801dd28
 	.thumb_func
 Func_0801dd28:
@@ -20,7 +19,7 @@ Func_0801dd28:
 	ldr	r0, [pc, #252]
 	mov	r9, r2
 	mov	r8, r3
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	mov	sl, r0
 	mov	r0, fp
 	ldrb	r5, [r0, #0]

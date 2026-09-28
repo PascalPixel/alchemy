@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08020000, 0x08020000
-	.set sub_08020090, 0x08020090
-	.set sub_080200a8, 0x080200a8
-	.set sub_080200c0, 0x080200c0
-	.set sub_080cad84, 0x080cad84
-	.set sub_080cccb8, 0x080cccb8
-	.set sub_080d2240, 0x080d2240
-	.set sub_081c0010, 0x081c0010
 	.global Func_080d476c
 	.thumb_func
 Func_080d476c:
@@ -26,10 +18,10 @@ Func_080d476c:
 	adds	r3, #102
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	sub_080cccb8
+	bl	0x080cccb8
 	movs	r3, #0
 	ldrsh	r0, [r0, r3]
-	bl	sub_08020000
+	bl	Func_08020000
 	movs	r2, #8
 	ldrsb	r2, [r0, r2]
 	ldr	r3, [r6, #12]
@@ -58,10 +50,10 @@ Func_080d476c:
 	cmp	r3, #6
 	bne.n	.L_080d47d0
 	movs	r0, #110
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 .L_080d47d0:
 	mov	r0, r8
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080d485e
@@ -70,16 +62,16 @@ Func_080d476c:
 	ldr	r1, [r6, #8]
 	ldr	r2, [r6, #12]
 	ldr	r3, [r6, #16]
-	bl	sub_080200c0
+	bl	Func_080200c0
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080d4858
 	ldr	r1, [pc, #72]
-	bl	sub_080200a8
+	bl	Object_SetCallback
 	movs	r1, #15
 	ands	r1, r7
 	adds	r0, r5, #0
-	bl	sub_08020090
+	bl	Object_SetMode
 	adds	r3, r5, #0
 	movs	r2, #0
 	adds	r3, #85
@@ -125,7 +117,7 @@ Func_080d476c:
 	strb	r3, [r0, #9]
 .L_080d4858:
 	mov	r0, sl
-	bl	sub_080d2240
+	bl	Battle_WaitMode0
 .L_080d485e:
 	adds	r0, r5, #0
 	pop	{r3, r5}

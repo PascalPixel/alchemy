@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800447c, 0x0800447c
-	.set sub_0800c300, 0x0800c300
-	.set sub_0800d14c, 0x0800d14c
-	.set sub_08011f54, 0x08011f54
-	.set sub_0801219c, 0x0801219c
 	.global Object_MoveByKeys
 	.global Func_0800f7f4
 	.thumb_func
@@ -66,7 +61,7 @@ Func_0800f7f4:
 	str	r3, [r5, #0]
 	str	r3, [r5, #4]
 	str	r3, [r5, #8]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	ldr	r3, [r5, #0]
 	ldr	r2, [r6, #8]
 	adds	r3, r3, r2
@@ -122,7 +117,7 @@ Func_0800f7f4:
 	lsls	r3, r3, #2
 	adds	r0, r5, #0
 	adds	r7, r3, r1
-	bl	sub_0801219c
+	bl	CheckMapPositionCellOccupied
 	cmp	r0, #0
 	bne.n	.L_0800f8da
 	mov	r3, r8
@@ -150,7 +145,7 @@ Func_0800f7f4:
 	ldr	r3, [pc, #196]
 	ldr	r1, [r5, #0]
 	adds	r2, r2, r3
-	bl	sub_08011f54
+	bl	Func_08011f54
 	ldr	r3, [r6, #12]
 	subs	r3, r0, r3
 	movs	r0, #128
@@ -169,7 +164,7 @@ Func_0800f7f4:
 	ldrb	r0, [r3, #0]
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #8]
-	bl	sub_08011f54
+	bl	Func_08011f54
 	ldr	r3, [r6, #12]
 	ldr	r1, [pc, #152]
 	subs	r3, r0, r3
@@ -205,7 +200,7 @@ Func_0800f7f4:
 .L_0800f962:
 	mov	r1, r9
 	adds	r0, r6, #0
-	bl	sub_0800c300
+	bl	ObjectDispatch_ApplyArgumentToChildren
 	mov	r1, sl
 	cmp	r1, #0
 	beq.n	.L_0800f984
@@ -225,7 +220,7 @@ Func_0800f7f4:
 	ldr	r2, [r3, #4]
 	adds	r0, r6, #0
 	ldr	r3, [r3, #8]
-	bl	sub_0800d14c
+	bl	Object_SetMoveTarget
 .L_0800f992:
 	ldrh	r3, [r6, #4]
 	adds	r3, #1

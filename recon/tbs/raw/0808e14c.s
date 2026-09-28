@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0808ba1c, 0x0808ba1c
-	.set sub_0808bd24, 0x0808bd24
-	.set sub_0808d428, 0x0808d428
-	.set sub_0808ddec, 0x0808ddec
 	.global Event_FindFacingTrigger
 	.global Func_0808e14c
 	.thumb_func
@@ -26,17 +22,17 @@ Func_0808e14c:
 	ldr	r0, [r5, #0]
 	ldr	r6, [r3, #16]
 	sub	sp, #4
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	ldrh	r0, [r0, #6]
 	mov	fp, r0
 	ldr	r0, [r5, #0]
-	bl	sub_0808ddec
+	bl	Func_0808ddec
 	ldr	r3, [pc, #96]
 	mov	r2, r8
 	ands	r2, r3
 	mov	r9, r0
 	mov	r8, r2
-	bl	sub_0808bd24
+	bl	GetFocusedObjectCollision
 	movs	r3, #1
 	ldr	r1, [r6, #0]
 	negs	r3, r3
@@ -63,7 +59,7 @@ Func_0808e14c:
 	movs	r1, #6
 	ldrsh	r0, [r6, r1]
 	str	r4, [sp, #0]
-	bl	sub_0808d428
+	bl	GameFlag_IsConditionActive
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	beq.n	.L_0808e216

@@ -8,7 +8,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08002850
 .L_08002850:
 	and	r8, r2, #15
 	add	r9, pc, #684

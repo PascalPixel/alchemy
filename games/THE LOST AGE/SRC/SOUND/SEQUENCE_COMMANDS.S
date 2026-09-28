@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common sound sequence command interpreter
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c171c
 	.global Sound_LoadCommandTable
 	.thumb_func
 Sound_LoadCommandTable:

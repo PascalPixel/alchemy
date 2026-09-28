@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08020058, 0x08020058
-	.set sub_08020060, 0x08020060
-	.set sub_08020080, 0x08020080
-	.set sub_0811bdb0, 0x0811bdb0
 	.global Func_0811b4d8
 	.thumb_func
 Func_0811b4d8:
@@ -16,7 +11,7 @@ Func_0811b4d8:
 	movs	r5, #0
 	cmp	r3, #0
 	bne.n	.L_0811b596
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #50
 	adds	r2, r0, #0
 	adds	r1, #255
@@ -196,7 +191,7 @@ Func_0811b4d8:
 	mov	r8, r3
 .L_0811b622:
 	movs	r1, #0
-	bl	sub_0811bdb0
+	bl	0x0811bdb0
 	adds	r7, r0, #0
 	cmp	r7, #0
 	beq.n	.L_0811b69c
@@ -222,7 +217,7 @@ Func_0811b4d8:
 	cmp	r3, #0
 	beq.n	.L_0811b65c
 	adds	r0, r7, #0
-	bl	sub_08020060
+	bl	0x08020060
 	movs	r3, #0
 	str	r3, [r5, #32]
 .L_0811b65c:
@@ -233,7 +228,7 @@ Func_0811b4d8:
 	beq.n	.L_0811b68c
 	adds	r0, r7, #0
 	adds	r1, r6, #0
-	bl	sub_08020058
+	bl	Func_08020058
 	movs	r3, #1
 	negs	r3, r3
 	str	r0, [r5, #32]
@@ -248,7 +243,7 @@ Func_0811b4d8:
 	movs	r3, #3
 	strb	r3, [r0, #6]
 	movs	r1, #0
-	bl	sub_08020080
+	bl	Func_08020080
 .L_0811b68c:
 	movs	r3, #1
 	strb	r3, [r7, #25]

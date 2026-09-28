@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002322, 0x08002322
-	.set sub_08004458, 0x08004458
-	.set sub_08015010, 0x08015010
-	.set sub_08015018, 0x08015018
-	.set sub_08015080, 0x08015080
-	.set sub_080150b0, 0x080150b0
-	.set sub_08077048, 0x08077048
-	.set sub_080772e0, 0x080772e0
-	.set sub_080f9010, 0x080f9010
 	.global Unnamed_080f6440
 	.global Func_080f6440
 	.thumb_func
@@ -33,7 +23,7 @@ Func_080f6440:
 	str	r3, [sp, #36]
 	str	r1, [sp, #28]
 	str	r0, [sp, #32]
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [pc, #132]
 	ldr	r2, [pc, #136]
 	ldrh	r1, [r3, #10]
@@ -135,7 +125,7 @@ Func_080f6440:
 	b.n	.L_080f6670
 .L_080f6536:
 	movs	r0, #228
-	bl	sub_080772e0
+	bl	0x080772e0
 	movs	r3, #152
 	adds	r3, r3, r7
 	ldr	r1, [pc, #168]
@@ -150,7 +140,7 @@ Func_080f6440:
 	movs	r1, #2
 	str	r3, [sp, #0]
 	movs	r3, #64
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	mov	r4, fp
 	movs	r3, #8
 	ldr	r2, [r5, #0]
@@ -158,7 +148,7 @@ Func_080f6440:
 	movs	r1, #2
 	str	r3, [sp, #0]
 	movs	r3, #64
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldrh	r2, [r6, #0]
 	movs	r3, #2
 	ands	r3, r2
@@ -179,7 +169,7 @@ Func_080f6440:
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r3, #148
 	adds	r3, r3, r7
 	mov	r8, r3
@@ -198,11 +188,11 @@ Func_080f6440:
 	adds	r3, #1
 	str	r3, [r4, #0]
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080f65ca
 .L_080f65c4:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080f65ca:
 	ldrh	r2, [r6, #0]
 	movs	r3, #128
@@ -216,7 +206,7 @@ Func_080f6440:
 	subs	r3, #1
 	str	r3, [r0, #0]
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080f65fa
 	.4byte 0x03001d20
 	.4byte 0x000004cc
@@ -224,7 +214,7 @@ Func_080f6440:
 	.2byte 0x0200
 .L_080f65f4:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080f65fa:
 	ldr	r2, [pc, #64]
 	ldr	r3, [pc, #52]
@@ -251,7 +241,7 @@ Func_080f6440:
 	str	r3, [r2, #0]
 	adds	r3, r7, r0
 	ldr	r0, [r3, #0]
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	mov	r1, r8
 	ldr	r3, [r1, #0]
 	b.n	.L_080f6644
@@ -266,7 +256,7 @@ Func_080f6440:
 	beq.n	.L_080f665a
 .L_080f664a:
 	movs	r0, #228
-	bl	sub_08077048
+	bl	PartyInventory_RemoveFar
 	mov	r2, r8
 	ldr	r3, [r2, #0]
 	adds	r5, #1
@@ -277,10 +267,10 @@ Func_080f6440:
 	adds	r3, r7, r4
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r0, #152
 	lsls	r0, r0, #1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080f6dd2
 .L_080f6670:
 	cmp	r5, #5
@@ -362,7 +352,7 @@ Func_080f6440:
 	cmp	r3, #4
 	bgt.n	.L_080f671a
 	ldr	r0, [pc, #632]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r2, [r5, #0]
 	lsls	r3, r2, #3
 	subs	r3, r3, r2
@@ -380,7 +370,7 @@ Func_080f6440:
 	bne.n	.L_080f6752
 	movs	r0, #152
 	lsls	r0, r0, #1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r0, [sp, #24]
 	mov	r1, r9
 	movs	r3, #1
@@ -405,7 +395,7 @@ Func_080f6440:
 	b.n	.L_080f67ac
 .L_080f6752:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080f67ac
 .L_080f675a:
 	mov	r3, r8
@@ -419,10 +409,10 @@ Func_080f6440:
 	ldr	r0, [r5, #0]
 	movs	r1, #6
 	adds	r0, #1
-	bl	sub_080022fc
+	bl	__modsi3
 	str	r0, [r5, #0]
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r4, r8
 	ldrh	r2, [r4, #0]
 .L_080f6780:
@@ -435,10 +425,10 @@ Func_080f6440:
 	ldr	r0, [r5, #0]
 	movs	r1, #6
 	adds	r0, #5
-	bl	sub_080022fc
+	bl	__modsi3
 	str	r0, [r5, #0]
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #148
 	adds	r0, r0, r7
 	mov	r8, r0
@@ -475,20 +465,20 @@ Func_080f6440:
 	adds	r5, r7, r0
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #19
 	movs	r3, #4
 	movs	r0, #11
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	movs	r3, #0
 	ldr	r0, [pc, #384]
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r1, #152
 	movs	r3, #1
 	b.n	.L_080f6868
@@ -504,7 +494,7 @@ Func_080f6440:
 	ldr	r0, [pc, #360]
 	movs	r3, #8
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #2
 	str	r3, [r6, #0]
 	movs	r3, #152
@@ -523,20 +513,20 @@ Func_080f6440:
 	adds	r5, r7, r0
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #14
 	movs	r3, #3
 	movs	r0, #16
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #296]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080f6864:
 	movs	r1, #152
 	movs	r3, #3
@@ -564,20 +554,20 @@ Func_080f6440:
 	adds	r5, r7, r3
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #23
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #216]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080f68b6:
 	movs	r4, #152
 	movs	r3, #4
@@ -597,20 +587,20 @@ Func_080f6440:
 	adds	r5, r7, r1
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r2, #7
 	movs	r3, #3
 	movs	r0, #23
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	ldr	r0, [pc, #152]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080f68fa:
 	movs	r3, #152
 	mov	r2, sl
@@ -624,7 +614,7 @@ Func_080f6440:
 	adds	r3, r7, r4
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r0, #152
 	adds	r0, r0, r7
 	mov	fp, r0
@@ -648,7 +638,7 @@ Func_080f6440:
 	str	r3, [r2, #0]
 	movs	r0, #93
 	str	r4, [sp, #8]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r3, [sp, #28]
 	ldr	r4, [sp, #8]
 	ldr	r2, [pc, #72]
@@ -702,7 +692,7 @@ Func_080f6440:
 	movs	r3, #10
 	str	r3, [r0, #0]
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080f6dfe
 .L_080f69c4:
 	cmp	r5, #11
@@ -722,7 +712,7 @@ Func_080f6440:
 	ldr	r0, [pc, #844]
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080f69ea:
 	ldrh	r2, [r6, #0]
 	movs	r3, #1
@@ -737,13 +727,13 @@ Func_080f6440:
 	str	r3, [r0, #0]
 	str	r1, [r5, #0]
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #153
 	lsls	r2, r2, #3
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	b.n	.L_080f6e0c
 .L_080f6a16:
 	cmp	r5, #20
@@ -766,13 +756,13 @@ Func_080f6440:
 	str	r3, [r0, #0]
 	b.n	.L_080f6e06
 .L_080f6a3a:
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #3
 	ands	r0, r3
 	adds	r0, #4
 	strb	r0, [r5, #2]
 	ldr	r0, [pc, #748]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080f6adc
 .L_080f6a4e:
 	cmp	r5, #10
@@ -792,7 +782,7 @@ Func_080f6440:
 	movs	r3, #3
 	movs	r0, #18
 	str	r4, [sp, #8]
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	movs	r0, #153
 	lsls	r0, r0, #3
@@ -801,7 +791,7 @@ Func_080f6440:
 	ldr	r0, [pc, #696]
 	movs	r3, #0
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r4, [sp, #8]
 	ldr	r3, [r4, #0]
 .L_080f6a8a:
@@ -810,7 +800,7 @@ Func_080f6440:
 	movs	r0, #153
 	lsls	r0, r0, #1
 	str	r4, [sp, #8]
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r4, [sp, #8]
 	ldr	r3, [r4, #0]
 .L_080f6a9c:
@@ -963,7 +953,7 @@ Func_080f6440:
 .L_080f6b9e:
 	movs	r1, #21
 	str	r4, [sp, #8]
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r0, r0, r5
 	adds	r0, #4
 	ldrb	r3, [r7, r0]
@@ -1028,7 +1018,7 @@ Func_080f6440:
 	movs	r3, #2
 	str	r3, [r1, #0]
 	movs	r0, #171
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r4, #239
 	ldr	r3, [sp, #36]
 	lsls	r4, r4, #7
@@ -1046,7 +1036,7 @@ Func_080f6440:
 	adds	r3, r7, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r3, #148
 	adds	r3, r3, r7
 	mov	r8, r3
@@ -1065,20 +1055,20 @@ Func_080f6440:
 	str	r1, [r3, #0]
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r3, #6
 	str	r3, [sp, #0]
 	movs	r1, #16
 	movs	r2, #24
 	movs	r3, #4
 	movs	r0, #3
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	adds	r1, r0, #0
 	str	r1, [r5, #0]
 	movs	r3, #0
 	ldr	r0, [pc, #200]
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #148
 	adds	r3, r3, r7
 	mov	r8, r3
@@ -1087,7 +1077,7 @@ Func_080f6440:
 	cmp	r3, #4
 	bne.n	.L_080f6d68
 	movs	r0, #228
-	bl	sub_080772e0
+	bl	0x080772e0
 	cmp	r0, #0
 	ble.n	.L_080f6cae
 	ldr	r4, [sp, #24]
@@ -1143,7 +1133,7 @@ Func_080f6440:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #18
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	ldr	r2, [pc, #68]
 	ldr	r5, [pc, #72]
 	adds	r1, r0, #0
@@ -1153,12 +1143,12 @@ Func_080f6440:
 	movs	r2, #0
 	movs	r3, #8
 	subs	r5, #1
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r1, [r6, #0]
 	adds	r0, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	b.n	.L_080f6d68
 	.4byte 0x0000090c
 	.4byte 0x00000133
@@ -1756,7 +1746,7 @@ Func_080f6440:
 	adds	r0, #21
 	movs	r1, #21
 	str	r4, [sp, #8]
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r0, #4
 	ldrb	r3, [r5, r0]
 	movs	r2, #128
@@ -1796,7 +1786,7 @@ Func_080f6440:
 	bgt.n	.L_080f7200
 	ldr	r3, [pc, #268]
 	muls	r0, r3
-	bl	sub_08002322
+	bl	Trig_Sin
 	lsls	r0, r0, #6
 	b.n	.L_080f7210
 .L_080f7200:
@@ -1805,7 +1795,7 @@ Func_080f6440:
 	ldr	r1, [pc, #256]
 	lsls	r0, r0, #12
 	adds	r0, r0, r1
-	bl	sub_08002322
+	bl	Trig_Sin
 	lsls	r0, r0, #2
 .L_080f7210:
 	asrs	r0, r0, #16

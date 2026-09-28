@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_080afdbc, 0x080afdbc
-	.set sub_080b0b78, 0x080b0b78
-	.set sub_080b0e04, 0x080b0e04
 	.global Djinn_AddToLeastLoadedOwner
 	.global Func_080b0ab8
 	.thumb_func
@@ -33,14 +27,14 @@ Func_080b0ab8:
 	mov	r0, fp
 	mov	r9, r2
 	mov	r8, r3
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080b0af2
 	movs	r0, #1
 	negs	r0, r0
 	b.n	.L_080b0b66
 .L_080b0af2:
-	bl	sub_080afdbc
+	bl	0x080afdbc
 	cmp	r9, r0
 	bge.n	.L_080b0b3a
 	ldr	r3, [pc, #120]
@@ -50,7 +44,7 @@ Func_080b0ab8:
 	adds	r5, r0, #0
 .L_080b0b04:
 	ldrb	r0, [r6, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #140
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
@@ -90,13 +84,13 @@ Func_080b0ab8:
 	adds	r1, r7, #0
 	mov	r2, sl
 	mov	r0, r9
-	bl	sub_080b0b78
+	bl	Djinn_AddToOwner
 	adds	r1, r7, #0
 	mov	r2, sl
 	mov	r0, r9
-	bl	sub_080b0e04
+	bl	Trade_AddOffer
 	mov	r0, fp
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	mov	r0, r9
 .L_080b0b66:
 	pop	{r3, r5, r6, r7}

@@ -12,7 +12,6 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, 4bpp decompressor
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08038b14
 	.set	.L_08038b70, 0x08038b70
 	.global Tile_Decompress4bpp
 	.thumb_func

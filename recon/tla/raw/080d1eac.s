@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080d1e60, 0x080d1e60
-	.set sub_080d1e84, 0x080d1e84
 	.global Func_080d1eac
 	.thumb_func
 Func_080d1eac:
@@ -14,7 +12,7 @@ Func_080d1eac:
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
 	beq.n	.L_080d1ec8
-	bl	sub_080d1e60
+	bl	0x080d1e60
 	ldrb	r0, [r0, #2]
 	cmp	r0, #255
 	bne.n	.L_080d1ecc
@@ -30,8 +28,8 @@ Func_080d1eac:
 	.2byte 0x0240
 	.2byte 0x0200
 	push	{lr}
-	bl	sub_080d1e84
-	bl	sub_080d1e60
+	bl	0x080d1e84
+	bl	0x080d1e60
 	ldrb	r0, [r0, #3]
 	pop	{pc}
 	.2byte 0x0000

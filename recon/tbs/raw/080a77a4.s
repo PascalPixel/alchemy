@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015070, 0x08015070
-	.set sub_08015270, 0x08015270
-	.set sub_080770c0, 0x080770c0
-	.set sub_080a17c4, 0x080a17c4
-	.set sub_080a1ac0, 0x080a1ac0
-	.set sub_080a7a34, 0x080a7a34
-	.set sub_080a7d68, 0x080a7d68
 	.global Func_080a77a4
 	.thumb_func
 Func_080a77a4:
@@ -35,10 +27,10 @@ CharacterMenu_SelectOwner:
 	sub	sp, #4
 	mov	r8, r2
 	ldrsb	r7, [r5, r2]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r0, #185
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080a77ee
 	movs	r3, #3
@@ -47,7 +39,7 @@ CharacterMenu_SelectOwner:
 	str	r3, [sp, #0]
 	movs	r2, #1
 	movs	r3, #9
-	bl	sub_08015070
+	bl	UiWindow_DrawDividerLineFar
 .L_080a77ee:
 	movs	r3, #1
 	negs	r3, r3
@@ -63,7 +55,7 @@ CharacterMenu_SelectOwner:
 	lsls	r0, r0, #3
 	subs	r0, #10
 	movs	r1, #16
-	bl	sub_080a1ac0
+	bl	UiMenu_SlideCursor
 .L_080a780c:
 	movs	r2, #136
 	lsls	r2, r2, #2
@@ -71,22 +63,22 @@ CharacterMenu_SelectOwner:
 	ldrh	r3, [r3, #0]
 	cmp	r3, #3
 	bne.n	.L_080a7828
-	bl	sub_080a7d68
+	bl	PsynergyMenu_SelectOwner
 	b.n	.L_080a782c
 	movs	r0, r0
 	.4byte 0x00000000
 	.2byte 0x1f2c
 	.2byte 0x0300
 .L_080a7828:
-	bl	sub_080a7a34
+	bl	CharacterSelector_RunRearrange
 .L_080a782c:
 	adds	r6, r0, #0
 	mov	r3, sl
 	adds	r3, #20
 	ldr	r0, [r5, r3]
-	bl	sub_080a17c4
+	bl	UiIcon_PrepareObject
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r3, r5}

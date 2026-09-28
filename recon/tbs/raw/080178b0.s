@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072f8, 0x080072f8
-	.set sub_080072fc, 0x080072fc
 	.global Func_080178b0
 	.thumb_func
 Func_080178b0:
@@ -27,7 +24,7 @@ Func_080178b0:
 	add	r0, sp, #4
 	ldr	r3, [pc, #368]
 	lsls	r1, r1, #1
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r0, [pc, #364]
 	adds	r3, r6, r0
 	ldrb	r3, [r3, #0]
@@ -63,21 +60,21 @@ Func_080178b0:
 	adds	r1, #53
 	mov	r2, r9
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	mov	r1, sp
 	adds	r1, #54
 	mov	r2, r9
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	mov	r2, fp
 	add	r1, sp, #36
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	mov	r1, sp
 	mov	r2, fp
 	adds	r1, #37
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	movs	r2, #1
 	add	r8, r2
 	b.n	.L_08017964
@@ -87,11 +84,11 @@ Func_080178b0:
 	mov	r2, r9
 	ldr	r5, [pc, #264]
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	adds	r0, r7, #0
 	add	r1, sp, #36
 	mov	r2, fp
-	bl	sub_080072f8
+	bl	_call_via_r5
 .L_08017964:
 	mov	r0, sl
 	lsls	r3, r0, #16
@@ -118,22 +115,22 @@ Func_080178b0:
 	adds	r1, #49
 	mov	r2, r9
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	adds	r1, r6, #0
 	adds	r1, #50
 	mov	r2, r9
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	adds	r1, r6, #0
 	adds	r1, #32
 	mov	r2, fp
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	adds	r1, r6, #0
 	mov	r2, fp
 	adds	r1, #33
 	adds	r0, r7, #0
-	bl	sub_080072f8
+	bl	_call_via_r5
 	mov	r0, sl
 	movs	r2, #128
 	lsls	r3, r0, #16
@@ -150,12 +147,12 @@ Func_080178b0:
 	mov	r2, r9
 	ldr	r6, [pc, #128]
 	adds	r0, r7, #0
-	bl	sub_080072fc
+	bl	_call_via_r6
 	adds	r1, r5, #0
 	adds	r1, #32
 	adds	r0, r7, #0
 	mov	r2, fp
-	bl	sub_080072fc
+	bl	_call_via_r6
 .L_080179ec:
 	mov	r0, sl
 	lsls	r3, r0, #16

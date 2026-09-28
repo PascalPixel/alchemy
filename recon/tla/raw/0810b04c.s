@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014878, 0x08014878
-	.set sub_0801489c, 0x0801489c
-	.set sub_08038060, 0x08038060
-	.set sub_08038078, 0x08038078
-	.set sub_08038120, 0x08038120
-	.set sub_080c8590, 0x080c8590
-	.set sub_080c8598, 0x080c8598
-	.set sub_080c85b8, 0x080c85b8
-	.set sub_0810a864, 0x0810a864
-	.set sub_0810a898, 0x0810a898
-	.set sub_0810a960, 0x0810a960
 	.global Func_0810b04c
 	.thumb_func
 Func_0810b04c:
@@ -31,15 +20,15 @@ Func_0810b04c:
 	adds	r6, r0, #0
 	adds	r1, r5, #0
 	adds	r0, r7, #0
-	bl	sub_0810a864
+	bl	Func_0810a864
 	mov	r8, r0
 	cmp	r6, #0
 	beq.n	.L_0810b0ac
 	adds	r0, r6, #0
-	bl	sub_08038060
+	bl	0x08038060
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sub_0810a898
+	bl	0x0810a898
 	cmp	r0, #0
 	beq.n	.L_0810b08e
 	ldr	r5, [pc, #40]
@@ -48,16 +37,16 @@ Func_0810b04c:
 	ldr	r5, [pc, #40]
 .L_0810b090:
 	adds	r0, r5, #0
-	bl	sub_0810a960
+	bl	Func_0810a960
 	movs	r1, #5
 	adds	r5, r0, #0
 	mov	r0, r8
-	bl	sub_08038120
+	bl	0x08038120
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08038078
+	bl	0x08038078
 .L_0810b0ac:
 	pop	{r3}
 	mov	r8, r3
@@ -83,26 +72,26 @@ Func_0810b04c:
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #24]
 	str	r3, [r5, #8]
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r1, r0, #0
 	movs	r0, #160
 	lsls	r0, r0, #14
 	adds	r2, r5, #0
-	bl	sub_0801489c
+	bl	0x0801489c
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #8]
 	adds	r0, r6, #0
-	bl	sub_080c8598
+	bl	0x080c8598
 	ldr	r3, [r6, #20]
 	str	r3, [r5, #0]
 	ldr	r3, [r6, #24]
 	str	r3, [r5, #8]
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r1, r0, #0
 	movs	r0, #128
 	adds	r2, r5, #0
 	lsls	r0, r0, #11
-	bl	sub_0801489c
+	bl	0x0801489c
 	ldr	r3, [r5, #0]
 	mov	r2, r8
 	str	r3, [r6, #12]
@@ -126,7 +115,7 @@ Func_0810b04c:
 	cmp	r7, #1
 	bne.n	.L_0810b14a
 	adds	r0, r6, #0
-	bl	sub_080c8590
+	bl	0x080c8590
 	cmp	r0, #0
 	bne.n	.L_0810b15e
 	mov	r3, r8
@@ -136,11 +125,11 @@ Func_0810b04c:
 	cmp	r7, #2
 	bne.n	.L_0810b15e
 	adds	r0, r6, #0
-	bl	sub_080c8590
+	bl	0x080c8590
 	cmp	r0, #0
 	bne.n	.L_0810b15e
 	adds	r0, r6, #0
-	bl	sub_080c85b8
+	bl	0x080c85b8
 .L_0810b15e:
 	add	sp, #12
 	pop	{r3}

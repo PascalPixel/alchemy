@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004080, 0x08004080
 	.global Menu_SetupSelectionSide
 	.global Func_0801b248
 	.thumb_func
@@ -89,14 +87,14 @@ Func_0801b248:
 	mov	r9, r2
 	cmp	r2, #0
 	bne.n	.L_0801b34c
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	adds	r5, r7, #0
 	adds	r5, #12
 	strh	r0, [r6, r5]
 	movs	r1, #128
 	ldrh	r0, [r6, r5]
 	mov	r2, fp
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	adds	r5, r6, r5
 	strh	r0, [r5, #2]
 	movs	r0, #230

@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015010, 0x08015010
-	.set sub_08015018, 0x08015018
-	.set sub_08015080, 0x08015080
-	.set sub_08077018, 0x08077018
-	.set sub_080770c0, 0x080770c0
-	.set sub_080a1a40, 0x080a1a40
-	.set sub_080a1ac0, 0x080a1ac0
-	.set sub_080f9010, 0x080f9010
 	.global Func_080a524c
 	.thumb_func
 Func_080a524c:
@@ -24,54 +14,54 @@ Func_080a524c:
 	adds	r5, r0, #0
 	movs	r3, #10
 	movs	r0, #13
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	ldr	r3, [pc, #264]
 	ands	r5, r3
 	adds	r7, r0, #0
 	adds	r0, r5, #0
-	bl	sub_08077018
+	bl	Item_Get
 	ldr	r3, [pc, #256]
 	adds	r5, r5, r3
 	adds	r0, r5, #0
 	adds	r1, r7, #0
 	movs	r2, #24
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r5, [pc, #244]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
 	movs	r2, #0
 	movs	r3, #16
 	adds	r5, #1
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r0, r5, #0
 	adds	r1, r7, #0
 	movs	r2, #0
 	movs	r3, #24
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r5, [pc, #220]
 	adds	r1, r7, #0
 	adds	r0, r5, #0
 	movs	r2, #24
 	movs	r3, #40
 	adds	r5, #1
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r0, r5, #0
 	adds	r1, r7, #0
 	movs	r2, #24
 	movs	r3, #56
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r6, #1
 	movs	r0, #104
 	movs	r1, #86
 	mov	r8, r6
-	bl	sub_080a1ac0
+	bl	UiMenu_SlideCursor
 	b.n	.L_080a5306
 .L_080a52c8:
 	lsls	r1, r6, #4
 	adds	r1, #70
 	movs	r0, #104
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	ldr	r5, [pc, #172]
 	ldr	r3, [r5, #0]
 	movs	r2, #64
@@ -82,7 +72,7 @@ Func_080a524c:
 	movs	r0, #111
 	subs	r6, #1
 	mov	r8, r2
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080a52ea:
 	ldr	r3, [r5, #0]
 	movs	r2, #128
@@ -93,14 +83,14 @@ Func_080a524c:
 	movs	r0, #111
 	adds	r6, #1
 	mov	r8, r3
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080a5300:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080a5306:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080a534c
 	mov	r2, r8
@@ -110,7 +100,7 @@ Func_080a524c:
 	adds	r0, r6, #2
 	movs	r1, #2
 	mov	r8, r3
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r6, r0, #0
 .L_080a5326:
 	ldr	r1, [pc, #92]
@@ -120,7 +110,7 @@ Func_080a524c:
 	cmp	r3, #0
 	beq.n	.L_080a533a
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a534c
 .L_080a533a:
 	ldr	r3, [r1, #0]
@@ -129,19 +119,19 @@ Func_080a524c:
 	cmp	r3, #0
 	beq.n	.L_080a52c8
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r6, #1
 .L_080a534c:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080a535a
 	movs	r6, #1
 .L_080a535a:
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	adds	r0, r6, #0
 	add	sp, #4
 	pop	{r3}

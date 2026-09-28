@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080005e8, 0x080005e8
-	.set sub_08000630, 0x08000630
-	.set sub_080019f4, 0x080019f4
-	.set sub_0801314c, 0x0801314c
-	.set sub_0801352e, 0x0801352e
-	.set sub_08013a36, 0x08013a36
-	.set sub_08013af6, 0x08013af6
-	.set sub_08013d84, 0x08013d84
-	.set sub_08013de4, 0x08013de4
-	.set sub_08013ffc, 0x08013ffc
-	.set sub_080147d8, 0x080147d8
-	.set sub_08014840, 0x08014840
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_08016430, 0x08016430
-	.set sub_080164e8, 0x080164e8
-	.set sub_08016990, 0x08016990
-	.set sub_08016dfc, 0x08016dfc
-	.set sub_08016e04, 0x08016e04
-	.set sub_081c0080, 0x081c0080
-	.set sub_081c0088, 0x081c0088
 	.global Func_080133c4
 	.thumb_func
 Func_080133c4:
@@ -195,10 +175,10 @@ Func_080133c4:
 	strb	r3, [r1, #1]
 	ldr	r3, [pc, #56]
 	strh	r4, [r3, #0]
-	bl	sub_081c0088
-	bl	sub_08000630
+	bl	0x081c0088
+	bl	SoundDriver_EnterFrameUpdate
 	cmp	r0, #0
-	bne.n	sub_0801352e
+	bne.n	0x0801352e
 	ldr	r3, [pc, #52]
 	movs	r0, #8
 	mov	lr, r3
@@ -251,7 +231,7 @@ Func_080133c4:
 	movs	r0, #144
 	strb	r1, [r5, #0]
 	lsls	r0, r0, #3
-	bl	sub_080147d8
+	bl	0x080147d8
 	movs	r3, #0
 	strb	r3, [r5, #0]
 	ldr	r3, [pc, #208]
@@ -261,8 +241,8 @@ Func_080133c4:
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #80
-	bl	sub_08014cc0
-	bl	sub_080019f4
+	bl	Func_08014cc0
+	bl	Render_BuildOamList
 	b.n	.L_080135ba
 .L_080135b0:
 	ldr	r2, [pc, #188]
@@ -397,7 +377,7 @@ Func_080133c4:
 	ldr	r2, [pc, #272]
 	ldr	r3, [pc, #276]
 	str	r3, [r2, #0]
-	bl	sub_081c0080
+	bl	Func_081c0080
 	movs	r4, #128
 	lsls	r4, r4, #20
 	ldr	r3, [pc, #268]
@@ -434,8 +414,8 @@ Func_080133c4:
 	strh	r3, [r2, #0]
 	bl	.L_080134b0
 	movs	r0, #80
-	bl	sub_0801314c
-	bl	sub_08013ffc
+	bl	Runtime_ReleaseSlot
+	bl	0x08013ffc
 	ldr	r2, [pc, #208]
 	ldr	r3, [r2, #0]
 	adds	r3, #1
@@ -449,7 +429,7 @@ Func_080133c4:
 	ldrh	r3, [r3, #0]
 	cmp	r3, #0
 	beq.n	.L_08013740
-	bl	sub_08016430
+	bl	Func_08016430
 	ldr	r2, [pc, #188]
 	ldrb	r3, [r2, #0]
 	cmp	r3, #0
@@ -514,9 +494,9 @@ Func_080133c4:
 	lsls	r3, r3, #8
 	adds	r3, #4
 	strh	r3, [r5, #0]
-	bl	sub_08016dfc
+	bl	Bios_SoundBiasOff
 	svc	3
-	bl	sub_08016e04
+	bl	Bios_SoundBiasOn
 	movs	r3, #192
 	lsls	r3, r3, #8
 	adds	r3, #15
@@ -591,7 +571,7 @@ Func_080133c4:
 	ldr	r2, [pc, #60]
 	ldr	r3, [pc, #64]
 	str	r3, [r2, #0]
-	bl	sub_081c0080
+	bl	Func_081c0080
 	movs	r4, #128
 	lsls	r4, r4, #20
 	ldr	r3, [pc, #56]
@@ -786,16 +766,16 @@ Func_080133c4:
 	ldr	r0, [pc, #164]
 	ldr	r1, [pc, #164]
 	ldr	r5, [pc, #168]
-	bl	sub_080164e8
+	bl	Func_080164e8
 	strh	r0, [r5, #0]
-	bl	sub_08016990
+	bl	0x08016990
 .L_080139d6:
-	bl	sub_080005e8
+	bl	SoundDriver_VSyncRefresh
 	ldr	r3, [pc, #156]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
 	beq.n	.L_080139e6
-	bl	sub_08013de4
+	bl	0x08013de4
 .L_080139e6:
 	ldr	r2, [pc, #148]
 	ldrb	r3, [r2, #0]
@@ -828,19 +808,19 @@ Func_080133c4:
 	adds	r1, #16
 	ldmia	r0!, {r2, r3, r4, r5}
 	stmia	r1!, {r2, r3, r4, r5}
-	bl	sub_08013d84
+	bl	0x08013d84
 .L_08013a26:
 	ldr	r1, [pc, #96]
 	ldr	r2, [r1, #0]
 	cmp	r2, #0
-	beq.n	sub_08013a36
+	beq.n	0x08013a36
 	movs	r3, #0
 	str	r3, [r1, #0]
 	mov	lr, r2
 	.2byte 0xf800
 	.2byte 0x20c8
 	lsls	r0, r0, #4
-	bl	sub_08014840
+	bl	Func_08014840
 	ldr	r3, [pc, #76]
 	ldr	r1, [pc, #76]
 	ldrh	r2, [r3, #0]
@@ -916,10 +896,10 @@ Func_080133c4:
 	ldr	r3, [r3, #0]
 	ldrb	r3, [r3, #4]
 	strb	r3, [r6, #1]
-	bl	sub_081c0088
-	bl	sub_08000630
+	bl	0x081c0088
+	bl	SoundDriver_EnterFrameUpdate
 	cmp	r0, #0
-	bne.n	sub_08013af6
+	bne.n	0x08013af6
 	ldr	r3, [pc, #52]
 	movs	r0, #8
 	mov	lr, r3

@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800206c, 0x0800206c
-	.set sub_08014878, 0x08014878
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_080202b0, 0x080202b0
-	.set sub_080ad290, 0x080ad290
-	.set sub_080ca4a8, 0x080ca4a8
-	.set sub_080ca514, 0x080ca514
-	.set sub_080ca5d8, 0x080ca5d8
 	.global Func_080c9e48
 	.thumb_func
 Func_080c9e48:
@@ -71,7 +63,7 @@ Func_080c9e48:
 	ldrsh	r0, [r5, r1]
 	cmp	r0, r2
 	beq.n	.L_080c9ec4
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080c9ece
 .L_080c9ec4:
@@ -115,7 +107,7 @@ Func_080c9e48:
 	adds	r2, r7, r4
 	lsls	r3, r3, #13
 	str	r3, [r2, #0]
-	bl	sub_080ca4a8
+	bl	0x080ca4a8
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -149,11 +141,11 @@ Func_080c9e48:
 	ldr	r5, [pc, #124]
 .L_080c9f52:
 	mov	r1, sp
-	bl	sub_080202b0
+	bl	0x080202b0
 	movs	r1, #20
 	adds	r6, r0, #0
 	ldr	r0, [sp, #0]
-	bl	sub_0800206c
+	bl	0x0800206c
 	movs	r1, #0
 	ldrsh	r3, [r5, r1]
 	ldr	r1, [pc, #108]
@@ -184,7 +176,7 @@ Func_080c9e48:
 	ldrsh	r0, [r5, r3]
 	cmp	r0, r2
 	beq.n	.L_080c9fa2
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080c9faa
 .L_080c9fa2:
@@ -201,7 +193,7 @@ Func_080c9e48:
 	bne.n	.L_080c9f7a
 .L_080c9fb6:
 	adds	r0, r6, #0
-	bl	sub_080ca514
+	bl	0x080ca514
 	mov	r0, sl
 .L_080c9fbe:
 	add	sp, #4
@@ -231,17 +223,17 @@ Func_080c9e48:
 	movs	r0, #96
 	adds	r0, #255
 	mov	fp, r3
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080ca0ea
 	movs	r0, #176
 	lsls	r0, r0, #1
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080ca072
 	movs	r0, #98
 	adds	r0, #255
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080ca072
 	ldr	r0, [sp, #4]
@@ -271,7 +263,7 @@ Func_080c9e48:
 	movs	r0, #0
 	cmp	r7, #0
 	beq.n	.L_080ca146
-	bl	sub_080ad290
+	bl	0x080ad290
 	mov	r2, r9
 	ldrh	r3, [r2, #2]
 	subs	r0, r0, r3
@@ -305,13 +297,13 @@ Func_080c9e48:
 	mov	sl, r3
 	cmp	r5, #0
 	bne.n	.L_080ca0b2
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r5, r0, #0
-	bl	sub_08014878
+	bl	0x08014878
 	mov	r8, r0
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r6, r0, #0
-	bl	sub_08014878
+	bl	0x08014878
 	mov	r2, r8
 	subs	r5, r5, r2
 	adds	r5, r5, r6
@@ -370,7 +362,7 @@ Func_080c9e48:
 	movs	r0, #0
 	cmp	r5, #0
 	beq.n	.L_080ca146
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	mov	r0, r9
@@ -396,7 +388,7 @@ Func_080c9e48:
 	mov	r2, r9
 	ldrh	r5, [r2, r3]
 	ldr	r0, [sp, #4]
-	bl	sub_080ca5d8
+	bl	0x080ca5d8
 	adds	r0, r5, #0
 .L_080ca146:
 	add	sp, #8

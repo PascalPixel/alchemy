@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08077008, 0x08077008
-	.set sub_08077018, 0x08077018
-	.set sub_08077080, 0x08077080
-	.set sub_08077198, 0x08077198
-	.set sub_080771a0, 0x080771a0
-	.set sub_080b9a70, 0x080b9a70
-	.set sub_080bad7c, 0x080bad7c
-	.set sub_080bae40, 0x080bae40
-	.set sub_080bd3c8, 0x080bd3c8
-	.set sub_080bd3e4, 0x080bd3e4
 	.global BattleCommand_SelectAutomatic
 	.global Func_080bd424
 	.thumb_func
@@ -27,7 +17,7 @@ Func_080bd424:
 	adds	r7, r0, #0
 	movs	r1, #0
 	ldrsh	r0, [r7, r1]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r3, #0
 	movs	r2, #1
 	str	r3, [sp, #12]
@@ -57,7 +47,7 @@ Func_080bd424:
 	lsls	r3, r3, #1
 	add	r3, fp
 	ldrb	r0, [r3, #0]
-	bl	sub_08077198
+	bl	Owner_GetRecordFar
 	str	r0, [sp, #20]
 	ldr	r1, [sp, #20]
 	movs	r3, #144
@@ -98,7 +88,7 @@ Func_080bd424:
 	ldr	r0, [pc, #440]
 	mov	r9, r2
 .L_080bd4d2:
-	bl	sub_080bd3e4
+	bl	Battle_SelectWeightedIndex
 	mov	sl, r0
 	b.n	.L_080bd534
 	mov	r3, r8
@@ -106,7 +96,7 @@ Func_080bd424:
 	lsls	r3, r2, #31
 	cmp	r3, #0
 	bne.n	.L_080bd508
-	bl	sub_080771a0
+	bl	BattleRandom16Far
 	mov	r1, r8
 	movs	r3, #7
 	ldrb	r2, [r1, #0]
@@ -192,13 +182,13 @@ Func_080bd424:
 	cmp	r6, #0
 	beq.n	.L_080bd5ba
 	ldrh	r0, [r1, #0]
-	bl	sub_08077018
+	bl	Item_Get
 	adds	r5, r0, #0
 	ldrb	r3, [r5, #12]
 	cmp	r3, #1
 	bne.n	.L_080bd5b4
 	ldrh	r0, [r5, #40]
-	bl	sub_08077080
+	bl	Ability_GetData
 	movs	r3, #2
 	ldrh	r5, [r5, #40]
 	strh	r3, [r7, #6]
@@ -225,7 +215,7 @@ Func_080bd424:
 	b.n	.L_080bd766
 .L_080bd5c6:
 	mov	r0, r9
-	bl	sub_08077080
+	bl	Ability_GetData
 	adds	r5, r0, #0
 	ldrb	r3, [r5, #3]
 	cmp	r3, #47
@@ -257,7 +247,7 @@ Func_080bd424:
 	movs	r1, #0
 	ldrsh	r0, [r7, r1]
 .L_080bd600:
-	bl	sub_080b9a70
+	bl	Battle_FindTaggedSlotByValue
 	strh	r0, [r7, #10]
 .L_080bd606:
 	ldr	r2, [sp, #24]
@@ -282,7 +272,7 @@ Func_080bd424:
 	cmp	r3, r1
 	beq.n	.L_080bd69a
 	mov	r0, r9
-	bl	sub_080bd3c8
+	bl	Ability_CheckStatusOrSpecialId
 	cmp	r0, #0
 	beq.n	.L_080bd674
 	movs	r3, #1
@@ -386,7 +376,7 @@ Func_080bd424:
 	movs	r2, #0
 	ldrsh	r0, [r7, r2]
 	adds	r1, r5, #0
-	bl	sub_080bae40
+	bl	BattleTarget_SelectForAction
 	movs	r3, #2
 	negs	r3, r3
 	cmp	r0, r3
@@ -397,7 +387,7 @@ Func_080bd424:
 	bhi.n	.L_080bd70e
 	movs	r0, #1
 .L_080bd70e:
-	bl	sub_080bad7c
+	bl	BattleTarget_SelectRandomPosition
 .L_080bd712:
 	movs	r1, #1
 	negs	r1, r1
@@ -411,7 +401,7 @@ Func_080bd424:
 	adds	r1, r5, #0
 	movs	r3, #0
 	ldrsh	r0, [r7, r3]
-	bl	sub_080bae40
+	bl	BattleTarget_SelectForAction
 	movs	r1, #2
 	negs	r1, r1
 	cmp	r0, r1
@@ -422,7 +412,7 @@ Func_080bd424:
 	bhi.n	.L_080bd73e
 	movs	r0, #1
 .L_080bd73e:
-	bl	sub_080bad7c
+	bl	BattleTarget_SelectRandomPosition
 .L_080bd742:
 	movs	r2, #1
 	negs	r2, r2
@@ -432,13 +422,13 @@ Func_080bd424:
 .L_080bd74c:
 	movs	r1, #0
 	ldrsh	r0, [r7, r1]
-	bl	sub_080b9a70
+	bl	Battle_FindTaggedSlotByValue
 	strh	r0, [r7, #10]
 	b.n	.L_080bd766
 .L_080bd758:
 	movs	r2, #0
 	ldrsh	r0, [r7, r2]
-	bl	sub_080b9a70
+	bl	Battle_FindTaggedSlotByValue
 .L_080bd760:
 	movs	r3, #0
 	strh	r0, [r7, #10]

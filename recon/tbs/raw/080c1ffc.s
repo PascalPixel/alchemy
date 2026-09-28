@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08004458, 0x08004458
-	.set sub_080072f8, 0x080072f8
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_08077140, 0x08077140
-	.set sub_080c1afc, 0x080c1afc
-	.set sub_080c1c54, 0x080c1c54
-	.set sub_080c1df4, 0x080c1df4
-	.set sub_080c1f50, 0x080c1f50
-	.set sub_080c23c0, 0x080c23c0
 	.global BattleFormation_BuildEnemyList
 	.global Func_080c1ffc
 	.thumb_func
@@ -36,11 +25,11 @@ Func_080c1ffc:
 	strb	r2, [r3, #0]
 	str	r0, [sp, #28]
 	ldr	r0, [pc, #596]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080c2034
 	add	r0, sp, #32
-	bl	sub_080c1afc
+	bl	BattleFormation_SelectLevelMatchedCandidate
 	adds	r5, r0, #0
 .L_080c2034:
 	movs	r1, #190
@@ -94,7 +83,7 @@ Func_080c1ffc:
 	ldrb	r0, [r1, r7]
 	adds	r0, #8
 	str	r4, [sp, #0]
-	bl	sub_080c23c0
+	bl	Summon_IsEntryFlagged
 	negs	r3, r0
 	orrs	r3, r0
 	movs	r2, #2
@@ -141,19 +130,19 @@ Func_080c1ffc:
 	ldr	r1, [sp, #8]
 	ldrb	r0, [r1, r7]
 	adds	r0, #8
-	bl	sub_080c23c0
+	bl	Summon_IsEntryFlagged
 	negs	r1, r0
 	orrs	r1, r0
 	lsrs	r1, r1, #31
 	movs	r3, #2
 	subs	r1, r3, r1
 	mov	r0, fp
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r0, r5
 	bge.n	.L_080c2106
 	adds	r5, r0, #0
 .L_080c2106:
-	bl	sub_08004458
+	bl	Random16
 	adds	r3, r5, #1
 	muls	r3, r0
 	mov	r2, r8
@@ -187,7 +176,7 @@ Func_080c1ffc:
 	beq.n	.L_080c2178
 	str	r1, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_080c23c0
+	bl	Summon_IsEntryFlagged
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31
@@ -246,10 +235,10 @@ Func_080c1ffc:
 	movs	r7, #0
 	mov	r6, r8
 .L_080c21b2:
-	bl	sub_08004458
+	bl	Random16
 	lsls	r5, r0, #2
 	adds	r5, r5, r0
-	bl	sub_08004458
+	bl	Random16
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r5, r5, #16
@@ -326,7 +315,7 @@ Func_080c1ffc:
 	cmp	r5, #0
 	beq.n	.L_080c22b4
 	str	r4, [sp, #0]
-	bl	sub_08004458
+	bl	Random16
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -400,11 +389,11 @@ Func_080c1ffc:
 	.2byte 0x0300
 .L_080c22d8:
 	adds	r0, r7, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r1, #166
 	lsls	r1, r1, #1
 	adds	r7, #1
-	bl	sub_080072f8
+	bl	_call_via_r5
 	cmp	r7, #133
 	bls.n	.L_080c22d8
 	ldr	r1, [sp, #28]
@@ -418,7 +407,7 @@ Func_080c1ffc:
 	adds	r6, r2, r3
 	ldrh	r0, [r6, #0]
 	movs	r1, #1
-	bl	sub_080c1df4
+	bl	Summon_TakeCharge
 	movs	r3, #128
 	adds	r4, r0, #0
 	lsls	r3, r3, #8
@@ -427,7 +416,7 @@ Func_080c1ffc:
 	beq.n	.L_080c231a
 	ldrh	r0, [r6, #0]
 	str	r4, [sp, #0]
-	bl	sub_080c1f50
+	bl	Summon_ResetCharge
 	ldr	r4, [sp, #0]
 .L_080c231a:
 	adds	r5, r7, #0
@@ -436,14 +425,14 @@ Func_080c1ffc:
 	ldrh	r1, [r6, #0]
 	ands	r2, r4
 	adds	r0, r5, #0
-	bl	sub_08077140
+	bl	Func_08077140
 	adds	r0, r5, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r1, [sp, #32]
 	cmp	r1, #0
 	beq.n	.L_080c233c
 	adds	r0, r5, #0
-	bl	sub_080c1c54
+	bl	Owner_ApplyLevelGains
 .L_080c233c:
 	adds	r7, #1
 	cmp	r7, #5

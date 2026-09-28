@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08009008, 0x08009008
-	.set sub_08015418, 0x08015418
 	.global FourObjectMotion_UpdateBottomRow
 	.global Func_080ad40c
 	.thumb_func
@@ -20,7 +17,7 @@ Func_080ad40c:
 	ldr	r0, [pc, #228]
 	sub	sp, #36
 	mov	r8, r3
-	bl	sub_08015418
+	bl	Link_DrawShiftedTilePairFar
 	movs	r0, #0
 	str	r0, [sp, #8]
 	movs	r0, #137
@@ -75,7 +72,7 @@ Func_080ad40c:
 	lsls	r0, r0, #9
 	movs	r1, #3
 	subs	r0, r0, r5
-	bl	sub_080022ec
+	bl	__divsi3
 	mov	r4, fp
 	adds	r0, r5, r0
 	str	r0, [sp, #12]
@@ -110,7 +107,7 @@ Func_080ad40c:
 .L_080ad4d0:
 	adds	r0, r6, #0
 	adds	r2, r4, #0
-	bl	sub_08009008
+	bl	Object_ApplyProjectedPlacementFar
 .L_080ad4d8:
 	ldr	r1, [sp, #4]
 	ldr	r2, [sp, #8]

@@ -9,11 +9,8 @@
 @ credit: handwritten — IWRAM runtime channel mixing
 .syntax unified
 	.thumb_func
-	.set	IwramSoundMixEntry, 0x03000658
 	.set	.L_audio_0ba0, 0x03000ba0
 	.arm
-	.set AlchemyLoadAddress, 0x08001118
-	.set AlchemyRunAddress, 0x030009a8
 .L_audio_channel_end:
 	ldr	r2, [sp, #24]
 	movs	r6, r2

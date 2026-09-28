@@ -9,7 +9,6 @@
 @ credit: handwritten — deliberate math primitive, cosine and sine
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08002090
 	.global Math_Cosine
 	.thumb_func
 Math_Cosine:

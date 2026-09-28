@@ -1,4 +1,6 @@
-#include "shared-aggregates.h"
+#include "TYPES.H"
+
+extern void *gWindowWork;
 
 /* Only the m2c spellings this draft actually uses. */
 typedef s32 M2C_UNK;
@@ -332,7 +334,7 @@ loop_62:
             Func_080150b8(0xF);
             Func_08015070(arg0, 0, 0xB, 0xD, 0xB);
         }
-        M2C_FIELD(absolute_03001e8c.field_0000, s8 *, 0xEA3) = 1;
+        M2C_FIELD(gWindowWork, s8 *, 0xEA3) = 1;
     }
     if (arg7 == 0) {
         Func_080150d8(sp38, 0, arg8, arg0, arg7, arg7);

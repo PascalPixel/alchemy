@@ -15,8 +15,44 @@ extern u8 Value_0000027a;
 extern u8 Value_00000700;
 extern u8 Value_00007824;
 extern u8 Value_00000800;
-#include "shared-aggregates.h"
 #include "BATTLE_EFX.H"
+
+/* A record of the effect scratch buffer at gMapCellBuffer, with the offsets
+   the battle effects touch. */
+struct EffectScratch {
+    u8 unknown_0000[0x4];
+    u32 field_0004;
+    u32 field_0008;
+    u32 field_000c;
+    u32 field_0010;
+    u32 field_0014;
+    u32 field_0018;
+    u8 unknown_001c[0x4];
+    u32 field_0020;
+    u8 unknown_0024[0x10];
+    u32 field_0034;
+    u8 unknown_0038[0x2];
+    u8 field_003a;
+};
+
+/* The camera state gCameraWork points at. */
+struct CameraState {
+    s16 field_0000;
+    u8 unknown_0002[0xa];
+    u32 field_000c;
+    u32 field_0010;
+    u32 field_0014;
+    u32 field_0018;
+    u32 field_001c;
+    u32 field_0020;
+    u8 unknown_0024[0x10];
+    u16 field_0034;
+    u16 field_0036;
+};
+
+extern u8 gMapCellBuffer[];
+extern struct CameraState *gCameraWork;
+extern u8 gBattleFxWork[];
 
 /* Only the m2c spellings this draft actually uses. */
 typedef s32 M2C_UNK;
@@ -39,7 +75,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     u32 sp18;
     u32 **sp1C;
     u8 *sp20;
-    struct M2cAggregate_deref_absolute_03001e80_0 *sp24;
+    struct CameraState *sp24;
     DrawRectangleFn callbacks[2];
     s32 sp2C;
     s32 sp30;
@@ -89,11 +125,11 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     s32 var_r8_293;
     s32 var_r8_344;
     s32 var_r8_378;
-    struct M2cAggregate_absolute_02010000 *var_r5_209;
-    struct M2cAggregate_absolute_02010000 *var_r5_251;
-    struct M2cAggregate_absolute_02010000 *var_r5_343;
-    struct M2cAggregate_absolute_02010000 *var_r5_377;
-    struct M2cAggregate_absolute_02010000 *var_r7_292;
+    struct EffectScratch *var_r5_209;
+    struct EffectScratch *var_r5_251;
+    struct EffectScratch *var_r5_343;
+    struct EffectScratch *var_r5_377;
+    struct EffectScratch *var_r7_292;
     u16 temp_r6_298;
     u32 **temp_r3_198;
     u32 temp_r4_875;
@@ -110,12 +146,12 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     void *temp_r6_599;
     void *temp_r7_508;
 
-    heap_base = (void **)0x03001EEC;
+    heap_base = (void **)gBattleFxWork;
     heap_cursor = heap_base;
     sp48 = *heap_cursor++;
     sp44 = *heap_cursor;
     sp38 = heap_base[2];
-    temp_r5_27 = M2C_FIELD(&absolute_03001eec, void **, 0) + 0x7828;
+    temp_r5_27 = M2C_FIELD(gBattleFxWork, void **, 0) + 0x7828;
     sp30 = 0;
     *temp_r5_27 = (void *)arg0;
     Func_080cd594(0);
@@ -136,8 +172,8 @@ void BattleEffectA(s32 arg0, u32 arg1) {
         Func_080e396c(M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s16 *, 0x24), &sp74);
         temp_r3_90 = 0x40 - sp74;
         sp30 = temp_r3_90;
-        absolute_04000028.field_0000 = temp_r3_90 << 8;
-        *(u16 *)((u8 *)&absolute_04000028 - 8) = 0x100;
+        *(u32 *)0x04000028 = temp_r3_90 << 8;
+        *(u16 *)((u8 *)0x04000020) = 0x100;
         sp2C = 0;
     } else {
         sp2C = 1;
@@ -173,7 +209,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     switch (arg1) {                                 /* switch 1; irregular */
     case 0:                                         /* switch 1 */
     case 6:                                         /* switch 1 */
-        var_r5_209 = &absolute_02010000;
+        var_r5_209 = (struct EffectScratch *)gMapCellBuffer;
         var_r8_210 = 0;
         do {
             M2C_FIELD(var_r5_209, s32 *, 0) = (s32) ((Func_08004458() - 0x7F) << 0xF);
@@ -187,7 +223,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
         var_r3_244 = (M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 0x14) * 8) + 0x58;
         break;
     case 1:                                         /* switch 1 */
-        var_r5_251 = &absolute_02010000;
+        var_r5_251 = (struct EffectScratch *)gMapCellBuffer;
         var_r8_252 = 0;
         do {
             M2C_FIELD(var_r5_251, s32 *, 0) = (s32) ((Func_08004458() - 0x7F) << 0xF);
@@ -200,7 +236,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
         var_r3_244 = (M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 0x14) * 8) + 0x58;
         break;
     case 2:                                         /* switch 1 */
-        var_r7_292 = &absolute_02010000;
+        var_r7_292 = (struct EffectScratch *)gMapCellBuffer;
         var_r8_293 = 0;
         do {
             temp_r6_298 = (u16) Func_08004458();
@@ -217,7 +253,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
         var_r3_244 = (M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 0x14) * 8) + 0x58;
         break;
     case 3:                                         /* switch 1 */
-        var_r5_343 = &absolute_02010000;
+        var_r5_343 = (struct EffectScratch *)gMapCellBuffer;
         var_r8_344 = 0;
         do {
             M2C_FIELD(var_r5_343, s32 *, 0) = (s32) ((Func_08004458() - 0x7F) << 0xF);
@@ -232,7 +268,7 @@ block_47:
         var_r3_244 = (M2C_FIELD(*var_r3_373, s32 *, 0x14) * 8) + 0x48;
         break;
     default:                                        /* switch 1 */
-        var_r5_377 = &absolute_02010000;
+        var_r5_377 = (struct EffectScratch *)gMapCellBuffer;
         var_r8_378 = 0;
         do {
             M2C_FIELD(var_r5_377, s32 *, 0) = (s32) ((Func_08004458() - 0x7F) << 0xF);
@@ -262,7 +298,7 @@ block_47:
     } else {
         spC = 0;
 loop_55:
-        sp24 = absolute_03001e80.field_0000;
+        sp24 = gCameraWork;
         if (var_fp_449 == 0x28) {
             Func_080b50e8(0);
         }
@@ -355,7 +391,7 @@ loop_72:
 
                 } else {
                     sp18 = arg1 - 3;
-                    var_r6_753 = &absolute_02010000.unknown_0000[sp8];
+                    var_r6_753 = &gMapCellBuffer[sp8];
 loop_90:
                     if (sp18 <= 2U) {
                         var_r2_764 = ((s32) ((var_r8_743 >> 0x1F) + var_r8_743) >> 1) + temp_r3_656 + 0x20;

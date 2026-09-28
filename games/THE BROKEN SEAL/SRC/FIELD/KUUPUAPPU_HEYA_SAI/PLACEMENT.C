@@ -122,7 +122,7 @@ u8 *SceneData_GetMessageTable(void)
     return Placement_Messages;
 }
 
-u8 *SceneData_InitAndGetTable87f4(void)
+u8 *SceneData_GetPreparedActors(void)
 {
     u8 *slot = Placement_Actors;
 

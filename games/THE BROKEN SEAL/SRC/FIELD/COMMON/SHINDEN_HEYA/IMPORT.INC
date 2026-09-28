@@ -5,13 +5,25 @@ IwramUnsignedRemainder:
 	.global WaitFrames
 	.thumb_func
 WaitFrames:
+	.global Engine_TaskWait
+	.thumb_func
+Engine_TaskWait:
 	overlay_veneer 0x080000c1
 	.global Engine_RandomNext
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer 0x080000f9
+	.global CalculateFacingAngle
+	.thumb_func
+CalculateFacingAngle:
 	overlay_veneer 0x08000101
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer 0x08000119
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer 0x08000121
 	.global Runtime_AllocateHeapBlock
 	.thumb_func
@@ -36,7 +48,13 @@ Engine_ObjectSetScript:
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer 0x080090c9
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer 0x08009181
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer 0x080091c1
 	overlay_veneer 0x08015011
 	overlay_veneer 0x08015019
@@ -77,19 +95,58 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer 0x0808a021
+	.global Event_CallWithLastActiveObjectId
+	.thumb_func
+Event_CallWithLastActiveObjectId:
 	overlay_veneer 0x0808a031
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer 0x0808a071
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
+	.global ResolveFacingObject
+	.thumb_func
+ResolveFacingObject:
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
+	.global GetActorState
+	.thumb_func
+GetActorState:
 	overlay_veneer 0x0808a081
+	.global Engine_ActorSetSpeed
+	.thumb_func
+Engine_ActorSetSpeed:
 	overlay_veneer 0x0808a091
+	.global Engine_ActorEnableActionCallback
+	.thumb_func
+Engine_ActorEnableActionCallback:
 	overlay_veneer 0x0808a099
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer 0x0808a0a1
+	.global Engine_ActorStop
+	.thumb_func
+Engine_ActorStop:
 	overlay_veneer 0x0808a0a9
+	.global Engine_ActorMoveToAndWait
+	.thumb_func
+Engine_ActorMoveToAndWait:
 	overlay_veneer 0x0808a0c1
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer 0x0808a0c9
+	.global Engine_ActorWalkToAndWait
+	.thumb_func
+Engine_ActorWalkToAndWait:
 	overlay_veneer 0x0808a0d1
+	.global Engine_ActorWaitForMove
+	.thumb_func
+Engine_ActorWaitForMove:
 	overlay_veneer 0x0808a0e9
 	.global Engine_ActorSetPosition
 	.thumb_func
@@ -99,24 +156,81 @@ Engine_ActorSetPosition:
 	.thumb_func
 Engine_ActorSetAnimation:
 	overlay_veneer 0x0808a101
+	.global Engine_ActorSetAnimationAndWait
+	.thumb_func
+Engine_ActorSetAnimationAndWait:
 	overlay_veneer 0x0808a111
+	.global ObjectMotion_WaitForAnimationChange
+	.thumb_func
+ObjectMotion_WaitForAnimationChange:
 	overlay_veneer 0x0808a119
+	.global Engine_ActorJump
+	.thumb_func
+Engine_ActorJump:
 	overlay_veneer 0x0808a129
+	.global Engine_ActorStartRepeatedMotion
+	.thumb_func
+Engine_ActorStartRepeatedMotion:
 	overlay_veneer 0x0808a131
+	.global Engine_ActorRunRepeatedMotion
+	.thumb_func
+Engine_ActorRunRepeatedMotion:
 	overlay_veneer 0x0808a139
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer 0x0808a149
+	.global Engine_ActorFaceEachOther
+	.thumb_func
+Engine_ActorFaceEachOther:
 	overlay_veneer 0x0808a151
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer 0x0808a159
+	.global Engine_EventSetMessage
+	.thumb_func
+Engine_EventSetMessage:
 	overlay_veneer 0x0808a171
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer 0x0808a179
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer 0x0808a181
+	.global Engine_ActorFaceDirection
+	.thumb_func
+Engine_ActorFaceDirection:
 	overlay_veneer 0x0808a1b9
+	.global Engine_EventShowTwoMessagesAndWait
+	.thumb_func
+Engine_EventShowTwoMessagesAndWait:
 	overlay_veneer 0x0808a1d1
+	.global Engine_ActorShowEmote
+	.thumb_func
+Engine_ActorShowEmote:
 	overlay_veneer 0x0808a1e9
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer 0x0808a1f1
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer 0x0808a209
+	.global Engine_CameraMoveTo
+	.thumb_func
+Engine_CameraMoveTo:
 	overlay_veneer 0x0808a211
+	.global Engine_CameraWaitForMove
+	.thumb_func
+Engine_CameraWaitForMove:
 	overlay_veneer 0x0808a219
+	.global Engine_CameraMoveToActor
+	.thumb_func
+Engine_CameraMoveToActor:
 	overlay_veneer 0x0808a221
 	.global Engine_EventRequestExit
 	.thumb_func
@@ -130,8 +244,23 @@ Engine_ColorBufferApplyTarget:
 	.thumb_func
 Engine_ColorBufferInterpolate:
 	overlay_veneer 0x0808a349
+	.global Engine_EventOpenScreen
+	.thumb_func
+Engine_EventOpenScreen:
 	overlay_veneer 0x0808a361
+	.global Engine_EventWaitForScreen
+	.thumb_func
+Engine_EventWaitForScreen:
 	overlay_veneer 0x0808a371
+	.global Engine_SanctumOpen
+	.thumb_func
+Engine_SanctumOpen:
 	overlay_veneer 0x080b0011
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer 0x080f9011
+	.global AudioCommand_WaitForCompletion
+	.thumb_func
+AudioCommand_WaitForCompletion:
 	overlay_veneer 0x080f9079

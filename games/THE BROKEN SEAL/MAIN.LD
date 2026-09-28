@@ -646,7 +646,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/GET_EQUIPMENT_GROUP.o"(.text)
         "*/recon/tbs/raw/080784ae.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/ITEMS.o"(.text)
-        "*/recon/tbs/raw/080788c4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/MUTATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/COUNTER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/INVENTORY/COUNT.o"(.text)

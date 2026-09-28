@@ -5,6 +5,8 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+
 /* Six drawn arguments: destination, source cell, x, y, width, height.
    The reference calls it through the r4 bx bank, so it is an indirect
    call through the cached kind-46 entry rather than a fixed callee. */
@@ -119,7 +121,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     } else {
         work->transfer_value = 50;
     }
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     Audio_PlayCue(0x88);
     frame = 0;
     do {
@@ -170,6 +172,6 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
         frame += 1;
     } while (frame != 80);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback(0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

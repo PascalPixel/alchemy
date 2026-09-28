@@ -9,6 +9,9 @@
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
 
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BuildWindowEdgeTable(void);
+
 void WaitFrames(s32);
 s32 Math_ModU(s32, s32);
 u32 Random16(void);
@@ -134,7 +137,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     *(u16 *)0x05000000 = 0;
     *(u16 *)0x05000002 = 0;
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     *(u16 *)0x04000048 = 0x2137;
     Unnamed_080cd104(1, 0);
     *(u16 *)0x04000040 = 0xf0f0;
@@ -181,12 +184,12 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
                     noise[n] = Random16() & 63;
                 }
                 *phase = 0;
-                Scheduler_AddOrUpdateCallback(0x080D66CD, 0x480);
+                Scheduler_AddOrUpdateCallback((s32)BattleFx_BuildWindowEdgeTable, 0x480);
             }
             *phase += step;
             step += 3;
             if (frame == 15) {
-                Scheduler_RemoveCallback(0x080D66CD);
+                Scheduler_RemoveCallback((s32)BattleFx_BuildWindowEdgeTable);
             }
         }
 
@@ -503,6 +506,6 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
 
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Scheduler_RemoveCallback(0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     BattleFx_EndCanvasLayer();
 }

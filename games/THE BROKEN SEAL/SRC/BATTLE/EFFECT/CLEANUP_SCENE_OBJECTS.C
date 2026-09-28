@@ -2,6 +2,10 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
+void BattleFx_UpdateScaledArcObjectB(void);
+void BattleFx_UpdateScaledArcObjectA(void);
+void BattleFx_UpdateAllEffectSlots(void);
+
 struct BattleEffectSceneObject {
     u8 reserved_00[0x45];
     s8 active;
@@ -69,9 +73,9 @@ void BattleEffect_CleanupSceneObjects(void)
     if (runtime->teardown_blocked == 0) {
         s32 waited = 0;
         void (*first_active_update)(void) =
-            (void (*)(void))0x08096d85;
+            (void (*)(void))BattleFx_UpdateScaledArcObjectB;
         void (*second_active_update)(void) =
-            (void (*)(void))0x08096d2d;
+            (void (*)(void))BattleFx_UpdateScaledArcObjectA;
         s32 active;
 
         do {
@@ -98,7 +102,7 @@ void BattleEffect_CleanupSceneObjects(void)
         } while (active != 0 && waited <= 29);
 
         runtime->teardown_state = 0;
-        Scheduler_RemoveCallback(0x08096f8d);
+        Scheduler_RemoveCallback((s32)BattleFx_UpdateAllEffectSlots);
         Resource_ResetEntry(scene->audio_handle);
         position->x = scene->x;
         position->y = scene->y;

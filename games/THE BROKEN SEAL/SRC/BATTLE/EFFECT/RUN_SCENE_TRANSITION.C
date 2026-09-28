@@ -1,5 +1,7 @@
 #include "DMA.H"
 
+void Func_08097644(void);
+
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void BattleEffect_InitializeSharedScene(void);
@@ -31,5 +33,5 @@ void RunSceneTransitionEffect(s32 x, s32 y)
     *(u16 *)(work + 0x292) = y;
     work[0x294] = 8;
     Ui_FillBank15PaletteGrey();
-    Scheduler_AddOrUpdateCallback((void (*)(void))0x08097645, 0xc80);
+    Scheduler_AddOrUpdateCallback((void (*)(void))Func_08097644, 0xc80);
 }

@@ -4,6 +4,8 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+
 /*
  * Battle-presentation sub-effect at 0x080e0c84.
  *
@@ -106,7 +108,7 @@ void BattleFx_RunParticleReveal(void *object)
         void *callback;
 
         interval = 0x480;
-        callback = (void *)0x080CD261;
+        callback = (void *)BattlePresentation_ProcessPendingGraphicsTransfer;
         Scheduler_AddOrUpdateCallback(callback, interval);
     }
     EffectPosition_ApplyAlternateStepAndYOffset(
@@ -203,7 +205,7 @@ void BattleFx_RunParticleReveal(void *object)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(0x2F);
     Runtime_ReleaseHeapBlock(0x2E);
     BattleFx_EndCanvasLayer();

@@ -11,6 +11,8 @@
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 
+extern const u8 SentouKouka_Tenkai[];
+
 extern volatile u16 Data_04000208;
 #define REG_IME Data_04000208
 
@@ -50,7 +52,7 @@ void Graphics_LoadCharacterBlockAndPalette(u32 resource, s32 alternate)
     }
     size = (u32)Value_00000230;
     decoder = Runtime_AllocateHeapBlock(49, size);
-    Dma_Set((void *)0x080f0024, decoder, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((void *)SentouKouka_Tenkai, decoder, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     ((PackedDecoder)Data_03001e50[49])(data + 256, vram, fill);
     Runtime_ReleaseHeapBlock(49);
 

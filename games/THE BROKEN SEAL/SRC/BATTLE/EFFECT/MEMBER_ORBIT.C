@@ -4,6 +4,9 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+void BattleFx_ArmBg2AffineHBlankDma(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+
 /*
  * Battle-presentation sub-effect: entry 34 of the effect callback table at
  * 0x080ee2b4.  The single argument is the effect state pointer, which the
@@ -70,10 +73,10 @@ void BattleFx_RunMemberOrbit(void *object)
     rect2 = heap_cache[8];
     rectangle_slot = rectangle;
     rectangle_slot[1] = rect2;
-    Scheduler_AddOrUpdateCallback((void *)0x080DBB9D, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)BattleFx_ArmBg2AffineHBlankDma, 0x480);
     FIELD_AT_OFFSET(work, s32 *, 0x7780) = 2;
     FIELD_AT_OFFSET(work, s32 *, 0x7784) = 50;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 1) {
         FIELD_AT_OFFSET((void *)0x04000028, s32 *, 0) = -0x6800;
         y_offset = -112;
@@ -157,8 +160,8 @@ void BattleFx_RunMemberOrbit(void *object)
         FIELD_AT_OFFSET(work, s32 *, 0x7824) = 1;
         WaitFrames(1);
     }
-    Scheduler_RemoveCallback((void *)0x080CD261);
-    Scheduler_RemoveCallback((void *)0x080DBB9D);
+    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback((void *)BattleFx_ArmBg2AffineHBlankDma);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

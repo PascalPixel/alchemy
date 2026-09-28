@@ -2,6 +2,8 @@
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 
+extern const u8 Func_08002cf4[];
+
 extern volatile u16 Data_04000208;
 #define REG_IME Data_04000208
 
@@ -76,7 +78,7 @@ void IoWriteQueue_FlushPending(void)
             u8 routine_bytes[word_count << 2];
 
             routine = (QueueFlushRoutine)routine_bytes;
-            Dma_Set((const void *)0x08002cf4, (void *)routine,
+            Dma_Set((const void *)Func_08002cf4, (void *)routine,
                     word_count | control, (volatile u32 *)0x040000d4);
             routine(queue, count);
             queue->count = zero;

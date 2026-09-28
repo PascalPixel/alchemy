@@ -1,3 +1,7 @@
+/* Draft of resource_3a4 0x02009678 (ArutinYama_GetAreaScript), from
+ * the former games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/AREA_SCRIPT.C.
+ * Remaining difference: none in its bytes, but the ROM loads scene numbers 0x4d-0x57 from the literal pool as link-time values, and no source defines those values.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 
 extern u8 Data_0200cd6c[];

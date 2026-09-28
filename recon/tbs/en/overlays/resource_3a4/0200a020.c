@@ -1,3 +1,7 @@
+/* Draft of resource_3a4 0x0200a020 (ArutinYama_RunAreaScene), from
+ * the former games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/AREA_SCENE.C.
+ * Remaining difference: none in its bytes, but the ROM loads scene numbers 0x4d-0x57 from the literal pool as link-time values, and no source defines those values.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 extern s16 Data_02000240_t[][1];

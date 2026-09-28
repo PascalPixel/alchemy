@@ -1,3 +1,7 @@
+/* Draft of resource_39f 0x0200a500 (FieldScene_RunSceneEntryHook), from
+ * the former games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/SCENE_ENTRY_HOOK.C.
+ * Remaining difference: none in its bytes, but the ROM loads scene numbers 0x44-0x46 from the literal pool as link-time values, and no source defines those values.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 
 extern u8 Data_02000240[];

@@ -1,3 +1,7 @@
+/* Draft of resource_39f 0x020099b8 (MogoruMori_RunProbedLandingScene), from
+ * the former games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/PROBED_LANDING.C.
+ * Remaining difference: none in its bytes, but its cue call reaches the veneer COMMON/OBJECT/STAGED_ACTOR.C names Audio_PlayCue, which FIELD_EVENT.H's inline of that name hides from this source; linking it would give the veneer a second name.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

@@ -72,8 +72,6 @@ next_second:
 }
 
 /* battle/presentation/cam/shoulder_alt.c */
-extern u16 Value_fffffe00;
-
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
     void **slot = (void **)((u32)&Data_03001e80);
@@ -85,7 +83,7 @@ void BattlePres_AdjustCameraByShoulderKeysAlt(void)
         *(u16 *)(cam + 54) += 512;
     }
     if ((*keys & 256) != 0) {
-        *(u16 *)(cam + 54) += (u16)(u32)&Value_fffffe00;
+        *(u16 *)(cam + 54) -= 512;
     }
     if (*(u32 *)(trans + 20) == 0) {
         BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);

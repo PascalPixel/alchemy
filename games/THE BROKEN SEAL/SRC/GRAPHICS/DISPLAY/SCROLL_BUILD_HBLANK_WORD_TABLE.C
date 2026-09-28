@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-extern u8 Value_00020002;
-
 void DisplayScroll_BuildHblankWordTable(u32 *arg0)
 {
     s32 count;
@@ -13,15 +11,12 @@ void DisplayScroll_BuildHblankWordTable(u32 *arg0)
         count--;
         *arg0++ = value;
     } while (count >= 0);
-    {
-        u32 increment = (u32)&Value_00020002;
-        count = 239;
-        do {
-            count--;
-            *arg0++ = step;
-            step += increment;
-        } while (count >= 0);
-    }
+    count = 239;
+    do {
+        count--;
+        *arg0++ = step;
+        step += 0x20002;
+    } while (count >= 0);
     count = 47;
     do {
         count--;

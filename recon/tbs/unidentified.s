@@ -833,8 +833,8 @@ Func_080f2b6c:
 	.incbin "baserom.gba", 0x000f53dc, 0x00000c24
 	.section .unidentified.080f86f8,"a"
 	.incbin "baserom.gba", 0x000f86f8, 0x00000908
-	.section .unidentified.080fb792,"a"
-	.incbin "baserom.gba", 0x000fb792, 0x0000009e
+	.section .unidentified.080fb7a0,"a"
+	.incbin "baserom.gba", 0x000fb7a0, 0x00000090
 	.global Sound_PcmPitchCodes
 Sound_PcmPitchCodes:
 	.incbin "baserom.gba", 0x000fb830, 0x000000b4

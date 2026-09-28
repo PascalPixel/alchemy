@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7804 bytes; 3076 differing halfwords, 348 aligned edits. */
+ * Candidate 7808 bytes; 181 differing halfwords, 113 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -174,7 +174,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     s32 phase;
     s32 i;
     s32 *scanline;
-    /* FAKEMATCH: Reuse the count scratch for the later drawing height. */
     s32 cnt;
     s32 orb_x;
     RectangleBlit *work_blitters;
@@ -395,10 +394,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             if (active_cnt <= 63) {
                 Render_ResetTransformState();
                 Graphics_PrepareTransferInIwramWork(camera, camera + 12);
-                /* FAKEMATCH: End the projection scope before drawing the orb. */
-                do {
-                    EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
-                } while (0);
+                EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
                 orb_x = spark_screen.x;
                 /* FAKEMATCH: Keep signed halving in the loaded coordinate register. */
                 orb_x += (u32)orb_x >> 31;
@@ -412,6 +408,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         WaitFrames(1);
         frame++;
     } while (frame != 32);
+    /* FAKEMATCH: Restart the pointer's lifetime after gathering so the
+     * projection above uses the stack position directly. */
+    position = &moving_pos;
     if (kind == 11) {
         *(volatile u16 *)0x04000020 = 0x100;
         if (work->effect->side == 0) {
@@ -852,18 +851,20 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             goto RestoreBlitters;
         }
         if (kind == 31) {
+            s32 height;
+
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
             if ((u32)(frame - 4) <= 19) {
                 pair_x = target_screen->x / 2;
-                cnt = 48;
+                height = 48;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 work_blitters = (RectangleBlit *)gWorkSlot;
-                DrawImage(canvas, IMAGE_WORK, pair_x - 24, 48, 24, cnt,
+                DrawImage(canvas, IMAGE_WORK, pair_x - 24, 48, 24, height,
                           work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
                 BattleEffect_LoadWork(47, 7, 7, 7, 2);
-                DrawImage(canvas, IMAGE_WORK, pair_x, 48, 24, cnt,
+                DrawImage(canvas, IMAGE_WORK, pair_x, 48, 24, height,
                           work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
             }

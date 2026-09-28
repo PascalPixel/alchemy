@@ -45,8 +45,8 @@ void Effect_MoveWithDrag(union FieldObject *object)
     object->effect.y += object->effect.velocity_y;
     velocity_z = object->effect.velocity_z;
     object->effect.z += velocity_z;
-    object->effect.velocity_x = velocity_x - Math_Divide(velocity_x, 22);
-    object->effect.velocity_z = velocity_z - Math_Divide(velocity_z, 20);
+    object->effect.velocity_x = velocity_x - velocity_x / 22;
+    object->effect.velocity_z = velocity_z - velocity_z / 20;
     object->effect.scale_x += object->effect.scale_rate_x;
     object->effect.scale_y += object->effect.scale_rate_y;
     object->effect.sprite->rotation += object->effect.spin;

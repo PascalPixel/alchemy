@@ -1,6 +1,6 @@
-/* resource_3a5: its entry veneers, its listing with the compiler library
-   linked in place from the licensed container, as pret links libgcc
-   members. Its import veneers follow its code. */
+/* resource_3a5: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -8,9 +8,15 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTRY.o"(.text)
         "*/resource_3a5_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
+        "*/resource_3a5_overlay.o"(.text.x02008314)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3a5_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = IwramSignedDivideEntry;
 }

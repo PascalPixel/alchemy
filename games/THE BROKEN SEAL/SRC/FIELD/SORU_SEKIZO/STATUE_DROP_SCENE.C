@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 u8 * Engine_ActorGet();
-void Main_08009278();
+void SetMapCellCollision();
 void Engine_EventBegin();
 s32 Engine_GameFlagIsSet();
 void Engine_ActorWalkToAndWait();
@@ -71,8 +71,8 @@ void SoruSekizo_RunStatueDropScene(void)
     s32 zero;
 
     rec8 = Engine_ActorGet(17);
-    Call4(Main_08009278, 2, 0x1100000, 0x800000, 0);
-    Call4(Main_08009278, 2, 0x1200000, 0x800000, 0);
+    Call4(SetMapCellCollision, 2, 0x1100000, 0x800000, 0);
+    Call4(SetMapCellCollision, 2, 0x1200000, 0x800000, 0);
     if ((s32)rec8 == 0) {
     } else {
         p5 = *(s32 *)((s32)rec8 + 16);

@@ -1,13 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern u8 Value_000025b8;
-extern u8 Value_000025dc;
-extern s16 Data_020085d0[];
+extern s16 SuharaMura_CellAnimationOrigins[];
 
 /*
- * Scene script for overlay resource_3c1: data table getters, two actor cue
- * branches, the indexed effect setups, and the entry state.
+ * Scene script for overlay resource_3c1: the layout step, the indexed effect
+ * setups, the event table choice and the entry state.
  */
 
 static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
@@ -18,67 +16,6 @@ static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
 static __inline__ void SetOffset_020004ba(s32 actor, s32 axis, s32 offset)
 {
     Actor_WalkBy(actor, axis, offset);
-}
-
-/*
- * Returns the in-image table address 0x020082f0, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr.
- */
-u8 *SceneData_GetScriptTable(void)
-{
-    return (u8 *)0x020082f0;
-}
-
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-/*
- * Returns the in-image table address 0x020083c8, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr.
- */
-u8 *SceneData_GetMessageTable(void)
-{
-    return (u8 *)0x020083c8;
-}
-
-s32 SceneData_SelectActorTableByFlag96f(void)
-{
-    if (GameFlag_IsSet(0x96f) != 0) {
-        return 0x020084e0;
-    }
-    return 0x020083f0;
-}
-
-void FieldScene_RunActorCue25b8Branch(s32 obj)
-{
-    s32 cue = (s32)&Value_000025b8;
-    Event_SetMessage(cue);
-    Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(cue + 1);
-    } else {
-        Event_SetMessage(cue + 2);
-    }
-    Event_ShowMessage(obj, 0);
-}
-
-void FieldScene_RunActorCue25dcBranch(s32 obj)
-{
-    s32 cue = (s32)&Value_000025dc;
-    Event_SetMessage(cue);
-    Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(cue + 1);
-    } else {
-        Event_SetMessage(cue + 2);
-    }
-    Event_ShowMessage(obj, 0);
 }
 
 void FieldScene_RunLayoutStepThenSet201(void)
@@ -94,8 +31,8 @@ void SceneEffect_ConfigureIndexedEffect85e8(void)
 {
     u8 *work = *(u8 **)0x03001ebc;
     s32 no = *(s16 *)(work + 364);
-    u16 x = Data_020085d0[no * 2];
-    u16 y = Data_020085d0[no * 2 + 1];
+    u16 x = SuharaMura_CellAnimationOrigins[no * 2];
+    u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
     Audio_PlayCue(158);
     Map_AnimateCells(0x020085e8, x, y);
@@ -108,8 +45,8 @@ void SceneEffect_ConfigureIndexedEffect85fe(void)
 {
     u8 *work = *(u8 **)0x03001ebc;
     s32 no = *(s16 *)(work + 364);
-    u16 x = Data_020085d0[no * 2];
-    u16 y = Data_020085d0[no * 2 + 1];
+    u16 x = SuharaMura_CellAnimationOrigins[no * 2];
+    u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
     Audio_PlayCue(158);
     Map_AnimateCells(0x020085fe, x, y);

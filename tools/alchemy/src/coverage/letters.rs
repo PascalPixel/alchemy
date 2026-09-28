@@ -1,15 +1,10 @@
-//! The lettering of the dashboard and the README figures, cut from the game's
+//! The lettering of the README figures, cut from the game's
 //! own editable PNG sheets. Advances come from the verified local ROM's
 //! font records; no generated glyph catalog or font file is tracked.
 use psynergy::assets::image::indexed_png;
 use std::collections::BTreeMap;
 use std::path::Path;
-use unicode_normalization::UnicodeNormalization;
 
-/// CSS pixels per game pixel, the one scale of the dashboard and the figures:
-/// a game pixel is one CSS pixel, so a retina display draws it as two device
-/// pixels. Every length either draws is a whole number of game pixels.
-pub(crate) const PIXEL: u32 = 1;
 /// Device pixels per game pixel in the README figures, drawn for retina
 /// displays and shown at half their width.
 pub(crate) const FIGURE_SCALE: u32 = 2;
@@ -21,10 +16,6 @@ const FONT: &str = "SRC/GRAPHICS/FONT";
 const GAMES: [(&str, &str); 2] = [("tbs", "THE BROKEN SEAL"), ("tla", "THE LOST AGE")];
 /// The sheets each face is cut from, relative to a game folder.
 pub(crate) const MENU: &str = "MENU_GLYPHS_0000_00FF.4BPP.PNG";
-pub(crate) const DIALOGUE: &str = "LOCALIZATION_GLYPHS_0020_00FF.1BPP.PNG";
-pub(crate) const JAPANESE: &str = "JAPANESE_GLYPHS_0020_00FF.1BPP.PNG";
-/// Columns a voicing mark moves right to sit at a kana's upper right.
-const VOICING_SHIFT: u32 = 5;
 
 pub(crate) fn sheet(game: &str, name: &str) -> String {
     format!("games/{game}/{FONT}/{name}")
@@ -161,112 +152,6 @@ impl Letters {
             advance,
             map,
         })
-    }
-    /// The Western dialogue font, 16x16 frames with a two-byte advance.
-    pub(crate) fn dialogue(root: &Path) -> Result<Self, String> {
-        let path = sheet(GAMES[0].1, DIALOGUE);
-        let rows = frames(root, &path, (LINE, LINE), 16, 224, |index| index != 0)?;
-        // Western records are a little-endian advance and fifteen 16-bit rows.
-        let advance = advances(&reference(root, "tbs-en")?, 0x0803_2224, 224, 32, true)?;
-        let face = Self {
-            cell: (LINE, LINE),
-            top: 0,
-            rows,
-            advance,
-            map: BTreeMap::new(),
-        };
-        let mut map = BTreeMap::new();
-        for frame in 0..face.rows.len() {
-            if let Some(character) = western(frame + 0x20) {
-                if face.advance[frame] > 0 {
-                    map.insert(character, frame);
-                }
-            }
-        }
-        Ok(Self { map, ..face })
-    }
-    /// The Japanese editions' dialogue font: the single-byte block and each
-    /// game's extended kanji, by the characters its text catalog decodes.
-    pub(crate) fn japanese(root: &Path) -> Result<Self, String> {
-        let mut face = Self {
-            cell: (LINE, LINE),
-            top: 0,
-            rows: Vec::new(),
-            advance: Vec::new(),
-            map: BTreeMap::new(),
-        };
-        for (game, folder) in GAMES {
-            let path = sheet(folder, JAPANESE);
-            if !root.join(&path).exists() {
-                continue;
-            }
-            let target = format!("{game}-ja");
-            let characters = crate::text_catalog::ARCHIVES
-                .iter()
-                .find(|spec| spec.target == target)
-                .and_then(|spec| spec.characters)
-                .ok_or_else(|| format!("{game} has no Japanese character map"))?
-                .chars()
-                .collect::<Vec<_>>();
-            let (address, extended, count) = if game == "tbs" {
-                (0x0803_2470, "JAPANESE_GLYPHS_0100_0171.1BPP.PNG", 114)
-            } else {
-                (0x0805_a8cc, "JAPANESE_GLYPHS_0100_0197.1BPP.PNG", 152)
-            };
-            // Japanese base records contain an advance and twelve 16-bit rows.
-            let base_advance = advances(&reference(root, &target)?, address, 224, 26, true)?;
-            let mut index = 0;
-            for (source, count, advance) in [
-                (path, 224, base_advance),
-                (sheet(folder, extended), count, vec![12; count]),
-            ] {
-                let rows = frames(root, &source, (LINE, LINE), 16, count, |index| index != 0)?;
-                for frame in 0..count {
-                    let character = characters.get(index + frame).copied();
-                    let Some(character) = character.filter(|c| *c != '\u{fffd}') else {
-                        continue;
-                    };
-                    let blank = rows[frame].iter().all(|row| *row == 0);
-                    if advance[frame] == 0 || (blank && character != ' ') {
-                        continue;
-                    }
-                    if face.map.contains_key(&character) {
-                        continue;
-                    }
-                    face.map.insert(character, face.rows.len());
-                    face.rows.push(rows[frame].clone());
-                    face.advance.push(advance[frame]);
-                }
-                index += count;
-            }
-        }
-        if face.rows.is_empty() {
-            return Err("no Japanese glyph PNG sheet is available".into());
-        }
-        // The fonts hold no voiced kana: the game prints the base kana and a
-        // voicing mark (codes 0xDE, 0xDF) at its upper right. Each precomposed
-        // kana the catalog decodes is drawn the same way, as one frame.
-        for composed in '\u{3040}'..='\u{30ff}' {
-            if face.map.contains_key(&composed) {
-                continue;
-            }
-            let parts = std::iter::once(composed).nfd().collect::<Vec<_>>();
-            let [base, mark] = parts[..] else {
-                continue;
-            };
-            let (Some(base), Some(mark)) = (face.frame(base), face.frame(mark)) else {
-                continue;
-            };
-            let rows = face.rows[base]
-                .iter()
-                .zip(&face.rows[mark])
-                .map(|(glyph, voicing)| glyph | voicing >> VOICING_SHIFT)
-                .collect();
-            face.map.insert(composed, face.rows.len());
-            face.rows.push(rows);
-            face.advance.push(face.advance[base]);
-        }
-        Ok(face)
     }
     /// A character's frame, when the face draws it.
     pub(crate) fn frame(&self, character: char) -> Option<usize> {
@@ -416,16 +301,6 @@ mod tests {
         assert!(menu.frame('é').is_some() && menu.frame('\\').is_none());
         assert_eq!(menu.frame('\u{8c}'), None);
         assert_eq!(menu.width("—"), menu.width("?"));
-        let dialogue = Letters::dialogue(&root).unwrap();
-        assert_eq!((dialogue.cell, dialogue.rows.len()), ((16, 16), 224));
-        assert!(dialogue.frame('é').is_some() && dialogue.frame('神').is_none());
-        let japanese = Letters::japanese(&root).unwrap();
-        for character in ['あ', 'ア', '神', '殿', 'A', 'だ', 'パ'] {
-            assert!(japanese.frame(character).is_some(), "{character}");
-        }
-        // Kanji advance twelve pixels; The Lost Age adds its own.
-        assert_eq!(japanese.advance[japanese.frame('神').unwrap()], 12);
-        assert!(japanese.frame('黄').is_some());
     }
     #[test]
     fn the_marks_are_one_colour_masks_on_a_line_box() {

@@ -372,7 +372,7 @@ fn models_strip(
 // -------------------------------------------------------------------- map
 
 /// The tracked files of the Camelot-shaped trees and `recon/`, by size on
-/// disk, in the dashboard's palette.
+/// disk, in the figure palette.
 pub(crate) fn map(letters: &Letters, root: &Path) -> Canvas {
     map_of(letters, tracked_only(root, disk_tiles(root)))
 }

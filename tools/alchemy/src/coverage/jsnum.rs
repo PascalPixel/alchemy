@@ -32,8 +32,8 @@ pub fn floor_percent(n: i64, d: i64) -> f64 {
     }
 }
 /// DONE counts exact C plus retained assembly over executable bytes.
-/// Every reader of the figure - the coverage summary, the README, the commit
-/// gate and the dashboard - takes it from here.
+/// Every reader of the figure - the coverage summary, the README and the
+/// commit gate - takes it from here.
 pub fn done_bytes(proven_c: i64, proven_asm: i64) -> i64 {
     proven_c + proven_asm
 }

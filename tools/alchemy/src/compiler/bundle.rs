@@ -433,7 +433,7 @@ pub fn compiler_bundle_signature_checked() -> Result<String> {
 type HostExecutableSignatureCache = Vec<(Vec<String>, Result<String>)>;
 /// Identity of the tool code that decides what a build stage caches: the
 /// digest `build.rs` takes of every Alchemy and Psynergy source except the
-/// checks, reports and dashboard that only read build outputs. A change to
+/// checks and reports that only read build outputs. A change to
 /// those rebuilds nothing, as a Makefile rebuilds only what a changed tool
 /// produces; any other tool change invalidates every cached object.
 pub fn executable_signature() -> Result<String> {

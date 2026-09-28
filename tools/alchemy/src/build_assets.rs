@@ -2,10 +2,9 @@
 mod compression_plan;
 mod derive_index;
 pub(crate) use compression_plan::LzMachine;
-pub(crate) use derive_index::{live_scene, network::live_family, tagged_extent};
+pub(crate) use derive_index::tagged_extent;
 mod gba_header;
 mod native;
-pub(crate) use native::{icon_bank_source, raw_palette_bank, ICON_BANKS, ICON_PALETTE_BANK};
 pub(crate) use native::{read_frame as read_sprite_frame, Catalog as SpriteCatalog};
 mod packer;
 use crate::compiler::build_io::{relative, text};

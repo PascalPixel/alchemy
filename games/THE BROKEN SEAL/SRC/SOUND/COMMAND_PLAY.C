@@ -19,8 +19,8 @@ struct MusicPlayerEntry {
     u8 unknown_09[3];
 };
 
-extern struct SongEntry Data_080fc684[];
-extern struct MusicPlayerEntry Data_080fc624[];
+extern struct SongEntry Sound_SongTable[];
+extern struct MusicPlayerEntry Sound_PlayerSlots[];
 extern u8 gMusicRestoreDelay;
 extern u16 gMusicVolume;
 extern u16 gMusicVolumeStep;
@@ -55,17 +55,17 @@ void AudioCommand_Play(s32 id)
         gMusicPlayerVolumes[3] = 0;
         MusicPlayer_FadeOut(Data_02004360, 3);
     } else if (id > 99) {
-        player = Data_080fc684[id].player;
+        player = Sound_SongTable[id].player;
         if (player == 7) {
         next:
-            if (Data_080fc624[player].info[4] != 0) {
+            if (Sound_PlayerSlots[player].info[4] != 0) {
                 player--;
                 if (player > 3)
                     goto next;
                 player = 7;
             }
         }
-        MusicPlayer_StartSong(Data_080fc624[player].info, Data_080fc684[id].header);
+        MusicPlayer_StartSong(Sound_PlayerSlots[player].info, Sound_SongTable[id].header);
         gMusicPlayerVolumes[player] = id;
     } else if (id > 79) {
         MusicPlayer_SetVolume(gMusicPlayerBgm, 255, 0);

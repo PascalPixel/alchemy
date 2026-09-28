@@ -409,6 +409,9 @@ Func_080d1f18:
 	.4byte 0x03001238
 	.2byte 0x1150
 	.2byte 0x0300
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

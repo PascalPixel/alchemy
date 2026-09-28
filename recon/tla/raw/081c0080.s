@@ -131,6 +131,9 @@ Func_081c0080:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
+	.global Func_081c0168
+	.thumb_func
+Func_081c0168:
 	bl	sub_081c04ac
 	str	r0, [r4, #32]
 .L_081c016e:

@@ -6,6 +6,9 @@
 	.global Func_080ad348
 	.thumb_func
 Func_080ad348:
+	.global Trade_GetOfferState
+	.thumb_func
+Trade_GetOfferState:
 	push	{lr}
 	cmp	r0, #0
 	beq.n	.L_080ad356

@@ -842,11 +842,11 @@ Sound_Cgb3LevelCodes:
 	.global Sound_ExtendedCommandTable
 Sound_ExtendedCommandTable:
 	.incbin "baserom.gba", 0x000fba48, 0x00000bdc
-	.global Data_080fc624
-Data_080fc624:
+	.global Sound_PlayerSlots
+Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x000fc624, 0x00000060
-	.global Data_080fc684
-Data_080fc684:
+	.global Sound_SongTable
+Sound_SongTable:
 	.incbin "baserom.gba", 0x000fc684, 0x0008897c
 	.section .unidentified.08185024,"a"
 	.global Character_DescriptorTable

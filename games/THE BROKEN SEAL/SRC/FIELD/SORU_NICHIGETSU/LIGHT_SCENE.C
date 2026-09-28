@@ -16,8 +16,8 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-void Main_0808a2f8(void);
-void Main_0808a5e0(s32 value);
+void InitializeSceneRecordBuffer(void);
+void BattleFx_SetQueuedSoundAndPlay(s32 value);
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
 
 /* The IWRAM event globals: the event work, then the field work at +0x14. */
@@ -87,7 +87,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_AudioPlayCue(107);
     Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
     Engine_EventWait(40);
-    Main_0808a2f8();
+    InitializeSceneRecordBuffer();
     Engine_ActorGet(0)->unknown_5a &= ~1;
     Engine_ActorGet(1)->unknown_5a &= ~1;
     Call3((void (*)())Engine_ActorJump, 0, 4, 0);
@@ -98,7 +98,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_EventWait(40);
     Engine_ActorGet(0)->unknown_5a |= 1;
     Engine_ActorGet(1)->unknown_5a |= 1;
-    Main_0808a5e0(141);
+    BattleFx_SetQueuedSoundAndPlay(141);
     Call3((void (*)())Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(1, 2);

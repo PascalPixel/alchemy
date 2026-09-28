@@ -1,3 +1,8 @@
+/* Draft of resource_381 0x020090c4 (SoruFunka_StepEmbers and what follows it in this file),
+ * from games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA (FUNKA.H). Remaining
+ * difference: it reads and writes the scene's variables that lie past the
+ * overlay image (0x0200bac0 and on), which no source defines, so it cannot
+ * link by name. The listing keeps these rows. */
 #include "TYPES.H"
 
 s32 Main_030003f0(s32 num, s32 den);

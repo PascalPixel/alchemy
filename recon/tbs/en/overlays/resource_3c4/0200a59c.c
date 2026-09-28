@@ -1,3 +1,8 @@
+/* Draft of resource_3c4 0x0200a59c (FieldScene_InitializeActorGroups), from
+ * games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY_STATE.C. Remaining
+ * difference: the ROM loads scene numbers 0xad and 0xb0 from the literal
+ * pool, as link-time values would; C constants are built with movs. The
+ * listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

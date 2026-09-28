@@ -1006,7 +1006,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/UPDATE_COMPATIBILITY_INDICATORS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/START_COMPATIBILITY_INDICATORS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/ITEM_LIST.o"(.text)
-        "*/recon/tbs/raw/080a3d9c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/GET_ITEM_QUANTITY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/OWNER_ITEMS.o"(.text)
         "*/recon/tbs/raw/080a3eee.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080a3ef0.o"(.text .rodata .data .padding)

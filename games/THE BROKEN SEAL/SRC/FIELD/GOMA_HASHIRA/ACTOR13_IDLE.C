@@ -4,11 +4,14 @@ void Engine_ActorFaceDirection();
 void Engine_ActorShowEmote();
 void Engine_ActorStartRepeatedMotion();
 void Engine_ActorJump();
-void Engine_ActorSetAnimation();
+void Object_SetModeById();
 
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][2];
+extern u8 *gWork;
+extern s16 Data_02000240[];
+
+/* Frames actor 13 has idled, in the overlay's own work past its image. */
+s32 GomaHashira_Actor13Frames;
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -26,8 +29,8 @@ void GomaHashira_DriveActor13Idle(void)
     u8 *work;
     s32 t;
 
-    work = *(u8 **)0x03001ebc;
-    t = ++*(s32 *)0x020098ec;
+    work = gWork;
+    t = ++GomaHashira_Actor13Frames;
     switch (t) {
     case 60:
         Call3(Engine_ActorFaceDirection, 13, 0x2000, 0);
@@ -41,11 +44,11 @@ void GomaHashira_DriveActor13Idle(void)
         Engine_ActorJump(13, 4, 0);
         break;
     case 480:
-        Engine_ActorSetAnimation(13, 4);
+        Object_SetModeById(13, 4);
         break;
     }
     /* FAKEMATCH: the 99 goes through the counter variable so it is built with
      * movs instead of a halfword pool constant. */
-    if (Data_02000240_t[141][0] == 0)
+    if (Data_02000240[282] == 0)
         *(u16 *)(work + 0x182) = t = 99;
 }

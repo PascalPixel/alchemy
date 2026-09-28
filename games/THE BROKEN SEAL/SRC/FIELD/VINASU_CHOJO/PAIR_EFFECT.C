@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
+struct StagedVerticalEffect;
+void Effect_AnimateVerticalPositive(struct StagedVerticalEffect *effect);
+void Effect_AnimateVerticalNegative(struct StagedVerticalEffect *effect);
+
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -35,8 +39,8 @@ struct WorldMapVramBlock {
     u16 offset;
 };
 extern struct WorldMapVramBlock Data_03001b10[];
-s32 Main_08009020(struct FieldSprite *sprite, s32 animation);
-void Main_080001b8(s32 block);
+void Resource_ResetEntry(s32 block);
+s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
@@ -71,9 +75,9 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = &part->sprite;
-                Main_08009020(sprite, 0);
+                AnimationObjects_SelectAnimation(sprite, 0);
                 sprite->flags = 0;
-                Main_080001b8(sprite->vram_block);
+                Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
                 /* FAKEMATCH: a plain byte access; the struct field store
                  * leaves a dead QImode zero that takes r3 from the +85
@@ -91,7 +95,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
         union PairObject *p = pair[0];
         struct FieldSprite *sp = p->object.actor.sprite;
 
-        p->object.actor.update = (void (*)(union FieldObject *))0x0200a1ad;
+        p->object.actor.update = (void (*)(union FieldObject *))Effect_AnimateVerticalNegative;
         sp->priority = parent->object.actor.sprite->priority;
     }
     {
@@ -99,7 +103,7 @@ void VinasuChojo_SpawnLinkedPairEffects(union PairObject *parent)
         struct FieldSprite *sp = p->sprite;
 
         sp->priority = parent->object.actor.sprite->priority;
-        p->update = (void (*)(union FieldObject *))0x0200a15d;
+        p->update = (void (*)(union FieldObject *))Effect_AnimateVerticalPositive;
         p->priority_flags = 2;
     }
 }

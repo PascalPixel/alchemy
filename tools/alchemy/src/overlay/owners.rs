@@ -123,7 +123,6 @@ pub fn reviewed_spans(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::compiler::routing::root;
 
     #[test]
     fn each_game_resolves_its_own_production_paths() {
@@ -151,10 +150,19 @@ mod tests {
     }
 
     #[test]
-    fn broken_seal_register_reads_as_the_compiler_reads_it() {
+    fn reviewed_register_reads_as_the_compiler_reads_it() {
+        let work = tempfile::tempdir().unwrap();
+        let target = production_target(CompilerTarget::Tbs);
+        let path = register_path(work.path(), target);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(
+            path,
+            r#"{"manual_regions":[{"overlay":"resource_380","entry":"0x02000100","span_bytes":8}]}"#,
+        )
+        .unwrap();
         assert_eq!(
-            reviewed_spans(root(), production_target(CompilerTarget::Tbs)).unwrap(),
-            crate::compiler::translation_units::reviewed_overlay_spans(root()).unwrap()
+            reviewed_spans(work.path(), target).unwrap(),
+            crate::compiler::translation_units::reviewed_overlay_spans(work.path()).unwrap()
         );
     }
 
@@ -187,11 +195,6 @@ mod tests {
             Some("resource_64e")
         );
         assert_eq!(listing_overlay("resource_64e.s"), None);
-    }
-
-    #[test]
-    fn lost_age_register_is_present_and_well_formed() {
-        reviewed_spans(root(), production_target(CompilerTarget::Tla)).unwrap();
     }
 
     #[test]

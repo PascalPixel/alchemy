@@ -1,25 +1,209 @@
 //! The tracked daily DONE history behind PROGRESS_CHART.png: one row per
 //! calendar day, the last measurement of the day winning. Early rows were
 //! seeded once from main's first-parent history and hold only the published
-//! percentage; measured rows hold verified bytes.
+//! percentage; later rows retain bytes as published at the time. Current
+//! verification status is recorded separately from those historical values.
 use super::progress::GameDone;
 use super::sessions;
-use crate::compiler::canonical_json::canonical_json;
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
-pub(crate) const PATH: &str = "recon/tbs/metrics/history.json";
+pub(crate) const PATH: &str = "recon/tbs/metrics/history.tsv";
+const HEADER: &str = "date\ttbs_done\ttbs_executable\ttbs_percent\ttla_done\ttla_executable\ttla_percent\tmodels\tcredit_correction";
 
 pub(crate) fn path(root: &Path) -> PathBuf {
     root.join(PATH)
 }
 pub(crate) fn load(root: &Path) -> Result<Value, String> {
-    let bytes = std::fs::read(path(root)).map_err(|e| format!("{PATH}: {e}"))?;
-    serde_json::from_slice(&bytes).map_err(|e| format!("{PATH}: {e}"))
+    let text = std::fs::read_to_string(path(root)).map_err(|e| format!("{PATH}: {e}"))?;
+    parse(&text).map_err(|error| format!("{PATH}: {error}"))
 }
 pub(crate) fn text(history: &Value) -> String {
-    format!("{}\n", canonical_json(history))
+    let mut text = format!(
+        "# Published progress; '-' means no value was recorded.\n# began\t{}\n",
+        history["began"].as_str().unwrap_or("")
+    );
+    if let Some(date) = history["current"]["date"].as_str() {
+        text.push_str(&format!(
+            "# current\t{date}\t{}\t{}\n",
+            history["current"]["tbs"].as_str().unwrap_or("pending"),
+            history["current"]["tla"].as_str().unwrap_or("pending")
+        ));
+    }
+    text.push_str(HEADER);
+    text.push('\n');
+    let mut days = BTreeMap::new();
+    for row in history["days"].as_array().into_iter().flatten() {
+        if let Some(date) = row["date"].as_str() {
+            days.insert(date, row.clone());
+        }
+    }
+    for correction in history["stricter"].as_array().into_iter().flatten() {
+        if let Some(date) = correction["date"].as_str() {
+            days.entry(date).or_insert_with(|| json!({"date": date}))["correction"] =
+                correction["note"].clone();
+        }
+    }
+    for (date, row) in days {
+        let number = |game: &str, field: &str| {
+            row[game][field]
+                .as_number()
+                .map_or_else(|| "-".into(), ToString::to_string)
+        };
+        let models = row["models"]
+            .as_object()
+            .map(|models| {
+                models
+                    .iter()
+                    .map(|(name, count)| format!("{name}={count}"))
+                    .collect::<Vec<_>>()
+                    .join(";")
+            })
+            .filter(|text| !text.is_empty())
+            .unwrap_or_else(|| "-".into());
+        let note = row["correction"]
+            .as_str()
+            .unwrap_or("-")
+            .replace(['\t', '\n', '\r'], " ");
+        let fields = [
+            date.to_string(),
+            number("tbs", "done"),
+            number("tbs", "executable"),
+            number("tbs", "percent"),
+            number("tla", "done"),
+            number("tla", "executable"),
+            number("tla", "percent"),
+            models,
+            note,
+        ];
+        text.push_str(&fields.join("\t"));
+        text.push('\n');
+    }
+    text
+}
+
+fn parse(text: &str) -> Result<Value, String> {
+    let mut began = None;
+    let mut header = false;
+    let mut days = Vec::new();
+    let mut corrections = Vec::new();
+    let mut current = None;
+    let mut previous = "";
+    for (index, line) in text.lines().enumerate() {
+        let problem = |why: &str| format!("line {}: {why}", index + 1);
+        if let Some(date) = line.strip_prefix("# began\t") {
+            began = Some(date.to_string());
+            continue;
+        }
+        if let Some(fields) = line.strip_prefix("# current\t") {
+            let fields = fields.split('\t').collect::<Vec<_>>();
+            if fields.len() != 3
+                || day_number(fields[0]).is_none()
+                || fields[1..]
+                    .iter()
+                    .any(|state| !matches!(*state, "verified" | "pending"))
+            {
+                return Err(problem(
+                    "current status needs date and verified/pending for each game",
+                ));
+            }
+            current = Some(json!({"date": fields[0], "tbs": fields[1], "tla": fields[2]}));
+            continue;
+        }
+        if line.starts_with('#') || line.is_empty() {
+            continue;
+        }
+        if !header {
+            if line != HEADER {
+                return Err(problem("unexpected progress columns"));
+            }
+            header = true;
+            continue;
+        }
+        let fields = line.split('\t').collect::<Vec<_>>();
+        if fields.len() != 9 {
+            return Err(problem("expected nine progress columns"));
+        }
+        let date = fields[0];
+        let valid_date = day_number(date)
+            .map(|day| {
+                let (year, month, day) = civil(day);
+                format!("{year:04}-{month:02}-{day:02}") == date
+            })
+            .unwrap_or(false);
+        if !valid_date || date <= previous {
+            return Err(problem("dates must be valid and strictly increasing"));
+        }
+        previous = date;
+        let mut row = json!({"date": date});
+        for (game, start) in [("tbs", 1), ("tla", 4)] {
+            let (done, total, percent) = (fields[start], fields[start + 1], fields[start + 2]);
+            if done != "-" || total != "-" {
+                let done = done
+                    .parse::<u64>()
+                    .map_err(|_| problem("invalid DONE bytes"))?;
+                let total = total
+                    .parse::<u64>()
+                    .map_err(|_| problem("invalid executable bytes"))?;
+                if total == 0 || done > total || percent != "-" {
+                    return Err(problem(
+                        "record bytes or a published percentage, never both",
+                    ));
+                }
+                row[game] = json!({"done": done, "executable": total});
+            } else if percent != "-" {
+                let percent = percent
+                    .parse::<f64>()
+                    .map_err(|_| problem("invalid published percentage"))?;
+                if !percent.is_finite() || !(0.0..=100.0).contains(&percent) {
+                    return Err(problem("published percentage is outside 0–100"));
+                }
+                row[game] = json!({"percent": percent});
+            }
+        }
+        if fields[7] != "-" {
+            let mut models = BTreeMap::new();
+            for field in fields[7].split(';') {
+                let (name, count) = field
+                    .rsplit_once('=')
+                    .ok_or_else(|| problem("model counts use name=count"))?;
+                let count = count
+                    .parse::<u64>()
+                    .map_err(|_| problem("invalid model count"))?;
+                if name.is_empty() || count == 0 || models.insert(name, count).is_some() {
+                    return Err(problem("model counts must be positive and distinct"));
+                }
+            }
+            row["models"] = json!(models);
+        }
+        if fields[8] != "-" {
+            corrections.push(json!({"date": date, "note": fields[8]}));
+        }
+        days.push(row);
+    }
+    if !header {
+        return Err("missing progress columns".into());
+    }
+    let began = began
+        .or_else(|| {
+            days.first()
+                .and_then(|row| row["date"].as_str())
+                .map(str::to_owned)
+        })
+        .ok_or("history has no beginning date")?;
+    let mut history = json!({"format": 1, "began": began, "days": days, "stricter": corrections});
+    history["figures"] = history["days"]
+        .as_array()
+        .and_then(|days| days.last())
+        .cloned()
+        .unwrap_or(Value::Null);
+    if let Some(current) = current {
+        history["pending"] =
+            json!({"tbs": current["tbs"] == "pending", "tla": current["tla"] == "pending"});
+        history["current"] = current;
+    }
+    Ok(history)
 }
 
 /// One game's value on one day, as a percentage.
@@ -43,6 +227,10 @@ pub(crate) fn record(
     sun: Option<GameDone>,
     anchor: Option<GameDone>,
 ) {
+    let pending =
+        [sun.as_ref(), anchor.as_ref()].map(|done| done.is_none_or(|done| done.executable <= 0));
+    history["current"] = json!({"date": date, "tbs": if pending[0] {"pending"} else {"verified"}, "tla": if pending[1] {"pending"} else {"verified"}});
+    history["pending"] = json!({"tbs": pending[0], "tla": pending[1]});
     let days = history["days"]
         .as_array_mut()
         .expect("history has a days array");
@@ -184,15 +372,13 @@ pub(crate) fn as_drawn(history: &Value) -> Value {
     }
     drawn
 }
-/// Note the day the figures were drawn, the row they showed and the digest
-/// of the tracked files the map drew.
-pub(crate) fn mark_drawn(history: &mut Value, date: &str, files: &str) {
-    let mut row = history["days"]
+/// Keep the row a figure shows while the caller renders it.
+pub(crate) fn mark_drawn(history: &mut Value, date: &str) {
+    let row = history["days"]
         .as_array()
         .and_then(|days| days.iter().find(|row| row["date"] == date))
         .cloned()
         .unwrap_or_else(|| json!({"date": date}));
-    row["files"] = json!(files);
     history["figures"] = row;
 }
 
@@ -251,6 +437,37 @@ pub(crate) fn day_label(day: i64) -> (String, bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn pending_current_status_preserves_published_measurements_and_corrections() {
+        let mut history = json!({"began": "2026-09-27", "days": [
+            {"date": "2026-09-28", "tbs": {"done": 1013978, "executable": 1375934},
+             "tla": {"done": 42332, "executable": 1975640}, "models": {"Astra 6": 17, "Sol 6": 8}}
+        ], "stricter": [{"date": "2026-09-28", "note": "Executable audit pending after cleanup"}]});
+        let published = history["days"].clone();
+        record(&mut history, "2026-09-28", None, None);
+        mark_drawn(&mut history, "2026-09-28");
+        history["figures"]["files"] = json!("derived-fingerprint");
+        let text = text(&history);
+        assert!(!text.contains("derived-fingerprint"));
+        let loaded = parse(&text).unwrap();
+        assert_eq!(loaded["days"], published);
+        assert_eq!(loaded["pending"], json!({"tbs": true, "tla": true}));
+        assert_eq!(loaded["stricter"], history["stricter"]);
+        assert!(loaded["figures"].get("files").is_none());
+    }
+
+    #[test]
+    fn archived_percentages_stay_percentages_without_invented_byte_counts() {
+        let history = json!({"began": "2026-07-16", "days": [
+            {"date": "2026-07-16", "tbs": {"percent": 1.0}}
+        ]});
+        let loaded = parse(&text(&history)).unwrap();
+        assert_eq!(percent(&loaded["days"][0]["tbs"]), Some(1.0));
+        assert!(loaded["days"][0]["tbs"].get("done").is_none());
+        let invalid = format!("{HEADER}\n2026-07-16\t10\t100\t10\t-\t-\t-\t-\t-\n");
+        assert!(parse(&invalid).is_err());
+    }
 
     #[test]
     fn publication_keeps_approved_models_and_adds_actual_new_trailers() {
@@ -314,7 +531,7 @@ mod tests {
         ]});
         record(&mut history, "2026-09-23", Some(done(500)), None);
         record(&mut history, "2026-09-24", Some(done(600)), Some(done(20)));
-        mark_drawn(&mut history, "2026-09-24", "digest");
+        mark_drawn(&mut history, "2026-09-24");
         record(&mut history, "2026-09-24", Some(done(610)), None);
         let days = history["days"].as_array().unwrap();
         assert_eq!(

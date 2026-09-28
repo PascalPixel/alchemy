@@ -6735,9 +6735,23 @@ fn material_audit_reports_only_game_material_no_build_read() {
     assert!(error.contains("has no build consumer"), "{error}");
     assert_eq!(
         error.lines().skip(1).map(str::trim).collect::<Vec<_>>(),
-        [format!("{game}/SRC/B.JSON")]
+        [
+            format!("{game}/SRC/B.JSON"),
+            format!("{}/source-paths.json", target.recon_dir())
+        ]
     );
     let everything = [format!("{game}/SRC/A.JSON"), format!("{game}/SRC/B.JSON")];
+    assert!(
+        audit_material_consumers(root, &manifest, everything.clone())
+            .unwrap_err()
+            .contains("source-paths.json")
+    );
+    git(&[
+        "rm",
+        "--cached",
+        "--",
+        &format!("{}/source-paths.json", target.recon_dir()),
+    ]);
     audit_material_consumers(root, &manifest, everything).unwrap();
     // A manifest that is not a game's own reads no game's material.
     fs::write(root.join("OTHER.JSON"), "{}\n").unwrap();

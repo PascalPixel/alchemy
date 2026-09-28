@@ -880,8 +880,14 @@ fn lexical(path: &Path) -> PathBuf {
 /// A candidate report may go anywhere outside the checkout or under `out/`,
 /// but never over a tracked file or any target's executable inventory.
 fn candidate_destination(root: &Path, path: &Path) -> Result<PathBuf, String> {
-    let path = lexical(&resolve(root, path));
-    let root = lexical(root);
+    if path
+        .components()
+        .any(|part| part == std::path::Component::ParentDir)
+    {
+        return Err("candidate output cannot contain parent-directory traversal".into());
+    }
+    let root = std::fs::canonicalize(root).map_err(|error| error.to_string())?;
+    let path = lexical(&resolve(&root, path));
     let inventory = TARGET_IDS
         .into_iter()
         .any(|id| path == lexical(&inventory_path(&root, target_for(id))));
@@ -890,6 +896,22 @@ fn candidate_destination(root: &Path, path: &Path) -> Result<PathBuf, String> {
             "{}: the candidate audit never replaces an executable inventory or a tracked file",
             path.display()
         ));
+    }
+    if path.starts_with(root.join("out")) {
+        let parent = crate::compiler::build_io::generated_directory(
+            &root,
+            path.parent().ok_or("candidate has no parent")?,
+        )?;
+        let destination = parent.join(path.file_name().ok_or("candidate has no filename")?);
+        if TARGET_IDS
+            .into_iter()
+            .any(|id| destination == inventory_path(&root, target_for(id)))
+            || std::fs::symlink_metadata(&destination)
+                .is_ok_and(|metadata| metadata.file_type().is_symlink())
+        {
+            return Err("candidate output cannot alias an inventory or maintained file".into());
+        }
+        return Ok(destination);
     }
     Ok(path)
 }
@@ -1403,11 +1425,12 @@ mod tests {
 
     #[test]
     fn the_candidate_never_replaces_an_inventory_or_tracked_file() {
-        let root = Path::new("/repo");
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
         for path in [
             "out/tbs-en/reports/executable.json",
             "./out/tla-en/reports/executable.json",
-            "/repo/out/tbs-ja/reports/executable.json",
+            "out/../recon/tbs/audit.json",
             "games/THE BROKEN SEAL/metrics/executable.json",
         ] {
             assert!(
@@ -1417,7 +1440,9 @@ mod tests {
         }
         assert_eq!(
             candidate_destination(root, Path::new("out/work/audit.json")).unwrap(),
-            Path::new("/repo/out/work/audit.json")
+            std::fs::canonicalize(root)
+                .unwrap()
+                .join("out/work/audit.json")
         );
         assert!(candidate_destination(root, Path::new("/tmp/audit.json")).is_ok());
     }
@@ -1704,11 +1729,11 @@ mod tests {
         forged["main_image_proof"]["rom_sha256"] =
             json!(crate::compiler::sha256::hex(b"another ROM"));
         std::fs::write(path("out/tbs-en/full/rebuilt.json"), forged.to_string()).unwrap();
-        unproven("is not the reference ROM recon/tbs/text.json registers");
+        unproven("is not the approved tbs-en reference ROM");
         // Nor does a local ROM replaced by that one vouch for it.
         let reference = std::fs::read(path("roms/tbs-en.gba")).unwrap();
         std::fs::write(path("roms/tbs-en.gba"), b"another ROM").unwrap();
-        unproven("is not the reference ROM recon/tbs/text.json registers");
+        unproven("is not the approved tbs-en reference ROM");
         std::fs::write(path("out/tbs-en/full/rebuilt.json"), &report).unwrap();
         std::fs::write(path("out/tbs-en/full/rebuilt.gba"), &reference).unwrap();
         unproven("is not the local reference ROM roms/tbs-en.gba");
@@ -1725,7 +1750,7 @@ mod tests {
         unproven("is not the asset manifest the build recorded");
         std::fs::write(path("out/tbs-en/full/assets/manifest.json"), &manifest).unwrap();
 
-        // An encoder, codec, machine definition, retained listing or asset
+        // An encoder, codec, build rule, maintained listing or asset
         // changed after the build leaves the layout that build proved, so the
         // complement stands; the build no longer proves the tree, so it can
         // credit nothing until it runs again.
@@ -1733,8 +1758,8 @@ mod tests {
             "tools/alchemy/src/build_assets/packer.rs",
             "tools/alchemy/src/build_assets.rs",
             "tools/psynergy/src/assets/lz.rs",
-            "recon/tbs/machine.json",
-            "recon/tbs/assets.json",
+            "games/THE BROKEN SEAL/BUILD.MK",
+            "games/THE BROKEN SEAL/MAIN.LD",
             "recon/tbs/raw/overlays/resource_001_overlay.s",
             "games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.JSON",
         ] {

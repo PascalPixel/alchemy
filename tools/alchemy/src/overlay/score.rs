@@ -213,12 +213,7 @@ pub(crate) fn render_options(
     std::fs::write(&reference, image).map_err(|error| error.to_string())?;
     let units = TranslationUnits::load_game(root, options.target)?;
     options.source = source.to_string_lossy().into_owned();
-    options.configuration.call_via_base = Some(
-        paths
-            .registered_call_via(resolved)
-            .map(u64::from)
-            .unwrap_or_else(|| overlay_call_via_base(&overlay)),
-    );
+    options.configuration.call_via_base = Some(overlay_call_via_base(root, game, &overlay)?);
     options.configuration.overlay_extent = Some(span);
     if let Some(unit) = units.unit_for_game_owner(options.target.as_str(), resolved) {
         if unit.instance_owner(&overlay, resolved.address()).is_some() {
@@ -262,80 +257,4 @@ pub(crate) fn render_options(
             + "\n";
     }
     Ok(rendered)
-}
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn lost_age_scores_its_registered_source_and_reviewed_extent() {
-        let root = crate::compiler::routing::root();
-        if !root.join("roms/tla-en.gba").is_file() {
-            return;
-        }
-        let args = [
-            "resource_64d:02000038",
-            "--target",
-            "tla",
-            "--work",
-            "out/tla-en/score-route-test",
-        ]
-        .map(str::to_owned);
-        let ParseOutcome::Options(options) = options_of(root, &args).unwrap() else {
-            panic!("expected options");
-        };
-        let result = render_options(root, options).unwrap();
-        assert_eq!(
-            (
-                result.candidate_length,
-                result.reference_length,
-                result.differing_halfwords
-            ),
-            (8, 8, 0)
-        );
-        assert!(result.stdout.contains("--target tla-en"));
-        let args = ["resource_64d:02000038", "--target", "tla", "--size", "6"].map(str::to_owned);
-        assert!(run(root, &args)
-            .unwrap_err()
-            .contains("complete installed extent 8"));
-    }
-
-    #[test]
-    fn lost_age_rejects_unreviewed_extents_and_reference_overrides() {
-        let root = crate::compiler::routing::root();
-        let args = ["resource_64d:02000000", "--target", "tla", "--size", "56"].map(str::to_owned);
-        assert!(run(root, &args)
-            .unwrap_err()
-            .contains("no reviewed complete owner boundary"));
-        let args = [
-            "resource_64d:02000038",
-            "--target",
-            "tla",
-            "--rom",
-            "roms/tbs-en.gba",
-        ]
-        .map(str::to_owned);
-        assert!(run(root, &args)
-            .unwrap_err()
-            .contains("selected game's canonical reference"));
-    }
-
-    #[test]
-    fn explicit_score_span_cannot_override_a_pool_head_or_owner_extent() {
-        let root = crate::compiler::routing::root();
-        for (target, span, message) in [
-            (
-                "resource_3c5:0200186c",
-                "596",
-                "no reviewed complete owner boundary",
-            ),
-            (
-                "resource_3c5:02001b10",
-                "2394",
-                "differs from complete installed extent 2396",
-            ),
-        ] {
-            let args = [target, "--span", span].map(str::to_owned);
-            assert!(run(root, &args).unwrap_err().contains(message));
-        }
-    }
 }

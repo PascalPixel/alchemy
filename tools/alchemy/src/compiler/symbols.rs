@@ -5,8 +5,12 @@
 //! Call-via bases differ between the main image and overlays.
 
 pub use crate::compiler::call_via_data::CALL_VIA_BASE;
-use crate::compiler::call_via_data::{CALL_VIA_REGISTERS, OVERLAY_CALL_VIA_BASE};
+use crate::compiler::call_via_data::CALL_VIA_REGISTERS;
 use crate::compiler::source_paths::lower_hex;
+use crate::overlay::assembly::{compiler_runtime_spans, OVERLAY_BASE};
+use crate::overlay::rom::CanonicalRom;
+use crate::targets::DecompTarget;
+use std::path::Path;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ExternalSymbol {
@@ -144,11 +148,65 @@ pub fn external_symbol_assembly(name: &str, call_via_base: u64) -> Result<String
     ))
 }
 
-/// Overlay-wide bank; owner exceptions live in `source-paths.json`.
-pub fn overlay_call_via_base(overlay: &str) -> u64 {
-    OVERLAY_CALL_VIA_BASE
-        .iter()
-        .find(|(candidate, _)| *candidate == overlay)
-        .map(|(_, base)| *base)
-        .unwrap_or(CALL_VIA_BASE)
+/// The selected overlay's complete stock compiler bank, derived from its
+/// verified local ROM. An absent or ambiguous bank has no implicit default.
+pub fn overlay_call_via_base(
+    root: &Path,
+    target: DecompTarget,
+    overlay: &str,
+) -> Result<u64, String> {
+    let rom = CanonicalRom::load_target(root, target)?;
+    crate::text_catalog::verify_reference(root, target.id.as_str(), rom.bytes())?;
+    overlay_bank(overlay, &rom.overlay(overlay)?)
+}
+
+fn overlay_bank(overlay: &str, image: &[u8]) -> Result<u64, String> {
+    let spans = compiler_runtime_spans(image, OVERLAY_BASE);
+    match spans.as_slice() {
+        [bank] => u64::try_from(bank.start).map_err(|error| error.to_string()),
+        banks => Err(format!(
+            "{overlay}: expected one complete call-via bank, found {}",
+            banks.len()
+        )),
+    }
+}
+
+#[cfg(test)]
+mod bank_tests {
+    use super::*;
+
+    #[test]
+    fn a_structurally_valid_unapproved_rom_cannot_supply_a_bank() {
+        let root = tempfile::tempdir().unwrap();
+        let target = crate::targets::target_for(crate::targets::DEFAULT_TARGET);
+        let path = root.path().join(target.rom);
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        let mut rom = vec![0u8; target.rom_size as usize];
+        // A synthetic, valid self-pointer makes structure validation succeed.
+        rom[..4].copy_from_slice(&0x0800_0000u32.to_le_bytes());
+        rom[4..8].copy_from_slice(&0x0800_0000u32.to_le_bytes());
+        std::fs::write(path, rom).unwrap();
+        assert!(overlay_call_via_base(root.path(), target, "resource_000")
+            .unwrap_err()
+            .contains("approved"));
+    }
+
+    #[test]
+    fn selected_images_require_one_complete_compiler_bank() {
+        let bank = (0u16..15)
+            .flat_map(|register| [0x4700 | (register << 3), 0x46c0])
+            .flat_map(u16::to_le_bytes)
+            .collect::<Vec<_>>();
+        let mut image = vec![0u8; 10];
+        image.extend(&bank);
+        assert_eq!(overlay_bank("selected", &image).unwrap(), 0x0200_000a);
+        assert!(overlay_bank("missing", &[0; 60])
+            .unwrap_err()
+            .contains("found 0"));
+        assert!(overlay_bank("truncated", &bank[..56]).is_err());
+        image.extend(bank);
+        assert!(overlay_bank("ambiguous", &image)
+            .unwrap_err()
+            .contains("found 2"));
+    }
 }

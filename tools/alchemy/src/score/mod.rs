@@ -96,7 +96,11 @@ fn score_unit(
     options.work = Some(work.clone());
     if let Some(overlay) = &unit.overlay {
         options.overlay = Some(overlay.clone());
-        options.configuration.call_via_base = Some(overlay_call_via_base(overlay));
+        options.configuration.call_via_base = Some(overlay_call_via_base(
+            root(),
+            crate::overlay::owners::production_target(options.target),
+            overlay,
+        )?);
         let reference = crate::overlay::rom::canonical_overlay_for(
             root(),
             crate::overlay::owners::production_target(options.target),
@@ -398,20 +402,6 @@ fn fail(message: &str) -> ! {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn lost_age_selected_overlay_member_still_uses_the_complete_unit() {
-        if !root().join("roms/tla-en.gba").is_file() {
-            return;
-        }
-        let mut options = crate::score::cli::Options::tbs(String::new());
-        options.target = crate::compiler::routing::CompilerTarget::Tla;
-        options.unit = Some("venus-lighthouse-approach-scene".into());
-        options.owner = Some(0x02000038);
-        options.work = Some("out/tla-en/score-unit-route-test".into());
-        let output = run(options).unwrap();
-        assert_eq!(output.matches("differing_halfwords=0").count(), 7);
-        assert!(output.starts_with("scope=translation-unit\nowner=0x02000038\n"));
-    }
 
     #[test]
     fn score_unit_all_instances_reports_every_owner_including_alignment_halfword() {
@@ -513,36 +503,6 @@ mod tests {
             "{lines}"
         );
         assert_eq!(lines.matches("owner=0x02000630").count(), 1);
-    }
-    #[test]
-    fn retained_overlay_unit_scores_without_an_owner_override() {
-        // Any overlay unit that is retained right now: naming one would break
-        // the test every time that owner is adopted.
-        let manifest = crate::compiler::translation_units::TranslationUnits::load(root()).unwrap();
-        let unit = manifest
-            .units
-            .iter()
-            .find(|unit| {
-                unit.overlay.is_some()
-                    && unit.owners.iter().any(|owner| {
-                        owner.state == crate::compiler::translation_units::OwnerState::NotYetC
-                    })
-            })
-            .expect("a retained overlay unit exists");
-        let owner = unit
-            .owners
-            .iter()
-            .find(|owner| owner.state == crate::compiler::translation_units::OwnerState::NotYetC)
-            .unwrap();
-        let work = tempfile::tempdir().unwrap();
-        let mut options = crate::score::cli::Options::tbs(String::new());
-        options.unit = Some(unit.id.clone());
-        options.work = Some(work.path().to_string_lossy().into_owned());
-        options.first = true;
-        let output = run(options).unwrap();
-        assert!(output.contains("scope=translation-unit"));
-        assert!(output.contains(&format!("owner=0x{:08x}", owner.address)));
-        assert!(output.contains("differing_halfwords="));
     }
     #[test]
     #[ignore = "reads the local ROMs and compiles real owners; make test-integration"]

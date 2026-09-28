@@ -4,7 +4,7 @@
 use psynergy::assets::image::{indexed_png, PNG_SIGNATURE};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use psynergy::assets::wav::wav_pcm8;
-use std::collections::{BTreeMap, BTreeSet};
+use std::collections::BTreeSet;
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
 use std::process::{Command, ExitCode, Stdio};
@@ -26,8 +26,11 @@ const DOCUMENT_EXTENSIONS: &[&str] = &[
     "txt",
 ];
 const OWNED_DOCUMENTS: &[&str] = &["README.md", "AGENTS.md"];
-/// Code a game without an asset manifest may track under its asset roots.
-const MANIFESTLESS_EXTENSIONS: &[&str] = &["c", "h", "inc", "gitkeep"];
+/// Native editable inputs; formats are validated independently of file names.
+const NATIVE_INPUT_EXTENSIONS: &[&str] = &[
+    "c", "h", "inc", "s", "ld", "mk", "gitkeep", "png", "wav", "mid", "pcm4", "po", "json", "tsv",
+    "bin",
+];
 /// Tooling metadata areas the former layout kept under `games/<game>/`; every
 /// other directory there is an asset root. Reconstruction metadata now lives
 /// under `recon/<id>/`, outside the game tree; these names still classify
@@ -113,10 +116,9 @@ const BYTE_COPY_LABELS: &[&str] = &[
 const STREAM_LABEL_WORDS: &[&str] = &["fill", "padding", "stream", "streams"];
 /// Labels of a JSON object that say what kind of bytes it holds.
 const BYTE_LABEL_FIELDS: &[&str] = &["kind", "representation", "role", "source_kind"];
-/// State words for bytes whose content still awaits verification. A state of
-/// `typed_values_pending` names typed values whose meaning is still open, and
-/// is not a dump.
-const UNVERIFIED_STATE_WORDS: &[&str] = &["required", "unverified"];
+/// Typed storage without an identified meaning remains unresolved material.
+const UNVERIFIED_STATE_WORDS: &[&str] =
+    &["pending", "required", "unverified", "unresolved", "unknown"];
 const JSON_BYTE_DUMP_REASON: &str = "byte dump in JSON: copied bytes, a stream, fill or unexplained byte run, or 256 or more byte values outside the named values of a typed table; decode them into a source form or register a private input";
 const JSON_UNPARSED_REASON: &str = "tracked JSON does not parse, so its numbers cannot be measured";
 const INTEGER_SUFFIXES: &[&str] = &[
@@ -159,6 +161,18 @@ const BLOCKED_DIRECTORIES: &[&str] = &[
 ];
 const REPORT_EXTENSIONS: &[&str] = &["csv", "json", "jsonl", "log", "tsv", "txt"];
 const REPORT_WORDS: &[&str] = &["analysis", "comparison", "diff", "dump", "report"];
+const GENERATED_LEDGER_NAMES: &[&str] = &[
+    "assets.json",
+    "private-inputs.json",
+    "source-paths.json",
+    "source-bindings.json",
+    "translation-units.json",
+    "machine.json",
+    "manifest.json",
+    "index.json",
+];
+const GENERATED_REASON: &str =
+    "calculated bookkeeping belongs in ignored out/: keep source decisions in code and build rules";
 const MARKER_EXTENSIONS: &[&str] = &[
     "md", "ts", "js", "json", "sh", "c", "h", "s", "asm", "tsv", "txt",
 ];
@@ -191,6 +205,22 @@ fn publication_path_reason(path: &str) -> Option<&'static str> {
         return Some("private or generated directory");
     }
     let lower_leaf = leaf.to_ascii_lowercase();
+    if extension(leaf).eq_ignore_ascii_case("tokens") {
+        return Some("stored compression token table: recover the encoder");
+    }
+    if components
+        .first()
+        .is_some_and(|top| top.eq_ignore_ascii_case("recon"))
+        && listed(&lower_leaf, GENERATED_LEDGER_NAMES)
+    {
+        return Some(GENERATED_REASON);
+    }
+    if listed(
+        &lower_leaf,
+        &["char_common.png", "tile_bank.png", "data.bin"],
+    ) {
+        return Some("unidentified asset dump: reconstruct an identified editable input");
+    }
     if lower_leaf == "baserom"
         || lower_leaf.starts_with("baserom.")
         || lower_leaf.contains(".gba.")
@@ -807,25 +837,11 @@ fn numeric_elements(text: &[u8]) -> usize {
 }
 /// Encoded content measured over a whole text, whatever its lines or quoting.
 fn encoded_reason(text: &str, arrays: bool) -> Option<&'static str> {
-    encoded_reason_without_digests(text, arrays, &mut BTreeMap::new())
-}
-fn encoded_reason_without_digests(
-    text: &str,
-    arrays: bool,
-    fingerprints: &mut BTreeMap<String, usize>,
-) -> Option<&'static str> {
     let (mut characters, mut digests) = (0, 0);
     for run in text.as_bytes().split(|byte| !byte.is_ascii_alphanumeric()) {
         match classify(run) {
             Run::Encoded => characters += run.len(),
-            Run::Digest => {
-                let count = fingerprints.get_mut(std::str::from_utf8(run).unwrap());
-                if let Some(count) = count.filter(|count| **count > 0) {
-                    *count -= 1;
-                } else {
-                    digests += 1;
-                }
-            }
+            Run::Digest => digests += 1,
             Run::Plain => {}
         }
     }
@@ -842,203 +858,6 @@ fn encoded_reason_without_digests(
     (arrays && numeric_elements(text.as_bytes()) > NUMERIC_ELEMENTS_MAX).then_some(
         "numeric array outside the game data tables: pret commits only editable build inputs",
     )
-}
-fn sha256_identifier(value: &str) -> bool {
-    value.len() == 64
-        && value
-            .bytes()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
-}
-fn registry_address(value: &serde_json::Value) -> Option<&str> {
-    let text = value.as_str()?;
-    let address = u32::from_str_radix(text.strip_prefix("0x")?, 16).ok()?;
-    (text.len() == 10 && (0x0800_0000..0x0a00_0000).contains(&address)).then_some(text)
-}
-fn registry_source(value: &serde_json::Value, source: &str) -> bool {
-    value.as_str().is_some_and(|path| {
-        path.strip_prefix(source).is_some_and(|rest| {
-            !rest.is_empty() && rest.split('/').all(|part| !matches!(part, "" | "." | ".."))
-        })
-    })
-}
-fn compression_codec(value: &serde_json::Value) -> bool {
-    matches!(
-        value.as_str(),
-        Some(
-            "golden-sun-general-lz"
-                | "golden-sun-general-lz-prefill"
-                | "golden-sun-palette-lz"
-                | "golden-sun-tagged-palette-lz"
-                | "golden-sun-kind2-lz"
-        )
-    )
-}
-fn fingerprint_projection(
-    value: &mut serde_json::Value,
-    prefix: &str,
-    fingerprints: &mut BTreeMap<String, usize>,
-) {
-    let Some(digest) = value
-        .as_str()
-        .and_then(|value| value.strip_prefix(prefix))
-        .filter(|digest| sha256_identifier(digest))
-    else {
-        return;
-    };
-    *fingerprints.entry(digest.to_string()).or_default() += 1;
-    *value = serde_json::Value::Null;
-}
-fn table_identifier_projection(
-    table: &mut serde_json::Value,
-    source: &str,
-    fingerprints: &mut BTreeMap<String, usize>,
-) {
-    if table["kind"] != "le-u16-array" {
-        return;
-    }
-    for (file, prefix) in [("PALETTE.JSON", "/tables/"), ("STILL.JSON", "/palettes/")] {
-        if table["source"] == format!("{source}GRAPHICS/COMMON/{file}") {
-            fingerprint_projection(&mut table["pointer"], prefix, fingerprints);
-        }
-    }
-}
-/// Only the native registry's fingerprint fields and compression section keys
-/// have digest semantics. All other values, including their siblings, stay text.
-fn registry_encoded_reason(path: &str, text: &str, arrays: bool) -> Option<&'static str> {
-    use serde_json::Value;
-    let (game, registry) = match path {
-        "recon/tbs/private-inputs.json" => ("THE BROKEN SEAL", true),
-        "recon/tla/private-inputs.json" => ("THE LOST AGE", true),
-        "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON" => ("THE BROKEN SEAL", false),
-        "games/THE LOST AGE/SRC/GRAPHICS/COMMON/COMPRESSION.JSON" => ("THE LOST AGE", false),
-        _ => return encoded_reason(text, arrays),
-    };
-    let Ok(mut document) = serde_json::from_str::<Value>(text) else {
-        return encoded_reason(text, arrays);
-    };
-    let source = format!("games/{game}/SRC/");
-    let compression = format!("{source}GRAPHICS/COMMON/COMPRESSION.JSON");
-    let mut fingerprints = BTreeMap::new();
-    if registry {
-        if document["format"] != "camelot-style-golden-sun-native"
-            || !document["regions"].is_array()
-            || !document["private_inputs"].is_array()
-        {
-            return encoded_reason(text, arrays);
-        }
-        fingerprint_projection(&mut document["reference_sha256"], "", &mut fingerprints);
-        for input in document["private_inputs"].as_array_mut().unwrap() {
-            let kind = matches!(
-                input["kind"].as_str(),
-                Some(
-                    "metatiles"
-                        | "grid"
-                        | "palette"
-                        | "tiles"
-                        | "sprite"
-                        | "palette-raw"
-                        | "sprite-atlas"
-                        | "archive-atlas"
-                        | "still-atlas"
-                        | "tile-atlas"
-                        | "portrait-atlas"
-                        | "palette-buffer"
-                        | "palette-table"
-                        | "frame-atlas"
-                        | "bytes"
-                )
-            );
-            let region = registry_address(&input["region_address"]).is_some()
-                || input["regions"].as_array().is_some_and(|regions| {
-                    !regions.is_empty()
-                        && regions
-                            .iter()
-                            .all(|region| registry_address(region).is_some())
-                });
-            if kind && region && registry_source(&input["source"], &source) {
-                for field in ["decoded_sha256", "encoded_sha256"] {
-                    fingerprint_projection(&mut input[field], "", &mut fingerprints);
-                }
-                if input["kind"] == "palette-table"
-                    && input["source"] == format!("{source}GRAPHICS/COMMON/PALETTE.JSON")
-                {
-                    fingerprint_projection(&mut input["pointer"], "/tables/", &mut fingerprints);
-                }
-            }
-        }
-        for region in document["regions"].as_array_mut().unwrap() {
-            if region["plan"] == compression
-                && compression_codec(&region["kind"])
-                && registry_address(&region["address"]).is_some()
-            {
-                fingerprint_projection(&mut region["plan_section"], "", &mut fingerprints);
-                fingerprint_projection(&mut region["plan_section"], "/recipes/", &mut fingerprints);
-            }
-            table_identifier_projection(region, &source, &mut fingerprints);
-            if let Some(palette) = region.get_mut("palette") {
-                table_identifier_projection(palette, &source, &mut fingerprints);
-            }
-        }
-        for binding in document["bindings"].as_array_mut().into_iter().flatten() {
-            if binding["compression"] == compression
-                && registry_address(&binding["address"]).is_some()
-                && binding["sources"].as_array().is_some_and(|sources| {
-                    !sources.is_empty()
-                        && sources.iter().all(|value| registry_source(value, &source))
-                })
-            {
-                fingerprint_projection(&mut binding["compression_section"], "", &mut fingerprints);
-                fingerprint_projection(
-                    &mut binding["compression_section"],
-                    "/recipes/",
-                    &mut fingerprints,
-                );
-            }
-        }
-        for layout in document["layouts"]
-            .as_object_mut()
-            .into_iter()
-            .flat_map(|rows| rows.values_mut())
-        {
-            if registry_source(&layout["source"], &source)
-                && layout["source_pointer"]
-                    .as_str()
-                    .is_some_and(|pointer| pointer.starts_with("/maps/"))
-                && layout["width"].as_u64().is_some()
-                && layout["height"].as_u64().is_some()
-            {
-                fingerprint_projection(&mut layout["payload_sha256"], "", &mut fingerprints);
-            }
-        }
-    } else if let Some(sections) = document.as_object_mut() {
-        let sections = std::mem::take(sections);
-        let mut names: BTreeSet<_> = sections.keys().cloned().collect();
-        let mut index = 0;
-        for (key, plan) in sections {
-            let key = if sha256_identifier(&key)
-                && plan["format"] == 1
-                && compression_codec(&plan["codec"])
-                && plan["decoded_size"].as_u64().is_some()
-                && plan["encoded_size"].as_u64().is_some()
-            {
-                *fingerprints.entry(key).or_default() += 1;
-                loop {
-                    index += 1;
-                    let name = format!("section_{index}");
-                    if names.insert(name.clone()) {
-                        break name;
-                    }
-                }
-            } else {
-                key
-            };
-            document.as_object_mut().unwrap().insert(key, plan);
-        }
-    }
-    // The original scan keeps duplicate keys and raw encodings visible; the
-    // projection also exposes escaped strings without giving them digest credit.
-    encoded_reason_without_digests(text, arrays, &mut fingerprints)
-        .or_else(|| encoded_reason(&document.to_string(), arrays))
 }
 /// Lower-case alphanumeric words of a name or label.
 fn label_words(label: &str) -> impl Iterator<Item = String> + '_ {
@@ -1159,11 +978,6 @@ fn copied_bytes<'a>(
 }
 /// Saved compression decisions remain answers when nested, split into short
 /// arrays, or addressed through a separate binary table.
-// Pascal temporarily admitted the already committed compression debt while
-// recovery continues. This checkpoint freezes it; it is not a growing allowlist.
-const LEGACY_COMPRESSION_BASELINE: &str = "d08ee3a28fc92afe15c6215d0997a05659395f1c";
-const LEGACY_COMPRESSION_TABLE: &str =
-    "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS";
 const COMPRESSION_ANSWER_REASON: &str =
     "stored compression decisions or padding: recover the encoder and packer";
 
@@ -1210,11 +1024,12 @@ fn compression_answers(value: &serde_json::Value, inherited_lz: bool) -> bool {
 /// inside game data tables: decoded streams, residual regions, hash-keyed
 /// stream maps and any other long flat byte array without a typed table.
 fn json_byte_dump_reason(path: &str, text: &str) -> Option<&'static str> {
-    if !extension(path).eq_ignore_ascii_case("json") {
+    let json = extension(path).eq_ignore_ascii_case("json");
+    if !json && !text.trim_start().starts_with(['{', '[']) {
         return None;
     }
     let Ok(document) = serde_json::from_str::<serde_json::Value>(text) else {
-        return Some(JSON_UNPARSED_REASON);
+        return json.then_some(JSON_UNPARSED_REASON);
     };
     if compression_answers(&document, false) {
         return Some(COMPRESSION_ANSWER_REASON);
@@ -1222,87 +1037,115 @@ fn json_byte_dump_reason(path: &str, text: &str) -> Option<&'static str> {
     copied_bytes(&document, None, &mut Vec::new(), false).then_some(JSON_BYTE_DUMP_REASON)
 }
 
-/// Remove only frozen legacy fields from the document used for further checks.
-/// Real build inputs stay unchanged; unrelated payloads still fail publication.
-fn legacy_compression_projection(
-    before: &serde_json::Value,
-    after: &mut serde_json::Value,
-    old_codec: &str,
-    new_codec: &str,
-) -> bool {
+/// A digest or measured inventory remains generated bookkeeping after a rename
+/// or a split into smaller documents. Reference checksums and dependency pins
+/// are deliberate records; they do not carry these measured game fields.
+fn calculated_bookkeeping(value: &serde_json::Value) -> bool {
     use serde_json::Value;
-    match after {
+    match value {
         Value::Object(object) => {
-            let new_codec = object
-                .get("codec")
-                .or_else(|| object.get("recipe_codec"))
-                .and_then(Value::as_str)
-                .unwrap_or(new_codec)
-                .to_string();
-            let old_codec = before
-                .get("codec")
-                .or_else(|| before.get("recipe_codec"))
-                .and_then(Value::as_str)
-                .unwrap_or(old_codec);
-            for key in ["token_table", "tokens", "lookahead"] {
-                let Some(value) = object.get(key) else {
-                    continue;
-                };
-                let debt = match key {
-                    "token_table" => value["format"] == "alchemy-lz-controls-v1",
-                    "tokens" => new_codec.contains("-lz") && !computed_controls(value),
-                    "lookahead" => new_codec.contains("-lz") && value != "",
-                    _ => false,
-                };
-                if debt {
-                    if before.get(key) != Some(value)
-                        || (key != "token_table" && old_codec != new_codec)
-                    {
-                        return false;
-                    }
-                    object.remove(key);
-                }
-            }
-            object.iter_mut().all(|(key, value)| {
-                legacy_compression_projection(&before[key], value, old_codec, &new_codec)
-            })
+            const FIELDS: &[&str] = &[
+                "decoded_sha256",
+                "encoded_sha256",
+                "payload_sha256",
+                "plan_sha256",
+                "private_inputs",
+                "owner_inventory",
+                "complete_registered_identity_coverage",
+                "total_union_bytes",
+                "rom_fallback_bytes",
+                "unowned_bytes",
+                "executable_bytes",
+                "pointer_catalog",
+                "symbol_catalog",
+            ];
+            object.keys().any(|key| listed(key, FIELDS))
+                || object.keys().any(|key| {
+                    digest_key(key)
+                        || key
+                            .strip_prefix("0x")
+                            .filter(|digits| digits.len() == 8)
+                            .and_then(|digits| u32::from_str_radix(digits, 16).ok())
+                            .is_some_and(|address| (0x0800_0000..0x0a00_0000).contains(&address))
+                })
+                || (object.contains_key("decoded_size") && object.contains_key("encoded_size"))
+                || ((object.contains_key("address") || object.contains_key("offset"))
+                    && object.contains_key("size"))
+                || (object.contains_key("start")
+                    && object.contains_key("end")
+                    && (object.contains_key("source") || object.contains_key("owner")))
+                || object
+                    .get("owners")
+                    .is_some_and(|owners| owners.is_array() || owners.is_object())
+                || object
+                    .get("symbols")
+                    .is_some_and(|symbols| symbols.is_array() || symbols.is_object())
+                || object.values().any(calculated_bookkeeping)
         }
-        Value::Array(rows) => rows.iter_mut().enumerate().all(|(index, value)| {
-            legacy_compression_projection(&before[index], value, old_codec, new_codec)
-        }),
-        _ => true,
+        Value::Array(rows) => rows.iter().any(calculated_bookkeeping),
+        Value::String(text) => serialized_listing(text),
+        _ => false,
     }
 }
 
-fn publication_data_reason_with_legacy(
-    root: &Path,
-    path: &str,
-    data: &[u8],
-    logo: Option<&[u8]>,
-) -> Option<&'static str> {
-    let reason = publication_data_reason(path, data, logo)?;
-    if reason != COMPRESSION_ANSWER_REASON && path != LEGACY_COMPRESSION_TABLE {
-        return Some(reason);
+fn calculated_bookkeeping_reason(path: &str, text: &str) -> Option<&'static str> {
+    // Historical progress is an intentional publication record. Its content
+    // still passes every payload, source and conflict check below.
+    if path == "recon/tbs/metrics/history.json" {
+        return None;
     }
-    let object = format!("{LEGACY_COMPRESSION_BASELINE}:{path}");
-    let Ok(before) = git(root, &["show", &object], "frozen compression debt") else {
-        return Some(reason);
-    };
-    if path == LEGACY_COMPRESSION_TABLE {
-        return (data != before).then_some(reason);
+    if let Ok(value) = serde_json::from_str(text) {
+        return calculated_bookkeeping(&value).then_some(GENERATED_REASON);
     }
-    let (Ok(before), Ok(mut after)) = (
-        serde_json::from_slice::<serde_json::Value>(&before),
-        serde_json::from_slice::<serde_json::Value>(data),
-    ) else {
-        return Some(reason);
-    };
-    if !legacy_compression_projection(&before, &mut after, "", "") {
-        return Some(reason);
-    }
-    let cleaned = serde_json::to_vec(&after).expect("JSON value serializes");
-    publication_data_reason(path, &cleaned, logo)
+    let header = text.lines().next().unwrap_or("");
+    header
+        .split(['\t', ','])
+        .map(|field| field.trim().trim_matches('"'))
+        .any(|field| {
+            listed(
+                field,
+                &[
+                    "decoded_sha256",
+                    "encoded_sha256",
+                    "payload_sha256",
+                    "plan_sha256",
+                    "owner_inventory",
+                    "executable_bytes",
+                    "rom_fallback_bytes",
+                ],
+            )
+        })
+        .then_some(GENERATED_REASON)
 }
+
+fn serialized_listing(text: &str) -> bool {
+    static LISTING: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let listing = LISTING.get_or_init(|| {
+        regex::Regex::new(
+            r"(?im)^[ \t]*\.(?:set|equ)[ \t]+(?:Func_|sub_|Data_)[0-9a-f]{8}[ \t]*,[ \t]*0x[0-9a-f]{8}\b",
+        )
+        .expect("disassembly pattern")
+    });
+    let assembly = text.lines().any(|line| {
+        [
+            ".syntax ",
+            ".thumb",
+            ".arm",
+            ".global ",
+            ".global\t",
+            ".section ",
+        ]
+        .iter()
+        .any(|prefix| line.trim_start().starts_with(*prefix))
+    });
+    static OBJDUMP: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let objdump = OBJDUMP.get_or_init(|| {
+        regex::Regex::new(r"(?im)^[ \t]*[0-9a-f]{7,8}:[ \t]+(?:[0-9a-f]{2,8}[ \t]+)+[a-z]")
+            .expect("objdump pattern")
+    });
+    (assembly && listing.is_match(text)) || objdump.is_match(text)
+}
+
 fn blocked_include(literal: &str, bytes: bool) -> bool {
     let literal = literal.replace('\\', "/");
     literal.split('/').any(|component| {
@@ -1502,47 +1345,27 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         return binary_reason(path, data, logo);
     }
     let text = std::str::from_utf8(data).unwrap_or("");
-    let table = asset_game(path).is_some() && listed(extension(path), DATA_TABLE_EXTENSIONS);
+    let table = (asset_game(path).is_some() && listed(extension(path), DATA_TABLE_EXTENSIONS))
+        || (path.starts_with("recon/") && listed(extension(path), &["s", "inc"]));
     license_reason(text)
         .or_else(|| diff_reason(text))
         .or_else(|| data_uri_reason(text))
-        .or_else(|| registry_encoded_reason(path, text, !table))
+        .or_else(|| encoded_reason(text, !table))
         .or_else(|| json_byte_dump_reason(path, text))
+        .or_else(|| calculated_bookkeeping_reason(path, text))
         .or_else(|| included_bytes_reason(path, text))
         .or_else(|| attributes_reason(path, text))
         .or_else(|| runtime_definition_reason(path, text))
 }
-/// Games whose asset manifest is tracked in the inspected tree, named by
-/// their `games/` directory: `recon/<id>/assets.json`, or the former
-/// `games/<game>/recon/assets.json` that outgoing history may still hold.
-fn manifest_games<'a>(paths: impl IntoIterator<Item = &'a str>) -> Vec<String> {
-    paths
-        .into_iter()
-        .filter_map(
-            |path| match path.split('/').collect::<Vec<_>>().as_slice() {
-                ["recon", id, "assets.json"] => {
-                    Some(crate::compiler::routing::game_directory(id).to_string())
-                }
-                ["games", game, "recon", "assets.json"] => Some(game.to_string()),
-                _ => None,
-            },
-        )
-        .collect()
-}
 /// The game whose asset roots hold `path`: every directory under
 /// `games/<game>/` except tooling metadata, with `asm/overlays` holding
-/// overlay streams, all matched without regard to case. Retained listings
-/// and the data packages the asset build reads beside them stay an asset
-/// root of their game under `recon/<id>/raw`.
+/// overlay streams, all matched without regard to case. Local reconstruction
+/// outputs under `recon/` are never native asset inputs.
 fn asset_game(path: &str) -> Option<&str> {
     let components: Vec<_> = path.split('/').collect();
     let [top, game, area, rest @ ..] = components.as_slice() else {
         return None;
     };
-    if top.eq_ignore_ascii_case("recon") {
-        return (area.eq_ignore_ascii_case("raw") && !rest.is_empty())
-            .then(|| crate::compiler::routing::game_directory(*game));
-    }
     if !top.eq_ignore_ascii_case("games") || rest.is_empty() {
         return None;
     }
@@ -1569,17 +1392,23 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
     (!(source || interface))
         .then_some("games/COMMON holds only shared SRC/<module>/*.C and INCLUDE/<module>/*.H")
 }
-fn manifestless_reason(path: &str, manifests: &[String]) -> Option<&'static str> {
+fn native_path_reason(path: &str) -> Option<&'static str> {
     if let Some(reason) = shared_root_reason(path) {
         return Some(reason);
     }
-    let game = asset_game(path)?;
-    // A manifest covers only the exact spelling of the tree it was read from.
-    let manifested = (path.starts_with("games/") || path.starts_with("recon/"))
-        && manifests.iter().any(|known| known == game);
-    let code = listed(extension(path), MANIFESTLESS_EXTENSIONS);
-    (!code && !manifested)
-        .then_some("game material without a consuming asset manifest (recon/<game>/assets.json)")
+    let components: Vec<_> = path.split('/').collect();
+    let [top, _, area, rest @ ..] = components.as_slice() else {
+        return None;
+    };
+    if !top.eq_ignore_ascii_case("games") {
+        return None;
+    }
+    let native = *top == "games"
+        && ((matches!(*area, "SRC" | "INCLUDE" | "SOUND" | "TEXT")
+            && !rest.is_empty()
+            && listed(extension(path), NATIVE_INPUT_EXTENSIONS))
+            || (rest.is_empty() && listed(extension(path), &["ld", "mk"])));
+    (!native).then_some("game material must be an editable native game input")
 }
 fn byte_dump(message: &str) -> bool {
     let bytes = message.as_bytes();
@@ -1676,20 +1505,14 @@ struct Entry {
 }
 /// One inspected path. Approved compiler submodules carry no blob to read;
 /// any other gitlink fails without being read.
-fn inspected(
-    scope: &str,
-    path: String,
-    object: String,
-    gitlink: bool,
-    manifests: &[String],
-) -> Option<Entry> {
+fn inspected(scope: &str, path: String, object: String, gitlink: bool) -> Option<Entry> {
     let listing_reason = if gitlink {
         if APPROVED_GITLINKS.contains(&path.as_str()) {
             return None;
         }
         Some("unapproved gitlink: only the agbcc and agscc submodules are approved")
     } else {
-        manifestless_reason(&path, manifests)
+        native_path_reason(&path)
     };
     Some(Entry {
         scope: scope.to_string(),
@@ -1757,8 +1580,8 @@ fn scan(root: &Path, entries: Vec<Entry>, conflicts: bool) -> Result<(), String>
     let objects = readable.iter().map(|entry| entry.object.clone()).collect();
     blobs(root, objects, |index, data| {
         let entry = &readable[index];
-        let reason = publication_data_reason_with_legacy(root, &entry.path, data, logo.as_deref())
-            .map(str::to_string);
+        let reason =
+            publication_data_reason(&entry.path, data, logo.as_deref()).map(str::to_string);
         let reason = reason.or_else(|| {
             conflicts
                 .then(|| conflict_marker_reason(&entry.path, data))
@@ -1810,21 +1633,14 @@ fn tracked(root: &Path, revision: Option<&str>) -> Result<Vec<(bool, String, Str
     }
     Ok(entries)
 }
-fn manifests_of(root: &Path, revision: Option<&str>) -> Result<Vec<String>, String> {
-    let records = tracked(root, revision)?;
-    Ok(manifest_games(
-        records.iter().map(|(_, _, path)| path.as_str()),
-    ))
-}
 fn tree_entries(root: &Path, revision: Option<&str>) -> Result<Vec<Entry>, String> {
     let records = tracked(root, revision)?;
-    let manifests = manifest_games(records.iter().map(|(_, _, path)| path.as_str()));
     let scope = revision.map_or("tree".to_string(), |revision| {
         format!("tree {}", &revision[..12.min(revision.len())])
     });
     Ok(records
         .into_iter()
-        .filter_map(|(gitlink, object, path)| inspected(&scope, path, object, gitlink, &manifests))
+        .filter_map(|(gitlink, object, path)| inspected(&scope, path, object, gitlink))
         .collect())
 }
 fn check_tree(root: &Path, revision: Option<&str>) -> Result<(), String> {
@@ -1862,12 +1678,11 @@ fn check_staged(root: &Path) -> Result<(), String> {
         }
         return Err("publication gate scanned nothing: no staged change to inspect".to_string());
     }
-    let manifests = manifests_of(root, None)?;
     let entries = changes
         .into_iter()
         .filter_map(|(path, gitlink)| {
             let object = format!(":{path}");
-            inspected("staged", path, object, gitlink, &manifests)
+            inspected("staged", path, object, gitlink)
         })
         .collect();
     scan(root, entries, true)
@@ -2051,7 +1866,6 @@ fn check_history(root: &Path, revision: Option<&str>) -> Result<(), String> {
             "history path scan",
         )?;
         let fields = nul_list(&output);
-        let manifests = manifests_of(root, Some(commit))?;
         let mut index = 0;
         while index + 1 < fields.len() {
             let metadata: Vec<_> = fields[index].split_whitespace().collect();
@@ -2064,9 +1878,7 @@ fn check_history(root: &Path, revision: Option<&str>) -> Result<(), String> {
             if !seen.insert((path.clone(), object.clone())) {
                 continue;
             }
-            if let Some(entry) =
-                inspected(commit, path, object, metadata[1] == "160000", &manifests)
-            {
+            if let Some(entry) = inspected(commit, path, object, metadata[1] == "160000") {
                 entries.push(entry);
             }
         }
@@ -2187,11 +1999,10 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
             &format!("commit path scan {commit}"),
         )?;
         let (_, changes) = raw_changes(&output)?;
-        let manifests = manifests_of(root, Some(&commit))?;
         let scope = &commit[..12.min(commit.len())];
         entries.extend(changes.into_iter().filter_map(|(path, gitlink)| {
             let object = format!("{commit}:{path}");
-            inspected(scope, path, object, gitlink, &manifests)
+            inspected(scope, path, object, gitlink)
         }));
     }
     // Each pushed tip must also pass as a whole tree, not only as its deltas.
@@ -2201,14 +2012,9 @@ fn check_push(root: &Path, updates: &str) -> Result<(), String> {
     scan(root, entries, false)
 }
 /// Every file-level decision for one blob, as `scan` makes it.
-fn publication_reason(
-    path: &str,
-    data: &[u8],
-    manifests: &[String],
-    logo: Option<&[u8]>,
-) -> Option<&'static str> {
+fn publication_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
     publication_path_reason(path)
-        .or_else(|| manifestless_reason(path, manifests))
+        .or_else(|| native_path_reason(path))
         .or_else(|| publication_data_reason(path, data, logo))
 }
 /// Deterministic pseudo-random bytes. Fixtures are built at run time so the
@@ -2338,8 +2144,8 @@ fn toolchain_fixtures() -> [String; 8] {
         format!("GIT binary {}\nliteral 12\nzcmZ\n", "patch"),
     ]
 }
-/// `(path, bytes, game has a manifest, expected rejection reason fragment)`.
-type Fixture = (&'static str, Vec<u8>, bool, Option<&'static str>);
+/// `(path, bytes, expected rejection reason fragment)`.
+type Fixture = (&'static str, Vec<u8>, Option<&'static str>);
 fn binary_fixtures() -> Vec<Fixture> {
     let logo = logo_fixture();
     let font = [b"OTTO".as_slice(), &[0, 10, 0, 128, 0, 3, 0, 32], b"CFF "].concat();
@@ -2401,188 +2207,153 @@ fn binary_fixtures() -> Vec<Fixture> {
         (
             "tools/alchemy/GRAPHICS/Weyard.otf",
             font.clone(),
-            true,
             Some("presentation material"),
         ),
-        ("notes.dat", font, true, Some("font")),
+        ("notes.dat", font, Some("font")),
         (
             "x.PNG",
             b"GIF89a\x10\0\x10\0\x80\0\0".to_vec(),
-            true,
             Some("GIF image"),
         ),
         (
             "games/THE BROKEN SEAL/PREVIEW/DJINN_101_IDLE.GIF",
             b"GIF89a".to_vec(),
-            true,
             Some("presentation material"),
         ),
         (
             "games/THE BROKEN SEAL/PREVIEW/title.png",
             indexed_fixture(4),
-            true,
             Some("PREVIEW"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SHOT.PNG",
             png_fixture(16, 8, 6, &stream, &[]),
-            true,
             Some("truecolour"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/IDLE.INDEXED.PNG",
             png_fixture(16, 4, 3, &stream, &[(b"acTL", &[0, 0, 0, 2, 0, 0, 0, 0])]),
-            true,
             Some("animated PNG"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/TABLE.DAT",
             b"\x01\x02\0\x03".to_vec(),
-            true,
-            unregistered,
+            Some("editable native game input"),
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE_00.PCM4",
             vec![0x5a; 65],
-            true,
             unregistered,
         ),
-        (
-            "tools/alchemy/tests/tone.wav",
-            wave.clone(),
-            true,
-            unregistered,
-        ),
+        ("tools/alchemy/tests/tone.wav", wave.clone(), unregistered),
         (
             "games/THE BROKEN SEAL/SOUND/X.PNG",
             indexed_fixture(4),
-            true,
             unregistered,
         ),
         (
-            "games/THE BROKEN SEAL/SRC/SYSTEM/HEADER.DAT",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/HEADER.BIN",
             fragment,
-            true,
             Some("ROM header fragment"),
         ),
         (
             "games/THE LOST AGE/SOUND/SEQUENCE/X.MID",
             midi.clone(),
-            false,
-            Some("asset manifest"),
+            None,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TRAILING.INDEXED.PNG",
             trailing,
-            true,
             malformed_png,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/TEXT.INDEXED.PNG",
             png_fixture(16, 4, 3, &stream, &[(b"tEXt", b"Comment\0payload")]),
-            true,
             malformed_png,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SURPLUS.INDEXED.PNG",
             png_fixture(16, 4, 3, &surplus, &[]),
-            true,
             malformed_png,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SECOND.INDEXED.PNG",
             png_fixture(16, 4, 3, &second, &[]),
-            true,
             malformed_png,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/LOGO.INDEXED.PNG",
             png_fixture(160, 8, 3, &hidden, &[]),
-            true,
             nintendo,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SAMPLE/LONG.PCM8.WAV",
             [wave.as_slice(), &[0]].concat(),
-            true,
             wav,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SAMPLE/LIST.PCM8.WAV",
             listed_wave,
-            true,
             wav,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SAMPLE/LOGO.PCM8.WAV",
             psynergy::assets::wav::pcm8_wav(&samples, 8000).unwrap(),
-            true,
             nintendo,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/CHUNK.MID",
             [midi.as_slice(), b"XXXX\0\0\0\x01\0"].concat(),
-            true,
             sequence,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/SYSEX.MID",
             midi_fixture(&[0, 0xf0, 3, 1, 2, 0xf7], true),
-            true,
             sequence,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/BINARY.MID",
             meta(0x7f, &[0xff, 0xfe, 0x80]),
-            true,
             sequence,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/OPEN.MID",
             midi_fixture(&[], false),
-            true,
             sequence,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/TEMPO.MID",
             meta(0x51, &fixture_bytes(64, 3)),
-            true,
             sequence,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/TIMED.MID",
             meta(0x51, &[7, 0xa1, 0x20]),
-            true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/PAYLOAD.MID",
             meta(0x01, encoded_fixture(&base64, 600, 2).as_bytes()),
-            true,
             Some("encoded payload"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/SPARE.TOKENS",
             table.clone(),
-            true,
-            unregistered,
+            Some("stored compression token table"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
             garbled,
-            true,
-            unregistered,
+            Some("stored compression token table"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/LOCALIZATION_GLYPHS_0020_00FF.1BPP.PNG",
             indexed_fixture(1),
-            true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_MTF_00.INDEXED.PNG",
             indexed_fixture(4),
-            true,
             None,
         ),
         (
@@ -2594,38 +2365,32 @@ fn binary_fixtures() -> Vec<Fixture> {
                 &fdeflate::compress_to_vec(&scanlines(16, 8)),
                 &[(b"tRNS", &[0])],
             ),
-            true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/TEXT/STAFF_ROLL_MOJI.1BPP.PNG",
             indexed_fixture(1),
-            true,
             None,
         ),
         (
             "games/THE LOST AGE/SOUND/SAMPLE/WAVE_00.PCM8.WAV",
             wave,
-            true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.MID",
             meta(0x7f, &directive),
-            true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE_00.PCM4",
             vec![0x5a; 16],
-            true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
             table,
-            true,
-            unregistered,
+            Some("stored compression token table"),
         ),
     ]
 }
@@ -2736,205 +2501,175 @@ fn text_fixtures() -> Vec<Fixture> {
     let patch = Some("patch or diff");
     let encoded = Some("encoded payload");
     let arrays = Some("numeric array");
-    let manifest = Some("asset manifest");
+    let native = Some("editable native game input");
     let include = Some("include_bytes! or include_str!");
     let uri = Some("data URI");
     vec![
-        ("README.md", svg_uri, true, uri),
-        ("tools/alchemy/src/dashboard/index.html", css_uri, true, uri),
-        ("tools/alchemy/src/coverage/figure.rs", rust_uri, true, uri),
+        ("README.md", svg_uri, uri),
+        ("tools/alchemy/src/dashboard/index.html", css_uri, uri),
+        ("tools/alchemy/src/coverage/figure.rs", rust_uri, uri),
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/BLOB.JSON",
             json_base64,
-            true,
             encoded,
         ),
         (
             "tools/alchemy/src/dashboard/font.css",
             text(lines(76, 5)),
-            true,
             encoded,
         ),
         (
             "tools/alchemy/src/dashboard/glyphs.css",
             text(lines(40, 12)),
-            true,
             encoded,
         ),
-        ("tools/alchemy/src/assets.rs", quoted, true, encoded),
-        ("tools/alchemy/src/key.rs", base32_key, true, encoded),
-        ("tools/alchemy/src/blob.json", hex_blob, true, encoded),
+        ("tools/alchemy/src/assets.rs", quoted, encoded),
+        ("tools/alchemy/src/key.rs", base32_key, encoded),
+        ("tools/alchemy/src/blob.json", hex_blob, encoded),
         (
             "tools/alchemy/src/words.rs",
             text(digests(17_000)),
-            true,
             Some("digest-sized"),
         ),
-        ("tools/alchemy/src/rom_table.rs", array, true, arrays),
-        ("tools/alchemy/src/rom_bytes.rs", escapes, true, arrays),
-        ("tools/alchemy/src/rom_dump.rs", dump, true, arrays),
+        ("tools/alchemy/src/rom_table.rs", array, arrays),
+        ("tools/alchemy/src/rom_bytes.rs", escapes, arrays),
+        ("tools/alchemy/src/rom_dump.rs", dump, arrays),
         (
             "games/THE BROKEN SEAL/SRC/BATTLE/TABLE.C",
             c_table,
-            true,
             arrays,
         ),
         (
             "games/THE BROKEN SEAL/SRC/BATTLE/DATA/TABLE.JSON",
             json_table,
-            true,
             Some("byte dump in JSON"),
         ),
         (
             "games/THE LOST AGE/DATA/TABLE.JSON",
             empty(),
-            false,
-            manifest,
+            native,
         ),
         (
             "games/THE LOST AGE/src/battle/table.json",
             empty(),
-            false,
-            manifest,
+            native,
         ),
         (
             "Games/THE BROKEN SEAL/SRC/TABLE.JSON",
             empty(),
-            true,
-            manifest,
+            native,
         ),
-        ("tools/alchemy/src/logo.rs", logo_include, true, include),
-        ("tools/alchemy/src/header.rs", header_include, true, include),
+        ("tools/alchemy/src/logo.rs", logo_include, include),
+        ("tools/alchemy/src/header.rs", header_include, include),
         (
             "tools/alchemy/src/recovery/fixture.rs",
             source_include,
-            true,
             None,
         ),
         (
             "tools/alchemy/assets/figure.png",
             text(pointer),
-            true,
             Some("Git LFS pointer"),
         ),
-        (".gitattributes", attributes, true, Some("filter attribute")),
-        (".gitattributes", b"*.TOKENS binary\n".to_vec(), true, None),
+        (".gitattributes", attributes, Some("filter attribute")),
+        (".gitattributes", b"*.TOKENS binary\n".to_vec(), None),
         (
             "recon/tbs/en/main/0800ebec.c.bak",
             b"int x;\n".to_vec(),
-            true,
             Some("backup"),
         ),
         (
             "recon/tla/raw/overlays/.gitkeep",
             Vec::new(),
-            false,
             None,
         ),
         (
             "games/THE LOST AGE/SRC/MAIN/X.C",
             b"void f(void) {}\n".to_vec(),
-            false,
             None,
         ),
         (
             "games/COMMON/SRC/SOUND/X.C",
             b"void f(void) {}\n".to_vec(),
-            false,
             None,
         ),
         (
             "games/COMMON/SRC/X.C",
             b"void f(void) {}\n".to_vec(),
-            true,
             Some("games/COMMON holds only"),
         ),
         (
             "games/COMMON/SRC/SOUND/X.H",
             b"void f(void);\n".to_vec(),
-            true,
             Some("games/COMMON holds only"),
         ),
         (
             "games/COMMON/INCLUDE/SOUND/X.H",
             b"void f(void);\n".to_vec(),
-            false,
             None,
         ),
         (
             "games/COMMON/SRC/SOUND/TABLE.JSON",
             empty(),
-            true,
             Some("games/COMMON holds only"),
         ),
         (
             "games/COMMON/recon/translation-units.json",
             empty(),
-            true,
             Some("games/COMMON holds only"),
         ),
         (
             "games/THE BROKEN SEAL/SRC/FIELD/SCENE/SCENE.C",
             text(identifiers),
-            true,
             None,
         ),
-        ("tools/Cargo.lock", text(checksums), true, None),
+        ("tools/Cargo.lock", text(checksums), None),
         (
             "tools/alchemy/src/hashes.rs",
             text(digests(2_048)),
-            true,
             None,
         ),
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/ROM_HEADER.JSON",
             text(rows),
-            true,
             None,
         ),
         (
             "tools/alchemy/src/dashboard/style.css",
             b"body { font: 16px mono; }\n".to_vec(),
-            true,
             None,
         ),
         (
             "PROGRESS.svg",
             svg,
-            true,
             Some("presentation material"),
         ),
         (
             "games/THE BROKEN SEAL/INCLUDE/ADD_PARTS_BODY.INC",
             text(license_header),
-            true,
             license,
         ),
         (
-            "recon/tbs/raw/080072e4.s",
+            "games/THE BROKEN SEAL/SRC/SYSTEM/LICENSE.S",
             text(wrapped_license),
-            true,
             license,
         ),
-        ("tools/alchemy/src/runtime.rs", text(lesser_license), true, license),
+        ("tools/alchemy/src/runtime.rs", text(lesser_license), license),
         (
             "games/THE BROKEN SEAL/SRC/LIB/SOFT_FLOAT.C",
             text(copyright),
-            true,
             license,
         ),
         (
             "recon/tbs/notes.json",
             text(unified),
-            true,
             patch,
         ),
-        ("AGENTS.md", text(headerless), true, patch),
-        ("tools/alchemy/src/compiler.rs", text(context), true, patch),
+        ("AGENTS.md", text(headerless), patch),
+        ("tools/alchemy/src/compiler.rs", text(context), patch),
         (
             "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD.INC",
             text(binary_patch),
-            true,
             patch,
         ),
         (
@@ -2943,7 +2678,6 @@ fn text_fixtures() -> Vec<Fixture> {
                 "Code whose license this repository cannot carry stays in the {} submodules; {}{} marks a hunk.\n",
                 "licensed", "@", "@"
             )),
-            true,
             None,
         ),
         (
@@ -2952,7 +2686,6 @@ fn text_fixtures() -> Vec<Fixture> {
                 "write(&patch, \"{a}{a} -1 +1 {a}{a}\\n-a\\n+b\\n\");\n{a}{a} -1 +1 {a}{a}\nnot a body\n",
                 a = '@'
             )),
-            true,
             None,
         ),
         (
@@ -2962,7 +2695,6 @@ fn text_fixtures() -> Vec<Fixture> {
                 "the free software",
                 FOUNDATION.replace('|', "")
             )),
-            true,
             None,
         ),
     ]
@@ -2997,7 +2729,7 @@ fn json_fixtures() -> Vec<Fixture> {
         |name: &str, length: usize| table(vec![segment("name", name, "u8", length, json!({}))]);
     let catalog = document(
         json!({"format": 1, "kind": "typed-table-catalog", "tables": {
-        "0x080c2a0a": {"format": 1, "kind": "typed-table", "segments": [
+        "action_visuals": {"format": 1, "kind": "typed-table", "segments": [
             segment("name", "action_modes", "u8", 518, json!({"min": 0, "max": 9})),
             segment("name", "action_display", "u8", 300, json!({}))]}}}),
     );
@@ -3012,7 +2744,7 @@ fn json_fixtures() -> Vec<Fixture> {
     .collect();
     let residual = json!({"format": 1, "regions": [{"name": "residual_001",
         "representation": "byte_values", "values": bytes(1916)}]});
-    // Typed rows whose meaning is still open, as grid_lookup_a is today.
+    // Typed rows whose meaning is still open remain unresolved material.
     let rows: Vec<Vec<u8>> = fixture_bytes(256, 5)
         .chunks(16)
         .map(<[u8]>::to_vec)
@@ -3054,25 +2786,23 @@ fn json_fixtures() -> Vec<Fixture> {
     let floats = json!({"segments": [{"name": "title_tiles", "values": floats}]});
     let dump = Some("byte dump in JSON");
     vec![
-        (DATABASE, named("inventory_counter_slots", 512), true, None),
-        (CATALOG, catalog, true, None),
+        (DATABASE, named("inventory_counter_slots", 512), None),
+        (CATALOG, catalog, None),
         (
             STAFF,
             table(vec![segment("id", "lines", "pool-pointer", 339, json!({}))]),
-            true,
             None,
         ),
         (
             "tools/alchemy/src/slots.json",
             named("inventory_counter_slots", 512),
-            true,
             None,
         ),
-        (DATABASE, named("residual_001", 255), true, None),
-        (DATABASE, named("residual_001", 256), true, dump),
-        (DATABASE, named("unreferenced_storage", 512), true, dump),
-        (DATABASE, named("region_0807b490", 512), true, dump),
-        (DATABASE, named("pending_slots", 512), true, dump),
+        (DATABASE, named("residual_001", 255), None),
+        (DATABASE, named("residual_001", 256), dump),
+        (DATABASE, named("unreferenced_storage", 512), dump),
+        (DATABASE, named("region_0807b490", 512), dump),
+        (DATABASE, named("pending_slots", 512), dump),
         (
             DATABASE,
             table(vec![segment(
@@ -3082,7 +2812,6 @@ fn json_fixtures() -> Vec<Fixture> {
                 512,
                 json!({}),
             )]),
-            true,
             dump,
         ),
         (
@@ -3090,49 +2819,38 @@ fn json_fixtures() -> Vec<Fixture> {
             document(
                 json!({"name": "inventory_counter_slots", "element": "u8", "bytes": bytes(512)}),
             ),
-            true,
             dump,
         ),
-        (DATABASE, document(floats), true, dump),
-        (STREAMS, document(decoded), true, dump),
+        (DATABASE, document(floats), dump),
+        (STREAMS, document(decoded), dump),
         (
             STREAMS,
             document(json!({"format": 1, "streams": hashed})),
-            true,
             dump,
         ),
-        (RESIDUAL, document(residual), true, dump),
-        (RUNTIME, table(vec![pending]), true, None),
-        (RUNTIME, table(vec![required]), true, dump),
-        (RUNTIME, table(vec![stream]), true, dump),
-        (RUNTIME, table(vec![fill]), true, dump),
-        (RUNTIME, table(vec![envelope]), true, None),
-        ("recon/tbs/assets.json", document(package), true, dump),
-        (
-            "tools/alchemy/src/rom.json",
-            document(bytes(256)),
-            true,
-            dump,
-        ),
+        (RESIDUAL, document(residual), dump),
+        (RUNTIME, table(vec![pending]), dump),
+        (RUNTIME, table(vec![required]), dump),
+        (RUNTIME, table(vec![stream]), dump),
+        (RUNTIME, table(vec![fill]), dump),
+        (RUNTIME, table(vec![envelope]), None),
+        ("recon/tbs/package.json", document(package), dump),
+        ("tools/alchemy/src/rom.json", document(bytes(256)), dump),
         (
             DATABASE,
             b"{\"values\": [1, 2,]}\n".to_vec(),
-            true,
             Some("does not parse"),
         ),
     ]
 }
 fn check_fixtures() -> Result<(), String> {
-    let tbs = vec!["THE BROKEN SEAL".to_string()];
-    let both = vec!["THE BROKEN SEAL".to_string(), "THE LOST AGE".to_string()];
     let logo = logo_fixture();
     let fixtures = binary_fixtures()
         .into_iter()
         .chain(text_fixtures())
         .chain(json_fixtures());
-    for (path, data, manifested, expected) in fixtures {
-        let manifests = if manifested { &both } else { &tbs };
-        let actual = publication_reason(path, &data, manifests, Some(&logo));
+    for (path, data, expected) in fixtures {
+        let actual = publication_reason(path, &data, Some(&logo));
         let holds = match expected {
             Some(fragment) => actual.is_some_and(|reason| reason.contains(fragment)),
             None => actual.is_none(),
@@ -3172,6 +2890,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         ".cmatch-fresh/result.s",
         "games/THE BROKEN SEAL/PREVIEW/title.png",
         "recon/tbs/raw/080000c0.s~",
+        "recon/tbs/assets.json",
         "docs/README.md",
         "CONTRIBUTING.md",
         "CLAUDE.md",
@@ -3191,12 +2910,10 @@ fn self_test(root: &Path) -> Result<(), String> {
         "src/main.c",
         "README.md",
         "AGENTS.md",
-        "recon/tbs/raw/080000c0.s",
         "PROGRESS.png",
         "PROGRESS_CHART.png",
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
         "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
-        "recon/tbs/assets.json",
         "tools/compare-roms/src/main.rs",
         "tools/alchemy/src/build_full.rs",
         "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON",
@@ -3315,6 +3032,186 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn editable_sources_need_no_calculated_asset_catalog() {
+        use serde_json::json;
+        for (path, data) in [
+            (
+                "games/THE BROKEN SEAL/SRC/FIELD/RUNPA/MAP.JSON",
+                json!({"music":"RunpaTheme", "weather":"sunny", "events":[
+                    {"actor":"Guard", "x":4, "y":8, "script":"OpenGate"}
+                ]})
+                .to_string()
+                .into_bytes(),
+            ),
+            (
+                "games/THE BROKEN SEAL/SRC/GRAPHICS/SIGN.JSON",
+                json!({"codec":"golden-sun-general-lz", "window":4096, "tile_order":"row-major"})
+                    .to_string()
+                    .into_bytes(),
+            ),
+            (
+                "games/THE LOST AGE/MAIN.LD",
+                b"MEMORY { ROM (rx) : ORIGIN = 0x08000000, LENGTH = 32M }\nSoundMixer = 0x081c0000;\n"
+                    .to_vec(),
+            ),
+            (
+                "games/THE LOST AGE/BUILD.MK",
+                b"GAME_OBJECTS := BATTLE/START.o FIELD/EVENT.o\n".to_vec(),
+            ),
+            (
+                "games/THE LOST AGE/INCLUDE/LINK.H",
+                b"extern int Data_081c0000;\n#define BufferAddress 0x02000000\n".to_vec(),
+            ),
+            (
+                "games/THE LOST AGE/SRC/SYSTEM/MACHINE.S",
+                b".syntax unified\n.thumb\n.global CallRoutine\nCallRoutine:\n bx r0\n"
+                    .to_vec(),
+            ),
+            (
+                "games/THE BROKEN SEAL/TEXT/EN.PO",
+                b"msgid \"000001\"\nmsgstr \"Open the gate.\"\n".to_vec(),
+            ),
+        ] {
+            assert_eq!(publication_reason(path, &data, None), None, "{path}");
+        }
+    }
+
+    #[test]
+    fn calculated_ledgers_and_saved_answers_fail_after_renaming_or_splitting() {
+        use serde_json::json;
+        for value in [
+            json!({"decoded_sha256": crate::compiler::sha256::hex(b"synthetic input")}),
+            json!({"objects":[{"source":"FIELD/EVENT.C", "address":"0x08000100", "size":32}]}),
+            json!({"owners":{"main:08000100":{"name":"Field_Event"}}}),
+            json!({"symbols":[{"name":"Field_Event", "address":"0x08000100"}]}),
+            json!({"decoded_size":32,"encoded_size":16}),
+            json!({"tables":{"0x08000100":{"name":"action_modes","element":"u8","values":[1,2]}}}),
+        ] {
+            let data = value.to_string();
+            for path in [
+                "recon/tbs/part.json",
+                "recon/tla/part.inc",
+                "tools/renamed.dat",
+            ] {
+                assert_eq!(
+                    publication_data_reason(path, data.as_bytes(), None),
+                    Some(GENERATED_REASON),
+                    "{path}: {value}"
+                );
+            }
+        }
+        let answers = json!({"codec":"golden-sun-kind2-lz", "frames":[
+            {"tokens":[2,[2,4]],"lookahead":"00"}
+        ]});
+        for path in [
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
+            "recon/tbs/renamed.inc",
+        ] {
+            assert_eq!(
+                publication_data_reason(path, answers.to_string().as_bytes(), None),
+                Some(COMPRESSION_ANSWER_REASON)
+            );
+        }
+        assert_eq!(
+            publication_data_reason("recon/tbs/part.tsv", b"source\tdecoded_sha256\n", None),
+            Some(GENERATED_REASON)
+        );
+        for path in [
+            "recon/tbs/private-inputs.json",
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TOKEN.TOKENS",
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/CHAR_COMMON.PNG",
+            "games/THE LOST AGE/SRC/DATA.BIN",
+        ] {
+            assert!(publication_path_reason(path).is_some(), "{path}");
+        }
+    }
+
+    #[test]
+    fn maintained_assembly_is_source_while_serialized_listings_are_not() {
+        let address = 0x0800_0100;
+        let listing = format!(
+            ".syntax unified\n.thumb\n.set sub_{address:08x}, 0x{address:08x}\n.global Func_{address:08x}\nFunc_{address:08x}:\n bx lr\n"
+        );
+        for path in ["recon/tbs/raw/routine.s", "games/X/SRC/ROUTINE.S"] {
+            assert_eq!(publication_reason(path, listing.as_bytes(), None), None);
+        }
+        let objdump = format!("{address:08x}: 4770 bx lr\n");
+        assert_eq!(
+            publication_data_reason("recon/tbs/raw/routine.s", objdump.as_bytes(), None),
+            None
+        );
+        let serialized = serde_json::json!({"listing": listing, "instructions": objdump});
+        assert_eq!(
+            publication_data_reason(
+                "recon/tbs/renamed.inc",
+                serialized.to_string().as_bytes(),
+                None
+            ),
+            Some(GENERATED_REASON)
+        );
+        let words = (0..NUMERIC_ELEMENTS_MAX + 1)
+            .map(|value| format!(".word 0x{value:08x}, 0x08000000, 0x08000100, 0x00000000\n"))
+            .collect::<String>();
+        assert_eq!(
+            publication_reason("recon/tbs/raw/table.s", words.as_bytes(), None),
+            None
+        );
+        let c = format!(
+            "extern int Data_{address:08x};\nint Func_{address:08x}(void)\n{{\n return (int)&Data_{address:08x};\n}}\n"
+        );
+        assert_eq!(publication_data_reason("game.c", c.as_bytes(), None), None);
+        let linker = format!("Data_{address:08x} = 0x{address:08x};\n");
+        assert_eq!(
+            publication_data_reason("LINK.LD", linker.as_bytes(), None),
+            None
+        );
+        let library = format!(
+            ".syntax unified\n.thumb\n.global MultiplyWords\nMultiplyWords:\n cmp r0, #0\n beq .L_{address:08x}\n bx lr\n.L_{address:08x}:\n bx lr\n"
+        );
+        assert_eq!(
+            publication_data_reason("LIBRARY.S", library.as_bytes(), None),
+            None
+        );
+        let global_alias = format!(
+            ".syntax unified\n.thumb\n.global Func_{address:08x}\nFunc_{address:08x}:\n bx lr\n"
+        );
+        assert_eq!(
+            publication_data_reason("LIBRARY.S", global_alias.as_bytes(), None),
+            None
+        );
+    }
+
+    #[test]
+    fn generated_bookkeeping_is_rejected_in_staged_tree_and_outgoing_history() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        git(root, &["init", "--quiet"], "publication fixture").unwrap();
+        let base = commit(
+            root,
+            &[("games/X/SRC/START.C", b"void Start(void) {}\n".to_vec())],
+        );
+        let path = root.join("recon/tbs/renamed.inc");
+        std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+        std::fs::write(&path, "{\"payload_sha256\":\"synthetic\"}\n").unwrap();
+        git(
+            root,
+            &["add", "recon/tbs/renamed.inc"],
+            "publication fixture",
+        )
+        .unwrap();
+        assert!(check_staged(root).unwrap_err().contains(GENERATED_REASON));
+        let tip = commit(root, &[]);
+        assert!(check_tree(root, Some(&tip))
+            .unwrap_err()
+            .contains(GENERATED_REASON));
+        let update = format!("refs/heads/cleanup {tip} refs/heads/cleanup {base}\n");
+        assert!(check_push(root, &update)
+            .unwrap_err()
+            .contains(GENERATED_REASON));
+    }
+
     #[test]
     fn history_only_merges_scan_the_whole_tree() {
         for (file, permitted) in [("README.md", true), ("UNOWNED.md", false)] {
@@ -3355,8 +3252,8 @@ mod tests {
         for owned in OWNED_DOCUMENTS {
             assert!(publication_path_reason(owned).is_none());
         }
-        assert!(inspected("staged", "agbcc".into(), ":agbcc".into(), true, &[]).is_none());
-        let foreign = inspected("staged", "vendor".into(), ":vendor".into(), true, &[]).unwrap();
+        assert!(inspected("staged", "agbcc".into(), ":agbcc".into(), true).is_none());
+        let foreign = inspected("staged", "vendor".into(), ":vendor".into(), true).unwrap();
         assert!(foreign
             .listing_reason
             .unwrap()
@@ -3488,7 +3385,7 @@ mod tests {
         }
         assert!(digest_key(&"9e".repeat(32)) && !digest_key("0x080c2a0a"));
         // Every JSON fixture is decided by this rule alone.
-        for (path, data, _, expected) in json_fixtures() {
+        for (path, data, expected) in json_fixtures() {
             let actual = json_byte_dump_reason(path, std::str::from_utf8(&data).unwrap());
             assert_eq!(actual.is_some(), expected.is_some(), "{path}: {actual:?}");
         }
@@ -3498,49 +3395,6 @@ mod tests {
     fn every_publication_rule_rejects_its_fixture_and_accepts_build_inputs() {
         check_fixtures().unwrap();
         self_test(crate::compiler::routing::root()).unwrap();
-    }
-    #[test]
-    fn reconstruction_scaffolding_keeps_its_game_outside_the_game_tree() {
-        assert_eq!(
-            manifest_games([
-                "recon/tbs/assets.json",
-                "recon/tbs/raw/assets.json",
-                "games/THE LOST AGE/recon/assets.json",
-            ]),
-            ["THE BROKEN SEAL", "THE LOST AGE"]
-        );
-        assert_eq!(
-            asset_game("recon/tla/raw/overlays/resource_64a_overlay.s"),
-            Some("THE LOST AGE")
-        );
-        assert_eq!(asset_game("recon/tla/semantic/regions.json"), None);
-        assert_eq!(asset_game("recon/tla/translation-units.json"), None);
-        let manifests = manifest_games(["recon/tla/assets.json"]);
-        assert!(manifestless_reason("recon/tla/raw/08007320.json", &manifests).is_none());
-        assert!(manifestless_reason("recon/tbs/raw/08007320.json", &manifests).is_some());
-        assert!(manifestless_reason("recon/tbs/translation-units.json", &[]).is_none());
-    }
-    #[test]
-    fn frozen_compression_debt_allows_removal_but_not_changed_answers() {
-        use serde_json::json;
-        let before =
-            json!({"codec":"golden-sun-kind2-lz","frames":[{"tokens":[2,[2,4]],"lookahead":"00"}]});
-        for mut after in [
-            before.clone(),
-            json!({"codec":"golden-sun-kind2-lz","frames":[{}]}),
-            json!({"codec":"golden-sun-kind2-lz","frames":[{"tokens":{"predictor":"lzss","exceptions":[]}}]}),
-        ] {
-            assert!(legacy_compression_projection(&before, &mut after, "", ""));
-            assert!(!compression_answers(&after, false));
-        }
-        for mut after in [
-            json!({"codec":"golden-sun-kind2-lz","frames":[{"tokens":[3,[2,4]]}]}),
-            json!({"codec":"golden-sun-kind2-lz","frames":[{"lookahead":"01"}]}),
-            json!({"codec":"golden-sun-general-lz","frames":[{"tokens":[2,[2,4]]}]}),
-            json!({"codec":"golden-sun-kind2-lz","frames":[{}, {"tokens":[2,[2,4]]}]}),
-        ] {
-            assert!(!legacy_compression_projection(&before, &mut after, "", ""));
-        }
     }
     #[test]
     fn compression_answers_are_rejected_independently_of_names_and_size() {
@@ -3622,167 +3476,10 @@ mod tests {
         assert_eq!(numeric_elements(fifteen.as_bytes()), 0);
         assert_eq!(numeric_elements(format!("[{fifteen}, 15]").as_bytes()), 16);
     }
-    fn native_fingerprint_fixture(game: &str, count: usize) -> serde_json::Value {
-        use crate::compiler::sha256;
-        use serde_json::{json, Map};
-        let source = format!("games/{game}/SRC/FIELD/COMMON/MAP.JSON");
-        let palette = format!("games/{game}/SRC/GRAPHICS/COMMON/PALETTE.JSON");
-        let still = format!("games/{game}/SRC/GRAPHICS/COMMON/STILL.JSON");
-        let compression = format!("games/{game}/SRC/GRAPHICS/COMMON/COMPRESSION.JSON");
-        let mut regions = Vec::new();
-        let mut inputs = Vec::new();
-        let mut bindings = Vec::new();
-        let mut layouts = Map::new();
-        for index in 0..count {
-            let address = format!("0x{:08x}", 0x0800_0100 + index * 4);
-            let decoded = sha256::hex(format!("synthetic decoded input {index}").as_bytes());
-            let encoded = sha256::hex(format!("synthetic encoded input {index}").as_bytes());
-            let section = if index % 2 == 0 {
-                decoded.clone()
-            } else {
-                format!("/recipes/{decoded}")
-            };
-            regions.push(json!({"address":address,"size":"0x4",
-                "kind":"golden-sun-general-lz","plan":compression,"plan_section":section,
-                "palette":{"kind":"le-u16-array","source":still,"pointer":format!("/palettes/{decoded}")}}));
-            inputs.push(
-                json!({"kind":"palette-table","source":palette,"pointer":format!("/tables/{decoded}"),
-                "region_address":address,"decoded_sha256":decoded,"encoded_sha256":encoded}),
-            );
-            bindings.push(json!({"address":address,"compression":compression,
-                "compression_section":decoded,"sources":[source]}));
-            layouts.insert(
-                index.to_string(),
-                json!({"source":source,
-                "source_pointer":format!("/maps/{index}"),"width":32,"height":32,
-                "payload_sha256":decoded}),
-            );
-        }
-        json!({"format":"camelot-style-golden-sun-native","regions":regions,
-            "private_inputs":inputs,"bindings":bindings,"layouts":layouts,
-            "reference_sha256":sha256::hex(b"synthetic reference")})
-    }
-    #[test]
-    fn native_registry_fingerprints_have_schema_scoped_digest_semantics() {
-        use serde_json::json;
-        for (id, game) in [("tbs", "THE BROKEN SEAL"), ("tla", "THE LOST AGE")] {
-            let path = format!("recon/{id}/private-inputs.json");
-            let document = native_fingerprint_fixture(game, DIGEST_RUNS_MAX + 1);
-            let text = document.to_string();
-            assert!(encoded_reason(&text, true)
-                .unwrap()
-                .contains("digest-sized"));
-            assert_eq!(publication_data_reason(&path, text.as_bytes(), None), None);
-            for outside in [
-                "recon/tbs/other.json",
-                "tools/alchemy/src/fingerprints.json",
-            ] {
-                assert!(publication_data_reason(outside, text.as_bytes(), None).is_some());
-            }
-            for field in ["format", "source", "region_address", "decoded_sha256"] {
-                let mut invalid = document.clone();
-                match field {
-                    "format" => invalid[field] = json!(1),
-                    "source" => {
-                        for input in invalid["private_inputs"].as_array_mut().unwrap() {
-                            input[field] = json!("elsewhere/MAP.JSON");
-                        }
-                    }
-                    "region_address" => {
-                        for input in invalid["private_inputs"].as_array_mut().unwrap() {
-                            input[field] = json!("0x07000000");
-                        }
-                    }
-                    _ => {
-                        for input in invalid["private_inputs"].as_array_mut().unwrap() {
-                            input[field] = json!(&input[field].as_str().unwrap()[..40]);
-                        }
-                    }
-                }
-                assert!(
-                    publication_data_reason(&path, invalid.to_string().as_bytes(), None).is_some(),
-                    "{id}: {field}"
-                );
-            }
-        }
-    }
-    #[test]
-    fn recognized_fingerprints_do_not_hide_payloads_or_duplicate_json_fields() {
-        use crate::compiler::sha256;
-        use serde_json::{json, Value};
-        let path = "recon/tbs/private-inputs.json";
-        let document = native_fingerprint_fixture("THE BROKEN SEAL", 1);
-        let chunks: Vec<_> = (0..=DIGEST_RUNS_MAX)
-            .map(|index| sha256::hex(format!("synthetic chunk {index}").as_bytes()))
-            .collect();
-        let base64: Vec<_> = (b'A'..=b'Z')
-            .chain(b'a'..=b'z')
-            .chain(b'0'..=b'9')
-            .chain(*b"+/")
-            .collect();
-        for payload in [
-            json!(chunks),
-            json!(encoded_fixture(&base64, 300, 4)),
-            json!(fixture_bytes(JSON_BYTE_ARRAY_MIN, 8)),
-        ] {
-            let mut hidden = document.clone();
-            hidden["private_inputs"][0]["payload"] = payload;
-            assert!(publication_data_reason(path, hidden.to_string().as_bytes(), None).is_some());
-        }
-        let mut disguised = document.clone();
-        disguised["private_inputs"][0]["decoded_sha256"] = json!(chunks);
-        assert!(publication_data_reason(path, disguised.to_string().as_bytes(), None).is_some());
-        // Escaped real fingerprints cannot provide credit for unrelated raw runs
-        // that JSON parsing would discard through duplicate object keys.
-        let mut duplicate = native_fingerprint_fixture("THE BROKEN SEAL", 0);
-        let rows: Vec<_> = chunks.iter().enumerate().map(|(index, chunk)| {
-            let known = sha256::hex(format!("synthetic fingerprint {index}").as_bytes());
-            let escaped = known.bytes().map(|byte| format!("\\u{:04x}", byte)).collect::<String>();
-            format!("{{\"kind\":\"grid\",\"source\":\"games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.JSON\",\"region_address\":\"0x08000100\",\"decoded_sha256\":\"{chunk}\",\"decoded_sha256\":\"{escaped}\"}}")
-        }).collect();
-        duplicate["regions"] = document["regions"].clone();
-        duplicate["private_inputs"] = Value::Null;
-        let text = duplicate.to_string().replace(
-            "\"private_inputs\":null",
-            &format!("\"private_inputs\":[{}]", rows.join(",")),
-        );
-        assert!(publication_data_reason(path, text.as_bytes(), None).is_some());
-        let logo = logo_fixture();
-        let hidden = [document.to_string().as_bytes(), &logo].concat();
-        assert_eq!(
-            publication_data_reason(path, &hidden, Some(&logo)),
-            Some(LOGO_REASON)
-        );
-    }
-    #[test]
-    fn compression_identifiers_require_plans_and_leave_the_plan_contents_scanned() {
-        use crate::compiler::sha256;
-        use serde_json::{json, Map, Value};
-        let path = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON";
-        let sections: Map<_, _> = (0..=DIGEST_RUNS_MAX).map(|index| {
-            (sha256::hex(format!("synthetic compression input {index}").as_bytes()),
-                json!({"format":1,"codec":"golden-sun-general-lz","decoded_size":32,"encoded_size":16}))
-        }).collect();
-        let mut document = Value::Object(sections);
-        assert_eq!(
-            publication_data_reason(path, document.to_string().as_bytes(), None),
-            None
-        );
-        let mut unknown = document.clone();
-        for plan in unknown.as_object_mut().unwrap().values_mut() {
-            *plan = json!("unexplained chunks");
-        }
-        assert!(publication_data_reason(path, unknown.to_string().as_bytes(), None).is_some());
-        document["section_1"] = json!({"values":fixture_bytes(JSON_BYTE_ARRAY_MIN, 9)});
-        assert_eq!(
-            publication_data_reason(path, document.to_string().as_bytes(), None),
-            Some(JSON_BYTE_DUMP_REASON)
-        );
-    }
     #[test]
     fn logo_hidden_in_filtered_pixels_is_found_after_decoding() {
         let logo = logo_fixture();
-        let (_, png, _, _) = binary_fixtures()
+        let (_, png, _) = binary_fixtures()
             .into_iter()
             .find(|(path, ..)| path.ends_with("/LOGO.INDEXED.PNG"))
             .unwrap();
@@ -3841,7 +3538,6 @@ mod tests {
         let inputs = commit(
             root,
             &[
-                ("games/X/recon/assets.json", b"{}\n".to_vec()),
                 ("games/X/SRC/GRAPHICS/TILE/A.4BPP.PNG", indexed_fixture(4)),
                 ("games/X/SOUND/SEQUENCE/A.MID", midi.clone()),
                 ("games/X/SRC/MAIN.C", b"void main(void) {}\n".to_vec()),
@@ -3872,16 +3568,16 @@ mod tests {
         );
         let update = format!("refs/heads/main {inputs} refs/heads/main {zero}\n");
         assert!(check_push(root, &update).is_ok());
-        let manifestless = commit(
+        let native_and_misplaced = commit(
             root,
             &[
                 ("games/Y/SOUND/SEQUENCE/A.MID", midi),
                 ("games/Y/Data/TABLE.JSON", b"{}\n".to_vec()),
             ],
         );
-        let error = check_tree(root, Some(&manifestless)).unwrap_err();
-        assert!(error.contains("games/Y/SOUND/SEQUENCE/A.MID: game material without"));
-        assert!(error.contains("games/Y/Data/TABLE.JSON: game material without"));
+        let error = check_tree(root, Some(&native_and_misplaced)).unwrap_err();
+        assert!(!error.contains("games/Y/SOUND/SEQUENCE/A.MID:"));
+        assert!(error.contains("games/Y/Data/TABLE.JSON: game material must be an editable native"));
         assert!(!error.contains("games/X/SOUND"), "{error}");
     }
     #[test]

@@ -34,20 +34,13 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
   extract OWNER         extract reference bytes for psynergy decompile\n\
   inspect OWNER         resolve calls and symbols; --asm shows annotated instructions, --siblings twins\n\
-  score SOURCE          compile through the approved route and compare the owner\n\
-  adopt OWNER           verify and integrate candidate C\n\
-  unit                  scaffold or flatten translation units\n\
-  cross-edition         compare historical editions\n\
   build                 build compilers, ROM stages, assets or allocator dumps\n\
   verify                the landing gate: every make verify gate in waves, one line each\n\
   coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
-  dashboard             serve live coverage on localhost:4650\n\
-  targets               every not-yet-C owner by size, with its draft, difference and wall\n\
-  land BRANCH...        merge lane branches in a landing worktree, prove and squash-commit them\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames\n\
-  overlay               trial, try, draft and adopt overlay owners; park, audit, export";
+  build native          compile whole sources with an explicit linker script";
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();
@@ -57,6 +50,14 @@ fn main() -> ExitCode {
         return ExitCode::from(2);
     };
     let rest = &arguments[1..];
+    if matches!(
+        command,
+        "adopt" | "unit" | "overlay" | "land" | "score" | "targets" | "cross-edition" | "dashboard"
+    ) {
+        return result(Err(format!(
+            "{command} used the removed owner/translation-unit catalogs; use maintained source and Make/linker rules"
+        )));
+    }
     match command {
         "bootstrap" => result(bootstrap::run(rest)),
         "unit" if rest.first().map(String::as_str) == Some("scaffold") => {

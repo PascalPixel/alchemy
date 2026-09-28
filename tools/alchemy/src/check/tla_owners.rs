@@ -395,6 +395,7 @@ fn assemble_main(
 ) -> Result<(), String> {
     let rom = std::fs::canonicalize(rom).map_err(|error| format!("{}: {error}", rom.display()))?;
     let options = crate::build_asm::Options {
+        target: target.id,
         rom: rom.to_string_lossy().into_owned(),
         output: format!("{}/owners/asm", target.output_dir),
         source: None,

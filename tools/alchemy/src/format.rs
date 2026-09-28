@@ -14,12 +14,6 @@ pub const NATIVE_ROOTS: [&str; 9] = [
     "games/THE BROKEN SEAL/SOUND",
     "games/THE BROKEN SEAL/TEXT",
 ];
-/// Reconstruction registries under `recon/` keep the same canonical JSON
-/// under their lowercase scaffolding names.
-pub const RECONSTRUCTION_JSON: [&str; 2] = [
-    "recon/tla/private-inputs.json",
-    "recon/tbs/private-inputs.json",
-];
 
 /// Rewrite, or under `check` record, one JSON file that is not canonical.
 fn canonical_file(
@@ -184,16 +178,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             canonical_file(path, name, check, &mut changed)?;
             count += 1;
         }
-    }
-    for name in RECONSTRUCTION_JSON {
-        let path = root().join(name);
-        if !exact_file(&path) {
-            return Err(format!(
-                "reconstruction registry must exist with exact spelling: {name}"
-            ));
-        }
-        canonical_file(&path, name, check, &mut changed)?;
-        count += 1;
     }
     if !changed.is_empty() {
         return Err(format!(

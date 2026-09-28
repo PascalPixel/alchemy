@@ -576,13 +576,13 @@ mod tests {
         assert!(LzMachine::of(&invalid).is_err());
     }
     #[test]
-    fn both_games_record_one_lz_machine() {
+    fn missing_machine_ledgers_do_not_supply_encoder_settings() {
         use crate::targets::{target_for, DecompTargetId};
-        let root = repository_root();
-        let tbs = crate::build_assets::target_lz_machine(&root, &target_for(DecompTargetId::TbsEn));
-        let tla = crate::build_assets::target_lz_machine(&root, &target_for(DecompTargetId::TlaEn));
-        assert!(tbs.is_ok(), "{tbs:?}");
-        assert_eq!(tbs, tla);
+        let root = tempfile::tempdir().unwrap();
+        for target in [DecompTargetId::TbsEn, DecompTargetId::TlaEn].map(target_for) {
+            let error = crate::build_assets::target_lz_machine(root.path(), &target).unwrap_err();
+            assert!(error.contains(target.asset_manifest), "{error}");
+        }
     }
     /// Palette LZ at `at` of a sequence with distinct byte pairs, except for a
     /// two-byte copy at `at` (distance 100), a three-byte copy at `at + 1`

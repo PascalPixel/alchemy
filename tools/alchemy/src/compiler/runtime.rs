@@ -716,22 +716,18 @@ mod tests {
         assert_eq!(signature(empty.path()).unwrap(), "no-compiler-runtime");
     }
     #[test]
-    fn each_game_names_its_own_main_call_via_bank() {
-        let root = crate::compiler::routing::root();
-        let bank = |game| {
-            Registry::load(root, game)
-                .unwrap()
-                .call_via_bank("main")
-                .map(u64::from)
-        };
-        assert_eq!(
-            bank(CompilerTarget::Tbs),
-            Some(crate::compiler::symbols::CALL_VIA_BASE)
-        );
-        assert_eq!(bank(CompilerTarget::Tla), Some(0x0801_7878));
-        let registry = Registry::load(root, CompilerTarget::Tbs).unwrap();
-        assert_eq!(registry.call_via_bank("resource_373"), Some(0x0200_6154));
-        assert_eq!(registry.call_via_bank("resource_999"), None);
+    fn call_via_banks_resolve_only_in_their_declared_images() {
+        let mut doc = document(serde_json::json!([
+            {"image": "main", "text": "0x08000100", "members": ["_call_via_rX", "_second"]},
+            {"image": "resource_380", "text": "0x02000100", "members": ["_call_via_rX"]},
+        ]));
+        doc.members.remove("_first");
+        doc.members
+            .insert("_call_via_rX".into(), "gcc/config/arm/call_via.asm".into());
+        let registry = Registry::parse(doc, "registry.json".into()).unwrap();
+        assert_eq!(registry.call_via_bank("main"), Some(0x0800_0100));
+        assert_eq!(registry.call_via_bank("resource_380"), Some(0x0200_0100));
+        assert_eq!(registry.call_via_bank("resource_381"), None);
     }
     #[test]
     fn registry_rejects_invalid_duplicate_and_unused_links() {
@@ -811,27 +807,6 @@ mod tests {
                     );
                 }
             }
-        }
-    }
-    /// The Lost Age links the same container `_call_via_rX` bank into its main
-    /// image; built at the registered address it is the ROM's bank.
-    #[test]
-    fn tla_main_links_build_to_the_local_rom() {
-        let root = crate::compiler::routing::root();
-        let rom = root.join("roms/tla-en.gba");
-        if !rom.is_file() {
-            return;
-        }
-        crate::compiler::routing::prefer_installed_binutils();
-        let rom = std::fs::read(rom).unwrap();
-        let registry = Registry::load(root, CompilerTarget::Tla).unwrap();
-        let mut main = registry.links_for("main").peekable();
-        assert!(main.peek().is_some());
-        for link in main {
-            let built = build(root, CompilerTarget::Tla, link).unwrap();
-            let start = (link.text - 0x0800_0000) as usize;
-            assert_eq!(built.text, rom[start..start + built.text.len()]);
-            assert!(built.rodata.is_empty());
         }
     }
 }

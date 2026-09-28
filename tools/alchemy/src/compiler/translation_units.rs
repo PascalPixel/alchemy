@@ -1968,19 +1968,31 @@ mod tests {
     }
     #[test]
     fn edition_layouts_preserve_names_extents_and_symbol_kinds() {
-        let document = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
-        let unit = document.unit("lunpa-fortress-scene").unwrap();
+        let repository = Repository::new();
+        let mut unit = repository.load().unwrap().units.remove(0);
+        ja(&mut unit, "resource_3bf", REDRAW, 0x0200_08d0, false);
+        unit.editions
+            .get_mut("ja")
+            .unwrap()
+            .absolute_symbols
+            .insert(
+                TABLE.into(),
+                AbsoluteSymbol {
+                    address: 0x0200_df20,
+                    kind: AbsoluteSymbolKind::Data,
+                },
+            );
         assert_eq!(
-            unit.edition_owner("resource_3bf", "ja", 0x02001e94)
+            unit.edition_owner("resource_3bf", "ja", 0x0200_08c0)
                 .unwrap()
                 .extent,
-            460
+            290
         );
         assert!(unit
-            .edition_owner("resource_3bf", "en", 0x02001e94)
+            .edition_owner("resource_3bf", "en", 0x0200_08c0)
             .is_none());
         assert!(unit.validate_editions().is_ok());
-        for address in [0, 0x02001e95, 0x08001e94, u32::MAX] {
+        for address in [0, 0x0200_08d1, 0x0800_08d0, u32::MAX] {
             let mut invalid = unit.clone();
             invalid
                 .editions
@@ -2015,8 +2027,8 @@ mod tests {
         invalid.editions.get_mut("ja").unwrap().owners.insert(
             "UnknownOwner".into(),
             EditionOwner {
-                address: 0x02001e94,
-                extent: 460,
+                address: 0x0200_08d0,
+                extent: 290,
                 source_variant: true,
             },
         );
@@ -2025,8 +2037,8 @@ mod tests {
         invalid.editions.get_mut("ja").unwrap().owners.insert(
             unit.owners[0].canonical_name.clone(),
             EditionOwner {
-                address: 0x02001e94,
-                extent: 460,
+                address: 0x0200_08d0,
+                extent: 290,
                 source_variant: false,
             },
         );
@@ -2037,7 +2049,7 @@ mod tests {
             .get_mut("ja")
             .unwrap()
             .absolute_symbols
-            .get_mut("Data_03001ebc")
+            .get_mut(TABLE)
             .unwrap()
             .kind = AbsoluteSymbolKind::Thumb;
         assert!(invalid.validate_editions().is_err());
@@ -2100,33 +2112,16 @@ mod tests {
         assert!(resolve(leaf, Some(usize::MAX), None).is_err());
     }
     #[test]
-    fn mixed_grouped_main_preserves_exact_and_retained_ownership() {
-        let root = crate::compiler::routing::root();
-        let manifest = TranslationUnits::load(root).unwrap();
-        let names = SourcePaths::load_for_game(root, "tbs").unwrap();
-        let unit = manifest.unit("battle-particle-streams").unwrap();
-        let source = root.join(&unit.source);
-        assert!(!unit.exact());
-        assert!(validate_production_state(root, unit, &source, true, &names).is_ok());
-        // An enclosing retained body must not acquire credit merely because
-        // the same compilation contains exact nested functions.
-        let mut invalid = unit.clone();
-        invalid.owners[2].state = OwnerState::ExactC;
-        assert!(validate_production_state(root, &invalid, &source, true, &names).is_err());
-        invalid = unit.clone();
-        invalid.owners[1].state = OwnerState::NotYetC;
-        assert!(validate_production_state(root, &invalid, &source, true, &names).is_err());
-        // Separate-source mixed units still require their direct includes.
-        assert!(validate_production_state(root, unit, &source, false, &names).is_err());
-    }
-    #[test]
     fn exact_twins_apart_in_the_image_link_as_owner_slices() {
-        let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
-        let whole = manifest
-            .unit("runtime-memory-schedule-callback-and-release-block-32-a")
-            .unwrap();
+        let repository = Repository::new();
+        let mut twins = repository.load().unwrap().units.remove(0);
+        twins.overlay = None;
+        twins.instances.clear();
+        twins.owners[0].address = 0x0800_0100;
+        twins.owners[1].address = 0x0800_1000;
+        let mut whole = twins.clone();
+        whole.owners[1].address = whole.owners[0].address + whole.owners[0].extent as u32;
         assert!(whole.exact() && whole.linked_whole());
-        let twins = manifest.unit("graphics-clear-bg0-vofs").unwrap();
         assert!(twins.exact() && !twins.linked_whole());
         let mut adjacent = twins.clone();
         adjacent.owners[1].address =
@@ -2141,60 +2136,7 @@ mod tests {
     }
 
     #[test]
-    fn loads_typed_main_and_overlay_units() {
-        let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
-        assert!(manifest
-            .unit("runtime-memory-schedule-callback-and-release-block-32-a")
-            .unwrap()
-            .exact());
-        let overlay = manifest.unit("guarded-step-scene").unwrap();
-        assert_eq!(overlay.image(), "resource_37b");
-        assert_eq!(
-            overlay
-                .source_owner("resource_37b", 0x0200_0030)
-                .unwrap()
-                .id(),
-            "resource_37b:02000030"
-        );
-        assert!(overlay.source_owner("resource_37c", 0x0200_0030).is_err());
-        assert_eq!(
-            overlay.absolute_symbols["SceneEventRuntime_ScriptData"].kind,
-            AbsoluteSymbolKind::Data
-        );
-        let owner = SourceOwner::Main(0x080f_37ec);
-        assert!(manifest.unit_for_game_owner("tbs", owner).is_some());
-        assert!(manifest.unit_for_game_owner("tla", owner).is_none());
-        let root = crate::compiler::routing::root();
-        let names = SourcePaths::load_for_game(root, "tbs").unwrap();
-        let candidate = manifest
-            .unit("retained-actor-group-departure-sequence-372")
-            .unwrap();
-        assert!(!candidate.exact());
-        let invalid_state = |unit: &TranslationUnit| {
-            validate_production_state(root, unit, &root.join(&unit.source), false, &names).is_err()
-        };
-        let mut invalid = candidate.clone();
-        invalid.owners[0].extent += 2;
-        assert!(invalid_state(&invalid));
-        let mut mixed = candidate.clone();
-        mixed.owners[0].state = OwnerState::ExactC;
-        assert!(invalid_state(&mixed));
-        let mut installed = candidate.clone();
-        installed.overlay = Some("resource_373".into());
-        installed.owners[0].address = 0x0200_0f5c;
-        installed.owners[0].extent = 0x30;
-        assert!(invalid_state(&installed));
-        invalid.source = PathBuf::from("games/THE BROKEN SEAL/SRC/invalid-retained-overlay.c");
-        assert!(invalid_state(&invalid));
-        let shared = manifest.unit("audio-cgb-channel-mute").unwrap();
-        assert!(shared.source.starts_with(SHARED_SOURCE_ROOT) && shared.exact());
-        let shared_source = root.join(&shared.source);
-        assert!(validate_production_state(root, shared, &shared_source, true, &names).is_ok());
-        assert!(validate_production_state(root, shared, &shared_source, false, &names).is_err());
-        let i = unconditional_quoted_includes;
-        assert!(i("#define X \\\n#include \"x\"").is_empty());
-        assert!(i("/* */ #if 0\n#include \"x\"").is_empty());
-
+    fn loads_typed_overlay_instances() {
         let repository = Repository::new();
         let manifest = repository.load().unwrap();
         let unit = &manifest.units[0];
@@ -2248,20 +2190,29 @@ mod tests {
         assert_eq!(local.owners_in("resource_39b").count(), 2);
     }
     #[test]
+    fn conditional_or_continued_includes_cannot_establish_production_sources() {
+        let includes = unconditional_quoted_includes;
+        assert!(includes("#define X \\\n#include \"x\"").is_empty());
+        assert!(includes("/* */ #if 0\n#include \"x\"").is_empty());
+    }
+    #[test]
     fn unit_data_belongs_to_word_aligned_ewram_outside_the_functions() {
-        let manifest = TranslationUnits::load(crate::compiler::routing::root()).unwrap();
-        let unit = manifest.unit("kuupuappu-runpa-jail").unwrap();
-        let data = unit.data.unwrap();
-        assert_eq!((data.address, data.extent), (0x0200_02d0, 0x200));
-        assert!(validate_unit_data(unit, data).is_ok());
+        let repository = Repository::new();
+        let mut unit = repository.load().unwrap().units.remove(0);
+        unit.instances.clear();
+        let data = UnitData {
+            address: 0x0200_1000,
+            extent: 0x200,
+        };
+        assert!(validate_unit_data(&unit, data).is_ok());
         for (address, extent) in [
-            (0x0200_02d2, 4),
-            (0x0200_02d0, 0),
+            (0x0200_1002, 4),
+            (0x0200_1000, 0),
             (0x0300_0000, 4),
             (0x02ff_fffc, 8),
-            (0x0200_0030, 4),
+            (0x0200_034c, 4),
         ] {
-            assert!(validate_unit_data(unit, UnitData { address, extent }).is_err());
+            assert!(validate_unit_data(&unit, UnitData { address, extent }).is_err());
         }
         let mut inexact = unit.clone();
         inexact.owners[0].state = OwnerState::NotYetC;

@@ -11,7 +11,7 @@ use unicode_normalization::UnicodeNormalization;
 const ROM_BASE: u32 = 0x0800_0000;
 const BANK_SIZE: usize = 256;
 
-#[derive(Clone, Debug, serde::Deserialize)]
+#[derive(Clone, Debug)]
 pub(crate) struct ArchiveSpec {
     pub target: &'static str,
     pub language: &'static str,
@@ -20,52 +20,147 @@ pub(crate) struct ArchiveSpec {
     pub contexts: u32,
     pub directory: u32,
     pub rom_sha256: &'static str,
-    pub japanese: bool,
-    #[serde(default)]
-    pub characters: Option<String>,
+    pub characters: Option<&'static str>,
 }
 
-pub(crate) static ARCHIVES: std::sync::LazyLock<Vec<ArchiveSpec>> =
-    std::sync::LazyLock::new(|| {
-        [
-            include_str!("../../../recon/tbs/text.json"),
-            include_str!("../../../recon/tla/text.json"),
-        ]
-        .into_iter()
-        .flat_map(|text| {
-            serde_json::from_str::<Vec<ArchiveSpec>>(text).expect("valid text layout metadata")
-        })
-        .inspect(|spec| {
-            assert_eq!(
-                spec.japanese,
-                spec.characters.is_some(),
-                "{} character map",
-                spec.target
-            )
-        })
-        .collect()
-    });
+/// Edition layouts and approved ROM identities; the alphabets map font slots,
+/// retaining unused and duplicate glyphs for lossless PO conversion.
+pub(crate) static ARCHIVES: [ArchiveSpec; 12] = [
+    ArchiveSpec {
+        target: "tbs-ja",
+        language: "ja",
+        rom: "roms/tbs-ja.gba",
+        output: "games/THE BROKEN SEAL/TEXT/JA.PO",
+        contexts: 0x0803_bb68,
+        directory: 0x0806_c040,
+        rom_sha256: "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26",
+        characters: Some(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿名前中武器長剣発動呪使水火風地毒見宝石町行炎船海氷道具島男女力土大上玉山気目入口岩天空防母北戦手出下品同死木像以宮村東南森西灯台寺分先遺跡立人方時様主者陸説明士世光知伝金売客商屋子×年兄川官錬日民父冬古代夜雪春「」草原黄文○"),
+    },
+    ArchiveSpec {
+        target: "tbs-en",
+        language: "en",
+        rom: "roms/tbs-en.gba",
+        output: "games/THE BROKEN SEAL/TEXT/EN.PO",
+        contexts: 0x0803_842c,
+        directory: 0x0807_36b8,
+        rom_sha256: "c14f1151897e8d73f25ffdd67e21eebb6dc57973ff2458872ee89fa9060aaca1",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tbs-de",
+        language: "de",
+        rom: "roms/tbs-de.gba",
+        output: "games/THE BROKEN SEAL/TEXT/DE.PO",
+        contexts: 0x0803_74a8,
+        directory: 0x0807_a618,
+        rom_sha256: "d7a61803600a002bc80be8063a7d8d281bc77c2261cfb812cea552d3f95f3dd1",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tbs-es",
+        language: "es",
+        rom: "roms/tbs-es.gba",
+        output: "games/THE BROKEN SEAL/TEXT/ES.PO",
+        contexts: 0x0803_7884,
+        directory: 0x0807_3210,
+        rom_sha256: "c067f04d05a65677eca3b8e3609a6ef9b86898604ef252ccf54c2b41d49f2eb8",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tbs-fr",
+        language: "fr",
+        rom: "roms/tbs-fr.gba",
+        output: "games/THE BROKEN SEAL/TEXT/FR.PO",
+        contexts: 0x0803_7634,
+        directory: 0x0807_3914,
+        rom_sha256: "5eb59f508c25548fb0ef72911cc75a81867f16b0ef8fca2a22cb6d026a862cd8",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tbs-it",
+        language: "it",
+        rom: "roms/tbs-it.gba",
+        output: "games/THE BROKEN SEAL/TEXT/IT.PO",
+        contexts: 0x0803_8504,
+        directory: 0x0807_2b20,
+        rom_sha256: "fc6ef60c1c271de7352be610eb4dca29ab5edea1e4b33f05a548a65f522a452d",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tla-ja",
+        language: "ja",
+        rom: "roms/tla-ja.gba",
+        output: "games/THE LOST AGE/TEXT/JA.PO",
+        contexts: 0x0806_4c3c,
+        directory: 0x0809_cf40,
+        rom_sha256: "19dd48b74726f323cd829e226b60aa1b373c51fb2e840804efe2d2dc2891a890",
+        characters: Some(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿後名前黄金太陽開封印失時代力手武器長剣発動呪使水火風地毒見宝石中炎船海氷道具灯台運光様目下山男女土大上玉気左右入口岩天空防母行北戦出品同以死木像人先島陸小村寺高原町遺跡東西南古屋頂通信世界錬文明者年日士兄「」生知方売客商子主王父一官白茶×説分今立川伝森○…足夜買門冬雪月民宮春多草床正店星城外絵心闘体"),
+    },
+    ArchiveSpec {
+        target: "tla-en",
+        language: "en",
+        rom: "roms/tla-en.gba",
+        output: "games/THE LOST AGE/TEXT/EN.PO",
+        contexts: 0x0806_0c30,
+        directory: 0x080a_9f54,
+        rom_sha256: "4199d82f845edf3e2e92f3783bca00190b5bc102d7c8aa339b951de280b1e6cc",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tla-de",
+        language: "de",
+        rom: "roms/tla-de.gba",
+        output: "games/THE LOST AGE/TEXT/DE.PO",
+        contexts: 0x0806_1024,
+        directory: 0x080b_70cc,
+        rom_sha256: "993cfc34b6b28f6a9bfb135dc04023ee2b64693841ce90ab89536b97fbb4afed",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tla-es",
+        language: "es",
+        rom: "roms/tla-es.gba",
+        output: "games/THE LOST AGE/TEXT/ES.PO",
+        contexts: 0x0806_0f10,
+        directory: 0x080a_8e40,
+        rom_sha256: "c6bb68229971c36febe8bdf5081a4aa658c5c5417a2f4d3c7e0c3762c3ecb18a",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tla-fr",
+        language: "fr",
+        rom: "roms/tla-fr.gba",
+        output: "games/THE LOST AGE/TEXT/FR.PO",
+        contexts: 0x0806_0f08,
+        directory: 0x080a_8c58,
+        rom_sha256: "8f9a854618332d4a2886170a03ab0b10624d1202ea8562dabf0002807f7b56a8",
+        characters: None,
+    },
+    ArchiveSpec {
+        target: "tla-it",
+        language: "it",
+        rom: "roms/tla-it.gba",
+        output: "games/THE LOST AGE/TEXT/IT.PO",
+        contexts: 0x0806_0c2c,
+        directory: 0x080a_2f9c,
+        rom_sha256: "7f3fbb2ee3e493784e63069899b5a53cf79742cb1a64560094c570b0ed3a05c2",
+        characters: None,
+    },
+];
 
-/// The sha256 of an edition's reference ROM as `recon/<game>/text.json`
-/// under `root` registers it: the one tracked record of each ROM's identity.
-pub(crate) fn reference_sha256(root: &Path, target: &str) -> Result<String, String> {
-    let game = target.split('-').next().unwrap_or_default();
-    let path = format!("recon/{game}/text.json");
-    let text = fs::read_to_string(root.join(&path)).map_err(|e| format!("{path}: {e}"))?;
-    let specs: Vec<serde_json::Value> =
-        serde_json::from_str(&text).map_err(|e| format!("{path}: {e}"))?;
-    specs
+/// The approved reference identity is independent of local extraction output.
+pub(crate) fn reference_sha256(_root: &Path, target: &str) -> Result<String, String> {
+    ARCHIVES
         .iter()
-        .find(|spec| spec["target"] == target)
-        .and_then(|spec| spec["rom_sha256"].as_str())
-        .map(str::to_owned)
-        .ok_or_else(|| format!("{path} registers no reference ROM for {target}"))
+        .find(|spec| spec.target == target)
+        .map(|spec| spec.rom_sha256.to_owned())
+        .ok_or_else(|| format!("no approved reference ROM for {target}"))
 }
-/// Refuse `rom` unless it is `target`'s registered reference ROM.
+/// Refuse `rom` unless it is `target`'s approved reference ROM.
 pub(crate) fn verify_reference(root: &Path, target: &str, rom: &[u8]) -> Result<(), String> {
     if crate::compiler::sha256::hex(rom) != reference_sha256(root, target)? {
         return Err(format!(
-            "ROM differs from the {target} reference ROM text.json registers"
+            "ROM differs from the approved {target} reference ROM"
         ));
     }
     Ok(())
@@ -728,7 +823,7 @@ mod tests {
             0x28, 0xc3, 0xde, 0xb0, 0xc0, 0x96, 0xde, 0x9a, 0xfc, 0xfa, 0xe3, 0x92, 0xef, 0x9d,
             0x29,
         ];
-        for spec in ARCHIVES.iter().filter(|spec| spec.japanese) {
+        for spec in ARCHIVES.iter().filter(|spec| spec.characters.is_some()) {
             let characters = spec.characters.as_deref();
             let text = symbols_text(&symbols, characters);
             assert_eq!(text, "(データがこわれています)");
@@ -770,7 +865,7 @@ mod tests {
             }
         }
         for spec in ARCHIVES.iter() {
-            assert_eq!(spec.characters.is_some(), spec.japanese);
+            assert_eq!(spec.characters.is_some(), spec.language == "ja");
         }
     }
 
@@ -789,9 +884,64 @@ mod tests {
         let mut ids = ARCHIVES.iter().map(|spec| spec.target).collect::<Vec<_>>();
         ids.sort_unstable();
         ids.dedup();
+        assert_eq!(ARCHIVES.len(), ids.len());
         assert_eq!(ids.len(), crate::targets::TARGET_IDS.len());
-        for target in crate::targets::TARGET_IDS {
-            assert!(ids.contains(&target.as_str()));
+        let mut identities = std::collections::HashSet::new();
+        for id in crate::targets::TARGET_IDS {
+            let target = crate::targets::target_for(id);
+            let spec = ARCHIVES
+                .iter()
+                .find(|spec| spec.target == id.as_str())
+                .unwrap();
+            assert_eq!(spec.rom, target.rom);
+            assert_eq!(
+                spec.output,
+                format!(
+                    "{}/TEXT/{}.PO",
+                    target.game_dir(),
+                    spec.language.to_uppercase()
+                )
+            );
+            assert!(ROM_BASE <= spec.contexts && spec.contexts < spec.directory);
+            assert!(u64::from(spec.directory - ROM_BASE) < target.rom_size);
+            assert_eq!(spec.rom_sha256.len(), 64);
+            assert!(spec.rom_sha256.bytes().all(|byte| byte.is_ascii_hexdigit()));
+            assert!(identities.insert(spec.rom_sha256));
+        }
+    }
+
+    #[test]
+    fn local_metadata_cannot_authorize_a_different_reference_rom() {
+        let root = tempfile::tempdir().unwrap();
+        let manifest = root.path().join("recon/tbs/text.json");
+        fs::create_dir_all(manifest.parent().unwrap()).unwrap();
+        let wrong_rom = b"a local ROM is not an approved reference";
+        fs::write(
+            manifest,
+            serde_json::json!([{
+                "target": "tbs-en",
+                "rom_sha256": crate::compiler::sha256::hex(wrong_rom)
+            }])
+            .to_string(),
+        )
+        .unwrap();
+        let identity = reference_sha256(root.path(), "tbs-en").unwrap();
+        assert_ne!(identity, crate::compiler::sha256::hex(wrong_rom));
+        assert_eq!(identity, ARCHIVES[1].rom_sha256);
+        assert!(verify_reference(root.path(), "tbs-en", wrong_rom).is_err());
+    }
+
+    #[test]
+    fn reference_identity_requires_an_exact_registered_target() {
+        for target in ["", "tbs", "TBS-en", "tbs-en ", "tbs-us", "tla-us"] {
+            assert!(
+                reference_sha256(Path::new("."), target).is_err(),
+                "{target}"
+            );
+            assert!(
+                verify_reference(Path::new("."), target, b"").is_err(),
+                "{target}"
+            );
         }
     }
 }

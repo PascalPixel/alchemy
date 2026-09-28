@@ -5,6 +5,7 @@ pub(crate) mod bundle;
 mod bundle_data;
 mod call_via_data;
 pub(crate) mod canonical_json;
+pub(crate) mod native;
 pub(crate) mod no_asm;
 pub(crate) mod overlay;
 pub(crate) mod plan;

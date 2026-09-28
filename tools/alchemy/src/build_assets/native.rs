@@ -734,7 +734,7 @@ fn create_missing(path: &Path, bytes: &[u8]) -> Result<(), String> {
 }
 
 #[test]
-fn byte_inputs_extract_raw_contained_and_compressed_spans_by_digest() {
+fn byte_inputs_refuse_a_self_approved_reference_rom() {
     use psynergy::assets::lz::{encode_general, GeneralToken};
     let temp = tempfile::tempdir().unwrap();
     let root = temp.path();
@@ -766,7 +766,7 @@ fn byte_inputs_extract_raw_contained_and_compressed_spans_by_digest() {
         json!([{"target":target.id.as_str(),"rom_sha256":sha256::hex(&rom)}]).to_string(),
     )
     .unwrap();
-    let mut index = json!({
+    let index = json!({
         "format":"camelot-style-golden-sun-native",
         "regions":[
             {"address":"0x08000010","size":3,"kind":"u8-array","format":"binary","source":bin,"source_offset":0,"source_length":3},
@@ -780,27 +780,10 @@ fn byte_inputs_extract_raw_contained_and_compressed_spans_by_digest() {
             {"kind":"bytes","source":bin,"source_offset":7,"region_address":"0x08000040"}]});
     let paths = NativePaths::of(&target);
     document(root, &paths.index, &index).unwrap();
-    extract(root, &root.join("rom.gba"), &target).unwrap();
-    assert_eq!(
-        fs::read(root.join(&bin)).unwrap(),
-        [7, 8, 9, 1, 2, 3, 4, 5, 5, 5, 5, 6, 7]
-    );
-    // The generated index records each input's span as the ROM decodes it,
-    // for the registry it was extracted from.
-    let digests = private_digests(root, &target).unwrap().unwrap();
-    assert_eq!(
-        digests[&input_key(&index["private_inputs"][0])],
-        sha256::hex(&[7, 8, 9, 1, 2, 3, 4])
-    );
-    assert_eq!(
-        digests[&input_key(&index["private_inputs"][1])],
-        sha256::hex(&decoded)
-    );
-    // A moved span refuses extraction.
-    index["private_inputs"][1]["source_offset"] = json!(8);
-    document(root, &paths.index, &index).unwrap();
-    assert!(private_digests(root, &target).unwrap().is_none());
-    assert!(extract(root, &root.join("rom.gba"), &target).is_err());
+    let error = extract(root, &root.join("rom.gba"), &target).unwrap_err();
+    assert!(error.contains("approved tbs-en reference ROM"), "{error}");
+    assert!(!root.join(&bin).exists());
+    assert!(!root.join(private_index_path(&target)).exists());
 }
 #[test]
 fn restoring_missing_inputs_preserves_existing_edits() {

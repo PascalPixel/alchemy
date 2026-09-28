@@ -498,29 +498,28 @@ pub(super) mod tests {
         assert!(counted.validate().is_err());
     }
 
-    /// The committed records parse, validate and name each game's canonical
-    /// edition; they record a verification, never an interval list.
     #[test]
-    fn committed_records_are_valid() {
-        let root = crate::compiler::routing::root();
+    fn missing_records_withhold_independent_verification() {
+        let root = tempfile::tempdir().unwrap();
         for id in [
             crate::targets::DecompTargetId::TbsEn,
             crate::targets::DecompTargetId::TlaEn,
         ] {
             let target = crate::targets::target_for(id);
             let path = record_path(target);
-            let record = load(root, &path)
+            assert!(load(root.path(), &path).unwrap().is_none());
+            let mut candidate = document();
+            candidate["target"] = json!(target.id.as_str());
+            let checked = overlays(root.path(), target, &candidate).unwrap();
+            assert!(checked
+                .pending
                 .unwrap()
-                .unwrap_or_else(|| panic!("{path}"));
-            assert_eq!(record.verified.target, target.id.as_str(), "{path}");
-            let text = std::fs::read_to_string(root.join(&path)).unwrap();
-            let value: Value = serde_json::from_str(&text).unwrap();
-            let canonical = crate::compiler::canonical_json::canonical_json(&value);
-            assert_eq!(
-                text,
-                format!("{canonical}\n"),
-                "{path} is not canonical JSON"
-            );
+                .contains("no independent verification"));
+            assert_eq!(checked.provenance["overlays"], "unverified");
+            assert!(checked.provenance["verified_sha256"].is_null());
+            assert!(authenticate(root.path(), target, &candidate)
+                .unwrap_err()
+                .contains("no independent verification"));
         }
     }
 }

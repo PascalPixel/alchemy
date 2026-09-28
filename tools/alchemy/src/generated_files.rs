@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 /// Source code a game tree tracks beside its material; builds compile it.
-const CODE_EXTENSIONS: &[&str] = &["c", "h", "inc", "s"];
+const CODE_EXTENSIONS: &[&str] = &["c", "h", "inc", "s", "ld", "mk"];
 
 /// Match a filename against an anchored `*`/`?` glob.
 pub fn glob_matches(pattern: &str, name: &str) -> bool {
@@ -51,17 +51,10 @@ pub fn prune_files(
     Ok(removed)
 }
 
-/// The structured registries reconstruction tooling keeps under `recon/<game>`.
-const REGISTRY_EXTENSIONS: &[&str] = &["json", "tsv"];
-
 /// Whether a tracked file carries no game data by category, so no build needs
-/// to read it. Under `games/<game>/` only code is exempt; everything else there
-/// is game material: pictures, samples, music, text, maps, tables and their
-/// indexes. Under `recon/<game>/` the registries, drafts and metrics that
-/// describe the reconstruction are exempt too, but any other file there, such
-/// as a data package beside the retained listings, is material a build must
-/// read.
-fn carries_no_game_data(relative: &str, registries: bool) -> bool {
+/// to read it. Editable data has a consumer, including data under `recon/`.
+/// A file's extension never exempts a generated catalog from that requirement.
+fn carries_no_game_data(relative: &str) -> bool {
     let leaf = relative.rsplit('/').next().unwrap_or("");
     let suffix = leaf.rsplit_once('.').map_or("", |(_, suffix)| suffix);
     let is = |choices: &[&str]| {
@@ -70,7 +63,7 @@ fn carries_no_game_data(relative: &str, registries: bool) -> bool {
             .any(|choice| suffix.eq_ignore_ascii_case(choice))
     };
     // Code the builds compile.
-    leaf == ".gitkeep" || is(CODE_EXTENSIONS) || (registries && is(REGISTRY_EXTENSIONS))
+    leaf == ".gitkeep" || is(CODE_EXTENSIONS)
 }
 /// Tracked game material under `game_dir` (a `games/<game>` tree or its
 /// `recon/<game>` scaffolding) that is in no consumer's input set.
@@ -80,13 +73,14 @@ pub fn unconsumed_material(
     consumed: &BTreeSet<String>,
 ) -> Vec<String> {
     let prefix = format!("{game_dir}/");
-    let registries = game_dir.starts_with("recon/");
     tracked
         .into_iter()
         .filter_map(|path| {
             let path = path.as_ref();
             let game_relative = path.strip_prefix(&prefix)?;
-            (!carries_no_game_data(game_relative, registries) && !consumed.contains(path))
+            // Published progress is an intentional record, not a game input.
+            let progress = path == "recon/tbs/metrics/history.json";
+            (!progress && !carries_no_game_data(game_relative) && !consumed.contains(path))
                 .then(|| path.to_string())
         })
         .collect()
@@ -183,7 +177,14 @@ fn only_game_material_needs_a_consumer_and_exemptions_are_categories() {
     let consumed = BTreeSet::from(["recon/x/raw/battle/TABLE.BIN".to_string()]);
     assert_eq!(
         unconsumed_material(recon, "recon/x", &consumed),
-        ["recon/x/raw/PACKAGE.BIN", "recon/x/PORTRAIT.PNG"]
+        [
+            "recon/x/raw/manifest.json",
+            "recon/x/raw/overlays/resource_001_stream.lz.json",
+            "recon/x/raw/PACKAGE.BIN",
+            "recon/x/source-paths.json",
+            "recon/x/locations.tsv",
+            "recon/x/PORTRAIT.PNG",
+        ]
     );
 }
 #[test]

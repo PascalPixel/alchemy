@@ -236,24 +236,13 @@ mod tests {
     use crate::coverage::progress::GameDone;
     use serde_json::json;
     #[test]
+    #[ignore = "publication rendering reads font widths from the approved local ROM"]
     fn figures_are_redrawn_with_each_count_and_match_the_readme() {
         use super::{check_figures, figure, figure_date_current, history, letters, write_figures};
         let root = tempfile::tempdir().unwrap();
         let root = root.path();
-        let manifest = letters::sheet("THE BROKEN SEAL", letters::MENU);
-        let table: serde_json::Value = serde_json::from_slice(
-            &std::fs::read(crate::coverage::tree::root().join(&manifest)).unwrap(),
-        )
-        .unwrap();
-        let image = table["components"][0]["source"]
-            .as_str()
-            .unwrap()
-            .to_string();
-        let widths = table["glyphs"]["advances"]["source"]
-            .as_str()
-            .unwrap()
-            .to_string();
-        for path in [&manifest, &image, &widths] {
+        let image = letters::sheet("THE BROKEN SEAL", letters::MENU);
+        for path in [&image, &"roms/tbs-en.gba".to_string()] {
             std::fs::create_dir_all(root.join(path).parent().unwrap()).unwrap();
             std::fs::copy(crate::coverage::tree::root().join(path), root.join(path)).unwrap();
         }
@@ -361,14 +350,6 @@ mod tests {
         assert!(!updated.contains("52%"));
     }
 }
-/// The digest of what the file map draws: each tracked file and its size.
-fn map_inputs(root: &Path) -> String {
-    let listing = boxtree::tracked_only(root, boxtree::disk_tiles(root))
-        .iter()
-        .map(|tile| format!("{}\t{}\n", tile.source.as_deref().unwrap_or(""), tile.bytes))
-        .collect::<String>();
-    boxtree::content_version(&listing)
-}
 /// Both README figures as the history's recorded figure date draws them.
 fn render_figures(
     root: &Path,
@@ -395,12 +376,7 @@ fn write_figures(
         history::models_on(root, &today)?
     };
     history::record_models(&mut history, &today, &models);
-    // The history is itself a tracked file the map draws: write it with a
-    // placeholder of the digest's length, then record the digest of the
-    // tree as it now stands, which leaves the history's size unchanged.
-    history::mark_drawn(&mut history, &today, &"0".repeat(16));
-    write(&history::path(root), &history::text(&history))?;
-    history["figures"]["files"] = serde_json::json!(map_inputs(root));
+    history::mark_drawn(&mut history, &today);
     write(&history::path(root), &history::text(&history))?;
     let (chart, map) = render_figures(root, &history)?;
     let scale = letters::FIGURE_SCALE;
@@ -441,6 +417,12 @@ fn check_figures(root: &Path) -> Result<(), String> {
     }
     let readme = std::fs::read_to_string(root.join("README.md")).unwrap_or_default();
     for (icon, game) in [("☀️", "tbs"), ("⚓️", "tla")] {
+        if history["pending"][game] == true {
+            if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} pending")) {
+                return stale(&format!("{game} has no verified current measurement"));
+            }
+            continue;
+        }
         if let Some(shown) = history::percent(&history["figures"][game]) {
             // The README floors to hundredths, as the chart labels do.
             let shown = (shown * 100.0 + 1e-9).floor() / 100.0;
@@ -470,8 +452,7 @@ fn check_figures(root: &Path) -> Result<(), String> {
     if raster::decode(&chart) != drawn(&expected_chart) {
         return stale(&format!("{} differs from its rows", figure::CHART));
     }
-    let unchanged = history["figures"]["files"].as_str() == Some(map_inputs(root).as_str());
-    if unchanged && raster::decode(&map) != drawn(&expected_map) {
+    if raster::decode(&map) != drawn(&expected_map) {
         return stale(&format!("{} differs from the tracked files", figure::MAP));
     }
     Ok(())
@@ -525,6 +506,30 @@ fn run(argv: &[String]) -> Result<String, String> {
             return Err("--files requires --write or --check".into());
         }
         return Ok(format!("figures={} {}", figure::CHART, figure::MAP));
+    }
+    let (sun, anchor) = (measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
+    if sun.is_none() || anchor.is_none() {
+        let source = read(&root().join("README.md"))?;
+        let status = status_line(sun, anchor);
+        let mut updated = source.clone();
+        if let Some(start) = updated.find("**☀️ ") {
+            if let Some(end) = updated[start..].find('\n') {
+                updated.replace_range(start..start + end, &status);
+            }
+        }
+        if o.check {
+            if updated != source {
+                return Err("README progress is stale; run make coverage".into());
+            }
+            check_figures(&root())?;
+        } else if o.write {
+            write(&root().join("README.md"), &updated)?;
+            write_figures(&root(), sun, anchor, o.publication)?;
+        }
+        return Ok(
+            "DONE=pending; executable audit and complete source extents need fresh verification"
+                .into(),
+        );
     }
     let exact = match o.exact.as_deref() {
         None | Some("worktree") => work_tree(),

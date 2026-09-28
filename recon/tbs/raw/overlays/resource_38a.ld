@@ -6,10 +6,15 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/ENTRY.o"(.text)
-        "*/resource_38a_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/resource_38a_overlay.o"(.text.x02008314)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/SCENE_EXITS.o"(.text)
+        "*/resource_38a_overlay.o"(.text.x02008350)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/CELL24.o"(.text)
+        "*/resource_38a_overlay.o"(.text.x020083e4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/BURST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/IMPORT.o"(.text)
         "*/resource_38a_overlay.o"(.rodata.part1)
     }

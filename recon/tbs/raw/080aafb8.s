@@ -42,7 +42,7 @@ Func_080aafb8:
 	ldrh	r1, [r6, #0]
 	adds	r0, r5, #0
 	negs	r2, r2
-	bl	Unnamed_080ac8fc
+	bl	Djinn_ListOwnerEntries
 	strb	r0, [r7, #0]
 	ldr	r3, [sp, #44]
 	adds	r3, #1

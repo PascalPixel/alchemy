@@ -94,7 +94,7 @@ void BattleUnit_BuildStatusFlags(s32 actor_id, void *slot);
 s32 BattleMotion_GetSlotField14(s32 actor_id);
 void BattlePres_SetActorModeAndAction(s32 actor_id);
 s32 ActivateBattleObjectSlot(s32 actor_id);
-void Unnamed_080ba918(void *object, s32 value);
+void BattleMotion_SetRecordChildValues(void *object, s32 value);
 void BattleActor_RemoveFromLists(s32 actor_id);
 void BattleActor_ResetRuntimeFields(s32 actor_id);
 void BattleActor_DestroyTemporaryObject(s32 actor_id);
@@ -268,7 +268,7 @@ void BattleEvent_Playback(void)
                                 state->events.operands[event_index]));
                         slot = GetBattleObjectSlot(
                             state->events.operands[event_index]);
-                        Unnamed_080ba918(
+                        BattleMotion_SetRecordChildValues(
                             slot->object,
                             BattleMotion_GetSlotField14(
                                 state->events.operands[event_index]));
@@ -360,7 +360,7 @@ void BattleEvent_Playback(void)
 
                     phase_locals.selection[0] = 0xff;
                     slot = GetBattleObjectSlot(state->actor_id);
-                    Unnamed_080ba918(
+                    BattleMotion_SetRecordChildValues(
                         slot->object,
                         BattleMotion_GetSlotField14(state->actor_id));
                 } else {
@@ -369,7 +369,7 @@ void BattleEvent_Playback(void)
                     phase_locals.selection[0] = state->actor_id;
                     phase_locals.selection[1] = 0xff;
                     slot = GetBattleObjectSlot(state->actor_id);
-                    Unnamed_080ba918(slot->object, 7);
+                    BattleMotion_SetRecordChildValues(slot->object, 7);
                 }
                 BattleLayout_HighlightPartyPanelsFar(phase_locals.selection);
             }

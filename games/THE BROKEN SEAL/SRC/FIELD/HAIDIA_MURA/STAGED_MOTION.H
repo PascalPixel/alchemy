@@ -1,0 +1,311 @@
+#ifndef GUARD_STAGED_MOTION_H
+#define GUARD_STAGED_MOTION_H
+
+#include "TYPES.H"
+
+#define ACTOR_A 12
+#define ACTOR_B 13
+#define ACTOR_C 14
+#define ACTOR_D 11
+
+#include "STAGED_ACTOR.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
+enum {
+    /* Message 0x182 + 181. */
+    ITEM_NUT = 181
+};
+
+/* Robin's mother, as in the repair-morning scene of this overlay. */
+enum {
+    ACTOR_DORA = 21
+};
+
+enum ValeMessage {
+    MSG_GOOD_JOB = 0xf03,
+    MSG_STUDYING_PSYNERGY_TO_THE_BONE = 0xf0a,
+    MSG_DEVASTATED_WHEN_KYLE_DIED = 0xf0e,
+    MSG_AS_STUBBORN_AS_YOUR_FATHER = 0xf27,
+    MSG_SUKURETA_IS_WAITING_FOR_US = 0xf39,
+    MSG_YOU_MAKE_ME_SO_MAD = 0xf63,
+    MSG_ILL_GET_YOU_FOR_MY_FLOWERS = 0xf66,
+    MSG_I_TOLD_GERALD_IT_WAS_ALL_RIGHT = 0xf68,
+    MSG_IT_WONT_RAIN_FOR_SOME_TIME = 0xf69,
+    MSG_DO_YOU_NEED_TO_GO_PAST = 0xf7c,
+    MSG_DONT_GO_BEYOND_SUKURETAS_COTTAGE = 0xf7e,
+    MSG_YOUR_GRANDPA_IS_THE_MAYOR = 0xf81,
+    MSG_NOT_SNEAKING_UP_MT_ALEPH = 0xfce,
+    MSG_YOU_CANT_BE_ROBIN = 0x11b6,
+    MSG_SUKURETA_HASNT_COME_BACK = 0x11c9,
+    MSG_THE_GROUND_STILL_SHAKES = 0x11cc,
+    MSG_HOW_HAVE_YOU_BEEN = 0x1c53,
+    MSG_IS_JASMINE_BACK_YET = 0x1c8d,
+    MSG_I_USED_TO_PLAY_HERE_WITH_GARCIA = 0x1c90,
+    MSG_I_FELT_ANOTHER_ONE = 0x1c9a,
+    MSG_NO_TRAVELERS_SINCE_THE_ERUPTION = 0x1c9d
+};
+
+/*
+ * Reset or tear down a consecutive run of scene actors -- resource_373.
+ */
+struct Resource373Actor {
+    u8 unknown_00[8];
+    s32 field08;
+    s32 field0c;
+    s32 field10;
+    u8 unknown_14[0x41];
+    u8 flag55;
+};
+
+struct SourceEntity {
+    s32 f00;
+    s32 f04;
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+};
+
+struct ParticleRecord {
+    u8 f00[9];
+    u8 f09;
+};
+
+struct StagedParticle {
+    u8 f00[0x48];
+    s32 f48;
+    s32 f4c;
+    struct ParticleRecord *f50;
+    u8 f54;
+    u8 f55;
+    u8 f56[8];
+    u16 f5e;
+};
+
+/* Emitter fields are named by offset; the layout is not verified. */
+struct Resource373Emitter {
+    u8 unknown_00[6];
+    u16 field06;
+    s32 x;                          /* 0x08 */
+    s32 y;                          /* 0x0c */
+    s32 z;                          /* 0x10 */
+    u8 unknown_14[4];
+    s32 field18;
+    s32 field1c;
+    u8 unknown_20[4];
+    s32 field24;
+    s32 field28;
+    s32 field2c;
+    u8 unknown_30[8];
+    s32 field38;
+    s32 field3c;
+    s32 field40;
+};
+
+struct Resource373Particle {
+    u8 unknown_00[0x28];
+    s32 lifetime;                   /* 0x28 */
+    u8 unknown_2c[4];
+    s32 field30;
+    s32 field34;
+    u8 unknown_38[0x10];
+    s32 field48;
+    u8 unknown_4c[9];
+    u8 field55;
+};
+
+struct StagedVerticalEffect {
+    s32 pad0[2];
+    s32 f8;
+    s32 fc;
+    s32 f10;
+    s32 pad14;
+    s32 f18;
+    s32 f1c;
+    s32 pad20[17];
+    s16 f64;
+    s16 pad66;
+    s32 *f68;
+};
+
+typedef struct OrbitingSceneObjectSprite {
+    u8 padding_00[5];
+    u8 flags_05_low : 5;
+    u8 flags_05_bit_5 : 1;
+    u8 flags_05_high : 2;
+    u8 padding_06[3];
+    u8 flags_09_low : 2;
+    u8 flags_09_mode : 2;
+    u8 flags_09_high : 4;
+    u8 padding_0a[18];
+    u8 palette;
+    u8 padding_1d[10];
+    u8 state;
+} OrbitingSceneObjectSprite;
+
+typedef struct OrbitingSceneObject {
+    u8 padding_00[8];
+    s32 x;
+    s32 y;
+    u8 padding_10[19];
+    u8 flags_23;
+    u8 padding_24[12];
+    s32 orbit_angle;
+    u8 padding_34[4];
+    s32 orbit_center_x;
+    s32 orbit_center_y;
+    u8 padding_40[16];
+    OrbitingSceneObjectSprite *sprite;
+    u8 padding_54;
+    u8 mode;
+    u8 state;
+    u8 padding_57[5];
+    u8 active;
+    u8 padding_5d[4];
+    u8 visible;
+    u8 padding_62[10];
+    u32 callback;
+} OrbitingSceneObject;
+
+extern s32 gHaidiaMuraEntrances[];
+extern s32 gHaidiaMuraExits[];
+extern s32 gHaidiaMuraPlacements4[];
+extern s32 gHaidiaMuraPlacements3[];
+extern s32 gHaidiaMuraPlacements2[];
+extern s32 gHaidiaMuraPlacements[];
+extern s32 gHaidiaMuraEvents3[];
+extern s32 gHaidiaMuraEvents2[];
+extern s32 gHaidiaMuraEvents[];
+extern u8 gHaidiaMuraCellAnimA[];
+extern u8 gHaidiaMuraCellAnimB[];
+extern u8 gVillagerAction[];
+extern u8 gLeaderHammerAction[];
+extern s32 gHaidiaMuraPairTableA[];
+extern s32 gHaidiaMuraPairTableB[];
+extern s32 gHaidiaMuraPairTableC[];
+extern s32 gHaidiaMuraPairTableD[];
+extern s32 gDustBurstScript[];
+
+enum {
+    MSG_RRRUFF_RRRRUFF = 0xf4d,
+    MSG_AH = 0x1c45,
+    MSG_WHATEVER_YOU_DO_YOU = 0x1c60,
+    MSG_DOOR_WONT_OPEN_FORCE_IMPACT = 0xee4,
+    MSG_REPAIR_CAPTION = 0xee8
+};
+
+void Object_RefreshSelectorById();
+s32 Object_SetActionCallbackAndRefreshById();
+void Graphics_EnableObjLayerAndCallbacks();
+void ObjectDispatch_StopCallbacksAndHideLayers();
+void UiText_ShowCenteredMessage();
+void Audio_PlayCueFromEventWork();
+void Scheduler_RemoveCallback();
+void Object_SetPosition();
+u8 *Object_GetById();
+void HaidiaMura_RunWalkScene032B0(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void HaidiaMura_OpenVillagerLane(void);
+void HaidiaMura_RunWalkScene03380(s32 actor, s32 animation, s32 next_animation, s32 grounded);
+void FieldScene_RunStep8C();
+void SceneState_SetValue0ThenCall();
+void FieldScene_RunStep17();
+void SceneState_SetValue24ThenCall();
+void SceneState_SetValue25ThenCall();
+void Effect_PlayStepSound();
+void Vector_AddPolarOffset(s32, s32, s32 *);
+void BattleEffect_CleanupSceneObjects(void);
+void HaidiaMura_TestFacing(s32, s32, s32, s32);
+u8 *Runtime_AllocateHeapBlock(s32, s32);
+void WorldMap_CreateLinkedEffects(s32);
+s32 SceneEffect_UpdateOrbitPosition(s32 *p);
+
+/*
+ * Distance between two three-component 16.16 fixed-point positions.
+ *
+ * Each argument walks three consecutive 16.16 words in x, y, z order. The
+ * per-axis deltas are taken in fixed point, shifted down to integers, squared,
+ * and summed; the total is passed to the resident IWRAM integer square root.
+ *
+ * Expressions are preserved exactly as reconstructed: the walking-pointer form
+ * is load-bearing for byte-identity and must not become struct field access.
+ */
+
+/* Actor IDs the scene sets up: three actors share a common data pointer,
+ * a fourth actor (11) is driven through its own sequence of position/speed
+ * calls. */
+
+/* Shared data used for actors A, B, C. */
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+/* Moves the next dialogue line on by amount messages. */
+static __inline__ void bump_step(s32 amount)
+{
+    gEventWork->message += amount;
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    return f(a0, a1, a2);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+/* Newly identified engine calls: each macro below names the site's own
+ * engine function from its reconstructed C source, and keeps the site's
+ * own calling form. */
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    f(a0, a1, a2, a3, a4, a5);
+}
+
+static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
+{
+    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
+}
+
+/*
+ * Staged actor cutscene tail -- resource_373. The long scene script plus the
+ * particle, sound, and vertical-motion effects it drives.
+ */
+
+static __inline__ void Call6_02003fb0(
+    void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    f(a0, a1, a2, a3, a4, a5);
+}
+
+#endif

@@ -1,7 +1,7 @@
 #include "FIELD_EVENT.H"
 
 s32 Runtime_ComputeFixedPointDistance(s32 *first_position, s32 *second_position);
-u16 Main_08000100(s32 z, s32 x);
+u16 ArcTan2(s32 z, s32 x);
 
 s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32 range, s32 force)
 {
@@ -19,7 +19,7 @@ s32 HaidiaMura_TestFacing(struct FieldActor *obj, struct FieldActor *target, s32
         }
     }
     if (Runtime_ComputeFixedPointDistance(&target->x.fixed, &obj->x.fixed) < range || force != 0) {
-        angle = (u16)Main_08000100(target->z.fixed - obj->z.fixed,
+        angle = (u16)ArcTan2(target->z.fixed - obj->z.fixed,
                                 target->x.fixed - obj->x.fixed);
         left = (angle - 0x1000) & 0xf000;
         right = (angle + 0x1000) & 0xf000;

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
-void Main_08000128();
-void Main_080001b8();
+void Vector_AddPolarOffset();
+void Resource_ResetEntry();
 void Engine_ObjectDispatchRelease();
 
 
@@ -51,7 +51,7 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj)
         {
             s32 a = obj->angle;
 
-            Main_08000128(t << 16, ((t * 3) << 8) + a, &pos);
+            Vector_AddPolarOffset(t << 16, ((t * 3) << 8) + a, &pos);
         }
         obj->x = pos.x;
         obj->y = pos.y;
@@ -62,7 +62,7 @@ void ToretoHeya_UpdateSwirlObject(struct Swirl *obj)
         }
         obj->timer++;
     } else {
-        Main_080001b8(obj->sprite[28]);
+        Resource_ResetEntry(obj->sprite[28]);
         Engine_ObjectDispatchRelease(obj);
     }
 }

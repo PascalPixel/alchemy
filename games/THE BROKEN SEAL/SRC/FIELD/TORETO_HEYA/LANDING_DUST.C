@@ -1,4 +1,5 @@
 #include "TYPES.H"
+void ToretoHeya_AdvanceEffectMotion();
 
 void Engine_EventBegin(void);
 void Engine_CameraMoveTo();
@@ -78,7 +79,7 @@ void ToretoHeya_RunLandingDustScene(void)
     leader = Engine_ActorGet(0);
     p = &params;
     p->kind = 7;
-    p->script = 0x200985d;
+    p->script = (s32)ToretoHeya_AdvanceEffectMotion;
     p->spread = 0xcccc;
     p->rise = 0xcccc;
     for (i = 0; i <= 16; i++) {

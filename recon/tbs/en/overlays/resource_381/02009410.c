@@ -1,3 +1,10 @@
+/* Draft of resource_381 0x02009410 (Scene_RunExtendedEffectPresentation and what follows it in this file),
+ * from games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA (FUNKA.H). Remaining
+ * difference: it reads and writes the scene's variables that lie past the
+ * overlay image (0x0200bac0 and on), which no source defines, so it cannot
+ * link by name.
+ * It also loads message 0x10f8 from its literal pool as a link-time value.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

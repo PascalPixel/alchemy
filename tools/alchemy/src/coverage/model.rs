@@ -1,22 +1,12 @@
 //! The treemap model the README's file map draws.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-#[repr(usize)]
-pub enum Category {
-    ProvenC,
-    DraftC,
-    Unknown,
-    DraftAsm,
-    ProvenAsm,
-    AssetData,
-}
-pub const UNIDENTIFIED: &str = "Unidentified";
+/// One tracked file, or a folder of them.
 #[derive(Clone, Debug, Default)]
 pub struct Tile {
     pub label: String,
     pub bytes: i64,
-    pub categories: [i64; 6],
-    pub group: Option<String>,
-    pub subgroup: Option<String>,
+    /// A file's lowercase extension, `s-credited` for assembly its header
+    /// credits; empty for a folder.
+    pub extension: String,
     pub source: Option<String>,
     pub children: Vec<Tile>,
 }

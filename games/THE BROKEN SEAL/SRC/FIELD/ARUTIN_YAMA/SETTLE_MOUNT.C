@@ -5,7 +5,6 @@ void Engine_ObjectCommitPosition(struct FieldActor *object);
 void ResourceMetadata_ClearRecord(s32 handle);
 struct FieldActor *ObjectTable_Get(s32 actor);
 
-#define SPRITE_OF(actor) ((struct FieldSprite *)*(s32 *)((u8 *)(actor) + 0x50))
 
 /* Settles the pushed object on the centre of its cell, then lifts the leader
  * onto it: the leader hops up a cell and a half and turns to face along the
@@ -48,11 +47,11 @@ void ArutinYama_SettleAndMountLeader(struct FieldActor *object)
     leader->velocity_y = 0x60000;
     *(s32 *)((u8 *)leader + 72) = 0x10000;
     leader->z.fixed = center_z;
-    SPRITE_OF(leader)->priority = 0;
+    ((struct FieldSprite *)*(s32 *)((u8 *)(leader) + 0x50))->priority = 0;
     Engine_ObjectSetAnimation(leader, 7);
     Engine_ObjectSetPosition(leader, x, leader->y.fixed, z + 0x180000);
     leader->facing = 0x4000;
     Engine_TaskWait(20);
-    SPRITE_OF(leader)->priority = 2;
+    ((struct FieldSprite *)*(s32 *)((u8 *)(leader) + 0x50))->priority = 2;
     Engine_AudioPlayCue(159);
 }

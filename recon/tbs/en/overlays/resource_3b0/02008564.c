@@ -1,3 +1,10 @@
+/* NONMATCHING: resource_3b0 0x02008564, Scene_RunFourActorStagingSequence,
+ * formerly FIELD/FUNE_HOBASHIRA/FOUR_ACTOR_STAGING.C (2026-09-28).
+ * Saves the camera pair into 0x02009930/0x02009938 in the overlay's work RAM
+ * past the image, which nothing names; its other references resolve (veneer
+ * Event_CallWithLastActiveObjectId, tables at image offsets 0x16f4, 0x139c and
+ * 0x1314, and OverlayObject_Add160ToFields18And1c). Remaining: the work RAM
+ * names. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

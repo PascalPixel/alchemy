@@ -1,19 +1,5 @@
-/* Draft, not exact (2026-09-28): candidate=484 reference=484, 21 differing
-   lines, all in the six key reads. Waiting a frame before counting it puts
-   the wait argument ahead of the increment, as the reference has it. The
-   one residual is allocation: here regmove retargets each key load into the
-   keys variable, so the local mask constant takes r3 and keys r2; the
-   reference keeps the load in its own r3 temporary and the mask in r2. A
-   ldrh read (u16 key state) keeps the load separate but ties keys to the
-   mask instead. Real for/while loops give the reference's frame-first
-   order but hoist the key address and mask into r6/r7 and duplicate the
-   exit test (508 bytes); u8/u16/s16/s32 keys, "9 & keys", "keys &= 9",
-   a mask variable and duplicated goto tests do not reach it. Reusing the
-   outer row counter for scroll clearing and frame waits is kept. No
-   exact-C credit. */
-/* Title: show the splash picture, fade it in and wait for A or START (or
-   time out), then fade it out. Returns -1 when a button cut it short. */
 #include "TYPES.H"
+#include "SYSTEM.H"
 #include "DMA.H"
 
 struct BgScroll {
@@ -33,10 +19,12 @@ void Blend_SetDarkenTarget0(s32 frames);
 void Blend_WaitForTransition(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
-void WaitFrames(s32 frames);
 u8 *Resource_GetTableEntry(s32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
 
+/* Title: show the splash picture, fade it in and wait for A or START (or
+   time out), then fade it out. Mode 0 only waits for two seconds after the
+   fade-in. Returns -1 when a button cut it short. */
 s32 Title_ShowSplashScreen(s32 mode)
 {
     s32 result;
@@ -47,7 +35,6 @@ s32 Title_ShowSplashScreen(s32 mode)
     s32 tile;
     s32 blank;
     s32 resource;
-    u32 keys;
 
     Audio_PlayCue(110);
     Data_03001d18 = 1;
@@ -97,61 +84,40 @@ row:
     if (mode == 0) {
         Blend_SetDarkenTarget0(1);
         Blend_WaitForTransition();
-        keys = gKeyState & 9;
-        y = 0;
-        goto check_start;
-    wait_start:
-        WaitFrames(1);
-        y++;
-        if (y > 119)
-            goto done;
-        keys = gKeyState & 9;
-    check_start:
-        if (keys == 0)
-            goto wait_start;
-        result = -1;
-        goto done;
+        for (y = 0; y < 120; y++) {
+            if (gKeyState & 9) {
+                result = -1;
+                break;
+            }
+            WaitFrames(1);
+        }
+        return result;
     }
-    keys = gKeyState & 9;
-    y = 0;
-    goto check_fade_in;
-wait_fade_in:
-    WaitFrames(1);
-    y++;
-    if (y > 59)
-        goto fade_in_done;
-    keys = gKeyState & 9;
-check_fade_in:
-    if (keys == 0)
-        goto wait_fade_in;
-    result = -1;
-fade_in_done:
+    for (y = 0; y < 60; y++) {
+        if (gKeyState & 9) {
+            result = -1;
+            break;
+        }
+        WaitFrames(1);
+    }
     if (result != 0)
         Blend_SetDarkenTarget0(8);
     else
         Blend_SetDarkenTarget0(60);
     Blend_WaitForTransition();
     if (result == 0) {
-        keys = gKeyState & 9;
-        y = 0;
-        goto check_hold;
-    wait_hold:
-        WaitFrames(1);
-        y++;
-        if (y > 179)
-            goto hold_done;
-        keys = gKeyState & 9;
-    check_hold:
-        if (keys == 0)
-            goto wait_hold;
-        result = -1;
+        for (y = 0; y < 180; y++) {
+            if (gKeyState & 9) {
+                result = -1;
+                break;
+            }
+            WaitFrames(1);
+        }
     }
-hold_done:
     if (result != 0)
         Blend_SetDarkenTarget16(8);
     else
         Blend_SetDarkenTarget16(60);
     Blend_WaitForTransition();
-done:
     return result;
 }

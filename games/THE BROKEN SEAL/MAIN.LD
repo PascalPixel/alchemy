@@ -1599,7 +1599,7 @@ SECTIONS
         "*/recon/tbs/raw/080f24a0.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080f26ec.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.080f2b6c)
-        "*/recon/tbs/raw/080f2b70.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TITLE_SHOW_SPLASH_SCREEN.o"(.text)
         "*/recon/tbs/raw/080f2d54.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/RESERVED_NO_OP.o"(.text)
         "*/recon/tbs/raw/080f2eba.o"(.text .rodata .data .padding)

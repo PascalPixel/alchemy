@@ -10,6 +10,8 @@ SECTIONS
         "*/resource_3be_overlay.o"(.text.x0200813c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/resource_3be_overlay.o"(.text.x02008cc0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/SPINNING_LEAP.o"(.text)
+        "*/resource_3be_overlay.o"(.text.x02009380)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3be_overlay.o"(.rodata.part1)
     }

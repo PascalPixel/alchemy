@@ -1,6 +1,7 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-void Local_02001b5c();
+void Korosseo_FinishSoloRound();
 void Engine_EventBegin();
 s32 SceneDialogue_RunFlagGatedPromptInteraction();
 void Engine_EventSetMessage();
@@ -8,7 +9,7 @@ void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
 void Engine_EventShowMessage();
-s32 Local_02002910();
+s32 Korosseo_FadeInCompetitor();
 void Engine_ActorSetSpeed();
 void Engine_ActorWalkToAndWait();
 void Engine_EventWait();
@@ -26,8 +27,6 @@ s32 FieldScene_RunMiddleSequence();
 void Engine_EventEnd();
 
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -71,8 +70,8 @@ void KorosseoKawa_RunStageIntro(s32 a0)
     s32 rec;
     s32 record;
 
-    if (Data_02000240_t[225][0] == 2) {
-        Local_02001b5c();
+    if (gGameState.entrance == 2) {
+        Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
         rec = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 1);
@@ -83,7 +82,7 @@ void KorosseoKawa_RunStageIntro(s32 a0)
             Call4(Engine_CameraMoveTo, 0x1480000, -1, 0xa80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventShowMessage(a0, 0);
-            Value3(Local_02002910, 0, 0x118, 200);
+            Value3(Korosseo_FadeInCompetitor, 0, 0x118, 200);
             Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
             Call3(Engine_ActorWalkToAndWait, 0, 0x168, 200);
             Engine_EventWait(30);

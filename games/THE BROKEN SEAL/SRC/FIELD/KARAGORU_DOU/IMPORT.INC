@@ -2,8 +2,17 @@
 	.global WaitFrames
 	.thumb_func
 WaitFrames:
+	.global Engine_TaskWait
+	.thumb_func
+Engine_TaskWait:
 	overlay_veneer 0x080000c1
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer 0x08000119
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer 0x08000121
 	.global Object_SetMode
 	.thumb_func
@@ -29,7 +38,13 @@ Object_CheckMovementCollision:
 	overlay_veneer 0x080091d9
 	overlay_veneer 0x080091e1
 	overlay_veneer 0x080091e9
+	.global Engine_WorkSetValuesIfNonNegative
+	.thumb_func
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer 0x080091f1
+	.global Map_WaitWorkValuesBelow256
+	.thumb_func
+Map_WaitWorkValuesBelow256:
 	overlay_veneer 0x080091f9
 	overlay_veneer 0x080770c1
 	overlay_veneer 0x080770c9
@@ -37,6 +52,9 @@ Object_CheckMovementCollision:
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
+	.global Engine_EventWait
+	.thumb_func
+Engine_EventWait:
 	overlay_veneer 0x0808a011
 	overlay_veneer 0x0808a019
 	overlay_veneer 0x0808a021
@@ -44,11 +62,20 @@ Battle_WaitMode0:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
 	overlay_veneer 0x0808a081
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func
 ObjectMotion_SetSpeedParameters:
+	.global Engine_ActorSetSpeed
+	.thumb_func
+Engine_ActorSetSpeed:
 	overlay_veneer 0x0808a091
+	.global Engine_ActorSetDestination
+	.thumb_func
+Engine_ActorSetDestination:
 	overlay_veneer 0x0808a0b9
 	overlay_veneer 0x0808a0c9
 	.global ObjectMotion_OffsetPositionAndResetMotion
@@ -58,11 +85,17 @@ ObjectMotion_OffsetPositionAndResetMotion:
 	.global ObjectMotion_CommitCurrentPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
+	.global Engine_ActorWaitForMove
+	.thumb_func
+Engine_ActorWaitForMove:
 	overlay_veneer 0x0808a0e9
 	overlay_veneer 0x0808a0f1
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
+	.global Engine_ActorSetAnimation
+	.thumb_func
+Engine_ActorSetAnimation:
 	overlay_veneer 0x0808a101
 	overlay_veneer 0x0808a149
 	overlay_veneer 0x0808a151
@@ -82,4 +115,7 @@ BattleFx_PlayQueuedSound:
 	.global Audio_PlayCue
 	.thumb_func
 Audio_PlayCue:
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer 0x080f9011

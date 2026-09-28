@@ -7,8 +7,6 @@ use crate::compiler::no_asm::{
 use crate::compiler::routing::{
     cflags_for_target_source, root as compiler_root, uses_agbcc_compiler, CompilerTarget,
 };
-use crate::compiler::source_paths::SourcePaths;
-use crate::compiler::translation_units::TranslationUnits;
 use crate::targets::{target_for, DecompTarget, DecompTargetId, TARGET_IDS};
 use std::collections::BTreeMap;
 use std::fs;
@@ -55,23 +53,26 @@ fn prefix(target: DecompTarget, source: &str) -> Result<Vec<String>, String> {
 
 fn groups(root: &Path, target_ids: &[DecompTargetId]) -> Result<Vec<Group>, String> {
     let mut groups = BTreeMap::<(String, Vec<String>), Vec<String>>::new();
-    let units = TranslationUnits::load(root)?;
     for &id in target_ids {
         let target = target_for(id);
-        let paths = SourcePaths::load_for_game(root, target.compiler.as_str())?;
-        paths.validate_tree()?;
-        for source in paths.all_sources()? {
-            let routing = source.owner.routing_path_for_game(target.compiler.as_str());
-            let path = source.path.strip_prefix(root).unwrap_or(&source.path);
-            let command = prefix(target, &routing.to_string_lossy())?;
-            let group = groups.entry((id.as_str().into(), command)).or_default();
-            group.push(path.to_string_lossy().into_owned());
-        }
-        for unit in &units.units {
-            if unit.game != target.compiler.as_str() {
+        let mut sources =
+            source_files(&root.join(target.source_dir)).map_err(|error| error.to_string())?;
+        sources.extend(
+            source_files(&root.join("games/COMMON/SRC")).map_err(|error| error.to_string())?,
+        );
+        for path in sources {
+            if !path
+                .extension()
+                .and_then(|ext| ext.to_str())
+                .is_some_and(|ext| ext.eq_ignore_ascii_case("c"))
+            {
                 continue;
             }
-            let source = unit.source.to_string_lossy().into_owned();
+            let source = path
+                .strip_prefix(root)
+                .unwrap_or(&path)
+                .to_string_lossy()
+                .into_owned();
             let command = prefix(target, &source)?;
             let group = groups.entry((id.as_str().into(), command)).or_default();
             group.push(source);
@@ -224,36 +225,21 @@ fn macro_self_test() -> Result<(), String> {
     let root = compiler_root();
     let directory = tempfile::tempdir().map_err(|error| error.to_string())?;
     let source = directory.path().join("fixture.c");
-    let text = "#if __GNUC_MINOR__ == 9\n#define ABI_KIND naked\n#else\n#define ABI_KIND packed\n#endif\nvoid f(void) __attribute__((ABI_KIND));\n";
+    let text = "#if __GNUC__ == 2\n#define ABI_KIND naked\n#else\n#define ABI_KIND packed\n#endif\nvoid f(void) __attribute__((ABI_KIND));\n";
     fs::write(&source, text).map_err(|error| error.to_string())?;
     if !find_forbidden("fixture.c", text).is_empty() {
         return Err("macro fixture did not evade the raw scan".into());
     }
     let target = target_for(DecompTargetId::TbsEn);
-    let paths = SourcePaths::load_for_game(root, "tbs")?;
-    let registered = paths
-        .all_sources()?
-        .into_iter()
-        .find(|source| {
-            uses_agbcc_compiler(
-                CompilerTarget::Tbs,
-                &source.owner.routing_path().to_string_lossy(),
-            )
-        })
-        .ok_or("missing registered AGBCC source")?;
-    let human = registered
-        .path
-        .strip_prefix(root)
-        .map_err(|error| error.to_string())?;
+    let human = Path::new("games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/CLEAR_WORD_IF_SET.C");
     if sibling(root, &human.to_string_lossy()) != Some(root.join(human).with_extension("s")) {
         return Err("relative sibling path did not resolve under repository root".into());
     }
-    let routing = registered.owner.routing_path_for_game("tbs");
-    let mut command = prefix(target, &routing.to_string_lossy())?;
+    let mut command = prefix(target, &human.to_string_lossy())?;
     command.push(source.to_string_lossy().into_owned());
     let found = run(root, &("macro-regression".into(), command))?;
     if found.len() != 1 || !found[0].token.contains("naked") {
-        return Err("production AGBCC route missed macro-expanded naked ABI".into());
+        return Err("production compiler route missed macro-expanded naked ABI".into());
     }
     Ok(())
 }

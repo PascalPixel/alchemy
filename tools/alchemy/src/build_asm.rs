@@ -1,4 +1,4 @@
-//! Assemble retained source regions and emit their classified manifest.
+//! Assemble maintained main-image source and derive its output manifest.
 use psynergy::process::run;
 pub fn entry(arguments: &[String]) -> Result<(), String> {
     if arguments == ["--self-test"] {
@@ -39,11 +39,12 @@ use std::path::{Path, PathBuf};
 const ROM_BASE: u64 = 0x0800_0000;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Options {
+    pub target: crate::targets::DecompTargetId,
     pub rom: String,
     pub output: String,
     pub source: Option<String>,
     pub source_only: bool,
-    /// The target's retained assembly root, `games/<GAME>/asm`.
+    /// The target's maintained assembly fallback root.
     pub asm_dir: String,
 }
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -92,6 +93,7 @@ pub fn repository_root() -> PathBuf {
 pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
     let mut target = crate::targets::decomp_target(None)?;
     let mut options = Options {
+        target: target.id,
         rom: String::new(),
         output: String::new(),
         source: None,
@@ -144,6 +146,7 @@ pub fn parse_args(argv: &[String]) -> Result<ParseOutcome, String> {
         options.output = format!("{}/asm", target.output_dir);
     }
     options.asm_dir = target.asm_dir.into();
+    options.target = target.id;
     Ok(ParseOutcome::Run(options))
 }
 fn resolve(root: &Path, cwd: &Path, value: &str) -> PathBuf {
@@ -211,54 +214,16 @@ fn declared_address(text: &str, name: &str) -> Option<u64> {
     })
 }
 
-fn asset_assembly_sources(
-    root: &Path,
-    target: crate::targets::DecompTarget,
-) -> Result<BTreeSet<PathBuf>, String> {
-    let path = root.join(target.asset_manifest);
-    if !path.is_file() {
-        return Ok(BTreeSet::new());
-    }
-    let value: Value =
-        serde_json::from_slice(&std::fs::read(&path).map_err(|error| error.to_string())?)
-            .map_err(|error| error.to_string())?;
-    fn collect(value: &Value, root: &Path, output: &mut BTreeSet<PathBuf>) {
-        match value {
-            Value::Object(object) => {
-                if let Some(source) = object.get("source").and_then(Value::as_str) {
-                    if source.ends_with(".S") {
-                        output.insert(root.join(source));
-                    }
-                }
-                for child in object.values() {
-                    collect(child, root, output);
-                }
-            }
-            Value::Array(array) => {
-                for child in array {
-                    collect(child, root, output);
-                }
-            }
-            _ => {}
-        }
-    }
-    let mut output = BTreeSet::new();
-    collect(&value, root, &mut output);
-    Ok(output)
-}
-
 pub(crate) fn maintained_assembly(
     root: &Path,
     target: crate::targets::DecompTarget,
 ) -> Result<Vec<MaintainedAssembly>, String> {
-    let assets = asset_assembly_sources(root, target)?;
     let mut modules = Vec::new();
     for entry in walkdir::WalkDir::new(root.join(target.source_dir)) {
         let entry = entry.map_err(|error| error.to_string())?;
         let source = entry.path();
         if !entry.file_type().is_file()
             || source.extension().and_then(|value| value.to_str()) != Some("S")
-            || assets.contains(source)
         {
             continue;
         }
@@ -286,33 +251,6 @@ pub(crate) fn maintained_assembly(
     Ok(modules)
 }
 
-pub(crate) fn maintained_assembly_bytes(
-    root: &Path,
-    target: crate::targets::DecompTarget,
-) -> Result<Vec<(MaintainedAssembly, Vec<u8>)>, String> {
-    let modules = maintained_assembly(root, target)?;
-    let output = tempfile::tempdir().map_err(|error| error.to_string())?;
-    let cache = SqliteCache::open(&root.join("out/cache/asm-regions.sqlite3"))?;
-    let binutils = production_binutil_signatures()?;
-    modules
-        .into_iter()
-        .map(|module| {
-            let source = std::fs::read(&module.source)
-                .map_err(|error| format!("{}: {error}", module.source.display()))?;
-            let built = build_region(
-                root,
-                &module.source,
-                &source,
-                output.path(),
-                &cache,
-                Some(module.run_address),
-                Some(module.load_address),
-                &binutils,
-            )?;
-            Ok((module, built.data))
-        })
-        .collect()
-}
 const ASSEMBLY_BINUTILS: [&str; 4] = [
     "arm-none-eabi-as",
     "arm-none-eabi-nm",
@@ -372,7 +310,7 @@ fn build_region(
         .or_else(|| u64::from_str_radix(&source_stem, 16).ok())
         .ok_or_else(|| {
             format!(
-                "{}: named source requires a manifest address",
+                "{}: named source needs a maintained load-address declaration",
                 source.display()
             )
         })?;
@@ -848,27 +786,34 @@ fn region_value(
     value
 }
 pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, String> {
+    let target = crate::targets::target_for(options.target);
+    if options.asm_dir != target.asm_dir {
+        return Err("assembly source root does not belong to the selected target".into());
+    }
     let rom = if options.source_only {
         None
     } else {
         let path = resolve(root, cwd, &options.rom);
-        Some(std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?)
+        let bytes = std::fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?;
+        if bytes.len() as u64 != target.rom_size {
+            return Err(format!(
+                "{}: wrong ROM size for {}",
+                path.display(),
+                target.id
+            ));
+        }
+        crate::text_catalog::verify_reference(root, target.id.as_str(), &bytes)?;
+        Some(bytes)
     };
-    let output = rooted(root, &options.output);
-    std::fs::create_dir_all(&output).map_err(|error| format!("{}: {error}", output.display()))?;
+    let output = crate::compiler::build_io::generated_directory(root, Path::new(&options.output))?;
     let asm = root.join(&options.asm_dir);
     let mut sources = assembly_sources(&asm)?;
     sources.sort();
-    // These packages are assembled through the asset manifest, with their own
-    // placement and compression. They are not standalone main-image regions.
+    // Decoded overlays have RAM placement and C holes; they require their
+    // own linked C before they can be compared as complete inputs.
     sources.retain(|source| {
         !source.starts_with(asm.join("overlays")) && !source.starts_with(asm.join("battle"))
     });
-    let target = match options.asm_dir.as_str() {
-        "recon/tbs/raw" => crate::targets::target_for(crate::targets::DecompTargetId::TbsEn),
-        "recon/tla/raw" => crate::targets::target_for(crate::targets::DecompTargetId::TlaEn),
-        _ => return Err(format!("unsupported assembly root {}", options.asm_dir)),
-    };
     let maintained = maintained_assembly(root, target)?;
     sources.extend(maintained.iter().map(|module| module.source.clone()));
     sources.sort();
@@ -906,6 +851,12 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         let source_name = relative(root, source);
         let source_text = std::fs::read_to_string(source)
             .map_err(|error| format!("{}: {error}", source.display()))?;
+        if source_text
+            .lines()
+            .any(|line| line.trim().starts_with("AlchemyC_"))
+        {
+            return Err(format!("{source_name}: a C placeholder requires its linked C; it cannot be built as an assembly fallback"));
+        }
         let module = maintained.get(source);
         let built = build_region(
             root,
@@ -940,6 +891,8 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
                 ));
             }
         }
+        let provenance = declared_provenance(&source_text, module.is_some(), rom.is_some())
+            .map_err(|error| format!("{source_name}: {error}"))?;
         let category = Classification {
             kind: if module.is_some() {
                 "maintained_assembly"
@@ -953,21 +906,20 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
                 "unresolved"
             }
             .into(),
-            retention: if module.is_some() {
+            retention: if !provenance.credit.is_empty() {
                 "keep_asm"
             } else {
-                "c_candidate"
+                "not_yet_c"
             }
             .into(),
-            confidence: if module.is_some() {
+            confidence: if rom.is_some() {
                 "verified"
             } else {
-                "unknown"
+                "unchecked"
             }
             .into(),
             evidence: Vec::new(),
-            provenance: declared_provenance(&source_text, module.is_some(), rom.is_some())
-                .map_err(|error| format!("{source_name}: {error}"))?,
+            provenance,
         };
         if category.provenance.credit == "reconstructed_veneer" {
             veneer_table(
@@ -1064,4 +1016,66 @@ pub fn build(root: &Path, cwd: &Path, options: &Options) -> Result<BuildReport, 
         bytes,
         counts: counts_text,
     })
+}
+
+#[cfg(test)]
+mod fallback_tests {
+    use super::*;
+
+    fn options(args: &[&str]) -> Options {
+        let args = args
+            .iter()
+            .map(|value| (*value).to_string())
+            .collect::<Vec<_>>();
+        match parse_args(&args).unwrap() {
+            ParseOutcome::Run(options) => options,
+            ParseOutcome::Help => panic!("unexpected help"),
+        }
+    }
+
+    #[test]
+    fn target_identity_survives_shared_game_paths() {
+        let japanese = options(&["--target", "tbs-ja", "--source-only"]);
+        let english = options(&["--target", "tbs-en", "--source-only"]);
+        assert_eq!(japanese.asm_dir, english.asm_dir);
+        assert_eq!(japanese.target, crate::targets::DecompTargetId::TbsJa);
+        assert_eq!(english.target, crate::targets::DecompTargetId::TbsEn);
+        assert_ne!(japanese.output, english.output);
+    }
+
+    #[test]
+    fn rejects_unapproved_rom_before_creating_output() {
+        let root = tempfile::tempdir().unwrap();
+        std::fs::write(root.path().join("reference.gba"), vec![0u8; 0x80_0000]).unwrap();
+        let options = options(&["reference.gba"]);
+        let error = build(root.path(), root.path(), &options).unwrap_err();
+        assert!(error.contains("differs from the approved tbs-en reference ROM"));
+        assert!(!root.path().join("out").exists());
+    }
+
+    #[test]
+    fn source_only_fallback_needs_no_tracked_manifest_and_gives_no_credit() {
+        let root = tempfile::tempdir().unwrap();
+        let options = options(&["--source-only"]);
+        let target = crate::targets::target_for(options.target);
+        std::fs::create_dir_all(root.path().join(target.source_dir)).unwrap();
+        std::fs::create_dir_all(root.path().join(&options.asm_dir)).unwrap();
+        std::fs::write(
+            root.path().join(&options.asm_dir).join("08000000.s"),
+            ".syntax unified\n.thumb\nmovs r0, #1\nbx lr\n",
+        )
+        .unwrap();
+        let report = build(root.path(), root.path(), &options).unwrap();
+        assert_eq!(report.regions, 1);
+        assert_eq!(report.bytes, 4);
+        let manifest: Value = serde_json::from_slice(
+            &std::fs::read(root.path().join(&options.output).join("manifest.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(manifest["verification"], "source_only");
+        assert_eq!(manifest["regions"][0]["retention"], "not_yet_c");
+        assert_eq!(manifest["regions"][0]["confidence"], "unchecked");
+        assert!(manifest["regions"][0].get("provenance").is_none());
+        assert!(!root.path().join(target.asset_manifest).exists());
+    }
 }

@@ -17,9 +17,10 @@ fn rewrite(message: &str, expected: &str) -> Result<String, String> {
         .map_or((message, ""), |(subject, body)| (subject, body));
     let carriage_return = subject.ends_with('\r');
     let subject = subject.trim_end_matches('\r');
-    let prefix =
-        regex::Regex::new(r"^☀️\s+(?:\d+(?:\.\d+)?|\?)%\s+⚓️\s+(?:\d+(?:\.\d+)?|\?)%\s+[–-]\s*")
-            .map_err(|error| error.to_string())?;
+    let prefix = regex::Regex::new(
+        r"^☀️\s+(?:pending|(?:\d+(?:\.\d+)?|\?)%)\s+⚓️\s+(?:pending|(?:\d+(?:\.\d+)?|\?)%)\s+[–-]\s*",
+    )
+    .map_err(|error| error.to_string())?;
     let title = prefix.replace(subject, "");
     let title = title.trim();
     if title.is_empty() || title.starts_with('#') {
@@ -124,6 +125,22 @@ mod tests {
         );
         assert!(rewrite("", expected).is_err());
         assert!(rewrite("☀️ 52% ⚓️ ?% –", expected).is_err());
+    }
+
+    #[test]
+    fn pending_prefix_survives_amends_and_can_be_replaced_after_audit() {
+        let pending = "☀️ pending ⚓️ pending –";
+        let measured = "☀️ 73.65% ⚓️ 2.14% –";
+        let message = "☀️ 52% ⚓️ ?% – Preserve drafts\n\nBody\n";
+        let rewritten = rewrite(message, pending).unwrap();
+        assert_eq!(rewritten, format!("{pending} Preserve drafts\n\nBody\n"));
+        assert!(valid(&rewritten, pending));
+        assert_eq!(rewrite(&rewritten, pending).unwrap(), rewritten);
+        assert_eq!(
+            rewrite(&rewritten, measured).unwrap(),
+            format!("{measured} Preserve drafts\n\nBody\n")
+        );
+        assert!(rewrite(pending, pending).is_err());
     }
 
     #[test]

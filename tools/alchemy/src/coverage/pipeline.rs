@@ -3696,16 +3696,22 @@ mod tests {
     }
     #[test]
     fn sprite_series_exposes_packages_without_double_counting() {
-        let tree = crate::coverage::tree::work_tree();
-        let span = Span::new(0x081a7020, 0x081e120c);
-        let children = sprite_children(
-            &tree,
-            "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-            span,
-            &[span],
+        let root = tempfile::tempdir().unwrap();
+        let source = "out/sprites.json";
+        std::fs::create_dir_all(root.path().join("out")).unwrap();
+        let span = Span::new(0x0800_1000, 0x0800_100a);
+        let index = json!({"layout": "golden-sun-static-sprite-series", "components": [
+            {"kind": "components", "address": span.start, "size": 4, "image": "GUARD.PNG"},
+            {"kind": "components", "address": span.start + 6, "size": 4, "image": "GERALD.PNG"}
+        ]});
+        std::fs::write(root.path().join(source), index.to_string()).unwrap();
+        let tree = crate::coverage::tree::work_tree_at(root.path().to_path_buf());
+        let children = sprite_children(&tree, source, span, &[span]);
+        assert_eq!(children.len(), 3);
+        assert_eq!(
+            children.iter().map(|tile| tile.bytes).sum::<i64>(),
+            span.bytes()
         );
-        assert_eq!(children.len(), 22);
-        assert_eq!(children.iter().map(|tile| tile.bytes).sum::<i64>(), 238060);
         assert_eq!(children[0].address, Some(span.start));
         let parent = source_container("sprites.json".into(), children);
         assert_eq!(parent.bytes, span.bytes());
@@ -3714,14 +3720,10 @@ mod tests {
             span.bytes()
         );
         assert_eq!(parent.address, None);
-        assert_eq!(tile_json(&parent)["children"].as_array().unwrap().len(), 22);
-        assert!(sprite_children(
-            &tree,
-            "games/THE BROKEN SEAL/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-            Span::new(span.start, span.end - 1),
-            &[span]
-        )
-        .is_empty());
+        assert_eq!(tile_json(&parent)["children"].as_array().unwrap().len(), 3);
+        assert!(
+            sprite_children(&tree, source, Span::new(span.start, span.end - 1), &[span]).is_empty()
+        );
     }
     #[test]
     fn sound_sequence_roles_follow_metadata_not_filenames() {

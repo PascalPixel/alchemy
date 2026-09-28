@@ -26,19 +26,8 @@ pub const WAVES: &[&[&str]] = &[
         "tooling-index-check",
         "prepare-inputs",
     ],
-    &["source-tracking-check", "build-full", "compare-tla"],
-    &[
-        "full-rom-check",
-        "overlay-check",
-        "check-owners",
-        "coverage-check",
-    ],
-    &[
-        "declared-tu-check",
-        "owner-inventory-check",
-        "siblings-check",
-    ],
-    &["strict-tu-check"],
+    &["build-full", "compare-tla"],
+    &["full-rom-check", "source-build-check", "coverage-check"],
 ];
 
 const USAGE: &str = "usage: alchemy verify\n\
@@ -60,7 +49,7 @@ const STAGED: &[&str] = &[
 
 const PUBLICATION_FILES: &[&str] = &[
     "README.md",
-    "recon/tbs/metrics/history.json",
+    "recon/tbs/metrics/history.tsv",
     "PROGRESS_CHART.png",
     "PROGRESS.png",
 ];
@@ -120,17 +109,13 @@ pub(crate) fn is_main(root: &Path) -> Result<bool, String> {
 }
 
 pub(crate) fn verified_subject(root: &Path) -> Result<String, String> {
-    let measured = |target| {
-        crate::coverage::progress::measured(root, target)?.ok_or_else(|| {
-            format!("{target}: main needs a verified byte-identical build and executable audit")
-        })
+    let show = |id| -> Result<String, String> {
+        let target = crate::targets::decomp_target(Some(id))?;
+        crate::coverage::proof::verify_source_build(root, target)?;
+        Ok(crate::coverage::progress::measured(root, id)?
+            .map_or("pending".into(), |done| format!("{:.2}%", done.percent())))
     };
-    let (sun, anchor) = (measured("tbs-en")?, measured("tla-en")?);
-    Ok(format!(
-        "☀️ {:.2}% ⚓️ {:.2}% –",
-        sun.percent(),
-        anchor.percent()
-    ))
+    Ok(format!("☀️ {} ⚓️ {} –", show("tbs-en")?, show("tla-en")?))
 }
 
 pub(crate) fn valid_subject(message: &str, expected: &str) -> bool {

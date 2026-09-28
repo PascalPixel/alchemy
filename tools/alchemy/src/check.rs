@@ -10,7 +10,7 @@ mod publication;
 pub(crate) use publication::PRESENTATION_EXTENSIONS;
 mod tla_owners;
 
-const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-tracking|owners|tla-owners|coverage|integrate|no-asm|progress|routes|siblings> [args]";
+const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-build|coverage|no-asm|progress|routes> [args]";
 
 /// Run a check body and report its error the way every check does.
 fn report(result: Result<(), String>) -> ExitCode {
@@ -67,7 +67,32 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         return ExitCode::from(2);
     };
     let rest = &arguments[1..];
+    if matches!(
+        command,
+        "source-tracking" | "owners" | "tla-owners" | "integrate" | "siblings"
+    ) {
+        return report(Err(format!(
+            "{command} used the removed catalogs; check source-build verifies maintained source"
+        )));
+    }
     match command {
+        "source-build" => {
+            let target = match rest {
+                [] => crate::targets::decomp_target(None),
+                [flag, target] if flag == "--target" => crate::targets::decomp_target(Some(target)),
+                _ => {
+                    return report(Err(
+                        "usage: alchemy check source-build [--target TARGET]".into()
+                    ))
+                }
+            };
+            report(target.and_then(|target| {
+                crate::coverage::proof::verify_source_build(
+                    crate::compiler::routing::root(),
+                    target,
+                )
+            }))
+        }
         "source-tracking" if rest.is_empty() => {
             match crate::build_assets::check_source_tracking() {
                 Ok(()) => ExitCode::SUCCESS,

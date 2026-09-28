@@ -183,6 +183,7 @@ const BUILD_PENDING: &str = "pending a byte-identical build of the current tree"
 
 /// The commit prefix: both games' DONE percentages, `?` for a game whose
 /// executable audit is incomplete.
+#[cfg(test)]
 fn subject(root: &Path) -> Result<String, String> {
     let percent =
         |done: Option<GameDone>| done.map_or("?".to_string(), |d| format!("{:.2}", d.percent()));
@@ -270,7 +271,7 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     let root = root();
     if action == "--subject" {
-        return subject(&root);
+        return crate::verify::verified_subject(&root);
     }
     if action.is_empty() {
         return done_lines(&root);

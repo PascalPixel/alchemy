@@ -34,16 +34,16 @@ the technical details in [AGENTS.md](AGENTS.md).
 
 ## Progress
 
-**☀️ 73.69% · ⚓️ 2.14%**
+**☀️ pending · ⚓️ pending**
 
 <img src="PROGRESS_CHART.png" width="838" alt="DONE by day for The Broken Seal and The Lost Age since 16 July 2026">
 
 <img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
 
-The chart shows how far each game has come, day by day: The Broken Seal in
-gold, The Lost Age in blue. The two dips mark days the rules for what counts
-got stricter, not lost work. The Broken Seal is well past halfway. The Lost Age has only just begun, but it is built much like the first
-game, which gives it a head start.
+The chart preserves past measurements: The Broken Seal in gold, The Lost Age
+in blue. Current progress is pending a fresh audit after removing stored
+reconstruction answers and generated bookkeeping. The C and draft work remain;
+only source that proves a complete, exact match will regain credit.
 
 ## Acknowledgements
 

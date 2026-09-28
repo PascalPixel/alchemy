@@ -3330,62 +3330,6 @@ fn named_locations(relocations: &[RelocationSite], edition: &str) -> EditionLoca
 mod tests {
     use super::*;
     #[test]
-    fn declared_shared_main_source_checks_each_edition_and_rejects_changed_bytes() {
-        use crate::compiler::translation_units::{EditionLayout, EditionOwner};
-        let mut unit = registers()
-            .unwrap()
-            .units
-            .unit("battle-motion-apply-variant-motion")
-            .unwrap()
-            .clone();
-        let address = 0x080b83b0;
-        let name = unit
-            .owners
-            .iter()
-            .find(|member| member.address == address)
-            .unwrap()
-            .canonical_name
-            .clone();
-        let mut images = BTreeMap::new();
-        for edition in EDITIONS {
-            let mut rom = vec![0u8; (address - ROM_BASE as u32) as usize + 2];
-            let start = rom.len() - 2;
-            rom[start..].copy_from_slice(&[0x70, 0x47]);
-            images.insert(edition, rom);
-            unit.editions.insert(
-                edition.into(),
-                EditionLayout {
-                    owners: BTreeMap::from([(
-                        name.clone(),
-                        EditionOwner {
-                            address,
-                            extent: 2,
-                            source_variant: false,
-                        },
-                    )]),
-                    absolute_symbols: BTreeMap::new(),
-                },
-            );
-        }
-        // Synthetic references test edition plumbing, not regional ROM recovery.
-        let work = tempfile::tempdir().unwrap();
-        let report_path = work.path().join("editions.json");
-        let mut roms = EditionRoms { images };
-        write_declared_main_owner_build(&report_path, "080b83b0", &unit, &roms).unwrap();
-        let report: serde_json::Value =
-            serde_json::from_slice(&fs::read(&report_path).unwrap()).unwrap();
-        assert_eq!(report["all_exact"], true);
-        assert_eq!(report["editions"].as_array().unwrap().len(), 6);
-        let ja = roms.images.get_mut("ja").unwrap();
-        let last = ja.len() - 1;
-        ja[last] ^= 1;
-        assert!(write_declared_main_owner_build(&report_path, "080b83b0", &unit, &roms).is_err());
-        let report: serde_json::Value =
-            serde_json::from_slice(&fs::read(&report_path).unwrap()).unwrap();
-        assert_eq!(report["all_exact"], false);
-        assert_eq!(report["editions"][0]["byte_exact"], false);
-    }
-    #[test]
     fn linked_overlay_comparison_includes_pools_and_complete_extents() {
         let compiled = crate::overlay::compile::Compiled {
             address: 0x02001000,

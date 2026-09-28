@@ -5,9 +5,21 @@ WaitFrames:
 	overlay_veneer 0x080000d1
 	overlay_veneer 0x080000d9
 	overlay_veneer 0x08000101
+	.global Runtime_AllocateHeapBlockFar
+	.thumb_func
+Runtime_AllocateHeapBlockFar:
 	overlay_veneer 0x08000141
+	.global Runtime_ReleaseHeapBlock
+	.thumb_func
+Runtime_ReleaseHeapBlock:
 	overlay_veneer 0x08000151
+	.global VramBlock_LoadCached
+	.thumb_func
+VramBlock_LoadCached:
 	overlay_veneer 0x080001c9
+	.global ResourceMetadata_ClearRecordFar
+	.thumb_func
+ResourceMetadata_ClearRecordFar:
 	overlay_veneer 0x08009061
 	.global Object_SetMode
 	.thumb_func
@@ -33,6 +45,9 @@ Map_CopyCellAttributeRect:
 Object_CheckMovementCollision:
 	overlay_veneer 0x080091d9
 	overlay_veneer 0x080091f1
+	.global ItemIcon_LoadTilesFar
+	.thumb_func
+ItemIcon_LoadTilesFar:
 	overlay_veneer 0x08015251
 	overlay_veneer 0x08077041
 	overlay_veneer 0x08077049
@@ -49,6 +64,9 @@ Battle_WaitMode0:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
+	.global Object_GetByIdFar
+	.thumb_func
+Object_GetByIdFar:
 	overlay_veneer 0x0808a081
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func

@@ -6,8 +6,8 @@
 extern u8 *Data_03001ebc[];
 extern u32 Data_03001e40;
 /* Current entry in the RGB tint list; a red of 99 ends the list. */
-extern s32 Data_0200adb8;
-extern s32 Data_02009f00[];
+extern s32 ToretoHeya_TintIndex;
+extern s32 ToretoHeya_TintSteps[];
 
 /* Every 32 frames, tint the background palette, weaker for later colours. */
 void ToretoPalette_ApplyTint(void)
@@ -34,9 +34,9 @@ void ToretoPalette_ApplyTint(void)
     dst = (u16 *)0x05000020;
     i = 0;
     for (; i <= 62; i++, src++) {
-        r = Data_02009f00[Data_0200adb8];
-        g = Data_02009f00[Data_0200adb8 + 1];
-        b = Data_02009f00[Data_0200adb8 + 2];
+        r = ToretoHeya_TintSteps[ToretoHeya_TintIndex];
+        g = ToretoHeya_TintSteps[ToretoHeya_TintIndex + 1];
+        b = ToretoHeya_TintSteps[ToretoHeya_TintIndex + 2];
         if (i > 47) {
             r -= r / 2 + r / 3;
             g -= g / 2 + g / 3;
@@ -71,7 +71,7 @@ void ToretoPalette_ApplyTint(void)
             blue = 0;
         *dst++ = (blue << 10) | (green << 5) | red;
     }
-    Data_0200adb8 += (Engine_RandomNext() & 7) * 3;
-    if (Data_02009f00[Data_0200adb8] == 99)
-        Data_0200adb8 = 0;
+    ToretoHeya_TintIndex += (Engine_RandomNext() & 7) * 3;
+    if (ToretoHeya_TintSteps[ToretoHeya_TintIndex] == 99)
+        ToretoHeya_TintIndex = 0;
 }

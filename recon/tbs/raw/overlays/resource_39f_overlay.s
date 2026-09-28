@@ -5350,7 +5350,7 @@ Func_02002c0c:
 	.4byte 0x0200aba5
 	.include "games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

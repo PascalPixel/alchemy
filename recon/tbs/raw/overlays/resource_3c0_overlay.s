@@ -2161,6 +2161,7 @@ Func_02001094:
 	.4byte 0x04000050
 	.4byte 0x04000052
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

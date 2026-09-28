@@ -1040,6 +1040,7 @@ Func_02000904:
 	bx lr
 	.2byte 0x0000
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x00000010

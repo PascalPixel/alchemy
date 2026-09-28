@@ -267,6 +267,7 @@ Func_020001e4:
 	.4byte 0x02000240
 	.4byte 0x0000012f
 	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 AlchemyData_020002d0:
 	.4byte 0xffff0000
 	.4byte 0x000000ac

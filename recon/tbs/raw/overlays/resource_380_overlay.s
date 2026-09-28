@@ -7636,6 +7636,7 @@ Func_0200478c:
 	.4byte 0x0200d168
 	.4byte 0x0200c49d
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

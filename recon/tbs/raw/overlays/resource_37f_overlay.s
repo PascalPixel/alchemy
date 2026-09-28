@@ -3026,6 +3026,7 @@ Func_02001ac8:
 	.4byte 0x0200a69c
 	.4byte 0x0000e666
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

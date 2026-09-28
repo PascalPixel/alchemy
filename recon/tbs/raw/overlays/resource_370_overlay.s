@@ -2365,6 +2365,7 @@ Func_020012c8:
 	.4byte 0x0000ffff
 	.4byte 0xffffefdf
 	.include "games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00040004
 	.4byte 0x00000004
 	.4byte 0x00800040

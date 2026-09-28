@@ -6585,6 +6585,7 @@ Func_02003a44:
 	pop {r0}
 	bx r0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x20021003
 	.4byte 0x20024001
 	.4byte 0x000000ff

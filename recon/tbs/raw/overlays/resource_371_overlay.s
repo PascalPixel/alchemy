@@ -7130,6 +7130,7 @@ Func_02004058:
 	.4byte 0x0200c005
 	.4byte 0x0200bfb5
 	.include "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x7c1f7c1f
 	.4byte 0x20a21861
 	.4byte 0x45643503

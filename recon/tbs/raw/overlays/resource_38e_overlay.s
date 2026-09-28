@@ -1130,6 +1130,7 @@ Func_02000974:
 	.4byte 0x00000109
 	.4byte 0x0200890d
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00190022
 	.4byte 0x00030001
 	.4byte 0x00230005

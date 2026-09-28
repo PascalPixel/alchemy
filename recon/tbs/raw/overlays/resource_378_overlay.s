@@ -5522,6 +5522,7 @@ Func_020034f0:
 	bx r0
 	.4byte 0x00001823
 	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015

@@ -8184,6 +8184,7 @@ Func_02004b2c:
 	pop {r0}
 	bx r0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000004
 	.4byte 0x00000001
 	.4byte 0x0000801e

@@ -3076,6 +3076,7 @@ Func_020018b8:
 	.4byte 0x00000101
 	.4byte 0x0000e666
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

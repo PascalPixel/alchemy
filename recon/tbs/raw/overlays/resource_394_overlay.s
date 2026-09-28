@@ -1910,6 +1910,7 @@ Func_02000fb4:
 	.4byte 0x020092d0
 	.4byte 0x840000e0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MAGARI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x000b00cd
 	.4byte 0x00010009
 	.4byte 0x00000000

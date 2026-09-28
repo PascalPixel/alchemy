@@ -91,6 +91,7 @@ Func_020000b4:
 	movs r0, #0
 	bx lr
 	.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00500050
 	.4byte 0x00000000
 	.4byte 0x00000050

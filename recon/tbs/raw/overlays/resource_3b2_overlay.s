@@ -6044,7 +6044,7 @@ Func_02002ed8:
 	.4byte 0x0200ae71
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TAKARA_SHIMA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

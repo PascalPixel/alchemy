@@ -391,6 +391,7 @@ Func_020002e0:
 	.4byte 0x0200826d
 	.4byte 0x020082a1
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x00000064
 	.4byte 0x40000064

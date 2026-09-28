@@ -1725,7 +1725,7 @@ Func_02000cb4:
 	.4byte 0x02008c4d
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

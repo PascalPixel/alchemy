@@ -1597,6 +1597,7 @@ Func_02000d58:
 	.4byte 0x02008d09
 	.4byte 0x000008ff
 	.include "games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_MURA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000016
 	.4byte 0x0000001e
 	.4byte 0x00000080

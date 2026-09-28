@@ -680,6 +680,7 @@ Func_02000570:
 	bx r0
 	.2byte 0x0000
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA_SAI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

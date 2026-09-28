@@ -2842,6 +2842,7 @@ Func_02001840:
 	.4byte 0x00000109
 	.4byte 0x020097d9
 	.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 AlchemyData_02001b38:
 	.4byte 0x00000000
 	.4byte 0x00000001

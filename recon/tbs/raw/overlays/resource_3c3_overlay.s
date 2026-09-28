@@ -911,6 +911,7 @@ Func_020007ac:
 	.4byte 0x0000266d
 	.4byte 0x00000897
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000005
 	.4byte 0x00000010

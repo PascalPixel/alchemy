@@ -9740,6 +9740,7 @@ Func_02005520:
 	.4byte 0x00000352
 	.4byte 0x00000353
 	.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.set .L_020057ec, 0x020057ec
 	.set .L_0200581c, 0x0200581c
 	.set .L_02005902, 0x02005902

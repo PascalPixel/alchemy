@@ -2034,6 +2034,7 @@ Func_020012ac:
 	.4byte 0x02009c18
 	.4byte 0x020091c5
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x69c05860
 	.4byte 0x69c07f20
 	.4byte 0x48005860

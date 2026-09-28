@@ -8392,7 +8392,7 @@ Func_02004790:
 	.4byte 0xfff00000
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x00000006
 	.4byte 0x00010000

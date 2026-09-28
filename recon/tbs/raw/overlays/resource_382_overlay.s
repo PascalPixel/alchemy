@@ -2935,7 +2935,7 @@ Func_020017ac:
 	.4byte 0x02009755
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

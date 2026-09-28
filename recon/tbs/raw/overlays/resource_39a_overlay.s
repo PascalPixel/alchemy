@@ -4059,6 +4059,7 @@ Func_02002094:
 	.2byte 0xa015
 	.2byte 0x0200
 	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0200b268
 	.4byte 0x0200b2a8
 	.4byte 0x0200b2e8

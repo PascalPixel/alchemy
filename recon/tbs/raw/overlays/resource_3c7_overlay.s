@@ -1836,6 +1836,7 @@ Func_0200104c:
 	.4byte 0x000000b4
 	.4byte 0x02009314
 	.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x0000001e
 	.4byte 0x00000081

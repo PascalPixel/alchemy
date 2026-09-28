@@ -321,6 +321,7 @@ Func_020001c4:
 	.4byte 0x00000845
 	.4byte 0x02000240
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

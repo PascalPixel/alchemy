@@ -4545,6 +4545,7 @@ Func_02002924:
 	.4byte 0x00000ffd
 	.4byte 0x00000fff
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_NICHIGETSU/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x00000120
 	.4byte 0x4000009d

@@ -459,6 +459,7 @@ Func_0200033c:
 	.4byte 0x02000240
 	.4byte 0x00000911
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8

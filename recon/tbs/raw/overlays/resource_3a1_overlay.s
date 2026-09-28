@@ -745,6 +745,7 @@ Func_02000598:
 	.4byte 0x01a10000
 	.4byte 0x0000012f
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

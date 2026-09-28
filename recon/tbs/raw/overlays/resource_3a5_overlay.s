@@ -3388,7 +3388,7 @@ Func_02001c78:
 	.4byte 0x0200b030
 	.include "games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

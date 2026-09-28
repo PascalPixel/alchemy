@@ -20,7 +20,7 @@ s32 Func_08004458();
 void Func_080049ac();
 void Func_080051d8();
 s32 Func_08005340();
-void Func_080072f0();
+void _call_via_r3();
 void Func_080072f4();
 void Func_08009080();
 void Func_08009140();
@@ -118,7 +118,7 @@ void Function(s32 a0)
     record = Func_08002f40((s32)Data_00000073);
     ((void (*)())Func_08005340)(record, slot28);
     rec7 = Value1(Func_08002f40, (s32)Data_0000007d);
-    Call4(Func_080072f0, 0x5000000, rec7, 128, 0x3001388);
+    Call4(_call_via_r3, 0x5000000, rec7, 128, 0x3001388);
     Value2(Func_08005340, (rec7 + 128), slot36);
     ((void (*)())BattleEffect_LoadWork)(46, 7, 7, 3, 2);
     slot40 = *(s32 *)(base6_3001eec + 28);
@@ -191,7 +191,7 @@ void Function(s32 a0)
     }
     if (v11 == 16) {
         rec7 = Value1(Func_08002f40, (s32)Data_00000089);
-        Call4(Func_080072f0, 0x5000000, rec7, 128, 0x3001388);
+        Call4(_call_via_r3, 0x5000000, rec7, 128, 0x3001388);
         ((void (*)())Func_08005340)((rec7 + 128), slot36);
         *(s32 *)((s32)p10 + 72) = 0;
         *(s32 *)((s32)p10 + 36) = 0;

@@ -159,7 +159,7 @@ s32 Func_080a414c(void)
                 ItemMenu_DrawEquipPreview(menu->item_owner, menu->selected_slot, 0, menu->item_owner);
                 if (index == 3) {
                     Scheduler_AddOrUpdateCallback(
-                        (s32)&EquipmentMenu_CompatibilityUpdateEntry, 0xc80);
+                        (s32)&EquipmentMenu_UpdateCompatibilityIndicators, 0xc80);
                 }
             } else if (index != 0) {
                 FIELD(menu, s8 *, 0x25c) = 0;

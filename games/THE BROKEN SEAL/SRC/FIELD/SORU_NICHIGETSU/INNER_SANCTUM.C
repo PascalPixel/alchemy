@@ -198,7 +198,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-s32  Func_02002e42();  /* Func_080770c0 */
+s32  Func_02002e42();  /* GameFlag_TestFar */
 s32  Func_02002ede();  /* Func_0808a080 */
 s32  Func_020031f2();  /* Func_0808a070 */
 s32  Func_02003262();  /* Func_0808a178 */

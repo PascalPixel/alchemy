@@ -60,7 +60,7 @@ void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style)
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
     struct ShopRuntime *shop = SHOP_RUNTIME;
-    struct BattleUnit *unit = BattleUnit_Get(unit_id);
+    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
     struct ItemDefinition *item = Item_Get(item_id);
     s32 replaced = -1;
     s32 slot;

@@ -68,7 +68,7 @@
  * counter (32) is written back over the 0x03001AD6 halfword and the
  * scene closes through BattleFx_SetTransitionFlagAndDisplay.
  *
- * `Func_080072f0` and `Func_080072f4` are not real function symbols: they
+ * `_call_via_r3` and `Func_080072f4` are not real function symbols: they
  * are entries of the `_call_via_rN` trampoline bundle at
  * recon/tbs/raw/080072e4.s, i.e. indirect calls through whatever pointer
  * the compiler kept in r3 and r4.  Here they are the IWRAM copy routine
@@ -212,14 +212,14 @@ struct Member {
    the name `alchemy inspect` resolves for that target, where it has one.
    The ones with no comment have no resolved project name. */
 void Func_080030f8(s32 frames);                      /* WaitFrames */
-s32 Func_080022ec(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
+s32 Math_Div(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
 void Func_08002dd8(s32 id);                          /* Runtime_ReleaseHeapBlock */
 void *Func_08002f40(s32 id);                         /* get */
 u32 Func_08004458(void);                             /* random_16 */
 void Func_080049ac(void);                            /* Render_ResetTransformState */
 void Func_080051d8(void *a, void *b);                /* Graphics_PrepareTransferInIwramWork */
 void Func_08005268(const struct Spark *position, s32 *out);
-void *Func_08077008(s32 id);                         /* Runtime_GetObject */
+void *Owner_GetStateFar(s32 id);                         /* Runtime_GetObject */
 s32 Func_080b5058(s32 id);
 s32 Func_080b5070(s32 id);
 void Func_080b5088(s32 member, s32 kind);
@@ -266,7 +266,7 @@ void BattlePres_RunBeamScene(void *object)
     xfer = heap[-27];
     kind = M2C_FIELD(object, s32 *, 0);
     STATE = object;
-    record = Func_08077008(M2C_FIELD(object, s32 *, 8));
+    record = Owner_GetStateFar(M2C_FIELD(object, s32 *, 8));
     Func_080030f8(1);
     Func_080c9048();
     Func_080cdd58();
@@ -405,7 +405,7 @@ void BattlePres_RunBeamScene(void *object)
             }
         } else {
             if (i <= 17) {
-                idx = Func_080022ec(i, 3);
+                idx = Math_Div(i, 3);
                 if (M2C_FIELD(STATE, s32 *, 4) == 0) {
                     blit[1](draw_target, work + Data_080eedbe[idx],
                         pos[0] + Data_080eedca[idx] + dx - 58,

@@ -45,8 +45,7 @@ struct Effect05State {
 };
 
 extern struct Effect05State *Data_03001f30;
-s32 Func_080022ec(s32, s32);
-#define Math_Div Func_080022ec
+s32 Math_Div(s32, s32);
 void WaitFrames(s32);
 s32 Func_08004458(void);
 #define Random_Next Func_08004458

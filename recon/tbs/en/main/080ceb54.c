@@ -31,7 +31,7 @@ typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
-void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
+void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_pair);
 void **Func_080b5098(s32 member_id);
 s32 Func_080b5070(s32 member_id);
@@ -89,7 +89,7 @@ s32 Func_080ceb54(void *object, s32 variant)
     } else {
         palette_id = (s32)&Value_00000091;
     }
-    Func_080072f0(
+    _call_via_r3(
         (void *)(160 << 19), Func_08002f40(palette_id), 128,
         (WordCopyFn)0x03001388);
 

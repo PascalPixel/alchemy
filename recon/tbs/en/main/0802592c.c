@@ -93,7 +93,6 @@ extern u8 Value_000008e7;
 #define ActionTextMessage Value_0000053a
 #define NoActionMessage Value_000008e7
 
-#define Math_Div Func_080022ec
 
 #define RenderWork (*(u8 **)0x03001e8c)
 #define MenuNav (*(struct BattleMenuNav **)0x03001f34)

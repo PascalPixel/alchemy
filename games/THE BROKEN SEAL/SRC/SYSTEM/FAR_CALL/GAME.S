@@ -12,9 +12,6 @@
 Trade_GetOfferStateFar:
 Func_08077000:
 	overlay_veneer 0x08077331
-	.global Func_08077008
-	.thumb_func
-Func_08077008:
 	.global Owner_GetStateFar
 	.thumb_func
 Owner_GetStateFar:
@@ -25,16 +22,10 @@ Runtime_GetObject:
 	.global BattleUnit_Recalculate
 	.thumb_func
 BattleUnit_Recalculate:
-	.global Func_08077010
-	.thumb_func
-Func_08077010:
 	.global Owner_RecalculateStatsFar
 	.thumb_func
 Owner_RecalculateStatsFar:
 	overlay_veneer 0x08077429
-	.global Func_08077018
-	.thumb_func
-Func_08077018:
 	.global Item_Get
 	.thumb_func
 Item_Get:
@@ -70,9 +61,9 @@ Inventory_EquipFar:
 	.thumb_func
 Inventory_RemoveFar:
 	overlay_veneer 0x080788c5
-	.global Func_08077060
+	.global Inventory_BreakFar
 	.thumb_func
-Func_08077060:
+Inventory_BreakFar:
 	overlay_veneer 0x08078a35
 	.global Func_08077068
 	.thumb_func
@@ -91,9 +82,6 @@ Ability_GetData:
 	.global BattleAction_Get
 	.thumb_func
 BattleAction_Get:
-	.global Func_08077080
-	.thumb_func
-Func_08077080:
 	overlay_veneer 0x08078b9d
 	.global OwnerAction_AddFar
 	.thumb_func
@@ -111,9 +99,6 @@ Equipment_HasValueFar:
 	.thumb_func
 Func_080770b8:
 	overlay_veneer 0x080792c5
-	.global Func_080770c0
-	.thumb_func
-Func_080770c0:
 	.global GameFlag_IsSet
 	.thumb_func
 GameFlag_IsSet:
@@ -148,16 +133,10 @@ Func_080770e0:
 Owner_AdjustFirstValueFar:
 Func_08077118:
 	overlay_veneer 0x080783a5
-	.global Func_08077120
-	.thumb_func
-Func_08077120:
 	.global Owner_AdjustSecondValueFar
 	.thumb_func
 Owner_AdjustSecondValueFar:
 	overlay_veneer 0x080783dd
-	.global Func_08077128
-	.thumb_func
-Func_08077128:
 	.global Owner_RecalculateRatiosFar
 	.thumb_func
 Owner_RecalculateRatiosFar:
@@ -189,21 +168,21 @@ Party_ListActiveOwnersFar:
 Party_RemoveActiveOwnerFar:
 	overlay_veneer 0x08079665
 	overlay_veneer 0x08079c8d
-	.global Func_08077178
+	.global Battle_HitCheck
 	.thumb_func
-Func_08077178:
+Battle_HitCheck:
 	overlay_veneer 0x08079f11
-	.global Func_08077180
+	.global Battle_CalcAttack
 	.thumb_func
-Func_08077180:
+Battle_CalcAttack:
 	overlay_veneer 0x08079bf9
-	.global Func_08077188
+	.global Battle_CalcPower
 	.thumb_func
-Func_08077188:
+Battle_CalcPower:
 	overlay_veneer 0x08079c31
-	.global Func_08077190
+	.global Battle_CalcRestore
 	.thumb_func
-Func_08077190:
+Battle_CalcRestore:
 	overlay_veneer 0x08079c5d
 	.global Owner_GetRecordFar
 	.thumb_func
@@ -212,9 +191,6 @@ Owner_GetRecordFar:
 	.global BattleRandom16Far
 	.thumb_func
 BattleRandom16Far:
-	.global Func_080771a0
-	.thumb_func
-Func_080771a0:
 	overlay_veneer 0x08079bc5
 	.global Djinn_AddToOwnerFar
 	.thumb_func
@@ -241,9 +217,9 @@ Trade_AddOfferFar:
 	overlay_veneer 0x0807a459
 	overlay_veneer 0x0807a499
 	overlay_veneer 0x0807977d
-	.global Func_080771e0
+	.global SummonDefinition_Get
 	.thumb_func
-Func_080771e0:
+SummonDefinition_Get:
 	overlay_veneer 0x080797d5
 	.global Func_080771e8
 	.thumb_func
@@ -263,9 +239,6 @@ Func_08077208:
 	.thumb_func
 Trade_CanOfferDjinnFar:
 	overlay_veneer 0x0807a1f9
-	.global Func_08077218
-	.thumb_func
-Func_08077218:
 	.global Item_CanOwnerEquip
 	.thumb_func
 Item_CanOwnerEquip:
@@ -341,9 +314,6 @@ Func_080772b0:
 	.global BattleFx_IsReviveFar
 	.thumb_func
 BattleFx_IsReviveFar:
-	.global Func_080772b8
-	.thumb_func
-Func_080772b8:
 	overlay_veneer 0x08079ef9
 	.global Func_080772c0
 	.thumb_func

@@ -41,7 +41,7 @@ extern struct EffectScene *Data_03001f30;
 void *Func_08096c80(s32, s32, s32, s32);
 void Func_08097384(void);
 void Func_08009080(void *, s32);
-s32 Func_080022ec(s32, s32);
+s32 Math_Div(s32, s32);
 void Func_080030f8(s32);
 void Func_080f9010(s32);
 u32 Func_08004458(void);
@@ -55,7 +55,7 @@ void Func_0809a7f4(void);
 
 static __inline__ s32 InterpolateCoordinate(s32 origin, s32 target, s32 step)
 {
-    return origin + Func_080022ec(step * (target - origin), 10);
+    return origin + Math_Div(step * (target - origin), 10);
 }
 
 void RunBattleEffect14(void)
@@ -92,7 +92,7 @@ void RunBattleEffect14(void)
         object->x = InterpolateCoordinate(origin.x, target_cursor->x, step);
         object->y = InterpolateCoordinate(origin.y, target_cursor->y, step);
         object->z = InterpolateCoordinate(origin.z, target_cursor->z, step);
-        scale = 0x4000 + Func_080022ec(step * 0x10ccc, 10);
+        scale = 0x4000 + Math_Div(step * 0x10ccc, 10);
         object->scale_x = scale;
         object->scale_y = scale;
         Func_080030f8(1);

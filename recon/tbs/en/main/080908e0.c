@@ -13,7 +13,7 @@
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
-s32 Func_080770c0(s32 flag);
+s32 GameFlag_TestFar(s32 flag);
 
 extern volatile u16 RegIme;
 extern u8 Value_000003e0;
@@ -55,7 +55,7 @@ void Func_080908e0(void)
     u8 *base;
     s32 i;
 
-    if (Func_080770c0(0x152) != 0) {
+    if (GameFlag_TestFar(0x152) != 0) {
         return;
     }
     if (*(s8 *)(p + 0x2a01) == 0) {

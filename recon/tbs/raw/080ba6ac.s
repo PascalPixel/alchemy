@@ -262,7 +262,7 @@ Func_080ba6ac:
 	ldrsh	r0, [r3, r2]
 	movs	r6, #8
 	ldrsh	r1, [r3, r6]
-	bl	Func_08077060
+	bl	Inventory_BreakFar
 	bl	BattleEv_DispatchQueued
 	b.n	.L_080ba8da
 .L_080ba8c0:

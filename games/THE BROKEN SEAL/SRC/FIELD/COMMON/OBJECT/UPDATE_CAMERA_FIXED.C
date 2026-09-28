@@ -52,7 +52,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 s32 ArcTan2(s32 x, s32 y);
 void Render_ResetTransformState(void);
 s32 GameFlag_TestFar(s32 flag);
-void Func_080072f0(u32 arg, s32 unused1, s32 unused2, u32 routine);
+void _call_via_r3(u32 arg, s32 unused1, s32 unused2, u32 routine);
 void Graphics_PrepareTransferAndRun(struct FixedPoint *eye, struct FixedPoint *target);
 void Graphics_PrepareTransferInIwramWork(struct FixedPoint *eye, struct FixedPoint *target);
 void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);

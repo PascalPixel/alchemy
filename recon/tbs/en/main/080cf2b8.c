@@ -94,7 +94,7 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *record);
 void Func_080e3944(void *source, s32 *screen);
-s32 Func_080022ec(s32 value, s32 divisor);
+s32 Math_Div(s32 value, s32 divisor);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080030f8(s32 frames);
 s32 Func_080cdbc0(void);
@@ -332,7 +332,7 @@ void BattleEffect_RunMemberBeam(void *object, s32 variant)
                         q = frame / 4;
                         thick = 6;
                         if (frame > gap) {
-                            thick = 6 - Func_080022ec((frame - base) - 88, 3);
+                            thick = 6 - Math_Div((frame - base) - 88, 3);
                         }
                         if (q > 2) {
                             q = (q & 1) + 1;

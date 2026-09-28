@@ -30,7 +30,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
                 do {
                     value = entry[slot];
                     if (value != 254) {
-                        if (BattleUnit_Get(value)->hp != 0) {
+                        if (Owner_GetStateFar(value)->hp != 0) {
                             positions[count] = index | 0x100;
                             count++;
                         }

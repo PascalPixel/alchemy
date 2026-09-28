@@ -42,7 +42,7 @@ struct MotionFrame {
 
 extern struct MotionScene *Data_03001f30;
 
-s32 Func_080022ec(s32, s32);
+s32 Math_Div(s32, s32);
 void Func_080030f8(s32);
 void Func_0800447c(s32, s32, struct EffectVector *);
 void Func_08009080(void *, s32);
@@ -105,15 +105,15 @@ void RunBattleEffect13(void)
     do {
         s32 value;
         value = origin_cursor->x;
-        value += Func_080022ec(step * (target_cursor->x - value), 10);
+        value += Math_Div(step * (target_cursor->x - value), 10);
         object->pos.x = value;
         value = origin_cursor->y;
-        value += Func_080022ec(step * (target_cursor->y - value), 10);
+        value += Math_Div(step * (target_cursor->y - value), 10);
         object->pos.y = value;
         value = origin_cursor->z;
-        value += Func_080022ec(step * (target_cursor->z - value), 10);
+        value += Math_Div(step * (target_cursor->z - value), 10);
         object->pos.z = value;
-        value = 0x4000 + Func_080022ec(step * 0xc000, 10);
+        value = 0x4000 + Math_Div(step * 0xc000, 10);
         object->scale_x = value;
         object->scale_y = value;
         step++;
@@ -149,15 +149,15 @@ void RunBattleEffect13(void)
     do {
         s32 value;
         value = target_cursor->x;
-        value += Func_080022ec(step * (origin_cursor->x - value), 10);
+        value += Math_Div(step * (origin_cursor->x - value), 10);
         object->pos.x = value;
         value = target_cursor->y;
-        value += Func_080022ec(step * (origin_cursor->y - value), 10);
+        value += Math_Div(step * (origin_cursor->y - value), 10);
         object->pos.y = value;
         value = target_cursor->z;
-        value += Func_080022ec(step * (origin_cursor->z - value), 10);
+        value += Math_Div(step * (origin_cursor->z - value), 10);
         object->pos.z = value;
-        value = 0x10000 + Func_080022ec(step * (s32)&Value_ffff4000, 10);
+        value = 0x10000 + Math_Div(step * (s32)&Value_ffff4000, 10);
         object->scale_x = value;
         object->scale_y = value;
         step++;

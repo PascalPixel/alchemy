@@ -18,11 +18,11 @@ extern void Func_080bdfec(void);                 /* BattleEventRuntime_Reset */
 extern void Func_08015118(void);
 extern void Func_08015120(s16 value, s16 mode);  /* UiText_DrawQuantity */
 extern void Func_080151c8(void *text);           /* UiText_ShowMessageAndWait */
-extern s32 Func_080771a0(void);
+extern s32 BattleRandom16Far(void);
 extern s32 Func_080771b0(s16 id, s8 a, u8 b);
 extern void Func_080771c0(s16 id, s8 a, u8 b);
 extern s32 Func_080771c8(s16 id, s8 a, u8 b);
-extern s32 Func_080771e0(s16 id);
+extern s32 SummonDefinition_Get(s16 id);
 extern s32 Func_080771e8(s8 a, u8 b);
 extern s32 Func_08077208(s16 id, s8 a, u8 b);
 extern s32 Func_08077210(s16 id, s8 a, u8 b);
@@ -42,16 +42,16 @@ extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
                                            * used directly as abilityId */
 extern s32 Func_08077078(void *actor, s32 flag);
 extern void Func_080bb8d8(void);
-extern s32 Func_080770c0(s32 flagId);            /* GameFlag_IsSet */
+extern s32 GameFlag_TestFar(s32 flagId);            /* GameFlag_IsSet */
 extern s32 Func_08077170(s16 id);
 extern s32 Func_080c23e8(u8 value);
 extern s32 Func_080771a0_rng(void);
 extern void Func_080bb65c(void);
 extern void Func_080bf1d4(void); /* unreachable; long-branch veneer target only, never a real call site */
-extern void Func_080022ec(s32 a, s32 b);         /* FixedPoint_Ratio */
+extern void Math_Div(s32 a, s32 b);         /* FixedPoint_Ratio */
 extern void Func_080772f8(s16 id);
 extern s32 Func_080bd3c8(s16 id);
-extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
+extern s32 Battle_HitCheck(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
 /*
  * Literal-pool constants, resolved from ground truth per AGENTS.md's
@@ -126,7 +126,7 @@ extern s32 Func_08077178(s16 id, u8 a, u8 b, u8 c, s32 mode);
 #define TEXT_TIER6_MSG          ((void *)0x83f)  /* 2111; L_080bec90/tier==6 tail */
 #define TEXT_TIER5_STATUS_MSG   ((void *)0x814)  /* 2068; L_080beea8 status message */
 
-s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
+s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattlePlan *plan)
 {
     u8 *req = (u8 *)request;
     u8 *tgt = (u8 *)plan;
@@ -136,7 +136,7 @@ s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
     s16 tier;
     s16 abilityId;      /* r11 in most case bodies */
     void *abilityData;  /* r5/r6/r7 role: Ability_GetData()/Item_GetData() result */
-    void *targetUnit;   /* r6 in Region_080beb08's L_080bee08 block: Func_08077008(tgt[2]) -- the ability's recipient unit, distinct from `actor` */
+    void *targetUnit;   /* r6 in Region_080beb08's L_080bee08 block: Owner_GetStateFar(tgt[2]) -- the ability's recipient unit, distinct from `actor` */
     void *textPtr;
     s16 packed;
     s8 subKind;
@@ -147,7 +147,7 @@ s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
 
     s32 Func_080be18c(s32 id)
     {
-        struct BattleAction *action = Func_08077080(id);
+        struct BattleAction *action = BattleAction_Get(id);
         s32 kind = action->target_mode;
         s32 allow_dead = 0;
         s32 count, allies, enemies, center, first, last, index, unit;
@@ -180,7 +180,7 @@ s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
                     if(index >= enemies) continue;
                     unit = battle->mirrored[index];
                     if(unit == 254) continue;
-                    if(!allow_dead && *(s16 *)((u8 *)Func_08077008(unit)+56) == 0) continue;
+                    if(!allow_dead && *(s16 *)((u8 *)Owner_GetStateFar(unit)+56) == 0) continue;
                     plan->target_adjustments[count] = 1;
                     plan->target_offsets[count] = index-center;
                     plan->target_ids[count] = unit;
@@ -189,7 +189,7 @@ s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
                     if(index >= allies) continue;
                     unit = battle->normal[index];
                     if(unit == 254) continue;
-                    if(!allow_dead && *(s16 *)((u8 *)Func_08077008(unit)+56) == 0) continue;
+                    if(!allow_dead && *(s16 *)((u8 *)Owner_GetStateFar(unit)+56) == 0) continue;
                     plan->target_adjustments[count] = 1;
                     plan->target_offsets[count] = index-center;
                     plan->target_ids[count] = unit;
@@ -206,7 +206,7 @@ s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
         }
     }
 
-    actor = Func_08077008(*(s16 *)(req + 0));
+    actor = Owner_GetStateFar(*(s16 *)(req + 0));
     battle = Data_03001e74;
     targetPowerBase = Func_080b9a44(*(s16 *)(req + 10));
     Func_080bdfec();
@@ -244,7 +244,7 @@ s32 Func_080be378(struct BattleCommandRequest *request, struct BattlePlan *plan)
     }
     if (((u8 *)actor)[ACTOR_STATUSFLAG_OFF] & 1) {
         if (*(s16 *)(req + 6) != 3) {
-            if ((Func_080771a0() & 3) == 0) {
+            if ((BattleRandom16Far() & 3) == 0) {
                 Func_08015120(*(s16 *)(req + 0), 1);
                 Func_080151c8(ACTOR_STATUSFLAG_MSG);
                 goto L_080bec8a;
@@ -369,7 +369,7 @@ L_080be76c:
     /* ---- case tier==1, address 0x080be7d0 ---- */
 L_080be7d0:
     abilityId = *(s16 *)(req + 8);
-    abilityData = Func_08077080(abilityId);
+    abilityData = BattleAction_Get(abilityId);
     lookupResult = Func_080be18c(abilityId);
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
@@ -394,7 +394,7 @@ L_080be7d0:
     *(s32 *)(tgt + 92) = 0;
     *(u16 *)((u8 *)actor + 58) =
         (u16)(*(u16 *)((u8 *)actor + 58) - *(u8 *)((u8 *)abilityData + 9));
-    Func_08077128(*(s16 *)(req + 0));
+    Owner_RecalculateRatiosFar(*(s16 *)(req + 0));
     if (*(s16 *)((u8 *)actor + 58) < 0) {
         *(u16 *)((u8 *)actor + 58) = 0;
     }
@@ -423,7 +423,7 @@ L_080be888:
              * mislabeled as req-relative when they are actor-relative.
              */
             u16 itemId = *(u16 *)((u8 *)actor + 216 + slotIdx * 2);
-            abilityData = Func_08077018(itemId);
+            abilityData = Item_Get(itemId);
         }
         abilityId = (s16)*(u16 *)((u8 *)abilityData + 40);
         if (abilityId != 0) {
@@ -485,7 +485,7 @@ L_080be984:
     }
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
-    abilityData = Func_08077080(abilityId);
+    abilityData = BattleAction_Get(abilityId);
     if ((*((u8 *)abilityData + 1) & 0x0f) == 6) {
         textPtr = (void *)0x8f1;  /* 2289 */
     } else {
@@ -573,13 +573,13 @@ L_080beb48:
         goto L_080bec62;
     }
 
-    Func_08077080(abilityId);
+    BattleAction_Get(abilityId);
     Func_080c10e8(0, 0);
     Func_080771b0(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
     Func_080771c0(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
-    Func_08077010(*(s16 *)(req + 0));
+    BattleUnit_Recalculate(*(s16 *)(req + 0));
     Func_080bdfec();
     Func_080bd808(30);
     Func_080bbabc(0, *(s16 *)(req + 0));
@@ -610,7 +610,7 @@ L_080bec90:
     }
     Func_080771c8(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
-    abilityData = Func_08077080(abilityId);
+    abilityData = BattleAction_Get(abilityId);
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
     Func_080151c8(TEXT_TIER6_MSG);
@@ -653,7 +653,7 @@ L_080becea:
      * as the skip case instead of subclass 4.)
      */
 L_080bee08:
-    targetUnit = Func_08077008(tgt[2]);
+    targetUnit = Owner_GetStateFar(tgt[2]);
     *(u32 *)(tgt + 76) = 1;
     *(s32 *)(tgt + 80) = Func_08077170(*(s16 *)(req + 0));
     *(s32 *)(tgt + 84) = 2;
@@ -699,23 +699,23 @@ L_080beea8:
             *((u8 *)targetUnit + 2068) == 0 &&
             *((u8 *)targetUnit + 315) == 0 &&
             ((u8 *)targetUnit)[314] != 0) {                /* 157*2 */
-            if (!(Func_080771a0() > 152)) {
+            if (!(BattleRandom16Far() > 152)) {
                 ((u8 *)targetUnit)[30] = 5; /* r5 kept the loop's own value; see TODO below */
             }
         }
-        if ((Func_080771a0() & 31) == 0) {
+        if ((BattleRandom16Far() & 31) == 0) {
             ((u8 *)targetUnit)[30] = 0;
         }
     }
 
 L_080bef28:
-    if (Func_080770c0(366) != 0) { /* 183*2 */
+    if (GameFlag_TestFar(366) != 0) { /* 183*2 */
         ((u8 *)tgt)[30] = 0;
     }
     if (*(s16 *)((u8 *)actor + 56) == 0) {
         goto L_080bf1a8_shared;
     }
-    if ((Func_080771a0() & 31) != 0) {
+    if ((BattleRandom16Far() & 31) != 0) {
         goto L_080bec5c;
     }
     goto L_080befb4_shared;
@@ -729,8 +729,8 @@ L_080befb4_shared:
         s32 rangeMask;
         impactPower = *(s16 *)(req + 0); /* placeholder wiring for Func_080772f8/Func_080022ec chain */
         Func_080772f8(impactPower);
-        Func_080022ec(200 << 16, 0);
-        rangeMask = Func_080771a0();
+        Math_Div(200 << 16, 0);
+        rangeMask = BattleRandom16Far();
         (void)rangeMask;
         if (rangeMask <= 0) {
             goto L_080bf1a8;
@@ -768,7 +768,7 @@ L_080befb4_shared:
      *                                   usage, so it is modeled as req here)
      */
 L_080befb4_tail:
-    abilityData = Func_08077080(abilityId);
+    abilityData = BattleAction_Get(abilityId);
     *(u32 *)(tgt + 80) = *((u8 *)abilityData + 2);
     *(u32 *)(tgt + 88) = 0;
     *(u32 *)(tgt + 76) = (u32)abilityId;
@@ -787,7 +787,7 @@ L_080befb4_tail:
                 goto L_080bf044;
             }
             stepValue = (kindByte == 65 || kindByte == 41 || kindByte == 42) ? 1 : 2;
-            if ((Func_080771a0() & 0xff) < capValue) {
+            if ((BattleRandom16Far() & 0xff) < capValue) {
                 s8 stepCount = (s8)tgt[1];
                 s32 j;
                 for (j = 0; j < stepCount; j++) {
@@ -810,7 +810,7 @@ L_080bf044:
             case 39: capValue2 = 7; break;
             default: capValue2 = 3; break;
             }
-            if ((Func_080771a0() & capValue2) == 0) {
+            if ((BattleRandom16Far() & capValue2) == 0) {
                 s8 stepCount2 = (s8)tgt[1];
                 s32 j;
                 for (j = 0; j < stepCount2; j++) {
@@ -821,7 +821,7 @@ L_080bf044:
             /*
              * ---- per-target power-accumulation loop, address 0x080bf0ca --
              * iterates `(s8)tgt[1]` times over the per-target slot bytes at
-             * tgt+2.., calling Func_08077178(req->0, slotByte,
+             * tgt+2.., calling Battle_HitCheck(req->0, slotByte,
              * abilityData->2, abilityData->3, 100) and writing the
              * (byte-truncated) result to tgt+2+i+56. First arg confirmed as
              * `req` (not `actor`) from the standalone objdump: this file's
@@ -833,7 +833,7 @@ L_080bf044:
             s32 i;
             for (i = 0; i < count; i++) {
                 u8 slotByte = tgt[2 + i];
-                s32 result = Func_08077178(*(s16 *)(req + 0), slotByte,
+                s32 result = Battle_HitCheck(*(s16 *)(req + 0), slotByte,
                                             *((u8 *)abilityData + 2),
                                             *((u8 *)abilityData + 3), 100);
                 tgt[2 + i + 56] = (u8)result;
@@ -877,7 +877,7 @@ L_080bf0f8:
         *(s32 *)(tgt + 84) = statusCode;
     }
 
-    if (Func_080772b8(*((u8 *)abilityData + 3)) != 0) {
+    if (BattleFx_IsReviveFar(*((u8 *)abilityData + 3)) != 0) {
         *(u32 *)(tgt + 88) |= 0x10000;
     }
 

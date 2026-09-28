@@ -117,7 +117,7 @@ void Owner_InitRecords(void)
     u8 *name;
 
     for (owner = 0; owner <= 7; owner++) {
-        state = (struct OwnerRecordState *)OwnerState_Get(owner);
+        state = (struct OwnerRecordState *)Owner_GetState(owner);
         Ui_AdjustValueWithoutLimitFar(owner + (s32)&Value_00000066, name_buf);
         name = state->name;
         name[0] = name_buf[0];
@@ -135,7 +135,7 @@ void Owner_InitRecords(void)
 
     if (*remote != -1) {
         do {
-            state = (struct OwnerRecordState *)OwnerState_Get(*remote);
+            state = (struct OwnerRecordState *)Owner_GetState(*remote);
             if (state != 0) {
                 state->class_id = (u8)*remote;
                 tmpl = (struct OwnerEquipTemplate *)Owner_GetRecordStride180(state->class_id);

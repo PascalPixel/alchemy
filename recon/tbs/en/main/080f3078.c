@@ -73,9 +73,7 @@ extern u8 Value_00000600;
 
 s32 Graphics_ClampRgb555Channel(s32 val);
 s32 Graphics_ClampRgb555Component(s32 val);
-s32 Func_080022ec(s32 numerator, s32 denominator);
-
-#define Math_Div Func_080022ec
+s32 Math_Div(s32 numerator, s32 denominator);
 
 typedef s32 (*DivideFunc)(s32 num, s32 den);
 

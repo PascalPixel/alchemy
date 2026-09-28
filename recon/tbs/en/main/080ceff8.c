@@ -56,7 +56,7 @@ extern u8 Value_000000cc;
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 value);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -109,7 +109,7 @@ void Func_080ceff8(void *object, s32 mode)
     } else {
         M2C_FIELD((void *)0x04000020, s16 *, 0) = (s16)(s32)&Value_000000cc;
         M2C_FIELD((void *)0x04000028, s32 *, 0) =
-            (Func_080022ec(-pos.x * 4, 5) + 64) << 8;
+            (Math_Div(-pos.x * 4, 5) + 64) << 8;
     }
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);

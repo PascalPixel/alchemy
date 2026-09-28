@@ -1003,7 +1003,7 @@ Func_08027114:
 	adds	r0, r6, #0
 	adds	r3, #12
 	mov	r8, r3
-	bl	Func_080771e0
+	bl	SummonDefinition_Get
 	mov	r9, r0
 	ldrh	r0, [r0, #0]
 	bl	Ability_GetData
@@ -1118,7 +1118,7 @@ Func_08027114:
 .L_08027a42:
 	adds	r0, r6, #0
 	str	r4, [sp, #4]
-	bl	Func_080771e0
+	bl	SummonDefinition_Get
 	ldr	r3, [pc, #16]
 	ldrh	r0, [r0, #0]
 	b.n	.L_08027a60

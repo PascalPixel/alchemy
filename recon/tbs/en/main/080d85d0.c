@@ -41,7 +41,7 @@ typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
-void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
+void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -99,7 +99,7 @@ s32 Func_080d85d0(void *object)
     } else {
         palette = Func_08002f40((s32) &Value_000000b9);
     }
-    Func_080072f0((void *)(160 << 19), palette, 128, (WordCopyFn)0x03001388);
+    _call_via_r3((void *)(160 << 19), palette, 128, (WordCopyFn)0x03001388);
 
     pool_cursor = (s32 *)0x02010018;
     pool_index = 0;

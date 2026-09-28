@@ -19,5 +19,5 @@ void EquipmentMenu_StartCompatibilityIndicators(void)
             member_index++;
         } while (member_index < menu[0x219]);
     }
-    Scheduler_RemoveCallback((s32)&EquipmentMenu_CompatibilityUpdateEntry);
+    Scheduler_RemoveCallback((s32)&EquipmentMenu_UpdateCompatibilityIndicators);
 }

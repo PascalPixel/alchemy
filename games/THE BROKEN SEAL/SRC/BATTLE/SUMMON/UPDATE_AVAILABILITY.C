@@ -16,7 +16,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
     s32 element;
     u32 available_mask;
 
-    party_size = BattleParty_ListActiveMembers(party_members);
+    party_size = BattleParty_PrepareActiveOwners(party_members);
     available_mask = 0;
 
     element = 0;
@@ -27,7 +27,7 @@ struct BattleSummonState *BattleSummon_UpdateAvailability(void)
 
             for (party_slot = 0; party_slot < party_size; party_slot++) {
                 struct OwnerValueState *member =
-                    OwnerState_GetFar(party_members[party_slot]);
+                    Owner_GetStateFar(party_members[party_slot]);
 
                 totals.by_element[element] += member->values[element];
             }

@@ -107,7 +107,7 @@ extern u8 Data_0200b1c1[];
 extern volatile u32 Data_03001ae8;
 extern u8 Data_0200c008[];
 extern u8 Data_00000000[];
-extern u8 Data_02002090[];
+extern u8 gIoWriteQueue[];
 extern u8 Data_0200cbfc[];
 extern u8 Data_0200cc28[];
 extern u8 Data_0200cca4[];

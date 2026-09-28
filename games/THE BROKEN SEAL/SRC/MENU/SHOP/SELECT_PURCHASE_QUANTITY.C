@@ -28,7 +28,7 @@ s32 Shop_SelBuyNum(s32 unit_id, s32 item_id)
     s32 result;
 
     shop = SHOP_RUNTIME;
-    unit = BattleUnit_Get(unit_id);
+    unit = Owner_GetStateFar(unit_id);
     item = Item_Get(item_id);
     result = 1;
     if (item->flags & 0x10) {

@@ -259,9 +259,6 @@ UiWindow_SetTilemapEntryFar:
 	overlay_veneer 0x08019001
 	overlay_veneer 0x08028f99
 	overlay_veneer 0x080291e5
-	.global Func_08015298
-	.thumb_func
-Func_08015298:
 	.global Resource_LoadByModeIntoSlotFar
 	.thumb_func
 Resource_LoadByModeIntoSlotFar:

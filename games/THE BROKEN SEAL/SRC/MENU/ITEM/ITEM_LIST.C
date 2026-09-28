@@ -59,7 +59,7 @@ s32 ItemMenu_Count(s32 owner_id)
     u16 *slots;
 
     count = 0;
-    slots = OwnerState_GetFar(owner_id)->inventory;
+    slots = Owner_GetStateFar(owner_id)->inventory;
     remaining = 0xE;
     do {
         item_id = 0x1FF & *slots;

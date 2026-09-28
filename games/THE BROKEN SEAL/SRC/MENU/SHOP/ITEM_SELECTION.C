@@ -64,8 +64,8 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             unit_id = shop->party_member_ids[selected_index];
             Shop_PlaceCursor((void *)list_window, selected_index * 24 - 12, 0);
             shop->mode = 3;
-            Shop_UpdatePartyMemberList(list_window, selected_index, 0);
-            Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+            Shop_DrawParty(list_window, selected_index, 0);
+            Shop_DrawUnitGrid(shop->item_window, unit_id);
         }
 
         WaitFrames(1);
@@ -188,8 +188,8 @@ s32 Shop_SelUse(s32 actor)
             y = (Math_Div(selection, 5) << 4) + 8;
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
-            Shop_DrawUseItemDetails(win1, actor, selection);
-            Shop_DrawMessage(win2, flags + (s32)&MsgItemPlainName);
+            Shop_DrawUseItem(win1, actor, selection);
+            Shop_DrawMsg(win2, flags + (s32)&MsgItemPlainName);
         }
 
         WaitFrames(1);
@@ -296,7 +296,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             s32 qty;
             s32 total;
 
-            qty = Shop_ComputeSalePrice(*(u16 *)(unit + slot_offset));
+            qty = Shop_SalePrice(*(u16 *)(unit + slot_offset));
             total = mult *qty;
 
             UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8d, window, 8, 8);

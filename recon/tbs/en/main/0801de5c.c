@@ -236,6 +236,6 @@ loop_50:
             goto loop_43;
         }
     }
-    Func_08002df0(sp8);
+    Sys_Free(sp8);
     return (s32) temp_r6_245;
 }

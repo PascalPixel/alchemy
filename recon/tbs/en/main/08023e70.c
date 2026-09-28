@@ -127,8 +127,8 @@ extern u8 Data_08037308[];
 extern u8 Data_080373e7[];
 extern u8 Data_080373eb[];
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
-void Func_08002df0(void *buf);
+s32 Math_Div(s32 numerator, s32 denominator);
+void Sys_Free(void *buf);
 void Func_080030f8(s32 frames);
 void Func_0800352c(void);
 void Func_08003dec(void *slot, s32 kind);
@@ -155,7 +155,7 @@ void Func_08022768(s32 x, s32 y, s32 w, s32 h, s32 pal);
 struct UiWindow *Func_08022b44(struct UiWindow *win, s32 owner, u32 code, s32 sel,
                                s32 *count);
 struct PlacementTable *Func_08077000(s32 side);
-struct BattleUnitGrid *Func_08077008(s32 owner);
+struct BattleUnitGrid *Owner_GetStateFar(s32 owner);
 void Func_080f9010(s32 cue);
 
 /* The two IWRAM helpers below are reached through the compiler's call-via
@@ -229,7 +229,7 @@ s32 Battle_SelectAbility(s32 owner)
     page = MENU_STATE->field_34;
     row = MENU_STATE->field_30;
     saved_row = MENU_STATE->field_38;
-    unit = Func_08077008(owner);
+    unit = Owner_GetStateFar(owner);
 
     /* Flatten the two ability grids into one page-ordered table. */
     for (x = 0; x <= 3; x++) {
@@ -350,9 +350,9 @@ s32 Battle_SelectAbility(s32 owner)
                 prev_page = page;
             }
             if (cnt > 5) {
-                for (j = 0; j < (pages = Func_080022ec(cnt + 4, 5)); j++) {
+                for (j = 0; j < (pages = Math_Div(cnt + 4, 5)); j++) {
                     tile = j + 0xf301;
-                    if (j == Func_080022ec(page, 5)) {
+                    if (j == Math_Div(page, 5)) {
                         tile = j + 0xf30b;
                     }
                     Func_08019000(list_win, tile, list_win->field_08 - pages + j - 2, -1, 0);
@@ -365,15 +365,15 @@ s32 Battle_SelectAbility(s32 owner)
         }
 
         if (cnt > 5) {
-            for (j = 0; j < (pages = Func_080022ec(cnt + 4, 5)); j++) {
+            for (j = 0; j < (pages = Math_Div(cnt + 4, 5)); j++) {
                 tile = j + 0xf301;
                 if ((BATTLE_OPTIONS & 0x100) || (FRAME_COUNTER & 15) <= 11) {
-                    if (j == Func_080022ec(page, 5)) {
+                    if (j == Math_Div(page, 5)) {
                         tile = j + 0xf30b;
                     }
                 }
                 Func_08019000(list_win, tile,
-                              list_win->field_08 - Func_080022ec(cnt + 4, 5) + j - 2, -1, 0);
+                              list_win->field_08 - Math_Div(cnt + 4, 5) + j - 2, -1, 0);
             }
             if ((BATTLE_OPTIONS & 0x100) == 0) {
                 Func_08019000(list_win, 0xf334, list_win->field_08 - pages - 3, -1, 0);
@@ -443,7 +443,7 @@ s32 Battle_SelectAbility(s32 owner)
                 Func_080f9010(0x6f);
                 row--;
                 if (row < 0) {
-                    if (page == Func_080022ec(cnt - 1, 5) * 5) {
+                    if (page == Math_Div(cnt - 1, 5) * 5) {
                         row = cnt - page - 1;
                     } else {
                         row = 4;
@@ -510,7 +510,7 @@ s32 Battle_SelectAbility(s32 owner)
                 } else {
                     page = page + 5;
                     row = saved_row;
-                    if (page == Func_080022ec(cnt - 1, 5) * 5) {
+                    if (page == Math_Div(cnt - 1, 5) * 5) {
                         row = cnt - page - 1;
                         if (row > saved_row) {
                             row = saved_row;
@@ -524,7 +524,7 @@ s32 Battle_SelectAbility(s32 owner)
                     page -= 5;
                     row = saved_row;
                 } else {
-                    page = Func_080022ec(cnt - 1, 5) * 5;
+                    page = Math_Div(cnt - 1, 5) * 5;
                     row = saved_row;
                     if (page != 0) {
                         row = cnt - page - 1;
@@ -584,7 +584,7 @@ s32 Battle_SelectAbility(s32 owner)
     Func_08016418(list_win, 1);
     Func_0801e318();
     Func_0801e3c8(0);
-    Func_08002df0(tbl);
+    Sys_Free(tbl);
     Func_080030f8(1);
     return ret;
 }

@@ -116,7 +116,6 @@ struct IoWriteQueue {
     u16 pad;
     u32 entries[32][3];
 };
-#define gIoWriteQueue Data_02002090
 extern struct IoWriteQueue gIoWriteQueue;
 
 #define REG_IME (*(volatile u16 *)0x04000208)

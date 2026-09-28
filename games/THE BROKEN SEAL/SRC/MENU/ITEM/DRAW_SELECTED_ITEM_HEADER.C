@@ -11,7 +11,7 @@ void ItemMenu_DrawItemHead(void)
 {
     struct InventoryMenuState *menu = gMenuWork;
 
-    InventoryMenu_DrawItemIcon(
+    Resource_LoadByModeIntoSlotFar(
         2, menu->selected_item, menu->selected_item_icon->render_target, 0);
     menu->selected_item_icon->state = 1;
     menu->selected_item_icon->x = 112;

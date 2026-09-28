@@ -6,7 +6,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-#include "RESOURCE_37E.H"
+/* The scene's four tables, in the overlay's read-only data. */
+extern u8 SoruRoka_SceneTable0[];
+extern u8 SoruRoka_SceneTable1[];
+extern u8 SoruRoka_SceneTable2[];
+extern u8 SoruRoka_SceneTable3[];
 #include "RESOURCE_37DE_SCENE.H"
 
 /*
@@ -15,7 +19,7 @@
  */
 u8 *SceneData_GetScriptTable(void)
 {
-    return RESOURCE37E_PRIMARY_TABLE;   /* image offset 0xc0 */
+    return SoruRoka_SceneTable0;
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
@@ -27,19 +31,19 @@ s32 SceneData_ReturnZero(void)
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetMessageTable(void)
 {
-    return RESOURCE37E_SECONDARY_TABLE;   /* image offset 0x120 */
+    return SoruRoka_SceneTable1;
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetActorTable(void)
 {
-    return RESOURCE37E_TERTIARY_TABLE;   /* image offset 0x130 */
+    return SoruRoka_SceneTable2;
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetEffectTable(void)
 {
-    return RESOURCE37E_QUATERNARY_TABLE;   /* image offset 0x148 */
+    return SoruRoka_SceneTable3;
 }
 
 s32 Scene_InitSceneRequestAndCameraZoom(void)

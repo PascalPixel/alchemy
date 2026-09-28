@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_08000128(s32 distance, s32 angle, union FieldCoordinate *pos);
-s32 Main_080091d8(struct FieldActor *actor, union FieldCoordinate *pos);
+void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
+s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -35,8 +35,8 @@ void ShianMura_HopLeaderAhead(void)
         p[0].fixed = (leader->x.fixed & -0x100000) + 0x80000;
         p[1].fixed = leader->y.fixed;
         p[2].fixed = (leader->z.fixed & -0x100000) + 0x80000;
-        Call3((void (*)())Main_08000128, 0x200000, (leader->facing + 0x2000) & 0xc000, (s32)p);
-        if (Value2((s32 (*)())Main_080091d8, (s32)leader, (s32)p) == 0) {
+        Call3((void (*)())Vector_AddPolarOffset, 0x200000, (leader->facing + 0x2000) & 0xc000, (s32)p);
+        if (Value2((s32 (*)())Object_CheckMovementCollision, (s32)leader, (s32)p) == 0) {
             Engine_EventBegin();
             Engine_ObjectSetAnimation(leader, 6);
             Engine_TaskWait(6);

@@ -6902,6 +6902,9 @@ Func_02003f88:
 	pop {r0}
 	bx r0
 	.4byte 0x03001e40
+	.global Effect_AnimateVerticalPositive
+	.thumb_func
+Effect_AnimateVerticalPositive:
 	.global Func_02003fb4
 	.thumb_func
 Func_02003fb4:
@@ -6945,6 +6948,9 @@ Func_02003fb4:
 	pop {r5, r6}
 	pop {r0}
 	bx r0
+	.global Effect_AnimateVerticalNegative
+	.thumb_func
+Effect_AnimateVerticalNegative:
 	.global Func_02004004
 	.thumb_func
 Func_02004004:
@@ -6990,145 +6996,7 @@ Func_02004004:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02004058
-	.thumb_func
-Func_02004058:
-	push {r5, r6, r7, lr}
-	mov r7, r11
-	mov r6, r10
-	mov r5, r9
-	push {r5, r6, r7}
-	mov r7, r8
-	push {r7}
-	ldr r3, [pc, #72]
-	ldr r3, [r3]
-	sub sp, #8
-	movs r1, #63
-	adds r6, r0, #0
-	mov r11, r3
-	movs r7, #0
-	mov r10, sp
-	mov r9, r1
-.L_02004058_2:
-	ldr r2, [r6, #12]
-	ldr r3, [r6, #16]
-	ldr r1, [r6, #8]
-	movs r0, #26
-	bl 0x0200c20c
-	lsls r3, r7, #2
-	mov r2, r10
-	str r0, [r3, r2]
-	cmp r0, #0
-	beq .L_02004058_0
-	ldr r3, [r6, #20]
-	str r3, [r0, #20]
-	adds r3, r0, #0
-	ldr r5, [r0, #80]
-	adds r3, #85
-	movs r2, #0
-	ldr r1, [pc, #16]
-	strb r2, [r3]
-	adds r3, #15
-	strh r2, [r3]
-	mov r8, r1
-	str r6, [r0, #104]
-	cmp r5, #0
-	beq .L_02004058_0
-	b .L_02004058_1
-	.4byte 0x00000000
-	.4byte 0x03001f30
-.L_02004058_1:
-	movs r1, #0
-	adds r0, r5, #0
-	bl 0x0200c1f4
-	adds r3, r5, #0
-	adds r3, #38
-	mov r2, r8
-	strb r2, [r3]
-	ldrb r0, [r5, #28]
-	bl 0x0200c1dc
-	mov r3, r11
-	adds r3, #70
-	ldrh r3, [r3]
-	strb r3, [r5, #28]
-	ldrb r3, [r5, #29]
-	movs r2, #1
-	orrs r3, r2
-	strb r3, [r5, #29]
-	ldrb r3, [r5, #28]
-	ldr r2, [pc, #64]
-	lsls r3, r3, #2
-	adds r3, r3, r2
-	ldrh r1, [r3, #2]
-	ldr r2, [pc, #52]
-	ldrh r3, [r5, #8]
-	lsls r1, r1, #17
-	lsrs r1, r1, #22
-	ands r3, r2
-	orrs r3, r1
-	movs r1, #33
-	negs r1, r1
-	strh r3, [r5, #8]
-	ldrb r3, [r5, #5]
-	adds r2, r1, #0
-	ands r3, r2
-	mov r2, r9
-	ands r3, r2
-	movs r2, #64
-	orrs r3, r2
-	ldrb r2, [r5, #7]
-	strb r3, [r5, #5]
-	mov r3, r9
-	ands r3, r2
-	movs r2, #128
-	orrs r3, r2
-	strb r3, [r5, #7]
-	ldr r3, [r5, #40]
-	mov r1, r8
-	strb r1, [r3, #22]
-	b .L_02004058_0
-	.2byte 0x0000
-	.4byte 0xfffffc00
-	.4byte 0x03001b10
-.L_02004058_0:
-	adds r7, #1
-	cmp r7, #1
-	ble .L_02004058_2
-	ldr r2, [sp, #0]
-	ldr r3, [pc, #60]
-	ldr r0, [r2, #80]
-	str r3, [r2, #108]
-	movs r2, #13
-	ldrb r1, [r0, #9]
-	negs r2, r2
-	adds r3, r2, #0
-	movs r4, #4
-	ands r3, r1
-	orrs r3, r4
-	strb r3, [r0, #9]
-	mov r3, r10
-	ldr r1, [r3, #4]
-	ldr r0, [r1, #80]
-	ldrb r3, [r0, #9]
-	ands r2, r3
-	ldr r3, [pc, #32]
-	orrs r2, r4
-	str r3, [r1, #108]
-	adds r1, #35
-	movs r3, #2
-	strb r2, [r0, #9]
-	strb r3, [r1]
-	sub sp, #-8
-	pop {r3, r5, r6, r7}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	mov r11, r7
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.4byte 0x0200c005
-	.4byte 0x0200bfb5
+	.section .text.x0200c174,"ax",%progbits
 	.include "games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x7c1f7c1f

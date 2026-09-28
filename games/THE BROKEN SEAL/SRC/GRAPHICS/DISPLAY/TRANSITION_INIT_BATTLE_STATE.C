@@ -14,7 +14,7 @@ struct DisplayTransitionState {
 };
 
 void *Runtime_AllocateBlock(s32 kind, s32 size);
-void Func_0808f52c(void);
+void DisplayTransition_UpdateScanlineTable(void);
 void BattleFx_StartWindowHBlankDma(void);
 
 /* Allocates and clears the transition state for a battle effect, arms the
@@ -30,6 +30,6 @@ void DisplayTransition_InitializeBattleEffectState(s32 mode)
     state->timer = 0;
     state->mask = 0x3f3f;
     state->active = 1;
-    Scheduler_AddOrUpdateCallback((s32)Func_0808f52c, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)DisplayTransition_UpdateScanlineTable, 0xc80);
     Scheduler_AddOrUpdateCallback((s32)BattleFx_StartWindowHBlankDma, 0x480);
 }

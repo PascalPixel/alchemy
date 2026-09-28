@@ -2,8 +2,6 @@
 @ projects read their base ROM. Each section shrinks as its data gains source.
 	.section .unidentified.08000000,"a"
 	.incbin "baserom.gba", 0x00000000, 0x000000c0
-	.section .unidentified.0800380a,"a"
-	.incbin "baserom.gba", 0x0000380a, 0x00000006
 	.section .unidentified.08007320,"a"
 	.incbin "baserom.gba", 0x00007320, 0x00000356
 	.global Math_ArcTanTable

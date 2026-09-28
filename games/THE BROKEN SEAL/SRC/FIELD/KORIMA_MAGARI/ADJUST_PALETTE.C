@@ -23,8 +23,6 @@ extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
 
-u32 Random16Far(void);
-
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
  * the returned table address 0x02009170.
@@ -86,20 +84,31 @@ u32 Random16Far(void);
  * rejoins at 0x02000f18 before the common return.
  */
 
+s32 IwramSignedDivide();   /* 0x02000eec */
 
 s32 IwramSignedDivide();   /* 0x02000efa */
 
 s32 IwramSignedDivide();   /* 0x02000f08 */
 
-void State_ApplyRectByLayoutSelector(void)
+u16 Effect_AdjustColorChannels(u16 color, s32 adj)
 {
-    if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    }
+    s16 green = (s16)((color >> 5) & 31);
+    s16 red = (s16)(color & 31);
+    s16 blue = (s16)((color >> 10) & 31);
+    u32 packed;
+
+    red = (s16)(red + IwramSignedDivide(
+        red,
+        (s32)((u32)adj << 2)
+    ));
+    green = (s16)(green - IwramSignedDivide(green, adj));
+    blue = (s16)(blue - IwramSignedDivide(blue, adj));
+
+    /* Only the increasing channel is explicitly saturated by this owner. */
+    if (red > 31)
+        red = 31;
+
+    packed = (u32)(s32)red;
+    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
+    return (u16)packed;
 }

@@ -1,3 +1,5 @@
+/* Draft of State_ApplyRecordTable92c0, resource_394 at 0x02008054 (split from FIELD/KORIMA_MAGARI/GET_TABLE9170.C).
+ * Remaining difference: its C does not compile to the game's instructions (it differs beyond relocations), so the overlay keeps its listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
@@ -22,8 +24,6 @@ extern s16 *gOv;
 extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
-
-u32 Random16Far(void);
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -86,20 +86,16 @@ u32 Random16Far(void);
  * rejoins at 0x02000f18 before the common return.
  */
 
+s32 SceneData_Run();   /* 0x02000eec */
 
 s32 IwramSignedDivide();   /* 0x02000efa */
 
 s32 IwramSignedDivide();   /* 0x02000f08 */
 
-void State_ApplyRectByLayoutSelector(void)
+void State_ApplyRecordTable92c0(void)
 {
-    if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    }
+    Scene_PushBlockAlongRun(*(s32 *)0x020092C0);
+    Map_CopyCellAttributeRect(0, 0x40, 0x20, 0x20, 0, 0);
+    SceneData_Apply(*(s32 *)0x020092C0, 0xFF);
+    State_ApplyRectByLayoutSelector();
 }

@@ -1,3 +1,5 @@
+/* Draft of Effect_AdjustPaletteColors, resource_394 at 0x02008e64 (split from FIELD/KORIMA_MAGARI/ADJUST_PALETTE.C).
+ * Remaining difference: its C does not compile to the game's instructions (it differs beyond relocations), so the overlay keeps its listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
@@ -22,8 +24,6 @@ extern s16 *gOv;
 extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
-
-u32 Random16Far(void);
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -86,20 +86,33 @@ u32 Random16Far(void);
  * rejoins at 0x02000f18 before the common return.
  */
 
+s32 SceneData_Run();   /* 0x02000eec */
 
 s32 IwramSignedDivide();   /* 0x02000efa */
 
 s32 IwramSignedDivide();   /* 0x02000f08 */
 
-void State_ApplyRectByLayoutSelector(void)
+void Effect_AdjustPaletteColors(s32 a)
 {
-    if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    }
+    u32 x;
+
+    KorimaPalette_SaveFirst();
+    x = 0;
+    do {
+        u32 idx = x >> 16;
+        if (x + 0xffef0000 > 0x60000 && (idx + 0xff3f) << 16 > 0x70000) {
+            u16 *pal = (u16 *)(0x5000000 + idx * 2);
+            *pal = SceneData_Apply4(*pal, a);
+        }
+        {
+            u32 nx = x + 0x10000;
+            x = nx;
+            if (nx > 0xdf0000) {
+                break;
+            }
+        }
+    } while (1);
+    KorimaPalette_Capture();
+    KorimaPalette_SaveSecond();
+    SceneData_Apply5(0x10000, 0);
 }

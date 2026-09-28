@@ -1,3 +1,5 @@
+/* Draft of State_CheckFourCellRun, resource_394 at 0x02008be4 (split from FIELD/KORIMA_MAGARI/STAMP_RECORD.C).
+ * Remaining difference: it reads RAM the main image does not name (0x0202c000) through a placeholder symbol, so the overlay keeps its listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
@@ -22,8 +24,6 @@ extern s16 *gOv;
 extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
-
-u32 Random16Far(void);
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -86,20 +86,29 @@ u32 Random16Far(void);
  * rejoins at 0x02000f18 before the common return.
  */
 
+s32 SceneData_Run();   /* 0x02000eec */
 
 s32 IwramSignedDivide();   /* 0x02000efa */
 
 s32 IwramSignedDivide();   /* 0x02000f08 */
 
-void State_ApplyRectByLayoutSelector(void)
+s32 State_CheckFourCellRun(s32 x, s32 z, s32 mode)
 {
-    if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
+    extern struct Cell gMapCellBuffer[];
+
+    s32 i;
+
+    for (i = 0; i <= 3; i++) {
+        struct Cell *cell = &gMapCellBuffer[x + (z << 7)];
+
+        if (cell->kind == 0xff || *(u8 *)((cell->type << 2) + (s32)gUnk) != 0) {
+            return -1;
+        }
+        if (mode == 0) {
+            x++;
+        } else {
+            z++;
+        }
     }
+    return 0;
 }

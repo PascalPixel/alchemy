@@ -1,3 +1,5 @@
+/* Draft of Scene_RunActorEightSequence, resource_394 at 0x020088b0 (split from FIELD/KORIMA_MAGARI/RUN_ACTOR.C).
+ * Remaining difference: its C does not compile to the game's instructions (it differs beyond relocations), so the overlay keeps its listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
@@ -22,8 +24,6 @@ extern s16 *gOv;
 extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
-
-u32 Random16Far(void);
 
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
@@ -86,20 +86,33 @@ u32 Random16Far(void);
  * rejoins at 0x02000f18 before the common return.
  */
 
+s32 SceneData_Run();   /* 0x02000eec */
 
 s32 IwramSignedDivide();   /* 0x02000efa */
 
 s32 IwramSignedDivide();   /* 0x02000f08 */
 
-void State_ApplyRectByLayoutSelector(void)
+void Scene_RunActorEightSequence(void)
 {
-    if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    }
+    Battle_Reset();
+    Object_SetModeById(0, 8);
+    Battle_WaitMode0(6);
+    SceneData_unk26_2(239);
+    SceneData_Place(8, 0x8000, 0x3333);
+    SceneData_unk27_2(8, 2);
+    SceneData_unk28_2(8, 104, 176);
+    SceneData_unk29_2(6);
+    SceneData_unk30_2(0, 2);
+    SceneData_unk2_3(0, 0x4ccc, 0x3333);
+    SceneData_unk31_2(0, 8, 0);
+    SceneData_unk32_2(24);
+    SceneData_unk33_2(0, 1);
+    SceneData_unk34_2(8);
+    SceneData_unk35_2(8, 1);
+    SceneData_Do(0x120);
+    SceneData_unk36_2(213);
+    SceneData_SetRect(5, 9, 1, 4, 4, 9);
+    SceneData_unk2_5(0, 0, 1, 4, 6, 9);
+    *gOv3 = 0;
+    SceneData_unk37_2();
 }

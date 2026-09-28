@@ -23,8 +23,6 @@ extern s16 *gOv2;
 extern u16 *gOv3;
 extern u8 gUnk[];
 
-u32 Random16Far(void);
-
 /*
  * The eight-byte owner at 0x02000030 includes its one pool word, which holds
  * the returned table address 0x02009170.
@@ -91,15 +89,7 @@ s32 IwramSignedDivide();   /* 0x02000efa */
 
 s32 IwramSignedDivide();   /* 0x02000f08 */
 
-void State_ApplyRectByLayoutSelector(void)
+void Scene_CallHelper118c(void)
 {
-    if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    }
+    Field_TryJumpForward();
 }

@@ -91,15 +91,41 @@ s32 IwramSignedDivide();   /* 0x02000efa */
 
 s32 IwramSignedDivide();   /* 0x02000f08 */
 
-void State_ApplyRectByLayoutSelector(void)
+void State_UpdateScrollRegistersWithPreset(void)
 {
-    if (**(s16 **)0x020092c4 == 1) {
-        s32 fifth = 4;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
-    } else {
-        s32 fifth = 6;
-        s32 sixth = 9;
-        Map_CopyCellAttributeRect(0, 0, 1, 4, fifth, sixth);
+    u16 line;
+    u32 *source;
+    volatile u32 *destination;
+
+    line = *(volatile u16 *)0x04000006;
+    source = (u32 *)0x03001ad4;
+    destination = (volatile u32 *)0x04000014;
+
+    if (line == 227 || line <= 52) {
+        if (((Random16Far() * 100) >> 16) < *(u32 *)0x0200a0dc) {
+            source = (u32 *)0x0200a0d0;
+        }
     }
+
+    *destination = *source++;
+    destination = (volatile u32 *)0x04000018;
+    *destination++ = *source++;
+    *destination = *source;
+}
+
+void State_CopyPresetA0d0WithOffsetB0(void)
+{
+    u32 *dst;
+    const u32 *src;
+    u16 *p;
+
+    src = (const u32 *)0x03001ad4;
+    dst = (u32 *)0x0200a0d0;
+    *dst++ = *src++;
+    *dst++ = *src++;
+    *dst = *src;
+    p = (u16 *)0x0200a0d0;
+    p[1] += 0xb0;
+    p[3] += 0xb0;
+    p[5] += 0xb0;
 }

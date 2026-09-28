@@ -9,9 +9,21 @@
 	.global Func_080b0000
 	.thumb_func
 Func_080b0000:
+	.global Battle_ApplyPresetItemsAndFlagsFar
+	.thumb_func
+Battle_ApplyPresetItemsAndFlagsFar:
 	overlay_veneer Battle_ApplyPresetItemsAndFlags
+	.global Shop_RunFar
+	.thumb_func
+Shop_RunFar:
 	overlay_veneer Shop_Run
+	.global Shop_ConfirmActFar
+	.thumb_func
+Shop_ConfirmActFar:
 	overlay_veneer Shop_ConfirmAct
+	.global Inn_CheckInFar
+	.thumb_func
+Inn_CheckInFar:
 	overlay_veneer Inn_CheckIn
 	.global ShopCursor_AdvanceFar
 	.global Func_080b0020
@@ -43,6 +55,15 @@ Unnamed_080b0840Far:
 	.thumb_func
 Shop_InitEffectFar:
 	overlay_veneer Shop_InitEffect
+	.global Shop_PickUnitItemFar
+	.thumb_func
+Shop_PickUnitItemFar:
 	overlay_veneer Shop_PickUnitItem
+	.global AudioCommand_WaitForStateByteClearFar
+	.thumb_func
+AudioCommand_WaitForStateByteClearFar:
 	overlay_veneer AudioCommand_WaitForStateByteClear
+	.global Func_080b0068
+	.thumb_func
+Func_080b0068:
 	overlay_veneer Inn_PlaySleep

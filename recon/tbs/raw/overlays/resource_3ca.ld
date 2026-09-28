@@ -1,10 +1,11 @@
-/* resource_3ca: its listing with maintained code linked in place,
-   as pret links objects in ROM order. */
+/* resource_3ca: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_3ca_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/TABLE_AUDIO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/GET_DEFAULT_RESULT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCENE_CUES.o"(.text)
@@ -22,7 +23,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/STOP_DMA.o"(.text)
         "*/resource_3ca_overlay.o"(.text.x020091c4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCHEDULE_FADE.o"(.text)
-        "*/resource_3ca_overlay.o"(.text.x02009314)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.o"(.text)
         "*/resource_3ca_overlay.o"(.rodata.part1)
     }
     .bss : { "*/resource_3ca_overlay.o"(.bss) }

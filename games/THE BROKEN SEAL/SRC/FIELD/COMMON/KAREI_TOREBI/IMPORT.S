@@ -1,0 +1,84 @@
+@ Import veneers after the KAREI_TOREBI overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — KAREI_TOREBI overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer Map_PlayMetatileCopySequenceFar
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
+	overlay_veneer Map_CopyCellAttributeRectFar
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer UiWindow_CreateFar
+	overlay_veneer UiWork_FinalizeFar
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawNumberInWindowFar
+	overlay_veneer UiWork_PushValueSlotFar
+	overlay_veneer Inventory_FindFar
+	overlay_veneer PartyInventory_FindOwnerFar
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer Party_AdjustSixDigitCounterAFar
+	overlay_veneer Inventory_DiscardFar
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer PartyInventory_GiveItemFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
+	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer UiText_OpenMessageAtObjectFar
+	overlay_veneer BattleEv_RunWaitFar
+	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	overlay_veneer BattleEventRuntime_ProcessActionFar
+	.global Engine_ActorFaceDirection
+	.thumb_func
+Engine_ActorFaceDirection:
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	overlay_veneer ObjectMotion_SetActionVariantFar
+	overlay_veneer BattleFx_SpawnLinkedFar
+	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	overlay_veneer Motion_CamBoundsFar
+	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	overlay_veneer Event_SetValue170Far
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Battle_ResetEffectCounterFar
+	overlay_veneer BattleFx_RunPageEffectForSlotFar
+	overlay_veneer Motion_LaunchFromFocusedObjectFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetFar
+	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	overlay_veneer AudioCommand_PlayFar

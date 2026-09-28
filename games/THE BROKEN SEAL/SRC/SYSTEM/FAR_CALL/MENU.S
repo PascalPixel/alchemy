@@ -20,6 +20,9 @@ Menu_OpenConfirmPromptFar:
 	.thumb_func
 Menu_OpenActionFlow:
 	overlay_veneer ActionMenu_Open
+	.global Menu_OpenCharacterSelectorFar
+	.thumb_func
+Menu_OpenCharacterSelectorFar:
 	overlay_veneer Menu_OpenCharacterSelector
 	overlay_veneer UiIcon_CreateWithResourceVariant
 	.global PsynergyMenu_InitializeEntryObjectsFar
@@ -39,5 +42,11 @@ UiIcon_PrepareObjectFar:
 	.global ItemMenu_Open
 	.thumb_func
 ItemMenu_Open:
+	.global Func_080a1040
+	.thumb_func
+Func_080a1040:
 	overlay_veneer Func_080aa56c
+	.global ItemMenu_DrawItemDetailsFar
+	.thumb_func
+ItemMenu_DrawItemDetailsFar:
 	overlay_veneer ItemMenu_DrawItemDetails

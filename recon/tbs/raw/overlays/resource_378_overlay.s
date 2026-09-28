@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ENTRY.INC"
 	.section .text.x0200a7d4,"ax",%progbits
 	.p2align 2
 	.global ShindenHeya_ChooseRestartOption
@@ -209,9 +205,6 @@ Func_02003144:
 	.4byte 0x0000cccc
 	.4byte 0x00009999
 	.4byte 0x0200c18c
-	.section .text.x0200b520,"ax",%progbits
-	.p2align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002

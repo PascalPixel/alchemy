@@ -1,0 +1,45 @@
+@ Import veneers after the MENU_TEST overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — MENU_TEST overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer IwramSignedRemainder
+	overlay_veneer WaitFramesFar
+	overlay_veneer UiWindow_CreateFar
+	overlay_veneer UiWork_FinalizeFar
+	overlay_veneer UiText_OpenMessageWindowFar
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer UiWork_IsCompleteFar
+	overlay_veneer UiText_DrawResourceFar
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawStringInWindowFar
+	overlay_veneer UiText_DrawNumberAtOffsetFar
+	overlay_veneer UiWindow_CreateWithSideObjectFar
+	overlay_veneer UiWork_PushValueSlotFar
+	overlay_veneer UiWork_FinalizePendingCoreFar
+	overlay_veneer RenderOutput_RedrawSavedRectFar
+	overlay_veneer RenderOutput_ClearListFar
+	overlay_veneer NameEntry_EditOwnerNameFar
+	overlay_veneer DebugMenu_BrowseIconsFar
+	overlay_veneer Owner_GetStateFar
+	overlay_veneer Owner_RecalculateStatsFar
+	overlay_veneer Func_08077018
+	overlay_veneer Inventory_AddItemFar
+	overlay_veneer PartyInventory_AddFar
+	overlay_veneer Owner_AdjustFirstValueFar
+	overlay_veneer Owner_AdjustSecondValueFar
+	overlay_veneer Party_AddActiveOwnerFar
+	overlay_veneer Party_RemoveActiveOwnerFar
+	overlay_veneer Djinn_AddToOwnerFar
+	overlay_veneer Djinn_ActivateFar
+	overlay_veneer Party_AdvanceOwnerCountToTargetFar
+	overlay_veneer Item_AdjustCounterFar
+	overlay_veneer PartyInventory_HasSpaceFar
+	overlay_veneer ItemMenu_DrawItemDetailsFar
+	overlay_veneer Battle_ApplyPresetItemsAndFlagsFar
+	overlay_veneer Shop_ConfirmActFar
+	overlay_veneer Shop_PickUnitItemFar
+	overlay_veneer AudioCommand_PlayFar

@@ -1,0 +1,98 @@
+@ Import veneers after the SORU_IRIGUCHI overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — SORU_IRIGUCHI overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	.global Engine_TaskWait
+	.thumb_func
+Engine_TaskWait:
+	overlay_veneer WaitFramesFar
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	overlay_veneer Random16Far
+	.global Engine_ObjectSetAnimation
+	.thumb_func
+Engine_ObjectSetAnimation:
+	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Engine_ObjectSetPosition
+	.thumb_func
+Engine_ObjectSetPosition:
+	overlay_veneer Object_SetMoveTargetFar
+	.global Engine_ObjectCommitPosition
+	.thumb_func
+Engine_ObjectCommitPosition:
+	overlay_veneer Script_WaitForEventTimeoutFar
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Object_CheckMovementCollision
+	.thumb_func
+Object_CheckMovementCollision:
+	overlay_veneer Func_080091d8
+	.global Engine_ActorSetSpriteFlags
+	.thumb_func
+Engine_ActorSetSpriteFlags:
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer Func_0808a038
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	overlay_veneer Object_LinkPairFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer UiText_OpenMessageAtObjectFar
+	overlay_veneer BattleEv_RunWaitFar
+	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	overlay_veneer BattleEventRuntime_ProcessActionFar
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	overlay_veneer ObjectMotion_SetActionVariantFar
+	overlay_veneer BattleFx_SpawnLinkedFar
+	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	overlay_veneer Motion_CamBoundsFar
+	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	overlay_veneer Event_SetValue170Far
+	overlay_veneer Func_0808a2f8
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Battle_ResetEffectCounterFar
+	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
+	overlay_veneer AudioCommand_PlayFar

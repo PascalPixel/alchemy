@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/ENTRY.INC"
 	.global Func_02000030
 	.thumb_func
 Func_02000030:
@@ -111,9 +107,6 @@ Func_02000230:
 	.4byte 0x00000209
 	.4byte 0x02000240
 	.4byte 0x00000067
-	.section .text.x02009a34,"ax",%progbits
-	.p2align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global KareiKyuden_PartyActions
 KareiKyuden_PartyActions:

@@ -1,9 +1,11 @@
-/* resource_39e: its listing with maintained code linked in place, as pret links objects in ROM order. */
+/* resource_39e: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_39e_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/NEW_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_39e_overlay.o"(.text.x0200813c)
@@ -27,7 +29,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ROOF_ENSEMBLE.o"(.text)
         "*/resource_39e_overlay.o"(.text.x0200be58)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/FINALE.o"(.text)
-        "*/resource_39e_overlay.o"(.text.x0200c33c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/IMPORT.o"(.text)
         "*/resource_39e_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

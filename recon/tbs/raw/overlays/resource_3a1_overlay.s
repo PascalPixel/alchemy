@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/ENTRY.INC"
 	.section .text.x0200813c,"ax",%progbits
 	.balign 4
 	.global Func_0200013c
@@ -264,9 +260,6 @@ SceneDialogue_RunActor12Dialogue:
 	pop {r0}
 	bx r0
 	.4byte 0x00001a40
-	.section .text.x02008614,"ax",%progbits
-	.balign 4
-	.include "games/THE BROKEN SEAL/SRC/FIELD/SHIAN_HEYA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001

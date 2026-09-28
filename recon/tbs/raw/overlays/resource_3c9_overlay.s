@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY.INC"
 	.section .text.x0200813a,"ax",%progbits
 	.2byte 0x0000
 	.global Func_0200013c
@@ -5207,8 +5203,6 @@ SceneEffect_SpawnParticlesBesideActor:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	.section .text.x0200dbec,"ax",%progbits
-	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.INC"
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000

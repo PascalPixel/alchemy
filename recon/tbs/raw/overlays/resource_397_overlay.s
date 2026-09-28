@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/ENTRY.INC"
 	.section .text.x020082e0,"ax",%progbits
 	.global Func_020002e0
 	.thumb_func
@@ -25,7 +21,6 @@ State_ApplyTables826dAnd82a1:
 	.2byte 0x0000
 	.4byte 0x0200826d
 	.4byte 0x020082a1
-	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global ToretoEda_SceneTable0
 ToretoEda_SceneTable0:

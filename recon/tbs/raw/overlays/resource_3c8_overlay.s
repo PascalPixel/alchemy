@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/ENTRY.INC"
 	.section .text.x02008e04,"ax",%progbits
 	.balign 4
 	.global Func_02000e04
@@ -968,6 +964,9 @@ Func_02002f8c:
 	.2byte 0x0200
 	.section .text.x0200b068,"ax",%progbits
 	.balign 4
+	.global Func_02003068
+	.thumb_func
+Func_02003068:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -2808,7 +2807,6 @@ VinasuHeya_SpawnRandomParticles:
 	.4byte 0x0200d164
 	.4byte 0x0200f78c
 	.4byte 0x0200f7ec
-	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000

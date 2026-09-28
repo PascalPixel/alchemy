@@ -1,11 +1,12 @@
-/* resource_382: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
+/* resource_382: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_382_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_382_overlay.o"(.text.x0200813c)
@@ -17,7 +18,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/FACING_RANGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/DRIFT.o"(.text)
-        "*/resource_382_overlay.o"(.text.x02009900)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_382_overlay.o"(.rodata.part1)
     }

@@ -57,6 +57,9 @@ UiWork_SetBusyFlagsFar:
 	.global UiWindow_Clear
 	.thumb_func
 UiWindow_Clear:
+	.global RenderOutput_PrepareForRedrawFar
+	.thumb_func
+RenderOutput_PrepareForRedrawFar:
 	overlay_veneer RenderOutput_PrepareForRedraw
 	.global UiWindow_ClearInteriorTilesFar
 	.thumb_func
@@ -72,6 +75,9 @@ Func_08015078:
 	.global UiText_DrawMessageAt
 	.thumb_func
 UiText_DrawMessageAt:
+	.global UiText_DrawResourceFar
+	.thumb_func
+UiText_DrawResourceFar:
 	overlay_veneer UiText_DrawResource
 	.global UiText_DrawAt
 	.thumb_func
@@ -80,6 +86,9 @@ UiText_DrawAt:
 	.thumb_func
 UiText_DrawCharacterAtOffsetFar:
 	overlay_veneer UiText_DrawCharacterAtOffset
+	.global UiText_DrawStringFar
+	.thumb_func
+UiText_DrawStringFar:
 	overlay_veneer UiText_DrawString
 	.global UiText_DrawStringAtOffsetFar
 	.global Func_08015090
@@ -91,6 +100,9 @@ Func_08015090:
 	.thumb_func
 UiText_DrawStringInWindowFar:
 	overlay_veneer UiText_DrawStringInWindow
+	.global UiText_DrawNumberFar
+	.thumb_func
+UiText_DrawNumberFar:
 	overlay_veneer UiText_DrawNumber
 	.global UiText_DrawNumberAtOffsetFar
 	.global Func_080150a8
@@ -155,6 +167,9 @@ UiText_DrawQuantity:
 	.global UiWork_PushValueSlotFar
 	.thumb_func
 UiWork_PushValueSlotFar:
+	.global Func_08015120
+	.thumb_func
+Func_08015120:
 	overlay_veneer UiWork_PushValueSlot
 	overlay_veneer UiWindow_CreateWithLayoutBounds
 	.global UiWindow_DrawPartyStatusContentsFar
@@ -201,7 +216,13 @@ UiText_PrepareMessageWorkFar:
 Func_080151e0:
 	overlay_veneer Localization_LookupEntryId
 	overlay_veneer Menu_RunTopSelection
+	.global Menu_SelectSaveSlotActionFar
+	.thumb_func
+Menu_SelectSaveSlotActionFar:
 	overlay_veneer Menu_SelectSaveSlotAction
+	.global Menu_SelectResourceLayoutFar
+	.thumb_func
+Menu_SelectResourceLayoutFar:
 	overlay_veneer Menu_SelectResourceLayout
 	.global Func_08015200
 	.thumb_func
@@ -211,6 +232,9 @@ Func_08015200:
 	.thumb_func
 UiTimedNotice_CloseIfActiveFar:
 	overlay_veneer UiTimedNotice_CloseIfActive
+	.global UiText_ShowCenteredMessageFar
+	.thumb_func
+UiText_ShowCenteredMessageFar:
 	overlay_veneer UiText_ShowCenteredMessage
 	.global UiWork_FinalizeSharedSlotFar
 	.global Func_08015218
@@ -222,8 +246,17 @@ Func_08015218:
 	.thumb_func
 UiWork_ResetFreeChannelFar:
 	overlay_veneer UiWork_ResetFreeChannel
+	.global UiTextResource_InitializeFar
+	.thumb_func
+UiTextResource_InitializeFar:
 	overlay_veneer UiTextResource_Initialize
+	.global UiTextResource_SetPositionFar
+	.thumb_func
+UiTextResource_SetPositionFar:
 	overlay_veneer UiTextResource_SetPosition
+	.global UiTextResource_ReleaseFar
+	.thumb_func
+UiTextResource_ReleaseFar:
 	overlay_veneer UiTextResource_Release
 	overlay_veneer Menu_RunSelectionHook
 	overlay_veneer Item_CallHandler48
@@ -232,6 +265,9 @@ UiWork_ResetFreeChannelFar:
 	.thumb_func
 ItemIcon_LoadTilesFar:
 Func_08015250:
+	.global Ui_PrepareTransferForItemFar
+	.thumb_func
+Ui_PrepareTransferForItemFar:
 	overlay_veneer Ui_PrepareTransferForItem
 	.global UiText_RenderWideStringAtOffsetFar
 	.thumb_func
@@ -289,18 +325,45 @@ UiIcon_Draw:
 	overlay_veneer RenderOutput_CreateLoaded
 	overlay_veneer RenderOutput_CreateFromTable
 	overlay_veneer SaveState_WriteCurrentSlotPair
+	.global Save_WriteSelectedSlotFar
+	.thumb_func
+Save_WriteSelectedSlotFar:
 	overlay_veneer Save_WriteSelectedSlot
+	.global SaveState_LoadRecordIntoWorkFar
+	.thumb_func
+SaveState_LoadRecordIntoWorkFar:
 	overlay_veneer SaveState_LoadRecordIntoWork
+	.global SaveState_CopySlotPairFar
+	.thumb_func
+SaveState_CopySlotPairFar:
 	overlay_veneer SaveState_CopySlotPair
+	.global SaveState_DeleteSelectedSlotFar
+	.thumb_func
+SaveState_DeleteSelectedSlotFar:
 	overlay_veneer SaveState_DeleteSelectedSlot
+	.global SaveState_ProcessSelectedSlotFar
+	.thumb_func
+SaveState_ProcessSelectedSlotFar:
 	overlay_veneer SaveState_ProcessSelectedSlot
 	overlay_veneer SaveState_WriteSlotPair
+	.global SaveState_ScanRecordFlagsFar
+	.thumb_func
+SaveState_ScanRecordFlagsFar:
 	overlay_veneer SaveState_ScanRecordFlags
+	.global NameEntry_EditOwnerNameFar
+	.thumb_func
+NameEntry_EditOwnerNameFar:
 	overlay_veneer NameEntry_EditOwnerName
 	overlay_veneer Resource_CopyFixedBlockB
 	overlay_veneer Resource_CopyFixedBlockA
 	overlay_veneer Menu_SetNodeCoordinates
+	.global DebugMenu_BrowseIconsFar
+	.thumb_func
+DebugMenu_BrowseIconsFar:
 	overlay_veneer DebugMenu_BrowseIcons
+	.global DebugMenu_BrowseEntryGlyphsFar
+	.thumb_func
+DebugMenu_BrowseEntryGlyphsFar:
 	overlay_veneer DebugMenu_BrowseEntryGlyphs
 	overlay_veneer Func_0801c468
 	.global Djinn_ShowJoinedMessageFar
@@ -334,7 +397,13 @@ Inventory_RequestMode:
 	.thumb_func
 Menu_RunConfirmSelectionFar:
 	overlay_veneer Menu_RunConfirmSelection
+	.global Menu_SelectEntry20To21Far
+	.thumb_func
+Menu_SelectEntry20To21Far:
 	overlay_veneer Menu_SelectEntry20To21
+	.global PartyTalkMenu_ChooseFar
+	.thumb_func
+PartyTalkMenu_ChooseFar:
 	overlay_veneer PartyTalkMenu_Choose
 	overlay_veneer RenderResource_LoadTableEntry
 	.global Menu_RunConfirmSelectionAtFar
@@ -346,6 +415,9 @@ Func_080153b0:
 	.global Func_080153b8
 	.thumb_func
 Func_080153b8:
+	.global Resource_LoadFixedBlockBIntoFreeSlotFar
+	.thumb_func
+Resource_LoadFixedBlockBIntoFreeSlotFar:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlot
 	overlay_veneer UiText_MeasureResourceEntries
 	.global UiWindow_SetPaletteBitRectFar
@@ -359,17 +431,26 @@ Func_080153d0:
 	.global Func_080153d8
 	.thumb_func
 Func_080153d8:
+	.global Graphics_ExpandVramTilesByColorTableFar
+	.thumb_func
+Graphics_ExpandVramTilesByColorTableFar:
 	overlay_veneer Graphics_ExpandVramTilesByColorTable
 	.global Func_080153e0
 	.thumb_func
 Func_080153e0:
 	overlay_veneer UiWork_SetAltFlagAndClearTable
+	.global Menu_AnimateSelectionToEntryFar
+	.thumb_func
+Menu_AnimateSelectionToEntryFar:
 	overlay_veneer Menu_AnimateSelectionToEntry
 	.global Func_080153f0
 	.thumb_func
 Func_080153f0:
 	overlay_veneer Ui_GetTableWordZero
 	overlay_veneer UiText_OpenEntryMessage
+	.global SaveState_CountRecordsExcludingFlaggedFar
+	.thumb_func
+SaveState_CountRecordsExcludingFlaggedFar:
 	overlay_veneer SaveState_CountRecordsExcludingFlagged
 	.global UiWindow_DrawFrameFar
 	.global Func_08015408

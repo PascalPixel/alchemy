@@ -5,14 +5,17 @@
 @ divide branches on the carry out of lsrs r0, ip, #32 into that core
 @ inside IwramUnsignedDivide, which the other entries also reach with bl.
 @ GCC never branches on the carry out of a shift and never enters another
-@ function's body.
+@ function's body. An overlay whose own import veneer takes an entry's name
+@ reaches the ARM entry by its ...Arm label.
 @ credit: handwritten — IWRAM runtime division helpers
 .syntax unified
 	.arm
 
 @ コンパイラ実行時系と同型の符号付き除算。
 	.global IwramSignedDivide
+	.global IwramSignedDivideArm
 IwramSignedDivide:
+IwramSignedDivideArm:
 	eor	ip, r0, r1
 	movs	r2, r1
 	rsbmi	r2, r2, #0
@@ -44,7 +47,9 @@ IwramSignedRemainder:
 
 @ コンパイラ実行時系と同型の符号なし剰余。
 	.global IwramUnsignedRemainder
+	.global IwramUnsignedRemainderArm
 IwramUnsignedRemainder:
+IwramUnsignedRemainderArm:
 	mov	ip, lr
 	bl	IwramUnsignedDivide
 	mov	r0, r1
@@ -52,7 +57,9 @@ IwramUnsignedRemainder:
 
 @ コンパイラ実行時系と同型の符号なし除算。
 	.global IwramUnsignedDivide
+	.global IwramUnsignedDivideArm
 IwramUnsignedDivide:
+IwramUnsignedDivideArm:
 	mov	r2, r1
 	mov	r1, r0
 	mov	r0, #0

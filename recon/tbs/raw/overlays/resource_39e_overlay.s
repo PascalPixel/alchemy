@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ENTRY.INC"
 	.section .text.x0200813c,"ax",%progbits
 	.balign 4
 	.global Effect_Spawn
@@ -1095,9 +1091,6 @@ Func_02003e58:
 	.4byte 0x000008b2
 	.4byte 0x00000894
 	.4byte 0x00000892
-	.section .text.x0200c33c,"ax",%progbits
-	.balign 4
-	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001

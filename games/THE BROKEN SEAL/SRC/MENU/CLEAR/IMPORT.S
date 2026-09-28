@@ -1,0 +1,76 @@
+@ Import veneers after the CLEAR overlay's code: fixed 8-byte veneers through
+@ which the overlay calls main-image code, each loading its target into r4 and
+@ branching, which the calling convention permits.
+@ credit: reconstructed_veneer — CLEAR overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer IwramSignedDivide
+	overlay_veneer IwramSignedRemainder
+	overlay_veneer WaitFramesFar
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Engine_TaskRemoveCallback
+	.thumb_func
+Engine_TaskRemoveCallback:
+	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Runtime_BumpAllocateAlternatePool
+	.thumb_func
+Runtime_BumpAllocateAlternatePool:
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
+	.global Runtime_BumpFree
+	.thumb_func
+Runtime_BumpFree:
+	overlay_veneer Sys_FreeFar
+	.global Resource_DecodeType01
+	.thumb_func
+Resource_DecodeType01:
+	overlay_veneer Resource_DecodeType01Far
+	overlay_veneer Ui_LoadWindowGraphicsFar
+	overlay_veneer Resource_GetTableEntryFar
+	overlay_veneer Blend_SetDarkenTarget16Far
+	overlay_veneer SerialRuntime_InitializeFar
+	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
+	overlay_veneer SerialRuntime_BeginTransferAFar
+	overlay_veneer UiWindow_CreateFar
+	overlay_veneer UiWork_FinalizeFar
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer RenderOutput_PrepareForRedrawFar
+	overlay_veneer UiWindow_DrawDividerLineFar
+	overlay_veneer UiText_DrawResourceFar
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawStringFar
+	overlay_veneer UiWork_FinalizePendingCoreFar
+	overlay_veneer Menu_SelectSaveSlotActionFar
+	overlay_veneer Menu_SelectResourceLayoutFar
+	overlay_veneer UiText_ShowCenteredMessageFar
+	overlay_veneer UiWindow_SetTilemapEntryFar
+	overlay_veneer Save_WriteSelectedSlotFar
+	overlay_veneer SaveState_LoadRecordIntoWorkFar
+	overlay_veneer SaveState_CopySlotPairFar
+	overlay_veneer SaveState_DeleteSelectedSlotFar
+	overlay_veneer SaveState_ScanRecordFlagsFar
+	overlay_veneer NameEntry_EditOwnerNameFar
+	overlay_veneer PaletteGlow_UpdateFar
+	overlay_veneer Menu_RunConfirmSelectionFar
+	overlay_veneer Graphics_ExpandVramTilesByColorTableFar
+	overlay_veneer Link_DrawShiftedTilePairFar
+	overlay_veneer Owner_GetStateFar
+	overlay_veneer Func_08077018
+	overlay_veneer GameState_InitDefaultsFar
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer Party_AddActiveOwnerFar
+	overlay_veneer Party_RemoveActiveOwnerFar
+	overlay_veneer Party_SetFlag32AndRefreshMembersFar
+	overlay_veneer Runtime_GetBuildStampTimeFar
+	overlay_veneer InventorySnapshot_RestoreFar
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Object_CallSpawnRoutineAtOriginFar
+	overlay_veneer AudioCommand_PlayFar

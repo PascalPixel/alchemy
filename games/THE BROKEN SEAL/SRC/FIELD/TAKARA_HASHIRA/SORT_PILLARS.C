@@ -7,7 +7,7 @@ struct PillarSlot {
     s32 flag;
 };
 
-extern struct PillarSlot Data_0200b6d0[];
+extern struct PillarSlot TakaraHashira_PillarSlots[];
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
@@ -40,18 +40,18 @@ void TakaraHashira_SortPillarActors(void)
             Dma_Wait(DMA3);
             Dma_Set(actor, a, 0x8400001c, DMA3);
             Dma_Wait(DMA3);
-            Dma_Set(&Data_0200b6d0[j], slot, 0x84000004, DMA3);
+            Dma_Set(&TakaraHashira_PillarSlots[j], slot, 0x84000004, DMA3);
             Dma_Wait(DMA3);
-            Dma_Set(&Data_0200b6d0[i], &Data_0200b6d0[j], 0x84000004, DMA3);
+            Dma_Set(&TakaraHashira_PillarSlots[i], &TakaraHashira_PillarSlots[j], 0x84000004, DMA3);
             Dma_Wait(DMA3);
-            Dma_Set(slot, &Data_0200b6d0[i], 0x84000004, DMA3);
+            Dma_Set(slot, &TakaraHashira_PillarSlots[i], 0x84000004, DMA3);
             Dma_Wait(DMA3);
-            if (Engine_GameFlagIsSet(Data_0200b6d0[i].flag) && !Engine_GameFlagIsSet(Data_0200b6d0[j].flag)) {
-                Engine_GameFlagClear(Data_0200b6d0[i].flag);
-                Engine_GameFlagSet(Data_0200b6d0[j].flag);
-            } else if (!Engine_GameFlagIsSet(Data_0200b6d0[i].flag) && Engine_GameFlagIsSet(Data_0200b6d0[j].flag)) {
-                Engine_GameFlagSet(Data_0200b6d0[i].flag);
-                Engine_GameFlagClear(Data_0200b6d0[j].flag);
+            if (Engine_GameFlagIsSet(TakaraHashira_PillarSlots[i].flag) && !Engine_GameFlagIsSet(TakaraHashira_PillarSlots[j].flag)) {
+                Engine_GameFlagClear(TakaraHashira_PillarSlots[i].flag);
+                Engine_GameFlagSet(TakaraHashira_PillarSlots[j].flag);
+            } else if (!Engine_GameFlagIsSet(TakaraHashira_PillarSlots[i].flag) && Engine_GameFlagIsSet(TakaraHashira_PillarSlots[j].flag)) {
+                Engine_GameFlagSet(TakaraHashira_PillarSlots[i].flag);
+                Engine_GameFlagClear(TakaraHashira_PillarSlots[j].flag);
             }
         }
     }

@@ -7,10 +7,10 @@
  * to 80.
  */
 
-extern void Func_0200c0ee();
-extern s32 Func_0200c09c();
-extern void Func_0200c2de();
-extern void Func_0200c116();
+extern void Engine_WorkSetValuesIfNonNegative();
+extern s32 Engine_RandomNext();
+extern void Engine_AudioPlayCue();
+extern s32 FuneHeya_CueTimer;
 
 /* Same argument forwarding used by the byte-exact timer sibling. */
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
@@ -21,19 +21,19 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2)
 {
     s32 value;
-    s32 timer_address = 0x0200ff84;
+    s32 *timer = &FuneHeya_CueTimer;
     s32 remaining;
-    if (*(s32 *)timer_address != 0) {
-        remaining = *(s32 *)timer_address - 1;
-        *(s32 *)timer_address = *(s32 *)timer_address - 1;
+    if (*timer != 0) {
+        remaining = *timer - 1;
+        *timer = *timer - 1;
         if (remaining == 70)
-            Call3(Func_0200c0ee, -1, -1, 0xe666);
+            Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     } else {
-        value = Func_0200c09c();
+        value = Engine_RandomNext();
         if (((u32)(((value << 4) - value) << 3) >> 16) == 0) {
-            Func_0200c2de(181);
-            Call3(Func_0200c116, 0x20000, 0x20000, 0x10000);
-            *(s32 *)timer_address = 80;
+            Engine_AudioPlayCue(181);
+            Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
+            *timer = 80;
         }
     }
 }

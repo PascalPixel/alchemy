@@ -13,8 +13,7 @@ void Engine_HeapRelease();
 void Engine_TaskAddCallback();
 
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern s16 gGameState[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -75,7 +74,7 @@ void KareiMachi_SetupEntryActors(void)
     if (Value1(Engine_GameFlagIsSet, 0x940) != 0) {
         Call1(Engine_GameFlagSet, 0x321);
     }
-    if (Data_02000240_t[225][0] == 14) {
+    if (gGameState[225][0] == 14) {
         Call3(Engine_ActorSetPosition, 25, 0x1a80000, 0x580000);
     }
     Engine_ActorSetChildValue(21, 2);

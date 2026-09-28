@@ -21,7 +21,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/FRONT_BEHIND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/FRONT_AHEAD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/PRIORITY_UPDATE.o"(.text)
-        "*/resource_3b3_overlay.o"(.text.x02009be8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/SORT_PILLARS.o"(.text)
+        "*/resource_3b3_overlay.o"(.text.x02009d84)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/STAGED_TRIGGER.o"(.text)
         "*/resource_3b3_overlay.o"(.text.x0200a080)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/RAISE_ACTOR.o"(.text)
@@ -36,5 +37,6 @@ SECTIONS
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3b3_overlay.o"(.rodata.part1)
     }
+    .bss : { "*/resource_3b3_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

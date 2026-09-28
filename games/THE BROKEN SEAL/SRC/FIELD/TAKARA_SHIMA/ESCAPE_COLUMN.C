@@ -1,20 +1,17 @@
 #include "TYPES.H"
 
-extern s16 Data_02000240[];             /* the overlay's scene table */
+extern s16 gGameState[];
 extern u8 Value_0000007e;
-extern u8 Value_000008d2;
 
-u8 *Func_0200434c();
-u8 *Func_02004344();
-void Func_02004368();
-void Func_02002106();
-void Func_02004424();
-void Func_0200437a();
-u8 *Func_020043a0();
-void Func_02004356();
-void Func_020043f6();
-void Func_02004370();
-void Func_020043b4();
+u8 *Engine_ActorGet();
+u8 *Engine_GameFlagIsSet();
+void Engine_EventWait();
+void SpawnRadialEffectBurst();
+void Engine_AudioPlayCue();
+void Engine_ActorSetSpriteFlags();
+void ObjectMotion_SetActionVariant();
+void Engine_MapCopyCellAttributes();
+void Engine_GameFlagSet();
 
 void FieldScene_HandleEscapeColumn(void)
 {
@@ -22,7 +19,7 @@ void FieldScene_HandleEscapeColumn(void)
     s16 *slot;
     s32 column;
 
-    entity = Func_0200434c(8);
+    entity = Engine_ActorGet(8);
     column = *(s32 *)(entity + 8) >> 20;    /* 16.16 -> 16-pixel tile grid */
     if (column != 40) {
         return;
@@ -30,21 +27,21 @@ void FieldScene_HandleEscapeColumn(void)
 
     {
         s32 off = 448;
-        slot = (s16 *) ((u8 *) Data_02000240 + off);
+        slot = (s16 *) ((u8 *) gGameState + off);
     }
-    if (Func_02004344(*slot + ((s32) &Value_000008d2 - (s32) &Value_0000007e)) != 0) {
+    if (Engine_GameFlagIsSet(*slot + (0x8d2 - (s32) &Value_0000007e)) != 0) {
         return;                             /* handled by 0x02001214 instead */
     }
 
     entity[85] = 3;
 
-    Func_02004368(8);
-    Func_02002106(8);
-    Func_02004424(136);
-    Func_0200437a(40);
+    Engine_EventWait(8);
+    SpawnRadialEffectBurst(8);
+    Engine_AudioPlayCue(136);
+    Engine_EventWait(40);
 
-    Func_02004356(Func_020043a0(8), 0);
-    Func_020043f6(8, 3);
+    Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
+    ObjectMotion_SetActionVariant(8, 3);
 
     entity[85] = 0;
     /* FAKEMATCH: a temporary holding the 2 picks the reference registers. */
@@ -55,7 +52,7 @@ void FieldScene_HandleEscapeColumn(void)
         entity[35] = flags;
     }
 
-    Func_02004370(42, 10, 1, 1, column, 10);
+    Engine_MapCopyCellAttributes(42, 10, 1, 1, column, 10);
 
-    Func_020043b4(*slot + ((s32) &Value_000008d2 - (s32) &Value_0000007e));
+    Engine_GameFlagSet(*slot + (0x8d2 - (s32) &Value_0000007e));
 }

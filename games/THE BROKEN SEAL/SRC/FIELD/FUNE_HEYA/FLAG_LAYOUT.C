@@ -5,8 +5,8 @@ void FuneHeya_PlaceAnchorCharm(void);
 void FieldScene_RunSceneStep(s32 step, s32 a, s32 b);
 void OverlayObject_SetPositionAndHeading(s32 object, s32 x, s32 z, s32 heading);
 
-extern u8 Value_0200812d;
-extern u8 Value_02008285;
+void FuneHeya_RunWalkerStep();
+void UpdateActorNineEffectMode();
 
 struct Half {
     u16 v;
@@ -54,10 +54,10 @@ void FuneHeya_ApplyFlaggedLayout(void)
         zero.v = 0;
         actor->rise_enabled = zero.v;
         actor->collision_flags |= 128;
-        actor->update = (void (*)(union FieldObject *))&Value_0200812d;
+        actor->update = (void (*)(union FieldObject *))&FuneHeya_RunWalkerStep;
         other = Engine_ActorGet(8);
         other->rise_counter = zero.v;
-        other->update = (void (*)(union FieldObject *))&Value_02008285;
+        other->update = (void (*)(union FieldObject *))&UpdateActorNineEffectMode;
         if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x109)) {
             OverlayObject_SetPositionAndHeading(0, x, 0x29a, 0xa000);
         }

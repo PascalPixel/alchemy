@@ -1,12 +1,8 @@
-/* Draft: complete 432-byte owner; 2 differing halfwords.
- * Only mov fp,r0 / mov sl,r8 setup order remains; typed bitfields and
- * branch-local positions close the prior 207-halfword structural mismatch.
- * An allocator-guided explicit buffer and scoped counter did not close it.
- * A pre-decrement 24-count loop canonicalizes to the same 432-byte body
- * and leaves the two setup moves reversed (2026-09-26).
+/*
+ * Spawns twenty-four burst particles around the effect target, two frames
+ * apart, each drifting outwards from the scene centre.
  */
 #include "TYPES.H"
-
 
 struct BurstParticleVisual {
     u8 reserved_00[5];
@@ -52,19 +48,19 @@ struct BurstParticleState {
     struct BurstParticleObject *target;
 };
 
-extern struct BurstParticleState *Data_03001f30;
-extern u8 Data_0809f0b4;
+extern struct BurstParticleState *gEffectWork;
+extern u8 BattleFx_CommonParticleScript[];
 
 void BattleEffect_InitializeSharedScene(void);
 void Vector_AddPolarOffset(s32, u32, s32 *);
 struct BurstParticleObject *Object_Spawn(s32, s32, s32, s32);
-void Func_08009240(struct BurstParticleObject *, s32);
-void Func_08009080(struct BurstParticleObject *, s32);
-void Func_08009098(struct BurstParticleObject *, void *);
-void Func_080091e0(struct BurstParticleObject *, s32);
+void Animation_ApplyChildValuesFar(struct BurstParticleObject *, s32);
+void Object_SetMode(struct BurstParticleObject *, s32);
+void ObjectDispatch_InitializeFar(struct BurstParticleObject *, void *);
+void ObjectDispatch_SetSingleChildField26Far(struct BurstParticleObject *, s32);
 u32 Random16(void);
-void Func_08009150(struct BurstParticleObject *, s32, s32, s32);
-void Func_080f9010(s32);
+void Object_SetPosition(struct BurstParticleObject *, s32, s32, s32);
+void Audio_PlayCue(s32);
 void WaitFrames(s32);
 
 void BattleEffect_SpawnBurstParticleField(void)
@@ -74,11 +70,11 @@ void BattleEffect_SpawnBurstParticleField(void)
     s32 position[3];
     s32 remaining;
 
-    state = Data_03001f30;
+    state = gEffectWork;
     target = state->target;
     BattleEffect_InitializeSharedScene();
-    remaining = 24;
-    while (--remaining >= 0) {
+
+    for (remaining = 0; remaining < 24; remaining++) {
         struct BurstParticleObject *object;
         struct BurstParticleVisual *visual;
         struct BurstParticleVisual *child;
@@ -115,10 +111,10 @@ void BattleEffect_SpawnBurstParticleField(void)
             object->velocity_y = 0x18000;
             object->velocity_x = 0x18000;
             object->mode = 0;
-            Func_08009240(object, 11);
-            Func_08009080(object, 7);
-            Func_08009098(object, &Data_0809f0b4);
-            Func_080091e0(object, 1);
+            Animation_ApplyChildValuesFar(object, 11);
+            Object_SetMode(object, 7);
+            ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript + 4);
+            ObjectDispatch_SetSingleChildField26Far(object, 1);
 
             position[0] = state->x;
             position[1] = state->y;
@@ -127,10 +123,10 @@ void BattleEffect_SpawnBurstParticleField(void)
                 Vector_AddPolarOffset(0xe0000, state->variant, position);
             random_distance = Random16() * 6 + 0x40000;
             Vector_AddPolarOffset(random_distance, Random16(), position);
-            Func_08009150(
+            Object_SetPosition(
                 object, position[0], position[1], position[2]);
         }
-        Func_080f9010(0x83);
+        Audio_PlayCue(0x83);
         WaitFrames(2);
     }
     WaitFrames(8);

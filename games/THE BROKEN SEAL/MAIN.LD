@@ -1410,7 +1410,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PREPARE_SCENE.o"(.text)
         "*/recon/tbs/raw/080ccc38.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080ccebc.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080cd104.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/WIPE_CANVAS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PROCESS_PENDING_GRAPHICS_TRANSFER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_FLUSH_PENDING_GRAPHICS_TRANSFER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/APPLY_WINDOW_BLEND.o"(.text)

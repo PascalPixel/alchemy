@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 gEffectWork[];
+extern u8 gKeyState[];
 
 #define Scene_AddToListedRecordCounts Func_020000c0
 #define SceneData_GetTable8964 Func_02000030
@@ -285,7 +287,7 @@ void FieldScene_RunCountAdjustPanel(void)
             Func_0200099c(record[15], 0, win, 72, 48);
         }
 
-        key = (volatile u32 *)0x03001c94;
+        key = (volatile u32 *)gKeyState;
 
         if ((*key & 8) != 0 || (*key & 4) != 0) {
             Func_02000250(5);
@@ -360,7 +362,7 @@ void FieldScene_DrawThreeCaptionWindow(void)
 
 void SceneState_SetRecordFlag53(void)
 {
-    u8 *record = *(u8 **)0x03001f30;
+    u8 *record = *(u8 **)gEffectWork;
 
     record[53] = 1;
 }

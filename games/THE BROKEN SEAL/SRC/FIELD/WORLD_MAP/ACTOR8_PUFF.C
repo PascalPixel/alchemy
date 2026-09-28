@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u32 gFrameCount;
 
 u8 *Engine_ActorGet(s32 actor);
 u8 *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
@@ -37,7 +38,7 @@ void WorldMap_SpawnActorEightPuff(void)
     struct Sprite371 *spr;
     u32 value;
 
-    if ((*(s32 *)0x03001e40 & 15) != 0)
+    if ((*(s32 *)&gFrameCount & 15) != 0)
         return;
     leader = Engine_ActorGet(8);
     obj = Engine_ObjectCreate(222, *(s32 *)(leader + 8) + -0x200000, *(s32 *)(leader + 12), *(s32 *)(leader + 16) + -0x100000);

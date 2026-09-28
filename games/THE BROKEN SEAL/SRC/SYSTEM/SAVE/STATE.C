@@ -3,6 +3,7 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
+extern u8 Flash_Handler0[];
 s32 Math_ModU(s32, s32);
 extern u8 Data_03001f1c[];
 
@@ -54,7 +55,7 @@ struct Work_08005868 {
 u32 SaveState_WriteWorkspaceSlot(code)
 u16 code;
 {
-    s32 *param = (s32 *)0x02004C04;
+    s32 *param = (s32 *)Flash_Handler0;
     s32 result;
     struct Work_08005868 *work;
     s32 value;

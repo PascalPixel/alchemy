@@ -1,4 +1,5 @@
 #include "DMA.H"
+extern u8 gMapCellBuffer[];
 
 struct MakyuriActor {
     u8 pad00[8];
@@ -85,7 +86,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
     }
     actor = ObjectTable_GetFar(Data_02000240_t[125]);
     z = actor->z;
-    cell = (struct MakyuriCell *)0x02010000 + ((z / 0x100000) << 7) + actor->x / 0x100000;
+    cell = (struct MakyuriCell *)gMapCellBuffer + ((z / 0x100000) << 7) + actor->x / 0x100000;
     if (st->lit != 0 && st->lower != 0) {
         obj = Object_CreateFar(26, actor->x, actor->y + 0x180000, z);
         if (obj == 0)

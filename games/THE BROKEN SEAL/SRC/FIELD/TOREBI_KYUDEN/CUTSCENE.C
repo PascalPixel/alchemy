@@ -1015,7 +1015,7 @@ void FieldScene_RunMainCutsceneSequence(void)
             Engine_EventWait(10);
         } while (0);
         {
-            u8 **scene_address = (u8 **)0x03001ebc;
+            u8 **scene_address = (u8 **)&gEventWork;
 
             AdvanceMessageAt(scene_address, 1);
             Engine_EventOpenMessage(1, 0);

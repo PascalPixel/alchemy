@@ -125,7 +125,7 @@ s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
 
 s32 SceneActor_FindNearestSlotOfKindF2(void)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
     Spr_020004bc **p;
     s32 best = 0;
     Spr_020004bc *ref;

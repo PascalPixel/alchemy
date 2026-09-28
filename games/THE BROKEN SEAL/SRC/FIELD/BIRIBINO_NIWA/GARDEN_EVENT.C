@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 #define BiribinoNiwa_RunGardenEvent Func_020001e4
 
@@ -121,7 +122,7 @@ void BiribinoNiwa_RunGardenEvent(void)
         if (Value2(Func_02000d5c, 0, 0) != 0) {
             goto L_02000408;
         }
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         Func_02000dfc(12, 0, 10);
         record = Func_02000d8a(0);
         if (*(s32 *)((s32)record + 16) <= 0x10dffff) {

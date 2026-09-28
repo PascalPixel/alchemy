@@ -14,6 +14,7 @@
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"
+extern u8 gEffectWork[];
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {
@@ -824,7 +825,7 @@ void FieldScene_RunScene3b3_0200215c(void)
 
     rec7 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     record = Actor_Get(13);
-    p6 = *(s32 *)0x03001f30;
+    p6 = *(s32 *)gEffectWork;
     if ((*(s32 *)(record + 8) >> 20) == (*(s32 *)(rec7 + 8) >> 20)) {
         if ((*(s32 *)(record + 16) >> 20) != (*(s32 *)(rec7 + 16) >> 20)) {
             goto L_02002198;

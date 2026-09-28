@@ -14,7 +14,7 @@ enum ActorTransferMessage {
 };
 
 #define RatioHistory_RecordAndScheduleCallback_1(a0, a1) Call2(Func_020077c6, a0, a1)
-#define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
+#define SCENE_PHASE (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
 #define ACTOR 8
 
 typedef struct {
@@ -589,7 +589,7 @@ void StoryScene_SetBranchValueFromX(
     subject_actor = Actor_Get(actor_object - 0x64);
     scene_table = Data_02000240;
     other_actor = Actor_Get(*(s32 *)&scene_table[250]);
-    scene_state = *(u8 **)0x03001ebc;
+    scene_state = *(u8 **)&gEventWork;
     if (other_actor->x < subject_actor->x) {
         *(u16 *)(scene_state + 0x170) = val_lower;
     } else {
@@ -614,7 +614,7 @@ void StoryScene_SetBranchValueFromZ(
     subject_actor = Actor_Get(actor_object - 0x64);
     scene_table = Data_02000240;
     other_actor = Actor_Get(*(s32 *)&scene_table[250]);
-    scene_state = *(u8 **)0x03001ebc;
+    scene_state = *(u8 **)&gEventWork;
     if (other_actor->z < subject_actor->z) {
         *(u16 *)(scene_state + 0x170) = val_lower;
     } else {
@@ -1618,7 +1618,7 @@ void StoryScene_StartTransition(void)
     ColorBuffer_ApplyTarget(0, 0);
     ColorBuffer_Interpolate(1);
     Task_Wait(2);
-    *(s32 *)(*(u8 **)0x03001ebc + 456) = 1;
+    *(s32 *)(*(u8 **)&gEventWork + 456) = 1;
     Event_OpenScreen();
     Event_WaitForScreen();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
@@ -1937,7 +1937,7 @@ void FieldScene_RunLateSequence(void)
     record = Actor_Get(Data_02000240_t[125][0]);
     sx = *(s16 *)(record + 10);
     sy = *(s16 *)(record + 18);
-    if (Value2(Func_02007af8, *(volatile s32 *)0x03001e40, 3) == 0) {
+    if (Value2(Func_02007af8, *(volatile s32 *)&gFrameCount, 3) == 0) {
         mode = (u32)(Random_Next() << 2) >> 16;
         switch (mode) {
         case 0:

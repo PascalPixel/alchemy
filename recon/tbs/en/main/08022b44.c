@@ -1,6 +1,18 @@
 /*
  * Draft: the parent matches but its nested arrow renderer does not yet, so the
  * unit links as assembly (recon/tbs/raw/08022a7c.s and 08022b44.s).
+ *
+ * 2026-09-28, why the zero moves: the byte stores to one5/one4 expand as
+ * read-modify-write with a zero mask (every byte member store does with this
+ * compiler), CSE reuses that zero pseudo for the tile clear, and its REG_EQUIV
+ * doubles its live length. With the tile clear last (the reference store
+ * order), r5's local ratio 2/34 falls below the static chain pseudo's 2/22,
+ * so global.c's find_reg evicts the zero from r5 ("utilized poorly by
+ * local-alloc") and hands r5 to the chain; with the clear right after the
+ * entry pointer (this draft) the ratio is 2/20 and nothing moves. u8-cast
+ * byte stores remove the mask, give the reference's late zero and its store
+ * order, but then the zero takes r2 and the chain r7. All 360 orders of the
+ * index, entry, zero, sentinel, x, y and word statements were scored.
  */
 /* DjinnMenu_ShowChangePreview (main:08022b44, 1588 bytes) is exact. Its
  * nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c) is emitted

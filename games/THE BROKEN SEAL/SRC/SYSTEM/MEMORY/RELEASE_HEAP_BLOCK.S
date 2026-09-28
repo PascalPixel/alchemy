@@ -49,4 +49,4 @@ Runtime_BumpFree:
 	ands	r2, r1
 	str	r0, [r2, r4]
 	bx	lr
-	.4byte	0x03001e50
+	.4byte	gWorkSlot

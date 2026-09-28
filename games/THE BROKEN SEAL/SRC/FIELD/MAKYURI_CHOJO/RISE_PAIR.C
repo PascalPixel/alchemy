@@ -3,7 +3,7 @@
 struct Actor *Engine_ActorGet(s32 actor);
 void Engine_AudioPlayCue(s32 cue);
 void Engine_ActorSetChildValue();
-void Engine_ActorSetSpriteFlags(struct Actor *actor, s32 flags);
+void SetOverlayObjectMode(struct Actor *actor, s32 flags);
 void Engine_EventWait(s32 frames);
 u32 Engine_RandomNext(void);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
@@ -48,8 +48,8 @@ void MakyuriChojo_RiseActorPair(void)
     left = Engine_ActorGet(22);
     right = Engine_ActorGet(24);
     Engine_AudioPlayCue(190);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(22), 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(24), 0);
+    SetOverlayObjectMode(Engine_ActorGet(22), 0);
+    SetOverlayObjectMode(Engine_ActorGet(24), 0);
     p = &params;
     p->count = 1;
     p->kind = 5;
@@ -78,6 +78,6 @@ void MakyuriChojo_RiseActorPair(void)
     }
     Engine_ActorSetChildValue(22, 0);
     Engine_ActorSetChildValue(24, 0);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(22), 1);
-    Engine_ActorSetSpriteFlags(Engine_ActorGet(24), 1);
+    SetOverlayObjectMode(Engine_ActorGet(22), 1);
+    SetOverlayObjectMode(Engine_ActorGet(24), 1);
 }

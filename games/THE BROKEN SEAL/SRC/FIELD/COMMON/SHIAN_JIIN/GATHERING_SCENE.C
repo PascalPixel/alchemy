@@ -9,7 +9,7 @@ void Engine_ActorShowEmote();
 void Engine_ActorSetAnimationAndWait();
 void Engine_ActorFaceEachOther();
 void Engine_ActorSetSpeed();
-void Local_02000f80();
+void ShianJiin_WalkByFacing();
 void Engine_ActorSetPosition();
 s32 Engine_ActorGet();
 void Engine_AudioPlayCue();
@@ -73,7 +73,7 @@ void ShianJiin_RunGatheringScene(void)
     Engine_ActorSetAnimationAndWait(15, 3);
     Engine_EventWait(20);
     Call3(Engine_ActorSetSpeed, 15, 0xcccc, 0x6666);
-    Local_02000f80();
+    ShianJiin_WalkByFacing();
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3(Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
     Call3(Engine_ActorSetPosition, 20, 0xe80000, 0xa80000);

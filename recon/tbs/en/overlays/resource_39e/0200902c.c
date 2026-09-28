@@ -1,3 +1,7 @@
+/* resource_39e:0200902c..02009160 (308 bytes with pool), still linked from
+ * the listing. Remaining difference: message 0x183a is loaded once and its
+ * followers derived as base + n, as a link-time value is; an integer message
+ * is propagated into separate constants (153 of 308 bytes differ). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -6,8 +10,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-void Local_02000f80(void);
-extern u8 Data_0000183a;
+void ShianJiin_WalkByFacing(void);
 
 /* Xian training scene: actor 15 speaks the lines for the given mode, then actors 19 and 20 are placed and actor 15 walks up to them. */
 void ShianJiin_RunMasterScene(s32 mode)
@@ -16,7 +19,7 @@ void ShianJiin_RunMasterScene(s32 mode)
 
     Call3((void (*)())Engine_ActorSetSpeed, 15, 0xcccc, 0x6666);
     Engine_EventWait(60);
-    msg = (s32)&Data_0000183a;
+    msg = 0x183a;
     Engine_EventSetMessage(msg);
     if (mode == 0) {
         Engine_EventSetMessage(msg - 1);
@@ -37,7 +40,7 @@ void ShianJiin_RunMasterScene(s32 mode)
         Engine_EventWait(20);
     }
     Engine_EventShowMessageAndWait(15, 0, 20);
-    Local_02000f80();
+    ShianJiin_WalkByFacing();
     Engine_ActorRunRepeatedMotion(15, 3);
     Call3((void (*)())Engine_ActorSetPosition, 19, 0xe80000, 0xa80000);
     Call3((void (*)())Engine_ActorSetPosition, 20, 0xe80000, 0xa80000);

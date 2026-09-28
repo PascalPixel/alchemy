@@ -1,18 +1,15 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
 void Engine_EventBegin();
-void Main_0808a030();
+void Event_CallWithLastActiveObjectId();
 void Engine_TaskWait();
 void Engine_ActorDestroy();
 void Engine_ActorSetPosition();
-s32 Engine_ActorGet();
 s32 Engine_GameFlagIsSet();
 void FieldScene_RunEncounterClosingSequence();
 void Engine_EventEnd();
 
-
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -48,19 +45,19 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
 
     *(s32 *)(*(s32 *)0x03001e70 + 236) = 0x410000;
     Engine_EventBegin();
-    Call1(Main_0808a030, 0x200d418);
+    Call1(Event_CallWithLastActiveObjectId, 0x200d418);
     Engine_TaskWait(1);
     Engine_ActorDestroy(24);
     Call3(Engine_ActorSetPosition, 23, 0xee0000, 0x2720000);
     v5 = 192;
-    record = Engine_ActorGet(23);
+    record = (s32)Engine_ActorGet(23);
     *(u16 *)(record + 6) = (v5 << 6);
     if (Value1(Engine_GameFlagIsSet, 0x903) != 0) {
         Call3(Engine_ActorSetPosition, 22, 0xa20000, 0x27a0000);
-        record = Engine_ActorGet(22);
+        record = (s32)Engine_ActorGet(22);
         *(u16 *)(record + 6) = (v5 << 6);
         Call3(Engine_ActorSetPosition, 21, 0xa20000, 0x2a40000);
-        record = Engine_ActorGet(21);
+        record = (s32)Engine_ActorGet(21);
         {
             s32 facing = 0xd000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
 
@@ -68,17 +65,17 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
         }
     } else {
         Call3(Engine_ActorSetPosition, 22, 0xa00000, 0x28c0000);
-        record = Engine_ActorGet(22);
+        record = (s32)Engine_ActorGet(22);
         *(u16 *)(record + 6) = (v5 << 6);
         Call3(Engine_ActorSetPosition, 21, 0xa60000, 0x29c0000);
-        record = Engine_ActorGet(21);
+        record = (s32)Engine_ActorGet(21);
         {
             s32 facing = 0xb000; /* FAKEMATCH: word temporary keeps the facing as movs+lsls */
 
             *(u16 *)(record + 6) = facing;
         }
     }
-    if (Data_02000240_t[225][0] == 6) {
+    if (gGameState.entrance == 6) {
         FieldScene_RunEncounterClosingSequence();
     }
     Engine_EventEnd();

@@ -1,16 +1,16 @@
 #include "TYPES.H"
 
-extern u8 Data_0200c80c[];
-extern u8 Data_0200c7a8[];
-extern u8 Data_0200c764[];
-extern u8 Data_0200c7ec[];
-extern u8 Data_0200c888[];
+extern u8 FuneKanpan_CrewActionsD[];
+extern u8 FuneKanpan_CrewActionsB[];
+extern u8 FuneKanpan_CrewActionsA[];
+extern u8 FuneKanpan_CrewActionsC[];
+extern u8 FuneKanpan_SailorActions[];
 
 void Engine_EventBegin();
 void Engine_ActorSetChildValue();
 s32 Engine_ActorGet();
 void Engine_ActorSetSpriteFlags();
-void Main_0808a030();
+void Event_CallWithLastActiveObjectId();
 void Engine_TaskWait();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetPosition();
@@ -24,13 +24,13 @@ void Engine_ObjectMotionSetPositionAndCommit();
 void Engine_AudioPlayCue();
 void FieldScene_CallPairWith10();
 void FieldScene_RunScene3af_02000bb8();
-void Main_0808a0b0();
+void Object_SetActionCallbackAndRefreshById();
 void Engine_EventCloseScreen();
 void Engine_ActorStop();
-void Main_08009208();
-void Main_0808a1d8();
-void Main_08015210();
-void Main_08009210();
+void Graphics_EnableObjLayerAndCallbacks();
+void Ui_SetRenderResultFromObject();
+void UiText_ShowCenteredMessage();
+void ObjectDispatch_StopCallbacksAndHideLayers();
 void Engine_EventRequestExit();
 
 
@@ -78,9 +78,9 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_ActorSetChildValue(0, 15);
     record = Engine_ActorGet(0);
     Engine_ActorSetSpriteFlags(record, 0);
-    Call1(Main_0808a030, 0x200d160);
+    Call1(Event_CallWithLastActiveObjectId, 0x200d160);
     Engine_TaskWait(1);
-    Call1(Main_0808a030, 0x200d268);
+    Call1(Event_CallWithLastActiveObjectId, 0x200d268);
     Engine_TaskWait(1);
     Engine_ActorSetAnimation(31, 0);
     record = Engine_ActorGet(24);
@@ -96,7 +96,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     record = Engine_ActorGet(29);
     Engine_ActorSetSpriteFlags(record, 1);
     Call3(Engine_ActorSetPosition, 22, 0x1000000, 0x2800000);
-    action_c80c = (s32)Data_0200c80c;
+    action_c80c = (s32)FuneKanpan_CrewActionsD;
     Engine_ActorEnableActionCallback(22, action_c80c);
     Call3(Engine_ActorSetPosition, 21, 0x10c0000, 0x2b40000);
     Value2(Engine_ActorEnableActionCallback, 22, action_c80c);
@@ -110,10 +110,10 @@ void FuneKanpan_RunDeckCrewScene(void)
     *(u8 *)(Engine_ActorGet(25) + 99) = v5;
     *(u8 *)(Engine_ActorGet(26) + 99) = v6;
     *(u8 *)(Engine_ActorGet(27) + 99) = v5;
-    action_c7a8 = (s32)Data_0200c7a8;
+    action_c7a8 = (s32)FuneKanpan_CrewActionsB;
     Engine_ActorEnableActionCallback(24, action_c7a8);
     Value2(Engine_ActorEnableActionCallback, 25, action_c7a8);
-    action_c764 = (s32)Data_0200c764;
+    action_c764 = (s32)FuneKanpan_CrewActionsA;
     Engine_ActorEnableActionCallback(26, action_c764);
     Value2(Engine_ActorEnableActionCallback, 27, action_c764);
     Engine_ActorSetPosition(20, 0, 0);
@@ -131,7 +131,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     Call3(Engine_ActorSetDestination, 0, 174, 0x26c);
     Call3(Engine_ObjectMotionSetPositionAndCommit, 28, 180, 0x244);
     Engine_AudioPlayCue(146);
-    action_c7ec = (s32)Data_0200c7ec;
+    action_c7ec = (s32)FuneKanpan_CrewActionsC;
     Engine_ActorEnableActionCallback(28, action_c7ec);
     Engine_ActorEnableActionCallback(29, action_c7ec);
     Engine_AudioPlayCue(240);
@@ -151,12 +151,12 @@ void FuneKanpan_RunDeckCrewScene(void)
     Call2(FieldScene_CallPairWith10, 30, 0xc000);
     FieldScene_RunScene3af_02000bb8();
     Engine_EventWait(10);
-    action_c888 = (s32)Data_0200c888;
+    action_c888 = (s32)FuneKanpan_SailorActions;
     Engine_ActorEnableActionCallback(30, action_c888);
     Engine_EventWait(10);
     Engine_ActorEnableActionCallback(28, action_c888);
     Engine_EventWait(10);
-    Main_0808a0b0(29, action_c888);
+    Object_SetActionCallbackAndRefreshById(29, action_c888);
     Engine_EventWait(20);
     Engine_AudioPlayCue(147);
     Engine_EventCloseScreen();
@@ -166,9 +166,9 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_ActorStop(26);
     Engine_ActorStop(27);
     Engine_EventWait(10);
-    Main_08009208();
-    Main_0808a1d8(21);
-    Call3(Main_08015210, 0x1e45, 1, 0);
-    Main_08009210();
+    Graphics_EnableObjLayerAndCallbacks();
+    Ui_SetRenderResultFromObject(21);
+    Call3(UiText_ShowCenteredMessage, 0x1e45, 1, 0);
+    ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventRequestExit(13);
 }

@@ -1,3 +1,7 @@
+/* NONMATCHING: resource_3bd 0x0200b644, ArutamiraDou_ApplyEntryState, formerly
+ * FIELD/ARUTAMIRA_DOU/ENTRY_STATE.C (2026-09-28).
+ * Compares the scene with ids 0x92..0x97 loaded from literals (link-time
+ * values). Remaining: the scene ids. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"

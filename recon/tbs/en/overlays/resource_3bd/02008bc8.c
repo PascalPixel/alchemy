@@ -1,3 +1,8 @@
+/* NONMATCHING: resource_3bd 0x02008bc8, ArutamiraDou_ApplyRoomVisuals, formerly
+ * FIELD/ARUTAMIRA_DOU/ROOM_VIS.C (2026-09-28).
+ * Compares the scene with ids 0x92 and 0x97 that the game loads from literals
+ * (link-time values; plain constants become cmp #imm). Remaining: the scene
+ * ids. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

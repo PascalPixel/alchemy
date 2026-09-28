@@ -1,13 +1,10 @@
 #include "TYPES.H"
-
-s32 Engine_ActorGet();
+#include "FIELD_EVENT.H"
 
 
 /* FAKEMATCH: ids the reference loads from the literal pool rather than
  * building inline are spelled as link symbols at those values. */
-extern u8 Data_000000ac[];
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern u8 Value_000000ac[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -25,8 +22,8 @@ void BabiChika_UpdateTrackedActor(void)
     actor = (u8 *)Engine_ActorGet(0);
     work = *(u8 **)0x03001ee0;
     limit = 0;
-    if (Data_02000240_t[224][0] == (s32)Data_000000ac) {
-        switch (Data_02000240_t[225][0]) {
+    if (gGameState.scene == (s32)Value_000000ac) {
+        switch (gGameState.entrance) {
         case 3:
         case 4:
             limit = 94;
@@ -40,7 +37,7 @@ void BabiChika_UpdateTrackedActor(void)
             limit = 118;
             break;
         }
-    } else if (Data_02000240_t[225][0] == 12) {
+    } else if (gGameState.entrance == 12) {
         limit = 93;
     }
     if ((*(s32 *)(actor + 16) >> 19) <= limit) {

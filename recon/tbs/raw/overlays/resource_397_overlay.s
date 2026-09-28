@@ -1,26 +1,6 @@
 .syntax unified
 .include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_0200013c, 0x0200013c
-	.set sub_0200014e, 0x0200014e
-	.set sub_0200015c, 0x0200015c
-	.set sub_0200016e, 0x0200016e
-	.set sub_0200017c, 0x0200017c
-	.set sub_0200018e, 0x0200018e
-	.set sub_0200037c, 0x0200037c
-	.set sub_020003ac, 0x020003ac
-	.set sub_020003b4, 0x020003b4
-	.set sub_020003da, 0x020003da
-	.set sub_0200048c, 0x0200048c
-	.set sub_02000496, 0x02000496
-	.set sub_020004ae, 0x020004ae
-	.set sub_020004e4, 0x020004e4
-	.set sub_020004f0, 0x020004f0
-	.set sub_020004fc, 0x020004fc
-	.set sub_0200051e, 0x0200051e
-	.set sub_02000560, 0x02000560
-	.set sub_020005f6, 0x020005f6
-	.set sub_020005f8, 0x020005f8
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TORETO_EDA/ENTRY.INC"
@@ -30,7 +10,7 @@ Func_02000030:
 	push {lr}
 	movs r0, #8
 	movs r1, #61
-	bl sub_0200037c
+	bl 0x02008344
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -73,7 +53,7 @@ Func_0200005c:
 	adds r6, r0, #0
 	ldr r0, [r3]
 	adds r7, r1, #0
-	bl sub_020003ac
+	bl 0x02008334
 	adds r5, r0, #0
 	lsls r6, r6, #20
 	lsls r7, r7, #20
@@ -88,7 +68,7 @@ Func_0200005c:
 	adds r3, r5, #0
 	adds r3, #34
 	ldrb r0, [r3]
-	bl sub_020003b4
+	bl 0x0200831c
 	str r0, [r5, #12]
 	str r0, [r5, #20]
 .L_0200005c_0:
@@ -107,7 +87,7 @@ Func_0200005c:
 	adds r3, r5, #0
 	adds r3, #34
 	ldrb r0, [r3]
-	bl sub_020003da
+	bl 0x0200831c
 	str r0, [r5, #12]
 	str r0, [r5, #20]
 .L_0200005c_1:
@@ -125,7 +105,7 @@ Func_020000d8:
 	push {lr}
 	movs r0, #0
 	movs r1, #5
-	bl sub_0200013c
+	bl 0x0200805c
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -136,7 +116,7 @@ Func_020000e8:
 	movs r1, #5
 	negs r1, r1
 	movs r0, #0
-	bl sub_0200014e
+	bl 0x0200805c
 	pop {r0}
 	bx r0
 	.global Func_020000f8
@@ -145,7 +125,7 @@ Func_020000f8:
 	push {lr}
 	movs r0, #0
 	movs r1, #5
-	bl sub_0200015c
+	bl 0x0200805c
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -156,7 +136,7 @@ Func_02000108:
 	movs r1, #5
 	negs r1, r1
 	movs r0, #0
-	bl sub_0200016e
+	bl 0x0200805c
 	pop {r0}
 	bx r0
 	.global Func_02000118
@@ -165,7 +145,7 @@ Func_02000118:
 	push {lr}
 	movs r0, #0
 	movs r1, #6
-	bl sub_0200017c
+	bl 0x0200805c
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -176,7 +156,7 @@ Func_02000128:
 	movs r1, #6
 	negs r1, r1
 	movs r0, #0
-	bl sub_0200018e
+	bl 0x0200805c
 	pop {r0}
 	bx r0
 	.global Func_02000138
@@ -187,14 +167,14 @@ Func_02000138:
 .L_0200013c:
 	movs r0, #123
 	ldr r5, [r3]
-	bl sub_02000496
+	bl 0x02008354
 	movs r3, #182
 	lsls r3, r3, #1
 	adds r5, r5, r3
 	movs r3, #0
 	ldrsh r0, [r5, r3]
 .L_0200014e:
-	bl sub_0200048c
+	bl 0x0200833c
 	pop {r5}
 	pop {r0}
 	bx r0
@@ -206,7 +186,7 @@ Func_02000138:
 Func_0200015c:
 	push {lr}
 	movs r0, #9
-	bl sub_020004ae
+	bl 0x0200834c
 	ldr r2, [pc, #48]
 	ldr r3, [pc, #40]
 	strh r3, [r2]
@@ -258,8 +238,8 @@ Func_020001b4:
 	.thumb_func
 Func_020001bc:
 	push {lr}
-	bl sub_020004e4
-	bl sub_020004f0
+	bl 0x02008324
+	bl 0x0200832c
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -281,7 +261,7 @@ Func_020001d4:
 	ldr r3, [r3]
 	ldr r1, [pc, #24]
 	strh r3, [r0, #2]
-	bl sub_020004fc
+	bl 0x02008314
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -301,7 +281,7 @@ Func_02000200:
 	subs r2, #192
 	str r2, [r3]
 	movs r0, #9
-	bl sub_02000560
+	bl 0x0200834c
 	ldr r2, [pc, #56]
 	ldr r3, [pc, #40]
 	strh r3, [r2]
@@ -321,7 +301,7 @@ Func_02000200:
 	adds r2, r2, r3
 	movs r3, #10
 	strh r3, [r2]
-	bl sub_0200051e
+	bl 0x020082e0
 	movs r0, #0
 	b .L_02000200_0
 	.4byte 0x00003f42
@@ -400,11 +380,11 @@ Func_020002e0:
 	ldr r2, [pc, #24]
 	movs r0, #1
 	movs r1, #0
-	bl sub_020005f6
+	bl 0x0200830c
 	movs r1, #200
 	lsls r1, r1, #4
 	ldr r0, [pc, #12]
-	bl sub_020005f8
+	bl 0x02008304
 	pop {r0}
 	bx r0
 	.2byte 0x0000

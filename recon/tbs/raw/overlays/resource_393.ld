@@ -3,7 +3,7 @@
 EXTERN(_call_via_r0)
 SECTIONS
 {
-    .text 0x2000000 :
+    .text 0x2008000 :
     {
         "*/resource_393_overlay.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

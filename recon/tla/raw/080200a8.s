@@ -3,6 +3,9 @@
 	.global Func_080200a8
 	.thumb_func
 Func_080200a8:
+	.global Object_SetCallback
+	.thumb_func
+Object_SetCallback:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x33a9

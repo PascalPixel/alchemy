@@ -146,6 +146,9 @@ Func_080227e0:
 	movs	r0, #0
 .L_080228de:
 	pop	{pc}
+	.global InitializeAnimationObjects
+	.thumb_func
+InitializeAnimationObjects:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}
@@ -251,6 +254,9 @@ Func_080227e0:
 	strb	r3, [r5, #22]
 .L_080229aa:
 	pop	{r5, r6, pc}
+	.global ResourceMetadata_Register
+	.thumb_func
+ResourceMetadata_Register:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

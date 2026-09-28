@@ -50,6 +50,9 @@ Func_080d4ab4:
 	pop	{r5, pc}
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Object_SetActionCallback
+	.thumb_func
+Object_SetActionCallback:
 	push	{r5, lr}
 	subs	r3, r1, #1
 	adds	r5, r0, #0

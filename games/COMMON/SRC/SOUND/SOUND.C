@@ -15,8 +15,8 @@ void AudioCommand_InvokeSlot35(void *block);
 extern struct SoundWork Sound_Work;
 extern struct SoundNote Sound_CgbNotes[4];
 extern u8 Sound_WorkBytes[];
-extern const struct PlayerSlot Data_080fc624[];
-extern const struct SongEntry Data_080fc684[];
+extern const struct PlayerSlot Sound_PlayerSlots[];
+extern const struct SongEntry Sound_SongTable[];
 extern u8 Sound_PlayerCount;
 
 void Audio_Initialize(void)
@@ -30,10 +30,10 @@ void Audio_Initialize(void)
     AudioEngine_SetMode(AUDIO_INITIAL_MODE);
     count = (u32)&Sound_PlayerCount;
     for (i = 0; i < count; i++) {
-        struct SoundPlayer *player = Data_080fc624[i].player;
+        struct SoundPlayer *player = Sound_PlayerSlots[i].player;
 
-        MusicPlayer_Initialize(player, Data_080fc624[i].tracks, Data_080fc624[i].track_count);
-        player->check_priority = Data_080fc624[i].check_priority;
+        MusicPlayer_Initialize(player, Sound_PlayerSlots[i].tracks, Sound_PlayerSlots[i].track_count);
+        player->check_priority = Sound_PlayerSlots[i].check_priority;
         player->work_bytes = Sound_WorkBytes;
     }
 }
@@ -45,8 +45,8 @@ void AudioEngine_RunMixer(void)
 
 void Audio_PlaySound(u16 id)
 {
-    const struct PlayerSlot *slots = Data_080fc624;
-    const struct SongEntry *songs = Data_080fc684;
+    const struct PlayerSlot *slots = Sound_PlayerSlots;
+    const struct SongEntry *songs = Sound_SongTable;
     const struct SongEntry *song = &songs[id];
 
     MusicPlayer_StartSong(slots[song->slot].player, song->header);
@@ -54,8 +54,8 @@ void Audio_PlaySound(u16 id)
 
 void Audio_PlaySoundIfInactive(u16 id)
 {
-    const struct PlayerSlot *slots = Data_080fc624;
-    const struct SongEntry *songs = Data_080fc684;
+    const struct PlayerSlot *slots = Sound_PlayerSlots;
+    const struct SongEntry *songs = Sound_SongTable;
     const struct SongEntry *song = &songs[id];
     struct SoundPlayer *player = slots[song->slot].player;
 
@@ -67,8 +67,8 @@ void Audio_PlaySoundIfInactive(u16 id)
 
 void Audio_PlayOrResumeSound(u16 id)
 {
-    const struct PlayerSlot *slots = Data_080fc624;
-    const struct SongEntry *songs = Data_080fc684;
+    const struct PlayerSlot *slots = Sound_PlayerSlots;
+    const struct SongEntry *songs = Sound_SongTable;
     const struct SongEntry *song = &songs[id];
     struct SoundPlayer *player = slots[song->slot].player;
 
@@ -82,8 +82,8 @@ void Audio_PlayOrResumeSound(u16 id)
 
 void Audio_StopSound(u16 id)
 {
-    const struct PlayerSlot *slots = Data_080fc624;
-    const struct SongEntry *songs = Data_080fc684;
+    const struct PlayerSlot *slots = Sound_PlayerSlots;
+    const struct SongEntry *songs = Sound_SongTable;
     const struct SongEntry *song = &songs[id];
     struct SoundPlayer *player = slots[song->slot].player;
 
@@ -93,8 +93,8 @@ void Audio_StopSound(u16 id)
 
 void Audio_ResumeSound(u16 id)
 {
-    const struct PlayerSlot *slots = Data_080fc624;
-    const struct SongEntry *songs = Data_080fc684;
+    const struct PlayerSlot *slots = Sound_PlayerSlots;
+    const struct SongEntry *songs = Sound_SongTable;
     const struct SongEntry *song = &songs[id];
     struct SoundPlayer *player = slots[song->slot].player;
 
@@ -108,7 +108,7 @@ void Audio_StopAllPlayers(void)
     s32 i;
 
     for (i = 0; i < count; i++)
-        MusicPlayer_Stop(Data_080fc624[i].player);
+        MusicPlayer_Stop(Sound_PlayerSlots[i].player);
 }
 
 void MusicPlayer_Resume(struct SoundPlayer *player)
@@ -122,7 +122,7 @@ void Audio_ResumeAllPlayers(void)
     s32 i;
 
     for (i = 0; i < count; i++)
-        Audio_ResumePlayer(Data_080fc624[i].player);
+        Audio_ResumePlayer(Sound_PlayerSlots[i].player);
 }
 
 void MusicPlayer_FadeOut(struct SoundPlayer *player, u16 speed)

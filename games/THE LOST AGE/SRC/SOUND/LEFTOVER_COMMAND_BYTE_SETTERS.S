@@ -16,7 +16,7 @@
 	.thumb_func
 MusicTrack_SetLfoSpeedFromCommandLeftover:
 	mov	ip, lr
-	bl	Func_081c03f4
+	bl	MusicTrack_ReadCommandByteLeftover
 	strb	r3, [r1, #25]
 	cmp	r3, #0
 	bne.n	.L_081c0410
@@ -30,7 +30,7 @@ AlchemyUncredited_081c0412:
 MusicTrack_SetModulationFromCommandLeftover:
 AlchemyUncreditedEnd_081c0412:
 	mov	ip, lr
-	bl	Func_081c03f4
+	bl	MusicTrack_ReadCommandByteLeftover
 	strb	r3, [r1, #23]
 	cmp	r3, #0
 	bne.n	.L_081c0424

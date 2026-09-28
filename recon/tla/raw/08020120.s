@@ -15,18 +15,30 @@ Func_08020120:
 	bx	r4
 	.2byte 0xbe4d
 	.2byte 0x0802
+	.global Object_ResetMotion
+	.thumb_func
+Object_ResetMotion:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x35f9
 	.2byte 0x0802
+	.global Object_RefreshSelector
+	.thumb_func
+Object_RefreshSelector:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x3635
 	.2byte 0x0802
+	.global Object_SetPosition
+	.thumb_func
+Object_SetPosition:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x4739
 	.2byte 0x0802
+	.global Object_CommitPosition
+	.thumb_func
+Object_CommitPosition:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x3f3d

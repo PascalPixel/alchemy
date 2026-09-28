@@ -215,7 +215,7 @@ MusicTrack_HandleNoteUnreferenced:
 .L_081c1d6e:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	Func_081c28e0
+	bl	MusicTrack_CalcOutput
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]
@@ -233,7 +233,7 @@ MusicTrack_HandleNoteUnreferenced:
 	str	r0, [r4, #4]
 	ldrh	r0, [r5, #30]
 	strh	r0, [r4, #12]
-	bl	Func_081c1bd8
+	bl	SoundDriver_CalculateStereoVolumeTwin
 	ldrb	r1, [r4, #8]
 	movs	r0, #8
 	ldrsb	r0, [r5, r0]
@@ -269,7 +269,7 @@ MusicTrack_HandleNoteUnreferenced:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	Func_081c1e98
+	bl	Pcm_KeyToFrequency
 .L_081c1de0:
 	str	r0, [r4, #32]
 	movs	r0, #128

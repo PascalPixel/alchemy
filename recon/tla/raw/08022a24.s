@@ -125,6 +125,9 @@ Func_08022a24:
 	strh	r7, [r5, #2]
 .L_08022b02:
 	pop	{r5, r6, r7, pc}
+	.global Animation_ApplyChildArgument
+	.thumb_func
+Animation_ApplyChildArgument:
 	push	{r5, r6, r7, lr}
 	adds	r7, r1, #0
 	movs	r3, #127

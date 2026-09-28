@@ -8,6 +8,9 @@
 	.thumb_func
 Func_080cad84:
 .L_080cad84:
+	.global ObjectTable_Get
+	.thumb_func
+ObjectTable_Get:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

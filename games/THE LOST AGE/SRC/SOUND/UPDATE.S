@@ -85,7 +85,7 @@ AlchemyUncreditedEnd_081c1922:
 	ldr	r0, [r0, #0]
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	Func_081c2818
+	bl	MusicPlayer_StepFade
 	ldr	r0, [r7, #4]
 	cmp	r0, #0
 	bge.n	.L_081c1974
@@ -296,7 +296,7 @@ AlchemyUncreditedEnd_081c1922:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	Func_081c28e0
+	bl	MusicTrack_CalcOutput
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L_081c1b60
@@ -316,7 +316,7 @@ AlchemyUncreditedEnd_081c1922:
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L_081c1b1c
-	bl	Func_081c1bd8
+	bl	SoundDriver_CalculateStereoVolumeTwin
 	cmp	r6, #0
 	beq.n	.L_081c1b1c
 	ldrb	r0, [r4, #29]
@@ -353,7 +353,7 @@ AlchemyUncreditedEnd_081c1922:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
-	bl	Func_081c1e98
+	bl	Pcm_KeyToFrequency
 	str	r0, [r4, #32]
 .L_081c1b5a:
 	ldr	r4, [r4, #52]

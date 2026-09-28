@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7800 bytes; 3114 differing halfwords, 363 aligned edits. */
+ * Candidate 7804 bytes; 3109 differing halfwords, 319 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -117,6 +117,14 @@ static __inline__ void DrawImage(void *canvas, const void *pixels, s32 x, s32 y,
                                  RectangleBlit *draw)
 {
     (*draw)(canvas, pixels, x, y, width, height);
+}
+
+/* FAKEMATCH: Derive height inside the inline scope so the dimension stores
+ * reuse one register instead of keeping two argument temporaries alive. */
+static __inline__ void DrawTallImage(void *canvas, const void *pixels,
+    s32 x, s32 y, s32 width, RectangleBlit *draw)
+{
+    (*draw)(canvas, pixels, x, y, width, width * 2);
 }
 
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
@@ -849,12 +857,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             if (frame <= 5) {
                 goto FinishFrame;
             }
-            strip_x = target_screen->x / 2;
+            strip_x = target_screen->x / 2 - 20;
             value = Math_Mod(frame / 2, 3);
             image_offset = (value * 2560);
-            blitters[0](canvas, (0x2010c56 + image_offset), (strip_x - 20), 16, 40, 32);
-            blitters[0](canvas, ((value * 1280) + 0x2012a56), (strip_x - 20), 48, 40, 32);
-            blitters[0](canvas, (image_offset + 0x2011156), (strip_x - 20), 80, 40, 32);
+            blitters[0](canvas, (0x2010c56 + image_offset), strip_x, 16, 40, 32);
+            blitters[0](canvas, ((value * 1280) + 0x2012a56), strip_x, 48, 40, 32);
+            blitters[0](canvas, (image_offset + 0x2011156), strip_x, 80, 40, 32);
             goto FinishFrame;
         }
         if (kind != 5) {
@@ -1037,7 +1045,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
             {
                 struct EffectStep *step = (struct EffectStep *)0x02014000;
-                struct EffectPosition *origin = target_screen;
+                /* FAKEMATCH: The wide snapshot keeps this origin in a saved
+                 * register; a pointer alias merges with the spilled pointer. */
+                u64 origin_addr = (u32)target_screen;
 
                 for (i = 0; i != 64; i++, step++) {
                     if (step->x >= 0 && frame >= i / 2) {
@@ -1047,8 +1057,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         SceneTransform_ApplyPitch(step->velocity_x);
                         SceneTransform_ApplyYaw(step->velocity_y);
                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-                        projected.x = projected.x / 2 + origin->x / 2;
-                        projected.y += origin->y + 32;
+                        projected.x = projected.x / 2 +
+                            ((struct EffectPosition *)(u32)origin_addr)->x / 2;
+                        projected.y +=
+                            ((struct EffectPosition *)(u32)origin_addr)->y + 32;
                         blitters[1](canvas, 0x02010000 + Data_080eedea[image],
                                     projected.x - 4, projected.y - 4, 8, 8);
                         step->x -= 6;
@@ -1099,8 +1111,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 image_x -= offset * 2;
                 image_y = target_screen->y - offset * 4 + 24;
             }
-            DrawImage(canvas, 0x02010000, image_x - 16, image_y - 32,
-                      32, 64, &blitters[1]);
+            DrawTallImage(canvas, 0x02010000, image_x - 16, image_y - 32,
+                          32, &blitters[1]);
         } else if (kind == 12) {
             if (frame > 47) {
                 *(volatile u16 *)0x04000052 = ((0x40 - frame) | 0x1000);

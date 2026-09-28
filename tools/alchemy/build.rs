@@ -18,15 +18,11 @@ const OUTSIDE: &[&str] = &[
     "alchemy/src/coverage",
     "alchemy/src/recovery",
     "alchemy/src/allocator.rs",
-    "alchemy/src/build_full.rs",
     "alchemy/src/build_rom.rs",
     "alchemy/src/cross_edition.rs",
-    "alchemy/src/flatten.rs",
     "alchemy/src/format.rs",
     "alchemy/src/http.rs",
     "alchemy/src/main.rs",
-    "alchemy/src/scaffold.rs",
-    "alchemy/src/siblings.rs",
 ];
 
 fn collect(tools: &Path, path: &Path, files: &mut Vec<PathBuf>) {

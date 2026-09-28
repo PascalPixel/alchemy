@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy build <compilers|runtime|native|asm|full|rom> [args]";
+const USAGE: &str = "usage: alchemy build <compilers|runtime|native|rom> [args]";
 
 pub fn entry(args: &[String]) -> ExitCode {
     let Some(command) = args.first().map(String::as_str) else {
@@ -11,6 +11,11 @@ pub fn entry(args: &[String]) -> ExitCode {
     if matches!(command, "claimed" | "assets" | "allocator") {
         return crate::result(Err(format!(
             "{command} used the removed generated catalogs; use build native with maintained Make/linker rules"
+        )));
+    }
+    if matches!(command, "full" | "asm") {
+        return crate::result(Err(format!(
+            "{command} composed the ROM from removed receipts; build rom links maintained source"
         )));
     }
     match command {
@@ -25,9 +30,6 @@ pub fn entry(args: &[String]) -> ExitCode {
             ExitCode::SUCCESS
         }
         "compilers" => crate::make_target("compiler-sources", &rest),
-        "asm" => crate::result(crate::build_asm::entry(&rest)),
-        "claimed" => crate::result(crate::build_claimed::entry(&rest)),
-        "full" => crate::result(crate::build_full::run(&rest)),
         "rom" => crate::result(crate::build_rom::run(&rest)),
         "-h" | "--help" => {
             println!("{USAGE}");

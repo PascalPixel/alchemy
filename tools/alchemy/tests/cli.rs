@@ -58,7 +58,7 @@ fn compression_recipe_writers_are_retired() {
 
 #[test]
 fn project_build_stages_remain_discoverable() {
-    for stage in ["compilers", "runtime", "asm", "native", "full", "rom"] {
+    for stage in ["compilers", "runtime", "native", "rom"] {
         let output = command().args(["build", stage, "--help"]).output().unwrap();
         assert!(
             output.status.success(),
@@ -96,5 +96,15 @@ fn retired_catalog_operations_explain_the_source_build_route() {
         let output = command().args(["build", stage, "--help"]).output().unwrap();
         assert!(!output.status.success(), "{stage}");
         assert!(String::from_utf8_lossy(&output.stderr).contains("removed generated catalogs"));
+    }
+    for stage in ["full", "asm"] {
+        let output = command().args(["build", stage, "--help"]).output().unwrap();
+        assert!(!output.status.success(), "{stage}");
+        assert!(String::from_utf8_lossy(&output.stderr).contains("build rom links"));
+    }
+    for check in ["source-build", "owners", "siblings"] {
+        let output = command().args(["check", check]).output().unwrap();
+        assert!(!output.status.success(), "{check}");
+        assert!(String::from_utf8_lossy(&output.stderr).contains("make compare"));
     }
 }

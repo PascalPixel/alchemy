@@ -2,10 +2,6 @@
 
 use std::path::{Path, PathBuf};
 
-pub fn argv(items: &[&str]) -> Vec<String> {
-    items.iter().map(|item| (*item).into()).collect()
-}
-
 pub fn text(path: impl AsRef<Path>) -> String {
     path.as_ref().to_string_lossy().into_owned()
 }

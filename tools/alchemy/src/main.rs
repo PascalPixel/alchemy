@@ -3,39 +3,30 @@ use std::process::ExitCode;
 mod allocator;
 mod bootstrap;
 mod build;
-mod build_asm;
 mod build_assets;
-mod build_claimed;
-mod build_full;
 mod build_rom;
 mod candidate;
 mod check;
 mod compiler;
 mod coverage;
-mod cross_edition;
-mod flatten;
+mod disasm;
 mod format;
 mod generated_files;
-mod land;
 mod overlay;
 mod parallel;
 mod raw;
 mod recovery;
-mod scaffold;
-mod score;
-mod siblings;
 mod targets;
 mod text_catalog;
 mod verify;
-mod worklist;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
   extract OWNER         extract reference bytes for psynergy decompile\n\
-  inspect OWNER         resolve calls and symbols; --asm shows annotated instructions, --siblings twins\n\
+  inspect OWNER         resolve calls and symbols; --asm shows annotated instructions\n\
   build                 build compilers, maintained source, assembly and ROMs\n\
   verify                the landing gate: every make verify gate in waves, one line each\n\
-  coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
+  coverage              publish README progress and both figures from verified builds\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames";
@@ -58,45 +49,13 @@ fn main() -> ExitCode {
     }
     match command {
         "bootstrap" => result(bootstrap::run(rest)),
-        "unit" if rest.first().map(String::as_str) == Some("scaffold") => {
-            scaffold::entry(&rest[1..])
-        }
-        "unit" if rest.first().map(String::as_str) == Some("flatten") => flatten::entry(&rest[1..]),
-        "unit" => {
-            println!("usage: alchemy unit <scaffold|flatten> [args]");
-            if rest == ["--help"] || rest == ["-h"] {
-                ExitCode::SUCCESS
-            } else {
-                ExitCode::from(2)
-            }
-        }
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
-        "coverage" if rest.first().map(String::as_str) == Some("audit") => result(
-            coverage::audit::run(&compiler::routing::root(), &rest[1..]).map(|line| {
-                println!("{line}");
-            }),
-        ),
         "coverage" => make_target(command, rest),
         "raw" => result(raw::run(rest)),
         "check" => check::entry(rest),
-        "targets" => result(worklist::entry(rest)),
-        "land" => result(land::entry(rest)),
         "format" => result(format::run(rest)),
-        "overlay" => overlay::entry(rest),
-        "extract" | "adopt" | "inspect" => recovery_command(command, rest),
-        "score" if rest.iter().any(|arg| arg == "--variants") => {
-            result(score::variants::run(compiler::routing::root(), rest))
-        }
-        "score" => match overlay_candidate(rest) {
-            Ok(true) => overlay::code(overlay::score::run(crate::compiler::routing::root(), rest)),
-            Ok(false) => {
-                score::entry(rest);
-                ExitCode::SUCCESS
-            }
-            Err(error) => result(Err(error)),
-        },
-        "cross-edition" => result(cross_edition::run(rest)),
+        "extract" | "inspect" => recovery_command(command, rest),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS
@@ -112,7 +71,7 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         if target == "coverage" {
             println!(
-                "usage: alchemy coverage\n       alchemy coverage audit --target TARGET [--output out/...json] [--calibrate --expected LEDGER.json | --inventory]\nRebuilds published coverage, or inventories executable overlay spans."
+                "usage: alchemy coverage\nPublishes README progress and both figures from each game's verified build."
             );
         } else {
             println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");
@@ -134,70 +93,11 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
     }
 }
 
-fn overlay_candidate(arguments: &[String]) -> Result<bool, String> {
-    use crate::compiler::source_paths::{SourceOwner, SourcePaths};
-    if arguments.iter().any(|arg| arg == "--unit") {
-        return Ok(false);
-    }
-    if let Some(pair) = arguments.windows(2).find(|pair| pair[0] == "--owner") {
-        return SourceOwner::parse_argument(&pair[1]).map(|owner| !owner.is_main());
-    }
-    let Some(first) = arguments.first() else {
-        return Ok(false);
-    };
-    if first.contains(':') && !first.starts_with('-') {
-        return SourceOwner::parse_argument(first).map(|owner| !owner.is_main());
-    }
-    let path = std::path::Path::new(first);
-    if path.is_file() {
-        let paths = SourcePaths::load(crate::compiler::routing::root())?;
-        return Ok(paths
-            .owner_for_path(path)?
-            .is_some_and(|owner| !owner.is_main()));
-    }
-    Ok(false)
-}
-
-#[cfg(test)]
-mod command_tests {
-    use super::overlay_candidate;
-
-    #[test]
-    fn explicit_owner_selects_address_space() {
-        for (owner, overlay) in [
-            ("080bbb0c", false),
-            ("main:080bbb0c", false),
-            ("resource_3ba:02002910", true),
-        ] {
-            let args = vec!["draft.c".into(), "--owner".into(), owner.into()];
-            assert_eq!(overlay_candidate(&args).unwrap(), overlay);
-        }
-        assert!(overlay_candidate(&["resource_3ba:02002910".into()]).unwrap());
-        assert!(!overlay_candidate(
-            &["--unit", "battle", "--owner", "resource_3ba:02002910"].map(str::to_owned)
-        )
-        .unwrap());
-    }
-
-    #[test]
-    fn invalid_explicit_owner_fails_instead_of_guessing_main() {
-        assert!(overlay_candidate(&[
-            "draft.c".into(),
-            "--owner".into(),
-            "resource_bad:nope".into()
-        ])
-        .is_err());
-        assert!(!overlay_candidate(&["--help".into()]).unwrap());
-        assert!(!overlay_candidate(&["--unit".into(), "battle-action-resolution".into()]).unwrap());
-    }
-}
-
 fn recovery_command(command: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         let usage = match command {
             "extract" => "extract OWNER --out out/FILE [--span BYTES]",
-            "adopt" => "adopt OWNER [--source FILE] [--span BYTES] [--name NAME] [--path PATH]",
-            "inspect" => "inspect OWNER [--span BYTES] [--asm | --siblings [--near] [--json FILE]]",
+            "inspect" => "inspect OWNER [--span BYTES] [--asm]",
             _ => return recovery::cli::entry(&["--help".to_string()]),
         };
         println!(

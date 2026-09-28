@@ -41,9 +41,11 @@ the technical details in [AGENTS.md](AGENTS.md).
 <img src="PROGRESS.png" width="838" alt="A map of the project's files by size on disk">
 
 The chart preserves past measurements: The Broken Seal in gold, The Lost Age
-in blue. Current progress is pending a fresh audit after removing stored
-reconstruction answers and generated bookkeeping. The C and draft work remain;
-only source that proves a complete, exact match will regain credit.
+in blue. Progress is the share of each game's code that is built from readable
+source, measured only when the rebuilt game is identical to the original; a game
+stays pending until it is. The drop on 28 September is a stricter count, not
+lost work: stored answers and generated bookkeeping were removed, and code now
+counts only once the game is linked from its source.
 
 ## Acknowledgements
 

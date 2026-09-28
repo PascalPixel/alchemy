@@ -4,8 +4,8 @@ use std::path::Path;
 use std::process::ExitCode;
 
 const USAGE: &str = "usage: check commit-progress [--write] COMMIT_MESSAGE\n\
-On main, derive both DONE percentages from verified receipts; --write updates the subject.\n\
-Other branches keep their subjects and require no build receipts.";
+On main, derive both DONE percentages from verified builds; --write updates the subject.\n\
+Other branches keep their subjects and require no builds.";
 
 fn valid(message: &str, expected: &str) -> bool {
     crate::verify::valid_subject(message, expected)

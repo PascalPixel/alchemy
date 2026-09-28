@@ -1,7 +1,5 @@
 use super::*;
 mod character;
-pub(super) use character::inventory as character_inventory;
-pub(crate) use character::{read_frame, Catalog};
 mod frame;
 mod graphics;
 mod identity;

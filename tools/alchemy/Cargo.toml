@@ -19,6 +19,7 @@ encoding_rs = "0.8"
 unicode-normalization = "0.1"
 sha2 = "0.10"
 tempfile = "3"
+sha1 = "0.10"
 
 [[bin]]
 name = "alchemy"

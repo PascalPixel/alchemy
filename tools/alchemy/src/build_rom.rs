@@ -2,7 +2,7 @@
 //! pret links `ld_script.ld`. Every symbol resolves from its definition; the
 //! image is written for `sha1sum -c rom.sha1` and nothing is copied from a
 //! reference ROM except what the script's scaffolding reads explicitly.
-use crate::build_assets::LzMachine;
+use crate::assets::lz::{compress_tagged, LzMachine};
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
     assembly_command, compiler_assembly_command, prefer_installed_binutils,
@@ -595,7 +595,7 @@ fn build_overlay(
     }
     let mut decoded = fs::read(&image).map_err(|error| error.to_string())?;
     store_thumb_calls(&mut decoded);
-    let encoded = crate::build_assets::encode_overlay_stream(&decoded, &OVERLAY_MACHINE)?;
+    let encoded = compress_tagged(&decoded, &OVERLAY_MACHINE)?;
     fs::write(&stream, encoded).map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
 }

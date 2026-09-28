@@ -746,7 +746,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN_NEARBY_MARKERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/WINDOW_HBLANK_DMA.o"(.text)
         "*/recon/tbs/raw/0808f52c.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0808fe38.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_INIT_BATTLE_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_ENABLE_TWO_CALLBACKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/TRANSITION_ALLOCATE_CLEAR_STATE.o"(.text)
         "*/recon/tbs/raw/0808fefc.o"(.text .rodata .data .padding)

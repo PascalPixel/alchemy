@@ -15,7 +15,6 @@ struct EffectPositionSource {
 };
 
 extern s32 gGameState[];
-#define PARTY_STATE gGameState
 
 struct EffectPositionSource *Object_GetById(s32 id);
 void Vector_AddPolarOffset(
@@ -32,7 +31,7 @@ void BattleFx_UpdateRandomTargetParticle(struct EffectSlot *effect)
     s8 *state_pointer;
     s32 state;
 
-    source = Object_GetById(PARTY_STATE[125]);
+    source = Object_GetById(gGameState[125]);
     state_pointer = &effect->state;
     state = *state_pointer;
 

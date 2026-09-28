@@ -7,9 +7,8 @@ extern u8 Data_03001f2c[];
    otherwise takes the money, plays the smithing sounds and offers to equip
    the mended item. */
 
-extern u8 Value_00000cbe[];
+extern u8 MsgShopRepairConfirm[];
 
-#define MSG_REPAIR_CONFIRM ((s32)Value_00000cbe)
 
 struct ItemDefinition *Item_Get(s32 item);
 s32 Inventory_FindEquippedFar(s32 unit_id, u8 kind);
@@ -56,7 +55,7 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     }
     UiWork_PushValueSlotFar(item_id, 2);
     UiWork_PushValueSlotFar(price, 5);
-    message = MSG_REPAIR_CONFIRM;
+    message = (s32)MsgShopRepairConfirm;
     UiMessage_ShowAndRestoreState(message);
     if (UiMessage_ShowChoice(0) != 0) {
         UiMessage_ShowAndRestoreState(message + 1);

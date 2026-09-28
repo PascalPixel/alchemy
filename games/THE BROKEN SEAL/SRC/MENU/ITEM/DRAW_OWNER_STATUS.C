@@ -8,7 +8,7 @@ extern u8 gMenuWork[];
    Shop_DrawItemPage; the class-name base is a link-time symbol loaded from
    the literal pool. */
 extern u8 Data_00000af7[];
-extern u8 Value_00000741;
+extern u8 MsgClassName;
 
 /* Fixed labels drawn with the panel. */
 extern const u8 Menu_LvString[];
@@ -42,7 +42,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
         UiWindow_ClearInteriorTilesFar(window, 0, 0, 128, 40);
     }
     UiText_DrawStringAtOffsetFar(unit->name, window, 40, 0);
-    UiText_DrawCharacterAtOffsetFar(unit->class_index + (s32)&Value_00000741, window, 0, 32);
+    UiText_DrawCharacterAtOffsetFar(unit->class_index + (s32)&MsgClassName, window, 0, 32);
     UiText_DrawStringAtOffsetFar(Menu_LvString, window, 104, 0);
     UiWork_SetParamNibbleFar(15);
     UiText_DrawNumberInWindowFar(unit->level, 2, window, 128, 0);

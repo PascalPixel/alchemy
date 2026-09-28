@@ -152,18 +152,12 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused, struct MenuResult *state)
 #include "PSYNERGY_MENU.H"
 #include "UI.H"
 
-extern u8 Value_00000aed;
-extern u8 Value_00000aef;
+extern u8 MsgPsynergyPp;
+extern u8 MsgNoPsynergy;
 extern u8 MsgAbilityName;
-extern u8 Value_00000741;
+extern u8 MsgClassName;
 extern u8 Menu_LvString;
 
-#define MsgPP Value_00000aed
-#define MsgNoPsy Value_00000aef
-#define MsgAction MsgAbilityName
-#define MsgClass Value_00000741
-#define StrLv Menu_LvString
-#define PsyMenuWork gMenuWork
 
 #define PSY_LIST_OFS 0x1c8
 #define ACT_ID_MASK 0x3fff
@@ -183,7 +177,7 @@ struct BattleAction *Ability_GetData(s32 action);
 s32 PsynergyMenu_DrawListPage(
     s32 window, s32 unused, const struct MenuResult *res)
 {
-    struct PsynergyMenuState *menu = PsyMenuWork;
+    struct PsynergyMenuState *menu = gMenuWork;
     u8 *owner;
     u32 first;
     u32 rows;
@@ -205,7 +199,7 @@ s32 PsynergyMenu_DrawListPage(
     Menu_SetPageIcons(5, first, window, 80, 58);
     Menu_DrawPageIndicator(window, res->entry_count, 5, res->page, 28);
 
-    UiText_DrawAt((s32)&MsgPP, window, 176, 0);
+    UiText_DrawAt((s32)&MsgPsynergyPp, window, 176, 0);
 
     row = 0;
     if (rows > row) {
@@ -218,7 +212,7 @@ s32 PsynergyMenu_DrawListPage(
             act = Ability_GetData(
                 ACT_ID_MASK & *(u16 *)(ofs + (s32)menu));
             msg = (*(u16 *)(ofs + (s32)menu) & ACT_ID_MASK) +
-                (s32)&MsgAction;
+                (s32)&MsgAbilityName;
             y = row * 16 + 16;
 
             UiText_DrawAt(msg, window, 88, y);
@@ -238,13 +232,13 @@ s32 PsynergyMenu_DrawListPage(
     }
 
     if (menu->psynergy_count == 0) {
-        UiText_DrawAt((s32)&MsgNoPsy, window, 96, 17);
+        UiText_DrawAt((s32)&MsgNoPsynergy, window, 96, 17);
     }
 
     UiText_DrawStringAtOffsetFar(owner, (void *)window, 40, 0);
     UiText_DrawAt(
-        owner[OWNER_CLASS_MSG_OFS] + (s32)&MsgClass, window, 0, 32);
-    UiText_DrawStringInWindowFar(&StrLv, window, 0, 48);
+        owner[OWNER_CLASS_MSG_OFS] + (s32)&MsgClassName, window, 0, 32);
+    UiText_DrawStringInWindowFar(&Menu_LvString, window, 0, 48);
     UiText_DrawNumberInWindowFar(owner[OWNER_LEVEL_OFS], 2, window, 24, 48);
 
     return 1;

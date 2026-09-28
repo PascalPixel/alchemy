@@ -12,7 +12,6 @@ struct GlobalData_0808d8f0 {
 
 extern void *gEventWork;
 extern u8 gGameState;
-#define PARTY_STATE gGameState
 extern volatile u32 gKeysHeld;
 
 void BattleFx_RunRisingObjectSequence(s32, s32, s32);
@@ -23,7 +22,7 @@ void battle_owner_69(void);
 s32 Battle_DispatchInputEvent(s32 event)
 {
     struct RuntimeState_0808d8f0 *state = (struct RuntimeState_0808d8f0 *)gEventWork;
-    s32 selected_object = ((struct GlobalData_0808d8f0 *)&PARTY_STATE)->selected_object;
+    s32 selected_object = ((struct GlobalData_0808d8f0 *)&gGameState)->selected_object;
 
     switch (event) {
     case 0xFC:

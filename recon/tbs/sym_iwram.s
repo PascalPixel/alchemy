@@ -174,8 +174,6 @@ gSpriteObjects:
 	.space 0x00000004
 	.global Data_03001e64
 Data_03001e64:
-	.global Data_03001e64_a
-Data_03001e64_a:
 	.global gObjectSlots
 gObjectSlots:
 	.space 0x00000004

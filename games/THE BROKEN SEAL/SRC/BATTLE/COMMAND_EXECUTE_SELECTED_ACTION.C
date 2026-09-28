@@ -1,6 +1,5 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define PARTY_STATE Data_02000240
 
 struct BattleActionDefinition { u8 pad00[9]; u8 pp_cost; u8 pad0a[2]; u8 target_mode; };
 struct BattleUnitRecord { u8 pad00[58]; s16 pp; };
@@ -64,7 +63,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     targetMode = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->target_mode;
     actor = (encodedAction >> 10) & 15;
-    ObjectTable_Get(PARTY_STATE.object_id);
+    ObjectTable_Get(Data_02000240.object_id);
     specialResult = 0;
     Battle_InitializeRenderObject();
     GameFlag_ClearBitFar(0x145);
@@ -87,7 +86,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
         status = Object_CallSpawnRoutineAtOrigin(1); UiWork_FinalizePendingCoreFar();
         if (status != 0) return 0;
         {
-            u16 *work = (u16 *)&PARTY_STATE;
+            u16 *work = (u16 *)&Data_02000240;
             s32 a, b;
             a = work[288];
             work[224] = a;
@@ -115,7 +114,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     targetId = -1;
     GameFlag_SetBitFar(0x140); GameFlag_SetBitFar(0x141);
     if (primary || secondary || tertiary) {
-        targetId = BattleEffect_SelectNearbyTargetObject(PARTY_STATE.object_id, targetMode);
+        targetId = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, targetMode);
         if (secondary && (secondary->flags & 0x400)) {
             GameFlag_ClearBitFar(0x140); GameFlag_ClearBitFar(0x141);
         }
@@ -123,7 +122,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
 
     if (runtime->battle_mode == 3) BattleEffect_ClearOutOfBoundsObjects();
     BattleFx_LoadActionEffectResources(actionId, 0); runtime->resolving_action = 1;
-    BattleFx_SetupObjectPair(PARTY_STATE.object_id, targetId); EventObject_Initialize();
+    BattleFx_SetupObjectPair(Data_02000240.object_id, targetId); EventObject_Initialize();
     BattleFx_RunEventAction(primary, actor, targetId);
     if (GameFlag_TestFar(0x140)) {
         if (GameFlag_TestFar(0x141)) BattleFx_DispatchRequestKind(); else BattleFx_Run();

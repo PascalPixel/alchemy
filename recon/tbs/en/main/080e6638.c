@@ -15,8 +15,8 @@
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
+#define REG_IME RegIme
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);

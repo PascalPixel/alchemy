@@ -57,10 +57,10 @@ struct DisplayWork {
     u16 split_bottom;
 };
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern u8 Value_00000000;
 extern u8 Value_00000050;
-#define REG_IME Data_04000208
+#define REG_IME RegIme
 
 void *DisplayTransition_AllocateAndClearState(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);

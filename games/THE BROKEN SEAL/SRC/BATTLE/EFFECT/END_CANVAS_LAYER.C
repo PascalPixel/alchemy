@@ -22,8 +22,7 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
 void Func_080b5048(u16, s32);
 
 extern u8 gWorkSlot[];
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 struct Cells03001ad0 {
     u16 unk00;
@@ -50,7 +49,7 @@ typedef s32 (*FillWordsFn)(void *destination, s32 size);
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
             do {                                                            \
-                ime = &REG_IME;                                             \
+                ime = &RegIme;                                             \
                 saved = *ime;                                               \
             } while (0);                                                    \
             *ime = (u16)ime;                                                \

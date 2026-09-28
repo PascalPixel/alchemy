@@ -13,8 +13,8 @@
 
 #define BattlePres_ConfigurePaletteFade Func_080c0774
 
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
+#define REG_IME RegIme
 extern u8 Value_0000001f;
 #define MASK mask
 

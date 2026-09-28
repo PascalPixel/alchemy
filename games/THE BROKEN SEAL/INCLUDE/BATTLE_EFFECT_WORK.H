@@ -4,19 +4,21 @@
 #include "LAYOUT_GUARD.H"
 #include "TYPES.H"
 
+struct BattleEffectArgument;
+
 struct BattleEffectWork {
     u8 unknown_0000[0x7780];
     s32 transfer_mode;
     s32 transfer_value;
     u8 unknown_7788[0x9c];
     s32 transfer_pending;
-    void *effect;
+    struct BattleEffectArgument *effect;
 };
 
 struct BattleEffectArgument {
     s32 kind;
     s32 side;
-    s32 actor;
+    s32 actor; /* Acting unit; actors[] contains the affected units. */
     s32 unknown_000c;
     s32 unknown_0010;
     s32 count;

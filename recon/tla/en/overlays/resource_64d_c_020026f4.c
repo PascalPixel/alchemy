@@ -8,8 +8,6 @@
  * the remaining type and allocation residual must be resolved before adoption.
  */
 
-#define Func_020026f4 Func_020026f4
-
 void Func_0200a7ec();
 s32 Func_0200a814();
 void Func_0200a824();

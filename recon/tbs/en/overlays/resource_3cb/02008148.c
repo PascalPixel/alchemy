@@ -1,3 +1,10 @@
+/* Draft of LinkLobby_PollPeerReady, resource_3cb at 0x02008148 (was
+ * MENU/LINK_LOBBY/POLL_READY.C).
+ * Remaining difference: it enters IwramClearWords through a register from a
+ * literal IWRAM address (a call by name compiles to a direct bl), and its
+ * counter is a word just past the loaded image (0x02009f4c), which the
+ * listing link does not place.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -12,7 +19,7 @@ typedef void (*PanelFn)(struct LobbyPanel *panel, s32 value);
 void LinkLobby_WriteSlotValue(s32 slot);
 
 extern s32 Data_02009f4c;
-extern struct LobbyPanel Data_02002024[];
+extern struct LobbyPanel gLinkPeerSignatures[];
 
 s32 LinkLobby_PollPeerReady(void)
 {
@@ -30,7 +37,7 @@ s32 LinkLobby_PollPeerReady(void)
         if (!Engine_GameFlagIsSet(0x303)) {
             if (++Data_02009f4c > 25) {
                 for (i = 0; i < 4; i++) {
-                    LobbyPanel_Update(&Data_02002024[i], 20);
+                    LobbyPanel_Update(&gLinkPeerSignatures[i], 20);
                 }
                 Data_02009f4c = 0;
                 LinkLobby_WriteSlotValue(4);

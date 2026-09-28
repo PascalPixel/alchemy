@@ -1,3 +1,8 @@
+/* Draft of LinkLobby_RunBattleApplication, resource_3cb at 0x02008b94 (was
+ * MENU/LINK_LOBBY/APPLY.C).
+ * Remaining difference: the message base 0x2930 held across calls is loaded
+ * at a different point, as a link-time value would be.
+ * The listing keeps these rows. */
 /* Handle battle applications and reopen the lobby attendant's dialogue.
  * Reconstructed from the complete own-ROM owner and registered draft;
  * exact 468-byte extent, including literal pool (2026-09-26). */
@@ -7,7 +12,7 @@
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
 u32 State_RunQueryWithInterruptMasterSaved(void);
-void Main_080770e8(s32 counter, s32 value);
+void Engine_GameFlagWriteValue(s32 counter, s32 value);
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -15,8 +20,6 @@ union GameStateRows {
     s32 words[256];
 };
 
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_00002930;
 
 /* FAKEMATCH: Typed inline calls preserve call-local constants and argument order. */
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
@@ -41,9 +44,9 @@ s32 LinkLobby_RunBattleApplication(void)
     s32 msg;
     s32 line;
 
-    msg = (s32)&Data_00002930;
+    msg = 0x2930;
     Engine_EventBegin();
-    Engine_ActorFaceActor(8, Data_02000240_t.words[125], 0);
+    Engine_ActorFaceActor(8, (*(union GameStateRows *)&gGameState).words[125], 0);
     if (LinkLobby_PeerSlotMatches(0) == 0) {
         Engine_TaskWait(1);
     }
@@ -55,14 +58,14 @@ s32 LinkLobby_RunBattleApplication(void)
             Engine_EventOpenMessage(8, 0);
             answer = Engine_UiWorkWaitThenFinalizeCapacity(0, 0);
             if (answer == 0) {
-                Main_080770e8(1000, 0);
+                Engine_GameFlagWriteValue(1000, 0);
                 Engine_GameFlagSet(0x173);
                 Engine_GameFlagClear(0x172);
                 Engine_GameFlagClear(0x16c);
                 Engine_GameFlagSet(0x202);
                 /* FAKEMATCH: Select the shared-tail message before its answer store. */
                 line = msg + 7;
-                Data_02000240_t.halves[341][0] = answer;
+                (*(union GameStateRows *)&gGameState).halves[341][0] = answer;
                 goto message;
             } else {
                 Call1(Engine_GameFlagClear, 0x173);

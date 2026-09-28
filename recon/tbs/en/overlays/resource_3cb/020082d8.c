@@ -1,3 +1,8 @@
+/* Draft of LinkLobby_CallIntoCircle, resource_3cb at 0x020082d8 (was
+ * MENU/LINK_LOBBY/CIRCLE_CALL.C).
+ * Remaining difference: its call counter is a word just past the loaded image
+ * (0x02009f50), which the listing link does not place.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 
 s32 Engine_GameFlagIsSet(s32 flag);

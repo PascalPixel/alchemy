@@ -41,31 +41,15 @@ impl std::fmt::Display for DecompTargetId {
     }
 }
 
-/// Whether `alchemy build rom` links a target's whole ROM. A link proves
-/// nothing by itself: only an image matching its `rom.sha1` line is
-/// measured, so a game whose image still differs stays pending.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum BuildSupport {
-    CompileOnly,
-    Full,
-}
-
-/// The English editions, each game's canonical image, compose full ROM
-/// builds; the other ten editions stay compile-only until they have their
-/// own link layouts, bindings and regional asset manifests.
-const FULL_BUILDS: [DecompTargetId; 2] = [DecompTargetId::TbsEn, DecompTargetId::TlaEn];
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DecompTarget {
     pub id: DecompTargetId,
     pub rom: &'static str,
     pub rom_size: u64,
     pub compiler: CompilerTarget,
-    pub build_support: BuildSupport,
     pub edition_define: &'static str,
     pub source_dir: &'static str,
     pub asm_dir: &'static str,
-    pub asset_manifest: &'static str,
     pub output_dir: &'static str,
     /// Fixed `ldr r4, [pc, #0]; bx r4` entry veneers every code overlay of
     /// this game opens with: six in The Broken Seal, seven in The Lost Age.
@@ -80,7 +64,7 @@ impl DecompTarget {
             .expect("source_dir ends with /SRC")
     }
     /// The game's reconstruction scaffolding, `recon/tbs` or `recon/tla`:
-    /// drafts, retained listings, registries and metrics outside `games/`.
+    /// drafts, retained listings and progress history outside `games/`.
     pub fn recon_dir(&self) -> &'static str {
         self.compiler.recon()
     }
@@ -88,7 +72,7 @@ impl DecompTarget {
     pub fn overlay_assembly(&self, overlay: &str) -> String {
         format!("{}/{overlay}_overlay.s", self.overlay_dir())
     }
-    /// The directory of retained overlay assembly and stream plans.
+    /// The directory of retained overlay listings and their link scripts.
     pub fn overlay_dir(&self) -> String {
         format!("{}/overlays", self.asm_dir)
     }
@@ -98,13 +82,12 @@ impl DecompTarget {
     }
 }
 
-const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
+const PRODUCTS: [(CompilerTarget, u64, &str, &str, usize); 2] = [
     (
         CompilerTarget::Tbs,
         0x0080_0000,
         "games/THE BROKEN SEAL/SRC",
         "recon/tbs/raw",
-        "recon/tbs/assets.json",
         6,
     ),
     (
@@ -112,7 +95,6 @@ const PRODUCTS: [(CompilerTarget, u64, &str, &str, &str, usize); 2] = [
         0x0100_0000,
         "games/THE LOST AGE/SRC",
         "recon/tla/raw",
-        "recon/tla/assets.json",
         7,
     ),
 ];
@@ -139,23 +121,16 @@ pub fn decomp_target(id: Option<&str>) -> Result<DecompTarget, String> {
 pub fn target_for(id: DecompTargetId) -> DecompTarget {
     let index = id as usize;
     let (name, rom, edition_define, output_dir) = TARGETS[index];
-    let (compiler, rom_size, source_dir, asm_dir, asset_manifest, overlay_entry_veneers) =
-        PRODUCTS[index / 6];
+    let (compiler, rom_size, source_dir, asm_dir, overlay_entry_veneers) = PRODUCTS[index / 6];
     debug_assert_eq!(name, id.as_str());
     DecompTarget {
         id,
         rom,
         rom_size,
         compiler,
-        build_support: if FULL_BUILDS.contains(&id) {
-            BuildSupport::Full
-        } else {
-            BuildSupport::CompileOnly
-        },
         edition_define,
         source_dir,
         asm_dir,
-        asset_manifest,
         output_dir,
         overlay_entry_veneers,
     }
@@ -177,9 +152,7 @@ fn self_test() -> Result<String, String> {
         };
         if !relative_path(target.output_dir)
             || !target.source_dir.starts_with(root)
-            || ![target.asm_dir, target.asset_manifest]
-                .iter()
-                .all(|path| path.starts_with(recon))
+            || !target.asm_dir.starts_with(recon)
             || !outputs.insert(target.output_dir)
             || !target.game_dir().starts_with(root.trim_end_matches('/'))
             || !target.recon_dir().starts_with(recon.trim_end_matches('/'))
@@ -212,23 +185,6 @@ mod tests {
         );
         assert_eq!(tla.overlay_entry_veneers, 7);
         assert_eq!(target_for(DEFAULT_TARGET).overlay_entry_veneers, 6);
-        for id in [DecompTargetId::TbsEn, DecompTargetId::TlaEn] {
-            let target = target_for(id);
-            assert_eq!(
-                target.asset_manifest,
-                format!("{}/assets.json", target.recon_dir())
-            );
-        }
-    }
-    /// Each game's English edition composes a full ROM build; every other
-    /// edition keeps its compile-only guard.
-    #[test]
-    fn only_the_english_editions_compose_full_builds() {
-        let full = TARGET_IDS
-            .into_iter()
-            .filter(|id| target_for(*id).build_support == BuildSupport::Full)
-            .collect::<Vec<_>>();
-        assert_eq!(full, [DecompTargetId::TbsEn, DecompTargetId::TlaEn]);
     }
     #[test]
     fn registry_covers_isolated_targets() {

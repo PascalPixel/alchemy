@@ -14,13 +14,13 @@ extern u8 Data_03001ca0;
 
 
 void Resource_LoadWorkHeader(void);
-void Func_0800300c(void);
+void Runtime_InstallIwramAndIrqs(void);
 void Runtime_SetIrqHandler(s32, s32, void (*)(void));
 void WaitFrames(s32 frames);
 void Resource_InitializeTable(void);
 void Scheduler_ResetTaskTable(void);
 void Bg0_ClearTilemap(void);
-void Func_0800479c(void);
+void Ui_LoadWindowGraphics(void);
 void Runtime_InitializeHeap(void);
 void Game_ResetForNewGameFar(s32);
 void Audio_InitializeRuntimeDefaultsFar(void);
@@ -43,13 +43,13 @@ void System_Initialize(void)
     zero = 0;
     Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, (volatile u32 *)0x040000d4);
     Runtime_InitializeHeap();
-    Func_0800300c();
+    Runtime_InstallIwramAndIrqs();
     Data_02002090 = 0;
     Data_03001ac4 = 0;
     gDebugMode = 0;
     Data_03001f58 = 0;
     Resource_LoadWorkHeader();
-    Func_0800479c();
+    Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
     *(u16 *)0x04000000 = 0x140;
     Runtime_SetIrqHandler(0, 1, (void (*)(void))0x08003651);

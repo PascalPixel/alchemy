@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080c8978, 0x080c8978
-	.set sub_080c89a6, 0x080c89a6
-	.set sub_080dc390, 0x080dc390
-	.set sub_080eb01c, 0x080eb01c
 	.global Func_080eb298
 	.thumb_func
 Func_080eb298:
@@ -20,21 +16,21 @@ Func_080eb298:
 	str	r3, [r5, #4]
 	ldr	r3, [r1, #8]
 	str	r3, [r5, #8]
-	bl	sub_080dc390
+	bl	Func_080dc390
 	ldr	r3, [r5, #0]
 	adds	r0, r6, #0
 	str	r3, [r6, #12]
 	ldr	r3, [r5, #8]
 	str	r3, [r6, #16]
-	bl	sub_080eb01c
+	bl	0x080eb01c
 .L_080eb2c4:
 	add	sp, #12
 	pop	{r5, r6, pc}
 	push	{lr}
-	bl	sub_080c89a6
+	bl	BattleFx_IntegrateVector2
 	pop	{pc}
 	push	{lr}
-	bl	sub_080c8978
+	bl	BattleFx_IntegrateVector3
 	pop	{pc}
 .L_080eb2d8:
 	movs	r4, #192

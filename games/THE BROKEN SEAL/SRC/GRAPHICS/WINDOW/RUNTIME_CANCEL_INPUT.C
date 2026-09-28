@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
+extern u8 Data_03001ae8[];
+extern u8 Data_03001c94[];
+extern u8 Data_03001af8[];
 
 s32 AudioCommand_GetStateByteFar();
 s32 UiWork_CheckCancelByInput(void *obj)
@@ -8,12 +12,12 @@ s32 UiWork_CheckCancelByInput(void *obj)
   int zero;
   s32 flag;
   flag = 0;
-  if (((*((u8 *)(((u8 *)(*((void **)ADDR_03001E8C))) + RENDER_BUSY_OFS))) != 0) && (AudioCommand_GetStateByteFar() == 0))
+  if (((*((u8 *)(((u8 *)(*((void **)((u32)&Data_03001e8c)))) + RENDER_BUSY_OFS))) != 0) && (AudioCommand_GetStateByteFar() == 0))
   {
     flag = 1;
   }
   zero = 0;
-  if ((*((s32 *)ADDR_03001AE8)) & 0x303)
+  if ((*((s32 *)((u32)&Data_03001ae8))) & 0x303)
   {
     flag = 1;
   }
@@ -33,18 +37,18 @@ s32 UiWork_CheckCancelByModeInput(void *obj)
   s32 key;
   s32 flag;
   void *work;
-  p = *((void **)ADDR_03001E8C);
+  p = *((void **)((u32)&Data_03001e8c));
   work = p;
   flag = 0;
   if (((*((u8 *)(((u8 *)work) + RENDER_BUSY_OFS))) != 0) && (AudioCommand_GetStateByteFar() == 0))
   {
     flag = 1;
   }
-  key = (tmp = *((s32 *)ADDR_03001C94));
+  key = (tmp = *((s32 *)((u32)&Data_03001c94)));
   zero = 0;
   if ((*((u8 *)(work + RENDER_MODE_OFS))) != zero)
   {
-    key = *((s32 *)ADDR_03001AF8);
+    key = *((s32 *)((u32)&Data_03001af8));
   }
   if (0x303 & key)
   {

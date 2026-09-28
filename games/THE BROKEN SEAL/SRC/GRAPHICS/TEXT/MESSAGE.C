@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -94,7 +95,7 @@ s32 Func_080165d8(s32 no, s32 entry, s32, s32, s32, s32);
    `argument` selects when that entry's slot is live. */
 s32 UiText_OpenEntryMessage(s32 no, s32 argument)
 {
-    u8 *base = *(u8 **)ADDR_03001E8C;
+    u8 *base = *(u8 **)((u32)&Data_03001e8c);
     s32 entry;
     s32 entry_offset;
     s32 result = 0;

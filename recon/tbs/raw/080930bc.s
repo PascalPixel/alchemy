@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015038, 0x08015038
-	.set sub_08015050, 0x08015050
-	.set sub_0808ba1c, 0x0808ba1c
 	.global Func_080930bc
 	.thumb_func
 Func_080930bc:
@@ -17,7 +13,7 @@ Func_080930bc:
 	adds	r5, r0, #0
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	movs	r3, #250
 	lsls	r3, r3, #1
 	add	r3, r8
@@ -61,7 +57,7 @@ Func_080930bc:
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
 	movs	r3, #1
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	movs	r3, #252
 	lsls	r3, r3, #1
 	adds	r5, r0, #0
@@ -70,10 +66,10 @@ Func_080930bc:
 	b.n	.L_08093134
 .L_0809312e:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_08093134:
 	adds	r0, r5, #0
-	bl	sub_08015050
+	bl	UiWork_IsIdleFar
 	cmp	r0, #0
 	beq.n	.L_0809312e
 .L_0809313e:

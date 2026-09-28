@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08016478, 0x08016478
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_080f9010, 0x080f9010
 	.global Menu_RunResourceSelectionLoop
 	.global Func_08028574
 	.thumb_func
@@ -30,7 +26,7 @@ Func_08028574:
 .L_08028598:
 	mov	r1, r8
 	ldr	r0, [r1, #120]
-	bl	sub_08016478
+	bl	RenderOutput_PrepareForRedraw
 	mov	r3, fp
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
@@ -43,7 +39,7 @@ Func_08028574:
 	b.n	.L_080285d0
 .L_080285b4:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #1
 	negs	r0, r0
 	b.n	.L_0802867e
@@ -61,7 +57,7 @@ Func_08028574:
 	ldr	r1, [r2, #120]
 	movs	r3, #0
 	movs	r2, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	movs	r3, #142
 	add	r3, r8
 	ldr	r7, [pc, #180]
@@ -69,7 +65,7 @@ Func_08028574:
 	mov	r9, r3
 .L_080285e6:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [r7, #0]
 	movs	r3, #1
 	ands	r2, r3
@@ -98,7 +94,7 @@ Func_08028574:
 	beq.n	.L_0802863e
 .L_08028620:
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldrh	r3, [r6, #0]
 	subs	r3, #1
 	strh	r3, [r6, #0]
@@ -124,7 +120,7 @@ Func_08028574:
 	beq.n	.L_080285e6
 .L_08028652:
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldrh	r3, [r6, #0]
 	adds	r3, #1
 	strh	r3, [r6, #0]
@@ -140,7 +136,7 @@ Func_08028574:
 	b.n	.L_08028598
 .L_08028672:
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r1, sl
 	movs	r3, #0
 	ldrsh	r0, [r1, r3]

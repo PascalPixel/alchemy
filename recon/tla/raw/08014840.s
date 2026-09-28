@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002074, 0x08002074
-	.set sub_08002096, 0x08002096
 	.global Func_08014840
 	.thumb_func
 Func_08014840:
@@ -61,7 +59,7 @@ Func_08014840:
 	lsls	r0, r0, #7
 	add	r0, r8
 	adds	r5, r2, #0
-	bl	sub_08002096
+	bl	Math_Sine
 	ldr	r6, [pc, #44]
 	adds	r1, r0, #0
 	mov	r0, sl
@@ -71,7 +69,7 @@ Func_08014840:
 	adds	r3, r3, r0
 	stmia	r5!, {r3}
 	mov	r0, r8
-	bl	sub_08002096
+	bl	Math_Sine
 	adds	r1, r0, #0
 	mov	r0, sl
 	mov	lr, r6
@@ -281,7 +279,7 @@ Func_08014840:
 .L_08014a4a:
 	adds	r0, r5, #0
 	ldr	r1, [pc, #84]
-	bl	sub_08002074
+	bl	Math_UnsignedMulHigh
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsls	r3, r3, #1

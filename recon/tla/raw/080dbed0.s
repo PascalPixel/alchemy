@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08013560, 0x08013560
-	.set sub_08020290, 0x08020290
 	.global Func_080dbed0
 	.thumb_func
 Func_080dbed0:
@@ -30,7 +27,7 @@ Func_080dbed0:
 	cmp	r3, r1
 	beq.n	.L_080dbf04
 	movs	r1, #0
-	bl	sub_08020290
+	bl	0x08020290
 .L_080dbf04:
 	ldr	r3, [r5, #8]
 	add	r2, sp, #4
@@ -53,7 +50,7 @@ Func_080dbed0:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r5, r5, r0
 	str	r5, [r6, #8]
 	mov	r2, r8
@@ -63,7 +60,7 @@ Func_080dbed0:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r5, r5, r0
 	str	r5, [r6, #12]
 	mov	r2, r8
@@ -73,19 +70,19 @@ Func_080dbed0:
 	adds	r0, r7, #0
 	muls	r0, r3
 	movs	r1, #10
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r1, #10
 	adds	r5, r5, r0
 	mov	r0, sl
 	str	r5, [r6, #16]
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r2, #128
 	lsls	r2, r2, #7
 	adds	r0, r0, r2
 	str	r0, [r6, #24]
 	str	r0, [r6, #28]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r3, #192
 	lsls	r3, r3, #8
 	adds	r7, #1

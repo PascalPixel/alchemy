@@ -1,14 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_08077394, 0x08077394
-	.set sub_08077428, 0x08077428
 	.global Func_080788c4
 	.thumb_func
 Func_080788c4:
 	push	{r5, r6, r7, lr}
 	adds	r5, r1, #0
 	adds	r7, r0, #0
-	bl	sub_08077394
+	bl	Owner_GetState
 	lsls	r5, r5, #1
 	adds	r5, #216
 	ldrh	r3, [r0, r5]
@@ -70,7 +68,7 @@ Func_080788c4:
 	movs	r6, #2
 .L_0807893a:
 	adds	r0, r7, #0
-	bl	sub_08077428
+	bl	Owner_RecalculateStats
 	adds	r0, r6, #0
 	pop	{r5, r6, r7}
 	pop	{r1}

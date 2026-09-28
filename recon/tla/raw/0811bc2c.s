@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0811a5fc, 0x0811a5fc
-	.set sub_0811b9e0, 0x0811b9e0
 	.global Func_0811bc2c
 	.thumb_func
 Func_0811bc2c:
@@ -20,7 +18,7 @@ Func_0811bc2c:
 	b.n	.L_0811bc62
 .L_0811bc46:
 	ldr	r0, [r0, #80]
-	bl	sub_0811b9e0
+	bl	Func_0811b9e0
 	b.n	.L_0811bc62
 .L_0811bc4e:
 	ldr	r5, [r0, #80]
@@ -29,7 +27,7 @@ Func_0811bc2c:
 	ldmia	r5!, {r0}
 	cmp	r0, #0
 	beq.n	.L_0811bc5c
-	bl	sub_0811b9e0
+	bl	Func_0811b9e0
 .L_0811bc5c:
 	subs	r6, #1
 	cmp	r6, #0
@@ -38,7 +36,7 @@ Func_0811bc2c:
 	pop	{r5, r6, pc}
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	sub_0811a5fc
+	bl	0x0811a5fc
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r2, [r3, #36]

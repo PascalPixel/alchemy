@@ -1,13 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_08002074, 0x08002074
 	.global Func_08122c18
 	.thumb_func
 Func_08122c18:
 	push	{lr}
 	movs	r1, #0
 	movs	r0, #5
-	bl	sub_08002074
+	bl	Math_UnsignedMulHigh
 	movs	r3, #128
 	lsls	r3, r3, #19
 	movs	r2, #132

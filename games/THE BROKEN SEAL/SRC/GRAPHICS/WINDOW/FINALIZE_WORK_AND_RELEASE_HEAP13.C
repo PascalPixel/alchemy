@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001e9c[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -14,7 +15,7 @@ void Ui_FinalizeWorkAndReleaseHeap13(void)
     u8 *unused;
     u16 *p;
 
-    state = *(u8 **)ADDR_03001E9C;
+    state = *(u8 **)((u32)&Data_03001e9c);
     UiWork_Finalize(FIELD_AT_OFFSET(state, s32 *, 0xFF4), 0);
     while (UiWork_IsIdle(FIELD_AT_OFFSET(state, s32 *, 0xFF4)) == 0) {
         WaitFrames(1);

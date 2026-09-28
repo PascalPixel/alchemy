@@ -1,4 +1,5 @@
 #include "EVENT_RUNTIME.H"
+extern struct EventRuntime *Data_03001ebc;
 
 struct EventRuntime1d8 {
     u8 unknown_000[0x1d8];
@@ -7,5 +8,5 @@ struct EventRuntime1d8 {
 
 void Event_SetValue1d8(s16 value)
 {
-    ((struct EventRuntime1d8 *)gEventWork)->value = value;
+    ((struct EventRuntime1d8 *)Data_03001ebc)->value = value;
 }

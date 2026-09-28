@@ -1,24 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f0c, 0x08002f0c
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003bb4, 0x08003bb4
-	.set sub_0800403c, 0x0800403c
-	.set sub_080040e8, 0x080040e8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004858, 0x08004858
-	.set sub_080048f4, 0x080048f4
-	.set sub_0800b6b8, 0x0800b6b8
-	.set sub_0800b8ac, 0x0800b8ac
-	.set sub_0800bc70, 0x0800bc70
-	.set sub_0800c004, 0x0800c004
-	.set sub_08012af8, 0x08012af8
-	.set sub_08012b2c, 0x08012b2c
-	.set sub_08012d20, 0x08012d20
-	.set sub_08012d48, 0x08012d48
-	.set sub_08012d70, 0x08012d70
-	.set sub_08012de8, 0x08012de8
-	.set sub_08185000, 0x08185000
 	.global Ui_RunIconMonitor
 	.global Func_08012518
 	.thumb_func
@@ -43,7 +24,7 @@ Func_08012518:
 	mov	sl, r3
 	str	r2, [sp, #16]
 	str	r2, [sp, #12]
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	ldr	r2, [pc, #116]
 	str	r0, [sp, #8]
 	add	r4, sp, #28
@@ -67,7 +48,7 @@ Func_08012518:
 	movs	r0, #1
 	movs	r1, #1
 	negs	r0, r0
-	bl	sub_08012af8
+	bl	Ui_FindNextNumberWithMetadata
 	add	r2, sp, #32
 	mov	r8, r2
 	ldr	r1, [pc, #48]
@@ -113,24 +94,24 @@ Func_08012518:
 	lsls	r2, r2, #19
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_08003bb4
+	bl	Blend_SetDarkenTarget0
 .L_080125de:
-	bl	sub_08004858
-	bl	sub_080040e8
+	bl	Runtime_InitializeHeap
+	bl	Scheduler_ResetTaskTable
 	movs	r1, #160
 	movs	r0, #9
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	str	r0, [sp, #8]
-	bl	sub_0800403c
+	bl	Resource_InitializeTable
 	movs	r0, #2
-	bl	sub_0800c004
+	bl	ObjectSystem_Initialize
 	mov	r0, r8
 	movs	r3, #0
 	ldrsh	r2, [r0, r3]
 	ldr	r1, [pc, #16]
 	movs	r3, #0
 	movs	r0, #0
-	bl	sub_0800b6b8
+	bl	ResourceSlot_Load
 	mov	r2, r8
 	b.n	.L_08012618
 	movs	r0, r0
@@ -140,7 +121,7 @@ Func_08012518:
 .L_08012618:
 	movs	r1, #0
 	ldrsh	r0, [r2, r1]
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #4]
 	cmp	r3, #20
 	bne.n	.L_08012638
@@ -151,14 +132,14 @@ Func_08012518:
 	adds	r2, #1
 	movs	r0, #1
 	movs	r3, #0
-	bl	sub_0800b6b8
+	bl	ResourceSlot_Load
 .L_08012638:
 	movs	r7, #0
 	mov	r6, r8
 .L_0801263c:
 	movs	r1, #0
 	ldrsh	r0, [r6, r1]
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #4]
 	movs	r5, #0
 	cmp	r3, #20
@@ -174,19 +155,19 @@ Func_08012518:
 	lsls	r3, r5, #12
 	adds	r0, r0, r5
 	adds	r0, r0, r3
-	bl	sub_0800bc70
+	bl	Func_0800bc70
 	movs	r3, #8
 	ldrsh	r1, [r6, r3]
 	adds	r5, r0, #0
-	bl	sub_0800b8ac
+	bl	ResourceMetadata_Register
 	movs	r0, #16
 	ldrsh	r1, [r6, r0]
 	adds	r0, r5, #0
-	bl	sub_0800b8ac
+	bl	ResourceMetadata_Register
 	adds	r0, r5, #0
 	movs	r2, #24
 	ldrsh	r1, [r6, r2]
-	bl	sub_0800b8ac
+	bl	ResourceMetadata_Register
 	add	r3, sp, #12
 	ldrb	r3, [r3, #0]
 	adds	r5, #38
@@ -214,17 +195,17 @@ Func_08012518:
 	movs	r1, #8
 	str	r2, [sp, #4]
 .L_080126b2:
-	bl	sub_08012d48
+	bl	Ui_SetGridColumnByte6
 	ldr	r2, [sp, #4]
 	movs	r1, #6
 	ldrsb	r1, [r5, r1]
 	adds	r0, r7, #0
 	str	r2, [sp, #4]
-	bl	sub_08012d20
+	bl	Ui_SetGridColumnByte5
 	movs	r3, #2
 	ldrsh	r1, [r5, r3]
 	adds	r0, r7, #0
-	bl	sub_08012d70
+	bl	Ui_FillGridColumnFromMetadata
 	ldr	r2, [sp, #4]
 	adds	r7, #1
 	adds	r5, #8
@@ -235,14 +216,14 @@ Func_08012518:
 	ldr	r0, [sp, #24]
 	ldr	r1, [sp, #20]
 	ldr	r2, [sp, #8]
-	bl	sub_08012b2c
+	bl	Map_BuildProbeRing
 	movs	r1, #200
 	ldr	r0, [pc, #596]
 	lsls	r1, r1, #4
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 .L_080126f0:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r0, [pc, #588]
 	ldr	r1, [pc, #588]
 	mov	fp, r0
@@ -297,7 +278,7 @@ Func_08012518:
 	ldr	r0, [sp, #24]
 	ldr	r1, [sp, #20]
 	ldr	r2, [sp, #8]
-	bl	sub_08012b2c
+	bl	Map_BuildProbeRing
 	b.n	.L_080127be
 .L_0801275e:
 	ldr	r1, [pc, #488]
@@ -488,7 +469,7 @@ Func_08012518:
 	ldrsh	r0, [r6, r5]
 	negs	r1, r1
 	str	r4, [sp, #0]
-	bl	sub_08012af8
+	bl	Ui_FindNextNumberWithMetadata
 	ldr	r4, [sp, #0]
 	adds	r7, #1
 	strh	r0, [r6, r5]
@@ -514,7 +495,7 @@ Func_08012518:
 	ldrsh	r0, [r6, r5]
 	movs	r1, #1
 	str	r4, [sp, #0]
-	bl	sub_08012af8
+	bl	Ui_FindNextNumberWithMetadata
 	ldr	r4, [sp, #0]
 	adds	r7, #1
 	strh	r0, [r6, r5]
@@ -543,21 +524,21 @@ Func_08012518:
 	ldrsh	r1, [r0, r6]
 	add	r5, r8
 	mov	r0, sl
-	bl	sub_08012de8
+	bl	Ui_SetGridColumnNumber
 	movs	r1, #1
 	ldrsb	r1, [r5, r1]
 	mov	r0, sl
-	bl	sub_08012d48
+	bl	Ui_SetGridColumnByte6
 	movs	r1, #2
 	ldrsb	r1, [r5, r1]
 	mov	r0, sl
-	bl	sub_08012d20
+	bl	Ui_SetGridColumnByte5
 	mov	r0, r8
 	adds	r3, r0, r6
 	movs	r2, #2
 	ldrsh	r1, [r3, r2]
 	mov	r0, sl
-	bl	sub_08012d70
+	bl	Ui_FillGridColumnFromMetadata
 	b.n	.L_080126f0
 	movs	r0, r0
 	.4byte 0x02018000
@@ -697,7 +678,7 @@ Func_08012518:
 	movs	r1, #2
 	ldrsb	r1, [r3, r1]
 	mov	r0, sl
-	bl	sub_08012d20
+	bl	Ui_SetGridColumnByte5
 	b.n	.L_080126f0
 .L_08012a46:
 	mov	r1, r9
@@ -724,7 +705,7 @@ Func_08012518:
 	movs	r2, #2
 	ldrsh	r1, [r3, r2]
 	mov	r0, sl
-	bl	sub_08012d70
+	bl	Ui_FillGridColumnFromMetadata
 	mov	r3, sl
 	cmp	r3, #0
 	beq.n	.L_08012a80
@@ -734,7 +715,7 @@ Func_08012518:
 	movs	r0, #10
 	ldrsh	r1, [r2, r0]
 	movs	r0, #1
-	bl	sub_08012d70
+	bl	Ui_FillGridColumnFromMetadata
 	b.n	.L_080126f0
 .L_08012a8e:
 	mov	r3, sl
@@ -757,7 +738,7 @@ Func_08012518:
 	movs	r1, #8
 .L_08012ab0:
 	mov	r0, sl
-	bl	sub_08012d48
+	bl	Ui_SetGridColumnByte6
 	b.n	.L_080126f0
 .L_08012ab8:
 	mov	r1, r9
@@ -766,7 +747,7 @@ Func_08012518:
 	ands	r2, r3
 	cmp	r2, #0
 	beq.n	.L_08012ae2
-	bl	sub_080040e8
+	bl	Scheduler_ResetTaskTable
 	mov	r2, fp
 	ldr	r3, [r2, #0]
 	movs	r2, #2
@@ -779,11 +760,11 @@ Func_08012518:
 	ldr	r0, [pc, #20]
 .L_08012ada:
 	ldr	r1, [pc, #24]
-	bl	sub_08002f0c
+	bl	RuntimeDispatch_ReturnZero
 	b.n	.L_080125de
 .L_08012ae2:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080126fe
 	movs	r0, r0
 	.4byte 0x00000011

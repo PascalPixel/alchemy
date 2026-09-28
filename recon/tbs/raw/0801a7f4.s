@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801a910, 0x0801a910
-	.set sub_0801bd98, 0x0801bd98
-	.set sub_0801c188, 0x0801c188
 	.global MenuSelection_BuildEntries
 	.global Func_0801a7f4
 	.thumb_func
@@ -43,7 +40,7 @@ Func_0801a7f4:
 	adds	r0, r7, #0
 	mov	r1, r8
 	str	r4, [sp, #0]
-	bl	sub_0801bd98
+	bl	MenuSelection_SetupEntry
 	movs	r3, #210
 	lsls	r3, r3, #2
 	add	r3, r9
@@ -79,7 +76,7 @@ Func_0801a7f4:
 	ldrh	r7, [r4, #0]
 	str	r4, [sp, #0]
 	mov	r8, r2
-	bl	sub_0801a910
+	bl	Resource_FindFreeTransferEntry
 	adds	r5, r0, #0
 	ldr	r4, [sp, #0]
 	cmp	r5, #0
@@ -141,7 +138,7 @@ Func_0801a7f4:
 	cmp	r6, #0
 	bne.n	.L_0801a8c8
 .L_0801a8f4:
-	bl	sub_0801c188
+	bl	Menu_LoadSelectedResource
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

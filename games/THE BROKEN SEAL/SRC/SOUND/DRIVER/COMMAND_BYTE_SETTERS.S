@@ -12,6 +12,9 @@
 .global Func_080fa1d4
 	.thumb_func
 Func_080fa1d4:
+	.global MusicTrack_SetLfoSpeedFromCommand
+	.thumb_func
+MusicTrack_SetLfoSpeedFromCommand:
 	mov	ip, lr
 	bl	Func_080fa1c8
 	strb	r3, [r1, #25]
@@ -27,6 +30,9 @@ AlchemyUncredited_080fa1e6:
 	.thumb_func
 Func_080fa1e8:
 AlchemyUncreditedEnd_080fa1e6:
+	.global MusicTrack_SetModulationFromCommand
+	.thumb_func
+MusicTrack_SetModulationFromCommand:
 	mov	ip, lr
 	bl	Func_080fa1c8
 	strb	r3, [r1, #23]

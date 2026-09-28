@@ -1,4 +1,5 @@
 #include "INVENTORY.H"
+s32 Inventory_AddItem(s32 owner, s32 item);
 
 void Inventory_AddAndEquip(s32 owner, s32 target)
 {

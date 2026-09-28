@@ -77,18 +77,18 @@ extern u8 Data_080eeb80[];
 extern u16 Data_080eeb88[];
 
 void Func_080cd594(s32 mode);
-s32 Func_08004458(void);
+s32 Random16(void);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_080b50e8(s32 id);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Func_080f9010(s32 id);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunDualTable(void *object, s32 arg1)
 {
@@ -176,10 +176,10 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
     i = 0;
     seed = work->columns;
     do {
-        temp_r2_134 = (Data_080eeb61[i] + (7 & Func_08004458())) - 4;
+        temp_r2_134 = (Data_080eeb61[i] + (7 & Random16())) - 4;
         seed->y = i / 2 + 0x6C;
         seed->x = temp_r2_134;
-        temp_r5_140 = (63 & Func_08004458()) + 0x37;
+        temp_r5_140 = (63 & Random16()) + 0x37;
         seed->height = temp_r5_140;
         temp_r3_145 = Data_080eeb4b[Func_080022fc(i, 3)];
         if (temp_r3_145 < temp_r5_140) {
@@ -193,7 +193,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 
     work->unknown_7780 = 1;
     work->unknown_7784 = 0;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     sp24 = 0;
     if (sp20 != 0) {
@@ -258,7 +258,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                                     if (!(i & 1)) {
                                         Func_080f9010(0x85);
                                     }
-                                    Func_080d6888(*(s16 *)((u8 *)work->effect + id_offset), 7, 5, n, 3);
+                                    ObjectGroup_UpdateMembers(*(s16 *)((u8 *)work->effect + id_offset), 7, 5, n, 3);
                                 }
                                 n += 1;
                             } while (n != work->effect->target_count);
@@ -270,8 +270,8 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                             n = 0;
                             while (n != 0x200) {
                                 if (((struct DualSpark *)var_r5_297)->age == -1) {
-                                    ((struct DualSpark *)var_r5_297)->x = ((Func_08004458() & 0xF) + column->x) - 8;
-                                    ((struct DualSpark *)var_r5_297)->y = (Func_08004458() & 0xF) + 0x50;
+                                    ((struct DualSpark *)var_r5_297)->x = ((Random16() & 0xF) + column->x) - 8;
+                                    ((struct DualSpark *)var_r5_297)->y = (Random16() & 0xF) + 0x50;
                                     ((struct DualSpark *)var_r5_297)->age = 0;
                                     break;
                                 }
@@ -316,15 +316,15 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                 i += 1;
             } while (i != 0x200);
 
-            Func_080e155c(4, 4);
-            Func_080cd52c();
+            Camera_ApplyShake(4, 4);
+            ObjectGroup_TickMemberTimers();
             work->transfer_pending = 1;
             Func_080030f8(1);
             sp24 += 1;
         } while (sp24 != sp20);
     }
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

@@ -29,7 +29,7 @@ struct SideObject {
     u8 slot_19;
 };
 
-extern struct SideObjectRegistry *gIw;
+extern struct SideObjectRegistry *gWindowWork;
 
 extern s32 GameFlag_IsSet(s32);
 extern s32 Localization_LookupEntryId(s32);
@@ -40,7 +40,7 @@ extern struct SideObject *RenderOutput_Create(
 struct SideObject *CreateSideObject(
     s32 object_kind, s32 position, s32 side, s32 arg3, s32 arg4, s32 arg5)
 {
-    struct SideObjectRegistry *state = gIw;
+    struct SideObjectRegistry *state = gWindowWork;
     struct SideObject *object = 0;
     s32 first;
     s32 second;
@@ -68,7 +68,7 @@ struct SideObject *CreateSideObject(
     }
 
     slot = 14 + side;
-    Obj_SetRect(id, position, &first, &second, slot, 0);
+    UiGlyph_LoadEntryWithPalette(id, position, &first, &second, slot, 0);
     object = RenderOutput_Create(first, 0x80000000, arg3, arg4, arg5);
     if (object != 0) {
         s32 slotBits = slot << 4;

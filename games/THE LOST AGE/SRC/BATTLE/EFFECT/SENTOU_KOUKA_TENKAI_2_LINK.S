@@ -4,7 +4,7 @@
 @ far the unit was moved. They sit between two routines and carry no
 @ credit, as SENTOU_KOUKA_TENKAI_LINK.S.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x081a036c
 	.4byte	0x80808080
 	.4byte	0x081a03a0

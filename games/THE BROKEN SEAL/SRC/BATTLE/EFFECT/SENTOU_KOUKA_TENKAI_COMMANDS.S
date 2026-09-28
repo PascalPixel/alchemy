@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, bit commands
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x080f0144
 .L_case_2:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2

@@ -11,7 +11,6 @@
 @ credit: handwritten — three- and two-axis fixed-point vector integrators (instance 2)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08138058
 	.global BattleFxKernels_IntegrateVector3
 	.thumb_func
 BattleFxKernels_IntegrateVector3:

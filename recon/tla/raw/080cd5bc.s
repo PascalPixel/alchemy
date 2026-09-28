@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080ccd78, 0x080ccd78
-	.set sub_080cdea8, 0x080cdea8
-	.set sub_080d5e50, 0x080d5e50
-	.set sub_080d5e64, 0x080d5e64
-	.set sub_080d5fd4, 0x080d5fd4
-	.set sub_081c0010, 0x081c0010
 	.global Func_080cd5bc
 	.thumb_func
 Func_080cd5bc:
@@ -15,7 +9,7 @@ Func_080cd5bc:
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	movs	r0, #2
-	bl	sub_080ccd78
+	bl	Func_080ccd78
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]
@@ -46,7 +40,7 @@ Func_080cd5bc:
 	cmp	r1, r3
 	bge.n	.L_080cd60c
 	adds	r0, r7, #0
-	bl	sub_080cdea8
+	bl	0x080cdea8
 	b.n	.L_080cd674
 .L_080cd60c:
 	adds	r0, r6, #0
@@ -56,7 +50,7 @@ Func_080cd5bc:
 .L_080cd614:
 	movs	r0, #1
 	adds	r1, r6, #0
-	bl	sub_080ccd78
+	bl	Func_080ccd78
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080cd676
@@ -78,22 +72,22 @@ Func_080cd5bc:
 	b.n	.L_080cd66a
 .L_080cd640:
 	movs	r0, #123
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	b.n	.L_080cd66a
 .L_080cd648:
 	movs	r0, #128
-	bl	sub_081c0010
-	bl	sub_080d5e50
+	bl	Audio_PlayCue
+	bl	0x080d5e50
 	b.n	.L_080cd66a
 .L_080cd654:
 	movs	r0, #129
-	bl	sub_081c0010
-	bl	sub_080d5e64
+	bl	Audio_PlayCue
+	bl	Func_080d5e64
 	b.n	.L_080cd66a
 .L_080cd660:
 	movs	r0, #123
-	bl	sub_081c0010
-	bl	sub_080d5fd4
+	bl	Audio_PlayCue
+	bl	0x080d5fd4
 .L_080cd66a:
 	ldr	r2, [r5, #8]
 	movs	r3, #172

@@ -5,6 +5,9 @@
 #include "BATTLE_SUMMON.H"
 #include "BATTLE_FORMATION.H"
 #include "SYSTEM.H"
+s32 GameFlag_ClearBitFar(s32 id);
+void Runtime_BumpFree(void *ptr);
+s32 BattleParty_PrepareActiveOwners(u16 *out_units);
 
 /* battle/formation/select_level_matched_candidate.c */
 

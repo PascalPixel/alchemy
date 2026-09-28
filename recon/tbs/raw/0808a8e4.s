@@ -1,27 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_0800307c, 0x0800307c
-	.set sub_0800403c, 0x0800403c
-	.set sub_080040e8, 0x080040e8
-	.set sub_08004760, 0x08004760
-	.set sub_08004858, 0x08004858
-	.set sub_08004938, 0x08004938
-	.set sub_08015360, 0x08015360
-	.set sub_08077098, 0x08077098
-	.set sub_080770c0, 0x080770c0
-	.set sub_080770d0, 0x080770d0
-	.set sub_0808a5f8, 0x0808a5f8
-	.set sub_0808a6e4, 0x0808a6e4
-	.set sub_0808ab48, 0x0808ab48
-	.set sub_0808ab74, 0x0808ab74
-	.set sub_0808acc4, 0x0808acc4
-	.set sub_0808b090, 0x0808b090
-	.set sub_0808c4f8, 0x0808c4f8
-	.set sub_080b50a0, 0x080b50a0
-	.set sub_080f4000, 0x080f4000
-	.set sub_080f6000, 0x080f6000
-	.set sub_080f9010, 0x080f9010
 	.global Game_ResetForNewGame
 	.global Func_0808a8e4
 	.thumb_func
@@ -68,7 +46,7 @@ Func_0808a8e4:
 	movs	r3, #1
 	b.n	.L_0808a94a
 .L_0808a932:
-	bl	sub_08077098
+	bl	0x08077098
 	ldr	r1, [pc, #80]
 	movs	r4, #224
 	ldr	r3, [pc, #88]
@@ -89,19 +67,19 @@ Func_0808a8e4:
 	ldr	r2, [pc, #68]
 	adds	r3, r3, r2
 	ldrb	r1, [r3, #0]
-	bl	sub_08015360
-	bl	sub_0800403c
-	bl	sub_080040e8
-	bl	sub_080040e8
+	bl	PaletteGlow_UpdateFar
+	bl	Resource_InitializeTable
+	bl	Scheduler_ResetTaskTable
+	bl	Scheduler_ResetTaskTable
 	ldr	r3, [pc, #52]
 	mov	r9, r3
 .L_0808a96e:
 	ldr	r0, [pc, #52]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808a9a8
 	ldr	r0, [pc, #40]
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	b.n	.L_0808a9b0
 	.4byte 0x03001f54
 	.4byte 0x0809f1a8
@@ -117,7 +95,7 @@ Func_0808a8e4:
 .L_0808a9a8:
 	movs	r0, #144
 	lsls	r0, r0, #1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_0808a9b0:
 	ldr	r7, [pc, #92]
 	movs	r4, #224
@@ -144,18 +122,18 @@ Func_0808a8e4:
 	strh	r3, [r1, #10]
 	mov	r8, r4
 	ldrh	r3, [r1, #10]
-	bl	sub_080040e8
+	bl	Scheduler_ResetTaskTable
 	movs	r0, #1
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	movs	r0, #2
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0800307c
-	bl	sub_08004858
-	bl	sub_08004760
-	bl	sub_0800403c
+	bl	Runtime_SetIrqHandler
+	bl	Runtime_InitializeHeap
+	bl	Bg0_ClearTilemap
+	bl	Resource_InitializeTable
 	b.n	.L_0808aa18
 	.4byte 0x0000c5ff
 	.4byte 0x00007fff
@@ -189,12 +167,12 @@ Func_0808a8e4:
 	cmp	r3, r0
 	bne.n	.L_0808aaa0
 	adds	r0, r6, #0
-	bl	sub_080b50a0
+	bl	0x080b50a0
 	adds	r6, r0, #0
 	b.n	.L_0808aaa0
 .L_0808aa52:
 	movs	r0, #64
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	adds	r5, r0, #0
 	ldr	r3, [pc, #212]
 	mov	r0, r9
@@ -203,11 +181,11 @@ Func_0808a8e4:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r6, #0
-	bl	sub_080f4000
+	bl	Func_080f4000
 	b.n	.L_0808aa88
 .L_0808aa6e:
 	movs	r0, #64
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	adds	r5, r0, #0
 	ldr	r3, [pc, #184]
 	mov	r0, r9
@@ -216,7 +194,7 @@ Func_0808a8e4:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r6, #0
-	bl	sub_080f6000
+	bl	Func_080f6000
 .L_0808aa88:
 	ldr	r3, [pc, #164]
 	adds	r6, r0, #0
@@ -226,43 +204,43 @@ Func_0808a8e4:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r5, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	b.n	.L_0808aaa0
 .L_0808aa9e:
 	movs	r6, #0
 .L_0808aaa0:
 	adds	r0, r6, #0
-	bl	sub_0808a6e4
+	bl	Func_0808a6e4
 	b.n	.L_0808a96e
 .L_0808aaa8:
 	ldr	r5, [pc, #140]
 	adds	r0, r5, #0
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	mov	r3, r8
 	adds	r1, r0, #0
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	sub_0808ab74
-	bl	sub_0808b090
+	bl	Scene_ResetFlagsOnEnter
+	bl	Scene_ResolveInteractionResult
 	adds	r0, r5, #0
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808aaf0
 	movs	r0, #141
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808aae6
 	ldr	r0, [pc, #100]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808aae6
-	bl	sub_0808acc4
+	bl	Audio_PlayCueFromEventWork
 	b.n	.L_0808ab0a
 .L_0808aae6:
 	movs	r0, #141
 	lsls	r0, r0, #1
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	b.n	.L_0808ab0a
 .L_0808aaf0:
 	ldr	r4, [pc, #76]
@@ -273,10 +251,10 @@ Func_0808a8e4:
 	negs	r2, r2
 	cmp	r0, r2
 	beq.n	.L_0808ab06
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_0808ab0a
 .L_0808ab06:
-	bl	sub_0808acc4
+	bl	Audio_PlayCueFromEventWork
 .L_0808ab0a:
 	mov	r4, sl
 	ldr	r3, [pc, #52]
@@ -286,10 +264,10 @@ Func_0808a8e4:
 	adds	r3, r3, r0
 	strh	r2, [r3, #0]
 	movs	r0, #0
-	bl	sub_0808ab48
+	bl	BattleFx_LoadResourceGroup
 	adds	r0, r6, #0
-	bl	sub_0808c4f8
-	bl	sub_0808a5f8
+	bl	Func_0808c4f8
+	bl	MapGroupTable_SelectEntry
 	b.n	.L_0808a96e
 	movs	r0, r0
 	.4byte 0x000001fd

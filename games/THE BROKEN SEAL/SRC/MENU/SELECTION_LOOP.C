@@ -2,6 +2,9 @@
 #include "SCENE.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001e98[];
+extern u8 Data_03001b04[];
+extern u8 Data_03001c94[];
 
 /* menu/selection/loop.c */
 extern u8 *gResQueueWork;
@@ -47,7 +50,7 @@ s32 Menu_SelectionLoop(s32 mode)
 /* menu/selection/wait_for_input.c */
 u32 Menu_WaitForSelectionInput(u32 value)
 {
-    u8 *state = *(u8 **)ADDR_03001E98;
+    u8 *state = *(u8 **)((u32)&Data_03001e98);
     volatile u32 *input;
     u32 result;
 
@@ -57,7 +60,7 @@ again:
         goto again;
 
     if (value != 999) {
-        input = (u32 *)ADDR_03001B04;
+        input = (u32 *)((u32)&Data_03001b04);
         if (*input & 0x10) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             Menu_StepRight(state);
@@ -66,7 +69,7 @@ again:
             Menu_StepLeft(state);
         }
 
-        if (*(u32 *)ADDR_03001C94 & 1) {
+        if (*(u32 *)((u32)&Data_03001c94) & 1) {
             result = *(u16 *)(state + 0x39c)
                    + *(u16 *)(state + 0x39e);
             if (*(u16 *)(*(u8 **)(state + 0x348) + 10) == 6) {
@@ -81,7 +84,7 @@ again:
         }
     }
 
-    if (value != 0 && (*(u32 *)ADDR_03001C94 & 2)) {
+    if (value != 0 && (*(u32 *)((u32)&Data_03001c94) & 2)) {
         Audio_PlayCue(SOUND_MENU_CANCEL);
         return -1;
     }

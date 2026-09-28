@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08014b70, 0x08014b70
-	.set sub_08014bac, 0x08014bac
-	.set sub_08015830, 0x08015830
 	.global Func_080cc9fc
 	.thumb_func
 Func_080cc9fc:
@@ -22,7 +18,7 @@ Func_080cc9fc:
 	sub	sp, #12
 	mov	sl, r2
 	mov	r8, r2
-	bl	sub_08015830
+	bl	0x08015830
 	movs	r3, #0
 	str	r3, [sp, #8]
 	mov	fp, r3
@@ -109,7 +105,7 @@ Func_080cc9fc:
 	cmp	r2, #15
 	bls.n	.L_080cca98
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r1, [pc, #360]
 	movs	r4, #31
 .L_080ccad6:
@@ -341,7 +337,7 @@ Func_080cc9fc:
 	movs	r0, #1
 	str	r1, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r1, [sp, #4]
 	movs	r3, #8
 	ldr	r2, [r1, #0]
@@ -359,13 +355,13 @@ Func_080cc9fc:
 	movs	r0, #1
 	str	r1, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r1, [sp, #4]
 	ldr	r4, [sp, #0]
 	b.n	.L_080ccad6
 .L_080ccca2:
-	bl	sub_08014bac
-	bl	sub_08014b70
+	bl	0x08014bac
+	bl	0x08014b70
 	add	sp, #12
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

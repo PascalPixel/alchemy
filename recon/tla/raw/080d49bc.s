@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_080148e8, 0x080148e8
-	.set sub_08020090, 0x08020090
-	.set sub_08020148, 0x08020148
 	.global Func_080d49bc
 	.thumb_func
 Func_080d49bc:
@@ -54,27 +50,27 @@ Func_080d49bc:
 	blt.n	.L_080d4a40
 	lsls	r0, r5, #20
 	adds	r1, r7, #0
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r5, [r6, #8]
 	mov	r3, r8
 	adds	r5, r5, r0
 	adds	r1, r7, #0
 	lsls	r0, r3, #20
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r3, [r6, #16]
 	adds	r1, r5, #0
 	adds	r3, r3, r0
 	ldr	r2, [r6, #12]
 	adds	r0, r6, #0
-	bl	sub_08020148
+	bl	Object_SetPosition
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08020090
+	bl	Object_SetMode
 	b.n	.L_080d4a48
 .L_080d4a40:
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 .L_080d4a48:
 	movs	r0, #1
 	pop	{r3}
@@ -98,7 +94,7 @@ Func_080d49bc:
 	subs	r0, r0, r3
 	ldr	r3, [r5, #8]
 	subs	r1, r1, r3
-	bl	sub_080148e8
+	bl	0x080148e8
 	ldrh	r3, [r5, #6]
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16

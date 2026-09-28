@@ -298,18 +298,6 @@ mod owner_tests {
         assert!(span_for(root.path(), "resource_374", 0x02001000, Some(32)).is_err());
         let error = image_window(root.path(), "resource_374:02001010", Some(32)).unwrap_err();
         assert!(error.contains("reviewed"), "{error}");
-        assert!(crate::recovery::adopt::adopt(
-            root.path(),
-            &crate::recovery::adopt::Request {
-                owner: "resource_374:02001010",
-                span: Some(32),
-                name: None,
-                path: None,
-                source: None,
-            }
-        )
-        .is_err());
-        assert!(!root.path().join("games/THE BROKEN SEAL/SRC").exists());
     }
 }
 

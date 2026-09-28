@@ -2,6 +2,9 @@
 #include "SCENE.H"
 #include "SYSTEM.H"
 #include "UI.H"
+void UiWork_FinalizeEntityMatchingLocalizedIdFar(s32);
+void Object_SetModeById(s32, s32);
+void Object_WaitUntilChildValueDiffers(s32, s32);
 
 struct Entry_08091c7c {
     u8 unknown_00[10];

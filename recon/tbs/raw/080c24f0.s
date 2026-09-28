@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080022f4, 0x080022f4
-	.set sub_08004458, 0x08004458
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_080770c8, 0x080770c8
-	.set sub_08077198, 0x08077198
-	.set sub_080771a0, 0x080771a0
-	.set sub_080c2470, 0x080c2470
 	.global BattleEnemy_RecordDefeat
 	.global Func_080c24f0
 	.thumb_func
@@ -23,7 +14,7 @@ Func_080c24f0:
 	push	{r7}
 	mov	fp, r1
 	adds	r5, r0, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r3, [pc, #524]
 	mov	r8, r0
 	movs	r1, #166
@@ -90,7 +81,7 @@ Func_080c24f0:
 	adds	r3, #1
 	str	r3, [r7, #8]
 	ldr	r0, [pc, #416]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080c2584
 	b.n	.L_080c2702
@@ -102,9 +93,9 @@ Func_080c24f0:
 	movs	r2, #192
 	lsls	r2, r2, #3
 	adds	r0, r0, r2
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	ldrb	r0, [r5, #0]
-	bl	sub_08077198
+	bl	Owner_GetRecordFar
 	mov	r3, fp
 	mov	sl, r0
 	cmp	r3, #0
@@ -119,7 +110,7 @@ Func_080c24f0:
 	movs	r5, #0
 	b.n	.L_080c25c8
 .L_080c25b6:
-	bl	sub_08004458
+	bl	Random16
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -131,7 +122,7 @@ Func_080c24f0:
 	mov	r1, r8
 	ldrb	r0, [r1, #15]
 	movs	r1, #10
-	bl	sub_080022f4
+	bl	__udivsi3
 	lsls	r0, r0, #24
 	lsrs	r0, r0, #24
 	adds	r0, #1
@@ -142,7 +133,7 @@ Func_080c24f0:
 	lsls	r0, r5, #1
 	adds	r0, r0, r5
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r6, r0
 	bge.n	.L_080c25f0
 	adds	r6, r0, #0
@@ -162,7 +153,7 @@ Func_080c24f0:
 	movs	r5, #0
 	b.n	.L_080c2618
 .L_080c260a:
-	bl	sub_08004458
+	bl	Random16
 	lsls	r0, r0, #2
 	lsrs	r0, r0, #16
 	adds	r0, r6, r0
@@ -172,7 +163,7 @@ Func_080c24f0:
 	mov	r1, r8
 	ldrb	r0, [r1, #15]
 	movs	r1, #10
-	bl	sub_080022f4
+	bl	__udivsi3
 	lsls	r0, r0, #24
 	lsrs	r0, r0, #24
 	adds	r0, #1
@@ -183,7 +174,7 @@ Func_080c24f0:
 	lsls	r0, r5, #1
 	adds	r0, r0, r5
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r6, r0
 	bge.n	.L_080c2640
 	adds	r6, r0, #0
@@ -253,7 +244,7 @@ Func_080c24f0:
 	movs	r5, #128
 	lsls	r5, r5, #10
 	asrs	r5, r0
-	bl	sub_080771a0
+	bl	BattleRandom16Far
 	ldr	r3, [pc, #100]
 	ands	r0, r3
 	cmp	r5, r0
@@ -270,7 +261,7 @@ Func_080c24f0:
 .L_080c26d2:
 	ldrh	r0, [r6, #0]
 	adds	r6, #2
-	bl	sub_080c2470
+	bl	Item_EncodeBankedId
 	cmp	r0, r8
 	bge.n	.L_080c26e2
 	mov	r8, r0
@@ -282,7 +273,7 @@ Func_080c24f0:
 	mov	r2, r9
 	movs	r1, #0
 	ldrsh	r0, [r2, r1]
-	bl	sub_080c2470
+	bl	Item_EncodeBankedId
 	cmp	r0, r8
 	ble.n	.L_080c2702
 	mov	r6, sl

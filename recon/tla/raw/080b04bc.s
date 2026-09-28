@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_080ad3a8, 0x080ad3a8
-	.set sub_080af054, 0x080af054
-	.set sub_080b0288, 0x080b0288
-	.set sub_080b0378, 0x080b0378
-	.set sub_080b0460, 0x080b0460
 	.global Func_080b04bc
 	.thumb_func
 Func_080b04bc:
@@ -20,7 +14,7 @@ Func_080b04bc:
 	beq.n	.L_080b0512
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_080af054
+	bl	Inventory_GetEquippedDefinition
 	adds	r6, r0, #0
 	movs	r0, #1
 	cmp	r6, #0
@@ -29,16 +23,16 @@ Func_080b04bc:
 	cmp	r3, #0
 	beq.n	.L_080b0512
 	adds	r0, r5, #0
-	bl	sub_080b0460
+	bl	Func_080b0460
 	ldrb	r2, [r6, #11]
 	movs	r1, #100
 	lsls	r3, r2, #2
 	adds	r3, r3, r2
 	adds	r0, r0, r3
 	lsls	r0, r0, #16
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r5, r0, #0
-	bl	sub_080b0378
+	bl	0x080b0378
 	movs	r3, #255
 	lsls	r3, r3, #8
 	adds	r3, #255
@@ -230,7 +224,7 @@ Func_080b04bc:
 	adds	r1, #33
 	adds	r3, r2, r1
 	ldrh	r0, [r3, #0]
-	bl	sub_080ad3a8
+	bl	0x080ad3a8
 	movs	r2, #0
 	adds	r0, #62
 .L_080b0708:
@@ -247,7 +241,7 @@ Func_080b04bc:
 	adds	r1, #255
 	adds	r3, r2, r1
 	ldrb	r0, [r3, #0]
-	bl	sub_080b0288
+	bl	Owner_GetRecordStride84
 	movs	r2, #0
 	adds	r0, #80
 .L_080b0728:

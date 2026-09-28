@@ -2,6 +2,7 @@
 #include "RUNTIME_MEM.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 extern u8 *gWindowWork;
 
@@ -14,7 +15,7 @@ s32 UiText_RenderStringTiles(void *text, s32 source, s32 destination, s32 phase)
 
 void UiText_DrawResource(s32 arg0, s32 arg1, s32 arg2, s32 arg3)
 {
-    u8 *base = *(u8 **)ADDR_03001E8C;
+    u8 *base = *(u8 **)((u32)&Data_03001e8c);
     u16 *counter = (u16 *)(base + RENDER_ENTRY_COUNT_OFS);
     s32 offset;
     s32 zero = 0;

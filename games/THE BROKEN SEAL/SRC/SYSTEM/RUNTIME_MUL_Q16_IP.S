@@ -7,8 +7,6 @@
 @ credit: handwritten — IWRAM runtime 16.16 multiply returning through ip
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000888
-	.set AlchemyRunAddress, 0x03000118
 
 	.global IwramMulQ16ReturnIp
 IwramMulQ16ReturnIp:

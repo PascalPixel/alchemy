@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_080165d8, 0x080165d8
-	.set sub_08019908, 0x08019908
-	.set sub_08019ba0, 0x08019ba0
-	.set sub_08019d2c, 0x08019d2c
-	.set sub_0801a4fc, 0x0801a4fc
-	.set sub_0801e41c, 0x0801e41c
-	.set sub_08021360, 0x08021360
-	.set sub_080f9010, 0x080f9010
-	.set sub_080f9048, 0x080f9048
 	.global Party_ShowPairJoinedMessage
 	.global Func_08021488
 	.thumb_func
@@ -42,7 +28,7 @@ Func_08021488:
 	movs	r0, #1
 	movs	r2, #28
 	movs	r3, #5
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r6, #0
 	mov	r9, r0
 	cmp	r0, #0
@@ -51,14 +37,14 @@ Func_08021488:
 	movs	r3, #4
 	movs	r2, #0
 	str	r3, [sp, #0]
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	ldr	r2, [pc, #240]
 	movs	r3, #1
 	add	r2, r8
 	strb	r3, [r2, #0]
 	mov	r0, fp
-	bl	sub_08021360
-	bl	sub_08019d2c
+	bl	Party_LookupCharacterValueByFlag32
+	bl	Localization_LookupEntryId
 	movs	r3, #14
 	add	r5, sp, #16
 	add	r2, sp, #20
@@ -66,7 +52,7 @@ Func_08021488:
 	movs	r1, #0
 	adds	r3, r5, #0
 	str	r6, [sp, #4]
-	bl	sub_0801a4fc
+	bl	UiGlyph_LoadEntryWithPalette
 	mov	r3, sl
 	str	r6, [r3, #0]
 	ldr	r3, [pc, #204]
@@ -78,15 +64,15 @@ Func_08021488:
 	orrs	r3, r2
 	str	r3, [sp, #32]
 	add	r7, sp, #36
-	bl	sub_08021360
-	bl	sub_08019d2c
+	bl	Party_LookupCharacterValueByFlag32
+	bl	Localization_LookupEntryId
 	movs	r3, #15
 	add	r2, sp, #12
 	str	r3, [sp, #0]
 	movs	r1, #0
 	adds	r3, r5, #0
 	str	r6, [sp, #4]
-	bl	sub_0801a4fc
+	bl	UiGlyph_LoadEntryWithPalette
 	ldr	r3, [pc, #164]
 	str	r6, [r7, #0]
 	movs	r2, #240
@@ -103,30 +89,30 @@ Func_08021488:
 	strh	r6, [r3, #0]
 	mov	r0, fp
 	movs	r1, #1
-	bl	sub_08019908
+	bl	UiWork_PushValueSlot
 	movs	r1, #1
 	ldr	r0, [sp, #8]
-	bl	sub_08019908
+	bl	UiWork_PushValueSlot
 	ldr	r0, [pc, #132]
-	bl	sub_08019ba0
+	bl	UiText_BuildRenderEntriesMode1
 	movs	r2, #68
 	adds	r1, r0, #0
 	movs	r3, #2
 	mov	r0, r9
 	str	r6, [sp, #0]
-	bl	sub_080165d8
+	bl	UiText_QueueRenderEntries
 	movs	r0, #81
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_08021566:
 	mov	r0, sl
 	movs	r1, #250
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	adds	r0, r7, #0
 	movs	r1, #250
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	movs	r0, #1
-	bl	sub_080030f8
-	bl	sub_080f9048
+	bl	WaitFrames
+	bl	Audio_Check
 	cmp	r0, #0
 	beq.n	.L_08021590
 	ldr	r3, [pc, #80]
@@ -138,13 +124,13 @@ Func_08021488:
 .L_08021590:
 	movs	r1, #2
 	mov	r0, r9
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r0, [sp, #20]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	ldr	r0, [sp, #12]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 .L_080215aa:
 	add	sp, #48
 	pop	{r3, r5, r6, r7}

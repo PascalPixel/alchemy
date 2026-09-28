@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ce4, 0x08016ce4
 	.global Func_080ccd48
 	.thumb_func
 Func_080ccd48:
@@ -17,10 +16,10 @@ Func_080ccd48:
 	ands	r3, r0
 	cmp	r3, #0
 	beq.n	.L_080ccd66
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	b.n	.L_080ccd74
 .L_080ccd66:
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31

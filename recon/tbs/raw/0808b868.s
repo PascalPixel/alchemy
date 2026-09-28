@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080770c8, 0x080770c8
-	.set sub_080770d0, 0x080770d0
 	.global Func_0808b868
 	.thumb_func
 Func_0808b868:
@@ -12,9 +10,9 @@ Func_0808b868:
 	movs	r0, #178
 	lsls	r0, r0, #1
 	ldr	r6, [r3, #0]
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	adds	r0, r7, #0
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	movs	r2, #0
 	ldrsh	r3, [r5, r2]
 	movs	r2, #1

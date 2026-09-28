@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080ad348, 0x080ad348
 	.global Trade_RemoveOffer
 	.global Func_080b0d58
 	.thumb_func
@@ -21,7 +20,7 @@ Func_080b0d58:
 	movs	r3, #1
 .L_080b0d72:
 	adds	r0, r3, #0
-	bl	sub_080ad348
+	bl	Trade_GetOfferState
 	movs	r1, #148
 	adds	r3, r0, #0
 	lsls	r1, r1, #1

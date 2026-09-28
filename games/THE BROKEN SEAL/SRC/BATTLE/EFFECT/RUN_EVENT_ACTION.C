@@ -1,9 +1,14 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 Math_ModU(s32, s32) __attribute__((const));
+void Event_SetValue1d8(s32);
+void BattleEv_RunWait(s32, s32);
+void BattleFx_FinishAction();
+void _call_via_r3(s32, s32);
 
 /* battle/effects/run/run_event_action.c */
 /*
- * Battle_Apply names a bx rN veneer slot, so this is an indirect call
+ * _call_via_r3 names a bx rN veneer slot, so this is an indirect call
  * through the register loaded just before it. The callee is whatever
  * BattleFx_FinishAction returned, not a fixed address.
  */
@@ -27,7 +32,7 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
                 BattleEv_RunWait(arg2, 0);
                 BattleFx_FinishAction();
             } else {
-                Battle_Apply(arg1, arg2);
+                _call_via_r3(arg1, arg2);
             }
         }
         if (GameFlag_TestFar(0x142) != 0) {
@@ -39,8 +44,8 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
     return 0;
 }
 
-/* object/Animation_ApplyRandomChildValues.c */
-/* object/group/Animation_ApplyRandomChildValues.c */
+/* object/ObjectGroup_ApplyRandomChildValues.c */
+/* object/group/ObjectGroup_ApplyRandomChildValues.c */
 extern volatile s32 gFrameCount;
 
 void ObjectGroup_ApplyRandomChildValues(void *owner)
@@ -76,7 +81,7 @@ void ObjectGroup_ApplyRandomChildValues(void *owner)
     }
 }
 
-/* object/motion/pos/set_target_position_from_magnitude_angle.c */
+/* object/motion/pos/Motion_SetTargetPositionFromMagnitudeAngle.c */
 struct Object_08096bec {
     u8 padding[8];
     s32 x;

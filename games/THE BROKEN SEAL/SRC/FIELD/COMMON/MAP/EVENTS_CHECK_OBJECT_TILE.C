@@ -4,7 +4,7 @@
 #include "MAP.H"
 #include "SYSTEM.H"
 
-/* map/shared/events/MapEvent_CheckObjectTile.c */
+/* map/shared/events/CheckObjectMapTile.c */
 struct MapObject {
     u8 padding00[8];
     s32 x;

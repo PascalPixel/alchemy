@@ -1,71 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080037d4, 0x080037d4
-	.set sub_08003b70, 0x08003b70
-	.set sub_08003ce0, 0x08003ce0
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080040b4, 0x080040b4
-	.set sub_080040e8, 0x080040e8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_080042c8, 0x080042c8
-	.set sub_0800488c, 0x0800488c
-	.set sub_080048a0, 0x080048a0
-	.set sub_080048f4, 0x080048f4
-	.set sub_080049ac, 0x080049ac
-	.set sub_080072f0, 0x080072f0
-	.set sub_08009078, 0x08009078
-	.set sub_08015008, 0x08015008
-	.set sub_08015018, 0x08015018
-	.set sub_08015038, 0x08015038
-	.set sub_08015048, 0x08015048
-	.set sub_08015118, 0x08015118
-	.set sub_08015120, 0x08015120
-	.set sub_08015128, 0x08015128
-	.set sub_08015130, 0x08015130
-	.set sub_080151c8, 0x080151c8
-	.set sub_08077000, 0x08077000
-	.set sub_080770c0, 0x080770c0
-	.set sub_080770c8, 0x080770c8
-	.set sub_080770e0, 0x080770e0
-	.set sub_08077140, 0x08077140
-	.set sub_080771a0, 0x080771a0
-	.set sub_0808a4a0, 0x0808a4a0
-	.set sub_080b5a0c, 0x080b5a0c
-	.set sub_080b5b14, 0x080b5b14
-	.set sub_080b5b18, 0x080b5b18
-	.set sub_080b5c08, 0x080b5c08
-	.set sub_080b5d3c, 0x080b5d3c
-	.set sub_080b6148, 0x080b6148
-	.set sub_080b6378, 0x080b6378
-	.set sub_080b63b0, 0x080b63b0
-	.set sub_080b6a60, 0x080b6a60
-	.set sub_080b6b40, 0x080b6b40
-	.set sub_080b6c90, 0x080b6c90
-	.set sub_080b75dc, 0x080b75dc
-	.set sub_080b7e7c, 0x080b7e7c
-	.set sub_080b7f9c, 0x080b7f9c
-	.set sub_080b8574, 0x080b8574
-	.set sub_080b874c, 0x080b874c
-	.set sub_080b9934, 0x080b9934
-	.set sub_080b9b2c, 0x080b9b2c
-	.set sub_080b9b30, 0x080b9b30
-	.set sub_080bb65c, 0x080bb65c
-	.set sub_080bb7c0, 0x080bb7c0
-	.set sub_080bf5a8, 0x080bf5a8
-	.set sub_080bf674, 0x080bf674
-	.set sub_080bf678, 0x080bf678
-	.set sub_080c02a4, 0x080c02a4
-	.set sub_080c08a8, 0x080c08a8
-	.set sub_080c08e0, 0x080c08e0
-	.set sub_080c08ec, 0x080c08ec
-	.set sub_080c0a24, 0x080c0a24
-	.set sub_080c0cec, 0x080c0cec
-	.set sub_080c1ffc, 0x080c1ffc
-	.set sub_080c24b0, 0x080c24b0
-	.set sub_080c2724, 0x080c2724
-	.set sub_080f9010, 0x080f9010
 	.global Func_080b63c8
 	.thumb_func
 Func_080b63c8:
@@ -80,34 +14,34 @@ Func_080b63c8:
 	str	r0, [sp, #12]
 	movs	r1, #76
 	movs	r0, #12
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	ldr	r1, [pc, #556]
 	mov	sl, r0
 	movs	r0, #9
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r5, #249
 	lsls	r5, r5, #3
 	adds	r1, r5, #0
 	mov	r8, r0
 	movs	r0, #54
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r1, #32
 	adds	r6, r0, #0
 	movs	r0, #44
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r1, #160
 	str	r0, [sp, #8]
 	lsls	r1, r1, #2
 	movs	r0, #11
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r1, #12
 	add	r1, sl
 	ldr	r3, [pc, #508]
 	mov	r9, r1
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080072f0
-	bl	sub_080040e8
+	bl	_call_via_r3
+	bl	Scheduler_ResetTaskTable
 	movs	r3, #128
 	ldr	r2, [sp, #8]
 	movs	r7, #0
@@ -123,10 +57,10 @@ Func_080b63c8:
 	lsls	r3, r3, #19
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #468]
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	ldr	r0, [pc, #468]
-	bl	sub_080770c8
-	bl	sub_080049ac
+	bl	GameFlag_SetBitFar
+	bl	Render_ResetTransformState
 	add	r5, sp, #16
 	str	r7, [r5, #0]
 	ldr	r3, [pc, #456]
@@ -148,7 +82,7 @@ Func_080b63c8:
 	movs	r0, #37
 	str	r2, [r1, #0]
 	movs	r1, #12
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	str	r7, [r5, #0]
 	adds	r1, r0, #0
 	ldr	r3, [pc, #412]
@@ -156,7 +90,7 @@ Func_080b63c8:
 	ldr	r2, [pc, #420]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	sub_0808a4a0
+	bl	Func_0808a4a0
 	movs	r3, #201
 	lsls	r3, r3, #3
 	add	r3, r8
@@ -164,24 +98,24 @@ Func_080b63c8:
 	strh	r0, [r3, #0]
 	lsls	r1, r1, #4
 	movs	r0, #4
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r1, #192
 	lsls	r1, r1, #3
 	movs	r0, #3
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r0, #4
-	bl	sub_08009078
+	bl	0x08009078
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080b64c6
 	movs	r0, #1
-	bl	sub_08015008
+	bl	0x08015008
 	b.n	.L_080b64cc
 .L_080b64c6:
 	movs	r0, #0
-	bl	sub_08015008
+	bl	0x08015008
 .L_080b64cc:
 	movs	r2, #128
 	mov	r3, r9
@@ -208,11 +142,11 @@ Func_080b63c8:
 	str	r3, [r1, #32]
 	mov	r2, r8
 	ldr	r0, [r2, #0]
-	bl	sub_080c1ffc
+	bl	BattleFormation_BuildEnemyList
 	adds	r6, r0, #0
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080b6528
 	mov	r3, r8
@@ -255,7 +189,7 @@ Func_080b63c8:
 	beq.n	.L_080b6566
 	movs	r0, #1
 	adds	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #24
 	ble.n	.L_080b654a
 	mov	r2, r9
@@ -283,9 +217,9 @@ Func_080b63c8:
 	bls.n	.L_080b657e
 	movs	r0, #252
 	lsls	r0, r0, #2
-	bl	sub_080770e0
+	bl	GameFlag_GetByteFar
 	adds	r6, r0, #0
-	bl	sub_080b6378
+	bl	BattleParty_AssignMemberSlots
 	mov	r2, r8
 	adds	r2, #66
 	movs	r3, #0
@@ -293,7 +227,7 @@ Func_080b63c8:
 .L_080b65a2:
 	ldr	r1, [pc, #172]
 	ldr	r0, [pc, #172]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r3, [pc, #132]
 	movs	r1, #247
 	lsls	r1, r1, #1
@@ -302,29 +236,29 @@ Func_080b63c8:
 	ldrsh	r0, [r3, r2]
 	cmp	r0, #0
 	beq.n	.L_080b65d8
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #182
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080b65e4
 	movs	r0, #55
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #4
-	bl	sub_080037d4
+	bl	Sound_LoadPresetParameters
 	b.n	.L_080b65e4
 .L_080b65d8:
 	movs	r0, #51
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #76
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080b65e4:
-	bl	sub_080b5a0c
-	bl	sub_080b75dc
-	bl	sub_080b5c08
-	bl	sub_080b5d3c
+	bl	BattleParty_CollectUnitList
+	bl	BattleUnit_RefreshPlacement
+	bl	BattlePlacement_UpdateEntries
+	bl	BattleSummon_UpdateAvailability
 	movs	r0, #0
-	bl	sub_08077000
+	bl	Trade_GetOfferStateFar
 	ldr	r3, [r0, #0]
 	cmp	r3, #0
 	beq.n	.L_080b6658
@@ -363,17 +297,17 @@ Func_080b63c8:
 	mov	r9, r2
 .L_080b6662:
 	movs	r0, #9
-	bl	sub_08015128
-	bl	sub_080b7f9c
-	bl	sub_080b6c90
-	bl	sub_080c08a8
+	bl	0x08015128
+	bl	Camera_InitDefaultTransform
+	bl	BattleActor_CommitPlacement
+	bl	BattlePresentation_InitializeWorkAndResetState
 	movs	r3, #201
 	lsls	r3, r3, #3
 	add	r3, r8
 	ldrh	r1, [r3, #0]
 	movs	r0, #1
 	movs	r2, #0
-	bl	sub_080c08ec
+	bl	Func_080c08ec
 	movs	r3, #128
 	lsls	r3, r3, #10
 	movs	r0, #160
@@ -383,20 +317,20 @@ Func_080b63c8:
 	lsls	r1, r1, #15
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_080c0a24
+	bl	BattleCamera_SetRange
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #190
 	movs	r0, #0
-	bl	sub_080c0cec
+	bl	BattlePres_SetupTransitionScene
 	movs	r0, #1
-	bl	sub_080b5b14
+	bl	Party_ReservedNoOp5B14
 	ldr	r5, [pc, #52]
 	ldr	r3, [pc, #56]
 	strh	r5, [r3, #0]
-	bl	sub_080c24b0
+	bl	Summon_ClearWorkFields
 	movs	r0, #128
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	mov	r3, r8
 	movs	r1, #69
 	str	r0, [r3, #84]
@@ -405,7 +339,7 @@ Func_080b63c8:
 	strb	r5, [r1, #0]
 	lsls	r0, r0, #1
 	mov	fp, r1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080b6700
 	ldr	r3, [pc, #20]
@@ -422,7 +356,7 @@ Func_080b63c8:
 	.2byte 0x022b
 	.2byte 0x0000
 .L_080b66f4:
-	bl	sub_080771a0
+	bl	BattleRandom16Far
 	movs	r3, #15
 	ands	r0, r3
 	cmp	r0, #0
@@ -433,7 +367,7 @@ Func_080b63c8:
 	strb	r3, [r2, #0]
 	b.n	.L_080b671a
 .L_080b6708:
-	bl	sub_080771a0
+	bl	BattleRandom16Far
 	movs	r3, #31
 	ands	r0, r3
 	cmp	r0, #0
@@ -444,7 +378,7 @@ Func_080b63c8:
 .L_080b671a:
 	adds	r0, r6, #0
 	ldr	r1, [sp, #12]
-	bl	sub_080c02a4
+	bl	Func_080c02a4
 	ldr	r3, [sp, #8]
 	movs	r2, #0
 	str	r2, [r3, #20]
@@ -453,12 +387,12 @@ Func_080b63c8:
 	strb	r2, [r3, #0]
 	ldr	r0, [pc, #620]
 	lsls	r1, r1, #4
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 .L_080b6736:
-	bl	sub_080b9b2c
-	bl	sub_080b5d3c
+	bl	Battle_ReservedNoOp9B2C
+	bl	BattleSummon_UpdateAvailability
 	movs	r0, #0
-	bl	sub_08077000
+	bl	Trade_GetOfferStateFar
 	ldr	r3, [r0, #0]
 	cmp	r3, #0
 	beq.n	.L_080b6752
@@ -481,41 +415,41 @@ Func_080b63c8:
 	movs	r5, #187
 	ldrb	r0, [r2, #0]
 	lsls	r5, r5, #2
-	bl	sub_08015130
+	bl	UiWindow_DrawPartyStatusContentsFar
 	add	r5, r8
 	movs	r1, #160
 	ldr	r3, [pc, #552]
 	lsls	r1, r1, #1
 	adds	r0, r5, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r3, r8
 	ldr	r0, [r3, #84]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	movs	r0, #181
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080b67ac
-	bl	sub_0800488c
-	bl	sub_080048a0
+	bl	Runtime_GetRemainingIwram
+	bl	Runtime_GetRemainingEwram
 	adds	r0, r5, #0
-	bl	sub_080b9934
+	bl	BattlePresentation_BuildActions
 	adds	r5, r0, #0
-	bl	sub_0800488c
-	bl	sub_080048a0
+	bl	Runtime_GetRemainingIwram
+	bl	Runtime_GetRemainingEwram
 	b.n	.L_080b67b4
 .L_080b67ac:
 	adds	r0, r5, #0
-	bl	sub_080b8574
+	bl	BattlePresentation_BuildSortedUnitEntries
 	adds	r5, r0, #0
 .L_080b67b4:
 	movs	r0, #128
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	mov	r1, r8
 	str	r0, [r1, #84]
 	mov	r2, r9
 	ldrb	r0, [r2, #0]
-	bl	sub_08015130
+	bl	UiWindow_DrawPartyStatusContentsFar
 	cmp	r5, #0
 	bge.n	.L_080b67cc
 	b.n	.L_080b696e
@@ -529,11 +463,11 @@ Func_080b63c8:
 	mov	r3, r8
 	ldrsh	r3, [r6, r3]
 	mov	sl, r3
-	bl	sub_0800488c
-	bl	sub_080048a0
+	bl	Runtime_GetRemainingIwram
+	bl	Runtime_GetRemainingEwram
 	movs	r0, #181
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080b6806
 	mov	r2, r8
@@ -543,30 +477,30 @@ Func_080b63c8:
 	beq.n	.L_080b67fc
 	movs	r1, #0
 .L_080b67fc:
-	bl	sub_080b9b30
+	bl	BattlePresentation_DispatchAction
 	cmp	r0, #1
 	bne.n	.L_080b6814
 	b.n	.L_080b6a00
 .L_080b6806:
 	mov	r3, r8
 	adds	r0, r6, r3
-	bl	sub_080b874c
+	bl	BattlePres_RunAction
 	cmp	r0, #1
 	bne.n	.L_080b6814
 	b.n	.L_080b6a00
 .L_080b6814:
-	bl	sub_0800488c
-	bl	sub_080048a0
+	bl	Runtime_GetRemainingIwram
+	bl	Runtime_GetRemainingEwram
 	movs	r0, #1
 	movs	r1, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	cmp	r0, #0
 	bne.n	.L_080b682a
 	b.n	.L_080b69b0
 .L_080b682a:
 	movs	r0, #2
 	movs	r1, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	cmp	r0, #0
 	bne.n	.L_080b6850
 	mov	r1, sl
@@ -583,7 +517,7 @@ Func_080b63c8:
 	strh	r3, [r2, #62]
 	b.n	.L_080b68ec
 .L_080b6850:
-	bl	sub_080b6148
+	bl	BattlePres_SyncTurn
 	cmp	r0, #0
 	bge.n	.L_080b685a
 	b.n	.L_080b696e
@@ -596,24 +530,24 @@ Func_080b63c8:
 	movs	r3, #0
 	mov	r1, fp
 	strb	r3, [r1, #0]
-	bl	sub_080bf674
-	bl	sub_080bf678
-	bl	sub_080b7e7c
+	bl	Battle_ReservedNoOpF674
+	bl	Battle_ProcessRoundEnd
+	bl	BattleMotion_DestroyAllSlotObjects
 	ldr	r2, [sp, #4]
 	ldrb	r3, [r2, #0]
 	cmp	r3, #0
 	beq.n	.L_080b6886
-	bl	sub_080b6148
+	bl	BattlePres_SyncTurn
 	cmp	r0, #0
 	bge.n	.L_080b688c
 	b.n	.L_080b696e
 .L_080b6886:
 	movs	r0, #20
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b688c:
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080b689a
 	b.n	.L_080b6736
@@ -622,41 +556,41 @@ Func_080b63c8:
 	movs	r1, #0
 	movs	r2, #4
 	movs	r3, #1
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	adds	r5, r0, #0
 	b.n	.L_080b68b0
 .L_080b68aa:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b68b0:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	beq.n	.L_080b68aa
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r2, #4
 	movs	r3, #1
 	movs	r1, #10
 	ldr	r0, [pc, #216]
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	movs	r1, #24
 	adds	r5, r0, #0
 	movs	r0, #92
-	bl	sub_080bb7c0
+	bl	Unnamed_080bb7c0
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080b6736
 .L_080b68ec:
-	bl	sub_080b63b0
+	bl	Battle_ApplyValueToWork2224
 	movs	r0, #183
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080b6954
 	ldr	r1, [sp, #4]
@@ -664,7 +598,7 @@ Func_080b63c8:
 	cmp	r3, #0
 	beq.n	.L_080b690a
 	movs	r0, #58
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080b690a:
 	movs	r3, #167
 	lsls	r3, r3, #3
@@ -673,7 +607,7 @@ Func_080b63c8:
 	cmp	r3, #0
 	beq.n	.L_080b6950
 	movs	r0, #58
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r2, r8
 	ldrh	r3, [r2, #62]
 	cmp	r3, #1
@@ -684,34 +618,34 @@ Func_080b63c8:
 	ldrh	r1, [r2, r3]
 	movs	r0, #128
 	movs	r2, #26
-	bl	sub_08077140
-	bl	sub_08015118
+	bl	Func_08077140
+	bl	UiWork_ClearValueNameTablesFar
 	movs	r0, #128
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	mov	r3, r8
 	ldrh	r0, [r3, #62]
 	ldr	r3, [pc, #100]
 	adds	r0, r0, r3
-	bl	sub_080151c8
-	bl	sub_080bb65c
+	bl	UiText_ShowMessageAndWaitCoreFar
+	bl	BattlePresentation_WaitForAdvance
 .L_080b6950:
-	bl	sub_080c2724
+	bl	Battle_AwardSpoils
 .L_080b6954:
 	movs	r0, #17
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #30
-	bl	sub_08003b70
-	bl	sub_08003ce0
+	bl	Blend_SetDarkenTarget16
+	bl	Blend_WaitForTransition
 	movs	r3, #167
 	lsls	r3, r3, #3
 	add	r3, r8
 	ldr	r7, [r3, #0]
 	b.n	.L_080b6a12
 .L_080b696e:
-	bl	sub_080b63b0
+	bl	Battle_ApplyValueToWork2224
 	movs	r0, #0
-	bl	sub_080042c8
+	bl	Scheduler_EnableCallbacks
 	ldr	r3, [pc, #24]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -722,7 +656,7 @@ Func_080b63c8:
 	add	r3, r8
 	lsls	r0, r0, #2
 	ldr	r7, [r3, #0]
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	b.n	.L_080b6a12
 	movs	r0, r0
 	.4byte 0x00000001
@@ -734,56 +668,56 @@ Func_080b63c8:
 	.2byte 0x0838
 	.2byte 0x0000
 .L_080b69b0:
-	bl	sub_080b63b0
+	bl	Battle_ApplyValueToWork2224
 	movs	r0, #59
-	bl	sub_080f9010
-	bl	sub_08015118
+	bl	Audio_PlayCue
+	bl	UiWork_ClearValueNameTablesFar
 	ldr	r3, [pc, #136]
 	movs	r1, #252
 	lsls	r1, r1, #1
 	adds	r3, r3, r1
 	ldrb	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	movs	r0, #0
-	bl	sub_080b6a60
+	bl	BattleParty_PrepareActiveOwners
 	cmp	r0, #1
 	bne.n	.L_080b69e0
 	ldr	r0, [pc, #112]
-	bl	sub_080151c8
+	bl	UiText_ShowMessageAndWaitCoreFar
 	b.n	.L_080b69e6
 .L_080b69e0:
 	ldr	r0, [pc, #108]
-	bl	sub_080151c8
+	bl	UiText_ShowMessageAndWaitCoreFar
 .L_080b69e6:
-	bl	sub_080bb65c
+	bl	BattlePresentation_WaitForAdvance
 	movs	r0, #17
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r7, #1
 	movs	r0, #30
-	bl	sub_08003b70
+	bl	Blend_SetDarkenTarget16
 	negs	r7, r7
-	bl	sub_08003ce0
+	bl	Blend_WaitForTransition
 	b.n	.L_080b6a12
 .L_080b6a00:
 	movs	r0, #17
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #30
-	bl	sub_08003b70
-	bl	sub_08003ce0
+	bl	Blend_SetDarkenTarget16
+	bl	Blend_WaitForTransition
 	ldr	r7, [pc, #64]
 .L_080b6a12:
-	bl	sub_080b5b18
-	bl	sub_080bf674
-	bl	sub_080bf5a8
+	bl	BattleParty_ResetActiveRuntimeFields
+	bl	Battle_ReservedNoOpF674
+	bl	BattlePlacement_UpdateTimedEntries
 	ldr	r3, [pc, #40]
 	ldr	r2, [pc, #52]
 	adds	r3, r3, r2
 	movs	r2, #0
 	strb	r2, [r3, #0]
 	ldr	r0, [pc, #48]
-	bl	sub_08004278
-	bl	sub_080c08e0
+	bl	Scheduler_RemoveCallback
+	bl	Runtime_ReleaseHeapBlock10
 	adds	r0, r7, #0
 	add	sp, #68
 	pop	{r3, r5, r6, r7}

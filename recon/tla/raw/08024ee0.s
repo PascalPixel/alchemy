@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c0010, 0x081c0010
 	.global Func_08024ee0
 	.thumb_func
 Func_08024ee0:
@@ -12,7 +11,7 @@ Func_08024ee0:
 	lsls	r3, r3, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #4]
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	ldrh	r3, [r5, #4]
 	movs	r0, #1
 	adds	r3, #2

@@ -28,23 +28,3 @@ void ObjectMotion_Launch(u32 object_id, s32 speed, s32 event_id)
         Battle_WaitMode0(event_id);
     }
 }
-
-void ObjectMotion_SetVariantCallback(u32 object_id, s32 variant)
-{
-    struct ObjectRuntime *object;
-
-    object = ObjectTable_Get(object_id);
-    if (object != NULL && variant > 0) {
-        if (variant > 3) {
-            variant = 3;
-        }
-        Object_SetCallback(object,
-            Object_VariantMotionScripts + ((3 - variant) << 7));
-    }
-}
-
-void Motion_SetVarCbAndRefresh(u32 object_id, s32 variant)
-{
-    ObjectMotion_SetVariantCallback(object_id, variant);
-    Object_RefreshSelectorById(object_id);
-}

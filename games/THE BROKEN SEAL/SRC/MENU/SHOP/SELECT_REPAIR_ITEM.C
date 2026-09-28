@@ -4,6 +4,9 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+extern u8 Data_03001f2c[];
+extern u8 Data_03001c94[];
+extern u8 Data_03001b04[];
 
 void UiWork_FinalizeFar(s32, s32);
 s32 Inventory_CountFar(s32);
@@ -65,29 +68,29 @@ s32 Shop_SelRepair(s32 unit_id)
                 Shop_DrawMessage(
                     price_window, item_id + (s32)&MsgItemPlainName);
             }
-            if ((*(volatile u32 *)ADDR_03001C94 & 1) != 0) {
+            if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {
                 Audio_PlayCue(SOUND_MENU_CONFIRM);
                 result = 0;
                 goto done;
             }
-            if ((*(volatile u32 *)ADDR_03001C94 & 2) != 0) {
+            if ((*(volatile u32 *)((u32)&Data_03001c94) & 2) != 0) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 result = -1;
                 goto done;
             }
-            if ((*(volatile u32 *)ADDR_03001B04 & 0x20) != 0) {
+            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x20) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection -= 1;
                 selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
-            if ((*(volatile u32 *)ADDR_03001B04 & 0x10) != 0) {
+            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x10) != 0) {
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 selection += 1;
                 selection = Math_Mod(selection + item_count, item_count);
                 redraw = 1;
             }
-            if ((*(volatile u32 *)ADDR_03001B04 & 0x40) != 0) {
+            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x40) != 0) {
                 selection -= 5;
                 if (selection < 0)
                     selection += 15;
@@ -96,7 +99,7 @@ s32 Shop_SelRepair(s32 unit_id)
                 Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
                 redraw = 1;
             }
-            if ((*(volatile u32 *)ADDR_03001B04 & 0x80) != 0) {
+            if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x80) != 0) {
                 selection += 5;
                 if (selection >= item_count)
                     selection -= 15;

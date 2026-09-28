@@ -1,18 +1,10 @@
 .syntax unified
 	.thumb
-	.set sub_08013b30, 0x08013b30
-	.set sub_081c11ac, 0x081c11ac
-	.set sub_081c11ec, 0x081c11ec
-	.set sub_081c1f3c, 0x081c1f3c
-	.set sub_081c1fc0, 0x081c1fc0
-	.set sub_081c2158, 0x081c2158
-	.set sub_081c26f4, 0x081c26f4
-	.set sub_081c2f68, 0x081c2f68
 	.global Func_081c0c1c
 	.thumb_func
 Func_081c0c1c:
 	push	{lr}
-	bl	sub_081c1f3c
+	bl	Audio_Initialize
 	ldr	r1, [pc, #56]
 	ldr	r3, [pc, #64]
 	ldr	r2, [pc, #56]
@@ -66,14 +58,14 @@ Func_081c0c1c:
 	bge.n	.L_081c0c98
 	movs	r0, #144
 	lsls	r0, r0, #12
-	bl	sub_081c11ec
+	bl	Func_081c11ec
 	pop	{pc}
 .L_081c0cac:
 	movs	r0, #3
 	bx	lr
 	push	{r5, r6, r7, lr}
 	adds	r6, r0, #0
-	bl	sub_081c11ac
+	bl	Func_081c11ac
 	ldr	r3, [pc, #268]
 	movs	r5, #240
 	ldrb	r3, [r3, #3]
@@ -98,7 +90,7 @@ Func_081c0c1c:
 .L_081c0ce0:
 	ldr	r0, [pc, #236]
 	movs	r1, #7
-	bl	sub_081c2158
+	bl	MusicPlayer_FadeOut
 	ldrb	r3, [r5, #0]
 	adds	r3, #1
 	strb	r3, [r5, #0]
@@ -114,7 +106,7 @@ Func_081c0c1c:
 	ldr	r0, [pc, #220]
 	movs	r1, #3
 	strh	r7, [r5, #6]
-	bl	sub_081c2158
+	bl	MusicPlayer_FadeOut
 	strh	r7, [r5, #10]
 	ldr	r0, [pc, #212]
 	b.n	.L_081c0d1c
@@ -128,7 +120,7 @@ Func_081c0c1c:
 	strh	r7, [r3, #10]
 .L_081c0d1c:
 	movs	r1, #3
-	bl	sub_081c2158
+	bl	MusicPlayer_FadeOut
 	b.n	.L_081c0e2c
 .L_081c0d24:
 	movs	r3, #175
@@ -166,7 +158,7 @@ Func_081c0c1c:
 	lsls	r3, r3, #2
 	ldr	r0, [r1, r3]
 	ldr	r1, [r7, r4]
-	bl	sub_081c26f4
+	bl	MusicPlayer_StartSong
 	ldr	r3, [pc, #108]
 	strh	r6, [r3, r5]
 	b.n	.L_081c0e2c
@@ -176,14 +168,14 @@ Func_081c0c1c:
 	movs	r2, #0
 	ldr	r0, [pc, #88]
 	movs	r1, #255
-	bl	sub_081c2f68
+	bl	MusicPlayer_SetVolume
 	ldr	r3, [pc, #108]
 	lsls	r0, r6, #16
 	strh	r7, [r3, #0]
 	ldr	r3, [pc, #108]
 	lsrs	r0, r0, #16
 	strh	r7, [r3, #0]
-	bl	sub_081c1fc0
+	bl	Audio_PlaySound
 	ldr	r2, [pc, #100]
 	movs	r3, #10
 	b.n	.L_081c0e0e
@@ -198,10 +190,10 @@ Func_081c0c1c:
 	strh	r6, [r2, #0]
 	adds	r0, r6, #0
 	bl	.L_081c0cac
-	bl	sub_08013b30
+	bl	0x08013b30
 	lsls	r0, r6, #16
 	lsrs	r0, r0, #16
-	bl	sub_081c1fc0
+	bl	Audio_PlaySound
 	movs	r3, #128
 	lsls	r3, r3, #5
 	ands	r3, r5

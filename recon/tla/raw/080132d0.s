@@ -1,12 +1,11 @@
 .syntax unified
 	.thumb
-	.set sub_08013300, 0x08013300
 	.global Func_080132d0
 	.thumb_func
 Func_080132d0:
 	push	{lr}
 	ldr	r0, [pc, #32]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	ldr	r4, [pc, #28]
 	movs	r3, #128
 	movs	r2, #132

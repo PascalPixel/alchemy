@@ -6,12 +6,7 @@
 @ an add rd, pc address form; both load constants one ldr at a time.
 @ credit: handwritten — Thumb stack-copy loaders of the colour-buffer fade kernels
 .syntax unified
-	.set ColorBuffer_ScaleThreeQuartersKernel, 0x08001a14
-	.set ColorBuffer_HalveKernel, 0x08001ad4
-	.set ColorBuffer_DarkenKernel, 0x08001b54
-	.set ColorBuffer_BrightenKernel, 0x08001c08
 	.thumb
-	.set AlchemyLoadAddress, 0x08001c90
 	.global ColorBuffer_ScaleThreeQuarters
 	.thumb_func
 ColorBuffer_ScaleThreeQuarters:
@@ -26,7 +21,7 @@ ColorBuffer_ScaleThreeQuarters:
 	add	sp, #192
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_ScaleThreeQuartersKernel
+	.4byte	ColorBuffer_ScaleThreeQuartersKernelCode
 	.4byte	0x84000030
 	.global ColorBuffer_Halve
 	.thumb_func
@@ -42,7 +37,7 @@ ColorBuffer_Halve:
 	add	sp, #128
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_HalveKernel
+	.4byte	ColorBuffer_HalveKernelCode
 	.4byte	0x84000020
 	.global ColorBuffer_Brighten
 	.thumb_func
@@ -58,7 +53,7 @@ ColorBuffer_Brighten:
 	add	sp, #136
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_BrightenKernel
+	.4byte	ColorBuffer_BrightenKernelCode
 	.4byte	0x84000022
 	.global ColorBuffer_Darken
 	.thumb_func
@@ -74,5 +69,5 @@ ColorBuffer_Darken:
 	add	sp, #180
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_DarkenKernel
+	.4byte	ColorBuffer_DarkenKernelCode
 	.4byte	0x8400002d

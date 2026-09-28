@@ -14,8 +14,6 @@
 .syntax unified
 .text
 	.arm
-	.set AlchemyLoadAddress, 0x080f0024
-	.set	SentouKouka_TenkaiYomi, 0x080f00f8
 	.global SentouKouka_Tenkai
 SentouKouka_Tenkai:
 	push	{r5, r6, r7, r8, r9, sl, fp, lr}

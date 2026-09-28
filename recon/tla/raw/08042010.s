@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0803b094, 0x0803b094
-	.set sub_080416cc, 0x080416cc
 	.global UiText_DrawCharacterAtOffset
 	.global Func_08042010
 	.thumb_func
@@ -27,7 +25,7 @@ Func_08042010:
 	mov	r3, r8
 	movs	r1, #1
 	strh	r3, [r5, #0]
-	bl	sub_0803b094
+	bl	0x0803b094
 	ldrh	r3, [r5, #0]
 	movs	r4, #244
 	lsls	r4, r4, #4
@@ -75,7 +73,7 @@ Func_08042010:
 	mov	r4, r9
 	adds	r1, #8
 	ands	r3, r4
-	bl	sub_080416cc
+	bl	Func_080416cc
 .L_0804209e:
 	pop	{r3, r5, r6}
 	mov	r8, r3

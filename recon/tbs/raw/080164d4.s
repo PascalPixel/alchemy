@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801e260, 0x0801e260
 	.global UiWindow_ClearInteriorTiles
 	.global Func_080164d4
 	.thumb_func
@@ -37,7 +36,7 @@ Func_080164d4:
 	adds	r2, r6, #0
 	adds	r0, r5, #0
 	str	r4, [sp, #0]
-	bl	sub_0801e260
+	bl	UiWindow_ClearTileAttributesInRect
 	lsls	r3, r7, #5
 	adds	r3, r3, r5
 	ldr	r4, [sp, #0]

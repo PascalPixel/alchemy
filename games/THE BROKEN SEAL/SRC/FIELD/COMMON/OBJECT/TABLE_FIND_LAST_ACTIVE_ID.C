@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ebc[];
 
 /* object/table/ObjectTable_FindLastActiveId.c */
 struct State_0808b824 {
@@ -35,5 +36,5 @@ s32 ObjectTable_FindLastActiveId(void)
 /* object/table/ObjectTable_GetSlotAddress.c */
 void *ObjectTable_GetSlotAddress(u32 index)
 {
-    return *(u8 **)ADDR_03001EBC + index * 4 + 20;
+    return *(u8 **)((u32)&Data_03001ebc) + index * 4 + 20;
 }

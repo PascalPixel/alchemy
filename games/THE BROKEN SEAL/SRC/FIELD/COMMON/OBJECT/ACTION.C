@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 Data_03001e64[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -15,7 +16,7 @@ s32 Object_ResetAndClearField59(void *obj)
 
 u16 ArcTan2(s32, s32);
 void *Object_GetById(u32);
-void Object_SetCallback(void *, void *);
+void ObjectDispatch_InitializeFar(void *, void *);
 extern s16 gGameState[];
 extern const u8 ObjectMotion_ActionKind1Script[];
 extern const u8 ObjectMotion_ActionKind2Script[];
@@ -121,7 +122,7 @@ void ObjectMotion_SetActionCallback(struct ObjectRuntime *object, s32 kind)
     default:
         break;
     }
-    Object_SetCallback(object, (void *)kind);
+    ObjectDispatch_InitializeFar(object, (void *)kind);
 }
 
 #include "TYPES.H"
@@ -162,7 +163,7 @@ struct FacingEntry *Object_FindNearestFacingTarget(struct FacingEntry *self, s32
 
     found = NULL;
     best = 40;
-    entry = *(struct FacingEntry **)ADDR_03001E64;
+    entry = *(struct FacingEntry **)((u32)&Data_03001e64);
     for (cnt = 0; cnt < 64; cnt++, entry++) {
         if (entry->data == NULL)
             continue;

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e70[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -13,7 +14,7 @@ void Map_ApplyWorkOriginAndSpan(void)
     s32 second;
     s32 *p;
 
-    p = **(s32 ***)ADDR_03001E70;
+    p = **(s32 ***)((u32)&Data_03001e70);
     first = 0;
     second = 0;
     third = 0;

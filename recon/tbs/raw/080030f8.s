@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08003538, 0x08003538
-	.set sub_08003d04, 0x08003d04
-	.set sub_08003e10, 0x08003e10
-	.set sub_08004420, 0x08004420
-	.set sub_080048b0, 0x080048b0
-	.set sub_08005fcc, 0x08005fcc
-	.set sub_08006868, 0x08006868
-	.set sub_08006870, 0x08006870
-	.set sub_080072e4, 0x080072e4
-	.set sub_08007304, 0x08007304
 	.global WaitFrames
 	.global Func_080030f8
 	.thumb_func
@@ -62,14 +51,14 @@ Func_080030f8:
 	movs	r0, #200
 	strb	r3, [r5, #0]
 	lsls	r0, r0, #4
-	bl	sub_08004420
+	bl	Runtime_InvokeCallbacksByKey
 	movs	r3, #0
 	movs	r1, #128
 	strb	r3, [r5, #0]
 	lsls	r1, r1, #3
 	movs	r0, #52
-	bl	sub_080048b0
-	bl	sub_08003e10
+	bl	Runtime_AllocateHeapBlock
+	bl	Runtime_CopyAndCallRoutine
 	ldr	r3, [pc, #228]
 	mov	r1, fp
 	strb	r1, [r3, #0]
@@ -224,7 +213,7 @@ Func_080030f8:
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_0800329e
-	bl	sub_08003538
+	bl	Input_UpdateKeyRepeatAndDirection
 	ldr	r2, [pc, #28]
 	ldrb	r3, [r2, #0]
 	cmp	r3, #0
@@ -246,7 +235,7 @@ Func_080030f8:
 	movs	r2, #0
 	ldr	r3, [pc, #108]
 	strh	r2, [r3, #0]
-	bl	sub_08007304
+	bl	_call_via_r8
 .L_080032e2:
 	ldrb	r3, [r5, #0]
 .L_080032e4:
@@ -290,8 +279,8 @@ Func_080030f8:
 	cmp	r3, #0
 	beq.n	.L_08003322
 	movs	r0, #52
-	bl	sub_08002dd8
-	bl	sub_08003d04
+	bl	Runtime_ReleaseHeapBlock
+	bl	Graphics_ResetFrameState
 	ldr	r2, [pc, #32]
 	ldr	r3, [r2, #0]
 	adds	r3, #1
@@ -311,12 +300,12 @@ Func_080030f8:
 	ldr	r3, [r2, #0]
 	adds	r3, #1
 	str	r3, [r2, #0]
-	bl	sub_08003538
+	bl	Input_UpdateKeyRepeatAndDirection
 	ldr	r3, [pc, #180]
 	ldrh	r3, [r3, #0]
 	cmp	r3, #0
 	beq.n	.L_08003386
-	bl	sub_08005fcc
+	bl	SerialRuntime_PollStatus
 	ldr	r2, [pc, #172]
 	ldrb	r3, [r2, #0]
 	cmp	r3, #0
@@ -380,9 +369,9 @@ Func_080030f8:
 	ldr	r5, [pc, #88]
 	lsls	r3, r3, #8
 	strh	r3, [r5, #0]
-	bl	sub_08006868
+	bl	Func_08006868
 	svc	3
-	bl	sub_08006870
+	bl	Func_08006870
 	ldr	r3, [pc, #76]
 	strh	r3, [r5, #0]
 	ldr	r3, [pc, #28]
@@ -464,7 +453,7 @@ Func_080030f8:
 	movs	r2, #0
 	ldr	r3, [pc, #112]
 	strh	r2, [r3, #0]
-	bl	sub_080072e4
+	bl	_call_via_r0
 .L_080034b2:
 	ldr	r3, [sp, #0]
 	ldr	r1, [sp, #4]

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void UiGlyph_DecodeWithHeapRoutines(struct State_0801a4c0 *, u32);
 
 struct State_0801a4c0 {
     u8 filler0[0x600];

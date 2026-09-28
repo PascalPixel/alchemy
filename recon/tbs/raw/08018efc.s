@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004080, 0x08004080
-	.set sub_08015e8c, 0x08015e8c
-	.set sub_08016584, 0x08016584
 	.global Func_08018efc
 	.thumb_func
 Func_08018efc:
@@ -27,7 +24,7 @@ Func_08018efc:
 	ldr	r2, [sp, #24]
 	cmp	r2, #1
 	bne.n	.L_08018fcc
-	bl	sub_08015e8c
+	bl	RenderOutput_AcquireFree
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_08018ff0
@@ -48,7 +45,7 @@ Func_08018efc:
 	cmp	r3, #99
 	bne.n	.L_08018f5a
 	str	r4, [sp, #0]
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	strh	r0, [r6, #0]
 	ldr	r4, [sp, #0]
 .L_08018f5a:
@@ -102,7 +99,7 @@ Func_08018efc:
 .L_08018fc2:
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sub_08016584
+	bl	RenderOutput_AppendToList
 	b.n	.L_08018ff0
 .L_08018fcc:
 	cmp	r1, #255

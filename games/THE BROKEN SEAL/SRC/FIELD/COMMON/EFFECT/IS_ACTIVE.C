@@ -1,4 +1,5 @@
 #include "EFFECT_RUNTIME.H"
+extern u8 Data_03001ebc[];
 
 u32 EffectRuntime_IsActive(void)
 {

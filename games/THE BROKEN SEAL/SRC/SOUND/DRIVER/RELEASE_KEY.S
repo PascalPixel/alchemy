@@ -7,7 +7,6 @@
 @ credit: library — TBS/TLA common sound driver end-of-tie command routine
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080fa16c
 	.global MusicTrack_ReleaseKey
 	.thumb_func
 MusicTrack_ReleaseKey:

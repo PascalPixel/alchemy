@@ -11,7 +11,6 @@
 @ credit: library — TBS/TLA common relocated ARM Q16 dot-product kernel
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08017ce8
 	.global Math_DotProductQ16
 	.thumb_func
 Math_DotProductQ16:

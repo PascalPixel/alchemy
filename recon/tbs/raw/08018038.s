@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08017e88, 0x08017e88
-	.set sub_080048b0, 0x080048b0
-	.set sub_08007308, 0x08007308
-	.set sub_08017dd4, 0x08017dd4
-	.set sub_080196c4, 0x080196c4
-	.set sub_080198dc, 0x080198dc
-	.set sub_08019944, 0x08019944
-	.set sub_08019bac, 0x08019bac
-	.set sub_08077008, 0x08077008
-	.set sub_0808a5d0, 0x0808a5d0
 	.global UiText_BuildRenderEntries
 	.global Func_08018038
 	.thumb_func
@@ -65,7 +54,7 @@ Func_08018038:
 	ldr	r5, [pc, #232]
 	movs	r0, #50
 	adds	r1, r5, #0
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #132
 	lsrs	r5, r5, #2
 	lsls	r2, r2, #24
@@ -83,13 +72,13 @@ Func_08018038:
 	mov	r0, sl
 	ldr	r1, [sp, #48]
 	mov	r9, r3
-	bl	sub_08019bac
+	bl	UiText_LookupMessage
 	mov	r3, sp
 	adds	r3, #84
 	str	r3, [sp, #12]
 .L_080180c8:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	adds	r5, r7, #0
 	adds	r7, r0, #0
 	cmp	r7, #255
@@ -136,7 +125,7 @@ Func_08018038:
 	cmp	r7, #20
 	bhi.n	.L_08018150
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	movs	r0, #3
 	b.n	.L_08018156
 .L_08018128:
@@ -160,7 +149,7 @@ Func_08018038:
 	b.n	.L_08018156
 .L_08018146:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	movs	r0, #2
 	b.n	.L_08018156
 .L_08018150:
@@ -170,11 +159,11 @@ Func_08018038:
 	movs	r0, #6
 .L_08018156:
 	mov	r1, fp
-	bl	sub_08019944
+	bl	UiRender_LookupNamedValue
 	b.n	.L_08018614
 .L_0801815e:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	b.n	.L_08018614
 .L_08018166:
 	movs	r2, #0
@@ -424,7 +413,7 @@ Func_08018038:
 	ands	r6, r0
 	strh	r7, [r3, r5]
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	ldr	r1, [pc, #572]
 	lsls	r3, r6, #1
 	adds	r0, r0, r1
@@ -437,7 +426,7 @@ Func_08018038:
 .L_08018344:
 	mov	r1, fp
 	movs	r0, #5
-	bl	sub_08019944
+	bl	UiRender_LookupNamedValue
 	adds	r1, r0, #0
 	adds	r3, r1, #0
 	cmp	r1, #0
@@ -454,7 +443,7 @@ Func_08018038:
 	add	r5, sp, #68
 	adds	r0, r5, #0
 	movs	r2, #0
-	bl	sub_08017dd4
+	bl	UiText_FormatNumber
 	subs	r4, r0, r5
 	cmp	r4, #16
 	bne.n	.L_08018374
@@ -490,17 +479,17 @@ Func_08018038:
 	b.n	.L_08018614
 .L_080183a6:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	mov	r1, fp
 	subs	r5, r0, #1
 	movs	r0, #3
-	bl	sub_08019944
+	bl	UiRender_LookupNamedValue
 	adds	r2, r0, #0
 	ldr	r0, [pc, #440]
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	sub_080196c4
+	bl	UiText_DecodeMessage
 	ldr	r3, [sp, #24]
 	str	r3, [sp, #4]
 	add	r3, sp, #52
@@ -513,11 +502,11 @@ Func_08018038:
 	b.n	.L_08018516
 .L_080183d8:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	mov	r1, fp
 	subs	r5, r0, #1
 	movs	r0, #2
-	bl	sub_08019944
+	bl	UiRender_LookupNamedValue
 	adds	r2, r0, #0
 	ldr	r0, [pc, #384]
 	ands	r2, r0
@@ -525,7 +514,7 @@ Func_08018038:
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	sub_080196c4
+	bl	UiText_DecodeMessage
 	ldr	r1, [sp, #24]
 	add	r3, sp, #52
 	str	r1, [sp, #4]
@@ -539,13 +528,13 @@ Func_08018038:
 .L_0801840e:
 	mov	r1, fp
 	movs	r0, #4
-	bl	sub_08019944
+	bl	UiRender_LookupNamedValue
 	adds	r2, r0, #0
 	ldr	r0, [pc, #352]
 	ldr	r1, [sp, #12]
 	adds	r0, r2, r0
 	movs	r2, #24
-	bl	sub_080196c4
+	bl	UiText_DecodeMessage
 	ldr	r1, [sp, #12]
 	ldrh	r2, [r1, #0]
 	adds	r3, r2, #0
@@ -568,14 +557,14 @@ Func_08018038:
 .L_08018448:
 	mov	r1, fp
 	movs	r0, #6
-	bl	sub_08019944
+	bl	UiRender_LookupNamedValue
 	movs	r1, #1
-	bl	sub_0808a5d0
+	bl	BattleFx_FindConditionResourceFar
 	ldr	r3, [pc, #296]
 	ldr	r1, [sp, #12]
 	adds	r0, r0, r3
 	movs	r2, #24
-	bl	sub_080196c4
+	bl	UiText_DecodeMessage
 	ldr	r1, [sp, #12]
 	ldrh	r2, [r1, #0]
 	adds	r3, r2, #0
@@ -601,7 +590,7 @@ Func_08018038:
 	lsls	r0, r0, #1
 	adds	r3, r3, r0
 	ldr	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	add	r1, sp, #84
 	adds	r2, r1, #0
 	movs	r4, #0
@@ -616,12 +605,12 @@ Func_08018038:
 	b.n	.L_08018506
 .L_080184aa:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	mov	r1, fp
 	subs	r5, r0, #1
 	movs	r0, #1
-	bl	sub_08019944
-	bl	sub_08077008
+	bl	UiRender_LookupNamedValue
+	bl	Owner_GetStateFar
 	add	r1, sp, #84
 	adds	r2, r1, #0
 	movs	r4, #0
@@ -644,10 +633,10 @@ Func_08018038:
 	b.n	.L_08018516
 .L_080184e4:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	subs	r2, r0, #1
 	adds	r0, r2, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	add	r1, sp, #84
 	adds	r2, r1, #0
 	movs	r4, #0
@@ -669,13 +658,13 @@ Func_08018038:
 	movs	r0, #0
 	mov	r3, r8
 .L_08018516:
-	bl	sub_08017e88
+	bl	UiText_AppendArticleName
 .L_0801851a:
 	adds	r6, r0, #0
 	b.n	.L_08018614
 .L_0801851e:
 	mov	r0, sl
-	bl	sub_08007308
+	bl	_call_via_r9
 	subs	r0, #1
 	lsls	r0, r0, #1
 	ldr	r1, [pc, #64]
@@ -822,7 +811,7 @@ Func_08018038:
 	adds	r2, r0, r1
 	strh	r3, [r2, #0]
 	movs	r0, #50
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r5, [pc, #36]
 	ldr	r2, [sp, #44]
 	add	r0, sp, #32
@@ -833,7 +822,7 @@ Func_08018038:
 	mov	r1, fp
 	cmp	r1, #0
 	beq.n	.L_08018678
-	bl	sub_080198dc
+	bl	UiWork_ClearValueNameTables
 	b.n	.L_08018678
 	movs	r0, r0
 	.4byte 0x00000000

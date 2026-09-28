@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014d00, 0x08014d00
 	.global Func_080d73e0
 	.thumb_func
 Func_080d73e0:
@@ -9,7 +8,7 @@ Func_080d73e0:
 	lsls	r1, r1, #5
 	adds	r1, #136
 	movs	r0, #120
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r3, #252
 	lsls	r3, r3, #5
 	adds	r2, r0, r3

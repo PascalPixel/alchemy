@@ -2,6 +2,8 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001b10[];
+extern u8 Data_03001e70[];
 
 /* map/shared/Map_RenderAnimatedTileFrame.c */
 struct MapBase {
@@ -22,7 +24,7 @@ void Map_RenderAnimatedTileFrame(u8 *object, u32 position)
     u8 offset_mask;
 
     destination = (u16 *)(0x06010000
-        + ((struct MapBase *)ADDR_03001B10)[object[0x1C]].offset);
+        + ((struct MapBase *)((u32)&Data_03001b10))[object[0x1C]].offset);
     count = (object[0x20] * object[0x21]) / 64;
     row = 0;
 
@@ -115,7 +117,7 @@ struct Thing {
 
 s32 Map_GetScreenRelativePosition(struct Thing *obj, s32 *out)
 {
-    u8 *state = *(u8 **)ADDR_03001E70;
+    u8 *state = *(u8 **)((u32)&Data_03001e70);
     s32 *org = (s32 *)(state + 228);
     s32 a;
     s32 b;

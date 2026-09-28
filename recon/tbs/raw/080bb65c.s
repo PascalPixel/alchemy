@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002322, 0x08002322
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800393c, 0x0800393c
-	.set sub_080039fc, 0x080039fc
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080040b4, 0x080040b4
-	.set sub_080040d0, 0x080040d0
-	.set sub_08015048, 0x08015048
-	.set sub_080f9010, 0x080f9010
 	.global BattlePresentation_WaitForAdvance
 	.global Func_080bb65c
 	.thumb_func
@@ -26,14 +16,14 @@ Func_080bb65c:
 	b.n	.L_080bb674
 .L_080bb66e:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080bb674:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	beq.n	.L_080bb66e
 	movs	r0, #128
 	add	r7, sp, #4
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	movs	r1, #0
 	str	r1, [sp, #0]
 	mov	fp, r0
@@ -56,10 +46,10 @@ Func_080bb65c:
 	movs	r1, #4
 	mov	r8, r2
 	mov	r9, r3
-	bl	sub_080039fc
+	bl	QueueIoWriteDelay10
 	adds	r0, r6, #0
 	movs	r1, #16
-	bl	sub_0800393c
+	bl	QueueIoWriteDelay6
 	movs	r2, #16
 	ldr	r3, [pc, #100]
 	strh	r2, [r3, #0]
@@ -70,7 +60,7 @@ Func_080bb65c:
 	str	r3, [r7, #8]
 	adds	r1, r5, #0
 	mov	r0, fp
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #48]
 	ands	r0, r3
@@ -109,7 +99,7 @@ Func_080bb65c:
 .L_080bb728:
 	ldr	r0, [r3, #0]
 	lsls	r0, r0, #12
-	bl	sub_08002322
+	bl	Trig_Sin
 	cmp	r0, #0
 	bge.n	.L_080bb738
 	ldr	r1, [pc, #120]
@@ -128,7 +118,7 @@ Func_080bb65c:
 	strb	r3, [r7, #4]
 	movs	r1, #240
 	adds	r0, r7, #0
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r1, [pc, #92]
 	ldr	r3, [r1, #0]
 	movs	r2, #2
@@ -150,18 +140,18 @@ Func_080bb65c:
 	bne.n	.L_080bb78a
 .L_080bb77c:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [sp, #0]
 	adds	r1, #1
 	str	r1, [sp, #0]
 	b.n	.L_080bb68a
 .L_080bb78a:
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r0, fp
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

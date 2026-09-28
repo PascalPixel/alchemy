@@ -1,28 +1,22 @@
 .syntax unified
 	.thumb
-	.set sub_08016d18, 0x08016d18
-	.set sub_08038040, 0x08038040
-	.set sub_080ad2e8, 0x080ad2e8
-	.set sub_080cded4, 0x080cded4
-	.set sub_080d22a8, 0x080d22a8
-	.set sub_080d2350, 0x080d2350
 	.global Func_080d2cc4
 	.thumb_func
 Func_080d2cc4:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	sub_080d22a8
+	bl	0x080d22a8
 	movs	r0, #0
-	bl	sub_080cded4
+	bl	Func_080cded4
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	sub_08038040
+	bl	0x08038040
 	movs	r0, #161
 	lsls	r0, r0, #1
-	bl	sub_08016d18
-	bl	sub_080d2350
+	bl	0x08016d18
+	bl	0x080d2350
 	movs	r0, #136
-	bl	sub_080ad2e8
+	bl	Func_080ad2e8
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1

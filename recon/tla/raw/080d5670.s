@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08020090, 0x08020090
-	.set sub_08020148, 0x08020148
-	.set sub_08020150, 0x08020150
-	.set sub_080cad84, 0x080cad84
-	.set sub_081c0010, 0x081c0010
 	.global Func_080d5670
 	.thumb_func
 Func_080d5670:
@@ -109,7 +104,7 @@ Func_080d5670:
 	lsls	r3, r3, #2
 	add	r3, r8
 	ldr	r0, [r3, #0]
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r5, r0, #0
 	adds	r0, #8
 	ldr	r7, [r5, #80]
@@ -127,7 +122,7 @@ Func_080d5670:
 	cmp	r6, #0
 	beq.n	.L_080d57dc
 	movs	r0, #152
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r5, #52]
@@ -140,14 +135,14 @@ Func_080d5670:
 	adds	r0, r5, #0
 	movs	r1, #2
 	str	r6, [r5, #104]
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r1, [r6, #4]
 	ldr	r2, [r6, #8]
 	ldr	r3, [r6, #12]
 	adds	r0, r5, #0
-	bl	sub_08020148
+	bl	Object_SetPosition
 	adds	r0, r5, #0
-	bl	sub_08020150
+	bl	Object_CommitPosition
 	adds	r3, r5, #0
 	adds	r3, #85
 	ldrb	r2, [r3, #0]

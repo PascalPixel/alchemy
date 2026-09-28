@@ -8,7 +8,6 @@
 @ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, bit commands
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x081a03c0
 	.global SentouKouka_TenkaiCommands2
 SentouKouka_TenkaiCommands2:
 .L_081a03c0:

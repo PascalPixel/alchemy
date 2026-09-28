@@ -5,6 +5,14 @@
 #include "TEXT_RENDER_RUNTIME.H"
 #include "RENDER_INPUT.H"
 #include "SOUND_IDS.H"
+s32 GameFlag_TestFar(s32);
+s32 Math_Mod(s32, s32);
+void Shop_SetCursorFar(void *, s32, s32, s32);
+void Menu_InitializeSelectedWorkspace(void);
+void RenderResource_LoadFrame(s32, s32, s32);
+void Ui_ApplyTableOffsetToPair(void *);
+void UiWork_Finalize(void *, s32);
+void Runtime_ScheduleCallbackAndReleaseBlock20A(void);
 
 /* menu/run_workspace_selection_loop.c */
 /* Owner-local field access until this runtime workspace layout is recovered
@@ -17,7 +25,7 @@ extern s8 Menu_WorkspaceIconFrames[];
 void *Menu_CreateWorkspaceWindows(void);
 void UiIcon_PrepareObjectFar(void *);
 
-void *RenderOutput_CreatePair(s32, void *, s32, s32);
+void *RenderResource_CreatePair(s32, void *, s32, s32);
 
 s32 Menu_RunWorkspaceSelectionLoop(void)
 {
@@ -44,14 +52,14 @@ s32 Menu_RunWorkspaceSelectionLoop(void)
     var_fp_21 = 3;
     temp_r0_22 = GameFlag_TestFar(0x17E);
     sp4 = 0;
-    Menu_PrepareWorkspacePage();
+    Menu_InitializeSelectedWorkspace();
     temp_sl_29 = gSelectionWork;
     sp10 = Menu_CreateWorkspaceWindows();
     var_r4_35 = -0x18;
     if (gDebugMode != 0) {
         var_r4_35 = -0x10;
     }
-    sp8 = (s32)RenderOutput_CreatePair(6, sp10, 0x28, var_r4_35);
+    sp8 = (s32)RenderResource_CreatePair(6, sp10, 0x28, var_r4_35);
     WaitFrames(1);
     var_r8_51 = FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574);
     if (temp_r0_22 != 0) {
@@ -79,7 +87,7 @@ loop_6:
                 if (i != FIELD_AT_OFFSET(temp_sl_29, u16 *, 0x574)) {
                     var_r2_101 = 1;
                 }
-                RenderOutput_LoadFrame(*(s8 *)(j + (s32)tbl), temp_e, var_r2_101);
+                RenderResource_LoadFrame(*(s8 *)(j + (s32)tbl), temp_e, var_r2_101);
                 i++;
                 j++;
             } while (i < var_fp_21);

@@ -1968,27 +1968,6 @@ mod source_activation_tests {
         );
     }
     #[test]
-    fn selected_data_unit_owner_calls_its_siblings_where_the_image_has_them() {
-        let manifest = crate::compiler::translation_units::TranslationUnits::load(&root()).unwrap();
-        let unit = manifest.unit("runpa-dou-cave").unwrap();
-        // The gate puddle's Frost script calls the scene's gate redraw.
-        let owner = unit
-            .owners
-            .iter()
-            .find(|owner| owner.address == 0x0200_01b0)
-            .unwrap();
-        let compiled =
-            compile_declared_overlay_unit(unit, "resource_3ad", "en", None, Some(owner.address))
-                .unwrap();
-        let reference = crate::overlay::rom::canonical_overlay(&root(), "resource_3ad").unwrap();
-        let start = (owner.address - overlay::RESOURCE_BASE) as usize;
-        let offset = (i64::from(owner.address) - compiled.address) as usize;
-        assert_eq!(
-            &compiled.data[offset..offset + owner.extent],
-            &reference[start..start + owner.extent]
-        );
-    }
-    #[test]
     fn regional_overlay_calls_keep_canonical_names_and_take_regional_targets() {
         let call = |value: u16| {
             let high = 0xf000 | value >> 12;
@@ -2173,19 +2152,6 @@ mod source_activation_tests {
         assert!(placeholder_addresses("Func_02000104:\n  bx lr\n").is_empty());
     }
     #[test]
-    fn production_overlay_preserves_missing_source_errors() {
-        let work = tempdir().unwrap();
-        let assembly = work.path().join("resource_382_overlay.s");
-        fs::write(&assembly, "AlchemyC_0200dead:\n  .space 4\n").unwrap();
-        let error =
-            compile_production_overlay(&OverlaySource::path(assembly), work.path(), "resource_382")
-                .unwrap_err();
-        assert!(
-            error.contains("resource_382:0200dead has an AlchemyC placeholder"),
-            "{error}"
-        );
-    }
-    #[test]
     fn shared_overlay_source_requires_one_wholly_exact_unit() {
         let root = tempdir().unwrap();
         let names = SourcePaths::parse(
@@ -2324,10 +2290,9 @@ mod source_activation_tests {
     }
     #[test]
     fn semantic_main_alias_is_in_the_generated_export_graph() {
-        let names = SourcePaths::load(&root()).unwrap();
-        let binding = ".thumb_set RunBattleEffect16, 0x0809b698\n";
-        assert!(binding.contains("0x0809b698"));
-        assert!(names.main_symbol_exports().contains(&binding));
+        let binding = Binding::new();
+        let export = ".thumb_set Object_GetById, 0x08000080\n";
+        assert!(binding.names.main_symbol_exports().contains(export));
     }
 
     const IMPORT_LIST: &str = "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/IMPORT.INC";

@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080aec04, 0x080aec04
-	.set sub_080b0288, 0x080b0288
-	.set sub_080b02d4, 0x080b02d4
 	.global Func_080af4e4
 	.thumb_func
 Func_080af4e4:
@@ -15,7 +11,7 @@ Func_080af4e4:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #4
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r5, #42
 	mov	r9, r0
 	adds	r5, #255
@@ -24,7 +20,7 @@ Func_080af4e4:
 	add	r5, r9
 	mov	r8, r0
 	ldrb	r0, [r5, #0]
-	bl	sub_080b0288
+	bl	Owner_GetRecordStride84
 	ldrb	r3, [r5, #0]
 	movs	r4, #192
 	mov	fp, r0
@@ -179,7 +175,7 @@ Func_080af4e4:
 	cmp	r3, #0
 	beq.n	.L_080af694
 	ldrh	r0, [r0, r1]
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r3, [r0, #12]
 	cmp	r3, #3
 	bne.n	.L_080af694
@@ -300,7 +296,7 @@ Func_080af4e4:
 	push	{r5, r6, r7, lr}
 	adds	r6, r1, #0
 	adds	r7, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r3, #252
 	lsls	r3, r3, #6
 	adds	r3, #255
@@ -362,7 +358,7 @@ Func_080af4e4:
 	b.n	.L_080af790
 .L_080af76c:
 	adds	r0, r7, #0
-	bl	sub_080b02d4
+	bl	0x080b02d4
 	movs	r3, #88
 	ldrh	r3, [r5, r3]
 	movs	r1, #0

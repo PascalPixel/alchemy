@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080ad3f8, 0x080ad3f8
-	.set sub_080aec04, 0x080aec04
-	.set sub_080aec1c, 0x080aec1c
-	.set sub_080b02d4, 0x080b02d4
 	.global Func_080aef34
 	.thumb_func
 Func_080aef34:
@@ -16,7 +11,7 @@ Func_080aef34:
 	adds	r5, r1, #0
 	mov	r8, r0
 	sub	sp, #4
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	lsls	r5, r5, #1
 	mov	r9, r5
 	mov	r3, r9
@@ -25,7 +20,7 @@ Func_080aef34:
 	ldrh	r5, [r7, r3]
 	mov	r0, r8
 	adds	r1, r5, #0
-	bl	sub_080aec1c
+	bl	0x080aec1c
 	cmp	r0, #0
 	bne.n	.L_080aef66
 	movs	r0, #1
@@ -41,7 +36,7 @@ Func_080aef34:
 	cmp	r3, #0
 	bne.n	.L_080aeffc
 	adds	r0, r5, #0
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r2, [r0, #2]
 	cmp	r2, #6
 	beq.n	.L_080aefda
@@ -63,7 +58,7 @@ Func_080aef34:
 	beq.n	.L_080aef8c
 	ldrh	r0, [r5, r7]
 	str	r2, [sp, #0]
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r3, [r0, #2]
 	ldr	r2, [sp, #0]
 	cmp	r3, r2
@@ -75,7 +70,7 @@ Func_080aef34:
 	adds	r6, r3, #0
 	adds	r6, #216
 	ldrh	r0, [r7, r6]
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r2, [r0, #3]
 	movs	r3, #2
 	ands	r3, r2
@@ -99,9 +94,9 @@ Func_080aef34:
 	mov	r0, r8
 	orrs	r2, r1
 	strh	r2, [r7, r3]
-	bl	sub_080b02d4
+	bl	0x080b02d4
 	mov	r0, r8
-	bl	sub_080ad3f8
+	bl	Func_080ad3f8
 	movs	r0, #0
 	b.n	.L_080aeffc
 	movs	r0, r0

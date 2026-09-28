@@ -11,8 +11,6 @@
 @ credit: library — TBS/TLA common IWRAM runtime fill, square root and bit-run helpers
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08000810
-	.set AlchemyRunAddress, 0x03000258
 AlchemyUncredited_08000810:
 	bx	pc
 	.2byte	0x0200

@@ -12,7 +12,6 @@
 @ rewritten at run time, carry no credit.
 @ credit: handwritten — relocated ARM kernels 11 and 12 of the battle-effect bank
 .syntax unified
-	.set AlchemyLoadAddress, 0x0813b7a0
 	.thumb
 	.global Func_0813b7a0
 	.thumb_func

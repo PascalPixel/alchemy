@@ -1,29 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002304, 0x08002304
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_08002f40, 0x08002f40
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003bf8, 0x08003bf8
-	.set sub_08003c3c, 0x08003c3c
-	.set sub_08003ce0, 0x08003ce0
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_0800403c, 0x0800403c
-	.set sub_08004080, 0x08004080
-	.set sub_080040e8, 0x080040e8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_08004760, 0x08004760
-	.set sub_0800479c, 0x0800479c
-	.set sub_080048b0, 0x080048b0
-	.set sub_080048f4, 0x080048f4
-	.set sub_080053e8, 0x080053e8
-	.set sub_080f24a0, 0x080f24a0
-	.set sub_080f377c, 0x080f377c
-	.set sub_080f3824, 0x080f3824
-	.set sub_080f3858, 0x080f3858
 	.global Func_080f26ec
 	.thumb_func
 Func_080f26ec:
@@ -43,24 +19,24 @@ Func_080f26ec:
 	movs	r1, #224
 	movs	r0, #43
 	str	r3, [sp, #4]
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	mov	r8, r0
-	bl	sub_08004760
-	bl	sub_0800403c
+	bl	Bg0_ClearTilemap
+	bl	Resource_InitializeTable
 	movs	r0, #1
-	bl	sub_080030f8
-	bl	sub_080040e8
+	bl	WaitFrames
+	bl	Scheduler_ResetTaskTable
 	add	r1, sp, #8
 	ldrb	r1, [r1, #0]
 	ldr	r3, [pc, #292]
 	adds	r2, r1, #0
 	strb	r1, [r3, #0]
 	strb	r2, [r5, #0]
-	bl	sub_080f24a0
-	bl	sub_080f377c
+	bl	Unnamed_080f24a0
+	bl	TitlePalette_InitializeBuffers
 	movs	r1, #0
 	movs	r0, #2
-	bl	sub_080f3824
+	bl	Graphics_TransformSmallPalette
 	ldr	r1, [pc, #272]
 	ldr	r0, [pc, #276]
 	ldrh	r3, [r0, #0]
@@ -87,11 +63,11 @@ Func_080f26ec:
 .L_080f276e:
 	strh	r4, [r0, #0]
 	movs	r0, #60
-	bl	sub_080f3858
+	bl	Graphics_UpdatePaletteInterpolation
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #228]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r0, [pc, #224]
 	movs	r1, #18
 	movs	r3, #1
@@ -131,7 +107,7 @@ Func_080f26ec:
 	ldr	r5, [r1, #12]
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	sub_080022fc
+	bl	__modsi3
 	cmp	r0, #0
 	bne.n	.L_080f280a
 	mov	r0, sl
@@ -220,7 +196,7 @@ Func_080f26ec:
 	strh	r2, [r3, #0]
 	subs	r0, r0, r1
 	movs	r1, #160
-	bl	sub_080022fc
+	bl	__modsi3
 	lsls	r1, r0, #4
 	subs	r1, r1, r0
 	ldr	r2, [pc, #52]
@@ -295,14 +271,14 @@ Func_080f26ec:
 	cmp	r3, r1
 	bne.n	.L_080f29bc
 	movs	r0, #1
-	bl	sub_08003bf8
+	bl	Blend_SetBrightenTarget16
 	ldr	r0, [pc, #84]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	ldr	r3, [pc, #80]
 	mov	r2, r9
 	strb	r2, [r3, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #72]
 	ldr	r3, [pc, #52]
 	strh	r3, [r2, #0]
@@ -313,7 +289,7 @@ Func_080f26ec:
 	mov	r0, sl
 	strh	r3, [r0, #10]
 	ldr	r0, [pc, #60]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	movs	r1, #160
 	adds	r4, r0, #0
 	ldr	r3, [pc, #52]
@@ -343,7 +319,7 @@ Func_080f26ec:
 	.2byte 0x0201
 .L_080f29a0:
 	adds	r1, r5, #0
-	bl	sub_080053e8
+	bl	Resource_DecodeByteLz
 	ldr	r3, [pc, #200]
 	adds	r0, r5, #0
 	ldr	r1, [pc, #200]
@@ -357,7 +333,7 @@ Func_080f26ec:
 	b.n	.L_080f29ea
 .L_080f29bc:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080f278e
 .L_080f29c4:
 	movs	r6, #0
@@ -383,29 +359,29 @@ Func_080f26ec:
 .L_080f29ea:
 	cmp	r7, #19
 	bls.n	.L_080f29c4
-	bl	sub_0800479c
-	bl	sub_08004760
+	bl	Ui_LoadWindowGraphics
+	bl	Bg0_ClearTilemap
 	ldr	r1, [sp, #12]
 	cmp	r1, #0
 	beq.n	.L_080f2a40
 	movs	r1, #128
 	lsls	r1, r1, #3
 	movs	r0, #14
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [pc, #120]
-	bl	sub_080053e8
+	bl	Resource_DecodeByteLz
 	mov	r5, r8
 	adds	r5, #128
 	movs	r7, #0
 .L_080f2a16:
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	lsls	r2, r7, #8
 	lsrs	r2, r2, #1
 	adds	r2, r6, r2
 	movs	r1, #128
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	adds	r2, r5, #0
 	movs	r3, #0
 	stmia	r2!, {r3}
@@ -417,11 +393,11 @@ Func_080f26ec:
 	cmp	r7, #4
 	bls.n	.L_080f2a16
 	movs	r0, #14
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 .L_080f2a40:
 	movs	r0, #30
-	bl	sub_08003c3c
-	bl	sub_08003ce0
+	bl	Blend_SetBrightenTarget0
+	bl	Blend_WaitForTransition
 	ldr	r3, [pc, #32]
 	movs	r2, #128
 	lsls	r2, r2, #19
@@ -479,7 +455,7 @@ Func_080f26ec:
 	adds	r0, r5, #0
 	movs	r1, #0
 	str	r4, [sp, #0]
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r4, [sp, #0]
 	adds	r6, #1
 	adds	r4, #32
@@ -488,7 +464,7 @@ Func_080f26ec:
 	bls.n	.L_080f2aa8
 	movs	r1, #60
 	adds	r0, r7, #0
-	bl	sub_08002304
+	bl	__umodsi3
 	ldr	r2, [pc, #16]
 	b.n	.L_080f2af0
 	movs	r0, r0
@@ -517,7 +493,7 @@ Func_080f26ec:
 	bne.n	.L_080f2a66
 	movs	r0, #1
 	adds	r7, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r7, r9
 	bcc.n	.L_080f2a96
 .L_080f2b1c:
@@ -534,14 +510,14 @@ Func_080f26ec:
 	.2byte 0x0300
 .L_080f2b38:
 	strb	r1, [r3, #0]
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r2, [pc, #20]
 	ldr	r3, [pc, #20]
 	strh	r2, [r3, #0]
 	adds	r3, #2
 	strh	r2, [r3, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r0, [sp, #8]
 	add	sp, #20
 	b.n	.L_080f2b5c

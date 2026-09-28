@@ -38,3 +38,5 @@ Func_08015570:
 	stm	r0, {r1, r2, r3}
 	bx	lr
 	.4byte 0x080736b8
+	.global UiText_LookupMessageCodeSize
+	.set UiText_LookupMessageCodeSize, . - Func_08015570

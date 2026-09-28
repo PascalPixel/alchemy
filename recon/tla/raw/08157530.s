@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08020090, 0x08020090
-	.set sub_08020138, 0x08020138
-	.set sub_08020148, 0x08020148
-	.set sub_08118098, 0x08118098
 	.global Func_08157530
 	.thumb_func
 Func_08157530:
@@ -18,10 +13,10 @@ Func_08157530:
 	mov	r9, r3
 	adds	r6, r1, #0
 	mov	fp, r2
-	bl	sub_08118098
+	bl	0x08118098
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08118098
+	bl	0x08118098
 	ldr	r6, [r5, #0]
 	ldr	r0, [r0, #0]
 	ldr	r2, [r6, #8]
@@ -32,7 +27,7 @@ Func_08157530:
 	muls	r0, r3
 	movs	r1, #100
 	mov	sl, r2
-	bl	sub_08002054
+	bl	Math_Div
 	mov	r2, r8
 	ldr	r3, [r2, #16]
 	ldr	r2, [r6, #16]
@@ -42,7 +37,7 @@ Func_08157530:
 	muls	r0, r3
 	movs	r1, #100
 	mov	r8, r2
-	bl	sub_08002054
+	bl	Math_Div
 	add	sl, r5
 	add	r8, r0
 	asrs	r5, r5, #8
@@ -58,7 +53,7 @@ Func_08157530:
 	.2byte 0xf800
 	.2byte 0x4659
 	lsls	r0, r0, #8
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r3, r6, #0
 	movs	r1, #1
 	adds	r3, #88
@@ -76,15 +71,15 @@ Func_08157530:
 	str	r2, [r6, #68]
 	adds	r0, r6, #0
 	strb	r1, [r3, #0]
-	bl	sub_08020138
+	bl	Object_ResetMotion
 	adds	r0, r6, #0
 	mov	r1, sl
 	movs	r2, #0
 	mov	r3, r8
-	bl	sub_08020148
+	bl	Object_SetPosition
 	adds	r0, r6, #0
 	movs	r1, #2
-	bl	sub_08020090
+	bl	Object_SetMode
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+extern u8 Data_03001f2c[];
 
 /* shop/effect/reset.c */
 void EffectSlot_UpdateFar(s32);
@@ -13,7 +14,7 @@ void Shop_ResetEffects(void)
     s8 no;
     s32 offset;
 
-    work = *(s32 *)ADDR_03001F2C;
+    work = *(s32 *)((u32)&Data_03001f2c);
     p = work + 0x3B0;
     cnt = 0x17;
     do {

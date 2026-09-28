@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002df0, 0x08002df0
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004938, 0x08004938
-	.set sub_080150d0, 0x080150d0
-	.set sub_08015270, 0x08015270
-	.set sub_08015278, 0x08015278
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_080770d0, 0x080770d0
-	.set sub_080a10d0, 0x080a10d0
-	.set sub_080a112c, 0x080a112c
-	.set sub_080a1804, 0x080a1804
-	.set sub_080a1a40, 0x080a1a40
-	.set sub_080a23c0, 0x080a23c0
-	.set sub_080a33d4, 0x080a33d4
-	.set sub_080a6384, 0x080a6384
-	.set sub_080a6614, 0x080a6614
-	.set sub_080a68ec, 0x080a68ec
-	.set sub_080f9010, 0x080f9010
 	.global PsynergyMenu_SetupActionIcons
 	.global Func_080a60d4
 	.thumb_func
@@ -57,7 +37,7 @@ Func_080a60d4:
 	mov	r2, sl
 	lsls	r2, r2, #1
 	ldrh	r0, [r2, r3]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r5, r7, #0
 	movs	r3, #10
 	adds	r5, #32
@@ -69,12 +49,12 @@ Func_080a60d4:
 	movs	r2, #3
 	movs	r3, #17
 	str	r6, [sp, #4]
-	bl	sub_080a10d0
+	bl	UiWindow_UpdateOrCreate
 	cmp	r0, #0
 	beq.n	.L_080a613e
 	ldr	r1, [r5, #0]
 	adds	r0, r7, #0
-	bl	sub_080a33d4
+	bl	Menu_SpawnIconEntries
 .L_080a613e:
 	adds	r5, r7, #0
 	movs	r3, #4
@@ -85,7 +65,7 @@ Func_080a60d4:
 	movs	r2, #13
 	movs	r3, #17
 	str	r6, [sp, #4]
-	bl	sub_080a10d0
+	bl	UiWindow_UpdateOrCreate
 	cmp	r0, #0
 	beq.n	.L_080a6174
 	ldr	r0, [sp, #16]
@@ -94,7 +74,7 @@ Func_080a60d4:
 	str	r0, [sp, #0]
 	movs	r3, #0
 	movs	r0, #2
-	bl	sub_080150d0
+	bl	RenderOutput_CreateFromResourceFar
 	movs	r1, #135
 	lsls	r1, r1, #2
 	adds	r3, r7, r1
@@ -119,7 +99,7 @@ Func_080a60d4:
 	ldr	r0, [sp, #24]
 	ldr	r1, [sp, #24]
 	add	r0, sl
-	bl	sub_080022fc
+	bl	__modsi3
 	mov	sl, r0
 	mov	r1, sl
 	ldr	r5, [sp, #28]
@@ -128,21 +108,21 @@ Func_080a60d4:
 	add	r5, r8
 	ldrh	r0, [r5, #0]
 	ldr	r6, [r7, #36]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	str	r0, [sp, #12]
 	ldrh	r0, [r5, #0]
-	bl	sub_080a6384
+	bl	PsynergyMenu_RefreshOwnerPsynergy
 	movs	r2, #0
 	movs	r3, #0
 	ldrh	r1, [r5, #0]
 	adds	r0, r6, #0
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 	ldrh	r1, [r5, #0]
 	ldr	r0, [r7, #40]
-	bl	sub_080a6614
+	bl	Func_080a6614
 	ldrh	r1, [r5, #0]
 	adds	r0, r7, #0
-	bl	sub_080a1804
+	bl	PsynergyMenu_CallIconRoutineWithValue
 	movs	r0, #165
 	lsls	r0, r0, #1
 	ldr	r1, [pc, #44]
@@ -161,7 +141,7 @@ Func_080a60d4:
 	add	r3, r9
 	strh	r2, [r7, r3]
 	ldr	r0, [pc, #24]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080a6228
 	ldr	r1, [sp, #8]
@@ -175,17 +155,17 @@ Func_080a60d4:
 	.2byte 0x0000
 .L_080a6210:
 	ldr	r0, [r7, #44]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	ldr	r0, [r7, #44]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	ldr	r0, [r7, #44]
-	bl	sub_080a23c0
+	bl	UiText_DrawWorkValueWithLabel
 	movs	r2, #1
 	str	r2, [sp, #8]
 	b.n	.L_080a6236
 .L_080a6228:
 	ldr	r0, [pc, #328]
-	bl	sub_080770d0
+	bl	GameFlag_ClearBitFar
 	b.n	.L_080a6236
 .L_080a6230:
 	mov	r3, sl
@@ -197,9 +177,9 @@ Func_080a60d4:
 	lsls	r0, r0, #3
 	movs	r1, #16
 	subs	r0, #10
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [pc, #300]
 	ldr	r3, [r1, #0]
 	movs	r2, #1
@@ -213,7 +193,7 @@ Func_080a60d4:
 	cmp	r3, #0
 	beq.n	.L_080a6272
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r2, [sp, #28]
 	mov	r1, r8
 	ldrh	r1, [r1, r2]
@@ -221,7 +201,7 @@ Func_080a60d4:
 	b.n	.L_080a634c
 .L_080a6272:
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r1, [pc, #252]
 .L_080a627a:
 	ldr	r0, [pc, #252]
@@ -256,29 +236,29 @@ Func_080a60d4:
 	strb	r3, [r1, #0]
 .L_080a62b2:
 	movs	r0, #64
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	adds	r6, r0, #0
 	adds	r1, r6, #0
 	ldr	r0, [sp, #12]
 	movs	r2, #1
-	bl	sub_080a68ec
+	bl	PsynergyMenu_CollectActions
 	adds	r5, r0, #0
 	lsls	r5, r5, #24
 	lsrs	r5, r5, #24
 	lsls	r5, r5, #24
 	adds	r0, r6, #0
 	asrs	r5, r5, #24
-	bl	sub_08002df0
+	bl	Party_Do
 	cmp	r5, #0
 	bne.n	.L_080a62e4
 	mov	r2, fp
 	strb	r5, [r2, #0]
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a62ec
 .L_080a62e4:
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a634c
 .L_080a62ec:
 	ldr	r0, [pc, #136]
@@ -288,7 +268,7 @@ Func_080a60d4:
 	cmp	r3, #0
 	beq.n	.L_080a6306
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	negs	r1, r1
 	str	r1, [sp, #16]
@@ -301,7 +281,7 @@ Func_080a60d4:
 	cmp	r3, #0
 	beq.n	.L_080a6322
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	movs	r3, #1
 	negs	r2, r2
@@ -314,14 +294,14 @@ Func_080a60d4:
 	cmp	r3, #0
 	beq.n	.L_080a6338
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #1
 	str	r0, [sp, #20]
 	add	sl, r0
 .L_080a6338:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080a6346
 	b.n	.L_080a6184

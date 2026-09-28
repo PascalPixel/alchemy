@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080041d8, 0x080041d8
-	.set sub_080c0098, 0x080c0098
-	.set sub_080c00d8, 0x080c00d8
 	.global BattlePresentation_ConfigurePaletteFade
 	.global Func_080c0774
 	.thumb_func
@@ -18,7 +15,7 @@ Func_080c0774:
 	bne.n	.L_080c078c
 	ldr	r0, [pc, #156]
 	ldr	r1, [pc, #160]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 .L_080c078c:
 	str	r7, [r6, #8]
 	cmp	r7, #1
@@ -144,9 +141,9 @@ Func_080c0774:
 	bne.n	.L_080c0802
 .L_080c088e:
 	ldr	r0, [pc, #16]
-	bl	sub_080c0098
+	bl	Graphics_BuildSequentialTileTable
 	ldr	r0, [pc, #12]
-	bl	sub_080c00d8
+	bl	BattlePresentation_BuildTilemap
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0

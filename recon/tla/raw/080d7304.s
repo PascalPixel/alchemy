@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080145a8, 0x080145a8
-	.set sub_08014d00, 0x08014d00
-	.set sub_080d0c50, 0x080d0c50
-	.set sub_080d0e1c, 0x080d0e1c
 	.global Func_080d7304
 	.thumb_func
 Func_080d7304:
@@ -15,7 +11,7 @@ Func_080d7304:
 	adds	r1, #136
 	movs	r0, #120
 	sub	sp, #4
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #128
@@ -38,7 +34,7 @@ Func_080d7304:
 	adds	r2, r5, #0
 	adds	r0, #3
 	movs	r3, #1
-	bl	sub_080d0e1c
+	bl	0x080d0e1c
 	movs	r3, #168
 	lsls	r3, r3, #4
 	movs	r0, #128
@@ -48,14 +44,14 @@ Func_080d7304:
 	adds	r2, r6, #0
 	adds	r0, #5
 	movs	r3, #1
-	bl	sub_080d0e1c
+	bl	0x080d0e1c
 	movs	r3, #168
 	lsls	r3, r3, #5
 	adds	r2, r5, r3
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	movs	r3, #12
-	bl	sub_080d0c50
+	bl	0x080d0c50
 	movs	r3, #224
 	lsls	r3, r3, #4
 	add	r8, r3
@@ -63,7 +59,7 @@ Func_080d7304:
 	mov	r2, r8
 	movs	r1, #0
 	movs	r3, #1
-	bl	sub_080d0e1c
+	bl	0x080d0e1c
 	movs	r3, #252
 	lsls	r3, r3, #5
 	adds	r2, r5, r3
@@ -79,7 +75,7 @@ Func_080d7304:
 	strh	r3, [r5, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #16]
-	bl	sub_080145a8
+	bl	0x080145a8
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3
@@ -93,7 +89,7 @@ Func_080d7304:
 	lsls	r1, r1, #5
 	adds	r1, #136
 	movs	r0, #120
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r3, #252
 	lsls	r3, r3, #5
 	adds	r2, r0, r3

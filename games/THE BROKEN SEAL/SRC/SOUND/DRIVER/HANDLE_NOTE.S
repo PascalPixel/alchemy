@@ -11,9 +11,7 @@
 @ credit.
 @ credit: library — TBS/TLA common sound driver note-start routine
 .syntax unified
-	.set SoundDriver_CallViaR3, 0x080f9ee8
 	.thumb
-	.set AlchemyLoadAddress, 0x080f9f6c
 	.global MusicTrack_HandleNote
 	.thumb_func
 MusicTrack_HandleNote:
@@ -198,7 +196,7 @@ MusicTrack_HandleNote:
 	beq.n	.L_080fa152
 .L_080fa0ac:
 	adds	r0, r4, #0
-	bl	Func_080fa678
+	bl	AudioCommand_InvokeSlot34
 	movs	r1, #0
 	str	r1, [r4, #48]
 	ldr	r3, [r5, #32]
@@ -218,7 +216,7 @@ MusicTrack_HandleNote:
 .L_080fa0d2:
 	ldr	r0, [sp, #0]
 	adds	r1, r5, #0
-	bl	Func_080fac44
+	bl	MusicTrack_CalcOutput
 	ldr	r0, [r5, #4]
 	str	r0, [r4, #16]
 	ldr	r0, [sp, #16]
@@ -272,7 +270,7 @@ MusicTrack_HandleNote:
 	ldrb	r2, [r5, #9]
 	adds	r1, r3, #0
 	adds	r0, r7, #0
-	bl	Func_080fa1fc
+	bl	Pcm_KeyToFrequency
 .L_080fa144:
 	str	r0, [r4, #32]
 	movs	r0, #128

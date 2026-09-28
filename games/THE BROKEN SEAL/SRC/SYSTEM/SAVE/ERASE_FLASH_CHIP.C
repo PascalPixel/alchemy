@@ -36,7 +36,7 @@ struct FlashChipInfo {
     u16 control;
 };
 
-s32 Func_080072f0(s32, u8 *, u8, s32);
+s32 _call_via_r3(s32, u8 *, u8, s32);
 
 /* チップ全消去。WAITCNT の SRAM 待ちをフラッシュ側の値に替え、
    0x5555/0x2aaa へ解除列と消去命令 0x10 を書き、完了待ちの結果を返す。
@@ -61,7 +61,7 @@ u16 EraseFlashChip(void)
     CopyFlashReadRoutineToRam(savedCode);
 
     status = (s32 *)0x02004C00;
-    result = Func_080072f0(3, (u8 *)0x0E000000, 255, *status);
+    result = _call_via_r3(3, (u8 *)0x0E000000, 255, *status);
 
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xFFFC) | 3;

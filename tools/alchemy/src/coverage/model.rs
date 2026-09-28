@@ -1,73 +1,4 @@
-//! The one byte-range and treemap model shared by progress and coverage.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
-pub struct Span {
-    pub start: i64,
-    pub end: i64,
-}
-impl Span {
-    pub const fn new(start: i64, end: i64) -> Self {
-        Self { start, end }
-    }
-    pub const fn bytes(self) -> i64 {
-        self.end - self.start
-    }
-}
-pub fn bytes(spans: &[Span]) -> i64 {
-    spans.iter().map(|s| s.bytes()).sum()
-}
-pub fn normalize(input: &[Span]) -> Vec<Span> {
-    let mut spans: Vec<_> = input.iter().copied().filter(|s| s.end > s.start).collect();
-    spans.sort_by_key(|s| (s.start, s.end));
-    let mut out: Vec<Span> = Vec::with_capacity(spans.len());
-    for span in spans {
-        match out.last_mut() {
-            Some(last) if span.start <= last.end => last.end = last.end.max(span.end),
-            _ => out.push(span),
-        }
-    }
-    out
-}
-pub fn intersect(left: &[Span], right: &[Span]) -> Vec<Span> {
-    let left = normalize(left);
-    let right = normalize(right);
-    let mut out = Vec::new();
-    for a in left {
-        for b in &right {
-            if b.start >= a.end {
-                break;
-            }
-            if let Some(span) = (a.start.max(b.start) < a.end.min(b.end))
-                .then(|| Span::new(a.start.max(b.start), a.end.min(b.end)))
-            {
-                out.push(span);
-            }
-        }
-    }
-    normalize(&out)
-}
-pub fn subtract(input: &[Span], cuts: &[Span]) -> Vec<Span> {
-    let cuts = normalize(cuts);
-    let mut out = Vec::new();
-    for span in normalize(input) {
-        let mut cursor = span.start;
-        for cut in &cuts {
-            if cut.end <= cursor {
-                continue;
-            }
-            if cut.start >= span.end {
-                break;
-            }
-            if cut.start > cursor {
-                out.push(Span::new(cursor, cut.start.min(span.end)));
-            }
-            cursor = cursor.max(cut.end);
-        }
-        if cursor < span.end {
-            out.push(Span::new(cursor, span.end));
-        }
-    }
-    out
-}
+//! The treemap model the README's file map draws.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 #[repr(usize)]
 pub enum Category {
@@ -79,14 +10,6 @@ pub enum Category {
     AssetData,
 }
 pub const UNIDENTIFIED: &str = "Unidentified";
-pub const CATEGORIES: [(Category, &str, &str); 6] = [
-    (Category::Unknown, "unknown", UNIDENTIFIED),
-    (Category::DraftAsm, "draft_asm", "Assembly"),
-    (Category::DraftC, "draft_c", "Drafted"),
-    (Category::ProvenAsm, "proven_asm", "Assembly"),
-    (Category::ProvenC, "proven_c", "C"),
-    (Category::AssetData, "asset_data", "Data"),
-];
 #[derive(Clone, Debug, Default)]
 pub struct Tile {
     pub label: String,
@@ -94,33 +17,8 @@ pub struct Tile {
     pub categories: [i64; 6],
     pub group: Option<String>,
     pub subgroup: Option<String>,
-    pub address: Option<i64>,
     pub source: Option<String>,
     pub children: Vec<Tile>,
-}
-#[derive(Clone, Debug, Default)]
-pub struct Area {
-    pub id: String,
-    pub label: String,
-    pub bytes: i64,
-    pub categories: [i64; 6],
-    pub tiles: Vec<Tile>,
-}
-pub fn area(id: &str, label: &str, tiles: Vec<Tile>) -> Area {
-    let mut categories = [0; 6];
-    let bytes = tiles.iter().map(|tile| tile.bytes).sum();
-    for tile in &tiles {
-        for (slot, value) in categories.iter_mut().zip(tile.categories) {
-            *slot += value;
-        }
-    }
-    Area {
-        id: id.into(),
-        label: label.into(),
-        bytes,
-        categories,
-        tiles: tiles.into_iter().filter(|t| t.bytes > 0).collect(),
-    }
 }
 #[derive(Clone, Copy, Debug, Default)]
 pub struct Rect {

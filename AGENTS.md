@@ -1,269 +1,114 @@
 # Alchemy
 
-Alchemy is a decompilation of Golden Sun: **The Broken Seal (TBS)** ☀️ and
-**The Lost Age (TLA)** ⚓️. Both games rebuild byte for byte from readable C,
-assembly and editable assets. Japanese releases are the source editions;
-localizations are measured differences. Build IDs are `tbs` and `tla`.
+Golden Sun: **The Broken Seal (TBS)** ☀️ and **The Lost Age (TLA)** ⚓️,
+rebuilt byte for byte from readable C, assembly and editable assets. Japanese
+releases are the source editions; localizations are measured differences.
+Build IDs are `tbs` and `tla`.
 
-This is the only working guide; `README.md` is for fans. It is short on
-purpose. Every stretch when this file grew into a long list of prohibitions
-was a stretch when progress stalled, and every stretch when it stayed short
-and pointed at methods was a stretch when progress moved. Add a line here only
-when it will make the next agent faster.
+This is the working guide; `README.md` is for fans. Keep it short. Implementation
+details belong in source and build rules. No separate notes, plans or reports.
 
-## The goal and the one number
+## Goal
 
-**DONE = matching C + proven library, hand-written or veneer assembly**, over
-each game's executable bytes. `make progress` prints it in bytes;
-`make progress-subject` gives the commit prefix. Optimise one thing:
-**☀️ percentage points gained per HOUR**, watched as a 12-hour timeseries
-of complete hourly bins landed on main. Calculate from exact DONE and executable
-bytes, never the floored README percentage; show credit corrections separately.
-Keep bytes as supporting accounting. Work that cannot move that number (compressor tails, packing,
-provenance archaeology, tooling nobody asked for) is timeboxed and never
-blocks a landing.
+**DONE = matching C + proven library, handwritten or veneer assembly**, over
+each game's executable bytes. `make progress` prints the exact counts.
+Optimise **☀️ percentage points landed on main per hour**, measured in complete
+hourly bins over 12 hours. Use exact DONE and executable bytes; show credit
+corrections separately. Timebox work that cannot move this number.
 
-## Our model: pret's pokeemerald
+## Rules
 
-Work the way pokeemerald did (a checkout lives at `~/Developer/pret/pokeemerald`;
-method only, never code or symbols). When in doubt, do what pret did. The one
-deliberate difference is presentation: our tree looks like the project Camelot
-most plausibly had on disk in 2001.
+1. Count a function only when its complete extent, including its literal pool,
+   compiles exactly and the ROM remains byte-identical.
+2. Tagged `/* FAKEMATCH: reason */` C counts. Never patch compiler output or use
+   inline assembly in game C except the reviewed `Dma_Set` and `Iwram_*` macros.
+3. Uncredited disassembly is `not-yet-c`. Only proven library, handwritten and
+   veneer modules count as assembly; difficulty never changes that classification.
+4. Commit each adoption and attempt; keep near misses as drafts with the
+   remaining difference in their header. Never throw work away.
+5. Commit code, tooling, our documentation and identified editable inputs.
+   Never commit ROMs, the cartridge logo, asset dumps, another project's Golden
+   Sun work, SDK or leaked code. Evidence comes from our ROMs, this repository
+   and public documentation.
+6. Only Pascal changes credit standards, approves compiler source, binaries
+   and digests, or authorises pushes and parallel workflows. Record approvals below.
 
-- `games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT`; uppercase 8.3-style names
-  (`BATTLE/EFFECT/PARTICLE.C`, `FIELD_EVENT.H`); `Subsystem_VerbObject`
-  functions; short `pos`, `cnt`, `tbl`, `buf`, `work` locals; C89.
-- Places use romaji from the Japanese ROM plus one area word (`RUNPA_DOU`,
-  `HAIDIA_MURA`); characters use their Japanese names (Gerald, Jasmine,
-  Sukureta).
-- Scaffolding lives apart in lowercase `recon/tbs` and `recon/tla` and shrinks
-  to nothing at 100%.
+## AI Cheating
 
-## Rules that never bend
+AI Cheating is saving the expected answer or changing verification instead of
+reconstructing the mechanism, or committing calculated bookkeeping as source.
 
-1. **Match first.** A function counts when its complete extent, literal pool
-   included, compiles to the exact bytes and `make compare` stays identical.
-2. **Fake matches count, tagged.** C that matches through an odd construct
-   carries `/* FAKEMATCH: <what is odd> */` and is cleaned up later. Never:
-   patched compiler output, ROM bytes copied into source, `asm` in game C
-   (the reviewed `Dma_Set` and `Iwram_*` header macros are the only inline
-   assembly), or changing a test or the measurement to pass.
-3. **Never throw work away.** A near miss is committed as a draft with its
-   remaining difference in its header. Every attempt ends in a commit.
-4. **What may be committed:** code, tooling, our documentation and the
-   editable inputs the build consumes, tracked the way pret tracks them. Never
-   ROMs, the cartridge logo, raw dumps, another project's Golden Sun work, or
-   SDK or leaked code. Evidence comes from our own ROMs, this repository and
-   public documentation.
-5. **Everything uncredited is C not yet written.** Camelot wrote the game in
-   C; only SDK library code, genuinely hand-written routines and the veneer
-   stubs are assembly, and only a credited `.S` module may say so. An owner
-   still built from its disassembly is `not-yet-c` (`not_yet_c` in the
-   overlay registry), never "assembly". No registry, gate, draft header or
-   report may classify C as assembly because it resisted: not a hard
-   instruction (`stmia` comes from `Dma_Set`), not a register wall, not a
-   size. Label it by what remains to be done.
-6. **Only Pascal** changes credit standards, approves compiler source,
-   binaries and digests, and authorises pushes. Record each decision here with
-   its date.
+- Maintained disassembly is a valid fallback for unfinished C. It remains
+  `not-yet-c`; only proven library, handwritten and veneer modules earn assembly credit.
+- Never commit grey sheets, whole-area BINs, `DATA.BIN` or compression tokens.
+  Renaming or splitting stored answers changes nothing.
+- Generate calculated offsets, sizes, per-asset hashes, pointer/symbol catalogs,
+  owner inventories, reports and receipts in ignored `out/` or `tools/out`.
+  Fix consumers that depend on tracked copies.
+- Keep decisions once: names in code, declarations in headers, layout and
+  bindings in build/linker rules, encoder options beside assets. Identified
+  editable assets are inputs; approved reference checksums, dependency pins
+  and published progress are intentional records.
 
-## Where the bytes come from
+## Source
 
-Measured on 2026-09-24, one day, about 100 KB landed. Choose the method by its
-yield, not by the size of the target alone.
+Use `~/Developer/pret/pokeemerald` for method only, never code or symbols.
+Our presentation follows a plausible Camelot project from 2001:
+`games/<GAME>/SRC`, `INCLUDE`, `SOUND`, `TEXT`; uppercase 8.3-style names,
+C89, `Subsystem_VerbObject` functions and short locals. Use Japanese character
+names and romaji plus one area word for places. Share declarations in headers
+and proven common code in `games/COMMON`; instanced code spells no address names.
+Scaffolding stays under `recon/tbs` and `recon/tla` and shrinks toward zero.
 
-| Method | Yield | Use it on |
-| --- | --- | --- |
-| Overlay recipe | 6–9 KB/h per agent | unadopted overlay owners |
-| Hand-writing from disassembly | about 8 min per matched function when the owner is whole | large registered main-image owners |
-| Library identification | 13 routines at once | Nintendo SDK code (sound driver, flash) |
-| Credit decisions from Pascal | 5.6 KB at once | whole classes of proven assembly |
-| Batch lifting in the main image | about 30% similarity, almost no matches | nothing; don't |
-| Re-sweeping the same 1–3 halfword residual with the same spellings | zero | only with a new structural idea; the owner stays a normal target |
+Assets are individual indexed PNGs with real palettes, identified tilemap/table
+BINs, WAV, MIDI, PO and editable game definitions. Compression comes from these
+inputs and per-file encoder options; unresolved ROM-derived material stays local.
 
-**The overlay recipe.** `psynergy decompile` the owner; rename every call to
-its `Engine_*` service in `FIELD_EVENT.H` or to the overlay's own function;
-bind the names in a single-overlay translation unit (an import veneer's
-runtime address is its listing offset plus 0x8000); score; sweep the near
-misses; adopt with `alchemy overlay adopt`. Area and script lookup functions
-(a switch on game state +0x1c0/+0x1c2) take about five minutes each by hand.
+## Work and build
 
-**Hand-writing.** Read `alchemy inspect <owner> --asm`, its callers, callees
-and exact neighbours, and write the C a Camelot programmer would have written,
-reusing existing headers, structs and registered names. Fix one hypothesis at
-a time. After about 30 minutes, or three attempts without a new idea, commit
-the draft and take the next owner. An owner registered as pieces
-(`Region_`, `Fragment_`, `Continuation_`) or bundled with a neighbour must be
-made whole first: one complete function, one listing, one owner.
+Work on the assigned branch; `main` is the only long-lived branch. Give agents
+disjoint slices. Inspect complete functions and their neighbours, reuse proven
+source, and change one hypothesis at a time. After 30 minutes or three attempts
+without a new idea, commit the draft and move on.
 
-**Library code.** SDK objects keep their own compiler family and flags,
-recorded with the reason in `tools/alchemy/src/compiler/routing_data.rs`, as
-pret builds its library and flash files: the flash library is agbcc `-O`, the
-MusicPlayer2000 C is agbcc `-O2`. A whole file shares one family; never route
-a single function. Hand-written SDK assembly is credited as `library`.
+Alchemy owns compilation, encoding, linking and verification; Psynergy owns
+portable reading, decoding, analysis and comparison. Prefer existing commands
+and read `--help`. Scripts are TypeScript on Bun or Rust. New tooling must solve
+a demonstrated recurring blocker and carry a test.
 
-## What makes code match
-
-Each of these closed real owners. Try them before inventing anything new.
-
-- **Prototypes decide argument order.** A value-returning callee gets r0 set
-  last; declare unused-result callees `void` and match registered return
-  types.
-- **Constants.** Pool-loaded constants are often `Value_XXXXXXXX` link
-  symbols. A halfword I/O store of a constant forces an early literal pool;
-  a zero held in a one-halfword struct (`struct Half { u16 v; }`) gives the
-  64-byte pool reach of a halfword move instead of 60. A constant stored
-  through a cast pointer goes to the pool; the same store through a struct
-  member becomes `movs`. Write `& -0x1000`, not `& 0xfffff000`.
-- **Memory.** Use typed structs and indexed arrays, not byte-pointer offsets;
-  put fields in one struct when the reference keeps a store order that
-  implies aliasing; declare neighbouring globals as separate externs; write
-  IWRAM tables as extern arrays; use bitfields for flag masks; a union gives
-  byte and halfword views of the same game-state rows. When a byte-field store
-  creates a zero absent from the reference, use an explicit `u8 *` store:
-  `WORLD_MAP/LINKED_EFFECTS.C` and `KUUPUAPPU_MURA/DRIFT.C` are exact witnesses.
-  An initialized word-based 16-bit record can hold an unsigned snapshot until
-  its later signed use without a register copy: `ARUTAMIRA_DOU/ROOM_VIS.C`.
-- **Locals and control flow.** Reuse one local across branches and give each
-  loop its own counter; declare locals in stack-slot order; one shared mask
-  local when the reference keeps 255 in a register; an explicit `case 0:`
-  gives the reference's switch table; `||` of two `!= 0` tests merges into one
-  load where `a | b` does not; a goto loop keeps constants from being hoisted;
-  separate constants the decompiler merged across branch tails.
-- **Machine interfaces.** `Iwram_Call2(left, right, routine)` passes the
-  routine last so its address loads first; alternate two locals across chained
-  `Iwram_MulQ16` calls. `Dma_Set` in `INCLUDE/DMA.H` produces the
-  `stmia r3!; subs r3, #12` idiom; call it from C. Write `_call_via` calls as
-  ordinary calls through a function pointer.
-- **Zeros and pools.** A plain `0` held in a `u8` or `u16` local is loaded as a
-  halfword pool constant, whose short reach puts the literal pool mid-function
-  where the ROM has it; a `(u16)(s32)&Value_XXXX` constant does the same for a
-  mask. Clamp helpers and IWRAM copy/fill calls as `static __inline__`
-  wrappers make constants reload per call instead of living in saved
-  registers. Read `-fsched-verbose=5` (scheduling ties) and `-dL` (strength
-  reduction) dumps before sweeping spellings.
-- **Last resort, tagged:** a `do { } while (0);` around one or two statements,
-  a statement swap, or a temporary that fixes one evaluation order.
-- **Overlay alignment is automatic.** The build proves native halfword fill
-  between exact C and its next C or maintained veneer boundary; adoption and
-  flattening need no hand-added padding records.
-
-## Making the C read like Camelot's
-
-Matching comes first, but names are evidence too. Name things from the game
-itself: messages from `TEXT/EN.PO` (msgid is the zero-padded decimal), items
-from message 0x182 plus the item id, places from `recon/tbs/locations.tsv`.
-Before naming a value, check which call consumes it: a value passed to
-`GameFlag_*` is a flag, not a message (Lunpa Fortress was once misnamed after
-Vale dialogue this way). A function's name lives once, in
-`recon/<game>/source-paths.json`; the build injects the link names, so never
-keep in-file `#define Name Func_addr` aliases. Shared declarations have one
-header. Code built into several overlays is one instanced source that spells
-no address names; bind named symbols per instance. `SRC/FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C`
-and `SRC/FIELD/SORU_SEKIZO/SETUP_STAGED_ACTORS.C` are the finished examples.
-
-## Running agents
-
-The lead gets more bytes by keeping three agents productive and landing their
-work than by working alone.
-
-- **Brief with specifics.** Give each agent a slice (an address range or
-  overlay range no other agent touches), its concrete targets with sizes and
-  known residuals, the methods and cookbook above, and the scripts earlier
-  agents left. Slices by address never collide.
-- **Start from origin.** Create each worktree **outside the checkout** with
-  `git worktree add ../alchemy-worktrees/<name> -b wf/<name> origin/main`
-  after `git fetch`, then `make worktree-setup`. A stale local `main` silently
-  costs an agent everything landed since.
-- **Commit every adoption immediately** and every draft before moving on. An
-  agent with no commit in 30 minutes is checked; one with none in an hour is
-  stopped and its slice rebriefed.
-- **Lanes defer publication.** Branch commits run the quick staged checks.
-  A main commit verifies both ROMs, updates README and both progress figures,
-  and derives its percentage prefix. Pre-push checks the outgoing history.
-- **Land every 30 minutes** from one landing worktree: merge each finished
-  branch, merge registries with a structural three-way JSON merge (keep both
-  sides' additions), stage and commit through main's publication hook, push
-  `main`, remove the landed worktree and branch. `main` is the only long-lived
-  branch.
-- **Workflows** (many agents at once) need Pascal's approval.
-- Scripts are TypeScript on Bun or Rust, never Python or shell. The only prose
-  files are `AGENTS.md` and `README.md`; no notes, plans or reports anywhere.
-
-## Compiler, build and assets
-
-Game code uses the approved agscc bundle (GCC 2.96) through
-`tools/alchemy/src/compiler/routing.rs`; TLA enables its reconstructed `-mgs2`
-lowering. A whole source file may use other flags when the original evidently
-differed; record the reason beside the route. Code the ROM copies into RAM and
-runs in ARM state uses `-marm -mno-apcs-frame`.
+Use approved agscc (GCC 2.96), with TLA's `-mgs2` route. Compiler family and flags
+apply to whole files with their reason recorded in compiler routing; never tune
+individual functions. Library routes remain agbcc `-O` for flash and `-O2` for
+MusicPlayer2000; RAM-executed ARM code uses `-marm -mno-apcs-frame`.
 
 ```sh
 git submodule update --init && git config core.hooksPath .hooks
-make bootstrap       # pinned agscc/agbcc and binutils under tools/out
-make compare         # TBS: rebuild what changed, check rom.sha1 (compare-tla, compare-all)
-make test            # tooling unit tests (test-integration reads local ROMs)
-make coverage        # counts and README on lanes; both images too on main
-make verify          # the landing gate: both ROMs, owners, publication, documents
+make bootstrap
+make compare-all
+make test
+make coverage
+make verify
 ```
 
-Everything caches by content, so one edited file rebuilds alone in seconds.
-Score with `tools/out/cargo-target/release/alchemy`, which skips the cargo
-rebuild that `./alchemy` does. A byte-identical build writes the receipt DONE
-reads; until the current tree has one, DONE is `?`.
-
-Assets are editable files the build converts, tracked in pret's shape: one
-indexed PNG per asset with its real palette, one identified BIN per tilemap or
-table, and WAV, MIDI, JSON and PO. The grey sheets (`CHAR_COMMON.PNG`,
-`TILE_BANK.PNG`), whole-area BIN bundles and `DATA.BIN` are dumps, restored
-from your own ROM through `recon/<game>/private-inputs.json` until each is
-split. Compressed streams the encoder does not yet reproduce keep a per-file
-option recorded beside the file, or remain stored until it does.
+A main commit verifies both ROMs, derives its percentage or pending prefix, and updates
+README and both progress figures. Branch commits run quick checks; pre-push
+checks outgoing history. DONE is `?` until the current tree has a verified build.
 
 ## Pascal's decisions
 
-- 2026-09-22: frozen compression answers at commit `d08ee3a2` may stay until
-  the encoder replaces them; build-machine facts may be recorded as observed
-  host facts in `recon/<game>/machine.json`.
-- 2026-09-23: fake matches count, tagged. The six stored TLA streams stay. ARM
-  code runs through the `-marm -mno-apcs-frame` route. Private inputs appear
-  only in the local dashboard.
-- 2026-09-24: the main-image far-call stub tables, built from the overlay
-  veneer macro with whole aligned 8-byte entries, count as reconstructed
-  veneers, as the overlay entry veneers already do.
-- 2026-09-27: repair model attribution after noon September 26 (Lisbon) to
-  Sol 6 or Astra 6. New trailers name the actual session model, never one
-  copied from an inherited prompt or earlier commit.
-- 2026-09-28: restore tooling to `2db71499f1f991c9a4899641737212bfba8104c0`;
-  retain only main and its checkout, finish pending work and sync with origin/main.
-- 2026-09-28: main commits own verified percentages, README and both progress
-  figures; branch and worktree commits defer those expensive checks.
-
-## Tooling index
-
-Prefer existing commands and read `--help` before scripting around one.
-**Alchemy builds, Psynergy reads:** Alchemy owns game policy, compilation,
-encoding, linking and verification; Psynergy owns portable reading, decoding,
-analysis and comparison over explicit input, with no Golden Sun defaults. New
-tooling must fix a demonstrated recurring blocker and carry a test.
-
-| Tool | Responsibility |
-| --- | --- |
-| [alchemy](tools/alchemy/) | Golden Sun commands: `inspect` (owners, `--asm`, `--siblings`), `extract`, `score` (owner or `--unit`, `--all-instances`), `adopt` and `overlay adopt`, `check integrate` (main-image adoption), `unit`, `raw rebuild`, `build` (`full`, `assets`, `allocator`), `coverage`, `check` (publication, owners, siblings, progress), `cross-edition`, `dashboard`, `format`, `bootstrap`. |
-| [psynergy](tools/psynergy/) | Portable commands over explicit files: `decompile`, `disassemble`, `discover`, `reconstruct-asm`, `diff`, `repair`, `inspect allocator`, `convert`, plus the Thumb decoder, C recovery, comparison, twin search and the image, sound, text and LZ codecs. |
-
-## Open work
-
-- ☀️ to 80%: use `make progress` for the current byte gap. The largest remaining pools are main-image
-  owners registered as fragments (make them whole, then hand-write), the
-  remaining unadopted overlay owners, and large registered main owners.
-- ⚓️: most TLA functions resemble their TBS counterparts but only about 12 KB
-  compiles unchanged under the TLA route; prove twins module by module
-  (`alchemy check siblings --common`) and move shared code to `games/COMMON`.
-- Split the asset dumps into pret-shaped assets; replace stored compression
-  streams with per-file encoder options.
-- Map viewer: group places by world position; show story variants one at a
-  time ("Vale: Stormy"). Music: restore the synth voices of the player retired
-  on September 10.
-- Later, as pokeemerald did: a `MODERN` build with a current compiler and
-  `BUGFIX` switches, for the recompilation.
+- 2026-09-23: tagged fake matches count; ARM uses `-marm -mno-apcs-frame`.
+  Private inputs are never published.
+- 2026-09-24: whole aligned 8-byte main-image far-call stubs count as
+  reconstructed veneers, like overlay entry veneers.
+- 2026-09-27: attribution after noon September 26 (Lisbon) is Sol 6 or Astra 6.
+  New trailers name the actual session model.
+- 2026-09-28: tooling baseline is `2db71499f1f991c9a4899641737212bfba8104c0`.
+  Main commits own verified percentages, README and both progress figures.
+- 2026-09-28: AI Cheating supersedes the September 22/23 exceptions for stored
+  compression answers and tracked machine ledgers.
+- 2026-09-28: approved the stock `da598c1` agbcc rebuild; its exact binary
+  digest is recorded in the compiler admission table.
+- 2026-09-28: the dashboard is removed.
+- 2026-09-28: prime directive: what pret published, we may; what pret did not
+  publish, we may not. Not-yet-sourced data links through pret's early
+  `.incbin "baserom.gba", OFFSET, SIZE` scaffolding in `recon/<game>`.

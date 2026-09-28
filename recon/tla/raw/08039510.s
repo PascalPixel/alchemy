@@ -1,18 +1,16 @@
 .syntax unified
 	.thumb
-	.set sub_08014274, 0x08014274
-	.set sub_08038edc, 0x08038edc
 	.global Func_08039510
 	.thumb_func
 Func_08039510:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	sub_08038edc
+	bl	0x08038edc
 	ldrb	r3, [r5, #4]
 	cmp	r3, #0
 	beq.n	.L_08039540
 	ldrb	r0, [r5, #14]
-	bl	sub_08014274
+	bl	0x08014274
 	ldrb	r3, [r5, #4]
 	cmp	r3, #2
 	bne.n	.L_08039540

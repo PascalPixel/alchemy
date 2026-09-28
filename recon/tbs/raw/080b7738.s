@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080b6c08, 0x080b6c08
-	.set sub_080b7994, 0x080b7994
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_080b7f70, 0x080b7f70
 	.global Func_080b7738
 	.thumb_func
 Func_080b7738:
@@ -18,7 +14,7 @@ Func_080b7738:
 	add	r1, sp, #16
 	mov	sl, r1
 	movs	r0, #3
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	movs	r7, #0
 	mov	r2, sl
 	ldrh	r3, [r2, r7]
@@ -28,18 +24,18 @@ Func_080b7738:
 .L_080b775e:
 	mov	r3, sl
 	ldrh	r0, [r3, r2]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080b77a0
 	ldr	r5, [r6, #0]
-	bl	sub_080b7994
+	bl	BattleStatusIcon_Cycle
 	ldr	r3, [r6, #36]
 	cmp	r3, #0
 	beq.n	.L_080b77a0
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_080b7f70
+	bl	GetMotionRecord
 	cmp	r0, #0
 	beq.n	.L_080b77a0
 	ldr	r3, [r5, #12]
@@ -87,7 +83,7 @@ Func_080b7738:
 .L_080b77d0:
 	movs	r0, #1
 	mov	r1, sl
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	movs	r7, #0
 	mov	r9, r0
 	cmp	r7, r9
@@ -104,7 +100,7 @@ Func_080b7738:
 	movs	r1, #2
 	ldrh	r0, [r3, #0]
 	add	r8, r1
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	cmp	r0, #0
 	beq.n	.L_080b7848
 	ldr	r5, [r0, #0]
@@ -155,7 +151,7 @@ Func_080b7738:
 .L_080b784e:
 	movs	r0, #2
 	mov	r1, sl
-	bl	sub_080b6c08
+	bl	BattleParty_ListActorIds
 	movs	r7, #0
 	mov	r9, r0
 	cmp	r7, r9
@@ -172,7 +168,7 @@ Func_080b7738:
 	movs	r1, #2
 	ldrh	r0, [r3, #0]
 	add	r8, r1
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	cmp	r0, #0
 	beq.n	.L_080b78c6
 	ldr	r5, [r0, #0]

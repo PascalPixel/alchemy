@@ -12,8 +12,6 @@
 	.thumb_func
 	.set	.L_030007b4, 0x030007b4
 	.arm
-	.set AlchemyLoadAddress, 0x080010b4
-	.set AlchemyRunAddress, 0x03000afc
 	asr	r9, r9, #22
 	adds	r9, r9, r6, lsl #1
 	adds	r7, r7, r4

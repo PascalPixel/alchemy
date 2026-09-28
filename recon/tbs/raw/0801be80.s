@@ -1,16 +1,13 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_0801a910, 0x0801a910
-	.set sub_0801b9a8, 0x0801b9a8
-	.set sub_0801ba34, 0x0801ba34
-	.set sub_0801c21c, 0x0801c21c
 	.global Menu_PushSelectedNode
 	.global Func_0801be80
 	.thumb_func
 Menu_PushSelectedNode:
 Func_0801be80:
+	.global Menu_ConfirmSelection
+	.thumb_func
+Menu_ConfirmSelection:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -30,17 +27,17 @@ Func_0801be80:
 	mov	r8, r0
 	adds	r0, r5, #0
 	mov	r9, r2
-	bl	sub_0801ba34
+	bl	Menu_SendNodeCountList
 	mov	r0, sl
 	ldrh	r1, [r0, #0]
 	adds	r0, r5, #0
-	bl	sub_0801b9a8
+	bl	Menu_ReloadNodeResource
 	ldr	r1, [pc, #328]
 	movs	r3, #33
 	adds	r2, r5, r1
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #320]
 	ldr	r0, [pc, #320]
 	movs	r7, #0
@@ -50,7 +47,7 @@ Func_0801be80:
 	strh	r7, [r3, #0]
 	adds	r3, r5, r0
 	strh	r7, [r3, #0]
-	bl	sub_0801c21c
+	bl	Resource_ResetPendingTransfer
 	movs	r1, #210
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
@@ -99,7 +96,7 @@ Func_0801be80:
 	bne.n	.L_0801bf10
 .L_0801bf2c:
 	movs	r0, #2
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #210
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
@@ -112,7 +109,7 @@ Func_0801be80:
 	cmp	r7, r6
 	beq.n	.L_0801bf50
 	ldrh	r0, [r7, #12]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	mov	r3, r8
 	strh	r3, [r7, #10]
 .L_0801bf50:
@@ -183,9 +180,9 @@ Func_0801be80:
 	orrs	r3, r2
 	strh	r3, [r1, #0]
 	movs	r0, #2
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #1
-	bl	sub_0801a910
+	bl	Resource_FindFreeTransferEntry
 	ldrh	r3, [r6, #10]
 	adds	r7, r0, #0
 	strh	r3, [r7, #10]

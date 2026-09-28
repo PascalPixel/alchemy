@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f2c[];
+s32 Func_080153d0(s32, s32, s32 *, s32 *, s32);
+s32 Runtime_ReleaseHeapBlock(s32);
 
 /* menu/res/reset_two_resource_entries.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -11,7 +14,7 @@ void Menu_ResetTwoResourceEntries(void)
 {
     void *state;
 
-    state = *(void **)ADDR_03001F2C;
+    state = *(void **)((u32)&Data_03001f2c);
     Resource_ResetEntry(FIELD_AT_OFFSET(state, u16 *, 0x392));
     Resource_ResetEntry(FIELD_AT_OFFSET(state, u16 *, 0x394));
 }
@@ -30,7 +33,7 @@ s32 UiIcon_LoadResourceIntoSlot(s32 resource_id, s32 slot)
 
     allocation = Runtime_AllocateBlock(0x11, 0x608);
     selected_slot = slot;
-    Ui_SetRange(resource_id, 0, &selected_slot, &resource_info, 1);
+    Func_080153d0(resource_id, 0, &selected_slot, &resource_info, 1);
     buffer = Resource_GetBuffer(slot, allocation + 0x400);
     Runtime_ReleaseHeapBlock(0x11);
     return buffer;

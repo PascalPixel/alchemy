@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SHOP.H"
+extern u8 Data_03001f2c[];
 
 /* shop/place_cursor.c */
 void Shop_SetCursor(struct ShopCursor *cursor, s32 x, s32 y, s8 kind);

@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08014de4, 0x08014de4
-	.set sub_08015024, 0x08015024
-	.set sub_08015068, 0x08015068
-	.set sub_08015128, 0x08015128
-	.set sub_080156e8, 0x080156e8
-	.set sub_08015768, 0x08015768
-	.set sub_08015778, 0x08015778
-	.set sub_0811be3c, 0x0811be3c
-	.set sub_08126548, 0x08126548
 	.global Func_08126700
 	.thumb_func
 Func_08126700:
@@ -33,7 +23,7 @@ Func_08126700:
 	movs	r1, #100
 	sub	sp, #40
 	mov	sl, r2
-	bl	sub_08002054
+	bl	Math_Div
 	mov	r3, sl
 	mov	r2, r9
 	str	r2, [r3, #4]
@@ -59,18 +49,18 @@ Func_08126700:
 	.2byte 0x0072
 	adds	r1, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08015768
-	bl	sub_08014de4
+	bl	Camera_StoreSceneParameters
+	bl	Func_08014de4
 	mov	r0, sl
-	bl	sub_08015128
+	bl	0x08015128
 	mov	r2, r8
 	movs	r3, #54
 	ldrsh	r0, [r2, r3]
-	bl	sub_08015068
+	bl	0x08015068
 	mov	r2, r8
 	movs	r3, #52
 	ldrsh	r0, [r2, r3]
-	bl	sub_08015024
+	bl	0x08015024
 	add	r0, sp, #28
 	str	r5, [r0, #0]
 	str	r5, [r0, #4]
@@ -85,14 +75,14 @@ Func_08126700:
 	movs	r5, #120
 	str	r5, [r3, #12]
 	str	r5, [r3, #16]
-	bl	sub_08014de4
+	bl	Func_08014de4
 	mov	r0, r8
 	mov	r1, sl
-	bl	sub_080156e8
+	bl	0x080156e8
 	add	r6, sp, #16
 	adds	r1, r6, #0
 	mov	r0, r9
-	bl	sub_08015778
+	bl	Func_08015778
 	ldr	r3, [r6, #4]
 	ldr	r2, [r6, #0]
 	movs	r1, #240
@@ -107,7 +97,7 @@ Func_08126700:
 	subs	r5, r5, r7
 	str	r7, [sp, #0]
 	lsls	r6, r5, #1
-	bl	sub_08126548
+	bl	0x08126548
 	movs	r1, #192
 	adds	r0, r6, #0
 	lsls	r1, r1, #8
@@ -117,7 +107,7 @@ Func_08126700:
 	adds	r1, r0, #0
 	adds	r2, r5, #0
 	adds	r0, r6, #0
-	bl	sub_08015768
+	bl	Camera_StoreSceneParameters
 	add	sp, #40
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -152,7 +142,7 @@ Func_08126700:
 	movs	r1, #100
 	sub	sp, #40
 	mov	sl, r2
-	bl	sub_08002054
+	bl	Math_Div
 	mov	r3, sl
 	mov	r2, r9
 	str	r2, [r3, #4]
@@ -178,18 +168,18 @@ Func_08126700:
 	.2byte 0x0072
 	adds	r1, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08015768
-	bl	sub_08014de4
+	bl	Camera_StoreSceneParameters
+	bl	Func_08014de4
 	mov	r0, sl
-	bl	sub_08015128
+	bl	0x08015128
 	mov	r2, r8
 	movs	r3, #54
 	ldrsh	r0, [r2, r3]
-	bl	sub_08015068
+	bl	0x08015068
 	mov	r2, r8
 	movs	r3, #52
 	ldrsh	r0, [r2, r3]
-	bl	sub_08015024
+	bl	0x08015024
 	add	r0, sp, #28
 	mov	r1, r8
 	str	r5, [r0, #0]
@@ -202,14 +192,14 @@ Func_08126700:
 	movs	r5, #120
 	str	r5, [r3, #12]
 	str	r5, [r3, #16]
-	bl	sub_08014de4
+	bl	Func_08014de4
 	mov	r0, r8
 	mov	r1, sl
-	bl	sub_080156e8
+	bl	0x080156e8
 	add	r6, sp, #16
 	adds	r1, r6, #0
 	mov	r0, r9
-	bl	sub_08015778
+	bl	Func_08015778
 	ldr	r3, [r6, #4]
 	ldr	r2, [r6, #0]
 	movs	r1, #240
@@ -224,7 +214,7 @@ Func_08126700:
 	subs	r5, r5, r7
 	str	r7, [sp, #0]
 	lsls	r6, r5, #1
-	bl	sub_08126548
+	bl	0x08126548
 	movs	r1, #192
 	adds	r0, r6, #0
 	lsls	r1, r1, #8
@@ -234,7 +224,7 @@ Func_08126700:
 	adds	r1, r0, #0
 	adds	r2, r5, #0
 	adds	r0, r6, #0
-	bl	sub_08015768
+	bl	Camera_StoreSceneParameters
 	add	sp, #40
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3
@@ -251,10 +241,10 @@ Func_08126700:
 	push	{r6}
 	adds	r6, r1, #0
 	mov	r8, r2
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	ldr	r5, [r0, #0]
 	adds	r0, r6, #0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	ldr	r3, [r0, #0]
 	ldr	r1, [r5, #8]
 	ldr	r0, [r3, #8]

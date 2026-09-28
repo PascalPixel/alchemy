@@ -11,6 +11,9 @@ Func_081c0000:
 	bx	r4
 	.2byte 0x0c1d
 	.2byte 0x081c
+	.global Audio_PlayCue
+	.thumb_func
+Audio_PlayCue:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x0cb1

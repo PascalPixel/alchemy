@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080048b0, 0x080048b0
 	.global Unnamed_080ed408
 	.global Func_080ed408
 	.thumb_func
@@ -161,7 +160,7 @@ Func_080ed408:
 .L_080ed506:
 	adds	r1, #8
 	lsls	r1, r1, #2
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r6, [pc, #796]
 	adds	r5, r0, #0
 	ldr	r3, [pc, #796]

@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080162d4, 0x080162d4
 	.global Menu_CenterResourceEntries
 	.global Func_08028808
 	.thumb_func
@@ -38,7 +36,7 @@ Func_08028808:
 	movs	r1, #3
 	lsls	r0, r0, #1
 	sub	sp, #4
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r5, r6, #1
 	adds	r5, r5, r6
 	adds	r5, r5, r0
@@ -74,7 +72,7 @@ Func_08028808:
 	str	r3, [sp, #0]
 	mov	r1, sl
 	movs	r3, #3
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [r7, #120]
 	add	sp, #4
 	pop	{r3, r5, r6}

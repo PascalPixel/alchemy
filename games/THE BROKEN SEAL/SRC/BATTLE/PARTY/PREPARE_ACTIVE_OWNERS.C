@@ -2,6 +2,7 @@
 #include "BATTLE_TYPES.H"
 #include "BATTLE_WORK.H"
 #include "PARTY_STATE.H"
+extern u8 *Data_03001e74;
 
 
 extern struct PartyState gGameState;
@@ -19,7 +20,7 @@ s32 BattleParty_PrepareActiveOwners(u16 *owners)
     s32 index;
 
     limit = 4;
-    if (((u8 *)BattleWorkPtr)[68] != 0)
+    if (((u8 *)Data_03001e74)[68] != 0)
         limit = 3;
 
     count = Party_CountActiveOwnersFar();

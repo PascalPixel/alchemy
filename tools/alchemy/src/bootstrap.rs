@@ -404,21 +404,42 @@ fn install(
         .map_err(|e| e.to_string())?;
     }
     validate(stage.path())?;
-    // A replacement requires an explicit removal; never destroy an installed
-    // compiler used by another worktree, even if the incoming bundle is valid.
+    // Complete a partial installation only when every existing compiler is
+    // identical to the admitted bundle. Existing executables are preserved.
     if destination.exists() {
-        validate(destination)?;
+        let mut missing = Vec::new();
         for name in FILES {
-            if fs::read(stage.path().join(name)).map_err(|e| e.to_string())?
-                != fs::read(destination.join(name)).map_err(|e| e.to_string())?
-            {
-                return Err(
-                    "a different toolchain is already installed; bootstrap does not replace it"
-                        .into(),
-                );
+            match fs::read(destination.join(name)) {
+                Ok(existing)
+                    if existing
+                        == fs::read(stage.path().join(name)).map_err(|e| e.to_string())? => {}
+                Ok(_) => {
+                    return Err(
+                        "a different toolchain is already installed; bootstrap does not replace it"
+                            .into(),
+                    )
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::NotFound => missing.push(name),
+                Err(error) => return Err(error.to_string()),
             }
         }
-        return Ok(());
+        let mut added = Vec::new();
+        let complete = (|| {
+            for name in missing {
+                let path = destination.join(name);
+                fs::create_dir_all(path.parent().expect("compiler parent"))
+                    .map_err(|e| e.to_string())?;
+                fs::copy(stage.path().join(name), &path).map_err(|e| e.to_string())?;
+                added.push(path);
+            }
+            validate(destination)
+        })();
+        if complete.is_err() {
+            for path in added {
+                let _ = fs::remove_file(path);
+            }
+        }
+        return complete;
     }
     fs::rename(stage.path(), destination).map_err(|e| e.to_string())?;
     Ok(())
@@ -473,6 +494,27 @@ mod tests {
         fs::write(source.join("cc1"), b"changed").unwrap();
         assert!(install(&source, &destination, |_| Ok(())).is_err());
         assert_eq!(fs::read(destination.join("cc1")).unwrap(), b"cc1");
+    }
+    #[test]
+    fn admitted_bundle_completes_partial_installation_without_replacing_compilers() {
+        let temp = tempfile::tempdir().unwrap();
+        let source = fixture(temp.path());
+        let destination = temp.path().join("installed");
+        install(&source, &destination, |_| Ok(())).unwrap();
+        fs::remove_file(destination.join("agbcc/old_agbcc")).unwrap();
+        install(&source, &destination, |_| Ok(())).unwrap();
+        assert_eq!(
+            fs::read(destination.join("agbcc/old_agbcc")).unwrap(),
+            b"agbcc/old_agbcc"
+        );
+        fs::remove_file(destination.join("agbcc/old_agbcc")).unwrap();
+        fs::write(destination.join("cc1"), b"different compiler").unwrap();
+        assert!(install(&source, &destination, |_| Ok(())).is_err());
+        assert!(!destination.join("agbcc/old_agbcc").exists());
+        assert_eq!(
+            fs::read(destination.join("cc1")).unwrap(),
+            b"different compiler"
+        );
     }
     #[test]
     fn modified_source_archives_are_rejected_before_extraction() {

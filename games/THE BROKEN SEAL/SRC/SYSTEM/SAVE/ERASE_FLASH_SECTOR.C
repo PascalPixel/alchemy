@@ -34,7 +34,7 @@ struct FlashChipInfo {
     u16 wait;
 };
 
-s32 Func_080072f0(s32, u8 *, u8, s32);
+s32 _call_via_r3(s32, u8 *, u8, s32);
 
 u16 EraseFlashSector(u16 sector)
 {
@@ -71,7 +71,7 @@ u16 EraseFlashSector(u16 sector)
     CopyFlashReadRoutineToRam(savedCode);
 
     status = (s32 *)0x02004C00;
-    result = Func_080072f0(2, (u8 *)target, 255, *status);
+    result = _call_via_r3(2, (u8 *)target, 255, *status);
 
     *waitcnt = (*waitcnt & 0xFFFC) | 3;
 

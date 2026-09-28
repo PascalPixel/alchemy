@@ -4,6 +4,8 @@
 #include "MENU_RESULT.H"
 #include "SYSTEM.H"
 #include "UI.H"
+extern u8 Data_03001c94[];
+extern u8 Data_03001b04[];
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -42,8 +44,8 @@ extern struct ItemListWork *gMenuWork;
 /* "{L}-{R}:Switch characters", then "{A}:Status". */
 extern u8 Value_00000b06;
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
+#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
+#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 #define KEY_A 1
 #define KEY_B 2

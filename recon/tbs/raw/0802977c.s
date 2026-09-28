@@ -1,20 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_080030f8, 0x080030f8
-	.set sub_08004080, 0x08004080
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016478, 0x08016478
-	.set sub_08019da8, 0x08019da8
-	.set sub_08019fcc, 0x08019fcc
-	.set sub_0801a2ec, 0x0801a2ec
-	.set sub_0801a404, 0x0801a404
-	.set sub_0801a4fc, 0x0801a4fc
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_0801e940, 0x0801e940
-	.set sub_0801ea08, 0x0801ea08
-	.set sub_0801eadc, 0x0801eadc
 	.global DebugMenu_BrowseEntryGlyphs
 	.thumb_func
 DebugMenu_BrowseEntryGlyphs:
@@ -36,7 +21,7 @@ Func_0802977c:
 	mov	fp, r3
 	movs	r0, #0
 	movs	r3, #5
-	bl	sub_08019da8
+	bl	UiWindow_CreateWithSideObject
 	movs	r3, #2
 	movs	r2, #14
 	str	r0, [sp, #12]
@@ -44,7 +29,7 @@ Func_0802977c:
 	movs	r1, #10
 	movs	r3, #3
 	movs	r0, #10
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	adds	r7, r0, #0
 	ldr	r0, [pc, #324]
 	movs	r5, #0
@@ -143,10 +128,10 @@ Func_0802977c:
 	mov	r1, sl
 	str	r0, [sp, #8]
 	adds	r0, r5, r1
-	bl	sub_080022fc
+	bl	__modsi3
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	sub_08016478
+	bl	RenderOutput_PrepareForRedraw
 	cmp	r5, r8
 	bge.n	.L_08029880
 	ldr	r2, [pc, #132]
@@ -175,32 +160,32 @@ Func_0802977c:
 	add	r2, sp, #20
 	add	r3, sp, #16
 	movs	r1, #0
-	bl	sub_0801a4fc
+	bl	UiGlyph_LoadEntryWithPalette
 	movs	r3, #0
 	adds	r0, r5, #0
 	movs	r1, #2
 	adds	r2, r7, #0
 	str	r3, [sp, #0]
-	bl	sub_0801ea08
+	bl	UiText_DrawNumberInWindow
 	ldr	r0, [pc, #80]
 	adds	r1, r7, #0
 	adds	r0, r5, r0
 	movs	r2, #24
 	movs	r3, #0
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 .L_080298c6:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_08029800
 .L_080298ce:
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #12]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #0
 	add	sp, #24
 	pop	{r3, r5, r6, r7}

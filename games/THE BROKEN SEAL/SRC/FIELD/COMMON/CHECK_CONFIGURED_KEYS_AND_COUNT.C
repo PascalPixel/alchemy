@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 Field_CheckConfiguredKeys();
 
 s32 Field_CheckConfiguredKeysAndCount(void *work)
 {

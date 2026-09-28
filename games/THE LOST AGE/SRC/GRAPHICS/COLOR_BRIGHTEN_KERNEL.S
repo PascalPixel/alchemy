@@ -9,7 +9,8 @@
 @ credit: library — TBS/TLA common ARM colour-buffer kernels copied to the stack, brighten
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08001c08
+	.global ColorBuffer_BrightenKernelCode
+ColorBuffer_BrightenKernelCode:
 	.global ColorBuffer_BrightenKernel
 	.thumb_func
 ColorBuffer_BrightenKernel:

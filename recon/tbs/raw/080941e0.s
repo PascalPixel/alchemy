@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080901c0, 0x080901c0
-	.set sub_080f9010, 0x080f9010
 	.global Func_080941e0
 	.thumb_func
 Func_080941e0:
@@ -18,12 +15,12 @@ Func_080941e0:
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
 	sub	sp, #8
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #144
 	lsls	r0, r0, #1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #147
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #207
 	lsls	r1, r1, #1
 	adds	r3, r6, r1
@@ -36,14 +33,14 @@ Func_080941e0:
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #180]
 	movs	r1, #16
-	bl	sub_080901c0
+	bl	DisplayTransition_Finish
 	movs	r3, #227
 	lsls	r3, r3, #1
 	adds	r2, r6, r3
 	movs	r3, #0
 	strh	r3, [r2, #0]
 	movs	r0, #16
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r7, #240
 	movs	r1, #240
 	movs	r5, #0
@@ -58,7 +55,7 @@ Func_080941e0:
 	strh	r3, [r2, #0]
 	movs	r0, #1
 	str	r1, [sp, #4]
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #128]
 	ldr	r1, [sp, #4]
 	adds	r5, #1
@@ -75,14 +72,14 @@ Func_080941e0:
 	strh	r3, [r5, #0]
 	ldr	r0, [pc, #108]
 	movs	r1, #16
-	bl	sub_080901c0
+	bl	DisplayTransition_Finish
 	movs	r3, #227
 	lsls	r3, r3, #1
 	adds	r2, r6, r3
 	movs	r3, #0
 	strh	r3, [r2, #0]
 	movs	r0, #16
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r7, #240
 	movs	r2, #240
 	mov	r8, r5
@@ -98,7 +95,7 @@ Func_080941e0:
 	strh	r3, [r1, #0]
 	movs	r0, #1
 	str	r2, [sp, #0]
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [pc, #48]
 	ldr	r2, [sp, #0]
 	subs	r5, #1

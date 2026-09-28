@@ -1,62 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_0800205c, 0x0800205c
-	.set sub_08002064, 0x08002064
-	.set sub_0801314c, 0x0801314c
-	.set sub_08013560, 0x08013560
-	.set sub_080142d4, 0x080142d4
-	.set sub_080143ac, 0x080143ac
-	.set sub_08014d00, 0x08014d00
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08020030, 0x08020030
-	.set sub_08038010, 0x08038010
-	.set sub_08038018, 0x08038018
-	.set sub_08038038, 0x08038038
-	.set sub_08038048, 0x08038048
-	.set sub_08038060, 0x08038060
-	.set sub_08038070, 0x08038070
-	.set sub_08038078, 0x08038078
-	.set sub_08038080, 0x08038080
-	.set sub_080380b0, 0x080380b0
-	.set sub_080380c8, 0x080380c8
-	.set sub_08038120, 0x08038120
-	.set sub_08038140, 0x08038140
-	.set sub_08038260, 0x08038260
-	.set sub_080ad008, 0x080ad008
-	.set sub_080ad010, 0x080ad010
-	.set sub_080ad018, 0x080ad018
-	.set sub_080ad020, 0x080ad020
-	.set sub_080ad030, 0x080ad030
-	.set sub_080ad048, 0x080ad048
-	.set sub_080ad1c0, 0x080ad1c0
-	.set sub_080ad1c8, 0x080ad1c8
-	.set sub_080ad1d0, 0x080ad1d0
-	.set sub_080ad1d8, 0x080ad1d8
-	.set sub_080ad1e8, 0x080ad1e8
-	.set sub_080ad1f0, 0x080ad1f0
-	.set sub_080ad258, 0x080ad258
-	.set sub_080ad278, 0x080ad278
-	.set sub_080ad288, 0x080ad288
-	.set sub_080f8028, 0x080f8028
-	.set sub_080f8038, 0x080f8038
-	.set sub_080f8058, 0x080f8058
-	.set sub_080f8060, 0x080f8060
-	.set sub_080f8068, 0x080f8068
-	.set sub_081084f4, 0x081084f4
-	.set sub_0810857c, 0x0810857c
-	.set sub_08108630, 0x08108630
-	.set sub_08108690, 0x08108690
-	.set sub_0810875c, 0x0810875c
-	.set sub_08108af0, 0x08108af0
-	.set sub_0810a2d0, 0x0810a2d0
-	.set sub_0810a2d8, 0x0810a2d8
-	.set sub_0810a748, 0x0810a748
-	.set sub_0810b6c4, 0x0810b6c4
-	.set sub_0810b6cc, 0x0810b6cc
-	.set sub_0810bea8, 0x0810bea8
-	.set sub_0810bf98, 0x0810bf98
-	.set sub_081c0010, 0x081c0010
 	.global Func_08109188
 	.thumb_func
 Func_08109188:
@@ -71,12 +14,12 @@ Func_08109188:
 	cmp	r5, #0
 	beq.n	.L_081091be
 	adds	r0, r5, #0
-	bl	sub_08038060
+	bl	0x08038060
 	ldr	r0, [pc, #32]
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08038080
+	bl	0x08038080
 	ldr	r3, [pc, #24]
 	movs	r1, #6
 	ldr	r0, [r3, #16]
@@ -84,7 +27,7 @@ Func_08109188:
 	str	r3, [sp, #0]
 	adds	r2, r5, #0
 	movs	r3, #32
-	bl	sub_080380b0
+	bl	0x080380b0
 .L_081091be:
 	add	sp, #4
 	pop	{r5, pc}
@@ -120,7 +63,7 @@ Func_08109188:
 	adds	r0, r5, #0
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_08038080
+	bl	0x08038080
 	movs	r3, #8
 	str	r3, [sp, #0]
 	adds	r0, r7, #0
@@ -128,23 +71,23 @@ Func_08109188:
 	adds	r2, r6, #0
 	movs	r3, #32
 	subs	r5, #3
-	bl	sub_080380b0
+	bl	0x080380b0
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	movs	r2, #72
 .L_08109218:
 	movs	r3, #8
-	bl	sub_08038080
+	bl	0x08038080
 	b.n	.L_08109252
 .L_08109220:
 	adds	r0, r6, #0
-	bl	sub_08038260
+	bl	0x08038260
 	ldr	r0, [pc, #64]
 	adds	r1, r6, #0
 	add	r0, r8
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08038080
+	bl	0x08038080
 	cmp	r7, #0
 	bne.n	.L_08109240
 	cmp	r5, #1
@@ -159,7 +102,7 @@ Func_08109188:
 	adds	r0, r7, r0
 	movs	r2, #8
 	movs	r3, #8
-	bl	sub_08038080
+	bl	0x08038080
 .L_08109252:
 	add	sp, #4
 	pop	{r3}
@@ -178,12 +121,12 @@ Func_08109188:
 	adds	r6, r1, #0
 	cmp	r5, #0
 	beq.n	.L_0810928a
-	bl	sub_08038260
+	bl	0x08038260
 	adds	r0, r6, #0
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08038080
+	bl	0x08038080
 .L_0810928a:
 	pop	{r5, r6, pc}
 .L_0810928c:
@@ -221,7 +164,7 @@ Func_08109188:
 	cmp	r6, #0
 	beq.n	.L_08109396
 	adds	r0, r6, #0
-	bl	sub_08038060
+	bl	0x08038060
 	mov	r1, fp
 	cmp	r1, #0
 	beq.n	.L_081092fe
@@ -237,7 +180,7 @@ Func_08109188:
 	adds	r2, r6, #0
 	movs	r3, #88
 	lsls	r1, r1, #23
-	bl	sub_080380c8
+	bl	Func_080380c8
 	movs	r2, #0
 	movs	r3, #17
 	strb	r2, [r0, #4]
@@ -258,7 +201,7 @@ Func_08109188:
 	lsls	r1, r1, #23
 	adds	r2, r6, #0
 	str	r5, [sp, #0]
-	bl	sub_080380c8
+	bl	Func_080380c8
 	movs	r3, #15
 	strb	r5, [r0, #4]
 	strb	r3, [r0, #5]
@@ -293,11 +236,11 @@ Func_08109188:
 	cmp	r3, r9
 	bne.n	.L_08109364
 	movs	r1, #30
-	bl	sub_08020030
+	bl	Func_08020030
 	b.n	.L_0810936a
 .L_08109364:
 	movs	r1, #1
-	bl	sub_08020030
+	bl	Func_08020030
 .L_0810936a:
 	movs	r3, #128
 	lsls	r3, r3, #9
@@ -305,7 +248,7 @@ Func_08109188:
 	str	r3, [r7, r2]
 	adds	r0, r5, #0
 	ldr	r1, [sp, #16]
-	bl	sub_080ad1c8
+	bl	0x080ad1c8
 	cmp	r0, #0
 	bne.n	.L_08109388
 	movs	r3, #204
@@ -346,10 +289,10 @@ Func_08109188:
 	adds	r0, r1, #0
 	mov	r9, r2
 	str	r3, [sp, #16]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r7, r0, #0
 	mov	r0, r9
-	bl	sub_080ad010
+	bl	0x080ad010
 	adds	r5, r0, #0
 	movs	r0, #1
 	negs	r0, r0
@@ -360,22 +303,22 @@ Func_08109188:
 	b.n	.L_0810959a
 .L_081093e2:
 	mov	r0, sl
-	bl	sub_08038060
+	bl	0x08038060
 	mov	r1, r9
 	ldr	r0, [sp, #20]
-	bl	sub_080ad1c0
+	bl	0x080ad1c0
 	cmp	r0, #0
 	bne.n	.L_08109402
 	ldr	r0, [pc, #108]
 	mov	r1, sl
 	movs	r2, #8
 	movs	r3, #24
-	bl	sub_08038078
+	bl	0x08038078
 	b.n	.L_0810959a
 .L_08109402:
 	ldrb	r1, [r5, #2]
 	ldr	r0, [sp, #20]
-	bl	sub_080ad1d0
+	bl	0x080ad1d0
 	ldr	r2, [sp, #12]
 	cmp	r0, r2
 	bne.n	.L_08109468
@@ -414,7 +357,7 @@ Func_08109188:
 	cmp	r5, #14
 	bgt.n	.L_0810945a
 	ldrh	r0, [r6, #0]
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrb	r3, [r0, #2]
 	adds	r6, #2
 	cmp	r3, #6
@@ -450,7 +393,7 @@ Func_08109188:
 	strh	r1, [r7, r5]
 	ldr	r0, [sp, #20]
 	mov	r8, r2
-	bl	sub_080ad008
+	bl	0x080ad008
 	ldrh	r3, [r7, #60]
 	add	r2, sp, #24
 	str	r3, [r2, #0]
@@ -474,7 +417,7 @@ Func_08109188:
 	str	r3, [r2, #12]
 	strh	r0, [r7, r5]
 	ldr	r0, [sp, #20]
-	bl	sub_080ad008
+	bl	0x080ad008
 	ldrh	r3, [r7, #60]
 	add	r1, sp, #40
 	str	r3, [r1, #0]
@@ -521,7 +464,7 @@ Func_08109188:
 	lsls	r1, r1, #23
 	movs	r3, #56
 	mov	r2, sl
-	bl	sub_080380c8
+	bl	Func_080380c8
 	movs	r3, #0
 	adds	r6, r7, #0
 	strb	r3, [r0, #4]
@@ -536,7 +479,7 @@ Func_08109188:
 	movs	r1, #3
 	movs	r3, #32
 	str	r7, [sp, #0]
-	bl	sub_080380b0
+	bl	0x080380b0
 	mov	r2, r8
 	add	r0, sp, #40
 	mov	r1, fp
@@ -548,20 +491,20 @@ Func_08109188:
 	mov	r2, sl
 	movs	r3, #72
 	str	r6, [sp, #0]
-	bl	sub_080380b0
+	bl	0x080380b0
 .L_08109554:
 	ldr	r0, [pc, #80]
 	mov	r1, sl
 	adds	r0, r5, r0
 	movs	r2, #0
 	adds	r3, r6, #0
-	bl	sub_08038080
+	bl	0x08038080
 	ldr	r2, [sp, #4]
 	mov	r0, sl
 	movs	r3, #13
 	movs	r1, #0
 	str	r2, [sp, #0]
-	bl	sub_08038070
+	bl	0x08038070
 	ldr	r3, [sp, #4]
 	movs	r0, #4
 	adds	r3, #2
@@ -581,7 +524,7 @@ Func_08109188:
 	adds	r0, r1, r0
 	movs	r3, #48
 	mov	r1, sl
-	bl	sub_08038080
+	bl	0x08038080
 .L_0810959a:
 	add	sp, #56
 	pop	{r3, r5, r6, r7}
@@ -600,15 +543,15 @@ Func_08109188:
 	adds	r5, r0, #0
 	adds	r0, r7, #0
 	adds	r6, r2, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	mov	r8, r0
 	cmp	r5, #0
 	beq.n	.L_08109616
 	adds	r0, r5, #0
-	bl	sub_08038060
+	bl	0x08038060
 	adds	r0, r7, #0
 	adds	r1, r6, #0
-	bl	sub_080ad030
+	bl	0x080ad030
 	movs	r2, #1
 	negs	r2, r2
 	cmp	r0, r2
@@ -620,25 +563,25 @@ Func_08109188:
 	movs	r1, #5
 	lsrs	r0, r0, #11
 	adds	r0, #1
-	bl	sub_08038120
+	bl	0x08038120
 	ldr	r0, [pc, #40]
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08038080
+	bl	0x08038080
 	b.n	.L_0810960a
 .L_081095fe:
 	ldr	r0, [pc, #32]
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08038080
+	bl	0x08038080
 .L_0810960a:
 	adds	r0, r5, #0
 	movs	r1, #8
 	movs	r2, #8
 	adds	r3, r7, #0
-	bl	sub_0810bf98
+	bl	Func_0810bf98
 .L_08109616:
 	pop	{r3}
 	mov	r8, r3
@@ -657,10 +600,10 @@ Func_08109188:
 	adds	r6, r1, #0
 	mov	sl, r3
 	adds	r5, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r7, r0, #0
 	adds	r0, r6, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	mov	r8, r0
 	mov	r3, r8
 	ldrb	r2, [r3, #3]
@@ -670,10 +613,10 @@ Func_08109188:
 	cmp	r3, #0
 	beq.n	.L_081096e6
 	ldr	r0, [pc, #152]
-	bl	sub_081084f4
+	bl	0x081084f4
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	sub_080ad030
+	bl	0x080ad030
 	movs	r2, #1
 	negs	r2, r2
 	cmp	r0, r2
@@ -695,7 +638,7 @@ Func_08109188:
 	ldr	r3, [pc, #108]
 	ldrh	r1, [r2, #0]
 	ldr	r0, [r3, #16]
-	bl	sub_0800205c
+	bl	0x0800205c
 	adds	r5, r0, #0
 .L_08109690:
 	movs	r3, #129
@@ -709,12 +652,12 @@ Func_08109188:
 	bne.n	.L_081096bc
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	sub_080ad1e8
+	bl	0x080ad1e8
 	cmp	r5, r0
 	ble.n	.L_081096b8
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	sub_080ad1e8
+	bl	0x080ad1e8
 	b.n	.L_081096ba
 .L_081096b8:
 	adds	r0, r5, #0
@@ -735,7 +678,7 @@ Func_08109188:
 	movs	r0, #0
 	movs	r1, #128
 	movs	r2, #48
-	bl	sub_08108af0
+	bl	Func_08108af0
 	mov	r3, r8
 	ldrh	r2, [r3, #0]
 	adds	r0, r7, #0
@@ -765,7 +708,7 @@ Func_08109188:
 	lsls	r1, r1, #3
 	movs	r0, #56
 	str	r2, [sp, #12]
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r2, #1
 	str	r2, [sp, #8]
 	mov	r3, r9
@@ -779,7 +722,7 @@ Func_08109188:
 	movs	r0, #7
 	movs	r2, #23
 	movs	r3, #3
-	bl	sub_08038010
+	bl	0x08038010
 	movs	r5, #1
 	negs	r5, r5
 	movs	r7, #0
@@ -788,7 +731,7 @@ Func_08109188:
 	bne.n	.L_08109744
 	b.n	.L_0810989e
 .L_08109744:
-	bl	sub_080143ac
+	bl	Func_080143ac
 	str	r0, [sp, #4]
 	cmp	r0, #96
 	bne.n	.L_08109750
@@ -797,20 +740,20 @@ Func_08109188:
 	movs	r1, #128
 	lsls	r1, r1, #1
 	movs	r2, #0
-	bl	sub_080142d4
+	bl	0x080142d4
 	ldr	r5, [pc, #56]
 	ldr	r0, [sp, #4]
 	adds	r1, r5, #0
 	mov	r2, sl
 	movs	r3, #0
 	str	r7, [sp, #0]
-	bl	sub_080380c8
+	bl	Func_080380c8
 	adds	r1, r5, #0
 	mov	r2, sl
 	movs	r3, #32
 	ldr	r0, [sp, #4]
 	str	r7, [sp, #0]
-	bl	sub_080380c8
+	bl	Func_080380c8
 	ldrh	r1, [r0, #24]
 	ldr	r3, [pc, #20]
 	lsls	r2, r1, #22
@@ -835,7 +778,7 @@ Func_08109188:
 	cmp	r3, #0
 	beq.n	.L_081097b4
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	str	r3, [sp, #8]
 	subs	r7, #1
@@ -847,7 +790,7 @@ Func_08109188:
 	cmp	r3, #0
 	beq.n	.L_081097cc
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	str	r3, [sp, #8]
 	adds	r7, #1
@@ -860,7 +803,7 @@ Func_08109188:
 	adds	r0, r7, r2
 	mov	r1, r9
 	str	r3, [sp, #8]
-	bl	sub_08002064
+	bl	0x08002064
 	movs	r3, #128
 	movs	r2, #132
 	lsls	r3, r3, #19
@@ -875,34 +818,34 @@ Func_08109188:
 	mov	r2, r8
 	movs	r0, #30
 	movs	r1, #14
-	bl	sub_0810875c
+	bl	0x0810875c
 	mov	r0, fp
 	add	r0, r9
 	movs	r1, #0
 	mov	r2, r8
-	bl	sub_0810875c
+	bl	0x0810875c
 	mov	r3, fp
 	adds	r0, r3, r7
 	adds	r0, #1
 	movs	r1, #10
 	mov	r2, r8
-	bl	sub_0810875c
+	bl	0x0810875c
 	mov	r0, fp
 	movs	r1, #2
 	mov	r2, r8
-	bl	sub_0810875c
+	bl	0x0810875c
 	movs	r1, #128
 	ldr	r0, [sp, #4]
 	lsls	r1, r1, #1
 	mov	r2, r8
-	bl	sub_080142d4
+	bl	0x080142d4
 	adds	r5, r7, #1
 	adds	r0, r5, #0
 	movs	r1, #2
 	mov	r2, sl
 	movs	r3, #72
 	str	r6, [sp, #0]
-	bl	sub_080380b0
+	bl	0x080380b0
 	ldr	r2, [sp, #12]
 	movs	r1, #6
 	adds	r0, r5, #0
@@ -910,15 +853,15 @@ Func_08109188:
 	movs	r3, #88
 	mov	r2, sl
 	str	r6, [sp, #0]
-	bl	sub_080380b0
+	bl	0x080380b0
 	ldr	r0, [pc, #104]
 	mov	r1, sl
 	movs	r2, #136
 	movs	r3, #0
-	bl	sub_08038080
+	bl	0x08038080
 .L_0810985e:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 .L_08109864:
 	ldr	r2, [pc, #76]
 	ldr	r3, [r2, #4]
@@ -927,7 +870,7 @@ Func_08109188:
 	cmp	r3, #0
 	beq.n	.L_0810987a
 	movs	r0, #112
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	adds	r5, r7, #1
 	b.n	.L_08109890
 .L_0810987a:
@@ -938,18 +881,18 @@ Func_08109188:
 	cmp	r6, #0
 	beq.n	.L_0810979c
 	movs	r0, #113
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r5, #1
 	negs	r5, r5
 .L_08109890:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	mov	r0, sl
 	movs	r1, #2
-	bl	sub_08038018
+	bl	0x08038018
 .L_0810989e:
 	movs	r0, #56
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	adds	r0, r5, #0
 	add	sp, #16
 	pop	{r3, r5, r6, r7}
@@ -971,35 +914,35 @@ Func_08109188:
 	adds	r7, r0, #0
 	mov	r0, r8
 	adds	r5, r2, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	adds	r6, r0, #0
 	movs	r3, #0
 	ldrb	r1, [r6, #2]
 	adds	r0, r7, #0
 	mov	sl, r3
-	bl	sub_080ad1d0
+	bl	0x080ad1d0
 	mov	r9, r0
 	movs	r0, #101
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	cmp	sl, r5
 	bge.n	.L_08109912
 .L_081098f0:
 	mov	r1, r8
 	adds	r0, r7, #0
-	bl	sub_080ad020
+	bl	0x080ad020
 	mov	sl, r0
 	ldrh	r0, [r6, #0]
 	subs	r5, #1
 	negs	r0, r0
-	bl	sub_080ad1d8
+	bl	0x080ad1d8
 	ldrh	r0, [r6, #0]
-	bl	sub_080ad258
+	bl	0x080ad258
 	bl	.L_08109188
 	cmp	r5, #0
 	bne.n	.L_081098f0
 .L_08109912:
 	ldr	r0, [pc, #36]
-	bl	sub_0810857c
+	bl	0x0810857c
 	adds	r0, r7, #0
 	mov	r1, sl
 	bl	.L_0810993c
@@ -1032,7 +975,7 @@ Func_08109188:
 	mov	r9, r1
 	mov	fp, r3
 	mov	r8, r0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	mov	r3, r9
 	lsls	r5, r3, #1
 	adds	r7, r0, #0
@@ -1043,7 +986,7 @@ Func_08109188:
 	adds	r6, #255
 	ands	r6, r3
 	adds	r0, r6, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrh	r2, [r7, r5]
 	movs	r3, #128
 	lsls	r3, r3, #2
@@ -1054,13 +997,13 @@ Func_08109188:
 	bne.n	.L_08109a24
 	mov	r0, r8
 	adds	r1, r6, #0
-	bl	sub_080ad1c0
+	bl	0x080ad1c0
 	cmp	r0, #0
 	beq.n	.L_081099d0
 	mov	r3, sl
 	ldrb	r1, [r3, #2]
 	mov	r0, r8
-	bl	sub_080ad1d0
+	bl	0x080ad1d0
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3
@@ -1068,7 +1011,7 @@ Func_08109188:
 	lsls	r3, r0, #1
 	adds	r3, #216
 	ldrh	r0, [r7, r3]
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrb	r2, [r0, #3]
 	movs	r3, #2
 	ands	r3, r2
@@ -1078,11 +1021,11 @@ Func_08109188:
 .L_081099b8:
 	mov	r0, r8
 	movs	r1, #1
-	bl	sub_08038120
+	bl	0x08038120
 	ldr	r0, [pc, #108]
-	bl	sub_081084f4
+	bl	0x081084f4
 	movs	r0, #0
-	bl	sub_08108630
+	bl	0x08108630
 	cmp	r0, #0
 	beq.n	.L_081099d4
 .L_081099d0:
@@ -1091,7 +1034,7 @@ Func_08109188:
 .L_081099d4:
 	mov	r0, r8
 	mov	r1, r9
-	bl	sub_080ad048
+	bl	0x080ad048
 	mov	r3, fp
 	ldr	r0, [r3, #36]
 	cmp	r0, #0
@@ -1106,24 +1049,24 @@ Func_08109188:
 	cmp	r3, #0
 	beq.n	.L_08109a1c
 	movs	r0, #103
-	bl	sub_081c0010
-	bl	sub_08038140
+	bl	Audio_PlayCue
+	bl	0x08038140
 	movs	r1, #8
 	movs	r2, #4
 	movs	r3, #2
 	ldr	r0, [pc, #44]
-	bl	sub_08038038
+	bl	0x08038038
 	b.n	.L_08109a14
 .L_08109a0e:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 .L_08109a14:
-	bl	sub_08038048
+	bl	0x08038048
 	cmp	r0, #0
 	beq.n	.L_08109a0e
 .L_08109a1c:
 	ldr	r0, [pc, #24]
-	bl	sub_0810857c
+	bl	0x0810857c
 	movs	r0, #1
 .L_08109a24:
 	pop	{r3, r5, r6, r7}
@@ -1142,7 +1085,7 @@ Func_08109188:
 	push	{r7}
 	adds	r7, r0, #0
 	adds	r6, r1, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r3, #1
 	negs	r3, r3
 	mov	r8, r3
@@ -1159,13 +1102,13 @@ Func_08109188:
 	adds	r5, #255
 	ands	r5, r3
 	adds	r0, r5, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrb	r3, [r0, #2]
 	movs	r0, #0
 	cmp	r3, #6
 	beq.n	.L_08109a92
 	adds	r0, r5, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2
@@ -1184,10 +1127,10 @@ Func_08109188:
 .L_08109a98:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrh	r5, [r0, #0]
 	adds	r0, r6, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2
@@ -1234,7 +1177,7 @@ Func_08109188:
 	str	r0, [sp, #4]
 	str	r5, [sp, #0]
 	mov	r8, r0
-	bl	sub_08038010
+	bl	0x08038010
 	str	r0, [r6, #12]
 	bl	.L_08109188
 	movs	r1, #12
@@ -1242,14 +1185,14 @@ Func_08109188:
 	movs	r3, #8
 	movs	r0, #16
 	str	r5, [sp, #0]
-	bl	sub_08038010
+	bl	0x08038010
 	movs	r1, #14
 	str	r0, [r6, #36]
 	movs	r2, #13
 	movs	r3, #3
 	movs	r0, #0
 	str	r5, [sp, #0]
-	bl	sub_08038010
+	bl	0x08038010
 	movs	r1, #192
 	lsls	r1, r1, #4
 	movs	r2, #128
@@ -1271,7 +1214,7 @@ Func_08109188:
 	movs	r1, #2
 	movs	r2, #0
 	mov	sl, r0
-	bl	sub_080f8060
+	bl	0x080f8060
 	movs	r0, #160
 	lsls	r0, r0, #3
 	adds	r0, #5
@@ -1303,7 +1246,7 @@ Func_08109188:
 	movs	r2, #0
 	subs	r1, #12
 	mov	r0, sl
-	bl	sub_08108af0
+	bl	Func_08108af0
 	movs	r3, #3
 	mov	r2, r9
 	strb	r3, [r2, #0]
@@ -1316,9 +1259,9 @@ Func_08109188:
 .L_08109ba2:
 	asrs	r0, r0, #2
 	lsls	r0, r0, #2
-	bl	sub_080f8058
+	bl	Func_080f8058
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 .L_08109bb0:
 	ldr	r1, [sp, #4]
 	mov	r0, sl
@@ -1336,19 +1279,19 @@ Func_08109188:
 	cmp	r2, #0
 	beq.n	.L_08109c3e
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	mov	r0, r8
-	bl	sub_080ad1f0
+	bl	0x080ad1f0
 	cmp	r0, #0
 	bne.n	.L_08109be8
 	movs	r0, #113
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	b.n	.L_08109b5e
 .L_08109be8:
 	mov	r0, sl
-	bl	sub_08038060
+	bl	0x08038060
 	movs	r0, #112
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r0, #129
 	lsls	r0, r0, #3
 	adds	r0, #255
@@ -1365,11 +1308,11 @@ Func_08109188:
 	cmp	r3, #3
 	bne.n	.L_08109c1a
 	mov	r0, r8
-	bl	sub_0810a2d0
+	bl	0x0810a2d0
 	b.n	.L_08109c26
 .L_08109c1a:
 	mov	r0, r8
-	bl	sub_0810b6c4
+	bl	0x0810b6c4
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_08109c72
@@ -1394,7 +1337,7 @@ Func_08109188:
 	beq.n	.L_08109c54
 	movs	r0, #113
 	movs	r5, #1
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	negs	r5, r5
 	b.n	.L_08109c72
 .L_08109c54:
@@ -1406,26 +1349,26 @@ Func_08109188:
 	ldrsb	r1, [r3, r1]
 	add	r0, sp, #4
 	movs	r2, #4
-	bl	sub_08108690
+	bl	Func_08108690
 	adds	r7, r0, #0
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	b.n	.L_08109b5e
 .L_08109c72:
 	movs	r0, #0
-	bl	sub_0810bea8
-	bl	sub_080f8068
+	bl	Func_0810bea8
+	bl	0x080f8068
 	mov	r0, sl
 	movs	r1, #2
-	bl	sub_08038018
+	bl	0x08038018
 	ldr	r0, [r6, #36]
 	movs	r1, #2
-	bl	sub_08038018
+	bl	0x08038018
 	ldr	r0, [r6, #12]
 	movs	r1, #2
-	bl	sub_08038018
+	bl	0x08038018
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	adds	r0, r5, #0
 	add	sp, #8
 	pop	{r3, r5, r6}
@@ -1450,7 +1393,7 @@ Func_08109188:
 	adds	r3, #220
 	ldr	r3, [r3, #0]
 	mov	fp, r3
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #0
 	movs	r2, #1
 	movs	r3, #2
@@ -1462,7 +1405,7 @@ Func_08109188:
 	movs	r1, #8
 	movs	r2, #15
 	movs	r3, #4
-	bl	sub_08038010
+	bl	0x08038010
 	str	r0, [sp, #16]
 .L_08109ce8:
 	movs	r3, #2
@@ -1471,7 +1414,7 @@ Func_08109188:
 	movs	r3, #3
 	movs	r0, #0
 	movs	r1, #5
-	bl	sub_08038010
+	bl	0x08038010
 	movs	r3, #128
 	str	r0, [sp, #20]
 	lsls	r3, r3, #3
@@ -1495,7 +1438,7 @@ Func_08109188:
 	movs	r2, #0
 	ldr	r0, [sp, #24]
 	mov	r9, r2
-	bl	sub_080ad1f0
+	bl	0x080ad1f0
 	adds	r3, r0, #0
 	subs	r3, #1
 	str	r0, [sp, #8]
@@ -1517,18 +1460,18 @@ Func_08109188:
 	mov	r2, fp
 	movs	r1, #5
 	ldr	r6, [r2, #36]
-	bl	sub_08002064
+	bl	0x08002064
 	movs	r1, #5
 	adds	r5, r0, #0
 	mov	r0, sl
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r2, r0, #0
 	lsls	r5, r5, #4
 	lsls	r2, r2, #4
 	adds	r2, #8
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_08108af0
+	bl	Func_08108af0
 	movs	r2, #160
 	lsls	r2, r2, #3
 	adds	r2, #5
@@ -1571,7 +1514,7 @@ Func_08109188:
 	b.n	.L_08109dd0
 .L_08109dbe:
 	mov	r0, r8
-	bl	sub_0810a748
+	bl	0x0810a748
 	mov	r1, r8
 	adds	r2, r0, #0
 	movs	r3, #3
@@ -1611,16 +1554,16 @@ Func_08109188:
 	movs	r0, #126
 	ldrh	r5, [r2, r3]
 	str	r4, [sp, #4]
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #10
 	movs	r1, #9
 	movs	r2, #16
 	movs	r0, #0
 	str	r7, [sp, #0]
-	bl	sub_08038010
+	bl	0x08038010
 	adds	r1, r5, #0
 	adds	r7, r0, #0
-	bl	sub_080f8038
+	bl	0x080f8038
 	movs	r3, #160
 	lsls	r3, r3, #3
 	adds	r3, #9
@@ -1636,7 +1579,7 @@ Func_08109188:
 	movs	r5, #4
 .L_08109e42:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r3, [r6, #0]
 	ands	r3, r5
 	cmp	r3, #0
@@ -1650,16 +1593,16 @@ Func_08109188:
 	strb	r3, [r2, #0]
 	movs	r1, #2
 	adds	r0, r7, #0
-	bl	sub_08038018
+	bl	0x08038018
 	bl	.L_08109188
 	movs	r3, #192
 	lsls	r3, r3, #4
 	adds	r3, #232
 	add	r3, fp
 	ldr	r0, [r3, #0]
-	bl	sub_08038060
+	bl	0x08038060
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r2, #1
 	mov	r9, r2
 	b.n	.L_08109d18
@@ -1671,14 +1614,14 @@ Func_08109188:
 	beq.n	.L_08109eac
 	movs	r0, #111
 	str	r4, [sp, #4]
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	ldr	r0, [sp, #8]
 	negs	r3, r3
 	add	sl, r3
 	add	r0, sl
 	ldr	r1, [sp, #8]
-	bl	sub_08002064
+	bl	0x08002064
 	ldr	r4, [sp, #4]
 	movs	r1, #1
 	mov	sl, r0
@@ -1691,13 +1634,13 @@ Func_08109188:
 	beq.n	.L_08109ed4
 	movs	r0, #111
 	str	r4, [sp, #4]
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	ldr	r0, [sp, #8]
 	movs	r2, #1
 	add	sl, r2
 	add	r0, sl
 	ldr	r1, [sp, #8]
-	bl	sub_08002064
+	bl	0x08002064
 	ldr	r4, [sp, #4]
 	movs	r3, #1
 	mov	sl, r0
@@ -1729,7 +1672,7 @@ Func_08109188:
 	bge.n	.L_08109ef4
 .L_08109f00:
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	mov	r9, r1
 .L_08109f0a:
@@ -1759,19 +1702,19 @@ Func_08109188:
 	blt.n	.L_08109f2c
 .L_08109f36:
 	movs	r0, #111
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	mov	r9, r2
 .L_08109f40:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	b.n	.L_08109d18
 .L_08109f48:
 	ldr	r0, [sp, #20]
 	movs	r1, #2
-	bl	sub_08038018
+	bl	0x08038018
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	cmp	r5, #0
 	bne.n	.L_08109fd8
 	movs	r3, #129
@@ -1796,17 +1739,17 @@ Func_08109188:
 	bl	.L_0810a108
 .L_08109f86:
 	ldr	r0, [pc, #112]
-	bl	sub_081084f4
+	bl	0x081084f4
 	b.n	.L_08109fcc
 .L_08109f8e:
 	movs	r0, #113
 	movs	r5, #1
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	negs	r5, r5
 	b.n	.L_08109f48
 .L_08109f9a:
 	movs	r0, #112
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r5, #0
 	b.n	.L_08109f48
 .L_08109fa4:
@@ -1814,29 +1757,29 @@ Func_08109188:
 	bne.n	.L_08109fb8
 	ldr	r0, [sp, #24]
 	mov	r1, sl
-	bl	sub_0810a2d8
+	bl	0x0810a2d8
 	ldr	r0, [pc, #72]
-	bl	sub_081084f4
+	bl	0x081084f4
 	b.n	.L_08109fcc
 .L_08109fb8:
 	ldr	r0, [sp, #24]
 	mov	r1, sl
-	bl	sub_0810b6cc
+	bl	0x0810b6cc
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_08109fd8
 	ldr	r0, [pc, #56]
-	bl	sub_081084f4
+	bl	0x081084f4
 .L_08109fcc:
 	ldr	r0, [sp, #24]
-	bl	sub_080ad1f0
+	bl	0x080ad1f0
 	cmp	r0, #0
 	beq.n	.L_08109fd8
 	b.n	.L_08109ce8
 .L_08109fd8:
 	ldr	r0, [sp, #16]
 	movs	r1, #2
-	bl	sub_08038018
+	bl	0x08038018
 	adds	r0, r5, #0
 	add	sp, #28
 	pop	{r3, r5, r6, r7}
@@ -1857,21 +1800,21 @@ Func_08109188:
 	adds	r6, r1, #0
 	cmp	r5, #0
 	beq.n	.L_0810a034
-	bl	sub_08038060
+	bl	0x08038060
 	adds	r0, r5, #0
 	movs	r1, #8
 	movs	r2, #0
 	adds	r3, r6, #0
-	bl	sub_0810bf98
+	bl	Func_0810bf98
 	adds	r0, r6, #0
-	bl	sub_080ad1f0
+	bl	0x080ad1f0
 	cmp	r0, #0
 	bne.n	.L_0810a034
 	ldr	r0, [pc, #12]
 	adds	r1, r5, #0
 	movs	r2, #8
 	movs	r3, #20
-	bl	sub_08038078
+	bl	0x08038078
 .L_0810a034:
 	pop	{r5, r6, pc}
 	movs	r0, r0
@@ -1892,13 +1835,13 @@ Func_08109188:
 	ldr	r7, [r3, #0]
 	mov	sl, r0
 	mov	r9, r1
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	mov	r1, r9
 	lsls	r5, r1, #1
 	adds	r6, r0, #0
 	adds	r5, #216
 	ldrh	r0, [r6, r5]
-	bl	sub_080ad010
+	bl	0x080ad010
 	movs	r2, #1
 	str	r2, [sp, #0]
 	mov	r8, r0
@@ -1907,7 +1850,7 @@ Func_08109188:
 	mov	r1, r9
 	mov	fp, r0
 	mov	r0, sl
-	bl	sub_080ad018
+	bl	0x080ad018
 	mov	r3, r8
 	ldrb	r2, [r3, #3]
 	movs	r3, #16
@@ -1918,7 +1861,7 @@ Func_08109188:
 	cmp	r0, #1
 	ble.n	.L_0810a0f4
 	ldr	r0, [pc, #112]
-	bl	sub_081084f4
+	bl	0x081084f4
 	movs	r1, #128
 	lsls	r1, r1, #3
 	adds	r1, #228
@@ -1946,20 +1889,20 @@ Func_08109188:
 	strb	r3, [r2, #0]
 	movs	r1, #128
 	movs	r2, #48
-	bl	sub_08108af0
+	bl	Func_08108af0
 	mov	r1, sl
 	mov	r2, fp
 	movs	r0, #0
 	bl	.L_081096f8
 	str	r0, [sp, #0]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r0, [r5, #0]
-	bl	sub_080f8028
+	bl	Func_080f8028
 	movs	r0, #0
 	mov	r1, r8
 	adds	r2, r6, #0
-	bl	sub_08108af0
+	bl	Func_08108af0
 .L_0810a0f4:
 	ldr	r0, [sp, #0]
 	add	sp, #4
@@ -1988,7 +1931,7 @@ Func_08109188:
 	adds	r7, r2, #0
 	str	r3, [sp, #12]
 	mov	r8, r0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldr	r2, [sp, #16]
 	adds	r6, r0, #0
 	lsls	r2, r2, #1
@@ -2002,7 +1945,7 @@ Func_08109188:
 	ands	r2, r3
 	mov	r9, r2
 	mov	r0, r9
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrb	r2, [r0, #3]
 	movs	r3, #4
 	ands	r3, r2
@@ -2029,9 +1972,9 @@ Func_08109188:
 	bne.n	.L_0810a18a
 	mov	r0, r9
 	movs	r1, #2
-	bl	sub_08038120
+	bl	0x08038120
 	ldr	r0, [pc, #252]
-	bl	sub_0810857c
+	bl	0x0810857c
 	b.n	.L_0810a270
 .L_0810a18a:
 	ldrh	r2, [r6, r5]
@@ -2048,9 +1991,9 @@ Func_08109188:
 	beq.n	.L_0810a1b2
 	mov	r0, r9
 	movs	r1, #2
-	bl	sub_08038120
+	bl	0x08038120
 	ldr	r0, [pc, #216]
-	bl	sub_0810857c
+	bl	0x0810857c
 	b.n	.L_0810a270
 .L_0810a1b2:
 	ldr	r2, [sp, #0]
@@ -2085,14 +2028,14 @@ Func_08109188:
 .L_0810a1e4:
 	mov	r0, r9
 	movs	r1, #2
-	bl	sub_08038120
+	bl	0x08038120
 	mov	r0, sl
 	movs	r1, #5
-	bl	sub_08038120
+	bl	0x08038120
 	adds	r0, r5, #0
-	bl	sub_0810857c
+	bl	0x0810857c
 	movs	r0, #0
-	bl	sub_08108630
+	bl	0x08108630
 	cmp	r0, #0
 	beq.n	.L_0810a21e
 	ldr	r2, [sp, #4]
@@ -2108,11 +2051,11 @@ Func_08109188:
 	ldr	r5, [pc, #136]
 .L_0810a216:
 	adds	r0, r5, #0
-	bl	sub_0810857c
+	bl	0x0810857c
 	b.n	.L_0810a270
 .L_0810a21e:
 	movs	r0, #102
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	cmp	r7, #0
 	ble.n	.L_0810a238
 	adds	r5, r7, #0
@@ -2120,16 +2063,16 @@ Func_08109188:
 	mov	r0, r8
 	ldr	r1, [sp, #16]
 	subs	r5, #1
-	bl	sub_080ad278
+	bl	0x080ad278
 	cmp	r5, #0
 	bne.n	.L_0810a22a
 .L_0810a238:
 	mov	r0, r8
-	bl	sub_080ad288
+	bl	0x080ad288
 	mov	r0, r8
-	bl	sub_080ad008
+	bl	0x080ad008
 	mov	r0, sl
-	bl	sub_080ad1d8
+	bl	0x080ad1d8
 	bl	.L_08109188
 	ldr	r2, [sp, #12]
 	mov	r1, r8
@@ -2148,7 +2091,7 @@ Func_08109188:
 	ldr	r5, [pc, #60]
 .L_0810a26a:
 	adds	r0, r5, #0
-	bl	sub_0810857c
+	bl	0x0810857c
 .L_0810a270:
 	add	sp, #20
 	pop	{r3, r5, r6, r7}
@@ -2173,7 +2116,7 @@ Func_08109188:
 .L_0810a2ac:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrh	r3, [r0, #0]
 	lsrs	r0, r3, #2
 	movs	r3, #128

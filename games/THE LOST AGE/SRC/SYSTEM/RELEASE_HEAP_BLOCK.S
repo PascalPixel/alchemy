@@ -11,7 +11,6 @@
 @ credit: handwritten — IWRAM slot free helper
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x0801314c
 	.global Runtime_ReleaseSlot
 	.thumb_func
 Runtime_ReleaseSlot:

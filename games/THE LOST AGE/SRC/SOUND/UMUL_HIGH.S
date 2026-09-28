@@ -6,10 +6,9 @@
 @ credit: library — TBS/TLA common sound-driver unsigned high-word multiply helper
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c127c
-	.global SoundDriver_UnsignedMulHigh
+	.global Audio_UmulHigh32
 	.thumb_func
-SoundDriver_UnsignedMulHigh:
+Audio_UmulHigh32:
 	add	r2, pc, #0
 	bx	r2
 	.arm

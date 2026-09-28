@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_080770c8, 0x080770c8
 	.global Func_0808a6e4
 	.thumb_func
 Func_0808a6e4:
@@ -22,7 +18,7 @@ Func_0808a6e4:
 	lsls	r4, r4, #1
 	adds	r3, r1, r4
 	ldr	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r6, r0, #0
 	movs	r5, #56
 	ldrsh	r3, [r6, r5]
@@ -34,7 +30,7 @@ Func_0808a6e4:
 	movs	r0, #52
 	ldrsh	r1, [r6, r0]
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r1, #128
 	lsls	r1, r1, #7
 	cmp	r0, r1
@@ -60,7 +56,7 @@ Func_0808a6e4:
 	movs	r4, #54
 	ldrsh	r1, [r6, r4]
 	lsls	r0, r0, #14
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -82,13 +78,13 @@ Func_0808a6e4:
 	strh	r3, [r6, #22]
 .L_0808a774:
 	movs	r0, #32
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808a7f6
 	movs	r5, #0
 .L_0808a780:
 	adds	r0, r5, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r6, r0, #0
 	ldrh	r1, [r6, #52]
 	ldrh	r3, [r6, #54]
@@ -97,7 +93,7 @@ Func_0808a6e4:
 	lsls	r1, r1, #16
 	asrs	r1, r1, #16
 	lsls	r0, r1, #14
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -123,7 +119,7 @@ Func_0808a6e4:
 	movs	r2, #54
 	ldrsh	r1, [r6, r2]
 	lsls	r0, r0, #14
-	bl	sub_080022ec
+	bl	__divsi3
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -258,7 +254,7 @@ Func_0808a6e4:
 	adds	r2, r1, r0
 	strh	r3, [r2, #0]
 	subs	r0, #185
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 .L_0808a8c2:
 	pop	{r5, r6}
 	pop	{r0}

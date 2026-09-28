@@ -9,8 +9,8 @@
 @ heap block. A state word, two addresses and a run-time buffer are data and
 @ carry no credit, as TBS GRAPHICS/RENDER/DECODE_DATA.S.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08020f84
 	.4byte	0x00000000
 	.4byte	0x080202c8
 	.4byte	0x080202a8, 0, 0, 0, 0, 0, 0, 0

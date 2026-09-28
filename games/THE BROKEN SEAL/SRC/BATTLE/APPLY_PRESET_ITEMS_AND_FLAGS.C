@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+void Inventory_EquipFar(s32, s32);
+s32 Inventory_AddItemFar(s32, s32);
+void Shop_Run(s32, s32);
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 

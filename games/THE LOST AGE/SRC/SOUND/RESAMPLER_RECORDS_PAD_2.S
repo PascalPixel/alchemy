@@ -2,8 +2,8 @@
 @ bytes after its branch to the next record's boundary; they never run.
 @ Padding carries no credit.
 .syntax unified
+	.section .padding,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08000544
 	.4byte	0
 	.4byte	0
 	.4byte	0

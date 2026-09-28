@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c18e0, 0x081c18e0
-	.set sub_081c2f40, 0x081c2f40
-	.set sub_081c2f68, 0x081c2f68
-	.set sub_081c2fd0, 0x081c2fd0
 	.global Func_081c0e30
 	.thumb_func
 Func_081c0e30:
@@ -41,6 +37,9 @@ Func_081c0e30:
 	cmp	r0, #0
 	ble.n	.L_081c0e90
 	ldr	r3, [pc, #28]
+	.global Func_081c0e70
+	.thumb_func
+Func_081c0e70:
 	ldrh	r3, [r3, #0]
 	adds	r3, r4, r3
 	b.n	.L_081c0e96
@@ -74,7 +73,7 @@ Func_081c0e30:
 	ldrh	r2, [r1, #0]
 	ldr	r0, [pc, #120]
 	movs	r1, #255
-	bl	sub_081c2f68
+	bl	MusicPlayer_SetVolume
 .L_081c0eba:
 	ldr	r3, [pc, #116]
 	ldr	r1, [pc, #116]
@@ -114,7 +113,7 @@ Func_081c0e30:
 	ldr	r5, [pc, #48]
 	ldrh	r1, [r6, #0]
 	adds	r0, r5, #0
-	bl	sub_081c2f40
+	bl	Func_081c2f40
 	movs	r0, #0
 	ldrsh	r3, [r6, r0]
 	movs	r1, #255
@@ -126,7 +125,7 @@ Func_081c0e30:
 	adds	r2, r2, r3
 	asrs	r2, r2, #16
 	adds	r0, r5, #0
-	bl	sub_081c2fd0
+	bl	MusicPlayer_SetPitch
 .L_081c0f1e:
 	pop	{r5, r6, pc}
 	.4byte 0x02005810
@@ -138,14 +137,14 @@ Func_081c0e30:
 	.2byte 0x580c
 	.2byte 0x0200
 	push	{lr}
-	bl	sub_081c18e0
+	bl	SoundDriver_Update
 	pop	{pc}
 	push	{lr}
 	adds	r1, r0, #0
 	lsls	r1, r1, #16
 	ldr	r0, [pc, #8]
 	lsrs	r1, r1, #16
-	bl	sub_081c2f40
+	bl	Func_081c2f40
 	pop	{pc}
 	.2byte 0x6a90
 	.2byte 0x0200
@@ -155,7 +154,7 @@ Func_081c0e30:
 	ldr	r0, [pc, #12]
 	asrs	r2, r2, #16
 	movs	r1, #255
-	bl	sub_081c2fd0
+	bl	MusicPlayer_SetPitch
 	pop	{pc}
 	movs	r0, r0
 	.2byte 0x6a90

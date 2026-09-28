@@ -1,5 +1,8 @@
 .syntax unified
 	.thumb
+	.global Func_081c03d8
+	.thumb_func
+Func_081c03d8:
 	.4byte 0x758a2200
 	.4byte 0x7e0a768a
 	.4byte 0xd1012a00

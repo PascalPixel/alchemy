@@ -1,10 +1,11 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e8c[];
 
 void UiWindow_FillTilemapRect(u8 *window, s32 x, s32 y, s32 width, s32 height)
 {
-    u16 *map = *(u16 **)ADDR_03001E8C;
+    u16 *map = *(u16 **)((u32)&Data_03001e8c);
     s32 sum;
 
     sum = x + *(u16 *)(window + 12);

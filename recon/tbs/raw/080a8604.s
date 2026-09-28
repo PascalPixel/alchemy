@@ -1,20 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015068, 0x08015068
-	.set sub_08015080, 0x08015080
-	.set sub_08015090, 0x08015090
-	.set sub_08015098, 0x08015098
-	.set sub_080150b0, 0x080150b0
-	.set sub_080150b8, 0x080150b8
-	.set sub_08015280, 0x08015280
-	.set sub_08077008, 0x08077008
-	.set sub_080771f8, 0x080771f8
-	.set sub_08077290, 0x08077290
-	.set sub_080a8914, 0x080a8914
-	.set sub_080a8b10, 0x080a8b10
-	.set sub_080a9d3c, 0x080a9d3c
-	.set sub_080a9dc4, 0x080a9dc4
 	.global CharacterMenu_DrawStatusAilments
 	.global Func_080a8604
 	.thumb_func
@@ -36,13 +21,13 @@ Func_080a8604:
 	movs	r0, #1
 	negs	r0, r0
 	mov	r8, r3
-	bl	sub_08077290
+	bl	Party_SumDjinnCountsFar
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31
 	ldr	r0, [sp, #28]
 	str	r3, [sp, #12]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r2, [sp, #24]
 	movs	r3, #255
 	ands	r3, r2
@@ -63,14 +48,14 @@ Func_080a8604:
 	ldr	r1, [sp, #28]
 	ldr	r2, [sp, #24]
 	adds	r0, r7, #0
-	bl	sub_080a8914
+	bl	ItemMenu_DrawOwnerStatus
 	add	r5, sp, #32
 	ldr	r2, [sp, #28]
 	movs	r1, #1
 	adds	r0, r5, #0
-	bl	sub_080a8b10
+	bl	CharacterMenu_BuildAvailability
 	adds	r0, r5, #0
-	bl	sub_080a9dc4
+	bl	CharacterMenu_UpdateSelectionIcons
 	movs	r6, #128
 	ldr	r2, [sp, #24]
 	lsls	r6, r6, #1
@@ -82,7 +67,7 @@ Func_080a8604:
 	movs	r1, #0
 	movs	r2, #40
 	str	r3, [sp, #0]
-	bl	sub_08015068
+	bl	UiWindow_ClearInteriorTilesFar
 .L_080a868c:
 	movs	r3, #0
 	mov	sl, r3
@@ -93,7 +78,7 @@ Func_080a8604:
 	ldr	r0, [pc, #576]
 	adds	r1, r7, #0
 	movs	r3, #40
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r2, #1
 	mov	sl, r2
 .L_080a86a6:
@@ -106,7 +91,7 @@ Func_080a8604:
 	ldr	r0, [pc, #556]
 	adds	r1, r7, #0
 	movs	r2, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #1
 	add	sl, r3
 .L_080a86c0:
@@ -119,7 +104,7 @@ Func_080a8604:
 	ldr	r0, [pc, #532]
 	adds	r1, r7, #0
 	movs	r2, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #1
 	add	sl, r3
 .L_080a86da:
@@ -132,7 +117,7 @@ Func_080a8604:
 	ldr	r0, [pc, #512]
 	adds	r1, r7, #0
 	movs	r2, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #1
 	add	sl, r3
 .L_080a86f4:
@@ -145,7 +130,7 @@ Func_080a8604:
 	ldr	r0, [pc, #488]
 	adds	r1, r7, #0
 	movs	r2, #16
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #1
 	add	sl, r3
 .L_080a870e:
@@ -156,12 +141,12 @@ Func_080a8604:
 	adds	r1, r7, #0
 	movs	r2, #0
 	movs	r3, #40
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080a8720:
 	adds	r0, r5, #0
-	bl	sub_080a9dc4
+	bl	CharacterMenu_UpdateSelectionIcons
 	adds	r0, r5, #0
-	bl	sub_080a9d3c
+	bl	ItemMenu_ApplyFlags
 	movs	r3, #136
 	lsls	r3, r3, #2
 	add	r3, r8
@@ -173,17 +158,17 @@ Func_080a8604:
 	cmp	r6, #0
 	bne.n	.L_080a8754
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #96
 	str	r3, [sp, #0]
 	adds	r0, r7, #0
 	movs	r1, #64
 	movs	r2, #56
 	movs	r3, #224
-	bl	sub_08015068
+	bl	UiWindow_ClearInteriorTilesFar
 .L_080a8754:
 	movs	r0, #15
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	ldr	r3, [sp, #24]
 	cmp	r3, #1
 	beq.n	.L_080a8766
@@ -197,25 +182,25 @@ Func_080a8604:
 	movs	r1, #1
 	movs	r2, #15
 	str	r5, [sp, #0]
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	adds	r0, r7, #0
 	ldr	r3, [sp, #16]
 	movs	r1, #2
 	movs	r2, #19
 	str	r5, [sp, #0]
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	adds	r0, r7, #0
 	movs	r1, #3
 	movs	r2, #23
 	ldr	r3, [sp, #16]
 	str	r5, [sp, #0]
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	adds	r0, r7, #0
 	movs	r1, #4
 	movs	r2, #27
 	ldr	r3, [sp, #16]
 	str	r5, [sp, #0]
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 .L_080a87a0:
 	ldr	r3, [sp, #12]
 	cmp	r3, #0
@@ -227,7 +212,7 @@ Func_080a8604:
 	adds	r3, #8
 	adds	r1, r7, #0
 	movs	r2, #64
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080a87b8:
 	ldr	r3, [sp, #24]
 	cmp	r3, #1
@@ -246,21 +231,21 @@ Func_080a8604:
 	adds	r3, #16
 	adds	r1, r7, #0
 	movs	r2, #64
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r5, [pc, #284]
 	adds	r3, r6, #0
 	adds	r0, r5, #0
 	adds	r3, #24
 	adds	r1, r7, #0
 	movs	r2, #64
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r5, #1
 	adds	r3, r6, #0
 	adds	r3, #32
 	adds	r0, r5, #0
 	adds	r1, r7, #0
 	movs	r2, #64
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080a87fc:
 	ldr	r2, [sp, #16]
 	movs	r3, #0
@@ -289,7 +274,7 @@ Func_080a8604:
 	str	r3, [sp, #0]
 	adds	r2, r7, #0
 	mov	r3, r9
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 .L_080a8834:
 	ldr	r2, [sp, #24]
 	movs	r3, #255
@@ -306,13 +291,13 @@ Func_080a8604:
 	mov	r3, fp
 	adds	r2, r7, #0
 	ldr	r6, [sp, #8]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	mov	r2, r9
 	subs	r2, #8
 	ldr	r0, [pc, #164]
 	adds	r1, r7, #0
 	ldr	r3, [sp, #4]
-	bl	sub_08015098
+	bl	UiText_DrawStringInWindowFar
 	b.n	.L_080a886a
 .L_080a8866:
 	ldr	r3, [sp, #16]
@@ -320,7 +305,7 @@ Func_080a8604:
 .L_080a886a:
 	ldr	r0, [sp, #28]
 	mov	r1, sl
-	bl	sub_080771f8
+	bl	0x080771f8
 	adds	r2, r6, #0
 	adds	r2, #16
 	mov	r3, r9
@@ -328,7 +313,7 @@ Func_080a8604:
 	subs	r3, #8
 	adds	r2, r7, #0
 	movs	r1, #2
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	mov	r3, r8
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
@@ -338,7 +323,7 @@ Func_080a8604:
 	str	r3, [sp, #0]
 	movs	r1, #3
 	mov	r3, fp
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	mov	r3, r8
 	movs	r2, #2
 	ldrsh	r0, [r3, r2]
@@ -348,7 +333,7 @@ Func_080a8604:
 	movs	r1, #3
 	adds	r2, r7, #0
 	mov	r3, fp
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 .L_080a88b0:
 	movs	r2, #4
 	add	r8, r2

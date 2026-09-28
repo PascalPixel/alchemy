@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_08016d18, 0x08016d18
-	.set sub_080393fc, 0x080393fc
-	.set sub_08042188, 0x08042188
 	.global Func_0804de54
 	.thumb_func
 Func_0804de54:
@@ -64,12 +59,12 @@ Func_0804de54:
 	mov	sl, r0
 	sub	sp, #36
 	adds	r5, r1, #0
-	bl	sub_080393fc
+	bl	0x080393fc
 	mov	r1, sl
 	movs	r2, #48
 	movs	r3, #0
 	ldr	r0, [pc, #156]
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	add	r2, sp, #8
 	mov	r8, r2
 	mov	r2, sp
@@ -100,18 +95,18 @@ Func_0804de54:
 	mov	r1, sl
 	movs	r2, #0
 	mov	r3, r9
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	ldr	r0, [pc, #92]
 	mov	r1, sl
 	movs	r2, #32
 	mov	r3, r9
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	mov	r6, r8
 	mov	r5, r8
 	adds	r6, #15
 .L_0804df14:
 	adds	r0, r7, #0
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	negs	r3, r0
 	orrs	r3, r0
 	lsrs	r3, r3, #31
@@ -129,7 +124,7 @@ Func_0804de54:
 	mov	r3, r9
 	mov	r1, sl
 	movs	r2, #48
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	ldr	r1, [sp, #4]
 	movs	r3, #8
 	adds	r1, #1
@@ -164,15 +159,15 @@ Func_0804de54:
 	lsls	r3, r3, #4
 	adds	r5, r3, r2
 	adds	r0, r5, #0
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_0804df96
 	adds	r0, r5, #0
-	bl	sub_08016d18
+	bl	0x08016d18
 	b.n	.L_0804e092
 .L_0804df96:
 	adds	r0, r5, #0
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	b.n	.L_0804e092
 .L_0804df9e:
 	ldr	r3, [r6, #4]

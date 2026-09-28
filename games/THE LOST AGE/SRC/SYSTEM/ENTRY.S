@@ -8,7 +8,6 @@
 @ credit: library — TBS/TLA common GBA ARM start-up entry
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000428
 	.global Entry
 Entry:
 	mov	r0, #18

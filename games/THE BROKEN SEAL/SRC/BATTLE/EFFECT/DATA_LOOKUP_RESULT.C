@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 Func_08009268(void *, s32 *);
 
 /* battle/effects/data/lookup_result.c */
 typedef struct Entry {
@@ -18,7 +19,7 @@ s32 BattleFx_LookupResult(void *arg0)
 {
     s32 value;
     Entry *entry = BattleFx_ResultRules;
-    s32 key = SceneData_Apply(arg0, &value);
+    s32 key = Func_08009268(arg0, &value);
     s32 result = 0;
 
     while (entry->first != -1) {

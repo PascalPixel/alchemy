@@ -23,7 +23,7 @@ typedef char Runtime1e74_SizeGuard[
 
 static inline struct Runtime1e74 *Runtime1e74_Get(void)
 {
-    return *(struct Runtime1e74 **)ADDR_03001E74;
+    return *(struct Runtime1e74 **)Data_03001e74_a;
 }
 
 #endif

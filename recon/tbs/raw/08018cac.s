@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_08002f40, 0x08002f40
-	.set sub_08004080, 0x08004080
-	.set sub_08004938, 0x08004938
-	.set sub_080072fc, 0x080072fc
-	.set sub_08015e8c, 0x08015e8c
-	.set sub_08016584, 0x08016584
-	.set sub_080178b0, 0x080178b0
 	.global UiText_DrawGlyph
 	.global Func_08018cac
 	.thumb_func
@@ -48,9 +40,9 @@ Func_08018cac:
 	cmp	r3, r8
 	bne.n	.L_08018d06
 	ldr	r0, [pc, #316]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r0, [pc, #316]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	movs	r1, #3
 	mov	r9, r1
 	cmp	r7, #32
@@ -58,7 +50,7 @@ Func_08018cac:
 	b.n	.L_08018ecc
 .L_08018d06:
 	ldr	r0, [pc, #300]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	movs	r2, #4
 	mov	sl, r0
 	mov	r9, r2
@@ -68,7 +60,7 @@ Func_08018cac:
 .L_08018d18:
 	ldr	r5, [pc, #284]
 	adds	r0, r5, #0
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	movs	r2, #132
 	adds	r6, r0, #0
 	lsrs	r5, r5, #2
@@ -85,10 +77,10 @@ Func_08018cac:
 	ldr	r2, [sp, #12]
 	ldr	r3, [sp, #8]
 	mov	r0, r8
-	bl	sub_080072fc
+	bl	_call_via_r6
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08002df0
+	bl	Party_Do
 	adds	r0, r5, #0
 	b.n	.L_08018ee8
 .L_08018d50:
@@ -98,7 +90,7 @@ Func_08018cac:
 	bne.n	.L_08018d5a
 	b.n	.L_08018ecc
 .L_08018d5a:
-	bl	sub_08015e8c
+	bl	RenderOutput_AcquireFree
 	adds	r5, r0, #0
 	movs	r0, #0
 	cmp	r5, #0
@@ -162,7 +154,7 @@ Func_08018cac:
 .L_08018dc6:
 	add	r1, sp, #16
 	adds	r0, r7, #0
-	bl	sub_080178b0
+	bl	Func_080178b0
 	cmp	r0, #0
 	bne.n	.L_08018dd4
 	movs	r0, #1
@@ -179,7 +171,7 @@ Func_08018cac:
 	adds	r7, #16
 	cmp	r3, #99
 	bne.n	.L_08018df0
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	strh	r0, [r6, #0]
 .L_08018df0:
 	mov	r3, r8
@@ -278,7 +270,7 @@ Func_08018cac:
 	str	r2, [r5, #0]
 	mov	r0, r8
 	adds	r1, r5, #0
-	bl	sub_08016584
+	bl	RenderOutput_AppendToList
 .L_08018ecc:
 	mov	r0, r9
 	b.n	.L_08018ee8

@@ -1,7 +1,7 @@
 #include "SCENE.H"
 #include "SHOP.H"
 
-extern u8 gVal[];
+extern u8 Data_00000000[];
 
 void Shop_SetCursor(
     struct ShopCursor *cursor,
@@ -10,7 +10,7 @@ void Shop_SetCursor(
     s8 kind)
 {
     struct ShopCursorAnchor *anchor = cursor->anchor;
-    s8 active = (s8)(s32)gVal;
+    s8 active = (s8)(s32)Data_00000000;
 
     cursor->x = anchor->x;
     cursor->y = anchor->y;

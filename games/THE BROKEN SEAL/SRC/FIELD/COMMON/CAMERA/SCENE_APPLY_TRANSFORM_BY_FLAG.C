@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e80[];
+void Render_ResetTransformState(void);
+s32 Graphics_PrepareTransferAndRun(void *, void *);
+s32 Graphics_PrepareTransferInIwramWork(void *, void *);
 
 s32 GameFlag_TestFar(s32);
 
@@ -15,7 +19,7 @@ extern u8 Camera_FlagTransformWork[];
 
 s32 Camera_ApplyTransformByFlag(void)
 {
-    u8 *state = *(u8 **)ADDR_03001E80;
+    u8 *state = *(u8 **)((u32)&Data_03001e80);
     Render_ResetTransformState();
     if (GameFlag_TestFar(0x16B) != 0) {
         ((void (*)(void *))0x030002C0)(Camera_FlagTransformWork);

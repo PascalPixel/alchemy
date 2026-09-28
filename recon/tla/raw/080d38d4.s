@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08020218, 0x08020218
-	.set sub_080d2d84, 0x080d2d84
 	.global Func_080d38d4
 	.thumb_func
 Func_080d38d4:
@@ -10,12 +8,12 @@ Func_080d38d4:
 	push	{r6}
 	mov	r8, r0
 	adds	r0, r1, #0
-	bl	sub_080d2d84
+	bl	Object_GetById
 	ldr	r0, [r0, #80]
 	ldrb	r6, [r0, #16]
 	ldrh	r5, [r0, #8]
 	mov	r0, r8
-	bl	sub_080d2d84
+	bl	Object_GetById
 	ldr	r0, [r0, #80]
 	ldr	r3, [pc, #20]
 	ldrh	r2, [r0, #8]
@@ -32,7 +30,7 @@ Func_080d38d4:
 	.2byte 0xfc00
 	.2byte 0xffff
 	push	{lr}
-	bl	sub_080d2d84
+	bl	Object_GetById
 	adds	r2, r0, #0
 	movs	r3, #0
 	adds	r2, #85
@@ -40,6 +38,6 @@ Func_080d38d4:
 	adds	r2, #4
 	strb	r3, [r2, #0]
 	movs	r1, #0
-	bl	sub_08020218
+	bl	0x08020218
 	pop	{pc}
 	.2byte 0x0000

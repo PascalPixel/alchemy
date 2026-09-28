@@ -4,6 +4,11 @@
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
+void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+extern u8 Data_03001f30[];
+void ObjectDispatch_ApplyValueToKind200Children(s32 battle_value);
+s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
+void BattleEffect_SpawnBurstParticleField(void);
 
 /* battle/effects/scene_transition/reset.c */
 typedef struct {
@@ -86,7 +91,7 @@ void BattleFx_RunBurstParticleMainObject(void)
     u8 *flags;
     u8 battle_value;
 
-    object = FIELD_AT_OFFSET(*(void **)ADDR_03001F30, u8 **, 0x14);
+    object = FIELD_AT_OFFSET(*(void **)((u32)&Data_03001f30), u8 **, 0x14);
     if (object != 0) {
         BattleEffect_SpawnBurstParticleField();
         Object_SetMode((s32)object, 2);
@@ -112,7 +117,7 @@ struct BurstParticleVector {
 #define Rand Random16
 void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
-void Object_SetCallback(void *, const void *);
+void ObjectDispatch_InitializeFar(void *, const void *);
 extern const u8 BattleFx_BurstParticleObjectScript[];
 
 void BattleFx_RunBurstParticles(void)
@@ -142,7 +147,7 @@ void BattleFx_RunBurstParticles(void)
             p->values[2]
         );
         if (object != 0) {
-            Object_SetCallback(object, BattleFx_BurstParticleObjectScript);
+            ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleObjectScript);
             *((u8 *)object + 0x55) = 2;
         }
         WaitFrames((((u32)Rand() * 2) >> 16) + 2);

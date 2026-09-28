@@ -7,12 +7,12 @@
 @ credit: library — TBS/TLA common IWRAM runtime word copier
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08001af8
-	.set AlchemyRunAddress, 0x03001388
 
 @ 二百五十六バイト単位で語列を転送する常駐処理。
 	.global IwramCopyWords
 IwramCopyWords:
+	.global Data_03001388
+Data_03001388:
 	push	{r5, r6, r7, r8, r9}
 	ands	ip, r2, #224, 0
 	rsb	ip, ip, #240, 0

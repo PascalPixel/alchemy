@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080eaf98, 0x080eaf98
-	.set sub_080eb01c, 0x080eb01c
-	.set sub_080eb2d8, 0x080eb2d8
 	.global Func_080eb3d0
 	.thumb_func
 Func_080eb3d0:
@@ -33,25 +30,25 @@ Func_080eb3d0:
 	adds	r0, r5, #0
 	mov	r1, r8
 	adds	r2, r7, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	ldr	r3, [sp, #0]
 	mov	r2, fp
 	subs	r6, r3, r2
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r7, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	ldr	r3, [sp, #4]
 	mov	r2, sl
 	subs	r5, r3, r2
 	adds	r0, r5, #0
 	mov	r1, r8
 	adds	r2, r7, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r7, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	ldr	r3, [sp, #0]
 	ldr	r5, [sp, #4]
 	add	r3, sl
@@ -60,25 +57,25 @@ Func_080eb3d0:
 	adds	r0, r5, #0
 	mov	r1, r8
 	adds	r2, r7, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	ldr	r2, [sp, #0]
 	mov	r3, sl
 	subs	r6, r2, r3
 	adds	r0, r5, #0
 	adds	r1, r6, #0
 	adds	r2, r7, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	ldr	r2, [sp, #4]
 	mov	r3, fp
 	subs	r5, r2, r3
 	adds	r0, r5, #0
 	mov	r1, r8
 	adds	r2, r7, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	adds	r2, r7, #0
 	adds	r0, r5, #0
 	adds	r1, r6, #0
-	bl	sub_080eb2d8
+	bl	0x080eb2d8
 	mov	r2, fp
 	lsls	r3, r2, #1
 	mov	r2, r9
@@ -419,7 +416,7 @@ Func_080eb3d0:
 	adds	r0, r5, #0
 	movs	r1, #32
 	movs	r2, #32
-	bl	sub_080eaf98
+	bl	0x080eaf98
 	ldrb	r2, [r5, #5]
 	movs	r3, #33
 	negs	r3, r3
@@ -458,7 +455,7 @@ Func_080eb3d0:
 	ldr	r3, [r3, #0]
 	adds	r0, r5, #0
 	strh	r3, [r5, #28]
-	bl	sub_080eb01c
+	bl	0x080eb01c
 	ldrb	r2, [r6, #0]
 .L_080eb75a:
 	movs	r1, #128
@@ -475,7 +472,7 @@ Func_080eb3d0:
 	adds	r0, r5, #0
 	movs	r1, #32
 	movs	r2, #32
-	bl	sub_080eaf98
+	bl	0x080eaf98
 	ldrb	r3, [r5, #5]
 	movs	r2, #32
 	orrs	r3, r2
@@ -511,7 +508,7 @@ Func_080eb3d0:
 	ldr	r3, [r3, #0]
 	adds	r0, r5, #0
 	strh	r3, [r5, #28]
-	bl	sub_080eb01c
+	bl	0x080eb01c
 	ldrb	r2, [r6, #0]
 .L_080eb7c6:
 	lsls	r3, r2, #24
@@ -547,7 +544,7 @@ Func_080eb3d0:
 	ldr	r3, [r3, #0]
 	adds	r0, r5, #0
 	strh	r3, [r5, #28]
-	bl	sub_080eb01c
+	bl	0x080eb01c
 .L_080eb80c:
 	adds	r2, r5, #0
 	adds	r2, #160

@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080045d4, 0x080045d4
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072f4, 0x080072f4
-	.set sub_08007310, 0x08007310
 	.global Graphics_PrepareTransfer
 	.thumb_func
 Graphics_PrepareTransfer:
@@ -51,15 +47,15 @@ Graphics_PrepareTransfer:
 	ldr	r4, [sp, #12]
 	adds	r2, r3, #0
 	adds	r0, r1, #0
-	bl	sub_080072f4
+	bl	_call_via_r4
 	ldr	r3, [pc, #392]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r1, r0, #0
 	ldr	r0, [pc, #388]
 	mov	fp, r0
 	movs	r0, #128
 	lsls	r0, r0, #24
-	bl	sub_08007310
+	bl	_call_via_fp
 	lsrs	r3, r0, #15
 	negs	r3, r3
 	ldr	r5, [pc, #376]
@@ -93,11 +89,11 @@ Graphics_PrepareTransfer:
 	subs	r0, r3, r0
 	cmp	r0, #0
 	ble.n	.L_080050a6
-	bl	sub_080045d4
+	bl	FixedSqrt
 	adds	r1, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #24
-	bl	sub_08007310
+	bl	_call_via_fp
 	lsls	r3, r0, #1
 .L_080050a6:
 	ldr	r0, [sp, #20]
@@ -143,12 +139,12 @@ Graphics_PrepareTransfer:
 	adds	r2, r6, #0
 	ldr	r4, [sp, #12]
 	mov	r0, sl
-	bl	sub_080072f4
-	bl	sub_080045d4
+	bl	_call_via_r4
+	bl	FixedSqrt
 	adds	r1, r0, #0
 	movs	r0, #128
 	lsls	r0, r0, #24
-	bl	sub_08007310
+	bl	_call_via_fp
 	lsls	r3, r0, #1
 	adds	r1, r3, #0
 	mov	r0, sl
@@ -189,7 +185,7 @@ Graphics_PrepareTransfer:
 	adds	r2, r5, #0
 	mov	r3, r8
 	mov	r0, fp
-	bl	sub_080072f4
+	bl	_call_via_r4
 	mov	r1, r9
 	mov	r2, sl
 	negs	r0, r0
@@ -204,7 +200,7 @@ Graphics_PrepareTransfer:
 	mov	r1, sl
 	adds	r3, r6, #0
 	mov	r0, fp
-	bl	sub_080072f4
+	bl	_call_via_r4
 	mov	r1, r9
 	negs	r0, r0
 	str	r0, [r1, #40]
@@ -221,7 +217,7 @@ Graphics_PrepareTransfer:
 	ldr	r3, [sp, #24]
 	ldr	r4, [sp, #12]
 	mov	r0, fp
-	bl	sub_080072f4
+	bl	_call_via_r4
 	mov	r1, r9
 	negs	r0, r0
 	str	r0, [r1, #44]

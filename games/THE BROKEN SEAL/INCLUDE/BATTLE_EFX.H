@@ -3,10 +3,10 @@
 
 #include "TYPES.H"
 
-void Func_080e0524(s32 resource_id, void *target, s32 unpack, s32 wait);
+void Resource_LoadAndDecompress(s32 resource_id, void *target, s32 unpack, s32 wait);
 s32 Func_080ed408(s32 kind, s32 width, s32 height, s32 count, u32 mode);
 
-#define Resource_LoadAndDecompress Func_080e0524
+#define Resource_LoadAndDecompress Resource_LoadAndDecompress
 #define BattleEffect_LoadWork      Func_080ed408
 
 /* The rectangle blitters return a value every caller ignores; declaring it

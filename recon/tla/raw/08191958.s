@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_0801314c, 0x0801314c
-	.set sub_08013560, 0x08013560
-	.set sub_08191abc, 0x08191abc
-	.set sub_081963ec, 0x081963ec
 	.global Func_08191958
 	.thumb_func
 Func_08191958:
@@ -38,7 +33,7 @@ Func_08191958:
 	movs	r0, #104
 	movs	r1, #3
 	str	r3, [sp, #4]
-	bl	sub_081963ec
+	bl	Func_081963ec
 	ldr	r3, [sp, #4]
 	movs	r1, #239
 	lsls	r1, r1, #7
@@ -157,7 +152,7 @@ Func_08191958:
 	negs	r1, r1
 .L_08191a76:
 	movs	r0, #192
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r6, r0, #1
 	asrs	r0, r0, #1
 	mov	r9, r0
@@ -182,12 +177,12 @@ Func_08191958:
 	movs	r3, #1
 	str	r3, [r1, #0]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	cmp	r5, r9
-	bne.n	sub_08191abc
+	bne.n	0x08191abc
 	ldr	r2, [sp, #8]
 	cmp	r2, #0
-	beq.n	sub_08191abc
+	beq.n	0x08191abc
 	mov	lr, r2
 	.2byte 0xf800
 	.2byte 0x3501
@@ -195,7 +190,7 @@ Func_08191958:
 	bne.n	.L_08191a98
 .L_08191ac2:
 	movs	r0, #104
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	add	sp, #140
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

@@ -31,7 +31,7 @@ static __inline__ s32 FillWords(WordFillFn fill, void *dst, s32 size, u32 value)
 s32 UiWindow_UpdateOrCreate(s32 *window, s32 x, s32 y, s32 width, s32 height, s32 style);
 void Func_080153d8(void *);
 void *Runtime_GetLowTableAddress(void);
-void Func_080aac84(s32);
+void Graphics_AdjustPaletteBank(s32);
 s32 Func_080aafb8(struct BackdropSave *);
 
 /* Opens the full-width menu window: saves BG character block 1 and
@@ -54,7 +54,7 @@ s32 Menu_OpenBackdropScreen(void)
             (volatile u32 *)0x040000d4);
     *(volatile u16 *)0x050000bc = *(volatile u16 *)0x050001e8;
     Dma_Set((void *)0x050001e0, (void *)0x050000e0, 0x80000010, (volatile u32 *)0x040000d4);
-    Func_080aac84(8);
+    Graphics_AdjustPaletteBank(8);
     *(volatile u16 *)0x050000e8 = *(volatile u16 *)0x050001e8;
     *(volatile u16 *)0x050000c8 = *(volatile u16 *)0x050001e8;
     return Func_080aafb8(backdrop);

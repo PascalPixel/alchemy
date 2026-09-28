@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_08004938, 0x08004938
-	.set sub_080072f0, 0x080072f0
-	.set sub_08077008, 0x08077008
-	.set sub_08077018, 0x08077018
-	.set sub_08077028, 0x08077028
-	.set sub_080a112c, 0x080a112c
-	.set sub_080a40ac, 0x080a40ac
 	.global ItemMenu_DrawEquipPreview
 	.global Func_080a3ef0
 	.thumb_func
@@ -29,7 +21,7 @@ Func_080a3ef0:
 	ldr	r7, [r3, #0]
 	mov	r8, r0
 	mov	sl, r1
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	r2, r9
 	lsls	r3, r2, #1
 	adds	r3, #216
@@ -45,7 +37,7 @@ Func_080a3ef0:
 	ldr	r1, [sp, #0]
 	ldr	r0, [pc, #364]
 	ands	r0, r1
-	bl	sub_08077018
+	bl	Item_Get
 	ldrb	r3, [r0, #2]
 	cmp	r3, #9
 	bls.n	.L_080a3f3c
@@ -72,19 +64,19 @@ Func_080a3ef0:
 	b.n	.L_080a3ffa
 .L_080a3f74:
 	adds	r0, r6, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r5, #166
 	lsls	r5, r5, #1
 	mov	fp, r0
 	adds	r0, r5, #0
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	adds	r2, r5, #0
 	ldr	r3, [pc, #280]
 	mov	r1, fp
 	mov	r8, r0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r0, r6, #0
-	bl	sub_080a40ac
+	bl	Inventory_RemoveFirstUnflagged
 	adds	r2, r0, #0
 	cmp	r2, #0
 	beq.n	.L_080a3fd2
@@ -93,7 +85,7 @@ Func_080a3ef0:
 	adds	r0, r6, #0
 	ands	r1, r3
 	str	r1, [sp, #0]
-	bl	sub_08077028
+	bl	Inventory_AddItemFar
 	movs	r3, #1
 	adds	r2, r0, #0
 	negs	r3, r3
@@ -112,23 +104,23 @@ Func_080a3ef0:
 	mov	r2, r9
 .L_080a3fca:
 	mov	r3, sl
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 	b.n	.L_080a3fde
 .L_080a3fd2:
 	ldr	r0, [r7, #36]
 	adds	r1, r6, #0
 	mov	r2, r9
 	mov	r3, sl
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 .L_080a3fde:
 	movs	r2, #166
 	ldr	r3, [pc, #192]
 	mov	r0, fp
 	mov	r1, r8
 	lsls	r2, r2, #1
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r0, r8
-	bl	sub_08002df0
+	bl	Party_Do
 	b.n	.L_080a4086
 	cmp	r6, r8
 	bne.n	.L_080a400e
@@ -141,29 +133,29 @@ Func_080a3ef0:
 	adds	r1, r6, #0
 	mov	r2, r9
 	mov	r3, sl
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 	b.n	.L_080a4086
 .L_080a400e:
 	adds	r0, r6, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r5, #166
 	lsls	r5, r5, #1
 	mov	fp, r0
 	adds	r0, r5, #0
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	adds	r2, r5, #0
 	ldr	r3, [pc, #128]
 	mov	r1, fp
 	mov	r8, r0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r0, r6, #0
-	bl	sub_080a40ac
+	bl	Inventory_RemoveFirstUnflagged
 	adds	r2, r0, #0
 	cmp	r2, #0
 	beq.n	.L_080a4066
 	adds	r0, r6, #0
 	ldr	r1, [sp, #0]
-	bl	sub_08077028
+	bl	Inventory_AddItemFar
 	movs	r3, #1
 	adds	r2, r0, #0
 	negs	r3, r3
@@ -182,23 +174,23 @@ Func_080a3ef0:
 	mov	r2, r9
 .L_080a405e:
 	mov	r3, sl
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 	b.n	.L_080a4072
 .L_080a4066:
 	ldr	r0, [r7, #36]
 	adds	r1, r6, #0
 	mov	r2, r9
 	mov	r3, sl
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 .L_080a4072:
 	movs	r2, #166
 	ldr	r3, [pc, #44]
 	mov	r0, fp
 	mov	r1, r8
 	lsls	r2, r2, #1
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r0, r8
-	bl	sub_08002df0
+	bl	Party_Do
 .L_080a4086:
 	add	sp, #4
 	pop	{r3, r5, r6, r7}

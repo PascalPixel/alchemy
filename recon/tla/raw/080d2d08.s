@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c0010, 0x081c0010
 	.global Func_080d2d08
 	.thumb_func
 Func_080d2d08:
@@ -56,7 +55,7 @@ Func_080d2d08:
 	bgt.n	.L_080d2d6c
 .L_080d2d66:
 	adds	r0, r5, #0
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 .L_080d2d6c:
 	pop	{r5, pc}
 	movs	r0, r0

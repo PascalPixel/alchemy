@@ -1,12 +1,11 @@
 .syntax unified
 	.thumb
-	.set sub_080cad84, 0x080cad84
 	.global Func_080ceeac
 	.thumb_func
 Func_080ceeac:
 	push	{r5, lr}
 	movs	r5, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	cmp	r0, #0
 	beq.n	.L_080ceec2
 	ldr	r0, [r0, #80]

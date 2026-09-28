@@ -15,8 +15,6 @@
 @ credit: handwritten — TLA IWRAM runtime vector and matrix transforms
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x0800090c
-	.set AlchemyRunAddress, 0x03000354
 AlchemyUncredited_0800090c:
 	bx	pc
 	.2byte	0x0200

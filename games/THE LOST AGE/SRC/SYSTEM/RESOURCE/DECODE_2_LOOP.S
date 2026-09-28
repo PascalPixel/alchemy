@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, compression format 2 decoder loop
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08012bbc
 .L_08012bbc:
 	and	r8, r2, #15
 	add	r9, pc, #0x2ac

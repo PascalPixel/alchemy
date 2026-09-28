@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_080048b0, 0x080048b0
-	.set sub_080053e8, 0x080053e8
 	.global Map_WriteLayerCellTile
 	.global Func_080108e4
 	.thumb_func
@@ -52,13 +49,13 @@ Func_080108e4:
 	strh	r5, [r2, #0]
 	lsls	r1, r1, #3
 	movs	r0, #14
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	lsls	r3, r5, #2
 	adds	r7, r0, #0
 	ldr	r0, [r3, r6]
 	adds	r1, r7, #0
 	adds	r0, r6, r0
-	bl	sub_080053e8
+	bl	Resource_DecodeByteLz
 	mov	r3, r9
 	add	r3, r8
 	lsls	r3, r3, #5
@@ -117,7 +114,7 @@ Func_080108e4:
 	bls.n	.L_0801098e
 .L_080109b6:
 	movs	r0, #14
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #1
 .L_080109be:
 	pop	{r3, r5, r6}

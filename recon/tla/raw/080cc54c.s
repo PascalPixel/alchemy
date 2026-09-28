@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801489c, 0x0801489c
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_080201c0, 0x080201c0
-	.set sub_08020358, 0x08020358
-	.set sub_080cb8e8, 0x080cb8e8
-	.set sub_080cc9ac, 0x080cc9ac
-	.set sub_080ccd78, 0x080ccd78
 	.global Func_080cc54c
 	.thumb_func
 Func_080cc54c:
@@ -17,7 +10,7 @@ Func_080cc54c:
 	movs	r0, #0
 	sub	sp, #12
 	mov	r8, r0
-	bl	sub_080cb8e8
+	bl	Func_080cb8e8
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r1, [r3, #108]
@@ -37,7 +30,7 @@ Func_080cc54c:
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
 	ldrh	r1, [r7, #6]
-	bl	sub_0801489c
+	bl	0x0801489c
 	movs	r3, #197
 	lsls	r3, r3, #1
 	add	r3, sl
@@ -105,7 +98,7 @@ Func_080cc54c:
 	ldr	r2, [r5, #8]
 	ldrb	r0, [r3, #0]
 	ldr	r1, [r5, #0]
-	bl	sub_080201c0
+	bl	Func_080201c0
 	adds	r2, r0, #0
 	ldr	r0, [r7, #12]
 	cmp	r2, r0
@@ -119,7 +112,7 @@ Func_080cc54c:
 .L_080cc61a:
 	movs	r0, #3
 	adds	r1, r6, #0
-	bl	sub_080ccd78
+	bl	Func_080ccd78
 	cmp	r0, #0
 	beq.n	.L_080cc628
 .L_080cc626:
@@ -146,7 +139,7 @@ Func_080cc54c:
 	cmp	r3, #0
 	beq.n	.L_080cc65e
 	adds	r0, r5, #0
-	bl	sub_08020358
+	bl	Func_08020358
 	cmp	r0, #3
 	bne.n	.L_080cc65e
 	movs	r2, #99
@@ -204,7 +197,7 @@ Func_080cc54c:
 	ldrsh	r0, [r6, r1]
 	cmp	r0, r5
 	beq.n	.L_080cc6d0
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080cc6b2
 .L_080cc6d0:
@@ -218,7 +211,7 @@ Func_080cc54c:
 .L_080cc6dc:
 	movs	r0, #10
 	adds	r0, #255
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080cc726
 	ldr	r1, [pc, #200]
@@ -394,12 +387,12 @@ Func_080cc54c:
 	adds	r3, #1
 	mov	r0, sl
 	str	r3, [sp, #4]
-	bl	sub_080cc9ac
+	bl	Func_080cc9ac
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16
 	mov	r8, r0
 	mov	r0, sl
-	bl	sub_080cc9ac
+	bl	Func_080cc9ac
 	lsls	r0, r0, #16
 	asrs	r0, r0, #16
 	mov	r2, r8
@@ -409,14 +402,14 @@ Func_080cc54c:
 	adds	r1, r6, #0
 	movs	r0, #0
 	adds	r2, r7, #0
-	bl	sub_080201c0
+	bl	Func_080201c0
 	asrs	r0, r0, #16
 	str	r0, [sp, #0]
 	ldr	r3, [sp, #4]
 	movs	r0, #10
 	adds	r0, #255
 	ldrb	r5, [r3, #0]
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080cc898
 	ldr	r2, [pc, #272]

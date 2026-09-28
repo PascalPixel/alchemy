@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_080072f0, 0x080072f0
 	.global SceneTransform_ApplyYaw
 	.global Func_08004c1c
 	.thumb_func
@@ -13,10 +10,10 @@ Func_08004c1c:
 	push	{r6}
 	sub	sp, #48
 	adds	r5, r0, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	mov	r8, r0
 	adds	r0, r5, #0
-	bl	sub_0800231c
+	bl	Trig_Cos
 	adds	r6, r0, #0
 	mov	r5, sp
 	adds	r0, r5, #0
@@ -36,7 +33,7 @@ Func_08004c1c:
 	str	r6, [r5, #32]
 	ldr	r3, [pc, #16]
 	adds	r0, r5, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	add	sp, #48
 	pop	{r3}
 	mov	r8, r3

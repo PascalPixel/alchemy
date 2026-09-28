@@ -1,12 +1,11 @@
 .syntax unified
 	.thumb
-	.set sub_08077008, 0x08077008
 	.global Func_080a3d9c
 	.thumb_func
 Func_080a3d9c:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r4, [pc, #48]
 	movs	r5, #0
 	movs	r1, #0

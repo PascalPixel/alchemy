@@ -30,7 +30,7 @@ struct LinkedEffectObject *Func_080090c8(s32 kind, s32 x, s32 y, s32 z);
 void Func_08009098(struct LinkedEffectObject *object, const void *configuration);
 void Func_08009080(struct LinkedEffectObject *object, s32 mode);
 void Func_080090d0(struct LinkedEffectObject *object);
-void Func_0809376c(void);
+void BattleFx_CopyLinkedObjectPosition(void);
 extern const u8 Data_0809fd38[];
 
 void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
@@ -79,7 +79,7 @@ void BattleFx_ConfigureLinkedObject(s32 id, s32 flags)
 
     child->resource_id = id;
     child->value_55 = 0;
-    child->callback = Func_0809376c;
+    child->callback = BattleFx_CopyLinkedObjectPosition;
     visual = child->visual;
     visual->value_26 = 0;
     child->resource = object;

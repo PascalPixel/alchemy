@@ -1,4 +1,5 @@
 #include "RUNTIME_1E74.H"
+extern u8 Data_03001e74[];
 
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void BattleEvent_Playback(void);

@@ -5,9 +5,8 @@
 @ transform writes its product back over it (stmdb r1, {...}). A run-time
 @ variable carries no credit.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08000ac0
-	.set AlchemyRunAddress, 0x03000350
 
 @ 三行の単位変換係数と平行移動成分。
 .L_unit_matrix:

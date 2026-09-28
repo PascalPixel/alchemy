@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002304, 0x08002304
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_08004458, 0x08004458
-	.set sub_08009080, 0x08009080
-	.set sub_080090c8, 0x080090c8
-	.set sub_080090f0, 0x080090f0
-	.set sub_080091a8, 0x080091a8
-	.set sub_08009228, 0x08009228
-	.set sub_080770c0, 0x080770c0
-	.set sub_0808b398, 0x0808b398
-	.set sub_0808ba1c, 0x0808ba1c
-	.set sub_0808d428, 0x0808d428
-	.set sub_08093a6c, 0x08093a6c
 	.global Event_SpawnObjectTable
 	.global Func_0808b3ec
 	.thumb_func
@@ -78,7 +65,7 @@ Func_0808b3ec:
 	movs	r1, #2
 	ldrsh	r5, [r7, r1]
 	adds	r0, r5, #0
-	bl	sub_0808d428
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_0808b464
 	b.n	.L_0808b60a
@@ -96,17 +83,17 @@ Func_0808b3ec:
 	beq.n	.L_0808b488
 	adds	r0, r5, #0
 	adds	r0, #80
-	bl	sub_0808d428
+	bl	GameFlag_IsConditionActive
 	cmp	r0, #0
 	bne.n	.L_0808b488
 	b.n	.L_0808b60a
 .L_0808b488:
 	movs	r3, #0
 	ldrsh	r0, [r7, r3]
-	bl	sub_0808b398
+	bl	Party_RemapCharacterIdByFlags
 	mov	sl, r0
 	ldr	r0, [sp, #4]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_0808b512
@@ -114,7 +101,7 @@ Func_0808b3ec:
 	ldr	r2, [r7, #12]
 	ldr	r3, [r7, #16]
 	mov	r0, sl
-	bl	sub_080090c8
+	bl	Engine_ObjectCreate
 	ldrb	r2, [r7, #23]
 	movs	r3, #1
 	ands	r3, r2
@@ -125,7 +112,7 @@ Func_0808b3ec:
 	ldr	r0, [sp, #4]
 	subs	r0, #1
 	str	r1, [sp, #0]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	adds	r3, r0, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -148,12 +135,12 @@ Func_0808b3ec:
 	mov	r8, r0
 	strb	r3, [r0, #29]
 	ldrb	r0, [r0, #28]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	mov	r1, r8
 	strb	r5, [r1, #28]
 .L_0808b4f6:
 	movs	r0, #33
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808b528
 	mov	r3, sl
@@ -162,24 +149,24 @@ Func_0808b3ec:
 	bhi.n	.L_0808b528
 	adds	r0, r6, #0
 	movs	r1, #226
-	bl	sub_08009228
+	bl	0x08009228
 	b.n	.L_0808b528
 .L_0808b512:
 	ldr	r0, [pc, #300]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808b528
 	ldr	r1, [r7, #8]
 	ldr	r2, [r7, #12]
 	ldr	r3, [r7, #16]
 	adds	r0, r6, #0
-	bl	sub_080090f0
+	bl	Object_SetPositionAndResetMotionFar
 .L_0808b528:
 	cmp	r6, #0
 	beq.n	.L_0808b600
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	adds	r3, r6, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -189,9 +176,9 @@ Func_0808b3ec:
 	mov	r8, r2
 	cmp	r2, #0
 	beq.n	.L_0808b556
-	bl	sub_08004458
+	bl	Random16
 	movs	r1, #30
-	bl	sub_08002304
+	bl	__umodsi3
 	mov	r3, r8
 	adds	r3, #36
 	strb	r0, [r3, #0]
@@ -204,10 +191,10 @@ Func_0808b3ec:
 	strb	r3, [r2, #0]
 	ldr	r1, [r7, #4]
 	adds	r0, r6, #0
-	bl	sub_08093a6c
+	bl	ObjectMotion_SetActionCallback
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	ldr	r2, [r6, #8]
 	cmp	r2, #0
 	bge.n	.L_0808b57c
@@ -254,7 +241,7 @@ Func_0808b3ec:
 	ands	r2, r3
 	strb	r2, [r1, #0]
 	movs	r0, #33
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808b5f8
 	mov	r1, r8
@@ -272,7 +259,7 @@ Func_0808b3ec:
 	ldr	r1, [r6, #8]
 	ldr	r2, [r6, #16]
 	movs	r0, #0
-	bl	sub_080091a8
+	bl	Map_GetTerrainHeightFar
 	ldr	r3, [r6, #12]
 	adds	r3, r3, r0
 	str	r0, [r6, #20]

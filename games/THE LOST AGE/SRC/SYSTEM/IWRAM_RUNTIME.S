@@ -21,8 +21,6 @@
 @ credit: handwritten — TLA IWRAM runtime interrupt dispatcher
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x080006b8
-	.set AlchemyRunAddress, 0x03000100
 	.global IwramIrqMain
 IwramIrqMain:
 	mov	r3, #0x4000000

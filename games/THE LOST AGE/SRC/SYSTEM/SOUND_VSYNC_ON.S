@@ -4,7 +4,6 @@
 @ credit: library — TBS/TLA common BIOS SoundBias wrapper
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08016e04
 	.global Bios_SoundBiasOn
 	.thumb_func
 Bios_SoundBiasOn:

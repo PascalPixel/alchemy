@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080b0298, 0x080b0298
-	.set sub_080b0bb8, 0x080b0bb8
 	.global Djinn_Activate
 	.global Func_080b0c9c
 	.thumb_func
@@ -15,12 +12,12 @@ Func_080b0c9c:
 	adds	r7, r0, #0
 	adds	r6, r1, #0
 	mov	r8, r2
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r1, r6, #0
 	adds	r5, r0, #0
 	mov	r2, r8
 	adds	r0, r7, #0
-	bl	sub_080b0bb8
+	bl	Trade_CanOfferDjinn
 	mov	sl, r0
 	cmp	r0, #0
 	beq.n	.L_080b0cf8
@@ -52,7 +49,7 @@ Func_080b0c9c:
 	adds	r0, r7, #0
 	adds	r3, #1
 	strb	r3, [r5, r2]
-	bl	sub_080b0298
+	bl	Func_080b0298
 .L_080b0cf8:
 	mov	r0, sl
 .L_080b0cfa:

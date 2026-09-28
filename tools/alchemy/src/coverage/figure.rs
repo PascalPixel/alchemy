@@ -26,6 +26,19 @@ pub(crate) const MAP: &str = "PROGRESS.png";
 /// Where both figures send a reader; the README links each image there too.
 pub(crate) const LINK: &str = "github.com/PascalPixel/alchemy";
 
+fn latest_label(history: &Value, game: &str) -> Option<String> {
+    if history["pending"][game] == true {
+        return Some("?%".into());
+    }
+    history["days"]
+        .as_array()?
+        .iter()
+        .rev()
+        .find_map(|row| percent(&row[game]))
+        // Floored to two places, as the README's status line reads.
+        .map(|value| format!("{:.2}%", ((value * 100.0) + 1e-6).floor() / 100.0))
+}
+
 /// Alchemy's mark and name at the top left of a figure, a heading after it
 /// and the repository's address after that, muted; returns where it ends.
 fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i32 {
@@ -61,13 +74,8 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         ("tbs", "The Broken Seal", GOLD),
         ("tla", "The Lost Age", BLUE),
     ];
-    let latest = series.map(|(key, _, _)| {
-        days.iter()
-            .rev()
-            .find_map(|row| percent(&row[key]))
-            // Floored to two places, as the README's status line reads.
-            .map(|value| format!("{:.2}%", ((value * 100.0) + 1e-6).floor() / 100.0))
-    });
+    let pending = series.map(|(key, _, _)| history["pending"][key] == true);
+    let latest = series.map(|(key, _, _)| latest_label(history, key));
     // Title and key along the top line; each game's mark, in its line's
     // colour, is its swatch.
     let masthead_end = masthead(&mut canvas, letters, 6, "Alchemy: Golden Sun Decompilation");
@@ -79,7 +87,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         canvas.mark(key_x, 6, key, ink, SHADOW);
         key_x -= 12;
     }
-    let stricter = "Stricter rules";
+    let stricter = "Credit corrections";
     key_x -= letters.width(stricter) as i32;
     canvas.text(letters, key_x, 6, stricter, INK, Some(SHADOW));
     canvas.fill(key_x - 14, 9, 10, 10, BAND);
@@ -98,6 +106,24 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
     let (left, top) = (40, 32);
     let (right, bottom) = (WIDTH - 8 - label_room, height - footer);
     let (plot_w, plot_h) = (right - left, bottom - top);
+    // A game without a byte-identical build keeps its historical line.
+    let waiting = series
+        .iter()
+        .zip(pending)
+        .filter(|(_, pending)| *pending)
+        .map(|((_, name, _), _)| *name)
+        .collect::<Vec<_>>();
+    if !waiting.is_empty() {
+        let note = if waiting.len() == series.len() {
+            "Historical measurements; current DONE pending matching builds".to_string()
+        } else {
+            format!(
+                "{}: historical measurement; pending a matching build",
+                waiting[0]
+            )
+        };
+        canvas.text(letters, left, top - 16, &note, MUTED, Some(SHADOW));
+    }
     let span = (last - began) as i32;
     let x_of = |day: i64| left + ((day - began) as i32 * (plot_w - 1) + span / 2) / span;
     let y_of = |value: f64| {
@@ -354,7 +380,7 @@ fn models_strip(
 // -------------------------------------------------------------------- map
 
 /// The tracked files of the Camelot-shaped trees and `recon/`, by size on
-/// disk, in the dashboard's palette.
+/// disk, in the figure palette.
 pub(crate) fn map(letters: &Letters, root: &Path) -> Canvas {
     map_of(letters, tracked_only(root, disk_tiles(root)))
 }
@@ -722,5 +748,22 @@ mod tests {
         let shades = (423..431).map(|y| canvas.get(strip, y)).collect::<Vec<_>>();
         assert_eq!(shades.iter().filter(|c| **c == Some(pink)).count(), 6);
         assert_eq!(shades.iter().filter(|c| **c == Some(grey)).count(), 2);
+    }
+    #[test]
+    fn pending_audits_label_unknown_and_keep_the_historical_lines() {
+        let history = json!({"began": "2026-09-27", "pending": {"tbs": true, "tla": true},
+        "days": [
+            {"date": "2026-09-27", "tbs": {"percent": 70.0}, "tla": {"percent": 2.0}},
+            {"date": "2026-09-28", "tbs": {"percent": 73.0}, "tla": {"percent": 2.1}}
+        ]});
+        let published = history["days"].clone();
+        assert_eq!(latest_label(&history, "tbs").as_deref(), Some("?%"));
+        assert_eq!(latest_label(&history, "tla").as_deref(), Some("?%"));
+        let canvas = chart(&fixture(), &history);
+        for ink in [GOLD, BLUE] {
+            let ink = super::super::raster::rgb(ink);
+            assert!((32..399).any(|y| canvas.get(41, y) == Some(ink)));
+        }
+        assert_eq!(history["days"], published);
     }
 }

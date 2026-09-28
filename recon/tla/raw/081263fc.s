@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013164, 0x08013164
-	.set sub_08013300, 0x08013300
-	.set sub_080145a8, 0x080145a8
-	.set sub_08014d78, 0x08014d78
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08118410, 0x08118410
-	.set sub_08125b78, 0x08125b78
-	.set sub_08125bb8, 0x08125bb8
 	.global Func_081263fc
 	.thumb_func
 Func_081263fc:
@@ -27,13 +19,13 @@ Func_081263fc:
 	adds	r0, r1, #0
 	adds	r7, r2, #0
 	mov	r9, r3
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	ldr	r5, [r5, #36]
 	mov	r8, r0
 	mov	sl, r5
 	ldr	r5, [pc, #248]
 	adds	r0, r5, #0
-	bl	sub_08014d78
+	bl	Func_08014d78
 	movs	r2, #132
 	movs	r3, #128
 	adds	r6, r0, #0
@@ -53,7 +45,7 @@ Func_081263fc:
 	mov	lr, r6
 	.2byte 0xf800
 	.2byte 0x1c30
-	bl	sub_08013164
+	bl	Func_08013164
 	movs	r4, #160
 	lsls	r4, r4, #3
 	adds	r4, #108
@@ -88,7 +80,7 @@ Func_081263fc:
 	adds	r1, #192
 	adds	r0, r4, #0
 	movs	r3, #128
-	bl	sub_08118410
+	bl	ColorBuffer_Scale
 .L_081264a0:
 	movs	r3, #237
 	lsls	r3, r3, #3
@@ -117,9 +109,9 @@ Func_081263fc:
 	strh	r2, [r3, #0]
 .L_081264d2:
 	ldr	r0, [pc, #96]
-	bl	sub_08125b78
+	bl	0x08125b78
 	ldr	r0, [pc, #92]
-	bl	sub_08125bb8
+	bl	0x08125bb8
 	ldr	r3, [pc, #92]
 	ldr	r0, [pc, #92]
 	movs	r1, #64
@@ -133,7 +125,7 @@ Func_081263fc:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #76]
 	adds	r1, #255
-	bl	sub_080145a8
+	bl	0x080145a8
 .L_081264fc:
 	mov	r3, fp
 	mov	r2, r9
@@ -309,7 +301,7 @@ Func_081263fc:
 	adds	r0, #255
 	adds	r7, #32
 	movs	r5, #0
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_08126674
 	ldr	r3, [pc, #40]

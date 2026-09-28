@@ -9,7 +9,6 @@
 @ credit: handwritten — ARM colour-buffer fade kernels with backup, copied to the stack
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08001ea8
 	.global ColorBuffer_ScaleThreeQuartersKernel
 ColorBuffer_ScaleThreeQuartersKernel:
 	push	{r5, r6}
@@ -87,3 +86,10 @@ ColorBuffer_DarkenKernel:
 	bne	.L_08001f5c
 	pop	{r5, r6, r7, r8, ip}
 	bx	ip
+ColorBuffer_BackupKernelsEnd:
+	.global ColorBuffer_BackupAndScaleThreeQuartersCodeSize
+	.set ColorBuffer_BackupAndScaleThreeQuartersCodeSize, ColorBuffer_HalveKernel - ColorBuffer_ScaleThreeQuartersKernel
+	.global ColorBuffer_BackupAndHalveCodeSize
+	.set ColorBuffer_BackupAndHalveCodeSize, ColorBuffer_DarkenKernel - ColorBuffer_HalveKernel
+	.global ColorBuffer_BackupAndDarkenCodeSize
+	.set ColorBuffer_BackupAndDarkenCodeSize, ColorBuffer_BackupKernelsEnd - ColorBuffer_DarkenKernel

@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004458, 0x08004458
-	.set sub_08077008, 0x08077008
-	.set sub_080b6b40, 0x080b6b40
 	.global BattlePresentation_BuildSortedUnitEntries
 	.global Func_080b8574
 	.thumb_func
@@ -23,13 +20,13 @@ Func_080b8574:
 	mov	r9, r1
 	movs	r0, #1
 	mov	r1, sl
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	movs	r7, #0
 	mov	r8, r0
 .L_080b859a:
 	adds	r0, r7, #0
 	adds	r7, #1
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	cmp	r7, #4
 	bne.n	.L_080b859a
 	movs	r7, #0
@@ -44,7 +41,7 @@ Func_080b8574:
 	adds	r0, r5, #0
 	str	r1, [sp, #4]
 	str	r2, [sp, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r3, r0, #0
 	adds	r3, #64
 	ldrh	r3, [r3, #0]
@@ -65,7 +62,7 @@ Func_080b8574:
 .L_080b85e2:
 	mov	r1, sl
 	movs	r0, #2
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	mov	r1, r8
 	ldr	r2, [sp, #12]
 	lsls	r3, r1, #4
@@ -73,7 +70,7 @@ Func_080b8574:
 	movs	r1, #0
 	movs	r0, #1
 	adds	r6, r2, r3
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	str	r0, [sp, #8]
 	cmp	r5, #0
 	ble.n	.L_080b865c
@@ -87,7 +84,7 @@ Func_080b8574:
 	movs	r2, #2
 	adds	r0, r5, #0
 	add	r8, r2
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	strh	r5, [r6, #0]
 	adds	r5, r0, #0
 	adds	r5, #64
@@ -96,7 +93,7 @@ Func_080b8574:
 	strh	r3, [r6, #4]
 	cmp	r3, #0
 	beq.n	.L_080b863a
-	bl	sub_08004458
+	bl	Random16
 	ldrh	r3, [r5, #0]
 	adds	r2, r3, #0
 	muls	r2, r0
@@ -109,7 +106,7 @@ Func_080b8574:
 	mov	r1, fp
 	strh	r3, [r6, #6]
 	strh	r1, [r6, #8]
-	bl	sub_08004458
+	bl	Random16
 	ldr	r2, [sp, #8]
 	adds	r3, r2, #0
 	muls	r3, r0

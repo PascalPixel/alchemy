@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080108e4, 0x080108e4
 	.global Map_UpdateCurrentTileBlockUntilBlocked
 	.global Func_080114a0
 	.thumb_func
@@ -74,7 +73,7 @@ Func_080114a0:
 	mov	r0, r9
 	mov	r2, r8
 	adds	r3, r4, #0
-	bl	sub_080108e4
+	bl	Map_WriteLayerCellTile
 	cmp	r0, #0
 	bne.n	.L_0801154e
 	adds	r5, #1

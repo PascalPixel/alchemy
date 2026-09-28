@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001eec[];
 
 typedef void (*Callback)(s32 *);
 
@@ -83,7 +84,7 @@ void BattleFx_DispatchMode(s32 *state)
     Runtime_AllocateHeapBlock(39, 0x782c);
     Runtime_AllocateHeapBlock(40, 0x4000);
 
-    destination = (s32 **)(*(s32 *)ADDR_03001EEC + 0x7828);
+    destination = (s32 **)(*(s32 *)((u32)&Data_03001eec) + 0x7828);
     index = state[0];
     *destination = state;
     if (index == 0)

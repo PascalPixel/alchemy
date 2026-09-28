@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013164, 0x08013164
-	.set sub_080142d4, 0x080142d4
-	.set sub_080143ac, 0x080143ac
-	.set sub_08014d00, 0x08014d00
-	.set sub_08014d78, 0x08014d78
-	.set sub_0803deac, 0x0803deac
-	.set sub_0803f2e4, 0x0803f2e4
-	.set sub_0803f6c8, 0x0803f6c8
 	.global Func_0803db54
 	.thumb_func
 Func_0803db54:
@@ -19,7 +11,7 @@ Func_0803db54:
 	mov	sl, r1
 	ldr	r5, [pc, #160]
 	adds	r0, r5, #0
-	bl	sub_08014d78
+	bl	Func_08014d78
 	adds	r7, r0, #0
 	movs	r0, #132
 	lsls	r0, r0, #24
@@ -43,13 +35,13 @@ Func_0803db54:
 	mov	lr, r7
 	.2byte 0xf800
 	.2byte 0x1c38
-	bl	sub_08013164
+	bl	Func_08013164
 	mov	r3, sl
 	cmp	r3, #0
 	beq.n	.L_0803dbb8
 	ldr	r5, [pc, #104]
 	adds	r0, r5, #0
-	bl	sub_08014d78
+	bl	Func_08014d78
 	movs	r3, #128
 	adds	r7, r0, #0
 	lsrs	r5, r5, #2
@@ -61,7 +53,7 @@ Func_0803db54:
 .L_0803dbb8:
 	ldr	r5, [pc, #88]
 	adds	r0, r5, #0
-	bl	sub_08014d78
+	bl	Func_08014d78
 	movs	r3, #128
 	adds	r7, r0, #0
 	lsrs	r5, r5, #2
@@ -90,7 +82,7 @@ Func_0803db54:
 	mov	lr, r7
 	.2byte 0xf800
 	.2byte 0x1c38
-	bl	sub_08013164
+	bl	Func_08013164
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5
@@ -107,7 +99,7 @@ Func_0803db54:
 	movs	r1, #249
 	lsls	r1, r1, #2
 	movs	r0, #72
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r2, #210
 	adds	r7, r0, #0
 	lsls	r2, r2, #2
@@ -176,7 +168,7 @@ Func_0803db54:
 	strh	r5, [r7, #18]
 	strh	r5, [r3, #0]
 	ldr	r6, [pc, #112]
-	bl	sub_080143ac
+	bl	Func_080143ac
 	movs	r2, #185
 	lsls	r2, r2, #2
 	adds	r3, r7, r2
@@ -185,7 +177,7 @@ Func_0803db54:
 	adds	r2, r6, #0
 	ldrh	r0, [r3, #0]
 	lsls	r1, r1, #1
-	bl	sub_080142d4
+	bl	0x080142d4
 	movs	r2, #128
 	lsls	r2, r2, #2
 	adds	r2, #230
@@ -329,7 +321,7 @@ Func_0803db54:
 	adds	r0, r7, #0
 	mov	r1, r8
 	str	r4, [sp, #0]
-	bl	sub_0803f2e4
+	bl	0x0803f2e4
 	movs	r3, #210
 	lsls	r3, r3, #2
 	add	r3, r9
@@ -363,7 +355,7 @@ Func_0803db54:
 	ldrh	r7, [r4, #0]
 	str	r4, [sp, #0]
 	mov	r8, r2
-	bl	sub_0803deac
+	bl	Func_0803deac
 	adds	r5, r0, #0
 	ldr	r4, [sp, #0]
 	cmp	r5, #0
@@ -425,7 +417,7 @@ Func_0803db54:
 	cmp	r6, #0
 	bne.n	.L_0803de68
 .L_0803de94:
-	bl	sub_0803f6c8
+	bl	0x0803f6c8
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

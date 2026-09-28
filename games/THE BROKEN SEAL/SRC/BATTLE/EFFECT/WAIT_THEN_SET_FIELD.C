@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
+void BattleMotion_ApproachTargetFar(s32, s16, s32, s32);
+s32 BattleFx_RunSparkGroups(void *, s32);
 
 /* battle/effects/wait_then_set_field.c */
 

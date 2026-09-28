@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002064, 0x08002064
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_0810be70, 0x0810be70
-	.set sub_0810bea8, 0x0810bea8
-	.set sub_0810bebc, 0x0810bebc
 	.global Func_0810bf98
 	.thumb_func
 Func_0810bf98:
@@ -17,7 +11,7 @@ Func_0810bf98:
 	adds	r0, r3, #0
 	mov	r8, r2
 	adds	r6, r1, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #12
 	ldrsh	r3, [r5, r2]
 	adds	r0, #216
@@ -32,17 +26,17 @@ Func_0810bf98:
 	add	r3, r8
 	movs	r2, #27
 	adds	r7, r3, #0
-	bl	sub_0810bebc
+	bl	0x0810bebc
 	adds	r7, #8
 	movs	r6, #0
 .L_0810bfd0:
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	sub_08002064
+	bl	0x08002064
 	movs	r1, #5
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_08002054
+	bl	Math_Div
 	lsls	r5, r5, #4
 	adds	r2, r0, #0
 	add	r5, sl
@@ -51,11 +45,11 @@ Func_0810bf98:
 	adds	r2, r7, r2
 	adds	r1, r5, #0
 	adds	r6, #1
-	bl	sub_0810be70
+	bl	0x0810be70
 	cmp	r6, #14
 	ble.n	.L_0810bfd0
 	movs	r0, #1
-	bl	sub_0810bea8
+	bl	Func_0810bea8
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_PRESENTATION.H"
+void Graphics_PrepareTransferInIwramWork();
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
 {

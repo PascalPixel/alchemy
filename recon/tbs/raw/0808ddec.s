@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080044d0, 0x080044d0
-	.set sub_080072f0, 0x080072f0
-	.set sub_0808ba1c, 0x0808ba1c
 	.global Func_0808ddec
 	.thumb_func
 Func_0808ddec:
@@ -21,7 +17,7 @@ Func_0808ddec:
 	mov	r9, r0
 	str	r1, [sp, #0]
 	mov	fp, r2
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	adds	r7, r0, #0
 	cmp	r7, #0
 	beq.n	.L_0808def2
@@ -31,7 +27,7 @@ Func_0808ddec:
 	cmp	sl, r9
 	beq.n	.L_0808dee8
 	mov	r0, sl
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_0808dee8
@@ -94,7 +90,7 @@ Func_0808ddec:
 	adds	r3, r1, #0
 	adds	r0, r0, r3
 	ldr	r3, [pc, #124]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r3, r8
 	ldrb	r2, [r3, #0]
 	movs	r3, #4
@@ -106,7 +102,7 @@ Func_0808ddec:
 	adds	r0, r0, r5
 	lsls	r0, r0, #1
 	movs	r1, #13
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r5, r0, #0
 .L_0808deb2:
 	cmp	r5, fp
@@ -117,7 +113,7 @@ Func_0808ddec:
 	subs	r0, r0, r3
 	ldr	r3, [r7, #8]
 	subs	r1, r1, r3
-	bl	sub_080044d0
+	bl	ArcTan2
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	cmp	r5, #11

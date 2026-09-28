@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, opaque tile expander
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08038e30
 	.global Tile_ExpandOpaque
 	.thumb_func
 Tile_ExpandOpaque:

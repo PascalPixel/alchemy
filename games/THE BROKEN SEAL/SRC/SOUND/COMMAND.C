@@ -8,7 +8,7 @@ extern u8 RomBytes_02003004;
 extern u16 gMusicVolume;
 extern u16 gMusicPitchStep;
 extern u16 gMusicVolumeStep;
-extern u8 gOv6;
+extern u8 Data_02003014;
 extern u16 gMusicPlayerVolumes;
 extern u16 gMusicPitchTarget;
 extern u16 gMusicVolumeTarget;
@@ -30,7 +30,7 @@ void Audio_InitializeRuntimeDefaults(void)
     gMusicPitchTarget = 0x100;
     gMusicPitch = 0x100;
     gMusicPitchStep = 4;
-    gOv6 = 0;
+    Data_02003014 = 0;
     Audio_CommandMask = 0;
     player_volume = &gMusicPlayerVolumes;
     RomBytes_02003004 = 0;

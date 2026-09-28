@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_080030f8, 0x080030f8
-	.set sub_080037d4, 0x080037d4
-	.set sub_080f9080, 0x080f9080
 	.global AudioTest_RunParameterController
 	.global Func_080f92fc
 	.thumb_func
@@ -58,9 +54,9 @@ Func_080f92fc:
 	mov	r0, fp
 	adds	r0, #1
 	movs	r1, #5
-	bl	sub_080022fc
+	bl	__modsi3
 	mov	fp, r0
-	bl	sub_080037d4
+	bl	Sound_LoadPresetParameters
 .L_080f9362:
 	ldr	r3, [r5, #0]
 	movs	r2, #128
@@ -134,7 +130,7 @@ Func_080f92fc:
 	mov	r3, r8
 	mov	r4, r9
 	ldr	r0, [r3, r4]
-	bl	sub_080f9080
+	bl	AudioCommand_Play
 .L_080f93ea:
 	ldr	r3, [r5, #0]
 	movs	r2, #2
@@ -142,7 +138,7 @@ Func_080f92fc:
 	cmp	r3, #0
 	beq.n	.L_080f93fa
 	movs	r0, #19
-	bl	sub_080f9080
+	bl	AudioCommand_Play
 .L_080f93fa:
 	ldr	r3, [r5, #0]
 	movs	r2, #8
@@ -150,7 +146,7 @@ Func_080f92fc:
 	cmp	r3, #0
 	beq.n	.L_080f940a
 	movs	r0, #17
-	bl	sub_080f9080
+	bl	AudioCommand_Play
 .L_080f940a:
 	ldr	r3, [r5, #0]
 	movs	r2, #4
@@ -158,10 +154,10 @@ Func_080f92fc:
 	cmp	r3, #0
 	beq.n	.L_080f941a
 	ldr	r0, [pc, #28]
-	bl	sub_080f9080
+	bl	AudioCommand_Play
 .L_080f941a:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080f932a
 	movs	r0, r0
 	.4byte 0x080fb794

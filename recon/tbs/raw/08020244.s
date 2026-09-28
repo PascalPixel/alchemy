@@ -1,29 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022fc, 0x080022fc
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_080030f8, 0x080030f8
-	.set sub_080048b0, 0x080048b0
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016498, 0x08016498
-	.set sub_0801ccc0, 0x0801ccc0
-	.set sub_0801e41c, 0x0801e41c
-	.set sub_0801e74c, 0x0801e74c
-	.set sub_0801e858, 0x0801e858
-	.set sub_0801fd84, 0x0801fd84
-	.set sub_0801fd98, 0x0801fd98
-	.set sub_0801fda8, 0x0801fda8
-	.set sub_0801fe2c, 0x0801fe2c
-	.set sub_0801ff14, 0x0801ff14
-	.set sub_0801ffd8, 0x0801ffd8
-	.set sub_08020088, 0x08020088
-	.set sub_08020150, 0x08020150
-	.set sub_08020198, 0x08020198
-	.set sub_08021620, 0x08021620
-	.set sub_080216b4, 0x080216b4
-	.set sub_08077300, 0x08077300
-	.set sub_080f9010, 0x080f9010
 	.global SaveMenu_SelectSlot
 	.global Func_08020244
 	.thumb_func
@@ -42,7 +18,7 @@ Func_08020244:
 	lsls	r1, r1, #4
 	movs	r0, #55
 	sub	sp, #40
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r3, [pc, #792]
 	movs	r1, #0
 	movs	r2, #1
@@ -55,7 +31,7 @@ Func_08020244:
 	ldr	r3, [r3, #0]
 	adds	r5, r0, #0
 	str	r3, [sp, #8]
-	bl	sub_08077300
+	bl	0x08077300
 	mov	r3, r8
 	str	r0, [sp, #4]
 	cmp	r3, #0
@@ -222,7 +198,7 @@ Func_08020244:
 .L_080203a4:
 	movs	r0, #113
 	movs	r5, #1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	negs	r5, r5
 	b.n	.L_0802074a
 .L_080203b0:
@@ -234,14 +210,14 @@ Func_08020244:
 	ldr	r2, [pc, #460]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	sub_0801fd84
+	bl	Scheduler_ScheduleCallbackAAfterFrames
 	movs	r3, #2
 	str	r3, [sp, #0]
 	movs	r1, #2
 	movs	r2, #28
 	movs	r3, #7
 	movs	r0, #1
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r1, #130
 	lsls	r1, r1, #5
 	adds	r1, r7, r1
@@ -285,7 +261,7 @@ Func_08020244:
 	mov	r1, sl
 	movs	r2, #10
 	mov	r3, fp
-	bl	sub_0801e74c
+	bl	UiText_DrawResource
 	b.n	.L_0802044e
 .L_08020426:
 	ldr	r0, [sp, #20]
@@ -293,14 +269,14 @@ Func_08020244:
 	adds	r0, #16
 	movs	r2, #12
 	mov	r3, fp
-	bl	sub_0801e858
+	bl	UiText_DrawString
 	ldr	r3, [pc, #356]
 	ldrh	r0, [r5, #2]
 	mov	r1, sl
 	adds	r0, r0, r3
 	movs	r2, #62
 	mov	r3, fp
-	bl	sub_0801e74c
+	bl	UiText_DrawResource
 	ldr	r1, [pc, #344]
 	ldr	r3, [sp, #8]
 	adds	r2, r3, r1
@@ -322,20 +298,20 @@ Func_08020244:
 	movs	r1, #0
 	movs	r2, #2
 	movs	r3, #27
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #4
 	str	r3, [sp, #0]
 	mov	r0, sl
 	movs	r1, #0
 	movs	r2, #4
 	movs	r3, #27
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #24
 	mov	r1, sl
 	negs	r3, r3
 	mov	r0, r9
 	movs	r2, #72
-	bl	sub_08021620
+	bl	RenderResource_CreatePair
 	movs	r1, #2
 	str	r0, [sp, #16]
 	mov	fp, r1
@@ -361,7 +337,7 @@ Func_08020244:
 	ldrb	r0, [r7, r3]
 	adds	r3, r7, r3
 	ldrb	r1, [r3, #1]
-	bl	sub_0801ccc0
+	bl	PaletteGlow_Update
 	ldr	r2, [sp, #32]
 	cmp	r2, #0
 	bne.n	.L_080204d6
@@ -371,7 +347,7 @@ Func_08020244:
 	movs	r1, #10
 	movs	r2, #14
 	movs	r3, #9
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #32]
 .L_080204d6:
 	movs	r1, #130
@@ -380,9 +356,9 @@ Func_08020244:
 	adds	r6, r3, r1
 	ldr	r0, [sp, #32]
 	adds	r1, r6, #0
-	bl	sub_08020198
+	bl	StatusMenu_DrawCharacterSummary
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [sp, #28]
 	cmp	r2, #0
 	bne.n	.L_08020504
@@ -392,17 +368,17 @@ Func_08020244:
 	movs	r1, #10
 	movs	r2, #13
 	movs	r3, #3
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #28]
 .L_08020504:
-	bl	sub_0801ff14
+	bl	Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs	r1, #0
 	ldr	r0, [sp, #28]
 	movs	r2, #0
 	adds	r3, r6, #0
-	bl	sub_0801fe2c
+	bl	ObjectPlacement_CreateGroup
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [pc, #140]
 	adds	r3, r5, r1
 	adds	r1, #1
@@ -428,23 +404,23 @@ Func_08020244:
 	movs	r1, #14
 	movs	r2, #13
 	movs	r3, #5
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	str	r0, [sp, #24]
 .L_08020552:
 	ldr	r0, [sp, #24]
 	adds	r1, r6, #0
-	bl	sub_08020150
-	bl	sub_08020088
+	bl	UiText_DrawFourNumbersInRow
+	bl	Menu_ClearSecondObjectRowAndScheduleUpdate
 	movs	r1, #0
 	ldr	r0, [sp, #24]
 	movs	r2, #0
-	bl	sub_0801ffd8
+	bl	Menu_SpawnFourObjectsAtOrigin
 	b.n	.L_080205e6
 .L_0802056a:
-	bl	sub_08020088
+	bl	Menu_ClearSecondObjectRowAndScheduleUpdate
 	movs	r1, #2
 	ldr	r0, [sp, #24]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #0
 	str	r1, [sp, #24]
 	b.n	.L_080205e6
@@ -469,39 +445,39 @@ Func_08020244:
 	ldr	r3, [pc, #504]
 	adds	r2, r2, r3
 	ldrb	r1, [r2, #0]
-	bl	sub_0801ccc0
-	bl	sub_08020088
-	bl	sub_0801ff14
+	bl	PaletteGlow_Update
+	bl	Menu_ClearSecondObjectRowAndScheduleUpdate
+	bl	Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs	r1, #2
 	ldr	r0, [sp, #24]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #28]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #32]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #0
 	str	r1, [sp, #24]
 	str	r1, [sp, #28]
 	str	r1, [sp, #32]
 .L_080205e6:
 	mov	r0, sl
-	bl	sub_08016498
+	bl	RenderOutput_RedrawSavedRect
 	mov	r2, fp
 	str	r2, [sp, #0]
 	mov	r0, sl
 	movs	r1, #0
 	movs	r2, #2
 	movs	r3, #27
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	movs	r3, #4
 	str	r3, [sp, #0]
 	mov	r0, sl
 	movs	r1, #0
 	movs	r2, #4
 	movs	r3, #27
-	bl	sub_0801e41c
+	bl	UiWindow_DrawDividerLine
 	mov	r3, r8
 	lsls	r2, r3, #1
 	movs	r3, #1
@@ -509,12 +485,12 @@ Func_08020244:
 	mov	r0, sl
 	movs	r1, #0
 	movs	r3, #26
-	bl	sub_0801fda8
+	bl	UiWindow_FillTilemapRect
 .L_0802061e:
 	ldr	r0, [sp, #16]
-	bl	sub_080216b4
+	bl	Ui_ApplyTableOffsetToPair
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [pc, #392]
 	ldr	r2, [r1, #0]
 	movs	r3, #64
@@ -522,7 +498,7 @@ Func_08020244:
 	cmp	r2, #0
 	beq.n	.L_080206aa
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r1, #1
 	str	r1, [sp, #12]
 	b.n	.L_08020696
@@ -576,7 +552,7 @@ Func_08020244:
 	mov	r0, r8
 	adds	r0, #2
 	movs	r1, #3
-	bl	sub_080022fc
+	bl	__modsi3
 	mov	r2, r9
 	mov	r8, r0
 	cmp	r2, #0
@@ -589,7 +565,7 @@ Func_08020244:
 	cmp	r2, #0
 	beq.n	.L_08020728
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	str	r3, [sp, #12]
 	b.n	.L_08020714
@@ -643,7 +619,7 @@ Func_08020244:
 	mov	r0, r8
 	adds	r0, #4
 	movs	r1, #3
-	bl	sub_080022fc
+	bl	__modsi3
 	mov	r2, r9
 	mov	r8, r0
 	cmp	r2, #0
@@ -666,26 +642,26 @@ Func_08020244:
 	b.n	.L_08020494
 .L_08020742:
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r5, r8
 .L_0802074a:
-	bl	sub_08020088
-	bl	sub_0801ff14
+	bl	Menu_ClearSecondObjectRowAndScheduleUpdate
+	bl	Menu_ClearFirstObjectRowAndScheduleUpdate
 	movs	r1, #2
 	ldr	r0, [sp, #24]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #28]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #32]
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #2
 	mov	r0, sl
-	bl	sub_08016418
-	bl	sub_0801fd98
+	bl	UiWork_Finalize
+	bl	Scheduler_ScheduleCallbackA
 	movs	r0, #55
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	ldr	r3, [pc, #40]
 	ldr	r1, [pc, #44]
 	adds	r2, r3, r1
@@ -693,9 +669,9 @@ Func_08020244:
 	ldr	r2, [pc, #40]
 	adds	r3, r3, r2
 	ldrb	r1, [r3, #0]
-	bl	sub_0801ccc0
+	bl	PaletteGlow_Update
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_08020794:
 	adds	r0, r5, #0
 	add	sp, #40

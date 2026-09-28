@@ -56,7 +56,7 @@ s32 GameFlag_TestFar(s32 flag);
 void Func_080072f0(u32 arg, s32 unused1, s32 unused2, u32 routine);
 void Graphics_PrepareTransferAndRun(struct FixedPoint *eye, struct FixedPoint *target);
 void Graphics_PrepareTransferInIwramWork(struct FixedPoint *eye, struct FixedPoint *target);
-void Func_0800b388(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);
+void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);
 
 void ObjectSystem_UpdateCameraFixed(void)
 {
@@ -118,7 +118,7 @@ void ObjectSystem_UpdateCameraFixed(void)
                 scale[0] = unit;
                 scale[1] = unit;
             }
-            Func_0800b388(sprite, pos, scale, obj->angle + angle, obj->layer);
+            Render_PlaceProjectedSprite(sprite, pos, scale, obj->angle + angle, obj->layer);
             break;
         case 2:
             scale2[0] = obj->scale_x;
@@ -131,7 +131,7 @@ void ObjectSystem_UpdateCameraFixed(void)
             for (part = 3; part >= 0; part--) {
                 sprite = *parts++;
                 if (sprite != NULL)
-                    Func_0800b388(sprite, &obj->x, scale2, obj->angle + angle, obj->layer);
+                    Render_PlaceProjectedSprite(sprite, &obj->x, scale2, obj->angle + angle, obj->layer);
             }
             break;
         case 0:

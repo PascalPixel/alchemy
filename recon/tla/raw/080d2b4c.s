@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800205c, 0x0800205c
-	.set sub_0800206c, 0x0800206c
-	.set sub_080c9f2c, 0x080c9f2c
-	.set sub_080ca1a4, 0x080ca1a4
-	.set sub_080ca5d8, 0x080ca5d8
-	.set sub_080cad84, 0x080cad84
-	.set sub_080cdf5c, 0x080cdf5c
-	.set sub_080d7524, 0x080d7524
 	.global Func_080d2b4c
 	.thumb_func
 Func_080d2b4c:
@@ -31,11 +23,11 @@ Func_080d2b4c:
 	adds	r0, r6, #0
 	movs	r3, #255
 	ands	r7, r3
-	bl	sub_0800205c
+	bl	0x0800205c
 	movs	r1, #20
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_0800206c
+	bl	0x0800206c
 	cmp	r0, #19
 	bne.n	.L_080d2b98
 	movs	r1, #200
@@ -56,7 +48,7 @@ Func_080d2b4c:
 	cmp	r3, #0
 	bne.n	.L_080d2bac
 	adds	r0, r7, #0
-	bl	sub_080d7524
+	bl	Func_080d7524
 .L_080d2bac:
 	movs	r1, #150
 	lsls	r1, r1, #1
@@ -69,7 +61,7 @@ Func_080d2b4c:
 	adds	r2, r2, r1
 	strh	r3, [r2, #0]
 	adds	r0, r6, #0
-	bl	sub_080ca1a4
+	bl	0x080ca1a4
 	movs	r3, #178
 	lsls	r3, r3, #1
 	add	r3, sl
@@ -82,14 +74,14 @@ Func_080d2b4c:
 	asrs	r3, r3, #24
 	cmp	r3, #3
 	bne.n	.L_080d2bec
-	bl	sub_080cdf5c
-	bl	sub_080cad84
+	bl	0x080cdf5c
+	bl	ObjectTable_Get
 	adds	r0, #8
-	bl	sub_080c9f2c
+	bl	0x080c9f2c
 .L_080d2bec:
 	movs	r0, #0
 	movs	r1, #0
-	bl	sub_080ca5d8
+	bl	0x080ca5d8
 .L_080d2bf4:
 	pop	{r3, r5}
 	mov	r8, r3

@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080ad3a8, 0x080ad3a8
-	.set sub_080af79c, 0x080af79c
 	.global Func_080affac
 	.thumb_func
 Func_080affac:
@@ -13,7 +9,7 @@ Func_080affac:
 	adds	r6, r2, #0
 	cmp	r5, #7
 	ble.n	.L_080affe8
-	bl	sub_080ad3a8
+	bl	0x080ad3a8
 	adds	r0, #42
 	ldrb	r1, [r0, #0]
 	cmp	r1, #47
@@ -56,7 +52,7 @@ Func_080affac:
 	cmp	r5, #7
 	bgt.n	.L_080b0020
 	adds	r0, r5, #0
-	bl	sub_080af79c
+	bl	0x080af79c
 	adds	r1, r6, #0
 	adds	r0, #146
 	movs	r4, #3
@@ -77,7 +73,7 @@ Func_080affac:
 	push	{r5, r6, lr}
 	adds	r6, r1, #0
 	sub	sp, #16
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r1, r0, #0
 	movs	r0, #0
 	cmp	r6, #3
@@ -93,7 +89,7 @@ Func_080affac:
 	lsls	r3, r6, #2
 	ldr	r0, [r5, r3]
 	movs	r1, #10
-	bl	sub_08002054
+	bl	Math_Div
 .L_080b0056:
 	add	sp, #16
 	pop	{r5, r6, pc}

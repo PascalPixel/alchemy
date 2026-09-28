@@ -1,8 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FOUR_OBJECT_MOTION.H"
+void ResourceObject_ReleaseFar(void *);
+s32 Object_ApplyProjectedPlacementFar(u32 object, u32 *request, u32 *motion, u32 limit);
+extern struct FourObjectMotionState *Data_03001f2c;
 
-extern u8 RomBytes_080ad35d[];
 extern u8 RomBytes_080ad40d[];
 
 /* object/motion/four_object/FourObjectMotion_InitializeTopRow.c */
@@ -17,7 +19,7 @@ void FourObjectMotion_UpdateBottomRow(void);
 
 void FourObjectMotion_InitializeTopRow(void)
 {
-    struct FourObjectMotionState *state = gMenuWork;
+    struct FourObjectMotionState *state = Data_03001f2c;
     s32 index;
 
     for (index = 0; index < 4; index++) {
@@ -47,7 +49,7 @@ void Scheduler_RemoveCallback(s32);
 
 void FourObjectMotion_ClearSlotsAndSchedule(void)
 {
-    struct FourObjectMotionState *state = gMenuWork;
+    struct FourObjectMotionState *state = Data_03001f2c;
     s32 index = 0;
 
     do {
@@ -59,7 +61,7 @@ void FourObjectMotion_ClearSlotsAndSchedule(void)
         }
         index++;
     } while (index < 4);
-    Scheduler_RemoveCallback((s32)&RomBytes_080ad35d);
+    Scheduler_RemoveCallback((s32)&FourObjectMotion_UpdateAllPositions);
 }
 
 /* object/motion/four_object/FourObjectMotion_UpdateAllPositions.c */
@@ -70,7 +72,7 @@ struct ObjectFlags_080ad35c { s8 flags; };
 
 void FourObjectMotion_UpdateAllPositions(void)
 {
-    struct FourObjectMotionState *state = gMenuWork;
+    struct FourObjectMotionState *state = Data_03001f2c;
     s32 index;
     u32 motion[2];
     u32 request[4];

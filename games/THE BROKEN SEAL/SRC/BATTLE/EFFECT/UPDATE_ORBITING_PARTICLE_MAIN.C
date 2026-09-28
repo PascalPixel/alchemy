@@ -4,6 +4,9 @@
 #include "OBJECT_EFX.H"
 #include "FIXED_MATH.H"
 #include "SYSTEM.H"
+extern u8 Data_03001e40[];
+void BattleEffect_InitializeSharedScene(void);
+s32 BattleFx_RunEventAction(void *resource, s32 battle_mode, s32 size);
 
 /* battle/effects/orbiting_particles/update_main.c */
 struct OrbitingParticle;
@@ -11,7 +14,7 @@ void Animation_ApplyChildValuesFar(struct OrbitingParticle *particle, s32 battle
 
 void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 {
-    s32 battle_mode = *(s32 *)ADDR_03001E40 & 7;
+    s32 battle_mode = *(s32 *)((u32)&Data_03001e40) & 7;
     if (battle_mode == 0) {
         Animation_ApplyChildValuesFar(particle, 2);
     } else if (battle_mode == 2) {
@@ -20,7 +23,7 @@ void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle)
 }
 
 /* battle/effects/orbiting_particles/update_fade.c */
-void Object_SetCallback(void *, void *);
+void ObjectDispatch_InitializeFar(void *, void *);
 void BattleFx_UpdateOrbitingParticleFade(void *object)
 {
   s32 primary_fade;
@@ -33,7 +36,7 @@ void BattleFx_UpdateOrbitingParticleFade(void *object)
     *((s32 *)(object_bytes + 0x18)) = primary_fade;
     if (primary_fade <= 0x1000)
     {
-      Object_SetCallback(object, BattleFx_CommonParticleScript);
+      ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
     }
   }
 }
@@ -183,8 +186,8 @@ struct OrbitingParticle *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
 
 void BattleFx_PrepareBufferInterpolation(void);
 void BattleFx_UpdateOrbitingParticleMain(struct OrbitingParticle *particle);
-void UpdateOrbitingParticleLeft(struct OrbitingParticle *particle);
-void UpdateOrbitingParticleRight(struct OrbitingParticle *particle);
+void BattleFx_UpdateOrbitingParticleLeft(struct OrbitingParticle *particle);
+void BattleFx_UpdateOrbitingParticleRight(struct OrbitingParticle *particle);
 void Audio_PlayCue(s32 sound_id);
 
 void BattleFx_RunOrbitingParticles(void)
@@ -200,7 +203,7 @@ void BattleFx_RunOrbitingParticles(void)
 
     scene = gEffectWork;
     main_particle = scene->main_particle;
-    BattleFx_InitializeSharedScene();
+    BattleEffect_InitializeSharedScene();
     Audio_PlayCue(0x73);
 
     p = &position;
@@ -215,9 +218,9 @@ void BattleFx_RunOrbitingParticles(void)
             particle->scale_y = initial_scale;
             particle->scale_x = initial_scale;
             if ((Rand() & 1) != 0)
-                particle->update = UpdateOrbitingParticleLeft;
+                particle->update = BattleFx_UpdateOrbitingParticleLeft;
             else
-                particle->update = UpdateOrbitingParticleRight;
+                particle->update = BattleFx_UpdateOrbitingParticleRight;
 
             particle->rotation = Rand();
             particle->lifetime = 60;

@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003dec, 0x08003dec
-	.set sub_08004458, 0x08004458
-	.set sub_080091a8, 0x080091a8
-	.set sub_080770c0, 0x080770c0
 	.global Unnamed_08094bbc
 	.global Func_08094bbc
 	.thumb_func
@@ -51,7 +47,7 @@ Func_08094bbc:
 	asrs	r3, r3, #16
 	lsls	r0, r0, #1
 	mov	sl, r3
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_08094c20
 	ldrh	r3, [r7, #28]
@@ -61,9 +57,9 @@ Func_08094bbc:
 	subs	r3, #1
 	str	r3, [r7, #24]
 .L_08094c20:
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #1
 	ldr	r1, [r7, #12]
 	ands	r0, r3
@@ -178,7 +174,7 @@ Func_08094bbc:
 	strb	r2, [r7, #7]
 	adds	r0, r7, #0
 	movs	r1, #240
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	b.n	.L_08094d2c
 	movs	r0, r0
 	.4byte 0x000001ff
@@ -202,14 +198,14 @@ Func_08094bbc:
 	bne.n	.L_08094d7c
 	ldr	r0, [sp, #12]
 	ldr	r6, [r0, #0]
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [r6, #0]
 	lsls	r0, r0, #8
 	ldr	r5, [pc, #84]
 	adds	r3, r3, r0
 	adds	r4, r3, r5
 	str	r4, [sp, #0]
-	bl	sub_08004458
+	bl	Random16
 	ldr	r3, [r6, #8]
 	lsls	r0, r0, #8
 	adds	r3, r3, r0
@@ -220,7 +216,7 @@ Func_08094bbc:
 	asrs	r1, r4, #16
 	str	r4, [r7, #12]
 	movs	r0, #0
-	bl	sub_080091a8
+	bl	Map_GetTerrainHeightFar
 	movs	r3, #120
 	lsls	r0, r0, #16
 	mov	r1, r8

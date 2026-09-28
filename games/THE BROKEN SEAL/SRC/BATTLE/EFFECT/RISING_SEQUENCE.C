@@ -43,7 +43,7 @@ extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
 void Object_SetMode(void *, s32);
-extern void Object_SetCallback(struct Object_08092624 *, const void *);
+extern void ObjectDispatch_InitializeFar(struct Object_08092624 *, const void *);
 extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
 extern s32 Math_ModU(s32, s32);
 extern const u8 BattleFx_BurstParticleScriptA[];
@@ -69,11 +69,11 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
         switch (Rand() & 1) {
         case 1:
             Object_SetMode(object, 2);
-            Object_SetCallback(object, BattleFx_BurstParticleScriptA);
+            ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleScriptA);
             break;
         default:
             Object_SetMode(object, 1);
-            Object_SetCallback(object, BattleFx_BurstParticleScriptB);
+            ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleScriptB);
             break;
         }
 

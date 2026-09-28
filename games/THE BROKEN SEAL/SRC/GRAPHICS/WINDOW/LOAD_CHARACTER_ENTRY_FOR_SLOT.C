@@ -3,6 +3,8 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_INTERFACES.H"
+extern u8 Data_03001e8c[];
+void UiGlyph_LoadEntryWithPalette(s32, s32, s32 *, s32 *, s32, s32);
 
 /* ui/load_character_entry_for_slot.c */
 /* ui/load_character_entry_for_slot.c */
@@ -27,7 +29,7 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
     u8 *state;
     s32 offset;
 
-    state = *(u8 **)ADDR_03001E8C;
+    state = *(u8 **)((u32)&Data_03001e8c);
 
     if (GameFlag_TestFar(0x20) != 0) {
         if (character == 0)
@@ -49,6 +51,6 @@ void Ui_LoadCharacterEntryForSlot(u32 slot, s32 character, s32 value)
         }
         offset = SLOT_VALUE_OFS + slot * 2;
         current = *(u16 *)(state + offset);
-        Ui_SetRect(character_id, value, &current, &result, slot + 0xe, 1);
+        UiGlyph_LoadEntryWithPalette(character_id, value, &current, &result, slot + 0xe, 1);
     }
 }

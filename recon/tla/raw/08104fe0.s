@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080145a8, 0x080145a8
-	.set sub_08014644, 0x08014644
-	.set sub_08020018, 0x08020018
-	.set sub_08020048, 0x08020048
-	.set sub_08104ef8, 0x08104ef8
 	.global Func_08104fe0
 	.thumb_func
 Func_08104fe0:
@@ -32,7 +27,7 @@ Func_08104fe0:
 	cmp	r1, #0
 	bge.n	.L_08105002
 	movs	r0, #0
-	bl	sub_08104ef8
+	bl	Func_08104ef8
 	movs	r2, #140
 	movs	r3, #148
 	lsls	r2, r2, #1
@@ -87,7 +82,7 @@ Func_08104fe0:
 	strb	r3, [r2, #0]
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
-	bl	sub_080145a8
+	bl	0x080145a8
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5
@@ -107,13 +102,13 @@ Func_08104fe0:
 	ldmia	r5!, {r0}
 	cmp	r0, #0
 	beq.n	.L_081050a6
-	bl	sub_08020048
+	bl	0x08020048
 .L_081050a6:
 	subs	r6, #1
 	cmp	r6, #0
 	bge.n	.L_0810509c
 	ldr	r0, [pc, #4]
-	bl	sub_08014644
+	bl	Func_08014644
 	pop	{r5, r6, pc}
 	.2byte 0x4da9
 	.2byte 0x0810
@@ -221,7 +216,7 @@ Func_08104fe0:
 	ldrh	r3, [r6, #32]
 	str	r2, [sp, #0]
 	adds	r2, r4, #0
-	bl	sub_08020018
+	bl	0x08020018
 .L_08105184:
 	movs	r1, #1
 	movs	r2, #4

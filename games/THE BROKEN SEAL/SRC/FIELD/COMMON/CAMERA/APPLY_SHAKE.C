@@ -3,6 +3,9 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001eec[];
+extern u8 Data_03001ad0[];
+extern u8 Data_03001ce0[];
 
 void Camera_ApplyShake(s32 random_mask, u32 shake_range)
 {
@@ -19,29 +22,29 @@ void Camera_ApplyShake(s32 random_mask, u32 shake_range)
     void *disp_p;
     void *center_p;
 
-    scene_state = *(s32 *)ADDR_03001EEC;
+    scene_state = *(s32 *)((u32)&Data_03001eec);
     remaining_frames = (s32 *)(scene_state + 0x77A8);
     if (*remaining_frames > 0) {
         random_x = (random_mask - 1) & Random16();
         half_range = (s32)(shake_range + (shake_range >> 0x1F)) >> 1;
         offset_y = ((shake_range - 1) & Random16()) - half_range;
-        display_position = (void *)ADDR_03001AD0;
+        display_position = (void *)((u32)&Data_03001ad0);
         offset_x = random_x - half_range;
         display_y = offset_y + 0x20;
         FIELD_AT_OFFSET(display_position, s16 *, 4) = offset_x;
         FIELD_AT_OFFSET(display_position, s16 *, 6) = display_y;
-        display_center = (void *)ADDR_03001CE0;
+        display_center = (void *)((u32)&Data_03001ce0);
         FIELD_AT_OFFSET(display_center, s32 *, 0xC) = 0x78 - offset_x;
         FIELD_AT_OFFSET(display_center, s32 *, 0x10) = 0x78 - offset_y;
         *remaining_frames -= 1;
         return;
     }
     restored_position = FIELD_AT_OFFSET(scene_state, s32 *, 0x77A0);
-    disp_p = (void *)ADDR_03001AD0;
+    disp_p = (void *)((u32)&Data_03001ad0);
     FIELD_AT_OFFSET(disp_p, s16 *, 4) = restored_position;
     restored_position = FIELD_AT_OFFSET(scene_state, s32 *, 0x77A4);
     FIELD_AT_OFFSET(disp_p, s16 *, 6) = restored_position;
-    center_p = (void *)ADDR_03001CE0;
+    center_p = (void *)((u32)&Data_03001ce0);
     FIELD_AT_OFFSET(center_p, s32 *, 0xC) = 0x78;
     FIELD_AT_OFFSET(center_p, s32 *, 0x10) = 0x78;
 }

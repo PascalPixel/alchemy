@@ -10,7 +10,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, relocated Thumb branch patcher
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080130cc
 	.global Resource_PatchThumbBranch
 	.thumb_func
 Resource_PatchThumbBranch:

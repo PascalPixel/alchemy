@@ -1,11 +1,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001eec[];
 
 /* graphics/registers/Display_ApplyWindowBlend.c */
 void Graphics_ApplyWindowBlendRegisters(void)
 {
-    u8 *src = *(u8 **)ADDR_03001EEC;
+    u8 *src = *(u8 **)((u32)&Data_03001eec);
 
     *(u16 *)0x04000040 = *(u16 *)(src + 0x77bc); /* WIN0H */
     *(u16 *)0x04000044 = *(u16 *)(src + 0x77be); /* WIN0V */
@@ -21,7 +22,7 @@ void Graphics_ApplyWindowBlendRegisters(void)
 /* graphics/registers/Display_ApplyBg2Reference.c */
 void Display_ApplyBg2Reference(void)
 {
-    u8 *base = *(u8 **)ADDR_03001EEC;
+    u8 *base = *(u8 **)((u32)&Data_03001eec);
     *(u32 *)0x04000028 = *(u32 *)(base + 0x77D0);
     *(u32 *)0x0400002C = *(u32 *)(base + 0x77D4);
 }

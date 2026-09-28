@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022f4, 0x080022f4
-	.set sub_08002322, 0x08002322
-	.set sub_080044d0, 0x080044d0
-	.set sub_080090c8, 0x080090c8
-	.set sub_08009150, 0x08009150
-	.set sub_0808d394, 0x0808d394
-	.set sub_0808e0b0, 0x0808e0b0
-	.set sub_08091200, 0x08091200
-	.set sub_08091254, 0x08091254
-	.set sub_08092054, 0x08092054
-	.set sub_080978c4, 0x080978c4
-	.set sub_080f9010, 0x080f9010
-	.set sub_08185000, 0x08185000
 	.global Func_08097644
 	.thumb_func
 Func_08097644:
@@ -60,8 +47,8 @@ Func_08097644:
 	adds	r0, r0, r3
 	movs	r1, #160
 	lsls	r0, r0, #16
-	bl	sub_080022f4
-	bl	sub_08002322
+	bl	__udivsi3
+	bl	Trig_Sin
 	adds	r5, #1
 	asrs	r0, r0, #14
 	strh	r0, [r6, #0]
@@ -105,18 +92,18 @@ Func_08097644:
 	lsls	r3, r3, #14
 	orrs	r0, r3
 	movs	r1, #1
-	bl	sub_08091200
+	bl	BattleFx_ApplyColorToTargetBuffer
 	movs	r0, #1
-	bl	sub_08091254
-	bl	sub_080978c4
+	bl	BattleFx_StartBufferInterpolation
+	bl	BattleFx_AdvanceHueCycle
 .L_08097704:
 	movs	r4, #164
 	lsls	r4, r4, #2
 	adds	r3, r7, r4
 	ldrh	r0, [r3, #0]
-	bl	sub_08092054
+	bl	Engine_ActorGet
 	movs	r1, #0
-	bl	sub_0808e0b0
+	bl	Animation_ApplyChildPalette
 	ldr	r0, [pc, #268]
 	adds	r3, r7, r0
 	ldrb	r3, [r3, #0]
@@ -131,13 +118,13 @@ Func_08097644:
 	lsls	r1, r1, #2
 	adds	r5, r7, r1
 	ldrh	r0, [r5, #0]
-	bl	sub_08092054
+	bl	Engine_ActorGet
 	ldr	r2, [pc, #240]
 	adds	r2, r2, r7
 	adds	r6, r0, #0
 	ldrh	r0, [r2, #0]
 	mov	fp, r2
-	bl	sub_08092054
+	bl	Engine_ActorGet
 	mov	r9, r0
 	cmp	r6, #0
 	beq.n	.L_08097806
@@ -149,10 +136,10 @@ Func_08097644:
 	mov	r4, sl
 	str	r3, [r4, #0]
 	ldrh	r0, [r5, #0]
-	bl	sub_0808d394
+	bl	BattleAction_FindDescriptor
 	movs	r1, #0
 	ldrsh	r0, [r0, r1]
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	movs	r2, #8
 	ldrsb	r2, [r0, r2]
 	ldr	r3, [r6, #12]
@@ -170,10 +157,10 @@ Func_08097644:
 	ldrh	r0, [r1, #0]
 	mov	r8, sp
 	str	r3, [sp, #0]
-	bl	sub_0808d394
+	bl	BattleAction_FindDescriptor
 	movs	r2, #0
 	ldrsh	r0, [r0, r2]
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	mov	r4, r9
 	movs	r3, #8
 	ldrsb	r3, [r0, r3]
@@ -188,7 +175,7 @@ Func_08097644:
 	mov	r4, r8
 	ldr	r0, [pc, #132]
 	ldr	r1, [r4, #0]
-	bl	sub_080090c8
+	bl	Engine_ObjectCreate
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_08097806
@@ -208,7 +195,7 @@ Func_08097644:
 	subs	r0, r0, r3
 	ldr	r3, [r2, #0]
 	subs	r1, r1, r3
-	bl	sub_080044d0
+	bl	ArcTan2
 	ldr	r3, [pc, #88]
 	ldr	r2, [pc, #52]
 	str	r3, [r6, #108]
@@ -228,7 +215,7 @@ Func_08097644:
 	ldr	r2, [r3, #4]
 	adds	r0, r6, #0
 	ldr	r3, [r3, #8]
-	bl	sub_08009150
+	bl	Object_SetPosition
 .L_08097806:
 	ldr	r4, [pc, #28]
 	adds	r5, r7, r4
@@ -250,7 +237,7 @@ Func_08097644:
 	.2byte 0x0809
 .L_0809783c:
 	movs	r0, #130
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldrb	r2, [r5, #0]
 .L_08097844:
 	adds	r3, r2, #1

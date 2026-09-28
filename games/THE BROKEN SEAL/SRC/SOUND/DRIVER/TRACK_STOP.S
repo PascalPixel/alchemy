@@ -8,9 +8,7 @@
 @ credit.
 @ credit: library — TBS/TLA common sound driver track-stop routine
 .syntax unified
-	.set SoundDriver_CallViaR3, 0x080f9ee8
 	.thumb
-	.set AlchemyLoadAddress, 0x080f9ef8
 	.global MusicTrack_Stop
 	.thumb_func
 MusicTrack_Stop:

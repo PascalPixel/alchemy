@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080150c8, 0x080150c8
 	.global UiIcon_DrawVariantWithTileOffset
 	.global Func_080ae9f0
 	.thumb_func
@@ -32,7 +31,7 @@ Func_080ae9f0:
 	lsls	r1, r1, #23
 	adds	r2, r4, #0
 	adds	r3, r6, #0
-	bl	sub_080150c8
+	bl	RenderOutput_CreateFar
 	cmp	r0, #0
 	bne.n	.L_080aea2e
 	movs	r0, #1

@@ -81,6 +81,9 @@ pub static AGBCC_EXPECTED: &[HostDigests] = &[
             // Source-bootstrap rebuild of the same unmodified da598c1.
             "fc60e7c849af70814e944445142eda626d19ca694a2e1d4f27a1d1d7a0f7b3cd",
             "3e9433bcfd37994d029389cf6c6ec11f7cba30e23e99f132e8f0220454f3cc32",
+            // Pascal-approved pinned-source rebuild, 2026-09-28; a clean
+            // host relink reproduced this exact digest.
+            "dfc3612d06cfd79d88092d6f3feff952a4ce3712c394bf58dbf7ca5c405e21e9",
         ],
     ),
     ("darwin-x64", &[]),

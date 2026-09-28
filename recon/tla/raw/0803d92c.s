@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0803d9bc, 0x0803d9bc
-	.set sub_0803db54, 0x0803db54
-	.set sub_080ad010, 0x080ad010
-	.set sub_080ad078, 0x080ad078
 	.global Func_0803d92c
 	.thumb_func
 Func_0803d92c:
@@ -16,7 +12,7 @@ Func_0803d92c:
 	lsls	r3, r3, #18
 	ands	r0, r5
 	ldr	r6, [r3, #68]
-	bl	sub_080ad010
+	bl	0x080ad010
 	cmp	r5, #0
 	beq.n	.L_0803d95a
 	movs	r2, #192
@@ -50,7 +46,7 @@ Func_0803d92c:
 	strh	r2, [r3, #0]
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	sub_0803db54
+	bl	Func_0803db54
 	pop	{r5, r6, pc}
 	movs	r0, r0
 	.2byte 0xeb58
@@ -64,13 +60,13 @@ Func_0803d92c:
 	adds	r6, r1, #0
 	mov	r8, r2
 	mov	sl, r3
-	bl	sub_080ad078
+	bl	0x080ad078
 	adds	r1, r6, #0
 	ldrh	r0, [r0, #4]
 	mov	r2, r8
 	mov	r3, sl
 	str	r5, [sp, #0]
-	bl	sub_0803d9bc
+	bl	Func_0803d9bc
 	add	sp, #4
 	pop	{r3, r5}
 	mov	r8, r3

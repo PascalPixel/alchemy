@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080041d8, 0x080041d8
-	.set sub_080072f8, 0x080072f8
-	.set sub_080b5028, 0x080b5028
-	.set sub_080b5038, 0x080b5038
-	.set sub_080cd508, 0x080cd508
 	.global BattleFx_OpenCanvasLayer
 	.global Func_080cd86c
 	.thumb_func
@@ -31,12 +25,12 @@ Func_080cd86c:
 	ldr	r3, [r3, #20]
 	mov	fp, r3
 	adds	r7, r0, #0
-	bl	sub_080cd508
+	bl	Runtime_ApplyValueToWork7818
 	mov	r2, fp
 	movs	r3, #1
 	str	r3, [r2, #12]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [pc, #52]
 	ldr	r2, [pc, #60]
 	ldr	r6, [pc, #60]
@@ -80,14 +74,14 @@ Func_080cd86c:
 	movs	r3, #32
 	strh	r3, [r2, #6]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #201
 	lsls	r3, r3, #3
 	add	r3, r9
 	ldrh	r1, [r3, #0]
 	movs	r0, #1
 	movs	r2, #128
-	bl	sub_080b5038
+	bl	BattlePresentation_ConfigurePaletteFadeFar
 	ldr	r2, [pc, #136]
 	movs	r3, #24
 	add	r2, sl
@@ -99,7 +93,7 @@ Func_080cd86c:
 	str	r2, [r3, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #124]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldrh	r3, [r5, #0]
 	adds	r1, r3, #0
 	strh	r5, [r5, #0]
@@ -124,7 +118,7 @@ Func_080cd86c:
 .L_080cd95a:
 	strh	r1, [r5, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #52]
 	ldr	r3, [pc, #72]
 	orrs	r7, r2
@@ -166,12 +160,12 @@ Func_080cd86c:
 	movs	r1, #0
 	movs	r2, #0
 	movs	r3, #100
-	bl	sub_080b5028
+	bl	Func_080b5028
 	mov	r3, r8
 	mov	r2, fp
 	str	r3, [r2, #12]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [pc, #52]
 	ldr	r2, [pc, #68]
 	strh	r3, [r2, #0]
@@ -259,7 +253,7 @@ Func_080cd86c:
 .L_080cda8e:
 	strh	r1, [r5, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [pc, #128]
 	movs	r2, #128
 	mov	r8, r3
@@ -306,13 +300,13 @@ Func_080cd86c:
 	ldr	r0, [sp, #0]
 	ldr	r5, [pc, #48]
 	lsls	r1, r1, #7
-	bl	sub_080072f8
+	bl	_call_via_r5
 	movs	r1, #128
 	lsls	r1, r1, #7
 	ldr	r0, [pc, #40]
-	bl	sub_080072f8
+	bl	_call_via_r5
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	add	sp, #4
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

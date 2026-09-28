@@ -24,7 +24,7 @@ void BattleFx_UpdateScaledArcObjectA(struct ArcObject *obj)
     link = obj->link;
     v = (s16)++obj->step;
     if (v > 31) {
-        Object_SetCallback((s32)obj, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((s32)obj, BattleFx_CommonParticleScript);
         return;
     }
     v = Trig_Sin(v << 10);
@@ -43,7 +43,7 @@ void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj)
     link = obj->link;
     v = (s16)++obj->step;
     if (v > 31) {
-        Object_SetCallback((s32)obj, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar((s32)obj, BattleFx_CommonParticleScript);
         return;
     }
     v = Trig_Sin(v << 10);

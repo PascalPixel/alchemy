@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
 	.global Func_0811f5a4
 	.thumb_func
 Func_0811f5a4:
@@ -14,7 +13,7 @@ Func_0811f5a4:
 	ldr	r3, [r3, #36]
 	mov	r8, r0
 	mov	r9, r3
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	mov	r6, r8
 	ldrh	r7, [r0, #60]
 	cmp	r6, #7
@@ -29,7 +28,7 @@ Func_0811f5a4:
 	cmp	r5, #254
 	beq.n	.L_0811f600
 	adds	r0, r5, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -39,14 +38,14 @@ Func_0811f5a4:
 	cmp	r5, r8
 	beq.n	.L_0811f600
 	adds	r0, r5, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldrh	r3, [r0, #60]
 	cmp	r3, r7
 	ble.n	.L_0811f600
 .L_0811f5f6:
 	adds	r6, r5, #0
 	adds	r0, r6, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldrh	r7, [r0, #60]
 .L_0811f600:
 	movs	r2, #2
@@ -70,7 +69,7 @@ Func_0811f5a4:
 	cmp	r5, #254
 	beq.n	.L_0811f650
 	adds	r0, r5, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -80,14 +79,14 @@ Func_0811f5a4:
 	cmp	r5, r8
 	beq.n	.L_0811f650
 	adds	r0, r5, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldrh	r3, [r0, #60]
 	cmp	r3, r7
 	ble.n	.L_0811f650
 .L_0811f646:
 	adds	r6, r5, #0
 	adds	r0, r6, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldrh	r7, [r0, #60]
 .L_0811f650:
 	movs	r2, #2

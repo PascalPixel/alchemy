@@ -3,8 +3,7 @@
 @ from which it restores them (add ip, pc, #212; ldm ip, {r2, r3, sp}).
 @ Run-time variables carry no credit.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x0800110c
-	.set AlchemyRunAddress, 0x0300099c
 @ 終端分岐間の予約語。
 	.space 0x0c, 0

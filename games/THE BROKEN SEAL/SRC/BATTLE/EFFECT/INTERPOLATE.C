@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ebc[];
 
 void BattleFx_ApplyColorToTargetBuffer(s32 arg0, s32 arg1);
 void BattleFx_StartBufferInterpolation(s32 value);
@@ -10,7 +11,7 @@ void BattleFx_PrepareBufferInterpolation(void)
     s32 value;
     u8 *state;
 
-    state = *(u8 **)ADDR_03001EBC;
+    state = *(u8 **)((u32)&Data_03001ebc);
     value = (s32)(state + 0x236);
     BattleFx_ApplyColorToTargetBuffer(value, 2);
     if (FIELD_AT_OFFSET(state, s16 *, 0xCB8) != 0) {

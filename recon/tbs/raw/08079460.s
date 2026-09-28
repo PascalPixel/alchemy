@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072f0, 0x080072f0
-	.set sub_08015028, 0x08015028
-	.set sub_08077394, 0x08077394
-	.set sub_08077428, 0x08077428
-	.set sub_080798e0, 0x080798e0
 	.global BattleUnit_Assign
 	.global Func_08079460
 	.thumb_func
@@ -39,12 +34,12 @@ Func_08079460:
 	b.n	.L_080795da
 .L_08079492:
 	mov	r0, r9
-	bl	sub_08077394
+	bl	Owner_GetState
 	movs	r1, #166
 	ldr	r3, [pc, #336]
 	lsls	r1, r1, #1
 	adds	r6, r0, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	cmp	r5, #164
 	bls.n	.L_080794aa
 	movs	r5, #0
@@ -92,7 +87,7 @@ Func_08079460:
 	adds	r1, r4, #0
 	movs	r2, #15
 	str	r4, [sp, #0]
-	bl	sub_08015028
+	bl	0x08015028
 	ldr	r4, [sp, #0]
 	movs	r5, #0
 	ldrh	r3, [r4, r5]
@@ -189,9 +184,9 @@ Func_08079460:
 	strb	r3, [r5, #0]
 	adds	r1, #36
 	mov	r0, r9
-	bl	sub_080798e0
+	bl	Owner_BuildDigitTiles
 	mov	r0, r9
-	bl	sub_08077428
+	bl	Owner_RecalculateStats
 	movs	r3, #149
 	lsls	r3, r3, #1
 	adds	r2, r6, r3

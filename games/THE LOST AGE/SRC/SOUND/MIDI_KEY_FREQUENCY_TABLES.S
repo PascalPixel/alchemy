@@ -4,8 +4,8 @@
 @ its octave shift (high nibble) and semitone (low nibble), which it reads
 @ with add r4, pc, #136; ldrb r4, [r1, r4]. Data tables carry no credit.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x081c0624
 	.4byte	0x80000000, 0x079c7c97, 0x879c7c97, 0x08105987, 0x8facd61e, 0x088b1a34, 0x9837f052, 0x090d277a
 	.4byte	0xa14517cc, 0x0996f07c, 0xaadc0848, 0x0a28eaec, 0xb504f334, 0x0ac39387, 0xbfc886bb, 0x0b676e6f
 	.4byte	0xcb2ff52a, 0x0c1507a1, 0xd744fccb, 0x0cccf36f, 0xe411f03a, 0x0d8fceff, 0xf1a1bf39, 0x0e5e40c7

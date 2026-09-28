@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081bff90, 0x081bff90
-	.set sub_081bff98, 0x081bff98
-	.set sub_081c0198, 0x081c0198
-	.set sub_081c01ec, 0x081c01ec
-	.set sub_081c04ac, 0x081c04ac
-	.set sub_081c0928, 0x081c0928
-	.set sub_081c0ef4, 0x081c0ef4
 	.global Func_081c0080
 	.thumb_func
 Func_081c0080:
@@ -41,7 +34,7 @@ Func_081c0080:
 	movs	r0, #80
 	adds	r5, r5, r0
 	lsls	r3, r3, #1
-	b.n	sub_081bff98
+	b.n	0x081bff98
 .L_081c00c0:
 	ldr	r0, [r7, #12]
 	adds	r0, #1
@@ -59,7 +52,7 @@ Func_081c0080:
 	strh	r0, [r7, #34]
 	cmp	r0, #150
 	bcc.n	.L_081c00e0
-	b.n	sub_081bff90
+	b.n	0x081bff90
 .L_081c00e0:
 	ldrb	r2, [r7, #8]
 	ldr	r5, [r7, #44]
@@ -74,7 +67,7 @@ Func_081c0080:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sub_081c0ef4
+	bl	0x081c0ef4
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L_081c0174
@@ -84,17 +77,19 @@ Func_081c0080:
 	tst	r0, r1
 	bne.n	.L_081c0112
 	adds	r0, r4, #0
-	bl	sub_081c0928
+	bl	0x081c0928
 	b.n	.L_081c016e
 .L_081c0112:
 	ldrb	r0, [r4, #1]
+	.global LeftoverSoundDriver_StaleCallTarget
+LeftoverSoundDriver_StaleCallTarget:
 	movs	r6, #7
 	ands	r6, r0
 	ldrb	r3, [r5, #0]
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L_081c0130
-	bl	sub_081c01ec
+	bl	0x081c01ec
 	cmp	r6, #0
 	beq.n	.L_081c0130
 	ldrb	r0, [r4, #29]
@@ -120,7 +115,7 @@ Func_081c0080:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	adds	r0, r6, #0
-	bl	sub_081c0198
+	bl	MusicTrack_HandleNoteLeftover
 	str	r0, [r4, #32]
 	ldrb	r0, [r4, #29]
 	movs	r1, #2
@@ -131,7 +126,10 @@ Func_081c0080:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
-	bl	sub_081c04ac
+	.global Func_081c0168
+	.thumb_func
+Func_081c0168:
+	bl	0x081c04ac
 	str	r0, [r4, #32]
 .L_081c016e:
 	ldr	r4, [r4, #52]

@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080048f4, 0x080048f4
-	.set sub_080058ac, 0x080058ac
-	.set sub_08005c08, 0x08005c08
-	.set sub_08006910, 0x08006910
-	.set sub_080069c8, 0x080069c8
 	.global SaveState_InitializeWorkspace
 	.global Func_080056cc
 	.thumb_func
@@ -22,7 +16,7 @@ Func_080056cc:
 	lsls	r1, r1, #5
 	movs	r0, #51
 	sub	sp, #24
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r3, #0
 	mov	fp, r0
 	add	r0, sp, #4
@@ -34,17 +28,17 @@ Func_080056cc:
 	subs	r3, #12
 	ldr	r1, [pc, #44]
 	movs	r0, #2
-	bl	sub_080069c8
+	bl	Func_080069c8
 	movs	r7, #0
 	b.n	.L_0800570c
 .L_08005704:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r7, #1
 .L_0800570c:
 	cmp	r7, #7
 	bhi.n	.L_0800571c
-	bl	sub_08006910
+	bl	Func_08006910
 	lsls	r0, r0, #16
 	cmp	r0, #0
 	bne.n	.L_08005704
@@ -81,7 +75,7 @@ Func_080056cc:
 	mov	r2, r9
 	strh	r3, [r2, #0]
 	adds	r0, r7, #0
-	bl	sub_080058ac
+	bl	SaveState_ReadSlotAndCheckChecksum
 	ldr	r3, [pc, #44]
 	adds	r5, r0, #0
 	add	r1, sp, #8
@@ -100,7 +94,7 @@ Func_080056cc:
 	mov	r0, r8
 	ldr	r1, [pc, #20]
 	movs	r2, #7
-	bl	sub_08005c08
+	bl	SaveState_CompareBytes
 	b.n	.L_08005798
 	movs	r0, r0
 	.4byte 0x00000000

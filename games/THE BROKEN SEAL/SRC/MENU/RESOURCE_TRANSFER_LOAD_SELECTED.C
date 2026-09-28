@@ -49,7 +49,7 @@ void Menu_LoadSelectedResource(void)
     buffer = Runtime_AllocateHeapBlock(17, 0x608);
     transfer = (struct TransferState_0801c188 *)(state + 0x30C);
     no = selection->no;
-    tbl = GetResource((s32)&Value_000000f1);
+    tbl = Resource_GetTableEntry((s32)&Value_000000f1);
     {
         void **destination = &buffer->resource;
         resource = tbl

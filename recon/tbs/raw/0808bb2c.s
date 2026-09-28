@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08009080, 0x08009080
-	.set sub_08009140, 0x08009140
-	.set sub_080091e0, 0x080091e0
-	.set sub_0808ba1c, 0x0808ba1c
 	.global ObjectTable_Restore
 	.global Func_0808bb2c
 	.thumb_func
@@ -47,7 +43,7 @@ Func_0808bb2c:
 	beq.n	.L_0808bc18
 .L_0808bb74:
 	adds	r0, r7, #0
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0808bbf2
@@ -63,12 +59,12 @@ Func_0808bb2c:
 	cmp	r1, #0
 	beq.n	.L_0808bb9c
 	adds	r0, r5, #0
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 .L_0808bb9c:
 	ldr	r2, [sp, #0]
 	adds	r0, r5, #0
 	ldrb	r1, [r2, #0]
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 	mov	r3, fp
 	ldrb	r1, [r3, #0]
 	movs	r3, #3
@@ -105,7 +101,7 @@ Func_0808bb2c:
 	str	r3, [r2, #20]
 	str	r3, [r2, #12]
 	str	r3, [r1, #4]
-	bl	sub_08009140
+	bl	Object_ResetMotion
 .L_0808bbf2:
 	movs	r2, #112
 	ldr	r3, [sp, #4]

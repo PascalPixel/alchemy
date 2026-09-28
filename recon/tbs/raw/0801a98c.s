@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801aeec, 0x0801aeec
-	.set sub_08003d28, 0x08003d28
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_0801b36c, 0x0801b36c
-	.set sub_080770c0, 0x080770c0
-	.set sub_080b50b0, 0x080b50b0
 	.global MenuSelection_DrawFrame
 	.global Func_0801a98c
 	.thumb_func
@@ -149,7 +142,7 @@ Func_0801a98c:
 	add	r5, sp, #12
 	adds	r1, r5, #0
 	ldrh	r0, [r7, #8]
-	bl	sub_080b50b0
+	bl	BattleMotion_ProjectScaledPositionFar
 	movs	r1, #1
 	negs	r1, r1
 	cmp	r0, r1
@@ -176,7 +169,7 @@ Func_0801a98c:
 	cmp	r3, #0
 	beq.n	.L_0801ab10
 	ldr	r0, [pc, #648]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0801ab08
 	ldr	r3, [pc, #644]
@@ -211,7 +204,7 @@ Func_0801a98c:
 .L_0801ab08:
 	adds	r0, r6, #0
 	ldr	r1, [sp, #4]
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_0801ab10:
 	ldr	r7, [r7, #4]
 	movs	r3, #1
@@ -227,7 +220,7 @@ Func_0801a98c:
 	b.n	.L_0801ac36
 .L_0801ab26:
 	mov	r0, sl
-	bl	sub_0801b36c
+	bl	NodeChain_GetNodeAtCount
 	mov	r5, r9
 	adds	r5, #40
 	movs	r6, #13
@@ -311,7 +304,7 @@ Func_0801a98c:
 	add	r2, sl
 	movs	r3, #0
 	strh	r3, [r2, #0]
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r3, #31
 	ldrb	r2, [r5, #7]
 	ands	r0, r3
@@ -347,7 +340,7 @@ Func_0801a98c:
 	strh	r3, [r1, #34]
 .L_0801ac18:
 	ldr	r0, [pc, #312]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0801ac2e
 	ldrb	r3, [r5, #5]
@@ -359,14 +352,14 @@ Func_0801a98c:
 .L_0801ac2e:
 	adds	r0, r5, #0
 	movs	r1, #248
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_0801ac36:
 	mov	r0, sl
 	movs	r1, #0
-	bl	sub_0801aeec
+	bl	MenuSelection_DrawSideMarker
 	mov	r0, sl
 	movs	r1, #1
-	bl	sub_0801aeec
+	bl	MenuSelection_DrawSideMarker
 	movs	r3, #211
 	lsls	r3, r3, #2
 	add	r3, sl
@@ -444,7 +437,7 @@ Func_0801a98c:
 	strh	r0, [r3, #0]
 	mov	r0, r9
 	str	r4, [sp, #0]
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r3, #31
 	movs	r1, #63
 	ands	r0, r3
@@ -489,7 +482,7 @@ Func_0801a98c:
 	strb	r3, [r6, #7]
 .L_0801ad2e:
 	ldr	r0, [pc, #36]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0801ad9a
 	ldr	r3, [pc, #28]
@@ -535,7 +528,7 @@ Func_0801a98c:
 .L_0801ad9a:
 	adds	r0, r6, #0
 	movs	r1, #240
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r7, [r7, #4]
 	cmp	r7, #0
 	beq.n	.L_0801adaa
@@ -559,7 +552,7 @@ Func_0801a98c:
 	add	r2, fp
 	ldrh	r0, [r4, #12]
 	lsls	r1, r1, #1
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	ldr	r3, [pc, #44]
 	ldr	r1, [sp, #8]
 	ands	r0, r3
@@ -645,7 +638,7 @@ Func_0801a98c:
 	orrs	r3, r2
 	strh	r3, [r0, #6]
 	ldr	r0, [pc, #36]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0801aec4
 	ldr	r3, [pc, #32]
@@ -683,7 +676,7 @@ Func_0801a98c:
 .L_0801aec4:
 	ldr	r0, [sp, #8]
 	movs	r1, #248
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_0801aecc:
 	ldr	r2, [pc, #24]
 	add	r2, sl

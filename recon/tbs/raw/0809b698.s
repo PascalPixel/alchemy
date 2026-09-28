@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004080, 0x08004080
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_080091e0, 0x080091e0
-	.set sub_08009240, 0x08009240
-	.set sub_08015040, 0x08015040
-	.set sub_080770c0, 0x080770c0
-	.set sub_080f9010, 0x080f9010
 	.global RunBattleEffect16
 	.global Func_0809b698
 	.thumb_func
@@ -34,7 +23,7 @@ Func_0809b698:
 	mov	sl, r1
 	str	r3, [sp, #0]
 	mov	r9, r2
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	ldr	r2, [pc, #292]
 	ldr	r1, [sp, #4]
 	adds	r3, r1, r2
@@ -46,7 +35,7 @@ Func_0809b698:
 	lsls	r1, r1, #1
 	ldr	r2, [pc, #280]
 	asrs	r0, r0, #16
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	ldr	r5, [pc, #276]
 	movs	r3, #145
 	lsls	r3, r3, #2
@@ -55,14 +44,14 @@ Func_0809b698:
 	lsls	r3, r3, #20
 	str	r3, [r2, #0]
 	ldr	r0, [pc, #264]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	movs	r1, #146
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
 	strb	r0, [r3, #0]
 	movs	r1, #0
 	mov	r0, sl
-	bl	sub_08009240
+	bl	Animation_ApplyChildValuesFar
 	ldr	r3, [pc, #248]
 	mov	r2, sl
 	mov	r5, sl
@@ -75,13 +64,13 @@ Func_0809b698:
 	adds	r3, #102
 	strh	r1, [r3, #0]
 	movs	r0, #140
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #15
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #1
 	strh	r3, [r5, #0]
 	movs	r0, #10
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r2, #38
 	adds	r2, r2, r6
 	movs	r3, #7
@@ -96,7 +85,7 @@ Func_0809b698:
 	strb	r1, [r2, #5]
 	movs	r0, #2
 	strb	r7, [r6, #0]
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #0
 	mov	r1, r9
 	mov	r2, r8
@@ -105,7 +94,7 @@ Func_0809b698:
 	strb	r7, [r2, #0]
 	movs	r0, #3
 	subs	r5, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r5, #0
 	bge.n	.L_0809b73a
 	mov	r2, sp
@@ -119,15 +108,15 @@ Func_0809b698:
 	strh	r2, [r3, #6]
 	lsls	r1, r1, #4
 	adds	r0, r5, #0
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r0, #15
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r0, #174
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r0, #55
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r0, r5, #0
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	ldr	r3, [pc, #92]
 	movs	r1, #147
 	lsls	r1, r1, #2
@@ -138,25 +127,25 @@ Func_0809b698:
 	beq.n	.L_0809b7ac
 	mov	r0, sl
 	movs	r1, #2
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 	b.n	.L_0809b7b4
 .L_0809b7ac:
 	mov	r0, sl
 	movs	r1, #1
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 .L_0809b7b4:
 	mov	r0, sl
 	movs	r1, #0
-	bl	sub_08009240
+	bl	Animation_ApplyChildValuesFar
 	ldr	r2, [pc, #40]
 	ldr	r1, [sp, #4]
 	adds	r3, r1, r2
 	movs	r1, #0
 	ldrsh	r0, [r3, r1]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	ldr	r0, [pc, #52]
 	movs	r1, #1
-	bl	sub_08015040
+	bl	UiText_DrawMessage
 	add	sp, #8
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

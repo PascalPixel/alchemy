@@ -1,11 +1,18 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001b00[];
+extern u8 Data_03001b04[];
+extern u8 Data_03001ae8[];
+extern u8 Data_03001afc[];
+extern u8 Data_03001d04[];
+extern u8 Data_03001c94[];
+extern u8 Data_03001cf4[];
 
 #define REG32(address) (*(volatile u32 *)(address))
 
 void Input_UpdateKeyRepeatAndDirection(void)
 {
-    s32 cnt = REG32(ADDR_03001B00);
+    s32 cnt = REG32(((u32)&Data_03001b00));
     u32 flags;
     u32 sel = 0;
     u32 n;
@@ -13,15 +20,15 @@ void Input_UpdateKeyRepeatAndDirection(void)
     volatile u32 *active;
 
     if (cnt <= 0) {
-        REG32(ADDR_03001B04) = REG32(ADDR_03001AE8);
-        flags = REG32(ADDR_03001B04);
+        REG32(((u32)&Data_03001b04)) = REG32(((u32)&Data_03001ae8));
+        flags = REG32(((u32)&Data_03001b04));
         if (cnt == 0)
-            REG32(ADDR_03001B00) = 6;
+            REG32(((u32)&Data_03001b00)) = 6;
         else
-            REG32(ADDR_03001B00) = 19;
+            REG32(((u32)&Data_03001b00)) = 19;
     } else {
-        REG32(ADDR_03001B04) = 0;
-        flags = REG32(ADDR_03001B04);
+        REG32(((u32)&Data_03001b04)) = 0;
+        flags = REG32(((u32)&Data_03001b04));
     }
 
     if (flags != 0) {
@@ -35,40 +42,40 @@ void Input_UpdateKeyRepeatAndDirection(void)
         if ((flags & 0x10) != 0)
             n++;
 
-        active = (volatile u32 *)ADDR_03001AFC;
+        active = (volatile u32 *)((u32)&Data_03001afc);
         *active = flags;
         switch (n) {
         default:
-            REG32(ADDR_03001D04) = 0x30;
+            REG32(((u32)&Data_03001d04)) = 0x30;
             mask = 0xff0f;
             *active &= mask;
             break;
         case 0:
-            REG32(ADDR_03001D04) = 0x30;
+            REG32(((u32)&Data_03001d04)) = 0x30;
             break;
         case 1:
-            REG32(ADDR_03001D04) = flags & 0xf0;
+            REG32(((u32)&Data_03001d04)) = flags & 0xf0;
             break;
         case 2:
-            if ((REG32(ADDR_03001D04)& *active) == 0)
-                REG32(ADDR_03001D04) = 0x30;
-            *active &= REG32(ADDR_03001D04) ^ 0xffff;
+            if ((REG32(((u32)&Data_03001d04))& *active) == 0)
+                REG32(((u32)&Data_03001d04)) = 0x30;
+            *active &= REG32(((u32)&Data_03001d04)) ^ 0xffff;
             break;
         case 3:
-            if ((REG32(ADDR_03001D04)& 0x30) != 0)
+            if ((REG32(((u32)&Data_03001d04))& 0x30) != 0)
                 sel = 0x30;
-            if ((REG32(ADDR_03001D04)& 0xc0) != 0)
+            if ((REG32(((u32)&Data_03001d04))& 0xc0) != 0)
                 sel = 0xc0;
             mask = 0xffff ^ sel;
-            REG32(ADDR_03001D04) = flags & mask;
+            REG32(((u32)&Data_03001d04)) = flags & mask;
             *active &= mask;
             break;
         }
     } else {
-        REG32(ADDR_03001AFC) = flags;
+        REG32(((u32)&Data_03001afc)) = flags;
     }
 
-    REG32(ADDR_03001C94) =
-        (REG32(ADDR_03001AE8) ^ REG32(ADDR_03001CF4)) & REG32(ADDR_03001AE8);
-    REG32(ADDR_03001CF4) = REG32(ADDR_03001AE8);
+    REG32(((u32)&Data_03001c94)) =
+        (REG32(((u32)&Data_03001ae8)) ^ REG32(((u32)&Data_03001cf4))) & REG32(((u32)&Data_03001ae8));
+    REG32(((u32)&Data_03001cf4)) = REG32(((u32)&Data_03001ae8));
 }

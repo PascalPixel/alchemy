@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
 	.global Func_08108948
 	.thumb_func
 Func_08108948:
@@ -32,7 +31,7 @@ Func_08108948:
 	adds	r0, r6, #0
 	muls	r0, r3
 	mov	r1, sl
-	bl	sub_08002054
+	bl	Math_Div
 	ldrh	r5, [r7, #4]
 	mov	r3, r8
 	adds	r5, r5, r0
@@ -58,7 +57,7 @@ Func_08108948:
 	subs	r3, r3, r2
 	adds	r0, r6, #0
 	muls	r0, r3
-	bl	sub_08002054
+	bl	Math_Div
 	ldrh	r5, [r7, #6]
 	mov	r2, r8
 	adds	r5, r5, r0

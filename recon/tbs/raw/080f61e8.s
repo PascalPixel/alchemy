@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f40, 0x08002f40
 	.global Unnamed_080f61e8
 	.global Func_080f61e8
 	.thumb_func
@@ -14,7 +13,7 @@ Func_080f61e8:
 	lsls	r1, r1, #19
 	sub	sp, #128
 	mov	r8, r1
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r3, [pc, #28]
 	mov	r1, sp
 	ldr	r2, [pc, #28]

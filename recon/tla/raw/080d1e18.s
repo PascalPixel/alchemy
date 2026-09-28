@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080cad84, 0x080cad84
-	.set sub_080eaf98, 0x080eaf98
 	.global Func_080d1e18
 	.thumb_func
 Func_080d1e18:
@@ -16,7 +14,7 @@ Func_080d1e18:
 	lsrs	r0, r0, #5
 	str	r0, [sp, #0]
 	adds	r0, r5, #0
-	bl	sub_080eaf98
+	bl	0x080eaf98
 	movs	r3, #0
 	strh	r3, [r5, #30]
 	movs	r0, #13
@@ -61,7 +59,7 @@ Func_080d1e18:
 	.2byte 0x0308
 	.2byte 0x080f
 	push	{lr}
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r3, r0, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]

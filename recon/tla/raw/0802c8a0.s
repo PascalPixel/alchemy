@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013300, 0x08013300
-	.set sub_08013560, 0x08013560
-	.set sub_08014694, 0x08014694
-	.set sub_0801587c, 0x0801587c
-	.set sub_0802dd08, 0x0802dd08
 	.global Func_0802c8a0
 	.thumb_func
 Func_0802c8a0:
@@ -25,7 +20,7 @@ Func_0802c8a0:
 	mov	r2, r8
 	strb	r2, [r3, #0]
 	ldr	r0, [pc, #160]
-	bl	sub_08014694
+	bl	0x08014694
 	movs	r2, #144
 	lsls	r2, r2, #4
 	adds	r2, #114
@@ -37,9 +32,9 @@ Func_0802c8a0:
 	adds	r3, r5, r2
 	ldr	r6, [r3, #0]
 	ldr	r0, [r6, #12]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #132]
-	bl	sub_0801587c
+	bl	0x0801587c
 	movs	r3, #151
 	lsls	r3, r3, #4
 	adds	r7, r5, r3
@@ -48,9 +43,9 @@ Func_0802c8a0:
 	cmp	r3, #0
 	beq.n	.L_0802c900
 	ldr	r0, [r6, #16]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #112]
-	bl	sub_0801587c
+	bl	0x0801587c
 .L_0802c900:
 	movs	r3, #0
 	strb	r3, [r7, #0]
@@ -63,7 +58,7 @@ Func_0802c8a0:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r3, [pc, #96]
 	mov	r2, r8
 	ldr	r3, [r3, #0]
@@ -76,7 +71,7 @@ Func_0802c8a0:
 	lsls	r3, r3, #4
 	add	r0, sl
 	adds	r0, r0, r3
-	bl	sub_0802dd08
+	bl	Func_0802dd08
 	movs	r3, #130
 	lsls	r3, r3, #1
 	adds	r2, r5, r3

@@ -1482,9 +1482,9 @@ Func_02000ba4:
 	.4byte 0x03001ebc
 	.4byte 0x02000240
 	.4byte 0x00002073
-	.global Func_02000c5c
+	.global KorosseoMaruta_RunStageStart
 	.thumb_func
-Func_02000c5c:
+KorosseoMaruta_RunStageStart:
 	push {r5, r6, lr}
 	bl 0x0200bcc0
 	bl 0x0200ca00
@@ -3397,9 +3397,9 @@ Func_02001c20:
 	.4byte 0x0000cccc
 	.4byte 0x00006666
 	.4byte 0x000020b1
-	.global Func_02001df8
+	.global FieldScene_RunSecondArrivalSequence
 	.thumb_func
-Func_02001df8:
+FieldScene_RunSecondArrivalSequence:
 	push {r5, r6, r7, lr}
 	ldr r3, [pc, #392]
 	movs r2, #225

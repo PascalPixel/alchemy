@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define MakyuriIriguchi_OpenEntrance Func_020011b4
-
 extern u8 Data_00000035[];
 extern u8 Data_02000240[];
 void Func_02003694();

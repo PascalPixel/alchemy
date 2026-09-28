@@ -2,7 +2,6 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define CalculateFacingAngle Func_02003afa
 #define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Value3(Engine_ActorWalkToAndWait, a0, a1, a2)
 #define Audio_PlayCue_1(a0) Value1(Engine_AudioPlayCue, a0)
 #define ObjectMotion_ResetAndSetPosition_2(a0, a1, a2) Value3(Engine_ActorSetDestination, a0, a1, a2)
@@ -102,7 +101,7 @@ void Func_02004042(s32, s32);
 void Func_0200403a(s32, s32);
 void Func_0200406e(s32, s32);
 void Func_02004066(s32, s32);
-s32 Func_02003afa(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 void Func_0200409a(s32, s32);
 void Func_02004092(s32, s32);
 u8 *Func_02004812(s32);

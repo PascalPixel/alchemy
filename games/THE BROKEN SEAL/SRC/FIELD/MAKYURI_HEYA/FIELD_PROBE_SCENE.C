@@ -144,10 +144,6 @@ extern s32 **Data_03001edc;
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define OverlayObject_PrepareSpawnedObject      Func_02000048
-#define CreateOverlayObject Func_02005a86
-#define SetOverlayObjectMode Func_02005b08
-#define SetOverlayObjectSlot Func_02005c58
 
 void *CreateOverlayObject(s32, s32, s32, s32);
 void SetOverlayObjectMode(void *, s32);

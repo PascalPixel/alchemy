@@ -4,9 +4,6 @@
 #include "FIELD_EFFECT.H"
 
 #define NULL ((void *)0)
-#define CreateOverlayObject Func_02002b26
-#define SetOverlayObjectMode Func_02002bb0
-#define SetOverlayObjectSlot Func_02002c50
 #define Scene_GetRecord_1(args...) Func_020042de(args)
 #define Scene_GetRecord_3(args...) Func_02004398(args)
 #define REC_ID 16

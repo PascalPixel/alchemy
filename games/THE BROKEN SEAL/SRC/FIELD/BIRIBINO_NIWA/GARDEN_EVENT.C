@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define BiribinoNiwa_RunGardenEvent Func_020001e4
-
 s32 Func_02000ca2();
 s32 Func_02000cae();
 s32 Func_02000cb8();

@@ -220,9 +220,9 @@ Func_020001c4:
 	pop {r0}
 	bx r0
 	.4byte 0x00001751
-	.global Func_020001e4
+	.global BiribinoNiwa_RunGardenEvent
 	.thumb_func
-Func_020001e4:
+BiribinoNiwa_RunGardenEvent:
 	push {lr}
 	bl 0x02008ad4
 	ldr r0, [pc, #568]

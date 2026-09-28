@@ -373,7 +373,6 @@ static __inline__ s32 Value0(s32 (*f)())
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunSecondArrivalSequence:
  * state-routed scene setup and all 40 calls with their scene arguments. */
 
-#define FieldScene_RunSecondArrivalSequence Func_02001df8
 
 void Func_0200469a_arrival();
 s32 Func_020048b0_arrival();
@@ -1610,7 +1609,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_End();
 }
 
-void Func_02001df8(s32 scene)
+void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
     s32 state;
 
@@ -2031,8 +2030,6 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     Event_End();
 }
 
-#define GetPartyInteractionRecord Func_020073ca_party
-#define GetPartyMemberCount Func_0200739a_party
 
 typedef struct PartyInteractionRecord {
     u8 padding_00[10];
@@ -2041,8 +2038,8 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-PartyInteractionRecord *Func_020073ca_party(void);
-s32 Func_0200739a_party(void);
+PartyInteractionRecord *GetPartyInteractionRecord(void);
+s32 GetPartyMemberCount(void);
 
 static inline void InitializeActorZero(void)
 {

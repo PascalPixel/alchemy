@@ -4,9 +4,9 @@
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/ENTRY.INC"
-	.global Func_02000030
+	.global SceneActor_SetActor14Pose258
 	.thumb_func
-Func_02000030:
+SceneActor_SetActor14Pose258:
 	push {lr}
 	movs r1, #129
 	movs r0, #14
@@ -16,15 +16,15 @@ Func_02000030:
 	pop {r1}
 	bx r1
 	.2byte 0x0000
-	.global Func_02000044
+	.global SceneData_GetTable9438
 	.thumb_func
-Func_02000044:
+SceneData_GetTable9438:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x02009438
-	.global Func_0200004c
+	.global SceneData_SelectTableByWord224
 	.thumb_func
-Func_0200004c:
+SceneData_SelectTableByWord224:
 	push {lr}
 	ldr r3, [pc, #28]
 	movs r1, #224
@@ -47,15 +47,15 @@ Func_0200004c:
 	.4byte 0x000000b3
 	.4byte 0x02009690
 	.4byte 0x020096b0
-	.global Func_0200007c
+	.global SceneData_GetTable96d0
 	.thumb_func
-Func_0200007c:
+SceneData_GetTable96d0:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x020096d0
-	.global Func_02000084
+	.global SceneData_SelectTableBySceneIdAndFlag9a7
 	.thumb_func
-Func_02000084:
+SceneData_SelectTableBySceneIdAndFlag9a7:
 	push {lr}
 	ldr r3, [pc, #40]
 	movs r1, #224
@@ -440,9 +440,9 @@ Func_02000308:
 	pop {r0}
 	bx r0
 	.4byte 0x02009314
-	.global Func_020003f4
+	.global FieldScene_RunSequenceA
 	.thumb_func
-Func_020003f4:
+FieldScene_RunSequenceA:
 	push {lr}
 	ldr r0, [pc, #104]
 	bl 0x020091e4
@@ -484,9 +484,9 @@ Func_020003f4:
 	bx r0
 	.4byte 0x000009bc
 	.4byte 0x0000288b
-	.global Func_02000468
+	.global FieldScene_RunThreeCallSequence
 	.thumb_func
-Func_02000468:
+FieldScene_RunThreeCallSequence:
 	push {lr}
 	ldr r0, [pc, #24]
 	bl 0x020091e4
@@ -500,9 +500,9 @@ Func_02000468:
 	.2byte 0x0000
 	.4byte 0x000009bc
 	.4byte 0x0000288b
-	.global Func_0200048c
+	.global SceneState_ForwardWord16cAndApply7b
 	.thumb_func
-Func_0200048c:
+SceneState_ForwardWord16cAndApply7b:
 	push {lr}
 	ldr r3, [pc, #28]
 	movs r2, #182
@@ -518,9 +518,9 @@ Func_0200048c:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x03001ebc
-	.global Func_020004b0
+	.global SceneData_SelectScriptBySceneIdAndFlag9a7
 	.thumb_func
-Func_020004b0:
+SceneData_SelectScriptBySceneIdAndFlag9a7:
 	push {lr}
 	ldr r3, [pc, #56]
 	movs r1, #224
@@ -560,9 +560,9 @@ Func_020004b0:
 	.4byte 0x02009eb4
 	.4byte 0x02009ca4
 	.4byte 0x02009a94
-	.global Func_02000508
+	.global FieldScene_RunPrimaryScript
 	.thumb_func
-Func_02000508:
+FieldScene_RunPrimaryScript:
 	push {lr}
 	bl 0x020091fc
 	movs r0, #1
@@ -1518,9 +1518,9 @@ Func_02000508:
 	.2byte 0x0000
 	.4byte 0x00013333
 	.4byte 0x00009999
-	.global Func_02000eec
+	.global FieldScene_RunSecondaryScript
 	.thumb_func
-Func_02000eec:
+FieldScene_RunSecondaryScript:
 	push {lr}
 	ldr r0, [pc, #336]
 	bl 0x0200927c

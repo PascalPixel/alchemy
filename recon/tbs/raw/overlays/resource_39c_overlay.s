@@ -19,9 +19,9 @@ Func_02000030:
 	strb r3, [r0, #9]
 	bx lr
 	.2byte 0x0000
-	.global Func_02000048
+	.global OverlayObject_PrepareSpawnedObject
 	.thumb_func
-Func_02000048:
+OverlayObject_PrepareSpawnedObject:
 	push {r5, r6, lr}
 	adds r4, r0, #0
 	adds r5, r1, #0

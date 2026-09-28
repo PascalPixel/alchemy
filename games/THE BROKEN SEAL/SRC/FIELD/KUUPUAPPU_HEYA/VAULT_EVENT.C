@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define KuupuappuHeya_RunVaultEvent Func_02002db4
-
 extern u8 Data_00000015[];
 extern u8 Data_02000240[];
 void Func_02007458();

@@ -91,11 +91,10 @@ void Func_02003c66();
 void Func_02003d84();
 
 #define NULL ((void *)0)
-#define CalculateFacingAngle Func_02002462
 
 #include "FACING_OBJECT.H"
 
-s32 Func_02002462(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 
 struct SceneRecord {
     u8 unk_000[166];

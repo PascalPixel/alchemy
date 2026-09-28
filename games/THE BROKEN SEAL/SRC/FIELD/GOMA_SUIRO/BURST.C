@@ -2,14 +2,6 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define OverlayObject_PrepareObject      Func_02000048
-#define AcquireOverlayObject      Func_02000736
-#define RunOverlayObjectCommand0  Func_0200076c
-#define RunOverlayObjectCommand1  Func_02000784
-#define RunOverlayObjectCommand14 Func_020007dc
-#define CreateOverlayObject Func_0200078e
-#define SetOverlayObjectMode Func_020007c8
-#define SetOverlayObjectSlot Func_02000838
 
 #include "CONFIGURED_EFFECT_SPAWN.H"
 
@@ -46,13 +38,13 @@ extern u8 Data_02008990[];
 extern u8 Data_0000001c[];
 extern u8 Data_03001ebc[];
 
-void *Func_02000736(s32, s32, s32, s32);
-void Func_0200076c(void *, s32);
-void Func_02000784(void *, s32);
-void Func_020007dc(void *, s32);
-void *Func_0200078e(s32, s32, s32, s32);
-void Func_020007c8(void *, s32);
-void Func_02000838(void *, s32);
+void *AcquireOverlayObject(s32, s32, s32, s32);
+void RunOverlayObjectCommand0(void *, s32);
+void RunOverlayObjectCommand1(void *, s32);
+void RunOverlayObjectCommand14(void *, s32);
+void *CreateOverlayObject(s32, s32, s32, s32);
+void SetOverlayObjectMode(void *, s32);
+void SetOverlayObjectSlot(void *, s32);
 void Func_02000892();
 void Func_02000aa6();
 s32 Func_02000aac();

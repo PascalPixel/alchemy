@@ -2040,9 +2040,9 @@ Func_02000f90:
 	.4byte 0x00003333
 	.4byte 0x0000081e
 	.4byte 0x00000203
-	.global Func_0200133c
+	.global HaidiaBabi_RunActorEightMessageScene
 	.thumb_func
-Func_0200133c:
+HaidiaBabi_RunActorEightMessageScene:
 	push {r5, lr}
 	bl 0x0200990c
 	ldr r0, [pc, #96]

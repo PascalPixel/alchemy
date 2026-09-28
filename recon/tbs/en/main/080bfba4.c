@@ -37,8 +37,8 @@ extern struct BattleState *Data_03001e74;
 /* The KO messages link as offsets from "goes down": the Grim Reaper's
    call three after it, the enemy's "strength is exhausted" three after
    that. */
-#define MSG_REAPER_CALLS (MSG_GOES_DOWN + 3)
-#define MSG_EXHAUSTED (MSG_GOES_DOWN + 6)
+#define MSG_REAPER_CALLS ((s32)&MsgGoesDown + 3)
+#define MSG_EXHAUSTED ((s32)&MsgGoesDown + 6)
 
 typedef void (*BlockCopy)(void *destination, const void *source, s32 size);
 
@@ -170,7 +170,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 BattleEv_Push(BATTLE_EVENT_VALUE, gain);
                 BattleEv_Push(BATTLE_EVENT_SOUND, 175);
-                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_EARTH_POWER_UP + i);
+                BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgEarthPowerUp + i);
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                 Func_080f9010(212);
                 Func_08009080(Func_080b7dd0(id)->object, 3);
@@ -190,14 +190,14 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
-            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURSE_DAMAGE);
+            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCurseDamage);
             if (Func_08077118(id, -plan->pending_amount_60) == 0) {
                 s32 text;
 
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
-                    text = MSG_GOES_DOWN;
+                    text = (s32)&MsgGoesDown;
                 } else {
                     text = MSG_EXHAUSTED;
                 }
@@ -217,7 +217,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
             BattleEv_Push(BATTLE_EVENT_UNIT, id);
             BattleEv_Push(BATTLE_EVENT_VALUE, damage);
-            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_POISON_DAMAGE);
+            BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgPoisonDamage);
             if (*poison != 0) {
                 state->poison_cue = 134;
             } else {
@@ -229,7 +229,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
-                    text = MSG_GOES_DOWN;
+                    text = (s32)&MsgGoesDown;
                 } else {
                     text = MSG_EXHAUSTED;
                 }
@@ -250,7 +250,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
-                    BattleEv_Push(BATTLE_EVENT_TEXT, MSG_GOES_DOWN);
+                    BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgGoesDown);
                 } else {
                     BattleEv_Push(BATTLE_EVENT_TEXT, MSG_EXHAUSTED);
                 }

@@ -1,3 +1,10 @@
+/* Draft of resource_3a2 0x020091b0 (YamaRama_ApplyEntryState), formerly
+ * games/THE BROKEN SEAL/SRC/FIELD/COMMON/YAMA_RAMA/ENTRY_STATE.C.
+ * Remaining difference: the ROM loads scenes 0x58 and 0x4a from the literal
+ * pool, as link-time scene symbols would; C builds those constants with
+ * movs. The Data_000000xx and Data_02000240_t spellings below are the old
+ * address-named forms and must become plain constants and gGameState before
+ * this links. The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

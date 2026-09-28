@@ -9,7 +9,7 @@
 	.balign 4
 	overlay_veneer Func_0200046c
 	overlay_veneer Func_02000040
-	overlay_veneer Func_02000098
+	overlay_veneer SceneData_GetEventTable
 	overlay_veneer Func_020000a0
 	overlay_veneer Func_020000f4
-	overlay_veneer Func_02000094
+	overlay_veneer SceneData_ReturnZero

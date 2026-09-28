@@ -19,6 +19,9 @@ Engine_MathCos:
 Object_SetMode:
 	overlay_veneer 0x08009081
 	overlay_veneer 0x08009099
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	overlay_veneer 0x080090c9
 	.global Object_SetPosition
 	.thumb_func
@@ -31,12 +34,21 @@ Object_CommitPosition:
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer 0x080091c1
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
 	overlay_veneer 0x080091d9
+	.global Engine_ActorSetSpriteFlags
+	.thumb_func
+Engine_ActorSetSpriteFlags:
 	overlay_veneer 0x080091e1
+	.global Engine_ObjectSetBlendMode
+	.thumb_func
+Engine_ObjectSetBlendMode:
 	overlay_veneer 0x080091e9
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
@@ -46,8 +58,17 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 Map_WaitWorkValuesBelow256:
 	overlay_veneer 0x080091f9
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
 	overlay_veneer 0x080770c1
+	.global Engine_GameFlagSet
+	.thumb_func
+Engine_GameFlagSet:
 	overlay_veneer 0x080770c9
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer 0x080770d1
 	.global Battle_WaitMode0
 	.thumb_func
@@ -56,7 +77,13 @@ Battle_WaitMode0:
 	.thumb_func
 Engine_EventWait:
 	overlay_veneer 0x0808a011
+	.global Engine_EventBegin
+	.thumb_func
+Engine_EventBegin:
 	overlay_veneer 0x0808a019
+	.global Engine_EventEnd
+	.thumb_func
+Engine_EventEnd:
 	overlay_veneer 0x0808a021
 	overlay_veneer 0x0808a071
 	.global Object_GetById
@@ -89,6 +116,9 @@ ObjectMotion_CommitCurrentPositionAndActivate:
 	.thumb_func
 Engine_ActorWaitForMove:
 	overlay_veneer 0x0808a0e9
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
 	overlay_veneer 0x0808a0f1
 	.global Object_SetModeById
 	.thumb_func
@@ -97,16 +127,43 @@ Object_SetModeById:
 	.thumb_func
 Engine_ActorSetAnimation:
 	overlay_veneer 0x0808a101
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer 0x0808a149
+	.global Engine_ActorFaceEachOther
+	.thumb_func
+Engine_ActorFaceEachOther:
 	overlay_veneer 0x0808a151
+	.global Engine_ObjectSetPalette
+	.thumb_func
+Engine_ObjectSetPalette:
 	overlay_veneer 0x0808a161
+	.global Engine_EventSetMessage
+	.thumb_func
+Engine_EventSetMessage:
 	overlay_veneer 0x0808a171
 	overlay_veneer 0x0808a179
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer 0x0808a181
 	overlay_veneer 0x0808a1b9
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer 0x0808a249
+	.global Engine_LeaderCheckAhead
+	.thumb_func
+Engine_LeaderCheckAhead:
 	overlay_veneer 0x0808a2a1
+	.global Engine_EventCloseScreen
+	.thumb_func
+Engine_EventCloseScreen:
 	overlay_veneer 0x0808a369
+	.global Engine_EventWaitForScreen
+	.thumb_func
+Engine_EventWaitForScreen:
 	overlay_veneer 0x0808a371
 	.global BattleFx_PlayQueuedSound
 	.thumb_func

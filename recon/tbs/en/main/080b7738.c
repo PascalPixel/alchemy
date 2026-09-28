@@ -1,9 +1,15 @@
-/* Draft, not exact (2026-09-24): candidate=432 reference=428 differing_halfwords=193.
-   Battle: cycle the status icons of every actor (state 9 while the object
-   is hidden) and set the sprite priority of each side from the camera
-   angle. Open: the reference keeps both priorities and two hoisted masks
-   on the stack (sp 44), indexes the icon loop without strength reduction,
-   and compares the side loops against the count without folding i = 0. */
+/* Draft, not exact (2026-09-28): 420 of 428 bytes, 104 aligned edits (was
+   432 bytes / 142 edits). Battle: cycle the status icons of every actor
+   (state 9 while the object is hidden) and set the sprite priority of each
+   side from the camera angle.
+   The icon loop is an if/goto loop: loop.c leaves it alone, so it indexes
+   ids[i * 2] afresh each pass exactly as the reference does (the for, while
+   and do/while spellings are all strength-reduced). Taking each child record
+   with *records++ gives the reference's ldmia walk.
+   Open: the reference keeps both priorities and two hoisted masks on the
+   stack (frame 44 against 32 here) and does not reverse the two side loops
+   (it compares i against the count, unfolded at i = 0); here loop.c's second
+   pass reverses them into a count-down. */
 #include "TYPES.H"
 #include "BATTLE_STATUS_ICON.H"
 
@@ -64,24 +70,28 @@ void Func_080b7738(void)
     s32 j;
 
     BattleParty_ListActorIds(3, ids);
-    for (i = 0; i <= 13 && ids[i] != 0xff; i++) {
+    i = 0;
+    if (ids[i] != 0xff) {
+    loop:
         slot = GetBattleObjectSlot(ids[i]);
-        if (slot == 0)
-            continue;
-        object = slot->object;
-        BattleStatusIcon_Cycle((struct BattleStatusIconRecord *)slot);
-        if (slot->icon_effect == 0)
-            continue;
-        context = GetMotionRecord(object, 0);
-        if (context == 0)
-            continue;
-        state = 0;
-        if (object->hidden != 0)
-            state = 9;
-        if (slot->icon_effect->state != state) {
-            slot->icon_effect->state = state;
-            context->dirty = 1;
+        if (slot != 0) {
+            object = slot->object;
+            BattleStatusIcon_Cycle((struct BattleStatusIconRecord *)slot);
+            if (slot->icon_effect != 0) {
+                context = GetMotionRecord(object, 0);
+                if (context != 0) {
+                    state = 0;
+                    if (object->hidden != 0)
+                        state = 9;
+                    if (slot->icon_effect->state != state) {
+                        slot->icon_effect->state = state;
+                        context->dirty = 1;
+                    }
+                }
+            }
         }
+        if (++i <= 13 && ids[i] != 0xff)
+            goto loop;
     }
 
     if (gCameraWork->angle >= 0) {
@@ -105,9 +115,9 @@ void Func_080b7738(void)
         case 2:
             records = object->records;
             for (j = 3; j >= 0; j--) {
-                if (*records != 0)
-                    (*records)->priority = near_priority;
-                records++;
+                struct SpriteRecord *record = *records++;
+                if (record != 0)
+                    record->priority = near_priority;
             }
             break;
         }
@@ -126,9 +136,9 @@ void Func_080b7738(void)
         case 2:
             records = object->records;
             for (j = 3; j >= 0; j--) {
-                if (*records != 0)
-                    (*records)->priority = far_priority;
-                records++;
+                struct SpriteRecord *record = *records++;
+                if (record != 0)
+                    record->priority = far_priority;
             }
             break;
         }

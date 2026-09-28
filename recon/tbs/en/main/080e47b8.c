@@ -1,7 +1,9 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7808 bytes; 181 differing halfwords, 113 aligned edits. */
+ * Separate drawing cursors: 7804 bytes, 1650 differing halfwords,
+ * 189 aligned edits. The column now retains its rise in fp, but the
+ * paired-image cursor and the shorter branch still differ. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -176,7 +178,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     s32 *scanline;
     s32 cnt;
     s32 orb_x;
-    RectangleBlit *work_blitters;
     struct BattleEffectWork *work;
     void *canvas;
     s32 frame;
@@ -800,6 +801,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         if (kind == 14) {
             s32 rise;
             s32 scroll;
+            RectangleBlit *column_draw;
 
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
@@ -814,10 +816,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             while (scroll > 104)
                 scroll -= 104;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            /* FAKEMATCH: Share the drawing cursor with the paired-image branch. */
-            work_blitters = (RectangleBlit *)gWorkSlot;
-            work_blitters += 47;
-            DrawRisingColumn(canvas, origin_x, rise, scroll, work_blitters);
+            /* FAKEMATCH: Keep the table base before advancing to this work slot. */
+            column_draw = (RectangleBlit *)gWorkSlot;
+            column_draw += 47;
+            DrawRisingColumn(canvas, origin_x, rise, scroll, column_draw);
             Runtime_ReleaseHeapBlock(47);
             if (frame == 8) {
                 work->shake_frames = frame;
@@ -852,6 +854,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
         if (kind == 31) {
             s32 height;
+            RectangleBlit *pair_draw;
 
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
@@ -859,13 +862,15 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 pair_x = target_screen->x / 2;
                 height = 48;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                work_blitters = (RectangleBlit *)gWorkSlot;
+                /* FAKEMATCH: Keep the table base before advancing to this work slot. */
+                pair_draw = (RectangleBlit *)gWorkSlot;
+                pair_draw += 47;
                 DrawImage(canvas, IMAGE_WORK, pair_x - 24, 48, 24, height,
-                          work_blitters + 47);
+                          pair_draw);
                 Runtime_ReleaseHeapBlock(47);
                 BattleEffect_LoadWork(47, 7, 7, 7, 2);
                 DrawImage(canvas, IMAGE_WORK, pair_x, 48, 24, height,
-                          work_blitters + 47);
+                          pair_draw);
                 Runtime_ReleaseHeapBlock(47);
             }
         RestoreBlitters:;

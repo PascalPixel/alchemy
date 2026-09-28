@@ -11,7 +11,7 @@ void Engine_MapCopyCellsTo();
 s32 Engine_TaskAddCallback();
 s32 Engine_ActorGet();
 void Engine_ActorSetAnimation();
-void Main_0808a118();
+void ObjectMotion_WaitForAnimationChange();
 void Engine_MapCopyCellAttributes();
 void Engine_GameFlagClear();
 void Engine_ActorSetChildValue();
@@ -76,7 +76,7 @@ void TakaraHashira_RunMapShiftScene(void)
             record = Engine_ActorGet(12);
             *(s32 *)(record + 108) = 0x200a2d9;
             Engine_ActorSetAnimation(12, 6);
-            Main_0808a118(12);
+            ObjectMotion_WaitForAnimationChange(12);
             record = Engine_ActorGet(12);
             *(s32 *)(record + 108) = rec7;
             Call6(Engine_MapCopyCellAttributes, 17, 13, 1, 1, 18, 13);

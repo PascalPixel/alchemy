@@ -5,7 +5,6 @@ s32 Engine_ObjectCreate();
 void Engine_ObjectSetScript();
 
 
-extern u8 Data_00000000[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant

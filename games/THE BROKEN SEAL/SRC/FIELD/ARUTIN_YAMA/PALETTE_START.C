@@ -2,9 +2,9 @@
 
 s32 Engine_TaskAddCallback();
 
-extern u8 Value_0200b9c9;
-extern u16 Data_0200d260;
-extern u16 Data_0200d25c;
+extern u8 ArutinYama_StepPaletteAnim;
+extern u16 ArutinYama_PaletteStep;
+extern u16 ArutinYama_PaletteHold;
 
 struct Half {
     u16 v;
@@ -20,7 +20,7 @@ void ArutinYama_StartPaletteAnim(void)
     struct Half zero;
 
     zero.v = 0;
-    Data_0200d260 = zero.v;
-    Data_0200d25c = zero.v;
-    Value2(Engine_TaskAddCallback, (s32)&Value_0200b9c9, 0xc80);
+    ArutinYama_PaletteStep = zero.v;
+    ArutinYama_PaletteHold = zero.v;
+    Value2(Engine_TaskAddCallback, (s32)&ArutinYama_StepPaletteAnim, 0xc80);
 }

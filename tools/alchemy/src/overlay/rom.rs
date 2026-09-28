@@ -1,8 +1,11 @@
-use crate::overlay::assembly::ROM_BASE;
 use crate::targets::DecompTarget;
 use psynergy::assets::lz::{GeneralToken, PaletteGroup};
 use std::path::Path;
 
+/// Where the cartridge ROM is mapped.
+const ROM_BASE: i64 = 0x0800_0000;
+/// Where a decoded overlay image's resource coordinates start.
+pub const OVERLAY_BASE: i64 = 0x0200_0000;
 /// The loader bound on one decoded resource.
 const DECODED_LIMIT: u64 = 0x10_0000;
 /// `ldr r4, [pc, #0]; bx r4`, the first word of every overlay veneer.

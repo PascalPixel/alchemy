@@ -1,3 +1,8 @@
+/* Draft of resource_38b 0x02008db4 (BiribinoMura_PushFacedBlock), from
+ * games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA. Remaining difference: the
+ * ROM loads the scene numbers it compares from the literal pool, as
+ * link-time values would; C constants compare against immediates. The
+ * listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

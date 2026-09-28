@@ -1,3 +1,8 @@
+/* Draft of resource_38e 0x020085dc (BiribinoNiwa_RunGardenScene), from
+ * games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA. Remaining difference: the
+ * ROM loads message 0x1720 from the literal pool, as a link-time message
+ * value would; the C constant is built with a move and a shift. Its imports
+ * still carry their old names. The listing keeps these rows. */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 

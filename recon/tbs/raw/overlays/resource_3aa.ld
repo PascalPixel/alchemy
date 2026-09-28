@@ -1,0 +1,17 @@
+/* resource_3aa: its listing with maintained code
+   linked in place, as pret links objects in ROM order. */
+SECTIONS
+{
+    .text 0x2008000 :
+    {
+        "*/resource_3aa_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/RETURN_ZERO.o"(.text)
+        "*/resource_3aa_overlay.o"(.text.x0200806c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/RUN_ACTOR13.o"(.text)
+        "*/resource_3aa_overlay.o"(.text.x02008230)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/PARTY_EVENTS.o"(.text)
+        "*/resource_3aa_overlay.o"(.text.x02009a34)
+        "*/resource_3aa_overlay.o"(.rodata)
+    }
+    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+}

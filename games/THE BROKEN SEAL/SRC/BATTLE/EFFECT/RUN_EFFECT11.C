@@ -1,12 +1,8 @@
-/* Not-yet-C: complete 304-byte owner, two differing halfwords.
- * A typed SpawnShard boundary recovers the position base in r5, anchor walk
- * in r7 and later r5-to-r7 copy; all other instructions and pools match.
- * Remaining: sched2 emits the r3-to-r8 counter copy before r5-to-r7,
- * rather than after it. Counter insn166 precedes hoisted cursor insn356.
- * Moving the whole shard loop into the helper gives 284 bytes / 68 edits;
- * an explicit outer cursor loses the separate copy (304 / 21). A do-loop
- * latch preserves this two-halfword residual. Stop those scheduling axes.
- * The twin at 08098954 differs only in its item-break spawner. */
+/*
+ * Battle effect 11: two mode-1 item-break anchors fly apart, then
+ * twenty-four shards scatter from the scene centre at random speeds and
+ * angles.
+ */
 #include "TYPES.H"
 #include "SYSTEM.H"
 
@@ -35,13 +31,14 @@ extern struct BattleEffectScene *gEffectWork;
 
 void BattleEffect_InitializeSharedScene(void);
 void *BattleFx_SpawnItemBreakMode1(s32 x, s32 y, s32 z, s32 angle);
-void set_target_position_from_magnitude_angle(
+void Motion_SetTargetPositionFromMagnitudeAngle(
     void *object, s32 magnitude, s32 angle);
 void Object_CommitPosition(void *object);
 void Audio_PlayCue(s32 sound);
 struct ScatterShard *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void ObjectDispatch_InitializeFar(void *object, s32 data);
-void Func_080090d0(void *object);
+void ObjectDispatch_InitializeFar(void *object, const u8 *script);
+extern const u8 BattleFx_FragmentScript[];
+void Object_Destroy(void *object);
 void BattleFx_PrepareBufferInterpolation(void);
 
 static __inline__ struct ScatterShard *SpawnShard(
@@ -79,25 +76,25 @@ void RunBattleEffect11(void)
     for (index = 0; index < 2; index++) {
         obj = *walk++;
         if (obj != 0)
-            set_target_position_from_magnitude_angle(
+            Motion_SetTargetPositionFromMagnitudeAngle(
                 obj, 0x180000, *(u16 *)((u8 *)obj + 6));
     }
 
     Object_CommitPosition(anchors[0]);
     Audio_PlayCue(134);
-    for (index = 23; index >= 0; index--) {
+    for (index = 0; index < 24; index++) {
         obj = SpawnShard(scene, &position);
         if (obj != 0) {
-            ObjectDispatch_InitializeFar(obj, 0x0809f0d4);
+            ObjectDispatch_InitializeFar(obj, BattleFx_FragmentScript);
             obj->speed = Random16() + 0x20000;
             obj->lift = 0x20000;
             obj->flag = 0;
             magnitude = Random16() * 24 + 0x80000;
-            set_target_position_from_magnitude_angle(obj, magnitude, Random16());
+            Motion_SetTargetPositionFromMagnitudeAngle(obj, magnitude, Random16());
         }
     }
 
-    Func_080090d0(anchors[0]);
-    Func_080090d0(anchors[1]);
+    Object_Destroy(anchors[0]);
+    Object_Destroy(anchors[1]);
     BattleFx_PrepareBufferInterpolation();
 }

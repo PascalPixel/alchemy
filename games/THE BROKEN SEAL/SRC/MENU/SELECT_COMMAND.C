@@ -1,24 +1,8 @@
-/* Draft H1: CharacterMenu_SelectCommand, complete 080a8114-080a847a body.
- * Transfer the typed cursor/window/owner family from SELECT_ACTION.C, preserve
- * the signed-byte availability count, and restore repeated typed owner loads.
- * The final two bytes before 080a847c are inter-function alignment.
- * H1: 870/870 bytes, 30 differing halfwords; exact 40-byte frame, branches,
- * cursor interfaces, signed-byte normalization and repeated owner loads.
- * Residual: spilled has_djinn/done/has_ailments/count slots are reversed,
- * count is sign-extended after the pane branch instead of before its modulo,
- * and scheduler r0 loads early. The actual scheduler returns s32, not void.
- * H2: 870/870 bytes, 16 differing halfwords. Reference spill declaration order
- * and actual scheduler return types fix every difference outside 080a8202-222.
- * The remaining block delays count's s8-to-s32 conversion until after the pane
- * branch; the ROM keeps that promoted limit live across its modulo/branch.
- * H3: 870/870 bytes, 7 differing halfwords (6 aligned edits). A redraw-local
- * promoted limit fixes modulo register roles and conversion placement across
- * the pane branch. Only the 7-halfword prelude at 080a8202-080a820e remains:
- * reference clears redraw first and loads count into r0, while this source
- * initializes limit first using r2 and clears redraw afterwards. Everything
- * outside that prelude is byte-identical. Three-model budget exhausted; park
- * without statement permutations. H1/H2 remain preserved in earlier commits.
- * Budget: corrected model plus two variants; adoption requires all gates. */
+/*
+ * The character menu's command selection: shows the selected character's
+ * status and available commands across two panes, switches characters on
+ * request, and returns 1 when a command is confirmed or -1 when cancelled.
+ */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "UI.H"
@@ -75,7 +59,7 @@ void CharacterMenu_DrawSelectionLabels(s32 window, s32 selected, const u8 *entri
 void StatusMenu_ShowOwnerProgressMessage(s32 window, s32 selected, s32 has_djinn);
 void Audio_PlayCue(s32 cue);
 
-s32 Func_080a8114(void)
+s32 CharacterMenu_SelectCommand(void)
 {
     struct CharacterCommandMenu *menu;
     s32 pane;
@@ -118,9 +102,10 @@ s32 Func_080a8114(void)
 
         while (GameFlag_TestFar(0x150) == 0) {
             if (redraw != 0) {
-                s32 limit = count;
+                s32 limit;
 
                 redraw = 0;
+                limit = count;
                 pane = (pane + 2) % 2;
                 if (pane == 0) {
                     selected = Math_Mod(selected + limit, limit);

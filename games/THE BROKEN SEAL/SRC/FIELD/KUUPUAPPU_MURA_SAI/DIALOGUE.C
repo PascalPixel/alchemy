@@ -1,5 +1,6 @@
 /*
- * Actor proximity, the scene tables and the first villagers' lines.
+ * Actor dialogue: facing-preserving and timed lines, the acceptance
+ * lines and the counted question.
  */
 
 #include "TYPES.H"
@@ -223,141 +224,76 @@ static __inline__ void UpdateRect(void (*update)(s32, s32, s32, s32, s32, s32),
     update(x, z, width, height, sourceX, sourceZ);
 }
 
-s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
+void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
 {
-    s32 delta_x = (*first_position++ - *second_position++) >> 16;
-    s32 delta_y = (*first_position++ - *second_position++) >> 16;
-    s32 delta_z = (*first_position - *second_position) >> 16;
-    s32 delta_x_squared = delta_x *delta_x;
-    s32 delta_y_squared = delta_y *delta_y;
-    s32 delta_z_squared = delta_z *delta_z;
+    struct Actor_02000640 *actor;
+    s16 facing0;
 
-    return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
+    actor = Actor_Get(15);
+    facing0 = (s16)actor->facing;
+    actor->state_flags |= 2;
+    Event_Begin();
+    Event_SetMessage(0x1cb4);
+    Actor_SetAnimation(15, 0);
+    Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 2);
+    Event_ShowMessageAndWait(15, 0, 10);
+    actor->facing = (u16)facing0;
+    Task_Wait(1);
+    Event_End();
+    actor->state_flags = 0;
 }
 
-s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target,
-                  s32 range, s32 force)
-{
-    s32 result = 0;
-    s32 *targetPos = &target->x;
-    s32 *actorPos = &actor->x;
-
-    if (SceneActor_GetPositionDistance(targetPos, actorPos) < range || force != 0) {
-        u32 angle = (u16)ArcTan2(target->z - actor->z,
-                                      *targetPos - *actorPos);
-        u32 left = (angle - 0x1000) & 0xf000;
-        u32 right = (angle + 0x1000) & 0xf000;
-        u32 forward = angle & 0xf000;
-        u32 facing = actor->facing & 0xf000;
-
-        if (forward == facing || right == facing || left == facing || force != 0) {
-            actor->active = 1;
-            Object_SetAnimation(actor, 1);
-            result = 1;
-        }
-    } else {
-        actor->active = 0;
-        Object_SetAnimation(actor, 2);
-    }
-    return result;
-}
-
-s32 UpdateActorProximity(u8 *actor)
-{
-    u8 **globals = Data_03001e8c;
-    u8 *scene = globals[0];
-    u8 *work = globals[12];
-    u16 *flags = (u16 *)(actor + 100);
-    s32 force = 0;
-    s32 range = 18;
-    u8 *partner;
-    u8 *player;
-
-    if ((*flags & 1) != 0) {
-        partner = Actor_Get(15);
-    } else {
-        partner = Actor_Get(14);
-    }
-    if (SceneActor_UpdateProximity(actor, partner, 32, 0) != 0) {
-        return 0;
-    }
-
-    player = Actor_Get(ACTOR_PARTY_LEADER);
-
-    if (*(s16 *)(work + 376) != 0 || scene[0x0ea4] != 0) {
-        range = 26;
-        if ((*flags & 2) != 0) {
-            force = 1;
-        }
-    }
-
-    SceneActor_UpdateProximity(actor, player, range, force);
-    return 0;
-}
-
-const void *SceneData_GetScriptTable(void)
-{
-    return KuupuappuMuraSai_Scripts;
-}
-
-/* Complete zero-return leaf; no calls and no argument read. */
-int SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-const void *SceneData_GetMessageTable(void)
-{
-    return KuupuappuMuraSai_Messages;
-}
-
-const void *SceneData_GetActorTable(void)
-{
-    return KuupuappuMuraSai_Actors;
-}
-
-void ActorPresentation_RunActorModeOneThenZero(s32 actor)
+void SceneDialogue_RunActor16CountedDialogue(void)
 {
     Event_Begin();
-    Actor_SetAnimation(actor, 1);
-    Event_ShowMessage(actor, 0);
+    Event_SetMessage(0x1cb5);
+    Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 2);
+    Event_OpenMessage(16, 0);
+    if (Event_ChooseYesNo(0, 0) != 0) {
+        ((struct SceneWork_020006b4 *)gWork)->branch_counter += 1;
+    }
+    Event_ShowMessage(16, 0);
+    GameFlag_Set(0x308);
     Event_End();
 }
 
-void SceneDialogue_RunActor8FlagScene(void)
+void SceneDialogue_RunActorEightTimedDialogue(void)
 {
     Event_Begin();
-    Actor_FaceActor(8, ACTOR_PARTY_LEADER, 2);
+    Actor_RunRepeatedMotion(8, 1);
+    Event_Wait(20);
+    Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x305);
     Event_SetMessage(0x1cab);
-    Event_ShowMessage(8, 0);
+    Event_ShowMessageAndWait(8, 0, 20);
     Event_End();
 }
 
-void SceneDialogue_RunActor11Line(void)
+void SceneDialogue_RunActor11AcceptanceDialogue(void)
 {
-
-    Event_SetMessage(0x1cae);
-    Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 2);
+    Event_SetMessage(0x1cbd);
+    ((struct Actor_02000754 *)Actor_Get(11))->accepted = 1;
     ActorPresentation_RunActorModeOneThenZero(11);
+    ((struct Actor_02000754 *)Actor_Get(11))->accepted = 0;
 }
 
-void SceneDialogue_RunActor12TwoFlagScene(void)
+void SceneDialogue_RunActor12TimedTwoFlagScene(void)
 {
-
     Event_Begin();
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 2);
+    Actor_RunRepeatedMotion(12, 1);
+    Event_Wait(20);
+    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x306);
     GameFlag_Set(0x868);
     Event_SetMessage(0x1caf);
-    Event_ShowMessage(12, 0);
+    Event_ShowMessageAndWait(12, 0, 20);
     Event_End();
 }
 
-void SceneDialogue_ShowLine1CB0ForActor13(void)
+void ActorPresentation_RunActor13AcceptanceDialogue(void)
 {
-
-    Event_SetMessage(0x1cb0);
-    Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 2);
+    Event_SetMessage(0x1cbf);
+    ((struct Actor_020007d4 *)Actor_Get(13))->accepted = 1;
     ActorPresentation_RunActorModeOneThenZero(13);
+    ((struct Actor_020007d4 *)Actor_Get(13))->accepted = 0;
 }

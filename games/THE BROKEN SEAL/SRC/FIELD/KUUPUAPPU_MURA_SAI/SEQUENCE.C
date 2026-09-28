@@ -1,5 +1,6 @@
 /*
- * Actor proximity, the scene tables and the first villagers' lines.
+ * Later scene steps and the scene initialiser: scene twelve, the flag 0x200
+ * cells, actor 18's sequence and the actors placed on entry.
  */
 
 #include "TYPES.H"
@@ -141,8 +142,6 @@ void PartyInventory_Discard();
 s32 UpdateActorProximity(u8 *actor);
 void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
 
-extern u8 *Data_03001e8c[];
-
 static __inline__ s32 Scene_QueryFlag(s32 (*func)(s32), s32 flag)
 {
     return func(flag);
@@ -223,141 +222,159 @@ static __inline__ void UpdateRect(void (*update)(s32, s32, s32, s32, s32, s32),
     update(x, z, width, height, sourceX, sourceZ);
 }
 
-s32 SceneActor_GetPositionDistance(s32 *first_position, s32 *second_position)
+void ActorPresentation_SetupActorZeroForSceneTwelve(void)
 {
-    s32 delta_x = (*first_position++ - *second_position++) >> 16;
-    s32 delta_y = (*first_position++ - *second_position++) >> 16;
-    s32 delta_z = (*first_position - *second_position) >> 16;
-    s32 delta_x_squared = delta_x *delta_x;
-    s32 delta_y_squared = delta_y *delta_y;
-    s32 delta_z_squared = delta_z *delta_z;
+    struct SceneActor_02000c1c *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Presentation_02000c1c *presentation = actor->presentation;
+    u8 flags;
 
-    return ((IwramIntegerSquareRoot) 0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
+    Audio_PlayCue(158);
+    Map_AnimateCells(KuupuappuMuraSai_Scene12Cells, 35, 9);
+    {
+        s32 cell = 4;
+        s32 row = 10;
+
+        Map_CopyCellAttributes(33, 20, 1, 3, cell, row);
+    }
+    actor->state_23 &= ~1;
+    flags = presentation->flags;
+    flags |= 12;
+    presentation->flags = flags;
+    SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
 }
 
-s32 SceneActor_UpdateProximity(struct SceneActor_02000350 *actor, struct SceneActor_02000350 *target,
-                  s32 range, s32 force)
+void SceneState_SetFlag200AndConfigureRegion55_26(void)
 {
-    s32 result = 0;
-    s32 *targetPos = &target->x;
-    s32 *actorPos = &actor->x;
-
-    if (SceneActor_GetPositionDistance(targetPos, actorPos) < range || force != 0) {
-        u32 angle = (u16)ArcTan2(target->z - actor->z,
-                                      *targetPos - *actorPos);
-        u32 left = (angle - 0x1000) & 0xf000;
-        u32 right = (angle + 0x1000) & 0xf000;
-        u32 forward = angle & 0xf000;
-        u32 facing = actor->facing & 0xf000;
-
-        if (forward == facing || right == facing || left == facing || force != 0) {
-            actor->active = 1;
-            Object_SetAnimation(actor, 1);
-            result = 1;
-        }
-    } else {
-        actor->active = 0;
-        Object_SetAnimation(actor, 2);
+    GameFlag_Set(0x200);
+    {
+        s32 a = 23;
+        s32 b = 26;
+        Map_CopyCellAttributes(55, 26, 4, 2, a, b);
     }
-    return result;
 }
 
-s32 UpdateActorProximity(u8 *actor)
+void ActorPresentation_SetFlag200AndSceneCell23(void)
 {
-    u8 **globals = Data_03001e8c;
-    u8 *scene = globals[0];
-    u8 *work = globals[12];
-    u16 *flags = (u16 *)(actor + 100);
-    s32 force = 0;
-    s32 range = 18;
-    u8 *partner;
-    u8 *player;
-
-    if ((*flags & 1) != 0) {
-        partner = Actor_Get(15);
-    } else {
-        partner = Actor_Get(14);
+    GameFlag_Clear(0x200);
+    {
+        s32 first_value = 23;
+        s32 second_value = 26;
+        Map_CopyCellAttributes(23, 23, 4, 2, first_value, second_value);
     }
-    if (SceneActor_UpdateProximity(actor, partner, 32, 0) != 0) {
-        return 0;
+}
+
+void FieldScene_SetActor21Values0And4(void)
+{
+    BattleFx_RunPageEffectForSlot(21, 0, 4);
+}
+
+void FieldScene_RunActor18MotionSequence(void)
+{
+    u32 i;
+    s32 record;
+
+    PartyInventory_Discard(231);
+    Event_Begin();
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(18, 2);
+    Actor_SetSpeed(18, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(18, 216, 0x198);
+    Event_Wait(10);
+    Actor_FaceDirection(18, 0x4000, 20);
+    Actor_Jump(18, 6, 0);
+    Event_Wait(30);
+    Actor_Jump(18, 6, 0);
+    Event_Wait(30);
+    Actor_Jump(18, 6, 0);
+    Event_Wait(30);
+    Actor_WalkToAndWait(18, 216, 0x188);
+    Event_Wait(10);
+    Actor_FaceDirection(18, 0x4000, 20);
+    GameFlag_Set(0x858);
+    Event_End();
+}
+
+void ActorPresentation_SetPairedSceneCells(void)
+{
+    s32 v1 = 13;
+    s32 v2 = 25;
+
+    Map_CopyCellAttributes(41, 43, 1, 1, v1, v2);
+    Map_CopyCells(40, 42, 12, 22, 3, 3);
+}
+
+void ActorPresentation_SetAlternatePairedSceneCells(void)
+{
+    s32 v1 = 13;
+    s32 v2 = 25;
+
+    Map_CopyCellAttributes(37, 43, 1, 1, v1, v2);
+    Map_CopyCells(36, 42, 12, 22, 3, 3);
+}
+
+void FieldScene_RunActorEighteenDialogue(void)
+{
+    Event_Begin();
+    Event_SetMessage(0x1342);
+    Actor_SetAnimation(18, 0);
+    Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
+    Event_Wait(2);
+    Event_ShowMessage(18, 0);
+    Actor_SetAnimation(18, 1);
+
+    if (PartyInventory_FindOwner(231) != -1 && GameFlag_IsSet(0x858) == 0) {
+        ((struct SceneWork_02000e90 *)gWork)->actor18_marker = 1;
     }
 
-    player = Actor_Get(ACTOR_PARTY_LEADER);
+    Event_End();
+}
 
-    if (*(s16 *)(work + 376) != 0 || scene[0x0ea4] != 0) {
-        range = 26;
-        if ((*flags & 2) != 0) {
-            force = 1;
-        }
+void SceneState_SetFlag947AndValue29dc(void)
+{
+    Event_Begin();
+    Message_ShowCentered(0x947, 1);
+    Message_ShowCentered(0x29dc, 1);
+    Event_End();
+}
+
+const u8 *SceneData_GetExtraTable(void)
+{
+    return KuupuappuMuraSai_Extras;
+}
+
+s32 SceneSetup_InitializeActorsAndFlags(void)
+{
+
+    u8 *actor;
+    s16 *scene;
+    s32 mode;
+
+    if (GameFlag_IsSet(0x200))
+        UpdateRect(Engine_MapCopyCellAttributes, 55, 26, 4, 2, 23, 26);
+    OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
+    Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
+    Engine_TaskWait(1);
+    actor = (u8 *)Engine_ActorGet(14);
+    *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
+    {
+        u8 *actor = (u8 *)Engine_ActorGet(14);
+        s32 mode = 1;
+        *(u16 *)(actor + 100) = mode;
     }
-
-    SceneActor_UpdateProximity(actor, player, range, force);
+    mode = 0;
+    actor = (u8 *)Engine_ActorGet(15);
+    *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
+    *(u16 *)((u8 *)Engine_ActorGet(15) + 100) = mode;
+    if (GameFlag_IsSet(0x858))
+        PlaceActor(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
+    if (gGameState.entrance <= 2 && !GameFlag_IsSet(52) && !GameFlag_IsSet(0x109))
+        GameFlag_Clear(0x867);
+    if (GameFlag_IsSet(0x867) && !GameFlag_IsSet(52))
+        PlaceActor(Engine_ActorSetPosition, 21, 0x1980000, 0x780000);
+    scene = (s16 *)&gGameState;
+    if (scene[225] == 11)
+        GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+    if (scene[225] == 13)
+        GameFlag_Clear(0x120);
     return 0;
-}
-
-const void *SceneData_GetScriptTable(void)
-{
-    return KuupuappuMuraSai_Scripts;
-}
-
-/* Complete zero-return leaf; no calls and no argument read. */
-int SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-const void *SceneData_GetMessageTable(void)
-{
-    return KuupuappuMuraSai_Messages;
-}
-
-const void *SceneData_GetActorTable(void)
-{
-    return KuupuappuMuraSai_Actors;
-}
-
-void ActorPresentation_RunActorModeOneThenZero(s32 actor)
-{
-    Event_Begin();
-    Actor_SetAnimation(actor, 1);
-    Event_ShowMessage(actor, 0);
-    Event_End();
-}
-
-void SceneDialogue_RunActor8FlagScene(void)
-{
-    Event_Begin();
-    Actor_FaceActor(8, ACTOR_PARTY_LEADER, 2);
-    GameFlag_Set(0x305);
-    Event_SetMessage(0x1cab);
-    Event_ShowMessage(8, 0);
-    Event_End();
-}
-
-void SceneDialogue_RunActor11Line(void)
-{
-
-    Event_SetMessage(0x1cae);
-    Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 2);
-    ActorPresentation_RunActorModeOneThenZero(11);
-}
-
-void SceneDialogue_RunActor12TwoFlagScene(void)
-{
-
-    Event_Begin();
-    Actor_FaceActor(12, ACTOR_PARTY_LEADER, 2);
-    GameFlag_Set(0x306);
-    GameFlag_Set(0x868);
-    Event_SetMessage(0x1caf);
-    Event_ShowMessage(12, 0);
-    Event_End();
-}
-
-void SceneDialogue_ShowLine1CB0ForActor13(void)
-{
-
-    Event_SetMessage(0x1cb0);
-    Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 2);
-    ActorPresentation_RunActorModeOneThenZero(13);
 }

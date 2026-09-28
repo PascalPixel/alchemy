@@ -2,6 +2,7 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "SHOP.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 struct Position { s32 x, y, z; };
@@ -46,7 +47,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     s32 callback_flags;
     s32 i;
 
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     burst = (struct ShopBurstRuntime *)shop;
     saved_kind = shop->cursor.anchor->kind;
     *(u8 *)((u8 *)shop + 0x3ab) = 0xff;

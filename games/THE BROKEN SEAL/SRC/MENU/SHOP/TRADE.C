@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
 extern u8 Data_03001b04[];
@@ -168,7 +169,7 @@ void Shop_SelRepair(s32);
  */
 s32 Shop_PickUnit(void)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     s32 list_window;
     s32 selection = 0;
     s32 redraw = 1;
@@ -265,7 +266,7 @@ s32 Shop_SelSell(s32 unit_id)
     void *window;
     s32 x;
 
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     unit = Owner_GetStateFar(unit_id);
     item_count = 1;
     list_window = UiWindow_CreateFar(15, 8, 15, 4, 2);
@@ -430,7 +431,7 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     struct ShopRuntime *shop;
     struct BattleUnit *unit;
 
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     unit = Owner_GetStateFar(unit_id);
     entry_offset = (slot * 2) + 0xd8;
     item = Item_Get(*(u16 *)((u8 *)unit + entry_offset));

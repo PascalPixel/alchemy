@@ -3,6 +3,7 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
+extern struct SaveWorkspace *gSaveWorkspace;
 s32 Math_ModU(s32, s32);
 extern u8 Data_03001f1c[];
 
@@ -121,7 +122,7 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
     u32 current;
     u32 slot;
 
-    work = SAVE_WORKSPACE;
+    work = gSaveWorkspace;
     zero = 0;
     START_DMA(&zero, &work->slot, 0x85000400);
     WAIT_DMA();
@@ -169,7 +170,7 @@ u32 SaveState_ReadRecordPayload(s32 record_id, void *destination)
     struct SaveWorkspace *work;
     u32 index;
 
-    work = SAVE_WORKSPACE;
+    work = gSaveWorkspace;
     index = SaveState_FindLatestSlot(record_id);
     if (index > 15)
         return 1;
@@ -273,7 +274,7 @@ s32 SaveState_InvalidateSlot(s32 index)
     struct SaveSlotHeader header;
     volatile u32 zero;
 
-    work = SAVE_WORKSPACE;
+    work = gSaveWorkspace;
     zero = 0;
     START_DMA(&zero, &header, 0x85000004);
     WAIT_DMA();
@@ -351,7 +352,7 @@ s32 SaveState_LoadSummaryRecords(void)
     u32 group;
     s32 count;
 
-    work = SAVE_WORKSPACE;
+    work = gSaveWorkspace;
     summary = work->summary[0];
     count = 0;
     group = 0;

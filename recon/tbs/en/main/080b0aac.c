@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "UI.H"
+extern struct ShopRuntime *gMenuWork;
 
 /* main:080b0aac Shop_SelBuy - hand-written draft, 523 of 636 halfwords
    differ (1256 of 1272 bytes). The control flow matches the ROM: real
@@ -44,7 +45,7 @@ void WaitFrames(s32 frames);
 
 s32 Shop_SelBuy(void)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     s32 price_window = 0;
     s32 stock_window;
     s32 message_window;

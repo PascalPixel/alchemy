@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SHOP.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 /* shop/place_cursor.c */
@@ -14,7 +15,7 @@ void Shop_PlaceCursor(void *window, s32 x, s32 y)
 
     cursor_x = x;
     cursor_y = y;
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     if (window != NULL) {
         cursor_x = cursor_x + (FIELD_AT_OFFSET(window, u16 *, 0xC) * 8) + 8;
         cursor_y = cursor_y + (FIELD_AT_OFFSET(window, u16 *, 0xE) * 8) + 8;

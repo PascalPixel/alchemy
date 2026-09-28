@@ -1,4 +1,5 @@
 #include "SHOP.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
 extern u8 Data_03001b04[];
@@ -35,7 +36,7 @@ void WaitFrames(s32 frames);
 
 void Shop_BuySpecialItem(void *window, s32 item_window)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     struct SpecialItemState *state = (struct SpecialItemState *)0x02000240;
     s32 price;
     u32 saved;

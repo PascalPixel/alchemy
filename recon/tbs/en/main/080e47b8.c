@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7800 bytes; 1934 differing halfwords, 432 aligned edits. */
+ * Candidate 7796 bytes; 1650 differing halfwords, 353 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -806,9 +806,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         seed->z = target_actor->z;
                         seed->velocity_x = ((Random16() & 255) - 127) << 12;
                         seed->velocity_y = ((Random16() & 255) - 64) << 10;
-                        seed->velocity_z = ((Random16() & 255) - 127) << 12;
-                        emitted++;
+                        /* FAKEMATCH: Finish velocity before deriving the particle lifetime. */
+                        do {
+                            seed->velocity_z = ((Random16() & 255) - 127) << 12;
+                        } while (0);
                         seed->variant = i / 2 + 32;
+                        emitted++;
                         if (emitted == 4)
                             break;
                     }
@@ -947,8 +950,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 x <<= 8;
                 *(volatile s32 *)0x04000028 = x;
             }
-            if ((u32)(frame - 16) <= 15) {
-                *(volatile u16 *)0x04000052 = ((0x10 - (frame - 16)) | 0x1000);
+            {
+                s32 fade;
+                fade = frame - 16;
+                if ((u32)fade <= 15) {
+                    *(volatile u16 *)0x04000052 = (16 - fade) | 0x1000;
+                }
             }
             if ((u32)(frame - 4) <= 1) {
                 FillWords(canvas, 0x4000, 0x3f3f3f3f);

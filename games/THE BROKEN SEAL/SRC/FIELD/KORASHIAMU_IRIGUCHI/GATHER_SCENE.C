@@ -1,5 +1,10 @@
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
+extern u8 KorashiamuIriguchi_ActionTable5[];
+extern u8 KorashiamuIriguchi_ActionTable6[];
+extern u8 KorashiamuIriguchi_ActionTable7[];
+extern u8 KorashiamuIriguchi_ActionTable8[];
+extern u8 KorashiamuIriguchi_ActionTable9[];
 
 struct ActorMotion {
     u8 pad0[100];
@@ -7,7 +12,6 @@ struct ActorMotion {
     u8 pad104[4];
     s32 target;
 };
-extern u8 Data_0200af24[];
 
 s32 Engine_GameFlagIsSet();
 void Engine_GameFlagSet();
@@ -22,7 +26,7 @@ void Engine_ActorFaceDirection();
 void Engine_ActorRunRepeatedMotion();
 void Engine_EventSetMessage();
 s32 Engine_EventOpenMessage();
-s32 Engine_UiWorkWaitThenFinalizeCapacity();
+s32 Engine_EventChooseYesNo();
 void Engine_EventWait();
 void FieldScene_CallPairWith10();
 void Engine_ActorSetAnimationAndWait();
@@ -32,7 +36,7 @@ void Engine_ActorSetAttachedEffect();
 void Engine_ActorStop();
 void Engine_TaskWait();
 void Engine_ActorEnableActionCallback();
-void Main_0808a0b0();
+void Object_SetActionCallbackAndRefreshById();
 s32 Engine_ActorGet();
 void Engine_EventRequestExit();
 void Engine_EventShowMessage();
@@ -102,7 +106,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
         Engine_ActorRunRepeatedMotion(8, 1);
         Call1(Engine_EventSetMessage, 0x2125);
         Value2(Engine_EventOpenMessage, 0x8008, 0);
-        rec = Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0);
+        rec = Value2(Engine_EventChooseYesNo, 0, 0);
         if (rec != 0) {
         } else {
             Engine_EventWait(20);
@@ -146,15 +150,15 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Call3(Engine_ActorSetSpeed, 13, 0x19999, 0xcccc);
             Call3(Engine_ActorSetSpeed, 14, 0x19999, 0xcccc);
             Call3(Engine_ActorSetSpeed, 16, 0x19999, 0xcccc);
-            Value2(Engine_ActorEnableActionCallback, 13, 0x200ae20);
-            Call2(Engine_ActorEnableActionCallback, 16, 0x200aed4);
+            Value2(Engine_ActorEnableActionCallback, 13, (s32)KorashiamuIriguchi_ActionTable5);
+            Call2(Engine_ActorEnableActionCallback, 16, (s32)KorashiamuIriguchi_ActionTable7);
             Engine_EventWait(20);
             Engine_ActorFaceDirection(15, 0xd000, 0);
             Engine_ActorFaceDirection(17, 0xb000, 0);
             Engine_ActorFaceDirection(0, 0xa000, 0);
             Engine_ActorFaceDirection(12, 0xd000, 0);
             Engine_ActorFaceDirection(18, 0xb000, 0);
-            Call2(Main_0808a0b0, 14, 0x200ae5c);
+            Call2(Object_SetActionCallbackAndRefreshById, 14, (s32)KorashiamuIriguchi_ActionTable6);
             Engine_EventWait(20);
             Engine_ActorFaceDirection(8, 0, 0);
             Engine_ActorFaceDirection(11, 0x8000, 40);
@@ -187,7 +191,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             *(s32 *)((s32)record + 60) = -0x80000000;
             *(s32 *)((s32)record + 64) = -0x80000000;
             Engine_TaskWait(1);
-            base5_200af24 = (s32)Data_0200af24;
+            base5_200af24 = (s32)KorashiamuIriguchi_ActionTable8;
             Engine_ActorEnableActionCallback(15, base5_200af24);
             Engine_EventWait(20);
             Engine_ActorEnableActionCallback(13, base5_200af24);

@@ -835,7 +835,10 @@ Func_080f2b6c:
 	.section .unidentified.080f53dc,"a"
 	.incbin "baserom.gba", 0x000f53dc, 0x00000c24
 	.section .unidentified.080f86f8,"a"
-	.incbin "baserom.gba", 0x000f86f8, 0x00000908
+	.incbin "baserom.gba", 0x000f86f8, 0x0000003e
+	.global ReelGame_TitleLetterWidths
+ReelGame_TitleLetterWidths:
+	.incbin "baserom.gba", 0x000f8736, 0x000008ca
 	.section .unidentified.080fb7a0,"a"
 	.incbin "baserom.gba", 0x000fb7a0, 0x00000090
 	.global Sound_PcmPitchCodes

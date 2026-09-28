@@ -1626,7 +1626,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/STEP_TOWARD_RESOURCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CANVAS_DRAW_LINE.o"(.text)
         "*/recon/tbs/raw/080f6440.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080f731c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MINIGAME/REEL_INIT_TITLE.o"(.text)
         "*/recon/tbs/raw/080f7460.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SOUND/TRACK_SLOT_BUFFER.o"(.text)
         "*/recon/tbs/raw/080f7f78.o"(.text .rodata .data .padding)

@@ -6,7 +6,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-#include "RESOURCE_37C.H"
+/* The scene's four tables, in the overlay's read-only data. */
+extern u8 SoruDou_SceneTable0[];
+extern u8 SoruDou_SceneTable1[];
+extern u8 SoruDou_SceneTable2[];
+extern u8 SoruDou_SceneTable3[];
 #include "RESOURCE_37C_RUNTIME.H"
 
 /*
@@ -15,7 +19,7 @@
  */
 u8 *State_Run(void)
 {
-    return RESOURCE37C_PRIMARY_TABLE;   /* image offset 0xc8 */
+    return SoruDou_SceneTable0;
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
@@ -27,19 +31,19 @@ s32 state_update_0432(void)
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetPrimaryTable37c(void)
 {
-    return RESOURCE37C_SECONDARY_TABLE;   /* image offset 0x110 */
+    return SoruDou_SceneTable1;
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetSecondaryTable37c(void)
 {
-    return RESOURCE37C_TERTIARY_TABLE;   /* image offset 0x11c */
+    return SoruDou_SceneTable2;
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTertiaryTable37c(void)
 {
-    return RESOURCE37C_QUATERNARY_TABLE;   /* image offset 0x134 */
+    return SoruDou_SceneTable3;
 }
 
 s32 Resource37c_Run(void)

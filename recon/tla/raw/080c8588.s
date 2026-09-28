@@ -31,6 +31,9 @@ Func_080c8588:
 	bx	r4
 	.2byte 0xbf69
 	.2byte 0x080e
+	.global Func_080c85c0
+	.thumb_func
+Func_080c85c0:
 	.2byte 0x4c00
 	.2byte 0x4720
 	.4byte 0x080dc391

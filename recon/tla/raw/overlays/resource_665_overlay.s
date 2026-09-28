@@ -1,21 +1,27 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x020087d5, 0x02008039, 0x02008045, 0x0200804d, 0x02008789, 0x02008041, 0x02008a19
-	overlay_veneer \EntryTarget
-	.endr
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x9dc0
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x9df0
 	.2byte 0x0200
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
 	push	{lr}
 	movs	r0, #245
 	lsls	r0, r0, #3
@@ -774,6 +780,9 @@ Overlay_02000000:
 	bl 0x02009cf4
 	pop	{pc}
 	.2byte 0x0000
+	.global Func_02000788
+	.thumb_func
+Func_02000788:
 	push	{lr}
 	movs	r0, #245
 	lsls	r0, r0, #3
@@ -810,6 +819,9 @@ Overlay_02000000:
 	.4byte 0x0200aad0
 	.2byte 0xa7f4
 	.2byte 0x0200
+	.global Func_020007d4
+	.thumb_func
+Func_020007d4:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -1046,6 +1058,9 @@ Overlay_02000000:
 	.4byte 0x02008a99
 	.2byte 0x9d54
 	.2byte 0x0200
+	.global Func_02000a18
+	.thumb_func
+Func_02000a18:
 	push	{lr}
 	movs	r0, #128
 	lsls	r0, r0, #4
@@ -2854,9 +2869,6 @@ Overlay_02000000:
 	.2byte 0x0000
 	.4byte 0x00001afa
 	.4byte 0x02000240
-	.irp EntryTarget, 0x080003c9, 0x080003d1, 0x08020171, 0x080201e9, 0x080ad041, 0x080c8011, 0x080c8019, 0x080c8021, 0x080c8071, 0x080c8089, 0x080c8099, 0x080c80a1, 0x080c80a9, 0x080c80b1, 0x080c80d9, 0x080c80e1, 0x080c80f1, 0x080c80f9, 0x080c8119, 0x080c8129, 0x080c8139, 0x080c8141, 0x080c8149, 0x080c8159, 0x080c8181, 0x080c8189, 0x080c8199, 0x080c81a1, 0x080c81d1, 0x080c8201, 0x080c8211, 0x080c8219, 0x080c8229, 0x080c8231, 0x080c8239, 0x080c8241, 0x080c8279, 0x080c83b1, 0x080c83b9, 0x080c83e1, 0x080c8409, 0x080c84e1, 0x080c85f1, 0x080c85f9, 0x080c8601, 0x080c8681, 0x080c8701, 0x080c8709, 0x080c8779, 0x080c8879, 0x08108009, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0x0200001a
 	.4byte 0x0201001b

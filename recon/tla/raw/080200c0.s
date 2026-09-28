@@ -7,6 +7,9 @@ Func_080200c0:
 	bx	r4
 	.2byte 0x3221
 	.2byte 0x0802
+	.global Func_080200c8
+	.thumb_func
+Func_080200c8:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x31c9

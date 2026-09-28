@@ -1,11 +1,5 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x0200a00d, 0x020080a1, 0x020080ad, 0x020080b5, 0x020080f1, 0x020080a9, 0x0200a191
-	overlay_veneer \EntryTarget
-	.endr
 	push	{lr}
 	movs	r0, #10
 	bl 0x0200a1dc
@@ -60,16 +54,28 @@ Overlay_02000000:
 	pop	{pc}
 	.2byte 0x0000
 	.2byte 0xff7c
+	.global Func_020000a0
+	.thumb_func
+Func_020000a0:
 	.2byte 0x4800
 	bx	lr
 	.2byte 0xaad0
 	.2byte 0x0200
+	.global Func_020000a8
+	.thumb_func
+Func_020000a8:
 	movs	r0, #0
 	bx	lr
+	.global Func_020000ac
+	.thumb_func
+Func_020000ac:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xab00
 	.2byte 0x0200
+	.global Func_020000b4
+	.thumb_func
+Func_020000b4:
 	push	{lr}
 	movs	r0, #144
 	lsls	r0, r0, #4
@@ -99,6 +105,9 @@ Overlay_02000000:
 	.4byte 0x0200acf0
 	.2byte 0xab40
 	.2byte 0x0200
+	.global Func_020000f0
+	.thumb_func
+Func_020000f0:
 	push	{lr}
 	movs	r0, #144
 	lsls	r0, r0, #4
@@ -3260,6 +3269,9 @@ Overlay_02000000:
 	.4byte 0x02000240
 	.2byte 0x23ce
 	.2byte 0x0000
+	.global Func_0200200c
+	.thumb_func
+Func_0200200c:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -3431,11 +3443,11 @@ Overlay_02000000:
 	.2byte 0x0000
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_02002190
+	.thumb_func
+Func_02002190:
 	movs	r0, #0
 	bx	lr
-	.irp EntryTarget, 0x080003c9, 0x080003d1, 0x080003d9, 0x080ad039, 0x080ad041, 0x080c8011, 0x080c8019, 0x080c8021, 0x080c8071, 0x080c8089, 0x080c8099, 0x080c80c1, 0x080c80d1, 0x080c80d9, 0x080c80e9, 0x080c80f1, 0x080c80f9, 0x080c8119, 0x080c8139, 0x080c8141, 0x080c8159, 0x080c8161, 0x080c8181, 0x080c8189, 0x080c81a1, 0x080c81d1, 0x080c8201, 0x080c8211, 0x080c8219, 0x080c8229, 0x080c8239, 0x080c8499, 0x080c84a1, 0x080c84a9, 0x080c84b1, 0x080c84b9, 0x080c84c1, 0x080c84e1, 0x080c8581, 0x080c85e9, 0x080c85f1, 0x080c8779, 0x080c8809, 0x080c8811, 0x080c8819, 0x080c8821, 0x08108009, 0x08108011, 0x08108019, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0x00000016
 	.4byte 0x0000001e

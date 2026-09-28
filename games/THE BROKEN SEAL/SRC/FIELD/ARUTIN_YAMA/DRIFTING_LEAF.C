@@ -4,14 +4,14 @@
 #define TIMER(object) (*(s16 *)&(object)->unknown_64)
 
 /* The way the wind blows the drifting leaves: 0 or 0x8000. */
-extern s32 Data_0200d23c;
+extern s32 ArutinYama_LeafMode;
 
 /* A drifting leaf: blown along the wind with a random wobble while its
  * timer runs, shrinking and settling once it is low, flickering to palette
  * 7 at random; released when its lifetime ends. */
 void ArutinYama_UpdateDriftingLeaf(struct FieldActor *object)
 {
-    switch (Data_0200d23c) {
+    switch (ArutinYama_LeafMode) {
     case 0:
         object->x.fixed += (TIMER(object) << 12) + ((s32)((((u32)(Engine_RandomNext() << 1) >> 16) - 1) << 16) >> 1);
         break;
@@ -20,7 +20,7 @@ void ArutinYama_UpdateDriftingLeaf(struct FieldActor *object)
         break;
     }
     if (TIMER(object) <= 3) {
-        switch (Data_0200d23c) {
+        switch (ArutinYama_LeafMode) {
         case 0:
             object->x.fixed += 0x8000;
             break;

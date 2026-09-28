@@ -6,6 +6,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/resource_3ba_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/STAGE_INTRO.o"(.text)
+        "*/resource_3ba_overlay.o"(.text.x020093e4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/ITEM_ICON.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x0200af64)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/PATH_RIVAL.o"(.text)

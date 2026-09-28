@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-s32 Main_080091a8(s32 layer, s32 x, s32 z);
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 
 /* An object placed at a cell, turned along one axis or the other. */
 struct IcePlacement {
@@ -37,7 +37,7 @@ void KorimaMagari_PlaceObjects(struct IcePlacement *entry)
         Engine_ActorSetSpriteFlags(actor, 0);
         actor->collision_flags = 0;
         actor->radius = 32;
-        height = Main_080091a8(0, actor->x.part.pixel, actor->z.part.pixel) << 16;
+        height = Map_GetTerrainHeightFar(0, actor->x.part.pixel, actor->z.part.pixel) << 16;
         /* FAKEMATCH: y is updated through an s32 lvalue; the coordinate
          * union has an s16 member, which would order the next entry load
          * after this store. */

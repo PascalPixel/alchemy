@@ -1,13 +1,12 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-u8 *Engine_ActorGet();
 s32 Engine_GameFlagIsSet();
 void Engine_ActorSetPosition();
 void Engine_ActorFaceDirection();
 void Engine_ActorEnableActionCallback();
 void OverlayObject_ConfigureObject22WithResource17();
 void Engine_MapCopyCellAttributes();
-void Engine_TaskAddCallback();
 void Engine_EventWait();
 void Engine_MapCopyCellsTo();
 void Engine_ActorSetSpriteFlags();
@@ -19,13 +18,12 @@ void SceneState_SetWord1c0To209AndRun();
 void Engine_AudioPlayCue();
 void Engine_EventSetMessage();
 void SceneActor_SetModeZeroAndValue();
-void Main_080091b8();
+void Map_CopyMetatileCellsRect();
 void FieldScene_RunLateSequence();
 void Engine_EventRequestExit();
 void RunEventScript01();
 void RunDialoguePromptScene();
 
-extern s16 Data_02000240_t[][1];
 
 struct ActorMode {
     u8 pad[100];
@@ -63,14 +61,14 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 s32 KuupuappuHeya_ApplyEntryState(void)
 {
     *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x209;
-    switch (Data_02000240_t[225][0]) {
+    switch (gGameState.entrance) {
     case 5:
         {
             s32 zero = 0;
 
-            Engine_ActorGet(8)[85] = zero;
-            *(s32 *)(Engine_ActorGet(8) + 12) = zero;
-            *(s32 *)(Engine_ActorGet(8) + 20) = zero;
+            ((u8 *)Engine_ActorGet(8))[85] = zero;
+            *(s32 *)(((u8 *)Engine_ActorGet(8)) + 12) = zero;
+            *(s32 *)(((u8 *)Engine_ActorGet(8)) + 20) = zero;
         }
         break;
     case 10:
@@ -116,8 +114,8 @@ s32 KuupuappuHeya_ApplyEntryState(void)
                 Call6((void (*)())Engine_MapCopyCellAttributes, 14, 50, 3, 1, 14, 44);
                 break;
             }
-            ((struct ActorMode *)Engine_ActorGet(24))->mode = 5;
-            ((struct ActorMode *)Engine_ActorGet(25))->mode = 4;
+            ((struct ActorMode *)((u8 *)Engine_ActorGet(24)))->mode = 5;
+            ((struct ActorMode *)((u8 *)Engine_ActorGet(25)))->mode = 4;
             Call2((void (*)())Engine_TaskAddCallback, 0x200aba1, 0xc80);
         }
         break;
@@ -129,7 +127,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         Call6((void (*)())Engine_MapCopyCellsTo, 54, 2, 35, 80, 2, 10);
         Call6((void (*)())Engine_MapCopyCellsTo, 54, 2, 46, 21, 4, 8);
         Call6((void (*)())Engine_MapCopyCellsTo, 54, 2, 46, 81, 4, 8);
-        ((struct ActorFlags *)Engine_ActorGet(26))->flags |= 4;
+        ((struct ActorFlags *)((u8 *)Engine_ActorGet(26)))->flags |= 4;
         Engine_ActorSetSpriteFlags(Engine_ActorGet(26), 0);
         if (Engine_GameFlagIsSet(0x859) != 0) {
             Call3((void (*)())Engine_ActorSetPosition, 26, 0x2a40000, 0x19b0000);
@@ -162,15 +160,15 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         Engine_EventEnd();
         break;
     case 16:
-        Call6((void (*)())Main_080091b8, 54, 2, 2, 8, 44, 21);
-        Call6((void (*)())Main_080091b8, 54, 2, 2, 8, 44, 81);
+        Call6((void (*)())Map_CopyMetatileCellsRect, 54, 2, 2, 8, 44, 21);
+        Call6((void (*)())Map_CopyMetatileCellsRect, 54, 2, 2, 8, 44, 81);
         Call3((void (*)())Engine_ActorSetPosition, 8, 0x3380000, 0x1c80000);
         FieldScene_RunLateSequence();
         Engine_EventRequestExit(16);
         break;
     case 17:
-        Call6((void (*)())Main_080091b8, 54, 2, 2, 8, 44, 21);
-        Call6((void (*)())Main_080091b8, 54, 2, 2, 8, 44, 81);
+        Call6((void (*)())Map_CopyMetatileCellsRect, 54, 2, 2, 8, 44, 21);
+        Call6((void (*)())Map_CopyMetatileCellsRect, 54, 2, 2, 8, 44, 81);
         if (Engine_GameFlagIsSet(0x109) == 0) {
             Call3((void (*)())Engine_ActorSetPosition, 8, 0x3380000, 0x1c80000);
             RunEventScript01();

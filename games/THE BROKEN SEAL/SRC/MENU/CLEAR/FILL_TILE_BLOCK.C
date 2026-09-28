@@ -10,13 +10,13 @@ struct SaveMenuTileBlock {
 
 extern u8 *gWindowWork;
 
-s16 *Func_020020be(s32);
-void Func_0200211e(s16 *);
+s16 *Runtime_BumpAllocateAlternatePool(s32);
+void Runtime_BumpFree(s16 *);
 
 void SaveMenu_FillTileBlock(const struct SaveMenuTileBlock *block)
 {
     s16 *mirror = (s16 *)gWindowWork;
-    s16 *buffer = Func_020020be(0x300);
+    s16 *buffer = Runtime_BumpAllocateAlternatePool(0x300);
     s16 *vram;
     s32 cell;
     s32 row;
@@ -46,5 +46,5 @@ void SaveMenu_FillTileBlock(const struct SaveMenuTileBlock *block)
         mirror += 16;
         base += 16;
     } while (row <= 7);
-    Func_0200211e(buffer);
+    Runtime_BumpFree(buffer);
 }

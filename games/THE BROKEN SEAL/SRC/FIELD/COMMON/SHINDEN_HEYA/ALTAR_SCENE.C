@@ -8,8 +8,8 @@ struct ShrineWork {
     u8 lamps[4];
 };
 
-void Main_08015210(s32 message, s32 a1, s32 a2);
-s32 Local_020027d4(void);
+void UiText_ShowCenteredMessage(s32 message, s32 a1, s32 a2);
+s32 ShindenHeya_ChooseRestartOption(void);
 
 /* Shrine room: the party faces the altar, the room fades to blue, three of the four lamps light, and the scene exits by the altar's answer. */
 void ShindenHeya_RunAltarScene(void)
@@ -40,12 +40,12 @@ void ShindenHeya_RunAltarScene(void)
     work->lamps[2] = 1;
     work->lamps[3] = 1;
     Engine_EventWait(1);
-    Main_08015210(0x116d, 1, 0);
+    UiText_ShowCenteredMessage(0x116d, 1, 0);
     Engine_ColorBufferApplyTarget(0, 0);
     Engine_ColorBufferInterpolate(120);
     Engine_EventWait(120);
     Engine_EventWait(60);
-    if (Local_020027d4() == 0) {
+    if (ShindenHeya_ChooseRestartOption() == 0) {
         Engine_EventEnd();
         Engine_EventRequestExit(20);
     } else {

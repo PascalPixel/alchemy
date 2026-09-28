@@ -27,7 +27,7 @@ s32 FieldScene_RunPrimarySequence(s32 a0)
     if (Value2(Object_CheckMovementCollision, (s32)rec, (s32)slot) == 0) {
         Event_Begin();
         Object_SetAnimation((s32)rec, 6);
-        Task_Wait(6);
+        WaitFrames(6);
         Audio_PlayCue(152);
         Object_SetAnimation((s32)rec, 7);
         *(s32 *)(rec + 48) = 0x30000;
@@ -57,20 +57,20 @@ void FieldScene_RunScene3a6SequenceA(void)
         Camera_SetSpeed(0x10000, 0x2000);
         Camera_FollowActor(8, 1);
         Camera_WaitForMove();
-        Event_Wait(60);
+        Battle_WaitMode0(60);
         Actor_FaceDirection(8, 0xc000, 20);
         Actor_SetAttachedEffect(8, 0x102);
         Actor_RunRepeatedMotion(8, 2);
-        Event_Wait(20);
-        Actor_SetSpeed(8, 0x10000, 0x8000);
+        Battle_WaitMode0(20);
+        Actor_SetMotionSpeed(8, 0x10000, 0x8000);
         Actor_WalkToAndWait(8, 0x318, 248);
         Audio_PlayCue(152);
         record = Actor_Get(8);
         *(s32 *)(record + 40) = 0x80000;
         Actor_WalkToAndWait(8, 0x318, 0x118);
-        Event_Wait(20);
+        Battle_WaitMode0(20);
         Actor_FaceDirection(8, 0xc000, 20);
-        Event_Wait(30);
+        Battle_WaitMode0(30);
         Event_End();
     }
 }
@@ -88,12 +88,12 @@ void FieldScene_RunScene3a6SequenceB(void)
             Event_Begin();
             Actor_SetAttachedEffect(8, 0x102);
             Actor_RunRepeatedMotion(8, 2);
-            Event_Wait(20);
-            Actor_SetSpeed(8, 0x20000, 0x10000);
+            Battle_WaitMode0(20);
+            Actor_SetMotionSpeed(8, 0x20000, 0x10000);
             Actor_WalkToAndWait(8, 0x2f8, 0x118);
             Actor_WalkToAndWait(8, 0x2f8, 0x138);
             Actor_WalkToAndWait(8, 0x318, 0x138);
-            Event_Wait(10);
+            Battle_WaitMode0(10);
             Actor_FaceDirection(8, 0xc000, 20);
             record = Actor_Get(8);
             *(s32 *)(record + 108) = (s32)SceneActor_FaceActorZero;
@@ -137,7 +137,7 @@ void FieldScene_RunScene3a6SequenceC(void)
 void FieldScene_RunActor8ZeroStep(void)
 {
     Event_Begin();
-    Actor_SetAnimation(8, 0);
+    Object_SetModeById(8, 0);
     Event_End();
 }
 

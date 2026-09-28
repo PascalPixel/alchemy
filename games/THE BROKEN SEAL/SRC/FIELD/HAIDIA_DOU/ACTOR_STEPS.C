@@ -12,7 +12,7 @@ void SceneActor_WaitActorDescent(u8 *obj)
     s32 cnt = 60;
 
     while (cnt != 0) {
-        Task_Wait(1);
+        WaitFrames(1);
         cnt--;
         if (*(s32 *)(obj + 12) <= *(s32 *)(obj + 20))
             break;

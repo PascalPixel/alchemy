@@ -2,6 +2,6 @@
 
 void ActorPresentation_AdvanceActorElevenStates(void)
 {
-    Actor_SetAnimation(11, 1);
-    Actor_SetAnimation(11, 2);
+    Object_SetModeById(11, 1);
+    Object_SetModeById(11, 2);
 }

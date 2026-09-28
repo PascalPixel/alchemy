@@ -1,15 +1,13 @@
 #include "SHOP.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
-extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
 /* Offers the shop's special item, whose price rises with each purchase:
    when the party can afford it, the player picks the member who carries
    it, and a full bag sends them back to choose again. */
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 #define SPECIAL_ITEM 228
 
@@ -73,7 +71,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
             Shop_DrawParty((s32)window, selected_index, shop->selected_item);
             Shop_DrawUnitItem(item_window, unit_id, shop->selected_item);
         }
-        if ((INPUT_NEW_KEYS & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             slot = Inventory_AddItemFar(unit_id, shop->selected_item);
             if (slot < 0) {
                 Audio_PlayCue(0x71);
@@ -93,17 +91,17 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
             Func_080772a0(1);
             goto done;
         }
-        if ((INPUT_NEW_KEYS & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             UiMessage_ShowAndRestoreState(0xcc5);
             Audio_PlayCue(0x71);
             goto done;
         }
-        if ((INPUT_REPEAT_KEYS & 0x20) != 0) {
+        if ((gKeysRepeat & 0x20) != 0) {
             Audio_PlayCue(0x6f);
             selected_index--;
             redraw = 1;
         }
-        if ((INPUT_REPEAT_KEYS & 0x10) != 0) {
+        if ((gKeysRepeat & 0x10) != 0) {
             Audio_PlayCue(0x6f);
             selected_index++;
             redraw = 1;

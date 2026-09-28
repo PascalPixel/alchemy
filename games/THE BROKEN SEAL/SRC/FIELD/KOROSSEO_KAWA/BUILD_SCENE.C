@@ -66,7 +66,6 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u8 *Data_03001f3c;
 extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 KorosseoKawa_ImageData[];
 extern u8 Korosseo_UpdatePathRival[];
@@ -215,7 +214,6 @@ void Script_WaitForEventTimeout(struct FieldActor *);              /* re-attach 
 void FieldScene_BuildSceneDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre,
                    s32 extra, s32 third, s32 fourth)
 {
-    extern Ctl Data_02001000;
 
     u8 *desc;
     u8 *rec0;

@@ -143,9 +143,9 @@ Func_02000ee0:
 	.4byte 0x0200aba8
 	.section .text.x02009ac8,"ax",%progbits
 	.p2align 2
-	.global Local_02001ac8
+	.global TakaraAshiba_DispatchByActorEightColumn
 	.thumb_func
-Local_02001ac8:
+TakaraAshiba_DispatchByActorEightColumn:
 	push	{r5, r6, lr}
 	movs	r0, #8
 	sub	sp, #8

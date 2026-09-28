@@ -252,7 +252,6 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
 
 void SceneState_ResetCounterAndStartTask(void)
 {
-    extern s16 Data_02001000;
     extern s32 KorosseoKawa_Countdown;
 
     SceneTask task;
@@ -265,7 +264,6 @@ void SceneState_ResetCounterAndStartTask(void)
 
 void SceneState_SetMode66AndPassOpeningSequence(void)
 {
-    extern s16 Data_02001000;
     extern s32 KorosseoKawa_Countdown;
 
     s32 value = 66;
@@ -277,7 +275,6 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
 
 void SceneState_WaitUntilWordC41cIs22(void)
 {
-    extern u16 Data_02001000;
     extern u32 KorosseoKawa_Countdown;
 
     s32 i;
@@ -297,7 +294,6 @@ void SceneState_WaitUntilWordC41cIs22(void)
 
 void SceneState_ApplyRectsForActorsNineAndTen(void)
 {
-    extern Ctl Data_02001000;
 
     struct FieldActor *actor;
     s32 blocked;
@@ -336,7 +332,6 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
 
 void FieldScene_RunTwoCallSequence(void)
 {
-    extern Ctl Data_02001000;
 
     StagedActor_PushActorAhead();
     SceneState_ApplyRectsForActorsNineAndTen();
@@ -344,7 +339,6 @@ void FieldScene_RunTwoCallSequence(void)
 
 void SceneState_ApplyRectAndSend303(void)
 {
-    extern s16 Data_02001000;
     extern s32 KorosseoKawa_Countdown;
 
     {

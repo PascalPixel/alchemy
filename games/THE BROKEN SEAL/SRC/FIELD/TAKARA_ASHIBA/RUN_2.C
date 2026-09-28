@@ -40,7 +40,7 @@ struct Slot {
 void TakaraAshiba_OpenPassage();
 void Korosseo_ShowItemIcon();
 s32 Object_GetById();
-void Local_02001ac8();
+void TakaraAshiba_DispatchByActorEightColumn();
 void TakaraAshiba_UpdateBlockRects();
 void ObjectDispatch_ApplyValueToChildren();
 
@@ -194,7 +194,7 @@ void FieldScene_RunScene3b4_02002334(void)
     if (GameFlag_IsSet(0xed9) != 0) {
         Actor_SetAnimation(14, 2);
     }
-    Local_02001ac8();
+    TakaraAshiba_DispatchByActorEightColumn();
     SceneActor_RunWhenActor9AtTile45x43();
     TakaraAshiba_UpdateBlockRects();
     FieldScene_RunSingleStep();

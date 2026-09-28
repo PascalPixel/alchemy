@@ -1,3 +1,9 @@
+/* Draft of resource_3a5 0x020084e4 (RamakanSabaku_ApplyEntryState), formerly
+ * games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/ENTRY_STATE.C.
+ * Remaining difference: the ROM loads desert scenes 0x59-0x5c from the
+ * literal pool, as link-time scene symbols would; C builds those constants
+ * with movs. The Data_ spellings below are the old address-named forms. The
+ * listing keeps these rows. */
 #include "TYPES.H"
 
 void Engine_GameFlagClear();

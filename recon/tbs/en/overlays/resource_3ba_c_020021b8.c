@@ -151,6 +151,16 @@
  * adds no lifetime. The finite repair command refuses the volatile source;
  * its reciprocal catalog targets XOR temporaries, not this pointer pair.
  * No volatile qualifier or tool guard was changed. Retain the 17-edit body. */
+/* 2026-09-27 renderer continuation: sharing the timer pointer between blend
+ * and position keeps 1264 bytes but exchanges sprite/timer sl-r9 roles
+ * (21 edits). Reusing it for the scene switch expands to 1268/129 edits.
+ * One cursor for both word writes and sprite submission expands to 1272/141
+ * edits and loses the required 20-byte frame. These distinct ownership
+ * models fail; retain the exact-topology 17-edit draft for all three twins.
+ * Sharing only test/store access through a timer pointer across scale/blend,
+ * then sharing only active-branch duration/store access, both compile to the
+ * same 21-edit output as full pointer sharing. CSE restores the full pointer
+ * lifetime, so the predicted four-use allocation boundary never appears. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 

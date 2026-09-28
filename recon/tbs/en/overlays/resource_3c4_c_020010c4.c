@@ -1,3 +1,8 @@
+/* 2026-09-27 continuation: staging both options and callback pointers before
+ * the flag clear keeps 284 bytes but gives 29 edits, with the pointer still
+ * published after the clear. A one-record options array and a typed motion
+ * bitfield each compile to the canonical 11-edit result. The opening OR and
+ * post-wait publication remain independent unresolved source lifetimes. */
 /* 2026-09-27 babi-land final audit: whole 284-byte extent and five pool
  * words rescored: 11 differing halfwords / 11 normalized edits. Exact
  * KUUPUAPPU_MURA/DRIFT.C publishes its callback to a constructor-owned leaf

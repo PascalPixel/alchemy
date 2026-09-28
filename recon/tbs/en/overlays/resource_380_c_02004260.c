@@ -1,4 +1,10 @@
-/* Astra 2026-09-27 interface audit: Engine_VramLoad now uses the canonical
+/* 2026-09-27 halfword-zero transfer from exact TORETO_HEYA/MAP_PATCH.C:
+ * replacing the reused zero/buffer local with a one-halfword record emitted
+ * 206/200 bytes, 94 differing halfwords / 53 aligned edits. The zero moves
+ * into a new r5 table-base lifetime and the actor/text values all reallocate;
+ * it does not preserve the reference's early r8 zero. Reject this storage
+ * model and retain the canonical 200-byte, two-halfword draft. DONE +0.
+ * Astra 2026-09-27 interface audit: Engine_VramLoad now uses the canonical
  * s32(s32, s32, const void *) contract from FIELD_EVENT.H, through this
  * unit's 0200c8ac veneer. The full candidate is byte-identical (cmp):
  * 200/200 bytes, two differing halfwords. In particular this later call

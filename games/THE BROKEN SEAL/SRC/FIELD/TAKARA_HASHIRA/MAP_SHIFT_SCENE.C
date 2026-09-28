@@ -18,6 +18,8 @@ void Engine_ActorSetChildValue();
 void Engine_ActorEnableActionCallback();
 void Engine_TaskRemoveCallback();
 void Engine_EventEnd();
+void SceneEffect_SpawnRandomizedParticle();
+void SceneEffect_SpawnRandomEffectEveryEightFrames();
 
 
 
@@ -70,11 +72,11 @@ void TakaraHashira_RunMapShiftScene(void)
         Engine_EventWait(20);
         Call6(Engine_MapCopyCellsTo, 73, 10, 60, 10, 1, 2);
         Engine_EventWait(20);
-        Engine_TaskAddCallback(0x200a231, 0xc80);
+        Engine_TaskAddCallback((s32)SceneEffect_SpawnRandomizedParticle, 0xc80);
         Engine_EventWait(40);
         if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
             record = Engine_ActorGet(12);
-            *(s32 *)(record + 108) = 0x200a2d9;
+            *(s32 *)(record + 108) = (s32)SceneEffect_SpawnRandomEffectEveryEightFrames;
             Engine_ActorSetAnimation(12, 6);
             ObjectMotion_WaitForAnimationChange(12);
             record = Engine_ActorGet(12);
@@ -86,7 +88,7 @@ void TakaraHashira_RunMapShiftScene(void)
         } else {
             Engine_EventWait(60);
         }
-        Call1(Engine_TaskRemoveCallback, 0x200a231);
+        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_SpawnRandomizedParticle);
         Engine_EventWait(20);
         Call6(Engine_MapCopyCellsTo, 72, 10, 60, 10, 1, 2);
         Engine_EventWait(20);

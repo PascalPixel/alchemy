@@ -2225,6 +2225,8 @@ KareiMachi_Data03:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global KareiMachi_ActionScript01
+KareiMachi_ActionScript01:
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0x00000222
@@ -3171,6 +3173,8 @@ KareiMachi_DoorCells:
 	.4byte 0x000e0033
 	.4byte 0x0200d0c8
 	.4byte 0x00190029
+	.global KareiMachi_Script02
+KareiMachi_Script02:
 	.4byte 0x00000022
 	.4byte 0x0200b6f9
 	.4byte 0x0000000c

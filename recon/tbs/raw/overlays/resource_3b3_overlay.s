@@ -2042,6 +2042,9 @@ Func_0200215c:
 	.4byte 0x00000203
 	.section .text.x0200a230,"ax",%progbits
 	.align 2
+	.global SceneEffect_SpawnRandomizedParticle
+	.thumb_func
+SceneEffect_SpawnRandomizedParticle:
 	.global Func_02002230
 	.thumb_func
 Func_02002230:
@@ -2121,6 +2124,9 @@ Func_02002230:
 	.4byte 0x0ffff000
 	.4byte 0x020093b1
 	.4byte 0x014d0000
+	.global SceneEffect_SpawnRandomEffectEveryEightFrames
+	.thumb_func
+SceneEffect_SpawnRandomEffectEveryEightFrames:
 	.global Func_020022d8
 	.thumb_func
 Func_020022d8:
@@ -3460,3 +3466,10 @@ StagedActor_FootprintBounds:
 	.global TakaraHashira_PillarSlots
 TakaraHashira_PillarSlots:
 	.space 80
+	.space 12
+	.global TakaraHashira_ShakenScroll
+TakaraHashira_ShakenScroll:
+	.space 12
+	.global TakaraHashira_ShakeChance
+TakaraHashira_ShakeChance:
+	.space 4

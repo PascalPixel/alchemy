@@ -9,6 +9,9 @@
 
 #include "RESOURCE_3A8_EFFECT.H"
 
+extern const s32 KareiMachi_ActionScript01[];
+extern const s32 KareiMachi_Script02[];
+
 enum {
     /* Message 0x182 + 181. */
     ITEM_NUT = 181
@@ -829,7 +832,7 @@ void FieldScene_RunScene3a8SequenceB(void)
         *(s32 *)(rec2 + 24) = 0x1999;
         *(s32 *)(rec2 + 28) = 0x1999;
         Actor_SetPosition(11, 0x960000, 0x2d80000);
-        Value2(Engine_ActorEnableActionCallback, 11, 0x200c268);
+        Value2(Engine_ActorEnableActionCallback, 11, (s32)KareiMachi_ActionScript01);
         v6 = 1;
         Map_CopyCellsTo(67, 64, 71, 44, v6, v5);
         Map_CopyCellsTo(67, 64, 72, 44, v6, v5);
@@ -970,7 +973,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
         L_020037ae:;
         if (GameFlag_IsSet(0x302) == 0) {
             if (*(s16 *)(rec7 + 10) <= 245) {
-                if ((*(volatile s32 *)0x03001e40 & 1) == 0) {
+                if ((*(volatile s32 *)&gFrameCount & 1) == 0) {
                     if (GameFlag_IsSet(0x202) == 0) {
                         Call1(BattleFx_SetQueuedSoundAndPlay, -1);
                         Audio_PlayCue(230);
@@ -983,7 +986,7 @@ void FieldScene_RunSupplementalSequenceOne(s32 a0)
     }
     if (GameFlag_IsSet(0x303) == 0) {
         if (*(s16 *)(rec8 + 10) <= 0x2c5) {
-            if ((*(volatile s32 *)0x03001e40 & 1) == 0) {
+            if ((*(volatile s32 *)&gFrameCount & 1) == 0) {
                 if (GameFlag_IsSet(0x203) == 0) {
                     Call1(BattleFx_SetQueuedSoundAndPlay, -1);
                     Audio_PlayCue(230);
@@ -1025,7 +1028,7 @@ void FieldScene_RunScene3a8SequenceA(s32 a0, s32 a1, s32 a2)
             *((u8 *)target - 3) = 1;
         }
         Object_SetAnimation((s32)rec7, 1);
-        Engine_ObjectSetScript((s32)rec7, 0x200d120);
+        Engine_ObjectSetScript((s32)rec7, (s32)KareiMachi_Script02);
     }
 }
 

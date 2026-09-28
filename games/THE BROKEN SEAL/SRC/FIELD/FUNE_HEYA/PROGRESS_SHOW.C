@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern struct EventWork *gEventWork;
+
 extern u8 FuneHeya_ProgressTableB;
 extern u8 FuneHeya_ProgressTableC;
 extern u8 FuneHeya_ProgressTableA;
@@ -132,9 +134,9 @@ void Scene_RunFourActorProgressPresentation(void)
     }
     Engine_ActorRunRepeatedMotion(rec7, 1);
     if (v6 == 1) {
-        (*(struct EventWork **)0x03001ebc)->message += 1;
+        gEventWork->message += 1;
     } else if (v6 == 2) {
-        (*(struct EventWork **)0x03001ebc)->message += 2;
+        gEventWork->message += 2;
     }
     Engine_ActorStartRepeatedMotion(rec7, 2);
     FieldScene_RunStepThen10(rec7);
@@ -154,11 +156,11 @@ void Scene_RunFourActorProgressPresentation(void)
         v6 = 3;
     }
     if (v6 == 0) {
-        (*(struct EventWork **)0x03001ebc)->message += 1;
+        gEventWork->message += 1;
     } else if (v6 == 1) {
-        (*(struct EventWork **)0x03001ebc)->message += 2;
+        gEventWork->message += 2;
     } else if (v6 == 2) {
-        (*(struct EventWork **)0x03001ebc)->message += 3;
+        gEventWork->message += 3;
     }
     FieldScene_CallPairWith10(rec7, 0);
     FieldScene_RunStepThen10(rec7);

@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+extern const s32 FuneHeya_Script01[];
 #include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
@@ -157,7 +159,7 @@ void FieldScene_RunFourActorCoordinatePresentation(void)
     Actor_SetAnimation(9, 1);
     mode = 128;
     OverlayObject_SetPositionAndHeading(0, 0x1b8, 134, 0x8000);
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = (mode << 1);
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = (mode << 1);
     Event_OpenScreen();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x198, 134);
@@ -287,7 +289,7 @@ void FieldScene_RunScene3b1_02003d10(void)
     rec7 = Value0(FuneHeya_PlaceAnchorCharm);
     Event_Wait(20);
     Audio_PlayCue(214);
-    Engine_ObjectSetScript(rec7, 0x200e738);
+    Engine_ObjectSetScript(rec7, FuneHeya_Script01);
     Event_Wait(40);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(20);

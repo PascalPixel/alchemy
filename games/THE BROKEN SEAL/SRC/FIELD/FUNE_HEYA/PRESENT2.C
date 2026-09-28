@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+extern const s32 FuneHeya_ActionScriptE[];
 #include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
@@ -105,7 +107,7 @@ void FieldScene_RunScene3b1_02004198(void)
     SceneActor_SetFlagBit3ForActors28To35();
     FieldScene_RunSceneStep(19, 11, 12);
     Actor_SetAnimation(10, 6);
-    Value2(Engine_ActorEnableActionCallback, 12, 0x200e840);
+    Value2(Engine_ActorEnableActionCallback, 12, (s32)FuneHeya_ActionScriptE);
     base5_200e8e4 = (s32)FuneHeya_EntryActionScript;
     Actor_EnableActionCallback(36, base5_200e8e4);
     Value2(Engine_ActorEnableActionCallback, 37, base5_200e8e4);

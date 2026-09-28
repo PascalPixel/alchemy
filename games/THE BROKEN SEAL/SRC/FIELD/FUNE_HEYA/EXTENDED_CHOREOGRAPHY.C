@@ -602,9 +602,9 @@ void FieldScene_RunBranchingActorPresentation(void)
         Call1(FieldScene_RunStepThen10, 0x9009);
         Actor_ShowEmote(8, 0x108, 40);
         FieldScene_RunStepThen10(request_a);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 2;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 2;
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 2;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 2;
         Actor_RunRepeatedMotion(9, 1);
         Call1(FieldScene_RunStepThen10, 0x9009);
         Actor_StartRepeatedMotion(8, 2);
@@ -698,9 +698,9 @@ void FieldScene_RunBranchingActorPresentation(void)
         FieldScene_RunStepThen10(request_b);
         Actor_StartRepeatedMotion(9, 1);
         Event_ShowMessageAndWait(0x9009, 0, 40);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 3;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 3;
         Actor_StartRepeatedMotion(8, 3);
         Event_ShowMessageAndWait(8, 0, 40);
     }
@@ -757,9 +757,9 @@ void FieldScene_RunBranchingActorPresentation(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Actor_SetAnimationAndWait(8, 3);
         Call1(FieldScene_RunStepThen10, 0x1008);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         Call1(FieldScene_RunStepThen10, 0x1008);
     }
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);

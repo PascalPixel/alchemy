@@ -440,6 +440,8 @@ FuneHeya_ActionScriptB:
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x00000010
+	.global FuneHeya_Script01
+FuneHeya_Script01:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00016000
@@ -590,6 +592,8 @@ FuneHeya_ProgressTableC:
 	.4byte 0x00ba0000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global FuneHeya_ActionScriptF
+FuneHeya_ActionScriptF:
 	.4byte 0x00000022
 	.4byte 0x020080b1
 	.4byte 0x00000022

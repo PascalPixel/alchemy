@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
+extern u8 gEffectWork[];
+
 void BattleFx_AdvanceObjectField6WithRamp(void);
 void BattleFx_ShrinkObjectAndDestroySlow(void);
 void BattleEffect_UpdatePhasedRadialParticle(void);
@@ -47,7 +49,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)0x03001F30;
+    effect_slots = *(void **)gEffectWork;
     Unnamed_080b0840Far(0x201090);
     WaitFrames(30);
     ObjectMotion_ArmCallback(arg, 0x4000, 0);

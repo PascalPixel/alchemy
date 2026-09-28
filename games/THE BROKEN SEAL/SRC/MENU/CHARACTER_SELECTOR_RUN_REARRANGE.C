@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "DMA.H"
 
+extern u8 gMenuWork[];
+
 /* menu/character_selector_run_rearrange.c */
 struct CharacterSelectWork {
     u8 padding0[8];
@@ -59,7 +61,7 @@ s32 CharacterSelector_RunRearrange(void)
     s32 result;
     s32 i;
 
-    work = *(struct CharacterSelectWork **)0x03001f2c;
+    work = *(struct CharacterSelectWork **)gMenuWork;
     cursor = work->cursor;
     count = work->count;
     redraw = 1;

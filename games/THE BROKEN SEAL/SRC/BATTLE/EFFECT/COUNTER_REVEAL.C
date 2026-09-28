@@ -4,6 +4,8 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+extern u8 gBattleFxWork[];
+
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -75,7 +77,7 @@ void BattleFx_RunCounterReveal(void *object)
     s32 zero_val;
     s32 frame;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

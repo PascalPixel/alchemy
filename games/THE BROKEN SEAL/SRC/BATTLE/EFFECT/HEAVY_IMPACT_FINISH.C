@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
+extern u8 gEffectWork[];
+
 void BattleFx_AdvanceSpinAngle(void);
 void BattleFx_RunAngledApproachPhases(void);
 
@@ -36,7 +38,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
             return;
         }
         BattleFx_InitializeSlots();
-        base = (*((s32 *)0x03001F30));
+        base = (*((s32 *)gEffectWork));
         Unnamed_080b0840Far(0x20118C);
         Audio_PlayCue(0xAD);
         Motion_SetVarCbAndRefresh(id, 1);

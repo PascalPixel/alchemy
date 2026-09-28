@@ -1,5 +1,7 @@
 #include "DMA.H"
 
+extern u8 gFrameCount[];
+
 void Func_08097644(void);
 
 
@@ -24,7 +26,7 @@ void RunSceneTransitionEffect(s32 x, s32 y)
     BattleEffect_InitializeSharedScene();
     zero = 0;
     Dma_Set((const void *)&zero, work, 0x850000a6, (volatile u32 *)0x040000d4);
-    *(u16 *)(work + 0x28e) = Math_ModU(*(s32 *)0x03001e40 << 1, 360);
+    *(u16 *)(work + 0x28e) = Math_ModU(*(s32 *)gFrameCount << 1, 360);
     BattleFx_AdvanceHueCycle();
     BattleFx_ApplyColorToTargetBuffer(((s8)work[0x28d] << 10) | ((s8)work[0x28c] << 5) |
                                       (s8)work[0x28b] | 0x200000, 1);

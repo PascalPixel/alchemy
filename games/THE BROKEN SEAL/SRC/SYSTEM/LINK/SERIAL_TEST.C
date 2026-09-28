@@ -2,13 +2,15 @@
 #include "SERIAL_RUNTIME.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
 
+extern u8 gKeysHeld[];
+
 void Audio_PlayCue(s32 cue);
 void SerialRuntime_Initialize(void);
 void SerialRuntime_WaitForStatusMask(s32 mask);
 void SerialRuntime_BeginTransferA(const void *source, s32 size);
 void SerialRuntime_BeginTransferB(void *destination);
 
-#define KEYS_HELD (*(volatile u32 *)0x03001ae8)
+#define KEYS_HELD (*(volatile u32 *)gKeysHeld)
 
 void RuntimeWait_BusyLoopTick(void)
 {

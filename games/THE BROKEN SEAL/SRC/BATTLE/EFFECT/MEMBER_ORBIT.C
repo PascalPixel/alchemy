@@ -4,6 +4,9 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+extern u8 gBattleFxWork[];
+extern u8 gCameraWork[];
+
 void BattleFx_ArmBg2AffineHBlankDma(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -57,7 +60,7 @@ void BattleFx_RunMemberOrbit(void *object)
     s32 *record_slot;
     s32 frame;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -92,7 +95,7 @@ void BattleFx_RunMemberOrbit(void *object)
         s32 i;
         s32 id_ofs;
 
-        facing = *(s32 *)0x03001E80;
+        facing = *(s32 *)gCameraWork;
         scanline = (s32 *)((u8 *)work + 0x6980);
         if (FIELD_AT_OFFSET(FIELD_AT_OFFSET(work, void **, 0x7828), s32 *, 4) == 0) {
             s32 angle;

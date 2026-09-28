@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern u8 gEffectWork[];
+
 void BattleFx_AdvanceSpinAngle(void);
 void BattleFx_ShrinkObjectAndDestroyFast(void);
 void BattleFx_UpdateRadialSpread(void);
@@ -78,7 +80,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)0x03001F30;
+    effect_slots = *(void **)gEffectWork;
     Unnamed_080b0840Far(0x201204);
     WaitFrames(30);
     djinni->visible = 0;

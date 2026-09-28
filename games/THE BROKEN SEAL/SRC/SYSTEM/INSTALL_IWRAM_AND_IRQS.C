@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "DMA.H"
 
+extern u8 Data_030000e0[];
+
 /* IWRAM start, where the runtime (SYSTEM/RUNTIME.S) is copied and the
    interrupt vector points. */
 extern u8 Data_03000000[];
@@ -27,7 +29,7 @@ void Runtime_InstallIwramAndIrqs(void)
     iwram = Data_03000000;
     Dma_Set((const void *)0x08000770, iwram, 0x84000500, (volatile u32 *)0x040000d4);
     Data_03007ffc = iwram;
-    Dma_Set((const void *)0x08007320, (void *)0x030000e0, 0x8400000e, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)0x08007320, (void *)Data_030000e0, 0x8400000e, (volatile u32 *)0x040000d4);
     *(volatile u16 *)0x04000004 = zero;
     value = 0xc3ff;
     *(volatile u16 *)0x04000132 = value;

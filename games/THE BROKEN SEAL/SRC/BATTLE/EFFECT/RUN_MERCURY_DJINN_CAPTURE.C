@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern u8 gEffectWork[];
+
 void BattleFx_HalveDistanceToTarget(void);
 void BattleFx_UpdateRandomTargetParticle(void);
 
@@ -91,7 +93,7 @@ void BattleFx_RunMercuryDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)0x03001F30;
+    effect_slots = *(void **)gEffectWork;
     Unnamed_080b0840Far(0x204084);
     WaitFrames(30);
     djinni->visible = 0;

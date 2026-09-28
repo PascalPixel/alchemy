@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
+extern u8 gMenuWork[];
+extern u8 gKeyState[];
+
 struct MenuIcon {
     u8 padding0[5];
     u8 state;
@@ -32,7 +35,7 @@ void UiWindow_CloseIfOpen(s32 *window, s32 mode);
    for A, B or Start and clear it; otherwise set flag 0x151. */
 void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
 {
-    struct InventoryMenuWork *menu = *(struct InventoryMenuWork **)0x03001f2c;
+    struct InventoryMenuWork *menu = *(struct InventoryMenuWork **)gMenuWork;
     s32 window;
     s32 height;
     s32 width;
@@ -58,7 +61,7 @@ void InventoryMenu_ShowModalMessage(s32 message, s32 x, s32 y)
         WaitFrames(1);
         do {
             WaitFrames(1);
-        } while (!(*(volatile u32 *)0x03001c94 & 1) && !(*(volatile u32 *)0x03001c94 & 2) && !(*(volatile u32 *)0x03001c94 & 8));
+        } while (!(*(volatile u32 *)gKeyState & 1) && !(*(volatile u32 *)gKeyState & 2) && !(*(volatile u32 *)gKeyState & 8));
         if (y == -1)
             RenderOutput_RedrawSavedRectFar(window);
         RenderOutput_ClearListFar(window);

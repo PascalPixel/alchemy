@@ -9,7 +9,7 @@
 @ high-register save and the branch on flags from subs r7, r4, #1
 @ (0x0800073c) are beyond both approved compilers. The pool word
 @ 0x04000006 at 0x08000764 is loaded by no instruction and carries no
-@ credit. TLA links its own revision (TLA SOUND/CHANNEL_UPDATE_ENTRY.S).
+@ credit. TLA links its own revision (raw 08000630.S).
 @ credit: handwritten — TBS sound driver guarded ROM-to-IWRAM mixer entry
 .syntax unified
 .text

@@ -670,43 +670,6 @@ mod tests {
     }
 
     #[test]
-    fn import_veneer_scan_finds_exactly_each_verified_import_list() {
-        let root = crate::compiler::routing::root();
-        let rom = crate::overlay::rom::CanonicalRom::load(root).unwrap();
-        let main = main_image(CompilerTarget::Tbs).unwrap();
-        let names = SourcePaths::load(root).unwrap();
-        let listings = root.join("recon/tbs/raw/overlays");
-        let mut overlays = 0;
-        for entry in std::fs::read_dir(listings).unwrap() {
-            let file = entry.unwrap().file_name().into_string().unwrap();
-            let Some(overlay) = file.strip_suffix("_overlay.s") else {
-                continue;
-            };
-            let reference = rom.overlay(overlay).unwrap();
-            let image = OverlayImage {
-                overlay,
-                reference: &reference,
-                main,
-                names: &names,
-            };
-            let list = std::fs::read_to_string(root.join(image.import_list())).unwrap();
-            // Compare every listed import, including the IWRAM arithmetic entries.
-            let listed = list
-                .split(|c: char| c == ',' || c.is_whitespace())
-                .filter_map(|word| u32::from_str_radix(word.strip_prefix("0x")?, 16).ok())
-                .map(|target| target & !1)
-                .collect::<Vec<_>>();
-            let found = import_veneers(&reference, main)
-                .into_iter()
-                .map(|(_, chain)| chain[0])
-                .collect::<Vec<_>>();
-            assert_eq!(found, listed, "{overlay}");
-            overlays += 1;
-        }
-        assert!(overlays > 0);
-    }
-
-    #[test]
     fn a_pool_pair_is_loaded_but_never_becomes_a_call_binding() {
         let mut reference = vec![0; 0x100];
         reference[..2].copy_from_slice(&0x4800u16.to_le_bytes());

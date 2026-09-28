@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7780 bytes; 2638 differing halfwords, 676 aligned edits. */
+ * Candidate 7792 bytes; 2356 differing halfwords, 534 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -111,6 +111,13 @@ static __inline__ void DrawImage(s32 canvas, s32 pixels, s32 x, s32 y, s32 width
                                  RectangleBlit *draw)
 {
     (*draw)((void *)canvas, (void *)pixels, x, y, width, height);
+}
+
+/* FAKEMATCH: Inline scope preserves argument order for the 32 by 64 impact image. */
+static __inline__ void DrawCenteredImpact(s32 canvas, s32 pixels, s32 x, s32 y,
+                                         RectangleBlit draw)
+{
+    draw((void *)canvas, (void *)pixels, x - 16, y - 32, 32, 64);
 }
 
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
@@ -371,10 +378,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     if (kind == 11) {
         *(volatile u16 *)0x04000020 = 0x100;
         if (work->effect->side == 0) {
-            tmp = (frame - target_screen->x);
-            goto SetScrollX;
+            *(volatile s32 *)0x04000028 = (frame - target_screen->x) << 8;
+        } else {
+            *(volatile s32 *)0x04000028 = (96 - target_screen->x) << 8;
         }
-        *(volatile s32 *)0x04000028 = ((96 - target_screen->x) << 8);
     } else {
         if (kind == 32) {
             *(volatile u16 *)0x04000020 = 0x100;
@@ -385,9 +392,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 scroll_pos = 0x80000;
                 scroll_speed = -0xc0000;
             }
-            tmp = (scroll_pos >> 16);
-        SetScrollX:;
-            *(volatile s32 *)0x04000028 = (tmp << 8);
+            *(volatile s32 *)0x04000028 = (scroll_pos >> 16) << 8;
         }
     }
     if (kind == 8) {
@@ -523,19 +528,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
     }
     kind_from_two = (kind - 2);
-    if ((u32)kind_from_two > 1) {
-        if (kind != 12) {
-            if (kind != 22) {
-                if (kind != 29) {
-                    if (kind != 28) {
-                        goto ChooseDuration;
-                    }
-                }
-            }
-        }
+    if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 29 || kind == 28) {
+        Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
     }
-    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
-ChooseDuration:;
     kind_from_four = kind - 4;
     if ((u32)kind_from_four <= 2 || kind == 23 || kind == 30 || kind == 27 || kind == 33 ||
         kind == 34 || kind == 100) {
@@ -659,13 +654,13 @@ ChooseDuration:;
                         for (i = 0; i != 128; i++) {
                             s32 index = i / 2;
                             struct EffectStep *step = &work->particles[index];
-                            s32 life = step->variant;
+                            s32 size = step->variant;
 
-                            if (life > 0) {
-                                s32 size;
-
+                            if (size > 0) {
                                 EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-                                size = (life >> 4) + 1;
+                                /* Remaining lifetime determines the particle's image size. */
+                                size >>= 4;
+                                size++;
                                 projected.x /= 2;
                                 blitters[index & 1](canvas, sprites + Data_080ede48[size - 1],
                                                     projected.x - size / 2, projected.y - size,
@@ -763,10 +758,15 @@ ChooseDuration:;
                 s32 image_y;
                 s32 value;
 
-                value = Trig_Sin(angle);
-                image_x = ((value << 3) >> 16) + target_screen->x / 2 - Data_080edeca[image] / 2;
-                value = Trig_Cos(angle);
-                image_y = ((value << 5) >> 16) - Data_080eded0[image] / 2;
+                image_x = Trig_Sin(angle);
+                image_x <<= 3;
+                image_x >>= 16;
+                image_x += target_screen->x / 2;
+                image_x -= Data_080edeca[image] / 2;
+                image_y = Trig_Cos(angle);
+                image_y <<= 5;
+                image_y >>= 16;
+                image_y -= Data_080eded0[image] / 2;
                 Runtime_ReleaseHeapBlock(47);
                 Runtime_ReleaseHeapBlock(46);
                 value = Random16();
@@ -782,6 +782,7 @@ ChooseDuration:;
         if (kind == 14) {
             s32 rise;
             s32 scroll;
+            RectangleBlit *draw;
 
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
@@ -796,14 +797,12 @@ ChooseDuration:;
             while (scroll > 104)
                 scroll -= 104;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
+            draw = (RectangleBlit *)(gWorkSlot + 47 * 4);
             column_y = rise + scroll;
             column_x = origin_x - 8;
-            DrawImage(canvas, 0x02010000, column_x, column_y - 104, 17, 104,
-                      (RectangleBlit *)0x03001f0c);
-            DrawImage(canvas, 0x02010000, column_x, column_y, 17, 104 - scroll,
-                      (RectangleBlit *)0x03001f0c);
-            DrawImage(canvas, 0x020106e8, origin_x - 17, rise + 47, 34, 65,
-                      (RectangleBlit *)0x03001f0c);
+            DrawImage(canvas, 0x02010000, column_x, column_y - 104, 17, 104, draw);
+            DrawImage(canvas, 0x02010000, column_x, column_y, 17, 104 - scroll, draw);
+            DrawImage(canvas, 0x020106e8, origin_x - 17, rise + 47, 34, 65, draw);
             Runtime_ReleaseHeapBlock(47);
             if (frame == 8) {
                 *(s32 *)(((s32)work + 0x77a8)) = frame;
@@ -899,8 +898,10 @@ ChooseDuration:;
                 s32 image_y;
 
                 Trig_Sin((frame << 9));
-                value = Trig_Cos((frame << 9));
-                image_y = *(s16 *)((u8 *)target_screen + 6) + ((value << 2) >> 16) + 16;
+                value = Trig_Cos(frame << 9);
+                value <<= 2;
+                value >>= 16;
+                image_y = *(s16 *)((u8 *)target_screen + 6) + value + 16;
                 if (frame <= 3) {
                     blitters[0](canvas, work,
                                 Data_080eedd4[((work->effect->side << 3) - work->effect->side)],
@@ -950,8 +951,7 @@ ChooseDuration:;
                           (image_y + Data_080eede2[6]), 76, 25, &blitters[0]);
                 goto FinishFrame;
             }
-            if (kind != 32) {
-            } else {
+            if (kind == 32) {
                 scroll_pos = (scroll_pos + scroll_speed);
                 if (frame > 6) {
                     scroll_speed = (s32)((u32)scroll_speed * 48) / 64;
@@ -1095,8 +1095,8 @@ ChooseDuration:;
                             offset = (6 - frame) * 3;
                             image_x = target_screen->x / 2 - offset * 2;
                         }
-                        draw(canvas, 0x02010000, image_x - 16,
-                             target_screen->y - offset * 4 - 8, 32, 64);
+                        DrawCenteredImpact(canvas, 0x02010000, image_x,
+                                           target_screen->y - offset * 4 + 24, draw);
                     } else {
                         if (kind == 12) {
                             if (frame > 47) {
@@ -1166,22 +1166,9 @@ ChooseDuration:;
             Audio_PlayCue(134);
         }
         if (frame == 6) {
-            if ((u32)kind_from_four > 1) {
-                if (kind != 7) {
-                    if (kind != 13) {
-                        if (kind != 18) {
-                            if (kind != 19) {
-                                if (kind != 23) {
-                                    if (kind != 34) {
-                                        if (kind != 100) {
-                                            goto SelectActorMotion;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            if ((u32)kind_from_four > 1 && kind != 7 && kind != 13 && kind != 18 &&
+                kind != 19 && kind != 23 && kind != 34 && kind != 100) {
+                goto SelectActorMotion;
             }
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
             state_addr = (s32 *)((u8 *)work + 0x77a8);
@@ -1229,19 +1216,9 @@ ChooseDuration:;
         Runtime_ReleaseHeapBlock(46);
         BattleFx_RunPaletteRampMode1(command);
     } else {
-        if ((u32)kind_from_two > 1) {
-            if (kind != 12) {
-                if (kind != 22) {
-                    if (kind != 28) {
-                        if (kind != 29) {
-                            goto EndScene;
-                        }
-                    }
-                }
-            }
+        if ((u32)kind_from_two <= 1 || kind == 12 || kind == 22 || kind == 28 || kind == 29) {
+            Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
         }
-        Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
-    EndScene:;
         Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);

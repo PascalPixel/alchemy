@@ -40,7 +40,7 @@ Func_0808a038:
 	.global Func_0808a040
 	.thumb_func
 Func_0808a040:
-	overlay_veneer Func_080917c4
+	overlay_veneer Event_SetWorkWord10
 	.global Event_PrepareObjectAndApplyValueFar
 	.thumb_func
 Event_PrepareObjectAndApplyValueFar:

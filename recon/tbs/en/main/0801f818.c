@@ -8,7 +8,14 @@
    Hand-written from the assembly. Residual: the reference schedules the load
    of the frame count after the first half of the 968 loop bound (movs r1);
    every order of the four loop-setup statements, barriers around each, and a
-   symbol-bound game state leave it directly after its address load. */
+   symbol-bound game state leave it directly after its address load.
+   2026-09-28: with every literal address replaced by its named variable
+   (gGameState, gLoadedStateWord, gOptionMirror, GameFlagBytes, gSaveBuffer;
+   0x02001000 still needs its own EWRAM label) the result is the same two
+   halfwords. for, while and unsigned-bound spellings drop the jump into the
+   test (408 bytes); only the goto form keeps it. In sched2 the frame load
+   (ldr r3, [r3]) depends on the has_flag_20 byte store through memory and
+   still issues right after its address load. */
 /* Save: fill the summary header at the start of the save image (leader name
    and level, area, play time, coins, Djinn counts, party and progress
    counters) and its checksum over the rest of the image. */

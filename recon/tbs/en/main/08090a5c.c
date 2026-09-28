@@ -76,8 +76,6 @@
  * the end come out with beq/bne inverted against the reference.
  */
 
-#define PaletteEffect_BuildComponentTable Func_08090a5c
-
 typedef s32 (*SignedDivide)(s32 numerator, s32 denominator);
 
 s32 Math_Div(s32 numerator, s32 denominator);
@@ -89,7 +87,7 @@ extern u16 Data_0809e92e[];
 extern u16 Data_0809e96e[];
 extern u16 Data_0809e9ae[];
 
-void PaletteEffect_BuildComponentTable(u32 mode, u16 *src, u16 *dst, s32 part)
+void BattleFx_BuildBuffer(u32 mode, u16 *src, u16 *dst, s32 part)
 {
     u32 *reg;
     u32 i;

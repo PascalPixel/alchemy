@@ -103,15 +103,6 @@ struct RenderChannel {
     u16 skip;           /* 0x24 */
 };
 
-#define UiWork_ResetChannelTransition Func_080167d8
-#define RenderOutput_PrepareForRedraw Func_08016478
-#define UiWindow_EraseBorderRect Func_08016178
-#define UiWindow_FitOnScreen Func_0801868c
-#define UiWork_CopyParamsToRenderWork Func_080167ac
-#define UiWork_CheckCancelByInput Func_0801999c
-#define UiWork_CheckCancelByModeInput Func_080199ec
-#define UiWork_RunMessageScript Func_080168f4
-
 void Func_080167e0(s32 mode);
 void UiWork_ResetChannelTransition(void *channel);
 void RenderOutput_PrepareForRedraw(void *work);
@@ -132,7 +123,7 @@ void Func_08003f3c(s32 cue);
 void Audio_PlayCue(s32 cue);
 s32 Func_08018cac(void *work, s32 code, s32 x, s32 y, s32 mode);
 
-s32 UiWork_RunMessageScript(struct RenderChannel *ch)
+s32 UiWork_StepChannelScript(struct RenderChannel *ch)
 {
     u8 *base;
     struct Work *pane;
@@ -156,7 +147,7 @@ s32 UiWork_RunMessageScript(struct RenderChannel *ch)
     s32 zero;
 
     base = *(u8 **)ADDR_03001E8C;
-    cnt = ((u8 *)SPEED_STEPS_TBL)[Data_02000240_asBytes[0x20C]];
+    cnt = ((u8 *)SPEED_STEPS_TBL)[((u8 *)&Data_02000240)[0x20C]];
     if (base[RENDER_MENU_STATE_OFS] != 0) {
         speed = *(u16 *)0x03001CD0;
         if (speed < 0)
@@ -375,7 +366,7 @@ s32 UiWork_RunMessageScript(struct RenderChannel *ch)
             gx = (ch->pos_x + 128) / 256;
             gy = (ch->pos_y + 128) / 256;
             cue_wait =
-                ((u8 *)SPEED_CUE_WAIT_TBL)[Data_02000240_asBytes[0x20C]];
+                ((u8 *)SPEED_CUE_WAIT_TBL)[((u8 *)&Data_02000240)[0x20C]];
             if (base[RENDER_MODE_OFS] != 0)
                 gx += 8;
             ofs = ((ch->pc + 1) & RENDER_ENTRY_MASK) * 2
@@ -400,7 +391,7 @@ s32 UiWork_RunMessageScript(struct RenderChannel *ch)
             }
             tmp = Func_08018cac(pane, code, gx, gy, 0);
             ch->delay =
-                ((u8 *)SPEED_DELAY_TBL)[Data_02000240_asBytes[0x20C]];
+                ((u8 *)SPEED_DELAY_TBL)[((u8 *)&Data_02000240)[0x20C]];
             if (tmp != 0) {
                 if (*(u16 *)(base + RENDER_RESULT_OFS) != 0) {
                     if (*(u16 *)(base + RENDER_CUE_WAIT_OFS) != 0) {

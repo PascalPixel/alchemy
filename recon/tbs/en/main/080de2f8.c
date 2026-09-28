@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-#define BattleEffect_RunSparkDescent Func_080de2f8
-
 /*
  * Battle-presentation sub-effect at 0x080de2f8 (1660 bytes, one function).
  *
@@ -141,7 +139,7 @@ extern u8 Value_000000a8;
 extern void *Data_03001e50[];
 extern const u16 Data_080ede48[]; /* shared per-step sprite-size table */
 
-void BattleEffect_RunSparkDescent(
+void BattleFx_PrepareCanvasEffect(
     void *object, s32 kind, s32 mode, s32 anchor_kind,
     s32 *out_x, s32 *out_y)
 {

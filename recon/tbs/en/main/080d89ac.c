@@ -25,8 +25,6 @@ typedef s32 M2C_UNK;
 void **Func_080b5098(s32 actor_id);
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
 
-#define BattleEffectA Func_080d89ac
-
 void BattleEffectA(s32 arg0, u32 arg1) {
     void **heap_base;
     void **heap_cursor;

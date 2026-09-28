@@ -20,8 +20,6 @@ extern u8 Value_00000648;
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattlePres_RunRingAndSparkScene Func_080e40a4
-
 /*
  * Battle-presentation ring-and-spark scene at 0x080e40a4.
  *

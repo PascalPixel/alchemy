@@ -5,8 +5,6 @@
  */
 #include "TYPES.H"
 
-#define SceneTransform_ApplyYaw Func_08004c1c
-
 void SceneTransform_ApplyYaw(s32 angle)
 {
     s32 sine = Func_08002322(angle);

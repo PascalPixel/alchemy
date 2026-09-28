@@ -56,7 +56,6 @@ struct BattlePresentationState {
 #define absolute_080edeab ((const u8 *)0x080edeab)
 #define absolute_080edeb2 ((const u16 *)0x080edeb2)
 
-#define BattleEffect_RunDualParticleStream Func_080e89ec
 
 void BattleEffect_RunDualParticleStream(void *object) {
     u32 draw_width;

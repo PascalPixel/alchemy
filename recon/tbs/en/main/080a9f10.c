@@ -81,9 +81,7 @@ s32 Func_08004458(void);
 void Func_08015120(s32, s32);
 s32 Math_Div(s32, s32);
 
-#define BattleFx_ApplyToTargets Func_080a9f10
-
-s32 BattleFx_ApplyToTargets(
+s32 BattleEffect_ApplyToTargets(
     s32 effect_id,
     s32 source_id,
     s32 target_id,

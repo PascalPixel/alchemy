@@ -8,8 +8,6 @@
  * the exact loader, with no change to the eight setup differences. */
 #include "TYPES.H"
 
-#define AudioTest_RunParameterController Func_080f92fc
-
 extern volatile u32 Data_03001b04;
 extern s32 Data_03000b5c;
 extern s32 Data_03007804;

@@ -57,7 +57,7 @@ void Scene_SaturosTakesHostages(void)
     s32 base5_3001ebc;
     u8 *p7;
 
-    base5_3001ec4 = (s32)Data_03001ec4;
+    base5_3001ec4 = (s32)gParticleWork;
     p7 = *(u8 **)base5_3001ec4;
     Event_Begin();
     *(s32 *)(((s32)p7 + 0x40c)) = 0;

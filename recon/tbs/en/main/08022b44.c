@@ -79,10 +79,6 @@ struct BattleUnitRecord {
 
 /* Callees the owner register already names, spelled the way types.h spells
  * its own aliases: the address symbol stays the ABI. */
-#define UiWork_SetParamNibble UiWork_SetParamNibble
-#define UiWindow_SetTilemapEntry UiWindow_SetTilemapEntry
-#define UiWindow_DrawThreeTileColumn UiWindow_DrawThreeTileColumn
-#define UiText_FormatNumberToHalfwords UiText_FormatNumberToHalfwords
 
 void Sys_Free(void *block);
 s32 _call_via_r3(void *dst, const void *src, s32 size, s32 proc);

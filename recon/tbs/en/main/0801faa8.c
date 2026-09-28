@@ -7,8 +7,6 @@
 #include "RUNTIME_INTERFACES.H"
 #include "RUNTIME_MEM.H"
 
-#define SaveState_ProcessSelectedSlot Func_0801faa8
-
 s32 Func_080056cc(void);
 u32 Func_08005a78(s32, void *);
 s32 Func_08005920(s32, void *);

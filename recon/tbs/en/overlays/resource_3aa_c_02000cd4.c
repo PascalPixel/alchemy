@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define RunEventScript03 Func_02000cd4
-
 /* AUDITED GENERATED CALL SCRIPT for RunEventScript03: 110 calls, 0 loops, 0 memory operations.
  * Recovered from the complete decoded owner. Calls, arguments, control flow,
  * loops, and memory operations are accounted for against the ROM. */

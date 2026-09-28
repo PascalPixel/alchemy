@@ -2,8 +2,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattlePres_RunBurstScene Func_080e2974
-
 /*
  * Battle-presentation burst scene at 0x080e2974.
  *

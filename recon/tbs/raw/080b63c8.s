@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080b63c8
+	.global Battle_RunEncounter
 	.thumb_func
-Func_080b63c8:
+Battle_RunEncounter:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

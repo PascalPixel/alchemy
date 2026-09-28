@@ -68,8 +68,6 @@
  * and were reverted.
  */
 
-#define BattleEffect_RunParticleBurstScene Func_080d52c8
-
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
 typedef s32 (*IntegerSqrtFn)(s32 value);
 
@@ -170,7 +168,7 @@ typedef struct {
 /* One unsigned 8-bit random sample, re-centred around zero. */
 #define RANDOM_BIASED(bias) ((s32)(Func_08004458() & 0xFF) - (bias))
 
-void BattleEffect_RunParticleBurstScene(void *object, u32 kind)
+void BattleFx_RenderMode(void *object, u32 kind)
 {
     void **heap;
     void **cursor;

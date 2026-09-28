@@ -4,8 +4,6 @@
 #include "types.h"
 #include "BATTLE_EFX.H"
 
-#define Function Func_080ce034
-
 extern u8 Data_00000073[];
 extern u8 Data_0000007d[];
 extern u8 Data_00000089[];
@@ -71,7 +69,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Function(s32 a0)
+void Func_080ce034(s32 a0)
 {
     u32 i;
     u8 *p10;

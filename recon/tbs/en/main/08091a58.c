@@ -1,6 +1,4 @@
 #include "TYPES.H"
-#define gEventWork Data_03001ebc
-#define gGameState Data_02000240
 
 /* main:08091a58 PartyInventory_GiveItem - draft, 95 of 226
    halfwords differ (436 of 452 bytes, 2026-09-26). The discard quantity
@@ -20,9 +18,6 @@
 extern u8 Value_0000096a[];
 extern u8 Value_00000977[];
 extern u8 Value_00000978[];
-#define MSG_RECEIVED ((s32)Value_0000096a)
-#define MSG_BAGS_FULL ((s32)Value_00000977)
-#define MSG_CHOOSE_DISCARD ((s32)Value_00000978)
 
 struct ItemData {
     u8 unknown_00[3];
@@ -50,8 +45,6 @@ s32 Func_080b0058(s32 *owner, s32 *slot);
 s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
 void Audio_PlayCue(s32 cue);
 
-#define Party_FindRoomForItem Func_08077030
-
 s32 PartyInventory_GiveItem(s32 item)
 {
     struct EventWork *work;
@@ -71,11 +64,11 @@ s32 PartyInventory_GiveItem(s32 item)
     owner = Party_FindRoomForItem(item);
     if (owner == -1) {
         UiWork_PushValueSlotFar(item, 2);
-        UiText_ShowPositionedMessageAndWaitFar(MSG_RECEIVED, 1);
-        UiText_ShowPositionedMessageAndWaitFar(MSG_BAGS_FULL, 1);
+        UiText_ShowPositionedMessageAndWaitFar((s32)Value_0000096a, 1);
+        UiText_ShowPositionedMessageAndWaitFar((s32)Value_00000977, 1);
     retry:
         do {
-            message = MSG_CHOOSE_DISCARD;
+            message = (s32)Value_00000978;
             UiText_ShowPositionedMessageAndWaitFar(message, 1);
             result = Func_080b0058(&member, &slot);
             if (result == -1) {
@@ -108,11 +101,11 @@ s32 PartyInventory_GiveItem(s32 item)
                 Audio_PlayCue(83);
                 if (owner == gGameState[125]) {
                     UiWork_PushValueSlotFar(item, 2);
-                    UiText_ShowPositionedMessageAndWaitFar(MSG_RECEIVED, 3);
+                    UiText_ShowPositionedMessageAndWaitFar((s32)Value_0000096a, 3);
                 } else {
                     UiWork_PushValueSlotFar(item, 2);
                     UiWork_PushValueSlotFar(owner, 1);
-                    UiText_ShowPositionedMessageAndWaitFar(MSG_RECEIVED + 1, 3);
+                    UiText_ShowPositionedMessageAndWaitFar((s32)Value_0000096a + 1, 3);
                 }
                 /* FAKEMATCH: distinguish this published position restore
                    from the discard branch's otherwise identical tail. */
@@ -123,7 +116,7 @@ s32 PartyInventory_GiveItem(s32 item)
     } else {
         Audio_PlayCue(83);
         UiWork_PushValueSlotFar(item, 2);
-        text = MSG_RECEIVED;
+        text = (s32)Value_0000096a;
         UiText_ShowPositionedMessageAndWaitFar(text, 3);
         if (owner != gGameState[125]) {
             UiWork_PushValueSlotFar(item, 2);

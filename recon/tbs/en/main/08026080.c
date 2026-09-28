@@ -19,8 +19,6 @@
  * in the spread loop is indexed, not strength-reduced.
  */
 
-#define BattleTarget_RunSelection Func_08026080
-
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 /* Object list entry chained by Runtime_PushSlotEntry; ordinary GBA OAM. */
@@ -121,8 +119,6 @@ extern struct BattleGlobals Data_03001e74;
  */
 extern volatile u32 Data_03001e40;
 
-#define Resource_LoadIntoFreeSlot Func_080040b4
-
 s32 Resource_LoadIntoFreeSlot(s32 id);
 s32 Resource_GetBuffer(s32 slot, s32 source);
 void Runtime_PushSlotEntry(struct DisplayEntry *entry, s32 slot);
@@ -134,7 +130,6 @@ void UiWork_Finalize(s32 work, s32 release);
 void UiText_DrawCharacterAtOffset(s32 text, s32 work, s32 x, s32 y);
 void UiText_DrawStringAtOffset(s32 text, s32 work, s32 x, s32 y);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, s32 work, s32 x, s32 y);
-#define UiWork_SetParamNibble Func_0801e71c
 
 void UiWork_SetParamNibble(s32 value);
 struct BattleUnit *Owner_GetStateFar(s32 id);

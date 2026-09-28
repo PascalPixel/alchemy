@@ -4,7 +4,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define BuildMotionCountdown Func_020042e6
 #define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
 #define Scene_GetRecord_1(args...) Func_020052d2(args)
@@ -94,7 +93,7 @@ extern u8 Data_0200d160[];
 extern u8 Data_00002014[];
 extern u8 Data_0200c918[];
 
-s32 Func_020042e6(s32, s16);
+s32 BuildMotionCountdown(s32, s16);
 u8 *Func_02007692(s32);
 s32 Func_02004d98();
 s32 Func_02004de0();
@@ -308,12 +307,6 @@ static __inline__ void Call1_02003a0c(void (*f)(), s32 a0)
     f(a0);
 }
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define Data_0200db40 Data_0200db80
-#define Data_0200db70 Data_0200dbb0
-#define Data_0200db90 Data_0200dbd0
-#endif
-
 #if defined(TBS_EDITION_JA)
 #define SCENE_STEP_VALUE 0x20ac
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -322,14 +315,9 @@ static __inline__ void Call1_02003a0c(void (*f)(), s32 a0)
 #define SCENE_STEP_VALUE 0x1f23
 #endif
 
-#if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define Data_0200db50 Data_0200db90
-#define Data_0200db60 Data_0200dba0
-#define Data_0200d160 Data_0200d1a4
-#endif
-#if defined(TBS_EDITION_DE)
-#define Data_03001ebc Data_03001ecc
-#endif
+/* EN draft. In the German, Spanish, French and Italian overlays this work
+ * block sits 0x40 bytes later, and the German event-work pointer 16 bytes
+ * later; those editions need their own names for these places. */
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */

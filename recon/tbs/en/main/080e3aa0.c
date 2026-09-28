@@ -2,7 +2,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattlePres_RunBeamScene Func_080e3aa0
 
 /*
  * Battle-presentation beam scene at 0x080e3aa0 (1540 bytes).
@@ -233,7 +232,7 @@ void Func_080e38b8(struct Spark *spark, s32 a, s32 b); /* advance_with_gravity_3
 void Func_080e3958(s32 value, s32 *out);             /* apply_animation_and_y_offset */
 void Func_080e396c(s32 value, s32 *out);             /* apply_step_and_y_offset */
 
-void BattlePres_RunBeamScene(void *object)
+void BattlePres_RunBeamSequence(void *object)
 {
     void **heap;
     void **cursor;

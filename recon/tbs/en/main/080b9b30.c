@@ -10,8 +10,6 @@ extern u8 Value_00000654;
 extern u8 Value_000006a8;
 extern u8 Value_00000648;
 
-#define BattlePres_DispatchAction Func_080b9b30
-
 struct BattlePresentationTransition {
     s32 blend;
     s32 timer;
@@ -19,7 +17,7 @@ struct BattlePresentationTransition {
     s32 active;
 };
 
-s32 BattlePres_DispatchAction(s16 *action, s32 delay)
+s32 BattlePresentation_DispatchAction(s16 *action, s32 delay)
 {
     u16 unit_stack[16];
     struct BattlePresentationTransition *transition;

@@ -40,8 +40,6 @@
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-#define Battle_SelectAbility Func_08023e70
-
 #define RUNTIME (*(struct RuntimeCells *)0x03001e8c)
 #define MENU_STATE (RUNTIME.menu)
 #define CURSOR_OWNER (*(struct CursorOwner **)0x03001e90)

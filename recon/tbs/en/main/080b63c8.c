@@ -144,8 +144,6 @@ void BattlePlacement_UpdateTimedEntries(void);
 void Scheduler_RemoveCallback(s32 callback);
 void Runtime_ReleaseHeapBlock10(void);
 
-#define Battle_RunEncounter Func_080b63c8
-
 s32 Battle_RunEncounter(s32 arg)
 {
     struct DmaChannel *dma;

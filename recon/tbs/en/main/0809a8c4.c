@@ -51,8 +51,6 @@ void Func_0809748c(void);
 void Func_0809a890(void);
 void Func_0809a7f4(void);
 
-#define RunBattleEffect14 Func_0809a8c4
-
 static __inline__ s32 InterpolateCoordinate(s32 origin, s32 target, s32 step)
 {
     return origin + Math_Div(step * (target - origin), 10);

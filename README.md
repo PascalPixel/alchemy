@@ -61,7 +61,3 @@ Thank you to:
 - [pret](https://github.com/pret), whose decompilations set the standard Alchemy
   measures itself against, and whose [agbcc](https://github.com/pret/agbcc)
   Alchemy builds the games' library code with.
-- Brankale and Pokefan531, for the
-  [Handheld Color Space Project](https://github.com/Brankale/Handheld-Color-Space-Project),
-  whose screen measurements drive the map viewer's GBA, GBA SP and Game Boy
-  Micro colour filters.

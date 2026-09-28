@@ -66,7 +66,7 @@ s32 Func_080b5f0c(void)
         table->owner_map[i] = 0xff;
     }
 
-    count = BattleParty_ListActiveMembers(sp_names);
+    count = BattleParty_PrepareActiveOwners(sp_names);
     for (i = 0; i < count; i++) {
         struct BattleUnit *object = Owner_GetStateFar(sp_names[i]);
         CopyWords(buffer, object, 340);

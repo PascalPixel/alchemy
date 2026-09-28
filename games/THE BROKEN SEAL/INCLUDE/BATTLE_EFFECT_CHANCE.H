@@ -5,9 +5,7 @@
 
 s32 BattleFx_GetBaseSuccessRate(s32 effect_id);
 s32 BattleFx_GetBaseSuccessRate(s32 effect_id);
-#define BattleEffect_GetBaseSuccessRate BattleFx_GetBaseSuccessRate
 s32 BattleFx_IsRevive(s32 effect_id);
-#define BattleEffect_IsRevive BattleFx_IsRevive
 s32 BattleTarget_IsWeakToEffect(const u8 *target_state, s32 effect_id);
 s32 BattleFx_IsRevive(s32 effect_id);
 s32 BattleFx_RollSuccess(

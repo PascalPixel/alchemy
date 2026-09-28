@@ -208,8 +208,8 @@ s32 Func_08023e70(s32 actor, s32 mode);
 s32 Func_08024934(s32 a, s32 b, u8 *cost);
 s32 Func_0802592c(s32 actor, u16 *list, s32 count);
 s32 Func_08025200(s32 actor, u16 *list);
-void Func_08002df0(void *block);
-struct DjinnDefinition *Func_080771e0(s32 id);
+void Sys_Free(void *block);
+struct DjinnDefinition *SummonDefinition_Get(s32 id);
 s32 Func_080771e8(s32 element, s32 index);
 s32 Func_08077208(s32 actor, s32 element, s32 index);
 s32 Func_080b5090(s32 mode, void *block);
@@ -372,7 +372,7 @@ handshake_done:
             handle = Func_080b5090(sel, block);
             WaitFrames(1);
             Func_08023178(block, handle, *(u16 *)block);
-            Func_08002df0(block);
+            Sys_Free(block);
             continue;
         }
         if (mode == 4) {
@@ -444,7 +444,7 @@ mark_visible:
                 WaitFrames(1);
                 Func_08023178(block, handle, actorId);
                 state->entryActive[2] = 1;
-                Func_08002df0(block);
+                Sys_Free(block);
                 continue;
             }
             Func_080b50e0(hdr, 0);
@@ -763,7 +763,7 @@ djinn_menu:
                 kind = 6;
                 param = res;
                 WaitFrames(1);
-                djinn = Func_080771e0(res);
+                djinn = SummonDefinition_Get(res);
                 ability = Ability_GetData(djinn->id);
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(10, 17, 17, 3, 6);
@@ -790,7 +790,7 @@ djinn_menu:
                 if (ok == 0) {
                     UiWork_SetParamNibble(2);
                 }
-                UiText_DrawCharacterAtOffset(Func_080771e0(param)->id + 819,
+                UiText_DrawCharacterAtOffset(SummonDefinition_Get(param)->id + 819,
                                              win, 16, 0);
                 for (k = 0; k <= 3; k++) {
                     if (djinn->cost[k] != 0) {

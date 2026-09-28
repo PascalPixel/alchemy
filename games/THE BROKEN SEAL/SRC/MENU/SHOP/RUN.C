@@ -84,7 +84,7 @@ loop:
             }
         } else if (choice == 3) {
             UiMessage_ShowAndWait(0xcb9);
-            Shop_RunPartyMemberSelection();
+            Shop_SelUnit();
         } else {
             goto done;
         }

@@ -72,7 +72,7 @@ void Func_080e396c(s32 source, void *screen);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 void Func_08002dd8(s32 id);
 void Func_080cd52c(void);
@@ -170,7 +170,7 @@ void Func_080cc5d8(void *object)
         }
 
         if ((u32)(frame - 28) <= 20) {
-            s32 sprite_frame = Func_080022ec(frame - 28, 3);
+            s32 sprite_frame = Math_Div(frame - 28, 3);
 
             rectangle[0](
                 canvas, (u8 *)work + 0x1400 + sprite_frame * 0x900,
@@ -178,7 +178,7 @@ void Func_080cc5d8(void *object)
         }
 
         if ((u32)frame <= 14) {
-            s32 offset = (Func_080022fc(Func_080022ec(frame, 3), 5)) << 10;
+            s32 offset = (Func_080022fc(Math_Div(frame, 3), 5)) << 10;
 
             for (i = 0; i != 4; i++) {
                 s32 x;

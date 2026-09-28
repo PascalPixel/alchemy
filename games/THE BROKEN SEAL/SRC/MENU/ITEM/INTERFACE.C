@@ -114,7 +114,7 @@ void ItemMenu_Close(void)
 
     menu = *(u8 **)((u32)&Data_03001f2c);
     Menu_ReleaseEntryObjects();
-    InventoryMenu_HideAllItemIcons();
+    ItemMenu_HideAllIcons();
     WaitFrames(1);
     cursor = *(s8 **)(menu + 0x17C);
     cursor[5] = 0xD;

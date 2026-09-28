@@ -121,7 +121,7 @@ void Func_080049ac(void);
 void Func_08004cb4(s32 *position);
 void Func_080f9010(s32 value);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002304(s32 value, s32 range);
 s32 Func_08002322(s32 angle);
@@ -280,7 +280,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
             for (k = 0;
                     k != Data_080eea88[work->argument->variant * 3 + 1];
                     k++) {
-                if (k < Func_080022ec(phase, 3)) {
+                if (k < Math_Div(phase, 3)) {
                     s32 image;
                     s32 height;
 

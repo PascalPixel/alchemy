@@ -48,7 +48,7 @@ Func_080a4f08:
 	ldrh	r3, [r3, #0]
 	ldr	r1, [pc, #128]
 	ands	r1, r3
-	bl	Func_080a3d9c
+	bl	InventoryMenu_GetItemQuantity
 	str	r0, [sp, #8]
 .L_080a4f6a:
 	ldr	r3, [pc, #124]
@@ -60,7 +60,7 @@ Func_080a4f08:
 	ldrh	r3, [r3, #0]
 	ldr	r1, [pc, #104]
 	ands	r1, r3
-	bl	Func_080a3d9c
+	bl	InventoryMenu_GetItemQuantity
 	str	r0, [sp, #4]
 	bl	Resource_FindFreeEntry
 	str	r0, [sp, #16]

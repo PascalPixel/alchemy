@@ -103,7 +103,7 @@ void Func_080f9010(s32 id);
 void Func_08009008(s32 handle, const s32 *pos, const s32 *clip, s32 mode);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-s32 Func_080022ec(s32 a, s32 b);
+s32 Math_Div(s32 a, s32 b);
 void Func_080e3908(SceneParticle *particle, s32 a, s32 b);
 void Func_080b5088(s32 member, s32 a);
 void Func_080d6888(s32 member, s32 a, s32 b, s32 c, s32 d);
@@ -383,7 +383,7 @@ void Func_080e823c(void *object)
                 life = entry->timer;
                 if (life >= 0) {
                     if ((u32)life <= 23U) {
-                        idx = Func_080022ec(life, 6) + 3;
+                        idx = Math_Div(life, 6) + 3;
                         offset = Data_080eeeea[idx];
                         size = Data_080eeef8[idx];
                         ((DrawRectangleFn)rectangle[0])(

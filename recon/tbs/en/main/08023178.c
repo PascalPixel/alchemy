@@ -131,8 +131,8 @@ void Resource_ResetEntry(s32 handle);
 s32 Resource_GetBuffer(s32 handle, u8 *resource);
 void Runtime_PushSlotEntry(struct UiObjEntry *entry, s32 slot);
 void *Runtime_BumpAllocate(s32 size);
-void Func_08002df0(void *block);
-void Func_080072f0(void *dst, const void *src, s32 size, s32 tag);
+void Sys_Free(void *block);
+void _call_via_r3(void *dst, const void *src, s32 size, s32 tag);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
@@ -657,7 +657,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
                 saved = (u8 *)Runtime_BumpAllocate(0x14C);
                 code = 0;
-                Func_080072f0(saved, object, 0x14C, 0x03001388);
+                _call_via_r3(saved, object, 0x14C, 0x03001388);
 
                 hpDelta = M2C_FIELD(object, u16 *, 0x3C);
                 ppDelta = M2C_FIELD(object, u16 *, 0x3E);
@@ -669,8 +669,8 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 hpDelta -= M2C_FIELD(object, u16 *, 0x3C);
                 ppDelta -= M2C_FIELD(object, u16 *, 0x3E);
                 spDelta -= M2C_FIELD(object, u16 *, 0x40);
-                Func_080072f0(object, saved, 0x14C, 0x03001388);
-                Func_08002df0(saved);
+                _call_via_r3(object, saved, 0x14C, 0x03001388);
+                Sys_Free(saved);
 
                 switch (iconIdx) {
                 case 8:
@@ -714,7 +714,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             }
 
             Func_08017aa4(text, winDesc, 0, 4);
-            Func_08002df0(text);
+            Sys_Free(text);
             base[0xEA3] = 1;
             redraw = 0;
         }

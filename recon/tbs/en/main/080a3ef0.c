@@ -11,10 +11,10 @@ struct EquipPreviewMenu {
 };
 
 extern u8 Data_03001388[];
-s32 Func_080072f0(void *dst, const void *src, s32 size, void *copy);
+s32 _call_via_r3(void *dst, const void *src, s32 size, void *copy);
 static __inline__ s32 CopyWords(void *dst, const void *src, s32 size)
 {
-    return Func_080072f0(dst, src, size, Data_03001388);
+    return _call_via_r3(dst, src, size, Data_03001388);
 }
 
 extern struct EquipPreviewMenu *gMenuWork;

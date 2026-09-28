@@ -161,7 +161,7 @@ void Func_08004278(void (*callback)(void));
 void Func_080cd260(void);
 s32 Func_08004458(void);
 s32 Func_080044d0(s32 x, s32 z);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002304(s32 numerator, s32 denominator);
 s32 Func_0800231c(s32 angle);
@@ -556,7 +556,7 @@ void Func_080d1714(struct EffectArgument *argument)
                                 screen.z = 170;
                             if (screen.z > 350)
                                 screen.z = 350;
-                            span = 6 - Func_080022ec(screen.z - 170, 36);
+                            span = 6 - Math_Div(screen.z - 170, 36);
                             draw_rectangle_alt(
                                 draw_destination,
                                 graphics + Data_080ede48[span - 1],
@@ -565,11 +565,11 @@ void Func_080d1714(struct EffectArgument *argument)
                                 span,
                                 span * 2);
                             point->field_00 -=
-                                Func_080022ec(point->field_00, dist);
+                                Math_Div(point->field_00, dist);
                             point->field_04 -=
-                                Func_080022ec(point->field_04, dist);
+                                Math_Div(point->field_04, dist);
                             point->field_08 -=
-                                Func_080022ec(point->field_08, dist);
+                                Math_Div(point->field_08, dist);
                         } else {
                             alive++;
                         }
@@ -578,7 +578,7 @@ void Func_080d1714(struct EffectArgument *argument)
                     } while (index != 32);
 
                     if (alive > 0) {
-                        span = Func_080022ec(alive, 10) + 1;
+                        span = Math_Div(alive, 10) + 1;
                         draw_rectangle_alt(
                             draw_destination,
                             graphics + Data_080ede48[span - 1],
@@ -626,7 +626,7 @@ void Func_080d1714(struct EffectArgument *argument)
                                 if (screen.z > 350)
                                     screen.z = 350;
                                 span =
-                                    3 - Func_080022ec(screen.z - 170, 90);
+                                    3 - Math_Div(screen.z - 170, 90);
                                 draw_rectangle(
                                     draw_destination,
                                     graphics + Data_080ede48[span - 1],
@@ -707,7 +707,7 @@ void Func_080d1714(struct EffectArgument *argument)
                                 if (screen.z > 350)
                                     screen.z = 350;
                                 span = 3
-                                    - Func_080022ec(screen.z - 170, 90);
+                                    - Math_Div(screen.z - 170, 90);
                                 draw_rectangle(
                                     draw_destination,
                                     graphics + Data_080ede48[span - 1],

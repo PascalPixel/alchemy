@@ -22,7 +22,7 @@ void Func_08015120();
 void Func_08015128();
 void Func_08015138();
 s32 Func_08077030();
-s32 Func_080770c0();
+s32 GameFlag_TestFar();
 void Func_080770c8();
 void Func_080770d0();
 void Func_08077230();
@@ -137,7 +137,7 @@ s32 Func_0808d9a4(s32 a0)
                     rec->action.callback(
                         *(s32 *)((s16 *)Data_02000240 + 250));
                 }
-                if (Value1(Func_080770c0, 0x142) == 0) {
+                if (Value1(GameFlag_TestFar, 0x142) == 0) {
                     goto L_0808dd6a;
                 }
                 ((void (*)())Func_08015040)((v5 + 0x948), 1);

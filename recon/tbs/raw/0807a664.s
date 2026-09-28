@@ -60,7 +60,7 @@ Func_0807a664:
 .L_0807a6cc:
 	ldrh	r0, [r6, r7]
 	str	r2, [sp, #0]
-	bl	Func_08078414
+	bl	Item_GetDirect
 	ldrb	r3, [r0, #2]
 	ldr	r2, [sp, #0]
 	cmp	r3, #6

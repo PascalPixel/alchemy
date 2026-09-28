@@ -69,8 +69,8 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
             unit_id = shop->party_member_ids[selected_index];
             Shop_PlaceCursor(window, selected_index * 24 - 12, 0);
             shop->mode = 3;
-            Shop_UpdatePartyMemberList((s32)window, selected_index, shop->selected_item);
-            Shop_DrawPartyMemberItems(item_window, unit_id, shop->selected_item);
+            Shop_DrawParty((s32)window, selected_index, shop->selected_item);
+            Shop_DrawUnitItem(item_window, unit_id, shop->selected_item);
         }
         if ((INPUT_NEW_KEYS & 1) != 0) {
             slot = Inventory_AddItemFar(unit_id, shop->selected_item);

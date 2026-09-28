@@ -95,7 +95,7 @@ void *Func_08002f40(s32 id);
 s32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_080b50e8(s32 id);
@@ -315,7 +315,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
                         if ((u32)timer <= 17) {
                             rectangle[0](canvas,
                                 (s8 *)work
-                                    + (Data_080ee294[Func_080022ec(timer, 3)]
+                                    + (Data_080ee294[Math_Div(timer, 3)]
                                         << 11),
                                 x - 16, y - 32, 32, 64);
                             timer = ring->timer;
@@ -359,7 +359,7 @@ void BattleEffect_RunSparkGroups(void *object, s32 kind)
                                     if ((u32)x <= 0x7EFFFF && y >= 0) {
                                         s32 size;
 
-                                        size = Func_080022ec(timer, 5) + 1;
+                                        size = Math_Div(timer, 5) + 1;
                                         rectangle_slot[i & 1](canvas,
                                             (s8 *)extra
                                                 + Data_080ede48[size - 1],

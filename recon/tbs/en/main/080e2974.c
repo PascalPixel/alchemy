@@ -48,7 +48,7 @@
  * under gravity, halving and inverting vy once y <= 0x7FFFF, applies the camera
  * shake, ticks the object group and waits one frame.
  *
- * Neither `Func_080072f0` nor `Func_080072f4` is a real function symbol:
+ * Neither `_call_via_r3` nor `Func_080072f4` is a real function symbol:
  * they are entries 3 and 4 of the `_call_via_rN` trampoline bundle at
  * recon/tbs/raw/080072e4.s, i.e. indirect calls through whatever pointer
  * the compiler kept in that register.  Here they are the IWRAM copy

@@ -169,7 +169,7 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void update_members(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b50e8(s32 cue);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 void apply_base_and_y_offset(void *source, void *screen);
 void advance_with_gravity_3d(void *record, s32 mode, s32 gravity);
 s32 random_16(void);
@@ -311,7 +311,7 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                         Func_080b50e8(133);
                     }
                     if (shard->frame >= 0) {
-                        cell = Func_080022ec(frame - start, 3);
+                        cell = Math_Div(frame - start, 3);
                         if (cell > 9)
                             cell = 9;
                         apply_base_and_y_offset(shard, screen);
@@ -395,7 +395,7 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                     s32 wide;
                     s32 high;
 
-                    index = Func_080022ec(spark->frame, 5);
+                    index = Math_Div(spark->frame, 5);
                     if ((i & 1) != 0)
                         index += 9;
                     side = object->direction;

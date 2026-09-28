@@ -24,7 +24,7 @@ extern u8 *Data_03001eec;
 extern struct DmaQueue Data_03001e50;
 void WaitFrames(s32);
 void Func_0800387c(u32, u32);
-void Func_080072f0(void *, s32);
+void _call_via_r3(void *, s32);
 void Func_080b845c(s32, struct ScreenPosition *);
 void Func_080c0774(s32, u16, s32);
 void Func_080c1470(s32);
@@ -60,7 +60,7 @@ void Func_080c1798(s32 actor, s32 value, s32 mode, s32 parameter)
 
     WaitFrames(1);
     Func_080c0774(1, FIELD(battle, u16, 0x648), 0);
-    Func_080072f0((void *)0x03000164, 0x4000);
+    _call_via_r3((void *)0x03000164, 0x4000);
     Func_0800387c(0x04000000, 0x3741);
     Func_0800387c(0x0400000c, 0x3741);
     Func_0800387c(0x3741, 0x0400000c);

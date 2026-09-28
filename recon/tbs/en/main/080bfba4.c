@@ -43,13 +43,13 @@ extern struct BattleState *Data_03001e74;
 typedef void (*BlockCopy)(void *destination, const void *source, s32 size);
 
 struct DjinnRecoveryTable *Func_08077000(s32 side);
-struct BattleUnit *Func_08077008(s32 unit_id);
-void Func_08077010(s32 unit_id);
+struct BattleUnit *Owner_GetStateFar(s32 unit_id);
+void BattleUnit_Recalculate(s32 unit_id);
 s32 Func_08077118(s32 unit_id, s32 amount);
 void Func_080771b8(s32 unit_id, s32 element, s32 index);
 void *Func_08004970(s32 size);
-void Func_08002df0(void *block);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+void Sys_Free(void *block);
+s32 Math_Div(s32 numerator, s32 denominator);
 void Func_08009080(void *object, s32 animation);
 void Func_08009088(void *object, s32 flags);
 void Func_080f9010(s32 cue);
@@ -81,7 +81,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 
     id = plan->actor_id;
     both_sides = 0;
-    unit = Func_08077008(id);
+    unit = Owner_GetStateFar(id);
     list = &Func_08077000((u32)id > 7)->list;
     i = 0;
     if (i < list->count) {
@@ -161,17 +161,17 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         if (best >= 0 && (&((s8 *)&unit->status_12c)[best])[0] < most) {
             ((s8 *)&unit->status_12c)[best] = most;
         }
-        Func_08077010(id);
+        BattleUnit_Recalculate(id);
         for (i = 0; i <= 3; i++) {
             gain = unit->elements[i].power - before->elements[i].power;
             if (gain > 0) {
                 Func_080bdfec();
                 Func_080bd808(25);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, id);
-                BattleEvent_Push(BATTLE_EVENT_VALUE, gain);
-                BattleEvent_Push(BATTLE_EVENT_SOUND, 175);
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_EARTH_POWER_UP + i);
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BattleEv_Push(BATTLE_EVENT_VALUE, gain);
+                BattleEv_Push(BATTLE_EVENT_SOUND, 175);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_EARTH_POWER_UP + i);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
                 Func_080f9010(212);
                 Func_08009080(Func_080b7dd0(id)->object, 3);
                 Func_08009088(Func_080b7dd0(id)->object, 32);
@@ -179,7 +179,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
                 Func_080be02c();
             }
         }
-        Func_08002df0(before);
+        Sys_Free(before);
     }
 
     if (both_sides != 0) {
@@ -187,23 +187,23 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
 
         Func_080bdfec();
         if (plan->pending_amount_60 != 0) {
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, id);
-            BattleEvent_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_CURSE_DAMAGE);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, plan->pending_amount_60);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_CURSE_DAMAGE);
             if (Func_08077118(id, -plan->pending_amount_60) == 0) {
                 s32 text;
 
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
                     text = MSG_GOES_DOWN;
                 } else {
                     text = MSG_EXHAUSTED;
                 }
-                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
             } else {
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
             }
         }
         Func_080bb938();
@@ -211,13 +211,13 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         Func_080bdfec();
         poison = &unit->poison;
         if (*poison != 0) {
-            s32 damage = Func_080022ec(*poison * unit->max_hp, 10);
+            s32 damage = Math_Div(*poison * unit->max_hp, 10);
             struct BattleState *state = Data_03001e74;
 
-            BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
-            BattleEvent_Push(BATTLE_EVENT_UNIT, id);
-            BattleEvent_Push(BATTLE_EVENT_VALUE, damage);
-            BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_POISON_DAMAGE);
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, id);
+            BattleEv_Push(BATTLE_EVENT_VALUE, damage);
+            BattleEv_Push(BATTLE_EVENT_TEXT, MSG_POISON_DAMAGE);
             if (*poison != 0) {
                 state->poison_cue = 134;
             } else {
@@ -226,16 +226,16 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
             if (Func_08077118(id, -damage) == 0) {
                 s32 text;
 
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
                     text = MSG_GOES_DOWN;
                 } else {
                     text = MSG_EXHAUSTED;
                 }
-                BattleEvent_Push(BATTLE_EVENT_TEXT, text);
+                BattleEv_Push(BATTLE_EVENT_TEXT, text);
             } else {
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, id);
             }
         }
         Func_080bb938();
@@ -244,19 +244,19 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         if (unit->death_count != 0) {
             if (--unit->death_count == 0
                 && Func_08077118(id, 0xc0000000) == 0) {
-                BattleEvent_Push(BATTLE_EVENT_UNIT, id);
-                BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_REAPER_CALLS);
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
-                BattleEvent_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
-                BattleEvent_Push(BATTLE_EVENT_UNIT, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
+                BattleEv_Push(BATTLE_EVENT_TEXT, MSG_REAPER_CALLS);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, id);
+                BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, id);
+                BattleEv_Push(BATTLE_EVENT_UNIT, id);
                 if ((u32)id <= 7) {
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_GOES_DOWN);
+                    BattleEv_Push(BATTLE_EVENT_TEXT, MSG_GOES_DOWN);
                 } else {
-                    BattleEvent_Push(BATTLE_EVENT_TEXT, MSG_EXHAUSTED);
+                    BattleEv_Push(BATTLE_EVENT_TEXT, MSG_EXHAUSTED);
                 }
             }
         }
         Func_080bb938();
     }
-    Func_08077010(id);
+    BattleUnit_Recalculate(id);
 }

@@ -990,7 +990,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_DRAW_PAGE_INDICATOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/SET_FLAG_RECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/COPY_OBJECT_BANK_TO_BACKGROUND14.o"(.text)
-        "*/recon/tbs/raw/080a2324.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SET_PAGE_ICONS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_DRAW_WORK_VALUE_WITH_LABEL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_SET_MENU_BUSY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SOUND/PLAY_PLAY_CUE_RETURN_ONE.o"(.text)

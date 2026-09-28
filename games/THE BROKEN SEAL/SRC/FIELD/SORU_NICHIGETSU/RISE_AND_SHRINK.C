@@ -11,29 +11,29 @@ void SetSolShindenActorStep();
 s32 Engine_GameFlagIsSet();
 void Engine_EventBegin();
 void Engine_ActorWalkToAndWait();
-void ObjectMotion_SetSpeedParameters();
+void Engine_ActorSetSpeed();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetPosition();
 void Engine_MapCopyCellsTo();
 void Engine_EventWait();
-void ObjectTable_AllocateAndSetObjectSpeed();
+void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_ActorFaceDirection();
 void Map_ClearLayerEntryFlag();
 void Engine_AudioPlayCue();
-void BattleFx_SpawnLinked();
+void Engine_ActorShowEmote();
 void Object_LinkPair();
 void Engine_TaskWait();
 void Engine_EventSetMessage();
-void BattleEv_RunWait();
+void Engine_EventShowMessage();
 void ObjectGroup_ConfigureChildValue();
 struct FieldActor *Engine_ActorGet();
 void Engine_ActorJump();
 void Engine_ActorRunRepeatedMotion();
 void Engine_EventEnd();
 void Engine_ColorBufferApplyTarget();
-void Event_SetValue170();
-void Event_ClearStatus1c6();
+void Engine_EventRequestExit();
+void Engine_EventCloseScreen();
 void Engine_ColorBufferInterpolate();
 void Engine_EventWaitForScreen();
 
@@ -84,13 +84,13 @@ void FieldScene_RunSanctumRiseAndShrink(void)
     if (Value1(Engine_GameFlagIsSet, 0x811) == 0) {
     } else {
         Engine_EventBegin();
-        Call2(ObjectTable_AllocateAndSetObjectSpeed, 0x10000, 0x2000);
+        Call2(Engine_CameraSetSpeed, 0x10000, 0x2000);
         Call4(Engine_CameraMoveTo, 0x11f0000, -1, 0x940000, 1);
         Call3(Engine_ActorWalkToAndWait, 0, 0x120, 120);
         Engine_ActorSetAnimation(0, 0);
         Actor_Jump(ACTOR_PARTY_LEADER, 4, 30);
         Call3(Engine_ActorSetPosition, 16, 0x1200000, 0x780000);
-        Call3(ObjectMotion_SetSpeedParameters, 16, 0x10000, 0x8000);
+        Call3(Engine_ActorSetSpeed, 16, 0x10000, 0x8000);
         Actor_WalkToAndWait(16, 0x114, 136);
         Actor_WalkTo(16, 0x108, 136);
         Call3(Engine_ActorWalkToAndWait, 0, 0x138, 136);
@@ -114,8 +114,8 @@ void FieldScene_RunSanctumRiseAndShrink(void)
             Call6(Engine_MapCopyCellsTo, 0, 32, 17, 39, 2, 1);
             Call6(Engine_MapCopyCellsTo, 44, 59, 17, 40, 2, 1);
             Engine_EventWait(10);
-            Call3(BattleFx_SpawnLinked, 0, 0x100, 0);
-            Call3(BattleFx_SpawnLinked, 16, 0x100, 0);
+            Call3(Engine_ActorShowEmote, 0, 0x100, 0);
+            Call3(Engine_ActorShowEmote, 16, 0x100, 0);
             Call6(Engine_MapCopyCellsTo, 42, 62, 17, 36, 2, 3);
             Call6(Engine_MapCopyCellsTo, 0, 32, 17, 40, 2, 1);
             Call6(Engine_MapCopyCellsTo, 44, 59, 17, 41, 2, 1);
@@ -139,16 +139,16 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         SetSolShindenActorStep(base5_8010, 6);
         Actor_SetAnimationAndWait(16, 3);
         Actor_SetAnimation(16, 1);
-        BattleEv_RunWait(base5_8010, 0);
+        Engine_EventShowMessage(base5_8010, 0);
         Engine_ActorSetAnimation(0, 3);
         Engine_EventWait(60);
         actor = Actor_Get(ACTOR_PARTY_LEADER);
-        Call2(ObjectTable_AllocateAndSetObjectSpeed, 0x9999, 0x1333);
+        Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
         Call4(Engine_CameraMoveTo, 0x11f0000, -1, 0x720000, 1);
         Call3(Engine_ActorWalkToAndWait, 0, 0x120, 120);
         Engine_EventWait(20);
         Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
-        Call3(ObjectMotion_SetSpeedParameters, 0, 0x4ccc, 0x2666);
+        Call3(Engine_ActorSetSpeed, 0, 0x4ccc, 0x2666);
         actor->unknown_5a &= 254;
         /* FAKEMATCH: the zero goes through the sprite variable (r7). */
         sprite = 0;
@@ -178,7 +178,7 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Engine_ActorRunRepeatedMotion(16, 2);
         Engine_EventWait(20);
         Call3(Engine_ActorFaceDirection, 16, 0xc000, 20);
-        Call3(ObjectMotion_SetSpeedParameters, 16, 0x4ccc, 0x2666);
+        Call3(Engine_ActorSetSpeed, 16, 0x4ccc, 0x2666);
         actor = Engine_ActorGet(16);
         /* FAKEMATCH: a mask temporary delays both byte stores past the zero. */
         {
@@ -210,12 +210,12 @@ void FieldScene_RunSanctumRiseAndShrink(void)
         Engine_EventWait(80);
         gEventWork->start_transition = 0x203;
         gEventWork->transition_frames = 24;
-        Event_ClearStatus1c6();
+        Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
         Engine_ColorBufferApplyTarget(0, 0);
         Engine_ColorBufferInterpolate(1);
         Engine_TaskWait(1);
-        Event_SetValue170(7);
+        Engine_EventRequestExit(7);
         Engine_EventEnd();
     }
 }

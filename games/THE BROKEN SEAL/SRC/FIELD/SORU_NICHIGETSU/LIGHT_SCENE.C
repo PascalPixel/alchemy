@@ -81,7 +81,7 @@ void SoruNichigetsu_RunLightScene(void)
     Engine_ActorRunRepeatedMotion(1, 2);
     Engine_EventSetMessage(0x1119);
     Engine_EventOpenMessage(1, 0);
-    Engine_UiWorkWaitThenFinalizeCapacity(0, 0);
+    Engine_EventChooseYesNo(0, 0);
     Engine_ActorSetAnimation(0, 1);
     Engine_EventWait(40);
     Engine_AudioPlayCue(107);

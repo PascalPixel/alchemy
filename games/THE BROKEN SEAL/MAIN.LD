@@ -555,7 +555,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUN_COPIED_ROUTINE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/CREATE_COUNTDOWN_LABEL_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/LOAD_INDEXED_INTO_BUFFER.o"(.text)
-        "*/recon/tbs/raw/08021cb8.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/LOAD_REMAPPED_GLYPH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/DRAW_CHARACTER.o"(.text)
         "*/recon/tbs/raw/08021dfa.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SET_BG1_PRIORITY3.o"(.text)

@@ -103,6 +103,9 @@ Func_08016bdc:
 	.4byte 0x020055d0
 	.2byte 0x1000
 	.2byte 0x0600
+	.global OwnerState_Get
+	.thumb_func
+OwnerState_Get:
 	push	{lr}
 	cmp	r0, #7
 	bhi.n	.L_08016cb6

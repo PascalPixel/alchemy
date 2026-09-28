@@ -2,10 +2,10 @@
 	.thumb
 	.set sub_081c2a3c, 0x081c2a3c
 	.set sub_081c2a8c, 0x081c2a8c
-	.global CgbAudio_Update
+	.global Cgb_UpdateChannels
 	.global Func_081c2af4
 	.thumb_func
-CgbAudio_Update:
+Cgb_UpdateChannels:
 Func_081c2af4:
 	push	{r4, r5, r6, r7, lr}
 	mov	r7, sl

@@ -1,44 +1,24 @@
-pub(crate) mod audit;
 pub(crate) mod boxtree;
-pub(crate) mod executable;
+pub(crate) mod calcrom;
 pub(crate) mod figure;
 pub(crate) mod history;
 pub(crate) mod jsnum;
 pub(crate) mod letters;
-pub(crate) mod main_data;
-pub(crate) mod midi;
 pub(crate) mod model;
 pub(crate) mod palette;
-pub(crate) mod pipeline;
-pub(crate) mod places;
 pub(crate) mod progress;
-pub(crate) mod proof;
 pub(crate) mod raster;
 pub(crate) mod sessions;
-pub(crate) mod source;
 pub(crate) mod tree;
 
-use crate::compiler::canonical_json::canonical_json;
-use crate::coverage::jsnum::{commas, number};
-use crate::coverage::pipeline::{build_coverage_map, BuildOptions, CoverageMap};
-use crate::coverage::progress::{game_done, measured, GameDone};
-use crate::coverage::tree::{ref_tree, root, work_tree};
-use serde_json::Value;
-use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--files|--models|--assembly-spans|--self-test] [--publication]\n\
---publication preserves approved model attribution while writing current publication figures.";
-fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
-    v.as_object()?.get(key)
-}
-fn field(v: &Value, path: &[&str]) -> f64 {
-    path.iter()
-        .try_fold(v, |node, key| get(node, key))
-        .and_then(Value::as_f64)
-        .unwrap_or(f64::NAN)
-}
-fn quote(s: &str) -> String {
-    serde_json::to_string(s).unwrap_or_else(|_| "\"\"".into())
-}
+use crate::coverage::progress::{measured, GameDone};
+use crate::coverage::tree::root;
+use std::path::Path;
+const USAGE: &str =
+    "usage: alchemy check coverage [--write [--publication]|--check|--models|--self-test]\n\
+Publishes README's progress line, today's progress history row and both figures from each game's\n\
+verified build (make compare); a game without one stays pending. --publication preserves approved\n\
+model attribution; --check fails when any published value is stale.";
 fn read(path: &Path) -> Result<String, String> {
     std::fs::read(path)
         .map(|b| String::from_utf8_lossy(&b).into_owned())
@@ -47,65 +27,22 @@ fn read(path: &Path) -> Result<String, String> {
 fn write(path: &Path, text: &str) -> Result<(), String> {
     std::fs::write(path, text).map_err(|e| format!("cannot write {}: {e}", path.display()))
 }
-fn map_path(target: &str) -> PathBuf {
-    root()
-        .join("out")
-        .join(target)
-        .join("reports/coverage-map.json")
-}
 #[derive(Default)]
 struct Options {
-    target: String,
-    exact: Option<String>,
-    recon: Option<String>,
     write: bool,
     check: bool,
-    assembly_spans: bool,
     self_test: bool,
-    files: bool,
     models: bool,
     publication: bool,
     help: bool,
 }
 fn parse(argv: &[String]) -> Result<Options, String> {
-    let mut o = Options {
-        target: "tbs-en".into(),
-        ..Options::default()
-    };
-    let mut i = 0;
-    while i < argv.len() {
-        match argv[i].as_str() {
-            "--target" => {
-                i += 1;
-                o.target = match argv.get(i).map(String::as_str) {
-                    Some("tbs-en") => "tbs-en".into(),
-                    Some("tla-en") => "tla-en".into(),
-                    Some(v) => {
-                        return Err(format!(
-                            "unsupported decomp target {}; expected tbs-en or tla-en",
-                            quote(v)
-                        ))
-                    }
-                    None => {
-                        return Err(
-                            "unsupported decomp target undefined; expected tbs-en or tla-en".into(),
-                        )
-                    }
-                };
-            }
-            "--exact-ref" => {
-                i += 1;
-                o.exact = argv.get(i).cloned();
-            }
-            "--recon-ref" | "--semantic-ref" => {
-                i += 1;
-                o.recon = argv.get(i).cloned();
-            }
+    let mut o = Options::default();
+    for argument in argv {
+        match argument.as_str() {
             "--write" => o.write = true,
             "--check" => o.check = true,
-            "--assembly-spans" => o.assembly_spans = true,
             "--self-test" => o.self_test = true,
-            "--files" => o.files = true,
             "--models" => o.models = true,
             "--publication" => o.publication = true,
             "-h" | "--help" => {
@@ -114,129 +51,29 @@ fn parse(argv: &[String]) -> Result<Options, String> {
             }
             other => return Err(format!("unrecognized argument: {other}")),
         }
-        i += 1;
     }
     Ok(o)
 }
-fn tracked(map: &Value) -> Value {
-    let mut out = map.clone();
-    if let Some(object) = out.as_object_mut() {
-        for key in ["rom_areas", "executable_areas"] {
-            if let Some(Value::Array(areas)) = object.get_mut(key) {
-                for area in areas {
-                    if let Some(a) = area.as_object_mut() {
-                        let count = a.get("tiles").and_then(Value::as_array).map_or(0, Vec::len);
-                        a.insert("tiles".into(), Value::Number((count as u64).into()));
-                    }
-                }
-            }
-        }
-    }
-    out
-}
-fn summary(doc: &Value) -> Result<String, String> {
-    let executable = field(doc, &["executable_bytes"]);
-    let proven_c = field(doc, &["categories", "proven_c", "bytes"]);
-    let draft_c = field(doc, &["categories", "draft_c", "bytes"]);
-    let proven_asm = field(doc, &["categories", "proven_asm", "bytes"]);
-    if !executable.is_finite() || !proven_asm.is_finite() {
-        return Err("coverage map lacks executable totals".into());
-    }
-    let score: GameDone = serde_json::from_value(doc["done"].clone())
-        .map_err(|e| format!("coverage has no verified score: {e}"))?;
-    Ok(format!(
-        "target={} rom={} executable={} proven_c={} ({}%) draft_c={} ({}%) proven_asm={} done={} ({}%) draft_source={}",
-        get(doc, "target").and_then(Value::as_str).unwrap_or("undefined"),
-        commas(field(doc, &["rom_bytes"]) as i64),
-        commas(executable as i64),
-        commas(proven_c as i64),
-        number(field(doc, &["categories", "proven_c", "percent_of_executable"])),
-        commas(draft_c as i64),
-        number(field(doc, &["categories", "draft_c", "percent_of_executable"])),
-        commas(proven_asm as i64),
-        commas(score.bytes()),
-        number(score.percent()),
-        get(get(doc, "provenance").unwrap_or(&Value::Null), "draft_source").and_then(Value::as_str).unwrap_or("undefined")
-    ))
-}
-fn readme_metrics(proven_c: f64, proven_asm: f64, executable: f64) -> String {
-    let done = crate::coverage::jsnum::done_bytes(proven_c as i64, proven_asm as i64) as f64;
-    let share = |bytes: f64| {
-        if executable == 0.0 {
-            0.0
-        } else {
-            bytes * 100.0 / executable
-        }
-    };
-    format!(
-        "|                    |       bytes |                   share |\n\
-         | ------------------ | ----------: | ----------------------: |\n\
-         | Proven C           | {:>11} | {:>8.1}% of executable |\n\
-         | Proven ASM         | {:>11} | {:>8.1}% of executable |\n\
-         | **DONE**           | **{:>7}** | **{:.1}% of executable** |",
-        commas(proven_c as i64),
-        share(proven_c),
-        commas(proven_asm as i64),
-        share(proven_asm),
-        commas(done as i64),
-        share(done)
-    )
-}
 /// The README status line under "## Progress": ☀️ The Broken Seal and
-/// ⚓️ The Lost Age, each pending until its executable audit gives it a
-/// denominator.
+/// ⚓️ The Lost Age, each pending until a byte-identical build measures it.
 fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     let show = |done: Option<GameDone>| {
         done.map_or("pending".to_string(), |d| format!("{:.2}%", d.percent()))
     };
     format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
 }
-fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> String {
-    let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
-    let proven_asm = field(&map.document, &["categories", "proven_asm", "bytes"]);
-    let executable = field(&map.document, &["executable_bytes"]);
-    let percent =
-        crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64);
+fn update_readme(text: &str, status: &str) -> String {
     let mut out = text.to_string();
-    if let Some(start) = out.find("**☀️ ").or_else(|| out.find("## Status:")) {
+    if let Some(start) = out.find("**☀️ ") {
         if let Some(end) = out[start..].find('\n') {
             out.replace_range(start..start + end, status);
-        }
-    }
-    if let Some(end) = out.find("\n\nDONE measures") {
-        if let Some(start) = out[..end].rfind("\n## DONE:") {
-            let head_end = start + 1;
-            let replacement = format!("## DONE: Currently {percent:.2}%");
-            out.replace_range(head_end..end, &replacement);
-        }
-    }
-    if let Some(start) = out.find("|                    |       bytes |                   share |")
-    {
-        if let Some(end) = out[start..].find("\n\nProven ASM") {
-            out.replace_range(
-                start..start + end,
-                &readme_metrics(proven_c, proven_asm, executable),
-            );
-        }
-    }
-    if let Some(start) = out.find("**Proven C stands at ") {
-        let value_start = start + "**Proven C stands at ".len();
-        if let Some(end) = out[value_start..].find("%**") {
-            let c_able = executable;
-            let c_share = if c_able == 0.0 {
-                0.0
-            } else {
-                proven_c * 100.0 / c_able
-            };
-            out.replace_range(value_start..value_start + end, &format!("{c_share:.1}"));
         }
     }
     out
 }
 #[cfg(test)]
 mod tests {
-    use super::{readme_metrics, status_line, update_readme};
-    use crate::coverage::pipeline::CoverageMap;
+    use super::{status_line, update_readme};
     use crate::coverage::progress::GameDone;
     use serde_json::json;
     #[test]
@@ -312,30 +149,9 @@ mod tests {
             false
         ));
     }
-    #[test]
-    fn readme_metrics_reports_all_done_categories() {
-        assert_eq!(
-            readme_metrics(282_436.0, 343_206.0, 1_347_122.0),
-            "|                    |       bytes |                   share |\n\
-             | ------------------ | ----------: | ----------------------: |\n\
-             | Proven C           |     282,436 |     21.0% of executable |\n\
-             | Proven ASM         |     343,206 |     25.5% of executable |\n\
-             | **DONE**           | **625,642** | **46.4% of executable** |"
-        );
-    }
 
     #[test]
-    fn readme_status_includes_exact_c_and_retained_assembly() {
-        let map = CoverageMap {
-            document: json!({
-                "executable_bytes": 1000,
-                "categories": {
-                    "proven_c": {"bytes": 250},
-                    "proven_asm": {"bytes": 340}
-                }
-            }),
-            executable_areas: Vec::new(),
-        };
+    fn readme_status_shows_each_verified_game_or_pending() {
         let sun = GameDone {
             game_c: 250,
             game_asm: 340,
@@ -346,12 +162,12 @@ mod tests {
         assert_eq!(status, "**☀️ 59.00% · ⚓️ pending**");
         let updated = update_readme(
             "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**\n\nDetails\n",
-            "tbs-en",
-            &map,
             &status,
         );
-        assert!(updated.contains("## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n"));
-        assert!(!updated.contains("52%"));
+        assert_eq!(
+            updated,
+            "# Alchemy\n\n## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n\nDetails\n"
+        );
     }
 }
 /// Both README figures as the history's recorded figure date draws them.
@@ -470,141 +286,44 @@ fn run(argv: &[String]) -> Result<String, String> {
         return Ok(USAGE.into());
     }
     if o.self_test {
-        return Ok("self-test=ok coverage-map".into());
+        return Ok("self-test=ok coverage".into());
     }
-    if o.publication && (!o.write || o.check || o.models || o.assembly_spans) {
+    if o.publication && (!o.write || o.check || o.models) {
         return Err("--publication requires --write; it cannot relabel models".into());
     }
-    if o.publication
-        && (o
-            .exact
-            .as_deref()
-            .is_some_and(|reference| reference != "worktree")
-            || o.recon
-                .as_deref()
-                .is_some_and(|reference| reference != "worktree"))
-    {
-        return Err("--publication requires the current worktree inputs".into());
-    }
+    let root = root();
     if o.models {
         // Relabel every day's commits by model from the local agent logs.
-        let mut history = history::load(&root())?;
-        let moved = history::relabel_models(&root(), &mut history)?;
-        write(&history::path(&root()), &history::text(&history))?;
+        let mut history = history::load(&root)?;
+        let moved = history::relabel_models(&root, &mut history)?;
+        write(&history::path(&root), &history::text(&history))?;
         return Ok(moved
             .iter()
             .map(|((from, to), n)| format!("{n}\t{from} -> {to}"))
             .collect::<Vec<_>>()
             .join("\n"));
     }
-    if o.files {
-        if o.exact.is_some() || o.recon.is_some() || o.assembly_spans {
-            return Err("--files accepts only --write or --check".into());
-        }
-        let (sun, anchor) = (measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
-        if o.check {
-            check_figures(&root())?;
-        } else if o.write {
-            write_figures(&root(), sun, anchor, o.publication)?;
-        } else {
-            return Err("--files requires --write or --check".into());
-        }
-        return Ok(format!("figures={} {}", figure::CHART, figure::MAP));
-    }
-    let (sun, anchor) = (measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
-    if sun.is_none() || anchor.is_none() {
-        let source = read(&root().join("README.md"))?;
-        let status = status_line(sun, anchor);
-        let mut updated = source.clone();
-        if let Some(start) = updated.find("**☀️ ") {
-            if let Some(end) = updated[start..].find('\n') {
-                updated.replace_range(start..start + end, &status);
-            }
-        }
-        if o.check {
-            if updated != source {
-                return Err("README progress is stale; run make coverage".into());
-            }
-            check_figures(&root())?;
-        } else if o.write {
-            write(&root().join("README.md"), &updated)?;
-            write_figures(&root(), sun, anchor, o.publication)?;
-        }
-        return Ok(
-            "DONE=pending; executable audit and complete source extents need fresh verification"
-                .into(),
-        );
-    }
-    let exact = match o.exact.as_deref() {
-        None | Some("worktree") => work_tree(),
-        Some(id) => {
-            ref_tree(id).ok_or_else(|| format!("exact source ref {id} is not available here"))?
-        }
-    };
-    let semantic = match o.recon.as_deref() {
-        Some("none") => None,
-        None | Some("worktree") => Some(work_tree()),
-        Some(id) => Some(
-            ref_tree(id)
-                .ok_or_else(|| format!("reconstruction source ref {id} is not available here"))?,
-        ),
-    };
-    let map = build_coverage_map(&BuildOptions {
-        target: o.target.clone(),
-        exact: &exact,
-        recon: semantic.as_ref(),
-    })?;
-    if o.assembly_spans {
-        let mut rows = map
-            .executable_areas
-            .iter()
-            .flat_map(|area| &area.tiles)
-            .filter(|tile| tile.categories[2] > 0)
-            .collect::<Vec<_>>();
-        rows.sort_by_key(|tile| std::cmp::Reverse(tile.categories[2]));
-        return Ok(rows
-            .into_iter()
-            .map(|tile| format!("{}\t{}", tile.categories[2], tile.label))
-            .collect::<Vec<_>>()
-            .join("\n"));
-    }
-    let map_json = canonical_json(&tracked(&map.document));
-    let sun = if o.target == "tbs-en" {
-        Some(game_done(&map)?)
-    } else {
-        measured(&root(), "tbs-en")?
-    };
-    let anchor = if o.target == "tla-en" {
-        Some(game_done(&map)?)
-    } else {
-        measured(&root(), "tla-en")?
-    };
+    let (sun, anchor) = (measured(&root, "tbs-en")?, measured(&root, "tla-en")?);
     let status = status_line(sun, anchor);
+    let readme = read(&root.join("README.md"))?;
+    let updated = update_readme(&readme, &status);
     if o.check {
-        check_figures(&root())?;
-        let readme = read(&root().join("README.md"))?;
-        if update_readme(&readme, &o.target, &map, &status) != readme {
-            return Err("README coverage values are stale; run: make coverage".into());
+        if updated != readme {
+            return Err("README progress is stale; run: make coverage".into());
         }
-        return Ok(format!("coverage-map=current {}", summary(&map.document)?));
+        check_figures(&root)?;
+        return Ok(format!("coverage=current {status}"));
     }
     if o.write {
-        write(&map_path(&o.target), &map_json)?;
-        write_figures(&root(), sun, anchor, o.publication)?;
-        let readme = read(&root().join("README.md"))?;
-        write(
-            &root().join("README.md"),
-            &update_readme(&readme, &o.target, &map, &status),
-        )?;
+        write(&root.join("README.md"), &updated)?;
+        write_figures(&root, sun, anchor, o.publication)?;
         return Ok(format!(
-            "map={} figures={},{} {}",
-            map_path(&o.target).display(),
+            "published {status} figures={},{}",
             figure::CHART,
-            figure::MAP,
-            summary(&map.document)?
+            figure::MAP
         ));
     }
-    summary(&map.document)
+    Ok(status)
 }
 pub fn entry(arguments: &[String]) {
     match run(arguments) {

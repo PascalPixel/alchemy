@@ -16,7 +16,6 @@ pub(crate) fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
             0
         }
 }
-use crate::coverage::pipeline::source_container;
 
 // The file-type palette of the figure: each kind of file has
 // its own clear pastel on the teal chart (the chrome is in `palette`); assembly and executable code sit in teal.
@@ -294,6 +293,23 @@ pub(crate) fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     }
     out
 }
+/// A folder tile holding `children`, its bytes and categories their sums.
+fn source_container(source: String, children: Vec<Tile>) -> Tile {
+    let mut tile = Tile {
+        label: source_name(&source).into(),
+        group: children.first().and_then(|child| child.group.clone()),
+        source: Some(source),
+        children,
+        ..Tile::default()
+    };
+    for child in &tile.children {
+        tile.bytes += child.bytes;
+        for (total, bytes) in tile.categories.iter_mut().zip(child.categories) {
+            *total += bytes;
+        }
+    }
+    tile
+}
 pub(crate) fn source_name(source: &str) -> &str {
     let trimmed = source.trim_end_matches('/');
     trimmed.rsplit('/').next().unwrap_or(trimmed)
@@ -413,13 +429,11 @@ mod tests {
     fn all_directories_wrap_files_without_duplicating_bytes() {
         let tile = Tile {
             source: Some("games/THE BROKEN SEAL/SRC/battle/effects/fire.c".into()),
-            address: Some(0x080bbb0c),
             bytes: 100,
             categories: [100, 0, 0, 0, 0, 0],
             ..Tile::default()
         };
-        let mut other = tile.clone();
-        other.address = Some(0x080bbb70);
+        let other = tile.clone();
         let grouped = directories(vec![tile, other], "");
         let mut node = &grouped[0];
         for path in [
@@ -433,7 +447,6 @@ mod tests {
             assert_eq!(node.children.len(), 1);
             assert_eq!(node.bytes, 200);
             assert_eq!(node.categories, [200, 0, 0, 0, 0, 0]);
-            assert_eq!(node.address, None);
             node = &node.children[0];
         }
         assert_eq!(node.label, "fire.c");

@@ -3,14 +3,12 @@ use std::process::Command;
 use std::process::ExitCode;
 
 mod commit_progress;
-mod integrate;
 mod no_asm;
-mod owners;
 mod publication;
 pub(crate) use publication::PRESENTATION_EXTENSIONS;
-mod tla_owners;
 
-const USAGE: &str = "usage: alchemy check <publication|commit-progress|source-build|coverage|no-asm|progress|routes> [args]";
+const USAGE: &str =
+    "usage: alchemy check <publication|commit-progress|coverage|no-asm|progress|routes> [args]";
 
 /// Run a check body and report its error the way every check does.
 fn report(result: Result<(), String>) -> ExitCode {
@@ -69,30 +67,13 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     let rest = &arguments[1..];
     if matches!(
         command,
-        "source-tracking" | "owners" | "tla-owners" | "integrate" | "siblings"
+        "source-tracking" | "owners" | "tla-owners" | "integrate" | "siblings" | "source-build"
     ) {
         return report(Err(format!(
-            "{command} used the removed catalogs; check source-build verifies maintained source"
+            "{command} used the removed catalogs or receipts; make compare builds and verifies maintained source"
         )));
     }
     match command {
-        "source-build" => {
-            let target = match rest {
-                [] => crate::targets::decomp_target(None),
-                [flag, target] if flag == "--target" => crate::targets::decomp_target(Some(target)),
-                _ => {
-                    return report(Err(
-                        "usage: alchemy check source-build [--target TARGET]".into()
-                    ))
-                }
-            };
-            report(target.and_then(|target| {
-                crate::coverage::proof::verify_source_build(
-                    crate::compiler::routing::root(),
-                    target,
-                )
-            }))
-        }
         "source-tracking" if rest.is_empty() => {
             match crate::build_assets::check_source_tracking() {
                 Ok(()) => ExitCode::SUCCESS,
@@ -104,20 +85,16 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         }
         "publication" => publication::entry(rest),
         "commit-progress" => commit_progress::entry(rest),
-        "owners" => owners::entry(rest),
-        "tla-owners" => tla_owners::entry(rest),
         "coverage" => {
             crate::coverage::entry(rest);
             ExitCode::SUCCESS
         }
-        "integrate" => integrate::entry(rest),
         "no-asm" => no_asm::entry(rest),
         "progress" => {
             crate::coverage::progress::entry(rest);
             ExitCode::SUCCESS
         }
         "routes" => routes(rest),
-        "siblings" => crate::siblings::check(rest),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

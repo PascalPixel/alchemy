@@ -8,7 +8,6 @@
 @ credit: handwritten — Thumb stack-copy loader of the colour-scale kernel
 .syntax unified
 	.thumb_func
-	.set	.L_08118394, 0x08118394
 	.arm
 	.thumb
 	.global ColorBuffer_Scale
@@ -25,5 +24,5 @@ ColorBuffer_Scale:
 	add	sp, #124
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	.L_08118394
+	.4byte	ColorBuffer_ScaleKernelCode
 	.4byte	0x8400001f

@@ -10,7 +10,8 @@
 	.arm
 	.global SentouKouka_TenkaiCommands
 SentouKouka_TenkaiCommands:
-.L_081a0170:
+	.global SentouKouka_TenkaiCase2
+SentouKouka_TenkaiCase2:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -18,7 +19,8 @@ SentouKouka_TenkaiCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_081a018c:
+	.global SentouKouka_TenkaiCase4Plus
+SentouKouka_TenkaiCase4Plus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -29,7 +31,8 @@ SentouKouka_TenkaiCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_081a01b4:
+	.global SentouKouka_TenkaiCase4Minus
+SentouKouka_TenkaiCase4Minus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -40,7 +43,8 @@ SentouKouka_TenkaiCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_081a01dc:
+	.global SentouKouka_TenkaiCase6Plus
+SentouKouka_TenkaiCase6Plus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -51,7 +55,8 @@ SentouKouka_TenkaiCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_081a0204:
+	.global SentouKouka_TenkaiCase6Minus
+SentouKouka_TenkaiCase6Minus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -62,7 +67,8 @@ SentouKouka_TenkaiCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_081a022c:
+	.global SentouKouka_TenkaiCase8
+SentouKouka_TenkaiCase8:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -75,7 +81,8 @@ SentouKouka_TenkaiCommands:
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_081a025c:
+	.global SentouKouka_TenkaiCase10
+SentouKouka_TenkaiCase10:
 	ror	r5, r3, #10
 	and	r5, r5, #0xfe000000
 	lsr	r3, r3, #10

@@ -12,7 +12,6 @@
 @ unwinding another routine's frame are beyond both approved compilers.
 @ credit: handwritten — IWRAM runtime frame renderer
 .syntax unified
-	.set	.L_audio_096c, 0x0300096c
 	.arm
 IwramSoundRenderFrame:
 	add	r0, pc, #656
@@ -32,7 +31,8 @@ IwramSoundRenderFrame:
 	eoreq	r6, r4, r4, lsl #1
 	andseq	r6, r6, lr
 	bne	IwramSoundNormalizeChannels
-.L_audio_0ba0:
+	.global IwramSoundRenderOutput
+IwramSoundRenderOutput:
 	and	r6, r8, r1, ror #15
 	and	r7, r8, r2, ror #15
 	orr	r6, r7, r6, lsr #8
@@ -94,7 +94,8 @@ Data_03000bd8:
 	pop	{r8, r9, sl, fp}
 	pop	{r5, r6, r7, lr}
 	bx	lr
-.L_audio_wave_mode:
+	.global IwramSoundSynthWave
+IwramSoundSynthWave:
 	cmp	ip, #0, 0
 	bne	.L_audio_noise_mode
 	ldrb	r6, [r3, #2]
@@ -128,7 +129,7 @@ Data_03000bd8:
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0
 	bgt	.L_audio_0cbc
-	b	.L_audio_096c
+	b	IwramSoundMixDone
 .L_audio_noise_mode:
 	subs	ip, ip, #1, 0
 	bne	.L_audio_square_mode
@@ -165,7 +166,7 @@ Data_03000bd8:
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0
 	bgt	.L_audio_0d28
-	b	.L_audio_096c
+	b	IwramSoundMixDone
 .L_audio_square_mode:
 	mov	r6, #128, 0
 	mov	ip, #384
@@ -190,4 +191,4 @@ Data_03000bd8:
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4, 0
 	bgt	.L_audio_0da4
-	b	.L_audio_096c
+	b	IwramSoundMixDone

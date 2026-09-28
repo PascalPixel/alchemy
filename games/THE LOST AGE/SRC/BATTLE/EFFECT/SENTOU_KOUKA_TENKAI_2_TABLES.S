@@ -6,20 +6,15 @@
 @ and carry no credit, as SENTOU_KOUKA_TENKAI_TABLES.S.
 .syntax unified
 	.section .data,"aw",%progbits
-	.set	.L_081a03c0, 0x081a03c0
-	.set	.L_081a03dc, 0x081a03dc
-	.set	.L_081a047c, 0x081a047c
-	.set	.L_081a042c, 0x081a042c
-	.set	.L_081a0404, 0x081a0404
-	.set	.L_081a04ac, 0x081a04ac
-	.set	.L_081a0454, 0x081a0454
 	.arm
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-	.4byte	.L_081a03c0
-	.4byte	.L_081a03dc
-	.4byte	.L_081a047c
-	.4byte	.L_081a042c
-	.4byte	.L_081a03c0
-	.4byte	.L_081a0404
-	.4byte	.L_081a04ac
-	.4byte	.L_081a0454
+	.global SentouKouka_Tenkai2CaseTable
+SentouKouka_Tenkai2CaseTable:
+	.4byte	SentouKouka_Tenkai2Case2
+	.4byte	SentouKouka_Tenkai2Case4Plus
+	.4byte	SentouKouka_Tenkai2Case8
+	.4byte	SentouKouka_Tenkai2Case6Plus
+	.4byte	SentouKouka_Tenkai2Case2
+	.4byte	SentouKouka_Tenkai2Case4Minus
+	.4byte	SentouKouka_Tenkai2Case10
+	.4byte	SentouKouka_Tenkai2Case6Minus

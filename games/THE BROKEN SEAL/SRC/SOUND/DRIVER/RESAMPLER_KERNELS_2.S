@@ -6,9 +6,9 @@
 @ only.
 @ credit: handwritten — ARM sound-buffer records patched into the IWRAM runtime
 .syntax unified
-	.set	.Lrecords_end, 0x080006fc
 	.arm
-.Lrecord_2:
+	.global IwramCodeRecord2
+IwramCodeRecord2:
 	asrs	r6, r4, #18
 	adds	r6, r6, fp, asr #19
 	addmi	r6, r6, #40
@@ -91,4 +91,4 @@
 	mov	r2, #0
 	mov	r3, #0
 	mov	r4, #0
-	b	.Lrecords_end
+	b	IwramCodeRecordsEnd

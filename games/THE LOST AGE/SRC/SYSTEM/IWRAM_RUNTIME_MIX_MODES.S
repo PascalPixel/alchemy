@@ -6,9 +6,9 @@
 @ both approved compilers.
 @ credit: handwritten — TLA IWRAM runtime synthesised channel loops
 .syntax unified
-	.set	.L_03000b94, 0x03000b94
 	.arm
-.L_03000eec:
+	.global IwramSoundSynthWave
+IwramSoundSynthWave:
 	cmp	ip, #0
 	bne	.L_03000fb8
 	ldrb	r6, [r3, #2]
@@ -60,7 +60,7 @@
 	subs	r8, r8, #8
 	bgt	.L_03000f20
 	pop	{r2, r3, r9, ip}
-	b	.L_03000b94
+	b	IwramSoundMixDone
 .L_03000fb8:
 	subs	ip, ip, #1
 	bne	.L_03001044
@@ -97,7 +97,7 @@
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4
 	bgt	.L_03000fd0
-	b	.L_03000b94
+	b	IwramSoundMixDone
 .L_03001044:
 	mov	r6, #128
 	mov	ip, #0x180
@@ -122,4 +122,4 @@
 	stmia	r5!, {r0, r1, sl, lr}
 	subs	r8, r8, #4
 	bgt	.L_0300104c
-	b	.L_03000b94
+	b	IwramSoundMixDone

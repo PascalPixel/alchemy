@@ -63,19 +63,6 @@ impl DecompTarget {
             .strip_suffix("/SRC")
             .expect("source_dir ends with /SRC")
     }
-    /// The game's reconstruction scaffolding, `recon/tbs` or `recon/tla`:
-    /// drafts, retained listings and progress history outside `games/`.
-    pub fn recon_dir(&self) -> &'static str {
-        self.compiler.recon()
-    }
-    /// Retained overlay assembly for one resource-qualified overlay.
-    pub fn overlay_assembly(&self, overlay: &str) -> String {
-        format!("{}/{overlay}_overlay.s", self.overlay_dir())
-    }
-    /// The directory of retained overlay listings and their link scripts.
-    pub fn overlay_dir(&self) -> String {
-        format!("{}/overlays", self.asm_dir)
-    }
     /// The game's shared `overlay_veneer` macro, included by every overlay.
     pub fn overlay_macro(&self) -> String {
         format!("{}/SYSTEM/OVERLAY.INC", self.source_dir)
@@ -155,10 +142,7 @@ fn self_test() -> Result<String, String> {
             || !target.asm_dir.starts_with(recon)
             || !outputs.insert(target.output_dir)
             || !target.game_dir().starts_with(root.trim_end_matches('/'))
-            || !target.recon_dir().starts_with(recon.trim_end_matches('/'))
             || !target.overlay_macro().starts_with(root)
-            || target.overlay_assembly("resource_649")
-                != format!("{recon}raw/overlays/resource_649_overlay.s")
         {
             return Err(format!("{id} does not have isolated relative paths"));
         }

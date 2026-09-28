@@ -16,11 +16,6 @@ pub fn write(path: impl AsRef<Path>, bytes: impl AsRef<[u8]>) -> Result<(), Stri
     std::fs::write(path, bytes).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-pub fn read_json<T: serde::de::DeserializeOwned>(path: impl AsRef<Path>) -> Result<T, String> {
-    let path = path.as_ref();
-    serde_json::from_slice(&read(path)?).map_err(|error| format!("{}: {error}", path.display()))
-}
-
 pub fn rooted(root: impl AsRef<Path>, path: impl AsRef<Path>) -> PathBuf {
     let path = path.as_ref();
     if path.is_absolute() {
@@ -60,11 +55,6 @@ pub fn generated_directory(root: &Path, path: &Path) -> Result<PathBuf, String> 
     Ok(path)
 }
 
-pub fn relative(root: impl AsRef<Path>, path: impl AsRef<Path>) -> String {
-    let (root, path) = (root.as_ref(), path.as_ref());
-    text(path.strip_prefix(root).unwrap_or(path)).replace('\\', "/")
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -92,60 +82,5 @@ mod tests {
         std::os::unix::fs::symlink(outside.path(), root.path().join("out/link")).unwrap();
         assert!(generated_directory(root.path(), Path::new("out/link/new")).is_err());
         assert!(!outside.path().join("new").exists());
-    }
-
-    #[test]
-    fn relative_only_strips_the_repository_root() {
-        assert_eq!(
-            relative("/repo", "/repo/games/THE BROKEN SEAL/SRC/a.c"),
-            "games/THE BROKEN SEAL/SRC/a.c"
-        );
-        assert_eq!(
-            relative("/repo", "/opt/toolchain/agscc"),
-            "/opt/toolchain/agscc"
-        );
-        assert_eq!(
-            relative("/repo", "games/THE BROKEN SEAL/SRC/a.c"),
-            "games/THE BROKEN SEAL/SRC/a.c"
-        );
-    }
-
-    #[cfg(unix)]
-    #[test]
-    fn relative_keeps_non_utf8_components_visible() {
-        use std::{ffi::OsString, os::unix::ffi::OsStringExt};
-
-        let path = PathBuf::from(OsString::from_vec(b"/outside/\xff/file.c".to_vec()));
-        let rendered = relative("/repo", path);
-        assert!(rendered.starts_with("/outside/"));
-        assert!(rendered.ends_with("/file.c"));
-        assert!(!rendered.contains("//"));
-    }
-}
-
-/// Files whose contents are put back if a multi-file mutation fails, so a
-/// register sequence either completes or leaves nothing behind.
-pub struct Snapshot(Vec<(PathBuf, Option<Vec<u8>>)>);
-
-impl Snapshot {
-    pub fn take(paths: &[PathBuf]) -> Result<Self, String> {
-        let mut entries = Vec::new();
-        for path in paths {
-            let contents = match std::fs::read(path) {
-                Ok(bytes) => Some(bytes),
-                Err(error) if error.kind() == std::io::ErrorKind::NotFound => None,
-                Err(error) => return Err(format!("{}: {error}", path.display())),
-            };
-            entries.push((path.clone(), contents));
-        }
-        Ok(Snapshot(entries))
-    }
-    pub fn restore(&self) {
-        for (path, contents) in &self.0 {
-            let _ = match contents {
-                Some(bytes) => std::fs::write(path, bytes),
-                None => std::fs::remove_file(path),
-            };
-        }
     }
 }

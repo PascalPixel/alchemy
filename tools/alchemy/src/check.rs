@@ -3,7 +3,6 @@ use std::process::ExitCode;
 mod commit_progress;
 mod no_asm;
 mod publication;
-pub(crate) use publication::PRESENTATION_EXTENSIONS;
 
 const USAGE: &str =
     "usage: alchemy check <publication|commit-progress|coverage|no-asm|progress|routes> [args]";

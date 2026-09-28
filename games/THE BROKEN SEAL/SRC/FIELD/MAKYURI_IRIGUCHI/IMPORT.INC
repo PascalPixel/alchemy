@@ -1,3 +1,114 @@
-	.irp EntryTarget, 0x03000380, 0x030003e0, 0x080000c1, 0x080000d1, 0x080000f9, 0x08000101, 0x08000111, 0x08000119, 0x08000121, 0x08000129, 0x08000149, 0x08009021, 0x08009081, 0x08009099, 0x080090c9, 0x080090d1, 0x08009129, 0x08009151, 0x08009159, 0x08009181, 0x080091c1, 0x080091d9, 0x080091e1, 0x080091e9, 0x080091f1, 0x080091f9, 0x08015041, 0x08015211, 0x080770c1, 0x080770c9, 0x080770d1, 0x0808a011, 0x0808a019, 0x0808a021, 0x0808a081, 0x0808a091, 0x0808a099, 0x0808a0c1, 0x0808a0c9, 0x0808a0d1, 0x0808a0e1, 0x0808a0e9, 0x0808a0f1, 0x0808a101, 0x0808a111, 0x0808a139, 0x0808a149, 0x0808a159, 0x0808a161, 0x0808a1b9, 0x0808a1e1, 0x0808a1e9, 0x0808a1f1, 0x0808a209, 0x0808a211, 0x0808a219, 0x0808a221, 0x0808a249, 0x0808a251, 0x0808a261, 0x0808a331, 0x0808a339, 0x0808a349, 0x0808a361, 0x0808a369, 0x0808a371, 0x0808a401, 0x0808a409, 0x0808a581, 0x0808a5e1, 0x0808a5e9, 0x080f9011
-	overlay_veneer \EntryTarget
-	.endr
+	overlay_veneer 0x03000380
+	overlay_veneer 0x030003e0
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
+	overlay_veneer 0x080000c1
+	overlay_veneer 0x080000d1
+	overlay_veneer 0x080000f9
+	overlay_veneer 0x08000101
+	overlay_veneer 0x08000111
+	overlay_veneer 0x08000119
+	overlay_veneer 0x08000121
+	overlay_veneer 0x08000129
+	overlay_veneer 0x08000149
+	overlay_veneer 0x08009021
+	.global Object_SetMode
+	.thumb_func
+Object_SetMode:
+	overlay_veneer 0x08009081
+	overlay_veneer 0x08009099
+	overlay_veneer 0x080090c9
+	overlay_veneer 0x080090d1
+	overlay_veneer 0x08009129
+	.global Object_SetPosition
+	.thumb_func
+Object_SetPosition:
+	overlay_veneer 0x08009151
+	.global Object_CommitPosition
+	.thumb_func
+Object_CommitPosition:
+	overlay_veneer 0x08009159
+	overlay_veneer 0x08009181
+	.global Map_CopyCellAttributeRect
+	.thumb_func
+Map_CopyCellAttributeRect:
+	overlay_veneer 0x080091c1
+	.global Object_CheckMovementCollision
+	.thumb_func
+Object_CheckMovementCollision:
+	overlay_veneer 0x080091d9
+	overlay_veneer 0x080091e1
+	overlay_veneer 0x080091e9
+	overlay_veneer 0x080091f1
+	overlay_veneer 0x080091f9
+	overlay_veneer 0x08015041
+	overlay_veneer 0x08015211
+	overlay_veneer 0x080770c1
+	overlay_veneer 0x080770c9
+	overlay_veneer 0x080770d1
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
+	overlay_veneer 0x0808a011
+	overlay_veneer 0x0808a019
+	overlay_veneer 0x0808a021
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
+	overlay_veneer 0x0808a081
+	.global ObjectMotion_SetSpeedParameters
+	.thumb_func
+ObjectMotion_SetSpeedParameters:
+	overlay_veneer 0x0808a091
+	overlay_veneer 0x0808a099
+	overlay_veneer 0x0808a0c1
+	overlay_veneer 0x0808a0c9
+	overlay_veneer 0x0808a0d1
+	.global ObjectMotion_OffsetPositionAndResetMotion
+	.thumb_func
+ObjectMotion_OffsetPositionAndResetMotion:
+	overlay_veneer 0x0808a0e1
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
+	overlay_veneer 0x0808a0e9
+	overlay_veneer 0x0808a0f1
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
+	overlay_veneer 0x0808a101
+	overlay_veneer 0x0808a111
+	overlay_veneer 0x0808a139
+	overlay_veneer 0x0808a149
+	overlay_veneer 0x0808a159
+	overlay_veneer 0x0808a161
+	overlay_veneer 0x0808a1b9
+	overlay_veneer 0x0808a1e1
+	overlay_veneer 0x0808a1e9
+	overlay_veneer 0x0808a1f1
+	overlay_veneer 0x0808a209
+	overlay_veneer 0x0808a211
+	overlay_veneer 0x0808a219
+	overlay_veneer 0x0808a221
+	overlay_veneer 0x0808a249
+	overlay_veneer 0x0808a251
+	overlay_veneer 0x0808a261
+	overlay_veneer 0x0808a331
+	overlay_veneer 0x0808a339
+	overlay_veneer 0x0808a349
+	overlay_veneer 0x0808a361
+	overlay_veneer 0x0808a369
+	overlay_veneer 0x0808a371
+	overlay_veneer 0x0808a401
+	overlay_veneer 0x0808a409
+	overlay_veneer 0x0808a581
+	overlay_veneer 0x0808a5e1
+	.global BattleFx_PlayQueuedSound
+	.thumb_func
+BattleFx_PlayQueuedSound:
+	overlay_veneer 0x0808a5e9
+	.global Audio_PlayCue
+	.thumb_func
+Audio_PlayCue:
+	overlay_veneer 0x080f9011

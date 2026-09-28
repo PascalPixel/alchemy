@@ -35,6 +35,51 @@ union DriftingObject {
 
 void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect);
 
+/* The two animation scripts a drifting effect may play. */
+extern const s32 KuupuappuMura_DriftScriptA[];
+extern const s32 KuupuappuMura_DriftScriptB[];
+
+void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay)
+{
+    Event_ShowMessage(actor, 0);
+    Event_Wait(delay);
+}
+
+void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay)
+{
+    Actor_FaceEachOther(actor, cue, 0);
+    Event_Wait(delay);
+}
+
+/*
+ * Per-frame step for a projectile. Advance x by its rate and mirror it into
+ * the shadow copy, then either follow the vertical rate or fall at a fixed
+ * rate depending on the mode word, and finally decay both rates.
+ */
+void SceneEffect_UpdateMotionWithDamping(struct OverlayEffectMotion *effect)
+{
+    s32 horizontal_rate;
+    s32 vertical_rate;
+
+    effect->x += effect->horizontal_rate;
+    effect->shadow_x = effect->x;
+
+    if (effect->mode != 0) {
+        effect->y += effect->vertical_rate;
+        effect->shadow_y = effect->y;
+    } else {
+        effect->z += effect->vertical_rate;
+        effect->shadow_z = effect->z;
+        effect->y += 1024;
+        effect->shadow_y = effect->y;
+    }
+
+    horizontal_rate = effect->horizontal_rate;
+    effect->horizontal_rate = horizontal_rate - Math_Divide(horizontal_rate, 28);
+    vertical_rate = effect->vertical_rate;
+    effect->vertical_rate = vertical_rate - Math_Divide(vertical_rate, 28);
+}
+
 /* Spawn a drifting effect near actor 19: bit 1 of flags picks its plane,
  * bit 0 its direction. */
 void KuupuappuMura_SpawnDriftingEffect(s32 flags)
@@ -77,11 +122,11 @@ void KuupuappuMura_SpawnDriftingEffect(s32 flags)
     switch (Engine_RandomNext() & 1) {
     case 1:
         Engine_ObjectSetAnimation(&leaf->actor, 3);
-        Engine_ObjectSetScript(&leaf->actor, (const s32 *)0x0200a8c4);
+        Engine_ObjectSetScript(&leaf->actor, KuupuappuMura_DriftScriptA);
         break;
     default:
         Engine_ObjectSetAnimation(&leaf->actor, 2);
-        Engine_ObjectSetScript(&leaf->actor, (const s32 *)0x0200a8dc);
+        Engine_ObjectSetScript(&leaf->actor, KuupuappuMura_DriftScriptB);
         break;
     }
     {

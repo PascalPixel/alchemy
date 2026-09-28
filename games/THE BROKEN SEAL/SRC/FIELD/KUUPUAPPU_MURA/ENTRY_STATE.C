@@ -20,12 +20,12 @@ void Engine_ActorSetSpeed();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetDestination();
 void Engine_ActorWaitForMove();
-void Main_0808a048();
+void Event_PrepareObjectAndApplyValue();
 s32 Engine_EventEnd();
 
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+/* The saved game state; the entrance the party came in by is at +450. */
+extern s16 gGameState[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -88,7 +88,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
             *(s32 *)(record + 108) = 0x20083ad;
         }
     }
-    if (Data_02000240_t[225][0] <= 2) {
+    if (gGameState[225] <= 2) {
         if (Value1(Engine_GameFlagIsSet, 0x109) == 0) {
             Call1(Engine_GameFlagClear, 0x867);
             if (Value1(Engine_GameFlagIsSet, 0x855) == 0) {
@@ -98,7 +98,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     if (record != 0) {
                         Engine_ActorSetPosition(2, *(s32 *)(record + 8), *(s32 *)(record + 16));
                     }
-                    if (Data_02000240_t[225][0] == 1) {
+                    if (gGameState[225] == 1) {
                         Call3(Engine_ActorSetPosition, 2, 0x1900000, 0x1c00000);
                     } else {
                         Call3(Engine_ActorSetPosition, 2, 0xe00000, 0xa20000);
@@ -119,7 +119,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     }
                     Engine_ActorWaitForMove(2);
                     Engine_ActorSetPosition(2, 0, 0);
-                    Main_0808a048(2, 0);
+                    Event_PrepareObjectAndApplyValue(2, 0);
                     ((void (*)())Engine_EventEnd)();
                 }
             }
@@ -128,7 +128,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
     if (Value1(Engine_GameFlagIsSet, 0x867) != 0) {
         Call3(Engine_ActorSetPosition, 23, 0x1980000, 0x780000);
     }
-    if (Data_02000240_t[225][0] == 11) {
+    if (gGameState[225] == 11) {
         if (Value1(Engine_GameFlagIsSet, 0x855) == 0) {
             if (Value1(Engine_GameFlagIsSet, 0x856) != 0) {
                 if (Value1(Engine_GameFlagIsSet, 2) == 0) {
@@ -150,14 +150,14 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     }
                     Engine_ActorWaitForMove(2);
                     Engine_ActorSetPosition(2, 0, 0);
-                    Main_0808a048(2, 0);
+                    Event_PrepareObjectAndApplyValue(2, 0);
                     Engine_EventEnd();
                 }
             }
         }
         Call1(Engine_GameFlagClear, 0x12f);
     } else {
-        if (Data_02000240_t[225][0] == 13) {
+        if (gGameState[225] == 13) {
             if (Value1(Engine_GameFlagIsSet, 0x855) != 0) {
                 Engine_ActorSetPosition(20, 0, 0);
             }

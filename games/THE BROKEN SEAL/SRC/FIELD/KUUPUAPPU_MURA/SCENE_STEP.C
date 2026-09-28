@@ -1,0 +1,500 @@
+/*
+ * Kuupuappu scene steps after the roof dialogue: actor lines and the
+ * leader's arrival in scenes five to ten.
+ */
+
+#include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
+
+struct EffectRecord {
+    u8 pad[9];
+    u8 flags_lo : 2;
+    u8 mode : 2;
+    u8 flags_hi : 4;
+};
+
+struct EffectWork {
+    u8 pad[80];
+    struct EffectRecord *record;
+};
+
+struct SceneActor {
+    u8 reserved_00[6];
+    s16 temporary_state;
+    u8 reserved_08[92];
+    u16 presentation_flags;
+};
+
+struct SceneActor_02000cfc {
+    u8 reserved_00[100];
+    u16 presentation_flags;
+};
+
+struct SceneActor_02000d78 { u8 reserved_00[100]; u16 presentation_flags; };
+
+struct Presentation {
+    u8 reserved_00[9];
+    u8 flags;
+};
+
+struct SceneActor_02000fb4 {
+    u8 reserved_00[35];
+    u8 state_23;
+    u8 reserved_24[44];
+    struct Presentation *presentation;
+};
+
+struct SceneActor_02001010 {
+    u8 reserved_00[35];
+    u8 state_23;
+    u8 reserved_24[44];
+    struct Presentation *presentation;
+};
+
+struct SceneActor_0200113c {
+    u8 reserved_00[35];
+    u8 state_23;
+    u8 reserved_24[44];
+    struct Presentation *presentation;
+};
+
+struct OverlayEffectMotion {
+    u8 pad00[8];
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 pad14[28];
+    s32 horizontal_rate;
+    s32 vertical_rate;
+    s32 shadow_x;
+    s32 shadow_y;
+    s32 shadow_z;
+    u8 pad44[32];
+    s16 mode;
+};
+
+extern u8 *Data_03001e8c[];
+extern u8 *gWork;
+
+/* The scene's tables, laid out after the code. */
+extern u8 KuupuappuMura_Scripts[];
+extern u8 KuupuappuMura_Messages[];
+extern u8 KuupuappuMura_Actors[];
+extern u8 KuupuappuMura_ActorsFlag855[];
+extern u8 KuupuappuMura_Extras[];
+extern u8 KuupuappuMura_ExtrasFlag855[];
+
+/* Map cell steps played as the leader arrives in each scene. */
+extern const u16 KuupuappuMura_Scene5Cells[];
+extern const u16 KuupuappuMura_Scene6Cells[];
+extern const u16 KuupuappuMura_Scene7Cells[];
+extern const u16 KuupuappuMura_Scene8Cells[];
+extern const u16 KuupuappuMura_Scene9Cells[];
+extern const u16 KuupuappuMura_Scene10Cells[];
+
+u8 *Owner_GetState();
+void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
+void Djinn_Transfer(int, int, int, int);
+s32 Owner_RecalculateStats(int);
+void Party_RemoveOwnerRestored();
+s32 PartyInventory_FindOwner(s32);
+
+s32 SceneActor_CheckFacingAndRange();
+void SceneActor_ApplyActorZeroThenWait(s32 actor, s32 delay);
+void SceneActor_ApplyActorCueThenWait(s32 actor, s32 cue, s32 delay);
+
+/*
+ * The wrapper helpers below pass their constants straight into the argument
+ * registers. A direct call precomputes an expensive constant into a value the
+ * compiler then shares with later uses in the same block.
+ */
+void SceneActor_RunActorCommandWithFlag91(s32 x);
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+/*
+ * A value-returning call sets r0 last of its arguments, so the callee must be
+ * spelled as returning a value even where the result is unused.
+ */
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+/* Moves the next dialogue line on by amount messages. */
+static __inline__ void bump_step(s32 amount)
+{
+    gEventWork->message += amount;
+}
+
+static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
+{
+    Actor_SetSpeed(actor, horizontal, vertical);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    void Actor_SetPosition();
+
+    return f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    void Actor_SetPosition();
+
+    f(a0, a1);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    void Actor_SetPosition();
+
+    f(a0, a1, a2, a3);
+}
+
+#include "TYPES.H"
+
+enum ActorPresentationMessage {
+    MSG_ROBIN_PEERED_INTO = 0x947,
+    MSG_WASNT_ERUPTION_MT_ALEPH_INCREDIBLE = 0x1223,
+    MSG_THOSE_TRAVELERS_LEFT_IN_BIG = 0x1229,
+    MSG_ACCUSING_US_STEALING_HAMMETS_TREASURED = 0x122f,
+    MSG_OFF_ON_ADVENTURE = 0x1232,
+    MSG_RUFF_RRRUFF = 0x1235,
+    MSG_MAN_SHOULD_STEAL_FROM_ANOTHER = 0x1239,
+    MSG_GROUP_TRAVELERS_WAS_STRANGE_BUNCH = 0x123b,
+    MSG_BET_WAS_THOSE_THREE_CREEPS = 0x123c,
+    MSG_SUPPOSE_DOESNT_MATTER_HOW_RICH = 0x123d,
+    MSG_EVERYONE_KNOWS_THOSE_THREE_AT = 0x123e,
+    MSG_STEALING_IN_MIDST_VOLCANIC_ERUPTION = 0x1241,
+    MSG_LEAVING_IM_STILL_WORRIED_ABOUT = 0x1327,
+    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
+    MSG_YOURE_HITTING_ROAD_AGAIN = 0x1330,
+    MSG_TALKING_ABOUT_HAMMETS_SERVANT_IVAN = 0x1336,
+    MSG_THOSE_MEN_CAPTURED_THEYRE_IN = 0x133c,
+    MSG_ONES_WHO_CAPTURED_THIEVES = 0x133f,
+    MSG_RUFF_RRRUFF_2 = 0x1342,
+    MSG_WITH_ROAD_OUT_ONLY_WAY = 0x1348,
+    MSG_WHERE_DID_IVAN_GO_BY = 0x1349,
+    MSG_MUST_STRONGER_THAN_LOOK_HAVE = 0x134b,
+    MSG_IF_BRING_ME_BONE_ILL = 0x134e,
+    MSG_THANK_FOR_OTHER_DAY_LEAVING = 0x137f,
+    MSG_CAREFUL_SEARCH_WILL_REVEAL_PASSAGE = 0x13ab,
+    MSG_HE_SHOULD_BE_FIXING_ROOF_NOW = 0x12c0,
+    MSG_CAN_HEAR_WATER_RUMBLING_DOWN = 0x29dc
+};
+
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ s32 Value0(s32 (*f)())
+{
+    return f();
+}
+
+/* The scene step counter at 0x1d8 of the shared scene work record. */
+
+void SceneActor_RunActorStep(int actor)
+{
+    void Event_ShowMessage(int, int);
+
+    Event_Begin(); Actor_SetAnimation(actor, 1); SceneActor_ApplyActorCueThenWait(actor, 0, 2);
+    Event_ShowMessage(actor, 0); Event_End();
+}
+
+void SceneActor_RunActorCommandWithFlag91(s32 x)
+{
+    void Event_ShowMessage(s32, s32);
+
+    u8 *flag = (u8 *)Actor_Get(x) + 91;
+    s32 zero = 0;
+
+    *flag = 1;
+    Event_Begin();
+    Actor_SetAnimation(x, 1);
+    Event_Wait(2);
+    Event_ShowMessage(x, 0);
+    Event_End();
+    *flag = zero;
+}
+
+void ActorPresentation_RunActorEightSceneSetup(void)
+{
+    u8 *workspace;
+    Event_Begin(); Event_SetMessage(MSG_YOURE_HITTING_ROAD_AGAIN); SceneActor_ApplyActorCueThenWait(8, 0, 2); Event_OpenMessage(8, 0);
+    if (Event_ChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    Event_ShowMessage(8, 0); Event_End();
+}
+
+void SceneDialogue_RunActor11SecondLine(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1335); SceneActor_RunActorStep(11); Engine_EventEnd(); }
+
+void SceneDialogue_RunActor12LineAndAdvance(void)
+{
+    u8 *workspace;
+    Event_Begin(); Event_SetMessage(MSG_TALKING_ABOUT_HAMMETS_SERVANT_IVAN);
+    if (GameFlag_IsSet(2) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    SceneActor_RunActorStep(12); Event_End();
+}
+
+void SceneDialogue_RunActor13Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1338); SceneActor_RunActorStep(13); Engine_EventEnd(); }
+
+void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
+{
+    void Task_Wait(s32);
+
+    struct SceneActor *actor = Actor_Get(14);
+    u16 *flags = &actor->presentation_flags;
+    s16 saved = actor->temporary_state;
+    /* tmp keeps the flag result live in a register; do not fold it away. */
+    s32 tmp;
+
+    *flags = (tmp = *flags | 2);
+    Event_Begin();
+    Engine_EventSetMessage(0x1339);
+    if (GameFlag_IsSet(2) != 0)
+        ++gEventWork->message;
+    Actor_SetAnimation(14, 0);
+    SceneActor_ApplyActorCueThenWait(14, 0, 2);
+    SceneActor_ApplyActorZeroThenWait(14, 10);
+    actor->temporary_state = saved;
+    Task_Wait(1);
+    Event_End();
+    *flags &= 1;
+}
+
+void ActorPresentation_RunActorFifteenFollowupDialogue(void)
+{
+    struct SceneActor *actor = Actor_Get(15);
+    s16 saved = actor->temporary_state;
+
+    actor->presentation_flags |= 2;
+    Event_Begin();
+    Engine_EventSetMessage(0x133b);
+    Actor_SetAnimation(15, 0);
+    SceneActor_ApplyActorCueThenWait(15, 0, 2);
+    SceneActor_ApplyActorZeroThenWait(15, 10);
+    actor->temporary_state = saved;
+    Task_Wait(1);
+    Event_End();
+    actor->presentation_flags &= 1;
+}
+
+void ActorPresentation_RunActorSixteenSceneSetup(void)
+{
+    u8 *workspace;
+    Event_Begin(); Event_SetMessage(MSG_THOSE_MEN_CAPTURED_THEYRE_IN); Actor_SetAnimation(16, 1); SceneActor_ApplyActorCueThenWait(16, 0, 2); Event_OpenMessage(16, 0);
+    if (Event_ChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    Event_ShowMessage(16, 0); Event_End();
+}
+
+void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
+{
+    void Event_ShowMessage(int, int);
+
+    u8 *workspace;
+    Event_Begin(); Event_SetMessage(MSG_ONES_WHO_CAPTURED_THIEVES); SceneActor_ApplyActorCueThenWait(18, 0, 2); Event_OpenMessage(18, 0);
+    if (Event_ChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
+    Event_ShowMessage(18, 0); Event_End();
+}
+
+void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
+{
+    void Actor_SetAnimation(s32, s32);
+    void Actor_SetAnimation(s32, s32);
+
+    Event_Begin();
+    Event_SetMessage(MSG_RUFF_RRRUFF_2);
+    Actor_SetAnimation(19, 0);
+    SceneActor_ApplyActorCueThenWait(19, 0, 2);
+    Event_ShowMessage(19, 0);
+    Actor_SetAnimation(19, 1);
+    if (PartyInventory_FindOwner(231) != -1 && GameFlag_IsSet(0x858) == 0) {
+        u16 *p = (u16 *)(gWork + 370);
+        u16 value = 1;
+
+        *p = value;
+    }
+    Event_End();
+}
+
+void SceneDialogue_RunActor20Line(void)
+{
+    Event_Begin(); Event_SetMessage(MSG_THANK_FOR_OTHER_DAY_LEAVING); SceneActor_ApplyActorCueThenWait(20, 0, 2); Actor_SetAnimationAndWait(20, 3);
+    Event_Wait(20); Event_ShowMessage(20, 0); Event_End();
+}
+
+void SceneDialogue_RunActor11FlaggedLine(void)
+{
+    int GameFlag_IsSet(int);
+
+    Event_Begin();
+    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(MSG_MAN_SHOULD_STEAL_FROM_ANOTHER); else Event_SetMessage(0x1346);
+    SceneActor_RunActorCommandWithFlag91(11); Event_End();
+}
+
+void SceneDialogue_RunActor13FlaggedLine(void)
+{
+    Event_Begin();
+    if (GameFlag_IsSet(0x855) == 0) {
+        Event_SetMessage(MSG_GROUP_TRAVELERS_WAS_STRANGE_BUNCH);
+    } else {
+        Event_SetMessage(MSG_WITH_ROAD_OUT_ONLY_WAY);
+    }
+    SceneActor_RunActorCommandWithFlag91(13);
+    Event_End();
+}
+
+void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
+{
+    ((struct SceneActor *)Actor_Get(14))->presentation_flags |= 2;
+    Event_Begin();
+    if (GameFlag_IsSet(0x855) == 0) {
+        Event_SetMessage(MSG_BET_WAS_THOSE_THREE_CREEPS);
+    } else {
+        Event_SetMessage(MSG_WHERE_DID_IVAN_GO_BY);
+        if (GameFlag_IsSet(2) != 0)
+            ++gEventWork->message;
+    }
+    SceneActor_RunActorCommandWithFlag91(14);
+    Event_End();
+    ((struct SceneActor *)Actor_Get(14))->presentation_flags &= 1;
+}
+
+void ActorPresentation_RunActorFifteenScriptBranch(void)
+{
+    void Event_SetMessage(s32);
+
+    ((struct SceneActor *)Actor_Get(15))->presentation_flags |= 2;
+    Event_Begin();
+    if (GameFlag_IsSet(0x855) == 0)
+        Event_SetMessage(MSG_SUPPOSE_DOESNT_MATTER_HOW_RICH);
+    else
+        Event_SetMessage(MSG_MUST_STRONGER_THAN_LOOK_HAVE);
+    SceneActor_RunActorCommandWithFlag91(15);
+    Event_End();
+    ((struct SceneActor *)Actor_Get(15))->presentation_flags &= 1;
+}
+
+void ActorPresentation_RunActorSixteenScriptBranch(void)
+{
+    void Event_SetMessage(int);
+
+    Event_Begin();
+    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(MSG_EVERYONE_KNOWS_THOSE_THREE_AT); else Event_SetMessage(0x134c);
+    SceneActor_RunActorCommandWithFlag91(16); Event_End();
+}
+
+void ActorPresentation_RunActorNineteenScriptBranch(void)
+{
+    void Event_Wait(int);
+
+    u8 *actor = Actor_Get(19); actor[91] = 1; Event_Begin();
+    if (GameFlag_IsSet(0x855) == 0) {
+        Event_SetMessage(MSG_STEALING_IN_MIDST_VOLCANIC_ERUPTION); Actor_SetAnimation(19, 0); Event_Wait(2);
+    } else if (GameFlag_IsSet(0x858) != 0) {
+        Event_SetMessage(MSG_CAREFUL_SEARCH_WILL_REVEAL_PASSAGE);
+    } else {
+        Event_SetMessage(MSG_IF_BRING_ME_BONE_ILL);
+    }
+    Event_ShowMessage(19, 0); Event_End(); actor[91] = 0;
+}
+
+void SceneDialogue_RunActor21Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x12c1); SceneActor_RunActorCommandWithFlag91(21); Engine_EventEnd(); }
+
+void SceneState_Apply200ThenPlace55_26(void)
+{
+    GameFlag_Set(0x200);
+    {
+        int v1 = 23;
+        int v2 = 26;
+        Map_CopyCellAttributes(55, 26, 4, 2, v1, v2);
+    }
+}
+
+void SceneState_Apply200ThenPlace23_23(void)
+{
+    GameFlag_Clear(0x200);
+    {
+        int v1 = 23;
+        int v2 = 26;
+        Map_CopyCellAttributes(23, 23, 4, 2, v1, v2);
+    }
+}
+
+void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation)
+{
+    SetScale(0, 0x8000, 0x4000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, x, y);
+    gEventWork->transition_frames = 16;
+    Event_RequestExit(continuation);
+}
+
+void FieldScene_SetupScene5At408_320(void)
+{
+    Audio_PlayCue(158); Map_AnimateCells(KuupuappuMura_Scene5Cells, 56, 19); SceneActor_PlaceAndSetSceneDelay(408, 320, 5);
+}
+
+void FieldScene_SetupScene6At312_304(void)
+{ Engine_AudioPlayCue(158); Engine_MapAnimateCells(KuupuappuMura_Scene6Cells, 50, 18); SceneActor_PlaceAndSetSceneDelay(312, 304, 6); }
+
+void FieldScene_SetupScene7At216_288(void)
+{ Engine_AudioPlayCue(158); Engine_MapAnimateCells(KuupuappuMura_Scene7Cells, 44, 17); SceneActor_PlaceAndSetSceneDelay(216, 288, 7); }
+
+void ActorPresentation_SetupActorZeroForSceneEightAt376_224(void)
+{
+    struct SceneActor_02000fb4 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Presentation *presentation = actor->presentation;
+    u8 flags;
+
+    Audio_PlayCue(158);
+    Map_AnimateCells(KuupuappuMura_Scene8Cells, 54, 13);
+    {
+        s32 cell = 23;
+        s32 row = 12;
+
+        Map_CopyCellAttributes(33, 20, 1, 3, cell, row);
+    }
+    actor->state_23 &= ~1;
+    flags = presentation->flags;
+    flags |= 12;
+    presentation->flags = flags;
+    SceneActor_PlaceAndSetSceneDelay(376, 224, 8);
+}
+
+void ActorPresentation_SetupActorZeroForSceneNineAt296_176(void)
+{
+
+    struct SceneActor_02001010 *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Presentation *presentation = actor->presentation;
+    u8 flags;
+
+    Audio_PlayCue(158);
+    Map_AnimateCells(KuupuappuMura_Scene9Cells, 49, 10);
+    {
+        s32 cell = 18;
+        s32 row = 10;
+
+        Map_CopyCellAttributes(33, 20, 1, 3, cell, row);
+    }
+    actor->state_23 &= ~1;
+    flags = presentation->flags;
+    flags |= 12;
+    presentation->flags = flags;
+    SceneActor_PlaceAndSetSceneDelay(296, 176, 9);
+}
+
+void FieldScene_SetupScene10At120_144(void)
+{ Engine_AudioPlayCue(158); Engine_MapAnimateCells(KuupuappuMura_Scene10Cells, 38, 6); SceneActor_PlaceAndSetSceneDelay(120, 144, 10); }

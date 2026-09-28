@@ -5,7 +5,7 @@ void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 continuation);
 
 void ActorDraw_SetupActorSceneCells(void)
 {
-    struct FieldActor *actor = Actor_Lookup(ACTOR_PARTY_LEADER);
+    struct FieldActor *actor = Actor_Get(ACTOR_PARTY_LEADER);
     struct FieldSprite *sprite = actor->sprite;
 
     Audio_PlayCue(188);

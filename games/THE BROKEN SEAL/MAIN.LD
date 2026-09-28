@@ -1417,7 +1417,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/APPLY_VALUE_TO_WORK_7818.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/GROUP_TICK_MEMBER_TIMERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BEGIN_CANVAS_LAYER.o"(.text)
-        "*/recon/tbs/raw/080cd86c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OPEN_CANVAS_LAYER.o"(.text)
         "*/recon/tbs/raw/080cdb24.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/END_CANVAS_LAYER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SET_TRANSITION_FLAG_AND_DISPLAY.o"(.text)

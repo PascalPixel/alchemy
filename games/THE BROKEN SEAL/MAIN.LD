@@ -1233,7 +1233,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/GET_STEP_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/LAYOUT_POSITIONS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/FIND_AVAILABLE_SLOT.o"(.text)
-        "*/recon/tbs/raw/080b7548.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/SUMMON/REFRESH.o"(.text)
         "*/recon/tbs/raw/080b75dc.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PARTY/CONTAINS_ID.o"(.text)
         "*/recon/tbs/raw/080b7738.o"(.text .rodata .data .padding)

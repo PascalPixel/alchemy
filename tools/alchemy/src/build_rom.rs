@@ -430,7 +430,7 @@ fn build_overlay_streams(
     let mut linked = Vec::with_capacity(ids.len());
     let mut sources = Vec::new();
     for id in &ids {
-        let script = overlay_script(root, target, &listings, id);
+        let script = overlay_script(&listings, id);
         let text = fs::read_to_string(root.join(&script))
             .map_err(|error| format!("{}: {error}", script.display()))?;
         let own = format!("resource_{id}_overlay");
@@ -480,13 +480,9 @@ fn build_overlay_streams(
 /// Link one overlay listing alone at its load address, with its own script
 /// when it places compiler-library members and the game's otherwise, and
 /// compress the image. The map stays beside it for progress.
-fn overlay_script(root: &Path, target: DecompTarget, listings: &Path, id: &str) -> PathBuf {
-    let own = listings.join(format!("resource_{id}.ld"));
-    if root.join(&own).is_file() {
-        own
-    } else {
-        Path::new(target.game_dir()).join("OVERLAY.LD")
-    }
+/// Each overlay's own script, beside its listing, places its objects.
+fn overlay_script(listings: &Path, id: &str) -> PathBuf {
+    listings.join(format!("resource_{id}.ld"))
 }
 
 fn build_overlay(

@@ -16,59 +16,18 @@ enum FlaggedCueMessage {
 
 
 #define NULL ((void *)0)
-#define ObjectMotion_RealignToTrackedObjectAndArmCallback_1(a0, a1, a2, a3) Call4(Func_02001882, a0, a1, a2, a3)
-#define ObjectMotion_RealignToTrackedObjectAndArmCallback_1_020007c4(a0, a1, a2, a3) Call4(Func_02001e12, a0, a1, a2, a3)
-#define ObjectMotion_RealignToTrackedObjectAndArmCallback_2(a0, a1, a2, a3) Call4(Func_02001e22, a0, a1, a2, a3)
-#define ObjectMotion_RealignToTrackedObjectAndArmCallback_3(a0, a1, a2, a3) Call4(Func_02001e30, a0, a1, a2, a3)
-#define Scene_GetRecord_1_020007c4(args...) Func_02001ee4(args)
-#define Scene_GetRecord_4(a0) Value1(Engine_ActorGet, a0)
-#define Scene_GetRecord_5(a0) Value1(Engine_ActorGet, a0)
-#define Scene_GetRecord_6(a0) Value1(Engine_ActorGet, a0)
-#define SCENE_STEP (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))
-#define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
-#define Scene_RunTableTransition Func_02000158
-#define SceneActor_SetActor23Params2And6 Func_02000030
-#define SceneData_GetTable975c Func_02000040
-#define SceneData_ReturnZero Func_02000048
-#define SceneData_GetTable98c4 Func_0200004c
-#define SceneData_SelectTableByFlag9a7 Func_02000054
-#define SceneActor_SetupActorForTable9638 Func_02000078
-#define SceneActor_UpdateObjectWithCue28be Func_020000c4
-#define SceneActor_SetupActor18Event Func_0200010c
-#define SceneState_SetWord1c8To16AndForward16c Func_020001f0
-#define FieldScene_RunPrimarySequence Func_02000218
-#define FieldScene_RunSecondarySequence Func_020007c4
-#define FieldScene_RunScene3c6SequenceA Func_02001090
-#define FieldScene_RunSequenceB Func_020011bc
-#define SceneData_SelectSecondaryTableByFlag9a7 Func_020011e8
-
-extern u8 Value_000028be;
-extern s16 Data_02009ca8[][2];
-extern u8 Data_02009cee[];
-extern u8 Data_02009cd8[];
-
-void Func_0200164a(s32, s32, s32);
-void Func_02001882();
-void Func_02001d8c_a(void);
-void Func_02001e12();
-void Func_02001e22();
-void Func_02001e30();
-void Func_02001eb6();
-void Func_02001ef0();
-void Func_020023d2();
-void Func_0200240a();
-u8 *Func_020016c6(s32);
-
 /* A signed 16-bit field of an actor record returned by one of the record
  * lookups. */
+#define REC_S16(rec, off) (*(s16 *)((rec) + (off)))
 
-/*
- * Each pseudo symbol above names the per-site call word the overlay image
- * holds, not a runtime address -- one word can serve two sites with different
- * targets -- and the macro names the function the site reaches through the
- * veneers, keeping the site's own calling form. Names without a repository
- * binding are provisional.
- */
+/* Each door's cell, by the trigger that opens it, and the cell animations
+ * that open the doors. */
+extern s16 RariberoMachi_DoorCells[][2];
+extern u8 RariberoMachi_GateOpenSteps[];
+extern u8 RariberoMachi_DoorOpenSteps[];
+
+void Motion_LaunchFromFocusedObject(u32, s32, s32, s32);
+void FieldScene_RunScene3c6SequenceA(void);
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -111,29 +70,21 @@ static __inline__ void SetOffset(s32 actor, s32 offset, s32 zero)
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
-    u8 *Func_02001ee4();
-
     return f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    u8 *Func_02001ee4();
-
     f(a0, a1, a2, a3);
 }
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
-    s32 Func_02001ee4();
-
     f(a0, a1);
 }
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
-    s32 Func_02001ee4();
-
     f(a0, a1, a2, a3, a4, a5);
 }
 
@@ -145,75 +96,6 @@ static __inline__ s32 Scene_Value3(s32 (*fn)(), s32 a, s32 b, s32 c)
 static __inline__ void Scene_Call3(void (*fn)(), s32 a, s32 b, s32 c)
 {
     fn(a, b, c);
-}
-
-void SceneActor_SetActor23Params2And6(void)
-{
-    Func_0200164a(0x17, 2, 6);
-}
-
-/*
- * Returns the in-image table at 0x0200975c. The eight-byte owner includes its
- * one pool word, which holds that address and is returned without being
- * dereferenced.
- */
-u8 *SceneData_GetTable975c(void)
-{
-    return (u8 *)0x0200975c;
-}
-
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-/*
- * Returns the in-image table at 0x020098c4. The eight-byte owner includes its
- * one pool word, which holds that address and is returned without being
- * dereferenced.
- */
-u8 *SceneData_GetTable98c4(void)
-{
-    return (u8 *)0x020098c4;
-}
-
-s32 SceneData_SelectTableByFlag9a7(void)
-{
-    if (GameFlag_IsSet(0x9A7) != 0) {
-        return 0x02009A98;
-    }
-    return 0x02009900;
-}
-
-void SceneActor_SetupActorForTable9638(s32 actor)
-{
-    void Actor_FaceDirection();
-
-    struct FieldActor *object;
-
-    object = (struct FieldActor *)Actor_Get(actor);
-    object->scale_x = 0x10000;
-    object = (struct FieldActor *)Value1(Engine_ActorGet, actor);
-    object->scale_y = 0x10000;
-    Event_SetMessage(MSG_OHH_THEY_TOOK_SHEBA_HEADED);
-    Event_ShowMessage(actor, 0);
-    Actor_FaceDirection(actor, 0xc000, 0);
-    Event_Wait(20);
-    Engine_ActorEnableActionCallback(actor, 0x2009638);
-}
-
-void SceneActor_UpdateObjectWithCue28be(s32 obj)
-{
-    s32 cue = (s32)&Value_000028be;
-    Event_SetMessage(cue);
-    Event_OpenMessage(obj, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_Wait(10);
-        Event_SetMessage(cue + 1);
-    } else {
-        Event_SetMessage(cue + 2);
-    }
-    Event_ShowMessage(obj, 0);
 }
 
 void SceneActor_SetupActor18Event(void)
@@ -232,16 +114,16 @@ void SceneActor_SetupActor18Event(void)
 void Scene_RunTableTransition(void)
 {
     s32 no = gEventWork->touched_trigger;
-    s32 x = Data_02009ca8[no][0];
-    s32 y = Data_02009ca8[no][1];
+    s32 x = RariberoMachi_DoorCells[no][0];
+    s32 y = RariberoMachi_DoorCells[no][1];
 
-    Func_020016c6(0)[85] = 2;
+    ((u8 *)Engine_ActorGet(0))[85] = 2;
     Audio_PlayCue(158);
     if (no == 6) {
-        Scene_Value3(Engine_MapAnimateCells, (s32)Data_02009cee, (u16)x, (u16)y);
+        Scene_Value3(Engine_MapAnimateCells, (s32)RariberoMachi_GateOpenSteps, (u16)x, (u16)y);
         Scene_Call3(Engine_ActorWalkBy, 0, 0, -16);
     } else {
-        Scene_Value3(Engine_MapAnimateCells, (s32)Data_02009cd8, (u16)x, (u16)y);
+        Scene_Value3(Engine_MapAnimateCells, (s32)RariberoMachi_DoorOpenSteps, (u16)x, (u16)y);
         Scene_Call3(Engine_ActorCenterAndWalk, 0, 2, -16);
     }
     Event_Wait(10);
@@ -251,9 +133,7 @@ void Scene_RunTableTransition(void)
 
 void SceneState_SetWord1c8To16AndForward16c(void)
 {
-    extern u8 *Data_03001ebc;
-
-    u8 *work = Data_03001ebc;
+    u8 *work = (u8 *)gEventWork;
     s16 *p = (s16 *)(work + 0x16C);
     s32 n = *p;
 
@@ -267,10 +147,8 @@ void SceneState_SetWord1c8To16AndForward16c(void)
  * interleaved with timed single-argument steps -- ending with a record lookup
  * whose s16 fields at +10 and +18 feed the last positioning call.
  */
-void FieldScene_RunPrimarySequence(void)
+void Scene_RunPrimarySequence(void)
 {
-    u8 *Func_02001ee4();
-
     u32 i;
     u8 *record;
 
@@ -283,7 +161,7 @@ void FieldScene_RunPrimarySequence(void)
     Event_OpenScreen(); /* main:0808a360 */
     Event_WaitForScreen(); /* main:0808a370 */
     Event_Wait(20);
-    ObjectMotion_RealignToTrackedObjectAndArmCallback_1(22, 8, -16, 0xc000);
+    Call4(Motion_LaunchFromFocusedObject, 22, 8, -16, 0xc000);
     Actor_WaitForMove(22);
     Event_Wait(20);
     Actor_ShowEmote(22, 0x102, 60);
@@ -463,8 +341,6 @@ void FieldScene_RunPrimarySequence(void)
  */
 void FieldScene_RunSecondarySequence(void)
 {
-    s32 Func_02001ee4();
-
     u32 i;
     u8 *record;
 
@@ -473,9 +349,9 @@ void FieldScene_RunSecondarySequence(void)
     Event_SetMessage(MSG_WHERE_GOING_ROBIN_IODEM_ASKED);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 104, 0x178);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    ObjectMotion_RealignToTrackedObjectAndArmCallback_1_020007c4(1, -32, 0, 0);
-    ObjectMotion_RealignToTrackedObjectAndArmCallback_2(3, -16, 16, 0xe000);
-    ObjectMotion_RealignToTrackedObjectAndArmCallback_3(2, 0, 16, 0xc000);
+    Call4(Motion_LaunchFromFocusedObject, 1, -32, 0, 0);
+    Call4(Motion_LaunchFromFocusedObject, 3, -16, 16, 0xe000);
+    Call4(Motion_LaunchFromFocusedObject, 2, 0, 16, 0xc000);
     Actor_WaitForMove(ACTOR_GERALD);
     Event_Wait(30);
     Event_OpenMessage(ACTOR_GERALD, 0);
@@ -489,12 +365,12 @@ void FieldScene_RunSecondarySequence(void)
         Actor_SetAnimationAndWait(ACTOR_MIA, 4);
         Event_Wait(20);
         Event_ShowMessage(ACTOR_MIA, 0);
-        SCENE_STEP += 1;
+        gEventWork->message += 1;
     } else {
         Event_Wait(20);
         Actor_SetAnimationAndWait(ACTOR_MIA, 4);
         Event_Wait(20);
-        SCENE_STEP += 1;
+        gEventWork->message += 1;
         Event_ShowMessage(ACTOR_MIA, 0);
     }
     Event_Wait(10);
@@ -521,15 +397,15 @@ void FieldScene_RunSecondarySequence(void)
     Event_Wait(80);
     Actor_SetSpeed(22, 0xcccc, 0x6666);
     /* Set the byte at offset 85 of actor 22's record to 2. */
-    *(u8 *)(Scene_GetRecord_1_020007c4(22) + 85) = 2;
+    *(u8 *)((s32)Engine_ActorGet(22) + 85) = 2;
     Actor_SetSpritePriority(22, 2);
-    Call6(Func_02001eb6, 34, 0, 1, 2, 4, 18);
+    Call6(Engine_MapCopyCellsTo, 34, 0, 1, 2, 4, 18);
     Audio_PlayCue(158);
     Event_Wait(20);
     Actor_SetPosition(22, 0x480000, 0x1380000);
     Event_Wait(20);
     Actor_WalkByAndWait(22, 0, 16);
-    Call6(Func_02001ef0, 32, 0, 1, 2, 4, 18);
+    Call6(Engine_MapCopyCellsTo, 32, 0, 1, 2, 4, 18);
     Audio_PlayCue(159);
     Event_Wait(20);
     Event_ShowMessage(22, 0);
@@ -598,12 +474,12 @@ void FieldScene_RunSecondarySequence(void)
         Actor_SetAnimationAndWait(22, 4);
         Event_Wait(20);
         Event_ShowMessage(22, 0);
-        SCENE_STEP += 1;
+        gEventWork->message += 1;
     } else {
         Event_Wait(20);
         Actor_SetAnimationAndWait(22, 4);
         Event_Wait(20);
-        SCENE_STEP += 1;
+        gEventWork->message += 1;
         Event_ShowMessage(22, 0);
     }
     Event_Wait(10);
@@ -627,7 +503,7 @@ void FieldScene_RunSecondarySequence(void)
     Event_ShowMessage(22, 0);
     /* One extra call, run only when GameFlag_IsSet(0x9bf) is non-zero. */
     if (GameFlag_IsSet(0x9bf) != 0) {
-        Func_02001d8c_a();
+        FieldScene_RunScene3c6SequenceA();
     }
     Event_SetMessage(MSG_BABI_TOLD_ME_SHIP_ANCIENTS);
     Event_Wait(10);
@@ -657,7 +533,7 @@ void FieldScene_RunSecondarySequence(void)
     Actor_WalkByAndWait(22, 0, 16);
     Event_Wait(30);
     Actor_SetPosition(25, 0, 0);
-    SCENE_STEP += 1;
+    gEventWork->message += 1;
     Party_GiveItem(242, 0);
     Event_Wait(10);
     /* Clear bit 0 of the actor flag byte, then set it back through a second
@@ -686,13 +562,13 @@ void FieldScene_RunSecondarySequence(void)
     Actor_WalkByAndWait(22, -16, 0);
     Actor_FaceDirection(22, 0xc000, 0);
     Event_Wait(20);
-    Call6(Func_020023d2, 34, 0, 1, 2, 4, 18);
+    Call6(Engine_MapCopyCellsTo, 34, 0, 1, 2, 4, 18);
     Audio_PlayCue(158);
     Event_Wait(10);
     Actor_WalkByAndWait(22, 0, -16);
     Actor_SetPosition(22, 0, 0);
     Event_Wait(10);
-    Call6(Func_0200240a, 32, 0, 1, 2, 4, 18);
+    Call6(Engine_MapCopyCellsTo, 32, 0, 1, 2, 4, 18);
     Audio_PlayCue(159);
     Event_Wait(50);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -719,21 +595,21 @@ void FieldScene_RunSecondarySequence(void)
     Actor_SetSpeed(ACTOR_MIA, 0x13333, 0x9999);
     Actor_SetSpeed(ACTOR_IVAN, 0x13333, 0x9999);
     Actor_SetAnimation(ACTOR_GERALD, 2);
-    record = Scene_GetRecord_4(0);
+    record = Value1(Engine_ActorGet, 0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_GERALD, REC_S16(record, 10), REC_S16(record, 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);
     Actor_SetAnimation(ACTOR_MIA, 2);
-    record = Scene_GetRecord_5(0);
+    record = Value1(Engine_ActorGet, 0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_MIA, REC_S16(record, 10), REC_S16(record, 18));
     }
     Actor_WaitForMove(ACTOR_MIA);
     Actor_SetPosition(ACTOR_MIA, 0, 0);
     Actor_SetAnimation(ACTOR_IVAN, 2);
-    record = Scene_GetRecord_6(0);
+    record = Value1(Engine_ActorGet, 0);
     if (record != 0) {
         Actor_SetDestination(ACTOR_IVAN, REC_S16(record, 10), REC_S16(record, 18));
     }

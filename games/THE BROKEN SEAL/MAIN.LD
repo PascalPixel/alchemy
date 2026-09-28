@@ -891,7 +891,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RESET_SCENE_TRANSITION_EFFECT.o"(.text)
         "*/recon/tbs/raw/08098698.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_TARGETED_ITEM_BREAK.o"(.text)
-        "*/recon/tbs/raw/08098954.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT07.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_ITEM_BREAK_MODE3.o"(.text)
         "*/recon/tbs/raw/08098b0e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RADIAL_BURST_UPDATE.o"(.text)

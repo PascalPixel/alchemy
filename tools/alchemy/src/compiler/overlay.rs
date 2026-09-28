@@ -151,7 +151,9 @@ pub fn load(bytes: &[u8], offset: usize) -> Result<Vec<u8>, String> {
     transform(bytes, offset, false)
 }
 
-pub fn encode(bytes: &[u8], offset: usize) -> Result<Vec<u8>, String> {
+/// The packer's form of a loaded image, which `load` undoes exactly.
+#[cfg(test)]
+fn encode(bytes: &[u8], offset: usize) -> Result<Vec<u8>, String> {
     let encoded = transform(bytes, offset, true)?;
     if load(&encoded, offset)? != bytes {
         return Err("overlay serialization failed the loader round trip".into());

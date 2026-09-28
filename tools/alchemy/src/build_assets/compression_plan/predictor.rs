@@ -41,6 +41,27 @@ pub(crate) struct LzMachine {
     palette: Ring,
 }
 impl LzMachine {
+    /// A machine from its settings: the general ring, and how far the palette
+    /// ring reads ahead.
+    pub(crate) const fn new(
+        window: usize,
+        read_ahead: usize,
+        max_distance: usize,
+        palette_read_ahead: usize,
+    ) -> Self {
+        Self {
+            general: Ring {
+                window,
+                read_ahead,
+                max_distance,
+            },
+            palette: Ring {
+                window: PALETTE_WINDOW,
+                read_ahead: palette_read_ahead,
+                max_distance: PALETTE_REACH,
+            },
+        }
+    }
     /// The compressors a machine definition records. Each setting must be
     /// one observed, uncredited value with its evidence, inside the range
     /// its evidence allows.

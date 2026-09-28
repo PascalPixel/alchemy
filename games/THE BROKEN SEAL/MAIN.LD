@@ -1706,6 +1706,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/ANIMREF1.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/ANIMREF2.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.08189814)
+        "*/recon/tbs/overlays.o"(.overlays)
+        "*/recon/tbs/unidentified.o"(.unidentified.087fd4b9)
     } > ROM
     /* Field services that shared overlay C calls through its import veneers are
        the engine functions themselves in the main image (SPAWN.C and

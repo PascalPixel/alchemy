@@ -858,4 +858,6 @@ Character_DescriptorTable:
 	.incbin "baserom.gba", 0x00189814, 0x001967ec
 	.global Resource_DirectoryTable
 Resource_DirectoryTable:
-	.incbin "baserom.gba", 0x00320000, 0x004e0000
+	.incbin "baserom.gba", 0x00320000, 0x00459188
+	.section .unidentified.087fd4b9,"a"
+	.incbin "baserom.gba", 0x007fd4b9, 0x00002b47

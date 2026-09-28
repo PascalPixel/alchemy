@@ -116,37 +116,8 @@ Func_020000a0:
 	pop {r1}
 	bx r1
 	.2byte 0x0000
-	.global Func_02000104
-	.thumb_func
-Func_02000104:
-	ldr r3, [r0, #8]
-	ldr r2, [r0, #68]
-	adds r3, r3, r2
-	str r3, [r0, #8]
-	ldr r2, [r0, #72]
-	ldr r3, [r0, #12]
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #76]
-	ldr r3, [r0, #16]
-	adds r3, r3, r2
-	str r3, [r0, #16]
-	ldr r2, [r0, #48]
-	ldr r3, [r0, #24]
-	adds r3, r3, r2
-	str r3, [r0, #24]
-	ldr r2, [r0, #52]
-	ldr r3, [r0, #28]
-	adds r3, r3, r2
-	str r3, [r0, #28]
-	ldr r1, [r0, #80]
-	adds r0, #100
-	ldrh r3, [r1, #30]
-	ldrh r2, [r0]
-	adds r3, r3, r2
-	strh r3, [r1, #30]
-	bx lr
-	.2byte 0x0000
+	.section .text.x0200813c,"ax",%progbits
+	.align 2
 	.global Func_0200013c
 	.thumb_func
 Func_0200013c:
@@ -828,7 +799,7 @@ Func_020004f4:
 	.4byte 0x0000e666
 	.4byte 0x00013333
 	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/IMPORT.INC"
-	.section .rodata,"a",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

@@ -4,7 +4,7 @@
 void SceneActor_MovePairByTileOffset(s32 actor, s32 dx, s32 dz);
 
 /* The buttons held this frame. */
-extern u32 Data_03001ae8;
+extern u32 gKeysHeld;
 
 /* When the leader stands in line with wall block 32 (or 33 on the far rows)
  * and pushes it along the row (left past column 51, right before it), moves
@@ -23,10 +23,10 @@ void KorosseoKabe_PushAlignedWall(void)
         return;
     }
     if (x > 51) {
-        if (Data_03001ae8 & 0x20) {
+        if (gKeysHeld & 0x20) {
             push = -64;
         }
-    } else if (Data_03001ae8 & 0x10) {
+    } else if (gKeysHeld & 0x10) {
         push = 64;
     }
     if (push != 0) {

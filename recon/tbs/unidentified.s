@@ -23,18 +23,24 @@ Text_PowersOfTen:
 	.global Flash_Chips
 Flash_Chips:
 	.incbin "baserom.gba", 0x00007a0c, 0x00000014
-	.section .unidentified.08007a50,"a"
-	.incbin "baserom.gba", 0x00007a50, 0x00000064
+	.section .unidentified.08007a68,"a"
+	.incbin "baserom.gba", 0x00007a68, 0x00000024
+	.section .unidentified.08007aa4,"a"
+	.incbin "baserom.gba", 0x00007aa4, 0x00000010
 	.incbin "baserom.gba", 0x00007ab4, 0x00000008
 	.global Data_08007abc
 Data_08007abc:
-	.incbin "baserom.gba", 0x00007abc, 0x00000128
+	.incbin "baserom.gba", 0x00007abc, 0x00000070
+	.section .unidentified.08007b38,"a"
+	.incbin "baserom.gba", 0x00007b38, 0x000000ac
 	.global Data_08007be4
 Data_08007be4:
 	.incbin "baserom.gba", 0x00007be4, 0x0000002c
 	.global Data_08007c10
 Data_08007c10:
-	.incbin "baserom.gba", 0x00007c10, 0x000013f0
+	.incbin "baserom.gba", 0x00007c10, 0x0000002c
+	.section .unidentified.08007c64,"a"
+	.incbin "baserom.gba", 0x00007c64, 0x0000139c
 	.section .unidentified.080092b8,"a"
 	.incbin "baserom.gba", 0x000092b8, 0x00000500
 	.global Runtime_ByteRemapTable

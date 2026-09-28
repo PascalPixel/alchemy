@@ -9,7 +9,6 @@ union GameStateRows {
     s32 words[256];
 };
 
-extern union GameStateRows Data_02000240_t;
 
 /* The sprite's attribute bytes as the scene scripts write them. */
 struct SpriteBytes {
@@ -48,10 +47,10 @@ void FieldScene_ConfigureFlaggedActors(void)
     if (Value1(Engine_GameFlagIsSet, 0x950)) {
         Engine_ActorSetChildValue(12, 2);
     }
-    if (Data_02000240_t.halves[225][0] == 3) {
+    if (((union GameStateRows *)&gGameState)->halves[225][0] == 3) {
         Engine_GameFlagClear(0x12f);
     }
-    if (Data_02000240_t.halves[225][0] == 1) {
+    if (((union GameStateRows *)&gGameState)->halves[225][0] == 1) {
         Engine_GameFlagClear(0x8aa);
     }
     if (Engine_GameFlagIsSet(0x8aa)) {

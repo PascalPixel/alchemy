@@ -13,16 +13,16 @@ void Engine_GameFlagClear();
 void FieldScene_RunFlaggedSequence();
 s32 CheckAllStatueLights();
 s32 Engine_MapCopyCellsTo();
-void Main_08009188();
+void Map_ClearLayerEntryFlag();
 void Engine_MapCopyCellAttributes();
-void Local_02002614();
-void Main_0808a5e0();
+void SoruNichigetsu_RunLightScene();
+void BattleFx_SetQueuedSoundAndPlay();
 void Engine_WorkSetValuesIfNonNegative();
-void Main_0808a2f8();
+void InitializeSceneRecordBuffer();
 
 
 extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern s16 gCell[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -90,13 +90,13 @@ s32 SoruNichigetsu_RestoreEntryState(void)
             Call3(Engine_ActorSetPosition, 16, 0x2400000, 0x780000);
         }
     }
-    if (Data_02000240_t[225][0] == 4) {
+    if (gCell[225][0] == 4) {
         if (Value1(Engine_GameFlagIsSet, 0x813) == 0) {
             Scene_SpringStatueTrap();
             Call1(Engine_GameFlagSet, 0x813);
             done = 1;
         }
-    } else if (Data_02000240_t[225][0] == 5) {
+    } else if (gCell[225][0] == 5) {
         if (Value1(Engine_GameFlagIsSet, 0x812) == 0) {
             FieldScene_RunClosingSequence();
             Call1(Engine_GameFlagSet, 0x812);
@@ -106,7 +106,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
             Call1(Engine_GameFlagClear, 0x80e);
             done = 1;
         }
-    } else if (Data_02000240_t[225][0] == 6) {
+    } else if (gCell[225][0] == 6) {
         if (Value1(Engine_GameFlagIsSet, 0x812) != 0) {
             FieldScene_RunFlaggedSequence();
             Call1(Engine_GameFlagSet, 0x822);
@@ -136,7 +136,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
             Call6(Engine_MapCopyCellsTo, 45, 28, 34, 10, 4, 2);
             Call6(Engine_MapCopyCellsTo, 45, 30, 16, 10, 4, 2);
             Call6(Engine_MapCopyCellsTo, 14, 45, 14, 41, 8, 4);
-            if (Data_02000240_t[225][0] != 8) {
+            if (gCell[225][0] != 8) {
                 if (Value1(Engine_GameFlagIsSet, 0x814) == 0) {
                     if (Value1(Engine_GameFlagIsSet, 0x819) != 0) {
                         Call6(Engine_MapCopyCellsTo, 0, 32, 17, 39, 2, 1);
@@ -147,8 +147,8 @@ s32 SoruNichigetsu_RestoreEntryState(void)
                     } else {
                         Call6(Engine_MapCopyCellsTo, 44, 59, 17, 37, 2, 6);
                     }
-                    Main_08009188(9);
-                    Main_08009188(10);
+                    Map_ClearLayerEntryFlag(9);
+                    Map_ClearLayerEntryFlag(10);
                 }
             }
             Engine_ActorSetPosition(16, 0, 0);
@@ -189,18 +189,18 @@ s32 SoruNichigetsu_RestoreEntryState(void)
     }
     L_02002510:;
     if (Value1(Engine_GameFlagIsSet, 0x309) == 0) {
-        if (Data_02000240_t[225][0] != 8) {
+        if (gCell[225][0] != 8) {
             goto L_0200254a;
         }
-        Local_02002614();
+        SoruNichigetsu_RunLightScene();
         Call1(Engine_GameFlagSet, 0x309);
         Call6(Engine_MapCopyCellAttributes, 15, 6, 2, 1, 17, 6);
     } else {
         L_0200254a:;
         if (Value1(Engine_GameFlagIsSet, 0x814) != 0) {
-            Main_0808a5e0(141);
+            BattleFx_SetQueuedSoundAndPlay(141);
             Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x10000, 0x10000);
-            Main_0808a2f8();
+            InitializeSceneRecordBuffer();
             Call6(Engine_MapCopyCellAttributes, 15, 6, 2, 1, 17, 6);
         }
     }

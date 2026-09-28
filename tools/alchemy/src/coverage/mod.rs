@@ -77,16 +77,14 @@ mod tests {
     use crate::coverage::progress::GameDone;
     use serde_json::json;
     #[test]
-    #[ignore = "publication rendering reads font widths from the approved local ROM"]
+    #[ignore = "publication rendering reads the font from the approved local ROM"]
     fn figures_are_redrawn_with_each_count_and_match_the_readme() {
-        use super::{check_figures, figure, figure_date_current, history, letters, write_figures};
+        use super::{check_figures, figure, figure_date_current, history, write_figures};
         let root = tempfile::tempdir().unwrap();
         let root = root.path();
-        let image = letters::sheet("THE BROKEN SEAL", letters::MENU);
-        for path in [&image, &"roms/tbs-en.gba".to_string()] {
-            std::fs::create_dir_all(root.join(path).parent().unwrap()).unwrap();
-            std::fs::copy(crate::coverage::tree::root().join(path), root.join(path)).unwrap();
-        }
+        let rom = "roms/tbs-en.gba";
+        std::fs::create_dir_all(root.join(rom).parent().unwrap()).unwrap();
+        std::fs::copy(crate::coverage::tree::root().join(rom), root.join(rom)).unwrap();
         std::fs::create_dir_all(history::path(root).parent().unwrap()).unwrap();
         std::fs::write(
             history::path(root),
@@ -99,12 +97,6 @@ mod tests {
         .unwrap();
         assert!(std::process::Command::new("git")
             .args(["init", "--quiet"])
-            .current_dir(root)
-            .status()
-            .unwrap()
-            .success());
-        assert!(std::process::Command::new("git")
-            .args(["add", "games"])
             .current_dir(root)
             .status()
             .unwrap()

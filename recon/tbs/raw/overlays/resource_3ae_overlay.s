@@ -1022,178 +1022,8 @@ Func_020008cc:
 	.4byte 0x00000109
 	.4byte 0x000008a9
 	.4byte 0x00000911
-	.global Func_02000958
-	.thumb_func
-Func_02000958:
-	push {r5, r6, lr}
-	sub sp, #8
-	bl 0x02008af8
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_02000958_0
-	movs r0, #12
-	movs r1, #2
-	bl 0x02009610
-.L_02000958_0:
-	ldr r3, [pc, #272]
-	movs r1, #225
-	lsls r1, r1, #1
-	adds r5, r3, r1
-	movs r1, #0
-	ldrsh r3, [r5, r1]
-	ldrh r2, [r5]
-	cmp r3, #3
-	bne .L_02000958_1
-	ldr r0, [pc, #260]
-	bl 0x02009560
-	ldrh r2, [r5]
-.L_02000958_1:
-	lsls r3, r2, #16
-	movs r2, #128
-	lsls r2, r2, #9
-	cmp r3, r2
-	bne .L_02000958_2
-	ldr r0, [pc, #244]
-	bl 0x02009560
-.L_02000958_2:
-	ldr r0, [pc, #240]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_02000958_3
-	movs r1, #204
-	movs r2, #148
-	movs r0, #8
-	lsls r1, r1, #17
-	lsls r2, r2, #17
-	bl 0x020095d8
-	movs r1, #128
-	movs r0, #8
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x02009640
-.L_02000958_3:
-	ldr r0, [pc, #208]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_02000958_4
-	movs r1, #140
-	movs r2, #148
-	movs r0, #13
-	lsls r1, r1, #17
-	lsls r2, r2, #17
-	bl 0x020095d8
-	movs r1, #192
-	movs r0, #13
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x02009640
-	movs r1, #144
-	movs r2, #140
-	movs r0, #16
-	lsls r1, r1, #17
-	lsls r2, r2, #17
-	bl 0x020095d8
-	movs r1, #224
-	movs r0, #16
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x02009640
-	movs r1, #232
-	movs r2, #152
-	movs r0, #10
-	lsls r1, r1, #16
-	lsls r2, r2, #17
-	bl 0x020095d8
-	movs r1, #128
-	movs r0, #10
-	lsls r1, r1, #7
-	movs r2, #0
-	bl 0x02009640
-	movs r1, #240
-	movs r2, #156
-	movs r0, #11
-	lsls r1, r1, #16
-	lsls r2, r2, #17
-	bl 0x020095d8
-	movs r1, #192
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #11
-	bl 0x02009640
-	movs r0, #10
-	bl 0x020095a0
-	adds r3, r0, #0
-	movs r1, #0
-	adds r3, #89
-	adds r2, r0, #0
-	strb r1, [r3]
-	adds r2, #35
-	movs r3, #2
-	strb r3, [r2]
-	ldr r2, [r0, #80]
-	ldrb r3, [r2, #9]
-	movs r5, #12
-	orrs r3, r5
-	strb r3, [r2, #9]
-	ldr r3, [r0, #80]
-	adds r3, #38
-	strb r1, [r3]
-	movs r3, #192
-	ldr r2, [r0, #80]
-	lsls r3, r3, #8
-	strh r3, [r2, #30]
-	movs r0, #11
-	bl 0x020095a0
-	ldr r6, [pc, #24]
-	adds r3, r0, #0
-	adds r3, #35
-	strb r6, [r3]
-	ldr r2, [r0, #80]
-	ldrb r3, [r2, #9]
-	orrs r3, r5
-	strb r3, [r2, #9]
-	ldr r2, [r0, #80]
-	ldrb r3, [r2, #21]
-	orrs r3, r5
-	strb r3, [r2, #21]
-	b .L_02000958_4
-	.2byte 0x0000
-	.4byte 0x00000000
-	.4byte 0x02000240
-	.4byte 0x0000012f
-	.4byte 0x000008aa
-	.4byte 0x000008ab
-.L_02000958_4:
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_02000958_5
-	movs r3, #14
-	movs r5, #18
-	str r3, [sp, #0]
-	movs r0, #18
-	movs r1, #18
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #4]
-	bl 0x02009508
-	movs r3, #15
-	str r3, [sp, #0]
-	movs r0, #18
-	movs r1, #18
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #4]
-	bl 0x02009508
-.L_02000958_5:
-	sub sp, #-8
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
+	.section .text.x02008ad4,"ax",%progbits
+	.align 2
 	.global Func_02000ad4
 	.thumb_func
 Func_02000ad4:
@@ -1212,6 +1042,9 @@ Func_02000ad4:
 	.2byte 0x0000
 	.4byte 0x03001ebc
 	.4byte 0x0000012f
+	.global FieldScene_PlaceSlots14And15
+	.thumb_func
+FieldScene_PlaceSlots14And15:
 	.global Func_02000af8
 	.thumb_func
 Func_02000af8:
@@ -2251,7 +2084,7 @@ Func_02000e40:
 	.2byte 0x96e4
 	.2byte 0x0200
 	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/IMPORT.INC"
-	.section .rodata,"a",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00540062
 	.4byte 0x00020002
 	.4byte 0x00620005

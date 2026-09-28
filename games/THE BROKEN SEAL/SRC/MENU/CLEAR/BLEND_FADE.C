@@ -3,7 +3,7 @@
 #include "IO_WRITE_QUEUE.H"
 
 extern volatile u16 Data_04000208;
-extern u16 Data_020096b0;
+extern u16 Clear_BlendFrame;
 
 void Clear_UpdateBlend(void);
 
@@ -44,8 +44,8 @@ void Clear_UpdateBlend(void)
     s32 frame;
     s32 level;
 
-    frame = Data_020096b0 + 1;
-    Data_020096b0 = frame;
+    frame = Clear_BlendFrame + 1;
+    Clear_BlendFrame = frame;
     q = &gIoWriteQueue;
     level = (u16)frame >> 1;
     QUEUE_WRITE(0x4000050, 0x2e51);

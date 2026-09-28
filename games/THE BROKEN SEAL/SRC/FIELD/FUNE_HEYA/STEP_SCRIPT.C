@@ -1,19 +1,19 @@
 #include "TYPES.H"
-extern u8 Data_0200eda8[];
-extern u8 Data_0200eeb0[];
-extern u8 Data_0200ed78[];
-extern u8 Data_0200efe8[];
-extern u8 Data_0200ed48[];
-extern u8 Data_0200ec58[];
-extern u8 Data_0200ebf8[];
-extern u8 Data_0200ebe0[];
+extern u8 FuneHeya_StepScriptF[];
+extern u8 FuneHeya_StepScriptG[];
+extern u8 FuneHeya_StepScriptE[];
+extern u8 FuneHeya_StepScriptH[];
+extern u8 FuneHeya_StepScriptD[];
+extern u8 FuneHeya_StepScriptC[];
+extern u8 FuneHeya_StepScriptB[];
+extern u8 FuneHeya_StepScriptA[];
 
 
 s32 Engine_GameFlagIsSet();
 
 
 extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+extern s16 gGameState[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -31,15 +31,15 @@ s32 FuneHeya_GetStepScript(void)
 {
     u8 *script;
 
-    switch (Data_02000240_t[225][0]) {
+    switch (gGameState[225][0]) {
     case 1:
     case 2:
     case 11:
         if (Value1(Engine_GameFlagIsSet, 0x93e) != 0) {
-            return (s32)Data_0200eda8;
+            return (s32)FuneHeya_StepScriptF;
         } else if (Value1(Engine_GameFlagIsSet, 0x928) != 0) {
             if (Value1(Engine_GameFlagIsSet, 0x8a0) != 0) {
-                script = Data_0200eeb0;
+                script = FuneHeya_StepScriptG;
                 script[22] = 2;
                 script[70] = 2;
                 script[118] = 2;
@@ -49,17 +49,17 @@ s32 FuneHeya_GetStepScript(void)
                 script[166] = 1;
                 script[94] = 2;
             }
-            return (s32)Data_0200eeb0;
+            return (s32)FuneHeya_StepScriptG;
         } else if (Value1(Engine_GameFlagIsSet, 0x911) != 0) {
             if (Value1(Engine_GameFlagIsSet, 0x925) != 0) {
-                Data_0200eda8[22] = 2;
-                Data_0200eda8[118] = 2;
-                Data_0200eda8[46] = 2;
-                Data_0200eda8[94] = 2;
+                FuneHeya_StepScriptF[22] = 2;
+                FuneHeya_StepScriptF[118] = 2;
+                FuneHeya_StepScriptF[46] = 2;
+                FuneHeya_StepScriptF[94] = 2;
             }
-            return (s32)Data_0200eda8;
+            return (s32)FuneHeya_StepScriptF;
         } else {
-            return (s32)Data_0200ed78;
+            return (s32)FuneHeya_StepScriptE;
         }
         break;
     case 4:
@@ -70,12 +70,12 @@ s32 FuneHeya_GetStepScript(void)
     case 21:
     case 23:
     case 24:
-        return (s32)Data_0200efe8;
+        return (s32)FuneHeya_StepScriptH;
         break;
     case 15:
     case 17:
     case 19:
-        script = Data_0200efe8;
+        script = FuneHeya_StepScriptH;
         script[22] = 2;
         script[46] = 2;
         script[94] = 1;
@@ -88,33 +88,33 @@ s32 FuneHeya_GetStepScript(void)
         return (s32)script;
     case 5:
         if (Value1(Engine_GameFlagIsSet, 0x93e) != 0) {
-            return (s32)Data_0200ed48;
+            return (s32)FuneHeya_StepScriptD;
         } else if (Value1(Engine_GameFlagIsSet, 0x911) != 0) {
             if (Value1(Engine_GameFlagIsSet, 0x922) != 0) {
                 if (Value1(Engine_GameFlagIsSet, 0x8a0) != 0) {
-                    Data_0200ec58[46] = 1;
+                    FuneHeya_StepScriptC[46] = 1;
                 }
                 if (Value1(Engine_GameFlagIsSet, 0x925) != 0) {
                     if (!(Value1(Engine_GameFlagIsSet, 0x8a0) != 0)) {
-                        Data_0200ec58[22] = 0;
+                        FuneHeya_StepScriptC[22] = 0;
                     }
                 }
-                return (s32)Data_0200ec58;
+                return (s32)FuneHeya_StepScriptC;
             } else {
-                return (s32)Data_0200ebe0;
+                return (s32)FuneHeya_StepScriptA;
             }
         } else {
-            return (s32)Data_0200ebf8;
+            return (s32)FuneHeya_StepScriptB;
         }
         break;
     case 10:
     case 13:
     case 14:
     case 22:
-        return (s32)Data_0200ebf8;
+        return (s32)FuneHeya_StepScriptB;
         break;
     default:
-        return (s32)Data_0200ebe0;
+        return (s32)FuneHeya_StepScriptA;
         break;
     }
     return (s32)script;

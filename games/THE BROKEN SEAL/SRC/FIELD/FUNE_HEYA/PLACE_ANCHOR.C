@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 
 /* The item object once it has been placed. */
-extern struct FieldActor *Data_0200e968;
+extern struct FieldActor *FuneHeya_AnchorObject;
 
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
 {
@@ -25,7 +25,7 @@ struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
     u8 *buffer;
 
     if (set != 0) {
-        return Data_0200e968;
+        return FuneHeya_AnchorObject;
     }
     object = Engine_ObjectCreate(22, 0x1c70000, 0x40000, 0x2200000);
     object->motion_flags = set;
@@ -39,6 +39,6 @@ struct FieldActor *FuneHeya_PlaceAnchorCharm(void)
     Engine_VramLoad(sprite->vram_block, 128, buffer + 0x400);
     Engine_HeapRelease(17);
     Call1(Engine_GameFlagSet, 0x200);
-    Data_0200e968 = object;
+    FuneHeya_AnchorObject = object;
     return object;
 }

@@ -2025,197 +2025,8 @@ Func_02000db8:
 	.4byte 0x000020d5
 	.4byte 0x000020d4
 	.4byte 0x000020e1
-	.global Func_02001214
-	.thumb_func
-Func_02001214:
-	push {r5, r6, r7, lr}
-	ldr r3, [pc, #448]
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	adds r6, r0, #0
-	cmp r3, #2
-	bne .L_02001214_0
-	bl 0x02009b5c
-	b .L_02001214_1
-.L_02001214_0:
-	bl 0x0200bca0
-	adds r0, r6, #0
-	movs r1, #1
-	bl 0x02009d64
-	adds r7, r0, #0
-	cmp r7, #0
-	beq .L_02001214_2
-	b .L_02001214_3
-.L_02001214_2:
-	ldr r0, [pc, #408]
-	bl 0x0200bd30
-	movs r0, #192
-	movs r1, #192
-	lsls r0, r0, #10
-	lsls r1, r1, #7
-	bl 0x0200bd70
-	movs r0, #164
-	movs r1, #1
-	movs r2, #168
-	movs r3, #1
-	lsls r2, r2, #16
-	lsls r0, r0, #17
-	negs r1, r1
-	bl 0x0200bd78
-	bl 0x0200bd80
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x0200bd40
-	movs r1, #140
-	lsls r1, r1, #1
-	movs r2, #200
-	movs r0, #0
-	bl 0x0200a910
-	movs r1, #128
-	movs r2, #128
-	movs r0, #0
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200bcc8
-	movs r1, #180
-	lsls r1, r1, #1
-	movs r2, #200
-	movs r0, #0
-	bl 0x0200bce8
-	movs r0, #30
-	bl 0x0200bc98
-	movs r1, #129
-	movs r2, #60
-	movs r0, #0
-	lsls r1, r1, #1
-	bl 0x0200bd60
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x0200bd40
-	movs r1, #156
-	lsls r1, r1, #1
-	movs r2, #200
-	movs r0, #0
-	bl 0x0200bce8
-	movs r0, #30
-	bl 0x0200bc98
-	movs r1, #192
-	movs r0, #0
-	lsls r1, r1, #8
-	movs r2, #10
-	bl 0x0200bd50
-	movs r1, #131
-	movs r0, #0
-	lsls r1, r1, #1
-	movs r2, #60
-	bl 0x0200bd60
-	movs r5, #148
-	movs r1, #192
-	movs r2, #192
-	lsls r5, r5, #1
-	movs r0, #0
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200bcc8
-	adds r1, r5, #0
-	movs r2, #184
-	movs r0, #0
-	bl 0x0200ae50
-	adds r1, r5, #0
-	movs r2, #152
-	movs r0, #0
-	bl 0x0200ae50
-	movs r1, #156
-	lsls r1, r1, #1
-	movs r2, #152
-	movs r0, #0
-	bl 0x0200ae50
-	movs r1, #128
-	lsls r1, r1, #7
-	movs r2, #15
-	movs r0, #0
-	bl 0x0200bd50
-	bl 0x0200b8f8
-	movs r0, #0
-	bl 0x0200abac
-	bl 0x0200b8f8
-	movs r0, #0
-	bl 0x0200abac
-	movs r1, #192
-	movs r2, #192
-	movs r0, #0
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200bcc8
-	movs r1, #152
-	movs r0, #0
-	lsls r1, r1, #1
-	movs r2, #184
-	bl 0x0200bce8
-	movs r0, #0
-	adds r1, r5, #0
-	movs r2, #192
-	bl 0x0200bce8
-	movs r0, #0
-	adds r1, r5, #0
-	movs r2, #200
-	bl 0x0200bce8
-	movs r2, #15
-	movs r1, #0
-	movs r0, #0
-	bl 0x0200bd50
-	bl 0x0200b8f8
-	movs r0, #0
-	bl 0x0200abac
-	bl 0x0200b8f8
-	movs r0, #0
-	bl 0x0200abac
-	movs r0, #0
-	movs r1, #1
-	bl 0x0200bd00
-	movs r1, #0
-	adds r0, r6, #0
-	bl 0x0200bd40
-	movs r0, #0
-	bl 0x0200aaec
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200bd68
-	movs r1, #156
-	movs r2, #168
-	movs r0, #9
-	lsls r1, r1, #17
-	lsls r2, r2, #16
-	bl 0x0200bcf8
-	adds r0, r6, #0
-	movs r1, #1
-	bl 0x02009e20
-	b .L_02001214_4
-.L_02001214_3:
-	cmp r7, #1
-	bne .L_02001214_4
-	ldr r0, [pc, #40]
-	bl 0x0200bd30
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x0200bd40
-.L_02001214_4:
-	adds r1, r6, #0
-	movs r2, #1
-	adds r0, r7, #0
-	bl 0x02009e7c
-	bl 0x0200bca8
-.L_02001214_1:
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000208c
-	.4byte 0x0000208b
+	.section .text.x020093e4,"ax",%progbits
+	.p2align 2
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -3059,6 +2870,9 @@ Func_02001a28:
 	.global Func_02001b5c
 	.thumb_func
 Func_02001b5c:
+	.global Korosseo_FinishSoloRound
+	.thumb_func
+Korosseo_FinishSoloRound:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -3281,6 +3095,9 @@ Func_02001d20:
 	.global Func_02001d64
 	.thumb_func
 Func_02001d64:
+	.global SceneDialogue_RunFlagGatedPromptInteraction
+	.thumb_func
+SceneDialogue_RunFlagGatedPromptInteraction:
 	push {r5, r6, lr}
 	adds r5, r1, #0
 	adds r6, r0, #0
@@ -3368,6 +3185,9 @@ Func_02001d64:
 	.global Func_02001e20
 	.thumb_func
 Func_02001e20:
+	.global SceneState_SendIdBySceneId
+	.thumb_func
+SceneState_SendIdBySceneId:
 	push {r5, lr}
 	adds r5, r0, #0
 	adds r0, r1, #0
@@ -3411,6 +3231,9 @@ Func_02001e20:
 	.global Func_02001e7c
 	.thumb_func
 Func_02001e7c:
+	.global FieldScene_RunMiddleSequence
+	.thumb_func
+FieldScene_RunMiddleSequence:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -4664,6 +4487,9 @@ Func_02002844:
 	.global Func_02002910
 	.thumb_func
 Func_02002910:
+	.global Korosseo_FadeInCompetitor
+	.thumb_func
+Korosseo_FadeInCompetitor:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -4888,6 +4714,9 @@ Func_02002910:
 	.global Func_02002aec
 	.thumb_func
 Func_02002aec:
+	.global Korosseo_RestoreCompetitor
+	.thumb_func
+Korosseo_RestoreCompetitor:
 	push {r5, r6, r7, lr}
 	ldr r3, [pc, #40]
 	adds r6, r0, #0
@@ -4975,6 +4804,9 @@ Func_02002aec:
 	.global Func_02002bac
 	.thumb_func
 Func_02002bac:
+	.global OverlayObject_ResetMotionFields
+	.thumb_func
+OverlayObject_ResetMotionFields:
 	push {r5, lr}
 	bl 0x0200bcb8
 	adds r5, r0, #0
@@ -5290,6 +5122,9 @@ Func_02002e10:
 	.global Func_02002e50
 	.thumb_func
 Func_02002e50:
+	.global OverlayObject_PlaceWithScale14000
+	.thumb_func
+OverlayObject_PlaceWithScale14000:
 	push {r5, r6, r7, lr}
 	adds r6, r1, #0
 	adds r7, r2, #0
@@ -6304,6 +6139,9 @@ Func_020038b0:
 	.global Func_020038f8
 	.thumb_func
 Func_020038f8:
+	.global StagedActor_PushActorAhead
+	.thumb_func
+StagedActor_PushActorAhead:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 .L_020038fc:

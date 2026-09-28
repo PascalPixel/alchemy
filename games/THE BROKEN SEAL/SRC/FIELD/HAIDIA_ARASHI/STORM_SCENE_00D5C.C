@@ -10,9 +10,9 @@ void Engine_ActorSetPosition();
 void Engine_ActorWalkToAndWait();
 void Engine_EventWait();
 void Engine_MapWaitWorkValuesBelow256();
-void Main_0808a5e8();
+void BattleFx_PlayQueuedSound();
 void Engine_GameFlagSet();
-void FieldScene_RunScene372_02000ec4();
+void HaidiaArashi_SetStormCellAttributes();
 void SceneActor_RunActor22PlacementSequence();
 void Engine_EventEnd();
 
@@ -89,10 +89,10 @@ void HaidiaArashi_RunScene00D5C(void)
             Call1(Engine_AudioPlayCue, 0x121);
             Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
             Engine_MapWaitWorkValuesBelow256();
-            Main_0808a5e8();
+            BattleFx_PlayQueuedSound();
             Call1(Engine_GameFlagSet, 0x830);
         }
-        FieldScene_RunScene372_02000ec4();
+        HaidiaArashi_SetStormCellAttributes();
         Call1(Engine_GameFlagSet, 0x310);
         if (Value1(Engine_GameFlagIsSet, 0x837) != 0) {
             if (Value1(Engine_GameFlagIsSet, 0x841) == 0) {

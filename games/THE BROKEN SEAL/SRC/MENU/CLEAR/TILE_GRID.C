@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
-s32 Main_08000170(s32 mask);
-void Main_080001a8(s32 value, s32 saved);
-void Main_08000178(s32 saved);
+s32 Runtime_BumpAllocateAlternatePool(s32 mask);
+void Resource_DecodeType01(s32 value, s32 saved);
+void Runtime_BumpFree(s32 saved);
 
 extern u8 *gWindowWork;
 
@@ -25,8 +25,8 @@ void SaveMenu_FillTileGrid(struct TileWindow *window, s32 value)
     s32 offset;
 
     shadow = (u16 *)gWindowWork;
-    saved = Main_08000170(0x300);
-    Main_080001a8(value, saved);
+    saved = Runtime_BumpAllocateAlternatePool(0x300);
+    Resource_DecodeType01(value, saved);
     offset = (window->y * 32 + window->x) * 2;
     vram = (u16 *)(0x06002000 + offset);
     shadow = (u16 *)((u8 *)shadow + offset);
@@ -40,5 +40,5 @@ void SaveMenu_FillTileGrid(struct TileWindow *window, s32 value)
         vram += 16;
         shadow += 16;
     }
-    Main_08000178(saved);
+    Runtime_BumpFree(saved);
 }

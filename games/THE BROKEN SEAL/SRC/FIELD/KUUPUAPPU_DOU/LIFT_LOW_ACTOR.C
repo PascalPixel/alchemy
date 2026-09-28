@@ -11,8 +11,7 @@ struct SceneActorRecord {
     s32 field_48;
 };
 
-struct SceneActorRecord *Func_02001a78(s32 actor);
-struct SceneActorRecord *Func_02001a84(s32 actor);
+struct SceneActorRecord *Engine_ActorGet(s32 actor);
 
 #define TILE(position) ((position) / 0x100000)
 
@@ -22,11 +21,11 @@ struct SceneActorRecord *Func_02001a84(s32 actor);
  * returns 1; otherwise it returns 0. */
 s32 SceneActor_LiftLowActorOnSubjectTile(s32 subject_actor)
 {
-    struct SceneActorRecord *subject = Func_02001a78(subject_actor);
+    struct SceneActorRecord *subject = Engine_ActorGet(subject_actor);
     s32 index = 0;
 
     do {
-        struct SceneActorRecord *actor = Func_02001a84(index + 11);
+        struct SceneActorRecord *actor = Engine_ActorGet(index + 11);
 
         if ((u32)(actor->y - 1) <= 0x000ffffe) {
             s32 actor_z = TILE(actor->z);

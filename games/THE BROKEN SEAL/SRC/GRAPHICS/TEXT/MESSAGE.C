@@ -89,7 +89,7 @@ check:
 #include "TYPES.H"
 
 s32 Func_08018038(s32 value, s32 mode);
-s32 Func_080165d8(s32 no, s32 entry, s32, s32, s32, s32);
+s32 UiText_QueueRenderEntries(s32 no, s32 entry, s32, s32, s32, s32);
 
 /* Clears the message cursor pair, then opens message `no` for the entry
    `argument` selects when that entry's slot is live. */
@@ -111,7 +111,7 @@ s32 UiText_OpenEntryMessage(s32 no, s32 argument)
         return 0;
     if (no == 0)
         return 0;
-    result = Func_080165d8(no, entry, 0, 0, 0, 1);
+    result = UiText_QueueRenderEntries(no, entry, 0, 0, 0, 1);
     if (result == 0)
         return 0;
     return result;

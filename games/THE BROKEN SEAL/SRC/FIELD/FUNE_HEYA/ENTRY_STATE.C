@@ -3,7 +3,7 @@
 
 void SceneState_RunFlagGatedSetupCascade(void);
 void RunSceneSelectionChain(void);
-void Local_02003364(void);
+void FuneHeya_ApplyFlaggedLayout(void);
 void FieldScene_RunScene3b1_02003dec(void);
 void FieldScene_RunScene3b1_02003d10(void);
 void FieldScene_RunScene3b1_02003eec(void);
@@ -29,9 +29,8 @@ union GameStateRows {
     s16 halves[512][1];
 };
 
-extern union GameStateRows Data_02000240_t;
-extern const u8 Data_0200e8e4[];
-extern s32 Data_0200ff84;
+extern const u8 FuneHeya_EntryActionScript[];
+extern s32 FuneHeya_CueTimer;
 
 /* Ship cabins entry: record the arrival, set the companions' child values by the story flags, then run the entrance's scene. */
 s32 FuneHeya_ApplyEntryState(void)
@@ -39,7 +38,7 @@ s32 FuneHeya_ApplyEntryState(void)
     Engine_TaskWait(1);
     Engine_GameFlagSet(0x144);
     *(s32 *)(*(s32 *)0x03001ebc + 0x1c0) = 0x209;
-    switch (Data_02000240_t.halves[225][0]) {
+    switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
     case 1:
     case 2:
     case 11:
@@ -68,7 +67,7 @@ s32 FuneHeya_ApplyEntryState(void)
         }
         break;
     }
-    switch (Data_02000240_t.halves[225][0]) {
+    switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
     case 1:
     case 2:
         SceneState_RunFlagGatedSetupCascade();
@@ -77,7 +76,7 @@ s32 FuneHeya_ApplyEntryState(void)
         RunSceneSelectionChain();
         break;
     case 5:
-        Local_02003364();
+        FuneHeya_ApplyFlaggedLayout();
         break;
     case 10:
         if (Engine_GameFlagIsSet(0x928) != 0) {
@@ -107,9 +106,9 @@ s32 FuneHeya_ApplyEntryState(void)
             Engine_EventBegin();
             FieldScene_RunSceneStep(25, 1, 0);
             FieldScene_RunSceneStep(22, 0, 0);
-            Engine_ActorEnableActionCallback(36, Data_0200e8e4);
-            Engine_ActorEnableActionCallback(37, Data_0200e8e4);
-            Engine_ActorEnableActionCallback(38, Data_0200e8e4);
+            Engine_ActorEnableActionCallback(36, FuneHeya_EntryActionScript);
+            Engine_ActorEnableActionCallback(37, FuneHeya_EntryActionScript);
+            Engine_ActorEnableActionCallback(38, FuneHeya_EntryActionScript);
             Engine_ActorSetChildValue(36, 3);
             Engine_ActorSetChildValue(37, 3);
             Engine_ActorSetChildValue(38, 3);
@@ -126,8 +125,8 @@ s32 FuneHeya_ApplyEntryState(void)
             Engine_EventBegin();
             FieldScene_RunSceneStep(25, 2, 0);
             FieldScene_RunSceneStep(22, 0, 0);
-            Engine_ActorEnableActionCallback(36, Data_0200e8e4);
-            Engine_ActorEnableActionCallback(37, Data_0200e8e4);
+            Engine_ActorEnableActionCallback(36, FuneHeya_EntryActionScript);
+            Engine_ActorEnableActionCallback(37, FuneHeya_EntryActionScript);
             Engine_EventEnd();
         } else {
             FieldScene_RunScene3b1_02005068();
@@ -141,8 +140,8 @@ s32 FuneHeya_ApplyEntryState(void)
             Engine_EventBegin();
             FieldScene_RunSceneStep(25, 3, 0);
             FieldScene_RunSceneStep(22, 0, 0);
-            Engine_ActorEnableActionCallback(36, Data_0200e8e4);
-            Engine_ActorEnableActionCallback(37, Data_0200e8e4);
+            Engine_ActorEnableActionCallback(36, FuneHeya_EntryActionScript);
+            Engine_ActorEnableActionCallback(37, FuneHeya_EntryActionScript);
             Engine_ActorSetChildValue(36, 3);
             Engine_ActorSetChildValue(37, 3);
             Engine_EventEnd();
@@ -160,7 +159,7 @@ s32 FuneHeya_ApplyEntryState(void)
                 {
                     s32 zero = 0;
 
-                    Data_0200ff84 = zero;
+                    FuneHeya_CueTimer = zero;
                 }
                 Engine_TaskAddCallback(Scene_UpdateCueTimer, 0xc80);
                 Engine_ActorSetAnimation(9, 5);

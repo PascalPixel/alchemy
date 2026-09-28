@@ -8,7 +8,7 @@
 extern s32 gSoruPushSteps[];
 
 struct FieldActor *SceneActor_FindSlotByTilePosition(s32 x, s32 z);
-s32 Main_080091d8(struct FieldActor *actor, union FieldCoordinate *pos);
+s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
 void Scene_UpdateOuterActor9Flags(void);
 void Scene_UpdateOuterActor10Flags(void);
@@ -49,7 +49,7 @@ void SoruIriguchi_PushFacedBlock(void)
         p[0].fixed = block->x.fixed + (step & -0x10000);
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
-        if (Value2((s32 (*)())Main_080091d8, (s32)block, (s32)p) <= 0) {
+        if (Value2((s32 (*)())Object_CheckMovementCollision, (s32)block, (s32)p) <= 0) {
             Engine_ObjectSetAnimation(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);

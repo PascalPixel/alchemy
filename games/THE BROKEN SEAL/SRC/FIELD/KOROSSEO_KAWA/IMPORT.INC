@@ -82,8 +82,17 @@ Engine_GameFlagSet:
 	overlay_veneer 0x08077151
 	overlay_veneer 0x08077169
 	overlay_veneer 0x08077261
+	.global Engine_EventWait
+	.thumb_func
+Engine_EventWait:
 	overlay_veneer 0x0808a011
+	.global Engine_EventBegin
+	.thumb_func
+Engine_EventBegin:
 	overlay_veneer 0x0808a019
+	.global Engine_EventEnd
+	.thumb_func
+Engine_EventEnd:
 	overlay_veneer 0x0808a021
 	overlay_veneer 0x0808a071
 	.global Engine_ActorGet
@@ -94,29 +103,65 @@ Engine_ActorGet:
 Object_GetByIdFar:
 	overlay_veneer 0x0808a081
 	overlay_veneer 0x0808a089
+	.global Engine_ActorSetSpeed
+	.thumb_func
+Engine_ActorSetSpeed:
 	overlay_veneer 0x0808a091
 	overlay_veneer 0x0808a0a1
 	overlay_veneer 0x0808a0b9
 	overlay_veneer 0x0808a0c9
+	.global Engine_ActorWalkToAndWait
+	.thumb_func
+Engine_ActorWalkToAndWait:
 	overlay_veneer 0x0808a0d1
 	overlay_veneer 0x0808a0e9
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
 	overlay_veneer 0x0808a0f1
+	.global Engine_ActorSetAnimation
+	.thumb_func
+Engine_ActorSetAnimation:
 	overlay_veneer 0x0808a101
 	overlay_veneer 0x0808a111
 	overlay_veneer 0x0808a131
 	overlay_veneer 0x0808a139
 	overlay_veneer 0x0808a149
 	overlay_veneer 0x0808a151
+	.global Engine_EventSetMessage
+	.thumb_func
+Engine_EventSetMessage:
 	overlay_veneer 0x0808a171
 	overlay_veneer 0x0808a179
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer 0x0808a181
 	overlay_veneer 0x0808a191
+	.global Engine_ActorFaceDirection
+	.thumb_func
+Engine_ActorFaceDirection:
 	overlay_veneer 0x0808a1b9
 	overlay_veneer 0x0808a1e1
+	.global Engine_ActorShowEmote
+	.thumb_func
+Engine_ActorShowEmote:
 	overlay_veneer 0x0808a1e9
+	.global Engine_CameraFollowActor
+	.thumb_func
+Engine_CameraFollowActor:
 	overlay_veneer 0x0808a201
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer 0x0808a209
+	.global Engine_CameraMoveTo
+	.thumb_func
+Engine_CameraMoveTo:
 	overlay_veneer 0x0808a211
+	.global Engine_CameraWaitForMove
+	.thumb_func
+Engine_CameraWaitForMove:
 	overlay_veneer 0x0808a219
 	overlay_veneer 0x0808a249
 	overlay_veneer 0x0808a251

@@ -1,16 +1,8 @@
-pub mod adopt;
 pub mod assembly;
-pub mod candidates;
 pub mod compile;
-pub mod draft;
-pub mod export;
-pub mod names;
 pub mod owners;
-pub mod park;
 pub mod rom;
-pub mod score;
 pub mod source;
-pub mod trial;
 use crate::compiler::source_paths::SourceOwner;
 use crate::overlay::assembly::OVERLAY_BASE;
 use std::fs;
@@ -242,45 +234,4 @@ pub fn splice_placeholder(
         last,
         aliases: aliases.len(),
     })
-}
-use crate::compiler::routing::root;
-use std::process::ExitCode;
-
-const OVERLAY_USAGE: &str =
-    "usage: alchemy overlay <trial|try|draft|adopt|park|audit|export> [args]";
-
-pub(crate) fn code(result: Result<i32, String>) -> ExitCode {
-    match result {
-        Ok(0) => ExitCode::SUCCESS,
-        Ok(_) => ExitCode::FAILURE,
-        Err(error) => {
-            eprintln!("{error}");
-            ExitCode::FAILURE
-        }
-    }
-}
-
-pub fn entry(arguments: &[String]) -> ExitCode {
-    let Some(command) = arguments.first().map(String::as_str) else {
-        eprintln!("{OVERLAY_USAGE}");
-        return ExitCode::from(2);
-    };
-    let rest = &arguments[1..];
-    match command {
-        "trial" => code(trial::run(root(), rest)),
-        "try" => code(candidates::run(root(), rest)),
-        "draft" => code(draft::run(root(), rest)),
-        "adopt" => code(adopt::run(root(), rest)),
-        "park" => code(park::run(root(), rest)),
-        "audit" => code(park::run_audit(root(), rest)),
-        "export" => code(export::run(root(), rest)),
-        "-h" | "--help" => {
-            println!("{OVERLAY_USAGE}");
-            ExitCode::SUCCESS
-        }
-        _ => {
-            eprintln!("unknown overlay command: {command}\n{OVERLAY_USAGE}");
-            ExitCode::from(2)
-        }
-    }
 }

@@ -3757,7 +3757,7 @@ Func_02000c98:
 	.4byte 0x0200bfc6
 	.4byte 0x0200bfc4
 	.4byte 0x02009d91
-	.section .text.x0200a0bc,"ax",%progbits
+	.section .rodata.x0200a0bc,"a",%progbits
 	.4byte 0x00007c1f
 	.4byte 0x00080005
 	.4byte 0x0850042c

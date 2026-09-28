@@ -7187,7 +7187,7 @@ Func_02002340:
 .L_02003c26:
 	pop	{pc}
 	.4byte 0x0200254c
-	.section .text.x0200bf04,"ax",%progbits
+	.section .rodata.x0200bf04,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000d

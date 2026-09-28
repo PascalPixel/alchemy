@@ -1282,7 +1282,7 @@ Func_02000b44:
 	push	{lr}
 	bl 0x02008d18
 	pop	{pc}
-	.section .text.x02008d80,"ax",%progbits
+	.section .rodata.x02008d80,"a",%progbits
 	.4byte 0x02160016
 	.4byte 0x02170017
 	.4byte 0x02180018

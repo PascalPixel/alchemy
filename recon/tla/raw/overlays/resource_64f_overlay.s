@@ -993,7 +993,7 @@ Func_020003a8:
 	.2byte 0x0000
 	.4byte 0x00001616
 	.4byte 0x02000240
-	.section .text.x02008aa8,"ax",%progbits
+	.section .rodata.x02008aa8,"a",%progbits
 	.4byte 0x80010000
 	.4byte 0x00000017
 	.4byte 0x00000009

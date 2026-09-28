@@ -5125,7 +5125,7 @@ Func_02002f84:
 .L_02003134:
 	add	sp, #8
 	pop	{r5, r6, pc}
-	.section .text.x0200b330,"ax",%progbits
+	.section .rodata.x0200b330,"a",%progbits
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000004

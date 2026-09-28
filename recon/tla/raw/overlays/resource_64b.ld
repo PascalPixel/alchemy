@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/WORLD_MAP/ENTRY.o"(.text)
         "*/resource_64b_overlay.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/WORLD_MAP/IMPORT.o"(.text)
-        "*/resource_64b_overlay.o"(.text.x0200ce38)
+        "*/resource_64b_overlay.o"(.rodata.x0200ce38)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

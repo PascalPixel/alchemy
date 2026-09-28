@@ -915,7 +915,7 @@ SECTIONS
         "*/recon/tbs/raw/080999f0.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLES.o"(.text)
         "*/recon/tbs/raw/08099da4.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0809a294.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT11.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_ITEM_BREAK_MODE1.o"(.text)
         "*/recon/tbs/raw/0809a44a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_OBJECT_MOTION_SCALE_AND_LINKED_ANGLE.o"(.text)

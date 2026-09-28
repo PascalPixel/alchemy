@@ -135,8 +135,7 @@ extern const s32 Data_080131c0[];
 extern struct ScriptObjectRuntime *Data_03001e64;
 /* FAKEMATCH: preserve independent multiply/divide address ownership, as
  * in the exact Object_SetMoveTarget neighbour. */
-extern u8 Value_03000118[];
-#define MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
+#define MulQ16(left, right) Iwram_Call2((left), (right), IwramMulQ16ReturnIp)
 
 s32 Func_08011f54(s32, s32, s32);
 s32 ScriptObject_CheckOverlap(struct ScriptObjectRuntime *, s32 *);

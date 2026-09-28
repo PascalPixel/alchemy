@@ -76,7 +76,7 @@ extern s8 Data_080eeb79[];
 extern u8 Data_080eeb80[];
 extern u16 Data_080eeb88[];
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 s32 Random16(void);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_080b50e8(s32 id);
@@ -145,7 +145,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
     work = *cursor++;
     draw_destination = *cursor;
     work->effect = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
     if (mode == 1) {

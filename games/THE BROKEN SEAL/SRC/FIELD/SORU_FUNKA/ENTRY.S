@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer FieldScene_RunWhenWord225Is10
-	overlay_veneer SceneData_GetTableB6D4
-	overlay_veneer SceneData_GetTableB704
-	overlay_veneer SceneData_GetTableB710
-	overlay_veneer SceneData_GetTableB998
-	overlay_veneer Func_02000038
+	overlay_veneer SceneData_GetScriptTable
+	overlay_veneer SceneData_GetMessageTable
+	overlay_veneer SceneData_GetActorTable
+	overlay_veneer SceneData_GetEffectTable
+	overlay_veneer SceneData_ReturnZero

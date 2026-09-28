@@ -210,17 +210,11 @@ static __inline__ void Call3_020029a4(void (*f)(s32, s32, s32), s32 a, s32 b, s3
     f(a, b, c);
 }
 
-/*
- * Returns the in-image table address 0x0200b6d4, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr. Published from the overlay header, not
- * reached by any call.
- */
-
-extern u8 Data_0200b6d4[];
-extern u8 Data_0200b704[];
-extern u8 Data_0200b710[];
-extern u8 Data_0200b998[];
+/* The scene's tables, laid out after the code. */
+extern u8 Placement_Scripts[];
+extern u8 Placement_Messages[];
+extern u8 Placement_Actors[];
+extern u8 Placement_Effects[];
 void SoruFunka_StepEmbers();
 void SceneState_UpdateRandomTimerLevel();
 

@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer SoruStar_ApplyEntryState
-	overlay_veneer SceneData_GetTableCd88
-	overlay_veneer SceneData_GetTableCDB8
-	overlay_veneer SceneData_GetTableCdc4
-	overlay_veneer SceneData_GetTableCFA4
+	overlay_veneer SceneData_GetScriptTable
+	overlay_veneer SceneData_GetMessageTable
+	overlay_veneer SceneData_GetActorTable
+	overlay_veneer SceneData_GetEffectTable
 	overlay_veneer SceneData_ReturnZero

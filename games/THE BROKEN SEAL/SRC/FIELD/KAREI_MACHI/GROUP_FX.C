@@ -133,33 +133,61 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-u8 *Object_GetByIdFar();
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
+void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
-/* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
-static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
+void SceneState_ApplyValues12And2And3(void)
 {
-    Actor_SetDestinationOffset(actor, axis, offset);
+    BattleFx_RunPageEffectForSlot(0xC, 2, 3);
 }
 
-void RunSceneArrivalSetup(void)
+s32 SceneEffect_UpdateRandomAction(struct Resource3a8Effect *effect)
 {
-    s32 two = 2;
+    u32 action;
+    u32 next_timer;
 
-    Event_Begin();
-    Audio_PlayCue(188);
-    Map_CopyCellsTo(36, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Map_CopyCellsTo(39, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    SetOffset(0, 0, -8);
-    Event_Wait(10);
-    Event_RequestExit(2);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    if (effect->action_timer == 0) {
+        action = (u32)(Random_Next() * 8) >> 0x10;
+        switch (action) {
+        case 0:
+            Object_SetAnimation(effect, 3);
+            break;
+        case 1:
+            Object_SetAnimation(effect, 4);
+            break;
+        case 3:
+        case 4:
+            effect->unknown_06 += (u32)(Random_Next() << 0xF) >> 0x10;
+            break;
+        }
+        next_timer = (u32)(Random_Next() * 0x50) >> 0x10;
+        effect->action_timer = (s16)next_timer;
+        if (next_timer != 0) {
+            goto decrement_timer;
+        }
+    } else {
+decrement_timer:
+        --effect->action_timer;
+    }
+    return 1;
+}
+
+s32 OverlayObject_AdvanceXWhenCounterExpires(struct Object *obj)
+{
+    s32 cnt = *(u16 *)&obj->cnt;
+    s32 loaded = obj->cnt;
+    s32 amount;
+
+    if (loaded == 0) {
+        obj->x += (u32)(Random_Next() << 15) >> 16;
+        amount = (u32)(Random_Next() * 80) >> 16;
+        obj->cnt = amount;
+        if (amount == 0) {
+            goto done;
+        }
+        cnt = amount;
+    }
+    obj->cnt = cnt - 1;
+done:
+    return 1;
 }

@@ -1,3 +1,6 @@
+/* Draft: FieldScene_DispatchBySceneId, resource_3a8 at 0x0200964c (listing 0x0200164c).
+ * Not linked: it reaches ids or an IWRAM work pointer the main image does not name: scene ids loaded from the literal pool as link-time constants (Value_00000063, Value_00001a9e, Value_00001aa2) that spelled as plain constants compile differently, or the pointer word at 0x03001ee0.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -133,33 +136,29 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-u8 *Object_GetByIdFar();
+extern u8 Value_00000063;
+extern u8 Value_00000066;
+extern u8 Value_00000099;
+extern u8 Value_0000009b;
+extern u8 Value_0000009c;
+void Func_02002d24(void);
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
-
-/* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
-static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
+s32 FieldScene_DispatchBySceneId(void)
 {
-    Actor_SetDestinationOffset(actor, axis, offset);
-}
+    s32 v;
 
-void RunSceneArrivalSetup(void)
-{
-    s32 two = 2;
-
-    Event_Begin();
-    Audio_PlayCue(188);
-    Map_CopyCellsTo(36, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Map_CopyCellsTo(39, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    SetOffset(0, 0, -8);
-    Event_Wait(10);
-    Event_RequestExit(2);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    GameFlag_Set(0x87a);
+    v = gGameState.scene;
+    if (v == (s32)&Value_00000063) {
+        Func_02002d24();
+    } else if (v == (s32)&Value_00000066) {
+        SceneState_CheckFlags941And940();
+    } else if (v == (s32)&Value_00000099) {
+        SceneState_ApplyFlagGatedActorEightSetup();
+    } else if (v == (s32)&Value_0000009b) {
+        SceneState_SetWork448AndRunFlag915Step();
+    } else if (v == (s32)&Value_0000009c) {
+        FieldScene_RunMiddleSequence();
+    }
+    return 0;
 }

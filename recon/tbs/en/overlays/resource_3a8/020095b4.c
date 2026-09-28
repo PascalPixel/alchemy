@@ -1,3 +1,6 @@
+/* Draft: SceneState_LinkRecordZeroWhenFlag200Clear, resource_3a8 at 0x020095b4 (listing 0x020015b4).
+ * Not linked: it reaches ids or an IWRAM work pointer the main image does not name: scene ids loaded from the literal pool as link-time constants (Value_00000063, Value_00001a9e, Value_00001aa2) that spelled as plain constants compile differently, or the pointer word at 0x03001ee0.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -133,33 +136,21 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-u8 *Object_GetByIdFar();
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
-
-/* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
-static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
-    Actor_SetDestinationOffset(actor, axis, offset);
+    return f(a0);
 }
 
-void RunSceneArrivalSetup(void)
+void SceneState_LinkRecordZeroWhenFlag200Clear(void)
 {
-    s32 two = 2;
+    extern u8 *Data_03001ee0;
 
-    Event_Begin();
-    Audio_PlayCue(188);
-    Map_CopyCellsTo(36, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Map_CopyCellsTo(39, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    SetOffset(0, 0, -8);
-    Event_Wait(10);
-    Event_RequestExit(2);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    u8 *work;
+
+    if (GameFlag_IsSet(0x200) == 0) {
+        work = Data_03001ee0;
+        *(s32 *)(work + 24) = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+        GameFlag_Set(0x200);
+    }
 }

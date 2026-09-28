@@ -133,33 +133,99 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-u8 *Object_GetByIdFar();
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
-
-/* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
-static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
+void SceneDialogue_RunActorNineteenDialogue(void)
 {
-    Actor_SetDestinationOffset(actor, axis, offset);
+    Event_Begin();
+    Event_SetMessage(MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE);
+    Event_AskYesNo(19, 0);
+    Event_End();
 }
 
-void RunSceneArrivalSetup(void)
+void FieldScene_RunSlotZeroFacingSequence(void)
 {
-    s32 two = 2;
+    extern u8 *Data_03001ebc;
 
+    struct Obj *o;
+    u32 v;
+    u16 *q;
+
+    o = Actor_Get(ACTOR_PARTY_LEADER);
+    v = (o->f06 + 0xfffff000) << 16;
+    if (v > 0x60000000) {
+        Event_Begin();
+        Actor_FaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
+        Event_Wait(10);
+        Event_SetMessage(MSG_DO_WANT_GO_CAVE_UP);
+        Event_OpenMessage(8, 0);
+        if (Event_ChooseYesNo(0, 0) == 0) {
+            Actor_SetAnimationAndWait(8, 4);
+            Event_ShowMessage(8, 0);
+        } else {
+            q = (u16 *)(Data_03001ebc + 472);
+            *q = *q + 1;
+            Actor_SetAnimationAndWait(8, 3);
+            Event_ShowMessage(8, 0);
+        }
+        Event_End();
+    }
+}
+
+void SceneDialogue_RunActorTenDialogue(void)
+{
     Event_Begin();
-    Audio_PlayCue(188);
-    Map_CopyCellsTo(36, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Map_CopyCellsTo(39, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    SetOffset(0, 0, -8);
-    Event_Wait(10);
-    Event_RequestExit(2);
-    Event_CloseScreen();
-    Event_WaitForScreen();
+    Event_SetMessage(MSG_LAYANA_WAS_VERY_HARD_ON);
+    Event_AskYesNo(10, 0);
     Event_End();
+}
+
+void SceneState_BranchOnSlotZeroFacing(void)
+{
+    struct Obj *o;
+    u32 v;
+
+    o = Actor_Get(ACTOR_PARTY_LEADER);
+    v = (o->f06 - 0x2000) << 16;
+    if (v > 0x80000000) {
+        Shop_Open(22, 22);
+    } else {
+        Event_Begin();
+        Event_SetMessage(MSG_LORD_HAMMET_SELLS_HIS_BEST);
+        Event_ShowMessage(22, 0);
+        Event_End();
+    }
+}
+
+void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
+{
+    struct Obj *o;
+    u32 v;
+
+    o = Actor_Get(ACTOR_PARTY_LEADER);
+    v = (o->f06 - 0x6001) << 16;
+    if (v <= 0x7ffe0000) {
+        Shop_Open(23, 23);
+    } else {
+        Event_Begin();
+        Event_SetMessage(MSG_DID_FIND_NEEDED_IN_WEAPON);
+        Event_AskYesNo(23, 0);
+        Event_End();
+    }
+}
+
+void FieldScene_RunActorTwentyFourAngleDialogue(void)
+{
+    struct Obj *o;
+    u32 v;
+
+    o = Actor_Get(ACTOR_PARTY_LEADER);
+    v = (o->f06 - 0x2000) << 16;
+    if (v > 0xC0000000) {
+        Shop_Open(24, 24);
+    } else {
+        Event_Begin();
+        Event_SetMessage(MSG_LADY_LAYANA_SHARED_IN_LORD);
+        Event_ShowMessage(24, 0);
+        Event_End();
+    }
 }

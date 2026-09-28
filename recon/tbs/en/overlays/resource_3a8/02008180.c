@@ -1,3 +1,6 @@
+/* Draft: SceneData_SelectTableByWord224B, resource_3a8 at 0x02008180 (listing 0x02000180).
+ * Not linked: it compares the scene with ids the reference loads from the literal pool, as link-time constants (Value_00000099, Value_0000009a, Value_0000009b) that the main image does not define; spelled as plain constants GCC compares against immediates.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -133,33 +136,31 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-u8 *Object_GetByIdFar();
+extern u8 Value_00000063;
+extern u8 Value_00000066;
+extern u8 Value_00000099;
+extern u8 Value_0000009c;
+extern u8 Data_0200c768[];
+extern u8 Data_0200ca20[];
+extern u8 Data_0200ca80[];
+extern u8 Data_0200cb58[];
+extern u8 Data_0200c750[];
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
-
-/* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
-static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
+s32 SceneData_SelectTableByWord224B(void)
 {
-    Actor_SetDestinationOffset(actor, axis, offset);
-}
+    s16 v = gGameState.scene;
 
-void RunSceneArrivalSetup(void)
-{
-    s32 two = 2;
-
-    Event_Begin();
-    Audio_PlayCue(188);
-    Map_CopyCellsTo(36, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Map_CopyCellsTo(39, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    SetOffset(0, 0, -8);
-    Event_Wait(10);
-    Event_RequestExit(2);
-    Event_CloseScreen();
-    Event_WaitForScreen();
-    Event_End();
+    if (v == (s32)&Value_00000063) {
+        return (s32)Data_0200c768;
+    }
+    if (v == (s32)&Value_00000066) {
+        return (s32)Data_0200ca20;
+    }
+    if (v == (s32)&Value_00000099) {
+        return (s32)Data_0200ca80;
+    }
+    if (v == (s32)&Value_0000009c) {
+        return (s32)Data_0200cb58;
+    }
+    return (s32)Data_0200c750;
 }

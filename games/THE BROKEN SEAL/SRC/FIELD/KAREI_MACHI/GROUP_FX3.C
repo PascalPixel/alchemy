@@ -133,33 +133,21 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-u8 *Object_GetByIdFar();
 
-/* Contiguous unnamed leaf-owner run for resource_3a8. */
-
-/* resource_3a8 owner at 0x02000504, 138 bytes. Scene arrival sequence. */
-static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
+void FieldScene_RunStepWithValue29df(void)
 {
-    Actor_SetDestinationOffset(actor, axis, offset);
+    Event_Begin();
+    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
+    Message_ShowCentered(MSG_VERY_CLEAN_MAINTAINED, 1);
+    Event_End();
 }
 
-void RunSceneArrivalSetup(void)
+void FieldScene_RunStepWithValueFd6(void)
 {
-    s32 two = 2;
-
     Event_Begin();
-    Audio_PlayCue(188);
-    Map_CopyCellsTo(36, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Map_CopyCellsTo(39, 23, 43, 12, two, two);
-    Task_Wait(5);
-    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x8000, 0x4000);
-    Object_GetByIdFar(0)[85] = 0;
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    SetOffset(0, 0, -8);
-    Event_Wait(10);
-    Event_RequestExit(2);
-    Event_CloseScreen();
-    Event_WaitForScreen();
+    Actor_SetPosition(12, 0, 0);
+    GameFlag_Set(0xfd6);
+    Item_ShowFound(ITEM_NUT, 3);
+    Party_GiveItem(ITEM_NUT, 0);
     Event_End();
 }

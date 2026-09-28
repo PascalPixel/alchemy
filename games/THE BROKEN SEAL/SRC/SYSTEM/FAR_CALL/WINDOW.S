@@ -9,387 +9,387 @@
 	.global Func_08015000
 	.thumb_func
 Func_08015000:
-	overlay_veneer 0x08015f31
-	overlay_veneer 0x08016019
+	overlay_veneer UiWork_InitializeWithResourceCounters
+	overlay_veneer UiWork_Initialize
 	.global UiWindow_CreateFar
 	.thumb_func
 UiWindow_CreateFar:
-	overlay_veneer 0x080162d5
+	overlay_veneer UiWindow_Create
 	.global UiWork_FinalizeFar
 	.thumb_func
 UiWork_FinalizeFar:
-	overlay_veneer 0x08016419
+	overlay_veneer UiWork_Finalize
 	.global Party_Apply
 	.thumb_func
 Party_Apply:
 	.global Ui_AdjustValueWithoutLimitFar
 	.thumb_func
 Ui_AdjustValueWithoutLimitFar:
-	overlay_veneer 0x0801964d
-	overlay_veneer 0x080196c5
+	overlay_veneer Ui_AdjustValueWithoutLimit
+	overlay_veneer UiText_DecodeMessage
 	.global UiText_CopyMessageStringFar
 	.thumb_func
 UiText_CopyMessageStringFar:
-	overlay_veneer 0x0801965d
+	overlay_veneer UiText_CopyMessageString
 	.global UiText_OpenMessageWindowFar
 	.thumb_func
 UiText_OpenMessageWindowFar:
-	overlay_veneer 0x08017659
+	overlay_veneer UiText_OpenMessageWindow
 	.global UiText_DrawMessage
 	.thumb_func
 UiText_DrawMessage:
 	.global UiText_ShowPositionedMessageAndWaitFar
 	.thumb_func
 UiText_ShowPositionedMessageAndWaitFar:
-	overlay_veneer 0x0801776d
+	overlay_veneer UiText_ShowPositionedMessageAndWait
 	.global UiWork_IsCompleteFar
 	.thumb_func
 UiWork_IsCompleteFar:
-	overlay_veneer 0x08017365
+	overlay_veneer UiWork_IsComplete
 	.global UiWork_IsIdleFar
 	.thumb_func
 UiWork_IsIdleFar:
-	overlay_veneer 0x08017395
+	overlay_veneer UiWork_IsIdle
 	.global UiWork_SetBusyFlagsFar
 	.thumb_func
 UiWork_SetBusyFlagsFar:
-	overlay_veneer 0x08017621
+	overlay_veneer UiWork_SetBusyFlags
 	.global UiWindow_Clear
 	.thumb_func
 UiWindow_Clear:
-	overlay_veneer 0x08016479
+	overlay_veneer RenderOutput_PrepareForRedraw
 	.global UiWindow_ClearInteriorTilesFar
 	.thumb_func
 UiWindow_ClearInteriorTilesFar:
-	overlay_veneer 0x080164d5
+	overlay_veneer UiWindow_ClearInteriorTiles
 	.global UiWindow_DrawDividerLineFar
 	.thumb_func
 UiWindow_DrawDividerLineFar:
-	overlay_veneer 0x0801e41d
+	overlay_veneer UiWindow_DrawDividerLine
 	.global Func_08015078
 	.thumb_func
 Func_08015078:
 	.global UiText_DrawMessageAt
 	.thumb_func
 UiText_DrawMessageAt:
-	overlay_veneer 0x0801e74d
+	overlay_veneer UiText_DrawResource
 	.global UiText_DrawAt
 	.thumb_func
 UiText_DrawAt:
 	.global UiText_DrawCharacterAtOffsetFar
 	.thumb_func
 UiText_DrawCharacterAtOffsetFar:
-	overlay_veneer 0x0801e7c1
-	overlay_veneer 0x0801e859
+	overlay_veneer UiText_DrawCharacterAtOffset
+	overlay_veneer UiText_DrawString
 	.global UiText_DrawStringAtOffsetFar
 	.global Func_08015090
 	.thumb_func
 UiText_DrawStringAtOffsetFar:
 Func_08015090:
-	overlay_veneer 0x0801e8b1
+	overlay_veneer UiText_DrawStringAtOffset
 	.global UiText_DrawStringInWindowFar
 	.thumb_func
 UiText_DrawStringInWindowFar:
-	overlay_veneer 0x0801e941
-	overlay_veneer 0x0801e9a1
+	overlay_veneer UiText_DrawStringInWindow
+	overlay_veneer UiText_DrawNumber
 	.global UiText_DrawNumberAtOffsetFar
 	.global Func_080150a8
 	.thumb_func
 UiText_DrawNumberAtOffsetFar:
 Func_080150a8:
-	overlay_veneer 0x0801e9d5
+	overlay_veneer UiText_DrawNumberAtOffset
 	.global UiNumber_DrawAt
 	.thumb_func
 UiNumber_DrawAt:
 	.global UiText_DrawNumberInWindowFar
 	.thumb_func
 UiText_DrawNumberInWindowFar:
-	overlay_veneer 0x0801ea09
+	overlay_veneer UiText_DrawNumberInWindow
 	.global UiWork_SetParamNibbleFar
 	.thumb_func
 UiWork_SetParamNibbleFar:
-	overlay_veneer 0x0801e71d
-	overlay_veneer 0x0801e739
+	overlay_veneer UiWork_SetParamNibble
+	overlay_veneer UiWork_SetRenderWord
 	.global RenderOutput_CreateFar
 	.global Func_080150c8
 	.thumb_func
 RenderOutput_CreateFar:
 Func_080150c8:
-	overlay_veneer 0x0801eadd
+	overlay_veneer RenderOutput_Create
 	.global RenderOutput_CreateFromResourceFar
 	.thumb_func
 RenderOutput_CreateFromResourceFar:
-	overlay_veneer 0x0801eb65
+	overlay_veneer RenderOutput_CreateFromResource
 	.global SideObject_CreateFar
 	.thumb_func
 SideObject_CreateFar:
-	overlay_veneer 0x0801ec6d
+	overlay_veneer CreateSideObject
 	.global Ui_LoadCharacterEntryForSlotFar
 	.thumb_func
 Ui_LoadCharacterEntryForSlotFar:
-	overlay_veneer 0x0801ed41
-	overlay_veneer 0x0801edcd
-	overlay_veneer 0x0801eddd
+	overlay_veneer Ui_LoadCharacterEntryForSlot
+	overlay_veneer UiWork_SetByte5AndResetHalfwordC
+	overlay_veneer UiWork_SetByte15Inverted
 	.global UiWindow_CreateWithSideObjectFar
 	.global Func_080150f8
 	.thumb_func
 UiWindow_CreateWithSideObjectFar:
 Func_080150f8:
-	overlay_veneer 0x08019da9
+	overlay_veneer UiWindow_CreateWithSideObject
 	.global UiWork_FinalizeEntityMatchingLocalizedIdFar
 	.thumb_func
 UiWork_FinalizeEntityMatchingLocalizedIdFar:
-	overlay_veneer 0x08019e49
+	overlay_veneer UiWork_FinalizeEntityMatchingLocalizedId
 	.global Func_08015108
 	.thumb_func
 Func_08015108:
-	overlay_veneer 0x080187ad
-	overlay_veneer 0x080187fd
+	overlay_veneer UiText_GetResourceDimensions
+	overlay_veneer UiText_GetResourceDimensionsAlt
 	.global UiWork_ClearValueNameTablesFar
 	.thumb_func
 UiWork_ClearValueNameTablesFar:
-	overlay_veneer 0x080198dd
+	overlay_veneer UiWork_ClearValueNameTables
 	.global UiText_DrawQuantity
 	.thumb_func
 UiText_DrawQuantity:
 	.global UiWork_PushValueSlotFar
 	.thumb_func
 UiWork_PushValueSlotFar:
-	overlay_veneer 0x08019909
-	overlay_veneer 0x0801ef09
+	overlay_veneer UiWork_PushValueSlot
+	overlay_veneer UiWindow_CreateWithLayoutBounds
 	.global UiWindow_DrawPartyStatusContentsFar
 	.thumb_func
 UiWindow_DrawPartyStatusContentsFar:
-	overlay_veneer 0x0801f201
-	overlay_veneer 0x0801f5d5
+	overlay_veneer UiWindow_DrawPartyStatusContents
+	overlay_veneer UiWork_FinalizeAndReleaseBlock16
 	.global UiWork_FinalizePendingCoreFar
 	.thumb_func
 UiWork_FinalizePendingCoreFar:
-	overlay_veneer 0x08019a55
-	overlay_veneer 0x080197c5
-	overlay_veneer 0x0801a66d
-	overlay_veneer 0x0801a779
-	overlay_veneer 0x0801a7c1
-	overlay_veneer 0x0801a969
-	overlay_veneer 0x0801a97d
-	overlay_veneer 0x0801b011
-	overlay_veneer 0x0801b149
-	overlay_veneer 0x0801b229
-	overlay_veneer 0x0801b399
-	overlay_veneer 0x0801b425
-	overlay_veneer 0x0801c0c9
-	overlay_veneer 0x0801c0cd
-	overlay_veneer 0x0801a7f5
-	overlay_veneer 0x0801a90d
+	overlay_veneer UiWork_FinalizePendingCore
+	overlay_veneer UiWork_DrainPending
+	overlay_veneer UiGlyph_ResetWorkState
+	overlay_veneer Resource_ClearOwnerListAndCounters
+	overlay_veneer Resource_PushPendingPair
+	overlay_veneer Resource_ScheduleOwnerResetDelayed
+	overlay_veneer Resource_ScheduleOwnerReset
+	overlay_veneer Menu_OpenSelectionWindow
+	overlay_veneer Resource_ResetOwnerEntries
+	overlay_veneer Menu_SetupSelectionBothSides
+	overlay_veneer Menu_SelectionLoop
+	overlay_veneer Menu_WaitForSelectionInput
+	overlay_veneer UiTextResource_NoOpCallbackBank
+	overlay_veneer UiTextResource_NoOpCallback1
+	overlay_veneer MenuSelection_BuildEntries
+	overlay_veneer UiWork_ReservedNoOp
 	.global Battle_CollectPartyCommandsFar
 	.global Func_080151c0
 	.thumb_func
 Battle_CollectPartyCommandsFar:
 Func_080151c0:
-	overlay_veneer 0x08027115
+	overlay_veneer Battle_CollectPartyCommands
 	.global UiText_ShowMessageAndWaitCoreFar
 	.thumb_func
 UiText_ShowMessageAndWaitCoreFar:
-	overlay_veneer 0x080175a1
+	overlay_veneer UiText_ShowMessageAndWaitCore
 	.global UiText_PrepareMessageWorkFar
 	.thumb_func
 UiText_PrepareMessageWorkFar:
-	overlay_veneer 0x080174f9
-	overlay_veneer 0x0801c0d9
+	overlay_veneer UiText_PrepareMessageWork
+	overlay_veneer UiTextResource_NoOpCallback4
 	.global Func_080151e0
 	.thumb_func
 Func_080151e0:
-	overlay_veneer 0x08019d2d
-	overlay_veneer 0x0801c245
-	overlay_veneer 0x080289e9
-	overlay_veneer 0x08028c05
+	overlay_veneer Localization_LookupEntryId
+	overlay_veneer Menu_RunTopSelection
+	overlay_veneer Menu_SelectSaveSlotAction
+	overlay_veneer Menu_SelectResourceLayout
 	.global Func_08015200
 	.thumb_func
 Func_08015200:
-	overlay_veneer 0x0801c34d
+	overlay_veneer Func_0801c34c
 	.global UiTimedNotice_CloseIfActiveFar
 	.thumb_func
 UiTimedNotice_CloseIfActiveFar:
-	overlay_veneer 0x0801c429
-	overlay_veneer 0x08019aa1
+	overlay_veneer UiTimedNotice_CloseIfActive
+	overlay_veneer UiText_ShowCenteredMessage
 	.global UiWork_FinalizeSharedSlotFar
 	.global Func_08015218
 	.thumb_func
 UiWork_FinalizeSharedSlotFar:
 Func_08015218:
-	overlay_veneer 0x080174d9
+	overlay_veneer UiWork_FinalizeSharedSlot
 	.global UiWork_ResetFreeChannelFar
 	.thumb_func
 UiWork_ResetFreeChannelFar:
-	overlay_veneer 0x08016759
-	overlay_veneer 0x0801c0dd
-	overlay_veneer 0x0801c155
-	overlay_veneer 0x0801c17d
-	overlay_veneer 0x0801c925
-	overlay_veneer 0x0801c459
+	overlay_veneer UiWork_ResetFreeChannel
+	overlay_veneer UiTextResource_Initialize
+	overlay_veneer UiTextResource_SetPosition
+	overlay_veneer UiTextResource_Release
+	overlay_veneer Menu_RunSelectionHook
+	overlay_veneer Item_CallHandler48
 	.global ItemIcon_LoadTilesFar
 	.global Func_08015250
 	.thumb_func
 ItemIcon_LoadTilesFar:
 Func_08015250:
-	overlay_veneer 0x0801a371
+	overlay_veneer Ui_PrepareTransferForItem
 	.global UiText_RenderWideStringAtOffsetFar
 	.thumb_func
 UiText_RenderWideStringAtOffsetFar:
-	overlay_veneer 0x08017aa5
-	overlay_veneer 0x0801cf45
+	overlay_veneer UiText_RenderWideStringAtOffset
+	overlay_veneer GraphicsPalette_SelectionNoOp
 	.global Func_08015268
 	.thumb_func
 Func_08015268:
-	overlay_veneer 0x0801eded
+	overlay_veneer UiWindow_FillFromScene
 	.global RenderOutput_RedrawSavedRectFar
 	.thumb_func
 RenderOutput_RedrawSavedRectFar:
 	.global UiWindow_Commit
 	.thumb_func
 UiWindow_Commit:
-	overlay_veneer 0x08016499
+	overlay_veneer RenderOutput_RedrawSavedRect
 	.global RenderOutput_ClearListFar
 	.thumb_func
 RenderOutput_ClearListFar:
-	overlay_veneer 0x080164ad
+	overlay_veneer RenderOutput_ClearList
 	.global UiWindow_SetTilemapEntryFar
 	.thumb_func
 UiWindow_SetTilemapEntryFar:
-	overlay_veneer 0x08019001
-	overlay_veneer 0x08028f99
-	overlay_veneer 0x080291e5
+	overlay_veneer UiWindow_SetTilemapEntry
+	overlay_veneer Menu_RunSelection
+	overlay_veneer Menu_RunSelectionWithCursorObject
 	.global Func_08015298
 	.thumb_func
 Func_08015298:
 	.global Resource_LoadByModeIntoSlotFar
 	.thumb_func
 Resource_LoadByModeIntoSlotFar:
-	overlay_veneer 0x0801bcd5
-	overlay_veneer 0x0801c49d
+	overlay_veneer Resource_LoadByModeIntoSlot
+	overlay_veneer Debug_SelectAbilityPair
 	.global Func_080152a8
 	.thumb_func
 Func_080152a8:
-	overlay_veneer 0x0801e319
-	overlay_veneer 0x0801a089
+	overlay_veneer UiWindow_MarkVisibleTileAttributes
+	overlay_veneer ItemIcon_Compose
 	.global BattleLayout_HighlightPartyPanelsFar
 	.global Func_080152b8
 	.thumb_func
 BattleLayout_HighlightPartyPanelsFar:
 Func_080152b8:
-	overlay_veneer 0x0802281d
-	overlay_veneer 0x08019fcd
-	overlay_veneer 0x0801a405
+	overlay_veneer BattleLayout_HighlightPartyPanels
+	overlay_veneer UiIcon_BuildItemIconTiles
+	overlay_veneer UiIcon_BuildAbilityIconTiles
 	.global Func_080152d0
 	.thumb_func
 Func_080152d0:
 	.global UiIcon_Draw
 	.thumb_func
 UiIcon_Draw:
-	overlay_veneer 0x0801eb91
-	overlay_veneer 0x0801ec25
-	overlay_veneer 0x0801f9b5
-	overlay_veneer 0x080207c5
-	overlay_veneer 0x080208e5
-	overlay_veneer 0x0801fba9
-	overlay_veneer 0x0801fc85
-	overlay_veneer 0x0801faa9
-	overlay_veneer 0x0801fa3d
-	overlay_veneer 0x0801f77d
-	overlay_veneer 0x08020bd9
-	overlay_veneer 0x08020aed
-	overlay_veneer 0x08020b01
-	overlay_veneer 0x0801b1ed
-	overlay_veneer 0x08029555
-	overlay_veneer 0x0802977d
-	overlay_veneer 0x0801c469
+	overlay_veneer RenderOutput_CreateLoaded
+	overlay_veneer RenderOutput_CreateFromTable
+	overlay_veneer SaveState_WriteCurrentSlotPair
+	overlay_veneer Save_WriteSelectedSlot
+	overlay_veneer SaveState_LoadRecordIntoWork
+	overlay_veneer SaveState_CopySlotPair
+	overlay_veneer SaveState_DeleteSelectedSlot
+	overlay_veneer SaveState_ProcessSelectedSlot
+	overlay_veneer SaveState_WriteSlotPair
+	overlay_veneer SaveState_ScanRecordFlags
+	overlay_veneer NameEntry_EditOwnerName
+	overlay_veneer Resource_CopyFixedBlockB
+	overlay_veneer Resource_CopyFixedBlockA
+	overlay_veneer Menu_SetNodeCoordinates
+	overlay_veneer DebugMenu_BrowseIcons
+	overlay_veneer DebugMenu_BrowseEntryGlyphs
+	overlay_veneer Func_0801c468
 	.global Djinn_ShowJoinedMessageFar
 	.global Func_08015358
 	.thumb_func
 Djinn_ShowJoinedMessageFar:
 Func_08015358:
-	overlay_veneer 0x08021229
+	overlay_veneer Djinn_ShowJoinedMessage
 	.global PaletteGlow_UpdateFar
 	.thumb_func
 PaletteGlow_UpdateFar:
-	overlay_veneer 0x0801ccc1
-	overlay_veneer 0x0801d4cd
+	overlay_veneer PaletteGlow_Update
+	overlay_veneer Menu_RunWorkspaceOptions
 	.global Func_08015370
 	.thumb_func
 Func_08015370:
-	overlay_veneer 0x08029505
-	overlay_veneer 0x0801ee69
+	overlay_veneer Menu_RunWorkspaceResultLoop
+	overlay_veneer UiWindow_FillScreenBlockRect
 	.global Func_08015380
 	.thumb_func
 Func_08015380:
-	overlay_veneer 0x08028d75
+	overlay_veneer Menu_SelectEntry11To14
 	.global Menu_SelectEntry19To1cFar
 	.thumb_func
 Menu_SelectEntry19To1cFar:
-	overlay_veneer 0x08028db5
+	overlay_veneer Menu_SelectEntry19To1c
 	.global Inventory_RequestMode
 	.thumb_func
 Inventory_RequestMode:
 	.global Menu_RunConfirmSelectionFar
 	.thumb_func
 Menu_RunConfirmSelectionFar:
-	overlay_veneer 0x08028df5
-	overlay_veneer 0x08028ea9
-	overlay_veneer 0x0802106d
-	overlay_veneer 0x0801a32d
+	overlay_veneer Menu_RunConfirmSelection
+	overlay_veneer Menu_SelectEntry20To21
+	overlay_veneer PartyTalkMenu_Choose
+	overlay_veneer RenderResource_LoadTableEntry
 	.global Menu_RunConfirmSelectionAtFar
 	.global Func_080153b0
 	.thumb_func
 Menu_RunConfirmSelectionAtFar:
 Func_080153b0:
-	overlay_veneer 0x08028e55
+	overlay_veneer Menu_RunConfirmSelectionAt
 	.global Func_080153b8
 	.thumb_func
 Func_080153b8:
-	overlay_veneer 0x080209b1
-	overlay_veneer 0x08018791
+	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlot
+	overlay_veneer UiText_MeasureResourceEntries
 	.global UiWindow_SetPaletteBitRectFar
 	.thumb_func
 UiWindow_SetPaletteBitRectFar:
-	overlay_veneer 0x08022769
+	overlay_veneer Ui_SetRectHighlight
 	.global Func_080153d0
 	.thumb_func
 Func_080153d0:
-	overlay_veneer 0x0801a3d1
+	overlay_veneer Ability_LoadGlyph
 	.global Func_080153d8
 	.thumb_func
 Func_080153d8:
-	overlay_veneer 0x08021a19
+	overlay_veneer Graphics_ExpandVramTilesByColorTable
 	.global Func_080153e0
 	.thumb_func
 Func_080153e0:
-	overlay_veneer 0x0801e3c9
-	overlay_veneer 0x0802899d
+	overlay_veneer UiWork_SetAltFlagAndClearTable
+	overlay_veneer Menu_AnimateSelectionToEntry
 	.global Func_080153f0
 	.thumb_func
 Func_080153f0:
-	overlay_veneer 0x08021bc9
-	overlay_veneer 0x080175c1
-	overlay_veneer 0x0801f731
+	overlay_veneer Ui_GetTableWordZero
+	overlay_veneer UiText_OpenEntryMessage
+	overlay_veneer SaveState_CountRecordsExcludingFlagged
 	.global UiWindow_DrawFrameFar
 	.global Func_08015408
 	.thumb_func
 UiWindow_DrawFrameFar:
 Func_08015408:
-	overlay_veneer 0x080170f9
+	overlay_veneer UiWindow_DrawFrame
 	.global UiWindow_EraseBorderRectFar
 	.thumb_func
 UiWindow_EraseBorderRectFar:
-	overlay_veneer 0x08016179
+	overlay_veneer UiWindow_EraseBorderRect
 	.global Link_DrawShiftedTilePairFar
 	.thumb_func
 Link_DrawShiftedTilePairFar:
-	overlay_veneer 0x080219c9
+	overlay_veneer Link_DrawShiftedTilePair
 	.global Party_ShowJoinedMessageFar
 	.thumb_func
 Party_ShowJoinedMessageFar:
-	overlay_veneer 0x08021391
+	overlay_veneer Party_ShowJoinedMessage
 	.global Party_ShowPairJoinedMessageFar
 	.thumb_func
 Party_ShowPairJoinedMessageFar:
-	overlay_veneer 0x08021489
+	overlay_veneer Party_ShowPairJoinedMessage

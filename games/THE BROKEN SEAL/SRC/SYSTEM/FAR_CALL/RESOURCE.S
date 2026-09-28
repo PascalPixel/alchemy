@@ -11,4 +11,4 @@
 	.thumb_func
 Resource_GetMetadataRecordFar:
 Func_08185000:
-	overlay_veneer 0x08185009
+	overlay_veneer Resource_GetMetadataRecord

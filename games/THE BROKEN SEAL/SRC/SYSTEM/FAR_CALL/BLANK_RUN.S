@@ -9,4 +9,4 @@
 	.global Func_080f4000
 	.thumb_func
 Func_080f4000:
-	overlay_veneer 0x080f4009
+	overlay_veneer Runtime_BlankDisplayAndRun

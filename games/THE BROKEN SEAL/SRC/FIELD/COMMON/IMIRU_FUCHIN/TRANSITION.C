@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 gKeysHeld[];
 
 enum {
     /* Message 0x182 + 230. */
@@ -1586,7 +1587,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     }
     o->unk5A = t;
     z = 1;
-    d = Data_0200a424[(*(u32 *)0x03001ae8 >> 4) & 0xF];
+    d = Data_0200a424[(*(u32 *)gKeysHeld >> 4) & 0xF];
     z = -z;
     if (d == z) {
         Object_SetAnimation(o, 9);

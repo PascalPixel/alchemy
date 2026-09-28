@@ -98,7 +98,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
     } else {
         Makyuri_ClearPalette();
     }
-    *(s32 *)(*(s32 *)0x03001ebc + 0x1c0) = 0x204;
+    *(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x204;
     switch (Data_02000240_t.halves[225][0]) {
     case 1:
         if (Engine_GameFlagIsSet(0x872) == 0) {
@@ -200,7 +200,7 @@ s32 MakyuriIriguchi_ApplyEntryState(void)
         Engine_EventBegin();
         Engine_MapRedraw();
         Engine_TaskWait(1);
-        *(s32 *)(*(s32 *)0x03001ebc + 0x1c0) = 0x100;
+        *(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x100;
         Engine_EventOpenScreen();
         Engine_EventWaitForScreen();
         Engine_EventWait(120);

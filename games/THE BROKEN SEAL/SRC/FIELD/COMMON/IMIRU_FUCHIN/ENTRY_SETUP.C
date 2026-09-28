@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void ImiruFuchin_ApplyRoomLayout();
 s32 Engine_GameFlagIsSet();
@@ -96,7 +97,7 @@ void ImiruFuchin_ApplyEntrySetup(void)
                     Call6(Engine_MapCopyCellsTo, 30, 57, 19, 57, 1, 1);
                     Call6(Engine_MapCopyCellsTo, 30, 8, 12, 8, 8, 7);
                 } else {
-                    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x100;
+                    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x100;
                     Call2(Engine_ColorBufferApplySource, 0x203108, 1);
                     Call2(Engine_ColorBufferApplyTarget, 0x203108, 1);
                     Engine_ColorBufferInterpolate(1);

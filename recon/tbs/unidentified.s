@@ -108,6 +108,8 @@ Func_0801c468:
 	.section .unidentified.080209cc,"a"
 	.incbin "baserom.gba", 0x000209cc, 0x00000004
 	.section .unidentified.08029910,"a"
+	.global WorkspaceOptions_SliderTiles
+WorkspaceOptions_SliderTiles:
 	.incbin "baserom.gba", 0x00029910, 0x00000100
 	.global RomBytes_08029a10
 RomBytes_08029a10:
@@ -228,7 +230,10 @@ Menu_SaveSlotActionByPosition:
 	.incbin "baserom.gba", 0x0003740f, 0x00000019
 	.global Menu_ColonString
 Menu_ColonString:
-	.incbin "baserom.gba", 0x00037428, 0x0003c42c
+	.incbin "baserom.gba", 0x00037428, 0x0003c3ea
+	.global WorkspaceOptions_SliderPalette
+WorkspaceOptions_SliderPalette:
+	.incbin "baserom.gba", 0x00073812, 0x00000042
 	.global Menu_PartySpriteResourceIds
 Menu_PartySpriteResourceIds:
 	.incbin "baserom.gba", 0x00073854, 0x00000114

@@ -3,6 +3,7 @@
  * draft; exact 1060-byte extent, including literal pools (2026-09-26). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 gOptionMirror[];
 s32 Main_0808a070(s32, s32);
 
 void Main_08000378(s32 value);
@@ -238,7 +239,7 @@ s32 LinkLobby_RunRoundResult(void)
             Engine_EventEnd();
         }
         *(u8 *)Data_02000240_t[277] = 0;
-        *(u8 *)0x03001d08 = 0;
+        *(u8 *)gOptionMirror = 0;
         Local_02000128(0);
         Local_02000128(4);
     }

@@ -71,7 +71,7 @@ void MakyuriHeya_RunColumnProbeScene(void)
                 Event_Wait(40);
                 GameFlag_Set(0x877);
                 ColorBuffer_ApplySource(0x10000, 0);
-                *(s32 *)&(*(struct GameState **)0x03001ebc)->scene = 0x100;
+                *(s32 *)&(*(struct GameState **)&gEventWork)->scene = 0x100;
                 Event_CloseScreen();
                 Event_WaitForScreen();
                 Event_RequestExit(15);

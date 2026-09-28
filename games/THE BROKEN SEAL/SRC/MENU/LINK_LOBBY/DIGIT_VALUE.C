@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+extern struct EventWork *gEventWork;
 
 extern s16 gCell[];
 extern u8 gOv[];
@@ -60,7 +61,7 @@ s32 SceneData_SelectTable9c04ByState(void)
  */
 s32 Scene_ClearFlagsAndPlayCue2927(void)
 {
-    u16 *work = *(u16 **)0x03001ebc;
+    u16 *work = *(u16 **)&gEventWork;
 
     Talk_unk3_4(4);
     Talk_unk4_4(512);

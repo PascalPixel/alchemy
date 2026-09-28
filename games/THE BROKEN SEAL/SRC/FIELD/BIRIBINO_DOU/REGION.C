@@ -10,6 +10,7 @@ extern u8 Data_020089ec[];
 extern u8 Data_02008a64[];
 extern u8 Data_02008b24[];
 extern u8 Data_020089bc[];
+extern struct MapRenderWork *gMapWork;
 
 extern s16 Data_02000240[];
 extern unsigned char Value_00000031;
@@ -347,13 +348,13 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
 void SceneState_SetGlobalByte17(void)
 {
 
-    FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 1;
+    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 1;
 }
 
 void SceneState_ClearRuntimeByte17(void)
 {
 
-    FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 0;
+    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 0;
 }
 
 /*

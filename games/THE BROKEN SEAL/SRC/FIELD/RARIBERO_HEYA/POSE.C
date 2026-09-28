@@ -349,7 +349,7 @@ void FieldScene_RunPrimaryScript(void)
     Value2(Engine_ActorSetAnimationAndWait, 11, 3);
     Value1(Engine_EventWait, 30);
     Value2(Engine_EventShowMessage, 11, 0);
-    (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
+    (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))++;
     } else {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
@@ -359,7 +359,7 @@ void FieldScene_RunPrimaryScript(void)
     Value1(Engine_EventWait, 10);
     Value2(Engine_ActorSetAnimationAndWait, 11, 4);
     Value1(Engine_EventWait, 20);
-    (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
+    (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))++;
     Event_ShowMessage(11, 0);
     }
     Value1(Engine_EventWait, 10);

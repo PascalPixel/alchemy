@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct MapRenderWork *gMapWork;
 extern u8 ArutinYama_ActorScript[];
 
 s32 Engine_GameFlagIsSet();
@@ -109,7 +110,7 @@ void ArutinYama_ApplyEntryState(void)
             Value3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)script);
         }
     } else {
-        p5 = *(s32 *)0x03001e70;
+        p5 = *(s32 *)&gMapWork;
         Call3((void (*)())Engine_ActorSetPosition, 10, 0, 0);
         Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 2, 3, 14);
         *(u16 *)((s32)p5 + 20) &= 0xfdff;

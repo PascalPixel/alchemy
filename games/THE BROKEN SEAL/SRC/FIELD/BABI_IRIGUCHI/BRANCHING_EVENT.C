@@ -10,6 +10,7 @@
 #include "SPAWN_CONFIGURED_EFFECT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 extern u8 Value_000000af;
+extern u8 gEffectWork[];
 
 enum BranchingEventMessage {
     MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
@@ -1177,7 +1178,7 @@ void FieldScene_RunFlag985DialogueBranch(void)
 
 void SceneState_SetRuntimeByte34(void)
 {
-    FIELD_AT_OFFSET(*(void **)0x03001F30, s8 *, 0x34) = 1;
+    FIELD_AT_OFFSET(*(void **)gEffectWork, s8 *, 0x34) = 1;
 }
 
 void ActorPresentation_PlaceActorTwelveAtTile20And12(void)

@@ -2,6 +2,7 @@
 #define ALCHEMY_RESOURCE_37C_RUNTIME_H
 
 #include "LAYOUT_GUARD.H"
+extern struct EventWork *gEventWork;
 
 /* resource_37c observes only this setup-request word of the shared runtime. */
 struct Resource37cRuntime {
@@ -17,7 +18,7 @@ LAYOUT_OFFSET_GUARD(
 
 /* Keep the existing pointer-load form while exposing the observed field. */
 #define RESOURCE37C_RUNTIME \
-    ((struct Resource37cRuntime *)*(void **)0x03001EBC)
+    ((struct Resource37cRuntime *)*(void **)&gEventWork)
 
 /* Address-stable overlay ABI declarations. */
 

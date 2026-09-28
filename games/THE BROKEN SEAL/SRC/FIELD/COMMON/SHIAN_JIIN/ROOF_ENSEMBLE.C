@@ -522,11 +522,11 @@ void FieldScene_RunRoofEnsembleSequence(void)
         Event_Wait(20);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
         /* Same step counter as bump_step(), incremented inline here. */
-        *(u16 *)((*(u8 **)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
     } else {
         Event_Wait(20);
         /* Same step counter as bump_step(), incremented inline here. */
-        *(u16 *)((*(u8 **)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(u8 **)&gEventWork + 0x1d8)) += 1;
         Actor_SetAnimationAndWait(ACTOR_MIA, 3);
         Event_Wait(20);
         Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);

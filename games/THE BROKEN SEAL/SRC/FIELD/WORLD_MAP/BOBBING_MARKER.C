@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
-#define FrameCounter (*(u32 *)0x03001e40)
+#define FrameCounter (*(u32 *)&gFrameCount)
 
 void Main_08000128(s32 radius, s32 angle, union FieldCoordinate *pos);
 

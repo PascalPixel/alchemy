@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 /* Audited 49-call script for the complete 0x02001db0 owner.
  * Recovered from the bounded canonical owner.
@@ -79,7 +80,7 @@ void FieldScene_RunShipDeckEventScript(void)
     ObjectGroup_ConfigureChildValue(0, 15);
     p8 = Engine_ActorGet(0);
     ObjectDispatch_SetSingleChildField26(p8, 0);
-    *(s32 *)(*(u8 **)0x03001ebc + 448) = 514;
+    *(s32 *)(*(u8 **)&gEventWork + 448) = 514;
     Event_SetStatus1c6();
     Call3(ObjectMotion_SetSpeedParameters, 21, 104857, 52428);
     Call3(ObjectMotion_SetPositionAndReset, 21, 242, 692);

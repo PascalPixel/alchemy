@@ -1,3 +1,11 @@
+/* NONMATCHING: resource_39a at 0x020097e4 (356 bytes with its pool),
+ * ImiruFuchin_ApplyEntrySetup, between FIELD/COMMON/IMIRU_FUCHIN/ARRIVAL.C and
+ * the room layout, stays listing. It was FIELD/COMMON/IMIRU_FUCHIN/ENTRY_SETUP.C.
+ *
+ * Remaining differences: it compares the scene with 0x40 and 0x43 loaded from
+ * its pool, as link-time scene symbols do, and writes the flag word just past
+ * the overlay's image through a literal address.
+ */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 

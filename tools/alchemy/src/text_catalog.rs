@@ -1,14 +1,13 @@
 //! The twelve shipped message archives as ordinary GNU gettext PO catalogs.
 
 use encoding_rs::WINDOWS_1252;
-use psynergy::assets::huffman_archive::{encode_huffman_archive, HuffmanArchive, MessageReader};
-use psynergy::assets::po::{self, Catalog, Entry};
+use psynergy::assets::huffman_archive::{encode_huffman_archive, HuffmanArchive};
+use psynergy::assets::po::{self, Catalog};
 use std::collections::BTreeMap;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use unicode_normalization::UnicodeNormalization;
 
-const ROM_BASE: u32 = 0x0800_0000;
 const BANK_SIZE: usize = 256;
 
 #[derive(Clone, Debug)]
@@ -138,72 +137,6 @@ pub(crate) fn verify_reference(root: &Path, target: &str, rom: &[u8]) -> Result<
         ));
     }
     Ok(())
-}
-
-fn alphabet(rom: &[u8], contexts: u32) -> Result<usize, String> {
-    let offset = contexts
-        .checked_sub(ROM_BASE)
-        .ok_or("message contexts precede ROM")? as usize;
-    let pointer = u32::from_le_bytes(
-        rom.get(offset + 4..offset + 8)
-            .ok_or("message context directory is outside ROM")?
-            .try_into()
-            .unwrap(),
-    );
-    let table_start = pointer
-        .checked_sub(ROM_BASE)
-        .ok_or("context table precedes ROM")? as usize;
-    let table = rom
-        .get(table_start..offset)
-        .ok_or("context table is outside ROM")?;
-    // Tree offsets cannot be zero: every tree follows at least one packed leaf.
-    // The offset table ends with up to three alignment bytes, not extra symbols.
-    let mut count = table.len() / 2;
-    while count > 0 && table[(count - 1) * 2..count * 2] == [0, 0] {
-        count -= 1;
-    }
-    if count == 0 || count > 0x1000 || table[count * 2..].iter().any(|byte| *byte != 0) {
-        return Err("message alphabet cannot be derived".into());
-    }
-    Ok(count)
-}
-
-fn archive_shape(rom: &[u8], directory: u32) -> Result<(usize, usize), String> {
-    let directory_offset = directory
-        .checked_sub(ROM_BASE)
-        .ok_or("message directory precedes ROM")? as usize;
-    let word = |offset: usize| -> Option<u32> {
-        Some(u32::from_le_bytes(
-            rom.get(offset..offset + 4)?.try_into().ok()?,
-        ))
-    };
-    let mut banks = Vec::new();
-    for index in 0..256usize {
-        let at = directory_offset + index * 8;
-        let (Some(payload), Some(lengths)) = (word(at), word(at + 4)) else {
-            break;
-        };
-        if payload < ROM_BASE
-            || payload >= lengths
-            || lengths >= directory
-            || banks
-                .last()
-                .is_some_and(|(_, previous)| payload < *previous)
-        {
-            break;
-        }
-        banks.push((payload, lengths));
-    }
-    let (_, last_lengths) = banks.last().ok_or("message directory has no banks")?;
-    let start = last_lengths.checked_sub(ROM_BASE).unwrap() as usize;
-    let lengths = rom
-        .get(start..directory_offset)
-        .ok_or("last message length table is outside ROM")?;
-    let last = lengths.iter().filter(|length| **length != 0xff).count();
-    if last == 0 || last > BANK_SIZE {
-        return Err("last message bank has an invalid message count".into());
-    }
-    Ok(((banks.len() - 1) * BANK_SIZE + last, banks.len()))
 }
 
 fn command(symbol: u16) -> (&'static str, bool) {
@@ -521,257 +454,13 @@ pub(crate) fn encode(source: &SourceCatalog, base: u32) -> Result<HuffmanArchive
         .map_err(|error| error.to_string())
 }
 
-fn compare(source: &SourceCatalog, bytes: &[u8], base: u32, rom: &[u8]) -> Result<(), String> {
-    let start = base
-        .checked_sub(ROM_BASE)
-        .ok_or("message archive precedes ROM")? as usize;
-    let end = start
-        .checked_add(bytes.len())
-        .ok_or("message archive extent overflow")?;
-    if rom.get(start..end) != Some(bytes) {
-        return Err(format!(
-            "{} text build differs from approved ROM",
-            source.target
-        ));
-    }
-    Ok(())
-}
-
-/// Where `source`'s archive lies in a reference `rom`: the one address at
-/// which it encodes to the ROM's own bytes. The context models open the
-/// archive and do not depend on its placement, so they find the candidates;
-/// the complete encoding, pointers included, decides.
-pub(crate) fn locate(source: &SourceCatalog, rom: &[u8]) -> Result<u32, String> {
-    // The models end where the offset table's alignment starts; placing the
-    // archive at an even and an odd address pads exactly one of them.
-    let even = encode(source, ROM_BASE)?;
-    let odd = encode(source, ROM_BASE + 1)?;
-    let models = (even.offset_table - ROM_BASE).min(odd.offset_table - ROM_BASE - 1) as usize;
-    let probe = &even.bytes[..models];
-    let first = *probe
-        .first()
-        .ok_or("message archive has no context models")?;
-    let mut found = None;
-    for start in (0..(rom.len() + 1).saturating_sub(models)).filter(|start| rom[*start] == first) {
-        if &rom[start..start + models] != probe {
-            continue;
-        }
-        let base = ROM_BASE + start as u32;
-        if compare(source, &encode(source, base)?.bytes, base, rom).is_ok()
-            && found.replace(base).is_some()
-        {
-            return Err(format!("{} text archive is not unique", source.target));
-        }
-    }
-    found.ok_or_else(|| format!("{} text build differs from approved ROM", source.target))
-}
-
-fn write_archive(root: &Path, spec: &ArchiveSpec, bytes: &[u8]) -> Result<PathBuf, String> {
-    let directory = crate::compiler::build_io::generated_directory(
-        root,
-        &root.join(format!("out/{}/text", spec.target)),
-    )?;
-    let output = directory.join("archive.bin");
-    psynergy::cache::write_cache_entry_atomically(&output, bytes)
-        .map_err(|error| error.to_string())?;
-    Ok(output)
-}
-
-pub(crate) fn build_source(
-    root: &Path,
-    path: &Path,
-    source_only: bool,
-) -> Result<serde_json::Value, String> {
-    let spec = ARCHIVES
-        .iter()
-        .find(|spec| root.join(spec.output) == path)
-        .ok_or("text catalog is not registered")?;
-    let source = read_source(path)?;
-    if source.target != spec.target {
-        return Err("message catalog target differs from its edition".into());
-    }
-    // The catalog records no placement; the edition's reference ROM holds it.
-    if source_only {
-        return Err(format!(
-            "{} text archive is placed where its reference ROM holds it; a source-only build cannot place it",
-            spec.target
-        ));
-    }
-    let rom = fs::read(root.join(spec.rom)).map_err(|error| error.to_string())?;
-    verify_reference(root, spec.target, &rom)?;
-    let base = locate(&source, &rom)?;
-    let archive = encode(&source, base)?;
-    let bytes = &archive.bytes;
-    let output = write_archive(root, spec, bytes)?;
-    let report = serde_json::json!({"target":spec.target,"source":spec.output,"address":base,"size":bytes.len(),"output_size":bytes.len(),"contexts_address":archive.context_directory,"directory_address":archive.directory,"output":output,"output_sha256":crate::compiler::sha256::hex(bytes),"verification":"rom"});
-    psynergy::cache::write_cache_entry_atomically(
-        &output.with_extension("json"),
-        serde_json::to_string_pretty(&report).unwrap().as_bytes(),
-    )
-    .map_err(|error| error.to_string())?;
-    Ok(report)
-}
-
-pub(crate) fn verify(root: &Path, selected: Option<&str>) -> Result<String, String> {
-    if selected.is_some_and(|target| !ARCHIVES.iter().any(|spec| spec.target == target)) {
-        return Err("unknown text target".into());
-    }
-    let mut count = 0;
-    let mut bytes = 0;
-    for spec in ARCHIVES
-        .iter()
-        .filter(|spec| selected.is_none_or(|target| target == spec.target))
-    {
-        let result = build_source(root, &path(root, spec), false)?;
-        println!("{} text byte-exact: {} bytes", spec.target, result["size"]);
-        count += 1;
-        bytes += result["size"].as_u64().unwrap();
-    }
-    Ok(format!("byte-exact text archives={count} bytes={bytes}"))
-}
-
-/// The edition's messages read back from its reference ROM, with the address
-/// the current catalog's archive lies at and its size.
-fn decode(root: &Path, spec: &ArchiveSpec, rom: &[u8]) -> Result<(Catalog, u32, usize), String> {
-    verify_reference(root, spec.target, rom)?;
-    let source = read_source(&root.join(spec.output))?;
-    if source.target != spec.target {
-        return Err("message catalog target differs from its edition".into());
-    }
-    let address = locate(&source, rom)?;
-    let layout = encode(&source, address)?;
-    let symbol_count = alphabet(rom, layout.context_directory)?;
-    let (message_count, _) = archive_shape(rom, layout.directory)?;
-    if symbol_count != source.symbol_count
-        || message_count != source.banks.iter().map(Vec::len).sum::<usize>()
-    {
-        return Err("message reader layout differs from the current encoded source".into());
-    }
-    let mut reader = MessageReader::new(
-        rom,
-        ROM_BASE,
-        layout.context_directory,
-        layout.directory,
-        symbol_count,
-    )
-    .map_err(|error| error.to_string())?;
-    let mut messages = Vec::with_capacity(message_count);
-    for key in 0..message_count {
-        messages.push(
-            reader
-                .message(key)
-                .map_err(|error| format!("{} message {key}: {error}", spec.target))?
-                .symbols,
-        );
-    }
-    let banks = messages
-        .chunks(BANK_SIZE)
-        .map(|bank| bank.to_vec())
-        .collect::<Vec<_>>();
-    let exact =
-        encode_huffman_archive(address, symbol_count, &banks).map_err(|error| error.to_string())?;
-    let start = address.checked_sub(ROM_BASE).unwrap() as usize;
-    let original_size = layout.bytes.len();
-    if exact.bytes != layout.bytes
-        || rom.get(start..start + original_size) != Some(exact.bytes.as_slice())
-    {
-        return Err(format!(
-            "{} inverse message encoding differs from source",
-            spec.target
-        ));
-    }
-    let mut catalog = Catalog::default();
-    for (name, value) in [
-        (
-            "Project-Id-Version",
-            format!("Alchemy {} text", spec.target),
-        ),
-        ("Language", spec.language.into()),
-        ("Content-Type", "text/plain; charset=UTF-8".into()),
-        ("X-Alchemy-Format", "1".into()),
-        ("X-Alchemy-Target", spec.target.into()),
-        ("X-Alchemy-Symbol-Count", symbol_count.to_string()),
-    ] {
-        catalog.headers.insert(name.into(), value);
-    }
-    catalog.entries = messages
-        .into_iter()
-        .enumerate()
-        .map(|(key, symbols)| Entry {
-            comments: Vec::new(),
-            flags: symbols
-                .is_none()
-                .then(|| "alchemy-null".into())
-                .into_iter()
-                .collect(),
-            context: Some("message".into()),
-            id: format!("{key:05}"),
-            value: symbols
-                .as_deref()
-                .map(|symbols| symbols_text(symbols, spec.characters.as_deref()))
-                .unwrap_or_default(),
-        })
-        .collect();
-    Ok((catalog, address, original_size))
-}
-
-pub(crate) fn extract(root: &Path, selected: Option<&str>) -> Result<String, String> {
-    let selected = selected
-        .map(|target| {
-            ARCHIVES
-                .iter()
-                .find(|spec| spec.target == target)
-                .ok_or_else(|| format!("unknown text target {target}"))
-        })
-        .transpose()?;
-    let list: Vec<&ArchiveSpec> =
-        selected.map_or_else(|| ARCHIVES.iter().collect(), |spec| vec![spec]);
-    let mut total_messages = 0;
-    let mut total_bytes = 0;
-    for spec in list {
-        let rom =
-            fs::read(root.join(spec.rom)).map_err(|error| format!("{}: {error}", spec.rom))?;
-        let (catalog, address, bytes) = decode(root, spec, &rom)?;
-        println!(
-            "{} messages={} bytes={bytes}",
-            spec.target,
-            catalog.entries.len(),
-        );
-        let text = po::write(&catalog);
-        let parsed = po::read(&text).map_err(|error| error.to_string())?;
-        let source = source_catalog(&parsed)?;
-        if compare(&source, &encode(&source, address)?.bytes, address, &rom).is_err() {
-            return Err(format!("{} PO text round trip differs", spec.target));
-        }
-        let output = root.join(spec.output);
-        fs::create_dir_all(output.parent().unwrap()).map_err(|error| error.to_string())?;
-        if output.exists() {
-            if fs::read_to_string(&output).map_err(|error| error.to_string())? != text {
-                return Err(format!(
-                    "{} already exists with different text; refusing to overwrite editable source",
-                    output.display()
-                ));
-            }
-        } else {
-            psynergy::cache::write_cache_entry_atomically(&output, text.as_bytes())
-                .map_err(|error| format!("{}: {error}", output.display()))?;
-        }
-        total_messages += catalog.entries.len();
-        total_bytes += bytes;
-    }
-    Ok(format!(
-        "catalogs={} messages={total_messages} archive_bytes={total_bytes}",
-        selected.map_or(12, |_| 1)
-    ))
-}
-
-pub(crate) fn path(root: &Path, spec: &ArchiveSpec) -> PathBuf {
-    root.join(spec.output)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use psynergy::assets::huffman_archive::MessageReader;
+    use psynergy::assets::po::Entry;
+
+    const ROM_BASE: u32 = 0x0800_0000;
 
     fn small_catalog() -> Catalog {
         let mut catalog = Catalog::default();
@@ -810,19 +499,9 @@ mod tests {
             source.banks.iter().map(Vec::len).sum::<usize>(),
             catalog.entries.len()
         );
+        // The archive placed at `base` in an image reads back every message.
         let mut rom = vec![0; (base - ROM_BASE) as usize];
         rom.extend_from_slice(&archive.bytes);
-        compare(&source, &archive.bytes, base, &rom).unwrap();
-        assert_eq!(locate(&source, &rom).unwrap(), base);
-        // The same models under other pointers are not the archive.
-        let mut elsewhere = vec![0; 0x100];
-        elsewhere.extend_from_slice(&archive.bytes);
-        assert!(locate(&source, &elsewhere).is_err());
-        let mut twice = rom.clone();
-        twice.resize(twice.len() + 0x40, 0);
-        let again = ROM_BASE + twice.len() as u32;
-        twice.extend_from_slice(&encode(&source, again).unwrap().bytes);
-        assert!(locate(&source, &twice).unwrap_err().contains("not unique"));
         let mut reader = MessageReader::new(
             &rom,
             ROM_BASE,
@@ -834,10 +513,6 @@ mod tests {
         assert_eq!(reader.message(0).unwrap().symbols, source.banks[0][0]);
         assert_eq!(reader.message(1).unwrap().symbols, source.banks[0][1]);
         assert_eq!(reader.message(2).unwrap().symbols, None);
-        assert!(compare(&source, &archive.bytes, base, &rom[..rom.len() - 1]).is_err());
-        rom[(base - ROM_BASE) as usize] ^= 1;
-        assert!(compare(&source, &archive.bytes, base, &rom).is_err());
-        assert!(locate(&source, &rom).is_err());
     }
 
     #[test]
@@ -859,33 +534,6 @@ mod tests {
         catalog.entries[2].id = "2".into();
         catalog.entries[2].value = "not null".into();
         assert!(source_catalog(&catalog).is_err());
-    }
-
-    #[test]
-    #[ignore = "rebuilds all twelve current PO inputs against the approved local ROMs"]
-    fn approved_rom_catalogs_rebuild_without_saved_layout_results() {
-        let root = crate::compiler::routing::root();
-        for spec in &ARCHIVES {
-            let rom = fs::read(root.join(spec.rom)).unwrap();
-            verify_reference(root, spec.target, &rom).unwrap();
-            let source = read_source(&root.join(spec.output)).unwrap();
-            let base = locate(&source, &rom).unwrap();
-            let archive = encode(&source, base).unwrap();
-            let (decoded, address, size) = decode(root, spec, &rom).unwrap();
-            assert_eq!(address, base);
-            assert_eq!(
-                encode(&source_catalog(&decoded).unwrap(), base)
-                    .unwrap()
-                    .bytes,
-                archive.bytes
-            );
-            assert_eq!(size, archive.bytes.len());
-            println!(
-                "target={} messages={} bytes={size}",
-                spec.target,
-                decoded.entries.len()
-            );
-        }
     }
 
     #[test]
@@ -964,16 +612,6 @@ mod tests {
         for spec in ARCHIVES.iter() {
             assert_eq!(spec.characters.is_some(), spec.language == "ja");
         }
-    }
-
-    #[test]
-    fn offset_table_alignment_is_not_an_extra_character() {
-        let banks = vec![vec![Some(vec![1, 2, 1])]];
-        let archive = encode_huffman_archive(ROM_BASE, 3, &banks).unwrap();
-        assert_eq!(
-            alphabet(&archive.bytes, archive.context_directory).unwrap(),
-            3
-        );
     }
 
     #[test]

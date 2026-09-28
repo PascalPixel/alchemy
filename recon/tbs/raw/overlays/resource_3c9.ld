@@ -1,11 +1,35 @@
-/* resource_3c9: its listing with the compiler library linked in place from
-   the licensed container, as pret links libgcc members. */
+/* resource_3c9: its listing with maintained code and the compiler library
+   linked in place, as pret links objects and libgcc members in ROM order. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
         "*/resource_3c9_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/OBJECTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x0200813a)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SETUP.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x020088b4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SCENE_A.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x020092c8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/EFFECTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/PAIR_EFFECT.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/STEPS.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x0200a360)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ORBIT.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x0200b6d0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/BEAM_ACTORS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ACTOR_TRANSITION.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/RESTAGE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/EXTENDED_ACTOR_TRANSITION.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/PARK.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x0200d6a0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/RISE.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x0200da26)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/FINALE.o"(.text)
+        "*/resource_3c9_overlay.o"(.text.x0200dbec)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c9_overlay.o"(.rodata.part1)
     }

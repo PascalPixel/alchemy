@@ -381,15 +381,6 @@ fn upstream_documents(root: &Path, path: &Path) -> bool {
                 && path.join("bfd").is_dir()
         })
 }
-/// These are raw .text section bytes produced by score/allocator.rs, not notes.
-fn allocator_section(path: &Path) -> bool {
-    path.parent()
-        .and_then(Path::file_name)
-        .is_some_and(|name| name == "allocator-order")
-        && path
-            .file_name()
-            .is_some_and(|name| name == "normal.text" || name == "diagnostic.text")
-}
 fn check_documents(root: &Path) -> Result<(), String> {
     let mut pending = vec![root.to_path_buf()];
     let mut rejected = Vec::new();
@@ -410,7 +401,6 @@ fn check_documents(root: &Path) -> Result<(), String> {
                 .to_string_lossy();
             if !listed(extension(&relative), DOCUMENT_EXTENSIONS)
                 || (matches!(relative.as_ref(), "README.md" | "AGENTS.md") && kind.is_file())
-                || (relative.starts_with("out/") && allocator_section(&path))
             {
                 continue;
             }
@@ -3764,7 +3754,6 @@ mod tests {
             "upstream",
         )
         .unwrap();
-        std::fs::write(root.join("out/allocator-order/normal.text"), [0u8, 1]).unwrap();
         std::fs::write(root.join("worktrees/scene/.git"), "gitdir: ../../.git\n").unwrap();
         assert!(check_documents(root).is_ok());
         for name in [
@@ -3775,6 +3764,7 @@ mod tests {
             "out/notes.mdown",
             "out/notes.rest",
             "out/notes.adoc",
+            "out/allocator-order/normal.text",
             "tools/out/compiler-build/notes.md",
             "TODO.md",
             "CONTRIBUTING.md",

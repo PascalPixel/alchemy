@@ -10,12 +10,12 @@ extern u8 *Data_03001ebc;
 #define SCENE_SETUP_WORD (*(u32 *)(Data_03001ebc + 0x1c8))
 #define SKIP_BEATS (*(u16 *)(Data_03001ebc + 0x1d8))
 
-void Func_020025c4();
+void ShindenHeya_CopyActorPose();
 void ShindenHeya_SpawnOwnerEffect();
-void Func_0200290c();
-u8 *Func_0808a080();
-void Func_0808a118();
-void Func_080f9078();
+void FieldScene_RunPairedActorChoreography();
+u8 *Object_GetById();
+void ObjectMotion_WaitForAnimationChange();
+void AudioCommand_WaitForCompletion();
 
 /* The sibling actor-update script passes repeated large constants through
  * these inline call forms, keeping each call's argument evaluation local. */
@@ -58,14 +58,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 #include "TYPES.H"
 
-#define NULL ((void *)0)
-#define CalculateFacingAngle Func_02003588
-#define ResolveFacingObject Func_0200364e
-
 #include "FACING_OBJECT.H"
 
-s16 Func_02003588(s32, s32);
-struct FacingObject *Func_0200364e(s16);
+s16 CalculateFacingAngle(s32, s32);
+struct FacingObject *ResolveFacingObject(s16);
 
 #include "TYPES.H"
 
@@ -79,7 +75,6 @@ struct FacingObject *Func_0200364e(s16);
 #include "TYPES.H"
 
 /* Resource 378 object reset at 0x02002660(28 bytes including alignment). */
-extern u8 *Func_02005c76();
 
 /* Publish the scene's upper prompt and lower dialogue panel. */
 
@@ -101,14 +96,12 @@ extern u8 *Func_02005c76();
 
 #include "TYPES.H"
 
-#define GetActorState Func_020068be
-
 typedef struct {
     u8 pad_to_angle[6];
     u16 angle;
 } ActorState;
 
-ActorState *Func_020068be(s32 actor_id);
+ActorState *GetActorState(s32 actor_id);
 
 #include "TYPES.H"
 
@@ -122,160 +115,7 @@ ActorState *Func_020068be(s32 actor_id);
 
 #include "TYPES.H"
 
-#define BattleRuntime_WaitIfModeZero_1(a0, a1) Call2_scene_primary_script(Engine_ActorSetAttachedEffect, a0, a1)
-#define ObjectMotion_SetSpeedParameters_1(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_2(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_3(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_4(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_5(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_6(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_7(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_1(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define ObjectMotion_ArmCallback_1(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_19(a0, a1) Call2_scene_primary_script(Engine_ColorBufferApplyTarget, a0, a1)
-#define ObjectMotion_SetSpeedLimitAndAcceleration_1(a0, a1) Call2_scene_primary_script(Engine_CameraSetSpeed, a0, a1)
-#define ObjectMotion_SetHorizontalPositionWithTerrain_1(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetPosition, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_8(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectGroup_ConfigureChildValue_1(a0, a1) Call2_scene_primary_script(Engine_ActorSetChildValue, a0, a1)
-#define Scene_GetRecord_1(args...) Func_020051f0(args)
-#define Scene_GetRecord_2(args...) Func_020051fc(args)
-#define BattleRuntime_WaitIfModeZero_30(a0, a1) Call2_scene_primary_script(Engine_ColorBufferApplyTarget, a0, a1)
-#define BattleEffect_SpawnLinkedResourceObject_2(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_3(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_4(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_5(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_6(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_7(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_8(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_9(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_10(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_11(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_12(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_13(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_14(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_15(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_16(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_17(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_18(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_19(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_20(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_21(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_22(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_23(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_24(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_25(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_26(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define Engine_ActorFaceDirection(args...) Actor_FaceDirection(args)
-#define ObjectMotion_ArmCallback_3(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_4(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_1(a0, a1, a2) Call3_scene_primary_script(Engine_ActorWalkTo, a0, a1, a2)
-#define ObjectMotion_ArmCallback_5(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_6(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_7(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_27(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_28(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_29(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_30(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_31(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_32(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_33(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define ObjectMotion_ArmCallback_8(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_34(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define ObjectMotion_ArmCallback_9(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_35(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define ObjectMotion_ArmCallback_10(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ResetAndSetPositionInMode2_2(a0, a1, a2) Call3_scene_primary_script(Engine_ActorWalkTo, a0, a1, a2)
-#define ObjectMotion_SetPositionAndReset_3(a0, a1, a2) Call3_scene_primary_script(Engine_ActorWalkToAndWait, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_36(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_37(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_38(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_39(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_40(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_41(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_42(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_43(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_1_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_2_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define Scene_GetRecord_1_0200290c(args...) Func_02005f7e(args)
-#define Scene_GetRecord_2_0200290c(args...) Func_02005f9e(args)
-#define Scene_GetRecord_3(args...) Func_02005fbc_a(args)
-#define Scene_GetRecord_4(args...) Func_02005fda(args)
-#define Scene_GetRecord_5(args...) Func_02005fe8_b(args)
-#define Engine_ActorFaceDirection(args...) Actor_FaceDirection(args)
-#define ObjectMotion_ArmCallback_2_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_3_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_4_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_5_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_6_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_7_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_8_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_9_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_10_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_11(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_12(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_13(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_1_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_2_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define Scene_GetRecord_6(args...) Func_02006284(args)
-#define Scene_GetRecord_7(args...) Func_02006290(args)
-#define Scene_GetRecord_8(args...) Func_0200629a(args)
-#define Scene_GetRecord_9(args...) Func_020062a4(args)
-#define ObjectMotion_SetPositionAndReset_1_0200290c(a0, a1, a2) Value3(Engine_ActorWalkToAndWait, a0, a1, a2)
-#define ObjectMotion_ArmCallback_14(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_15(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define Scene_GetRecord_10(args...) Func_0200632a(args)
-#define Scene_GetRecord_11(args...) Func_02006334(args)
-#define ObjectMotion_SetVariantCallback_1_0200290c(a0, a1) Value2(Engine_ActorStartRepeatedMotion, a0, a1)
-#define BattleEffect_SpawnLinkedResourceObject_3_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define BattleEffect_SpawnLinkedResourceObject_4_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorShowEmote, a0, a1, a2)
-#define ObjectMotion_ArmCallback_16(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define BattleRuntime_WaitIfModeZero_46_0200290c(args...) ((void (*)())Engine_EventWait)(args)
-#define Engine_ActorFaceDirection(args...) Actor_FaceDirection(args)
-#define Engine_ActorFaceDirection(args...) Actor_FaceDirection(args)
-#define Engine_ActorFaceDirection(args...) Actor_FaceDirection(args)
-#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
-#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Call2_scene_primary_script(Engine_ActorEnableActionCallback, a0, a1)
-#define Object_LookupAndStep_1(args...) Func_020064f4(args)
-#define Object_LookupAndStep_2(args...) Func_020064fa(args)
-#define ObjectMotion_SetSpeedParameters_3_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_SetSpeedParameters_4_0200290c(a0, a1, a2) Call3_scene_primary_script(Engine_ActorSetSpeed, a0, a1, a2)
-#define ObjectMotion_ArmCallback_20(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_21(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_22(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_23(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_24(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_25(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_26(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define ObjectMotion_ArmCallback_27(a0, a1, a2) Call3_scene_primary_script(Engine_ActorFaceDirection, a0, a1, a2)
-#define Engine_ActorFaceDirection(args...) Actor_FaceDirection(args)
-#define ObjectMotion_SetVariantCallback_5_0200290c(a0, a1) Call2_scene_primary_script((void (*)())Engine_ActorStartRepeatedMotion, a0, a1)
-#define ObjectMotion_SetPositionAndReset_10(a0, a1, a2) Call3_scene_primary_script((void (*)())Engine_ActorWalkToAndWait, a0, a1, a2)
-
-extern s16 Data_02000240[];
-
-struct FacingObject *Func_020039e2();
-struct FacingObject *Func_020039f2_b();
-struct FacingObject *Func_02003a20();
-struct FacingObject *Func_02003a40();
-void Func_02003af4();
-void Func_02003c02();
-void Func_020040c0();
-void Func_02004d8c();
-struct FacingObject *Func_02005f7e();
-u8 *Func_020051f0();
-u8 *Func_020051fc();
-s32 Func_02005bc6();
-struct FacingObject *Func_02005fbc_a();
-struct FacingObject *Func_02005fda();
-struct FacingObject *Func_02006284();
-u8 *Func_02006290();
-struct FacingObject *Func_0200629a();
-u8 *Func_020062a4();
-u8 *Func_0200632a();
-void Func_020064f4();
-void Func_020064fa();
-struct FacingObject *Func_02005fe8_b();
-u8 *Func_02006334();
+void ShindenHeya_SpawnActorSpark();
 
 /*
  * Each Func_ symbol names the pre-relocation call word the image holds, not
@@ -298,28 +138,24 @@ u8 *Func_02006334();
 
 static __inline__ void Call2_scene_primary_script(void (*f)(), s32 a0, s32 a1)
 {
-    u8 *Func_02005f9e();
 
     f(a0, a1);
 }
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    u8 *Func_02005f9e();
 
     f(a0, a1, a2, a3);
 }
 
 static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 {
-    s32 Func_02005f9e();
 
     return f(a0, a1, a2);
 }
 
 static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
-    s32 Func_02005f9e();
 
     return f(a0, a1, a2, a3);
 }
@@ -387,307 +223,6 @@ enum FacingGatedMessage {
     MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP = 0x1ceb
 };
 
-
-extern u8 Data_0200baa8;
-extern u8 Data_0200bbc8;
-extern u8 Data_0200bbf4[];   /* Empty table: place nothing. */
-extern u8 Data_0200bc0c[];
-extern u8 Data_0200bccc[];
-extern u8 Data_0200bd2c[];
-extern u8 Data_0200be04[];
-extern u8 Data_0200be34[];
-extern u8 Data_0200be70[];
-extern u8 Data_0200bec4[];
-extern u8 Data_0200bf0c[];
-extern u8 Data_0200bf78[];
-extern u8 Data_0200bfd8[];
-extern u8 Data_0200c038[];
-extern u8 Data_0200c080[];
-extern u8 Data_0200c0ec[];
-
-/* One symbol per call site, named at the site's decoded address. */
-
-/*
- * Select this scene's placement script from its stored sub-state.  The
- * 220-byte owner at 0x02000070 includes the 35-entry jump table at
- * 0x0200008c-0x02000117 and the literal pool at 0x02000130-0x0200014b.  The
- * selector is the signed halfword at offset 450 of the scene-record block, and
- * its address is built rather than folded: the `s32 off = 450;` local in its
- * own block is what forces that.  The out-of-range arm is also the arm for
- * most of the in-range entries, so it is a genuine default.
- */
-
-/*
- * In-image script tables: runs of 24-byte records terminated by 0x0000ffff, in
- * the shape {0xffff0000 | selector, count, x, 0, z, value} with coordinates in
- * 16.16 fixed point.  The layout is read off the data, so the fields at +12
- * and +20 are named by position only, and the selector's return type stays an
- * opaque pointer.  The tables live in EWRAM, which is writable and used as
- * save state, so they are deliberately not const.
- */
-
-/* Shared cross-overlay scene-record block; +450 is the scene sub-state. */
-
-/*
- * Select a table from the scene id and two flags.  The 304-byte owner at
- * 0x0200014c decomposes as dispatcher, the 41-entry jump table at
- * 0x02000168-0x0200020b, the case bodies, an alignment halfword at 0x02000246
- * and the literal pool.  Case-arm order follows the table -- entries grouped
- * by value, distinct values ascending -- so the 20/21/50 arm comes third and
- * the 29 arm after the 32 arm, not in selector order.
- */
-
-s32 UpdateFacingFromResolvedObject(struct FacingObject *object)
-{
-    struct FacingObject *target;
-
-    target = ResolveFacingObject(object->unknown_64);
-    object->facing = CalculateFacingAngle(
-        target->position_z - object->position_z,
-        target->position_x - object->position_x
-    );
-    return 0;
-}
-
-void *SceneData_GetTableBaa8(void)
-{
-    return &Data_0200baa8;
-}
-
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-void *SceneData_GetTableBbc8(void)
-{
-    return &Data_0200bbc8;
-}
-
-void *SceneData_SelectPlacementTableBySubstate(void)
-{
-
-    s16 sub;
-
-    {
-        s32 off = 450;
-
-        sub = *(s16 *)((u8 *)Data_02000240 + off);
-    }
-    switch ((s32)sub) {
-    case 1:
-    case 2:
-        return Data_0200bc0c;
-
-    case 10:
-    case 11:
-    case 12:
-    case 35:
-        return Data_0200bccc;
-
-    case 20:
-    case 21:
-        return Data_0200bd2c;
-
-    case 29:
-    case 32:
-        return Data_0200be04;
-
-    default:
-        return Data_0200bbf4;
-    }
-}
-
-u8 *SceneData_SelectTableBySceneIdAndFlags(void)
-{
-    extern s16 Data_02000240[];
-
-    s16 *tbl = Data_02000240;
-    s32 no = tbl[225];
-
-    switch (no) {
-    case 10:
-    case 12:
-        return Data_0200be70;
-    case 11:
-        return Data_0200bec4;
-    case 20:
-    case 21:
-    case 50:
-        return Data_0200bf0c;
-    case 32:
-        return Data_0200c0ec;
-    case 29:
-        return Data_0200c038;
-    case 35:
-        return Data_0200c080;
-    default:
-        break;
-    }
-
-    if (GameFlag_IsSet(0x87a) != 0) {
-        return Data_0200bfd8;
-    }
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        return Data_0200bf78;
-    }
-    return Data_0200be34;
-}
-
-void FieldScene_RunActorNineFlagDialogueA(void)
-{
-    Event_Begin();
-
-    if (GameFlag_IsSet(0x855) != 0) {
-        Event_SetMessage(MSG_WHEN_STRAY_FROM_YOUR_WORLDLY);
-    } else {
-        Event_SetMessage(MSG_HEALER_MUST_WORRIED_ABOUT_NEVER);
-    }
-
-    if (gGameState.entrance == 11) {
-        Event_SetMessage(MSG_POLISHED_GOLD_STATUE_RETURNED_US);
-    }
-
-    Actor_SetAnimation(9, 1);
-    Actor_FaceEachOther(9, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(2);
-    Event_ShowMessage(9, 0);
-    Event_End();
-}
-
-void FieldScene_RunActorNineFlagDialogueB(void)
-{
-    void Actor_Stop(s32 id);
-
-    Event_Begin();
-
-    if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(MSG_WONDER_IF_EVER_SEE_OUR);
-    } else {
-        Event_SetMessage(MSG_CHILD_HAS_AWAKENED_OUR_TEACHINGS);
-    }
-
-    if (gGameState.entrance == 11) {
-        Event_SetMessage(MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP);
-    }
-
-    Actor_Stop(9);
-    Actor_SetAnimation(9, 1);
-    Event_Wait(2);
-    Event_ShowMessage(9, 0);
-    Actor_EnableActionCallback(9, 2);
-    Event_End();
-}
-
-void FieldScene_RunSupplementalSequenceOne(void)
-{
-    Event_Begin();
-    Event_SetMessage(MSG_ARE_YOU_SURE);
-    Event_OpenMessage(8, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Actor_SetAnimationAndWait(8, 3);
-        Event_Wait(20);
-    } else {
-        Event_Wait(20);
-        Event_OpenMessage(8, 0);
-        if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_Wait(20);
-            Event_OpenMessage(8, 0);
-            if (Event_ChooseYesNo(0, 0) == 0) {
-                Event_Wait(20);
-                if (Func_020039e2(8)->facing >= 0xa000 && Func_020039f2_b(8)->facing <= 0xe000) {
-                    Call3_scene_primary_script(Engine_ActorSetSpeed, 8, 0x8000, 0x4000);
-                    Actor_FaceDirection(8, 0, 0);
-                    Event_Wait(10);
-                    Func_02003a20(8)->facing_flags &= ~1;
-                    Actor_WalkToAndWait(8, 152, 120);
-                    Event_Wait(1);
-                    Func_02003a40(8)->facing_flags |= 1;
-                    Event_Wait(20);
-                    Actor_SetAnimationAndWait(8, 3);
-                    Event_Wait(20);
-                    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 120);
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
-                    Event_Wait(20);
-                    Actor_WalkToAndWait(8, 168, 120);
-                    Call3_scene_primary_script(Engine_ActorFaceDirection, 8, 0x3000, 0);
-                    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-                } else {
-                    Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
-                    Event_Wait(20);
-                    Call3_scene_primary_script(Engine_ActorFaceDirection, 8, 0x3000, 0);
-                    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-                }
-                FieldScene_RunActorUpdateSequence();
-                ColorBuffer_ApplyTarget(0, 0);
-                ColorBuffer_Interpolate(120);
-                Event_Wait(120);
-                Audio_PlayCue(86);
-                Func_02003c02();
-                GameFlag_Set(0x9f0);
-                Event_RequestExit(30);
-            }
-        }
-    }
-    Event_End();
-}
-
-void FieldScene_RunScene378SequenceB(void)
-{
-    void Actor_Stop();
-
-    u32 i;
-    s32 record;
-
-    Event_Begin();
-    Call1(Func_02003af4, 0x200bc9c);
-    Call1((void (*)())Engine_TaskWait, 1);
-    Event_SetMessage(MSG_ROBIN_YOUR_NEW_FRIENDS_ADEPTS);
-    Event_OpenMessage(9, 0);
-    if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_ShowMessage(9, 0);
-    } else {
-        bump_step();
-        Call11(Engine_EventShowTwoMessagesAndWait, 2, 16, 1, 24, 1, 3, 7, 16, 1, 14, 0);
-        Event_ShowMessage(9, 0);
-    }
-    Event_End();
-}
-
-void FieldScene_RunActorTenCountStep(void)
-{
-
-    Event_Begin();
-    Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(10);
-    Event_SetMessage(MSG_DO_FEEL_ANY_CHANGE_IN);
-    Event_OpenMessage(10, 0);
-
-    if (Event_ChooseYesNo(0, 0) == 1) {
-        (gEventWork->message)++;
-    }
-
-    Event_ShowMessage(10, 0);
-    Event_End();
-}
-
-void FieldScene_RunActorEightResetSequence(void)
-{
-    Event_Begin();
-    Camera_SetSpeed(0x10000, 0x2000);
-    Camera_MoveToActor(1, 1);
-    Camera_WaitForMove();
-    Event_Wait(20);
-    Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(8, 4);
-    Event_Wait(20);
-    Event_SetMessage(MSG_ONCE_STEP_OUTSIDE_VILLAGE_CANNOT);
-    Event_ShowMessage(8, 0);
-    GameFlag_Set(0x200);
-    Event_End();
-}
-
 void FieldScene_RunScriptedSceneSequence(void)
 {
     u32 i;
@@ -718,7 +253,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     SCENE_REQUEST = 0x209;
     Event_OpenScreen();
     Event_WaitForScreen();
-    Func_0200290c();
+    FieldScene_RunPairedActorChoreography();
     ColorBuffer_ApplyTarget(0x10000, 0);
     ColorBuffer_Interpolate(0x3c);
     Event_Wait(0x64);
@@ -900,7 +435,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_RunRepeatedMotion(8, 2);
     Actor_SetAnimation(8, 0);
     Actor_SetChildValue(8, 0x100);
-    Func_020025c4();
+    ShindenHeya_CopyActorPose();
     Audio_PlayCue(0xc4);
     ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x20);
@@ -952,7 +487,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Event_Wait(0x14);
     Actor_SetAnimation(9, 3);
     Actor_SetAnimation(0xa, 3);
-    Func_0808a118(0xa);
+    ObjectMotion_WaitForAnimationChange(0xa);
     Event_Wait(0x1e);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 0xb, 0);
     Actor_FaceEachOther(ACTOR_GERALD, 0xc, 0);
@@ -961,12 +496,12 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_SetAnimation(0xb, 3);
     Actor_SetAnimation(ACTOR_GERALD, 3);
     Actor_SetAnimation(0xc, 3);
-    Func_0808a118(0xc);
+    ObjectMotion_WaitForAnimationChange(0xc);
     Event_Wait(0x3c);
     Actor_RunRepeatedMotion(8, 2);
     Actor_SetAnimation(8, 0);
     Actor_SetChildValue(8, 0x100);
-    Func_020025c4();
+    ShindenHeya_CopyActorPose();
     Audio_PlayCue(0xc4);
     ShindenHeya_SpawnOwnerEffect(8, 0x1200);
     Event_Wait(0x20);
@@ -1049,7 +584,7 @@ void FieldScene_RunScriptedSceneSequence(void)
     Actor_SetAnimation(0xc, 3);
     Actor_SetAnimation(9, 3);
     Actor_SetAnimation(0xa, 3);
-    Func_0808a118(0xa);
+    ObjectMotion_WaitForAnimationChange(0xa);
     Event_Wait(0x14);
     Actor_RunRepeatedMotion(0xc, 1);
     Event_Wait(0x14);
@@ -1189,7 +724,7 @@ dialogue:
         ColorBuffer_Interpolate(0x78);
         Event_Wait(0x78);
         Audio_PlayCue(0x56);
-        Func_080f9078();
+        AudioCommand_WaitForCompletion();
         GameFlag_Set(0x9f0);
         Event_RequestExit(0x1e);
     } else {
@@ -1202,12 +737,12 @@ dialogue:
         Event_Wait(0x14);
         Event_ShowMessage(0xc, 0);
         Event_Wait(0x14);
-        actor = Func_0808a080(0xa);
+        actor = Object_GetById(0xa);
         actor += 0x23;
         flags = 254;
         flags &= *actor;
         *actor = flags;
-        actor = Func_0808a080(0xa);
+        actor = Object_GetById(0xa);
         *(u32 *)(actor + 0x6c) = 0x02008849;
     }
     Event_End();
@@ -1215,21 +750,20 @@ dialogue:
 
 void FieldScene_RunActorUpdateSequence(void)
 {
-    u8 *Func_02005f9e();
 
     u32 i;
     u8 *record;
 
-    BattleRuntime_WaitIfModeZero_1(1, 0x102);
+    Call2_scene_primary_script(Engine_ActorSetAttachedEffect, 1, 0x102);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
-    ObjectMotion_SetSpeedParameters_1(0, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_2(1, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_3(11, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_4(12, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_5(9, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_6(10, 0xcccc, 0x6666);
-    ObjectMotion_SetSpeedParameters_7(8, 0xcccc, 0x6666);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 11, 0xcccc, 0x6666);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 12, 0xcccc, 0x6666);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 9, 0xcccc, 0x6666);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 10, 0xcccc, 0x6666);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 8, 0xcccc, 0x6666);
     Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
     Camera_WaitForMove();
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
@@ -1259,7 +793,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Actor_FaceActor(12, ACTOR_GERALD, 0);
     Actor_StartRepeatedMotion(12, 2);
-    BattleEffect_SpawnLinkedResourceObject_1(12, 0x103, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x103, 0);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
     Event_Wait(20);
@@ -1274,29 +808,29 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(20);
-    ObjectMotion_ArmCallback_1(8, 0xd000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 8, 0xd000, 0);
     Event_Wait(30);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(30);
     Event_ShowMessage(8, 0);
     Event_Wait(80);
     Audio_PlayCue(17);
-    BattleRuntime_WaitIfModeZero_19(0x10005, 1);
+    Call2_scene_primary_script(Engine_ColorBufferApplyTarget, 0x10005, 1);
     ColorBuffer_Interpolate(60);
     Event_Wait(40);
-    ObjectMotion_SetSpeedLimitAndAcceleration_1(0x6666, 0xccc);
+    Call2_scene_primary_script(Engine_CameraSetSpeed, 0x6666, 0xccc);
     Camera_MoveTo(0xc00000, -1, 0x680000, 1);
     Event_Wait(120);
     Audio_PlayCue(21);
     Audio_PlayCue(0x134);
-    ObjectMotion_SetHorizontalPositionWithTerrain_1(13, 0xc80000, 0x80000);
-    ObjectMotion_SetSpeedParameters_8(13, 0x6666, 0x3333);
+    Call3_scene_primary_script(Engine_ActorSetPosition, 13, 0xc80000, 0x80000);
+    Call3_scene_primary_script(Engine_ActorSetSpeed, 13, 0x6666, 0x3333);
     Actor_MoveToAndWait(13, 200, 72);
     Audio_PlayCue(0x120);
     Event_Wait(30);
     Actor_RunRepeatedMotion(8, 2);
     Actor_SetAnimation(8, 0);
-    Func_020040c0();
+    ShindenHeya_CopyActorPose();
     Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Actor_FaceActor(ACTOR_GERALD, 13, 0);
     Actor_FaceActor(11, 13, 0);
@@ -1315,7 +849,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(40);
     Event_ShowMessage(13, 0);
     Event_Wait(60);
-    ObjectGroup_ConfigureChildValue_1(13, 0x100);
+    Call2_scene_primary_script(Engine_ActorSetChildValue, 13, 0x100);
     Audio_PlayCue(17);
     Audio_PlayCue(0x134);
     /*
@@ -1323,11 +857,11 @@ void FieldScene_RunActorUpdateSequence(void)
      * from the record fields at +24 and +28.
      */
     for (i = 0; i < 32; i++) {
-        Func_02004d8c(13);
+        ShindenHeya_SpawnActorSpark(13);
         Event_Wait(4);
-        record = Scene_GetRecord_1(13);
+        record = Object_GetById(13);
         *(s32 *)(record + 24) += -0x28f;
-        record = Scene_GetRecord_2(13);
+        record = Object_GetById(13);
         *(s32 *)(record + 28) += -0x28f;
     }
     Audio_PlayCue(0x120);
@@ -1336,7 +870,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(40);
     Camera_MoveTo(0xc00000, -1, 0xa00000, 1);
     Camera_WaitForMove();
-    BattleRuntime_WaitIfModeZero_30(0x10000, 0);
+    Call2_scene_primary_script(Engine_ColorBufferApplyTarget, 0x10000, 0);
     ColorBuffer_Interpolate(60);
     Event_Wait(120);
     SceneState_ResetObject14Word108();
@@ -1379,14 +913,14 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_2(0, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_3(1, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_4(11, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_5(12, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_6(9, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_7(10, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x102, 0);
     Event_Wait(30);
-    BattleEffect_SpawnLinkedResourceObject_8(8, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x102, 0);
     Event_Wait(30);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
@@ -1399,7 +933,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(180);
-    BattleEffect_SpawnLinkedResourceObject_9(12, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x105, 0);
     Event_Wait(60);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Actor_FaceEachOther(9, 10, 0);
@@ -1413,7 +947,7 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(30);
-    BattleEffect_SpawnLinkedResourceObject_10(8, 0x101, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x101, 0);
     Event_Wait(60);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
@@ -1424,16 +958,16 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Event_ShowMessage(11, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_11(8, 0x101, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x101, 0);
     Event_Wait(80);
-    BattleEffect_SpawnLinkedResourceObject_12(12, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
     Event_Wait(30);
-    BattleEffect_SpawnLinkedResourceObject_13(8, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x105, 0);
     Event_Wait(60);
     Actor_RunRepeatedMotion(8, 1);
-    BattleEffect_SpawnLinkedResourceObject_14(8, 0x106, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 8, 0x106, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
@@ -1468,12 +1002,12 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_15(0, 0x105, 0);
-    BattleEffect_SpawnLinkedResourceObject_16(1, 0x105, 0);
-    BattleEffect_SpawnLinkedResourceObject_17(11, 0x105, 0);
-    BattleEffect_SpawnLinkedResourceObject_18(12, 0x100, 0);
-    BattleEffect_SpawnLinkedResourceObject_19(9, 0x105, 0);
-    BattleEffect_SpawnLinkedResourceObject_20(10, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x105, 0);
     Event_Wait(60);
     Actor_RunRepeatedMotion(12, 1);
     Event_ShowMessage(12, 0);
@@ -1484,12 +1018,12 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(8, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_21(0, 0x100, 0);
-    BattleEffect_SpawnLinkedResourceObject_22(1, 0x100, 0);
-    BattleEffect_SpawnLinkedResourceObject_23(11, 0x100, 0);
-    BattleEffect_SpawnLinkedResourceObject_24(12, 0x100, 0);
-    BattleEffect_SpawnLinkedResourceObject_25(9, 0x100, 0);
-    BattleEffect_SpawnLinkedResourceObject_26(10, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x100, 0);
     Event_Wait(60);
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
@@ -1508,22 +1042,22 @@ void FieldScene_RunActorUpdateSequence(void)
     Actor_FaceActor(ACTOR_GERALD, 8, 0);
     Actor_FaceActor(12, 8, 0);
     Actor_FaceDirection(11, 0, 0);
-    ObjectMotion_ArmCallback_3(9, 0x8000, 0);
-    ObjectMotion_ArmCallback_4(10, 0x8000, 0);
-    ObjectMotion_ResetAndSetPositionInMode2_1(8, 200, 0x110);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 9, 0x8000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x8000, 0);
+    Call3_scene_primary_script(Engine_ActorWalkTo, 8, 200, 0x110);
     Event_Wait(40);
-    ObjectMotion_ArmCallback_5(11, 0x3000, 0);
-    ObjectMotion_ArmCallback_6(9, 0x5000, 0);
-    ObjectMotion_ArmCallback_7(10, 0x5000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 11, 0x3000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 9, 0x5000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x5000, 0);
     Actor_WaitForMove(8);
     Actor_SetPosition(8, 0, 0);
     Event_Wait(60);
-    BattleEffect_SpawnLinkedResourceObject_27(0, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_28(1, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_29(11, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_30(12, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_31(9, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_32(10, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 11, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x102, 0);
     Event_Wait(60);
     Event_Wait(120);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
@@ -1531,24 +1065,24 @@ void FieldScene_RunActorUpdateSequence(void)
     Actor_FaceActor(11, 9, 0);
     Actor_FaceActor(12, 9, 0);
     Event_Wait(120);
-    BattleEffect_SpawnLinkedResourceObject_33(9, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x105, 0);
     Event_Wait(60);
     Actor_FaceActor(9, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(10);
-    ObjectMotion_ArmCallback_8(9, 0x5000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 9, 0x5000, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_34(9, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 9, 0x102, 0);
     Event_Wait(80);
     Actor_FaceActor(9, 10, 0);
     Actor_RunRepeatedMotion(9, 1);
     Event_Wait(20);
     Event_ShowMessage(9, 0);
     Event_Wait(20);
-    ObjectMotion_ArmCallback_9(10, 0x5000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x5000, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_35(10, 0x101, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 10, 0x101, 0);
     Event_Wait(60);
     Actor_RunRepeatedMotion(9, 2);
     Event_Wait(20);
@@ -1556,18 +1090,18 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Actor_RunRepeatedMotion(10, 2);
     Event_Wait(30);
-    ObjectMotion_ArmCallback_10(10, 0x5000, 0);
+    Call3_scene_primary_script(Engine_ActorFaceDirection, 10, 0x5000, 0);
     Event_Wait(20);
     Event_ShowMessage(10, 0);
     Event_Wait(20);
     Actor_SetAnimation(9, 3);
     Actor_SetAnimationAndWait(10, 3);
     Event_Wait(20);
-    ObjectMotion_ResetAndSetPositionInMode2_2(9, 200, 0x110);
-    ObjectMotion_SetPositionAndReset_3(10, 200, 0x110);
+    Call3_scene_primary_script(Engine_ActorWalkTo, 9, 200, 0x110);
+    Call3_scene_primary_script(Engine_ActorWalkToAndWait, 10, 200, 0x110);
     Actor_SetPosition(9, 0, 0);
     Actor_SetPosition(10, 0, 0);
-    BattleEffect_SpawnLinkedResourceObject_36(12, 0x105, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x105, 0);
     Event_Wait(60);
     Actor_WalkToAndWait(12, 200, 136);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
@@ -1593,8 +1127,8 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(11, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_37(0, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_38(1, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
     Event_Wait(60);
     Actor_SetAnimationAndWait(12, 4);
     Event_Wait(20);
@@ -1607,17 +1141,17 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(20);
     Event_ShowMessage(11, 0);
     Event_Wait(20);
-    BattleEffect_SpawnLinkedResourceObject_39(0, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_40(1, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x102, 0);
     Event_Wait(60);
-    BattleEffect_SpawnLinkedResourceObject_41(12, 0x102, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 12, 0x102, 0);
     Event_Wait(60);
     Event_ShowMessage(12, 0);
     Event_Wait(20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    BattleEffect_SpawnLinkedResourceObject_42(0, 0x100, 0);
-    BattleEffect_SpawnLinkedResourceObject_43(1, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 0, 0x100, 0);
+    Call3_scene_primary_script(Engine_ActorShowEmote, 1, 0x100, 0);
     Event_Wait(60);
     Actor_SetAnimationAndWait(11, 3);
     Event_Wait(20);
@@ -1629,384 +1163,4 @@ void FieldScene_RunActorUpdateSequence(void)
     Event_Wait(30);
     Actor_SetAnimation(12, 3);
 }
-
-void SceneState_ResetObject14Word108(void)
-{
-    u8 *state = Func_02005c76(14);
-    *(s32 *)(state + 108) = 0;
-    Actor_SetPosition(14, 0, 0);
-}
-
-void SceneEffect_StepEllipseOrbit(u8 *obj)
-{
-    u8 *anchor = *(u8 **)(obj + 104);
-    u16 *angle = (u16 *)(obj + 100);
-    u16 theta = *angle;
-    s32 x;
-    s32 z;
-    s32 tmp;
-
-    x = *(s32 *)(anchor + 8) + Math_Cos(theta)* 14;
-    *(s32 *)(obj + 8) = x;
-
-    z = *(s32 *)(anchor + 16) + Math_Sin(theta)* 10;
-    tmp = *(s32 *)(obj + 8);
-    *(s32 *)(obj + 16) = z;
-    *(s32 *)(obj + 64) = z;
-    *(s32 *)(obj + 56) = tmp;
-
-    *angle = (u16)(*angle + *(u16 *)(obj + 102));
-}
-
-void FieldScene_RunPairedActorChoreography(void)
-{
-    struct FacingObject *Func_02005f9e();
-
-    ObjectMotion_SetSpeedParameters_1_0200290c(0, 0x18000, 0xc000);
-    ObjectMotion_SetSpeedParameters_2_0200290c(1, 0x18000, 0xc000);
-    Call2_scene_primary_script((void (*)())Engine_ActorRunRepeatedMotion, 12, 2); /* main:0808a138 */
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(12, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
-    Event_Wait(15);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    ObjectMotion_SetVariantCallback_5_0200290c(0, 1); /* object 0, variant 1 */
-    Scene_GetRecord_1_0200290c(0)->facing_flags &= ~1;
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 184, 168);
-    Scene_GetRecord_2_0200290c(1)->facing_flags &= ~1;
-    ObjectMotion_SetPositionAndReset_10(1, 200, 168);
-    Event_Wait(1);
-    Scene_GetRecord_3(1)->facing_flags |= 1;
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Scene_GetRecord_4(0)->facing_flags |= 1;
-    Scene_GetRecord_5(1)->facing_flags |= 1;
-    Actor_Jump(ACTOR_GERALD, 2, 0);
-    Event_Wait(15);
-    Actor_FaceActor(ACTOR_GERALD, 8, 0);
-    Call1((void (*)())Engine_EventWait, 5); /* main:0808a080 */
-    Actor_Jump(ACTOR_GERALD, 2, 0);
-    Event_Wait(25);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_Wait(5);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
-    Event_Wait(5);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(15);
-    Actor_SetAnimation(11, 3);
-    Actor_SetAnimation(12, 3);
-    Actor_SetAnimation(8, 3);
-    Actor_SetAnimation(9, 3);
-    Actor_SetAnimationAndWait(10, 3); /* main:0808a110 */
-    Event_Wait(20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_Wait(10); /* main:0808a138 */
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-    Actor_FaceActor(ACTOR_GERALD, 11, 0);
-    Event_Wait(10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(20);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Event_Wait(15);
-    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2); /* main:0808a138 */
-    Event_Wait(10);
-    Value4(Func_02005bc6, 222, 0xb80000, 0x1b0000, 0xa80000);
-    Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
-    Event_Wait(10);
-    Actor_Jump(ACTOR_GERALD, 4, 0); /* main:0808a138 */
-    ObjectMotion_ArmCallback_2_0200290c(1, 0xd000, 0);
-    Event_Wait(15);
-    ObjectMotion_ArmCallback_3_0200290c(1, 0xb000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_4_0200290c(1, 0xd000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_5_0200290c(1, 0xb000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_6_0200290c(1, 0xd000, 0);
-    Event_Wait(30);
-    Actor_Jump(ACTOR_GERALD, 4, 0);
-    ObjectMotion_ArmCallback_7_0200290c(1, 0x3000, 0);
-    Event_Wait(15);
-    ObjectMotion_ArmCallback_8_0200290c(1, 0x5000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_9_0200290c(1, 0x3000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_10_0200290c(1, 0x5000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_11(1, 0x3000, 0);
-    Event_Wait(30);
-    ObjectMotion_ArmCallback_12(0, 0xc000, 0);
-    ObjectMotion_ArmCallback_13(1, 0xc000, 0);
-    Event_Wait(10);
-    BattleEffect_SpawnLinkedResourceObject_1_0200290c(0, 0x102, 0);
-    BattleEffect_SpawnLinkedResourceObject_2_0200290c(1, 0x102, 0);
-    Event_Wait(60);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Scene_GetRecord_6(8)->unknown_64 = 1;
-    *(s32 *)(Scene_GetRecord_7(8) + 108) = (s32)UpdateFacingFromResolvedObject;
-    Scene_GetRecord_8(12)->unknown_64 = 1;
-    *(s32 *)(Scene_GetRecord_9(12) + 108) = (s32)UpdateFacingFromResolvedObject;
-    ObjectMotion_SetPositionAndReset_1_0200290c(1, 196, 180);
-    Actor_WalkToAndWait(ACTOR_GERALD, 184, 184);
-    Actor_WalkToAndWait(ACTOR_GERALD, 180, 180);
-    Actor_WalkToAndWait(ACTOR_GERALD, 168, 168);
-    Actor_WalkToAndWait(ACTOR_GERALD, 180, 156);
-    Actor_WalkTo(ACTOR_GERALD, 200, 104);
-    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 192, 168);
-    ObjectMotion_ArmCallback_14(0, 0xc000, 0);
-    Actor_WaitForMove(ACTOR_GERALD);
-    Event_Wait(30);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 1); /* main:0808a138 */
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_15(1, 0x5000, 0);
-    Event_Wait(15);
-    *(s32 *)(Scene_GetRecord_10(12) + 108) = 0;
-    *(s32 *)(Scene_GetRecord_11(8) + 108) = 0;
-    ObjectMotion_SetVariantCallback_1_0200290c(8, 2);
-    BattleEffect_SpawnLinkedResourceObject_3_0200290c(8, 0x100, 0);
-    Call1((void (*)())Engine_EventWait, 60); /* main:0808a080 */
-    Actor_SetAnimation(8, 0);
-    BattleEffect_SpawnLinkedResourceObject_4_0200290c(0, 0x102, 0);
-    Event_Wait(60);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 11, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(11, 3); /* main:0808a110 */
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_16(0, 0xc000, 0);
-    Event_Wait(10);
-    Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Event_Wait(10);
-    Actor_Jump(ACTOR_PARTY_LEADER, 2, 0); /* main:0808a138 */
-    Event_Wait(20);
-    Actor_Jump(ACTOR_PARTY_LEADER, 2, 0);
-    BattleRuntime_WaitIfModeZero_46_0200290c(20);
-    Event_Wait(15);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(12, 3); /* main:0808a110 */
-    Event_Wait(60);
-    Actor_WalkToAndWait(ACTOR_GERALD, 208, 168);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_Wait(10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 4);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 4); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 1); /* main:0808a138 */
-    Event_Wait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_Wait(10);
-    Actor_SetAnimationAndWait(12, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    Event_Wait(10);
-    Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
-    Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_Wait(10);
-    ObjectMotion_EnableActionAndSetCallback_1(0, 0x200b740);
-    ObjectMotion_EnableActionAndSetCallback_2(1, 0x200b81c);
-    Object_LookupAndStep_1(0); /* main:0808a0a0 */
-    Object_LookupAndStep_2(1); /* main:0808a0a0 */
-    ObjectMotion_SetSpeedParameters_3_0200290c(0, 0x18000, 0xc000);
-    ObjectMotion_SetSpeedParameters_4_0200290c(1, 0x18000, 0xc000);
-    Actor_Jump(ACTOR_PARTY_LEADER, 6, 0);
-    Actor_Jump(ACTOR_GERALD, 6, 0);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 9, 0);
-    Actor_FaceActor(ACTOR_GERALD, 8, 0);
-    Event_Wait(1);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 12, 0);
-    Actor_FaceActor(ACTOR_GERALD, 11, 0);
-    Event_Wait(1);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 8, 0);
-    Actor_FaceActor(ACTOR_GERALD, 9, 0);
-    Event_Wait(1); /* main:0808a138 */
-    Actor_WalkTo(ACTOR_PARTY_LEADER, 192, 168);
-    Actor_WalkToAndWait(ACTOR_GERALD, 208, 168);
-    Actor_WaitForMove(ACTOR_PARTY_LEADER);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_20(0, 0x3000, 0);
-    ObjectMotion_ArmCallback_21(1, 0xd000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_22(0, 0x5000, 0);
-    ObjectMotion_ArmCallback_23(1, 0xb000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_24(0, 0x3000, 0);
-    ObjectMotion_ArmCallback_25(1, 0xd000, 0);
-    Event_Wait(10);
-    ObjectMotion_ArmCallback_26(0, 0x5000, 0);
-    ObjectMotion_ArmCallback_27(1, 0xb000, 0);
-    Event_Wait(20);
-    Actor_FaceActor(ACTOR_PARTY_LEADER, 11, 0);
-    Actor_FaceActor(ACTOR_GERALD, 12, 0);
-    Event_Wait(20);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_SetAnimation(11, 3);
-    Actor_SetAnimationAndWait(12, 3); /* main:0808a110 */
-    Event_Wait(30);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
-    Event_Wait(20);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
-    Actor_SetAnimationAndWait(ACTOR_GERALD, 3); /* main:0808a110 */
-    Event_Wait(10);
-    Actor_FaceDirection(ACTOR_GERALD, 0, 0);
-    Event_Wait(10);
-    Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
-    Actor_SetAnimation(ACTOR_GERALD, 2);
-    Event_Wait(60);
-}
-
-void SceneState_ApplyTwoRects(void)
-{
-    {
-        s32 a5 = 3, a6 = 2;
-        Map_CopyCellsTo(0, 64, 11, 68, a5, a6);
-    }
-    {
-        s32 a5 = 11, a6 = 8;
-        Map_CopyCellAttributes(11, 10, 3, 2, a5, a6);
-    }
-    Task_Wait(1);
-}
-
-s32 IsActorFacingInward(void)
-{
-    ActorState *actor = GetActorState(0);
-
-    if ((u32)((actor->angle + 0x5fff) << 16) <= 0x3ffe0000) {
-        return 1;
-    }
-    return 0;
-}
-
-void FieldScene_RunActorEightFacingDialogue(void)
-{
-    if (IsActorFacingInward() != 0) {
-        Sanctum_Open(8);
-        return;
-    }
-
-    Event_Begin();
-    if (GameFlag_IsSet(0x87a) != 0)
-        Event_SetMessage(MSG_PATH_SOL_SANCTUM_STILL_CLOSED);
-    else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
-        Event_SetMessage(MSG_MY_CONTROL_OVER_PSYNERGY_HAS);
-    else
-        Event_SetMessage(MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS);
-    Event_ShowMessage(8, 0);
-    Event_End();
-}
-
-void FieldScene_DispatchBySceneId(void)
-{
-    s16 *tbl;
-    s32 no;
-
-    if (IsActorFacingInward() != 0) {
-        Sanctum_Open(8);
-        return;
-    }
-
-    Event_Begin();
-
-    tbl = Data_02000240;
-    no = tbl[225];
-
-    switch (no) {
-    case 10:
-    case 12:
-        if (GameFlag_IsSet(0x855) != 0) {
-            Event_SetMessage(MSG_WAS_HAND_FATE_RETURNED_GOLD);
-        } else {
-            Event_SetMessage(MSG_WE_WILL_HELP_ANYTIME_AS);
-        }
-        break;
-    case 11:
-        Event_SetMessage(MSG_MAY_WRONG_BUT_LATELY_THERE);
-        break;
-    case 20:
-    case 21:
-    case 50:
-        Event_End();
-        FieldScene_RunSupplementalSequenceOne();
-        return;
-    default:
-        break;
-    }
-
-    Event_ShowMessage(8, 0);
-    Event_End();
-}
-
-void SceneDialogue_RunActorEightFlaggedDialogue(void)
-{
-    if (IsActorFacingInward() != 0) {
-        Sanctum_Open(8);
-        return;
-    }
-
-    Event_Begin();
-    if (GameFlag_IsSet(0x845) != 0)
-        Event_SetMessage(MSG_CURSE_MAY_OVER_BUT_WE);
-    else
-        Event_SetMessage(MSG_AM_STARTING_FEEL_ONLY_BEGINNING);
-    Event_ShowMessage(8, 0);
-    Event_End();
-}
-
-void SceneDialogue_RunActorEightFollowupDialogue(void)
-{
-    if (IsActorFacingInward() != 0) {
-        Sanctum_Open(8);
-        return;
-    }
-
-    Event_Begin();
-    Event_SetMessage(MSG_WAS_AFTER_EERIE_NIGHT_WHEN);
-    if (GameFlag_IsSet(0x909) != 0)
-        Event_SetMessage(MSG_SAVED_ALTIN_FROM_MONSTERS_CLEARLY);
-    Event_ShowMessage(8, 0);
-    Event_End();
-}
-
-void SceneDialogue_RunActorEightDialogue(void)
-{
-    if (IsActorFacingInward() != 0) {
-        Sanctum_Open(8);
-        return;
-    }
-
-    Event_Begin();
-    Event_SetMessage(MSG_CAME_XIAN_FROM_VERY_DISTANT);
-    Event_ShowMessage(8, 0);
-    Event_End();
-}
+void SceneState_ResetObject14Word108(void);

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define TakaraAshiba_RunActorElevenFollowScene Func_02001694
 
 extern u8 Data_02000240[];
 void Battle_Reset();

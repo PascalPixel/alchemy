@@ -5,6 +5,8 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/resource_370_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/GET_SCRIPT.o"(.text)
+        "*/resource_370_overlay.o"(.text.x02008054)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/BLEND_FADE.o"(.text)
         "*/resource_370_overlay.o"(.text.x020081fc)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/NAME_CHARACTER.o"(.text)
@@ -13,7 +15,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/FILL_TILE_BLOCK.o"(.text)
         "*/resource_370_overlay.o"(.text.x02008de4)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENCODE_PASSWORD.o"(.text)
-        "*/resource_370_overlay.o"(.text.x020092c8)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/SAVE_MENU.o"(.text)
+        "*/resource_370_overlay.o"(.text.x02009314)
         "*/resource_370_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

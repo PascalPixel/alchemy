@@ -14,7 +14,12 @@ struct BattleEffectWork {
     struct EffectStep particles[64];
     s32 transfer_mode;
     s32 transfer_value;
-    u8 unknown_7788[0x9c];
+    u8 unknown_7788[0x20];
+    s32 shake_frames;
+    u8 unknown_77ac[0x8];
+    s32 fade_frames;
+    s32 fade_step;
+    u8 unknown_77bc[0x68];
     s32 transfer_pending;
     struct BattleEffectArgument *effect;
 };
@@ -40,6 +45,12 @@ LAYOUT_OFFSET_GUARD(BattleEffectWork_TransferMode,
     struct BattleEffectWork, transfer_mode, 0x7780);
 LAYOUT_OFFSET_GUARD(BattleEffectWork_TransferValue,
     struct BattleEffectWork, transfer_value, 0x7784);
+LAYOUT_OFFSET_GUARD(BattleEffectWork_ShakeFrames,
+    struct BattleEffectWork, shake_frames, 0x77a8);
+LAYOUT_OFFSET_GUARD(BattleEffectWork_FadeFrames,
+    struct BattleEffectWork, fade_frames, 0x77b4);
+LAYOUT_OFFSET_GUARD(BattleEffectWork_FadeStep,
+    struct BattleEffectWork, fade_step, 0x77b8);
 LAYOUT_OFFSET_GUARD(BattleEffectWork_TransferPending,
     struct BattleEffectWork, transfer_pending, 0x7824);
 LAYOUT_OFFSET_GUARD(BattleEffectWork_Effect,

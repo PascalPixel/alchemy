@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7796 bytes; 1650 differing halfwords, 353 aligned edits. */
+ * Candidate 7804 bytes; 1643 differing halfwords, 304 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -364,7 +364,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
                 } while (0);
                 orb_x = spark_screen.x;
-                orb_x /= 2;
+                /* FAKEMATCH: Keep signed halving in the loaded coordinate register. */
+                orb_x += (u32)orb_x >> 31;
+                orb_x >>= 1;
                 spark_screen.x = orb_x;
 
                 blitters[0](canvas, 0x2013c56, (orb_x - 10), (spark_screen.y - 4), 20, 40);
@@ -1079,18 +1081,23 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 
             if (frame > 5)
                 goto FinishFrame;
+            /* FAKEMATCH: Calculate each center before the shared centered draw;
+             * spell signed halving as an in-place rounding bias and shift. */
             if (work->effect->side == 0) {
                 image_x = target_screen->x;
-                image_x /= 2;
+                image_x += (u32)image_x >> 31;
+                image_x >>= 1;
                 offset = (6 - frame) * 3;
                 image_x += offset * 2;
+                image_y = target_screen->y - offset * 4 + 24;
             } else {
                 image_x = target_screen->x;
-                image_x /= 2;
+                image_x += (u32)image_x >> 31;
+                image_x >>= 1;
                 offset = (6 - frame) * 3;
                 image_x -= offset * 2;
+                image_y = target_screen->y - offset * 4 + 24;
             }
-            image_y = target_screen->y - offset * 4 + 24;
             DrawImage(canvas, 0x02010000, image_x - 16, image_y - 32,
                       32, 64, &blitters[1]);
         } else if (kind == 12) {
@@ -1142,7 +1149,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             if (frame <= 5) {
                 EffectPosition_ApplyBaseAndYOffset((s32 *)position, &projected);
                 orb_x = projected.x;
-                orb_x /= 2;
+                /* FAKEMATCH: Keep signed halving in the loaded coordinate register. */
+                orb_x += (u32)orb_x >> 31;
+                orb_x >>= 1;
                 projected.x = orb_x;
                 draw_pair[1](canvas, 0x2013c56, (orb_x - 10), (projected.y - 4), 20, 40);
                 position->x += motion->x;

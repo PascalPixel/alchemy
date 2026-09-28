@@ -18,7 +18,6 @@ union GameStateRows {
     s32 words[256];
 };
 
-extern union GameStateRows Data_02000240_t;
 
 void RamakanSabaku_UpdateTravelDust(void)
 {
@@ -28,7 +27,7 @@ void RamakanSabaku_UpdateTravelDust(void)
     s32 dx;
     s32 z;
     s32 phase;
-    union GameStateRows *rows = &Data_02000240_t;
+    union GameStateRows *rows = (union GameStateRows *)&gGameState;
 
     actor = Engine_ActorGet(rows->words[125]);
     event = gEventWork;

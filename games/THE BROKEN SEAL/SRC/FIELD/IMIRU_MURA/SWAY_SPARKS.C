@@ -2,12 +2,12 @@
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
-#define FrameCounter (*(u32 *)&gFrameCount)
 
-extern s32 Data_0200b1f0;
+extern s32 ImiruMura_ArcOrigin;
 extern u8 Value_00000000;
+extern u8 ImiruMura_SparkScript[];
 
-void Main_08000128(s32 radius, s32 angle, s32 *pos);
+void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *pos);
 
 /* Sway the actor from side to side and, every third frame, throw a spark
  * from a random point around it. */
@@ -20,15 +20,15 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
     u8 zero;
 
     phase = (s16 *)&actor->unknown_64;
-    actor->x.fixed = Data_0200b1f0 + Iwram_MulQ16(0x60000, Engine_MathSin(*phase << 10));
+    actor->x.fixed = ImiruMura_ArcOrigin + Iwram_MulQ16(0x60000, Engine_MathSin(*phase << 10));
     (*phase)++;
     *phase = (*phase + 64) % 64;
-    if (Engine_MathModulo(FrameCounter, 3) == 0) {
+    if (Engine_MathModulo((*(u32 *)&gFrameCount), 3) == 0) {
         pos[0] = actor->x.fixed;
         pos[1] = actor->y.fixed + 0x20000;
         pos[2] = actor->z.fixed;
         radius = Engine_RandomNext();
-        Main_08000128(radius * 6, Engine_RandomNext(), pos);
+        Vector_AddPolarOffset(radius * 6, Engine_RandomNext(), pos);
         spark = Engine_ObjectCreate(0x11d, pos[0], pos[1], pos[2]);
         if (spark != NULL) {
             spark->sprite->priority = 0;
@@ -40,7 +40,7 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
             zero = (u8)(u32)&Value_00000000;
             spark->motion_flags = zero;
             Engine_ObjectSetPalette(spark, 9);
-            Engine_ObjectSetScript(spark, (const s32 *)0x0200a64c);
+            Engine_ObjectSetScript(spark, (const s32 *)ImiruMura_SparkScript);
         }
     }
 }

@@ -13,9 +13,6 @@ IwramSignedDivideEntry:
 	.global WaitFrames
 	.thumb_func
 WaitFrames:
-	.global Engine_TaskWait
-	.thumb_func
-Engine_TaskWait:
 	overlay_veneer WaitFramesFar
 	.global Engine_RandomNext
 	.thumb_func
@@ -35,13 +32,7 @@ Engine_ObjectSetAnimation:
 	.global Engine_ObjectSetScript
 	.thumb_func
 Engine_ObjectSetScript:
-	.global Engine_ObjectSetScript
-	.thumb_func
-Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
-	.global Engine_ObjectCreate
-	.thumb_func
-Engine_ObjectCreate:
 	.global Engine_ObjectCreate
 	.thumb_func
 Engine_ObjectCreate:
@@ -65,9 +56,6 @@ Engine_MapCopyCells:
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
-	.global Engine_MapCopyCellAttributes
-	.thumb_func
-Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Object_CheckMovementCollision
 	.thumb_func
@@ -96,9 +84,6 @@ Engine_GameFlagClear:
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
-	.global Engine_EventWait
-	.thumb_func
-Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
@@ -118,9 +103,6 @@ Engine_ActorGet:
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func
 ObjectMotion_SetSpeedParameters:
-	.global Engine_ActorSetSpeed
-	.thumb_func
-Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	.global Engine_ActorMoveToAndWait
 	.thumb_func
@@ -137,32 +119,20 @@ Engine_ActorWalkToAndWait:
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
 ObjectMotion_OffsetPositionAndResetMotion:
-	.global Engine_ActorSetDestinationOffset
-	.thumb_func
-Engine_ActorSetDestinationOffset:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
 	.global ObjectMotion_CommitCurrentPositionAndActivate
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
-	.global Engine_ActorWaitForMove
-	.thumb_func
-Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func
 Object_SetModeById:
-	.global Engine_ActorSetAnimation
-	.thumb_func
-Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
 	.global Engine_ActorRunRepeatedMotion
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
-	.global Engine_ObjectSetPalette
-	.thumb_func
-Engine_ObjectSetPalette:
 	.global Engine_ObjectSetPalette
 	.thumb_func
 Engine_ObjectSetPalette:

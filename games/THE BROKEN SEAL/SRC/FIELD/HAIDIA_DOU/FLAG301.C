@@ -15,14 +15,14 @@ void SceneAudio_PlayCue123AndDispatchWork364(void)
  */
 void DialogueLayout_ConfigureRowsByFlag301(void)
 {
-    Map_CopyCellAttributes(0, 34, 13, 3, 23, 34);
+    Map_CopyCellRect(0, 34, 13, 3, 23, 34);
 
     if (GameFlag_IsSet(0x301) != 0) {
         SceneActor_PlaceAtTile(11, 35, 35);
-        Map_CopyCellAttributes(24, 34, 1, 3, 23, 34);
+        Map_CopyCellRect(24, 34, 1, 3, 23, 34);
     } else {
         SceneActor_PlaceAtTile(11, 23, 35);
-        Map_CopyCellAttributes(24, 34, 1, 3, 35, 34);
+        Map_CopyCellRect(24, 34, 1, 3, 35, 34);
     }
 }
 
@@ -76,7 +76,7 @@ void FieldScene_RunShiftAndSetFlag301(void)
     SceneActor_PositionPair(11, 112, 0);
     SceneActor_PositionPair(11, 80, 0);
     GameFlag_Set(0x301);
-    Task_Wait(2);
+    WaitFrames(2);
     DialogueLayout_ConfigureRowsByFlag301();
     Audio_PlayCue(0x121);
 }
@@ -88,7 +88,7 @@ void FieldScene_RunActor11Transition301(void)
     SceneActor_PositionPair(11, -112, 0);
     SceneActor_PositionPair(11, -80, 0);
     GameFlag_Clear(0x301);
-    Task_Wait(2);
+    WaitFrames(2);
     DialogueLayout_ConfigureRowsByFlag301();
     Audio_PlayCue(0x121);
 }

@@ -56,6 +56,34 @@ extern const s32 HaidiaDou_WalkTargets[];
 
 s32 SceneActor_FaceActorZero(u8 *obj);
 
+/* Main-image services reached through the veneers the staged-actor module
+   names. */
+void WaitFrames(s32 frames);
+void Battle_WaitMode0(s32 frames);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Object_SetModeById(s32 actor, s32 mode);
+void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void ObjectMotion_OffsetPositionAndResetMotion(s32 actor, s32 dx, s32 dz);
+void Map_CopyCellAttributeRect(s32 x, s32 z, s32 width, s32 height, s32 dest_x, s32 dest_z);
+
+/* Motion and cell services in the shape of the engine header's, through
+   those names. */
+static __inline__ void Actor_SetMotionSpeed(s32 actor, s32 speed, s32 acceleration)
+{
+    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+}
+
+static __inline__ void Actor_OffsetDestination(s32 actor, s32 dx, s32 dz)
+{
+    ObjectMotion_OffsetPositionAndResetMotion(actor, dx, dz);
+}
+
+static __inline__ void Map_CopyCellRect(s32 x, s32 z, s32 width, s32 height, s32 dest_x,
+                                        s32 dest_z)
+{
+    Map_CopyCellAttributeRect(x, z, width, height, dest_x, dest_z);
+}
+
 void Object_SetPosition(Obj *, s32, s32, s32);
 void Object_CommitPosition(Obj *);
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);

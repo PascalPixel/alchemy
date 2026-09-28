@@ -48,12 +48,7 @@ pub fn entry(arguments: &[String]) {
 }
 fn run(options: crate::score::cli::Options) -> Result<String, String> {
     let Some(id) = options.unit.clone() else {
-        let output = render(root(), &options)?;
-        let twins = options.owner.map_or(String::new(), |address| {
-            let owner = crate::compiler::source_paths::SourceOwner::Main(address);
-            crate::score::cli::siblings_line(root(), owner, output.reference_length)
-        });
-        return Ok(format!("{}{twins}", output.stdout));
+        return Ok(render(root(), &options)?.stdout);
     };
     let manifest = TranslationUnits::load_game(root(), options.target)?;
     let unit = manifest

@@ -3,17 +3,13 @@ use std::process::ExitCode;
 mod allocator;
 mod bootstrap;
 mod build;
-mod build_asm;
 mod build_assets;
-mod build_claimed;
-mod build_full;
 mod build_rom;
 mod candidate;
 mod check;
 mod compiler;
 mod coverage;
 mod cross_edition;
-mod flatten;
 mod format;
 mod generated_files;
 mod land;
@@ -21,13 +17,10 @@ mod overlay;
 mod parallel;
 mod raw;
 mod recovery;
-mod scaffold;
 mod score;
-mod siblings;
 mod targets;
 mod text_catalog;
 mod verify;
-mod worklist;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
@@ -35,7 +28,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   inspect OWNER         resolve calls and symbols; --asm shows annotated instructions, --siblings twins\n\
   build                 build compilers, maintained source, assembly and ROMs\n\
   verify                the landing gate: every make verify gate in waves, one line each\n\
-  coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
+  coverage              publish README progress and both figures from verified builds\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames";
@@ -58,29 +51,11 @@ fn main() -> ExitCode {
     }
     match command {
         "bootstrap" => result(bootstrap::run(rest)),
-        "unit" if rest.first().map(String::as_str) == Some("scaffold") => {
-            scaffold::entry(&rest[1..])
-        }
-        "unit" if rest.first().map(String::as_str) == Some("flatten") => flatten::entry(&rest[1..]),
-        "unit" => {
-            println!("usage: alchemy unit <scaffold|flatten> [args]");
-            if rest == ["--help"] || rest == ["-h"] {
-                ExitCode::SUCCESS
-            } else {
-                ExitCode::from(2)
-            }
-        }
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
-        "coverage" if rest.first().map(String::as_str) == Some("audit") => result(
-            coverage::audit::run(&compiler::routing::root(), &rest[1..]).map(|line| {
-                println!("{line}");
-            }),
-        ),
         "coverage" => make_target(command, rest),
         "raw" => result(raw::run(rest)),
         "check" => check::entry(rest),
-        "targets" => result(worklist::entry(rest)),
         "land" => result(land::entry(rest)),
         "format" => result(format::run(rest)),
         "overlay" => overlay::entry(rest),
@@ -112,7 +87,7 @@ fn make_target(target: &str, arguments: &[String]) -> ExitCode {
     if arguments == ["--help"] || arguments == ["-h"] {
         if target == "coverage" {
             println!(
-                "usage: alchemy coverage\n       alchemy coverage audit --target TARGET [--output out/...json] [--calibrate --expected LEDGER.json | --inventory]\nRebuilds published coverage, or inventories executable overlay spans."
+                "usage: alchemy coverage\nPublishes README progress and both figures from each game's verified build."
             );
         } else {
             println!("usage: alchemy {target}\nRuns the repository's make {target} contract.");

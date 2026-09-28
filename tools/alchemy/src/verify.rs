@@ -26,8 +26,8 @@ pub const WAVES: &[&[&str]] = &[
         "tooling-index-check",
         "prepare-inputs",
     ],
-    &["build-full", "compare-tla"],
-    &["full-rom-check", "source-build-check", "coverage-check"],
+    &["compare", "compare-tla"],
+    &["coverage-check"],
 ];
 
 const USAGE: &str = "usage: alchemy verify\n\
@@ -108,14 +108,10 @@ pub(crate) fn is_main(root: &Path) -> Result<bool, String> {
     Ok(output.stdout == b"refs/heads/main\n")
 }
 
+/// Main's subject prefix: each game's DONE from its byte-identical build, or
+/// `pending` while `rom.sha1` does not match it.
 pub(crate) fn verified_subject(root: &Path) -> Result<String, String> {
-    let show = |id| -> Result<String, String> {
-        let target = crate::targets::decomp_target(Some(id))?;
-        crate::coverage::proof::verify_source_build(root, target)?;
-        Ok(crate::coverage::progress::measured(root, id)?
-            .map_or("pending".into(), |done| format!("{:.2}%", done.percent())))
-    };
-    Ok(format!("☀️ {} ⚓️ {} –", show("tbs-en")?, show("tla-en")?))
+    crate::coverage::progress::subject(root)
 }
 
 pub(crate) fn valid_subject(message: &str, expected: &str) -> bool {
@@ -175,7 +171,7 @@ fn check_main_tip(root: &Path, executable: &Path, tip: &str) -> Result<(), Strin
         ));
     }
     let coverage = Command::new(executable)
-        .args(["check", "coverage", "--target", "tbs-en", "--check"])
+        .args(["check", "coverage", "--check"])
         .current_dir(root)
         .status()
         .map_err(|error| format!("cannot check outgoing main publication: {error}"))?;
@@ -413,14 +409,8 @@ mod tests {
     fn main_default_gates_override_an_ambient_tla_target() {
         let directory = tempfile::tempdir().unwrap();
         let root = directory.path();
-        std::fs::write(root.join("Makefile"), "build-full coverage full-rom-check check-owners:\n\t@printf '%s\\n' '$(TARGET)'\ncompare-tla:\n\t@printf '%s\\n' tla-en\n").unwrap();
-        for gate in [
-            "build-full",
-            "coverage",
-            "full-rom-check",
-            "check-owners",
-            "compare-tla",
-        ] {
+        std::fs::write(root.join("Makefile"), "build-full coverage:\n\t@printf '%s\\n' '$(TARGET)'\ncompare-tla:\n\t@printf '%s\\n' tla-en\n").unwrap();
+        for gate in ["build-full", "coverage", "compare-tla"] {
             let arguments = make_arguments(Path::new("/unused/alchemy"), &[], gate, true);
             let output = Command::new("make")
                 .args(arguments)
@@ -453,7 +443,7 @@ mod tests {
         assert!(gates.contains("test"));
         let builds = main
             .iter()
-            .position(|wave| wave.contains(&"build-full"))
+            .position(|wave| wave.contains(&"compare"))
             .unwrap();
         let publication = main
             .iter()
@@ -621,8 +611,8 @@ mod tests {
     fn later_gates_mark_finished_gates_old_and_call_this_executable() {
         let arguments = make_arguments(
             Path::new("/repo/alchemy"),
-            &["prepare-inputs", "build-full"],
-            "full-rom-check",
+            &["prepare-inputs", "compare"],
+            "coverage-check",
             false,
         );
         assert_eq!(
@@ -633,8 +623,8 @@ mod tests {
                 "-o",
                 "prepare-inputs",
                 "-o",
-                "build-full",
-                "full-rom-check"
+                "compare",
+                "coverage-check"
             ]
         );
     }

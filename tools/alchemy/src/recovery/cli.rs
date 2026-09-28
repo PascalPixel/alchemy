@@ -146,15 +146,8 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         "extract" => extract(&root, &options).map(|_| 0),
         "adopt" => adopt_owner(&root, &options).map(|_| 0),
         "inspect" if options.asm => disasm(&root, &options).map(|_| 0),
-        "inspect" if options.siblings => crate::siblings::inspect(
-            &root,
-            owner_argument(&options)?,
-            options.near,
-            options.json.as_deref(),
-        )
-        .map(|_| 0),
-        "inspect" if options.near || options.json.is_some() => {
-            Err("--near and --json belong to inspect --siblings".into())
+        "inspect" if options.siblings || options.near || options.json.is_some() => {
+            Err("inspect --siblings read the removed owner inventory".into())
         }
         "inspect" => imports_owner(&root, &options),
         "-h" | "--help" => {

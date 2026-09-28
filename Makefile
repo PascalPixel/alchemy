@@ -39,7 +39,7 @@ compiler-runtime: toolchain-check compiler-source-check
 	    _lshrdi3=gcc/libgcc2.c
 
 .PHONY: help native bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
-.PHONY: compare compare-tla compare-all build-full build-rom full-rom-check source-build-check
+.PHONY: compare compare-tla compare-all build-full build-rom
 .PHONY: precommit prepush verify verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check
 .PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
@@ -53,7 +53,7 @@ help:
 	  'make test            Rust tests, formatting and source policy' \
 	  'make verify          verify source, publication and both ROM compositions' \
 	  'make coverage        update README and both published figures' \
-	  'make progress        report DONE, pending until independently audited' \
+	  'make progress        report DONE from the linker maps of verified builds' \
 	  'make raw             generate private disassembly under out/'
 
 bootstrap:
@@ -85,24 +85,17 @@ build-tools:
 	$(CARGO) build --offline --release --workspace --manifest-path $(TOOLS)/Cargo.toml
 
 compare:
-	$(BUILD) full --target tbs-en
+	$(BUILD) rom --target tbs-en
 	@grep -F ' out/tbs-en/' rom.sha1 | $(SHA1) -
 
 compare-tla:
-	$(BUILD) full --target tla-en
+	$(BUILD) rom --target tla-en
 	@grep -F ' out/tla-en/' rom.sha1 | $(SHA1) -
 
 compare-all: compare compare-tla
 
 build-full build-rom:
-	$(BUILD) full --target $(TARGET)
-
-full-rom-check: build-full
-	$(CHECK) source-build --target $(TARGET)
-
-source-build-check:
-	$(CHECK) source-build --target tbs-en
-	$(CHECK) source-build --target tla-en
+	$(BUILD) rom --target $(TARGET)
 
 # Reading local references does not restore source catalogs or award credit.
 prepare-inputs:
@@ -180,7 +173,6 @@ test-integration: toolchain-check
 test:
 	@$(MAKE) --no-print-directory -j4 rustfmt-check native-format-check publication-tree-check tool-tests
 	$(CHECK) no-asm --self-test
-	$(BUILD) full --self-test
 
 coverage:
 	$(CHECK) coverage --write --publication

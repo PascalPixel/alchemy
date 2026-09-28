@@ -1,0 +1,490 @@
+//! pret's calcrom over the linker's own maps. Every executable byte of a
+//! verified build is an input `text` section the map places; the object that
+//! supplied it says whether it is maintained source under `games/`, a proven
+//! compiler-library member, or disassembly not yet in C. Nothing else is read:
+//! no catalog, no receipt and no guess at what is code.
+use super::progress::GameDone;
+use crate::targets::DecompTarget;
+use sha1::{Digest, Sha1};
+use std::path::Path;
+
+/// One game's executable bytes by the object that supplied them.
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub(crate) struct Measurement {
+    /// DONE: maintained C and assembly under `games/`, the library in game assembly.
+    pub done: GameDone,
+    /// Compiler-library members, counted within `done.game_asm`.
+    pub library: i64,
+    /// Main-image disassembly under `recon/<game>/raw`, not yet C.
+    pub raw: i64,
+    /// Code overlays still linked from their listings, not yet C.
+    pub listings: i64,
+    /// Any other object with text, not yet C, shown so it is never hidden.
+    pub other: Vec<(String, i64)>,
+}
+
+/// Where a text section's object came from.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Origin {
+    CommonC,
+    CommonAsm,
+    GameC,
+    GameAsm,
+    Library,
+    Raw,
+    Listing,
+    Other,
+}
+
+/// The language of the maintained source an object under `games/` was built
+/// from, as `build rom` chooses it: C first, then assembly.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Language {
+    C,
+    Assembly,
+}
+
+/// Every input section the map places: name, size and object path. The
+/// discarded sections listed before the memory map are skipped.
+fn sections(map: &str) -> Vec<(&str, i64, &str)> {
+    let mut found = Vec::new();
+    let mut discarded = false;
+    let mut lines = map.lines().peekable();
+    while let Some(line) = lines.next() {
+        match line {
+            "Discarded input sections" => discarded = true,
+            "Memory Configuration" | "Linker script and memory map" => discarded = false,
+            _ => {}
+        }
+        let Some(rest) = line.strip_prefix(" .") else {
+            continue;
+        };
+        let name_end = rest.find(char::is_whitespace).unwrap_or(rest.len());
+        let name = &line[1..name_end + 2];
+        let placed = if name_end == rest.len() {
+            // A long section name stands alone; its placement follows.
+            match lines.peek().and_then(|next| placement(next)) {
+                Some(placed) => {
+                    lines.next();
+                    placed
+                }
+                None => continue,
+            }
+        } else {
+            match placement(&rest[name_end..]) {
+                Some(placed) => placed,
+                None => continue,
+            }
+        };
+        if !discarded {
+            found.push((name, placed.0, placed.1));
+        }
+    }
+    found
+}
+
+/// `  0xADDRESS  0xSIZE  object`, as the map places an input section.
+fn placement(text: &str) -> Option<(i64, &str)> {
+    let hex = |field: &str| {
+        field
+            .strip_prefix("0x")
+            .and_then(|digits| i64::from_str_radix(digits, 16).ok())
+    };
+    let text = text.trim_start();
+    let (address, rest) = text.split_once(char::is_whitespace)?;
+    hex(address)?;
+    let rest = rest.trim_start();
+    let (size, object) = rest.split_once(char::is_whitespace)?;
+    let object = object.trim();
+    (!object.is_empty()).then_some(())?;
+    Some((hex(size)?, object))
+}
+
+/// Classify one object by its path alone. `output` is the build directory,
+/// such as `out/tbs-en`; `source` finds the language of a `games/` object.
+fn origin(
+    object: &str,
+    output: &str,
+    overlay: bool,
+    source: &dyn Fn(&str) -> Option<Language>,
+) -> Result<Origin, String> {
+    if object.contains("libgcc.a(") {
+        return Ok(Origin::Library);
+    }
+    let relative = |marker: &str| {
+        let marker = format!("{output}/{marker}/");
+        object
+            .rfind(&marker)
+            .map(|index| &object[index + marker.len()..])
+    };
+    let (relative, listing_directory) = match relative("obj") {
+        Some(path) => (path, false),
+        None if overlay => match relative("overlays") {
+            Some(path) => (path.strip_prefix("obj/").unwrap_or(path), true),
+            None => return Ok(Origin::Other),
+        },
+        None => return Ok(Origin::Other),
+    };
+    if relative.starts_with("games/") {
+        let stem = relative
+            .strip_suffix(".o")
+            .ok_or_else(|| format!("{relative}: not an object"))?;
+        let language =
+            source(stem).ok_or_else(|| format!("{relative}: no maintained source; rebuild"))?;
+        let common = relative.starts_with("games/COMMON/");
+        return Ok(match (common, language) {
+            (true, Language::C) => Origin::CommonC,
+            (true, Language::Assembly) => Origin::CommonAsm,
+            (false, Language::C) => Origin::GameC,
+            (false, Language::Assembly) => Origin::GameAsm,
+        });
+    }
+    if listing_directory && is_listing(relative) {
+        return Ok(Origin::Listing);
+    }
+    if relative
+        .strip_prefix("recon/")
+        .and_then(|rest| rest.split_once('/'))
+        .is_some_and(|(_, rest)| rest.starts_with("raw/"))
+    {
+        return Ok(Origin::Raw);
+    }
+    Ok(Origin::Other)
+}
+
+/// `resource_XXX_overlay.o`, an overlay assembled from its listing.
+fn is_listing(name: &str) -> bool {
+    name.strip_prefix("resource_")
+        .and_then(|rest| rest.strip_suffix("_overlay.o"))
+        .is_some_and(|id| !id.is_empty() && id.bytes().all(|byte| byte.is_ascii_hexdigit()))
+}
+
+/// Add one map's text sections to `measurement`.
+fn tally(
+    measurement: &mut Measurement,
+    map: &str,
+    output: &str,
+    overlay: bool,
+    source: &dyn Fn(&str) -> Option<Language>,
+) -> Result<(), String> {
+    for (name, size, object) in sections(map) {
+        if size <= 0 || !name.contains("text") {
+            continue;
+        }
+        let done = &mut measurement.done;
+        match origin(object, output, overlay, source)? {
+            Origin::CommonC => done.common_c += size,
+            Origin::CommonAsm => done.common_asm += size,
+            Origin::GameC => done.game_c += size,
+            Origin::GameAsm => done.game_asm += size,
+            Origin::Library => {
+                done.game_asm += size;
+                measurement.library += size;
+            }
+            Origin::Raw => measurement.raw += size,
+            Origin::Listing => measurement.listings += size,
+            Origin::Other => match measurement
+                .other
+                .iter_mut()
+                .find(|(path, _)| path == object)
+            {
+                Some((_, bytes)) => *bytes += size,
+                None => measurement.other.push((object.to_owned(), size)),
+            },
+        }
+        done.executable += size;
+    }
+    Ok(())
+}
+
+/// The language `build rom` compiled a `games/` object from.
+fn maintained_source(root: &Path, stem: &str) -> Option<Language> {
+    [
+        ("C", Language::C),
+        ("c", Language::C),
+        ("S", Language::Assembly),
+        ("s", Language::Assembly),
+    ]
+    .into_iter()
+    .find(|(extension, _)| root.join(format!("{stem}.{extension}")).is_file())
+    .map(|(_, language)| language)
+}
+
+/// The image `build rom` writes for a target, as `rom.sha1` names it.
+pub(crate) fn image(target: DecompTarget) -> String {
+    format!("{}/{}.gba", target.output_dir, target.id)
+}
+
+/// Whether the target's linked image is byte-identical to its reference:
+/// `Ok(Err(reason))` while it is missing or differs.
+pub(crate) fn verified(root: &Path, target: DecompTarget) -> Result<Result<(), String>, String> {
+    let name = image(target);
+    let digests = std::fs::read_to_string(root.join("rom.sha1"))
+        .map_err(|error| format!("rom.sha1: {error}"))?;
+    let expected = digests
+        .lines()
+        .filter_map(|line| line.split_once(char::is_whitespace))
+        .find(|(_, path)| path.trim().trim_start_matches('*') == name)
+        .map(|(digest, _)| digest.to_ascii_lowercase())
+        .ok_or_else(|| format!("rom.sha1 names no {name}"))?;
+    let bytes = match std::fs::read(root.join(&name)) {
+        Ok(bytes) => bytes,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            return Ok(Err(format!("pending a build of {name}")))
+        }
+        Err(error) => return Err(format!("{name}: {error}")),
+    };
+    let actual = Sha1::digest(&bytes)
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect::<String>();
+    Ok(if actual == expected {
+        Ok(())
+    } else {
+        Err(format!("pending: {name} differs from rom.sha1"))
+    })
+}
+
+/// A game's measurement from its verified build, or why it is pending.
+pub(crate) fn measure(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<Result<Measurement, String>, String> {
+    if let Err(reason) = verified(root, target)? {
+        return Ok(Err(reason));
+    }
+    let output = target.output_dir;
+    let image = root.join(image(target));
+    let written = |path: &Path| {
+        std::fs::metadata(path)
+            .and_then(|metadata| metadata.modified())
+            .map_err(|error| format!("{}: {error}", path.display()))
+    };
+    let linked = written(&image)?;
+    let mut maps = vec![(root.join(format!("{output}/{}.map", target.id)), false)];
+    let overlays = root.join(output).join("overlays");
+    if overlays.is_dir() {
+        let mut names = std::fs::read_dir(&overlays)
+            .map_err(|error| format!("{}: {error}", overlays.display()))?
+            .filter_map(|entry| entry.ok())
+            .map(|entry| entry.file_name().to_string_lossy().into_owned())
+            .filter(|name| name.starts_with("resource_") && name.ends_with(".map"))
+            .collect::<Vec<_>>();
+        names.sort();
+        maps.extend(names.into_iter().map(|name| (overlays.join(name), true)));
+    }
+    let source = |stem: &str| maintained_source(root, stem);
+    let mut measurement = Measurement::default();
+    for (path, overlay) in maps {
+        // A link that failed after writing its map leaves an older image.
+        if written(&path)? > linked {
+            return Ok(Err(format!(
+                "pending: {} is newer than its verified image; rebuild",
+                path.strip_prefix(root).unwrap_or(&path).display()
+            )));
+        }
+        let text = std::fs::read_to_string(&path)
+            .map_err(|error| format!("{}: {error}", path.display()))?;
+        tally(&mut measurement, &text, output, overlay, &source)?;
+    }
+    for (object, bytes) in &measurement.other {
+        eprintln!(
+            "{}: {bytes} text bytes from unclassified {object}",
+            target.id
+        );
+    }
+    Ok(Ok(measurement))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    const MAIN: &str = "\
+Archive member included to satisfy reference by file (symbol)
+
+/r/tools/out/compiler-runtime/libgcc.a(_call_via_rX.o)
+                              /r/out/tbs-en/obj/games/G/SRC/A.o (_call_via_r3)
+
+Discarded input sections
+
+ .text          0x0000000000000000       0x40 /r/out/tbs-en/obj/games/G/SRC/A.o
+ .ARM.attributes
+                0x0000000000000000       0x20 /r/out/tbs-en/obj/recon/tbs/raw/08000000.o
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+
+Linker script and memory map
+
+.text           0x0000000008000000     0x1000
+ */games/G/SRC/A.o(.text .rodata)
+ .text          0x0000000008000000      0x100 /r/out/tbs-en/obj/games/G/SRC/A.o
+                0x0000000008000000                A_Main
+ .rodata        0x0000000008000100       0x80 /r/out/tbs-en/obj/games/G/SRC/A.o
+ .text          0x0000000008000180       0x20 /r/out/tbs-en/obj/games/G/SRC/B.o
+ .text          0x00000000080001a0       0x10 /r/out/tbs-en/obj/games/COMMON/SRC/C.o
+ .text          0x00000000080001b0        0x8 /r/out/tbs-en/obj/games/COMMON/SRC/D.o
+ .text          0x00000000080001b8        0x0 /r/out/tbs-en/obj/games/G/SRC/EMPTY.o
+ *fill*         0x00000000080001b8        0x8
+ .text          0x00000000080001c0      0x200 /r/out/tbs-en/obj/recon/tbs/raw/080001c0.o
+ .text.unlikely
+                0x00000000080003c0       0x40 /r/out/tbs-en/obj/recon/tbs/raw/080003c0.o
+ .text          0x0000000008000400       0x3c /r/tools/out/compiler-runtime/libgcc.a(_call_via_rX.o)
+ .unidentified.08000440
+                0x0000000008000440      0x100 /r/out/tbs-en/obj/recon/tbs/unidentified.o
+ .text          0x0000000008000540        0x4 /r/out/tbs-en/obj/recon/tbs/stray.o
+ .data          0x0000000003000000       0x10 /r/out/tbs-en/obj/games/G/SRC/A.o
+";
+
+    const OVERLAY: &str = "\
+Linker script and memory map
+
+.text           0x0000000002000000      0x652
+ *(.text .text.*)
+ .text          0x0000000002000000      0x600 /r/out/tbs-en/overlays/resource_36f_overlay.o
+ .text          0x0000000002000600       0x30 /r/out/tbs-en/overlays/obj/games/G/SRC/FIELD/F.o
+ .text          0x0000000002000630       0x22 /r/tools/out/compiler-runtime/libgcc.a(_lshrdi3.o)
+";
+
+    fn language(stem: &str) -> Option<Language> {
+        match stem {
+            "games/G/SRC/A" | "games/COMMON/SRC/C" | "games/G/SRC/FIELD/F" => Some(Language::C),
+            "games/G/SRC/B" | "games/COMMON/SRC/D" | "games/G/SRC/EMPTY" => {
+                Some(Language::Assembly)
+            }
+            _ => None,
+        }
+    }
+
+    #[test]
+    fn placed_text_is_counted_by_its_object_and_nothing_else() {
+        let mut measurement = Measurement::default();
+        tally(&mut measurement, MAIN, "out/tbs-en", false, &language).unwrap();
+        tally(&mut measurement, OVERLAY, "out/tbs-en", true, &language).unwrap();
+        assert_eq!(
+            measurement,
+            Measurement {
+                done: GameDone {
+                    common_c: 0x10,
+                    common_asm: 0x8,
+                    game_c: 0x100 + 0x30,
+                    game_asm: 0x20 + 0x3c + 0x22,
+                    executable: 0x100
+                        + 0x20
+                        + 0x10
+                        + 0x8
+                        + 0x200
+                        + 0x40
+                        + 0x3c
+                        + 0x4
+                        + 0x600
+                        + 0x30
+                        + 0x22,
+                },
+                library: 0x3c + 0x22,
+                raw: 0x240,
+                listings: 0x600,
+                other: vec![("/r/out/tbs-en/obj/recon/tbs/stray.o".into(), 4)],
+            }
+        );
+    }
+
+    #[test]
+    fn listings_count_only_in_overlay_maps_and_sources_must_exist() {
+        let source = |_: &str| None;
+        let listing = "/r/out/tbs-en/overlays/resource_3a0_overlay.o";
+        assert_eq!(
+            origin(listing, "out/tbs-en", true, &source).unwrap(),
+            Origin::Listing
+        );
+        assert_eq!(
+            origin(listing, "out/tbs-en", false, &source).unwrap(),
+            Origin::Other
+        );
+        assert_eq!(
+            origin(
+                "/r/out/tbs-en/overlays/resource_x_overlay.o",
+                "out/tbs-en",
+                true,
+                &source
+            )
+            .unwrap(),
+            Origin::Other
+        );
+        assert!(origin(
+            "/r/out/tbs-en/obj/games/G/SRC/GONE.o",
+            "out/tbs-en",
+            false,
+            &source
+        )
+        .unwrap_err()
+        .contains("no maintained source"));
+        // Another target's objects are never this target's source.
+        assert_eq!(
+            origin(
+                "/r/out/tla-en/obj/games/G/SRC/A.o",
+                "out/tbs-en",
+                false,
+                &language
+            )
+            .unwrap(),
+            Origin::Other
+        );
+    }
+
+    #[test]
+    fn a_game_is_measured_only_from_its_verified_image() {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        let target = crate::targets::decomp_target(Some("tla-en")).unwrap();
+        let image = b"linked image";
+        let digest = Sha1::digest(image)
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>();
+        assert!(verified(root, target).is_err());
+        std::fs::write(
+            root.join("rom.sha1"),
+            format!("{digest}  out/tla-en/tla-en.gba\n"),
+        )
+        .unwrap();
+        assert!(measure(root, target).unwrap().is_err());
+        let output = root.join("out/tla-en");
+        std::fs::create_dir_all(output.join("overlays")).unwrap();
+        std::fs::create_dir_all(root.join("games/G/SRC")).unwrap();
+        std::fs::write(root.join("games/G/SRC/A.C"), "void A(void) {}\n").unwrap();
+        let main = "Linker script and memory map\n \
+             .text 0x08000000 0x30 /x/out/tla-en/obj/games/G/SRC/A.o\n \
+             .text 0x08000030 0x10 /x/out/tla-en/obj/recon/tla/raw/08000030.o\n";
+        let overlay = "Linker script and memory map\n \
+             .text 0x02000000 0x40 /x/out/tla-en/overlays/resource_001_overlay.o\n";
+        std::fs::write(output.join("tla-en.map"), main).unwrap();
+        std::fs::write(output.join("overlays/resource_001.map"), overlay).unwrap();
+        std::fs::write(output.join("tla-en.gba"), b"another image").unwrap();
+        assert_eq!(
+            measure(root, target).unwrap().unwrap_err(),
+            "pending: out/tla-en/tla-en.gba differs from rom.sha1"
+        );
+        std::fs::write(output.join("tla-en.gba"), image).unwrap();
+        let measured = measure(root, target).unwrap().unwrap();
+        assert_eq!(
+            measured.done,
+            GameDone {
+                game_c: 0x30,
+                executable: 0x80,
+                ..GameDone::default()
+            }
+        );
+        assert_eq!((measured.raw, measured.listings), (0x10, 0x40));
+        assert_eq!(measured.done.percent(), 37.5);
+        // A map rewritten by a link that did not produce a new image.
+        std::thread::sleep(std::time::Duration::from_millis(20));
+        std::fs::write(output.join("tla-en.map"), main).unwrap();
+        assert!(measure(root, target)
+            .unwrap()
+            .unwrap_err()
+            .contains("newer than its verified image"));
+    }
+}

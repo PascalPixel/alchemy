@@ -6,20 +6,16 @@ enum ValeMessage {
     MSG_MT_ALEPH_WAS_INACTIVE = 0x1122
 };
 
-extern u8 Data_02008cb4[];
-extern u8 Data_03001ebc[];
+extern u8 HaidiaFunka_ActionScript[];
+/* The scene's four tables, in the overlay's read-only data. */
+extern u8 HaidiaFunka_SceneTable0[];
+extern u8 HaidiaFunka_SceneTable1[];
+extern u8 HaidiaFunka_SceneTable2[];
+extern u8 HaidiaFunka_SceneTable3[];
 
-void Func_02000cbc();
-void Func_02000cc0();
-void Func_02000d2c();
-void Func_02000d3c();
-void Func_02000d5a();
-void Func_02000e7e();
-void Func_0200110a();
-void Func_02001126();
-void Func_02001182();
-void Func_02001528();
-void Func_02001612();
+void BattleFx_SetBlock30Values12Zero();
+void BattleFx_StartBufferBlend();
+void Object_RefreshSelectorById();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -54,14 +50,14 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)Data_03001ebc;
+    u8 *work = (u8 *)gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
 
 u8 *ConditionalSceneSetup_GetScriptData(void)
 {
-    return (u8 *)0x02008cf0;
+    return HaidiaFunka_SceneTable0;
 }
 
 s32 ConditionalSceneSetup_GetInitialState(void)
@@ -71,17 +67,17 @@ s32 ConditionalSceneSetup_GetInitialState(void)
 
 u8 *ConditionalSceneSetup_GetMessageData(void)
 {
-    return (u8 *)0x02008d38;
+    return HaidiaFunka_SceneTable1;
 }
 
 u8 *ConditionalSceneSetup_GetActorData(void)
 {
-    return (u8 *)0x02008d44;
+    return HaidiaFunka_SceneTable2;
 }
 
 u8 *ConditionalSceneSetup_GetEffectData(void)
 {
-    return (u8 *)0x02008e94;
+    return HaidiaFunka_SceneTable3;
 }
 
 s32 ConditionalSceneSetup_InitForScene15(void)
@@ -97,7 +93,7 @@ void RunEventScript01(void)
     u32 i;
     s32 record;
     u8 *work;
-    s32 base5_2008cb4;
+    s32 action_script;
 
     Event_Begin();
     Actor_SetAnimation(14, 0);
@@ -110,13 +106,13 @@ void RunEventScript01(void)
     Actor_FaceDirection(11, 0xa000, 0);
     Actor_WalkToAndWait(12, 0x100, 0x1f4);
     Actor_FaceDirection(12, 0xa000, 0);
-    Call2(Func_02000cc0, 0x10003, 0x10006);
-    Func_02000cbc();
+    Call2(BattleFx_StartBufferBlend, 0x10003, 0x10006);
+    BattleFx_SetBlock30Values12Zero();
     Task_Wait(60);
     Camera_MoveTo(0x1000000, -1, 0x2640000, 0);
     Camera_WaitForMove();
     Map_Redraw();
-    work = *(u8 **)Data_03001ebc;
+    work = (u8 *)gEventWork;
     *(s32 *)(work + 0x1c0) = 0;
     *(s32 *)(work + 0x1c8) = 32;
     Event_OpenScreen();
@@ -124,14 +120,14 @@ void RunEventScript01(void)
     Camera_MoveTo(0x1000000, -1, 0x1f40000, 1);
     Event_Wait(20);
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
-    Func_02000d2c();
+    BattleFx_SetBlock30Values12Zero();
     Audio_PlayCue(145);
     Event_Wait(30);
-    Func_02000d3c();
+    BattleFx_SetBlock30Values12Zero();
     Audio_PlayCue(145);
     Camera_WaitForMove();
     Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
-    Func_02000d5a();
+    BattleFx_SetBlock30Values12Zero();
     Audio_PlayCue(145);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
     MapRender_WaitForValues();
@@ -167,7 +163,7 @@ void RunEventScript01(void)
     Event_ShowMessage(10, 0);
     Event_Wait(60);
     Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
-    Func_02000e7e();
+    BattleFx_SetBlock30Values12Zero();
     Audio_PlayCue(145);
     Event_Wait(60);
     Actor_FaceEachOther(8, 9, 0);
@@ -257,11 +253,11 @@ void RunEventScript01(void)
     Camera_WaitForMove();
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
-    Func_0200110a(1);
+    Object_RefreshSelectorById(1);
     Event_Wait(50);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
     Actor_SetAnimation(ACTOR_GERALD, 3);
-    Func_02001126(1);
+    Object_RefreshSelectorById(1);
     Event_Wait(60);
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(0xd60000, -1, 0x1d80000, 1);
@@ -270,7 +266,7 @@ void RunEventScript01(void)
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 0x2008c00);
     Event_Wait(30);
     Actor_EnableActionCallback(ACTOR_GERALD, 0x2008c64);
-    Func_02001182(1);
+    Object_RefreshSelectorById(1);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0, 0);
     Camera_WaitForMove();
@@ -377,19 +373,19 @@ void RunEventScript01(void)
     Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
     Event_Wait(40);
     Actor_WalkTo(10, 255, 0x186);
-    base5_2008cb4 = (s32)Data_02008cb4;
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, base5_2008cb4);
+    action_script = (s32)HaidiaFunka_ActionScript;
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, action_script);
     Event_Wait(40);
-    Actor_EnableActionCallback(ACTOR_GERALD, base5_2008cb4);
-    Func_02001528(1);
+    Actor_EnableActionCallback(ACTOR_GERALD, action_script);
+    Object_RefreshSelectorById(1);
     Actor_ShowEmote(11, 0x102, 0);
     Actor_ShowEmote(12, 0x102, 0);
     Event_Wait(40);
     Work_SetValuesIfNonNegative(0x20000, 0x30000, 0x10000);
-    Func_02001612();
+    BattleFx_SetBlock30Values12Zero();
     Audio_PlayCue(145);
     Event_Wait(30);
-    work = *(u8 **)Data_03001ebc;
+    work = (u8 *)gEventWork;
     *(s32 *)(work + 0x1c0) = 0;
     *(s32 *)(work + 0x1c8) = 64;
     Event_CloseScreen();

@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801314c, 0x0801314c
-	.set sub_08013560, 0x08013560
-	.set sub_08014644, 0x08014644
-	.set sub_080d2c98, 0x080d2c98
-	.set sub_080dbb40, 0x080dbb40
-	.set sub_080e137c, 0x080e137c
-	.set sub_080e1650, 0x080e1650
-	.set sub_080ebf68, 0x080ebf68
 	.global Func_080dc7e8
 	.thumb_func
 Func_080dc7e8:
@@ -48,7 +40,7 @@ Func_080dc7e8:
 	cmp	r3, #0
 	beq.n	.L_080dc834
 	adds	r0, r5, #0
-	bl	sub_080ebf68
+	bl	Func_080ebf68
 .L_080dc834:
 	subs	r7, #1
 	adds	r5, #72
@@ -75,8 +67,8 @@ Func_080dc7e8:
 	asrs	r3, r3, #24
 	cmp	r3, #0
 	bne.n	.L_080dc942
-	bl	sub_080e137c
-	bl	sub_080e1650
+	bl	0x080e137c
+	bl	0x080e1650
 	movs	r3, #197
 	lsls	r3, r3, #1
 	add	r3, fp
@@ -105,7 +97,7 @@ Func_080dc7e8:
 .L_080dc89e:
 	movs	r0, #1
 	adds	r7, #1
-	bl	sub_08013560
+	bl	0x08013560
 	cmp	r7, #89
 	bgt.n	.L_080dc8b2
 	movs	r3, #0
@@ -119,9 +111,9 @@ Func_080dc7e8:
 	add	r2, fp
 	movs	r3, #0
 	strb	r3, [r2, #0]
-	bl	sub_080dbb40
+	bl	0x080dbb40
 	ldr	r0, [pc, #140]
-	bl	sub_08014644
+	bl	Func_08014644
 	mov	r2, r8
 	ldr	r3, [r2, #68]
 	mov	r0, r9
@@ -181,9 +173,9 @@ Func_080dc7e8:
 	movs	r3, #1
 	strb	r3, [r2, #0]
 .L_080dc938:
-	bl	sub_080d2c98
+	bl	0x080d2c98
 	movs	r0, #224
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 .L_080dc942:
 	add	sp, #4
 	pop	{r3, r5, r6, r7}

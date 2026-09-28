@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08077008, 0x08077008
-	.set sub_080770c0, 0x080770c0
-	.set sub_08077158, 0x08077158
-	.set sub_08077290, 0x08077290
-	.set sub_08077300, 0x08077300
-	.set sub_0808a5d0, 0x0808a5d0
 	.global SaveState_BuildSummaryHeader
 	.global Func_0801f818
 	.thumb_func
@@ -18,7 +12,7 @@ Func_0801f818:
 	ldr	r5, [pc, #356]
 	sub	sp, #28
 	mov	r8, r0
-	bl	sub_08077300
+	bl	0x08077300
 	ldr	r2, [pc, #352]
 	ldr	r3, [pc, #352]
 	str	r0, [r2, #0]
@@ -38,7 +32,7 @@ Func_0801f818:
 	lsls	r1, r1, #1
 	adds	r2, r2, r1
 	ldr	r0, [r2, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r7, r5, #0
 	adds	r6, r0, #0
 	adds	r1, r5, #0
@@ -67,7 +61,7 @@ Func_0801f818:
 	adds	r3, r5, r2
 	movs	r2, #0
 	ldrsh	r1, [r3, r2]
-	bl	sub_0808a5d0
+	bl	BattleFx_FindConditionResourceFar
 	strh	r0, [r7, #30]
 	ldr	r0, [pc, #268]
 	adds	r3, r6, r0
@@ -76,29 +70,29 @@ Func_0801f818:
 	ldr	r3, [r5, #16]
 	movs	r0, #0
 	str	r3, [r7, #36]
-	bl	sub_08077290
+	bl	Party_SumDjinnCountsFar
 	adds	r3, r7, #0
 	adds	r3, #40
 	strb	r0, [r3, #0]
 	movs	r0, #1
-	bl	sub_08077290
+	bl	Party_SumDjinnCountsFar
 	adds	r3, r7, #0
 	adds	r3, #41
 	strb	r0, [r3, #0]
 	movs	r0, #2
-	bl	sub_08077290
+	bl	Party_SumDjinnCountsFar
 	adds	r3, r7, #0
 	adds	r3, #42
 	strb	r0, [r3, #0]
 	movs	r0, #3
-	bl	sub_08077290
+	bl	Party_SumDjinnCountsFar
 	adds	r3, r7, #0
 	adds	r3, #43
 	mov	r6, sp
 	strb	r0, [r3, #0]
 	movs	r5, #0
 	adds	r0, r6, #0
-	bl	sub_08077158
+	bl	Party_ListActiveOwnersFar
 	ldrh	r3, [r6, r5]
 	cmp	r3, #255
 	beq.n	.L_0801f8f8
@@ -151,7 +145,7 @@ Func_0801f818:
 	adds	r6, r3, #0
 .L_0801f936:
 	adds	r0, r5, #0
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0801f946
 	ldrb	r3, [r6, #0]
@@ -162,7 +156,7 @@ Func_0801f818:
 	cmp	r5, #127
 	ble.n	.L_0801f936
 	movs	r0, #32
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	negs	r3, r0
 	orrs	r3, r0
 	adds	r2, r7, #0

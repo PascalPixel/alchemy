@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800231c, 0x0800231c
-	.set sub_08015010, 0x08015010
-	.set sub_08015080, 0x08015080
 	.global Unnamed_080f731c
 	.global Func_080f731c
 	.thumb_func
@@ -74,13 +71,13 @@ Func_080f731c:
 	adds	r5, r6, #0
 	muls	r5, r3
 	adds	r0, r5, #0
-	bl	sub_0800231c
+	bl	Trig_Cos
 	lsls	r3, r0, #1
 	adds	r3, r3, r0
 	lsrs	r3, r3, #15
 	strh	r3, [r7, #0]
 	adds	r0, r5, #0
-	bl	sub_0800231c
+	bl	Trig_Cos
 	movs	r2, #110
 	subs	r2, r2, r6
 	movs	r3, #155
@@ -131,7 +128,7 @@ Func_080f731c:
 	movs	r2, #12
 	movs	r3, #4
 	movs	r0, #18
-	bl	sub_08015010
+	bl	UiWindow_CreateFar
 	ldr	r6, [pc, #56]
 	ldr	r5, [pc, #56]
 	adds	r1, r0, #0
@@ -141,12 +138,12 @@ Func_080f731c:
 	movs	r2, #0
 	movs	r3, #8
 	subs	r5, #1
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r1, [r6, #0]
 	adds	r0, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	add	sp, #4
 	pop	{r3, r5}
 	mov	r8, r3

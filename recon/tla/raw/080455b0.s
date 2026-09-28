@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801314c, 0x0801314c
-	.set sub_08013164, 0x08013164
-	.set sub_08013300, 0x08013300
-	.set sub_080143f8, 0x080143f8
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_08014d78, 0x08014d78
-	.set sub_0801591c, 0x0801591c
-	.set sub_08039260, 0x08039260
-	.set sub_08042188, 0x08042188
 	.global Func_080455b0
 	.thumb_func
 Func_080455b0:
@@ -20,13 +11,13 @@ Func_080455b0:
 	movs	r2, #6
 	movs	r3, #4
 	movs	r0, #0
-	bl	sub_08039260
+	bl	0x08039260
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	ldr	r0, [pc, #12]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	adds	r0, r5, #0
 	add	sp, #4
 	pop	{r5, pc}
@@ -41,10 +32,10 @@ Func_080455b0:
 	mov	r8, r0
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	adds	r6, r0, #0
 	ldr	r0, [pc, #52]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	movs	r3, #192
 	lsls	r3, r3, #3
 	adds	r3, #4
@@ -54,13 +45,13 @@ Func_080455b0:
 	adds	r1, r6, #0
 	adds	r0, r0, r3
 	str	r0, [r2, #0]
-	bl	sub_0801591c
+	bl	0x0801591c
 	adds	r1, r6, #0
 	mov	r0, r8
-	bl	sub_080143f8
+	bl	Func_080143f8
 	adds	r5, r0, #0
 	movs	r0, #68
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	adds	r0, r5, #0
 	pop	{r3}
 	mov	r8, r3
@@ -79,10 +70,10 @@ Func_080455b0:
 	adds	r7, r0, #0
 	movs	r0, #68
 	mov	r8, r2
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	adds	r6, r0, #0
 	ldr	r0, [pc, #160]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	movs	r3, #192
 	lsls	r3, r3, #3
 	adds	r3, #4
@@ -92,10 +83,10 @@ Func_080455b0:
 	adds	r1, r6, #0
 	adds	r0, r0, r3
 	str	r0, [r2, #0]
-	bl	sub_0801591c
+	bl	0x0801591c
 	movs	r0, #128
 	lsls	r0, r0, #3
-	bl	sub_08014d78
+	bl	Func_08014d78
 	movs	r2, #0
 	mov	lr, r0
 	mov	r5, lr
@@ -153,9 +144,9 @@ Func_080455b0:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	mov	r0, lr
-	bl	sub_08013164
+	bl	Func_08013164
 	movs	r0, #68
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5

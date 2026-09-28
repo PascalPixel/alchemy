@@ -8,7 +8,6 @@
 .syntax unified
 .text
 	.arm
-	.set AlchemyLoadAddress, 0x080f0008
 	.global SentouKouka_SekiWa
 SentouKouka_SekiWa:
 	smull	ip, r0, r1, r0

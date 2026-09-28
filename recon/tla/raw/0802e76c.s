@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08021918, 0x08021918
-	.set sub_0802296c, 0x0802296c
 	.global Func_0802e76c
 	.thumb_func
 Func_0802e76c:
@@ -14,7 +12,7 @@ Func_0802e76c:
 	lsls	r3, r3, #18
 	adds	r0, r7, #0
 	ldr	r6, [r3, #16]
-	bl	sub_08021918
+	bl	Func_08021918
 	movs	r3, #3
 	ands	r3, r5
 	lsls	r3, r3, #2
@@ -26,7 +24,7 @@ Func_0802e76c:
 	ldr	r0, [r6, r3]
 	subs	r5, #1
 	strh	r7, [r0, #0]
-	bl	sub_0802296c
+	bl	0x0802296c
 	adds	r6, #56
 	cmp	r5, #0
 	bge.n	.L_0802e78e

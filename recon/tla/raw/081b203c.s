@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08001f7c, 0x08001f7c
-	.set sub_08001f9c, 0x08001f9c
-	.set sub_08013300, 0x08013300
 	.global Func_081b203c
 	.thumb_func
 Func_081b203c:
@@ -112,14 +109,14 @@ Func_081b203c:
 	ldr	r1, [pc, #64]
 	lsls	r2, r2, #8
 	adds	r0, r4, #0
-	bl	sub_08001f9c
+	bl	ColorBuffer_HalveNonzero
 	b.n	.L_081b211a
 .L_081b210e:
 	movs	r2, #128
 	ldr	r1, [pc, #48]
 	lsls	r2, r2, #8
 	adds	r0, r4, #0
-	bl	sub_08001f7c
+	bl	ColorBuffer_ScaleNonzeroThreeQuarters
 .L_081b211a:
 	movs	r3, #240
 	lsls	r3, r3, #7
@@ -240,7 +237,7 @@ Func_081b203c:
 	lsls	r1, r1, #19
 	sub	sp, #128
 	mov	r8, r1
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	movs	r3, #128
 	movs	r2, #132
 	lsls	r3, r3, #19

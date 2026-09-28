@@ -1,32 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002064, 0x08002064
-	.set sub_0801314c, 0x0801314c
-	.set sub_08013560, 0x08013560
-	.set sub_08013b30, 0x08013b30
-	.set sub_080145a8, 0x080145a8
-	.set sub_08014644, 0x08014644
-	.set sub_08014d00, 0x08014d00
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_08016d18, 0x08016d18
-	.set sub_08039260, 0x08039260
-	.set sub_0803939c, 0x0803939c
-	.set sub_08039418, 0x08039418
-	.set sub_080409a4, 0x080409a4
-	.set sub_080409dc, 0x080409dc
-	.set sub_080409f0, 0x080409f0
-	.set sub_08041c54, 0x08041c54
-	.set sub_08041fa4, 0x08041fa4
-	.set sub_08042188, 0x08042188
-	.set sub_08042244, 0x08042244
-	.set sub_08042314, 0x08042314
-	.set sub_08044460, 0x08044460
-	.set sub_080ad020, 0x080ad020
-	.set sub_080c8268, 0x080c8268
-	.set sub_08108030, 0x08108030
-	.set sub_08108040, 0x08108040
-	.set sub_08108048, 0x08108048
-	.set sub_081c0010, 0x081c0010
 	.global Func_08040a48
 	.thumb_func
 Func_08040a48:
@@ -51,16 +24,16 @@ Func_08040a48:
 	ldr	r3, [r3, #0]
 	mov	sl, fp
 	str	r3, [r2, #0]
-	bl	sub_080409a4
+	bl	0x080409a4
 	movs	r3, #192
 	lsls	r3, r3, #18
 	adds	r3, #208
 	ldr	r3, [r3, #0]
 	str	r3, [sp, #4]
-	bl	sub_080409f0
+	bl	0x080409f0
 	adds	r7, r0, #0
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 .L_08040a8c:
 	mov	r2, r9
 	cmp	r2, #0
@@ -70,17 +43,17 @@ Func_08040a48:
 	movs	r1, #4
 	adds	r0, #4
 	mov	r9, r3
-	bl	sub_08002064
+	bl	0x08002064
 	mov	r4, sl
 	mov	r8, r0
 	ldr	r0, [r4, #12]
 	movs	r1, #5
 	adds	r0, #5
-	bl	sub_08002064
+	bl	0x08002064
 	mov	r1, sl
 	str	r0, [r1, #12]
 	adds	r0, r7, #0
-	bl	sub_08039418
+	bl	Func_08039418
 	movs	r6, #2
 	movs	r5, #2
 .L_08040abc:
@@ -90,7 +63,7 @@ Func_08040a48:
 	movs	r3, #14
 	subs	r5, #1
 	str	r6, [sp, #0]
-	bl	sub_08041c54
+	bl	Func_08041c54
 	adds	r6, #2
 	cmp	r5, #0
 	bge.n	.L_08040abc
@@ -104,29 +77,29 @@ Func_08040a48:
 	adds	r2, r7, #0
 	movs	r3, #72
 	adds	r5, #1
-	bl	sub_08042244
+	bl	UiText_DrawNumberInWindow
 	cmp	r5, #3
 	ble.n	.L_08040ad6
 	ldr	r0, [pc, #348]
 	adds	r1, r7, #0
 	movs	r2, #8
 	movs	r3, #0
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	ldr	r0, [pc, #340]
 	adds	r1, r7, #0
 	movs	r2, #8
 	movs	r3, #16
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	ldr	r0, [pc, #332]
 	adds	r1, r7, #0
 	movs	r2, #8
 	movs	r3, #32
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	movs	r2, #8
 	movs	r3, #48
 	ldr	r0, [pc, #320]
 	adds	r1, r7, #0
-	bl	sub_08042188
+	bl	UiText_DrawStringInWindow
 	movs	r2, #12
 	ldrsh	r1, [r7, r2]
 	movs	r3, #14
@@ -144,10 +117,10 @@ Func_08040a48:
 	subs	r1, #4
 	adds	r2, #12
 	movs	r3, #3
-	bl	sub_08108040
+	bl	0x08108040
 .L_08040b42:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r5, [pc, #272]
 	movs	r2, #2
 	ldr	r3, [r5, #4]
@@ -164,14 +137,14 @@ Func_08040a48:
 	bne.n	.L_08040b6e
 	mov	r1, fp
 	ldr	r0, [r1, #12]
-	bl	sub_08013b30
+	bl	0x08013b30
 	b.n	.L_08040b7a
 .L_08040b6e:
 	mov	r2, r8
 	lsls	r3, r2, #2
 	mov	r4, fp
 	ldr	r0, [r4, r3]
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 .L_08040b7a:
 	ldr	r3, [r5, #4]
 	movs	r2, #8
@@ -180,9 +153,9 @@ Func_08040a48:
 	beq.n	.L_08040b92
 	movs	r0, #195
 	lsls	r0, r0, #1
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r0, #0
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 .L_08040b92:
 	ldr	r3, [r5, #12]
 	movs	r2, #128
@@ -267,10 +240,10 @@ Func_08040a48:
 .L_08040c26:
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	sub_0803939c
-	bl	sub_080409dc
+	bl	Func_0803939c
+	bl	0x080409dc
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r0, #0
 	add	sp, #24
 	pop	{r3, r5, r6, r7}
@@ -295,7 +268,7 @@ Func_08040a48:
 	lsls	r3, r3, #3
 	adds	r3, #164
 	adds	r0, r0, r3
-	bl	sub_08108030
+	bl	Func_08108030
 	pop	{pc}
 .L_08040c78:
 	push	{lr}
@@ -303,7 +276,7 @@ Func_08040a48:
 	lsls	r1, r1, #3
 	movs	r0, #208
 	sub	sp, #4
-	bl	sub_08014d00
+	bl	0x08014d00
 	movs	r3, #0
 	adds	r1, r0, #0
 	mov	r0, sp
@@ -317,7 +290,7 @@ Func_08040a48:
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #12]
-	bl	sub_080145a8
+	bl	0x080145a8
 	add	sp, #4
 	pop	{pc}
 	.4byte 0x8500018a
@@ -326,9 +299,9 @@ Func_08040a48:
 .L_08040cb0:
 	push	{lr}
 	ldr	r0, [pc, #12]
-	bl	sub_08014644
+	bl	Func_08014644
 	movs	r0, #208
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	pop	{pc}
 	.2byte 0x0c61
 	.2byte 0x0804
@@ -348,7 +321,7 @@ Func_08040a48:
 	movs	r1, #2
 	movs	r2, #18
 	movs	r3, #16
-	bl	sub_08039260
+	bl	0x08039260
 	movs	r5, #3
 	adds	r7, r0, #0
 	movs	r6, #3
@@ -359,7 +332,7 @@ Func_08040a48:
 	movs	r3, #17
 	subs	r6, #1
 	str	r5, [sp, #0]
-	bl	sub_08041c54
+	bl	Func_08041c54
 	adds	r5, #3
 	cmp	r6, #0
 	bge.n	.L_08040cec
@@ -368,36 +341,36 @@ Func_08040a48:
 	adds	r0, r5, #0
 	movs	r2, #8
 	movs	r3, #4
-	bl	sub_08041fa4
+	bl	UiText_DrawResource
 	adds	r0, r5, #1
 	adds	r1, r7, #0
 	movs	r2, #8
 	movs	r3, #28
-	bl	sub_08041fa4
+	bl	UiText_DrawResource
 	adds	r0, r5, #2
 	adds	r1, r7, #0
 	movs	r2, #8
 	movs	r3, #52
-	bl	sub_08041fa4
+	bl	UiText_DrawResource
 	adds	r0, r5, #3
 	adds	r1, r7, #0
 	movs	r2, #8
 	movs	r3, #76
 	adds	r5, #4
-	bl	sub_08041fa4
+	bl	UiText_DrawResource
 	adds	r1, r7, #0
 	adds	r0, r5, #0
 	movs	r2, #8
 	movs	r3, #100
-	bl	sub_08041fa4
-	bl	sub_08044460
+	bl	UiText_DrawResource
+	bl	0x08044460
 	movs	r1, #128
 	movs	r6, #0
 	lsls	r1, r1, #23
 	adds	r2, r7, #0
 	movs	r3, #0
 	str	r6, [sp, #0]
-	bl	sub_08042314
+	bl	0x08042314
 	movs	r3, #160
 	lsls	r3, r3, #3
 	adds	r3, #164
@@ -423,7 +396,7 @@ Func_08040a48:
 	ldr	r3, [r3, #0]
 	movs	r0, #1
 	mov	sl, r3
-	bl	sub_08013560
+	bl	0x08013560
 	bl	.L_08040cc4
 	movs	r7, #1
 	negs	r7, r7
@@ -433,7 +406,7 @@ Func_08040a48:
 	beq.n	.L_08040de8
 	adds	r0, r5, #5
 	movs	r1, #5
-	bl	sub_08002064
+	bl	0x08002064
 	mov	r1, r8
 	adds	r5, r0, #0
 	movs	r0, #12
@@ -457,7 +430,7 @@ Func_08040a48:
 	lsls	r0, r0, #3
 	adds	r0, #164
 	add	r0, sl
-	bl	sub_08108048
+	bl	0x08108048
 	b.n	.L_08040de6
 .L_08040dd8:
 	movs	r0, #160
@@ -465,12 +438,12 @@ Func_08040a48:
 	adds	r0, #164
 	add	r0, sl
 	movs	r3, #3
-	bl	sub_08108040
+	bl	0x08108040
 .L_08040de6:
 	movs	r7, #0
 .L_08040de8:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r6, [pc, #112]
 	movs	r2, #2
 	ldr	r3, [r6, #4]
@@ -479,7 +452,7 @@ Func_08040a48:
 	beq.n	.L_08040e06
 	movs	r0, #113
 	movs	r5, #1
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	negs	r5, r5
 	b.n	.L_08040e42
 .L_08040e06:
@@ -489,7 +462,7 @@ Func_08040a48:
 	cmp	r3, #0
 	beq.n	.L_08040e18
 	movs	r0, #112
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	b.n	.L_08040e42
 .L_08040e18:
 	ldr	r3, [r6, #12]
@@ -500,7 +473,7 @@ Func_08040a48:
 	movs	r0, #111
 	subs	r5, #1
 	movs	r7, #1
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 .L_08040e2c:
 	ldr	r3, [r6, #12]
 	movs	r2, #128
@@ -510,15 +483,15 @@ Func_08040a48:
 	movs	r0, #111
 	adds	r5, #1
 	movs	r7, #1
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	b.n	.L_08040d98
 .L_08040e42:
 	mov	r0, r8
 	movs	r1, #2
-	bl	sub_0803939c
+	bl	Func_0803939c
 	bl	.L_08040cb0
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	adds	r0, r5, #0
 	pop	{r3, r5}
 	mov	r8, r3
@@ -530,13 +503,13 @@ Func_08040a48:
 	push	{lr}
 	movs	r1, #243
 	movs	r0, #4
-	bl	sub_080ad020
+	bl	0x080ad020
 	movs	r1, #244
 	movs	r0, #4
-	bl	sub_080ad020
+	bl	0x080ad020
 	ldr	r0, [pc, #8]
 	movs	r1, #4
-	bl	sub_080c8268
+	bl	Func_080c8268
 	pop	{pc}
 	.2byte 0x0101
 	.2byte 0x0000
@@ -544,19 +517,19 @@ Func_08040a48:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #171
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	movs	r0, #245
 	lsls	r0, r0, #3
 	adds	r0, #255
-	bl	sub_08016d18
+	bl	0x08016d18
 	movs	r0, #128
 	lsls	r0, r0, #4
 	adds	r0, #170
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	movs	r1, #202
 	adds	r1, #255
 	movs	r0, #4
-	bl	sub_080ad020
+	bl	0x080ad020
 	ldr	r3, [pc, #24]
 	movs	r2, #128
 	lsls	r2, r2, #2
@@ -566,7 +539,7 @@ Func_08040a48:
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #12]
 	movs	r1, #1
-	bl	sub_080c8268
+	bl	Func_080c8268
 	pop	{pc}
 	movs	r0, r0
 	.4byte 0x02000240

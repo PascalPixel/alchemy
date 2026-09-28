@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015270, 0x08015270
-	.set sub_08015278, 0x08015278
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_08077080, 0x08077080
-	.set sub_080770c0, 0x080770c0
-	.set sub_08077120, 0x08077120
-	.set sub_080a112c, 0x080a112c
-	.set sub_080a1d08, 0x080a1d08
-	.set sub_080a3cf8, 0x080a3cf8
-	.set sub_080a5fe0, 0x080a5fe0
-	.set sub_080a602c, 0x080a602c
-	.set sub_080a63e4, 0x080a63e4
-	.set sub_080a65e4, 0x080a65e4
-	.set sub_080a6ccc, 0x080a6ccc
-	.set sub_080a9cbc, 0x080a9cbc
-	.set sub_080a9f10, 0x080a9f10
-	.set sub_080aa460, 0x080aa460
-	.set sub_080f9010, 0x080f9010
 	.global Menu_ResolveSelectedAction
 	.global Func_080a5cc0
 	.thumb_func
@@ -64,9 +44,9 @@ Func_080a5cc0:
 	strh	r3, [r2, #0]
 	ldr	r1, [pc, #316]
 	movs	r0, #0
-	bl	sub_080a3cf8
+	bl	ItemMenu_DrawMsg
 	movs	r0, #0
-	bl	sub_080a602c
+	bl	PsynergyMenu_SelectPartySlot
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3
@@ -76,15 +56,15 @@ Func_080a5cc0:
 	mov	fp, r3
 .L_080a5d2a:
 	ldr	r0, [r7, #44]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r5, #1
 	b.n	.L_080a5fa4
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #276]
 	adds	r3, r7, r2
 	ldrb	r0, [r3, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r2, #134
 	lsls	r2, r2, #2
 	adds	r3, r7, r2
@@ -116,23 +96,23 @@ Func_080a5cc0:
 	ldr	r1, [pc, #224]
 .L_080a5d76:
 	movs	r0, #0
-	bl	sub_080a3cf8
+	bl	ItemMenu_DrawMsg
 	b.n	.L_080a5d86
 .L_080a5d7e:
 	ldr	r1, [pc, #220]
 	movs	r0, #0
-	bl	sub_080a3cf8
+	bl	ItemMenu_DrawMsg
 .L_080a5d86:
-	bl	sub_080a9cbc
+	bl	ItemMenu_PosCategory
 	ldr	r3, [pc, #196]
 	adds	r6, r7, r3
 	ldrb	r1, [r6, #0]
 	movs	r2, #0
 	ldr	r0, [r7, #36]
 	movs	r3, #0
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 	movs	r0, #0
-	bl	sub_080a6ccc
+	bl	PsynergyMenu_RunList
 	movs	r2, #1
 	negs	r2, r2
 	adds	r1, r0, #0
@@ -155,32 +135,32 @@ Func_080a5cc0:
 	bne.n	.L_080a5dde
 	movs	r2, #0
 	ldrb	r0, [r6, #0]
-	bl	sub_080a65e4
+	bl	PsynergyMenu_SetShortcut
 	ldr	r0, [r7, #44]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	ldr	r0, [pc, #140]
 	mov	r1, r8
 	mov	r2, r8
-	bl	sub_080a1d08
+	bl	InventoryMenu_ShowModalMessage
 	b.n	.L_080a5df6
 .L_080a5dde:
 	movs	r2, #1
 	ldrb	r0, [r6, #0]
-	bl	sub_080a65e4
+	bl	PsynergyMenu_SetShortcut
 	ldr	r0, [r7, #44]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	ldr	r0, [pc, #116]
 	mov	r1, r8
 	mov	r2, r8
-	bl	sub_080a1d08
+	bl	InventoryMenu_ShowModalMessage
 .L_080a5df6:
 	movs	r5, #0
 	b.n	.L_080a5fa4
 	ldr	r1, [pc, #108]
 	movs	r0, #0
-	bl	sub_080a3cf8
+	bl	ItemMenu_DrawMsg
 	movs	r0, #0
-	bl	sub_080a63e4
+	bl	PsynergyMenu_SelectTarget
 	movs	r3, #1
 	mov	sl, r0
 	negs	r3, r3
@@ -195,7 +175,7 @@ Func_080a5cc0:
 	ldrh	r2, [r1, #0]
 	ldr	r3, [pc, #32]
 	b.n	.L_080a5f58
-	bl	sub_080a5fe0
+	bl	PsynergyMenu_ClassifySelectedPsynergy
 	cmp	r0, #1
 	bne.n	.L_080a5e2e
 .L_080a5e2a:
@@ -256,7 +236,7 @@ Func_080a5cc0:
 	movs	r3, #0
 	ldrb	r1, [r5, #0]
 	ldrb	r2, [r6, #0]
-	bl	sub_080a9f10
+	bl	BattleEffect_ApplyToTargets
 	ldrb	r3, [r6, #0]
 	mov	fp, r0
 	cmp	r3, #9
@@ -275,29 +255,29 @@ Func_080a5cc0:
 	ldrh	r3, [r2, #0]
 	ldr	r0, [pc, #184]
 	ands	r0, r3
-	bl	sub_08077080
+	bl	Ability_GetData
 	ldrb	r3, [r5, #0]
 	ldrb	r1, [r0, #9]
 	adds	r0, r3, #0
 	negs	r1, r1
-	bl	sub_08077120
+	bl	Owner_AdjustSecondValueFar
 .L_080a5ee4:
 	ldrb	r0, [r5, #0]
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	cmp	fp, r9
 	beq.n	.L_080a5f22
 	ldrb	r1, [r6, #0]
 	ldr	r0, [r7, #36]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 	mov	r2, r8
 	ldrh	r3, [r2, #0]
 	ldr	r0, [pc, #140]
 	ands	r0, r3
-	bl	sub_080aa460
+	bl	Ability_PlayUseAnimation
 	ldr	r0, [r7, #44]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	ldr	r2, [pc, #132]
 	adds	r3, r7, r2
 	movs	r2, #0
@@ -306,13 +286,13 @@ Func_080a5cc0:
 	movs	r1, #0
 	adds	r0, r0, r3
 	mov	r2, r9
-	bl	sub_080a1d08
+	bl	InventoryMenu_ShowModalMessage
 	b.n	.L_080a5f42
 .L_080a5f22:
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	ldr	r0, [r7, #44]
-	bl	sub_08015278
+	bl	RenderOutput_ClearListFar
 	ldr	r2, [pc, #100]
 	adds	r3, r7, r2
 	movs	r2, #0
@@ -321,7 +301,7 @@ Func_080a5cc0:
 	mov	r1, fp
 	adds	r0, r0, r3
 	mov	r2, fp
-	bl	sub_080a1d08
+	bl	InventoryMenu_ShowModalMessage
 .L_080a5f42:
 	movs	r3, #1
 	negs	r3, r3
@@ -376,14 +356,14 @@ Func_080a5cc0:
 	bne.n	.L_080a5fb8
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_080a5fb8
 	b.n	.L_080a5ce0
 .L_080a5fb8:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_080a5fca
 	movs	r2, #1

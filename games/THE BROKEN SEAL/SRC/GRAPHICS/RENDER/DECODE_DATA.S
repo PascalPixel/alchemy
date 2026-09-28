@@ -10,7 +10,6 @@
 .syntax unified
 	.section .data,"aw",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08009d90
 	.4byte 0x00000000
 	.4byte 0x080091d8
 	.4byte 0x080091b8

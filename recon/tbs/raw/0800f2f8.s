@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800447c, 0x0800447c
-	.set sub_080045d4, 0x080045d4
-	.set sub_0800ba30, 0x0800ba30
-	.set sub_0800c150, 0x0800c150
-	.set sub_0800c2d8, 0x0800c2d8
-	.set sub_0800c300, 0x0800c300
-	.set sub_0800d14c, 0x0800d14c
-	.set sub_0800eaf8, 0x0800eaf8
-	.set sub_08012204, 0x08012204
-	.set sub_080122ac, 0x080122ac
 	.global Func_0800f2f8
 	.thumb_func
 Func_0800f2f8:
@@ -107,7 +97,7 @@ Func_0800f2f8:
 	mov	r0, sl
 	adds	r1, r7, #0
 	mov	r2, r8
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	ldr	r3, [pc, #656]
 	ldrb	r3, [r3, #0]
 	cmp	r3, #0
@@ -121,7 +111,7 @@ Func_0800f2f8:
 .L_0800f3c2:
 	adds	r0, r6, #0
 	mov	r1, r8
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f466
 	ldr	r3, [r6, #8]
@@ -136,10 +126,10 @@ Func_0800f2f8:
 	mov	r0, sl
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f466
 	ldr	r3, [r6, #8]
@@ -152,10 +142,10 @@ Func_0800f2f8:
 	mov	r0, sl
 	adds	r1, r7, r3
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f466
 	ldr	r3, [r6, #8]
@@ -169,10 +159,10 @@ Func_0800f2f8:
 	str	r3, [r5, #8]
 	mov	r0, sl
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f466
 	ldr	r3, [r6, #8]
@@ -185,10 +175,10 @@ Func_0800f2f8:
 	mov	r0, sl
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f466
 	b.n	.L_0800f592
@@ -248,10 +238,10 @@ Func_0800f2f8:
 	adds	r1, r7, #0
 	mov	fp, r2
 	mov	r2, r8
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	mov	r1, r8
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f582
 	ldr	r3, [r6, #8]
@@ -267,10 +257,10 @@ Func_0800f2f8:
 	lsls	r0, r0, #11
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f582
 	ldr	r3, [r6, #8]
@@ -284,10 +274,10 @@ Func_0800f2f8:
 	adds	r1, r7, r3
 	lsls	r0, r0, #11
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f582
 	ldr	r3, [r6, #8]
@@ -302,10 +292,10 @@ Func_0800f2f8:
 	lsls	r0, r0, #11
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f582
 	ldr	r3, [r6, #8]
@@ -319,10 +309,10 @@ Func_0800f2f8:
 	lsls	r0, r0, #11
 	str	r3, [r5, #8]
 	adds	r2, r5, #0
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	sub_080122ac
+	bl	CheckWorldMapCollisionRange
 	cmp	r0, #0
 	bne.n	.L_0800f582
 	b.n	.L_0800f382
@@ -363,12 +353,12 @@ Func_0800f2f8:
 	beq.n	.L_0800f5ca
 	adds	r0, r6, #0
 	movs	r1, #9
-	bl	sub_0800c300
+	bl	ObjectDispatch_ApplyArgumentToChildren
 	b.n	.L_0800f5d2
 .L_0800f5ca:
 	adds	r0, r6, #0
 	ldr	r1, [sp, #0]
-	bl	sub_0800c300
+	bl	ObjectDispatch_ApplyArgumentToChildren
 .L_0800f5d2:
 	ldr	r2, [sp, #8]
 	cmp	r2, #0
@@ -436,7 +426,7 @@ Func_0800f2f8:
 	ldr	r2, [r3, #4]
 	adds	r0, r6, #0
 	ldr	r3, [r3, #8]
-	bl	sub_0800d14c
+	bl	Object_SetMoveTarget
 	ldr	r1, [r6, #36]
 	ldr	r4, [pc, #184]
 	adds	r0, r1, #0
@@ -450,7 +440,7 @@ Func_0800f2f8:
 	bx	r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 	ldr	r2, [sp, #4]
 	ldr	r3, [sp, #8]
 	lsls	r1, r2, #16
@@ -459,7 +449,7 @@ Func_0800f2f8:
 	lsrs	r1, r1, #16
 	str	r3, [r6, #36]
 	str	r3, [r6, #44]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	movs	r3, #100
 	adds	r3, r3, r6
 	mov	r8, r3
@@ -522,7 +512,7 @@ Func_0800f2f8:
 	adds	r0, r6, #0
 	adds	r0, #8
 	ldr	r5, [r6, #80]
-	bl	sub_08012204
+	bl	GetWorldMapCollision
 	cmp	r0, #9
 	bne.n	.L_0800f738
 	ldr	r3, [r5, #44]
@@ -561,13 +551,13 @@ Func_0800f2f8:
 	ldr	r2, [r6, #12]
 	ldr	r3, [r6, #16]
 	movs	r0, #24
-	bl	sub_0800c150
+	bl	Func_0800c150
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0800f7ba
 	ldr	r1, [pc, #108]
 	ldr	r7, [r5, #80]
-	bl	sub_0800c2d8
+	bl	ObjectDispatch_Initialize
 	add	r0, sp, #8
 	adds	r3, r5, #0
 	ldrb	r0, [r0, #0]
@@ -581,7 +571,7 @@ Func_0800f2f8:
 	beq.n	.L_0800f7b4
 	movs	r1, #1
 	adds	r0, r7, #0
-	bl	sub_0800ba30
+	bl	AnimationObjects_SelectAnimation
 	add	r1, sp, #8
 	ldrb	r1, [r1, #0]
 	adds	r3, r7, #0
@@ -605,7 +595,7 @@ Func_0800f2f8:
 	mov	r2, r8
 	strh	r3, [r2, #0]
 .L_0800f7ba:
-	bl	sub_0800eaf8
+	bl	Field_CheckConfiguredKeys
 	ldrh	r3, [r6, #4]
 	adds	r3, #1
 	movs	r0, #1

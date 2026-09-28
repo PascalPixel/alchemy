@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800447c, 0x0800447c
 	.global Map_BuildProbeRing
 	.global Func_08012b2c
 	.thumb_func
@@ -74,7 +73,7 @@ Func_08012b2c:
 	adds	r2, r7, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	ldr	r3, [pc, #360]
 	ldr	r4, [sp, #0]
 	adds	r5, r5, r3
@@ -108,7 +107,7 @@ Func_08012b2c:
 	adds	r2, r7, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	movs	r3, #128
 	lsls	r3, r3, #6
 	ldr	r4, [sp, #0]
@@ -143,7 +142,7 @@ Func_08012b2c:
 	adds	r2, r7, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	ldr	r3, [pc, #232]
 	ldr	r4, [sp, #0]
 	adds	r5, r5, r3
@@ -183,7 +182,7 @@ Func_08012b2c:
 	adds	r2, r7, #0
 	mov	r0, r9
 	str	r4, [sp, #0]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	mov	r3, sl
 	str	r3, [r6, #16]
 	mov	r3, fp
@@ -194,7 +193,7 @@ Func_08012b2c:
 	str	r3, [r6, #24]
 	adds	r1, r5, #0
 	mov	r0, r9
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	movs	r2, #128
 	lsls	r2, r2, #8
 	ldr	r4, [sp, #0]
@@ -230,7 +229,7 @@ Func_08012b2c:
 	adds	r1, r5, #0
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	movs	r2, #128
 	lsls	r2, r2, #7
 	ldr	r4, [sp, #0]

@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080044d0, 0x080044d0
-	.set sub_080045d4, 0x080045d4
-	.set sub_080072ec, 0x080072ec
-	.set sub_080072f0, 0x080072f0
-	.set sub_08007310, 0x08007310
-	.set sub_0800d924, 0x0800d924
-	.set sub_08011f54, 0x08011f54
 	.global Object_UpdateAllThumb
 	.global Func_0800cacc
 	.thumb_func
@@ -42,7 +35,7 @@ Func_0800cacc:
 	cmp	r3, #0
 	beq.n	.L_0800cb0a
 	adds	r0, r6, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r2, [r6, #0]
 .L_0800cb0a:
 	cmp	r2, #0
@@ -83,7 +76,7 @@ Func_0800cacc:
 	lsls	r3, r3, #2
 	ldr	r3, [r5, r3]
 	adds	r0, r6, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	cmp	r0, #0
 	bne.n	.L_0800cb34
 	ldr	r3, [r6, #0]
@@ -157,7 +150,7 @@ Func_0800cacc:
 	adds	r0, r0, r3
 	adds	r0, r0, r2
 	ldr	r3, [pc, #440]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	cmp	r0, #0
 	bne.n	.L_0800cbe8
 	ldr	r0, [r6, #56]
@@ -171,7 +164,7 @@ Func_0800cacc:
 	ldr	r1, [r6, #52]
 	ldr	r3, [pc, #420]
 	lsls	r0, r0, #16
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r5, r0, #0
 	mov	r3, r8
 	muls	r3, r5
@@ -212,14 +205,14 @@ Func_0800cacc:
 	adds	r3, r3, r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 	ldr	r1, [r6, #48]
 	cmp	r0, r1
 	bgt.n	.L_0800cc4e
 	b.n	.L_0800cfd6
 .L_0800cc4e:
 	ldr	r2, [pc, #320]
-	bl	sub_080072ec
+	bl	_call_via_r2
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	mov	r0, sl
@@ -268,7 +261,7 @@ Func_0800cacc:
 	adds	r3, r3, r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 	cmp	r0, #0
 	beq.n	.L_0800ccf0
 	ldr	r3, [r6, #52]
@@ -278,7 +271,7 @@ Func_0800cacc:
 	movs	r1, #0
 .L_0800ccc4:
 	ldr	r3, [pc, #200]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	mov	r0, r8
@@ -338,7 +331,7 @@ Func_0800cacc:
 	muls	r0, r2
 	adds	r0, r0, r3
 	ldr	r3, [pc, #84]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r1, [pc, #92]
 	lsls	r0, r0, #16
 	cmp	r0, r1
@@ -364,7 +357,7 @@ Func_0800cacc:
 	bx	r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 .L_0800cd70:
 	cmp	r0, #0
 	bne.n	.L_0800cd9c
@@ -386,7 +379,7 @@ Func_0800cacc:
 	ldr	r2, [pc, #688]
 	ldr	r1, [r6, #52]
 	mov	fp, r2
-	bl	sub_08007310
+	bl	_call_via_fp
 	adds	r5, r0, #0
 	ldr	r7, [pc, #680]
 	mov	r0, r8
@@ -420,11 +413,11 @@ Func_0800cacc:
 	bx	r7
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 	ldr	r1, [r6, #48]
 	cmp	r0, r1
 	ble.n	.L_0800ce66
-	bl	sub_08007310
+	bl	_call_via_fp
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	mov	r0, sl
@@ -455,7 +448,7 @@ Func_0800cacc:
 	bx	r7
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 	cmp	r0, #0
 	beq.n	.L_0800ce62
 	ldr	r3, [r6, #52]
@@ -465,7 +458,7 @@ Func_0800cacc:
 	movs	r1, #0
 .L_0800ce42:
 	ldr	r3, [pc, #524]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	mov	r0, r8
@@ -503,7 +496,7 @@ Func_0800cacc:
 	ldrb	r0, [r3, #0]
 	mov	sl, r1
 	mov	r9, r2
-	bl	sub_08011f54
+	bl	Func_08011f54
 	str	r0, [sp, #16]
 	ldr	r4, [sp, #24]
 	ldr	r3, [r6, #20]
@@ -565,7 +558,7 @@ Func_0800cacc:
 	adds	r3, r3, r4
 	adds	r3, r3, r0
 	adds	r0, r3, #0
-	bl	sub_080045d4
+	bl	FixedSqrt
 	cmp	r0, #0
 	beq.n	.L_0800cf3e
 	subs	r1, r0, r7
@@ -574,7 +567,7 @@ Func_0800cacc:
 	movs	r1, #0
 .L_0800cf12:
 	ldr	r3, [pc, #316]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	adds	r5, r0, #0
 	adds	r1, r5, #0
 	mov	r0, r8
@@ -705,7 +698,7 @@ Func_0800cacc:
 	ldr	r4, [sp, #20]
 	adds	r0, r6, #0
 	str	r4, [r1, #8]
-	bl	sub_0800d924
+	bl	ScriptObject_CheckOverlap
 	cmp	r0, #0
 	beq.n	.L_0800d018
 	ldr	r0, [sp, #4]
@@ -820,7 +813,7 @@ Func_0800cacc:
 .L_0800d0d8:
 	ldr	r0, [sp, #20]
 	ldr	r1, [sp, #28]
-	bl	sub_080044d0
+	bl	ArcTan2
 	ldrh	r3, [r6, #6]
 	subs	r0, r0, r3
 	lsls	r0, r0, #16

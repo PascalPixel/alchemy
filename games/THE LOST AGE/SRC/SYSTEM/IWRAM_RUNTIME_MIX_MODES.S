@@ -8,8 +8,6 @@
 .syntax unified
 	.set	.L_03000b94, 0x03000b94
 	.arm
-	.set AlchemyLoadAddress, 0x080014a4
-	.set AlchemyRunAddress, 0x03000eec
 .L_03000eec:
 	cmp	ip, #0
 	bne	.L_03000fb8

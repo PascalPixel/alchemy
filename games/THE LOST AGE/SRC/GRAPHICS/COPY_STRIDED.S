@@ -10,7 +10,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, strided copy kernel
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080217a4
 	.global Render_CopyStrided
 	.thumb_func
 Render_CopyStrided:

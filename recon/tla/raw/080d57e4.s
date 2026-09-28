@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801489c, 0x0801489c
-	.set sub_08020090, 0x08020090
-	.set sub_08020148, 0x08020148
-	.set sub_08020150, 0x08020150
-	.set sub_080201d0, 0x080201d0
-	.set sub_08020210, 0x08020210
-	.set sub_080cad84, 0x080cad84
-	.set sub_081c0010, 0x081c0010
 	.global Func_080d57e4
 	.thumb_func
 Func_080d57e4:
@@ -22,7 +14,7 @@ Func_080d57e4:
 	add	r3, sl
 	ldr	r0, [r3, #0]
 	sub	sp, #12
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r6, r0, #0
 	ldr	r3, [r6, #80]
 	movs	r2, #194
@@ -69,7 +61,7 @@ Func_080d57e4:
 	ldr	r3, [r6, #16]
 	adds	r2, r7, #0
 	str	r3, [r7, #8]
-	bl	sub_0801489c
+	bl	0x0801489c
 	ldr	r2, [pc, #204]
 	ldr	r3, [r6, #12]
 	adds	r3, r3, r2
@@ -79,12 +71,12 @@ Func_080d57e4:
 	ldrb	r0, [r3, #0]
 	ldr	r1, [r7, #0]
 	ldr	r2, [r7, #8]
-	bl	sub_080201d0
+	bl	0x080201d0
 	cmp	r0, #0
 	bne.n	.L_080d5884
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	sub_08020210
+	bl	Func_08020210
 	cmp	r0, #0
 	beq.n	.L_080d5888
 .L_080d5884:
@@ -115,7 +107,7 @@ Func_080d57e4:
 	mov	r3, r8
 	strh	r0, [r3, #18]
 	movs	r0, #152
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #128
 	lsls	r3, r3, #10
 	str	r3, [r6, #48]
@@ -125,14 +117,14 @@ Func_080d57e4:
 	adds	r0, r6, #0
 	movs	r1, #2
 	str	r5, [r6, #52]
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r1, [r7, #0]
 	ldr	r2, [r7, #4]
 	ldr	r3, [r7, #8]
 	adds	r0, r6, #0
-	bl	sub_08020148
+	bl	Object_SetPosition
 	adds	r0, r6, #0
-	bl	sub_08020150
+	bl	Object_CommitPosition
 	adds	r3, r6, #0
 	adds	r3, #98
 	ldrb	r2, [r3, #0]
@@ -266,7 +258,7 @@ Func_080d57e4:
 	lsls	r3, r3, #2
 	add	r3, r8
 	ldr	r0, [r3, #0]
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r5, r0, #0
 	adds	r0, #8
 	ldr	r7, [r5, #80]
@@ -284,7 +276,7 @@ Func_080d57e4:
 	cmp	r6, #0
 	beq.n	.L_080d5a98
 	movs	r0, #152
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r5, #52]
@@ -297,14 +289,14 @@ Func_080d57e4:
 	adds	r0, r5, #0
 	movs	r1, #2
 	str	r6, [r5, #104]
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r1, [r6, #4]
 	ldr	r2, [r6, #8]
 	ldr	r3, [r6, #12]
 	adds	r0, r5, #0
-	bl	sub_08020148
+	bl	Object_SetPosition
 	adds	r0, r5, #0
-	bl	sub_08020150
+	bl	Object_CommitPosition
 	adds	r3, r5, #0
 	adds	r3, #85
 	ldrb	r2, [r3, #0]

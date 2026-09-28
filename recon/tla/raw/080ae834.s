@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08014878, 0x08014878
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_08016d18, 0x08016d18
-	.set sub_080afdbc, 0x080afdbc
-	.set sub_080afdd8, 0x080afdd8
-	.set sub_080afe1c, 0x080afe1c
-	.set sub_080b0ab8, 0x080b0ab8
-	.set sub_080b0b78, 0x080b0b78
-	.set sub_080b0e04, 0x080b0e04
-	.set sub_080b1004, 0x080b1004
 	.global Func_080ae834
 	.thumb_func
 Func_080ae834:
@@ -28,14 +15,14 @@ Func_080ae834:
 	lsls	r5, r5, #2
 	mov	sl, r0
 	add	r5, r8
-	bl	sub_080b0b78
+	bl	Djinn_AddToOwner
 	adds	r5, #48
 	mov	r0, sl
 	adds	r1, r6, #0
 	mov	r2, r8
-	bl	sub_080b0e04
+	bl	Trade_AddOffer
 	adds	r0, r5, #0
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5
@@ -50,12 +37,12 @@ Func_080ae834:
 	movs	r0, #128
 	lsls	r0, r0, #4
 	sub	sp, #12
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080ae886
 	b.n	.L_080aea18
 .L_080ae886:
-	bl	sub_080afdbc
+	bl	0x080afdbc
 	mov	fp, r0
 	cmp	r0, #0
 	ble.n	.L_080ae8aa
@@ -85,7 +72,7 @@ Func_080ae834:
 	lsls	r0, r0, #24
 	asrs	r0, r0, #24
 	adds	r6, #1
-	bl	sub_080afe1c
+	bl	0x080afe1c
 	cmp	r5, #0
 	bne.n	.L_080ae8b4
 .L_080ae8c6:
@@ -93,7 +80,7 @@ Func_080ae834:
 .L_080ae8c8:
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	sub_080afdd8
+	bl	0x080afdd8
 	cmp	r5, #3
 	ble.n	.L_080ae8c8
 	movs	r0, #0
@@ -115,10 +102,10 @@ Func_080ae834:
 	mov	r9, r2
 	mov	sl, r6
 .L_080ae8fc:
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r0, r0, #2
 	lsrs	r5, r0, #16
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r3, r0, #3
 	subs	r3, r3, r0
 	lsls	r0, r5, #2
@@ -128,7 +115,7 @@ Func_080ae834:
 	lsls	r0, r0, #2
 	add	r0, r8
 	adds	r0, #48
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080ae99e
 	mov	r0, sl
@@ -172,7 +159,7 @@ Func_080ae834:
 	subs	r3, r3, r2
 	cmp	r3, #1
 	bgt.n	.L_080ae99e
-	bl	sub_08014878
+	bl	0x08014878
 	movs	r3, #100
 	adds	r2, r0, #0
 	muls	r2, r3
@@ -187,7 +174,7 @@ Func_080ae834:
 	bcs.n	.L_080ae99e
 	mov	r1, r8
 	adds	r0, r5, #0
-	bl	sub_080b0ab8
+	bl	Djinn_AddToLeastLoadedOwner
 	ldrb	r3, [r6, r5]
 	movs	r1, #1
 	adds	r3, #1
@@ -198,7 +185,7 @@ Func_080ae834:
 	mov	r2, r9
 	cmp	r2, #0
 	bne.n	.L_080ae8fc
-	bl	sub_080b1004
+	bl	Func_080b1004
 	movs	r5, #0
 	mov	sl, r5
 .L_080ae9ac:
@@ -214,14 +201,14 @@ Func_080ae834:
 	add	r7, sl
 .L_080ae9c0:
 	adds	r0, r6, #0
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080ae9d0
 	adds	r0, r7, #0
-	bl	sub_08016cfc
+	bl	0x08016cfc
 .L_080ae9d0:
 	adds	r0, r6, #0
-	bl	sub_08016d18
+	bl	0x08016d18
 	movs	r0, #1
 	add	r8, r0
 	mov	r1, r8
@@ -238,7 +225,7 @@ Func_080ae834:
 .L_080ae9f0:
 	adds	r0, r5, #0
 	adds	r5, #1
-	bl	sub_080afe1c
+	bl	0x080afe1c
 	cmp	r5, #3
 	ble.n	.L_080ae9f0
 	mov	r3, fp
@@ -252,7 +239,7 @@ Func_080ae834:
 	lsls	r0, r0, #24
 	asrs	r0, r0, #24
 	adds	r6, #1
-	bl	sub_080afdd8
+	bl	0x080afdd8
 	cmp	r5, #0
 	bne.n	.L_080aea06
 .L_080aea18:
@@ -268,14 +255,14 @@ Func_080ae834:
 	.2byte 0x1290
 	.2byte 0x080b
 	push	{r5, lr}
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r5, r0, #0
 	movs	r2, #56
 	ldrsh	r0, [r5, r2]
 	movs	r3, #52
 	ldrsh	r1, [r5, r3]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3
@@ -301,7 +288,7 @@ Func_080ae834:
 	movs	r2, #54
 	ldrsh	r1, [r5, r2]
 	lsls	r0, r0, #14
-	bl	sub_08002054
+	bl	Math_Div
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r0, r3

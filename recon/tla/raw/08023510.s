@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_080233a8, 0x080233a8
 	.global Func_08023510
 	.thumb_func
 Func_08023510:
@@ -9,7 +7,7 @@ Func_08023510:
 	adds	r6, r1, #0
 	ldr	r1, [pc, #8]
 	adds	r5, r0, #0
-	bl	sub_080233a8
+	bl	ObjectDispatch_Initialize
 	str	r6, [r5, #104]
 	pop	{r5, r6, pc}
 	.2byte 0xf1e8
@@ -61,7 +59,7 @@ Func_08023510:
 	ldr	r1, [pc, #72]
 	b.n	.L_080235b0
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r1, [pc, #68]
 	b.n	.L_080235b0
 	ldr	r1, [pc, #68]
@@ -74,7 +72,7 @@ Func_08023510:
 	ldr	r1, [pc, #68]
 .L_080235b0:
 	adds	r0, r5, #0
-	bl	sub_080233a8
+	bl	ObjectDispatch_Initialize
 	pop	{r5, pc}
 	.4byte 0x02000240
 	.4byte 0x08023540

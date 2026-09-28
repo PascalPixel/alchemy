@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08002df0, 0x08002df0
-	.set sub_08004970, 0x08004970
-	.set sub_080072f0, 0x080072f0
-	.set sub_08009080, 0x08009080
-	.set sub_08009088, 0x08009088
-	.set sub_08077000, 0x08077000
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_08077118, 0x08077118
-	.set sub_080771b8, 0x080771b8
-	.set sub_080b6b40, 0x080b6b40
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_080bb938, 0x080bb938
-	.set sub_080bbabc, 0x080bbabc
-	.set sub_080bd808, 0x080bd808
-	.set sub_080bdfec, 0x080bdfec
-	.set sub_080be02c, 0x080be02c
-	.set sub_080c1798, 0x080c1798
-	.set sub_080f9010, 0x080f9010
 	.global BattleUnit_ProcessTurnEnd
 	.global Func_080bfba4
 	.thumb_func
@@ -38,7 +18,7 @@ Func_080bfba4:
 	movs	r1, #0
 	mov	r8, r0
 	str	r1, [sp, #4]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	r2, r8
 	str	r0, [sp, #8]
 	movs	r0, #0
@@ -46,7 +26,7 @@ Func_080bfba4:
 	bls.n	.L_080bfbce
 	movs	r0, #1
 .L_080bfbce:
-	bl	sub_08077000
+	bl	Trade_GetOfferStateFar
 	adds	r3, r0, #0
 	movs	r0, #132
 	lsls	r0, r0, #1
@@ -73,7 +53,7 @@ Func_080bfba4:
 	ldrb	r1, [r5, #0]
 	ldrb	r2, [r5, #1]
 	mov	r0, r8
-	bl	sub_080771b8
+	bl	Func_080771b8
 .L_080bfc08:
 	movs	r0, #128
 	lsls	r0, r0, #1
@@ -86,12 +66,12 @@ Func_080bfba4:
 .L_080bfc18:
 	movs	r0, #1
 	movs	r1, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	cmp	r0, #0
 	beq.n	.L_080bfc34
 	movs	r0, #2
 	movs	r1, #0
-	bl	sub_080b6b40
+	bl	BattleParty_ListLivingUnits
 	cmp	r0, #0
 	beq.n	.L_080bfc34
 	movs	r1, #1
@@ -103,7 +83,7 @@ Func_080bfba4:
 	bls.n	.L_080bfc3e
 	movs	r0, #1
 .L_080bfc3e:
-	bl	sub_08077000
+	bl	Trade_GetOfferStateFar
 	mov	r3, sp
 	adds	r3, #16
 	str	r3, [sp, #0]
@@ -232,12 +212,12 @@ Func_080bfba4:
 	lsls	r5, r5, #1
 	mov	sl, r0
 	adds	r0, r5, #0
-	bl	sub_08004970
+	bl	Runtime_BumpAllocateAlternatePool
 	adds	r2, r5, #0
 	ldr	r3, [pc, #604]
 	ldr	r1, [sp, #8]
 	mov	r9, r0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r7, #1
 	ldr	r2, [sp, #0]
 	negs	r7, r7
@@ -265,7 +245,7 @@ Func_080bfba4:
 	strb	r1, [r0, r2]
 .L_080bfd68:
 	mov	r0, r8
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	movs	r6, #0
 	movs	r7, #72
 .L_080bfd72:
@@ -276,87 +256,87 @@ Func_080bfba4:
 	subs	r5, r2, r3
 	cmp	r5, #0
 	ble.n	.L_080bfde8
-	bl	sub_080bdfec
+	bl	BattleEventRuntime_Reset
 	movs	r0, #25
-	bl	sub_080bd808
+	bl	BattleEventRuntime_SchedulePhase
 	mov	r1, r8
 	movs	r0, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	adds	r1, r5, #0
 	movs	r0, #1
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	movs	r1, #175
 	movs	r0, #14
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r1, [pc, #496]
 	movs	r0, #4
 	adds	r1, r6, r1
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	movs	r0, #11
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	movs	r0, #212
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	mov	r0, r8
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	movs	r1, #3
 	ldr	r0, [r0, #0]
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	mov	r0, r8
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	movs	r1, #32
 	ldr	r0, [r0, #0]
-	bl	sub_08009088
+	bl	ObjectDispatch_ApplyValueToChildrenFar
 	mov	r3, sl
 	adds	r1, r6, #0
 	movs	r2, #2
 	subs	r3, #1
 	mov	r0, r8
-	bl	sub_080c1798
-	bl	sub_080be02c
+	bl	BattleFx_PlayUnitElementEffect
+	bl	BattleEventRuntime_WaitForReady
 .L_080bfde8:
 	adds	r6, #1
 	adds	r7, #4
 	cmp	r6, #3
 	ble.n	.L_080bfd72
 	mov	r0, r9
-	bl	sub_08002df0
+	bl	Party_Do
 	ldr	r1, [sp, #4]
 	cmp	r1, #0
 	bne.n	.L_080bfdfe
 	b.n	.L_080bff78
 .L_080bfdfe:
-	bl	sub_080bdfec
+	bl	BattleEventRuntime_Reset
 	ldr	r2, [sp, #12]
 	ldr	r3, [r2, #96]
 	cmp	r3, #0
 	beq.n	.L_080bfe68
 	mov	r1, r8
 	movs	r0, #8
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	movs	r0, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r3, [sp, #12]
 	movs	r0, #1
 	ldr	r1, [r3, #96]
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r1, [pc, #368]
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r0, [sp, #12]
 	ldr	r1, [r0, #96]
 	mov	r0, r8
 	negs	r1, r1
-	bl	sub_08077118
+	bl	Owner_AdjustFirstValueFar
 	cmp	r0, #0
 	bne.n	.L_080bfe60
 	mov	r1, r8
 	movs	r0, #9
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	movs	r0, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	cmp	r1, #7
 	bhi.n	.L_080bfe56
@@ -366,15 +346,15 @@ Func_080bfba4:
 	ldr	r1, [pc, #328]
 .L_080bfe58:
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	b.n	.L_080bfe68
 .L_080bfe60:
 	movs	r0, #11
 	mov	r1, r8
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 .L_080bfe68:
-	bl	sub_080bb938
-	bl	sub_080bdfec
+	bl	BattleEv_DispatchQueued
+	bl	BattleEventRuntime_Reset
 	ldr	r3, [pc, #304]
 	ldr	r2, [sp, #8]
 	adds	r6, r2, r3
@@ -386,22 +366,22 @@ Func_080bfba4:
 	ldrsh	r3, [r2, r1]
 	movs	r1, #10
 	muls	r0, r3
-	bl	sub_080022ec
+	bl	__divsi3
 	ldr	r3, [pc, #284]
 	adds	r7, r0, #0
 	mov	r1, r8
 	movs	r0, #8
 	ldr	r5, [r3, #0]
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	movs	r0, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	adds	r1, r7, #0
 	movs	r0, #1
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r1, [pc, #256]
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	movs	r3, #0
 	ldrsb	r3, [r6, r3]
 	cmp	r3, #0
@@ -420,15 +400,15 @@ Func_080bfba4:
 	str	r3, [r2, #0]
 	negs	r1, r7
 	mov	r0, r8
-	bl	sub_08077118
+	bl	Owner_AdjustFirstValueFar
 	cmp	r0, #0
 	bne.n	.L_080bfefc
 	mov	r1, r8
 	movs	r0, #9
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	movs	r0, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	cmp	r1, #7
 	bhi.n	.L_080bfef2
@@ -438,15 +418,15 @@ Func_080bfba4:
 	ldr	r1, [pc, #172]
 .L_080bfef4:
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	b.n	.L_080bff04
 .L_080bfefc:
 	movs	r0, #11
 	mov	r1, r8
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 .L_080bff04:
-	bl	sub_080bb938
-	bl	sub_080bdfec
+	bl	BattleEv_DispatchQueued
+	bl	BattleEventRuntime_Reset
 	ldr	r3, [pc, #160]
 	ldr	r2, [sp, #8]
 	adds	r1, r2, r3
@@ -462,41 +442,41 @@ Func_080bfba4:
 	movs	r1, #192
 	lsls	r1, r1, #24
 	mov	r0, r8
-	bl	sub_08077118
+	bl	Owner_AdjustFirstValueFar
 	cmp	r0, #0
 	bne.n	.L_080bff74
 	mov	r1, r8
 	movs	r0, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r5, [pc, #120]
 	movs	r0, #4
 	adds	r1, r5, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	movs	r0, #8
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r1, r8
 	movs	r0, #9
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	movs	r0, #0
 	mov	r1, r8
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r0, r8
 	cmp	r0, #7
 	bhi.n	.L_080bff6c
 	subs	r1, r5, #3
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	b.n	.L_080bff74
 .L_080bff6c:
 	adds	r1, r5, #3
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 .L_080bff74:
-	bl	sub_080bb938
+	bl	BattleEv_DispatchQueued
 .L_080bff78:
 	mov	r0, r8
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	add	sp, #32
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08077394, 0x08077394
-	.set sub_08078414, 0x08078414
-	.set sub_08079ad8, 0x08079ad8
 	.global Owner_RefreshClassActions
 	.global Func_08078bf0
 	.thumb_func
@@ -16,7 +13,7 @@ Func_08078bf0:
 	mov	r7, r8
 	push	{r7}
 	sub	sp, #8
-	bl	sub_08077394
+	bl	Owner_GetState
 	ldr	r5, [pc, #72]
 	mov	r9, r0
 	movs	r0, #88
@@ -24,7 +21,7 @@ Func_08078bf0:
 	add	r0, r9
 	mov	r8, r0
 	ldrb	r0, [r5, #0]
-	bl	sub_08079ad8
+	bl	Owner_GetRecordStride84
 	str	r0, [sp, #4]
 	ldrb	r3, [r5, #0]
 	movs	r4, #128
@@ -198,7 +195,7 @@ Func_08078bf0:
 	cmp	r3, #0
 	beq.n	.L_08078dc4
 	ldrh	r0, [r0, r1]
-	bl	sub_08078414
+	bl	Func_08078414
 	ldrb	r3, [r0, #12]
 	cmp	r3, #3
 	bne.n	.L_08078dc4

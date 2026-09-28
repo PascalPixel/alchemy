@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080b7f70, 0x080b7f70
 	.global Unnamed_080ba918
 	.global Func_080ba918
 	.thumb_func
@@ -47,7 +46,7 @@ Func_080ba918:
 .L_080ba95e:
 	mov	r0, r8
 	adds	r1, r6, #0
-	bl	sub_080b7f70
+	bl	GetMotionRecord
 	cmp	r0, #0
 	bne.n	.L_080ba92c
 	pop	{r3, r5}

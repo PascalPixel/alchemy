@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0814fab8, 0x0814fab8
 	.global Func_0814fa98
 	.thumb_func
 Func_0814fa98:
@@ -16,6 +15,6 @@ Func_0814fa98:
 	str	r2, [r3, #0]
 	movs	r1, #10
 	str	r2, [r0, #28]
-	bl	sub_0814fab8
+	bl	Func_0814fab8
 	pop	{pc}
 	.2byte 0x0000

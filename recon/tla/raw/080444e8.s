@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080420a8, 0x080420a8
 	.global Func_080444e8
 	.thumb_func
 Func_080444e8:
@@ -60,7 +59,7 @@ Func_080444e8:
 	negs	r3, r3
 	adds	r1, r6, #0
 	movs	r2, #0
-	bl	sub_080420a8
+	bl	UiText_DrawString
 	add	sp, #20
 	pop	{r5, r6, pc}
 	.2byte 0x0000

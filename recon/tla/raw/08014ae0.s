@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013300, 0x08013300
-	.set sub_080149f8, 0x080149f8
-	.set sub_08014a24, 0x08014a24
 	.global Func_08014ae0
 	.thumb_func
 Func_08014ae0:
@@ -56,7 +53,7 @@ Func_08014ae0:
 	bls.n	.L_08014b3c
 	movs	r5, #8
 .L_08014b3c:
-	bl	sub_080149f8
+	bl	0x080149f8
 	ldr	r0, [pc, #8]
 	subs	r0, r0, r5
 	bl	.L_08014ae0
@@ -71,7 +68,7 @@ Func_08014ae0:
 	bls.n	.L_08014b5c
 	movs	r5, #10
 .L_08014b5c:
-	bl	sub_08014a24
+	bl	0x08014a24
 	ldr	r0, [pc, #8]
 	subs	r0, r0, r5
 	bl	.L_08014ae0
@@ -108,7 +105,7 @@ Func_08014ae0:
 	.2byte 0x0300
 	push	{lr}
 	ldr	r0, [pc, #132]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	movs	r3, #128
 	lsls	r3, r3, #19
 	movs	r1, #192

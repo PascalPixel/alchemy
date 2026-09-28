@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
 	.global Func_081c11ec
 	.thumb_func
 Func_081c11ec:
@@ -27,7 +26,7 @@ Func_081c11ec:
 	ldr	r3, [pc, #80]
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #80]
-	bl	sub_08002054
+	bl	Math_Div
 	ldr	r3, [pc, #80]
 	strh	r0, [r3, #0]
 	ldr	r5, [pc, #80]

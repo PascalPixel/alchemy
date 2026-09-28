@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800393c, 0x0800393c
-	.set sub_080039fc, 0x080039fc
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080040b4, 0x080040b4
-	.set sub_080040d0, 0x080040d0
-	.set sub_08015048, 0x08015048
-	.set sub_080153f0, 0x080153f0
 	.global Unnamed_080bb7c0
 	.global Func_080bb7c0
 	.thumb_func
@@ -25,21 +16,21 @@ Func_080bb7c0:
 	movs	r0, #0
 	sub	sp, #20
 	adds	r6, r1, #0
-	bl	sub_080153f0
+	bl	Func_080153f0
 	mov	fp, r0
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
 	b.n	.L_080bb7e8
 .L_080bb7e2:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080bb7e8:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	beq.n	.L_080bb7e2
 	movs	r0, #128
 	add	r5, sp, #8
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	mov	r2, sp
 	ldrh	r2, [r2, #0]
 	ldr	r3, [pc, #120]
@@ -52,10 +43,10 @@ Func_080bb7c0:
 .L_080bb80a:
 	adds	r0, r7, #0
 	movs	r1, #4
-	bl	sub_080039fc
+	bl	QueueIoWriteDelay10
 	adds	r0, r7, #0
 	movs	r1, #16
-	bl	sub_0800393c
+	bl	QueueIoWriteDelay6
 	movs	r2, #16
 	ldr	r3, [pc, #96]
 	strh	r2, [r3, #0]
@@ -66,7 +57,7 @@ Func_080bb7c0:
 	str	r3, [r5, #8]
 	mov	r1, fp
 	adds	r0, r6, #0
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #52]
 	ldr	r2, [pc, #52]
 	ands	r0, r3
@@ -112,7 +103,7 @@ Func_080bb7c0:
 	strb	r3, [r5, #4]
 	adds	r0, r5, #0
 	movs	r1, #240
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #52]
 	ldr	r3, [r3, #0]
@@ -120,13 +111,13 @@ Func_080bb7c0:
 	cmp	r3, #0
 	bne.n	.L_080bb8b0
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_080bb80a
 .L_080bb8b0:
 	adds	r0, r6, #0
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	add	sp, #20
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

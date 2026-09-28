@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08015000, 0x08015000
-	.set sub_08015018, 0x08015018
-	.set sub_08015020, 0x08015020
-	.set sub_08015038, 0x08015038
-	.set sub_08015048, 0x08015048
-	.set sub_08015118, 0x08015118
-	.set sub_08015120, 0x08015120
-	.set sub_08015148, 0x08015148
-	.set sub_08077008, 0x08077008
-	.set sub_080f9010, 0x080f9010
 	.global Unnamed_080b5534
 	.global Func_080b5534
 	.thumb_func
@@ -24,12 +13,12 @@ Func_080b5534:
 	movs	r0, #0
 	sub	sp, #128
 	mov	sl, r2
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	r5, sp
 	adds	r6, r0, #0
 	adds	r1, r5, #0
 	ldr	r0, [pc, #356]
-	bl	sub_08015020
+	bl	Party_Apply
 	mov	r2, sl
 	ldrh	r3, [r5, r2]
 	strb	r3, [r6, #0]
@@ -53,9 +42,9 @@ Func_080b5534:
 .L_080b557a:
 	movs	r3, #0
 	strb	r3, [r6, #14]
-	bl	sub_08015000
+	bl	Func_08015000
 	movs	r0, #71
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r5, #0
 	ldr	r2, [pc, #300]
 	movs	r3, #128
@@ -68,22 +57,22 @@ Func_080b5534:
 	movs	r2, #2
 .L_080b559c:
 	strb	r2, [r3, #0]
-	bl	sub_08015118
+	bl	UiWork_ClearValueNameTablesFar
 	ldr	r0, [pc, #284]
 	movs	r1, #5
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	movs	r0, #0
 	movs	r1, #3
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	movs	r0, #1
 	movs	r1, #1
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	movs	r0, #1
 	movs	r1, #2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	movs	r0, #2
 	movs	r1, #4
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	mov	r3, sl
 	cmp	r3, #0
 	bne.n	.L_080b55da
@@ -99,10 +88,10 @@ Func_080b5534:
 	movs	r2, #2
 .L_080b55e2:
 	movs	r3, #4
-	bl	sub_08015038
+	bl	UiText_OpenMessageWindowFar
 	adds	r7, r0, #0
 	movs	r0, #10
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #216]
 	ldr	r3, [pc, #208]
 	ldr	r6, [pc, #216]
@@ -110,7 +99,7 @@ Func_080b5534:
 	mov	r8, r2
 	b.n	.L_080b5614
 .L_080b55fc:
-	bl	sub_08015048
+	bl	UiWork_IsCompleteFar
 	cmp	r0, #0
 	beq.n	.L_080b560e
 	ldr	r3, [r6, #0]
@@ -120,7 +109,7 @@ Func_080b5534:
 	bne.n	.L_080b569a
 .L_080b560e:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080b5614:
 	ldr	r3, [r6, #0]
 	movs	r2, #2
@@ -201,10 +190,10 @@ Func_080b5534:
 	beq.n	.L_080b55fc
 .L_080b569a:
 	movs	r0, #1
-	bl	sub_08015148
+	bl	0x08015148
 	adds	r0, r7, #0
 	movs	r1, #1
-	bl	sub_08015018
+	bl	UiWork_FinalizeFar
 	ldr	r3, [pc, #44]
 	ldr	r2, [pc, #48]
 	ldr	r3, [r3, #0]

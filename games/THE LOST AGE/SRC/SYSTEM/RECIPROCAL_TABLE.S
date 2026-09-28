@@ -3,7 +3,6 @@
 @ divide helper handles divisor 1's wrapped zero product separately.
 .syntax unified
 	.section .rodata,"a",%progbits
-	.set AlchemyLoadAddress, 0x080028a8
 	.align 2
 	.global Runtime_ReciprocalTable
 	.type Runtime_ReciprocalTable, %object

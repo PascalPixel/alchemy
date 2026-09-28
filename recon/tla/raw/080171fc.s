@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08017054, 0x08017054
-	.set sub_08017500, 0x08017500
-	.set sub_08017884, 0x08017884
 	.global Func_080171fc
 	.thumb_func
 Func_080171fc:
@@ -55,7 +52,7 @@ Func_080171fc:
 	adds	r1, r1, r2
 	ldrh	r2, [r0, #24]
 	adds	r0, r5, #0
-	bl	sub_08017884
+	bl	_call_via_r3
 	add	sp, #256
 	pop	{r4, r5}
 	pop	{r1}
@@ -86,14 +83,14 @@ Func_080171fc:
 	movs	r0, #16
 	strb	r0, [r1, #0]
 	mov	r0, sp
-	bl	sub_08017054
+	bl	Func_08017054
 	ldr	r0, [pc, #56]
 	movs	r1, #224
 	lsls	r1, r1, #20
 	ldr	r3, [r0, #0]
 	movs	r0, #3
 	movs	r2, #255
-	bl	sub_08017884
+	bl	_call_via_r3
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	ldrh	r1, [r5, #0]
@@ -151,13 +148,13 @@ Func_080171fc:
 	movs	r0, #48
 	strb	r0, [r4, #0]
 	mov	r0, sp
-	bl	sub_08017054
+	bl	Func_08017054
 	ldr	r0, [pc, #52]
 	ldr	r3, [r0, #0]
 	movs	r0, #2
 	adds	r1, r4, #0
 	movs	r2, #255
-	bl	sub_08017884
+	bl	_call_via_r3
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	ldrh	r1, [r6, #0]
@@ -203,7 +200,7 @@ Func_080171fc:
 	ldrb	r2, [r0, #0]
 	ldr	r3, [r3, #0]
 	movs	r0, #1
-	bl	sub_08017884
+	bl	_call_via_r3
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
 	pop	{r4}
@@ -279,7 +276,7 @@ Func_080171fc:
 	adds	r0, r7, #0
 	mov	r1, sp
 	adds	r1, #1
-	bl	sub_08017500
+	bl	Func_08017500
 	lsls	r0, r0, #16
 	lsrs	r5, r0, #16
 	cmp	r5, #0
@@ -302,7 +299,7 @@ Func_080171fc:
 	bls.n	.L_08017452
 .L_08017462:
 	mov	r0, sp
-	bl	sub_08017054
+	bl	Func_08017054
 	ldr	r3, [pc, #24]
 	ldrh	r1, [r3, #0]
 	ldr	r0, [pc, #24]

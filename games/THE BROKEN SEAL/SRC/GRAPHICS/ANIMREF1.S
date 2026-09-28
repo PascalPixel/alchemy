@@ -2,7 +2,6 @@
 @ Only its own slots reference the table.
 .syntax unified
 	.section .rodata,"a",%progbits
-	.set AlchemyLoadAddress, 0x081897ec
 	.align 2
 	.global Animation_SelfSlots1
 	.type Animation_SelfSlots1, %object

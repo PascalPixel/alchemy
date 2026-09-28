@@ -1,27 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080030f8, 0x080030f8
-	.set sub_0800352c, 0x0800352c
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_080040b4, 0x080040b4
-	.set sub_080040d0, 0x080040d0
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_08016498, 0x08016498
-	.set sub_08016738, 0x08016738
-	.set sub_08017aa4, 0x08017aa4
-	.set sub_08019000, 0x08019000
-	.set sub_0801965c, 0x0801965c
-	.set sub_0801e71c, 0x0801e71c
-	.set sub_0801e7c0, 0x0801e7c0
-	.set sub_08021af0, 0x08021af0
-	.set sub_08022768, 0x08022768
-	.set sub_08025180, 0x08025180
-	.set sub_080251d4, 0x080251d4
-	.set sub_08077018, 0x08077018
-	.set sub_080f9010, 0x080f9010
 	.global ItemList_SelectEntry
 	.global Func_08025200
 	.thumb_func
@@ -46,7 +24,7 @@ Func_08025200:
 	str	r1, [sp, #68]
 	str	r2, [sp, #64]
 	str	r2, [sp, #60]
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	movs	r3, #42
 	str	r0, [sp, #56]
 	str	r3, [sp, #0]
@@ -54,7 +32,7 @@ Func_08025200:
 	movs	r2, #30
 	movs	r3, #4
 	movs	r0, #0
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	movs	r3, #0
 	str	r0, [sp, #52]
 	str	r3, [sp, #48]
@@ -72,7 +50,7 @@ Func_08025200:
 	movs	r3, #11
 	movs	r0, #15
 	movs	r2, #15
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	mov	r3, sp
 	adds	r3, #84
 	ldr	r1, [pc, #88]
@@ -127,14 +105,14 @@ Func_08025200:
 	movs	r7, #4
 .L_080252cc:
 	movs	r0, #128
-	bl	sub_080040b4
+	bl	Resource_LoadIntoFreeSlot
 	ldr	r2, [sp, #8]
 	stmia	r2!, {r0}
 	adds	r1, r2, #0
 	str	r1, [sp, #8]
 	movs	r1, #1
 	negs	r1, r1
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #52]
 	ands	r0, r3
 	ldrh	r3, [r5, r6]
@@ -150,10 +128,10 @@ Func_08025200:
 	movs	r1, #128
 	adds	r0, r5, #0
 	lsls	r1, r1, #2
-	bl	sub_080251d4
+	bl	Vram_CopyTile
 	adds	r0, r5, #0
 	ldr	r1, [pc, #24]
-	bl	sub_080251d4
+	bl	Vram_CopyTile
 	adds	r5, #1
 	movs	r1, #132
 	lsls	r1, r1, #2
@@ -165,10 +143,10 @@ Func_08025200:
 	.2byte 0x0201
 	.2byte 0x0000
 .L_08025324:
-	bl	sub_080251d4
+	bl	Vram_CopyTile
 	ldr	r1, [pc, #148]
 	adds	r0, r5, #0
-	bl	sub_080251d4
+	bl	Vram_CopyTile
 	movs	r2, #146
 	lsls	r2, r2, #1
 	mov	r3, r8
@@ -207,8 +185,8 @@ Func_08025200:
 	adds	r0, #1
 	subs	r2, #2
 	movs	r3, #1
-	bl	sub_08022768
-	bl	sub_08016738
+	bl	Ui_SetRectHighlight
+	bl	Ui_FillVramBlockPattern
 	ldr	r1, [sp, #72]
 	cmp	r1, #0
 	beq.n	.L_080253d0
@@ -219,7 +197,7 @@ Func_08025200:
 	adds	r5, r3, r2
 	ldrh	r1, [r5, #0]
 	ldr	r0, [sp, #80]
-	bl	sub_08025180
+	bl	Item_ClassifyUseAbility
 	cmp	r0, #2
 	bne.n	.L_080253a4
 	ldr	r5, [sp, #32]
@@ -236,7 +214,7 @@ Func_08025200:
 	adds	r0, r0, r3
 .L_080253b2:
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	b.n	.L_080253dc
 	movs	r0, r0
 	.4byte 0x000001ff
@@ -250,20 +228,20 @@ Func_08025200:
 	ldr	r0, [pc, #100]
 	adds	r1, r5, #0
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 .L_080253dc:
 	ldr	r1, [sp, #52]
 	movs	r3, #4
 	adds	r0, r5, #0
 	movs	r2, #0
-	bl	sub_08017aa4
+	bl	UiText_RenderWideStringAtOffset
 	ldr	r1, [sp, #64]
 	mov	r3, r8
 	str	r3, [sp, #60]
 	cmp	r9, r1
 	beq.n	.L_080254b2
 	mov	r0, fp
-	bl	sub_08016498
+	bl	RenderOutput_RedrawSavedRect
 	mov	r2, r9
 	ldr	r1, [sp, #76]
 	lsls	r3, r2, #1
@@ -281,16 +259,16 @@ Func_08025200:
 	mov	sl, r2
 .L_08025416:
 	adds	r0, r5, #0
-	bl	sub_08077018
+	bl	Item_Get
 	movs	r0, #15
-	bl	sub_0801e71c
+	bl	UiWork_SetParamNibble
 	adds	r1, r5, #0
 	ldr	r0, [sp, #80]
-	bl	sub_08025180
+	bl	Item_ClassifyUseAbility
 	cmp	r0, #0
 	beq.n	.L_0802543c
 	movs	r0, #4
-	bl	sub_0801e71c
+	bl	UiWork_SetParamNibble
 	b.n	.L_0802544c
 	movs	r0, r0
 	.2byte 0x08e5
@@ -302,7 +280,7 @@ Func_08025200:
 	cmp	r3, #0
 	beq.n	.L_0802544c
 	movs	r0, #2
-	bl	sub_0801e71c
+	bl	UiWork_SetParamNibble
 .L_0802544c:
 	ldr	r0, [pc, #84]
 	ldr	r3, [pc, #88]
@@ -311,15 +289,15 @@ Func_08025200:
 	mov	r1, fp
 	lsls	r3, r7, #4
 	movs	r2, #16
-	bl	sub_0801e7c0
+	bl	UiText_DrawCharacterAtOffset
 	movs	r0, #15
-	bl	sub_0801e71c
+	bl	UiWork_SetParamNibble
 	ldr	r3, [sp, #4]
 	ldmia	r3!, {r1}
 	adds	r0, r5, #0
 	adds	r2, r3, #0
 	str	r2, [sp, #4]
-	bl	sub_08021af0
+	bl	Resource_LoadKind26EntryToBuffer
 	ldr	r3, [pc, #40]
 	ldr	r1, [sp, #12]
 	mov	r2, sl
@@ -363,7 +341,7 @@ Func_08025200:
 	mov	r0, r9
 	movs	r1, #5
 	adds	r6, r7, r2
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r7, r0
 	bne.n	.L_080254d4
 	ldr	r3, [pc, #108]
@@ -379,12 +357,12 @@ Func_08025200:
 	mov	r0, fp
 	adds	r1, r6, #0
 	subs	r3, #1
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	adds	r7, #1
 .L_080254ee:
 	mov	r0, sl
 	movs	r1, #5
-	bl	sub_080022ec
+	bl	__divsi3
 	adds	r5, r0, #0
 	cmp	r7, r5
 	blt.n	.L_080254c0
@@ -402,7 +380,7 @@ Func_08025200:
 	str	r3, [sp, #0]
 	adds	r0, #1
 	movs	r3, #1
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 	ldr	r3, [pc, #40]
 	ldr	r1, [sp, #68]
 	adds	r2, r1, r3
@@ -437,7 +415,7 @@ Func_08025200:
 	bhi.n	.L_0802556c
 	mov	r0, r9
 	movs	r1, #5
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r7, r0
 	bne.n	.L_0802556c
 	ldr	r2, [pc, #264]
@@ -447,7 +425,7 @@ Func_08025200:
 	movs	r1, #5
 	mov	r0, sl
 	ldrh	r5, [r3, #8]
-	bl	sub_080022ec
+	bl	__divsi3
 	subs	r5, r5, r0
 	adds	r5, r5, r7
 	movs	r1, #0
@@ -458,12 +436,12 @@ Func_08025200:
 	adds	r1, r6, #0
 	adds	r2, r5, #0
 	negs	r3, r3
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	adds	r7, #1
 .L_08025592:
 	mov	r0, sl
 	movs	r1, #5
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r7, r0
 	blt.n	.L_0802554c
 	mov	r3, fp
@@ -477,7 +455,7 @@ Func_08025200:
 	adds	r3, r5, #0
 	subs	r2, #3
 	ldr	r1, [pc, #196]
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	mov	r3, fp
 	ldrh	r2, [r3, #8]
 	movs	r1, #0
@@ -486,7 +464,7 @@ Func_08025200:
 	mov	r0, fp
 	ldr	r1, [pc, #180]
 	adds	r3, r5, #0
-	bl	sub_08019000
+	bl	UiWindow_SetTilemapEntry
 	ldr	r2, [sp, #68]
 	ldr	r3, [pc, #176]
 	adds	r1, r2, r3
@@ -509,7 +487,7 @@ Func_08025200:
 	adds	r0, r5, #0
 	movs	r1, #240
 	subs	r7, #1
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	adds	r5, #12
 	cmp	r7, #0
 	bne.n	.L_080255ee
@@ -533,7 +511,7 @@ Func_08025200:
 	str	r2, [r1, #8]
 	ldr	r0, [sp, #56]
 	ldr	r1, [pc, #96]
-	bl	sub_080040d0
+	bl	Resource_GetBuffer
 	ldr	r3, [pc, #48]
 	ldr	r1, [sp, #24]
 	ands	r0, r3
@@ -591,7 +569,7 @@ Func_08025200:
 	beq.n	.L_080256b2
 	ldr	r0, [sp, #24]
 	movs	r1, #242
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_080256b2:
 	ldr	r3, [pc, #608]
 	ldr	r1, [r3, #0]
@@ -619,7 +597,7 @@ Func_08025200:
 	movs	r7, #128
 	mov	sl, r2
 	lsls	r7, r7, #3
-	bl	sub_08077018
+	bl	Item_Get
 	ldrh	r2, [r5, #0]
 	adds	r3, r7, #0
 	ands	r3, r2
@@ -628,14 +606,14 @@ Func_08025200:
 	bne.n	.L_08025706
 	ldrh	r1, [r5, #0]
 	ldr	r0, [sp, #80]
-	bl	sub_08025180
+	bl	Item_ClassifyUseAbility
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_08025706
 	b.n	.L_080258c8
 .L_08025706:
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	cmp	r6, #2
 	bne.n	.L_08025716
 	ldr	r5, [sp, #32]
@@ -652,21 +630,21 @@ Func_08025200:
 .L_08025724:
 	adds	r1, r5, #0
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 	b.n	.L_0802573a
 .L_0802572e:
 	ldr	r5, [sp, #32]
 	ldr	r0, [pc, #496]
 	adds	r1, r5, #0
 	movs	r2, #52
-	bl	sub_0801965c
+	bl	UiText_CopyMessageString
 .L_0802573a:
-	bl	sub_08016738
+	bl	Ui_FillVramBlockPattern
 	adds	r0, r5, #0
 	ldr	r1, [sp, #52]
 	movs	r2, #0
 	movs	r3, #4
-	bl	sub_08017aa4
+	bl	UiText_RenderWideStringAtOffset
 	b.n	.L_08025772
 .L_0802574c:
 	movs	r2, #1
@@ -684,7 +662,7 @@ Func_08025200:
 	beq.n	.L_08025772
 .L_08025764:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	negs	r3, r3
 	mov	sl, r3
@@ -702,7 +680,7 @@ Func_08025200:
 	cmp	r3, #0
 	beq.n	.L_080257b0
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	add	r8, r2
 	mov	r3, r8
@@ -730,7 +708,7 @@ Func_08025200:
 	cmp	r3, #0
 	beq.n	.L_080257f6
 	movs	r0, #111
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r2, #1
 	negs	r2, r2
 	add	r8, r2
@@ -740,7 +718,7 @@ Func_08025200:
 	ldr	r0, [sp, #72]
 	movs	r1, #5
 	subs	r0, #1
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	cmp	r9, r3
@@ -767,8 +745,8 @@ Func_08025200:
 	cmp	r3, #0
 	beq.n	.L_08025854
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_0800352c
+	bl	Audio_PlayCue
+	bl	Runtime_SetMainState19
 	mov	r3, r9
 	ldr	r1, [sp, #72]
 	adds	r3, #5
@@ -791,7 +769,7 @@ Func_08025200:
 	subs	r0, #1
 	movs	r1, #5
 	mov	r8, r3
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	cmp	r9, r3
@@ -813,8 +791,8 @@ Func_08025200:
 	cmp	r3, #0
 	beq.n	.L_080258c0
 	movs	r0, #111
-	bl	sub_080f9010
-	bl	sub_0800352c
+	bl	Audio_PlayCue
+	bl	Runtime_SetMainState19
 	mov	r2, r9
 	cmp	r2, #0
 	beq.n	.L_0802587e
@@ -830,7 +808,7 @@ Func_08025200:
 	ldr	r0, [sp, #72]
 	movs	r1, #5
 	subs	r0, #1
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	mov	r9, r3
@@ -865,29 +843,29 @@ Func_08025200:
 	str	r2, [sp, #20]
 .L_080258c0:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_08025344
 .L_080258c8:
 	ldr	r0, [sp, #52]
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r1, #1
 	mov	r0, fp
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r0, [sp, #56]
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	ldr	r5, [sp, #28]
 	movs	r7, #4
 .L_080258e8:
 	ldmia	r5!, {r0}
 	subs	r7, #1
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 	cmp	r7, #0
 	bge.n	.L_080258e8
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	mov	r0, sl
 	add	sp, #304
 	pop	{r3, r5, r6, r7}

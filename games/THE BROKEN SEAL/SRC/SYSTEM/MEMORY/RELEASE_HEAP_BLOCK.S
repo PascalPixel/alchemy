@@ -10,7 +10,6 @@
 @ credit: handwritten — heap block release by slot and by pointer, sharing one literal pool
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08002dd8
 	.global Runtime_ReleaseHeapBlock
 	.thumb_func
 Runtime_ReleaseHeapBlock:

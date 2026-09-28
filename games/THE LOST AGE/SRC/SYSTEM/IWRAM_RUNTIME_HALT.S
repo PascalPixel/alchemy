@@ -11,8 +11,6 @@
 @ credit: library — TBS/TLA common runtime halt loop
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000d64
-	.set AlchemyRunAddress, 0x030007ac
 .L_030007ac:
 	svc	0x00030000
 	b	.L_030007ac

@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_08002f40, 0x08002f40
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004458, 0x08004458
-	.set sub_080048b0, 0x080048b0
-	.set sub_080048f4, 0x080048f4
-	.set sub_08005340, 0x08005340
-	.set sub_080072f0, 0x080072f0
-	.set sub_080c9000, 0x080c9000
 	.global BattleFx_InitializeStarField
 	.global Func_080c1470
 	.thumb_func
@@ -30,12 +20,12 @@ Func_080c1470:
 	str	r3, [r2, #8]
 	ldr	r1, [pc, #516]
 	movs	r0, #39
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	movs	r1, #128
 	mov	fp, r0
 	lsls	r1, r1, #7
 	movs	r0, #40
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	ldr	r1, [pc, #500]
 	movs	r7, #142
 	lsls	r7, r7, #5
@@ -44,22 +34,22 @@ Func_080c1470:
 	add	r7, fp
 	mov	r9, r2
 .L_080c14ac:
-	bl	sub_08004458
+	bl	Random16
 	adds	r5, r0, #0
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #128
 	lsls	r3, r3, #9
 	adds	r3, r3, r0
 	lsrs	r6, r3, #1
 	adds	r0, r5, #0
 	mov	r8, r3
-	bl	sub_0800231c
+	bl	Trig_Cos
 	adds	r1, r6, #0
 	mov	ip, pc
 	bx	sl
 	str	r0, [r7, #0]
 	adds	r0, r5, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	adds	r1, r6, #0
 	movs	r0, r0
 	mov	ip, pc
@@ -83,7 +73,7 @@ Func_080c1470:
 	negs	r3, r2
 	str	r3, [r7, #4]
 .L_080c14fe:
-	bl	sub_08004458
+	bl	Random16
 	movs	r2, #128
 	lsls	r2, r2, #8
 	adds	r0, r0, r2
@@ -126,28 +116,28 @@ Func_080c1470:
 	mov	r9, r2
 .L_080c1552:
 	adds	r0, r7, #0
-	bl	sub_0800231c
+	bl	Trig_Cos
 	mov	r1, r8
 	movs	r0, r0
 	mov	ip, pc
 	bx	r6
 	str	r0, [r5, #0]
 	adds	r0, r7, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	mov	r1, r8
 	movs	r0, r0
 	mov	ip, pc
 	bx	r6
 	str	r0, [r5, #4]
 	adds	r0, r7, #0
-	bl	sub_0800231c
+	bl	Trig_Cos
 	movs	r1, #128
 	lsls	r1, r1, #2
 	mov	ip, pc
 	bx	r6
 	str	r0, [r5, #8]
 	adds	r0, r7, #0
-	bl	sub_08002322
+	bl	Trig_Sin
 	movs	r1, #128
 	lsls	r1, r1, #2
 	mov	ip, pc
@@ -180,10 +170,10 @@ Func_080c1470:
 	lsls	r1, r1, #7
 	ldr	r0, [r3, #0]
 	ldr	r3, [pc, #224]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r6, [pc, #220]
 	adds	r0, r6, #0
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r5, r0, #0
 	movs	r0, #160
 	adds	r1, r5, #0
@@ -191,10 +181,10 @@ Func_080c1470:
 	movs	r2, #128
 	lsls	r0, r0, #19
 	adds	r5, #128
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r1, fp
 	adds	r0, r5, #0
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	ldr	r1, [sp, #4]
 	cmp	r1, #1
 	beq.n	.L_080c160a
@@ -220,7 +210,7 @@ Func_080c1470:
 .L_080c1612:
 	ldr	r0, [pc, #168]
 .L_080c1614:
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r5, r0, #0
 	movs	r1, #160
 	ldr	r3, [pc, #160]
@@ -249,7 +239,7 @@ Func_080c1470:
 	movs	r2, #7
 	movs	r0, #46
 	str	r3, [sp, #0]
-	bl	sub_080c9000
+	bl	Func_080c9000
 	movs	r5, #200
 	movs	r3, #2
 	str	r3, [sp, #0]
@@ -258,13 +248,13 @@ Func_080c1470:
 	lsls	r5, r5, #4
 	movs	r1, #7
 	movs	r0, #47
-	bl	sub_080c9000
+	bl	Func_080c9000
 	adds	r1, r5, #0
 	ldr	r0, [pc, #92]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	adds	r1, r5, #0
 	ldr	r0, [pc, #88]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	add	sp, #36
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

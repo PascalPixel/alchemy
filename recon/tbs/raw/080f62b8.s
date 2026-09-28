@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
 	.global Unnamed_080f62b8
 	.global Func_080f62b8
 	.thumb_func
@@ -62,14 +61,14 @@ Func_080f62b8:
 	blt.n	.L_080f632a
 	adds	r1, r5, #0
 	str	r4, [sp, #0]
-	bl	sub_080022ec
+	bl	__divsi3
 	mov	ip, r0
 	ldr	r4, [sp, #0]
 	b.n	.L_080f6336
 .L_080f632a:
 	subs	r1, r7, r4
 	str	r4, [sp, #0]
-	bl	sub_080022ec
+	bl	__divsi3
 	ldr	r4, [sp, #0]
 	mov	ip, r0
 .L_080f6336:
@@ -155,7 +154,7 @@ Func_080f62b8:
 	mov	r6, sl
 	subs	r1, r3, r6
 .L_080f63c6:
-	bl	sub_080022ec
+	bl	__divsi3
 	mov	ip, r0
 	mov	r0, r8
 	adds	r1, r7, #0

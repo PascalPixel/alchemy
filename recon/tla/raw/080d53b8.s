@@ -1,18 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08020090, 0x08020090
-	.set sub_08020148, 0x08020148
-	.set sub_080201c0, 0x080201c0
-	.set sub_08020218, 0x08020218
-	.set sub_08020258, 0x08020258
-	.set sub_08020348, 0x08020348
-	.set sub_080d2240, 0x080d2240
-	.set sub_080d22a8, 0x080d22a8
-	.set sub_080d2350, 0x080d2350
-	.set sub_080d2d84, 0x080d2d84
-	.set sub_080d2ea4, 0x080d2ea4
-	.set sub_080d30fc, 0x080d30fc
 	.global Func_080d53b8
 	.thumb_func
 Func_080d53b8:
@@ -26,7 +13,7 @@ Func_080d53b8:
 	ldr	r1, [pc, #396]
 	sub	sp, #24
 	ldr	r0, [r1, #0]
-	bl	sub_080d2d84
+	bl	Object_GetById
 	movs	r2, #192
 	lsls	r2, r2, #18
 	ldr	r2, [r2, #32]
@@ -56,7 +43,7 @@ Func_080d53b8:
 	movs	r1, #8
 	add	r1, r8
 	mov	r9, r1
-	bl	sub_080d22a8
+	bl	0x080d22a8
 	adds	r3, r7, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -134,7 +121,7 @@ Func_080d53b8:
 	mov	r3, r9
 	lsls	r2, r3, #16
 	adds	r1, r5, #0
-	bl	sub_080201c0
+	bl	Func_080201c0
 	mov	r2, r8
 	mov	r1, sl
 	subs	r2, #8
@@ -142,7 +129,7 @@ Func_080d53b8:
 	lsls	r2, r2, #16
 	ldrb	r0, [r1, #0]
 	adds	r1, r5, #0
-	bl	sub_080201c0
+	bl	Func_080201c0
 	cmp	r6, r0
 	blt.n	.L_080d54ba
 	b.n	.L_080d5658
@@ -154,7 +141,7 @@ Func_080d53b8:
 	str	r3, [r0, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r0, #8]
-	bl	sub_08020258
+	bl	Func_08020258
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080d54d4
@@ -167,20 +154,20 @@ Func_080d53b8:
 	mov	r1, fp
 	ldr	r0, [r2, #0]
 	mov	r2, r9
-	bl	sub_080d2ea4
+	bl	ObjectMotion_SetPositionAndCommit
 	movs	r1, #6
 	adds	r0, r7, #0
-	bl	sub_08020090
+	bl	Object_SetMode
 	movs	r0, #4
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r1, #7
 	adds	r0, r7, #0
-	bl	sub_08020090
+	bl	Object_SetMode
 	movs	r3, #128
 	lsls	r3, r3, #11
 	str	r3, [r7, #40]
 	movs	r0, #4
-	bl	sub_08013560
+	bl	0x08013560
 	adds	r3, r7, #0
 	adds	r3, #85
 	strb	r5, [r3, #0]
@@ -190,23 +177,23 @@ Func_080d53b8:
 	str	r0, [sp, #4]
 	ldr	r1, [sp, #4]
 	adds	r0, r7, #0
-	bl	sub_08020218
+	bl	0x08020218
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r7, #48]
 	movs	r1, #12
 	adds	r0, r7, #0
 	str	r5, [r7, #40]
-	bl	sub_08020090
+	bl	Object_SetMode
 	movs	r0, #4
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r1, [pc, #32]
 	movs	r3, #2
 	strb	r3, [r1, #0]
 	movs	r3, #1
 	strb	r3, [r6, #0]
 	movs	r0, #8
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r3, [r7, #16]
 	ldr	r2, [pc, #24]
 	ands	r3, r2
@@ -261,7 +248,7 @@ Func_080d53b8:
 	subs	r3, #2
 	mov	r1, sl
 	str	r4, [sp, #0]
-	bl	sub_08020348
+	bl	0x08020348
 	ldr	r4, [sp, #0]
 	cmp	r0, #0
 	bge.n	.L_080d5658
@@ -281,7 +268,7 @@ Func_080d53b8:
 	strb	r3, [r6, #0]
 	adds	r0, r7, #0
 	movs	r1, #11
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r2, [r7, #12]
 	mov	r0, fp
 	movs	r3, #128
@@ -293,13 +280,13 @@ Func_080d53b8:
 	ldr	r0, [pc, #88]
 	adds	r3, r3, r0
 	adds	r0, r7, #0
-	bl	sub_08020148
+	bl	Object_SetPosition
 	ldr	r5, [pc, #80]
 	movs	r1, #133
 	lsls	r1, r1, #2
 	adds	r3, r5, r1
 	ldr	r0, [r3, #0]
-	bl	sub_080d30fc
+	bl	ObjectMotion_CommitCurrentPositionAndActivate
 	movs	r3, #3
 	strb	r3, [r6, #0]
 	ldr	r3, [r7, #12]
@@ -310,9 +297,9 @@ Func_080d53b8:
 	orrs	r2, r6
 	adds	r1, r2, #0
 	str	r2, [sp, #4]
-	bl	sub_08020218
+	bl	0x08020218
 	movs	r0, #4
-	bl	sub_080d2240
+	bl	Battle_WaitMode0
 	movs	r3, #128
 	lsls	r3, r3, #2
 	adds	r3, #18
@@ -334,11 +321,11 @@ Func_080d53b8:
 	.2byte 0x0240
 	.2byte 0x0200
 .L_080d5650:
-	bl	sub_080d2350
+	bl	0x080d2350
 	movs	r0, #0
 	b.n	.L_080d5660
 .L_080d5658:
-	bl	sub_080d2350
+	bl	0x080d2350
 	movs	r0, #1
 	negs	r0, r0
 .L_080d5660:

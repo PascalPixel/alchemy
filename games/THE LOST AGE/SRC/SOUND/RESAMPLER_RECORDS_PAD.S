@@ -4,6 +4,5 @@
 .syntax unified
 	.section .padding,"a",%progbits
 	.arm
-	.set AlchemyLoadAddress, 0x08000478
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0

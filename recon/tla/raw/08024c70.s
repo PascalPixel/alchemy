@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08023f64, 0x08023f64
 	.global Func_08024c70
 	.thumb_func
 Func_08024c70:
@@ -24,7 +23,7 @@ Func_08024c70:
 	b.n	.L_08024c9e
 .L_08024c94:
 	adds	r0, r5, #0
-	bl	sub_08023f64
+	bl	Func_08023f64
 	cmp	r0, #0
 	beq.n	.L_08024ca8
 .L_08024c9e:

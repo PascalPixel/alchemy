@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002064, 0x08002064
-	.set sub_0801314c, 0x0801314c
-	.set sub_080142d4, 0x080142d4
-	.set sub_080143ac, 0x080143ac
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_0803d4bc, 0x0803d4bc
-	.set sub_0803db54, 0x0803db54
-	.set sub_080ad010, 0x080ad010
 	.global Func_0803d5c4
 	.thumb_func
 Func_0803d5c4:
@@ -26,9 +17,9 @@ Func_0803d5c4:
 	movs	r0, #68
 	mov	r8, r2
 	mov	r9, r3
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	adds	r5, r0, #0
-	bl	sub_0803d4bc
+	bl	Ui_CountIconTableEntries
 	cmp	r6, r0
 	bcc.n	.L_0803d5f0
 	movs	r6, #0
@@ -52,7 +43,7 @@ Func_0803d5c4:
 	strh	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_0803db54
+	bl	Func_0803db54
 	movs	r2, #1
 	mov	sl, r2
 .L_0803d61e:
@@ -74,11 +65,11 @@ Func_0803d5c4:
 	strh	r2, [r3, #0]
 	adds	r0, r5, #0
 	mov	r1, sl
-	bl	sub_0803db54
+	bl	Func_0803db54
 	ldr	r2, [sp, #28]
 	cmp	r2, #0
 	bne.n	.L_0803d654
-	bl	sub_080143ac
+	bl	Func_080143ac
 	mov	r3, r8
 	str	r0, [r3, #0]
 .L_0803d654:
@@ -88,11 +79,11 @@ Func_0803d5c4:
 	ldr	r0, [r1, #0]
 	adds	r2, r5, r3
 	movs	r1, #128
-	bl	sub_080142d4
+	bl	0x080142d4
 	mov	r1, r9
 	str	r0, [r1, #0]
 	movs	r0, #68
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	pop	{r3, r5, r6}
 	mov	r8, r3
 	mov	r9, r5
@@ -120,7 +111,7 @@ Func_0803d5c4:
 	movs	r1, #0
 	str	r1, [sp, #4]
 	mov	sl, r1
-	bl	sub_080ad010
+	bl	0x080ad010
 	str	r0, [sp, #0]
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -153,7 +144,7 @@ Func_0803d5c4:
 	strh	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_0803db54
+	bl	Func_0803db54
 	movs	r2, #1
 	str	r2, [sp, #4]
 .L_0803d6ee:
@@ -183,7 +174,7 @@ Func_0803d5c4:
 	strh	r6, [r7, #0]
 	ldr	r1, [sp, #4]
 	adds	r0, r5, #0
-	bl	sub_0803db54
+	bl	Func_0803db54
 	movs	r3, #8
 	mov	r1, fp
 	ands	r3, r1
@@ -204,7 +195,7 @@ Func_0803d5c4:
 	strh	r6, [r2, #0]
 	movs	r1, #1
 	strh	r6, [r7, #0]
-	bl	sub_0803db54
+	bl	Func_0803db54
 .L_0803d752:
 	movs	r3, #16
 	mov	r1, fp
@@ -234,7 +225,7 @@ Func_0803d5c4:
 	strh	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_0803db54
+	bl	Func_0803db54
 .L_0803d78e:
 	movs	r3, #32
 	mov	r2, fp
@@ -274,7 +265,7 @@ Func_0803d5c4:
 	adds	r3, r5, r2
 	strh	r1, [r3, #0]
 	movs	r1, #1
-	bl	sub_0803db54
+	bl	Func_0803db54
 .L_0803d7de:
 	movs	r3, #2
 	mov	r1, fp
@@ -316,7 +307,7 @@ Func_0803d5c4:
 	bgt.n	.L_0803d888
 	movs	r1, #10
 	mov	r0, sl
-	bl	sub_08002064
+	bl	0x08002064
 	ldr	r3, [pc, #120]
 	lsls	r0, r0, #2
 	movs	r2, #192
@@ -341,10 +332,10 @@ Func_0803d5c4:
 	adds	r0, r5, #0
 	movs	r1, #1
 	strh	r6, [r7, #0]
-	bl	sub_0803db54
+	bl	Func_0803db54
 	mov	r0, sl
 	movs	r1, #10
-	bl	sub_08002054
+	bl	Math_Div
 	cmp	r0, #0
 	beq.n	.L_0803d888
 	lsls	r3, r0, #2
@@ -358,7 +349,7 @@ Func_0803d5c4:
 	adds	r0, r5, #0
 	strh	r6, [r7, #0]
 	movs	r1, #1
-	bl	sub_0803db54
+	bl	Func_0803db54
 .L_0803d888:
 	movs	r0, #128
 	lsls	r0, r0, #1
@@ -386,7 +377,7 @@ Func_0803d5c4:
 	lsls	r1, r1, #3
 	movs	r0, #68
 	mov	sl, r2
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	mov	r1, r8
 	adds	r5, r0, #0
 	adds	r0, r6, #0
@@ -397,9 +388,9 @@ Func_0803d5c4:
 	movs	r1, #128
 	adds	r2, r5, #0
 	mov	r0, sl
-	bl	sub_080142d4
+	bl	0x080142d4
 	movs	r0, #68
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	movs	r0, #1
 	pop	{r3, r5}
 	mov	r8, r3

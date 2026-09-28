@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08009080, 0x08009080
-	.set sub_08009150, 0x08009150
-	.set sub_080091e0, 0x080091e0
-	.set sub_08009220, 0x08009220
-	.set sub_0809163c, 0x0809163c
-	.set sub_080916b0, 0x080916b0
-	.set sub_08091750, 0x08091750
-	.set sub_08092054, 0x08092054
-	.set sub_08092158, 0x08092158
-	.set sub_080923c4, 0x080923c4
 	.global battle_owner_69
 	.global Func_08093fa0
 	.thumb_func
@@ -28,7 +17,7 @@ Func_08093fa0:
 	mov	r9, r0
 	ldr	r0, [r1, #0]
 	sub	sp, #24
-	bl	sub_08092054
+	bl	Engine_ActorGet
 	adds	r7, r0, #0
 	movs	r3, #10
 	ldrsh	r5, [r7, r3]
@@ -45,7 +34,7 @@ Func_08093fa0:
 	adds	r2, r2, r6
 	mov	r8, r0
 	mov	sl, r2
-	bl	sub_080916b0
+	bl	Battle_Reset
 	adds	r3, r7, #0
 	adds	r3, #84
 	ldrb	r3, [r3, #0]
@@ -97,7 +86,7 @@ Func_08093fa0:
 	str	r3, [r0, #4]
 	ldr	r3, [r7, #16]
 	str	r3, [r0, #8]
-	bl	sub_08009220
+	bl	CheckMapPositionCellOccupiedFar
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_08094138
@@ -108,20 +97,20 @@ Func_08093fa0:
 	mov	r2, sl
 	ldr	r0, [r1, #0]
 	mov	r1, r8
-	bl	sub_08092158
+	bl	ObjectMotion_SetPositionAndCommit
 	movs	r1, #6
 	adds	r0, r7, #0
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r0, #4
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #7
 	adds	r0, r7, #0
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r3, #128
 	lsls	r3, r3, #11
 	str	r3, [r7, #40]
 	movs	r0, #4
-	bl	sub_080030f8
+	bl	WaitFrames
 	adds	r3, r7, #0
 	adds	r3, #85
 	strb	r5, [r3, #0]
@@ -131,22 +120,22 @@ Func_08093fa0:
 	mov	fp, r2
 	adds	r0, r7, #0
 	mov	r1, fp
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r7, #48]
 	adds	r0, r7, #0
 	movs	r1, #12
 	str	r5, [r7, #40]
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r0, #4
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #1
 	mov	r0, r9
 	strb	r3, [r0, #0]
 	strb	r3, [r6, #0]
 	movs	r0, #8
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_08094112
 .L_080940b8:
 	adds	r5, r7, #0
@@ -155,7 +144,7 @@ Func_08093fa0:
 	strb	r6, [r5, #0]
 	adds	r0, r7, #0
 	movs	r1, #11
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	mov	r2, r8
 	lsls	r1, r2, #16
 	movs	r3, #128
@@ -167,10 +156,10 @@ Func_08093fa0:
 	ldr	r0, [pc, #88]
 	adds	r3, r3, r0
 	adds	r0, r7, #0
-	bl	sub_08009150
+	bl	Object_SetPosition
 	ldr	r1, [pc, #60]
 	ldr	r0, [r1, #0]
-	bl	sub_080923c4
+	bl	ObjectMotion_CommitCurrentPositionAndActivate
 	movs	r3, #3
 	strb	r3, [r5, #0]
 	ldr	r5, [pc, #44]
@@ -181,16 +170,16 @@ Func_08093fa0:
 	str	r3, [r7, #20]
 	adds	r0, r7, #0
 	mov	r1, fp
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r0, #4
-	bl	sub_0809163c
+	bl	Battle_WaitMode0
 	mov	r3, r9
 	strb	r6, [r3, #0]
 	adds	r3, r7, #0
 	adds	r3, #90
 	strb	r5, [r3, #0]
 .L_08094112:
-	bl	sub_08091750
+	bl	BattleFx_FinishAction
 	movs	r0, #0
 	b.n	.L_08094140
 	movs	r0, r0

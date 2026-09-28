@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080b0298, 0x080b0298
-	.set sub_080b0c78, 0x080b0c78
 	.global Djinn_Deactivate
 	.global Func_080b0d04
 	.thumb_func
@@ -15,12 +12,12 @@ Func_080b0d04:
 	adds	r7, r0, #0
 	adds	r6, r1, #0
 	mov	sl, r2
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r1, r6, #0
 	adds	r5, r0, #0
 	mov	r2, sl
 	adds	r0, r7, #0
-	bl	sub_080b0c78
+	bl	Djinn_IsActive
 	mov	r8, r0
 	cmp	r0, #0
 	beq.n	.L_080b0d4e
@@ -41,7 +38,7 @@ Func_080b0d04:
 	adds	r0, r7, #0
 	bics	r3, r2
 	str	r3, [r5, r1]
-	bl	sub_080b0298
+	bl	Func_080b0298
 .L_080b0d4e:
 	mov	r0, r8
 	pop	{r3, r5}

@@ -8,7 +8,6 @@
 @ credit: library — TBS/TLA common sound driver update and timer module
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c18e0
 	.global SoundDriver_Update
 	.thumb_func
 SoundDriver_Update:
@@ -381,6 +380,8 @@ AlchemyUncreditedEnd_081c1922:
 	mov	fp, r3
 	pop	{r3}
 .L_081c1b84:
+	.global SoundDriver_CallViaR3
+SoundDriver_CallViaR3:
 	bx	r3
 AlchemyUncredited_081c1b86:
 	.2byte	0x0000

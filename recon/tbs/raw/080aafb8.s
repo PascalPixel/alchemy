@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015070, 0x08015070
-	.set sub_08015080, 0x08015080
-	.set sub_080150b8, 0x080150b8
-	.set sub_08015270, 0x08015270
-	.set sub_08015280, 0x08015280
-	.set sub_08077208, 0x08077208
-	.set sub_08077210, 0x08077210
-	.set sub_080ac8fc, 0x080ac8fc
 	.global DjinnMenu_DrawElementList
 	.global Func_080aafb8
 	.thumb_func
@@ -50,7 +42,7 @@ Func_080aafb8:
 	ldrh	r1, [r6, #0]
 	adds	r0, r5, #0
 	negs	r2, r2
-	bl	sub_080ac8fc
+	bl	Unnamed_080ac8fc
 	strb	r0, [r7, #0]
 	ldr	r3, [sp, #44]
 	adds	r3, #1
@@ -67,13 +59,13 @@ Func_080aafb8:
 .L_080ab01e:
 	mov	r1, r9
 	ldr	r0, [r1, #48]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	mov	r2, r9
 	ldr	r0, [pc, #132]
 	ldr	r1, [r2, #48]
 	movs	r3, #80
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r3, #0
 	str	r3, [sp, #40]
 	ldr	r3, [pc, #112]
@@ -129,7 +121,7 @@ Func_080aafb8:
 	cmp	r3, #0
 	bne.n	.L_080ab0b4
 	movs	r0, #2
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	ldrh	r4, [r5, #0]
 	b.n	.L_080ab0b4
 	.4byte 0x00008000
@@ -152,7 +144,7 @@ Func_080aafb8:
 	lsrs	r0, r0, #8
 	lsrs	r1, r1, #5
 	ands	r2, r4
-	bl	sub_08077210
+	bl	Trade_CanOfferDjinnFar
 	cmp	r0, #0
 	bne.n	.L_080ab0f0
 	ldrh	r3, [r5, #0]
@@ -164,7 +156,7 @@ Func_080aafb8:
 	lsrs	r0, r0, #8
 	lsrs	r1, r1, #5
 	ands	r2, r3
-	bl	sub_08077208
+	bl	Func_08077208
 	cmp	r0, #0
 	beq.n	.L_080ab0f4
 .L_080ab0f0:
@@ -175,7 +167,7 @@ Func_080aafb8:
 	cmp	r0, #0
 	bne.n	.L_080ab100
 	movs	r0, #4
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 .L_080ab100:
 	ldrh	r3, [r5, #0]
 	mov	r1, r9
@@ -191,7 +183,7 @@ Func_080aafb8:
 	ldr	r2, [sp, #24]
 	adds	r3, #2
 	adds	r2, #1
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldrh	r2, [r5, #0]
 	mov	r3, fp
 	ands	r3, r2
@@ -209,14 +201,14 @@ Func_080aafb8:
 	ldr	r1, [r3, #48]
 	adds	r2, #16
 	mov	r3, sl
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r1, [sp, #28]
 	movs	r0, #8
 	add	sl, r0
 	adds	r1, #1
 	movs	r0, #15
 	str	r1, [sp, #28]
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 .L_080ab156:
 	ldr	r2, [sp, #44]
 	adds	r2, #1
@@ -266,7 +258,7 @@ Func_080aafb8:
 	str	r3, [sp, #0]
 	movs	r1, #0
 	movs	r3, #28
-	bl	sub_08015070
+	bl	UiWindow_DrawDividerLineFar
 	ldr	r3, [pc, #48]
 	ldr	r2, [pc, #52]
 	ldr	r3, [r3, #0]

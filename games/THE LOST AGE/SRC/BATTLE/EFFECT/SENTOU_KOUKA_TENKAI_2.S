@@ -13,9 +13,7 @@
 @ entry.
 @ credit: handwritten — TLA variant model/bit-stream decoder of the battle-effect bank
 .syntax unified
-	.set SentouKouka_TenkaiYomi2, 0x081a0374
 	.thumb
-	.set AlchemyLoadAddress, 0x081a029c
 	.global SentouKouka_Tenkai2
 	.thumb_func
 SentouKouka_Tenkai2:

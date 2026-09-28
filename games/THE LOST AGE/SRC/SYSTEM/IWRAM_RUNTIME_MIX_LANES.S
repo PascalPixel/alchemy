@@ -21,8 +21,6 @@
 	.set	.L_03000b44, 0x03000b44
 	.set	.L_03000b94, 0x03000b94
 	.thumb
-	.set AlchemyLoadAddress, 0x08000e38
-	.set AlchemyRunAddress, 0x03000880
 	.arm
 	mov	r8, #0x210
 	orrs	fp, sl, fp, lsl #16

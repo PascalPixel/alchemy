@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080b7424, 0x080b7424
-	.set sub_080b7dd0, 0x080b7dd0
 	.global Summon_Refresh
 	.global Func_080b7548
 	.thumb_func
@@ -48,7 +46,7 @@ Func_080b7548:
 	adds	r1, r6, #0
 	mov	r2, sl
 	mov	r3, r8
-	bl	sub_080b7424
+	bl	Summon_LayoutPositions
 	cmp	r6, #0
 	ble.n	.L_080b75c6
 	movs	r5, #0
@@ -58,7 +56,7 @@ Func_080b7548:
 	ldrsh	r0, [r2, r7]
 	cmp	r0, #254
 	beq.n	.L_080b75bc
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	mov	r1, sl
 	ldr	r3, [r5, r1]
 	lsls	r3, r3, #16

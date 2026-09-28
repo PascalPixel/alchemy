@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081bf80c, 0x081bf80c
 	.global Pcm_KeyToFrequencyWorkCopy
 	.global Func_081c0428
 	.thumb_func
@@ -43,11 +42,11 @@ Func_081c0428:
 	ldr	r4, [r1, #4]
 	subs	r0, r0, r5
 	adds	r1, r7, #0
-	bl	sub_081bf80c
+	bl	0x081bf80c
 	adds	r1, r0, #0
 	adds	r1, r5, r1
 	adds	r0, r4, #0
-	bl	sub_081bf80c
+	bl	0x081bf80c
 	pop	{r4, r5, r6, r7}
 	pop	{r1}
 	bx	r1

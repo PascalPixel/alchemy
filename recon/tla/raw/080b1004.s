@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080afe78, 0x080afe78
-	.set sub_080b0bb8, 0x080b0bb8
-	.set sub_080b0c9c, 0x080b0c9c
-	.set sub_080b0d58, 0x080b0d58
-	.set sub_08118108, 0x08118108
 	.global Func_080b1004
 	.thumb_func
 Func_080b1004:
@@ -15,9 +10,9 @@ Func_080b1004:
 	sub	sp, #32
 	mov	r5, sp
 	adds	r0, r5, #0
-	bl	sub_080afe78
+	bl	Party_ListActiveOwners
 	mov	sl, r0
-	bl	sub_08118108
+	bl	0x08118108
 	movs	r3, #0
 	mov	r8, r3
 	cmp	r8, sl
@@ -31,17 +26,17 @@ Func_080b1004:
 	ldrh	r0, [r7, #0]
 	adds	r1, r6, #0
 	adds	r2, r5, #0
-	bl	sub_080b0bb8
+	bl	Trade_CanOfferDjinn
 	cmp	r0, #0
 	beq.n	.L_080b104c
 	adds	r1, r6, #0
 	adds	r2, r5, #0
 	ldrh	r0, [r7, #0]
-	bl	sub_080b0c9c
+	bl	Djinn_Activate
 	ldrh	r0, [r7, #0]
 	adds	r1, r6, #0
 	adds	r2, r5, #0
-	bl	sub_080b0d58
+	bl	Trade_RemoveOffer
 .L_080b104c:
 	adds	r5, #1
 	cmp	r5, #19

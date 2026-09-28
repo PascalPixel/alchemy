@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014878, 0x08014878
-	.set sub_08020040, 0x08020040
-	.set sub_080ebe94, 0x080ebe94
-	.set sub_080ebea8, 0x080ebea8
 	.global Func_080ebeb4
 	.thumb_func
 Func_080ebeb4:
@@ -39,7 +35,7 @@ Func_080ebeb4:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r4, #0
-	bl	sub_08020040
+	bl	Func_08020040
 	str	r0, [r5, #0]
 	cmp	r0, #0
 	beq.n	.L_080ebf08
@@ -52,7 +48,7 @@ Func_080ebeb4:
 	adds	r1, r6, #0
 	adds	r0, r5, #0
 	adds	r2, r7, #0
-	bl	sub_080ebe94
+	bl	EffectSlot_SetPosition
 	movs	r3, #128
 	lsls	r3, r3, #10
 	str	r3, [r5, #32]
@@ -78,7 +74,7 @@ Func_080ebeb4:
 	strb	r2, [r3, #0]
 	adds	r3, #1
 	strb	r2, [r3, #0]
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r3, r5, #0
 	adds	r3, #70
 	adds	r2, r5, #0
@@ -88,7 +84,7 @@ Func_080ebeb4:
 	strb	r3, [r2, #0]
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_080ebea8
+	bl	Func_080ebea8
 	add	sp, #4
 	pop	{r3}
 	mov	r8, r3

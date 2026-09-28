@@ -8,8 +8,6 @@
 @ credit: library — TBS/TLA common IWRAM runtime word copier
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000ce8
-	.set AlchemyRunAddress, 0x03000730
 	.thumb
 AlchemyUncredited_08000ce8:
 	bx	pc

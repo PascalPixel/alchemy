@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072f0, 0x080072f0
 	.global Func_08011f54
 	.thumb_func
 Func_08011f54:
@@ -57,7 +56,7 @@ Func_08011f54:
 	ldr	r3, [r4, r3]
 	adds	r1, r5, #0
 	adds	r2, r6, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	pop	{r5, r6, r7}
 	pop	{r1}
 	bx	r1

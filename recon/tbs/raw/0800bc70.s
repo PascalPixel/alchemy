@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004080, 0x08004080
-	.set sub_0800b8ac, 0x0800b8ac
-	.set sub_08185000, 0x08185000
 	.global Func_0800bc70
 	.thumb_func
 Func_0800bc70:
@@ -14,9 +10,9 @@ Func_0800bc70:
 	movs	r1, #0
 	mov	r8, r1
 	mov	sl, r0
-	bl	sub_08185000
+	bl	Resource_GetMetadataRecordFar
 	adds	r7, r0, #0
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	ldr	r3, [pc, #284]
 	ldr	r5, [r3, #0]
 	ldrb	r3, [r7, #0]
@@ -53,7 +49,7 @@ Func_0800bc70:
 	adds	r0, r6, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	mov	ip, r0
 	cmp	r0, #0
 	bne.n	.L_0800bcd6
@@ -160,7 +156,7 @@ Func_0800bc70:
 	str	r3, [r2, #0]
 	adds	r0, r5, #0
 	mov	r1, sl
-	bl	sub_0800b8ac
+	bl	ResourceMetadata_Register
 	movs	r2, #1
 	negs	r2, r2
 	mov	r0, r8

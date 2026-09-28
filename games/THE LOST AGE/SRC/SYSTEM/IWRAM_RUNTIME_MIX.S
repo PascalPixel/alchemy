@@ -12,8 +12,6 @@
 	.thumb_func
 	.set	.L_03000cfc, 0x03000cfc
 	.arm
-	.set AlchemyLoadAddress, 0x08000d6c
-	.set AlchemyRunAddress, 0x030007b4
 	.thumb
 .L_030007b4:
 	str	r0, [sp, #4]

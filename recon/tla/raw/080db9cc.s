@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015778, 0x08015778
-	.set sub_080eb01c, 0x080eb01c
 	.global Func_080db9cc
 	.thumb_func
 Func_080db9cc:
@@ -28,7 +26,7 @@ Func_080db9cc:
 	str	r3, [r0, #4]
 	ldr	r3, [r4, #16]
 	str	r3, [r0, #8]
-	bl	sub_08015778
+	bl	Func_08015778
 	ldr	r2, [r5, #8]
 	movs	r3, #128
 	lsls	r3, r3, #2
@@ -74,6 +72,6 @@ Func_080db9cc:
 	movs	r3, #249
 	lsls	r3, r3, #3
 	adds	r0, r0, r3
-	bl	sub_080eb01c
+	bl	0x080eb01c
 	pop	{pc}
 	.2byte 0x0000

@@ -15,7 +15,6 @@
 	.set	.L_case_10, 0x080f0230
 	.set	.L_case_6_minus, 0x080f01d8
 	.arm
-	.set AlchemyLoadAddress, 0x080f0104
 .L_dispatch_runtime:
 	.space 32, 0
 .L_dispatch_source:

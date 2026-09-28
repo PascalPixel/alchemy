@@ -1,26 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080022fc, 0x080022fc
-	.set sub_080030f8, 0x080030f8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08015070, 0x08015070
-	.set sub_08015080, 0x08015080
-	.set sub_08015270, 0x08015270
-	.set sub_080770c0, 0x080770c0
-	.set sub_080a112c, 0x080a112c
-	.set sub_080a1a40, 0x080a1a40
-	.set sub_080a1ac0, 0x080a1ac0
-	.set sub_080a345c, 0x080a345c
-	.set sub_080a3c98, 0x080a3c98
-	.set sub_080a3ef0, 0x080a3ef0
-	.set sub_080a4110, 0x080a4110
-	.set sub_080a413c, 0x080a413c
-	.set sub_080a448c, 0x080a448c
-	.set sub_080a45cc, 0x080a45cc
-	.set sub_080a4eb8, 0x080a4eb8
-	.set sub_080a51d0, 0x080a51d0
-	.set sub_080f9010, 0x080f9010
 	.global Func_080a414c
 	.thumb_func
 Func_080a414c:
@@ -44,7 +23,7 @@ Func_080a414c:
 	movs	r3, #1
 	mov	r8, r2
 	mov	r9, r3
-	bl	sub_080a448c
+	bl	ItemMenu_BuildCmd
 	movs	r2, #136
 	lsls	r2, r2, #2
 	adds	r2, r6, r2
@@ -53,29 +32,29 @@ Func_080a414c:
 	movs	r7, #0
 	cmp	r3, #1
 	beq.n	.L_080a41e0
-	bl	sub_080a345c
+	bl	ItemMenu_HideAllIcons
 	ldr	r0, [r6, #52]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r1, #134
 	lsls	r1, r1, #1
 	adds	r3, r6, r1
 	ldr	r5, [r3, #0]
-	bl	sub_080a4eb8
+	bl	ItemMenu_SetMsgWin7
 	adds	r0, r5, #0
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r3, #3
 	str	r3, [sp, #0]
 	movs	r2, #3
 	movs	r3, #16
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_08015070
-	bl	sub_080a51d0
+	bl	UiWindow_DrawDividerLineFar
+	bl	ItemMenu_DrawItemHead
 	adds	r1, r5, #0
 	mov	r0, fp
-	bl	sub_080a45cc
+	bl	ItemMenu_DrawCmd
 	ldr	r0, [r6, #44]
-	bl	sub_08015270
+	bl	RenderOutput_RedrawSavedRectFar
 	movs	r2, #188
 	lsls	r2, r2, #1
 	adds	r3, r6, r2
@@ -87,7 +66,7 @@ Func_080a414c:
 	adds	r0, r0, r3
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080a41e0:
 	ldr	r1, [sp, #4]
 	mov	r3, sl
@@ -147,7 +126,7 @@ Func_080a414c:
 	b.n	.L_080a427a
 .L_080a4248:
 	movs	r0, #113
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r3, #1
 	negs	r3, r3
 	ldr	r1, [pc, #544]
@@ -156,12 +135,12 @@ Func_080a414c:
 .L_080a4258:
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	sub_080022fc
+	bl	__modsi3
 	lsls	r0, r0, #24
 	asrs	r7, r0, #24
 	movs	r1, #3
 	adds	r0, r5, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	lsls	r0, r0, #24
 	asrs	r0, r0, #24
 	mov	r8, r0
@@ -172,14 +151,14 @@ Func_080a414c:
 .L_080a427a:
 	mov	r1, r8
 	adds	r0, r7, #0
-	bl	sub_080a4110
+	bl	ItemMenu_CmdCursorX
 	mov	r1, r8
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	sub_080a413c
+	bl	ItemMenu_CmdCursorY
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	sub_080a1ac0
+	bl	UiMenu_SlideCursor
 	b.n	.L_080a4436
 .L_080a4296:
 	mov	r3, r9
@@ -189,7 +168,7 @@ Func_080a414c:
 	adds	r0, r7, #3
 	mov	r9, r1
 	movs	r1, #3
-	bl	sub_080022fc
+	bl	__modsi3
 	mov	r2, r8
 	adds	r2, #2
 	lsrs	r3, r2, #31
@@ -203,7 +182,7 @@ Func_080a414c:
 	add	r3, r8
 	adds	r3, r3, r7
 	mov	sl, r3
-	bl	sub_080a3c98
+	bl	EquipmentMenu_StartCompatibilityIndicators
 	mov	r2, sl
 	cmp	r2, #2
 	ble.n	.L_080a42fc
@@ -220,14 +199,14 @@ Func_080a414c:
 	ldrh	r1, [r2, #0]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	sub_080a3ef0
+	bl	ItemMenu_DrawEquipPreview
 	mov	r2, sl
 	cmp	r2, #3
 	bne.n	.L_080a4330
 	movs	r1, #200
 	ldr	r0, [pc, #392]
 	lsls	r1, r1, #4
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	b.n	.L_080a4330
 .L_080a42fc:
 	mov	r3, sl
@@ -245,7 +224,7 @@ Func_080a414c:
 	ldrh	r1, [r2, #0]
 	adds	r0, r3, #0
 	movs	r2, #0
-	bl	sub_080a3ef0
+	bl	ItemMenu_DrawEquipPreview
 	b.n	.L_080a4330
 .L_080a4320:
 	ldr	r2, [pc, #340]
@@ -254,20 +233,20 @@ Func_080a414c:
 	ldr	r0, [r6, #36]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_080a112c
+	bl	Menu_DrawOwnerStatusPanel
 .L_080a4330:
 	mov	r1, r8
 	adds	r0, r7, #0
-	bl	sub_080a4110
+	bl	ItemMenu_CmdCursorX
 	mov	r1, r8
 	adds	r5, r0, #0
 	adds	r0, r7, #0
-	bl	sub_080a413c
+	bl	ItemMenu_CmdCursorY
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	sub_080a1a40
+	bl	UiMenu_PositionCursor
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r5, [pc, #300]
 	ldr	r2, [r5, #0]
 	movs	r3, #1
@@ -282,7 +261,7 @@ Func_080a414c:
 	cmp	r3, r1
 	bne.n	.L_080a4372
 	movs	r0, #114
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a43c8
 .L_080a4372:
 	mov	r2, sl
@@ -305,20 +284,20 @@ Func_080a414c:
 	bics	r0, r5
 	lsrs	r2, r1, #32
 	movs	r0, #174
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a43be
 	movs	r0, #175
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a43be
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a43be
 	movs	r0, #117
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a43be
 .L_080a43b8:
 	movs	r0, #112
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080a43be:
 	ldr	r1, [pc, #180]
 .L_080a43c0:
@@ -345,7 +324,7 @@ Func_080a414c:
 	movs	r0, #111
 	add	r8, r3
 	mov	r9, r1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a4436
 .L_080a43f0:
 	ldr	r2, [r1, #0]
@@ -357,7 +336,7 @@ Func_080a414c:
 	movs	r0, #111
 	add	r8, r2
 	mov	r9, r2
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a4436
 .L_080a4408:
 	ldr	r2, [r1, #0]
@@ -369,7 +348,7 @@ Func_080a414c:
 	movs	r0, #111
 	adds	r7, #1
 	mov	r9, r3
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	b.n	.L_080a4436
 .L_080a4420:
 	ldr	r3, [r1, #0]
@@ -381,11 +360,11 @@ Func_080a414c:
 	movs	r0, #111
 	subs	r7, #1
 	mov	r9, r1
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 .L_080a4436:
 	movs	r0, #168
 	lsls	r0, r0, #1
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_080a4446
@@ -396,7 +375,7 @@ Func_080a414c:
 	adds	r2, r6, r3
 	movs	r3, #0
 	strb	r3, [r2, #0]
-	bl	sub_080a3c98
+	bl	EquipmentMenu_StartCompatibilityIndicators
 	mov	r0, sl
 	add	sp, #16
 	pop	{r3, r5, r6, r7}

@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c2a3c, 0x081c2a3c
-	.set sub_081c2a8c, 0x081c2a8c
 	.global Cgb_UpdateChannels
 	.global Func_081c2af4
 	.thumb_func
@@ -137,7 +135,7 @@ Func_081c2af4:
 	strb	r0, [r4, #29]
 	adds	r0, r4, #0
 	str	r3, [sp, #24]
-	bl	sub_081c2a8c
+	bl	CgbNote_UpdatePanEnvelope
 	ldr	r3, [sp, #24]
 	cmp	r6, #2
 	beq.n	.L_081c2c1c
@@ -261,7 +259,7 @@ Func_081c2af4:
 .L_081c2cce:
 	lsls	r0, r6, #24
 	lsrs	r0, r0, #24
-	bl	sub_081c2a3c
+	bl	CgbChannel_Mute
 	movs	r0, #0
 	strb	r0, [r4, #0]
 	b.n	.L_081c2f20
@@ -310,7 +308,7 @@ Func_081c2af4:
 	strb	r0, [r4, #29]
 .L_081c2d2e:
 	adds	r0, r4, #0
-	bl	sub_081c2a8c
+	bl	CgbNote_UpdatePanEnvelope
 	movs	r0, #3
 	ldrb	r2, [r4, #0]
 	ands	r0, r2

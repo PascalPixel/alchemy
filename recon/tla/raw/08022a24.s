@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08021918, 0x08021918
-	.set sub_08022d1c, 0x08022d1c
 	.global Func_08022a24
 	.thumb_func
 Func_08022a24:
@@ -13,7 +11,7 @@ Func_08022a24:
 	cmp	r5, #0
 	beq.n	.L_08022a82
 	adds	r0, r5, #0
-	bl	sub_08022d1c
+	bl	Func_08022d1c
 	ldr	r3, [r6, #40]
 	movs	r0, #0
 	cmp	r5, r3
@@ -71,7 +69,7 @@ Func_08022a24:
 	ldr	r0, [r5, r6]
 	cmp	r0, #0
 	beq.n	.L_08022aca
-	bl	sub_08022d1c
+	bl	Func_08022d1c
 	movs	r3, #0
 	adds	r2, r7, #1
 	str	r3, [r5, r6]
@@ -107,7 +105,7 @@ Func_08022a24:
 	beq.n	.L_08022b02
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
-	bl	sub_08021918
+	bl	Func_08021918
 	ldrb	r3, [r0, #5]
 	cmp	r6, r3
 	bge.n	.L_08022b02
@@ -155,7 +153,7 @@ Animation_ApplyChildArgument:
 	ldrsh	r0, [r5, r3]
 	str	r1, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_08021918
+	bl	Func_08021918
 	ldrb	r3, [r0, #5]
 	ldr	r1, [sp, #4]
 	ldr	r4, [sp, #0]

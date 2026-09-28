@@ -13,7 +13,6 @@
 @ credit: handwritten — MIDI key to frequency (TLA revision)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c05e8
 .L_081c05e8:
 	movs	r1, #178
 	movs	r2, #255

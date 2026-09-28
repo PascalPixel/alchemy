@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080aec04, 0x080aec04
 	.global Inventory_Add
 	.global Func_080aed6c
 	.thumb_func
@@ -9,10 +7,10 @@ Inventory_Add:
 Func_080aed6c:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r6, r0, #0
 	adds	r0, r5, #0
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r2, [r0, #3]
 	movs	r3, #16
 	ands	r3, r2

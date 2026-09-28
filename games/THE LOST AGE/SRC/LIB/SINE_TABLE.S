@@ -5,7 +5,6 @@
 .syntax unified
 	.section .rodata,"a",%progbits
 	.thumb
-	.set AlchemyLoadAddress, 0x080020a6
 	.2byte	0x0000
 	.global Math_SineTable
 Math_SineTable:

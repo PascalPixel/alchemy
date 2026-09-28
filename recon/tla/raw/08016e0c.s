@@ -1,14 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_08017054, 0x08017054
-	.set sub_0801788c, 0x0801788c
 	.global Func_08016e0c
 	.thumb_func
 Func_08016e0c:
 	push	{r4, r5, lr}
 	sub	sp, #68
 	mov	r0, sp
-	bl	sub_08017054
+	bl	Func_08017054
 	mov	r5, sp
 	adds	r5, #1
 	ldr	r2, [pc, #24]
@@ -37,12 +35,12 @@ Func_08016e0c:
 	cmp	r0, #0
 	bne.n	.L_08016e40
 	ldr	r0, [pc, #44]
-	bl	sub_0801788c
+	bl	_call_via_r5
 	lsls	r0, r0, #24
 	lsrs	r4, r0, #16
 	movs	r0, #224
 	lsls	r0, r0, #20
-	bl	sub_0801788c
+	bl	_call_via_r5
 	lsls	r0, r0, #24
 	lsrs	r0, r0, #24
 	orrs	r4, r0

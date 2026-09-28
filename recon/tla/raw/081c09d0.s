@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_081c05f0, 0x081c05f0
-	.set sub_081c0738, 0x081c0738
-	.set sub_081c077a, 0x081c077a
-	.set sub_081c07a2, 0x081c07a2
-	.set sub_081c09ec, 0x081c09ec
-	.set sub_081c16b4, 0x081c16b4
-	.set sub_081c2818, 0x081c2818
-	.set sub_081c28e0, 0x081c28e0
 	.global MusicPlayer_Tick
 	.global Func_081c09d0
 	.thumb_func
@@ -24,7 +16,7 @@ Func_081c09d0:
 	push	{r0, lr}
 	ldr	r3, [r0, #56]
 	cmp	r3, #0
-	beq.n	sub_081c09ec
+	beq.n	0x081c09ec
 	ldr	r0, [r0, #60]
 	mov	lr, r3
 	.2byte 0xf800
@@ -45,7 +37,7 @@ Func_081c09d0:
 	ldr	r0, [r0, #0]
 	mov	r8, r0
 	adds	r0, r7, #0
-	bl	sub_081c2818
+	bl	MusicPlayer_StepFade
 	ldr	r0, [r7, #4]
 	cmp	r0, #0
 	bge.n	.L_081c0a18
@@ -89,7 +81,7 @@ Func_081c09d0:
 	b.n	.L_081c0a5e
 .L_081c0a58:
 	adds	r0, r4, #0
-	bl	sub_081c0738
+	bl	SoundChannel_Unlink
 .L_081c0a5e:
 	ldr	r4, [r4, #52]
 	cmp	r4, #0
@@ -99,7 +91,7 @@ Func_081c09d0:
 	lsrs	r0, r3, #7
 	bcc.n	.L_081c0ad8
 	adds	r0, r5, #0
-	bl	sub_081c16b4
+	bl	SoundDriver_ClearBuffer
 	movs	r0, #128
 	strb	r0, [r5, #0]
 	movs	r0, #2
@@ -132,7 +124,7 @@ Func_081c09d0:
 	subs	r0, #207
 	adds	r1, r7, #0
 	adds	r2, r5, #0
-	bl	sub_081c07a2
+	bl	MusicTrack_HandleNote
 	b.n	.L_081c0ad8
 .L_081c0ab0:
 	ldr	r0, [pc, #4]
@@ -247,7 +239,7 @@ Func_081c09d0:
 	mov	r9, r2
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sub_081c28e0
+	bl	MusicTrack_CalcOutput
 	ldr	r4, [r5, #32]
 	cmp	r4, #0
 	beq.n	.L_081c0bee
@@ -257,7 +249,7 @@ Func_081c09d0:
 	tst	r0, r1
 	bne.n	.L_081c0b8c
 	adds	r0, r4, #0
-	bl	sub_081c0738
+	bl	SoundChannel_Unlink
 	b.n	.L_081c0be8
 .L_081c0b8c:
 	ldrb	r0, [r4, #1]
@@ -267,7 +259,7 @@ Func_081c09d0:
 	movs	r0, #3
 	tst	r0, r3
 	beq.n	.L_081c0baa
-	bl	sub_081c077a
+	bl	SoundDriver_CalculateStereoVolume
 	cmp	r6, #0
 	beq.n	.L_081c0baa
 	ldrb	r0, [r4, #29]
@@ -305,7 +297,7 @@ Func_081c09d0:
 	adds	r1, r2, #0
 	ldrb	r2, [r5, #9]
 	ldr	r0, [r4, #36]
-	bl	sub_081c05f0
+	bl	SoundDriver_MidiKeyToFrequency
 	str	r0, [r4, #32]
 .L_081c0be8:
 	ldr	r4, [r4, #52]

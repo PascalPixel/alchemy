@@ -12,11 +12,8 @@
 @ unwinding another routine's frame are beyond both approved compilers.
 @ credit: handwritten — IWRAM runtime frame renderer
 .syntax unified
-	.set	IwramSoundNormalizeChannels, 0x03000b1c
 	.set	.L_audio_096c, 0x0300096c
 	.arm
-	.set AlchemyLoadAddress, 0x080012d0
-	.set AlchemyRunAddress, 0x03000b60
 IwramSoundRenderFrame:
 	add	r0, pc, #656
 	mov	r9, #352

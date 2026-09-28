@@ -8,7 +8,6 @@
 @ credit: handwritten — sound driver VSync DMA refresh (TLA revision)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x080005e8
 	.global SoundDriver_VSyncRefresh
 	.thumb_func
 SoundDriver_VSyncRefresh:

@@ -10,7 +10,6 @@
 @ credit: library — TBS/TLA common ARM byte-LZ decoder copied to the heap
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08001b70
 	.global Resource_DecodeByteLzArm
 Resource_DecodeByteLzArm:
 	push	{r1, r5, r6, r7, lr}

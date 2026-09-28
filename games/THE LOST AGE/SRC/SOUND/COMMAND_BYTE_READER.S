@@ -5,7 +5,6 @@
 @ credit: library — TBS/TLA common sound command-byte reader and setters (reader)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c1e64
 	.global MusicTrack_ReadCommandByte
 	.thumb_func
 MusicTrack_ReadCommandByte:

@@ -5,7 +5,6 @@
 .syntax unified
 	.section .rodata,"a",%progbits
 	.thumb
-	.set AlchemyLoadAddress, 0x08002344
 @ 四分円正弦表。各項は正弦値を六五五三六倍して四捨五入した値。
 	.align	2
 	.global Data_08002344

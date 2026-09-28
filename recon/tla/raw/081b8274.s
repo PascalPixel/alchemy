@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08002064, 0x08002064
 	.global Func_081b8274
 	.thumb_func
 Func_081b8274:
@@ -52,12 +50,12 @@ Func_081b8274:
 .L_081b82ca:
 	movs	r1, #10
 	adds	r5, #1
-	bl	sub_08002054
+	bl	Math_Div
 	cmp	r5, r8
 	bne.n	.L_081b82ca
 .L_081b82d6:
 	movs	r1, #10
-	bl	sub_08002064
+	bl	0x08002064
 	cmp	r0, #0
 	beq.n	.L_081b82e6
 	movs	r2, #1

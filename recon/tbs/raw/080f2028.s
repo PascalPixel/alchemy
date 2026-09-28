@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
 	.global Func_080f2028
 	.thumb_func
 Func_080f2028:
@@ -60,7 +59,7 @@ Func_080f2028:
 	mov	r0, r9
 	muls	r0, r3
 	movs	r1, #80
-	bl	sub_080022ec
+	bl	__divsi3
 	add	r0, sl
 	adds	r5, r0, #0
 	subs	r5, #16
@@ -129,7 +128,7 @@ Func_080f2028:
 	mov	r0, r9
 	muls	r0, r3
 	movs	r1, #80
-	bl	sub_080022ec
+	bl	__divsi3
 	add	r0, sl
 	adds	r5, r0, #0
 	subs	r5, #16
@@ -170,7 +169,7 @@ Func_080f2028:
 	mov	r0, r9
 	muls	r0, r3
 	movs	r1, #80
-	bl	sub_080022ec
+	bl	__divsi3
 	add	r0, sl
 	adds	r5, r0, #0
 	subs	r5, #32
@@ -255,7 +254,7 @@ Func_080f2028:
 	mov	r0, r9
 	muls	r0, r3
 	movs	r1, #80
-	bl	sub_080022ec
+	bl	__divsi3
 	add	r0, sl
 	adds	r5, r0, #0
 	subs	r5, #16
@@ -324,7 +323,7 @@ Func_080f2028:
 	mov	r0, r9
 	muls	r0, r3
 	movs	r1, #80
-	bl	sub_080022ec
+	bl	__divsi3
 	add	r0, sl
 	adds	r5, r0, #0
 	subs	r5, #16
@@ -395,7 +394,7 @@ Func_080f2028:
 	mov	r0, r9
 	muls	r0, r3
 	movs	r1, #80
-	bl	sub_080022ec
+	bl	__divsi3
 	add	r0, sl
 	adds	r5, r0, #0
 	subs	r5, #32

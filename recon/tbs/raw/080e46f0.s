@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f40, 0x08002f40
-	.set sub_080072f0, 0x080072f0
 	.global BattleFx_StepPaletteToResource
 	.global Func_080e46f0
 	.thumb_func
@@ -15,12 +13,12 @@ Func_080e46f0:
 	lsls	r1, r1, #19
 	sub	sp, #128
 	mov	r8, r1
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r3, [pc, #32]
 	adds	r1, r0, #0
 	movs	r2, #128
 	mov	r0, sp
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r3, #0
 	mov	r2, sp
 	strh	r3, [r2, #0]
@@ -99,7 +97,7 @@ Func_080e46f0:
 	ldr	r3, [pc, #24]
 	movs	r2, #128
 	lsls	r0, r0, #19
-	bl	sub_080072f0
+	bl	_call_via_r3
 	add	sp, #128
 	pop	{r3, r5}
 	mov	r8, r3

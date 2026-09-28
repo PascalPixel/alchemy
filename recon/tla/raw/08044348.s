@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013164, 0x08013164
-	.set sub_080143ac, 0x080143ac
-	.set sub_08014dac, 0x08014dac
-	.set sub_0801587c, 0x0801587c
-	.set sub_0803b918, 0x0803b918
-	.set sub_08108088, 0x08108088
 	.global Func_08044348
 	.thumb_func
 Func_08044348:
@@ -20,11 +14,11 @@ Func_08044348:
 	lsls	r0, r0, #2
 	ldr	r5, [r3, #60]
 	mov	r8, r1
-	bl	sub_08014dac
+	bl	0x08014dac
 	mov	sl, r0
 	mov	r1, sl
 	mov	r0, r8
-	bl	sub_0801587c
+	bl	0x0801587c
 	movs	r1, #14
 	ldrsh	r3, [r6, r1]
 	movs	r1, #12
@@ -74,7 +68,7 @@ Func_08044348:
 	blt.n	.L_08044394
 .L_080443c4:
 	mov	r0, sl
-	bl	sub_08013164
+	bl	Func_08013164
 	pop	{r3, r5}
 	mov	r8, r3
 	mov	sl, r5
@@ -159,11 +153,11 @@ Func_08044348:
 	.2byte 0xefff
 	.2byte 0xffff
 	push	{r5, lr}
-	bl	sub_080143ac
+	bl	Func_080143ac
 	ldr	r2, [pc, #12]
 	movs	r1, #128
 	adds	r5, r0, #0
-	bl	sub_08108088
+	bl	Func_08108088
 	adds	r0, r5, #0
 	pop	{r5, pc}
 	.2byte 0x01fa
@@ -171,14 +165,14 @@ Func_08044348:
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128
-	bl	sub_08108088
+	bl	Func_08108088
 	pop	{pc}
 	.2byte 0x01fa
 	.2byte 0x0000
 	push	{lr}
 	ldr	r2, [pc, #8]
 	movs	r1, #128
-	bl	sub_08108088
+	bl	Func_08108088
 	pop	{pc}
 	.2byte 0x0202
 	.2byte 0x0000
@@ -214,7 +208,7 @@ Func_08044348:
 	movs	r0, #0
 	mov	r2, sp
 	movs	r3, #0
-	bl	sub_0803b918
+	bl	0x0803b918
 	ldr	r0, [sp, #4]
 	add	sp, #8
 	b.n	.L_080444e4

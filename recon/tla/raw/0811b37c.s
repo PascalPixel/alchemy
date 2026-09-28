@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0811a038, 0x0811a038
-	.set sub_0811a0b0, 0x0811a0b0
-	.set sub_0811a7ac, 0x0811a7ac
-	.set sub_0811b180, 0x0811b180
-	.set sub_0811be3c, 0x0811be3c
 	.global Func_0811b37c
 	.thumb_func
 Func_0811b37c:
@@ -26,12 +21,12 @@ Func_0811b37c:
 	mov	sl, r3
 	str	r2, [sp, #0]
 	mov	r9, r1
-	bl	sub_0811a038
+	bl	0x0811a038
 	ldr	r3, [sp, #0]
 	adds	r5, r0, #0
 	lsls	r0, r5, #1
 	adds	r0, r3, r0
-	bl	sub_0811a0b0
+	bl	0x0811a0b0
 	mov	r3, sl
 	adds	r5, r5, r0
 	movs	r2, #255
@@ -74,14 +69,14 @@ Func_0811b37c:
 	mov	r2, r9
 	strb	r2, [r1, r3]
 	adds	r0, r5, #0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	mov	r3, fp
 	ldrsb	r2, [r6, r3]
 	mov	r1, fp
 	adds	r3, r6, #1
 	ldrsb	r3, [r3, r1]
 	adds	r1, r5, #0
-	bl	sub_0811a7ac
+	bl	0x0811a7ac
 	subs	r7, #1
 	movs	r2, #1
 	adds	r6, #2
@@ -124,7 +119,7 @@ Func_0811b37c:
 	adds	r1, r5, #0
 	mov	r2, r9
 	mov	r3, sl
-	bl	sub_0811b180
+	bl	Func_0811b180
 	cmp	r5, #0
 	ble.n	.L_0811b49a
 	movs	r3, #0
@@ -138,13 +133,13 @@ Func_0811b37c:
 	cmp	r5, #254
 	beq.n	.L_0811b48e
 	adds	r0, r5, #0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	mov	r1, r9
 	ldr	r2, [r6, r1]
 	mov	r1, sl
 	ldr	r3, [r6, r1]
 	adds	r1, r5, #0
-	bl	sub_0811a7ac
+	bl	0x0811a7ac
 .L_0811b48e:
 	movs	r2, #2
 	subs	r7, #1

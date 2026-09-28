@@ -7,13 +7,7 @@
 @ one ldr at a time.
 @ credit: handwritten — Thumb stack-copy loaders of the colour-buffer kernels
 .syntax unified
-	.set _call_via_sp, 0x080178ac
-	.set ColorBuffer_ScaleNonzeroThreeQuartersKernel, 0x08001d10
-	.set ColorBuffer_HalveNonzeroKernel, 0x08001d70
-	.set ColorBuffer_DarkenPartialKernel, 0x08001dd0
-	.set ColorBuffer_BrightenPartialKernel, 0x08001ea4
 	.thumb
-	.set AlchemyLoadAddress, 0x08001f7c
 	.global ColorBuffer_ScaleNonzeroThreeQuarters
 	.thumb_func
 ColorBuffer_ScaleNonzeroThreeQuarters:
@@ -27,7 +21,7 @@ ColorBuffer_ScaleNonzeroThreeQuarters:
 	add	sp, #96
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_ScaleNonzeroThreeQuartersKernel
+	.4byte	ColorBuffer_ScaleNonzeroThreeQuartersKernelCode
 	.4byte	0x84000018
 	.global ColorBuffer_HalveNonzero
 	.thumb_func
@@ -42,7 +36,7 @@ ColorBuffer_HalveNonzero:
 	add	sp, #96
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_HalveNonzeroKernel
+	.4byte	ColorBuffer_HalveNonzeroKernelCode
 	.4byte	0x84000018
 	.global ColorBuffer_BrightenPartial
 	.thumb_func
@@ -57,7 +51,7 @@ ColorBuffer_BrightenPartial:
 	add	sp, #216
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_BrightenPartialKernel
+	.4byte	ColorBuffer_BrightenPartialKernelCode
 	.4byte	0x84000036
 	.global ColorBuffer_DarkenPartial
 	.thumb_func
@@ -72,5 +66,5 @@ ColorBuffer_DarkenPartial:
 	add	sp, #212
 	pop	{r5, r6, r7, pc}
 	.4byte	0x040000d4
-	.4byte	ColorBuffer_DarkenPartialKernel
+	.4byte	ColorBuffer_DarkenPartialKernelCode
 	.4byte	0x84000035

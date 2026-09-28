@@ -7,7 +7,6 @@
 .syntax unified
 	.set	.L_08000504, 0x08000504
 	.arm
-	.set AlchemyLoadAddress, 0x080004b8
 .L_080004b8:
 	asrs	r4, ip, #24
 	mulne	r4, r6, r4

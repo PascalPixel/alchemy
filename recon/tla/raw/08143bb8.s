@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08013ba4, 0x08013ba4
-	.set sub_08014644, 0x08014644
-	.set sub_08118038, 0x08118038
-	.set sub_08118048, 0x08118048
-	.set sub_081434d8, 0x081434d8
-	.set sub_081c0010, 0x081c0010
 	.global Func_08143bb8
 	.thumb_func
 Func_08143bb8:
@@ -19,7 +12,7 @@ Func_08143bb8:
 	lsls	r0, r0, #1
 	ldr	r5, [r3, #92]
 	ldr	r7, [r3, #36]
-	bl	sub_081c0010
+	bl	Audio_PlayCue
 	movs	r2, #238
 	lsls	r2, r2, #7
 	adds	r2, #160
@@ -49,7 +42,7 @@ Func_08143bb8:
 	mov	lr, r3
 	.2byte 0xf800
 	.2byte 0x480c
-	bl	sub_08014644
+	bl	Func_08014644
 	ldr	r1, [pc, #44]
 	movs	r3, #32
 	strh	r3, [r6, #6]
@@ -97,16 +90,16 @@ Func_08143bb8:
 	adds	r2, #80
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r2, #206
 	lsls	r2, r2, #3
 	adds	r3, r7, r2
 	ldrh	r1, [r3, #0]
 	movs	r2, #7
 	movs	r0, #2
-	bl	sub_08118038
+	bl	0x08118038
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r3, #206
 	lsls	r3, r3, #3
 	movs	r2, #21
@@ -122,10 +115,10 @@ Func_08143bb8:
 	mov	r3, r8
 	subs	r1, r3, r5
 	ldrh	r0, [r7, #0]
-	bl	sub_08118048
+	bl	0x08118048
 	adds	r6, #1
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	adds	r5, #3
 	cmp	r6, #8
 	bne.n	.L_08143ca4
@@ -157,7 +150,7 @@ Func_08143bb8:
 .L_08143cee:
 	strh	r4, [r0, #0]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, r7, pc}
@@ -178,16 +171,16 @@ Func_08143bb8:
 	adds	r1, #65
 	lsls	r0, r0, #19
 	ldr	r5, [r2, #36]
-	bl	sub_08013ba4
+	bl	0x08013ba4
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r3, #206
 	lsls	r3, r3, #3
 	adds	r5, r5, r3
 	ldrh	r1, [r5, #0]
 	movs	r0, #2
 	movs	r2, #0
-	bl	sub_08118038
+	bl	0x08118038
 	ldr	r1, [pc, #60]
 	ldr	r0, [pc, #60]
 	ldrh	r3, [r0, #0]
@@ -217,7 +210,7 @@ Func_08143bb8:
 .L_08143d6e:
 	strh	r4, [r0, #0]
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	pop	{r5, pc}
 	.4byte 0x020038e0
 	.2byte 0x0208
@@ -232,14 +225,14 @@ Func_08143bb8:
 	adds	r3, #176
 	ldr	r6, [r3, #0]
 	mov	r8, r2
-	bl	sub_081434d8
+	bl	Func_081434d8
 	movs	r3, #206
 	lsls	r3, r3, #3
 	adds	r5, r5, r3
 	ldrh	r1, [r5, #0]
 	movs	r0, #2
 	movs	r2, #0
-	bl	sub_08118038
+	bl	0x08118038
 	ldr	r2, [pc, #68]
 	movs	r1, #0
 	movs	r3, #32
@@ -352,7 +345,7 @@ Func_08143bb8:
 	mov	lr, r5
 	.2byte 0xf800
 	.2byte 0x2001
-	bl	sub_08013560
+	bl	0x08013560
 	b.n	.L_08143eac
 	movs	r0, r0
 	.4byte 0x00003f21

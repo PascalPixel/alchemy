@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002304, 0x08002304
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_08003d28, 0x08003d28
-	.set sub_08003dec, 0x08003dec
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004458, 0x08004458
 	.global RenderOutput_UpdateScaleAnimation
 	.global Func_0801908c
 	.thumb_func
@@ -110,7 +103,7 @@ Func_0801908c:
 	ldr	r3, [r0, #4]
 	ands	r3, r4
 	str	r3, [r0, #4]
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	movs	r3, #31
 	ands	r0, r3
 	ldrb	r2, [r5, #7]

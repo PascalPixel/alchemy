@@ -13,9 +13,7 @@
 @ before its literal pool is alignment and carries no credit.
 @ credit: library — TBS/TLA common sound driver note-start routine
 .syntax unified
-	.set SoundDriver_CallViaR3, 0x081c0114
 	.thumb
-	.set AlchemyLoadAddress, 0x081c0198
 	.global MusicTrack_HandleNoteLeftover
 	.thumb_func
 MusicTrack_HandleNoteLeftover:
@@ -268,7 +266,7 @@ MusicTrack_HandleNoteLeftover:
 	ldr	r0, [sp, #12]
 	ldr	r3, [sp, #4]
 	ldr	r3, [r3, #48]
-	bl	SoundDriver_CallViaR3
+	bl	LeftoverSoundDriver_StaleCallTarget
 	b.n	.L_081c0370
 .L_081c0366:
 	ldrb	r2, [r5, #9]

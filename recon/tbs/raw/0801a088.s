@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_080022fc, 0x080022fc
-	.set sub_0801a5a4, 0x0801a5a4
-	.set sub_08077018, 0x08077018
 	.global ItemIcon_Compose
 	.global Func_0801a088
 	.thumb_func
@@ -25,7 +21,7 @@ Func_0801a088:
 	movs	r1, #0
 	str	r1, [sp, #4]
 	mov	sl, r1
-	bl	sub_08077018
+	bl	Item_Get
 	ldr	r3, [pc, #472]
 	str	r0, [sp, #0]
 	ldr	r5, [r3, #0]
@@ -55,7 +51,7 @@ Func_0801a088:
 	strh	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_0801a5a4
+	bl	UiGlyph_DecodeWithHeapRoutines
 	movs	r2, #1
 	str	r2, [sp, #4]
 .L_0801a0ec:
@@ -81,7 +77,7 @@ Func_0801a088:
 	strh	r6, [r7, #0]
 	ldr	r1, [sp, #4]
 	adds	r0, r5, #0
-	bl	sub_0801a5a4
+	bl	UiGlyph_DecodeWithHeapRoutines
 	movs	r3, #8
 	mov	r1, fp
 	ands	r3, r1
@@ -102,7 +98,7 @@ Func_0801a088:
 	strh	r6, [r2, #0]
 	movs	r1, #1
 	strh	r6, [r7, #0]
-	bl	sub_0801a5a4
+	bl	UiGlyph_DecodeWithHeapRoutines
 .L_0801a148:
 	movs	r3, #16
 	mov	r1, fp
@@ -130,7 +126,7 @@ Func_0801a088:
 	strh	r2, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_0801a5a4
+	bl	UiGlyph_DecodeWithHeapRoutines
 .L_0801a180:
 	movs	r3, #32
 	mov	r2, fp
@@ -168,7 +164,7 @@ Func_0801a088:
 	strh	r1, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_0801a5a4
+	bl	UiGlyph_DecodeWithHeapRoutines
 .L_0801a1cc:
 	movs	r3, #2
 	mov	r1, fp
@@ -210,7 +206,7 @@ Func_0801a088:
 	bgt.n	.L_0801a26e
 	movs	r1, #10
 	mov	r0, sl
-	bl	sub_080022fc
+	bl	__modsi3
 	ldr	r3, [pc, #128]
 	lsls	r0, r0, #2
 	ldr	r2, [pc, #104]
@@ -231,10 +227,10 @@ Func_0801a088:
 	adds	r0, r5, #0
 	movs	r1, #1
 	strh	r6, [r7, #0]
-	bl	sub_0801a5a4
+	bl	UiGlyph_DecodeWithHeapRoutines
 	mov	r0, sl
 	movs	r1, #10
-	bl	sub_080022ec
+	bl	__divsi3
 	cmp	r0, #0
 	beq.n	.L_0801a26e
 	lsls	r3, r0, #2
@@ -248,7 +244,7 @@ Func_0801a088:
 	adds	r0, r5, #0
 	strh	r6, [r7, #0]
 	movs	r1, #1
-	bl	sub_0801a5a4
+	bl	UiGlyph_DecodeWithHeapRoutines
 .L_0801a26e:
 	movs	r0, #128
 	lsls	r0, r0, #1

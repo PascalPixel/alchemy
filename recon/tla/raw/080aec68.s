@@ -1,11 +1,10 @@
 .syntax unified
 	.thumb
-	.set sub_080aec04, 0x080aec04
 	.global Func_080aec68
 	.thumb_func
 Func_080aec68:
 	push	{lr}
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r1, [r0, #2]
 	movs	r0, #1
 	cmp	r1, #1

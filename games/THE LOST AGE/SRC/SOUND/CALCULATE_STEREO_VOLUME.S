@@ -6,7 +6,6 @@
 @ credit: library — TBS/TLA common sound driver stereo-volume helper
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c1bd8
 	.global SoundDriver_CalculateStereoVolumeTwin
 	.thumb_func
 SoundDriver_CalculateStereoVolumeTwin:

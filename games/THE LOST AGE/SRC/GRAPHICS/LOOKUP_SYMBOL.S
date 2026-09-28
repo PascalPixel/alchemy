@@ -8,7 +8,6 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, symbol lookup
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x0803857c
 	.global Text_LookupSymbol
 	.thumb_func
 Text_LookupSymbol:

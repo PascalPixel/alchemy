@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08020090, 0x08020090
-	.set sub_080200a8, 0x080200a8
-	.set sub_080200c0, 0x080200c0
-	.set sub_080d2d84, 0x080d2d84
-	.set sub_080d3744, 0x080d3744
 	.global Func_080df8e0
 	.thumb_func
 Func_080df8e0:
@@ -25,7 +19,7 @@ Func_080df8e0:
 	str	r3, [sp, #4]
 	mov	sl, r1
 	ldr	r7, [sp, #52]
-	bl	sub_080d2d84
+	bl	Object_GetById
 	movs	r3, #128
 	lsls	r3, r3, #13
 	mov	r2, sl
@@ -46,7 +40,7 @@ Func_080df8e0:
 .L_080df924:
 	adds	r1, r5, #0
 	mov	r3, r8
-	bl	sub_080200c0
+	bl	Func_080200c0
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_080df934
@@ -59,7 +53,7 @@ Func_080df8e0:
 	adds	r1, #1
 	ands	r1, r5
 	adds	r0, r6, #0
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r2, [pc, #352]
 	mov	r3, sl
 	ands	r3, r5
@@ -67,7 +61,7 @@ Func_080df8e0:
 	ldr	r1, [r2, r3]
 	adds	r0, r6, #0
 	mov	r9, r3
-	bl	sub_080200a8
+	bl	Object_SetCallback
 	adds	r3, r6, #0
 	movs	r0, #0
 	adds	r3, #85
@@ -118,7 +112,7 @@ Func_080df8e0:
 	beq.n	.L_080df9c0
 	ldr	r1, [r7, #4]
 	adds	r0, r6, #0
-	bl	sub_080d3744
+	bl	0x080d3744
 .L_080df9c0:
 	movs	r3, #128
 	lsls	r3, r3, #10
@@ -169,7 +163,7 @@ Func_080df8e0:
 	ldr	r3, [r6, #24]
 	ldr	r1, [r5, #12]
 	subs	r0, r0, r3
-	bl	sub_08002054
+	bl	Math_Div
 	str	r0, [r6, #48]
 	ldr	r0, [r7, #20]
 	ldr	r3, [r6, #28]
@@ -181,14 +175,14 @@ Func_080df8e0:
 	ldr	r2, [pc, #124]
 	ldr	r1, [r5, #12]
 	adds	r0, r0, r2
-	bl	sub_08002054
+	bl	Math_Div
 	str	r0, [r6, #48]
 	ldr	r0, [r7, #20]
 	ldr	r3, [pc, #112]
 	ldr	r1, [r5, #12]
 	adds	r0, r0, r3
 .L_080dfa44:
-	bl	sub_08002054
+	bl	Math_Div
 	str	r0, [r6, #52]
 .L_080dfa4a:
 	movs	r3, #128
@@ -199,10 +193,10 @@ Func_080df8e0:
 	beq.n	.L_080dfa66
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 	ldr	r1, [r7, #28]
 	adds	r0, r6, #0
-	bl	sub_080200a8
+	bl	Object_SetCallback
 .L_080dfa66:
 	movs	r3, #128
 	lsls	r3, r3, #15
@@ -260,7 +254,7 @@ Func_080df8e0:
 	adds	r3, r3, r7
 	movs	r1, #18
 	str	r3, [r6, #16]
-	bl	sub_08002054
+	bl	Math_Div
 	subs	r5, r5, r0
 	str	r5, [r6, #68]
 	adds	r3, r7, #0

@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08077008, 0x08077008
 	.global Unnamed_080ac8fc
 	.global Func_080ac8fc
 	.thumb_func
@@ -18,7 +17,7 @@ Func_080ac8fc:
 	adds	r0, r5, #0
 	sub	sp, #4
 	adds	r6, r2, #0
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	sl, r0
 	movs	r0, #1
 	negs	r0, r0

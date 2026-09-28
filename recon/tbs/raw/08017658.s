@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080162d4, 0x080162d4
-	.set sub_08016418, 0x08016418
-	.set sub_080165d8, 0x080165d8
-	.set sub_08018038, 0x08018038
-	.set sub_0801868c, 0x0801868c
 	.global UiText_OpenMessageWindow
 	.global Func_08017658
 	.thumb_func
@@ -34,7 +29,7 @@ Func_08017658:
 	ldr	r3, [pc, #220]
 	movs	r1, #1
 	ands	r5, r3
-	bl	sub_08018038
+	bl	UiText_BuildRenderEntries
 	lsls	r3, r0, #1
 	mov	sl, r0
 	movs	r0, #235
@@ -56,7 +51,7 @@ Func_08017658:
 	mov	r9, r0
 	mov	r0, sl
 	str	r6, [sp, #8]
-	bl	sub_0801868c
+	bl	UiWindow_FitOnScreen
 	ldr	r2, [sp, #16]
 	cmp	r2, #0
 	bne.n	.L_080176ca
@@ -101,7 +96,7 @@ Func_08017658:
 	ldr	r1, [sp, #20]
 	adds	r3, r4, #0
 	str	r7, [sp, #0]
-	bl	sub_080162d4
+	bl	UiWindow_Create
 	adds	r6, r0, #0
 	movs	r0, #0
 	cmp	r6, #0
@@ -114,12 +109,12 @@ Func_08017658:
 	movs	r2, #0
 	movs	r3, #0
 	str	r5, [sp, #4]
-	bl	sub_080165d8
+	bl	UiText_QueueRenderEntries
 	cmp	r0, #0
 	bne.n	.L_08017736
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_08016418
+	bl	UiWork_Finalize
 	movs	r0, #0
 	b.n	.L_08017744
 .L_08017736:

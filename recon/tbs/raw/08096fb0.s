@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003fa4, 0x08003fa4
-	.set sub_08004080, 0x08004080
-	.set sub_080041d8, 0x080041d8
-	.set sub_080048b0, 0x080048b0
-	.set sub_08077080, 0x08077080
-	.set sub_08096c24, 0x08096c24
-	.set sub_080970f8, 0x080970f8
 	.global BattleFx_LoadActionEffectResources
 	.global Func_08096fb0
 	.thumb_func
@@ -35,7 +28,7 @@ Func_08096fb0:
 	movs	r1, #228
 	lsls	r1, r1, #3
 	movs	r0, #56
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	adds	r5, r0, #0
 	mov	r0, sp
 	str	r6, [r0, #0]
@@ -56,7 +49,7 @@ Func_08096fb0:
 	mov	r3, r8
 	strh	r3, [r5, #28]
 	mov	r0, r8
-	bl	sub_08077080
+	bl	Ability_GetData
 	ldrb	r3, [r0, #12]
 	strh	r3, [r5, #30]
 	ldr	r3, [pc, #80]
@@ -65,7 +58,7 @@ Func_08096fb0:
 	ldrsb	r6, [r3, r6]
 	cmp	r6, #0
 	bne.n	.L_080970d8
-	bl	sub_08096c24
+	bl	ResourceTable_CountFreeBlocks
 	ldr	r3, [pc, #60]
 	adds	r2, r5, #0
 	subs	r3, r3, r0
@@ -129,7 +122,7 @@ Func_08096fb0:
 	movs	r1, #1
 	ldr	r0, [r3, #0]
 	negs	r1, r1
-	bl	sub_080970f8
+	bl	BattleFx_SetupObjectPair
 	movs	r2, #30
 	ldrsh	r3, [r5, r2]
 	cmp	r3, #8
@@ -139,7 +132,7 @@ Func_08096fb0:
 	add	r3, sl
 	strh	r6, [r3, #0]
 .L_080970b6:
-	bl	sub_08004080
+	bl	Resource_FindFreeEntry
 	adds	r3, r5, #0
 	adds	r3, #70
 	strh	r0, [r3, #0]
@@ -148,11 +141,11 @@ Func_08096fb0:
 	lsls	r1, r1, #1
 	asrs	r0, r0, #16
 	ldr	r2, [pc, #36]
-	bl	sub_08003fa4
+	bl	VramBlock_LoadCached
 	movs	r1, #200
 	ldr	r0, [pc, #32]
 	lsls	r1, r1, #4
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 .L_080970d8:
 	add	sp, #4
 	pop	{r3, r5, r6}

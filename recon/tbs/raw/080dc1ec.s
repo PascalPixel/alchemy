@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002dd8, 0x08002dd8
-	.set sub_080030f8, 0x080030f8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004278, 0x08004278
-	.set sub_08004458, 0x08004458
-	.set sub_080049ac, 0x080049ac
-	.set sub_080049e8, 0x080049e8
-	.set sub_08004a5c, 0x08004a5c
-	.set sub_08004bd4, 0x08004bd4
-	.set sub_08004c1c, 0x08004c1c
-	.set sub_08004c6c, 0x08004c6c
-	.set sub_08004cb4, 0x08004cb4
-	.set sub_080051d8, 0x080051d8
-	.set sub_080072f4, 0x080072f4
-	.set sub_080cd594, 0x080cd594
-	.set sub_080cdbc0, 0x080cdbc0
-	.set sub_080cef64, 0x080cef64
-	.set sub_080e0524, 0x080e0524
-	.set sub_080e38b8, 0x080e38b8
-	.set sub_080e3944, 0x080e3944
 	.global Func_080dc1ec
 	.thumb_func
 Func_080dc1ec:
@@ -40,37 +20,37 @@ Func_080dc1ec:
 	str	r3, [sp, #16]
 	str	r0, [r5, #0]
 	movs	r0, #0
-	bl	sub_080cd594
+	bl	BattleFx_BeginCanvasLayer
 	ldr	r0, [pc, #544]
 	mov	r1, fp
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_080e0524
+	bl	Resource_LoadAndDecompress
 	ldr	r3, [r5, #0]
 	ldr	r0, [r3, #4]
 	movs	r3, #1
 	eors	r0, r3
 	add	r1, sp, #20
-	bl	sub_080cef64
+	bl	BattleFx_FetchRectangleBlitters
 	ldr	r5, [pc, #520]
 	movs	r3, #255
 	movs	r7, #0
 	mov	r8, r3
 	movs	r6, #0
 .L_080dc236:
-	bl	sub_08004458
+	bl	Random16
 	mov	r2, r8
 	ands	r0, r2
 	subs	r0, #127
 	lsls	r0, r0, #16
 	str	r0, [r5, #0]
-	bl	sub_08004458
+	bl	Random16
 	mov	r3, r8
 	ands	r0, r3
 	subs	r0, #127
 	lsls	r0, r0, #16
 	str	r0, [r5, #4]
-	bl	sub_08004458
+	bl	Random16
 	mov	r2, r8
 	ands	r0, r2
 	subs	r0, #127
@@ -98,7 +78,7 @@ Func_080dc1ec:
 	str	r5, [r3, #0]
 	ldr	r0, [pc, #436]
 	lsls	r1, r1, #3
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r3, #160
 	mov	r2, sp
 	adds	r2, #40
@@ -111,13 +91,13 @@ Func_080dc1ec:
 .L_080dc2a2:
 	ldr	r3, [pc, #416]
 	ldr	r5, [r3, #0]
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	adds	r1, r5, #0
 	adds	r1, #12
 	adds	r0, r5, #0
-	bl	sub_080051d8
+	bl	Graphics_PrepareTransferInIwramWork
 	ldr	r0, [sp, #12]
-	bl	sub_08004cb4
+	bl	SceneTransform_ApplyPosition
 	mov	r3, sl
 	negs	r3, r3
 	mov	r2, sl
@@ -140,7 +120,7 @@ Func_080dc1ec:
 	ldr	r3, [r6, #24]
 	cmp	r3, #0
 	bne.n	.L_080dc3d2
-	bl	sub_080049e8
+	bl	Graphics_SaveTransferWorkOnce
 	movs	r3, #3
 	ands	r3, r7
 	cmp	r3, #1
@@ -158,30 +138,30 @@ Func_080dc1ec:
 	b.n	.L_080dc326
 .L_080dc302:
 	mov	r0, r9
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	b.n	.L_080dc326
 .L_080dc30a:
 	mov	r0, r8
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 	b.n	.L_080dc326
 .L_080dc312:
 	mov	r0, r8
-	bl	sub_08004c6c
+	bl	SceneTransform_ApplyRoll
 	b.n	.L_080dc326
 .L_080dc31a:
 	mov	r0, r8
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 	mov	r0, r8
-	bl	sub_08004c6c
+	bl	SceneTransform_ApplyRoll
 .L_080dc326:
 	add	r5, sp, #28
 	adds	r1, r5, #0
 	adds	r0, r6, #0
-	bl	sub_080e3944
+	bl	EffectPosition_ApplyBaseAndYOffset
 	ldr	r3, [r5, #0]
 	asrs	r3, r3, #1
 	str	r3, [r5, #0]
-	bl	sub_08004a5c
+	bl	Graphics_RestoreTransferWork
 	ldr	r2, [r5, #8]
 	cmp	r2, #249
 	bgt.n	.L_080dc346
@@ -228,11 +208,11 @@ Func_080dc1ec:
 	str	r4, [sp, #4]
 	ldr	r0, [sp, #16]
 	ldr	r4, [sp, #20]
-	bl	sub_080072f4
+	bl	_call_via_r4
 	adds	r0, r6, #0
 	movs	r1, #60
 	movs	r2, #0
-	bl	sub_080e38b8
+	bl	EffectStep_AdvanceWithGravity3D
 	adds	r3, r7, #0
 	cmp	r7, #0
 	bge.n	.L_080dc3a6
@@ -278,7 +258,7 @@ Func_080dc1ec:
 	add	r2, fp
 	str	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #1
 	add	sl, r3
 	mov	r2, sl
@@ -287,12 +267,12 @@ Func_080dc1ec:
 	b.n	.L_080dc2a2
 .L_080dc402:
 	ldr	r0, [pc, #60]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	movs	r0, #47
-	bl	sub_08002dd8
+	bl	Runtime_ReleaseHeapBlock
 	movs	r0, #46
-	bl	sub_08002dd8
-	bl	sub_080cdbc0
+	bl	Runtime_ReleaseHeapBlock
+	bl	BattleFx_EndCanvasLayer
 	add	sp, #52
 	pop	{r3, r5, r6, r7}
 	mov	r8, r3

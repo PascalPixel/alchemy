@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080afdbc, 0x080afdbc
 	.global Func_080ad348
 	.thumb_func
 Func_080ad348:
@@ -13,7 +10,7 @@ Trade_GetOfferState:
 	cmp	r0, #0
 	beq.n	.L_080ad356
 	movs	r0, #131
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	b.n	.L_080ad358
 .L_080ad356:
 	ldr	r0, [pc, #4]
@@ -24,7 +21,7 @@ Trade_GetOfferState:
 	.2byte 0x0200
 	push	{r5, r6, r7, lr}
 	sub	sp, #4
-	bl	sub_080afdbc
+	bl	0x080afdbc
 	adds	r7, r0, #0
 	movs	r6, #0
 	movs	r0, #0
@@ -41,7 +38,7 @@ Trade_GetOfferState:
 	ldrb	r0, [r2, #0]
 	adds	r2, #1
 	str	r2, [sp, #0]
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldrb	r3, [r0, #15]
 	subs	r5, #1
 	adds	r6, r6, r3
@@ -51,7 +48,7 @@ Trade_GetOfferState:
 .L_080ad396:
 	adds	r0, r6, #0
 	adds	r1, r7, #0
-	bl	sub_08002054
+	bl	Math_Div
 	adds	r6, r0, #0
 .L_080ad3a0:
 	add	sp, #4

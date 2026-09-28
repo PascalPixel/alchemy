@@ -5,7 +5,6 @@
 @ credit: handwritten — TLA fixed-size ARM sound resampler records
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08000550
 .L_08000550:
 	and	r7, r7, r8
 	add	r7, r7, r7, lsr #7

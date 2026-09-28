@@ -4,7 +4,6 @@
 @ credit: library — TBS/TLA common BIOS call wrappers
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x08016df8
 	.global Bios_CpuSet
 	.thumb_func
 Bios_CpuSet:

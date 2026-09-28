@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080022ec, 0x080022ec
-	.set sub_08004278, 0x08004278
-	.set sub_08004458, 0x08004458
-	.set sub_080072f0, 0x080072f0
-	.set sub_08007300, 0x08007300
-	.set sub_08007308, 0x08007308
-	.set sub_08015268, 0x08015268
-	.set sub_0808ba1c, 0x0808ba1c
 	.global Func_0808f52c
 	.thumb_func
 Func_0808f52c:
@@ -66,9 +58,9 @@ Func_0808f52c:
 	ands	r3, r2
 	strh	r3, [r1, #0]
 	ldr	r0, [pc, #548]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	ldr	r0, [pc, #548]
-	bl	sub_08004278
+	bl	Scheduler_RemoveCallback
 	ldr	r2, [pc, #544]
 	ldr	r3, [pc, #548]
 	ldrh	r1, [r2, #10]
@@ -108,7 +100,7 @@ Func_0808f52c:
 	movs	r1, #0
 	ldrsb	r1, [r4, r1]
 	ldr	r3, [pc, #488]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	movs	r3, #0
 	ldrsb	r3, [r5, r3]
 	ldr	r5, [pc, #480]
@@ -130,7 +122,7 @@ Func_0808f52c:
 	adds	r4, r7, r3
 	adds	r0, r4, #4
 	str	r4, [sp, #0]
-	bl	sub_08015268
+	bl	Func_08015268
 	movs	r1, #165
 	lsls	r1, r1, #3
 	adds	r3, r7, r1
@@ -276,7 +268,7 @@ Func_0808f52c:
 	subs	r6, r3, r5
 .L_0808f7f4:
 	str	r4, [sp, #0]
-	bl	sub_08004458
+	bl	Random16
 	adds	r3, r6, #0
 	muls	r3, r0
 	movs	r0, #1
@@ -365,12 +357,12 @@ Func_0808f52c:
 	str	r2, [sp, #8]
 	str	r3, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_080022ec
+	bl	__divsi3
 	ldr	r2, [sp, #8]
 	adds	r5, r0, #0
 	adds	r1, r7, #0
 	adds	r0, r2, #0
-	bl	sub_080022ec
+	bl	__divsi3
 	add	r5, fp
 	adds	r0, r6, r0
 	ldr	r4, [sp, #0]
@@ -434,7 +426,7 @@ Func_0808f52c:
 	lsls	r5, r5, #4
 .L_0808f92a:
 	str	r4, [sp, #0]
-	bl	sub_08004458
+	bl	Random16
 	lsls	r0, r0, #4
 	lsrs	r0, r0, #16
 	adds	r0, r5, r0
@@ -498,7 +490,7 @@ Func_0808f52c:
 	lsls	r0, r0, #16
 	str	r4, [sp, #0]
 	subs	r0, r1, r0
-	bl	sub_08007300
+	bl	_call_via_r7
 	movs	r3, #120
 	asrs	r0, r0, #8
 	subs	r6, r3, r0
@@ -595,7 +587,7 @@ Func_0808f52c:
 	adds	r3, r3, r7
 	ldr	r0, [r3, #0]
 	str	r4, [sp, #0]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	subs	r3, r3, r5
 	ldr	r4, [sp, #0]
@@ -676,7 +668,7 @@ Func_0808f52c:
 	lsls	r0, r0, #15
 	str	r4, [sp, #0]
 	subs	r0, r2, r0
-	bl	sub_08007308
+	bl	_call_via_r9
 	asrs	r0, r0, #8
 	subs	r6, r7, r0
 	ldr	r4, [sp, #0]
@@ -792,7 +784,7 @@ Func_0808f52c:
 	str	r4, [sp, #0]
 	subs	r0, r2, r0
 	ldr	r3, [pc, #452]
-	bl	sub_080072f0
+	bl	_call_via_r3
 	asrs	r0, r0, #8
 	subs	r6, r7, r0
 	adds	r0, r7, r0
@@ -852,7 +844,7 @@ Func_0808f52c:
 	adds	r3, r3, r7
 	ldr	r0, [r3, #0]
 	str	r4, [sp, #0]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	subs	r3, r3, r5
 	ldr	r4, [sp, #0]
@@ -925,7 +917,7 @@ Func_0808f52c:
 	lsls	r0, r0, #15
 	str	r4, [sp, #0]
 	subs	r0, r2, r0
-	bl	sub_08007308
+	bl	_call_via_r9
 	asrs	r0, r0, #8
 	subs	r6, r7, r0
 	ldr	r4, [sp, #0]
@@ -969,7 +961,7 @@ Func_0808f52c:
 	adds	r3, r3, r7
 	ldr	r0, [r3, #0]
 	str	r4, [sp, #0]
-	bl	sub_0808ba1c
+	bl	ObjectTable_Get
 	ldr	r3, [r0, #8]
 	subs	r3, r3, r5
 	ldr	r4, [sp, #0]
@@ -1053,7 +1045,7 @@ Func_0808f52c:
 	lsls	r0, r0, #14
 	str	r4, [sp, #0]
 	subs	r0, r2, r0
-	bl	sub_08007308
+	bl	_call_via_r9
 	asrs	r0, r0, #8
 	subs	r6, r7, r0
 	ldr	r4, [sp, #0]

@@ -1,20 +1,10 @@
 .syntax unified
 	.thumb
-	.set sub_08013164, 0x08013164
-	.set sub_08013300, 0x08013300
-	.set sub_08013560, 0x08013560
-	.set sub_08014dac, 0x08014dac
-	.set sub_0801591c, 0x0801591c
-	.set sub_080d170c, 0x080d170c
-	.set sub_080d172c, 0x080d172c
-	.set sub_080d17ac, 0x080d17ac
-	.set sub_080d1ee8, 0x080d1ee8
-	.set sub_080d2a8c, 0x080d2a8c
 	.global Func_080d1f18
 	.thumb_func
 Func_080d1f18:
 	push	{lr}
-	bl	sub_080d1ee8
+	bl	Func_080d1ee8
 	pop	{pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
@@ -23,14 +13,14 @@ Func_080d1f18:
 	adds	r5, r0, #0
 	ldr	r0, [pc, #248]
 	sub	sp, #8
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	adds	r7, r0, #0
 	movs	r0, #16
 	mov	sl, r0
-	bl	sub_080d2a8c
+	bl	Func_080d2a8c
 	movs	r0, #130
 	lsls	r0, r0, #5
-	bl	sub_08014dac
+	bl	0x08014dac
 	lsls	r5, r5, #2
 	ldr	r3, [r5, r7]
 	ldr	r6, [pc, #220]
@@ -44,7 +34,7 @@ Func_080d1f18:
 	adds	r7, r7, r3
 	mov	r1, r8
 	adds	r0, r7, #0
-	bl	sub_0801591c
+	bl	0x0801591c
 	movs	r3, #128
 	lsls	r3, r3, #19
 	adds	r3, #212
@@ -54,7 +44,7 @@ Func_080d1f18:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	mov	r0, r8
-	bl	sub_08013164
+	bl	Func_08013164
 	movs	r1, #128
 	lsls	r1, r1, #19
 	ldrh	r2, [r1, #0]
@@ -128,7 +118,7 @@ Func_080d1f18:
 	subs	r2, #6
 	strh	r3, [r2, #0]
 	movs	r1, #0
-	bl	sub_080d172c
+	bl	Func_080d172c
 	movs	r0, #128
 	lsls	r0, r0, #9
 	b.n	.L_080d203c
@@ -148,9 +138,9 @@ Func_080d1f18:
 .L_080d203c:
 	adds	r0, #8
 	movs	r1, #0
-	bl	sub_080d170c
+	bl	0x080d170c
 	movs	r0, #24
-	bl	sub_080d17ac
+	bl	0x080d17ac
 	ldrh	r3, [r5, #0]
 	ldr	r2, [pc, #12]
 	movs	r7, #120
@@ -170,7 +160,7 @@ Func_080d1f18:
 	strh	r3, [r6, #0]
 	movs	r0, #1
 	str	r2, [sp, #0]
-	bl	sub_08013560
+	bl	0x08013560
 	adds	r5, #1
 	ldr	r2, [sp, #0]
 	cmp	r5, #23
@@ -190,7 +180,7 @@ Func_080d1f18:
 	cmp	r5, #119
 	bhi.n	.L_080d209e
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	ldr	r3, [r6, #4]
 	cmp	r3, #0
 	beq.n	.L_080d208c
@@ -261,9 +251,9 @@ Func_080d1f18:
 	movs	r1, #0
 	lsls	r0, r0, #9
 	sub	sp, #8
-	bl	sub_080d170c
+	bl	0x080d170c
 	movs	r0, #24
-	bl	sub_080d17ac
+	bl	0x080d17ac
 	ldr	r2, [pc, #96]
 	movs	r1, #9
 	negs	r1, r1
@@ -306,7 +296,7 @@ Func_080d1f18:
 	bge.n	.L_080d213c
 .L_080d216a:
 	movs	r0, #2
-	bl	sub_08013560
+	bl	0x08013560
 	mov	r2, r9
 	mov	r0, r8
 	ldrsh	r3, [r2, r0]
@@ -338,7 +328,7 @@ Func_080d1f18:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	ldr	r0, [pc, #36]
-	bl	sub_08013300
+	bl	Resource_GetTableEntry
 	movs	r3, #128
 	lsls	r3, r3, #19
 	movs	r1, #192
@@ -424,7 +414,7 @@ Battle_WaitMode0:
 	bne.n	.L_080d225c
 	cmp	r0, #0
 	beq.n	.L_080d225c
-	bl	sub_08013560
+	bl	0x08013560
 .L_080d225c:
 	pop	{pc}
 	.2byte 0x0000

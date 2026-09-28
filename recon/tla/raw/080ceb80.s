@@ -1,22 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_08020090, 0x08020090
-	.set sub_080200c0, 0x080200c0
-	.set sub_08020138, 0x08020138
-	.set sub_080201c0, 0x080201c0
-	.set sub_08020218, 0x08020218
-	.set sub_080ca9cc, 0x080ca9cc
-	.set sub_080cad84, 0x080cad84
-	.set sub_080cdfb0, 0x080cdfb0
-	.set sub_080d3b28, 0x080d3b28
 	.global Func_080ceb80
 	.thumb_func
 Func_080ceb80:
 	push	{lr}
 	lsls	r0, r0, #16
 	lsrs	r0, r0, #16
-	bl	sub_080cdfb0
+	bl	0x080cdfb0
 	adds	r3, r0, #0
 	negs	r0, r3
 	orrs	r0, r3
@@ -27,7 +17,7 @@ Func_080ceb80:
 	ldr	r1, [r5, #8]
 	ldr	r2, [r5, #16]
 	movs	r0, #0
-	bl	sub_080201c0
+	bl	Func_080201c0
 	str	r0, [r5, #12]
 	str	r0, [r5, #20]
 	pop	{r5, pc}
@@ -86,7 +76,7 @@ Func_080ceb80:
 	negs	r2, r2
 	cmp	r0, r2
 	beq.n	.L_080cec16
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_080cebbe
 .L_080cec16:
@@ -103,7 +93,7 @@ Func_080ceb80:
 	str	r3, [r1, #0]
 	str	r3, [r1, #4]
 	str	r3, [r1, #8]
-	bl	sub_080ca9cc
+	bl	0x080ca9cc
 	pop	{pc}
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
@@ -158,7 +148,7 @@ Func_080ceb80:
 	cmp	sl, r2
 	beq.n	.L_080ceca4
 	mov	r0, sl
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080ceca4
 	b.n	.L_080cee08
@@ -200,7 +190,7 @@ Func_080ceb80:
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #4]
 	ldr	r3, [r5, #8]
-	bl	sub_080200c0
+	bl	Func_080200c0
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_080cecf8
@@ -226,7 +216,7 @@ Func_080ceb80:
 	ldr	r1, [r5, #8]
 	ldr	r2, [r5, #16]
 	movs	r0, #0
-	bl	sub_080201c0
+	bl	Func_080201c0
 	ldr	r3, [r5, #12]
 	str	r0, [r5, #20]
 	adds	r3, r3, r0
@@ -270,20 +260,20 @@ Func_080ceb80:
 .L_080ced70:
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_08020218
+	bl	0x08020218
 	mov	r0, sl
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_080ced92
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	sub_08020090
+	bl	Object_SetMode
 .L_080ced92:
 	adds	r0, r5, #0
-	bl	sub_08020138
+	bl	Object_ResetMotion
 	ldr	r2, [r5, #8]
 	cmp	r2, #0
 	bge.n	.L_080ceda6
@@ -334,7 +324,7 @@ Func_080ceb80:
 	mov	r0, r9
 	adds	r0, #64
 	ldr	r1, [sp, #0]
-	bl	sub_080d3b28
+	bl	0x080d3b28
 .L_080cee00:
 	cmp	r7, #133
 	bne.n	.L_080cee08
@@ -372,7 +362,7 @@ Func_080ceb80:
 	.2byte 0x0000
 	push	{r5, lr}
 	adds	r5, r1, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	cmp	r0, #0
 	beq.n	.L_080cee7a
 	cmp	r5, #0
@@ -404,7 +394,7 @@ Func_080ceb80:
 	.2byte 0x5927
 	.2byte 0x3141
 	push	{lr}
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	cmp	r0, #0
 	beq.n	.L_080ceea8
 	ldr	r0, [r0, #80]

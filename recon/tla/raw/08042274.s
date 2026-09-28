@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08014274, 0x08014274
-	.set sub_080143ac, 0x080143ac
-	.set sub_08038eb0, 0x08038eb0
-	.set sub_08039500, 0x08039500
-	.set sub_0803ae14, 0x0803ae14
-	.set sub_0803d2f0, 0x0803d2f0
-	.set sub_0803d4e4, 0x0803d4e4
-	.set sub_0803d8ac, 0x0803d8ac
-	.set sub_0803dab0, 0x0803dab0
-	.set sub_0803f1d4, 0x0803f1d4
-	.set sub_080416cc, 0x080416cc
 	.global UiText_DrawPrefixedNumberAtOffset
 	.global Func_08042274
 	.thumb_func
@@ -33,7 +22,7 @@ Func_08042274:
 	adds	r1, r4, #0
 	movs	r2, #4
 	mov	sl, r3
-	bl	sub_0803ae14
+	bl	0x0803ae14
 	cmp	r5, #0
 	bne.n	.L_080422a8
 	movs	r3, #240
@@ -87,7 +76,7 @@ Func_08042274:
 	adds	r1, #8
 	ands	r3, r7
 	adds	r0, r4, #0
-	bl	sub_080416cc
+	bl	Func_080416cc
 .L_08042302:
 	add	sp, #32
 	pop	{r3, r5}
@@ -106,12 +95,12 @@ Func_08042274:
 	mov	sl, r1
 	mov	r8, r2
 	adds	r6, r3, #0
-	bl	sub_08038eb0
+	bl	Func_08038eb0
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_08042338
 	adds	r0, r7, #0
-	bl	sub_08014274
+	bl	0x08014274
 	movs	r0, #0
 	b.n	.L_08042390
 .L_08042338:
@@ -156,7 +145,7 @@ Func_08042274:
 	strb	r3, [r5, #5]
 	mov	r0, r8
 	adds	r1, r5, #0
-	bl	sub_08039500
+	bl	Func_08039500
 	adds	r0, r5, #0
 .L_08042390:
 	pop	{r3, r5}
@@ -169,7 +158,7 @@ Func_08042274:
 	sub	sp, #4
 	adds	r5, r2, #0
 	adds	r6, r3, #0
-	bl	sub_0803f1d4
+	bl	Func_0803f1d4
 	cmp	r0, #0
 	bge.n	.L_080423b0
 	movs	r0, #0
@@ -194,7 +183,7 @@ Func_08042274:
 	adds	r7, r1, #0
 	mov	r8, r2
 	mov	sl, r3
-	bl	sub_080143ac
+	bl	Func_080143ac
 	adds	r5, r0, #0
 	movs	r0, #0
 	cmp	r5, #96
@@ -202,7 +191,7 @@ Func_08042274:
 	adds	r1, r7, #0
 	adds	r2, r5, #0
 	adds	r0, r6, #0
-	bl	sub_0803d8ac
+	bl	0x0803d8ac
 	ldr	r3, [sp, #28]
 	movs	r1, #128
 	str	r3, [sp, #0]
@@ -225,7 +214,7 @@ Func_08042274:
 	adds	r7, r1, #0
 	mov	r8, r2
 	adds	r6, r3, #0
-	bl	sub_080143ac
+	bl	Func_080143ac
 	str	r0, [sp, #8]
 	cmp	r0, #96
 	bne.n	.L_08042426
@@ -237,7 +226,7 @@ Func_08042274:
 	movs	r1, #1
 	adds	r0, r5, #0
 	str	r1, [sp, #0]
-	bl	sub_0803d4e4
+	bl	Func_0803d4e4
 	movs	r1, #128
 	mov	r3, r8
 	ldr	r0, [sp, #8]
@@ -264,7 +253,7 @@ Func_08042274:
 	sub	sp, #16
 	adds	r5, r2, #0
 	ldr	r6, [r3, #60]
-	bl	sub_0803d2f0
+	bl	0x0803d2f0
 	movs	r1, #1
 	adds	r7, r0, #0
 	negs	r1, r1
@@ -304,7 +293,7 @@ Func_08042274:
 	str	r1, [sp, #4]
 	adds	r0, r7, #0
 	mov	r1, sl
-	bl	sub_0803dab0
+	bl	0x0803dab0
 	ldr	r3, [sp, #48]
 	movs	r1, #128
 	str	r3, [sp, #0]

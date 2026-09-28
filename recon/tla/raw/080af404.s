@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080af3a0, 0x080af3a0
-	.set sub_080af4b8, 0x080af4b8
-	.set sub_080afe78, 0x080afe78
 	.global Func_080af404
 	.thumb_func
 Func_080af404:
@@ -14,7 +11,7 @@ Func_080af404:
 	mov	r8, r0
 	adds	r0, r5, #0
 	movs	r7, #0
-	bl	sub_080afe78
+	bl	Party_ListActiveOwners
 	cmp	r7, r0
 	bge.n	.L_080af432
 	adds	r6, r5, #0
@@ -22,7 +19,7 @@ Func_080af404:
 .L_080af420:
 	ldrh	r0, [r6, #0]
 	mov	r1, r8
-	bl	sub_080af3a0
+	bl	0x080af3a0
 	subs	r5, #1
 	adds	r6, #2
 	adds	r7, r7, r0
@@ -64,7 +61,7 @@ Func_080af404:
 	mov	r8, sp
 	mov	sl, r0
 	mov	r0, r8
-	bl	sub_080afe78
+	bl	Party_ListActiveOwners
 	movs	r5, #0
 	adds	r7, r0, #0
 	mov	r9, r8
@@ -79,7 +76,7 @@ Func_080af404:
 	mov	r1, r9
 	ldrsh	r0, [r6, r1]
 	mov	r1, sl
-	bl	sub_080af4b8
+	bl	Func_080af4b8
 	cmp	r0, #0
 	beq.n	.L_080af484
 .L_080af49a:

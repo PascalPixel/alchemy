@@ -1,12 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015778, 0x08015778
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_0811bd10, 0x0811bd10
-	.set sub_0811bdb0, 0x0811bdb0
-	.set sub_0811be3c, 0x0811be3c
-	.set sub_081280fc, 0x081280fc
-	.set sub_08128194, 0x08128194
 	.global Func_0811c2b4
 	.thumb_func
 Func_0811c2b4:
@@ -17,17 +10,17 @@ Func_0811c2b4:
 	sub	sp, #12
 	mov	r8, r1
 	mov	sl, r0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	sub_0811bdb0
+	bl	0x0811bdb0
 	adds	r5, #8
 	adds	r6, r0, #0
-	bl	sub_0811bd10
+	bl	Func_0811bd10
 	mov	r1, r8
 	adds	r0, r5, #0
-	bl	sub_08015778
+	bl	Func_08015778
 	ldr	r1, [r6, #12]
 	ldr	r6, [pc, #44]
 	mov	lr, r6
@@ -58,29 +51,29 @@ Func_0811c2b4:
 	push	{r7}
 	adds	r7, r1, #0
 	mov	r8, r0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	ldr	r5, [r0, #0]
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	sub_0811bdb0
+	bl	0x0811bdb0
 	adds	r5, #8
 	adds	r6, r0, #0
-	bl	sub_0811bd10
+	bl	Func_0811bd10
 	adds	r0, r5, #0
 	adds	r1, r7, #0
-	bl	sub_08015778
+	bl	Func_08015778
 	ldr	r1, [r6, #12]
 	ldr	r6, [pc, #56]
 	mov	lr, r6
 	.2byte 0xf800
 	.2byte 0x1c05
 	mov	r0, r8
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	sub_081280fc
+	bl	0x081280fc
 	cmp	r0, #0
 	beq.n	.L_0811c362
 	adds	r0, r5, #0
@@ -104,23 +97,23 @@ Func_0811c2b4:
 .L_0811c37c:
 	push	{r5, lr}
 	adds	r5, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	sub_08128194
+	bl	0x08128194
 	lsls	r0, r0, #24
 	lsrs	r3, r0, #8
 	cmp	r3, #0
 	bne.n	.L_0811c3b6
 	adds	r0, r5, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #165
 	lsls	r2, r2, #1
 	adds	r3, r0, r2
 	ldrh	r0, [r3, #0]
-	bl	sub_081280fc
+	bl	0x081280fc
 	movs	r3, #192
 	lsls	r3, r3, #13
 	cmp	r0, #0

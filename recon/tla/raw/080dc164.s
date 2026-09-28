@@ -1,10 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_08020098, 0x08020098
-	.set sub_080cad84, 0x080cad84
-	.set sub_080d170c, 0x080d170c
-	.set sub_080d17ac, 0x080d17ac
 	.global Func_080dc164
 	.thumb_func
 Func_080dc164:
@@ -20,7 +15,7 @@ Func_080dc164:
 	mov	sl, r1
 .L_080dc178:
 	adds	r0, r5, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	mov	r1, sl
 	movs	r2, #0
 	ldrsh	r3, [r1, r2]
@@ -34,7 +29,7 @@ Func_080dc164:
 	adds	r3, #91
 	strb	r7, [r3, #0]
 	adds	r1, r6, #0
-	bl	sub_08020098
+	bl	0x08020098
 .L_080dc19c:
 	adds	r5, #1
 	cmp	r5, #80
@@ -106,12 +101,12 @@ Func_080dc164:
 	lsls	r0, r0, #14
 	orrs	r0, r6
 	movs	r1, #1
-	bl	sub_080d170c
+	bl	0x080d170c
 	movs	r0, #132
 	lsls	r0, r0, #1
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	adds	r0, r7, #0
-	bl	sub_080d17ac
+	bl	0x080d17ac
 	pop	{r5, r6, r7, pc}
 	movs	r0, r0
 	.4byte 0x84000150

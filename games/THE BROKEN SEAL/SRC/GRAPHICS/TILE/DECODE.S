@@ -9,7 +9,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 .text
-	.set sub_080b520c, 0x080b520c
 	.arm
 	.global Func_080b5138
 Func_080b5138:
@@ -36,23 +35,23 @@ Func_080b5138:
 .L_080b5180:
 	mov	r7, #32
 .L_080b5184:
-	bl sub_080b520c
+	bl Func_080b520c
 	lsr	r6, r5, #25
-	bl sub_080b520c
+	bl Func_080b520c
 	orr	r6, r6, r5, lsr #17
-	bl sub_080b520c
+	bl Func_080b520c
 	orr	r6, r6, r5, lsr #9
-	bl sub_080b520c
+	bl Func_080b520c
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #4
-	bl sub_080b520c
+	bl Func_080b520c
 	lsr	r6, r5, #25
-	bl sub_080b520c
+	bl Func_080b520c
 	orr	r6, r6, r5, lsr #17
-	bl sub_080b520c
+	bl Func_080b520c
 	orr	r6, r6, r5, lsr #9
-	bl sub_080b520c
+	bl Func_080b520c
 	orr	r6, r6, r5, lsr #1
 	add	r6, r6, sl
 	str	r6, [r1], #60

@@ -1,23 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080041d8, 0x080041d8
-	.set sub_080044d0, 0x080044d0
-	.set sub_08009080, 0x08009080
-	.set sub_08009088, 0x08009088
-	.set sub_08015130, 0x08015130
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_080b7f70, 0x080b7f70
-	.set sub_080b8000, 0x080b8000
-	.set sub_080b9d34, 0x080b9d34
-	.set sub_080bb938, 0x080bb938
-	.set sub_080bbabc, 0x080bbabc
-	.set sub_080be02c, 0x080be02c
-	.set sub_080c10e8, 0x080c10e8
-	.set sub_080c1798, 0x080c1798
-	.set sub_080c1a14, 0x080c1a14
-	.set sub_080c9008, 0x080c9008
-	.set sub_080c9018, 0x080c9018
-	.set sub_080f9010, 0x080f9010
 	.global Func_080ba978
 	.thumb_func
 Func_080ba978:
@@ -49,11 +31,11 @@ Func_080ba978:
 	b.n	.L_080baa28
 .L_080ba9aa:
 	ldrb	r0, [r7, #0]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	ldr	r3, [r0, #0]
 	ldr	r1, [r3, #16]
 	ldr	r0, [r3, #8]
-	bl	sub_080044d0
+	bl	ArcTan2
 	ldrb	r4, [r7, #0]
 	lsls	r0, r0, #16
 	ldr	r2, [pc, #516]
@@ -139,7 +121,7 @@ Func_080ba978:
 	add	r5, sp, #4
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sub_080b9d34
+	bl	BattlePres_BuildTargetList
 	mov	r6, sl
 	movs	r3, #1
 	ands	r6, r3
@@ -149,7 +131,7 @@ Func_080ba978:
 .L_080baa5c:
 	movs	r1, #0
 	movs	r0, #0
-	bl	sub_080c10e8
+	bl	BattlePres_SetActorModes
 	ldr	r3, [pc, #356]
 	ldr	r3, [r3, #0]
 	adds	r3, #65
@@ -157,18 +139,18 @@ Func_080ba978:
 	movs	r3, #2
 	negs	r3, r3
 	ands	r0, r3
-	bl	sub_08015130
+	bl	UiWindow_DrawPartyStatusContentsFar
 	ldr	r0, [r5, #8]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	ldr	r0, [r0, #0]
 	movs	r1, #3
 	mov	r8, r0
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r1, #16
 	mov	r0, r8
-	bl	sub_08009088
+	bl	ObjectDispatch_ApplyValueToChildrenFar
 	movs	r0, #154
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	movs	r3, #2
 	mov	r1, sl
 	ands	r3, r1
@@ -178,7 +160,7 @@ Func_080ba978:
 	ldr	r1, [r7, #80]
 	movs	r2, #1
 	movs	r3, #0
-	bl	sub_080c1798
+	bl	BattleFx_PlayUnitElementEffect
 	b.n	.L_080baabc
 .L_080baaac:
 	cmp	r6, #0
@@ -187,7 +169,7 @@ Func_080ba978:
 	ldr	r1, [r7, #80]
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_080c1798
+	bl	BattleFx_PlayUnitElementEffect
 .L_080baabc:
 	ldrb	r3, [r7, #2]
 	cmp	r3, #7
@@ -209,10 +191,10 @@ Func_080ba978:
 	adds	r3, #36
 	ldrsh	r0, [r2, r3]
 	str	r4, [sp, #0]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	movs	r1, #0
 	ldr	r0, [r0, #0]
-	bl	sub_080b7f70
+	bl	GetMotionRecord
 	adds	r3, r0, #0
 	adds	r3, #39
 	ldrb	r3, [r3, #0]
@@ -249,24 +231,24 @@ Func_080ba978:
 	bne.n	.L_080bab3a
 	ldrb	r1, [r7, #0]
 	movs	r0, #0
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r1, [pc, #156]
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	b.n	.L_080bab42
 .L_080bab3a:
 	ldr	r1, [pc, #152]
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 .L_080bab42:
-	bl	sub_080bb938
-	bl	sub_080c1a14
+	bl	BattleEv_DispatchQueued
+	bl	BattlePres_RunWithZeroArguments
 	b.n	.L_080babaa
 .L_080bab4c:
 	movs	r1, #200
 	ldr	r0, [pc, #136]
 	lsls	r1, r1, #4
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
 	beq.n	.L_080bab78
@@ -277,20 +259,20 @@ Func_080ba978:
 	cmp	r3, #0
 	beq.n	.L_080bab70
 	adds	r0, r5, #0
-	bl	sub_080c9008
+	bl	BattleFx_DispatchByIdRangeFar
 	b.n	.L_080bab7c
 .L_080bab70:
 	adds	r0, r5, #0
-	bl	sub_080c9018
+	bl	0x080c9018
 	b.n	.L_080bab7c
 .L_080bab78:
-	bl	sub_080c1a14
+	bl	BattlePres_RunWithZeroArguments
 .L_080bab7c:
-	bl	sub_080be02c
+	bl	BattleEventRuntime_WaitForReady
 	adds	r6, r5, #0
 	mov	r0, r8
 	movs	r1, #1
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	ldr	r3, [r6, #20]
 	movs	r4, #0
 	cmp	r3, #0
@@ -299,7 +281,7 @@ Func_080ba978:
 .L_080bab94:
 	ldrsh	r0, [r6, r7]
 	str	r4, [sp, #0]
-	bl	sub_080b8000
+	bl	Actor_ResetMotionAtAnchor
 	adds	r5, r6, #0
 	ldr	r4, [sp, #0]
 	ldr	r3, [r5, #20]

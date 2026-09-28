@@ -1,16 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002054, 0x08002054
-	.set sub_08014878, 0x08014878
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08016ce4, 0x08016ce4
-	.set sub_080ad010, 0x080ad010
-	.set sub_080ad0e8, 0x080ad0e8
-	.set sub_0812764c, 0x0812764c
-	.set sub_0812786c, 0x0812786c
-	.set sub_08127a0c, 0x08127a0c
-	.set sub_08127adc, 0x08127adc
-	.set sub_08127c2c, 0x08127c2c
 	.global Func_08127c80
 	.thumb_func
 Func_08127c80:
@@ -47,7 +36,7 @@ Func_08127c80:
 	adds	r0, #2
 	cmp	r1, #0
 	bge.n	.L_08127ca4
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -80,11 +69,11 @@ Func_08127c80:
 	strb	r2, [r3, #0]
 	adds	r0, #255
 	str	r1, [sp, #28]
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_08127d10
 	add	r0, sp, #32
-	bl	sub_0812764c
+	bl	0x0812764c
 	adds	r5, r0, #0
 .L_08127d10:
 	movs	r2, #165
@@ -195,12 +184,12 @@ Func_08127c80:
 	movs	r3, #2
 	subs	r1, r3, r1
 	ldr	r0, [sp, #20]
-	bl	sub_08002054
+	bl	Math_Div
 	cmp	r0, r5
 	bge.n	.L_08127de8
 	adds	r5, r0, #0
 .L_08127de8:
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r3, r5, #1
 	muls	r3, r0
 	mov	r2, r8
@@ -299,10 +288,10 @@ Func_08127c80:
 	movs	r7, #0
 	mov	r6, r8
 .L_08127ea0:
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r5, r0, #2
 	adds	r5, r5, r0
-	bl	sub_08014878
+	bl	0x08014878
 	lsls	r3, r0, #2
 	adds	r3, r3, r0
 	lsrs	r5, r5, #16
@@ -380,7 +369,7 @@ Func_08127c80:
 	cmp	r5, #0
 	beq.n	.L_08127fa2
 	str	r4, [sp, #0]
-	bl	sub_08014878
+	bl	0x08014878
 	adds	r3, r5, #0
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -456,7 +445,7 @@ Func_08127c80:
 	.2byte 0x0300
 .L_08127fc8:
 	adds	r0, r7, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #166
 	lsls	r1, r1, #1
 	adds	r7, #1
@@ -475,7 +464,7 @@ Func_08127c80:
 	movs	r1, #1
 	adds	r5, r2, r6
 	ldrh	r0, [r5, #0]
-	bl	sub_08127adc
+	bl	0x08127adc
 	movs	r3, #128
 	adds	r4, r0, #0
 	lsls	r3, r3, #8
@@ -484,7 +473,7 @@ Func_08127c80:
 	beq.n	.L_0812800a
 	ldrh	r0, [r5, #0]
 	str	r4, [sp, #0]
-	bl	sub_08127c2c
+	bl	0x08127c2c
 	ldr	r4, [sp, #0]
 .L_0812800a:
 	movs	r2, #254
@@ -495,28 +484,28 @@ Func_08127c80:
 	ldrh	r1, [r5, #0]
 	ands	r2, r4
 	adds	r0, r6, #0
-	bl	sub_080ad0e8
+	bl	0x080ad0e8
 	adds	r0, r6, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	ldr	r1, [sp, #32]
 	mov	r8, r0
 	cmp	r1, #0
 	beq.n	.L_08128034
 	adds	r0, r6, #0
-	bl	sub_0812786c
+	bl	0x0812786c
 	b.n	.L_08128050
 .L_08128034:
 	movs	r0, #116
 	adds	r0, #255
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_08128050
 	movs	r0, #46
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	beq.n	.L_08128050
 	adds	r0, r6, #0
-	bl	sub_08127a0c
+	bl	0x08127a0c
 .L_08128050:
 	ldr	r1, [sp, #24]
 	movs	r2, #128
@@ -535,7 +524,7 @@ Func_08127c80:
 	blt.n	.L_0812807e
 	movs	r0, #116
 	adds	r0, #255
-	bl	sub_08016ce4
+	bl	0x08016ce4
 	cmp	r0, #0
 	bne.n	.L_0812807e
 	movs	r3, #1
@@ -723,7 +712,7 @@ Func_08127c80:
 	cmp	r6, #0
 	beq.n	.L_081281e8
 	adds	r0, r6, #0
-	bl	sub_080ad010
+	bl	0x080ad010
 	ldrb	r2, [r0, #3]
 	movs	r3, #8
 	ands	r3, r2

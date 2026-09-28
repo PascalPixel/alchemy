@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015080, 0x08015080
-	.set sub_08015090, 0x08015090
-	.set sub_080150b8, 0x080150b8
-	.set sub_08015108, 0x08015108
-	.set sub_08015120, 0x08015120
-	.set sub_08077008, 0x08077008
 	.global Func_080a6614
 	.thumb_func
 Func_080a6614:
@@ -35,7 +29,7 @@ Func_080a6614:
 	negs	r3, r3
 	adds	r1, r5, #0
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	b.n	.L_080a665c
 .L_080a664e:
 	movs	r3, #8
@@ -43,7 +37,7 @@ Func_080a6614:
 	negs	r3, r3
 	adds	r1, r5, #0
 	movs	r2, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080a665c:
 	ldr	r3, [pc, #268]
 	movs	r2, #136
@@ -68,7 +62,7 @@ Func_080a6614:
 	mov	r1, sl
 	mov	r3, fp
 	mov	r2, r9
-	bl	sub_08015108
+	bl	Func_08015108
 	ldr	r3, [sp, #8]
 	movs	r6, #1
 	cmp	r3, #10
@@ -86,28 +80,28 @@ Func_080a6614:
 	ldr	r0, [pc, #204]
 	movs	r1, #4
 	ands	r0, r2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #204]
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	cmp	r6, #0
 	bne.n	.L_080a66e2
 	ldrh	r0, [r7, #0]
 	lsrs	r0, r0, #10
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r1, r5, #0
 	movs	r2, #80
 	movs	r3, #0
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	b.n	.L_080a66e2
 .L_080a66d6:
 	ldr	r0, [pc, #172]
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080a66e2:
 	ldr	r3, [pc, #136]
 	ldr	r2, [pc, #160]
@@ -122,7 +116,7 @@ Func_080a6614:
 	mov	r1, sl
 	mov	r3, fp
 	mov	r2, r9
-	bl	sub_08015108
+	bl	Func_08015108
 	ldr	r3, [sp, #8]
 	movs	r6, #1
 	cmp	r3, #10
@@ -139,31 +133,31 @@ Func_080a6614:
 	ldr	r0, [pc, #92]
 	movs	r1, #4
 	ands	r0, r2
-	bl	sub_08015120
+	bl	UiText_DrawQuantity
 	ldr	r0, [pc, #104]
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	cmp	r6, #0
 	bne.n	.L_080a6744
 	ldrh	r0, [r7, #0]
 	lsrs	r0, r0, #10
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r1, r5, #0
 	movs	r2, #80
 	movs	r3, #8
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 .L_080a6744:
 	movs	r0, #15
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	b.n	.L_080a6758
 .L_080a674c:
 	ldr	r0, [pc, #64]
 	adds	r1, r5, #0
 	movs	r2, #0
 	movs	r3, #8
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080a6758:
 	movs	r0, #1
 	add	sp, #20

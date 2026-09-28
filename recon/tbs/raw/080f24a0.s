@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002f40, 0x08002f40
-	.set sub_080053e8, 0x080053e8
 	.global Unnamed_080f24a0
 	.global Func_080f24a0
 	.thumb_func
@@ -17,7 +15,7 @@ Func_080f24a0:
 	lsls	r3, r3, #19
 	strh	r6, [r3, #0]
 	ldr	r0, [pc, #52]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r3, [pc, #48]
 	adds	r4, r0, #0
 	ldr	r1, [pc, #48]
@@ -33,7 +31,7 @@ Func_080f24a0:
 	add	r4, r8
 	adds	r1, r5, #0
 	adds	r0, r4, #0
-	bl	sub_080053e8
+	bl	Resource_DecodeByteLz
 	ldr	r3, [pc, #16]
 	b.n	.L_080f24fc
 	movs	r0, r0
@@ -52,7 +50,7 @@ Func_080f24a0:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	ldr	r0, [pc, #308]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	movs	r1, #160
 	adds	r4, r0, #0
 	ldr	r3, [pc, #300]
@@ -66,7 +64,7 @@ Func_080f24a0:
 	strh	r6, [r3, #0]
 	adds	r1, r5, #0
 	adds	r0, r4, #0
-	bl	sub_080053e8
+	bl	Resource_DecodeByteLz
 	movs	r1, #192
 	ldr	r3, [pc, #272]
 	ldr	r0, [pc, #280]

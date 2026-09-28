@@ -7,7 +7,6 @@
 @ credit: handwritten — sound channel chain unlink helper (TLA revision)
 .syntax unified
 	.thumb
-	.set AlchemyLoadAddress, 0x081c0738
 	.global SoundChannel_Unlink
 	.thumb_func
 SoundChannel_Unlink:

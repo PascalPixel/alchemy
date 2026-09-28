@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080072e4, 0x080072e4
-	.set sub_08009080, 0x08009080
-	.set sub_080090c8, 0x080090c8
-	.set sub_080090d0, 0x080090d0
-	.set sub_08009140, 0x08009140
-	.set sub_080091e0, 0x080091e0
-	.set sub_080770c0, 0x080770c0
-	.set sub_0808e9a8, 0x0808e9a8
 	.global Battle_PlaceMapMarkers
 	.global Func_0808e9c0
 	.thumb_func
@@ -69,7 +61,7 @@ Func_0808e9c0:
 .L_0808ea26:
 	ldr	r3, [pc, #472]
 	ldr	r0, [r3, #36]
-	bl	sub_080072e4
+	bl	_call_via_r0
 	adds	r6, r0, #0
 	movs	r4, #1
 	ldr	r2, [r6, #0]
@@ -102,19 +94,19 @@ Func_0808e9c0:
 	add	r1, r9
 	movs	r2, #0
 	adds	r3, r7, r4
-	bl	sub_080090c8
+	bl	Engine_ObjectCreate
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_0808ea74
 	b.n	.L_0808ebb8
 .L_0808ea74:
-	bl	sub_0808e9a8
+	bl	ObjectMotion_SnapToTerrain
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 	movs	r1, #6
 	ldrsh	r0, [r6, r1]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	beq.n	.L_0808eaaa
 	ldr	r3, [pc, #376]
@@ -125,15 +117,15 @@ Func_0808e9c0:
 	cmp	r2, r3
 	bne.n	.L_0808eaa2
 	adds	r0, r5, #0
-	bl	sub_080090d0
+	bl	Object_Destroy
 	b.n	.L_0808ebb8
 .L_0808eaa2:
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 .L_0808eaaa:
 	adds	r0, r5, #0
-	bl	sub_08009140
+	bl	Object_ResetMotion
 	ldr	r2, [r5, #8]
 	cmp	r2, #0
 	bge.n	.L_0808eaba
@@ -190,7 +182,7 @@ Func_0808e9c0:
 	bne.n	.L_0808ebb8
 	movs	r4, #6
 	ldrsh	r0, [r6, r4]
-	bl	sub_080770c0
+	bl	GameFlag_IsSet
 	cmp	r0, #0
 	bne.n	.L_0808ebb8
 	mov	r4, r9
@@ -199,19 +191,19 @@ Func_0808e9c0:
 	add	r1, r9
 	movs	r2, #0
 	adds	r3, r7, r4
-	bl	sub_080090c8
+	bl	Engine_ObjectCreate
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0808ebb8
-	bl	sub_0808e9a8
+	bl	ObjectMotion_SnapToTerrain
 	movs	r1, #0
 	adds	r0, r5, #0
-	bl	sub_080091e0
+	bl	ObjectDispatch_SetSingleChildField26Far
 	adds	r0, r5, #0
-	bl	sub_08009140
+	bl	Object_ResetMotion
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	ldr	r2, [r5, #8]
 	cmp	r2, #0
 	bge.n	.L_0808eb5a

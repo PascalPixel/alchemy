@@ -1,19 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08015218, 0x08015218
-	.set sub_08077008, 0x08077008
-	.set sub_080770c8, 0x080770c8
-	.set sub_080770d0, 0x080770d0
-	.set sub_080b60a0, 0x080b60a0
-	.set sub_080b7f9c, 0x080b7f9c
-	.set sub_080b8fd4, 0x080b8fd4
-	.set sub_080b90ac, 0x080b90ac
-	.set sub_080b90f8, 0x080b90f8
-	.set sub_080b920c, 0x080b920c
-	.set sub_080b9324, 0x080b9324
-	.set sub_080b9470, 0x080b9470
-	.set sub_080b9724, 0x080b9724
-	.set sub_080b98b4, 0x080b98b4
 	.global BattlePresentation_BuildActions
 	.global Func_080b9934
 	.thumb_func
@@ -37,20 +23,20 @@ Func_080b9934:
 	adds	r3, #16
 	cmp	r2, #19
 	bls.n	.L_080b994a
-	bl	sub_080b90ac
+	bl	BattleUnit_ClearField12bForGroup
 	movs	r0, #8
-	bl	sub_080b98b4
+	bl	Palette_CopyBanksWithBrightnessOffset
 	ldr	r0, [pc, #212]
-	bl	sub_080770c8
+	bl	GameFlag_SetBitFar
 	adds	r5, #69
 	movs	r0, #0
-	bl	sub_080b8fd4
-	bl	sub_08015218
+	bl	Camera_ConfigureScene
+	bl	UiWork_FinalizeSharedSlotFar
 	ldrb	r3, [r5, #0]
 	cmp	r3, #2
 	beq.n	.L_080b999e
 	adds	r0, r7, #0
-	bl	sub_080b920c
+	bl	BattlePres_BuildUnitEntries
 	adds	r6, r0, #0
 	cmp	r6, #0
 	blt.n	.L_080b9a16
@@ -60,7 +46,7 @@ Func_080b9934:
 	ldrsh	r3, [r7, r1]
 	cmp	r3, #99
 	bne.n	.L_080b99a0
-	bl	sub_080b90f8
+	bl	BattleEscape_CheckSuccess
 	cmp	r0, #0
 	bne.n	.L_080b99a0
 	movs	r3, #2
@@ -77,9 +63,9 @@ Func_080b9934:
 	beq.n	.L_080b99ca
 	adds	r0, r7, #0
 	adds	r1, r6, #0
-	bl	sub_080b9724
+	bl	BattlePresentation_AppendLinkedActions
 	adds	r5, r0, #0
-	bl	sub_080b60a0
+	bl	BattlePres_WaitSync
 	cmp	r0, #0
 	blt.n	.L_080b99c4
 	adds	r6, r6, r5
@@ -92,12 +78,12 @@ Func_080b9934:
 .L_080b99ca:
 	lsls	r0, r6, #4
 	adds	r0, r7, r0
-	bl	sub_080b9324
+	bl	BattlePres_BuildOpponentEntries
 	adds	r6, r6, r0
 .L_080b99d4:
 	adds	r0, r7, #0
 	adds	r1, r6, #0
-	bl	sub_080b9470
+	bl	BattleQueue_SortByPriority
 	cmp	r6, #0
 	ble.n	.L_080b9a16
 	adds	r5, r7, #0
@@ -112,7 +98,7 @@ Func_080b9934:
 .L_080b99f0:
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r4, #6
 	ldrsh	r2, [r5, r4]
 	movs	r3, #3
@@ -131,8 +117,8 @@ Func_080b9934:
 	bne.n	.L_080b99e4
 .L_080b9a16:
 	ldr	r0, [pc, #32]
-	bl	sub_080770d0
-	bl	sub_080b7f9c
+	bl	GameFlag_ClearBitFar
+	bl	Camera_InitDefaultTransform
 	ldr	r3, [pc, #28]
 	ldr	r2, [r3, #0]
 	movs	r3, #128

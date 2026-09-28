@@ -7,7 +7,6 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08015b38
 .L_08015b38:
 	orr	r2, r4, r3, lsr #28
 	orr	r3, r6, r3, lsl #4

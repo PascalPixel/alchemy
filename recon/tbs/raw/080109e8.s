@@ -1,24 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800231c, 0x0800231c
-	.set sub_08002322, 0x08002322
-	.set sub_08002f40, 0x08002f40
-	.set sub_08003bb4, 0x08003bb4
-	.set sub_080041d8, 0x080041d8
-	.set sub_080048b0, 0x080048b0
-	.set sub_080048f4, 0x080048f4
-	.set sub_080049ac, 0x080049ac
-	.set sub_08004bd4, 0x08004bd4
-	.set sub_08004c1c, 0x08004c1c
-	.set sub_08004cb4, 0x08004cb4
-	.set sub_080051d8, 0x080051d8
-	.set sub_08005258, 0x08005258
-	.set sub_08005340, 0x08005340
-	.set sub_080072ec, 0x080072ec
-	.set sub_080072f0, 0x080072f0
-	.set sub_080072f4, 0x080072f4
-	.set sub_080118d8, 0x080118d8
-	.set sub_080123f4, 0x080123f4
 	.global Map_InitializePerspectiveScene
 	.global Func_080109e8
 	.thumb_func
@@ -41,11 +22,11 @@ Func_080109e8:
 	strh	r3, [r2, #0]
 	movs	r0, #0
 	sub	sp, #32
-	bl	sub_08003bb4
+	bl	Blend_SetDarkenTarget0
 	movs	r1, #215
 	lsls	r1, r1, #2
 	movs	r0, #8
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	movs	r6, #0
 	adds	r7, r0, #0
 	add	r0, sp, #28
@@ -78,18 +59,18 @@ Func_080109e8:
 	str	r2, [r3, #0]
 	str	r6, [r7, #16]
 	ldr	r0, [pc, #632]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	movs	r1, #136
 	lsls	r1, r1, #1
 	adds	r3, r7, r1
 	ldr	r5, [pc, #624]
 	str	r0, [r3, #0]
 	ldr	r0, [pc, #624]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	adds	r1, r5, #0
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	adds	r0, r5, #0
-	bl	sub_080118d8
+	bl	MapAnimation_StartChannels
 	ldr	r2, [pc, #608]
 	ldr	r3, [pc, #612]
 	strh	r2, [r3, #0]
@@ -99,13 +80,13 @@ Func_080109e8:
 	adds	r3, #2
 	strh	r6, [r3, #0]
 	ldr	r0, [pc, #604]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #604]
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	ldr	r0, [pc, #600]
-	bl	sub_08002f40
+	bl	Resource_GetTableEntry
 	ldr	r1, [pc, #600]
-	bl	sub_08005340
+	bl	Resource_DecodeType01
 	movs	r3, #248
 	lsls	r3, r3, #5
 	strh	r3, [r7, #20]
@@ -150,11 +131,11 @@ Func_080109e8:
 	str	r6, [r3, #0]
 	movs	r0, #12
 	movs	r1, #76
-	bl	sub_080048f4
+	bl	Engine_AllocateBlock
 	ldr	r1, [pc, #520]
 	mov	r9, r0
 	movs	r0, #7
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #12
 	add	r2, r9
 	movs	r3, #200
@@ -193,26 +174,26 @@ Func_080109e8:
 	adds	r0, r5, #0
 	str	r3, [r2, #16]
 	lsls	r2, r5, #1
-	bl	sub_08005258
+	bl	Camera_StoreSceneParameters
 	mov	r3, r8
 	str	r6, [r3, #0]
 	str	r6, [r3, #4]
 	str	r6, [r3, #8]
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	mov	r0, r8
-	bl	sub_08004cb4
+	bl	SceneTransform_ApplyPosition
 	movs	r1, #141
 	lsls	r1, r1, #1
 	adds	r1, r7, r1
 	str	r1, [sp, #0]
 	ldrh	r0, [r1, #0]
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	movs	r2, #140
 	lsls	r2, r2, #1
 	adds	r2, r2, r7
 	ldrh	r0, [r2, #0]
 	mov	fp, r2
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 	add	r3, sp, #16
 	mov	sl, r3
 	str	r6, [r3, #0]
@@ -221,15 +202,15 @@ Func_080109e8:
 	mov	r1, r9
 	ldr	r2, [pc, #380]
 	mov	r0, sl
-	bl	sub_080072ec
-	bl	sub_080049ac
+	bl	_call_via_r2
+	bl	Render_ResetTransformState
 	mov	r0, r9
 	mov	r1, r8
-	bl	sub_080051d8
+	bl	Graphics_PrepareTransferInIwramWork
 	ldr	r5, [pc, #364]
 	movs	r0, #46
 	adds	r1, r5, #0
-	bl	sub_080048b0
+	bl	Runtime_AllocateHeapBlock
 	movs	r2, #132
 	lsrs	r5, r5, #2
 	lsls	r2, r2, #24
@@ -241,18 +222,18 @@ Func_080109e8:
 	subs	r3, #12
 	mov	r3, fp
 	ldrh	r0, [r3, #0]
-	bl	sub_0800231c
+	bl	Trig_Cos
 	mov	r1, fp
 	adds	r5, r0, #0
 	ldrh	r0, [r1, #0]
-	bl	sub_08002322
+	bl	Trig_Sin
 	ldr	r3, [pc, #328]
 	adds	r1, r0, #0
 	adds	r0, r5, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	mov	r1, r8
 	ldr	r2, [sp, #12]
-	bl	sub_080123f4
+	bl	WorldMap_BuildScanlineTable
 	ldr	r3, [pc, #312]
 	str	r6, [r3, #0]
 	mov	r1, fp
@@ -274,27 +255,27 @@ Func_080109e8:
 	mov	r1, r8
 	ldr	r2, [sp, #12]
 	mov	r0, r9
-	bl	sub_080072f4
+	bl	_call_via_r4
 	mov	r3, r8
 	str	r6, [r3, #0]
 	str	r6, [r3, #4]
 	str	r6, [r3, #8]
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	movs	r3, #224
 	mov	r1, fp
 	lsls	r3, r3, #8
 	strh	r3, [r1, #0]
 	ldr	r2, [sp, #0]
 	strh	r6, [r2, #0]
-	bl	sub_080049ac
+	bl	Render_ResetTransformState
 	mov	r0, r8
-	bl	sub_08004cb4
+	bl	SceneTransform_ApplyPosition
 	ldr	r3, [sp, #0]
 	ldrh	r0, [r3, #0]
-	bl	sub_08004c1c
+	bl	SceneTransform_ApplyYaw
 	mov	r1, fp
 	ldrh	r0, [r1, #0]
-	bl	sub_08004bd4
+	bl	SceneTransform_ApplyPitch
 	mov	r2, sl
 	str	r6, [r2, #0]
 	str	r6, [r2, #4]
@@ -308,7 +289,7 @@ Func_080109e8:
 	mov	r0, sl
 	mov	r1, r9
 	ldr	r2, [pc, #176]
-	bl	sub_080072ec
+	bl	_call_via_r2
 	ldr	r3, [pc, #204]
 	strh	r6, [r3, #0]
 	movs	r3, #66
@@ -333,11 +314,11 @@ Func_080109e8:
 	strh	r3, [r2, #0]
 	ldr	r1, [pc, #168]
 	ldr	r0, [pc, #168]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #164]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r1, [pc, #160]
 	movs	r3, #255
 	adds	r0, r7, r1

@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08028ef0, 0x08028ef0
 	.global Menu_HandleSelectionRowInput
 	.global Func_08029094
 	.thumb_func
@@ -144,7 +143,7 @@ Func_08029094:
 	adds	r0, r7, #0
 	adds	r1, r5, #0
 	adds	r2, r4, #0
-	bl	sub_08028ef0
+	bl	Menu_DrawSelectionRow
 	b.n	.L_080291da
 .L_08029196:
 	ldr	r3, [r6, #0]
@@ -182,7 +181,7 @@ Func_08029094:
 	adds	r0, r7, #0
 	adds	r1, r5, #0
 	adds	r2, r4, #0
-	bl	sub_08028ef0
+	bl	Menu_DrawSelectionRow
 .L_080291da:
 	adds	r0, r5, #0
 .L_080291dc:

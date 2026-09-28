@@ -1,8 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08003d28, 0x08003d28
-	.set sub_08003dec, 0x08003dec
-	.set sub_0800aa0c, 0x0800aa0c
 	.global Render_ApplyProjectedPlacement
 	.global Func_0800b168
 	.thumb_func
@@ -46,7 +43,7 @@ Func_0800b168:
 	adds	r1, r3, #0
 	adds	r0, r7, #0
 	mov	fp, r4
-	bl	sub_0800aa0c
+	bl	Func_0800aa0c
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_0800b1da
@@ -100,7 +97,7 @@ Func_0800b168:
 	orrs	r2, r3
 	str	r2, [sp, #36]
 .L_0800b21c:
-	bl	sub_08003d28
+	bl	AffineMatrix_BuildForEffect
 	str	r0, [sp, #32]
 .L_0800b222:
 	movs	r3, #128
@@ -184,7 +181,7 @@ Func_0800b168:
 	strh	r3, [r0, #6]
 	strb	r6, [r0, #4]
 	adds	r1, r4, #0
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 	b.n	.L_0800b2dc
 	movs	r0, r0
 	.4byte 0x000001ff
@@ -270,7 +267,7 @@ Func_0800b168:
 	.2byte 0xfe00
 	.2byte 0xffff
 .L_0800b370:
-	bl	sub_08003dec
+	bl	Runtime_PushSlotEntry
 .L_0800b374:
 	add	sp, #68
 	pop	{r3, r5, r6, r7}

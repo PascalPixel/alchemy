@@ -1,6 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
 	.global ObjectDispatch_WaitForCommandEnd
 	.global Func_08023634
 	.thumb_func
@@ -13,7 +12,7 @@ Func_08023634:
 	b.n	.L_08023652
 .L_0802363e:
 	movs	r0, #1
-	bl	sub_08013560
+	bl	0x08013560
 	movs	r3, #172
 	lsls	r3, r3, #1
 	adds	r6, #1

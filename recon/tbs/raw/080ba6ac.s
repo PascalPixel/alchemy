@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08009080, 0x08009080
-	.set sub_08009088, 0x08009088
-	.set sub_08077008, 0x08077008
-	.set sub_08077018, 0x08077018
-	.set sub_08077058, 0x08077058
-	.set sub_08077060, 0x08077060
-	.set sub_080771a0, 0x080771a0
-	.set sub_080b7dd0, 0x080b7dd0
-	.set sub_080b7f70, 0x080b7f70
-	.set sub_080b8000, 0x080b8000
-	.set sub_080b9d34, 0x080b9d34
-	.set sub_080bb938, 0x080bb938
-	.set sub_080bbabc, 0x080bbabc
-	.set sub_080be02c, 0x080be02c
-	.set sub_080c10e8, 0x080c10e8
-	.set sub_080c1724, 0x080c1724
-	.set sub_080c9008, 0x080c9008
-	.set sub_080c9018, 0x080c9018
 	.global Func_080ba6ac
 	.thumb_func
 Func_080ba6ac:
@@ -48,19 +28,19 @@ Func_080ba6ac:
 	add	r5, sp, #4
 	adds	r1, r5, #0
 	mov	r0, sl
-	bl	sub_080b9d34
+	bl	BattlePres_BuildTargetList
 	movs	r1, #0
 	movs	r0, #0
-	bl	sub_080c10e8
+	bl	BattlePres_SetActorModes
 	ldr	r0, [r5, #8]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	ldr	r0, [r0, #0]
 	movs	r1, #3
 	mov	r9, r0
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r1, #16
 	mov	r0, r9
-	bl	sub_08009088
+	bl	ObjectDispatch_ApplyValueToChildrenFar
 	mov	r1, sl
 	ldrb	r3, [r1, #2]
 	cmp	r3, #7
@@ -81,10 +61,10 @@ Func_080ba6ac:
 	lsls	r3, r7, #1
 	adds	r3, #36
 	ldrsh	r0, [r2, r3]
-	bl	sub_080b7dd0
+	bl	GetBattleObjectSlot
 	movs	r1, #0
 	ldr	r0, [r0, #0]
-	bl	sub_080b7f70
+	bl	GetMotionRecord
 	adds	r3, r0, #0
 	adds	r3, #39
 	ldrb	r3, [r3, #0]
@@ -116,7 +96,7 @@ Func_080ba6ac:
 	movs	r1, #200
 	ldr	r0, [pc, #400]
 	lsls	r1, r1, #4
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r3, [r5, #0]
 	cmp	r3, #0
 	beq.n	.L_080ba7c0
@@ -137,10 +117,10 @@ Func_080ba6ac:
 	str	r2, [r3, #0]
 	ldr	r1, [pc, #376]
 	movs	r3, #128
-	bl	sub_080c1724
+	bl	Graphics_ScaleRgb555Clamped
 .L_080ba792:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #364]
 	adds	r7, #1
 	adds	r6, r6, r2
@@ -154,21 +134,21 @@ Func_080ba6ac:
 	cmp	r3, #0
 	beq.n	.L_080ba7b8
 	adds	r0, r5, #0
-	bl	sub_080c9008
+	bl	BattleFx_DispatchByIdRangeFar
 	b.n	.L_080ba7c6
 .L_080ba7b8:
 	adds	r0, r5, #0
-	bl	sub_080c9018
+	bl	0x080c9018
 	b.n	.L_080ba7c6
 .L_080ba7c0:
 	movs	r0, #60
-	bl	sub_080030f8
+	bl	WaitFrames
 .L_080ba7c6:
-	bl	sub_080be02c
+	bl	BattleEventRuntime_WaitForReady
 	adds	r6, r5, #0
 	mov	r0, r9
 	movs	r1, #1
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	ldr	r3, [r6, #20]
 	movs	r7, #0
 	cmp	r3, #0
@@ -177,7 +157,7 @@ Func_080ba6ac:
 .L_080ba7de:
 	ldrsh	r0, [r6, r2]
 	str	r2, [sp, #0]
-	bl	sub_080b8000
+	bl	Actor_ResetMotionAtAnchor
 	adds	r5, r6, #0
 	ldr	r2, [sp, #0]
 	ldr	r3, [r5, #20]
@@ -189,7 +169,7 @@ Func_080ba6ac:
 	mov	r3, r8
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	r1, r8
 	movs	r7, #8
 	ldrsh	r3, [r1, r7]
@@ -198,7 +178,7 @@ Func_080ba6ac:
 	adds	r6, r0, #0
 	ldrh	r5, [r6, r3]
 	adds	r0, r5, #0
-	bl	sub_08077018
+	bl	Item_Get
 	ldrb	r2, [r0, #12]
 	adds	r3, r2, #0
 	cmp	r3, #1
@@ -208,7 +188,7 @@ Func_080ba6ac:
 	ldrsh	r1, [r3, r6]
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
-	bl	sub_08077058
+	bl	Inventory_RemoveFar
 	mov	r1, r8
 	movs	r7, #8
 	ldrsh	r5, [r1, r7]
@@ -261,7 +241,7 @@ Func_080ba6ac:
 	lsrs	r3, r3, #24
 	cmp	r3, #2
 	bne.n	.L_080ba8c0
-	bl	sub_080771a0
+	bl	BattleRandom16Far
 	movs	r3, #7
 	ands	r0, r3
 	cmp	r0, #0
@@ -273,17 +253,17 @@ Func_080ba6ac:
 	adds	r3, #216
 	ldrh	r1, [r6, r3]
 	movs	r0, #2
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	ldr	r1, [pc, #104]
 	movs	r0, #4
-	bl	sub_080bbabc
+	bl	BattleEv_Push
 	mov	r3, r8
 	movs	r2, #0
 	ldrsh	r0, [r3, r2]
 	movs	r6, #8
 	ldrsh	r1, [r3, r6]
-	bl	sub_08077060
-	bl	sub_080bb938
+	bl	Func_08077060
+	bl	BattleEv_DispatchQueued
 	b.n	.L_080ba8da
 .L_080ba8c0:
 	cmp	r3, #4

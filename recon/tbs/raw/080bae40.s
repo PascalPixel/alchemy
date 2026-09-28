@@ -1,9 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08004458, 0x08004458
-	.set sub_08077008, 0x08077008
-	.set sub_08077198, 0x08077198
-	.set sub_080772b8, 0x080772b8
 	.global BattleTarget_SelectForAction
 	.global Func_080bae40
 	.thumb_func
@@ -174,7 +170,7 @@ Func_080bae40:
 	lsls	r3, r3, #2
 	ldr	r0, [r4, r3]
 	mov	r9, r3
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r5, r0, #0
 	ldrb	r0, [r7, #3]
 	movs	r6, #0
@@ -599,7 +595,7 @@ Func_080bae40:
 	lsls	r3, r1, #16
 	cmp	r3, #0
 	bne.n	.L_080bb316
-	bl	sub_080772b8
+	bl	BattleFx_IsReviveFar
 	cmp	r0, #0
 	bne.n	.L_080bb316
 	movs	r6, #0
@@ -702,12 +698,12 @@ Func_080bae40:
 	b.n	.L_080bb54a
 .L_080bb3d8:
 	ldr	r0, [sp, #28]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r3, #148
 	lsls	r3, r3, #1
 	adds	r0, r0, r3
 	ldrb	r0, [r0, #0]
-	bl	sub_08077198
+	bl	Owner_GetRecordFar
 	adds	r0, #53
 	movs	r3, #0
 	ldrsb	r3, [r0, r3]
@@ -761,18 +757,18 @@ Func_080bae40:
 	ldr	r6, [sp, #16]
 	ldr	r0, [r5, r6]
 	str	r1, [sp, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	mov	r8, r0
 	ldr	r0, [r7, #0]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	adds	r6, r0, #0
 	ldr	r0, [sp, #28]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	movs	r2, #148
 	lsls	r2, r2, #1
 	adds	r0, r0, r2
 	ldrb	r0, [r0, #0]
-	bl	sub_08077198
+	bl	Owner_GetRecordFar
 	adds	r0, #53
 	movs	r3, #0
 	ldrsb	r3, [r0, r3]
@@ -849,7 +845,7 @@ Func_080bae40:
 	beq.n	.L_080bb51c
 	b.n	.L_080bb53e
 .L_080bb4f4:
-	bl	sub_08004458
+	bl	Random16
 	movs	r3, #11
 	muls	r3, r0
 	lsrs	r3, r3, #16
@@ -860,7 +856,7 @@ Func_080bae40:
 	movs	r1, #1
 	b.n	.L_080bb53e
 .L_080bb508:
-	bl	sub_08004458
+	bl	Random16
 	lsls	r3, r0, #4
 	subs	r3, r3, r0
 	lsrs	r1, r3, #16
@@ -870,7 +866,7 @@ Func_080bae40:
 	bgt.n	.L_080bb538
 	b.n	.L_080bb504
 .L_080bb51c:
-	bl	sub_08004458
+	bl	Random16
 	lsls	r3, r0, #3
 	adds	r3, r3, r0
 	lsls	r3, r3, #1
@@ -912,7 +908,7 @@ Func_080bae40:
 	adds	r4, #32
 	str	r4, [sp, #12]
 .L_080bb560:
-	bl	sub_08004458
+	bl	Random16
 	ldr	r6, [sp, #20]
 	adds	r3, r6, #0
 	muls	r3, r0

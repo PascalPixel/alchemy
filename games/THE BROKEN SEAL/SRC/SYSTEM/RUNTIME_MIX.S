@@ -23,8 +23,6 @@
 	.set	.L_audio_091c, 0x0300091c
 	.set	.L_audio_096c, 0x0300096c
 	.arm
-	.set AlchemyLoadAddress, 0x08000dc8
-	.set AlchemyRunAddress, 0x03000658
 
 @ 音源ごとの状態更新と標本合成を行う常駐音響処理。
 @ サム入口からアーム合成核へ切り替わる。由来は命令列だけでは確定しない。

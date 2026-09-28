@@ -1,18 +1,10 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08038020, 0x08038020
-	.set sub_080ad3f8, 0x080ad3f8
-	.set sub_080aed6c, 0x080aed6c
-	.set sub_080aef34, 0x080aef34
-	.set sub_080afb80, 0x080afb80
-	.set sub_080afbb4, 0x080afbb4
-	.set sub_080b0298, 0x080b0298
 	.global Func_080af794
 	.thumb_func
 Func_080af794:
 	push	{lr}
-	bl	sub_080afb80
+	bl	Func_080afb80
 	pop	{pc}
 .L_080af79c:
 	movs	r3, #180
@@ -36,12 +28,12 @@ Func_080af794:
 	mov	r9, sl
 .L_080af7c2:
 	adds	r0, r6, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r7, r0, #0
 	ldr	r0, [pc, #144]
 	mov	r1, r9
 	adds	r0, r6, r0
-	bl	sub_08038020
+	bl	0x08038020
 	mov	r2, r9
 	ldrh	r3, [r2, #0]
 	movs	r5, #0
@@ -76,7 +68,7 @@ Func_080af794:
 	cmp	r0, r1
 	beq.n	.L_080af8be
 .L_080af812:
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r7, r0, #0
 	cmp	r7, #0
 	beq.n	.L_080af8ae
@@ -118,18 +110,18 @@ Func_080af794:
 	ldrh	r3, [r6, #0]
 	mov	r1, r9
 	ands	r1, r3
-	bl	sub_080aed6c
+	bl	Inventory_Add
 	mov	r2, r8
 	adds	r1, r0, #0
 	adds	r5, #1
 	ldr	r0, [r2, #0]
 	adds	r6, #2
-	bl	sub_080aef34
+	bl	Func_080aef34
 	cmp	r5, #12
 	bls.n	.L_080af860
 	mov	r3, r8
 	ldr	r0, [r3, #0]
-	bl	sub_080b0298
+	bl	Func_080b0298
 	movs	r3, #128
 	lsls	r3, r3, #7
 	strh	r3, [r7, #22]
@@ -139,13 +131,13 @@ Func_080af794:
 	mov	r1, r8
 	ldr	r0, [r1, #0]
 	ldrb	r1, [r3, #0]
-	bl	sub_080afbb4
+	bl	0x080afbb4
 	mov	r2, r8
 	ldr	r0, [r2, #0]
-	bl	sub_080b0298
+	bl	Func_080b0298
 	mov	r3, r8
 	ldr	r0, [r3, #0]
-	bl	sub_080ad3f8
+	bl	Func_080ad3f8
 .L_080af8ae:
 	movs	r1, #4
 	add	r8, r1

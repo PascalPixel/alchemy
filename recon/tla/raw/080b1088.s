@@ -1,13 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08016cfc, 0x08016cfc
-	.set sub_08016d18, 0x08016d18
-	.set sub_080ad3f8, 0x080ad3f8
-	.set sub_080ae16c, 0x080ae16c
-	.set sub_080aec04, 0x080aec04
-	.set sub_080b0298, 0x080b0298
-	.set sub_080b106c, 0x080b106c
 	.global Func_080b1088
 	.thumb_func
 Func_080b1088:
@@ -51,7 +43,7 @@ Func_080b1088:
 	mov	sl, r1
 .L_080b10d2:
 	mov	r0, sl
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	adds	r7, r0, #0
 	adds	r2, r7, #0
 	adds	r2, #216
@@ -74,7 +66,7 @@ Func_080b1088:
 	adds	r5, #216
 .L_080b10fe:
 	ldrh	r0, [r5, #0]
-	bl	sub_080aec04
+	bl	Item_GetDirect
 	ldrb	r3, [r0, #2]
 	movs	r0, #192
 	adds	r3, #255
@@ -92,7 +84,7 @@ Func_080b1088:
 	strh	r3, [r5, #0]
 .L_080b1122:
 	ldrh	r0, [r5, #0]
-	bl	sub_080b106c
+	bl	0x080b106c
 	cmp	r0, #0
 	beq.n	.L_080b1130
 	ldr	r3, [pc, #40]
@@ -145,9 +137,9 @@ Func_080b1088:
 	.2byte 0x0000
 .L_080b1188:
 	mov	r0, sl
-	bl	sub_080b0298
+	bl	Func_080b0298
 	mov	r0, sl
-	bl	sub_080ad3f8
+	bl	Func_080ad3f8
 	movs	r2, #1
 	add	sl, r2
 	mov	r3, sl
@@ -174,14 +166,14 @@ Func_080b1088:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	sub_08016cfc
+	bl	0x08016cfc
 	movs	r0, #1
-	bl	sub_080ae16c
+	bl	0x080ae16c
 	movs	r6, #229
 	lsls	r6, r6, #4
 .L_080b11d4:
 	adds	r0, r6, #0
-	bl	sub_08016d18
+	bl	0x08016d18
 	movs	r3, #224
 	lsls	r3, r3, #4
 	adds	r6, #1
@@ -210,7 +202,7 @@ Func_080b1088:
 	movs	r6, #4
 .L_080b120e:
 	adds	r0, r6, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #14
 	adds	r0, #216
 .L_080b1218:
@@ -222,10 +214,10 @@ Func_080b1088:
 	cmp	r2, #0
 	bge.n	.L_080b1218
 	adds	r0, r6, #0
-	bl	sub_080b0298
+	bl	Func_080b0298
 	adds	r0, r6, #0
 	adds	r6, #1
-	bl	sub_080ad3f8
+	bl	Func_080ad3f8
 	cmp	r6, #7
 	ble.n	.L_080b120e
 	ldr	r1, [pc, #60]
@@ -256,7 +248,7 @@ Func_080b1088:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	sub_08016d18
+	bl	0x08016d18
 	pop	{r5, r6, pc}
 	.4byte 0x020023c4
 	.4byte 0x02000240

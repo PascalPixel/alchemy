@@ -1,21 +1,12 @@
 .syntax unified
 	.thumb
-	.set sub_08013560, 0x08013560
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_08020030, 0x08020030
-	.set sub_08020100, 0x08020100
-	.set sub_080ad148, 0x080ad148
-	.set sub_0811bc64, 0x0811bc64
-	.set sub_0811bdb0, 0x0811bdb0
-	.set sub_0811be3c, 0x0811be3c
-	.set sub_0811f3b8, 0x0811f3b8
 	.global Func_0811f444
 	.thumb_func
 Func_0811f444:
 	push	{r5, r6, r7, lr}
 	sub	sp, #16
 	adds	r6, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r5, #0
 	adds	r7, r0, #0
 	b.n	.L_0811f470
@@ -27,19 +18,19 @@ Func_0811f444:
 	cmp	r3, #1
 	beq.n	.L_0811f468
 	movs	r1, #4
-	bl	sub_08020030
+	bl	Func_08020030
 	b.n	.L_0811f46e
 .L_0811f468:
 	movs	r1, #5
-	bl	sub_08020030
+	bl	Func_08020030
 .L_0811f46e:
 	adds	r5, #1
 .L_0811f470:
 	adds	r0, r6, #0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	sub_0811bdb0
+	bl	0x0811bdb0
 	cmp	r0, #0
 	bne.n	.L_0811f454
 	movs	r2, #149
@@ -62,21 +53,21 @@ Func_0811f444:
 	adds	r5, #1
 .L_0811f4a4:
 	adds	r0, r6, #0
-	bl	sub_0811be3c
+	bl	0x0811be3c
 	adds	r1, r5, #0
 	ldr	r0, [r0, #0]
-	bl	sub_0811bdb0
+	bl	0x0811bdb0
 	cmp	r0, #0
 	bne.n	.L_0811f494
 	movs	r0, #4
-	bl	sub_08013560
+	bl	0x08013560
 	adds	r0, r6, #0
-	bl	sub_0811f3b8
+	bl	0x0811f3b8
 	adds	r0, r7, #0
 	adds	r1, r5, #0
-	bl	sub_08020100
+	bl	0x08020100
 	adds	r0, r6, #0
-	bl	sub_0811bc64
+	bl	0x0811bc64
 .L_0811f4d0:
 	add	sp, #16
 	pop	{r5, r6, r7, pc}
@@ -105,7 +96,7 @@ Func_0811f444:
 	ldrsh	r0, [r5, r2]
 	cmp	r0, #254
 	beq.n	.L_0811f51e
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -146,7 +137,7 @@ Func_0811f444:
 	ldrsh	r0, [r2, r6]
 	cmp	r0, #254
 	beq.n	.L_0811f56c
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r1, #56
 	ldrsh	r3, [r0, r1]
 	cmp	r3, #0
@@ -175,7 +166,7 @@ Func_0811f444:
 	cmp	r2, #0
 	beq.n	.L_0811f598
 	mov	r5, sp
-	bl	sub_080ad148
+	bl	0x080ad148
 	mov	r3, r8
 	muls	r3, r0
 	lsrs	r3, r3, #16

@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08016ca4, 0x08016ca4
-	.set sub_080ad348, 0x080ad348
 	.global Trade_CanOfferDjinn
 	.global Func_080b0bb8
 	.thumb_func
@@ -11,7 +9,7 @@ Func_080b0bb8:
 	adds	r5, r1, #0
 	adds	r6, r2, #0
 	adds	r7, r0, #0
-	bl	sub_08016ca4
+	bl	OwnerState_Get
 	movs	r2, #140
 	lsls	r2, r2, #1
 	adds	r3, r5, r2
@@ -49,7 +47,7 @@ Func_080b0bb8:
 	bls.n	.L_080b0c0a
 	movs	r0, #1
 .L_080b0c0a:
-	bl	sub_080ad348
+	bl	Trade_GetOfferState
 	movs	r2, #148
 	adds	r3, r0, #0
 	lsls	r2, r2, #1

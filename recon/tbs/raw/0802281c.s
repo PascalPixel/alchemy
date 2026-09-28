@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08022768, 0x08022768
-	.set sub_080b5090, 0x080b5090
 	.global BattleLayout_HighlightPartyPanels
 	.global Func_0802281c
 	.thumb_func
@@ -16,7 +14,7 @@ Func_0802281c:
 	movs	r0, #1
 	sub	sp, #4
 	ldr	r7, [r3, #0]
-	bl	sub_080b5090
+	bl	0x080b5090
 	mov	r8, r0
 	lsls	r3, r0, #1
 	add	r3, r8
@@ -28,7 +26,7 @@ Func_0802281c:
 	movs	r1, #0
 	movs	r3, #5
 	movs	r2, #25
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 	ldrh	r3, [r5, #0]
 	movs	r6, #0
 	cmp	r3, #255
@@ -69,7 +67,7 @@ Func_0802281c:
 	movs	r1, #0
 	movs	r2, #7
 	movs	r3, #5
-	bl	sub_08022768
+	bl	Ui_SetRectHighlight
 .L_08022898:
 	adds	r6, #1
 	cmp	r6, #3

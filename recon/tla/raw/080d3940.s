@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0801314c, 0x0801314c
-	.set sub_080142d4, 0x080142d4
-	.set sub_0801489c, 0x0801489c
-	.set sub_08014cc0, 0x08014cc0
-	.set sub_08020070, 0x08020070
-	.set sub_08020090, 0x08020090
-	.set sub_080202c0, 0x080202c0
-	.set sub_08038248, 0x08038248
-	.set sub_080d2d84, 0x080d2d84
 	.global Func_080d3940
 	.thumb_func
 Func_080d3940:
@@ -19,7 +10,7 @@ Func_080d3940:
 	push	{r5, r6, r7}
 	sub	sp, #12
 	adds	r7, r1, #0
-	bl	sub_080d2d84
+	bl	Object_GetById
 	mov	r8, r0
 	ldr	r6, [r0, #80]
 	cmp	r0, #0
@@ -27,7 +18,7 @@ Func_080d3940:
 	cmp	r6, #0
 	beq.n	.L_080d3a04
 	movs	r1, #0
-	bl	sub_08020090
+	bl	Object_SetMode
 	movs	r2, #128
 	lsls	r2, r2, #6
 	adds	r7, r7, r2
@@ -46,18 +37,18 @@ Func_080d3940:
 	ldrb	r0, [r3, #0]
 	mov	sl, r3
 	movs	r3, #255
-	bl	sub_080202c0
+	bl	0x080202c0
 	movs	r0, #128
 	lsls	r0, r0, #13
 	adds	r1, r7, #0
 	adds	r2, r5, #0
-	bl	sub_0801489c
+	bl	0x0801489c
 	mov	r2, sl
 	ldrb	r0, [r2, #0]
 	movs	r3, #255
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #8]
-	bl	sub_080202c0
+	bl	0x080202c0
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r7, r3
@@ -127,7 +118,7 @@ Func_080d3940:
 	sub	sp, #12
 	mov	r8, r1
 	adds	r5, r2, #0
-	bl	sub_080d2d84
+	bl	Object_GetById
 	adds	r6, r0, #0
 	ldr	r7, [r6, #80]
 	cmp	r6, #0
@@ -139,7 +130,7 @@ Func_080d3940:
 	cmp	r5, r2
 	beq.n	.L_080d3a3e
 	adds	r1, r5, #0
-	bl	sub_08020090
+	bl	Object_SetMode
 .L_080d3a3e:
 	ldr	r1, [r6, #8]
 	mov	r5, sp
@@ -160,18 +151,18 @@ Func_080d3940:
 	ldrb	r0, [r3, #0]
 	mov	sl, r3
 	movs	r3, #255
-	bl	sub_080202c0
+	bl	0x080202c0
 	movs	r0, #128
 	lsls	r0, r0, #13
 	mov	r1, r8
 	adds	r2, r5, #0
-	bl	sub_0801489c
+	bl	0x0801489c
 	mov	r2, sl
 	ldrb	r0, [r2, #0]
 	movs	r3, #255
 	ldr	r1, [r5, #0]
 	ldr	r2, [r5, #8]
-	bl	sub_080202c0
+	bl	0x080202c0
 	movs	r3, #128
 	lsls	r3, r3, #7
 	cmp	r8, r3
@@ -270,7 +261,7 @@ Func_080d3940:
 	push	{r5, r6, r7}
 	sub	sp, #4
 	adds	r6, r1, #0
-	bl	sub_080d2d84
+	bl	Object_GetById
 	mov	r8, r0
 	cmp	r0, #0
 	beq.n	.L_080d3bdc
@@ -292,7 +283,7 @@ Func_080d3940:
 	movs	r1, #193
 	lsls	r1, r1, #3
 	movs	r0, #68
-	bl	sub_08014cc0
+	bl	Func_08014cc0
 	movs	r2, #128
 	movs	r3, #0
 	adds	r5, r0, #0
@@ -311,20 +302,20 @@ Func_080d3940:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r6, #0
-	bl	sub_08038248
+	bl	Func_08038248
 	adds	r2, r5, #0
 	movs	r1, #128
 	ldrb	r0, [r7, #16]
-	bl	sub_080142d4
+	bl	0x080142d4
 	adds	r5, r0, #0
 	movs	r0, #68
-	bl	sub_0801314c
+	bl	Runtime_ReleaseSlot
 	mov	r3, r8
 	adds	r3, #92
 	mov	r2, r9
 	strb	r2, [r3, #0]
 	ldr	r0, [r7, #40]
-	bl	sub_08020070
+	bl	0x08020070
 	mov	r3, sl
 	ldrb	r2, [r7, #5]
 	str	r3, [r7, #40]

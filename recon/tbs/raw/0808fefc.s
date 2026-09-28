@@ -1,15 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_0800307c, 0x0800307c
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003b70, 0x08003b70
-	.set sub_08003bb4, 0x08003bb4
-	.set sub_080041d8, 0x080041d8
-	.set sub_0808fecc, 0x0808fecc
-	.set sub_080907b0, 0x080907b0
-	.set sub_08091220, 0x08091220
-	.set sub_08091240, 0x08091240
-	.set sub_08091254, 0x08091254
 	.global DisplayTransition_Start
 	.global Func_0808fefc
 	.thumb_func
@@ -47,22 +37,22 @@ Func_0808fefc:
 	lsls	r0, r0, #3
 	lsrs	r1, r1, #32
 	movs	r0, #0
-	bl	sub_08003b70
+	bl	Blend_SetDarkenTarget16
 	mov	r0, sl
-	bl	sub_08003bb4
+	bl	Blend_SetDarkenTarget0
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	b.n	.L_08090168
 	movs	r3, #160
 	lsls	r3, r3, #19
 	movs	r0, #128
 	ldrh	r1, [r3, #0]
 	lsls	r0, r0, #8
-	bl	sub_08091220
+	bl	BattleFx_ApplyColorToSourceBuffer
 	mov	r0, sl
-	bl	sub_08091254
+	bl	BattleFx_StartBufferInterpolation
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [pc, #412]
 	ldr	r4, [pc, #412]
 	ldrh	r3, [r4, #0]
@@ -91,9 +81,9 @@ Func_0808fefc:
 .L_0808ff98:
 	strh	r5, [r4, #0]
 	movs	r0, #0
-	bl	sub_08091240
+	bl	BattleFx_SetPrimaryBufferValue
 	b.n	.L_0809019c
-	bl	sub_0808fecc
+	bl	DisplayTransition_AllocateAndClearState
 	movs	r1, #165
 	adds	r5, r0, #0
 	lsls	r1, r1, #3
@@ -116,13 +106,13 @@ Func_0808fefc:
 	strh	r3, [r2, #0]
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #316]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #312]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [pc, #284]
 	ldr	r4, [pc, #284]
 	ldrh	r3, [r4, #0]
@@ -167,7 +157,7 @@ Func_0808fefc:
 	mov	r2, r8
 	strb	r2, [r3, #0]
 	b.n	.L_0809019c
-	bl	sub_0808fecc
+	bl	DisplayTransition_AllocateAndClearState
 	movs	r1, #165
 	adds	r5, r0, #0
 	lsls	r1, r1, #3
@@ -180,13 +170,13 @@ Func_0808fefc:
 	mov	r2, r8
 	strh	r2, [r3, #0]
 	movs	r0, #15
-	bl	sub_080907b0
+	bl	DisplayTransition_FillTilemapAndSolidTile
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #200
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #192]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r1, [pc, #148]
 	ldr	r4, [pc, #152]
 	ldrh	r3, [r4, #0]
@@ -231,7 +221,7 @@ Func_0808fefc:
 	strb	r2, [r3, #0]
 	b.n	.L_0809019c
 	ldr	r7, [r1, #0]
-	bl	sub_0808fecc
+	bl	DisplayTransition_AllocateAndClearState
 	movs	r3, #128
 	lsls	r3, r3, #1
 	ldr	r1, [pc, #40]
@@ -247,7 +237,7 @@ Func_0808fefc:
 	adds	r5, r0, #0
 	strh	r3, [r2, #0]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	cmp	r6, #0
 	bne.n	.L_08090134
 	movs	r1, #200
@@ -276,11 +266,11 @@ Func_0808fefc:
 	lsls	r1, r1, #4
 	ldr	r0, [pc, #112]
 .L_0809013a:
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	ldr	r2, [pc, #112]
 	movs	r1, #0
 	movs	r0, #1
-	bl	sub_0800307c
+	bl	Runtime_SetIrqHandler
 	ldr	r2, [pc, #104]
 	mov	r1, r9
 	adds	r3, r5, r2

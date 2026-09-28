@@ -1,26 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_08003f3c, 0x08003f3c
-	.set sub_0800447c, 0x0800447c
-	.set sub_08009080, 0x08009080
-	.set sub_08009098, 0x08009098
-	.set sub_08009150, 0x08009150
-	.set sub_080091d8, 0x080091d8
-	.set sub_08009240, 0x08009240
-	.set sub_08009248, 0x08009248
-	.set sub_08009250, 0x08009250
-	.set sub_0808e4b4, 0x0808e4b4
-	.set sub_08096b28, 0x08096b28
-	.set sub_08096c48, 0x08096c48
-	.set sub_08096c80, 0x08096c80
-	.set sub_08097384, 0x08097384
-	.set sub_0809748c, 0x0809748c
-	.set sub_080974d8, 0x080974d8
-	.set sub_0809ba70, 0x0809ba70
-	.set sub_0809ba7c, 0x0809ba7c
-	.set sub_0809ba90, 0x0809ba90
-	.set sub_080f9010, 0x080f9010
 	.global RunBattleEffect04
 	.global Func_08098cd8
 	.thumb_func
@@ -39,9 +18,9 @@ Func_08098cd8:
 	sub	sp, #44
 	mov	r9, r3
 	str	r0, [sp, #8]
-	bl	sub_08097384
+	bl	BattleEffect_InitializeSharedScene
 	movs	r0, #130
-	bl	sub_080f9010
+	bl	Audio_PlayCue
 	add	r1, sp, #16
 	mov	r5, r9
 	mov	sl, r1
@@ -62,27 +41,27 @@ Func_08098cd8:
 	ldr	r3, [r2, #16]
 	adds	r0, r6, #0
 	str	r3, [r6, #8]
-	bl	sub_080974d8
+	bl	Camera_WorldToScreen
 	movs	r1, #142
 	ldr	r2, [r6, #0]
 	ldr	r3, [r6, #8]
 	adds	r0, r5, #0
 	lsls	r1, r1, #1
-	bl	sub_0809ba90
+	bl	EffectSlot_Initialize
 	adds	r0, r5, #0
 	ldr	r1, [pc, #116]
-	bl	sub_0809ba7c
+	bl	EffectSlot_SetCallback
 	adds	r0, r5, #0
 	movs	r1, #7
-	bl	sub_0809ba70
+	bl	EffectSlot_SetObjectMode
 	ldr	r0, [r5, #0]
 	movs	r1, #9
-	bl	sub_08009248
+	bl	ObjectGroup_SetChildValueUnlessFifteenFar
 	ldr	r3, [pc, #96]
 	movs	r0, #2
 	str	r3, [r5, #44]
 	str	r3, [r5, #40]
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #1
 	negs	r1, r1
 	add	r8, r1
@@ -107,17 +86,17 @@ Func_08098cd8:
 	ldr	r1, [r2, #0]
 	lsls	r0, r0, #12
 	mov	r2, sl
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	mov	r3, sl
 	ldr	r1, [r3, #0]
 	ldr	r2, [r3, #4]
 	movs	r0, #215
 	ldr	r3, [r3, #8]
-	bl	sub_08096c80
+	bl	Object_Spawn
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_08098db4
-	bl	sub_0809748c
+	bl	BattleFx_PrepareBufferInterpolation
 	b.n	.L_08098ff2
 	movs	r0, r0
 	.4byte 0x03001f30
@@ -142,10 +121,10 @@ Func_08098cd8:
 	strb	r2, [r3, #0]
 	adds	r0, r6, #0
 	movs	r1, #5
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	movs	r1, #3
 	adds	r0, r6, #0
-	bl	sub_08009240
+	bl	Animation_ApplyChildValuesFar
 	movs	r1, #128
 	ldr	r3, [r6, #24]
 	lsls	r1, r1, #9
@@ -162,14 +141,14 @@ Func_08098cd8:
 	str	r3, [r6, #28]
 	str	r3, [r6, #24]
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r3, [r6, #24]
 	ldr	r0, [pc, #508]
 	cmp	r3, r0
 	ble.n	.L_08098df4
 .L_08098e0c:
 	movs	r0, #3
-	bl	sub_080030f8
+	bl	WaitFrames
 	mov	r3, sp
 	adds	r3, #28
 	movs	r1, #0
@@ -183,7 +162,7 @@ Func_08098cd8:
 	ldr	r2, [r6, #12]
 	ldr	r3, [r6, #16]
 	movs	r0, #215
-	bl	sub_08096c80
+	bl	Object_Spawn
 	adds	r5, r0, #0
 	str	r0, [r7, #0]
 	subs	r7, #4
@@ -206,13 +185,13 @@ Func_08098cd8:
 	strb	r1, [r3, #0]
 	adds	r0, r5, #0
 	movs	r1, #5
-	bl	sub_08009080
+	bl	Engine_ObjectSetAnimation
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	sub_08009240
+	bl	Animation_ApplyChildValuesFar
 	mov	r1, fp
 	ldr	r0, [r5, #80]
-	bl	sub_08096c48
+	bl	Object_ReplaceResourceEntry
 	mov	fp, r0
 .L_08098e70:
 	movs	r2, #1
@@ -248,7 +227,7 @@ Func_08098cd8:
 	ldr	r1, [r2, #0]
 	lsls	r0, r0, #14
 	mov	r2, sl
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	b.n	.L_08098ece
 .L_08098eb8:
 	mov	r0, r9
@@ -268,10 +247,10 @@ Func_08098cd8:
 	ldr	r2, [r3, #4]
 	adds	r0, r6, #0
 	ldr	r3, [r3, #8]
-	bl	sub_08009150
+	bl	Object_SetPosition
 	ldr	r1, [pc, #296]
 	adds	r0, r6, #0
-	bl	sub_08009098
+	bl	Engine_ObjectSetScript
 	ldr	r0, [sp, #4]
 	movs	r1, #2
 	str	r0, [sp, #0]
@@ -285,15 +264,15 @@ Func_08098cd8:
 	cmp	r5, #0
 	beq.n	.L_08098f14
 	movs	r0, #3
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r1, [r7, #0]
 	adds	r0, r5, #0
 	ldr	r2, [r7, #4]
 	ldr	r3, [r7, #8]
-	bl	sub_08009150
+	bl	Object_SetPosition
 	adds	r0, r5, #0
 	ldr	r1, [pc, #252]
-	bl	sub_08009098
+	bl	Engine_ObjectSetScript
 .L_08098f14:
 	movs	r0, #1
 	negs	r0, r0
@@ -308,7 +287,7 @@ Func_08098cd8:
 	beq.n	.L_08098f40
 .L_08098f2a:
 	movs	r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r3, #1
 	add	r8, r3
 	mov	r0, r8
@@ -352,15 +331,15 @@ Func_08098cd8:
 	ldr	r1, [r2, #0]
 	lsls	r0, r0, #13
 	mov	r2, sl
-	bl	sub_0800447c
+	bl	Vector_AddPolarOffset
 	mov	r1, sl
 	ldr	r0, [sp, #8]
-	bl	sub_080091d8
+	bl	Object_CheckMovementCollision
 	cmp	r0, #0
 	bne.n	.L_08098fb8
 	ldr	r0, [sp, #8]
 	mov	r1, sl
-	bl	sub_08009250
+	bl	0x08009250
 	cmp	r0, #0
 	bne.n	.L_08098fb8
 	ldr	r0, [sp, #8]
@@ -374,12 +353,12 @@ Func_08098cd8:
 	ldr	r3, [r0, #8]
 	ldr	r2, [r2, #4]
 	ldr	r0, [sp, #8]
-	bl	sub_08009150
+	bl	Object_SetPosition
 .L_08098fb8:
 	ldr	r0, [pc, #84]
 	add	r2, sp, #12
 	movs	r1, #4
-	bl	sub_0808e4b4
+	bl	BattleFx_FindMatchingEvent
 	cmp	r0, #0
 	beq.n	.L_08098fd6
 	ldr	r3, [pc, #76]
@@ -388,18 +367,18 @@ Func_08098cd8:
 	adds	r3, r3, r1
 	ldr	r1, [r3, #0]
 	ldr	r2, [sp, #12]
-	bl	sub_08096b28
+	bl	BattleFx_RunEventAction
 .L_08098fd6:
 	movs	r0, #10
-	bl	sub_080030f8
-	bl	sub_0809748c
+	bl	WaitFrames
+	bl	BattleFx_PrepareBufferInterpolation
 	movs	r0, #20
-	bl	sub_080030f8
+	bl	WaitFrames
 	mov	r2, fp
 	cmp	r2, #96
 	beq.n	.L_08098ff2
 	mov	r0, fp
-	bl	sub_08003f3c
+	bl	Resource_ResetEntry
 .L_08098ff2:
 	add	sp, #44
 	pop	{r3, r5, r6, r7}

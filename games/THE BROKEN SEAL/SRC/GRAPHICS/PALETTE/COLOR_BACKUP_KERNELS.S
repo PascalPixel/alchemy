@@ -9,7 +9,6 @@
 @ credit: handwritten — ARM colour-buffer fade kernels with backup, copied to the stack
 .syntax unified
 	.arm
-	.set AlchemyLoadAddress, 0x08001ea8
 	.global ColorBuffer_ScaleThreeQuartersKernel
 ColorBuffer_ScaleThreeQuartersKernel:
 	push	{r5, r6}

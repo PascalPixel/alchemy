@@ -1,14 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080030f8, 0x080030f8
-	.set sub_080040e8, 0x080040e8
-	.set sub_080041d8, 0x080041d8
-	.set sub_08004760, 0x08004760
-	.set sub_0800479c, 0x0800479c
-	.set sub_080f0254, 0x080f0254
-	.set sub_080f02b0, 0x080f02b0
-	.set sub_080f037c, 0x080f037c
-	.set sub_080f0678, 0x080f0678
 	.global Func_080f03f0
 	.thumb_func
 Func_080f03f0:
@@ -28,23 +19,23 @@ Func_080f03f0:
 	strb	r2, [r3, #0]
 	ldr	r3, [pc, #244]
 	strb	r2, [r3, #0]
-	bl	sub_080040e8
+	bl	Scheduler_ResetTaskTable
 	movs	r1, #144
 	lsls	r1, r1, #3
 	ldr	r0, [pc, #236]
-	bl	sub_080041d8
+	bl	Engine_ScheduleCallback
 	movs	r3, #64
 	movs	r5, #128
 	lsls	r5, r5, #19
 	strh	r3, [r5, #0]
 	ldr	r0, [pc, #228]
-	bl	sub_080f037c
+	bl	DisplayScroll_BuildHblankWordTable
 	ldr	r0, [pc, #224]
-	bl	sub_080f037c
+	bl	DisplayScroll_BuildHblankWordTable
 	movs	r0, #0
-	bl	sub_080f0254
+	bl	Graphics_ClearCharacterBlockAndPalette
 	movs	r0, #1
-	bl	sub_080f0254
+	bl	Graphics_ClearCharacterBlockAndPalette
 	ldr	r2, [pc, #212]
 	ldr	r3, [pc, #212]
 	strh	r2, [r3, #0]
@@ -57,10 +48,10 @@ Func_080f03f0:
 	ldr	r2, [pc, #204]
 	ldr	r3, [pc, #208]
 	strh	r2, [r3, #0]
-	bl	sub_080f0678
+	bl	DisplayScroll_InitObjectTable
 	movs	r0, #150
 	lsls	r0, r0, #1
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #0
 	mov	r8, r1
 	ldr	r3, [pc, #192]
@@ -77,7 +68,7 @@ Func_080f03f0:
 	adds	r1, r5, #0
 	ldr	r0, [r2, #0]
 	eors	r1, r3
-	bl	sub_080f02b0
+	bl	Graphics_LoadCharacterBlockAndPalette
 	adds	r7, r5, #0
 	movs	r5, #240
 	movs	r6, #1
@@ -99,14 +90,14 @@ Func_080f03f0:
 	strh	r3, [r1, #0]
 .L_080f04a6:
 	movs	r0, #4
-	bl	sub_080030f8
+	bl	WaitFrames
 	ldr	r2, [pc, #128]
 	adds	r6, #1
 	adds	r5, r5, r2
 	cmp	r6, #16
 	ble.n	.L_080f048c
 	ldr	r0, [pc, #124]
-	bl	sub_080030f8
+	bl	WaitFrames
 	movs	r1, #1
 	add	r8, r1
 	movs	r3, #4
@@ -121,8 +112,8 @@ Func_080f03f0:
 	lsls	r2, r2, #5
 	subs	r3, #80
 	strh	r2, [r3, #0]
-	bl	sub_0800479c
-	bl	sub_08004760
+	bl	Ui_LoadWindowGraphics
+	bl	Bg0_ClearTilemap
 	ldr	r2, [pc, #20]
 	movs	r3, #1
 	strb	r3, [r2, #0]

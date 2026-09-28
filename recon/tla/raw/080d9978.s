@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_080d2d84, 0x080d2d84
-	.set sub_080d8fa8, 0x080d8fa8
 	.global Func_080d9978
 	.thumb_func
 Func_080d9978:
@@ -30,7 +28,7 @@ Func_080d9978:
 	movs	r1, #12
 	movs	r2, #13
 	movs	r3, #0
-	bl	sub_080d8fa8
+	bl	0x080d8fa8
 .L_080d99ac:
 	pop	{pc}
 	movs	r0, r0
@@ -47,13 +45,13 @@ Func_080d9978:
 	adds	r6, r0, #0
 	ldr	r0, [r3, #0]
 	mov	r8, r1
-	bl	sub_080d2d84
+	bl	Object_GetById
 	adds	r5, r0, #0
 	adds	r0, r6, #0
-	bl	sub_080d2d84
+	bl	Object_GetById
 	adds	r6, r0, #0
 	mov	r0, r8
-	bl	sub_080d2d84
+	bl	Object_GetById
 	ldr	r3, [r5, #8]
 	ldr	r2, [r6, #12]
 	asrs	r4, r3, #20

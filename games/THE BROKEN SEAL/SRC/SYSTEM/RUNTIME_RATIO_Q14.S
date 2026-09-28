@@ -8,10 +8,7 @@
 @ own variant (IWRAM_RUNTIME_RATIO_Q14.S).
 @ credit: handwritten — IWRAM runtime Q14 ratio multiply
 .syntax unified
-	.set	IwramSignedDivide, 0x03000380
 	.arm
-	.set AlchemyLoadAddress, 0x080008ac
-	.set AlchemyRunAddress, 0x0300013c
 
 	.global IwramRatioMulQ14
 IwramRatioMulQ14:

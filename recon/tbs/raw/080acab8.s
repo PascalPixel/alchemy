@@ -1,25 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08002df0, 0x08002df0
-	.set sub_08004938, 0x08004938
-	.set sub_080072f0, 0x080072f0
-	.set sub_08015070, 0x08015070
-	.set sub_08015080, 0x08015080
-	.set sub_08015090, 0x08015090
-	.set sub_080150a8, 0x080150a8
-	.set sub_080150b0, 0x080150b0
-	.set sub_080150b8, 0x080150b8
-	.set sub_080150d8, 0x080150d8
-	.set sub_08015280, 0x08015280
-	.set sub_08077008, 0x08077008
-	.set sub_08077010, 0x08077010
-	.set sub_08077080, 0x08077080
-	.set sub_080771a8, 0x080771a8
-	.set sub_080771b0, 0x080771b0
-	.set sub_080771b8, 0x080771b8
-	.set sub_080aae14, 0x080aae14
-	.set sub_080ae958, 0x080ae958
-	.set sub_080ae9f0, 0x080ae9f0
 	.global DjinnMenu_DrawStatPreview
 	.global Func_080acab8
 	.thumb_func
@@ -40,7 +20,7 @@ Func_080acab8:
 	str	r1, [sp, #64]
 	str	r2, [sp, #60]
 	str	r3, [sp, #56]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r3, [pc, #828]
 	str	r0, [sp, #52]
 	movs	r1, #149
@@ -82,12 +62,12 @@ Func_080acab8:
 	lsrs	r2, r2, #16
 	adds	r0, r5, #0
 	str	r2, [sp, #24]
-	bl	sub_08004938
+	bl	Runtime_BumpAllocate
 	ldr	r3, [pc, #744]
 	ldr	r1, [sp, #52]
 	str	r0, [sp, #48]
 	adds	r2, r5, #0
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r1, [sp, #216]
 	cmp	r1, #0
 	beq.n	.L_080acb44
@@ -113,7 +93,7 @@ Func_080acab8:
 	mov	r2, r9
 	adds	r3, r5, #0
 	movs	r1, #3
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	movs	r1, #64
 	ldr	r3, [sp, #52]
 	adds	r1, r1, r7
@@ -124,7 +104,7 @@ Func_080acab8:
 	mov	r2, r9
 	adds	r3, r5, #0
 	movs	r1, #3
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #52]
 	subs	r5, #32
 	mov	r1, sl
@@ -134,7 +114,7 @@ Func_080acab8:
 	mov	r2, r9
 	adds	r3, r5, #0
 	movs	r1, #3
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #52]
 	mov	r1, r8
 	movs	r2, #58
@@ -143,7 +123,7 @@ Func_080acab8:
 	adds	r3, r5, #0
 	movs	r1, #3
 	mov	r2, r9
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	mov	r6, fp
 	ldr	r5, [pc, #616]
 	adds	r6, #72
@@ -151,12 +131,12 @@ Func_080acab8:
 	mov	r1, r9
 	adds	r2, r6, #0
 	mov	r3, sl
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	adds	r0, r5, #0
 	mov	r1, r9
 	adds	r2, r6, #0
 	mov	r3, r8
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	b.n	.L_080acc0c
 .L_080acbd2:
 	ldr	r3, [sp, #52]
@@ -175,7 +155,7 @@ Func_080acab8:
 	movs	r1, #3
 	adds	r3, r5, #0
 	mov	r2, r9
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r1, [sp, #52]
 	movs	r3, #58
 	ldrsh	r0, [r1, r3]
@@ -185,7 +165,7 @@ Func_080acab8:
 	movs	r1, #3
 	mov	r2, r9
 	adds	r3, r5, #0
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 .L_080acc0c:
 	ldr	r2, [sp, #52]
 	mov	r5, fp
@@ -197,7 +177,7 @@ Func_080acab8:
 	str	r3, [sp, #0]
 	mov	r2, r9
 	adds	r3, r5, #0
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #52]
 	ldrh	r0, [r3, #62]
 	adds	r3, r7, #0
@@ -206,7 +186,7 @@ Func_080acab8:
 	movs	r1, #3
 	mov	r2, r9
 	adds	r3, r5, #0
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #52]
 	adds	r3, #64
 	ldrh	r0, [r3, #0]
@@ -216,7 +196,7 @@ Func_080acab8:
 	movs	r1, #3
 	mov	r2, r9
 	adds	r3, r5, #0
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #52]
 	adds	r2, r7, #0
 	adds	r3, #66
@@ -227,7 +207,7 @@ Func_080acab8:
 	adds	r3, #56
 	movs	r1, #2
 	mov	r2, r9
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 .L_080acc66:
 	ldr	r0, [sp, #212]
 	cmp	r0, #1
@@ -251,11 +231,11 @@ Func_080acab8:
 	ldr	r1, [sp, #32]
 	adds	r2, r5, #0
 	ldr	r0, [sp, #56]
-	bl	sub_080771a8
+	bl	Djinn_AddToOwnerFar
 	adds	r2, r5, #0
 	ldr	r0, [sp, #56]
 	ldr	r1, [sp, #32]
-	bl	sub_080771b0
+	bl	Djinn_ActivateFar
 	b.n	.L_080acd0a
 .L_080acc9e:
 	ldr	r0, [sp, #40]
@@ -265,7 +245,7 @@ Func_080acab8:
 	ldr	r1, [sp, #44]
 	ldr	r0, [sp, #56]
 	ldr	r2, [sp, #40]
-	bl	sub_080771b8
+	bl	Func_080771b8
 	b.n	.L_080acd0a
 .L_080accb2:
 	ldr	r1, [sp, #36]
@@ -277,7 +257,7 @@ Func_080acab8:
 	ldr	r0, [sp, #56]
 	ldr	r1, [sp, #44]
 	str	r2, [sp, #40]
-	bl	sub_080771b8
+	bl	Func_080771b8
 .L_080accc8:
 	ldr	r3, [sp, #28]
 	movs	r5, #31
@@ -285,14 +265,14 @@ Func_080acab8:
 	ldr	r0, [sp, #56]
 	ldr	r1, [sp, #32]
 	adds	r2, r5, #0
-	bl	sub_080771a8
+	bl	Djinn_AddToOwnerFar
 	ldr	r0, [sp, #24]
 	cmp	r0, #0
 	beq.n	.L_080acd0a
 	ldr	r0, [sp, #56]
 	ldr	r1, [sp, #32]
 	adds	r2, r5, #0
-	bl	sub_080771b0
+	bl	Djinn_ActivateFar
 	b.n	.L_080acd0a
 .L_080accea:
 	ldr	r1, [sp, #28]
@@ -301,19 +281,19 @@ Func_080acab8:
 	adds	r2, r5, #0
 	ldr	r0, [sp, #56]
 	ldr	r1, [sp, #32]
-	bl	sub_080771a8
+	bl	Djinn_AddToOwnerFar
 	ldr	r2, [sp, #24]
 	cmp	r2, #0
 	beq.n	.L_080acd0a
 	ldr	r0, [sp, #56]
 	ldr	r1, [sp, #32]
 	adds	r2, r5, #0
-	bl	sub_080771b0
+	bl	Djinn_ActivateFar
 .L_080acd0a:
 	ldr	r0, [sp, #56]
-	bl	sub_08077010
+	bl	BattleUnit_Recalculate
 	ldr	r0, [sp, #56]
-	bl	sub_08077008
+	bl	Owner_GetStateFar
 	ldr	r3, [sp, #216]
 	str	r0, [sp, #52]
 	cmp	r3, #0
@@ -331,12 +311,12 @@ Func_080acab8:
 	mov	r1, r9
 	adds	r2, r6, #0
 	adds	r3, r7, #0
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	adds	r3, r5, #0
 	ldr	r0, [pc, #228]
 	mov	r1, r9
 	adds	r2, r6, #0
-	bl	sub_08015090
+	bl	UiText_DrawStringAtOffsetFar
 	ldr	r2, [sp, #52]
 	mov	r3, fp
 	ldrb	r0, [r2, #15]
@@ -344,45 +324,45 @@ Func_080acab8:
 	movs	r1, #2
 	mov	r2, r9
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r5, [pc, #204]
 	adds	r3, r7, #0
 	adds	r0, r5, #0
 	adds	r3, #56
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r3, r7, #0
 	adds	r0, r5, #1
 	adds	r3, #64
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r3, r7, #0
 	adds	r0, r5, #2
 	adds	r3, #72
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r3, r7, #0
 	adds	r0, r5, #3
 	adds	r3, #80
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r3, r7, #0
 	adds	r0, r5, #4
 	adds	r3, #88
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r5, #5
 	adds	r3, r7, #0
 	adds	r3, #96
 	adds	r0, r5, #0
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r1, [pc, #120]
 	ldr	r0, [sp, #48]
 	adds	r3, r0, r1
@@ -393,7 +373,7 @@ Func_080acab8:
 	adds	r3, #32
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080acdca:
 	ldr	r2, [sp, #216]
 	cmp	r2, #0
@@ -420,7 +400,7 @@ Func_080acab8:
 	adds	r3, #48
 	mov	r1, r9
 	mov	fp, r2
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r3, [sp, #216]
 	ldr	r2, [sp, #64]
 	ldr	r1, [pc, #48]
@@ -428,7 +408,7 @@ Func_080acab8:
 	adds	r2, #2
 	movs	r3, #5
 	mov	r0, r9
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldrb	r1, [r6, #0]
 	ldrb	r3, [r5, #0]
 	b.n	.L_080ace3e
@@ -473,7 +453,7 @@ Func_080acab8:
 	mov	r0, r9
 	mov	r3, r8
 	str	r4, [sp, #8]
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldrb	r1, [r6, #0]
 	ldr	r0, [pc, #660]
 	mov	r2, sl
@@ -482,7 +462,7 @@ Func_080acab8:
 	mov	r0, r9
 	adds	r2, r7, #0
 	mov	r3, r8
-	bl	sub_08015280
+	bl	UiWindow_SetTilemapEntryFar
 	ldr	r4, [sp, #8]
 	adds	r4, #1
 	adds	r6, #1
@@ -510,7 +490,7 @@ Func_080acab8:
 	mov	r2, r9
 	adds	r5, #56
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r0, [sp, #52]
 	movs	r3, #56
 	ldrsh	r2, [r0, r3]
@@ -523,14 +503,14 @@ Func_080acab8:
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #0
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 	b.n	.L_080aceea
 .L_080acede:
 	mov	r0, r9
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #1
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 .L_080aceea:
 	ldr	r2, [sp, #52]
 	movs	r1, #58
@@ -549,7 +529,7 @@ Func_080acab8:
 	mov	r2, r9
 	adds	r5, #64
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r0, [sp, #52]
 	movs	r3, #58
 	ldrsh	r2, [r0, r3]
@@ -562,14 +542,14 @@ Func_080acab8:
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #0
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 	b.n	.L_080acf3a
 .L_080acf2e:
 	mov	r0, r9
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #1
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 .L_080acf3a:
 	ldr	r1, [sp, #52]
 	ldr	r0, [sp, #48]
@@ -587,7 +567,7 @@ Func_080acab8:
 	adds	r5, #72
 	movs	r1, #4
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #52]
 	ldr	r0, [sp, #48]
 	ldrh	r2, [r3, #60]
@@ -598,14 +578,14 @@ Func_080acab8:
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #0
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 	b.n	.L_080acf84
 .L_080acf78:
 	mov	r0, r9
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #1
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 .L_080acf84:
 	ldr	r1, [sp, #52]
 	ldr	r0, [sp, #48]
@@ -623,7 +603,7 @@ Func_080acab8:
 	adds	r5, #80
 	movs	r1, #4
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldr	r3, [sp, #52]
 	ldr	r0, [sp, #48]
 	ldrh	r2, [r3, #62]
@@ -634,14 +614,14 @@ Func_080acab8:
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #0
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 	b.n	.L_080acfce
 .L_080acfc2:
 	mov	r0, r9
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #1
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 .L_080acfce:
 	ldr	r5, [sp, #52]
 	ldr	r7, [sp, #48]
@@ -661,7 +641,7 @@ Func_080acab8:
 	adds	r6, #88
 	movs	r1, #4
 	str	r6, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldrh	r2, [r5, #0]
 	ldrh	r3, [r7, #0]
 	cmp	r2, r3
@@ -670,14 +650,14 @@ Func_080acab8:
 	mov	r1, r8
 	adds	r2, r6, #0
 	movs	r3, #0
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 	b.n	.L_080ad018
 .L_080ad00c:
 	mov	r0, r9
 	mov	r1, r8
 	adds	r2, r6, #0
 	movs	r3, #1
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 .L_080ad018:
 	ldr	r7, [sp, #52]
 	ldr	r6, [sp, #48]
@@ -697,7 +677,7 @@ Func_080acab8:
 	adds	r5, #96
 	movs	r1, #2
 	str	r5, [sp, #0]
-	bl	sub_080150b0
+	bl	UiNumber_DrawAt
 	ldrb	r2, [r7, #0]
 	ldrb	r3, [r6, #0]
 	cmp	r2, r3
@@ -706,14 +686,14 @@ Func_080acab8:
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #0
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 	b.n	.L_080ad062
 .L_080ad056:
 	mov	r0, r9
 	mov	r1, r8
 	adds	r2, r5, #0
 	movs	r3, #1
-	bl	sub_080ae9f0
+	bl	UiIcon_DrawVariantWithTileOffset
 .L_080ad062:
 	ldr	r2, [sp, #216]
 	cmp	r2, #0
@@ -745,7 +725,7 @@ Func_080acab8:
 	str	r2, [sp, #0]
 	adds	r0, #88
 	adds	r2, r5, #0
-	bl	sub_080aae14
+	bl	OwnerAction_DiffSlots
 	lsls	r0, r0, #24
 	str	r0, [sp, #16]
 	asrs	r3, r0, #24
@@ -776,14 +756,14 @@ Func_080acab8:
 	adds	r2, #4
 	mov	r0, r9
 	mov	r1, fp
-	bl	sub_080ae958
+	bl	UiIcon_CreateWithLoadedResource
 	ldrh	r2, [r7, #0]
 	ldr	r3, [pc, #28]
 	ands	r3, r2
 	cmp	r3, #0
 	beq.n	.L_080ad0f0
 	movs	r0, #4
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	b.n	.L_080ad11a
 .L_080ad0f0:
 	ldr	r3, [pc, #16]
@@ -791,7 +771,7 @@ Func_080acab8:
 	cmp	r3, #0
 	beq.n	.L_080ad114
 	movs	r0, #2
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	b.n	.L_080ad11a
 	.4byte 0x00008000
 	.4byte 0x00004000
@@ -801,7 +781,7 @@ Func_080acab8:
 	.2byte 0x0000
 .L_080ad114:
 	movs	r0, #15
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 .L_080ad11a:
 	ldr	r1, [sp, #60]
 	asrs	r6, r6, #24
@@ -818,16 +798,16 @@ Func_080acab8:
 	mov	r1, r9
 	adds	r2, #16
 	adds	r3, r5, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldrh	r0, [r7, #0]
-	bl	sub_08077080
+	bl	Ability_GetData
 	ldr	r3, [sp, #20]
 	ldrb	r0, [r0, #9]
 	movs	r1, #2
 	mov	r2, r9
 	adds	r3, #88
 	str	r5, [sp, #0]
-	bl	sub_080150a8
+	bl	UiText_DrawNumberAtOffsetFar
 	movs	r1, #128
 	ldr	r0, [sp, #12]
 	lsls	r1, r1, #17
@@ -855,7 +835,7 @@ Func_080acab8:
 	mov	fp, r1
 .L_080ad182:
 	movs	r0, #15
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	ldr	r3, [sp, #60]
 	mov	r2, fp
 	lsls	r6, r3, #3
@@ -863,7 +843,7 @@ Func_080acab8:
 	adds	r2, #88
 	mov	r1, r9
 	adds	r3, r6, #0
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	ldr	r0, [sp, #212]
 	cmp	r0, #3
 	beq.n	.L_080ad206
@@ -872,20 +852,20 @@ Func_080acab8:
 	cmp	r3, #0
 	beq.n	.L_080ad1be
 	movs	r0, #4
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	adds	r3, r6, #0
 	ldr	r0, [pc, #168]
 	adds	r3, #88
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	movs	r5, #1
 .L_080ad1be:
 	ldr	r3, [sp, #68]
 	cmp	r3, #0
 	beq.n	.L_080ad1de
 	movs	r0, #2
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	ldr	r1, [sp, #60]
 	adds	r3, r1, r5
 	lsls	r3, r3, #3
@@ -893,7 +873,7 @@ Func_080acab8:
 	adds	r3, #88
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 	adds	r5, #1
 .L_080ad1de:
 	cmp	r5, #0
@@ -903,17 +883,17 @@ Func_080acab8:
 	adds	r3, #88
 	mov	r1, r9
 	mov	r2, fp
-	bl	sub_08015080
+	bl	UiText_DrawAt
 .L_080ad1f0:
 	movs	r0, #15
-	bl	sub_080150b8
+	bl	UiWork_SetParamNibbleFar
 	movs	r3, #11
 	str	r3, [sp, #0]
 	mov	r0, r9
 	movs	r1, #0
 	movs	r2, #11
 	movs	r3, #13
-	bl	sub_08015070
+	bl	UiWindow_DrawDividerLineFar
 .L_080ad206:
 	ldr	r3, [pc, #96]
 	ldr	r2, [pc, #96]
@@ -931,16 +911,16 @@ Func_080acab8:
 	movs	r1, #0
 	ldr	r2, [sp, #220]
 	mov	r3, r9
-	bl	sub_080150d8
+	bl	SideObject_CreateFar
 .L_080ad228:
 	movs	r2, #166
 	ldr	r1, [sp, #48]
 	ldr	r3, [pc, #64]
 	ldr	r0, [sp, #52]
 	lsls	r2, r2, #1
-	bl	sub_080072f0
+	bl	_call_via_r3
 	ldr	r0, [sp, #48]
-	bl	sub_08002df0
+	bl	Party_Do
 	movs	r0, #1
 	add	sp, #172
 	pop	{r3, r5, r6, r7}

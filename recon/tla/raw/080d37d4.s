@@ -1,11 +1,5 @@
 .syntax unified
 	.thumb
-	.set sub_08020090, 0x08020090
-	.set sub_080200a8, 0x080200a8
-	.set sub_08020138, 0x08020138
-	.set sub_080cad84, 0x080cad84
-	.set sub_080d2240, 0x080d2240
-	.set sub_080d2e40, 0x080d2e40
 	.global Func_080d37d4
 	.thumb_func
 Func_080d37d4:
@@ -44,7 +38,7 @@ Func_080d37d4:
 	.2byte 0xf800
 	.2byte 0xffff
 	push	{r5, lr}
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_080d3836
@@ -53,25 +47,25 @@ Func_080d37d4:
 	str	r3, [r5, #56]
 	str	r3, [r5, #60]
 	str	r3, [r5, #64]
-	bl	sub_08020138
+	bl	Object_ResetMotion
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_08020090
+	bl	Object_SetMode
 .L_080d3836:
 	pop	{r5, pc}
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	adds	r6, r2, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	cmp	r0, #0
 	beq.n	.L_080d3858
 	adds	r3, r0, #0
 	adds	r3, #100
 	strh	r5, [r3, #0]
 	ldr	r1, [pc, #12]
-	bl	sub_080200a8
+	bl	Object_SetCallback
 	adds	r0, r6, #0
-	bl	sub_080d2240
+	bl	Battle_WaitMode0
 .L_080d3858:
 	pop	{r5, r6, pc}
 	movs	r0, r0
@@ -80,16 +74,16 @@ Func_080d37d4:
 	push	{r5, r6, lr}
 	adds	r6, r0, #0
 	adds	r5, r1, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	cmp	r0, #0
 	beq.n	.L_080d3880
 	adds	r3, r0, #0
 	adds	r3, #100
 	strh	r5, [r3, #0]
 	ldr	r1, [pc, #12]
-	bl	sub_080200a8
+	bl	Object_SetCallback
 	adds	r0, r6, #0
-	bl	sub_080d2e40
+	bl	Object_RefreshSelectorById
 .L_080d3880:
 	pop	{r5, r6, pc}
 	movs	r0, r0
@@ -97,7 +91,7 @@ Func_080d37d4:
 	.2byte 0x080f
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
-	bl	sub_080cad84
+	bl	ObjectTable_Get
 	adds	r6, r0, #0
 	cmp	r6, #0
 	beq.n	.L_080d38d0

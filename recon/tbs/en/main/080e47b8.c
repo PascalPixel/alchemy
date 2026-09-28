@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7776 bytes; 2746 differing halfwords, 893 aligned edits. */
+ * Candidate 7780 bytes; 2638 differing halfwords, 676 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -131,8 +131,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     s32 tmp;
     s32 phase;
     s32 i;
-    /* FAKEMATCH: Reuse one cursor for particles and the scanline table. */
-    s32 cursor;
+    s32 *scanline;
     /* FAKEMATCH: Reuse the count scratch for the later drawing height. */
     s32 cnt;
     s32 orb_x;
@@ -187,7 +186,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     LoadResource((s32)&Value_00000073, sprites, 0, 0);
     LoadResource((s32)&Value_00000096, work, 1, 0);
     LoadResource((s32)&Value_00000099, (void *)0x02010000, 1, 0);
-    PackRows((void *)0x02010000, (void *)((s32)work + 0x5100), 40, 0x120);
+    /* FAKEMATCH: Local dimensions preserve the packing argument order. */
+    {
+        s32 width = 40;
+        s32 height = 0x120;
+        PackRows((void *)0x02010000, (void *)((s32)work + 0x5100), width, height);
+    }
     if (kind == 5 || kind == 23) {
         LoadResource((s32)&Value_0000007d, (void *)0x02010000, 1, 0);
     } else if (kind == 12) {
@@ -279,8 +283,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
      * records later hold the sparks emitted at the target. */
     caster_actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     {
-        seed = work->particles;
-        for (i = 0; i != 64; i++, seed++) {
+        for (i = 0; i != 64; i++) {
+            seed = &work->particles[i];
             seed->x = (Random16() & 63) + 32;
             seed->y = 0;
             seed->z = 0;
@@ -310,11 +314,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     Audio_PlayCue(212);
     frame = 0;
     do {
-        cursor = (s32)work->particles;
         cnt = 0;
-        i = 0;
-        do {
-            struct EffectStep *step = (struct EffectStep *)cursor;
+        for (i = 0; i != 64; i++) {
+            struct EffectStep *step = &work->particles[i];
 
             if (step->x >= 0) {
                 if (frame >= (i / 4)) {
@@ -325,7 +327,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         SceneTransform_ApplyRoll(step->velocity_z);
                         SceneTransform_ApplyPitch(step->velocity_x);
                         SceneTransform_ApplyYaw(step->velocity_y);
-                        EffectPosition_ApplyBaseAndYOffset((s32 *)cursor, &spark_screen);
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)step, &spark_screen);
                         spark_screen.x = spark_screen.x / 2 + caster_screen->x;
                         if (kind <= 7)
                             spark_screen.y = spark_screen.y + caster_screen->y - 8;
@@ -346,15 +348,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 }
                 cnt++;
             }
-            i++;
-            cursor += sizeof(struct EffectStep);
-        } while (i != 64);
+        }
         if (kind <= 7) {
             active_cnt = cnt;
             if (active_cnt <= 63) {
                 Render_ResetTransformState();
                 Graphics_PrepareTransferInIwramWork(matrix, (matrix + 12));
-                EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
+                /* FAKEMATCH: End the projection scope before drawing the orb. */
+                do {
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
+                } while (0);
                 orb_x = spark_screen.x / 2;
                 spark_screen.x = spark_screen.x / 2;
 
@@ -456,17 +459,17 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     motion->y = record;
     record = Math_Div((target_actor->z - position->z), 6);
     motion->z = record;
-    seed = work->particles;
-    for (i = 0; i != 64; i++, seed++) {
+    for (i = 0; i != 64; i++) {
+        seed = &work->particles[i];
         seed->variant = 0;
     }
     if (kind != 14) {
         s32 height = (s32)Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
 
-        seed = work->particles;
-        for (i = 0; i != 32; i++, seed++) {
-            seed->y = height;
+        for (i = 0; i != 32; i++) {
+            seed = &work->particles[i];
             seed->x = target_actor->x;
+            seed->y = height;
             seed->z = target_actor->z;
             if (kind == 31) {
                 seed->velocity_x = ((s32)(Random16() & 255) - 127) << 12;
@@ -475,7 +478,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 seed->velocity_x = ((s32)(Random16() & 255) - 127) << 12;
                 seed->velocity_y = ((s32)(Random16() & 255) - 64) << 12;
             }
-            seed->velocity_z = ((s32)(Random16() & 255) - 127) << 12;
+            /* FAKEMATCH: Keep the final velocity store ahead of the lifetime calculation. */
+            do {
+                seed->velocity_z = ((s32)(Random16() & 255) - 127) << 12;
+            } while (0);
             seed->variant = i / 2 + 32;
         }
     }
@@ -495,10 +501,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         if (kind != 12)
             height = 0x140000;
 
-        seed = (struct EffectStep *)0x02014000;
-        for (i = 0; i != 64; i++, seed++) {
-            seed->y = height;
+        for (i = 0; i != 64; i++) {
+            seed = &((struct EffectStep *)0x02014000)[i];
             seed->x = target_actor->x;
+            seed->y = height;
             seed->z = target_actor->z;
             if (kind == 5 || kind == 23) {
                 seed->velocity_x = ((s32)(Random16() & 255) - 127) << 11;
@@ -554,11 +560,11 @@ ChooseDuration:;
             if (kind != 32) {
                 phase = (frame << 12);
                 i = 0;
-                cursor = (s32)work->bg2_x;
+                scanline = work->bg2_x;
                 do {
-                    *(s32 *)cursor = (0x40000 - (Trig_Sin(phase) << 2)) >> 10;
+                    *scanline = (0x40000 - (Trig_Sin(phase) << 2)) >> 10;
                     i++;
-                    cursor += 4;
+                    scanline++;
                     phase += 0x800;
                 } while (i != 160);
             }
@@ -808,8 +814,8 @@ ChooseDuration:;
             {
                 s32 emitted = 0;
 
-                seed = work->particles;
-                for (i = 0; i != 64; i++, seed++) {
+                for (i = 0; i != 64; i++) {
+                    seed = &work->particles[i];
                     if (seed->variant == 0) {
                         seed->x = target_actor->x;
                         seed->y = 0x140000;
@@ -1020,8 +1026,8 @@ ChooseDuration:;
             } else {
                 if (kind == 16) {
                     if (frame == 0) {
-                        seed = (struct EffectStep *)0x02014000;
-                        for (i = 0; i != 64; i++, seed++) {
+                        for (i = 0; i != 64; i++) {
+                            seed = &((struct EffectStep *)0x02014000)[i];
                             seed->x = (Random16() & 127) + 32;
                             seed->y = 0;
                             seed->z = 0;

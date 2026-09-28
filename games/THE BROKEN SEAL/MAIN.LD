@@ -647,7 +647,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GAME/FLAGS/TEST.o"(.text)
         "*/recon/tbs/raw/08079460.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/ACTIVE_OWNERS.o"(.text)
-        "*/recon/tbs/raw/08079664.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/LIST_ACTIVE_OWNERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/COUNTERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/DJINN/LIST_FLAGGED_ENTRIES.o"(.text)

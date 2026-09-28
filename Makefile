@@ -11,7 +11,7 @@ BUILD := $(ALCHEMY) build
 CHECK := $(ALCHEMY) check
 TARGET ?= tbs-en
 TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
-GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4
+GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 
 ifeq ($(TARGET_GAME),tbs)

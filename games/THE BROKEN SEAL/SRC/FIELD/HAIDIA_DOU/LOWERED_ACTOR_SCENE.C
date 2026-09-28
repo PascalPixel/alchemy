@@ -5,23 +5,21 @@ struct Probe {
 };
 
 void Object_SetModeById(s32 id, s32 mode);
-void GameFlag_SetBitFar(s32 flag);
 
-s32 Func_02001b72();
-s32 Func_02001d32(struct Probe *probe);
-void Func_02001ede(struct Probe probe);
-void Func_0200327e();
-void Func_020032be();
-void Func_020032cc();
-void Func_020032e2();
-s32 Func_020032ea();
-void Func_020032ec();
-void Func_020032f4();
+
+s32 StagedActor_FillGridAttributeRectangle();
+s32 StagedActor_FindClearPosition(struct Probe *probe);
+void SceneActor_MoveAndRedraw(struct Probe probe);
+void Engine_EventBegin();
+void Battle_WaitMode0();
+void ObjectMotion_SetSpeedParameters();
+void Map_CopyCellAttributeRect();
+s32 Object_GetById();
+void Engine_GameFlagSet();
 void Func_020032f6();
-void Func_020032f8();
-void Func_02003324();
-void Func_02003340();
-void Func_0200337c();
+void ObjectMotion_OffsetPositionAndResetMotion();
+void Engine_EventEnd();
+void Audio_PlayCue();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -56,34 +54,34 @@ void HaidiaDou_RunLoweredActorScene(void)
     s32 record;
     struct Probe probe;
 
-    Func_0200327e();
-    if (Func_02001d32(&probe) != 0) {
-        Func_02001ede(probe);
+    Engine_EventBegin();
+    if (StagedActor_FindClearPosition(&probe) != 0) {
+        SceneActor_MoveAndRedraw(probe);
         Object_SetModeById(11, 3);
-        Call3(Func_020032cc, 11, 0x4000, 0x8000);
-        Call3(Func_020032f8, 11, 0, -16);
-        Func_020032be(45);
-        Func_0200337c(240);
-        Func_02003324(11, 8);
+        Call3(ObjectMotion_SetSpeedParameters, 11, 0x4000, 0x8000);
+        Call3(ObjectMotion_OffsetPositionAndResetMotion, 11, 0, -16);
+        Battle_WaitMode0(45);
+        Audio_PlayCue(240);
+        Object_SetModeById(11, 8);
         {
-            u8 *obj = (u8 *)Func_020032ea(11);
+            u8 *obj = (u8 *)Object_GetById(11);
             s32 two = 2;
             s32 zero = 0;
 
             obj[35] = two;
-            Func_02001b72(0, 13, (probe.word[4] >> 20) - 1, 4, two, zero);
+            StagedActor_FillGridAttributeRectangle(0, 13, (probe.word[4] >> 20) - 1, 4, two, zero);
         }
         if ((probe.word[4] >> 20) == 20) {
-            Call1(Func_020032ec, 0x205);
+            Call1(Engine_GameFlagSet, 0x205);
         } else {
-            Call1(GameFlag_SetBitFar, 0x204);
+            Call1((void (*)())Engine_GameFlagSet, 0x204);
             {
                 s32 column = 14;
 
-                Func_020032e2(14, 17, 2, 1, column, 16);
-                Func_020032f4(14, 13, 1, 1, column, 15);
+                Map_CopyCellAttributeRect(14, 17, 2, 1, column, 16);
+                Map_CopyCellAttributeRect(14, 13, 1, 1, column, 15);
             }
         }
     }
-    Func_02003340();
+    Engine_EventEnd();
 }

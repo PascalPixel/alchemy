@@ -1,4 +1,4 @@
-/* Draft of resource_37f 0x, from
+/* Draft of resource_37f 0x0200807c, from
  * games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C.
  * Remaining difference: the ROM loads scene or message numbers from the
  * literal pool, as link-time symbols would; C builds those constants

@@ -1,3 +1,9 @@
+/* Draft of resource_3a6 0x020096f0 (HaidiaDou_RunSceneScript), formerly
+ * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/SCENE_SCRIPT.C.
+ * Remaining difference: the ROM loads scene 0x5d from the literal pool, as a
+ * link-time scene symbol would; C builds the constant with movs. The Data_
+ * spellings below are the old address-named forms. The listing keeps these
+ * rows. */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 

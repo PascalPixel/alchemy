@@ -1064,7 +1064,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/MOVE_ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/INIT_SELECTOR_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CREATE_WINDOW_AND_ENTRY_OBJECTS.o"(.text)
-        "*/recon/tbs/raw/080a8114.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SELECT_COMMAND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_SELECTION_CURSOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DRAW_SELECTION_LABELS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOW_OWNER_PROGRESS_MESSAGE.o"(.text)

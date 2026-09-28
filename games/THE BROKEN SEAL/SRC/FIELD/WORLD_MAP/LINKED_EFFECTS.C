@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
+#include "VRAM_BLOCK.H"
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -28,16 +29,11 @@ struct PairWork {
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 
-extern struct PairWork *gWorldMapEffectWork;
-struct WorldMapVramBlock {
-    u16 base;
-    u16 offset;
-};
-extern struct WorldMapVramBlock gWorldMapVramBlocks[];
-void WorldMap_MoveEffectDown(union FieldObject *object);
-void WorldMap_MoveEffectUp(union FieldObject *object);
-s32 Main_08009020(struct FieldSprite *sprite, s32 animation);
-void Main_080001b8(s32 block);
+extern struct PairWork *gEffectWork;
+void Effect_AnimateVerticalNegative(union FieldObject *object);
+void Effect_AnimateVerticalPositive(union FieldObject *object);
+s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
+s32 Resource_ResetEntry(u32 index);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
@@ -57,7 +53,7 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
     union PairObject *child;
     struct PairSprite *part;
     struct FieldSprite *sprite;
-    struct PairWork *work = gWorldMapEffectWork;
+    struct PairWork *work = gEffectWork;
     s32 i;
 
     for (i = 0; i < 2; ++i) {
@@ -73,15 +69,15 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = &part->sprite;
-                Main_08009020(sprite, 0);
+                AnimationObjects_SelectAnimation(sprite, 0);
                 sprite->flags = 0;
-                Main_080001b8(sprite->vram_block);
+                Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
                 /* FAKEMATCH: a plain byte access; the struct field store
                  * leaves a dead QImode zero that takes r3 from the +85
                  * address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
-                sprite->tile = (gWorldMapVramBlocks[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;
@@ -94,7 +90,7 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
         union PairObject *p = pair[0];
         struct FieldSprite *sp = p->object.actor.sprite;
 
-        p->object.actor.update = WorldMap_MoveEffectDown;
+        p->object.actor.update = Effect_AnimateVerticalNegative;
         sp->priority = 1;
     }
     {
@@ -102,7 +98,7 @@ void WorldMap_CreateLinkedEffects(union PairObject *parent)
         struct FieldSprite *sp = p->sprite;
 
         sp->priority = 1;
-        p->update = WorldMap_MoveEffectUp;
+        p->update = Effect_AnimateVerticalPositive;
         p->priority_flags = 2;
     }
 }

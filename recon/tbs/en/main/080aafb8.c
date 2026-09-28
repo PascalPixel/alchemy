@@ -89,7 +89,7 @@ struct WorkPointers {
 
 extern struct WorkPointers gWindowWork;
 
-s8 Unnamed_080ac8fc(void *list, s32 owner, s32 mode);
+s8 Djinn_ListOwnerEntries(void *list, s32 owner, s32 mode);
 void RenderOutput_RedrawSavedRectFar(void *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void UiWork_SetParamNibbleFar(s32 value);
@@ -119,7 +119,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
         s32 owner;
 
         for (owner = 0; owner < state->owner_count; owner++)
-            tbl->counts[owner] = Unnamed_080ac8fc(tbl->ids[owner], state->owners[owner], -1);
+            tbl->counts[owner] = Djinn_ListOwnerEntries(tbl->ids[owner], state->owners[owner], -1);
     }
     RenderOutput_RedrawSavedRectFar(state->window);
     UiText_DrawCharacterAtOffsetFar((u16)(u32)&Value_00000bad, state->window, 0, 80);

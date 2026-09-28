@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "RESOURCE.H"
+extern u8 Data_03001e40[];
 
 /* graphics/tile/merge_shifted_tile_rows.c */
 void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output, s32 shift)
@@ -52,7 +53,7 @@ extern u8 gRomShiftedTilePair[];
 
 void Link_DrawShiftedTilePair(s32 offset)
 {
-    s32 phase = (*(u32 *)ADDR_03001E40 >> 2) & 3;
+    s32 phase = (*(u32 *)((u32)&Data_03001e40) >> 2) & 3;
 
     if (phase > 2) {
         phase = 2;
@@ -68,7 +69,7 @@ void Link_DrawShiftedTilePair(s32 offset)
 }
 
 /* graphics/tile/expand_vram_tiles_by_color_table.c */
-extern u16 gUnk[];
+extern u16 Data_06000600[];
 extern u16 Graphics_ExpandNibbleTable[];
 
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
@@ -83,7 +84,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 
         do {
             u16 *out = (u16 *)((u8 *)dst + dst_ofs);
-            u16 *src = (u16 *)((u8 *)gUnk + (row << 5));
+            u16 *src = (u16 *)((u8 *)Data_06000600 + (row << 5));
             s32 col = 0;
 
             do {

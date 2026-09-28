@@ -26,8 +26,8 @@ struct ImpactObject {
 
 void Audio_PlayCue(s32 cue);
 struct ImpactObject *Object_Spawn(s32 kind, s32 x, s32 y, s32 z);
-void Object_SetCallback(struct ImpactObject *object, const void *callback);
-void set_target_position_from_magnitude_angle(
+void ObjectDispatch_InitializeFar(struct ImpactObject *object, const void *callback);
+void Motion_SetTargetPositionFromMagnitudeAngle(
     struct ImpactObject *object, s32 magnitude, s32 angle);
 
 /* Plays the heavy impact cue and spawns effect object 0x11b 32 units above
@@ -48,17 +48,17 @@ s32 SpawnHeavyImpactEffect(struct ImpactSource *source)
     if (object != NULL) {
         object->mode_55 = 0;
         object->field_5e = 20;
-        Object_SetCallback(object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
     }
 
     for (i = 0; i < 12; i++) {
         fragment = Object_Spawn(0x11d, position.x, position.y, position.z);
         if (fragment != NULL) {
-            Object_SetCallback(fragment, &BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar(fragment, &BattleFx_FragmentScript);
             fragment->field_30 = Random16() + 0x10000;
             fragment->field_34 = 0x10000;
             fragment->mode_55 = 0;
-            set_target_position_from_magnitude_angle(
+            Motion_SetTargetPositionFromMagnitudeAngle(
                 fragment, Random16() * 24 + 0x80000, Random16());
         }
     }

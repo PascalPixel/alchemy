@@ -1,6 +1,7 @@
 #include "A9_MOTION.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f2c[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -12,7 +13,7 @@ void Menu_PlaceEntryObjectsInGrid(s32 origin_x, s32 origin_y, s32 phase)
 
     i = 0;
     tbl =
-        (struct Object080a9bd8 **)(*(s32 *)ADDR_03001F2C + 0x48);
+        (struct Object080a9bd8 **)(*(s32 *)((u32)&Data_03001f2c) + 0x48);
     do {
         obj = *tbl++;
         if (obj != NULL) {

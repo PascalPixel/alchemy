@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void OwnerAction_AddFar(void);
 
 void Audio_PlayCue(s32);
 void UiWork_PushValueSlotFar(s32, s32);

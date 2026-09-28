@@ -4,6 +4,10 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "RUNTIME_INTERFACES.H"
+void Runtime_BumpFree(void *buffer);
+extern u8 Data_03001e8c[];
+u32 Resource_DecodeType01(const void *source, void *destination);
+s32 UiText_MeasureEntryDimensions(s32 start, s32 *width, s32 *count, s32 mode);
 
 /* ui/window/window_copy_tilemap_region.c */
 /* ui/window/copy_tilemap_region.c */
@@ -43,7 +47,7 @@ void UiWindow_CopyTilemapRegion(const struct RenderInput *window, const void *so
 /* ui/window/set_tile_attribute_rect.c */
 void UiWindow_SetTileAttributeRect(const struct RenderInput *window,
     s32 x, s32 y, s32 width, s32 height, u32 field) {
-    u8 *base = *(u8 **)ADDR_03001E8C;
+    u8 *base = *(u8 **)((u32)&Data_03001e8c);
 
     x += window->x + 1;
     y += window->y + 1;
@@ -112,7 +116,7 @@ s32 UiText_SetRenderString(const u8 *str)
     s32 count_out;
     s32 width_out;
 
-    base = *(u8 **)ADDR_03001E8C;
+    base = *(u8 **)((u32)&Data_03001e8c);
     count = 0;
     if (*str != 0) {
         dst = (u16 *)(base + 0xEB0);

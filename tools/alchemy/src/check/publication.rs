@@ -425,18 +425,29 @@ fn check_documents(root: &Path) -> Result<(), String> {
         ))
     }
 }
-fn incbin(data: &[u8]) -> bool {
+/// An `.incbin` directive, except pret's base-ROM range form in scaffolding:
+/// `.incbin "baserom.gba", OFFSET, SIZE` reads the builder's own ROM and
+/// commits no bytes, as pokeemerald's early data files did.
+fn incbin(path: &str, data: &[u8]) -> bool {
+    let base_rom = regex::Regex::new(
+        r#"^\s*\.incbin\s+"baserom\.gba"\s*,\s*0x[0-9a-f]+\s*,\s*0x[0-9a-f]+\s*$"#,
+    )
+    .expect("base ROM range pattern");
+    let scaffolding = path.starts_with("recon/");
     let text = String::from_utf8_lossy(data);
-    text.split(['\n', '\r']).any(|line| {
-        let trimmed = line.trim_start_matches(|ch: char| ch.is_whitespace() || ch == '\u{feff}');
-        let bytes = trimmed.as_bytes();
-        bytes
-            .get(..7)
-            .is_some_and(|word| word.eq_ignore_ascii_case(b".incbin"))
-            && bytes
-                .get(7)
-                .is_none_or(|next| !(next.is_ascii_alphanumeric() || *next == b'_'))
-    })
+    text.split(['\n', '\r'])
+        .filter(|line| !(scaffolding && base_rom.is_match(line)))
+        .any(|line| {
+            let trimmed =
+                line.trim_start_matches(|ch: char| ch.is_whitespace() || ch == '\u{feff}');
+            let bytes = trimmed.as_bytes();
+            bytes
+                .get(..7)
+                .is_some_and(|word| word.eq_ignore_ascii_case(b".incbin"))
+                && bytes
+                    .get(7)
+                    .is_none_or(|next| !(next.is_ascii_alphanumeric() || *next == b'_'))
+        })
 }
 fn binary(data: &[u8]) -> bool {
     data.contains(&0) || std::str::from_utf8(data).is_err()
@@ -1329,7 +1340,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
     if logo.is_some_and(|logo| contains(data, logo)) {
         return Some(LOGO_REASON);
     }
-    if listed(extension(path), &["asm", "inc", "s"]) && incbin(data) {
+    if listed(extension(path), &["asm", "inc", "s"]) && incbin(path, data) {
         return Some("committed incbin payload");
     }
     if data.starts_with(b"version https://git-lfs") || data.starts_with(b"version https://hawser") {
@@ -3030,6 +3041,21 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 }
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn only_the_base_rom_range_form_may_incbin_and_only_in_scaffolding() {
+        let range = b".incbin \"baserom.gba\", 0x00037464, 0x0003c3a4\n";
+        assert!(!super::incbin("recon/tbs/unidentified.s", range));
+        assert!(super::incbin("games/THE BROKEN SEAL/SRC/DATA.S", range));
+        assert!(super::incbin(
+            "recon/tbs/unidentified.s",
+            b".incbin \"TEXT.BIN\"\n"
+        ));
+        assert!(super::incbin(
+            "recon/tbs/unidentified.s",
+            b".incbin \"baserom.gba\"\n"
+        ));
+    }
+
     use super::*;
 
     #[test]

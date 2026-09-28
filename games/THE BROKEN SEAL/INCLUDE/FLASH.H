@@ -24,10 +24,10 @@
 #define ProgramAtmelFlashBlock           Func_08007220
 #define FlashTimerIntr                   Func_080069a4
 #define SetFlashTimerIntr                Func_080069c8
-#define ReadFlashCore                    Func_08006b84
+#define ReadFlashCore                    ReadFlashCore
 #define ReadFlash                        Func_08006ba8
 #define VerifyFlashCore                  Func_08006c24
-#define VerifyFlashSector                Func_08006c68
+#define VerifyFlashSector                Flash_VerifySector
 
 u16 EraseFlashSector(u16 sector);
 u16 ProgramFlashByte(u8 *source, u8 *destination);

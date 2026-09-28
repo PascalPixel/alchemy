@@ -9,9 +9,8 @@
 	.global Func_080f2000
 	.thumb_func
 Func_080f2000:
-	.irp target, 0x080f26ed, 0x080f2eb9, 0x080f2b6d, 0x080f2b71
-	overlay_veneer \target
-	.endr
-	.irp target, 0x080f2d55
-	overlay_veneer \target
-	.endr
+	overlay_veneer 0x080f26ed
+	overlay_veneer 0x080f2eb9
+	overlay_veneer 0x080f2b6d
+	overlay_veneer 0x080f2b71
+	overlay_veneer 0x080f2d55

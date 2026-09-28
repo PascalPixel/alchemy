@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "INN.H"
+extern struct InnState *Data_03001f2c;
 
 /* ui/ability_menu/build_available_list.c */
 s32 Ability_GetMaximum(s32, s32);
@@ -15,7 +16,7 @@ s32 AbilityMenu_BuildAvailableList(void)
     s32 offset;
     s8 mode;
 
-    state = (u8 *)gMenuWork;
+    state = (u8 *)Data_03001f2c;
     count = 0;
     index = 0;
     output = (s16 *)(state + 0x26c);

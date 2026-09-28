@@ -9,11 +9,11 @@ struct Fields_08099810 {
 extern struct Fields_08099810 gGameState;
 
 void Scheduler_AddOrUpdateCallback(s32, s32);
-extern u8 gRom;
+extern u8 CheckObjectMapTile;
 
 void BattleFx_ScheduleCallbackWhenValue24cSet(void)
 {
     if (gGameState.value != 0) {
-        Scheduler_AddOrUpdateCallback((s32)&gRom, 0xc80);
+        Scheduler_AddOrUpdateCallback((s32)&CheckObjectMapTile, 0xc80);
     }
 }

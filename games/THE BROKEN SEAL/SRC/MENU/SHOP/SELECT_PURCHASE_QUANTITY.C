@@ -1,6 +1,7 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001f2c[];
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_FR)
 #define ACTION_Y 120

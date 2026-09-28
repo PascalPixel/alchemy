@@ -8,15 +8,22 @@
 #include "FIXED_MATH.H"
 #include "BATTLE_PARTY.H"
 #include "SYSTEM.H"
+void UiWork_ClearValueNameTablesFar(void);
+extern u8 Data_03001e80[];
+extern u8 Data_03001ae8[];
+s32 BattlePres_ShowMessageWhenField38Positive(s16 *);
+s32 BattlePres_RunUnitAction(s16 *);
+s32 BattlePresentation_RunPairedUnitTransition(s16 *);
+void BattleMotion_SetupEscapeObject(s32);
 
 extern u16 Value_fffffe00;
 
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
-    void **slot = (void **)ADDR_03001E80;
+    void **slot = (void **)((u32)&Data_03001e80);
     struct BattleCamera *cam = slot[0];
     struct BattlePresentationTransition *trans = slot[32];
-    volatile u32 *keys = (volatile u32 *)ADDR_03001AE8;
+    volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);
 
     if ((*keys & 512) != 0) {
         cam->yaw += 512;
@@ -82,7 +89,7 @@ s32 BattlePres_RunAction(s16 *action)
         break;
     }
     case 1:
-        BattlePres_RunPairedUnitTransition(action);
+        BattlePresentation_RunPairedUnitTransition(action);
         break;
     }
 

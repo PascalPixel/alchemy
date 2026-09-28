@@ -5,10 +5,10 @@
 #include "SYSTEM.H"
 
 extern void *Object_Spawn(s32, s32, s32, s32);
-extern void set_target_position_from_magnitude_angle(
+extern void Motion_SetTargetPositionFromMagnitudeAngle(
     struct Object_08096bec *object, s32 magnitude, s32 angle);
 extern void Object_SetMode(void *, s32);
-extern void Object_SetCallback(void *, void *);
+extern void ObjectDispatch_InitializeFar(void *, void *);
 extern void BattleFx_UpdateItemBreakFragment(void *);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 #define Rand Random16
@@ -40,7 +40,7 @@ void *BattleFx_StartItemBreak(void *source)
     zero = 0;
     *(s8 *)((s8 *)parent + 0x55) = zero;
     Object_SetMode(parent, 3);
-    set_target_position_from_magnitude_angle(parent, 0x100000, angle);
+    Motion_SetTargetPositionFromMagnitudeAngle(parent, 0x100000, angle);
 
     fragment_count = 7;
     do {
@@ -48,7 +48,7 @@ void *BattleFx_StartItemBreak(void *source)
                               *(s32 *)((s8 *)source + 12) + 0x100000,
                               *(s32 *)((s8 *)source + 16));
         if (child != 0) {
-            Object_SetCallback(child, &BattleFx_FragmentScript);
+            ObjectDispatch_InitializeFar(child, &BattleFx_FragmentScript);
             fragment_scale = Rand() + 0x10000;
             *(s32 *)((s8 *)child + 0x34) = 0x10000;
             *(s32 *)((s8 *)child + 0x30) = fragment_scale;
@@ -58,7 +58,7 @@ void *BattleFx_StartItemBreak(void *source)
             *(s32 *)((s8 *)child + 0x28) = vel - Rand();
             fragment_height = Rand() * 0x18 + 0x80000;
             rotation_jitter = Rand();
-            set_target_position_from_magnitude_angle(
+            Motion_SetTargetPositionFromMagnitudeAngle(
                 child, fragment_height,
                           ((rotation_jitter - Rand()) >> 3) +
                           *(u16 *)((s8 *)source + 6));

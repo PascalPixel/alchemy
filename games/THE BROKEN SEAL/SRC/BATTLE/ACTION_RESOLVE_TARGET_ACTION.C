@@ -11,6 +11,12 @@
 #include "../../INCLUDE/BATTLE_WORK.H"
 #include "../../INCLUDE/RUNTIME_1E74.H"
 #include "../../INCLUDE/RUNTIME_MEM.H"
+void *GetBattleObjectSlot(s32 unit);
+void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
+void BattleActor_CommitPlacement(void);
+s32 BattleParty_ListPresentEnemies(s16 *entries);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
+extern u8 *Data_03001e74;
 
 /* 行動1件の対象解決。コピーを取り、命中とダメージ種別を決めて効果を出す。 */
 
@@ -36,7 +42,7 @@ struct AffinityPair {
 #define S8OF(v) (*(s8 *)&(v))
 
 #ifndef BATTLE_WORK
-#define BATTLE_WORK BattleWorkPtr
+#define BATTLE_WORK Data_03001e74
 #endif
 
 #ifndef BATTLE_REFRAIN_TURNS

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001400[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -17,7 +18,7 @@ void Runtime_PushSlotEntry(s32 *slot_entry, s32 slot)
         clamped_slot = 0;
     }
     slot_offset = clamped_slot * 4;
-    previous_head = FIELD_AT_OFFSET(slot_offset, s32 **, ADDR_03001400);
-    FIELD_AT_OFFSET(slot_offset, s32 **, ADDR_03001400) = slot_entry;
+    previous_head = FIELD_AT_OFFSET(slot_offset, s32 **, ((u32)&Data_03001400));
+    FIELD_AT_OFFSET(slot_offset, s32 **, ((u32)&Data_03001400)) = slot_entry;
     *slot_entry = previous_head;
 }

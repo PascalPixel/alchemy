@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
+extern u8 Data_03001f2c[];
 
 /* Sells count of one inventory slot (count -1 sells the whole stack as
    one): refuses worthless and cursed-and-equipped items, picks the offer

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 BattleUnit_BuildStatusFlags(s32, s32);
 
 u8 *Owner_GetStateFar(s32);
 void Owner_RecalculateStatsFar(s32);
@@ -47,5 +48,5 @@ s32 BattleActor_ResetRuntimeFields(s32 actor)
     state[0x148] = 0;
 
     Owner_RecalculateStatsFar(actor);
-    return Actor_Apply(actor, GetBattleObjectSlot(actor));
+    return BattleUnit_BuildStatusFlags(actor, GetBattleObjectSlot(actor));
 }

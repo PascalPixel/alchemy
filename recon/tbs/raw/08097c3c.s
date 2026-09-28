@@ -22,6 +22,9 @@
 	.global Func_08097c3c
 	.thumb_func
 Func_08097c3c:
+	.global FunctionHead_08097c3c
+	.thumb_func
+FunctionHead_08097c3c:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

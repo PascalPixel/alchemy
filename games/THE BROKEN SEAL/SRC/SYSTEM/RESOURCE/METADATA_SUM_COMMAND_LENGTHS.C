@@ -1,6 +1,7 @@
 #include "METADATA_LOOKUP.H"
 #include "TYPES.H"
 #include "SCENE.H"
+void *Resource_GetMetadataRecordFar(s32 no);
 
 struct EventInfo {
     u8 pad0[5];

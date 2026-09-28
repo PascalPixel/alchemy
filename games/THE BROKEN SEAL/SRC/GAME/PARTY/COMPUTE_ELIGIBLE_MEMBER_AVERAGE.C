@@ -1,13 +1,14 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_FORMATION.H"
+extern struct BattleFormationRecord Data_080c5c38[];
 
 struct Object_080c1a34 {
     u8 padding_00[15];
     u8 value;
 };
 
-struct Object_080c1a34 *Party_Run(s32 id);
+struct Object_080c1a34 *Owner_GetRecordFar(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 
@@ -21,7 +22,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
 
     eligible_count = 0;
     level_sum = 0;
-    record = &gRom[record_id];
+    record = &Data_080c5c38[record_id];
     (void)scratch;
 
     member_index = 0;
@@ -46,7 +47,7 @@ s32 Party_ComputeEligibleMemberAverage(s32 record_id)
             s32 member;
 
             member = record->member_ids[member_index];
-            object = Party_Run(member + 8);
+            object = Owner_GetRecordFar(member + 8);
             if (object != 0) {
                 if (object->value <= 3 ||
                     GameFlag_IsSet(372) != 0 ||

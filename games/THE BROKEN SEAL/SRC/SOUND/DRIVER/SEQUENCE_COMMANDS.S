@@ -14,6 +14,9 @@
 .global Func_080f9a80
 	.thumb_func
 Func_080f9a80:
+	.global Sound_LoadCommandTable
+	.thumb_func
+Sound_LoadCommandTable:
 	mov	ip, lr
 	movs	r1, #36
 	ldr	r2, .L_080f9a80_source
@@ -57,6 +60,9 @@ Func_080f9a9a:
 	.thumb_func
 Func_080f9ab4:
 	ldr	r2, [r1, #64]
+	.global Func_080f9ab6
+	.thumb_func
+Func_080f9ab6:
 	adds	r3, r2, #1
 	str	r3, [r1, #64]
 	ldrb	r3, [r2, #0]

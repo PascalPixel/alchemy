@@ -1,11 +1,15 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e74[];
+extern u8 Data_03001e80[];
+extern u8 Data_03001ae8[];
+void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
 /* battle/get_tagged_slot_value.c */
 s16 Battle_GetTaggedSlotValue(s32 arg0)
 {
-    u8 *base = *(u8 **)ADDR_03001E74;
+    u8 *base = *(u8 **)((u32)&Data_03001e74);
     s32 offset;
 
     if ((arg0 & 0x80) != 0) {
@@ -72,10 +76,10 @@ extern u16 Value_fffffe00;
 
 void BattlePres_AdjustCameraByShoulderKeysAlt(void)
 {
-    void **slot = (void **)ADDR_03001E80;
+    void **slot = (void **)((u32)&Data_03001e80);
     u8 *cam = slot[0];
     u8 *trans = slot[32];
-    volatile u32 *keys = (volatile u32 *)ADDR_03001AE8;
+    volatile u32 *keys = (volatile u32 *)((u32)&Data_03001ae8);
 
     if ((*keys & 512) != 0) {
         *(u16 *)(cam + 54) += 512;
@@ -84,7 +88,7 @@ void BattlePres_AdjustCameraByShoulderKeysAlt(void)
         *(u16 *)(cam + 54) += (u16)(u32)&Value_fffffe00;
     }
     if (*(u32 *)(trans + 20) == 0) {
-        Battle_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
+        BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);
     }
 }
 

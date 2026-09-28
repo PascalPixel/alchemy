@@ -4,6 +4,9 @@
 	.thumb_func
 UiText_QueueRenderEntries:
 Func_080165d8:
+	.global Func_080165d8
+	.thumb_func
+Func_080165d8:
 	push	{r5, r6, r7, lr}
 	adds	r7, r3, #0
 	ldr	r3, [pc, #104]

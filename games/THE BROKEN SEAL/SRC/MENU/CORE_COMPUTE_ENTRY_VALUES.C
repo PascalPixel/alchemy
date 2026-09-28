@@ -2,6 +2,8 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001f2c[];
+s16 Unnamed_080ac8fc(void *, s32, s32);
 
 /* menu/core/compute_entry_values.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -16,7 +18,7 @@ s32 Menu_ComputeEntryValues(void *tbl)
     s16 v;
     s32 cnt;
 
-    state = *(void **)ADDR_03001F2C;
+    state = *(void **)((u32)&Data_03001f2c);
     i = 0;
     if (i < FIELD_AT_OFFSET(state, u8, 0x219)) {
         dst = (s8 *)tbl + 0xA0;

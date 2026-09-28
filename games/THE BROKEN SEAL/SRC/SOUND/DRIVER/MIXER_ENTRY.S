@@ -15,6 +15,9 @@
 	.global Func_080f95f0
 	.thumb_func
 Func_080f95f0:
+	.global AudioEngine_RunMixerTick
+	.thumb_func
+AudioEngine_RunMixerTick:
 	ldr	r0, [pc, #104]
 	ldr	r0, [r0, #0]
 	ldr	r2, [pc, #104]
@@ -48,11 +51,11 @@ Func_080f95f0:
 	cmp	r3, #0
 	beq.n	.L3
 	ldr	r0, [r0, #36]
-	bl	Func_080f9a12
+	bl	Mixer_CallViaR3Rom
 	ldr	r0, [sp, #24]
 .L3:
 	ldr	r3, [r0, #40]
-	bl	Func_080f9a12
+	bl	Mixer_CallViaR3Rom
 	ldr	r0, [sp, #24]
 	ldr	r3, [r0, #16]
 	mov	r8, r3

@@ -1,5 +1,6 @@
 #include "LOW_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f7a[];
 
 void Text_FormatSignedDecimalToWork(s32);
 
@@ -12,5 +13,5 @@ void Text_DrawSignedDecimalRightAligned(s32 value, s32 width)
         count = 0xA;
     }
     Text_FormatSignedDecimalToWork(value);
-    Runtime_WriteDebugTextTiles((const u8 *)(ADDR_03001F7A - count));
+    Runtime_WriteDebugTextTiles((const u8 *)(((u32)&Data_03001f7a) - count));
 }

@@ -109,3 +109,6 @@ checks outgoing history. DONE is `?` until the current tree has a verified build
 - 2026-09-28: approved the stock `da598c1` agbcc rebuild; its exact binary
   digest is recorded in the compiler admission table.
 - 2026-09-28: the dashboard is removed.
+- 2026-09-28: prime directive: what pret published, we may; what pret did not
+  publish, we may not. Not-yet-sourced data links through pret's early
+  `.incbin "baserom.gba", OFFSET, SIZE` scaffolding in `recon/<game>`.

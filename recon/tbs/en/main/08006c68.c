@@ -1,4 +1,9 @@
 /*
+ * Draft: this code matches, but its translation unit is not the original one:
+ * the library's constant block at 0x08007a50 (its .rodata) is not reproduced.
+ * Links as recon/tbs/raw/08006c68.s until the unit is rebuilt.
+ */
+/*
  * VENEER AUDIT NOTE (2026-08-01) -- COMMENT ONLY, NO CODE CHANGE.
  *
  * This file is byte-exact, so nothing below is rewritten.  The note records
@@ -24,7 +29,7 @@
  */
 #include "FLASH.H"
 
-s32 Func_080072f0(s32, s32, s32, s32);
+s32 _call_via_r3(s32, s32, s32, s32);
 
 extern u8 Data_08007abc[];
 
@@ -59,7 +64,7 @@ s32 VerifyFlashSector(u16 sector, s32 arg1)
     core = (s32)((u8 *)buffer + 1);
     shifted = sector << Data_08007abc[28];
     address = shifted + 0x0E000000;
-    return Func_080072f0(
+    return _call_via_r3(
         arg1,
         address,
         *(u16 *)(Data_08007abc + 24),

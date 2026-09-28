@@ -2,6 +2,7 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "SHOP.H"
+extern u8 Data_03001f2c[];
 
 struct Position { s32 x, y, z; };
 union PositionWord { s32 w; s16 h[2]; };
@@ -17,20 +18,20 @@ u32 Random16(void);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
-void Func_080b0840(s32 address);
-s32 Func_080041d8(void (*callback)(void), s32 flags);
+void Shop_RestoreSceneTiles(s32 address);
+s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 flags);
 void Func_0808a528(struct Effect_080b2f4c *effect, s32 mode, s32 x, s32 z);
 void Func_0808a520(
     struct Effect_080b2f4c *effect,
     void (*callback)(struct Effect_080b2f4c *));
 void Func_0808a518(struct Effect_080b2f4c *effect, s32 value);
 void Func_08009248(s32 object, u32 frame_offset);
-void Func_080b04c4(void);
+void AudioCommand_WaitForStateByteClear(void);
 void Func_0808a530(struct Effect_080b2f4c *effect);
-void Func_08004278(void (*callback)(void));
+void Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08009280(s32 object, s32 arg);
-void Func_080b0894(void);
-void Func_080b2ffc(void);
+void Shop_InitEffect(void);
+void Shop_ResetEffects(void);
 void BattleFx_UpdateRadialMotion(struct Effect_080b2f4c *effect);
 
 extern s8 Data_080b4ab2[];
@@ -52,11 +53,11 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
     shop->cursor.anchor->kind = 13;
     Audio_PlayCue(Data_080b4ab2[shop->party_action]);
-    Func_080b0840(0x00202108);
+    Shop_RestoreSceneTiles(0x00202108);
     Func_08009280((s32)shop->party_member_icons[member], 0);
     WaitFrames(20);
     callback_flags = 0xc80;
-    Func_080041d8(Func_080b2ffc, callback_flags);
+    Scheduler_AddOrUpdateCallback(Shop_ResetEffects, callback_flags);
 
     /* FAKEMATCH: the x store goes through a union with a halfword view so it
        may alias the member_z load, which keeps the reference schedule. */
@@ -82,7 +83,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         effect = (struct Effect_080b2f4c *)((u8 *)effect + 0x48);
     } while (i <= 17);
 
-    Func_080b04c4();
+    AudioCommand_WaitForStateByteClear();
     {
         u8 active_mode = 2;
         u8 *entry = (u8 *)shop + 0x3f0;
@@ -123,9 +124,9 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         }
     }
 
-    Func_08004278(Func_080b2ffc);
+    Scheduler_RemoveCallback(Shop_ResetEffects);
     Func_08009280((s32)shop->party_member_icons[member], 16);
-    Func_080b0894();
+    Shop_InitEffect();
     WaitFrames(30);
     shop->cursor.anchor->kind = saved_kind;
 }

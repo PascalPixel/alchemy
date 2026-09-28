@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e8c[];
 
 extern s32 Localization_LookupEntryId();
 extern void UiWork_Finalize(struct Work *work, s32 release);
@@ -14,7 +15,7 @@ void UiWork_FinalizeEntityMatchingLocalizedId(void)
     u8 *entity;
     s32 offset;
 
-    base = *(u8 **)ADDR_03001E8C;
+    base = *(u8 **)((u32)&Data_03001e8c);
     work = base + 0x500;
     id = Localization_LookupEntryId();
     if (id == -1)

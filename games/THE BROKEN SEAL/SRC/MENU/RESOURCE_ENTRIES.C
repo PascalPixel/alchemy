@@ -3,6 +3,7 @@
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001f38[];
 
 struct MenuSelectionState {
     u8 padding000[0x78];
@@ -92,7 +93,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
     void *buffer = (void *)Runtime_BumpAllocate(size);
-    u16 *base = GetResource((s32)Data_000000f1);
+    u16 *base = Resource_GetTableEntry((s32)Data_000000f1);
 
     /* 表内の相対位置から転送元を求める。 */
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);
@@ -109,7 +110,7 @@ void Menu_AppendResourceEntry(s32 no)
     s32 off;
     s32 flags;
 
-    base = *(u8 **)ADDR_03001F38;
+    base = *(u8 **)((u32)&Data_03001f38);
     index = *(s16 *)(base + 142);
     if (index <= 5)
     {

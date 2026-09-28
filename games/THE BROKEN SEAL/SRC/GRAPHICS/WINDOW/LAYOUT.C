@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 Data_03001e90[];
+extern u8 Data_03001e8c[];
 
 void UiWindow_FillScreenBlockRect(s32 unused0, s32 unused1, u32 width, u32 height,
                    s32 value)
@@ -38,7 +40,7 @@ extern s32 Party_CountActiveOwnersFar(void);
 
 void UiWindow_BuildLayoutBounds(s32 flags)
 {
-    void **slot = (void **)ADDR_03001E90;
+    void **slot = (void **)((u32)&Data_03001e90);
     struct UiWindowBounds *state = *slot;
     u8 *base = *(u8 **)(slot - 1);
     s32 height = 4;
@@ -85,7 +87,7 @@ void UiWindow_CreateWithLayoutBounds(s32 flags)
     s8 *busy;
 
     window = Runtime_AllocateBlock(0x10, 0x10);
-    busy = (s8 *)((u8 *)*(void **)ADDR_03001E8C + RENDER_MENU_BUSY_OFS);
+    busy = (s8 *)((u8 *)*(void **)((u32)&Data_03001e8c) + RENDER_MENU_BUSY_OFS);
     zero = 0;
     *busy = 1;
     UiWindow_BuildLayoutBounds(flags);

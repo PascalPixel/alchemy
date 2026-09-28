@@ -3,6 +3,10 @@
 
 #include "TYPES.H"
 
-/* Address-bearing names keep edition-specific IWRAM layout in the linker. */
+/* Byte views of IWRAM work cells whose pointer is read through a typed macro. */
+extern u8 Data_03001e74_a[];
+extern u8 Data_03001ebc_a[];
+extern u8 Data_03001f1c_a[];
+extern u8 Data_03001f2c_a[];
 
 #endif

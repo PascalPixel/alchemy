@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+s32 Menu_Check();
 
 /* menu/run_selection_hook.c */
 /* menu/sel/run_selection_hook.c */

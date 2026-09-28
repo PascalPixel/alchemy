@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+extern u8 Data_03001e70[];
 
 /*
  * Record a ratio-driven transition on the battle effect work block and
@@ -21,12 +22,12 @@ struct Work_080936a0 {
 };
 
 void *Runtime_AllocateBlock(s32 arg0, s32 arg1);
-void ScheduleCallbackAfterFrames(const void *arg0, s32 arg1);
-extern u8 Data_080935d5[]; /* the transition callback, Thumb address */
+void Scheduler_AddOrUpdateCallback(const void *arg0, s32 arg1);
+extern u8 BattleFx_StepRatioTransition[]; /* the transition callback, Thumb address */
 
 void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
 {
-    struct Work_080936a0 *state = *(struct Work_080936a0 **)ADDR_03001E70;
+    struct Work_080936a0 *state = *(struct Work_080936a0 **)((u32)&Data_03001e70);
     s32 handle;
     s32 result;
 
@@ -41,5 +42,5 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     state->current = result;
     state->kind = arg1;
     state->flags = 0;
-    ScheduleCallbackAfterFrames(Data_080935d5, 0xc94);
+    Scheduler_AddOrUpdateCallback(BattleFx_StepRatioTransition, 0xc94);
 }

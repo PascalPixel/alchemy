@@ -50,6 +50,8 @@ IwramSoundRenderFrame:
 	str	fp, [r5, #1584]
 	ldr	fp, [r5]
 	str	r7, [r5], #4
+	.global Data_03000bd8
+Data_03000bd8:
 	asrs	r6, r4, #18
 	adds	r6, r6, fp, asr #19
 	addmi	r6, r6, #40, 0

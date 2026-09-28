@@ -30,7 +30,7 @@ extern struct FieldMapState gOverlayArea;
 
 struct FieldActor *ObjectTable_Get(s32 index);
 s32 EffectRuntime_GetCurrentObject(s32 id);
-struct MapEventEntry *Func_080072e4(s32 resource);
+struct MapEventEntry *_call_via_r0(s32 resource);
 s32 GameFlag_TestFar(s32 flag);
 s32 Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectDispatch_InitializeFar(s32 object, s32 data);
@@ -71,7 +71,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
                     continue;
             } else if (z - actor_z > 5)
                 continue;
-            entry = Func_080072e4(gOverlayArea.events);
+            entry = _call_via_r0(gOverlayArea.events);
             if (entry->flags == -1)
                 continue;
             do {

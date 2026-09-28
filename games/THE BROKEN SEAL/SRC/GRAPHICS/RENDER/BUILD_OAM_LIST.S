@@ -73,3 +73,5 @@ Render_BuildOamList:
 	.4byte	0x03000168
 	.4byte	0x03001d00
 	.4byte	0x03001d40
+	.global LoadedRuntime_Size
+	.set LoadedRuntime_Size, . - Render_BuildOamList

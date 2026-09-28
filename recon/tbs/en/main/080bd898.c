@@ -9,4 +9,4 @@
  * Sharing the scan counter across phases stays at 1858/331 and keeps
  * the buffer base in sl. None recovers the missing count spill, so the
  * complete baseline body is retained. Fix that lifetime before registers. */
-#include "../../../../games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/EVENT_PLAYBACK.C"
+#include "080bd850.c"

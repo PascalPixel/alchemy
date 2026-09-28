@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 struct Work;
 
@@ -10,7 +11,7 @@ void UiWork_AdvanceChannelTransition(void *);
 
 void UiWork_ProcessRenderChannels(void)
 {
-    u8 *channel = *(u8 **)ADDR_03001E8C + RENDER_CHANNEL_OFS;
+    u8 *channel = *(u8 **)((u32)&Data_03001e8c) + RENDER_CHANNEL_OFS;
     s32 channel_no = 0;
     s32 one = 1;
 

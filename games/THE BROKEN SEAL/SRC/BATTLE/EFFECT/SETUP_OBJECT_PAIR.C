@@ -1,13 +1,14 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f30[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Vector_AddPolarOffset(s32, s32, void *);
 void BattleFx_SetupObjectPair(s32 first_object_id, s32 second_object_id)
 {
     void *first_object; void *second_object; s32 facing_quadrant; void *state;
-    state = *(void **)ADDR_03001F30;
+    state = *(void **)((u32)&Data_03001f30);
     FIELD_AT_OFFSET(state, s16, 0x18) = first_object_id;
     first_object = ObjectTable_Get((s16)first_object_id);
     FIELD_AT_OFFSET(state, s16, 0x1A) = second_object_id;

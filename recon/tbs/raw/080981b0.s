@@ -10,6 +10,9 @@
 	.global Func_080981b0
 	.thumb_func
 Func_080981b0:
+	.global UpdateRisingParticleBurst
+	.thumb_func
+UpdateRisingParticleBurst:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

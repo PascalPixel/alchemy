@@ -5,6 +5,10 @@
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_RUNTIME.H"
 #include "SYSTEM.H"
+s32 ResourceMetadata_SumCommandLengthsFar(s32 battle_value, s32 second, s32 third);
+void BattlePres_SetActorModes(u16 *actors, s32 mode);
+void BattleMotion_ResetObjectAtScaledAnchor(s32 id);
+void BattleEv_DispatchQueued(void);
 
 /* battle/run_simple_presentation.c */
 struct SimplePresentationInput {

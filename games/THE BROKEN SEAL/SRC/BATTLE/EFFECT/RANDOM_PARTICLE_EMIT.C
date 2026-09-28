@@ -45,7 +45,7 @@ typedef char ParticleEffectObject_child_offset[
 #undef OBJECT_0808EEE4_OFFSET
 
 extern void Vector_AddPolarOffset(s32, s32, struct ParticlePosition *);
-extern void Object_SetCallback(struct ParticleEffectObject *, void *);
+extern void ObjectDispatch_InitializeFar(struct ParticleEffectObject *, void *);
 extern void Object_SetMode(struct ParticleEffectObject *, s32);
 extern const u8 BattleFx_ParticleScript[];
 
@@ -72,7 +72,7 @@ void BattleFx_EmitRandomParticleFromEmitter(struct ParticleEmitter *emitter)
         s32 mask;
         u8 flags;
 
-        Object_SetCallback(object, (void *)BattleFx_ParticleScript);
+        ObjectDispatch_InitializeFar(object, (void *)BattleFx_ParticleScript);
         Object_SetMode(object, 0);
         mask = 13;
         flags = object->child->flags;

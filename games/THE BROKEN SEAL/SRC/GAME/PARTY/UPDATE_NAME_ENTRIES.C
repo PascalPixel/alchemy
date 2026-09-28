@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+s32 Party_Check(void);
+void SerialRuntime_WaitForTransferB(void);
+void Party_Apply(s32, u16 *);
+void Party_Do(void *);
 
 #if defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || \
     defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
@@ -15,7 +19,7 @@ void *Runtime_BumpAllocateAlternatePool(s32);
 
 void WaitFrames(s32);
 u8 *Runtime_GetObject(s32);
-void *Party_Run(s32);
+void *Trade_GetOfferStateFar(s32);
 
 extern char Value_0000080c;
 
@@ -68,7 +72,7 @@ s32 UpdateNameEntries(void)
     }
     Party_Do(buffer);
     buffer = Runtime_BumpAllocateAlternatePool(320);
-    Party_Run(1);
+    Trade_GetOfferStateFar(1);
     if (Party_Check() != -1) {
         SerialRuntime_WaitForTransferB();
         WaitFrames(2);

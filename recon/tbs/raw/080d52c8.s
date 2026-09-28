@@ -33,6 +33,9 @@
 	.global Func_080d52c8
 	.thumb_func
 Func_080d52c8:
+	.global BattleFx_RenderMode
+	.thumb_func
+BattleFx_RenderMode:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

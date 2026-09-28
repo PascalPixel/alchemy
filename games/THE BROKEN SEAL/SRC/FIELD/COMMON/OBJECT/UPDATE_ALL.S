@@ -13,6 +13,8 @@
 	.global Func_0800a494
 Object_UpdateAll:
 Func_0800a494:
+	.global Data_0800a494
+Data_0800a494:
 	push	{r5, r6, r7, r8, r9, sl, lr}
 	mov	r2, #0
 	ldr	r3, [pc, #928]

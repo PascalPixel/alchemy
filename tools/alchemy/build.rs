@@ -19,6 +19,7 @@ const OUTSIDE: &[&str] = &[
     "alchemy/src/recovery",
     "alchemy/src/allocator.rs",
     "alchemy/src/build_full.rs",
+    "alchemy/src/build_rom.rs",
     "alchemy/src/cross_edition.rs",
     "alchemy/src/flatten.rs",
     "alchemy/src/format.rs",

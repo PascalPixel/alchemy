@@ -33,7 +33,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     VramBlock_LoadCached(
         FIELD(FIELD(base, void *, 0x5B4), u8, 14),
         0x100,
-        (s32)GetResource(src0));
+        (s32)Resource_GetTableEntry(src0));
 
     if (sel == 1) {
         src1 = (FIELD(base, u16, 0x57C) & 7) +
@@ -44,7 +44,7 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
     VramBlock_LoadCached(
         FIELD(FIELD(base, void *, 0x5C4), u8, 14),
         0x100,
-        (s32)GetResource(src1));
+        (s32)Resource_GetTableEntry(src1));
 
     if (sel > 1) {
         s32 idx = sel * 3;

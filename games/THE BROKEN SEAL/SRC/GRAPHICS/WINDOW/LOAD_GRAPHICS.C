@@ -9,7 +9,7 @@ extern u8 Value_00000013;
    and the object palettes. */
 void Ui_LoadWindowGraphics(void)
 {
-    Dma_Set(GetResource((s32)&Value_00000013), (void *)0x06000000, 0x84000800,
+    Dma_Set(Resource_GetTableEntry((s32)&Value_00000013), (void *)0x06000000, 0x84000800,
             (volatile u32 *)0x040000d4);
     Dma_Set((const void *)0x0800777c, (void *)0x050001e0, 0x80000010,
             (volatile u32 *)0x040000d4);

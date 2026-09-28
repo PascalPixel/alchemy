@@ -1,6 +1,7 @@
 #include "OBJECT_FACTORY.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f2c[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 
@@ -12,7 +13,7 @@ s32 Menu_CreateEightEntryObjects(s32 resource)
     u8 *state;
     s32 param;
 
-    state = *(u8 **)ADDR_03001F2C;
+    state = *(u8 **)((u32)&Data_03001f2c);
     i = 0;
     param = 0xA8;
     slot = (void **)(state + 0xC8);

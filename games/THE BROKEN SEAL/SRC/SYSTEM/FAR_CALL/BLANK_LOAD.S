@@ -9,6 +9,4 @@
 	.global Func_080f6000
 	.thumb_func
 Func_080f6000:
-	.irp target, 0x080f6009
-	overlay_veneer \target
-	.endr
+	overlay_veneer 0x080f6009

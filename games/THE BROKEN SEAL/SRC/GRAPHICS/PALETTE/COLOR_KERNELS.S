@@ -228,3 +228,14 @@ ColorBuffer_BrightenPartialKernel:
 .L_08002290:
 	pop	{r5, r6, r7, r8, r9}
 	bx	lr
+ColorBuffer_KernelsEnd:
+	.global ColorBuffer_BackupAndBrightenCodeSize
+	.set ColorBuffer_BackupAndBrightenCodeSize, ColorBuffer_ScaleNonzeroThreeQuartersKernel - ColorBuffer_BrightenKernel
+	.global ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize
+	.set ColorBuffer_BackupAndScaleNonzeroThreeQuartersCodeSize, ColorBuffer_HalveNonzeroKernel - ColorBuffer_ScaleNonzeroThreeQuartersKernel
+	.global ColorBuffer_BackupAndHalveNonzeroCodeSize
+	.set ColorBuffer_BackupAndHalveNonzeroCodeSize, ColorBuffer_DarkenPartialKernel - ColorBuffer_HalveNonzeroKernel
+	.global ColorBuffer_BackupAndDarkenPartialCodeSize
+	.set ColorBuffer_BackupAndDarkenPartialCodeSize, ColorBuffer_BrightenPartialKernel - ColorBuffer_DarkenPartialKernel
+	.global ColorBuffer_BackupAndBrightenPartialCodeSize
+	.set ColorBuffer_BackupAndBrightenPartialCodeSize, ColorBuffer_KernelsEnd - ColorBuffer_BrightenPartialKernel

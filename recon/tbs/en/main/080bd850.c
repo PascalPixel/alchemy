@@ -1,3 +1,8 @@
+/*
+ * Draft: BattleEvent_Playback does not yet match; its raw assembly links in its place.
+ * The nested functions it contains match and link as their compiler's own
+ * assembly (recon/tbs/raw/080bd850.s).
+ */
 #include "VRAM_BLOCK.H"
 #include "BATTLE_COMMAND.H"
 #include "BATTLE_EVENT.H"

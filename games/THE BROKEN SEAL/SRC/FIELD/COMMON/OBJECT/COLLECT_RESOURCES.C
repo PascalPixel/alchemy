@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 Party_ListActiveOwnersFar(u16 *objects);
 
 #define RESOURCE_ID_MASK_0801C7FC 0x3FFF
 
@@ -25,7 +26,7 @@ s32 Object_CollectResources(struct ResourcePair_0801c7fc *output)
 {
     u16 object_ids[14];
     s32 output_count = 0;
-    s32 object_count = Obj_Check(object_ids);
+    s32 object_count = Party_ListActiveOwnersFar(object_ids);
 
     if (output_count < object_count) {
         u16 *object_id = object_ids;

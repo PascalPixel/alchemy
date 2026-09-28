@@ -44,7 +44,7 @@ void GameFlag_RefreshLureCap(void)
 
 /* runtime/System_GetBuildStampTime.c */
 extern u8 gDebugMode;
-extern u8 gVal[];
+extern u8 Value_00000002[];
 
 u16 Runtime_GetBuildStampTime(void)
 {
@@ -62,7 +62,7 @@ u16 Runtime_GetBuildStampTime(void)
     s32 shifted;
     s32 result;
 
-    digits = GetResource((s32)gVal);
+    digits = Resource_GetTableEntry((s32)Value_00000002);
     hourTens = *digits;
     hours = (hourTens - '0') * 10;
     digits++;

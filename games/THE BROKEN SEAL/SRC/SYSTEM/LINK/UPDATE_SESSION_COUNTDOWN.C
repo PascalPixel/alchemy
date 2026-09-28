@@ -2,6 +2,9 @@
 #include "SCENE.H"
 #include "SOUND_IDS.H"
 #include "FIXED_MATH.H"
+void Camera_ConfigureSceneFar(s32 offset);
+void Link_DrawShiftedTilePair(s32 destination);
+s32 Link_CreateCountdownLabelWindow(void);
 
 #define COUNTDOWN_START_FRAMES 900
 #define FRAMES_PER_SECOND 60

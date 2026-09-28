@@ -25,6 +25,9 @@
 	.global Func_08099da4
 	.thumb_func
 Func_08099da4:
+	.global Battle_unk3_2
+	.thumb_func
+Battle_unk3_2:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

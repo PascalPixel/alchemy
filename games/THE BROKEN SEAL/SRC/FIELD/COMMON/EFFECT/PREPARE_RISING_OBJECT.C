@@ -40,7 +40,7 @@ struct Object_0808f0d8 {
 extern struct State_0808f0d8 gGameState;
 void Object_SetPosition(struct Object_0808f0d8 *, s32, s32, s32);
 void Object_SetMode(void *, s32);
-void Object_SetCallback(void *, const void *);
+void ObjectDispatch_InitializeFar(void *, const void *);
 extern const u8 RomBytes_0809e75c[];
 
 void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
@@ -57,14 +57,14 @@ void EffectRuntime_PrepareRisingObject(struct Object_0808f0d8 *object)
     Object_SetPosition(object, entity->x, entity->y + 0x240000, entity->z);
     WaitFrames(3);
     Object_SetMode(entity, 28);
-    Object_SetCallback(object, RomBytes_0809e75c);
+    ObjectDispatch_InitializeFar(object, RomBytes_0809e75c);
     entity->angle = 0x4000;
 }
 
 /* effect_runtime/Effect_RunRisingObjectSequence.c */
 void ObjectDispatch_SetSingleChildField26Far(void *, s32);
 extern const u8 BattleFx_ParticleEmitterScript[];
-extern u8 gRom2;
+void BattleFx_EmitRandomParticleFromEmitter(void);
 
 void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
 {
@@ -74,10 +74,10 @@ void EffectRuntime_RunRisingObjectSequence(void *object, s32 flags)
         other = ObjectTable_Get(gGameState.object_index);
         if (flags & 1) {
             ObjectDispatch_SetSingleChildField26Far(object, 0);
-            Object_SetCallback(object, BattleFx_ParticleEmitterScript);
+            ObjectDispatch_InitializeFar(object, BattleFx_ParticleEmitterScript);
             FIELD_AT_OFFSET(object, u32 *, 0x28) = 0x20000;
             FIELD_AT_OFFSET(object, u32 *, 0x48) = 0x4000;
-            FIELD_AT_OFFSET(object, s32 *, 0x6C) = (s32)&gRom2;
+            FIELD_AT_OFFSET(object, s32 *, 0x6C) = (s32)&BattleFx_EmitRandomParticleFromEmitter;
         }
         if (flags == 3) {
             WaitFrames(60);

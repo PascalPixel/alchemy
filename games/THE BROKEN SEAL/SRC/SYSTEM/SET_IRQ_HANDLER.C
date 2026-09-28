@@ -3,7 +3,7 @@
 typedef void (*InterruptHandler)(void);
 
 extern InterruptHandler Data_030000e0[];
-void Scheduler_ReservedNoOp(void);
+void RuntimeDispatch_ReservedNoOp03008(void);
 
 /* Installs or removes the handler for one interrupt with IME off: sets
    the IE bit, the DISPSTAT enable (and the VCOUNT target for IRQ 2), and
@@ -44,7 +44,7 @@ void Runtime_SetIrqHandler(u32 irq, s32 vcount, InterruptHandler handler)
         if (handler != 0)
             Data_030000e0[irq] = handler;
         else
-            Data_030000e0[irq] = Scheduler_ReservedNoOp;
+            Data_030000e0[irq] = RuntimeDispatch_ReservedNoOp03008;
         *(volatile u16 *)0x04000208 = ime;
     }
 }

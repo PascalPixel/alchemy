@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e74[];
 
 /* battle/summon/clear_work_fields.c */
 extern s16 gGameState[];
@@ -16,7 +17,7 @@ void Summon_ClearWorkFields(void)
     s16 *slots;
     s32 index;
 
-    base = *(u8 **)ADDR_03001E74;
+    base = *(u8 **)((u32)&Data_03001e74);
     words = (union Word *)(base + 0x530);
     gGameState[286] = 0;
     words[0].value = 0;

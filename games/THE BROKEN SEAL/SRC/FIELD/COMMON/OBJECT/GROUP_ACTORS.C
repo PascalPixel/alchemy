@@ -1,5 +1,6 @@
 #include "OBJECT_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f30[];
 
 struct ObjectRuntime *Object_CreateFar(s32, s32, s32, s32);
 void Object_Destroy(struct ObjectRuntime *);
@@ -10,7 +11,7 @@ extern u8 gPlayerObjectId[];
 
 struct ObjectRuntime *Object_Spawn(s32 kind, s32 x, s32 y, s32 z)
 {
-    u8 *base = *(u8 **)ADDR_03001F30;
+    u8 *base = *(u8 **)((u32)&Data_03001f30);
     struct ObjectRuntime *object;
     u8 *child;
     u8 flag;

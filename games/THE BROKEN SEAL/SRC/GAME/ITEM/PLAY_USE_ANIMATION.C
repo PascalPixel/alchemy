@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void Audio_PlayCueReturnOne(s32);
 
 /* ability/play_use_animation.c */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))

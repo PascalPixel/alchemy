@@ -2,6 +2,7 @@
 #include "ITEM.H"
 #include "OWNER_STATE.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f2c[];
 
 struct ItemMenuIcon {
     u8 unknown_00[5];
@@ -95,7 +96,7 @@ void Event_ClearInvalidPackedValuesFar(void);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
 void InventoryMenu_ShowModalMessage(s32 message, s32 acknowledgement_mode, s32 window_mode);
 void UiText_DrawWorkValueWithLabel(s32 window);
-s32 Func_080a38d0(s32 mode);
+s32 ItemMenu_SelectTarget(s32 mode);
 s32 Func_080a3d9c(s32 owner, s32 item);
 /* Takes a fourth argument; this caller passes the owner there as well. */
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 arg3);
@@ -165,7 +166,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
     sel = 0;
     ret = 0;
     state = 0;
-    menu = *(struct ItemCommandWork **)ADDR_03001F2C;
+    menu = *(struct ItemCommandWork **)((u32)&Data_03001f2c);
 
     while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         switch (state) {
@@ -271,7 +272,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
                 (s32)&Value_00000adb, menu->message_window, 16, 16);
-            if (Func_080a38d0(0) != -1) {
+            if (ItemMenu_SelectTarget(0) != -1) {
                 command = 0;
                 if (ItemMenu_IsSpecial(
                         menu->selected_item & 0x1ff) != 0) {
@@ -304,7 +305,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             ItemMenu_DrawItemHead();
             UiText_DrawCharacterAtOffsetFar(
                 (s32)&Value_00000adc, menu->message_window, 16, 16);
-            n = Func_080a38d0(1);
+            n = ItemMenu_SelectTarget(1);
             state = 4;
             if (n == -1) {
                 ItemMenu_DrawEquipPreview(

@@ -153,7 +153,7 @@ LAYOUT_SIZE_GUARD(
     struct ShopPartyState,
     0x14);
 
-#define SHOP_RUNTIME (*(struct ShopRuntime **)ADDR_03001F2C)
+#define SHOP_RUNTIME (*(struct ShopRuntime **)Data_03001f2c_a)
 #define SHOP_PARTY_STATE (*(struct ShopPartyState *)0x02000240)
 
 void Func_080b09fc(
@@ -169,39 +169,39 @@ void Func_080b110c(
     s32 item_name_message,
     s32 price,
     s32 price_mode);
-void Func_080b11a4(s32 window, s32 message);
-void Func_080b11c4(s32 window, s32 selected, s32 requirement);
-void Func_080b1470(s32 window, s32 unit_id, s32 item_id);
+void Shop_DrawMsg(s32 window, s32 message);
+void Shop_DrawParty(s32 window, s32 selected, s32 requirement);
+void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id);
 s32 Func_080b153c(s32 unit_id, s32 item_id);
 void Func_080b17e4(s32 unit_id, s32 item_id, s32 quantity);
-s32 Func_080b1868(s32 unit_id, s32 slot);
-s32 Func_080b196c(s32 unit_id, s32 slot);
-s32 Func_080b19cc(s32 item_id);
-s32 Func_080b1a14(void);
-void Func_080b1dec(s32 window, s32 unit_id);
-s32 Func_080b1e80(s32 unit_id, s32 slot);
-s32 Func_080b20e8(s32 item_id);
-s32 Func_080b2110(void);
-void Func_080b386c(s32 window, s32 unit_id, s32 item_slot);
+s32 Shop_ConfirmEquip(s32 unit_id, s32 slot);
+s32 Shop_SellOld(s32 unit_id, s32 slot);
+s32 Shop_SalePrice(s32 item_id);
+s32 Shop_PickUnit(void);
+void Shop_DrawUnitGrid(s32 window, s32 unit_id);
+s32 Shop_SelSellNum(s32 unit_id, s32 slot);
+s32 Shop_RepairPrice(s32 item_id);
+s32 Shop_SelUnit(void);
+void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_slot);
 
 #define Shop_SetCursorPosition        Func_080b09fc
 #define Shop_PlaceCursor              Func_080b0a6c
 #define Shop_DrawStockPage            Func_080b0fa4
 #define Shop_DrawMoney                Func_080b10cc
 #define Shop_DrawItemPrice            Func_080b110c
-#define Shop_DrawMessage              Func_080b11a4
-#define Shop_UpdatePartyMemberList    Func_080b11c4
-#define Shop_DrawPartyMemberItems     Func_080b1470
+#define Shop_DrawMessage              Shop_DrawMsg
+#define Shop_UpdatePartyMemberList    Shop_DrawParty
+#define Shop_DrawPartyMemberItems     Shop_DrawUnitItem
 #define Shop_SelectPurchaseQuantity   Func_080b153c
 #define Shop_CompletePurchase         Func_080b17e4
-#define Shop_ConfirmEquipItem         Func_080b1868
-#define Shop_SellReplacedItem         Func_080b196c
-#define Shop_ComputeSalePrice         Func_080b19cc
-#define Shop_SelectPartyMember        Func_080b1a14
-#define Shop_DrawPartyMemberItemGrid  Func_080b1dec
-#define Shop_SelectSaleQuantity       Func_080b1e80
-#define Shop_ComputeRepairPrice       Func_080b20e8
-#define Shop_RunPartyMemberSelection  Func_080b2110
-#define Shop_DrawUseItemDetails       Func_080b386c
+#define Shop_ConfirmEquipItem         Shop_ConfirmEquip
+#define Shop_SellReplacedItem         Shop_SellOld
+#define Shop_ComputeSalePrice         Shop_SalePrice
+#define Shop_SelectPartyMember        Shop_PickUnit
+#define Shop_DrawPartyMemberItemGrid  Shop_DrawUnitGrid
+#define Shop_SelectSaleQuantity       Shop_SelSellNum
+#define Shop_ComputeRepairPrice       Shop_RepairPrice
+#define Shop_RunPartyMemberSelection  Shop_SelUnit
+#define Shop_DrawUseItemDetails       Shop_DrawUseItem
 
 #endif

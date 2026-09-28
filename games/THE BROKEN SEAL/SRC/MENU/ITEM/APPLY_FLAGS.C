@@ -5,10 +5,11 @@
    the flag index as a counter over the flags base (loop.c otherwise turns
    flags[index] into a walking pointer). */
 #include "TYPES.H"
+extern u8 Data_03001f2c[];
 #include "GLOBAL_CELLS.H"
 
 void ItemMenu_ResetCategory(void);
-void Func_080a17c4(void *);
+void UiIcon_PrepareObject(void *);
 
 void ItemMenu_ApplyFlags(const u8 *flags)
 {
@@ -19,7 +20,7 @@ void ItemMenu_ApplyFlags(const u8 *flags)
     s32 value;
     u16 kind;
 
-    base = *(u8 **)ADDR_03001F2C;
+    base = *(u8 **)((u32)&Data_03001f2c);
     ItemMenu_ResetCategory();
     index = 0;
     slot = (void **)(base + 200);
@@ -35,7 +36,7 @@ void ItemMenu_ApplyFlags(const u8 *flags)
                 *x = value;
             }
             *(u8 *)((u8 *)entry + 15) = 240;
-            Func_080a17c4(entry);
+            UiIcon_PrepareObject(entry);
             value += 16;
         }
         index++;

@@ -2,6 +2,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
+extern u8 Data_03001ebc[];
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -36,7 +37,7 @@ void BattleFx_EmitRandomParticle(void)
     register u8 *entry;
 
     object = ObjectTable_Get(PARTY_STATE.value_1F4);
-    entry = *(u8 **)ADDR_03001EBC + 0x11C;
+    entry = *(u8 **)((u32)&Data_03001ebc) + 0x11C;
     index = 0;
     if (entry[4] != 0) {
         object_x = FIELD(object, s32, 8);

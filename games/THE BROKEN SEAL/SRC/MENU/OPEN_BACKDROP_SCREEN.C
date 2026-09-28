@@ -2,6 +2,8 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 
+extern u8 gMenuWork[];
+
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*WordFillFn)(void *dst, s32 size, u32 value);
 
@@ -39,7 +41,7 @@ s32 Func_080aafb8(struct BackdropSave *);
    loads the frame tile and palettes, then runs the backdrop screen. */
 s32 Menu_OpenBackdropScreen(void)
 {
-    struct MenuWork *work = *(struct MenuWork **)0x03001f2c;
+    struct MenuWork *work = *(struct MenuWork **)gMenuWork;
     struct BackdropSave *backdrop = work->backdrop;
 
     UiWindow_UpdateOrCreate(&work->window, 0, 5, 30, 15, 2);

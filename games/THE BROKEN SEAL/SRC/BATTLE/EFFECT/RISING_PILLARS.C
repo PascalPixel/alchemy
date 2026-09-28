@@ -14,6 +14,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+
 void WaitFrames(s32);
 u32 Random16(void);
 void Audio_PlayCue(s32);
@@ -82,7 +84,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     work->transfer_mode = 1;
     work->transfer_value = 0;
     blit47 = ((DrawRectangle *)cache)[47 - 39];
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     total = BattleFxPillar_Counts[work->effect->variant] * 8 + 56;
 
     for (i = 0; i != 1024; i++) {
@@ -180,7 +182,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
         WaitFrames(1);
     }
 
-    Scheduler_RemoveCallback(0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

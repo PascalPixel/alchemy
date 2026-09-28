@@ -2,6 +2,8 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+extern const u8 BattleFx_CommonParticleScript[];
+
 struct OrbitEffect {
     u8 unknown_00[6];
     u16 angle;
@@ -44,5 +46,5 @@ void BattleFx_WanderAroundAnchor(struct OrbitEffect *effect)
         effect->pause = ((Random16() << 4) >> 16) + 8;
     }
     if (++effect->timer == 101)
-        ObjectDispatch_InitializeFar(effect, 0x0809f0b0);
+        ObjectDispatch_InitializeFar(effect, (s32)BattleFx_CommonParticleScript);
 }

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
+#include "VRAM_BLOCK.H"
 
 struct FxWindowEntry {
     u32 a;
@@ -29,8 +30,6 @@ struct FxObject {
 };
 
 extern struct FxWindowWork gMapCellBuffer;
-struct TileSlot { u16 a; u16 tile; };
-extern struct TileSlot Value_03001b10[];
 extern struct BattleWork gGameState;
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
@@ -90,7 +89,7 @@ void BattleFx_SetupResourcesAndWindow(void)
         work->y = ((object->y * 160) / 4096) << 16;
     }
     work->window_slot = Func_080153b8();
-    tile = Value_03001b10[work->window_slot].tile;
+    tile = gVramBlockCache[work->window_slot].offset;
     work->window = UiWindow_CreateFar(0, 0, 0, 0, 2);
     work->unknown_12 = 0xffff;
     work->unknown_18 = 0x10000;

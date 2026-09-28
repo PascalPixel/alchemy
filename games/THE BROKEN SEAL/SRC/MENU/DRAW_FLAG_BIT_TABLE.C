@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern const u8 Menu_ColonString[];
+
 void RenderOutput_PrepareForRedraw(void);
 void UiText_DrawStringInWindow(s32 text, s32 window, s32 x, s32 y);
 void Text_FormatHex(s32 value, s32 width, s32 buf);
@@ -27,7 +29,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
         }
         Text_FormatHex(flag, 3, (s32)label);
         UiText_DrawStringInWindow((s32)label, window, 0, y);
-        UiText_DrawStringInWindow(0x08037428, window, 32, y);
+        UiText_DrawStringInWindow((s32)Menu_ColonString, window, 32, y);
 
         for (i = 0; i < 16; i++) {
             s32 val = GameFlag_TestFar(flag);

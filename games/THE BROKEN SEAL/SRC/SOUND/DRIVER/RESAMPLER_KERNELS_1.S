@@ -5,9 +5,9 @@
 @ RESAMPLER_KERNELS_PAD_1.S. TBS only.
 @ credit: handwritten — ARM sound-buffer record patched into the IWRAM runtime
 .syntax unified
-	.set	.Lrecord_2, 0x08000534
 	.arm
-.Lrecord_1:
+	.global IwramCodeRecord1
+IwramCodeRecord1:
 	asrs	r7, fp, #19
 	adds	r7, r7, ip, asr #20
 	addmi	r7, r7, #48
@@ -42,4 +42,4 @@
 	adds	r6, r6, fp, asr #20
 	addmi	r6, r6, #48
 	adds	r1, r7, r6, lsl #16
-	b	.Lrecord_2
+	b	IwramCodeRecord2

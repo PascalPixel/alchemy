@@ -1,5 +1,7 @@
 #include "DMA.H"
 
+extern u8 gEventWork[];
+
 void BattleFx_ApplyColorToTargetBufferFar(s32, s32);
 void BattleFx_StartBufferInterpolationFar(s32);
 
@@ -8,7 +10,7 @@ void BattleFx_StartBufferInterpolationFar(s32);
    the work area, then refreshes the scene layer. */
 void Shop_RestoreSceneTiles(s32 layer)
 {
-    u32 *scene = (u32 *)0x03001ebc;
+    u32 *scene = (u32 *)gEventWork;
     u8 *work = (u8 *)scene[5];
     u8 *map = (u8 *)scene[0];
     u8 *saved = work + 0xe00;

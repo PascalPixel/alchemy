@@ -7,8 +7,6 @@
 @ return. Every TBS and TLA edition has these bytes.
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
-	.set	.L_08002ae8, 0x08002ae8
-	.set	.L_08002910, 0x08002910
 	.arm
 	.global Func_08002808
 Func_08002808:
@@ -26,5 +24,5 @@ Func_08002808:
 	lsl	r4, r2, #3
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
-	blmi	.L_08002ae8
-	b	.L_08002910
+	blmi	Resource_RefillType2Bits
+	b	Resource_DecodeType2Loop

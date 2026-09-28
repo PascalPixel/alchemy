@@ -185,7 +185,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         work->transfer_mode = 2;
         work->transfer_value = 75;
     }
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     for (i = 0; i != 64; i++) {
         SPARKS[i].tick = -1;
@@ -336,7 +336,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         frame += 1;
     } while (frame != 64);
 
-    Scheduler_RemoveCallback(0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

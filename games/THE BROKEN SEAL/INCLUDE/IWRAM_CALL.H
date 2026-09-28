@@ -25,6 +25,10 @@ static __inline__ s32 Iwram_Call2(s32 left, s32 right, void *routine)
     return result;
 }
 
-#define Iwram_MulQ16(left, right) Iwram_Call2((left), (right), (void *)0x03000118)
+/* The 16.16 multiply of SYSTEM/RUNTIME_MUL_Q16_IP.S returns through ip, so
+ * C enters it only through Iwram_Call2. */
+extern u8 IwramMulQ16ReturnIp[];
+
+#define Iwram_MulQ16(left, right) Iwram_Call2((left), (right), IwramMulQ16ReturnIp)
 
 #endif

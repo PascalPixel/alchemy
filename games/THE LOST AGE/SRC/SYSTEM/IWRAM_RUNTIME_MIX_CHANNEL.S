@@ -10,7 +10,6 @@
 @ credit: handwritten — TLA IWRAM runtime channel mixing
 .syntax unified
 	.thumb_func
-	.set	.L_030007b4, 0x030007b4
 	.arm
 	asr	r9, r9, #22
 	adds	r9, r9, r6, lsl #1
@@ -30,7 +29,8 @@
 	ldrsb	r6, [r3]
 	ldrsb	ip, [r3, #1]!
 	subs	ip, ip, r6
-.L_03000b44:
+	.global IwramSoundMixInterpolated
+IwramSoundMixInterpolated:
 	add	r5, r5, r8, lsl #2
 .L_03000b48:
 	mul	r9, r7, ip
@@ -53,7 +53,8 @@
 .L_03000b8c:
 	subs	r8, r8, #1
 	bgt	.L_03000b48
-.L_03000b94:
+	.global IwramSoundMixDone
+IwramSoundMixDone:
 	sub	r3, r3, #1
 	pop	{r4, r9, ip}
 	str	r7, [r4, #28]
@@ -75,7 +76,7 @@
 	pop	{r4, r9}
 .L_03000bd8:
 	strb	r6, [r4]
-	b	.L_03000cf4
+	b	IwramSoundMixSkipChannel
 	lsls	r6, sl, #24
 	asrs	r6, r6, #24
 	lsls	r6, sl, #16
@@ -91,7 +92,8 @@
 	lsls	r6, sl, #8
 	asrs	r6, r6, #24
 	pop	{r4, r9, ip}
-.L_03000c1c:
+	.global IwramSoundMixBlock
+IwramSoundMixBlock:
 	push	{r4, r9}
 .L_03000c20:
 	mov	lr, r2
@@ -159,16 +161,18 @@ AlchemyUncreditedEnd_08001258:
 .L_03000cec:
 	str	r2, [r4, #24]
 	str	r3, [r4, #40]
-.L_03000cf4:
+	.global IwramSoundMixSkipChannel
+IwramSoundMixSkipChannel:
 	add	r0, pc, #1
 	bx	r0
 	.thumb
-.L_03000cfc:
+	.global IwramSoundMixNextChannel
+IwramSoundMixNextChannel:
 	ldr	r0, [sp, #4]
 	subs	r0, #1
 	ble.n	.L_03000d06
 	adds	r4, #64
-	b.n	.L_030007b4
+	b.n	IwramSoundMixEntry
 .L_03000d06:
 	pop	{r4, r5, r6}
 	add	r5, pc, #20

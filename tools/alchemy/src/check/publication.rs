@@ -1405,6 +1405,26 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| included_bytes_reason(path, text))
         .or_else(|| attributes_reason(path, text))
         .or_else(|| runtime_definition_reason(path, text))
+        .or_else(|| address_equate_reason(path, text))
+}
+const ADDRESS_EQUATE_REASON: &str = "assembler equate of a full address: define the name as a label where its bytes are and reference it";
+/// An assembler equate that gives a name a whole 32-bit address, such as
+/// `.set .L_x, 0x080f0144`, in game or reconstruction source. Names are
+/// labels at their bytes; restating an address beside them is a stored
+/// answer, whichever equate directive spells it.
+fn address_equate_reason(path: &str, text: &str) -> Option<&'static str> {
+    let game = path.starts_with("games/") || path.starts_with("recon/");
+    if !game || !listed(extension(path), &["s", "inc", "asm"]) {
+        return None;
+    }
+    static EQUATE: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    let equate = EQUATE.get_or_init(|| {
+        regex::Regex::new(
+            r"(?im)^[ \t]*\.(?:set|equ|equiv|eqv)[ \t]+[^,\s]+[ \t]*,[ \t]*0x[0-9a-f]{8}(?:[^0-9a-z_]|$)",
+        )
+        .expect("address equate pattern")
+    });
+    equate.is_match(text).then_some(ADDRESS_EQUATE_REASON)
 }
 /// The game whose asset roots hold `path`: every directory under
 /// `games/<game>/` except tooling metadata, with `asm/overlays` holding
@@ -3257,17 +3277,25 @@ mod tests {
     fn maintained_assembly_is_source_while_serialized_listings_are_not() {
         let address = 0x0800_0100;
         let listing = format!(
-            ".syntax unified\n.thumb\n.set sub_{address:08x}, 0x{address:08x}\n.global Func_{address:08x}\nFunc_{address:08x}:\n bx lr\n"
+            ".syntax unified\n.thumb\n.global Func_{address:08x}\nFunc_{address:08x}:\n bx lr\n"
+        );
+        let equated = listing.replace(
+            ".thumb\n",
+            &format!(".thumb\n.set sub_{address:08x}, 0x{address:08x}\n"),
         );
         for path in ["recon/tbs/raw/routine.s", "games/X/SRC/ROUTINE.S"] {
             assert_eq!(publication_reason(path, listing.as_bytes(), None), None);
+            assert_eq!(
+                publication_reason(path, equated.as_bytes(), None),
+                Some(ADDRESS_EQUATE_REASON)
+            );
         }
         let objdump = format!("{address:08x}: 4770 bx lr\n");
         assert_eq!(
             publication_data_reason("recon/tbs/raw/routine.s", objdump.as_bytes(), None),
             None
         );
-        let serialized = serde_json::json!({"listing": listing, "instructions": objdump});
+        let serialized = serde_json::json!({"listing": equated, "instructions": objdump});
         assert_eq!(
             publication_data_reason(
                 "recon/tbs/renamed.inc",
@@ -3392,6 +3420,47 @@ mod tests {
         assert_eq!(
             check_push(root.path(), "invalid").unwrap_err(),
             "invalid pre-push update"
+        );
+    }
+    #[test]
+    fn full_address_equates_are_refused_in_game_and_reconstruction_assembly() {
+        let tbs = "games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TABLES.S";
+        let listing = "recon/tbs/raw/overlays/resource_3a7_overlay.s";
+        let refused = [
+            "\t.set\t.L_case_2, 0x080f0144\n",
+            ".set .L_080f9b10__080f9ac2, 0x080f9ac2\n",
+            "  .equ gBuffer, 0x03001B10 @ restated\n",
+            "\t.equiv\tRecordEnd,0x080006fc",
+            "\t.eqv Data_02000100, 0x02000100\n",
+        ];
+        for line in refused {
+            assert_eq!(
+                address_equate_reason(tbs, &format!(".syntax unified\n{line}")),
+                Some(ADDRESS_EQUATE_REASON),
+                "{line:?}"
+            );
+            assert!(address_equate_reason(listing, line).is_some(), "{line:?}");
+            assert!(address_equate_reason("games/THE LOST AGE/SRC/X.INC", line).is_some());
+        }
+        let accepted = [
+            "\t.set FIELD_OVERLAY_LOAD_BIAS, 0x8000\n",
+            "\t.set FOREVER, 0xffff\n",
+            "\t.set Size, . - Start\n",
+            "\t.set .Ldivisor, .Ldivisor + 1\n",
+            "\t.4byte 0x080f0144\n",
+            "@ .set .L_case_2, 0x080f0144 was a restated address\n",
+            "\t.set Wide, 0x080f01440\n",
+        ];
+        for line in accepted {
+            assert!(address_equate_reason(tbs, line).is_none(), "{line:?}");
+        }
+        let restated = "\t.set .L_case_2, 0x080f0144\n";
+        assert!(address_equate_reason("tools/alchemy/src/x.rs", restated).is_none());
+        assert!(address_equate_reason("docs/notes.s", restated).is_none());
+        assert!(address_equate_reason("games/THE BROKEN SEAL/SRC/X.C", restated).is_none());
+        assert_eq!(
+            publication_data_reason(tbs, restated.as_bytes(), None),
+            Some(ADDRESS_EQUATE_REASON)
         );
     }
     #[test]

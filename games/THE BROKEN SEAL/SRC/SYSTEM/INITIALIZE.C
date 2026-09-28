@@ -1,5 +1,7 @@
 #include "DMA.H"
 
+void System_VBlankHandler(void);
+
 /* WAITCNT and SIOCNT values, link-time symbols loaded from the pool. */
 extern u8 Value_00004014;
 extern u8 Value_0000c00f;
@@ -52,7 +54,7 @@ void System_Initialize(void)
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
     *(u16 *)0x04000000 = 0x140;
-    Runtime_SetIrqHandler(0, 1, (void (*)(void))0x08003651);
+    Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
     do { u32 value = (u32)&Value_0000c00f; *(u16 *)0x04000132 = value; } while (0);
     Audio_InitializeRuntimeDefaultsFar();
     Resource_InitializeTable();

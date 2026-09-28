@@ -75,6 +75,7 @@ AlchemyUncredited_080f9abe:
 Func_080f9ac0:
 AlchemyUncreditedEnd_080f9abe:
 	push	{lr}
+.L_080f9ac0_jump:
 	ldr	r2, [r1, #64]
 	ldrb	r0, [r2, #3]
 	lsls	r0, r0, #8
@@ -126,7 +127,6 @@ AlchemyUncreditedEnd_080f9afa:
 .L_080f9afc_0:
 	bx	lr
 
-.set .L_080f9b10__080f9ac2, 0x080f9ac2
 	.global Func_080f9b10
 	.thumb_func
 Func_080f9b10:
@@ -137,7 +137,7 @@ Func_080f9b10:
 	bne.n	.L_080f9b10_repeat
 	adds	r2, #1
 	str	r2, [r1, #64]
-	b.n	.L_080f9b10__080f9ac2
+	b.n	.L_080f9ac0_jump
 .L_080f9b10_repeat:
 	ldrb	r3, [r1, #3]
 	adds	r3, #1
@@ -146,7 +146,7 @@ Func_080f9b10:
 	bl	Func_080f9ab4
 	cmp	ip, r3
 	bcs.n	.L_080f9b10_advance
-	b.n	.L_080f9b10__080f9ac2
+	b.n	.L_080f9ac0_jump
 .L_080f9b10_advance:
 	movs	r3, #0
 	strb	r3, [r1, #3]

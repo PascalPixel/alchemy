@@ -37,10 +37,6 @@ extern struct WorkSlots Data_03001e50;
 extern s32 Data_080c3604[];
 extern u8 Data_080c3620[];
 extern s32 Data_080c3628[];
-extern u8 Value_03000118[];
-
-#define Spark_MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
-
 #define Spark_RatioQ14 ((s32 (*)(s32, s32))0x0300013c)
 
 s32 FixedSqrt(s32 value);
@@ -97,7 +93,7 @@ s32 BattleFx_UpdateStarField(void)
                 pos = spark->pos;
                 for (k = 2; k >= 0; k--) {
                     value = *pos;
-                    step = Spark_MulQ16(Spark_MulQ16(-value >> 8, scale), 0x13000);
+                    step = Iwram_MulQ16(Iwram_MulQ16(-value >> 8, scale), 0x13000);
                     pos[3] = pos[3] - (pos[3] >> 7) + step;
                     *pos = value + pos[3];
                     pos++;
@@ -111,8 +107,8 @@ s32 BattleFx_UpdateStarField(void)
             angle = Random16();
             radius = Random16() + 0x10000;
             half = radius >> 1;
-            spark->pos[0] = Spark_MulQ16(Trig_Cos(angle), half);
-            spark->pos[1] = Spark_MulQ16(Trig_Sin(angle), half);
+            spark->pos[0] = Iwram_MulQ16(Trig_Cos(angle), half);
+            spark->pos[1] = Iwram_MulQ16(Trig_Sin(angle), half);
             if (spark->pos[0] & 1)
                 spark->pos[0] = -spark->pos[0];
             if (spark->pos[1] & 1)

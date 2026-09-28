@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "DMA.H"
 
+extern const u8 Func_0800a37c[];
+
 typedef void (*WordCopyFn)(void *destination, const void *source, s32 size);
 typedef void (*ConvertFn)(void *dst, const void *src, const void *saved);
 
@@ -35,7 +37,7 @@ void Tilemap_ConvertBuffer(void)
 
         do {
             routine = (ConvertFn)Runtime_BumpAllocate(code_size);
-            Dma_Set((void *)0x0800a37c, routine, 0x84000000 | (code_size >> 2),
+            Dma_Set((void *)Func_0800a37c, routine, 0x84000000 | (code_size >> 2),
                     (volatile u32 *)0x040000d4);
         } while (0);
     }

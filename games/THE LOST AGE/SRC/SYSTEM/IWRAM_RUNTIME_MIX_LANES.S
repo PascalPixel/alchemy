@@ -15,21 +15,16 @@
 @ own loop is beyond both approved compilers.
 @ credit: handwritten — TLA IWRAM runtime sound mixer
 .syntax unified
-	.set	.L_03000cf4, 0x03000cf4
-	.set	.L_03000c1c, 0x03000c1c
-	.set	.L_03000eec, 0x03000eec
-	.set	.L_03000b44, 0x03000b44
-	.set	.L_03000b94, 0x03000b94
 	.thumb
 	.arm
 	mov	r8, #0x210
 	orrs	fp, sl, fp, lsl #16
-	beq	.L_03000cf4
+	beq	IwramSoundMixSkipChannel
 	ldr	r6, [pc, #1160]
 	add	r6, r6, #1
 	str	r6, [pc, #1152]
 	tst	r0, #8
-	bne	.L_03000c1c
+	bne	IwramSoundMixBlock
 	push	{r4, r9, ip}
 	movs	r2, r2
 	orreq	r0, r0, #64
@@ -40,7 +35,7 @@
 	ldrsb	r6, [r3], #1
 	ldrsb	ip, [r3]
 	ands	r0, r0, #64
-	bne	.L_03000eec
+	bne	IwramSoundSynthWave
 	sub	ip, ip, r6
 	lsrs	fp, fp, #1
 	adc	fp, fp, #0x8000
@@ -50,7 +45,7 @@
 	lsr	r1, r1, #23
 	orr	r0, r1, r0, lsl #9
 	cmp	r2, r0
-	ble	.L_03000b44
+	ble	IwramSoundMixInterpolated
 	sub	r2, r2, r0
 	ldr	sl, [pc, #500]
 	add	sl, sl, r0
@@ -211,7 +206,7 @@ AlchemyUncreditedEnd_08001074:
 	bgt	.L_030009a4
 	add	ip, pc, #4
 	ldm	ip, {r2, r3, sp}
-	b	.L_03000b94
+	b	IwramSoundMixDone
 AlchemyUncredited_080010a0:
 	.4byte	0x00000000
 	.4byte	0x00000000

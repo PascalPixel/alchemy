@@ -1,7 +1,9 @@
 #include "DMA.H"
+
+extern u8 gWindowWork[];
 void UiWork_UploadDirtyBlocks(void)
 {
-    u8 *work = *(u8 **)0x03001e8c;
+    u8 *work = *(u8 **)gWindowWork;
     u32 flags;
     u8 *src;
     u8 *dst;

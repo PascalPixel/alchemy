@@ -10,7 +10,6 @@
 @ inside another routine's loop are not compiled functions. TBS only.
 @ credit: handwritten — ARM sound-buffer record patched into the IWRAM runtime
 .syntax unified
-	.set	.Lrecord_1, 0x0800049c
 .text
 	.arm
 	.global Func_08000404
@@ -49,4 +48,4 @@ Data_08000404:
 	addmi	r1, r1, #32
 	add	r1, r1, r1, asr #1
 	add	r1, r1, r1, lsl #16
-	b	.Lrecord_1
+	b	IwramCodeRecord1

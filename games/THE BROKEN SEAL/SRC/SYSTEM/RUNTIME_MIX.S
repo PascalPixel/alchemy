@@ -17,11 +17,6 @@
 @ credit: handwritten — IWRAM runtime sound mixer
 .syntax unified
 	.thumb_func
-	.set	.L_audio_0adc, 0x03000adc
-	.set	.L_audio_pcm_block, 0x030009fc
-	.set	.L_audio_wave_mode, 0x03000c8c
-	.set	.L_audio_091c, 0x0300091c
-	.set	.L_audio_096c, 0x0300096c
 	.arm
 
 @ 音源ごとの状態更新と標本合成を行う常駐音響処理。
@@ -67,7 +62,7 @@ IwramSoundMixEntry:
 	movs	r0, #0
 	strb	r0, [r4, #0]
 .L_audio_069a:
-	b.n	.L_audio_0adc
+	b.n	IwramSoundMixNextChannel
 .L_audio_069c:
 	lsls	r0, r6, #25
 	bpl.n	.L_audio_06b8
@@ -153,7 +148,7 @@ IwramSoundMixArm:
 .L_audio_0720:
 	orr	fp, sl, fp, lsl #16
 .L_audio_0724:
-	bcs	.L_audio_pcm_block
+	bcs	IwramSoundMixBlock
 	push	{r4, r9, ip}
 	movs	r2, r2
 	orreq	r0, r0, #64, 0
@@ -164,7 +159,7 @@ IwramSoundMixArm:
 	ldrsb	r6, [r3], #1
 	ldrsb	ip, [r3]
 	ands	r0, r0, #64, 0
-	bne	.L_audio_wave_mode
+	bne	IwramSoundSynthWave
 	sub	ip, ip, r6
 	lsrs	fp, fp, #1
 	adc	fp, fp, #32768
@@ -174,7 +169,7 @@ IwramSoundMixArm:
 	lsr	r1, r1, #23
 	orr	r0, r1, r0, lsl #9
 	cmp	r2, r0
-	ble	.L_audio_091c
+	ble	IwramSoundMixInterpolated
 	sub	r2, r2, r0
 	ldr	sl, [pc, #324]
 	add	sl, sl, r0
@@ -279,6 +274,6 @@ AlchemyUncreditedEnd_08001010:
 	bgt	.L_audio_0820
 	add	ip, pc, #212, 0
 	ldm	ip, {r2, r3, sp}
-	b	.L_audio_096c
+	b	IwramSoundMixDone
 .L_audio_stack_floor:
 	.4byte 0x03007900

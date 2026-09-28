@@ -2,6 +2,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "RESOURCE.H"
 
+void Shop_StepCursor(void);
+
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Battle_ResetEffectCounterFar(void);
 u8 Party_ListActiveOwnersFar(void *);
@@ -40,5 +42,5 @@ void Shop_InitializeCursorWork(void)
     slot = Resource_FindFreeEntry();
     *(u16 *)(work + 0x398) = slot;
     VramBlock_LoadCached(slot, 128, (const void *)0x080b3ac0);
-    Scheduler_AddOrUpdateCallback(0x080b00f5, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Shop_StepCursor, 0xc80);
 }

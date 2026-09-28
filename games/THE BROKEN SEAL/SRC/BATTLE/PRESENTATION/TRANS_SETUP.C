@@ -1,13 +1,16 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_PRESENTATION.H"
+
+extern u8 gCameraWork[];
+extern u8 gProjection[];
 void Graphics_PrepareTransferInIwramWork();
 
 void BattlePres_SetupTransitionScene(s32 x, s32 depth, s32 y, s32 mode)
 {
-    struct BattleCamera *scene = *(struct BattleCamera **)0x03001e80;
+    struct BattleCamera *scene = *(struct BattleCamera **)gCameraWork;
     s32 *pos = scene->pos;
-    s32 *hud = (s32 *)0x03001ce0;
+    s32 *hud = (s32 *)gProjection;
     s32 scale = Math_Div(mode << 16, 100);
     s32 render_bounds[3];
     s32 measured_bounds[3];

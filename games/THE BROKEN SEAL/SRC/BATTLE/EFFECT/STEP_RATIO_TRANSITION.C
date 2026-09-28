@@ -1,6 +1,8 @@
 #include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 
+extern u8 Data_03001af4[];
+
 extern u8 *gMapWork;
 
 u8 *Runtime_AllocateBlock(s32 kind, s32 size);
@@ -31,7 +33,7 @@ s32 BattleFx_StepRatioTransition(void)
     (*step)++;
     offset = *from + Math_Div(delta * *step, *duration);
     *(s32 *)(work + 0x34c) = Iwram_MulQ16(*(s32 *)(work + 0x348), offset);
-    *(u32 *)0x03001af4 = *(u16 *)(work + 0x118) + 1;
+    *(u32 *)Data_03001af4 = *(u16 *)(work + 0x118) + 1;
     if (*step == *duration) {
         *duration = 0;
         Scheduler_RemoveCallback(BattleFx_StepRatioTransition);

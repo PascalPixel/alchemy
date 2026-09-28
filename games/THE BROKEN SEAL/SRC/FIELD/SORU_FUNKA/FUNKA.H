@@ -224,4 +224,15 @@ extern u8 Data_0200b998[];
 void SoruFunka_StepEmbers();
 void SceneState_UpdateRandomTimerLevel();
 
+/* The scene's own variables after the image:
+ * the sixteen embers' states and the ember timer, the ten arcing effects and
+ * their timers, and the ember spawn mask with the level and timer that pick
+ * it. */
+extern s32 gEmberState[16];
+extern s32 gEmberTimer;
+extern s32 gArcEffectTimers[10];
+extern s32 gEmberMask;
+extern s32 gEmberLevel;
+extern s32 gEmberLevelTimer;
+
 #endif

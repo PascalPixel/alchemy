@@ -43,7 +43,7 @@ pub fn compare(candidate: &str, reference: &str, symbol: &str) -> Comparison {
     compare_symbols(candidate, symbol, reference, symbol)
 }
 
-pub fn compare_symbols(
+fn compare_symbols(
     candidate: &str,
     candidate_symbol: &str,
     reference: &str,
@@ -62,7 +62,7 @@ pub fn compare_symbols(
     )
 }
 
-pub fn compare_symbols_at(
+fn compare_symbols_at(
     candidate: &str,
     candidate_symbol: &str,
     reference: &str,

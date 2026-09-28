@@ -8,7 +8,6 @@ struct ResourceMenuWork {
     u16 selection;
 };
 extern struct ResourceMenuWork *Data_03001f38;
-extern const u8 Value_0000ffff;
 extern const u8 Value_00000c76;
 void *AffineEffect_InitializeWork(void);
 void Menu_AppendResourceEntry(s32);
@@ -46,7 +45,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
     Menu_CenterResourceEntries(17, 7, 0);
     if (mode != 0) {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, (s32)&Value_00000c76);
-        work->selection = (s32)&Value_0000ffff;
+        work->selection = 0xffff;
         window = UiWindow_Create(7, 0, 17, 4, 2);
         msg = 0xc77;
         upper = &work->upper_window;
@@ -60,7 +59,7 @@ s32 Menu_SelectResourceLayout(s32 mode)
         UiText_DrawResource(msg, work->lower_window, 8, 22);
     } else {
         Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, (s32)&Value_00000c76);
-        work->selection = (s32)&Value_0000ffff;
+        work->selection = 0xffff;
         window = UiWindow_Create(6, 0, 18, 4, 2);
         upper = &work->upper_window;
         *upper = window;

@@ -88,7 +88,6 @@ extern u8 FuneHeya_SceneTable11[];
 extern u8 FuneHeya_SceneTable12[];
 extern u8 FuneHeya_SceneTable13[];
 extern u8 FuneHeya_SceneTable14[];
-extern u8 Value_00000925;
 void Battle_ResetEffectCounterFar();
 void FuneHeya_TurnActorToOpenSide(u8 *obj);
 u8 *Object_GetByIdFar(s32 n);
@@ -294,7 +293,7 @@ void FieldScene_RunScene3b1_020007f8(void)
 void SceneDialogue_ShowLine1E19Or1D50(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet((s32)&Value_00000925) != 0) {
+    if (GameFlag_IsSet(0x925) != 0) {
         Event_SetMessage(LinkedMessage_YouGoingRow);
         Event_AskYesNo(10, 0);
     } else {

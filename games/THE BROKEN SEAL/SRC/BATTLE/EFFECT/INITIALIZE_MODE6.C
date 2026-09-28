@@ -62,7 +62,6 @@ extern u8 Value_0000006e;
 extern u8 Value_0000006f;
 extern u8 Value_00000073;
 extern u8 Value_00000076;
-extern u8 Value_00000121;
 
 typedef struct Scale {
     s32 x;
@@ -460,7 +459,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         work->sparks[i].x = seat[0] / 2;
     }
     Resource_LoadAndDecompress((s32)&Value_0000006f, work, 1, 1);
-    Audio_PlayCue((s32)&Value_00000121);
+    Audio_PlayCue(0x121);
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x1010;
 

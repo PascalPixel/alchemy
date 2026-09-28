@@ -29,7 +29,6 @@ extern u8 *gWindowWork;
 extern volatile u32 gKeyState;
 extern u8 Value_00000b17[];
 extern u8 Value_00000b18[];
-extern u8 Value_00001001[];
 extern u8 Value_0000045f[];
 
 void ItemMenu_ResetCategory(void);
@@ -74,7 +73,8 @@ s32 DjinnMenu_ShowCurrentList(void)
             s32 id = row * 20 + col;
 
             if (GameFlag_TestFar(48 + id)) {
-                UiWindow_SetTilemapEntryFar(window, (s32)Value_00001001 + row,
+                /* Tilemap entry: tile 1 + row in palette 1. */
+                UiWindow_SetTilemapEntryFar(window, 0x1001 + row,
                     row * 7 + 1, col + 3, 0);
                 UiText_DrawCharacterAtOffsetFar((s32)Value_0000045f + id,
                     window, row * 56 + 16, col * 8 + 24);

@@ -11,7 +11,7 @@ void Main_08015210(s32 message, s32 a1, s32 a2);
 void SetEffectRecordMode();
 void FieldScene_RedrawActorFootprint(s32 actor);
 void FieldScene_RunSupplementalSequenceOne(s32 mode);
-void FieldScene_RunScene39b_02001208(void);
+void MakyuriHeya_ArriveWithSparks(void);
 void SceneEffect_SpawnParticleRowsByMode(s32 mode);
 void FieldScene_RunPrimarySequence(s32 mode);
 void Engine_MapWaitWorkValuesBelow256(void);
@@ -237,7 +237,7 @@ s32 Scene_RunSelectorEntry(void)
             break;
         case 3:
         case 13:
-            FieldScene_RunScene39b_02001208();
+            MakyuriHeya_ArriveWithSparks();
         case 1:
         case 2:
         case 12:
@@ -333,7 +333,7 @@ s32 Scene_RunSelectorEntry(void)
             Call2((void (*)())Engine_TaskAddCallback, TASK_DCD, 0xc80);
             if (Engine_GameFlagIsSet(0x109))
                 break;
-            FieldScene_RunScene39b_02001208();
+            MakyuriHeya_ArriveWithSparks();
             Main_0808a5e0(170);
             Call2((void (*)())Engine_ColorBufferApplySource, 128 << 9, 0);
             Call2((void (*)())Engine_ColorBufferApplyTarget, 0x10003, 1);

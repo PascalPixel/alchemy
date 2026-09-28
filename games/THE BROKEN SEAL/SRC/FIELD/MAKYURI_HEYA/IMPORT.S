@@ -12,6 +12,9 @@
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_TaskRemoveCallback
 	.thumb_func
@@ -25,8 +28,17 @@ Engine_RandomNext:
 	.thumb_func
 FixedSqrt:
 	overlay_veneer FixedSqrtFar
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
+	.global Vector_AddPolarOffset
+	.thumb_func
+Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.global Runtime_AllocateBlock
+	.thumb_func
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	.global AnimationObjects_SelectAnimation
 	.thumb_func
@@ -44,6 +56,9 @@ Engine_ObjectSetScript:
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
+	.global Engine_ObjectDispatchRelease
+	.thumb_func
+Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Object_SetPosition
@@ -76,6 +91,9 @@ Object_CheckMovementCollision:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Engine_ObjectSetBlendMode
+	.thumb_func
+Engine_ObjectSetBlendMode:
 	overlay_veneer Animation_SetStateField5Bits2To3Far
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
@@ -85,12 +103,27 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 Engine_MapRenderWaitForValues:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiWork_PushValueSlot
+	.thumb_func
+UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
 	overlay_veneer UiText_ShowCenteredMessageFar
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
 	overlay_veneer Owner_RecalculateStatsFar
+	.global Inventory_Find
+	.thumb_func
+Inventory_Find:
 	overlay_veneer Inventory_FindFar
+	.global PartyInventory_FindOwner
+	.thumb_func
+PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -143,6 +176,9 @@ Engine_ActorStartAction:
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ActorMoveToAndWait
+	.thumb_func
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -194,6 +230,9 @@ Engine_ActorFaceEachOther:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	.global Engine_ObjectSetPalette
+	.thumb_func
+Engine_ObjectSetPalette:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func
@@ -211,6 +250,9 @@ Engine_EventShowMessageAndWait:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Engine_ActorSetSpritePriority
+	.thumb_func
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Engine_ActorShowEmote
 	.thumb_func
@@ -233,6 +275,9 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global BattleFx_SetPhaseRequest
+	.thumb_func
+BattleFx_SetPhaseRequest:
 	overlay_veneer BattleFx_SetPhaseRequestFar
 	.global Engine_ColorBufferApplyTarget
 	.thumb_func
@@ -246,6 +291,9 @@ Engine_ColorBufferApplySource:
 	.thumb_func
 Engine_ColorBufferInterpolate:
 	overlay_veneer BattleFx_StartBufferInterpolationFar
+	.global Engine_EventOpenScreen
+	.thumb_func
+Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
 	.global Engine_EventCloseScreen
 	.thumb_func
@@ -255,14 +303,35 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Engine_ItemShowFound
+	.thumb_func
+Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
 	overlay_veneer ObjectTable_GetFar
 	overlay_veneer BattleFx_StartFadeOverlayFar
+	.global Engine_PsynergyPlayEffect
+	.thumb_func
+Engine_PsynergyPlayEffect:
 	overlay_veneer Field_DispatchTypeHandlerFar
+	.global Engine_PsynergyBegin
+	.thumb_func
+Engine_PsynergyBegin:
 	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	.global Engine_PsynergySetTarget
+	.thumb_func
+Engine_PsynergySetTarget:
 	overlay_veneer BattleFx_SetupObjectPairFar
+	.global Engine_PsynergyLowerHands
+	.thumb_func
+Engine_PsynergyLowerHands:
 	overlay_veneer EffectRuntime_StopCurrentObjectFar
+	.global Engine_PsynergyRaiseHands
+	.thumb_func
+Engine_PsynergyRaiseHands:
 	overlay_veneer EventObject_InitializeFar
+	.global Engine_ActorWalkByAndWait
+	.thumb_func
+Engine_ActorWalkByAndWait:
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global BattleFx_PlayQueuedSound

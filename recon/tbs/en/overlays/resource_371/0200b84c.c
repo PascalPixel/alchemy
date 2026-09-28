@@ -1,10 +1,13 @@
+/* Draft of resource_371 0x0200b84c..0x0200b8fc (176 bytes with pool),
+ * WorldMap_RaiseActors; the listing keeps the rows. Remaining difference:
+ * the reference loads the exit scene 2 for Event_SetPairWork1c0 from its
+ * literal pool, a link-time value; the integer scene is an immediate (172
+ * bytes, 2 differ at +0x90). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 
-void Func_0200c2e4(void);
-void Func_0200c404(s32 scene, s32 entrance);
-extern u8 LinkedScene_WorldMap;
+void Event_SetPairWork1c0(s32 scene, s32 entrance);
 
 void WorldMap_RaiseActors(void)
 {
@@ -12,7 +15,7 @@ void WorldMap_RaiseActors(void)
     struct FieldActor *other = Actor_Get(54);
     s32 frames;
 
-    Event_End();
+    Event_Begin();
     Camera_MoveTo(-1, -1, -1, 0);
     Audio_PlayCue(219);
     Actor_SetSpriteFlags(actor, 0);
@@ -28,7 +31,7 @@ void WorldMap_RaiseActors(void)
     }
     Event_CloseScreen();
     Event_WaitForScreen();
-    Func_0200c2e4();
+    Event_End();
     GameFlag_Set(0x122);
-    Func_0200c404((s32)&LinkedScene_WorldMap, 27);
+    Event_SetPairWork1c0(2, 27);
 }

@@ -1,14 +1,19 @@
+/* Draft of resource_371 0x020086ec..0x02008a8c (928 bytes with pool),
+ * WorldMap_EnterScene, the overlay's first entry; the listing keeps the rows.
+ * Remaining difference: the reference loads the exit scenes 0x3a and 0xbb
+ * for Event_SetPairWork1c0 from its literal pool, link-time values; integer
+ * scenes are immediates (920 bytes, 54 differ from +0x38). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 void Scene_RunScene371SequenceA(s32 direction);
-void Main_0808a238(s32 a0, s32 a1);
+void Event_SetPairWork1c0(s32 a0, s32 a1);
 void Engine_PartyRemoveItem(s32 item);
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
-void Main_080091d0(s32 a0, s32 a1, s32 a2, s32 a3);
-s32 Main_080770e0(s32 flag);
-void WorldMap_PrepareTriggerActor(s32 actor);
-void WorldMap_RunActorSequence(void);
+void Map_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3);
+s32 GameFlag_GetByte(s32 flag);
+void WorldMap_ActivateSite138(s32 actor);
+void WorldMap_RunBlackOrbScene(void);
 void RunEventScript01(void);
 void FieldScene_RunActorTransferSequence(void);
 void FieldScene_RunScene371_020017fc(void);
@@ -22,13 +27,10 @@ void FieldScene_RunScene371_0200357c(void);
 void StoryScene_StartTransition(void);
 void FieldScene_RunActorEightApproach(void);
 void FieldScene_RunActorPresentationSequence(void);
-void Local_02000598(void);
-void Local_02003678(void);
+void MapActor_UpdateContact(void);
+void StoryScene_UpdateSelectedActorProgress(void);
 
-extern s32 Data_0200e79c;
-extern u8 Data_0000003a[];
-extern u8 Data_000000bb[];
-extern s16 Data_02000240_t[][1];
+extern s32 gWorldMapTriggerActor;
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -65,10 +67,10 @@ s32 WorldMap_EnterScene(void)
     }
     if (*entrance == 90) {
         Scene_RunScene371SequenceA(0);
-        Main_0808a238((s32)Data_0000003a, 1);
+        Event_SetPairWork1c0(0x3a, 1);
     } else if (*entrance == 91) {
         Scene_RunScene371SequenceA(1);
-        Main_0808a238((s32)Data_000000bb, 93);
+        Event_SetPairWork1c0(0xbb, 93);
     } else if (*entrance == 78) {
         Engine_EventBegin();
         Engine_PartyRemoveItem(242);
@@ -80,9 +82,9 @@ s32 WorldMap_EnterScene(void)
         Engine_TaskWait(1);
         Engine_CameraSetSpeed(0x80000, 0x10000);
         Engine_GameFlagClear(0x12f);
-        Engine_TaskAddCallback(Local_02000598, 0xc80);
+        Engine_TaskAddCallback(MapActor_UpdateContact, 0xc80);
         if (Engine_GameFlagIsSet(0x90a) == 0) {
-            Call4(Main_080091d0, 128, 256, 176, 56);
+            Call4(Map_SetWindowCellTile, 128, 256, 176, 56);
         }
         switch (*entrance) {
         case 1:
@@ -94,13 +96,13 @@ s32 WorldMap_EnterScene(void)
         case 33:
             if (Engine_GameFlagIsSet(0x109) != 0) {
                 if (Engine_GameFlagIsSet(0x85d) == 0 && Engine_GameFlagIsSet(0x234) != 0) {
-                    Data_0200e79c = 55;
+                    gWorldMapTriggerActor = 55;
                     Call3(Engine_ActorSetPosition, 55, 0x17940000, 0xd480000);
-                    Engine_ActorGet(Data_0200e79c)->facing = 0x3000;
-                    WorldMap_PrepareTriggerActor(Data_0200e79c);
+                    Engine_ActorGet(gWorldMapTriggerActor)->facing = 0x3000;
+                    WorldMap_ActivateSite138(gWorldMapTriggerActor);
                 }
             } else if (Engine_GameFlagIsSet(0x85d) == 0 && Engine_GameFlagIsSet(0x9b8) == 0) {
-                WorldMap_RunActorSequence();
+                WorldMap_RunBlackOrbScene();
             }
             break;
         case 49:
@@ -144,10 +146,10 @@ s32 WorldMap_EnterScene(void)
         case 76:
         case 77:
             Engine_GameFlagSet(0x11c);
-            if (Main_080770e0(0x2f8) != 0) {
+            if (GameFlag_GetByte(0x2f8) != 0) {
                 state = (u8 *)&gGameState;
                 state[0x1f2] = 2;
-                Engine_TaskAddCallback(Local_02003678, 0xc80);
+                Engine_TaskAddCallback(StoryScene_UpdateSelectedActorProgress, 0xc80);
             }
             break;
         case 75:

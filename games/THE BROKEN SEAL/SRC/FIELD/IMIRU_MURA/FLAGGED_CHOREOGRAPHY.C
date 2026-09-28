@@ -333,7 +333,7 @@ void Func_020042e8();
  *   0x0200a300  SceneWork_SetStepValue                    (0x0808a170)
  *   0x0200a310  BattleRuntime_RunThenWaitIfModeZero       (0x0808a188)
  *   0x0200a320  ObjectMotion_ArmCallback                  (0x0808a1b8)
- *   0x0200a330  BattleEffect_SpawnLinkedResourceObject    (0x0808a1e8)
+ *   0x0200a330  BattleFx_SpawnLinked    (0x0808a1e8)
  *   0x0200a338  BattleRuntime_WaitIfModeZero              (0x0808a1f0)
  *   0x0200a340  ObjectMotion_SetSpeedLimitAndAcceleration (0x0808a208)
  *   0x0200a348  ObjectMotion_PlaceWithinCameraBounds      (0x0808a210)

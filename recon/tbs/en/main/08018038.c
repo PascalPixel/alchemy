@@ -63,7 +63,6 @@
 
 /* alchemy inspect names this callee Runtime_ReleaseHeapBlock; the project has
    no header alias for it yet, so declare the alias beside the prototype. */
-#define Runtime_ReleaseHeapBlock Func_08002dd8
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Func_08002dd8(s32 kind);

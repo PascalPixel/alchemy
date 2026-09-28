@@ -1,4 +1,4 @@
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&PrimaryRuntimeSelector) {
         return (s32)PrimaryOverlayData;

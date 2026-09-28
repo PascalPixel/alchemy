@@ -2,7 +2,6 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define CalculateFacingAngle Func_02003afa
 #define ObjectMotion_SetPositionAndReset_1(a0, a1, a2) Value3(Engine_ActorWalkToAndWait, a0, a1, a2)
 #define Audio_PlayCue_1(a0) Value1(Engine_AudioPlayCue, a0)
 #define ObjectMotion_ResetAndSetPosition_2(a0, a1, a2) Value3(Engine_ActorSetDestination, a0, a1, a2)
@@ -11,7 +10,6 @@
 #define ObjectMotion_CommitCurrentPositionAndActivate_1(a0) Value1(Engine_ActorWaitForMove, a0)
 #define SharedWorkData_SetFirstAndSecondFields_1(a0, a1) Call2(Func_02006c72, a0, a1)
 #define BattleEffect_ComputeWeightedResultAndDispatch_1(a0, a1) Call2(Func_02006c6a_a, a0, a1)
-#define WORK_BYTE_22B (Data_02000240[0x22B])
 #define Scene_GetRecord_1(a0) Value1(Engine_ActorGet, a0)
 #define Scene_GetRecord_2(a0) Value1(Engine_ActorGet, a0)
 #define Scene_GetRecord_3(a0) Value1(Engine_ActorGet, a0)
@@ -102,7 +100,7 @@ void Func_02004042(s32, s32);
 void Func_0200403a(s32, s32);
 void Func_0200406e(s32, s32);
 void Func_02004066(s32, s32);
-s32 Func_02003afa(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 void Func_0200409a(s32, s32);
 void Func_02004092(s32, s32);
 u8 *Func_02004812(s32);
@@ -1663,7 +1661,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
     ObjectMotion_SetVariantCallback_1(0, 2);
     ObjectMotion_CommitCurrentPositionAndActivate_1(8);
     do {
-        WORK_BYTE_22B = 3;
+        ((u8 *)&gGameState)[0x22B] = 3;
     } while (0);
     SharedWorkData_SetFirstAndSecondFields_1((s32)&Value_00000056, 99);
     BattleEffect_ComputeWeightedResultAndDispatch_1(53, 3);

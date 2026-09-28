@@ -106,7 +106,7 @@ extern u8 Data_0200e250[];
 extern u8 Data_0200de30[];
 extern u8 Data_0200cf2c[];
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
-extern u8 Value_00000854;
+extern u8 MsgNoEffect;
 extern u8 Value_000012c3;
 extern s32 Data_0200e4a8[];
 extern s32 Data_0200e4c0[];

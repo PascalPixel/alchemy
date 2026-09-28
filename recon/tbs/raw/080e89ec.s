@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080e89ec
-	.global Func_080e89ec
+	.global BattleEffect_RunDualParticleStream
 	.thumb_func
 Unnamed_080e89ec:
-Func_080e89ec:
+BattleEffect_RunDualParticleStream:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

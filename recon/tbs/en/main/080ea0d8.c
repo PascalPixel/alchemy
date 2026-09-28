@@ -73,14 +73,7 @@ typedef struct Scale {
     s32 y;
 } Scale;
 
-#define BattleFx_DotCells Data_080ede48
-#define BattleFx9_UnitScale Data_080edad0
-#define BattleFx9_BurstHeights Data_080eef28
-#define BattleFx9_BurstCells Data_080eef30
-#define BattleFx9_ShardCells Data_080eef3e
-#define BattleFx9_ShardWidths Data_080eef4a
-#define BattleFx9_ShardHeights Data_080eef50
-extern const u16 BattleFx_DotCells[];
+extern const u16 ParticleStreams_CellOffsets[];
 extern const Scale BattleFx9_UnitScale;
 extern const u8 BattleFx9_BurstHeights[];
 extern const u16 BattleFx9_BurstCells[];
@@ -116,7 +109,6 @@ struct IoWriteQueue {
     u16 pad;
     u32 entries[32][3];
 };
-#define gIoWriteQueue Data_02002090
 extern struct IoWriteQueue gIoWriteQueue;
 
 #define REG_IME (*(volatile u16 *)0x04000208)
@@ -328,7 +320,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 if (far < z) {
                     far = z;
                 }
-                draw(canvas, ramp + BattleFx_DotCells[size - 1], scene[0] - size / 2, scene[1] - size, size,
+                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
                     size * 2);
                 if (frame == 64) {
                     SPARKS[i4].velocity_x += (Trig_Sin(SPARKS[i4].variant) * 255) >> 3;
@@ -366,7 +358,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 size = Math_Div(scene[2], 20) + 2;
                 scene[0] += 60;
                 scene[1] += 80;
-                draw(canvas, ramp + BattleFx_DotCells[size - 1], scene[0] - size / 2, scene[1] - size, size,
+                draw(canvas, ramp + ParticleStreams_CellOffsets[size - 1], scene[0] - size / 2, scene[1] - size, size,
                     size * 2);
             }
         }
@@ -450,7 +442,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
             n = (frame - 144) / 2;
             work->transfer_value = 75;
             if (n <= 6) {
-                u8 *cell = work->sheet + n * 770 + BattleFx_DotCells[7] + 0x2710;
+                u8 *cell = work->sheet + n * 770 + ParticleStreams_CellOffsets[7] + 0x2710;
                 high = 8;
                 Unnamed_080ed408(47, 7, 7, 3, 2);
                 blit = slots[47];
@@ -708,7 +700,7 @@ void Unnamed_080ea0d8(struct BattleEffectArgument *efx)
                 s32 angle = i18 << 8;
                 x = ((r2 * Trig_Sin(angle)) >> 16) - 5;
                 y = (r2 * Trig_Cos(angle)) >> 17;
-                draw(canvas, ramp + BattleFx_DotCells[9], x + 60, y + 50, 10, 20);
+                draw(canvas, ramp + ParticleStreams_CellOffsets[9], x + 60, y + 50, 10, 20);
             }
         }
 

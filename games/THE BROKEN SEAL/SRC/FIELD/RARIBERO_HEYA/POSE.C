@@ -9,17 +9,6 @@ enum PoseMessage {
 };
 
 
-#define SceneActor_SetActor14Pose258 Func_02000030
-#define SceneData_GetTable9438 Func_02000044
-#define SceneData_SelectTableByWord224 Func_0200004c
-#define SceneData_GetTable96d0 Func_0200007c
-#define SceneData_SelectTableBySceneIdAndFlag9a7 Func_02000084
-#define FieldScene_RunSequenceA Func_020003f4
-#define FieldScene_RunThreeCallSequence Func_02000468
-#define SceneState_ForwardWord16cAndApply7b Func_0200048c
-#define SceneData_SelectScriptBySceneIdAndFlag9a7 Func_020004b0
-#define FieldScene_RunPrimaryScript Func_02000508
-#define FieldScene_RunSecondaryScript Func_02000eec
 
 extern u8 Value_000000b3;
 extern u8 Data_02009690[];

@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define KorimaMagari_RunReturnSequence Func_020007e0
-
 extern u8 Data_00000001[];
 void Func_02001882();
 void Func_02001888();

@@ -174,7 +174,6 @@ struct OrbitingParticleGlobals {
 extern struct OrbitingParticleGlobals gGameState;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Vector_AddPolarOffset(
     s32 magnitude,
     s32 angle,
@@ -214,24 +213,24 @@ void BattleFx_RunOrbitingParticles(void)
             u32 initial_scale;
             s32 magnitude;
 
-            initial_scale = (Rand() >> 1) + 0x8000;
+            initial_scale = (Random16() >> 1) + 0x8000;
             particle->scale_y = initial_scale;
             particle->scale_x = initial_scale;
-            if ((Rand() & 1) != 0)
+            if ((Random16() & 1) != 0)
                 particle->update = BattleFx_UpdateOrbitingParticleLeft;
             else
                 particle->update = BattleFx_UpdateOrbitingParticleRight;
 
-            particle->rotation = Rand();
+            particle->rotation = Random16();
             particle->lifetime = 60;
-            particle->orbit_angle = Rand();
+            particle->orbit_angle = Random16();
             Animation_ApplyChildValuesFar(particle, 9);
 
             p->x = scene->origin.x;
             p->y = scene->origin.y;
             p->z = scene->origin.z;
-            magnitude = (Rand() << 2) + 0x20000;
-            Vector_AddPolarOffset(magnitude, Rand(), p);
+            magnitude = (Random16() << 2) + 0x20000;
+            Vector_AddPolarOffset(magnitude, Random16(), p);
             particle->orbit_center.x = p->x;
             particle->orbit_center.y = p->y;
             particle->orbit_center.z = p->z;

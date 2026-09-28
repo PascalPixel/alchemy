@@ -7,8 +7,6 @@
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
 
-#define BattlePres_RunEncounterOrUnitTrigger Func_080b9dc4
-
 struct BattlePresentationState {
     s32 mode;
     u8 unknown_04[12];
@@ -24,7 +22,7 @@ struct BattleTrigger {
     u8 unit_id;
 };
 
-struct BattleUnit *Func_08077008(s32 unit_id);
+struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void Func_080c10e8(u16 *, s32);
 void Func_080151c8(s32 message_id);
 void Func_080bb65c(void);
@@ -34,7 +32,7 @@ u32 Func_08004458(void);
 void Func_080bac6c(s32 unit_id);
 void Func_080b7e60(s32 unit_id);
 
-s32 BattlePres_RunEncounterOrUnitTrigger(struct BattleTrigger *trigger)
+s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattleTrigger *trigger)
 {
     u8 *presentation_addr = (u8 *)0x03001f00;
     struct BattlePresentationState *presentation =
@@ -63,7 +61,7 @@ s32 BattlePres_RunEncounterOrUnitTrigger(struct BattleTrigger *trigger)
             s32 index = BattleParty_ListLivingUnits(1, (u16 *)unit_ids) - 1;
 
             while (index != -1) {
-                struct BattleUnit *unit = Func_08077008(unit_ids[index]);
+                struct BattleUnit *unit = Owner_GetStateFar(unit_ids[index]);
 
                 if (unit->stun == 0 && unit->sleep == 0) {
                     Func_080b8064(unit_ids[index]);

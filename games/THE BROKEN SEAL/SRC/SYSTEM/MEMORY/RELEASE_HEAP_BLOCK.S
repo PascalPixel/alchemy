@@ -34,9 +34,6 @@ AlchemyUncreditedEnd_08002dee:
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
-	.global Func_08002df0
-	.thumb_func
-Func_08002df0:
 	.global Party_Do
 	.thumb_func
 Party_Do:

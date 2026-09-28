@@ -355,9 +355,9 @@ Func_02000194:
 	.4byte 0x020092c8
 	.section .text.x020083f0,"ax",%progbits
 	.p2align 2
-	.global Func_020003f0
+	.global Scene_RunKorimaMagariSequence
 	.thumb_func
-Func_020003f0:
+Scene_RunKorimaMagariSequence:
 	push {r5, r6, lr}
 	sub sp, #12
 	bl 0x0200909c
@@ -796,9 +796,9 @@ Func_020003f0:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_020007e0
+	.global KorimaMagari_RunReturnSequence
 	.thumb_func
-Func_020007e0:
+KorimaMagari_RunReturnSequence:
 	push {r5, lr}
 	sub sp, #8
 	bl 0x0200909c

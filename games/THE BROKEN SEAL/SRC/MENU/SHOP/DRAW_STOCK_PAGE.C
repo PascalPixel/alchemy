@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "FIXED_MATH.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 void UiWindow_Clear(s32 window);
@@ -22,7 +23,7 @@ void Shop_DrawStock(s32 window, s32 selected)
     struct ItemDefinition *definition;
     u8 *icon;
 
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     item_ids = shop->stock_item_ids;
     item_count = shop->stock_count;
     first = selected - Math_Mod(selected, 7);

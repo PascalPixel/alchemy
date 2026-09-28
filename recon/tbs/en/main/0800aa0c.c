@@ -94,7 +94,7 @@ extern const u8 Data_0801310c[];
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 u32 Runtime_BumpAllocate(s32 size);
-void Func_08002df0(void *allocation);
+void Sys_Free(void *allocation);
 void Runtime_ReleaseHeapBlock(s32 id);
 u32 Func_08005340(const void *source, void *destination);
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
@@ -296,7 +296,7 @@ s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
                     tmp = (u8 *)Runtime_BumpAllocate(0x400);
                     draw(Resource_DecompressLz(e->frames[e->frame], tmp),
                          buf, e->param);
-                    Func_08002df0(tmp);
+                    Sys_Free(tmp);
                 } else {
                     decoded = ((SelectFn)0x030005c0)(e->frames[e->frame], buf);
                     if (decoded != 0) {
@@ -342,7 +342,7 @@ s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
                 dst++;
                 src++;
             }
-            Func_08002df0(mask);
+            Sys_Free(mask);
         }
 
         tile = VramBlock_LoadCached(obj->slot, size, 0);
@@ -352,7 +352,7 @@ s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
         obj->tile = (u16)((tile & 0x3ff) | (obj->tile & 0xfffffc00));
         obj->dirty = 0;
         ctx->used += size;
-        Func_08002df0(buf);
+        Sys_Free(buf);
     }
 
     if (held == 0) {

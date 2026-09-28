@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "UI.H"
+extern struct ShopRuntime *gMenuWork;
 
 /* main:080b0aac Shop_SelBuy - hand-written draft, 523 of 636 halfwords
    differ (1256 of 1272 bytes). The control flow matches the ROM: real
@@ -44,7 +45,7 @@ void WaitFrames(s32 frames);
 
 s32 Shop_SelBuy(void)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     s32 price_window = 0;
     s32 stock_window;
     s32 message_window;
@@ -86,8 +87,8 @@ outer:
                 redraw = 0;
                 Shop_PlaceCursor((void *)stock_window, Math_Mod(cursor, 7) * 32 - 8, 8);
                 shop->mode = 4;
-                Shop_DrawStockPage(stock_window, cursor);
-                Shop_DrawMessage(message_window, item_id + (s32)&MsgItemPlainName);
+                Shop_DrawStock(stock_window, cursor);
+                Shop_DrawMsg(message_window, item_id + (s32)&MsgItemPlainName);
                 RenderOutput_RedrawSavedRectFar(price_window);
                 Shop_DrawItemPrice(price_window, item_id, stock_item->price, 0);
             }
@@ -159,9 +160,9 @@ outer:
                 member = shop->party_member_ids[cursor];
                 Shop_PlaceCursor((void *)party_window, cursor * 24 - 12, 0);
                 shop->mode = 3;
-                Shop_UpdatePartyMemberList(party_window, cursor, shop->selected_item);
+                Shop_DrawParty(party_window, cursor, shop->selected_item);
                 if (Item_GetEquipmentGroupFar(shop->selected_item) == 0)
-                    Shop_DrawPartyMemberItems(item_window, member, shop->selected_item);
+                    Shop_DrawUnitItem(item_window, member, shop->selected_item);
                 else
                     Func_080b1260(item_window, member, shop->selected_item);
             }
@@ -189,11 +190,11 @@ outer:
                 }
                 Audio_PlayCue(0x70);
                 WaitFrames(1);
-                quantity = Shop_SelectPurchaseQuantity(member, shop->selected_item);
+                quantity = Shop_SelBuyNum(member, shop->selected_item);
                 ask_again = 1;
                 if (quantity == -1)
                     continue;
-                Shop_CompletePurchase(member, shop->selected_item, quantity);
+                Shop_BuyDone(member, shop->selected_item, quantity);
                 Shop_BuySpecialItem(party_window, item_window);
                 result = 0;
                 goto close_party;

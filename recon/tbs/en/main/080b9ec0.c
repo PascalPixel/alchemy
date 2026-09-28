@@ -12,8 +12,6 @@ extern u8 Value_00000855;
 extern u8 Value_00000c80;
 extern u8 Value_00004000;
 
-#define BattlePres_RunUnitTransition Func_080b9ec0
-
 struct BattlePresentationSelection {
     u8 primary_unit;
     s8 unit_count;
@@ -34,7 +32,7 @@ struct BattlePresentationUnitInfo {
 #define FIELD16(base, offset) (*(u16 *)((u8 *)(base) + (offset)))
 #define FIELD32(base, offset) (*(u32 *)((u8 *)(base) + (offset)))
 
-void BattlePres_RunUnitTransition(
+void BattlePresentation_RunUnitTransition(
     struct BattlePresentationSelection *selection,
     s32 mode)
 {

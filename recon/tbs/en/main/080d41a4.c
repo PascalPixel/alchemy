@@ -17,7 +17,7 @@
  * Unlike the template, this owner keeps a third heap_cache slot
  * (heap_cache[2], "sprite_sheet") alongside work/canvas, runs an inner
  * per-"kind" loop (0..count-1, count from Data_080ee25e[state->0x18]) that
- * draws a growing/shrinking marker via Func_080072f0 (the r3-slot
+ * draws a growing/shrinking marker via _call_via_r3 (the r3-slot
  * trampoline, modeled per games/THE BROKEN SEAL/src/unidentified/main/battle/
  * battle_owner_12.c's established direct-call-with-trailing-target
  * convention) and the rectangle[0] blit routine, spawns particles into the
@@ -40,7 +40,7 @@ extern u16 Data_080ede48[];
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
-void Func_080072f0(s32 a, s32 b, s32 c, s32 target);
+void _call_via_r3(s32 a, s32 b, s32 c, s32 target);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 s32 Func_08004458(void);
@@ -92,7 +92,7 @@ void Func_080d41a4(void *object)
     Resource_LoadAndDecompress((s32)&Value_00000073, sprite_sheet, 0, 0);
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18) != 2) {
         void *palette = Func_08002f40((s32)&Value_00000060);
-        Func_080072f0(0x05000000, (s32)palette, 128, 0x03001388);
+        _call_via_r3(0x05000000, (s32)palette, 128, 0x03001388);
     }
     {
         s32 *particle_life;
@@ -139,7 +139,7 @@ void Func_080d41a4(void *object)
             base = j * 8;
             if (frame == base) {
                 Func_080f9010(0x86);
-                Func_080072f0((s32)canvas, 0x4000, 0x10101010, 0x03000168);
+                _call_via_r3((s32)canvas, 0x4000, 0x10101010, 0x03000168);
             }
             if (frame < base) {
                 goto after_range;

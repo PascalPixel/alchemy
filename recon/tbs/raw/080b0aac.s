@@ -30,7 +30,7 @@ Func_080b0aac:
 	bl	UiWindow_CreateFar
 	mov	r2, sl
 	str	r0, [r2, #12]
-	bl	Func_080b10cc
+	bl	Shop_DrawMoney
 	movs	r0, #0
 	movs	r1, #8
 	movs	r2, #15
@@ -96,7 +96,7 @@ Func_080b0aac:
 	ldr	r0, [sp, #28]
 	subs	r1, #8
 	movs	r2, #8
-	bl	Func_080b0a6c
+	bl	Shop_PlaceCursor
 	movs	r2, #234
 	lsls	r2, r2, #2
 	movs	r3, #4
@@ -116,7 +116,7 @@ Func_080b0aac:
 	ldr	r0, [sp, #32]
 	adds	r1, r5, #0
 	movs	r3, #0
-	bl	Func_080b110c
+	bl	Shop_DrawItemPrice
 .L_080b0ba0:
 	ldr	r1, [pc, #552]
 	ldr	r3, [r1, #0]
@@ -316,7 +316,7 @@ Func_080b0aac:
 	subs	r1, #12
 	ldr	r0, [sp, #20]
 	movs	r2, #0
-	bl	Func_080b0a6c
+	bl	Shop_PlaceCursor
 	movs	r2, #234
 	lsls	r2, r2, #2
 	add	r2, sl

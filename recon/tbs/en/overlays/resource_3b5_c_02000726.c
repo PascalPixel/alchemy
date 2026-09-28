@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define Scene_RunSupplementalSequenceOne Func_02000726
-
 /* Audited retained supplemental scene body.
  * The complete production span preserves 42 calls, 0 loop(s), and 5 explicit memory operation(s).
  * Approved GCC changes scheduling, allocation, control-flow lowering, and
@@ -47,7 +45,7 @@ void Func_020016fa();
 void Func_02001740();
 void Func_02001748();
 
-void Func_02000726(void)
+void Scene_RunSupplementalSequenceOne(void)
 {
     void *p3;
     void *p6;

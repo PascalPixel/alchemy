@@ -5,6 +5,7 @@
 
 #include "TYPES.H"
 #include "SCENE.H"
+extern struct Resource388Runtime *gEventWork;
 
 /* The scene's four tables, in the overlay's read-only data. */
 extern u8 GomaIke_SceneTable0[];
@@ -67,7 +68,7 @@ s32 Scene_PlaceActor8OnGate300(void)
     s32 pos_x = 0xD80000;
     s32 pos_z = 0x880000;
 
-    work = RESOURCE388_RUNTIME;
+    work = gEventWork;
     work->setup_request_1c0 = 0x204;
     work->setup_value_1c8 = 0x18;
     if (Resource388_TestSetupGate(0x300) != 0) {

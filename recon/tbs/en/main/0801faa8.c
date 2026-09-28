@@ -7,8 +7,6 @@
 #include "RUNTIME_INTERFACES.H"
 #include "RUNTIME_MEM.H"
 
-#define SaveState_ProcessSelectedSlot Func_0801faa8
-
 s32 Func_080056cc(void);
 u32 Func_08005a78(s32, void *);
 s32 Func_08005920(s32, void *);
@@ -46,7 +44,7 @@ s32 SaveState_ProcessSelectedSlot(void)
             }
             dst = (char *)buffer + (s32)&Value_020004e4;
             dst = dst - (s32)&Data_02000000;
-            Func_080072f0(dst, &Value_020004e4, 16, &Value_03001388);
+            _call_via_r3(dst, &Value_020004e4, 16, &Value_03001388);
             found = Func_08005920(*(s16 *)0x02002004, buffer);
             if (found != 0) {
                 Func_0801776c((s32)&Value_0000000b, 1);
@@ -56,7 +54,7 @@ negate:
             }
         }
         Func_08005cf8();
-        Func_08002df0(buffer);
+        Sys_Free(buffer);
         value = result;
     }
     return value;

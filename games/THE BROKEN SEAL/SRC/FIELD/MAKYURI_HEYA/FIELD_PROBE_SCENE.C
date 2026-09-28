@@ -123,7 +123,7 @@ void Func_02003e2e(s32, s32, s32, s32, s32, s32, s32, s32 *);
 extern u8 Value_02008cd1;
 
 extern u8 Data_0200e010[];
-extern u8 Value_00000874;
+extern u8 MsgVenom;
 
 extern s32 **Data_03001edc;
 
@@ -144,10 +144,6 @@ extern s32 **Data_03001edc;
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define OverlayObject_PrepareSpawnedObject      Func_02000048
-#define CreateOverlayObject Func_02005a86
-#define SetOverlayObjectMode Func_02005b08
-#define SetOverlayObjectSlot Func_02005c58
 
 void *CreateOverlayObject(s32, s32, s32, s32);
 void SetOverlayObjectMode(void *, s32);
@@ -716,7 +712,7 @@ void FieldScene_RunActorElevenAtTile5And13(void)
             s32 s1 = 10;
             Map_CopyCellAttributes(9, 5, 1, 1, s0, s1);
         }
-        GameFlag_Set((s32)&Value_00000874);
+        GameFlag_Set((s32)&MsgVenom);
     }
     Event_End();
 }

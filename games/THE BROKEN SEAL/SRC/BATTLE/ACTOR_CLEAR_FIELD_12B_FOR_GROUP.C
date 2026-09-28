@@ -43,7 +43,6 @@ struct BattleEscapeState {
 
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 extern u8 gGameState[];
 
 s32 BattleEscape_CheckSuccess(void)
@@ -83,7 +82,7 @@ s32 BattleEscape_CheckSuccess(void)
         }
         chance -= Math_Div(level_total * 0x1F4, living_count);
         if ((chance > 0) &&
-            ((u32)((u32)(0x2710 * Rand()) >> 0x10) < (u32)chance)) {
+            ((u32)((u32)(0x2710 * Random16()) >> 0x10) < (u32)chance)) {
             escaped = 1;
         }
         *failed_attempts += 1;

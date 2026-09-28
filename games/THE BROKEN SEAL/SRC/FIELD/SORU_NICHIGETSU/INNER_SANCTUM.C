@@ -38,14 +38,6 @@ enum InnerSanctumFlag {
     FLAG_ROBIN_SEARCHING_FOR_SUKURETA = 0x896
 };
 
-#if defined(TBS_EDITION_JA)
-#define SCENE_STEP_VALUE Value_000011b4
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define SCENE_STEP_VALUE Value_0000100d
-#else
-#define SCENE_STEP_VALUE Value_0000102b
-#endif
-
 extern u8 Value_0000100d[];
 extern u8 Value_0000102b[];
 extern u8 Value_000011b4[];
@@ -198,7 +190,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 /* Ordinary C field access retained from the reviewed disassembly dataflow. */
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
-s32  Func_02002e42();  /* Func_080770c0 */
+s32  Func_02002e42();  /* GameFlag_TestFar */
 s32  Func_02002ede();  /* Func_0808a080 */
 s32  Func_020031f2();  /* Func_0808a070 */
 s32  Func_02003262();  /* Func_0808a178 */
@@ -1444,7 +1436,13 @@ void FieldScene_RunActorPositionTransition(void)
     Call3(Func_02004636, 16, 0x188, 168);
     Call3(Func_020046aa, 16, 0x8000, 30);
     Func_02004662(16, 1);
-    Event_SetMessage((s32)SCENE_STEP_VALUE);
+#if defined(TBS_EDITION_JA)
+    Event_SetMessage((s32)Value_000011b4);
+#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    Event_SetMessage((s32)Value_0000100d);
+#else
+    Event_SetMessage((s32)Value_0000102b);
+#endif
     Func_02004682(16, 4, 30);
     Func_02004252_actor_step(16, 6);
     Func_0200469a(0, 2);

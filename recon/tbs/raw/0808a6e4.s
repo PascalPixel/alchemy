@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0808a6e4
+	.global Party_SetReturnPoint
 	.thumb_func
-Func_0808a6e4:
+Party_SetReturnPoint:
 	push	{r5, r6, lr}
 	ldr	r1, [pc, #480]
 	ldr	r2, [pc, #480]

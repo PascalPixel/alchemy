@@ -20,8 +20,6 @@ typedef char Resource37deSceneRuntime_scene_setup_word_offset[
 ];
 #undef RESOURCE37DE_SCENE_OFFSET
 
-#define RESOURCE37DE_SCENE_RUNTIME \
-    ((struct Resource37deSceneRuntime *)EFFECT_RUNTIME)
 
 s32 TestSceneFlag(s32);
 void SetCameraZoom(s32, s32, s32);

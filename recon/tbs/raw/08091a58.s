@@ -23,7 +23,7 @@ Func_08091a58:
 	sub	sp, #12
 	str	r2, [sp, #0]
 	adds	r6, r0, #0
-	bl	Func_08077030
+	bl	PartyInventory_AddFar
 	movs	r2, #1
 	mov	r8, r0
 	negs	r2, r2
@@ -120,7 +120,7 @@ Func_08091a58:
 	bne.n	.L_08091b48
 .L_08091b56:
 	adds	r0, r6, #0
-	bl	Func_08077030
+	bl	PartyInventory_AddFar
 	mov	r8, r0
 	movs	r0, #83
 	bl	Audio_PlayCue

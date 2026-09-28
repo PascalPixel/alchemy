@@ -29,7 +29,7 @@
  * particle group.  Variant 3 additionally scatters two random decorations
  * per member during the member's first 32 frames.
  *
- * `Func_080072f0` is not a real callee: it is the r3 entry of the
+ * `_call_via_r3` is not a real callee: it is the r3 entry of the
  * `_call_via_rN` trampoline bundle at recon/tbs/raw/080072e4.s, so the two
  * sites that reach it are spelled here as what they are -- typed indirect
  * calls to the fixed IWRAM block copier at 0x03001388 and the fixed IWRAM
@@ -68,8 +68,6 @@
  * and were reverted.
  */
 
-#define BattleEffect_RunParticleBurstScene Func_080d52c8
-
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
 typedef s32 (*IntegerSqrtFn)(s32 value);
 
@@ -97,7 +95,7 @@ extern u8 Value_000000ce;
 
 /* Callees the project has not named yet keep their address spelling; the
    names in comments are the ones `alchemy inspect` resolves. */
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_0800231c(s32 angle);
 s32 Func_08002322(s32 angle);
 /* Runtime_ReleaseHeapBlock */
@@ -170,7 +168,7 @@ typedef struct {
 /* One unsigned 8-bit random sample, re-centred around zero. */
 #define RANDOM_BIASED(bias) ((s32)(Func_08004458() & 0xFF) - (bias))
 
-void BattleEffect_RunParticleBurstScene(void *object, u32 kind)
+void BattleFx_RenderMode(void *object, u32 kind)
 {
     void **heap;
     void **cursor;
@@ -388,11 +386,11 @@ void BattleEffect_RunParticleBurstScene(void *object, u32 kind)
                                     if (kind <= 1 || kind == 4 || kind == 5
                                         || kind == 6) {
                                         v = p->x;
-                                        p->x = v - Func_080022ec(v, distance);
+                                        p->x = v - Math_Div(v, distance);
                                         v = p->y;
-                                        p->y = v - Func_080022ec(v, distance);
+                                        p->y = v - Math_Div(v, distance);
                                         v = p->z;
-                                        p->z = v - Func_080022ec(v, distance);
+                                        p->z = v - Math_Div(v, distance);
                                     } else {
                                         p->y += 128 << 9;
                                     }

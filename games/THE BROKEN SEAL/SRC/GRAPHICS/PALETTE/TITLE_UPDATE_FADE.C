@@ -11,15 +11,14 @@
 #include "IO_WRITE_QUEUE.H"
 
 extern u8 gWorkSlot[];
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 #define QUEUE_PALETTE(source, destination) {                                \
         u32 saved;                                                          \
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
-            ime = &REG_IME;                                                 \
+            ime = &RegIme;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \

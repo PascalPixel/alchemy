@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
 extern u16 gGameState[];
-#define PARTY_STATE gGameState
 extern u8 Value_00000038;
 extern u8 Value_0000003a;
 extern u8 Value_0000003c;
@@ -35,5 +34,5 @@ void BattleFx_SelectResultPointer(s32 arg0)
         value = (u16)(u32)&Value_00000039;
         break;
     }
-    PARTY_STATE[235] = value;
+    gGameState[235] = value;
 }

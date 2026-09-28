@@ -114,7 +114,6 @@ struct BurstParticleVector {
 };
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Vector_AddPolarOffset(s32, s32, struct BurstParticleVector *);
 void *Object_Spawn(s32, s32, s32, s32);
 void ObjectDispatch_InitializeFar(void *, const void *);
@@ -137,8 +136,8 @@ void BattleFx_RunBurstParticles(void)
 
         p->values[0] = *(s32 *)(state + 4);
         p->values[2] = *(s32 *)(state + 12);
-        random_value = (Rand() * 6) + 0x40000;
-        Vector_AddPolarOffset(random_value, Rand(), p);
+        random_value = (Random16() * 6) + 0x40000;
+        Vector_AddPolarOffset(random_value, Random16(), p);
         p->values[1] = *(s32 *)(state + 8);
         object = Object_Spawn(
             0xD9,
@@ -150,7 +149,7 @@ void BattleFx_RunBurstParticles(void)
             ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleObjectScript);
             *((u8 *)object + 0x55) = 2;
         }
-        WaitFrames((((u32)Rand() * 2) >> 16) + 2);
+        WaitFrames((((u32)Random16() * 2) >> 16) + 2);
         entry_count--;
     } while (entry_count >= 0);
     WaitFrames(0x1E);

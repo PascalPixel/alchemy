@@ -97,7 +97,7 @@ void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused, s32 style);
 void InventoryMenu_ShowModalMessage(s32 message, s32 acknowledgement_mode, s32 window_mode);
 void UiText_DrawWorkValueWithLabel(s32 window);
 s32 ItemMenu_SelectTarget(s32 mode);
-s32 Func_080a3d9c(s32 owner, s32 item);
+s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 /* Takes a fourth argument; this caller passes the owner there as well. */
 void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 arg3);
 s32 Func_080a414c(void);
@@ -235,7 +235,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                         menu->message_offset + (s32)&Value_00000bef, 0, -1);
                     menu->list.icon->state = 13;
                     menu->item_count = ItemMenu_Collect(
-                        OwnerState_GetFar(menu->item_owner), menu->items, 0);
+                        Owner_GetStateFar(menu->item_owner), menu->items, 0);
                     ItemMenu_DrawIcons(menu->items, 0);
                     state = 0;
                 }
@@ -290,7 +290,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                     state = 1;
                 }
                 menu->item_count = ItemMenu_Collect(
-                    OwnerState_GetFar(menu->item_owner), menu->items, 0);
+                    Owner_GetStateFar(menu->item_owner), menu->items, 0);
                 ItemMenu_DrawIcons(menu->items, 0);
                 menu->completion_flag = 1;
             } else {
@@ -343,7 +343,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             RenderOutput_RedrawSavedRectFar(menu->message_window);
             if (Func_080a524c(sel) == 0) {
                 command = menu->item_owner;
-                OwnerState_GetFar(command);
+                Owner_GetStateFar(command);
                 for (work = 0; work < result + 1; work++) {
                     Inventory_RemoveFar(command, menu->selected_slot);
                     Func_08077240(menu->selected_item & 0x1ff, 1);
@@ -370,7 +370,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             aborted = 0;
             item = Item_Get(menu->selected_item & 0x1ff);
             if ((item->flags & 16) != 0) {
-                qty = Func_080a3d9c(
+                qty = InventoryMenu_GetItemQuantity(
                     menu->target_owner, menu->selected_item & 0x1ff);
                 if (qty == 30) {
                     aborted = 1;
@@ -479,8 +479,8 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
                 state = 6;
                 break;
             }
-            source = OwnerState_GetFar(menu->item_owner);
-            target = OwnerState_GetFar(menu->target_owner);
+            source = Owner_GetStateFar(menu->item_owner);
+            target = Owner_GetStateFar(menu->target_owner);
             source_copy = Runtime_BumpAllocate(0x14c);
             target_copy = Runtime_BumpAllocate(0x14c);
             CopyWords(IWRAM_COPY_WORDS, source_copy, source, 0x14c);
@@ -601,7 +601,7 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             Func_080772c0(menu->item_owner);
             menu->list.icon->state = 13;
             menu->item_count = ItemMenu_Collect(
-                OwnerState_GetFar(menu->item_owner), menu->items, 0);
+                Owner_GetStateFar(menu->item_owner), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
             ItemMenu_DrawEquipPreview(
@@ -619,13 +619,13 @@ s32 ItemMenu_RunCommands(s32 *owner_out, s32 *target_out, s32 *item_out)
             break;
 
         case 11:
-            OwnerState_GetFar(menu->item_owner)->inventory[menu->selected_slot]
+            Owner_GetStateFar(menu->item_owner)->inventory[menu->selected_slot]
                 &= 0xfdff;
             Owner_RecalculateStatsFar(menu->item_owner);
             Func_080772c0(menu->item_owner);
             menu->list.icon->state = 13;
             menu->item_count = ItemMenu_Collect(
-                OwnerState_GetFar(menu->item_owner), menu->items, 0);
+                Owner_GetStateFar(menu->item_owner), menu->items, 0);
             ItemMenu_DrawIcons(menu->items, 0);
             WaitFrames(1);
             menu->equip_preview = 1;

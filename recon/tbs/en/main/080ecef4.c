@@ -14,7 +14,7 @@ void Func_080b5078(s32, s32, s32, s32);
 void Func_080b5088(s32, s32, s32);
 void Func_080b50e8(s32);
 void Func_080072f4(s32, s32, s32, s32, s32);
-void Func_080072f0(s32, s32, s32);
+void _call_via_r3(s32, s32, s32);
 void Func_080e155c(s32, s32);
 void Func_080cd52c(void);
 
@@ -73,7 +73,7 @@ void Func_080ecef4(void *arg0, s32 mode)
         }
 
         if (i >= 16 && i <= 19)
-            Func_080072f0(base, 0x3f3f3f3f, 0x4000);
+            _call_via_r3(base, 0x3f3f3f3f, 0x4000);
 
         if (i == 18)
             Func_080b50e8(0x86);

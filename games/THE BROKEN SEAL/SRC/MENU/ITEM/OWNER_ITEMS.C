@@ -36,10 +36,10 @@ void ItemMenu_DrawIcons(u16 *items, s32 style)
         item_id = *entries++;
         if (item_id != 0) {
             if (style == 0) {
-                InventoryMenu_DrawItemIcon(
+                Resource_LoadByModeIntoSlotFar(
                     2, item_id, (*icons)->render_target, 0);
             } else {
-                InventoryMenu_DrawItemIcon(
+                Resource_LoadByModeIntoSlotFar(
                     7, item_id, (*icons)->render_target, 0);
             }
         }
@@ -61,15 +61,15 @@ void ItemMenu_RefreshOwner(s32 owner_id, s32 mode)
     u16 *items;
 
     menu = gMenuWork;
-    owner = OwnerState_GetFar(owner_id);
+    owner = Owner_GetStateFar(owner_id);
     items = menu->items;
-    menu->item_count = InventoryMenu_CollectItems(owner, items, 0);
+    menu->item_count = ItemMenu_Collect(owner, items, 0);
     RenderOutput_RedrawSavedRectFar(menu->item_window);
     ItemMenu_RefreshEntry(mode);
-    InventoryMenu_DrawItemIcons(items, 0);
-    if (InventoryMenu_CountItems(owner_id) == 0)
+    ItemMenu_DrawIcons(items, 0);
+    if (ItemMenu_Count(owner_id) == 0)
         UiText_DrawCharacterAtOffsetFar(
-            (s32)&InventoryMenu_EmptyMessage, menu->item_window, 8, 24);
+            (s32)&MsgItemMenuEmpty, menu->item_window, 8, 24);
 }
 
 void InventoryMenu_NoOp(void)

@@ -2,6 +2,7 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "SHOP.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 struct Position { s32 x, y, z; };
@@ -14,7 +15,6 @@ struct ShopBurstRuntime {
 };
 
 u32 Random16(void);
-#define Rand Random16
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 sound_id);
 
@@ -47,7 +47,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
     s32 callback_flags;
     s32 i;
 
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     burst = (struct ShopBurstRuntime *)shop;
     saved_kind = shop->cursor.anchor->kind;
     *(u8 *)((u8 *)shop + 0x3ab) = 0xff;
@@ -72,7 +72,7 @@ void Shop_RunPartyMemberIconBurst(s32 member)
         Func_0808a518(effect, 7);
         Func_08009248(
             *(s32 *)((u8 *)effect + 0),
-            (Rand() * 7) >> 16);
+            (Random16() * 7) >> 16);
         *(s32 *)((u8 *)effect + 44) = 0xb333;
         *(s32 *)((u8 *)effect + 40) = 0xb333;
         WaitFrames(3);

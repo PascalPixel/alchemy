@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 /* Sells count of one inventory slot (count -1 sells the whole stack as
@@ -21,8 +22,8 @@ void Party_AdjustSixDigitCounterAFar(s32 amount);
 
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
-    struct BattleUnit *unit = BattleUnit_Get(unit_id);
+    struct ShopRuntime *shop = gMenuWork;
+    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_Get(item_id);
     u8 rare = item->flags & 4;
@@ -35,7 +36,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
         all = 1;
         count = 1;
     }
-    total = Shop_ComputeSalePrice(unit->inventory[slot]) * count;
+    total = Shop_SalePrice(unit->inventory[slot]) * count;
     if (total == 0) {
         UiWork_PushValueSlotFar(item_id, 2);
         UiMessage_ShowAndRestoreState((s32)Value_00000cac);
@@ -72,7 +73,7 @@ void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
         Func_080772b0(unit_id, slot);
     Party_AdjustSixDigitCounterAFar(total);
     Shop_DrawMoney();
-    Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+    Shop_DrawUnitGrid(shop->item_window, unit_id);
     if (rare || all)
         message = (s32)Value_00000cb5;
     else

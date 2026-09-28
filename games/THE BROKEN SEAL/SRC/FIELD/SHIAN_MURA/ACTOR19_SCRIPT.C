@@ -2,9 +2,10 @@
 #include "FIELD_EVENT.H"
 
 void Effect_Spawn();
-void Main_0808a5e8();
+void BattleFx_PlayQueuedSound();
 
-extern u8 Value_02008359;
+void SceneEffect_AdvanceRotatingSprite();
+extern const s32 ShianMura_Actor19Motion[];
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -26,10 +27,10 @@ void Scene_RunActorNineteenScript(void)
     s32 cb;
 
     Engine_EventBegin();
-    Value2((s32 (*)())Engine_ActorEnableActionCallback, 19, 0x20096a0);
-    cb = (s32)&Value_02008359;
+    Value2((s32 (*)())Engine_ActorEnableActionCallback, 19, (s32)ShianMura_Actor19Motion);
+    cb = (s32)SceneEffect_AdvanceRotatingSprite;
     Value2((s32 (*)())Engine_TaskAddCallback, cb, 0xc80);
-    Engine_ActorStartAction(19);
+    Object_RefreshSelectorById(19);
     Engine_AudioPlayCue(124);
     Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);
     Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0x3333, 0, 0, 0x20001, 0);
@@ -47,6 +48,6 @@ void Scene_RunActorNineteenScript(void)
     }
     Engine_EventShowMessage(14, 0);
     Call1((void (*)())Engine_GameFlagSet, 0x203);
-    Main_0808a5e8();
+    BattleFx_PlayQueuedSound();
     Engine_EventEnd();
 }

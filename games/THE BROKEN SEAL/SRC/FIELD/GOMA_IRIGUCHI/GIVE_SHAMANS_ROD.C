@@ -13,11 +13,11 @@ struct Item_387 {
     u8 equippable;
 };
 
-struct Member_387 *Engine_OwnerGetState();
-s32 Main_08077028(s32 member, s32 item);
-struct Item_387 *Engine_DebugGetItem();
-void Main_080772b0(s32 member, s32 slot);
-void Main_08077050(s32 member, s32 slot);
+struct Member_387 *Owner_GetStateFar();
+s32 Inventory_AddItemFar(s32 member, s32 item);
+struct Item_387 *Item_Get();
+void Inventory_Discard(s32 member, s32 slot);
+void Inventory_EquipFar(s32 member, s32 slot);
 
 /* Give member 2 item 65, dropping an item to make room while the inventory
  * is full (the last slot is cleared after a thousand tries), then equip every
@@ -31,23 +31,23 @@ void GomaIriguchi_GiveShamansRod(void)
     s32 id;
 
     id = 65;
-    member = Engine_OwnerGetState(2);
+    member = Owner_GetStateFar(2);
     tries = 0;
 retry:
     if (++tries > 1000)
         member->items[14] = 0;
-    if (Main_08077028(2, id) == -1) {
+    if (Inventory_AddItemFar(2, id) == -1) {
         for (i = 0; i <= 14; i++) {
-            item = Engine_DebugGetItem(member->items[i]);
+            item = Item_Get(member->items[i]);
             if (((u8 *)item)[2] == 1) {
-                Main_080772b0(2, i);
+                Inventory_Discard(2, i);
                 goto retry;
             }
         }
         for (i = 0; i <= 14; i++) {
-            item = Engine_DebugGetItem(member->items[i]);
+            item = Item_Get(member->items[i]);
             if ((item->flags & 0x8ff) == 0 && item->equippable == 1) {
-                Main_080772b0(2, i);
+                Inventory_Discard(2, i);
                 goto retry;
             }
         }
@@ -55,6 +55,6 @@ retry:
     }
     for (i = 0; i <= 14; i++) {
         if (member->items[i] == id)
-            Main_08077050(2, i);
+            Inventory_EquipFar(2, i);
     }
 }

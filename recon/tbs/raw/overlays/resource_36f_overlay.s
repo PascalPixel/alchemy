@@ -603,6 +603,7 @@ Func_02000454:
 	.4byte 0x84000004
 	.4byte 0x03001e70
 	.include "games/THE BROKEN SEAL/SRC/MENU/TITLE/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x00000000
 	.4byte 0x40000000

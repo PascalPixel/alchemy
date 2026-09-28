@@ -69,6 +69,7 @@ Func_02000054:
 	.4byte 0x03001ebc
 	.4byte 0x00000814
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_DOU/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x00000057
 	.4byte 0xc000008e

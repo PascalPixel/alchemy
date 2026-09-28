@@ -2846,7 +2846,7 @@ Func_0200173c:
 	.4byte 0x0200a138
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000098

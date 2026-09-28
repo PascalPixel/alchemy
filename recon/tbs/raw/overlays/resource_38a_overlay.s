@@ -828,6 +828,7 @@ Func_020004f4:
 	.4byte 0x0000e666
 	.4byte 0x00013333
 	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_SUIRO/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

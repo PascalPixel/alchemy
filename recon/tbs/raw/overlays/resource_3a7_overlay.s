@@ -2000,6 +2000,7 @@ Func_02000ca0:
 	.4byte 0x00000242
 	.4byte 0x00000060
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.set .L_020012b0, 0x020012b0
 	.set .L_020012b4, 0x020012b4
 	.set .L_020012d4, 0x020012d4

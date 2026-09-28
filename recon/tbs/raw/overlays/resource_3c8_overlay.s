@@ -8694,7 +8694,7 @@ Func_02004a2c:
 	.4byte 0x0200f7ec
 	.include "games/THE BROKEN SEAL/SRC/FIELD/VINASU_HEYA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

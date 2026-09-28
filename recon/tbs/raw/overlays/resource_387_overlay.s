@@ -1874,6 +1874,7 @@ Func_02000fc8:
 	pop {r0}
 	bx r0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

@@ -11060,6 +11060,7 @@ Func_020063ac:
 	pop {r0}
 	bx r0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

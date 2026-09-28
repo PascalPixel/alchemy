@@ -1857,6 +1857,7 @@ Func_020010c0:
 	.4byte 0x00006666
 	.4byte 0x02009440
 	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x0000000c

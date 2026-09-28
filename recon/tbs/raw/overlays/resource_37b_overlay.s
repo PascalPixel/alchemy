@@ -4029,6 +4029,7 @@ Func_020023a4:
 	bx r0
 	.2byte 0x0000
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_SEKIZO/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x01020041
 	.4byte 0x000cccc0
 	.4byte 0x060100cc

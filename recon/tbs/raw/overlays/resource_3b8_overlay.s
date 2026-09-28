@@ -6774,6 +6774,7 @@ Func_020040b4:
 	.4byte 0x00000209
 	.4byte 0x00000967
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x001c0019
 	.4byte 0x00030001
 	.4byte 0x001a0005

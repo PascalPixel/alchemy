@@ -3791,6 +3791,7 @@ Func_020021bc:
 	.4byte 0x0000012f
 	.4byte 0x00000202
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x0000000c

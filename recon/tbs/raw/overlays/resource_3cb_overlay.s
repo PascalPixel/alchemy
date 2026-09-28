@@ -2692,7 +2692,7 @@ Func_020012e0:
 	.4byte 0x02008149
 	.include "games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x434d4753
 	.4byte 0x33323130
 	.4byte 0x31434241

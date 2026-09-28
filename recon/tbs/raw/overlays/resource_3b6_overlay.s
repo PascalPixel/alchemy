@@ -1064,6 +1064,7 @@ Func_0200091c:
 	.4byte 0x00002231
 	.4byte 0x00001feb
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000

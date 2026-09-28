@@ -1146,6 +1146,7 @@ Func_02000a78:
 	pop {r1}
 	bx r1
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

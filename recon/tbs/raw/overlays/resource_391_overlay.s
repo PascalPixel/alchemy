@@ -4869,7 +4869,7 @@ Func_02002ad8:
 	.4byte 0x03001e40
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HASHI/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

@@ -2251,6 +2251,7 @@ Func_02000e40:
 	.2byte 0x96e4
 	.2byte 0x0200
 	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/KAREI_TOREBI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00540062
 	.4byte 0x00020002
 	.4byte 0x00620005

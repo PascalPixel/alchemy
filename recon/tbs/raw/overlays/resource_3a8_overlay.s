@@ -6429,6 +6429,7 @@ Func_02003a3c:
 	.4byte 0x00000109
 	.4byte 0x0200b9d5
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

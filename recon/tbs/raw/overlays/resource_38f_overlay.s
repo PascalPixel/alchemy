@@ -4493,6 +4493,7 @@ Func_02002910:
 	.4byte 0x00000845
 	.4byte 0x00000847
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

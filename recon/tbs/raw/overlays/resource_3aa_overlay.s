@@ -2733,6 +2733,7 @@ Func_02001494:
 	.4byte 0x0000012f
 	.4byte 0x00000914
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_KYUDEN/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

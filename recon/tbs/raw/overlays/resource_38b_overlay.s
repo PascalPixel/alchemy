@@ -1839,6 +1839,7 @@ Func_02000fa0:
 	pop {r0}
 	bx r0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x0000000c

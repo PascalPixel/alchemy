@@ -6883,7 +6883,7 @@ Func_02003a60:
 	.2byte 0xfff0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x20202000
 	.4byte 0x40404060
 	.4byte 0x10000080

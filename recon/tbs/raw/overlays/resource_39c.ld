@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/resource_39c_overlay.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_39c_overlay.o"(.text.part1)
+        "*/resource_39c_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

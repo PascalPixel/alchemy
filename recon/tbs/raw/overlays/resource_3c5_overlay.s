@@ -5129,7 +5129,7 @@ Func_02002820:
 	.4byte 0x02000240
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

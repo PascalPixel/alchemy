@@ -1481,7 +1481,7 @@ Func_02000ca8:
 	.4byte 0x00000201
 	.include "games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0xffff0000

@@ -4634,6 +4634,7 @@ Func_02002b1c:
 	bx r0
 	.2byte 0x0000
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

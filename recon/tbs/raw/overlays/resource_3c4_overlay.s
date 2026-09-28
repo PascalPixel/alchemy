@@ -5897,7 +5897,7 @@ Func_0200259c:
 	.2byte 0x0000
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
-	.section .text.part1,"ax",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

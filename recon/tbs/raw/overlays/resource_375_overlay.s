@@ -2730,6 +2730,7 @@ Func_02001a2c:
 	bx r0
 	.4byte 0x00001c96
 	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

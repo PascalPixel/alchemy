@@ -297,6 +297,7 @@ Func_0200022c:
 	.4byte 0x03001ebc
 	.4byte 0x00000201
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SUHARA_MURA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095

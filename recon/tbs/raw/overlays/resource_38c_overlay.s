@@ -548,6 +548,7 @@ Func_020004c8:
 	.2byte 0x0000
 	.4byte 0x03001ebc
 	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_HEYA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000b0
 	.4byte 0xc00000d8

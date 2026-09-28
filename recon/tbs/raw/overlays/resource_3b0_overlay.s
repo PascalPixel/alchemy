@@ -1907,6 +1907,7 @@ Func_0200115c:
 	.4byte 0x00000917
 	.4byte 0x020098f8
 	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0x00000800

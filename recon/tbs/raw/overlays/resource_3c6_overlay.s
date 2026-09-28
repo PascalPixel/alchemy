@@ -2126,6 +2126,7 @@ Func_0200120c:
 	.2byte 0x0000
 	.4byte 0x000009b8
 	.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000

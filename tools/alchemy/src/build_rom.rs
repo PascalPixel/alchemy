@@ -104,36 +104,45 @@ pub(crate) fn link(
     }
     let output = root.join(output);
     base_rom(root, target, &output)?;
-    let objects = compile_all(root, target, &sources, &output)?;
+    // Sources that read built overlay streams wait for the overlays, and the
+    // overlays link against the main image's symbols: a first pass links the
+    // main image with empty streams, which move nothing the overlays can see.
+    let (streamed, direct): (Vec<PathBuf>, Vec<PathBuf>) = sources
+        .iter()
+        .cloned()
+        .partition(|source| !stream_paths(root, source, &output).is_empty());
+    compile_all(root, target, &direct, &output)?;
+    let objects: Vec<PathBuf> = sources
+        .iter()
+        .map(|source| output.join("obj").join(source).with_extension("o"))
+        .collect();
+    let mut symbols = None;
+    if !streamed.is_empty() {
+        let pass = symbols_pass(root, script, &text, &output, name, &sources, &streamed)?;
+        for source in &streamed {
+            build_overlay_streams(root, target, source, &output, &pass)?;
+        }
+        compile_all(root, target, &streamed, &output)?;
+        symbols = Some(pass);
+    }
     let elf = output.join(format!("{name}.elf"));
     let map = output.join(format!("{name}.map"));
     let image = output.join(format!("{name}.gba"));
-    let mut arguments = vec![
-        "arm-none-eabi-ld".to_owned(),
-        "--no-warn-mismatch".into(),
-        "-T".into(),
-        root.join(script).to_string_lossy().into_owned(),
-        "-Map".into(),
-        map.to_string_lossy().into_owned(),
-        "-o".into(),
-        elf.to_string_lossy().into_owned(),
-    ];
+    let mut arguments = link_command(root, script, &text, &objects, &elf);
+    arguments.splice(
+        1..1,
+        ["-Map".to_owned(), map.to_string_lossy().into_owned()],
+    );
     if keep_going {
         arguments.push("--noinhibit-exec".into());
     }
-    arguments.extend(
-        objects
-            .iter()
-            .map(|path| path.to_string_lossy().into_owned()),
-    );
-    if text.contains("libgcc.a:") {
-        arguments.push(
-            root.join("tools/out/compiler-runtime/libgcc.a")
-                .to_string_lossy()
-                .into_owned(),
-        );
+    let linked = command(&arguments, root);
+    if linked.is_ok() {
+        if let Some(pass) = &symbols {
+            same_addresses(root, pass, &elf)?;
+        }
     }
-    if let Err(error) = command(&arguments, root) {
+    if let Err(error) = linked {
         if !keep_going || !elf.is_file() {
             return Err(error);
         }
@@ -155,6 +164,109 @@ pub(crate) fn link(
         map,
         image,
     })
+}
+
+/// The linker command for the whole image.
+fn link_command(
+    root: &Path,
+    script: &Path,
+    text: &str,
+    objects: &[PathBuf],
+    elf: &Path,
+) -> Vec<String> {
+    let mut arguments = vec![
+        "arm-none-eabi-ld".to_owned(),
+        "--no-warn-mismatch".into(),
+        "-T".into(),
+        root.join(script).to_string_lossy().into_owned(),
+        "-o".into(),
+        elf.to_string_lossy().into_owned(),
+    ];
+    arguments.extend(
+        objects
+            .iter()
+            .map(|path| path.to_string_lossy().into_owned()),
+    );
+    if text.contains("libgcc.a:") {
+        arguments.push(
+            root.join("tools/out/compiler-runtime/libgcc.a")
+                .to_string_lossy()
+                .into_owned(),
+        );
+    }
+    arguments
+}
+
+/// The main image linked with every stream-reading object empty, for the
+/// overlays' links: every symbol before the streams keeps its address.
+fn symbols_pass(
+    root: &Path,
+    script: &Path,
+    text: &str,
+    output: &Path,
+    name: &str,
+    sources: &[PathBuf],
+    streamed: &[PathBuf],
+) -> Result<PathBuf, String> {
+    let pass = output.join("symbols");
+    let mut objects = Vec::with_capacity(sources.len());
+    for source in sources {
+        if streamed.contains(source) {
+            let stub = pass.join(source).with_extension("o");
+            fs::create_dir_all(stub.parent().expect("stub directory"))
+                .map_err(|error| error.to_string())?;
+            command(
+                &assembly_command("/dev/null", &stub.to_string_lossy()),
+                root,
+            )?;
+            objects.push(stub);
+        } else {
+            objects.push(output.join("obj").join(source).with_extension("o"));
+        }
+    }
+    let elf = pass.join(format!("{name}.elf"));
+    command(&link_command(root, script, text, &objects, &elf), root)?;
+    Ok(elf)
+}
+
+/// Every symbol the overlays could see keeps its address in the final image.
+fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
+    let table = |path: &Path| -> Result<std::collections::BTreeMap<String, String>, String> {
+        let text = command(
+            &[
+                "arm-none-eabi-nm",
+                "--defined-only",
+                &path.to_string_lossy(),
+            ],
+            root,
+        )?;
+        Ok(text
+            .lines()
+            .filter_map(|line| {
+                let mut parts = line.split_whitespace();
+                let (value, _, name) = (parts.next()?, parts.next()?, parts.next()?);
+                Some((name.to_owned(), value.to_owned()))
+            })
+            .collect())
+    };
+    let before = table(pass)?;
+    let after = table(elf)?;
+    let moved: Vec<&String> = before
+        .iter()
+        .filter(|(name, value)| {
+            after
+                .get(*name)
+                .is_some_and(|final_value| final_value != *value)
+        })
+        .map(|(name, _)| name)
+        .collect();
+    if moved.is_empty() {
+        Ok(())
+    } else {
+        Err(format!(
+            "symbols moved after the overlays linked: {moved:?}"
+        ))
+    }
 }
 
 /// Scaffolding reads not-yet-sourced data from the builder's own verified ROM as
@@ -254,7 +366,7 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
             .ancestors()
             .find(|path| path.join("baserom.gba").exists())
             .ok_or("the base ROM link is missing")?;
-        for stream in overlay_streams(root, target, source, base)? {
+        for stream in stream_paths(root, source, base) {
             hasher.update(fs::read(&stream).map_err(|error| error.to_string())?);
         }
         step.insert(1, format!("-I{}", base.display()));
@@ -281,20 +393,33 @@ const OVERLAY_MACHINE: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 /// `.incbin "overlays/resource_XXX.lz"`, each linked from its listing beside
 /// the source and compressed, as pret builds the compressed files its data
 /// sources read.
-fn overlay_streams(
+fn stream_ids(root: &Path, source: &Path) -> Vec<String> {
+    let Ok(text) = fs::read_to_string(root.join(source)) else {
+        return Vec::new();
+    };
+    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"overlays/resource_([0-9a-f]+)\.lz""#)
+        .expect("static pattern");
+    pattern
+        .captures_iter(&text)
+        .map(|capture| capture[1].to_owned())
+        .collect()
+}
+
+fn stream_paths(root: &Path, source: &Path, output: &Path) -> Vec<PathBuf> {
+    stream_ids(root, source)
+        .iter()
+        .map(|id| output.join("overlays").join(format!("resource_{id}.lz")))
+        .collect()
+}
+
+fn build_overlay_streams(
     root: &Path,
     target: DecompTarget,
     source: &Path,
     output: &Path,
-) -> Result<Vec<PathBuf>, String> {
-    let text = fs::read_to_string(root.join(source))
-        .map_err(|error| format!("{}: {error}", source.display()))?;
-    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"overlays/resource_([0-9a-f]+)\.lz""#)
-        .expect("static pattern");
-    let ids: Vec<String> = pattern
-        .captures_iter(&text)
-        .map(|capture| capture[1].to_owned())
-        .collect();
+    symbols: &Path,
+) -> Result<(), String> {
+    let ids = stream_ids(root, source);
     let listings = source
         .parent()
         .ok_or("source has no directory")?
@@ -334,7 +459,8 @@ fn overlay_streams(
                     break;
                 };
                 let (script, objects) = &linked[index];
-                if let Err(error) = build_overlay(root, &listings, id, script, objects, &directory)
+                if let Err(error) =
+                    build_overlay(root, &listings, id, script, objects, symbols, &directory)
                 {
                     errors
                         .lock()
@@ -348,10 +474,7 @@ fn overlay_streams(
     if !errors.is_empty() {
         return Err(errors.join("\n"));
     }
-    Ok(ids
-        .iter()
-        .map(|id| directory.join(format!("resource_{id}.lz")))
-        .collect())
+    Ok(())
 }
 
 /// Link one overlay listing alone at its load address, with its own script
@@ -372,6 +495,7 @@ fn build_overlay(
     id: &str,
     script: &Path,
     objects: &[PathBuf],
+    symbols: &Path,
     directory: &Path,
 ) -> Result<(), String> {
     fs::create_dir_all(directory).map_err(|error| error.to_string())?;
@@ -383,6 +507,7 @@ fn build_overlay(
     let image = path(format!("resource_{id}.bin"));
     let stream = directory.join(format!("resource_{id}.lz"));
     let stamp = stream.with_extension("lz.key");
+    let own_symbols = path(format!("resource_{id}.symbols.elf"));
     let mut link: Vec<String> = [
         "arm-none-eabi-ld",
         "--no-warn-mismatch",
@@ -390,6 +515,8 @@ fn build_overlay(
         &script.to_string_lossy(),
         "-Map",
         &map,
+        "-R",
+        &own_symbols,
         "-o",
         &elf,
         &object,
@@ -402,8 +529,8 @@ fn build_overlay(
             .map(|path| path.to_string_lossy().into_owned()),
     );
     link.push("tools/out/compiler-runtime/libgcc.a".into());
+    let assemble = assembly_command(&listing.to_string_lossy(), &object);
     let steps = [
-        assembly_command(&listing.to_string_lossy(), &object),
         link,
         ["arm-none-eabi-objcopy", "-O", "binary", &elf, &image]
             .map(String::from)
@@ -416,15 +543,57 @@ fn build_overlay(
         let stamp = object.with_extension("o.key");
         hasher.update(fs::read(&stamp).map_err(|error| format!("{}: {error}", stamp.display()))?);
     }
-    for step in &steps {
+    for step in std::iter::once(&assemble).chain(&steps) {
         hasher.update(step.join("\0").as_bytes());
     }
+    hasher.update(command(&["arm-none-eabi-nm", &symbols.to_string_lossy()], root)?.as_bytes());
     hasher.update(format!("{OVERLAY_MACHINE:?}").as_bytes());
+    // The steps between the commands (the names an overlay hides, the
+    // packer's transform) belong to this build implementation.
+    hasher.update(env!("ALCHEMY_BUILD_IMPLEMENTATION").as_bytes());
     let key = format!("{:x}", hasher.finalize());
     if stream.is_file() && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
         return Ok(());
     }
     let _ = fs::remove_file(&stamp);
+    command(&assemble, root)?;
+    // The overlay's own names (its import veneers carry the names of the main
+    // functions they reach) hide the main image's: the linker sees one each.
+    // An overlay reaches only its own copies of the compiler library too.
+    let mut own = String::new();
+    let library = PathBuf::from("tools/out/compiler-runtime/libgcc.a");
+    for path in std::iter::once(PathBuf::from(&object))
+        .chain(objects.iter().cloned())
+        .chain(std::iter::once(library))
+    {
+        let table = command(
+            &[
+                "arm-none-eabi-nm",
+                "-g",
+                "--defined-only",
+                &path.to_string_lossy(),
+            ],
+            root,
+        )?;
+        for name in table
+            .lines()
+            .filter_map(|line| line.split_whitespace().nth(2))
+        {
+            own.push_str(name);
+            own.push('\n');
+        }
+    }
+    let names = directory.join(format!("resource_{id}.own"));
+    fs::write(&names, own).map_err(|error| error.to_string())?;
+    command(
+        &[
+            "arm-none-eabi-objcopy",
+            &format!("--strip-symbols={}", names.display()),
+            &symbols.to_string_lossy(),
+            &own_symbols,
+        ],
+        root,
+    )?;
     for step in &steps {
         command(step, root)?;
     }

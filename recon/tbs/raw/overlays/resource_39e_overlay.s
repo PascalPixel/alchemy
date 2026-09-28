@@ -7216,6 +7216,7 @@ Func_020041ec:
 	.2byte 0x0000
 	.2byte 0xfff0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c

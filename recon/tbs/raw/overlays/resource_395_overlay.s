@@ -2719,6 +2719,7 @@ Func_020018b8:
 	.4byte 0x02009de0
 	.4byte 0x840000e0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

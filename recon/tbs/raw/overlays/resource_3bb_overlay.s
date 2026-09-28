@@ -7283,6 +7283,7 @@ Func_02003cf8:
 	.2byte 0x0000
 	.2byte 0xfff0
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/IMPORT.INC"
+	.section .rodata,"a",%progbits
 	.4byte 0x03030202
 	.4byte 0x20202000
 	.4byte 0x40404060

@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define FuneKanpan_RunDeckStateEvent Func_02000c28
 
 void FieldScene_RunScene3af_02000bb8();
 void FieldScene_RunScene3af_02000bf0();

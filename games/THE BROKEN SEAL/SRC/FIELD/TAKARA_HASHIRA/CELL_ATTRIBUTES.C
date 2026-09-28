@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern u8 *gMapWork;
+
 struct MapCell {
     u32 tile : 12;
     u32 layer : 2;
@@ -22,7 +24,7 @@ struct MapState {
  * cell at x, y of a map layer. */
 void TakaraHashira_SetCellAttributes(s32 layer, s32 x, s32 y, struct MapCell *src)
 {
-    struct MapState *map = *(struct MapState **)0x03001e70;
+    struct MapState *map = *(struct MapState **)&gMapWork;
 
     if (map != 0) {
         struct MapCell *cell = map->layers[layer].cells;

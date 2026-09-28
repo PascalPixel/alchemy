@@ -17,7 +17,8 @@
 	lsrs	ip, ip, #1
 	bcs	.L_08038b78
 	strb	r6, [r1], #1
-.L_08038b70:
+	.global Tile_Decompress4bppLoop
+Tile_Decompress4bppLoop:
 	lsrs	ip, ip, #1
 	bcc	.L_08038b5c
 .L_08038b78:

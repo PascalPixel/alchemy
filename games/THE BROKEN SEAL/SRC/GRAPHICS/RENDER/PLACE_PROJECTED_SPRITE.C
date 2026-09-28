@@ -8,6 +8,8 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
+extern u8 gMenuCtrlWork[];
+
 struct ProjectedSpritePart {
     u8 unknown_00[4];
     u16 y : 8;
@@ -46,9 +48,6 @@ struct RenderState {
     s16 frozen;
 };
 
-extern u8 Value_03000118[];
-#define MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
-
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 s32 Func_0800aa0c(struct ProjectedSprite *sprite, u16 mode);
 s32 AffineMatrix_BuildForEffect(struct ProjectedEffect *source);
@@ -74,7 +73,7 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     s32 slot;
 
     affine = 1;
-    if ((*(struct RenderState **)0x03001e68)->frozen != 0)
+    if ((*(struct RenderState **)gMenuCtrlWork)->frozen != 0)
         goto hide;
     z = Render_ProjectPoint(point, screen);
     if (screen[2] == 0)
@@ -90,20 +89,20 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     if (sprite->flags & 2)
         z = sprite->scale;
     else
-        z = MulQ16(z, sprite->scale);
+        z = Iwram_MulQ16(z, sprite->scale);
     half_width = sprite->width >> 1;
     half_height = sprite->height >> 1;
     size = 8;
     flip = Func_0800aa0c(sprite, mode);
     base = (z + 0x400) & -0x800;
-    scale_x = MulQ16(base, *scale++);
-    scale_y = MulQ16(base, *scale);
+    scale_x = Iwram_MulQ16(base, *scale++);
+    scale_y = Iwram_MulQ16(base, *scale);
     if (scale_x > 0x1f7ff)
         scale_x = 0x1f800;
     if (scale_y > 0x1f7ff)
         scale_y = 0x1f800;
-    offset_x = MulQ16(sprite->offset_x, scale_x);
-    offset_y = -MulQ16((sprite->height >> 1) - sprite->offset_y, scale_y);
+    offset_x = Iwram_MulQ16(sprite->offset_x, scale_x);
+    offset_y = -Iwram_MulQ16((sprite->height >> 1) - sprite->offset_y, scale_y);
     if (scale_x > 0x10000 || scale_y > 0x10000) {
         affine = 3;
         half_width <<= 1;

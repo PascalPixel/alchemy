@@ -1,11 +1,33 @@
-/* resource_3c4: its listing with the compiler library linked in place from
-   the licensed container, as pret links libgcc members. */
+/* resource_3c4: its listing with maintained code and the compiler library
+   linked in place, as pret links objects and libgcc members in ROM order. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
         "*/resource_3c4_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/OBJECTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_3c4_overlay.o"(.text.x02008ae6)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ACTORS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/TRACKED_ACTOR.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SLOTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/FLICKER_EFFECT.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/WAIT.o"(.text)
+        "*/resource_3c4_overlay.o"(.text.x020090c2)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/RADIAL.o"(.text)
+        "*/resource_3c4_overlay.o"(.text.x02009270)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/TABLES.o"(.text)
+        "*/resource_3c4_overlay.o"(.text.x02009318)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/POINT.o"(.text)
+        "*/resource_3c4_overlay.o"(.text.x02009374)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/STEPS.o"(.text)
+        "*/resource_3c4_overlay.o"(.text.x020093de)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/MAP_INIT.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SETTLE_STEPS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SEQUENCE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/MARK_ACTOR_CELLS.o"(.text)
+        "*/resource_3c4_overlay.o"(.text.x0200a59c)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c4_overlay.o"(.rodata.part1)
     }

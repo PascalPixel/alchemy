@@ -5,6 +5,9 @@
 #include "TEXT_RENDER_RUNTIME.H"
 #include "RENDER_INPUT.H"
 #include "SOUND_IDS.H"
+
+extern u8 gKeyState[];
+extern u8 gKeysRepeat[];
 s32 GameFlag_TestFar(s32);
 s32 Math_Mod(s32, s32);
 void Shop_SetCursorFar(void *, s32, s32, s32);
@@ -103,18 +106,18 @@ loop_6:
     }
     Ui_ApplyTableOffsetToPair((void *)sp8);
     WaitFrames(1);
-    if (*(volatile s32 *)0x03001C94 & 1) {
+    if (*(volatile s32 *)gKeyState & 1) {
         var_r5_144 = var_r8_51;
         Audio_PlayCue(SOUND_MENU_CONFIRM);
-    } else if (*(volatile s32 *)0x03001C94 & 0xA) {
+    } else if (*(volatile s32 *)gKeyState & 0xA) {
         var_r5_144 = -1;
         Audio_PlayCue(SOUND_MENU_CANCEL);
     } else {
-        if (*(volatile s32 *)0x03001B04 & 0x40) {
+        if (*(volatile s32 *)gKeysRepeat & 0x40) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             var_r8_51 -= 1;
             spC = 1;
-        } else if (*(volatile s32 *)0x03001B04 & 0x80) {
+        } else if (*(volatile s32 *)gKeysRepeat & 0x80) {
             Audio_PlayCue(SOUND_MENU_CURSOR_MOVE);
             var_r8_51 += 1;
             spC = 1;

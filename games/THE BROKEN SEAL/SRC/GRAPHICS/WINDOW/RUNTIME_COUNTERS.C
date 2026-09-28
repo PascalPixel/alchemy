@@ -71,7 +71,7 @@ void UiWork_InitCountersWithResourceAndScheduleRefresh(void)
     state->second_zero = 0;
     size = 200;
     size <<= 4;
-    Scheduler_AddOrUpdateCallback((void *)0x0801789d, size);
+    Scheduler_AddOrUpdateCallback((void *)UiWork_ProcessAll, size);
 }
 
 void UiWork_InitCountersAndScheduleRefresh(s32 initialize)

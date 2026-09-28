@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+void OverlayObject_TurnStateByEighth();
+
 struct Actor *Engine_ActorGet(s32 actor);
 void Engine_TaskWait(s32 frames);
 s32 Engine_MathCos(s32 angle);
@@ -89,7 +91,7 @@ void GomaIriguchi_RunSpinningLeap(s32 id)
         actor->x -= Engine_MathCos((u16)actor->sprite->angle) / 2;
         actor->hover = 0x80000000;
     }
-    actor->callback = 0x2008da9;
+    actor->callback = (s32)OverlayObject_TurnStateByEighth;
     Call3(Engine_ActorSetSpeed, id, 0x30000, 0x18000);
     Engine_ActorSetDestination(id, 160, 192);
     actor->accel = 0xcccc;

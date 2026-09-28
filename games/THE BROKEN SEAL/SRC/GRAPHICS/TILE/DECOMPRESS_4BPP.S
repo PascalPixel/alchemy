@@ -8,7 +8,6 @@
 @ TLA edition has these bytes.
 @ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
-	.set	.L_08015b54, 0x08015b54
 .text
 	.arm
 	.global Func_08015afc
@@ -19,10 +18,10 @@ Func_08015afc:
 	mov	r5, #15
 	mov	ip, #1
 	ands	r6, r0, #3
-	beq .L_08015b54
+	beq Tile_Decompress4bppLoop
 	rsbs	r6, ip, r6, lsl #3
 	bic	r0, r0, #3
 	ldr	ip, [r0], #4
 	rrx	ip, ip
 	lsr	ip, ip, r6
-	b .L_08015b54
+	b Tile_Decompress4bppLoop

@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 
 void Effect_Spawn();
-s32 Main_080091d8(struct FieldActor *object, s32 *pos);
+s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
 
 struct DirXZ {
     s32 x;
@@ -16,13 +16,8 @@ struct DustParams {
     u8 unknown_24[4];
 };
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
 
-extern union GameStateRows Data_02000240_t;
+
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
@@ -44,14 +39,14 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     {
         struct EventWork *event = gEventWork;
 
-        id = Data_02000240_t.words[125];
+        id = gGameState.selected_actor;
         center = event->view_center;
     }
     actor = Engine_ActorGet(id);
     pos[0] = actor->x.fixed + ((dir->x * 3) << 15);
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + ((dir->z * 3) << 15);
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     phase = gFrameCount & 4;
     if (phase == 0) {
         params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
@@ -80,14 +75,14 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     pos[0] = actor->x.fixed + (dir->x << 19);
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + (dir->z << 19);
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     if (hit > 0) {
         return;
     }
     pos[0] = actor->x.fixed + dir->x * 0x5b333 - dir->z * 0x5b333;
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + dir->z * 0x5b333 - dir->x * 0x5b333;
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     if (hit > 0) {
         actor->x.fixed += (dir->z * 3) << 15;
         actor->z.fixed += (dir->x * 3) << 15;
@@ -96,7 +91,7 @@ void VinasuHeya_StepActorWithDust(struct DirXZ *dir)
     pos[0] = (dir->x + dir->z) * 0x5b333 + actor->x.fixed;
     pos[1] = actor->y.fixed;
     pos[2] = (dir->x + dir->z) * 0x5b333 + actor->z.fixed;
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     if (hit > 0) {
         actor->x.fixed -= (dir->z * 3) << 15;
         actor->z.fixed -= (dir->x * 3) << 15;

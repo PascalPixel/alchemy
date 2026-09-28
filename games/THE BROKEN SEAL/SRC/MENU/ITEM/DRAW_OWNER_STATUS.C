@@ -2,6 +2,8 @@
 #include "ITEM_MENU.H"
 #include "BATTLE_TYPES.H"
 
+extern u8 gMenuWork[];
+
 /* Message identities link as offsets from the "Attack" label, as in
    Shop_DrawItemPage; the class-name base is a link-time symbol loaded from
    the literal pool. */
@@ -32,7 +34,7 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     struct ItemMenuState *menu;
     struct BattleUnit *unit;
 
-    menu = *(struct ItemMenuState **)0x03001f2c;
+    menu = *(struct ItemMenuState **)gMenuWork;
     unit = Owner_GetStateFar(owner);
     menu->cursor->state = 1;
     flags &= 0x100;

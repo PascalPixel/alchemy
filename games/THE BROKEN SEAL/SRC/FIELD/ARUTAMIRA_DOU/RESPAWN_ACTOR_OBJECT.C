@@ -1,12 +1,11 @@
 #include "DMA.H"
 #include "TYPES.H"
 
-#define ArutamiraDou_RespawnActorObject Func_02000c98
 
-s32 Func_020048f6();
-void Func_0200492c();
-void Func_02004962();
-void Func_02004a24();
+s32 Engine_ObjectCreate();
+void Animation_ApplyChildValues();
+void Battle_WaitMode0();
+void Engine_ActorFaceDirection();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -32,10 +31,10 @@ void ArutamiraDou_RespawnActorObject(void)
 
     p6 = *(s32 *)0x03001f30;
     p5 = *(s32 *)((s32)p6 + 16);
-    Call3(Func_02004a24, *(s16 *)((s32)p6 + 24), 0x4000, 0);
-    Func_0200492c((s32)p5, 0);
-    Func_02004962(20);
-    rec6 = Value4(Func_020048f6, 0, *(s32 *)((s32)p5 + 8), *(s32 *)((s32)p5 + 12), *(s32 *)((s32)p5 + 16));
+    Call3(Engine_ActorFaceDirection, *(s16 *)((s32)p6 + 24), 0x4000, 0);
+    Animation_ApplyChildValues((s32)p5, 0);
+    Battle_WaitMode0(20);
+    rec6 = Value4(Engine_ObjectCreate, 0, *(s32 *)((s32)p5 + 8), *(s32 *)((s32)p5 + 12), *(s32 *)((s32)p5 + 16));
     if (rec6 != 0) {
         Dma_Set((const void *)((s32)p5), (void *)(rec6), -0x7bffffe4, (volatile u32 *)(0x40000d4));
         *(s32 *)((s32)p5 + 108) = 0;

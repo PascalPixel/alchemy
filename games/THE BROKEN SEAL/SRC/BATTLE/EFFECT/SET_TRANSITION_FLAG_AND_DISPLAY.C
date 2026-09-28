@@ -1,10 +1,12 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 
+extern u8 gTransitionWork[];
+
 #if defined(TBS_EDITION_DE)
 #define TRANSITION_CELL_ADDR 0x03001F10
 #else
-#define TRANSITION_CELL_ADDR 0x03001F00
+#define TRANSITION_CELL_ADDR (s32)gTransitionWork
 #endif
 
 s32 WaitFrames(s32);

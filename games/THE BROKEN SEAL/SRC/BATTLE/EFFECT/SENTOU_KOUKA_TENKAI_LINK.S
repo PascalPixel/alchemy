@@ -7,9 +7,8 @@
 @ credit.
 .syntax unified
 	.section .rodata,"a",%progbits
-	.set	.L_dispatch_source, 0x080f0124
 	.arm
 .L_bias:
 	.4byte 0x80808080
 .L_dispatch_base:
-	.4byte .L_dispatch_source
+	.4byte SentouKouka_TenkaiCaseTable

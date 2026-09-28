@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PRESENTATION.H"
+
+extern u8 gLinkStatus[];
 extern u8 Data_03001e80[];
 
 struct SceneCameraTransfer {
@@ -18,7 +20,7 @@ struct LinkWork {
     u8 paused;
 };
 
-#define LINK_STAT (*(u16 *)0x03001f64)
+#define LINK_STAT (*(u16 *)gLinkStatus)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
 
 void Render_ResetTransformState(void);

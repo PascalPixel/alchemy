@@ -1,12 +1,14 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+
+extern u8 Data_03007800[];
 extern u8 Data_03001e50[];
 
 s32 Runtime_GetRemainingIwram(void)
 {
     s32 state = ((u32)&Data_03001e50);
 
-    return 0x03007800 - *(s32 *)(state + 4);
+    return (s32)Data_03007800 - *(s32 *)(state + 4);
 }
 
 s32 Runtime_GetRemainingEwram(void)

@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern u8 gMenuWork[];
+
 struct CharacterSelectorState {
     u8 padding000[0x24];
     s32 screen_handle;
@@ -22,7 +24,7 @@ s32 Party_RemoveActiveOwnerFar(s32 character_id);
 s32 CharacterSelector_MoveEntry(s32 selected_index, s32 direction)
 {
     struct CharacterSelectorState *state =
-        *(struct CharacterSelectorState **)0x03001f2c;
+        *(struct CharacterSelectorState **)gMenuWork;
     u32 reordered[14];
     s32 index;
 

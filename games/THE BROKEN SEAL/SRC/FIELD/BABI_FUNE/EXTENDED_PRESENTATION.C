@@ -1,6 +1,11 @@
 #include "TYPES.H"
 
 extern u8 gMapWork[];
+extern u8 *gEventWork;
+extern const s32 BabiFune_ActionScriptA[];
+extern const s32 BabiFune_ActionScriptB[];
+extern const s32 BabiFune_ActionScriptC[];
+extern const s32 BabiFune_ActionScriptD[];
 extern u8 Value_00000000;
 
 void Engine_EventBegin();
@@ -108,11 +113,11 @@ void Scene_RunExtendedPresentationSequence(void)
         Call1(Engine_EventWait, 30);
         Call3(Engine_ActorShowEmote, 1, 258, 50);
         Call2(Engine_EventShowMessage, 1, 0);
-        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
+        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
     } else {
         Call1(Engine_EventWait, 30);
         Call3(Engine_ActorShowEmote, 1, 258, 50);
-        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
+        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
         Call2(Engine_EventShowMessage, 1, 0);
     }
     Call1(Engine_EventWait, 10);
@@ -149,14 +154,14 @@ void Scene_RunExtendedPresentationSequence(void)
         Call3(Engine_ActorFaceDirection, 1, 57344, 0);
         Call1(Engine_EventWait, 20);
         Call2(Engine_EventShowMessage, 1, 0);
-        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
+        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
     } else {
         Call1(Engine_EventWait, 20);
         Call2(Engine_ActorRunRepeatedMotion, 1, 2);
         Call1(Engine_EventWait, 20);
         Call3(Engine_ActorFaceDirection, 1, 57344, 0);
         Call1(Engine_EventWait, 20);
-        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
+        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
         Call2(Engine_EventShowMessage, 1, 0);
     }
     Call1(Engine_EventWait, 10);
@@ -185,12 +190,12 @@ void Scene_RunExtendedPresentationSequence(void)
         Call2(Engine_ActorSetAnimationAndWait, 3, 3);
         Call1(Engine_EventWait, 20);
         Call2(Engine_EventShowMessage, 3, 0);
-        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
+        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
     } else {
         Call1(Engine_EventWait, 30);
         Call2(Engine_ActorSetAnimationAndWait, 3, 3);
         Call1(Engine_EventWait, 20);
-        (*(u16 *)(*(u8 **)0x03001ebc + 472))++;
+        (*(u16 *)(*(u8 **)&gEventWork + 472))++;
         Call2(Engine_EventShowMessage, 3, 0);
     }
     Call1(Engine_EventWait, 10);
@@ -220,12 +225,12 @@ void Scene_RunExtendedPresentationSequence(void)
     Call3(Engine_ActorSetSpeed, 1, 78643, 39321);
     Call3(Engine_ActorSetSpeed, 2, 78643, 39321);
     Call3(Engine_ActorSetSpeed, 3, 78643, 39321);
-    Call2(Engine_ActorEnableActionCallback, 0, 33593376);
+    Call2(Engine_ActorEnableActionCallback, 0, (s32)BabiFune_ActionScriptA);
     Call1(Engine_EventWait, 50);
     Call4(Engine_CameraMoveTo, 17301504, -1, 13107200, 1);
-    Call2(Engine_ActorEnableActionCallback, 1, 33593568);
+    Call2(Engine_ActorEnableActionCallback, 1, (s32)BabiFune_ActionScriptB);
     Call1(Engine_EventWait, 50);
-    Call2(Engine_ActorEnableActionCallback, 2, 33593740);
+    Call2(Engine_ActorEnableActionCallback, 2, (s32)BabiFune_ActionScriptC);
     Call1(Object_RefreshSelectorById, 2);
     Call3(Engine_ActorFaceDirection, 0, 16384, 0);
     Call3(Engine_ActorFaceDirection, 1, 16384, 0);
@@ -236,7 +241,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Call1(Engine_EventWait, 60);
     Call3(Engine_ActorFaceDirection, 3, 32768, 0);
     Call1(Engine_EventWait, 20);
-    Call2(Engine_ActorEnableActionCallback, 3, 33593932);
+    Call2(Engine_ActorEnableActionCallback, 3, (s32)BabiFune_ActionScriptD);
     Call1(Object_RefreshSelectorById, 3);
     Call3(Engine_ActorFaceDirection, 3, 49152, 0);
     Call1(Engine_EventWait, 20);

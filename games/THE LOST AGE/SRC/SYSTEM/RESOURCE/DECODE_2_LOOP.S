@@ -22,7 +22,7 @@
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #8
 	subs	r4, r4, #11
-	blmi	.L_08012e54
+	blmi	Resource_RefillType2Bits
 	b	.L_08012c74
 .L_08012bf4:
 	lsrs	r2, r2, #1
@@ -39,7 +39,7 @@
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #6
 	subs	r4, r4, #9
-	blmi	.L_08012e54
+	blmi	Resource_RefillType2Bits
 	b	.L_08012c74
 .L_08012c34:
 	push	{r5, r9}
@@ -57,11 +57,12 @@
 	orr	r5, r5, r8, lsl #4
 	lsr	r2, r2, #4
 	subs	r4, r4, #6
-	blmi	.L_08012e54
+	blmi	Resource_RefillType2Bits
 .L_08012c74:
 	strb	r5, [r1, #1]!
 	pop	{r5, r9}
-.L_08012c7c:
+	.global Resource_DecodeType2Loop
+Resource_DecodeType2Loop:
 	lsrs	r2, r2, #1
 	bcs	.L_08012c34
 	lsrs	r2, r2, #1
@@ -125,19 +126,19 @@
 	subs	r4, r4, #6
 	lsr	r2, r2, #5
 .L_08012d54:
-	blmi	.L_08012e54
+	blmi	Resource_RefillType2Bits
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 .L_08012d60:
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
-	beq	.L_08012c7c
+	beq	Resource_DecodeType2Loop
 	ldrb	r7, [r1, -r6]
 	strb	r7, [r1, #1]!
 	subs	r5, r5, #1
 	bne	.L_08012d60
-	b	.L_08012c7c
+	b	Resource_DecodeType2Loop
 .L_08012d84:
 	sub	r6, r1, r9
 	cmp	r6, #0x800
@@ -194,7 +195,8 @@
 	b	.L_08012d54
 .L_08012e50:
 	sub	lr, pc, #0x118
-.L_08012e54:
+	.global Resource_RefillType2Bits
+Resource_RefillType2Bits:
 	ldrh	r3, [r0], #2
 	add	r4, r4, #16
 	orr	r2, r2, r3, lsl r4

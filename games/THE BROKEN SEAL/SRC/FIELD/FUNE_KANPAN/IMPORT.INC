@@ -1,6 +1,9 @@
 	.global IwramUnsignedRemainder
 	.thumb_func
 IwramUnsignedRemainder:
+	.global BuildMotionCountdown
+	.thumb_func
+BuildMotionCountdown:
 	overlay_veneer 0x030003e0
 	.global WaitFrames
 	.thumb_func
@@ -16,12 +19,21 @@ Engine_RandomNext:
 	overlay_veneer 0x080000f9
 	overlay_veneer 0x08000119
 	overlay_veneer 0x08000121
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer 0x08009129
 	.global Engine_ObjectSetPosition
 	.thumb_func
 Engine_ObjectSetPosition:
 	overlay_veneer 0x08009151
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer 0x08009181
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer 0x080091c1
 	.global ObjectDispatch_SetSingleChildField26Far
 	.thumb_func
@@ -50,6 +62,9 @@ UiText_ShowCenteredMessage:
 	.thumb_func
 Engine_GameFlagIsSet:
 	overlay_veneer 0x080770c1
+	.global Engine_GameFlagSet
+	.thumb_func
+Engine_GameFlagSet:
 	overlay_veneer 0x080770c9
 	.global Engine_GameFlagClear
 	.thumb_func
@@ -77,10 +92,16 @@ Engine_EventEnd:
 	.thumb_func
 Event_CallWithLastActiveObjectId:
 	overlay_veneer 0x0808a031
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer 0x0808a071
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer 0x0808a081
 	.global Engine_ActorDestroy
 	.thumb_func
@@ -129,6 +150,9 @@ Engine_ObjectMotionSetPositionAndCommit:
 	.global ObjectMotion_ResetAndSetPositionInMode2
 	.thumb_func
 ObjectMotion_ResetAndSetPositionInMode2:
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer 0x0808a0c9
 	.global ObjectMotion_SetPositionAndReset
 	.thumb_func
@@ -156,7 +180,13 @@ Engine_ActorSetAnimation:
 	.thumb_func
 Engine_ActorSetAnimationAndWait:
 	overlay_veneer 0x0808a111
+	.global Engine_ActorJump
+	.thumb_func
+Engine_ActorJump:
 	overlay_veneer 0x0808a129
+	.global Engine_ActorStartRepeatedMotion
+	.thumb_func
+Engine_ActorStartRepeatedMotion:
 	overlay_veneer 0x0808a131
 	.global Motion_SetVarCbAndRefresh
 	.thumb_func
@@ -165,6 +195,9 @@ Motion_SetVarCbAndRefresh:
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer 0x0808a139
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer 0x0808a149
 	.global ObjectGroup_ConfigureChildValue
 	.thumb_func
@@ -180,8 +213,17 @@ Event_SetValue1d8:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer 0x0808a171
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer 0x0808a179
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer 0x0808a181
+	.global Engine_EventShowMessageAndWait
+	.thumb_func
+Engine_EventShowMessageAndWait:
 	overlay_veneer 0x0808a189
 	overlay_veneer 0x0808a191
 	.global Engine_ActorFaceDirection
@@ -206,8 +248,17 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_CameraFollowActor:
 	overlay_veneer 0x0808a201
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer 0x0808a209
+	.global Engine_CameraMoveTo
+	.thumb_func
+Engine_CameraMoveTo:
 	overlay_veneer 0x0808a211
+	.global Engine_CameraWaitForMove
+	.thumb_func
+Engine_CameraWaitForMove:
 	overlay_veneer 0x0808a219
 	.global Event_SetValue170
 	.thumb_func
@@ -245,6 +296,9 @@ Event_WaitValue1c8Frames:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer 0x0808a371
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
 	overlay_veneer 0x0808a461
 	.global Engine_AudioPlayCue
 	.thumb_func

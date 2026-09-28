@@ -3,6 +3,9 @@
 #include "RESOURCE.H"
 #include "UI.H"
 
+extern u8 gKeyState[];
+extern u8 gKeysRepeat[];
+
 struct UiSprite {
     u8 unknown_00[24];
     u16 tile : 10;
@@ -46,22 +49,22 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
             sprite = RenderOutput_CreateFar(slot, 0x40004000, window, 32, 0);
             sprite->tile += 4;
             for (;;) {
-                if (*(volatile u32 *)0x03001c94 & 1) {
+                if (*(volatile u32 *)gKeyState & 1) {
                     Audio_PlayCue(112);
                     result = count + 1;
                     break;
                 }
-                if (*(volatile u32 *)0x03001c94 & 2) {
+                if (*(volatile u32 *)gKeyState & 2) {
                     Audio_PlayCue(113);
                     result = -1;
                     break;
                 }
-                if (*(volatile u32 *)0x03001b04 & 32) {
+                if (*(volatile u32 *)gKeysRepeat & 32) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count--;
                 }
-                if (*(volatile u32 *)0x03001b04 & 16) {
+                if (*(volatile u32 *)gKeysRepeat & 16) {
                     Audio_PlayCue(111);
                     changed = 1;
                     count++;

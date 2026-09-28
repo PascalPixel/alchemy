@@ -18,6 +18,10 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
+extern u8 gBattleFxWork[];
+
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+
 /* One column record at work + 0x7080. */
 struct DualColumn {
     s32 x;
@@ -140,7 +144,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 
     mode = arg1;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     draw_destination = *cursor;
@@ -193,7 +197,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 
     work->unknown_7780 = 1;
     work->unknown_7784 = 0;
-    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     sp24 = 0;
     if (sp20 != 0) {
@@ -323,7 +327,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
             sp24 += 1;
         } while (sp24 != sp20);
     }
-    Scheduler_RemoveCallback((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)BattlePresentation_ProcessPendingGraphicsTransfer);
     Func_08002dd8(47);
     Func_08002dd8(46);
     BattleFx_EndCanvasLayer();

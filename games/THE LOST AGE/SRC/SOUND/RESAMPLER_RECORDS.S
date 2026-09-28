@@ -12,9 +12,8 @@
 @ credit: handwritten — TLA fixed-size ARM sound resampler record
 .syntax unified
 	.arm
-	.set	.L_080004b8, 0x080004b8
 	.global Sound_ResamplerRecords
 Sound_ResamplerRecords:
 	mov	r2, #0
 	mov	r4, #0
-	b	.L_080004b8
+	b	Sound_ResamplerRecord1

@@ -1,21 +1,15 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_08015360(s32 a, s32 b);
+void PaletteGlow_Update(s32 a, s32 b);
 void FieldScene_RunLargeStagingSequence(void);
 void InitializeStagedActorSceneOrbitingEffect(s32 actor);
-void Local_02005950(void);
+void HaidiaMura_OpenVillagerLane(void);
 void Scene_RepairTheHouse(void);
 void SceneState_Send210AndApplyRectAt40x84(void);
-void Main_0808a5e0(s32 value);
+void BattleFx_SetQueuedSoundAndPlay(s32 value);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
 
-extern union GameStateRows Data_02000240_t;
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -43,8 +37,8 @@ s32 HaidiaMura_ApplyEntryState(void)
     struct FieldActor *actor;
     s32 set;
 
-    if (Data_02000240_t.halves[225][0] == 16) {
-        Main_08015360(Data_02000240_t.bytes[258][1], Data_02000240_t.bytes[259][0]);
+    if (gGameState.entrance == 16) {
+        PaletteGlow_Update(((u8 *)&gGameState)[517], ((u8 *)&gGameState)[518]);
         FieldScene_RunLargeStagingSequence();
     } else {
         if (!Engine_GameFlagIsSet(0xfd0)) {
@@ -67,7 +61,7 @@ s32 HaidiaMura_ApplyEntryState(void)
         }
         actor->z.fixed = 0x2480000;
         actor->y.fixed = 0xc00000;
-        Local_02005950();
+        HaidiaMura_OpenVillagerLane();
         actor->unknown_22 = 3;
         actor->motion_flags = 0;
         Engine_TaskAddCallback((void (*)(void))0x200da95, 0xc80);
@@ -95,11 +89,11 @@ s32 HaidiaMura_ApplyEntryState(void)
                     Engine_ActorGet(22)->unknown_5b = set;
                     Engine_GameFlagClear(0x241);
                 }
-                if (Data_02000240_t.halves[225][0] != 16 && !Engine_GameFlagIsSet(0x87a)) {
+                if (gGameState.entrance != 16 && !Engine_GameFlagIsSet(0x87a)) {
                     Engine_TaskAddCallback((void (*)(void))0x200da41, 0xc80);
                 }
             }
-            if (!Value1(Engine_GameFlagIsSet, 0x308) && Data_02000240_t.halves[225][0] == 17) {
+            if (!Value1(Engine_GameFlagIsSet, 0x308) && gGameState.entrance == 17) {
                 Scene_RepairTheHouse();
                 Call1(Engine_GameFlagSet, 0x308);
             }
@@ -112,7 +106,7 @@ s32 HaidiaMura_ApplyEntryState(void)
                 SceneState_Send210AndApplyRectAt40x84();
             }
         }
-        Main_0808a5e0(170);
+        BattleFx_SetQueuedSoundAndPlay(170);
         Engine_MapRedraw();
         Engine_TaskWait(1);
     }

@@ -33,22 +33,39 @@ corrections separately. Timebox work that cannot move this number.
 6. Only Pascal changes credit standards, approves compiler source, binaries
    and digests, or authorises pushes and parallel workflows. Record approvals below.
 
-## AI Cheating
+## Oracle leakage
 
-AI Cheating is saving the expected answer or changing verification instead of
-reconstructing the mechanism, or committing calculated bookkeeping as source.
+The reference ROM is the test oracle: it judges the build and never feeds it.
+Oracle leakage (Goodhart's law, specification gaming) is any path by which the
+expected answer steers the build or the count, so the comparison passes by
+construction. Every past cheat was one leak in a new form: a cloned ROM,
+catalogs, receipts, name-decoded equates, `#define` aliases, addresses stored
+in assets. Banning forms only moves the answer; hold these invariants instead.
 
-- Maintained disassembly is a valid fallback for unfinished C. It remains
-  `not-yet-c`; only proven library, handwritten and veneer modules earn assembly credit.
-- Never commit grey sheets, whole-area BINs, `DATA.BIN` or compression tokens.
-  Renaming or splitting stored answers changes nothing.
-- Generate calculated offsets, sizes, per-asset hashes, pointer/symbol catalogs,
-  owner inventories, reports and receipts in ignored `out/` or `tools/out`.
-  Fix consumers that depend on tracked copies.
-- Keep decisions once: names in code, declarations in headers, layout and
-  bindings in build/linker rules, encoder options beside assets. Identified
-  editable assets are inputs; approved reference checksums, dependency pins
-  and published progress are intentional records.
+1. **One door.** ROM bytes reach the build only through pret's
+   `.incbin "baserom.gba", OFFSET, SIZE` scaffold in `recon/<game>`, which never
+   counts. Nothing else derived from the ROM or the expected output (bytes,
+   addresses, sizes, tokens, tables, per-asset hashes) may steer the build or
+   the count, in any file or location, `out/` included.
+2. **The linker places.** Every name is defined where its bytes are, as a C
+   definition or a label, and layout is the linker scripts' object order. No
+   equate, alias, `#define` or table gives a name an address.
+3. **The map counts.** DONE is pret's calcrom over the linker maps of
+   byte-identical builds: the code the linker places from `games/`. `games/`
+   holds only real source: C from an approved compiler, or proven library,
+   handwritten or veneer assembly written as instructions, never as copied
+   bytes. Unfinished code is disassembly in `recon/<game>/raw`, `not-yet-c`.
+4. **Verification is fixed.** A mismatch is fixed in source, or the code stays
+   disassembly or a draft. Only Pascal changes gates, credit or the comparison.
+5. **Audit before claiming.** No list is complete: before announcing a
+   milestone, run an independent adversarial audit for leaks and fix each at
+   its owner.
+
+Reports may be generated under `out/` for people to read, never for the build
+or the count to consume. Keep each decision once: names in code, declarations
+in headers, layout and bindings in linker rules, encoder options beside assets.
+Approved checksums, dependency pins and published progress are intentional
+records.
 
 ## Source
 
@@ -108,7 +125,7 @@ a verified build.
   New trailers name the actual session model.
 - 2026-09-28: tooling baseline is `2db71499f1f991c9a4899641737212bfba8104c0`.
   Main commits own verified percentages, README and both progress figures.
-- 2026-09-28: AI Cheating supersedes the September 22/23 exceptions for stored
+- 2026-09-28: the oracle-leakage rule supersedes the September 22/23 exceptions for stored
   compression answers and tracked machine ledgers.
 - 2026-09-28: approved the stock `da598c1` agbcc rebuild; its exact binary
   digest is recorded in the compiler admission table.
@@ -116,3 +133,5 @@ a verified build.
 - 2026-09-28: prime directive: what pret published, we may; what pret did not
   publish, we may not. Not-yet-sourced data links through pret's early
   `.incbin "baserom.gba", OFFSET, SIZE` scaffolding in `recon/<game>`.
+- 2026-09-28: the cheating rule is restated as oracle leakage: five invariants
+  that keep the answer out of the build and the count, not a list of forms.

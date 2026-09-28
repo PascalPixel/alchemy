@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
+
+extern u8 gBattleFxWork[];
 void ColorBuffer_BackupAndHalve(const void *source, void *destination, s32 size);
 void ColorBuffer_BackupAndScaleThreeQuarters(const void *source, void *destination, s32 size);
 void ColorBuffer_BackupAndDarken(const void *source, s32 mode, void *destination, s32 size);
@@ -27,7 +29,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
     void *source;
     s32 transfer_mode;
 
-    heap_cache = (void **)0x03001eec;
+    heap_cache = (void **)gBattleFxWork;
     work = heap_cache[0];
     source = (void *)0x02010000;
     if (work->transfer_pending != 1)

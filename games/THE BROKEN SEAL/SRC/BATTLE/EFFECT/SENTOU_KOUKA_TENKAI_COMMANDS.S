@@ -9,7 +9,8 @@
 @ credit: library — TBS/TLA common ARM model/bit-stream decoder bank, bit commands
 .syntax unified
 	.arm
-.L_case_2:
+	.global SentouKouka_TenkaiCase2
+SentouKouka_TenkaiCase2:
 	lsr	r3, r3, #2
 	subs	r2, r2, #2
 	movpl	pc, lr
@@ -17,7 +18,8 @@
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_case_4_plus:
+	.global SentouKouka_TenkaiCase4Plus
+SentouKouka_TenkaiCase4Plus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -28,7 +30,8 @@
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_case_4_minus:
+	.global SentouKouka_TenkaiCase4Minus
+SentouKouka_TenkaiCase4Minus:
 	and	ip, r3, #8
 	lsrs	r3, r3, #4
 	add	ip, ip, #8
@@ -39,7 +42,8 @@
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_case_6_plus:
+	.global SentouKouka_TenkaiCase6Plus
+SentouKouka_TenkaiCase6Plus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -50,7 +54,8 @@
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_case_6_minus:
+	.global SentouKouka_TenkaiCase6Minus
+SentouKouka_TenkaiCase6Minus:
 	and	ip, fp, r3, lsr #3
 	lsr	r3, r3, #6
 	add	ip, ip, #3
@@ -61,7 +66,8 @@
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_case_8:
+	.global SentouKouka_TenkaiCase8
+SentouKouka_TenkaiCase8:
 	mov	ip, #15
 	ands	ip, ip, r3, lsr #4
 	add	ip, ip, #11
@@ -74,7 +80,8 @@
 	add	r2, r2, #16
 	orr	r3, r3, ip, lsl r2
 	mov	pc, lr
-.L_case_10:
+	.global SentouKouka_TenkaiCase10
+SentouKouka_TenkaiCase10:
 	ror	r5, r3, #10
 	and	r5, r5, #-33554432
 	lsr	r3, r3, #10

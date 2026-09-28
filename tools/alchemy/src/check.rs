@@ -48,15 +48,6 @@ pub fn entry(arguments: &[String]) -> ExitCode {
         )));
     }
     match command {
-        "source-tracking" if rest.is_empty() => {
-            match crate::build_assets::check_source_tracking() {
-                Ok(()) => ExitCode::SUCCESS,
-                Err(error) => {
-                    eprintln!("error: {error}");
-                    ExitCode::FAILURE
-                }
-            }
-        }
         "publication" => publication::entry(rest),
         "commit-progress" => commit_progress::entry(rest),
         "coverage" => {

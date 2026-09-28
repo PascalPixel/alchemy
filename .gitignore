@@ -4,10 +4,8 @@ out/
 tools/out/
 # Worktree convenience symlink to the shared ROM set.
 /roms
-# Native pixel, palette, packed map and unidentified byte inputs of every game
-# are private: recon/<game>/private-inputs.json registers them and
-# `alchemy build assets --extract-sources ROM [--target TARGET]` regenerates
-# them from the verified local ROM.
+# Grey sheets, palette ledgers and packed byte runs the retired extractor
+# wrote under these names are dumps, not editable assets: they stay local.
 /games/*/SRC/**/CHR.PNG
 /games/*/SRC/**/*_CHR.PNG
 /games/*/SRC/**/*.BIN

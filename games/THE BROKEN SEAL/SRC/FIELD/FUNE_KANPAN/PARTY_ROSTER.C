@@ -7,7 +7,7 @@ void FieldScene_RunStepThen10(s32 actor);
 void FieldScene_CallPairWith10(s32 actor, s32 value);
 void Engine_ActorStartAction(s32 actor);
 
-extern const u8 Data_0200c8e0[];
+extern const u8 FuneKanpan_RosterActions[];
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
@@ -196,7 +196,7 @@ scene:
         }
 
         FieldScene_RunStepThen10(actor);
-        Call2(Engine_ActorEnableActionCallback, actor, Data_0200c8e0);
+        Call2(Engine_ActorEnableActionCallback, actor, FuneKanpan_RosterActions);
     }
 
     /* Phase 5 -- teardown. */

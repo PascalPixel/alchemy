@@ -1,6 +1,5 @@
 #include "TYPES.H"
 
-#define SaveMenu_FillTileBlock Func_02000d74
 
 struct SaveMenuTileBlock {
     u8 padding_00[12];

@@ -134,8 +134,8 @@ void FieldScene_RunMultiPhasePresentation(void)
     *(volatile s16 *)timer = 0;
     actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 212, 200);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 103, 200);
+    Call3(Engine_ActorMoveToAndWait, 10, 212, 200);
+    Call3(Engine_ActorMoveToAndWait, 10, 103, 200);
     actor->actor.update = NULL;
     actor->motion.state = zero.v;
     Engine_EventWait(10);
@@ -154,7 +154,7 @@ void FieldScene_RunMultiPhasePresentation(void)
     record = Engine_ActorGet(10);
     record->velocity_y = 0x40000;
     Call2((void (*)())Engine_ActorSetAnimation, 10, 3);
-    Engine_ObjectMotionSetPositionAndCommit(10, 86, 214);
+    Engine_ActorMoveToAndWait(10, 86, 214);
     Engine_ActorSetAnimation(10, 1);
     record = Engine_ActorGet(10);
     Engine_ActorSetSpriteFlags(record, 1);
@@ -178,7 +178,7 @@ void FieldScene_RunMultiPhasePresentation(void)
     *(volatile s16 *)delay = 0;
     actor->actor.update = (void (*)(union FieldObject *))SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 120, 215);
+    Call3(Engine_ActorMoveToAndWait, 10, 120, 215);
     actor->actor.update = NULL;
     actor->motion.state = zero.v;
     Engine_ActorSetAnimation(10, 1);

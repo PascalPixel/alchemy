@@ -1,17 +1,20 @@
 #include "TYPES.H"
 
-s32 Func_02002c32();
-void Func_02002c4c();
-void Func_02002c60();
-void Func_02002c6a();
-void Func_02002c7e();
-void Func_02002cae();
-void Func_02002d10();
-void Func_02002d12();
-void Func_02002d26();
-void Func_02002d3e();
-void Func_02002d46();
-void Func_02002d6a();
+/* Actor 8's two lines, depending on whether he has already left. */
+
+s32 Engine_GameFlagIsSet();
+void Engine_EventBegin();
+void Engine_EventWait();
+void Engine_MessageShowCentered();
+void Engine_EventEnd();
+void Engine_ActorRunRepeatedMotion();
+void Object_SetTargetAndCallback();
+void Engine_EventSetMessage();
+void Engine_EventShowMessage();
+void Engine_EventShowMessageAndWait();
+
+/* Actor 8's departure, in the overlay's read-only data. */
+extern s32 gHaidiaBabiActor8Departure[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -45,21 +48,21 @@ void HaidiaBabi_RunActorEightMessageScene(void)
     s32 record;
     s32 base5_1c79;
 
-    Func_02002c4c();
-    if (Value1(Func_02002c32, 0x203) != 0) {
-        Call3(Func_02002d12, 8, 0x10000, 0x2009e6c);
-        Func_02002c60(20);
-        Call1(Func_02002d26, 0x1c77);
-        Func_02002d3e(8, 0);
+    Engine_EventBegin();
+    if (Value1(Engine_GameFlagIsSet, 0x203) != 0) {
+        Call3(Object_SetTargetAndCallback, 8, 0x10000, (s32)gHaidiaBabiActor8Departure);
+        Engine_EventWait(20);
+        Call1(Engine_EventSetMessage, 0x1c77);
+        Engine_EventShowMessage(8, 0);
     } else {
-        Func_02002d10(8, 2);
-        Func_02002c7e(40);
+        Engine_ActorRunRepeatedMotion(8, 2);
+        Engine_EventWait(40);
         do {
             base5_1c79 = 0x1c79;
         } while (0); /* FAKEMATCH: the wrap keeps the message id load after the wait. */
-        Func_02002d46(base5_1c79);
-        Func_02002d6a(8, 0, 40);
-        Func_02002c6a((base5_1c79 + 1), 1);
+        Engine_EventSetMessage(base5_1c79);
+        Engine_EventShowMessageAndWait(8, 0, 40);
+        Engine_MessageShowCentered((base5_1c79 + 1), 1);
     }
-    Func_02002cae();
+    Engine_EventEnd();
 }

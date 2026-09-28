@@ -365,7 +365,7 @@ DebugMenu_BrowseIconsFar:
 	.thumb_func
 DebugMenu_BrowseEntryGlyphsFar:
 	overlay_veneer DebugMenu_BrowseEntryGlyphs
-	overlay_veneer Func_0801c468
+	overlay_veneer Item_ReturnTrue
 	.global Djinn_ShowJoinedMessageFar
 	.global Func_08015358
 	.thumb_func

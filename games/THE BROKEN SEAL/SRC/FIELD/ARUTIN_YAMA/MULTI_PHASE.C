@@ -16,14 +16,14 @@ void Engine_AudioPlayCue();
 void Engine_ActorRunRepeatedMotion();
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
-void Engine_ObjectMotionSetPositionAndCommit();
+void Engine_ActorMoveToAndWait();
 s32 Engine_ActorSetAnimation();
 void Engine_WorkSetValuesIfNonNegative();
 void Engine_ActorFaceDirection();
 void FieldScene_RunActorTenFourStepSequence();
 void Engine_MapCopyCellAttributes();
 void Engine_ActorSetSpriteFlags();
-void Main_0808a168();
+void Engine_ObjectSetTargetAndCallback();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
 
@@ -65,8 +65,8 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 struct Half { u16 v; };
-extern u8 Value_02009771;
-extern u8 Value_0200bd34;
+extern u8 SceneMotion_UpdateTimedActor;
+extern u8 ArutinYama_ActorScript;
 
 /* The zero is a one-halfword struct, so its movhi pool load reaches 64 bytes
  * and the pool lands where the ROM has it; the motion callbacks are Value_
@@ -96,10 +96,10 @@ void FieldScene_BuildMultiPhasePresentation(void)
     p10.v = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
     *(s32 *)((s32)rec3 + 72) = 0x6666;
-    ((struct ActorMotion *)rec3)->callback = (s32)&Value_02009771;
+    ((struct ActorMotion *)rec3)->callback = (s32)&SceneMotion_UpdateTimedActor;
     Call3(Engine_ActorSetSpeed, 10, 0x13333, 0x9999);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x134, 0x123);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x137, 215);
+    Call3(Engine_ActorMoveToAndWait, 10, 0x134, 0x123);
+    Call3(Engine_ActorMoveToAndWait, 10, 0x137, 215);
     ((struct ActorMotion *)rec3)->callback = 0;
     rec3[91] = p10.v;
     Engine_EventWait(16);
@@ -119,10 +119,10 @@ void FieldScene_BuildMultiPhasePresentation(void)
     ((struct ActorMotion *)rec3)->phase = 0;
     ((struct ActorMotion *)rec3)->step[0] = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
-    ((struct ActorMotion *)rec3)->callback = (s32)&Value_02009771;
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x140, 232);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x154, 0x106);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x176, 0x106);
+    ((struct ActorMotion *)rec3)->callback = (s32)&SceneMotion_UpdateTimedActor;
+    Call3(Engine_ActorMoveToAndWait, 10, 0x140, 232);
+    Call3(Engine_ActorMoveToAndWait, 10, 0x154, 0x106);
+    Call3(Engine_ActorMoveToAndWait, 10, 0x176, 0x106);
     ((struct ActorMotion *)rec3)->callback = 0;
     Engine_EventWait(16);
     Engine_ActorSetAnimation(10, 1);
@@ -137,7 +137,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     record = Engine_ActorGet(10);
     *(s32 *)(record + 40) = 0x40000;
     Engine_ActorSetAnimation(10, 2);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x17c, 248);
+    Call3(Engine_ActorMoveToAndWait, 10, 0x17c, 248);
     Engine_EventWait(10);
     Engine_AudioPlayCue(229);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0, 0x10000);
@@ -152,8 +152,8 @@ void FieldScene_BuildMultiPhasePresentation(void)
     ((struct ActorMotion *)rec3)->phase = 0;
     ((struct ActorMotion *)rec3)->step[0] = 0;
     ((struct ActorMotion *)rec3)->step[1] = 0;
-    ((struct ActorMotion *)rec3)->callback = (s32)&Value_02009771;
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x149, 219);
+    ((struct ActorMotion *)rec3)->callback = (s32)&SceneMotion_UpdateTimedActor;
+    Call3(Engine_ActorMoveToAndWait, 10, 0x149, 219);
     ((struct ActorMotion *)rec3)->callback = 0;
     Engine_ActorSetAnimation(10, 1);
     Engine_EventWait(16);
@@ -175,7 +175,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     record = Engine_ActorGet(10);
     *(s32 *)(record + 40) = (v6 << 11);
     Call2((void (*)())Engine_ActorSetAnimation, 10, 3);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x127, 215);
+    Call3(Engine_ActorMoveToAndWait, 10, 0x127, 215);
     Engine_ActorSetAnimation(10, 1);
     record = Engine_ActorGet(10);
     Engine_ActorSetSpriteFlags(record, 1);
@@ -188,7 +188,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     record = Engine_ActorGet(10);
     *(s32 *)(record + 40) = (v6 << 11);
     Engine_ActorSetAnimation(10, 3);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, 10, 0x104, 215);
+    Call3(Engine_ActorMoveToAndWait, 10, 0x104, 215);
     Engine_ActorSetAnimation(10, 1);
     Engine_AudioPlayCue(229);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0, 0x10000);
@@ -207,7 +207,7 @@ void FieldScene_BuildMultiPhasePresentation(void)
     Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);
     Engine_CameraMoveTo(*(s32 *)(rec7 + 8), *(s32 *)(rec7 + 12), *(s32 *)(rec7 + 16), 1);
     Engine_CameraWaitForMove();
-    Call3(Main_0808a168, 10, 0x10000, (s32)&Value_0200bd34);
+    Call3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)&ArutinYama_ActorScript);
     Call1(Engine_GameFlagSet, 0x904);
     Engine_EventEnd();
 }

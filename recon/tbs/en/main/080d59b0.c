@@ -1,19 +1,18 @@
-/* Draft, not exact (2026-09-28): 664 of 664 bytes, 16 differing halfwords
- * (the earlier draft was 660 bytes, 203 halfwords). Rewritten from the
- * listing in the style of the matched effect family (TARGET_BURSTS.C,
- * SWIRLING_STARS.C): 32 rocks are dropped from above the scene, the first
- * twelve drawn from frame i * 4, bouncing once they pass the floor; each
- * affected unit is lifted with ObjectGroup_UpdateMembers on frame
- * i * 16 + 64. Recovered: the two blitters as separate scalars declared b
- * then a (stack +12/+16), the indexed seeding loop, the unused second
- * Random16 draw (its result masked to zero) and the second sheet's offset
- * written as (cel << 10) - 0x1000.
- * Remaining: in the fall update the ROM keeps the gravity constant and
- * then z in r0 and the new vertical velocity in r1 (here swapped), and in
- * the bounce it forms -(vy + 1) / 2 before z + 4; the frame counter is
- * reloaded into r2 instead of r3. Statement orders of the update and the
- * bounce, an inline fall helper, a saved velocity temporary, the other
- * negation spellings and every scalar declaration order leave these. */
+/* Draft, byte-exact but not adoptable (2026-09-28): 664 of 664 bytes,
+ * 0 differing halfwords. Rewritten from the listing in the style of the
+ * matched effect family (TARGET_BURSTS.C, SWIRLING_STARS.C): 32 rocks are
+ * dropped from above the scene, the first twelve drawn from frame i * 4,
+ * bouncing once they pass the floor; each affected unit is lifted with
+ * ObjectGroup_UpdateMembers on frame i * 16 + 64. The last residual closed
+ * when the bounce takes the speed (vy + 1) before placing the rock on the
+ * floor and stepping z.
+ * Blockers before adoption:
+ * - the resource id 0xa8 is a literal-pool word in the reference, which
+ *   only the name-decoded link constant Value_000000a8 reproduces here; it
+ *   needs a real resource symbol, not a new equate;
+ * - the rock buffer is spelled as the literal 0x02010000: the named
+ *   gMapCellBuffer (same address) changes the seeding loop's induction
+ *   (672 bytes, or 664 bytes and 48 edits as a walking pointer). */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -21,6 +20,8 @@
 #include "SYSTEM.H"
 
 extern u8 Value_000000a8;
+extern void *gBattleFxWork[];
+extern s32 gCameraWork;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
@@ -48,7 +49,7 @@ void BattleFx_RunBouncingRocks(void *object)
     DrawRectangleFn draw_a;
     s32 member;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -78,7 +79,7 @@ void BattleFx_RunBouncingRocks(void *object)
     for (frame = 0; frame != 148; frame++) {
         s32 facing;
 
-        facing = *(s32 *)0x03001e80;
+        facing = gCameraWork;
         if (frame == 80)
             BattleEventRuntime_BeginPhaseFar(0);
         for (member = 0; member != work->effect->count; member++) {
@@ -110,9 +111,10 @@ void BattleFx_RunBouncingRocks(void *object)
                 rock->velocity_y += 0x2000;
                 rock->variant += rock->z;
                 if (rock->y > 0x5c0000 && rock->velocity_y == 0) {
-                    rock->z += 4;
+                    s32 speed = rock->velocity_y + 1;
                     rock->y = 0x5c0000;
-                    rock->velocity_y = -(rock->velocity_y + 1) / 2;
+                    rock->z += 4;
+                    rock->velocity_y = -speed / 2;
                 }
             }
         }

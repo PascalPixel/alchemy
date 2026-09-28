@@ -2,13 +2,13 @@
 
 
 
-extern u8 Data_020091c5[];
-extern s16 Data_02009c1a;
-extern u16 Data_02009c18;
-s32 Func_02002602();
-s32 Func_0200261a(void);
-void Func_02002632();
-s32 Func_02002612(void *callback, s32 priority);
+void BabiFune_StepFade();
+extern s16 BabiFune_FadeSlot;
+extern u16 BabiFune_FadeStep;
+s32 Runtime_BumpAllocateAlternatePool();
+s32 Resource_FindFreeEntry(void);
+void VramBlock_LoadCached();
+s32 Engine_ScheduleCallback(void *callback, s32 priority);
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -31,12 +31,12 @@ void BabiFune_ScheduleFade(void)
     u8 *buf;
     volatile u32 fill;
 
-    buf = (u8 *)Value1(Func_02002602, 0x100);
-    Data_02009c1a = Func_0200261a();
+    buf = (u8 *)Value1(Runtime_BumpAllocateAlternatePool, 0x100);
+    BabiFune_FadeSlot = Resource_FindFreeEntry();
     fill = 0x11111111;
     Dma_Set((const void *)&fill, buf, 0x85000040, (volatile u32 *)0x040000d4);
-    Call3(Func_02002632, Data_02009c1a, 0x100, (s32)buf);
+    Call3(VramBlock_LoadCached, BabiFune_FadeSlot, 0x100, (s32)buf);
     /* The halfword constant comes from the literal pool (HImode move). */
-    Data_02009c18 = 0x30;
-    Func_02002612(Data_020091c5, 0xc80);
+    BabiFune_FadeStep = 0x30;
+    Engine_ScheduleCallback(BabiFune_StepFade, 0xc80);
 }

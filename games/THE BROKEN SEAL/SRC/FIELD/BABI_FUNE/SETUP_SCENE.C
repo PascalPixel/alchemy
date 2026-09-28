@@ -6,7 +6,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_08077028(s32 a, s32 b);
+void Inventory_AddItemFar(s32 a, s32 b);
 void FieldScene_ConfigureFixedPointValues(void);
 
 union GameStateRows {
@@ -33,10 +33,7 @@ struct FieldGlobals {
     u8 *event;
 };
 
-extern union GameStateRows Data_02000240_t;
-extern struct FieldGlobals Data_03001e70;
-extern u8 Data_00000002[];
-extern u8 Data_00000003[];
+extern struct FieldGlobals gMapWork;
 
 #define SPRITE_BYTES(actor) ((u8 *)(actor)->sprite)
 
@@ -54,11 +51,11 @@ s32 BabiFune_SetupScene(void)
     struct MapWork *map;
     volatile u16 cnt;
 
-    map = Data_03001e70.map;
-    if (Data_02000240_t.halves[225][0] == 99) {
-        Main_08077028(0, 242);
+    map = gMapWork.map;
+    if (((union GameStateRows *)&gGameState)->halves[225][0] == 99) {
+        Inventory_AddItemFar(0, 242);
     }
-    *(s32 *)(Data_03001e70.event + 0x1c0) = 0x100;
+    *(s32 *)(gMapWork.event + 0x1c0) = 0x100;
     Engine_ActorGet(8)->collision_flags = 0;
     Engine_ActorGet(8)->priority_flags = 2;
     Engine_ActorGet(9)->collision_flags = 0;

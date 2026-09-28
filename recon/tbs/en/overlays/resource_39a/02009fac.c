@@ -1,15 +1,24 @@
+/* NONMATCHING: resource_39a at 0x02009fac (104 bytes with its pool),
+ * ImiruFuchin_StartFadeIn, between FIELD/COMMON/IMIRU_FUCHIN/CALLBACKS.C and
+ * HEADING.C, stays listing. It was FIELD/COMMON/IMIRU_FUCHIN/FADE_IN.C.
+ *
+ * Remaining difference: the reference loads the effect work pointer's
+ * address (0x03001f30) from its pool and reaches the light-flag work pointer
+ * 100 bytes below it with one subtract, as two members of one resident
+ * structure do when both lie beyond a load's reach from its start. The main
+ * image names them as separate variables (gEffectWork and Data_03001ecc),
+ * which load separately; spelled as gWork[29] and gWork[4] they share gWork's
+ * base register instead (54 differing bytes). The structure that holds them
+ * is not yet recovered.
+ */
 #include "TYPES.H"
-extern u8 Data_03001ecc[];
-extern u8 gEffectWork[];
+#include "FIELD_EVENT.H"
+
+extern u8 *gWork[];
 
 void Engine_ColorBufferApplySource();
 void Engine_ColorBufferApplyTarget();
 void Engine_ColorBufferInterpolate();
-void Engine_TaskWait();
-
-
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -33,9 +42,9 @@ void ImiruFuchin_StartFadeIn(void)
     struct FadeWork *fade;
     u8 *work;
 
-    if (Data_02000240_t[225][0] <= 6) {
-        fade = *(struct FadeWork **)gEffectWork;
-        work = *(u8 **)Data_03001ecc;
+    if (gGameState.entrance <= 6) {
+        fade = (struct FadeWork *)gWork[29];
+        work = gWork[4];
         fade->active = 1;
         work[0x53e] = 0;
         work[0x53c] = 1;

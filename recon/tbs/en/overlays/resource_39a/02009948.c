@@ -1,3 +1,11 @@
+/* NONMATCHING: resource_39a at 0x02009948 (236 bytes with its pool),
+ * ImiruFuchin_ApplyRoomLayout, stays listing. It was
+ * FIELD/COMMON/IMIRU_FUCHIN/ROOM_LAYOUT.C.
+ *
+ * Remaining difference: the reference loads the scene numbers from its literal
+ * pool and compares registers, as link-time scene symbols do; plain constants
+ * compile to cmp with an immediate. The tables keep their listing addresses.
+ */
 #include "TYPES.H"
 
 void Engine_MapCopyCellAttributes();

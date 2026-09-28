@@ -12,7 +12,7 @@ void Engine_ActorSetDestination();
 void Engine_ActorWaitForMove();
 void Effect_Spawn();
 void Engine_EventWait();
-void Main_0808a5e8();
+void BattleFx_PlayQueuedSoundFar();
 void Engine_MapCopyCellAttributes();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
@@ -80,7 +80,7 @@ void ShianJiin_RunTempleWalkScene(void)
     Effect_Spawn(*(s32 *)(rec8 + 8), *(s32 *)(rec8 + 12), (*(s32 *)(rec8 + 16) + 0x40000), 0, 0, 0, 0x10000, p8);
     Effect_Spawn(*(s32 *)(rec8 + 8), *(s32 *)(rec8 + 12), (*(s32 *)(rec8 + 16) + 0x40000), -0x8000, 0, 0, 0x10000, p8);
     Engine_EventWait(30);
-    Main_0808a5e8();
+    BattleFx_PlayQueuedSoundFar();
     Call6(Engine_MapCopyCellAttributes, 10, 24, 1, 1, 10, 22);
     Call1(Engine_GameFlagSet, 0x892);
     Engine_EventEnd();

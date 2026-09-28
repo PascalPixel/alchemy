@@ -1,9 +1,13 @@
+/* resource_39d:0200b4bc..0200b628 (364 bytes with pool), still linked from
+ * the listing. Remaining difference: the spark's random angle is masked with
+ * 0x0ffff000 loaded from the literal pool as a link-time value; an integer
+ * mask stored to the halfword angle narrows to a halfword load and changes the
+ * register allocation that follows (362 bytes, 104 differ). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "OVERLAY_OBJECT.H"
 
-extern u8 *Data_03001e70;
-extern u8 Value_0ffff000;
+extern u8 *gCam;
 
 struct LampWork {
     s16 unused;
@@ -40,7 +44,7 @@ void MakyuriChojo_SpawnLampSpark(void)
     struct Half zero;
 
     lamp = Engine_ActorGet(8);
-    work = (struct LampWork *)(Data_03001e70 + 0xe8);
+    work = (struct LampWork *)(gCam + 0xe8);
     height = ((u32)(Engine_RandomNext() * 48) >> 16) << 16;
     if (work->height <= 129) {
         if (gFrameCount & 1) {
@@ -70,9 +74,9 @@ void MakyuriChojo_SpawnLampSpark(void)
         return;
     sprite = spark->actor.sprite;
     Engine_ObjectSetScript(&spark->actor, (const s32 *)0x0200bc54);
-    Engine_ObjectSetPalette(&spark->actor, 3);
+    SetOverlayObjectSlot(&spark->actor, 3);
     spark->actor.motion_flags = tick;
-    spark->arc.angle_64 = (u32)&Value_0ffff000 & Engine_RandomNext();
+    spark->arc.angle_64 = 0x0ffff000 & Engine_RandomNext();
     zero.value = 0;
     spark->actor.unknown_66 = tick;
     spark->arc.linked_object = (struct OverlayObject *)lamp;

@@ -1,7 +1,11 @@
+/* resource_39e:02008388..02008414 (140 bytes with pool), still linked from
+ * the listing. Remaining difference: the area test loads 0x3c from the
+ * literal pool, a link-time value; an integer compares with an immediate
+ * (132 bytes, 99 differ). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_0808a038(void *events);
+void Event_RegisterAreaEventsFar(void *events);
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -20,7 +24,6 @@ struct AreaEvent {
 };
 
 extern union GameStateRows Data_02000240_t;
-extern u8 Data_0000003c[];
 extern struct AreaEvent ShianJiin_AreaEventsA[];
 extern struct AreaEvent ShianJiin_AreaEventsB[];
 extern struct AreaEvent ShianJiin_AreaEventsC[];
@@ -33,7 +36,7 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 /* Choose the area's event table by area and entrance; once flag 0x895 is set, the third table's gated events take that flag and one event moves. */
 struct AreaEvent *ShianJiin_SelectAreaEvents(void)
 {
-    if (Data_02000240_t.halves[224][0] == (s32)Data_0000003c) {
+    if (Data_02000240_t.halves[224][0] == 0x3c) {
         return ShianJiin_AreaEventsA;
     }
     if (Data_02000240_t.halves[225][0] == 3) {
@@ -47,6 +50,6 @@ struct AreaEvent *ShianJiin_SelectAreaEvents(void)
         ShianJiin_AreaEventsC[11].flag = 0x895;
         ShianJiin_AreaEventsC[12].flag = 0x895;
     }
-    Main_0808a038(ShianJiin_AreaEventsC);
+    Event_RegisterAreaEventsFar(ShianJiin_AreaEventsC);
     return ShianJiin_AreaEventsC;
 }

@@ -1,10 +1,15 @@
+/* resource_3b8:0200c0b4..0200c340 (652 bytes with pool), still linked from
+ * the listing. Remaining difference: the scene test loads 0x8b from the
+ * literal pool (ldr r3, =0x8b; cmp r2, r3), a link-time value; an integer
+ * scene compares with an immediate, and the function comes out 648 bytes
+ * with 377 differing from +0x4f on. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_08009190(s32 value);
-s32 Main_08077158(s16 *owners);
-void Main_08077128(s32 owner);
-void Main_08077318(void);
+void Map_SetLayerEntryFlagFar(s32 value);
+s32 Party_ListActiveOwnersFar(s16 *owners);
+void Owner_RecalculateRatiosFar(s32 owner);
+void InventorySnapshot_RestoreFar(void);
 void Engine_PartyAddActiveOwner(s32 owner);
 void FieldScene_RunMainCutsceneSequence(void);
 void FieldScene_RunBranchingActorSequence(void);
@@ -21,14 +26,6 @@ struct OwnerState {
 
 struct OwnerState *Engine_OwnerGetState(s32 owner);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_0000008b[];
 
 /* Restore the whole party: every owner's HP and PP to their maximums, and
  * the three companions back into the active party. */
@@ -39,17 +36,17 @@ static __inline__ void Party_RestoreAll(void)
     s32 cnt;
     s32 i;
 
-    cnt = Main_08077158(owners);
+    cnt = Party_ListActiveOwnersFar(owners);
     for (i = 0; i < cnt; i++) {
         state = Engine_OwnerGetState(owners[i]);
         state->hp = state->max_hp;
         state->pp = state->max_pp;
-        Main_08077128(owners[i]);
+        Owner_RecalculateRatiosFar(owners[i]);
     }
     Engine_PartyAddActiveOwner(1);
     Engine_PartyAddActiveOwner(2);
     Engine_PartyAddActiveOwner(3);
-    Main_08077318();
+    InventorySnapshot_RestoreFar();
 }
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
@@ -75,18 +72,18 @@ s32 TorebiKyuden_ApplyEntryState(void)
     u8 *buf;
     s32 set;
 
-    Main_08009190(1);
-    Main_08009190(2);
-    Main_08009190(4);
-    if (Data_02000240_t.halves[225][0] == 90) {
+    Map_SetLayerEntryFlagFar(1);
+    Map_SetLayerEntryFlagFar(2);
+    Map_SetLayerEntryFlagFar(4);
+    if (gGameState.entrance == 90) {
         Engine_GameFlagSet(0x962);
     }
-    if (Data_02000240_t.halves[225][0] == 91) {
+    if (gGameState.entrance == 91) {
         Engine_GameFlagSet(0x962);
         Engine_GameFlagSet(0x950);
     }
-    if (Data_02000240_t.halves[224][0] != (s32)Data_0000008b) {
-        if (Data_02000240_t.halves[225][0] == 11) {
+    if (gGameState.scene != 0x8b) {
+        if (gGameState.entrance == 11) {
             Engine_GameFlagClear(0x12f);
         }
         if (Engine_GameFlagIsSet(0x950)) {
@@ -112,7 +109,7 @@ s32 TorebiKyuden_ApplyEntryState(void)
                 Engine_VramLoad(sprite->vram_block, 128, buf + 0x400);
                 Engine_HeapRelease(17);
             }
-            if (Data_02000240_t.halves[225][0] == 33 && !Value1(Engine_GameFlagIsSet, 0x96f)) {
+            if (gGameState.entrance == 33 && !Value1(Engine_GameFlagIsSet, 0x96f)) {
                 Call1(Engine_GameFlagSet, 0x96f);
                 Call3(Engine_ActorSetPosition, 14, 0xd00000, 0x2c00000);
                 FieldScene_RunMainCutsceneSequence();
@@ -124,19 +121,19 @@ s32 TorebiKyuden_ApplyEntryState(void)
         }
         gEventWork->start_transition = 0x209;
         Engine_ActorGet(9)->collision_flags |= 4;
-        if (Data_02000240_t.halves[225][0] == 99) {
+        if (gGameState.entrance == 99) {
             Party_RestoreAll();
             FieldScene_RunBranchingActorSequence();
-            Data_02000240_t.halves[225][0] = 8;
+            gGameState.entrance = 8;
         }
-        if (Data_02000240_t.halves[225][0] == 98) {
+        if (gGameState.entrance == 98) {
             Party_RestoreAll();
             Engine_GameFlagSet(0x966);
             Engine_GameFlagSet(0x967);
             Call3(Engine_ActorSetPosition, 10, 0x380000, 0x780000);
             Engine_ActorFaceDirection(10, 0xf000, 0);
             FieldScene_RunScene3b8SequenceB();
-            Data_02000240_t.halves[225][0] = 8;
+            gGameState.entrance = 8;
         }
     }
     return 0;

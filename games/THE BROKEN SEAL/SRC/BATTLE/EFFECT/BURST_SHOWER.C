@@ -34,7 +34,6 @@ void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
 void *Resource_GetTableEntry(s32);
 void EffectPosition_ApplyAnimationAndYOffset(s32, s32 *);
-void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
 s32 Random16(void);
 void Audio_PlayCue(s32);
 void BattleMotion_ApplyVariantMotionFar(s32, s32);
@@ -217,7 +216,7 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
 
     i = 0;
     while (i != WORK_EFX->count) {
-        EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[i], seat[i]);
+        EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[i], (struct EffectPosition *)seat[i]);
         i += 1;
     }
 

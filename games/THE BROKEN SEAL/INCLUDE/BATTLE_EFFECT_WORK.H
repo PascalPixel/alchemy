@@ -1,13 +1,17 @@
 #ifndef ALCHEMY_BATTLE_EFFECT_WORK_H
 #define ALCHEMY_BATTLE_EFFECT_WORK_H
 
+#include "EFFECT_STEP.H"
 #include "LAYOUT_GUARD.H"
 #include "TYPES.H"
 
 struct BattleEffectArgument;
 
 struct BattleEffectWork {
-    u8 unknown_0000[0x7780];
+    u8 unknown_0000[0x6980];
+    s32 bg2_x[160];
+    u8 unknown_6c00[0x480];
+    struct EffectStep particles[64];
     s32 transfer_mode;
     s32 transfer_value;
     u8 unknown_7788[0x9c];
@@ -28,6 +32,10 @@ struct BattleEffectArgument {
     s16 actors[8];
 };
 
+LAYOUT_OFFSET_GUARD(BattleEffectWork_Bg2X,
+    struct BattleEffectWork, bg2_x, 0x6980);
+LAYOUT_OFFSET_GUARD(BattleEffectWork_Particles,
+    struct BattleEffectWork, particles, 0x7080);
 LAYOUT_OFFSET_GUARD(BattleEffectWork_TransferMode,
     struct BattleEffectWork, transfer_mode, 0x7780);
 LAYOUT_OFFSET_GUARD(BattleEffectWork_TransferValue,

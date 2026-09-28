@@ -19,7 +19,6 @@ extern s8 RisingColumns_ColumnOffsets[];
 extern u8 Value_000000a6;
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
-void EffectPosition_ApplyStepAndYOffset(s32, s32 *);
 void Audio_PlayCue(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
@@ -34,7 +33,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     void *dst;
     DrawRectangle draw[2];
     s32 origin_x, origin_y;
-    s32 first[3], last[3];
+    struct EffectPosition first, last;
     s32 i, frame, cell, height, offset, middle;
     Column *column;
 
@@ -48,12 +47,12 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
     Resource_LoadAndDecompress((s32)&Value_000000a6, work, 1, 1);
-    EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[0], first);
-    EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[WORK_EFFECT->count - 1], last);
-    middle = first[0];
-    middle += (last[0] - middle) / 2;
-    first[0] = middle;
-    *(s32 *)0x04000028 = (64 - first[0]) << 8;
+    EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[0], &first);
+    EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[WORK_EFFECT->count - 1], &last);
+    middle = first.x;
+    middle += (last.x - middle) / 2;
+    first.x = middle;
+    *(s32 *)0x04000028 = (64 - first.x) << 8;
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
     draw[0] = (DrawRectangle)cache[7];
     BattleEffect_LoadWork(47, 7, 7, 7, 1);

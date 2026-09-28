@@ -41,7 +41,7 @@ extern u8 *gBattleWork;
 extern u8 CounterReveal_PanelX[];
 extern u8 CounterReveal_PanelY[];
 
-s32 Unnamed_080cdb24(s32 mode);
+s32 BattleFx_BeginTiledCanvas(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 s32 BattleFx_EndCanvasLayer(void);
@@ -78,7 +78,7 @@ void BattleFx_RunCounterReveal(void *object)
     canvas = *cursor;
     zero_val = 0;
     (*(void **)((u8 *)(work) + (0x7828))) = object;
-    Unnamed_080cdb24(0);
+    BattleFx_BeginTiledCanvas(0);
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
     palette = Resource_GetTableEntry((s32)&Value_000000ab);

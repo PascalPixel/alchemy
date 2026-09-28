@@ -821,7 +821,10 @@ BattleFx6_Gravity:
 	.section .unidentified.080ef014,"a"
 	.incbin "baserom.gba", 0x000ef014, 0x00000fec
 	.section .unidentified.080f0a5c,"a"
-	.incbin "baserom.gba", 0x000f0a5c, 0x000015a4
+	.incbin "baserom.gba", 0x000f0a5c, 0x000007c4
+	.global DisplayScroll_LineTable
+DisplayScroll_LineTable:
+	.incbin "baserom.gba", 0x000f1220, 0x00000de0
 	.section .unidentified.080f2b6c,"ax"
 	.global Func_080f2b6c
 	.thumb_func

@@ -1,3 +1,49 @@
-	.irp EntryTarget, 0x03000380, 0x080000c1, 0x080000d1, 0x080000d9, 0x080000f9, 0x08000129, 0x08000131, 0x08000149, 0x08009081, 0x080090c9, 0x080090e1, 0x08009129, 0x08009151, 0x08009159, 0x080091a9, 0x080091b9, 0x080091c1, 0x080091e1, 0x08015041, 0x080770c1, 0x0808a011, 0x0808a019, 0x0808a021, 0x0808a081, 0x0808a091, 0x0808a0b9, 0x0808a0e1, 0x0808a0e9, 0x0808a0f1, 0x0808a101, 0x0808a209, 0x0808a211, 0x0808a219, 0x0808a2a1, 0x0808a331, 0x0808a339, 0x080f9011
-	overlay_veneer \EntryTarget
-	.endr
+	overlay_veneer 0x03000380
+	overlay_veneer 0x080000c1
+	overlay_veneer 0x080000d1
+	overlay_veneer 0x080000d9
+	overlay_veneer 0x080000f9
+	overlay_veneer 0x08000129
+	overlay_veneer 0x08000131
+	overlay_veneer 0x08000149
+	.global Engine_ObjectSetAnimation
+	.thumb_func
+Engine_ObjectSetAnimation:
+	overlay_veneer 0x08009081
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
+	overlay_veneer 0x080090c9
+	overlay_veneer 0x080090e1
+	overlay_veneer 0x08009129
+	overlay_veneer 0x08009151
+	overlay_veneer 0x08009159
+	.global Map_GetTerrainHeightFar
+	.thumb_func
+Map_GetTerrainHeightFar:
+	overlay_veneer 0x080091a9
+	overlay_veneer 0x080091b9
+	overlay_veneer 0x080091c1
+	.global Engine_ActorSetSpriteFlags
+	.thumb_func
+Engine_ActorSetSpriteFlags:
+	overlay_veneer 0x080091e1
+	overlay_veneer 0x08015041
+	overlay_veneer 0x080770c1
+	overlay_veneer 0x0808a011
+	overlay_veneer 0x0808a019
+	overlay_veneer 0x0808a021
+	overlay_veneer 0x0808a081
+	overlay_veneer 0x0808a091
+	overlay_veneer 0x0808a0b9
+	overlay_veneer 0x0808a0e1
+	overlay_veneer 0x0808a0e9
+	overlay_veneer 0x0808a0f1
+	overlay_veneer 0x0808a101
+	overlay_veneer 0x0808a209
+	overlay_veneer 0x0808a211
+	overlay_veneer 0x0808a219
+	overlay_veneer 0x0808a2a1
+	overlay_veneer 0x0808a331
+	overlay_veneer 0x0808a339
+	overlay_veneer 0x080f9011

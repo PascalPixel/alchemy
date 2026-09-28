@@ -2,7 +2,7 @@
 
 s32 Engine_ActorGet();
 s32 Engine_RandomNext();
-s32 Local_030003e0();
+s32 IwramUnsignedRemainder();
 s32 Engine_ObjectCreate();
 
 
@@ -49,7 +49,7 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     actor = (u8 *)Engine_ActorGet(id);
     if (actor == 0)
         return;
-    r = Local_030003e0(Engine_RandomNext(), 20);
+    r = IwramUnsignedRemainder(Engine_RandomNext(), 20);
     x = *(s32 *)(actor + 8);
     x += r << 16;
     x += -0xa0000;
@@ -58,10 +58,10 @@ void ShindenHeya_SpawnActorSpark(s32 id)
         return;
     spr = *(struct Sprite378 **)(obj + 80);
     obj[85] = 0;
-    *(u16 *)(obj + 100) = Local_030003e0(Engine_RandomNext(), 10) + 5;
+    *(u16 *)(obj + 100) = IwramUnsignedRemainder(Engine_RandomNext(), 10) + 5;
     /* FAKEMATCH: the spark frame zero held in a halfword struct. */
     zero.v = 0;
-    *(u16 *)(obj + 102) = Local_030003e0(Engine_RandomNext(), 60) + 30;
+    *(u16 *)(obj + 102) = IwramUnsignedRemainder(Engine_RandomNext(), 60) + 30;
     *(s32 *)(obj + 108) = 0x200b145;
     ((u8 *)spr)[38] = zero.v;
     spr->layer = (*(struct Sprite378 **)(actor + 80))->layer;

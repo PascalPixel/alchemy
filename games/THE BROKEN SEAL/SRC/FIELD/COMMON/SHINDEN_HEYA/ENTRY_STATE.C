@@ -4,13 +4,6 @@
 void SceneState_ApplyTwoRects(void);
 void FieldScene_RunScriptedSceneSequence(void);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-};
-
-extern union GameStateRows Data_02000240_t;
-
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -23,7 +16,7 @@ s32 ShindenHeya_ApplyEntryState(void)
     Engine_ColorBufferApplyTarget(0x10000, 0);
     Engine_ColorBufferInterpolate(1);
     Engine_EventWait(1);
-    switch (Data_02000240_t.halves[225][0]) {
+    switch (gGameState.entrance) {
     case 10:
     case 11:
     case 12:

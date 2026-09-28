@@ -1,13 +1,13 @@
 #include "TYPES.H"
 
-extern u8 Data_0200c4d8[];
+extern u8 FuneKanpan_RandomActorActions[];
 
 void Engine_ActorSetSpritePriority();
 s32 Engine_GameFlagIsSet();
 void Engine_ActorSetPosition();
 s32 Engine_ActorGet();
 s32 Engine_RandomNext();
-s32 Local_030003e0();
+s32 IwramUnsignedRemainder();
 void Engine_ActorEnableActionCallback();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -62,18 +62,18 @@ void FuneKanpan_PlaceRandomDeckActors(void)
         record = Engine_RandomNext();
         {
             /* FAKEMATCH: the temporary makes the +60 add come before the +100. */
-            s32 t = Local_030003e0(record, 90) + 60;
+            s32 t = IwramUnsignedRemainder(record, 90) + 60;
 
             a += 100;
             *(u16 *)a = t;
         }
-        Engine_ActorEnableActionCallback(21, Data_0200c4d8);
+        Engine_ActorEnableActionCallback(21, FuneKanpan_RandomActorActions);
         Call3(Engine_ActorSetPosition, 24, 0xf80000, 0x2a80000);
         a = Value1(Engine_ActorGet, 24);
         record = Engine_RandomNext();
         a += 100;
-        *(u16 *)a = (Local_030003e0(record, 90) + 60);
-        Engine_ActorEnableActionCallback(24, Data_0200c4d8);
+        *(u16 *)a = (IwramUnsignedRemainder(record, 90) + 60);
+        Engine_ActorEnableActionCallback(24, FuneKanpan_RandomActorActions);
         Engine_ActorSetPosition(22, 0, 0);
     } else {
         if (Value1(Engine_GameFlagIsSet, 0x923) != 0) {

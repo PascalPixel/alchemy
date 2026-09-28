@@ -2,12 +2,12 @@
 #include "FIELD_EVENT.H"
 
 struct FieldActor *SceneData_FindActiveSlotAtCell(s32 cx, s32 cz);
-s32 Main_080091d8(struct FieldActor *actor, union FieldCoordinate *pos);
+s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
 
 /* One cell's step for each sixteenth of a turn: pixels across in the high
  * half, pixels along in the low half. */
-extern s32 Data_02009844[];
+extern s32 KuupuappuDou_DirectionSteps[];
 
 
 /* The leader pushes the block in the cell ahead one cell further, unless it
@@ -26,8 +26,8 @@ void KuupuappuDou_PushBlockAhead(void)
     s32 cx;
     s32 cz;
 
-    cx = (leader->x.part.pixel + (Data_02009844[direction] >> 16)) >> 4;
-    cz = (leader->z.part.pixel + (s16)Data_02009844[direction]) >> 4;
+    cx = (leader->x.part.pixel + (KuupuappuDou_DirectionSteps[direction] >> 16)) >> 4;
+    cz = (leader->z.part.pixel + (s16)KuupuappuDou_DirectionSteps[direction]) >> 4;
     block = SceneData_FindActiveSlotAtCell(cx, cz);
     if (block->collision_flags == 0 || block == 0) {
         return;
@@ -37,8 +37,8 @@ void KuupuappuDou_PushBlockAhead(void)
             return;
         }
     }
-    cx = (block->x.part.pixel + (Data_02009844[direction] >> 16)) >> 4;
-    cz = (block->z.part.pixel + (s16)Data_02009844[direction]) >> 4;
+    cx = (block->x.part.pixel + (KuupuappuDou_DirectionSteps[direction] >> 16)) >> 4;
+    cz = (block->z.part.pixel + (s16)KuupuappuDou_DirectionSteps[direction]) >> 4;
     beyond = SceneData_FindActiveSlotAtCell(cx, cz);
     if (beyond != 0 && (beyond->collision_flags & 1)) {
         return;
@@ -46,10 +46,10 @@ void KuupuappuDou_PushBlockAhead(void)
     block->unknown_22 = 2;
     zero = 0;
     p = pos;
-    p[0].fixed = block->x.fixed + (Data_02009844[direction] & 0xffff0000);
+    p[0].fixed = block->x.fixed + (KuupuappuDou_DirectionSteps[direction] & 0xffff0000);
     p[1].fixed = block->y.fixed;
-    p[2].fixed = block->z.fixed + (Data_02009844[direction] << 16);
-    if (Main_080091d8(block, p) > 0) {
+    p[2].fixed = block->z.fixed + (KuupuappuDou_DirectionSteps[direction] << 16);
+    if (Object_CheckMovementCollision(block, p) > 0) {
         return;
     }
     Engine_ObjectSetAnimation(leader, 8);

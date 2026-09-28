@@ -3,7 +3,7 @@
 void Engine_AudioPlaySceneCue();
 void Engine_ActorSetSpritePriority();
 u8 * Engine_ActorGet();
-void Main_0808a230();
+void Map_SetWorkFourValues();
 void Engine_ActorSetSpeed();
 void Engine_ActorSetPosition();
 void Engine_ActorFaceEachOther();
@@ -80,7 +80,7 @@ void KuupuappuHeya_RunScene021C8(void)
     
         record[35] = (u8)(value | 1);
     }
-    Call4(Main_0808a230, 0x200000, 0x2400000, 0x1900000, 0x3a80000);
+    Call4(Map_SetWorkFourValues, 0x200000, 0x2400000, 0x1900000, 0x3a80000);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorSetSpeed, 1, 0xcccc, 0x6666);
     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);

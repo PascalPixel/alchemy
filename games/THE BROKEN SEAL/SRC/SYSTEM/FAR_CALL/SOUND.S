@@ -9,29 +9,29 @@
 	.global Func_080f9000
 	.thumb_func
 Func_080f9000:
-	overlay_veneer 0x080fa319
+	overlay_veneer AudioEngine_RunMixer
 	.global Audio_InitializeRuntimeDefaultsFar
 	.global Func_080f9008
 	.thumb_func
 Audio_InitializeRuntimeDefaultsFar:
 Func_080f9008:
-	overlay_veneer 0x080f9439
+	overlay_veneer Audio_InitializeRuntimeDefaults
 	.global Audio_PlayCue
 	.thumb_func
 Audio_PlayCue:
 	.global Func_080f9010
 	.thumb_func
 Func_080f9010:
-	overlay_veneer 0x080f9081
+	overlay_veneer AudioCommand_Play
 	.global Func_080f9018
 	.thumb_func
 Func_080f9018:
-	overlay_veneer 0x080f91e9
-	overlay_veneer 0x080f94c9
-	overlay_veneer 0x080f94e1
-	overlay_veneer 0x080f94f9
-	overlay_veneer 0x080f950d
-	overlay_veneer 0x080f9539
+	overlay_veneer MusicPlayer_StepVolumeAndPitchTowardTargets
+	overlay_veneer MusicCommand_SetPitchAndUpdateFrequency
+	overlay_veneer MusicCommand_SetPitch
+	overlay_veneer Audio_SetWorkPairB
+	overlay_veneer MusicCommand_SetVolume
+	overlay_veneer Audio_SetWorkPairA
 	.global AudioCommand_GetStateByteFar
 	.global Func_080f9048
 	.thumb_func
@@ -40,13 +40,13 @@ Func_080f9048:
 	.global Audio_Check
 	.thumb_func
 Audio_Check:
-	overlay_veneer 0x080f954d
-	overlay_veneer 0x080f92fd
-	overlay_veneer 0x080f9559
-	overlay_veneer 0x080f9565
-	overlay_veneer 0x080f9571
+	overlay_veneer AudioCommand_GetStateByte
+	overlay_veneer AudioTest_RunParameterController
+	overlay_veneer AudioCommand_StopAllPlayers
+	overlay_veneer AudioCommand_ResumeAllPlayers
+	overlay_veneer AudioCommand_UpdateToggleMask
 	.global Func_080f9070
 	.thumb_func
 Func_080f9070:
-	overlay_veneer 0x080f9595
-	overlay_veneer 0x080f95a1
+	overlay_veneer AudioCommand_GetSecondaryStateByte
+	overlay_veneer AudioCommand_WaitForCompletion

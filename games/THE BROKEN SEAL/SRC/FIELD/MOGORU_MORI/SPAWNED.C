@@ -1,6 +1,6 @@
 #include "MORI.H"
 
-void Func_020009dc(u8 *object, s32 mode)
+void OverlayObject_SetOwnerMode(u8 *object, s32 mode)
 {
     struct Owner *owner = *(struct Owner **)(object + 80);
     owner->mode = mode;

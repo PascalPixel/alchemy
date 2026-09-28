@@ -166,7 +166,7 @@ static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 }
 
 /* The sources call one another across files. */
-void Func_020009dc(u8 *object, s32 mode);
+void OverlayObject_SetOwnerMode(u8 *object, s32 mode);
 u8 *OverlayObject_PrepareSpawnedObject(s32 x, s32 y, s32 z, s32 kind);
 u8 *OverlayObject_SpawnConfiguredWithMode15(s32 x, s32 y, s32 z, s32 kind);
 void SceneState_SetValue18Mode2(void);

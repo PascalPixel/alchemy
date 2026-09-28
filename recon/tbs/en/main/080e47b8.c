@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7800 bytes; 2396 differing halfwords, 487 aligned edits. */
+ * Candidate 7800 bytes; 1938 differing halfwords, 436 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -119,13 +119,6 @@ static __inline__ void DrawImage(s32 canvas, s32 pixels, s32 x, s32 y, s32 width
     (*draw)((void *)canvas, (void *)pixels, x, y, width, height);
 }
 
-/* FAKEMATCH: Inline scope preserves argument order for the 32 by 64 impact image. */
-static __inline__ void DrawCenteredImpact(s32 canvas, s32 pixels, s32 x, s32 y,
-                                         RectangleBlit draw)
-{
-    draw((void *)canvas, (void *)pixels, x - 16, y - 32, 32, 64);
-}
-
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 {
     void **heap_cache;
@@ -149,7 +142,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     s32 cnt;
     s32 orb_x;
     s32 heap_base;
-    s32 height;
     struct BattleEffectWork *work;
     s32 canvas;
     s32 frame;
@@ -769,7 +761,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         if (kind == 14) {
             s32 rise;
             s32 scroll;
-            RectangleBlit *draw;
+            RectangleBlit *draw_tbl;
+            s32 width;
+            s32 tile_height;
 
             Runtime_ReleaseHeapBlock(47);
             Runtime_ReleaseHeapBlock(46);
@@ -784,12 +778,16 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             while (scroll > 104)
                 scroll -= 104;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            draw = (RectangleBlit *)(gWorkSlot + 47 * 4);
+            draw_tbl = (RectangleBlit *)gWorkSlot;
+            width = 17;
+            tile_height = 104;
             column_y = rise + scroll;
-            column_x = origin_x - 8;
-            DrawImage(canvas, 0x02010000, column_x, column_y - 104, 17, 104, draw);
-            DrawImage(canvas, 0x02010000, column_x, column_y, 17, 104 - scroll, draw);
-            DrawImage(canvas, 0x020106e8, origin_x - 17, rise + 47, 34, 65, draw);
+            column_x = origin_x - width / 2;
+            DrawImage(canvas, 0x02010000, column_x, column_y - tile_height, width,
+                      tile_height, draw_tbl + 47);
+            DrawImage(canvas, 0x02010000, column_x, column_y, width,
+                      tile_height - scroll, draw_tbl + 47);
+            DrawImage(canvas, 0x020106e8, origin_x - width, rise + 47, width * 2, 65, draw_tbl + 47);
             Runtime_ReleaseHeapBlock(47);
             if (frame == 8) {
                 *(s32 *)(((s32)work + 0x77a8)) = frame;
@@ -933,9 +931,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 if ((u32)(frame - 14) > 1) {
                     goto FinishFrame;
                 }
-                DrawImage(canvas, 0x20158d2,
-                          Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 6)],
-                          (image_y + Data_080eede2[6]), 76, 25, &blitters[0]);
+                blitters[0](canvas, 0x20158d2,
+                            Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 6)],
+                            (image_y + Data_080eede2[6]), 76, 25);
                 goto FinishFrame;
             }
             if (kind == 32) {
@@ -1052,6 +1050,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     goto FinishFrame;
                 }
                 if (kind == 8) {
+                    s32 height;
+
                     if ((u32)(frame - 5) > 44) {
                         goto FinishFrame;
                     }
@@ -1063,27 +1063,29 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     if (height > 96) {
                         height = 96;
                     }
-                    blitters[0](canvas, 0x2010000, 48, (104 - height), 32, height);
+                    DrawImage(canvas, 0x2010000, 48, 104 - height, 32, height, &blitters[0]);
                 } else {
                     if ((u32)(kind - 33) <= 1) {
                         s32 offset;
                         s32 image_x;
-                        RectangleBlit draw;
+                        s32 image_y;
 
                         if (frame > 5)
                             goto FinishFrame;
-                        /* FAKEMATCH: Keep the callback live during argument preparation;
-                         * this makes GCC reload through r5 instead of r4 across the owner. */
-                        draw = blitters[1];
                         if (work->effect->side == 0) {
+                            image_x = target_screen->x;
+                            image_x /= 2;
                             offset = (6 - frame) * 3;
-                            image_x = target_screen->x / 2 + offset * 2;
+                            image_x += offset * 2;
                         } else {
+                            image_x = target_screen->x;
+                            image_x /= 2;
                             offset = (6 - frame) * 3;
-                            image_x = target_screen->x / 2 - offset * 2;
+                            image_x -= offset * 2;
                         }
-                        DrawCenteredImpact(canvas, 0x02010000, image_x,
-                                           target_screen->y - offset * 4 + 24, draw);
+                        image_y = target_screen->y - offset * 4 + 24;
+                        DrawImage(canvas, 0x02010000, image_x - 16, image_y - 32,
+                                  32, 64, &blitters[1]);
                     } else {
                         if (kind == 12) {
                             if (frame > 47) {

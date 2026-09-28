@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7804 bytes; 1643 differing halfwords, 304 aligned edits. */
+ * Candidate 7800 bytes; 3114 differing halfwords, 363 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -134,7 +134,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     struct EffectPosition caster_pos;
     struct EffectPosition target_pos;
     struct FixedPointPosition moving_pos;
-    s32 tmp;
     s32 phase;
     s32 i;
     s32 *scanline;
@@ -554,15 +553,17 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     while (frame != duration) {
         if (kind != 11) {
             if (kind != 32) {
-                phase = (frame << 12);
-                i = 0;
+                s32 base;
+
                 scanline = work->bg2_x;
-                do {
-                    *scanline = (0x40000 - (Trig_Sin(phase) << 2)) >> 10;
-                    i++;
-                    scanline++;
+                i = 0;
+                base = 0x40000;
+                phase = frame << 12;
+                for (; i != 160; i++) {
+                    s32 offset = (base - (Trig_Sin(phase) << 2)) >> 10;
+                    *scanline++ = offset;
                     phase += 0x800;
-                } while (i != 160);
+                }
             }
         }
         if (frame <= 2) {
@@ -1177,8 +1178,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             if (kind == 20 || kind == 14 || kind == 33) {
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
                 shake_addr = &work->shake_frames;
-                tmp = 2;
-                goto SetShake;
+                *shake_addr = 2;
+                goto ActorMotionDone;
             }
             if (kind != 30) {
                 if (kind != 8) {
@@ -1188,9 +1189,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
             shake_addr = &work->shake_frames;
         SetShake8:;
-            tmp = 8;
-        SetShake:;
-            *shake_addr = tmp;
+            *shake_addr = 8;
         ActorMotionDone:;
         }
         if (frame == 6) {

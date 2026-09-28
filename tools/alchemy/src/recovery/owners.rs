@@ -146,17 +146,8 @@ fn overlay_extent(
     Ok(next - loaded)
 }
 
-/// Read one complete owner window, independent of its address space.
-pub fn image_window(
-    root: &Path,
-    owner: &str,
-    span: Option<u32>,
-) -> Result<(Vec<u8>, u32, u32, u32), String> {
-    image_window_for(root, default_target(), owner, span)
-}
-
-/// `image_window` against one target's ROM and linked images. An explicit
-/// `span` bounds the window; otherwise a main owner is its retained
+/// One complete owner window of a target's ROM and linked images. An
+/// explicit `span` bounds the window; otherwise a main owner is its retained
 /// listing's size and an overlay owner reaches its linked label's successor.
 pub fn image_window_for(
     root: &Path,

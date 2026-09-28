@@ -3,6 +3,7 @@
 s32 Engine_RandomNext();
 void Engine_ObjectSetAnimation();
 void Engine_ObjectSetScript();
+extern const s32 BabiFune_DriftScript[];
 
 /* Lemurian ship: while the wait lasts, drift the object randomly sideways
  * and upwards; when it ends and a trigger is pending, start its script. */
@@ -28,6 +29,6 @@ void BabiFune_UpdateDriftingObject(u8 *obj)
 
             *p = delay;
         }
-        Engine_ObjectSetScript(obj, 0x020094c4);
+        Engine_ObjectSetScript(obj, BabiFune_DriftScript);
     }
 }

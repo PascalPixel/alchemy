@@ -3,7 +3,9 @@
 /*
  * Babi Fune: arm the BG3 hblank scroll DMA. It copies the scroll line for the
  * current page into the hblank DMA source, clears the DMA enable and done
- * bits in the status register, and fires a single 32-bit transfer.
+ * bits in the status register, and fires a single 32-bit transfer. This is
+ * the overlay's own copy of the routine the shared scroll initialiser
+ * (GRAPHICS/DISPLAY/SCROLL_INITIALIZE_HBLANK_DMA.C) arms by this name.
  */
 
 struct DisplayScrollState {
@@ -11,9 +13,9 @@ struct DisplayScrollState {
     u8 page;
 };
 
-extern struct DisplayScrollState *Data_03001ed8;
+extern struct DisplayScrollState *gHBlankScrollWork;
 
-void BabiFune_ArmBg3HBlankDma(void)
+void Engine_ArmScrollDma(void)
 {
     volatile u32 *dma;
     struct DisplayScrollState *state;
@@ -22,7 +24,7 @@ void BabiFune_ArmBg3HBlankDma(void)
     u32 control;
     volatile u32 *destination;
 
-    state = Data_03001ed8;
+    state = gHBlankScrollWork;
     source = (u32 *)((u8 *)state + state->page * 0x780);
 
     dma = (volatile u32 *)0x040000b0;

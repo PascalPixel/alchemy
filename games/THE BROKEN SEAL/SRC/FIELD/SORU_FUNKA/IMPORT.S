@@ -6,8 +6,14 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer IwramUnsignedDivide
-	overlay_veneer IwramUnsignedRemainder
+	.global IwramUnsignedDivide
+	.thumb_func
+IwramUnsignedDivide:
+	overlay_veneer IwramUnsignedDivideArm
+	.global IwramUnsignedRemainder
+	.thumb_func
+IwramUnsignedRemainder:
+	overlay_veneer IwramUnsignedRemainderArm
 	.global Engine_TaskWait
 	.thumb_func
 Engine_TaskWait:
@@ -16,7 +22,13 @@ Engine_TaskWait:
 	.thumb_func
 Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Engine_TaskRemoveCallback
+	.thumb_func
+Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Engine_RandomNext
+	.thumb_func
+Engine_RandomNext:
 	overlay_veneer Random16Far
 	.global Engine_MathSin
 	.thumb_func
@@ -45,11 +57,17 @@ AnimationObjects_SelectAnimation:
 	.thumb_func
 Engine_ObjectSetAnimation:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	.global Engine_ObjectSetScript
+	.thumb_func
+Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
 	.global Engine_ObjectCreate
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
+	.global Engine_ObjectDispatchRelease
+	.thumb_func
+Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -59,7 +77,13 @@ Engine_MapRedraw:
 	.thumb_func
 Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
@@ -77,9 +101,15 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 Engine_MapRenderWaitForValues:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
+	.global Engine_ObjectSetPartPalettes
+	.thumb_func
+Engine_ObjectSetPartPalettes:
 	overlay_veneer Animation_ApplyChildValuesFar
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer ItemIcon_LoadTilesFar
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
 	.global Engine_GameFlagSet
 	.thumb_func
@@ -105,6 +135,9 @@ Engine_EventChooseYesNo:
 	.thumb_func
 Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
+	.global Engine_ActorDestroy
+	.thumb_func
+Engine_ActorDestroy:
 	overlay_veneer ObjectTable_DestroyByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func
@@ -160,6 +193,9 @@ Engine_ActorFaceEachOther:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	.global Engine_ObjectSetPalette
+	.thumb_func
+Engine_ObjectSetPalette:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func
@@ -202,6 +238,9 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Engine_EventGetViewCenter
+	.thumb_func
+Engine_EventGetViewCenter:
 	overlay_veneer Battle_GetWorkObject1e0Far
 	overlay_veneer Event_SetValue170Far
 	.global Unnamed_0809509c

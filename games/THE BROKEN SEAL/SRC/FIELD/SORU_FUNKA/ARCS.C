@@ -1,16 +1,17 @@
-/* Draft of resource_381 0x0200a820 (SceneActor_MoveTo232_125AndFace4000 and what follows it in this file),
- * from games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA (FUNKA.H). Remaining
- * difference: it reads and writes the scene's variables that lie past the
- * overlay image (0x0200bac0 and on), which no source defines, so it cannot
- * link by name. The listing keeps these rows. */
 /* Scene steps, regions and arcing effects. */
 #include "FUNKA.H"
+/* The ten arcing effects' origins, laid out after the code. */
+extern s32 Funka_ArcOrigins[][2];
+
+/* The IWRAM remainder, reached through an import veneer. */
+u32 IwramUnsignedRemainder(u32, u32);
+void SoruFunka_SpawnEffectPair();
 
 void SceneActor_MoveTo232_125AndFace4000(s32 no)
 {
     Ent_02002820 *rec;
 
-    rec = Func_02005d12(no);
+    rec = (Ent_02002820 *)Engine_ActorGet(no);
     Actor_SetPosition(no, 0xe80000, 0x7d0000);
     rec->unk6 = 0x4000;
     Actor_SetSpritePriority(no, 3);
@@ -55,8 +56,8 @@ void SceneState_ApplyRectPairByFlag(s32 a)
 
 void FieldScene_RunRandomHalfBranch(void)
 {
-    if ((Data_03001e40 & 1) == 0) {
-        if (Func_02005d2e(Random_Next(), 100) > 50) {
+    if ((gFrameCount & 1) == 0) {
+        if (IwramUnsignedRemainder(Random_Next(), 100) > 50) {
             SceneState_ApplyRectsByCondition(1);
         } else {
             SceneState_ApplyRectsByCondition(0);
@@ -66,8 +67,8 @@ void FieldScene_RunRandomHalfBranch(void)
 
 void FieldScene_RunLateRandomHalfBranch(void)
 {
-    if ((Data_03001e40 & 1) == 0) {
-        if (Func_02005d62(Random_Next(), 100) > 50) {
+    if ((gFrameCount & 1) == 0) {
+        if (IwramUnsignedRemainder(Random_Next(), 100) > 50) {
             SceneState_ApplyRectPairByFlag(1);
         } else {
             SceneState_ApplyRectPairByFlag(0);
@@ -77,7 +78,7 @@ void FieldScene_RunLateRandomHalfBranch(void)
 
 void FieldScene_RunFourWayEffectSequence(u32 mode)
 {
-    extern u8 *Data_0200bb10[];
+    extern u8 *gArcEffects[];
     void Actor_ShowEmote(s32, s32, s32);
     void ColorBuffer_ApplyTarget(s32, s32);
     void ColorBuffer_Interpolate(s32);
@@ -100,7 +101,7 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
     Audio_PlayCue(214);
     i = 0;
     zero = i;
-    for (pos = &Data_0200b684[0][0]; i <= 9; i++, pos += 2) {
+    for (pos = &Funka_ArcOrigins[0][0]; i <= 9; i++, pos += 2) {
         x = pos[0];
         y = pos[1];
         z = 0;
@@ -110,9 +111,9 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
         case 2: x += 0x2c70000; z = 0x900000; break;
         case 3: x += 0x2c70000; z = 0x1d00000; break;
         }
-        Data_0200bb40[i] = zero;
-        obj = Func_0200b454(284, x, y, z);
-        Data_0200bb10[i] = obj;
+        gArcEffectTimers[i] = zero;
+        obj = (u8 *)Engine_ObjectCreate(284, x, y, z);
+        gArcEffects[i] = obj;
         obj[85] = zero;
         sprite = *(u8 **)(obj + 80);
         sprite[38] = zero;
@@ -125,21 +126,21 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
         Actor_ShowEmote(ACTOR_GERALD, 256, 0);
     }
     Task_Wait(20);
-    Func_0200b3ec(SceneEffect_AdvanceTenEntryTimers, 3200);
+    Engine_TaskAddCallback(SceneEffect_AdvanceTenEntryTimers, 3200);
     Audio_PlayCue(246);
-    Data_0200bb40[0] = 1; Task_Wait(6);
-    Data_0200bb40[1] = 1; Task_Wait(6);
-    Data_0200bb40[2] = 1; Task_Wait(6);
-    Data_0200bb40[3] = 1; Task_Wait(6);
-    Data_0200bb40[4] = 1; Task_Wait(6);
-    Data_0200bb40[5] = 1; Task_Wait(6);
-    Data_0200bb40[6] = 1; Task_Wait(6);
-    Data_0200bb40[7] = 1; Task_Wait(6);
-    Data_0200bb40[8] = 1; Task_Wait(6);
-    Data_0200bb40[9] = 1; Task_Wait(6);
+    gArcEffectTimers[0] = 1; Task_Wait(6);
+    gArcEffectTimers[1] = 1; Task_Wait(6);
+    gArcEffectTimers[2] = 1; Task_Wait(6);
+    gArcEffectTimers[3] = 1; Task_Wait(6);
+    gArcEffectTimers[4] = 1; Task_Wait(6);
+    gArcEffectTimers[5] = 1; Task_Wait(6);
+    gArcEffectTimers[6] = 1; Task_Wait(6);
+    gArcEffectTimers[7] = 1; Task_Wait(6);
+    gArcEffectTimers[8] = 1; Task_Wait(6);
+    gArcEffectTimers[9] = 1; Task_Wait(6);
     for (;;) {
         for (i = 0; i <= 9; i++) {
-            if (Data_0200bb40[i] != 0) {
+            if (gArcEffectTimers[i] != 0) {
                 i = 888;
                 break;
             }
@@ -149,23 +150,23 @@ void FieldScene_RunFourWayEffectSequence(u32 mode)
         Task_Wait(1);
     }
     Task_Wait(40);
-    Func_0200b3f4(SceneEffect_AdvanceTenEntryTimers);
+    Engine_TaskRemoveCallback(SceneEffect_AdvanceTenEntryTimers);
     ColorBuffer_ApplyTarget(65536, 1);
     ColorBuffer_Interpolate(40);
 }
 
 void SceneEffect_AdvanceTenEntryTimers(void)
 {
-    extern Ent *Data_0200bb10[];
+    extern Ent *gArcEffects[];
 
     u32 i;
     s32 v;
     Ent_02002ba0 *p;
 
     for (i = 0; i <= 9; i++) {
-        v = Data_0200bb40[i];
+        v = gArcEffectTimers[i];
         if (v != 0) {
-            p = Data_0200bb10[i];
+            p = gArcEffects[i];
             if ((u32)v <= 8) {
                 p->unk18 += -0x1ccc;
                 p->unk1C += 0x8000;
@@ -175,10 +176,10 @@ void SceneEffect_AdvanceTenEntryTimers(void)
                 p->unkC += 0x140000;
                 p->unk3C += 0x140000;
             }
-            v = Data_0200bb40[i] + 1;
-            Data_0200bb40[i] = v;
+            v = gArcEffectTimers[i] + 1;
+            gArcEffectTimers[i] = v;
             if ((u32)v > 14) {
-                Data_0200bb40[i] = 0;
+                gArcEffectTimers[i] = 0;
             }
         }
     }
@@ -188,7 +189,9 @@ void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b)
 {
     Ent_02002c1c *p;
 
-    p = Func_020061fc(a);
+    /* FAKEMATCH: the view-centre import is passed the tile x it ignores, as
+     * the game passes it. */
+    p = (Ent_02002c1c *)Value1((s32 (*)())Engine_EventGetViewCenter, a);
     b = b << 16;
     a = a << 16;
     Camera_MoveTo(a, -1, b, 1);
@@ -249,25 +252,25 @@ void FieldScene_RunVariantStep(s32 a, s32 b, s32 c)
 
 void FieldScene_RunStepByRuntimeBits(s32 a)
 {
-    if ((Data_03001e40 & 2) != 0) {
+    if ((gFrameCount & 2) != 0) {
         Object_SetPartPalettes(a, 7);
     } else {
         Object_SetPartPalettes(a, 0);
     }
-    if ((Data_03001e40 & 15) == 0) {
-        Func_02005c74(a);
+    if ((gFrameCount & 15) == 0) {
+        SoruFunka_SpawnEffectPair(a);
     }
 }
 
 void SceneState_ForwardByRuntimeWordBits(s32 a)
 {
-    volatile u32 *p = (u32 *)0x03001e40;
+    volatile u32 *p = &gFrameCount;
 
     if (*p & 1) {
-        Object_SetPartPalettes(a, Func_020061c4(*p >> 1, 6));
+        Object_SetPartPalettes(a, IwramUnsignedRemainder(*p >> 1, 6));
     }
     if ((*p & 15) == 0) {
-        Func_02005cb0(a);
+        SoruFunka_SpawnEffectPair(a);
     }
 }
 

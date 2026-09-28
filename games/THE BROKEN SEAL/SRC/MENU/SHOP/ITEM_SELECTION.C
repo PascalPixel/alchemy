@@ -1,4 +1,5 @@
 #include "SHOP.H"
+extern struct ShopRuntime *gMenuWork;
 void *Runtime_GetObject(s32);
 void UiWindow_Commit(s32);
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
@@ -39,7 +40,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     s32 result = 0;
 
     Shop_InitializeCursorWork();
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
     cursor_anchor = RenderOutput_CreateFar(
@@ -133,7 +134,7 @@ extern u8 MsgItemPlainName;
 
 s32 Shop_SelUse(s32 actor)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     /* win2 declared ahead of win1 (and both ahead of object) to match the
      * reference's sp+8/sp+12/sp+16 spill-slot order for these three
      * call-result locals; declaring them in call order instead misassigns

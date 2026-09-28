@@ -41,10 +41,9 @@ s32 Party_FindRoomForItem(s32 item);
 /* The word-copy entry the runtime publishes in IWRAM. */
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
-extern u8 Data_03001e74_a[];
+extern u8 *gBattleWork;
 extern u8 Value_000008a0[];
 
-#define BATTLE_SPOILS ((struct BattleSpoils *)(*(u8 **)Data_03001e74_a + 0x530))
 #define PSYNERGY_MASK 0x3fff
 
 void Battle_AwardSpoils(void)
@@ -67,7 +66,7 @@ void Battle_AwardSpoils(void)
     s16 gains[8];
     u16 units[8];
 
-    spoils = BATTLE_SPOILS;
+    spoils = (struct BattleSpoils *)(gBattleWork + 0x530);
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
         UiText_ShowMessageAndWaitCoreFar(0x83a);

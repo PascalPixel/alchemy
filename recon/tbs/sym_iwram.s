@@ -232,8 +232,6 @@ gBattleBgFxWork:
 	.space 0x00000014
 	.global Data_03001ebc
 Data_03001ebc:
-	.global Data_03001ebc_a
-Data_03001ebc_a:
 	.global gEventWork
 gEventWork:
 	.global gWork
@@ -277,8 +275,6 @@ gTransitionWork:
 	.space 0x0000001c
 	.global Data_03001f1c
 Data_03001f1c:
-	.global Data_03001f1c_a
-Data_03001f1c_a:
 	.global gSaveWorkspace
 gSaveWorkspace:
 	.space 0x00000010

@@ -37,7 +37,6 @@ struct SaveWorkspace {
     u8 summary[3][64];
 };
 
-#define SAVE_WORKSPACE (*(struct SaveWorkspace **)Data_03001f1c_a)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
 #define SAVE_HEADER_TEMPLATE ((const struct SaveSlotHeader *)0x080079b8)

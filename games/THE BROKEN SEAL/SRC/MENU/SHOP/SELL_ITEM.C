@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 /* Sells count of one inventory slot (count -1 sells the whole stack as
@@ -21,7 +22,7 @@ void Party_AdjustSixDigitCounterAFar(s32 amount);
 
 void Shop_SellItem(s32 unit_id, s32 slot, s32 count)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     struct BattleUnit *unit = Owner_GetStateFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *item = Item_Get(item_id);

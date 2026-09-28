@@ -1,323 +1,10 @@
-/*
- * A run of unnamed leaf owners in resource_376: scene data getters, actor
- * dialogue beats, numbered scene steps, and the long presentation
- * sequence.
- */
-
-#include "TYPES.H"
-
-#define NULL ((void *)0)
-
-/*
- * Each Func_ symbol names the pre-relocation call word the image holds,
- * not a runtime address.
- */
-#define CalculateFacingAngle Func_020011b6
-
-#include "FACING_OBJECT.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_SCENE.H"
-
-enum ValeHouseFlag {
-    FLAG_GOT_FAREWELL_HERB = 0x81b
-};
-
-enum {
-    /* Message 0x182 + 180. */
-    ITEM_HERB = 180
-};
-
-enum ValeHouseMessage {
-    MSG_GOOD_WEAPONS_DRAW_OUT_STRENGTH = 0xf53,
-    MSG_GOOD_ARMOR_DRAWS_OUT_STRENGTH = 0xf54,
-    MSG_A_WISE_MAN_FLEES_WHEN_INJURED = 0xf55,
-    MSG_SUKURETA_CAME_TO_STUDY_MT_ALEPH = 0xf6d,
-    MSG_LETS_SCARE_SUKURETAS_VISITORS = 0xf73,
-    MSG_VALE_FEELS_EMPTY = 0x11a2,
-    MSG_IM_NOT_SAD_JUST_GO = 0x11a3,
-    MSG_YOU_MUST_SAVE_JASMINE = 0x11a6,
-    MSG_THE_CULPRITS_HAD_STRANGE_POWERS = 0x11be,
-    MSG_YOU_CAME_BACK = 0x1c06,
-    MSG_THE_RUMOR_WAS_TRUE = 0x1c09,
-    MSG_WHEN_DID_YOU_COME_BACK = 0x1c0a,
-    MSG_HEY = 0x1c1e,
-    MSG_YOURE_LEAVING_AGAIN_SOON = 0x1c33,
-    MSG_DID_YOU_HEAR_ABOUT_DORA = 0x1c3d
-};
-
-typedef struct {
-    u8 pad_to_position[8];
-    s32 x;
-    s32 y;
-    u8 pad_to_scale[8];
-    s32 scale_x;
-    s32 scale_y;
-    u8 pad_to_velocity[0x44];
-    s16 velocity_x;
-    s16 velocity_y;
-} ScaledMotion;
-
-union SceneActor {
-    s32 words[26];
-    u16 halfwords[52];
-};
-
-/*
- * The fields at 100 and 102 are consecutive halfwords, so this byte and
- * halfword view needs two-byte layout rather than the default four.
- */
-union SceneField {
-    u16 value;
-    u8 bytes[2];
-} __attribute__((packed, aligned(2)));
-
-extern u8 Data_020098b8[];
-extern u8 Data_02009738[];
-extern u8 Data_020095b8[];
-extern u8 LinkedMessage_ThisIsMyFarewellGift[];
-extern u8 LinkedMessage_HopeYouDidntGetSick[];
-extern s16 Data_02000240_t[][1];
-extern u8 Data_020092fc[];
-extern u8 Data_02009400[];
-extern u32 Data_03001e40;
-extern u8 Data_02009440[];
-
-s32 Func_020011b6(s32, s32);
-void Func_020012cc(void *);
-void Func_0200144c();
-void Func_02001588(void);
-void Func_02001620();
-void Func_020016ce();
-void Func_020016ec();
-void Func_02001706_b();
-void Func_02001864();
-s32 Func_020018ae();
-s32 Func_020018ba();
-s32 Func_020018c4();
-void Func_020019fe_b();
-void Func_02001a08();
-void Func_02001a12_b();
-void Func_02001a1c_a();
-s32 Func_02001a90();
-void Func_02001c7a();
-s32 Func_02001ffe();
-s32 Func_02002062();
-s32 Func_02002248();
-void Func_020090c1();
-
-/*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the
- * block. A value-returning call sets r0 last of its arguments, so a callee
- * is declared to return a value here even where the result is unused.
- */
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-/* Moves the next dialogue line on by amount messages. */
-static __inline__ void bump_step(s32 amount)
-{
-    gEventWork->message += amount;
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    void Camera_MoveTo();
-
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6, s32 a7, s32 a8, s32 a9, s32 a10)
-{
-    void Camera_MoveTo();
-
-    f(a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10);
-}
-
-s32 OverlayObject_UpdateFacingTowardTarget(struct FacingObject *obj)
-{
-    s32 delta;
-    u16 old;
-    s32 angle;
-    struct FacingObject *target;
-
-    target = obj->facing_target;
-    if (target != NULL) {
-        obj->facing_flags = (u8)(0xFE & obj->facing_flags);
-        angle = (u16)CalculateFacingAngle(target->position_z - obj->position_z, target->position_x - obj->position_x);
-        old = obj->facing;
-        delta = (s16)(angle - old);
-        if (delta != 0) {
-            if (delta > 0x1000) {
-                delta = 0x1000;
-            }
-            /* The loader relocates the stored pool word to -0x1000. */
-            if (delta < -0x1000) {
-                delta = -0x1000;
-            }
-            obj->facing = (u16)(old + delta);
-        }
-    }
-    return 1;
-}
-
-s32 AdvancePositionScaleAndVelocity(ScaledMotion *motion)
-{
-    motion->x += motion->velocity_x << 8;
-    motion->y += motion->velocity_y << 8;
-    motion->scale_x += 0x666;
-    motion->scale_y += 0x666;
-    motion->velocity_x += 5;
-    motion->velocity_y -= 1;
-    return 0;
-}
-
-/* The eight-byte owner includes its one pool word. */
-void *SceneData_GetTable9478(void)
-{
-    return (void *)0x02009478;
-}
-
-/* A four-byte leaf that returns zero. */
-int SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-/* The 36-byte owner includes its three pool words. */
-void *SceneData_SelectTable9568ByFlag(void)
-{
-    if (GameFlag_IsSet(0x834) != 0)
-        return (void *)0x02009590;
-    return (void *)0x02009568;
-}
-
-void *SceneData_SelectFlaggedTable(void)
-{
-    void *tbl;
-
-    if (GameFlag_IsSet(0x87a)) {
-        tbl = Data_020098b8;
-    } else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE)) {
-        tbl = Data_02009738;
-    } else {
-        tbl = Data_020095b8;
-    }
-    Func_020012cc(tbl);
-    return tbl;
-}
-
-/* The 80-byte owner includes its seven pool words. */
-void *SceneData_SelectTable9c00ByFlags(void)
-{
-    if (GameFlag_IsSet(0x834) != 0)
-        return (void *)0x02009ac8;
-    if (GameFlag_IsSet(0x87a) != 0)
-        return (void *)0x02009ffc;
-    if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
-        return (void *)0x02009da4;
-    return (void *)0x02009c00;
-}
-
-/* The 44-byte actor-15 scene owner includes its one pool word. */
-void Villager_AskWhySukuretaCame(void)
-{
-    Event_Begin();
-    Event_SetMessage(MSG_SUKURETA_CAME_TO_STUDY_MT_ALEPH);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 15, 6);
-    Event_AskYesNo(15, 0);
-    Event_End();
-}
-
-/* The 44-byte actor-19 scene owner includes its one pool word. */
-void Villager_PlanToScareVisitors(void)
-{
-    Event_Begin();
-    Event_SetMessage(MSG_LETS_SCARE_SUKURETAS_VISITORS);
-    Actor_FaceEachOther(ACTOR_PARTY_LEADER, 19, 6);
-    Event_AskYesNo(19, 0);
-    Event_End();
-}
-
-void Scene_GiveFarewellHerb(void)
-{
-    s32 callback;
-    s32 base5_11a4;
-
-    Event_Begin();
-    if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0) {
-        Event_SetMessage(MSG_YOU_MUST_SAVE_JASMINE);
-        Event_ShowMessage(20, 0);
-        callback = 0x20092fc;
-        Call3(Func_0200144c, 20, 0x10000, callback);
-    } else {
-        base5_11a4 = (s32)LinkedMessage_ThisIsMyFarewellGift;
-        Event_SetMessage(base5_11a4);
-        Event_ShowMessageAndWait(20, 0, 20);
-        Message_ShowCentered((base5_11a4 + 1), 1);
-        Party_GiveItem(ITEM_HERB, 0);
-        GameFlag_Set(FLAG_GOT_FAREWELL_HERB);
-    }
-    Event_End();
-}
-
-/* The 32-byte actor-16 dialogue owner includes its one pool word. */
-void Villager_AskAboutStrangePowers(void)
-{
-    Event_Begin();
-    Event_SetMessage(MSG_THE_CULPRITS_HAD_STRANGE_POWERS);
-    Event_AskYesNo(16, 0);
-    Event_End();
-}
-
-/* The 32-byte actor-10 dialogue owner includes its one pool word. */
-void Villager_AskAboutDora(void)
-{
-    Event_Begin();
-    Event_SetMessage(MSG_DID_YOU_HEAR_ABOUT_DORA);
-    Event_AskYesNo(10, 0);
-    Event_End();
-}
-
-void FieldScene_RunScene376_02000298(void)
-{
-    u32 i;
-    s32 record;
-
-    Event_Begin();
-    Event_SetMessage((s32)LinkedMessage_HopeYouDidntGetSick);
-    Event_ShowMessage(0x800b, 0);
-    Event_End();
-}
+#include "TIMED_EVENTS.H"
 
 /* The 76-byte shared numbered-scene owner includes its two pool words. */
 void SceneState_SetRuntimeWord448To521AndRun(s32 value)
 {
     if (GameFlag_IsSet(0x834) != 0)
-        Func_02001588();
+        BattleFx_SetBlock30ValuesMaxZero();
     Audio_PlayCue(123);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     gEventWork->transition_frames = 16;
@@ -377,12 +64,12 @@ struct FlashCueWork {
     s16 alternate_cue;
 };
 
-s32 Func_02000368(void)
+s32 Scene_RunSupplementalSequenceOne(void)
 {
-    extern u8 Data_03001ebc[];
+    extern u8 *gWork;
 
     u8 *record;
-    u8 **scene = (u8 **)Data_03001ebc;
+    u8 **scene = (u8 **)&gWork;
 
     *(s32 *)(scene[0] + 0x1c0) = 0x209;
     if (GameFlag_IsSet(0x834) != 0) {
@@ -401,29 +88,29 @@ s32 Func_02000368(void)
         Actor_SetPosition(20, 0, 0);
         Actor_SetPosition(21, 0, 0);
         Actor_SetPosition(22, 0, 0);
-        Func_020016ce();
+        BattleFx_StartTwelveFrameBlend();
         ((struct FlashCueWork *)scene[3])->alternate_cue = 1;
-        Func_020016ec();
+        BattleFx_SetBlock30Values12Zero();
         Task_Wait(30);
         Event_OpenScreen();
         Event_WaitForScreen();
-        Func_02001706_b();
+        BattleFx_SetBlock30Values128One();
     }
     if (GameFlag_IsSet(0x87a) != 0) {
-        if (Data_02000240_t[225][0] == 6) {
+        if (gGameState.entrance == 6) {
             if (GameFlag_IsSet(0x81d) == 0) {
                 FieldScene_RunLongPresentationSequence();
             }
         }
         Actor_Get(10)->collision_flags |= 0x80;
     }
-    if (Data_02000240_t[225][0] == 2) {
+    if (gGameState.entrance == 2) {
         if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
             Actor_SetPosition(13, 0x1c60000, 0x960000);
             record = Actor_Get(13);
             Actor_SetSpriteFlags((s32)record, 0);
             Actor_SetAnimation(13, 5);
-            Func_02001620(4);
+            Map_ClearLayerEntryFlag(4);
         }
     }
     return 0;
@@ -544,11 +231,11 @@ void FieldScene_RunLongPresentationSequence(void)
     record = Actor_Get(25);
     Actor_SetSpriteFlags(record, 0);
     v6 = 0;
-    *(u8 *)(Func_020018ae(23) + 85) = v6;
-    *(u8 *)(Func_020018ba(24) + 85) = v6;
-    *(u8 *)(Func_020018c4(25) + 85) = v6;
-    base7_20090c1 = (s32)Func_020090c1;
-    Call2(Func_02001864, base7_20090c1, 0xc80);
+    *((u8 *)Engine_ActorGet(23) + 85) = v6;
+    *((u8 *)Engine_ActorGet(24) + 85) = v6;
+    *((u8 *)Engine_ActorGet(25) + 85) = v6;
+    base7_20090c1 = (s32)Scene_UpdateTimedActor;
+    Call2((void (*)())Engine_TaskAddCallback, base7_20090c1, 0xc80);
     Task_Wait(1);
     gEventWork->transition_frames = 32;
     Event_OpenScreen();
@@ -573,13 +260,13 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetAnimation(ACTOR_GERALD, 1);
     Actor_SetAnimation(ACTOR_IVAN, 1);
     Event_Wait(10);
-    base5_20092fc = (s32)Data_020092fc;
-    Call3(Func_020019fe_b, 0, 0x1000a, base5_20092fc);
-    Call3(Func_02001a08, 1, 0x1000a, base5_20092fc);
-    Call3(Func_02001a12_b, 2, 0x1000a, base5_20092fc);
-    Call3(Func_02001a1c_a, 3, 0x1000a, base5_20092fc);
+    base5_20092fc = (s32)gValeFaceTargetScript;
+    Call3(Object_SetTargetAndCallback, 0, 0x1000a, base5_20092fc);
+    Call3(Object_SetTargetAndCallback, 1, 0x1000a, base5_20092fc);
+    Call3(Object_SetTargetAndCallback, 2, 0x1000a, base5_20092fc);
+    Call3(Object_SetTargetAndCallback, 3, 0x1000a, base5_20092fc);
     Event_Wait(0x12c);
-    *(u8 *)(Func_02001a90() + 85) = v6;
+    *(u8 *)(Battle_GetWorkObject1e0() + 85) = v6;
     Camera_SetSpeed(0x1999, 0x333);
     Camera_MoveTo(0x3120000, 0, 0x1ae0000, 1);
     Event_Wait(240);
@@ -661,7 +348,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
     Event_ShowMessageAndWait(0x1001, 0, 20);
     Actor_RunRepeatedMotion(8, 2);
-    Func_02001c7a(base7_20090c1);
+    Engine_TaskRemoveCallback((void (*)(void))base7_20090c1);
     Event_Wait(40);
     Actor_SetAnimationAndWait(8, 6);
     Event_Wait(20);
@@ -745,7 +432,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetAnimation(9, 3);
     Actor_SetAnimation(10, 3);
     Actor_SetAnimationAndWait(9, 3);
-    *(u8 *)(Func_02001ffe(3) + 35) &= 254;
+    *((u8 *)Engine_ActorGet(3) + 35) &= 254;
     Actor_SetSpritePriority(ACTOR_MIA, 1);
     Actor_SetSpeed(ACTOR_MIA, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_MIA, 0x31a, 0x208);
@@ -753,7 +440,7 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Actor_WalkToAndWait(ACTOR_MIA, 0x310, 0x1f0);
     Actor_FaceDirection(ACTOR_MIA, 0x9000, 10);
-    *(u8 *)(Func_02002062(3) + 35) |= 1;
+    *((u8 *)Engine_ActorGet(3) + 35) |= 1;
     Event_ShowMessageAndWait(ACTOR_MIA, 0, 20);
     Actor_SetAnimation(8, 3);
     Actor_SetAnimation(9, 3);
@@ -790,11 +477,11 @@ void FieldScene_RunLongPresentationSequence(void)
     Actor_SetAnimationAndWait(ACTOR_MIA, 3);
     Event_Wait(20);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
-    base5_2009400 = (s32)Data_02009400;
+    base5_2009400 = (s32)gValePartyScript;
     Actor_EnableActionCallback(ACTOR_GERALD, base5_2009400);
     Value2(Engine_ActorEnableActionCallback, 2, base5_2009400);
-    Value2(Func_02002248, 3, base5_2009400);
-    Value2(Engine_ActorEnableActionCallback, 10, 0x2009310);
+    Value2(Object_SetActionCallbackAndRefreshById, 3, base5_2009400);
+    Value2(Engine_ActorEnableActionCallback, 10, (s32)gValeActor10Script);
     Actor_WalkToAndWait(11, 0x345, 0x178);
     Actor_FaceDirection(11, 0xd000, 20);
     GameFlag_Set(0x81d);
@@ -803,14 +490,12 @@ void FieldScene_RunLongPresentationSequence(void)
 
 void Scene_UpdateTimedActor(void)
 {
-    u32 Func_0200220e_a(u32, u32);
-
     s32 no;
     u32 phase;
     union SceneActor *actor;
     s32 *other;
 
-    phase = Func_0200220e_a(Data_03001e40, 180);
+    phase = gFrameCount % 180;
     no = 23;
     switch (phase) {
     case 10:
@@ -846,5 +531,5 @@ void Scene_UpdateTimedActor(void)
         value = 128;
         dst->value = value;
     }
-    Actor_EnableActionCallback(no, Data_02009440);
+    Actor_EnableActionCallback(no, gValeTimedActorScript);
 }

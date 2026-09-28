@@ -588,6 +588,9 @@ Func_02000420:
 	.4byte 0x00001032
 	.4byte 0x0000e666
 	.4byte 0x00000143
+	.global Scene_UpdateOuterActor9Flags
+	.thumb_func
+Scene_UpdateOuterActor9Flags:
 	.global Func_0200056c
 	.thumb_func
 Func_0200056c:
@@ -618,6 +621,9 @@ Func_0200056c:
 	bx r0
 	.4byte 0x00000302
 	.4byte 0x00000303
+	.global Scene_UpdateOuterActor10Flags
+	.thumb_func
+Scene_UpdateOuterActor10Flags:
 	.global Func_020005ac
 	.thumb_func
 Func_020005ac:
@@ -649,6 +655,9 @@ Func_020005ac:
 	pop {r0}
 	bx r0
 	.4byte 0x00000301
+	.global Scene_UpdateFormationActor9Flags
+	.thumb_func
+Scene_UpdateFormationActor9Flags:
 	.global Func_020005ec
 	.thumb_func
 Func_020005ec:
@@ -684,6 +693,9 @@ Func_020005ec:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00000311
+	.global Scene_UpdateFormationActor10Flags
+	.thumb_func
+Scene_UpdateFormationActor10Flags:
 	.global Func_02000634
 	.thumb_func
 Func_02000634:
@@ -718,6 +730,9 @@ Func_02000634:
 	.2byte 0x0000
 	.4byte 0x00000312
 	.4byte 0x00000313
+	.global Scene_UpdateFormationActor11Flags
+	.thumb_func
+Scene_UpdateFormationActor11Flags:
 	.global Func_0200067c
 	.thumb_func
 Func_0200067c:
@@ -753,6 +768,9 @@ Func_0200067c:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00000315
+	.global Scene_UpdateFormationActor12Flags
+	.thumb_func
+Scene_UpdateFormationActor12Flags:
 	.global Func_020006c4
 	.thumb_func
 Func_020006c4:
@@ -787,6 +805,9 @@ Func_020006c4:
 	.2byte 0x0000
 	.4byte 0x00000316
 	.4byte 0x00000317
+	.global Scene_UpdateFormationActor13Flags
+	.thumb_func
+Scene_UpdateFormationActor13Flags:
 	.global Func_0200070c
 	.thumb_func
 Func_0200070c:
@@ -822,6 +843,9 @@ Func_0200070c:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00000319
+	.global Scene_UpdateFormationActor14Flags
+	.thumb_func
+Scene_UpdateFormationActor14Flags:
 	.global Func_02000754
 	.thumb_func
 Func_02000754:
@@ -856,6 +880,9 @@ Func_02000754:
 	.2byte 0x0000
 	.4byte 0x0000031a
 	.4byte 0x0000031b
+	.global SceneActor_FindSlotByTilePosition
+	.thumb_func
+SceneActor_FindSlotByTilePosition:
 	.global Func_0200079c
 	.thumb_func
 Func_0200079c:
@@ -887,136 +914,8 @@ Func_0200079c:
 	bx r1
 	.2byte 0x0000
 	.4byte 0x03001ebc
-	.global Func_020007d0
-	.thumb_func
-Func_020007d0:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r9
-	mov r5, r8
-	push {r5, r6, r7}
-	movs r0, #0
-	sub sp, #12
-	bl 0x02009bcc
-	ldrh r3, [r0, #6]
-	ldr r2, [pc, #252]
-	lsrs r3, r3, #12
-	lsls r5, r3, #2
-	ldr r3, [r2, r5]
-	mov r8, r0
-	movs r1, #10
-	ldrsh r0, [r0, r1]
-	mov r10, r2
-	asrs r2, r3, #16
-	adds r0, r0, r2
-	mov r2, r8
-	movs r4, #18
-	ldrsh r1, [r2, r4]
-	lsls r3, r3, #16
-	asrs r3, r3, #16
-	adds r1, r1, r3
-	asrs r0, r0, #4
-	asrs r1, r1, #4
-	bl 0x0200879c
-	adds r7, r0, #0
-	cmp r7, #0
-	beq .L_020007d0_0
-	movs r3, #0
-	adds r2, r7, #0
-	adds r2, #34
-	mov r9, r3
-	movs r3, #2
-	strb r3, [r2]
-	mov r4, r10
-	ldr r1, [r4, r5]
-	ldr r2, [pc, #196]
-	ldr r3, [r7, #8]
-	ands r2, r1
-	mov r6, sp
-	adds r3, r3, r2
-	str r3, [r6]
-	ldr r3, [r7, #12]
-	str r3, [r6, #4]
-	ldr r3, [r7, #16]
-	lsls r1, r1, #16
-	adds r3, r3, r1
-	adds r1, r6, #0
-	str r3, [r6, #8]
-	bl 0x02009b6c
-	cmp r0, #0
-	bgt .L_020007d0_0
-	movs r1, #8
-	mov r0, r8
-	bl 0x02009b3c
-	ldr r5, [pc, #156]
-	movs r0, #15
-	bl 0x02009b24
-	movs r0, #185
-	bl 0x02009ccc
-	str r5, [r7, #48]
-	str r5, [r7, #52]
-	adds r0, r7, #0
-	ldr r1, [r6]
-	ldr r2, [r6, #4]
-	ldr r3, [r6, #8]
-	bl 0x02009b4c
-	mov r1, r8
-	str r5, [r1, #48]
-	str r5, [r1, #52]
-	mov r0, r8
-	ldr r1, [r6]
-	ldr r2, [r6, #4]
-	ldr r3, [r6, #8]
-	bl 0x02009b4c
-	adds r0, r7, #0
-	bl 0x02009b54
-	ldr r3, [r6]
-	str r3, [r7, #8]
-	ldr r3, [r6, #8]
-	mov r2, r9
-	str r3, [r7, #16]
-	movs r1, #1
-	str r2, [r7, #36]
-	str r2, [r7, #44]
-	mov r0, r8
-	bl 0x02009b3c
-	ldr r3, [pc, #84]
-	movs r4, #225
-	lsls r4, r4, #1
-	adds r3, r3, r4
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #11
-	blt .L_020007d0_0
-	cmp r3, #13
-	ble .L_020007d0_1
-	cmp r3, #16
-	bgt .L_020007d0_0
-	b .L_020007d0_2
-.L_020007d0_1:
-	bl 0x0200856c
-	bl 0x020085ac
-	b .L_020007d0_0
-.L_020007d0_2:
-	bl 0x020085ec
-	bl 0x02008634
-	bl 0x0200867c
-	bl 0x020086c4
-	bl 0x0200870c
-	bl 0x02008754
-.L_020007d0_0:
-	sub sp, #-12
-	pop {r3, r5, r6}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.4byte 0x0200a65c
-	.4byte 0xffff0000
-	.4byte 0x00003333
-	.4byte 0x02000240
+	.section .text.x020088f4,"ax",%progbits
+	.align 2
 	.global Func_020008f4
 	.thumb_func
 Func_020008f4:
@@ -3026,7 +2925,7 @@ Func_02001ac8:
 	.4byte 0x0200a69c
 	.4byte 0x0000e666
 	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/IMPORT.INC"
-	.section .rodata,"a",%progbits
+	.section .rodata.part1,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -3637,6 +3536,8 @@ Func_02001ac8:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruPushSteps
+gSoruPushSteps:
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

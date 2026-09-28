@@ -22,8 +22,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/PRIMARY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/SWAY_SPARKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/CHOREOGRAPHY.o"(.text)
-        "*/resource_399_overlay.o"(.text.x020098c4)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/CHOREOGRAPHY2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/IMPORT.o"(.text)
         "*/resource_399_overlay.o"(.rodata)
     }

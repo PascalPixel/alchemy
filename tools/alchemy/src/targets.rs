@@ -41,10 +41,9 @@ impl std::fmt::Display for DecompTargetId {
     }
 }
 
-/// Whether `alchemy build full` composes a target's whole ROM. A supported
-/// full build proves nothing by itself: only a byte-identical rebuild of the
-/// registered reference ROM leaves a proof, so a game whose image is still
-/// incomplete fails its full build and its DONE stays `?`.
+/// Whether `alchemy build rom` links a target's whole ROM. A link proves
+/// nothing by itself: only an image matching its `rom.sha1` line is
+/// measured, so a game whose image still differs stays pending.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum BuildSupport {
     CompileOnly,

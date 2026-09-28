@@ -3,7 +3,7 @@
 //! Every gate is an ordinary `make` target, so each stays runnable alone.
 //! Gates within a wave share no pending prerequisite and run concurrently;
 //! each later invocation marks every finished gate old (`make -o`), so no
-//! prerequisite (the full build, input preparation) runs twice. Every gate
+//! prerequisite (a ROM link, input preparation) runs twice. Every gate
 //! calls this executable directly instead of `cargo run`. A passing gate
 //! prints one line; a failing gate prints its whole output. Every gate's
 //! output is kept in `out/verify/<gate>.log`.
@@ -242,11 +242,15 @@ fn stage_publication(root: &Path) -> Result<(), String> {
 
 fn run(root: &Path, pre_commit: bool) -> Result<bool, String> {
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
+    let main = !pre_commit || is_main(root)?;
+    run_waves(root, &executable, pre_commit, main)
+}
+
+fn run_waves(root: &Path, executable: &Path, pre_commit: bool, main: bool) -> Result<bool, String> {
     let logs = root.join("out/verify");
     std::fs::create_dir_all(&logs).map_err(|error| format!("{}: {error}", logs.display()))?;
     let started = Instant::now();
     let mut finished: Vec<&str> = Vec::new();
-    let main = !pre_commit || is_main(root)?;
     let waves = if pre_commit {
         commit_waves(main)
     } else {
@@ -478,6 +482,101 @@ mod tests {
         .unwrap();
         assert!(!is_main(root).unwrap());
         assert!(verified_subject(root).is_err());
+    }
+
+    /// A repository whose every gate records its name, `coverage` also
+    /// writing the publication, and whose `failing` gate fails.
+    fn landing_fixture(failing: &str) -> tempfile::TempDir {
+        let directory = tempfile::tempdir().unwrap();
+        let root = directory.path();
+        assert!(Command::new("git")
+            .args(["init", "--quiet", "--initial-branch=wf/landing"])
+            .arg(root)
+            .status()
+            .unwrap()
+            .success());
+        let mut makefile = String::new();
+        let gates = STAGED
+            .iter()
+            .chain(WAVES.iter().flat_map(|wave| wave.iter()))
+            .chain(["test", "coverage"].iter())
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for gate in gates {
+            makefile.push_str(&format!("{gate}:\n\t@echo {gate} >> gates.log\n"));
+            if gate == "coverage" {
+                for path in PUBLICATION_FILES {
+                    makefile.push_str(&format!("\t@echo published > '{path}'\n"));
+                }
+            }
+            if gate == failing {
+                makefile.push_str("\t@false\n");
+            }
+        }
+        std::fs::write(root.join("Makefile"), makefile).unwrap();
+        std::fs::create_dir_all(root.join("recon/tbs/metrics")).unwrap();
+        // Neither game has a build yet, so both are pending.
+        std::fs::write(
+            root.join("rom.sha1"),
+            "5c4695205413df7db52b9a184815a07783999971  out/tbs-en/tbs-en.gba\n\
+             b500663220cb9bf56b9f8e8c0c544f1d6fa3a824  out/tla-en/tla-en.gba\n",
+        )
+        .unwrap();
+        directory
+    }
+
+    fn gates_run(root: &Path) -> Vec<String> {
+        std::fs::read_to_string(root.join("gates.log"))
+            .unwrap_or_default()
+            .lines()
+            .map(str::to_owned)
+            .collect()
+    }
+
+    #[test]
+    fn main_landing_builds_compares_publishes_then_checks_publication() {
+        let directory = landing_fixture("none");
+        let root = directory.path();
+        assert_eq!(verified_subject(root).unwrap(), "☀️ pending ⚓️ pending –");
+        assert!(run_waves(root, Path::new("/unused/alchemy"), true, true).unwrap());
+        let ran = gates_run(root);
+        let at = |gate: &str| ran.iter().position(|name| name == gate).unwrap();
+        for gate in ["compare", "compare-tla"] {
+            assert!(at("test") < at(gate) && at(gate) < at("coverage"));
+        }
+        assert!(at("coverage") < at("coverage-check"));
+        assert_eq!(
+            &ran[ran.len() - 2..],
+            ["index-sync-check", "publication-staged-check"]
+        );
+        let staged = Command::new("git")
+            .args(["diff", "--cached", "--name-only"])
+            .current_dir(root)
+            .output()
+            .unwrap();
+        assert_eq!(
+            String::from_utf8(staged.stdout)
+                .unwrap()
+                .lines()
+                .collect::<BTreeSet<_>>(),
+            PUBLICATION_FILES.iter().copied().collect()
+        );
+    }
+
+    #[test]
+    fn a_game_whose_build_differs_stops_the_landing_before_publication() {
+        let directory = landing_fixture("compare-tla");
+        let root = directory.path();
+        assert!(!run_waves(root, Path::new("/unused/alchemy"), true, true).unwrap());
+        let ran = gates_run(root);
+        assert!(ran.iter().any(|gate| gate == "compare-tla"));
+        assert!(!ran.iter().any(|gate| gate == "coverage"));
+        assert!(!root.join("README.md").exists());
+        // A branch commit runs only the staged checks.
+        let directory = landing_fixture("compare-tla");
+        let root = directory.path();
+        assert!(run_waves(root, Path::new("/unused/alchemy"), true, false).unwrap());
+        assert_eq!(gates_run(root).len(), STAGED.len());
     }
 
     #[test]

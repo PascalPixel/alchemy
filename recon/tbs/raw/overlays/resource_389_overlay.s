@@ -1,12 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/ENTRY.INC"
-	.section .text.x020093a8,"ax",%progbits
-	.align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.global StagedActor_DirectionSteps

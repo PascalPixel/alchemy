@@ -10,6 +10,9 @@ Object_SetCallback:
 	bx	r4
 	.2byte 0x33a9
 	.2byte 0x0802
+	.global Func_080200b0
+	.thumb_func
+Func_080200b0:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x3525

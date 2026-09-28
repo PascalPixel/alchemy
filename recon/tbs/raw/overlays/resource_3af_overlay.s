@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY.INC"
 	.section .text.x020080c4,"ax",%progbits
 	.p2align 2
 	push	{r5, r6, r7, lr}
@@ -3001,9 +2997,6 @@ FieldScene_RunEncounterClosingSequence:
 	.4byte 0x0000cccc
 	.4byte 0x00019999
 	.4byte 0x0200c918
-	.section .text.x0200c254,"ax",%progbits
-	.p2align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x0000001c
 	.4byte 0x00000002

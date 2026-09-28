@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ENTRY.INC"
 	.section .text.x02009084,"ax",%progbits
 	.global Func_02001084
 	.thumb_func
@@ -3719,8 +3715,6 @@ Soru_UpdateRing:
 	.4byte 0x00001999
 	.2byte 0xba48
 	.2byte 0x0200
-	.section .text.x0200b3d4,"ax",%progbits
-	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x0000000d

@@ -9,4 +9,4 @@
 	.global Func_080f0000
 	.thumb_func
 Func_080f0000:
-	overlay_veneer 0x080f03f1
+	overlay_veneer Func_080f03f0

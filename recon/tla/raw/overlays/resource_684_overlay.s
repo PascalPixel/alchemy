@@ -1,21 +1,27 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x02008065, 0x02008039, 0x02008045, 0x0200804d, 0x0200805d, 0x02008041, 0x020080a5
-	overlay_veneer \EntryTarget
-	.endr
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x80c0
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x80f0
 	.2byte 0x0200
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x8100
@@ -23,10 +29,16 @@ Overlay_02000000:
 	push	{lr}
 	bl 0x020080b8
 	pop	{pc}
+	.global Func_0200005c
+	.thumb_func
+Func_0200005c:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x8130
 	.2byte 0x0200
+	.global Func_02000064
+	.thumb_func
+Func_02000064:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -56,11 +68,11 @@ Overlay_02000000:
 	movs	r0, #0
 	pop	{pc}
 	.2byte 0x0000
+	.global Func_020000a4
+	.thumb_func
+Func_020000a4:
 	movs	r0, #0
 	bx	lr
-	.irp EntryTarget, 0x080c8089, 0x080c8201, 0x08108011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac

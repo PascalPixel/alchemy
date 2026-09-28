@@ -1,12 +1,13 @@
-/* resource_386: its listing with maintained code linked in place, as pret
-   links objects in ROM order. */
+/* resource_386: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_386_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA_SAI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA_SAI/PLACEMENT.o"(.text)
-        "*/resource_386_overlay.o"(.text.x020085dc)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA_SAI/IMPORT.o"(.text)
         "*/resource_386_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

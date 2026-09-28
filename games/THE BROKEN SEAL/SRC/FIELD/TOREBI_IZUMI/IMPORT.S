@@ -1,0 +1,55 @@
+@ Import veneers after the TOREBI_IZUMI overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — TOREBI_IZUMI overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer IwramSignedDivide
+	overlay_veneer IwramSignedRemainder
+	overlay_veneer WaitFramesFar
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	overlay_veneer Random16Far
+	overlay_veneer Trig_SinFar
+	overlay_veneer Trig_CosFar
+	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	overlay_veneer ObjectDispatch_ApplyValueToChildrenFar
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer UiWindow_CreateFar
+	overlay_veneer UiWork_FinalizeFar
+	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	overlay_veneer UiText_DrawNumberInWindowFar
+	overlay_veneer UiWork_PushValueSlotFar
+	overlay_veneer UiWork_FinalizePendingCoreFar
+	overlay_veneer Menu_SelectEntry20To21Far
+	overlay_veneer PartyInventory_RemoveFar
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer Party_AdjustSixDigitCounterAFar
+	overlay_veneer Party_GetAverageLevelFar
+	overlay_veneer PartyInventory_CountItemFar
+	overlay_veneer PartyInventory_CountFreeSlotsFar
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer PartyInventory_GiveItemFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer UiText_OpenMessageAtObjectFar
+	overlay_veneer BattleEv_RunWaitFar
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	overlay_veneer Party_SetFields1ceAnd1d0Far
+	overlay_veneer Event_SetPair1c0AndSetValue170Far
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer BattleFx_StartEffectObject22Far
+	overlay_veneer Battle_ResetEffectCounterFar
+	overlay_veneer SaveState_CaptureObjectTableFar
+	overlay_veneer AudioCommand_WaitForStateByteClearFar
+	overlay_veneer AudioCommand_PlayFar

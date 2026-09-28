@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/ENTRY.INC"
 	.section .text.x02008a80,"ax",%progbits
 	.align 2
 	.global Func_02000a80
@@ -378,9 +374,6 @@ Func_020050e4:
 	.4byte 0x0200e7c8
 	.4byte 0x00000301
 	.4byte 0x0000012f
-	.section .text.x0200e420,"ax",%progbits
-	.align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/IMPORT.INC"
 	.section .rodata.part1,"a",%progbits
 	.global FuneHeya_TurnSteps
 FuneHeya_TurnSteps:

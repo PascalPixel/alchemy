@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/ENTRY.INC"
 	.section .text.x020080c4,"ax",%progbits
 	.global Func_020000c4
 	.thumb_func
@@ -38,8 +34,6 @@ Func_020000c4:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x000028be
-	.section .text.x020094d8,"ax",%progbits
-	.include "games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_MACHI/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x00000015
 	.4byte 0x00000009

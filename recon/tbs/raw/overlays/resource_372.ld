@@ -1,10 +1,11 @@
-/* resource_372: its listing with maintained code linked in place,
-   as pret links objects in ROM order. The overlay's own work follows the image. */
+/* resource_372: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. The overlay's own work follows the image. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_372_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE.o"(.text)
         "*/resource_372_overlay.o"(.text.x02008a10)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/STORM_SCENE_00D5C.o"(.text)
@@ -27,6 +28,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/SPAWN_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_H.o"(.text)
         "*/resource_372_overlay.o"(.text.x0200c618)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/IMPORT.o"(.text)
         "*/resource_372_overlay.o"(.rodata)
     }
     .bss (NOLOAD) :

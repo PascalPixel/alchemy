@@ -11,33 +11,42 @@
 	.thumb_func
 RunAssetSelectionScreenFar:
 Func_080a1000:
-	overlay_veneer 0x080a24d1
+	overlay_veneer RunAssetSelectionScreen
 	.global Menu_OpenConfirmPromptFar
 	.thumb_func
 Menu_OpenConfirmPromptFar:
-	overlay_veneer 0x080a5b95
+	overlay_veneer Menu_OpenConfirmPrompt
 	.global Menu_OpenActionFlow
 	.thumb_func
 Menu_OpenActionFlow:
-	overlay_veneer 0x080a7479
-	overlay_veneer 0x080a7381
-	overlay_veneer 0x080a1779
+	overlay_veneer ActionMenu_Open
+	.global Menu_OpenCharacterSelectorFar
+	.thumb_func
+Menu_OpenCharacterSelectorFar:
+	overlay_veneer Menu_OpenCharacterSelector
+	overlay_veneer UiIcon_CreateWithResourceVariant
 	.global PsynergyMenu_InitializeEntryObjectsFar
 	.global Func_080a1028
 	.thumb_func
 PsynergyMenu_InitializeEntryObjectsFar:
 Func_080a1028:
-	overlay_veneer 0x080a1871
+	overlay_veneer PsynergyMenu_InitializeEntryObjects
 	.global Menu_ReleaseEntryObjectsFar
 	.thumb_func
 Menu_ReleaseEntryObjectsFar:
-	overlay_veneer 0x080a195d
+	overlay_veneer Menu_ReleaseEntryObjects
 	.global UiIcon_PrepareObjectFar
 	.thumb_func
 UiIcon_PrepareObjectFar:
-	overlay_veneer 0x080a17c5
+	overlay_veneer UiIcon_PrepareObject
 	.global ItemMenu_Open
 	.thumb_func
 ItemMenu_Open:
-	overlay_veneer 0x080aa56d
-	overlay_veneer 0x080a4925
+	.global Func_080a1040
+	.thumb_func
+Func_080a1040:
+	overlay_veneer Func_080aa56c
+	.global ItemMenu_DrawItemDetailsFar
+	.thumb_func
+ItemMenu_DrawItemDetailsFar:
+	overlay_veneer ItemMenu_DrawItemDetails

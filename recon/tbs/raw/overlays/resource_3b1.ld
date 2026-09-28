@@ -1,10 +1,11 @@
-/* resource_3b1: its listing with maintained code linked in place,
-   as pret links objects in ROM order. */
+/* resource_3b1: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_3b1_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/STAGED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/WALKER_STEP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/EFFECT9.o"(.text)
@@ -36,7 +37,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/MAPEVENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/PROGRESS_SHOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/SCAN.o"(.text)
-        "*/resource_3b1_overlay.o"(.text.x0200e420)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/IMPORT.o"(.text)
         "*/resource_3b1_overlay.o"(.rodata.part1)
     }
     .bss : { "*/resource_3b1_overlay.o"(.bss) }

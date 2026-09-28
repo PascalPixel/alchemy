@@ -1,11 +1,5 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x02009419, 0x02008d31, 0x02008d3d, 0x02008d45, 0x020093d9, 0x02008d39, 0x020097dd
-	overlay_veneer \EntryTarget
-	.endr
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1608,16 +1602,28 @@ Overlay_02000000:
 	.2byte 0x0000
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_02000d30
+	.thumb_func
+Func_02000d30:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x9a9c
 	.2byte 0x0200
+	.global Func_02000d38
+	.thumb_func
+Func_02000d38:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000d3c
+	.thumb_func
+Func_02000d3c:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x9acc
 	.2byte 0x0200
+	.global Func_02000d44
+	.thumb_func
+Func_02000d44:
 	push	{lr}
 	ldr	r3, [pc, #36]
 	movs	r1, #240
@@ -2395,6 +2401,9 @@ Overlay_02000000:
 	adds	r2, #2
 	bl 0x02009920
 	pop	{pc}
+	.global Func_020013d8
+	.thumb_func
+Func_020013d8:
 	push	{lr}
 	ldr	r3, [pc, #36]
 	movs	r1, #240
@@ -2425,6 +2434,9 @@ Overlay_02000000:
 	.4byte 0x02009e78
 	.2byte 0x9d28
 	.2byte 0x0200
+	.global Func_02001418
+	.thumb_func
+Func_02001418:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -2864,11 +2876,11 @@ Overlay_02000000:
 	.4byte 0x020099cc
 	.2byte 0x91e1
 	.2byte 0x0200
+	.global Func_020017dc
+	.thumb_func
+Func_020017dc:
 	movs	r0, #0
 	bx	lr
-	.irp EntryTarget, 0x080000c1, 0x080000d1, 0x080000d9, 0x08000129, 0x080003c9, 0x080003d1, 0x080003d9, 0x080003e9, 0x080003f1, 0x08020091, 0x080200e9, 0x08020149, 0x08020151, 0x080201e9, 0x08020211, 0x08020219, 0x08038211, 0x080c8011, 0x080c8019, 0x080c8021, 0x080c8089, 0x080c8099, 0x080c80c1, 0x080c80e9, 0x080c80f1, 0x080c80f9, 0x080c8119, 0x080c8141, 0x080c8201, 0x080c8209, 0x080c8211, 0x080c8269, 0x080c8281, 0x080c8289, 0x080c8379, 0x080c8381, 0x080c8391, 0x080c83a9, 0x080c83b9, 0x080c8421, 0x080c8429, 0x080c8481, 0x080c84e1, 0x080c8691, 0x080c8711, 0x080c8739, 0x080c88d9, 0x080c88e9, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0x01030102
 	.4byte 0x01260125

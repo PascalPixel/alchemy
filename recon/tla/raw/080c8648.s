@@ -31,14 +31,23 @@ Func_080c8648:
 	bx	r4
 	.2byte 0x20fd
 	.2byte 0x080d
+	.global Func_080c8680
+	.thumb_func
+Func_080c8680:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x4b0d
 	.2byte 0x080d
+	.global Func_080c8688
+	.thumb_func
+Func_080c8688:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x2c65
 	.2byte 0x080d
+	.global Func_080c8690
+	.thumb_func
+Func_080c8690:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.4byte 0x080d2c99

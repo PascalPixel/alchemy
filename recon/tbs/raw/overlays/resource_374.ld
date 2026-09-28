@@ -1,10 +1,11 @@
-/* resource_374: its listing with maintained code linked in place, as pret
-   links objects in ROM order. */
+/* resource_374: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_374_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.o"(.text)
         "*/resource_374_overlay.o"(.text.x02008248)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/STONE.o"(.text)
@@ -12,7 +13,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/RESTORE.o"(.text)
         "*/resource_374_overlay.o"(.text.x02009274)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SCENES.o"(.text)
-        "*/resource_374_overlay.o"(.text.x0200a5e4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IMPORT.o"(.text)
         "*/resource_374_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

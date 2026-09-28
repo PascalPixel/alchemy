@@ -1,11 +1,12 @@
-/* resource_3bd: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
+/* resource_3bd: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_3bd_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/SCENE_TABLES.o"(.text)
         "*/resource_3bd_overlay.o"(.text.x02008a00)
@@ -30,7 +31,7 @@ SECTIONS
         "*/resource_3bd_overlay.o"(.text.x0200b644)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/THREE_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/OPEN_WALL.o"(.text)
-        "*/resource_3bd_overlay.o"(.text.x0200bbe8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTAMIRA_DOU/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3bd_overlay.o"(.rodata.part1)
     }

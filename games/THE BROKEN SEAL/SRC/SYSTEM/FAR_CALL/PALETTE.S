@@ -9,8 +9,14 @@
 	.global Func_080f2000
 	.thumb_func
 Func_080f2000:
-	overlay_veneer 0x080f26ed
-	overlay_veneer 0x080f2eb9
-	overlay_veneer 0x080f2b6d
-	overlay_veneer 0x080f2b71
-	overlay_veneer 0x080f2d55
+	overlay_veneer Func_080f26ec
+	overlay_veneer Graphics_NoOpColor
+	overlay_veneer Func_080f2b6c
+	.global Title_ShowSplashScreenFar
+	.thumb_func
+Title_ShowSplashScreenFar:
+	overlay_veneer Title_ShowSplashScreen
+	.global Func_080f2020
+	.thumb_func
+Func_080f2020:
+	overlay_veneer Unnamed_080f2d54

@@ -1,11 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_HEYA/ENTRY.INC"
-	.section .text.x02008500,"ax",%progbits
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_HEYA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global BiribinoHeya_PrimaryTable
 BiribinoHeya_PrimaryTable:

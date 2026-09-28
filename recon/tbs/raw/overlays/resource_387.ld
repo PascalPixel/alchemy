@@ -1,10 +1,11 @@
-/* resource_387: its listing with maintained code linked in place,
-   as pret links objects in ROM order. */
+/* resource_387: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_387_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/EFFOBJ.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_387_overlay.o"(.text.x0200813c)
@@ -16,7 +17,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/SPINNING_LEAP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/SLOTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/GIVE_SHAMANS_ROD.o"(.text)
-        "*/resource_387_overlay.o"(.text.x02009084)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_IRIGUCHI/IMPORT.o"(.text)
         "*/resource_387_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

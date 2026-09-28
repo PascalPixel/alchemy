@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/ENTRY.INC"
 	.section .text.x020080ec,"ax",%progbits
 	.align 2
 	.global Func_020000ec
@@ -1892,9 +1888,6 @@ Func_0200164c:
 	.4byte 0x00000099
 	.4byte 0x0000009b
 	.4byte 0x0000009c
-	.section .text.x0200bb14,"ax",%progbits
-	.align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/IMPORT.INC"
 	.section .rodata.part1,"a",%progbits
 	.global KareiMachi_Data01
 KareiMachi_Data01:

@@ -7,10 +7,16 @@ Func_08020238:
 	bx	r4
 	.2byte 0x34cd
 	.2byte 0x0802
+	.global Func_08020240
+	.thumb_func
+Func_08020240:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x37f9
 	.2byte 0x0802
+	.global Func_08020248
+	.thumb_func
+Func_08020248:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x3841

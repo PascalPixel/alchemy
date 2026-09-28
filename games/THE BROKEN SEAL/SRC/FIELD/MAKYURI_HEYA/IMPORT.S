@@ -1,0 +1,146 @@
+@ Import veneers after the MAKYURI_HEYA overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — MAKYURI_HEYA overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer IwramSignedDivide
+	overlay_veneer IwramUnsignedRemainder
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
+	overlay_veneer WaitFramesFar
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	overlay_veneer Scheduler_RemoveCallbackFar
+	overlay_veneer Random16Far
+	overlay_veneer FixedSqrtFar
+	overlay_veneer Trig_SinFar
+	overlay_veneer Vector_AddPolarOffsetFar
+	overlay_veneer Runtime_AllocateBlockFar
+	overlay_veneer AnimationObjects_SelectAnimationFar
+	.global Object_SetMode
+	.thumb_func
+Object_SetMode:
+	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Object_CreateFar
+	overlay_veneer ObjectDispatch_ReleaseFar
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Object_SetPosition
+	.thumb_func
+Object_SetPosition:
+	overlay_veneer Object_SetMoveTargetFar
+	.global Object_CommitPosition
+	.thumb_func
+Object_CommitPosition:
+	overlay_veneer Script_WaitForEventTimeoutFar
+	overlay_veneer Map_PlayMetatileCopySequenceFar
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer DisplayBlend_DisableRunScriptFar
+	overlay_veneer DisplayBlend_EnableRunScriptFar
+	.global Map_CopyCellAttributeRect
+	.thumb_func
+Map_CopyCellAttributeRect:
+	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Object_CheckMovementCollision
+	.thumb_func
+Object_CheckMovementCollision:
+	overlay_veneer Func_080091d8
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer Map_WaitWorkValuesBelow256Far
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer UiWork_PushValueSlotFar
+	overlay_veneer UiText_ShowCenteredMessageFar
+	overlay_veneer Owner_GetStateFar
+	overlay_veneer Owner_RecalculateStatsFar
+	overlay_veneer Inventory_FindFar
+	overlay_veneer PartyInventory_FindOwnerFar
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer Djinn_AddToOwnerFar
+	overlay_veneer Djinn_ActivateFar
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer Event_PrepareObjectAndApplyValueFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
+	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetSpeedParameters
+	.thumb_func
+ObjectMotion_SetSpeedParameters:
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer Object_RefreshSelectorByIdFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	.global ObjectMotion_OffsetPositionAndResetMotion
+	.thumb_func
+ObjectMotion_OffsetPositionAndResetMotion:
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	overlay_veneer ObjectMotion_SetAngleTowardFar
+	overlay_veneer Object_LinkPairFar
+	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	overlay_veneer ObjectGroup_SetChildValueFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer UiText_OpenMessageAtObjectFar
+	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	overlay_veneer ObjectMotion_SetActionVariantFar
+	overlay_veneer BattleFx_SpawnLinkedFar
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	overlay_veneer Motion_CamBoundsFar
+	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	overlay_veneer Battle_GetWorkObject1e0Far
+	overlay_veneer Event_SetValue170Far
+	overlay_veneer BattleFx_SetPhaseRequestFar
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer BattleFx_StartEffectObject22Far
+	overlay_veneer ObjectTable_GetFar
+	overlay_veneer BattleFx_StartFadeOverlayFar
+	overlay_veneer Field_DispatchTypeHandlerFar
+	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	overlay_veneer BattleFx_SetupObjectPairFar
+	overlay_veneer EffectRuntime_StopCurrentObjectFar
+	overlay_veneer EventObject_InitializeFar
+	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
+	.global BattleFx_PlayQueuedSound
+	.thumb_func
+BattleFx_PlayQueuedSound:
+	overlay_veneer BattleFx_PlayQueuedSoundFar
+	.global Audio_PlayCue
+	.thumb_func
+Audio_PlayCue:
+	overlay_veneer AudioCommand_PlayFar

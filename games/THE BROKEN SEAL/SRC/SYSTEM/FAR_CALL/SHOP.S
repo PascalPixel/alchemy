@@ -9,40 +9,61 @@
 	.global Func_080b0000
 	.thumb_func
 Func_080b0000:
-	overlay_veneer 0x080b0445
-	overlay_veneer 0x080b0279
-	overlay_veneer 0x080b29a9
-	overlay_veneer 0x080b3285
+	.global Battle_ApplyPresetItemsAndFlagsFar
+	.thumb_func
+Battle_ApplyPresetItemsAndFlagsFar:
+	overlay_veneer Battle_ApplyPresetItemsAndFlags
+	.global Shop_RunFar
+	.thumb_func
+Shop_RunFar:
+	overlay_veneer Shop_Run
+	.global Shop_ConfirmActFar
+	.thumb_func
+Shop_ConfirmActFar:
+	overlay_veneer Shop_ConfirmAct
+	.global Inn_CheckInFar
+	.thumb_func
+Inn_CheckInFar:
+	overlay_veneer Inn_CheckIn
 	.global ShopCursor_AdvanceFar
 	.global Func_080b0020
 	.thumb_func
 ShopCursor_AdvanceFar:
 Func_080b0020:
-	overlay_veneer 0x080b08b9
+	overlay_veneer ShopCursor_Advance
 	.global ShopCursor_MoveTowardTargetFar
 	.thumb_func
 ShopCursor_MoveTowardTargetFar:
-	overlay_veneer 0x080b0959
+	overlay_veneer ShopCursor_MoveTowardTarget
 	.global Shop_SetCursorFar
 	.thumb_func
 Shop_SetCursorFar:
-	overlay_veneer 0x080b09fd
+	overlay_veneer Shop_SetCursor
 	.global Func_080b0038
 	.thumb_func
 Func_080b0038:
 	.global ShopCursor_SetPositionImmediateFar
 	.thumb_func
 ShopCursor_SetPositionImmediateFar:
-	overlay_veneer 0x080b0a21
-	overlay_veneer 0x080b06c1
+	overlay_veneer ShopCursor_SetPositionImmediate
+	overlay_veneer Shop_FillSelector
 	.global Unnamed_080b0840Far
 	.thumb_func
 Unnamed_080b0840Far:
-	overlay_veneer 0x080b0841
+	overlay_veneer Shop_RestoreSceneTiles
 	.global Shop_InitEffectFar
 	.thumb_func
 Shop_InitEffectFar:
-	overlay_veneer 0x080b0895
-	overlay_veneer 0x080b3445
-	overlay_veneer 0x080b04c5
-	overlay_veneer 0x080b3399
+	overlay_veneer Shop_InitEffect
+	.global Shop_PickUnitItemFar
+	.thumb_func
+Shop_PickUnitItemFar:
+	overlay_veneer Shop_PickUnitItem
+	.global AudioCommand_WaitForStateByteClearFar
+	.thumb_func
+AudioCommand_WaitForStateByteClearFar:
+	overlay_veneer AudioCommand_WaitForStateByteClear
+	.global Func_080b0068
+	.thumb_func
+Func_080b0068:
+	overlay_veneer Inn_PlaySleep

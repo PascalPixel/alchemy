@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/ENTRY.INC"
 	.global Func_02000030
 	.thumb_func
 Func_02000030:
@@ -1039,7 +1035,6 @@ Func_020007f8:
 Func_02000904:
 	bx lr
 	.2byte 0x0000
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_DOU/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x00000022
 	.4byte 0x02008031

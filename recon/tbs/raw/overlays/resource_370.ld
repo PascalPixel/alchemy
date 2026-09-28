@@ -1,10 +1,11 @@
-/* resource_370: its listing with maintained code
-   linked in place, as pret links objects in ROM order. */
+/* resource_370: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_370_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/GET_SCRIPT.o"(.text)
         "*/resource_370_overlay.o"(.text.x02008054)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/BLEND_FADE.o"(.text)
@@ -16,7 +17,7 @@ SECTIONS
         "*/resource_370_overlay.o"(.text.x02008de4)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENCODE_PASSWORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/SAVE_MENU.o"(.text)
-        "*/resource_370_overlay.o"(.text.x02009314)
+        "*/games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.o"(.text)
         "*/resource_370_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

@@ -1,10 +1,11 @@
-/* resource_383: its listing with maintained code
-   linked in place, as pret links objects in ROM order. */
+/* resource_383: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_383_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/GET_TABLE.o"(.text)
         "*/resource_383_overlay.o"(.text.x02008048)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/SET_SCENE.o"(.text)
@@ -41,6 +42,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ACTOR_NEAR_POINT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/CHECK_TILE.o"(.text)
         "*/resource_383_overlay.o"(.text.x0200c8c8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/IMPORT.o"(.text)
         "*/resource_383_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

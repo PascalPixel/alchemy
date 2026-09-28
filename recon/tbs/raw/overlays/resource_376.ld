@@ -1,14 +1,15 @@
-/* resource_376: its listing with maintained code linked in place, as pret
-   links objects in ROM order. */
+/* resource_376: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_376_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/VILLAGER.o"(.text)
         "*/resource_376_overlay.o"(.text.x02008298)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/TIMED_EVENTS.o"(.text)
-        "*/resource_376_overlay.o"(.text.x02009144)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/IMPORT.o"(.text)
         "*/resource_376_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

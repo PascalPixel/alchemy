@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/ENTRY.INC"
 	.section .text.x02008314,"ax",%progbits
 	.balign 4
 	.global Func_02000314
@@ -546,6 +542,3 @@ Func_02001668:
 	.4byte 0x0000094a
 	.4byte 0x0000094b
 	.4byte 0x0000094c
-	.section .text.x02009918,"ax",%progbits
-	.balign 4
-	.include "games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/IMPORT.INC"

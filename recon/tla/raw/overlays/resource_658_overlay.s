@@ -1,21 +1,27 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x020086ad, 0x02008039, 0x02008045, 0x0200804d, 0x02008639, 0x02008041, 0x02008839
-	overlay_veneer \EntryTarget
-	.endr
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xac98
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xacc8
 	.2byte 0x0200
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
 	push	{lr}
 	movs	r0, #128
 	lsls	r0, r0, #4
@@ -662,6 +668,9 @@ Overlay_02000000:
 .L_02000634:
 	pop	{pc}
 	.2byte 0x0000
+	.global Func_02000638
+	.thumb_func
+Func_02000638:
 	push	{lr}
 	movs	r0, #128
 	lsls	r0, r0, #4
@@ -716,6 +725,9 @@ Overlay_02000000:
 	bl 0x02008670
 	add	sp, #8
 	pop	{pc}
+	.global Func_020006ac
+	.thumb_func
+Func_020006ac:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -892,6 +904,9 @@ Overlay_02000000:
 	.2byte 0x0000
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_02000838
+	.thumb_func
+Func_02000838:
 	movs	r0, #0
 	bx	lr
 	push	{r5, r6, lr}
@@ -4410,9 +4425,6 @@ Overlay_02000000:
 	bl 0x0200a9c8
 	pop	{pc}
 	.2byte 0x0000
-	.irp EntryTarget, 0x03000528, 0x080003c9, 0x080003d1, 0x08020171, 0x080201e9, 0x080201f1, 0x08020219, 0x08038041, 0x08038121, 0x080ad2f1, 0x080c8011, 0x080c8019, 0x080c8021, 0x080c8061, 0x080c8071, 0x080c8089, 0x080c8099, 0x080c80c1, 0x080c80d1, 0x080c80d9, 0x080c80e1, 0x080c80e9, 0x080c80f1, 0x080c80f9, 0x080c8101, 0x080c8119, 0x080c8129, 0x080c8139, 0x080c8149, 0x080c8159, 0x080c8161, 0x080c8171, 0x080c8181, 0x080c8189, 0x080c8199, 0x080c81a1, 0x080c81d1, 0x080c81d9, 0x080c8201, 0x080c8211, 0x080c8219, 0x080c8229, 0x080c8239, 0x080c8241, 0x080c8279, 0x080c83a9, 0x080c83b1, 0x080c83b9, 0x080c83e1, 0x080c84e1, 0x080c8571, 0x080c85e9, 0x080c85f1, 0x080c85f9, 0x080c8779, 0x08108009, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x000000ac

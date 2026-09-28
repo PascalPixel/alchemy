@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
-extern u8 Value_0200e904;
-extern u8 Value_0200e938;
-extern u8 Value_0200e7c8;
+extern u8 FuneHeya_ProgressTableB;
+extern u8 FuneHeya_ProgressTableC;
+extern u8 FuneHeya_ProgressTableA;
 
 struct EventWork {
     u8 unknown_000[0x1d8];
@@ -33,7 +33,7 @@ void Engine_ActorSetAnimationAndWait();
 void Engine_ActorShowEmote();
 void Engine_ActorDestroy();
 void FieldScene_CallPairWith10();
-s32 Main_0808a0b0();
+s32 Object_SetActionCallbackAndRefreshById();
 s32 Engine_ActorEnableActionCallback();
 void Engine_GameFlagClear();
 void Engine_GameFlagSet();
@@ -163,8 +163,8 @@ void Scene_RunFourActorProgressPresentation(void)
     FieldScene_CallPairWith10(rec7, 0);
     FieldScene_RunStepThen10(rec7);
     Call3(Engine_ActorSetSpeed, rec7, 0x10000, 0x8000);
-    base6_200e904 = (s32)&Value_0200e904;
-    Main_0808a0b0(rec7, base6_200e904);
+    base6_200e904 = (s32)&FuneHeya_ProgressTableB;
+    Object_SetActionCallbackAndRefreshById(rec7, base6_200e904);
     Call3(Engine_ActorFaceDirection, rec2, 0x5000, 0);
     Engine_ActorFaceDirection(rec4, 0, 0);
     Call3(Engine_ActorFaceDirection, rec, 0x8000, 40);
@@ -176,18 +176,18 @@ void Scene_RunFourActorProgressPresentation(void)
     Call3(Engine_ActorSetSpeed, rec, 0x10000, 0x8000);
     Engine_ActorEnableActionCallback(rec4, base6_200e904);
     Engine_EventWait(40);
-    base5_200e938 = (s32)&Value_0200e938;
-    Main_0808a0b0(rec2, base5_200e938);
+    base5_200e938 = (s32)&FuneHeya_ProgressTableC;
+    Object_SetActionCallbackAndRefreshById(rec2, base5_200e938);
     Call2((void (*)())Engine_ActorEnableActionCallback, rec2, base6_200e904);
-    Call2((void (*)())Main_0808a0b0, rec, base5_200e938);
-    Call2((void (*)())Main_0808a0b0, rec, base6_200e904);
+    Call2((void (*)())Object_SetActionCallbackAndRefreshById, rec, base5_200e938);
+    Call2((void (*)())Object_SetActionCallbackAndRefreshById, rec, base6_200e904);
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
-    base5_200e7c8 = (s32)&Value_0200e7c8;
+    base5_200e7c8 = (s32)&FuneHeya_ProgressTableA;
     Engine_ActorEnableActionCallback(1, base5_200e7c8);
     Value2(Engine_ActorEnableActionCallback, 2, base5_200e7c8);
-    Value2(Main_0808a0b0, 3, base5_200e7c8);
+    Value2(Object_SetActionCallbackAndRefreshById, 3, base5_200e7c8);
     FieldScene_RunSceneStep(23, 0, 0);
     Call1(Engine_GameFlagClear, 0x927);
     Call1(Engine_GameFlagSet, 0x8a0);

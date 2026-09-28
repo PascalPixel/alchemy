@@ -1,3 +1,7 @@
+/* 2026-09-28: the 20-pulse loop counts up from zero (the compiler reverses
+ * it itself), which gives 364 bytes and 26 differing halfwords (was 32).
+ * Remaining: the opening object/record loads and the pulse-loop constant
+ * setup schedule differently. */
 /* NONMATCHING: complete extent is 364 bytes (332-byte body and 32-byte
  * literal pool, previously split as 0809b7e4). Keep this 364-byte baseline.
  * The typed scene/object/child and goto-pulse experiment is preserved in
@@ -62,17 +66,17 @@ void RunBattleEffect16(void)
     *(s16 *)(object + 100) = active;
     Func_080030f8(10);
     entry_mode = 7;
-    count = 19;
-    do {
+
+    for (count = 0; count <= 19; count++) {
         *(s8 *)(entry + 5) = entry_mode;
         *(s8 *)(group + 37) = 1;
         Func_080030f8(2);
         *(s8 *)(group + 37) = 1;
         *(s8 *)(entry + 5) = 0;
         *(s8 *)(group + 38) = 1;
-        count--;
+
         Func_080030f8(3);
-    } while (count >= 0);
+    }
     *(void **)(object + 108) = 0;
     *(u16 *)(object + 6) = saved;
     Func_080041d8((const void *)0x0809b589, 0xc80);

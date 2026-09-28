@@ -290,4 +290,7 @@ Value_00000051 = 0x00000051;
 Value_00000c9b = 0x00000c9b;
 Value_00000cc6 = 0x00000cc6;
 Value_00000cf1 = 0x00000cf1;
+/* The sound driver's link-time settings: the number of music players and
+   the mixer's scanline limit (0: none). */
 Sound_PlayerCount = 0x00000008;
+Sound_MaxLines = 0x00000000;

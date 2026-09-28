@@ -66,6 +66,7 @@ Value_000000b9 = 0x000000b9;
 Value_000000ba = 0x000000ba;
 Value_000000bb = 0x000000bb;
 Value_000000be = 0x000000be;
+Value_000000c0 = 0x000000c0;
 Value_000000c8 = 0x000000c8;
 Value_000000cb = 0x000000cb;
 Value_000000ce = 0x000000ce;

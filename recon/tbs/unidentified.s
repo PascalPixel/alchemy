@@ -817,7 +817,13 @@ BattleFx6_ObjectY:
 	.incbin "baserom.gba", 0x000eef70, 0x00000008
 	.global BattleFx6_Gravity
 BattleFx6_Gravity:
-	.incbin "baserom.gba", 0x000eef78, 0x0000002c
+	.incbin "baserom.gba", 0x000eef78, 0x00000010
+	.global RisingBurst_SparkCells
+RisingBurst_SparkCells:
+	.incbin "baserom.gba", 0x000eef88, 0x0000000e
+	.global RisingBurst_SparkSizes
+RisingBurst_SparkSizes:
+	.incbin "baserom.gba", 0x000eef96, 0x0000000e
 	.section .unidentified.080ef014,"a"
 	.incbin "baserom.gba", 0x000ef014, 0x00000fec
 	.section .unidentified.080f0a5c,"a"

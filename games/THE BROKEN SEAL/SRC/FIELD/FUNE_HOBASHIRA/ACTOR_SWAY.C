@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
+u32 Random16(void);
+
 /* A swaying object: the actor record with its drift speed and the two sway
  * states (0 rising, 1 falling, 9 stopped) in the free words. */
 struct SwayActor {
@@ -24,13 +26,13 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
     if (*state == 9) {
         actor->drift = 0;
     } else if (*state != 0) {
-        actor->drift -= (u32)(Engine_RandomNext() << 11) >> 16;
+        actor->drift -= (u32)(Random16() << 11) >> 16;
         if (actor->drift < -0xc000) {
             next = 0;
             *state = next;
         }
     } else {
-        actor->drift += (u32)(Engine_RandomNext() << 11) >> 16;
+        actor->drift += (u32)(Random16() << 11) >> 16;
         if (actor->drift > 0xc000) {
             next = 1;
             *state = next;
@@ -43,13 +45,13 @@ s32 FuneHobashira_SwayActor(struct SwayActor *actor)
     if (*state == 9) {
         actor->y = 0;
     } else if (*state != 0) {
-        actor->y -= (u32)(Engine_RandomNext() * 3 << 14) >> 16;
+        actor->y -= (u32)(Random16() * 3 << 14) >> 16;
         if (actor->y < 0) {
             next = 0;
             *state = next;
         }
     } else {
-        actor->y += (u32)(Engine_RandomNext() * 3 << 14) >> 16;
+        actor->y += (u32)(Random16() * 3 << 14) >> 16;
         if (actor->y > 0x100000) {
             next = 1;
             *state = next;

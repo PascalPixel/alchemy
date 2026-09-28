@@ -13,13 +13,6 @@ pub const VENEER: [u8; 4] = [0x00, 0x4c, 0x20, 0x47];
 
 pub struct CanonicalRom(Vec<u8>, usize);
 impl CanonicalRom {
-    /// The production default target's ROM (`tbs-en`).
-    pub fn load(root: &Path) -> Result<Self, String> {
-        Self::load_target(
-            root,
-            crate::targets::target_for(crate::targets::DEFAULT_TARGET),
-        )
-    }
     /// Any registered target's ROM, located through its resource-directory self-pointer.
     pub fn load_target(root: &Path, target: DecompTarget) -> Result<Self, String> {
         Self::from_file(&root.join(target.rom), target)
@@ -178,9 +171,6 @@ fn decode_stream(rom: &[u8], table: usize, resource: usize) -> Result<Stream, St
 }
 pub fn decode_overlay(rom: &[u8], table: usize, overlay: &str) -> Result<Vec<u8>, String> {
     decode_stream(rom, table, resource_id(overlay)?).map(|stream| stream.decoded)
-}
-pub fn canonical_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    CanonicalRom::load(root)?.overlay(overlay)
 }
 /// One decoded overlay resource from any registered target's ROM.
 pub fn canonical_overlay_for(

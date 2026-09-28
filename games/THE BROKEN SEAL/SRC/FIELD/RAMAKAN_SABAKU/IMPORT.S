@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global IwramSignedDivideEntry
+	.thumb_func
+IwramSignedDivideEntry:
 	overlay_veneer IwramSignedDivide
 	overlay_veneer WaitFramesFar
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
@@ -19,8 +22,17 @@
 	overlay_veneer Resource_FindFreeEntryFar
 	overlay_veneer Runtime_PushSlotEntryFar
 	overlay_veneer QueueIoWriteDelay3Far
+	.global Engine_ObjectSetAnimation
+	.thumb_func
+Engine_ObjectSetAnimation:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	.global Engine_ObjectSetScript
+	.thumb_func
+Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
 	overlay_veneer Object_SetMoveTargetFar
 	overlay_veneer Script_WaitForEventTimeoutFar
@@ -36,6 +48,9 @@
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Battle_ResetFar
 	overlay_veneer BattleFx_FinishActionFar
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
@@ -48,6 +63,9 @@
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	overlay_veneer Motion_SetVarCbAndRefreshFar
 	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Engine_ObjectSetPalette
+	.thumb_func
+Engine_ObjectSetPalette:
 	overlay_veneer ObjectGroup_SetChildValueFar
 	overlay_veneer Event_SetValue1d8Far
 	overlay_veneer BattleEv_RunWaitFar

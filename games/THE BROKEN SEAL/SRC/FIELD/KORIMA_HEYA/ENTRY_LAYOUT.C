@@ -6,9 +6,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* The workspace pointer is a cell holding the scene work: one dereference. */
-#define MAP390_WORKSPACE (*(u8 **)0x03001ebc)
-
 #include "RESOURCE_390.H"
 #include "RESOURCE_390_TABLE.H"
 
@@ -25,15 +22,15 @@ struct Approach390Subject {
     u16 dir;                   /* 0x06, wrapped 16-bit */
 };
 
-/* The cross-overlay map selector block, in RAM rather than in the image. */
-extern u8 Data_02000240[];
+extern u8 *gWork;
 
-void Func_02000368(u8 *);
-struct Approach390Subject *Func_0200038a(s32);
-struct Approach390Subject *Func_020003d2(s32);
-struct Approach390Subject *Func_0200041a(s32);
-struct Approach390Subject *Func_02000462(s32);
-void *Func_020004ce();
+/* The scene's tables, laid out after the code. */
+extern u8 EntryLayout_PrimaryTable[];
+extern u8 EntryLayout_SecondaryTable[];
+extern u8 EntryLayout_Records[];
+extern u8 EntryLayout_FourthTable[];
+
+void FieldScene_PrepareActors(u8 *);
 
 /* Fill the fifteen record-table entries with their default field values. */
 void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
@@ -67,7 +64,7 @@ void SceneData_InitRecordTable(struct Resource390TableEntry *entry)
  */
 u8 *SceneData_GetPrimaryTable(void)
 {
-    return (u8 *)0x02008318;
+    return EntryLayout_PrimaryTable;
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
@@ -79,18 +76,18 @@ s32 SceneData_ReturnZero(void)
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetSecondaryTable(void)
 {
-    return (u8 *)0x02008498;
+    return EntryLayout_SecondaryTable;
 }
 
-u8 *SceneData_PrepareTable84d8(void)
+u8 *SceneData_GetPreparedRecords(void)
 {
     u8 *buf;
 
     if (GameFlag_IsSet(0x845) == 0) {
-        SceneData_InitRecordTable((u8 *)0x020084D8);
+        SceneData_InitRecordTable((struct Resource390TableEntry *)EntryLayout_Records);
     }
-    buf = (u8 *)0x020084D8;
-    Func_02000368(buf);
+    buf = EntryLayout_Records;
+    FieldScene_PrepareActors(buf);
     return buf;
 }
 
@@ -100,7 +97,7 @@ void FieldScene_RunActor16MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Func_0200038a(0)->dir;
+    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
     Event_Begin();
 
@@ -120,7 +117,7 @@ void FieldScene_RunActor17MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Func_020003d2(0)->dir;
+    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
     Event_Begin();
 
@@ -140,7 +137,7 @@ void FieldScene_RunActor18MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Func_0200041a(0)->dir;
+    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
     Event_Begin();
 
@@ -163,7 +160,7 @@ void FieldScene_RunActor19MessageBranch(void)
      * The local must stay wider than the halfword field; as a u16 it is
      * reloaded signed and renormalised across the call.
      */
-    u32 dir = Func_02000462(0)->dir;
+    u32 dir = ((struct Approach390Subject *)Actor_Get(0))->dir;
 
     Event_Begin();
 
@@ -178,9 +175,9 @@ void FieldScene_RunActor19MessageBranch(void)
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
-u8 *SceneData_GetTable8658(void)
+u8 *SceneData_GetFourthTable(void)
 {
-    return (u8 *)0x02008658;
+    return EntryLayout_FourthTable;
 }
 
 /*
@@ -192,7 +189,7 @@ u8 *SceneData_GetTable8658(void)
  * Slot +448 of the workspace is the s32 scene phase id, and 0x209 is the
  * stored value; the displacement and the value are separate.
  *
- * The selector at Data_02000240 + 450 is read both ways: signed for the
+ * The entrance selector, 450 bytes into the game state, is read both ways: signed for the
  * comparison against 7 and unsigned for the window test below. Which reading
  * the record intends is not established, so both are kept.
  */
@@ -200,7 +197,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 {
     s32 GameFlag_IsSet();
 
-    u8 *work = MAP390_WORKSPACE;
+    u8 *work = gWork;
     s32 id;
     s16 *sel_p;
     u32 sel;
@@ -210,7 +207,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
     if (GameFlag_IsSet(0x845) == 0) {
         id = 8;
         do {
-            void *record = Func_020004ce(id);
+            struct FieldActor *record = Actor_Get(id);
 
             id++;
             Actor_SetSpriteFlags(record, 0);
@@ -219,7 +216,7 @@ s32 FieldScene_SetupEntryLayoutsBySelector(void)
 
     {
         s32 off = 450;
-        sel_p = (s16 *)(Data_02000240 + off);
+        sel_p = (s16 *)((u8 *)&gGameState + off);
         sel = *(u16 *)sel_p;
     }
 

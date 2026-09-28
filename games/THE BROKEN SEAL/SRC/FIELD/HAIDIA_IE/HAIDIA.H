@@ -1,5 +1,5 @@
 /* Declarations shared by the Vale house scene's sources (resource_374). The
- * calls reach this overlay's import veneers by the names IMPORT.INC gives
+ * calls reach this overlay's import veneers by the names IMPORT.S gives
  * them, and its tables by the labels on the listing's data rows. */
 #ifndef HAIDIA_H
 #define HAIDIA_H

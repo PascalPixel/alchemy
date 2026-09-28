@@ -1,11 +1,12 @@
-/* resource_3ba: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
+/* resource_3ba: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_3ba_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/COORDINATOR.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x02008540)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/APPLY_VALUE768.o"(.text)
@@ -37,7 +38,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/BUILD_SCENE.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x0200b84c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/FIND_SLOT.o"(.text)
-        "*/resource_3ba_overlay.o"(.text.x0200bb00)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3ba_overlay.o"(.rodata.part1)
     }

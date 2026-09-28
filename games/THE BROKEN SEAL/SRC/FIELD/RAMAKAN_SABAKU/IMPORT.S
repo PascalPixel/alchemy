@@ -1,0 +1,65 @@
+@ Import veneers after the RAMAKAN_SABAKU overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — RAMAKAN_SABAKU overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer IwramSignedDivide
+	overlay_veneer WaitFramesFar
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	overlay_veneer Random16Far
+	overlay_veneer Vector_AddPolarOffsetFar
+	overlay_veneer Runtime_BumpAllocateFar
+	overlay_veneer Sys_FreeFar
+	overlay_veneer Resource_DecodeType01Far
+	overlay_veneer Resource_ActivateEntryFar
+	overlay_veneer VramBlock_LoadCachedFar
+	overlay_veneer Resource_FindFreeEntryFar
+	overlay_veneer Runtime_PushSlotEntryFar
+	overlay_veneer QueueIoWriteDelay3Far
+	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Object_CreateFar
+	overlay_veneer Object_SetMoveTargetFar
+	overlay_veneer Script_WaitForEventTimeoutFar
+	overlay_veneer Map_CopyMetatileCellsRectFar
+	overlay_veneer Map_CopyCellAttributeRectFar
+	overlay_veneer Func_080091c8
+	overlay_veneer Func_080091d8
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer Animation_SetStateField5Bits2To3Far
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Object_SetActionByIdFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	overlay_veneer ObjectMotion_SetAngleTowardFar
+	overlay_veneer ObjectGroup_SetChildValueFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer BattleEv_RunWaitFar
+	overlay_veneer BattleFx_SpawnLinkedFar
+	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	overlay_veneer Event_SetValue170Far
+	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Party_SetFields1ceAnd1d0Far
+	overlay_veneer DisplayScroll_InitializeHBlankDmaFar
+	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
+	overlay_veneer EffectRuntime_SetCurrentPositionFar
+	overlay_veneer BattleFx_EmitRandomParticleFar
+	overlay_veneer BattleFx_RunPageEffectForSlotFar
+	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
+	overlay_veneer AudioCommand_PlayFar

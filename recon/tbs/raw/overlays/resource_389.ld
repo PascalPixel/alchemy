@@ -1,11 +1,12 @@
-/* resource_389: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
+/* resource_389: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_389_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/EFFECT_STEP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/SPAWN_PILLAR_EFFECT.o"(.text)
@@ -13,7 +14,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/PILLAR_DROP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/ACTOR13_IDLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/SEQUENCE.o"(.text)
-        "*/resource_389_overlay.o"(.text.x020093a8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/GOMA_HASHIRA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_389_overlay.o"(.rodata.part1)
     }

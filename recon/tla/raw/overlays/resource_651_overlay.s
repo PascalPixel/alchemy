@@ -1,15 +1,20 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE LOST AGE/SRC/FIELD/DERI_MURA/ENTRY.INC"
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x8fb8
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
 	push	{lr}
 	ldr	r3, [pc, #24]
 	movs	r1, #240
@@ -31,6 +36,9 @@ Overlay_02000000:
 	.4byte 0x02009068
 	.2byte 0x9018
 	.2byte 0x0200
+	.global Func_02000070
+	.thumb_func
+Func_02000070:
 	push	{lr}
 	ldr	r3, [pc, #24]
 	movs	r1, #240
@@ -108,6 +116,9 @@ Overlay_02000000:
 	bl 0x02008d38
 	pop	{pc}
 	.2byte 0x0000
+	.global Func_02000128
+	.thumb_func
+Func_02000128:
 	push	{lr}
 	ldr	r3, [pc, #24]
 	movs	r1, #240
@@ -1094,6 +1105,9 @@ Overlay_02000000:
 	pop	{r5, pc}
 	.2byte 0x8d80
 	.2byte 0x0200
+	.global Func_02000ac8
+	.thumb_func
+Func_02000ac8:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -1151,6 +1165,9 @@ Overlay_02000000:
 	.4byte 0x0000000d
 	.2byte 0x8d80
 	.2byte 0x0200
+	.global Func_02000b44
+	.thumb_func
+Func_02000b44:
 	push	{lr}
 	ldr	r3, [pc, #224]
 	movs	r1, #240
@@ -1265,7 +1282,7 @@ Overlay_02000000:
 	push	{lr}
 	bl 0x02008d18
 	pop	{pc}
-	.include "games/THE LOST AGE/SRC/FIELD/DERI_MURA/IMPORT.INC"
+	.section .text.x02008d80,"ax",%progbits
 	.4byte 0x02160016
 	.4byte 0x02170017
 	.4byte 0x02180018

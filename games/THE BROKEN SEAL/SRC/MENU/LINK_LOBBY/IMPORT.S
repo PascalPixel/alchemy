@@ -1,0 +1,69 @@
+@ Import veneers after the LINK_LOBBY overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — LINK_LOBBY overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer IwramSignedDivide
+	overlay_veneer IwramSignedRemainder
+	overlay_veneer WaitFramesFar
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	overlay_veneer Scheduler_RemoveCallbackFar
+	overlay_veneer Runtime_AllocateBlockFar
+	overlay_veneer Runtime_ReleaseHeapBlockFar
+	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
+	overlay_veneer Sys_FreeFar
+	overlay_veneer SerialRuntime_InitializeFar
+	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
+	overlay_veneer Sound_LoadPresetParametersFar
+	overlay_veneer SerialRuntime_BeginTransferAFar
+	overlay_veneer SerialRuntime_BeginTransferBFar
+	overlay_veneer SerialRuntime_GetActiveTransfersFar
+	overlay_veneer Scheduler_SetCallbackMaskFar
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_ClearLayerEntryFlagFar
+	overlay_veneer Map_SetLayerEntryFlagFar
+	overlay_veneer Map_CopyCellAttributeRectFar
+	overlay_veneer UiWindow_CreateFar
+	overlay_veneer UiWork_FinalizeFar
+	overlay_veneer Ui_AdjustValueWithoutLimitFar
+	overlay_veneer UiText_OpenMessageWindowFar
+	overlay_veneer UiWork_IsCompleteFar
+	overlay_veneer RenderOutput_PrepareForRedrawFar
+	overlay_veneer UiText_DrawNumberFar
+	overlay_veneer UiWork_ClearValueNameTablesFar
+	overlay_veneer UiWork_PushValueSlotFar
+	overlay_veneer SaveState_ProcessSelectedSlotFar
+	overlay_veneer Trade_GetOfferStateFar
+	overlay_veneer Owner_GetStateFar
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer GameFlag_GetByteFar
+	overlay_veneer GameFlag_SetByteFar
+	overlay_veneer Party_CountActiveOwnersFar
+	overlay_veneer Owner_RefreshActiveRatiosFar
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	overlay_veneer ObjectMotion_SetAngleTowardFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer UiText_OpenMessageAtObjectFar
+	overlay_veneer BattleEv_RunWaitFar
+	overlay_veneer Event_SetPairWork1c0Far
+	overlay_veneer BattleFx_SetWeightedResultFar
+	overlay_veneer Party_SetFields1ceAnd1d0Far
+	overlay_veneer Event_SetPair1d4Far
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer Shop_ConfirmActFar
+	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimesFar
+	overlay_veneer DebugParty_LoadPresetFar
+	overlay_veneer AudioCommand_PlayFar

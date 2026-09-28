@@ -1,0 +1,75 @@
+@ Import veneers after the OVERLAY_6B5 overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — OVERLAY_6B5 overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer IwramSignedDivide
+	overlay_veneer IwramSignedRemainder
+	overlay_veneer Func_080000c0
+	overlay_veneer Func_080000d0
+	overlay_veneer Func_080000d8
+	overlay_veneer Func_08000148
+	overlay_veneer Func_08000150
+	overlay_veneer Func_08000170
+	overlay_veneer Func_08000178
+	overlay_veneer Func_08000300
+	overlay_veneer Func_08000370
+	overlay_veneer Func_08000378
+	overlay_veneer Func_08000380
+	overlay_veneer Func_08000388
+	overlay_veneer Func_080003a8
+	overlay_veneer Func_080003b8
+	overlay_veneer Func_080003c0
+	overlay_veneer Func_080003c8
+	overlay_veneer Func_080003d0
+	overlay_veneer Func_080003d8
+	overlay_veneer Func_080003e8
+	overlay_veneer Func_080003f0
+	overlay_veneer Func_08020120
+	overlay_veneer Func_08020178
+	overlay_veneer Func_08020198
+	overlay_veneer Func_080201a0
+	overlay_veneer Func_080201e8
+	overlay_veneer Func_08038010
+	overlay_veneer Func_08038018
+	overlay_veneer Func_08038020
+	overlay_veneer Func_08038038
+	overlay_veneer Func_08038040
+	overlay_veneer Func_08038060
+	overlay_veneer Func_080380a0
+	overlay_veneer Func_08038118
+	overlay_veneer Func_08038120
+	overlay_veneer Func_080382e0
+	overlay_veneer Func_080ad000
+	overlay_veneer Func_080ad0f0
+	overlay_veneer Func_080ad208
+	overlay_veneer Func_080c8010
+	overlay_veneer Func_080c8018
+	overlay_veneer Func_080c8020
+	overlay_veneer Func_080c8070
+	overlay_veneer Func_080c8088
+	overlay_veneer Func_080c8098
+	overlay_veneer Func_080c80d0
+	overlay_veneer Func_080c80f0
+	overlay_veneer Func_080c8118
+	overlay_veneer Func_080c8140
+	overlay_veneer Func_080c8158
+	overlay_veneer Func_080c8180
+	overlay_veneer Func_080c8188
+	overlay_veneer Func_080c81a0
+	overlay_veneer Func_080c8210
+	overlay_veneer Func_080c8268
+	overlay_veneer Func_080c8280
+	overlay_veneer Func_080c8290
+	overlay_veneer Func_080c8298
+	overlay_veneer Func_080c83a8
+	overlay_veneer Func_080c83b8
+	overlay_veneer Func_080c84e0
+	overlay_veneer Func_08108010
+	overlay_veneer Func_08118108
+	overlay_veneer Func_08118110
+	overlay_veneer Audio_PlayCue
+	overlay_veneer Func_081c0090

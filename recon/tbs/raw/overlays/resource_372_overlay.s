@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/ENTRY.INC"
 	.section .text.x02008a10,"ax",%progbits
 	.balign 4
 	.global Func_02000a10
@@ -3037,7 +3033,6 @@ FieldScene_RunScriptedStep1120:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00001120
-	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global HaidiaArashi_FrameModes
 HaidiaArashi_FrameModes:

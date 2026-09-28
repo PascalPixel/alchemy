@@ -9,18 +9,18 @@
 	.global Func_080c9000
 	.thumb_func
 Func_080c9000:
-	overlay_veneer 0x080ed409
+	overlay_veneer Unnamed_080ed408
 	.global BattleFx_DispatchByIdRangeFar
 	.thumb_func
 BattleFx_DispatchByIdRangeFar:
-	overlay_veneer 0x080e3a3d
+	overlay_veneer BattleFx_DispatchByIdRange
 	.global BattleFx_InitializeModeFar
 	.thumb_func
 BattleFx_InitializeModeFar:
-	overlay_veneer 0x080d6579
-	overlay_veneer 0x080d6661
-	overlay_veneer 0x080cb7f9
-	overlay_veneer 0x080cbc0d
-	overlay_veneer 0x080cc5d9
-	overlay_veneer 0x080ccaed
-	overlay_veneer 0x080ccbdd
+	overlay_veneer BattleFx_InitializeMode
+	overlay_veneer BattleFx_DispatchMode
+	overlay_veneer Unnamed_080cb7f8
+	overlay_veneer BattleEffect_RunTileAndPaletteAnimation
+	overlay_veneer Func_080cc5d8
+	overlay_veneer BattlePresentation_PrepareScene
+	overlay_veneer BattleFx_ScheduleCallbacksAndReleaseBlocks

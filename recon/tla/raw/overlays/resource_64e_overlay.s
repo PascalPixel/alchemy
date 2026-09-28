@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/ENTRY.INC"
 	.global Func_02000038
 	.thumb_func
 Func_02000038:
@@ -1240,6 +1236,9 @@ Func_02000a14:
 	pop	{pc}
 	.2byte 0x8a15
 	.2byte 0x0200
+	.global Func_02000a54
+	.thumb_func
+Func_02000a54:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -2895,7 +2894,7 @@ Func_02000b28:
 	pop	{r5, pc}
 	.4byte 0x00013333
 	.4byte 0x02000240
-	.include "games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/IMPORT.INC"
+	.section .text.x02009ce4,"ax",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000d

@@ -1,15 +1,15 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x020086ed, 0x02008039, 0x02008079, 0x02008081, 0x02008435, 0x02008041, 0x02008a69
-	overlay_veneer \EntryTarget
-	.endr
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x8f2c
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	push	{lr}
 	ldr	r3, [pc, #32]
 	movs	r1, #240
@@ -36,10 +36,16 @@ Overlay_02000000:
 	.4byte 0x000000af
 	.2byte 0x8f8c
 	.2byte 0x0200
+	.global Func_02000078
+	.thumb_func
+Func_02000078:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x8fbc
 	.2byte 0x0200
+	.global Func_02000080
+	.thumb_func
+Func_02000080:
 	push	{lr}
 	ldr	r3, [pc, #44]
 	movs	r1, #240
@@ -470,6 +476,9 @@ Overlay_02000000:
 	.4byte 0x0000231a
 	.2byte 0x2319
 	.2byte 0x0000
+	.global Func_02000434
+	.thumb_func
+Func_02000434:
 	push	{lr}
 	ldr	r3, [pc, #36]
 	movs	r1, #240
@@ -803,6 +812,9 @@ Overlay_02000000:
 	.4byte 0xffe00000
 	.2byte 0x95c4
 	.2byte 0x0200
+	.global Func_020006ec
+	.thumb_func
+Func_020006ec:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1195,6 +1207,9 @@ Overlay_02000000:
 	.4byte 0xff890000
 	.2byte 0x00b0
 	.2byte 0x0000
+	.global Func_02000a68
+	.thumb_func
+Func_02000a68:
 	push	{lr}
 	ldr	r1, [pc, #60]
 	movs	r0, #240
@@ -1604,9 +1619,6 @@ Overlay_02000000:
 	pop	{pc}
 	.2byte 0x0000
 	.4byte 0x02008ab5
-	.irp EntryTarget, 0x080000c1, 0x080000d1, 0x080000f9, 0x08000119, 0x08000121, 0x08000129, 0x080003c9, 0x080003d1, 0x08020091, 0x080200a9, 0x080200c1, 0x08020149, 0x080201e9, 0x08020219, 0x08020229, 0x08020291, 0x08038041, 0x080c8011, 0x080c8019, 0x080c8021, 0x080c8089, 0x080c80f9, 0x080c8119, 0x080c8141, 0x080c8181, 0x080c81a1, 0x080c81a9, 0x080c8219, 0x080c8239, 0x080c8241, 0x080c8249, 0x080c8369, 0x080c83a9, 0x080c83b9, 0x080c84e1, 0x080c8759, 0x080c8761, 0x080c8779, 0x080c8781, 0x080c88c9, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x00000018

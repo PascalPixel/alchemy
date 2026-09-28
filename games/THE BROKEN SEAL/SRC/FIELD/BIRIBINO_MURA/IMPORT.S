@@ -1,0 +1,61 @@
+@ Import veneers after the BIRIBINO_MURA overlay's code: fixed 8-byte veneers
+@ through which the overlay calls main-image code, each loading its target
+@ into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — BIRIBINO_MURA overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer WaitFramesFar
+	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	overlay_veneer ArcTan2Far
+	overlay_veneer AnimationObjects_SelectAnimationFar
+	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	overlay_veneer ObjectDispatch_InitializeFar
+	overlay_veneer Object_CreateFar
+	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	overlay_veneer Object_SetMoveTargetFar
+	overlay_veneer Script_WaitForEventTimeoutFar
+	overlay_veneer Map_PlayMetatileCopySequenceFar
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellAttributeRectFar
+	overlay_veneer Func_080091d8
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer PartyInventory_GiveItemFar
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_LaunchFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	overlay_veneer Object_SetTargetAndCallbackFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer BattleEv_RunWaitFar
+	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	overlay_veneer BattleEventRuntime_ProcessActionFar
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	overlay_veneer ObjectMotion_SetActionVariantFar
+	overlay_veneer BattleFx_SpawnLinkedFar
+	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	overlay_veneer Motion_CamBoundsFar
+	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	overlay_veneer Event_SetValue170Far
+	overlay_veneer Field_TryJumpForwardFar
+	overlay_veneer BattleFx_StartEffectObject22Far
+	overlay_veneer RunSceneTransitionEffectFar
+	overlay_veneer BattleFx_FinishSceneAndReleaseHeapBlockFar
+	overlay_veneer BattleFx_RunPageEffectForSlotFar
+	overlay_veneer AudioCommand_PlayFar

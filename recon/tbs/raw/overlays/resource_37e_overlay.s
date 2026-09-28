@@ -1,11 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/ENTRY.INC"
-	.section .text.x020080a0,"ax",%progbits
-	.include "games/THE BROKEN SEAL/SRC/FIELD/SORU_MEIRO/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global SoruRoka_SceneTable0
 SoruRoka_SceneTable0:

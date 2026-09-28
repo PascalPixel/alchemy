@@ -15,8 +15,8 @@
  *   Data_0200f73c   - the pair table (words) the bridge reads its pairs from
  *   Engine_MapCopyCells - writes a pair of words into a row of the support table
  *   Engine_MapCopyCellAttributes   - writes a pair whose first word is raised one bit
- * The in-image veneer labels and the runtime main-image addresses must stay
- * in step; the overlay assembler owns the veneer list (IMPORT.INC).
+ * The overlay's import veneers (IMPORT.S) name the main-image code they
+ * reach, so the linker keeps them in step.
  */
 
 extern s32 Data_0200f73c[];

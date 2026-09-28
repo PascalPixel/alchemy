@@ -1,0 +1,16 @@
+@ Entry veneers opening the OVERLAY_671 overlay at its load address: fixed
+@ 8-byte veneers through which the main image calls into the overlay, each
+@ loading its target into r4 and branching, which the calling convention
+@ permits.
+@ credit: reconstructed_veneer — OVERLAY_671 overlay entry veneers
+.syntax unified
+	.thumb
+	.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer Func_02003398
+	overlay_veneer Func_020002d4
+	overlay_veneer Func_0200035c
+	overlay_veneer Func_020004b8
+	overlay_veneer Func_02001124
+	overlay_veneer Func_020002dc
+	overlay_veneer Func_02003494

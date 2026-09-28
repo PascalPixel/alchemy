@@ -11,10 +11,16 @@ Func_080c8950:
 	bx	r4
 	.2byte 0x25c9
 	.2byte 0x080d
+	.global Func_080c8960
+	.thumb_func
+Func_080c8960:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xcd79
 	.2byte 0x080c
+	.global Func_080c8968
+	.thumb_func
+Func_080c8968:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.4byte 0x080d1761

@@ -1,11 +1,12 @@
-/* resource_373: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
+/* resource_373: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_373_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/CAMERA_RISE_SCENE.o"(.text)
@@ -25,7 +26,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/OPEN_LANE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ORBIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LINKED_EFFECTS.o"(.text)
-        "*/resource_373_overlay.o"(.text.x0200de84)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_373_overlay.o"(.rodata.part1)
     }

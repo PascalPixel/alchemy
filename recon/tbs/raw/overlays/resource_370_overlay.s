@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/MENU/CLEAR/ENTRY.INC"
 	.section .text.x02008054,"ax",%progbits
 	.p2align 2
 	.global Func_02000054
@@ -279,6 +275,9 @@ Func_02000384:
 	.4byte 0x0000023e
 	.4byte 0x02000240
 	.4byte 0x00000002
+	.global Func_020003cc
+	.thumb_func
+Func_020003cc:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1884,9 +1883,6 @@ Func_02000384:
 	.4byte 0x000001ff
 	.2byte 0x0240
 	.2byte 0x0200
-	.section .text.x02009314,"ax",%progbits
-	.p2align 2
-	.include "games/THE BROKEN SEAL/SRC/MENU/CLEAR/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x00040004
 	.4byte 0x00000004

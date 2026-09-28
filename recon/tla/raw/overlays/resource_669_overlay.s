@@ -1,21 +1,27 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x02008251, 0x02008039, 0x02008045, 0x0200804d, 0x02008249, 0x02008041, 0x020083e5
-	overlay_veneer \EntryTarget
-	.endr
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xb3fc
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xb42c
 	.2byte 0x0200
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.4byte 0x0200b45c
@@ -224,10 +230,16 @@ Overlay_02000000:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x1c10
 	.2byte 0x0000
+	.global Func_02000248
+	.thumb_func
+Func_02000248:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xb654
 	.2byte 0x0200
+	.global Func_02000250
+	.thumb_func
+Func_02000250:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -411,6 +423,9 @@ Overlay_02000000:
 	.4byte 0x02000240
 	.2byte 0x0000
 	.2byte 0x01db
+	.global Func_020003e4
+	.thumb_func
+Func_020003e4:
 	movs	r0, #0
 	bx	lr
 	push	{r5, r6, r7, lr}
@@ -5018,9 +5033,6 @@ Overlay_02000000:
 	pop	{r5, r6, pc}
 	.4byte 0x00013333
 	.4byte 0x02000240
-	.irp EntryTarget, 0x080003c9, 0x080003d1, 0x080003d9, 0x08020091, 0x080200a9, 0x080200c1, 0x080200e9, 0x08020219, 0x080c8011, 0x080c8019, 0x080c8021, 0x080c8071, 0x080c8079, 0x080c8089, 0x080c8099, 0x080c80a1, 0x080c80a9, 0x080c80c1, 0x080c80c9, 0x080c80d1, 0x080c80d9, 0x080c80f1, 0x080c80f9, 0x080c8119, 0x080c8129, 0x080c8139, 0x080c8141, 0x080c8149, 0x080c8181, 0x080c8189, 0x080c8199, 0x080c81a1, 0x080c81d1, 0x080c81f1, 0x080c8211, 0x080c8219, 0x080c8229, 0x080c8239, 0x080c8241, 0x080c8281, 0x080c8291, 0x080c83a9, 0x080c83b9, 0x080c84e1, 0x080c85e9, 0x080c85f1, 0x080c85f9, 0x080c87a9, 0x080c87f9, 0x080c8801, 0x080c8809, 0x080c8811, 0x080c8819, 0x080c8821, 0x080c8861, 0x080c8931, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0x00000027
 	.4byte 0x00000002

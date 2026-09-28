@@ -1,10 +1,12 @@
-/* resource_3c4: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
+/* resource_3c4: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY.o"(.text)
         "*/resource_3c4_overlay.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
@@ -28,6 +30,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/MARK_ACTOR_CELLS.o"(.text)
         "*/resource_3c4_overlay.o"(.text.x0200a59c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c4_overlay.o"(.rodata.part1)
     }

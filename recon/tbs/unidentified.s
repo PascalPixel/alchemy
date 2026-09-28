@@ -99,8 +99,12 @@ ObjectDispatch_Table6Script:
 	.global Script_OperandHandlerTable
 Script_OperandHandlerTable:
 	.incbin "baserom.gba", 0x000136e0, 0x00001920
-	.section .unidentified.0801c466,"a"
-	.incbin "baserom.gba", 0x0001c466, 0x00000006
+	.section .unidentified.0801c466,"ax"
+	.incbin "baserom.gba", 0x0001c466, 0x00000002
+	.global Func_0801c468
+	.thumb_func
+Func_0801c468:
+	.incbin "baserom.gba", 0x0001c468, 0x00000004
 	.section .unidentified.080209cc,"a"
 	.incbin "baserom.gba", 0x000209cc, 0x00000004
 	.section .unidentified.08029910,"a"
@@ -281,8 +285,12 @@ Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008926c, 0x00000d94
 	.section .unidentified.08091778,"a"
 	.incbin "baserom.gba", 0x00091778, 0x00000004
-	.section .unidentified.080917c2,"a"
-	.incbin "baserom.gba", 0x000917c2, 0x0000000e
+	.section .unidentified.080917c2,"ax"
+	.incbin "baserom.gba", 0x000917c2, 0x00000002
+	.global Func_080917c4
+	.thumb_func
+Func_080917c4:
+	.incbin "baserom.gba", 0x000917c4, 0x0000000c
 	.section .unidentified.08091c3e,"a"
 	.incbin "baserom.gba", 0x00091c3e, 0x00000006
 	.section .unidentified.0809c410,"a"
@@ -814,7 +822,10 @@ BattleFx6_Gravity:
 	.incbin "baserom.gba", 0x000ef014, 0x00000fec
 	.section .unidentified.080f0a5c,"a"
 	.incbin "baserom.gba", 0x000f0a5c, 0x000015a4
-	.section .unidentified.080f2b6c,"a"
+	.section .unidentified.080f2b6c,"ax"
+	.global Func_080f2b6c
+	.thumb_func
+Func_080f2b6c:
 	.incbin "baserom.gba", 0x000f2b6c, 0x00000004
 	.section .unidentified.080f38bc,"a"
 	.incbin "baserom.gba", 0x000f38bc, 0x00000744

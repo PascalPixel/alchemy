@@ -1,25 +1,34 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x02008329, 0x02008039, 0x02008045, 0x0200804d, 0x02008055, 0x02008041, 0x02008a6d
-	overlay_veneer \EntryTarget
-	.endr
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xa49c
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xa4cc
 	.2byte 0x0200
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xa4d0
 	.2byte 0x0200
+	.global Func_02000054
+	.thumb_func
+Func_02000054:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0xa4e8
@@ -367,6 +376,9 @@ Overlay_02000000:
 	.4byte 0x02000240
 	.2byte 0x0002
 	.2byte 0x0000
+	.global Func_02000328
+	.thumb_func
+Func_02000328:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1225,6 +1237,9 @@ Overlay_02000000:
 	.4byte 0x0200a4f6
 	.2byte 0xa4f8
 	.2byte 0x0200
+	.global Func_02000a6c
+	.thumb_func
+Func_02000a6c:
 	movs	r0, #0
 	bx	lr
 	push	{lr}
@@ -4184,9 +4199,6 @@ Overlay_02000000:
 	lsrs	r0, r0, #16
 	pop	{r5, r6, r7, pc}
 	.4byte 0xffffefdf
-	.irp EntryTarget, 0x03000528, 0x03000508, 0x080000c1, 0x080000d1, 0x080000d9, 0x08000171, 0x08000179, 0x080001a9, 0x080001d1, 0x080001f1, 0x08000291, 0x080002a9, 0x08000301, 0x08000371, 0x08000389, 0x080003c1, 0x080003c9, 0x080003d1, 0x080003d9, 0x08038011, 0x08038019, 0x08038041, 0x08038061, 0x08038071, 0x08038079, 0x08038081, 0x08038099, 0x080380c9, 0x08038141, 0x080381f1, 0x080381f9, 0x08038211, 0x08038261, 0x08038271, 0x080382c1, 0x080382c9, 0x080382d1, 0x080382d9, 0x080382f1, 0x080382f9, 0x08038301, 0x08038309, 0x08038349, 0x08038379, 0x080383b9, 0x08038429, 0x08038431, 0x080ad001, 0x080ad009, 0x080ad029, 0x080ad091, 0x080ad0f9, 0x080ad111, 0x080ad201, 0x080ad239, 0x080ad249, 0x080ad299, 0x080ad2c9, 0x080ad2e1, 0x080ad321, 0x080ad331, 0x080c8011, 0x080c8089, 0x080c8269, 0x080c83a9, 0x080c83b1, 0x080c83b9, 0x080c8559, 0x080c8941, 0x080f8011, 0x08108031, 0x08108041, 0x08108049, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0x00040004
 	.4byte 0x00000004

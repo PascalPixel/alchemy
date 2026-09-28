@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/ENTRY.INC"
 	.section .text.x02008298,"ax",%progbits
 	.balign 4
 	.global Func_02000298
@@ -21,9 +17,6 @@ Func_02000298:
 	bx r0
 	.4byte 0x00001c40
 	.4byte 0x0000800b
-	.section .text.x02009144,"ax",%progbits
-	.balign 4
-	.include "games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global gValeFaceTargetScript
 gValeFaceTargetScript:

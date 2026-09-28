@@ -1,207 +1,126 @@
-/* Draft, not exact (2026-09-26): 660 of 664 bytes, 203 differing halfwords,
-   90 aligned edits. Scalar declaration order fixes all five stack slots:
-   callbacks +12/+16, frame +20, destination +24, record +28 (40-byte frame).
-   Baseline: 664/92/81; scalar order: 664/88/77; scoped particle cursors,
-   plain record stores and void epilogue: 660/203/90 (retained). An explicit
-   member-loop back edge produces the same bytes. Three hypotheses stopped.
-   Remaining: target-slot load is shared across the member-loop entry,
-   drawing cursor/accumulator registers differ, and four bytes are absent.
-   Typed 28-byte particles (x halfword union, y, step, acceleration, phase)
-   and work/effect/member structs previously left the same residual. Two blitters in
-   an array give 83 edits; grouping frame/destination/record with them gives
-   692 bytes and a 52-byte frame, not the reference's 40. The remaining
-   stack order was blitters at +12/+16, frame +20, destination +24, record +28.
-   The former empty do-while record-store wrap is no longer needed. */
+/* Draft, not exact (2026-09-28): 664 of 664 bytes, 16 differing halfwords
+ * (the earlier draft was 660 bytes, 203 halfwords). Rewritten from the
+ * listing in the style of the matched effect family (TARGET_BURSTS.C,
+ * SWIRLING_STARS.C): 32 rocks are dropped from above the scene, the first
+ * twelve drawn from frame i * 4, bouncing once they pass the floor; each
+ * affected unit is lifted with ObjectGroup_UpdateMembers on frame
+ * i * 16 + 64. Recovered: the two blitters as separate scalars declared b
+ * then a (stack +12/+16), the indexed seeding loop, the unused second
+ * Random16 draw (its result masked to zero) and the second sheet's offset
+ * written as (cel << 10) - 0x1000.
+ * Remaining: in the fall update the ROM keeps the gravity constant and
+ * then z in r0 and the new vertical velocity in r1 (here swapped), and in
+ * the bounce it forms -(vy + 1) / 2 before z + 4; the frame counter is
+ * reloaded into r2 instead of r3. Statement orders of the update and the
+ * bounce, an inline fall helper, a saved velocity temporary, the other
+ * negation spellings and every scalar declaration order leave these. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
-
-/*
- * Draft for the battle-presentation sub-effect at 0x080d59b0.
- *
- * This owner was assigned from the orbiting_particles/run.c compiler-family
- * cluster (template-main-08099160), but its own callee set and constants
- * (Func_080cd594, Resource_LoadAndDecompress, Func_080041d8/Func_08004278 with the shared
- * 0x080CD261 callback and 0x480 interval, Func_08002dd8, Func_080cdbc0,
- * BattleEffect_LoadWork, work-offsets 0x7780/0x7784/0x7824/0x7828) match the
- * already-drafted 0x080e7404 "battle work" subsystem instead -- see that
- * owner's dossier and recon/tbs/en/main/080e7404.c, which is the
- * evidence source for the field/signature choices below.  Byte-offset
- * accesses are kept generic where no evidence-backed structure exists yet.
- */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
-
+#include "BATTLE_EFFECT_WORK.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "SYSTEM.H"
 
 extern u8 Value_000000a8;
 
-void Func_080cd594(s32 mode);
-s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
-void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
-u32 Func_08004458(void);
-void Func_080030f8(s32 frames);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
-void **Func_080b5098(s32 member_id);
-void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
-void Func_08004cb4(void *record);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 BattleFx_EndCanvasLayer(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void **GetBattleObjectSlotFar(s32 member_id);
+void SceneTransform_ApplyPosition(s32 *position);
+void Audio_PlayCue(s32 cue);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 
-void Func_080d59b0(void *object)
+void BattleFx_RunBouncingRocks(void *object)
 {
-    void *work;
-    void *draw_destination;
-    void *target;
     void **heap_cache;
     void **cursor;
-    s32 frame;
-    DrawRectangleFn callback_b;
-    DrawRectangleFn callback_a;
-    s32 i;
-    s32 j;
-    s32 facing;
+    struct BattleEffectWork *work;
+    void *canvas;
     s32 record[3];
+
+    struct EffectStep *rock;
+    s32 i;
+    s32 frame;
+    DrawRectangleFn draw_b;
+    DrawRectangleFn draw_a;
+    s32 member;
 
     heap_cache = (void **)0x03001EEC;
     cursor = heap_cache;
     work = *cursor++;
-    draw_destination = *cursor;
-    M2C_FIELD(work, void **, 0x7828) = object;
-    Func_080cd594(0);
-    M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x0100;
-    M2C_FIELD((void *)0x04000050, s16 *, 0) = 0;
+    canvas = *cursor;
+    work->effect = object;
+    BattleFx_BeginCanvasLayer(0);
+    *(volatile u16 *)0x04000020 = 0x100;
+    *(volatile u16 *)0x04000050 = 0;
     Resource_LoadAndDecompress((s32)&Value_000000a8, work, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
-    callback_a = (DrawRectangleFn) heap_cache[7];
+    draw_a = (DrawRectangleFn)heap_cache[7];
     BattleEffect_LoadWork(47, 7, 7, 15, 1);
-    callback_b = (DrawRectangleFn) heap_cache[8];
-
-    {
-        u8 *star = (u8 *)0x02010000;
-        for (i = 0; i != 32; i++) {
-            M2C_FIELD(star, s32 *, 0) = (s32) (((Func_08004458() & 0x3F) + 32) << 16);
-            M2C_FIELD(star, s32 *, 4) = (s32) 0xFFE00000;
-            Func_08004458();
-            M2C_FIELD(star, s32 *, 16) = 0;
-            M2C_FIELD(star, s32 *, 8) = (s32) (Func_08004458() & 3);
-            M2C_FIELD(star, s32 *, 24) = (s32) (Func_08004458() & 0xFF);
-            star += 28;
-        }
+    draw_b = (DrawRectangleFn)heap_cache[8];
+    for (i = 0; i != 32; i++) {
+        rock = &((struct EffectStep *)0x02010000)[i];
+        rock->x = ((Random16() & 63) + 32) << 16;
+        rock->y = -0x200000;
+        rock->velocity_y = Random16() & 0;
+        rock->z = Random16() & 3;
+        rock->variant = Random16() & 255;
     }
-
-    if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
-        *(u32 *)0x04000028 = 0xFFFF9000;
-    }
-    M2C_FIELD(work, s32 *, 0x7780) = 1;
-    M2C_FIELD(work, s32 *, 0x7784) = 0;
-    Func_080041d8((void *)0x080CD261, 0x480);
-    Func_080f9010(142);
-
+    if (work->effect->side == 1)
+        *(volatile s32 *)0x04000028 = -0x7000;
+    work->transfer_mode = 1;
+    work->transfer_value = 0;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    Audio_PlayCue(142);
     for (frame = 0; frame != 148; frame++) {
-        u8 *star;
-        facing = *(s32 *)0x03001E80;
-        if (frame == 80) {
-            Func_080b50e8(0);
+        s32 facing;
+
+        facing = *(s32 *)0x03001e80;
+        if (frame == 80)
+            BattleEventRuntime_BeginPhaseFar(0);
+        for (member = 0; member != work->effect->count; member++) {
+            void *member_object;
+
+            member_object = *GetBattleObjectSlotFar(work->effect->actors[member]);
+            Render_ResetTransformState();
+            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            record[0] = *(s32 *)((u8 *)member_object + 8);
+            record[1] = 160 << 14;
+            record[2] = *(s32 *)((u8 *)member_object + 16);
+            SceneTransform_ApplyPosition(record);
+            if (frame == member * 16 + 64)
+                ObjectGroup_UpdateMembers(work->effect->actors[member], 0, 5, -1, 0);
         }
+        rock = (struct EffectStep *)0x02010000;
+        for (i = 0; i != 12; i++, rock++) {
+            if (frame > i * 4 && rock->y <= 0x7fffff) {
+                s32 cel;
 
-        target = M2C_FIELD(work, void **, 0x7828);
-        j = 0;
-        if (M2C_FIELD(target, s32 *, 20) != 0) {
-            void **target_slot;
-            void *member;
-            s32 member_id_offset;
-
-            target_slot = (void **)((u8 *)work + 0x7828);
-            member_id_offset = 36;
-next_member:
-            target = *target_slot;
-            member = *Func_080b5098(
-                M2C_FIELD(target, s16 *, member_id_offset));
-            Func_080049ac();
-            Func_080051d8(facing, facing + 12);
-            record[0] = M2C_FIELD(member, s32 *, 8);
-            record[1] = (s32) (160 << 14);
-            record[2] = M2C_FIELD(member, s32 *, 16);
-            Func_08004cb4(record);
-
-            if (frame == j * 16 + 64) {
-                target = *target_slot;
-                Func_080d6888(
-                    M2C_FIELD(target, s16 *, member_id_offset),
-                    0, 5, -1, 0);
-            }
-
-            member_id_offset += 2;
-            j++;
-            target = *target_slot;
-            if (j != M2C_FIELD(target, s32 *, 20))
-                goto next_member;
-        }
-
-        star = (u8 *)0x02010000;
-        for (i = 0; i != 12; i++) {
-            if (frame > i * 4) {
-                s32 velocity;
-                s32 phase;
-                s32 kind;
-
-                velocity = M2C_FIELD(star, s32 *, 4);
-                if (velocity <= 0x7FFFFF) {
-                    phase = M2C_FIELD(star, s32 *, 24);
-                    kind = (phase / 16) & 7;
-                    if (kind <= 3) {
-                        callback_a(
-                            draw_destination,
-                            (void *) ((kind << 10) + (s32) work),
-                            M2C_FIELD(star, s16 *, 2) - 16,
-                            (velocity >> 16) - 16,
-                            32, 32);
-                    } else {
-                        callback_b(
-                            draw_destination,
-                            (void *) ((kind << 10) + (s32) work - 0x1000),
-                            M2C_FIELD(star, s16 *, 2) - 16,
-                            (velocity >> 16) - 16,
-                            32, 32);
-                    }
-
-                    {
-                        s32 accumulator;
-                        s32 new_velocity;
-                        s32 new_phase;
-                        s32 previous_accumulator;
-
-                        previous_accumulator = M2C_FIELD(star, s32 *, 16);
-                        accumulator = previous_accumulator + 0x2000;
-                        new_velocity = M2C_FIELD(star, s32 *, 4) + previous_accumulator;
-                        new_phase = M2C_FIELD(star, s32 *, 24) + M2C_FIELD(star, s32 *, 8);
-                        M2C_FIELD(star, s32 *, 4) = new_velocity;
-                        M2C_FIELD(star, s32 *, 16) = accumulator;
-                        M2C_FIELD(star, s32 *, 24) = new_phase;
-                        if (new_velocity > 0x5C0000 && accumulator == 0) {
-                            s32 bounced;
-
-                            bounced = -(previous_accumulator + 0x2001);
-                            M2C_FIELD(star, s32 *, 8) =
-                                M2C_FIELD(star, s32 *, 8) + 4;
-                            bounced = (bounced + (s32) ((u32) bounced >> 31)) >> 1;
-                            M2C_FIELD(star, s32 *, 4) = 0x5C0000;
-                            M2C_FIELD(star, s32 *, 16) = bounced;
-                        }
-                    }
+                cel = (rock->variant / 16) & 7;
+                if (cel < 4)
+                    draw_a(canvas, (u8 *)work + (cel << 10),
+                        (rock->x >> 16) - 16, (rock->y >> 16) - 16, 32, 32);
+                else
+                    draw_b(canvas, (u8 *)work + (cel << 10) - 0x1000,
+                        (rock->x >> 16) - 16, (rock->y >> 16) - 16, 32, 32);
+                rock->y += rock->velocity_y;
+                rock->velocity_y += 0x2000;
+                rock->variant += rock->z;
+                if (rock->y > 0x5c0000 && rock->velocity_y == 0) {
+                    rock->z += 4;
+                    rock->y = 0x5c0000;
+                    rock->velocity_y = -(rock->velocity_y + 1) / 2;
                 }
             }
-            star += 28;
         }
-
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        work->transfer_pending = 1;
+        WaitFrames(1);
     }
-
-    Func_08004278((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
 }

@@ -8,6 +8,8 @@ SECTIONS
         "*/resource_373_overlay.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/resource_373_overlay.o"(.text.x020089dc)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LINKED_EFFECTS.o"(.text)
+        "*/resource_373_overlay.o"(.text.x0200de84)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_373_overlay.o"(.rodata.part1)
     }

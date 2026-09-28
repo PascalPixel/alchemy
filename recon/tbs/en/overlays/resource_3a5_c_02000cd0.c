@@ -32,7 +32,14 @@
  * Complete output shrinks to 300/304 bytes, 147 differing halfwords and
  * 42 aligned edits. The addition/zero-load pair folds into indexed ldrsh;
  * offset still follows event/state. It does not admit the required entry,
- * and the shifted pool is not a gain. Keep 304-byte body; stop this axis. */
+ * and the shifted pool is not a gain. Keep 304-byte body; stop this axis.
+ * H3 (2026-09-27): form a typed pointer to steps before loading event work.
+ * Prediction: the independent 0x232 address producer loads before the event
+ * and state bases. Complete result 304/304, 21 differing halfwords / 19
+ * aligned edits. The compiler instead adds state base and offset before
+ * loading event work, and later event stores change scratch-register order.
+ * The eight-word pool retains its extent. This pointer boundary fails;
+ * the six-halfword body is restored below. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

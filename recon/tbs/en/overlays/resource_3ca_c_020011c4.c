@@ -1,4 +1,9 @@
-/* Astra load/shift boundary (2026-09-27): load the raw tile offset,
+/* NONMATCHING 2026-09-27: direct global counter reads and decrement,
+ * followed by a row-loop pointer, produce 228/232 bytes, 109 differing
+ * halfwords and 20 aligned edits. The pool order improves, but the tile
+ * claims lr and the counter moves to ip, deleting four required copies.
+ * Restore the canonical pointer lifetime; this split-owner axis is closed.
+ * Astra load/shift boundary (2026-09-27): load the raw tile offset,
  * initialize count, then shift tile. This restores the first three pool
  * values' order, but tile becomes r6 and the candidate shrinks to 228/232
  * (106 halfwords / 42 aligned edits). An explicit unsigned shift fixes

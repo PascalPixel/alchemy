@@ -14,6 +14,11 @@
  * Full normalized diff read; this confirms pointer/index independence can
  * recover the load form but exceeds the reference's pressure budget. Stop
  * this axis rather than permuting declarations; 588-byte body restored.
+ * H3 (2026-09-27): create slot immediately after the position guard instead
+ * of before it. Both first indexed X/Z loads match, but slot spills and the
+ * frame grows from 20 to 28 bytes. Complete score 600/592, 286 differing
+ * halfwords / 89 aligned edits, all five pool words retained. This rejects
+ * the earlier phase boundary; the stronger 588-byte body is restored below.
  * Own-ROM extent 0x02001d84..0x02001fd4 includes the five-word pool.
  * SETUP calls this four-pillar frame driver; the final call sorts the actors.
  * 2026-09-27 transfer from exact WORLD_MAP/LINKED_EFFECTS.C: access the four

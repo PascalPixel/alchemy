@@ -1,14 +1,16 @@
-/* Draft, not exact (2026-09-26): candidate=484 reference=484, 27 differing
-   halfwords. The title-background recipe keeps the signed tile wrap explicit
-   and starts blank's lifetime before Scheduler_ResetTaskTable; mode, result
-   and blank now occupy the reference's r8, r6 and r7. Reusing the outer row
-   counter for scroll clearing and frame waits fixes its r5 assignment and
-   extends the exact prefix to 120 halfwords. Residual: key value/mask use
-   r2/r3 instead of r3/r2, and frame increments precede the wait argument.
-   Splitting the three key locals and incrementing inside the call argument
-   changed no bytes; reusing the inner counter left 33 differing halfwords.
-   The key waits remain goto loops because the reference reloads key state
-   and mask each pass. No exact-C credit. */
+/* Draft, not exact (2026-09-28): candidate=484 reference=484, 21 differing
+   lines, all in the six key reads. Waiting a frame before counting it puts
+   the wait argument ahead of the increment, as the reference has it. The
+   one residual is allocation: here regmove retargets each key load into the
+   keys variable, so the local mask constant takes r3 and keys r2; the
+   reference keeps the load in its own r3 temporary and the mask in r2. A
+   ldrh read (u16 key state) keeps the load separate but ties keys to the
+   mask instead. Real for/while loops give the reference's frame-first
+   order but hoist the key address and mask into r6/r7 and duplicate the
+   exit test (508 bytes); u8/u16/s16/s32 keys, "9 & keys", "keys &= 9",
+   a mask variable and duplicated goto tests do not reach it. Reusing the
+   outer row counter for scroll clearing and frame waits is kept. No
+   exact-C credit. */
 /* Title: show the splash picture, fade it in and wait for A or START (or
    time out), then fade it out. Returns -1 when a button cut it short. */
 #include "TYPES.H"
@@ -99,8 +101,8 @@ row:
         y = 0;
         goto check_start;
     wait_start:
-        y++;
         WaitFrames(1);
+        y++;
         if (y > 119)
             goto done;
         keys = gKeyState & 9;
@@ -114,8 +116,8 @@ row:
     y = 0;
     goto check_fade_in;
 wait_fade_in:
-    y++;
     WaitFrames(1);
+    y++;
     if (y > 59)
         goto fade_in_done;
     keys = gKeyState & 9;
@@ -134,8 +136,8 @@ fade_in_done:
         y = 0;
         goto check_hold;
     wait_hold:
-        y++;
         WaitFrames(1);
+        y++;
         if (y > 179)
             goto hold_done;
         keys = gKeyState & 9;

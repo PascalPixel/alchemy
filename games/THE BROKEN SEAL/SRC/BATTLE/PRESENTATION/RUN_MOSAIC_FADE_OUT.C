@@ -4,7 +4,6 @@
 
 void Blend_SetDarkenTarget16(s32 arg0);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 
 s32 BattlePres_RunMosaicFadeOut(void)
 {
@@ -29,10 +28,10 @@ s32 BattlePres_RunMosaicFadeOut(void)
 
     Blend_SetDarkenTarget16(16);
     for (i = 0; i <= 15; i++) {
-        Rand();
-        Rand();
-        Rand();
-        Rand();
+        Random16();
+        Random16();
+        Random16();
+        Random16();
         *(volatile u16 *)0x0400004c = (i << 8) | i;
         WaitFrames(1);
     }

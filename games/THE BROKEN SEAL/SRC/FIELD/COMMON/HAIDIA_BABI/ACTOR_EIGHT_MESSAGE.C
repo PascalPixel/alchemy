@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define HaidiaBabi_RunActorEightMessageScene Func_0200133c
-
 s32 Func_02002c32();
 void Func_02002c4c();
 void Func_02002c60();

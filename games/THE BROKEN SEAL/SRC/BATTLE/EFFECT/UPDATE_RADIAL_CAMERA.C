@@ -40,7 +40,6 @@ struct RadialCameraEffect {
 extern struct EffectCamera *gEffectWork;
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 extern void Vector_AddPolarOffset(s32, s32, struct EffectPosition *);
 extern void Camera_WorldToScreen(struct EffectPosition *);
 extern s32 BattleFx_HasReachedTarget(struct RadialCameraEffect *);
@@ -60,8 +59,8 @@ top:
     if (state == 0) {
         position.x = effect->source_x;
         position.z = effect->source_z;
-        angle = Rand();
-        Vector_AddPolarOffset(Rand() * 30 + 0x280000, (u16)angle, &position);
+        angle = Random16();
+        Vector_AddPolarOffset(Random16() * 30 + 0x280000, (u16)angle, &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->acceleration = 0x40000;
@@ -78,7 +77,7 @@ top:
         position.y = camera->y + 0x80000;
         position.z = camera->z;
         Camera_WorldToScreen(&position);
-        Vector_AddPolarOffset(0x40000, Rand(), &position);
+        Vector_AddPolarOffset(0x40000, Random16(), &position);
         effect->x = position.x;
         effect->z = position.z;
         effect->field_32 = 0x1000;

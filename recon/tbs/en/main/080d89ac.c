@@ -25,8 +25,6 @@ typedef s32 M2C_UNK;
 void **Func_080b5098(s32 actor_id);
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
 
-#define BattleEffectA Func_080d89ac
-
 void BattleEffectA(s32 arg0, u32 arg1) {
     void **heap_base;
     void **heap_cursor;
@@ -155,7 +153,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
     } else {
         var_r0_141 = 0xC0;
     }
-    Func_080072f0(0x05000000, Func_08002f40(var_r0_141), 0x80, 0x03001388);
+    _call_via_r3(0x05000000, Func_08002f40(var_r0_141), 0x80, 0x03001388);
     if (sp2C == 0) {
         if (arg1 == 6) {
             var_r0_169 = 0x8D;
@@ -376,7 +374,7 @@ loop_90:
                         temp_r2_792 = temp_r3_790 * temp_r3_790;
                         temp_r3_794 = (s32) M2C_FIELD(var_r6_753, s32 *, 8) >> 8;
                         temp_r1_796 = temp_r3_794 * temp_r3_794;
-                        temp_r7_802 = Func_080072f0((temp_r3_786 * temp_r3_786) + temp_r2_792 + temp_r1_796, temp_r1_796, temp_r2_792, 0x030001D8) >> 9;
+                        temp_r7_802 = _call_via_r3((temp_r3_786 * temp_r3_786) + temp_r2_792 + temp_r1_796, temp_r1_796, temp_r2_792, 0x030001D8) >> 9;
                         if (temp_r7_802 != 0) {
                             Func_080e3944(var_r6_753, &sp68);
                             if (arg1 == 0) {
@@ -422,11 +420,11 @@ loop_90:
                             }
                             if ((arg1 <= 2U) || (arg1 == 6)) {
                                 temp_r5_913 = M2C_FIELD(var_r6_753, s32 *, 0);
-                                M2C_FIELD(var_r6_753, s32 *, 0) = (s32) (temp_r5_913 - Func_080022ec(temp_r5_913, temp_r7_802));
+                                M2C_FIELD(var_r6_753, s32 *, 0) = (s32) (temp_r5_913 - Math_Div(temp_r5_913, temp_r7_802));
                                 temp_r5_919 = M2C_FIELD(var_r6_753, s32 *, 4);
-                                M2C_FIELD(var_r6_753, s32 *, 4) = (s32) (temp_r5_919 - Func_080022ec(temp_r5_919, temp_r7_802));
+                                M2C_FIELD(var_r6_753, s32 *, 4) = (s32) (temp_r5_919 - Math_Div(temp_r5_919, temp_r7_802));
                                 temp_r5_925 = M2C_FIELD(var_r6_753, s32 *, 8);
-                                M2C_FIELD(var_r6_753, s32 *, 8) = (s32) (temp_r5_925 - Func_080022ec(temp_r5_925, temp_r7_802));
+                                M2C_FIELD(var_r6_753, s32 *, 8) = (s32) (temp_r5_925 - Math_Div(temp_r5_925, temp_r7_802));
                             }
                         }
                     }

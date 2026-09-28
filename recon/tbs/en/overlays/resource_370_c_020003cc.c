@@ -8,8 +8,6 @@
 /* Save selection, link transfer and password display. */
 #include "TYPES.H"
 
-#define SaveMenu_Run Func_020003cc
-
 extern u8 Data_02000000[];
 extern u8 Data_02000240[];
 extern u8 Data_02001100[];

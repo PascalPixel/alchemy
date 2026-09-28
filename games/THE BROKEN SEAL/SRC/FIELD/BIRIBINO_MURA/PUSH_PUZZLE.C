@@ -1,23 +1,6 @@
 #include "TYPES.H"
 
 #define NULL ((void *)0)
-#define CalculateFacingAngle Func_0200107a
-#define RuntimeSelectorTable Data_02000240
-#define PrimaryRuntimeSelector Value_0000001e
-#define SecondaryRuntimeSelector Value_00000023
-#define TertiaryRuntimeSelector Value_00000020
-#define PrimaryOverlayData Data_020091ec
-#define SecondaryOverlayData Data_0200930c
-#define TertiaryOverlayData Data_0200936c
-#define DefaultOverlayData Data_020091d4
-#define PrimaryOverlayData_0200011c Data_02009498
-#define SecondaryOverlayData_0200011c Data_02009600
-#define TertiaryOverlayData_0200011c Data_020096f0
-#define DefaultOverlayData_0200011c Data_02009480
-#define PrimaryOverlayData_02000198 Data_02009744
-#define SecondaryOverlayData_02000198 Data_02009a2c
-#define TertiaryOverlayData_02000198 Data_02009bc4
-#define DefaultOverlayData_02000198 Data_02009738
 
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
@@ -55,7 +38,7 @@ extern u8 Value_00000023;
 extern u8 Data_02009d28[];
 extern u8 Data_02009d7c[];
 
-s32 Func_0200107a(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 void Func_020012c6(s32, s32, s32);
 s32 Func_02001460();
 void Func_020016ca();
@@ -170,15 +153,15 @@ s32 SceneActor_UpdateFacingTowardTarget(struct FacingObject *object)
 
 s32 SceneData_SelectOverlayDataByRuntimeSelector(void)
 {
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000001e) {
         return (s32)PrimaryOverlayData;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000023) {
         return (s32)SecondaryOverlayData;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000020) {
         return (s32)TertiaryOverlayData;
     }
     return (s32)DefaultOverlayData;
@@ -215,15 +198,15 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
     extern u8 SecondaryOverlayData_0200011c[];
     extern u8 TertiaryOverlayData_0200011c[];
     extern u8 DefaultOverlayData_0200011c[];
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000001e) {
         return (s32)PrimaryOverlayData_0200011c;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000023) {
         return (s32)SecondaryOverlayData_0200011c;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000020) {
         return (s32)TertiaryOverlayData_0200011c;
     }
     return (s32)DefaultOverlayData_0200011c;
@@ -243,15 +226,15 @@ s32 SceneData_SelectDataByRuntimeSelectorB(void)
     extern u8 SecondaryOverlayData_02000198[];
     extern u8 TertiaryOverlayData_02000198[];
     extern u8 DefaultOverlayData_02000198[];
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000001e) {
         return (s32)PrimaryOverlayData_02000198;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000023) {
         return (s32)SecondaryOverlayData_02000198;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000020) {
         return (s32)TertiaryOverlayData_02000198;
     }
     return (s32)DefaultOverlayData_02000198;

@@ -12,8 +12,7 @@
 
 void WaitFrames(s32 frames);
 
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 void BattlePres_ConfigureEffectDisplay(void)
 {
@@ -33,7 +32,7 @@ void BattlePres_ConfigureEffectDisplay(void)
 
     q = &gIoWriteQueue;
     do {
-        ime = &REG_IME;
+        ime = &RegIme;
         saved = *ime;
     } while (0);
     *ime = (u16)ime;

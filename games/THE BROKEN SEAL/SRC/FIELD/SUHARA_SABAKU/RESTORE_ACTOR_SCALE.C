@@ -4,7 +4,7 @@
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
@@ -63,7 +63,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     rec2 = Value1(Engine_GameFlagIsSet, 0x340);
     p9 = rec7->x.part.pixel;
     p11 = rec7->z.part.pixel;
-    ime = &Data_04000208;
+    ime = &RegIme;
     Engine_EventBegin();
     Engine_AudioPlayCue(244);
     i = 0;

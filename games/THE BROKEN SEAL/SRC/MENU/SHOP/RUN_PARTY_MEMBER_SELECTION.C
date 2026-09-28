@@ -2,6 +2,6 @@
 
 s32 Shop_SelUnit(void)
 {
-    Shop_SelectPartyMember();
+    Shop_PickUnit();
     return 0;
 }

@@ -56,7 +56,6 @@ struct BattlePresentationState {
 #define absolute_080edeab ((const u8 *)0x080edeab)
 #define absolute_080edeb2 ((const u16 *)0x080edeb2)
 
-#define BattleEffect_RunDualParticleStream Func_080e89ec
 
 void BattleEffect_RunDualParticleStream(void *object) {
     u32 draw_width;
@@ -248,7 +247,7 @@ block_35:
     }
     Func_080b5028(0, 0, 0, 0x64);
     if (frame <= 0x11) {
-        temp_r0_331 = Func_080022ec(frame, 3);
+        temp_r0_331 = Math_Div(frame, 3);
         draw_width = (u32) absolute_080ede9f[temp_r0_331];
         draw_height = (s32) absolute_080edea5[temp_r0_331];
         callbacks[0](draw_destination, &work->unknown_0000[absolute_080edeb2[temp_r0_331]] + 0x3C00, 0x30, absolute_080edeab[temp_r0_331] + 0x3C, draw_width, draw_height);

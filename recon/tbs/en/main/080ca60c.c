@@ -19,8 +19,8 @@
  * resource, record[5] is a blit parameter and record[6] is the frame count.
  *
  * Setup opens the resources through Resource_LoadAndDecompress, copies a palette to
- * 0x05000000 through the generic word-copy helper (Func_080072f0 taking the
- * 0x03001388 routine as a trailing callback argument -- Func_080072f0 is the
+ * 0x05000000 through the generic word-copy helper (_call_via_r3 taking the
+ * 0x03001388 routine as a trailing callback argument -- _call_via_r3 is the
  * r3 slot of the _call_via_rN trampoline at recon/tbs/raw/080072e4.s,
  * modeled as a direct call with the real callee as a trailing argument per
  * that trampoline's established convention), then seeds three particle
@@ -28,7 +28,7 @@
  * 0x02013800.
  *
  * The frame loop then draws a staged foreground element (record[0] == 0
- * uses the Func_080022ec/Func_080022fc phase tables at 0x080edf58..0x080edf76,
+ * uses the Math_Div/Func_080022fc phase tables at 0x080edf58..0x080edf76,
  * record[0] != 0 uses a 27-cell strip inside the work buffer), retriggers
  * the three pools at fixed phase boundaries, optionally scatters three
  * decorations, and finally redraws the pools through the display-kind 46/47
@@ -83,13 +83,13 @@ extern u8 Value_000000ce;
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
-void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
+void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 void **Func_080b5098(s32 member_id);
 void Func_080e3980(s32 member_id, s32 *out);
 void Func_080e396c(s32 member_id, s32 *out);
 u32 Func_08004458(void);
 s32 Func_080041d8(void *callback, s32 interval);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 void Func_08002dd8(s32 id);
 void Func_080b50e8(s32 id);
@@ -187,7 +187,7 @@ void Func_080ca60c(void *object, s32 kind)
         palette_id = (s32)&Value_000000c4;
         break;
     }
-    Func_080072f0((void *)(160 << 19), Func_08002f40(palette_id), 128,
+    _call_via_r3((void *)(160 << 19), Func_08002f40(palette_id), 128,
         (WordCopyFn)0x03001388);
 
     Resource_LoadAndDecompress((s32)&Value_0000009e, (s8 *)work + (200 << 6), 1, 0);
@@ -286,7 +286,7 @@ void Func_080ca60c(void *object, s32 kind)
         if (Data_080edf04[kind * 7] == 0) {
             if (frame < count * 6) {
                 cell = Func_080022fc(
-                    Func_080022ec(frame, Data_080edf04[kind * 7 + 4]), 6);
+                    Math_Div(frame, Data_080edf04[kind * 7 + 4]), 6);
 
                 if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4)
                         == 1) {
@@ -342,7 +342,7 @@ void Func_080ca60c(void *object, s32 kind)
                         i = 0;
                         do {
                             particle = (s32 *)(0x02013800
-                                + ((Func_080022ec(frame,
+                                + ((Math_Div(frame,
                                         Data_080edf04[kind * 7 + 4] * 6) * 32)
                                       + i) * 28);
                             particle[6] = (s32)(Func_08004458() & 15) + 7;
@@ -353,7 +353,7 @@ void Func_080ca60c(void *object, s32 kind)
                     i = 0;
                     do {
                         particle = (s32 *)(((s8 *)work + (225 << 7))
-                            + ((Func_080022ec(frame,
+                            + ((Math_Div(frame,
                                     Data_080edf04[kind * 7 + 4] * 6) * 16)
                                   + i) * 28);
                         particle[6] = 0;
@@ -366,7 +366,7 @@ void Func_080ca60c(void *object, s32 kind)
                 idx = 3;
             } else {
                 phase_index =
-                    Func_080022ec(frame, Data_080edf04[kind * 7 + 4]);
+                    Math_Div(frame, Data_080edf04[kind * 7 + 4]);
                 while (phase_index > 4) {
                     phase_index -= 4;
                 }
@@ -402,7 +402,7 @@ void Func_080ca60c(void *object, s32 kind)
                 i = 0;
                 do {
                     particle = (s32 *)(0x02013800
-                        + ((Func_080022ec(frame,
+                        + ((Math_Div(frame,
                                 Data_080edf04[kind * 7 + 4] * 6) * 64)
                               + i) * 28);
                     particle[6] = (s32)(Func_08004458() & 15) + 7;
@@ -412,7 +412,7 @@ void Func_080ca60c(void *object, s32 kind)
                 i = 0;
                 do {
                     particle = (s32 *)(((s8 *)work + (225 << 7))
-                        + ((Func_080022ec(frame,
+                        + ((Math_Div(frame,
                                 Data_080edf04[kind * 7 + 4] * 6) * 16)
                               + i) * 28);
                     particle[6] = 0;
@@ -422,7 +422,7 @@ void Func_080ca60c(void *object, s32 kind)
                 i = 0;
                 do {
                     particle = (s32 *)(0x02010000
-                        + ((Func_080022ec(frame,
+                        + ((Math_Div(frame,
                                 Data_080edf04[kind * 7 + 4] * 6) * 16)
                               + i) * 28);
                     particle[6] = 0;

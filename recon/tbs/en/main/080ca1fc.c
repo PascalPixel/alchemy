@@ -13,8 +13,8 @@
  *
  * Semantic summary: opens display kinds 46 and 47 (draw-rectangle blit
  * routines cached in Data_03001e50[]), copies a palette through the
- * generic word-copy helper (Func_080072f0 taking the 0x03001388 word-copy
- * routine as a trailing callback argument -- Func_080072f0 is the r3 slot
+ * generic word-copy helper (_call_via_r3 taking the 0x03001388 word-copy
+ * routine as a trailing callback argument -- _call_via_r3 is the r3 slot
  * of the _call_via_rN trampoline at recon/tbs/raw/080072e4.s, modeled as a
  * direct call with the real callee as a trailing argument per that
  * trampoline's established convention), seeds a 256-slot particle pool at
@@ -39,7 +39,7 @@ extern u8 Value_0000007c;
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 id);
-void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
+void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);
 void **Func_080b5098(s32 member_id);
 u32 Func_08004458(void);
@@ -101,7 +101,7 @@ void Func_080ca1fc(void *object, s32 mode)
 
     Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
 
-    Func_080072f0((void *)(160 << 19),
+    _call_via_r3((void *)(160 << 19),
         Func_08002f40(mode == 0 ? (s32)&Value_0000007c : (s32)&Value_0000007b),
         128, (WordCopyFn)0x03001388);
 

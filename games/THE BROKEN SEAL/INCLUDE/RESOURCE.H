@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-#define Resource_GetTableEntry Resource_GetTableEntry
 void *Resource_GetTableEntry(s32 resource_id);
 
 /* Index of a free resource table entry. */

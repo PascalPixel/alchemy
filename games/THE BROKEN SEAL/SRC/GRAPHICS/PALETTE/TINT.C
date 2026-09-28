@@ -7,13 +7,12 @@
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 extern u8 gGameState[];
-#define PARTY_STATE gGameState
 extern u8 PaletteGlow_WaveTable[];
 void GraphicsPalette_SetTintChannelsFromCounters(void *work)
 {
     s16 phase; s32 bias; s32 c2, c0, c1;
-    phase = Math_Mod(PARTY_STATE[0x205] + 0xC, 0x18) * 4;
-    bias = PARTY_STATE[0x206] - 7;
+    phase = Math_Mod(gGameState[0x205] + 0xC, 0x18) * 4;
+    bias = gGameState[0x206] - 7;
     c0 = PaletteGlow_WaveTable[(s16)Math_Mod(phase, 0x60)];
     c1 = PaletteGlow_WaveTable[Math_Mod(phase + 0x20, 0x60)];
     c2 = PaletteGlow_WaveTable[Math_Mod(phase + 0x40, 0x60)];

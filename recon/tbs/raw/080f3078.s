@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080f3078
-	.global Func_080f3078
+	.global Graphics_TransformPaletteBuffer
 	.thumb_func
 Unnamed_080f3078:
-Func_080f3078:
+Graphics_TransformPaletteBuffer:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

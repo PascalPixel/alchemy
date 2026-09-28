@@ -21,7 +21,7 @@ void BattleParty_ApplyDrain(s32 amount)
     s32 target_count = Party_CountActiveOwnersFar();
 
     if (target_count > 0) {
-        u8 *base = (u8 *)&PARTY_STATE;
+        u8 *base = (u8 *)&gGameState;
         s32 offset = 252 << 1;
         u8 *target_id = base + offset;
         s32 remaining = target_count;
@@ -58,7 +58,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
 
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        unit = Owner_GetStateFar(PARTY_STATE.active_owners[i]);
+        unit = Owner_GetStateFar(gGameState.active_owners[i]);
         if (!scaled) {
             value = amount;
         } else {
@@ -69,7 +69,7 @@ void BattleParty_ApplyHealthDelta(s32 amount, s32 scaled)
                     value = -value;
             }
         }
-        Owner_AdjustFirstValueFar(PARTY_STATE.active_owners[i], value);
+        Owner_AdjustFirstValueFar(gGameState.active_owners[i], value);
     }
 }
 
@@ -84,7 +84,7 @@ s32 BattleParty_ApplyStatusDamage(void)
         s32 remaining;
 
         offset <<= 1;
-        entry = (u8 *)&PARTY_STATE + offset;
+        entry = (u8 *)&gGameState + offset;
         remaining = count;
 
         do {

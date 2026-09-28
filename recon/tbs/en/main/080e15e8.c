@@ -11,7 +11,6 @@
 #include "BATTLE_EFX.H"
 /* As in mode 6, the blitters return a value the effect ignores. */
 typedef s32 (*DrawRectangleResult)(void *, const void *, s32, s32, s32, s32);
-#define DrawRectangle DrawRectangleResult
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
@@ -121,11 +120,11 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     void *dst;
     u8 *aux;
     s32 frame;
-    DrawRectangle blit[2];
+    DrawRectangleResult blit[2];
     s32 size;
     s32 count;
     s32 *sc;
-    DrawRectangle blit47;
+    DrawRectangleResult blit47;
     s32 lvl;
     s32 cam_x;
     s32 cam_y;
@@ -191,7 +190,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
     *(u16 *)0x04000020 = 0x80;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     cache = (u32 *)gWorkSlot;
-    blit[0] = (DrawRectangle)cache[46];
+    blit[0] = (DrawRectangleResult)cache[46];
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x100f;
@@ -311,10 +310,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             }
             if (frame <= 139) {
                 BattleEffect_LoadWork(47, 7, 7, 3, 3);
-                blit47 = (DrawRectangle)SLOT(47);
+                blit47 = (DrawRectangleResult)SLOT(47);
             } else {
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                blit47 = (DrawRectangle)SLOT(47);
+                blit47 = (DrawRectangleResult)SLOT(47);
             }
             n = count;
             if (n > 128) {
@@ -352,10 +351,10 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 blit[0](dst, ramp + w, w + 48, i + 16, 32 - w * 2, 1);
             }
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            ((DrawRectangle)SLOT(47))(dst, work, 32, h - 56, 32, 96);
+            ((DrawRectangleResult)SLOT(47))(dst, work, 32, h - 56, 32, 96);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            ((DrawRectangle)SLOT(47))(dst, work, 64, h - 56, 32, 96);
+            ((DrawRectangleResult)SLOT(47))(dst, work, 64, h - 56, 32, 96);
             Runtime_ReleaseHeapBlock(47);
         }
         work->transfer_pending = 1;
@@ -457,7 +456,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                         s32 rx = Random16() & 3;
                         s32 ry = Random16() & 3;
                         BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                        ((DrawRectangle)SLOT(47))(dst, work->sheet + Math_Mod(i, 3) * 0x1440, rx - 3, ry + 32, 72, 72);
+                        ((DrawRectangleResult)SLOT(47))(dst, work->sheet + Math_Mod(i, 3) * 0x1440, rx - 3, ry + 32, 72, 72);
                         Runtime_ReleaseHeapBlock(47);
                     }
                     if (frame == i * 2 + 80) {
@@ -499,16 +498,16 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
             }
             smoke = work->sheet + 0x6000;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            ((DrawRectangle)SLOT(47))(dst, smoke, ox + 60, oy - 24, 12, 24);
+            ((DrawRectangleResult)SLOT(47))(dst, smoke, ox + 60, oy - 24, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
-            ((DrawRectangle)SLOT(47))(dst, smoke, sx, oy - 24, 12, 24);
+            ((DrawRectangleResult)SLOT(47))(dst, smoke, sx, oy - 24, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 11, 2);
-            ((DrawRectangle)SLOT(47))(dst, smoke, ox + 60, oy, 12, 24);
+            ((DrawRectangleResult)SLOT(47))(dst, smoke, ox + 60, oy, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             BattleEffect_LoadWork(47, 7, 7, 15, 2);
-            ((DrawRectangle)SLOT(47))(dst, smoke, sx, oy, 12, 24);
+            ((DrawRectangleResult)SLOT(47))(dst, smoke, sx, oy, 12, 24);
             Runtime_ReleaseHeapBlock(47);
             n = 0;
             for (i = 0, p = PARTICLES; i != 910; i++, p++) {
@@ -532,7 +531,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
 
         BattleEffect_LoadWork(47, 7, 7, 15, 2);
         {
-            DrawRectangle draw = (DrawRectangle)SLOT(47);
+            DrawRectangleResult draw = (DrawRectangleResult)SLOT(47);
             for (i = 0, p = PARTICLES; i != 910; i++, p++) {
                 if (p->variant > 0) {
                     p->variant--;
@@ -571,7 +570,7 @@ void BattleFx_InitializeMode12(struct BattleEffectArgument *efx)
                 s32 x = ((Trig_Sin(angle) << 3) >> 16) + base - (BattleFx12_SmokeWidths[k] >> 1);
                 s32 y = ((Trig_Cos(angle) * 40) >> 16) - (BattleFx12_SmokeHeights[k] >> 1);
                 BattleEffect_LoadWork(47, 7, 7, 3 | BattleFx12_SmokePalettes[Random16() & 3], 2);
-                ((DrawRectangle)SLOT(47))(dst, (u8 *)0x02010000 + BattleFx12_SmokeCells[k], x, y + 56,
+                ((DrawRectangleResult)SLOT(47))(dst, (u8 *)0x02010000 + BattleFx12_SmokeCells[k], x, y + 56,
                     BattleFx12_SmokeWidths[k], BattleFx12_SmokeHeights[k]);
                 Runtime_ReleaseHeapBlock(47);
             }

@@ -41,7 +41,6 @@ extern struct EffectRuntime *gEffectWork;
 
 s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, struct EffectPosition *output);
 void Camera_WorldToScreen(struct EffectPosition *value);
 s32 BattleFx_HasReachedTarget(struct RadialBurstEffect *effect);
@@ -58,7 +57,7 @@ again:
     if (state == 0) {
         value.x = effect->source_x;
         value.z = effect->source_z;
-        Vector_AddPolarOffset(0x190000, (u16)Rand(), &value);
+        Vector_AddPolarOffset(0x190000, (u16)Random16(), &value);
         effect->x = value.x;
         effect->z = value.z;
         effect->velocity_z = 0x30000;
@@ -84,7 +83,7 @@ again:
         value.z = target->z;
         Vector_AddPolarOffset(0x80000, runtime->angle, &value);
         Camera_WorldToScreen(&value);
-        Vector_AddPolarOffset(0x40000, Rand(), &value);
+        Vector_AddPolarOffset(0x40000, Random16(), &value);
         effect->x = value.x;
         effect->z = value.z;
         effect->scale = 0x800;

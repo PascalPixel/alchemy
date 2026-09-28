@@ -7,10 +7,10 @@ void BattleUnit_ResetStateByMode(s32 id, s32 mode)
 {
     struct BattleUnit *unit;
 
-    unit = BattleUnit_Get(id);
+    unit = Owner_GetStateFar(id);
     if (mode == 0) {
         unit->hp = unit->max_hp;
-        BattleUnit_UpdateRatios(id);
+        Owner_RecalculateRatiosFar(id);
     } else if (mode == 1) {
         unit->poison = 0;
     } else if (mode == 2) {

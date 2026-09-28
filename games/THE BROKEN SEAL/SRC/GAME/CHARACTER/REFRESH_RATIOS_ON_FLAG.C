@@ -24,7 +24,7 @@ void Owner_RefreshRatiosOnFlag(void)
 
     count = Party_CountActiveOwners();
     for (n = 0; n < count; n++) {
-        ownerId = PARTY_STATE.active_owners[n];
+        ownerId = gGameState.active_owners[n];
         group = Character_ElementGroupTable[ownerId];
         doRefresh = 0;
         if (group == 0) {

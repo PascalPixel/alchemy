@@ -15,7 +15,7 @@ extern const struct FlashChipType Data_08007abc;
 
 /* Copies the byte comparison loop into a stack buffer, since it must run
    outside the cartridge bus, and compares one whole sector with source. */
-s32 VerifyFlashSector(u16 sector, s32 source)
+s32 Flash_VerifySector(u16 sector, s32 source)
 {
     u16 code[128];
     u16 *from;
@@ -27,7 +27,7 @@ s32 VerifyFlashSector(u16 sector, s32 source)
     from = (u16 *)VerifyFlashCore;
     from = (u16 *)((u32)from ^ 1);
     to = code;
-    count = ((u32)VerifyFlashSector - (u32)VerifyFlashCore) / 2;
+    count = ((u32)Flash_VerifySector - (u32)VerifyFlashCore) / 2;
     while (count != 0) {
         *to++ = *from++;
         count--;

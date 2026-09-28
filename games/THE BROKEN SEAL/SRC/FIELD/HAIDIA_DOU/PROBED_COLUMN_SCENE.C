@@ -4,8 +4,6 @@ struct Probe {
     s32 word[6];
 };
 
-#define HaidiaDou_RunProbedColumnScene Func_02001390
-
 s32 Func_0200197a();
 s32 Func_02001990();
 s32 Func_020019a2();

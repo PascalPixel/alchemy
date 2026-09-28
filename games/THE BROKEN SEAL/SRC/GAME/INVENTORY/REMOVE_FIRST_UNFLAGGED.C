@@ -7,7 +7,7 @@ s32 Inventory_RemoveFar(s32 owner, s32 slot);
 
 s32 Inventory_RemoveFirstUnflagged(s32 owner)
 {
-    struct OwnerInventoryState *state = OwnerState_GetFar(owner);
+    struct OwnerInventoryState *state = Owner_GetStateFar(owner);
     s32 result = 0;
     s32 i;
 

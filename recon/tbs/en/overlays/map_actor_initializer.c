@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define FieldScene_InitializeActorGroups Func_0200259c
-
 struct SceneWork {
     u8 unknown_000[448];
     s32 request;

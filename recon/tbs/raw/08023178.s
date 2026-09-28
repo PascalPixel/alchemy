@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_08023178
+	.global Ui_RunOwnerStatusScreen
 	.thumb_func
-Func_08023178:
+Ui_RunOwnerStatusScreen:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

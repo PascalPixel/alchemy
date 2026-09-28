@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
 extern u8 Data_03001b04[];
@@ -39,8 +40,8 @@ void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity)
         } while (remaining != 0);
     }
     UiMessage_ShowAndRestoreState((s32)&Value_00000ca1);
-    if (Shop_ConfirmEquipItem(unit_id, added_slot) != 0) {
-        Shop_SellReplacedItem(unit_id, replaced_slot);
+    if (Shop_ConfirmEquip(unit_id, added_slot) != 0) {
+        Shop_SellOld(unit_id, replaced_slot);
     }
 }
 
@@ -63,7 +64,7 @@ extern u8 Value_00000ad0[];
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot)
 {
     struct ShopRuntime *menu = gMenuWork;
-    struct BattleUnit *unit = (struct BattleUnit *)BattleUnit_Get(unit_id);
+    struct BattleUnit *unit = (struct BattleUnit *)Owner_GetStateFar(unit_id);
     s32 item_id = unit->inventory[slot] & 0x1ff;
     struct ItemDefinition *info = Item_Get(item_id);
     s32 replaced;
@@ -114,7 +115,7 @@ s32 Shop_SellOld(s32 unit_id, s32 slot)
     s32 item_offset;
     s32 item_id;
 
-    unit = BattleUnit_Get(unit_id);
+    unit = Owner_GetStateFar(unit_id);
     if (slot == -1)
     {
         return 0;
@@ -168,7 +169,7 @@ void Shop_SelRepair(s32);
  */
 s32 Shop_PickUnit(void)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     s32 list_window;
     s32 selection = 0;
     s32 redraw = 1;
@@ -194,8 +195,8 @@ s32 Shop_PickUnit(void)
                 selection * 24 - 12,
                 0);
             shop->mode = 3;
-            Shop_UpdatePartyMemberList(list_window, selection, 0);
-            Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+            Shop_DrawParty(list_window, selection, 0);
+            Shop_DrawUnitGrid(shop->item_window, unit_id);
         }
 
         if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {
@@ -245,9 +246,9 @@ extern u8 MsgItemPlainName;
 extern u8 Value_00000caa;
 
 /*
- * Sell flow reached from Shop_SelectPartyMember when the shop's party action
+ * Sell flow reached from Shop_PickUnit when the shop's party action
  * is "sell": browse the chosen member's inventory, priced one slot at a
- * time, and hand a confirmed slot off to Shop_SelectSaleQuantity before
+ * time, and hand a confirmed slot off to Shop_SelSellNum before
  * writing the sale back through Shop_SellItem.
  */
 s32 Shop_SelSell(s32 unit_id)
@@ -265,8 +266,8 @@ s32 Shop_SelSell(s32 unit_id)
     void *window;
     s32 x;
 
-    shop = SHOP_RUNTIME;
-    unit = BattleUnit_Get(unit_id);
+    shop = gMenuWork;
+    unit = Owner_GetStateFar(unit_id);
     item_count = 1;
     list_window = UiWindow_CreateFar(15, 8, 15, 4, 2);
     selection = 0;
@@ -291,9 +292,9 @@ s32 Shop_SelSell(s32 unit_id)
                 Shop_DrawItemPrice(
                     list_window,
                     item_id,
-                    Shop_ComputeSalePrice(unit->inventory[selection]),
+                    Shop_SalePrice(unit->inventory[selection]),
                     1);
-                Shop_DrawMessage(price_window, item_id + (s32)&MsgItemPlainName);
+                Shop_DrawMsg(price_window, item_id + (s32)&MsgItemPlainName);
             }
 
             if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {
@@ -344,7 +345,7 @@ done:
         if (result != 0)
             break;
 
-        quantity = Shop_SelectSaleQuantity(unit_id, selection);
+        quantity = Shop_SelSellNum(unit_id, selection);
         if (quantity != -1)
             Shop_SellItem(unit_id, selection, quantity);
         UiMessage_ShowAndWait((s32)&Value_00000caa);
@@ -372,7 +373,7 @@ void Shop_DrawUnitGrid(s32 window, s32 unit_id)
     s32 item_offset;
     u8 *icon;
 
-    unit = (u8 *)BattleUnit_Get(unit_id);
+    unit = (u8 *)Owner_GetStateFar(unit_id);
     x = 8;
     y = 0;
     if (window != 0) {
@@ -430,12 +431,12 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot)
     struct ShopRuntime *shop;
     struct BattleUnit *unit;
 
-    shop = SHOP_RUNTIME;
-    unit = BattleUnit_Get(unit_id);
+    shop = gMenuWork;
+    unit = Owner_GetStateFar(unit_id);
     entry_offset = (slot * 2) + 0xd8;
     item = Item_Get(*(u16 *)((u8 *)unit + entry_offset));
     result = 1;
-    effect = Shop_ComputeSalePrice(*(u16 *)((u8 *)unit + entry_offset));
+    effect = Shop_SalePrice(*(u16 *)((u8 *)unit + entry_offset));
     state = Shop_GetSelectionState(unit_id, slot);
     selection = state;
     if ((item->flags & 0x10) && state > 1) {

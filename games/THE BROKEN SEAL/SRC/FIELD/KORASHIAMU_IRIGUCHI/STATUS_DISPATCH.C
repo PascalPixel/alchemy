@@ -40,7 +40,6 @@ enum StatusDispatchMessage {
 #define SCENE_PHASE_02001cd4 (*(s32 *)(SCENE_WORK + 0x1c0))
 #define SCENE_FIELD_1C8_02001cd4 (*(s32 *)(SCENE_WORK + 0x1c8))
 #define SCENE_STEP (*(u16 *)(SCENE_WORK + 0x1d8))
-#define ObjectMotion_MarkActiveAndSetActionCallback Func_02004f1c
 
 extern u8 Value_0000008c;
 extern u8 Value_0000008e;
@@ -88,7 +87,7 @@ void Func_020047cc(s32 arg0);
 void Func_020047ea(s32 arg0);
 void Func_020047f0(s32 arg0);
 void Func_020047f6(s32 arg0);
-void Func_02004f1c();
+void ObjectMotion_MarkActiveAndSetActionCallback();
 void Data_0200ad0c();
 void Func_020057c0_b();
 void Func_020057c8_a();

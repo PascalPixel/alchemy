@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080e40a4
-	.global Func_080e40a4
+	.global BattlePres_RunRingAndSparkScene
 	.thumb_func
 Unnamed_080e40a4:
-Func_080e40a4:
+BattlePres_RunRingAndSparkScene:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

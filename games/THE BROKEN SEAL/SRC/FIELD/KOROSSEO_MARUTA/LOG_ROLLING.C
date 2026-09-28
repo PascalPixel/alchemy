@@ -373,7 +373,6 @@ static __inline__ s32 Value0(s32 (*f)())
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunSecondArrivalSequence:
  * state-routed scene setup and all 40 calls with their scene arguments. */
 
-#define FieldScene_RunSecondArrivalSequence Func_02001df8
 
 void Func_0200469a_arrival();
 s32 Func_020048b0_arrival();
@@ -1610,7 +1609,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_End();
 }
 
-void Func_02001df8(s32 scene)
+void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
     s32 state;
 
@@ -2031,8 +2030,6 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     Event_End();
 }
 
-#define GetPartyInteractionRecord Func_020073ca_party
-#define GetPartyMemberCount Func_0200739a_party
 
 typedef struct PartyInteractionRecord {
     u8 padding_00[10];
@@ -2041,8 +2038,8 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-PartyInteractionRecord *Func_020073ca_party(void);
-s32 Func_0200739a_party(void);
+PartyInteractionRecord *GetPartyInteractionRecord(void);
+s32 GetPartyMemberCount(void);
 
 static inline void InitializeActorZero(void)
 {
@@ -2337,7 +2334,7 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
  *
  * Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
  * target at every occurrence, including every repeated Func_0808a010,
- * Audio_PlayCue, Func_02002e54, Func_020033d8, Func_0808a018/360/370/020
+ * Audio_PlayCue, Func_02002e54, ColossoLogRollingStage_InitializeModeTask, Func_0808a018/360/370/020
  * call) -- declared/named as the literal per-site targets, not the shared
  * ultimate-destination symbol.
  */

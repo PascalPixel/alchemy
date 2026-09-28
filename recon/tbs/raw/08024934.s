@@ -150,7 +150,7 @@ Func_08024934:
 .L_08024a62:
 	ldrb	r6, [r5, #0]
 	adds	r0, r6, #0
-	bl	Func_080771e0
+	bl	SummonDefinition_Get
 	ldr	r1, [sp, #84]
 	adds	r0, #4
 	ldrb	r2, [r0, #0]
@@ -252,7 +252,7 @@ Func_08024934:
 	ldr	r1, [sp, #32]
 	add	r3, sl
 	ldrb	r0, [r1, r3]
-	bl	Func_080771e0
+	bl	SummonDefinition_Get
 	adds	r6, r0, #0
 	ldrh	r0, [r6, #0]
 	ldr	r3, [pc, #260]
@@ -330,7 +330,7 @@ Func_08024934:
 .L_08024bbc:
 	adds	r0, r6, #0
 	str	r4, [sp, #4]
-	bl	Func_080771e0
+	bl	SummonDefinition_Get
 	str	r0, [sp, #36]
 	adds	r1, r0, #0
 	ldr	r0, [sp, #84]
@@ -403,7 +403,7 @@ Func_08024934:
 .L_08024c54:
 	adds	r0, r6, #0
 	str	r4, [sp, #4]
-	bl	Func_080771e0
+	bl	SummonDefinition_Get
 	ldr	r3, [pc, #28]
 	ldr	r4, [sp, #4]
 	ldrh	r0, [r0, #0]

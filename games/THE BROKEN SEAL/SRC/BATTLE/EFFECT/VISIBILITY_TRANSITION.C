@@ -6,7 +6,6 @@ extern u8 Data_03001ae8[];
 s32 Object_GetById(u32);
 
 extern s32 gGameState[];
-#define PARTY_STATE gGameState
 extern u8 gEventWork[];
 
 s32 WaitFrames(s32);
@@ -27,7 +26,7 @@ void BattleFx_UpdateObjectVisibilityBounds(void)
     s32 bottom;
     u32 id;
 
-    object = PARTY_STATE[125];
+    object = gGameState[125];
     Object_GetById(object);
     object = *(s32 *)(*(u8 **)gEventWork + 480);
     x = *(s32 *)(object + 8);

@@ -88,7 +88,6 @@
  *     shorter and adds one more long-lived value.
  */
 
-#define BattleEffect_RunImpactBurst Func_080cf8e0
 
 
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 words);
@@ -155,10 +154,6 @@ extern u16 Data_080ee0e8[];
 /* Names the project already resolves for this owner's callees; the four
    lowercase spellings are static in their own units, so they are aliased
    here the way recon/tbs/en/main/08027114.c aliases random_16. */
-#define update_members Func_080d6888
-#define apply_base_and_y_offset Func_080e3944
-#define random_16 Func_08004458
-#define advance_with_gravity_3d Func_080e38b8
 
 void Func_080cd594(s32 mode);
 void *Func_08002f40(s32 resource_id);   /* "get" in alchemy inspect */
@@ -167,19 +162,19 @@ struct ActorObject **Func_080b5098(s32 member_id);
 void Func_080f9010(s32 cue);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void update_members(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b50e8(s32 cue);
-s32 Func_080022ec(s32 numerator, s32 denominator);
-void apply_base_and_y_offset(void *source, void *screen);
-void advance_with_gravity_3d(void *record, s32 mode, s32 gravity);
-s32 random_16(void);
+s32 Math_Div(s32 numerator, s32 denominator);
+void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
+void EffectStep_AdvanceWithGravity3D(void *record, s32 mode, s32 gravity);
+s32 Random16(void);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 resource_id);
 void Func_080cdbc0(void);
 
-void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
+void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
 {
     void **cursor;
     struct EffectRuntime *work;
@@ -306,15 +301,15 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
             do {
                 if (frame >= start) {
                     if (frame == start + 17) {
-                        update_members(
+                        ObjectGroup_UpdateMembers(
                             work->argument->member_ids[member], 7, 5, member, 16);
                         Func_080b50e8(133);
                     }
                     if (shard->frame >= 0) {
-                        cell = Func_080022ec(frame - start, 3);
+                        cell = Math_Div(frame - start, 3);
                         if (cell > 9)
                             cell = 9;
-                        apply_base_and_y_offset(shard, screen);
+                        EffectPosition_ApplyBaseAndYOffset(shard, screen);
                         screen[0] >>= 1;
                         if (cell > 4) {
                             ((DrawRectangleFn)rectangle[0])(
@@ -334,7 +329,7 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                                 32);
                         }
                         if (shard->frame == 0)
-                            advance_with_gravity_3d(shard, 63, -0x8000);
+                            EffectStep_AdvanceWithGravity3D(shard, 63, -0x8000);
                         if (shard->y < 0) {
                             shard->y = 0;
                             shard->frame = 1;
@@ -350,17 +345,17 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                                 spark->z = shard->z;
                                 if (Data_080ee0b6[variant * 2] == 0) {
                                     spark->vx =
-                                        ((random_16() & 63) - 32) << 11;
+                                        ((Random16() & 63) - 32) << 11;
                                     spark->vy = 0;
                                     spark->vz =
-                                        ((random_16() & 63) - 32) << 11;
+                                        ((Random16() & 63) - 32) << 11;
                                 } else {
                                     spark->vx =
-                                        ((random_16() & 63) - 32) << 13;
+                                        ((Random16() & 63) - 32) << 13;
                                     spark->vy =
-                                        ((random_16() & 31) + 32) << 12;
+                                        ((Random16() & 31) + 32) << 12;
                                     spark->vz =
-                                        ((random_16() & 63) - 32) << 13;
+                                        ((Random16() & 63) - 32) << 13;
                                 }
                                 spark->frame = 0;
                             }
@@ -379,7 +374,7 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                compare came from: an unstarted spark keeps frame = -1. */
             if ((spark->frame >= 0) && (spark->frame <= 44)
                     && (spark->y >= 0)) {
-                apply_base_and_y_offset(spark, screen);
+                EffectPosition_ApplyBaseAndYOffset(spark, screen);
                 screen[0] >>= 1;
                 if (Data_080ee0b6[variant * 2] == 0) {
                     ((DrawRectangleFn)rectangle_slot[1])(
@@ -395,7 +390,7 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                     s32 wide;
                     s32 high;
 
-                    index = Func_080022ec(spark->frame, 5);
+                    index = Math_Div(spark->frame, 5);
                     if ((i & 1) != 0)
                         index += 9;
                     side = object->direction;
@@ -415,9 +410,9 @@ void BattleEffect_RunImpactBurst(struct EffectArgument *object, s32 variant)
                         high);
                 }
                 if (Data_080ee0b6[variant * 2] == 0)
-                    advance_with_gravity_3d(spark, 62, 0x800);
+                    EffectStep_AdvanceWithGravity3D(spark, 62, 0x800);
                 else
-                    advance_with_gravity_3d(spark, 62, -0x8000);
+                    EffectStep_AdvanceWithGravity3D(spark, 62, -0x8000);
                 spark->frame++;
             }
             spark++;

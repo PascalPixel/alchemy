@@ -8,7 +8,7 @@ struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
  * count (bits 11-15) of the first nonempty slot holding the item, plus one,
  * or 0 when the owner does not carry it.
  */
-s32 Func_080a3d9c(s32 owner, s32 item)
+s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item)
 {
     struct OwnerInventoryState *state;
     s32 i;

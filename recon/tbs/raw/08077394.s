@@ -1,10 +1,8 @@
 .syntax unified
 	.thumb
 	.global Owner_GetState
-	.global Func_08077394
 	.thumb_func
 Owner_GetState:
-Func_08077394:
 	push	{lr}
 	mov	r3, lr
 	ldr	r2, [pc, #48]

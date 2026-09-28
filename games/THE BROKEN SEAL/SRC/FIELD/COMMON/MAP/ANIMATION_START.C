@@ -8,7 +8,6 @@ struct MapAnimationWork {
     u16 limit;
 };
 
-#define MapAnimation_Start Func_08011590
 
 s32 Scheduler_EnableCallbacks(void (*callback)(void));
 void WaitFrames(s32 frames);

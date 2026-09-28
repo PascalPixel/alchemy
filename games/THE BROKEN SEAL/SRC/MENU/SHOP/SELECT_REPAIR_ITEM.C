@@ -4,6 +4,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
 extern u8 Data_03001b04[];
@@ -18,7 +19,7 @@ extern u8 MsgItemPlainName;
 extern u8 Value_00000cc2;
 
 /*
- * Repair flow reached from Shop_SelectPartyMember when the shop's party
+ * Repair flow reached from Shop_PickUnit when the shop's party
  * action is not "sell": browse the chosen member's inventory, priced one
  * slot at a time, and hand a confirmed slot off to Shop_RepairItem before
  * showing the repair-result message.
@@ -39,8 +40,8 @@ s32 Shop_SelRepair(s32 unit_id)
     s32 x;
     s32 y;
 
-    shop = SHOP_RUNTIME;
-    unit = BattleUnit_Get(unit_id);
+    shop = gMenuWork;
+    unit = Owner_GetStateFar(unit_id);
     item_count = 1;
     list_window = UiWindow_CreateFar(15, 8, 15, 4, 2);
     selection = 0;
@@ -63,9 +64,9 @@ s32 Shop_SelRepair(s32 unit_id)
                 y = Math_Div(selection, 5) * 16 + 8;
                 Shop_PlaceCursor(window, x, y);
                 shop->mode = 3;
-                price = Shop_ComputeRepairPrice(unit->inventory[selection]);
+                price = Shop_RepairPrice(unit->inventory[selection]);
                 Shop_DrawItemPrice(list_window, item_id, price, 2);
-                Shop_DrawMessage(
+                Shop_DrawMsg(
                     price_window, item_id + (s32)&MsgItemPlainName);
             }
             if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {

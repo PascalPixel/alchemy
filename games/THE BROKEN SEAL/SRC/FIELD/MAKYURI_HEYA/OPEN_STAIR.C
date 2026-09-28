@@ -3,7 +3,7 @@
 void Engine_MapCopyCellsTo(s32 sx, s32 sy, s32 dx, s32 dy, s32 w, s32 h);
 u32 Engine_RandomNext(void);
 void Effect_Spawn(s32 x, s32 y, s32 z, s32 dx, s32 dy, s32 dz, s32 lift, void *params);
-void Engine_EventWait(s32 frames);
+void Battle_WaitMode0(s32 frames);
 
 struct EffectParams {
     s32 count;
@@ -36,7 +36,7 @@ void MakyuriHeya_OpenThreeStepStair(void)
                 } else {
                     Effect_Spawn((((i << 2) + j) << 17) + 0xb70000, 0, (0x26c - ((Engine_RandomNext() * 5) >> 16)) << 16, 0x4000, 0, 0, 0x90000, p);
                 }
-                Engine_EventWait(1);
+                Battle_WaitMode0(1);
             }
             z += -0x20000;
         }

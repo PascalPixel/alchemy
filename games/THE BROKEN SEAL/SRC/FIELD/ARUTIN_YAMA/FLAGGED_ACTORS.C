@@ -1,13 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -45,7 +38,7 @@ void ArutinYama_PlaceFlaggedActors(void)
         Engine_MapRedraw();
         Engine_TaskWait(1);
     }
-    if (Data_02000240_t.halves[225][0] == 6 && !Engine_GameFlagIsSet(0x109)) {
+    if (gGameState.entrance == 6 && !Engine_GameFlagIsSet(0x109)) {
         Engine_EventBegin();
         Engine_ActorGet(0)->y.fixed = -0x580000;
         Engine_CameraMoveTo(0x3180000, -0x580000, 0x2410000, 0);

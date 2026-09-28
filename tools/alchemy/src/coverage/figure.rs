@@ -1,5 +1,5 @@
-//! The README's two figures, drawn in whole game pixels from the tracked
-//! glyph sheet and written at `FIGURE_SCALE`: PROGRESS_CHART.png, each
+//! The README's two figures, drawn in whole game pixels with the lettering
+//! defined in `letters` and written at `FIGURE_SCALE`: PROGRESS_CHART.png, each
 //! game's DONE by calendar day, and PROGRESS.png, the map of tracked files.
 //! Both are drawn in Weyard UI (`palette`) and are opaque but for the four
 //! cut corner pixels of their frames, so they read the same on light and

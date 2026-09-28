@@ -12,7 +12,8 @@
 	.global ColorBuffer_ScaleKernel
 	.thumb_func
 ColorBuffer_ScaleKernel:
-.L_08118394:
+	.global ColorBuffer_ScaleKernelCode
+ColorBuffer_ScaleKernelCode:
 	bx	pc
 	.2byte	0x0200
 	.arm

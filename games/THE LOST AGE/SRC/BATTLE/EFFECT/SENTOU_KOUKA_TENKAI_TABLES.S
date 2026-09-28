@@ -6,20 +6,15 @@
 @ and carry no credit, as TBS BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_TABLES.S.
 .syntax unified
 	.section .data,"aw",%progbits
-	.set	.L_081a0170, 0x081a0170
-	.set	.L_081a018c, 0x081a018c
-	.set	.L_081a022c, 0x081a022c
-	.set	.L_081a01dc, 0x081a01dc
-	.set	.L_081a01b4, 0x081a01b4
-	.set	.L_081a025c, 0x081a025c
-	.set	.L_081a0204, 0x081a0204
 	.arm
 	.4byte	0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
-	.4byte	.L_081a0170
-	.4byte	.L_081a018c
-	.4byte	.L_081a022c
-	.4byte	.L_081a01dc
-	.4byte	.L_081a0170
-	.4byte	.L_081a01b4
-	.4byte	.L_081a025c
-	.4byte	.L_081a0204
+	.global SentouKouka_TenkaiCaseTable
+SentouKouka_TenkaiCaseTable:
+	.4byte	SentouKouka_TenkaiCase2
+	.4byte	SentouKouka_TenkaiCase4Plus
+	.4byte	SentouKouka_TenkaiCase8
+	.4byte	SentouKouka_TenkaiCase6Plus
+	.4byte	SentouKouka_TenkaiCase2
+	.4byte	SentouKouka_TenkaiCase4Minus
+	.4byte	SentouKouka_TenkaiCase10
+	.4byte	SentouKouka_TenkaiCase6Minus

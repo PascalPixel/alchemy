@@ -41,3 +41,5 @@
 	adds	r7, r7, fp, asr #18
 	addmi	r7, r7, #64
 	adds	r1, r7, r6, lsl #16
+	.global IwramCodeRecordsEnd
+IwramCodeRecordsEnd:

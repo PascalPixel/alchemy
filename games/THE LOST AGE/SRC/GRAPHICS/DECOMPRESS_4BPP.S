@@ -12,7 +12,6 @@
 @ credit: library — TBS/TLA common ARM text and tile kernel bank, 4bpp decompressor
 .syntax unified
 	.thumb
-	.set	.L_08038b70, 0x08038b70
 	.global Tile_Decompress4bpp
 	.thumb_func
 Tile_Decompress4bpp:
@@ -27,10 +26,10 @@ AlchemyUncreditedEnd_08038b14:
 	mov	r5, #15
 	mov	ip, #1
 	ands	r6, r0, #3
-	beq	.L_08038b70
+	beq	Tile_Decompress4bppLoop
 	rsbs	r6, ip, r6, lsl #3
 	bic	r0, r0, #3
 	ldr	ip, [r0], #4
 	rrx	ip, ip
 	lsr	ip, ip, r6
-	b	.L_08038b70
+	b	Tile_Decompress4bppLoop

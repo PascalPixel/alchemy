@@ -5,9 +5,9 @@
 @ credit.
 @ credit: handwritten — TLA fixed-size ARM sound resampler record
 .syntax unified
-	.set	.L_08000504, 0x08000504
 	.arm
-.L_080004b8:
+	.global Sound_ResamplerRecord1
+Sound_ResamplerRecord1:
 	asrs	r4, ip, #24
 	mulne	r4, r6, r4
 	rors	ip, ip, #16
@@ -18,4 +18,4 @@
 	rors	fp, fp, #16
 	asrs	ip, fp, #24
 	mlane	r2, r1, ip, r2
-	b	.L_08000504
+	b	Sound_ResamplerRecord2

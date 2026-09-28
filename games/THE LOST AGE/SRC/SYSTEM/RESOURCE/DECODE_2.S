@@ -12,8 +12,6 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank, compression format 2 decoder
 .syntax unified
 	.thumb
-	.set	.L_08012e54, 0x08012e54
-	.set	.L_08012c7c, 0x08012c7c
 	.global Resource_Decode2
 	.thumb_func
 Resource_Decode2:
@@ -36,5 +34,5 @@ AlchemyUncreditedEnd_08012b70:
 	lsl	r4, r2, #3
 	ldrbne	r2, [r0], #1
 	subs	r4, r4, #16
-	blmi	.L_08012e54
-	b	.L_08012c7c
+	blmi	Resource_RefillType2Bits
+	b	Resource_DecodeType2Loop

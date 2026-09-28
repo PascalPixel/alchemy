@@ -8,6 +8,9 @@
 
 void OverlayObject_AdvancePositionByDelta();
 
+/* The overlay's three effect scripts, at the start of its read-only data. */
+extern const s32 *const gEffectScripts[];
+
 struct ScriptTable {
     const s32 *script[3];
 };
@@ -20,7 +23,7 @@ void Effect_Spawn(s32 x, s32 y, s32 z, s32 velocity_x, s32 velocity_y, s32 veloc
     struct FieldSprite *spr;
     const s32 *script;
 
-    table = *(struct ScriptTable *)0x0200a418;
+    table = *(struct ScriptTable *)gEffectScripts;
     obj = (struct FieldEffect *)Engine_ObjectCreate(222, x, y, z);
     if (obj == 0)
         return;

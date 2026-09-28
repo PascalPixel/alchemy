@@ -3,7 +3,7 @@ extern u32 gFrameCount;
 
 void Engine_AudioPlayCue();
 u32 Engine_RandomNext();
-void Local_02001c18();
+void Effect_Spawn();
 
 
 
@@ -40,7 +40,7 @@ void ImiruFuchin_BlowCaveMouthDust(void)
     s32 dx;
     s32 dy;
 
-    phase = *(s32 *)&gFrameCount & 3;
+    phase = *(volatile s32 *)&gFrameCount & 3;
     if (phase != 0)
         return;
     p = &params;
@@ -49,9 +49,9 @@ void ImiruFuchin_BlowCaveMouthDust(void)
     p->spreadY = 0x8000;
     p->growX = 0x1cccc;
     p->growY = 0x1cccc;
-    if ((*(s32 *)&gFrameCount & 7) == 0)
+    if ((*(volatile s32 *)&gFrameCount & 7) == 0)
         Engine_AudioPlayCue(136);
     dx = -0x10000 - (((Engine_RandomNext() << 1) >> 16) << 16);
     dy = -(s32)(((Engine_RandomNext() * 3) >> 16) * 0x3333);
-    Local_02001c18(0x1340000, 0x400000, 0xde0000, dx, dy, phase, 0xd0001, p);
+    Effect_Spawn(0x1340000, 0x400000, 0xde0000, dx, dy, phase, 0xd0001, p);
 }

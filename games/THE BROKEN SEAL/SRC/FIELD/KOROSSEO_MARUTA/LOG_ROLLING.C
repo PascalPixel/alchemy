@@ -2337,7 +2337,7 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
  *
  * Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
  * target at every occurrence, including every repeated Func_0808a010,
- * Audio_PlayCue, Func_02002e54, Func_020033d8, Func_0808a018/360/370/020
+ * Audio_PlayCue, Func_02002e54, ColossoLogRollingStage_InitializeModeTask, Func_0808a018/360/370/020
  * call) -- declared/named as the literal per-site targets, not the shared
  * ultimate-destination symbol.
  */

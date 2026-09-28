@@ -60,12 +60,12 @@ void Party_RemoveOwnerRestored(s32 owner)
     standing = 0;
     count = Party_CountActiveOwnersFar();
     for (i = 0; i < count; i++) {
-        vitals = Owner_GetStateFar(PARTY_STATE.active_owners[i]);
+        vitals = Owner_GetStateFar(gGameState.active_owners[i]);
         if (vitals->hp != 0)
             standing++;
     }
     if (standing == 0) {
-        vitals = Owner_GetStateFar(PARTY_STATE.current_owner);
+        vitals = Owner_GetStateFar(gGameState.current_owner);
         vitals->hp = 1;
         vitals->hp_ratio = Vitals_Ratio(vitals->hp, vitals->max_hp);
         if (vitals->hp_ratio == 0 && vitals->hp != 0)

@@ -28,8 +28,7 @@ LAYOUT_OFFSET_GUARD(
     0x1f8);
 LAYOUT_SIZE_GUARD(PartyState_Size, struct PartyState, 0x200);
 
-extern struct PartyState Data_02000240;
-#define PARTY_STATE Data_02000240
+extern struct PartyState gGameState;
 
 s32 Party_CountActiveOwners(void);
 s32 Party_ListActiveOwners(s16 *owners);

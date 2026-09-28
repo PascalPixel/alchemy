@@ -4,26 +4,26 @@
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/ENTRY.INC"
-	.global Func_02000030
+	.global ColossoLogRollingStage_GetScriptData
 	.thumb_func
-Func_02000030:
+ColossoLogRollingStage_GetScriptData:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x0200d000
-	.global Func_02000038
+	.global ColossoLogRollingStage_GetMessageData
 	.thumb_func
-Func_02000038:
+ColossoLogRollingStage_GetMessageData:
 	movs r0, #0
 	bx lr
-	.global Func_0200003c
+	.global ColossoLogRollingStage_GetActorData
 	.thumb_func
-Func_0200003c:
+ColossoLogRollingStage_GetActorData:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x0200d090
-	.global Func_02000044
+	.global ColossoLogRollingStage_GetEffectData
 	.thumb_func
-Func_02000044:
+ColossoLogRollingStage_GetEffectData:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x0200d0a8
@@ -181,9 +181,9 @@ Func_02000044:
 	.4byte 0x0031ffff
 	.2byte 0xfffe
 	.2byte 0x0013
-	.global Func_02000188
+	.global ColossoLogRollingStage_ResetAndRunSceneTask
 	.thumb_func
-Func_02000188:
+ColossoLogRollingStage_ResetAndRunSceneTask:
 	push {r5, lr}
 	ldr r3, [pc, #28]
 	movs r2, #0
@@ -201,9 +201,9 @@ Func_02000188:
 	.4byte 0x0200d484
 	.4byte 0x0200804d
 	.4byte 0x0200d480
-	.global Func_020001b4
+	.global ColossoLogRollingStage_StartSceneTask
 	.thumb_func
-Func_020001b4:
+ColossoLogRollingStage_StartSceneTask:
 	push {lr}
 	movs r1, #200
 	lsls r1, r1, #4
@@ -212,9 +212,9 @@ Func_020001b4:
 	pop {r0}
 	bx r0
 	.4byte 0x0200804d
-	.global Func_020001c8
+	.global ColossoLogRollingStage_WaitForSceneTask
 	.thumb_func
-Func_020001c8:
+ColossoLogRollingStage_WaitForSceneTask:
 	push {r5, lr}
 	movs r0, #10
 	bl 0x0200c840
@@ -244,9 +244,9 @@ Func_020001c8:
 	.2byte 0x0000
 	.4byte 0x0200d480
 	.4byte 0x0200d484
-	.global Func_02000204
+	.global ColossoLogRollingStage_NudgeActorsLeft
 	.thumb_func
-Func_02000204:
+ColossoLogRollingStage_NudgeActorsLeft:
 	push {r5, lr}
 	ldr r3, [pc, #56]
 	movs r1, #250
@@ -280,9 +280,9 @@ Func_02000204:
 	.4byte 0x03001ebc
 	.4byte 0x02000240
 	.4byte 0xffff3334
-	.global Func_0200024c
+	.global ColossoLogRollingStage_ConfigureGridRegion
 	.thumb_func
-Func_0200024c:
+ColossoLogRollingStage_ConfigureGridRegion:
 	push {lr}
 	movs r0, #216
 	lsls r0, r0, #2
@@ -301,9 +301,9 @@ Func_0200024c:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02000274
+	.global ColossoLogRollingStage_ConfigurePrimaryObjects
 	.thumb_func
-Func_02000274:
+ColossoLogRollingStage_ConfigurePrimaryObjects:
 	push {r5, r6, lr}
 	movs r0, #9
 	sub sp, #8
@@ -477,9 +477,9 @@ Func_020002f8:
 	.4byte 0x00006666
 	.4byte 0x0000cccc
 	.4byte 0x00000367
-	.global Func_02000404
+	.global ColossoLogRollingStage_ConfigureSecondaryObjects
 	.thumb_func
-Func_02000404:
+ColossoLogRollingStage_ConfigureSecondaryObjects:
 	push {r5, r6, lr}
 	mov r6, r8
 	push {r6}
@@ -646,18 +646,18 @@ Func_020004a4:
 	bx r0
 	.4byte 0x00006666
 	.4byte 0x0000cccc
-	.global Func_0200057c
+	.global ColossoLogRollingStage_RunSetupCompletionHooks
 	.thumb_func
-Func_0200057c:
+ColossoLogRollingStage_RunSetupCompletionHooks:
 	push {lr}
 	bl 0x0200c628
 	bl 0x020084a4
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_0200058c
+	.global ColossoLogRollingStage_ConfigureActorThirteen
 	.thumb_func
-Func_0200058c:
+ColossoLogRollingStage_ConfigureActorThirteen:
 	push {r5, r6, lr}
 	movs r0, #13
 	sub sp, #8
@@ -688,22 +688,22 @@ Func_0200058c:
 	pop {r5, r6}
 	pop {r0}
 	bx r0
-	.global Func_020005d0
+	.global ColossoLogRollingStage_NoopSetupHook
 	.thumb_func
-Func_020005d0:
+ColossoLogRollingStage_NoopSetupHook:
 	bx lr
 	.2byte 0x0000
-	.global Func_020005d4
+	.global ColossoLogRollingStage_RunSetupHook
 	.thumb_func
-Func_020005d4:
+ColossoLogRollingStage_RunSetupHook:
 	push {lr}
 	bl 0x0200c628
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_020005e0
+	.global ColossoLogRollingStage_ActivateClearObstacleActors
 	.thumb_func
-Func_020005e0:
+ColossoLogRollingStage_ActivateClearObstacleActors:
 	push {r5, r6, lr}
 	sub sp, #8
 	movs r6, #15
@@ -760,9 +760,9 @@ Func_020005e0:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00000205
-	.global Func_02000658
+	.global ColossoLogRollingStage_ShowActorPositionMessage
 	.thumb_func
-Func_02000658:
+ColossoLogRollingStage_ShowActorPositionMessage:
 	push {r5, lr}
 	ldr r3, [pc, #68]
 	movs r2, #250
@@ -800,9 +800,9 @@ Func_02000658:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x02000240
-	.global Func_020006a4
+	.global ColossoLogRollingStage_CheckObstacleDestination
 	.thumb_func
-Func_020006a4:
+ColossoLogRollingStage_CheckObstacleDestination:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	adds r6, r1, #0
@@ -861,9 +861,9 @@ Func_020006a4:
 	pop {r1}
 	bx r1
 	.2byte 0x0000
-	.global Func_02000714
+	.global ColossoLogRollingStage_CheckPathClearance
 	.thumb_func
-Func_02000714:
+ColossoLogRollingStage_CheckPathClearance:
 	push {r5, r6, lr}
 	ldr r3, [pc, #76]
 	adds r5, r1, #0
@@ -1220,9 +1220,9 @@ Func_0200076c:
 	.4byte 0x00003333
 	.4byte 0x00000ccc
 	.4byte 0x00000369
-	.global Func_02000a20
+	.global ColossoLogRollingStage_SetSceneEventValues
 	.thumb_func
-Func_02000a20:
+ColossoLogRollingStage_SetSceneEventValues:
 	push {lr}
 	movs r0, #1
 	bl 0x0200c928
@@ -1238,9 +1238,9 @@ Func_02000a20:
 	pop {r1}
 	bx r1
 	.2byte 0x0000
-	.global Func_02000a44
+	.global ColossoLogRollingStage_ConfigureSceneEventEffect
 	.thumb_func
-Func_02000a44:
+ColossoLogRollingStage_ConfigureSceneEventEffect:
 	push {r5, lr}
 	movs r0, #30
 	bl 0x0200ca18
@@ -1266,9 +1266,9 @@ Func_02000a44:
 	.4byte 0x00019999
 	.4byte 0x0200cc48
 	.4byte 0x00000363
-	.global Func_02000a84
+	.global ColossoLogRollingStage_WaitForSceneEventTask
 	.thumb_func
-Func_02000a84:
+ColossoLogRollingStage_WaitForSceneEventTask:
 	push {r5, lr}
 	movs r0, #28
 	bl 0x0200cb90
@@ -1302,9 +1302,9 @@ Func_02000a84:
 	.4byte 0x00000361
 	.4byte 0x0200d480
 	.4byte 0x0200804d
-	.global Func_02000ad4
+	.global ColossoLogRollingStage_OffsetActiveActor
 	.thumb_func
-Func_02000ad4:
+ColossoLogRollingStage_OffsetActiveActor:
 	push {r5, r6, lr}
 	ldr r6, [pc, #80]
 	movs r0, #250
@@ -1344,9 +1344,9 @@ Func_02000ad4:
 	.2byte 0x0000
 	.4byte 0x02000240
 	.4byte 0xfff00000
-	.global Func_02000b30
+	.global ColossoLogRollingStage_ClampAndOffsetActiveActor
 	.thumb_func
-Func_02000b30:
+ColossoLogRollingStage_ClampAndOffsetActiveActor:
 	push {r5, r6, lr}
 	ldr r3, [pc, #100]
 	movs r0, #250
@@ -1396,9 +1396,9 @@ Func_02000b30:
 	bx r0
 	.4byte 0x02000240
 	.4byte 0xfff00000
-	.global Func_02000ba0
+	.global ColossoLogRollingStage_NoopSceneEventHook
 	.thumb_func
-Func_02000ba0:
+ColossoLogRollingStage_NoopSceneEventHook:
 	bx lr
 	.2byte 0x0000
 	.global Func_02000ba4
@@ -1595,9 +1595,9 @@ Func_02000c5c:
 	.4byte 0x02000240
 	.4byte 0x0000022b
 	.4byte 0x00000091
-	.global Func_02000d70
+	.global ColossoLogRollingStage_RunSceneEventIfReady
 	.thumb_func
-Func_02000d70:
+ColossoLogRollingStage_RunSceneEventIfReady:
 	push {lr}
 	bl 0x0200c790
 	cmp r0, #0
@@ -1607,9 +1607,9 @@ Func_02000d70:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02000d84
+	.global ColossoLogRollingStage_FinishOrContinueSceneEvent
 	.thumb_func
-Func_02000d84:
+ColossoLogRollingStage_FinishOrContinueSceneEvent:
 	push {lr}
 	bl 0x0200c790
 	cmp r0, #0
@@ -1621,9 +1621,9 @@ Func_02000d84:
 .L_02000d84_1:
 	pop {r0}
 	bx r0
-	.global Func_02000d9c
+	.global ColossoLogRollingStage_GetSceneEventState
 	.thumb_func
-Func_02000d9c:
+ColossoLogRollingStage_GetSceneEventState:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x0200d488
@@ -2306,9 +2306,9 @@ Func_02000da4:
 	.2byte 0x0200
 	.2byte 0x0951
 	.2byte 0x0000
-	.global Func_0200137c
+	.global ColossoLogRollingStage_AdvanceParticleMotion
 	.thumb_func
-Func_0200137c:
+ColossoLogRollingStage_AdvanceParticleMotion:
 	adds r1, r0, #0
 	adds r1, #100
 	movs r3, #0
@@ -2342,9 +2342,9 @@ Func_0200137c:
 	bx lr
 	.2byte 0x0000
 	.4byte 0x00000666
-	.global Func_020013c0
+	.global ColossoLogRollingStage_SpawnPeriodicParticle
 	.thumb_func
-Func_020013c0:
+ColossoLogRollingStage_SpawnPeriodicParticle:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -3919,9 +3919,9 @@ Func_020020f0:
 	.2byte 0x0000
 	.2byte 0x20be
 	.2byte 0x0000
-	.global Func_020022c4
+	.global ColossoLogRollingStage_PositionActor
 	.thumb_func
-Func_020022c4:
+ColossoLogRollingStage_PositionActor:
 	push {r5, r6, r7, lr}
 	adds r6, r1, #0
 	adds r7, r2, #0
@@ -3943,9 +3943,9 @@ Func_020022c4:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_020022f4
+	.global ColossoLogRollingStage_PositionAndActivateActor
 	.thumb_func
-Func_020022f4:
+ColossoLogRollingStage_PositionAndActivateActor:
 	push {r5, r6, r7, lr}
 	adds r6, r1, #0
 	adds r7, r2, #0
@@ -4145,9 +4145,9 @@ Func_02002330:
 	.4byte 0xfffecccd
 	.4byte 0x00000103
 	.4byte 0x000020c2
-	.global Func_020024d0
+	.global ColossoLogRollingStage_RunLogRollingInteraction
 	.thumb_func
-Func_020024d0:
+ColossoLogRollingStage_RunLogRollingInteraction:
 	push {r5, r6, lr}
 	ldr r3, [pc, #232]
 	movs r2, #225
@@ -4247,9 +4247,9 @@ Func_020024d0:
 	.4byte 0x02000240
 	.4byte 0x000020c7
 	.4byte 0x000020c6
-	.global Func_020025c8
+	.global ColossoLogRollingStage_RestoreActorPositions
 	.thumb_func
-Func_020025c8:
+ColossoLogRollingStage_RestoreActorPositions:
 	push {r5, r6, lr}
 	movs r0, #224
 	lsls r0, r0, #2
@@ -4398,9 +4398,9 @@ Func_02002640:
 	pop {r5}
 	pop {r0}
 	bx r0
-	.global Func_02002710
+	.global ColossoLogRollingStage_MarkSceneProgress
 	.thumb_func
-Func_02002710:
+ColossoLogRollingStage_MarkSceneProgress:
 	push {r5, lr}
 	ldr r3, [pc, #56]
 	movs r1, #250
@@ -4434,9 +4434,9 @@ Func_02002710:
 	.4byte 0x03001ebc
 	.4byte 0x02000240
 	.4byte 0x00000141
-	.global Func_02002758
+	.global ColossoLogRollingStage_SelectNearestObstacle
 	.thumb_func
-Func_02002758:
+ColossoLogRollingStage_SelectNearestObstacle:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9
@@ -4770,9 +4770,9 @@ Func_020029ac:
 	.2byte 0x0000
 	.4byte 0x000020e5
 	.4byte 0x000020e8
-	.global Func_02002a50
+	.global ColossoLogRollingStage_ClearSavedActorPositions
 	.thumb_func
-Func_02002a50:
+ColossoLogRollingStage_ClearSavedActorPositions:
 	push {lr}
 	movs r0, #224
 	lsls r0, r0, #2
@@ -4801,9 +4801,9 @@ Func_02002a50:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02002a94
+	.global ColossoLogRollingStage_RunStateInteraction
 	.thumb_func
-Func_02002a94:
+ColossoLogRollingStage_RunStateInteraction:
 	push {r5, r6, lr}
 	adds r5, r1, #0
 	adds r6, r0, #0
@@ -4888,9 +4888,9 @@ Func_02002a94:
 	.4byte 0x00002078
 	.4byte 0x0000207a
 	.4byte 0x0000207c
-	.global Func_02002b50
+	.global ColossoLogRollingStage_InitializeStateInteraction
 	.thumb_func
-Func_02002b50:
+ColossoLogRollingStage_InitializeStateInteraction:
 	push {r5, lr}
 	adds r5, r0, #0
 	adds r0, r1, #0
@@ -5217,9 +5217,9 @@ Func_02002bac:
 	.4byte 0x0000207d
 	.4byte 0x0000207e
 	.4byte 0x0000207f
-	.global Func_02002e18
+	.global ColossoLogRollingStage_ApplyItemToMatchingSlots
 	.thumb_func
-Func_02002e18:
+ColossoLogRollingStage_ApplyItemToMatchingSlots:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -5935,9 +5935,9 @@ Func_02002e54:
 	.4byte 0x04000050
 	.2byte 0x0052
 	.2byte 0x0400
-	.global Func_020033d8
+	.global ColossoLogRollingStage_InitializeModeTask
 	.thumb_func
-Func_020033d8:
+ColossoLogRollingStage_InitializeModeTask:
 	push {r5, r6, lr}
 	ldr r3, [pc, #48]
 	adds r5, r0, #0
@@ -6000,9 +6000,9 @@ Func_020033d8:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02003468
+	.global ColossoLogRollingStage_RunScriptedTransition
 	.thumb_func
-Func_02003468:
+ColossoLogRollingStage_RunScriptedTransition:
 	push {r5, lr}
 	adds r5, r0, #0
 	cmp r5, #0
@@ -6496,9 +6496,9 @@ Func_0200381c:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_020038dc
+	.global ColossoLogRollingStage_ResetActorMotion
 	.thumb_func
-Func_020038dc:
+ColossoLogRollingStage_ResetActorMotion:
 	push {r5, lr}
 	bl 0x0200ca18
 	adds r5, r0, #0
@@ -6513,9 +6513,9 @@ Func_020038dc:
 	pop {r5}
 	pop {r0}
 	bx r0
-	.global Func_020038fc
+	.global ColossoLogRollingStage_EnsurePaletteHandle
 	.thumb_func
-Func_020038fc:
+ColossoLogRollingStage_EnsurePaletteHandle:
 	push {r5, lr}
 	ldr r5, [pc, #24]
 	movs r2, #0
@@ -6678,9 +6678,9 @@ Func_020038fc:
 	bx	r0
 	.2byte 0x0000
 	.2byte 0x0000
-	.global Func_02003a58
+	.global ColossoLogRollingStage_StartPaletteTask
 	.thumb_func
-Func_02003a58:
+ColossoLogRollingStage_StartPaletteTask:
 	push {r5, r6, lr}
 	mov r6, r8
 	push {r6}
@@ -6722,9 +6722,9 @@ Func_02003a58:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02003abc
+	.global ColossoLogRollingStage_StartPaletteTaskFromState
 	.thumb_func
-Func_02003abc:
+ColossoLogRollingStage_StartPaletteTaskFromState:
 	push {lr}
 	ldr r3, [pc, #52]
 	strh r0, [r3]
@@ -6760,9 +6760,9 @@ Func_02003abc:
 	.4byte 0x0200dbcc
 	.4byte 0x0200db90
 	.4byte 0x0200b91d
-	.global Func_02003b18
+	.global ColossoLogRollingStage_StopPaletteTask
 	.thumb_func
-Func_02003b18:
+ColossoLogRollingStage_StopPaletteTask:
 	push {r5, lr}
 	ldr r0, [pc, #28]
 	bl 0x0200c850
@@ -6778,9 +6778,9 @@ Func_02003b18:
 	.4byte 0xffffffff
 	.4byte 0x0200b91d
 	.4byte 0x0200dace
-	.global Func_02003b40
+	.global ColossoLogRollingStage_PositionScaledObject
 	.thumb_func
-Func_02003b40:
+ColossoLogRollingStage_PositionScaledObject:
 	push {r5, r6, r7, lr}
 	adds r6, r1, #0
 	adds r7, r2, #0
@@ -6810,9 +6810,9 @@ Func_02003b40:
 	pop {r5, r6, r7}
 	pop {r0}
 	bx r0
-	.global Func_02003b80
+	.global ColossoLogRollingStage_SpawnPositionedObject
 	.thumb_func
-Func_02003b80:
+ColossoLogRollingStage_SpawnPositionedObject:
 	push {r5, r6, r7, lr}
 	adds r6, r1, #0
 	adds r7, r2, #0
@@ -6965,22 +6965,22 @@ Func_02003c94:
 	pop {r0}
 	bx r0
 	.4byte 0x0200ce3c
-	.global Func_02003cc0
+	.global ColossoLogRollingStage_NoopSceneHook
 	.thumb_func
-Func_02003cc0:
+ColossoLogRollingStage_NoopSceneHook:
 	bx lr
 	.2byte 0x0000
-	.global Func_02003cc4
+	.global ColossoLogRollingStage_SetBalanceStateReady
 	.thumb_func
-Func_02003cc4:
+ColossoLogRollingStage_SetBalanceStateReady:
 	ldr r2, [pc, #4]
 	movs r3, #9
 	strh r3, [r2]
 	bx lr
 	.4byte 0x02001000
-	.global Func_02003cd0
+	.global ColossoLogRollingStage_WaitForBalanceState
 	.thumb_func
-Func_02003cd0:
+ColossoLogRollingStage_WaitForBalanceState:
 	push {r5, lr}
 	ldr r5, [pc, #28]
 	movs r2, #0
@@ -6999,9 +6999,9 @@ Func_02003cd0:
 	pop {r0}
 	bx r0
 	.4byte 0x02001000
-	.global Func_02003cf4
+	.global ColossoLogRollingStage_SpawnRandomSceneEffect
 	.thumb_func
-Func_02003cf4:
+ColossoLogRollingStage_SpawnRandomSceneEffect:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	ldr r3, [r5, #40]
@@ -7067,9 +7067,9 @@ Func_02003cf4:
 	bx r0
 	.4byte 0x0000011d
 	.4byte 0x0200ce50
-	.global Func_02003d88
+	.global ColossoLogRollingStage_RaiseLinkedSceneEffect
 	.thumb_func
-Func_02003d88:
+ColossoLogRollingStage_RaiseLinkedSceneEffect:
 	push {r5, r6, lr}
 	mov r6, r8
 	push {r6}
@@ -7107,9 +7107,9 @@ Func_02003d88:
 	bx r1
 	.2byte 0x0000
 	.4byte 0x0200ce74
-	.global Func_02003ddc
+	.global ColossoLogRollingStage_PositionActiveActor
 	.thumb_func
-Func_02003ddc:
+ColossoLogRollingStage_PositionActiveActor:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -7942,9 +7942,9 @@ Func_02003ef0:
 	.4byte 0x0200cd80
 	.2byte 0x1e40
 	.2byte 0x0300
-	.global Func_02004494
+	.global ColossoLogRollingStage_SetupSceneDescriptor
 	.thumb_func
-Func_02004494:
+ColossoLogRollingStage_SetupSceneDescriptor:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -8049,9 +8049,9 @@ Func_02004494:
 	pop {r5, r6, r7}
 	pop {r0}
 	bx r0
-	.global Func_0200457c
+	.global ColossoLogRollingStage_InitializeSceneControl
 	.thumb_func
-Func_0200457c:
+ColossoLogRollingStage_InitializeSceneControl:
 	push {r5, r6, lr}
 	ldr r3, [pc, #60]
 	ldr r6, [r3]
@@ -8086,9 +8086,9 @@ Func_0200457c:
 	.4byte 0x00000109
 	.4byte 0x00000c85
 	.4byte 0x0200bef1
-	.global Func_020045d0
+	.global ColossoLogRollingStage_SetSceneControlValue
 	.thumb_func
-Func_020045d0:
+ColossoLogRollingStage_SetSceneControlValue:
 	ldr r3, [pc, #8]
 	ldr r3, [r3]
 	adds r3, #220
@@ -8137,9 +8137,9 @@ Func_020045e0:
 	bx r1
 	.2byte 0x0000
 	.4byte 0x03001ebc
-	.global Func_02004628
+	.global ColossoLogRollingStage_PushStagedActor
 	.thumb_func
-Func_02004628:
+ColossoLogRollingStage_PushStagedActor:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10
@@ -8313,9 +8313,9 @@ Func_02004628:
 	.2byte 0x0000
 	.2byte 0xffff
 	.4byte 0x00003333
-	.global Func_02004790
+	.global ColossoLogRollingStage_FindActorAhead
 	.thumb_func
-Func_02004790:
+ColossoLogRollingStage_FindActorAhead:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}

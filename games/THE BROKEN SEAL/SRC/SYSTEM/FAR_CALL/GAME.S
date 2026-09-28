@@ -146,9 +146,9 @@ Owner_RecalculateRatiosFar:
 Owner_UpdateRatioPairFar:
 	overlay_veneer 0x080782a1
 	overlay_veneer 0x08078321
-	.global Func_08077140
+	.global BattleUnit_AssignFar
 	.thumb_func
-Func_08077140:
+BattleUnit_AssignFar:
 	overlay_veneer 0x08079461
 	.global Party_CountActiveOwnersFar
 	.thumb_func

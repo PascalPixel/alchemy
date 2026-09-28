@@ -1,18 +1,28 @@
-/* Instanced unit: 39b:02001ec8 and its twin 39c:02005458; the pillar script
- * and the rumble routine are per-overlay absolute symbols. */
+/* Linked into both Mercury Lighthouse overlays, each with its own copy of the
+ * pillar script and of the spark routine. */
 #include "TYPES.H"
 
 void Engine_EventBegin(void);
 u8 *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
 void Engine_ObjectSetScript(u8 *obj, s32 script);
-void Pillar_Rumble(void);
-void Engine_TaskWait(s32 frames);
-void Engine_ObjectSetAnimation(u8 *obj, s32 anim);
+void MakyuriHeya_SpawnSparkPair(void);
+void WaitFrames(s32 frames);
+void Object_SetMode(u8 *obj, s32 anim);
 void Engine_GameFlagSet(s32 flag);
 void Engine_EventEnd(void);
 
-extern u8 Pillar_Script[];
-extern s32 Data_02000240_t[];
+extern u8 Makyuri_PillarScript[];
+/* The saved game as words: word 125 is the selected actor. */
+extern s32 gGameState[];
+
+/* The IWRAM work pointers: the event work, and 0x20 bytes on, the scene's. */
+struct WorkPointers {
+    u8 *event;
+    u8 *unknown_04[7];
+    u8 *scene;
+};
+
+extern struct WorkPointers gWork;
 
 struct Sprite39b {
     u8 pad[9];
@@ -59,13 +69,13 @@ void MakyuriIriguchi_RaisePillar(void)
     struct Sprite39b *spr;
     s32 step;
 
-    /* FAKEMATCH: the work pointer is read as globals - 8 so the reference
-     * derives 0x03001ebc from the loaded 0x03001edc. */
+    /* FAKEMATCH: the event work pointer is read as globals - 8, so the pool
+     * holds the scene pointer's address and the base is derived from it. */
     {
-        u8 **globals = (u8 **)0x03001edc;
+        u8 **globals = &gWork.scene;
 
         state = *(struct PillarState **)globals[0];
-        leader = (*(struct Work **)(globals - 8))->actors[Data_02000240_t[125]];
+        leader = (*(struct Work **)(globals - 8))->actors[gGameState[125]];
     }
     if ((u32)state->step > 2)
         return;
@@ -76,7 +86,7 @@ void MakyuriIriguchi_RaisePillar(void)
         if (obj != 0) {
             spr = *(struct Sprite39b **)(obj + 80);
             *(s32 *)(obj + 20) = *(s32 *)(leader + 20);
-            Engine_ObjectSetScript(obj, (s32)Pillar_Script);
+            Engine_ObjectSetScript(obj, (s32)Makyuri_PillarScript);
             ((struct Obj *)obj)->owner = leader;
             ((struct Obj *)obj)->f85 = 4;
             ((struct Obj *)obj)->y += -0x8000;
@@ -92,10 +102,10 @@ void MakyuriIriguchi_RaisePillar(void)
         }
     }
     for (step = state->step; step <= 2; step++) {
-        Pillar_Rumble();
-        Engine_TaskWait(30);
+        MakyuriHeya_SpawnSparkPair();
+        WaitFrames(30);
         pillar[84] = 1;
-        Engine_ObjectSetAnimation(pillar, 5 - step);
+        Object_SetMode(pillar, 5 - step);
     }
     state->step = 3;
     state->x = (*(s32 *)(pillar + 8) & -0x100000) + 0x80000;

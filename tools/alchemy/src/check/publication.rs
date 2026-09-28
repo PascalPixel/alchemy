@@ -564,6 +564,16 @@ fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
             .collect(),
     )
 }
+/// An indexed PNG of any size as its packed palette indices, row by row.
+fn packed_indices(data: &[u8]) -> Option<Vec<u8>> {
+    let mut reader = png::Decoder::new(std::io::Cursor::new(data))
+        .read_info()
+        .ok()?;
+    let mut pixels = vec![0; reader.output_buffer_size()];
+    let frame = reader.next_frame(&mut pixels).ok()?;
+    pixels.truncate(frame.buffer_size());
+    Some(pixels)
+}
 /// A palette of more than ink and paper whose every colour is grey: a dump
 /// drawn without the asset's real palette.
 fn grey_sheet(data: &[u8]) -> bool {
@@ -711,11 +721,19 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
         return None;
     }
     // The README figures are generated, but held to the indexed build-input
-    // standard: palette pixels and standard chunks, no text payloads.
+    // standard: palette pixels and standard chunks, no text payloads. Only
+    // their size is exempt from the tile grid; like any other PNG they carry a
+    // real palette and never draw the cartridge logo.
     if matches!(path, "PROGRESS.png" | "PROGRESS_CHART.png") {
-        return exact_indexed_stream(data)
-            .is_none()
-            .then_some("README figure is not an exact indexed PNG");
+        if exact_indexed_stream(data).is_none() {
+            return Some("README figure is not an exact indexed PNG");
+        }
+        if grey_sheet(data) {
+            return Some(GREY_SHEET);
+        }
+        return logo
+            .is_some_and(|logo| packed_indices(data).is_none_or(|pixels| contains(&pixels, logo)))
+            .then_some(LOGO_REASON);
     }
     let components: Vec<_> = path.split('/').collect();
     let (area, rest) = match components.as_slice() {
@@ -3914,6 +3932,18 @@ mod tests {
             publication_data_reason(path, &png, Some(&logo)),
             Some(LOGO_REASON)
         );
+        // The README figures get no pass from the logo or grey-sheet checks.
+        for figure in ["PROGRESS.png", "PROGRESS_CHART.png"] {
+            assert_eq!(publication_data_reason(figure, &png, None), None);
+            assert_eq!(
+                publication_data_reason(figure, &png, Some(&logo)),
+                Some(LOGO_REASON)
+            );
+            assert_eq!(
+                publication_data_reason(figure, &grey_fixture(4), None),
+                Some(GREY_SHEET)
+            );
+        }
     }
     #[test]
     fn exact_inflation_refuses_surplus_and_trailing_streams() {

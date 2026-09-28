@@ -2,9 +2,10 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define WORKSPACE (*(u8 **) 0x03001EBC)
-
-#include "RESOURCE_38C.H"
+/* The room's scene tables, where the overlay's data lies. */
+extern u8 BiribinoHeya_PrimaryTable[];
+extern u8 BiribinoHeya_SecondaryTable[];
+extern u8 BiribinoHeya_TertiaryTable[];
 
 enum MessageBranchMessage {
     MSG_WHEN_SPRING_COMES_WANT_GO = 0x13d9,
@@ -30,30 +31,8 @@ enum MessageBranchMessage {
 };
 
 
-void Func_02000574(s32);
-u8 *Func_0200059a(s32);
-u8 *Func_020005fa(s32);
-u8 *Func_02000832(s32);
-
-/*
- * The eight-byte owner at 0x02000030 includes its one pool word, which holds
- * the returned table address 0x02008598.
- */
-
-/*
- * The eight-byte owner at 0x0200003c includes its one pool word, which holds
- * the returned table address 0x02008688.
- */
-
-/*
- * The eight-byte owner at 0x0200011c includes its one pool word, which holds
- * the returned table address 0x020088f0.
- */
-
-/*
- * Loader-relocated overlay calls: each symbol names the pre-relocation call
- * word the image holds, not a runtime address.
- */
+/* Marks which of a scene's placements lie inside the current view. */
+void ScenePlacement_ClipToView(s32 placements);
 
 /*
  * Call sites spelled through these wrappers pass their constants straight into
@@ -115,7 +94,7 @@ static __inline__ void SetScale_020009d8(s32 actor, s32 scale, s32 duration)
 
 u8 *SceneData_GetPrimaryTable(void)
 {
-    return (u8 *)RESOURCE38C_PRIMARY_TABLE_ADDRESS;
+    return BiribinoHeya_PrimaryTable;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -125,12 +104,12 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetSecondaryTable(void)
 {
-    return (u8 *)RESOURCE38C_SECONDARY_TABLE_ADDRESS;
+    return BiribinoHeya_SecondaryTable;
 }
 
 s32 SceneData_PrepareTable86b0(void)
 {
-    Func_02000574(0x020086B0);
+    ScenePlacement_ClipToView(0x020086B0);
     return 0x020086B0;
 }
 
@@ -139,7 +118,7 @@ void FieldScene_RunActor16MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)(Func_0200059a(0) + 6);
+    dir = *(u16 *)((u8 *)Engine_ActorGet(0) + 6);
     Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -161,7 +140,7 @@ void FieldScene_RunActor18MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)(Func_020005fa(0) + 6);
+    dir = *(u16 *)((u8 *)Engine_ActorGet(0) + 6);
     Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -180,16 +159,14 @@ void FieldScene_RunActor18MessageBranch(void)
 
 u8 *SceneData_GetTertiaryTable(void)
 {
-    return (u8 *)RESOURCE38C_TERTIARY_TABLE_ADDRESS;
+    return BiribinoHeya_TertiaryTable;
 }
 
 void FieldScene_RunActor17MessageBranch(void)
 {
-    s32 Func_02000662_a();
-
     u32 dir;
 
-    dir = *(u16 *)(Value1(Func_02000662_a, 0) + 6);
+    dir = *(u16 *)(Value1(Engine_ActorGet, 0) + 6);
     Event_Begin();
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Shop_Open(8, 17);
@@ -279,7 +256,7 @@ void FieldScene_RunActor19MessageBranch(void)
 
     u32 dir;
 
-    dir = *(u16 *)(Func_02000832(0) + 6);
+    dir = *(u16 *)((u8 *)Engine_ActorGet(0) + 6);
     Event_Begin();
 
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
@@ -375,14 +352,13 @@ void FieldScene_RunActor10MessageBranch(void)
 
 s32 FieldScene_SetupActor27OnEntry(void)
 {
-    u8 *Func_02000a14_a(s32);
 
     u8 *actor;
     u8 *record;
     s32 bits;
 
-    *(s32 *)(WORKSPACE + 448) = 521;
-    actor = Func_02000a14_a(27);
+    *(s32 *)((u8 *)gEventWork + 448) = 521;
+    actor = (u8 *)Engine_ActorGet(27);
     /*
      * The stored zero is also the mask's starting value: -13 is built by
      * subtracting from the register the strb already set to zero, not by

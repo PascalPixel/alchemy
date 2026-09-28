@@ -23,8 +23,8 @@ Text_PowersOfTen:
 	.global Flash_Chips
 Flash_Chips:
 	.incbin "baserom.gba", 0x00007a0c, 0x00000014
-	.section .unidentified.08007a50,"a"
-	.incbin "baserom.gba", 0x00007a50, 0x00000064
+	.section .unidentified.08007a68,"a"
+	.incbin "baserom.gba", 0x00007a68, 0x0000004c
 	.incbin "baserom.gba", 0x00007ab4, 0x00000008
 	.global Data_08007abc
 Data_08007abc:

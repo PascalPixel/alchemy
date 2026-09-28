@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7804 bytes; 3109 differing halfwords, 319 aligned edits. */
+ * Candidate 7804 bytes; 3109 differing halfwords, 314 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -125,6 +125,13 @@ static __inline__ void DrawTallImage(void *canvas, const void *pixels,
     s32 x, s32 y, s32 width, RectangleBlit *draw)
 {
     (*draw)(canvas, pixels, x, y, width, width * 2);
+}
+
+/* FAKEMATCH: Keep the cropped height inside the drawing scope. */
+static __inline__ void DrawCroppedImage(void *canvas, const void *pixels,
+    s32 x, s32 y, s32 width, RectangleBlit *draw)
+{
+    (*draw)(canvas, pixels, x, y, width, 91);
 }
 
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
@@ -926,10 +933,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     (image_y + Data_080eede2[2]), 128, 91);
             }
             if ((u32)(frame - 8) <= 1) {
-                DrawImage(
+                DrawCroppedImage(
                     canvas, 0x2010000,
                     Data_080eedd4[(work->effect->side * 7 + 3)],
-                    (image_y + Data_080eede2[3]), 128, 91, &blitters[0]);
+                    (image_y + Data_080eede2[3]), 128, &blitters[0]);
             }
             if ((u32)(frame - 10) <= 1) {
                 blitters[0](
@@ -995,7 +1002,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 blitters[0](canvas, ((s32)work + 0x3e80), 0, 16, 128, 91);
             }
             if ((u32)(frame - 8) <= 1) {
-                blitters[0](canvas, 0x2010000, 0, 16, 128, 91);
+                DrawCroppedImage(canvas, 0x2010000, 0, 16, 128, &blitters[0]);
             }
             if ((u32)(frame - 10) <= 1) {
                 blitters[0](canvas, 0x2012d80, 0, 16, 128, 59);

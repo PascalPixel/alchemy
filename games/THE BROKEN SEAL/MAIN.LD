@@ -898,7 +898,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SPAWN_HEAVY_IMPACT_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CALL_EFFECT_04.o"(.text)
         "*/recon/tbs/raw/08098cd6.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08098cd8.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_EFFECT04.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/UPDATE_ORBITING_PARTICLE_MAIN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SWAY_PARTICLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/OBJECTS_UPDATE_SHRINKING_ORBIT.o"(.text)

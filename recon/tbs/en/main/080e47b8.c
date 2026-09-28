@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7804 bytes; 3109 differing halfwords, 314 aligned edits. */
+ * Candidate 7804 bytes; 3076 differing halfwords, 348 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -778,7 +778,6 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         if (kind == 14) {
             s32 rise;
             s32 scroll;
-            RectangleBlit *draw_tbl;
             s32 width;
             s32 tile_height;
 
@@ -795,16 +794,18 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             while (scroll > 104)
                 scroll -= 104;
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
-            draw_tbl = (RectangleBlit *)gWorkSlot;
+            /* FAKEMATCH: Share the drawing cursor with the paired-image branch. */
+            work_blitters = (RectangleBlit *)gWorkSlot;
+            work_blitters += 47;
             width = 17;
             tile_height = 104;
             column_y = rise + scroll;
             column_x = origin_x - width / 2;
             DrawImage(canvas, 0x02010000, column_x, column_y - tile_height, width,
-                      tile_height, draw_tbl + 47);
+                      tile_height, work_blitters);
             DrawImage(canvas, 0x02010000, column_x, column_y, width,
-                      tile_height - scroll, draw_tbl + 47);
-            DrawImage(canvas, 0x020106e8, origin_x - width, rise + 47, width * 2, 65, draw_tbl + 47);
+                      tile_height - scroll, work_blitters);
+            DrawImage(canvas, 0x020106e8, origin_x - width, rise + 47, width * 2, 65, work_blitters);
             Runtime_ReleaseHeapBlock(47);
             if (frame == 8) {
                 work->shake_frames = frame;
@@ -814,20 +815,21 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             }
             {
                 s32 emitted = 0;
+                struct EffectStep *step;
 
                 for (i = 0; i != 64; i++) {
-                    particle = &work->particles[i];
-                    if (particle->variant == 0) {
-                        particle->x = target_actor->x;
-                        particle->y = 0x140000;
-                        particle->z = target_actor->z;
-                        particle->velocity_x = ((Random16() & 255) - 127) << 12;
-                        particle->velocity_y = ((Random16() & 255) - 64) << 10;
+                    step = &work->particles[i];
+                    if (step->variant == 0) {
+                        step->x = target_actor->x;
+                        step->y = 0x140000;
+                        step->z = target_actor->z;
+                        step->velocity_x = ((Random16() & 255) - 127) << 12;
+                        step->velocity_y = ((Random16() & 255) - 64) << 10;
                         /* FAKEMATCH: Finish velocity before deriving the particle lifetime. */
                         do {
-                            particle->velocity_z = ((Random16() & 255) - 127) << 12;
+                            step->velocity_z = ((Random16() & 255) - 127) << 12;
                         } while (0);
-                        particle->variant = i / 2 + 32;
+                        step->variant = i / 2 + 32;
                         emitted++;
                         if (emitted == 4)
                             break;

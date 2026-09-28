@@ -6,27 +6,54 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
 	overlay_veneer WaitFramesFar
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	overlay_veneer Scheduler_RemoveCallbackFar
 	overlay_veneer Random16Far
+	.global Object_SetMode
+	.thumb_func
+Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	overlay_veneer ObjectDispatch_InitializeFar
 	overlay_veneer Object_CreateFar
 	overlay_veneer ObjectDispatch_ReleaseFar
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Object_SetPosition
+	.thumb_func
+Object_SetPosition:
 	overlay_veneer Object_SetMoveTargetFar
+	.global Object_CommitPosition
+	.thumb_func
+Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
+	.global Map_CopyCellAttributeRect
+	.thumb_func
+Map_CopyCellAttributeRect:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Object_CheckMovementCollision
+	.thumb_func
+Object_CheckMovementCollision:
 	overlay_veneer Func_080091d8
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	overlay_veneer GameFlag_TestFar
 	overlay_veneer GameFlag_SetBitFar
+	.global Battle_WaitMode0
+	.thumb_func
+Battle_WaitMode0:
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Battle_ResetFar
 	overlay_veneer BattleFx_FinishActionFar
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Object_GetById
+	.thumb_func
+Object_GetById:
 	overlay_veneer Object_GetByIdFar
+	.global ObjectMotion_SetSpeedParameters
+	.thumb_func
+ObjectMotion_SetSpeedParameters:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
 	overlay_veneer Object_RefreshSelectorByIdFar
@@ -35,9 +62,18 @@
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	.global ObjectMotion_OffsetPositionAndResetMotion
+	.thumb_func
+ObjectMotion_OffsetPositionAndResetMotion:
 	overlay_veneer ObjectMotion_OffsetPositionAndResetMotionFar
+	.global ObjectMotion_CommitCurrentPositionAndActivate
+	.thumb_func
+ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer Object_SetModeByIdFar
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
 	overlay_veneer ObjectMotion_LaunchFar
@@ -57,5 +93,11 @@
 	overlay_veneer Event_SetStatus1c6Far
 	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Audio_PlayCueFromEventWorkFar
+	.global BattleFx_PlayQueuedSound
+	.thumb_func
+BattleFx_PlayQueuedSound:
 	overlay_veneer BattleFx_PlayQueuedSoundFar
+	.global Audio_PlayCue
+	.thumb_func
+Audio_PlayCue:
 	overlay_veneer AudioCommand_PlayFar

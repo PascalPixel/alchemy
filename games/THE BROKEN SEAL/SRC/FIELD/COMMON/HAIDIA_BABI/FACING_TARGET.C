@@ -269,7 +269,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0xE, 0);
     } else {
-        work = *(void **)0x03001EBC;
+        work = *(void **)&gEventWork;
         FIELD_AT_OFFSET(work, u16 *, 0x1D8) = (u16)(FIELD_AT_OFFSET(work, u16 *, 0x1D8) + 1);
         Event_AskYesNo(0xE, 0);
     }

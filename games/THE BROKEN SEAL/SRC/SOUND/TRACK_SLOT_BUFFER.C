@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 Flash_Handler3[];
 
 struct AudioTrackSlotWork {
     u8 unknown0000[0x3404];
@@ -22,14 +23,14 @@ void AudioTrack_ResetSlotBuckets(void)
     limit = 0x3FF;
     index = 0;
     zero = 0;
-    record = *(u8 **)0x02004C00 + 4;
+    record = *(u8 **)Flash_Handler3 + 4;
     do {
         *(s32 *)(record + 4) = index;
         index++;
         *(s32 *)record = zero;
         record += 12;
     } while (index <= limit);
-    slot = (s32 *)(*(u8 **)0x02004C00 + 0x3000);
+    slot = (s32 *)(*(u8 **)Flash_Handler3 + 0x3000);
     {
         s32 zero2 = 0;
         for (index = 0xFF; index >= 0; index--) {
@@ -75,7 +76,7 @@ void AudioTrack_RemoveSlotNode(s32 slot)
     s32 next_link_offset;
     void *previous_node;
 
-    track_table = *(s32 *)0x02004C00;
+    track_table = *(s32 *)Flash_Handler3;
     slot_offset = slot * 12;
     next_link_offset = slot_offset + 4;
     next_node = *(s32 *)(track_table + next_link_offset);
@@ -153,7 +154,7 @@ extern u8 Data_0000443c[];
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
     u32 cnt_off = 0x4404;
-    u8 **base_p = (u8 **)0x02004c00;
+    u8 **base_p = (u8 **)Flash_Handler3;
     u8 *base = *base_p;
     u32 index = 0;
     u32 *cnt_p = (u32 *)(base + cnt_off);

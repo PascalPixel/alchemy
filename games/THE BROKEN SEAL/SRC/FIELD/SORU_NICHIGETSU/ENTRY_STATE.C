@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void Engine_TaskWait();
 s32 Engine_GameFlagIsSet();
@@ -67,7 +68,7 @@ s32 SoruNichigetsu_RestoreEntryState(void)
     s32 lit;
 
     Engine_TaskWait(1);
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x204;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x204;
     done = 0;
     if (Value1(Engine_GameFlagIsSet, 0x809) != 0 && Value1(Engine_GameFlagIsSet, 0x814) == 0
         && Value1(Engine_GameFlagIsSet, 0x819) == 0) {

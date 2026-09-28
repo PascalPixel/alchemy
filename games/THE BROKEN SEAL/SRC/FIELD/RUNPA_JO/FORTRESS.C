@@ -36,14 +36,14 @@
 #define ObjectMotion_OffsetPositionAndResetMotion_3(a0, a1, a2) Value3(Engine_ActorSetDestinationOffset, a0, a1, a2)
 #define SharedWorkData_SetFirstAndSecondFields_2(args...) Func_02008788_a(args)
 #define BattleEffect_ComputeWeightedResultAndDispatch_2(args...) Func_02008788_b(args)
-#define SHARED_RECORD_FIELD_448 (*(u32 *)(*(u8 **)0x03001ebc + 448))
+#define SHARED_RECORD_FIELD_448 (*(u32 *)(*(u8 **)&gEventWork + 448))
 #define SharedWorkData_SetFirstAndSecondFields_1_02001e94(args...) Func_02007778(args)
 #define BattleEffect_ComputeWeightedResultAndDispatch_1_02001e94(args...) Func_02007782(args)
 #define Scene_GetRecord_1_02003054(args...) Func_020086d6(args)
 #define Scene_GetRecord_2_02003054(args...) Func_02009a00(args)
 #define Scene_GetRecord_3(args...) Func_02009a30(args)
 #define Scene_GetRecord_4(args...) Func_02009a60_b(args)
-#define SCENE_PHASE_02003054 (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
+#define SCENE_PHASE_02003054 (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
 #define PRIMARY_ID 24
 #define DERIVED_ID 25
 #define ObjectMotion_SetVariantCallbackAndInvokeObject_1_020049a0(a0, a1) Value2(Engine_ActorRunRepeatedMotion, a0, a1)
@@ -512,7 +512,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step_02003054(s32 amount)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }

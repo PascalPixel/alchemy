@@ -377,7 +377,7 @@ void Func_02001348(void)
     Func_02005f64(10, 4, 20);
     Func_02006754(10, 0);
     Call1(Func_02006652, 2132);
-    *(s32 *)(*(u8 **)0x03001ebc + 448) = 512;
+    *(s32 *)(*(u8 **)&gEventWork + 448) = 512;
     base = (s32)Value_00000015;
     Func_020067ca(base, 17);
     Func_020067da(base, 16);

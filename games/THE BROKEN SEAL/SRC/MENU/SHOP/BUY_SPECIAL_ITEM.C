@@ -1,5 +1,6 @@
 #include "SHOP.H"
 extern struct ShopRuntime *gMenuWork;
+extern struct GameState gGameState;
 extern u8 Data_03001f2c[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
@@ -35,7 +36,7 @@ void WaitFrames(s32 frames);
 void Shop_BuySpecialItem(void *window, s32 item_window)
 {
     struct ShopRuntime *shop = gMenuWork;
-    struct SpecialItemState *state = (struct SpecialItemState *)0x02000240;
+    struct SpecialItemState *state = (struct SpecialItemState *)&gGameState;
     s32 price;
     u32 saved;
     s32 redraw;

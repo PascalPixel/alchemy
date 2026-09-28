@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 gEffectWork[];
 
 enum TaskMessage {
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -692,7 +693,7 @@ void SceneState_StoreSlotTileXToWork832To848(void)
 
 void SceneState_SetWorkByte35(void)
 {
-    u8 *record = *(u8 **)0x03001F30;
+    u8 *record = *(u8 **)gEffectWork;
 
     record[53] = 1;
 }

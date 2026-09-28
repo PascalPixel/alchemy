@@ -200,7 +200,7 @@ void Scene_RunExtendedActorTransition(void)
         VinasuChojo_ShowMessage(3);
         step_pending = 1;
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 3;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 3;
         Event_Wait(60);
         VinasuChojo_ShowMessage(1);
         Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
@@ -209,7 +209,7 @@ void Scene_RunExtendedActorTransition(void)
         VinasuChojo_ShowMessage(3);
     }
     if (step_pending != 0) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 3;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 3;
     }
     VinasuChojo_FaceActor( 0, 0x4000);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);

@@ -31,7 +31,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE BASE [NAME=ADDRESS...] | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI BASE [NAME=ADDRESS...] | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE BASE [NAME=ADDRESS...] | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI BASE [NAME=ADDRESS...] | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 
 fn repository_root() -> PathBuf {
@@ -1999,77 +1999,6 @@ fn resolve_table_bitmaps(document: &mut Value, root: &Path) -> Result<Vec<String
         sources.push(name.to_string());
     }
     Ok(sources)
-}
-
-/// Where the registries place each table: `(source, pointer)` to address,
-/// the pointer empty for a whole document. Container parts follow one another
-/// from their container's address, as the builder lays them out; parts inside
-/// a compressed stream have no ROM address. A placed table records no address
-/// of its own.
-pub(crate) fn placements(root: &Path) -> Result<BTreeMap<(String, String), usize>, String> {
-    fn walk(
-        root: &Path,
-        region: &Value,
-        address: Option<usize>,
-        placed: &mut BTreeMap<(String, String), usize>,
-    ) -> Result<(), String> {
-        let source = region["source"].as_str();
-        if let (Some(source), Some(address)) = (source, address) {
-            let pointer = region.get("pointer").and_then(Value::as_str).unwrap_or("");
-            placed.insert((source.to_string(), pointer.to_string()), address);
-        }
-        if region["kind"] != "components" {
-            return Ok(());
-        }
-        let parts = match (&region["components"], source) {
-            (Value::Array(parts), _) => parts.clone(),
-            (_, Some(source)) => {
-                let pointer = region
-                    .get("pointer")
-                    .and_then(Value::as_str)
-                    .unwrap_or("/components");
-                json(&root_path(root, source)?)?
-                    .pointer(pointer)
-                    .and_then(Value::as_array)
-                    .cloned()
-                    .unwrap_or_default()
-            }
-            _ => Vec::new(),
-        };
-        let mut at = address;
-        for part in &parts {
-            walk(root, part, at, placed)?;
-            at = match at {
-                Some(at) => Some(at + number(&part["size"], "component size")?),
-                None => None,
-            };
-        }
-        Ok(())
-    }
-    let mut placed = BTreeMap::new();
-    for target in native::games() {
-        for registry in [
-            format!("{}/assets.json", target.recon_dir()),
-            native::NativePaths::of(&target).index,
-        ] {
-            let document = json(&root.join(&registry))?;
-            for region in ["regions", "edition_regions"]
-                .iter()
-                .flat_map(|key| document[*key].as_array().into_iter().flatten())
-            {
-                let address = number(&region["address"], "region address")?;
-                walk(root, region, Some(address), &mut placed)?;
-            }
-        }
-    }
-    Ok(placed)
-}
-/// Where the registries place the table at `source` and `pointer`.
-pub(crate) fn placed_address(root: &Path, source: &str, pointer: &str) -> Result<usize, String> {
-    placements(root)?
-        .get(&(source.to_string(), pointer.to_string()))
-        .copied()
-        .ok_or_else(|| format!("no region places {source}{pointer}"))
 }
 
 /// Where each segment of a typed table starts. Segments follow one another
@@ -6896,10 +6825,6 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
     if arguments.first().map(String::as_str) == Some("--extract-missing-sources") {
         let (rom, target) = rom_and_target(&arguments[1..])?;
         native::extract_missing(&repository_root(), Path::new(&rom), &target)?;
-        return Ok(ExitCode::SUCCESS);
-    }
-    if arguments.first().map(String::as_str) == Some("--audit-characters") {
-        native::audit_characters(&repository_root(), &arguments[1..])?;
         return Ok(ExitCode::SUCCESS);
     }
     if arguments.first().map(String::as_str) == Some("--extract-sources") {

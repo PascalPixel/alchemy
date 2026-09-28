@@ -36,7 +36,7 @@ void MakyuriHeya_SpawnSparkPair(void)
     struct FieldActor *spark;
     struct FieldSprite *sprite;
 
-    point = (*(struct EventSpawns **)0x03001ebc)->points[Data_02000240_t.words[125]];
+    point = (*(struct EventSpawns **)&gEventWork)->points[Data_02000240_t.words[125]];
     spark = Engine_ObjectCreate(26, point->x, point->y, point->z);
     if (spark != NULL) {
         *(s32 *)spark->unknown_14 = point->value;

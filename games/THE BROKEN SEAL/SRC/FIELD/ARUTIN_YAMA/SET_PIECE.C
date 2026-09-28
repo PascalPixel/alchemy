@@ -25,6 +25,7 @@
 #include "FACING_OBJECT.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern struct MapRenderWork *gMapWork;
 
 enum {
     /* Message 0x182 + 202. */
@@ -682,7 +683,7 @@ void FieldScene_RunEarlySequence(void)
     u8 *rec;
     s32 v;
 
-    p5 = *(u8 **)0x03001e70;
+    p5 = *(u8 **)&gMapWork;
     Audio_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Event_Wait(10);
@@ -724,7 +725,7 @@ void Func_020007e8(void)
     u8 *rec;
     s32 v;
 
-    p5 = *(u8 **)0x03001e70;
+    p5 = *(u8 **)&gMapWork;
     Map_CopyCells(93, 41, 16, 4, 77, 28);
     Audio_PlayCue(230);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
@@ -759,7 +760,7 @@ void Func_020008d4(void)
     u8 *rec;
     s32 v;
 
-    p8 = *(u8 **)0x03001e70;
+    p8 = *(u8 **)&gMapWork;
     Map_CopyCellsTo(113, 31, 103, 17, 1, 1);
     Map_CopyCellsTo(111, 32, 104, 18, 3, 2);
     Map_CopyCellsTo(64, 32, 103, 18, 1, 2);
@@ -1160,7 +1161,7 @@ void FieldScene_RunScene3a4_02002310(void)
     extern struct GameState Data_02000240;
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
+        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
         Actor_SetPosition(9, 0, 0);
     } else {
         Func_02005d7c();
@@ -1192,7 +1193,7 @@ void FieldScene_RunScene3a4_02002428(void)
     extern u8 Data_02000240[];
 
     if (GameFlag_IsSet(0x8fe) != 0) {
-        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
+        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
     } else {
         Map_CopyCellAttributes(52, 42, 1, 1, 53, 42);
     }
@@ -1212,7 +1213,7 @@ void FieldScene_RunScene3a4_02002490(void)
     u8 *record;
 
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
+        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
         Actor_SetPosition(10, 0, 0);
     } else {
         if (GameFlag_IsSet(0x109) == 0) {
@@ -1272,7 +1273,7 @@ void FieldScene_RunScene3a4_020025c0(void)
         }
     }
     if (GameFlag_IsSet(0x907) != 0) {
-        *(u16 *)(*(u8 **)0x03001e70 + 20) &= ~0x200;
+        *(u16 *)(*(u8 **)&gMapWork + 20) &= ~0x200;
     }
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(17, 93, 1, 1, 16, 92);
@@ -1466,7 +1467,7 @@ void FieldScene_RunScene3a4SequenceG(void)
     s32 value;
     s32 base6_3001e40;
 
-    base6_3001e40 = 0x3001e40;
+    base6_3001e40 = (u32)&gFrameCount;
     if (Value2(Func_0200665a, *(volatile s32 *)base6_3001e40, 3) == 0) {
         value = Value0(Engine_RandomNext);
         rec7 = Value4(Func_020066ec, 200, ((((u32)(((value << 1) + value) << 4) >> 16) << 16) + 0x2fd0000), -0x400000, 0x2600000);

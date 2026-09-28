@@ -7,6 +7,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
+extern u8 gWindowWork[];
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -551,7 +552,7 @@ s32 SceneActor_UpdatePlayerProximity(struct SceneActor *actor,
 
 s32 SceneActor_UpdatePartnerProximity(u8 *self)
 {
-    u8 **globals = (u8 **)0x03001e8c;
+    u8 **globals = (u8 **)gWindowWork;
     u8 *scene = globals[0];
     u8 *work = globals[12];        /* == *(u8 **)0x03001ebc */
     u16 *flags = (u16 *)(self + 100);

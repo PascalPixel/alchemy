@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 gMenuCtrlWork[];
 
 u8 * Engine_ActorGet();
 void Engine_ActorSetAnimation();
@@ -34,7 +35,7 @@ void Korosseo_RestoreCompetitor(s32 a0)
     u8 *p7;
     s32 zero;
 
-    p7 = *(s32 *)0x03001e68;
+    p7 = *(s32 *)gMenuCtrlWork;
     rec7 = Engine_ActorGet(a0);
     if (gGameStateRows[249][0] == 1) {
         gGameStateRows[249][0] = 0;

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+extern u8 gOverlayArea[];
 
 extern const u8 ObjectMotion_LinkedActionScript[];
 extern const u8 ObjectMotion_StepAngleScript[];
@@ -113,7 +114,7 @@ typedef s32 (*WorkEntryFn)(void);
 
 void Runtime_CallWorkBlockEntry(void)
 {
-    s32 base = 0x02008000;
+    s32 base = (u32)gOverlayArea;
     ((WorkEntryFn)*(s32 *)(base + 4))();
 }
 

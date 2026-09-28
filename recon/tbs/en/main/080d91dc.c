@@ -1,5 +1,49 @@
-#include "shared-aggregates.h"
 #include "BATTLE_EFX.H"
+
+/* A record of the effect scratch buffer at gMapCellBuffer, with the offsets
+   the battle effects touch. */
+struct EffectScratch {
+    u8 unknown_0000[0x4];
+    u32 field_0004;
+    u32 field_0008;
+    u32 field_000c;
+    u32 field_0010;
+    u32 field_0014;
+    u32 field_0018;
+    u8 unknown_001c[0x4];
+    u32 field_0020;
+    u8 unknown_0024[0x10];
+    u32 field_0034;
+    u8 unknown_0038[0x2];
+    u8 field_003a;
+};
+
+/* The camera state gCameraWork points at. */
+struct CameraState {
+    s16 field_0000;
+    u8 unknown_0002[0xa];
+    u32 field_000c;
+    u32 field_0010;
+    u32 field_0014;
+    u32 field_0018;
+    u32 field_001c;
+    u32 field_0020;
+    u8 unknown_0024[0x10];
+    u16 field_0034;
+    u16 field_0036;
+};
+
+/* The cells from gCameraWork on: the camera pointer, then the words this
+   effect reads past it. */
+struct CameraCells {
+    struct CameraState *field_0000;
+    u8 unknown_0004[0x7c];
+    u32 field_0080;
+};
+
+extern u8 gMapCellBuffer[];
+extern u8 gCameraWork[];
+extern u8 gBattleFxWork[];
 
 typedef void (*WordCopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*IntegerSqrtFn)(s32 value);
@@ -21,8 +65,8 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     s32 *sp18;
     s32 *sp1C;
     u32 *sp20;
-    struct M2cAggregate_absolute_03001e80 *sp24;
-    struct M2cAggregate_deref_absolute_03001e80_0 *sp28;
+    struct CameraCells *sp24;
+    struct CameraState *sp28;
     s32 sp2C;
     s32 sp30;
     s32 sp34;
@@ -83,7 +127,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     s32 var_r9_478;
     s32 var_sl_245;
     s32 var_sl_624;
-    struct M2cAggregate_absolute_02010000 *var_r5_244;
+    struct EffectScratch *var_r5_244;
     u32 temp_r0_927;
     void **temp_r5_23;
     void *temp_r2_277;
@@ -94,7 +138,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     void *var_r1_216;
 
     sp48 = arg1;
-    heap_cursor = (void **)0x03001EEC;
+    heap_cursor = (void **)gBattleFxWork;
     sp44 = *heap_cursor++;
     temp_r5_23 = (void **)((u8 *)sp44 + 0x7828);
     sp40 = *heap_cursor;
@@ -118,7 +162,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
         }
         sp50 = Math_Div(sp50 * 4, 5);
     }
-    absolute_04000020.field_0000 = 0xCC;
+    *(u16 *)0x04000020 = 0xCC;
     Resource_LoadAndDecompress(0x76, sp44, 0, 0);
     Resource_LoadAndDecompress(0xB7, sp44 + 0x60E, 1, 1);
     if (sp48 == 3 || sp48 == 5) {
@@ -159,7 +203,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     } else {
         Resource_LoadAndDecompress(0x8D, sp44 + 0x65C0, 1, 0);
     }
-    var_r5_244 = &absolute_02010000;
+    var_r5_244 = (struct EffectScratch *)gMapCellBuffer;
     var_sl_245 = 0;
     do {
         M2C_FIELD(var_r5_244, s32 *, 0) = (s32) ((Func_08002304(Func_08004458(), 0xC8) - 0x64) << 0xE);
@@ -179,7 +223,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
             sp30 = 0;
         }
     }
-    absolute_04000028.field_0000 = sp30 << 8;
+    *(u32 *)0x04000028 = sp30 << 8;
     M2C_FIELD(sp44, s32 *, 0x7780) = 2;
     M2C_FIELD(sp44, s32 *, 0x7784) = 0x32;
     Func_080041d8(0x080CD261, 0x480);
@@ -192,7 +236,7 @@ void BattleEffectB(s32 arg0, s32 arg1) {
     if ((M2C_FIELD(M2C_FIELD(sp44, void **, 0x7828), s32 *, 0x14) * 8) == -0x6C) {
 
     } else {
-        sp24 = &absolute_03001e80;
+        sp24 = (struct CameraCells *)gCameraWork;
 loop_49:
         sp28 = sp24->field_0000;
         if (var_fp_344 == 0x50) {
@@ -283,7 +327,7 @@ loop_60:
                 var_r1_620 = sp18;
                 var_sl_624 = 0;
                 temp_r8_625 = var_r1_620;
-                var_r6_626 = (void *)((u8 *)&absolute_02010000 + sp34 * 0x700);
+                var_r6_626 = (void *)(gMapCellBuffer + sp34 * 0x700);
                 do {
                     if (var_fp_344 > (s32) (sp10 + var_sl_624)) {
                         temp_r3_633 = (s32) M2C_FIELD(var_r6_626, s32 *, 0) >> 8;

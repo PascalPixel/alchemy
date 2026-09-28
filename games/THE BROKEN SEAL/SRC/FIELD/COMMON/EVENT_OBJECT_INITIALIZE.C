@@ -3,36 +3,31 @@
 #include "TBS_EDITION.H"
 
 void ObjectGroup_SetActionForOthers(void *object, s32 mode, s32 value);
+void BattleFx_FlickerObjectAndTick();
+void BattleFx_CycleObjectValueByCounter();
+
+#define CALLBACK_1      (u32)BattleFx_FlickerObjectAndTick
+#define CALLBACK_2      (u32)BattleFx_CycleObjectValueByCounter
 
 #if defined(TBS_EDITION_JA)
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define CALLBACK_1      0x0808DEFD
-#define CALLBACK_2      0x0808DF39
 #define MESSAGE_NO      0x94B
 #elif defined(TBS_EDITION_DE)
 #define WORK_CELL_ADDR  0x03001F40
 #define RENDER_CELL_ADDR 0x03001ECC
-#define CALLBACK_1      0x0809A5B1
-#define CALLBACK_2      0x0809A5ED
 #define MESSAGE_NO      0xA16
 #elif defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR)
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define CALLBACK_1      0x0809BFA1
-#define CALLBACK_2      0x0809BFDD
 #define MESSAGE_NO      0xA16
 #elif defined(TBS_EDITION_IT)
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define CALLBACK_1      0x08096FA1
-#define CALLBACK_2      0x08096FDD
 #define MESSAGE_NO      0xA16
 #else
 #define WORK_CELL_ADDR  0x03001F30
 #define RENDER_CELL_ADDR 0x03001EBC
-#define CALLBACK_1      0x08096F15
-#define CALLBACK_2      0x08096F51
 #define MESSAGE_NO      0x926
 #endif
 

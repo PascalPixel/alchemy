@@ -29,7 +29,7 @@ void FieldScene_RunLayoutStepThenSet201(void)
 
 void SceneEffect_ConfigureIndexedEffect85e8(void)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
     s32 no = *(s16 *)(work + 364);
     u16 x = SuharaMura_CellAnimationOrigins[no * 2];
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
@@ -37,13 +37,13 @@ void SceneEffect_ConfigureIndexedEffect85e8(void)
     Audio_PlayCue(158);
     Map_AnimateCells(0x020085e8, x, y);
     SetOffset(0, 0, -16);
-    *(s32 *)(*(u8 **)0x03001ebc + 456) = 16;
+    *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
     Event_RequestExit(no);
 }
 
 void SceneEffect_ConfigureIndexedEffect85fe(void)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
     s32 no = *(s16 *)(work + 364);
     u16 x = SuharaMura_CellAnimationOrigins[no * 2];
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
@@ -51,7 +51,7 @@ void SceneEffect_ConfigureIndexedEffect85fe(void)
     Audio_PlayCue(158);
     Map_AnimateCells(0x020085fe, x, y);
     SetOffset_020004ba(0, 0, -16);
-    *(s32 *)(*(u8 **)0x03001ebc + 456) = 16;
+    *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
     Event_RequestExit(no);
 }
 
@@ -72,7 +72,7 @@ s32 SceneState_InitEntryWorkspaceAndFlag96f(void)
         GameFlag_Set(0x96f);
     }
 
-    work = *(u8 **)0x03001ebc;
+    work = *(u8 **)&gEventWork;
     *(s32 *)(work + 448) = 256;
     *(s32 *)(work + 456) = 24;
 

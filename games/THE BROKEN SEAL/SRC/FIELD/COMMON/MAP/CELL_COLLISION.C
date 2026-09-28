@@ -1,5 +1,6 @@
 #include "MAP.H"
 #include "GLOBAL_CELLS.H"
+extern u8 gMapCellBuffer[];
 extern u8 Data_03001e70[];
 
 extern struct MapState *gMapWork;
@@ -13,7 +14,7 @@ u8 GetMapCellCollision(s32 layer, s32 x, s32 y)
     state = *(struct MapState **)((u32)&Data_03001e70);
     x >>= 20;
     y >>= 20;
-    cell_address = 0x02010000;
+    cell_address = (u32)gMapCellBuffer;
     if (state != NULL) {
         layer_offset = (layer & 3) * sizeof(struct MapLayer) + 0x130;
         cell_address = *(s32 *)((u8 *)state + layer_offset);
@@ -42,7 +43,7 @@ s32 Map_GetCellHighFlags(s32 x, s32 y)
 {
     s32 tile_x = x / 16;
     s32 tile_y = y / 16;
-    u8 *cell = (u8 *)0x02010000 + (tile_x + tile_y * 128) * 4;
+    u8 *cell = (u8 *)gMapCellBuffer + (tile_x + tile_y * 128) * 4;
 
     return cell[1] >> 6;
 }

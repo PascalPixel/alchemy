@@ -3,6 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+extern u8 gMapCellBuffer[];
 
 extern u8 gBattleFxWork[];
 
@@ -216,7 +217,7 @@ void BattleFx_RunCounterReveal(void *object)
                 }
                 if ((u32)(frame - 92) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                        canvas, (void *)0x02010000,
+                        canvas, (void *)gMapCellBuffer,
                         CounterReveal_PanelX[idx_a * 7 + 3],
                         CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
                 }

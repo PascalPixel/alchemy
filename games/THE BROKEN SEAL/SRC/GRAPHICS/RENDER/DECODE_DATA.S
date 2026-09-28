@@ -11,7 +11,7 @@
 	.section .data,"aw",%progbits
 	.arm
 	.4byte 0x00000000
-	.4byte 0x080091d8
+	.4byte 0x080091d8	@ an even address into the field far-call stubs; nothing reads it
 	.4byte 0x080091b8
 @ 転送先で置換表として更新する初期化領域。
 	.space 224, 0

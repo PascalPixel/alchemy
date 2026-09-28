@@ -3,6 +3,7 @@
 #include "FIELD_SCENE.H"
 
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
+extern u8 gKeysHeld[];
 
 enum LogRollingMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -441,7 +442,7 @@ void Func_02005a5c_arrival();
 #define BattleRuntime_WaitIfModeZero_31(args...) Func_02006332_b_head(args)
 #define Object_SetModeById_8(args...) Func_020063d0_b_head(args)
 #define Object_LinkObjectAndSetCallback_20(args...) Func_020064f0_head(args)
-#define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
+#define SCENE_PHASE (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
 #define PENDING_CALLBACK_FLAG (*(s32 *)0x0200db80)
 
 extern u8 StageSceneWork[];
@@ -1053,7 +1054,7 @@ void FieldScene_RunEarlySequence(void)
         || (cell_center[2] - z >= 0 ? cell_center[2] - z : z - cell_center[2]) > 0x200000) {
         goto far;
     }
-    keys = (volatile s32 *)0x03001ae8;
+    keys = (volatile s32 *)gKeysHeld;
     if ((*keys & 32) != 0) {
         direction = 2;
         cell_step = -8;
@@ -1937,7 +1938,7 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
     s32 value;
     u16 *field;
 
-    state = *(u8 **)0x03001ebc;
+    state = *(u8 **)&gEventWork;
     table = Data_02000240;
     slotValue = *(s32 *)&table[250];
     if (slotValue != 0) {
@@ -1970,7 +1971,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     s32 base;
     s32 z;
 
-    state = *(u8 **)0x03001ebc;
+    state = *(u8 **)&gEventWork;
     best_slot = 8;
     best = 0x100000;
     table = Data_02000240;

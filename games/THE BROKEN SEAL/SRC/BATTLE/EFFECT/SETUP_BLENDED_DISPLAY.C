@@ -1,5 +1,7 @@
 #include "DMA.H"
 
+extern u8 gBattleWork[];
+
 extern u16 gBgScroll[];
 extern s32 gProjection[];
 
@@ -12,7 +14,7 @@ void BattleBackground_LoadFar(s32 mode, s32 value, s32 size);
    EVB 16) and arms a 120-frame timer. */
 void BattleEffect_SetupBlendedDisplay(void)
 {
-    u8 **pointers = (u8 **)0x03001e74;
+    u8 **pointers = (u8 **)gBattleWork;
     u8 *buffer = pointers[31];
     u8 *work = pointers[0];
     volatile u32 zero;

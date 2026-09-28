@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern u8 gMenuWork[];
+
 struct CharacterSelectorWork {
     u8 pad0[0x174];
     u16 cursor;
@@ -13,7 +15,7 @@ s32 Func_080a77a4(s32 mode);
    cancelled. */
 s32 CharacterSelector_Run(void)
 {
-    struct CharacterSelectorWork *work = *(struct CharacterSelectorWork **)0x03001f2c;
+    struct CharacterSelectorWork *work = *(struct CharacterSelectorWork **)gMenuWork;
     s32 result = 0;
 
     /* FAKEMATCH: the do-while keeps the cursor store in source order */

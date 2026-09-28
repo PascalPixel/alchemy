@@ -334,7 +334,7 @@ s32 BattleAction_RunDescriptor(s32 arg0)
 
     desc = (EffectDescriptorWorkView *)BattleFx_FindDescriptor(2, arg0);
     ret = -1;
-    work = *(EffectDescriptorWorkView **)0x03001ebc;
+    work = *(EffectDescriptorWorkView **)&gEventWork;
     if ((desc != 0) && (desc->result != 0)) {
         if (desc->flags & 0x200) {
             work->limit = 0;

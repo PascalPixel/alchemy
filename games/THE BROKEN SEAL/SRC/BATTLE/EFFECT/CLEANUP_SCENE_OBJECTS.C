@@ -2,6 +2,9 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
+extern u8 gObjectSlots[];
+extern u8 gEffectWork[];
+
 void BattleFx_UpdateScaledArcObjectB(void);
 void BattleFx_UpdateScaledArcObjectA(void);
 void BattleFx_UpdateAllEffectSlots(void);
@@ -44,7 +47,7 @@ struct BattleObjectSlot {
     void (*update)(void);
 };
 
-#define BATTLE_OBJECT_SLOTS (*(struct BattleObjectSlot **)0x03001e64)
+#define BATTLE_OBJECT_SLOTS (*(struct BattleObjectSlot **)gObjectSlots)
 
 void BattleFx_ClearOwnedSlot(struct BattleEffectSceneObject *object);
 void Resource_ResetEntry(s32 handle);
@@ -60,7 +63,7 @@ void BattleEffect_CleanupSceneObjects(void)
     struct BattleEffectSceneObject *scene_object;
     s32 remaining;
 
-    scene_cell = (struct BattleEffectScene **)0x03001f30;
+    scene_cell = (struct BattleEffectScene **)gEffectWork;
     scene = *scene_cell;
     runtime = *(struct BattleEffectRuntime **)((u8 *)scene_cell - 116);
     position = *(struct BattleEffectPosition **)((u8 *)scene_cell - 192);

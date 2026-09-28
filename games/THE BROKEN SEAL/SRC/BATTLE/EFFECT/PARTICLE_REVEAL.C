@@ -4,6 +4,8 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+extern u8 gBattleFxWork[];
+
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 /*
@@ -89,7 +91,7 @@ void BattleFx_RunParticleReveal(void *object)
     s32 frame;
     s32 clamp;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;

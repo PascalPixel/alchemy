@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
+extern u8 gFrameTick[];
+
 /* Cycles the four object palette colours at 0x050001d0 through a sine glow
    driven by the frame phase at 0x03001800. */
 void PaletteGlow_UpdateSine(void)
@@ -11,7 +13,7 @@ void PaletteGlow_UpdateSine(void)
     s32 value;
     s32 index;
 
-    phase = (s32 *)0x03001800;
+    phase = (s32 *)gFrameTick;
     palette = (volatile u16 *)0x050001D0;
     index = 0;
     do {

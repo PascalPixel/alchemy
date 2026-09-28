@@ -8,6 +8,8 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
+extern u8 gMenuCtrlWork[];
+
 struct ProjectedSpritePart {
     u8 unknown_00[4];
     u16 y : 8;
@@ -71,7 +73,7 @@ void Render_PlaceProjectedSprite(struct ProjectedSprite *sprite, s32 *point, s32
     s32 slot;
 
     affine = 1;
-    if ((*(struct RenderState **)0x03001e68)->frozen != 0)
+    if ((*(struct RenderState **)gMenuCtrlWork)->frozen != 0)
         goto hide;
     z = Render_ProjectPoint(point, screen);
     if (screen[2] == 0)

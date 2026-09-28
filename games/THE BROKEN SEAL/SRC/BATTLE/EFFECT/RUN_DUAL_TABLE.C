@@ -18,6 +18,8 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
+extern u8 gBattleFxWork[];
+
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 /* One column record at work + 0x7080. */
@@ -142,7 +144,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 
     mode = arg1;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     draw_destination = *cursor;

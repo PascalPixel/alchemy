@@ -4,6 +4,8 @@
    count the frames since the last flush. */
 #include "TYPES.H"
 
+extern u8 gBattleFxWork[];
+
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 /* The IWRAM word copy returns a value the callers ignore; declaring it
@@ -28,7 +30,7 @@ void ColorBuffer_BackupAndBrighten(void *source, s32 amount, void *destination, 
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void)
 {
-    void **heap_cache = (void **)0x03001eec;
+    void **heap_cache = (void **)gBattleFxWork;
     void *work = heap_cache[0];
     void *source;
     s32 *counter;

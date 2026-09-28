@@ -1,7 +1,11 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
-#define KEYS_NEW (*(volatile u32 *)0x03001c94)
+extern u8 gKeyState[];
+extern u8 gMenuWork[];
+extern u8 gKeysRepeat[];
+
+#define KEYS_NEW (*(volatile u32 *)gKeyState)
 
 
 struct PsynergyOwnerMenu {
@@ -45,7 +49,7 @@ void Audio_PlayCue(s32 cue);
    chosen member is stored as the selected owner. */
 s32 PsynergyMenu_SelectOwner(void)
 {
-    struct PsynergyOwnerMenu *menu = *(struct PsynergyOwnerMenu **)0x03001f2c;
+    struct PsynergyOwnerMenu *menu = *(struct PsynergyOwnerMenu **)gMenuWork;
     s32 selection = menu->selection;
     s32 count = menu->count;
     s32 pending = 1;
@@ -86,7 +90,7 @@ s32 PsynergyMenu_SelectOwner(void)
             break;
         }
         {
-            volatile u32 *repeat = (volatile u32 *)0x03001b04;
+            volatile u32 *repeat = (volatile u32 *)gKeysRepeat;
 
             if (*repeat & 32) {
                 Audio_PlayCue(111);

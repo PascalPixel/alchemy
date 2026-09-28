@@ -22,11 +22,15 @@ struct SpringRide {
     s32 frames;
 };
 
-extern struct SpringRide Data_0200a070;
-extern s32 Data_0200a0c0;
-extern s32 Data_0200a130;
-extern s32 Data_0200a134;
-extern s32 Data_0200a138;
+/* The ride's work, laid out in order just past the overlay's image, with the
+ * actor records FOUR_ACTORS.C sets up. */
+struct SpringRide TorebiIzumi_Ride = { 0 };
+s32 TorebiIzumi_RideSide = 0;
+s32 TorebiIzumi_RideUnknown[3] = { 0 };
+u8 TorebiIzumi_ActorRecords[4 * 24] = { 0 };
+s32 TorebiIzumi_RideFrame = 0;
+s32 TorebiIzumi_RideEnded = 0;
+s32 TorebiIzumi_RideResult = 0;
 
 /* Launches the spring ride from side 0 or 1: plays the spring cue at frame
  * 50, starts the leader and the ride at frame 16, and waits for the ride to
@@ -35,19 +39,19 @@ s32 TorebiIzumi_RunSpringRide(s32 side)
 {
     struct SpringRide *ride;
 
-    ride = &Data_0200a070;
+    ride = &TorebiIzumi_Ride;
     ride->y = 0;
     ride->unknown_14 = 0;
     ride->unknown_20 = 0;
     ride->unknown_2c = 0;
-    Data_0200a0c0 = side;
-    Data_0200a134 = 0;
+    TorebiIzumi_RideSide = side;
+    TorebiIzumi_RideEnded = 0;
     ride->hold = 0xffff;
-    for (Data_0200a130 = 0;; Data_0200a130++) {
-        if (Data_0200a130 == 50) {
+    for (TorebiIzumi_RideFrame = 0;; TorebiIzumi_RideFrame++) {
+        if (TorebiIzumi_RideFrame == 50) {
             Engine_AudioPlayCue(300);
         }
-        if (Data_0200a130 == 16) {
+        if (TorebiIzumi_RideFrame == 16) {
             Engine_ActorSetAnimation(gGameState.selected_actor, 29);
             ride->hold = 0;
             ride->speed = 0x14ccc;
@@ -57,7 +61,7 @@ s32 TorebiIzumi_RunSpringRide(s32 side)
             ride->y = 0x100000;
             ride->z = 0x980000;
             ride->frames = 300;
-            if (Data_0200a0c0 == 1) {
+            if (TorebiIzumi_RideSide == 1) {
                 Engine_ObjectSetAnimation(Engine_ActorGet(16), 3);
                 Engine_ObjectSetAnimation(Engine_ActorGet(17), 0);
                 OverlayObject_SetField54(15, 1);
@@ -72,9 +76,9 @@ s32 TorebiIzumi_RunSpringRide(s32 side)
             }
         }
         Engine_TaskWait(1);
-        if (Data_0200a134 == 1) {
+        if (TorebiIzumi_RideEnded == 1) {
             break;
         }
     }
-    return Data_0200a138;
+    return TorebiIzumi_RideResult;
 }

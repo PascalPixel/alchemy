@@ -2,7 +2,7 @@
 
 void Engine_GameFlagSet();
 void Engine_EventWait();
-void Main_0808a5e0();
+void BattleFx_SetQueuedSoundAndPlay();
 void Engine_ActorSetAnimation();
 s32 Engine_ActorGet();
 s32 Engine_GameFlagIsSet();
@@ -50,7 +50,7 @@ s32 GomaIriguchi_RestoreEntryState(void)
 
     Call1(Engine_GameFlagSet, 0x144);
     Engine_EventWait(10);
-    Main_0808a5e0(170);
+    BattleFx_SetQueuedSoundAndPlay(170);
     Engine_ActorSetAnimation(11, 2);
     ((struct Flags35 *)Engine_ActorGet(11))->flags = 2;
     {

@@ -10,7 +10,7 @@ void Engine_ActorFaceDirection();
 void Engine_EventEnd();
 s32 Engine_ActorRunRepeatedMotion();
 s32 Engine_ActorGet();
-void Main_08000128();
+void Vector_AddPolarOffset();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetDestinationOffset();
 void Engine_ActorWaitForMove();
@@ -21,10 +21,10 @@ void Engine_ActorSetSpeed();
 void Engine_ActorSetDestination();
 s32 Engine_ActorEnableActionCallback();
 void Engine_TaskRemoveCallback();
-void Engine_ActorStartAction();
+void Object_RefreshSelectorById();
 void Engine_EventShowMessageAndWait();
 void Engine_GameFlagSet();
-void Main_0808a5e8();
+void BattleFx_PlayQueuedSound();
 
 
 
@@ -73,7 +73,10 @@ struct SpawnParams {
     u8 unknown_22[6];
 };
 
-extern u8 Value_02008371;
+void SceneEffect_SpawnPeriodicEffect();
+void SceneEffect_AdvanceRotatingSprite();
+extern const s32 ShianMura_Actor19Motion[];
+extern const s32 ShianMura_EffectScript[];
 
 void ShianMura_RunNpcMeetScene(void)
 {
@@ -102,7 +105,7 @@ void ShianMura_RunNpcMeetScene(void)
         pos[1] = flag;
         pos[2] = flag;
         record = Engine_ActorGet(0);
-        Call3(Main_08000128, -0x80000, *(u16 *)(record + 6), (s32)pos);
+        Call3(Vector_AddPolarOffset, -0x80000, *(u16 *)(record + 6), (s32)pos);
         Engine_ActorSetAnimation(0, 2);
         Engine_ActorSetDestinationOffset(0, pos[0] / 0x10000, pos[2] / 0x10000);
         Engine_ActorWaitForMove(0);
@@ -113,7 +116,7 @@ void ShianMura_RunNpcMeetScene(void)
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x1999, 0x3333, 0, 0x20001, 0);
         Effect_Spawn(0xc00000, 0, 0x1380000, 0x3333, 0x1999, 0, 0x20001, 0);
         Engine_AudioPlayCue(132);
-        cb = (s32)&Value_02008371;
+        cb = (s32)SceneEffect_SpawnPeriodicEffect;
         Value2(Engine_TaskAddCallback, cb, 0xc80);
         *(s32 *)(Engine_ActorGet(14) + 40) = 0x60000;
         *(s32 *)(Engine_ActorGet(14) + 72) = 0x10000;
@@ -122,14 +125,14 @@ void ShianMura_RunNpcMeetScene(void)
         Call3(Engine_ActorSetDestination, 14, 168, 0x138);
         Engine_ActorWaitForMove(14);
         Engine_AudioPlayCue(134);
-        Value2(Engine_ActorEnableActionCallback, 19, 0x20096a0);
-        Value2(Engine_TaskAddCallback, 0x2008359, 0xc80);
+        Value2(Engine_ActorEnableActionCallback, 19, (s32)ShianMura_Actor19Motion);
+        Value2(Engine_TaskAddCallback, (s32)SceneEffect_AdvanceRotatingSprite, 0xc80);
         {
             s32 sprite = 0x11b;
 
             params.sprite = sprite;
         }
-        params.callback = 0x2009714;
+        params.callback = (s32)ShianMura_EffectScript;
         params.facing = 0x4000;
         Effect_Spawn(0xa80000, 0, 0x14c0000, 0, 0, 0, 0x720000, &params);
         Call3(Engine_ActorSetDestination, 14, 146, 0x138);
@@ -139,12 +142,12 @@ void ShianMura_RunNpcMeetScene(void)
         Effect_Spawn(0x900000, 0, 0x1380000, -0x3333, 0x1999, 0, 0x20001, 0);
         back = -0x8000;
         Effect_Spawn(0x900000, 0, 0x1380000, back, 0, 0, 0x20001, 0);
-        Engine_ActorStartAction(19);
+        Object_RefreshSelectorById(19);
         Engine_AudioPlayCue(124);
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0, 0, 0, 0x20001, 0);
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, 0x3333, 0, 0, 0x20001, 0);
         Effect_Spawn(0xa80000, 0x80000, 0x1380000, -0x3333, 0, 0, 0x20001, 0);
-        Call1(Engine_TaskRemoveCallback, 0x2008359);
+        Call1(Engine_TaskRemoveCallback, (s32)SceneEffect_AdvanceRotatingSprite);
         *(u16 *)(*(s32 *)(Engine_ActorGet(19) + 80) + 30) = back;
         *(s32 *)(Engine_ActorGet(14) + 68) = 0x4000;
         *(s32 *)(Engine_ActorGet(14) + 72) = 0x10000;
@@ -154,7 +157,7 @@ void ShianMura_RunNpcMeetScene(void)
         Engine_EventWait(20);
         Engine_EventShowMessageAndWait(14, 0, 20);
         Call1(Engine_GameFlagSet, 0x202);
-        Main_0808a5e8();
+        BattleFx_PlayQueuedSound();
         Engine_EventEnd();
     }
 }

@@ -12,14 +12,23 @@ WaitFrames:
 	overlay_veneer 0x08000129
 	overlay_veneer 0x08000141
 	overlay_veneer 0x08000151
+	.global Resource_ResetEntry
+	.thumb_func
+Resource_ResetEntry:
 	overlay_veneer 0x080001b9
 	overlay_veneer 0x080001c9
+	.global AnimationObjects_SelectAnimation
+	.thumb_func
+AnimationObjects_SelectAnimation:
 	overlay_veneer 0x08009021
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
 	overlay_veneer 0x08009081
 	overlay_veneer 0x08009099
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	overlay_veneer 0x080090c9
 	overlay_veneer 0x080090d1
 	overlay_veneer 0x08009129

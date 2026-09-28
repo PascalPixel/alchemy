@@ -3,7 +3,7 @@
 
 void Korosseo_FinishSoloRound(void);
 s32 KorosseoKabe_RunStateInteraction(s32 speaker, s32 base);
-s32 Local_02002ba8(s32 actor, s32 x, s32 z);
+s32 Korosseo_FadeInCompetitor(s32 actor, s32 x, s32 z);
 s32 SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
 void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row);
 void Korosseo_RestoreCompetitor(s32 actor);
@@ -53,7 +53,7 @@ void KorosseoKabe_RunGuideTalk(s32 speaker)
         Call4((void (*)())Engine_CameraMoveTo, 0x1380000, -1, 0xb00000, 1);
         Engine_CameraWaitForMove();
         Engine_EventShowMessage(speaker, 0);
-        Local_02002ba8(0, x, z);
+        Korosseo_FadeInCompetitor(0, x, z);
         Call3((void (*)())Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
         SceneActor_PlaceWithScale14000(0, x, 216);
         Call3((void (*)())Engine_ActorFaceDirection, 0, 0x8000, 10);

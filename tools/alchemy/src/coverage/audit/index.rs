@@ -406,8 +406,7 @@ fn cross_game_exact_windows(
         .collect())
 }
 /// Load the last generated index and report whether every recorded input still
-/// matches. Dashboard callers may display stale data with an explicit warning;
-/// verification callers must continue to use `current`.
+/// matches. Verification callers use `current`.
 pub(crate) fn available(tree: &SourceTree, target: &str) -> Option<(Value, bool)> {
     let doc: Value =
         serde_json::from_str(&tree.read(&format!("out/{target}/reports/rom-index.json"))?).ok()?;

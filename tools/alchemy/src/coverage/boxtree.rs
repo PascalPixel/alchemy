@@ -17,9 +17,8 @@ pub(crate) fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
         }
 }
 use crate::coverage::pipeline::source_container;
-use sha1::{Digest, Sha1};
 
-// The file-type palette of the figure and dashboard: each kind of file has
+// The file-type palette of the figure: each kind of file has
 // its own clear pastel on the teal chart (the chrome is in `palette`); assembly and executable code sit in teal.
 pub(crate) const UNKNOWN: &str = "#d9d9d4";
 pub(crate) const C_TEAL: &str = "#326b7d";
@@ -300,13 +299,6 @@ pub(crate) fn source_name(source: &str) -> &str {
     trimmed.rsplit('/').next().unwrap_or(trimmed)
 }
 
-pub(crate) fn esc(value: &str) -> String {
-    value
-        .replace('&', "&amp;")
-        .replace('<', "&lt;")
-        .replace('>', "&gt;")
-        .replace('"', "&quot;")
-}
 pub(crate) fn color(category: Category) -> &'static str {
     match category {
         Category::Unknown => UNKNOWN,
@@ -411,15 +403,7 @@ pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
         })
         .collect()
 }
-/// A short content digest for cache stamps.
-pub fn content_version(text: &str) -> String {
-    format!("{:x}", Sha1::digest(text.as_bytes()))[..16].into()
-}
 
-#[test]
-fn content_version_uses_standard_sha1_prefix() {
-    assert_eq!(content_version("abc"), "a9993e364706816a");
-}
 #[cfg(test)]
 mod tests {
     use super::{content_style, directories, leaves, sound_type, SOUND_TYPES};

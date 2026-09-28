@@ -82,7 +82,6 @@ fn retired_catalog_operations_explain_the_source_build_route() {
         "score",
         "targets",
         "cross-edition",
-        "dashboard",
     ] {
         let output = command().args([operation, "--help"]).output().unwrap();
         assert!(!output.status.success(), "{operation}");

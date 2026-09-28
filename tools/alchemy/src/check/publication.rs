@@ -66,8 +66,7 @@ const ENCODED_CHARACTERS_MAX: usize = 128;
 const DIGEST_RUNS_MAX: usize = 2_048;
 /// Consecutive integer literals that form an array rather than an expression.
 const NUMERIC_RUN_MIN: usize = 16;
-/// Array elements a text outside the game data tables may hold; the tree peaks
-/// near 580 in the dashboard map filter.
+/// Array elements a text outside the game data tables may hold.
 const NUMERIC_ELEMENTS_MAX: usize = 2_048;
 /// Byte values one flat JSON array may hold before only a named typed table
 /// explains it; the tracked tree peaks at 518 in `action_modes`.

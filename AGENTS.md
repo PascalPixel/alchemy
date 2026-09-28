@@ -97,7 +97,7 @@ checks outgoing history. DONE is `?` until the current tree has a verified build
 ## Pascal's decisions
 
 - 2026-09-23: tagged fake matches count; ARM uses `-marm -mno-apcs-frame`.
-  Private inputs appear only in the local dashboard.
+  Private inputs are never published.
 - 2026-09-24: whole aligned 8-byte main-image far-call stubs count as
   reconstructed veneers, like overlay entry veneers.
 - 2026-09-27: attribution after noon September 26 (Lisbon) is Sol 6 or Astra 6.
@@ -108,3 +108,4 @@ checks outgoing history. DONE is `?` until the current tree has a verified build
   compression answers and tracked machine ledgers.
 - 2026-09-28: approved the stock `da598c1` agbcc rebuild; its exact binary
   digest is recorded in the compiler admission table.
+- 2026-09-28: the dashboard is removed.

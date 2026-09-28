@@ -140,14 +140,6 @@ pub(crate) fn verify_reference(root: &Path, target: &str, rom: &[u8]) -> Result<
     Ok(())
 }
 
-pub(crate) fn archives(game: &str) -> &'static [ArchiveSpec] {
-    match game {
-        "tbs" => &ARCHIVES[..6],
-        "tla" => &ARCHIVES[6..],
-        _ => &[],
-    }
-}
-
 fn alphabet(rom: &[u8], contexts: u32) -> Result<usize, String> {
     let offset = contexts
         .checked_sub(ROM_BASE)

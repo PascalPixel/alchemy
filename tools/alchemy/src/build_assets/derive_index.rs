@@ -2005,45 +2005,6 @@ pub(in crate::build_assets) fn render_field(map: &FieldMap) -> Result<FieldRende
     })
 }
 
-/// Live transport: u32 JSON-header length, header, then indexed layer planes.
-/// Never persisted or published; the same decoder also feeds image exports.
-pub(crate) fn live_scene(root: &Path, target: &str, scene: usize) -> Result<Vec<u8>, String> {
-    let target = decomp_target(Some(target))?;
-    let scenes = json(
-        &root
-            .join(target.source_dir)
-            .join("FIELD/COMMON/SCENE_TABLE.JSON"),
-    )?;
-    if !scenes["segments"][0]["records"]
-        .as_array()
-        .is_some_and(|rows| scene < rows.len())
-    {
-        return Err("Scene is not in the maintained scene index".into());
-    }
-    let rom = fs::read(root.join(target.rom)).map_err(|e| e.to_string())?;
-    crate::text_catalog::verify_reference(root, target.id.as_str(), &rom)?;
-    let mut deriver = Deriver::new(&rom, target)?;
-    deriver.scene(&SceneRequest::scene(scene))?;
-    let preview = deriver
-        .output
-        .previews
-        .first()
-        .ok_or("Scene has no supported field map")?;
-    let (field, colors) = decoded_field(&deriver, preview)?;
-    let blend = network::blend(
-        &deriver,
-        usize::from_str_radix(&preview.container, 16).map_err(|e| e.to_string())?,
-    );
-    let header = json!({"format":1,"scene":scene,"container":preview.container,"width":field.width,"height":field.height,"unresolved":field.unresolved,"palettes":colors,"order":field.order(),"blend":blend.map(|b|json!({"control":b.control,"alpha":b.alpha})),"layers":field.layers.iter().map(|l|json!({"bg":l.bg,"priority":l.priority,"charblock":l.charblock,"opaque":l.opaque})).collect::<Vec<_>>()});
-    let json = serde_json::to_vec(&header).map_err(|e| e.to_string())?;
-    let mut bytes = (json.len() as u32).to_le_bytes().to_vec();
-    bytes.extend(json);
-    for layer in field.layers {
-        bytes.extend(layer.pixels)
-    }
-    Ok(bytes)
-}
-
 /// Review image: the composited layers over the loaded palette's backdrop.
 fn decoded_field(
     deriver: &Deriver,

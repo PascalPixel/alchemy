@@ -12,11 +12,9 @@ mod check;
 mod compiler;
 mod coverage;
 mod cross_edition;
-mod dashboard;
 mod flatten;
 mod format;
 mod generated_files;
-mod http;
 mod land;
 mod overlay;
 mod parallel;
@@ -51,7 +49,7 @@ fn main() -> ExitCode {
     let rest = &arguments[1..];
     if matches!(
         command,
-        "adopt" | "unit" | "overlay" | "land" | "score" | "targets" | "cross-edition" | "dashboard"
+        "adopt" | "unit" | "overlay" | "land" | "score" | "targets" | "cross-edition"
     ) {
         return result(Err(format!(
             "{command} used the removed owner/translation-unit catalogs; use maintained source and Make/linker rules"
@@ -71,7 +69,6 @@ fn main() -> ExitCode {
                 ExitCode::from(2)
             }
         }
-        "dashboard" => result(dashboard::entry(rest)),
         "build" => build::entry(rest),
         "verify" => verify::entry(rest),
         "coverage" if rest.first().map(String::as_str) == Some("audit") => result(

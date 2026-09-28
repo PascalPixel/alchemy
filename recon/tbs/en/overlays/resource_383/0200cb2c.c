@@ -1,3 +1,8 @@
+/* Draft of FieldScene_RunScene383_02004b2c, resource_383 at 0x0200cb2c (split from
+ * FIELD/KUUPUAPPU_HEYA/PROMPT.C).
+ * Remaining difference: it stores to an overlay variable past the loaded image
+ * (0x0200e4f8), which the listing link does not place, so the overlay keeps its
+ * listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -64,6 +69,36 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
+#define Scene_GetRecord_1(args...) ((void *(*)())Object_GetById)(args)
+#define Scene_GetRecord_2(args...) ((u8 *(*)())Object_GetById)(args)
+#define Audio_PlayCueForPartyMember_1(args...) Audio_PlayCueFromEventWork(args)
+#define Audio_PlayCue_1_020019a4(a0) Value1(Engine_AudioPlayCue, a0)
+#define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)0x03001ebc + 456))
+#define SceneWork_SetStepValue_1_020019e4(a0) Value1(Engine_EventSetMessage, a0)
+#define Audio_PlayCue_1_020019e4(a0) Value1(Engine_AudioPlayCue, a0)
+#define SCENE_WORK_FIELD_456 (*(u32 *)(*(u8 **)0x03001ebc + 456))
+#define Scene_GetRecord_1_02001a4c(args...) ((void *(*)())Object_GetById)(args)
+#define Scene_GetRecord_2_02001a4c(args...) ((void *(*)())Object_GetById)(args)
+#define SceneWork_SetStepValue_1_02001a4c(a0) Value1(Engine_EventSetMessage, a0)
+#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
+#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
+#define Object_LookupAndStep_1(a0) Call1(Object_RefreshSelectorById, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02001a4c() Value0(Engine_EventEnd)
+#define RATIO_HI 52428
+#define RATIO_LO 26214
+#define Scene_GetRecord_1_02001ba0(a0) Value1(Func_02006924, a0)
+#define Scene_GetRecord_2_02001ba0(a0) Value1(Func_0200692c, a0)
+#define ObjectMotion_EnableActionAndSetCallback_1_02001e80(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
+#define Object_LookupAndStep_1_02001ba0(args...) Func_02006ca4(args)
+#define Scene_GetRecord_1_02001e80(args...) Func_02006c92(args)
+#define Scene_GetRecord_2_02001e80(a0) Value1(Func_02006c9e, a0)
+#define ACTOR_SHOWN_OFFSET 100
+#define Scene_GetRecord_1_02002fd4(a0) Value1(Object_GetById, a0)
+#define Scene_GetRecord_2_02002fd4(args...) Object_GetById(args)
+#define Scene_GetRecord_3(args...) Object_GetById(args)
+#define Scene_GetRecord_4(args...) Object_GetById(args)
+#define Scene_GetRecord_5(args...) Object_GetById(args)
+
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the
@@ -73,9 +108,9 @@ extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
+extern u16 Data_0200e4f8;
 
 s32 PartyInventory_HasSpace(void);
 void Battle_InitializeRenderObject(void);
@@ -94,6 +129,11 @@ void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
 
 s32 ArcTan2();
+s32 Func_02006924();
+s32 Func_0200692c();
+u8 *Func_02006c92();
+s32 Func_02006c9e();
+void Func_02006ca4();
 void FieldScene_RunSplitTripleSteps();
 
 void SceneState_SetWord1c0To209AndRun();
@@ -230,9 +270,35 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
 }
+void FieldScene_ConfigurePairedActors(void);
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void FieldScene_RunScene383_02004b2c(void)
 {
-    return Owner_GetState(2)[0x118];
+    Event_Begin();
+    Camera_MoveTo(0xa80000, -1, 0x2900000, 1);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
+    Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 248, 0x2b8);
+    Actor_SetPosition(ACTOR_GERALD, 0xf80000, 0x2b80000);
+    Actor_SetPosition(ACTOR_IVAN, 0xf80000, 0x2b80000);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 200, 0x2b8);
+    Actor_WalkTo(ACTOR_GERALD, 248, 0x2c8);
+    Actor_WalkToAndWait(ACTOR_IVAN, 232, 0x2b8);
+    Actor_WaitForMove(ACTOR_GERALD);
+    Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Actor_SetAnimation(ACTOR_GERALD, 12);
+    FieldScene_ConfigurePairedActors();
+    Call4(Map_SetWorkFourValues, 0x300000, 0x2400000, 0x1200000, 0x2e00000);
+    Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
+    Actor_SetSpeed(ACTOR_IVAN, 0xc000, 0x6000);
+    Actor_SetSpeed(24, 0x10000, 0x13333);
+    Actor_SetSpeed(25, 0x18000, 0x18000);
+    Data_0200e4f8 = 0;
+    Call2(Scheduler_AddOrUpdateCallback, 0x200c8c9, 0xc94);
+    Engine_GameFlagClear(0x1ff);
+    Event_End();
+    Audio_PlayCue(9);
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);

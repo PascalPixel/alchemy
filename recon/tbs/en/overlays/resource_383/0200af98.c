@@ -1,3 +1,5 @@
+/* Draft of OverlayObject_RunObjectTwoWhenFlagged, resource_383 at 0x0200af98 (split from FIELD/KUUPUAPPU_HEYA/PROMPT.C).
+ * Remaining difference: its C no longer compiles to the ROM's length (the cleanup of its address-derived symbols left it incomplete), so the overlay keeps its listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -64,6 +66,36 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
+#define Scene_GetRecord_1(args...) ((void *(*)())Object_GetById)(args)
+#define Scene_GetRecord_2(args...) ((u8 *(*)())Object_GetById)(args)
+#define Audio_PlayCueForPartyMember_1(args...) Audio_PlayCueFromEventWork(args)
+#define Audio_PlayCue_1_020019a4(a0) Value1(Engine_AudioPlayCue, a0)
+#define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)0x03001ebc + 456))
+#define SceneWork_SetStepValue_1_020019e4(a0) Value1(Engine_EventSetMessage, a0)
+#define Audio_PlayCue_1_020019e4(a0) Value1(Engine_AudioPlayCue, a0)
+#define SCENE_WORK_FIELD_456 (*(u32 *)(*(u8 **)0x03001ebc + 456))
+#define Scene_GetRecord_1_02001a4c(args...) ((void *(*)())Object_GetById)(args)
+#define Scene_GetRecord_2_02001a4c(args...) ((void *(*)())Object_GetById)(args)
+#define SceneWork_SetStepValue_1_02001a4c(a0) Value1(Engine_EventSetMessage, a0)
+#define ObjectMotion_EnableActionAndSetCallback_1(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
+#define ObjectMotion_EnableActionAndSetCallback_2(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
+#define Object_LookupAndStep_1(a0) Call1(Object_RefreshSelectorById, a0)
+#define BattleRuntime_ScheduleShoulderButtonModeUpdate_1_02001a4c() Value0(Engine_EventEnd)
+#define RATIO_HI 52428
+#define RATIO_LO 26214
+#define Scene_GetRecord_1_02001ba0(a0) Value1(Func_02006924, a0)
+#define Scene_GetRecord_2_02001ba0(a0) Value1(Func_0200692c, a0)
+#define ObjectMotion_EnableActionAndSetCallback_1_02001e80(a0, a1) Value2(Engine_ActorEnableActionCallback, a0, a1)
+#define Object_LookupAndStep_1_02001ba0(args...) Func_02006ca4(args)
+#define Scene_GetRecord_1_02001e80(args...) Func_02006c92(args)
+#define Scene_GetRecord_2_02001e80(a0) Value1(Func_02006c9e, a0)
+#define ACTOR_SHOWN_OFFSET 100
+#define Scene_GetRecord_1_02002fd4(a0) Value1(Object_GetById, a0)
+#define Scene_GetRecord_2_02002fd4(args...) Object_GetById(args)
+#define Scene_GetRecord_3(args...) Object_GetById(args)
+#define Scene_GetRecord_4(args...) Object_GetById(args)
+#define Scene_GetRecord_5(args...) Object_GetById(args)
+
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the
@@ -94,6 +126,11 @@ void Object_RefreshSelectorById();
 void Object_RefreshSelectorById(s32);
 
 s32 ArcTan2();
+s32 Func_02006924();
+s32 Func_0200692c();
+u8 *Func_02006c92();
+s32 Func_02006c9e();
+void Func_02006ca4();
 void FieldScene_RunSplitTripleSteps();
 
 void SceneState_SetWord1c0To209AndRun();
@@ -231,8 +268,18 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+s32 OverlayObject_RunObjectTwoWhenFlagged(void)
 {
-    return Owner_GetState(2)[0x118];
+    u8 *o;
+
+    BattlePlacement_UpdateTimedEntriesTwentyTimes();
+    o = Owner_GetState(2);
+    o += 0xf8;
+    if (*(s32 *)o & 1) {
+        Djinn_Transfer(2, 0, 0, 0);
+        Audio_PlayCue(126);
+        Owner_RecalculateStats(0);
+
+    }
 }
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);

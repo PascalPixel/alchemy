@@ -71,9 +71,10 @@ enum PromptMessage {
  */
 extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
+extern s32 KuupuappuHeya_StepActions[];
+extern s32 KuupuappuHeya_IdleActions[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +232,78 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void FieldScene_RunActorTwentyAngleDialogue(void)
 {
-    return Owner_GetState(2)[0x118];
+    s32 v = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
+
+    Event_Begin();
+    if (v >= 0xa001 && v <= 0xdfff) {
+        Shop_Open(5, 20);
+    } else {
+        if (GameFlag_IsSet(0x855) == 0) {
+            Event_SetMessage(MSG_THIEVES_DIDNT_HIT_OUR_HOUSE);
+        } else {
+            Event_SetMessage(MSG_IF_YOURE_GONNA_HEAD_INTO);
+        }
+        Event_ShowMessage(20, 0);
+    }
+    Event_End();
 }
+
+void FieldScene_RunActorTwentyThreeAngleDialogue(void)
+{
+    s32 v = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
+
+    Event_Begin();
+    if (v >= 0xa001 && v <= 0xdfff) {
+        Inn_Open(1, 23);
+    } else {
+        if (GameFlag_IsSet(0x855) == 0) {
+            Event_SetMessage(MSG_EVERYONE_THINKS_OUR_GUESTS_THIEVES);
+        } else {
+            Event_SetMessage(MSG_THEY_HID_THOSE_STOLEN_GOODS);
+        }
+        Event_ShowMessage(23, 0);
+    }
+    Event_End();
+}
+
+void FieldScene_RunActorEighteenConditionalScene(void)
+{
+    Event_Begin();
+    if (PartyInventory_HasSpace() == 0) {
+        Actor_SetAnimationAndWait(18, 4);
+        Event_Wait(20);
+        Event_SetMessage(MSG_WOW_HAVE_MANY_THINGS_ARENT);
+        Event_ShowMessage(18, 0);
+    } else {
+        Item_ShowFound(ITEM_BONE, 3);
+        Party_GiveItem(ITEM_BONE, 0);
+    }
+    Event_End();
+}
+
+void SceneDialogue_ShowLine12BB(void)
+{
+    Battle_InitializeRenderObject();
+    Event_SetMessage(MSG_WE_DONT_HAVE_TIME_FOR);
+    Event_ShowMessage(ACTOR_GERALD, 0);
+}
+
+void SceneState_SetFlags92bAnd94b(void)
+{
+    Event_Begin();
+    Message_ShowCentered(MSG_ROBIN_CHECKED_BARREL, 1);
+    Message_ShowCentered(MSG_BUT_DIDNT_FIND_ANYTHING, 1);
+    Event_End();
+}
+
+void SceneState_SetFlags929And949(void)
+{
+    Event_Begin();
+    Message_ShowCentered(MSG_ROBIN_CHECKED_CHEST, 1);
+    Message_ShowCentered(MSG_BUT_CHEST_WAS_EMPTY, 1);
+    Event_End();
+}
+void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);

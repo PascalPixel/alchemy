@@ -64,6 +64,9 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
+#define RATIO_HI 52428
+#define RATIO_LO 26214
+
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the
@@ -73,7 +76,6 @@ extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +233,48 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+/* Third scene step: sets up actors 24 and 25 (fetching each one's record),
+ * runs a shared series of configuration calls touching actors 0-2, 10, 14,
+ * 20, 24 and 25, then marks the two fetched records with a byte flag. */
+void FieldScene_RunOpeningSequenceThird(void)
 {
-    return Owner_GetState(2)[0x118];
+
+    void *actor24;
+    void *actor25;
+
+    actor24 = ((void *(*)())Object_GetById)(24);
+    actor25 = ((void *(*)())Object_GetById)(25);
+    Event_Begin();
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, RATIO_HI, RATIO_LO);
+    Actor_SetSpeed(ACTOR_GERALD, RATIO_HI, RATIO_LO);
+    Actor_SetSpeed(ACTOR_IVAN, RATIO_HI, RATIO_LO);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 696);
+    Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 200, 696);
+    Event_Wait(10);
+    Actor_ShowEmote(25, 256, 0);
+    Actor_ShowEmote(24, 256, 0);
+    Event_Wait(60);
+    Call3(FieldScene_RunSplitTripleSteps, 25, 0, 10);
+    Actor_RunRepeatedMotion(24, 2);
+    Event_Wait(20);
+    Value1(Engine_EventSetMessage, 4758);
+    Call2(SceneActor_SetModeZeroAndValue, 24, 20);
+    Actor_SetAttachedEffect(25, 258); /* main:0808a1f0 */
+    Event_Wait(60);
+    Call2(SceneActor_SetModeZeroAndValue, 25, 20);
+    Actor_RunRepeatedMotion(24, 1);
+    Call2(SceneActor_SetModeZeroAndValue, 24, 30);
+    Actor_SetSpeed(24, 262144, 131072);
+    Actor_SetSpeed(25, 229376, 114688);
+    Value2(Engine_ActorEnableActionCallback, 25, 33609776);
+    Value2(Engine_ActorEnableActionCallback, 24, 33609056);
+    Call1(Object_RefreshSelectorById, 24);
+    Map_CopyCellAttributes(14, 45, 3, 1, 14, 44); /* main:080091c0 */
+    GameFlag_Set(2130);
+    GameFlag_Set(768);
+    Call2(Scheduler_AddOrUpdateCallback, 33598369, 3200); /* main:080000d0 */
+    /* Starting movement steps for the two thieves. */
+    ((struct FieldActor *)actor24)->unknown_64 = 1;
+    ((struct FieldActor *)actor25)->unknown_64 = 3;
+    Value0(Engine_EventEnd);
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);

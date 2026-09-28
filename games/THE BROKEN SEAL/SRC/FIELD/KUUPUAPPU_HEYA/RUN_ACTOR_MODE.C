@@ -71,9 +71,10 @@ enum PromptMessage {
  */
 extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
+extern s32 KuupuappuHeya_StepActions[];
+extern s32 KuupuappuHeya_IdleActions[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +232,173 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x)
 {
-    return Owner_GetState(2)[0x118];
+    Actor_SetAnimation(x, 1);
+    SceneActor_SetPairZeroAndValue(x, 0, 2);
+    Event_ShowMessage(x, 0);
 }
+
+void SceneState_RunGuardedActorStep(s32 x)
+{
+    u8 *flag = (u8 *)Object_GetById() + 91;
+    s32 zero = 0;
+
+    *flag = 1;
+    Event_Begin();
+    Actor_SetAnimation(x, 1);
+    Event_Wait(2);
+    Event_ShowMessage(x, 0);
+    Event_End();
+    *flag = zero;
+}
+
+void SceneDialogue_PromptAndCountSkip(s32 x)
+{
+    SceneActor_SetPairZeroAndValue(x, 0, 2);
+    Event_OpenMessage(x, 0);
+    if (Event_ChooseYesNo(0, 0) != 0) {
+        gEventWork->message += 1;
+    }
+    Event_ShowMessage(x, 0);
+}
+
+void SceneDialogue_RunActorElevenDialogue(void)
+{
+    Event_Begin();
+    Event_SetMessage(MSG_MISTER_FUN_SEE_STRANGE_NEW);
+    Actor_SetAnimation(11, 1);
+    SceneDialogue_PromptAndCountSkip(11);
+    Event_End();
+}
+
+void FieldScene_RunScene383_02000428(void)
+{
+    u32 i;
+    s32 record;
+
+    Event_Begin();
+    Event_SetMessage(MSG_IVAN_HAS_GREAT_POWERS_WOULDNT);
+    SceneDialogue_PromptAndCountSkip(15);
+    Actor_FaceDirection(15, 0x8000, 0);
+    Event_End();
+}
+
+void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
+{
+    s32 value = *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6);
+
+    Event_Begin();
+    if (value >= 0xa001 && value <= 0xdfff) {
+        Shop_Open(6, 21);
+    } else if (GameFlag_IsSet(0x855) == 0) {
+        Event_SetMessage(MSG_DID_JUST_ARRIVE_IN_TOWN);
+        SceneDialogue_PromptAndCountSkip(21);
+    } else {
+        Event_SetMessage(MSG_WITH_BRIDGE_OUT_WILL_QUITE);
+        Event_ShowMessage(21, 0);
+    }
+    Event_End();
+}
+
+void SceneDialogue_RunActor9FlaggedLine(void)
+{
+    Event_Begin();
+    if (GameFlag_IsSet(0x855) == 0) {
+        Event_SetMessage(MSG_IF_ONLY_THESE_ROCKS_WERE);
+    } else {
+        Event_SetMessage(MSG_THANK_GOODNESS_THOSE_THIEVES_WERE);
+    }
+    ActorPresentation_RunActorModeOneThenZeroWithStep(9);
+    Event_End();
+}
+
+void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
+{
+    Event_Begin();
+    if (GameFlag_IsSet(0x855) != 0) {
+        Event_SetMessage(MSG_THIEVES_HID_STOLEN_TREASURE_IN);
+    } else {
+        Event_SetMessage(MSG_JUST_ME_OR_AM_MISSING);
+    }
+    ActorPresentation_RunActorModeOneThenZeroWithStep(12);
+    Event_End();
+}
+
+void FieldScene_RunFlag856DialogueBranch(void)
+{
+    s32 g;
+    g = 0x851;
+    Event_Begin();
+    if (GameFlag_IsSet(0x856) != 0) {
+        if (GameFlag_IsSet(g) == 0) {
+            Event_SetMessage(MSG_YOURE_GOING_HELP_IVAN);
+            ActorPresentation_RunActorModeOneThenZeroWithStep(16);
+            Event_Wait(10);
+            SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
+            GameFlag_Set(g);
+        } else {
+            Event_SetMessage(MSG_PLEASE_LOOK_AFTER_IVAN);
+        }
+    } else {
+        Event_SetMessage(MSG_COULD_SOMEONE_PLEASE_HELP_IVAN);
+    }
+    ActorPresentation_RunActorModeOneThenZeroWithStep(16);
+    Event_End();
+}
+
+void SceneDialogue_ShowLine128E(void)
+{
+    Event_Begin();
+    Event_SetMessage(MSG_THOSE_THREE_STRANGERS_SURE_HAVE);
+    ActorPresentation_RunActorModeOneThenZeroWithStep(18);
+    Event_End();
+}
+
+void SceneActor_StepActor24AnimationByFacing(void)
+{
+    struct FieldActor *p;
+    s16 *q;
+    s32 v;
+    s32 n;
+
+    p = ((struct FieldActor *(*)())Object_GetById)(24);
+    Event_Begin();
+    Actor_RunRepeatedMotion(24, 2);
+    Event_SetMessage(MSG_OW_STOP);
+    Event_ShowMessage(24, 0);
+    Actor_SetSpeed(24, 0x40000, 0x20000);
+    if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {
+        q = (s16 *)((u8 *)p + 100);
+        v = *q;
+        if (v <= 2) {
+            Actor_EnableActionCallback(24, KuupuappuHeya_StepActions[v]);
+            *(u16 *)q = *(u16 *)q + 1;
+            goto clamp;
+        }
+    } else {
+        q = (s16 *)((u8 *)p + 100);
+        v = *q;
+        if (v > 2) {
+            Actor_EnableActionCallback(24, KuupuappuHeya_StepActions[v]);
+            *(u16 *)q = *(u16 *)q + 1;
+            goto clamp;
+        }
+    }
+    Actor_EnableActionCallback(24, KuupuappuHeya_IdleActions[v]);
+    n = *(u16 *)q - 1;
+    *(u16 *)q = n;
+clamp:
+    if (*q > 5) {
+        n = 0;
+        *(u16 *)q = n;
+    }
+    if (*q < 0) {
+        n = 5;
+        *(u16 *)q = n;
+    }
+    Object_RefreshSelectorById(24);
+    Event_End();
+}
+void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);

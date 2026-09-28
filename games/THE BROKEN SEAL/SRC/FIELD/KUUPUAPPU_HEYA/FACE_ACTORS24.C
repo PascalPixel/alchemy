@@ -73,7 +73,6 @@ extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +230,70 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void SceneActor_FaceActors24And25TowardActorZero(void)
 {
-    return Owner_GetState(2)[0x118];
+    struct FieldActor *origin = ((struct FieldActor *(*)())Object_GetById)(0);
+    struct FieldActor *first = ((struct FieldActor *(*)())Object_GetById)(24);
+    struct FieldActor *second = ((struct FieldActor *(*)())Object_GetById)(25);
+
+    first->facing = ArcTan2(origin->z.fixed - first->z.fixed, origin->x.fixed - first->x.fixed);
+    second->facing = ArcTan2(origin->z.fixed - second->z.fixed, origin->x.fixed - second->x.fixed);
 }
+
+void FieldScene_RunLateSequence(void)
+{
+    u32 i;
+    s32 record;
+    s32 v5;
+
+    Event_Begin();
+    Actor_SetPosition(10, 0x3180000, 0x1a00000);
+    Actor_SetPosition(11, 0x3200000, 0x1900000);
+    Actor_SetPosition(12, 0x3080000, 0x1a00000);
+    Actor_FaceDirection(10, 0x3000, 0);
+    Actor_FaceDirection(11, 0x3000, 0);
+    Actor_FaceDirection(12, 0x3000, 0);
+    Actor_SetSpeed(11, 0xcccc, 0x6666);
+    Actor_SetSpeed(12, 0xcccc, 0x6666);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3100000, 0x1c00000);
+    Actor_SetPosition(ACTOR_GERALD, 0x3280000, 0x1b00000);
+    Actor_SetPosition(ACTOR_IVAN, 0x3080000, 0x1b00000);
+    Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
+    Actor_SetAnimation(ACTOR_GERALD, 19);
+    Actor_SetAnimation(ACTOR_IVAN, 19);
+    v5 = 2;
+    *(u8 *)(Object_GetById(0) + 35) = v5;
+    *(u8 *)(Object_GetById(1) + 35) = v5;
+    *(u8 *)(Object_GetById(2) + 35) = v5;
+    record = Object_GetById(0);
+    Actor_SetSpriteFlags(record, 0);
+    record = Object_GetById(2);
+    Actor_SetSpriteFlags(record, 0);
+    record = Object_GetById(1);
+    Actor_SetSpriteFlags(record, 0);
+    Actor_FaceDirection(8, 0xb000, 0);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
+    Camera_WaitForMove();
+    Map_Redraw();
+    SceneState_SetWord1c0To209AndRun();
+    Event_Wait(60);
+    SceneEffect_ApplyThreeValuesAndFinish(10, 3, 20);
+    Event_SetMessage(MSG_THESE_KIDS_NOTHING_WORRY_ABOUT);
+    SceneActor_SetModeZeroAndValue(10, 30);
+    SceneActor_SetModeZeroAndValue(8, 30);
+    Actor_WalkTo(11, 0x328, 0x1c8);
+    Actor_WalkTo(12, 0x318, 0x1c8);
+    Actor_WaitForMove(12);
+    Actor_FaceDirection(12, 0, 0);
+    Actor_WaitForMove(11);
+    Actor_FaceDirection(11, 0, 0);
+    Event_Wait(30);
+    SceneEffect_ApplyThreeValuesAndFinish(11, 3, 20);
+    SceneActor_SetModeZeroAndValue(11, 20);
+    FieldScene_RunSplitTripleSteps(12, 0, 30);
+    SceneActor_SetModeZeroAndValue(12, 60);
+    Event_End();
+}
+void SceneState_SetWord1c0To209AndRun(void);
 void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);

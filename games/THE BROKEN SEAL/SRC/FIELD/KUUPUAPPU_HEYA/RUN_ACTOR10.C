@@ -73,7 +73,6 @@ extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -230,9 +229,29 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
     f(a0, a1, a2, a3);
 }
+void ActorPresentation_RunActorModeOneThenZeroWithStep(s32 x);
+void SceneDialogue_PromptAndCountSkip(s32 x);
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void SceneDialogue_RunActor10Line(void)
 {
-    return Owner_GetState(2)[0x118];
+    Event_Begin();
+    Event_SetMessage(MSG_DID_THOSE_THIEVES_COME_FROM);
+    SceneDialogue_PromptAndCountSkip(10);
+    Event_End();
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+
+void SceneDialogue_RunActor11Line(void)
+{
+    Event_Begin();
+    Event_SetMessage(MSG_MY_FATHER_WORRIED_ABOUT_THOSE);
+    ActorPresentation_RunActorModeOneThenZeroWithStep(11);
+    Event_End();
+}
+
+void SceneDialogue_RunActor14Line(void)
+{
+    Event_Begin();
+    Event_SetMessage(MSG_HEARD_DEFEATED_THOSE_THIEVES);
+    SceneDialogue_PromptAndCountSkip(14);
+    Event_End();
+}

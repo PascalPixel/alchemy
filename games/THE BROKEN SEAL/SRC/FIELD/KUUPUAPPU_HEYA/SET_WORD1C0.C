@@ -70,10 +70,10 @@ enum PromptMessage {
  * reference record, stored as a halfword at +6.
  */
 extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
+extern u8 KuupuappuHeya_Stops[];
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +231,108 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void SceneState_SetWord1c0To209AndRun(void)
 {
-    return Owner_GetState(2)[0x118];
+    u8 *state;
+
+    state = *(u8 **)0x03001ebc;
+    *(s32 *)(state + 0x1c0) = 0x209;
+    Event_OpenScreen();
+    Event_WaitForScreen();
+    Event_Wait(1);
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+
+void SceneActor_SetModeZeroAndValue(s32 a, s32 b)
+{
+    Event_ShowMessage(a, 0);
+    Event_Wait(b);
+}
+
+void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c)
+{
+    Actor_FaceActor(a, b, 0);
+    Event_Wait(c);
+}
+
+void SceneActor_SetPairZeroAndValue(s32 a, s32 b, s32 c)
+{
+    Actor_FaceEachOther(a, b, 0);
+    Event_Wait(c);
+}
+
+void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c)
+{
+    Object_SetModeById(a, b, c);
+    ObjectMotion_WaitForAnimationChange(a);
+    Event_Wait(c);
+}
+
+void SceneEffect_ApplyPairWithValue141(s32 a, s32 b)
+{
+    Psynergy_Begin(141, 1);
+    Psynergy_SetTarget(a, b);
+    Psynergy_RaiseHands();
+    Psynergy_PlayEffect(1);
+    Task_Wait(1);
+}
+
+void SceneState_SetValue2ThenFinish(void)
+{
+    Psynergy_PlayEffect(2);
+    Psynergy_LowerHands();
+    BattleEffect_CleanupSceneObjects();
+}
+
+void OverlayObject_ConfigureObject22WithResource17(s32 a)
+{
+    u8 *o;
+    u8 *q;
+    u8 *p;
+    u8 *v;
+    s32 z;
+    s32 m;
+
+    z = 0;
+    o = Object_CreateFar(22);
+    if (o != 0) {
+        q = *(u8 **)(o + 0x50);
+        p = q + 38;
+        *p = z;
+        p += 1;
+        *p = z;
+        m = 33;
+        m = -m;
+        q[5] &= m;
+        q[9] &= 15;
+        o[0x55] = z;
+        o[0x5c] = 1;
+        v = Runtime_AllocateHeapBlock(17, 0x608);
+        Item_LoadIcon(a);
+        v += 0x400;
+        Vram_Load(q[28], 0x80, v);
+        Heap_Release(17);
+    }
+}
+
+u8 *SceneData_FindEntryAtPosition(s32 *o)
+{
+    s32 x = (o[0] + (s32)0xFFC00000) >> 19;
+    s32 y = (o[2] + (s32)0xFD900000) >> 19;
+    u8 *e = KuupuappuHeya_Stops;
+    u8 *ret = 0;
+    u32 i;
+
+    for (i = 0; i <= 36; i++, e += 16) {
+        s32 a = e[0];
+
+        if (a == x || a + 1 == x) {
+            s32 b = e[1];
+
+            if (b == y || b + 1 == y) {
+                ret = e;
+                break;
+            }
+        }
+    }
+    return ret;
+}

@@ -64,6 +64,8 @@ enum PromptMessage {
     MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
+#define SCENE_WORD_1C8 (*(u32 *)(*(u8 **)0x03001ebc + 456))
+
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the
@@ -73,7 +75,6 @@ extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +232,19 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void SceneState_SetValue123Mode11(void)
 {
-    return Owner_GetState(2)[0x118];
+    Audio_PlayCue(123);
+    Event_RequestExit(11);
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+
+/* Sets up the opening sequence: two calls with fixed argument pairs, a
+ * write to the scene work record, and two more calls with fixed args. */
+void FieldScene_RunOpeningSequenceHead(void)
+{
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384); /* object_id 0, speed_limit 32768, acceleration 16384 */
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 728, 408); /* object_id 0, x 728, z 408 */
+    SCENE_WORD_1C8 = 16;
+    Value1(Engine_AudioPlayCue, 123);
+    Event_RequestExit(15); /* main:0808a248 */
+}

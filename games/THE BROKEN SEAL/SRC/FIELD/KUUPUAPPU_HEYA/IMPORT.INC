@@ -1,3 +1,6 @@
+	.global Engine_TaskWait
+	.thumb_func
+Engine_TaskWait:
 	overlay_veneer 0x080000c1
 	.global Engine_ScheduleCallback
 	.thumb_func
@@ -5,23 +8,44 @@ Engine_ScheduleCallback:
 	.global Engine_TaskAddCallback
 	.thumb_func
 Engine_TaskAddCallback:
+	.global Scheduler_AddOrUpdateCallback
+	.thumb_func
+Scheduler_AddOrUpdateCallback:
 	overlay_veneer 0x080000d1
 	.global Scheduler_RemoveCallback
 	.thumb_func
 Scheduler_RemoveCallback:
 	overlay_veneer 0x080000d9
 	overlay_veneer 0x080000f9
+	.global ArcTan2
+	.thumb_func
+ArcTan2:
 	overlay_veneer 0x08000101
+	.global Runtime_AllocateHeapBlock
+	.thumb_func
+Runtime_AllocateHeapBlock:
 	overlay_veneer 0x08000141
+	.global Engine_HeapRelease
+	.thumb_func
+Engine_HeapRelease:
 	overlay_veneer 0x08000151
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer 0x080001c9
 	overlay_veneer 0x08009081
+	.global Object_CreateFar
+	.thumb_func
+Object_CreateFar:
 	overlay_veneer 0x080090c9
 	overlay_veneer 0x080090d1
 	.global Engine_MapRedraw
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer 0x08009129
+	.global Object_SetMoveTarget
+	.thumb_func
+Object_SetMoveTarget:
 	overlay_veneer 0x08009151
 	.global Engine_MapCopyCellsTo
 	.thumb_func
@@ -43,8 +67,17 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer 0x08015041
+	.global Engine_ItemLoadIcon
+	.thumb_func
+Engine_ItemLoadIcon:
 	overlay_veneer 0x08015251
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer 0x08077009
+	.global Owner_RecalculateStats
+	.thumb_func
+Owner_RecalculateStats:
 	overlay_veneer 0x08077011
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -58,7 +91,13 @@ Engine_GameFlagSet:
 	.thumb_func
 Engine_GameFlagClear:
 	overlay_veneer 0x080770d1
+	.global Djinn_Transfer
+	.thumb_func
+Djinn_Transfer:
 	overlay_veneer 0x080771d1
+	.global PartyInventory_HasSpace
+	.thumb_func
+PartyInventory_HasSpace:
 	overlay_veneer 0x08077251
 	.global Engine_EventWait
 	.thumb_func
@@ -78,6 +117,9 @@ Engine_EventEnd:
 Event_PrepareObjectAndApplyValue:
 	overlay_veneer 0x0808a049
 	overlay_veneer 0x0808a059
+	.global Engine_PartyGiveItem
+	.thumb_func
+Engine_PartyGiveItem:
 	overlay_veneer 0x0808a061
 	.global Engine_UiWorkWaitThenFinalizeCapacity
 	.thumb_func
@@ -101,7 +143,13 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer 0x0808a099
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer 0x0808a0a1
+	.global Engine_ActorSetDestination
+	.thumb_func
+Engine_ActorSetDestination:
 	overlay_veneer 0x0808a0b9
 	overlay_veneer 0x0808a0c1
 	.global Engine_ActorWalkTo
@@ -124,11 +172,17 @@ Engine_ActorSetPosition:
 	.global Engine_ActorSetAnimation
 	.thumb_func
 Engine_ActorSetAnimation:
+	.global Object_SetModeById
+	.thumb_func
+Object_SetModeById:
 	overlay_veneer 0x0808a101
 	.global Engine_ActorSetAnimationAndWait
 	.thumb_func
 Engine_ActorSetAnimationAndWait:
 	overlay_veneer 0x0808a111
+	.global ObjectMotion_WaitForAnimationChange
+	.thumb_func
+ObjectMotion_WaitForAnimationChange:
 	overlay_veneer 0x0808a119
 	.global Engine_ActorJump
 	.thumb_func
@@ -198,7 +252,13 @@ Engine_EventRequestExit:
 	overlay_veneer 0x0808a251
 	overlay_veneer 0x0808a261
 	overlay_veneer 0x0808a269
+	.global Engine_LeaderCheckAhead
+	.thumb_func
+Engine_LeaderCheckAhead:
 	overlay_veneer 0x0808a2a1
+	.global Battle_InitializeRenderObject
+	.thumb_func
+Battle_InitializeRenderObject:
 	overlay_veneer 0x0808a2b9
 	.global Engine_EventOpenScreen
 	.thumb_func
@@ -213,6 +273,9 @@ Engine_EventCloseScreen:
 Engine_EventWaitForScreen:
 	overlay_veneer 0x0808a371
 	overlay_veneer 0x0808a389
+	.global Engine_ItemShowFound
+	.thumb_func
+Engine_ItemShowFound:
 	overlay_veneer 0x0808a399
 	.global ObjectTable_Get
 	.thumb_func
@@ -221,11 +284,29 @@ ObjectTable_Get:
 	.thumb_func
 Engine_ActorLookup:
 	overlay_veneer 0x0808a401
+	.global Engine_PsynergyPlayEffect
+	.thumb_func
+Engine_PsynergyPlayEffect:
 	overlay_veneer 0x0808a421
+	.global Engine_PsynergyBegin
+	.thumb_func
+Engine_PsynergyBegin:
 	overlay_veneer 0x0808a429
+	.global Engine_PsynergySetTarget
+	.thumb_func
+Engine_PsynergySetTarget:
 	overlay_veneer 0x0808a431
+	.global Engine_PsynergyLowerHands
+	.thumb_func
+Engine_PsynergyLowerHands:
 	overlay_veneer 0x0808a439
+	.global BattleEffect_CleanupSceneObjects
+	.thumb_func
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer 0x0808a441
+	.global Engine_PsynergyRaiseHands
+	.thumb_func
+Engine_PsynergyRaiseHands:
 	overlay_veneer 0x0808a449
 	.global Ui_SetBank15PaletteAndClearRenderMode
 	.thumb_func
@@ -234,9 +315,21 @@ Ui_SetBank15PaletteAndClearRenderMode:
 	.global Engine_AudioPlaySceneCue
 	.thumb_func
 Engine_AudioPlaySceneCue:
+	.global Audio_PlayCueFromEventWork
+	.thumb_func
+Audio_PlayCueFromEventWork:
 	overlay_veneer 0x0808a4f1
+	.global Engine_ShopOpen
+	.thumb_func
+Engine_ShopOpen:
 	overlay_veneer 0x080b0009
+	.global Engine_InnOpen
+	.thumb_func
+Engine_InnOpen:
 	overlay_veneer 0x080b0019
+	.global BattlePlacement_UpdateTimedEntriesTwentyTimes
+	.thumb_func
+BattlePlacement_UpdateTimedEntriesTwentyTimes:
 	overlay_veneer 0x080b5109
 	.global Engine_AudioPlayCue
 	.thumb_func

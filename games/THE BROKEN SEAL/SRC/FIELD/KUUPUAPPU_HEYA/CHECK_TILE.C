@@ -73,7 +73,6 @@ extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +230,24 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+s32 SceneActor_CheckTileFreeOfKinds(u8 *p)
 {
-    return Owner_GetState(2)[0x118];
+    s32 x;
+    s32 y;
+
+    if (p == 0) {
+        return 1;
+    }
+    x = (p[0] << 19) + 0x480000;
+    y = (p[1] << 19) + 0x2780000;
+    if (KuupuappuHeya_IsActorNearPoint(x, y, 0) != 0 || KuupuappuHeya_IsRecordNearPoint(x, y, 2) != 0
+        || KuupuappuHeya_IsRecordNearPoint(x, y, 24) != 0 || KuupuappuHeya_IsRecordNearPoint(x, y, 25) != 0) {
+        return -1;
+    }
+    return 0;
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+
+void SceneActor_ApplyScaledBytePairPosition(s32 a, u8 *p)
+{
+    Object_SetMoveTarget(a, (p[0] << 19) + 0x480000, 0, (p[1] << 19) + 0x2780000);
+}

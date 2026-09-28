@@ -69,11 +69,12 @@ enum PromptMessage {
  * Points two records at a third: each gets the angle from its own offset to the
  * reference record, stored as a halfword at +6.
  */
+extern u8 KuupuappuHeya_SceneTableB[];
+extern u8 KuupuappuHeya_SceneTableA[];
 extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +232,38 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+/*
+ * Head export stub at 0x02000030. The eight-byte owner includes its one pool
+ * word at 0x02000034, which the load reads and which sits past the return.
+ * The word is an address returned without being dereferenced, so this is a
+ * getter for an in-image table; it names bytes only while this overlay is
+ * resident at 0x02000000.
+ */
+u8 *SceneData_GetTableD8f8(void)
 {
-    return Owner_GetState(2)[0x118];
+    return (u8 *)0x0200d8f8;
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+
+/*
+ * Head export stub at 0x02000038. The eight-byte owner includes its one pool
+ * word at 0x0200003c, which the load reads and which sits past the return.
+ * The word is an address returned without being dereferenced, so this is a
+ * getter for an in-image table; it names bytes only while this overlay is
+ * resident at 0x02000000.
+ */
+u8 *SceneData_GetTableDa60(void)
+{
+    return (u8 *)0x0200da60;
+}
+
+/*
+ * Head export stub at 0x02000040. The eight-byte owner includes its one pool
+ * word at 0x02000044, which the load reads and which sits past the return.
+ * The word is an address returned without being dereferenced, so this is a
+ * getter for an in-image table; it names bytes only while this overlay is
+ * resident at 0x02000000.
+ */
+u8 *SceneData_GetTableDa80(void)
+{
+    return (u8 *)0x0200da80;
+}

@@ -69,11 +69,12 @@ enum PromptMessage {
  * Points two records at a third: each gets the angle from its own offset to the
  * reference record, stored as a halfword at +6.
  */
+extern u8 KuupuappuHeya_SceneTableB[];
+extern u8 KuupuappuHeya_SceneTableA[];
 extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +232,39 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void ActorPresentation_SetSceneCellByAngle(void)
 {
-    return Owner_GetState(2)[0x118];
+    s32 x;
+    s32 z;
+
+    if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0xa000
+        && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0xe000) {
+        Leader_CheckAhead();
+        x = 42;
+        z = 85;
+        Map_CopyCellAttributes(41, 85, 1, 1, x, z);
+    } else if (*(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) >= 0x2000
+               && *(u16 *)(((u8 *(*)())Object_GetById)(0) + 6) <= 0x6000) {
+        Leader_CheckAhead();
+        x = 42;
+        z = 85;
+        Map_CopyCellAttributes(43, 85, 1, 1, x, z);
+    }
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+
+void FieldScene_RunObjectTwentySixPositionCheck(void)
+{
+    struct FieldActor *obj;
+    s32 x;
+    s32 z;
+
+    Event_Begin();
+    obj = ((struct FieldActor *(*)())Object_GetById)(26);
+    if ((obj->x.fixed >> 20) == 42) {
+        x = 41;
+        z = 24;
+        Map_CopyCellAttributes(101, 24, 3, 4, x, z);
+        GameFlag_Set(0x859);
+    }
+    Event_End();
+}

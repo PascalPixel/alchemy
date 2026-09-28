@@ -73,7 +73,6 @@ extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
 extern u8 LinkedMessage_TheyreBack[];
-extern u8 KuupuappuHeya_ActionTable[];
 extern u8 LinkedMessage_YouRobinRightWontForget[];
 extern u8 LinkedMessage_IvanGotShamansRod[];
 
@@ -231,8 +230,32 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 OverlayObject_GetObjectTwoByte118(void)
+void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 expected, s32 next, const u8 *desc)
 {
-    return Owner_GetState(2)[0x118];
+    u8 *rec = ((u8 *(*)())Object_GetById)(actor);
+
+    if (*(s16 *)(rec + 100) == expected) {
+        Actor_EnableActionCallback(actor, desc);
+        *(u16 *)(rec + 100) = (u16)next;
+    }
 }
-void SceneEffect_ApplyThreeValuesAndFinish(s32 a, s32 b, s32 c);
+
+void SceneState_SetFlagByActorPosition(void)
+{
+    u8 *p0 = ((u8 *(*)())Object_GetById)(0);
+    s32 rx = *(s32 *)(p0 + 8);
+    s32 x;
+    s32 z;
+
+    u8 *p1 = ((u8 *(*)())Object_GetById)(0);
+    x = rx >> 20;
+    z = *(s32 *)(p1 + 16);
+    x = x - 34;
+    z = z >> 20;
+
+    if ((u32)x <= 1 && z > 40 && z <= 42) {
+        GameFlag_Set(148 << 2);
+    } else {
+        GameFlag_Clear(148 << 2);
+    }
+}

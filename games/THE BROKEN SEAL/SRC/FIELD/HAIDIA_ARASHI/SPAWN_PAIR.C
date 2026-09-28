@@ -29,14 +29,16 @@ struct PairWork {
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 
-extern struct PairWork *Data_03001f30;
+extern struct PairWork *gEffectWork;
 struct WorldMapVramBlock {
     u16 base;
     u16 offset;
 };
-extern struct WorldMapVramBlock Data_03001b10[];
-s32 Main_08009020(struct FieldSprite *sprite, s32 animation);
-void Main_080001b8(s32 block);
+extern struct WorldMapVramBlock gVramBlockCache[];
+s32 Object_InitializeMode(struct FieldSprite *sprite, s32 animation);
+void Resource_ResetEntry(s32 block);
+void OverlayObject_UpdateArcFromParent(union FieldObject *object);
+void SceneEffect_UpdateArcOverAnchor(union FieldObject *object);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
@@ -54,7 +56,7 @@ void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
     union PairObject *child;
     struct PairSprite *part;
     struct FieldSprite *sprite;
-    struct PairWork *work = Data_03001f30;
+    struct PairWork *work = gEffectWork;
     s32 i;
 
     Engine_AudioPlayCue(152);
@@ -71,15 +73,15 @@ void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = &part->sprite;
-                Main_08009020(sprite, 0);
+                Object_InitializeMode(sprite, 0);
                 sprite->flags = 0;
-                Main_080001b8(sprite->vram_block);
+                Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
                 /* FAKEMATCH: a plain byte access; the struct field store
                  * leaves a dead QImode zero that takes r3 from the +85
                  * address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
-                sprite->tile = (Data_03001b10[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;
@@ -91,7 +93,7 @@ void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
         union PairObject *p = pair[0];
         struct FieldSprite *sp = p->object.actor.sprite;
 
-        p->object.actor.update = (void (*)(union FieldObject *))0x0200c3c9;
+        p->object.actor.update = OverlayObject_UpdateArcFromParent;
         sp->priority = parent->object.actor.sprite->priority;
     }
     {
@@ -99,7 +101,7 @@ void HaidiaArashi_SpawnEffectPair(union PairObject *parent)
         struct FieldSprite *sp = p->sprite;
 
         sp->priority = parent->object.actor.sprite->priority;
-        p->update = (void (*)(union FieldObject *))0x0200c379;
+        p->update = SceneEffect_UpdateArcOverAnchor;
         p->priority_flags = 2;
     }
 }

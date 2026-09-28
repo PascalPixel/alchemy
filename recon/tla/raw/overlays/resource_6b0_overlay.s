@@ -5910,7 +5910,7 @@ Func_020026fc:
 	pop	{r5, r6, r7, pc}
 	.4byte 0x02000240
 	.4byte 0x0200c458
-	.section .text.x0200b4c0,"ax",%progbits
+	.section .rodata.x0200b4c0,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000d

@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/ENTRY.o"(.text)
         "*/resource_64d_overlay.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_IRIGUCHI/IMPORT.o"(.text)
-        "*/resource_64d_overlay.o"(.text.x0200aa6c)
+        "*/resource_64d_overlay.o"(.rodata.x0200aa6c)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

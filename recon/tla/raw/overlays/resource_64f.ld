@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/ENTRY.o"(.text)
         "*/resource_64f_overlay.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/SUHARA_GATE/IMPORT.o"(.text)
-        "*/resource_64f_overlay.o"(.text.x02008aa8)
+        "*/resource_64f_overlay.o"(.rodata.x02008aa8)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -3282,7 +3282,7 @@ Func_020001d4:
 	.2byte 0x0000
 	.4byte 0x00013333
 	.4byte 0x02000240
-	.section .text.x0200a12c,"ax",%progbits
+	.section .rodata.x0200a12c,"a",%progbits
 	.4byte 0xffff0000
 	.4byte 0x00000120
 	.4byte 0xc00001c6

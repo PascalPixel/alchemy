@@ -10205,7 +10205,7 @@ Func_0200140c:
 	.4byte 0x80184b01
 	.4byte 0x00004770
 	.4byte 0x0200f5d2
-	.section .text.x0200d6c8,"ax",%progbits
+	.section .rodata.x0200d6c8,"a",%progbits
 	.4byte 0x0000002e
 	.4byte 0x0200804d
 	.4byte 0x00000011

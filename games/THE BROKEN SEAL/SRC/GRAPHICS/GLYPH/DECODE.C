@@ -10,11 +10,10 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 /* Heap block addresses, indexed by block number. */
 extern void *Data_03001e50[];
 
-/* ARM routines copied into heap block 49 before each call; their lengths
-   are link-time symbols. */
-extern u8 Data_00000278[];
-extern u8 Data_0000009c[];
-extern u8 Data_0000007c[];
+/* ARM routines copied into heap block 49 before each call. */
+extern u8 Tile_Decompress4bppCodeSize[];
+extern u8 Tile_ExpandMaskedCodeSize[];
+extern u8 Tile_ExpandOpaqueCodeSize[];
 
 #define ROUTINE_BLOCK 49
 
@@ -27,7 +26,7 @@ void UiGlyph_DecodeWithHeapRoutines(u8 *glyph, s32 outlined)
 
         /* FAKEMATCH: retain the size load after saving both arguments. */
         do {
-            size = (u32)Data_00000278;
+            size = (u32)Tile_Decompress4bppCodeSize;
         } while (0);
         code = Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
@@ -40,7 +39,7 @@ void UiGlyph_DecodeWithHeapRoutines(u8 *glyph, s32 outlined)
     if (outlined) {
         u32 size;
 
-        size = (u32)Data_0000009c;
+        size = (u32)Tile_ExpandMaskedCodeSize;
         code = Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
         Dma_Set((const void *)Func_08015d74, code,
@@ -48,7 +47,7 @@ void UiGlyph_DecodeWithHeapRoutines(u8 *glyph, s32 outlined)
     } else {
         u32 size;
 
-        size = (u32)Data_0000007c;
+        size = (u32)Tile_ExpandOpaqueCodeSize;
         code = Runtime_AllocateHeapBlock(ROUTINE_BLOCK, size);
         size >>= 2;
         Dma_Set((const void *)Func_08015e10, code,

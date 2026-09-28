@@ -3,7 +3,7 @@
 extern const u8 Func_08015430[];
 
 extern void *Data_03001e50[];
-extern u8 Value_00000140;
+extern u8 Text_DecodeSymbolCodeSize[];
 
 void *Runtime_AllocateHeapBlock(s32 slot, u32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
@@ -22,7 +22,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
         u32 size;
         void *code;
 
-        size = (u32)&Value_00000140;
+        size = (u32)Text_DecodeSymbolCodeSize;
         code = Runtime_AllocateHeapBlock(50, size);
         Dma_Set((const void *)Func_08015430, code,
             0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);

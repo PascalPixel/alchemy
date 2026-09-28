@@ -4,11 +4,9 @@ void *Runtime_GetObject(s32);
 void UiWindow_Commit(s32);
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 extern u8 Data_03001f2c[];
-extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 s32 Math_Mod(s32 value, s32 divisor);
 void UiWork_FinalizeFar(s32 window, s32 style);
@@ -70,7 +68,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
         }
 
         WaitFrames(1);
-        if ((INPUT_NEW_KEYS & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             if (Inventory_CountFar(unit_id) == 0) {
                 Audio_PlayCue(0x71);
                 continue;
@@ -90,7 +88,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((INPUT_NEW_KEYS & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             Audio_PlayCue(0x71);
             *selected_unit = -1;
             *selected_item = -1;
@@ -98,12 +96,12 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((INPUT_REPEAT_KEYS & 0x20) != 0) {
+        if ((gKeysRepeat & 0x20) != 0) {
             Audio_PlayCue(0x6f);
             selected_index--;
             redraw = 1;
         }
-        if ((INPUT_REPEAT_KEYS & 0x10) != 0) {
+        if ((gKeysRepeat & 0x10) != 0) {
             Audio_PlayCue(0x6f);
             selected_index++;
             redraw = 1;
@@ -195,7 +193,7 @@ s32 Shop_SelUse(s32 actor)
 
         WaitFrames(1);
 
-        if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             status = Inventory_CheckDiscardFar(actor, selection);
             if (status == 0) {
                 Audio_PlayCue(112);
@@ -213,7 +211,7 @@ s32 Shop_SelUse(s32 actor)
             continue;
         }
 
-        if ((*(volatile u32 *)((u32)&Data_03001c94) & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             Audio_PlayCue(113);
             result = -1;
             goto exit_loop;
@@ -225,19 +223,19 @@ s32 Shop_SelUse(s32 actor)
          * ahead of the add; folding it into one `selection +- 1 + count`
          * expression instead subtracts/adds 1 from the sum register after
          * the add, which is a different (non-matching) instruction order. */
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x20) != 0) {
+        if ((gKeysRepeat & 0x20) != 0) {
             Audio_PlayCue(111);
             selection -= 1;
             selection = Math_Mod(selection + count, count);
             redraw = 1;
         }
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x10) != 0) {
+        if ((gKeysRepeat & 0x10) != 0) {
             Audio_PlayCue(111);
             selection += 1;
             selection = Math_Mod(selection + count, count);
             redraw = 1;
         }
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x40) != 0) {
+        if ((gKeysRepeat & 0x40) != 0) {
             selection -= 5;
             if (selection < 0)
                 selection += 15;
@@ -246,7 +244,7 @@ s32 Shop_SelUse(s32 actor)
             Audio_PlayCue(111);
             redraw = 1;
         }
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x80) != 0) {
+        if ((gKeysRepeat & 0x80) != 0) {
             selection += 5;
             if (selection >= count)
                 selection -= 15;

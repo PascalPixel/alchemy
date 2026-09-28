@@ -1,11 +1,12 @@
-/* resource_3c9: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
+/* resource_3c9: its entry veneers, its listing with maintained code and
+   the compiler library linked in place, as pret links objects and libgcc
+   members in ROM order. Its import veneers follow its code. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_3c9_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_3c9_overlay.o"(.text.x0200813a)
@@ -29,7 +30,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/RISE.o"(.text)
         "*/resource_3c9_overlay.o"(.text.x0200da26)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/FINALE.o"(.text)
-        "*/resource_3c9_overlay.o"(.text.x0200dbec)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c9_overlay.o"(.rodata.part1)
     }

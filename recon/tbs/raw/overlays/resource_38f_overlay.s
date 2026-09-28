@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/ENTRY.INC"
 	.section .text.x0200816c,"ax",%progbits
 	.align 2
 	.global Func_0200016c
@@ -289,9 +285,6 @@ Func_02000694:
 	.4byte 0x00000845
 	.4byte 0x00000843
 	.4byte 0x0200b2d8
-	.section .text.x0200a99c,"ax",%progbits
-	.align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_MURA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global KorimaMura_ActionTable1
 KorimaMura_ActionTable1:

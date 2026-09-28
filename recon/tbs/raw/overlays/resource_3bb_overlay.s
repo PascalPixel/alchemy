@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/ENTRY.INC"
 	.global Func_02000030
 	.thumb_func
 Func_02000030:
@@ -6094,7 +6090,6 @@ Func_02003cf8:
 	.2byte 0x0200
 	.2byte 0x0000
 	.2byte 0xfff0
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global KorosseoKabe_RollLogScript
 KorosseoKabe_RollLogScript:

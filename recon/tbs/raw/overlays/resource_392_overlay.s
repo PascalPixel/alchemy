@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/ENTRY.INC"
 	.section .text.x02008b8c,"ax",%progbits
 	.align 2
 	.global KorimaPalette_SaveFirst
@@ -110,9 +106,6 @@ Func_02000c0c:
 	.4byte 0x020097b0
 	.4byte 0x020090b0
 	.4byte 0x840000e0
-	.section .text.x02008d8c,"ax",%progbits
-	.align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KORIMA_HIROBA/IMPORT.INC"
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.global StagedActor_DirectionSteps

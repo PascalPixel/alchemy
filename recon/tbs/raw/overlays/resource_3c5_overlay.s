@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/ENTRY.INC"
 	.section .text.x020089dc,"ax",%progbits
 	.global Func_020009dc
 	.thumb_func
@@ -3096,6 +3092,9 @@ Func_02002820:
 	pop {r5, r6}
 	pop {r0}
 	bx r0
+	.global Func_020028a0
+	.thumb_func
+Func_020028a0:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -3611,7 +3610,6 @@ Func_02002820:
 	.4byte 0x00000989
 	.4byte 0x00000985
 	.4byte 0x02000240
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_IRIGUCHI/IMPORT.INC"
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.global StagedActor_DirectionSteps

@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/ENTRY.INC"
 	.section .text.x02008194,"ax",%progbits
 	.align 2
 	.global Func_02000194
@@ -729,9 +725,6 @@ Func_020011c4:
 	.4byte 0x02009af8
 	.2byte 0x4000
 	.2byte 0x8000
-	.section .text.x02009314,"ax",%progbits
-	.align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/IMPORT.INC"
 	.section .rodata.part1,"a",%progbits
 	.global BabiFune_PaletteFrames
 BabiFune_PaletteFrames:

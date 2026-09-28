@@ -1,0 +1,62 @@
+@ Import veneers after the KORASHIAMU_IRIGUCHI overlay's code: fixed 8-byte
+@ veneers through which the overlay calls main-image code, each loading its
+@ target into r4 and branching, which the calling convention permits.
+@ credit: reconstructed_veneer — KORASHIAMU_IRIGUCHI overlay import veneers
+.syntax unified
+	.thumb
+	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.balign 4
+	overlay_veneer WaitFramesFar
+	overlay_veneer Map_CopyMetatileIndicesRectFar
+	overlay_veneer Map_CopyCellAttributeRectFar
+	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	overlay_veneer Map_WaitWorkValuesBelow256Far
+	overlay_veneer GameFlag_TestFar
+	overlay_veneer GameFlag_SetBitFar
+	overlay_veneer GameFlag_ClearBitFar
+	overlay_veneer Party_AddActiveOwnerFar
+	overlay_veneer Party_RemoveActiveOwnerFar
+	overlay_veneer Func_08077310
+	overlay_veneer Battle_WaitMode0Far
+	overlay_veneer Battle_ResetFar
+	overlay_veneer BattleFx_FinishActionFar
+	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	overlay_veneer Object_GetByIdFar
+	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	overlay_veneer Object_SetActionCallbackAndRefreshByIdFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
+	overlay_veneer Object_SetModeByIdFar
+	overlay_veneer Object_SetActionByIdFar
+	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	overlay_veneer ObjectMotion_SetVariantCallbackFar
+	overlay_veneer Motion_SetVarCbAndRefreshFar
+	overlay_veneer Object_LinkPairFar
+	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	overlay_veneer Event_SetValue1d8Far
+	overlay_veneer UiText_OpenMessageAtObjectFar
+	overlay_veneer BattleEv_RunWaitFar
+	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	overlay_veneer BattleEventRuntime_ProcessActionFar
+	overlay_veneer ObjectMotion_ArmCallbackFar
+	overlay_veneer BattleFx_SpawnLinkedFar
+	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	overlay_veneer Motion_CamBoundsFar
+	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	overlay_veneer Battle_GetWorkObject1e0Far
+	overlay_veneer Event_SetValue170Far
+	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
+	overlay_veneer BattleFx_StartBufferInterpolationFar
+	overlay_veneer Event_SetStatus1c6Far
+	overlay_veneer Event_ClearStatus1c6Far
+	overlay_veneer Event_WaitValue1c8FramesFar
+	overlay_veneer AudioCommand_PlayFar

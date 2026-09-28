@@ -1,10 +1,11 @@
-/* resource_378: its listing with maintained code
-   linked in place, as pret links objects in ROM order. */
+/* resource_378: its entry veneers, its listing with maintained code linked
+   in place, as pret links objects in ROM order. Its import veneers follow
+   its code. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_378_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/UPDATE_FACING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/RUN_ACTOR.o"(.text)
@@ -22,7 +23,7 @@ SECTIONS
         "*/resource_378_overlay.o"(.text.x0200b144)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/SPAWN_SPARK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/APPLY_TWO.o"(.text)
-        "*/resource_378_overlay.o"(.text.x0200b520)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHINDEN_HEYA/IMPORT.o"(.text)
         "*/resource_378_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }

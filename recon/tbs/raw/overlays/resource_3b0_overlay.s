@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/ENTRY.INC"
 	.global Func_02000030
 	.thumb_func
 Func_02000030:
@@ -755,9 +751,6 @@ Func_020010a0:
 	.4byte 0x02009924
 	.4byte 0x02009920
 	.4byte 0x0000ffff
-	.section .text.x020091b4,"ax",%progbits
-	.p2align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/FUNE_HOBASHIRA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.4byte 0x00000016
 	.4byte 0x00000009

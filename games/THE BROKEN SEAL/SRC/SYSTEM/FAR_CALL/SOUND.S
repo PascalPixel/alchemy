@@ -22,11 +22,17 @@ Audio_PlayCue:
 	.global Func_080f9010
 	.thumb_func
 Func_080f9010:
+	.global AudioCommand_PlayFar
+	.thumb_func
+AudioCommand_PlayFar:
 	overlay_veneer AudioCommand_Play
 	.global Func_080f9018
 	.thumb_func
 Func_080f9018:
 	overlay_veneer MusicPlayer_StepVolumeAndPitchTowardTargets
+	.global MusicCommand_SetPitchAndUpdateFrequencyFar
+	.thumb_func
+MusicCommand_SetPitchAndUpdateFrequencyFar:
 	overlay_veneer MusicCommand_SetPitchAndUpdateFrequency
 	overlay_veneer MusicCommand_SetPitch
 	overlay_veneer Audio_SetWorkPairB
@@ -49,4 +55,7 @@ Audio_Check:
 	.thumb_func
 Func_080f9070:
 	overlay_veneer AudioCommand_GetSecondaryStateByte
+	.global AudioCommand_WaitForCompletionFar
+	.thumb_func
+AudioCommand_WaitForCompletionFar:
 	overlay_veneer AudioCommand_WaitForCompletion

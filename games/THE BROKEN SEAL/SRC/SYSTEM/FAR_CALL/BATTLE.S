@@ -113,7 +113,13 @@ Func_080b50f8:
 	.thumb_func
 BattleMotion_GetSlotField14Far:
 	overlay_veneer BattleMotion_GetSlotField14
+	.global BattlePlacement_UpdateTimedEntriesTwentyTimesFar
+	.thumb_func
+BattlePlacement_UpdateTimedEntriesTwentyTimesFar:
 	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimes
+	.global DebugParty_LoadPresetFar
+	.thumb_func
+DebugParty_LoadPresetFar:
 	overlay_veneer DebugParty_LoadPreset
 	.global BattleActor_CommitPlacementFar
 	.global Func_080b5118

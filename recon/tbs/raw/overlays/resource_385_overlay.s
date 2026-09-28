@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/ENTRY.INC"
 	.section .text.x0200813c,"ax",%progbits
 	.align 2
 	.global Func_0200013c
@@ -366,9 +362,6 @@ Func_02000804:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00000307
-	.section .text.x02009058,"ax",%progbits
-	.align 2
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA_SAI/IMPORT.INC"
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000

@@ -1,9 +1,5 @@
 .syntax unified
-.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ENTRY.INC"
 	.section .text.x02008048,"ax",%progbits
 	.p2align 2
 	.global Func_02000048
@@ -3532,7 +3528,6 @@ FieldScene_RunScene383_02004b2c:
 .L_02004b9c_0:
 	pop {r0}
 	bx r0
-	.include "games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/IMPORT.INC"
 	.section .rodata,"a",%progbits
 	.global KuupuappuHeya_Stops
 KuupuappuHeya_Stops:

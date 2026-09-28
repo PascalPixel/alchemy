@@ -1,3 +1,8 @@
+/* Draft of resource_375 0x02009760 (HaidiaSukureta_RunActorSequence), from
+ * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference:
+ * the ROM loads message 0xe85 from the literal pool and derives the
+ * following lines from it, as a link-time message value would; its imports
+ * still carry their old call-site names. The listing keeps these rows. */
 #include "TYPES.H"
 
 extern u8 Data_00000e85[];

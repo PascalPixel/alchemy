@@ -29,20 +29,34 @@ union SceneCell {
 extern s32 gCell[];
 extern u8 *gCam;
 extern u8 *gWork;
-extern u32 gIw;
-extern s32 gIw2;
-extern s32 gIw3;
-extern u16 gUnk;
-extern s32 gOv;
-extern u16 gOv2;
-extern u16 gOv3;
-extern u16 gUnk2;
+extern u32 gFrameCount;
+extern s32 gKeysHeld;
+extern s32 gKeysRepeat;
 
-u8 *SceneObject_Get();
+/*
+ * The scene's own work, after the overlay image: a transfer header and the
+ * buffer it describes, and the scanline where the BG3 scroll switches between
+ * the two values above and below it.
+ */
+static u16 sTransferHeader[16];
+static u8 sTransferData[0x60];
+static s32 sSplitLine;
+static u16 sHofsAbove;
+static u16 sHofsBelow;
+
+/* The scene's tables, in the overlay's read-only data. */
+extern u8 ToretoEda_SceneTable0[];
+extern u8 ToretoEda_SceneTable1[];
+extern u8 ToretoEda_SceneTable2[];
+extern u8 ToretoEda_SceneTable3[];
+
+void *Object_GetById(u32);
+void BattleFx_SetPhaseRequest(s32, s32);
+void State_ApplyTables826dAnd82a1(void);
 
 void State_SetActorEightValue3d(void)
 {
-    Field_unk_0200037c(8, 0x3D);
+    BattleFx_SetPhaseRequest(8, 0x3D);
 }
 
 /*
@@ -51,7 +65,7 @@ void State_SetActorEightValue3d(void)
  */
 u8 *SceneData_GetTable835c(void)
 {
-    return (u8 *)0x0200835c;   /* image offset 0x35c */
+    return ToretoEda_SceneTable0;
 }
 
 /* Table slot with no data: reads nothing and returns zero. */
@@ -63,13 +77,13 @@ s32 SceneData_ReturnZero(void)
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable844c(void)
 {
-    return (u8 *)0x0200844c;   /* image offset 0x44c */
+    return ToretoEda_SceneTable1;
 }
 
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable8474(void)
 {
-    return (u8 *)0x02008474;   /* image offset 0x474 */
+    return ToretoEda_SceneTable2;
 }
 
 void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
@@ -81,14 +95,14 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     s32 h;
 
     /* Block coordinates become 16.16 fixed-point shifts of sixteen tiles. */
-    obj = (struct SceneObject *)SceneObject_Get(gCell[125]);
+    obj = (struct SceneObject *)Object_GetById(gCell[125]);
     dx <<= 20;
     dz <<= 20;
 
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Field_Check((s32)obj->layer, obj->x, obj->z);
+        h = Map_GetTerrainHeight((s32)obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }
@@ -98,7 +112,7 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
     if (obj != 0) {
         obj->x += dx;
         obj->z += dz;
-        h = Field_Check2((s32)obj->layer, obj->x, obj->z);
+        h = Map_GetTerrainHeight((s32)obj->layer, obj->x, obj->z);
         obj->y = h;
         obj->settled_y = h;
     }
@@ -106,12 +120,12 @@ void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 
 void Scene_ApplyOffset0Pos5(void)
 {
-    Field_unk_0200013c(0, 5);
+    Actor_ShiftObjectsByBlock(0, 5);
 }
 
 void Scene_ApplyOffset0Neg5(void)
 {
-    Field_unk_0200014e(0, -5);
+    Actor_ShiftObjectsByBlock(0, -5);
 }
 
 void Scene_ApplyOffset0Pos5Second(void)
@@ -121,17 +135,17 @@ void Scene_ApplyOffset0Pos5Second(void)
 
 void Scene_ApplyOffset0Neg5Second(void)
 {
-    Field_unk_0200016e(0, -5);
+    Actor_ShiftObjectsByBlock(0, -5);
 }
 
 void Scene_ApplyOffset0Pos6(void)
 {
-    Field_unk_0200017c(0, 6);
+    Actor_ShiftObjectsByBlock(0, 6);
 }
 
 void Scene_ApplyOffset0Neg6(void)
 {
-    Field_unk_0200018e(0, -6);
+    Actor_ShiftObjectsByBlock(0, -6);
 }
 
 void State_SetValue123ThenCounter16c(void)
@@ -139,9 +153,9 @@ void State_SetValue123ThenCounter16c(void)
     u8 *state = gWork;
     s16 *cnt;
 
-    Field_unk_02000496(0x7B);
+    Audio_PlayCue(0x7B);
     cnt = (s16 *)(state + 0x16C);
-    Field_unk_0200048c(*cnt);
+    Event_SetValue170(*cnt);
 }
 
 void Effect_SetAlphaBlendForScene9(void)
@@ -149,7 +163,7 @@ void Effect_SetAlphaBlendForScene9(void)
     u8 *disp;
 
     /* Start the scene, then configure alpha blending for its display state. */
-    Field_unk_020004ae(9);
+    DisplayTransition_InitializeBattleEffectState(9);
 
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
@@ -175,31 +189,34 @@ void Effect_SetAlphaBlendForScene9(void)
 /* The eight-byte owner includes the pool word holding this address. */
 u8 *SceneData_GetTable84a4(void)
 {
-    return (u8 *)0x020084a4;   /* image offset 0x4a4 */
+    return ToretoEda_SceneTable3;
 }
 
 void Scene_RunTwoCallSequence(void)
 {
-    Field_unk_020004e4();
-    Field_unk_020004f0();
+    Battle_Reset();
+    BattleFx_FinishAction();
 }
 
 /*
- * Scene hook that does nothing. The owner is the two-byte return alone; the
- * zero halfwords on either side align it and the entry that follows, and are
- * not part of it.
+ * Two scene hooks that do nothing. Each is the two-byte return alone; the
+ * zero halfwords after them align the entry that follows.
  */
+void State_RunEmptyHookFirst(void)
+{
+}
+
 void State_RunEmptyHook(void)
 {
 }
 
 void SceneData_InitHeader8590(void)
 {
-    u16 *hdr = (u16 *)0x02008590;
+    u16 *hdr = sTransferHeader;
 
-    hdr[0] = gIw2;
-    hdr[1] = gIw3;
-    Field_unk_020004fc(hdr, (u8 *)0x020085B0);
+    hdr[0] = gKeysHeld;
+    hdr[1] = gKeysRepeat;
+    SerialRuntime_PollAndTransfer(hdr, sTransferData);
 }
 
 s32 State_SetRuntimeWord448To256(void)
@@ -217,7 +234,7 @@ s32 State_SetRuntimeWord448To256(void)
     off -= 192;
     *scene = off;
 
-    Field_unk_02000560(9);
+    DisplayTransition_InitializeBattleEffectState(9);
 
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
@@ -239,7 +256,7 @@ s32 State_SetRuntimeWord448To256(void)
         *slot = value;
     }
 
-    Field_unk_0200051e();
+    State_ApplyTables826dAnd82a1();
     return 0;
 }
 
@@ -248,43 +265,34 @@ void Effect_UpdateBg3HofsByVcount(void)
     u16 *src;
     u32 value;
 
-    if (gUnk >= gOv) {
-        src = &gOv2;
+    if (*(u16 *)0x04000006 >= sSplitLine) {
+        src = &sHofsAbove;
     } else {
-        src = &gOv3;
+        src = &sHofsBelow;
     }
     value = *src;
-    gUnk2 = value;
+    *(u16 *)0x0400001c = value;
 }
 
 /*
- * The owner at 0x020002a0, 64 bytes: 42 bytes of code, the two-byte alignment
- * halfword, and a five-word literal pool at 0x020002cc holding 0x03001e70,
- * 0x02008610, 0x02008614, 0x03001e40 and 0x02008616.
- *
- * It prepares the three words that Effect_UpdateBg3HofsByVcount consumes:
- * a VCOUNT threshold at 0x02008610 and the two BG3HOFS values selected above
- * and below it. 192 is the screen height, so the threshold is a scanline
- * derived from a coordinate in the scene work record.
+ * Prepares the three values that Effect_UpdateBg3HofsByVcount consumes: a
+ * VCOUNT threshold and the two BG3HOFS values selected above and below it.
+ * 192 is the screen height, so the threshold is a scanline derived from a
+ * coordinate in the scene work record.
  *
  * The record cell is read as a union, not as bare halfwords. The word store to
- * 0x02008610 and the halfword reads are only ordered against each other when
- * they can alias, and the reference schedules the 0x02008614 address load ahead
- * of the halfword read on exactly that dependence. Reading the cell through a
- * halfword-only pointer disambiguates the two accesses and loses that order.
+ * the threshold and the halfword reads are only ordered against each other
+ * when they can alias, and the reference schedules the address load of the
+ * value above ahead of the halfword read on exactly that dependence. Reading
+ * the cell through a halfword-only pointer disambiguates the two accesses and
+ * loses that order.
  */
 void Effect_SetBg3HofsSplit(void)
 {
     union SceneCell *work = (union SceneCell *)(gCam + 260);
     s32 hofs;
 
-    gOv = 192 - work[1].h[1];
-    gOv2 = hofs = work[0].h[1];
-    gOv3 = hofs - (gIw >> 2);
-}
-
-void State_ApplyTables826dAnd82a1(void)
-{
-    Field_unk_020005f6(1, 0, 0x0200826D);
-    Field_unk_020005f8(0x020082A1, 0xC80);
+    sSplitLine = 192 - work[1].h[1];
+    sHofsAbove = hofs = work[0].h[1];
+    sHofsBelow = hofs - (gFrameCount >> 2);
 }

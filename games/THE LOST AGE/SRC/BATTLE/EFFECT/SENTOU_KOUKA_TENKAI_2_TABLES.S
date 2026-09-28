@@ -5,6 +5,7 @@
 @ table rewritten at run time and the addresses it is built from are data
 @ and carry no credit, as SENTOU_KOUKA_TENKAI_TABLES.S.
 .syntax unified
+	.section .data,"aw",%progbits
 	.set	.L_081a03c0, 0x081a03c0
 	.set	.L_081a03dc, 0x081a03dc
 	.set	.L_081a047c, 0x081a047c

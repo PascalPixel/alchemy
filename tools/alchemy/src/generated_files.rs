@@ -79,7 +79,7 @@ pub fn unconsumed_material(
             let path = path.as_ref();
             let game_relative = path.strip_prefix(&prefix)?;
             // Published progress is an intentional record, not a game input.
-            let progress = path == "recon/tbs/metrics/history.json";
+            let progress = path == "recon/tbs/metrics/history.tsv";
             (!progress && !carries_no_game_data(game_relative) && !consumed.contains(path))
                 .then(|| path.to_string())
         })

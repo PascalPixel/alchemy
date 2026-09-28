@@ -1,5 +1,5 @@
-//! Bounded audition of recovered MIDI and voice sources, not SMSH emulation.
-use psynergy::assets::midi::{midi_events, EventBody};
+//! Bounded MIDI audition using the approved local reference's sound voices.
+use psynergy::assets::midi::{midi_events, sound_voice, EventBody};
 use serde_json::Value;
 use std::{collections::BTreeMap, path::Path};
 const RATE: usize = 22050;
@@ -47,7 +47,18 @@ struct Sample {
 
 pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, String> {
     let midi = read(source)?;
-    let report = midi_events(&midi).map_err(|e| e.to_string())?;
+    let id = match game {
+        "THE BROKEN SEAL" => "tbs-en",
+        "THE LOST AGE" => "tla-en",
+        _ => return Err(format!("unknown sound source game {game}")),
+    };
+    let reference = read(&root.join(format!("roms/{id}.gba")))?;
+    crate::text_catalog::verify_reference(root, id, &reference)?;
+    render_midi(&midi, &reference)
+}
+
+fn render_midi(midi: &[u8], reference: &[u8]) -> Result<Vec<u8>, String> {
+    let report = midi_events(midi).map_err(|e| e.to_string())?;
     if report.ticks_per_quarter == 0 {
         return Err("MIDI has zero time division".into());
     }
@@ -60,58 +71,7 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
         })
         .ok_or("Sequence has no native voice-bank metadata")?;
     let bank_address = number(&skeleton["externals"]["tone_bank"])?;
-    let sound = root.join("games").join(game).join("SOUND");
-    let engine_path = format!("games/{game}/SOUND/INSTRUMENT/ENGINE.JSON");
-    let mut engine: Value =
-        serde_json::from_slice(&read(&root.join(&engine_path))?).map_err(|e| e.to_string())?;
-    engine["address"] = crate::build_assets::placed_address(root, &engine_path, "")?.into();
-    let segments = engine["segments"]
-        .as_array()
-        .ok_or("No instrument segments")?;
-    let starts = crate::build_assets::segment_starts(&engine)?
-        .into_iter()
-        .map(|start| start as u64)
-        .collect::<Vec<_>>();
-    let bank = segments
-        .iter()
-        .zip(&starts)
-        .find(|(_, start)| **start == bank_address)
-        .and_then(|(s, _)| s["records"].as_array())
-        .ok_or("Sequence voice bank is not recovered")?;
     let mut samples = BTreeMap::new();
-    let mut reference: Option<Vec<u8>> = None;
-    let sample_table =
-        String::from_utf8(read(&sound.join("SAMPLE/SAMPLES.TSV"))?).map_err(|e| e.to_string())?;
-    for row in sample_table.lines().filter(|s| !s.starts_with('#')).skip(1) {
-        let fields = row.split('\t').collect::<Vec<_>>();
-        if fields.len() != 6 {
-            return Err("Malformed sample table".into());
-        }
-        let path = Path::new(fields[5]);
-        if path.components().count() != 1 {
-            return Err("Sample source must be a filename".into());
-        }
-        let (rate, pcm) = psynergy::assets::wav::wav_pcm8(&read(&sound.join("SAMPLE").join(path))?)
-            .map_err(|e| e.to_string())?;
-        let address = u64::from_str_radix(fields[1].trim_start_matches("0x"), 16)
-            .map_err(|e| e.to_string())?;
-        let loop_at = if fields[3].is_empty() {
-            None
-        } else {
-            Some(fields[3].parse::<usize>().map_err(|e| e.to_string())?)
-        };
-        if loop_at.is_some_and(|i| i >= pcm.len()) {
-            return Err("Sample loop outside PCM extent".into());
-        }
-        samples.insert(
-            address,
-            Sample {
-                values: pcm.iter().map(|b| *b as i8 as f32 / 128.).collect(),
-                rate: f64::from(rate),
-                loop_at,
-            },
-        );
-    }
     let mut channels = BTreeMap::<(usize, u8), Channel>::new();
     let mut active = BTreeMap::<(usize, u8, u8), Note>::new();
     let mut notes = vec![];
@@ -176,56 +136,24 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
     }
     let mut mix = vec![[0f32; 2]; (duration * RATE as f64) as usize];
     for note in notes {
-        let mut voice = bank
-            .get(note.channel.program)
-            .ok_or("Program outside recovered bank")?;
-        let mut kind = number(&voice["type"])?;
-        let rhythm = kind & 128 != 0;
-        if rhythm {
-            let offset = number(&voice["target"])? + u64::from(note.key) * 12;
-            voice = segments
-                .iter()
-                .zip(&starts)
-                .find_map(|(segment, &start)| {
-                    let rows = segment["records"].as_array()?;
-                    if !segment["id"].as_str()?.starts_with("voice_bank_")
-                        || offset < start
-                        || (offset - start) % 12 != 0
-                    {
-                        return None;
-                    }
-                    rows.get(((offset - start) / 12) as usize)
-                })
-                .ok_or("Rhythm voice is not recovered")?;
-            kind = number(&voice["type"])?;
-        }
-        if kind & 0xc0 != 0 {
-            return Err(format!(
-                "Unsupported split voice type {kind}; preview refused"
-            ));
-        }
-        let key = number(&voice["key"])? as f64;
+        let (voice, rhythm) = sound_voice(
+            reference,
+            0x08000000,
+            bank_address,
+            note.channel.program as u8,
+            note.key,
+        )
+        .map_err(|error| error.to_string())?;
+        let kind = voice.kind;
+        let key = f64::from(voice.base_key);
         let pitch = if rhythm || kind & 8 != 0 {
             key
         } else {
             f64::from(note.key) + f64::from(note.channel.bend)
         };
-        let target = number(&voice["target"])?;
+        let target = u64::from(voice.target);
         if kind & 7 == 0 && !samples.contains_key(&target) {
-            if reference.is_none() {
-                let id = if game == "THE BROKEN SEAL" {
-                    "tbs-en"
-                } else {
-                    "tla-en"
-                };
-                let bytes = read(&root.join(format!("roms/{id}.gba")))?;
-                crate::text_catalog::verify_reference(root, id, &bytes)?;
-                reference = Some(bytes);
-            }
-            samples.insert(
-                target,
-                reference_sample(reference.as_ref().unwrap(), target)?,
-            );
+            samples.insert(target, reference_sample(reference, target)?);
         }
         let generator;
         let sample = match kind & 7 {
@@ -246,21 +174,17 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
                 &generator
             }
             3 => {
-                let waves = segments
-                    .iter()
-                    .find(|s| s["id"] == "waveforms")
-                    .ok_or("Waveform table is not recovered")?;
-                let start = number(&waves["address"])?;
-                let index = target
-                    .checked_sub(start)
-                    .ok_or("Waveform pointer before table")?
-                    / 16;
-                let packed = waves["records"][index as usize]["packed_samples"]
-                    .as_array()
-                    .ok_or("Waveform is not recovered")?;
+                let start = usize::try_from(
+                    target
+                        .checked_sub(0x08000000)
+                        .ok_or("Waveform pointer before ROM")?,
+                )
+                .map_err(|error| error.to_string())?;
+                let packed = reference
+                    .get(start..start.checked_add(16).ok_or("Waveform extent overflows")?)
+                    .ok_or("Waveform outside ROM")?;
                 let mut values = vec![];
                 for byte in packed {
-                    let byte = number(byte)? as u8;
                     values.extend([
                         (f32::from(byte >> 4) - 7.5) / 7.5,
                         (f32::from(byte & 15) - 7.5) / 7.5,
@@ -295,8 +219,7 @@ pub(super) fn render(root: &Path, game: &str, source: &Path) -> Result<Vec<u8>, 
             }
             _ => return Err(format!("Unsupported instrument type {kind}")),
         };
-        let sustain =
-            voice["envelope"][2].as_f64().unwrap_or(255.) / if kind & 7 == 0 { 255. } else { 15. };
+        let sustain = f64::from(voice.envelope[2]) / if kind & 7 == 0 { 255. } else { 15. };
         let step = sample.rate / RATE as f64 * 2f64.powf((pitch - key) / 12.);
         let begin = (note.start * RATE as f64) as usize;
         let end = ((note.end + 0.3) * RATE as f64) as usize;
@@ -374,6 +297,49 @@ fn reference_sample(rom: &[u8], address: u64) -> Result<Sample, String> {
             None
         },
     })
+}
+
+#[test]
+fn midi_preview_reads_bound_voices_without_a_catalog() {
+    let midi = psynergy::assets::midi::append_conductor_meta(
+        b"MThd\0\0\0\x06\0\0\0\x01\0\x60MTrk\0\0\0\x0c\0\x90\x3c\x7f\x60\x80\x3c\0\0\xff\x2f\0",
+        1,
+        br#"{"externals":{"tone_bank":"0x08000000"}}"#,
+    )
+    .unwrap();
+    let mut rom = vec![0; 32];
+    rom[1] = 60;
+    rom[4..8].copy_from_slice(&0x0800000cu32.to_le_bytes());
+    rom[10] = 255;
+    rom[12..16].copy_from_slice(&0x40000000u32.to_le_bytes());
+    rom[16..20].copy_from_slice(&(8000u32 * 1024).to_le_bytes());
+    rom[24..28].copy_from_slice(&3u32.to_le_bytes());
+    rom[28..32].copy_from_slice(&[128, 64, 128, 64]);
+    let wav = render_midi(&midi, &rom).unwrap();
+    assert_eq!(&wav[..4], b"RIFF");
+    assert_eq!(
+        u32::from_le_bytes(wav[4..8].try_into().unwrap()) as usize + 8,
+        wav.len()
+    );
+    assert!(wav[44..].iter().any(|byte| *byte != 0));
+    assert!(render_midi(&midi, &rom[..31]).is_err());
+    rom[0] = 3;
+    rom[10] = 15;
+    assert!(render_midi(&midi, &rom[..28]).is_ok());
+    assert!(render_midi(&midi, &rom[..27]).is_err());
+}
+
+#[test]
+#[ignore = "requires approved local reference ROMs"]
+fn current_midi_previews_use_approved_reference_voices() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../..");
+    for (game, sequence) in [("THE BROKEN SEAL", "BGM_000"), ("THE LOST AGE", "BGM_008")] {
+        let source = root.join(format!("games/{game}/SOUND/SEQUENCE/{sequence}.MID"));
+        let wav = render(&root, game, &source).unwrap();
+        assert_eq!(&wav[..4], b"RIFF");
+        assert!(wav[44..].iter().any(|byte| *byte != 0));
+        eprintln!("{game} MIDI preview: {} generated WAV bytes", wav.len());
+    }
 }
 
 #[test]

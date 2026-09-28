@@ -34,13 +34,12 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   bootstrap             install or validate the persistent compiler toolchain\n\
   extract OWNER         extract reference bytes for psynergy decompile\n\
   inspect OWNER         resolve calls and symbols; --asm shows annotated instructions, --siblings twins\n\
-  build                 build compilers, ROM stages, assets or allocator dumps\n\
+  build                 build compilers, maintained source, assembly and ROMs\n\
   verify                the landing gate: every make verify gate in waves, one line each\n\
   coverage              rebuild coverage; `coverage audit` inventories executable overlays\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
   check                 run repository contract checks\n\
-  format                format native game data and check uppercase filenames\n\
-  build native          compile whole sources with an explicit linker script";
+  format                format native game data and check uppercase filenames";
 
 fn main() -> ExitCode {
     compiler::routing::prefer_installed_binutils();

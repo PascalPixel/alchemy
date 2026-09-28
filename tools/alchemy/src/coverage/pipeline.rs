@@ -1269,6 +1269,38 @@ fn streams(tree: &SourceTree, target: &DecompTarget) -> Vec<Stream> {
     }
     out
 }
+
+fn source_streams(
+    rom: &crate::overlay::rom::CanonicalRom,
+    overlays: &SpanMap,
+    sources: &BTreeMap<i64, String>,
+) -> Result<Vec<Stream>, String> {
+    let mut streams = Vec::new();
+    let mut seen = BTreeSet::new();
+    for id in overlays.keys() {
+        let resource = crate::overlay::rom::resource_id(id)?;
+        let stream = rom.stream(resource)?;
+        let encoded = stream.encoded()?;
+        let end = stream
+            .start
+            .checked_add(encoded.len())
+            .ok_or("compressed stream extent overflow")?;
+        if rom.bytes().get(stream.start..end) != Some(encoded.as_slice()) {
+            return Err(format!("compressed stream {id} differs from its encoding"));
+        }
+        // Directory aliases share one physical stream. A following resource
+        // pointer does not turn the intervening bytes into compressed code.
+        if seen.insert((stream.start, end)) {
+            streams.push(Stream {
+                id: id.clone(),
+                start: ROM_BASE + stream.start as i64,
+                rom: encoded.len() as i64,
+                source: sources.get(&(resource as i64)).cloned(),
+            });
+        }
+    }
+    Ok(streams)
+}
 fn shared_map_assets(tree: &SourceTree, areas: &[Area]) -> Result<Value, String> {
     let read = |path| json(tree, path).ok_or_else(|| format!("missing Atlas input: {path}"));
     let scenes = read("games/THE BROKEN SEAL/SRC/FIELD/COMMON/SCENE_TABLE.JSON")?;
@@ -1391,21 +1423,6 @@ fn stream_categories(
     }
     out[2] = remaining;
     out
-}
-fn sound_sequence_classes(source: &str) -> BTreeMap<i64, String> {
-    source
-        .lines()
-        .filter_map(|line| {
-            let mut fields = line.split('\t');
-            fields.next()?;
-            let class = fields.next()?;
-            if !matches!(class, "music" | "sfx") {
-                return None;
-            }
-            let address = i64::from_str_radix(fields.next()?.strip_prefix("0x")?, 16).ok()?;
-            Some((address, class.into()))
-        })
-        .collect()
 }
 fn asset_number(value: &Value, key: &str) -> Option<i64> {
     integer(value, key).or_else(|| {
@@ -1744,14 +1761,6 @@ fn asset_tiles(tree: &SourceTree, target: &DecompTarget, data: &[Span], rom: i64
             ..Tile::default()
         }];
     };
-    let sequence_classes = sound_sequence_classes(
-        &tree
-            .read(&format!(
-                "{}/SOUND/SEQUENCE/SEQUENCES.TSV",
-                target.game_dir()
-            ))
-            .unwrap_or_default(),
-    );
     let mut groups: BTreeMap<String, Vec<Tile>> = BTreeMap::new();
     let mut covered = Vec::new();
     for region in array(&manifest, "regions") {
@@ -1778,15 +1787,7 @@ fn asset_tiles(tree: &SourceTree, target: &DecompTarget, data: &[Span], rom: i64
             })
             .or_else(|| sources.first().and_then(Value::as_str))
             .unwrap_or(target.asset_manifest);
-        let owner = if kind == "golden-sun-sound-sequence" {
-            format!("{}/SOUND/SEQUENCE/SEQUENCES.TSV", target.game_dir())
-        } else {
-            sources
-                .first()
-                .and_then(Value::as_str)
-                .unwrap_or(source)
-                .to_string()
-        };
+        let owner = source.to_string();
         let mut children = if kind == "components" {
             sprite_children(tree, &owner, span, &actual_spans)
         } else {
@@ -1809,7 +1810,7 @@ fn asset_tiles(tree: &SourceTree, target: &DecompTarget, data: &[Span], rom: i64
             bytes: actual,
             categories: [0, 0, 0, 0, 0, actual],
             group: Some(group),
-            subgroup: sequence_classes.get(&start).cloned(),
+            subgroup: None,
             address: Some(start),
             source: Some(source.into()),
             children,
@@ -1959,6 +1960,11 @@ pub(crate) fn overlay_assembly_images(
 
 pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     let target = crate::targets::decomp_target(Some(&options.target))?;
+    if let SourceTree::Work { root, .. } = options.exact {
+        if super::proof::source_format(root, target)? == Some(3) {
+            return classify_reconstruction(root, target);
+        }
+    }
     // Classifying owners needs only where the code lies, not a fresh proof of
     // DONE: an adoption changes inputs before its twin check runs, so the
     // inventory must be complete and consistent, not re-authenticated.
@@ -2057,6 +2063,107 @@ pub fn classify(options: &BuildOptions) -> Result<Classification, String> {
     })
 }
 
+/// Presentation uses the same current source proof and executable reader as
+/// DONE. Names come from compiled natural symbols; no owner register is needed.
+fn classify_reconstruction(root: &Path, target: DecompTarget) -> Result<Classification, String> {
+    let verified = super::proof::reconstruction(root, target)?;
+    let accounting = super::executable::derive(root, target, &verified.layout)?;
+    if accounting.state() != super::executable::State::Exact {
+        return Err("coverage requires complete current executable accounting".into());
+    }
+    let main_exec = accounting.main.executable;
+    let overlay_exec: SpanMap = accounting
+        .overlays
+        .into_iter()
+        .map(|image| (image.id, image.executable))
+        .collect();
+    let ranges = |image: &str, kind: &str, executable: &[Span]| {
+        intersect(
+            &normalize(
+                &verified
+                    .credits
+                    .iter()
+                    .filter(|credit| credit.image == image && credit.kind == kind)
+                    .map(|credit| Span::new(credit.start, credit.end))
+                    .collect::<Vec<_>>(),
+            ),
+            executable,
+        )
+    };
+    let exact_main = ranges("main", "c", &main_exec);
+    let retained_main = subtract(&ranges("main", "assembly", &main_exec), &exact_main);
+    let mut exact_overlay = SpanMap::new();
+    let mut retained_overlay = SpanMap::new();
+    let mut owners = OwnerMap::new();
+    for (image, executable) in &overlay_exec {
+        let exact = ranges(image, "c", executable);
+        retained_overlay.insert(
+            image.clone(),
+            subtract(&ranges(image, "assembly", executable), &exact),
+        );
+        exact_overlay.insert(image.clone(), exact);
+        if let Some(build) = verified.images.get(image) {
+            for function in &build.accepted {
+                if !function
+                    .source
+                    .extension()
+                    .and_then(|value| value.to_str())
+                    .is_some_and(|value| value.eq_ignore_ascii_case("c"))
+                {
+                    continue;
+                }
+                let entry = function.load_address as i64 - 0x8000;
+                let spans = intersect(
+                    &[Span::new(entry, entry + function.size as i64)],
+                    executable,
+                );
+                if !spans.is_empty() {
+                    owners.entry(image.clone()).or_default().push(Owner {
+                        label: function.name.clone(),
+                        source: function
+                            .source
+                            .strip_prefix(root)
+                            .map_err(|error| error.to_string())?
+                            .to_string_lossy()
+                            .into_owned(),
+                        entry,
+                        spans,
+                    });
+                }
+            }
+        }
+    }
+    let main = main_exec
+        .iter()
+        .map(|span| Region {
+            span: *span,
+            kind: "executable".into(),
+            evidence: "current source build and executable reader".into(),
+        })
+        .collect();
+    Ok(Classification {
+        main,
+        main_exec,
+        overlay_exec,
+        exact_main,
+        owners,
+        exact_overlay,
+        retained_main,
+        retained_overlay,
+        withdrawn_main: Vec::new(),
+        withdrawn_draft_main: Vec::new(),
+        withdrawn_overlay: SpanMap::new(),
+        withdrawn_draft_overlay: SpanMap::new(),
+        semantic_main: Vec::new(),
+        semantic_overlay: SpanMap::new(),
+        draft_sources: verified
+            .images
+            .values()
+            .map(|image| image.rejected.len())
+            .sum(),
+    })
+}
+
 /// Called only after the complete production image has compared byte-exact.
 /// Preserve verified source attribution before presentation constructs tiles.
 pub fn verified_credits(options: &BuildOptions) -> Result<Vec<super::proof::Credit>, String> {
@@ -2138,6 +2245,7 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     }
     let rom = rom_size(&options.target)?;
     let target = crate::targets::decomp_target(Some(&options.target))?;
+    let source_build = super::proof::source_format(root, target)? == Some(3);
     let Classification {
         main,
         main_exec,
@@ -2216,7 +2324,15 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
     }
     executable_areas.push(area("overlays", "Decoded code overlays", overlay_tiles_all));
     let mut code = main_exec.clone();
-    let ss = streams(options.exact, &target);
+    let ss = if source_build {
+        source_streams(
+            &crate::overlay::rom::CanonicalRom::load_target(root, target)?,
+            &overlay_exec,
+            &atlas_sources(options.exact, &target),
+        )?
+    } else {
+        streams(options.exact, &target)
+    };
     let rom_span = Span::new(ROM_BASE, ROM_BASE + rom);
     validate_streams(&ss, rom_span, &main_exec)?;
     for stream in &ss {
@@ -2334,11 +2450,11 @@ pub fn build_coverage_map(options: &BuildOptions) -> Result<CoverageMap, String>
         "done": done,
         "games": game_scores,
         "target": options.target,
-        "derivation": "tracked-evidence-v1",
+        "derivation": if source_build { "current-source-build-v3" } else { "tracked-evidence-v1" },
         "rom_bytes": rom,
         "asset_verification": json(options.exact, &format!("out/{}/full/assets/manifest.json", options.target))
             .and_then(|manifest| manifest.get("verification").cloned()),
-        "shared_map_assets": if options.target == "tbs-en" {
+        "shared_map_assets": if options.target == "tbs-en" && !source_build {
             shared_map_assets(options.exact, &rom_areas)?
         } else { json!({}) },
         "executable_bytes": executable,
@@ -3726,15 +3842,6 @@ mod tests {
         );
     }
     #[test]
-    fn sound_sequence_roles_follow_metadata_not_filenames() {
-        let classes = sound_sequence_classes("sound_id\tclass\taddress\tsize\tsource\n0\tmusic\t0x0815fb78\t1\tse_000.mid\n197\tsfx\t0x08182830\t1\tbgm_197.mid\n1\tunknown\t0x08182834\n2\tmusic\tnot-an-address\n");
-        assert_eq!(
-            classes,
-            BTreeMap::from([(0x0815fb78, "music".into()), (0x08182830, "sfx".into())])
-        );
-        assert!(sound_sequence_classes("").is_empty());
-    }
-    #[test]
     fn exact_ownership_fails_closed() {
         let executable = [Span::new(10, 20)];
         assert!(exact_spans(vec![Span::new(10, 16), Span::new(14, 18)], &executable, "x").is_err());
@@ -3792,6 +3899,44 @@ mod tests {
             &main
         )
         .is_err());
+    }
+
+    #[test]
+    fn source_streams_need_no_catalogue_and_deduplicate_directory_aliases() {
+        use psynergy::assets::lz::{encode_general, GeneralToken};
+
+        let encoded = encode_general(b"ABAB", &[GeneralToken::Literal(4)]).unwrap();
+        let mut bytes = vec![0xaa; 256];
+        for (index, pointer) in [
+            ROM_BASE,
+            ROM_BASE + 0xc0,
+            ROM_BASE + 0xe0,
+            ROM_BASE + 0xe0,
+            0,
+        ]
+        .into_iter()
+        .enumerate()
+        {
+            let at = 0xc0 + index * 4;
+            bytes[at..at + 4].copy_from_slice(&(pointer as u32).to_le_bytes());
+        }
+        bytes[0xe0..0xe0 + encoded.len()].copy_from_slice(&encoded);
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("fixture.gba");
+        std::fs::write(&path, &bytes).unwrap();
+        let mut target = crate::targets::target_for(crate::targets::DecompTargetId::TbsEn);
+        target.rom_size = bytes.len() as u64;
+        let rom = crate::overlay::rom::CanonicalRom::from_file(&path, target).unwrap();
+        let overlays = BTreeMap::from([
+            ("resource_002".into(), vec![Span::new(0, 4)]),
+            ("resource_003".into(), vec![Span::new(0, 4)]),
+        ]);
+        let sources = BTreeMap::from([(2, "games/FIELD/".into())]);
+        let streams = source_streams(&rom, &overlays, &sources).unwrap();
+        assert_eq!(streams.len(), 1);
+        assert_eq!(streams[0].start, ROM_BASE + 0xe0);
+        assert_eq!(streams[0].rom, encoded.len() as i64);
+        assert_eq!(streams[0].source.as_deref(), Some("games/FIELD/"));
     }
 
     #[test]

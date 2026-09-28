@@ -1,12 +1,12 @@
 //! Rebuild connected source; retain unfinished ROM material privately and uncredited.
 use crate::compiler::{canonical_json::write_canonical, native};
-use crate::coverage::proof;
+use crate::coverage::{proof, source};
 use crate::targets::{decomp_target, BuildSupport, DecompTarget};
 use std::path::Path;
 use std::process::Command;
 
 const ROM_BASE: u64 = 0x0800_0000;
-const USAGE: &str = "usage: alchemy build full [--target tbs-en|tla-en]\nBuild the ordinary source/link rules, compare every linked byte, and retain the\nunwritten remainder from your verified local ROM. Private input grants no credit.";
+const USAGE: &str = "usage: alchemy build full [--target tbs-en|tla-en]\nCompile ordinary source/link rules, compare complete functions and assembly, and\nretain unfinished material from your verified local ROM privately and uncredited.";
 
 pub fn run(args: &[String]) -> Result<(), String> {
     if args == ["--help"] || args == ["-h"] {
@@ -95,6 +95,8 @@ fn build(root: &Path, target: DecompTarget) -> Result<String, String> {
         std::fs::remove_file(receipt).map_err(|error| error.to_string())?;
     }
     let inputs = proof::identity(root, target.id.as_str())?;
+    crate::compiler::bundle::validate_bundle(target.compiler)?;
+    crate::compiler::bundle::validate_agbcc_bundle()?;
     let reference =
         std::fs::read(root.join(target.rom)).map_err(|error| format!("{}: {error}", target.rom))?;
     crate::text_catalog::verify_reference(root, target.id.as_str(), &reference)?;
@@ -102,6 +104,11 @@ fn build(root: &Path, target: DecompTarget) -> Result<String, String> {
         return Err("reference ROM has the wrong size".into());
     }
     let executable = std::env::current_exe().map_err(|error| error.to_string())?;
+    // A current build must not inherit images from an earlier source list.
+    let native_output = root.join(target.output_dir).join("native");
+    if native_output.is_dir() {
+        std::fs::remove_dir_all(&native_output).map_err(|error| error.to_string())?;
+    }
     let status = Command::new("make")
         .current_dir(root)
         .args(["--no-print-directory", "native"])
@@ -112,12 +119,7 @@ fn build(root: &Path, target: DecompTarget) -> Result<String, String> {
     if !status.success() {
         return Err("maintained source failed to compile or link".into());
     }
-    let native_path = root.join(format!("{}/native/native.json", target.output_dir));
-    let native: native::Build =
-        serde_json::from_slice(&std::fs::read(&native_path).map_err(|error| error.to_string())?)
-            .map_err(|error| error.to_string())?;
-    let binary = std::fs::read(&native.binary).map_err(|error| error.to_string())?;
-    let (mut rebuilt, _) = compose(&reference, &binary, &native.sections)?;
+    let mut rebuilt = reference.clone();
     let options = crate::build_asm::Options {
         target: target.id,
         rom: target.rom.into(),
@@ -127,19 +129,67 @@ fn build(root: &Path, target: DecompTarget) -> Result<String, String> {
         asm_dir: target.asm_dir.into(),
     };
     let fallback = crate::build_asm::build(root, root, &options)?;
-    let source_bytes = compose_fallback(root, target, &reference, &mut rebuilt, &native.sections)?;
+    let verified = source::verify(root, target, &reference)?;
+    let main = &verified.images["main"];
+    let mut accepted_sections = Vec::new();
+    for input in &main.inputs {
+        let bytes = main.input_bytes(input)?;
+        let start = (input.load_address - ROM_BASE) as usize;
+        rebuilt[start..start + bytes.len()].copy_from_slice(bytes);
+        accepted_sections.push(native::Section {
+            name: input.section.clone(),
+            size: input.size,
+            address: input.address,
+            load_address: input.load_address,
+        });
+    }
+    for section in &main.libraries {
+        let bytes = &main.bytes[&section.name];
+        let start = (section.load_address - ROM_BASE) as usize;
+        rebuilt[start..start + bytes.len()].copy_from_slice(bytes);
+        accepted_sections.push(section.clone());
+    }
+    for (_, address, bytes) in &verified.assets {
+        let start = (*address - ROM_BASE) as usize;
+        rebuilt[start..start + bytes.len()].copy_from_slice(bytes);
+        accepted_sections.push(native::Section {
+            name: "editable asset".into(),
+            address: *address,
+            load_address: *address,
+            size: bytes.len() as u64,
+        });
+    }
+    let source_bytes =
+        compose_fallback(root, target, &reference, &mut rebuilt, &accepted_sections)?;
+    if source_bytes != verified.source_bytes {
+        return Err(
+            "composed source bytes differ from the independently verified ELF extents".into(),
+        );
+    }
     let output = root.join(proof::full_build_rom(target));
     std::fs::create_dir_all(output.parent().unwrap()).map_err(|error| error.to_string())?;
     std::fs::write(&output, &rebuilt).map_err(|error| error.to_string())?;
-    let mut report = proof::record_source_build(root, target, &inputs, &rebuilt, source_bytes)?;
-    report["sections"] =
-        serde_json::to_value(&native.sections).map_err(|error| error.to_string())?;
+    let mut report = proof::record_reconstruction(root, target, &inputs, &rebuilt, &verified)?;
+    report["attempts"] = serde_json::to_value(
+        verified
+            .images
+            .iter()
+            .map(|(image, built)| (image, &built.rejected))
+            .collect::<std::collections::BTreeMap<_, _>>(),
+    )
+    .map_err(|error| error.to_string())?;
     write_canonical(&root.join(proof::full_build_report(target)), &report)?;
-    // Source output is compared here; complete extents and the denominator
-    // require a fresh independent audit before any progress credit.
-    proof::write(root, target.id.as_str(), &rebuilt, &inputs, Vec::new())?;
-    Ok(format!("target={}\nbyte_identical=true\nsource_bytes={}\nfallback_regions={}\nprivate_unwritten_bytes={}\nDONE=pending\nrom={}",
-        target.id, source_bytes, fallback.regions, reference.len() - source_bytes, output.display()))
+    proof::write(
+        root,
+        target.id.as_str(),
+        &rebuilt,
+        &inputs,
+        verified.credits,
+    )?;
+    let done = crate::coverage::progress::measured(root, target.id.as_str())?
+        .map_or("pending".into(), |value| format!("{:.2}%", value.percent()));
+    Ok(format!("target={}\nbyte_identical=true\nsource_bytes={}\nfallback_regions={}\nprivate_unwritten_bytes={}\nDONE={}\nrom={}",
+        target.id, source_bytes, fallback.regions, reference.len() - source_bytes, done, output.display()))
 }
 
 fn compose_fallback(

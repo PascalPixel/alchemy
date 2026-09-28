@@ -3,7 +3,8 @@ mod atlas;
 mod catalog;
 pub(in crate::build_assets) use catalog::inventory;
 mod raw;
-pub(super) use catalog::{catalog, Catalog, Descriptor};
+pub(super) use catalog::catalog;
+pub(crate) use catalog::{read_frame, Catalog, Descriptor};
 
 fn gray(entries: usize) -> Vec<[u8; 3]> {
     (0..entries).map(|i| [i as u8; 3]).collect()

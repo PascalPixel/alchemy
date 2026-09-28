@@ -4,6 +4,7 @@
 @ far the unit was moved. They sit between two routines and carry no
 @ credit, as TBS BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_LINK.S.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x081a011c
 	.4byte	0x80808080

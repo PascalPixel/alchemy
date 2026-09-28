@@ -3,6 +3,7 @@
 @ it with add r3, pc, #12; ldrh r0, [r3, r1]. A data table carries no
 @ credit.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.thumb
 	.set AlchemyLoadAddress, 0x08002344
 @ 四分円正弦表。各項は正弦値を六五五三六倍して四捨五入した値。

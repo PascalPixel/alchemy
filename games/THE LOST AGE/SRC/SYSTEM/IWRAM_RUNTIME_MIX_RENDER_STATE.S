@@ -10,6 +10,7 @@
 @ with negative offsets from pc. Run-time variables and the parameters laid
 @ out among them carry no credit.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x080012d4
 	.set AlchemyRunAddress, 0x03000d1c

@@ -1,9 +1,12 @@
 pub(crate) mod audit;
 pub(crate) mod boxtree;
+pub(crate) mod executable;
 pub(crate) mod figure;
 pub(crate) mod history;
 pub(crate) mod jsnum;
 pub(crate) mod letters;
+pub(crate) mod main_data;
+pub(crate) mod midi;
 pub(crate) mod model;
 pub(crate) mod palette;
 pub(crate) mod pipeline;
@@ -12,6 +15,7 @@ pub(crate) mod progress;
 pub(crate) mod proof;
 pub(crate) mod raster;
 pub(crate) mod sessions;
+pub(crate) mod source;
 pub(crate) mod tree;
 
 use crate::compiler::canonical_json::canonical_json;

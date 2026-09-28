@@ -4,6 +4,7 @@
 @ ldm r5, {r2, r3}. A data table carries no credit, as TBS
 @ GRAPHICS/TILE/DECOMPRESS_4BPP_NIBBLES.S.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x08038b4c
 	.4byte	0xfedcba98

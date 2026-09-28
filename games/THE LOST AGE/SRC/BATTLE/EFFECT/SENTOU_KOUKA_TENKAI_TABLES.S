@@ -5,6 +5,7 @@
 @ table rewritten at run time and the addresses it is built from are data
 @ and carry no credit, as TBS BATTLE/EFFECT/SENTOU_KOUKA_TENKAI_TABLES.S.
 .syntax unified
+	.section .data,"aw",%progbits
 	.set	.L_081a0170, 0x081a0170
 	.set	.L_081a018c, 0x081a018c
 	.set	.L_081a022c, 0x081a022c

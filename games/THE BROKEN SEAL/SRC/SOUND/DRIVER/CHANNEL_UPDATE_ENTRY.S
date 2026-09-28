@@ -25,6 +25,9 @@ Func_080006fc:
 	cmp	r2, r3
 	beq sub_0800070c
 	bx	lr
+	.global MusicDriver_CallHook
+	.thumb_func
+MusicDriver_CallHook:
 	.inst.n 0x4718
 @ Builds the frame the IWRAM mixer at 0x03000659 unwinds, then jumps there.
 .syntax unified
@@ -43,11 +46,11 @@ Func_0800070c:
 	cmp	r3, #0
 	beq.n	.L0
 	ldr	r0, [r0, #36]
-	bl	Func_0800070a
+	bl	MusicDriver_CallHook
 	ldr	r0, [sp, #24]
 .L0:
 	ldr	r3, [r0, #40]
-	bl	Func_0800070a
+	bl	MusicDriver_CallHook
 	ldr	r0, [sp, #24]
 	ldr	r3, [r0, #16]
 	str	r3, [sp, #0]

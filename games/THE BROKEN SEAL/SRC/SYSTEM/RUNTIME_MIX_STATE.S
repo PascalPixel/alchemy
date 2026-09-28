@@ -3,6 +3,7 @@
 @ (str r0, [pc, #216]), patching the loop only when the choice changes. A
 @ run-time state word carries no credit.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x08001040
 	.set AlchemyRunAddress, 0x030008d0

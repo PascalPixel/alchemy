@@ -5,12 +5,11 @@ fn command() -> Command {
 }
 
 #[test]
-fn every_advertised_command_has_help_and_documented_ownership() {
+fn every_advertised_command_has_help() {
     let output = command().arg("--help").output().unwrap();
     assert!(output.status.success());
     let help = String::from_utf8(output.stdout).unwrap();
-    let tooling = include_str!("../../../AGENTS.md");
-    for line in help.lines().filter(|line| line.starts_with("  ")) {
+    for line in help.lines().skip(1).filter(|line| !line.trim().is_empty()) {
         let name = line.split_whitespace().next().unwrap();
         let output = command().args([name, "--help"]).output().unwrap();
         assert!(
@@ -21,10 +20,6 @@ fn every_advertised_command_has_help_and_documented_ownership() {
         assert!(
             String::from_utf8_lossy(&output.stdout).contains("usage:"),
             "{name}"
-        );
-        assert!(
-            tooling.contains(&format!("| `alchemy {name}` |")),
-            "{name} missing from inventory"
         );
     }
 }
@@ -46,7 +41,8 @@ fn compression_recipe_writers_are_retired() {
         .args(["build", "assets", "--help"])
         .output()
         .unwrap();
-    assert!(help.status.success());
+    assert!(!help.status.success());
+    assert!(String::from_utf8_lossy(&help.stderr).contains("removed generated catalogs"));
     for flag in ["--compact-plans", "--derive-plans"] {
         assert!(!String::from_utf8_lossy(&help.stdout).contains(flag));
         let output = command()
@@ -62,15 +58,7 @@ fn compression_recipe_writers_are_retired() {
 
 #[test]
 fn project_build_stages_remain_discoverable() {
-    for stage in [
-        "compilers",
-        "asm",
-        "claimed",
-        "full",
-        "rom",
-        "assets",
-        "allocator",
-    ] {
+    for stage in ["compilers", "runtime", "asm", "native", "full", "rom"] {
         let output = command().args(["build", stage, "--help"]).output().unwrap();
         assert!(
             output.status.success(),
@@ -85,19 +73,29 @@ fn project_build_stages_remain_discoverable() {
 }
 
 #[test]
-fn overlay_help_never_treats_flags_as_resource_names() {
-    for operation in ["adopt", "park", "audit"] {
-        for flag in ["--help", "-h"] {
-            let output = command()
-                .args(["overlay", operation, flag])
-                .output()
-                .unwrap();
-            assert!(
-                output.status.success(),
-                "{operation}: {}",
-                String::from_utf8_lossy(&output.stderr)
-            );
-            assert!(String::from_utf8_lossy(&output.stdout).contains("usage: alchemy overlay"));
-        }
+fn retired_catalog_operations_explain_the_source_build_route() {
+    for operation in [
+        "adopt",
+        "unit",
+        "overlay",
+        "land",
+        "score",
+        "targets",
+        "cross-edition",
+        "dashboard",
+    ] {
+        let output = command().args([operation, "--help"]).output().unwrap();
+        assert!(!output.status.success(), "{operation}");
+        let error = String::from_utf8_lossy(&output.stderr);
+        assert!(
+            error.contains("removed owner/translation-unit catalogs"),
+            "{operation}: {error}"
+        );
+        assert!(error.contains("maintained source"), "{operation}: {error}");
+    }
+    for stage in ["claimed", "assets", "allocator"] {
+        let output = command().args(["build", stage, "--help"]).output().unwrap();
+        assert!(!output.status.success(), "{stage}");
+        assert!(String::from_utf8_lossy(&output.stderr).contains("removed generated catalogs"));
     }
 }

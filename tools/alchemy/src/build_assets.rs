@@ -31,7 +31,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
-const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI | --self-test";
+const USAGE: &str = "usage: alchemy build assets [-h] [--source-only] [--target TARGET] [--manifest MANIFEST] [-o OUTPUT] [rom] | --extract-text [TARGET] | --verify-text [TARGET] | --audit-characters OUTPUT [--target TARGET] | --extract-sources ROM [--target TARGET] | --extract-missing-sources ROM [--target TARGET] | --derive-index ROM --target TARGET --scenes N[=NAME],... [--leave ID,...] [-o OUTPUT] [--stage DIR] [--preview DIR] | --network ROM --target TARGET -o DIR [--from WORLD_MAP_EXIT | --scenes LIST] [--mark SCENE] [--packed] | --verify-smsh-source ROM SOURCE BASE [NAME=ADDRESS...] | --adopt-smsh-midi SOURCE INPUT OUTPUT | --verify-smsh-midi ROM MIDI BASE [NAME=ADDRESS...] | --self-test";
 const ROM_BASE: usize = 0x0800_0000;
 
 fn repository_root() -> PathBuf {
@@ -3716,49 +3716,6 @@ fn expand_series(
                     }
                 }
             }
-            "golden-sun-sound-sequence-series" => {
-                let index_name = json_string(&series["index"], "sequence index")?;
-                if !index_name.to_ascii_lowercase().ends_with(".tsv") {
-                    return Err("sequence series requires its canonical TSV table".into());
-                }
-                let index_path = ctx.source(index_name)?;
-                let text = fs::read_to_string(&index_path).map_err(|error| error.to_string())?;
-                let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-                if rows.next() != Some("sound_id\tclass\taddress\tsize\tsource") {
-                    return Err("sequence table header differs".to_string());
-                }
-                let directory = Path::new(index_name).parent().unwrap_or(Path::new("."));
-                let mut previous = None;
-                for row in rows {
-                    let fields = row.split('\t').collect::<Vec<_>>();
-                    if fields.len() != 5 {
-                        return Err("sequence table row width differs".to_string());
-                    }
-                    let id = fields[0]
-                        .parse::<usize>()
-                        .map_err(|_| "sequence table sound ID differs".to_string())?;
-                    if previous.is_some_and(|value| id <= value)
-                        || !matches!(fields[1], "music" | "sfx")
-                    {
-                        return Err(format!("sequence table row {id} identity differs"));
-                    }
-                    previous = Some(id);
-                    let source = directory
-                        .join(fields[4])
-                        .to_string_lossy()
-                        .replace('\\', "/");
-                    ctx.source(&source)?;
-                    entries.push(serde_json::json!({
-                        "address":fields[2],
-                        "size":fields[3],
-                        "kind":"golden-sun-sound-sequence",
-                        "source":source,
-                    }));
-                }
-                if previous.is_none() {
-                    return Err("sequence table is empty".to_string());
-                }
-            }
             _ => return Err(format!("unsupported asset series: {kind}")),
         }
     }
@@ -3876,41 +3833,6 @@ fn overlay_series_default_to_the_games_own_listings() {
             entries[0]["components"][0]["source"],
             format!("{directory_name}/resource_64a_overlay.s")
         );
-    }
-}
-#[test]
-fn sound_series_use_only_the_canonical_tables() {
-    let directory = tempfile::tempdir().unwrap();
-    let mut ctx = Context::new(directory.path());
-    let sequence =
-        "sound_id\tclass\taddress\tsize\tsource\n0\tmusic\t0x08000000\t16\tsongs/opening.mid\n";
-    for (kind, table, source, expected_size) in [(
-        "sound-sequence",
-        sequence,
-        "songs/opening.mid",
-        serde_json::json!("16"),
-    )] {
-        let manifest = serde_json::json!({"series":[{
-            "kind":format!("golden-sun-{kind}-series"), "index":"index.tsv"
-        }]});
-        fs::write(directory.path().join("index.tsv"), table).unwrap();
-        let mut entries = Vec::new();
-        expand_series(&mut ctx, &manifest, &mut entries).unwrap();
-        assert_eq!(entries.len(), 1);
-        assert_eq!(entries[0]["source"], source);
-        assert_eq!(entries[0]["size"], expected_size);
-        for invalid in [
-            table.replacen('\t', ",", 1),
-            table.replace("\n0\t", "\nno-id\t"),
-        ] {
-            fs::write(directory.path().join("index.tsv"), invalid).unwrap();
-            assert!(expand_series(&mut ctx, &manifest, &mut Vec::new()).is_err());
-        }
-        let mut legacy = manifest;
-        legacy["series"][0]["index"] = serde_json::json!("index.json");
-        assert!(expand_series(&mut ctx, &legacy, &mut Vec::new())
-            .unwrap_err()
-            .contains("canonical TSV"));
     }
 }
 fn closure_coverage(items: &[Value], label: &str) -> Result<Vec<(usize, usize)>, String> {
@@ -4498,21 +4420,67 @@ fn sequence_alignment_size(offset: usize, boundary: usize) -> Result<usize, Stri
     }
     Ok((0usize.wrapping_sub(offset)) & (boundary - 1))
 }
-fn build_sequence_source(source: &Value) -> Result<(Vec<u8>, Value), String> {
+/// Where the build places a sequence: the address its first byte lands at
+/// and the addresses of the names it references without defining, such as
+/// its tone bank. A sequence source records neither.
+pub(crate) struct SequencePlacement {
+    pub base: u32,
+    pub symbols: BTreeMap<String, u32>,
+}
+impl SequencePlacement {
+    /// `BASE [NAME=ADDRESS...]` as a caller spells it.
+    fn parse(arguments: &[String]) -> Result<Self, String> {
+        let (base, symbols) = arguments.split_first().ok_or(USAGE)?;
+        Ok(Self {
+            base: sequence_address(&Value::from(base.as_str()), "sequence base")?,
+            symbols: symbols
+                .iter()
+                .map(|symbol| {
+                    let (name, address) = symbol
+                        .split_once('=')
+                        .ok_or_else(|| format!("sequence symbol {symbol} is not NAME=ADDRESS"))?;
+                    Ok((
+                        sequence_symbol(&Value::from(name), "sequence symbol")?,
+                        sequence_address(&Value::from(address), "sequence symbol address")?,
+                    ))
+                })
+                .collect::<Result<_, String>>()?,
+        })
+    }
+}
+/// A sequence source's own fields: its format, engine and layout. Placement
+/// and symbol addresses belong to the build, so a source carrying them, or
+/// anything else, is refused.
+fn sequence_fields(source: &Value) -> Result<(), String> {
+    let fields = source
+        .as_object()
+        .ok_or("sequence source is not an object")?;
+    if let Some(field) = fields
+        .keys()
+        .find(|field| !matches!(field.as_str(), "format" | "engine" | "layout"))
+    {
+        return Err(format!(
+            "sequence source records {field}; the build supplies placement and symbols"
+        ));
+    }
     if number(&source["format"], "sequence format")? != 1
         || source["engine"].as_str() != Some("smsh-sequence")
     {
         return Err("unsupported sequence source".into());
     }
-    let base = sequence_address(&source["base"], "sequence base")?;
-    let externals = source["externals"]
-        .as_object()
-        .ok_or("sequence externals are missing")?;
+    Ok(())
+}
+fn build_sequence_source(
+    source: &Value,
+    placement: &SequencePlacement,
+) -> Result<(Vec<u8>, Value), String> {
+    sequence_fields(source)?;
+    let base = sequence_address(&Value::from(placement.base), "sequence base")?;
     let mut external_addresses = HashMap::<String, u32>::new();
-    for (name, value) in externals {
+    for (name, address) in &placement.symbols {
         external_addresses.insert(
-            sequence_symbol(&Value::String(name.clone()), "external symbol")?,
-            sequence_address(value, "external address")?,
+            sequence_symbol(&Value::from(name.as_str()), "sequence symbol")?,
+            sequence_address(&Value::from(*address), "sequence symbol address")?,
         );
     }
     let layout = source["layout"]
@@ -4614,7 +4582,7 @@ fn build_sequence_source(source: &Value) -> Result<(Vec<u8>, Value), String> {
         .cloned()
         .collect();
     if !unused.is_empty() {
-        return Err(format!("unused sequence externals: {}", unused.join(", ")));
+        return Err(format!("unused sequence symbols: {}", unused.join(", ")));
     }
     let report = serde_json::json!({
         "base": base,
@@ -4630,8 +4598,7 @@ fn build_sequence_source(source: &Value) -> Result<(Vec<u8>, Value), String> {
 #[test]
 fn sequence_emission_resolves_forward_and_backward_labels_and_rejects_invalid_layouts() {
     let source = serde_json::json!({
-        "format": 1, "engine": "smsh-sequence", "base": "0x08000000",
-        "externals": {"voicegroup": "0x08010000"},
+        "format": 1, "engine": "smsh-sequence",
         "layout": [
             {"kind": "header", "label": "song", "tracks": ["track"],
              "block_count": 0, "priority": 1, "reverb": 0, "tone_bank": "voicegroup"},
@@ -4643,7 +4610,11 @@ fn sequence_emission_resolves_forward_and_backward_labels_and_rejects_invalid_la
             ]}
         ]
     });
-    let (bytes, report) = build_sequence_source(&source).unwrap();
+    let placement = SequencePlacement {
+        base: 0x0800_0000,
+        symbols: BTreeMap::from([("voicegroup".to_string(), 0x0801_0000)]),
+    };
+    let (bytes, report) = build_sequence_source(&source, &placement).unwrap();
     assert_eq!(
         bytes,
         [
@@ -4679,15 +4650,48 @@ fn sequence_emission_resolves_forward_and_backward_labels_and_rejects_invalid_la
         let mut invalid = source.clone();
         *invalid.pointer_mut(path).unwrap() = value;
         assert!(
-            build_sequence_source(&invalid).unwrap_err().contains(error),
+            build_sequence_source(&invalid, &placement)
+                .unwrap_err()
+                .contains(error),
             "{path}"
         );
     }
-    let mut unused = source;
-    unused["externals"]["unused"] = serde_json::json!("0x08010004");
-    assert!(build_sequence_source(&unused)
+    let mut unused = SequencePlacement {
+        base: placement.base,
+        symbols: placement.symbols.clone(),
+    };
+    unused.symbols.insert("unused".into(), 0x0801_0004);
+    assert!(build_sequence_source(&source, &unused)
         .unwrap_err()
-        .contains("unused sequence externals"));
+        .contains("unused sequence symbols"));
+    let missing = SequencePlacement {
+        base: placement.base,
+        symbols: BTreeMap::new(),
+    };
+    assert!(build_sequence_source(&source, &missing)
+        .unwrap_err()
+        .contains("unknown sequence symbol: voicegroup"));
+    for (field, value) in [
+        ("base", serde_json::json!("0x08000000")),
+        ("externals", serde_json::json!({"voicegroup": "0x08010000"})),
+    ] {
+        let mut recorded = source.clone();
+        recorded[field] = value;
+        assert!(build_sequence_source(&recorded, &placement)
+            .unwrap_err()
+            .contains(&format!("records {field}")));
+    }
+    let parsed = SequencePlacement::parse(&[
+        "0x08000000".to_string(),
+        "voicegroup=0x08010000".to_string(),
+    ])
+    .unwrap();
+    assert_eq!(
+        (parsed.base, parsed.symbols),
+        (placement.base, placement.symbols)
+    );
+    assert!(SequencePlacement::parse(&["0x08000000".into(), "voicegroup".into()]).is_err());
+    assert!(SequencePlacement::parse(&["0x02000000".into()]).is_err());
 }
 /// Prefix of the retired per-event sequence sidecars. The converter derives
 /// every encoding choice, so a MIDI still carrying one is refused.
@@ -5190,13 +5194,17 @@ fn read_midi_stream(
         meter,
     )?)
 }
-pub(crate) fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8>, Value), String> {
+pub(crate) fn build_midi_sequence(
+    source: &Path,
+    placement: &SequencePlacement,
+) -> Result<(Vec<u8>, Value), String> {
     let midi =
         read_sequence_midi(&fs::read(source).map_err(|e| format!("{}: {e}", source.display()))?)?;
     let skeleton = midi
         .skeleton
         .as_ref()
         .ok_or("MIDI conductor skeleton is missing")?;
+    sequence_fields(skeleton)?;
     let skeleton_layout = skeleton
         .get("layout")
         .and_then(Value::as_array)
@@ -5219,17 +5227,16 @@ pub(crate) fn build_midi_sequence(_root: &Path, source: &Path) -> Result<(Vec<u8
     let source = serde_json::json!({
         "format": skeleton["format"],
         "engine": skeleton["engine"],
-        "base": skeleton["base"],
-        "externals": skeleton["externals"],
         "layout": layout
     });
-    build_sequence_source(&source)
+    build_sequence_source(&source, placement)
 }
 /// Adopt a playback MIDI as the source of a native sequence. Its conductor
 /// becomes the sequence skeleton and the first time signature, in
 /// `ADOPTION_BARS` order, under which the converter reads every native stream
 /// back exactly; without one, adoption refuses and names the first difference.
 fn adopt_smsh_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
+    sequence_fields(source)?;
     let source_layout = source
         .get("layout")
         .and_then(Value::as_array)
@@ -5292,8 +5299,11 @@ fn adopt_smsh_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
             first_difference.unwrap_or_default()
         )
     })?;
-    let mut skeleton = source.clone();
-    skeleton["layout"] = Value::Array(skeleton_layout);
+    let skeleton = serde_json::json!({
+        "format": source["format"],
+        "engine": source["engine"],
+        "layout": skeleton_layout,
+    });
     let conductor = encode_midi_track(&[
         MidiEvent {
             tick: 0,
@@ -5514,7 +5524,7 @@ fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
         );
         events.push(serde_json::json!(["fine"]));
         serde_json::json!({
-            "format": 1, "engine": "smsh-sequence", "base": "0x08000000", "externals": {},
+            "format": 1, "engine": "smsh-sequence",
             "layout": [{"kind": "stream", "label": "track_1", "events": events}]
         })
     };
@@ -5524,9 +5534,15 @@ fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
     .unwrap();
     assert_eq!(adopted.meter, [(0, 72)]);
     assert_eq!(
-        adopted.skeleton.unwrap()["layout"],
-        serde_json::json!([{"kind": "stream", "label": "track_1"}])
+        adopted.skeleton.unwrap(),
+        serde_json::json!({"format": 1, "engine": "smsh-sequence",
+            "layout": [{"kind": "stream", "label": "track_1"}]})
     );
+    let mut placed = source(serde_json::json!([72, 24]));
+    placed["base"] = serde_json::json!("0x08000000");
+    assert!(adopt_smsh_midi(&placed, &playback)
+        .unwrap_err()
+        .contains("records base"));
     let refusal = adopt_smsh_midi(&source(serde_json::json!([50, 46])), &playback).unwrap_err();
     assert!(refusal.contains("no time signature"), "{refusal}");
     let directive = [MIDI_BUILD_DIRECTIVE, b"{}"].concat();
@@ -5744,26 +5760,6 @@ fn build_entry_native_tail(
 ) -> Result<(Vec<u8>, Vec<String>, Value), String> {
     let source_path = |name: &str| ctx.source(name);
     match kind {
-        "golden-sun-sound-sequence" => {
-            let source = source_path(entry_source)?;
-            let (built, report) = if entry_source.to_ascii_lowercase().ends_with(".json") {
-                let document = json(&source)?;
-                let document = if let Some(pointer) = entry.get("pointer") {
-                    document
-                        .pointer(json_string(pointer, "sequence pointer")?)
-                        .ok_or("sequence pointer is absent")?
-                } else {
-                    &document
-                };
-                build_sequence_source(document)?
-            } else {
-                build_midi_sequence(&ctx.root, &source)?
-            };
-            if report["base"].as_u64() != Some(address as u64) {
-                return Err("sound-sequence base differs from manifest".to_string());
-            }
-            Ok((built, vec![entry_source.to_string()], report))
-        }
         "golden-sun-pcm-wave" => {
             let wav = fs::read(source_path(entry_source)?).map_err(|error| error.to_string())?;
             let (built, report) = build_pcm_record(&wav)?;
@@ -5811,10 +5807,9 @@ fn build_entry_native_tail(
         "golden-sun-message-archive" => {
             if entry_source.to_ascii_lowercase().ends_with(".po") {
                 let source = crate::text_catalog::read_source(&source_path(entry_source)?)?;
-                if source.address != address {
-                    return Err("message catalog identity differs".into());
-                }
-                let archive = crate::text_catalog::encode(&source)?;
+                // The region places the archive; the catalog records no address.
+                let base = u32::try_from(address).map_err(|_| "archive address exceeds u32")?;
+                let archive = crate::text_catalog::encode(&source, base)?;
                 return Ok((
                     archive.bytes,
                     vec![entry_source.to_string()],
@@ -6916,16 +6911,17 @@ fn run(arguments: Vec<String>) -> Result<ExitCode, String> {
         arguments.first().map(String::as_str),
         Some("--verify-smsh-midi" | "--verify-smsh-source")
     ) {
-        if arguments.len() != 3 {
+        if arguments.len() < 4 {
             return Err(USAGE.to_string());
         }
         let rom = fs::read(&arguments[1]).map_err(|error| format!("{}: {error}", arguments[1]))?;
+        let placement = SequencePlacement::parse(&arguments[3..])?;
         let (built, report, label) = if arguments[0] == "--verify-smsh-midi" {
-            let (built, report) =
-                build_midi_sequence(&repository_root(), Path::new(&arguments[2]))?;
+            let (built, report) = build_midi_sequence(Path::new(&arguments[2]), &placement)?;
             (built, report, "MIDI")
         } else {
-            let (built, report) = build_sequence_source(&json(Path::new(&arguments[2]))?)?;
+            let (built, report) =
+                build_sequence_source(&json(Path::new(&arguments[2]))?, &placement)?;
             (built, report, "source")
         };
         let base = number(&report["base"], "base")?;

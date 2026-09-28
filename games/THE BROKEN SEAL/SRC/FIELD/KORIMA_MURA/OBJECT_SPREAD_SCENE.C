@@ -1,6 +1,8 @@
 #include "TYPES.H"
 
-extern u8 Data_0200ae34[];
+/* Actor 8's path and the debris script, laid out after the code. */
+extern u8 KorimaMura_Actor8Path[];
+extern u8 KorimaMura_DebrisScript[];
 
 void Engine_EventBegin();
 void Engine_CameraSetSpeed();
@@ -28,7 +30,7 @@ void Engine_ObjectSetAnimation();
 void Engine_ObjectSetScript();
 void Engine_MapCopyCellAttributes();
 void Engine_WorkSetValuesIfNonNegative();
-void Main_0808a168();
+void Object_SetTargetAndCallback();
 void Engine_GameFlagSet();
 void Engine_EventEnd();
 
@@ -147,7 +149,7 @@ void KorimaMura_RunObjectSpreadScene(void)
                 *(s32 *)(obj + 36) = -((s32)(((i & 3) << 16) + 0x10000) >> 1);
             }
             Engine_ObjectSetAnimation(obj, 1);
-            Call2(Engine_ObjectSetScript, (s32)obj, 0x200ae20);
+            Call2(Engine_ObjectSetScript, (s32)obj, (s32)KorimaMura_DebrisScript);
         }
     }
     Call6(Engine_MapCopyCellsTo, 91, 19, 72, 9, 5, 7);
@@ -157,7 +159,7 @@ void KorimaMura_RunObjectSpreadScene(void)
     Engine_ActorJump(0, 6, 0);
     Engine_EventWait(20);
     Call3(Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
-    Call3(Main_0808a168, 8, 0x10000, (s32)Data_0200ae34);
+    Call3(Object_SetTargetAndCallback, 8, 0x10000, (s32)KorimaMura_Actor8Path);
     Engine_EventWait(60);
     Call3(Engine_ActorShowEmote, 0, 0x102, 60);
     Call1(Engine_GameFlagSet, 0x847);

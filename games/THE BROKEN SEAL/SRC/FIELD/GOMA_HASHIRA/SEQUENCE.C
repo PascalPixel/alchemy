@@ -1,6 +1,5 @@
 /*
- * The scene tables, actor 8's column switch and the task that spawns
- * pillar effects while the pillar moves.
+ * Actor 13's departure and the scene initialiser that restores the pillars.
  */
 
 #include "TYPES.H"
@@ -111,99 +110,83 @@ enum StagedPlacementMessage {
     MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
 };
 
-u8 *SceneData_GetScriptTable(void) { return GomaHashira_Scripts; }
-
-s32 SceneData_ReturnZero(void) { return 0; }
-
-u8 *SceneData_GetMessageTable(void) { return GomaHashira_Messages; }
-
-u8 *SceneData_GetActorTable(void) { return GomaHashira_Actors; }
-
-void ConfigureSceneForActorEightColumn(void)
-{
-    u8 *actor;
-    s32 x;
-    s32 a4;
-    s32 a5;
-
-    actor = Object_GetById(8);
-    x = *(s32 *)(actor + 8);
-    if (x < 0)
-        x += 0xfffff;
-    x >>= 20;
-    Event_Begin();
-    if (x == 20) {
-        a4 = 18;
-        a5 = 6;
-        Goma_CopyCellAttributes(18, 40, 6, 3, a4, a5);
-        GameFlag_Clear(0x302);
-    } else {
-        a4 = 18;
-        a5 = 6;
-        Goma_CopyCellAttributes(24, 40, 6, 3, a4, a5);
-        GameFlag_Set(0x302);
-    }
-    Event_End();
-}
-
-void FieldScene_RunPrimarySequence(void)
-{
-    volatile s32 *state = (volatile s32 *)&gFrameCount;
-    s32 flags;
-    s32 a0;
-    s32 a2;
-    s32 rec4;
-    s32 rec7a, reca, v1a, v2a, v3a, ta, ua, na;
-    s32 rec7b, recb, v1b, v2b, v3b, tb, ub, nb;
-
-    flags = *state & 7;
-    if (flags == 0) {
-        rec7a = Value1(Object_GetById, 9);
-        v1a = Value0(Engine_RandomNext);
-        a0 = *(s32 *)(rec7a + 8);
-        a0 = a0 + (s32)((((u32)(((v1a << 1) + v1a) << 2)) >> 16) << 16);
-        rec4 = Object_GetById(9);
-        reca = (s32)Object_GetById(9);
-        a2 = *(s32 *)(reca + 16);
-        a2 = a2 + 0x60000;
-        v2a = Value0(Engine_RandomNext);
-        ta = (s32)((u32)((v2a << 2) + v2a) >> 16);
-        ua = (((ta << 1) + ta) << 2) + ta;
-        na = ua << 6;
-        na = na - ua;
-        na = na << 3;
-        na = na + ta;
-        v3a = Random_Next();
-        na = -na;
-        Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, na,
-              (s32)((u32)(v3a << 1) >> 16), flags);
-        flags = *state & 15;
-        if (flags == 0) {
-            rec7b = Value1(Object_GetById, 9);
-            v1b = Value0(Engine_RandomNext);
-            a0 = *(s32 *)(rec7b + 8);
-            a0 = a0 + (s32)((((u32)(((v1b << 1) + v1b) << 2)) >> 16) << 16);
-            rec4 = Object_GetById(9);
-            recb = (s32)Object_GetById(9);
-            a2 = *(s32 *)(recb + 16);
-            a2 = a2 + 0x60000;
-            v2b = Value0(Engine_RandomNext);
-            tb = (s32)((u32)((v2b << 2) + v2b) >> 16);
-            ub = (((tb << 1) + tb) << 2) + tb;
-            nb = ub << 6;
-            nb = nb - ub;
-            nb = nb << 3;
-            nb = nb + tb;
-            v3b = Random_Next();
-            nb = -nb;
-            Call7(GomaHashira_SpawnPillarEffect, a0, *(s32 *)(rec4 + 12), a2, 0, nb,
-                  (s32)((u32)(v3b << 1) >> 16), flags);
-        }
-    }
-}
-
 /* Sets bits in an actor's flag byte. */
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {
     *flags |= bits;
+}
+
+void FieldScene_RunActor13Departure(void)
+{
+    Call1(Engine_TaskRemoveCallback, (s32)GomaHashira_DriveActor13Idle);
+    Event_Begin();
+    Actor_ShowEmote(13, 0x100, 30);
+    Actor_RunRepeatedMotion(13, 2);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
+    Event_SetMessage(MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE);
+    Event_ShowMessage(13, 0);
+    Actor_SetAnimationAndWait(13, 3);
+    Goma_Wait(30);
+    *(u8 *)(Object_GetById(10) + 35) &= 253;
+    Goma_SetSpeed(13, 0x20000, 0x10000);
+    Actor_WalkToAndWait(13, 0x258, 216);
+    Actor_WalkToAndWait(13, 0x258, 248);
+    Actor_WalkToAndWait(13, 0x238, 0x128);
+    Actor_SetPosition(13, 0, 0);
+    SetFlagBits(Object_GetById(10) + 35, 2);
+    GameFlag_Set(0x869);
+    Event_End();
+}
+
+s32 FieldScene_SetupPillarsOnEntry(void)
+{
+    u8 *record;
+    u8 *work;
+
+    work = gWork;
+    *(s32 *)((s32)work + 0x1c0) = 0x204;
+    *(s32 *)((s32)work + 0x1c8) = 24;
+    SetFlagBits(Object_GetById(9) + 89, 16);
+    if (GameFlag_IsSet(0x302) != 0) {
+        Actor_SetPosition(8, 0x1580000, 0x680000);
+        Goma_CopyCellAttributes(24, 40, 6, 3, 18, 6);
+    } else {
+        Goma_CopyCellAttributes(18, 40, 6, 3, 18, 6);
+    }
+    if (GameFlag_IsSet(0x300) != 0) {
+        Actor_SetPosition(9, 0, 0);
+        Goma_CopyCellAttributes(21, 45, 4, 2, 21, 11);
+    }
+    if (GameFlag_IsSet(0x301) != 0) {
+        Actor_SetPosition(10, 0x2680000, 0xe80000);
+        if ((u32)(((u16)Data_02000240[225] - 2) << 16) > 0x10000) {
+            goto L_0200131c;
+        }
+        *(u8 *)(Object_GetById(10) + 34) = 2;
+        record = Value1(Object_GetById, 10);
+        *(s32 *)((s32)record + 12) = *(s32 *)((s32)record + 12) - 1;
+        {
+            u8 bits = 2;
+            u8 *flags = Object_GetById(10) + 35;
+
+            *flags |= bits;
+        }
+        Goma_CopyCellAttributes(36, 48, 5, 1, 36, 14);
+    }
+L_0200131c:
+    if (Data_02000240[225] == 99) {
+        Event_OpenScreen();
+        Event_WaitForScreen();
+        Actor_SetPosition(9, 0x1800000, 0xc00000);
+        Goma_Wait(60);
+        *(u8 *)(Object_GetById(9) + 34) = 2;
+        Actor_MoveToAndWait(9, 0x198, 192);
+        Call1((void (*)())Battle_WaitMode0, 60);
+        FieldScene_RunPillarSequence();
+    }
+    if (Data_02000240[282] != 0) {
+        GomaHashira_Actor13Frames = 0;
+        Call2(Engine_TaskAddCallback, (s32)GomaHashira_DriveActor13Idle, 0xc80);
+    }
+    return 0;
 }

@@ -9,10 +9,12 @@ struct SceneEffectOrigin {
 struct SceneEffectWork {
     struct SceneEffectOrigin *origin;
 };
-extern struct SceneEffectWork *gSceneEffectWork;
-extern u32 gFallingEffectState;
-extern s32 gFallingEffectWidth;
-extern s32 gFallingEffectOffset;
+extern struct SceneEffectWork *gCam;
+
+/* The spread of the falling effect, in the overlay's work past its image. */
+s32 gFallingEffectOffset __attribute__((section(".bss")));
+s32 gFallingEffectWidth __attribute__((section(".bss")));
+u32 gFallingEffectState __attribute__((section(".bss")));
 extern const s32 gFallingEffectScript[];
 
 void FieldScene_UpdateFallingEffect(void)
@@ -47,7 +49,7 @@ void FieldScene_UpdateFallingEffect(void)
         break;
     }
     if ((gFrameCount & 7) == 0 && (object = Engine_ObjectCreate(285, 0, 0, 0)) != 0) {
-        origin = gSceneEffectWork->origin;
+        origin = gCam->origin;
         if ((gFrameCount & 63) == 0)
             Engine_AudioPlayCue(246);
         if (gFallingEffectState != 0)

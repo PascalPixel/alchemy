@@ -1,10 +1,14 @@
+/* resource_39e:0200be58..0200c0dc (644 bytes with pool), still linked from
+ * the listing. Remaining difference: the scene test loads 0x3d from the
+ * literal pool, a link-time value; an integer scene compares with an
+ * immediate (636 bytes, 419 differ). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
 void FieldScene_RunScene39e_020027ec(void);
 void FieldScene_RunRoofEnsembleSequence(void);
 void *NewEffectObject(s32 x, s32 y, s32 z, s32 kind);
-void Main_0808a5e0(s32 value);
+void BattleFx_SetQueuedSoundAndPlayFar(s32 value);
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -13,7 +17,6 @@ union GameStateRows {
 };
 
 extern union GameStateRows Data_02000240_t;
-extern u8 Data_0000003d[];
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -31,7 +34,7 @@ s32 ShianJiin_ApplyEntryState(void)
     struct FieldActor *actor;
     s32 set;
 
-    if (Data_02000240_t.halves[224][0] == (s32)Data_0000003d) {
+    if (Data_02000240_t.halves[224][0] == 0x3d) {
         gEventWork->start_transition = 0x209;
         if (Data_02000240_t.halves[225][0] == 1) {
             if (Engine_GameFlagIsSet(0x88f)) {
@@ -88,7 +91,7 @@ s32 ShianJiin_ApplyEntryState(void)
             }
         }
     } else {
-        Main_0808a5e0(170);
+        BattleFx_SetQueuedSoundAndPlayFar(170);
         Engine_ActorGet(9)->collision_flags |= 16;
         if (Data_02000240_t.halves[225][0] == 3 && Engine_GameFlagIsSet(0xf14) && !Engine_GameFlagIsSet(0x894)) {
             Call6(Engine_MapCopyCellAttributes, 10, 84, 1, 1, 10, 24);

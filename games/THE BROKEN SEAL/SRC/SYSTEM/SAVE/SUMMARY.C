@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f1c[];
+extern u8 Data_03001ae8[];
 
 
 u32 SaveState_FindFreeSummarySlot(void)
@@ -7,7 +9,7 @@ u32 SaveState_FindFreeSummarySlot(void)
     u32 i;
     u8 *p;
 
-    p = (u8 *)(*(s32 *)ADDR_03001F1C + 0x1040);
+    p = (u8 *)(*(s32 *)((u32)&Data_03001f1c) + 0x1040);
     for (i = 0; i < 3; i++, p += 0x40) {
         if (p[0x1c] == 0)
             return i;
@@ -32,7 +34,7 @@ s32 SaveState_CountRecordsExcludingFlagged(s32 flag)
     } else {
         cnt = SaveState_LoadSummaryRecords();
         if (flag != 0) {
-            p = (s8 *)(*(s32 *)ADDR_03001F1C + 0x1070);
+            p = (s8 *)(*(s32 *)((u32)&Data_03001f1c) + 0x1070);
             for (i = 0; i < 3; i++) {
                 if (p[i * 0x40 + 1] != 0)
                     cnt--;
@@ -60,7 +62,7 @@ s32 SaveState_ScanRecordFlags(void)
         s8 *p;
 
         ret = SaveState_LoadSummaryRecords();
-        p = (s8 *)(*(s32 *)ADDR_03001F1C + 0x1070);
+        p = (s8 *)(*(s32 *)((u32)&Data_03001f1c) + 0x1070);
         *(s16 *)0x02002010 = 0;
         gTitleExtraOptionEnabled = 0;
         for (i = 0; i < 3; i++) {
@@ -73,7 +75,7 @@ s32 SaveState_ScanRecordFlags(void)
             }
         }
 
-        if ((*(volatile s32 *)ADDR_03001AE8 & 0x120) != 0x120) {
+        if ((*(volatile s32 *)((u32)&Data_03001ae8) & 0x120) != 0x120) {
             *(s16 *)0x02002010 = 0;
         }
     }

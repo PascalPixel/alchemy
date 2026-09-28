@@ -1,5 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 BattleFx_Run(void);
+s32 BattleFx_DispatchRequestKind(void);
+void BattleFx_ClearChildValueOnMismatch(void);
 
 void FieldEvent_RunTypeHandler(void);
 

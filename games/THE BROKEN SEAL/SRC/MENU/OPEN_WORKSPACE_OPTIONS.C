@@ -15,7 +15,7 @@ void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 struct RenderOutput *RenderOutput_Create(s32 no, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
-void *RenderOutput_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
+void *RenderResource_CreateFrame(s32 frame, s32 flags, struct RenderInput *input, s32 offset_x, s32 offset_y);
 s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080b0038(void *object, s32 x, s32 y);
 
@@ -102,14 +102,14 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     }
 
     y = 28;
-    work->frame[0][0] = RenderOutput_CreateFrame(Data_080367c9[0], 0, win, 84, y);
-    work->frame[0][1] = RenderOutput_CreateFrame(Data_080367c9[1], 0, win, 108, y);
-    work->frame[0][2] = RenderOutput_CreateFrame(Data_080367c9[2], 0, win, 132, y);
+    work->frame[0][0] = RenderResource_CreateFrame(Data_080367c9[0], 0, win, 84, y);
+    work->frame[0][1] = RenderResource_CreateFrame(Data_080367c9[1], 0, win, 108, y);
+    work->frame[0][2] = RenderResource_CreateFrame(Data_080367c9[2], 0, win, 132, y);
     y = 52;
-    work->frame[1][0] = RenderOutput_CreateFrame(Data_080367cc[0], 0, win, 100, y);
-    work->frame[1][1] = RenderOutput_CreateFrame(Data_080367cc[1], 0, win, 124, y);
+    work->frame[1][0] = RenderResource_CreateFrame(Data_080367cc[0], 0, win, 100, y);
+    work->frame[1][1] = RenderResource_CreateFrame(Data_080367cc[1], 0, win, 124, y);
     y = 76;
-    work->frame[2][0] = RenderOutput_CreateFrame(Data_080367ce[0], 0, win, 100, y);
-    work->frame[2][1] = RenderOutput_CreateFrame(Data_080367ce[1], 0, win, 124, y);
+    work->frame[2][0] = RenderResource_CreateFrame(Data_080367ce[0], 0, win, 100, y);
+    work->frame[2][1] = RenderResource_CreateFrame(Data_080367ce[1], 0, win, 124, y);
     return win;
 }

@@ -2,10 +2,12 @@
 #include "SCENE.H"
 
 void VramBlock_LoadCached(void *, s32, void *);
+/* FAKEMATCH: the reference keeps one literal-pool entry per case for the one
+   pair source table, so each case names it through its own alias (MAIN.LD). */
 extern u8 RenderResource_PairSourceTable;
-extern u8 Value_08031864;
-extern u8 gRom2;
-extern u8 gRom3;
+extern u8 RenderResource_PairSourceTable2;
+extern u8 RenderResource_PairSourceTable3;
+extern u8 RenderResource_PairSourceTable4;
 
 s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
 {
@@ -15,14 +17,14 @@ s32 RenderResource_LoadTableEntry(u32 value, s32 unused, void *destination)
         source = &RenderResource_PairSourceTable;
         break;
     case 2:
-        source = &Value_08031864;
+        source = &RenderResource_PairSourceTable2;
         break;
     case 3:
-        source = &gRom2;
+        source = &RenderResource_PairSourceTable3;
         break;
     case 0:
     default:
-        source = &gRom3;
+        source = &RenderResource_PairSourceTable4;
         break;
     }
     VramBlock_LoadCached(destination, 32, source);

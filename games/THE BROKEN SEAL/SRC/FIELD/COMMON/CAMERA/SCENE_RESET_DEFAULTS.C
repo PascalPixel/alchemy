@@ -1,5 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *);
+void SceneTransform_ApplyYaw(s32);
+void SceneTransform_ApplyPitch(s32);
+void Camera_StoreSceneParameters(u32, u32, u32);
 
 struct SceneCameraState {
     u8 filler0[12];

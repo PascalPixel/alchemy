@@ -1,5 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *);
+void SceneTransform_ApplyYaw(s32);
+void SceneTransform_ApplyPitch(s32);
 
 struct State_080b7f9c {
     u8 filler0[12];

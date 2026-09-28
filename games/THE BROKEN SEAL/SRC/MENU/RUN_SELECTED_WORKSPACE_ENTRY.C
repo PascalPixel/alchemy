@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void ShopCursor_AdvanceFar(void *);
+void Ui_ApplyTableScaleToObject(struct Object *object);
 
 extern u8 *gSelectionWork;
 

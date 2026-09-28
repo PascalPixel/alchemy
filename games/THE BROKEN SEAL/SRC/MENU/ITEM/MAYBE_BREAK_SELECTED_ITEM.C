@@ -5,6 +5,7 @@
 #include "ITEM.H"
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001f2c[];
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -17,7 +18,7 @@ void ItemMenu_TryBreak(void)
 {
     void *menu;
 
-    menu = *(void **)ADDR_03001F2C;
+    menu = *(void **)((u32)&Data_03001f2c);
     if ((FIELD(Item_Get(0x1FF & FIELD(menu, u16 *, 0x178)), u8 *, 0xC) == 2) && (Rand() < 0x2000U)) {
         Inventory_BreakFar(
             FIELD(menu, u8 *, 0x21A),

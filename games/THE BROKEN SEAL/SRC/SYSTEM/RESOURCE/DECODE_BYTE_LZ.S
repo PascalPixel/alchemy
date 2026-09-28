@@ -11,8 +11,8 @@
 .syntax unified
 	.arm
 	.set AlchemyLoadAddress, 0x08001b70
-	.global Resource_DecodeByteLz
-Resource_DecodeByteLz:
+	.global Resource_DecodeByteLzArm
+Resource_DecodeByteLzArm:
 	push	{r1, r5, r6, r7, lr}
 .L_08001b74:
 	ldrb	lr, [r0], #1
@@ -175,3 +175,5 @@ AlchemyUncreditedEnd_08001d20:
 	pop	{r0, r5, r6, r7, ip}
 	sub	r0, r1, r0
 	bx	ip
+	.global Resource_DecodeByteLzCodeSize
+	.set Resource_DecodeByteLzCodeSize, . - Resource_DecodeByteLzArm

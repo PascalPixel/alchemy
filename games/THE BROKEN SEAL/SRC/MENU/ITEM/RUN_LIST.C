@@ -5,6 +5,10 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "UI.H"
+s32 GameFlag_IsSet(s32 message);
+void Object_InitializeMode(s32 object, s32 mode);
+extern u8 Data_03001c94[];
+extern u8 Data_03001b04[];
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -68,9 +72,9 @@ void Audio_PlayCue(s32 cue);
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
+#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
 #define INPUT_HELD_KEYS (*(volatile u32 *)ADDR_03001AE8)
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
+#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 #define KEY_A 1
 #define KEY_B 2

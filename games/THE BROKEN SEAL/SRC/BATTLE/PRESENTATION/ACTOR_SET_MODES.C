@@ -1,6 +1,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
+void Scheduler_RemoveCallback(u32);
+void BattlePres_ClearAllActorRecordModes(void);
+void QueueIoWriteDelay2(u32, u32);
+u32 BattleParty_ListActorIds(s32, s16 *);
+void BattlePres_SetActorRecordMode(s32, s32);
+s32 Scheduler_AddOrUpdateCallback(u32, s32);
 
 extern u8 *gBattleWork;
 
@@ -15,9 +21,9 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
     if (mode == 0) {
         Scheduler_RemoveCallback(0x080c1085);
         *(volatile u16 *)0x04000054 = mode;
-        Actor_Run();
+        BattlePres_ClearAllActorRecordModes();
         WaitFrames(1);
-        Actor_Apply(0x04000050, 0);
+        QueueIoWriteDelay2(0x04000050, 0);
     }
     if (battle != 0 && mode != 0) {
         u32 zero = 0;
@@ -33,9 +39,9 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             blend_y[-1] = sixteen;
         } while (0);
 
-        count = Actor_Apply2(3, active_actors);
+        count = BattleParty_ListActorIds(3, active_actors);
         for (i = 0; i < count; i++)
-            Actor_Apply3(active_actors[i], mode & 1);
+            BattlePres_SetActorRecordMode(active_actors[i], mode & 1);
 
         if (actors != 0) {
             u32 actor = *actors;
@@ -43,7 +49,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             actors++;
             if (actor != 0xff) {
                 do {
-                    Actor_Apply3(actor, (mode & 1) ^ 1);
+                    BattlePres_SetActorRecordMode(actor, (mode & 1) ^ 1);
                     i++;
                     if (i > 13)
                         break;
@@ -52,7 +58,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
             }
         }
         WaitFrames(1);
-        Actor_Apply(0x04000050, 0);
+        QueueIoWriteDelay2(0x04000050, 0);
         Scheduler_AddOrUpdateCallback(0x080c1085, 0x480);
     }
 }

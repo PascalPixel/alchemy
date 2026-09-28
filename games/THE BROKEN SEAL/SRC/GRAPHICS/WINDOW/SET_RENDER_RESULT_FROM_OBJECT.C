@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+s32 BattleFx_GetResourceId(u32 id);
 
 struct State08093304 {
     u8 padding[0x12F4];

@@ -21,6 +21,8 @@
 	.arm
 	.global Func_08009bb8
 Func_08009bb8:
+	.global Data_08009bb8
+Data_08009bb8:
 	cmp	r2, #0
 	bne	.L_08009cd0
 	mov	r4, #255

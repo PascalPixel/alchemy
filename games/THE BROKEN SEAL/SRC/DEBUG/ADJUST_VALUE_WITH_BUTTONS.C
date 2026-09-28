@@ -1,10 +1,10 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-extern volatile u32 gIw;
-extern volatile u32 gIw2;
+extern volatile u32 gKeysHeld;
+extern volatile u32 gKeysRepeat;
 extern u8 *gBattleWork;
-extern volatile u32 gIw3;
+extern volatile u32 gKeyState;
 
 void WaitFrames(s32);
 
@@ -13,8 +13,8 @@ s32 Runtime_AdjustDebugValueWithButtons(s32 ret)
     u8 *base;
     volatile u32 *keys;
 
-    if (gIw & 8) {
-        keys = &gIw2;
+    if (gKeysHeld & 8) {
+        keys = &gKeysRepeat;
 loop:
         base = gBattleWork;
         if (*keys & 0x20)
@@ -25,7 +25,7 @@ loop:
             *(s32 *)(base + 0x828) -= 100;
         if (*keys & 0x80)
             *(s32 *)(base + 0x828) += 100;
-        if (gIw3 & 1) {
+        if (gKeyState & 1) {
             ret = *(s32 *)(base + 0x828);
             goto done;
         }
@@ -33,7 +33,7 @@ loop:
         goto loop;
     }
 done:
-    if (gIw & 4)
+    if (gKeysHeld & 4)
         ret = 0x18f;
     return ret;
 }

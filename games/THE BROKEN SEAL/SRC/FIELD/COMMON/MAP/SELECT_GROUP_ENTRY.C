@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 GameFlag_TestFar(s32 flag_id);
 
 /*
  * Walks the word table returned by the 0x02008000 service at +0x14 and
@@ -27,7 +28,7 @@ struct Services_0808a5f8 {
 };
 
 extern struct Work_0808a5f8 gGameState;
-extern struct Services_0808a5f8 gOv;
+extern struct Services_0808a5f8 gOverlayArea;
 
 void MapGroupTable_SelectEntry(s32 kind)
 {
@@ -43,7 +44,7 @@ void MapGroupTable_SelectEntry(s32 kind)
     s32 flag;
 
     cur = gGameState.current;
-    p = gOv.table_provider();
+    p = gOverlayArea.table_provider();
     result = 999;
     sub = 0;
     if (kind == 999)

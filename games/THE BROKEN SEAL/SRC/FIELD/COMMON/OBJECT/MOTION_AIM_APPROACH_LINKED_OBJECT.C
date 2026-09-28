@@ -5,9 +5,12 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
+s32 _call_via_r3(s32, s32, s32, s32);
+s32 Object_SetMoveTarget(void *, s32, s32, s32);
+void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
 
 /*
- * Obj_SetMode names a `bx rN` slot, so the call is indirect through the
+ * _call_via_r3 names a `bx rN` slot, so the call is indirect through the
  * register that slot selects; the trailing argument is the callee address
  * loaded into that register, not a parameter of the callee. The callee
  * takes one argument and returns one; it is fed a sum of squares and its
@@ -44,7 +47,7 @@ s32 Object_ApproachLinkedObject(void *arg0)
   dz = (*((s32 *)(((u8 *)link) + 0x10))) - (*((s32 *)(p + 0x10)));
   dxh = dx >> 0x10;
   dzh = dz >> 0x10;
-  len = Obj_SetMode((dxh *dxh) + (dzh *dzh), dx, dzh, 0x030001D8);
+  len = _call_via_r3((dxh *dxh) + (dzh *dzh), dx, dzh, 0x030001D8);
   if (len > 0x10)
   {
     dx2 = dx;

@@ -36,7 +36,7 @@ extern s32 ArcTan2(s32, s32);
 extern void Vector_AddPolarOffset(s32, s32, struct ItemBreakFragmentPosition *);
 extern struct ItemBreakFragmentObject *Object_Spawn(s32, s32, s32, s32);
 extern void Object_SetMode(struct ItemBreakFragmentObject *, s32);
-extern void Object_SetCallback(struct ItemBreakFragmentObject *, const void *);
+extern void ObjectDispatch_InitializeFar(struct ItemBreakFragmentObject *, const void *);
 
 void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
 {
@@ -75,6 +75,6 @@ void BattleFx_UpdateItemBreakFragment(struct ItemBreakFragmentSource *source)
         object->field_48 = 0x1999;
         Object_SetMode(object, 0);
         object->field_5e = 12;
-        Object_SetCallback(object, BattleFx_CommonParticleScript);
+        ObjectDispatch_InitializeFar(object, BattleFx_CommonParticleScript);
     }
 }

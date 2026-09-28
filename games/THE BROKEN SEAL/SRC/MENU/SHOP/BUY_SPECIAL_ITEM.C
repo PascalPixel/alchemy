@@ -1,11 +1,14 @@
 #include "SHOP.H"
+extern u8 Data_03001f2c[];
+extern u8 Data_03001c94[];
+extern u8 Data_03001b04[];
 
 /* Offers the shop's special item, whose price rises with each purchase:
    when the party can afford it, the player picks the member who carries
    it, and a full bag sends them back to choose again. */
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
+#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
+#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 #define SPECIAL_ITEM 228
 

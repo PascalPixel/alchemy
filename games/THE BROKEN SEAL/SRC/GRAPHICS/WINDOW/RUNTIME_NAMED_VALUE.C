@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 struct UiNamedValueWork {
     u8 filler0[RENDER_VALUE_TBL_OFS];
@@ -52,7 +53,7 @@ u32 UiRender_LookupNamedValue(u32 value, u32 clear)
     u32 result;
     u32 zero;
 
-    base = *(u8 **)ADDR_03001E8C;
+    base = *(u8 **)((u32)&Data_03001e8c);
     result = 0;
     index = 0;
     zero = index;

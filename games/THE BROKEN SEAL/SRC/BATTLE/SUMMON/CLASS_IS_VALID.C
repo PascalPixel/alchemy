@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e74[];
 
 extern s32 Summon_IsEntryFlagged(s32 index);
 
@@ -15,7 +16,7 @@ s32 Summon_ClassValid(s32 arg0)
     s32 i;
 
     retval = Summon_IsEntryFlagged(arg0);
-    ptr = *(struct Layout **)ADDR_03001E74;
+    ptr = *(struct Layout **)((u32)&Data_03001e74);
     for (i = 0; i <= 5; i++) {
         if (ptr->field[i] != 0)
             continue;

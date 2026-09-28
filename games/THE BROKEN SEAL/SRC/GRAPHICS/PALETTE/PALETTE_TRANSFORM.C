@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ed0[];
 
 s32 Unnamed_080f3078(s32, void *, void *, s32);
 void Graphics_InterpolatePaletteBuffers(s16 *, s16 *, s16 *, s32);
@@ -16,7 +17,7 @@ struct PaletteInterpolationState {
 
 void Graphics_TransformLargePalette(s32 index, s32 transform)
 {
-    void *target = *(void **)ADDR_03001ED0;
+    void *target = *(void **)((u32)&Data_03001ed0);
 
     if (target != NULL)
         Unnamed_080f3078(index, target, (u8 *)target + 0x1000, transform);
@@ -24,7 +25,7 @@ void Graphics_TransformLargePalette(s32 index, s32 transform)
 
 void Graphics_TransformSmallPalette(s32 index, s32 transform)
 {
-    void *target = *(void **)ADDR_03001ED0;
+    void *target = *(void **)((u32)&Data_03001ed0);
 
     if (target != NULL)
         Unnamed_080f3078(index, target, (u8 *)target + 0x400, transform);
@@ -32,7 +33,7 @@ void Graphics_TransformSmallPalette(s32 index, s32 transform)
 
 void Graphics_SetPaletteTransformValue(s32 value)
 {
-    u16 *target = *(u16 **)ADDR_03001ED0;
+    u16 *target = *(u16 **)((u32)&Data_03001ed0);
 
     if (target != NULL)
         *target = value;
@@ -41,7 +42,7 @@ void Graphics_SetPaletteTransformValue(s32 value)
 void Graphics_UpdatePaletteInterpolation(s32 value)
 {
     struct PaletteInterpolationState *state =
-        *(struct PaletteInterpolationState **)ADDR_03001ED0;
+        *(struct PaletteInterpolationState **)((u32)&Data_03001ed0);
 
     if (state != NULL) {
         state->value = value;

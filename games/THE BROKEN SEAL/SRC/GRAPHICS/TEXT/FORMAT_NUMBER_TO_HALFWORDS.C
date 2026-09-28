@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f70[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
@@ -13,7 +14,7 @@ s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value)
 
     dst = out;
     Text_FormatSignedDecimalToWork(value);
-    src = (u8 *)ADDR_03001F70;
+    src = (u8 *)((u32)&Data_03001f70);
     n = 0xD;
     do {
         n -= 1;

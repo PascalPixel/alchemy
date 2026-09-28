@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 BattleFx_RunFiveMode(s32, s32);
 
 /* battle/effects/five_mode/run_mode0.c */
 void BattleFx_RunFiveModeMode0(s32 arg0)

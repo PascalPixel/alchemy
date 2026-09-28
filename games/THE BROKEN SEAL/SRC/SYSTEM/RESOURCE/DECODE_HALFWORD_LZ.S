@@ -36,3 +36,5 @@ Resource_DecodeHalfwordLz:
 	subs	r2, r2, #1
 	bne	.L_080022d8
 	b	.L_080022a4
+	.global Resource_DecompressHalfwordsCodeSize
+	.set Resource_DecompressHalfwordsCodeSize, . - Resource_DecodeHalfwordLz

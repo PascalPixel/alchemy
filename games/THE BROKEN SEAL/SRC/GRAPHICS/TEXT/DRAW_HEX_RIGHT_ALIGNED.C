@@ -1,5 +1,6 @@
 #include "LOW_RUNTIME.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f78[];
 
 void Text_FormatHexToWork(u32);
 
@@ -12,5 +13,5 @@ void Text_DrawHexRightAligned(u32 value, s32 width)
         count = 8;
     }
     Text_FormatHexToWork(value);
-    Runtime_WriteDebugTextTiles((const u8 *)(ADDR_03001F78 - count));
+    Runtime_WriteDebugTextTiles((const u8 *)(((u32)&Data_03001f78) - count));
 }

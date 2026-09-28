@@ -23,6 +23,9 @@
 	.thumb_func
 Debug_SelectAbilityPair:
 Func_0801c49c:
+	.global Menu_Check
+	.thumb_func
+Menu_Check:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

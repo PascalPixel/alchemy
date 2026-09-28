@@ -1,4 +1,5 @@
 #include "SHOP.H"
+extern u8 Data_03001f2c[];
 
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 s32 UiText_DrawNumberInWindowFar(s32, s32, s32, s32, s32);

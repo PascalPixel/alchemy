@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 Trig_Cos(s32);
 
 s32 Math_Div(s32, s32);
 extern s32 gFrameCount;

@@ -2,11 +2,12 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 void Render_SetTilemapFlagRect(
     const u8 *object, s32 x, s32 y, s32 width, s32 height, u32 field)
 {
-    u8 *base = *(u8 **)ADDR_03001E8C;
+    u8 *base = *(u8 **)((u32)&Data_03001e8c);
 
     x += *(u16 *)(object + 12) + 1;
     y += *(u16 *)(object + 14) + 1;

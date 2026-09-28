@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001f2c[];
 
 struct State080a8034 {
     u8 padding_00[0x20];
@@ -21,7 +22,7 @@ void Menu_InitSelectorCursorAndEntries(void)
 {
     struct State080a8034 *state;
 
-    state = *(struct State080a8034 **)ADDR_03001F2C;
+    state = *(struct State080a8034 **)((u32)&Data_03001f2c);
     PsynergyMenu_InitializeEntryObjects(UiMenu_CreateCursor(state), 2, 2, 8, 0);
     state->field_28 = 0;
     state->field_24 = 0;

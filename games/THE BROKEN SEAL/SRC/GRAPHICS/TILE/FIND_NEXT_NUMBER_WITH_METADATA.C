@@ -2,6 +2,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+void *Resource_GetMetadataRecordFar(s32 no);
 
 /* ui/icon/find_next_number_with_metadata.c */
 s32 Ui_FindNextNumberWithMetadata(s32 start, s32 step)

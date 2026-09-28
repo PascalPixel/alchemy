@@ -1,6 +1,7 @@
 #include "OBJECT_LOOKUP.H"
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ae8[];
 
 s32 Object_GetById(u32);
 
@@ -63,13 +64,13 @@ void BattleFx_RunVisibilityTransition(void)
     BattleFx_UpdateObjectVisibilityBounds();
     Battle_InitializeRenderObject();
     BattleFx_ScheduleRatioTransition(0x9D89, 6);
-    if ((*((volatile u32 *) ADDR_03001AE8)) & 0x200)
+    if ((*((volatile u32 *) ((u32)&Data_03001ae8))) & 0x200)
     {
       do
       {
         WaitFrames(1);
       }
-      while ((*((volatile u32 *) ADDR_03001AE8)) & 0x200);
+      while ((*((volatile u32 *) ((u32)&Data_03001ae8))) & 0x200);
     }
     BattleFx_ScheduleRatioTransition(0x10000, 6);
     Scheduler_DisableOverlayCallbacks();

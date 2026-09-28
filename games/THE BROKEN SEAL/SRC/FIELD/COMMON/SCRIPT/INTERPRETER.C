@@ -1,4 +1,5 @@
 #include "SCRIPT_INTERPRETER.H"
+extern u8 Data_03001e64[];
 
 s32 GameFlag_TestFar(s32);
 s32 GameFlag_SetBitFar(s32);
@@ -228,7 +229,7 @@ s32 ScriptObject_CheckOverlap(struct ScriptObjectEntry *object, s32 *values)
     u8 *flags;
     struct ScriptObjectEntry *entry;
 
-    entry = *(struct ScriptObjectEntry **)ADDR_03001E64;
+    entry = *(struct ScriptObjectEntry **)((u32)&Data_03001e64);
     index = 0;
     flags = &entry->flags_59;
 loop_1:
@@ -261,7 +262,7 @@ struct ScriptObjectEntry *ScriptObject_FindOverlappingEntry(
     u8 *flags;
     struct ScriptObjectEntry *entry;
 
-    entry = *(struct ScriptObjectEntry **)ADDR_03001E64;
+    entry = *(struct ScriptObjectEntry **)((u32)&Data_03001e64);
     index = 0;
     flags = &entry->flags_59;
 loop_1:

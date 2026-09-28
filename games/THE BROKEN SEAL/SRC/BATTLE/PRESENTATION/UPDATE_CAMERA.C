@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PRESENTATION.H"
+extern u8 Data_03001e80[];
 
 struct SceneCameraTransfer {
     s32 x;
@@ -27,7 +28,7 @@ void SceneTransform_ApplyPitch(s32);
 
 void BattlePresentation_UpdateCamera(void)
 {
-    void **slot = (void **)ADDR_03001E80;
+    void **slot = (void **)((u32)&Data_03001e80);
     struct BattleCamera *state = slot[0];
     struct BattlePresentationTransition *transition = slot[32];
     struct LinkWork *work = slot[-3];

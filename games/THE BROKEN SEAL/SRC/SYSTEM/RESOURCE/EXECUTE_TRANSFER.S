@@ -39,3 +39,5 @@ Func_08002cf4:
 	add	ip, ip, #212
 	stm	ip, {r2, r3, r4}
 	b	.L_08002d3c
+	.global TransferCommandExecutor_Size
+	.set TransferCommandExecutor_Size, . - Func_08002cf4

@@ -45,7 +45,7 @@ void Audio_PlayCue(s32 cue);
 s32 CharacterSelector_MoveEntry(s32 cursor, s32 forward);
 void Menu_ReleaseEntryObjects(void);
 s32 PsynergyMenu_InitializeEntryObjects(s32, s32, s32, s32, s32);
-void Func_080a7850(void);
+void DjinnMenu_ShowCurrentList(void);
 
 /* Pick a party member, rearranging the order with L and R; returns 1 when
  * one was chosen, -1 when cancelled. */
@@ -131,7 +131,7 @@ s32 CharacterSelector_RunRearrange(void)
             }
             WaitFrames(1);
         } else if ((gKeyState & 4) && GameFlag_TestFar(48)) {
-            Func_080a7850();
+            DjinnMenu_ShowCurrentList();
             redraw = 1;
         } else {
             if (gKeysRepeat & 0x20) {

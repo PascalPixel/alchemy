@@ -4,6 +4,7 @@
 #include "BATTLE_MSG.H"
 #include "BATTLE_MOTION.H"
 #include "SYSTEM.H"
+s32 BattleObject_IsValidId(u32);
 
 struct Input_080b8b48 {
     s16 primary_id;

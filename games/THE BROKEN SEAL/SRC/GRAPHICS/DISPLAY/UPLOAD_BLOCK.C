@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SCENE.H"
+u32 ColorBuffer_BackupAndScaleThreeQuarters(void *, void *, u32);
 
 /* graphics/vram/Display_UploadBlock.c */
 struct State {

@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "UI.H"
+extern u8 Data_03001f2c[];
 
 /* Runs a shop visit: set up the shop from its event-table row, show the
    keeper's window, then loop over the buy, sell, artifact and repair
@@ -18,7 +19,7 @@ struct ShopKeeper {
 s32 EventTable_GetRowLimit(void);
 void EventTable_ApplyRowAbilities(s32 row);
 s32 EventTable_GetRowType(s32 row);
-s32 Func_080b2720(s32 row, s16 *items);
+s32 EventTable_CopyRowHeader(s32 row, s16 *items);
 void Shop_InitializeCursorWork(void);
 struct ShopKeeper *Object_GetByIdFar(s32 id);
 s32 UiWindow_CreateWithSideObjectFar(s32 resource, s32 a, s32 b, s32 c);
@@ -67,7 +68,7 @@ loop:
         choice = Func_08015380(choice);
         shop->party_action = choice;
         if (choice == 0) {
-            shop->stock_count = Func_080b2720(row, shop->stock_item_ids);
+            shop->stock_count = EventTable_CopyRowHeader(row, shop->stock_item_ids);
             UiMessage_ShowAndWait(0xca7);
             Shop_SelBuy();
         } else if (choice == 1) {

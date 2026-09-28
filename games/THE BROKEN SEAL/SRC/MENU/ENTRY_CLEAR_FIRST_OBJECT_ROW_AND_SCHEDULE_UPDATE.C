@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "INN.H"
+extern struct InnState *Data_03001f2c;
 
 /* menu/entry/clear_first_object_row_and_schedule_update.c */
 void Scheduler_RemoveCallback(s32);
@@ -9,7 +10,7 @@ void ResourceObject_ReleaseFar(void *);
 
 void Menu_ClearFirstObjectRowAndScheduleUpdate(void)
 {
-    u8 *base = (u8 *)gMenuWork;
+    u8 *base = (u8 *)Data_03001f2c;
     s32 offset = 138;
     s32 zero;
     s32 count;
@@ -35,7 +36,7 @@ s32 Object_ApplyProjectedPlacementFar(s32, void *, void *, s32);
 
 void Menu_UpdateFirstObjectRowPositions(void)
 {
-    u8 *base = (u8 *)gMenuWork;
+    u8 *base = (u8 *)Data_03001f2c;
     s16 *offsets = (s16 *)(base + 0x134);
     s32 *entries = (s32 *)(base + 0x114);
     s32 source[2];

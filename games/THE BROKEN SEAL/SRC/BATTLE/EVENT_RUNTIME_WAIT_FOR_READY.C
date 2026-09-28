@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001e74[];
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -13,7 +14,7 @@ s32 BattleEventRuntime_WaitForReady(void)
     s32 state;
     void *runtime;
 
-    runtime = *(void **)ADDR_03001E74;
+    runtime = *(void **)((u32)&Data_03001e74);
     state = FIELD_AT_OFFSET(runtime, s32 *, 0x800);
     if (state == 0) {
         FIELD_AT_OFFSET(runtime, s32 *, 0x800) = 1;

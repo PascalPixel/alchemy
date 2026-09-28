@@ -1,16 +1,17 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e50[];
 
 s32 Runtime_GetRemainingIwram(void)
 {
-    s32 state = ADDR_03001E50;
+    s32 state = ((u32)&Data_03001e50);
 
     return 0x03007800 - *(s32 *)(state + 4);
 }
 
 s32 Runtime_GetRemainingEwram(void)
 {
-    return 0x02040000 - *(s32 *)ADDR_03001E50;
+    return 0x02040000 - *(s32 *)((u32)&Data_03001e50);
 }
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
@@ -23,7 +24,7 @@ s32 Runtime_AllocateHeapBlock(s32 kind, s32 size)
     u32 next;
     u32 cached_address;
 
-    allocator_state = (u32 *)ADDR_03001E50;
+    allocator_state = (u32 *)((u32)&Data_03001e50);
     kind_offset = kind * 4;
     cached_address = *(u32 *)((u8 *)allocator_state + kind_offset);
     if (cached_address == 0) {
@@ -57,7 +58,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
     u32 next_address;
     u32 cached_address;
 
-    allocator_state = (u32 *)ADDR_03001E50;
+    allocator_state = (u32 *)((u32)&Data_03001e50);
     kind_offset = kind * 4;
     cached_address = *(u32 *)((u8 *)allocator_state + kind_offset);
     if (cached_address == 0) {
@@ -83,7 +84,7 @@ void *Runtime_AllocateBlock(s32 kind, s32 size)
 
 u32 Runtime_BumpAllocate(s32 size)
 {
-    u32 *allocator_state = (u32 *)ADDR_03001E50;
+    u32 *allocator_state = (u32 *)((u32)&Data_03001e50);
     u32 next_address;
     u32 next;
     u32 allocation_address;
@@ -110,7 +111,7 @@ block_5:
 
 s16 *Runtime_BumpAllocateAlternatePool(s32 arg0)
 {
-    s32 allocator_state_address = ADDR_03001E50;
+    s32 allocator_state_address = ((u32)&Data_03001e50);
     u32 alternate_next_address;
     u32 primary_next_address;
     u32 allocation_address;

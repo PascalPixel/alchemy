@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "LOW_RUNTIME.H"
+extern u8 Data_03001f70[];
 
 /* ui/text/fmt/text_format_hex_to_work.c */
 /* ui/text/fmt/format_hex_to_work.c */
@@ -9,7 +10,7 @@ extern const u8 RomBytes_0800795c[];
 
 void Text_FormatHexToWork(u32 value)
 {
-    u8 *buffer = (u8 *)ADDR_03001F70;
+    u8 *buffer = (u8 *)((u32)&Data_03001f70);
     const u8 *digits = RomBytes_0800795c;
     s32 index = 7;
 
@@ -20,7 +21,7 @@ void Text_FormatHexToWork(u32 value)
     } while (index >= 0);
 
     {
-        u8 *terminator = (u8 *)ADDR_03001F70;
+        u8 *terminator = (u8 *)((u32)&Data_03001f70);
         terminator[8] = 0;
     }
 }

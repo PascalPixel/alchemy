@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "IWRAM_CALL.H"
+extern u8 Data_03001e80[];
 
 /* Per-frame world map view: follow the target (with a decaying random
    shake), redraw the palette-mapped column or row the view crossed, then
@@ -62,7 +63,7 @@ void WorldMap_BuildScanlineTable(s32 value, s32 *position, u8 *map);
 
 void WorldMap_UpdateView(void)
 {
-    void **slot = (void **)ADDR_03001E80;
+    void **slot = (void **)((u32)&Data_03001e80);
     u8 *cam = slot[0];
     u8 *map = slot[-5];
     struct WorldView *view = slot[-4];

@@ -1,5 +1,11 @@
 #include "TYPES.H"
 #include "SCENE.H"
+void Render_ResetTransformState(void);
+void SceneTransform_ApplyPosition(void *);
+void SceneTransform_ApplyYaw(s32);
+void SceneTransform_ApplyPitch(s32);
+void Camera_StoreSceneParameters(u32, u32, u32);
+void BattleCamera_SetRange(s32, s32, s32, s32, s32);
 
 /* Alternate scene-camera setup used by the later field presentation. */
 struct SceneCameraState {
@@ -78,7 +84,7 @@ void Camera_ConfigureScene(s32 pos)
 
     gProjection.anchor = pos + 120;
     secondary->field10 = 1;
-    Sys_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
+    BattleCamera_SetRange(240 << 15, (0x76 - pos) << 16, 0, 128 << 4, 128 << 10);
     secondary->field14 = 1;
     secondary->field10 = 0;
 }

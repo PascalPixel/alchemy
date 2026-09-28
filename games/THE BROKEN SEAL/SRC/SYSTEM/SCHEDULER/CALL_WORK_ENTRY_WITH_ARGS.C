@@ -3,9 +3,10 @@
  */
 #include "TYPES.H"
 #include "SCENE.H"
+s32 _call_via_r2(s32, s32, s32);
 
 /*
- * Sys_Place names a `bx rN` slot: the call is an indirect call through
+ * _call_via_r2 names a `bx rN` slot: the call is an indirect call through
  * the register that slot selects, not a call to a function at that
  * address. The declaration stands in for the typed slot.
  */
@@ -21,5 +22,5 @@ void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)
   int fn;
   base = (fn = 0x02004000);
   fn = *((s32 *)base);
-  Sys_Place(arg0, arg1, fn);
+  _call_via_r2(arg0, arg1, fn);
 }

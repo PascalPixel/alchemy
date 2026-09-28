@@ -2,6 +2,7 @@
 #include "FIXED_MATH.H"
 #include "EFFECT_0809B11C.H"
 #include "SYSTEM.H"
+u32 BattleFx_HasReachedTarget(struct EffectSlot *);
 
 /* Object updates of the radial spread page effect. */
 

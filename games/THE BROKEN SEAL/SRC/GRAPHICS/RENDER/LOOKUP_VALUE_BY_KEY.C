@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "METADATA_LOOKUP.H"
+extern u8 Data_03001e68[];
 
 /* animation/lookup_value_by_key.c */
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
@@ -15,7 +16,7 @@ s32 Animation_LookupValueByKey(s32 key)
     u32 no;
     struct LookupEntry *p;
 
-    p = (struct LookupEntry *)(*(u32 *)ADDR_03001E68 + 0x1c);
+    p = (struct LookupEntry *)(*(u32 *)((u32)&Data_03001e68) + 0x1c);
     no = 0;
 loop_1:
     if (p->key == key) {

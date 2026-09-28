@@ -11,6 +11,9 @@
 	.thumb_func
 Menu_PushSelectedNode:
 Func_0801be80:
+	.global Menu_ConfirmSelection
+	.thumb_func
+Menu_ConfirmSelection:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

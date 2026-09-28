@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 Data_03001cb0[];
 
 #ifndef SERIAL_RUNTIME_TU
 union SerialDataRegisters {
@@ -118,7 +119,7 @@ void SerialRuntime_RemoveIrqHandlers(void)
     s16 *work;
     s32 handler;
 
-    work = (s16 *)ADDR_03001CB0;
+    work = (s16 *)((u32)&Data_03001cb0);
     do {
         do {
         } while (0);

@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+s32 Menu_SetupSelectionSide(s32, s32);
+extern u8 Data_03001e98[];
 
 /* menu/selection/set_node_coordinates.c */
 struct Node_0801b1ec {
@@ -47,7 +49,7 @@ void Menu_SetupSelectionBothSides(void)
 {
     s32 state;
 
-    state = *(s32 *)ADDR_03001E98;
+    state = *(s32 *)((u32)&Data_03001e98);
     Menu_SetupSelectionSide(state, 0);
     Menu_SetupSelectionSide(state, 1);
 }

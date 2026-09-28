@@ -3,18 +3,22 @@
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
 #include "UI.H"
+s32 BattleFx_GetResourceIdFar(s32);
+void UiIcon_PrepareObjectFar(void *);
+s32 Menu_RunConfirmSelectionAtFar(s32, s32, s32);
+extern u8 Data_03001f2c[];
 
 /* ui/message/show_and_wait.c */
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern u8 gVal[];
-extern u8 gVal2[];
-extern u8 gVal3[];
+extern u8 Value_00000c9b[];
+extern u8 Value_00000cc6[];
+extern u8 Value_00000cf1[];
 extern u8 gVal4[];
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
-    s32 *state = *(s32 **)ADDR_03001F2C;
+    s32 *state = *(s32 **)((u32)&Data_03001f2c);
     s32 value = BattleFx_GetResourceIdFar(*(u16 *)&state[233]);
     s32 result = arg0;
     s8 mode;
@@ -22,11 +26,11 @@ void UiMessage_ShowAndWait(s32 arg0)
     UiWork_FinalizePendingCoreFar();
     mode = *(s8 *)((u8 *)state + 0x3a9);
     if (mode == 2)
-        result += gVal2 - gVal;
+        result += Value_00000cc6 - Value_00000c9b;
     if (mode == 0)
-        result += gVal3 - gVal;
+        result += Value_00000cf1 - Value_00000c9b;
     if (*(s8 *)&state[235] != 0)
-        result += gVal4 - gVal;
+        result += gVal4 - Value_00000c9b;
     UiText_OpenMessageWindowFar(result, 5, 0, (value << 16) | 0x22);
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
@@ -45,21 +49,21 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     void *state;
     u8 **slot;
 
-    state = *(void **)ADDR_03001F2C;
+    state = *(void **)((u32)&Data_03001f2c);
     slot = (u8 **)((u8 *)state + 0x380);
     saved = (*slot)[5];
     no = message_id;
     variant = BattleFx_GetResourceIdFar(FIELD_AT_OFFSET(state, u16 *, 0x3A4));
     mode = FIELD_AT_OFFSET(state, s8 *, 0x3A9);
     if (mode == 2) {
-        no += (s32)gVal2 - (s32)gVal;
+        no += (s32)Value_00000cc6 - (s32)Value_00000c9b;
     }
     if (mode == 0) {
-        no += (s32)gVal3 - (s32)gVal;
+        no += (s32)Value_00000cf1 - (s32)Value_00000c9b;
     }
     flag = FIELD_AT_OFFSET(state, u8 *, 0x3AC);
     if (flag != 0) {
-        no += (s32)gVal4 - (s32)gVal;
+        no += (s32)gVal4 - (s32)Value_00000c9b;
     }
     (*slot)[5] = 0xDU;
     UiWork_FinalizePendingCoreFar();
@@ -74,7 +78,7 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
 /* ui/message/show_choice.c */
 s32 UiMessage_ShowChoice(s32 arg0)
 {
-    u8 **slot = (u8 **)(*(u8 **)ADDR_03001F2C + 0x380);
+    u8 **slot = (u8 **)(*(u8 **)((u32)&Data_03001f2c) + 0x380);
     u8 saved = (*slot)[5];
     UiIcon_PrepareObjectFar(*slot);
     arg0 = Menu_RunConfirmSelectionAtFar(7, 5, arg0);
@@ -85,7 +89,7 @@ s32 UiMessage_ShowChoice(s32 arg0)
 /* ui/message/show_choice_variant.c */
 s32 UiMessage_ShowChoiceVariant(s32 arg0)
 {
-    u8 **slot = (u8 **)(*(u8 **)ADDR_03001F2C + 0x380);
+    u8 **slot = (u8 **)(*(u8 **)((u32)&Data_03001f2c) + 0x380);
     u8 saved = (*slot)[5];
     UiIcon_PrepareObjectFar(*slot);
     arg0 = Menu_RunConfirmSelectionAtFar(7, 7, arg0);

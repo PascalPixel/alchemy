@@ -27,7 +27,8 @@ pub fn entry(args: &[String]) -> ExitCode {
         "compilers" => crate::make_target("compiler-sources", &rest),
         "asm" => crate::result(crate::build_asm::entry(&rest)),
         "claimed" => crate::result(crate::build_claimed::entry(&rest)),
-        "full" | "rom" => crate::result(crate::build_full::run(&rest)),
+        "full" => crate::result(crate::build_full::run(&rest)),
+        "rom" => crate::result(crate::build_rom::run(&rest)),
         "-h" | "--help" => {
             println!("{USAGE}");
             ExitCode::SUCCESS

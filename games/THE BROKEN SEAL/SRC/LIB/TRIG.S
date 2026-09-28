@@ -25,9 +25,15 @@ Func_0800230c:
 	.global Func_0800231c
 	.thumb_func
 Func_0800231c:
+	.global Trig_Cos
+	.thumb_func
+Trig_Cos:
 	movs	r1, #64
 	lsls	r1, r1, #8
 	adds	r0, r0, r1
+	.global Trig_Sin
+	.thumb_func
+Trig_Sin:
 	adds	r0, #32
 	lsls	r1, r0, #18
 	lsrs	r1, r1, #24

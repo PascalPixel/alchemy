@@ -2,6 +2,8 @@
 #include "SCENE.H"
 #include "RENDER_INPUT.H"
 #include "RESOURCE.H"
+u32 Resource_DecodeByteLz(const void *, void *);
+void Runtime_ReleaseHeapBlock(s32);
 
 /* graphics/resource/RenderOutput_LoadPair.c */
 extern s32 RenderResource_PairSourceTable[];
@@ -19,7 +21,7 @@ void RenderResource_LoadPair(s32 group_index, s32 resource_index)
     }
 }
 
-/* graphics/resource/RenderOutput_CreatePair.c */
+/* graphics/resource/RenderResource_CreatePair.c */
 void RenderResource_LoadPair(s32 arg0, s32 arg1);
 void *RenderResource_CreatePair(
     s32 arg0,

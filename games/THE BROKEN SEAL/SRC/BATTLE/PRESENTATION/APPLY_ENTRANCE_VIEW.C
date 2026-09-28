@@ -49,7 +49,7 @@ struct MapScrollWork {
 
 extern struct MapScrollWork *gMapWork;
 extern struct ViewState gGameState;
-extern struct ViewServices gOv;
+extern struct ViewServices gOverlayArea;
 
 s32 GameFlag_TestFar(s32 flag);
 
@@ -57,7 +57,7 @@ void BattleMap_ApplyEntranceView(void)
 {
     struct MapScrollWork *work = gMapWork;
     s32 entrance = gGameState.entrance;
-    struct EntranceView *view = gOv.entrance_views();
+    struct EntranceView *view = gOverlayArea.entrance_views();
     s32 found = 0;
 
     while (view->entrance != -1) {
@@ -69,7 +69,7 @@ void BattleMap_ApplyEntranceView(void)
         view++;
     }
     if (!found)
-        view = gOv.entrance_views();
+        view = gOverlayArea.entrance_views();
 
     if (!GameFlag_TestFar(0x109)) {
         gGameState.x = view->x << 16;

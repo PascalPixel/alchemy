@@ -1,3 +1,7 @@
+/*
+ * Draft: the parent matches but its nested arrow renderer does not yet, so the
+ * unit links as assembly (recon/tbs/raw/08022a7c.s and 08022b44.s).
+ */
 /* DjinnMenu_ShowChangePreview (main:08022b44, 1588 bytes) is exact. Its
  * nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c) is emitted
  * first in the same object and is not exact yet, so the unit keeps it as
@@ -41,12 +45,12 @@
  * function (main:08022a7c) that reaches the window through the static chain.
  *
  * The six stat labels load one linked message base (Data_000008ae) and the
- * ability names another (Value_00000333); Func_080072f0,
+ * ability names another (Value_00000333); _call_via_r3,
  * UiText_RenderWideStringInWindow and UiWindow_DrawThreeTileColumn are
  * declared returning a value so r0 is set last at each call. The locals are
  * declared in the reference's spill-slot order. */
 
-/* The IWRAM block-copy routine Func_080072f0 is asked to drive. */
+/* The IWRAM block-copy routine _call_via_r3 is asked to drive. */
 #define VRAM_COPY_PROC 0x03001388
 
 /* Ability table entry returned by Ability_GetData. */
@@ -75,15 +79,15 @@ struct BattleUnitRecord {
 
 /* Callees the owner register already names, spelled the way types.h spells
  * its own aliases: the address symbol stays the ABI. */
-#define UiWork_SetParamNibble Func_0801e71c
-#define UiWindow_SetTilemapEntry Func_08019000
-#define UiWindow_DrawThreeTileColumn Func_080218dc
-#define UiText_FormatNumberToHalfwords Func_080228bc
+#define UiWork_SetParamNibble UiWork_SetParamNibble
+#define UiWindow_SetTilemapEntry UiWindow_SetTilemapEntry
+#define UiWindow_DrawThreeTileColumn UiWindow_DrawThreeTileColumn
+#define UiText_FormatNumberToHalfwords UiText_FormatNumberToHalfwords
 
 void Func_08002df0(void *block);
-s32 Func_080072f0(void *dst, const void *src, s32 size, s32 proc);
-s32 Func_08017c8c(s16 *text, struct RenderInput *win, s32 x, s32 y);
-void Func_0801e41c(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
+s32 _call_via_r3(void *dst, const void *src, s32 size, s32 proc);
+s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
+void UiWindow_DrawDividerLine(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
 void UiWork_SetParamNibble(s32 nibble);
 void UiWindow_SetTilemapEntry(
     struct RenderInput *win, s32 tile, s32 x, s32 y, s32 flags);
@@ -97,10 +101,10 @@ struct PreviewSprite {
     } attributes;
     union RenderTableValue tile;
 };
-struct RenderOutput *Func_08015e8c(void);
-s32 Func_080040b4(s32);
-s32 Func_080040d0(s32, const void *);
-void Func_08016584(struct RenderInput *, struct RenderOutput *);
+struct RenderOutput *RenderOutput_AcquireFree(void);
+s32 Resource_LoadIntoFreeSlot(s32);
+s32 Resource_GetBuffer(s32, const void *);
+void RenderOutput_AppendToList(struct RenderInput *, struct RenderOutput *);
 extern u8 Data_000008ae[];
 extern u8 Value_00000333[];
 extern u8 Data_080313a4[];
@@ -152,12 +156,12 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
     void Func_08022a7c(s32 x, s32 y, s32 rising)
     {
-        struct RenderOutput *output = Func_08015e8c();
+        struct RenderOutput *output = RenderOutput_AcquireFree();
         struct PreviewSprite *entry;
         if (output) {
             output->one5 = 1;
             output->one4 = 1;
-            output->index = Func_080040b4(128);
+            output->index = Resource_LoadIntoFreeSlot(128);
             entry = (struct PreviewSprite *)((u8 *)output + 16);
             output->table.value = 0;
             output->sentinel = 240;
@@ -166,8 +170,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             entry->attributes.word = 0x40000400;
             entry->attributes.bits.x = win->x * 8 + x;
             entry->attributes.bits.y = win->y * 8 + y;
-            entry->tile.bits.index = Func_080040d0((u8)output->index, rising ? Data_080313a4 : Data_08031424);
-            Func_08016584(win, output);
+            entry->tile.bits.index = Resource_GetBuffer((u8)output->index, rising ? Data_080313a4 : Data_08031424);
+            RenderOutput_AppendToList(win, output);
         }
     }
 
@@ -185,7 +189,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     buf = (s16 *)Runtime_BumpAllocate(128);
     snap = (struct BattleUnitRecord *)Runtime_BumpAllocate(332);
     list = (u16 *)Runtime_BumpAllocateAlternatePool(96);
-    Func_080072f0(snap, unit, 332, VRAM_COPY_PROC);
+    _call_via_r3(snap, unit, 332, VRAM_COPY_PROC);
 
     /* Apply the pending change to the live record, then recompute. */
     col = (code >> 8) & 15;
@@ -213,23 +217,23 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
         oldHp = snap->hp;
         UiText_FormatNumberToHalfwords(buf, oldHp);
-        Func_08017c8c(buf + 7, win, 5, 1);
+        UiText_RenderWideStringInWindow(buf + 7, win, 5, 1);
         oldPp = snap->pp;
         UiText_FormatNumberToHalfwords(buf, oldPp);
-        Func_08017c8c(buf + 7, win, 5, 2);
+        UiText_RenderWideStringInWindow(buf + 7, win, 5, 2);
         oldAtk = snap->atk;
         UiText_FormatNumberToHalfwords(buf, oldAtk);
-        Func_08017c8c(buf + 8, win, 6, 3);
+        UiText_RenderWideStringInWindow(buf + 8, win, 6, 3);
         oldDef = snap->def;
         UiText_FormatNumberToHalfwords(buf, oldDef);
-        Func_08017c8c(buf + 8, win, 6, 4);
+        UiText_RenderWideStringInWindow(buf + 8, win, 6, 4);
         oldAgi = snap->agi;
         UiText_FormatNumberToHalfwords(buf, oldAgi);
-        Func_08017c8c(buf + 8, win, 6, 5);
+        UiText_RenderWideStringInWindow(buf + 8, win, 6, 5);
         UiText_FormatNumberToHalfwords(buf, snap->luk);
-        Func_08017c8c(buf + 8, win, 5, 6);
+        UiText_RenderWideStringInWindow(buf + 8, win, 5, 6);
 
-        Func_0801e41c(win, 0, 8, 19, 8);
+        UiWindow_DrawDividerLine(win, 0, 8, 19, 8);
         if (gained != 0 || lost != 0)
             UiWork_SetParamNibble(2);
         UiText_DrawCharacterAtOffset(0x8ad, win, 24, 64);
@@ -284,7 +288,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             UiText_DrawCharacterAtOffset(0xba8, win, 32, 80);
         UiWork_SetParamNibble(15);
         UiWork_SetParamNibble(15);
-        Func_0801e41c(win, 0, 10, 19, 10);
+        UiWindow_DrawDividerLine(win, 0, 10, 19, 10);
     }
 
     if (page == 0) {
@@ -297,7 +301,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
             UiWindow_SetTilemapEntry(win, 0xf729, 9, 0, page);
 
         UiText_FormatNumberToHalfwords(buf, unit->hp);
-        Func_08017c8c(buf + 7, win, 11, 1);
+        UiText_RenderWideStringInWindow(buf + 7, win, 11, 1);
         if (unit->hp != oldHp) {
             val = 0;
             if (unit->hp > oldHp)
@@ -306,7 +310,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->pp);
-        Func_08017c8c(buf + 7, win, 11, 2);
+        UiText_RenderWideStringInWindow(buf + 7, win, 11, 2);
         if (unit->pp != oldPp) {
             val = 0;
             if (unit->pp > oldPp)
@@ -315,7 +319,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->atk);
-        Func_08017c8c(buf + 7, win, 11, 3);
+        UiText_RenderWideStringInWindow(buf + 7, win, 11, 3);
         if (unit->atk != oldAtk) {
             val = 0;
             if (unit->atk > oldAtk)
@@ -324,7 +328,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->def);
-        Func_08017c8c(buf + 7, win, 11, 4);
+        UiText_RenderWideStringInWindow(buf + 7, win, 11, 4);
         if (unit->def != oldDef) {
             val = 0;
             if (unit->def > oldDef)
@@ -333,7 +337,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->agi);
-        Func_08017c8c(buf + 7, win, 11, 5);
+        UiText_RenderWideStringInWindow(buf + 7, win, 11, 5);
         if (unit->agi != oldAgi) {
             val = 0;
             if (unit->agi > oldAgi)
@@ -342,7 +346,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
         }
 
         UiText_FormatNumberToHalfwords(buf, unit->luk);
-        Func_08017c8c(buf + 8, win, 12, 6);
+        UiText_RenderWideStringInWindow(buf + 8, win, 12, 6);
         if (unit->luk != snap->luk) {
             val = 0;
             if (unit->luk > snap->luk)
@@ -352,7 +356,7 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     }
 
     /* Put the record back the way it was and release the scratch blocks. */
-    Func_080072f0(unit, snap, 332, VRAM_COPY_PROC);
+    _call_via_r3(unit, snap, 332, VRAM_COPY_PROC);
     Func_08002df0(list);
     Func_08002df0(snap);
     Func_08002df0(buf);

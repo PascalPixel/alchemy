@@ -54,7 +54,7 @@ enum BattleEventOpcode {
 #ifndef BATTLE_EVENT_PUSH_RESULT
 #define BATTLE_EVENT_PUSH_RESULT u32
 #endif
-BATTLE_EVENT_PUSH_RESULT Func_080bbabc(u32 opcode, u32 operand);
-#define BattleEvent_Push Func_080bbabc
+BATTLE_EVENT_PUSH_RESULT BattleEv_Push(u32 opcode, u32 operand);
+#define BattleEvent_Push BattleEv_Push
 
 #endif

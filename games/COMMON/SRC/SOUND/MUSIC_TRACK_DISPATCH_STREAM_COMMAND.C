@@ -3,7 +3,7 @@
 /* Handler per stream command byte, indexed by the byte itself. */
 extern s32 Sound_ExtendedCommandTable[];
 
-void Runtime_InvokeWorkEntryWithArgs();
+void _call_via_r2();
 
 /*
  * Take the next byte of the track's command stream, advance the read
@@ -15,5 +15,5 @@ void MusicTrack_DispatchStreamCommand(s32 player, s32 track)
 
     command = *(u8 *)(*(s32 *)(track + 64));
     *(s32 *)(track + 64) += 1;
-    Runtime_InvokeWorkEntryWithArgs(player, track, Sound_ExtendedCommandTable[command]);
+    _call_via_r2(player, track, Sound_ExtendedCommandTable[command]);
 }

@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+extern u8 Data_03001f38[];
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type *)((u8 *)(base) + (offset)))
 void Scheduler_RemoveCallback(void *);
@@ -15,7 +16,7 @@ void Menu_EndResourceSelection(void)
     u16 *entry;
     void *work;
 
-    work = *(void **)ADDR_03001F38;
+    work = *(void **)((u32)&Data_03001f38);
     Scheduler_RemoveCallback(AffineEffect_UpdateFrame);
     child = FIELD_AT_OFFSET(work, struct Work *, 0x78);
     if (child != 0) {

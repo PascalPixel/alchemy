@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "FIXED_MATH.H"
+extern u8 Data_03001b10[];
 
 /* resource/initialize.c */
 /* resource/table/initialize.c */
@@ -46,11 +47,11 @@ s32 Resource_FindFreeEntry(void)
   void *table_base;
   int first_slot;
   void *entry_cursor;
-  entry_cursor = (void *)ADDR_03001B10;
+  entry_cursor = (void *)((u32)&Data_03001b10);
   free_slot = 0x60;
   first_slot = 0;
   slot_index = first_slot;
-  table_base = (void *)ADDR_03001B10;
+  table_base = (void *)((u32)&Data_03001b10);
   if ((*((u16 *)(((u8 *)table_base) + 2))) == 0xFFFF)
   {
     return first_slot;

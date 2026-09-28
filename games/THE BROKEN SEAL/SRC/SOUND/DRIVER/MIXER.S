@@ -377,6 +377,9 @@ AlchemyUncreditedEnd_080f980a:
 	mov	sl, r2
 	mov	fp, r3
 	pop	{r3}
+	.global Mixer_CallViaR3
+	.thumb_func
+Mixer_CallViaR3:
 	bx	r3
 	.align 2
 .L_030073a0:

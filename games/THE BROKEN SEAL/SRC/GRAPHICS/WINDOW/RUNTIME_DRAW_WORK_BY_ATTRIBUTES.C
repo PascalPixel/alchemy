@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e8c[];
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -21,7 +22,7 @@ void UiWork_DrawByAttributes(void *arg0)
     void *work;
 
     /* 描画属性に従い転送方法を切り替える。 */
-    work = *(void **)ADDR_03001E8C;
+    work = *(void **)((u32)&Data_03001e8c);
     tmp = FIELD_AT_OFFSET(arg0, u16 *, 0xA);
     attr = FIELD_AT_OFFSET(arg0, u16 *, 0x16);
     v3 = tmp;

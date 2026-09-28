@@ -1,6 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define PARTY_STATE gGameState
+#define PARTY_STATE Data_02000240
 
 struct BattleActionDefinition { u8 pad00[9]; u8 pp_cost; u8 pad0a[2]; u8 target_mode; };
 struct BattleUnitRecord { u8 pad00[58]; s16 pp; };

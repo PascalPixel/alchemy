@@ -38,7 +38,7 @@ s32 Math_DivU(s32 numerator, s32 denominator);
 #define Battle_CalcRestore Func_08077190
 #define BattleUnit_Drain Func_08077120
 #define BattleUnit_Assign Func_08077140
-#define BattleEffect_OnDead Func_080bbae8
+#define BattleEffect_OnDead BattleFx_CanAffectDefeatedUnit
 
 s32 Battle_HitCheck(s32 actor, s32 target, s32 range, s32 effect, s32 table);
 s32 Battle_CalcAttack(s32 power, s32 scale, s32 unused, s32 bonus);

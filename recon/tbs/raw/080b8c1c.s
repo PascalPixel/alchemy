@@ -13,6 +13,9 @@
 	.global Func_080b8c1c
 	.thumb_func
 Func_080b8c1c:
+	.global BattlePres_RunUnitAction
+	.thumb_func
+BattlePres_RunUnitAction:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8

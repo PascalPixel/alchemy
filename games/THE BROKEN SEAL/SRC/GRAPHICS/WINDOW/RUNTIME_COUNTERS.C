@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ee4[];
 
 struct UiCounterWork {
     u8 unknown_000[0xea8];
@@ -99,7 +100,7 @@ void UiWork_FinalizeSharedSlot(void)
     struct Work **slot;
     struct Work *work;
 
-    slot = *(struct Work ***)ADDR_03001EE4;
+    slot = *(struct Work ***)((u32)&Data_03001ee4);
     work = *slot;
     if (work != 0) {
         UiWork_Finalize(work, 1);

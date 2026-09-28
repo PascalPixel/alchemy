@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001ebc[];
 
 struct MenuState {
     u8 padding_000[20];
@@ -28,7 +29,7 @@ void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, void *entries)
     struct MenuState *state;
     s32 selection;
 
-    state = *(struct MenuState **)ADDR_03001EBC;
+    state = *(struct MenuState **)((u32)&Data_03001ebc);
     if (GameFlag_TestFar(366) != 0) {
         selection = 0;
         GameFlag_SetBitFar((u8 *)entries + page * 20 + 48);

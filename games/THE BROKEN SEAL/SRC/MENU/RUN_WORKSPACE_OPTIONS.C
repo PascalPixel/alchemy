@@ -19,12 +19,12 @@ extern u8 Data_080367d6[];
 
 void OptionMenu_InitializeWork(void);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
-void *RenderOutput_CreatePair(s32, struct RenderInput *, s32, s32);
+void *RenderResource_CreatePair(s32, struct RenderInput *, s32, s32);
 void WaitFrames(s32);
 s32 Math_Mod(s32, s32);
 s32 Math_Div(s32, s32);
 void UiIcon_PrepareObjectFar(struct RenderOutput *);
-void RenderOutput_LoadFrame(s32 frame, s32 index, s32 dim);
+void RenderResource_LoadFrame(s32 frame, s32 index, s32 dim);
 void Shop_SetCursorFar(void *cursor, s32 x, s32 y, s32 mode);
 void UiWindow_ClearInteriorTiles(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawCharacterAtOffset(s32 message, struct RenderInput *win, s32 x, s32 y);
@@ -65,7 +65,7 @@ s32 Menu_RunWorkspaceOptions(void)
     work = Data_03001ea0;
     win = UiWindow_Create(1, 2, 28, 3, 2);
     icon = Menu_OpenWorkspaceOptions();
-    pair = RenderOutput_CreatePair(7, icon, 64, -48);
+    pair = RenderResource_CreatePair(7, icon, 64, -48);
     WaitFrames(1);
     pA = &work->option[0];
     pB = &work->option[1];
@@ -86,7 +86,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 dim = 0;
                 if (i != work->option[2])
                     dim = 1;
-                RenderOutput_LoadFrame(Data_080367c9[i], index, dim);
+                RenderResource_LoadFrame(Data_080367c9[i], index, dim);
             }
             for (i = 0; i <= 1; i++) {
                 work->frame[1][i]->sentinel = 0xfb;
@@ -95,7 +95,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 dim = 0;
                 if (i != work->option[3])
                     dim = 1;
-                RenderOutput_LoadFrame(Data_080367cc[i], index, dim);
+                RenderResource_LoadFrame(Data_080367cc[i], index, dim);
             }
             for (i = 0; i <= 1; i++) {
                 work->frame[2][i]->sentinel = 0xfb;
@@ -104,7 +104,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 dim = 0;
                 if (i != work->option[4])
                     dim = 1;
-                RenderOutput_LoadFrame(Data_080367ce[i], index, dim);
+                RenderResource_LoadFrame(Data_080367ce[i], index, dim);
             }
 
             x = icon->x * 8 + 140;

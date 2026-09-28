@@ -2,6 +2,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
+void EffectSlot_SetPositionFar(struct Effect_080b2f4c *, s32, s32);
+s32 BattleFx_HasReachedTargetFar(struct Effect_080b2f4c *);
+void BattleFx_ClearOwnedSlotFar(struct Effect_080b2f4c *);
 
 struct Position {
     s32 x;

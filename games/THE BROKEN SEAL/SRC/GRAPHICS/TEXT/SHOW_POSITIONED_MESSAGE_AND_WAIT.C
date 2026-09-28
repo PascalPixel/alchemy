@@ -2,6 +2,7 @@
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 #include "SYSTEM.H"
+extern u8 Data_03001e8c[];
 
 struct Work;
 
@@ -25,7 +26,7 @@ extern s32 gGameState[];
  * result words and waiting three frames. */
 void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 {
-    u8 *base = *(u8 **)ADDR_03001E8C;
+    u8 *base = *(u8 **)((u32)&Data_03001e8c);
     s32 release;
     s32 pos[2] = {0, 0};
     s32 height;
@@ -83,7 +84,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
 
         if (flags & 0x20)
         {
-            *(u8 *)(*(u8 **)ADDR_03001E8C + RENDER_MENU_BUSY_OFS) = 1;
+            *(u8 *)(*(u8 **)((u32)&Data_03001e8c) + RENDER_MENU_BUSY_OFS) = 1;
         }
 
         if (!(flags & 4))

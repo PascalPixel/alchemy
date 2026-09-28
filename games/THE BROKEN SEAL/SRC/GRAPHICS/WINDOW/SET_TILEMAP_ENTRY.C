@@ -1,11 +1,12 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e8c[];
 
 /* Writes one tile into a window's tilemap; modes 2-4 add palette bits. */
 void UiWindow_SetTilemapEntry(
     u8 *window, s32 value, s32 x, s32 y, u32 mode)
 {
-    u16 *map = *(u16 **)ADDR_03001E8C;
+    u16 *map = *(u16 **)((u32)&Data_03001e8c);
     s32 mask;
     s32 index;
 

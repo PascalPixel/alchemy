@@ -3,6 +3,8 @@
 #include "FIXED_MATH.H"
 #include "GLOBAL_CELLS.H"
 #include "RUNTIME_INTERFACES.H"
+s32 Math_ModU(s32, s32);
+extern u8 Data_03001f1c[];
 
 /* save/state/select_write_slot.c */
 u32 Random16(void);
@@ -15,7 +17,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
     u8 *slot;
     u8 value;
 
-    slot = *(u8 **)ADDR_03001F1C;
+    slot = *(u8 **)((u32)&Data_03001f1c);
     count = 0;
     index = 0;
     do {
@@ -41,7 +43,7 @@ u32 SaveState_SelectWriteSlot(s32 mode)
 }
 
 /* save/state/write_workspace_slot.c */
-s32 State_SetMode(s32, s32, s32, s32);
+s32 _call_via_r3(s32, s32, s32, s32);
 s32 Flash_VerifySector(u16, s32);
 
 struct Work_08005868 {
@@ -57,9 +59,9 @@ u16 code;
     struct Work_08005868 *work;
     s32 value;
 
-    work = *(struct Work_08005868 **)ADDR_03001F1C;
+    work = *(struct Work_08005868 **)((u32)&Data_03001f1c);
     value = code & 0xFFFF;
-    if ((State_SetMode(value, (s32)&work->data,
+    if ((_call_via_r3(value, (s32)&work->data,
                        (s32)param, *param) << 0x10) != 0) {
         return 1U;
     }
@@ -91,7 +93,7 @@ s32 SaveState_ReadSlotAndCheckChecksum(s32 index)
     struct SaveSlotHeader header;
     u32 checksum;
 
-    work = *(struct SaveWorkspace **)ADDR_03001F1C;
+    work = *(struct SaveWorkspace **)((u32)&Data_03001f1c);
     ReadFlash((u16)index, 0, work->slot.bytes, sizeof(work->slot));
     Dma_Set(&work->slot, &header, 0x84000004, (volatile u32 *)0x040000d4);
     Dma_WaitForCompletion((volatile struct DmaChannel *)0x040000d4);
@@ -209,7 +211,7 @@ s32 SaveState_ChecksumWorkspace(void)
     u32 offset;
     s32 sum;
 
-    runtime = *(struct Runtime08005ae0 **)ADDR_03001F1C;
+    runtime = *(struct Runtime08005ae0 **)((u32)&Data_03001f1c);
     limit = 0xFE7;
     sum = 0;
     offset = 0;
@@ -242,7 +244,7 @@ u32 SaveState_FindLatestSlot(s32 record_id)
     void *save_state;
     void *slot_cursor;
 
-    save_state = *(void **)ADDR_03001F1C;
+    save_state = *(void **)((u32)&Data_03001f1c);
     latest_slot = 0x10;
     latest_sequence = 0;
     slot_index = 0;
@@ -320,7 +322,7 @@ u32 SaveState_GetLatestSequence(s32 record_id)
     void *save_state;
     void *slot_cursor;
 
-    save_state = *(void **)ADDR_03001F1C;
+    save_state = *(void **)((u32)&Data_03001f1c);
     slot_index = 0;
     latest_sequence = 0;
     sequence_cursor = save_state + 0x20;

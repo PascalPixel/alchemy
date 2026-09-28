@@ -5,7 +5,7 @@ u8 *Runtime_AllocateBlock(s32 slot, u32 size);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mode);
 void BattleFx_InterpolateBuffers(s16 *from, s16 *to, s16 *step, s32 frames);
-void Func_080949a8(void);
+void BattleFx_UpdateStormFlash(void);
 
 /* Builds two 0xa80-byte buffers and the per-frame step between them for a
    twelve-frame blend, then schedules the blend. */
@@ -36,5 +36,5 @@ void BattleFx_StartTwelveFrameBlend(void)
     work += 0x1f82;
     one = 1;
     *(u16 *)work = one;
-    Scheduler_AddOrUpdateCallback(Func_080949a8, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateStormFlash, 0xc80);
 }

@@ -1,5 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
+s32 Shop_CanServe(s32, s32);
+s32 Shop_ServicePrice(s32 selection, s32 variant);
+s32 Shop_MsgByMode(s32 msg);
 
 /* shop/unit/hilite.c */
 void AnimationObjects_SelectAnimationFar(void *, s32);

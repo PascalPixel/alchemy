@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "TBS_EDITION.H"
+s32 BattlePres_SetupTransitionScene(s32, s32, s32, s32);
 
 /* battle/presentation/trans/timer.c */
 #if defined(TBS_EDITION_DE)

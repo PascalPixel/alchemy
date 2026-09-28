@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
+void ColorBuffer_BackupAndHalve(const void *source, void *destination, s32 size);
+void ColorBuffer_BackupAndScaleThreeQuarters(const void *source, void *destination, s32 size);
+void ColorBuffer_BackupAndDarken(const void *source, s32 mode, void *destination, s32 size);
 
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 

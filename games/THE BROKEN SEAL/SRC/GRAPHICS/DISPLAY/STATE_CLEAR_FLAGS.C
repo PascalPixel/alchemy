@@ -2,13 +2,14 @@
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 Data_03001e70[];
 
 /* display/state/clear_flags.c */
 void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
 {
     void *state;
 
-    state = *(void **)ADDR_03001E70;
+    state = *(void **)((u32)&Data_03001e70);
     if (state != NULL) {
         if (clear_0200 != 0) {
             FIELD_AT_OFFSET(state, u16 *, 0x14) &= 0xFDFF;

@@ -5,7 +5,7 @@ void Resource_DecodeType01(void *, void *);
 void Resource_LoadAndDecompress(s32 resource_id, void *destination,
     s32 skip_palette, s32 copy_palette)
 {
-    u8 *resource = GetResource(resource_id);
+    u8 *resource = Resource_GetTableEntry(resource_id);
 
     if (copy_palette != 0) {
         void (*copy)(void *, void *, s32) = (void (*)(void *, void *, s32))0x03001388;

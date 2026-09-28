@@ -7,6 +7,7 @@
 #include "FIXED_MATH.H"
 #include "OBJECT_EFFECT.H"
 #include "SYSTEM.H"
+s32 BattleFx_StartRandomParticleEmitter(s32, s32);
 
 /* battle/effects/play_cue_and_start_emitter_on_target.c */
 extern void Object_SetMode(struct ParticleEffectObject *, s32);

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+extern u8 Data_03001cfc[];
 
 u32 Resource_GetTableEntry(u32 index);
 s32 Resource_DecodeByteLz(const void *source, void *destination);
@@ -42,7 +43,7 @@ void Map_LoadAreaGraphics(void)
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), (void *)0x0203a000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), (void *)0x0203c000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), (void *)0x0203e000);
-    *(s32 *)ADDR_03001CFC = (s32)Map_ShowBg1FromBuffer;
+    *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
     ((struct MapWindow *)state)->top = 0;
     ((struct MapWindow *)state)->bottom = 159;
     WaitFrames(1);

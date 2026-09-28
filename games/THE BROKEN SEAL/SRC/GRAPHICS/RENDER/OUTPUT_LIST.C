@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e8c[];
 
 struct RenderOutput {
     struct RenderOutput *next;
@@ -49,7 +50,7 @@ void RenderOutput_Release(struct RenderOutput *entry)
     if (entry->kind != 0) {
         Resource_ResetEntry(entry->index);
         if (entry->kind == 2) {
-            u8 *dst = (u8 *)(*(s32 *)ADDR_03001E8C);
+            u8 *dst = (u8 *)(*(s32 *)((u32)&Data_03001e8c));
             s32 idx = ((u32)entry->palette >> 4) * 2 + 0x12D0;
             *(u16 *)(dst + idx) = 0x3E7;
         }

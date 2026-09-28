@@ -1,4 +1,9 @@
 /*
+ * Draft: this code matches, but its translation unit is not the original one:
+ * the library's constant block at 0x08007a50 (its .rodata) is not reproduced.
+ * Links as recon/tbs/raw/080071a8.s until the unit is rebuilt.
+ */
+/*
  * VENEER AUDIT NOTE (2026-08-01) -- COMMENT ONLY, NO CODE CHANGE.
  *
  * This file is byte-exact, so nothing below is rewritten.  The note records
@@ -35,7 +40,7 @@ struct Config_080071a8 {
 
 extern struct Config_080071a8 Data_08007c10;
 
-s32 Func_080072f0(s32, u8 *, u32, s32);
+s32 _call_via_r3(s32, u8 *, u32, s32);
 
 u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
 {
@@ -69,7 +74,7 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
     *(volatile u16 *)0x04000208 = saved_ime;
     finish = (s32 *)0x02004c00;
     last = *input;
-    return Func_080072f0(
+    return _call_via_r3(
         1,
         (u8 *)destination,
         last,

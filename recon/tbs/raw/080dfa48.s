@@ -28,6 +28,9 @@
 	.global Func_080dfa48
 	.thumb_func
 Func_080dfa48:
+	.global BattleFx_RunParticleFieldVariant
+	.thumb_func
+BattleFx_RunParticleFieldVariant:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

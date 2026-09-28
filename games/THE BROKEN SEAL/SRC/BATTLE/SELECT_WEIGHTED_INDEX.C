@@ -2,6 +2,7 @@
 #include "SCENE.H"
 #include "RUNTIME_1E74.H"
 #include "GLOBAL_CELLS.H"
+extern u8 Data_03001e74[];
 
 /* battle/select_weighted_index.c */
 /*

@@ -25,6 +25,9 @@
 	.global Func_080a8114
 	.thumb_func
 Func_080a8114:
+	.global CharacterMenu_SelectCommand
+	.thumb_func
+CharacterMenu_SelectCommand:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

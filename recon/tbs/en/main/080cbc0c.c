@@ -1,6 +1,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+#include "IO_WRITE_QUEUE.H"
 
 /* The battle scene work gBattleWork points at. */
 struct BattleSceneWork {
@@ -34,14 +35,8 @@ struct TransitionWork {
     u32 field_0010;
 };
 
-/* The display write queue: a count, then twelve-byte slots. */
-struct IoWriteQueueCount {
-    u16 field_0000;
-};
-
 extern struct BattleSceneWork *gBattleWork;
 extern struct TransitionWork *gTransitionWork;
-extern struct IoWriteQueueCount Data_02002090;
 extern u16 gBgScroll[];
 extern u32 gWorkSlot[];
 extern u8 gMapCellBuffer[];
@@ -240,10 +235,10 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
     ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
-    qcnt = Data_02002090.field_0000;
+    qcnt = gIoWriteQueue.count;
     if (qcnt <= 0x1F) {
-        slot = (u8 *)&Data_02002090 + (qcnt * 0xC);
-        Data_02002090.field_0000 = qcnt + 1;
+        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
+        gIoWriteQueue.count = qcnt + 1;
         M2C_FIELD(slot, s32 *, 4) = 0x7741;
         M2C_FIELD(slot, s32 *, 8) = 0x04000000;
         M2C_FIELD(slot, s32 *, 12) = 0x20000;
@@ -290,10 +285,10 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
     ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
-    qcnt = Data_02002090.field_0000;
+    qcnt = gIoWriteQueue.count;
     if (qcnt <= 0x1F) {
-        slot = (u8 *)&Data_02002090 + (qcnt * 0xC);
-        Data_02002090.field_0000 = qcnt + 1;
+        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
+        gIoWriteQueue.count = qcnt + 1;
         M2C_FIELD(slot, s32 *, 4) = 0x1F81;
         M2C_FIELD(slot, s32 *, 8) = (u32) (u16 *)0x0400000a;
         M2C_FIELD(slot, s32 *, 12) = 0x20000;
@@ -581,10 +576,10 @@ void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
 
     ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;
-    qcnt = Data_02002090.field_0000;
+    qcnt = gIoWriteQueue.count;
     if (qcnt <= 0x1F) {
-        slot = (u8 *)&Data_02002090 + (qcnt * 0xC);
-        Data_02002090.field_0000 = qcnt + 1;
+        slot = (u8 *)&gIoWriteQueue + (qcnt * 0xC);
+        gIoWriteQueue.count = qcnt + 1;
         M2C_FIELD(slot, s32 *, 4) = 0x7541;
         M2C_FIELD(slot, s32 *, 8) = 0x04000000;
         M2C_FIELD(slot, s32 *, 12) = 0x20000;

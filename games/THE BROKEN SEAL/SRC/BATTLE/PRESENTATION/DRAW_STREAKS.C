@@ -1,25 +1,14 @@
-/* Draft, not exact (2026-09-26): candidate=396 reference=396,
-   9 differing halfwords, 8 aligned edits; equal block topology, frame 48.
-   Fresh baseline with shared projection header: 412/396 bytes, 188 differing
-   halfwords, 73 aligned edits. H1 splits the first-frame seed cursor from
-   the draw cursor. This recovers seed r5, mask r6, draw cursor r8 and removes
-   twelve extra bytes; the work spill and both projection slots already match.
-   H1 witness 5283d5f32: 400 bytes, 146 differing halfwords, 49 aligned edits.
-   H2 initializes point y/z from the draw index's zero. This removes the
-   duplicate zero instruction and restores the full extent and pool position.
-   H2 witness a1b8a7aa8: 396 bytes, 35 differing halfwords, 31 aligned edits.
-   H3 indexes both arrays by i instead of retaining cursors. Strength
-   reduction now initializes seed after mask, gives the exact seed loop,
-   restores all projection argument/register choices, and fixes pool order.
-   Residual is confined to the draw preheader at 080cc9c8..080cc9d6
-   (point address/zero/index/array-base scheduling) and 080cca7a..080cca7e
-   (color+48 before rather than after the two coordinate decrements).
-   The exact next owner PREPARE_SCENE.C schedules this no-argument callback
-   at 0xc80 after resetting work+778c. Extent is [080cc960,080ccaec).
-   No bytes adopted. Three structural hypotheses used; stop before any
-   further setup-order spelling trials. No complete match is claimed. */
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+
+/*
+ * Frame callback that BattlePresentation_PrepareScene schedules at 0xc80.
+ * On its first frame it seeds 256 streaks with a random length and a random
+ * roll, pitch and yaw; every frame after that it draws the first 64 (one more
+ * every four frames) as three lines from tail to head, both projected around
+ * the screen point (64, 80), and pulls each streak four units closer to that
+ * point. The line colour brightens as the tail reaches the centre.
+ */
 
 u32 Random16(void);
 void Render_ResetTransformState(void);
@@ -44,7 +33,7 @@ struct StreakPoint {
     s32 z;
 };
 
-void Func_080cc960(void)
+void BattlePresentation_DrawStreaks(void)
 {
     u8 *work = *(u8 **)0x03001eec;
     s32 frame;
@@ -67,14 +56,13 @@ void Func_080cc960(void)
             seed->roll = Random16() & 0xffff;
         }
     }
+    point.y = 0;
+    point.z = 0;
     i = 0;
-    point.y = i;
-    point.z = i;
     for (; i != 64; i++) {
         streak = &((struct Streak *)0x02010000)[i];
         if (frame > i / 4 && streak->head > 0) {
             s32 fade;
-            s32 color;
 
             Render_ResetTransformState();
             SceneTransform_ApplyRoll(streak->roll);
@@ -93,9 +81,8 @@ void Func_080cc960(void)
             if (streak->tail < 0)
                 streak->tail = 0;
             fade = -streak->tail / 2;
-            color = fade + 48;
-            Func_080cde90(tail.x - 1, tail.y, head.x - 1, head.y, color);
-            Func_080cde90(tail.x, tail.y - 1, head.x, head.y - 1, color);
+            Func_080cde90(tail.x - 1, tail.y, head.x - 1, head.y, fade + 48);
+            Func_080cde90(tail.x, tail.y - 1, head.x, head.y - 1, fade + 48);
             Func_080cde90(tail.x, tail.y, head.x, head.y, fade + 56);
         }
     }

@@ -6,12 +6,19 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/resource_3be_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/SET_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_3be_overlay.o"(.text.x0200813c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/resource_3be_overlay.o"(.text.x02008cc0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/GET_INITIAL.o"(.text)
+        "*/resource_3be_overlay.o"(.text.x02008d20)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/RUN_ACTOR.o"(.text)
+        "*/resource_3be_overlay.o"(.text.x02008fd0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/STAGED_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/SPINNING_LEAP.o"(.text)
-        "*/resource_3be_overlay.o"(.text.x02009380)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/NOOP_SCENE.o"(.text)
+        "*/resource_3be_overlay.o"(.text.x02009394)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3be_overlay.o"(.rodata.part1)
     }

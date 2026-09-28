@@ -28,6 +28,9 @@ Func_08022b80:
 .L_08022ba8:
 	movs	r0, #0
 	pop	{r5, r6, pc}
+	.global Animation_ApplyChildValue
+	.thumb_func
+Animation_ApplyChildValue:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	ldrb	r4, [r5, #27]

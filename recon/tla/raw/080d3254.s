@@ -17,6 +17,9 @@ Func_080d3254:
 	bl	sub_08020098
 .L_080d3266:
 	pop	{r5, pc}
+	.global ObjectMotion_WaitForAnimationChange
+	.thumb_func
+ObjectMotion_WaitForAnimationChange:
 	push	{r5, r6, r7, lr}
 	sub	sp, #4
 	bl	sub_080cad84

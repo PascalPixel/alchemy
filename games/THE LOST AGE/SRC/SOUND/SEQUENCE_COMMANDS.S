@@ -10,9 +10,9 @@
 .syntax unified
 	.thumb
 	.set AlchemyLoadAddress, 0x081c171c
-	.global MusicTrack_SequenceCommands
+	.global Sound_LoadCommandTable
 	.thumb_func
-MusicTrack_SequenceCommands:
+Sound_LoadCommandTable:
 	mov	ip, lr
 	movs	r1, #36
 	ldr	r2, [pc, #40]

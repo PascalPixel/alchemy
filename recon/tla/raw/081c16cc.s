@@ -24,6 +24,9 @@ Func_081c16cc:
 	str	r1, [r0, #44]
 .L_081c16ea:
 	bx	lr
+	.global Func_081c16ec
+	.thumb_func
+Func_081c16ec:
 	push	{r4, r5, lr}
 	adds	r5, r1, #0
 	ldr	r4, [r5, #32]

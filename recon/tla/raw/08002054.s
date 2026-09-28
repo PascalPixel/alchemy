@@ -3,6 +3,9 @@
 	.global Func_08002054
 	.thumb_func
 Func_08002054:
+	.global Math_Div
+	.thumb_func
+Math_Div:
 	ldr	r3, [pc, #0]
 	bx	r3
 	.2byte 0x0528

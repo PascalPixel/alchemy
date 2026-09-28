@@ -12,6 +12,9 @@ Func_080227a0:
 	strb	r3, [r0, #25]
 .L_080227ae:
 	pop	{pc}
+	.global Animation_ApplyChildValuesToRecord
+	.thumb_func
+Animation_ApplyChildValuesToRecord:
 	push	{r5, r6, lr}
 	adds	r5, r0, #0
 	adds	r6, r1, #0

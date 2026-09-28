@@ -404,6 +404,9 @@ Func_080afb80:
 	movs	r0, r0
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Party_ListActiveOwners
+	.thumb_func
+Party_ListActiveOwners:
 	push	{r5, lr}
 	adds	r5, r0, #0
 	movs	r0, #0

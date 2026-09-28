@@ -41,6 +41,9 @@ Func_081c0e30:
 	cmp	r0, #0
 	ble.n	.L_081c0e90
 	ldr	r3, [pc, #28]
+	.global Func_081c0e70
+	.thumb_func
+Func_081c0e70:
 	ldrh	r3, [r3, #0]
 	adds	r3, r4, r3
 	b.n	.L_081c0e96

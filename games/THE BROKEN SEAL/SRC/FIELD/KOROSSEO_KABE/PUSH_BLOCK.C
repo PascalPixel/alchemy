@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Engine_ObjectCommitPosition(struct FieldActor *object);
+void Object_CommitPosition(struct FieldActor *object);
 
 /* The leader pushes wall block id to cell (column / 2, row): the block slides
  * there and the leader follows half the distance behind it. */
@@ -35,9 +35,9 @@ void KorosseoKabe_PushBlockToCell(s32 id, s32 column, s32 row)
     Engine_ActorSetSpeed(pusher, 0x8000, 0x3333);
     Engine_ObjectSetAnimation(leader, 2);
     Engine_ObjectSetPosition(leader, leader->x.fixed + dx, 0, leader->z.fixed + dz);
-    Engine_ObjectCommitPosition(leader);
+    Object_CommitPosition(leader);
     Engine_ObjectSetAnimation(leader, 1);
-    Engine_ObjectCommitPosition(block);
+    Object_CommitPosition(block);
     Engine_ObjectSetAnimation(block, 1);
     Engine_AudioPlayCue(288);
     Engine_AudioPlayCue(213);

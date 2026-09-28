@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define KorosseoMaruta_RunStageStart Func_02000c5c
-
 extern u8 Data_00000091[];
 extern u8 Data_02000240[];
 void Func_02004920();

@@ -4,32 +4,32 @@
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/ENTRY.INC"
-	.global Func_02000030
+	.global SceneData_GetTable8964
 	.thumb_func
-Func_02000030:
+SceneData_GetTable8964:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x02008964
-	.global Func_02000038
+	.global SceneData_ReturnZero
 	.thumb_func
-Func_02000038:
+SceneData_ReturnZero:
 	movs r0, #0
 	bx lr
-	.global Func_0200003c
+	.global SceneData_GetTable8994
 	.thumb_func
-Func_0200003c:
+SceneData_GetTable8994:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x02008994
-	.global Func_02000044
+	.global SceneData_GetTable8998
 	.thumb_func
-Func_02000044:
+SceneData_GetTable8998:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x02008998
-	.global Func_0200004c
+	.global FieldScene_RunActor13Mode102Step
 	.thumb_func
-Func_0200004c:
+FieldScene_RunActor13Mode102Step:
 	push {lr}
 	ldr r0, [pc, #28]
 	bl 0x020088a0
@@ -44,9 +44,9 @@ Func_0200004c:
 	pop {r0}
 	bx r0
 	.4byte 0x000023cd
-	.global Func_02000070
+	.global FieldScene_RunActor13Mode105Step
 	.thumb_func
-Func_02000070:
+FieldScene_RunActor13Mode105Step:
 	push {lr}
 	ldr r1, [pc, #28]
 	movs r2, #0
@@ -62,15 +62,15 @@ Func_02000070:
 	.2byte 0x0000
 	.4byte 0x00000105
 	.4byte 0x000023cd
-	.global Func_02000098
+	.global SceneData_GetTable8a58
 	.thumb_func
-Func_02000098:
+SceneData_GetTable8a58:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x02008a58
-	.global Func_020000a0
+	.global SceneState_AddToRecordCount
 	.thumb_func
-Func_020000a0:
+SceneState_AddToRecordCount:
 	push {r5, r6, lr}
 	adds r5, r0, #0
 	adds r6, r1, #0
@@ -84,9 +84,9 @@ Func_020000a0:
 	pop {r5, r6}
 	pop {r0}
 	bx r0
-	.global Func_020000c0
+	.global Scene_AddToListedRecordCounts
 	.thumb_func
-Func_020000c0:
+Scene_AddToListedRecordCounts:
 	push {r5, r6, r7, lr}
 	sub sp, #32
 	adds r7, r0, #0
@@ -109,9 +109,9 @@ Func_020000c0:
 	pop {r5, r6, r7}
 	pop {r0}
 	bx r0
-	.global Func_020000ec
+	.global FieldScene_RunCountAdjustPanel
 	.thumb_func
-Func_020000ec:
+FieldScene_RunCountAdjustPanel:
 	push {r5, r6, r7, lr}
 	mov r7, r8
 	push {r7}
@@ -814,9 +814,9 @@ Func_020000ec:
 	.4byte 0x0000010d
 	.2byte 0x010f
 	.2byte 0x0000
-	.global Func_020006f8
+	.global SceneState_SetWorkWords1c0And1c8
 	.thumb_func
-Func_020006f8:
+SceneState_SetWorkWords1c0And1c8:
 	push {lr}
 	ldr r3, [pc, #28]
 	ldr r1, [r3]
@@ -833,9 +833,9 @@ Func_020006f8:
 	pop {r0}
 	bx r0
 	.4byte 0x03001ebc
-	.global Func_0200071c
+	.global FieldScene_RunEntrySetup
 	.thumb_func
-Func_0200071c:
+FieldScene_RunEntrySetup:
 	push {r5, lr}
 	ldr r3, [pc, #64]
 	ldr r1, [r3]
@@ -868,9 +868,9 @@ Func_0200071c:
 	.2byte 0x0000
 	.4byte 0x03001ebc
 	.4byte 0x00019999
-	.global Func_02000768
+	.global FieldScene_DrawThreeCaptionWindow
 	.thumb_func
-Func_02000768:
+FieldScene_DrawThreeCaptionWindow:
 	push {r5, lr}
 	sub sp, #36
 	movs r3, #2
@@ -904,9 +904,9 @@ Func_02000768:
 	.4byte 0x02008920
 	.4byte 0x0200893c
 	.4byte 0x02008958
-	.global Func_020007b8
+	.global SceneState_SetRecordFlag53
 	.thumb_func
-Func_020007b8:
+SceneState_SetRecordFlag53:
 	ldr r3, [pc, #8]
 	ldr r3, [r3]
 	movs r2, #1
@@ -914,17 +914,17 @@ Func_020007b8:
 	strb r2, [r3]
 	bx lr
 	.4byte 0x03001f30
-	.global Func_020007c8
+	.global SceneState_GetFarResult100c
 	.thumb_func
-Func_020007c8:
+SceneState_GetFarResult100c:
 	push {lr}
 	bl 0x02008840
 	pop {r1}
 	bx r1
 	.2byte 0x0000
-	.global Func_020007d4
+	.global SceneState_GetFarResult1020
 	.thumb_func
-Func_020007d4:
+SceneState_GetFarResult1020:
 	push {lr}
 	bl 0x02008848
 	pop {r1}

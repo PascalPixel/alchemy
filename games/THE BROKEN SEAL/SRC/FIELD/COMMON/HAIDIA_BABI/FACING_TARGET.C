@@ -1,7 +1,6 @@
 #include "TYPES.H"
 
 #define NULL ((void *)0)
-#define CalculateFacingAngle Func_0200186e
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
 
 #include "FACING_OBJECT.H"
@@ -66,7 +65,7 @@ extern s32 Data_0200a218[];
 extern u8 Value_000022b9;
 extern s32 Data_03001e40;
 
-s32 Func_0200186e(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 s32 Func_02001a0c(s32);
 void Func_020030f6(s32);
 void Func_02002d4e(void);

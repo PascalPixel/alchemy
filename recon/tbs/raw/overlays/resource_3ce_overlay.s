@@ -4,32 +4,32 @@
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/ENTRY.INC"
-	.global Func_02000030
+	.global SceneData_GetTable93c8
 	.thumb_func
-Func_02000030:
+SceneData_GetTable93c8:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x020093c8
-	.global Func_02000038
+	.global SceneData_ReturnZero
 	.thumb_func
-Func_02000038:
+SceneData_ReturnZero:
 	movs r0, #0
 	bx lr
-	.global Func_0200003c
+	.global SceneData_GetTable93f8
 	.thumb_func
-Func_0200003c:
+SceneData_GetTable93f8:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x020093f8
-	.global Func_02000044
+	.global SceneData_GetTable93fc
 	.thumb_func
-Func_02000044:
+SceneData_GetTable93fc:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x020093fc
-	.global Func_0200004c
+	.global SceneDialogue_ShowMessageAndWait
 	.thumb_func
-Func_0200004c:
+SceneDialogue_ShowMessageAndWait:
 	push {r5, lr}
 	adds r5, r0, #0
 	bl 0x020091f0
@@ -51,9 +51,9 @@ Func_0200004c:
 	pop {r5}
 	pop {r0}
 	bx r0
-	.global Func_0200007c
+	.global CommandTable_RunDirectionalInput
 	.thumb_func
-Func_0200007c:
+CommandTable_RunDirectionalInput:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r8
@@ -141,9 +141,9 @@ Func_0200007c:
 	.4byte 0x02000240
 	.4byte 0x03001ae8
 	.4byte 0x0001e240
-	.global Func_02000130
+	.global SceneState_ApplyBlockC9b
 	.thumb_func
-Func_02000130:
+SceneState_ApplyBlockC9b:
 	push {lr}
 	ldr r0, [pc, #12]
 	ldr r1, [pc, #12]
@@ -153,9 +153,9 @@ Func_02000130:
 	bx r0
 	.4byte 0x00000c9b
 	.4byte 0x00000cc6
-	.global Func_02000148
+	.global SceneState_ApplyBlockCc6
 	.thumb_func
-Func_02000148:
+SceneState_ApplyBlockCc6:
 	push {lr}
 	ldr r0, [pc, #12]
 	ldr r1, [pc, #12]
@@ -165,9 +165,9 @@ Func_02000148:
 	bx r0
 	.4byte 0x00000cc6
 	.4byte 0x00000c9b
-	.global Func_02000160
+	.global SceneState_ApplyBlockCf1
 	.thumb_func
-Func_02000160:
+SceneState_ApplyBlockCf1:
 	push {lr}
 	ldr r3, [pc, #16]
 	ldr r1, [pc, #16]
@@ -180,9 +180,9 @@ Func_02000160:
 	.4byte 0x00000c9b
 	.4byte 0x00000cc6
 	.4byte 0x00000cf1
-	.global Func_02000180
+	.global SceneState_ApplyBlockD21
 	.thumb_func
-Func_02000180:
+SceneState_ApplyBlockD21:
 	push {lr}
 	ldr r0, [pc, #12]
 	ldr r1, [pc, #12]
@@ -192,9 +192,9 @@ Func_02000180:
 	bx r0
 	.4byte 0x00000d21
 	.4byte 0x00000d4c
-	.global Func_02000198
+	.global SceneState_ApplyBlockD4c
 	.thumb_func
-Func_02000198:
+SceneState_ApplyBlockD4c:
 	push {lr}
 	ldr r3, [pc, #16]
 	ldr r1, [pc, #16]
@@ -207,9 +207,9 @@ Func_02000198:
 	.4byte 0x00000c9b
 	.4byte 0x00000cc6
 	.4byte 0x00000d4c
-	.global Func_020001b8
+	.global SceneState_ApplyBlockD77
 	.thumb_func
-Func_020001b8:
+SceneState_ApplyBlockD77:
 	push {lr}
 	ldr r3, [pc, #16]
 	ldr r1, [pc, #16]
@@ -222,9 +222,9 @@ Func_020001b8:
 	.4byte 0x00000c9b
 	.4byte 0x00000cc6
 	.4byte 0x00000d77
-	.global Func_020001d8
+	.global SceneState_ApplyBlockDa2
 	.thumb_func
-Func_020001d8:
+SceneState_ApplyBlockDa2:
 	push {lr}
 	ldr r3, [pc, #16]
 	ldr r1, [pc, #16]
@@ -241,22 +241,22 @@ Func_020001d8:
 	.2byte 0x0000
 	.2byte 0x0da2
 	.2byte 0x0000
-	.global Func_020001f8
+	.global SceneState_ApplyOne
 	.thumb_func
-Func_020001f8:
+SceneState_ApplyOne:
 	push {lr}
 	movs r0, #1
 	bl 0x02009290
 	pop {r0}
 	bx r0
-	.global Func_02000204
+	.global SceneState_NoOp
 	.thumb_func
-Func_02000204:
+SceneState_NoOp:
 	bx lr
 	.2byte 0x0000
-	.global Func_02000208
+	.global SceneState_QueryTwoValues
 	.thumb_func
-Func_02000208:
+SceneState_QueryTwoValues:
 	push {lr}
 	sub sp, #8
 	mov r1, sp
@@ -266,23 +266,23 @@ Func_02000208:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_0200021c
+	.global SceneState_ApplyZero
 	.thumb_func
-Func_0200021c:
+SceneState_ApplyZero:
 	push {lr}
 	movs r0, #0
 .L_02000220:
 	bl 0x02009208
 	pop {r0}
 	bx r0
-	.global Func_02000228
+	.global CommandTable_NoOpCallback
 	.thumb_func
-Func_02000228:
+CommandTable_NoOpCallback:
 	bx lr
 	.2byte 0x0000
-	.global Func_0200022c
+	.global SceneState_SetRecordFlag53
 	.thumb_func
-Func_0200022c:
+SceneState_SetRecordFlag53:
 	ldr r3, [pc, #8]
 	ldr r3, [r3]
 	movs r2, #1
@@ -290,15 +290,15 @@ Func_0200022c:
 	strb r2, [r3]
 	bx lr
 	.4byte 0x03001f30
-	.global Func_0200023c
+	.global SceneData_GetTable9564
 	.thumb_func
-Func_0200023c:
+SceneData_GetTable9564:
 	ldr r0, [pc, #0]
 	bx lr
 	.4byte 0x02009564
-	.global Func_02000244
+	.global FieldScene_ApplyTable9684ValueToFourSlots
 	.thumb_func
-Func_02000244:
+FieldScene_ApplyTable9684ValueToFourSlots:
 	push {r5, lr}
 	ldr r0, [pc, #76]
 	movs r1, #1
@@ -335,9 +335,9 @@ Func_02000244:
 	.2byte 0x0000
 	.2byte 0x9684
 	.2byte 0x0200
-	.global Func_0200029c
+	.global FieldScene_GrantItemListToSlots
 	.thumb_func
-Func_0200029c:
+FieldScene_GrantItemListToSlots:
 	push {lr}
 	ldr r0, [pc, #1020]
 	movs r1, #1
@@ -930,9 +930,9 @@ Func_0200029c:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_020008c4
+	.global CommandTable_ConfigureCommandGroups
 	.thumb_func
-Func_020008c4:
+CommandTable_ConfigureCommandGroups:
 	push {lr}
 	ldr r0, [pc, #580]
 	movs r1, #1
@@ -1167,9 +1167,9 @@ Func_020008c4:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00000c1d
-	.global Func_02000b10
+	.global FieldScene_ApplySlotOffsetsAndFlags
 	.thumb_func
-Func_02000b10:
+FieldScene_ApplySlotOffsetsAndFlags:
 	push {r5, r6, lr}
 	ldr r0, [pc, #156]
 	movs r1, #1
@@ -1237,9 +1237,9 @@ Func_02000b10:
 	.2byte 0x0000
 	.4byte 0x00000c1b
 	.4byte 0x00000131
-	.global Func_02000bb8
+	.global FieldScene_AssignCodeSetAToSlots
 	.thumb_func
-Func_02000bb8:
+FieldScene_AssignCodeSetAToSlots:
 	push {lr}
 	ldr r0, [pc, #308]
 	movs r1, #1
@@ -1595,17 +1595,17 @@ Func_02000cf4:
 	.4byte 0x020093b4
 	.4byte 0x03001c94
 	.4byte 0x03001b04
-	.global Func_02000f08
+	.global SceneState_RunCall1c00
 	.thumb_func
-Func_02000f08:
+SceneState_RunCall1c00:
 	push {lr}
 	bl 0x02008cf4
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02000f14
+	.global FieldScene_AssignCodeSetBToSlots
 	.thumb_func
-Func_02000f14:
+FieldScene_AssignCodeSetBToSlots:
 	push {lr}
 	ldr r0, [pc, #388]
 	movs r1, #1
@@ -1756,9 +1756,9 @@ Func_02000f14:
 	.4byte 0x00000c1c
 	.4byte 0x0000010b
 	.4byte 0x00000109
-	.global Func_020010a8
+	.global CommandTable_ConfigureCommandList
 	.thumb_func
-Func_020010a8:
+CommandTable_ConfigureCommandList:
 	push {lr}
 	movs r0, #5
 	bl 0x02009258
@@ -1833,17 +1833,17 @@ Func_020010a8:
 	movs r0, #0
 	pop {r1}
 	bx r1
-	.global Func_02001170
+	.global SceneState_GetFarResult2384
 	.thumb_func
-Func_02001170:
+SceneState_GetFarResult2384:
 	push {lr}
 	bl 0x02009210
 	pop {r1}
 	bx r1
 	.2byte 0x0000
-	.global Func_0200117c
+	.global SceneState_GetFarResult2418
 	.thumb_func
-Func_0200117c:
+SceneState_GetFarResult2418:
 	push {lr}
 	bl 0x02009298
 	pop {r1}

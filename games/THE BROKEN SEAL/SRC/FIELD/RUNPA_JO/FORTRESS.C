@@ -535,12 +535,12 @@ static __inline__ void Call1_02004f60(void (*f)(), s32 value)
 }
 
 #if defined(TBS_EDITION_JA)
-#define Value_00002421 Value_000025aa
+extern u8 Value_000025aa;
 #elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define Value_00002421 Value_00002403
-#endif
-
+extern u8 Value_00002403;
+#else
 extern u8 Value_00002421;
+#endif
 
 s32 SelectPrimarySceneData(void)
 {
@@ -1460,7 +1460,13 @@ void RunActorScriptedSequenceB(s32 handle)
 
 void RunActorScriptedSequenceC(s32 actor_id)
 {
+#if defined(TBS_EDITION_JA)
+    u8 *t = &Value_000025aa;
+#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
+    u8 *t = &Value_00002403;
+#else
     u8 *t = &Value_00002421;
+#endif
 
     Event_SetMessage((s32)t);
     Event_ShowMessage(actor_id, 0);

@@ -6,7 +6,6 @@ struct Probe {
 
 void Object_SetModeById(s32 id, s32 mode);
 void GameFlag_SetBitFar(s32 flag);
-#define HaidiaDou_RunLoweredActorScene Func_020015cc
 
 s32 Func_02001b72();
 s32 Func_02001d32(struct Probe *probe);

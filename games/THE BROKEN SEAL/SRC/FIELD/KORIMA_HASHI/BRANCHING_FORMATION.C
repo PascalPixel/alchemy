@@ -2,8 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define GetStagedActorEffect Func_0200374e
-#define CanStartStagedActorEffect Func_0200371e
 #define SceneTransition_Phase Data_02000240[225]
 
 #include "STAGED_ACTOR.H"
@@ -72,7 +70,7 @@ void Func_02001096(struct PlacementResult_02000a68 res);
 u8 *Func_020036ee(s32);
 s32 Func_02000d3c_grid(s32, s32, s32, s32, s32, s32);
 u8 *Func_0200372a(s32);
-struct StagedActorEffect *Func_0200374e(s32 actor_index);
+struct StagedActorEffect *GetStagedActorEffect(s32 actor_index);
 struct Struct3848 *Func_02003848(s32 arg0);
 s32 Func_020038a6();
 s32 Func_020038da();
@@ -136,7 +134,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 Func_0200371e(struct StagedActorEffect *actor,
+s32 CanStartStagedActorEffect(struct StagedActorEffect *actor,
                          struct StagedActorEffectRequest *request);
 
 s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)

@@ -1,5 +1,3 @@
-#[cfg(test)]
-use std::process::Command;
 use std::process::ExitCode;
 
 mod commit_progress;
@@ -19,30 +17,6 @@ fn report(result: Result<(), String>) -> ExitCode {
             ExitCode::FAILURE
         }
     }
-}
-
-#[cfg(test)]
-fn fixture_repository(files: &[(&str, &str, bool)]) -> tempfile::TempDir {
-    let directory = tempfile::tempdir().unwrap();
-    let git = |args: &[&str]| {
-        let status = Command::new("git")
-            .arg("-C")
-            .arg(directory.path())
-            .args(args)
-            .status()
-            .unwrap();
-        assert!(status.success(), "git {args:?}");
-    };
-    git(&["init", "--quiet"]);
-    for (path, text, tracked) in files {
-        let path_on_disk = directory.path().join(path);
-        std::fs::create_dir_all(path_on_disk.parent().unwrap()).unwrap();
-        std::fs::write(path_on_disk, text).unwrap();
-        if *tracked {
-            git(&["add", "--", path]);
-        }
-    }
-    directory
 }
 
 fn routes(arguments: &[String]) -> ExitCode {

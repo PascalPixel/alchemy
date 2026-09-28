@@ -2930,7 +2930,7 @@ fn self_test(root: &Path) -> Result<(), String> {
         "games/THE BROKEN SEAL/SOUND/SEQUENCE/THEME.mid",
         "games/THE BROKEN SEAL/SOUND/SAMPLE/WAVE.wav",
         "tools/compare-roms/src/main.rs",
-        "tools/alchemy/src/build_full.rs",
+        "tools/alchemy/src/build_rom.rs",
         "games/THE BROKEN SEAL/SRC/SYSTEM/BUILD_STAMP.JSON",
         "rom.sha1",
     ] {

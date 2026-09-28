@@ -296,46 +296,6 @@ pub(crate) fn read_frame(
     Ok((pixels, consumed))
 }
 
-/// Metadata only: catalog consumers establish sprite roles; successful frame
-/// decoding establishes extents, not reconstructed-source or DONE credit.
-pub(in crate::build_assets) fn inventory(
-    rom: &[u8],
-    target: &DecompTarget,
-) -> Result<(Vec<Value>, Vec<Value>), String> {
-    let catalog = catalog(target)?;
-    let descriptors = catalog.descriptors(rom)?;
-    let directories = catalog.directories(rom, &descriptors)?;
-    let mut rows = vec![
-        json!({"start":catalog.table,"end":catalog.table + catalog.count * DESCRIPTOR_SIZE,"kind":"record-table","label":"Sprite descriptors","evidence":"runtime character descriptor lookup"}),
-    ];
-    let mut failures = vec![];
-    let mut seen = BTreeSet::new();
-    for descriptor in descriptors {
-        if descriptor.animation_count > 0 {
-            rows.push(json!({"start":descriptor.animation_table,"end":descriptor.animation_table + descriptor.animation_count * 4,"kind":"pointer-table","label":"Sprite animation directory","evidence":format!("descriptor {}", descriptor.id)}));
-        }
-        let Some(slots) = directories.get(&descriptor.frame_directory) else {
-            continue;
-        };
-        rows.push(json!({"start":descriptor.frame_directory,"end":descriptor.frame_directory + slots.len() * 4,"kind":"pointer-table","label":"Sprite frame directory","evidence":format!("descriptor {}", descriptor.id)}));
-        for &pointer in slots {
-            if !seen.insert((
-                pointer,
-                descriptor.frame_codec,
-                descriptor.width,
-                descriptor.height,
-            )) {
-                continue;
-            }
-            match read_frame(rom, catalog.game, descriptor.frame_codec, pointer, descriptor.width, descriptor.height) {
-                Ok((_, size)) => rows.push(json!({"start":pointer,"end":pointer+size,"kind":"golden-sun-static-sprite-series","label":"Sprite frame","evidence":format!("descriptor {}, codec {}, {}x{} decoded pixels",descriptor.id,descriptor.frame_codec,descriptor.width,descriptor.height)})),
-                Err(error) => failures.push(json!({"address":pointer,"descriptor":descriptor.id,"reason":error})),
-            }
-        }
-    }
-    Ok((rows, failures))
-}
-
 /// A sheet of `columns` frames per row, frames in directory order.
 pub(in crate::build_assets::native) fn sheet(
     frames: &[Vec<u8>],

@@ -1,6 +1,7 @@
 use std::process::ExitCode;
 
 mod allocator;
+mod assets;
 mod bootstrap;
 mod build;
 mod build_assets;

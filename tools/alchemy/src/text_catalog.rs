@@ -544,28 +544,6 @@ fn compare(source: &SourceCatalog, bytes: &[u8], rom: &[u8]) -> Result<(), Strin
     Ok(())
 }
 
-/// Build one whole editable catalog and verify it without saved layout results.
-pub(crate) fn build_verified(
-    root: &Path,
-    target: crate::targets::DecompTarget,
-    rom: &[u8],
-) -> Result<(PathBuf, u64, Vec<u8>), String> {
-    let spec = ARCHIVES
-        .iter()
-        .find(|spec| spec.target == target.id.as_str())
-        .ok_or("text catalog is not registered")?;
-    verify_reference(root, spec.target, rom)?;
-    let input = PathBuf::from(spec.output);
-    let source = read_source(&root.join(&input))?;
-    if source.target != spec.target {
-        return Err("message catalog target differs from its edition".into());
-    }
-    let archive = encode(&source)?;
-    compare(&source, &archive.bytes, rom)?;
-    write_archive(root, spec, &archive.bytes)?;
-    Ok((input, source.address as u64, archive.bytes))
-}
-
 fn write_archive(root: &Path, spec: &ArchiveSpec, bytes: &[u8]) -> Result<PathBuf, String> {
     let directory = crate::compiler::build_io::generated_directory(
         root,
@@ -764,18 +742,6 @@ pub(crate) fn extract(root: &Path, selected: Option<&str>) -> Result<String, Str
 
 pub(crate) fn path(root: &Path, spec: &ArchiveSpec) -> PathBuf {
     root.join(spec.output)
-}
-
-pub(crate) fn archive_region(target: &str, rom: &[u8]) -> Result<serde_json::Value, String> {
-    let spec = ARCHIVES
-        .iter()
-        .find(|spec| spec.target == target)
-        .ok_or("unknown text target")?;
-    let (catalog, size) = decode(crate::compiler::routing::root(), spec, rom)?;
-    let start = header_number(&catalog.headers, "X-Alchemy-Archive-Address")?;
-    Ok(
-        serde_json::json!({"start":start,"end":start+size,"bytes":size,"kind":"golden-sun-message-archive","label":"Localized message archive","evidence":"edition-local message directory, complete decoding and byte-identical source re-encoding"}),
-    )
 }
 
 #[cfg(test)]

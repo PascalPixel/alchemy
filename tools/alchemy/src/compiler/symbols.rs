@@ -136,18 +136,6 @@ pub fn external_symbol(name: &str, call_via_base: u64) -> Option<ExternalSymbol>
     None
 }
 
-/// `.thumb_func` only marks a symbol defined by a label; on a `.set` alias the
-pub fn external_symbol_assembly(name: &str, call_via_base: u64) -> Result<String, String> {
-    let symbol = external_symbol(name, call_via_base)
-        .ok_or_else(|| format!("unsupported external symbol: {name}"))?;
-    let directive = if symbol.thumb { ".thumb_set" } else { ".set" };
-    // Width 8 pads without truncating, matching JS padStart.
-    Ok(format!(
-        ".global {name}\n{directive} {name}, 0x{:08x}\n",
-        symbol.address
-    ))
-}
-
 /// The selected overlay's complete stock compiler bank, derived from its
 /// verified local ROM. An absent or ambiguous bank has no implicit default.
 pub fn overlay_call_via_base(

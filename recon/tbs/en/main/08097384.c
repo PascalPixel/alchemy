@@ -1,9 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 
-#define BattleFx_InitializeSharedScene Func_08097384
-
-void BattleFx_InitializeSharedScene(void)
+void BattleEffect_InitializeSharedScene(void)
 {
     u8 **state = (u8 **)0x03001ebc;
     u8 *scene = state[0];

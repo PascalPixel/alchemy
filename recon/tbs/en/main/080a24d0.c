@@ -105,7 +105,6 @@ extern u8 Value_00000001;
 /* Run the modal asset-selection screen and publish an accepted selection. */
 s32 RunAssetSelectionScreen(void)
 {
-#define globals (&Data_03001e68)
     void *backup;
     struct AssetSelectionScreen *screen;
     s32 index;
@@ -118,7 +117,7 @@ s32 RunAssetSelectionScreen(void)
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
     screen = Runtime_AllocateHeapBlock(0x37, 0xa70);
-    globals->display_state->busy = 1;
+    (&Data_03001e68)->display_state->busy = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
@@ -138,7 +137,7 @@ s32 RunAssetSelectionScreen(void)
     Menu_EnsureCancelSound();
 
     if (result == 1) {
-        u8 *selection = globals->selection_state;
+        u8 *selection = (&Data_03001e68)->selection_state;
 
         u16 packed = (category << 10) | (index & 0x1ff);
         s32 style;
@@ -149,22 +148,22 @@ s32 RunAssetSelectionScreen(void)
     }
 
     RenderOutput_ClearListFar(screen->resource_handle);
-    globals->process_state[0xea6] = (s32)&Value_00000001;
+    (&Data_03001e68)->process_state[0xea6] = (s32)&Value_00000001;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Menu_ResetTwoResourceEntries();
     Runtime_ReleaseHeapBlock(0x37);
-    globals->display_state->busy = 0;
+    (&Data_03001e68)->display_state->busy = 0;
     Func_080152a8();
     Func_080153e0(0);
     CopyWords(copy, (void *)0x06004000, backup, size);
-    globals->process_state[0xea6] = 0;
+    (&Data_03001e68)->process_state[0xea6] = 0;
     Runtime_BumpFree(backup);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    globals->process_state[0xea6] = 0;
+    (&Data_03001e68)->process_state[0xea6] = 0;
     Event_ClearInvalidPackedValuesFar();
     return result;
 }

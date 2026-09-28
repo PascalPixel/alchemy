@@ -44,8 +44,6 @@
  * allocator, and contriving one would not be evidence.
  */
 
-#define DisplayTransition_UpdateScanlineTable Func_0808f52c
-
 /* Resolved project symbols. */
 void Func_08004278(void *callback);  /* Scheduler_RemoveCallback */
 void Func_08015268(void *lines);

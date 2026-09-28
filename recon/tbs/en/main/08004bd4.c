@@ -5,8 +5,6 @@
  */
 #include "TYPES.H"
 
-#define SceneTransform_ApplyPitch Func_08004bd4
-
 void SceneTransform_ApplyPitch(s32 angle)
 {
     s32 sine = Func_08002322(angle);

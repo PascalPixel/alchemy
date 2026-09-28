@@ -99,7 +99,7 @@ s32 Func_080ab314(void);
 s32 Func_080ab5e4(s32);
 s32 Menu_OpenBackdropScreen(void);
 s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
-s32 Func_080ad6d4(s32);
+s32 OwnerAction_RunCompareLoop(s32);
 s32 Unnamed_080ae2f4(void);
 void DjinnMenu_DrawElementList(struct DjinnListTable *);
 s32 Menu_ComputeEntryValues(struct DjinnListTable *);
@@ -244,7 +244,7 @@ s32 Unnamed_080aa768(void)
             }
             break;
         case 7:
-            result = Func_080ad6d4(1);
+            result = OwnerAction_RunCompareLoop(1);
             if (result == -2)
                 done = 1;
             state = 3;
@@ -264,7 +264,7 @@ s32 Unnamed_080aa768(void)
             state = 0;
             break;
         case 6:
-            result = Func_080ad6d4(2);
+            result = OwnerAction_RunCompareLoop(2);
             if (result == -2)
                 done = 1;
             state = 3;
@@ -277,7 +277,7 @@ s32 Unnamed_080aa768(void)
             result = (s32)Trade_AddOfferFar(menu->source_owner, menu->element[0], menu->number[0]);
             goto refresh_owner;
         case 9:
-            result = Func_080ad6d4(0);
+            result = OwnerAction_RunCompareLoop(0);
             if (result == -2)
                 done = 1;
             state = 3;
@@ -306,7 +306,7 @@ s32 Unnamed_080aa768(void)
                 state = 7;
             break;
         case 5:
-            result = Func_080ad6d4(3);
+            result = OwnerAction_RunCompareLoop(3);
             if (result == -2)
                 done = 1;
             state = 3;

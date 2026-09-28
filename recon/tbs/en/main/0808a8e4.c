@@ -53,7 +53,7 @@ void Func_08077098();
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void MapGroupTable_SelectEntry(void);
-void Func_0808a6e4(s32 value);
+void Party_SetReturnPoint(s32 value);
 void BattleFx_LoadResourceGroup(s32 group);
 void Func_0808ab74(s32 scene, s32 flag);
 void Audio_PlayCueFromEventWork(void);
@@ -144,7 +144,7 @@ start:
                 entrance = Func_080b50a0(entrance);
                 break;
             }
-            Func_0808a6e4(entrance);
+            Party_SetReturnPoint(entrance);
             continue;
         }
         Func_0808ab74(Data_02000240.scene, GameFlag_TestFar(0x109));

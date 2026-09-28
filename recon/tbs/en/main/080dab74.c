@@ -44,7 +44,6 @@
  *     so the names stay address-derived.
  */
 
-#define BattleEffect_RunRisingMotes Func_080dab74
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 

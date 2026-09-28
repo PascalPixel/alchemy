@@ -91,7 +91,6 @@ extern const u16 Data_0809f188[];
 extern const s32 Data_080a0138[];
 extern const u8 Value_0000099b;
 extern volatile u16 RegIme;
-#define REG_IME RegIme
 
 s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
@@ -299,7 +298,7 @@ markers:
     do {
         q = &gIoWriteQueue;
     } while (0);
-    ime = &REG_IME;
+    ime = &RegIme;
     QUEUE_IO_WRITE_DELAY2(0x04000050, 0x3f00);
     QUEUE_IO_WRITE_DELAY2_BARRIER(0x04000052, ((16 - blend) << 8) | blend);
 }

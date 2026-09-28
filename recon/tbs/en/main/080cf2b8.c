@@ -2,8 +2,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleEffect_RunMemberBeam Func_080cf2b8
-
 /*
  * Battle-presentation sub-effect at 0x080cf2b8, a two-argument entry
  * (effect object, variant) in the same family as the adopted
@@ -99,7 +97,7 @@ void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080030f8(s32 frames);
 s32 Func_080cdbc0(void);
 
-void BattleEffect_RunMemberBeam(void *object, s32 variant)
+void BattleFx_RunMemberBeam(void *object, s32 variant)
 {
     void **heap_cache;
     void **cursor;

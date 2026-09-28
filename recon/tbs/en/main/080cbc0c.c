@@ -9,8 +9,6 @@ extern u8 BattlePieceWidth[];
 extern u8 BattlePieceHeight[];
 extern u16 BattlePieceOffset[];
 
-#define BattleFx_RunTileAndPaletteAnimation Func_080cbc0c
-
 /*
  * Blocking battle effect scene at 0x080cbc0c.
  *
@@ -73,7 +71,7 @@ void Func_080f9010(s32 id);
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-void BattleFx_RunTileAndPaletteAnimation(void *arg0) {
+void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     struct BattleEffectWork *work;
     void *canvas;
     struct EffectStep *ent;

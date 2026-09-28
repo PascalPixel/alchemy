@@ -6,8 +6,6 @@
 #include "DMA.H"
 #include "BATTLE_EFX.H"
 
-#define Scene_RunParticleSequence Func_080f7460
-
 /* Builds and presents the particle scene, then releases its work blocks. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 

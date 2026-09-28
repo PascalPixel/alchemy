@@ -60,8 +60,6 @@ u32 Func_080bdfec(void);
 void Func_080be02c(void);
 s32 Func_080c1798(s32 unit_id, s32 element, s32 mode, s32 arg);
 
-#define BattleUnit_ProcessTurnEnd Func_080bfba4
-
 /* End of one unit's turn. The Djinn it summoned with join its side's
    recovery order and raise their element's level; the power each element
    gains is announced. When both sides still stand, curse, poison and the

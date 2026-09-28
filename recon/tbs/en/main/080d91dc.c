@@ -7,8 +7,6 @@ typedef s32 (*IntegerSqrtFn)(s32 value);
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-#define BattleEffectB Func_080d91dc
-
 void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
 typedef void (*BattleEffectDrawFn)(u32, void *, s32, s32, s32, s32);
 

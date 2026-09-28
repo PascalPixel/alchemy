@@ -7,8 +7,6 @@
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
 
-#define BattlePres_RunEncounterOrUnitTrigger Func_080b9dc4
-
 struct BattlePresentationState {
     s32 mode;
     u8 unknown_04[12];
@@ -34,7 +32,7 @@ u32 Func_08004458(void);
 void Func_080bac6c(s32 unit_id);
 void Func_080b7e60(s32 unit_id);
 
-s32 BattlePres_RunEncounterOrUnitTrigger(struct BattleTrigger *trigger)
+s32 BattlePresentation_RunEncounterOrUnitTrigger(struct BattleTrigger *trigger)
 {
     u8 *presentation_addr = (u8 *)0x03001f00;
     struct BattlePresentationState *presentation =

@@ -36,7 +36,7 @@ s32 Func_080770b8(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
-s32 Func_08077030(s32 item);
+s32 Party_FindRoomForItem(s32 item);
 
 /* The word-copy entry the runtime publishes in IWRAM. */
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
@@ -164,7 +164,7 @@ void Battle_AwardSpoils(void)
         UiWork_PushValueSlotFar(spoils->items[best_slot], 2);
         UiText_ShowMessageAndWaitCoreFar(0x83c);
         BattlePresentation_WaitForAdvance();
-        if (Func_08077030(spoils->items[best_slot]) == -1) {
+        if (Party_FindRoomForItem(spoils->items[best_slot]) == -1) {
             *found = spoils->items[best_slot];
             break;
         }

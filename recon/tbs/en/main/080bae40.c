@@ -26,10 +26,7 @@
 #include "BATTLE_TYPES.H"
 #include "FIXED_MATH.H"
 
-#define BattleTarget_SelectForAction Func_080bae40
-
 s32 BattleFx_IsReviveFar(s32 effect);
-#define BattleFx_Classify BattleFx_IsReviveFar
 
 struct BattleAiProfile {
     u8 unknown_00[0x35];
@@ -185,7 +182,7 @@ u32 Random16(void);
             break;                                                            \
         }                                                                     \
         if ((unit)->hp == 0                                                   \
-            && BattleFx_Classify((action)->effect) == 0)                  \
+            && BattleFx_IsReviveFar((action)->effect) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
             (damage_class) = ((action)->target_flags & 0x0f) - 1;             \

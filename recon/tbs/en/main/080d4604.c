@@ -2,8 +2,6 @@
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-#define BattleEffect_RunSparkGroups Func_080d4604
-
 /*
  * Draft for the battle-presentation sub-effect at 0x080d4604 (1764 bytes).
  *
@@ -109,7 +107,7 @@ void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
 s32 Func_080cdbc0(void);
 
-void BattleEffect_RunSparkGroups(void *object, s32 kind)
+void BattleFx_RunSparkGroups(void *object, s32 kind)
 {
     void **heap_cache;
     void **cursor;

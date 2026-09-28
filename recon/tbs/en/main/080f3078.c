@@ -15,7 +15,6 @@ extern u8 Value_00000600;
 
 /* games/THE BROKEN SEAL/INCLUDE/TYPES.H already aliases this owner; the identical
    definition is repeated here so the entry symbol is visible in this file. */
-#define Graphics_TransformPaletteBuffer Func_080f3078
 
 /* Expands a 512-entry (or 256-entry half) BGR555 palette into the engine's
  * three-halfword-per-entry working buffer, applying one of several colour
@@ -81,10 +80,6 @@ extern const u16 Data_080f39ee[];
 extern const u16 Data_080f3a2e[];
 extern const u16 Data_080f3a6e[];
 
-#define COLOR_RAMP_A Data_080f39ee
-#define COLOR_RAMP_B Data_080f3a2e
-#define COLOR_RAMP_C Data_080f3a6e
-
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {
     DivideFunc divide;
@@ -136,7 +131,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             break;
         case 0x10002:
             divide = (DivideFunc)0x03000380;
-            tbl = COLOR_RAMP_B;
+            tbl = Data_080f3a2e;
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 v = divide((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
@@ -175,14 +170,14 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
                 g = Graphics_ClampRgb555Channel(g - Math_Div(g, 3) + 4);
                 b = Graphics_ClampRgb555Channel(b - 6);
-                dst[0] = COLOR_RAMP_C[b];
-                dst[1] = COLOR_RAMP_B[g];
-                dst[2] = COLOR_RAMP_A[r];
+                dst[0] = Data_080f3a6e[b];
+                dst[1] = Data_080f3a2e[g];
+                dst[2] = Data_080f39ee[r];
                 dst += 3;
             }
             break;
         case 0x10004:
-            tbl = COLOR_RAMP_A;
+            tbl = Data_080f39ee;
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
@@ -215,7 +210,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             }
             break;
         case 0x10005:
-            tbl = COLOR_RAMP_C;
+            tbl = Data_080f3a6e;
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 r = c & 31;
@@ -240,9 +235,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r + ((g >> 3) + (b >> 3)));
                 g = g - Math_Div(g, 3);
                 b = b - Math_Div(b, 3);
-                dst[0] = COLOR_RAMP_A[b];
-                dst[1] = COLOR_RAMP_A[g];
-                dst[2] = COLOR_RAMP_B[r];
+                dst[0] = Data_080f39ee[b];
+                dst[1] = Data_080f39ee[g];
+                dst[2] = Data_080f3a2e[r];
                 dst += 3;
             }
             break;
@@ -255,9 +250,9 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
                 g = Graphics_ClampRgb555Channel(g - Math_Div(g, 3) + 4);
                 b = Graphics_ClampRgb555Channel(b - 6);
-                dst[0] = COLOR_RAMP_C[b];
-                dst[1] = COLOR_RAMP_B[g];
-                dst[2] = COLOR_RAMP_A[r];
+                dst[0] = Data_080f3a6e[b];
+                dst[1] = Data_080f3a2e[g];
+                dst[2] = Data_080f39ee[r];
                 dst += 3;
             }
             break;
@@ -298,7 +293,7 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
         tint_r = mode & 31;
         tint_g = (mode >> 5) & 31;
         tint_b = (mode >> 10) & 31;
-        tbl = COLOR_RAMP_A;
+        tbl = Data_080f39ee;
         for (i = 0; i < cnt; i++) {
             c = *src++;
             v = divide((((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4),

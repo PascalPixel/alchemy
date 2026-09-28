@@ -38,9 +38,9 @@ Shop_GetSelectionState:
 	.thumb_func
 Inventory_AddItemFar:
 	overlay_veneer 0x08078589
-	.global Func_08077030
+	.global Party_FindRoomForItem
 	.thumb_func
-Func_08077030:
+Party_FindRoomForItem:
 	overlay_veneer 0x08078619
 	.global Item_FindSlot
 	.thumb_func

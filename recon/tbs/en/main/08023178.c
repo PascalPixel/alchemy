@@ -30,13 +30,6 @@
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
-#define Resource_LoadIntoFreeSlot Func_080040b4
-#define Ui_LoadEntryForKind Func_08021b80
-#define Resource_LoadTableEntryToBuffer Func_08021ab0
-#define UiWindow_MarkVisibleTileAttributes Func_0801e318
-#define UiWindow_SetTilemapEntry Func_08019000
-#define UiWork_PushValueSlot Func_08019908
-#define Ui_FillVramBlockPattern Func_08016738
 
 /* Shared cells this screen reads or writes. */
 #define KEY_STATE (*(u32 *)0x03001B04)
@@ -163,7 +156,6 @@ s32 Func_08077258(s32 owner, s32 level);
 s32 Func_08077290(s32 request);
 struct UiSpriteRecord **Func_080b5098(s32 owner);
 
-#define Ui_RunOwnerStatusScreen Func_08023178
 
 s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 {

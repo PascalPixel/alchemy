@@ -273,7 +273,7 @@ Func_08027114:
 	ldrh	r2, [r6, #0]
 	adds	r0, r6, #0
 	adds	r1, r5, #0
-	bl	Func_08023178
+	bl	Ui_RunOwnerStatusScreen
 	adds	r0, r6, #0
 	bl	Party_Do
 	b.n	.L_080272a8
@@ -478,7 +478,7 @@ Func_08027114:
 	adds	r0, r5, #0
 	ldr	r2, [sp, #64]
 	adds	r1, r6, #0
-	bl	Func_08023178
+	bl	Ui_RunOwnerStatusScreen
 	ldr	r2, [sp, #36]
 	ldr	r3, [r2, #0]
 	movs	r2, #1
@@ -1281,7 +1281,7 @@ Func_08027114:
 	str	r3, [r2, r5]
 	movs	r1, #1
 	ldr	r0, [sp, #64]
-	bl	Func_08023e70
+	bl	Battle_SelectAbility
 	movs	r1, #0
 	adds	r6, r0, #0
 	movs	r0, #1

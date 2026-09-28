@@ -1,7 +1,5 @@
 #include "AUDIO_ENGINE.H"
 
-#define MusicPlayer_ResetActiveTracks Func_080fa514
-
 void AudioCommand_InvokeSlot35(void *block);
 
 static __inline__ s32 masked_track_status(s32 mask, s32 status)

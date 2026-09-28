@@ -31,8 +31,6 @@
  *    match the reference call sites, not those definitions.
  */
 
-#define OwnerAction_RunCompareLoop Func_080ad6d4
-
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 /* Fixed IWRAM helper entries used as descriptors by the copy dispatcher. */

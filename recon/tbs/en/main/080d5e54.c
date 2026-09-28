@@ -3,8 +3,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleEffect_RunSparkTravel Func_080d5e54
-
 /*
  * Battle-presentation sub-effect at 0x080d5e54, from the same 0x03001eec
  * "battle work" subsystem family already recovered in

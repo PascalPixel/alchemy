@@ -242,8 +242,8 @@ gWork:
 	.global gPaletteWork
 gPaletteWork:
 	.space 0x00000004
-	.global Data_03001ec4
-Data_03001ec4:
+	.global gParticleWork
+gParticleWork:
 	.space 0x00000004
 	.global Data_03001ec8
 Data_03001ec8:

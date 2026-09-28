@@ -66,7 +66,6 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u8 *Data_03001f3c;
 extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 KorosseoKawa_ImageData[];
 extern u8 Korosseo_UpdatePathRival[];

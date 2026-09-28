@@ -179,7 +179,6 @@ void FieldScene_RunTwoCallSequence(void);
 
 void FieldScene_RunBranchedStep(void)
 {
-    extern Ctl Data_02001000;
 
     if (SceneActor_FindOccupantAheadOfSubject() == 0) {
         Leader_CheckAhead();
@@ -190,7 +189,6 @@ void FieldScene_RunBranchedStep(void)
 
 u8 *SceneData_GetTablec420(void)
 {
-    extern Ctl Data_02001000;
 
     return KorosseoKawa_SceneTableD;
 }

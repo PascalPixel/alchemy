@@ -39,7 +39,7 @@ void Scheduler_RemoveCallbackFar();
 u8 *Object_GetById(s32);
 void battle_owner_69();
 void FieldEffect_UpdateGridPlacement();
-void Local_02001ac8();
+void TakaraAshiba_DispatchByActorEightColumn();
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.
@@ -135,7 +135,7 @@ void SceneActor_BranchOnSlotZeroAtTile38(void)
 
     SceneState_ApplyFourRectsAndSetActor8Byte85();
     StagedActor_AdvancePair();
-    Local_02001ac8();
+    TakaraAshiba_DispatchByActorEightColumn();
 }
 
 void FieldScene_RunScene3b4_02001bc4(void)

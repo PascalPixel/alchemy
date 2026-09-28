@@ -1,20 +1,11 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-void Engine_ColorBufferApplySource();
-void Engine_GameFlagSet();
-s32 Engine_ActorGet();
-void Engine_ActorSetSpritePriority();
-void SoruStar_StartActorRing();
-s32 Engine_GameFlagIsSet();
-void Engine_ActorSetPosition();
-void Engine_MapCopyCellsTo();
-void Engine_MapCopyCellAttributes();
-void Local_0200227c();
+void SoruStar_SetupElementalRings();
+void Func_0200227c();
 void Scene_EnterStarRoom();
 
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -59,10 +50,10 @@ s32 SoruStar_ApplyEntryState(void)
     Call1(Engine_GameFlagSet, 0x144);
     base5_f = 15;
     do {
-        *(u8 *)(Engine_ActorGet(base5_f) + 89) = 0;
+        *(u8 *)((u8 *)Engine_ActorGet(base5_f) + 89) = 0;
         Engine_ActorSetSpritePriority(base5_f++, 1);
     } while ((u32)base5_f <= 24);
-    SoruStar_StartActorRing(15, 16);
+    SoruStar_SetupElementalRings(15, 16);
     if (Value1(Engine_GameFlagIsSet, 0x83b) != 0) {
         Call3(Engine_ActorSetPosition, 9, 0x1c80000, 0x1680000);
         Call3(Engine_ActorSetPosition, 5, 0x1b80000, 0x15a0000);
@@ -102,10 +93,10 @@ s32 SoruStar_ApplyEntryState(void)
         Call6(Engine_MapCopyCellsTo, 83, 40, 91, 10, 3, 4);
         Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 1, 36, 10);
         Call6(Engine_MapCopyCellsTo, 87, 42, 36, 12, 1, 2);
-        Local_0200227c();
+        Func_0200227c();
     }
     if (Value1(Engine_GameFlagIsSet, 0x83b) == 0) {
-        if (Data_02000240_t[225][0] == 10) {
+        if (gGameState.entrance == 10) {
             Scene_EnterStarRoom();
         }
     }

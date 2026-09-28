@@ -128,6 +128,8 @@ const INTEGER_SUFFIXES: &[&str] = &[
 const LOGO: std::ops::Range<usize> = 0x04..0xa0;
 const LOGO_REASON: &str = "Nintendo logo from a GBA cartridge header: ROM material";
 const UNREGISTERED: &str = "unregistered binary: pret commits only editable build inputs";
+const GREY_SHEET: &str =
+    "PNG is a grey sheet: an indexed asset carries its real palette, not a grey ramp";
 const BLOCKED_DIRECTORIES: &[&str] = &[
     ".cache",
     "alchemy-gcc",
@@ -572,6 +574,18 @@ fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
             .collect(),
     )
 }
+/// A palette of more than ink and paper whose every colour is grey: a dump
+/// drawn without the asset's real palette.
+fn grey_sheet(data: &[u8]) -> bool {
+    png_chunks(data)
+        .and_then(|chunks| chunks.into_iter().find(|(kind, _)| *kind == b"PLTE"))
+        .is_some_and(|(_, palette)| {
+            palette.len() > 6
+                && palette.chunks(3).all(|colour| {
+                    colour.len() == 3 && colour[0] == colour[1] && colour[1] == colour[2]
+                })
+        })
+}
 /// The chunk and stream half of `indexed_png_bytes`, for an indexed image of
 /// any size: the README figures are not tile-aligned build inputs.
 fn exact_indexed_stream(data: &[u8]) -> Option<()> {
@@ -707,6 +721,7 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
             None => {
                 Some("PNG is not an exact indexed build input: standard chunks, one exact stream")
             }
+            Some(_) if grey_sheet(data) => Some(GREY_SHEET),
             Some(pixels) => logo
                 .is_some_and(|logo| contains(&pixels, logo))
                 .then_some(LOGO_REASON),
@@ -2083,8 +2098,8 @@ fn png_fixture(
         &[depth, colour, 0, 0, 0],
     ]
     .concat();
-    let palette: Vec<u8> = (0..3usize << depth)
-        .map(|index| (index / 3) as u8)
+    let palette: Vec<u8> = (0..1usize << depth)
+        .flat_map(|index| [index as u8, (index * 2) as u8, 255 - index as u8])
         .collect();
     let mut data = PNG_SIGNATURE.to_vec();
     data.extend(png_chunk(b"IHDR", &header));
@@ -2099,6 +2114,27 @@ fn png_fixture(
 fn indexed_fixture(depth: u8) -> Vec<u8> {
     let stream = fdeflate::compress_to_vec(&scanlines(16, usize::from(depth)));
     png_fixture(16, depth, 3, &stream, &[])
+}
+/// An indexed fixture drawn with a grey ramp in place of a real palette.
+fn grey_fixture(depth: u8) -> Vec<u8> {
+    let stream = fdeflate::compress_to_vec(&scanlines(16, usize::from(depth)));
+    let header = [
+        16u32.to_be_bytes().as_slice(),
+        &16u32.to_be_bytes(),
+        &[depth, 3, 0, 0, 0],
+    ]
+    .concat();
+    let palette: Vec<u8> = (0..1usize << depth)
+        .flat_map(|index| [(index * 255 >> depth) as u8; 3])
+        .collect();
+    [
+        PNG_SIGNATURE.as_slice(),
+        &png_chunk(b"IHDR", &header),
+        &png_chunk(b"PLTE", &palette),
+        &png_chunk(b"IDAT", &stream),
+        &png_chunk(b"IEND", &[]),
+    ]
+    .concat()
 }
 /// A one-track MIDI file of a note and, when `closed`, its end-of-track.
 fn midi_fixture(events: &[u8], closed: bool) -> Vec<u8> {
@@ -2386,6 +2422,16 @@ fn binary_fixtures() -> Vec<Fixture> {
             "games/THE BROKEN SEAL/TEXT/STAFF_ROLL_MOJI.1BPP.PNG",
             indexed_fixture(1),
             None,
+        ),
+        (
+            "games/THE BROKEN SEAL/TEXT/INK_AND_PAPER.1BPP.PNG",
+            grey_fixture(1),
+            None,
+        ),
+        (
+            "games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/UI_TILE.4BPP.PNG",
+            grey_fixture(4),
+            Some("grey sheet"),
         ),
         (
             "games/THE LOST AGE/SOUND/SAMPLE/WAVE_00.PCM8.WAV",

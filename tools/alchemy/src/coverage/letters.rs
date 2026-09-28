@@ -1,7 +1,6 @@
-//! The lettering of the README figures, cut from the game's
-//! own editable PNG sheets. Advances come from the verified local ROM's
-//! font records; no generated glyph catalog or font file is tracked.
-use psynergy::assets::image::indexed_png;
+//! The lettering of the README figures, read from the verified local ROM:
+//! the menu font's tiles and its advances. No glyph sheet, generated glyph
+//! catalog or font file is tracked.
 use std::collections::BTreeMap;
 use std::path::Path;
 
@@ -12,14 +11,9 @@ pub(crate) const FIGURE_SCALE: u32 = 2;
 /// eight-pixel menu font sits centred in.
 pub(crate) const LINE: u32 = 16;
 
-const FONT: &str = "SRC/GRAPHICS/FONT";
-const GAMES: [(&str, &str); 2] = [("tbs", "THE BROKEN SEAL"), ("tla", "THE LOST AGE")];
-/// The sheets each face is cut from, relative to a game folder.
-pub(crate) const MENU: &str = "MENU_GLYPHS_0000_00FF.4BPP.PNG";
-
-pub(crate) fn sheet(game: &str, name: &str) -> String {
-    format!("games/{game}/{FONT}/{name}")
-}
+/// The upright menu font's 256 4bpp tiles in The Broken Seal's English ROM,
+/// by character code.
+const MENU_TILES: u32 = 0x0832_0fb0;
 
 /// One face: frames of `cell` game pixels (rows most significant bit
 /// leftmost), each frame's advance, and the characters it draws.
@@ -69,39 +63,31 @@ fn advances(
         })
         .collect()
 }
-/// The indexed pixels of a sheet's frames, `cell` wide and tall, `columns`
-/// to a row.
-fn frames(
-    root: &Path,
-    source: &str,
-    cell: (u32, u32),
-    columns: u32,
+/// `count` 8x8 4bpp tiles at `address` as rows of ink bits, most
+/// significant bit leftmost; each byte holds two pixels, low nibble first.
+fn tiles(
+    rom: &[u8],
+    address: u32,
     count: usize,
-    ink: impl Fn(u32) -> bool,
+    ink: impl Fn(u8) -> bool,
 ) -> Result<Vec<Vec<u16>>, String> {
-    let bytes = std::fs::read(root.join(source)).map_err(|e| format!("{source}: {e}"))?;
-    let png = indexed_png(&bytes).map_err(|e| format!("{source}: {e}"))?;
-    if columns == 0
-        || cell.0 == 0
-        || cell.0 > 16
-        || cell.1 == 0
-        || png.width != columns * cell.0
-        || png.height < (count as u32).div_ceil(columns) * cell.1
-    {
-        return Err(format!(
-            "{source}: glyph sheet does not fit its frame geometry"
-        ));
-    }
-    Ok((0..count as u32)
-        .map(|frame| {
-            let (left, top) = (frame % columns * cell.0, frame / columns * cell.1);
-            (0..cell.1)
-                .map(|y| {
-                    (0..cell.0).fold(0u16, |row, x| {
-                        let at = (top + y) * png.width + left + x;
-                        match png.pixels.get(at as usize) {
-                            Some(index) if ink(*index) => row | 0x8000 >> x,
-                            _ => row,
+    let start = address
+        .checked_sub(0x0800_0000)
+        .ok_or("font tiles precede the ROM")? as usize;
+    let bytes = start
+        .checked_add(count * 32)
+        .and_then(|end| rom.get(start..end))
+        .ok_or("font tiles exceed the ROM")?;
+    Ok(bytes
+        .chunks(32)
+        .map(|tile| {
+            tile.chunks(4)
+                .map(|row| {
+                    (0..8).fold(0u16, |bits, x| {
+                        if ink(row[x / 2] >> (x % 2 * 4) & 15) {
+                            bits | 0x8000 >> x
+                        } else {
+                            bits
                         }
                     })
                 })
@@ -121,16 +107,10 @@ impl Letters {
     /// The upright menu font: 256 8x8 tiles by character code, ink in
     /// colour 1, advances from the menu text path's width table.
     pub(crate) fn menu(root: &Path) -> Result<Self, String> {
-        let path = sheet(GAMES[0].1, MENU);
-        let rows = frames(root, &path, (8, 8), 16, 256, |index| index == 1)?;
+        let rom = reference(root, "tbs-en")?;
+        let rows = tiles(&rom, MENU_TILES, 256, |index| index == 1)?;
         let mut advance = vec![0; 256];
-        advance[0x20..].copy_from_slice(&advances(
-            &reference(root, "tbs-en")?,
-            0x0803_70d4,
-            224,
-            1,
-            false,
-        )?);
+        advance[0x20..].copy_from_slice(&advances(&rom, 0x0803_70d4, 224, 1, false)?);
         let mut map = BTreeMap::new();
         for (code, rows) in rows.iter().enumerate() {
             let blank = rows.iter().all(|row| *row == 0);
@@ -291,7 +271,20 @@ mod tests {
         assert!(advances(&data, 0x0700_0000, 1, 4, false).is_err());
     }
     #[test]
-    fn the_tracked_sheets_draw_their_faces() {
+    fn font_tiles_read_low_nibble_first_and_stay_inside_the_rom() {
+        let mut rom = vec![0u8; 32];
+        rom[0] = 0x01;
+        rom[4] = 0x10;
+        rom[31] = 0x11;
+        let rows = tiles(&rom, 0x0800_0000, 1, |index| index == 1).unwrap();
+        assert_eq!(rows[0][0], 0x8000);
+        assert_eq!(rows[0][1], 0x4000);
+        assert_eq!(rows[0][7], 0x0300);
+        assert!(tiles(&rom, 0x0800_0000, 2, |_| true).is_err());
+        assert!(tiles(&rom, 0x0700_0000, 1, |_| true).is_err());
+    }
+    #[test]
+    fn the_rom_font_draws_its_face() {
         let root = crate::coverage::tree::root();
         let menu = Letters::menu(&root).unwrap();
         assert_eq!((menu.cell, menu.top, menu.rows.len()), ((8, 8), 4, 256));

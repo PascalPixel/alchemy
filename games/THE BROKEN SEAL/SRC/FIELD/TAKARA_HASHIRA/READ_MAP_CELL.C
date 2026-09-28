@@ -1,4 +1,6 @@
 #include "TYPES.H"
+
+extern u8 *gMapWork;
 #include "DMA.H"
 
 struct MapLayer {
@@ -14,7 +16,7 @@ struct MapState {
 /* Copy the map cell at x, y of a layer to dst with DMA 3 and wait for it. */
 void TakaraHashira_ReadMapCell(s32 layer, s32 x, s32 y, u32 *dst)
 {
-    struct MapState *map = *(struct MapState **)0x03001e70;
+    struct MapState *map = *(struct MapState **)&gMapWork;
 
     if (map != 0) {
         u32 *cell = map->layers[layer].cells;

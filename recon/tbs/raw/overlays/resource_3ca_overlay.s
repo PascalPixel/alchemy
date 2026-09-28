@@ -980,6 +980,8 @@ BabiFune_StoredRecord2:
 	.global BabiFune_PaletteStep
 BabiFune_PaletteStep:
 	.4byte 0x00000000
+	.global BabiFune_ActionScriptA
+BabiFune_ActionScriptA:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -1028,6 +1030,8 @@ BabiFune_PaletteStep:
 	.4byte 0x00000022
 	.4byte 0x020083c1
 	.4byte 0x00000010
+	.global BabiFune_ActionScriptB
+BabiFune_ActionScriptB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -1071,6 +1075,8 @@ BabiFune_PaletteStep:
 	.4byte 0x00000022
 	.4byte 0x020083dd
 	.4byte 0x00000010
+	.global BabiFune_ActionScriptC
+BabiFune_ActionScriptC:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000004
@@ -1119,6 +1125,8 @@ BabiFune_PaletteStep:
 	.4byte 0x00000022
 	.4byte 0x02008415
 	.4byte 0x00000010
+	.global BabiFune_ActionScriptD
+BabiFune_ActionScriptD:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000004

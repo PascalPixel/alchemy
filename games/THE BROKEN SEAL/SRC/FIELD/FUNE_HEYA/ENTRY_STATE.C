@@ -37,7 +37,7 @@ s32 FuneHeya_ApplyEntryState(void)
 {
     Engine_TaskWait(1);
     Engine_GameFlagSet(0x144);
-    *(s32 *)(*(s32 *)0x03001ebc + 0x1c0) = 0x209;
+    *(s32 *)(*(s32 *)&gEventWork + 0x1c0) = 0x209;
     switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
     case 1:
     case 2:

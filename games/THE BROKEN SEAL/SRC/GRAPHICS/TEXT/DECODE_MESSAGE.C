@@ -1,5 +1,7 @@
 #include "DMA.H"
 
+extern const u8 Func_08015430[];
+
 extern void *Data_03001e50[];
 extern u8 Value_00000140;
 
@@ -22,7 +24,7 @@ void UiText_DecodeMessage(s32 message, u16 *text, s32 capacity)
 
         size = (u32)&Value_00000140;
         code = Runtime_AllocateHeapBlock(50, size);
-        Dma_Set((const void *)0x08015430, code,
+        Dma_Set((const void *)Func_08015430, code,
             0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     }
     decode = (s32 (*)(void *))Data_03001e50[50];

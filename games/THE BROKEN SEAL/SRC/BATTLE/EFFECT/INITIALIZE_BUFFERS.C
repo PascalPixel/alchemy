@@ -2,6 +2,8 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 
+void Func_080908e0(void);
+
 void BattleFx_BuildBuffer(s32, s32, s32, s32);
 
 void BattleEffect_InitializeBuffers(void)
@@ -16,5 +18,5 @@ void BattleEffect_InitializeBuffers(void)
     Dma_Set((void *)0x05000200, (u8 *)buffer + 0x1c0, 0x84000070,
             (volatile u32 *)0x040000d4);
     BattleFx_BuildBuffer(0x10000, (s32)buffer, (s32)buffer + 0xe00, 0);
-    Scheduler_AddOrUpdateCallback((void (*)(void))0x080908e1, 0xc8f);
+    Scheduler_AddOrUpdateCallback((void (*)(void))Func_080908e0, 0xc8f);
 }

@@ -2,6 +2,8 @@
 #include "DMA.H"
 #include "RESOURCE.H"
 
+extern const u8 System_BasicColorPalette[];
+
 extern u8 Value_00000013;
 
 /* Loads the shared window graphics: resource 0x13 into BG character block
@@ -45,6 +47,6 @@ void Ui_LoadWindowGraphics(void)
         pal++;
         *pal = color;
     } while (0);
-    Dma_Set((const void *)0x0800779c, (void *)0x05000200, 0x800000e0,
+    Dma_Set((const void *)System_BasicColorPalette, (void *)0x05000200, 0x800000e0,
             (volatile u32 *)0x040000d4);
 }

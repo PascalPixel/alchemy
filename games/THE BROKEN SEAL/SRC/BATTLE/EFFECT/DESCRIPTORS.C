@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
+extern const u8 ObjectMotion_LinkedActionScript[];
+extern const u8 ObjectMotion_StepAngleScript[];
+
 u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value)
 {
   u32 tmp;
@@ -259,10 +262,10 @@ run_descriptor:
                     *(s32 *)((s16 *)&PARTY_STATE + object_index);
                 object->linked_object = Object_GetById(object_id);
                 object->flags_5a |= 1;
-                ObjectMotion_SetActionCallback(object, (void *)0x0809ff40);
+                ObjectMotion_SetActionCallback(object, (void *)ObjectMotion_LinkedActionScript);
             } else if (action->mode == 1) {
                 object->saved_value = saved_value;
-                ObjectDispatch_InitializeFar(object, (void *)0x0809fc1c);
+                ObjectDispatch_InitializeFar(object, (void *)ObjectMotion_StepAngleScript);
             }
         }
         object->busy_5b = 0;

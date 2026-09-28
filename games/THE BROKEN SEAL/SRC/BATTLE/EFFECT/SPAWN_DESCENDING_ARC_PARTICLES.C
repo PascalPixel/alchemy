@@ -2,6 +2,9 @@
    the source object, one for each of the descending-arc update callbacks. */
 #include "TYPES.H"
 
+void BattleFx_UpdateDescendingParticleNegativeArc(void);
+void BattleFx_UpdateDescendingParticlePositiveArc(void);
+
 struct ArcFrame {
     u8 padding00[22];
     u8 visible;
@@ -104,8 +107,8 @@ void BattleFx_SpawnDescendingArcParticles(struct ArcObject *source)
         sprite->size = 2;
         sprite->frame->visible = zero;
     }
-    objects[0]->callback = (void *)0x0809b3d9;
+    objects[0]->callback = (void *)BattleFx_UpdateDescendingParticleNegativeArc;
     objects[0]->sprite->attr.byte.variant = 0;
-    objects[1]->callback = (void *)0x0809b365;
+    objects[1]->callback = (void *)BattleFx_UpdateDescendingParticlePositiveArc;
     objects[1]->sprite->attr.byte.variant = leader->sprite->attr.byte.variant;
 }

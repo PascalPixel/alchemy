@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
+void BattleFx_AdvanceSpinAngle(void);
+void BattleFx_RunAngledApproachPhases(void);
+
 extern s32 gGameState[];
 #define PARTY_STATE gGameState
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
@@ -48,7 +51,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         Motion_SetVarCbAndRefresh(id, 1);
         WaitFrames(0x14);
         Audio_PlayCue(0x8C);
-        (*((s32 *)(((s8 *)ctx) + 0x6C))) = 0x0809592D;
+        (*((s32 *)(((s8 *)ctx) + 0x6C))) = (s32)BattleFx_AdvanceSpinAngle;
         WaitFrames(0x28);
         Audio_PlayCue(0x99);
         ObjectMotion_Launch(id, 0xC, 0x16);
@@ -63,7 +66,7 @@ void BattleFx_FinishHeavyImpact(s32 arg)
         do
         {
             EffectSlot_Initialize(work, 0x11C, pos.x, pos.z);
-            EffectSlot_SetCallback(work, 0x08095939);
+            EffectSlot_SetCallback(work, (s32)BattleFx_RunAngledApproachPhases);
             /* This boundary keeps the work pointer ahead of the constant. */
             do
             {

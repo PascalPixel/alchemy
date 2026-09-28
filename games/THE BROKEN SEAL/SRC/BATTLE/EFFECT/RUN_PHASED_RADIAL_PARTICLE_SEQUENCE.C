@@ -1,6 +1,11 @@
 #include "TYPES.H"
 #include "FIXED_MATH.H"
 
+void BattleFx_AdvanceObjectField6WithRamp(void);
+void BattleFx_ShrinkObjectAndDestroySlow(void);
+void BattleEffect_UpdatePhasedRadialParticle(void);
+void BattleFx_SetObjectAlternatingWords(void);
+
 
 extern s32 gGameState[];
 void Motion_SetVarCbAndRefresh(s32, s32);
@@ -55,10 +60,10 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     Motion_SetVarCbAndRefresh(arg, 1);
     WaitFrames(20);
     Audio_PlayCue(140);
-    source_object->callback = (void *)0x08095bad;
+    source_object->callback = (void *)BattleFx_AdvanceObjectField6WithRamp;
     source_object->timer = 0;
     WaitFrames(80);
-    source_object->callback = (void *)0x08095bd9;
+    source_object->callback = (void *)BattleFx_ShrinkObjectAndDestroySlow;
     Object_SetMode(source_object, 3);
 
     position.x = source_object->x;
@@ -70,7 +75,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 284, position.x, position.z);
-        EffectSlot_SetCallback(slot, (void *)0x08095c09);
+        EffectSlot_SetCallback(slot, (void *)BattleEffect_UpdatePhasedRadialParticle);
         EffectSlot_SetObjectMode(slot, 7);
         object_pointer = slot;
         value = *(s32 *)object_pointer;
@@ -104,7 +109,7 @@ void BattleEffect_RunPhasedRadialParticleSequence(s32 arg)
     }
 
     WaitFrames(60);
-    target_object->callback = (void *)0x08095b8d;
+    target_object->callback = (void *)BattleFx_SetObjectAlternatingWords;
     WaitFrames(100);
 
     {

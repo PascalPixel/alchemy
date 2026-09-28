@@ -1,16 +1,14 @@
-/* resource_3c8: its listing with maintained code and the compiler library
-   linked in place, as pret links objects and libgcc members in ROM order. */
-EXTERN(_call_via_r0)
+/* resource_3ab: its listing with maintained code linked in place, as pret
+   links objects in ROM order. */
 SECTIONS
 {
     .text 0x2008000 :
     {
-        "*/resource_3c8_overlay.o"(.text)
+        "*/resource_3ab_overlay.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
-        "*/resource_3c8_overlay.o"(.text.x020082f0)
-        *libgcc.a:_call_via_rX.o(.text)
-        "*/resource_3c8_overlay.o"(.rodata.part1)
+        "*/resource_3ab_overlay.o"(.text.x02008314)
+        "*/resource_3ab_overlay.o"(.rodata)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
     /* The compiler calls its division helper by its ABI name; here it is the

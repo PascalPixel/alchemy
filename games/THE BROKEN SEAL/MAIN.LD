@@ -1539,7 +1539,7 @@ SECTIONS
         "*/recon/tbs/raw/080e698c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PLACE_FORMATION_OBJECTS.o"(.text)
         "*/recon/tbs/raw/080e6eac.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080e727c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/BRIGHTEN_BG_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ARM_PALETTE_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_INITIALIZE_DEFAULT_MODE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUNTIME_INITIALIZE_MODE_1.o"(.text)

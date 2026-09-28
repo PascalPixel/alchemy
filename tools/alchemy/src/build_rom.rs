@@ -389,10 +389,36 @@ fn build_overlay(
     for step in &steps {
         command(step, root)?;
     }
-    let decoded = fs::read(&image).map_err(|error| error.to_string())?;
+    let mut decoded = fs::read(&image).map_err(|error| error.to_string())?;
+    store_thumb_calls(&mut decoded);
     let encoded = crate::build_assets::encode_overlay_stream(&decoded, &OVERLAY_MACHINE)?;
     fs::write(&stream, encoded).map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+/// The resource packer's form of a code block's Thumb calls: every bl pair
+/// holds its target as an offset from the block (less two) instead of from
+/// the call, and the loader's PATCH_THUMB_BRANCH kernel turns each pair back
+/// into a call from where the block lands. Pairs are found as the kernel finds
+/// them, a 0xf800 halfword after a 0xf000 halfword, so the kernel undoes this
+/// exactly.
+fn store_thumb_calls(block: &mut [u8]) {
+    let half = |block: &[u8], at: usize| u32::from(u16::from_le_bytes([block[at], block[at + 1]]));
+    let mut at = 2;
+    while at + 2 <= block.len() {
+        let low = half(block, at);
+        let high = half(block, at - 2);
+        at += 2;
+        if low >> 11 != 31 || high >> 11 != 30 {
+            continue;
+        }
+        let call = ((high & 0x7ff) << 12) | ((low & 0x7ff) << 1);
+        let stored = call.wrapping_add((at - 2) as u32) & 0x7f_fffe;
+        let high = 0xf000 | (stored >> 12);
+        let low = 0xf800 | ((stored >> 1) & 0x7ff);
+        block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
+        block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
+    }
 }
 
 /// The plan's preprocessing step when it has one, or a `-E` run of the same
@@ -447,6 +473,58 @@ fn with_includes(root: &Path, source: &Path) -> Result<Vec<u8>, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// The loader's kernel, as PATCH_THUMB_BRANCH.S runs it on a block.
+    fn patch_thumb_calls(block: &mut [u8]) {
+        let half =
+            |block: &[u8], at: usize| u32::from(u16::from_le_bytes([block[at], block[at + 1]]));
+        let mut at = 2;
+        while at + 2 <= block.len() {
+            let low = half(block, at);
+            at += 2;
+            if low >> 11 != 31 {
+                continue;
+            }
+            let high = half(block, at - 4);
+            if high >> 11 != 30 {
+                continue;
+            }
+            let stored = (((low & 0x7ff) | ((high & 0x7ff) << 11)) << 1) as i64;
+            let call = (stored - (at as i64 - 2)) as u32;
+            let high = 0xf000 | ((call >> 12) & 0x7ff);
+            let low = 0xf800 | ((call >> 1) & 0x7ff);
+            block[at - 4..at - 2].copy_from_slice(&(high as u16).to_le_bytes());
+            block[at - 2..at].copy_from_slice(&(low as u16).to_le_bytes());
+        }
+    }
+
+    #[test]
+    fn stored_calls_are_what_the_loader_kernel_undoes() {
+        // bl from 0x2d4 to 0x6c in a block: the packer stores the target, less
+        // two, as the ROM's overlay 373 does (bl 0x342 read from 0x2d4).
+        let mut block = vec![0u8; 0x2d8];
+        let call = (0x6c_i64 - (0x2d4 + 4)) as u32;
+        block[0x2d4..0x2d6]
+            .copy_from_slice(&((0xf000 | ((call >> 12) & 0x7ff)) as u16).to_le_bytes());
+        block[0x2d6..0x2d8]
+            .copy_from_slice(&((0xf800 | ((call >> 1) & 0x7ff)) as u16).to_le_bytes());
+        let linked = block.clone();
+        store_thumb_calls(&mut block);
+        let stored = u32::from(u16::from_le_bytes([block[0x2d4], block[0x2d5]])) & 0x7ff;
+        let stored = (stored << 12)
+            | ((u32::from(u16::from_le_bytes([block[0x2d6], block[0x2d7]])) & 0x7ff) << 1);
+        assert_eq!(stored, 0x6a);
+        patch_thumb_calls(&mut block);
+        assert_eq!(block, linked);
+        // Every halfword pattern round-trips, pairs in data included.
+        let mut noise: Vec<u8> = (0..4096u32)
+            .flat_map(|i| (((i * 40503) >> 3) as u16 | 0xf000).to_le_bytes())
+            .collect();
+        let original = noise.clone();
+        store_thumb_calls(&mut noise);
+        patch_thumb_calls(&mut noise);
+        assert_eq!(noise, original);
+    }
 
     #[test]
     fn script_objects_keep_first_order_and_skip_archive_members() {

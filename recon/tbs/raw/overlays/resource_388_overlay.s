@@ -1,14 +1,6 @@
 .syntax unified
 .include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_0200015c, 0x0200015c
-	.set sub_0200017a, 0x0200017a
-	.set sub_0200017e, 0x0200017e
-	.set sub_02000184, 0x02000184
-	.set sub_0200018e, 0x0200018e
-	.set sub_02000190, 0x02000190
-	.set sub_0200019c, 0x0200019c
-	.set sub_0200019e, 0x0200019e
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/FIELD/GOMA_IKE/ENTRY.INC"
@@ -59,7 +51,7 @@ Func_02000054:
 	str r3, [r2]
 	lsls r0, r0, #2
 	sub sp, #8
-	bl sub_0200015c
+	bl 0x020080e8
 	cmp r0, #0
 	beq .L_02000054_0
 	movs r1, #216
@@ -67,21 +59,21 @@ Func_02000054:
 	lsls r2, r2, #16
 	movs r0, #8
 	lsls r1, r1, #16
-	bl sub_0200017e
+	bl 0x020080f8
 	movs r1, #2
 	movs r0, #8
-	bl sub_0200018e
+	bl 0x02008100
 	movs r0, #8
-	bl sub_02000184
+	bl 0x020080f0
 	movs r1, #0
-	bl sub_0200017a
+	bl 0x020080e0
 	movs r0, #8
-	bl sub_02000190
+	bl 0x020080f0
 	movs r3, #2
 	adds r0, #35
 	strb r3, [r0]
 	movs r0, #8
-	bl sub_0200019c
+	bl 0x020080f0
 	movs r5, #0
 	adds r0, #89
 	movs r3, #11
@@ -93,7 +85,7 @@ Func_02000054:
 	movs r0, #11
 	movs r2, #5
 	movs r3, #5
-	bl sub_0200019e
+	bl 0x020080d8
 .L_02000054_0:
 	movs r0, #0
 	sub sp, #-8

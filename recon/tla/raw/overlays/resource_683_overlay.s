@@ -1,11 +1,6 @@
 .syntax unified
 .include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_0200020c, 0x0200020c
-	.set sub_02000220, 0x02000220
-	.set sub_02000240, 0x02000240
-	.set sub_02000284, 0x02000284
-	.set sub_020002d4, 0x020002d4
 	.global Overlay_02000000
 Overlay_02000000:
 	.irp EntryTarget, 0x020080fd, 0x02008039, 0x02008045, 0x0200804d, 0x020080a5, 0x02008041, 0x02008149
@@ -55,12 +50,12 @@ Overlay_02000000:
 	push	{lr}
 	adds	r1, r0, #0
 	movs	r0, #25
-	bl	sub_0200020c
+	bl 0x02008178
 	pop	{pc}
 	push	{lr}
 	adds	r1, r0, #0
 	movs	r0, #10
-	bl	sub_02000220
+	bl 0x02008180
 	pop	{pc}
 	push	{lr}
 	ldr	r1, [pc, #64]
@@ -88,7 +83,7 @@ Overlay_02000000:
 	movs	r0, #136
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	sub_02000240
+	bl 0x02008168
 	cmp	r0, #0
 	beq.n	.L_020000e2
 	ldr	r0, [pc, #20]
@@ -133,7 +128,7 @@ Overlay_02000000:
 	lsls	r0, r0, #9
 	cmp	r3, r0
 	bhi.n	.L_0200013a
-	bl	sub_02000284
+	bl 0x0200814c
 .L_0200013a:
 	movs	r0, #0
 	pop	{pc}
@@ -154,7 +149,7 @@ Overlay_02000000:
 	adds	r2, #93
 	str	r2, [r3, #0]
 	adds	r0, #255
-	bl	sub_020002d4
+	bl 0x02008170
 	pop	{pc}
 	.irp EntryTarget, 0x080003c9, 0x080003d9, 0x08108009, 0x08108019
 	overlay_veneer \EntryTarget

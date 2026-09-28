@@ -1,14 +1,6 @@
 .syntax unified
 .include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_02000114, 0x02000114
-	.set sub_02000116, 0x02000116
-	.set sub_0200012c, 0x0200012c
-	.set sub_0200012e, 0x0200012e
-	.set sub_02000144, 0x02000144
-	.set sub_02000146, 0x02000146
-	.set sub_0200015c, 0x0200015c
-	.set sub_0200015e, 0x0200015e
 	.global Overlay_02000000
 Overlay_02000000:
 	.include "games/THE BROKEN SEAL/SRC/DEBUG/TEST_ROOMS/ENTRY.INC"
@@ -42,9 +34,9 @@ Func_0200004c:
 	movs r0, #8
 	movs r1, #0
 	movs r2, #0
-	bl sub_02000116
+	bl 0x020080c0
 	movs r0, #48
-	bl sub_02000114
+	bl 0x020080b8
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -55,9 +47,9 @@ Func_02000064:
 	movs r0, #9
 	movs r1, #1
 	movs r2, #0
-	bl sub_0200012e
+	bl 0x020080c0
 	movs r0, #68
-	bl sub_0200012c
+	bl 0x020080b8
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -68,9 +60,9 @@ Func_0200007c:
 	movs r0, #10
 	movs r1, #2
 	movs r2, #0
-	bl sub_02000146
+	bl 0x020080c0
 	movs r0, #88
-	bl sub_02000144
+	bl 0x020080b8
 	pop {r0}
 	bx r0
 	.2byte 0x0000
@@ -81,9 +73,9 @@ Func_02000094:
 	movs r0, #11
 	movs r1, #3
 	movs r2, #0
-	bl sub_0200015e
+	bl 0x020080c0
 	movs r0, #108
-	bl sub_0200015c
+	bl 0x020080b8
 	pop {r0}
 	bx r0
 	.2byte 0x0000

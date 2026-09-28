@@ -1,14 +1,6 @@
 .syntax unified
 .include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_020001e0, 0x020001e0
-	.set sub_020001fe, 0x020001fe
-	.set sub_02000214, 0x02000214
-	.set sub_02000232, 0x02000232
-	.set sub_02000250, 0x02000250
-	.set sub_0200025a, 0x0200025a
-	.set sub_02000262, 0x02000262
-	.set sub_02000292, 0x02000292
 	.global Overlay_02000000
 Overlay_02000000:
 	.irp EntryTarget, 0x02008075, 0x02008039, 0x02008045, 0x0200804d, 0x0200806d, 0x02008041, 0x0200816d
@@ -32,11 +24,11 @@ Overlay_02000000:
 	movs	r1, #13
 	movs	r2, #14
 	movs	r0, #1
-	bl	sub_020001fe
+	bl 0x020081a0
 	movs	r0, #130
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_020001e0
+	bl 0x02008178
 	pop	{pc}
 	ldr	r0, [pc, #0]
 	bx	lr
@@ -65,36 +57,36 @@ Overlay_02000000:
 	lsls	r1, r1, #3
 	str	r2, [r3, #0]
 	ldr	r0, [pc, #80]
-	bl	sub_02000214
+	bl 0x02008170
 	ldr	r3, [pc, #80]
 	movs	r2, #133
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	sub_02000232
+	bl 0x02008180
 	adds	r0, #35
 	ldrb	r2, [r0, #0]
 	movs	r3, #32
 	orrs	r3, r2
 	strb	r3, [r0, #0]
-	bl	sub_02000250
+	bl 0x02008190
 	movs	r2, #11
 	movs	r1, #12
 	movs	r0, #0
-	bl	sub_02000262
+	bl 0x02008198
 	movs	r0, #12
 	movs	r1, #4
-	bl	sub_0200025a
+	bl 0x02008188
 	movs	r0, #11
 	movs	r1, #4
-	bl	sub_02000262
+	bl 0x02008188
 	movs	r1, #130
 	lsls	r1, r1, #1
 	movs	r0, #1
 	adds	r1, #255
 	movs	r2, #13
 	movs	r3, #14
-	bl	sub_02000292
+	bl 0x020081a8
 	movs	r0, #0
 	pop	{pc}
 	.4byte 0x020081b0

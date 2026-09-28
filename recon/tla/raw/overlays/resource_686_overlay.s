@@ -1,512 +1,6 @@
 .syntax unified
 .include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_02000126, 0x02000126
-	.set sub_0200145c, 0x0200145c
-	.set sub_0200178c, 0x0200178c
-	.set sub_02001b1c, 0x02001b1c
-	.set sub_02002dbe, 0x02002dbe
-	.set sub_02002e2c, 0x02002e2c
-	.set sub_02002e76, 0x02002e76
-	.set sub_02002ec6, 0x02002ec6
-	.set sub_02002ec8, 0x02002ec8
-	.set sub_02002ee0, 0x02002ee0
-	.set sub_02002f18, 0x02002f18
-	.set sub_02002f40, 0x02002f40
-	.set sub_02002f90, 0x02002f90
-	.set sub_02002f94, 0x02002f94
-	.set sub_02002f9e, 0x02002f9e
-	.set sub_02002fb8, 0x02002fb8
-	.set sub_02002fda, 0x02002fda
-	.set sub_02002ffc, 0x02002ffc
-	.set sub_02003000, 0x02003000
-	.set sub_02003010, 0x02003010
-	.set sub_0200301e, 0x0200301e
-	.set sub_020030b4, 0x020030b4
-	.set sub_020030be, 0x020030be
-	.set sub_020030c4, 0x020030c4
-	.set sub_02003136, 0x02003136
-	.set sub_0200316c, 0x0200316c
-	.set sub_020031b2, 0x020031b2
-	.set sub_0200321c, 0x0200321c
-	.set sub_02003220, 0x02003220
-	.set sub_0200323c, 0x0200323c
-	.set sub_0200323e, 0x0200323e
-	.set sub_02003244, 0x02003244
-	.set sub_0200324a, 0x0200324a
-	.set sub_02003260, 0x02003260
-	.set sub_02003272, 0x02003272
-	.set sub_02003278, 0x02003278
-	.set sub_02003282, 0x02003282
-	.set sub_02003294, 0x02003294
-	.set sub_020032d2, 0x020032d2
-	.set sub_020032f8, 0x020032f8
-	.set sub_02003316, 0x02003316
-	.set sub_02003346, 0x02003346
-	.set sub_02003352, 0x02003352
-	.set sub_02003376, 0x02003376
-	.set sub_02003378, 0x02003378
-	.set sub_02003388, 0x02003388
-	.set sub_02003394, 0x02003394
-	.set sub_020033b6, 0x020033b6
-	.set sub_020033be, 0x020033be
-	.set sub_020033c0, 0x020033c0
-	.set sub_020033d6, 0x020033d6
-	.set sub_020033dc, 0x020033dc
-	.set sub_020033ec, 0x020033ec
-	.set sub_02003400, 0x02003400
-	.set sub_0200340e, 0x0200340e
-	.set sub_02003414, 0x02003414
-	.set sub_020034fa, 0x020034fa
-	.set sub_0200350e, 0x0200350e
-	.set sub_02003516, 0x02003516
-	.set sub_02003538, 0x02003538
-	.set sub_0200354c, 0x0200354c
-	.set sub_02003564, 0x02003564
-	.set sub_0200357c, 0x0200357c
-	.set sub_020035a6, 0x020035a6
-	.set sub_020035ba, 0x020035ba
-	.set sub_020035d0, 0x020035d0
-	.set sub_020035e4, 0x020035e4
-	.set sub_020035f8, 0x020035f8
-	.set sub_0200360a, 0x0200360a
-	.set sub_02003628, 0x02003628
-	.set sub_02003654, 0x02003654
-	.set sub_0200368a, 0x0200368a
-	.set sub_020036a8, 0x020036a8
-	.set sub_020036ae, 0x020036ae
-	.set sub_020036bc, 0x020036bc
-	.set sub_020036de, 0x020036de
-	.set sub_020036e6, 0x020036e6
-	.set sub_020036fa, 0x020036fa
-	.set sub_02003714, 0x02003714
-	.set sub_0200371a, 0x0200371a
-	.set sub_02003744, 0x02003744
-	.set sub_02003748, 0x02003748
-	.set sub_02003772, 0x02003772
-	.set sub_02003794, 0x02003794
-	.set sub_0200379c, 0x0200379c
-	.set sub_020037b0, 0x020037b0
-	.set sub_020037ca, 0x020037ca
-	.set sub_020037fe, 0x020037fe
-	.set sub_02003808, 0x02003808
-	.set sub_0200380e, 0x0200380e
-	.set sub_02003812, 0x02003812
-	.set sub_02003824, 0x02003824
-	.set sub_0200383e, 0x0200383e
-	.set sub_02003874, 0x02003874
-	.set sub_0200388c, 0x0200388c
-	.set sub_0200389a, 0x0200389a
-	.set sub_020038a8, 0x020038a8
-	.set sub_020038ae, 0x020038ae
-	.set sub_020038b6, 0x020038b6
-	.set sub_020038c4, 0x020038c4
-	.set sub_020038c6, 0x020038c6
-	.set sub_020038c8, 0x020038c8
-	.set sub_020038d2, 0x020038d2
-	.set sub_020038e0, 0x020038e0
-	.set sub_0200392e, 0x0200392e
-	.set sub_02003930, 0x02003930
-	.set sub_02003938, 0x02003938
-	.set sub_02003982, 0x02003982
-	.set sub_0200398e, 0x0200398e
-	.set sub_02003a10, 0x02003a10
-	.set sub_02003a2e, 0x02003a2e
-	.set sub_02003a38, 0x02003a38
-	.set sub_02003a44, 0x02003a44
-	.set sub_02003a48, 0x02003a48
-	.set sub_02003a50, 0x02003a50
-	.set sub_02003a8a, 0x02003a8a
-	.set sub_02003ad8, 0x02003ad8
-	.set sub_02003ae2, 0x02003ae2
-	.set sub_02003ae8, 0x02003ae8
-	.set sub_02003afc, 0x02003afc
-	.set sub_02003b06, 0x02003b06
-	.set sub_02003b0c, 0x02003b0c
-	.set sub_02003b26, 0x02003b26
-	.set sub_02003b3c, 0x02003b3c
-	.set sub_02003b4c, 0x02003b4c
-	.set sub_02003b70, 0x02003b70
-	.set sub_02003b74, 0x02003b74
-	.set sub_02003b80, 0x02003b80
-	.set sub_02003b84, 0x02003b84
-	.set sub_02003bac, 0x02003bac
-	.set sub_02003bbc, 0x02003bbc
-	.set sub_02003be0, 0x02003be0
-	.set sub_02003be4, 0x02003be4
-	.set sub_02003bf4, 0x02003bf4
-	.set sub_02003c2e, 0x02003c2e
-	.set sub_02003c36, 0x02003c36
-	.set sub_02003c3e, 0x02003c3e
-	.set sub_02003c50, 0x02003c50
-	.set sub_02003c9a, 0x02003c9a
-	.set sub_02003cb8, 0x02003cb8
-	.set sub_02003cc4, 0x02003cc4
-	.set sub_02003ce4, 0x02003ce4
-	.set sub_02003ce8, 0x02003ce8
-	.set sub_02003d00, 0x02003d00
-	.set sub_02003d0a, 0x02003d0a
-	.set sub_02003d12, 0x02003d12
-	.set sub_02003d28, 0x02003d28
-	.set sub_02003d3e, 0x02003d3e
-	.set sub_02003d50, 0x02003d50
-	.set sub_02003d74, 0x02003d74
-	.set sub_02003d82, 0x02003d82
-	.set sub_02003d86, 0x02003d86
-	.set sub_02003d9e, 0x02003d9e
-	.set sub_02003daa, 0x02003daa
-	.set sub_02003dbc, 0x02003dbc
-	.set sub_02003de2, 0x02003de2
-	.set sub_02003df2, 0x02003df2
-	.set sub_02003e04, 0x02003e04
-	.set sub_02003e10, 0x02003e10
-	.set sub_02003e1c, 0x02003e1c
-	.set sub_02003e2e, 0x02003e2e
-	.set sub_02003e52, 0x02003e52
-	.set sub_02003e8a, 0x02003e8a
-	.set sub_02003ea0, 0x02003ea0
-	.set sub_02003ea8, 0x02003ea8
-	.set sub_02003ec0, 0x02003ec0
-	.set sub_02003ec4, 0x02003ec4
-	.set sub_02003ecc, 0x02003ecc
-	.set sub_02003ed8, 0x02003ed8
-	.set sub_02003eda, 0x02003eda
-	.set sub_02003ee8, 0x02003ee8
-	.set sub_02003f06, 0x02003f06
-	.set sub_02003f28, 0x02003f28
-	.set sub_02003f2a, 0x02003f2a
-	.set sub_02003f46, 0x02003f46
-	.set sub_02003f5c, 0x02003f5c
-	.set sub_02003f9a, 0x02003f9a
-	.set sub_02003fb0, 0x02003fb0
-	.set sub_02003fc6, 0x02003fc6
-	.set sub_02004018, 0x02004018
-	.set sub_02004022, 0x02004022
-	.set sub_02004040, 0x02004040
-	.set sub_02004056, 0x02004056
-	.set sub_0200405e, 0x0200405e
-	.set sub_0200406c, 0x0200406c
-	.set sub_02004088, 0x02004088
-	.set sub_0200408e, 0x0200408e
-	.set sub_020040a8, 0x020040a8
-	.set sub_020040b6, 0x020040b6
-	.set sub_020040c6, 0x020040c6
-	.set sub_020040d8, 0x020040d8
-	.set sub_0200411e, 0x0200411e
-	.set sub_02004186, 0x02004186
-	.set sub_020041ba, 0x020041ba
-	.set sub_02004200, 0x02004200
-	.set sub_02004214, 0x02004214
-	.set sub_02004216, 0x02004216
-	.set sub_02004218, 0x02004218
-	.set sub_0200421a, 0x0200421a
-	.set sub_02004346, 0x02004346
-	.set sub_0200436e, 0x0200436e
-	.set sub_02004472, 0x02004472
-	.set sub_0200447c, 0x0200447c
-	.set sub_02004480, 0x02004480
-	.set sub_02004484, 0x02004484
-	.set sub_0200449e, 0x0200449e
-	.set sub_020044b0, 0x020044b0
-	.set sub_020044e4, 0x020044e4
-	.set sub_02004510, 0x02004510
-	.set sub_02004516, 0x02004516
-	.set sub_02004538, 0x02004538
-	.set sub_0200453e, 0x0200453e
-	.set sub_02004542, 0x02004542
-	.set sub_02004556, 0x02004556
-	.set sub_0200456a, 0x0200456a
-	.set sub_02004586, 0x02004586
-	.set sub_02004596, 0x02004596
-	.set sub_020045aa, 0x020045aa
-	.set sub_020045c6, 0x020045c6
-	.set sub_020045c8, 0x020045c8
-	.set sub_020045da, 0x020045da
-	.set sub_020045ec, 0x020045ec
-	.set sub_0200465a, 0x0200465a
-	.set sub_0200467a, 0x0200467a
-	.set sub_020046ca, 0x020046ca
-	.set sub_020046e0, 0x020046e0
-	.set sub_020046f4, 0x020046f4
-	.set sub_02004708, 0x02004708
-	.set sub_0200471c, 0x0200471c
-	.set sub_0200472e, 0x0200472e
-	.set sub_02004742, 0x02004742
-	.set sub_02004754, 0x02004754
-	.set sub_0200476c, 0x0200476c
-	.set sub_02004806, 0x02004806
-	.set sub_02004810, 0x02004810
-	.set sub_02004814, 0x02004814
-	.set sub_02004818, 0x02004818
-	.set sub_02004832, 0x02004832
-	.set sub_02004844, 0x02004844
-	.set sub_02004878, 0x02004878
-	.set sub_020048a6, 0x020048a6
-	.set sub_020048aa, 0x020048aa
-	.set sub_020048ce, 0x020048ce
-	.set sub_020048d2, 0x020048d2
-	.set sub_020048d8, 0x020048d8
-	.set sub_020048ea, 0x020048ea
-	.set sub_02004900, 0x02004900
-	.set sub_0200491c, 0x0200491c
-	.set sub_0200492c, 0x0200492c
-	.set sub_02004940, 0x02004940
-	.set sub_0200495c, 0x0200495c
-	.set sub_0200495e, 0x0200495e
-	.set sub_02004970, 0x02004970
-	.set sub_02004982, 0x02004982
-	.set sub_020049f0, 0x020049f0
-	.set sub_02004a10, 0x02004a10
-	.set sub_02004a5e, 0x02004a5e
-	.set sub_02004a72, 0x02004a72
-	.set sub_02004a88, 0x02004a88
-	.set sub_02004a9c, 0x02004a9c
-	.set sub_02004ab0, 0x02004ab0
-	.set sub_02004ac2, 0x02004ac2
-	.set sub_02004ad6, 0x02004ad6
-	.set sub_02004ae8, 0x02004ae8
-	.set sub_02004af4, 0x02004af4
-	.set sub_02004b00, 0x02004b00
-	.set sub_02004b68, 0x02004b68
-	.set sub_02004b6a, 0x02004b6a
-	.set sub_02004b78, 0x02004b78
-	.set sub_02004b96, 0x02004b96
-	.set sub_02004b9c, 0x02004b9c
-	.set sub_02004ba8, 0x02004ba8
-	.set sub_02004bb2, 0x02004bb2
-	.set sub_02004bc6, 0x02004bc6
-	.set sub_02004c10, 0x02004c10
-	.set sub_02004c14, 0x02004c14
-	.set sub_02004c28, 0x02004c28
-	.set sub_02004c2c, 0x02004c2c
-	.set sub_02004c40, 0x02004c40
-	.set sub_02004c46, 0x02004c46
-	.set sub_02004c4c, 0x02004c4c
-	.set sub_02004c5e, 0x02004c5e
-	.set sub_02004c88, 0x02004c88
-	.set sub_02004c8c, 0x02004c8c
-	.set sub_02004c9a, 0x02004c9a
-	.set sub_02004cb6, 0x02004cb6
-	.set sub_02004cc4, 0x02004cc4
-	.set sub_02004cc8, 0x02004cc8
-	.set sub_02004cda, 0x02004cda
-	.set sub_02004ce4, 0x02004ce4
-	.set sub_02004ce6, 0x02004ce6
-	.set sub_02004cea, 0x02004cea
-	.set sub_02004d14, 0x02004d14
-	.set sub_02004d38, 0x02004d38
-	.set sub_02004d48, 0x02004d48
-	.set sub_02004d54, 0x02004d54
-	.set sub_02004d60, 0x02004d60
-	.set sub_02004d6c, 0x02004d6c
-	.set sub_02004d6e, 0x02004d6e
-	.set sub_02004d86, 0x02004d86
-	.set sub_02004dc2, 0x02004dc2
-	.set sub_02004dee, 0x02004dee
-	.set sub_02004df6, 0x02004df6
-	.set sub_02004e00, 0x02004e00
-	.set sub_02004e04, 0x02004e04
-	.set sub_02004e0c, 0x02004e0c
-	.set sub_02004e12, 0x02004e12
-	.set sub_02004e1e, 0x02004e1e
-	.set sub_02004e22, 0x02004e22
-	.set sub_02004e3c, 0x02004e3c
-	.set sub_02004e52, 0x02004e52
-	.set sub_02004e56, 0x02004e56
-	.set sub_02004e82, 0x02004e82
-	.set sub_02004e84, 0x02004e84
-	.set sub_02004e94, 0x02004e94
-	.set sub_02004e9c, 0x02004e9c
-	.set sub_02004eba, 0x02004eba
-	.set sub_02004ec6, 0x02004ec6
-	.set sub_02004ece, 0x02004ece
-	.set sub_02004ed4, 0x02004ed4
-	.set sub_02004eee, 0x02004eee
-	.set sub_02004f58, 0x02004f58
-	.set sub_02004f70, 0x02004f70
-	.set sub_02004f74, 0x02004f74
-	.set sub_02004f7c, 0x02004f7c
-	.set sub_02004f80, 0x02004f80
-	.set sub_02004f8e, 0x02004f8e
-	.set sub_02004f98, 0x02004f98
-	.set sub_02004f9e, 0x02004f9e
-	.set sub_02004fac, 0x02004fac
-	.set sub_02004fb2, 0x02004fb2
-	.set sub_02004fc6, 0x02004fc6
-	.set sub_02004fca, 0x02004fca
-	.set sub_02005006, 0x02005006
-	.set sub_0200500e, 0x0200500e
-	.set sub_02005010, 0x02005010
-	.set sub_02005012, 0x02005012
-	.set sub_0200501a, 0x0200501a
-	.set sub_02005028, 0x02005028
-	.set sub_0200502a, 0x0200502a
-	.set sub_02005030, 0x02005030
-	.set sub_02005036, 0x02005036
-	.set sub_0200503c, 0x0200503c
-	.set sub_0200503e, 0x0200503e
-	.set sub_02005070, 0x02005070
-	.set sub_020050a2, 0x020050a2
-	.set sub_020050b0, 0x020050b0
-	.set sub_020050ba, 0x020050ba
-	.set sub_020050bc, 0x020050bc
-	.set sub_020050ce, 0x020050ce
-	.set sub_020050de, 0x020050de
-	.set sub_020050f4, 0x020050f4
-	.set sub_020050f6, 0x020050f6
-	.set sub_02005104, 0x02005104
-	.set sub_02005106, 0x02005106
-	.set sub_0200515c, 0x0200515c
-	.set sub_0200515e, 0x0200515e
-	.set sub_02005164, 0x02005164
-	.set sub_02005172, 0x02005172
-	.set sub_02005180, 0x02005180
-	.set sub_02005218, 0x02005218
-	.set sub_02005230, 0x02005230
-	.set sub_02005248, 0x02005248
-	.set sub_02005260, 0x02005260
-	.set sub_02005278, 0x02005278
-	.set sub_02005290, 0x02005290
-	.set sub_020052a8, 0x020052a8
-	.set sub_020052be, 0x020052be
-	.set sub_020052d6, 0x020052d6
-	.set sub_020052de, 0x020052de
-	.set sub_020052ee, 0x020052ee
-	.set sub_020052f6, 0x020052f6
-	.set sub_02005306, 0x02005306
-	.set sub_0200530e, 0x0200530e
-	.set sub_0200531e, 0x0200531e
-	.set sub_02005326, 0x02005326
-	.set sub_0200532e, 0x0200532e
-	.set sub_02005336, 0x02005336
-	.set sub_0200533e, 0x0200533e
-	.set sub_0200534e, 0x0200534e
-	.set sub_02005356, 0x02005356
-	.set sub_02005366, 0x02005366
-	.set sub_0200536e, 0x0200536e
-	.set sub_0200537e, 0x0200537e
-	.set sub_02005384, 0x02005384
-	.set sub_02005396, 0x02005396
-	.set sub_0200539c, 0x0200539c
-	.set sub_020053ae, 0x020053ae
-	.set sub_020053b4, 0x020053b4
-	.set sub_020053c6, 0x020053c6
-	.set sub_020053cc, 0x020053cc
-	.set sub_020053de, 0x020053de
-	.set sub_020053e4, 0x020053e4
-	.set sub_020053f6, 0x020053f6
-	.set sub_020053fc, 0x020053fc
-	.set sub_0200540e, 0x0200540e
-	.set sub_02005414, 0x02005414
-	.set sub_0200542c, 0x0200542c
-	.set sub_02005444, 0x02005444
-	.set sub_02005448, 0x02005448
-	.set sub_0200545c, 0x0200545c
-	.set sub_02005460, 0x02005460
-	.set sub_02005474, 0x02005474
-	.set sub_02005476, 0x02005476
-	.set sub_0200547e, 0x0200547e
-	.set sub_0200548c, 0x0200548c
-	.set sub_0200548e, 0x0200548e
-	.set sub_020054a4, 0x020054a4
-	.set sub_020054bc, 0x020054bc
-	.set sub_020054da, 0x020054da
-	.set sub_02005506, 0x02005506
-	.set sub_0200550e, 0x0200550e
-	.set sub_02005518, 0x02005518
-	.set sub_0200551a, 0x0200551a
-	.set sub_02005526, 0x02005526
-	.set sub_0200553a, 0x0200553a
-	.set sub_0200553c, 0x0200553c
-	.set sub_0200554a, 0x0200554a
-	.set sub_0200556a, 0x0200556a
-	.set sub_02005588, 0x02005588
-	.set sub_020055be, 0x020055be
-	.set sub_020055cc, 0x020055cc
-	.set sub_020055d6, 0x020055d6
-	.set sub_020055e0, 0x020055e0
-	.set sub_020055e4, 0x020055e4
-	.set sub_020055ee, 0x020055ee
-	.set sub_020055f2, 0x020055f2
-	.set sub_02005606, 0x02005606
-	.set sub_02005610, 0x02005610
-	.set sub_0200561e, 0x0200561e
-	.set sub_02005620, 0x02005620
-	.set sub_02005632, 0x02005632
-	.set sub_02005636, 0x02005636
-	.set sub_0200564e, 0x0200564e
-	.set sub_02005666, 0x02005666
-	.set sub_02005682, 0x02005682
-	.set sub_02005684, 0x02005684
-	.set sub_0200569c, 0x0200569c
-	.set sub_0200569e, 0x0200569e
-	.set sub_020056b4, 0x020056b4
-	.set sub_020056cc, 0x020056cc
-	.set sub_020056ce, 0x020056ce
-	.set sub_020056e4, 0x020056e4
-	.set sub_020056fa, 0x020056fa
-	.set sub_020056fc, 0x020056fc
-	.set sub_02005704, 0x02005704
-	.set sub_02005714, 0x02005714
-	.set sub_02005728, 0x02005728
-	.set sub_02005730, 0x02005730
-	.set sub_02005734, 0x02005734
-	.set sub_0200574c, 0x0200574c
-	.set sub_02005750, 0x02005750
-	.set sub_0200575e, 0x0200575e
-	.set sub_02005768, 0x02005768
-	.set sub_02005778, 0x02005778
-	.set sub_020057a4, 0x020057a4
-	.set sub_020057a8, 0x020057a8
-	.set sub_020057b0, 0x020057b0
-	.set sub_020057cc, 0x020057cc
-	.set sub_020057d6, 0x020057d6
-	.set sub_020057e8, 0x020057e8
-	.set sub_020057f8, 0x020057f8
-	.set sub_020057fe, 0x020057fe
-	.set sub_0200586c, 0x0200586c
-	.set sub_02005876, 0x02005876
-	.set sub_020058a0, 0x020058a0
-	.set sub_020058aa, 0x020058aa
-	.set sub_020058ba, 0x020058ba
-	.set sub_020058bc, 0x020058bc
-	.set sub_020058be, 0x020058be
-	.set sub_020058c0, 0x020058c0
-	.set sub_020058c2, 0x020058c2
-	.set sub_020058c6, 0x020058c6
-	.set sub_020058e6, 0x020058e6
-	.set sub_020058ec, 0x020058ec
-	.set sub_020058ee, 0x020058ee
-	.set sub_0200590a, 0x0200590a
-	.set sub_02005922, 0x02005922
-	.set sub_02005930, 0x02005930
-	.set sub_02005938, 0x02005938
-	.set sub_0200596c, 0x0200596c
-	.set sub_02005970, 0x02005970
-	.set sub_0200597c, 0x0200597c
-	.set sub_0200598c, 0x0200598c
-	.set sub_02005990, 0x02005990
-	.set sub_02005998, 0x02005998
-	.set sub_0200599e, 0x0200599e
-	.set sub_020059aa, 0x020059aa
-	.set sub_020059ac, 0x020059ac
-	.set sub_020059c4, 0x020059c4
-	.set sub_020059de, 0x020059de
-	.set sub_02005a28, 0x02005a28
-	.set sub_02005a3a, 0x02005a3a
-	.set sub_02005a3e, 0x02005a3e
-	.set sub_02005a4c, 0x02005a4c
-	.set sub_02005a5e, 0x02005a5e
-	.set sub_02005a78, 0x02005a78
-	.set sub_02005a94, 0x02005a94
-	.set sub_02005aa6, 0x02005aa6
-	.set sub_02005aba, 0x02005aba
-	.set sub_02005acc, 0x02005acc
-	.set sub_02005ae6, 0x02005ae6
-	.set sub_02005aec, 0x02005aec
-	.set sub_02005b38, 0x02005b38
-	.set sub_02005b42, 0x02005b42
-	.set sub_02005b62, 0x02005b62
 	.global Overlay_02000000
 Overlay_02000000:
 	.irp EntryTarget, 0x0200a439, 0x0200833d, 0x0200837d, 0x02008601, 0x0200a339, 0x02008345, 0x0200ad51
@@ -557,12 +51,12 @@ Overlay_02000000:
 	adds	r2, r5, #0
 	adds	r1, r4, #0
 	adds	r3, r6, #0
-	bl	sub_02002e76
+	bl 0x0200ade4
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_020000ca
 	movs	r1, #0
-	bl	.L_020000d6
+	bl 0x02008038
 	adds	r2, r5, #0
 	adds	r2, #85
 	movs	r3, #0
@@ -572,13 +66,13 @@ Overlay_02000000:
 	strb	r3, [r2, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_02002ec8
+	bl 0x0200ae14
 	adds	r0, r5, #0
 	movs	r1, #14
-	bl	sub_02002f40
+	bl 0x0200ae84
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	sub_02002ee0
+	bl 0x0200ae1c
 	adds	r0, r5, #0
 	b.n	.L_020000cc
 .L_020000ca:
@@ -595,12 +89,12 @@ Overlay_02000000:
 	adds	r2, r5, #0
 	adds	r1, r4, #0
 	adds	r3, r6, #0
-	bl	sub_02002ec6
+	bl 0x0200ade4
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0200011e
 	movs	r1, #1
-	bl	sub_02000126
+	bl 0x02008038
 	adds	r2, r5, #0
 	adds	r2, #85
 	movs	r3, #0
@@ -610,10 +104,10 @@ Overlay_02000000:
 	strb	r3, [r2, #0]
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	sub_02002f18
+	bl 0x0200ae14
 	adds	r0, r5, #0
 	movs	r1, #15
-	bl	sub_02002f90
+	bl 0x0200ae84
 	adds	r1, r5, #0
 	adds	r1, #35
 	ldrb	r2, [r1, #0]
@@ -662,7 +156,7 @@ Overlay_02000000:
 	ldr	r0, [r3, #0]
 	mov	sl, r1
 	ldr	r7, [sp, #48]
-	bl	sub_02002fda
+	bl 0x0200ae54
 	movs	r3, #128
 	lsls	r3, r3, #13
 	mov	r1, sl
@@ -684,7 +178,7 @@ Overlay_02000000:
 	adds	r1, r5, #0
 .L_020001ac:
 	mov	r3, r8
-	bl	sub_02002f94
+	bl 0x0200ade4
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_020001ba
@@ -697,7 +191,7 @@ Overlay_02000000:
 	ands	r1, r5
 	adds	r0, r6, #0
 	mov	r8, r3
-	bl	sub_02002f9e
+	bl 0x0200add4
 	ldr	r2, [pc, #352]
 	mov	r3, sl
 	ands	r3, r5
@@ -705,14 +199,14 @@ Overlay_02000000:
 	ldr	r1, [r2, r3]
 	adds	r0, r6, #0
 	mov	fp, r3
-	bl	sub_02002fb8
+	bl 0x0200addc
 	adds	r3, r6, #0
 	movs	r5, #0
 	adds	r3, #85
 	strb	r5, [r3, #0]
 	adds	r0, r6, #0
 	movs	r1, #0
-	bl	sub_02003000
+	bl 0x0200ae14
 	ldr	r3, [pc, #324]
 	mov	r1, r9
 	str	r3, [r6, #108]
@@ -727,7 +221,7 @@ Overlay_02000000:
 	ldrb	r1, [r3, #9]
 	lsls	r1, r1, #28
 	lsrs	r1, r1, #30
-	bl	.L_02000244
+	bl 0x02008038
 	movs	r2, #100
 	adds	r2, r2, r6
 	mov	r9, r2
@@ -749,7 +243,7 @@ Overlay_02000000:
 	beq.n	.L_0200023c
 	ldr	r1, [r7, #4]
 	adds	r0, r6, #0
-	bl	sub_020030be
+	bl 0x0200ae84
 .L_0200023c:
 	movs	r3, #128
 	lsls	r3, r3, #10
@@ -778,7 +272,7 @@ Overlay_02000000:
 	orrs	r3, r2
 	strb	r3, [r1, #9]
 	ldr	r1, [r7, #0]
-	bl	.L_020002aa
+	bl 0x02008038
 .L_02000274:
 	movs	r2, #128
 	lsls	r2, r2, #12
@@ -806,7 +300,7 @@ Overlay_02000000:
 	beq.n	.L_020002b6
 	ldr	r0, [r6, #24]
 	subs	r0, r3, r0
-	bl	sub_02002ffc
+	bl 0x0200ad54
 .L_020002aa:
 	str	r0, [r6, #48]
 	ldr	r0, [r7, #20]
@@ -817,14 +311,14 @@ Overlay_02000000:
 .L_020002b6:
 	ldr	r2, [pc, #128]
 	adds	r0, r3, r2
-	bl	sub_02003010
+	bl 0x0200ad54
 	str	r0, [r6, #48]
 	ldr	r0, [r7, #20]
 	ldr	r3, [pc, #116]
 	ldr	r1, [r5, #12]
 	adds	r0, r0, r3
 .L_020002c8:
-	bl	sub_0200301e
+	bl 0x0200ad54
 	str	r0, [r6, #52]
 .L_020002ce:
 	movs	r3, #128
@@ -835,10 +329,10 @@ Overlay_02000000:
 	beq.n	.L_020002ea
 	adds	r0, r6, #0
 	movs	r1, #1
-	bl	sub_020030b4
+	bl 0x0200add4
 	ldr	r1, [r7, #28]
 	adds	r0, r6, #0
-	bl	sub_020030c4
+	bl 0x0200addc
 .L_020002ea:
 	movs	r3, #128
 	lsls	r3, r3, #15
@@ -922,20 +416,20 @@ Overlay_02000000:
 	adds	r5, r5, r3
 	ldr	r0, [r5, #0]
 	movs	r1, #2
-	bl	sub_02003220
+	bl 0x0200ae8c
 	movs	r2, #128
 	movs	r1, #6
 	lsls	r2, r2, #5
 	ldr	r0, [r5, #0]
-	bl	sub_0200321c
+	bl 0x0200ae7c
 	movs	r0, #155
 	lsls	r0, r0, #1
-	bl	sub_02003294
+	bl 0x0200aeec
 	movs	r0, #145
 	lsls	r0, r0, #1
-	bl	sub_0200316c
+	bl 0x0200adbc
 	movs	r0, #13
-	bl	sub_02003272
+	bl 0x0200aebc
 	pop	{r5, pc}
 	.2byte 0x0000
 	.2byte 0x0240
@@ -956,7 +450,7 @@ Overlay_02000000:
 	adds	r3, r3, r7
 	movs	r1, #18
 	str	r3, [r6, #16]
-	bl	sub_02003136
+	bl 0x0200ad54
 	subs	r5, r5, r0
 	str	r5, [r6, #68]
 	adds	r3, r7, #0
@@ -994,11 +488,11 @@ Overlay_02000000:
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
 	sub	sp, #68
-	bl	sub_02003282
+	bl 0x0200ae54
 	adds	r7, r0, #0
-	bl	sub_02003278
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_02003316
+	bl 0x0200aedc
 	movs	r0, #1
 	movs	r1, #1
 	movs	r2, #1
@@ -1006,10 +500,10 @@ Overlay_02000000:
 	negs	r2, r2
 	movs	r3, #0
 	negs	r0, r0
-	bl	sub_020032f8
-	bl	sub_0200323c
+	bl 0x0200aeac
+	bl 0x0200adec
 	movs	r0, #1
-	bl	sub_020031b2
+	bl 0x0200ad5c
 	movs	r3, #130
 	lsls	r3, r3, #16
 	str	r3, [r7, #12]
@@ -1030,14 +524,14 @@ Overlay_02000000:
 	adds	r3, r3, r4
 	lsls	r2, r2, #1
 	str	r2, [r3, #0]
-	bl	sub_02003346
-	bl	sub_02003352
+	bl 0x0200aec4
+	bl 0x0200aecc
 	movs	r0, #204
-	bl	sub_02003378
+	bl 0x0200aeec
 	movs	r3, #3
 	strb	r3, [r5, #0]
 	movs	r0, #24
-	bl	sub_020032d2
+	bl 0x0200ae3c
 	add	r2, sp, #28
 	movs	r3, #7
 	str	r3, [r2, #4]
@@ -1055,19 +549,19 @@ Overlay_02000000:
 	mov	r4, sl
 	lsls	r5, r4, #12
 	adds	r0, r5, #0
-	bl	sub_0200323e
+	bl 0x0200ad84
 	add	r6, sp, #16
 	movs	r3, #0
 	str	r0, [r6, #0]
 	adds	r0, r5, #0
 	str	r3, [r6, #4]
-	bl	sub_02003244
+	bl 0x0200ad7c
 	ldr	r3, [r6, #0]
 	str	r0, [r6, #8]
 	asrs	r2, r3, #1
 	adds	r3, r3, r2
 	str	r3, [r6, #0]
-	bl	sub_0200324a
+	bl 0x0200ad74
 	lsls	r3, r0, #1
 	ldr	r2, [r6, #0]
 	adds	r3, r3, r0
@@ -1077,7 +571,7 @@ Overlay_02000000:
 	ldr	r3, [pc, #204]
 	adds	r2, r2, r3
 	str	r2, [r6, #0]
-	bl	sub_02003260
+	bl 0x0200ad74
 	lsls	r3, r0, #1
 	ldr	r5, [r6, #8]
 	adds	r3, r3, r0
@@ -1098,14 +592,14 @@ Overlay_02000000:
 	str	r4, [sp, #8]
 	mov	r4, r8
 	str	r4, [sp, #12]
-	bl	.L_02000674
+	bl 0x0200815c
 	movs	r2, #1
 	add	sl, r2
 	mov	r3, sl
 	cmp	r3, #16
 	bls.n	.L_020004b2
 	movs	r0, #188
-	bl	sub_02003414
+	bl 0x0200aeec
 	ldr	r5, [pc, #128]
 	movs	r4, #133
 	lsls	r4, r4, #2
@@ -1113,17 +607,17 @@ Overlay_02000000:
 	movs	r1, #2
 	ldr	r0, [r5, #0]
 	adds	r1, #255
-	bl	sub_020033d6
+	bl 0x0200ae9c
 	ldr	r0, [r5, #0]
 	movs	r1, #49
-	bl	sub_020033b6
+	bl 0x0200ae74
 	movs	r0, #160
 	movs	r1, #160
 	movs	r2, #128
 	lsls	r0, r0, #11
 	lsls	r1, r1, #11
 	lsls	r2, r2, #9
-	bl	sub_02003376
+	bl 0x0200ae24
 	movs	r2, #230
 	movs	r0, #1
 	movs	r1, #1
@@ -1131,12 +625,12 @@ Overlay_02000000:
 	adds	r2, #102
 	negs	r0, r0
 	negs	r1, r1
-	bl	sub_02003388
-	bl	sub_02003394
+	bl 0x0200ae24
+	bl 0x0200ae2c
 	movs	r1, #128
 	ldr	r0, [r5, #0]
 	lsls	r1, r1, #1
-	bl	sub_0200340e
+	bl 0x0200ae9c
 	movs	r3, #128
 	lsls	r3, r3, #9
 	str	r3, [r7, #72]
@@ -1144,10 +638,10 @@ Overlay_02000000:
 	lsls	r3, r3, #7
 	str	r3, [r7, #68]
 	movs	r0, #10
-	bl	sub_020033c0
+	bl 0x0200ae3c
 	ldr	r0, [r5, #0]
 	movs	r1, #1
-	bl	sub_02003400
+	bl 0x0200ae74
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #108]
@@ -1156,7 +650,7 @@ Overlay_02000000:
 	adds	r3, r3, r2
 	adds	r2, #88
 	str	r2, [r3, #0]
-	bl	sub_020033ec
+	bl 0x0200ae4c
 	add	sp, #68
 	pop	{r3, r5}
 	mov	r8, r3
@@ -1171,7 +665,7 @@ Overlay_02000000:
 	push	{r5, lr}
 	movs	r1, #0
 	adds	r5, r0, #0
-	bl	sub_020033dc
+	bl 0x0200ae14
 	ldr	r1, [r5, #80]
 	movs	r3, #13
 	ldrb	r2, [r1, #9]
@@ -1285,7 +779,7 @@ Overlay_02000000:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	sub_020034fa
+	bl 0x0200ae54
 	movs	r3, #2
 	adds	r0, #34
 	strb	r3, [r0, #0]
@@ -1298,7 +792,7 @@ Overlay_02000000:
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
-	bl	sub_02003516
+	bl 0x0200ae54
 	movs	r3, #0
 	adds	r0, #34
 	strb	r3, [r0, #0]
@@ -1327,7 +821,7 @@ Overlay_02000000:
 	movs	r1, #68
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020034fa
+	bl 0x0200adfc
 	movs	r3, #3
 	movs	r2, #70
 	str	r3, [sp, #0]
@@ -1336,7 +830,7 @@ Overlay_02000000:
 	movs	r1, #68
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_0200350e
+	bl 0x0200adfc
 .L_02000714:
 	ldr	r3, [pc, #292]
 	movs	r2, #240
@@ -1357,7 +851,7 @@ Overlay_02000000:
 	movs	r1, #72
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_02003538
+	bl 0x0200adfc
 	movs	r3, #37
 	movs	r2, #73
 	str	r3, [sp, #0]
@@ -1366,7 +860,7 @@ Overlay_02000000:
 	movs	r1, #72
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_0200354c
+	bl 0x0200adfc
 .L_02000752:
 	cmp	r6, #8
 	bne.n	.L_0200076a
@@ -1378,7 +872,7 @@ Overlay_02000000:
 	movs	r1, #113
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_02003564
+	bl 0x0200adfc
 .L_0200076a:
 	cmp	r6, #18
 	bne.n	.L_02000782
@@ -1390,7 +884,7 @@ Overlay_02000000:
 	movs	r1, #93
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_0200357c
+	bl 0x0200adfc
 .L_02000782:
 	ldr	r3, [pc, #184]
 	movs	r2, #240
@@ -1411,7 +905,7 @@ Overlay_02000000:
 	movs	r1, #69
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020035a6
+	bl 0x0200adfc
 	movs	r3, #33
 	movs	r2, #71
 	str	r3, [sp, #0]
@@ -1420,7 +914,7 @@ Overlay_02000000:
 	movs	r1, #69
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020035ba
+	bl 0x0200adfc
 .L_020007c0:
 	ldr	r3, [pc, #120]
 	movs	r2, #240
@@ -1441,7 +935,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #4]
-	bl	sub_020035e4
+	bl 0x0200adfc
 	movs	r3, #18
 	movs	r2, #82
 	str	r3, [sp, #0]
@@ -1450,7 +944,7 @@ Overlay_02000000:
 	movs	r1, #84
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020035f8
+	bl 0x0200adfc
 	movs	r3, #19
 	str	r3, [sp, #0]
 	movs	r0, #19
@@ -1458,14 +952,14 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #4]
-	bl	sub_0200360a
+	bl 0x0200adfc
 .L_02000810:
 	cmp	r6, #9
 	bne.n	.L_02000836
 	movs	r0, #131
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_020035d0
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02000836
 	movs	r3, #25
@@ -1476,7 +970,7 @@ Overlay_02000000:
 	movs	r1, #98
 	movs	r2, #3
 	movs	r3, #5
-	bl	sub_02003628
+	bl 0x0200adf4
 .L_02000836:
 	add	sp, #8
 	pop	{r5, r6, pc}
@@ -1491,7 +985,7 @@ Overlay_02000000:
 	adds	r5, r1, #0
 	adds	r0, r5, #0
 	sub	sp, #8
-	bl	sub_020036ae
+	bl 0x0200ae54
 	adds	r7, r0, #0
 	cmp	r5, #8
 	bne.n	.L_02000924
@@ -1516,11 +1010,11 @@ Overlay_02000000:
 	movs	r1, #68
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_0200368a
+	bl 0x0200adfc
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #198
-	bl	sub_02003654
+	bl 0x0200adbc
 .L_0200089a:
 	movs	r3, #4
 	movs	r2, #69
@@ -1530,7 +1024,7 @@ Overlay_02000000:
 	movs	r1, #68
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020036a8
+	bl 0x0200adfc
 	movs	r3, #3
 	movs	r2, #70
 	str	r3, [sp, #0]
@@ -1539,7 +1033,7 @@ Overlay_02000000:
 	movs	r1, #69
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020036bc
+	bl 0x0200adfc
 .L_020008c2:
 	cmp	r5, #8
 	bne.n	.L_02000924
@@ -1560,7 +1054,7 @@ Overlay_02000000:
 	movs	r3, #1
 	movs	r6, #33
 	str	r6, [sp, #0]
-	bl	sub_020036e6
+	bl 0x0200adfc
 	movs	r3, #32
 	movs	r2, #70
 	str	r3, [sp, #0]
@@ -1569,7 +1063,7 @@ Overlay_02000000:
 	movs	r0, #31
 	movs	r1, #70
 	movs	r2, #1
-	bl	sub_020036fa
+	bl 0x0200adfc
 	ldr	r3, [r7, #8]
 	asrs	r3, r3, #20
 	cmp	r3, #32
@@ -1581,11 +1075,11 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r6, [sp, #0]
-	bl	sub_02003714
+	bl 0x0200adfc
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #199
-	bl	sub_020036de
+	bl 0x0200adbc
 .L_02000924:
 	ldr	r3, [pc, #300]
 	movs	r2, #240
@@ -1606,7 +1100,7 @@ Overlay_02000000:
 	movs	r0, #3
 	movs	r1, #114
 	movs	r2, #1
-	bl	sub_02003748
+	bl 0x0200adfc
 	ldr	r3, [r7, #8]
 	asrs	r3, r3, #20
 	cmp	r3, #2
@@ -1614,7 +1108,7 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #200
-	bl	sub_0200371a
+	bl 0x0200adbc
 .L_02000960:
 	cmp	r5, #18
 	bne.n	.L_0200098a
@@ -1626,7 +1120,7 @@ Overlay_02000000:
 	movs	r0, #40
 	movs	r1, #94
 	movs	r2, #1
-	bl	sub_02003772
+	bl 0x0200adfc
 	ldr	r3, [r7, #8]
 	asrs	r3, r3, #20
 	cmp	r3, #39
@@ -1634,7 +1128,7 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #201
-	bl	sub_02003744
+	bl 0x0200adbc
 .L_0200098a:
 	cmp	r5, #19
 	bne.n	.L_020009da
@@ -1646,7 +1140,7 @@ Overlay_02000000:
 	movs	r1, #72
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_0200379c
+	bl 0x0200adfc
 	movs	r3, #73
 	str	r3, [sp, #4]
 	movs	r6, #37
@@ -1655,7 +1149,7 @@ Overlay_02000000:
 	movs	r1, #74
 	movs	r2, #1
 	str	r6, [sp, #0]
-	bl	sub_020037b0
+	bl 0x0200adfc
 	ldr	r3, [r7, #8]
 	asrs	r3, r3, #20
 	cmp	r3, #38
@@ -1667,11 +1161,11 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r6, [sp, #0]
-	bl	sub_020037ca
+	bl 0x0200adfc
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #202
-	bl	sub_02003794
+	bl 0x0200adbc
 .L_020009da:
 	cmp	r5, #8
 	bne.n	.L_02000a4e
@@ -1692,7 +1186,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #4]
-	bl	sub_020037fe
+	bl 0x0200adfc
 	movs	r3, #82
 	str	r3, [sp, #4]
 	movs	r0, #19
@@ -1701,7 +1195,7 @@ Overlay_02000000:
 	movs	r3, #1
 	movs	r6, #18
 	str	r6, [sp, #0]
-	bl	sub_02003812
+	bl 0x0200adfc
 	movs	r3, #19
 	str	r3, [sp, #0]
 	movs	r0, #19
@@ -1709,7 +1203,7 @@ Overlay_02000000:
 	movs	r1, #82
 	movs	r2, #1
 	str	r5, [sp, #4]
-	bl	sub_02003824
+	bl 0x0200adfc
 	ldr	r3, [r7, #8]
 	asrs	r3, r3, #20
 	cmp	r3, #17
@@ -1721,11 +1215,11 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r6, [sp, #0]
-	bl	sub_0200383e
+	bl 0x0200adfc
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #203
-	bl	sub_02003808
+	bl 0x0200adbc
 .L_02000a4e:
 	add	sp, #8
 	pop	{r5, r6, r7, pc}
@@ -1741,7 +1235,7 @@ Overlay_02000000:
 	push	{r7}
 	adds	r5, r1, #0
 	adds	r0, r5, #0
-	bl	sub_020038c8
+	bl 0x0200ae54
 	adds	r6, r0, #0
 	ldr	r3, [r6, #16]
 	movs	r2, #60
@@ -1754,9 +1248,9 @@ Overlay_02000000:
 	movs	r3, #3
 	strb	r3, [r2, #0]
 	movs	r1, #3
-	bl	sub_020038c4
+	bl 0x0200ae34
 	movs	r0, #204
-	bl	sub_02003982
+	bl 0x0200aeec
 	movs	r7, #236
 	lsls	r7, r7, #14
 	b.n	.L_02000aa8
@@ -1771,7 +1265,7 @@ Overlay_02000000:
 	cmp	r3, #0
 	beq.n	.L_02000aba
 	movs	r0, #1
-	bl	sub_0200380e
+	bl 0x0200ad5c
 	ldr	r3, [r6, #40]
 	cmp	r3, #0
 	bne.n	.L_02000a9e
@@ -1779,55 +1273,55 @@ Overlay_02000000:
 	adds	r0, r5, #0
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200392e
+	bl 0x0200ae6c
 	cmp	r5, #10
 	bne.n	.L_02000ad2
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #210
-	bl	sub_0200388c
+	bl 0x0200adbc
 .L_02000ad2:
 	cmp	r5, #11
 	bne.n	.L_02000ae0
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #211
-	bl	sub_0200389a
+	bl 0x0200adbc
 .L_02000ae0:
 	cmp	r5, #12
 	bne.n	.L_02000aee
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #212
-	bl	sub_020038a8
+	bl 0x0200adbc
 .L_02000aee:
 	cmp	r5, #13
 	bne.n	.L_02000afc
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #213
-	bl	sub_020038b6
+	bl 0x0200adbc
 .L_02000afc:
 	cmp	r5, #14
 	bne.n	.L_02000b0a
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #214
-	bl	sub_020038c4
+	bl 0x0200adbc
 .L_02000b0a:
 	cmp	r5, #15
 	bne.n	.L_02000b18
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #215
-	bl	sub_020038d2
+	bl 0x0200adbc
 .L_02000b18:
 	cmp	r5, #16
 	bne.n	.L_02000b26
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #216
-	bl	sub_020038e0
+	bl 0x0200adbc
 .L_02000b26:
 	pop	{r3}
 	mov	r8, r3
@@ -1838,7 +1332,7 @@ Overlay_02000000:
 	mov	r7, r8
 	push	{r7}
 	adds	r7, r1, #0
-	bl	sub_0200398e
+	bl 0x0200ae54
 	movs	r2, #85
 	adds	r5, r0, #0
 	adds	r2, r2, r5
@@ -1850,7 +1344,7 @@ Overlay_02000000:
 	cmp	r6, #0
 	beq.n	.L_02000b5c
 	movs	r0, #1
-	bl	sub_020038ae
+	bl 0x0200ad5c
 	ldr	r3, [r5, #40]
 	subs	r6, #1
 	cmp	r3, #0
@@ -1859,10 +1353,10 @@ Overlay_02000000:
 	cmp	r7, #0
 	beq.n	.L_02000b66
 	adds	r0, r7, #0
-	bl	sub_02003a50
+	bl 0x0200aeec
 .L_02000b66:
 	movs	r0, #10
-	bl	sub_020038c6
+	bl 0x0200ad5c
 	movs	r3, #0
 	mov	r2, r8
 	strb	r3, [r2, #0]
@@ -1904,10 +1398,10 @@ Overlay_02000000:
 	adds	r6, r3, #0
 	lsls	r7, r2, #16
 .L_02000bba:
-	bl	sub_02003930
+	bl 0x0200ad74
 	movs	r5, #15
 	ands	r5, r0
-	bl	sub_02003938
+	bl 0x0200ad74
 	ldr	r3, [sp, #16]
 	movs	r1, #31
 	ands	r1, r0
@@ -1931,7 +1425,7 @@ Overlay_02000000:
 	lsls	r2, r3, #16
 	adds	r0, r5, #0
 	movs	r3, #0
-	bl	.L_02000d52
+	bl 0x0200815c
 	movs	r2, #128
 	lsls	r2, r2, #13
 	subs	r6, #1
@@ -1940,7 +1434,7 @@ Overlay_02000000:
 	bne.n	.L_02000bba
 .L_02000c04:
 	ldr	r0, [sp, #24]
-	bl	sub_02003a44
+	bl 0x0200ae3c
 	movs	r2, #1
 	movs	r3, #2
 	add	r9, r2
@@ -1963,7 +1457,7 @@ Overlay_02000000:
 	adds	r5, r1, #0
 	adds	r0, r5, #0
 	sub	sp, #8
-	bl	sub_02003a8a
+	bl 0x0200ae54
 	ldr	r3, [r0, #8]
 	asrs	r7, r3, #20
 	ldr	r3, [r0, #16]
@@ -1977,10 +1471,10 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #217
-	bl	sub_02003a10
+	bl 0x0200adbc
 	movs	r0, #9
 	movs	r1, #181
-	bl	sub_0200178c
+	bl 0x02008b30
 .L_02000c5e:
 	cmp	r5, #10
 	bne.n	.L_02000c7c
@@ -1991,15 +1485,15 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #218
-	bl	sub_02003a2e
+	bl 0x0200adbc
 	movs	r0, #10
 	movs	r1, #181
-	bl	.L_020017aa
+	bl 0x02008b30
 .L_02000c7c:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #218
-	bl	sub_02003a38
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02000c8c
 	b.n	.L_02000e50
@@ -2007,32 +1501,32 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #217
-	bl	sub_02003a48
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02000c9c
 	b.n	.L_02000e50
 .L_02000c9c:
-	bl	sub_02003ae2
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_02003b80
+	bl 0x0200aedc
 	movs	r0, #128
 	movs	r1, #128
 	movs	r2, #128
 	lsls	r0, r0, #10
 	lsls	r1, r1, #10
 	lsls	r2, r2, #9
-	bl	sub_02003ad8
+	bl 0x0200ae24
 	movs	r0, #216
 	movs	r1, #1
 	negs	r1, r1
 	ldr	r2, [pc, #412]
 	movs	r3, #1
 	lsls	r0, r0, #16
-	bl	sub_02003b70
+	bl 0x0200aeac
 	movs	r0, #15
-	bl	sub_02003b06
+	bl 0x0200ae3c
 	movs	r0, #202
-	bl	sub_02003bbc
+	bl 0x0200aeec
 	movs	r5, #12
 	movs	r6, #111
 	movs	r1, #91
@@ -2041,13 +1535,13 @@ Overlay_02000000:
 	movs	r0, #12
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02003ae8
+	bl 0x0200ae04
 	movs	r0, #60
-	bl	sub_02003b26
+	bl 0x0200ae3c
 	movs	r0, #160
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_02003be0
+	bl 0x0200aeec
 	movs	r3, #47
 	str	r3, [sp, #4]
 	mov	r9, r3
@@ -2056,14 +1550,14 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #2
 	str	r5, [sp, #0]
-	bl	sub_02003afc
+	bl 0x0200adf4
 	movs	r0, #16
 	movs	r1, #91
 	movs	r2, #3
 	movs	r3, #2
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02003b0c
+	bl 0x0200adf4
 	movs	r3, #40
 	negs	r3, r3
 	mov	sl, r3
@@ -2077,7 +1571,7 @@ Overlay_02000000:
 	movs	r1, #15
 	movs	r2, #200
 	mov	r3, sl
-	bl	.L_020018ae
+	bl 0x02008b78
 	mov	r3, r9
 	str	r3, [sp, #4]
 	movs	r0, #16
@@ -2085,7 +1579,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	sub_02003b3c
+	bl 0x0200adf4
 	movs	r0, #16
 	movs	r1, #91
 	movs	r2, #3
@@ -2093,7 +1587,7 @@ Overlay_02000000:
 .L_02000d52:
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02003b4c
+	bl 0x0200adf4
 	movs	r3, #190
 	lsls	r3, r3, #2
 	str	r3, [sp, #0]
@@ -2103,7 +1597,7 @@ Overlay_02000000:
 	movs	r1, #10
 	movs	r2, #200
 	mov	r3, sl
-	bl	.L_020018e6
+	bl 0x02008b78
 	mov	r3, r9
 	str	r3, [sp, #4]
 	movs	r0, #16
@@ -2111,14 +1605,14 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #4
 	str	r5, [sp, #0]
-	bl	sub_02003b74
+	bl 0x0200adf4
 	movs	r0, #16
 	movs	r1, #91
 	movs	r2, #3
 	movs	r3, #4
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02003b84
+	bl 0x0200adf4
 	movs	r3, #194
 	lsls	r3, r3, #2
 	str	r3, [sp, #0]
@@ -2128,7 +1622,7 @@ Overlay_02000000:
 	movs	r1, #10
 	movs	r2, #200
 	mov	r3, sl
-	bl	.L_0200191e
+	bl 0x02008b78
 	mov	r3, r9
 	str	r3, [sp, #4]
 	movs	r0, #16
@@ -2136,14 +1630,14 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	sub_02003bac
+	bl 0x0200adf4
 	movs	r0, #16
 	movs	r1, #91
 	movs	r2, #3
 	movs	r3, #5
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02003bbc
+	bl 0x0200adf4
 	movs	r3, #198
 	lsls	r3, r3, #2
 	str	r3, [sp, #0]
@@ -2153,7 +1647,7 @@ Overlay_02000000:
 	movs	r1, #10
 	movs	r2, #200
 	mov	r3, sl
-	bl	.L_02001956
+	bl 0x02008b78
 	mov	r3, r9
 	str	r3, [sp, #4]
 	movs	r0, #16
@@ -2161,14 +1655,14 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #6
 	str	r5, [sp, #0]
-	bl	sub_02003be4
+	bl 0x0200adf4
 	movs	r3, #6
 	movs	r0, #16
 	movs	r1, #91
 	movs	r2, #3
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02003bf4
+	bl 0x0200adf4
 	movs	r2, #230
 	movs	r0, #1
 	movs	r1, #1
@@ -2176,7 +1670,7 @@ Overlay_02000000:
 	negs	r0, r0
 	negs	r1, r1
 	adds	r2, #102
-	bl	sub_02003c36
+	bl 0x0200ae24
 	movs	r3, #202
 	lsls	r3, r3, #2
 	str	r3, [sp, #0]
@@ -2186,7 +1680,7 @@ Overlay_02000000:
 	movs	r1, #10
 	movs	r2, #200
 	mov	r3, sl
-	bl	.L_020019a0
+	bl 0x02008b78
 	mov	r3, r9
 	str	r3, [sp, #4]
 	movs	r0, #16
@@ -2194,15 +1688,15 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #13
 	str	r5, [sp, #0]
-	bl	sub_02003c2e
+	bl 0x0200adf4
 	movs	r0, #16
 	movs	r1, #91
 	movs	r2, #3
 	movs	r3, #13
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02003c3e
-	bl	sub_02003c9a
+	bl 0x0200adf4
+	bl 0x0200ae4c
 .L_02000e50:
 	add	sp, #8
 	pop	{r3, r5, r6}
@@ -2219,7 +1713,7 @@ Overlay_02000000:
 	adds	r5, r1, #0
 	adds	r0, r5, #0
 	sub	sp, #8
-	bl	sub_02003cc4
+	bl 0x0200ae54
 	ldr	r3, [r0, #8]
 	asrs	r7, r3, #20
 	ldr	r3, [r0, #16]
@@ -2239,17 +1733,17 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #220
-	bl	sub_02003c50
+	bl 0x0200adbc
 	movs	r1, #181
 	movs	r0, #8
-	bl	.L_020019cc
-	bl	sub_02003ce4
+	bl 0x02008b30
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_02003d82
+	bl 0x0200aedc
 	movs	r0, #15
-	bl	sub_02003ce8
+	bl 0x0200ae3c
 	movs	r0, #202
-	bl	sub_02003d9e
+	bl 0x0200aeec
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r0, #29
@@ -2257,7 +1751,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #1
 	str	r7, [sp, #0]
-	bl	sub_02003cb8
+	bl 0x0200adf4
 	movs	r0, #216
 	movs	r1, #1
 	movs	r2, #240
@@ -2265,20 +1759,20 @@ Overlay_02000000:
 	lsls	r0, r0, #16
 	negs	r1, r1
 	lsls	r2, r2, #15
-	bl	sub_02003d82
+	bl 0x0200aeac
 	movs	r0, #128
 	movs	r1, #128
 	movs	r2, #128
 	lsls	r1, r1, #10
 	lsls	r2, r2, #9
 	lsls	r0, r0, #10
-	bl	sub_02003d0a
+	bl 0x0200ae24
 	movs	r0, #60
-	bl	sub_02003d28
+	bl 0x0200ae3c
 	movs	r0, #160
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_02003de2
+	bl 0x0200aeec
 	movs	r3, #7
 	str	r3, [sp, #4]
 	movs	r5, #10
@@ -2288,7 +1782,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #2
 	str	r5, [sp, #0]
-	bl	sub_02003d00
+	bl 0x0200adf4
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2296,7 +1790,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #2
 	str	r5, [sp, #0]
-	bl	sub_02003d12
+	bl 0x0200adf4
 	movs	r3, #40
 	negs	r3, r3
 	mov	r8, r3
@@ -2308,7 +1802,7 @@ Overlay_02000000:
 	movs	r1, #10
 	movs	r2, #200
 	mov	r3, r8
-	bl	.L_02001ab0
+	bl 0x02008b78
 	mov	r3, sl
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2316,7 +1810,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	sub_02003d3e
+	bl 0x0200adf4
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2324,7 +1818,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	sub_02003d50
+	bl 0x0200adf4
 	movs	r3, #140
 	str	r3, [sp, #0]
 	movs	r0, #3
@@ -2332,7 +1826,7 @@ Overlay_02000000:
 	movs	r2, #184
 	mov	r3, r8
 	str	r6, [sp, #4]
-	bl	.L_02001ae6
+	bl 0x02008b78
 	mov	r3, sl
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2340,7 +1834,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #4
 	str	r5, [sp, #0]
-	bl	sub_02003d74
+	bl 0x0200adf4
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2348,7 +1842,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #4
 	str	r5, [sp, #0]
-	bl	sub_02003d86
+	bl 0x0200adf4
 	movs	r3, #156
 	str	r3, [sp, #0]
 	movs	r0, #3
@@ -2356,7 +1850,7 @@ Overlay_02000000:
 	movs	r2, #184
 	mov	r3, r8
 	str	r6, [sp, #4]
-	bl	sub_02001b1c
+	bl 0x02008b78
 	mov	r3, sl
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2364,7 +1858,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	sub_02003daa
+	bl 0x0200adf4
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2372,7 +1866,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	sub_02003dbc
+	bl 0x0200adf4
 	movs	r3, #172
 	str	r3, [sp, #0]
 	movs	r0, #3
@@ -2380,7 +1874,7 @@ Overlay_02000000:
 	movs	r1, #10
 	movs	r2, #184
 	str	r6, [sp, #4]
-	bl	.L_02001b52
+	bl 0x02008b78
 	movs	r2, #230
 	movs	r0, #1
 	movs	r1, #1
@@ -2388,7 +1882,7 @@ Overlay_02000000:
 	negs	r0, r0
 	negs	r1, r1
 	adds	r2, #102
-	bl	sub_02003e10
+	bl 0x0200ae24
 	mov	r3, sl
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2396,7 +1890,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #6
 	str	r5, [sp, #0]
-	bl	sub_02003df2
+	bl 0x0200adf4
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r1, #70
@@ -2404,9 +1898,9 @@ Overlay_02000000:
 	movs	r3, #6
 	movs	r0, #35
 	str	r5, [sp, #0]
-	bl	sub_02003e04
+	bl 0x0200adf4
 	movs	r0, #15
-	bl	sub_02003e52
+	bl 0x0200ae3c
 	mov	r3, sl
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2414,7 +1908,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #16
 	str	r5, [sp, #0]
-	bl	sub_02003e1c
+	bl 0x0200adf4
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -2422,8 +1916,8 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #16
 	str	r5, [sp, #0]
-	bl	sub_02003e2e
-	bl	sub_02003e8a
+	bl 0x0200adf4
+	bl 0x0200ae4c
 .L_02001040:
 	add	sp, #8
 	pop	{r3, r5}
@@ -2434,7 +1928,7 @@ Overlay_02000000:
 	push	{r5, r6, lr}
 	adds	r5, r1, #0
 	adds	r0, r5, #0
-	bl	sub_02003ea8
+	bl 0x0200ae54
 	adds	r6, r0, #0
 	ldr	r3, [r6, #8]
 	asrs	r2, r3, #20
@@ -2447,53 +1941,53 @@ Overlay_02000000:
 	cmp	r3, #24
 	bne.n	.L_020010e6
 	movs	r0, #10
-	bl	sub_02003ec4
+	bl 0x0200ae54
 	movs	r1, #0
-	bl	sub_02003e8a
+	bl 0x0200ae14
 	ldr	r5, [pc, #108]
 	ldr	r3, [r6, #12]
 	movs	r0, #1
 	adds	r3, r3, r5
 	str	r3, [r6, #12]
-	bl	sub_02003ec0
+	bl 0x0200ae3c
 	ldr	r3, [r6, #12]
 	movs	r0, #1
 	adds	r3, r3, r5
 	str	r3, [r6, #12]
-	bl	sub_02003ecc
+	bl 0x0200ae3c
 	ldr	r3, [r6, #12]
 	ldr	r2, [pc, #84]
 	movs	r0, #1
 	adds	r3, r3, r2
 	str	r3, [r6, #12]
-	bl	sub_02003eda
+	bl 0x0200ae3c
 	ldr	r2, [pc, #76]
 	ldr	r3, [r6, #12]
 	movs	r0, #1
 	adds	r3, r3, r2
 	str	r3, [r6, #12]
-	bl	sub_02003ee8
+	bl 0x0200ae3c
 	movs	r0, #9
 	movs	r1, #3
-	bl	sub_02003f28
+	bl 0x0200ae74
 	movs	r2, #0
 	movs	r1, #0
 	movs	r0, #10
-	bl	sub_02003f2a
+	bl 0x0200ae6c
 	movs	r0, #188
-	bl	sub_02003fb0
+	bl 0x0200aeec
 	movs	r0, #45
-	bl	sub_02003f06
+	bl 0x0200ae3c
 	movs	r0, #9
 	movs	r1, #4
-	bl	sub_02003f46
+	bl 0x0200ae74
 	movs	r0, #141
 	lsls	r0, r0, #2
-	bl	sub_02003fc6
+	bl 0x0200aeec
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #221
-	bl	sub_02003ea0
+	bl 0x0200adbc
 .L_020010e6:
 	pop	{r5, r6, pc}
 	.4byte 0xfffe0000
@@ -2509,7 +2003,7 @@ Overlay_02000000:
 	adds	r3, r3, r1
 	ldr	r0, [r3, #0]
 	sub	sp, #12
-	bl	sub_02003f5c
+	bl 0x0200ae54
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r7, [r3, #108]
@@ -2522,7 +2016,7 @@ Overlay_02000000:
 	movs	r0, #130
 	lsls	r0, r0, #1
 	mov	r8, r3
-	bl	sub_02003ed8
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_020011b0
 	cmp	r5, #0
@@ -2576,7 +2070,7 @@ Overlay_02000000:
 	ldr	r3, [r6, #16]
 	adds	r3, r3, r2
 	str	r3, [r1, #8]
-	bl	sub_02003f9a
+	bl 0x0200ae0c
 	cmp	r0, #0
 	bge.n	.L_0200119e
 	movs	r3, #170
@@ -2608,18 +2102,18 @@ Overlay_02000000:
 	lsls	r3, r3, #2
 	adds	r5, r5, r3
 	ldr	r0, [r5, #0]
-	bl	sub_02004022
+	bl 0x0200ae54
 	adds	r6, r0, #0
-	bl	sub_02004018
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_020040b6
+	bl 0x0200aedc
 	ldr	r0, [r5, #0]
 	movs	r1, #0
-	bl	sub_02004056
+	bl 0x0200ae74
 	movs	r1, #129
 	ldr	r0, [r5, #0]
 	lsls	r1, r1, #1
-	bl	sub_02004088
+	bl 0x0200ae9c
 	adds	r2, r6, #0
 	movs	r3, #0
 	adds	r6, #90
@@ -2629,16 +2123,16 @@ Overlay_02000000:
 	movs	r1, #0
 	ldr	r0, [r5, #0]
 	movs	r2, #8
-	bl	sub_0200405e
+	bl 0x0200ae5c
 	ldr	r0, [r5, #0]
-	bl	sub_0200406c
+	bl 0x0200ae64
 	movs	r1, #128
 	lsls	r1, r1, #1
 	movs	r2, #0
 	ldr	r0, [r5, #0]
-	bl	sub_020040a8
+	bl 0x0200ae94
 	movs	r0, #10
-	bl	sub_02004056
+	bl 0x0200ae3c
 	movs	r0, #1
 	movs	r1, #1
 	movs	r2, #1
@@ -2646,15 +2140,15 @@ Overlay_02000000:
 	movs	r3, #0
 	negs	r1, r1
 	negs	r0, r0
-	bl	sub_020040d8
+	bl 0x0200aeac
 	movs	r0, #204
-	bl	sub_0200411e
+	bl 0x0200aeec
 	ldr	r0, [r5, #0]
 	movs	r1, #188
-	bl	.L_02001d6a
+	bl 0x02008b30
 	movs	r3, #1
 	strb	r3, [r6, #0]
-	bl	sub_0200408e
+	bl 0x0200ae4c
 	pop	{r5, r6, pc}
 	.2byte 0x0000
 	.2byte 0x0240
@@ -2664,10 +2158,10 @@ Overlay_02000000:
 	subs	r3, #9
 	cmp	r3, #1
 	bhi.n	.L_0200125c
-	bl	.L_02001e7c
+	bl 0x02008c24
 	b.n	.L_02001260
 .L_0200125c:
-	bl	.L_02001aae
+	bl 0x02008850
 .L_02001260:
 	pop	{pc}
 	.2byte 0x0000
@@ -2686,7 +2180,7 @@ Overlay_02000000:
 	lsls	r2, r2, #4
 	adds	r2, #255
 	adds	r0, r5, r2
-	bl	sub_02004040
+	bl 0x0200adbc
 .L_02001286:
 	movs	r3, #0
 	ldrsh	r2, [r6, r3]
@@ -2697,7 +2191,7 @@ Overlay_02000000:
 	lsls	r2, r2, #4
 	adds	r2, #149
 	adds	r0, r5, r2
-	bl	sub_02004056
+	bl 0x0200adbc
 .L_0200129c:
 	movs	r3, #0
 	ldrsh	r2, [r6, r3]
@@ -2708,7 +2202,7 @@ Overlay_02000000:
 	lsls	r2, r2, #4
 	adds	r2, #150
 	adds	r0, r5, r2
-	bl	sub_0200406c
+	bl 0x0200adbc
 .L_020012b2:
 	pop	{r5, r6, pc}
 	.4byte 0x02000240
@@ -2754,7 +2248,7 @@ Overlay_02000000:
 	adds	r0, #255
 	mov	fp, r3
 	adds	r5, #16
-	bl	sub_020040c6
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_020013e8
 	mov	r2, sl
@@ -2839,7 +2333,7 @@ Overlay_02000000:
 	str	r3, [r5, #24]
 	adds	r0, #16
 	movs	r1, #255
-	bl	sub_02004186
+	bl 0x0200adac
 .L_020013dc:
 	movs	r1, #1
 	add	r9, r1
@@ -2877,7 +2371,7 @@ Overlay_02000000:
 	movs	r0, #128
 	sub	sp, #4
 	ldr	r7, [pc, #168]
-	bl	sub_020041ba
+	bl 0x0200ad8c
 	adds	r6, r0, #0
 	str	r6, [sp, #0]
 	movs	r3, #192
@@ -2891,9 +2385,9 @@ Overlay_02000000:
 	adds	r5, r7, #0
 	adds	r0, #255
 	adds	r5, #16
-	bl	sub_02004200
+	bl 0x0200adb4
 	cmp	r0, #0
-	bne.n	sub_0200145c
+	bne.n	0x0200945c
 	ldr	r3, [pc, #132]
 	adds	r0, r7, #0
 	movs	r1, #240
@@ -2909,15 +2403,15 @@ Overlay_02000000:
 	str	r1, [sp, #0]
 	cmp	r2, #0
 	bge.n	.L_0200145e
-	bl	sub_02004214
+	bl 0x0200ada4
 	strh	r0, [r7, #2]
 	lsls	r0, r0, #16
 	movs	r1, #128
 	adds	r2, r6, #0
 	asrs	r0, r0, #16
-	bl	sub_0200421a
+	bl 0x0200ad9c
 	adds	r0, r6, #0
-	bl	sub_02004218
+	bl 0x0200ad94
 	mov	r1, r8
 	ldr	r3, [r1, #8]
 	str	r3, [r7, #8]
@@ -2939,7 +2433,7 @@ Overlay_02000000:
 	strh	r3, [r1, #0]
 	movs	r1, #144
 	lsls	r1, r1, #3
-	bl	sub_02004216
+	bl 0x0200ad64
 	ldr	r3, [pc, #44]
 	movs	r2, #241
 	lsls	r2, r2, #1
@@ -3068,7 +2562,7 @@ Overlay_02000000:
 	lsls	r3, r3, #18
 	lsls	r0, r0, #1
 	ldr	r5, [r3, #108]
-	bl	sub_0200436e
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_020015f8
 	ldr	r2, [pc, #56]
@@ -3083,7 +2577,7 @@ Overlay_02000000:
 	cmp	r3, r2
 	blt.n	.L_020015f8
 	ldr	r0, [pc, #44]
-	bl	sub_02004346
+	bl 0x0200ad6c
 	ldr	r3, [pc, #40]
 	ldr	r3, [r3, #0]
 	cmp	r3, #1
@@ -3121,7 +2615,7 @@ Overlay_02000000:
 	adds	r5, r5, r0
 	ldr	r0, [r5, #0]
 	sub	sp, #20
-	bl	sub_0200447c
+	bl 0x0200ae54
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #32]
@@ -3130,7 +2624,7 @@ Overlay_02000000:
 	movs	r1, #0
 	ldr	r0, [r5, #0]
 	mov	r9, r3
-	bl	sub_020044b0
+	bl 0x0200ae74
 	ldr	r3, [r7, #4]
 	movs	r1, #85
 	asrs	r3, r3, #19
@@ -3145,12 +2639,12 @@ Overlay_02000000:
 	lsls	r1, r1, #11
 	lsls	r2, r2, #9
 	lsls	r0, r0, #11
-	bl	sub_02004480
+	bl 0x0200ae24
 	movs	r0, #30
-	bl	sub_0200449e
+	bl 0x0200ae3c
 	movs	r0, #139
 	lsls	r0, r0, #2
-	bl	sub_02004556
+	bl 0x0200aeec
 	movs	r3, #66
 	str	r3, [sp, #4]
 	movs	r5, #7
@@ -3159,7 +2653,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004472
+	bl 0x0200adf4
 	movs	r3, #1
 	str	r3, [sp, #4]
 	movs	r2, #3
@@ -3167,7 +2661,7 @@ Overlay_02000000:
 	movs	r1, #1
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	sub_02004484
+	bl 0x0200adf4
 	movs	r2, #0
 	str	r2, [sp, #16]
 .L_02001696:
@@ -3180,7 +2674,7 @@ Overlay_02000000:
 	lsls	r5, r5, #9
 .L_020016a4:
 	movs	r0, #1
-	bl	sub_020044e4
+	bl 0x0200ae3c
 	ldr	r2, [pc, #732]
 	adds	r3, r5, #0
 	movs	r1, #0
@@ -3228,7 +2722,7 @@ Overlay_02000000:
 	str	r3, [r6, #20]
 .L_020016fe:
 	movs	r0, #1
-	bl	sub_0200453e
+	bl 0x0200ae3c
 	mov	r0, r8
 	cmp	r0, #2
 	bne.n	.L_02001748
@@ -3243,7 +2737,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004516
+	bl 0x0200adf4
 	movs	r3, #68
 	str	r3, [sp, #4]
 	movs	r0, #10
@@ -3251,7 +2745,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004538
+	bl 0x0200ae04
 	movs	r3, #5
 	str	r3, [sp, #4]
 	movs	r0, #10
@@ -3259,7 +2753,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004542
+	bl 0x0200adfc
 .L_02001748:
 	mov	r2, r8
 	cmp	r2, #1
@@ -3275,7 +2769,7 @@ Overlay_02000000:
 	movs	r1, #73
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_0200456a
+	bl 0x0200ae04
 .L_02001768:
 	ldr	r3, [sp, #16]
 	adds	r3, #1
@@ -3291,9 +2785,9 @@ Overlay_02000000:
 	negs	r0, r0
 	negs	r1, r1
 	adds	r2, #102
-	bl	sub_020045aa
+	bl 0x0200ae24
 	movs	r0, #5
-	bl	sub_020045c8
+	bl 0x0200ae3c
 	movs	r3, #3
 	mov	r4, sl
 	strb	r3, [r4, #0]
@@ -3309,7 +2803,7 @@ Overlay_02000000:
 	ldr	r0, [pc, #496]
 	lsls	r1, r1, #3
 .L_020017aa:
-	bl	sub_02004510
+	bl 0x0200ad64
 	b.n	.L_020017d4
 .L_020017b0:
 	movs	r3, #68
@@ -3320,13 +2814,13 @@ Overlay_02000000:
 	movs	r1, #6
 	movs	r2, #1
 	movs	r3, #2
-	bl	sub_020045c6
+	bl 0x0200ae04
 	movs	r0, #129
 	lsls	r0, r0, #2
-	bl	sub_02004586
+	bl 0x0200adbc
 	movs	r0, #126
 	adds	r0, #255
-	bl	sub_02004596
+	bl 0x0200adc4
 .L_020017d4:
 	movs	r3, #66
 	str	r3, [sp, #4]
@@ -3336,7 +2830,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_020045da
+	bl 0x0200adf4
 	movs	r3, #1
 	str	r3, [sp, #4]
 	movs	r2, #3
@@ -3344,7 +2838,7 @@ Overlay_02000000:
 	movs	r0, #18
 	movs	r1, #1
 	str	r5, [sp, #0]
-	bl	sub_020045ec
+	bl 0x0200adf4
 	ldr	r3, [r7, #4]
 	ldr	r2, [pc, #412]
 	asrs	r3, r3, #19
@@ -3397,7 +2891,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r4, [sp, #8]
-	bl	sub_0200465a
+	bl 0x0200adfc
 	mov	r0, r9
 	mov	r1, fp
 	ldrb	r3, [r0, r1]
@@ -3412,7 +2906,7 @@ Overlay_02000000:
 	movs	r3, #1
 	movs	r0, #25
 	adds	r1, r5, #0
-	bl	sub_0200467a
+	bl 0x0200adfc
 	mov	r3, sl
 	asrs	r4, r3, #16
 	ldrb	r3, [r6, #1]
@@ -3455,7 +2949,7 @@ Overlay_02000000:
 	movs	r3, #1
 	str	r2, [sp, #0]
 	mov	fp, r2
-	bl	sub_020046ca
+	bl 0x0200adfc
 	mov	r0, r8
 	str	r0, [sp, #4]
 	movs	r4, #13
@@ -3465,7 +2959,7 @@ Overlay_02000000:
 	movs	r3, #1
 	str	r4, [sp, #0]
 	mov	r9, r4
-	bl	sub_020046e0
+	bl 0x0200adfc
 .L_020018e6:
 	mov	r1, r8
 	str	r1, [sp, #0]
@@ -3475,7 +2969,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r7, [sp, #4]
-	bl	sub_020046f4
+	bl 0x0200adfc
 	movs	r2, #9
 	str	r2, [sp, #0]
 	mov	sl, r2
@@ -3484,7 +2978,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r7, [sp, #4]
-	bl	sub_02004708
+	bl 0x0200adfc
 	mov	r3, fp
 	str	r3, [sp, #0]
 	movs	r6, #71
@@ -3494,7 +2988,7 @@ Overlay_02000000:
 	movs	r3, #1
 	str	r6, [sp, #4]
 .L_0200191e:
-	bl	sub_0200471c
+	bl 0x0200adfc
 	mov	r4, r9
 	movs	r0, #22
 	adds	r1, r5, #0
@@ -3502,7 +2996,7 @@ Overlay_02000000:
 	movs	r3, #1
 	str	r6, [sp, #4]
 	str	r4, [sp, #0]
-	bl	sub_0200472e
+	bl 0x0200adfc
 	mov	r0, r8
 	str	r0, [sp, #0]
 	movs	r6, #69
@@ -3511,7 +3005,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r6, [sp, #4]
-	bl	sub_02004742
+	bl 0x0200adfc
 	mov	r1, sl
 	str	r1, [sp, #0]
 	movs	r2, #1
@@ -3520,7 +3014,7 @@ Overlay_02000000:
 	movs	r3, #1
 	str	r6, [sp, #4]
 .L_02001956:
-	bl	sub_02004754
+	bl 0x0200adfc
 	ldr	r2, [sp, #16]
 	cmp	r2, #2
 	bne.n	.L_02001972
@@ -3531,7 +3025,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r7, [sp, #4]
-	bl	sub_0200476c
+	bl 0x0200adfc
 .L_02001972:
 	add	sp, #20
 	pop	{r3, r5, r6, r7}
@@ -3563,7 +3057,7 @@ Overlay_02000000:
 	adds	r5, r5, r0
 	ldr	r0, [r5, #0]
 	sub	sp, #20
-	bl	sub_02004810
+	bl 0x0200ae54
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r3, [r3, #32]
@@ -3573,7 +3067,7 @@ Overlay_02000000:
 	ldr	r0, [r5, #0]
 .L_020019cc:
 	mov	r9, r3
-	bl	sub_02004844
+	bl 0x0200ae74
 	ldr	r3, [r7, #4]
 	movs	r1, #85
 	asrs	r3, r3, #19
@@ -3588,12 +3082,12 @@ Overlay_02000000:
 	lsls	r1, r1, #11
 	lsls	r2, r2, #9
 	lsls	r0, r0, #11
-	bl	sub_02004814
+	bl 0x0200ae24
 	movs	r0, #30
-	bl	sub_02004832
+	bl 0x0200ae3c
 	movs	r0, #139
 	lsls	r0, r0, #2
-	bl	sub_020048ea
+	bl 0x0200aeec
 	movs	r3, #84
 	str	r3, [sp, #4]
 	movs	r5, #7
@@ -3602,7 +3096,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004806
+	bl 0x0200adf4
 	movs	r3, #19
 	str	r3, [sp, #4]
 	movs	r2, #3
@@ -3610,7 +3104,7 @@ Overlay_02000000:
 	movs	r1, #1
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	sub_02004818
+	bl 0x0200adf4
 	movs	r2, #0
 	str	r2, [sp, #16]
 .L_02001a2a:
@@ -3623,7 +3117,7 @@ Overlay_02000000:
 	lsls	r5, r5, #9
 .L_02001a38:
 	movs	r0, #1
-	bl	sub_02004878
+	bl 0x0200ae3c
 	ldr	r2, [pc, #732]
 	adds	r3, r5, #0
 	movs	r1, #0
@@ -3671,7 +3165,7 @@ Overlay_02000000:
 	str	r3, [r6, #20]
 .L_02001a92:
 	movs	r0, #1
-	bl	sub_020048d2
+	bl 0x0200ae3c
 	mov	r0, r8
 	cmp	r0, #2
 	bne.n	.L_02001ade
@@ -3688,7 +3182,7 @@ Overlay_02000000:
 .L_02001ab0:
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020048aa
+	bl 0x0200adf4
 	movs	r3, #86
 	movs	r5, #4
 	str	r3, [sp, #4]
@@ -3697,7 +3191,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_020048ce
+	bl 0x0200ae04
 	movs	r3, #23
 	str	r3, [sp, #4]
 	movs	r0, #4
@@ -3705,7 +3199,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_020048d8
+	bl 0x0200adfc
 .L_02001ade:
 	mov	r2, r8
 	cmp	r2, #1
@@ -3722,7 +3216,7 @@ Overlay_02000000:
 	movs	r1, #73
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_02004900
+	bl 0x0200ae04
 .L_02001afe:
 	ldr	r3, [sp, #16]
 	adds	r3, #1
@@ -3738,9 +3232,9 @@ Overlay_02000000:
 	negs	r0, r0
 	negs	r1, r1
 	adds	r2, #102
-	bl	sub_02004940
+	bl 0x0200ae24
 	movs	r0, #5
-	bl	sub_0200495e
+	bl 0x0200ae3c
 	movs	r3, #3
 	mov	r4, sl
 	strb	r3, [r4, #0]
@@ -3755,7 +3249,7 @@ Overlay_02000000:
 	strh	r2, [r3, #0]
 	ldr	r0, [pc, #492]
 	lsls	r1, r1, #3
-	bl	sub_020048a6
+	bl 0x0200ad64
 	b.n	.L_02001b6a
 .L_02001b46:
 	movs	r3, #68
@@ -3767,13 +3261,13 @@ Overlay_02000000:
 .L_02001b52:
 	movs	r2, #1
 	movs	r3, #4
-	bl	sub_0200495c
+	bl 0x0200ae04
 	movs	r0, #129
 	lsls	r0, r0, #2
-	bl	sub_0200491c
+	bl 0x0200adbc
 	movs	r0, #126
 	adds	r0, #255
-	bl	sub_0200492c
+	bl 0x0200adc4
 .L_02001b6a:
 	movs	r3, #84
 	str	r3, [sp, #4]
@@ -3783,7 +3277,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004970
+	bl 0x0200adf4
 	movs	r3, #19
 	str	r3, [sp, #4]
 	movs	r2, #3
@@ -3791,7 +3285,7 @@ Overlay_02000000:
 	movs	r0, #18
 	movs	r1, #1
 	str	r5, [sp, #0]
-	bl	sub_02004982
+	bl 0x0200adf4
 	ldr	r3, [r7, #4]
 	ldr	r2, [pc, #412]
 	asrs	r3, r3, #19
@@ -3844,7 +3338,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r4, [sp, #8]
-	bl	sub_020049f0
+	bl 0x0200adfc
 	mov	r0, r9
 	mov	r1, fp
 	ldrb	r3, [r0, r1]
@@ -3859,7 +3353,7 @@ Overlay_02000000:
 	movs	r3, #1
 	movs	r0, #25
 	adds	r1, r5, #0
-	bl	sub_02004a10
+	bl 0x0200adfc
 	mov	r3, sl
 	asrs	r4, r3, #16
 	ldrb	r3, [r6, #1]
@@ -3900,7 +3394,7 @@ Overlay_02000000:
 	movs	r3, #1
 	str	r2, [sp, #0]
 	mov	r9, r2
-	bl	sub_02004a5e
+	bl 0x0200adfc
 	movs	r3, #25
 	str	r3, [sp, #4]
 	movs	r6, #13
@@ -3909,7 +3403,7 @@ Overlay_02000000:
 	movs	r2, #2
 	movs	r3, #1
 	str	r6, [sp, #0]
-	bl	sub_02004a72
+	bl 0x0200adfc
 	movs	r3, #7
 	str	r3, [sp, #0]
 	mov	sl, r3
@@ -3919,7 +3413,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r7, [sp, #4]
-	bl	sub_02004a88
+	bl 0x0200adfc
 	movs	r4, #9
 	movs	r0, #24
 	adds	r1, r5, #0
@@ -3928,7 +3422,7 @@ Overlay_02000000:
 	mov	r8, r4
 	str	r4, [sp, #0]
 	str	r7, [sp, #4]
-	bl	sub_02004a9c
+	bl 0x0200adfc
 	movs	r3, #91
 	mov	r0, r9
 	str	r0, [sp, #0]
@@ -3937,7 +3431,7 @@ Overlay_02000000:
 	adds	r1, r5, #0
 	movs	r2, #2
 	movs	r3, #1
-	bl	sub_02004ab0
+	bl 0x0200adfc
 	movs	r3, #89
 	str	r3, [sp, #4]
 	movs	r0, #19
@@ -3945,7 +3439,7 @@ Overlay_02000000:
 	movs	r2, #2
 	movs	r3, #1
 	str	r6, [sp, #0]
-	bl	sub_02004ac2
+	bl 0x0200adfc
 	mov	r1, sl
 	str	r1, [sp, #0]
 	movs	r6, #87
@@ -3954,7 +3448,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r6, [sp, #4]
-	bl	sub_02004ad6
+	bl 0x0200adfc
 	mov	r2, r8
 	str	r2, [sp, #0]
 	movs	r3, #1
@@ -3962,7 +3456,7 @@ Overlay_02000000:
 	adds	r1, r5, #0
 	movs	r2, #1
 	str	r6, [sp, #4]
-	bl	sub_02004ae8
+	bl 0x0200adfc
 	ldr	r3, [sp, #16]
 	cmp	r3, #2
 	bne.n	.L_02001d06
@@ -3973,7 +3467,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r7, [sp, #4]
-	bl	sub_02004b00
+	bl 0x0200adfc
 .L_02001d06:
 	add	sp, #20
 	pop	{r3, r5, r6, r7}
@@ -3996,19 +3490,19 @@ Overlay_02000000:
 	lsls	r0, r0, #2
 	adds	r0, #2
 	sub	sp, #8
-	bl	sub_02004af4
+	bl 0x0200adb4
 	adds	r6, r0, #0
 	cmp	r6, #0
 	bne.n	.L_02001dd8
 	movs	r0, #0
-	bl	sub_02004c28
+	bl 0x0200aedc
 	movs	r0, #146
 	lsls	r0, r0, #2
-	bl	sub_02004c40
+	bl 0x0200aeec
 	movs	r0, #15
-	bl	sub_02004b96
+	bl 0x0200ae3c
 	movs	r0, #202
-	bl	sub_02004c4c
+	bl 0x0200aeec
 	movs	r3, #66
 	str	r3, [sp, #4]
 	movs	r5, #7
@@ -4018,16 +3512,16 @@ Overlay_02000000:
 	movs	r1, #66
 	movs	r2, #3
 	str	r5, [sp, #0]
-	bl	sub_02004b68
+	bl 0x0200adf4
 	movs	r0, #128
 	movs	r1, #128
 	movs	r2, #128
 	lsls	r1, r1, #10
 	lsls	r2, r2, #9
 	lsls	r0, r0, #10
-	bl	sub_02004ba8
+	bl 0x0200ae24
 	movs	r0, #15
-	bl	sub_02004bc6
+	bl 0x0200ae3c
 	ldr	r3, [pc, #52]
 	ldr	r2, [pc, #56]
 	strh	r5, [r3, #0]
@@ -4044,12 +3538,12 @@ Overlay_02000000:
 	ldr	r2, [pc, #44]
 	movs	r3, #1
 	str	r3, [r2, #0]
-	bl	sub_02004b6a
-	bl	sub_020033be
+	bl 0x0200adbc
+	bl 0x0200960c
 	movs	r0, #128
 	lsls	r0, r0, #2
 	adds	r0, #2
-	bl	sub_02004b78
+	bl 0x0200adbc
 	b.n	.L_02001dd8
 	.4byte 0x000000c8
 	.4byte 0x0200b780
@@ -4066,19 +3560,19 @@ Overlay_02000000:
 	lsls	r0, r0, #4
 	adds	r0, #226
 	sub	sp, #8
-	bl	sub_02004b9c
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02001e50
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #226
-	bl	sub_02004bb2
+	bl 0x0200adbc
 	movs	r0, #146
 	lsls	r0, r0, #2
-	bl	sub_02004cea
-	bl	sub_02004c46
+	bl 0x0200aeec
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_02004ce4
+	bl 0x0200aedc
 	movs	r5, #14
 	movs	r1, #70
 	movs	r2, #1
@@ -4087,18 +3581,18 @@ Overlay_02000000:
 	movs	r0, #26
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02004c10
+	bl 0x0200adf4
 	movs	r0, #20
-	bl	sub_02004c5e
+	bl 0x0200ae3c
 	movs	r0, #181
-	bl	sub_02004d14
+	bl 0x0200aeec
 	movs	r0, #26
 	movs	r1, #67
 	movs	r2, #1
 	movs	r3, #3
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02004c2c
+	bl 0x0200adf4
 	movs	r3, #5
 	str	r3, [sp, #4]
 	movs	r0, #15
@@ -4106,8 +3600,8 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004c46
-	bl	sub_02004c9a
+	bl 0x0200adfc
+	bl 0x0200ae4c
 .L_02001e50:
 	add	sp, #8
 	pop	{r5, r6, pc}
@@ -4116,20 +3610,20 @@ Overlay_02000000:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	sub	sp, #8
-	bl	sub_02004c14
+	bl 0x0200adb4
 	adds	r5, r0, #0
 	cmp	r5, #0
 	bne.n	.L_02001f00
 	movs	r0, #0
-	bl	sub_02004d48
+	bl 0x0200aedc
 	movs	r0, #146
 	lsls	r0, r0, #2
-	bl	sub_02004d60
+	bl 0x0200aeec
 	movs	r0, #15
-	bl	sub_02004cb6
+	bl 0x0200ae3c
 .L_02001e7c:
 	movs	r0, #202
-	bl	sub_02004d6c
+	bl 0x0200aeec
 	movs	r3, #7
 	movs	r2, #84
 	str	r3, [sp, #0]
@@ -4138,16 +3632,16 @@ Overlay_02000000:
 	movs	r0, #18
 	movs	r1, #66
 	movs	r2, #3
-	bl	sub_02004c88
+	bl 0x0200adf4
 	movs	r0, #128
 	movs	r1, #128
 	movs	r2, #128
 	lsls	r1, r1, #10
 	lsls	r2, r2, #9
 	lsls	r0, r0, #10
-	bl	sub_02004cc8
+	bl 0x0200ae24
 	movs	r0, #15
-	bl	sub_02004ce6
+	bl 0x0200ae3c
 	ldr	r2, [pc, #60]
 	ldr	r3, [pc, #52]
 	movs	r0, #126
@@ -4165,12 +3659,12 @@ Overlay_02000000:
 	ldr	r2, [pc, #48]
 	movs	r3, #2
 	str	r3, [r2, #0]
-	bl	sub_02004c8c
-	bl	sub_02003874
+	bl 0x0200adbc
+	bl 0x020099a0
 	movs	r0, #130
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_02004c9a
+	bl 0x0200adbc
 	b.n	.L_02001f00
 	.2byte 0x0000
 	.4byte 0x00000003
@@ -4189,19 +3683,19 @@ Overlay_02000000:
 	lsls	r0, r0, #4
 	adds	r0, #227
 	sub	sp, #8
-	bl	sub_02004cc4
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02001f78
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #227
-	bl	sub_02004cda
+	bl 0x0200adbc
 	movs	r0, #146
 	lsls	r0, r0, #2
-	bl	sub_02004e12
-	bl	sub_02004d6e
+	bl 0x0200aeec
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_02004e0c
+	bl 0x0200aedc
 	movs	r5, #2
 	movs	r1, #70
 	movs	r2, #1
@@ -4210,18 +3704,18 @@ Overlay_02000000:
 	movs	r0, #26
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02004d38
+	bl 0x0200adf4
 	movs	r0, #20
-	bl	sub_02004d86
+	bl 0x0200ae3c
 	movs	r0, #181
-	bl	sub_02004e3c
+	bl 0x0200aeec
 	movs	r0, #26
 	movs	r1, #67
 	movs	r2, #1
 	movs	r3, #3
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02004d54
+	bl 0x0200adf4
 	movs	r3, #23
 	str	r3, [sp, #4]
 	movs	r0, #1
@@ -4229,8 +3723,8 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_02004d6e
-	bl	sub_02004dc2
+	bl 0x0200adfc
+	bl 0x0200ae4c
 .L_02001f78:
 	add	sp, #8
 	pop	{r5, r6, pc}
@@ -4248,7 +3742,7 @@ Overlay_02000000:
 	movs	r0, #9
 	sub	sp, #8
 	mov	sl, r3
-	bl	sub_02004dee
+	bl 0x0200ae54
 	ldr	r2, [pc, #332]
 	movs	r3, #133
 	mov	r8, r2
@@ -4256,12 +3750,12 @@ Overlay_02000000:
 	add	r3, r8
 	adds	r7, r0, #0
 	ldr	r0, [r3, #0]
-	bl	sub_02004e00
+	bl 0x0200ae54
 	adds	r6, r0, #0
 	movs	r0, #130
 	lsls	r0, r0, #1
 	ldr	r5, [r5, #108]
-	bl	sub_02004d6c
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02001fce
 	movs	r1, #170
@@ -4332,7 +3826,7 @@ Overlay_02000000:
 	bhi.n	.L_02002064
 	movs	r0, #163
 	lsls	r0, r0, #1
-	bl	sub_02004df6
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02002064
 	movs	r3, #12
@@ -4343,16 +3837,16 @@ Overlay_02000000:
 	movs	r1, #83
 	movs	r2, #5
 	movs	r3, #4
-	bl	sub_02004e56
+	bl 0x0200adfc
 	movs	r0, #163
 	lsls	r0, r0, #1
-	bl	sub_02004e1e
+	bl 0x0200adbc
 .L_02002064:
 	cmp	r5, #37
 	bne.n	.L_02002090
 	movs	r0, #163
 	lsls	r0, r0, #1
-	bl	sub_02004e22
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002090
 	movs	r3, #12
@@ -4363,15 +3857,15 @@ Overlay_02000000:
 	movs	r1, #83
 	movs	r2, #5
 	movs	r3, #4
-	bl	sub_02004e82
+	bl 0x0200adfc
 	movs	r0, #163
 	lsls	r0, r0, #1
-	bl	sub_02004e52
+	bl 0x0200adc4
 .L_02002090:
 	cmp	r5, #41
 	ble.n	.L_020020e0
 	ldr	r0, [pc, #96]
-	bl	sub_02004e04
+	bl 0x0200ad6c
 	movs	r2, #230
 	movs	r0, #1
 	movs	r1, #1
@@ -4379,7 +3873,7 @@ Overlay_02000000:
 	negs	r0, r0
 	negs	r1, r1
 	adds	r2, #102
-	bl	sub_02004ece
+	bl 0x0200ae24
 	movs	r3, #13
 	movs	r2, #41
 	str	r3, [sp, #0]
@@ -4388,19 +3882,19 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #2
 	movs	r0, #41
-	bl	sub_02004eba
+	bl 0x0200adfc
 	movs	r0, #129
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_02004e84
+	bl 0x0200adbc
 	movs	r0, #126
 	adds	r0, #255
-	bl	sub_02004e94
+	bl 0x0200adc4
 	movs	r0, #98
 	adds	r0, #255
-	bl	sub_02004e9c
+	bl 0x0200adc4
 	movs	r0, #208
-	bl	sub_02004fca
+	bl 0x0200aeec
 .L_020020e0:
 	add	sp, #8
 	pop	{r3, r5}
@@ -4416,61 +3910,61 @@ Overlay_02000000:
 	push	{r5, r6, r7, lr}
 	movs	r0, #9
 	sub	sp, #8
-	bl	sub_02004f58
+	bl 0x0200ae54
 	ldr	r3, [r0, #16]
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #221
 	asrs	r6, r3, #20
-	bl	sub_02004ec6
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020021c6
 	cmp	r6, #24
 	bne.n	.L_020021c6
 	ldr	r7, [pc, #172]
 	adds	r0, r7, #0
-	bl	sub_02004eee
+	bl 0x0200adcc
 	movs	r2, #1
 	adds	r5, r0, #0
 	negs	r2, r2
 	cmp	r5, r2
 	bne.n	.L_020021c6
-	bl	sub_02004f74
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_02005012
+	bl 0x0200aedc
 	movs	r0, #207
-	bl	sub_02005028
+	bl 0x0200aeec
 	movs	r0, #128
 	movs	r1, #128
 	movs	r2, #128
 	lsls	r1, r1, #10
 	lsls	r2, r2, #9
 	lsls	r0, r0, #10
-	bl	sub_02004f70
+	bl 0x0200ae24
 	movs	r0, #10
-	bl	sub_02004f8e
+	bl 0x0200ae3c
 	movs	r0, #232
 	movs	r2, #196
 	lsls	r2, r2, #17
 	movs	r3, #1
 	lsls	r0, r0, #16
 	adds	r1, r5, #0
-	bl	sub_0200500e
-	bl	sub_0200501a
+	bl 0x0200aeac
+	bl 0x0200aeb4
 	movs	r1, #144
 	lsls	r1, r1, #3
 	adds	r0, r7, #0
-	bl	sub_02004ed4
+	bl 0x0200ad64
 	movs	r0, #40
-	bl	sub_02004fb2
+	bl 0x0200ae3c
 	ldr	r3, [pc, #84]
 	movs	r2, #133
 	lsls	r2, r2, #2
 	adds	r3, r3, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #1
-	bl	sub_0200502a
-	bl	sub_0200503e
+	bl 0x0200aea4
+	bl 0x0200aeb4
 	movs	r3, #13
 	str	r3, [sp, #0]
 	movs	r0, #13
@@ -4478,7 +3972,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #2
 	str	r6, [sp, #4]
-	bl	sub_02004f98
+	bl 0x0200adfc
 	movs	r3, #14
 	movs	r2, #88
 	str	r3, [sp, #0]
@@ -4487,14 +3981,14 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	movs	r0, #14
-	bl	sub_02004fac
+	bl 0x0200adfc
 	movs	r0, #126
 	adds	r0, #255
-	bl	sub_02004f74
+	bl 0x0200adbc
 	movs	r0, #98
 	adds	r0, #255
-	bl	sub_02004f7c
-	bl	sub_02005010
+	bl 0x0200adbc
+	bl 0x0200ae4c
 .L_020021c6:
 	add	sp, #8
 	pop	{r5, r6, r7, pc}
@@ -4505,20 +3999,20 @@ Overlay_02000000:
 	push	{r5, r6, lr}
 	movs	r0, #9
 	sub	sp, #8
-	bl	sub_02005030
+	bl 0x0200ae54
 	ldr	r3, [r0, #16]
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #221
 	asrs	r6, r3, #20
-	bl	sub_02004f9e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002258
 	cmp	r6, #24
 	bne.n	.L_02002258
 	ldr	r5, [pc, #100]
 	adds	r0, r5, #0
-	bl	sub_02004fc6
+	bl 0x0200adcc
 	movs	r3, #1
 	negs	r3, r3
 	cmp	r0, r3
@@ -4529,11 +4023,11 @@ Overlay_02000000:
 	lsls	r2, r2, #9
 	lsls	r0, r0, #10
 	lsls	r1, r1, #10
-	bl	sub_02005036
+	bl 0x0200ae24
 	movs	r1, #144
 	lsls	r1, r1, #3
 	adds	r0, r5, #0
-	bl	sub_02004f80
+	bl 0x0200ad64
 	movs	r3, #13
 	str	r3, [sp, #0]
 	movs	r0, #13
@@ -4541,7 +4035,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #2
 	str	r6, [sp, #4]
-	bl	sub_0200502a
+	bl 0x0200adfc
 	movs	r3, #14
 	movs	r2, #88
 	str	r3, [sp, #0]
@@ -4550,14 +4044,14 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	movs	r0, #14
-	bl	sub_0200503e
+	bl 0x0200adfc
 	movs	r0, #126
 	adds	r0, #255
-	bl	sub_02005006
+	bl 0x0200adbc
 	movs	r0, #98
 	adds	r0, #255
-	bl	sub_0200500e
-	bl	sub_020050a2
+	bl 0x0200adbc
+	bl 0x0200ae4c
 .L_02002258:
 	add	sp, #8
 	pop	{r5, r6, pc}
@@ -4565,7 +4059,7 @@ Overlay_02000000:
 	.2byte 0x0200
 	push	{lr}
 	movs	r0, #9
-	bl	sub_020050ba
+	bl 0x0200ae54
 	ldr	r3, [r0, #8]
 	asrs	r3, r3, #20
 	cmp	r3, #26
@@ -4577,19 +4071,19 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #219
-	bl	sub_0200503c
+	bl 0x0200adbc
 	movs	r0, #204
-	bl	sub_02005172
+	bl 0x0200aeec
 	movs	r0, #9
 	movs	r1, #0
-	bl	sub_02002dbe
+	bl 0x02008b30
 	movs	r0, #9
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005104
-	bl	sub_02005180
+	bl 0x0200ae6c
+	bl 0x0200aee4
 	movs	r0, #20
-	bl	sub_0200515e
+	bl 0x0200aebc
 .L_020022a4:
 	pop	{pc}
 	.2byte 0x0000
@@ -4598,7 +4092,7 @@ Overlay_02000000:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	sub	sp, #8
-	bl	sub_02005070
+	bl 0x0200adbc
 	movs	r3, #34
 	str	r3, [sp, #4]
 	movs	r5, #25
@@ -4607,7 +4101,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	sub_020050bc
+	bl 0x0200adf4
 	movs	r3, #98
 	str	r3, [sp, #4]
 	movs	r0, #35
@@ -4615,7 +4109,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	sub_020050ce
+	bl 0x0200adf4
 	add	sp, #8
 	pop	{r5, pc}
 	push	{r5, lr}
@@ -4623,7 +4117,7 @@ Overlay_02000000:
 	lsls	r0, r0, #1
 	adds	r0, #255
 	sub	sp, #8
-	bl	sub_020050b0
+	bl 0x0200adc4
 	movs	r3, #34
 	str	r3, [sp, #4]
 	movs	r5, #25
@@ -4632,7 +4126,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #5
 	str	r5, [sp, #0]
-	bl	sub_020050f4
+	bl 0x0200adf4
 	movs	r3, #98
 	str	r3, [sp, #4]
 	movs	r0, #40
@@ -4640,21 +4134,21 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	sub_02005106
+	bl 0x0200adf4
 	add	sp, #8
 	pop	{r5, pc}
 	push	{lr}
 	movs	r0, #131
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_020050de
+	bl 0x0200adbc
 	pop	{pc}
 	.2byte 0x0000
 	push	{lr}
 	movs	r0, #131
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_020050f6
+	bl 0x0200adc4
 	pop	{pc}
 	.2byte 0x0000
 	push	{lr}
@@ -4737,10 +4231,10 @@ Overlay_02000000:
 	mov	r8, r0
 	cmp	r7, #0
 	bne.n	.L_0200242a
-	bl	sub_0200515c
+	bl 0x0200ad74
 	movs	r5, #15
 	ands	r5, r0
-	bl	sub_02005164
+	bl 0x0200ad74
 	movs	r3, #209
 	lsls	r3, r3, #1
 	ands	r0, r6
@@ -4767,7 +4261,7 @@ Overlay_02000000:
 	movs	r3, #0
 	str	r7, [sp, #4]
 	str	r6, [sp, #12]
-	bl	.L_02002584
+	bl 0x0200815c
 .L_0200242a:
 	add	sp, #56
 	pop	{r3}
@@ -4793,242 +4287,242 @@ Overlay_02000000:
 	b.n	.L_02002686
 .L_02002456:
 	movs	r0, #0
-	bl	sub_0200532e
+	bl 0x0200aed4
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #210
-	bl	sub_02005218
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002474
 	movs	r0, #10
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020052de
+	bl 0x0200ae6c
 .L_02002474:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #211
-	bl	sub_02005230
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200248c
 	movs	r0, #11
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020052f6
+	bl 0x0200ae6c
 .L_0200248c:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #212
-	bl	sub_02005248
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020024a4
 	movs	r0, #12
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200530e
+	bl 0x0200ae6c
 .L_020024a4:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #213
-	bl	sub_02005260
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020024bc
 	movs	r0, #13
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005326
+	bl 0x0200ae6c
 .L_020024bc:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #214
-	bl	sub_02005278
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020024d4
 	movs	r0, #14
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200533e
+	bl 0x0200ae6c
 .L_020024d4:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #215
-	bl	sub_02005290
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020024ec
 	movs	r0, #15
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005356
+	bl 0x0200ae6c
 .L_020024ec:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #216
-	bl	sub_020052a8
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002504
 	movs	r0, #16
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200536e
+	bl 0x0200ae6c
 .L_02002504:
 	movs	r0, #153
 	lsls	r0, r0, #4
-	bl	sub_020052be
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200251a
 	movs	r0, #17
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005384
+	bl 0x0200ae6c
 .L_0200251a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #145
-	bl	sub_020052d6
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002532
 	movs	r0, #18
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200539c
+	bl 0x0200ae6c
 .L_02002532:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #146
-	bl	sub_020052ee
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200254a
 	movs	r0, #19
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020053b4
+	bl 0x0200ae6c
 .L_0200254a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #147
-	bl	sub_02005306
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002562
 	movs	r0, #20
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020053cc
+	bl 0x0200ae6c
 .L_02002562:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #148
-	bl	sub_0200531e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200257a
 	movs	r0, #21
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020053e4
+	bl 0x0200ae6c
 .L_0200257a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #149
-	bl	sub_02005336
+	bl 0x0200adb4
 .L_02002584:
 	cmp	r0, #0
 	beq.n	.L_02002592
 	movs	r0, #22
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020053fc
+	bl 0x0200ae6c
 .L_02002592:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #150
-	bl	sub_0200534e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020025aa
 	movs	r0, #23
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005414
+	bl 0x0200ae6c
 .L_020025aa:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #151
-	bl	sub_02005366
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020025c2
 	movs	r0, #24
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200542c
+	bl 0x0200ae6c
 .L_020025c2:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #152
-	bl	sub_0200537e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020025da
 	movs	r0, #25
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005444
+	bl 0x0200ae6c
 .L_020025da:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #153
-	bl	sub_02005396
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020025f2
 	movs	r0, #26
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200545c
+	bl 0x0200ae6c
 .L_020025f2:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #154
-	bl	sub_020053ae
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200260a
 	movs	r0, #27
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005474
+	bl 0x0200ae6c
 .L_0200260a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #155
-	bl	sub_020053c6
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002622
 	movs	r0, #28
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200548c
+	bl 0x0200ae6c
 .L_02002622:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #156
-	bl	sub_020053de
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200263a
 	movs	r0, #29
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020054a4
+	bl 0x0200ae6c
 .L_0200263a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #157
-	bl	sub_020053f6
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002652
 	movs	r0, #30
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020054bc
+	bl 0x0200ae6c
 .L_02002652:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #198
-	bl	sub_0200540e
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02002662
 	b.n	.L_02002d2a
@@ -5038,7 +4532,7 @@ Overlay_02000000:
 	movs	r0, #8
 	lsls	r1, r1, #15
 	lsls	r2, r2, #15
-	bl	sub_020054da
+	bl 0x0200ae6c
 	movs	r3, #2
 	movs	r2, #69
 	str	r3, [sp, #0]
@@ -5047,7 +4541,7 @@ Overlay_02000000:
 	movs	r1, #68
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_0200547e
+	bl 0x0200adfc
 	b.n	.L_02002d2a
 .L_02002686:
 	ldr	r3, [pc, #204]
@@ -5056,45 +4550,45 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #158
-	bl	sub_02005448
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020026a4
 	movs	r0, #9
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200550e
+	bl 0x0200ae6c
 .L_020026a4:
 	movs	r0, #138
 	lsls	r0, r0, #4
 	adds	r0, #255
-	bl	sub_02005460
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020026bc
 	movs	r0, #10
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005526
+	bl 0x0200ae6c
 .L_020026bc:
 	movs	r0, #154
 	lsls	r0, r0, #4
-	bl	sub_02005476
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020026d2
 	movs	r0, #11
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200553c
+	bl 0x0200ae6c
 .L_020026d2:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #220
-	bl	sub_0200548e
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_020026e2
 	b.n	.L_02002d2a
 .L_020026e2:
 	movs	r0, #8
-	bl	sub_0200553a
+	bl 0x0200ae54
 	adds	r5, r0, #0
 	adds	r2, r5, #0
 	movs	r3, #3
@@ -5105,7 +4599,7 @@ Overlay_02000000:
 	movs	r0, #8
 	lsls	r1, r1, #16
 	lsls	r2, r2, #15
-	bl	sub_0200556a
+	bl 0x0200ae6c
 	movs	r3, #7
 	str	r3, [sp, #4]
 	movs	r5, #10
@@ -5114,7 +4608,7 @@ Overlay_02000000:
 	movs	r2, #7
 	movs	r3, #16
 	str	r5, [sp, #0]
-	bl	sub_02005506
+	bl 0x0200adf4
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r1, #70
@@ -5122,7 +4616,7 @@ Overlay_02000000:
 	movs	r3, #16
 	movs	r0, #35
 	str	r5, [sp, #0]
-	bl	sub_02005518
+	bl 0x0200adf4
 	movs	r2, #241
 	lsls	r2, r2, #1
 	adds	r3, r7, r2
@@ -5139,7 +4633,7 @@ Overlay_02000000:
 	movs	r0, #160
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_02005632
+	bl 0x0200aeec
 	b.n	.L_02002d2a
 	.2byte 0x0000
 	.4byte 0x02000240
@@ -5153,7 +4647,7 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #199
-	bl	sub_0200551a
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200278e
 	movs	r1, #130
@@ -5161,7 +4655,7 @@ Overlay_02000000:
 	movs	r0, #8
 	lsls	r1, r1, #18
 	lsls	r2, r2, #15
-	bl	sub_020055e4
+	bl 0x0200ae6c
 	movs	r3, #33
 	movs	r2, #69
 	str	r3, [sp, #0]
@@ -5170,26 +4664,26 @@ Overlay_02000000:
 	movs	r1, #69
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_02005588
+	bl 0x0200adfc
 .L_0200278e:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #221
-	bl	sub_0200554a
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020027ae
 	movs	r0, #10
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005610
+	bl 0x0200ae6c
 	movs	r0, #9
 	movs	r1, #4
-	bl	sub_02005620
+	bl 0x0200ae74
 .L_020027ae:
 	movs	r0, #129
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_0200556a
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_020027be
 	b.n	.L_02002d2a
@@ -5202,7 +4696,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #2
 	str	r5, [sp, #0]
-	bl	sub_020055cc
+	bl 0x0200adfc
 	movs	r3, #14
 	movs	r2, #88
 	str	r3, [sp, #0]
@@ -5211,7 +4705,7 @@ Overlay_02000000:
 	movs	r1, #87
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_020055e0
+	bl 0x0200adfc
 	movs	r3, #41
 	str	r3, [sp, #4]
 	movs	r0, #41
@@ -5219,7 +4713,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #2
 	str	r5, [sp, #0]
-	bl	sub_020055f2
+	bl 0x0200adfc
 	b.n	.L_02002d2a
 .L_020027fa:
 	ldr	r3, [pc, #740]
@@ -5230,84 +4724,84 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #161
-	bl	sub_020055be
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200281a
 	movs	r0, #11
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005684
+	bl 0x0200ae6c
 .L_0200281a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #162
-	bl	sub_020055d6
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002832
 	movs	r0, #12
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_0200569c
+	bl 0x0200ae6c
 .L_02002832:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #163
-	bl	sub_020055ee
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200284a
 	movs	r0, #13
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020056b4
+	bl 0x0200ae6c
 .L_0200284a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #164
-	bl	sub_02005606
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002862
 	movs	r0, #14
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020056cc
+	bl 0x0200ae6c
 .L_02002862:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #165
-	bl	sub_0200561e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200287a
 	movs	r0, #15
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020056e4
+	bl 0x0200ae6c
 .L_0200287a:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #166
-	bl	sub_02005636
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002892
 	movs	r0, #16
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020056fc
+	bl 0x0200ae6c
 .L_02002892:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #167
-	bl	sub_0200564e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020028aa
 	movs	r0, #17
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005714
+	bl 0x0200ae6c
 .L_020028aa:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #200
-	bl	sub_02005666
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020028c6
 	movs	r1, #160
@@ -5315,12 +4809,12 @@ Overlay_02000000:
 	movs	r0, #8
 	lsls	r1, r1, #14
 	lsls	r2, r2, #18
-	bl	sub_02005730
+	bl 0x0200ae6c
 .L_020028c6:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #201
-	bl	sub_02005682
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020028e2
 	movs	r1, #158
@@ -5328,12 +4822,12 @@ Overlay_02000000:
 	movs	r0, #18
 	lsls	r1, r1, #18
 	lsls	r2, r2, #17
-	bl	sub_0200574c
+	bl 0x0200ae6c
 .L_020028e2:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #202
-	bl	sub_0200569e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002912
 	movs	r1, #154
@@ -5341,7 +4835,7 @@ Overlay_02000000:
 	movs	r0, #19
 	lsls	r1, r1, #18
 	lsls	r2, r2, #16
-	bl	sub_02005768
+	bl 0x0200ae6c
 	movs	r3, #37
 	movs	r2, #71
 	str	r3, [sp, #0]
@@ -5350,16 +4844,16 @@ Overlay_02000000:
 	movs	r1, #70
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_02005704
+	bl 0x0200adf4
 .L_02002912:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #217
-	bl	sub_020056ce
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200293e
 	movs	r0, #9
-	bl	sub_02005778
+	bl 0x0200ae54
 	adds	r5, r0, #0
 	adds	r2, r5, #0
 	adds	r2, #85
@@ -5370,23 +4864,23 @@ Overlay_02000000:
 	movs	r0, #9
 	lsls	r1, r1, #16
 	lsls	r2, r2, #18
-	bl	sub_020057a8
+	bl 0x0200ae6c
 .L_0200293e:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #218
-	bl	sub_020056fa
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_0200296c
 	movs	r0, #10
-	bl	sub_020057a4
+	bl 0x0200ae54
 	movs	r1, #232
 	movs	r2, #182
 	adds	r5, r0, #0
 	lsls	r2, r2, #18
 	movs	r0, #10
 	lsls	r1, r1, #16
-	bl	sub_020057cc
+	bl 0x0200ae6c
 	adds	r2, r5, #0
 	adds	r2, #85
 	movs	r3, #3
@@ -5396,12 +4890,12 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #219
-	bl	sub_02005728
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002994
 	movs	r0, #10
 	adds	r0, #255
-	bl	sub_02005734
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02002994
 	movs	r1, #164
@@ -5409,18 +4903,18 @@ Overlay_02000000:
 	movs	r0, #10
 	lsls	r1, r1, #17
 	lsls	r2, r2, #18
-	bl	sub_020057fe
+	bl 0x0200ae6c
 .L_02002994:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #218
-	bl	sub_02005750
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020029f6
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #217
-	bl	sub_0200575e
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_020029f6
 	ldr	r3, [pc, #304]
@@ -5437,7 +4931,7 @@ Overlay_02000000:
 	movs	r0, #160
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_020058ba
+	bl 0x0200aeec
 .L_020029d0:
 	movs	r3, #47
 	movs	r5, #12
@@ -5447,7 +4941,7 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #13
 	str	r5, [sp, #0]
-	bl	sub_020057d6
+	bl 0x0200adf4
 	movs	r3, #111
 	str	r3, [sp, #4]
 	movs	r0, #16
@@ -5455,11 +4949,11 @@ Overlay_02000000:
 	movs	r2, #3
 	movs	r3, #13
 	str	r5, [sp, #0]
-	bl	sub_020057e8
+	bl 0x0200adf4
 .L_020029f6:
 	movs	r0, #10
 	adds	r0, #255
-	bl	sub_020057b0
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02002a16
 	ldr	r3, [pc, #224]
@@ -5470,7 +4964,7 @@ Overlay_02000000:
 	ldrsh	r3, [r3, r1]
 	cmp	r3, #17
 	bne.n	.L_02002a16
-	bl	sub_02002e2c
+	bl 0x02008418
 .L_02002a16:
 	ldr	r5, [pc, #204]
 	movs	r2, #241
@@ -5480,9 +4974,9 @@ Overlay_02000000:
 	ldrsh	r3, [r3, r1]
 	cmp	r3, #20
 	bne.n	.L_02002ac2
-	bl	sub_0200586c
+	bl 0x0200ae44
 	movs	r0, #0
-	bl	sub_0200590a
+	bl 0x0200aedc
 	movs	r0, #1
 	movs	r1, #1
 	movs	r2, #1
@@ -5490,30 +4984,30 @@ Overlay_02000000:
 	negs	r1, r1
 	negs	r2, r2
 	movs	r3, #0
-	bl	sub_020058ec
+	bl 0x0200aeac
 	movs	r2, #133
 	lsls	r2, r2, #2
 	adds	r3, r5, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_020058bc
+	bl 0x0200ae6c
 	movs	r1, #0
 	movs	r2, #0
 	movs	r0, #10
-	bl	sub_020058c6
-	bl	sub_02005922
+	bl 0x0200ae6c
+	bl 0x0200aec4
 	movs	r0, #15
-	bl	sub_020058a0
+	bl 0x0200ae3c
 	movs	r0, #10
-	bl	sub_020058be
+	bl 0x0200ae54
 	movs	r1, #164
 	movs	r2, #190
 	adds	r5, r0, #0
 	lsls	r1, r1, #17
 	lsls	r2, r2, #18
 	movs	r0, #10
-	bl	sub_020058e6
+	bl 0x0200ae6c
 	ldr	r3, [r5, #12]
 	movs	r1, #128
 	lsls	r1, r1, #16
@@ -5531,7 +5025,7 @@ Overlay_02000000:
 	cmp	r6, #0
 	beq.n	.L_02002aa8
 	movs	r0, #1
-	bl	sub_020057f8
+	bl 0x0200ad5c
 	ldr	r3, [r5, #40]
 	movs	r2, #1
 	negs	r2, r2
@@ -5539,14 +5033,14 @@ Overlay_02000000:
 	ble.n	.L_02002a92
 .L_02002aa8:
 	movs	r0, #188
-	bl	sub_02005998
+	bl 0x0200aeec
 	movs	r0, #60
-	bl	sub_020058ee
+	bl 0x0200ae3c
 	movs	r0, #10
 	adds	r0, #255
-	bl	sub_02005876
+	bl 0x0200adbc
 	movs	r0, #20
-	bl	sub_0200597c
+	bl 0x0200aebc
 .L_02002ac2:
 	ldr	r3, [pc, #32]
 	movs	r1, #241
@@ -5573,18 +5067,18 @@ Overlay_02000000:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #219
-	bl	sub_020058aa
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002b06
 	movs	r0, #9
 	movs	r1, #0
 	movs	r2, #0
-	bl	sub_02005970
+	bl 0x0200ae6c
 .L_02002b06:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #203
-	bl	sub_020058c2
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002b36
 	movs	r1, #140
@@ -5592,7 +5086,7 @@ Overlay_02000000:
 	movs	r0, #8
 	lsls	r1, r1, #17
 	lsls	r2, r2, #17
-	bl	sub_0200598c
+	bl 0x0200ae6c
 	movs	r3, #18
 	movs	r2, #84
 	str	r3, [sp, #0]
@@ -5601,7 +5095,7 @@ Overlay_02000000:
 	movs	r1, #84
 	movs	r2, #1
 	movs	r3, #1
-	bl	sub_02005930
+	bl 0x0200adfc
 .L_02002b36:
 	movs	r1, #241
 	lsls	r1, r1, #1
@@ -5617,12 +5111,12 @@ Overlay_02000000:
 	movs	r0, #160
 	lsls	r0, r0, #1
 	adds	r0, #255
-	bl	sub_02005a3e
+	bl 0x0200aeec
 .L_02002b54:
 	movs	r1, #144
 	ldr	r0, [pc, #484]
 	lsls	r1, r1, #3
-	bl	sub_020058c0
+	bl 0x0200ad64
 	b.n	.L_02002d2a
 .L_02002b60:
 	ldr	r3, [pc, #476]
@@ -5638,12 +5132,12 @@ Overlay_02000000:
 	ldrsh	r3, [r3, r1]
 	cmp	r3, #4
 	bgt.n	.L_02002b7c
-	bl	sub_02003f9a
+	bl 0x02009420
 .L_02002b7c:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #226
-	bl	sub_02005938
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002bb0
 	movs	r3, #65
@@ -5654,7 +5148,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	sub_02005990
+	bl 0x0200adf4
 	movs	r3, #5
 	str	r3, [sp, #4]
 	movs	r0, #15
@@ -5662,12 +5156,12 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_020059aa
+	bl 0x0200adfc
 .L_02002bb0:
 	movs	r0, #144
 	lsls	r0, r0, #4
 	adds	r0, #227
-	bl	sub_0200596c
+	bl 0x0200adb4
 	cmp	r0, #0
 	beq.n	.L_02002be4
 	movs	r3, #83
@@ -5678,7 +5172,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #3
 	str	r5, [sp, #0]
-	bl	sub_020059c4
+	bl 0x0200adf4
 	movs	r3, #23
 	str	r3, [sp, #4]
 	movs	r0, #1
@@ -5686,18 +5180,18 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #1
 	str	r5, [sp, #0]
-	bl	sub_020059de
+	bl 0x0200adfc
 .L_02002be4:
 	movs	r0, #10
 	adds	r0, #255
-	bl	sub_0200599e
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02002bf2
 	b.n	.L_02002d2a
 .L_02002bf2:
 	movs	r0, #129
 	lsls	r0, r0, #2
-	bl	sub_020059ac
+	bl 0x0200adb4
 	cmp	r0, #0
 	bne.n	.L_02002c00
 	b.n	.L_02002d2a
@@ -5723,7 +5217,7 @@ Overlay_02000000:
 	movs	r3, #2
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02005a28
+	bl 0x0200adfc
 	movs	r3, #69
 	str	r3, [sp, #4]
 	movs	r0, #25
@@ -5731,7 +5225,7 @@ Overlay_02000000:
 	movs	r2, #9
 	movs	r3, #2
 	str	r5, [sp, #0]
-	bl	sub_02005a3a
+	bl 0x0200adfc
 	movs	r5, #1
 	movs	r3, #7
 	movs	r0, #22
@@ -5739,7 +5233,7 @@ Overlay_02000000:
 	movs	r2, #15
 	str	r3, [sp, #4]
 	str	r5, [sp, #0]
-	bl	sub_02005a4c
+	bl 0x0200adfc
 	movs	r3, #71
 	str	r3, [sp, #4]
 	movs	r0, #22
@@ -5747,7 +5241,7 @@ Overlay_02000000:
 	movs	r2, #15
 	movs	r3, #7
 	str	r5, [sp, #0]
-	bl	sub_02005a5e
+	bl 0x0200adfc
 	movs	r3, #68
 	str	r3, [sp, #0]
 	movs	r0, #69
@@ -5755,7 +5249,7 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #2
 	str	r6, [sp, #4]
-	bl	sub_02005a78
+	bl 0x0200ae04
 .L_02002c76:
 	mov	r1, sl
 	ldrh	r3, [r1, #0]
@@ -5773,7 +5267,7 @@ Overlay_02000000:
 	movs	r3, #2
 	str	r5, [sp, #0]
 	str	r6, [sp, #4]
-	bl	sub_02005a94
+	bl 0x0200adfc
 	movs	r3, #87
 	str	r3, [sp, #4]
 	movs	r0, #25
@@ -5781,7 +5275,7 @@ Overlay_02000000:
 	movs	r2, #9
 	movs	r3, #2
 	str	r5, [sp, #0]
-	bl	sub_02005aa6
+	bl 0x0200adfc
 	movs	r3, #25
 	str	r3, [sp, #4]
 	movs	r5, #1
@@ -5790,7 +5284,7 @@ Overlay_02000000:
 	movs	r2, #15
 	movs	r3, #7
 	str	r5, [sp, #0]
-	bl	sub_02005aba
+	bl 0x0200adfc
 	movs	r3, #89
 	str	r3, [sp, #4]
 	movs	r0, #22
@@ -5798,7 +5292,7 @@ Overlay_02000000:
 	movs	r2, #15
 	movs	r3, #7
 	str	r5, [sp, #0]
-	bl	sub_02005acc
+	bl 0x0200adfc
 	movs	r3, #68
 	str	r3, [sp, #0]
 	movs	r0, #69
@@ -5806,27 +5300,27 @@ Overlay_02000000:
 	movs	r2, #1
 	movs	r3, #4
 	str	r6, [sp, #4]
-	bl	sub_02005ae6
+	bl 0x0200ae04
 .L_02002ce4:
 	movs	r1, #133
 	lsls	r1, r1, #2
 	adds	r3, r7, r1
 	ldr	r0, [r3, #0]
-	bl	sub_02005b42
+	bl 0x0200ae54
 	mov	r2, r8
 	adds	r5, r0, #0
 	str	r2, [r5, #20]
 	str	r2, [r5, #12]
 	movs	r0, #1
-	bl	sub_02005b38
-	bl	sub_02005aec
+	bl 0x0200ae3c
+	bl 0x0200adec
 	b.n	.L_02002d2a
 .L_02002d04:
 	ldr	r3, [pc, #64]
 	cmp	r2, r3
 	bne.n	.L_02002d2a
 	movs	r0, #64
-	bl	sub_02005b62
+	bl 0x0200ae54
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_02002d2a

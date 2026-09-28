@@ -1,7 +1,6 @@
 .syntax unified
 .include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.set sub_020000ea, 0x020000ea
 	.global Overlay_02000000
 Overlay_02000000:
 	.irp EntryTarget, 0x02008071, 0x02008039, 0x02008045, 0x0200804d, 0x02008069, 0x02008041, 0x02008085
@@ -27,7 +26,7 @@ Overlay_02000000:
 	adds	r3, #225
 	adds	r1, r1, r3
 	adds	r0, r1, #0
-	bl	sub_020000ea
+	bl 0x02008088
 	pop	{pc}
 	.2byte 0x0000
 	ldr	r0, [pc, #0]

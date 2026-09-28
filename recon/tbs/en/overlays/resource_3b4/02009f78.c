@@ -1,3 +1,5 @@
+/* Draft of FieldScene_DispatchByRuntimeSelector, resource_3b4 at 0x02009f78 (split from FIELD/TAKARA_ASHIBA/RUN_THREE.C).
+ * Remaining difference: it compares the scene id against runtime selector constants loaded through address-derived symbols, so the overlay keeps its listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -35,10 +37,8 @@ struct Slot {
     u16 f06;
 };
 
-void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 frames);
-s32 ArcTan2();
-void ObjectDispatch_ApplyValueToChildren();
-s32 Object_GetById();
+void TakaraAshiba_UpdateBlockRects(void);
+void BattleFx_RunRisingObjectSequence(s32, s32, s32);
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.
@@ -90,38 +90,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* resource_3b4 actor presentation: cell repaints for slots 11 and 12. */
-
-/*
- * Func_ names below are loader-relocated call words in this overlay's import
- * veneer table, not runtime addresses.  The declarations are old-style
- * because the same imports are reached with differing argument counts from
- * different call sites.
- */
-
-/*
- * Actor presentation for resource_3b4.
- *
- * A Func_ name in the import veneer band 0x02002468-0x0200261f names the
- * main-image address held in the veneer's trailing word, not a runtime
- * address the call reaches directly.  Declarations are old-style because
- * those imports are reached with differing argument counts from different
- * call sites.
- */
-
-/* Slot record lookup, then the mode imports. */
-
-/* Complete 16-byte actor-15 mode wrapper before the no-op leaf at 0x9ec. */
-void SceneActor_SetActor15ModeZero(void)
-{
-    BattleFx_RunPageEffectForSlot(15, 0, 6);
-}
-
-/* Complete four-byte no-op leaf plus its alignment halfword. */
-void Resource3b4_EmptyHookA(void)
-{
-}
-
 s32 *Engine_GetTriggerActor(s32 slot);
 s32 Engine_TestTriggerFlag(s32 flag);
 void Engine_SetTriggerFlag(s32 flag);
@@ -130,7 +98,26 @@ static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
 {
     *field = step;
 }
+void SceneState_ApplyTwoRectsAtRow56(void);
 
 void FieldScene_RunScene3b4_02002188(void);
 void FieldScene_RunScene3b4_02002290(void);
 void FieldScene_RunScene3b4_02002334(void);
+
+s32 FieldScene_DispatchByRuntimeSelector(void)
+{
+    u8 *base;
+
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    base = RuntimeSelectorTable;
+    if (*(s16 *)(base + 0x1c0) == (s32)&PrimaryRuntimeSelector) {
+        FieldScene_RunScene3b4_02002188();
+    }
+    if (*(s16 *)(base + 0x1c0) == (s32)&SecondaryRuntimeSelector) {
+        FieldScene_RunScene3b4_02002290();
+    }
+    if (*(s16 *)(base + 0x1c0) == (s32)&TertiaryRuntimeSelector) {
+        FieldScene_RunScene3b4_02002334();
+    }
+    return 0;
+}

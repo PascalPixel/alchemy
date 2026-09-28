@@ -90,36 +90,16 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* resource_3b4 actor presentation: cell repaints for slots 11 and 12. */
-
-/*
- * Func_ names below are loader-relocated call words in this overlay's import
- * veneer table, not runtime addresses.  The declarations are old-style
- * because the same imports are reached with differing argument counts from
- * different call sites.
- */
-
-/*
- * Actor presentation for resource_3b4.
- *
- * A Func_ name in the import veneer band 0x02002468-0x0200261f names the
- * main-image address held in the veneer's trailing word, not a runtime
- * address the call reaches directly.  Declarations are old-style because
- * those imports are reached with differing argument counts from different
- * call sites.
- */
-
-/* Slot record lookup, then the mode imports. */
-
-/* Complete 16-byte actor-15 mode wrapper before the no-op leaf at 0x9ec. */
-void SceneActor_SetActor15ModeZero(void)
+/* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
+s32 SceneData_ReturnZero(void)
 {
-    BattleFx_RunPageEffectForSlot(15, 0, 6);
+    return 0;
 }
 
-/* Complete four-byte no-op leaf plus its alignment halfword. */
-void Resource3b4_EmptyHookA(void)
+/* Complete eight-byte literal-address getter, including its sole pool word. */
+u8 *SceneData_GetTablea970(void)
 {
+    return (u8 *)0x0200a970;
 }
 
 s32 *Engine_GetTriggerActor(s32 slot);

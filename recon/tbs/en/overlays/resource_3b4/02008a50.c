@@ -1,3 +1,5 @@
+/* Draft of SceneData_SelectDataByRuntimeSelector, resource_3b4 at 0x02008a50 (split from FIELD/TAKARA_ASHIBA/STAGED_STEP.C).
+ * Remaining difference: it compares the scene id against runtime selector constants loaded through address-derived symbols, so the overlay keeps its listing rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -90,36 +92,25 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* resource_3b4 actor presentation: cell repaints for slots 11 and 12. */
-
-/*
- * Func_ names below are loader-relocated call words in this overlay's import
- * veneer table, not runtime addresses.  The declarations are old-style
- * because the same imports are reached with differing argument counts from
- * different call sites.
- */
-
-/*
- * Actor presentation for resource_3b4.
- *
- * A Func_ name in the import veneer band 0x02002468-0x0200261f names the
- * main-image address held in the veneer's trailing word, not a runtime
- * address the call reaches directly.  Declarations are old-style because
- * those imports are reached with differing argument counts from different
- * call sites.
- */
-
-/* Slot record lookup, then the mode imports. */
-
-/* Complete 16-byte actor-15 mode wrapper before the no-op leaf at 0x9ec. */
-void SceneActor_SetActor15ModeZero(void)
+s32 SceneData_SelectDataByRuntimeSelector(void)
 {
-    BattleFx_RunPageEffectForSlot(15, 0, 6);
-}
+    extern u8 PrimaryOverlayData_02000a50[];
+    extern u8 SecondaryOverlayData_02000a50[];
+    extern u8 TertiaryOverlayData_02000a50[];
+    extern u8 DefaultOverlayData_02000a50[];
 
-/* Complete four-byte no-op leaf plus its alignment halfword. */
-void Resource3b4_EmptyHookA(void)
-{
+    s16 selector = RuntimeSelectorTable[224];
+
+    if (selector == (s32)&PrimaryRuntimeSelector) {
+        return (s32)PrimaryOverlayData_02000a50;
+    }
+    if (selector == (s32)&SecondaryRuntimeSelector) {
+        return (s32)SecondaryOverlayData_02000a50;
+    }
+    if (selector == (s32)&TertiaryRuntimeSelector) {
+        return (s32)TertiaryOverlayData_02000a50;
+    }
+    return (s32)DefaultOverlayData_02000a50;
 }
 
 s32 *Engine_GetTriggerActor(s32 slot);

@@ -1,0 +1,226 @@
+#include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
+#include "STAGED_ACTOR.H"
+#include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+/* FAKEMATCH: calls that cast Engine_ScheduleCallback to another return type keep their original register order. */
+s32 Engine_ScheduleCallback();
+
+enum {
+    /* Message 0x182 + 243. */
+    ITEM_RED_KEY = 243,
+    /* Message 0x182 + 244. */
+    ITEM_BLUE_KEY = 244
+};
+
+struct Actor {
+    s32 f00;
+    s32 f04;
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+};
+
+struct Frame {
+    s32 f00;
+    s32 f04;
+    s32 f08;
+    s32 f0c;
+    s32 f10;
+};
+
+struct Slot {
+    u16 f00;
+    u16 f02;
+    u16 f04;
+    u16 f06;
+};
+
+void TakaraAshiba_OpenPassage();
+void Korosseo_ShowItemIcon();
+s32 Object_GetById();
+void Local_02001ac8();
+void TakaraAshiba_UpdateBlockRects();
+void ObjectDispatch_ApplyValueToChildren();
+
+/*
+ * Distance between two three-component 16.16 fixed-point positions.
+ *
+ * Each argument walks three consecutive 16.16 words in x, y, z order. The
+ * per-axis deltas are taken in fixed point, shifted down to integers, squared,
+ * and summed; the total is passed to the resident IWRAM integer square root.
+ *
+ * Expressions are preserved exactly as reconstructed: the walking-pointer form
+ * is load-bearing for byte-identity and must not become struct field access.
+ */
+
+static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
+{
+    Actor_SetPosition(actor, x, y);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
+{
+    f(a0, a1, a2, a3, a4, a5);
+}
+void FieldScene_RunScene3b4_02000fdc(s32 a0);
+
+s32 *Engine_GetTriggerActor(s32 slot);
+s32 Engine_TestTriggerFlag(s32 flag);
+void Engine_SetTriggerFlag(s32 flag);
+
+static __inline__ void SceneState_StoreStep(s16 *field, s32 step)
+{
+    *field = step;
+}
+void SceneActor_MarkSlot13AndSetFlag200(void);
+void SceneActor_RunWhenActor9AtTile45x43(void);
+void ActorPresentation_RepaintCellsAtActorsElevenAndTwelve(void);
+void FieldScene_RunSingleStep(void);
+void FieldScene_CallHelper3c70(void);
+
+void FieldScene_RunScene3b4_02002188(void);
+void FieldScene_RunScene3b4_02002290(void);
+void FieldScene_RunScene3b4_02002334(void);
+
+void FieldScene_RunScene3b4_02002188(void)
+{
+    u32 i;
+    s32 record;
+
+    Task_Wait(1);
+    Korosseo_ShowItemIcon(12, 243);
+    Korosseo_ShowItemIcon(11, 244);
+    Korosseo_ShowItemIcon(10, 244);
+    Korosseo_ShowItemIcon(9, 244);
+    Korosseo_ShowItemIcon(8, 244);
+    if (GameFlag_IsSet(0xee7) == 0) {
+        Actor_SetPosition(8, 0xe80000, 0x3680000);
+    }
+    if (GameFlag_IsSet(0xee8) == 0) {
+        Actor_SetPosition(9, 0x1280000, 0x3380000);
+    }
+    if (GameFlag_IsSet(0xee9) == 0) {
+        Actor_SetPosition(10, 0x1480000, 0x2f80000);
+    }
+    if (GameFlag_IsSet(0xeea) == 0) {
+        Actor_SetPosition(11, 0x1680000, 0x3680000);
+    }
+    if (GameFlag_IsSet(0x9c0) != 0) {
+        TakaraAshiba_OpenPassage(0);
+    }
+    if (GameFlag_IsSet(0x9c1) != 0) {
+        TakaraAshiba_OpenPassage(1);
+    }
+    if (GameFlag_IsSet(0x9c2) != 0) {
+        TakaraAshiba_OpenPassage(2);
+    }
+    if (GameFlag_IsSet(0x9c3) != 0) {
+        TakaraAshiba_OpenPassage(3);
+    }
+    if (GameFlag_IsSet(0x9c4) != 0) {
+        FieldScene_RunScene3b4_02000fdc(0);
+    }
+}
+
+void FieldScene_RunScene3b4_02002290(void)
+{
+    s32 record;
+
+    *(u8 *)(Object_GetById(8) + 89) = 1;
+    *(u8 *)(Object_GetById(9) + 89) = 1;
+    *(u8 *)(Object_GetById(10) + 89) = 1;
+    *(u8 *)(Object_GetById(11) + 89) = 1;
+    record = Engine_GetTriggerActor(8);
+    *(s32 *)(record + 24) = 0xb333;
+    record = Value1(Engine_GetTriggerActor, 9);
+    *(s32 *)(record + 24) = 0xb333;
+    record = Value1(Engine_GetTriggerActor, 10);
+    *(s32 *)(record + 24) = 0xb333;
+    record = Value1(Engine_GetTriggerActor, 11);
+    *(s32 *)(record + 24) = 0xb333;
+    record = Engine_GetTriggerActor(12);
+    *(s32 *)(record + 24) = 0xb333;
+    Call2(Engine_ScheduleCallback, 0x20097ad, 0xc80);
+    Value2(Engine_ScheduleCallback, 0x200941d, 0xc80);
+    Value2(Engine_ScheduleCallback, 0x2009309, 0xc80);
+    {
+        u16 t;
+        t = 0x3f42;
+        *(volatile u16 *)0x04000050 = t;
+        t = 0x607;
+        *(volatile u16 *)0x04000052 = t;
+    }
+}
+
+void FieldScene_RunScene3b4_02002334(void)
+{
+    s32 record;
+
+    *(u8 *)(Object_GetById(14) + 85) = 0;
+    Call2(Engine_ScheduleCallback, 0x2009e95, 0xc80);
+    Value2(Engine_ScheduleCallback, 0x2009edd, 0xc80);
+    MapObject_SetPosition(107, 0, 0);
+    if (GameFlag_IsSet(0xed9) != 0) {
+        Actor_SetAnimation(14, 2);
+    }
+    Local_02001ac8();
+    SceneActor_RunWhenActor9AtTile45x43();
+    TakaraAshiba_UpdateBlockRects();
+    FieldScene_RunSingleStep();
+    FieldScene_CallHelper3c70();
+    Actor_SetSpritePriority(8, 3);
+    *(u8 *)(Object_GetById(11) + 85) = 0;
+    *(u8 *)(Object_GetById(12) + 85) = 0;
+    ActorPresentation_RepaintCellsAtActorsElevenAndTwelve();
+    if (GameFlag_IsSet(0x200) != 0) {
+        SceneActor_MarkSlot13AndSetFlag200();
+        Actor_SetAnimation(13, 5);
+    }
+    if (GameFlag_IsSet(0x109) == 0) {
+        if (GameFlag_IsSet(0x9ca) != 0) {
+            Actor_SetPosition(15, 0x3580000, 0x3380000);
+            record = Engine_GetTriggerActor(15);
+            *(s32 *)(record + 108) = 0x2008aa9;
+        } else if (GameFlag_IsSet(0x9c9) != 0) {
+            Actor_SetPosition(15, 0x3780000, 0x2980000);
+            record = Value1(Engine_GetTriggerActor, 15);
+            *(u16 *)(*(s32 *)(record + 80) + 30) = 0;
+            ObjectDispatch_ApplyValueToChildren(record, 16);
+        } else if (GameFlag_IsSet(0x9c8) != 0) {
+            Actor_SetPosition(15, 0x2480000, 0x2a80000);
+        } else {
+            Actor_SetPosition(15, 0x2480000, 0x2980000);
+        }
+    }
+}

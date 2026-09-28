@@ -2,21 +2,20 @@
 #include "SERIAL_RUNTIME.H"
 extern u8 gLinkStatus[];
 
-s32 Main_08000170(u32 size);
-void Main_08000178(s32 heap);
-s32 Main_08000388(void);
-s32 Main_080003a8(void);
-u8 *Engine_OwnerGetState(s32 owner);
+s32 Runtime_BumpAllocateAlternatePool(u32 size);
+void Runtime_BumpFree(s32 heap);
+s32 SerialRuntime_BeginTransferB(void);
+s32 SerialRuntime_GetActiveTransfers(void);
+u8 *Owner_GetState(s32 owner);
 void Engine_TaskWait(s32 frames);
-void Main_08015020(s32 id, u16 *buf);
-void Main_08077000(s32 mode);
+void Ui_AdjustValueWithoutLimit(s32 id, u16 *buf);
+void Trade_GetOfferState(s32 mode);
 
 static __inline__ void Call2(void (*f)(s32, u16 *), s32 a0, u16 *a1)
 {
     f(a0, a1);
 }
 
-#define LINK_STAT (*(volatile u16 *)gLinkStatus)
 
 /* Receives the linked player's three party records (0x154-byte transfers)
  * and then one 0x140-byte block, waiting on each transfer for at most 900
@@ -38,7 +37,7 @@ s32 LinkLobby_ReceivePartyRecords(void)
     s32 i;
 
     size = 0x154;
-    heap = Main_08000170(size);
+    heap = Runtime_BumpAllocateAlternatePool(size);
     result = 0;
     timeout = 900;
     slot = 0;
@@ -49,14 +48,14 @@ wait1:
         goto done;
     }
     Engine_TaskWait(1);
-    if (--timeout < 0 || (LINK_STAT & 3) != 3) {
+    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
         if (++tries > 24) {
                 result = -1;
                 goto done;
         }
     }
 test1:
-    if (Main_080003a8() != 0) {
+    if (SerialRuntime_GetActiveTransfers() != 0) {
         goto wait1;
     }
     if (SERIAL_VALUE_B != size) {
@@ -67,7 +66,7 @@ test1:
         result++;
     }
     Engine_TaskWait(2);
-    Call2(Main_08015020, 0x80c, buf);
+    Call2(Ui_AdjustValueWithoutLimit, 0x80c, buf);
     i = 0;
     if (buf[i] != 0) {
         do {
@@ -90,9 +89,9 @@ next:
     if (slot > 2) {
         goto second;
     }
-    rec = Engine_OwnerGetState(slot + 128);
+    rec = Owner_GetState(slot + 128);
     tries = 0;
-    if ((ret = Main_08000388()) == -1) {
+    if ((ret = SerialRuntime_BeginTransferB()) == -1) {
         goto failed;
     }
     goto test1;
@@ -103,14 +102,14 @@ wait2:
         goto done;
     }
     Engine_TaskWait(1);
-    if (--timeout < 0 || (LINK_STAT & 3) != 3) {
+    if (--timeout < 0 || (*(volatile u16 *)gLinkStatus & 3) != 3) {
         if (++tries > 24) {
             result = -1;
         goto done;
         }
     }
 test2:
-    if (Main_080003a8() != 0) {
+    if (SerialRuntime_GetActiveTransfers() != 0) {
         goto wait2;
     }
     if (SERIAL_VALUE_B != 0x140) {
@@ -120,17 +119,17 @@ test2:
     }
     goto done;
 second:
-    Main_08000178(heap);
+    Runtime_BumpFree(heap);
     size = 0x140;
-    heap = Main_08000170(size);
-    Main_08077000(1);
+    heap = Runtime_BumpAllocateAlternatePool(size);
+    Trade_GetOfferState(1);
     tries = 0;
-    if ((ret = Main_08000388()) != -1) {
+    if ((ret = SerialRuntime_BeginTransferB()) != -1) {
         goto test2;
     }
 failed:
     result = ret;
 done:
-    Main_08000178(heap);
+    Runtime_BumpFree(heap);
     return result;
 }

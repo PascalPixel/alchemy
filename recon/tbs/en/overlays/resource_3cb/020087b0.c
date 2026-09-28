@@ -1,3 +1,8 @@
+/* Draft of LinkLobby_ExchangePartyRecords, resource_3cb at 0x020087b0 (was
+ * MENU/LINK_LOBBY/EXCHANGE_PARTY.C).
+ * Remaining difference: it stores to 0x020023a0, twelve bytes before
+ * gSerialReceiveDest, which the main image does not name.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SERIAL_RUNTIME.H"

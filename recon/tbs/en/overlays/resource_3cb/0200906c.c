@@ -1,3 +1,8 @@
+/* Draft of LinkLobby_TalkToAttendant, resource_3cb at 0x0200906c (was
+ * MENU/LINK_LOBBY/ATTENDANT_TALK.C).
+ * Remaining difference: each branch's message number is a C constant GCC
+ * hoists above its test; the ROM loads it after, as a link-time value.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 
 union GameStateRows {
@@ -13,8 +18,7 @@ void Engine_EventSetMessage(s32 message);
 s32 Engine_EventOpenMessage(s32 actor, s32 mode);
 s32 Engine_EventEnd(void);
 
-extern union GameStateRows gGameStateRows;
-extern u8 Data_0000297f[], Data_00002982[], Data_00002985[];
+extern union GameStateRows gGameState;
 
 static __inline__ s32 Call2(s32 (*f)(s32, s32), s32 a0, s32 a1)
 {
@@ -30,17 +34,17 @@ s32 LinkLobby_TalkToAttendant(s32 actor)
     Engine_EventBegin();
     switch (actor) {
     case 12:
-        message = (s32)Data_00002985;
+        message = 0x2985;
         break;
     case 13:
-        message = (s32)Data_0000297f;
+        message = 0x297f;
         break;
     case 14:
     default:
-        message = (s32)Data_00002982;
+        message = 0x2982;
         break;
     }
-    Engine_ActorFaceActor(actor, gGameStateRows.words[125], 0);
+    Engine_ActorFaceActor(actor, gGameState.words[125], 0);
     if (Engine_GameFlagIsSet(0x304))
         step = 2 - (Engine_GameFlagIsSet(0x305) != 0);
     Engine_EventSetMessage(message + step);

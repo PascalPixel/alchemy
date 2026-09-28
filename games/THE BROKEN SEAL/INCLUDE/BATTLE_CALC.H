@@ -22,14 +22,13 @@ extern s32 HpDmgFalloff[];
 
 s32 Math_Div(s32 numerator, s32 denominator);
 s32 Math_DivU(s32 numerator, s32 denominator);
-#define BattleUnit_Assign Func_08077140
 
 s32 Battle_HitCheck(s32 actor, s32 target, s32 range, s32 effect, s32 table);
 s32 Battle_CalcAttack(s32 power, s32 scale, s32 unused, s32 bonus);
 s32 Battle_CalcPower(s32 power, s32 bonus, s32 scale);
 s32 Battle_CalcRestore(s32 power, s32 scale, s32 factor);
 s16 Owner_AdjustSecondValueFar(s32 unit, s32 amount);
-s32 BattleUnit_Assign(s32 slot, s32 unit, s32 mask);
+s32 BattleUnit_AssignFar(s32 slot, s32 unit, s32 mask);
 s32 BattleFx_CanAffectDefeatedUnit(s32 effect);
 
 #endif

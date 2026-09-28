@@ -619,7 +619,7 @@ after_power:
             ch = Summon_TakeCharge(st, 1);
             if (ch & 0x8000)
                 Summon_ResetCharge(st);
-            BattleUnit_Assign(rec, st, ch & 0x7fff);
+            BattleUnit_AssignFar(rec, st, ch & 0x7fff);
             slots = (s16 *)(BytePtr(work) + 2);
             {
                 s32 off;

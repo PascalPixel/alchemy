@@ -129,7 +129,7 @@ s32 Func_08015048(void);
 void Func_08015018(s32 handle, s32 mode);
 void Func_080bb7c0(s32 a, s32 b);
 void Battle_ApplyValueToWork2224(void);
-void Func_08077140(s32 a, s32 b, s32 c);
+void BattleUnit_AssignFar(s32 a, s32 b, s32 c);
 void Func_08015118(void);
 void Func_08015120(s32 a, s32 b);
 void Func_080151c8(s32 id);
@@ -380,7 +380,7 @@ resolved:
         if (work->field_538 != 0) {
             Func_080f9010(58);
             if (work->field_3e <= 1) {
-                Func_08077140(128, work->msg_ids[work->field_3c], 26);
+                BattleUnit_AssignFar(128, work->msg_ids[work->field_3c], 26);
                 Func_08015118();
                 Func_08015120(128, 1);
                 Func_080151c8(work->field_3e + 0x838);

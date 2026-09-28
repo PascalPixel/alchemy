@@ -67,7 +67,7 @@ s32 Scene_PlaceActor8OnGate300(void)
     s32 pos_x = 0xD80000;
     s32 pos_z = 0x880000;
 
-    work = RESOURCE388_RUNTIME;
+    work = (struct Resource388Runtime *)EFFECT_RUNTIME;
     work->setup_request_1c0 = 0x204;
     work->setup_value_1c8 = 0x18;
     if (Resource388_TestSetupGate(0x300) != 0) {

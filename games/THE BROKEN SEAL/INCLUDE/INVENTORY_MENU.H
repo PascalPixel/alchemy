@@ -139,7 +139,7 @@ LAYOUT_SIZE_GUARD(
     0x25c);
 
 extern struct InventoryMenuState *gMenuWork;
-extern char Value_00000ad7;
+extern char MsgItemMenuEmpty;
 
 s32 ItemMenu_IsSpecial(s32 item);
 void ItemMenu_OpenCategory(s32 owner);
@@ -178,7 +178,5 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused, const struct MenuResult *state
 s32 InventoryMenu_ItemNamePageReturnTrue(void);
 void ItemMenu_DrawCategory(s32 window, s32 owner, s32 mode);
 void Resource_LoadByModeIntoSlotFar(s32 style, u16 item, u8 target, s32 flags);
-
-#define InventoryMenu_EmptyMessage         Value_00000ad7
 
 #endif

@@ -618,7 +618,7 @@ Func_080b63c8:
 	ldrh	r1, [r2, r3]
 	movs	r0, #128
 	movs	r2, #26
-	bl	Func_08077140
+	bl	BattleUnit_AssignFar
 	bl	UiWork_ClearValueNameTablesFar
 	movs	r0, #128
 	movs	r1, #1

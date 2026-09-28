@@ -85,6 +85,8 @@ void PackedTable_AdjustMarkedOffsets(u16 *entries, s32 byte_length)
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 
+extern const u8 Func_08002d5c[];
+
 u32 Resource_GetTableEntry(u32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
 
@@ -106,7 +108,7 @@ void Resource_LoadCode(u32 index, void *destination)
         size = (u32)Resource_PatchThumbBranchCodeSize;
     } while (0);
     routine = (void (*)(void *, s32))Runtime_BumpAllocate(size);
-    Dma_Set((const void *)0x8002d5c, routine, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)Func_08002d5c, routine, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     routine(destination, end);
     Sys_Free(routine);
 }

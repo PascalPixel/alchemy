@@ -10,10 +10,10 @@
 @ credit: handwritten — TLA IWRAM runtime sound mixer entry
 .syntax unified
 	.thumb_func
-	.set	.L_03000cfc, 0x03000cfc
 	.arm
 	.thumb
-.L_030007b4:
+	.global IwramSoundMixEntry
+IwramSoundMixEntry:
 	str	r0, [sp, #4]
 	ldr	r3, [r4, #36]
 	ldrb	r6, [r4, #0]
@@ -50,7 +50,7 @@
 	movs	r0, #0
 	strb	r0, [r4, #0]
 .L_030007f6:
-	b.n	.L_03000cfc
+	b.n	IwramSoundMixNextChannel
 .L_030007f8:
 	lsls	r0, r6, #25
 	bpl.n	.L_03000818

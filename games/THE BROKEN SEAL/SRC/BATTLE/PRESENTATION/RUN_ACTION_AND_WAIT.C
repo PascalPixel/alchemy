@@ -1,10 +1,12 @@
 #include "TYPES.H"
 
+extern u8 gEventWork[];
+
 extern volatile u32 gKeysHeld;
 
 void BattleEv_RunWait(s32 action)
 {
-    u8 *runtime = *(u8 **)0x03001ebc;
+    u8 *runtime = *(u8 **)gEventWork;
     s32 wait_token = UiText_OpenMessageAtObject();
     s32 resolved_action;
     u32 frames = 0;

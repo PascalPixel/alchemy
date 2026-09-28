@@ -5,6 +5,8 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+
 /* Sixteen columns grow and retract in staggered windows. Five image cells
  * cycle with frame and column, using the alternating cached blitters.
  * Position-query outputs are separate from the two three-word coordinates.
@@ -65,7 +67,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     } while (i != 16);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     frame = 0;
     do {
         if (frame == 32) {
@@ -100,7 +102,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
         WaitFrames(1);
         frame++;
     } while (frame != 70);
-    Scheduler_RemoveCallback(0x080cd261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

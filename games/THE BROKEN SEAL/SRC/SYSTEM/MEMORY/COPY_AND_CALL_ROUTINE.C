@@ -2,6 +2,8 @@
 #include "DMA.H"
 #include "RUNTIME_MEM.H"
 
+extern const u8 Render_BuildOamList[];
+
 typedef void (*LoadedRoutine)(void *argument);
 
 /* Linker-resolved absolute size of the routine copied into the heap. */
@@ -21,7 +23,7 @@ void Runtime_CopyAndCallRoutine(void *argument)
         size = (u32)LoadedRuntime_Size;
     } while (0);
     routine = (LoadedRoutine)Runtime_BumpAllocate(size);
-    Dma_Set((const void *)0x08001dc8, (void *)routine,
+    Dma_Set((const void *)Render_BuildOamList, (void *)routine,
             (size >> 2) | 0x84000000, (volatile u32 *)0x040000d4);
     routine(argument);
     Sys_Free((void *)routine);

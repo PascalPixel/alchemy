@@ -5,6 +5,8 @@
 #include "BATTLE_PRESENTATION.H"
 #include "MOTION_OBJECT.H"
 
+extern u8 gTransitionWork[];
+
 struct TransitionContext {
     s32 kind;
     s32 side;
@@ -42,7 +44,7 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
 
     {
         struct BattlePresentationTransition *transition =
-            *(struct BattlePresentationTransition **)0x03001f00;
+            *(struct BattlePresentationTransition **)gTransitionWork;
         transition->target_yaw = action[0] > 4 ? 0x5000 : 0x2000;
         transition->frames = 60;
     }

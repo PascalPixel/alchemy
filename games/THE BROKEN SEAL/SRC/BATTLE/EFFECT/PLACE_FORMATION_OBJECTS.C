@@ -1,6 +1,8 @@
 
 #include "TYPES.H"
 
+extern u8 gBattleFxWork[];
+
 struct Scale { s32 x; s32 y; };
 struct Placement { s32 x; s32 y; s32 z; s32 w; };
 
@@ -26,7 +28,7 @@ void Object_ApplyProjectedPlacementFar(void *object, struct Placement *pos, stru
    3x3 grid, or the twelve- and eight-object layouts from the offset tables. */
 void BattleFx_PlaceFormationObjects(s32 formation, s32 x, s32 z)
 {
-    struct FormationWork *work = *(struct FormationWork **)0x03001eec;
+    struct FormationWork *work = *(struct FormationWork **)gBattleFxWork;
     struct Scale normal = Data_080edab8;
     struct Scale small = Data_080edac0;
     struct Placement pos;

@@ -1,7 +1,9 @@
 #include "DMA.H"
+
+extern u8 gBattleBgFxWork[];
 void BattleFx_ArmBg0HBlankDma(void)
 {
-    u8 *work = *(u8 **)0x03001ea8;
+    u8 *work = *(u8 **)gBattleBgFxWork;
     if (!work[660]) {
         u32 offset = work[650] * 324;
         volatile u16 *channel = (volatile u16 *)0x040000b0;

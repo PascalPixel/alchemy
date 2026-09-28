@@ -4,6 +4,8 @@
  */
 #include "TYPES.H"
 
+extern u8 gMenuWork[];
+
 struct OwnerProgressState {
     u8 unknown_000[0x0f];
     u8 level;
@@ -34,7 +36,7 @@ void StatusMenu_ShowOwnerProgressMessage(
     s32 preserve_variant)
 {
     struct StatusMenuContext *menu =
-        *(struct StatusMenuContext **)0x03001f2c;
+        *(struct StatusMenuContext **)gMenuWork;
     void *buffer;
 
     if (preserve_variant == 0 && message_variant > 3) {

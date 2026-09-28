@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "SYSTEM.H"
+
+void Graphics_AdvancePaletteCycle(void);
 void Scheduler_RemoveCallback(u32);
 void BattlePres_ClearAllActorRecordModes(void);
 void QueueIoWriteDelay2(u32, u32);
@@ -19,7 +21,7 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
     volatile u16 *blend_y;
 
     if (mode == 0) {
-        Scheduler_RemoveCallback(0x080c1085);
+        Scheduler_RemoveCallback((s32)Graphics_AdvancePaletteCycle);
         *(volatile u16 *)0x04000054 = mode;
         BattlePres_ClearAllActorRecordModes();
         WaitFrames(1);
@@ -59,6 +61,6 @@ void BattlePres_SetActorModes(u16 *actors, s32 mode)
         }
         WaitFrames(1);
         QueueIoWriteDelay2(0x04000050, 0);
-        Scheduler_AddOrUpdateCallback(0x080c1085, 0x480);
+        Scheduler_AddOrUpdateCallback((s32)Graphics_AdvancePaletteCycle, 0x480);
     }
 }

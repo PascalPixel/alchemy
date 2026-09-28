@@ -3,6 +3,8 @@
 #include "RENDER_INPUT.H"
 #include "WORKSPACE_OPTIONS.H"
 
+extern const u8 Resource_FixedBlockBTiles[];
+
 extern u8 Value_00000c07;
 extern u8 Value_00000c0d;
 extern s8 Data_080367c9[];
@@ -51,7 +53,7 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 
     x = Resource_FindFreeEntry();
     if (x < 96) {
-        VramBlock_LoadCached(x, 128, (const void *)0x080310a4);
+        VramBlock_LoadCached(x, 128, (const void *)Resource_FixedBlockBTiles);
         out = RenderOutput_Create(x, 0x40000000, win, 0, 0);
         work->cursor.output = out;
         x = win->x * 8;

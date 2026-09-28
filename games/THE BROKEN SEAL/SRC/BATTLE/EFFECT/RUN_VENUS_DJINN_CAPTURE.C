@@ -1,5 +1,13 @@
 #include "TYPES.H"
 
+extern u8 gEffectWork[];
+
+void BattleFx_AdvanceSpinAngle(void);
+void BattleFx_ShrinkObjectAndDestroyFast(void);
+void BattleFx_UpdateRadialSpread(void);
+void BattleFx_UpdateDescendingOrbitObject(void);
+extern const u8 BattleFx_CommonParticleScript[];
+
 /* The Venus Djinni capture: the Djinni hops twice and leaps, a ring of
    particles rises from it and falls back, then a burst above the leader
    and eight sparks scattered around it close the scene. */
@@ -72,7 +80,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         return;
 
     BattleFx_InitializeSlots();
-    effect_slots = *(void **)0x03001F30;
+    effect_slots = *(void **)gEffectWork;
     Unnamed_080b0840Far(0x201204);
     WaitFrames(30);
     djinni->visible = 0;
@@ -81,12 +89,12 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     Audio_PlayCue(152);
     ObjectMotion_Launch(arg, 4, 15);
     WaitFrames(30);
-    djinni->callback = (void *)0x0809592d;
+    djinni->callback = (void *)BattleFx_AdvanceSpinAngle;
     Audio_PlayCue(153);
     ObjectMotion_Launch(arg, 8, 22);
     Audio_PlayCue(140);
     Func_080091f0(0x14ccc, 0x14ccc, 0x10000);
-    djinni->callback = (void *)0x08095f9d;
+    djinni->callback = (void *)BattleFx_ShrinkObjectAndDestroyFast;
     Object_SetMode(djinni, 3);
     WaitFrames(90);
     ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
@@ -104,7 +112,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
     remaining = 23;
     do {
         EffectSlot_Initialize(slot, 284, position[0], position[2]);
-        EffectSlot_SetCallback(slot, (void *)0x08096049);
+        EffectSlot_SetCallback(slot, (void *)BattleFx_UpdateRadialSpread);
         EffectSlot_SetObjectMode(slot, 7);
         ObjectGroup_SetChildValueUnlessFifteenFar(*(s32 *)slot, 11);
         *(s32 *)(slot + 40) = 0x8000;
@@ -145,7 +153,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
             djinni->scale_x = scale;
             djinni->timer = 100;
             djinni->angle = Math_Div(remaining << 16, 24);
-            djinni->callback = (void *)0x08095fcd;
+            djinni->callback = (void *)BattleFx_UpdateDescendingOrbitObject;
             djinni->mode = 0;
             Object_SetMode(djinni, 7);
             Animation_ApplyChildValuesFar(djinni, 11);
@@ -172,7 +180,7 @@ void BattleFx_RunVenusDjinnCapture(s32 arg)
         Motion_SetTargetPositionFromMagnitudeAngle(djinni, 0x200000, Random16());
         Animation_ApplyChildValuesFar(djinni, 11);
         djinni->lifetime = 8;
-        ObjectDispatch_InitializeFar(djinni, (void *)0x0809f0b0);
+        ObjectDispatch_InitializeFar(djinni, (void *)BattleFx_CommonParticleScript);
     }
 
     WaitFrames(15);

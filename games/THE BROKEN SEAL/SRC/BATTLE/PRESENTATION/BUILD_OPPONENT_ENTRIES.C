@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 
+extern u8 gBattleWork[];
+
 s32 BattleParty_ListLivingUnits(s32 side, u16 *out_units);
 u8 *Owner_GetStateFar(s32 unit_id);
 void BattleCommand_SelectAutomatic(void *entry, s32 arg1);
@@ -20,7 +22,7 @@ s32 BattlePres_BuildOpponentEntries(
 {
     u16 unit_ids[14];
     s32 entry_count = 0;
-    u8 *battle = *(u8 **)0x03001e74;
+    u8 *battle = *(u8 **)gBattleWork;
     s32 unit_count;
     s32 i;
 

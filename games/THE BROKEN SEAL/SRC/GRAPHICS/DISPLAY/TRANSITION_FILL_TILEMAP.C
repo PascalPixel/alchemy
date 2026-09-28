@@ -1,7 +1,9 @@
 #include "DMA.H"
+
+extern u8 Data_03001ecc[];
 void DisplayTransition_FillTilemapAndSolidTile(s32 color)
 {
-    u8 *work = *(u8 **)0x03001ecc;
+    u8 *work = *(u8 **)Data_03001ecc;
     volatile u32 fill = 0xf000f000;
     Dma_Set(&fill, (void *)0x06002000, 0x85000140, (volatile u32 *)0x040000d4);
     if (color != -1) {

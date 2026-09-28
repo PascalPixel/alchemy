@@ -10,6 +10,11 @@
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
 
+void Graphics_ResetBg2Pa(void);
+void Graphics_SetBg2AffineScaleHalf(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_BuildWindowEdgeTable(void);
+
 void WaitFrames(s32);
 u32 Random16(void);
 s32 Trig_Sin(s32);
@@ -132,10 +137,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     BattlePres_ConfigureEffectDisplay();
     *(u16 *)0x05000000 = 0;
     *(u16 *)0x05000002 = 0;
-    Scheduler_AddOrUpdateCallback(0x080EC0E1, 0x480);
-    Runtime_SetIrqHandler(2, 0, 0x080EC0F1);
+    Scheduler_AddOrUpdateCallback((s32)Graphics_ResetBg2Pa, 0x480);
+    Runtime_SetIrqHandler(2, 0, (s32)Graphics_SetBg2AffineScaleHalf);
     work->transfer_mode = 0;
-    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     *(u16 *)0x04000048 = 0x2137;
     Unnamed_080cd104(1, 0);
     *(u16 *)0x04000040 = 0xf0f0;
@@ -212,12 +217,12 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                     noise[k] = Random16() & 63;
                 }
                 *phase = 0;
-                Scheduler_AddOrUpdateCallback(0x080D66CD, 0x480);
+                Scheduler_AddOrUpdateCallback((s32)BattleFx_BuildWindowEdgeTable, 0x480);
             }
             *phase += step;
             step += 3;
             if (frame == 15) {
-                Scheduler_RemoveCallback(0x080D66CD);
+                Scheduler_RemoveCallback((s32)BattleFx_BuildWindowEdgeTable);
             }
         }
 
@@ -274,7 +279,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             }
         }
         if (frame == 152) {
-            Runtime_SetIrqHandler(2, 96, 0x080EC0F1);
+            Runtime_SetIrqHandler(2, 96, (s32)Graphics_SetBg2AffineScaleHalf);
             work->unknown_77b4 = 24;
             work->unknown_77b8 = 0;
         }
@@ -438,7 +443,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     spot[4] = 0;
     Runtime_SetIrqHandler(2, 0, 0);
     BattleEffect_SetupBlendedDisplay();
-    Scheduler_RemoveCallback(0x080EC0E1);
+    Scheduler_RemoveCallback((s32)Graphics_ResetBg2Pa);
     *(u16 *)0x04000040 = 0xf0;
     work->transfer_mode = 2;
     work->transfer_value = 75;
@@ -535,7 +540,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     for (i = 0; i != 8; i++) {
         ResourceObject_ReleaseFar(work->objects[i]);
     }
-    Scheduler_RemoveCallback(0x080CD261);
+    Scheduler_RemoveCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();

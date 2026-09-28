@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
 
+extern u8 gBattleFxWork[];
+
 /*
  * Frame callback that BattlePresentation_PrepareScene schedules at 0xc80.
  * On its first frame it seeds 256 streaks with a random length and a random
@@ -35,7 +37,7 @@ struct StreakPoint {
 
 void BattlePresentation_DrawStreaks(void)
 {
-    u8 *work = *(u8 **)0x03001eec;
+    u8 *work = *(u8 **)gBattleFxWork;
     s32 frame;
     s32 i;
     struct Streak *streak;

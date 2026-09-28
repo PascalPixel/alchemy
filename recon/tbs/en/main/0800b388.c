@@ -50,8 +50,7 @@ struct RenderState {
     s16 frozen;
 };
 
-extern u8 Value_03000118[];
-#define MulQ16(left, right) Iwram_Call2((left), (right), Value_03000118)
+#define MulQ16(left, right) Iwram_Call2((left), (right), IwramMulQ16ReturnIp)
 
 s32 Render_ProjectPoint(s32 *point, s32 *screen);
 s32 Func_0800aa0c(struct ProjectedSprite *sprite, u16 mode);

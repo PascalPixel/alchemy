@@ -1,47 +1,29 @@
 /* Scene tables, the hostage scene and small callbacks. */
 #include "FUNKA.H"
 
-u8 *SceneData_GetTableB6D4(void)
+u8 *SceneData_GetScriptTable(void)
 {
-    return Data_0200b6d4;
+    return Placement_Scripts;
 }
 
-s32 Func_02000038(void)
+s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-/*
- * Returns the in-image table address 0x0200b704, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr. Published from the overlay header, not
- * reached by any call.
- */
-u8 *SceneData_GetTableB704(void)
+u8 *SceneData_GetMessageTable(void)
 {
-    return Data_0200b704;
+    return Placement_Messages;
 }
 
-/*
- * Returns the in-image table address 0x0200b710, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr. Published from the overlay header, not
- * reached by any call.
- */
-u8 *SceneData_GetTableB710(void)
+u8 *SceneData_GetActorTable(void)
 {
-    return Data_0200b710;
+    return Placement_Actors;
 }
 
-/*
- * Returns the in-image table address 0x0200b998, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr. Published from the overlay header, not
- * reached by any call.
- */
-u8 *SceneData_GetTableB998(void)
+u8 *SceneData_GetEffectTable(void)
 {
-    return Data_0200b998;
+    return Placement_Effects;
 }
 
 void Scene_SaturosTakesHostages(void)

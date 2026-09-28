@@ -28,9 +28,9 @@ s32 UpdateOverlayObjectAngle(struct OverlayObject *object)
     return 1;
 }
 
-s32 *SceneData_GetTableCd88(void)
+s32 *SceneData_GetScriptTable(void)
 {
-    return Data_0200cd88;
+    return Placement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -38,17 +38,17 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-s32 *SceneData_GetTableCDB8(void)
+s32 *SceneData_GetMessageTable(void)
 {
-    return Data_0200cdb8;
+    return Placement_Messages;
 }
 
-s32 *SceneData_GetTableCdc4(void)
+s32 *SceneData_GetActorTable(void)
 {
-    return Data_0200cdc4;
+    return Placement_Actors;
 }
 
-s32 *SceneData_GetTableCFA4(void)
+s32 *SceneData_GetEffectTable(void)
 {
-    return Data_0200cfa4;
+    return Placement_Effects;
 }

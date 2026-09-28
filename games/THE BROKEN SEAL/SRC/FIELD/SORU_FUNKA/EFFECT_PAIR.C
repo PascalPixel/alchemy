@@ -1,6 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 
+void SceneEffect_UpdateArcOverAnchor();
+void SceneEffect_UpdateAnchoredRiseArc();
+
 
 struct PairDetail {
     u8 unknown_00[22];
@@ -35,8 +38,8 @@ struct WorldMapVramBlock {
     u16 offset;
 };
 extern struct WorldMapVramBlock Data_03001b10[];
-s32 Main_08009020(struct FieldSprite *sprite, s32 animation);
-void Main_080001b8(s32 block);
+void Resource_ResetEntry(s32 block);
+s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
 /* The OAM view with attribute 1 ending in the two-bit size field. */
 struct WorldMapOam {
@@ -71,9 +74,9 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
             child->link.parent = parent;
             if (part != NULL) {
                 sprite = &part->sprite;
-                Main_08009020(sprite, 0);
+                AnimationObjects_SelectAnimation(sprite, 0);
                 sprite->flags = 0;
-                Main_080001b8(sprite->vram_block);
+                Resource_ResetEntry(sprite->vram_block);
                 sprite->vram_block = work->vram_block;
                 /* FAKEMATCH: a plain byte access; the struct field store
                  * leaves a dead QImode zero that takes r3 from the +85
@@ -87,14 +90,14 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
             }
         }
     }
-    pair[0]->object.actor.update = (void (*)(union FieldObject *))0x0200ae5d;
+    pair[0]->object.actor.update = (void (*)(union FieldObject *))SceneEffect_UpdateAnchoredRiseArc;
     pair[0]->object.actor.sprite->priority = Engine_ActorGet(15)->sprite->priority;
     {
         struct FieldActor *q = Engine_ActorGet(15);
         struct FieldActor *p = &pair[1]->object.actor;
 
         p->sprite->priority = q->sprite->priority;
-        p->update = (void (*)(union FieldObject *))0x0200ae0d;
+        p->update = (void (*)(union FieldObject *))SceneEffect_UpdateArcOverAnchor;
         p->priority_flags = 2;
     }
 }

@@ -265,11 +265,7 @@ Value_00000d38 = 0x00000d38;
 Value_00000d42 = 0x00000d42;
 gVal4 = 0x00000d4c;
 Value_00002080 = 0x00002080;
-Value_00002090 = 0x00002090;
-Value_00020002 = 0x00020002;
-RegIme = 0x04000208;
 Value_fff80000 = 0xfff80000;
-Value_fffffe00 = 0xfffffe00;
 /* Message numbers the C passes as pool-loaded values. */
 MsgNoBackupMemory = 0x0000000a;
 MsgSaveFailed = 0x0000000b;

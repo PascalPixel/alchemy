@@ -88,7 +88,6 @@ extern volatile s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern volatile s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
-extern volatile u16 RegIme;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
 {
@@ -108,7 +107,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
      * assignment keeps its allocation priority above the IME pointer. */
     do {
         state = &gSerialTransfer;
-        ime = &RegIme;
+        ime = &REG_IME;
     } while (0);
     do {
         saved = *ime;

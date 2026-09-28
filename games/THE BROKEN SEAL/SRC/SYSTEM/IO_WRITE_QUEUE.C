@@ -1,10 +1,10 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
 
 extern const u8 Func_08002cf4[];
 
-extern volatile u16 RegIme;
 
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
@@ -33,7 +33,7 @@ extern u8 TransferCommandExecutor_Size[];
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
-            ime = &RegIme;                                                 \
+            ime = &REG_IME;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \

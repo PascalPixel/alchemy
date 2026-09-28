@@ -10,7 +10,7 @@ extern u8 gMapCellBuffer[];
         s32 count;                                                          \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
-            ime = &RegIme;                                           \
+            ime = &REG_IME;                                           \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \
@@ -30,6 +30,7 @@ extern u8 gMapCellBuffer[];
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
 
 struct VramBlock {
     u16 base;
@@ -62,7 +63,6 @@ extern struct VramBlock Data_03001b10[];
 extern s16 Data_02008650;
 extern s16 Data_0200868c;
 extern u32 Data_020086a0[];
-extern volatile u16 RegIme;
 extern u8 Value_0000001a[];
 extern u16 Data_03001ad0[];
 
@@ -109,7 +109,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 static __inline__ void RestoreInterrupts(u32 saved)
 {
     /* FAKEMATCH: BLEND_FADE.C keeps this address local to restoration. */
-    do { RegIme = saved; } while (0);
+    do { REG_IME = saved; } while (0);
 }
 
 /* FAKEMATCH: expand the destination first while the one-halfword record

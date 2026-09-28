@@ -1,0 +1,380 @@
+/*
+ * Later scene steps and the scene initialiser: scene twelve, the flag 0x200
+ * cells, actor 18's sequence and the actors placed on entry.
+ */
+
+#include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
+#define NULL ((void *)0)
+#define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
+
+/* Shared 22-byte head leaf proved identical for this overlay family. */
+struct EffectRecord {
+    u8 pad[9];
+    u8 flags_lo : 2;
+    u8 mode : 2;
+    u8 flags_hi : 4;
+};
+
+struct EffectWork {
+    u8 pad[80];
+    struct EffectRecord *record;
+};
+
+union MotionWork {
+  struct {
+    u32 unk_00[2];
+    s32 x, y, z;
+    u32 unk_14;
+    s32 accum_x, accum_y;
+    u32 unk_20[4];
+    s32 rate_x, rate_y;
+    u32 unk_38[3];
+    s32 velocity_x, velocity_y, velocity_z;
+    u16 *record;
+    u8 unk_54[16];
+    u16 angle_step;
+  } fields;
+  u8 bytes[102];
+};
+
+struct SceneActor {
+    u8 unk_00[6];
+    u16 facing;
+    u8 unk_08[92];
+    u16 state_flags;
+};
+
+struct SceneActor_02000350 {
+    u8 unk_00[6];
+    u16 facing;
+    s32 x, y, z;
+    u8 unk_14[71];
+    u8 active;
+};
+
+/* Complete actor-13 temporary-acceptance dialogue wrapper through its pool. */
+struct Actor_020007d4 {
+    u8 reserved00[91];
+    u8 accepted;
+};
+
+struct Presentation {
+    u8 reserved_00[9];
+    u8 flags;
+};
+
+struct SceneActor_020004b4 {
+    u8 reserved_00[35];
+    u8 state_23;
+    u8 reserved_24[44];
+    struct Presentation *presentation;
+};
+
+struct Presentation_02000c1c {
+    u8 unk_00[9];
+    u8 flags;
+};
+
+struct SceneActor_02000c1c {
+    u8 unk_00[35];
+    u8 state_23;
+    u8 unk_24[44];
+    struct Presentation_02000c1c *presentation;
+};
+
+/*
+ * Complete actor-18 dialogue/restoration scene.  If cue 231 remains available
+ * and its movement scene has not set flag 0x858, the shared scene marker at
+ * +370 is enabled before the dialogue scene closes.
+ */
+struct SceneWork_02000e90 {
+    u8 reserved000[370];
+    u16 actor18_marker;
+};
+
+/* Complete actor-16 conditional-counter dialogue scene through its pool. */
+struct SceneWork_020006b4 {
+    u8 reserved000[472];
+    u16 branch_counter;
+};
+
+/* Complete actor-11 temporary-acceptance dialogue wrapper through its pool. */
+struct Actor_02000754 {
+    u8 reserved00[91];
+    u8 accepted;
+};
+
+/* Complete actor-15 facing-preserving dialogue scene through its two-word pool. */
+struct Actor_02000640 {
+    u8 reserved00[6];
+    u16 facing;
+    u8 reserved08[92];
+    u16 state_flags;
+};
+
+extern u8 *gWork;
+
+/* The scene's tables, laid out after the code. */
+extern const u8 KuupuappuMuraSai_Scripts[];
+extern const u8 KuupuappuMuraSai_Messages[];
+extern const u8 KuupuappuMuraSai_Actors[];
+extern const u8 KuupuappuMuraSai_Extras[];
+
+/* Map cell steps played as the leader arrives in each scene. */
+extern const u16 KuupuappuMuraSai_Scene5Cells[];
+extern const u16 KuupuappuMuraSai_Scene6Cells[];
+extern const u16 KuupuappuMuraSai_Scene7Cells[];
+extern const u16 KuupuappuMuraSai_Scene8Cells[];
+extern const u16 KuupuappuMuraSai_Scene9Cells[];
+extern const u16 KuupuappuMuraSai_Scene10Cells[];
+extern const u16 KuupuappuMuraSai_Scene12Cells[];
+
+typedef s32(*IwramIntegerSquareRoot)(s32);
+s32 SceneActor_GetPositionDistance(s32 *, s32 *);
+u32 ArcTan2(s32, s32);
+s32 PartyInventory_FindOwner(s32 item);
+void ActorPresentation_MoveActorToPositionAndWait();
+void BattleFx_RunPageEffectForSlot(s32 actor, s32 mode, s32 value);
+void PartyInventory_Discard();
+s32 UpdateActorProximity(u8 *actor);
+void SceneActor_PlaceAndSetSceneDelay(s32 x, s32 y, s32 delay);
+
+static __inline__ s32 Scene_QueryFlag(s32 (*func)(s32), s32 flag)
+{
+    return func(flag);
+}
+
+static __inline__ void Scene_SetFlag(void (*func)(s32), s32 flag)
+{
+    func(flag);
+}
+
+static __inline__ void Scene_Call3(void (*func)(s32, s32, s32), s32 a, s32 b, s32 c)
+{
+    func(a, b, c);
+}
+
+/* Call sites spelled through these wrappers pass their constants straight
+ * into the argument registers; a direct call precomputes a costly constant
+ * into a pseudo that the compiler then shares with later uses in the block.
+ * A value-returning call also sets r0 last of its arguments. */
+static __inline__ void Call0(void (*f)())
+{
+    f();
+}
+
+static __inline__ void Call1(void (*f)(), s32 a0)
+{
+    f(a0);
+}
+
+static __inline__ s32 Value1(s32 (*f)(), s32 a0)
+{
+    return f(a0);
+}
+
+static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
+{
+    f(a0, a1);
+}
+
+static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
+{
+    return f(a0, a1);
+}
+
+static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
+{
+    f(a0, a1, a2);
+}
+
+/* Moves the next dialogue line on by amount messages. */
+static __inline__ void bump_step(s32 amount)
+{
+    gEventWork->message += amount;
+}
+
+static __inline__ void SetScale(s32 actor, s32 horizontal, s32 vertical)
+{
+    Actor_SetSpeed(actor, horizontal, vertical);
+}
+
+static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
+{
+    f(a0, a1, a2, a3);
+}
+
+static __inline__ void PlaceActor(void (*place)(s32, s32, s32),
+                                 s32 actor, s32 x, s32 z)
+{
+
+    place(actor, x, z);
+}
+
+static __inline__ void UpdateRect(void (*update)(s32, s32, s32, s32, s32, s32),
+                                 s32 x, s32 z, s32 width, s32 height,
+                                 s32 sourceX, s32 sourceZ)
+{
+
+    update(x, z, width, height, sourceX, sourceZ);
+}
+
+void ActorPresentation_SetupActorZeroForSceneTwelve(void)
+{
+    struct SceneActor_02000c1c *actor = Actor_Get(ACTOR_PARTY_LEADER);
+    struct Presentation_02000c1c *presentation = actor->presentation;
+    u8 flags;
+
+    Audio_PlayCue(158);
+    Map_AnimateCells(KuupuappuMuraSai_Scene12Cells, 35, 9);
+    {
+        s32 cell = 4;
+        s32 row = 10;
+
+        Map_CopyCellAttributes(33, 20, 1, 3, cell, row);
+    }
+    actor->state_23 &= ~1;
+    flags = presentation->flags;
+    flags |= 12;
+    presentation->flags = flags;
+    SceneActor_PlaceAndSetSceneDelay(72, 160, 12);
+}
+
+void SceneState_SetFlag200AndConfigureRegion55_26(void)
+{
+    GameFlag_Set(0x200);
+    {
+        s32 a = 23;
+        s32 b = 26;
+        Map_CopyCellAttributes(55, 26, 4, 2, a, b);
+    }
+}
+
+void ActorPresentation_SetFlag200AndSceneCell23(void)
+{
+    GameFlag_Clear(0x200);
+    {
+        s32 first_value = 23;
+        s32 second_value = 26;
+        Map_CopyCellAttributes(23, 23, 4, 2, first_value, second_value);
+    }
+}
+
+void FieldScene_SetActor21Values0And4(void)
+{
+    BattleFx_RunPageEffectForSlot(21, 0, 4);
+}
+
+void FieldScene_RunActor18MotionSequence(void)
+{
+    u32 i;
+    s32 record;
+
+    PartyInventory_Discard(231);
+    Event_Begin();
+    Event_Wait(10);
+    Actor_RunRepeatedMotion(18, 2);
+    Actor_SetSpeed(18, 0xcccc, 0x6666);
+    Actor_WalkToAndWait(18, 216, 0x198);
+    Event_Wait(10);
+    Actor_FaceDirection(18, 0x4000, 20);
+    Actor_Jump(18, 6, 0);
+    Event_Wait(30);
+    Actor_Jump(18, 6, 0);
+    Event_Wait(30);
+    Actor_Jump(18, 6, 0);
+    Event_Wait(30);
+    Actor_WalkToAndWait(18, 216, 0x188);
+    Event_Wait(10);
+    Actor_FaceDirection(18, 0x4000, 20);
+    GameFlag_Set(0x858);
+    Event_End();
+}
+
+void ActorPresentation_SetPairedSceneCells(void)
+{
+    s32 v1 = 13;
+    s32 v2 = 25;
+
+    Map_CopyCellAttributes(41, 43, 1, 1, v1, v2);
+    Map_CopyCells(40, 42, 12, 22, 3, 3);
+}
+
+void ActorPresentation_SetAlternatePairedSceneCells(void)
+{
+    s32 v1 = 13;
+    s32 v2 = 25;
+
+    Map_CopyCellAttributes(37, 43, 1, 1, v1, v2);
+    Map_CopyCells(36, 42, 12, 22, 3, 3);
+}
+
+void FieldScene_RunActorEighteenDialogue(void)
+{
+    Event_Begin();
+    Event_SetMessage(0x1342);
+    Actor_SetAnimation(18, 0);
+    Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
+    Event_Wait(2);
+    Event_ShowMessage(18, 0);
+    Actor_SetAnimation(18, 1);
+
+    if (PartyInventory_FindOwner(231) != -1 && GameFlag_IsSet(0x858) == 0) {
+        ((struct SceneWork_02000e90 *)gWork)->actor18_marker = 1;
+    }
+
+    Event_End();
+}
+
+void SceneState_SetFlag947AndValue29dc(void)
+{
+    Event_Begin();
+    Message_ShowCentered(0x947, 1);
+    Message_ShowCentered(0x29dc, 1);
+    Event_End();
+}
+
+const u8 *SceneData_GetExtraTable(void)
+{
+    return KuupuappuMuraSai_Extras;
+}
+
+s32 SceneSetup_InitializeActorsAndFlags(void)
+{
+
+    u8 *actor;
+    s16 *scene;
+    s32 mode;
+
+    if (GameFlag_IsSet(0x200))
+        UpdateRect(Engine_MapCopyCellAttributes, 55, 26, 4, 2, 23, 26);
+    OverlayObject_CreateConfiguredObjectB(0x800000, 0, 0x1a40000, 223);
+    Engine_MapCopyCells(45, 41, 8, 45, 3, 3);
+    Engine_TaskWait(1);
+    actor = (u8 *)Engine_ActorGet(14);
+    *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
+    {
+        u8 *actor = (u8 *)Engine_ActorGet(14);
+        s32 mode = 1;
+        *(u16 *)(actor + 100) = mode;
+    }
+    mode = 0;
+    actor = (u8 *)Engine_ActorGet(15);
+    *(u32 *)(actor + 108) = (u32)UpdateActorProximity;
+    *(u16 *)((u8 *)Engine_ActorGet(15) + 100) = mode;
+    if (GameFlag_IsSet(0x858))
+        PlaceActor(Engine_ActorSetPosition, 18, 0xd80000, 0x1880000);
+    if (gGameState.entrance <= 2 && !GameFlag_IsSet(52) && !GameFlag_IsSet(0x109))
+        GameFlag_Clear(0x867);
+    if (GameFlag_IsSet(0x867) && !GameFlag_IsSet(52))
+        PlaceActor(Engine_ActorSetPosition, 21, 0x1980000, 0x780000);
+    scene = (s16 *)&gGameState;
+    if (scene[225] == 11)
+        GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
+    if (scene[225] == 13)
+        GameFlag_Clear(0x120);
+    return 0;
+}

@@ -19,7 +19,7 @@
  * second pool four bytes early, and callback address hoisted before its
  * speed call. Those lifetime-only trials are closed.
  * New interface model: exact FIELD_EVENT.H FieldActor accesses, canonical
- * void Engine_ActorEnableActionCallback and named Data_0200c888, supported by
+ * void Engine_ActorEnableActionCallback and named FuneKanpan_SailorActions, supported by
  * OBJECT/BY_ID.C and exact FUNE_KANPAN deck scenes. Keep all original local
  * lifetimes and calls; this reduces 83 halfwords/55 edits to 3/2. Complete
  * 856-byte owner, saved registers and all three pools now agree. Only the
@@ -33,21 +33,20 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern u8 Data_00000000[];
-extern u8 Data_0200c8c4[];
-extern u8 Data_0200c8b0[];
-extern u8 Data_0200c8d8[];
-extern u8 Data_0200c888[];
+extern u8 FuneKanpan_DeckActionsA[];
+extern u8 FuneKanpan_DeckActionsB[];
+extern u8 FuneKanpan_DeckActionsC[];
+extern u8 FuneKanpan_SailorActions[];
 void FieldScene_RunScene3af_02000bb8();
 void FieldScene_CallPairWith10();
 void ObjectDispatch_SetSingleChildField26Far(struct FieldActor *object, s32 value);
-void Main_0808a030();
+void Event_CallWithLastActiveObjectId();
 void Engine_ObjectMotionSetPositionAndCommit();
-void Main_08009208();
-void Main_08009210();
-void Main_08015210();
-void Main_0808a0b0();
-void Main_0808a1d8();
+void Graphics_EnableObjLayerAndCallbacks();
+void ObjectDispatch_StopCallbacksAndHideLayers();
+void UiText_ShowCenteredMessage();
+void Object_SetActionCallbackAndRefreshById();
+void Ui_SetRenderResultFromObject();
 void Event_ClearStatus1c6Far();
 void Event_WaitValue1c8FramesFar();
 
@@ -98,9 +97,9 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetChildValue(0, 15);
     record = Engine_ActorGet(0);
     ObjectDispatch_SetSingleChildField26Far(record, 0);
-    Call1(Main_0808a030, 0x200d160);
+    Call1(Event_CallWithLastActiveObjectId, 0x200d160);
     Engine_TaskWait(1);
-    Call1(Main_0808a030, 0x200d340);
+    Call1(Event_CallWithLastActiveObjectId, 0x200d340);
     Engine_TaskWait(1);
     Call3(Engine_ActorSetPosition, 22, 0xb00000, 0x2b80000);
     record = Engine_ActorGet(22);
@@ -133,12 +132,12 @@ void FieldScene_RunActorSequence(void)
         Engine_ActorGet(27)->rise_enabled = 2;
     }
     Call3(Engine_ActorSetPosition, 20, 0, 0);
-    Engine_ActorEnableActionCallback(24, Data_0200c8c4);
-    Value2(Engine_ActorEnableActionCallback, 25, (s32)Data_0200c8c4);
-    Engine_ActorEnableActionCallback(26, Data_0200c8b0);
-    Value2(Engine_ActorEnableActionCallback, 27, (s32)Data_0200c8b0);
-    Engine_ActorEnableActionCallback(28, Data_0200c8d8);
-    Value2(Engine_ActorEnableActionCallback, 29, (s32)Data_0200c8d8);
+    Engine_ActorEnableActionCallback(24, FuneKanpan_DeckActionsA);
+    Value2(Engine_ActorEnableActionCallback, 25, (s32)FuneKanpan_DeckActionsA);
+    Engine_ActorEnableActionCallback(26, FuneKanpan_DeckActionsB);
+    Value2(Engine_ActorEnableActionCallback, 27, (s32)FuneKanpan_DeckActionsB);
+    Engine_ActorEnableActionCallback(28, FuneKanpan_DeckActionsC);
+    Value2(Engine_ActorEnableActionCallback, 29, (s32)FuneKanpan_DeckActionsC);
     Engine_ActorSetChildValue(24, 3);
     Engine_ActorSetChildValue(25, 3);
     Engine_ActorSetChildValue(26, 3);
@@ -194,7 +193,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorStop(28);
     Engine_TaskWait(1);
     Call3(Engine_ActorSetSpeed, 28, 0x19999, 0xcccc);
-    base5_200c888 = Data_0200c888;
+    base5_200c888 = FuneKanpan_SailorActions;
     Engine_ActorEnableActionCallback(28, base5_200c888);
     Call2(FieldScene_CallPairWith10, 30, 0xd000);
     FieldScene_RunScene3af_02000bb8();
@@ -203,7 +202,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorStop(29);
     Engine_TaskWait(1);
     Call3(Engine_ActorSetSpeed, 29, 0x19999, 0xcccc);
-    Main_0808a0b0(29, base5_200c888);
+    Object_SetActionCallbackAndRefreshById(29, base5_200c888);
     Engine_EventWait(20);
     Event_ClearStatus1c6Far();
     Event_WaitValue1c8FramesFar();
@@ -214,9 +213,9 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorStop(28);
     Engine_ActorStop(29);
     Engine_EventWait(10);
-    Main_08009208();
-    Main_0808a1d8(21);
-    Call3(Main_08015210, 0x1e45, 1, 0);
-    Main_08009210();
+    Graphics_EnableObjLayerAndCallbacks();
+    Ui_SetRenderResultFromObject(21);
+    Call3(UiText_ShowCenteredMessage, 0x1e45, 1, 0);
+    ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventRequestExit(14);
 }

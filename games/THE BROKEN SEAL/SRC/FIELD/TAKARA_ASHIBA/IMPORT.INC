@@ -1,6 +1,9 @@
 	.global WaitFrames
 	.thumb_func
 WaitFrames:
+	.global Engine_TaskWait
+	.thumb_func
+Engine_TaskWait:
 	overlay_veneer 0x080000c1
 	overlay_veneer 0x080000d1
 	overlay_veneer 0x080000d9
@@ -35,15 +38,24 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer 0x08009159
+	.global Map_CopyMetatileCellsRect
+	.thumb_func
+Map_CopyMetatileCellsRect:
 	overlay_veneer 0x080091b9
 	.global Map_CopyCellAttributeRect
 	.thumb_func
 Map_CopyCellAttributeRect:
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer 0x080091c1
 	.global Object_CheckMovementCollision
 	.thumb_func
 Object_CheckMovementCollision:
 	overlay_veneer 0x080091d9
+	.global Engine_WorkSetValuesIfNonNegative
+	.thumb_func
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer 0x080091f1
 	.global ItemIcon_LoadTilesFar
 	.thumb_func
@@ -51,14 +63,26 @@ ItemIcon_LoadTilesFar:
 	overlay_veneer 0x08015251
 	overlay_veneer 0x08077041
 	overlay_veneer 0x08077049
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
 	overlay_veneer 0x080770c1
+	.global Engine_GameFlagSet
+	.thumb_func
+Engine_GameFlagSet:
 	overlay_veneer 0x080770c9
 	overlay_veneer 0x080770d1
 	.global Battle_WaitMode0
 	.thumb_func
 Battle_WaitMode0:
 	overlay_veneer 0x0808a011
+	.global Battle_Reset
+	.thumb_func
+Battle_Reset:
 	overlay_veneer 0x0808a019
+	.global BattleFx_FinishAction
+	.thumb_func
+BattleFx_FinishAction:
 	overlay_veneer 0x0808a021
 	overlay_veneer 0x0808a061
 	.global Object_GetById
@@ -67,11 +91,17 @@ Object_GetById:
 	.global Object_GetByIdFar
 	.thumb_func
 Object_GetByIdFar:
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
 	overlay_veneer 0x0808a081
 	.global ObjectMotion_SetSpeedParameters
 	.thumb_func
 ObjectMotion_SetSpeedParameters:
 	overlay_veneer 0x0808a091
+	.global ObjectMotion_ResetAndSetPosition
+	.thumb_func
+ObjectMotion_ResetAndSetPosition:
 	overlay_veneer 0x0808a0b9
 	overlay_veneer 0x0808a0c9
 	overlay_veneer 0x0808a0d1
@@ -83,6 +113,9 @@ ObjectMotion_OffsetPositionAndResetMotion:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer 0x0808a0e9
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
 	overlay_veneer 0x0808a0f1
 	.global Object_SetModeById
 	.thumb_func
@@ -109,4 +142,10 @@ BattleFx_PlayQueuedSound:
 	.global Audio_PlayCue
 	.thumb_func
 Audio_PlayCue:
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
+	.global AudioCommand_Play
+	.thumb_func
+AudioCommand_Play:
 	overlay_veneer 0x080f9011

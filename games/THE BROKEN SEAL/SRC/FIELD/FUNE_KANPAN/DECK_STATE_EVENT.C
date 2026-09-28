@@ -2,14 +2,14 @@
 
 #define FuneKanpan_RunDeckStateEvent Func_02000c28
 
-void Func_02001804();
-void Func_02001844();
-void Func_02004f1c();
-void Func_02004f58();
-void Func_02004f7e();
-void Func_02004fd2();
-void Func_020050ae();
-void Func_020050d8();
+void FieldScene_RunScene3af_02000bb8();
+void FieldScene_RunScene3af_02000bf0();
+void Battle_Reset();
+void Battle_WaitMode0();
+void ObjectMotion_SetSpeedParameters();
+void ObjectMotion_SnapHeadingAndOffset();
+void Event_SetValue170();
+void AudioCommand_Play();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -28,24 +28,24 @@ void FuneKanpan_RunDeckStateEvent(void)
     u8 *p6;
 
     p6 = *(s32 *)0x03001ebc;
-    Func_02004f1c();
+    Battle_Reset();
     v5 = 0;
     switch (*(s16 *)(((s32)p6 + 0x16c))) {
     case 1:
         v5 = 1;
-        Func_02001804();
+        FieldScene_RunScene3af_02000bb8();
         break;
     case 3:
         v5 = 1;
-        Func_02001844();
+        FieldScene_RunScene3af_02000bf0();
         break;
     }
     if (v5 != 0) {
-        Call3(Func_02004f7e, 0, 0x9999, 0x4ccc);
-        Call3(Func_02004fd2, 0, 1, -10);
-        Func_02004f58(10);
+        Call3(ObjectMotion_SetSpeedParameters, 0, 0x9999, 0x4ccc);
+        Call3(ObjectMotion_SnapHeadingAndOffset, 0, 1, -10);
+        Battle_WaitMode0(10);
     } else {
-        Func_020050d8(123);
+        AudioCommand_Play(123);
     }
-    Func_020050ae(*(s16 *)(((s32)p6 + 0x16c)));
+    Event_SetValue170(*(s16 *)(((s32)p6 + 0x16c)));
 }

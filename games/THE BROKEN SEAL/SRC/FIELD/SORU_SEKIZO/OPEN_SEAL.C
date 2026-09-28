@@ -2,7 +2,7 @@
 #include "FIELD_EVENT.H"
 
 s32 SceneEventRuntime_SelectInitialSceneByFlags(void);
-void Local_02000c8c(void);
+void SoruSekizo_RunSealOpenedSequence(void);
 
 /* A map-cell copy as MapCopyCellsTo takes it. */
 struct CellCopy {
@@ -29,7 +29,8 @@ struct SealScene {
     s32 actor_z;
 };
 
-extern struct SealScene Data_0200a980;
+/* The seal scene the guarded steps fill in; the first of the overlay's own work. */
+struct SealScene gSealScene;
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
@@ -67,16 +68,16 @@ void SoruSekizo_OpenSeal(void)
         Engine_CameraMoveTo(0x2400000, -1, 0xac0000, 1);
         Engine_CameraWaitForMove();
         Engine_AudioPlayCue(186);
-        COPY_CELLS(Data_0200a980.open);
+        COPY_CELLS(gSealScene.open);
         for (i = 0; i != 20; i++) {
             Engine_AudioPlayCue(246);
-            COPY_CELLS(Data_0200a980.pulse_a);
+            COPY_CELLS(gSealScene.pulse_a);
             Engine_EventWait(4);
             Engine_AudioPlayCue(246);
-            COPY_CELLS(Data_0200a980.pulse_b);
+            COPY_CELLS(gSealScene.pulse_b);
             Engine_EventWait(4);
         }
-        scene = &Data_0200a980;
+        scene = &gSealScene;
         COPY_CELLS(scene->opened);
         Engine_GameFlagSet(scene->flag);
         result = SceneEventRuntime_SelectInitialSceneByFlags();
@@ -100,7 +101,7 @@ void SoruSekizo_OpenSeal(void)
             if (Engine_GameFlagIsSet(0x80b) && Engine_GameFlagIsSet(0x80d) && Engine_GameFlagIsSet(0x80e)) {
                 if (!Value1(Engine_GameFlagIsSet, 0x80f)) {
                     Call1(Engine_GameFlagSet, 0x80f);
-                    Local_02000c8c();
+                    SoruSekizo_RunSealOpenedSequence();
                 }
             } else if (Engine_GameFlagIsSet(0x812)) {
                 Engine_EventRequestExit(5);

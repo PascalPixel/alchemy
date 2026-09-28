@@ -15,10 +15,10 @@ struct Rec_383b {
     u8 pad3c[4];
     s32 f64;                    /* +64 */
 };
-struct Rec_383b *Main_0808a400();
+struct Rec_383b *ObjectTable_Get();
 s32 KuupuappuHeya_IsRecordNearPoint(s32 x, s32 y, s32 id)
 {
-    struct Rec_383b *rec = Main_0808a400(id);
+    struct Rec_383b *rec = ObjectTable_Get(id);
     s32 target_x = rec->f56;
     s32 target_y;
     s32 dx;

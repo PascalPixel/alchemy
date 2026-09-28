@@ -1,10 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-#define GetOrbitingSceneObject Func_02001af4
-#define AllocateEffectTransfer Func_02001aec
-#define UpdateOrbitingSceneObject Value_02008c4d
-
 #include "STAGED_ACTOR.H"
 
 enum {
@@ -68,27 +64,15 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern u8 Value_02008c4d;
+/* The scene's tables, laid out after the code. */
+extern u8 KorimaHiroba_Scripts[];
+extern u8 KorimaHiroba_Messages[];
+extern u8 KorimaHiroba_Actors[];
+extern u8 KorimaHiroba_Extras[];
 
-void Func_02001026(Query result);
-OrbitingSceneObject *Func_02001af4(void);
-u8 *Func_02001aec(s32, s32);
+void *Object_GetById(u32);
 
-/*
- * The Func_ symbols declared above name the pre-relocation call words the
- * overlay image holds, not runtime addresses. A source reached from two
- * sites carries two such names.
- */
-
-/*
- * One symbol per call site, named at the site's PC-relative decoded
- * address. All three reach the same ARM-mode IWRAM helper that scales one
- * channel by the adjustment, and each still needs its own name.
- */
-
-/* Constant getter; the owner includes its own pool word. */
-
-u8 *SceneData_GetTable8f80(void) { return (u8 *)0x02008f80; }
+u8 *SceneData_GetScriptTable(void) { return KorimaHiroba_Scripts; }
 
 s32 StagedActor_FindClearPosition(struct StagedActorProbe *probe);
 
@@ -97,19 +81,17 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/* Constant getter; the owner includes its own pool word. */
-u8 *SceneData_GetTable8fe0(void) { return (u8 *)0x02008fe0; }
+u8 *SceneData_GetMessageTable(void) { return KorimaHiroba_Messages; }
 
-/* Constant getter; the owner includes its own pool word. */
-u8 *SceneData_GetTable8ff0(void) { return (u8 *)0x02008ff0; }
+u8 *SceneData_GetActorTable(void) { return KorimaHiroba_Actors; }
 
 /* Runs the six-word placement query and forwards a successful result. */
 void SceneActor_RunPlacementQuery(void)
 {
-    Query result;
+    StagedActorMovementRequest result;
     Event_Begin();
-    if (StagedActor_FindClearPosition(&result))
-        Func_02001026(result);
+    if (StagedActor_FindClearPosition((struct StagedActorProbe *)&result))
+        SceneActor_MoveAndRedraw(result);
     Event_End();
 }
 
@@ -124,8 +106,7 @@ void FieldScene_SetupActor11Effect181(void)
     Event_End();
 }
 
-/* Constant getter; the owner includes its own pool word. */
-u8 *SceneData_GetTable9068(void) { return (u8 *)0x02009068; }
+u8 *SceneData_GetExtraTable(void) { return KorimaHiroba_Extras; }
 
 /*
  * The overlay's entry driver: the loader enters here through the header
@@ -137,7 +118,6 @@ u8 *SceneData_GetTable9068(void) { return (u8 *)0x02009068; }
 s32 FieldScene_SetupEntryActors8To11(void)
 {
     void SceneEffect_AdjustPaletteWindow(s32 id);
-    void Func_02000cb4(s32 id);
 
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (GameFlag_IsSet(0xfd3) == 0) {
@@ -201,70 +181,4 @@ u16 SceneEffect_AdjustColorChannels(u16 color, s32 adj)
     packed = (u32)(s32)red;
     packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
     return (u16)packed;
-}
-
-s32 SceneEffect_UpdateOrbitingParticle(struct Particle_02000c4c *record)
-{
-    u16 *sprite = record->sprite;
-    s32 lift;
-    s32 tilt;
-    s32 jitter;
-
-    lift = Math_Sin(record->angle) * 2;
-    if (lift > 0)
-        lift = -lift;
-
-    record->x = record->base_x + Math_Cos(record->angle) * 2;
-    record->y = record->base_y + lift;
-
-    /* Signed divide by 8, spelled `if (v < 0) v += 7; v >>= 3`. */
-    tilt = Math_Cos(record->angle + 0x8000);
-    if (tilt < 0)
-        tilt += 7;
-    sprite[15] = (u16)(tilt >> 3);          /* +0x1e */
-
-    jitter = (s32)(((u32)Random_Next() << 9) >> 16);
-    jitter += (s32)(((u32)Random_Next() << 9) >> 16);
-    record->angle += jitter + 1024;
-
-    return 0;
-}
-
-void SceneEffect_InitOrbitingParticle(void)
-{
-    OrbitingSceneObject *actor;
-    OrbitingSceneObjectSprite *sprite;
-    u8 *transfer;
-    s32 zero;
-
-    actor = GetOrbitingSceneObject();
-    sprite = actor->sprite;
-    sprite->flags_09_mode = 1;
-    sprite->flags_05_bit_5 = 0;
-    sprite->flags_09_high = 0;
-
-    zero = 0;
-    sprite->state = zero;
-    Actor_SetSpriteFlags(actor, zero);
-    actor->active = zero;
-    actor->mode = zero;
-
-    if (GameFlag_IsSet(0x109) == 0)
-        actor->y += 0x200000;
-
-    actor->flags_23 &= 0xfe;
-    actor->visible = 1;
-
-    transfer = AllocateEffectTransfer(17, 0x608);
-    Item_LoadIcon(ITEM_NUT);
-    transfer += 0x400;
-    Vram_Load(sprite->pal, 128, transfer);
-    Heap_Release(17);
-
-    actor->orbit_center_x = actor->x;
-    actor->orbit_angle = zero;
-    actor->orbit_center_y = actor->y;
-    actor->active = 1;
-    actor->callback = (u32)&UpdateOrbitingSceneObject;
-    actor->state = zero;
 }

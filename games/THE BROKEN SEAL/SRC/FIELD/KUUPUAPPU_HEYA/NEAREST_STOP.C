@@ -15,7 +15,7 @@ struct StopRecord {
     u8 unknown_00[16];
 };
 
-extern struct StopRecord Data_0200cf2c[];
+extern struct StopRecord KuupuappuHeya_Stops[];
 
 /* Snap *pos to the nearest used stop of the set and return that stop's record,
  * or return null when every stop is unused. */
@@ -49,5 +49,5 @@ struct StopRecord *KuupuappuHeya_SnapToNearestStop(struct StopSet *set, s16 *pos
     if (id == -1)
         return 0;
     *pos = at;
-    return &Data_0200cf2c[id];
+    return &KuupuappuHeya_Stops[id];
 }

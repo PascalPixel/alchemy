@@ -3,7 +3,7 @@
 
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 
-extern s32 Data_0200af80;
+extern s32 TakaraAshiba_IconTimer;
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -13,10 +13,10 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* Run a sixteen-frame cycle: on frame 12 return the actors whose flags are clear to their marks, and on the even frames before it show their item icons in turn. */
 void TakaraAshiba_UpdateItemIcons(void)
 {
-    if (++Data_0200af80 > 16) {
-        Data_0200af80 = 0;
+    if (++TakaraAshiba_IconTimer > 16) {
+        TakaraAshiba_IconTimer = 0;
     }
-    switch (Data_0200af80) {
+    switch (TakaraAshiba_IconTimer) {
     case 12:
         if (Engine_GameFlagIsSet(0xee7) == 0) {
             Call3(Engine_ActorSetPosition, 8, 0xe80000, 0x3680000);

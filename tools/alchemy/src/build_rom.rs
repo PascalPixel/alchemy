@@ -2,6 +2,7 @@
 //! pret links `ld_script.ld`. Every symbol resolves from its definition; the
 //! image is written for `sha1sum -c rom.sha1` and nothing is copied from a
 //! reference ROM except what the script's scaffolding reads explicitly.
+use crate::build_assets::LzMachine;
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
     assembly_command, compiler_assembly_command, prefer_installed_binutils,
@@ -253,6 +254,9 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
             .ancestors()
             .find(|path| path.join("baserom.gba").exists())
             .ok_or("the base ROM link is missing")?;
+        for stream in overlay_streams(root, target, source, base)? {
+            hasher.update(fs::read(&stream).map_err(|error| error.to_string())?);
+        }
         step.insert(1, format!("-I{}", base.display()));
         hasher.update(step.join("\0").as_bytes());
         (format!("{:x}", hasher.finalize()), vec![step])
@@ -264,6 +268,130 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
     for step in &steps {
         command(step, root)?;
     }
+    fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+/// The compressor Camelot's resource packer ran on every code overlay, as
+/// the streams in both games show: the general ring's window, read-ahead and
+/// reach, and the palette ring's read-ahead. Each overlay takes the smaller
+/// of the two encodings, the palette one on ties.
+const OVERLAY_MACHINE: LzMachine = LzMachine::new(4123, 485, 4126, 272);
+
+/// The code overlays an assembly source reads with
+/// `.incbin "overlays/resource_XXX.lz"`, each linked from its listing beside
+/// the source and compressed, as pret builds the compressed files its data
+/// sources read.
+fn overlay_streams(
+    root: &Path,
+    target: DecompTarget,
+    source: &Path,
+    output: &Path,
+) -> Result<Vec<PathBuf>, String> {
+    let text = fs::read_to_string(root.join(source))
+        .map_err(|error| format!("{}: {error}", source.display()))?;
+    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"overlays/resource_([0-9a-f]+)\.lz""#)
+        .expect("static pattern");
+    let ids: Vec<String> = pattern
+        .captures_iter(&text)
+        .map(|capture| capture[1].to_owned())
+        .collect();
+    let listings = source
+        .parent()
+        .ok_or("source has no directory")?
+        .join("raw/overlays");
+    let directory = output.join("overlays");
+    let next = AtomicUsize::new(0);
+    let errors = Mutex::new(Vec::new());
+    let workers = std::thread::available_parallelism().map_or(4, |count| count.get());
+    std::thread::scope(|scope| {
+        for _ in 0..workers {
+            scope.spawn(|| loop {
+                let index = next.fetch_add(1, Ordering::Relaxed);
+                let Some(id) = ids.get(index) else {
+                    break;
+                };
+                if let Err(error) = build_overlay(root, target, &listings, id, &directory) {
+                    errors
+                        .lock()
+                        .unwrap()
+                        .push(format!("resource_{id}: {error}"));
+                }
+            });
+        }
+    });
+    let errors = errors.into_inner().unwrap();
+    if !errors.is_empty() {
+        return Err(errors.join("\n"));
+    }
+    Ok(ids
+        .iter()
+        .map(|id| directory.join(format!("resource_{id}.lz")))
+        .collect())
+}
+
+/// Link one overlay listing alone at its load address, with its own script
+/// when it places compiler-library members and the game's otherwise, and
+/// compress the image. The map stays beside it for progress.
+fn build_overlay(
+    root: &Path,
+    target: DecompTarget,
+    listings: &Path,
+    id: &str,
+    directory: &Path,
+) -> Result<(), String> {
+    fs::create_dir_all(directory).map_err(|error| error.to_string())?;
+    let listing = listings.join(format!("resource_{id}_overlay.s"));
+    let own = listings.join(format!("resource_{id}.ld"));
+    let script = if root.join(&own).is_file() {
+        own
+    } else {
+        Path::new(target.game_dir()).join("OVERLAY.LD")
+    };
+    let path = |name: String| directory.join(name).to_string_lossy().into_owned();
+    let object = path(format!("resource_{id}_overlay.o"));
+    let elf = path(format!("resource_{id}.elf"));
+    let map = path(format!("resource_{id}.map"));
+    let image = path(format!("resource_{id}.bin"));
+    let stream = directory.join(format!("resource_{id}.lz"));
+    let stamp = stream.with_extension("lz.key");
+    let steps = [
+        assembly_command(&listing.to_string_lossy(), &object),
+        [
+            "arm-none-eabi-ld",
+            "--no-warn-mismatch",
+            "-T",
+            &script.to_string_lossy(),
+            "-Map",
+            &map,
+            "-o",
+            &elf,
+            &object,
+            "tools/out/compiler-runtime/libgcc.a",
+        ]
+        .map(String::from)
+        .to_vec(),
+        ["arm-none-eabi-objcopy", "-O", "binary", &elf, &image]
+            .map(String::from)
+            .to_vec(),
+    ];
+    let mut hasher = Sha256::new();
+    hasher.update(with_includes(root, &root.join(&listing))?);
+    hasher.update(fs::read(root.join(&script)).map_err(|error| error.to_string())?);
+    for step in &steps {
+        hasher.update(step.join("\0").as_bytes());
+    }
+    hasher.update(format!("{OVERLAY_MACHINE:?}").as_bytes());
+    let key = format!("{:x}", hasher.finalize());
+    if stream.is_file() && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
+        return Ok(());
+    }
+    let _ = fs::remove_file(&stamp);
+    for step in &steps {
+        command(step, root)?;
+    }
+    let decoded = fs::read(&image).map_err(|error| error.to_string())?;
+    let encoded = crate::build_assets::encode_overlay_stream(&decoded, &OVERLAY_MACHINE)?;
+    fs::write(&stream, encoded).map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
 }
 

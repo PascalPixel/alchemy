@@ -425,18 +425,23 @@ fn check_documents(root: &Path) -> Result<(), String> {
         ))
     }
 }
-/// An `.incbin` directive, except pret's base-ROM range form in scaffolding:
-/// `.incbin "baserom.gba", OFFSET, SIZE` reads the builder's own ROM and
-/// commits no bytes, as pokeemerald's early data files did.
+/// An `.incbin` directive, except two forms in scaffolding that commit no
+/// bytes: pret's base-ROM range `.incbin "baserom.gba", OFFSET, SIZE`, which
+/// reads the builder's own ROM as pokeemerald's early data files did, and a
+/// code overlay the build links from its listing and compresses,
+/// `.incbin "overlays/resource_XXX.lz"`, as pret's data files read the
+/// compressed files its build makes.
 fn incbin(path: &str, data: &[u8]) -> bool {
     let base_rom = regex::Regex::new(
         r#"^\s*\.incbin\s+"baserom\.gba"\s*,\s*0x[0-9a-f]+\s*,\s*0x[0-9a-f]+\s*$"#,
     )
     .expect("base ROM range pattern");
+    let overlay = regex::Regex::new(r#"^\s*\.incbin\s+"overlays/resource_[0-9a-f]+\.lz"\s*$"#)
+        .expect("built overlay pattern");
     let scaffolding = path.starts_with("recon/");
     let text = String::from_utf8_lossy(data);
     text.split(['\n', '\r'])
-        .filter(|line| !(scaffolding && base_rom.is_match(line)))
+        .filter(|line| !(scaffolding && (base_rom.is_match(line) || overlay.is_match(line))))
         .any(|line| {
             let trimmed =
                 line.trim_start_matches(|ch: char| ch.is_whitespace() || ch == '\u{feff}');
@@ -3042,7 +3047,7 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn only_the_base_rom_range_form_may_incbin_and_only_in_scaffolding() {
+    fn only_base_rom_ranges_and_built_overlays_may_incbin_and_only_in_scaffolding() {
         let range = b".incbin \"baserom.gba\", 0x00037464, 0x0003c3a4\n";
         assert!(!super::incbin("recon/tbs/unidentified.s", range));
         assert!(super::incbin("games/THE BROKEN SEAL/SRC/DATA.S", range));
@@ -3053,6 +3058,13 @@ mod tests {
         assert!(super::incbin(
             "recon/tbs/unidentified.s",
             b".incbin \"baserom.gba\"\n"
+        ));
+        let overlay = b".incbin \"overlays/resource_36f.lz\"\n";
+        assert!(!super::incbin("recon/tbs/overlays.s", overlay));
+        assert!(super::incbin("games/THE BROKEN SEAL/SRC/DATA.S", overlay));
+        assert!(super::incbin(
+            "recon/tbs/overlays.s",
+            b".incbin \"overlays/resource_36f.bin\"\n"
         ));
     }
 

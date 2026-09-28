@@ -1360,6 +1360,8 @@ SECTIONS
         "*/recon/tla/raw/081c3418.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081c342c.o"(.text .rodata .data .padding)
         "*/recon/tla/unidentified.o"(.unidentified.081c342e)
+        "*/recon/tla/overlays.o"(.overlays)
+        "*/recon/tla/unidentified.o"(.unidentified.08f79646)
     } > ROM
     /* The sound mixer runs in IWRAM; its ROM copy is called in place for its return trampoline. */
     Sound_Mixer = LOADADDR(.iwram_mixer) + 1;

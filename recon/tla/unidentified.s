@@ -124,4 +124,6 @@ Sound_SongTable:
 	.incbin "baserom.gba", 0x001c4530, 0x004bbad0
 	.global Data_08680000
 Data_08680000:
-	.incbin "baserom.gba", 0x00680000, 0x00980000
+	.incbin "baserom.gba", 0x00680000, 0x00843878
+	.section .unidentified.08f79646,"a"
+	.incbin "baserom.gba", 0x00f79646, 0x000869ba

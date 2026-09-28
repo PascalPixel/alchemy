@@ -5,7 +5,7 @@ void Engine_ActorSetSpeed();
 void Engine_ActorWalkToAndWait();
 void Engine_ActorFaceDirection();
 void Engine_ActorSetAnimation();
-void Engine_ObjectMotionSetPositionAndCommit();
+void Engine_ActorMoveToAndWait();
 void Engine_EventWait();
 
 
@@ -54,11 +54,11 @@ void HaidiaMura_RunWalkScene032B0(s32 a0, s32 a1, s32 a2, s32 a3)
     ((struct Flags38 *)p5)->flags = 0;
     Engine_ActorSetAnimation(a0, p8);
     Call3(Engine_ActorSetSpeed, a0, 0x4ccc, 0x2666);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, a0, 0x188, 0x36b);
+    Call3(Engine_ActorMoveToAndWait, a0, 0x188, 0x36b);
     Engine_EventWait(10);
     Engine_ActorSetAnimation(a0, p10);
     Call3(Engine_ActorSetSpeed, a0, 0x10000, 0x8000);
-    Call3(Engine_ObjectMotionSetPositionAndCommit, a0, 0x188, 0x35b);
+    Call3(Engine_ActorMoveToAndWait, a0, 0x188, 0x35b);
     p5[38] = 1;
     if (p9 != 0) {
         rec8[85] = 3;

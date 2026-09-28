@@ -33,7 +33,7 @@ extern u8 Value_000000cb;
 extern u8 Value_000000be;
 
 void *Resource_GetTableEntry(s32 id);
-void Unnamed_080cc960(void);
+void BattlePresentation_DrawStreaks(void);
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 void BattlePresentation_PrepareScene(s32 kind)
@@ -71,7 +71,7 @@ void BattlePresentation_PrepareScene(s32 kind)
     *(s32 *)(work + 0x778c) = 0;
     *(s32 *)(work + 0x7780) = 3;
     *(s32 *)(work + 0x7784) = 0x06060606;
-    Scheduler_AddOrUpdateCallback((s32)Unnamed_080cc960, 0xC80);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_DrawStreaks, 0xC80);
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 }
 
@@ -83,7 +83,7 @@ extern u8 Palette_StepFadeTransfer;
 
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
 {
-    Scheduler_RemoveCallback((void (*)(void))&Unnamed_080cc960);
+    Scheduler_RemoveCallback((void (*)(void))&BattlePresentation_DrawStreaks);
     Scheduler_RemoveCallback((void (*)(void))&BattlePresentation_ProcessPendingGraphicsTransfer);
     {
         Transfer transfer = (Transfer)0x03000164;

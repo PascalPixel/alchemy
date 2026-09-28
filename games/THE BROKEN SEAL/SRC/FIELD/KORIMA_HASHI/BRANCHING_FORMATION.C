@@ -2,7 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define SceneTransition_Phase Data_02000240[225]
 
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
@@ -271,7 +270,7 @@ s32 FieldScene_RunScene391_02000c68(void)
     }
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
-    if (SceneTransition_Phase == 4) {
+    if (gGameState.entrance == 4) {
         if (GameFlag_IsSet(0x843) == 0) {
             FieldScene_RunBranchingFormationPresentation();
         }

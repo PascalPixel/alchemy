@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7800 bytes; 1938 differing halfwords, 436 aligned edits. */
+ * Candidate 7800 bytes; 1934 differing halfwords, 432 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -68,7 +68,7 @@ void ObjectGroup_UpdateMembers(s32 set_id, s32 object_value, s32 group_value, s3
 void BattleFx_RunPaletteRampMode1();
 s32 BattleFx_RunProjectileVolley();
 void Graphics_PackTileRows();
-void Camera_ApplyShake(s32 x, s32 y);
+void Camera_ApplyShake(s32 random_mask, u32 shake_range);
 void BattleFx_StepPaletteToResource(s32 resource_id);
 
 void Audio_PlayCue();
@@ -86,37 +86,37 @@ static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 }
 
 /* FAKEMATCH: Inline scope makes each clearing call reload its byte count. */
-static __inline__ void ClearWords(s32 dest, u32 size)
+static __inline__ void ClearWords(void *dest, u32 size)
 {
-    ((s32 (*)(s32, u32))0x03000164)(dest, size);
+    ((s32 (*)(void *, u32))0x03000164)(dest, size);
 }
 
 /* FAKEMATCH: Inline scope reloads the fill routine before its arguments. */
-static __inline__ void FillWords(s32 dest, u32 size, u32 value)
+static __inline__ void FillWords(void *dest, u32 size, u32 value)
 {
-    ((void (*)(s32, u32, u32))0x03000168)(dest, size, value);
+    ((void (*)(void *, u32, u32))0x03000168)(dest, size, value);
 }
 
 /* Particle image offsets indexed by size; the remaining tables describe
  * individual impact images (offsets, dimensions and placement). */
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 extern u16 Data_080eedea[];
-extern u8 Data_080ede9f[];
-extern u8 Data_080edea5[];
-extern u8 Data_080edeab[];
-extern u16 Data_080edeb2[];
-extern u16 Data_080edebe[];
-extern u8 Data_080edeca[];
-extern u8 Data_080eded0[];
+extern u8 PuffArc_CellWidths[];
+extern u8 PuffArc_CellHeights[];
+extern u8 PuffArc_CellBiasY[];
+extern u16 PuffArc_CellSourceOffsets[];
+extern u16 BattleFx12_SmokeCells[];
+extern u8 BattleFx12_SmokeWidths[];
+extern u8 BattleFx12_SmokeHeights[];
 extern u8 Data_080eedd0[];
 extern u8 Data_080eedd4[];
 extern u8 Data_080eede2[];
 
 /* FAKEMATCH: Inline scope reloads each image address at its drawing call. */
-static __inline__ void DrawImage(s32 canvas, s32 pixels, s32 x, s32 y, s32 width, s32 height,
+static __inline__ void DrawImage(void *canvas, const void *pixels, s32 x, s32 y, s32 width, s32 height,
                                  RectangleBlit *draw)
 {
-    (*draw)((void *)canvas, (void *)pixels, x, y, width, height);
+    (*draw)(canvas, pixels, x, y, width, height);
 }
 
 void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
@@ -127,8 +127,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     s32 active_cnt;
     s32 column_y;
     s32 image_offset;
-    /* FAKEMATCH: Keep each phase destination live into the shared store. */
-    s32 *state_addr;
+    /* FAKEMATCH: Keep the shake timer address live into the shared store. */
+    s32 *shake_addr;
     s32 record;
     s32 value;
     struct EffectPosition caster_pos;
@@ -141,12 +141,12 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     /* FAKEMATCH: Reuse the count scratch for the later drawing height. */
     s32 cnt;
     s32 orb_x;
-    s32 heap_base;
+    RectangleBlit *work_blitters;
     struct BattleEffectWork *work;
-    s32 canvas;
+    void *canvas;
     s32 frame;
     s32 matrix;
-    s32 sprites;
+    u8 *sprites;
     s32 scroll_pos;
     s32 scroll_speed;
     s32 duration;
@@ -178,9 +178,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     heap_cache = (void **)(gWorkSlot + 39 * 4);
     heap_cursor = heap_cache;
     work = (struct BattleEffectWork *)*heap_cursor++;
-    canvas = (s32)*heap_cursor;
+    canvas = *heap_cursor;
     matrix = (s32) * (void **)((u8 *)heap_cache - 0x6c);
-    sprites = (s32)heap_cache[2];
+    sprites = (u8 *)heap_cache[2];
     work->effect = command;
     if (kind == 11 || kind == 8 || kind == 32) {
         BattleFx_BeginTiledCanvas(0);
@@ -282,8 +282,8 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], target_screen = &target_pos);
     EffectPosition_ApplyStepAndYOffset(work->effect->actor, caster_screen = &caster_pos);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw_pair = blitters);
-    *(s32 *)(((s32)work + 0x77b4)) = 24;
-    *(s32 *)(((s32)work + 0x77b8)) = 0;
+    work->fade_frames = 24;
+    work->fade_step = 0;
     /* Gather particles around the acting unit for 32 frames. The same
      * records later hold the sparks emitted at the target. */
     caster_actor = GetBattleObjectSlotFar(work->effect->actor)->object;
@@ -346,7 +346,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                             spark_screen.depth = 60;
                         spark_screen.depth += 60;
                         ((RectangleBlit)blitters[1])(
-                            (void *)canvas, (void *)(sprites + Data_080ede48[size - 1]),
+                            (void *)canvas, (void *)(sprites + ParticleStreams_CellOffsets[size - 1]),
                             spark_screen.x - size / 2, spark_screen.y - size, size, size * 2);
                     }
                     step->x -= 4;
@@ -648,7 +648,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         size >>= 4;
                         size++;
                         projected.x /= 2;
-                        blitters[index & 1](canvas, sprites + Data_080ede48[size - 1],
+                        blitters[index & 1](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
                                             projected.x - size / 2, projected.y - size,
                                             size, size * 2);
                         EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
@@ -693,7 +693,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 
                         EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                         projected.x >>= 1;
-                        blitters[0](canvas, sprites + Data_080ede48[size - 1],
+                        blitters[0](canvas, sprites + ParticleStreams_CellOffsets[size - 1],
                                     projected.x - (u32)size / 2, projected.y - size, size,
                                     size * 2);
                         EffectStep_AdvanceWithGravity3D(step, 62, 0);
@@ -741,18 +741,18 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 image_x <<= 3;
                 image_x >>= 16;
                 image_x += target_screen->x / 2;
-                image_x -= Data_080edeca[image] / 2;
+                image_x -= BattleFx12_SmokeWidths[image] / 2;
                 image_y = Trig_Cos(angle);
                 image_y <<= 5;
                 image_y >>= 16;
-                image_y -= Data_080eded0[image] / 2;
+                image_y -= BattleFx12_SmokeHeights[image] / 2;
                 Runtime_ReleaseHeapBlock(47);
                 Runtime_ReleaseHeapBlock(46);
                 value = Random16();
                 BattleEffect_LoadWork(47, 7, 7, Data_080eedd0[value & 3] | 3, 2);
-                ((RectangleBlit) * (s32 *)0x03001f0c)(canvas, 0x02010000 + Data_080edebe[image],
-                                                      image_x, image_y + 56, Data_080edeca[image],
-                                                      Data_080eded0[image]);
+                ((RectangleBlit *)gWorkSlot)[47](canvas, 0x02010000 + BattleFx12_SmokeCells[image],
+                                                      image_x, image_y + 56, BattleFx12_SmokeWidths[image],
+                                                      BattleFx12_SmokeHeights[image]);
                 Runtime_ReleaseHeapBlock(47);
                 BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
             }
@@ -790,7 +790,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             DrawImage(canvas, 0x020106e8, origin_x - width, rise + 47, width * 2, 65, draw_tbl + 47);
             Runtime_ReleaseHeapBlock(47);
             if (frame == 8) {
-                *(s32 *)(((s32)work + 0x77a8)) = frame;
+                work->shake_frames = frame;
             }
             if (frame <= 1) {
                 goto RestoreBlitters;
@@ -823,13 +823,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 pair_x = target_screen->x / 2;
                 cnt = 48;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                heap_base = (s32)gWorkSlot;
+                work_blitters = (RectangleBlit *)gWorkSlot;
                 DrawImage(canvas, 0x02010000, pair_x - 24, 48, 24, cnt,
-                          (RectangleBlit *)(heap_base + 188));
+                          work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
                 BattleEffect_LoadWork(47, 7, 7, 7, 2);
                 DrawImage(canvas, 0x02010000, pair_x, 48, 24, cnt,
-                          (RectangleBlit *)(heap_base + 188));
+                          work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
             }
         RestoreBlitters:;
@@ -878,262 +878,254 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
         goto FinishFrame;
     DrawLargeImages:;
-        if (kind != 4) {
-            if (kind == 11) {
-                s32 image_y;
+        if (kind == 4)
+            goto FinishFrame;
+        if (kind == 11) {
+            s32 image_y;
 
-                Trig_Sin((frame << 9));
-                value = Trig_Cos(frame << 9);
-                value <<= 2;
-                value >>= 16;
-                image_y = (target_screen->y >> 16) + value + 16;
-                if (frame <= 3) {
-                    blitters[0](canvas, work,
-                                Data_080eedd4[((work->effect->side << 3) - work->effect->side)],
-                                (image_y + Data_080eede2[0]), 57, 98);
-                    goto FinishFrame;
-                }
-                if (frame <= 7) {
-                    blitters[0](canvas, work,
-                                Data_080eedd4[((work->effect->side << 3) - work->effect->side)],
-                                (image_y + Data_080eede2[0]), 57, 98);
-                }
-                blitters[0](canvas, ((s32)work + 0x15d2),
-                            Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 1)],
-                            (image_y + Data_080eede2[1]), 99, 69);
-                if ((u32)(frame - 4) <= 1) {
-                    FillWords(canvas, 0x4000, 0x3f3f3f3f);
-                }
-                if ((u32)(frame - 6) <= 1) {
-                    blitters[0](
-                        canvas, ((s32)work + 0x3081),
-                        Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 2)],
-                        (image_y + Data_080eede2[2]), 128, 91);
-                }
-                if ((u32)(frame - 8) <= 1) {
-                    DrawImage(
-                        canvas, 0x2010000,
-                        Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 3)],
-                        (image_y + Data_080eede2[3]), 128, 91, &blitters[0]);
-                }
-                if ((u32)(frame - 10) <= 1) {
-                    blitters[0](
-                        canvas, 0x2012d80,
-                        Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 4)],
-                        (image_y + Data_080eede2[4]), 128, 59);
-                }
-                if ((u32)(frame - 12) <= 1) {
-                    blitters[0](
-                        canvas, 0x2014b00,
-                        Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 5)],
-                        (image_y + Data_080eede2[5]), 122, 29);
-                }
-                if ((u32)(frame - 14) > 1) {
-                    goto FinishFrame;
-                }
-                blitters[0](canvas, 0x20158d2,
-                            Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 6)],
-                            (image_y + Data_080eede2[6]), 76, 25);
+            Trig_Sin((frame << 9));
+            value = Trig_Cos(frame << 9);
+            value <<= 2;
+            value >>= 16;
+            image_y = (target_screen->y >> 16) + value + 16;
+            if (frame <= 3) {
+                blitters[0](canvas, work,
+                            Data_080eedd4[work->effect->side * 7],
+                            (image_y + Data_080eede2[0]), 57, 98);
                 goto FinishFrame;
             }
-            if (kind == 32) {
-                scroll_pos = (scroll_pos + scroll_speed);
-                if (frame > 6) {
-                    scroll_speed = (s32)((u32)scroll_speed * 48) / 64;
-                }
-                *(volatile s32 *)0x04000028 = ((scroll_pos >> 16) << 8);
-                if ((u32)(frame - 16) <= 15) {
-                    *(volatile u16 *)0x04000052 = ((0x10 - (frame - 16)) | 0x1000);
-                }
-                if ((u32)(frame - 4) <= 1) {
-                    FillWords(canvas, 0x4000, 0x3f3f3f3f);
-                }
-                if (frame <= 3) {
-                    if (work->effect->side == 1) {
-                        blitters[0](canvas, work, 0, 24, 80, 104);
-                    } else {
-                        blitters[0](canvas, work, 48, 24, 80, 104);
-                    }
-                    goto FinishFrame;
-                }
-                if (frame <= 7) {
-                    if (work->effect->side == 1) {
-                        blitters[0](canvas, work, 0, 24, 80, 104);
-                    } else {
-                        blitters[0](canvas, work, 48, 24, 80, 104);
-                    }
-                }
+            if (frame <= 7) {
+                blitters[0](canvas, work,
+                            Data_080eedd4[work->effect->side * 7],
+                            (image_y + Data_080eede2[0]), 57, 98);
+            }
+            blitters[0](canvas, ((s32)work + 0x15d2),
+                        Data_080eedd4[(work->effect->side * 7 + 1)],
+                        (image_y + Data_080eede2[1]), 99, 69);
+            if ((u32)(frame - 4) <= 1) {
+                FillWords(canvas, 0x4000, 0x3f3f3f3f);
+            }
+            if ((u32)(frame - 6) <= 1) {
+                blitters[0](
+                    canvas, ((s32)work + 0x3081),
+                    Data_080eedd4[(work->effect->side * 7 + 2)],
+                    (image_y + Data_080eede2[2]), 128, 91);
+            }
+            if ((u32)(frame - 8) <= 1) {
+                DrawImage(
+                    canvas, 0x2010000,
+                    Data_080eedd4[(work->effect->side * 7 + 3)],
+                    (image_y + Data_080eede2[3]), 128, 91, &blitters[0]);
+            }
+            if ((u32)(frame - 10) <= 1) {
+                blitters[0](
+                    canvas, 0x2012d80,
+                    Data_080eedd4[(work->effect->side * 7 + 4)],
+                    (image_y + Data_080eede2[4]), 128, 59);
+            }
+            if ((u32)(frame - 12) <= 1) {
+                blitters[0](
+                    canvas, 0x2014b00,
+                    Data_080eedd4[(work->effect->side * 7 + 5)],
+                    (image_y + Data_080eede2[5]), 122, 29);
+            }
+            if ((u32)(frame - 14) > 1) {
+                goto FinishFrame;
+            }
+            blitters[0](canvas, 0x20158d2,
+                        Data_080eedd4[(work->effect->side * 7 + 6)],
+                        (image_y + Data_080eede2[6]), 76, 25);
+            goto FinishFrame;
+        } else if (kind == 32) {
+            scroll_pos = (scroll_pos + scroll_speed);
+            if (frame > 6) {
+                scroll_speed = (s32)((u32)scroll_speed * 48) / 64;
+            }
+            {
+                s32 x = scroll_pos;
+                x >>= 16;
+                x <<= 8;
+                *(volatile s32 *)0x04000028 = x;
+            }
+            if ((u32)(frame - 16) <= 15) {
+                *(volatile u16 *)0x04000052 = ((0x10 - (frame - 16)) | 0x1000);
+            }
+            if ((u32)(frame - 4) <= 1) {
+                FillWords(canvas, 0x4000, 0x3f3f3f3f);
+            }
+            if (frame <= 3) {
                 if (work->effect->side == 1) {
-                    blitters[0](canvas, ((s32)work + 0x1e00), 16, 16, 80, 104);
+                    blitters[0](canvas, work, 0, 24, 80, 104);
                 } else {
-                    blitters[0](canvas, ((s32)work + 0x1e00), 32, 16, 80, 104);
+                    blitters[0](canvas, work, 48, 24, 80, 104);
                 }
-                if ((u32)(frame - 6) <= 1) {
-                    blitters[0](canvas, ((s32)work + 0x3e80), 0, 16, 128, 91);
-                }
-                if ((u32)(frame - 8) <= 1) {
-                    blitters[0](canvas, 0x2010000, 0, 16, 128, 91);
-                }
-                if ((u32)(frame - 10) <= 1) {
-                    blitters[0](canvas, 0x2012d80, 0, 16, 128, 59);
-                }
-                if ((u32)(frame - 12) <= 1) {
-                    blitters[0](canvas, 0x2014b00, 0, 16, 128, 29);
-                }
-                if ((u32)(frame - 14) > 1) {
-                    goto FinishFrame;
-                }
-                blitters[0](canvas, 0x2015980, 0, 16, 128, 26);
                 goto FinishFrame;
             }
-            if (kind == 20) {
-                for (i = 0; i != 12; i++) {
-                    if (frame >= i + 6 && frame < i + 18) {
-                        s32 image = (frame - i - 6) / 2;
-                        s32 image_x = target_screen->x / 2 - Data_080ede9f[image] / 2;
-                        s32 mirrored;
-
-                        if (i & 1)
-                            image_x += ((i + 1) / 2) * 3;
-                        else
-                            image_x -= ((i + 1) / 2) * 3;
-                        mirrored = 1;
-                        if (i != 0) {
-                            mirrored = 0;
-                            if (((i - 1) & 3) > 1)
-                                mirrored = 1;
-                        }
-                        blitters[mirrored](canvas, 0x02010000 + Data_080edeb2[image], image_x,
-                                           Data_080edeab[image] + 48, Data_080ede9f[image],
-                                           Data_080edea5[image]);
-                    }
-                }
-            } else {
-                if (kind == 16) {
-                    if (frame == 0) {
-                        for (i = 0; i != 64; i++) {
-                            seed = &((struct EffectStep *)0x02014000)[i];
-                            seed->x = (Random16() & 127) + 32;
-                            seed->y = 0;
-                            seed->z = 0;
-                            seed->velocity_x = Random16() & 0xffff;
-                            seed->velocity_y = Random16() & 0xffff;
-                            seed->velocity_z = Random16() & 0xffff;
-                        }
-                        ((struct EffectStep *)0x02014000)[63].y = 159;
-                    }
-                    {
-                        struct EffectStep *step = (struct EffectStep *)0x02014000;
-
-                        struct EffectPosition *origin = target_screen;
-
-                        for (i = 0; i != 64; i++, step++) {
-                            if (step->x >= 0 && frame >= i / 2) {
-                                s32 image = i & 3;
-
-                                Render_ResetTransformState();
-                                SceneTransform_ApplyPitch(step->velocity_x);
-                                SceneTransform_ApplyYaw(step->velocity_y);
-                                EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-                                projected.x = projected.x / 2 + origin->x / 2;
-                                projected.y += origin->y + 32;
-                                blitters[1](canvas, 0x02010000 + Data_080eedea[image],
-                                            projected.x - 4, projected.y - 4, 8, 8);
-                                step->x -= 6;
-                                if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
-                                    Audio_PlayCue(133);
-                                    ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
-                                }
-                            }
-                        }
-                    }
-                    goto FinishFrame;
-                }
-                if (kind == 8) {
-                    s32 height;
-
-                    if ((u32)(frame - 5) > 44) {
-                        goto FinishFrame;
-                    }
-                    if (frame > 25) {
-                        height = (196 - (frame << 2));
-                    } else {
-                        height = ((frame << 4) - 64);
-                    }
-                    if (height > 96) {
-                        height = 96;
-                    }
-                    DrawImage(canvas, 0x2010000, 48, 104 - height, 32, height, &blitters[0]);
+            if (frame <= 7) {
+                if (work->effect->side == 1) {
+                    blitters[0](canvas, work, 0, 24, 80, 104);
                 } else {
-                    if ((u32)(kind - 33) <= 1) {
-                        s32 offset;
-                        s32 image_x;
-                        s32 image_y;
+                    blitters[0](canvas, work, 48, 24, 80, 104);
+                }
+            }
+            if (work->effect->side == 1) {
+                blitters[0](canvas, ((s32)work + 0x1e00), 16, 16, 80, 104);
+            } else {
+                blitters[0](canvas, ((s32)work + 0x1e00), 32, 16, 80, 104);
+            }
+            if ((u32)(frame - 6) <= 1) {
+                blitters[0](canvas, ((s32)work + 0x3e80), 0, 16, 128, 91);
+            }
+            if ((u32)(frame - 8) <= 1) {
+                blitters[0](canvas, 0x2010000, 0, 16, 128, 91);
+            }
+            if ((u32)(frame - 10) <= 1) {
+                blitters[0](canvas, 0x2012d80, 0, 16, 128, 59);
+            }
+            if ((u32)(frame - 12) <= 1) {
+                blitters[0](canvas, 0x2014b00, 0, 16, 128, 29);
+            }
+            if ((u32)(frame - 14) > 1) {
+                goto FinishFrame;
+            }
+            blitters[0](canvas, 0x2015980, 0, 16, 128, 26);
+            goto FinishFrame;
+        } else if (kind == 20) {
+            for (i = 0; i != 12; i++) {
+                if (frame >= i + 6 && frame < i + 18) {
+                    s32 image = (frame - i - 6) / 2;
+                    s32 image_x = target_screen->x / 2 - PuffArc_CellWidths[image] / 2;
+                    s32 mirrored;
 
-                        if (frame > 5)
-                            goto FinishFrame;
-                        if (work->effect->side == 0) {
-                            image_x = target_screen->x;
-                            image_x /= 2;
-                            offset = (6 - frame) * 3;
-                            image_x += offset * 2;
-                        } else {
-                            image_x = target_screen->x;
-                            image_x /= 2;
-                            offset = (6 - frame) * 3;
-                            image_x -= offset * 2;
+                    if (i & 1)
+                        image_x += ((i + 1) / 2) * 3;
+                    else
+                        image_x -= ((i + 1) / 2) * 3;
+                    mirrored = 1;
+                    if (i != 0) {
+                        mirrored = 0;
+                        if (((i - 1) & 3) > 1)
+                            mirrored = 1;
+                    }
+                    blitters[mirrored](canvas, 0x02010000 + PuffArc_CellSourceOffsets[image], image_x,
+                                       PuffArc_CellBiasY[image] + 48, PuffArc_CellWidths[image],
+                                       PuffArc_CellHeights[image]);
+                }
+            }
+        } else if (kind == 16) {
+            if (frame == 0) {
+                for (i = 0; i != 64; i++) {
+                    seed = &((struct EffectStep *)0x02014000)[i];
+                    seed->x = (Random16() & 127) + 32;
+                    seed->y = 0;
+                    seed->z = 0;
+                    seed->velocity_x = Random16() & 0xffff;
+                    seed->velocity_y = Random16() & 0xffff;
+                    seed->velocity_z = Random16() & 0xffff;
+                }
+                ((struct EffectStep *)0x02014000)[63].y = 159;
+            }
+            {
+                struct EffectStep *step = (struct EffectStep *)0x02014000;
+                struct EffectPosition *origin = target_screen;
+
+                for (i = 0; i != 64; i++, step++) {
+                    if (step->x >= 0 && frame >= i / 2) {
+                        s32 image = i & 3;
+
+                        Render_ResetTransformState();
+                        SceneTransform_ApplyPitch(step->velocity_x);
+                        SceneTransform_ApplyYaw(step->velocity_y);
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                        projected.x = projected.x / 2 + origin->x / 2;
+                        projected.y += origin->y + 32;
+                        blitters[1](canvas, 0x02010000 + Data_080eedea[image],
+                                    projected.x - 4, projected.y - 4, 8, 8);
+                        step->x -= 6;
+                        if (step->x < 0 && ((i & 7) == 0 || i == 63)) {
+                            Audio_PlayCue(133);
+                            ObjectGroup_UpdateMembers(work->effect->actors[0], 7, 5, 0, 4);
                         }
-                        image_y = target_screen->y - offset * 4 + 24;
-                        DrawImage(canvas, 0x02010000, image_x - 16, image_y - 32,
-                                  32, 64, &blitters[1]);
-                    } else {
-                        if (kind == 12) {
-                            if (frame > 47) {
-                                *(volatile u16 *)0x04000052 = ((0x40 - frame) | 0x1000);
-                            }
-                            {
-                                struct EffectStep *step = (struct EffectStep *)0x02014000;
-                                s32 mask;
+                    }
+                }
+            }
+            goto FinishFrame;
+        } else if (kind == 8) {
+            s32 height;
 
-                                /* FAKEMATCH: Initialize the mask after the loop counter. */
-                                for (i = 0, mask = 3; i != 16; i++, step++) {
-                                    s32 image = Math_Mod(i, 3);
+            if ((u32)(frame - 5) > 44) {
+                goto FinishFrame;
+            }
+            if (frame > 25) {
+                height = (196 - (frame << 2));
+            } else {
+                height = ((frame << 4) - 64);
+            }
+            if (height > 96) {
+                height = 96;
+            }
+            DrawImage(canvas, 0x2010000, 48, 104 - height, 32, height, &blitters[0]);
+        } else if ((u32)(kind - 33) <= 1) {
+            s32 offset;
+            s32 image_x;
+            s32 image_y;
 
-                                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-                                    projected.x /= 2;
-                                    blitters[i & 1](canvas, 0x02010000 + image * 576,
-                                                    projected.x - 12, projected.y - 12, 24, 24);
-                                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & mask) + 11));
-                                    step->variant++;
-                                }
-                            }
-                        } else {
-                            if (kind != 100) {
-                                struct EffectStep *step = (struct EffectStep *)0x02014000;
+            if (frame > 5)
+                goto FinishFrame;
+            if (work->effect->side == 0) {
+                image_x = target_screen->x;
+                image_x /= 2;
+                offset = (6 - frame) * 3;
+                image_x += offset * 2;
+            } else {
+                image_x = target_screen->x;
+                image_x /= 2;
+                offset = (6 - frame) * 3;
+                image_x -= offset * 2;
+            }
+            image_y = target_screen->y - offset * 4 + 24;
+            DrawImage(canvas, 0x02010000, image_x - 16, image_y - 32,
+                      32, 64, &blitters[1]);
+        } else if (kind == 12) {
+            if (frame > 47) {
+                *(volatile u16 *)0x04000052 = ((0x40 - frame) | 0x1000);
+            }
+            {
+                struct EffectStep *step = (struct EffectStep *)0x02014000;
+                s32 mask;
 
-                                for (i = 0; i != 16; i++, step++) {
-                                    if (frame >= i + 4) {
-                                        s32 age = step->variant;
+                /* FAKEMATCH: Initialize the mask after the loop counter. */
+                for (i = 0, mask = 3; i != 16; i++, step++) {
+                    s32 image = Math_Mod(i, 3);
 
-                                        if (age <= 23) {
-                                            s32 image = age / 4;
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                    projected.x /= 2;
+                    blitters[i & 1](canvas, 0x02010000 + image * 576,
+                                    projected.x - 12, projected.y - 12, 24, 24);
+                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & mask) + 11));
+                    step->variant++;
+                }
+            }
+        } else if (kind != 100) {
+            struct EffectStep *step = (struct EffectStep *)0x02014000;
 
-                                            EffectPosition_ApplyBaseAndYOffset((s32 *)step,
-                                                                               &projected);
-                                            projected.x /= 2;
-                                            blitters[i & 1](canvas, 0x02010000 + image * 1152,
-                                                            projected.x - 12, projected.y - 24, 24,
-                                                            48);
-                                            if (kind == 25)
-                                                EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
-                                            else
-                                                EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
-                                            step->variant++;
-                                        }
-                                    }
-                                }
-                            }
-                        }
+            for (i = 0; i != 16; i++, step++) {
+                if (frame >= i + 4) {
+                    s32 age = step->variant;
+
+                    if (age <= 23) {
+                        s32 image = age / 4;
+
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                        projected.x /= 2;
+                        blitters[i & 1](canvas, 0x02010000 + image * 1152,
+                                        projected.x - 12, projected.y - 24, 24,
+                                        48);
+                        if (kind == 25)
+                            EffectStep_AdvanceWithGravity3D(step, 60, 0x400);
+                        else
+                            EffectStep_AdvanceWithGravity3D(step, 60, 0x1000);
+                        step->variant++;
                     }
                 }
             }
@@ -1163,14 +1155,14 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 goto SelectActorMotion;
             }
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 4);
-            state_addr = (s32 *)((u8 *)work + 0x77a8);
-            goto SetPhase8;
+            shake_addr = &work->shake_frames;
+            goto SetShake8;
         SelectActorMotion:;
             if (kind == 20 || kind == 14 || kind == 33) {
                 BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 1);
-                state_addr = (s32 *)((u8 *)work + 0x77a8);
+                shake_addr = &work->shake_frames;
                 tmp = 2;
-                goto SetPhase;
+                goto SetShake;
             }
             if (kind != 30) {
                 if (kind != 8) {
@@ -1178,11 +1170,11 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 }
             }
             BattleMotion_ApplyVariantMotionFar(work->effect->actors[0], 3);
-            state_addr = (s32 *)((u8 *)work + 0x77a8);
-        SetPhase8:;
+            shake_addr = &work->shake_frames;
+        SetShake8:;
             tmp = 8;
-        SetPhase:;
-            *state_addr = tmp;
+        SetShake:;
+            *shake_addr = tmp;
         ActorMotionDone:;
         }
         if (frame == 6) {

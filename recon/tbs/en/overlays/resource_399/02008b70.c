@@ -1,3 +1,7 @@
+/* Draft of resource_399 0x02008b70 (ImiruMura_ApplyEntryState), from
+ * the former games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ENTRY_STATE.C.
+ * Remaining difference: none in its bytes, but the ROM loads scene numbers 0x32 and 0x33 from the literal pool as link-time values, and no source defines those values.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

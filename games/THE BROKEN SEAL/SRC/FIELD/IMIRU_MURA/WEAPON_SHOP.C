@@ -1,6 +1,7 @@
 #include "TYPES.H"
 
 s32 Engine_ActorGet();
+extern u8 ImiruMura_TurnScript[];
 s32 Engine_GameFlagIsSet();
 void Engine_ShopOpen();
 void Engine_EventBegin();
@@ -13,7 +14,7 @@ void Engine_EventEnd();
 void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_CameraWaitForMove();
-void Main_0808a0b0();
+void Object_SetActionCallbackAndRefreshById();
 
 
 
@@ -74,7 +75,7 @@ void ImiruMura_RunWeaponShop(void)
             Call4(Engine_CameraMoveTo, 0x1aa0000, -1, 0x1ec0000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(20);
-            Call2(Main_0808a0b0, 12, 0x200a5ec);
+            Call2(Object_SetActionCallbackAndRefreshById, 12, (s32)ImiruMura_TurnScript);
             Call1(Engine_EventSetMessage, 0x153e);
             Engine_EventShowMessage(12, 0);
             Call4(Engine_CameraMoveTo, 0x1aa0000, -1, 0x2680000, 1);

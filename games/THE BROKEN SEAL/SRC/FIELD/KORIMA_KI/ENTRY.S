@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer Func_02001070
-	overlay_veneer Func_02000030
-	overlay_veneer Func_02000040
-	overlay_veneer Func_02000048
-	overlay_veneer Func_02000080
-	overlay_veneer Func_02000038
+	overlay_veneer KorimaKi_GetEntrances
+	overlay_veneer KorimaKi_GetExits
+	overlay_veneer KorimaKi_GetPlacements
+	overlay_veneer KorimaKi_GetEvents
+	overlay_veneer KorimaKi_GetRegions

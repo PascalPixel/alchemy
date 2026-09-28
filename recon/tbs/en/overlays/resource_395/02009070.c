@@ -1,9 +1,11 @@
+/* Draft of resource_395 0x02009070..0x020091e8 (376 bytes with pool),
+ * KorimaKi_PrepareActors, the overlay's first entry; the listing keeps the
+ * rows. Remaining difference: the reference loads 40 and 0 from its literal
+ * pool, link-time values; integers are immediates (372 bytes, 175 differ
+ * from +0x31). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern u8 Value_00000000;
-extern u8 Value_00000028;
-extern u16 Data_02000240_t[][1];
 
 void PaletteScene_AdjustPaletteWindow(s32 step);
 
@@ -21,9 +23,9 @@ s32 KorimaKi_PrepareActors(void)
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(14, 15);
     *(s32 *)(*(u8 **)&gEventWork + 0x1c0) = 0x204;
-    Data_02000240_t[288][0] = (u16)(u32)&Value_00000028;
-    Data_02000240_t[289][0] = 4;
-    zero = (u8)(u32)&Value_00000000;
+    ((u16 *)&gGameState)[288] = 40;
+    ((u16 *)&gGameState)[289] = 4;
+    zero = 0;
     if (!Engine_GameFlagIsSet(0x845))
         PaletteScene_AdjustPaletteWindow(3);
     Engine_ActorGet(8)->radius = 6;

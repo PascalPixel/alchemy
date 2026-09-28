@@ -1,3 +1,8 @@
+/* Draft of resource_395 0x02008088..0x02008158 (208 bytes with pool),
+ * KorimaKi_RunMessageScene; the listing keeps the rows. Remaining
+ * difference: the reference loads message 0x1520 from its literal pool as a
+ * link-time value; the integer message is scheduled differently (208 bytes,
+ * 78 differ from +0xe). */
 #include "TYPES.H"
 
 void Engine_EventBegin();
@@ -12,7 +17,6 @@ void Engine_GameFlagSet();
 void Engine_EventEnd();
 
 
-extern u8 Data_00001520[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -40,7 +44,7 @@ void KorimaKi_RunMessageScene(void)
         Engine_EventSetMessage(0x1525);
         Engine_EventShowMessage(9, 0);
     } else {
-        Engine_EventSetMessage((s32)Data_00001520);
+        Engine_EventSetMessage(0x1520);
         Engine_EventShowMessageAndWait(9, 0, 20);
         Local_020012f4(11, 0);
         Engine_EventWait(60);

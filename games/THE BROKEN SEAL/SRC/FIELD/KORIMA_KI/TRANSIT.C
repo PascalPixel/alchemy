@@ -1,206 +1,9 @@
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_SCENE.H"
+#include "KORIMAKI.H"
 
-#define NULL ((void *)0)
-#define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-
-#include "PALETTE_SCENE.H"
-
-enum PaletteMessage {
-    MSG_HEALING_WATERS_MERCURY_LIGHTHOUSE_MIGHT = 0x14c8,
-    MSG_SILENCE = 0x14c9,
-    MSG_CONTROL_TRETS_HEART_SHALL_NOT = 0x14cc,
-    MSG_SILENCE_2 = 0x14eb,
-    MSG_PEOPLE_KOLIMA_FORGIVE_ME = 0x14ec,
-    MSG_WATER_HERMES_SEEPED_INTO_TRET = 0x14ed,
-    MSG_FEEL_GREAT_POWER_SPREADING_THROUGH = 0x14ee,
-    MSG_SHOULD_DO_PEOPLE_KOLIMA_CURSED = 0x14fb,
-    MSG_WAS_INDEED_ANGRY_PEOPLE_HAD = 0x1501,
-    MSG_OWE_GREAT_DEBT_HAVE_SAVED = 0x1519,
-    MSG_NOW_HAVE_SUCH_POWER_AXE = 0x151c,
-    MSG_KNOW_CANNOT_STOP_BUT_PLEASE = 0x151e,
-    MSG_MUST_HORRIBLE_BEYOND_RIVER_AM = 0x151f
-};
-
-struct PaletteEffectFrame {
-    s32 pad00[6];
-    s32 progress;
-    s32 pad1c[7];
-    s32 limit;
-    s32 second_limit;
-    s32 third_limit;
-};
-
-struct EffectSprite { u8 pad00[9]; u8 flags; u8 pad0a[28]; u8 state; };
-
-struct PaletteEffect {
-    u8 pad00[0x18];
-    s32 progress;
-    u8 pad1c[7];
-    u8 flags;
-    u8 pad24[12];
-    s32 rate_x;
-    s32 rate_y;
-    u8 pad38[24];
-    struct EffectSprite *sprite;
-    u8 pad54[1];
-    u8 mode;
-};
-
-struct OrbitingPaletteEffect {
-    s32 pad00[2];
-    s32 x;
-    s32 y;
-    s32 z;
-    s32 pad14;
-    s32 angle_x;
-    s32 angle_y;
-    s32 pad20[6];
-    s32 anchor_x;
-    s32 anchor_y;
-    s32 anchor_z;
-    s32 pad44[3];
-    u8 *owner;
-    s32 pad54[4];
-    s16 step;
-    s16 heading;
-};
-
-struct PaletteSceneRecord {
-    u8 pad00[216];
-    u16 values[1];                 /* +216 */
-};
-
-extern s32 Data_02009dd4;
-extern s32 Data_02009dcc;
-extern s32 Data_02009dc0[3];
-extern const s32 SceneAction_ActorOneEntry[];
-extern const s32 SceneAction_ActorTwoEntry[];
-extern const s32 SceneAction_ActorThreeEntry[];
-extern const s32 SceneAction_GroupFinish[];
-extern s32 Data_03001e40;
-extern u8 Data_02009d9c[];
-extern u8 Data_03001ebc[];
-
-void Func_02001d58(void);
-void Func_020015a0(void);
-void Func_020019c8();
-s32 Func_02001910();
-s32 Func_02001918();
-void Func_020012f4();
-void Func_020019d0();
-struct PaletteEffect *Func_02002b84(s32, s32, s32, s32);
-void Func_02002be4(struct PaletteEffect *, s32, s32, s32);
-void Func_02002e82();
-void Func_02002eb4();
-s32 Func_020030b0();
-s32 Func_020030b8();
-struct PaletteSceneRecord *Func_020030bc();
-void Func_02001462();
-void Func_02001478();
-void Func_0200148c();
-s32 Func_020014a2();
-s32 Func_02001b2c();
-void Func_02001c3a();
-void Func_02001cea();
-s32 Func_02001d04();
-void Func_02001ebc();
-
-/* One symbol per call site, named at the site's decoded address. All three
- * reach the same helper, which scales one channel by the adjustment, and each
- * site still needs its own name. */
-
-void PaletteScene_AdvanceTransition(void);
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
-{
-    return f(a0, a1);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
-
-static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    return f(a0, a1, a2);
-}
-
-/*
- * Returns the in-image table at 0x02009ba4. The eight-byte owner at 0x02000030
- * includes its one pool word, which holds that address and is returned
- * without being dereferenced.
- */
-u8 *PaletteScene_GetScriptData(void)
-{
-    return (u8 *)0x02009ba4;
-}
-
-/*
- * Returns the in-image table at 0x02009c04. The eight-byte owner at 0x02000038
- * includes its one pool word, which holds that address and is returned
- * without being dereferenced.
- */
-u8 *PaletteScene_GetMessageData(void)
-{
-    return (u8 *)0x02009c04;
-}
-
-/*
- * Returns the in-image table at 0x02009c24. The eight-byte owner at 0x02000040
- * includes its one pool word, which holds that address and is returned
- * without being dereferenced.
- */
-u8 *PaletteScene_GetActorData(void)
-{
-    return (u8 *)0x02009c24;
-}
-
-/*
- * Returns the in-image table at 0x02009c34. The eight-byte owner at 0x02000048
- * includes its one pool word, which holds that address and is returned
- * without being dereferenced.
- */
-u8 *PaletteScene_GetEffectData(void)
-{
-    return (u8 *)0x02009c34;
-}
-
-void PaletteScene_Initialize(void)
-{
-    void *scene;
-
-    scene = *(void **)&gEventWork;
-    Event_Begin();
-    Actor_WalkByAndWait(ACTOR_PARTY_LEADER, 0, 0);
-    Event_RequestExit(FIELD_AT_OFFSET(scene, s16 *, 0x16C));
-    Event_End();
-}
-
-/* Returns this overlay's state block. */
-u8 *PaletteScene_GetState(void) { return (u8 *)0x02009d3c; }
+s32 gKorimaKiSparkOrigin[3] __attribute__((section(".bss")));
+s32 gKorimaKiSparkCount __attribute__((section(".bss")));
+s32 gKorimaKiSparkSound __attribute__((section(".bss")));
+s32 gKorimaKiTransitionStep __attribute__((section(".bss")));
 
 void FieldScene_RunScene395_02000158(void)
 {
@@ -209,22 +12,22 @@ void FieldScene_RunScene395_02000158(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0) {
-        Func_02001462(10, 1);
+        KorimaKi_PlayGesture(10, 1);
         Event_SetMessage(MSG_NOW_HAVE_SUCH_POWER_AXE);
         Event_ShowMessage(8, 0);
-        Func_02001478(10, 0);
+        KorimaKi_PlayGesture(10, 0);
     } else {
         if (GameFlag_IsSet(0x844) != 0) {
-            Func_0200148c(10, 1);
+            KorimaKi_PlayGesture(10, 1);
             Event_SetMessage(MSG_SILENCE_2);
             Event_ShowMessage(8, 0);
-            Value2(Func_020014a2, 10, 0);
-            record = Func_02001b2c(184);
+            Value2(KorimaKi_PlayGesture, 10, 0);
+            record = PartyInventory_FindOwner(184);
             if (record == -1) {
                 goto L_02000220;
             }
             {
-                u16 *target = (u16 *)(*(u8 **)Data_03001ebc + 0x172);
+                u16 *target = (u16 *)((u8 *)gEventWork + 0x172);
                 s32 shown = 1;
 
                 *target = shown;
@@ -274,7 +77,7 @@ void PaletteScene_RunActorEightBranch(void)
 void PaletteScene_RunFlaggedBranch(void)
 {
     Event_Begin();
-    Func_02001d58();
+    Battle_ResetEffectCounter();
     if (GameFlag_IsSet(0x844) == 0) {
         RunEventScript01();
     } else {
@@ -285,7 +88,6 @@ void PaletteScene_RunFlaggedBranch(void)
 
 void RunEventScript01(void)
 {
-    extern s32 Data_02009dd0;
 
     u32 i;
     s32 rec8;
@@ -296,13 +98,13 @@ void RunEventScript01(void)
     ColorBuffer_Interpolate(20);
     Task_Wait(40);
     Audio_PlayCue(17);
-    Data_02009dd0 = 1;
-    Call2(Func_02001c3a, 0x2009219, 0xc80);
+    gKorimaKiSparkSound = 1;
+    Call2(Engine_TaskAddCallback, (s32)PaletteScene_SpawnEffect, 0xc80);
     Task_Wait(30);
-    Data_02009dd0 = 0;
+    gKorimaKiSparkSound = 0;
     Camera_MoveTo(0x1480000, -1, 0xeb0000, 1);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);
-    *(u8 *)(Func_02001d04(0) + 90) &= 254;
+    *((u8 *)Engine_ActorGet(0) + 90) &= 254;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 16);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x20000);
     Audio_PlayCue(133);
@@ -319,7 +121,7 @@ void RunEventScript01(void)
     Audio_PlayCue(161);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 19);
     Event_Wait(120);
-    Call1(Func_02001cea, 0x2009219);
+    Call1(Engine_TaskRemoveCallback, (s32)PaletteScene_SpawnEffect);
     Task_Wait(40);
     *(s32 *)(rec8 + 68) = 0x4000;
     {
@@ -334,7 +136,7 @@ void RunEventScript01(void)
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Event_Wait(20);
     Event_ShowMessage(0x200e, 0);
-    Func_02001ebc();
+    Audio_PlayCueFromEventWork();
     ColorBuffer_ApplyTarget(0x10000, 1);
     ColorBuffer_Interpolate(20);
     Task_Wait(40);
@@ -390,14 +192,14 @@ void PaletteScene_RunActorTransitionSequence(void)
         }
         Actor_EnableActionCallback(ACTOR_MIA, SceneAction_ActorThreeEntry);
     }
-    Func_020019c8(2);
+    Object_RefreshSelectorById(2);
     Event_Wait(40);
     KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(32);
     Task_Wait(40);
-    transitionState = &Data_02009dd4;
+    transitionState = &gKorimaKiTransitionStep;
     *transitionState = 0;
-    Value2(Func_02001910, (s32)PaletteScene_AdvanceTransition, 0xc80);
+    Value2(Engine_TaskAddCallback, (s32)PaletteScene_AdvanceTransition, 0xc80);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
     Camera_SetSpeed(0x33333, 0x6666);
@@ -420,7 +222,7 @@ void PaletteScene_RunActorTransitionSequence(void)
             Task_Wait(1);
         } while (*transitionState != 24);
     }
-    Value1(Func_02001918, (s32)PaletteScene_AdvanceTransition);
+    Value1(Engine_TaskRemoveCallback, (s32)PaletteScene_AdvanceTransition);
     Task_Wait(10);
     cycle = 0;
     do {
@@ -438,7 +240,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Camera_MoveTo(0x1480000, 0x80000, 0xd40000, 1);
     Camera_WaitForMove();
     Event_Wait(40);
-    Func_020012f4(10, 1);
+    KorimaKi_PlayGesture(10, 1);
     Event_Wait(40);
     Audio_PlayCue(7);
     Event_SetMessage(MSG_FEEL_GREAT_POWER_SPREADING_THROUGH);
@@ -451,11 +253,11 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xc000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0xc000, 20);
-    Func_020012f4(10, 2);
+    KorimaKi_PlayGesture(10, 2);
     Event_Wait(20);
-    Func_020012f4(10, 3);
+    KorimaKi_PlayGesture(10, 3);
     Event_Wait(40);
-    Func_020012f4(10, 1);
+    KorimaKi_PlayGesture(10, 1);
     Event_Wait(20);
     Event_ShowMessage(8, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x105, 0);
@@ -465,27 +267,27 @@ void PaletteScene_RunActorTransitionSequence(void)
     Camera_MoveTo(0xea0000, 0, 0xe80000, 1);
     Camera_WaitForMove();
     Event_Wait(40);
-    Func_020012f4(11, 1);
+    KorimaKi_PlayGesture(11, 1);
     Event_Wait(40);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 20);
-    Func_020012f4(11, 2);
+    KorimaKi_PlayGesture(11, 2);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x6000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0x6000, 20);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_Wait(20);
-    Func_020012f4(11, 2);
+    KorimaKi_PlayGesture(11, 2);
     Event_Wait(20);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_ShowMessageAndWait(0x4009, 0, 10);
-    Func_020012f4(10, 0);
+    KorimaKi_PlayGesture(10, 0);
     Event_Wait(20);
     Event_ShowMessage(0x8008, 0);
-    Func_020012f4(10, 1);
+    KorimaKi_PlayGesture(10, 1);
     Event_Wait(20);
     Event_OpenMessage(0x8008, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
@@ -521,7 +323,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Camera_MoveTo(0x1480000, 0x80000, 0xd40000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
-    Func_020012f4(10, 0);
+    KorimaKi_PlayGesture(10, 0);
     Event_Wait(20);
     KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(1);
@@ -529,21 +331,21 @@ void PaletteScene_RunActorTransitionSequence(void)
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(40);
     Event_Wait(60);
-    Data_02009dcc = 0;
-    Data_02009dc0[0] = 0x1480000;
-    Data_02009dc0[1] = 0x300000;
-    effectCallback = (s32)Func_020015a0;
-    Data_02009dc0[2] = 0xcd0000;
-    Value2(Func_02001910, effectCallback, 0xc80);
+    gKorimaKiSparkCount = 0;
+    gKorimaKiSparkOrigin[0] = 0x1480000;
+    gKorimaKiSparkOrigin[1] = 0x300000;
+    effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
+    gKorimaKiSparkOrigin[2] = 0xcd0000;
+    Value2(Engine_TaskAddCallback, effectCallback, 0xc80);
     Event_Wait(100);
-    Func_02001918(effectCallback);
+    Engine_TaskRemoveCallback(effectCallback);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     ColorBuffer_Interpolate(60);
     Event_Wait(100);
     KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(20);
     Event_Wait(40);
-    Func_020012f4(10, 1);
+    KorimaKi_PlayGesture(10, 1);
     Event_Wait(10);
     Event_SetMessage(MSG_SHOULD_DO_PEOPLE_KOLIMA_CURSED);
     Event_ShowMessage(0x8008, 0);
@@ -567,7 +369,7 @@ void PaletteScene_RunActorTransitionSequence(void)
         *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Event_ShowMessage(ACTOR_GERALD, 0);
-    Func_020012f4(10, 4);
+    KorimaKi_PlayGesture(10, 4);
     Event_Wait(20);
     Event_SetMessage(MSG_WAS_INDEED_ANGRY_PEOPLE_HAD);
     Event_ShowMessage(0x8008, 0);
@@ -578,31 +380,31 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_SetAnimation(ACTOR_GERALD, 3);
     Actor_SetAnimation(ACTOR_MIA, 3);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Func_020012f4(10, 4);
+    KorimaKi_PlayGesture(10, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x8008, 0, 20);
-    Func_020012f4(11, 0);
+    KorimaKi_PlayGesture(11, 0);
     Event_ShowMessageAndWait(0x4009, 0, 20);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_Wait(40);
-    Func_020012f4(11, 1);
+    KorimaKi_PlayGesture(11, 1);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 20);
-    Func_020012f4(10, 2);
+    KorimaKi_PlayGesture(10, 2);
     Event_Wait(20);
     Event_ShowMessage(0x8008, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x102, 80);
-    Func_020012f4(11, 5);
+    KorimaKi_PlayGesture(11, 5);
     Event_Wait(60);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 20);
-    Func_020012f4(10, 5);
+    KorimaKi_PlayGesture(10, 5);
     Event_Wait(40);
-    Func_020012f4(10, 2);
+    KorimaKi_PlayGesture(10, 2);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4008, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
@@ -610,19 +412,19 @@ void PaletteScene_RunActorTransitionSequence(void)
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 20);
     Event_ShowMessage(0x8002, 0);
-    Func_020012f4(11, 4);
+    KorimaKi_PlayGesture(11, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 20);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 10);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
-    Func_020012f4(10, 1);
+    KorimaKi_PlayGesture(10, 1);
     Event_ShowMessageAndWait(0x8008, 0, 10);
-    Func_020012f4(10, 2);
+    KorimaKi_PlayGesture(10, 2);
     Event_Wait(20);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_Wait(40);
-    Func_020012f4(11, 0);
+    KorimaKi_PlayGesture(11, 0);
     Event_Wait(20);
     KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(1);
@@ -630,12 +432,12 @@ void PaletteScene_RunActorTransitionSequence(void)
     ColorBuffer_ApplyTarget(0x406218, 1);
     ColorBuffer_Interpolate(40);
     Event_Wait(60);
-    Data_02009dcc = 0;
-    Data_02009dc0[0] = 0x880000;
-    Data_02009dc0[1] = 0x140000;
-    effectCallback = (s32)Func_020015a0;
-    Data_02009dc0[2] = 0x1020000;
-    Value2(Func_02001910, effectCallback, 0xc80);
+    gKorimaKiSparkCount = 0;
+    gKorimaKiSparkOrigin[0] = 0x880000;
+    gKorimaKiSparkOrigin[1] = 0x140000;
+    effectCallback = (s32)KorimaKi_SpawnOrbitSparks;
+    gKorimaKiSparkOrigin[2] = 0x1020000;
+    Value2(Engine_TaskAddCallback, effectCallback, 0xc80);
     Event_Wait(100);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
@@ -647,7 +449,7 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x2000, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    Func_020012f4(10, 4);
+    KorimaKi_PlayGesture(10, 4);
     Event_Wait(20);
     Event_ShowMessage(0x8008, 0);
     Actor_ShowEmote(ACTOR_IVAN, 0x101, 60);
@@ -666,24 +468,24 @@ void PaletteScene_RunActorTransitionSequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 0);
     Actor_FaceDirection(ACTOR_MIA, 0x6000, 0);
     Actor_FaceDirection(ACTOR_IVAN, 0x6000, 120);
-    Func_02001918(effectCallback);
+    Engine_TaskRemoveCallback(effectCallback);
     Event_Wait(60);
     KorimaPalette_Restore(0);
     ColorBuffer_Interpolate(40);
-    Func_020012f4(10, 2);
+    KorimaKi_PlayGesture(10, 2);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x8008, 0, 20);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_ShowMessage(0x4009, 0);
     Event_ShowMessage(0x8008, 0);
-    Func_020012f4(11, 4);
+    KorimaKi_PlayGesture(11, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 10);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
     Actor_StartRepeatedMotion(ACTOR_MIA, 2);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Func_020012f4(10, 1);
+    KorimaKi_PlayGesture(10, 1);
     Event_OpenMessage(0x8008, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
@@ -693,11 +495,11 @@ void PaletteScene_RunActorTransitionSequence(void)
         *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Event_Wait(10);
-    Func_020012f4(10, 2);
+    KorimaKi_PlayGesture(10, 2);
     Event_Wait(20);
-    Func_020012f4(11, 3);
+    KorimaKi_PlayGesture(11, 3);
     Event_Wait(40);
-    Func_020012f4(10, 1);
+    KorimaKi_PlayGesture(10, 1);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x8008, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 0);
@@ -714,179 +516,18 @@ void PaletteScene_RunActorTransitionSequence(void)
     if (actorThreeEnabled != 0) {
         Actor_EnableActionCallback(ACTOR_MIA, finalActions);
     }
-    Call2(Func_020019d0, 2, (s32)finalActions);
-    Func_020012f4(10, 4);
-    Func_020012f4(10, 4);
+    Call2(Object_SetActionCallbackAndRefreshById, 2, (s32)finalActions);
+    KorimaKi_PlayGesture(10, 4);
+    KorimaKi_PlayGesture(10, 4);
     Event_Wait(20);
     Event_SetMessage(MSG_OWE_GREAT_DEBT_HAVE_SAVED);
     Event_ShowMessage(0x8008, 0);
-    Func_020012f4(11, 4);
-    Func_020012f4(11, 4);
+    KorimaKi_PlayGesture(11, 4);
+    KorimaKi_PlayGesture(11, 4);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x4009, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     GameFlag_Set(0x845);
     Audio_PlayCue(1);
     PaletteScene_SetRecordValue(184, 185);
-}
-
-s32 PaletteScene_AdvanceEffectFrame(struct PaletteEffectFrame *frame)
-{
-    frame->progress += 0x1EB8;
-    if (frame->limit == 0x80000000) {
-        if (frame->second_limit == frame->limit) {
-            if (frame->third_limit == frame->second_limit) {
-                Engine_ObjectDispatchRelease(frame);
-            }
-        }
-    }
-    return 1;
-}
-
-void PaletteScene_SpawnEffect(void)
-{
-    extern s32 Data_02009dd0;
-
-    struct PaletteEffect *effect;
-    struct EffectSprite *sprite;
-    s32 phase;
-    s32 effect_flags;
-    s32 sprite_flags;
-    s32 spawn_x = 0x01460000;
-    s32 spawn_y = 0x00200000;
-    s32 spawn_z = 0x00c00000;
-    s32 target_x = 0x01460000;
-    s32 target_z = 0x00f00000;
-
-    phase = Data_03001e40 & 3;
-    if (phase != 0) return;
-    if (Data_02009dd0 != 0) Audio_PlayCue(200);
-    effect = Func_02002b84(26, spawn_x, spawn_y, spawn_z);
-    if (effect == 0) return;
-    sprite = effect->sprite;
-    sprite->state = phase;
-    effect_flags = 0xfe;
-    effect_flags &= effect->flags;
-    effect->flags = effect_flags;
-    sprite_flags = ~12;
-    sprite_flags &= sprite->flags;
-    sprite_flags |= 4;
-    sprite->flags = sprite_flags;
-    effect->progress = 0x1999;
-    effect->rate_x = 0x40000;
-    effect->rate_y = 0x40000;
-    effect->mode = phase;
-    Object_SetAnimation(effect, 2);
-    Func_02002be4(effect, target_x, 0, target_z);
-    Object_SetScript(effect, Data_02009d9c);
-}
-
-/* Steps the shared transition counter, firing at 0 and at 20 and wrapping at
- * 30. */
-void PaletteScene_AdvanceTransition(void)
-{
-    s32 step = Data_02009dd4;
-
-    if (step == 0) {
-        KorimaPalette_Restore(0);
-        ColorBuffer_Interpolate(20);
-    } else if (step == 20) {
-        KorimaPalette_Restore(1);
-        ColorBuffer_Interpolate(8);
-    }
-    step = Data_02009dd4 + 1;
-    Data_02009dd4 = step;
-    if (step == 30) {
-        Data_02009dd4 = 0;
-    }
-}
-
-void PaletteScene_AdvanceOrbit(struct OrbitingPaletteEffect *effect)
-{
-    s32 position[3];
-    s32 step = effect->step;
-    s32 heading;
-
-    if (step <= 119) {
-        position[0] = effect->anchor_x;
-        position[1] = effect->anchor_y;
-        position[2] = effect->anchor_z;
-        heading = effect->heading;
-        Func_02002e82(step << 16, step * 768 + heading, position);
-        effect->x = position[0];
-        effect->y = position[1];
-        effect->z = position[2];
-        effect->angle_x += 0x147;
-        effect->angle_y += 0x147;
-        effect->step++;
-    } else {
-        Func_02002eb4(effect->owner[0x1c]);
-        Engine_ObjectDispatchRelease(effect);
-    }
-}
-
-/* Two lookups, each of which can fail with -1; on success stores the caller's
- * halfword into the table at +216 of the record the first index names. */
-void PaletteScene_SetRecordValue(s32 key, s32 value)
-{
-    s32 slot = Func_020030b0(key);
-
-    if (slot != -1) {
-        s32 index = Func_020030b8(slot, key);
-
-        if (index != -1) {
-            Func_020030bc(slot)->values[index] = value;
-        }
-    }
-}
-
-/* Applies the adjustment to palette RAM, skipping two protected windows. */
-void PaletteScene_AdjustPaletteWindow(s32 adjustment)
-{
-    volatile u16 *palette = (volatile u16 *)0x05000000;
-    u32 phase;
-    u32 next_phase;
-    KorimaPalette_SaveFirst();
-    phase = 0;
-    do {
-        u32 index = phase >> 16;
-        u32 second_window;
-
-        if ((u32)(phase + 0xffef0000) > 0x60000) {
-            second_window = (index + 0xff3f) << 16;
-            if (second_window > 0x70000)
-                palette[index] = PaletteScene_AdjustColor(palette[index], adjustment);
-        }
-        next_phase = phase + 0x10000;
-        phase = next_phase;
-    } while (next_phase <= 0x00df0000);
-    KorimaPalette_Capture(); KorimaPalette_SaveSecond(); ColorBuffer_ApplyTarget(0x10000, 0);
-}
-
-/*
- * Applies the asymmetric RGB555 colour adjustment: red rises, green and blue
- * fall. Control jumps over a mask literal inside the span and rejoins before
- * the common return, so the literal belongs to this owner.
- */
-u16 PaletteScene_AdjustColor(u16 color, s32 adjustment)
-{
-    s16 green = (s16)((color >> 5) & 31);
-    s16 red = (s16)(color & 31);
-    s16 blue = (s16)((color >> 10) & 31);
-    u32 packed;
-
-    red = (s16)(red + Math_Divide(
-        red,
-        (s32)((u32)adjustment << 2)
-    ));
-    green = (s16)(green - Math_Divide(green, adjustment));
-    blue = (s16)(blue - Math_Divide(blue, adjustment));
-
-    /* Only the increasing channel is explicitly saturated by this owner. */
-    if (red > 31)
-        red = 31;
-
-    packed = (u32)(s32)red;
-    packed |= ((u32)(s32)blue << 10) | ((u32)(s32)green << 5);
-    return (u16)packed;
 }

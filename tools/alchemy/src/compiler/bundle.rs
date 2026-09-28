@@ -430,7 +430,6 @@ pub fn compiler_bundle_signature_checked() -> Result<String> {
     ensure_compiler_bundle_access()?;
     Ok(compiler_bundle_signature())
 }
-type HostExecutableSignatureCache = Vec<(Vec<String>, Result<String>)>;
 /// Identity of the tool code that decides what a build stage caches: the
 /// digest `build.rs` takes of every Alchemy and Psynergy source except the
 /// checks and reports that only read build outputs. A change to
@@ -440,10 +439,6 @@ pub fn executable_signature() -> Result<String> {
     Ok(env!("ALCHEMY_BUILD_IMPLEMENTATION").to_string())
 }
 
-fn host_executable_signature_cache() -> &'static Mutex<HostExecutableSignatureCache> {
-    static CACHE: OnceLock<Mutex<HostExecutableSignatureCache>> = OnceLock::new();
-    CACHE.get_or_init(|| Mutex::new(Vec::new()))
-}
 fn path_bytes(path: &Path) -> Vec<u8> {
     #[cfg(unix)]
     {
@@ -458,56 +453,6 @@ fn path_bytes(path: &Path) -> Vec<u8> {
 fn append_signature_frame(stream: &mut Vec<u8>, bytes: &[u8]) {
     stream.extend_from_slice(&(bytes.len() as u64).to_be_bytes());
     stream.extend_from_slice(bytes);
-}
-fn resolve_host_executable(name: &str) -> Result<PathBuf> {
-    if name.is_empty() {
-        return Err("host executable name is empty".to_string());
-    }
-    let path = std::env::var_os("PATH")
-        .ok_or_else(|| "PATH is unset; cannot resolve host executable".to_string())?;
-    for directory in std::env::split_paths(&path) {
-        let candidate = directory.join(name);
-        if executable_mode(&candidate) == Some(true) {
-            return fs::canonicalize(&candidate).map_err(|error| {
-                format!(
-                    "host executable {name} resolved at {} but its path cannot be read: {error}",
-                    candidate.display()
-                )
-            });
-        }
-    }
-    Err(format!("host executable {name} cannot be resolved on PATH"))
-}
-fn host_executable_signature_uncached_names(names: &[String]) -> Result<String> {
-    let mut stream = Vec::new();
-    // Cache-format identity survives the former crate's removal.
-    append_signature_frame(&mut stream, b"compiler-core host-executables v1");
-    append_signature_frame(&mut stream, &(names.len() as u64).to_be_bytes());
-    for name in names {
-        let path = resolve_host_executable(name)?;
-        let bytes = fs::read(&path).map_err(|error| {
-            format!(
-                "host executable {name} resolved at {} but cannot be read: {error}",
-                path.display()
-            )
-        })?;
-        append_signature_frame(&mut stream, name.as_bytes());
-        append_signature_frame(&mut stream, &path_bytes(&path));
-        append_signature_frame(&mut stream, &bytes);
-    }
-    Ok(sha256::hex(&stream))
-}
-pub fn host_executable_signature(executables: &[&str]) -> Result<String> {
-    let names: Vec<String> = executables.iter().map(|name| (*name).to_string()).collect();
-    let mut cache = host_executable_signature_cache()
-        .lock()
-        .expect("host executable signature memo is not poisoned");
-    if let Some((_, result)) = cache.iter().find(|(cached, _)| *cached == names) {
-        return result.clone();
-    }
-    let result = host_executable_signature_uncached_names(&names);
-    cache.push((names, result.clone()));
-    result
 }
 pub fn compiler_command_for_target(
     target: CompilerTarget,

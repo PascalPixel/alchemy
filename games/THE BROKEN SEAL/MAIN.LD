@@ -1611,7 +1611,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_LOAD.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/BLANK_DISPLAY_LOAD_VALUE_AND_RUN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/PROCESS_PENDING_TILE_TRANSFER.o"(.text)
-        "*/recon/tbs/raw/080f6148.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/DARKEN_SCENE_STEP.o"(.text)
         "*/recon/tbs/raw/080f61e8.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080f62b8.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080f6440.o"(.text .rodata .data .padding)

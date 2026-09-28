@@ -15,6 +15,9 @@ Func_080c82a8:
 	bx	r4
 	.2byte 0xa6a5
 	.2byte 0x080c
+	.global Func_080c82c0
+	.thumb_func
+Func_080c82c0:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xd91d
@@ -27,14 +30,23 @@ Func_080c82a8:
 	bx	r4
 	.2byte 0xecb9
 	.2byte 0x080d
+	.global Func_080c82d8
+	.thumb_func
+Func_080c82d8:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xdbf9
 	.2byte 0x080c
+	.global Func_080c82e0
+	.thumb_func
+Func_080c82e0:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x4d09
 	.2byte 0x080d
+	.global Func_080c82e8
+	.thumb_func
+Func_080c82e8:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x50f9
@@ -43,6 +55,9 @@ Func_080c82a8:
 	bx	r4
 	.2byte 0x53b9
 	.2byte 0x080d
+	.global Func_080c82f8
+	.thumb_func
+Func_080c82f8:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x2261
@@ -71,6 +86,9 @@ Func_080c82a8:
 	bx	r4
 	.2byte 0x7431
 	.2byte 0x080d
+	.global Func_080c8330
+	.thumb_func
+Func_080c8330:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x6b91
@@ -87,6 +105,9 @@ Func_080c82a8:
 	bx	r4
 	.2byte 0x0bed
 	.2byte 0x080d
+	.global Func_080c8350
+	.thumb_func
+Func_080c8350:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x01cd
@@ -99,6 +120,9 @@ Func_080c82a8:
 	bx	r4
 	.2byte 0x0749
 	.2byte 0x080d
+	.global Func_080c8368
+	.thumb_func
+Func_080c8368:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xcec9

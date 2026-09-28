@@ -7,10 +7,16 @@ Func_080ad2e8:
 	bx	r4
 	.2byte 0xf465
 	.2byte 0x080a
+	.global Func_080ad2f0
+	.thumb_func
+Func_080ad2f0:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xee41
 	.2byte 0x080a
+	.global Func_080ad2f8
+	.thumb_func
+Func_080ad2f8:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xff95
@@ -19,10 +25,16 @@ Func_080ad2e8:
 	bx	r4
 	.2byte 0x1005
 	.2byte 0x080b
+	.global Func_080ad308
+	.thumb_func
+Func_080ad308:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xf0e5
 	.2byte 0x080a
+	.global Func_080ad310
+	.thumb_func
+Func_080ad310:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.4byte 0x080add5d

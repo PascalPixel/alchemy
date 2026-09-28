@@ -11,10 +11,16 @@ Func_08038368:
 	bx	r4
 	.2byte 0xd9a5
 	.2byte 0x0804
+	.global Func_08038378
+	.thumb_func
+Func_08038378:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xd9e1
 	.2byte 0x0804
+	.global Func_08038380
+	.thumb_func
+Func_08038380:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xda8d

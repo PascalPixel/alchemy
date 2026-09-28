@@ -7,6 +7,9 @@ Func_080c8378:
 	bx	r4
 	.2byte 0x170d
 	.2byte 0x080d
+	.global Func_080c8380
+	.thumb_func
+Func_080c8380:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x172d

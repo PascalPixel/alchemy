@@ -11,6 +11,9 @@ Func_080c8508:
 	bx	r4
 	.2byte 0xeb81
 	.2byte 0x080c
+	.global Func_080c8518
+	.thumb_func
+Func_080c8518:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.4byte 0x080dc0d9

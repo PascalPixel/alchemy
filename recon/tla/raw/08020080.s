@@ -18,6 +18,9 @@ Object_SetMode:
 	bx	r4
 	.2byte 0x33d1
 	.2byte 0x0802
+	.global Func_08020098
+	.thumb_func
+Func_08020098:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x3411

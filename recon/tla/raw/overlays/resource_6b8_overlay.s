@@ -1,21 +1,27 @@
 .syntax unified
-.include "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
 	.thumb
-	.global Overlay_02000000
-Overlay_02000000:
-	.irp EntryTarget, 0x0200879d, 0x02008039, 0x02008045, 0x0200804d, 0x02008795, 0x02008041, 0x02008919
-	overlay_veneer \EntryTarget
-	.endr
+	.global Func_02000038
+	.thumb_func
+Func_02000038:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x9204
 	.2byte 0x0200
+	.global Func_02000040
+	.thumb_func
+Func_02000040:
 	movs	r0, #0
 	bx	lr
+	.global Func_02000044
+	.thumb_func
+Func_02000044:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x92f4
 	.2byte 0x0200
+	.global Func_0200004c
+	.thumb_func
+Func_0200004c:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.4byte 0x02009300
@@ -827,10 +833,16 @@ Overlay_02000000:
 	.4byte 0x02000240
 	.2byte 0x97b0
 	.2byte 0x0200
+	.global Func_02000794
+	.thumb_func
+Func_02000794:
 	ldr	r0, [pc, #0]
 	bx	lr
 	.2byte 0x94e0
 	.2byte 0x0200
+	.global Func_0200079c
+	.thumb_func
+Func_0200079c:
 	push	{r5, r6, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -996,6 +1008,9 @@ Overlay_02000000:
 	.2byte 0x0000
 	.2byte 0x0240
 	.2byte 0x0200
+	.global Func_02000918
+	.thumb_func
+Func_02000918:
 	movs	r0, #0
 	bx	lr
 	push	{lr}
@@ -1523,9 +1538,6 @@ Overlay_02000000:
 	.4byte 0x80004000
 	.4byte 0x23013062
 	.4byte 0x47707003
-	.irp EntryTarget, 0x03000514, 0x080000c1, 0x08000119, 0x080001b9, 0x080001c9, 0x080001d1, 0x080003c1, 0x080003c9, 0x080003d1, 0x080003d9, 0x080200c1, 0x080201e1, 0x08020219, 0x08020279, 0x08020301, 0x08038019, 0x08038039, 0x08038041, 0x08038049, 0x080380f9, 0x08038121, 0x08038141, 0x080382f9, 0x08038319, 0x080ad009, 0x080ad021, 0x080ad0c1, 0x080ad0c9, 0x080ad151, 0x080ad159, 0x080ad199, 0x080ad1e9, 0x080c8011, 0x080c8079, 0x080c8089, 0x080c80d9, 0x080c80f9, 0x080c8119, 0x080c8139, 0x080c8159, 0x080c8181, 0x080c81a1, 0x080c81d1, 0x080c8211, 0x080c8269, 0x080c8281, 0x080c85c1, 0x080c8761, 0x080c87b1, 0x080c87b9, 0x080c87c1, 0x080c87c9, 0x080c87e9, 0x080c87f1, 0x080c8881, 0x080c8889, 0x080c8949, 0x08108009, 0x08108011, 0x08108019, 0x08108069, 0x081c0011
-	overlay_veneer \EntryTarget
-	.endr
 	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000000

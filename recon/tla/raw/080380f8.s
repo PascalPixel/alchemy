@@ -7,10 +7,16 @@ Func_080380f8:
 	bx	r4
 	.2byte 0xd3c1
 	.2byte 0x0803
+	.global Func_08038100
+	.thumb_func
+Func_08038100:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xd451
 	.2byte 0x0803
+	.global Func_08038108
+	.thumb_func
+Func_08038108:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xb881
@@ -19,10 +25,16 @@ Func_080380f8:
 	bx	r4
 	.2byte 0xb8cd
 	.2byte 0x0803
+	.global Func_08038118
+	.thumb_func
+Func_08038118:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xcca9
 	.2byte 0x0803
+	.global Func_08038120
+	.thumb_func
+Func_08038120:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xccd1
@@ -39,6 +51,9 @@ Func_080380f8:
 	bx	r4
 	.2byte 0x2dad
 	.2byte 0x0804
+	.global Func_08038140
+	.thumb_func
+Func_08038140:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xce1d

@@ -44,10 +44,9 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    extern u8 Data_03001ebc[];
     void Map_ClearLayerEntryFlag();
 
-    u8 *work = *(u8 **)Data_03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
@@ -114,9 +113,8 @@ static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 
 static __inline__ void Scene_AdvanceStep(s32 amount)
 {
-    extern u8 Data_03001ebc[];
 
-    *(u16 *)(*(u8 **)Data_03001ebc + 0x1d8) += amount;
+    *(u16 *)(*(u8 **)&gEventWork + 0x1d8) += amount;
 }
 
 /*
@@ -188,7 +186,6 @@ void FieldScene_DispatchSceneByIndex(void)
 
 void RunEventScript01(void)
 {
-    extern u8 Data_03001ebc[];
 
     u32 i;
     s32 record;
@@ -203,7 +200,7 @@ void RunEventScript01(void)
     ColorBuffer_ApplyTarget(0x10002, 0);
     ColorBuffer_Interpolate(1);
     Task_Wait(1);
-    work = *(u8 **)Data_03001ebc;
+    work = *(u8 **)&gEventWork;
     *(s32 *)(work + 0x1c8) = 24;
     *(s32 *)(work + 0x1c0) = 0x201;
     Actor_SetPosition(8, 0x3580000, 0x1b80000);
@@ -642,7 +639,7 @@ void RunEventScript01(void)
     Actor_EnableActionCallback(ACTOR_GERALD, tbl);
     Value2(Engine_ActorEnableActionCallback, 2, tbl);
     Value2(Object_SetActionCallbackAndRefreshById, 3, tbl);
-    work = *(u8 **)Data_03001ebc;
+    work = *(u8 **)&gEventWork;
     *(s32 *)(work + 0x1c8) = 16;
     *(s32 *)(work + 0x1c0) = 0x209;
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);
@@ -674,7 +671,6 @@ void SceneChannel_ConfigureUniformAndHandoff(s32 handoff)
 
 void Scene_RunPartySequence(void)
 {
-    extern u8 Data_03001ebc[];
 
     s32 record;
     u8 *work;
@@ -688,8 +684,8 @@ void Scene_RunPartySequence(void)
     Map_Redraw();
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3600000, 0x2760000);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c0) = v5 = 0x100;
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 40;
+    *(s32 *)(*(u8 **)&gEventWork + 0x1c0) = v5 = 0x100;
+    *(s32 *)(*(u8 **)&gEventWork + 0x1c8) = 40;
     Event_OpenScreen();
     Camera_SetSpeed(0x6666, 0xccc);
     Camera_MoveTo(0x3600000, -1, 0x1d80000, 1);
@@ -831,7 +827,7 @@ void Scene_RunPartySequence(void)
     Actor_EnableActionCallback(ACTOR_GERALD, tbl);
     Value2(Engine_ActorEnableActionCallback, 2, tbl);
     Value2(Object_SetActionCallbackAndRefreshById, 3, tbl);
-    work = *(u8 **)Data_03001ebc;
+    work = *(u8 **)&gEventWork;
     *(s32 *)(((s32)work + 0x1c8)) = 16;
     *(s32 *)(((s32)work + 0x1c0)) = 0x209;
     GameFlag_Clear(FLAG_ARRIVAL_EVENT_PENDING);

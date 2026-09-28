@@ -1,3 +1,8 @@
+/* Draft of resource_3ca 0x020080b0 (BabiFune_CyclePalette), from games/THE
+ * BROKEN SEAL/SRC/FIELD/BABI_FUNE. Remaining difference: it matches only by
+ * reading its zero from the literal pool through Data_00000000, a name the
+ * main image's CONSTANTS.LD equates to 0, as a link-time value would; a C
+ * constant stores an immediate zero. The listing keeps these rows. */
 #include "DMA.H"
 #include "TYPES.H"
 

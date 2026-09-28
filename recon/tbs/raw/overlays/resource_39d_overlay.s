@@ -2250,6 +2250,39 @@ Func_020034bc:
 	bx r0
 	.2byte 0x0000
 @ The compiler library links here from its licensed container.
+	.section .text.x02008890,"ax",%progbits
+	.balign 4
+	.global MeasureFixedPointPositionDistance
+	.thumb_func
+MeasureFixedPointPositionDistance:
+	push {r5, lr}
+	ldmia r0!, {r5}
+	ldmia r1!, {r3}
+	ldmia r0!, {r4}
+	subs r5, r5, r3
+	ldmia r1!, {r3}
+	ldr r2, [r1]
+	subs r4, r4, r3
+	ldr r3, [r0]
+	subs r3, r3, r2
+	asrs r5, r5, #16
+	asrs r4, r4, #16
+	asrs r3, r3, #16
+	adds r0, r5, #0
+	muls r0, r5
+	adds r2, r4, #0
+	muls r2, r4
+	adds r1, r3, #0
+	muls r1, r3
+	adds r0, r0, r2
+	adds r3, r1, #0
+	adds r0, r0, r3
+	ldr r3, [pc, #8]
+	bl 0x0200b854
+	pop {r5}
+	pop {r1}
+	bx r1
+	.4byte 0x030001d8
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001

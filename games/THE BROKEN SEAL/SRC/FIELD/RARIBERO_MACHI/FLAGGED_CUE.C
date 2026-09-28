@@ -25,6 +25,10 @@ enum FlaggedCueMessage {
 extern s16 RariberoMachi_DoorCells[][2];
 extern u8 RariberoMachi_GateOpenSteps[];
 extern u8 RariberoMachi_DoorOpenSteps[];
+/* The effect tables, laid out after the code, with an alternate once flag
+ * 0x9a7 is set. */
+extern u8 Placement_Effects[];
+extern u8 Placement_Effects9a7[];
 
 void Motion_LaunchFromFocusedObject(u32, s32, s32, s32);
 void FieldScene_RunScene3c6SequenceA(void);
@@ -680,9 +684,9 @@ void FieldScene_RunSequenceB(void)
 s32 SceneData_SelectSecondaryTableByFlag9a7(void)
 {
     if (GameFlag_IsSet(0x9A7) != 0) {
-        return 0x02009EE4;
+        return (s32)Placement_Effects9a7;
     }
-    return 0x02009D04;
+    return (s32)Placement_Effects;
 }
 
 enum {

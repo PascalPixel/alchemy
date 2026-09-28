@@ -40,7 +40,7 @@ compiler-runtime: toolchain-check compiler-source-check
 
 .PHONY: help native bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-full build-rom
-.PHONY: precommit prepush verify verify-clean test tool-tests test-integration lint lint-staged lint-production
+.PHONY: precommit prepush verify land verify-clean test tool-tests test-integration lint lint-staged lint-production
 .PHONY: standard-check rustfmt-check native-format-check language-check corpus-check index-sync-check
 .PHONY: publication-tree-check publication-staged-check tooling-index-check coverage coverage-check
 .PHONY: progress progress-subject progress-report progress-check prepare-inputs raw clean
@@ -114,6 +114,12 @@ prepush:
 verify:
 	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
 	@$(ALCHEMY_BIN) verify
+
+# On main, before committing a landing: every gate, the tests and the
+# publication (README and both figures), staged for the commit.
+land:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
+	@$(ALCHEMY_BIN) verify --land
 
 verify-clean: toolchain-check
 	$(MAKE) clean

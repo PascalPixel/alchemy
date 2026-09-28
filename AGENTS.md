@@ -88,11 +88,15 @@ make compare-all
 make test
 make coverage
 make verify
+make land          # on main, before committing a landing
 ```
 
-A main commit verifies both ROMs, derives its percentage or pending prefix, and updates
-README and both progress figures. Branch commits run quick checks; pre-push
-checks outgoing history. DONE is `?` until the current tree has a verified build.
+Commit hooks only check: every commit runs the staged checks, and on main the
+commit-msg hook writes the verified percentage or pending prefix. Land on main
+with `make land` before committing: it builds and compares both ROMs, runs the
+tests and writes and stages README and both progress figures. Pre-push checks
+outgoing history and main's publication. DONE is `?` until the current tree has
+a verified build.
 
 ## Pascal's decisions
 

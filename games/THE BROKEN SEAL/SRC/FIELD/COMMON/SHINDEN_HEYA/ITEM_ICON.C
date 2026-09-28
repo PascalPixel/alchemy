@@ -1,14 +1,13 @@
 #include "TYPES.H"
 
 
-s32 Func_02006614();
-void Func_0200661a();
-s32 Func_02006636();
-void Func_0200664c();
-void Func_0200665c();
-s32 Func_0200665e();
-void Func_02006698();
-void Func_020066ae();
+s32 Engine_ObjectCreate();
+void ObjectDispatch_Initialize();
+s32 Runtime_AllocateHeapBlock();
+void WaitFrames();
+void Runtime_ReleaseHeapBlock();
+s32 VramBlock_LoadCached();
+void Ui_PrepareTransferForItem();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -47,10 +46,10 @@ void ShindenHeya_RaiseItemIcon(s32 item)
     u8 *flag;
     u32 i;
 
-    obj = Value1(Func_02006614, 22);
+    obj = Value1(Engine_ObjectCreate, 22);
     zero = 0;
     if (obj != 0) {
-        Call2(Func_0200661a, (s32)obj, 0x200b8f8);
+        Call2(ObjectDispatch_Initialize, (s32)obj, 0x200b8f8);
         spr = *(u8 **)(obj + 80);
         spr[38] = zero;
         spr[39] = zero;
@@ -58,17 +57,17 @@ void ShindenHeya_RaiseItemIcon(s32 item)
         spr[9] &= 15;
         *(s32 *)(obj + 40) = 0x20000;
         *(s32 *)(obj + 72) = 0x4000;
-        buf = Value2(Func_02006636, 17, 0x608);
-        Func_020066ae(item);
-        Func_0200665e(spr[28], 128, buf + 0x400);
-        Func_0200665c(17);
+        buf = Value2(Runtime_AllocateHeapBlock, 17, 0x608);
+        Ui_PrepareTransferForItem(item);
+        VramBlock_LoadCached(spr[28], 128, buf + 0x400);
+        Runtime_ReleaseHeapBlock(17);
         /* FAKEMATCH: the stored zero is a variable set after the flag
          * address, so it copies the counter's zero after that address. */
         for (i = 0, flag = obj + 85, z = 0; i <= 59; i++) {
             if ((u32)(*(s32 *)(obj + 40) + 255) <= 0x1fe)
                 *flag = z;
-            Func_0200664c(1);
+            WaitFrames(1);
         }
-        Func_02006698((s32)obj, 0x200ba9c);
+        ObjectDispatch_Initialize((s32)obj, 0x200ba9c);
     }
 }

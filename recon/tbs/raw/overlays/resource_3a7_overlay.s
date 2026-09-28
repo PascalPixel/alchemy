@@ -136,6 +136,9 @@ Func_020000e0:
 	.global Func_02000134
 	.thumb_func
 Func_02000134:
+	.global SceneData_FindActiveSlotAtCell
+	.thumb_func
+SceneData_FindActiveSlotAtCell:
 	push {r5, lr}
 	ldr r3, [pc, #52]
 	ldr r3, [r3]
@@ -168,162 +171,8 @@ Func_02000134:
 	pop {r1}
 	bx r1
 	.4byte 0x03001ebc
-	.global Func_02000170
-	.thumb_func
-Func_02000170:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r9
-	mov r5, r8
-	push {r5, r6, r7}
-	movs r0, #0
-	sub sp, #12
-	bl 0x02009130
-	ldrh r3, [r0, #6]
-	movs r2, #10
-	ldrsh r1, [r0, r2]
-	lsrs r3, r3, #12
-	ldr r2, [pc, #292]
-	lsls r3, r3, #2
-	mov r10, r3
-	ldr r3, [r2, r3]
-	asrs r2, r3, #16
-	adds r1, r1, r2
-	mov r8, r0
-	asrs r0, r1, #4
-	mov r1, r8
-	movs r4, #18
-	ldrsh r2, [r1, r4]
-	lsls r3, r3, #16
-	asrs r3, r3, #16
-	adds r2, r2, r3
-	asrs r1, r2, #4
-	bl 0x02008134
-	adds r6, r0, #0
-	adds r3, r6, #0
-	adds r3, #89
-	ldrb r3, [r3]
-	cmp r3, #0
-	beq .L_02000170_0
-	cmp r6, #0
-	beq .L_02000170_0
-	movs r5, #0
-.L_02000170_1:
-	adds r0, r5, #0
-	adds r0, #11
-	bl 0x02009130
-	cmp r6, r0
-	beq .L_02000170_0
-	adds r5, #1
-	cmp r5, #3
-	ble .L_02000170_1
-	ldr r5, [pc, #220]
-	mov r4, r10
-	ldr r3, [r5, r4]
-	movs r2, #10
-	ldrsh r1, [r6, r2]
-	asrs r2, r3, #16
-	adds r1, r1, r2
-	asrs r0, r1, #4
-	lsls r3, r3, #16
-	movs r1, #18
-	ldrsh r2, [r6, r1]
-	asrs r3, r3, #16
-	adds r2, r2, r3
-	asrs r1, r2, #4
-	bl 0x02008134
-	cmp r0, #0
-	beq .L_02000170_2
-	adds r3, r0, #0
-	adds r3, #89
-	ldrb r2, [r3]
-	movs r3, #1
-	ands r3, r2
-	cmp r3, #0
-	bne .L_02000170_0
-.L_02000170_2:
-	movs r3, #0
-	adds r2, r6, #0
-	adds r2, #34
-	mov r9, r3
-	movs r3, #2
-	strb r3, [r2]
-	mov r4, r10
-	ldr r1, [r5, r4]
-	ldr r2, [pc, #160]
-	ldr r3, [r6, #8]
-	ands r2, r1
-	mov r7, sp
-	adds r3, r3, r2
-	str r3, [r7]
-	ldr r3, [r6, #12]
-	str r3, [r7, #4]
-	ldr r3, [r6, #16]
-	lsls r1, r1, #16
-	adds r3, r3, r1
-	str r3, [r7, #8]
-	adds r0, r6, #0
-	adds r1, r7, #0
-	bl 0x020090d8
-	cmp r0, #0
-	bgt .L_02000170_0
-	movs r1, #8
-	mov r0, r8
-	bl 0x02009098
-	ldr r5, [pc, #120]
-	movs r0, #15
-	bl 0x02009070
-	movs r0, #238
-	bl 0x02009150
-	str r5, [r6, #48]
-	str r5, [r6, #52]
-	ldr r1, [r7]
-	ldr r2, [r7, #4]
-	ldr r3, [r7, #8]
-	adds r0, r6, #0
-	bl 0x020090b8
-	mov r0, r8
-	str r5, [r0, #48]
-	str r5, [r0, #52]
-	ldr r1, [r7]
-	ldr r2, [r7, #4]
-	ldr r3, [r7, #8]
-	bl 0x020090b8
-	adds r0, r6, #0
-	bl 0x020090c0
-	movs r0, #144
-	lsls r0, r0, #1
-	bl 0x02009150
-	ldr r3, [r7]
-	str r3, [r6, #8]
-	ldr r3, [r7, #8]
-	str r3, [r6, #16]
-	movs r3, #128
-	mov r1, r9
-	mov r2, r8
-	lsls r3, r3, #24
-	str r1, [r6, #36]
-	str r1, [r6, #44]
-	mov r0, r8
-	str r1, [r2, #36]
-	str r1, [r2, #44]
-	str r3, [r2, #56]
-	str r3, [r2, #64]
-	movs r1, #1
-	bl 0x02009098
-.L_02000170_0:
-	sub sp, #-12
-	pop {r3, r5, r6}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02009844
-	.4byte 0xffff0000
-	.4byte 0x00003333
+	.section .text.x020082bc,"ax",%progbits
+	.p2align 2
 	.global Func_020002bc
 	.thumb_func
 Func_020002bc:
@@ -874,33 +723,8 @@ Func_020006e4:
 .L_020006e4_1:
 	pop {r0}
 	bx r0
-	.global Func_02000704
-	.thumb_func
-Func_02000704:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	movs r3, #0
-	movs r6, #16
-	movs r7, #2
-	movs r5, #5
-	mov r8, r3
-.L_02000704_0:
-	adds r0, r6, #0
-	bl 0x02009130
-	adds r0, #35
-	ldrb r3, [r0]
-	subs r5, #1
-	orrs r3, r7
-	strb r3, [r0]
-	adds r6, #1
-	cmp r5, #0
-	bge .L_02000704_0
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
+	.section .text.x02008734,"ax",%progbits
+	.p2align 2
 	.global Func_02000734
 	.thumb_func
 Func_02000734:
@@ -1141,74 +965,8 @@ Func_020008a8:
 	.2byte 0x0000
 	.2byte 0x1528
 	.2byte 0x0000
-	.global Func_02000944
-	.thumb_func
-Func_02000944:
-	push {r5, r6, r7, lr}
-	bl 0x02009130
-	movs r5, #0
-	adds r6, r0, #0
-.L_02000944_6:
-	adds r0, r5, #0
-	adds r0, #11
-	bl 0x02009130
-	ldr r3, [r0, #12]
-	ldr r2, [pc, #92]
-	subs r3, #1
-	cmp r3, r2
-	bhi .L_02000944_0
-	ldr r3, [r0, #16]
-	cmp r3, #0
-	bge .L_02000944_1
-	ldr r7, [pc, #84]
-	adds r3, r3, r7
-.L_02000944_1:
-	asrs r4, r3, #20
-	ldr r3, [r0, #8]
-	cmp r3, #0
-	bge .L_02000944_2
-	ldr r2, [pc, #72]
-	adds r3, r3, r2
-.L_02000944_2:
-	asrs r1, r3, #20
-	ldr r3, [r6, #16]
-	cmp r3, #0
-	bge .L_02000944_3
-	ldr r7, [pc, #60]
-	adds r3, r3, r7
-.L_02000944_3:
-	asrs r2, r3, #20
-	ldr r3, [r6, #8]
-	cmp r3, #0
-	bge .L_02000944_4
-	ldr r7, [pc, #48]
-	adds r3, r3, r7
-.L_02000944_4:
-	asrs r3, r3, #20
-	subs r2, r2, r4
-	cmp r3, r1
-	bne .L_02000944_0
-	cmp r2, #0
-	bne .L_02000944_0
-	movs r3, #255
-	lsls r3, r3, #16
-	str r3, [r0, #12]
-	str r2, [r0, #72]
-	str r2, [r0, #40]
-	movs r0, #1
-	b .L_02000944_5
-.L_02000944_0:
-	adds r5, #1
-	cmp r5, #3
-	ble .L_02000944_6
-	movs r0, #0
-.L_02000944_5:
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x000ffffe
-	.4byte 0x000fffff
+	.section .text.x020089c0,"ax",%progbits
+	.p2align 2
 	.global Func_020009c0
 	.thumb_func
 Func_020009c0:
@@ -1402,6 +1160,9 @@ Func_02000aa0:
 	.global Func_02000b54
 	.thumb_func
 Func_02000b54:
+	.global SceneActor_TransformAndApplyRecordPosition
+	.thumb_func
+SceneActor_TransformAndApplyRecordPosition:
 	push {r5, r6, lr}
 	adds r6, r0, #0
 	sub sp, #12
@@ -1429,65 +1190,8 @@ Func_02000b54:
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.global Func_02000b8c
-	.thumb_func
-Func_02000b8c:
-	push {r5, r6, r7, lr}
-	adds r6, r0, #0
-	movs r7, #0
-	b .L_02000b8c_0
-.L_02000b8c_2:
-	ldr r3, [pc, #96]
-	adds r2, r5, #0
-	str r3, [r5, #28]
-	str r3, [r5, #24]
-	adds r2, #85
-	movs r3, #2
-	strb r3, [r2]
-	ldr r3, [pc, #88]
-	str r3, [r5, #40]
-	bl 0x02009080
-	ldr r3, [pc, #84]
-	adds r2, r5, #0
-	adds r0, r0, r3
-	adds r2, #89
-	movs r3, #1
-	str r0, [r5, #48]
-	strb r3, [r2]
-	bl 0x02009080
-	movs r1, #128
-	adds r2, r0, #0
-	lsls r1, r1, #14
-	adds r0, r5, #0
-	bl 0x02008b54
-	adds r2, r5, #0
-	adds r2, #94
-	movs r3, #8
-	strh r3, [r2]
-	adds r0, r5, #0
-	ldr r1, [pc, #48]
-	bl 0x020090a0
-	adds r7, #1
-.L_02000b8c_0:
-	cmp r7, #3
-	bgt .L_02000b8c_1
-	ldr r1, [r6, #8]
-	ldr r2, [r6, #12]
-	ldr r3, [r6, #16]
-	movs r0, #240
-	bl 0x020090a8
-	adds r5, r0, #0
-	cmp r5, #0
-	bne .L_02000b8c_2
-.L_02000b8c_1:
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00008ccc
-	.4byte 0xffff0000
-	.4byte 0x0000cccc
-	.4byte 0x02009884
+	.section .text.x02008c08,"ax",%progbits
+	.p2align 2
 	.global Func_02000c08
 	.thumb_func
 Func_02000c08:
@@ -2973,6 +2677,8 @@ Func_02001158:
 	.4byte 0xfffffc01
 	.4byte 0x00000000
 	.4byte 0x10000000
+	.global KuupuappuDou_DirectionSteps
+KuupuappuDou_DirectionSteps:
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000
@@ -2989,6 +2695,8 @@ Func_02001158:
 	.4byte 0x0000fff0
 	.4byte 0x0000fff0
 	.4byte 0x00100000
+	.global KuupuappuDou_PuffScript
+KuupuappuDou_PuffScript:
 	.4byte 0x0000001b
 AlchemyRuntime_02001888:
 	.4byte 0x00000000

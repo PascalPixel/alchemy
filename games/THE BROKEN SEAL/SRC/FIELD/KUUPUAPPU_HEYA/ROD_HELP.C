@@ -8,7 +8,7 @@ void SceneEffect_ApplyPairWithValue141();
 void SceneState_SetValue2ThenFinish();
 void Engine_MessageShowCentered();
 void Engine_EventWait();
-void Main_0808a048();
+void Event_PrepareObjectAndApplyValue();
 void Engine_EventChooseYesNo();
 u8 * Engine_ActorGet();
 void Engine_ActorWalkTo();
@@ -24,7 +24,7 @@ s32 Engine_EventOpenMessage();
 void Engine_EventShowMessage();
 void Engine_ActorShowEmote();
 void Engine_ActorSetAttachedEffect();
-void Main_0808a480();
+void Ui_SetBank15PaletteAndClearRenderMode();
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -175,7 +175,7 @@ void Scene_JoinRodSearch(void)
     Call3(Engine_ActorShowEmote, 0, 0x102, 0);
     Engine_EventWait(60);
     SceneEffect_ApplyPairWithValue141(2, 0);
-    Main_0808a480();
+    Ui_SetBank15PaletteAndClearRenderMode();
     SceneActor_SetModeZeroAndValue(1, 30);
     SceneState_SetValue2ThenFinish();
     Engine_ActorFaceEachOther(2, 1, 0);
@@ -215,7 +215,7 @@ void Scene_JoinRodSearch(void)
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 10);
     Engine_ActorSetAnimation(0, 3);
     SceneEffect_ApplyThreeValuesAndFinish(1, 3, 20);
-    Main_0808a048(2, 1);
+    Event_PrepareObjectAndApplyValue(2, 1);
     Engine_EventSetMessage(mes + 22);
     Engine_ActorRunRepeatedMotion(2, 1);
     Engine_EventShowMessage(2, 0);

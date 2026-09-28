@@ -33,7 +33,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern u8 Data_00000000[];
 extern u8 FuneKanpan_DeckActionsA[];
 extern u8 FuneKanpan_DeckActionsB[];
 extern u8 FuneKanpan_DeckActionsC[];

@@ -3,13 +3,18 @@
    buffers, shared rectangle return type, typed work/target records and
    pre-projection particle lifetime recovered. Remaining differences are
    spill slots, initial particle/actor registers and scheduling. Allocator
-   inspected; bounded initialization-order hypothesis regressed. */
+   inspected; bounded initialization-order hypothesis regressed.
+   Separate camera ownership added a literal and reached 88 aligned edits;
+   a persistent local layer record reached 944 bytes / 224 edits, and
+   per-loop counters reached 912 bytes / 105 edits. Keep the derived camera
+   cell and shared counter lifetime until new producer evidence appears. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "BATTLE_EFX.H"
 #include "EFFECT_STEP.H"
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
+#include "BATTLE_PRESENTATION.H"
 
 struct ParticleTarget {
     u32 reserved_00;
@@ -77,14 +82,14 @@ void Func_080dfa48(struct ParticleTarget *object, s32 variant)
     s32 cnt;
     s32 size;
     s32 offset;
-    s32 facing;
+    struct BattleCamera *camera;
     s32 palette;
 
     cache = (void **)&Data_03001eec;
     cursor = cache;
     work = *cursor++;
     canvas = *cursor;
-    facing = *(s32 *)((u8 *)cache - 108);
+    camera = *(struct BattleCamera **)((u8 *)cache - 108);
     source = cache[2];
     work->target = object;
     BattleFx_BeginCanvasLayer(0);
@@ -150,7 +155,7 @@ void Func_080dfa48(struct ParticleTarget *object, s32 variant)
         }
         if ((u32)offset <= 55) {
             Render_ResetTransformState();
-            Graphics_PrepareTransferInIwramWork(facing, facing + 12);
+            Graphics_PrepareTransferInIwramWork((s32)camera, (s32)camera->pos);
             particle = work->particles;
             cnt = 0;
             do {

@@ -1,7 +1,7 @@
 use crate::candidate::CandidateCompilerConfiguration;
 use crate::compiler::routing::CompilerTarget;
 use std::path::Path;
-pub const USAGE: &str = "usage: alchemy score <candidate.c|overlay:address> [--unit ID [--instance IMAGE | --all-instances]] [--rom FILE] [--target tbs|tla] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE]";
+pub const USAGE: &str = "usage: alchemy score <candidate.c|overlay:address> [--unit ID [--instance IMAGE | --all-instances]] [--rom FILE] [--target tbs|tla] [--owner OWNER] [--symbol ADDRESS] [--size BYTES] [--reference-symbols] [--work DIR] [--align] [--first] [--allocator-order] [--asm] [--patch FILE] [--diff] [--dump \"FLAGS\"] [--variants DIR]\n  --diff             reference and candidate side by side: differing rows with two rows of context\n  --dump \"FLAGS\"     the same compile with extra cc1 dump flags (-dL -fsched-verbose=5 -dG); dumps under out/score/<owner>/dumps\n  --variants DIR     score every .c in DIR in parallel (private work dirs) and rank them";
 pub const SHORT_USAGE: &str = "usage: alchemy score <candidate.c> [--rom FILE]";
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -24,6 +24,10 @@ pub struct Options {
     pub allocator_order: bool,
     pub asm: bool,
     pub patch: Option<String>,
+    /// Print only the differing aligned rows with a little context.
+    pub diff: bool,
+    /// Extra cc1 diagnostic flags for a dump-only compile.
+    pub dump: Option<Vec<String>>,
 }
 impl Options {
     pub fn tbs(source: String) -> Self {
@@ -45,6 +49,8 @@ impl Options {
             allocator_order: false,
             asm: false,
             patch: None,
+            diff: false,
+            dump: None,
         }
     }
 }
@@ -112,6 +118,14 @@ pub fn options_of(root: &Path, argv: &[String]) -> Result<ParseOutcome, String> 
             }
             "--asm" => options.asm = true,
             "--patch" => options.patch = next(&mut index).cloned(),
+            "--diff" => options.diff = true,
+            "--dump" => {
+                let flags = next(&mut index).ok_or("--dump requires quoted cc1 flags")?;
+                options.dump = Some(flags.split_whitespace().map(str::to_owned).collect());
+            }
+            "--variants" => {
+                return Err("--variants DIR is its own score mode; see alchemy score --help".into())
+            }
             "--flags" | "--remove-flags" | "--family" => {
                 return Err(format!(
                     "{arg} is retired; candidates use their canonical compiler route"

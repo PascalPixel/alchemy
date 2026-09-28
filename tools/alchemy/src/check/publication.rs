@@ -4,7 +4,7 @@
 use psynergy::assets::image::{indexed_png, PNG_SIGNATURE};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use psynergy::assets::wav::wav_pcm8;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::io::{BufRead, BufReader, Read, Write};
 use std::path::Path;
 use std::process::{Command, ExitCode, Stdio};
@@ -59,12 +59,12 @@ const PNG_SCANLINES_MAX: usize = 1 << 26;
 const ENCODED_RUN_MIN: usize = 16;
 /// Encoded characters one text may hold; the tracked tree peaks near 32.
 const ENCODED_CHARACTERS_MAX: usize = 128;
-/// Digest-sized hex runs one text may hold; private-inputs.json carries about 3,400.
-const DIGEST_RUNS_MAX: usize = 16_384;
+/// Unexplained digest-sized hex runs one text may hold.
+const DIGEST_RUNS_MAX: usize = 2_048;
 /// Consecutive integer literals that form an array rather than an expression.
 const NUMERIC_RUN_MIN: usize = 16;
 /// Array elements a text outside the game data tables may hold; the tree peaks
-/// near 720 in the executable-gap package.
+/// near 580 in the dashboard map filter.
 const NUMERIC_ELEMENTS_MAX: usize = 2_048;
 /// Byte values one flat JSON array may hold before only a named typed table
 /// explains it; the tracked tree peaks at 518 in `action_modes`.
@@ -807,11 +807,25 @@ fn numeric_elements(text: &[u8]) -> usize {
 }
 /// Encoded content measured over a whole text, whatever its lines or quoting.
 fn encoded_reason(text: &str, arrays: bool) -> Option<&'static str> {
+    encoded_reason_without_digests(text, arrays, &mut BTreeMap::new())
+}
+fn encoded_reason_without_digests(
+    text: &str,
+    arrays: bool,
+    fingerprints: &mut BTreeMap<String, usize>,
+) -> Option<&'static str> {
     let (mut characters, mut digests) = (0, 0);
     for run in text.as_bytes().split(|byte| !byte.is_ascii_alphanumeric()) {
         match classify(run) {
             Run::Encoded => characters += run.len(),
-            Run::Digest => digests += 1,
+            Run::Digest => {
+                let count = fingerprints.get_mut(std::str::from_utf8(run).unwrap());
+                if let Some(count) = count.filter(|count| **count > 0) {
+                    *count -= 1;
+                } else {
+                    digests += 1;
+                }
+            }
             Run::Plain => {}
         }
     }
@@ -828,6 +842,203 @@ fn encoded_reason(text: &str, arrays: bool) -> Option<&'static str> {
     (arrays && numeric_elements(text.as_bytes()) > NUMERIC_ELEMENTS_MAX).then_some(
         "numeric array outside the game data tables: pret commits only editable build inputs",
     )
+}
+fn sha256_identifier(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(&byte))
+}
+fn registry_address(value: &serde_json::Value) -> Option<&str> {
+    let text = value.as_str()?;
+    let address = u32::from_str_radix(text.strip_prefix("0x")?, 16).ok()?;
+    (text.len() == 10 && (0x0800_0000..0x0a00_0000).contains(&address)).then_some(text)
+}
+fn registry_source(value: &serde_json::Value, source: &str) -> bool {
+    value.as_str().is_some_and(|path| {
+        path.strip_prefix(source).is_some_and(|rest| {
+            !rest.is_empty() && rest.split('/').all(|part| !matches!(part, "" | "." | ".."))
+        })
+    })
+}
+fn compression_codec(value: &serde_json::Value) -> bool {
+    matches!(
+        value.as_str(),
+        Some(
+            "golden-sun-general-lz"
+                | "golden-sun-general-lz-prefill"
+                | "golden-sun-palette-lz"
+                | "golden-sun-tagged-palette-lz"
+                | "golden-sun-kind2-lz"
+        )
+    )
+}
+fn fingerprint_projection(
+    value: &mut serde_json::Value,
+    prefix: &str,
+    fingerprints: &mut BTreeMap<String, usize>,
+) {
+    let Some(digest) = value
+        .as_str()
+        .and_then(|value| value.strip_prefix(prefix))
+        .filter(|digest| sha256_identifier(digest))
+    else {
+        return;
+    };
+    *fingerprints.entry(digest.to_string()).or_default() += 1;
+    *value = serde_json::Value::Null;
+}
+fn table_identifier_projection(
+    table: &mut serde_json::Value,
+    source: &str,
+    fingerprints: &mut BTreeMap<String, usize>,
+) {
+    if table["kind"] != "le-u16-array" {
+        return;
+    }
+    for (file, prefix) in [("PALETTE.JSON", "/tables/"), ("STILL.JSON", "/palettes/")] {
+        if table["source"] == format!("{source}GRAPHICS/COMMON/{file}") {
+            fingerprint_projection(&mut table["pointer"], prefix, fingerprints);
+        }
+    }
+}
+/// Only the native registry's fingerprint fields and compression section keys
+/// have digest semantics. All other values, including their siblings, stay text.
+fn registry_encoded_reason(path: &str, text: &str, arrays: bool) -> Option<&'static str> {
+    use serde_json::Value;
+    let (game, registry) = match path {
+        "recon/tbs/private-inputs.json" => ("THE BROKEN SEAL", true),
+        "recon/tla/private-inputs.json" => ("THE LOST AGE", true),
+        "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON" => ("THE BROKEN SEAL", false),
+        "games/THE LOST AGE/SRC/GRAPHICS/COMMON/COMPRESSION.JSON" => ("THE LOST AGE", false),
+        _ => return encoded_reason(text, arrays),
+    };
+    let Ok(mut document) = serde_json::from_str::<Value>(text) else {
+        return encoded_reason(text, arrays);
+    };
+    let source = format!("games/{game}/SRC/");
+    let compression = format!("{source}GRAPHICS/COMMON/COMPRESSION.JSON");
+    let mut fingerprints = BTreeMap::new();
+    if registry {
+        if document["format"] != "camelot-style-golden-sun-native"
+            || !document["regions"].is_array()
+            || !document["private_inputs"].is_array()
+        {
+            return encoded_reason(text, arrays);
+        }
+        fingerprint_projection(&mut document["reference_sha256"], "", &mut fingerprints);
+        for input in document["private_inputs"].as_array_mut().unwrap() {
+            let kind = matches!(
+                input["kind"].as_str(),
+                Some(
+                    "metatiles"
+                        | "grid"
+                        | "palette"
+                        | "tiles"
+                        | "sprite"
+                        | "palette-raw"
+                        | "sprite-atlas"
+                        | "archive-atlas"
+                        | "still-atlas"
+                        | "tile-atlas"
+                        | "portrait-atlas"
+                        | "palette-buffer"
+                        | "palette-table"
+                        | "frame-atlas"
+                        | "bytes"
+                )
+            );
+            let region = registry_address(&input["region_address"]).is_some()
+                || input["regions"].as_array().is_some_and(|regions| {
+                    !regions.is_empty()
+                        && regions
+                            .iter()
+                            .all(|region| registry_address(region).is_some())
+                });
+            if kind && region && registry_source(&input["source"], &source) {
+                for field in ["decoded_sha256", "encoded_sha256"] {
+                    fingerprint_projection(&mut input[field], "", &mut fingerprints);
+                }
+                if input["kind"] == "palette-table"
+                    && input["source"] == format!("{source}GRAPHICS/COMMON/PALETTE.JSON")
+                {
+                    fingerprint_projection(&mut input["pointer"], "/tables/", &mut fingerprints);
+                }
+            }
+        }
+        for region in document["regions"].as_array_mut().unwrap() {
+            if region["plan"] == compression
+                && compression_codec(&region["kind"])
+                && registry_address(&region["address"]).is_some()
+            {
+                fingerprint_projection(&mut region["plan_section"], "", &mut fingerprints);
+                fingerprint_projection(&mut region["plan_section"], "/recipes/", &mut fingerprints);
+            }
+            table_identifier_projection(region, &source, &mut fingerprints);
+            if let Some(palette) = region.get_mut("palette") {
+                table_identifier_projection(palette, &source, &mut fingerprints);
+            }
+        }
+        for binding in document["bindings"].as_array_mut().into_iter().flatten() {
+            if binding["compression"] == compression
+                && registry_address(&binding["address"]).is_some()
+                && binding["sources"].as_array().is_some_and(|sources| {
+                    !sources.is_empty()
+                        && sources.iter().all(|value| registry_source(value, &source))
+                })
+            {
+                fingerprint_projection(&mut binding["compression_section"], "", &mut fingerprints);
+                fingerprint_projection(
+                    &mut binding["compression_section"],
+                    "/recipes/",
+                    &mut fingerprints,
+                );
+            }
+        }
+        for layout in document["layouts"]
+            .as_object_mut()
+            .into_iter()
+            .flat_map(|rows| rows.values_mut())
+        {
+            if registry_source(&layout["source"], &source)
+                && layout["source_pointer"]
+                    .as_str()
+                    .is_some_and(|pointer| pointer.starts_with("/maps/"))
+                && layout["width"].as_u64().is_some()
+                && layout["height"].as_u64().is_some()
+            {
+                fingerprint_projection(&mut layout["payload_sha256"], "", &mut fingerprints);
+            }
+        }
+    } else if let Some(sections) = document.as_object_mut() {
+        let sections = std::mem::take(sections);
+        let mut names: BTreeSet<_> = sections.keys().cloned().collect();
+        let mut index = 0;
+        for (key, plan) in sections {
+            let key = if sha256_identifier(&key)
+                && plan["format"] == 1
+                && compression_codec(&plan["codec"])
+                && plan["decoded_size"].as_u64().is_some()
+                && plan["encoded_size"].as_u64().is_some()
+            {
+                *fingerprints.entry(key).or_default() += 1;
+                loop {
+                    index += 1;
+                    let name = format!("section_{index}");
+                    if names.insert(name.clone()) {
+                        break name;
+                    }
+                }
+            } else {
+                key
+            };
+            document.as_object_mut().unwrap().insert(key, plan);
+        }
+    }
+    // The original scan keeps duplicate keys and raw encodings visible; the
+    // projection also exposes escaped strings without giving them digest credit.
+    encoded_reason_without_digests(text, arrays, &mut fingerprints)
+        .or_else(|| encoded_reason(&document.to_string(), arrays))
 }
 /// Lower-case alphanumeric words of a name or label.
 fn label_words(label: &str) -> impl Iterator<Item = String> + '_ {
@@ -1295,7 +1506,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
     license_reason(text)
         .or_else(|| diff_reason(text))
         .or_else(|| data_uri_reason(text))
-        .or_else(|| encoded_reason(text, !table))
+        .or_else(|| registry_encoded_reason(path, text, !table))
         .or_else(|| json_byte_dump_reason(path, text))
         .or_else(|| included_bytes_reason(path, text))
         .or_else(|| attributes_reason(path, text))
@@ -2671,7 +2882,7 @@ fn text_fixtures() -> Vec<Fixture> {
         ("tools/Cargo.lock", text(checksums), true, None),
         (
             "tools/alchemy/src/hashes.rs",
-            text(digests(4_096)),
+            text(digests(2_048)),
             true,
             None,
         ),
@@ -3105,53 +3316,6 @@ pub(super) fn entry(arguments: &[String]) -> ExitCode {
 mod tests {
     use super::*;
     #[test]
-    fn generated_publication_merge_driver_survives_binary_macro() {
-        let directory = tempfile::tempdir().unwrap();
-        let root = directory.path();
-        git(root, &["init", "--quiet"], "attribute fixture").unwrap();
-        let attributes = include_str!("../../../../.gitattributes");
-        std::fs::write(root.join(".gitattributes"), attributes).unwrap();
-        let inspect = || {
-            String::from_utf8(
-                git(
-                    root,
-                    &[
-                        "-c",
-                        "core.attributesFile=/dev/null",
-                        "check-attr",
-                        "merge",
-                        "text",
-                        "diff",
-                        "--",
-                        "PROGRESS.png",
-                        "PROGRESS_CHART.png",
-                        "recon/tbs/metrics/history.json",
-                        "games/X/SRC/MAIN.C",
-                    ],
-                    "attribute fixture",
-                )
-                .unwrap(),
-            )
-            .unwrap()
-        };
-        let result = inspect();
-        for path in ["PROGRESS.png", "PROGRESS_CHART.png"] {
-            for (attribute, value) in [("merge", "generated"), ("text", "unset"), ("diff", "unset")]
-            {
-                assert!(result.contains(&format!("{path}: {attribute}: {value}\n")));
-            }
-        }
-        assert!(result.contains("recon/tbs/metrics/history.json: merge: generated\n"));
-        assert!(result.contains("games/X/SRC/MAIN.C: merge: unspecified\n"));
-        std::fs::write(
-            root.join(".gitattributes"),
-            attributes.replace("binary merge=generated", "merge=generated binary"),
-        )
-        .unwrap();
-        assert!(inspect().contains("PROGRESS.png: merge: unset\n"));
-    }
-
-    #[test]
     fn history_only_merges_scan_the_whole_tree() {
         for (file, permitted) in [("README.md", true), ("UNOWNED.md", false)] {
             let directory = tempfile::tempdir().unwrap();
@@ -3352,12 +3516,8 @@ mod tests {
         assert_eq!(asset_game("recon/tla/semantic/regions.json"), None);
         assert_eq!(asset_game("recon/tla/translation-units.json"), None);
         let manifests = manifest_games(["recon/tla/assets.json"]);
-        assert!(
-            manifestless_reason("recon/tla/raw/executable_gaps/index.json", &manifests).is_none()
-        );
-        assert!(
-            manifestless_reason("recon/tbs/raw/executable_gaps/index.json", &manifests).is_some()
-        );
+        assert!(manifestless_reason("recon/tla/raw/08007320.json", &manifests).is_none());
+        assert!(manifestless_reason("recon/tbs/raw/08007320.json", &manifests).is_some());
         assert!(manifestless_reason("recon/tbs/translation-units.json", &[]).is_none());
     }
     #[test]
@@ -3461,6 +3621,163 @@ mod tests {
             .join(", ");
         assert_eq!(numeric_elements(fifteen.as_bytes()), 0);
         assert_eq!(numeric_elements(format!("[{fifteen}, 15]").as_bytes()), 16);
+    }
+    fn native_fingerprint_fixture(game: &str, count: usize) -> serde_json::Value {
+        use crate::compiler::sha256;
+        use serde_json::{json, Map};
+        let source = format!("games/{game}/SRC/FIELD/COMMON/MAP.JSON");
+        let palette = format!("games/{game}/SRC/GRAPHICS/COMMON/PALETTE.JSON");
+        let still = format!("games/{game}/SRC/GRAPHICS/COMMON/STILL.JSON");
+        let compression = format!("games/{game}/SRC/GRAPHICS/COMMON/COMPRESSION.JSON");
+        let mut regions = Vec::new();
+        let mut inputs = Vec::new();
+        let mut bindings = Vec::new();
+        let mut layouts = Map::new();
+        for index in 0..count {
+            let address = format!("0x{:08x}", 0x0800_0100 + index * 4);
+            let decoded = sha256::hex(format!("synthetic decoded input {index}").as_bytes());
+            let encoded = sha256::hex(format!("synthetic encoded input {index}").as_bytes());
+            let section = if index % 2 == 0 {
+                decoded.clone()
+            } else {
+                format!("/recipes/{decoded}")
+            };
+            regions.push(json!({"address":address,"size":"0x4",
+                "kind":"golden-sun-general-lz","plan":compression,"plan_section":section,
+                "palette":{"kind":"le-u16-array","source":still,"pointer":format!("/palettes/{decoded}")}}));
+            inputs.push(
+                json!({"kind":"palette-table","source":palette,"pointer":format!("/tables/{decoded}"),
+                "region_address":address,"decoded_sha256":decoded,"encoded_sha256":encoded}),
+            );
+            bindings.push(json!({"address":address,"compression":compression,
+                "compression_section":decoded,"sources":[source]}));
+            layouts.insert(
+                index.to_string(),
+                json!({"source":source,
+                "source_pointer":format!("/maps/{index}"),"width":32,"height":32,
+                "payload_sha256":decoded}),
+            );
+        }
+        json!({"format":"camelot-style-golden-sun-native","regions":regions,
+            "private_inputs":inputs,"bindings":bindings,"layouts":layouts,
+            "reference_sha256":sha256::hex(b"synthetic reference")})
+    }
+    #[test]
+    fn native_registry_fingerprints_have_schema_scoped_digest_semantics() {
+        use serde_json::json;
+        for (id, game) in [("tbs", "THE BROKEN SEAL"), ("tla", "THE LOST AGE")] {
+            let path = format!("recon/{id}/private-inputs.json");
+            let document = native_fingerprint_fixture(game, DIGEST_RUNS_MAX + 1);
+            let text = document.to_string();
+            assert!(encoded_reason(&text, true)
+                .unwrap()
+                .contains("digest-sized"));
+            assert_eq!(publication_data_reason(&path, text.as_bytes(), None), None);
+            for outside in [
+                "recon/tbs/other.json",
+                "tools/alchemy/src/fingerprints.json",
+            ] {
+                assert!(publication_data_reason(outside, text.as_bytes(), None).is_some());
+            }
+            for field in ["format", "source", "region_address", "decoded_sha256"] {
+                let mut invalid = document.clone();
+                match field {
+                    "format" => invalid[field] = json!(1),
+                    "source" => {
+                        for input in invalid["private_inputs"].as_array_mut().unwrap() {
+                            input[field] = json!("elsewhere/MAP.JSON");
+                        }
+                    }
+                    "region_address" => {
+                        for input in invalid["private_inputs"].as_array_mut().unwrap() {
+                            input[field] = json!("0x07000000");
+                        }
+                    }
+                    _ => {
+                        for input in invalid["private_inputs"].as_array_mut().unwrap() {
+                            input[field] = json!(&input[field].as_str().unwrap()[..40]);
+                        }
+                    }
+                }
+                assert!(
+                    publication_data_reason(&path, invalid.to_string().as_bytes(), None).is_some(),
+                    "{id}: {field}"
+                );
+            }
+        }
+    }
+    #[test]
+    fn recognized_fingerprints_do_not_hide_payloads_or_duplicate_json_fields() {
+        use crate::compiler::sha256;
+        use serde_json::{json, Value};
+        let path = "recon/tbs/private-inputs.json";
+        let document = native_fingerprint_fixture("THE BROKEN SEAL", 1);
+        let chunks: Vec<_> = (0..=DIGEST_RUNS_MAX)
+            .map(|index| sha256::hex(format!("synthetic chunk {index}").as_bytes()))
+            .collect();
+        let base64: Vec<_> = (b'A'..=b'Z')
+            .chain(b'a'..=b'z')
+            .chain(b'0'..=b'9')
+            .chain(*b"+/")
+            .collect();
+        for payload in [
+            json!(chunks),
+            json!(encoded_fixture(&base64, 300, 4)),
+            json!(fixture_bytes(JSON_BYTE_ARRAY_MIN, 8)),
+        ] {
+            let mut hidden = document.clone();
+            hidden["private_inputs"][0]["payload"] = payload;
+            assert!(publication_data_reason(path, hidden.to_string().as_bytes(), None).is_some());
+        }
+        let mut disguised = document.clone();
+        disguised["private_inputs"][0]["decoded_sha256"] = json!(chunks);
+        assert!(publication_data_reason(path, disguised.to_string().as_bytes(), None).is_some());
+        // Escaped real fingerprints cannot provide credit for unrelated raw runs
+        // that JSON parsing would discard through duplicate object keys.
+        let mut duplicate = native_fingerprint_fixture("THE BROKEN SEAL", 0);
+        let rows: Vec<_> = chunks.iter().enumerate().map(|(index, chunk)| {
+            let known = sha256::hex(format!("synthetic fingerprint {index}").as_bytes());
+            let escaped = known.bytes().map(|byte| format!("\\u{:04x}", byte)).collect::<String>();
+            format!("{{\"kind\":\"grid\",\"source\":\"games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP.JSON\",\"region_address\":\"0x08000100\",\"decoded_sha256\":\"{chunk}\",\"decoded_sha256\":\"{escaped}\"}}")
+        }).collect();
+        duplicate["regions"] = document["regions"].clone();
+        duplicate["private_inputs"] = Value::Null;
+        let text = duplicate.to_string().replace(
+            "\"private_inputs\":null",
+            &format!("\"private_inputs\":[{}]", rows.join(",")),
+        );
+        assert!(publication_data_reason(path, text.as_bytes(), None).is_some());
+        let logo = logo_fixture();
+        let hidden = [document.to_string().as_bytes(), &logo].concat();
+        assert_eq!(
+            publication_data_reason(path, &hidden, Some(&logo)),
+            Some(LOGO_REASON)
+        );
+    }
+    #[test]
+    fn compression_identifiers_require_plans_and_leave_the_plan_contents_scanned() {
+        use crate::compiler::sha256;
+        use serde_json::{json, Map, Value};
+        let path = "games/THE BROKEN SEAL/SRC/GRAPHICS/COMMON/COMPRESSION.JSON";
+        let sections: Map<_, _> = (0..=DIGEST_RUNS_MAX).map(|index| {
+            (sha256::hex(format!("synthetic compression input {index}").as_bytes()),
+                json!({"format":1,"codec":"golden-sun-general-lz","decoded_size":32,"encoded_size":16}))
+        }).collect();
+        let mut document = Value::Object(sections);
+        assert_eq!(
+            publication_data_reason(path, document.to_string().as_bytes(), None),
+            None
+        );
+        let mut unknown = document.clone();
+        for plan in unknown.as_object_mut().unwrap().values_mut() {
+            *plan = json!("unexplained chunks");
+        }
+        assert!(publication_data_reason(path, unknown.to_string().as_bytes(), None).is_some());
+        document["section_1"] = json!({"values":fixture_bytes(JSON_BYTE_ARRAY_MIN, 9)});
+        assert_eq!(
+            publication_data_reason(path, document.to_string().as_bytes(), None),
+            Some(JSON_BYTE_DUMP_REASON)
+        );
     }
     #[test]
     fn logo_hidden_in_filtered_pixels_is_found_after_decoding() {

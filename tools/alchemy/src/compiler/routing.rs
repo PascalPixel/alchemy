@@ -1,7 +1,9 @@
 //! Compiler routing; `routing_data` is the sole table source.
 //!
-//! Compiler family and evidenced execution state determine one canonical flag
-//! set. Unmatched game code remains not-yet-C; callers cannot tune its flags.
+//! A source routes to exactly one compiler family, and every member of a
+//! family compiles with that family's one flag set. There is no per-file
+//! flag: a function that is not exact under its family's flags is not exact,
+//! and stays retained assembly until an ordinary C spelling reproduces it.
 use crate::compiler::routing_data::*;
 use crate::compiler::source_paths::SourceOwner;
 use std::path::{Path, PathBuf};
@@ -83,19 +85,6 @@ pub fn compiler_assembly_command(source: &str, object: &str) -> Vec<String> {
         .iter()
         .map(|s| (*s).to_string()),
     );
-    command
-}
-/// GCC's ARM output omits a state directive; never force it into Thumb in GAS.
-pub fn compiler_assembly_command_for_source(
-    target: CompilerTarget,
-    route: &str,
-    source: &str,
-    object: &str,
-) -> Vec<String> {
-    let mut command = compiler_assembly_command(source, object);
-    if uses_arm_game_code(target, route) {
-        command.retain(|flag| flag != "-mthumb");
-    }
     command
 }
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -262,20 +251,7 @@ pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
         CompilerFamily::Agbcc | CompilerFamily::AgbccFlash
     )
 }
-pub fn uses_arm_game_code(target: CompilerTarget, source: &str) -> bool {
-    target == CompilerTarget::Tbs && has(ARM_GAME_SOURCES, routed_owner(source).as_deref())
-}
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
-    if uses_arm_game_code(target, source) {
-        let mut flags = base_cflags(target);
-        for flag in &mut flags {
-            if flag == "-mthumb" {
-                *flag = "-marm".into();
-            }
-        }
-        flags.insert(2, "-mno-apcs-frame".into());
-        return flags;
-    }
     match (family_for_source(target, source), target) {
         (CompilerFamily::Agbcc, _) => agbcc_cflags(),
         (CompilerFamily::AgbccFlash, _) => agbcc_flash_cflags(),
@@ -286,57 +262,6 @@ pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<Str
 #[cfg(test)]
 mod target_tests {
     use super::*;
-    #[test]
-    fn only_evidenced_complete_tbs_ram_modules_use_arm() {
-        let mut expected = cflags();
-        expected[1] = "-marm".into();
-        expected.insert(2, "-mno-apcs-frame".into());
-        for id in ARM_GAME_SOURCES {
-            let owner = SourceOwner::parse(id).unwrap();
-            let route = owner.routing_path();
-            let route = route.to_string_lossy();
-            assert_eq!(
-                family_for_source(CompilerTarget::Tbs, &route),
-                CompilerFamily::Game
-            );
-            assert_eq!(
-                cflags_for_target_source(CompilerTarget::Tbs, &route),
-                expected
-            );
-            assert_eq!(
-                cflags_for_target_source(CompilerTarget::Tla, &route),
-                base_cflags(CompilerTarget::Tla)
-            );
-            assert!(!AGBCC_SOURCES.contains(id));
-            assert!(!AGBCC_FLASH_SOURCES.contains(id));
-            let command =
-                compiler_assembly_command_for_source(CompilerTarget::Tbs, &route, "in.s", "out.o");
-            let expected_assembler = compiler_assembly_command("in.s", "out.o")
-                .into_iter()
-                .filter(|flag| flag != "-mthumb")
-                .collect::<Vec<_>>();
-            assert_eq!(command, expected_assembler);
-        }
-        for route in ["08006878.c", "080fb670.c", "0800a0fc.c"] {
-            assert_eq!(
-                compiler_assembly_command_for_source(CompilerTarget::Tbs, route, "in.s", "out.o"),
-                compiler_assembly_command("in.s", "out.o")
-            );
-        }
-        for route in [
-            "0800a0fc.c",
-            "0800a958.c",
-            "080109e8.c",
-            "0800d304.c",
-            "resource_380_c_0800a0f8.c",
-            "GRAPHICS/TILE/UPDATE_VERTICES.C",
-        ] {
-            assert_eq!(
-                cflags_for_target_source(CompilerTarget::Tbs, route),
-                cflags()
-            );
-        }
-    }
     #[test]
     fn installed_binutils_lead_path_once() {
         let first = Path::new("/repo/tools/out/binutils/bin");

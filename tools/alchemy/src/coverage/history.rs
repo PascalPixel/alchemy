@@ -75,6 +75,66 @@ pub(crate) fn models_on(root: &Path, date: &str) -> Result<BTreeMap<String, u64>
     let (mut days, _) = sessions::tally(&log, &activity, &sessions::checkouts(root));
     Ok(days.remove(date).unwrap_or_default())
 }
+
+/// Publication retains approved attribution and adds only the commits that
+/// have landed since that day's maintained count. Missing logs never relabel it.
+pub(crate) fn publication_models(
+    root: &Path,
+    history: &Value,
+    date: &str,
+) -> Result<BTreeMap<String, u64>, String> {
+    let mut models = history["days"]
+        .as_array()
+        .and_then(|days| days.iter().find(|row| row["date"] == date))
+        .and_then(|row| row.get("models"))
+        .map(|models| serde_json::from_value::<BTreeMap<String, u64>>(models.clone()))
+        .transpose()
+        .map_err(|error| format!("{date}: invalid model attribution: {error}"))?
+        .unwrap_or_default();
+    let since = previous(date).unwrap_or_default();
+    let log = sessions::git_log(root, Some(&since))?;
+    let mut commits = sessions::commits(&log)
+        .into_iter()
+        .filter(|commit| commit.date == date)
+        .collect::<Vec<_>>();
+    commits.sort_by(|left, right| right.time.cmp(&left.time).then(right.sha.cmp(&left.sha)));
+    let from = day_number(&since).unwrap_or_default() * 86_400 - 86_400;
+    let activity = sessions::activity(&sessions::home(), from);
+    append_models(&mut models, &commits, &activity, &sessions::checkouts(root));
+    Ok(models)
+}
+
+fn append_models(
+    models: &mut BTreeMap<String, u64>,
+    commits: &[sessions::Commit],
+    activity: &sessions::Activity,
+    checkouts: &std::collections::HashMap<String, String>,
+) {
+    let labels = commits
+        .iter()
+        .map(|commit| {
+            let (before, after) = sessions::label(commit, activity, checkouts);
+            if before == [UNTAGGED]
+                && activity
+                    .model_at(
+                        commit.time,
+                        None,
+                        checkouts.get(&commit.sha).map(String::as_str),
+                    )
+                    .is_none()
+            {
+                before
+            } else {
+                after
+            }
+        })
+        .collect::<Vec<_>>();
+    let total = labels.iter().map(|labels| labels.len() as u64).sum::<u64>();
+    let missing = total.saturating_sub(models.values().sum());
+    for model in labels.iter().flatten().take(missing as usize) {
+        *models.entry(model.clone()).or_default() += 1;
+    }
+}
 /// Relabel every day's commits from the whole log and the agent logs,
 /// returning how many commits changed label, from → to.
 pub(crate) fn relabel_models(
@@ -191,6 +251,54 @@ pub(crate) fn day_label(day: i64) -> (String, bool) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn publication_keeps_approved_models_and_adds_actual_new_trailers() {
+        let mut models = BTreeMap::from([("Astra 6".into(), 17), ("Sol 6".into(), 9)]);
+        let old = |time| sessions::Commit {
+            time,
+            author: "Pascal Pixel".into(),
+            ..sessions::Commit::default()
+        };
+        let mut commits = (0..26).map(|_| old(100)).collect::<Vec<_>>();
+        let mut new = old(200);
+        new.trailers = "Sol 6 <agent@example.com>".into();
+        commits.insert(0, new);
+        append_models(
+            &mut models,
+            &commits,
+            &sessions::Activity::default(),
+            &Default::default(),
+        );
+        assert_eq!(
+            models,
+            BTreeMap::from([("Astra 6".into(), 17), ("Sol 6".into(), 10)])
+        );
+        append_models(
+            &mut models,
+            &commits,
+            &sessions::Activity::default(),
+            &Default::default(),
+        );
+        assert_eq!(models["Sol 6"], 10);
+        assert!(!models.contains_key("Sol 5.6"));
+    }
+
+    #[test]
+    fn publication_without_session_evidence_keeps_new_commits_untagged() {
+        let mut models = BTreeMap::new();
+        let commit = sessions::Commit {
+            author: "Pascal Pixel".into(),
+            ..sessions::Commit::default()
+        };
+        append_models(
+            &mut models,
+            &[commit],
+            &sessions::Activity::default(),
+            &Default::default(),
+        );
+        assert_eq!(models, BTreeMap::from([(UNTAGGED.into(), 1)]));
+    }
     fn done(bytes: i64) -> GameDone {
         GameDone {
             game_c: bytes,

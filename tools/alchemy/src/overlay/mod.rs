@@ -1,17 +1,19 @@
 pub mod adopt;
 pub mod assembly;
+pub mod candidates;
 pub mod compile;
+pub mod draft;
 pub mod export;
 pub mod flow;
+pub mod names;
 pub mod owners;
 pub mod park;
 pub mod rom;
 pub mod score;
 pub mod source;
+pub mod trial;
 use crate::compiler::source_paths::SourceOwner;
 use crate::overlay::assembly::OVERLAY_BASE;
-use serde::Deserialize;
-use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
@@ -20,21 +22,6 @@ use tempfile::tempdir;
 pub struct InternalAlias {
     pub label: String,
     pub offset: i64,
-}
-#[derive(Debug, Clone, Deserialize)]
-pub struct AuditInterval {
-    pub start: i64,
-    pub end: i64,
-    pub kind: String,
-}
-#[derive(Deserialize)]
-struct AuditReport {
-    overlays: Vec<AuditOverlay>,
-}
-#[derive(Deserialize)]
-struct AuditOverlay {
-    id: String,
-    intervals: Vec<AuditInterval>,
 }
 pub(crate) fn overlay_assembly(root: &Path, overlay: &str) -> PathBuf {
     root.join(crate::targets::target_for(crate::targets::DEFAULT_TARGET).overlay_assembly(overlay))
@@ -66,6 +53,7 @@ pub fn listing_offsets(assembly: &Path) -> Result<Vec<(i64, i64)>, String> {
     let listing = work.path().join("listing.lst");
     let object = work.path().join("listing.o");
     let output = Command::new("arm-none-eabi-as")
+        .current_dir(crate::compiler::routing::root())
         .args(["-mcpu=arm7tdmi", "-mthumb-interwork"])
         .arg(format!("-al={}", listing.display()))
         .arg("-o")
@@ -211,39 +199,56 @@ pub fn placeholder_lines(stem: &str, span: i64, aliases: &[InternalAlias]) -> Ve
     }
     result
 }
-fn audit_intervals(root: &Path, overlay: &str) -> Result<Option<Vec<AuditInterval>>, String> {
-    let path = root.join("recon/tbs/metrics").join("executable.json");
-    if !path.exists() {
-        return Ok(None);
+/// One owner's retained listing lines replaced by its `AlchemyC_`
+/// placeholder: the new text, the lines taken out and the block put in.
+pub struct Splice {
+    pub text: String,
+    pub removed: Vec<String>,
+    pub placeholder: Vec<String>,
+    pub first: i64,
+    pub last: i64,
+    pub aliases: usize,
+}
+/// Splices a placeholder for `owner` into `text`, the listing `assembly`
+/// currently holds on disk (its offsets come from assembling that file).
+/// Labels other lines reach inside the owner stay as aliases.
+pub fn splice_placeholder(
+    assembly: &Path,
+    text: &str,
+    owner: SourceOwner,
+    span: i64,
+) -> Result<Splice, String> {
+    let stem = owner.address_stem();
+    let lines: Vec<String> = text.split('\n').map(str::to_string).collect();
+    if lines
+        .iter()
+        .any(|line| line == &format!("AlchemyC_{stem}:"))
+    {
+        return Err(format!("{} is already adopted as C", owner.id()));
     }
-    let report: AuditReport = serde_json::from_slice(
-        &fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))?,
-    )
-    .map_err(|error| format!("{}: {error}", path.display()))?;
-    Ok(report
-        .overlays
-        .into_iter()
-        .find(|row| row.id == overlay)
-        .map(|row| row.intervals))
-}
-pub fn audited_kind(root: &Path, overlay: &str, entry: i64) -> Result<Option<String>, String> {
-    Ok(audit_intervals(root, overlay)?.and_then(|intervals| {
-        intervals
-            .into_iter()
-            .find(|interval| interval.start <= entry && entry < interval.end)
-            .map(|interval| interval.kind)
-    }))
-}
-pub(crate) fn reviewed_spans(root: &Path) -> Result<BTreeMap<SourceOwner, usize>, String> {
-    owners::reviewed_spans(
-        root,
-        crate::targets::target_for(crate::targets::DEFAULT_TARGET),
-    )
+    let offset = i64::from(owner.address()) - OVERLAY_BASE;
+    let offsets = listing_offsets(assembly)?;
+    let (first, last) = region_lines(&offsets, offset, span)?;
+    let aliases = internal_aliases(&lines, first, last, offset, span)?;
+    let placeholder = placeholder_lines(&stem, span, &aliases);
+    let removed = lines[(first - 1) as usize..last as usize].to_vec();
+    let mut replaced = lines[..(first - 1) as usize].to_vec();
+    replaced.extend(placeholder.iter().cloned());
+    replaced.extend(lines[last as usize..].iter().cloned());
+    Ok(Splice {
+        text: replaced.join("\n"),
+        removed,
+        placeholder,
+        first,
+        last,
+        aliases: aliases.len(),
+    })
 }
 use crate::compiler::routing::root;
 use std::process::ExitCode;
 
-const OVERLAY_USAGE: &str = "usage: alchemy overlay <adopt|park|audit|export> [args]";
+const OVERLAY_USAGE: &str =
+    "usage: alchemy overlay <trial|try|draft|adopt|park|audit|export> [args]";
 
 pub(crate) fn code(result: Result<i32, String>) -> ExitCode {
     match result {
@@ -263,6 +268,9 @@ pub fn entry(arguments: &[String]) -> ExitCode {
     };
     let rest = &arguments[1..];
     match command {
+        "trial" => code(trial::run(root(), rest)),
+        "try" => code(candidates::run(root(), rest)),
+        "draft" => code(draft::run(root(), rest)),
         "adopt" => code(adopt::run(root(), rest)),
         "park" => code(park::run(root(), rest)),
         "audit" => code(park::run_audit(root(), rest)),

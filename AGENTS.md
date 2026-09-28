@@ -178,14 +178,14 @@ work than by working alone.
 - **Commit every adoption immediately** and every draft before moving on. An
   agent with no commit in 30 minutes is checked; one with none in an hour is
   stopped and its slice rebriefed.
-- **Lanes defer publication.** `make coverage` records verified counts and
-  README progress on branches; only main redraws both figures. Pre-push checks
-  fresh figures on every branch; use `--publication` for an explicit refresh.
+- **Lanes defer publication.** Branch commits run the quick staged checks.
+  A main commit verifies both ROMs, updates README and both progress figures,
+  and derives its percentage prefix. Pre-push checks the outgoing history.
 - **Land every 30 minutes** from one landing worktree: merge each finished
   branch, merge registries with a structural three-way JSON merge (keep both
-  sides' additions), run `make compare-all`, `make test`, `make coverage` and
-  `make verify`, commit with the progress prefix, push `main`, remove the
-  landed worktree and branch. `main` is the only long-lived branch.
+  sides' additions), stage and commit through main's publication hook, push
+  `main`, remove the landed worktree and branch. `main` is the only long-lived
+  branch.
 - **Workflows** (many agents at once) need Pascal's approval.
 - Scripts are TypeScript on Bun or Rust, never Python or shell. The only prose
   files are `AGENTS.md` and `README.md`; no notes, plans or reports anywhere.
@@ -234,6 +234,10 @@ option recorded beside the file, or remain stored until it does.
 - 2026-09-27: repair model attribution after noon September 26 (Lisbon) to
   Sol 6 or Astra 6. New trailers name the actual session model, never one
   copied from an inherited prompt or earlier commit.
+- 2026-09-28: restore tooling to `2db71499f1f991c9a4899641737212bfba8104c0`;
+  retain only main and its checkout, finish pending work and sync with origin/main.
+- 2026-09-28: main commits own verified percentages, README and both progress
+  figures; branch and worktree commits defer those expensive checks.
 
 ## Tooling index
 

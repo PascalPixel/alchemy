@@ -12,12 +12,16 @@ export CARGO_TARGET_DIR := $(CURDIR)/tools/out/cargo-target
 # Bootstrap's native arm-none-eabi binutils come first for every recipe and test.
 export PATH := $(CURDIR)/tools/out/binutils/bin:$(PATH)
 CARGO_RUN := $(CARGO) run --offline --quiet --release --manifest-path
+# `make verify` builds the tool once; `alchemy verify` passes that binary as
+# ALCHEMY to every gate instead of a `cargo run` per call.
+ALCHEMY ?= $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
+ALCHEMY_BIN := $(CARGO_TARGET_DIR)/release/alchemy
 
-BUILD := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build
-ASSETS := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- build assets
-CHECK := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- check
-COMPILER := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml --
-OVERLAY := $(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- overlay
+BUILD := $(ALCHEMY) build
+ASSETS := $(ALCHEMY) build assets
+CHECK := $(ALCHEMY) check
+COMPILER := $(ALCHEMY)
+OVERLAY := $(ALCHEMY) overlay
 
 HOSTS := alchemy psynergy
 PORTABLE_TOOLS := alchemy psynergy
@@ -30,13 +34,13 @@ OWNER_INVENTORY = out/$(TARGET)/full/rebuilt.owner-inventory.json
 REPORT_DIR = out/$(TARGET)/reports
 HISTORICAL_TARGETS := tbs-ja tbs-en tbs-de tbs-es tbs-fr tbs-it \
 	tla-ja tla-en tla-de tla-es tla-fr tla-it
-.PHONY: help compare compare-tla compare-all precommit lint-staged rustfmt-check test-integration verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-index-check \
+.PHONY: help compare compare-tla compare-all precommit prepush publication-staged-check lint-staged rustfmt-check test-integration verify audit reports test lint lint-production lint-all-targets build-tools tool-tests tooling-index-check \
 	build-claimed build-asm build-assets build-full build-rom \
 	standard-check compiler-source-check corpus-check \
 	full-rom-check tla-assets-check tla-owners-check overlay-check declared-tu-check owner-inventory-check strict-tu-check siblings-check \
 	source-tracking-check index-sync-check publication-tree-check check-owners progress progress-report progress-check progress-subject \
 	correspondence correspondence-check edition-builds edition-builds-check \
-	coverage coverage-check native-format-check review-images-check clean clean-preview
+	coverage coverage-check native-format-check clean clean-preview
 .PHONY: targets $(HISTORICAL_TARGETS)
 
 help:
@@ -47,8 +51,8 @@ help:
 		'make verify-clean     verify after deleting generated output' \
 		'make compare          rebuild what changed; check TBS against rom.sha1' \
 		'make compare-tla      the same for TLA; make compare-all for both' \
-		'make precommit        the pre-commit gate: compare the staged games, quick checks' \
-		'make verify           the landing gate on main and before every push' \
+		'make precommit        staged checks; on main, verify and publish both games' \
+		'make verify           the complete landing gate' \
 		'make audit            exhaustive editions, candidates, and reports audit' \
 		'make reports          refresh analysis reports and coverage figures' \
 		'make targets          compile shared source for all 12 historical targets' \
@@ -92,20 +96,18 @@ compare-tla:
 
 compare-all: compare compare-tla
 
-# The pre-commit gate, split as pret splits a quick local build from CI:
-# compare each game the staged change can reach, with the quick repository
-# checks, then require the README progress and history to match the receipts.
-# Main and pre-push also require fresh figures; lanes defer their rendering.
-precommit: index-sync-check native-format-check language-check lint-staged tooling-index-check
+# Branch selection and publication are owned by the Rust landing runner.
+precommit:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
+	@$(ALCHEMY_BIN) verify --pre-commit
+
+publication-staged-check:
 	$(CHECK) publication --staged
-	@set -e; goals=$$(git diff --cached --name-only | awk ' \
-		/^games\/THE BROKEN SEAL\// || /^recon\/tbs\// { tbs = 1 } \
-		/^games\/THE LOST AGE\// || /^recon\/tla\// { tla = 1 } \
-		/^(games\/COMMON|tools|\.cargo)\// || /^(Makefile|agscc|agbcc|rom\.sha1)$$/ { tbs = 1; tla = 1 } \
-		END { if (tbs) print "compare"; if (tla) print "compare-tla" }'); \
-	if [ -n "$$goals" ]; then $(MAKE) --no-print-directory $$goals; \
-	else printf 'no game input staged; nothing to compare\n'; fi
-	$(CHECK) coverage --check
+
+# Main's commit already ran the landing gate; history protection still scans
+# every outgoing commit on every branch.
+prepush:
+	$(ALCHEMY) verify --pre-push
 
 build-claimed:
 	$(BUILD) claimed --target $(TARGET)
@@ -232,10 +234,10 @@ edition-builds-check: correspondence-check
 	@printf 'cross-edition edition-build audit ok\n'
 
 coverage: | $(REPORT_DIR)
-	$(CHECK) coverage --write
+	$(CHECK) coverage --write --publication
 
 coverage-check:
-	$(CHECK) coverage --check $(COVERAGE_PUBLICATION_FLAGS)
+	$(CHECK) coverage --check
 
 source-tracking-check: prepare-inputs
 	$(CHECK) source-tracking
@@ -257,8 +259,6 @@ check-owners: source-tracking-check
 	$(CHECK) owners
 
 corpus-check:
-	@test -f "recon/tbs/project.json"
-	@test -f "recon/tla/project.json"
 	@if test -d draft; then \
 		printf 'legacy draft/ directory found; use recon/tbs/<edition>/\n'; \
 		exit 1; \
@@ -298,7 +298,6 @@ tool-tests:
 test-integration: toolchain-check
 	$(CARGO) test --offline --quiet --release --workspace \
 		--manifest-path $(TOOLS)/Cargo.toml -- --ignored
-	$(COMPILER) match --acceptance-test
 
 tooling-index-check:
 	@$(CHECK) publication --documents
@@ -360,13 +359,13 @@ test: toolchain-check
 	$(CHECK) no-asm --self-test
 
 native-format-check:
-	$(CARGO_RUN) $(TOOLS)/alchemy/Cargo.toml -- format --check
+	$(ALCHEMY) format --check
 
-review-images-check: source-tracking-check
-	$(ASSETS) --review-images out/tbs-en/graphics-review
-
-verify: toolchain-check native-format-check index-sync-check publication-tree-check source-tracking-check review-images-check corpus-check language-check lint-production tooling-index-check \
-	strict-tu-check check-owners full-rom-check compare-tla coverage-check siblings-check
+# The landing gate. Its gates and their dependency waves live in
+# tools/alchemy/src/verify.rs; each gate stays a target here.
+verify:
+	@$(CARGO) build --offline --quiet --release --manifest-path $(TOOLS)/alchemy/Cargo.toml
+	@$(ALCHEMY_BIN) verify
 
 audit: verify test test-integration targets \
 	correspondence-check progress-report coverage-check

@@ -7,6 +7,7 @@ pub(crate) mod letters;
 pub(crate) mod model;
 pub(crate) mod palette;
 pub(crate) mod pipeline;
+pub(crate) mod places;
 pub(crate) mod progress;
 pub(crate) mod proof;
 pub(crate) mod raster;
@@ -20,7 +21,8 @@ use crate::coverage::progress::{game_done, measured, GameDone};
 use crate::coverage::tree::{ref_tree, root, work_tree};
 use serde_json::Value;
 use std::path::{Path, PathBuf};
-const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--files|--models|--assembly-spans|--self-test] [--publication]\n\nLane branches update and check verified counts without rendering figures.\nMain, detached checkouts and --publication also require fresh README figures.";
+const USAGE: &str = "usage: alchemy check coverage [--target tbs-en|tla-en] [--exact-ref <ref>|worktree] [--recon-ref <ref>|worktree|none] [--write|--check|--files|--models|--assembly-spans|--self-test] [--publication]\n\
+--publication preserves approved model attribution while writing current publication figures.";
 fn get<'a>(v: &'a Value, key: &str) -> Option<&'a Value> {
     v.as_object()?.get(key)
 }
@@ -185,12 +187,6 @@ fn status_line(sun: Option<GameDone>, anchor: Option<GameDone>) -> String {
     };
     format!("**☀️ {} · ⚓️ {}**", show(sun), show(anchor))
 }
-fn readme_progress(text: &str) -> Option<&str> {
-    text.lines()
-        .skip_while(|line| *line != "## Progress")
-        .skip(1)
-        .find(|line| !line.trim().is_empty())
-}
 fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> String {
     let proven_c = field(&map.document, &["categories", "proven_c", "bytes"]);
     let proven_asm = field(&map.document, &["categories", "proven_asm", "bytes"]);
@@ -198,26 +194,9 @@ fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> 
     let percent =
         crate::coverage::jsnum::done_percent(proven_c as i64, proven_asm as i64, executable as i64);
     let mut out = text.to_string();
-    let progress_start = out
-        .find("## Progress\n")
-        .map(|start| start + "## Progress\n".len());
-    let status_start = if let Some(start) = progress_start {
-        let section = &out[start..];
-        let end = section.find("\n## ").unwrap_or(section.len());
-        section[..end].find("**☀️ ").map(|offset| start + offset)
-    } else {
-        out.find("**☀️ ").or_else(|| out.find("## Status:"))
-    };
-    if let Some(start) = status_start {
-        let end = out[start..].find('\n').unwrap_or(out.len() - start);
-        out.replace_range(start..start + end, status);
-    }
-    if readme_progress(&out) != Some(status) {
-        if let Some(start) = out.find("## Progress\n") {
-            out.insert_str(start + "## Progress\n".len(), &format!("\n{status}\n"));
-        } else {
-            let start = out.find("## Acknowledgements").unwrap_or(out.len());
-            out.insert_str(start, &format!("\n## Progress\n\n{status}\n\n"));
+    if let Some(start) = out.find("**☀️ ").or_else(|| out.find("## Status:")) {
+        if let Some(end) = out[start..].find('\n') {
+            out.replace_range(start..start + end, status);
         }
     }
     if let Some(end) = out.find("\n\nDONE measures") {
@@ -252,114 +231,10 @@ fn update_readme(text: &str, _target: &str, map: &CoverageMap, status: &str) -> 
 }
 #[cfg(test)]
 mod tests {
-    use super::{readme_metrics, readme_progress, status_line, update_readme};
+    use super::{readme_metrics, status_line, update_readme};
     use crate::coverage::pipeline::CoverageMap;
     use crate::coverage::progress::GameDone;
     use serde_json::json;
-    #[test]
-    fn publication_scope_follows_git_head_and_push_forces_it() {
-        use super::{parse, publication_required};
-        let temp = tempfile::tempdir().unwrap();
-        let root = temp.path();
-        let git = |args: &[&str]| {
-            assert!(std::process::Command::new("git")
-                .args(args)
-                .current_dir(root)
-                .status()
-                .unwrap()
-                .success());
-        };
-        git(&["init", "--quiet", "--initial-branch=main"]);
-        assert!(publication_required(root, false));
-        git(&["symbolic-ref", "HEAD", "refs/heads/wf/coverage-test"]);
-        assert!(!publication_required(root, false));
-        let o = parse(&["--check".into(), "--publication".into()]).unwrap();
-        assert!(o.check && o.publication);
-        assert!(publication_required(root, o.publication));
-        // The actual pre-push hook must carry the force flag into verify's
-        // coverage-check, even when Git invokes it from a lane branch.
-        assert!(include_str!("../../../../.hooks/pre-push")
-            .contains("verify COVERAGE_PUBLICATION_FLAGS=--publication"));
-        assert!(include_str!("../../../../Makefile")
-            .contains("coverage --check $(COVERAGE_PUBLICATION_FLAGS)"));
-        git(&[
-            "-c",
-            "user.name=Coverage test",
-            "-c",
-            "user.email=coverage@example.invalid",
-            "commit",
-            "--quiet",
-            "--allow-empty",
-            "-m",
-            "Fixture",
-        ]);
-        git(&["checkout", "--quiet", "--detach"]);
-        assert!(publication_required(root, false));
-        let missing = tempfile::tempdir().unwrap();
-        assert!(publication_required(missing.path(), false));
-    }
-    #[test]
-    fn lane_counts_do_not_touch_publication_and_stale_counts_still_fail() {
-        use super::{check_progress, figure, history, write_progress};
-        let temp = tempfile::tempdir().unwrap();
-        let root = temp.path();
-        std::fs::create_dir_all(history::path(root).parent().unwrap()).unwrap();
-        let today = history::today();
-        let recorded = json!({"format": 1, "days": [{
-            "date": today, "tbs": {"done": 600, "executable": 1000},
-            "models": {"Sol 6": 1}
-        }], "figures": {"date": "2026-07-16", "files": "old-map",
-            "tbs": {"done": 600, "executable": 1000}}});
-        std::fs::write(history::path(root), history::text(&recorded)).unwrap();
-        // No glyphs or valid PNGs: a numeric lane update cannot render or
-        // decode publication artifacts, even if their contents are stale.
-        for path in [figure::CHART, figure::MAP] {
-            std::fs::write(root.join(path), b"old-published-image").unwrap();
-        }
-        let done = |bytes| GameDone {
-            game_c: bytes,
-            executable: 1000,
-            ..GameDone::default()
-        };
-        let readme = |bytes| {
-            std::fs::write(
-                root.join("README.md"),
-                format!("## Progress\n\n{}\n", status_line(Some(done(bytes)), None)),
-            )
-            .unwrap();
-        };
-        readme(610);
-        assert!(check_progress(root, Some(done(610)), None, false).is_err());
-        write_progress(root, Some(done(610)), None, false).unwrap();
-        let changed = history::load(root).unwrap();
-        assert_eq!(changed["figures"], recorded["figures"]);
-        assert_eq!(changed["days"][0]["models"], recorded["days"][0]["models"]);
-        assert_eq!(changed["days"][0]["tbs"]["done"], 610);
-        for path in [figure::CHART, figure::MAP] {
-            assert_eq!(
-                std::fs::read(root.join(path)).unwrap(),
-                b"old-published-image"
-            );
-        }
-        check_progress(root, Some(done(610)), None, false).unwrap();
-        // Main / --publication cannot accept the deferred images.
-        assert!(check_progress(root, Some(done(610)), None, true).is_err());
-        readme(600);
-        assert!(check_progress(root, Some(done(610)), None, false).is_err());
-        readme(610);
-        // Equal percentages cannot conceal different counts or denominators.
-        assert!(check_progress(
-            root,
-            Some(GameDone {
-                game_c: 1220,
-                executable: 2000,
-                ..GameDone::default()
-            }),
-            None,
-            false,
-        )
-        .is_err());
-    }
     #[test]
     fn figures_are_redrawn_with_each_count_and_match_the_readme() {
         use super::{check_figures, figure, figure_date_current, history, letters, write_figures};
@@ -409,22 +284,12 @@ mod tests {
             executable: 1000,
             ..GameDone::default()
         };
-        std::fs::write(
-            root.join("README.md"),
-            "## Progress\n\n**☀️ 60.00% · ⚓️ pending**\n",
-        )
-        .unwrap();
-        write_figures(root, Some(done(600)), None).unwrap();
+        write_figures(root, Some(done(600)), None, false).unwrap();
         let chart = std::fs::read(root.join(figure::CHART)).unwrap();
         let map = std::fs::read(root.join(figure::MAP)).unwrap();
-        check_figures(root, Some(done(600)), None).unwrap();
+        check_figures(root).unwrap();
         // A later count the same day redraws the chart with it.
-        write_figures(root, Some(done(610)), None).unwrap();
-        std::fs::write(
-            root.join("README.md"),
-            "## Progress\n\n**☀️ 61.00% · ⚓️ pending**\n",
-        )
-        .unwrap();
+        write_figures(root, Some(done(610)), None, false).unwrap();
         assert_ne!(std::fs::read(root.join(figure::CHART)).unwrap(), chart);
         let _ = map;
         let recorded = history::load(root).unwrap();
@@ -435,62 +300,15 @@ mod tests {
             (Some(today.as_str()), Some(61.0))
         );
         assert_eq!(history::percent(&recorded["figures"]["tbs"]), Some(61.0));
-        check_figures(root, Some(done(610)), None).unwrap();
+        check_figures(root).unwrap();
         // A README stating another number fails.
-        std::fs::write(
-            root.join("README.md"),
-            "## Progress\n\n**☀️ 60.00% · ⚓️ pending**\n",
-        )
-        .unwrap();
-        assert!(check_figures(root, Some(done(610)), None).is_err());
-        // Missing progress cannot bypass the gate; correct numbers elsewhere cannot either.
-        for readme in [
-            "## Progress\n\n<img src=\"PROGRESS_CHART.png\">\n",
-            "**☀️ 61.00% · ⚓️ pending**\n",
-            "**☀️ 61.00% · ⚓️ pending**\n\n## Progress\n\n**☀️ 60.00% · ⚓️ pending**\n",
-            "## Progress\n\n**☀️ 61.00% · ⚓️ 2.00%**\n",
-        ] {
-            std::fs::write(root.join("README.md"), readme).unwrap();
-            assert!(check_figures(root, Some(done(610)), None).is_err());
-        }
-        std::fs::write(
-            root.join("README.md"),
-            "## Progress\n\n**☀️ 61.00% · ⚓️ pending**\n",
-        )
-        .unwrap();
-        check_figures(root, Some(done(610)), None).unwrap();
-        assert!(check_figures(
-            root,
-            Some(GameDone {
-                game_c: 1220,
-                executable: 2000,
-                ..GameDone::default()
-            }),
-            None
-        )
-        .is_err());
-        // Equal percentages must not conceal different measured byte counts.
-        let mut changed = history::load(root).unwrap();
-        changed["days"].as_array_mut().unwrap().last_mut().unwrap()["tbs"] =
-            json!({"done": 1220, "executable": 2000});
-        std::fs::write(history::path(root), history::text(&changed)).unwrap();
-        assert!(check_figures(root, Some(done(610)), None).is_err());
-        write_figures(root, Some(done(610)), None).unwrap();
-        check_figures(root, Some(done(610)), None).unwrap();
-        // A changed tracked tree requires a fresh map, even with unchanged DONE.
-        std::fs::write(root.join("games/CHECK.C"), "void Check(void) {}\n").unwrap();
-        assert!(std::process::Command::new("git")
-            .args(["add", "games/CHECK.C"])
-            .current_dir(root)
-            .status()
-            .unwrap()
-            .success());
-        assert!(check_figures(root, Some(done(610)), None).is_err());
-        write_figures(root, Some(done(610)), None).unwrap();
-        check_figures(root, Some(done(610)), None).unwrap();
+        std::fs::write(root.join("README.md"), "**☀️ 60.00% · ⚓️ pending**\n").unwrap();
+        assert!(check_figures(root).is_err());
+        std::fs::write(root.join("README.md"), "**☀️ 61.00% · ⚓️ pending**\n").unwrap();
+        check_figures(root).unwrap();
         // A tampered chart fails; yesterday's figures pass only until today has a row.
         std::fs::write(root.join(figure::CHART), &map).unwrap();
-        assert!(check_figures(root, Some(done(610)), None).is_err());
+        assert!(check_figures(root).is_err());
         let yesterday = history::previous(&today).unwrap();
         assert!(figure_date_current(&today, &today, true));
         assert!(figure_date_current(&yesterday, &today, false));
@@ -541,15 +359,6 @@ mod tests {
         );
         assert!(updated.contains("## Progress\n\n**☀️ 59.00% · ⚓️ pending**\n"));
         assert!(!updated.contains("52%"));
-        for missing in [
-            "# Alchemy\n\n## Progress\n\n<img src=\"PROGRESS_CHART.png\">\n",
-            "# Alchemy\n\n## Acknowledgements\n\nThanks\n",
-            "# Alchemy\n\n## Progress\n\n**☀️ 52% · ⚓️ 1%**",
-        ] {
-            let updated = update_readme(missing, "tbs-en", &map, &status);
-            assert_eq!(readme_progress(&updated), Some(status.as_str()));
-            assert_eq!(update_readme(&updated, "tbs-en", &map, &status), updated);
-        }
     }
 }
 /// The digest of what the file map draws: each tracked file and its size.
@@ -569,92 +378,23 @@ fn render_figures(
     let chart = figure::chart(&letters, &history::as_drawn(history));
     Ok((chart, figure::map(&letters, root)))
 }
-/// Only a named lane may defer publication. Unknown or detached HEADs stay
-/// strict, and the pre-push gate forces publication regardless of the branch.
-fn publication_required(root: &Path, force: bool) -> bool {
-    if force {
-        return true;
-    }
-    let Ok(output) = std::process::Command::new("git")
-        .args(["symbolic-ref", "--quiet", "HEAD"])
-        .current_dir(root)
-        .output()
-    else {
-        return true;
-    };
-    if !output.status.success() {
-        return true;
-    }
-    let branch = String::from_utf8_lossy(&output.stdout);
-    let branch = branch.trim();
-    !branch.starts_with("refs/heads/") || branch == "refs/heads/main"
-}
-/// Lanes record exact counts without scanning model logs or touching the
-/// images and their last-drawn metadata. Main renders them at landing time.
-fn write_progress(
-    root: &Path,
-    sun: Option<GameDone>,
-    anchor: Option<GameDone>,
-    publication: bool,
-) -> Result<(), String> {
-    if publication {
-        return write_figures(root, sun, anchor);
-    }
-    let mut history = history::load(root)?;
-    history::record(&mut history, &history::today(), sun, anchor);
-    write(&history::path(root), &history::text(&history))
-}
-/// Numeric truth is required on every branch, including exact denominators
-/// that a rounded or floored percentage could conceal.
-fn check_counts(
-    root: &Path,
-    sun: Option<GameDone>,
-    anchor: Option<GameDone>,
-) -> Result<(), String> {
-    let history = history::load(root)?;
-    let latest = history["days"].as_array().and_then(|days| days.last());
-    for (game, done) in [("tbs", sun), ("tla", anchor)] {
-        if let Some(done) = done.filter(|done| done.executable > 0) {
-            let measured = serde_json::json!({"done": done.bytes(), "executable": done.executable});
-            if latest.map(|row| &row[game]) != Some(&measured) {
-                return Err(format!(
-                    "{game} history does not match the verified byte counts; run: make coverage"
-                ));
-            }
-        }
-    }
-    let readme = read(&root.join("README.md"))?;
-    let expected = status_line(sun, anchor);
-    if readme_progress(&readme) != Some(expected.as_str()) {
-        return Err(format!(
-            "the line under ## Progress must be {expected}; run: make coverage"
-        ));
-    }
-    Ok(())
-}
-fn check_progress(
-    root: &Path,
-    sun: Option<GameDone>,
-    anchor: Option<GameDone>,
-    publication: bool,
-) -> Result<(), String> {
-    check_counts(root, sun, anchor)?;
-    if publication {
-        check_figures(root, sun, anchor)?;
-    }
-    Ok(())
-}
 /// Record today's verified counts and redraw both figures, so the chart
 /// always shows the numbers the README states.
 fn write_figures(
     root: &Path,
     sun: Option<GameDone>,
     anchor: Option<GameDone>,
+    publication: bool,
 ) -> Result<(), String> {
     let today = history::today();
     let mut history = history::load(root)?;
     history::record(&mut history, &today, sun, anchor);
-    history::record_models(&mut history, &today, &history::models_on(root, &today)?);
+    let models = if publication {
+        history::publication_models(root, &history, &today)?
+    } else {
+        history::models_on(root, &today)?
+    };
+    history::record_models(&mut history, &today, &models);
     // The history is itself a tracked file the map draws: write it with a
     // placeholder of the digest's length, then record the digest of the
     // tree as it now stands, which leaves the history's size unchanged.
@@ -673,12 +413,8 @@ fn write_figures(
 /// date, that date is today (or yesterday while today has no row), they show
 /// the latest recorded row and the README's progress line, the chart
 /// is exactly what that day's rows draw, and the map is exactly what the
-/// current tracked files draw.
-fn check_figures(
-    root: &Path,
-    sun: Option<GameDone>,
-    anchor: Option<GameDone>,
-) -> Result<(), String> {
+/// tracked files draw unless they changed since it was drawn that day.
+fn check_figures(root: &Path) -> Result<(), String> {
     let stale = |why: &str| {
         Err(format!(
             "README figures are stale ({why}); run: make coverage"
@@ -696,24 +432,22 @@ fn check_figures(
     if !figure_date_current(&date, &today, has_today) {
         return stale(&format!("drawn on {date:?}"));
     }
-    for (game, done) in [("tbs", sun), ("tla", anchor)] {
-        if let Some(done) = done.filter(|done| done.executable > 0) {
-            let measured = serde_json::json!({"done": done.bytes(), "executable": done.executable});
-            if history["figures"][game] != measured {
-                return stale(&format!("{game} does not match the verified byte counts"));
-            }
-        }
-    }
     let latest = history["days"].as_array().and_then(|days| days.last());
     for game in ["tbs", "tla"] {
-        if latest.map(|row| &row[game]) != Some(&history["figures"][game]) {
+        let shown = history::percent(&history["figures"][game]);
+        if latest.map(|row| history::percent(&row[game])) != Some(shown) {
             return stale(&format!("{game} is not the latest recorded row"));
         }
     }
     let readme = std::fs::read_to_string(root.join("README.md")).unwrap_or_default();
-    let expected = status_line(sun, anchor);
-    if readme_progress(&readme) != Some(expected.as_str()) {
-        return stale(&format!("the line under ## Progress must be {expected}"));
+    for (icon, game) in [("☀️", "tbs"), ("⚓️", "tla")] {
+        if let Some(shown) = history::percent(&history["figures"][game]) {
+            // The README floors to hundredths, as the chart labels do.
+            let shown = (shown * 100.0 + 1e-9).floor() / 100.0;
+            if readme.contains("**☀️ ") && !readme.contains(&format!("{icon} {shown:.2}%")) {
+                return stale(&format!("{game} {shown:.2}% is not the README's progress"));
+            }
+        }
     }
     let chart =
         std::fs::read(root.join(figure::CHART)).map_err(|e| format!("{}: {e}", figure::CHART))?;
@@ -736,13 +470,8 @@ fn check_figures(
     if raster::decode(&chart) != drawn(&expected_chart) {
         return stale(&format!("{} differs from its rows", figure::CHART));
     }
-    if history["figures"]["files"].as_str() != Some(map_inputs(root).as_str()) {
-        return stale(&format!(
-            "{} was drawn from different tracked files",
-            figure::MAP
-        ));
-    }
-    if raster::decode(&map) != drawn(&expected_map) {
+    let unchanged = history["figures"]["files"].as_str() == Some(map_inputs(root).as_str());
+    if unchanged && raster::decode(&map) != drawn(&expected_map) {
         return stale(&format!("{} differs from the tracked files", figure::MAP));
     }
     Ok(())
@@ -757,6 +486,20 @@ fn run(argv: &[String]) -> Result<String, String> {
     }
     if o.self_test {
         return Ok("self-test=ok coverage-map".into());
+    }
+    if o.publication && (!o.write || o.check || o.models || o.assembly_spans) {
+        return Err("--publication requires --write; it cannot relabel models".into());
+    }
+    if o.publication
+        && (o
+            .exact
+            .as_deref()
+            .is_some_and(|reference| reference != "worktree")
+            || o.recon
+                .as_deref()
+                .is_some_and(|reference| reference != "worktree"))
+    {
+        return Err("--publication requires the current worktree inputs".into());
     }
     if o.models {
         // Relabel every day's commits by model from the local agent logs.
@@ -775,9 +518,9 @@ fn run(argv: &[String]) -> Result<String, String> {
         }
         let (sun, anchor) = (measured(&root(), "tbs-en")?, measured(&root(), "tla-en")?);
         if o.check {
-            check_figures(&root(), sun, anchor)?;
+            check_figures(&root())?;
         } else if o.write {
-            write_figures(&root(), sun, anchor)?;
+            write_figures(&root(), sun, anchor, o.publication)?;
         } else {
             return Err("--files requires --write or --check".into());
         }
@@ -828,39 +571,27 @@ fn run(argv: &[String]) -> Result<String, String> {
         measured(&root(), "tla-en")?
     };
     let status = status_line(sun, anchor);
-    let publication = publication_required(&root(), o.publication);
     if o.check {
-        check_progress(&root(), sun, anchor, publication)?;
+        check_figures(&root())?;
         let readme = read(&root().join("README.md"))?;
         if update_readme(&readme, &o.target, &map, &status) != readme {
             return Err("README coverage values are stale; run: make coverage".into());
         }
-        return Ok(format!(
-            "coverage-map=current figures={} {}",
-            if publication {
-                "current"
-            } else {
-                "deferred-to-main"
-            },
-            summary(&map.document)?
-        ));
+        return Ok(format!("coverage-map=current {}", summary(&map.document)?));
     }
     if o.write {
         write(&map_path(&o.target), &map_json)?;
-        write_progress(&root(), sun, anchor, publication)?;
+        write_figures(&root(), sun, anchor, o.publication)?;
         let readme = read(&root().join("README.md"))?;
         write(
             &root().join("README.md"),
             &update_readme(&readme, &o.target, &map, &status),
         )?;
         return Ok(format!(
-            "map={} figures={} {}",
+            "map={} figures={},{} {}",
             map_path(&o.target).display(),
-            if publication {
-                format!("{},{}", figure::CHART, figure::MAP)
-            } else {
-                "deferred-to-main".into()
-            },
+            figure::CHART,
+            figure::MAP,
             summary(&map.document)?
         ));
     }

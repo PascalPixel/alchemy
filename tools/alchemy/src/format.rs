@@ -16,8 +16,7 @@ pub const NATIVE_ROOTS: [&str; 9] = [
 ];
 /// Reconstruction registries under `recon/` keep the same canonical JSON
 /// under their lowercase scaffolding names.
-pub const RECONSTRUCTION_JSON: [&str; 3] = [
-    "recon/tla/project.json",
+pub const RECONSTRUCTION_JSON: [&str; 2] = [
     "recon/tla/private-inputs.json",
     "recon/tbs/private-inputs.json",
 ];

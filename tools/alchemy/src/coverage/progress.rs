@@ -63,9 +63,6 @@ impl GameDone {
     pub fn percent(&self) -> f64 {
         floor_percent(self.bytes(), self.executable)
     }
-    pub fn whole(&self) -> i64 {
-        crate::coverage::jsnum::done_percent_whole(self.bytes(), 0, self.executable)
-    }
 }
 
 /// Read the independently calculated score carried by the presentation map.
@@ -184,14 +181,15 @@ fn status(root: &Path, target: &str) -> Result<Result<GameDone, String>, String>
 const AUDIT_PENDING: &str = "pending its executable audit";
 const BUILD_PENDING: &str = "pending a byte-identical build of the current tree";
 
-/// The commit prefix: both games' whole DONE percentages, `?` for a game whose
+/// The commit prefix: both games' DONE percentages, `?` for a game whose
 /// executable audit is incomplete.
 fn subject(root: &Path) -> Result<String, String> {
-    let whole = |done: Option<GameDone>| done.map_or("?".to_string(), |d| d.whole().to_string());
+    let percent =
+        |done: Option<GameDone>| done.map_or("?".to_string(), |d| format!("{:.2}", d.percent()));
     Ok(format!(
         "☀️ {}% ⚓️ {}% –",
-        whole(measured(root, "tbs-en")?),
-        whole(measured(root, "tla-en")?)
+        percent(measured(root, "tbs-en")?),
+        percent(measured(root, "tla-en")?)
     ))
 }
 
@@ -430,7 +428,7 @@ mod tests {
                 ..GameDone::default()
             }
         );
-        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ 75% –");
+        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ 75.00% –");
         // A changed source keeps the inventory but makes the receipt stale.
         let source = root.join("games/THE LOST AGE/SRC/A.C");
         std::fs::create_dir_all(source.parent().unwrap()).unwrap();
@@ -443,7 +441,7 @@ mod tests {
         assert_eq!(status(root, "tla-en").unwrap(), Err(BUILD_PENDING.into()));
         assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ ?% –");
         std::fs::remove_file(&source).unwrap();
-        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ 75% –");
+        assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ 75.00% –");
         crate::coverage::proof::withdraw_full_build(root, target).unwrap();
         assert_eq!(measured(root, "tla-en").unwrap(), None);
         assert_eq!(subject(root).unwrap(), "☀️ ?% ⚓️ ?% –");

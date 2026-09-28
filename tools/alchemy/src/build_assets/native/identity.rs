@@ -303,7 +303,8 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
             .as_array()
             .ok_or("descriptor table missing")?;
         if records.len() != english_descriptors.len()
-            || address(&recovered["segments"][0]["address"])? != english_catalog.table
+            || crate::build_assets::placed_address(root, edition.catalog_source.unwrap(), "")?
+                != english_catalog.table
         {
             return Err("recovered descriptor catalog differs from the registered table".into());
         }
@@ -319,6 +320,7 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
         }
     }
     let mut banks = BTreeMap::new();
+    let placed = crate::build_assets::placements(root)?;
     if let Some(directory) = edition.character_dir {
         for entry in walkdir::WalkDir::new(root.join(directory)) {
             let entry = entry.map_err(|e| e.to_string())?;
@@ -332,23 +334,22 @@ pub fn audit(root: &Path, arguments: &[String]) -> Result<(), String> {
                 continue;
             }
             let doc = json(entry.path())?;
-            if doc["directory"]["address"].is_string() {
-                banks.insert(
-                    address(&doc["directory"]["address"])?,
-                    relative(root, entry.path()),
-                );
+            let path = relative(root, entry.path());
+            if let Some(&directory) = placed.get(&(path.clone(), "/directory".to_string())) {
+                banks.insert(directory, path.clone());
             }
             if let Some(owned) = doc["banks"].as_object() {
                 for (key, bank) in owned {
                     let directory = if bank["directory"].is_string() {
-                        &bank["directory"]
+                        address(&bank["directory"])?
                     } else {
-                        &bank["directory"]["address"]
+                        *placed
+                            .get(&(path.clone(), format!("/banks/{key}/directory")))
+                            .ok_or_else(|| {
+                                format!("no region places {path}#/banks/{key}/directory")
+                            })?
                     };
-                    banks.insert(
-                        address(directory)?,
-                        format!("{}#/banks/{key}", relative(root, entry.path())),
-                    );
+                    banks.insert(directory, format!("{path}#/banks/{key}"));
                 }
             }
         }

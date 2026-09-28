@@ -1,32 +1,12 @@
 // Compiler-family membership. These tables say which compiler and library
-// produced a source's bytes and the execution state of RAM-loaded modules.
-// Every member of a route compiles with its canonical flag set (routing.rs), and a
+// produced a source's bytes; they never carry a per-file flag. Every member
+// of a family compiles with that family's single flag set (routing.rs), and a
 // source that is not exact under its family's flags is not exact.
 //
 // Members are canonical source-owner IDs (`main:ADDRESS` or
 // `resource_XXX:ADDRESS`), the same keys as each game's source-paths.json.
 // Routing belongs to the owner, not to whatever file currently holds it, so a
 // member keeps its family when its source is renamed, moved, or grouped.
-
-// Complete game modules copied to RAM and entered at even addresses. Pascal's
-// 2026-09-23 approval is -marm -mno-apcs-frame, with the other Game flags intact.
-// Compilation/assembly work; linking still requires a separate ABI decision:
-// historical GAS marks ARM objects 0x4, while the generated symbol object is
-// 0x204 (software FP). Do not add flags or rewrite ELF metadata to mask this.
-// Read-only trace: this is an ELF-input incompatibility, not an observed FP
-// instruction mismatch. The current claimed link uses 0x204 Thumb inputs;
-// raw ARM modules link separately before binary placement. No linked ARM
-// candidate comparison or new DONE is established by enabling these routes.
-pub static ARM_GAME_SOURCES: &[&str] = &[
-    // GRAPHICS/TILE/UPDATE_VERTICES.S: [0800a0f8,0800a37c), 0x284 bytes.
-    // Loader 080109e8 DMA-copies it to heap slot 46, then calls that slot
-    // without setting bit 0; the listing and its callback returns are ARM.
-    "main:0800a0f8",
-    // FIELD/COMMON/OBJECT/UPDATE_ALL.S: [0800a494,0800a97c), 0x4e8 bytes,
-    // including its three local call stubs and pools. Object_RunUpdateAllFromHeap
-    // (0800d304) copies exactly 0x4e8 bytes and calls the even heap address.
-    "main:0800a494",
-];
 
 // Library code built with agbcc.
 pub static AGBCC_SOURCES: &[&str] = &[

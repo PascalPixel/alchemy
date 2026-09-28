@@ -1,0 +1,3 @@
+#!/bin/sh
+# Automatic merge commits use the same landing gate as ordinary commits.
+exec make --no-print-directory precommit

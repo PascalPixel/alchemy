@@ -363,7 +363,7 @@ SECTIONS
         "*/recon/tbs/raw/080164d2.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080164d4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/OUTPUT_LIST.o"(.text)
-        "*/recon/tbs/raw/080165d8.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/QUEUE_RENDER_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/CHANNEL.o"(.text)
         "*/recon/tbs/raw/080167de.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080167e0.o"(.text .rodata .data .padding)

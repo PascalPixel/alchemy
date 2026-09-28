@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+extern s32 FuneHeya_CueTimer;
 #include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
@@ -200,7 +202,7 @@ void FieldScene_RunFormationAndEffectPresentation(void)
         FieldScene_RunStepThen10(27);
     } else {
         Actor_SetAnimationAndWait(27, 4);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         FieldScene_RunStepThen10(27);
         FieldScene_RunSceneStep(3, 2, 40);
         Actor_RunRepeatedMotion(27, 1);
@@ -218,7 +220,7 @@ void FieldScene_RunFormationAndEffectPresentation(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1a8, 0x110);
     Actor_WalkTo(ACTOR_PARTY_LEADER, 0x1a8, 164);
     Event_Wait(60);
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x209;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
     FieldScene_RunSceneStep(9, 0, 0);
     GameFlag_Clear(0x301);
     GameFlag_Clear(0x927);
@@ -408,7 +410,7 @@ void FieldScene_RunExtendedFormationPresentation(void)
     Actor_EnableActionCallback(ACTOR_IVAN, action);
     Object_SetActionCallbackAndRefreshById(3, action);
     GameFlag_Set(0x302);
-    *(s32 *)0x0200ff84 = 0;
+    FuneHeya_CueTimer = 0;
     Value2(Scheduler_AddOrUpdateCallback, (s32)Scene_UpdateCueTimer, 0xc80);
     FieldScene_RunSceneStep(23, 0, 0);
     Actor_Destroy(27);

@@ -139,6 +139,7 @@ union GameStateRows {
     s16 halves[512][1];
 };
 void Scheduler_AddOrUpdateCallback();
+void FieldScene_RunSupplementalSequenceOne();
 u8 *Object_GetByIdFar();
 void BattleFx_StartFadeOverlay();
 void BattleFx_SetQueuedSoundAndPlay();
@@ -256,7 +257,7 @@ void FieldScene_RunMiddleSequence(void)
     Actor_SetSpriteFlags((s32)record, 0);
     record = Actor_Get(9);
     Actor_SetSpriteFlags((s32)record, 0);
-    Call2(Scheduler_AddOrUpdateCallback, 0x200b769, 0xc80);
+    Call2(Scheduler_AddOrUpdateCallback, (s32)FieldScene_RunSupplementalSequenceOne, 0xc80);
     if (GameFlag_IsSet(0x915) != 0) {
         Actor_SetPosition(10, 0x1aa0000, 0x2da0000);
         record = Actor_Get(10);

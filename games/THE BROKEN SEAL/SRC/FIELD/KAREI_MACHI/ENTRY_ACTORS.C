@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+void SceneEffect_UpdateLobeOrbitEffect26();
+
 
 s32 Engine_GameFlagIsSet();
 s32 Engine_GameFlagSet();
@@ -100,6 +102,6 @@ void KareiMachi_SetupEntryActors(void)
         *(s32 *)((s32)rec + 56) = *(s32 *)((s32)rec + 8);
         *(s32 *)((s32)rec + 60) = *(s32 *)((s32)rec + 12);
         *(s32 *)((s32)rec + 64) = *(s32 *)((s32)rec + 16);
-        Call2(Engine_TaskAddCallback, 0x200b90d, 0xc80);
+        Call2(Engine_TaskAddCallback, (s32)SceneEffect_UpdateLobeOrbitEffect26, 0xc80);
     }
 }

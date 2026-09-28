@@ -1,5 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+
+extern const s32 FuneHeya_ActionScriptE[];
+extern const s32 FuneHeya_ActionScriptF[];
 #include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
@@ -86,14 +89,14 @@ void SceneState_RunFlagGatedSetupCascade(void)
 
     if (GameFlag_IsSet(0x8a0) != 0) {
         OverlayObject_SetPositionAndHeading(8, 0x98, 0x1bc, 0x3000);
-        Engine_ActorEnableActionCallback(8, 0x0200e958);
+        Engine_ActorEnableActionCallback(8, FuneHeya_ActionScriptF);
         OverlayObject_SetPositionAndHeading(10, 0xb8, 0x1e0, 0xb000);
         OverlayObject_SetPositionAndHeading(12, 0xaa, 0x1e8, 0xb000);
         OverlayObject_SetPositionAndHeading(13, 0x88, 0x1e8, 0xd000);
         OverlayObject_SetPositionAndHeading(15, 0x78, 0x1e0, 0xd000);
         OverlayObject_SetPositionAndHeading(14, 0xb8, 0x20e, 0xb000);
         OverlayObject_SetPositionAndHeading(11, 0x88, 0x248, 0x8000);
-        Engine_ActorEnableActionCallback(11, 0x0200e840);
+        Engine_ActorEnableActionCallback(11, FuneHeya_ActionScriptE);
         return;
     }
 

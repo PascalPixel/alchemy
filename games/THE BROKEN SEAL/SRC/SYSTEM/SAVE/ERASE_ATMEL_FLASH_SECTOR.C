@@ -1,11 +1,7 @@
-/*
- * Draft: this code matches, but its translation unit is not the original one:
- * the library's constant block at 0x08007a50 (its .rodata) is not reproduced.
- * Links as recon/tbs/raw/08007098.s until the unit is rebuilt.
- */
-/* The wait callback is read from the flash runtime cell at 0x02004c00. */
 #include "FLASH.H"
 #include "FLASH_DATA.H"
+
+extern FlashWaitProc Flash_Handler3;
 
 u16 EraseAtmelFlashSector(u16 sector)
 {
@@ -29,7 +25,7 @@ u16 EraseAtmelFlashSector(u16 sector)
     }
     cursor--;
     *(volatile u16 *)0x04000208 = saved;
-    result = (*(FlashWaitProc *)0x02004C00)(1, cursor, 0xFF);
+    result = Flash_Handler3(1, cursor, 0xFF);
     if (result != 0) {
         result = (result & 0xFF00) | 2;
     }

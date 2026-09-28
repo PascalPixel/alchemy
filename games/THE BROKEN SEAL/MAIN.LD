@@ -1494,7 +1494,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BURST_SHOWER.o"(.text)
         "*/recon/tbs/raw/080dc1ec.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080dc454.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080dc6bc.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)
         "*/recon/tbs/raw/080dc968.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_DUAL_TABLE_MODE0.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_DUAL_TABLE.o"(.text)

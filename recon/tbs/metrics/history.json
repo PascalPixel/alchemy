@@ -124,14 +124,14 @@
       "date": "2026-09-28",
       "tbs": {"done": 1013438, "executable": 1375934},
       "tla": {"done": 42338, "executable": 1975640},
-      "models": {"Sol 6": 3}
+      "models": {"Sol 6": 4}
     }
   ],
   "figures": {
     "date": "2026-09-28",
     "tbs": {"done": 1013438, "executable": 1375934},
     "tla": {"done": 42338, "executable": 1975640},
-    "models": {"Sol 6": 3},
-    "files": "59c64697547d6d53"
+    "models": {"Sol 6": 4},
+    "files": "2bb282fa72a932e1"
   }
 }

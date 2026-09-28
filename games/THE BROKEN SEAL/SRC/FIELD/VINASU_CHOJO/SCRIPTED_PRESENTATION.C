@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "VINASU.H"
 #include "FIELD_EFFECT.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -28,13 +29,10 @@
 #define SceneEffect_SpawnAndBobWithActorZero Func_020005ec
 #define SceneActor_SetByte55ForActorZeroAnd12To17 Func_020006c0
 #define FieldScene_InitActorsAndDispatchBySubstate Func_0200071c
-#define FieldScene_RunSetupSequence35c4 Func_020035c4
 #define FieldScene_RunThreeStepsInBracket Func_020038c0
 #define FieldScene_RunBracketedSceneWithFlag282 Func_020038dc
-#define SceneState_ApplyArgMode0AndSet10 Func_02000894
 #define SceneState_ForwardByRuntimeWordBits Func_0200211c
 #define SceneState_ApplyPair140And0 Func_02002334
-#define FieldScene_CallPairWith10 Func_020008a8
 #define FieldScene_ForwardValue81fc Func_02002344
 #define FieldScene_RunScene3c9_02001280 Func_02001280
 #define FieldScene_RunStep6 Func_02002350
@@ -649,15 +647,15 @@ s32 FieldScene_InitActorsAndDispatchBySubstate(void)
     return z;
 }
 
-void SceneState_ApplyArgMode0AndSet10(s32 a)
+void VinasuChojo_ShowMessage(s32 speaker)
 {
-    Event_ShowMessage(a, 0);
+    Event_ShowMessage(speaker, 0);
     Event_Wait(10);
 }
 
-void FieldScene_CallPairWith10(s32 a, s32 b)
+void VinasuChojo_FaceActor(s32 actor, s32 facing)
 {
-    Actor_FaceDirection(a, b, 10);
+    Actor_FaceDirection(actor, facing, 10);
 }
 
 void FieldScene_RunScene3c9_02001280(s32 a0, s32 a1)
@@ -753,7 +751,7 @@ void FieldScene_RunStep6(void)
     Func_02004476();
 }
 
-void FieldScene_RunSetupSequence35c4(void)
+void VinasuChojo_FlashScreen(void)
 {
     Audio_PlayCue(187);
     ColorBuffer_ApplyTarget(0x7fff, 1);
@@ -990,8 +988,6 @@ void FieldScene_RunScene3c9_02003924(void)
 }
 
 enum {
-    ACTOR_FIRST_OF_PAIR = 20,
-    ACTOR_SECOND_OF_PAIR = 19,
     MSG_PAIR_DEFEATED = 0x2809
 };
 
@@ -1061,7 +1057,7 @@ void FieldScene_RunPairDefeat(void)
     Actor_RunRepeatedMotion(ACTOR_FIRST_OF_PAIR, 2);
     Event_Wait(10);
     Event_SetMessage(MSG_PAIR_DEFEATED);
-    State_ApplyArgMode0AndSet10(ACTOR_FIRST_OF_PAIR);
+    VinasuChojo_ShowMessage(ACTOR_FIRST_OF_PAIR);
     Actor_RunRepeatedMotion(ACTOR_SECOND_OF_PAIR, 3);
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_SECOND_OF_PAIR, 0, 40);

@@ -7803,7 +7803,7 @@
       "source": "FIELD/FUNE_HOBASHIRA/OBJECT_SCALE.C"
     },
     "resource_3c9:020008a8": {
-      "name": "Scene_CallPairWith10",
+      "name": "VinasuChojo_FaceActor",
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3b0:020001e0": {
@@ -8587,7 +8587,7 @@
       "source": "FIELD/SORU_STAR/PARTY_INTRO.C"
     },
     "resource_3c9:020035c4": {
-      "name": "Scene_RunSetupSequence35c4",
+      "name": "VinasuChojo_FlashScreen",
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_3ad:020012f0": {
@@ -9739,7 +9739,7 @@
       "source": "FIELD/COMMON/KUUPUAPPU_RUNPA/JAIL.C"
     },
     "resource_3c9:02000894": {
-      "name": "State_ApplyArgMode0AndSet10",
+      "name": "VinasuChojo_ShowMessage",
       "source": "FIELD/VINASU_CHOJO/SCRIPTED_PRESENTATION.C"
     },
     "resource_374:02000094": {

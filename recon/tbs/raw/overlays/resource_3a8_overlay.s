@@ -3127,130 +3127,8 @@ Func_02001ea4:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x0200beac
-	.section .text.x02009f14,"ax",%progbits
+	.section .text.x0200a008,"ax",%progbits
 	.align 2
-	.global Func_02001f14
-	.thumb_func
-Func_02001f14:
-	push {lr}
-	ldr r3, [pc, #224]
-	ldr r3, [r3]
-	cmp r3, #4
-	bhi .L_02001f14_0
-	ldr r2, [pc, #220]
-	lsls r3, r3, #2
-	ldr r3, [r3, r2]
-	mov pc, r3
-	movs r0, r0
-	ldr r7, [sp, #240]
-	lsls r0, r0, #8
-	ldr r7, [sp, #352]
-	lsls r0, r0, #8
-	ldr r7, [sp, #528]
-	lsls r0, r0, #8
-	ldr r7, [sp, #704]
-	lsls r0, r0, #8
-	ldr r7, [sp, #880]
-	lsls r0, r0, #8
-	movs r0, #21
-	bl 0x0200bc1c
-	movs r3, #0
-	adds r0, #100
-	strh r3, [r0]
-	ldr r1, [pc, #180]
-	movs r0, #21
-	bl 0x0200bc34
-	ldr r2, [pc, #164]
-	ldr r3, [r2]
-	adds r3, #1
-	b .L_02001f14_1
-	.2byte 0x2015
-	.2byte 0xf001
-	.2byte 0xfe5f
-	.2byte 0x3064
-	.2byte 0x2200
-	.2byte 0x5e83
-	.2byte 0x2b00
-	.2byte 0xd044
-	.2byte 0x2014
-	.2byte 0xf001
-	.2byte 0xfe57
-	.2byte 0x2300
-	.2byte 0x3064
-	.2byte 0x8003
-	.2byte 0x4923
-	.2byte 0x2014
-	.2byte 0xf001
-	.2byte 0xfe5c
-	.2byte 0x4a1e
-	.2byte 0x6813
-	.2byte 0x3301
-	.2byte 0xe035
-	.2byte 0x2014
-	.2byte 0xf001
-	.2byte 0xfe49
-	.2byte 0x3064
-	.2byte 0x2200
-	.2byte 0x5e83
-	.2byte 0x2b00
-	.2byte 0xd02e
-	.2byte 0x2014
-	.2byte 0xf001
-	.2byte 0xfe41
-	.2byte 0x2300
-	.2byte 0x3064
-	.2byte 0x8003
-	.2byte 0x4917
-	.2byte 0x2014
-	.2byte 0xf001
-	.2byte 0xfe46
-	.2byte 0x4a13
-	.2byte 0x6813
-	.2byte 0x3301
-	.2byte 0xe01f
-	.2byte 0x2014
-	.2byte 0xf001
-	.2byte 0xfe33
-	.2byte 0x3064
-	.2byte 0x2200
-	.2byte 0x5e83
-	.2byte 0x2b00
-	.2byte 0xd018
-	.2byte 0x2015
-	.2byte 0xf001
-	.2byte 0xfe2b
-	.2byte 0x2300
-	.2byte 0x3064
-	.2byte 0x8003
-	.2byte 0x490d
-	.2byte 0x2015
-	.2byte 0xf001
-	.2byte 0xfe30
-	.2byte 0x4a08
-	.2byte 0x6813
-	.2byte 0x3301
-	.2byte 0xe009
-	.2byte 0x2015
-	.2byte 0xf001
-	.2byte 0xfe1d
-	.2byte 0x3064
-	.2byte 0x2200
-	.2byte 0x5e83
-	.2byte 0x2b00
-	.2byte 0xd002
-	.2byte 0x4a02
-	.2byte 0x2300
-.L_02001f14_1:
-	str r3, [r2]
-.L_02001f14_0:
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0200d144
-	.4byte 0x02009f28
-	.4byte 0x0200bec0
-	.2byte 0xbfb0
-	.2byte 0x0200
 	.global Func_02002008
 	.thumb_func
 Func_02002008:
@@ -6286,6 +6164,8 @@ Func_02003a3c:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global KareiMachi_DanceScriptA
+KareiMachi_DanceScriptA:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -6346,6 +6226,8 @@ Func_02003a3c:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KareiMachi_DanceScriptB
+KareiMachi_DanceScriptB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -7469,3 +7351,8 @@ KareiMachi_DoorCells:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 16
+	.global KareiMachi_DanceStep
+KareiMachi_DanceStep:
+	.space 4

@@ -370,7 +370,17 @@ fn run_gate(
         std::fs::File::create(&log).map_err(|error| format!("{}: {error}", log.display()))?;
     let error_file = file.try_clone().map_err(|error| error.to_string())?;
     let started = Instant::now();
-    let status = Command::new("make")
+    let mut command = Command::new("make");
+    if isolated(gate) {
+        // A commit hook's git variables name the repository being committed;
+        // tests that make their own repositories must never inherit them.
+        for (key, _) in std::env::vars_os() {
+            if key.to_string_lossy().starts_with("GIT_") {
+                command.env_remove(key);
+            }
+        }
+    }
+    let status = command
         .current_dir(root)
         .args(arguments)
         .stdin(Stdio::null())
@@ -386,9 +396,22 @@ fn run_gate(
     })
 }
 
+/// Gates that run outside the commit being made: the tool tests.
+fn isolated(gate: &str) -> bool {
+    matches!(gate, "test" | "tool-tests")
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_the_tests_leave_the_commits_repository() {
+        assert!(isolated("test"));
+        assert!(!isolated("index-sync-check"));
+        assert!(!isolated("publication-staged-check"));
+        assert!(!isolated("compare"));
+    }
     use std::collections::{BTreeMap, BTreeSet};
 
     #[test]

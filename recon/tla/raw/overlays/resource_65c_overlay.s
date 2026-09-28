@@ -154,6 +154,7 @@ Overlay_02000000:
 	.irp EntryTarget, 0x080000d1, 0x080003d1, 0x080c8089, 0x080c8119, 0x080c86a9, 0x080c86b1, 0x080c86c1, 0x080c86e9
 	overlay_veneer \EntryTarget
 	.endr
+	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0xffff0000
 	.4byte 0x000000ac

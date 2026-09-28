@@ -1457,7 +1457,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RENDER_MODE.o"(.text)
         "*/recon/tbs/raw/080d52c8.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080d59b0.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080d5c48.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_MARKERS.o"(.text)
         "*/recon/tbs/raw/080d5e54.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/APPLY_PHASED_DELTA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_NO_EFFECT_FRAMES.o"(.text)

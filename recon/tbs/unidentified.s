@@ -800,7 +800,10 @@ BattleFx6_Gravity:
 	.section .unidentified.080ef014,"a"
 	.incbin "baserom.gba", 0x000ef014, 0x00000fec
 	.section .unidentified.080f0a5c,"a"
-	.incbin "baserom.gba", 0x000f0a5c, 0x000015a4
+	.incbin "baserom.gba", 0x000f0a5c, 0x000007c4
+	.global DisplayScroll_LineTable
+DisplayScroll_LineTable:
+	.incbin "baserom.gba", 0x000f1220, 0x00000de0
 	.section .unidentified.080f2b6c,"ax"
 	.global Func_080f2b6c
 	.thumb_func
@@ -811,9 +814,12 @@ Func_080f2b6c:
 	.section .unidentified.080f53dc,"a"
 	.incbin "baserom.gba", 0x000f53dc, 0x00000c24
 	.section .unidentified.080f86f8,"a"
-	.incbin "baserom.gba", 0x000f86f8, 0x00000908
-	.section .unidentified.080fb792,"a"
-	.incbin "baserom.gba", 0x000fb792, 0x0000009e
+	.incbin "baserom.gba", 0x000f86f8, 0x0000003e
+	.global ReelGame_TitleLetterWidths
+ReelGame_TitleLetterWidths:
+	.incbin "baserom.gba", 0x000f8736, 0x000008ca
+	.section .unidentified.080fb7a0,"a"
+	.incbin "baserom.gba", 0x000fb7a0, 0x00000090
 	.global Sound_PcmPitchCodes
 Sound_PcmPitchCodes:
 	.incbin "baserom.gba", 0x000fb830, 0x000000b4

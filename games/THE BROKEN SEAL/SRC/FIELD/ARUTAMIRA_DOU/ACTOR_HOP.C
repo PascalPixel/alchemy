@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_08000128(s32 distance, s32 angle, union FieldCoordinate *pos);
-s32 Main_080091d8(struct FieldActor *actor, union FieldCoordinate *pos);
+void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
+s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 
 /* Hops the selected actor one step (two cells) the way it faces, snapping to
  * the facing's sixteenth, unless something blocks the landing cell. */
@@ -19,9 +19,9 @@ void ArutamiraDou_HopSelectedActor(void)
     {
         s32 angle = actor->facing & 0xf000;
 
-        Main_08000128(0x200000, angle, p);
+        Vector_AddPolarOffset(0x200000, angle, p);
     }
-    if (Main_080091d8(actor, p) == 0) {
+    if (Object_CheckMovementCollision(actor, p) == 0) {
         Engine_EventBegin();
         Engine_ObjectSetAnimation(actor, 6);
         Engine_TaskWait(6);

@@ -8,11 +8,11 @@ struct Obj {
     s16 frame;
 };
 
-extern s32 Data_0200c468[];
+extern s32 ArutamiraDou_PulseScales[];
 
 void ArutamiraDou_UpdateScalePulse(struct Obj *obj)
 {
-    s32 v = Data_0200c468[(u16)(obj->frame >> 2) & 3];
+    s32 v = ArutamiraDou_PulseScales[(u16)(obj->frame >> 2) & 3];
 
     obj->a = v;
     obj->b = v;

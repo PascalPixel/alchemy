@@ -300,6 +300,29 @@ fn overlay_streams(
         .ok_or("source has no directory")?
         .join("raw/overlays");
     let directory = output.join("overlays");
+    // The sources each overlay's own script links beside its listing, compiled
+    // once for every overlay that shares them.
+    let mut linked = Vec::with_capacity(ids.len());
+    let mut sources = Vec::new();
+    for id in &ids {
+        let script = overlay_script(root, target, &listings, id);
+        let text = fs::read_to_string(root.join(&script))
+            .map_err(|error| format!("{}: {error}", script.display()))?;
+        let own = format!("resource_{id}_overlay");
+        let mut objects = Vec::new();
+        for object in script_objects(&text)
+            .into_iter()
+            .filter(|object| *object != own)
+        {
+            let source = source_for(root, &object)?;
+            objects.push(output.join("obj").join(&source).with_extension("o"));
+            if !sources.contains(&source) {
+                sources.push(source);
+            }
+        }
+        linked.push((script, objects));
+    }
+    compile_all(root, target, &sources, output)?;
     let next = AtomicUsize::new(0);
     let errors = Mutex::new(Vec::new());
     let workers = std::thread::available_parallelism().map_or(4, |count| count.get());
@@ -310,7 +333,9 @@ fn overlay_streams(
                 let Some(id) = ids.get(index) else {
                     break;
                 };
-                if let Err(error) = build_overlay(root, target, &listings, id, &directory) {
+                let (script, objects) = &linked[index];
+                if let Err(error) = build_overlay(root, &listings, id, script, objects, &directory)
+                {
                     errors
                         .lock()
                         .unwrap()
@@ -332,21 +357,25 @@ fn overlay_streams(
 /// Link one overlay listing alone at its load address, with its own script
 /// when it places compiler-library members and the game's otherwise, and
 /// compress the image. The map stays beside it for progress.
+fn overlay_script(root: &Path, target: DecompTarget, listings: &Path, id: &str) -> PathBuf {
+    let own = listings.join(format!("resource_{id}.ld"));
+    if root.join(&own).is_file() {
+        own
+    } else {
+        Path::new(target.game_dir()).join("OVERLAY.LD")
+    }
+}
+
 fn build_overlay(
     root: &Path,
-    target: DecompTarget,
     listings: &Path,
     id: &str,
+    script: &Path,
+    objects: &[PathBuf],
     directory: &Path,
 ) -> Result<(), String> {
     fs::create_dir_all(directory).map_err(|error| error.to_string())?;
     let listing = listings.join(format!("resource_{id}_overlay.s"));
-    let own = listings.join(format!("resource_{id}.ld"));
-    let script = if root.join(&own).is_file() {
-        own
-    } else {
-        Path::new(target.game_dir()).join("OVERLAY.LD")
-    };
     let path = |name: String| directory.join(name).to_string_lossy().into_owned();
     let object = path(format!("resource_{id}_overlay.o"));
     let elf = path(format!("resource_{id}.elf"));
@@ -354,29 +383,39 @@ fn build_overlay(
     let image = path(format!("resource_{id}.bin"));
     let stream = directory.join(format!("resource_{id}.lz"));
     let stamp = stream.with_extension("lz.key");
+    let mut link: Vec<String> = [
+        "arm-none-eabi-ld",
+        "--no-warn-mismatch",
+        "-T",
+        &script.to_string_lossy(),
+        "-Map",
+        &map,
+        "-o",
+        &elf,
+        &object,
+    ]
+    .map(String::from)
+    .to_vec();
+    link.extend(
+        objects
+            .iter()
+            .map(|path| path.to_string_lossy().into_owned()),
+    );
+    link.push("tools/out/compiler-runtime/libgcc.a".into());
     let steps = [
         assembly_command(&listing.to_string_lossy(), &object),
-        [
-            "arm-none-eabi-ld",
-            "--no-warn-mismatch",
-            "-T",
-            &script.to_string_lossy(),
-            "-Map",
-            &map,
-            "-o",
-            &elf,
-            &object,
-            "tools/out/compiler-runtime/libgcc.a",
-        ]
-        .map(String::from)
-        .to_vec(),
+        link,
         ["arm-none-eabi-objcopy", "-O", "binary", &elf, &image]
             .map(String::from)
             .to_vec(),
     ];
     let mut hasher = Sha256::new();
     hasher.update(with_includes(root, &root.join(&listing))?);
-    hasher.update(fs::read(root.join(&script)).map_err(|error| error.to_string())?);
+    hasher.update(fs::read(root.join(script)).map_err(|error| error.to_string())?);
+    for object in objects {
+        let stamp = object.with_extension("o.key");
+        hasher.update(fs::read(&stamp).map_err(|error| format!("{}: {error}", stamp.display()))?);
+    }
     for step in &steps {
         hasher.update(step.join("\0").as_bytes());
     }

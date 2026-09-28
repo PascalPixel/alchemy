@@ -24,6 +24,9 @@ struct BattlePresentationTransition {
 void BattleCamera_SetRange(s32 cx, s32 cy, s32 ox, s32 oy, s32 scale);
 
 s32 BattlePresentation_RunAction(s16 *action);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void BattleFx_ArmBg2AffineHBlankDma(void);
+void Palette_StepFadeTransfer(void);
 struct BattleEffectArgument;
 void BattleEffect_RunBurstShower(struct BattleEffectArgument *effect, s32 mode);
 

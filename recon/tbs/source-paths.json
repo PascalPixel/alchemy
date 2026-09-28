@@ -10719,7 +10719,7 @@
       "name": "Unnamed_080e2538"
     },
     "main:080e47b8": {
-      "name": "FunctionHead_080e47b8"
+      "name": "BattleFx_RunCastingImpact"
     },
     "main:08094820": {
       "name": "Unnamed_08094820"
@@ -20463,7 +20463,7 @@
       "name": "BattleFx_OpenCanvasLayer"
     },
     "main:080cdb24": {
-      "name": "Unnamed_080cdb24"
+      "name": "BattleFx_BeginTiledCanvas"
     },
     "main:080ce034": {
       "name": "Unnamed_080ce034"
@@ -20526,7 +20526,7 @@
       "name": "Unnamed_080e40a4"
     },
     "main:080e46f0": {
-      "name": "Unnamed_080e46f0"
+      "name": "BattleFx_StepPaletteToResource"
     },
     "main:080e89ec": {
       "name": "Unnamed_080e89ec"

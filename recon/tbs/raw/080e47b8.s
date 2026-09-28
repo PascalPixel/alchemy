@@ -43,10 +43,10 @@
 	.set sub_080e67a2, 0x080e67a2
 	.set sub_080ed408, 0x080ed408
 	.set sub_080f9010, 0x080f9010
-	.global FunctionHead_080e47b8
+	.global BattleFx_RunCastingImpact
 	.global Func_080e47b8
 	.thumb_func
-FunctionHead_080e47b8:
+BattleFx_RunCastingImpact:
 Func_080e47b8:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp

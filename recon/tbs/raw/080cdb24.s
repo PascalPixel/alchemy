@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.set sub_080cd594, 0x080cd594
-	.global Unnamed_080cdb24
+	.global BattleFx_BeginTiledCanvas
 	.global Func_080cdb24
 	.thumb_func
-Unnamed_080cdb24:
+BattleFx_BeginTiledCanvas:
 Func_080cdb24:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

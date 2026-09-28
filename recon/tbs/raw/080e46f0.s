@@ -2,10 +2,10 @@
 	.thumb
 	.set sub_08002f40, 0x08002f40
 	.set sub_080072f0, 0x080072f0
-	.global Unnamed_080e46f0
+	.global BattleFx_StepPaletteToResource
 	.global Func_080e46f0
 	.thumb_func
-Unnamed_080e46f0:
+BattleFx_StepPaletteToResource:
 Func_080e46f0:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl

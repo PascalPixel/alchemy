@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7772 bytes; 2858 differing halfwords, 1305 aligned edits. */
+ * Candidate 7776 bytes; 2746 differing halfwords, 893 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -11,6 +11,7 @@
 #include "MOTION_OBJECT.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "BATTLE_PRESENTATION.H"
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
 extern u8 Value_0000008d;
@@ -57,7 +58,7 @@ struct BattleObjectSlot *GetBattleObjectSlotFar(s32 actor_id);
 void BattleEventRuntime_BeginPhaseFar();
 void ObjectGroup_TickMemberTimers();
 void BattleFx_BeginCanvasLayer();
-s32 Func_080cdb24();
+void BattleFx_BeginTiledCanvas(u32 display_control);
 void BattleFx_EndCanvasLayer();
 void BattleFx_FetchRectangleBlitters(s32 alternate, RectangleBlit *output);
 s32 BattleFx_RunSparkGroups();
@@ -68,7 +69,7 @@ void BattleFx_RunPaletteRampMode1();
 s32 BattleFx_RunProjectileVolley();
 void Graphics_PackTileRows();
 void Camera_ApplyShake(s32 x, s32 y);
-void Func_080e46f0();
+void BattleFx_StepPaletteToResource(s32 resource_id);
 
 void Audio_PlayCue();
 
@@ -90,6 +91,8 @@ static __inline__ void ClearWords(s32 dest, u32 size)
     ((s32 (*)(s32, u32))0x03000164)(dest, size);
 }
 
+/* Particle image offsets indexed by size; the remaining tables describe
+ * individual impact images (offsets, dimensions and placement). */
 extern u16 Data_080ede48[];
 extern u16 Data_080eedea[];
 extern u8 Data_080ede9f[];
@@ -110,7 +113,7 @@ static __inline__ void DrawImage(s32 canvas, s32 pixels, s32 x, s32 y, s32 width
     (*draw)((void *)canvas, (void *)pixels, x, y, width, height);
 }
 
-void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
+void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
 {
     void **heap_cache;
     void **heap_cursor;
@@ -176,7 +179,7 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
     sprites = (s32)heap_cache[2];
     work->effect = command;
     if (kind == 11 || kind == 8 || kind == 32) {
-        Func_080cdb24(0);
+        BattleFx_BeginTiledCanvas(0);
     } else {
         BattleFx_BeginCanvasLayer(0);
     }
@@ -265,24 +268,23 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
     } else {
         work->transfer_value = 50;
     }
-    Scheduler_AddOrUpdateCallback(0x80cd261, 0x480);
-    target_screen = &target_pos;
-    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], &target_pos);
-    caster_screen = &caster_pos;
-    EffectPosition_ApplyStepAndYOffset(work->effect->actor, &caster_pos);
-    draw_pair = blitters;
-    BattleFx_FetchRectangleBlitters(work->effect->side, blitters);
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
+    /* FAKEMATCH: Retain each output pointer while preparing its call. */
+    EffectPosition_ApplyStepAndYOffset(work->effect->actors[0], target_screen = &target_pos);
+    EffectPosition_ApplyStepAndYOffset(work->effect->actor, caster_screen = &caster_pos);
+    BattleFx_FetchRectangleBlitters(work->effect->side, draw_pair = blitters);
     *(s32 *)(((s32)work + 0x77b4)) = 24;
     *(s32 *)(((s32)work + 0x77b8)) = 0;
-    /* Gather particles around the acting unit for 32 frames. */
+    /* Gather particles around the acting unit for 32 frames. The same
+     * records later hold the sparks emitted at the target. */
     caster_actor = GetBattleObjectSlotFar(work->effect->actor)->object;
     {
-
-        seed = (struct EffectStep *)((u8 *)work + 0x7080);
+        seed = work->particles;
         for (i = 0; i != 64; i++, seed++) {
             seed->x = (Random16() & 63) + 32;
             seed->y = 0;
             seed->z = 0;
+            /* Gathering reuses velocity fields as rotation angles. */
             seed->velocity_x = Random16() & 0xffff;
             seed->velocity_y = Random16() & 0xffff;
             seed->velocity_z = Random16() & 0xffff;
@@ -308,19 +310,21 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
     Audio_PlayCue(212);
     frame = 0;
     do {
-        cursor = (s32)work + 0x7080;
+        cursor = (s32)work->particles;
         cnt = 0;
         i = 0;
         do {
-            if (*(s32 *)(cursor) >= 0) {
+            struct EffectStep *step = (struct EffectStep *)cursor;
+
+            if (step->x >= 0) {
                 if (frame >= (i / 4)) {
                     {
                         s32 size = 5;
 
                         Render_ResetTransformState();
-                        SceneTransform_ApplyRoll(*(s32 *)(cursor + 20));
-                        SceneTransform_ApplyPitch(*(s32 *)(cursor + 12));
-                        SceneTransform_ApplyYaw(*(s32 *)(cursor + 16));
+                        SceneTransform_ApplyRoll(step->velocity_z);
+                        SceneTransform_ApplyPitch(step->velocity_x);
+                        SceneTransform_ApplyYaw(step->velocity_y);
                         EffectPosition_ApplyBaseAndYOffset((s32 *)cursor, &spark_screen);
                         spark_screen.x = spark_screen.x / 2 + caster_screen->x;
                         if (kind <= 7)
@@ -338,12 +342,12 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
                             (void *)canvas, (void *)(sprites + Data_080ede48[size - 1]),
                             spark_screen.x - size / 2, spark_screen.y - size, size, size * 2);
                     }
-                    *(s32 *)(cursor) = (*(s32 *)(cursor)-4);
+                    step->x -= 4;
                 }
-                cnt = (cnt + 1);
+                cnt++;
             }
-            i = (i + 1);
-            cursor = (cursor + 28);
+            i++;
+            cursor += sizeof(struct EffectStep);
         } while (i != 64);
         if (kind <= 7) {
             active_cnt = cnt;
@@ -359,7 +363,7 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
         }
         work->transfer_pending = 1;
         WaitFrames(1);
-        frame = (frame + 1);
+        frame++;
     } while (frame != 32);
     if (kind == 11) {
         *(volatile u16 *)0x04000020 = 0x100;
@@ -408,8 +412,8 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->unknown_001c = 0;
-        Scheduler_RemoveCallback(0x80cd4b5);
-        Scheduler_RemoveCallback(0x80cd261);
+        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         Object_SetMode((s32)caster_actor, 3);
@@ -435,8 +439,8 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->unknown_001c = 0;
-        Scheduler_RemoveCallback(0x80cd4b5);
-        Scheduler_RemoveCallback(0x80cd261);
+        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         command->variant = 3;
@@ -452,14 +456,14 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
     motion->y = record;
     record = Math_Div((target_actor->z - position->z), 6);
     motion->z = record;
-    seed = (struct EffectStep *)((u8 *)work + 0x7080);
+    seed = work->particles;
     for (i = 0; i != 64; i++, seed++) {
         seed->variant = 0;
     }
     if (kind != 14) {
         s32 height = (s32)Battle_GetObjectTableValueFar(work->effect->actors[0]) / 2;
 
-        seed = (struct EffectStep *)((s32)work + 0x7080);
+        seed = work->particles;
         for (i = 0; i != 32; i++, seed++) {
             seed->y = height;
             seed->x = target_actor->x;
@@ -486,7 +490,10 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind != 7 && kind != 13 && kind != 18 && kind != 11 && kind != 32 && kind != 19) {
-        s32 height = kind == 12 ? 0 : 0x140000;
+        s32 height = 0;
+
+        if (kind != 12)
+            height = 0x140000;
 
         seed = (struct EffectStep *)0x02014000;
         for (i = 0; i != 64; i++, seed++) {
@@ -521,7 +528,7 @@ void Func_080e47b8(struct BattleEffectArgument *command, s32 kind)
             }
         }
     }
-    Scheduler_AddOrUpdateCallback(0x80dbb9d, 0x480);
+    Scheduler_AddOrUpdateCallback((s32)BattleFx_ArmBg2AffineHBlankDma, 0x480);
 ChooseDuration:;
     kind_from_four = kind - 4;
     if ((u32)kind_from_four <= 2 || kind == 23 || kind == 30 || kind == 27 || kind == 33 ||
@@ -547,7 +554,7 @@ ChooseDuration:;
             if (kind != 32) {
                 phase = (frame << 12);
                 i = 0;
-                cursor = (s32)work + 0x6980;
+                cursor = (s32)work->bg2_x;
                 do {
                     *(s32 *)cursor = (0x40000 - (Trig_Sin(phase) << 2)) >> 10;
                     i++;
@@ -565,7 +572,7 @@ ChooseDuration:;
             if (kind != 8) {
                 if (kind != 32) {
                     if (kind == 33) {
-                        goto UpdateParticleGraphics;
+                        goto StepEffectPalette;
                     }
                     if (kind != 34) {
                         if (frame <= 11) {
@@ -582,54 +589,54 @@ ChooseDuration:;
                 }
             }
         }
-    UpdateParticleGraphics:;
+    StepEffectPalette:;
         switch (kind) {
         case 33:
-            Func_080e46f0((s32)&Value_00000053);
+            BattleFx_StepPaletteToResource((s32)&Value_00000053);
             break;
         case 14:
-            Func_080e46f0((s32)&Value_0000006f);
+            BattleFx_StepPaletteToResource((s32)&Value_0000006f);
             break;
         case 31:
-            Func_080e46f0((s32)&Value_00000079);
+            BattleFx_StepPaletteToResource((s32)&Value_00000079);
             break;
         case 8:
-            Func_080e46f0((s32)&Value_000000c3);
+            BattleFx_StepPaletteToResource((s32)&Value_000000c3);
             break;
         case 0:
         case 10:
-            Func_080e46f0((s32)&Value_0000008d);
+            BattleFx_StepPaletteToResource((s32)&Value_0000008d);
             break;
         case 12:
         case 13:
         case 25:
-            Func_080e46f0((s32)&Value_000000bb);
+            BattleFx_StepPaletteToResource((s32)&Value_000000bb);
             break;
         case 18:
-            Func_080e46f0((s32)&Value_000000b9);
+            BattleFx_StepPaletteToResource((s32)&Value_000000b9);
             break;
         case 19:
-            Func_080e46f0((s32)&Value_000000c0);
+            BattleFx_StepPaletteToResource((s32)&Value_000000c0);
             break;
         case 2:
         case 29:
-            Func_080e46f0((s32)&Value_000000a4);
+            BattleFx_StepPaletteToResource((s32)&Value_000000a4);
             break;
         case 1:
         case 28:
-            Func_080e46f0((s32)&Value_000000a3);
+            BattleFx_StepPaletteToResource((s32)&Value_000000a3);
             break;
         case 3:
         case 20:
         case 22:
-            Func_080e46f0((s32)&Value_000000b4);
+            BattleFx_StepPaletteToResource((s32)&Value_000000b4);
             break;
         case 9:
-            Func_080e46f0((s32)&Value_000000a0);
+            BattleFx_StepPaletteToResource((s32)&Value_000000a0);
             break;
         case 5:
         case 23:
-            Func_080e46f0((s32)&Value_0000007d);
+            BattleFx_StepPaletteToResource((s32)&Value_0000007d);
             break;
         }
         if (kind != 11) {
@@ -645,8 +652,7 @@ ChooseDuration:;
 
                         for (i = 0; i != 128; i++) {
                             s32 index = i / 2;
-                            struct EffectStep *step =
-                                (struct EffectStep *)((s32)work + index * 28 + 0x7080);
+                            struct EffectStep *step = &work->particles[index];
                             s32 life = step->variant;
 
                             if (life > 0) {
@@ -691,10 +697,10 @@ ChooseDuration:;
             {
                 struct EffectStep *step = (struct EffectStep *)0x02014000;
 
-                struct MotionObject *target;
+                struct MotionObject *caster;
                 s32 height;
 
-                target = GetBattleObjectSlotFar(work->effect->actor)->object;
+                caster = GetBattleObjectSlotFar(work->effect->actor)->object;
                 height = (s32)Battle_GetObjectTableValueFar(work->effect->actor) / 2;
                 for (i = 0; i != 32; i++, step++) {
                     if (step->variant >= 0) {
@@ -707,9 +713,9 @@ ChooseDuration:;
                                     size * 2);
                         EffectStep_AdvanceWithGravity3D(step, 62, 0);
                         if (frame > i + 22) {
-                            s32 dx = (target->x - step->x) >> 8;
-                            s32 dy = (target->y + height - step->y) >> 8;
-                            s32 dz = (target->z - step->z) >> 8;
+                            s32 dx = (caster->x - step->x) >> 8;
+                            s32 dy = (caster->y + height - step->y) >> 8;
+                            s32 dz = (caster->z - step->z) >> 8;
 
                             step->velocity_x += dx;
                             step->velocity_y += dy;
@@ -737,8 +743,8 @@ ChooseDuration:;
                 do {
                     blitters[0](canvas, ((((phase / 2) & 3) * 2880) + 0x02010c56),
                                 ((target_screen->x / 2) - 8), 0, 24, 104);
-                    i = (i + 1);
-                    phase = (phase + 3);
+                    i++;
+                    phase += 3;
                 } while (i != 2);
             }
             if ((u32)(frame - 8) > 15) {
@@ -767,8 +773,7 @@ ChooseDuration:;
             }
             goto FinishFrame;
         }
-        if (kind != 14) {
-        } else {
+        if (kind == 14) {
             s32 rise;
             s32 scroll;
 
@@ -803,7 +808,7 @@ ChooseDuration:;
             {
                 s32 emitted = 0;
 
-                seed = (struct EffectStep *)((s32)work + 0x7080);
+                seed = work->particles;
                 for (i = 0; i != 64; i++, seed++) {
                     if (seed->variant == 0) {
                         seed->x = target_actor->x;
@@ -883,10 +888,8 @@ ChooseDuration:;
         }
         goto FinishFrame;
     DrawLargeImages:;
-        if (kind == 4) {
-        } else {
-            if (kind != 11) {
-            } else {
+        if (kind != 4) {
+            if (kind == 11) {
                 s32 image_y;
 
                 Trig_Sin((frame << 9));
@@ -1015,8 +1018,7 @@ ChooseDuration:;
                     }
                 }
             } else {
-                if (kind != 16) {
-                } else {
+                if (kind == 16) {
                     if (frame == 0) {
                         seed = (struct EffectStep *)0x02014000;
                         for (i = 0; i != 64; i++, seed++) {
@@ -1073,9 +1075,13 @@ ChooseDuration:;
                     if ((u32)(kind - 33) <= 1) {
                         s32 offset;
                         s32 image_x;
+                        RectangleBlit draw;
 
                         if (frame > 5)
                             goto FinishFrame;
+                        /* FAKEMATCH: Keep the callback live during argument preparation;
+                         * this makes GCC reload through r5 instead of r4 across the owner. */
+                        draw = blitters[1];
                         if (work->effect->side == 0) {
                             offset = (6 - frame) * 3;
                             image_x = target_screen->x / 2 + offset * 2;
@@ -1083,8 +1089,8 @@ ChooseDuration:;
                             offset = (6 - frame) * 3;
                             image_x = target_screen->x / 2 - offset * 2;
                         }
-                        blitters[1](canvas, 0x02010000, image_x - 16,
-                                    target_screen->y - offset * 4 - 8, 32, 64);
+                        draw(canvas, 0x02010000, image_x - 16,
+                             target_screen->y - offset * 4 - 8, 32, 64);
                     } else {
                         if (kind == 12) {
                             if (frame > 47) {
@@ -1204,15 +1210,15 @@ ChooseDuration:;
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);
-        frame = (frame + 1);
+        frame++;
     }
     /* Hand off the follow-up effect, or release the canvas layer. */
     if (kind == 21) {
         ClearWords(0x6004000, 0x4000);
         ClearWords(canvas, 0x4000);
         work->effect->unknown_001c = 0;
-        Scheduler_RemoveCallback(0x80cd4b5);
-        Scheduler_RemoveCallback(0x80cd261);
+        Scheduler_RemoveCallback((u32)Palette_StepFadeTransfer);
+        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleFx_RunPaletteRampMode1(command);
@@ -1228,9 +1234,9 @@ ChooseDuration:;
                 }
             }
         }
-        Scheduler_RemoveCallback(0x80dbb9d);
+        Scheduler_RemoveCallback((u32)BattleFx_ArmBg2AffineHBlankDma);
     EndScene:;
-        Scheduler_RemoveCallback(0x80cd261);
+        Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         BattleFx_EndCanvasLayer();

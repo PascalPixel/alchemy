@@ -6,24 +6,24 @@
  * lines.
  */
 
-u16 *Func_020014b8(s32);
-s32 Func_020014ac(s32);
-void Func_020015c6(s32, s32);
-void Func_02001556(s32);
-void Func_02001566(s32);
-void Func_0200156e(s32, s32);
-void Func_0200157e(s32, s32);
+u16 *Engine_ActorGet(s32);
+s32 Engine_GameFlagIsSet(s32);
+void Inn_CheckIn(s32, s32);
+void Engine_EventSetMessage(s32);
+void Engine_EventSetMessage(s32);
+void Engine_EventShowMessage(s32, s32);
+void Engine_EventShowMessage(s32, s32);
 
 void Dialogue_HandleFacingCueBranch(s32 no)
 {
-    u16 party_facing = (Func_020014b8(0)[3] + 0x2000) & ~0x3fff;
+    u16 party_facing = (Engine_ActorGet(0)[3] + 0x2000) & ~0x3fff;
     if (party_facing == 0xc000) {
-        Func_020015c6(11, no);
-    } else if (Func_020014ac(0x9a7)) {
-        Func_02001556(0x28f6);
-        Func_0200156e(no, 0);
+        Inn_CheckIn(11, no);
+    } else if (Engine_GameFlagIsSet(0x9a7)) {
+        Engine_EventSetMessage(0x28f6);
+        Engine_EventShowMessage(no, 0);
     } else {
-        Func_02001566(0x26eb);
-        Func_0200157e(no, 0);
+        Engine_EventSetMessage(0x26eb);
+        Engine_EventShowMessage(no, 0);
     }
 }

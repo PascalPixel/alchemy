@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+extern u8 IwramClearWords[];
 
 /*
  * _call_via_r3 names a bx rN veneer slot, so this is an indirect call
@@ -13,7 +14,7 @@ extern u8 BattleFx_UpdateStarField;
 
 s32 Graphics_ResetVramBlockAndReleaseHeapBlocks(s32 unused0, s32 unused1, s32 mode)
 {
-    _call_via_r3(0x06004000, 0x4000, mode, 0x03000164);
+    _call_via_r3(0x06004000, 0x4000, mode, (u32)IwramClearWords);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
     Runtime_ReleaseHeapBlock(40);

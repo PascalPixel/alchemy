@@ -1279,7 +1279,7 @@ SECTIONS
         "*/recon/tbs/raw/080b9554.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080b9724.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/COPY_BANKS_WITH_BRIGHTNESS_OFFSET.o"(.text)
-        "*/recon/tbs/raw/080b9934.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/BUILD_ACTIONS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/GET_TAGGED_SLOT_VALUE.o"(.text)
         "*/recon/tbs/raw/080b9b2e.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080b9b30.o"(.text .rodata .data .padding)

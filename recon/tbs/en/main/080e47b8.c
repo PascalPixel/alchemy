@@ -1,7 +1,7 @@
 /* NONMATCHING: 7808-byte owner; complete casting and impact sequence.
  * The acting unit gathers particles, then launches the selected effect at
  * the first affected unit. All 217 calls follow the reference sequence.
- * Candidate 7792 bytes; 2356 differing halfwords, 534 aligned edits. */
+ * Candidate 7800 bytes; 2396 differing halfwords, 487 aligned edits. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -89,6 +89,12 @@ static __inline__ void PackRows(void *src, void *dest, s32 width, s32 height)
 static __inline__ void ClearWords(s32 dest, u32 size)
 {
     ((s32 (*)(s32, u32))0x03000164)(dest, size);
+}
+
+/* FAKEMATCH: Inline scope reloads the fill routine before its arguments. */
+static __inline__ void FillWords(s32 dest, u32 size, u32 value)
+{
+    ((void (*)(s32, u32, u32))0x03000168)(dest, size, value);
 }
 
 /* Particle image offsets indexed by size; the remaining tables describe
@@ -365,8 +371,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 do {
                     EffectPosition_ApplyBaseAndYOffset((s32 *)&moving_pos, &spark_screen);
                 } while (0);
-                orb_x = spark_screen.x / 2;
-                spark_screen.x = spark_screen.x / 2;
+                orb_x = spark_screen.x;
+                orb_x /= 2;
+                spark_screen.x = orb_x;
 
                 blitters[0](canvas, 0x2013c56, (orb_x - 10), (spark_screen.y - 4), 20, 40);
             }
@@ -569,28 +576,17 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             caster_screen->x = caster_screen->x / 2;
             caster_screen->y += 16;
         }
-        if (kind != 11) {
-            if (kind != 8) {
-                if (kind != 32) {
-                    if (kind == 33) {
-                        goto StepEffectPalette;
-                    }
-                    if (kind != 34) {
-                        if (frame <= 11) {
-                            if (work->effect->side == 0) {
-                                blitters[0](canvas, ((s32)work + (frame / 2) * 3456),
-                                            (caster_screen->x - 32), (caster_screen->y - 40), 48,
-                                            72);
-                            } else {
-                                blitters[0](canvas, ((s32)work + (frame / 2) * 3456),
-                                            caster_screen->x, (caster_screen->y - 40), 48, 72);
-                            }
-                        }
-                    }
+        if (kind != 11 && kind != 8 && kind != 32 && kind != 33 && kind != 34) {
+            if (frame <= 11) {
+                if (work->effect->side == 0) {
+                    blitters[0](canvas, ((s32)work + (frame / 2) * 3456),
+                                caster_screen->x - 32, caster_screen->y - 40, 48, 72);
+                } else {
+                    blitters[0](canvas, ((s32)work + (frame / 2) * 3456),
+                                caster_screen->x, caster_screen->y - 40, 48, 72);
                 }
             }
         }
-    StepEffectPalette:;
         switch (kind) {
         case 33:
             BattleFx_StepPaletteToResource((s32)&Value_00000053);
@@ -640,35 +636,31 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             BattleFx_StepPaletteToResource((s32)&Value_0000007d);
             break;
         }
-        if (kind != 11) {
-            if (kind != 8) {
-                if (kind != 32) {
-                    if ((u32)(frame - 4) <= 11) {
-                        draw_pair[1](canvas, ((s32)work + ((frame - 4) / 2) * 960 + 0x5100),
-                                     ((target_screen->x / 2) - 8), (caster_screen->y - 24), 20, 48);
-                    }
-                    Render_ResetTransformState();
-                    Graphics_PrepareTransferInIwramWork(matrix, (matrix + 12));
-                    if (frame > 3) {
+        if (kind != 11 && kind != 8 && kind != 32) {
+            if ((u32)(frame - 4) <= 11) {
+                draw_pair[1](canvas, ((s32)work + ((frame - 4) / 2) * 960 + 0x5100),
+                             ((target_screen->x / 2) - 8), (caster_screen->y - 24), 20, 48);
+            }
+            Render_ResetTransformState();
+            Graphics_PrepareTransferInIwramWork(matrix, (matrix + 12));
+            if (frame > 3) {
 
-                        for (i = 0; i != 128; i++) {
-                            s32 index = i / 2;
-                            struct EffectStep *step = &work->particles[index];
-                            s32 size = step->variant;
+                for (i = 0; i != 128; i++) {
+                    s32 index = i / 2;
+                    struct EffectStep *step = &work->particles[index];
+                    s32 size = step->variant;
 
-                            if (size > 0) {
-                                EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
-                                /* Remaining lifetime determines the particle's image size. */
-                                size >>= 4;
-                                size++;
-                                projected.x /= 2;
-                                blitters[index & 1](canvas, sprites + Data_080ede48[size - 1],
-                                                    projected.x - size / 2, projected.y - size,
-                                                    size, size * 2);
-                                EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
-                                step->variant--;
-                            }
-                        }
+                    if (size > 0) {
+                        EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
+                        /* Remaining lifetime determines the particle's image size. */
+                        size >>= 4;
+                        size++;
+                        projected.x /= 2;
+                        blitters[index & 1](canvas, sprites + Data_080ede48[size - 1],
+                                            projected.x - size / 2, projected.y - size,
+                                            size, size * 2);
+                        EffectStep_AdvanceWithGravity3D(step, 60, -0x1000);
+                        step->variant--;
                     }
                 }
             }
@@ -732,12 +724,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         if (kind == 21) {
             goto FinishFrame;
         }
-        if (kind != 6) {
-            if (kind == 27) {
-                goto DrawVerticalStrips;
-            }
-        } else {
-        DrawVerticalStrips:;
+        if (kind == 6 || kind == 27) {
             if ((u32)(frame - 6) <= 13) {
                 phase = frame;
                 i = 0;
@@ -901,7 +888,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                 value = Trig_Cos(frame << 9);
                 value <<= 2;
                 value >>= 16;
-                image_y = *(s16 *)((u8 *)target_screen + 6) + value + 16;
+                image_y = (target_screen->y >> 16) + value + 16;
                 if (frame <= 3) {
                     blitters[0](canvas, work,
                                 Data_080eedd4[((work->effect->side << 3) - work->effect->side)],
@@ -917,7 +904,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                             Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 1)],
                             (image_y + Data_080eede2[1]), 99, 69);
                 if ((u32)(frame - 4) <= 1) {
-                    ((s32 (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
+                    FillWords(canvas, 0x4000, 0x3f3f3f3f);
                 }
                 if ((u32)(frame - 6) <= 1) {
                     blitters[0](
@@ -926,10 +913,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                         (image_y + Data_080eede2[2]), 128, 91);
                 }
                 if ((u32)(frame - 8) <= 1) {
-                    blitters[0](
+                    DrawImage(
                         canvas, 0x2010000,
                         Data_080eedd4[(((work->effect->side << 3) - work->effect->side) + 3)],
-                        (image_y + Data_080eede2[3]), 128, 91);
+                        (image_y + Data_080eede2[3]), 128, 91, &blitters[0]);
                 }
                 if ((u32)(frame - 10) <= 1) {
                     blitters[0](
@@ -961,7 +948,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                     *(volatile u16 *)0x04000052 = ((0x10 - (frame - 16)) | 0x1000);
                 }
                 if ((u32)(frame - 4) <= 1) {
-                    ((s32 (*)(s32, u32, u32))0x03000168)(canvas, 0x4000, 0x3f3f3f3f);
+                    FillWords(canvas, 0x4000, 0x3f3f3f3f);
                 }
                 if (frame <= 3) {
                     if (work->effect->side == 1) {
@@ -1104,15 +1091,17 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
                             }
                             {
                                 struct EffectStep *step = (struct EffectStep *)0x02014000;
+                                s32 mask;
 
-                                for (i = 0; i != 16; i++, step++) {
+                                /* FAKEMATCH: Initialize the mask after the loop counter. */
+                                for (i = 0, mask = 3; i != 16; i++, step++) {
                                     s32 image = Math_Mod(i, 3);
 
                                     EffectPosition_ApplyBaseAndYOffset((s32 *)step, &projected);
                                     projected.x /= 2;
                                     blitters[i & 1](canvas, 0x02010000 + image * 576,
                                                     projected.x - 12, projected.y - 12, 24, 24);
-                                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
+                                    EffectStep_AdvanceWithGravity3D(step, 60, 1 << ((i & mask) + 11));
                                     step->variant++;
                                 }
                             }
@@ -1151,8 +1140,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         if (kind <= 7) {
             if (frame <= 5) {
                 EffectPosition_ApplyBaseAndYOffset((s32 *)position, &projected);
-                orb_x = projected.x / 2;
-                projected.x = projected.x / 2;
+                orb_x = projected.x;
+                orb_x /= 2;
+                projected.x = orb_x;
                 draw_pair[1](canvas, 0x2013c56, (orb_x - 10), (projected.y - 4), 20, 40);
                 position->x += motion->x;
                 position->y += motion->y;

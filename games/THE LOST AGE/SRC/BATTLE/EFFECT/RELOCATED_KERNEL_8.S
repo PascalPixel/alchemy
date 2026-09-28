@@ -236,7 +236,8 @@ AlchemyUncreditedEnd_0813a92c:
 	bic	r7, r4, #7
 	orr	r7, r7, r4, lsl #29
 	tst	r0, #1
-	bne	0x813ac7c
+	bne	.L_0813ac7c
+.L_0813ac48:
 	and	sl, fp, ip
 	orr	sl, sl, ip, lsr #32
 	add	ip, ip, r9
@@ -252,12 +253,13 @@ AlchemyUncreditedEnd_0813a92c:
 	adds	r7, r7, r1
 	subcc	r7, r7, #8
 @ Zero words that the set-up code fills by DMA3 with a copy of the words before them.
+.L_0813ac7c:
 AlchemyUncredited_0813ac7c:
 	.4byte	0, 0, 0, 0, 0, 0, 0, 0
 	.4byte	0, 0, 0, 0, 0
 AlchemyUncreditedEnd_0813ac7c:
 	subs	r0, r0, #2
-	bgt	0x813ac48
+	bgt	.L_0813ac48
 .L_0813acb8:
 	ldm	sp, {r2, r4, r7, r8, sl, fp, ip}
 	add	r5, r5, r7
@@ -342,7 +344,7 @@ AlchemyUncreditedEnd_0813ac7c:
 	ldr	r0, [r0, #8]
 	b	.L_0813a93c
 AlchemyUncredited_0813adf8:
-	.4byte	0x080028a9
+	.4byte	Runtime_ReciprocalTable + 1
 AlchemyUncreditedEnd_0813adf8:
 AlchemyUncredited_0813adfc:
 	.4byte	0x00000000

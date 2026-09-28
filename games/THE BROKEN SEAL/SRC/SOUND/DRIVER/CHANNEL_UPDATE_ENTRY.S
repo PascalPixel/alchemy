@@ -74,7 +74,7 @@ Func_0800070c:
 	adds	r4, #80
 	ldr	r3, [pc, #0]
 	bx	r3
-	.4byte 0x03000659
+	.4byte IwramSoundMixEntry
 	.4byte 0x00000350
 AlchemyUncredited_08000764:
 	.4byte 0x04000006

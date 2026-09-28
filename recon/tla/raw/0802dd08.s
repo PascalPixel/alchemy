@@ -908,7 +908,7 @@ Func_0802dd08:
 	bl	0x080144c0
 	ldr	r0, [pc, #60]
 	ldr	r1, [pc, #64]
-	bl	Func_080132cc
+	bl	Runtime_ConstantZeroResult
 	b.n	.L_0802df54
 .L_0802e402:
 	ldr	r2, [r6, #4]

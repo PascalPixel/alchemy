@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct SerialRuntime gSerialRuntime;
 
 void SerialRuntime_DisableTransfer(void)
 {
@@ -10,6 +11,6 @@ void SerialRuntime_DisableTransfer(void)
     *(u16 *)0x04000128 = 0x2003;
     *(u32 *)0x0400010c = 0x0000c963;
     *(u16 *)0x04000202 = 0xc0;
-    base = 0x02002240;
+    base = (u32)&gSerialRuntime;
     *((u8 *)base + 8) = 0;
 }

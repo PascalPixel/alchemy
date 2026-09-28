@@ -2,31 +2,15 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define OverlayObject_IntegrateVelocities Func_02000ab0
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define RuntimeSelectorTable Data_02000240
-#define PrimaryRuntimeSelector Value_000000b0
-#define SecondaryRuntimeSelector Value_000000af
-#define TertiaryRuntimeSelector Value_000000ae
-#define PrimaryOverlayData Data_0200b270
-#define SecondaryOverlayData Data_0200b330
-#define TertiaryOverlayData Data_0200b4f8
-#define DefaultOverlayData Data_0200b558
-#define PrimaryOverlayData_02000fdc Data_0200b694
-#define SecondaryOverlayData_02000fdc Data_0200b754
-#define TertiaryOverlayData_02000fdc Data_0200b784
-#define DefaultOverlayData_02000fdc Data_0200b88c
-#define PrimaryOverlayData_020027a0 Data_0200b91c
-#define SecondaryOverlayData_020027a0 Data_0200b9e8
-#define TertiaryOverlayData_020027a0 Data_0200bac0
-#define DefaultOverlayData_020027a0 Data_0200bc28
 
 #include "FIELD_EFFECT.H"
-#define OverlayObject_IntegrateVelocities Effect_Move
 #include "STAGED_ACTOR.H"
 #include "SPAWN_CONFIGURED_EFFECT.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+extern u8 Value_000000af;
+extern u8 gEffectWork[];
 
 enum BranchingEventMessage {
     MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
@@ -412,12 +396,12 @@ void FieldScene_RunScene3c5SequenceA(s32 a0)
 /* Return this overlay's state block. */
 s32 SceneData_SelectByRuntimeSelector(void)
 {
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_000000b0) {
         return (s32)PrimaryOverlayData;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_000000af) {
         return (s32)SecondaryOverlayData;
     }
     if (selector == (s32)&TertiaryRuntimeSelector) {
@@ -443,12 +427,12 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
     extern u8 TertiaryOverlayData_02000fdc[];
     extern u8 DefaultOverlayData_02000fdc[];
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_000000b0) {
         return (s32)PrimaryOverlayData_02000fdc;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_000000af) {
         return (s32)SecondaryOverlayData_02000fdc;
     }
     if (selector == (s32)&TertiaryRuntimeSelector) {
@@ -1194,7 +1178,7 @@ void FieldScene_RunFlag985DialogueBranch(void)
 
 void SceneState_SetRuntimeByte34(void)
 {
-    FIELD_AT_OFFSET(*(void **)0x03001F30, s8 *, 0x34) = 1;
+    FIELD_AT_OFFSET(*(void **)gEffectWork, s8 *, 0x34) = 1;
 }
 
 void ActorPresentation_PlaceActorTwelveAtTile20And12(void)
@@ -1277,12 +1261,12 @@ s32 SceneData_SelectTableB91cByRuntimeSelector(void)
     extern u8 TertiaryOverlayData_020027a0[];
     extern u8 DefaultOverlayData_020027a0[];
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_000000b0) {
         return (s32)PrimaryOverlayData_020027a0;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_000000af) {
         return (s32)SecondaryOverlayData_020027a0;
     }
     if (selector == (s32)&TertiaryRuntimeSelector) {

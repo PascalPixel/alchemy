@@ -28,19 +28,18 @@ enum StatusDispatchMessage {
 
 #define RuntimeBlock_GetOffset1e0Pointer_1(args...) Func_02003f06(args)
 #define RuntimeBlock_GetOffset1e0Pointer_2(args...) Func_02003f06(args)
-#define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
-#define SCENE_FIELD_1C8 (*(s32 *)(*(u8 **)0x03001ebc + 0x1c8))
+#define SCENE_PHASE (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
+#define SCENE_FIELD_1C8 (*(s32 *)(*(u8 **)&gEventWork + 0x1c8))
 #define RECORD_17 17
 #define Scene_GetRecord_1(args...) Func_02004310_a(args)
 #define Scene_GetRecord_2(args...) Func_0200431c(args)
 #define Scene_GetRecord_3(a0) Value1(Func_02004326, a0)
 #define Scene_GetRecord_4(a0) Value1(Func_020044b0, a0)
 #define Scene_GetRecord_5(args...) Func_02004512(args)
-#define SCENE_WORK (*(u8 **)0x03001ebc)
+#define SCENE_WORK (*(u8 **)&gEventWork)
 #define SCENE_PHASE_02001cd4 (*(s32 *)(SCENE_WORK + 0x1c0))
 #define SCENE_FIELD_1C8_02001cd4 (*(s32 *)(SCENE_WORK + 0x1c8))
 #define SCENE_STEP (*(u16 *)(SCENE_WORK + 0x1d8))
-#define ObjectMotion_MarkActiveAndSetActionCallback Func_02004f1c
 
 extern u8 Value_0000008c;
 extern u8 Value_0000008e;
@@ -88,7 +87,7 @@ void Func_020047cc(s32 arg0);
 void Func_020047ea(s32 arg0);
 void Func_020047f0(s32 arg0);
 void Func_020047f6(s32 arg0);
-void Func_02004f1c();
+void ObjectMotion_MarkActiveAndSetActionCallback();
 void Data_0200ad0c();
 void Func_020057c0_b();
 void Func_020057c8_a();

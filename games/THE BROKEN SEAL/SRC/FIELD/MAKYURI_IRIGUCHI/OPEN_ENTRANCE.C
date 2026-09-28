@@ -1,6 +1,5 @@
 #include "TYPES.H"
-
-#define MakyuriIriguchi_OpenEntrance Func_020011b4
+extern struct EventWork *gEventWork;
 
 extern u8 Data_00000035[];
 extern u8 Data_02000240[];
@@ -23,7 +22,7 @@ void MakyuriIriguchi_OpenEntrance(void)
     Func_02003694();
     Func_02003704(8, 2);
     Func_0200369a(20);
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x200;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x200;
     /* FAKEMATCH: 0x35 is loaded from the literal pool through a link
      * symbol, and the do/while keeps the flag store before the call. */
     Func_02003790((s32)Data_00000035, 31);

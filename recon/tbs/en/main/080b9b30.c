@@ -10,8 +10,6 @@ extern u8 Value_00000654;
 extern u8 Value_000006a8;
 extern u8 Value_00000648;
 
-#define BattlePres_DispatchAction Func_080b9b30
-
 struct BattlePresentationTransition {
     s32 blend;
     s32 timer;
@@ -19,7 +17,7 @@ struct BattlePresentationTransition {
     s32 active;
 };
 
-s32 BattlePres_DispatchAction(s16 *action, s32 delay)
+s32 BattlePresentation_DispatchAction(s16 *action, s32 delay)
 {
     u16 unit_stack[16];
     struct BattlePresentationTransition *transition;
@@ -35,7 +33,7 @@ s32 BattlePres_DispatchAction(s16 *action, s32 delay)
     preserve_action = 0;
     if (action[0] == 0xff)
         return 0;
-    actor = Func_08077008(action[0]);
+    actor = Owner_GetStateFar(action[0]);
     if (*(s16 *)(actor + 0x38) == 0)
         return -1;
     if (actor[0x129] == 0)
@@ -50,7 +48,7 @@ s32 BattlePres_DispatchAction(s16 *action, s32 delay)
     render_state = *(transition_slot - 32);
     Func_080049ac();
     Func_080051d8(render_state, render_state + 12);
-    do { Func_08005258(0x01fe0000, Func_080072f0(0x01fe0000, 0xc000), 0x7fff0000); } while (0); /* FAKEMATCH */
+    do { Func_08005258(0x01fe0000, _call_via_r3(0x01fe0000, 0xc000), 0x7fff0000); } while (0); /* FAKEMATCH */
 
     if (delay != 0) {
         transition->blend = 0x2000;
@@ -60,7 +58,7 @@ s32 BattlePres_DispatchAction(s16 *action, s32 delay)
     do { unit_stack[15] = 0xff; } while (0); /* FAKEMATCH */
     Func_080c10e8(unit_stack + 14, 1);
 
-    result = Func_080be378(action, battle + 0x654);
+    result = BattleCommand_BuildPlan(action, battle + 0x654);
     if (result == 0) {
         switch (*(s32 *)(battle + 0x6a8)) {
         case 1: Func_080ba27c(battle + 0x654, 0); break;

@@ -344,7 +344,7 @@ Func_0808d9a4:
 	movs	r0, #30
 	bl	WaitFrames
 	ldrh	r0, [r7, #8]
-	bl	Func_08077030
+	bl	PartyInventory_AddFar
 	movs	r3, #1
 	adds	r6, r0, #0
 	negs	r3, r3

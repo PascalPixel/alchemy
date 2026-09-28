@@ -11,7 +11,7 @@ BUILD := $(ALCHEMY) build
 CHECK := $(ALCHEMY) check
 TARGET ?= tbs-en
 TARGET_GAME := $(firstword $(subst -, ,$(TARGET)))
-GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -fno-builtin -nostdinc -ffreestanding -fcall-used-r4
+GCC296_CFLAGS := -O2 -mthumb -mthumb-interwork -mcpu=arm7tdmi -nostdinc -fcall-used-r4
 SHA1 := $(shell { command -v sha1sum || command -v shasum; } 2>/dev/null) -c
 
 ifeq ($(TARGET_GAME),tbs)
@@ -72,7 +72,7 @@ compiler-source-check:
 	@set -e; for repo in agbcc agscc; do \
 	  case "$$repo" in \
 	    agbcc) approved=da598c1d918402c42c0c0d7128ba14567f3175e9;; \
-	    agscc) approved=f2095030ce7fa3b8991a5b5bdbe32a1860c6fa34;; \
+	    agscc) approved=70b81d084a50db8ef3db3a90e07fda33e7ba8c84;; \
 	  esac; \
 	  test "$$(git rev-parse :$$repo)" = "$$approved" || { printf '%s gitlink is not approved\n' "$$repo"; exit 1; }; \
 	  test "$$(env -u GIT_DIR -u GIT_WORK_TREE -u GIT_INDEX_FILE git -C "$$repo" rev-parse HEAD)" = "$$approved" || { printf '%s checkout is not approved\n' "$$repo"; exit 1; }; \

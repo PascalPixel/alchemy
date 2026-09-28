@@ -127,7 +127,7 @@ s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
 
 s32 FindNearestF2Actor(void)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
     Actor **actor_slot;
     Actor *origin;
     s32 nearest_actor = 0;

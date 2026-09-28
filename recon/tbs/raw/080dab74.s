@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080dab74
-	.global Func_080dab74
+	.global BattleEffect_RunRisingMotes
 	.thumb_func
 Unnamed_080dab74:
-Func_080dab74:
+BattleEffect_RunRisingMotes:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

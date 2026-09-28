@@ -22,7 +22,7 @@
  *    games/THE BROKEN SEAL/src/menu/sel/run_paired_entry_action.c instead of inventing a type.
  *  - the reference reaches the fixed IWRAM entry at 0x03000118 with the
  *    "mov ip, pc / bx rN" interface supplied by IWRAM_CALL.H.
- *  - Func_080072f0/f4/f8 take a fixed IWRAM helper entry as their last
+ *  - _call_via_r3/f4/f8 take a fixed IWRAM helper entry as their last
  *    argument (0x03001388 word copy, 0x03000168 word fill); the reference also
  *    materialises that constant before the three-argument variants, which this
  *    draft does not reproduce.
@@ -30,8 +30,6 @@
  *    argument that the adopted definitions ignore; the declarations below
  *    match the reference call sites, not those definitions.
  */
-
-#define OwnerAction_RunCompareLoop Func_080ad6d4
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
@@ -77,9 +75,9 @@ s32 OwnerAction_DiffSlots(void *, void *, void *, s32 *, s32 *);
 void FourObjectMotion_SetSlotPhase(s32, s32);
 s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
 
-void Func_08002df0(void *);
+void Sys_Free(void *);
 s32 Func_08002322(s32);
-void Func_080072f0(s32, s32, s32, s32);
+void _call_via_r3(s32, s32, s32, s32);
 void Func_080072f4(s32, s32, s32);
 void Func_080072f8(s32, s32, s32);
 void Func_08015068(s32, s32, s32, s32, s32);
@@ -167,7 +165,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         first_flag = (u16)(FIELD_AT_OFFSET(state, u16, 0x178) & 0x8000);
 
         unit = Runtime_GetObject(first_id);
-        Func_080072f0((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
+        _call_via_r3((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
         Func_080771b8(first_id, first_pal, first_bank);
         if (mode == 0) {
             second_pal = FIELD_AT_OFFSET(state, u8, 0x257);
@@ -197,8 +195,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         count[1] = OwnerAction_DiffSlots(
             (u8 *)unit_copy + 88, unit + 88, diff_work, &out_b, &out_a);
         Func_080072f8((s32)unit, (s32)unit_copy, 0x14c);
-        Func_08002df0(unit_copy);
-        Func_08002df0(diff_work);
+        Sys_Free(unit_copy);
+        Sys_Free(diff_work);
     } else if (mode - 2 <= 1) {
         /* One owner: mode 3 also applies the secondary entry. */
         s16 *diff_work;
@@ -219,7 +217,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         apply_second = (mode == 3);
 
         unit = Runtime_GetObject(first_id);
-        Func_080072f0((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
+        _call_via_r3((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
         Func_080771b8(first_id, first_pal, first_bank);
         if (apply_second != 0) {
             Func_080771b0(first_id, first_pal, first_bank);
@@ -230,8 +228,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         Func_080072f4((s32)unit, (s32)unit_copy, 0x14c);
         count[1] = count[0];
         page = 0;
-        Func_08002df0(unit_copy);
-        Func_08002df0(diff_work);
+        Sys_Free(unit_copy);
+        Sys_Free(diff_work);
     }
 
     count[0] = FixedPoint_Ratio(count[0] - 1, 5) + 1;
@@ -336,7 +334,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 break;
             case 10:
                 if (FIELD_AT_OFFSET(scene, s32, 0x2128) == 60) {
-                    Func_080072f0((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
+                    _call_via_r3((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
                     work = UiWork_Create(0xc43, 8, 0, 1);
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 1;
                     Func_080a1ac0(2, 96);
@@ -345,7 +343,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         WaitFrames(1);
                     }
                     UiWindow_Close(work, 1);
-                    Func_080072f0((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
+                    _call_via_r3((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
                     Func_080152a8();
                     render[0xea3] = 1;
                     dirty = 1;
@@ -356,7 +354,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                 break;
             case 11:
                 if (FIELD_AT_OFFSET(scene, s32, 0x2128) == 60) {
-                    Func_080072f0((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
+                    _call_via_r3((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
                     work = UiWork_Create(0xc42, 8, 0, 1);
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 1;
                     Func_080a1ac0(106, 56);
@@ -365,7 +363,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                         WaitFrames(1);
                     }
                     UiWindow_Close(work, 1);
-                    Func_080072f0((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
+                    _call_via_r3((s32)render, (s32)saved, 0x200, IWRAM_WORD_COPY);
                     Func_080152a8();
                     render[0xea3] = 1;
                     WaitFrames(1);
@@ -378,7 +376,7 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             default:
                 break;
             }
-            Func_08002df0(saved);
+            Sys_Free(saved);
         }
 
         if (dirty != 0) {
@@ -501,9 +499,9 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
 
         if ((frame & 3) == 0) {
             if ((frame & 4) != 0) {
-                Func_080072f0(VRAM_STRIP, (s32)Data_080af26c, 32, IWRAM_WORD_COPY);
+                _call_via_r3(VRAM_STRIP, (s32)Data_080af26c, 32, IWRAM_WORD_COPY);
             } else {
-                Func_080072f0(VRAM_STRIP, 32, 0x44444444, IWRAM_WORD_FILL);
+                _call_via_r3(VRAM_STRIP, 32, 0x44444444, IWRAM_WORD_FILL);
             }
         }
 

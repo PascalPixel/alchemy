@@ -3,6 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+extern u8 gMapCellBuffer[];
 
 extern u8 gBattleFxWork[];
 
@@ -29,9 +30,9 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * rectangle-routine pick -- most plausibly a spinning number/counter reveal
  * rather than the orbiting-member sprite loop of the sibling effect.
  *
- * `status` and `Func_080072f0`/`Func_080072f4` follow the established
+ * `status` and `_call_via_r3`/`Func_080072f4` follow the established
  * sibling reading: both addresses are `_call_via_rN` thunk slots
- * (the container-built bank at 0x080072e4) -- r3 for Func_080072f0, r4 for Func_080072f4
+ * (the container-built bank at 0x080072e4) -- r3 for _call_via_r3, r4 for Func_080072f4
  * -- so each call is a genuine indirect call through a traced function
  * pointer, not a call to a real symbol at that address.
  */
@@ -216,7 +217,7 @@ void BattleFx_RunCounterReveal(void *object)
                 }
                 if ((u32)(frame - 92) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                        canvas, (void *)0x02010000,
+                        canvas, (void *)gMapCellBuffer,
                         CounterReveal_PanelX[idx_a * 7 + 3],
                         CounterReveal_PanelY[idx_b * 7 + 3] + screen_y, 128, 91);
                 }

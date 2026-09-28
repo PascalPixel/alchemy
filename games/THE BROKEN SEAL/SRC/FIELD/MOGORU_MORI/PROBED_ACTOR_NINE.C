@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define MogoruMori_RunProbedActorNineScene Func_02000f94
-
 struct Resource39fProbe {
     s32 word[6];
 };

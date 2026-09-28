@@ -1,4 +1,5 @@
 #include "MAKYURI_HEYA.H"
+extern u8 gEffectWork[];
 
 enum {
     /* Message 0x182 + 184. */
@@ -123,7 +124,7 @@ void Func_02003e2e(s32, s32, s32, s32, s32, s32, s32, s32 *);
 extern u8 Value_02008cd1;
 
 extern u8 Data_0200e010[];
-extern u8 Value_00000874;
+extern u8 MsgVenom;
 
 extern s32 **Data_03001edc;
 
@@ -144,10 +145,6 @@ extern s32 **Data_03001edc;
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
-#define OverlayObject_PrepareSpawnedObject      Func_02000048
-#define CreateOverlayObject Func_02005a86
-#define SetOverlayObjectMode Func_02005b08
-#define SetOverlayObjectSlot Func_02005c58
 
 void *CreateOverlayObject(s32, s32, s32, s32);
 void SetOverlayObjectMode(void *, s32);
@@ -282,7 +279,7 @@ struct FieldActor *Func_02006ffa_actor_gate();
 #define Scene_GetRecord_2(args...) Func_020081d6_tail(args)
 #define ObjectMotion_CallThenWaitForAnimationChange_1(args...) Func_02008270_a_tail(args)
 #define GameFlag_Set_1(a0) Call1(Func_0200827e_b_tail, a0)
-#define SCENE_WORK (*(u8 **)0x03001ebc)
+#define SCENE_WORK (*(u8 **)&gEventWork)
 #define FX16_0_1 0x1999
 #define FX16_0_25 0x4000
 #define FX16_0_4 0x6666
@@ -716,7 +713,7 @@ void FieldScene_RunActorElevenAtTile5And13(void)
             s32 s1 = 10;
             Map_CopyCellAttributes(9, 5, 1, 1, s0, s1);
         }
-        GameFlag_Set((s32)&Value_00000874);
+        GameFlag_Set((s32)&MsgVenom);
     }
     Event_End();
 }
@@ -1130,7 +1127,7 @@ void SceneEffect_RotatePaletteEntries40To47(void)
     u16 *src;
     u32 front;
 
-    if ((*(volatile u32 *)0x03001e40 & 7) != 0) {
+    if ((*(volatile u32 *)&gFrameCount & 7) != 0) {
         return;
     }
 
@@ -1216,7 +1213,7 @@ void SceneEffect_RotatePaletteEntries97To103(void)
     u16 *src;
     u32 first;
 
-    if ((*(volatile u32 *)0x03001e40 & 7) != 0) {
+    if ((*(volatile u32 *)&gFrameCount & 7) != 0) {
         return;
     }
 
@@ -1452,7 +1449,7 @@ void FieldScene_RunScene39c_02004f44(void)
     u8 *addr;
     u8 v;
 
-    p5 = *(volatile s32 *)0x03001f30;
+    p5 = *(volatile s32 *)gEffectWork;
     Actor_SetPosition(11, 0x3480000, 0x2580000);
     Psynergy_Begin(93, 1);
     Psynergy_SetTarget(3, 11);

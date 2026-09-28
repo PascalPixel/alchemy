@@ -73,7 +73,7 @@ s32 Math_Mod(s32 numerator, s32 denominator);
 void ItemMenu_RefreshOwner(s32 owner, s32 mode);
 void UiWindow_DrawDividerLineFar(s32 window, s32 unused, s32 x, s32 y, s32 width);
 void UiWindow_ClearInteriorTilesFar(s32 window, s32 unused, s32 x, s32 y, s32 height);
-s32 Func_080a3d9c(s32 owner, s32 item);
+s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 s32 ItemMenu_Count(s32 owner);
@@ -125,7 +125,7 @@ s8 ItemMenu_SelectTarget(s32 mode)
                 UiWindow_DrawDividerLineFar(window, 0, 9, 16, 9);
                 UiWindow_ClearInteriorTilesFar(window, 0, 72, 120, 80);
                 if (selection != menu->item_selection) {
-                    quantity = Func_080a3d9c(menu->owner_ids[selection], menu->selected_item & 0x1ff);
+                    quantity = InventoryMenu_GetItemQuantity(menu->owner_ids[selection], menu->selected_item & 0x1ff);
                     if (quantity != 0) {
                         UiText_DrawNumberInWindowFar(quantity, 2, window, 8, 72);
                         UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b2f, window, 24, 72);

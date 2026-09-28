@@ -38,7 +38,7 @@ Func_08077018:
 	.global Item_Get
 	.thumb_func
 Item_Get:
-	overlay_veneer Func_08078414
+	overlay_veneer Item_GetDirect
 	.global Shop_GetSelectionState
 	.thumb_func
 Shop_GetSelectionState:
@@ -88,10 +88,10 @@ Func_08077050:
 	.global Inventory_RemoveFar
 	.thumb_func
 Inventory_RemoveFar:
-	overlay_veneer Func_080788c4
-	.global Func_08077060
+	overlay_veneer Inventory_Remove
+	.global Inventory_BreakFar
 	.thumb_func
-Func_08077060:
+Inventory_BreakFar:
 	overlay_veneer Inventory_Break
 	.global Func_08077068
 	.thumb_func
@@ -113,7 +113,7 @@ BattleAction_Get:
 	.global Func_08077080
 	.thumb_func
 Func_08077080:
-	overlay_veneer Func_08078b9c
+	overlay_veneer BattleAction_GetDirect
 	.global OwnerAction_AddFar
 	.thumb_func
 OwnerAction_AddFar:
@@ -199,9 +199,9 @@ Owner_RecalculateRatiosFar:
 Owner_UpdateRatioPairFar:
 	overlay_veneer Owner_UpdateRatioPair
 	overlay_veneer Owner_UpdateSecondInputAndRatios
-	.global Func_08077140
+	.global BattleUnit_AssignFar
 	.thumb_func
-Func_08077140:
+BattleUnit_AssignFar:
 	overlay_veneer BattleUnit_Assign
 	.global Party_CountActiveOwnersFar
 	.thumb_func
@@ -209,7 +209,7 @@ Party_CountActiveOwnersFar:
 	.global Func_08077148
 	.thumb_func
 Func_08077148:
-	overlay_veneer Func_080795fc
+	overlay_veneer Party_CountActiveOwners
 	.global Party_AddActiveOwnerFar
 	.thumb_func
 Party_AddActiveOwnerFar:
@@ -217,28 +217,28 @@ Party_AddActiveOwnerFar:
 	.global Party_ListActiveOwnersFar
 	.thumb_func
 Party_ListActiveOwnersFar:
-	overlay_veneer Func_080796c4
-	overlay_veneer Func_08079d1c
+	overlay_veneer Party_ListActiveOwners
+	overlay_veneer RollWeaponUnleash
 	.global Party_RemoveActiveOwnerFar
 	.thumb_func
 Party_RemoveActiveOwnerFar:
 	overlay_veneer Party_RemoveActiveOwner
 	overlay_veneer Item_GetEquippedElement
-	.global Func_08077178
+	.global Battle_HitCheck
 	.thumb_func
-Func_08077178:
+Battle_HitCheck:
 	overlay_veneer BattleFx_RollSuccess
-	.global Func_08077180
+	.global Battle_CalcAttack
 	.thumb_func
-Func_08077180:
+Battle_CalcAttack:
 	overlay_veneer Owner_ScaleAdjustedAmount
-	.global Func_08077188
+	.global Battle_CalcPower
 	.thumb_func
-Func_08077188:
+Battle_CalcPower:
 	overlay_veneer Owner_ScaleValueByCurve
-	.global Func_08077190
+	.global Battle_CalcRestore
 	.thumb_func
-Func_08077190:
+Battle_CalcRestore:
 	overlay_veneer Owner_ScaleValueByOffsetCurve
 	.global Owner_GetRecordFar
 	.thumb_func
@@ -279,9 +279,9 @@ Trade_AddOfferFar:
 Djinn_TransferFar:
 	overlay_veneer Djinn_Transfer
 	overlay_veneer Trade_ListFlaggedEntries
-	.global Func_080771e0
+	.global SummonDefinition_Get
 	.thumb_func
-Func_080771e0:
+SummonDefinition_Get:
 	overlay_veneer SummonDefinition_GetNear
 	.global Func_080771e8
 	.thumb_func
@@ -310,11 +310,11 @@ Func_08077218:
 	.global Item_CanOwnerEquip
 	.thumb_func
 Item_CanOwnerEquip:
-	overlay_veneer Func_0807842c
+	overlay_veneer Item_CanOwnerEquipDirect
 	.global Item_IsCompatibleWithOwnerFar
 	.thumb_func
 Item_IsCompatibleWithOwnerFar:
-	overlay_veneer Func_0807845c
+	overlay_veneer Item_IsCompatibleWithOwner
 	.global Inventory_FindEquippedFar
 	.thumb_func
 Inventory_FindEquippedFar:

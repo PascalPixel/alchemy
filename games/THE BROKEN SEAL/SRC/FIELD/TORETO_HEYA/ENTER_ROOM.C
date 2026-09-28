@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
+extern struct MapRenderWork *gMapWork;
 
 void ToretoPalette_CaptureBank(void);
 void ToretoHeya_PlayGesture(s32 gesture);
@@ -66,7 +67,7 @@ s32 ToretoHeya_EnterRoom(void)
     }
     if (Value1(Engine_GameFlagIsSet, 0x109))
         ToretoHeya_ApplyFlaggedMapPatches();
-    globals = (u8 **)0x03001e70;
+    globals = (u8 **)&gMapWork;
     work = globals[0];
     camera = (s32 *)(work + 260);
     camera[2] += Iwram_MulQ16(*(s32 *)(work + 236) + 0xa00000, 0x1999);

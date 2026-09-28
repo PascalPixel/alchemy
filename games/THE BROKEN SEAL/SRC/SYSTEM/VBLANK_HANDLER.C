@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+extern struct SerialTransferState gSerialTransfer;
 
 extern u16 Data_03001cb0;            /* link active */
 extern u16 Data_03001f64;            /* link exchange status */
@@ -43,7 +44,7 @@ void System_VBlankHandler(void)
     }
     if (Data_03001cb0 != 0) {
         u16 *status = &Data_03001f64;
-        *status = SerialRuntime_ExchangePayloads((void *)0x02002220, (void *)0x02002020);
+        *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)0x02002020);
         SerialRuntime_StepBlockTransfer();
     }
     Func_080f9018();

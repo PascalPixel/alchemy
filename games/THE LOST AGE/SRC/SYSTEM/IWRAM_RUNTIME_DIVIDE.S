@@ -54,6 +54,10 @@ AlchemyUncreditedEnd_08000acc:
 	bl	.L_03000534
 	mov	r0, r1
 	bx	ip
+@ Divide entry: signed when either operand is negative. ARM callers enter
+@ at its Thumb stub, which runs as andeq in ARM state.
+	.global IwramDivide
+IwramDivide:
 	.thumb
 	.global IwramSignedDivide
 IwramSignedDivide:
@@ -88,7 +92,7 @@ AlchemyUncreditedEnd_08000afc:
 	mov	r0, r1
 	mov	r1, #0
 	bx	lr
-	.4byte	0x080028a8
+	.4byte	Runtime_ReciprocalTable
 .L_03000578:
 	rsbs	r3, r2, r1, lsr #16
 	bcc	.L_030005b0

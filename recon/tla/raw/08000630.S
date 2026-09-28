@@ -11,7 +11,9 @@
 @ The zero halfword after its early return (0x08000646) never runs, and the
 @ pool words 0x00000350 and 0x04000006 at 0x080006ac are loaded by no
 @ instruction; they carry no credit.
-@ credit: handwritten — TLA sound driver guarded ROM-to-IWRAM frame entry
+@ It stays disassembly without credit: it calls through lr with the second
+@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
+@ an instruction.
 .syntax unified
 	.thumb
 	.global SoundDriver_EnterFrameUpdate

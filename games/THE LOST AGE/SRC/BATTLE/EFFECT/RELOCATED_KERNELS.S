@@ -158,7 +158,7 @@ AlchemyUncreditedEnd_08138fc8:
 	pop	{r0, r1, r9}
 	b	.L_08138ff4
 AlchemyUncredited_081391bc:
-	.4byte	0x080028a9
+	.4byte	Runtime_ReciprocalTable + 1
 .L_081391c0:
 AlchemyUncreditedEnd_081391bc:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
@@ -311,7 +311,7 @@ AlchemyUncreditedEnd_081391c8:
 	pop	{r0, r1, r9}
 	b	.L_081391f4
 AlchemyUncredited_081393cc:
-	.4byte	0x080028a9
+	.4byte	Runtime_ReciprocalTable + 1
 .L_081393d0:
 AlchemyUncreditedEnd_081393cc:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}
@@ -468,7 +468,7 @@ AlchemyUncreditedEnd_081393d8:
 	pop	{r0, r1, r9}
 	b	.L_08139404
 AlchemyUncredited_081395ec:
-	.4byte	0x080028a9
+	.4byte	Runtime_ReciprocalTable + 1
 .L_081395f0:
 AlchemyUncreditedEnd_081395ec:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}

@@ -153,18 +153,17 @@ LAYOUT_SIZE_GUARD(
     struct ShopPartyState,
     0x14);
 
-#define SHOP_RUNTIME (*(struct ShopRuntime **)Data_03001f2c_a)
 #define SHOP_PARTY_STATE (*(struct ShopPartyState *)0x02000240)
 
-void Func_080b09fc(
+void Shop_SetCursor(
     struct ShopCursor *cursor,
     s32 target_x,
     s32 target_y,
     s8 kind);
-void Func_080b0a6c(void *window, s32 x, s32 y);
-void Func_080b0fa4(s32 window, s32 selected);
-void Func_080b10cc(void);
-void Func_080b110c(
+void Shop_PlaceCursor(void *window, s32 x, s32 y);
+void Shop_DrawStock(s32 window, s32 selected);
+void Shop_DrawMoney(void);
+void Shop_DrawItemPrice(
     s32 window,
     s32 item_name_message,
     s32 price,
@@ -172,8 +171,8 @@ void Func_080b110c(
 void Shop_DrawMsg(s32 window, s32 message);
 void Shop_DrawParty(s32 window, s32 selected, s32 requirement);
 void Shop_DrawUnitItem(s32 window, s32 unit_id, s32 item_id);
-s32 Func_080b153c(s32 unit_id, s32 item_id);
-void Func_080b17e4(s32 unit_id, s32 item_id, s32 quantity);
+s32 Shop_SelBuyNum(s32 unit_id, s32 item_id);
+void Shop_BuyDone(s32 unit_id, s32 item_id, s32 quantity);
 s32 Shop_ConfirmEquip(s32 unit_id, s32 slot);
 s32 Shop_SellOld(s32 unit_id, s32 slot);
 s32 Shop_SalePrice(s32 item_id);
@@ -183,25 +182,5 @@ s32 Shop_SelSellNum(s32 unit_id, s32 slot);
 s32 Shop_RepairPrice(s32 item_id);
 s32 Shop_SelUnit(void);
 void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_slot);
-
-#define Shop_SetCursorPosition        Func_080b09fc
-#define Shop_PlaceCursor              Func_080b0a6c
-#define Shop_DrawStockPage            Func_080b0fa4
-#define Shop_DrawMoney                Func_080b10cc
-#define Shop_DrawItemPrice            Func_080b110c
-#define Shop_DrawMessage              Shop_DrawMsg
-#define Shop_UpdatePartyMemberList    Shop_DrawParty
-#define Shop_DrawPartyMemberItems     Shop_DrawUnitItem
-#define Shop_SelectPurchaseQuantity   Func_080b153c
-#define Shop_CompletePurchase         Func_080b17e4
-#define Shop_ConfirmEquipItem         Shop_ConfirmEquip
-#define Shop_SellReplacedItem         Shop_SellOld
-#define Shop_ComputeSalePrice         Shop_SalePrice
-#define Shop_SelectPartyMember        Shop_PickUnit
-#define Shop_DrawPartyMemberItemGrid  Shop_DrawUnitGrid
-#define Shop_SelectSaleQuantity       Shop_SelSellNum
-#define Shop_ComputeRepairPrice       Shop_RepairPrice
-#define Shop_RunPartyMemberSelection  Shop_SelUnit
-#define Shop_DrawUseItemDetails       Shop_DrawUseItem
 
 #endif

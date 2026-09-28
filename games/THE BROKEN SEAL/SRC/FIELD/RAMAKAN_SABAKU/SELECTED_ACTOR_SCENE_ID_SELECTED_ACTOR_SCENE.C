@@ -3,9 +3,6 @@
 #include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
-#define CreateOverlayObject Func_02001dae
-#define SetOverlayObjectMode Func_02001e10
-#define SetOverlayObjectSlot Func_02001eb8
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 

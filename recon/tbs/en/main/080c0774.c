@@ -11,18 +11,14 @@
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 
-#define BattlePres_ConfigurePaletteFade Func_080c0774
-
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 extern u8 Value_0000001f;
-#define MASK mask
 
 s32 Func_080041d8(u32 callback, s32 interval);
 void Func_080c0098(void *);
 void Func_080c00d8(void *);
 
-void BattlePres_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
+void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
     s32 *transition = *(s32 **)0x03001f00;
 
@@ -40,7 +36,7 @@ void BattlePres_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         q = &gIoWriteQueue;
         do {
             do {
-                ime = &REG_IME;
+                ime = &RegIme;
                 saved = *ime;
             } while (0);
             *ime = (u16)ime;
@@ -69,8 +65,8 @@ void BattlePres_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 
         for (i = 0; i != 128; i++) {
             s32 red = source[i] & 31;
-            s32 green = (source[i] >> 5) & MASK;
-            s32 blue = (source[i] >> 10) & MASK;
+            s32 green = (source[i] >> 5) & mask;
+            s32 blue = (source[i] >> 10) & mask;
 
             if (red > fade) {
                 red -= fade;

@@ -15,7 +15,6 @@ struct GlobalData {
 };
 
 extern struct GlobalData gGameState;
-#define PARTY_STATE gGameState
 extern char Value_fff80000;
 extern char Value_001ffffe;
 
@@ -36,7 +35,7 @@ void BattleFx_EmitRandomParticle(void)
     register u8 *object;
     register u8 *entry;
 
-    object = ObjectTable_Get(PARTY_STATE.value_1F4);
+    object = ObjectTable_Get(gGameState.value_1F4);
     entry = *(u8 **)((u32)&Data_03001ebc) + 0x11C;
     index = 0;
     if (entry[4] != 0) {

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void Engine_EventBegin();
 void Engine_CameraMoveTo();
@@ -155,7 +156,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorSetPosition(11, 0, 0);
     Engine_ActorWaitForMove(0);
     Engine_ActorSetPosition(0, 0, 0);
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x201;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x201;
     Engine_EventCloseScreen();
     Engine_EventWaitForScreen();
     Engine_EventRequestExit(10);

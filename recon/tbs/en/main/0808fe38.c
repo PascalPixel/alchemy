@@ -13,9 +13,7 @@ struct DisplayTransitionState {
  s16 active;
 };
 
-#define DisplayTransition_InitializeState Func_0808fe38
-
-void DisplayTransition_InitializeState(s32 mode)
+void DisplayTransition_InitializeBattleEffectState(s32 mode)
 {
     u8 *pool = Func_080048f4(31, 0x540);
     volatile s32 zero;

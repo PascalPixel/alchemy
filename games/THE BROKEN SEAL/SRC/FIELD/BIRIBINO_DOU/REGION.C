@@ -4,16 +4,13 @@
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define RuntimeSelectorTable Data_02000240
-#define PrimaryRuntimeSelector Value_00000031
-#define SecondaryRuntimeSelector Value_00000030
-#define TertiaryRuntimeSelector Value_0000002f
-#define PrimaryOverlayData Data_020089ec
-#define SecondaryOverlayData Data_02008a64
-#define TertiaryOverlayData Data_02008b24
-#define DefaultOverlayData Data_020089bc
 
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+extern u8 Data_020089ec[];
+extern u8 Data_02008a64[];
+extern u8 Data_02008b24[];
+extern u8 Data_020089bc[];
+extern struct MapRenderWork *gMapWork;
 
 extern s16 Data_02000240[];
 extern unsigned char Value_00000031;
@@ -87,25 +84,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-#undef PrimaryOverlayData
-#define PrimaryOverlayData Data_02008c2c
-#undef SecondaryOverlayData
-#define SecondaryOverlayData Data_02008c5c
-#undef TertiaryOverlayData
-#define TertiaryOverlayData Data_02008cbc
-#undef DefaultOverlayData
-#define DefaultOverlayData Data_02008c14
-
 extern u8 Data_02008c2c[];
-
-#undef PrimaryOverlayData
-#define PrimaryOverlayData Data_02008ea8
-#undef SecondaryOverlayData
-#define SecondaryOverlayData Data_02008efc
-#undef TertiaryOverlayData
-#define TertiaryOverlayData Data_02008f80
-#undef DefaultOverlayData
-#define DefaultOverlayData Data_02008e9c
 
 extern u8 Data_02008ea8[];
 
@@ -119,15 +98,15 @@ s32 SceneState_ApplyArgMode0AndReturnZero(s32 no)
 s32 SceneData_SelectByRuntimeSelector(void)
 {
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000031) {
         return (s32)Data_020089ec;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000030) {
         return (s32)Data_02008a64;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000002f) {
         return (s32)Data_02008b24;
     }
     return (s32)Data_020089bc;
@@ -148,15 +127,15 @@ u8 *SceneData_GetTable8bcc(void)
 s32 SceneData_SelectSecondaryDataByRuntimeSelector(void)
 {
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000031) {
         return (s32)Data_02008c2c;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000030) {
         return (s32)Data_02008c5c;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000002f) {
         return (s32)Data_02008cbc;
     }
     return (s32)Data_02008c14;
@@ -165,15 +144,15 @@ s32 SceneData_SelectSecondaryDataByRuntimeSelector(void)
 s32 SceneData_SelectDataByRuntimeSelector(void)
 {
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000031) {
         return (s32)Data_02008ea8;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_00000030) {
         return (s32)Data_02008efc;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000002f) {
         return (s32)Data_02008f80;
     }
     return (s32)Data_02008e9c;
@@ -369,13 +348,13 @@ void ActorPresentation_SetSceneCell31AndFlag305(void)
 void SceneState_SetGlobalByte17(void)
 {
 
-    FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 1;
+    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 1;
 }
 
 void SceneState_ClearRuntimeByte17(void)
 {
 
-    FIELD_AT_OFFSET(*(void **)0x03001E70, s8 *, 0x17) = 0;
+    FIELD_AT_OFFSET(*(void **)&gMapWork, s8 *, 0x17) = 0;
 }
 
 /*

@@ -13,7 +13,7 @@ struct ModeRecord {
 extern struct ModeRecord Data_0200cac8;
 extern struct ModeRecord Data_0200c0f6;
 extern u8 Data_02000240[];
-extern u8 Data_02002090[];
+extern u8 gIoWriteQueue[];
 extern u8 Data_0200cbfc[];
 extern u8 Data_0200cc28[];
 extern u8 Data_0200cca4[];
@@ -182,7 +182,7 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
     Func_02006bba(p11, p8b, p10b);
     Func_02006bec(0, 0x4000, 0);
     base6_4000208 = 0x4000208;
-    base4_2002090 = (s32)Data_02002090;
+    base4_2002090 = (s32)gIoWriteQueue;
     v1 = *(volatile u16 *)base6_4000208;
     *(volatile u16 *)base6_4000208 = base6_4000208;
     if (*(volatile u16 *)base4_2002090 <= 31) {
@@ -217,11 +217,11 @@ void Func_02002ba8(s32 a0, s32 a1, s32 a2)
     } while (v5 <= 15);
     v4 = *(volatile u16 *)0x04000208;
     *(volatile u16 *)0x04000208 = 0x4000208;
-    if (*(volatile u16 *)Data_02002090 <= 31) {
-        *(volatile u16 *)Data_02002090 += 1;
-        *(volatile s32 *)((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4)) = 16;
-        *(volatile s32 *)(((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
-        *(volatile s32 *)(((((((*(volatile u16 *)Data_02002090 << 1) + *(volatile u16 *)Data_02002090) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
+    if (*(volatile u16 *)gIoWriteQueue <= 31) {
+        *(volatile u16 *)gIoWriteQueue += 1;
+        *(volatile s32 *)((((((*(volatile u16 *)gIoWriteQueue << 1) + *(volatile u16 *)gIoWriteQueue) << 2) + 0x2002090) + 4)) = 16;
+        *(volatile s32 *)(((((((*(volatile u16 *)gIoWriteQueue << 1) + *(volatile u16 *)gIoWriteQueue) << 2) + 0x2002090) + 4) + 4)) = 0x4000052;
+        *(volatile s32 *)(((((((*(volatile u16 *)gIoWriteQueue << 1) + *(volatile u16 *)gIoWriteQueue) << 2) + 0x2002090) + 4) + 4) + 4) = 0x20000;
     }
     *(volatile u16 *)0x04000208 = v4;
     *(volatile s32 *)((s32)rec + 24) = 0x11000;

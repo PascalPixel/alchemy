@@ -171,12 +171,12 @@ s32 OverlayObject_ApplyLowNibbleOfField100(void *obj)
 
 s32 OverlayObject_UpdateEveryFourFrames(void *obj)
 {
-    if ((*(u32 *)0x03001e40 & 3) == 0)
+    if ((*(u32 *)&gFrameCount & 3) == 0)
         Object_SetPalette(obj, 7);
     else
         Object_SetPalette(obj, 0);
 
-    if ((*(u32 *)0x03001e40 & 7) == 0)
+    if ((*(u32 *)&gFrameCount & 7) == 0)
         Audio_PlayCue(138);
     return 0;
 }
@@ -185,7 +185,7 @@ s32 SceneEffect_SpawnRandomEveryEightFramesB(struct Object_020005e4 *object)
 {
     struct EffectParams_020005e4 params;
     s32 phase, x, y, speed;
-    phase = *(u32 *)0x03001e40 & 7;
+    phase = *(u32 *)&gFrameCount & 7;
     if (phase != 0) goto done;
     params.unk00 = 3 - (s32)((u32)(Random_Next() * 2) >> 16);
     params.color1 = 0x6666;
@@ -252,7 +252,7 @@ void SceneEffect_RunObjectZeroColorSequence(void)
     struct EffectObject *obj;
     u8 *state;
 
-    state = *(u8 **)0x03001ebc;
+    state = *(u8 **)&gEventWork;
     obj = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
     Audio_PlayCue(228);

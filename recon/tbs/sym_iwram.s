@@ -174,8 +174,6 @@ gSpriteObjects:
 	.space 0x00000004
 	.global Data_03001e64
 Data_03001e64:
-	.global Data_03001e64_a
-Data_03001e64_a:
 	.global gObjectSlots
 gObjectSlots:
 	.space 0x00000004
@@ -234,8 +232,6 @@ gBattleBgFxWork:
 	.space 0x00000014
 	.global Data_03001ebc
 Data_03001ebc:
-	.global Data_03001ebc_a
-Data_03001ebc_a:
 	.global gEventWork
 gEventWork:
 	.global gWork
@@ -244,8 +240,8 @@ gWork:
 	.global gPaletteWork
 gPaletteWork:
 	.space 0x00000004
-	.global Data_03001ec4
-Data_03001ec4:
+	.global gParticleWork
+gParticleWork:
 	.space 0x00000004
 	.global Data_03001ec8
 Data_03001ec8:
@@ -279,8 +275,6 @@ gTransitionWork:
 	.space 0x0000001c
 	.global Data_03001f1c
 Data_03001f1c:
-	.global Data_03001f1c_a
-Data_03001f1c_a:
 	.global gSaveWorkspace
 gSaveWorkspace:
 	.space 0x00000010

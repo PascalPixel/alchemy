@@ -17,8 +17,6 @@ void Func_0808f32c(void);
 s32 Func_080041d8(const void *callback, s32 delay);
 void Func_080982dc(void);
 
-#define RunBattleEffect08 Func_080983a0
-
 void RunBattleEffect08(void)
 {
     u8 **state_slot = &Data_03001ebc;

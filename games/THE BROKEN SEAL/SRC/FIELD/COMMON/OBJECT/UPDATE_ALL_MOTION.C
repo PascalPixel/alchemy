@@ -3,6 +3,7 @@
 
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+extern u8 gObjectSlots[];
 
 /* Moves each of the fourteen entries of the object table toward its target,
    applies gravity with bounce, notices when an axis target was passed and
@@ -62,7 +63,7 @@ void Object_UpdateAllMotion(void)
     s32 vy;
     s32 turn;
 
-    obj = *(struct MotionObject **)0x03001e64;
+    obj = *(struct MotionObject **)gObjectSlots;
     for (cnt = 13; cnt >= 0; cnt--, obj++) {
         if (obj->active == 0)
             continue;

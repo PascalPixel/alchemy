@@ -12,7 +12,6 @@ struct ResultWork {
 };
 
 extern struct ResultWork gGameState;
-#define PARTY_STATE gGameState
 extern u8 Value_00000021;
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
 s16 BattleFx_GetPhaseResult(s32 value);
@@ -28,9 +27,9 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
 
     runtime->value_17c = BattleFx_GetWeightedResult(first, second);
     if (first == 98 && second == 0)
-        PARTY_STATE.special = (u16)(s32)&Value_00000021;
+        gGameState.special = (u16)(s32)&Value_00000021;
     if (runtime->mode_19e == 3)
-        BattleFx_LookupResult((u8 *)ObjectTable_Get(PARTY_STATE.object_id) + 8);
+        BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.object_id) + 8);
     BattleFx_SelectBattleCue(first, second);
 }
 
@@ -47,7 +46,7 @@ void BattleFx_SetPhaseRequest(s32 flags, s32 value)
     if (high == 0)
         EventActor_RunHopAndLeapSequence(flags);
 
-    shared = &PARTY_STATE;
+    shared = &gGameState;
     shared->request = (value + 0x12c) | high;
     state->value_17c = BattleFx_GetPhaseResult(value);
     if (state->mode_19e == 3) {

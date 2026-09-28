@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+extern u8 gEffectWork[];
 
 void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
 {
@@ -9,7 +10,7 @@ void FieldScene_SetFlag140AndFinishSequence(s32 arg0, s32 arg1)
 
     GameFlag_Set(160 << 1);
     Psynergy_Begin(141, 1);
-    globalCtx = *(u8 **)0x03001f30;
+    globalCtx = *(u8 **)gEffectWork;
     Psynergy_SetTarget(arg0, arg1);
     globalCtx[0x23] = 0;
     Psynergy_RaiseHands();
@@ -50,7 +51,7 @@ void FieldScene_SpawnEightShots(void)
 
 void FieldScene_SelectActorModeFromInputBit(s32 arg0)
 {
-    if ((*(u32 *)0x03001e40 >> 1) & 1) {
+    if ((*(u32 *)&gFrameCount >> 1) & 1) {
         Object_SetPalette(arg0, 10);
     } else {
         Object_SetPalette(arg0, 9);

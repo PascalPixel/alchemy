@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void FieldScene_RunScene39a_02001ad0();
 s32 Engine_GameFlagIsSet();
@@ -28,7 +29,7 @@ void ImiruFuchin_NudgeCameraByStep(void)
 {
     s32 step;
 
-    step = *(s16 *)(*(u8 **)0x03001ebc + 0x16c);
+    step = *(s16 *)(*(u8 **)&gEventWork + 0x16c);
     if (Data_02000240_t[224][0] == (s32)Data_0000003f) {
         if (step == 17)
             FieldScene_RunScene39a_02001ad0(0, -32);

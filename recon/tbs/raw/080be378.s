@@ -1,10 +1,8 @@
 .syntax unified
 	.thumb
 	.global BattleCommand_BuildPlan
-	.global Func_080be378
 	.thumb_func
 BattleCommand_BuildPlan:
-Func_080be378:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1065,7 +1063,7 @@ Func_080be378:
 	ldr	r3, [r1, #0]
 	movs	r2, #8
 	ldrsh	r0, [r3, r2]
-	bl	Func_080771e0
+	bl	SummonDefinition_Get
 	mov	r4, sl
 	movs	r2, #24
 	ldr	r3, [r4, #0]
@@ -1558,7 +1556,7 @@ Func_080be378:
 	ldrb	r3, [r7, #3]
 	movs	r4, #100
 	str	r4, [sp, #0]
-	bl	Func_08077178
+	bl	Battle_HitCheck
 	ldr	r1, [r5, #0]
 	adds	r2, r6, #0
 	adds	r3, r1, #2

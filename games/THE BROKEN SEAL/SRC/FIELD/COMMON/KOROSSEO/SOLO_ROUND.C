@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 u8 * Engine_ActorGet();
 void Engine_EventBegin();
@@ -36,7 +37,7 @@ void Korosseo_FinishSoloRound(s32 id)
     s32 msg;
     s32 res;
 
-    work = *(s32 *)0x03001ebc;
+    work = *(s32 *)&gEventWork;
     Engine_ActorGet(id);
     Engine_ActorGet(id);
     slot = gGameStateRows[125][0];
@@ -46,7 +47,7 @@ void Korosseo_FinishSoloRound(s32 id)
     Engine_EventSetMessage(msg);
     Value2((s32 (*)())Engine_EventOpenMessage, id, 0);
     {
-        u8 *w = *(u8 **)0x03001ebc;
+        u8 *w = *(u8 **)&gEventWork;
         s32 v = 0x2089;
 
         *(u16 *)(w + 0xcc2) = v;

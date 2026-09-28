@@ -9,17 +9,6 @@ enum PoseMessage {
 };
 
 
-#define SceneActor_SetActor14Pose258 Func_02000030
-#define SceneData_GetTable9438 Func_02000044
-#define SceneData_SelectTableByWord224 Func_0200004c
-#define SceneData_GetTable96d0 Func_0200007c
-#define SceneData_SelectTableBySceneIdAndFlag9a7 Func_02000084
-#define FieldScene_RunSequenceA Func_020003f4
-#define FieldScene_RunThreeCallSequence Func_02000468
-#define SceneState_ForwardWord16cAndApply7b Func_0200048c
-#define SceneData_SelectScriptBySceneIdAndFlag9a7 Func_020004b0
-#define FieldScene_RunPrimaryScript Func_02000508
-#define FieldScene_RunSecondaryScript Func_02000eec
 
 extern u8 Value_000000b3;
 extern u8 Data_02009690[];
@@ -360,7 +349,7 @@ void FieldScene_RunPrimaryScript(void)
     Value2(Engine_ActorSetAnimationAndWait, 11, 3);
     Value1(Engine_EventWait, 30);
     Value2(Engine_EventShowMessage, 11, 0);
-    (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
+    (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))++;
     } else {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
@@ -370,7 +359,7 @@ void FieldScene_RunPrimaryScript(void)
     Value1(Engine_EventWait, 10);
     Value2(Engine_ActorSetAnimationAndWait, 11, 4);
     Value1(Engine_EventWait, 20);
-    (*(u16 *)(*(u8 **)0x03001ebc + 0x1d8))++;
+    (*(u16 *)(*(u8 **)&gEventWork + 0x1d8))++;
     Event_ShowMessage(11, 0);
     }
     Value1(Engine_EventWait, 10);

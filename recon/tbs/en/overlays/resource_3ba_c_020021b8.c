@@ -164,7 +164,7 @@
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 
 struct Sprite { u32 words[3]; };
 struct SpriteTile { u16 pad, base; };
@@ -363,7 +363,7 @@ render:
         break;
     }
     queue = &gIoWriteQueue;
-    ime = &Data_04000208;
+    ime = &RegIme;
     QueueRegister(0x04000050, 0x3f00)
     QueueRegister(0x04000052, ((16 - blend) << 8) | blend)
 }

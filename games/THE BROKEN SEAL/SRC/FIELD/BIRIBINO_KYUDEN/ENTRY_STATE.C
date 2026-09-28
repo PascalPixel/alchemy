@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void Engine_MapClearLayerEntryFlag();
 void Engine_GameFlagSet();
@@ -51,7 +52,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
     s32 rec8;
     s32 record;
 
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x209;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
     Engine_MapClearLayerEntryFlag(1);
     Engine_MapClearLayerEntryFlag(2);
     Call1(Engine_GameFlagSet, 0x84b);

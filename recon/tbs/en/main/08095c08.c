@@ -92,8 +92,6 @@ void RotateVectorByMagnitude(
 void NormalizeVector(void *position);
 void Audio_PlayCue(s32 cue);
 
-#define BattleFx_UpdatePhasedRadialParticle Func_08095c08
-
 /* FAKEMATCH: isolate only the coordinate input and its polar consumer. */
 static __inline__ void EffectPosition_AddLaunchOffset(
     struct PhasedParticleSlot *effect, struct EffectVector *position)
@@ -108,7 +106,7 @@ static __inline__ void EffectPosition_AddLaunchOffset(
         position);
 }
 
-void BattleFx_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
+void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
 {
     struct EffectPositionSource *source;
     struct EffectVector position;

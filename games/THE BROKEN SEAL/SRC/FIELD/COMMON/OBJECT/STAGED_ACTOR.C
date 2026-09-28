@@ -1,5 +1,6 @@
 #include "STAGED_ACTOR.H"
 #include "FIXED_POINT_POSITION.H"
+extern u8 gMapCellBuffer[];
 
 /* Linked into several field overlays; each overlay has its own copy of the
  * footprint and direction tables. */
@@ -155,7 +156,7 @@ s32 StagedActor_FillGridAttributeRectangle(u32 layer, s32 x, s32 z, u32 width, u
 
             cells = *(u8 **)(map + offset);
         } else {
-            cells = (u8 *)0x02010000;
+            cells = (u8 *)gMapCellBuffer;
         }
         cells += (x + (z << 7)) * 4;
         for (row = 0; row < height; row++) {

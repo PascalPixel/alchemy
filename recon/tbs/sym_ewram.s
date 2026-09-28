@@ -41,8 +41,8 @@ gLinkPeerSignatures:
 	.global gSerialSendSource
 gSerialSendSource:
 	.space 0x00000010
-	.global Data_02002090
-Data_02002090:
+	.global gIoWriteQueue
+gIoWriteQueue:
 	.space 0x00000190
 	.global gSerialTransfer
 gSerialTransfer:

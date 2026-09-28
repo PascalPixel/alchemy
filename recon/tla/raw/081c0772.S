@@ -7,7 +7,9 @@
 @ no compare, and calls the helper through that private register contract.
 @ The zero halfword of alignment at 0x081c09c6 never runs and carries no
 @ credit.
-@ credit: handwritten — sound driver stereo-volume helper and note handler (TLA revision)
+@ It stays disassembly without credit: it calls through lr with the second
+@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
+@ an instruction.
 .syntax unified
 	.thumb
 .L_081c0772:

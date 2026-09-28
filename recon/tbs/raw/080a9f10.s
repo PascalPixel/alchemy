@@ -112,7 +112,7 @@ Func_080a9f10:
 	movs	r2, #128
 	adds	r0, r6, #0
 	lsls	r2, r2, #1
-	bl	Func_08077190
+	bl	Battle_CalcRestore
 	adds	r6, r0, #0
 .L_080a9ffa:
 	movs	r4, #56

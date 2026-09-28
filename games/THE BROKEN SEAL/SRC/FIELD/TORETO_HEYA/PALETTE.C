@@ -1,4 +1,5 @@
 #include "DMA.H"
+extern struct BattleEffectBuffers *Data_03001ed0;
 
 /*
  * Toreto house: upload the room's palette bank from the source pointed at by
@@ -8,6 +9,6 @@
 
 void ToretoPalette_CaptureBank(void)
 {
-    Dma_Set((const void *)0x05000000, *(void **)0x03001ed0, 0x84000070,
+    Dma_Set((const void *)0x05000000, *(void **)&Data_03001ed0, 0x84000070,
             (volatile u32 *)0x040000d4);
 }

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080ad6d4
+	.global OwnerAction_RunCompareLoop
 	.thumb_func
-Func_080ad6d4:
+OwnerAction_RunCompareLoop:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

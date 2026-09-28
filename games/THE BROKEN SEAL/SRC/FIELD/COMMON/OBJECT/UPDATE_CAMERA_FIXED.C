@@ -43,8 +43,7 @@ struct FixedSync {
     s16 frozen;
 };
 
-extern u8 Data_03001e64_a[];
-#define FIELD_RUNTIME ((u32)Data_03001e64_a)
+extern u8 gObjectSlots[];
 extern u8 Data_08009bb8[];
 extern u8 Value_000002c4[];
 
@@ -53,7 +52,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 s32 ArcTan2(s32 x, s32 y);
 void Render_ResetTransformState(void);
 s32 GameFlag_TestFar(s32 flag);
-void Func_080072f0(u32 arg, s32 unused1, s32 unused2, u32 routine);
+void _call_via_r3(u32 arg, s32 unused1, s32 unused2, u32 routine);
 void Graphics_PrepareTransferAndRun(struct FixedPoint *eye, struct FixedPoint *target);
 void Graphics_PrepareTransferInIwramWork(struct FixedPoint *eye, struct FixedPoint *target);
 void Render_PlaceProjectedSprite(void *sprite, s32 *position, s32 *scale, s32 angle, s32 layer);
@@ -79,8 +78,8 @@ void ObjectSystem_UpdateCameraFixed(void)
     /* FAKEMATCH: unused words that give the ROM's 52-byte frame. */
     s32 unused[6];
 
-    camera = *(struct FixedCamera **)(FIELD_RUNTIME + 0x1c);
-    sync = *(struct FixedSync **)(FIELD_RUNTIME + 4);
+    camera = *(struct FixedCamera **)((u32)gObjectSlots + 0x1c);
+    sync = *(struct FixedSync **)((u32)gObjectSlots + 4);
     /* FAKEMATCH: the do-while keeps the size load after the runtime loads. */
     do { size = (u32)Value_000002c4; } while (0);
     Dma_Set(Data_08009bb8, Runtime_AllocateHeapBlock(52, size), 0x84000000 | (size >> 2),
@@ -101,7 +100,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     } else {
         Graphics_PrepareTransferInIwramWork(eye, target);
     }
-    obj = *(struct FixedObject **)FIELD_RUNTIME;
+    obj = *(struct FixedObject **)(u32)gObjectSlots;
     obj += 63;
     unit = 0x10000;
     for (cnt = 63; cnt >= 0; cnt--, obj--) {

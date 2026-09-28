@@ -21,7 +21,6 @@ enum CottageFlag {
 };
 
 #define NULL ((void *)0)
-#define CalculateFacingAngle Func_02001a9e
 
 #include "FACING_OBJECT.H"
 
@@ -52,7 +51,7 @@ extern u8 LinkedMessage_TheyKnowLittleOfTheSanctum[];
 extern u8 LinkedMessage_YoureTheOnesSneakingAround[];
 extern u8 Data_02009ce0[];
 
-s32 Func_02001a9e(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 struct ObjectRuntime *Func_02001c6e(u32);
 s32 Func_02002430();
 s32 Func_0200243c();

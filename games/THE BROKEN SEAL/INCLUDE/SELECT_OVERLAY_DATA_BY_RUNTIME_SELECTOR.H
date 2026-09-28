@@ -3,7 +3,6 @@
 
 #include "TYPES.H"
 
-extern s16 RuntimeSelectorTable[];
 extern u8 PrimaryRuntimeSelector;
 extern u8 SecondaryRuntimeSelector;
 extern u8 TertiaryRuntimeSelector;

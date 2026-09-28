@@ -64,28 +64,19 @@ extern char Value_00000af1;
 extern char Value_00000bef;
 
 void Func_080030f8(s32 frames);
-void Func_080a3cf8(s32 unused, s32 message);
+void ItemMenu_DrawMsg(s32 unused, s32 message);
 s32 Func_080a602c(s32 unused);
-void Func_080a9cbc(void);
+void ItemMenu_PosCategory(void);
 void Func_080a112c(s32 window, s32 owner, s32 unused0, s32 unused1);
 s32 Func_080a6ccc(s32 unused);
-s32 Func_080a65e4(s32 owner, s32 psynergy, s32 shortcut);
+s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
 s32 Func_08015278(s32 window);
-s32 Func_080a1d08(s32 message, s32 arg1, s32 arg2);
+s32 InventoryMenu_ShowModalMessage(s32 message, s32 arg1, s32 arg2);
 s32 Func_080a63e4(s32 unused);
-s32 Func_080a5fe0(void);
+s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 s32 Func_080a9f10(s32 action, s32 owner, s32 target, s32 flags);
-void Func_080aa460();
+void Ability_PlayUseAnimation();
 void Func_080f9010(s32 cue);
-
-#define ItemMenu_DrawMsg Func_080a3cf8
-#define ItemMenu_PosCategory Func_080a9cbc
-#define ItemMenu_ShowModalMessage Func_080a1d08
-#define PsynergyMenu_SetShortcut Func_080a65e4
-#define PsynergyMenu_ClassifySelectedPsynergy Func_080a5fe0
-#define Ability_PlayUseAnimation Func_080aa460
-#define WaitFrames Func_080030f8
-#define Audio_PlayCue Func_080f9010
 
 /*
  * State machine that resolves the currently selected item/Psynergy command:
@@ -114,7 +105,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
     work = Data_03001f2c;
     result = 0;
 
-    while (done == 0 && Func_080770c0(0x150) == 0) {
+    while (done == 0 && GameFlag_TestFar(0x150) == 0) {
         switch (state) {
         case 0:
             work->field_174 = 0;
@@ -129,7 +120,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
 
         case 1:
             WaitFrames(1);
-            Func_08077008(work->item_owner);
+            Owner_GetStateFar(work->item_owner);
             state = 0;
             if (work->entry_count != 0) {
                 switch (work->mode) {
@@ -154,13 +145,13 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
                             PsynergyMenu_SetShortcut(
                                 work->item_owner, selection, 0);
                             Func_08015278(work->info_window);
-                            ItemMenu_ShowModalMessage(
+                            InventoryMenu_ShowModalMessage(
                                 (s32)&Value_00000ae2, -1, -1);
                         } else {
                             PsynergyMenu_SetShortcut(
                                 work->item_owner, selection, 1);
                             Func_08015278(work->info_window);
-                            ItemMenu_ShowModalMessage(
+                            InventoryMenu_ShowModalMessage(
                                 (s32)&Value_00000ae3, -1, -1);
                         }
                         state = 0;
@@ -206,20 +197,20 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
                 self_flag = 9;
             }
             if (result != -1) {
-                action = Func_08077080(work->selected_action & 0x3fff);
-                Func_08077120(work->item_owner, -action->pp_cost);
+                action = BattleAction_Get(work->selected_action & 0x3fff);
+                Owner_AdjustSecondValueFar(work->item_owner, -action->pp_cost);
             }
-            Func_08077010(work->item_owner);
+            BattleUnit_Recalculate(work->item_owner);
             if (result != -1) {
                 Func_080a112c(work->field_024, work->target_owner, 0, 0);
                 Ability_PlayUseAnimation(work->selected_action & 0x3fff);
                 Func_08015278(work->info_window);
-                ItemMenu_ShowModalMessage(
+                InventoryMenu_ShowModalMessage(
                     work->message_offset + (s32)&Value_00000bef, 0, -1);
             } else {
                 Audio_PlayCue(114);
                 Func_08015278(work->info_window);
-                ItemMenu_ShowModalMessage(
+                InventoryMenu_ShowModalMessage(
                     work->message_offset + (s32)&Value_00000bef,
                     result,
                     result);
@@ -245,7 +236,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
         }
     }
 
-    if (Func_080770c0(0x150) != 0) {
+    if (GameFlag_TestFar(0x150) != 0) {
         result = -1;
     }
     return result;

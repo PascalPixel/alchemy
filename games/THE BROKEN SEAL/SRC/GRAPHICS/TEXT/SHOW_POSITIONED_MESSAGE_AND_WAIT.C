@@ -14,7 +14,6 @@ void UiWork_Finalize(struct Work *work, s32 release);
 s32 UiWork_IsIdle(struct Work *work);
 
 extern s32 gGameState[];
-#define PARTY_STATE gGameState
 
 /* Shows message no in a window centred across the screen and waits until it
  * has printed. Flag 8 places the window high and flag 0x40 lower; otherwise it
@@ -61,7 +60,7 @@ void UiText_ShowPositionedMessageAndWait(s32 no, s32 flags)
     {
         s32 dy;
 
-        Object_GetScreenPositionFar(PARTY_STATE[125], pos);
+        Object_GetScreenPositionFar(gGameState[125], pos);
         dy = pos[1] >> 3;
         if (dy > 9)
         {

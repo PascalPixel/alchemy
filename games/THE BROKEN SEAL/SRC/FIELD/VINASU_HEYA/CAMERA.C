@@ -2,7 +2,7 @@
 
 void FieldScene_SetupActorTenCamera(void)
 {
-    u8 *state = *(u8 **)0x03001ebc;
+    u8 *state = *(u8 **)&gEventWork;
     {
         u16 *target = (u16 *)(state + 0xcba);
         s32 shown = 0;

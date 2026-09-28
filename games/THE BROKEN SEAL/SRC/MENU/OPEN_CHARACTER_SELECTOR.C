@@ -96,7 +96,7 @@ s32 Menu_OpenCharacterSelector(void)
     result = CharacterSelector_Run();
 
     RenderOutput_ClearListFar(state->screen_handle);
-    InventoryMenu_CloseWindows();
+    ItemMenu_Close();
     gMenuCtrlWork->suspended = 0;
     WaitFrames(1);
     Runtime_ReleaseHeapBlock(55);

@@ -44,24 +44,6 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-#define Runtime_ReleaseHeapBlock       Func_08002dd8
-#define Battle_SetObjectFlag5bWhenMode3   Func_0808c44c
-#define Battle_ClearObjectFlag5bWhenMode3 Func_0808c4c0
-#define BattleFx_InitializeBuffers Func_08091174
-#define Party_ResolveTablePair         Func_0808b1d8
-#define Party_CheckMemberValueTotal    Func_080919d8
-#define PartyInventory_GiveItem        Func_08091a58
-#define ObjectEffect_RunPendingFlagEvent Func_08094428
-#define BattleFx_ScheduleCallbackWhenValue24cSet Func_08099810
-#define BattleAction_RunDescriptor     Func_0808d828
-#define Battle_DispatchInputEvent      Func_0808d8f0
-#define BattleFx_FindDescriptorWithOverride Func_0808d5a4
-#define BattleFx_RunDescriptorAction Func_0808d5dc
-#define BattleFx_RunKind6DescriptorAction Func_0808d7d8
-#define BattleCommand_ExecuteSelectedAction Func_0808e680
-#define BattleCommand_ExecuteSelectedItem   Func_0808e23c
-#define Battle_ResetEffectCounter      Func_0808e118
-
 void *Func_080048f4();
 void Func_08002dd8();
 void Func_080030f8();
@@ -88,48 +70,48 @@ void Func_08015208();
 void Func_08015288();
 void Func_08015290();
 void Func_08015370();
-s32 Func_080022ec();
-void *Func_08077008();
-s32 Func_080770c0();
+s32 Math_Div();
+void *Owner_GetStateFar();
+s32 GameFlag_TestFar();
 void Func_080770c8();
 void Func_080770d0();
 void Func_080772f0();
 void Func_0808ace0();
-void Func_0808b1d8();
+void Party_ResolveTablePair();
 void Func_0808b674();
 void Func_0808ba38();
 void Func_0808bb2c();
 void Func_0808bc44();
 s32 Func_0808bc9c();
 void Func_0808bec0();
-void Func_0808c44c();
-void Func_0808c4c0();
+void Battle_SetObjectFlag5bWhenMode3();
+void Battle_ClearObjectFlag5bWhenMode3();
 s32 Func_0808ce74();
 void Func_0808cf78();
 void Func_0808d0c8();
-s32 Func_0808d5a4();
-void Func_0808d5dc();
-void Func_0808d7d8();
-void Func_0808d828();
-void Func_0808d8f0();
+s32 BattleFx_FindDescriptorWithOverride();
+void BattleFx_RunDescriptorAction();
+void BattleFx_RunKind6DescriptorAction();
+void BattleAction_RunDescriptor();
+void Battle_DispatchInputEvent();
 void Func_0808d9a4();
 s32 Func_0808ddec();
-void Func_0808e118();
+void Battle_ResetEffectCounter();
 void Func_0808e23c();
-void Func_0808e680();
+void BattleCommand_ExecuteSelectedAction();
 void Func_0808e9c0();
 void Func_0808fefc();
 void Func_080901c0();
-void Func_08091174();
+void BattleEffect_InitializeBuffers();
 void Func_08091200();
 void Func_08091660();
-s32 Func_080919d8();
+s32 Party_CheckMemberValueTotal();
 void Func_08091a58();
 void Func_080941e0();
-s32 Func_08094428();
+s32 ObjectEffect_RunPendingFlagEvent();
 void Func_08095680();
 void Func_08095778();
-void Func_08099810();
+void BattleFx_ScheduleCallbackWhenValue24cSet();
 void Func_0809c138();
 void Func_0809c3a4();
 void Func_080f9010();
@@ -221,7 +203,7 @@ s32 Func_0808c4f8(void)
         Func_08009128();
     }
     Func_0808e9c0();
-    BattleFx_InitializeBuffers();
+    BattleEffect_InitializeBuffers();
     BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
 
     FIELD_AT_OFFSET(work, s32 *, 0x1C0) = 256;

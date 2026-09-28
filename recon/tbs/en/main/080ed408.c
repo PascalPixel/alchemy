@@ -2,8 +2,6 @@
 #include "DMA.H"
 #include "BATTLE_EFX.H"
 
-#define Blit_BuildRoutine BattleEffect_LoadWork
-
 /*
  * Runtime code assembler at 0x080ed408 (1648 bytes, one function).
  *
@@ -85,7 +83,7 @@ extern const u32 Data_080edcb8[];
 extern const u32 Data_080eefa4[];
 extern const u32 Data_080eefdc[];
 
-s32 Blit_BuildRoutine(s32 id, s32 a, s32 b, s32 flags, u32 mode)
+s32 BattleEffect_LoadWork(s32 id, s32 a, s32 b, s32 flags, u32 mode)
 {
     const u32 *src;
     u32 *dst;

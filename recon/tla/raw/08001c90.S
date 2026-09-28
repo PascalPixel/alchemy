@@ -4,7 +4,9 @@
 @ exactly the kernel's size on the stack, has DMA3 copy the kernel there with
 @ stmia r4!, {r5, r6, r7} and calls the copy. Neither approved compiler emits
 @ an add rd, pc address form; both load constants one ldr at a time.
-@ credit: handwritten — Thumb stack-copy loaders of the colour-buffer fade kernels
+@ It stays disassembly without credit: it calls through lr with the second
+@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
+@ an instruction.
 .syntax unified
 	.thumb
 	.global ColorBuffer_ScaleThreeQuarters

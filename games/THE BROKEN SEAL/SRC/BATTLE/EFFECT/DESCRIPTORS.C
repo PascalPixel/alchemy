@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+extern u8 gOverlayArea[];
 
 extern const u8 ObjectMotion_LinkedActionScript[];
 extern const u8 ObjectMotion_StepAngleScript[];
@@ -50,7 +51,6 @@ extern u32 BattleFx_CheckDescriptorKind3Result(s32 descriptor, s32 value);
 extern s32 GameFlag_IsConditionActive(s32 condition);
 extern struct EffectObject *ObjectTable_Get(s32 object);
 extern u8 gGameState;
-#define PARTY_STATE gGameState
 extern void *gEventWork;
 
 struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
@@ -61,7 +61,7 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32 kind, s32 value)
     s32 state_index = 250;
     s32 flags;
     u32 reference =
-        ObjectTable_Get(*(u32 *)((s16 *)&PARTY_STATE + state_index))->reference;
+        ObjectTable_Get(*(u32 *)((s16 *)&gGameState + state_index))->reference;
 
     flags = descriptor->flags;
     while (flags != -1) {
@@ -114,7 +114,7 @@ typedef s32 (*WorkEntryFn)(void);
 
 void Runtime_CallWorkBlockEntry(void)
 {
-    s32 base = 0x02008000;
+    s32 base = (u32)gOverlayArea;
     ((WorkEntryFn)*(s32 *)(base + 4))();
 }
 
@@ -130,7 +130,7 @@ struct EffectDescriptor *BattleFx_FindDescriptor(s32, s32);
 s32 BattleFx_FindDescriptorWithOverride(s32 arg0)
 {
     struct EffectDescriptor *result = BattleFx_FindDescriptor(0, arg0);
-    s32 value = ((struct EffectSelectionWork *)&PARTY_STATE)->value;
+    s32 value = ((struct EffectSelectionWork *)&gGameState)->value;
 
     if (value == arg0) {
         struct EffectDescriptor *next = BattleFx_FindDescriptor(7, value);
@@ -192,7 +192,7 @@ s32 BattleFx_RunDescriptorAction(s32 id)
     s32 used_fallback = 0;
     s32 selected_offset = 0x24a;
 
-    if (*(s16 *)((u8 *)&PARTY_STATE + selected_offset) == id) {
+    if (*(s16 *)((u8 *)&gGameState + selected_offset) == id) {
         special = 1;
         descriptor = (struct EffectDescriptor *)BattleFx_FindDescriptor(7, id);
         if (descriptor == 0) {
@@ -232,7 +232,7 @@ run_descriptor:
         if (shifted_mode <= (1 << 24) || shifted_mode == (3 << 24)) {
             s32 object_index = 250;
             s32 *object_slot =
-                (s32 *)((s16 *)&PARTY_STATE + object_index);
+                (s32 *)((s16 *)&gGameState + object_index);
             struct BattleActionObject *linked = Object_GetById(*object_slot);
             *(void **)((u8 *)linked + 56) = *(void **)((u8 *)linked + 8);
             *(void **)((u8 *)linked + 60) = *(void **)((u8 *)linked + 12);
@@ -259,7 +259,7 @@ run_descriptor:
             if (action->mode == 3) {
                 s32 object_index = 250;
                 s32 object_id =
-                    *(s32 *)((s16 *)&PARTY_STATE + object_index);
+                    *(s32 *)((s16 *)&gGameState + object_index);
                 object->linked_object = Object_GetById(object_id);
                 object->flags_5a |= 1;
                 ObjectMotion_SetActionCallback(object, (void *)ObjectMotion_LinkedActionScript);
@@ -276,7 +276,7 @@ finish:
     if (special) {
         s32 finish_selected_offset = 0x24a;
         s16 *selected =
-            (s16 *)((u8 *)&PARTY_STATE + finish_selected_offset);
+            (s16 *)((u8 *)&gGameState + finish_selected_offset);
         BattleFx_ResumeObject(*selected);
         cleared_selection = 0xffff;
         *selected = cleared_selection;

@@ -1,6 +1,8 @@
 #include "AUDIO_ENGINE_SYMBOLS.H"
 #include "TYPES.H"
 #include "AUDIO_ENGINE.H"
+extern u8 gMusicPlayerBgm[];
+extern u8 gMusicRestoreDelay[];
 
 void Audio_Initialize(void);
 extern u8 RomBytes_02003000;
@@ -46,7 +48,7 @@ void MusicPlayer_SetPitchAndUpdateFrequency(s32 address, u16 value);
 
 void MusicCommand_SetPitchAndUpdateFrequency(u16 value)
 {
-    MusicPlayer_SetPitchAndUpdateFrequency(0x02004290, value);
+    MusicPlayer_SetPitchAndUpdateFrequency((u32)gMusicPlayerBgm, value);
 }
 
 void MusicPlayer_SetPitch(u8 *state, u32 mask, u32 value);
@@ -55,7 +57,7 @@ void MusicCommand_SetPitch(s16 pitch)
   int player_address;
   int channel_mask;
   s16 pitch_value;
-  player_address = 0x02004290;
+  player_address = (u32)gMusicPlayerBgm;
   do
   {
     pitch_value = pitch;
@@ -80,16 +82,16 @@ void MusicCommand_SetVolume(s16 volume)
   s16 volume_value;
   s16 *volume_cell;
   volume_value = volume;
-  MusicPlayer_SetVolume(0x02004290, 0xFF, (u16)volume);
-  *((s16 *) 0x02003034) = volume_value;
+  MusicPlayer_SetVolume((u32)gMusicPlayerBgm, 0xFF, (u16)volume);
+  *((s16 *) &gMusicVolumeTarget) = volume_value;
   /* GCC 2.96 preserves this matched branch shape. */
  store_shared_volume:;
   if (volume_value)
   {
-    *(volume_cell = (s16 *) 0x02003008) = volume_value;
+    *(volume_cell = (s16 *) &gMusicVolume) = volume_value;
   } else
   {
-    *(volume_cell = (s16 *) 0x02003008) = volume_value;
+    *(volume_cell = (s16 *) &gMusicVolume) = volume_value;
   }
 }
 
@@ -108,7 +110,7 @@ s32 WaitFrames(s32);
 
 u8 AudioCommand_GetStateByte(void)
 {
-    return *(u8 *)0x02003000;
+    return *(u8 *)gMusicRestoreDelay;
 }
 
 void AudioCommand_StopAllPlayers(void)
@@ -134,7 +136,7 @@ void AudioCommand_UpdateToggleMask(u32 command)
 
 u8 AudioCommand_GetSecondaryStateByte(void)
 {
-    return *(u8 *)0x0200303c;
+    return *(u8 *)&gAudioSecondaryState;
 }
 
 void AudioCommand_WaitForCompletion(void)
@@ -142,7 +144,7 @@ void AudioCommand_WaitForCompletion(void)
     s32 wait_count = 0;
 
     do {
-        if (*(u8 *)0x02003000 == 0)
+        if (*(u8 *)gMusicRestoreDelay == 0)
             break;
         WaitFrames(1);
         wait_count++;

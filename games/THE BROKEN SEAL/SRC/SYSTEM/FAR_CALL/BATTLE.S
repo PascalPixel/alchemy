@@ -65,7 +65,7 @@ Func_080b5088:
 	.thumb_func
 GetBattleObjectSlotFar:
 	overlay_veneer GetBattleObjectSlot
-	overlay_veneer Func_080b63c8
+	overlay_veneer Battle_RunEncounter
 	.global BattleMotion_ProjectPositionFar
 	.thumb_func
 BattleMotion_ProjectPositionFar:

@@ -35,10 +35,6 @@ extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
 
-#define CELL_W PuffArc_CellWidths
-#define CELL_H PuffArc_CellHeights
-#define CELL_DY PuffArc_CellBiasY
-#define CELL_SRC PuffArc_CellSourceOffsets
 
 /* One 28-byte record; the array starts at work + 0x7080. */
 typedef struct Puff {
@@ -138,21 +134,21 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
                 /* wide is loaded once and reused for the centring shift and
                    the width argument, then reloaded per layer because the
                    call clobbers it. */
-                draw(dst, (u8 *)work + CELL_SRC[cell],
-                    cur->x - ((wide = CELL_W[cell]) >> 1),
-                    cur->y + CELL_DY[cell],
-                    wide, CELL_H[cell]);
+                draw(dst, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                    cur->x - ((wide = PuffArc_CellWidths[cell]) >> 1),
+                    cur->y + PuffArc_CellBiasY[cell],
+                    wide, PuffArc_CellHeights[cell]);
                 if (WORK_EFX->variant != 0) {
-                    draw(dst, (u8 *)work + CELL_SRC[cell],
-                        cur->x - ((wide = CELL_W[cell]) >> 1),
-                        (cur->y + CELL_DY[cell]) - 16,
-                        wide, CELL_H[cell]);
+                    draw(dst, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                        cur->x - ((wide = PuffArc_CellWidths[cell]) >> 1),
+                        (cur->y + PuffArc_CellBiasY[cell]) - 16,
+                        wide, PuffArc_CellHeights[cell]);
                 }
                 if (WORK_EFX->variant == 2) {
-                    draw(dst, (u8 *)work + CELL_SRC[cell],
-                        cur->x - ((wide = CELL_W[cell]) >> 1),
-                        (cur->y + CELL_DY[cell]) - 32,
-                        wide, CELL_H[cell]);
+                    draw(dst, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                        cur->x - ((wide = PuffArc_CellWidths[cell]) >> 1),
+                        (cur->y + PuffArc_CellBiasY[cell]) - 32,
+                        wide, PuffArc_CellHeights[cell]);
                 }
             }
             i += 1;

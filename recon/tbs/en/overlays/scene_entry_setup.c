@@ -42,7 +42,6 @@ void Func_02004fc4(void);
 void Func_02004fd4(void);
 void Func_02004fdc(s32);
 void Func_02004fec(s32);
-extern s16 Data_02000240[];
 extern u8 Value_000000b5;
 extern u8 Value_000000b6;
 extern u8 Value_000000b7;
@@ -70,7 +69,6 @@ static __inline__ void Scene_Call3(void (*func)(), s32 a0, s32 a1, s32 a2)
 
 #define WORD(p, n) (*(s32 *)((u8 *)(p) + (n)))
 #define HALF(p, n) (*(u16 *)((u8 *)(p) + (n)))
-#define SCENE Data_02000240
 #define WORK (*(struct EventWork **)0x03001ebc)
 
 s32 Scene_RunEntrySetup(void)
@@ -84,7 +82,7 @@ s32 Scene_RunEntrySetup(void)
         Func_02000558();
     Func_02004e7c(0x110);
     WORK->start_transition = 0x204;
-    if (SCENE[224] == (s32)&Value_000000b5) {
+    if (((s16 *)&gGameState)[224] == (s32)&Value_000000b5) {
         WORK->start_transition = 0x100;
         if (!Func_02004e74(0x981))
             Func_0200300c(8);
@@ -98,8 +96,8 @@ s32 Scene_RunEntrySetup(void)
         Func_02004f64(12, 2);
         Func_0200300c(13);
         Func_0200300c(14);
-    } else if (SCENE[224] == (s32)&Value_000000b6) {
-        switch (SCENE[225]) {
+    } else if (((s16 *)&gGameState)[224] == (s32)&Value_000000b6) {
+        switch (((s16 *)&gGameState)[225]) {
         case 1: case 2:
             Func_0200300c(8);
             break;
@@ -153,8 +151,8 @@ s32 Scene_RunEntrySetup(void)
             }
             break;
         }
-    } else if (SCENE[224] == (s32)&Value_000000b7) {
-        switch (SCENE[225]) {
+    } else if (((s16 *)&gGameState)[224] == (s32)&Value_000000b7) {
+        switch (((s16 *)&gGameState)[225]) {
         case 16:
             Func_02004e84(0x12f);
             break;
@@ -207,8 +205,8 @@ s32 Scene_RunEntrySetup(void)
         case 1: case 2: case 3: case 4: case 19:
             goto play_cue;
         }
-    } else if (SCENE[224] == (s32)&Value_000000b8) {
-        switch (SCENE[225]) {
+    } else if (((s16 *)&gGameState)[224] == (s32)&Value_000000b8) {
+        switch (((s16 *)&gGameState)[225]) {
         case 2:
             Func_020007d8();
             goto play_cue;
@@ -257,7 +255,7 @@ s32 Scene_RunEntrySetup(void)
                 Func_02004e34(15, 32, 3, 1, 9, 32);
                 Func_02004e34(12, 32, 3, 1, 15, 32);
             }
-            if (SCENE[225] == 11) {
+            if (((s16 *)&gGameState)[225] == 11) {
                 Func_02004fc4();
                 Func_02004fd4();
                 WORK->start_transition = 0x204;
@@ -266,8 +264,8 @@ s32 Scene_RunEntrySetup(void)
         case 1:
             goto play_cue;
         }
-    } else if (SCENE[224] == (s32)&Value_000000b9) {
-        switch (SCENE[225]) {
+    } else if (((s16 *)&gGameState)[224] == (s32)&Value_000000b9) {
+        switch (((s16 *)&gGameState)[225]) {
         case 19:
             Func_02004610();
             break;
@@ -285,9 +283,9 @@ s32 Scene_RunEntrySetup(void)
                 Func_02004da4(1);
                 Func_02004dac(0x0200c601, 3200);
             }
-            if (SCENE[225] == 11)
+            if (((s16 *)&gGameState)[225] == 11)
                 Func_020007d8();
-            else if (SCENE[225] == 20)
+            else if (((s16 *)&gGameState)[225] == 20)
                 Func_020047c0();
             break;
         case 4: case 5:
@@ -339,8 +337,8 @@ s32 Scene_RunEntrySetup(void)
         case 6:
             goto play_cue;
         }
-    } else if (SCENE[224] == (s32)&Value_000000ba) {
-        switch (SCENE[225]) {
+    } else if (((s16 *)&gGameState)[224] == (s32)&Value_000000ba) {
+        switch (((s16 *)&gGameState)[225]) {
         case 1: case 2:
             if (Func_02004e74(0x109)) {
                 Func_020022c8(0);
@@ -418,12 +416,12 @@ play_cue:
                 Func_02004e1c(63, 29, 49, 20, 1, 1);
                 Func_02004e1c(41, 56, 44, 17, 3, 4);
             }
-            if ((u16)(SCENE[225] - 18) <= 1) {
+            if ((u16)(((s16 *)&gGameState)[225] - 18) <= 1) {
                 Func_02004fc4();
                 Func_02004fd4();
                 WORK->start_transition = 0x204;
             }
-            if ((u16)SCENE[225] == 20)
+            if ((u16)((s16 *)&gGameState)[225] == 20)
                 Func_02004a2c();
             break;
 place_actor:

@@ -108,7 +108,7 @@ struct Actor_02002e5c {
     struct Actor_02002e5c *anchor;  /* 0x68 */
 };
 
-extern u8 *Data_03001ec4[];
+extern u8 *gParticleWork[];
 
 void *SoruFunka_ThrowEruptionRing();
 void Party_RemoveOwnerRestored();

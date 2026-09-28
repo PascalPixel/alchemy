@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 struct ActorMotion {
     u8 pad0[100];
@@ -206,7 +207,7 @@ void KorashiamuIriguchi_RunGatherScene(void)
             Engine_EventRequestExit(66);
             goto L_0200115c;
         }
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         Call2(Engine_EventShowMessage, 0x8008, 0);
         L_0200115c:;
         Engine_EventEnd();

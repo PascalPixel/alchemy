@@ -4,13 +4,11 @@
 #include "types.h"
 #include "BATTLE_EFX.H"
 
-#define Func_080e94b8 Func_080e94b8
-
 extern u8 Data_00000055[];
 extern u8 Data_00000073[];
 extern u8 Data_0000007d[];
 extern u8 Data_000000c0[];
-s32 Func_080022ec();
+s32 Math_Div();
 s32 Func_0800231c();
 s32 Func_08002322();
 void Func_08002dd8();
@@ -236,7 +234,7 @@ void Func_080e94b8(s32 a0)
         v10 = none;
         do {
             if ((u32)*(s32 *)(v5 + 24) <= 17) {
-                record = Func_080022ec(*(s32 *)(v5 + 24), 3);
+                record = Math_Div(*(s32 *)(v5 + 24), 3);
                 Call6(Func_080072f4, slot40, ((s32)((*(u8 *)(0x080eef0c + record) << 11) + p11) + 0x2000), ((*(s16 *)(v5 + 2) + *(u8 *)(0x080eef06 + (s32)(slot36 + (s32)((s32)(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4) << 1) + *(s32 *)(*(s32 *)((0x7828 + p11)) + 4))))) - 16), (*(s16 *)(v5 + 6) + 56), 32, 64);
             }
             if (*(s32 *)(v5 + 24) > 0) {
@@ -265,8 +263,8 @@ void Func_080e94b8(s32 a0)
                         if (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) >= 0) {
                             p8 = (s32)*(u8 **)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) >> 16;
                             p4 = *(s32 *)(((1 & v10) << 2) + slot24);
-                            p8b = ((s32)p8 - (Value2(Func_080022ec, v3, 5) + 1));
-                            Func_080072f4(slot40, (slot32 + *(u16 *)(0x080ede48 + (((Value2(Func_080022ec, v3, 5) + 1) << 1) - 2))), ((*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000)) >> 16) - (((Value2(Func_080022ec, v3, 5) + 1) + ((u32)(Value2(Func_080022ec, v3, 5) + 1) >> 31)) >> 1)), (Value2(Func_080022ec, v3, 5) + 1), ((Value2(Func_080022ec, v3, 5) + 1) << 1));
+                            p8b = ((s32)p8 - (Value2(Math_Div, v3, 5) + 1));
+                            Func_080072f4(slot40, (slot32 + *(u16 *)(0x080ede48 + (((Value2(Math_Div, v3, 5) + 1) << 1) - 2))), ((*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000)) >> 16) - (((Value2(Math_Div, v3, 5) + 1) + ((u32)(Value2(Math_Div, v3, 5) + 1) >> 31)) >> 1)), (Value2(Math_Div, v3, 5) + 1), ((Value2(Math_Div, v3, 5) + 1) << 1));
                         }
                     }
                 }

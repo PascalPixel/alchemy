@@ -5,7 +5,7 @@
 extern u8 Data_00000539[];
 
 extern s32 Func_08004278(void *);
-extern s32 Func_080072f0(s32, s32, s32, s32);
+extern s32 _call_via_r3(s32, s32, s32, s32);
 
 struct DisplayTransitionState {
     u8 pad_000[0x508];
@@ -31,7 +31,7 @@ struct DisplayTransferQueue {
     struct DisplayTransfer entries[32];
 };
 
-extern struct DisplayTransferQueue Data_02002090;
+extern struct DisplayTransferQueue gIoWriteQueue;
 
 void Func_08090658(void)
 {
@@ -58,7 +58,7 @@ void Func_08090658(void)
             s32 v;
 
             (*step)++;
-            v = Func_080072f0(delta * *step, *duration, delta, 0x03000380);
+            v = _call_via_r3(delta * *step, *duration, delta, 0x03000380);
             state->transition_value = state->transition_start + v;
         }
     }
@@ -100,7 +100,7 @@ void Func_08090658(void)
     }
 
     {
-        struct DisplayTransferQueue *queue = &Data_02002090;
+        struct DisplayTransferQueue *queue = &gIoWriteQueue;
         volatile u16 *ime = (volatile u16 *)0x04000208;
         s32 savedIme;
         s32 counter;

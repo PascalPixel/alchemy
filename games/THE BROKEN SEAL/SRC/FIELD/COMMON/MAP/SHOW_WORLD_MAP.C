@@ -11,6 +11,8 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
+void Map_UpdateWorldMapMarkers(void);
+extern u8 gMapCellBuffer[];
 
 struct MapLayerEntry {
     u8 padding00[10];
@@ -39,8 +41,7 @@ struct FieldState {
 extern u8 gWorkSlot[];
 extern u8 Value_0000001b[];
 extern u32 gKeysRepeat;
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Event_ClearStatus1c6(void);
@@ -87,8 +88,8 @@ void Map_ShowWorldMap(void)
     graphics = Resource_GetTableEntry(resource);
     Dma_Set(graphics, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     *(u16 *)0x05000000 = 0;
-    Resource_DecodeType01(graphics + 448, (void *)0x02010000);
-    Dma_Set((void *)0x02010000, (void *)0x06006a00, 0x84002580, (volatile u32 *)0x040000d4);
+    Resource_DecodeType01(graphics + 448, (void *)gMapCellBuffer);
+    Dma_Set((void *)gMapCellBuffer, (void *)0x06006a00, 0x84002580, (volatile u32 *)0x040000d4);
     {
         s32 v = 0x682;
         *(volatile u16 *)0x0400000a = v;
@@ -96,13 +97,13 @@ void Map_ShowWorldMap(void)
         *(volatile u16 *)0x04000000 = v;
     }
     BattleFx_SetupResourcesAndWindow();
-    Scheduler_AddOrUpdateCallback(0x0809bcf9, 0xc80);
+    Scheduler_AddOrUpdateCallback((s32)Map_UpdateWorldMapMarkers, 0xc80);
     if (GameFlag_TestFar(284))
         UiText_ShowPositionedMessageAndWaitFar(0x985, 1);
     do {
         WaitFrames(1);
     } while ((gKeysRepeat & 3) == 0);
-    Scheduler_RemoveCallback(0x0809bcf9);
+    Scheduler_RemoveCallback((u32)Map_UpdateWorldMapMarkers);
     BattleFx_CleanupResourcesAndWindow();
     {
         s32 v;
@@ -120,7 +121,7 @@ void Map_ShowWorldMap(void)
 
         q = &gIoWriteQueue;
         do {
-            ime = &REG_IME;
+            ime = &RegIme;
             saved = *ime;
         } while (0);
         *ime = (u16)ime;

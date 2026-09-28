@@ -1,0 +1,29 @@
+/* resource_380: its listing with maintained code linked in place, as pret
+   links objects in ROM order. */
+SECTIONS
+{
+    .text 0x2008000 :
+    {
+        "*/resource_380_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/OBJECTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
+        "*/resource_380_overlay.o"(.text.x0200813a)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/TABLES.o"(.text)
+        "*/resource_380_overlay.o"(.text.x02008390)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STARS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/ELEMENTAL_STAR_DEMAND.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/OFFER.o"(.text)
+        "*/resource_380_overlay.o"(.text.x0200978c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/PARTY_INTRO.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/ENTRY_STATE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/SAY.o"(.text)
+        "*/resource_380_overlay.o"(.text.x0200c25e)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/MYTHRIL.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RISE_SPARKS.o"(.text)
+        "*/resource_380_overlay.o"(.text.x0200c49c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.o"(.text)
+        "*/resource_380_overlay.o"(.text.x0200c854)
+        "*/resource_380_overlay.o"(.rodata)
+    }
+    /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+}

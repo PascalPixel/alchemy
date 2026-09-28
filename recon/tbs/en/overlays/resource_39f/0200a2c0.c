@@ -1,3 +1,7 @@
+/* Draft of resource_39f 0x0200a2c0 (MogoruMori_RunClosingChoreography), from
+ * the former games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/CLOSE_SCENE.C.
+ * Remaining difference: none in its bytes, but the ROM loads scene number 0x46 from the literal pool as a link-time value, and no source defines it.
+ * The listing keeps these rows. */
 #include "TYPES.H"
 
 u8 *Engine_ActorGet();

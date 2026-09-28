@@ -1,4 +1,4 @@
-/* Named link-time values the C loads from literal pools: hardware registers
-   and constants spelled as symbols. */
-Value_00000000 = 0x00000000;
+/* The sound driver's link-time settings: the number of music players and
+   the mixer's scanline limit (0: none). */
 Sound_PlayerCount = 0x00000008;
+Sound_MaxLines = 0x00000000;

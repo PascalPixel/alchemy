@@ -14,7 +14,7 @@ void CgbChannel_Mute(u8 channel);
 s32 Cgb_KeyToFrequency(u8 kind, u8 key, u8 fine);
 
 extern SoundCommand Sound_CommandTable[36];
-extern u8 Value_00000000;
+extern u8 Sound_MaxLines;
 
 void CgbAudio_Initialize(struct SoundNote *notes)
 {
@@ -53,7 +53,7 @@ void CgbAudio_Initialize(struct SoundNote *notes)
     work->cgb_update = Cgb_UpdateChannels;
     work->cgb_mute = CgbChannel_Mute;
     work->cgb_frequency = Cgb_KeyToFrequency;
-    work->unk0c = (u32)&Value_00000000;
+    work->max_lines = (u32)&Sound_MaxLines;
 
     zero = 0;
     Bios_CpuSet(&zero, notes, 0x05000040);

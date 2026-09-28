@@ -12,7 +12,6 @@ enum ArrivalMessage {
     MSG_OUR_INN_FEELS_EMPTY_NOW = 0x1afb
 };
 
-
 /* Table selection, dialogue and arrival scripts for resource_3a9. */
 typedef struct Placement {
     u32 destination;
@@ -20,118 +19,9 @@ typedef struct Placement {
     u16 y;
 } Placement;
 
-extern s16 Data_02000240[];     /* The shared work area, in RAM. */
-extern u8 Value_00000064;
-extern u8 Value_00000065;
-extern u8 Data_020084d0[];
-extern u8 Data_020086c8[];
-extern u8 Data_020084a0[];
-extern Placement Data_02008ef8[];   /* In-image placement table, four entries. */
-extern s16 Data_02000240[];
-extern u8 Data_020088d4[];
-extern u8 Data_0200879c[];
-extern u8 Data_02008a0c[];
-extern u8 Data_02008784[];
-extern u8 Data_02008c88[];
-extern u8 Data_02008a48[];
-extern u8 Data_02008eb0[];
-extern u8 Data_02008a3c[];
+extern Placement KareiHeya_ArrivalPlacements[];   /* In-image placement table, four entries. */
 
-u8 *Func_020005ba(s32);
-u8 *Func_0200062a(int);
-u8 *Func_020006e6();
-void Func_020004d0(void *);
-
-/* Old-style declarations where an overlay import varies in arity between its
- * call sites. */
-
-/* Picks one of three scene tables by scene id. */
-s32 SceneData_SelectTableBySceneId(void)
-{
-    s16 v = gGameState.scene;
-
-    if (v == (s32)&Value_00000064) {
-        return (s32)Data_020084d0;
-    }
-    if (v == (s32)&Value_00000065) {
-        return (s32)Data_020086c8;
-    }
-    return (s32)Data_020084a0;
-}
-
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-/*
- * Returns the in-image table at 0x02008728. The eight-byte owner includes its
- * one pool word, which holds that address and is returned without being
- * dereferenced.
- */
-u8 *SceneData_GetTable8728(void)
-{
-    return (u8 *)0x02008728;
-}
-
-/* Picks a table by scene id and sub-state, and hands the chosen one to
- * Func_020004d0 before returning it. */
-u8 *SceneData_SelectAndPrepareTable(void)
-{
-    s32 id = gGameState.scene;
-    if (id == (s32)&Value_00000064) {
-        s32 state = gGameState.entrance;
-        u8 *tbl;
-        switch (state) {
-        case 9:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-        case 17:
-            tbl = Data_020088d4;
-            break;
-        default:
-            tbl = Data_0200879c;
-            break;
-        }
-        Func_020004d0(tbl);
-        return tbl;
-    }
-    if (id == (s32)&Value_00000065) {
-        return Data_02008a0c;
-    }
-    return Data_02008784;
-}
-
-/* The same selection without the hand-off. Sub-state 16 falls to the default
- * arm even though it lies inside 9..17; that hole is deliberate. */
-u8 *SceneData_SelectSubStateTable(void)
-{
-    s32 id = gGameState.scene;
-    if (id == (s32)&Value_00000064) {
-        s32 state = gGameState.entrance;
-        switch (state) {
-        case 9:
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-        case 17:
-            return Data_02008c88;
-        default:
-            return Data_02008a48;
-        }
-    }
-    if (id == (s32)&Value_00000065) {
-        return Data_02008eb0;
-    }
-    return Data_02008a3c;
-}
+u8 *Object_GetById(s32);
 
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
@@ -155,7 +45,7 @@ void SceneDialogue_RunActor16Dialogue(void)
  * gesture in the first arm, the one-argument message in the second. */
 void SceneDialogue_RunActor8FlaggedDialogue(void)
 {
-    u8 *p = Func_020005ba(0);
+    u8 *p = Object_GetById(0);
 
     /* Band guard: facing in 0x6001..0x9fff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
@@ -181,7 +71,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
 {
     void Event_SetMessage(int);
 
-    u8 *p = Func_0200062a(0);
+    u8 *p = Object_GetById(0);
 
     /* Band guard: facing in 0xa001..0xdfff. The test is spelled as the short
      * arm's condition, which is what reproduces the branch. */
@@ -205,7 +95,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
  */
 void FieldScene_RunArrivalPlacement(void)
 {
-    u8 *Func_0200067a_a();
+    u8 *Object_GetById();
 
     u8 *work = *(u8 **)0x03001ebc;
     u32 slot;
@@ -215,7 +105,7 @@ void FieldScene_RunArrivalPlacement(void)
     Event_Begin();
 
     for (slot = 8; slot <= 65; slot++) {
-        u8 *rec = Func_0200067a_a(slot);
+        u8 *rec = Object_GetById(slot);
 
         if (rec != 0) {
             rec[85] = 0;
@@ -235,15 +125,15 @@ void FieldScene_RunArrivalPlacement(void)
     Audio_PlayCue(158);
 
     {
-        u32 x = Data_02008ef8[idx].x;
-        u32 y = Data_02008ef8[idx].y;
+        u32 x = KareiHeya_ArrivalPlacements[idx].x;
+        u32 y = KareiHeya_ArrivalPlacements[idx].y;
 
-        Map_AnimateCells(Data_02008ef8[idx].destination, x, y);
+        Map_AnimateCells(KareiHeya_ArrivalPlacements[idx].destination, x, y);
     }
 
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x00008000, 0x00004000);
 
-    p = Func_020006e6(0);
+    p = Object_GetById(0);
     p[85] = 0;
 
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -254,73 +144,4 @@ void FieldScene_RunArrivalPlacement(void)
     Event_CloseScreen();
     Event_WaitForScreen();
     Event_End();
-}
-
-/* Publishes 0x209 at +448 of the runtime record, and calls SceneState_ClearSlotsBySubState for
- * scene 0x64. */
-s32 SceneState_SetRuntimeWord448To521(void)
-{
-    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-    if (gGameState.scene == (s32)(u32)&Value_00000064) {
-        SceneState_ClearSlotsBySubState();
-    }
-    return 0;
-}
-
-/*
- * Clears the set of scene slots this sub-state leaves behind. Sub-state 16
- * takes the last arm even though it lies inside 9..17, so the test is not
- * written as a range. 0x911 is read as an event-flag id from its argument
- * position, and the six-argument call's argument meanings are not
- * established.
- */
-void SceneState_ClearSlotsBySubState(void)
-{
-    s16 sub = gGameState.entrance;
-
-    switch (sub) {
-    case 3:
-    {
-        /* The last two arguments travel on the stack. */
-        s32 fifth = 4;
-        s32 sixth = 2;
-        Map_CopyCellsTo(30, 14, 30, 16, fifth, sixth);
-        return;
-    }
-    case 9:
-    case 10:
-    case 11:
-    case 12:
-    case 13:
-    case 14:
-    case 15:
-    case 17:
-        break;
-    default:
-        goto other;
-    }
-
-    /* sub is 9..15 or 17. */
-    if (GameFlag_IsSet(0x911) != 0) {
-        /* Nine distinct call sites, not a loop; the trailing 15 is out of
-         * order and is kept that way. */
-        Actor_Destroy(10);
-        Actor_Destroy(11);
-        Actor_Destroy(12);
-        Actor_Destroy(13);
-        Actor_Destroy(14);
-        Actor_Destroy(17);
-        Actor_Destroy(18);
-        Actor_Destroy(19);
-        Actor_Destroy(15);
-    } else {
-        Actor_SetChildValue(13, 2);
-    }
-    return;
-
-other:
-    if (GameFlag_IsSet(0x911) != 0) {
-        Actor_Destroy(16);
-        Actor_Destroy(17);
-    }
 }

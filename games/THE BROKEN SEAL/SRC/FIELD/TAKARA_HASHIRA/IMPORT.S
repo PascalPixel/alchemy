@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathDivide
+	.thumb_func
+Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
 	.global WaitFrames
 	.thumb_func
@@ -23,18 +26,30 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
+	.global Vector_AddPolarOffset
+	.thumb_func
+Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.global Runtime_SetIrqHandler
+	.thumb_func
+Runtime_SetIrqHandler:
 	overlay_veneer Runtime_SetIrqHandlerFar
 	.global Object_SetMode
 	.thumb_func
 Object_SetMode:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	overlay_veneer ObjectDispatch_InitializeFar
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
 	.global Engine_ObjectDispatchRelease
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Engine_ObjectSetPosition
 	.thumb_func
@@ -47,6 +62,9 @@ Object_SetPosition:
 	.thumb_func
 Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
+	.global Engine_MapAnimateCells
+	.thumb_func
+Engine_MapAnimateCells:
 	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global Engine_MapCopyCellsTo
 	.thumb_func
@@ -73,7 +91,13 @@ Object_CheckMovementCollision:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Engine_ObjectSetBlendMode
+	.thumb_func
+Engine_ObjectSetBlendMode:
 	overlay_veneer Animation_SetStateField5Bits2To3Far
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -117,6 +141,9 @@ ObjectMotion_SetSpeedParameters:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Engine_ActorMoveToAndWait
+	.thumb_func
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
@@ -129,6 +156,9 @@ Engine_ActorWaitForMove:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
@@ -145,7 +175,13 @@ ObjectMotion_WaitForAnimationChange:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	.global Engine_ObjectSetPalette
+	.thumb_func
+Engine_ObjectSetPalette:
 	overlay_veneer ObjectGroup_SetChildValueFar
+	.global Engine_ActorSetSpritePriority
+	.thumb_func
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Engine_CameraSetSpeed
 	.thumb_func
@@ -163,6 +199,9 @@ Engine_CameraWaitForMove:
 	.thumb_func
 FieldEffect_UpdateGridPlacement:
 	overlay_veneer FieldEffect_UpdateGridPlacementFar
+	.global battle_owner_69
+	.thumb_func
+battle_owner_69:
 	overlay_veneer battle_owner_69Far
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	.global BattleFx_PlayQueuedSound

@@ -2,7 +2,7 @@
 #include "FIELD_EFFECT.H"
 
 /* The spray's motion script. */
-extern const s32 Data_0200d2cc[];
+extern const s32 gVinasuSprayScript[];
 
 /* Every fourth frame, sprays a rising effect (type 286) from a random point
  * within 24 pixels of actor, with cue 246 every eighth frame. */
@@ -16,7 +16,7 @@ s32 VinasuHeya_UpdateRisingSpray(struct FieldActor *actor)
     o->priority = 1;
     o->palette = 5;
     o->type = 286;
-    o->script = Data_0200d2cc;
+    o->script = gVinasuSprayScript;
     phase = *(volatile u32 *)&gFrameCount & 3;
     if (phase == 0) {
         if ((*(volatile u32 *)&gFrameCount & 7) == 0) {

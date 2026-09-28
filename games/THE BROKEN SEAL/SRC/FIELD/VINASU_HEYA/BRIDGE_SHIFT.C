@@ -12,7 +12,7 @@ struct MapWork {
     struct ScrollLayer layer;
 };
 
-extern struct MapWork *Data_03001e70;
+extern struct MapWork *gMapWork;
 
 /* The first bridge slides beneath the leader while its map columns are
  * copied into place and dust trails along the moving edge. */
@@ -27,7 +27,7 @@ void VinasuHeya_ShiftBridge(void)
     u32 i;
     s32 dust_x;
 
-    layer = &Data_03001e70->layer;
+    layer = &gMapWork->layer;
     leader = Engine_ActorGet(0);
     x = leader->x.part.pixel;
     z = leader->z.part.pixel;
@@ -76,7 +76,7 @@ void VinasuHeya_ShiftBridge(void)
             Engine_AudioPlayCue(288);
             Engine_AudioPlayCue(188);
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-            Engine_MapWaitWorkValuesBelow256();
+            Engine_MapRenderWaitForValues();
             gEventWork->start_transition = 0x202;
             Engine_EventRequestExit(11);
             Engine_EventEnd();

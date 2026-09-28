@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-extern s32 Data_0200d148[];
+extern s32 gVinasuBlockHeights[];
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -31,12 +31,12 @@ void VinasuHeya_LowerFloatingBlocks(s32 wait)
     if (wait != 0) {
         Engine_AudioPlayCue(180);
     }
-    Call4((void (*)())Engine_ObjectSetPosition, (s32)a, a->x.fixed, Data_0200d148[(s16)a->unknown_64], a->z.fixed);
-    Call4((void (*)())Engine_ObjectSetPosition, (s32)b, b->x.fixed, Data_0200d148[(s16)b->unknown_64], b->z.fixed);
+    Call4((void (*)())Engine_ObjectSetPosition, (s32)a, a->x.fixed, gVinasuBlockHeights[(s16)a->unknown_64], a->z.fixed);
+    Call4((void (*)())Engine_ObjectSetPosition, (s32)b, b->x.fixed, gVinasuBlockHeights[(s16)b->unknown_64], b->z.fixed);
     Engine_ActorWaitForMove(8);
     Engine_ActorWaitForMove(9);
-    a->y.fixed = Data_0200d148[(s16)a->unknown_64];
-    b->y.fixed = Data_0200d148[(s16)b->unknown_64];
+    a->y.fixed = gVinasuBlockHeights[(s16)a->unknown_64];
+    b->y.fixed = gVinasuBlockHeights[(s16)b->unknown_64];
     if (wait != 0) {
         Engine_AudioPlayCue(0x121);
     }

@@ -2,9 +2,9 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 
-void Main_0808a5e0(s32 cue);
+void BattleFx_SetQueuedSoundAndPlay(s32 cue);
 
-#define RubbleFall_Callback ((void (*)(void))0x0200c601)
+void FieldScene_CallWith560And44(void);
 
 /* The ceiling gives way: rubble rains down in thirteen rows, the fourth row
  * four times, while the map fills in behind it. */
@@ -24,7 +24,7 @@ void Scene_RunEastParticleWaveSequence(void)
     Engine_EventBegin();
     Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 0);
     Engine_ActorSetChildValue(0, 15);
-    Main_0808a5e0(170);
+    BattleFx_SetQueuedSoundAndPlay(170);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(40);
@@ -50,7 +50,7 @@ void Scene_RunEastParticleWaveSequence(void)
             repeat++;
             goto again;
         }
-        Engine_TaskAddCallback(RubbleFall_Callback, 3200);
+        Engine_TaskAddCallback(FieldScene_CallWith560And44, 3200);
         Map_CopyCellsTo(58, row + 12, 34, row + 12, 3, 1);
         offset += 0x100000;
         row++;

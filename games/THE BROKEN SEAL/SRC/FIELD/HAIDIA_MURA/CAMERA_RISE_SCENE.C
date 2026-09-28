@@ -1,26 +1,24 @@
 #include "TYPES.H"
 
-#define HaidiaMura_RunCameraRiseScene Func_020010d8
 
-void Func_02007076();
-s32 Func_02007082();
-void Func_020070a6();
-void Func_020070b0();
-void Func_020070c4();
-void Func_020070ee();
-void Func_020070f0();
-void Func_02007112();
-s32 Func_02007114();
-void Func_02007120();
-void Func_0200712e();
-void Func_02007142();
-void Func_0200714e();
-void Func_02007156();
-void Func_02007174();
-void Func_0200719a();
-void Func_020071bc();
-void Func_020071c6();
-void Func_020071d0();
+s32 Engine_GameFlagIsSet();
+void Engine_EventBegin();
+void Battle_WaitMode0();
+void ObjectMotion_SetSpeedParameters();
+void Engine_MessageShowCentered();
+void Engine_MapRedraw();
+void Battle_WaitMode0();
+s32 Object_GetById();
+void Battle_WaitMode0();
+void Battle_WaitMode0();
+void Battle_WaitMode0();
+void Object_SetModeById();
+void Battle_WaitMode0();
+void Engine_EventEnd();
+void Engine_EventSetMessage();
+void Engine_EventShowMessageAndWait();
+void Engine_EventShowMessageAndWait();
+void Engine_ActorWalkToAndWait();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -58,16 +56,16 @@ void HaidiaMura_RunCameraRiseScene(void)
     s32 n;
     s32 pos[3];
 
-    if (Value1(Func_02007082, 0x808) == 0) {
+    if (Value1(Engine_GameFlagIsSet, 0x808) == 0) {
         cam = *(s32 ***)0x03001e70;
-        Func_020070b0();
-        Call3(Func_020070ee, 0, 0x10000, 0x8000);
-        Func_0200714e(0, 1);
-        Func_020070c4(2);
-        Call1(Func_0200719a, 0xf4d);
-        Func_020071bc(15, 0, 2);
-        Func_020071c6(16, 0, 2);
-        rec = (s32 *)Value1(Func_02007114, 0);
+        Engine_EventBegin();
+        Call3(ObjectMotion_SetSpeedParameters, 0, 0x10000, 0x8000);
+        Object_SetModeById(0, 1);
+        Battle_WaitMode0(2);
+        Call1(Engine_EventSetMessage, 0xf4d);
+        Engine_EventShowMessageAndWait(15, 0, 2);
+        Engine_EventShowMessageAndWait(16, 0, 2);
+        rec = (s32 *)Value1(Object_GetById, 0);
         pos[0] = rec[2];
         pos[1] = rec[3];
         pos[2] = rec[4];
@@ -76,23 +74,23 @@ void HaidiaMura_RunCameraRiseScene(void)
         n = 0;
         do {
             pos[2] += 0x20000;
-            Func_02007112(1);
+            Battle_WaitMode0(1);
             n++;
-            Func_02007076();
+            Engine_MapRedraw();
         } while (n != 40);
-        Func_02007120(60);
-        Call2(Func_020070f0, 0xf4f, 1);
+        Battle_WaitMode0(60);
+        Call2(Engine_MessageShowCentered, 0xf4f, 1);
         n = 0;
-        Func_0200712e(6);
+        Battle_WaitMode0(6);
         do {
             pos[2] -= 0x20000;
-            Func_02007142(1);
+            Battle_WaitMode0(1);
             n++;
-            Func_020070a6();
+            Engine_MapRedraw();
         } while (n != 40);
         *cam = saved;
-        Func_02007156(60);
-        Call3(Func_020071d0, 0, 70, 0x2e5);
-        Func_02007174();
+        Battle_WaitMode0(60);
+        Call3(Engine_ActorWalkToAndWait, 0, 70, 0x2e5);
+        Engine_EventEnd();
     }
 }

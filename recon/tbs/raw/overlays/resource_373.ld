@@ -7,11 +7,30 @@ SECTIONS
     {
         "*/resource_373_overlay.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
-        "*/resource_373_overlay.o"(.text.x020089dc)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/CAMERA_RISE_SCENE.o"(.text)
+        "*/resource_373_overlay.o"(.text.x020091d8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/TABLE_PAIR.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/REPAIR_MORNING.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ENTRY_STATE.o"(.text)
+        "*/resource_373_overlay.o"(.text.x0200acb0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ACTORS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/WALK_SCENE_032B0.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/WALK_SCENE_03380.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/RESET_RUN.o"(.text)
+        "*/resource_373_overlay.o"(.text.x0200b4c8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGING.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/FACING.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/DUST_BURST.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/OPEN_LANE.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/ORBIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/LINKED_EFFECTS.o"(.text)
         "*/resource_373_overlay.o"(.text.x0200de84)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_373_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its remainder helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __umodsi3 = IwramUnsignedRemainderEntry;
 }

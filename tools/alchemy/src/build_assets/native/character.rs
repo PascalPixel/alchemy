@@ -1,9 +1,6 @@
 use super::*;
 mod atlas;
-mod catalog;
 mod raw;
-pub(super) use catalog::catalog;
-pub(crate) use catalog::{Catalog, Descriptor};
 
 fn gray(entries: usize) -> Vec<[u8; 3]> {
     (0..entries).map(|i| [i as u8; 3]).collect()
@@ -244,59 +241,6 @@ fn pixels(ctx: &Context, input: &Value, rom: &[u8]) -> Result<Vec<u8>, String> {
         }
     }
     Ok(output)
-}
-/// One descriptor's decoded frames, as rendered into a character sheet.
-pub(super) struct Sheet {
-    pub frames: usize,
-    pub unique_frames: usize,
-    pub codec: &'static str,
-    pub png: Vec<u8>,
-}
-/// Decode every frame each descriptor of `target` names and colour it with the
-/// target's sprite palette. Descriptors whose directory is loaded at runtime
-/// (a null frame directory) have no sheet.
-pub(super) fn sheets(
-    target: &DecompTarget,
-    rom: &[u8],
-) -> Result<(Catalog, Vec<Descriptor>, BTreeMap<usize, Sheet>), String> {
-    let catalog = catalog(target)?;
-    let descriptors = catalog.descriptors(rom)?;
-    let directories = catalog.directories(rom, &descriptors)?;
-    let palette = catalog.palette(rom)?;
-    let mut sheets = BTreeMap::new();
-    for descriptor in &descriptors {
-        let Some(slots) = directories.get(&descriptor.frame_directory) else {
-            continue;
-        };
-        let codec = catalog::frame_codec(catalog.game, descriptor.frame_codec)
-            .ok_or_else(|| format!("descriptor {} frame codec is unregistered", descriptor.id))?;
-        let frames = slots
-            .iter()
-            .map(|slot| {
-                catalog::frame(
-                    rom,
-                    catalog.game,
-                    descriptor.frame_codec,
-                    *slot,
-                    descriptor.width,
-                    descriptor.height,
-                )
-                .map_err(|e| format!("descriptor {}: {e}", descriptor.id))
-            })
-            .collect::<Result<Vec<_>, _>>()?;
-        let (width, height, pixels) =
-            catalog::sheet(&frames, descriptor.width, descriptor.height, 8);
-        sheets.insert(
-            descriptor.id,
-            Sheet {
-                frames: frames.len(),
-                unique_frames: slots.iter().collect::<BTreeSet<_>>().len(),
-                codec,
-                png: catalog::preview(&pixels, width, height, &palette)?,
-            },
-        );
-    }
-    Ok((catalog, descriptors, sheets))
 }
 /// Restore every atlas input and return each input's pixel digest.
 pub(super) fn extract_all(

@@ -1,7 +1,8 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-#include "RESOURCE_3CC.H"
+void BattleFx_RunPageEffectForSlot(s32 slot, s32 page, s32 effect);
+void Engine_GameFlagClear(s32 flag);
 
 /*
  * Overlay resource_3cc: in-image table getters and the scene state helpers
@@ -37,26 +38,26 @@ u8 *SceneData_GetTable81ec(void)
 
 void State_ApplyValues8And0And0Then30(void)
 {
-    SceneData_Place(8, 0, 0);
-    SceneData_Do(0x30);
+    BattleFx_RunPageEffectForSlot(8, 0, 0);
+    Engine_GameFlagClear(0x30);
 }
 
 void State_ApplyValues9And1And0Then44(void)
 {
-    SceneData_unk2_3(9, 1, 0);
-    SceneData_unk2_2(0x44);
+    BattleFx_RunPageEffectForSlot(9, 1, 0);
+    Engine_GameFlagClear(0x44);
 }
 
 void State_ApplyValues10And2And0Then58(void)
 {
-    SceneData_unk3_3(0xA, 2, 0);
-    SceneData_unk3_2(0x58);
+    BattleFx_RunPageEffectForSlot(0xA, 2, 0);
+    Engine_GameFlagClear(0x58);
 }
 
 void State_ApplyValues11And3And0Then6c(void)
 {
-    SceneData_unk4_3(0xB, 3, 0);
-    SceneData_unk4_2(0x6C);
+    BattleFx_RunPageEffectForSlot(0xB, 3, 0);
+    Engine_GameFlagClear(0x6C);
 }
 
 /* The eight-byte owner includes the pool word holding this address. */

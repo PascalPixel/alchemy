@@ -6,6 +6,7 @@
 @ GRAPHICS/TILE/DECODE.S leave the same words uncredited, so they carry no
 @ credit.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.set	.L_dispatch_source, 0x080f0124
 	.arm
 	.set AlchemyLoadAddress, 0x080f00f0

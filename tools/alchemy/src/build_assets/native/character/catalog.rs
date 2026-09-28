@@ -11,7 +11,7 @@ pub(in crate::build_assets::native) const PALETTE_COLORS: usize = 224;
 
 /// Where one edition keeps its descriptor table and sprite palette.
 #[derive(Debug, Clone, Copy)]
-pub(in crate::build_assets::native) struct Catalog {
+pub(crate) struct Catalog {
     pub game: CompilerTarget,
     pub table: usize,
     pub count: usize,
@@ -48,7 +48,7 @@ pub(in crate::build_assets::native) fn catalog(target: &DecompTarget) -> Result<
 }
 
 #[derive(Debug, Clone)]
-pub(in crate::build_assets::native) struct Descriptor {
+pub(crate) struct Descriptor {
     pub id: usize,
     pub address: usize,
     pub width: usize,
@@ -216,8 +216,7 @@ pub(in crate::build_assets::native) fn frame_codec(
         (_, 0) => Some("zero-skip"),
         (_, 1) => Some("golden-sun-tagged-lz/indexed-bytes"),
         (CompilerTarget::Tla, 2) => Some("runtime-loaded golden-sun-general-lz archive/zero-skip"),
-        (CompilerTarget::Tbs, 3) => Some("golden-sun-general-lz/zero-skip"),
-        (CompilerTarget::Tla, 3) => Some("golden-sun-arena-lz/zero-skip"),
+        (_, 3) => Some("golden-sun-arena-lz/zero-skip"),
         _ => None,
     }
 }
@@ -234,7 +233,7 @@ pub(in crate::build_assets::native) fn frame(
     read_frame(rom, game, codec, pointer, width, height).map(|(pixels, _)| pixels)
 }
 
-fn read_frame(
+pub(crate) fn read_frame(
     rom: &[u8],
     game: CompilerTarget,
     codec: u8,
@@ -393,6 +392,12 @@ fn absent_arena_frames_read_blank_and_runtime_archives_have_no_pointer() {
     assert!(read_frame(&rom, CompilerTarget::Tla, 2, ROM_BASE, 4, 4)
         .unwrap_err()
         .contains("no ROM frame pointer"));
+    // TBS's maintained Resource_DecompressLz reader uses the same split
+    // literal-block format, including the two-byte empty frame.
+    for game in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+        let (pixels, consumed) = read_frame(&rom, game, 3, ROM_BASE, 4, 4).unwrap();
+        assert_eq!((pixels, consumed), (vec![0; 16], 2));
+    }
 }
 
 #[test]

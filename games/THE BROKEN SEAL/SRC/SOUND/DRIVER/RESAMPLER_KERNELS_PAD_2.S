@@ -6,6 +6,7 @@
 @ never run. Filler that never runs carries no credit, as
 @ RESAMPLER_KERNELS_PAD.S and RESAMPLER_KERNELS_PAD_1.S.
 .syntax unified
+	.section .padding,"a",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x08000678
 	adds	r7, r7, fp, asr #18

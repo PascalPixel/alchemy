@@ -106,3 +106,5 @@ checks outgoing history. DONE is `?` until the current tree has a verified build
   Main commits own verified percentages, README and both progress figures.
 - 2026-09-28: AI Cheating supersedes the September 22/23 exceptions for stored
   compression answers and tracked machine ledgers.
+- 2026-09-28: approved the stock `da598c1` agbcc rebuild; its exact binary
+  digest is recorded in the compiler admission table.

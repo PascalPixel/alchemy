@@ -4,6 +4,7 @@
 @ fills them by DMA3 from the ROM table at 0x08007320 (control 0x8400000e,
 @ 14 words). Run-time variables carry no credit.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x08000850
 	.set AlchemyRunAddress, 0x030000e0

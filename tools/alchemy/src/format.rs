@@ -131,6 +131,10 @@ fn check_table_sources(path: &Path) -> Result<(), String> {
 }
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
+    if arguments == ["--help"] || arguments == ["-h"] {
+        println!("usage: alchemy format [--check]");
+        return Ok(());
+    }
     let check = arguments == ["--check"];
     if !check && !arguments.is_empty() {
         return Err("usage: alchemy format [--check]".into());

@@ -3,6 +3,7 @@
 @ and which its loader copies to RAM with it. A data table carries no
 @ credit, as TLA GRAPHICS/EXPAND_OPAQUE_MASKS.S.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x08015e80
 	.4byte 0x00ff00ff

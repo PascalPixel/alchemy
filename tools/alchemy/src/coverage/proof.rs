@@ -4,7 +4,7 @@ use crate::targets::{BuildSupport, DecompTarget};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Credit {
     pub image: String,
     pub start: i64,
@@ -50,8 +50,10 @@ pub fn identity(root: &Path, target: &str) -> Result<String, String> {
         format!("{}/TEXT", game.game_dir()),
         format!("{}/BUILD.MK", game.game_dir()),
         format!("{}/MAIN.LD", game.game_dir()),
+        format!("{}/LINK", game.game_dir()),
         "games/COMMON/SRC".into(),
         "games/COMMON/INCLUDE".into(),
+        "Makefile".into(),
     ] {
         collect(root, &root.join(folder), &mut files)?;
     }
@@ -157,19 +159,32 @@ pub fn write(
     if sha256::hex(rom) != reference_sha256(root, game)? {
         return Err("progress receipt requires the approved reference ROM".into());
     }
-    let source_build = source_report(root, game)?;
+    let source_format = source_format(root, game)?;
+    let source_build = matches!(source_format, Some(2 | 3));
     if source_build {
-        if !credits.is_empty() {
-            return Err(
-                "a source build with private unwritten bytes grants no progress credit".into(),
-            );
+        if source_format == Some(3) {
+            if credits != reconstruction(root, game)?.credits {
+                return Err("progress credits disagree with independently verified source".into());
+            }
+        } else {
+            if !credits.is_empty() {
+                return Err(
+                    "a source build with private unwritten bytes grants no progress credit".into(),
+                );
+            }
+            verify_source_build(root, game)?;
         }
-        verify_source_build(root, game)?;
     }
     let path = root.join(format!("out/{target}/reports/verified-code.json"));
     std::fs::create_dir_all(path.parent().unwrap()).map_err(|e| e.to_string())?;
     let receipt = Receipt {
-        format: if source_build { 2 } else { 1 },
+        format: if source_format == Some(3) {
+            3
+        } else if source_build {
+            2
+        } else {
+            1
+        },
         target: target.into(),
         inputs_sha256: inputs.into(),
         rom_sha256: sha256::hex(rom),
@@ -190,7 +205,7 @@ pub fn read(root: &Path, target: &str) -> Result<Receipt, String> {
         )
     })?)
     .map_err(|e| e.to_string())?;
-    if !matches!(receipt.format, 1 | 2)
+    if !matches!(receipt.format, 1 | 2 | 3)
         || receipt.target != target
         || receipt.inputs_sha256 != identity(root, target)?
     {
@@ -201,13 +216,19 @@ pub fn read(root: &Path, target: &str) -> Result<Receipt, String> {
     if hash != receipt.rom_sha256 || hash != reference_sha256(root, rom)? {
         return Err(format!("{target}: reference ROM changed"));
     }
-    if receipt.format == 2 || source_report(root, rom)? {
-        if !receipt.credits.is_empty() {
-            return Err(
-                "a source build with private unwritten bytes grants no progress credit".into(),
-            );
+    if receipt.format >= 2 || source_report(root, rom)? {
+        if receipt.format == 3 || source_format(root, rom)? == Some(3) {
+            if receipt.format != 3 || receipt.credits != reconstruction(root, rom)?.credits {
+                return Err("progress receipt differs from the current verified source".into());
+            }
+        } else {
+            if !receipt.credits.is_empty() {
+                return Err(
+                    "a source build with private unwritten bytes grants no progress credit".into(),
+                );
+            }
+            verify_source_build(root, rom)?;
         }
-        verify_source_build(root, rom)?;
     }
     Ok(receipt)
 }
@@ -275,17 +296,100 @@ struct SourceBuild {
     fallback_artifacts_sha256: Option<String>,
 }
 
-fn source_report(root: &Path, target: DecompTarget) -> Result<bool, String> {
+pub(crate) fn source_format(root: &Path, target: DecompTarget) -> Result<Option<u64>, String> {
     let path = root.join(full_build_report(target));
     match std::fs::read(&path) {
         Ok(bytes) => {
             let report: serde_json::Value = serde_json::from_slice(&bytes)
                 .map_err(|error| format!("{}: {error}", path.display()))?;
-            Ok(report["format"].as_u64() == Some(2))
+            Ok(report["format"].as_u64())
         }
-        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(false),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
         Err(error) => Err(format!("{}: {error}", path.display())),
     }
+}
+
+fn source_report(root: &Path, target: DecompTarget) -> Result<bool, String> {
+    Ok(matches!(source_format(root, target)?, Some(2 | 3)))
+}
+
+#[derive(Debug, PartialEq, Serialize, Deserialize)]
+struct Reconstruction {
+    format: u8,
+    target: String,
+    inputs_sha256: String,
+    rom_sha256: String,
+    artifacts_sha256: String,
+}
+
+/// A source reconstruction can retain private unfinished material while its
+/// complete matching functions earn credit. The executable denominator is
+/// independently derived; this report cannot supply one.
+pub(crate) fn record_reconstruction(
+    root: &Path,
+    target: DecompTarget,
+    inputs: &str,
+    rom: &[u8],
+    verified: &super::source::Verification,
+) -> Result<serde_json::Value, String> {
+    full_build_supported(target)?;
+    if identity(root, target.id.as_str())? != inputs
+        || sha256::hex(rom) != reference_sha256(root, target)?
+    {
+        return Err("reconstruction does not bind the current source and approved ROM".into());
+    }
+    Ok(serde_json::json!({
+        "format": 3, "target": target.id.as_str(), "verification": "rom", "byte_identical": true,
+        "source_bytes": verified.source_bytes, "private_unwritten_bytes": rom.len() - verified.source_bytes,
+        "credits": verified.credits,
+        "source_build_proof": Reconstruction {
+            format: 3, target: target.id.as_str().into(), inputs_sha256: inputs.into(),
+            rom_sha256: sha256::hex(rom), artifacts_sha256: verified.artifacts_sha256.clone(),
+        },
+    }))
+}
+
+pub(crate) fn reconstruction(
+    root: &Path,
+    target: DecompTarget,
+) -> Result<super::source::Verification, String> {
+    full_build_supported(target)?;
+    let report: serde_json::Value =
+        serde_json::from_slice(&artifact_bytes(&root.join(full_build_report(target)))?)
+            .map_err(|error| error.to_string())?;
+    if report["format"] != 3
+        || report["target"] != target.id.as_str()
+        || report["verification"] != "rom"
+        || report["byte_identical"] != true
+        || report.get("main_image_proof").is_some()
+    {
+        return Err("not a verified source reconstruction".into());
+    }
+    let recorded: Reconstruction = serde_json::from_value(report["source_build_proof"].clone())
+        .map_err(|error| error.to_string())?;
+    let rom = artifact_bytes(&root.join(full_build_rom(target)))?;
+    if rom != artifact_bytes(&root.join(target.rom))? {
+        return Err("rebuilt ROM differs from the local approved reference".into());
+    }
+    let actual = super::source::verify(root, target, &rom)?;
+    let expected = Reconstruction {
+        format: 3,
+        target: target.id.as_str().into(),
+        inputs_sha256: identity(root, target.id.as_str())?,
+        rom_sha256: sha256::hex(&rom),
+        artifacts_sha256: actual.artifacts_sha256.clone(),
+    };
+    let credits: Vec<Credit> =
+        serde_json::from_value(report["credits"].clone()).map_err(|error| error.to_string())?;
+    if recorded != expected
+        || credits != actual.credits
+        || report["source_bytes"].as_u64() != Some(actual.source_bytes as u64)
+        || report["private_unwritten_bytes"].as_u64()
+            != Some((rom.len() - actual.source_bytes) as u64)
+    {
+        return Err("reconstruction inputs, artifacts or complete-function credit changed".into());
+    }
+    Ok(actual)
 }
 
 fn native_artifact(root: &Path, target: DecompTarget, name: &str) -> std::path::PathBuf {
@@ -346,7 +450,7 @@ fn native_sections(
     crate::compiler::native::inspect_loaded_sections(root, elf)
 }
 
-fn fallback_artifacts(
+pub(crate) fn fallback_artifacts(
     root: &Path,
     target: DecompTarget,
     rom: &[u8],
@@ -645,6 +749,10 @@ pub(crate) fn record_source_build(
 
 pub(crate) fn verify_source_build(root: &Path, target: DecompTarget) -> Result<(), String> {
     full_build_supported(target)?;
+    if source_format(root, target)? == Some(3) {
+        reconstruction(root, target)?;
+        return Ok(());
+    }
     let path = root.join(full_build_report(target));
     let report: serde_json::Value = serde_json::from_slice(&artifact_bytes(&path)?)
         .map_err(|error| format!("{}: {error}", path.display()))?;
@@ -967,15 +1075,18 @@ mod tests {
         );
         write_fixture(root, &native_artifact(root, target, "native.bin"), &binary);
         let native = crate::compiler::native::Build {
+            image: "main".into(),
             sources: vec![root.join(format!("{}/SRC/BOOT.C", target.game_dir()))],
             script: root.join(format!("{}/MAIN.LD", target.game_dir())),
             objects: vec![native_artifact(root, target, "obj/BOOT.o")],
+            archives: Vec::new(),
             elf: native_artifact(root, target, "native.elf"),
             binary: native_artifact(root, target, "native.bin"),
             symbols: native_artifact(root, target, "native.nm"),
             map: native_artifact(root, target, "native.map"),
             log: native_artifact(root, target, "build.log"),
             sections,
+            functions: Vec::new(),
         };
         write_fixture(
             root,

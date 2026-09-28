@@ -3,6 +3,7 @@
 @ ldrsh r0, [r0, r1]), after the zero halfword that aligns it to a word.
 @ Alignment and a data table carry no credit, as TBS LIB/SINE_TABLE.S.
 .syntax unified
+	.section .rodata,"a",%progbits
 	.thumb
 	.set AlchemyLoadAddress, 0x080020a6
 	.2byte	0x0000

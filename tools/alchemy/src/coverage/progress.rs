@@ -1,4 +1,4 @@
-//! DONE accounting from verified build receipts and fixed executable inventories.
+//! DONE accounting from current source builds and independently derived executable extents.
 use crate::coverage::jsnum::{commas, floor_percent};
 use crate::coverage::model::{bytes, intersect, normalize, subtract, Span};
 use crate::coverage::pipeline::{validated_inventory, CoverageMap};
@@ -147,6 +147,25 @@ pub fn measured(root: &Path, target: &str) -> Result<Option<GameDone>, String> {
 /// A game's DONE, or why it is unmeasured.
 fn status(root: &Path, target: &str) -> Result<Result<GameDone, String>, String> {
     let game = crate::targets::decomp_target(Some(target))?;
+    if super::proof::source_format(root, game)? == Some(3) {
+        if super::proof::read(root, target).is_err() {
+            return Ok(Err(BUILD_PENDING.into()));
+        }
+        let verified = super::proof::reconstruction(root, game)?;
+        let accounting = super::executable::derive(root, game, &verified.layout)?;
+        if accounting.state() != super::executable::State::Exact {
+            return Ok(Err(AUDIT_PENDING.into()));
+        }
+        let mut images =
+            std::collections::BTreeMap::from([("main".to_owned(), accounting.main.executable)]);
+        images.extend(
+            accounting
+                .overlays
+                .into_iter()
+                .map(|image| (image.id, image.executable)),
+        );
+        return tally(&verified.credits, &images).map(Ok);
+    }
     let path = root.join(format!("out/{target}/reports/executable.json"));
     let text = match std::fs::read(&path) {
         Ok(text) => text,

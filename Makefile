@@ -22,6 +22,22 @@ else
 $(error unknown game in TARGET=$(TARGET))
 endif
 
+# Compiler library members come from the pinned toolchain's own sources/rules.
+LIBGCC := tools/out/compiler-runtime/libgcc.a
+
+.PHONY: compiler-runtime
+native: compiler-runtime
+compiler-runtime: toolchain-check compiler-source-check
+	$(BUILD) runtime --output $(LIBGCC) \
+	    _call_via_rX=gcc/config/arm/lib1funcs.asm \
+	    _addsub_df=dp-bit.c \
+	    _si_to_df=dp-bit.c \
+	    _df_to_si=dp-bit.c \
+	    _pack_df=dp-bit.c \
+	    _unpack_df=dp-bit.c \
+	    _thenan_df=dp-bit.c \
+	    _lshrdi3=gcc/libgcc2.c
+
 .PHONY: help native bootstrap compilers compiler-sources compiler-source-check toolchain-check build-tools
 .PHONY: compare compare-tla compare-all build-full build-rom full-rom-check source-build-check
 .PHONY: precommit prepush verify verify-clean test tool-tests test-integration lint lint-staged lint-production

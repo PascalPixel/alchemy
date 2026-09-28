@@ -7,7 +7,7 @@ use crate::compiler::routing;
 use crate::overlay::assembly::OVERLAY_BASE;
 use crate::overlay::rom::CanonicalRom;
 use crate::targets::{self, DecompTarget};
-use psynergy::assembly::thumb_source;
+use psynergy::assembly::{thumb_source, thumb_source_from_instructions};
 use psynergy::decode::{decode_one, Kind};
 use psynergy::discovery::{Discovery, FunctionInfo, Mode, ROM_BASE};
 use std::collections::BTreeMap;
@@ -95,11 +95,16 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         let (extension, source) = match info.mode {
             Mode::Thumb => (
                 "s",
-                thumb_source(
+                thumb_source_from_instructions(
                     rom.bytes(),
                     ROM_BASE as u32,
                     entry as u32,
                     (end - entry) as u32,
+                    &info
+                        .instructions
+                        .iter()
+                        .map(|address| *address as u32)
+                        .collect(),
                 )?,
             ),
             Mode::Arm => (

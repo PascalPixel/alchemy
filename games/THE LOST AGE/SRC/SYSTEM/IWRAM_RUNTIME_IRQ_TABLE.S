@@ -5,6 +5,7 @@
 @ DMA3 from the ROM table at 0x080178b4 (control 0x8400000e, 14 words).
 @ Run-time variables carry no credit.
 .syntax unified
+	.section .data,"aw",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x0800079c
 	.set AlchemyRunAddress, 0x030001e4

@@ -2,6 +2,7 @@
 @ bytes after its branch to the slot's end; they never run. Padding
 @ carries no credit.
 .syntax unified
+	.section .padding,"a",%progbits
 	.arm
 	.set AlchemyLoadAddress, 0x08000480
 	nop

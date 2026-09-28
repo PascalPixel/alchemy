@@ -1,6 +1,6 @@
 use std::process::ExitCode;
 
-const USAGE: &str = "usage: alchemy build <compilers|native|asm|full|rom> [args]";
+const USAGE: &str = "usage: alchemy build <compilers|runtime|native|asm|full|rom> [args]";
 
 pub fn entry(args: &[String]) -> ExitCode {
     let Some(command) = args.first().map(String::as_str) else {
@@ -15,6 +15,7 @@ pub fn entry(args: &[String]) -> ExitCode {
     }
     match command {
         "native" => crate::result(crate::compiler::native::run(&rest)),
+        "runtime" => crate::result(crate::compiler::runtime::entry(&rest)),
         "assets" => crate::build_assets::entry(&rest),
         "allocator" => crate::allocator::entry(&rest),
         "compilers" if rest == ["--help"] || rest == ["-h"] => {

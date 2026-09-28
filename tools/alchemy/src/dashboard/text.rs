@@ -35,12 +35,7 @@ fn load(spec: &ArchiveSpec) -> Result<Edition, String> {
         &fs::read_to_string(&source).map_err(|error| format!("{}: {error}", source.display()))?,
     )
     .map_err(|error| error.to_string())?;
-    let count = catalog
-        .headers
-        .get("X-Alchemy-Message-Count")
-        .ok_or("message count is absent from PO")?
-        .parse::<usize>()
-        .map_err(|_| "message count in PO is invalid")?;
+    let count = catalog.entries.len();
     let mut messages = vec![None; count];
     for entry in catalog.entries {
         if entry.context.as_deref() != Some("message") {

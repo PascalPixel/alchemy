@@ -331,9 +331,16 @@ fn build_region(
                 .find(|(kind, _)| kind == name)
                 .map(|(_, value)| value.clone())
         };
-        if let (Some(data), Some(spans)) = (entry("payload"), entry("uncredited")) {
+        if let (Some(data), Some(spans), Some(object_bytes), Some(elf_bytes)) = (
+            entry("payload"),
+            entry("uncredited"),
+            entry("object"),
+            entry("elf"),
+        ) {
             if let Ok(uncredited) = serde_json::from_slice::<Vec<(u64, u64)>>(&spans) {
                 write(&binary, &data)?;
+                write(&object, &object_bytes)?;
+                write(&elf, &elf_bytes)?;
                 return Ok(BuiltRegion {
                     address,
                     run_address: linked_address,
@@ -398,12 +405,19 @@ fn build_region(
         )?;
         objects.push(symbols_object);
     }
-    let formatted = format!("{linked_address:08x}");
+    let script = output_dir.join(format!("{name}.ld"));
+    write(
+        &script,
+        format!(
+            "SECTIONS {{ . = 0x{linked_address:08x}; .text : {{ *(.text .text.*) }} .rodata : {{ *(.rodata .rodata.*) }} .data : {{ *(.data .data.*) }} .padding : {{ *(.padding .padding.*) }} /DISCARD/ : {{ *(.ARM.attributes) *(.comment) *(.note*) }} }}\n"
+        ),
+    )?;
     let mut link = vec![
         "arm-none-eabi-ld".into(),
-        format!("-Ttext=0x{formatted}"),
+        "-T".into(),
+        text(&script),
         "-e".into(),
-        format!("0x{formatted}"),
+        format!("0x{linked_address:08x}"),
         "-o".into(),
         text(&elf),
     ];
@@ -414,8 +428,6 @@ fn build_region(
             "arm-none-eabi-objcopy",
             "-O",
             "binary",
-            "-j",
-            ".text",
             &text(&elf),
             &text(&binary),
         ]),
@@ -426,7 +438,15 @@ fn build_region(
     let uncredited = uncredited_spans(&symbols, address, data.len() as u64)
         .map_err(|error| format!("{}: {error}", source.file_name().unwrap().to_string_lossy()))?;
     let spans = serde_json::to_vec(&uncredited).map_err(|error| error.to_string())?;
-    cache.put(&cache_key, &[("payload", &data), ("uncredited", &spans)])?;
+    cache.put(
+        &cache_key,
+        &[
+            ("payload", &data),
+            ("uncredited", &spans),
+            ("object", &read(&object)?),
+            ("elf", &read(&elf)?),
+        ],
+    )?;
     Ok(BuiltRegion {
         address,
         run_address: linked_address,
@@ -629,6 +649,41 @@ fn declared_provenance(
             Vec::new()
         },
     })
+}
+
+/// Derive assembly credit from the maintained header and compiled markers,
+/// never from the generated manifest's classification fields.
+pub(crate) fn credited_spans(
+    source: &str,
+    maintained: bool,
+    address: u64,
+    data: &[u8],
+    symbols: &str,
+    veneer_macro: &str,
+) -> Result<Vec<(u64, u64)>, String> {
+    let provenance = declared_provenance(source, maintained, true)?;
+    let excluded = uncredited_spans(symbols, address, data.len() as u64)?;
+    if provenance.credit.is_empty() {
+        if !excluded.is_empty() {
+            return Err("uncredited markers need a credited maintained module".into());
+        }
+        return Ok(Vec::new());
+    }
+    if provenance.credit == "reconstructed_veneer" {
+        veneer_table(source, veneer_macro, address, data, &excluded)?;
+    }
+    let mut spans = Vec::new();
+    let mut start = address;
+    for (left, right) in excluded {
+        if start < left {
+            spans.push((start, left));
+        }
+        start = right;
+    }
+    if start < address + data.len() as u64 {
+        spans.push((start, address + data.len() as u64));
+    }
+    Ok(spans)
 }
 #[cfg(test)]
 mod credit_tests {

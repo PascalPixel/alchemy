@@ -6,6 +6,7 @@
 @ and carry no credit; TLA leaves the same 64 bytes outside its credited
 @ modules.
 .syntax unified
+	.section .data,"aw",%progbits
 	.set	.L_case_2, 0x080f0144
 	.set	.L_case_4_plus, 0x080f0160
 	.set	.L_case_8, 0x080f0200

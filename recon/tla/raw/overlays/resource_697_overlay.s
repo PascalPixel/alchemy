@@ -10189,7 +10189,7 @@ Func_0200242c:
 	.4byte 0x00004770
 	.4byte 0x0200234c
 	.4byte 0x00004770
-	.section .text.x0200da70,"ax",%progbits
+	.section .rodata.x0200da70,"a",%progbits
 	.4byte 0x0000002e
 	.4byte 0x02008059
 	.4byte 0x00000011

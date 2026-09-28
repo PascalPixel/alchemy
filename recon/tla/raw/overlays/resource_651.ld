@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/ENTRY.o"(.text)
         "*/resource_651_overlay.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/DERI_MURA/IMPORT.o"(.text)
-        "*/resource_651_overlay.o"(.text.x02008d80)
+        "*/resource_651_overlay.o"(.rodata.x02008d80)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

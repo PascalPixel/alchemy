@@ -4148,7 +4148,7 @@ Func_02000308:
 	bl 0x0200a81c
 	pop	{r5, pc}
 	.4byte 0x0200a58d
-	.section .text.x0200aa6c,"ax",%progbits
+	.section .rodata.x0200aa6c,"a",%progbits
 	.4byte 0xc13c0100
 	.4byte 0xb9d2cf52
 	.4byte 0x13465bb3

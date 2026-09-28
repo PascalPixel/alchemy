@@ -7,7 +7,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/ENTRY.o"(.text)
         "*/resource_64e_overlay.o"(.text)
         "*/games/THE LOST AGE/SRC/FIELD/VINASU_CHOJO/IMPORT.o"(.text)
-        "*/resource_64e_overlay.o"(.text.x02009ce4)
+        "*/resource_64e_overlay.o"(.rodata.x02009ce4)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

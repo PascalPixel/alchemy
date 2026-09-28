@@ -2894,7 +2894,7 @@ Func_02000b28:
 	pop	{r5, pc}
 	.4byte 0x00013333
 	.4byte 0x02000240
-	.section .text.x02009ce4,"ax",%progbits
+	.section .rodata.x02009ce4,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000d

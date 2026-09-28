@@ -1357,7 +1357,7 @@ Func_02000c0c:
 	push	{lr}
 	bl 0x02008d9c
 	pop	{pc}
-	.section .text.x02008e04,"ax",%progbits
+	.section .rodata.x02008e04,"a",%progbits
 	.4byte 0x0220000a
 	.4byte 0x0221000b
 	.4byte 0x0222000c

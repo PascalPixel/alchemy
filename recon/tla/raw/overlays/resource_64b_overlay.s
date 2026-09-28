@@ -8274,7 +8274,7 @@ Func_020011f8:
 	.4byte 0x0200ee0e
 	.4byte 0x0200ee0c
 	.4byte 0x0200c8f5
-	.section .text.x0200ce38,"ax",%progbits
+	.section .rodata.x0200ce38,"a",%progbits
 	.4byte 0x00000027
 	.4byte 0x00000002
 	.4byte 0x00000030

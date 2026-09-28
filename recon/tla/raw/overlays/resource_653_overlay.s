@@ -9143,7 +9143,7 @@ Func_02002908:
 	add	sp, #8
 	pop	{r5, pc}
 	.2byte 0x0000
-	.section .text.x0200d3e0,"ax",%progbits
+	.section .rodata.x0200d3e0,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000d

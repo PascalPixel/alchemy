@@ -16,7 +16,6 @@ struct GlobalData {
 
 extern struct GlobalData gGameState;
 extern char Value_fff80000;
-extern char Value_001ffffe;
 
 void BattleFx_EmitRandomParticle(void)
 {
@@ -42,7 +41,7 @@ void BattleFx_EmitRandomParticle(void)
         object_x = FIELD(object, s32, 8);
         object_y = FIELD(object, s32, 0x10);
         negative_center = (s32)&Value_fff80000;
-        maximum = (u32)&Value_001ffffe;
+        maximum = 0x1ffffe;
         center = 128;
         center <<= 12;
 loop:

@@ -3,6 +3,7 @@
 
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "IO_REG.H"
 
 #define SERIAL_RUNTIME_TU
 
@@ -60,16 +61,6 @@ struct SerialTransferState {
 #define SERIAL_RUNTIME (&gSerialRuntime)
 #define SERIAL_TRANSFER ((struct SerialTransferState *)0x02002220)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
-#define REG_SIODATA32 ((volatile u32 *)0x04000120)
-#define REG_SIOCNT (*(volatile u32 *)0x04000128)
-#define REG_SIOCNT16 (*(volatile u16 *)0x04000128)
-#define REG_SIODATA8 (*(volatile u16 *)0x0400012a)
-#define REG_RCNT (*(volatile u16 *)0x04000134)
-#define REG_TM3CNT (*(volatile u32 *)0x0400010c)
-#define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
-#define REG_IE (*(volatile u16 *)0x04000200)
-#define REG_IF (*(volatile u16 *)0x04000202)
-#define REG_IME (*(volatile u16 *)0x04000208)
 
 #define SERIAL_ACTIVE_A gSerialSendSource
 #define SERIAL_VALUE_A gSerialSendSize

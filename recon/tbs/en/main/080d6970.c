@@ -55,7 +55,7 @@ void Func_080f9010(s32 id);
 void Func_080b5088(s32 member_id, s32 unk);
 void Func_080e6d3c(s32 channel, s32 a, s32 b);
 void Func_080e6eac(s32 channel, s32 a, s32 b);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 s32 Func_08002304(s32 numerator, s32 denominator);
 s32 Func_0800231c(s32 angle);
@@ -299,7 +299,7 @@ void Func_080d6970(void *object)
         if ((u32)(t - 48) <= 48U) {
             s32 cell;
 
-            cell = Func_080022fc(Func_080022ec(t - 48, 24), 3);
+            cell = Func_080022fc(Math_Div(t - 48, 24), 3);
             Func_08009020(M2C_FIELD(work, void **, 0x77E4),
                 Data_080ee910[cell * 2]);
             Func_08009020(M2C_FIELD(work, void **, 0x77E8),
@@ -488,7 +488,7 @@ void Func_080d6970(void *object)
                 r = colour & 31;
                 g = (colour >> 5) & 31;
                 b = (colour >> 10) & 31;
-                grey = Func_080022ec(r + g + b, 3);
+                grey = Math_Div(r + g + b, 3);
                 if (r > grey) {
                     r--;
                 }

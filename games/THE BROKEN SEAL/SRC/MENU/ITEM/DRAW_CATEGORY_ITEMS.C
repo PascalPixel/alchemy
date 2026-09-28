@@ -14,9 +14,9 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     struct InventoryMenuState *menu = gMenuWork;
     u8 *items;
 
-    OwnerState_GetFar(owner_id);
+    Owner_GetStateFar(owner_id);
     ItemMenu_PosCategory();
-    InventoryMenu_HideAllItemIcons();
+    ItemMenu_HideAllIcons();
     UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels, window, 0, 0);
     UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels + 1, window, 0, 32);
     UiText_DrawCharacterAtOffsetFar(&MsgEquipSlotLabels + 2, window, 0, 16);
@@ -25,7 +25,7 @@ void ItemMenu_DrawCategory(s32 window, s32 owner_id, s32 mode)
     ItemMenu_DrawEquippedItemNames(window, items);
     if (mode == 0) {
         WaitFrames(1);
-        InventoryMenu_DrawItemIcons((u16 *)items, 1);
+        ItemMenu_DrawIcons((u16 *)items, 1);
         ItemMenu_ArrangeCategoryItemIcons(items);
     }
 }

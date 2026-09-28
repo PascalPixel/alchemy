@@ -79,12 +79,8 @@ struct BattleUnitRecord {
 
 /* Callees the owner register already names, spelled the way types.h spells
  * its own aliases: the address symbol stays the ABI. */
-#define UiWork_SetParamNibble UiWork_SetParamNibble
-#define UiWindow_SetTilemapEntry UiWindow_SetTilemapEntry
-#define UiWindow_DrawThreeTileColumn UiWindow_DrawThreeTileColumn
-#define UiText_FormatNumberToHalfwords UiText_FormatNumberToHalfwords
 
-void Func_08002df0(void *block);
+void Sys_Free(void *block);
 s32 _call_via_r3(void *dst, const void *src, s32 size, s32 proc);
 s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
@@ -357,8 +353,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
     /* Put the record back the way it was and release the scratch blocks. */
     _call_via_r3(unit, snap, 332, VRAM_COPY_PROC);
-    Func_08002df0(list);
-    Func_08002df0(snap);
-    Func_08002df0(buf);
+    Sys_Free(list);
+    Sys_Free(snap);
+    Sys_Free(buf);
     return win;
 }

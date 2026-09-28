@@ -41,8 +41,8 @@ fn path_with_first(first: &Path, current: &std::ffi::OsStr) -> Option<std::ffi::
     let rest = std::env::split_paths(current).filter(|entry| entry != first);
     std::env::join_paths(std::iter::once(first.to_path_buf()).chain(rest)).ok()
 }
-/// Both games use the licensed agscc source and the same executable bundle.
-/// TLA selects its reconstructed lowering with the explicit -mgs2 option.
+/// Both games use the licensed agscc source and the same executable bundle,
+/// with the same stock options.
 pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
     bundle()
 }
@@ -160,16 +160,7 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     if interworks(target) {
         flags.push("-mthumb-interwork".to_string());
     }
-    if target == CompilerTarget::Tla {
-        flags.push("-mgs2".to_string());
-    }
-    for flag in [
-        "-mcpu=arm7tdmi",
-        "-fno-builtin",
-        "-nostdinc",
-        "-ffreestanding",
-        "-fcall-used-r4",
-    ] {
+    for flag in ["-mcpu=arm7tdmi", "-nostdinc", "-fcall-used-r4"] {
         flags.push(flag.to_string());
     }
     flags.push(include_flag(target));
@@ -179,14 +170,14 @@ pub fn cflags() -> Vec<String> {
     base_cflags(CompilerTarget::Tbs)
 }
 pub fn agbcc_cflags() -> Vec<String> {
-    ["-mthumb-interwork", "-O2", "-fno-builtin", "-ffreestanding"]
+    ["-mthumb-interwork", "-O2"]
         .iter()
         .map(|s| (*s).to_string())
         .collect()
 }
 /// The flash library's agbcc flags: the library family's set at -O.
 pub fn agbcc_flash_cflags() -> Vec<String> {
-    ["-mthumb-interwork", "-O", "-fno-builtin", "-ffreestanding"]
+    ["-mthumb-interwork", "-O"]
         .iter()
         .map(|s| (*s).to_string())
         .collect()
@@ -309,10 +300,7 @@ mod target_tests {
             .iter()
             .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))
             .collect();
-        let derived: Vec<&String> = tla
-            .iter()
-            .filter(|flag| *flag != "-mgs2" && !flag.starts_with("-I"))
-            .collect();
+        let derived: Vec<&String> = tla.iter().filter(|flag| !flag.starts_with("-I")).collect();
         assert_eq!(shared, derived);
         for flags in [&tbs, &tla] {
             assert!(!flags
@@ -328,19 +316,13 @@ mod target_tests {
         let tla = cflags_for_target_source(CompilerTarget::Tla, "GAME/FLAGS/GET_BYTE.C");
         assert!(tbs.iter().any(|flag| flag == "-mthumb-interwork"));
         assert!(!tla.iter().any(|flag| flag == "-mthumb-interwork"));
-        assert!(tla.iter().any(|flag| flag == "-mgs2"));
-        assert!(!tbs.iter().any(|flag| flag == "-mgs2"));
         assert_eq!(
             bundle_for(CompilerTarget::Tbs),
             bundle_for(CompilerTarget::Tla)
         );
-        assert!(!cflags_for_target_source(
-            CompilerTarget::Tla,
-            "games/COMMON/SRC/SOUND/MUSIC_PLAYER.C"
-        )
-        .iter()
-        .any(|flag| flag == "-mgs2"));
         for flags in [&tbs, &tla] {
+            // No game-specific compiler option exists: both games use stock GCC.
+            assert!(!flags.iter().any(|flag| flag.starts_with("-mgs")));
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-mthumb"));
         }

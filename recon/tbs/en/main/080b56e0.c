@@ -11,7 +11,7 @@
  *
  * Structurally: an outer loop polls ADDR_03001AE8 (held-key level bits)
  * for bit 0x80 (Down) each pass. While Down is not held it calls two
- * flag-style calls and loops (Func_080b63c8 with a fixed 0x101). Once
+ * flag-style calls and loops (Battle_RunEncounter with a fixed 0x101). Once
  * Down is held it never returns to that outer poll again -- the
  * function has no epilogue in the retained assembly (push with no
  * matching pop anywhere), so both branches are provably infinite from
@@ -46,7 +46,7 @@ extern void Func_080770c8(s32);
 extern void Func_080770d0(s32);
 extern void Func_080b5534(void);
 extern s32 Func_080b5368(s32);
-extern void Func_080b63c8(s32);
+extern void Battle_RunEncounter(s32);
 
 void WaitFrames(s32);
 void Resource_InitializeTable(void);
@@ -77,7 +77,7 @@ void Func_080b56e0(void)
 
         if ((*(volatile u32 *)ADDR_03001AE8 & 0x80) == 0) {
             Func_080770c8(354);
-            Func_080b63c8(257);
+            Battle_RunEncounter(257);
             continue;
         }
 
@@ -129,7 +129,7 @@ void Func_080b56e0(void)
             if (val1 == 28)
                 Func_080770c8(366);
             Func_080770c8(354);
-            Func_080b63c8(val1);
+            Battle_RunEncounter(val1);
             Func_0800479c();
             Func_08004760();
             Scheduler_ResetTaskTable();

@@ -3,7 +3,6 @@
 
 extern u8 *gEventWork;
 extern s16 gGameState[];
-#define PARTY_STATE gGameState
 
 void *ObjectTable_Get(u32);
 void Audio_PlayCue(s32);
@@ -21,7 +20,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
 {
     u8 *state = gEventWork;
     s32 index = 250;
-    u8 *object = ObjectTable_Get(*(u32 *)&PARTY_STATE[index]);
+    u8 *object = ObjectTable_Get(*(u32 *)&gGameState[index]);
     EffectSprite *record = *(EffectSprite **)(object + 80);
     u8 *entry = *(u8 **)((u8 *)record + 40);
     u32 cycle;
@@ -48,7 +47,7 @@ void BattleFx_RunFlashingCallbackSequence(void)
     callback = CheckObjectMapTile;
     Scheduler_AddOrUpdateCallback((s32)callback, 0xc80);
     index = 147;
-    *(s16 *)&((s32 *)PARTY_STATE)[index] = 1;
+    *(s16 *)&((s32 *)gGameState)[index] = 1;
     callback();
     if (*(s16 *)(state + 382) == 0x2092) {
         MapEvent_RunTileTriggerSequence();

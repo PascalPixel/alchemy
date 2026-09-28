@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 extern u8 Data_00001c6f[];
 
@@ -99,7 +100,7 @@ void HaidiaBabi_RunEventScript01(void)
     Engine_ActorSetAnimation(8, 13);
     Value2(Engine_EventOpenMessage, 8, 0);
     if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 1) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
@@ -114,7 +115,7 @@ void HaidiaBabi_RunEventScript01(void)
     Engine_EventSetMessage(base5_1c6f);
     Value2(Engine_EventOpenMessage, 8, 0);
     if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 1) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);

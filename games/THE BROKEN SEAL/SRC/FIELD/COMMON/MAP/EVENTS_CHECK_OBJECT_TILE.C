@@ -3,6 +3,7 @@
 #include "SCENE.H"
 #include "MAP.H"
 #include "SYSTEM.H"
+extern u8 gMapCellBuffer[];
 
 /* map/shared/events/CheckObjectMapTile.c */
 struct MapObject {
@@ -67,7 +68,7 @@ void CheckObjectMapTile(void)
             tile = (u8 *)((struct MapState *)tile)
                 ->layers[object->map_layer].cells;
         } else
-            tile = (u8 *)0x02010000;
+            tile = (u8 *)gMapCellBuffer;
 
         x = object->x;
         if (x < 0)

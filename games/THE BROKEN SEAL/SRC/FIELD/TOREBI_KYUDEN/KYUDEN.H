@@ -1,5 +1,6 @@
 #ifndef TOREBI_KYUDEN_KYUDEN_H
 #define TOREBI_KYUDEN_KYUDEN_H
+extern struct EventWork *gEventWork;
 
 s32 Audio_PlayCueFromEventWorkFar();
 void Battle_ResetEffectCounterFar();
@@ -59,7 +60,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 
 static __inline__ void AdvanceMessage(s32 amount)
 {
-    u8 *scene = *(u8 **)0x03001ebc;
+    u8 *scene = *(u8 **)&gEventWork;
 
     *(u16 *)(scene + 0x1d8) = (u16)(*(u16 *)(scene + 0x1d8) + amount);
 }

@@ -19,12 +19,12 @@ void BattleFx_SelectLivingTargets(struct BattleEffectTargetArgument *argument)
         for (i = 0; i != 6; i++) {
             s32 unit = i + 128;
 
-            if (BattleUnit_Get(unit)->hp > 0)
+            if (Owner_GetStateFar(unit)->hp > 0)
                 targets[count++] = unit;
         }
     } else {
         for (i = 0; i != 8; i++) {
-            if (BattleUnit_Get(i)->hp > 0)
+            if (Owner_GetStateFar(i)->hp > 0)
                 targets[count++] = i;
         }
     }

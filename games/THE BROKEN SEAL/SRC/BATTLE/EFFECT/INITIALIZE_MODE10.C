@@ -8,6 +8,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
+extern u8 gMapCellBuffer[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void BattleFx_BuildWindowEdgeTable(void);
@@ -176,7 +177,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
        frame limit and before the skip keys are tested. */
     for (frame = 0; frame != 288 && (count = 16, !(gKeysRepeat & 3) || frame <= 16); frame++) {
         if (frame >= 0 && frame < 16) {
-            u16 *phase = (u16 *)0x02010000;
+            u16 *phase = (u16 *)gMapCellBuffer;
             if (frame == 1) {
                 u8 *noise = (u8 *)0x02010002;
                 s32 n;

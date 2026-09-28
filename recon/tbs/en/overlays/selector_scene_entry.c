@@ -1,9 +1,6 @@
 #include "MAKYURI_HEYA.H"
 
-#define Scene_RunSelectorEntry Func_02003d20
-#define SCENE RuntimeSelectorTable
 #define WORD(p, offset) (*(s32 *)((u8 *)(p) + (offset)))
-#define WORK MAKYURI_EVENT_WORK
 
 extern u8 Value_00000036;
 extern u8 Value_00000037;
@@ -18,7 +15,7 @@ void Func_02000dfc();
 void Func_02005a1c();
 void Func_02005c54();
 u8 *Func_02005ad4();
-void Func_02000030();
+void SetEffectRecordMode();
 void Func_0200597c();
 void Func_02005b24();
 void Func_02005a94();
@@ -27,10 +24,10 @@ void Func_02005a04();
 void Func_020059e4();
 void Func_02005b94();
 void Func_02005c64();
-void Func_020017a8();
-void Func_02003788();
-void Func_02002030();
-void Func_02001db4();
+void FieldScene_RunSupplementalSequenceOne();
+void FieldScene_RunScene39b_02001208();
+void SceneEffect_SpawnParticleRowsByMode();
+void FieldScene_RunPrimarySequence();
 void Func_02005b9c();
 void Func_02005ab4();
 void Func_02005b6c();
@@ -53,12 +50,6 @@ u8 *Func_02005bc4();
 void Func_02004c68();
 void Func_02005a0c();
 
-#define SetEffectRecordMode Func_02000030
-#define SceneEffect_SpawnParticleRowsByMode Func_02002030
-#define FieldScene_RunSupplementalSequenceOne Func_020017a8
-#define FieldScene_RunScene39b_02001208 Func_02003788
-#define FieldScene_RunPrimarySequence Func_02001db4
-
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
@@ -79,9 +70,9 @@ s32 Scene_RunSelectorEntry(void)
     s32 flag;
 
     Func_02005a8c(0x111);
-    SCENE[289] = 11;
-    SCENE[288] = (s32)&Value_00000039;
-    WORD(WORK, 0x1c0) = 0x204;
+    ((s16 *)&gGameState)[289] = 11;
+    ((s16 *)&gGameState)[288] = (s32)&Value_00000039;
+    WORD((u8 *)gEventWork, 0x1c0) = 0x204;
     *(volatile u16 *)0x04000050 = 0x3f40;
     *(volatile u16 *)0x04000052 = 0x1010;
     Func_02004fcc(21, 0x02001000);
@@ -91,8 +82,8 @@ s32 Scene_RunSelectorEntry(void)
     } else {
         Func_02000dfc();
     }
-    if (SCENE[224] == (s32)&Value_00000036) {
-        switch (SCENE[225]) {
+    if (((s16 *)&gGameState)[224] == (s32)&Value_00000036) {
+        switch (((s16 *)&gGameState)[225]) {
         case 1:
         case 2:
         case 3:
@@ -148,8 +139,8 @@ s32 Scene_RunSelectorEntry(void)
             break;
         }
     }
-    if (SCENE[224] == (s32)&Value_00000037) {
-        switch (SCENE[225]) {
+    if (((s16 *)&gGameState)[224] == (s32)&Value_00000037) {
+        switch (((s16 *)&gGameState)[225]) {
         case 1:
         case 2:
             SetEffectRecordMode(Func_02005ad4(8), 1);
@@ -201,8 +192,8 @@ s32 Scene_RunSelectorEntry(void)
             break;
         }
     }
-    if (SCENE[224] == (s32)&Value_00000038) {
-        switch (SCENE[225]) {
+    if (((s16 *)&gGameState)[224] == (s32)&Value_00000038) {
+        switch (((s16 *)&gGameState)[225]) {
         case 4:
         case 5:
         case 6:
@@ -276,7 +267,7 @@ s32 Scene_RunSelectorEntry(void)
             FieldScene_RunPrimarySequence(1);
             /* fall through */
         case 14:
-            if (SCENE[225] == 14) {
+            if (((s16 *)&gGameState)[225] == 14) {
                 Func_02005c64(211);
             }
             SetEffectRecordMode(Func_02005ad4(9), 1);
@@ -288,7 +279,7 @@ s32 Scene_RunSelectorEntry(void)
             SetEffectRecordMode(Func_02005ad4(14), 1);
             Func_02000ba4(10);
             Func_02000ba4(11);
-            if (SCENE[225] != 14) {
+            if (((s16 *)&gGameState)[225] != 14) {
                 break;
             }
             if (!Func_02005a84(0x109)) {
@@ -319,7 +310,7 @@ s32 Scene_RunSelectorEntry(void)
             Func_02005ad4(8)[85] = 0;
             WORD(Func_02005ad4(8), 68) = 0;
             WORD(Func_02005ad4(8), 72) = 0x4ccc;
-            WORD(WORK, 0x1c0) = 0x100;
+            WORD((u8 *)gEventWork, 0x1c0) = 0x100;
             Func_02005bf4();
             Func_02005c04();
             Func_02005ad4(8)[85] = 3;
@@ -336,8 +327,8 @@ s32 Scene_RunSelectorEntry(void)
             break;
         }
     }
-    if (SCENE[224] == (s32)&Value_00000039) {
-        switch (SCENE[225]) {
+    if (((s16 *)&gGameState)[224] == (s32)&Value_00000039) {
+        switch (((s16 *)&gGameState)[225]) {
         case 10:
             Func_02005984(0x0200adcd, 0xc80);
             if (Func_02005a84(0x109)) {

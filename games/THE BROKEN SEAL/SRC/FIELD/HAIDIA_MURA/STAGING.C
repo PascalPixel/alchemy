@@ -1,4 +1,6 @@
 #include "STAGED_MOTION.H"
+extern u8 gGeraldAction[];
+extern u8 gJasmineAction[];
 
 void Scene_RepairTheHouse(void)
 {
@@ -43,7 +45,7 @@ void Scene_RepairTheHouse(void)
     turned = Actor_Get(ACTOR_JASMINE);
     *(u16 *)(turned + 6) = turn_side;
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    Engine_ActorEnableActionCallback(0, 0x200e590);
+    Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
     rec = Actor_Get(23);
     rec[85] = 0;
     *(s32 *)(rec + 8) = 0x1840000;
@@ -67,12 +69,12 @@ void Scene_RepairTheHouse(void)
     Camera_MoveTo(0x17f0000, 0xa00000, 0x36d0000, 0);
     Map_Redraw();
     Task_Wait(1);
-    *(s32 *)(*(u8 **)0x03001ebc + 0x1c8) = 32;
+    *(s32 *)(*(u8 **)&gEventWork + 0x1c8) = 32;
     Event_OpenScreen();
     Actor_SetSpeed(ACTOR_JASMINE, 0x8000, turn_side);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, turn_side);
-    Engine_ActorEnableActionCallback(5, 0x200e614);
-    Engine_ActorEnableActionCallback(1, 0x200e5cc);
+    Engine_ActorEnableActionCallback(5, (u32)gJasmineAction);
+    Engine_ActorEnableActionCallback(1, (u32)gGeraldAction);
     Event_Wait(40);
     Engine_ActorEnableActionCallback(0, 1);
     *(s32 *)(scene + 24) = 0x10000;
@@ -121,7 +123,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetPosition(23, 0, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    Engine_ActorEnableActionCallback(0, 0x200e590);
+    Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
     Event_Wait(120);
     Map_CopyCellsTo(7, 102, 84, 41, 2, 1);
     Engine_ActorEnableActionCallback(0, 1);
@@ -165,7 +167,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetPosition(24, 0, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    Engine_ActorEnableActionCallback(0, 0x200e590);
+    Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
     Event_Wait(120);
     Map_CopyCellsTo(6, 102, 83, 41, 1, 1);
     Engine_ActorEnableActionCallback(0, 1);
@@ -210,7 +212,7 @@ void Scene_RepairTheHouse(void)
     Actor_SetPosition(25, 0, 0);
     Event_Wait(20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    Engine_ActorEnableActionCallback(0, 0x200e590);
+    Engine_ActorEnableActionCallback(0, (u32)gLeaderHammerAction);
     Event_Wait(120);
     FieldScene_RunSingleStep();
     Map_CopyCellsTo(5, 103, 82, 42, 1, 1);

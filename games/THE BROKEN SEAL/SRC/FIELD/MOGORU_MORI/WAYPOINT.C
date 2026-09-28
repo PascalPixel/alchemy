@@ -2,29 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define OverlayObject_IntegrateVelocities Func_02000ab0
-#define RuntimeSelectorTable Data_02000240
-#define PrimaryRuntimeSelector Value_00000044
-#define SecondaryRuntimeSelector Value_00000045
-#define TertiaryRuntimeSelector Value_00000046
-#define PrimaryOverlayData Data_0200b0f4
-#define SecondaryOverlayData Data_0200b1e4
-#define TertiaryOverlayData Data_0200b334
-#define DefaultOverlayData Data_0200b4b4
-#define PrimaryOverlayData_02000f40 Data_0200b6a0
-#define SecondaryOverlayData_02000f40 Data_0200b790
-#define TertiaryOverlayData_02000f40 Data_0200b8b0
-#define DefaultOverlayData_02000f40 Data_0200ba30
-#define PrimaryOverlayData_020024ac Data_0200ba48
-#define SecondaryOverlayData_020024ac Data_0200bb20
-#define TertiaryOverlayData_020024ac Data_0200bc1c
-#define DefaultOverlayData_020024ac Data_0200bd54
-#define GetOrbitingSceneObject Func_020059d4
-#define AllocateEffectTransfer Func_0200599c
-#define UpdateOrbitingSceneObject Value_0200aba5
-
 #include "FIELD_EFFECT.H"
-#define OverlayObject_IntegrateVelocities Effect_Move
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 
@@ -89,7 +67,7 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-extern u8 Value_0200aba5;
+extern u8 UpdateOrbitingSceneObject;
 
 void Func_02003b4c(s32 a, s32 b);
 s32 *Func_020042f4(s32);
@@ -121,8 +99,8 @@ void Func_02002cf0();
 void Func_02001ce8(s32 no);
 s32 *Func_02004950();
 s32 *Func_02004958();
-OrbitingSceneObject *Func_020059d4(void);
-u8 *Func_0200599c(s32, s32);
+OrbitingSceneObject *GetOrbitingSceneObject(void);
+u8 *AllocateEffectTransfer(s32, s32);
 
 /*
  * Distance between two three-component 16.16 fixed-point positions.
@@ -371,7 +349,7 @@ void FieldScene_RunSixCallSetupSequence(s32 no, s32 val)
 
 s32 SceneData_SelectByRuntimeSelector(void)
 {
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&PrimaryRuntimeSelector) {
         return (s32)PrimaryOverlayData;
@@ -404,7 +382,7 @@ s32 SceneData_SelectDataByRuntimeSelector(void)
     extern u8 TertiaryOverlayData_02000f40[];
     extern u8 DefaultOverlayData_02000f40[];
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&PrimaryRuntimeSelector) {
         return (s32)PrimaryOverlayData_02000f40;
@@ -960,7 +938,7 @@ void FieldScene_RunScene39fSequenceA(void)
     Call4(FieldScene_RunScene39f_02000d90, 15, shown, *(s16 *)(second + 18), 0x60000);
     ((s64 (*)())Engine_EventWait)(10);
     GameFlag_Set(0x307);
-    base3_2000240 = (s32)Data_02000240;
+    base3_2000240 = (s32)&gGameState;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     Func_02004c3c(53, 0);
     Event_End();
@@ -1165,7 +1143,7 @@ s32 SceneData_SelectTableBa48ByRuntimeSelector(void)
     extern u8 TertiaryOverlayData_020024ac[];
     extern u8 DefaultOverlayData_020024ac[];
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
     if (selector == (s32)&PrimaryRuntimeSelector) {
         return (s32)PrimaryOverlayData_020024ac;

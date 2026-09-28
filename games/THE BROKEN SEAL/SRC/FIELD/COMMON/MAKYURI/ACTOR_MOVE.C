@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "IWRAM_CALL.H"
+extern u8 gMapCellBuffer[];
 
 void Field_OffsetPosition(s32 radius, s32 angle, union FieldCoordinate *pos);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
@@ -35,7 +36,7 @@ struct PushState {
     struct FieldActor *effect;
 };
 
-#define MAP_CELLS ((struct MapCell *)0x02010000)
+#define MAP_CELLS ((struct MapCell *)gMapCellBuffer)
 
 /* FAKEMATCH: the inline boundary rematerializes pos for the collision call. */
 static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate *pos)

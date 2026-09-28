@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 FuneKanpan_RandomActorActions[];
 
 enum MultiEncounterMessage {
     MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
@@ -62,7 +63,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
@@ -139,7 +140,7 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             *(u16 *)(rec7 + 100) = shown;
-            Engine_ActorEnableActionCallback(21, 0x200c4d8);
+            Engine_ActorEnableActionCallback(21, (u32)FuneKanpan_RandomActorActions);
         } else {
             Actor_ShowEmote(21, 0x103, 0);
             Actor_StartRepeatedMotion(21, 3);
@@ -169,7 +170,7 @@ void FieldScene_RunScene3afSequenceA(void)
             record = Random_Next();
             shown = ((u32)(90 * record) >> 16) + 60;
             *(u16 *)(rec7 + 100) = shown;
-            Engine_ActorEnableActionCallback(24, 0x200c4d8);
+            Engine_ActorEnableActionCallback(24, (u32)FuneKanpan_RandomActorActions);
         } else {
             Actor_ShowEmote(24, 0x103, 0);
             Actor_StartRepeatedMotion(24, 3);

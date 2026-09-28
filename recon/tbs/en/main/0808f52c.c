@@ -44,13 +44,11 @@
  * allocator, and contriving one would not be evidence.
  */
 
-#define DisplayTransition_UpdateScanlineTable Func_0808f52c
-
 /* Resolved project symbols. */
 void Func_08004278(void *callback);  /* Scheduler_RemoveCallback */
 void Func_08015268(void *lines);
 u32 Func_08004458(void);             /* Random16 */
-s32 Func_080022ec(s32 num, s32 den); /* Math_Div */
+s32 Math_Div(s32 num, s32 den); /* Math_Div */
 void *Func_0808ba1c(s32 id);         /* ObjectTable_Get */
 
 struct BattleSelectionWork {
@@ -220,8 +218,8 @@ void DisplayTransition_UpdateScanlineTable(void)
                     ny = 0;
                     n = cnt;
                     while (n != 0) {
-                        dst[0] = (u16)(((Func_080022ec(nx, cnt) + x0) << 8)
-                                       + (Func_080022ec(ny, cnt) + y0));
+                        dst[0] = (u16)(((Math_Div(nx, cnt) + x0) << 8)
+                                       + (Math_Div(ny, cnt) + y0));
                         ny += dy;
                         nx += dx;
                         dst += 2;

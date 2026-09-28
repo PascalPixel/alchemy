@@ -9,7 +9,7 @@
 @ high-register save and the branch on flags from subs r7, r4, #1
 @ (0x0800073c) are beyond both approved compilers. The pool word
 @ 0x04000006 at 0x08000764 is loaded by no instruction and carries no
-@ credit. TLA links its own revision (TLA SOUND/CHANNEL_UPDATE_ENTRY.S).
+@ credit. TLA links its own revision (raw 08000630.S).
 @ credit: handwritten — TBS sound driver guarded ROM-to-IWRAM mixer entry
 .syntax unified
 .text
@@ -27,7 +27,7 @@ Func_080006fc:
 	.global MusicDriver_CallHook
 	.thumb_func
 MusicDriver_CallHook:
-	.inst.n 0x4718
+	bx	r3
 @ Builds the frame the IWRAM mixer at 0x03000659 unwinds, then jumps there.
 .syntax unified
 	.thumb
@@ -74,7 +74,7 @@ Func_0800070c:
 	adds	r4, #80
 	ldr	r3, [pc, #0]
 	bx	r3
-	.4byte 0x03000659
+	.4byte IwramSoundMixEntry
 	.4byte 0x00000350
 AlchemyUncredited_08000764:
 	.4byte 0x04000006

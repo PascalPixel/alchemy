@@ -93,7 +93,7 @@ portable reading, decoding, analysis and comparison. Prefer existing commands
 and read `--help`. Scripts are TypeScript on Bun or Rust. New tooling must solve
 a demonstrated recurring blocker and carry a test.
 
-Use approved agscc (GCC 2.96), with TLA's `-mgs2` route. Compiler family and flags
+Use approved agscc (GCC 2.96) for both games with stock options. Compiler family and flags
 apply to whole files with their reason recorded in compiler routing; never tune
 individual functions. Library routes remain agbcc `-O` for flash and `-O2` for
 MusicPlayer2000; RAM-executed ARM code uses `-marm -mno-apcs-frame`.
@@ -135,3 +135,6 @@ a verified build.
   `.incbin "baserom.gba", OFFSET, SIZE` scaffolding in `recon/<game>`.
 - 2026-09-28: the cheating rule is restated as oracle leakage: five invariants
   that keep the answer out of the build and the count, not a list of forms.
+- 2026-09-28: compilers take stock options only; a game-specific compiler flag
+  is an invented answer. agscc is GCC 2.96 with its host ports, and agbcc is
+  called with pret's flags.

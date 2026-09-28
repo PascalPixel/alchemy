@@ -1,4 +1,5 @@
 #include "DMA.H"
+extern u8 gMapCellBuffer[];
 
 /* H-blank callback: feed the per-line WIN0H table at 0x02010000 to WIN0H. */
 void BattleFx_ArmWin0HBlankDma(void)
@@ -7,5 +8,5 @@ void BattleFx_ArmWin0HBlankDma(void)
     channel[5] &= 0xc5ff;
     channel[5] &= 0x7fff;
     (void)channel[5];
-    Dma_Set((void *)0x02010000, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
+    Dma_Set((void *)gMapCellBuffer, (void *)0x04000040, 0xa2600001, (volatile u32 *)channel);
 }

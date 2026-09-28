@@ -57,7 +57,7 @@ struct SerialTransferState {
     u16 value;
 };
 
-#define SERIAL_RUNTIME ((struct SerialRuntime *)0x02002240)
+#define SERIAL_RUNTIME (&gSerialRuntime)
 #define SERIAL_TRANSFER ((struct SerialTransferState *)0x02002220)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define REG_SIODATA32 ((volatile u32 *)0x04000120)
@@ -71,10 +71,10 @@ struct SerialTransferState {
 #define REG_IF (*(volatile u16 *)0x04000202)
 #define REG_IME (*(volatile u16 *)0x04000208)
 
-#define SERIAL_ACTIVE_A (*(volatile s32 *)0x02002080)
-#define SERIAL_VALUE_A (*(volatile u16 *)0x02002008)
-#define SERIAL_ACTIVE_B (*(volatile s32 *)0x020023ac)
-#define SERIAL_VALUE_B (*(volatile u16 *)0x02002238)
+#define SERIAL_ACTIVE_A gSerialSendSource
+#define SERIAL_VALUE_A gSerialSendSize
+#define SERIAL_ACTIVE_B gSerialReceiveDest
+#define SERIAL_VALUE_B gSerialReceivedSize
 #define SERIAL_RESULT (*(volatile u8 *)0x020023a4)
 
 #define START_DMA(source_, destination_, control_) do { \
@@ -97,7 +97,7 @@ extern volatile s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern volatile s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
 {
@@ -117,7 +117,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
      * assignment keeps its allocation priority above the IME pointer. */
     do {
         state = &gSerialTransfer;
-        ime = &Data_04000208;
+        ime = &RegIme;
     } while (0);
     do {
         saved = *ime;

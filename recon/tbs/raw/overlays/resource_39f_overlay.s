@@ -709,9 +709,9 @@ Func_02000f40:
 	.4byte 0x00000046
 	.4byte 0x0200b8b0
 	.4byte 0x0200ba30
-	.global Func_02000f94
+	.global MogoruMori_RunProbedActorNineScene
 	.thumb_func
-Func_02000f94:
+MogoruMori_RunProbedActorNineScene:
 	push {r5, lr}
 	sub sp, #32
 	bl 0x0200ada4

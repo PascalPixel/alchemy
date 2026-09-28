@@ -2,9 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define GetStagedActorEffect Func_0200374e
-#define CanStartStagedActorEffect Func_0200371e
-#define SceneTransition_Phase Data_02000240[225]
 
 #include "STAGED_ACTOR.H"
 #include "STAGED_ACTOR_EFFECT.H"
@@ -72,7 +69,7 @@ void Func_02001096(struct PlacementResult_02000a68 res);
 u8 *Func_020036ee(s32);
 s32 Func_02000d3c_grid(s32, s32, s32, s32, s32, s32);
 u8 *Func_0200372a(s32);
-struct StagedActorEffect *Func_0200374e(s32 actor_index);
+struct StagedActorEffect *GetStagedActorEffect(s32 actor_index);
 struct Struct3848 *Func_02003848(s32 arg0);
 s32 Func_020038a6();
 s32 Func_020038da();
@@ -136,7 +133,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-s32 Func_0200371e(struct StagedActorEffect *actor,
+s32 CanStartStagedActorEffect(struct StagedActorEffect *actor,
                          struct StagedActorEffectRequest *request);
 
 s32 OverlayObject_ClearPendingAndRestoreMode(u8 *object)
@@ -273,7 +270,7 @@ s32 FieldScene_RunScene391_02000c68(void)
     }
     FieldScene_RedrawActorFootprint(8);
     FieldScene_RedrawActorFootprint(9);
-    if (SceneTransition_Phase == 4) {
+    if (gGameState.entrance == 4) {
         if (GameFlag_IsSet(0x843) == 0) {
             FieldScene_RunBranchingFormationPresentation();
         }
@@ -508,7 +505,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Event_Wait(40);
         Event_SayThenWait(ACTOR_MIA, 40);
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Event_Wait(20);
     party_flag = &Data_0200b394;
@@ -595,7 +592,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_ShowEmote(ACTOR_MIA, 0x102, 0);
         Event_SayThenWait(ACTOR_MIA, 10);
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     formation_phase = &Data_0200b38c;
     *formation_phase = 3;
@@ -665,7 +662,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     Actor_SetPosition(12, 0xdc0000, 0x1ee0000);
     Task_Wait(1);
     if (Event_ChooseYesNo(11, 0) == 1) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);
     Event_Wait(20);
@@ -728,7 +725,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Event_Wait(20);
         Event_SayThenWait(ACTOR_MIA, 20);
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Actor_Jump(ACTOR_GERALD, 2, 0);
     Func_02002780(1, 0x4000, 20);
@@ -787,7 +784,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Actor_SetAnimation(ACTOR_IVAN, 3);
         Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     } else {
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Func_02002780(1, 0x2000, 10);
@@ -807,7 +804,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_SetAnimation(ACTOR_MIA, 4);
         Event_SayThenWait(ACTOR_MIA, 10);
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Actor_FaceDirection(ACTOR_GERALD, 0x2000, 0);
     Func_02002780(0, 0xa000, 10);
@@ -852,7 +849,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Event_Wait(20);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_Wait(40);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Event_ShowMessage(ACTOR_GERALD, 0);
     Audio_PlayCue(21);
@@ -1096,7 +1093,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_StartRepeatedMotion(ACTOR_MIA, 3);
             Event_SayThenWait(ACTOR_MIA, 20);
         } else {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         }
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
         Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
@@ -1111,7 +1108,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
             Actor_SetAnimationAndWait(ACTOR_MIA, 4);
             Event_SayThenWait(ACTOR_MIA, 10);
         } else {
-            *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+            *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
         }
         Event_Wait(60);
         Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
@@ -1142,7 +1139,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_StartRepeatedMotion(ACTOR_MIA, 1);
         Event_SayThenWait(ACTOR_MIA, 20);
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 0);
@@ -1157,7 +1154,7 @@ void FieldScene_RunBranchingFormationPresentation(void)
         Actor_SetAnimation(ACTOR_MIA, 4);
         Event_SayThenWait(ACTOR_MIA, 40);
     } else {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
     }
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);

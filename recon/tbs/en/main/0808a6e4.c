@@ -8,8 +8,6 @@
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
-#define Party_SetReturnPoint Func_0808a6e4
-
 /* Party-state rows 0x1c0-0x1d4 hold the field return point as x/y pairs;
    0x236 remembers the reason the party is being sent back. */
 struct ReturnPointState {
@@ -69,8 +67,6 @@ static __inline__ void Unit_UpdateGauges(struct BattleUnit *unit)
         unit->pp_gauge = 1;
 }
 
-#define st (&Data_02000240)
-
 void Party_SetReturnPoint(s32 reason)
 {
     struct BattleUnit *unit;
@@ -78,9 +74,9 @@ void Party_SetReturnPoint(s32 reason)
     s32 x;
     s32 y;
 
-    st->reason = reason;
+    (&Data_02000240)->reason = reason;
     if (reason == -1) {
-        unit = Owner_GetStateFar(st->current_owner);
+        unit = Owner_GetStateFar((&Data_02000240)->current_owner);
         if (unit->hp == 0) {
             unit->hp = 1;
             Unit_UpdateGauges(unit);
@@ -95,37 +91,37 @@ void Party_SetReturnPoint(s32 reason)
             if (++i <= 1)
                 goto heal;
         }
-        x = st->defeat_x;
-        y = st->defeat_y;
+        x = (&Data_02000240)->defeat_x;
+        y = (&Data_02000240)->defeat_y;
         if (x == -1) {
             if (y == -1) {
-                st->return_x = st->sanctum_x;
-                st->return_y = st->sanctum_y;
+                (&Data_02000240)->return_x = (&Data_02000240)->sanctum_x;
+                (&Data_02000240)->return_y = (&Data_02000240)->sanctum_y;
                 return;
             }
             goto default_x;
         } else {
-            st->return_x = x;
+            (&Data_02000240)->return_x = x;
         }
     } else {
-        x = st->entry_x;
-        y = st->entry_y;
+        x = (&Data_02000240)->entry_x;
+        y = (&Data_02000240)->entry_y;
         if (x == -1) {
             if (y == -1)
                 goto home;
 default_x:
-            st->return_x = st->home_x;
+            (&Data_02000240)->return_x = (&Data_02000240)->home_x;
         } else {
-            st->return_x = x;
+            (&Data_02000240)->return_x = x;
         }
     }
     if (y != -1)
-        st->return_y = y;
+        (&Data_02000240)->return_y = y;
     else
-        st->return_y = st->home_y;
+        (&Data_02000240)->return_y = (&Data_02000240)->home_y;
     return;
 home:
-    st->return_x = st->home_x;
-    st->return_y = st->home_y;
+    (&Data_02000240)->return_x = (&Data_02000240)->home_x;
+    (&Data_02000240)->return_y = (&Data_02000240)->home_y;
     GameFlag_SetBitFar(0x109);
 }

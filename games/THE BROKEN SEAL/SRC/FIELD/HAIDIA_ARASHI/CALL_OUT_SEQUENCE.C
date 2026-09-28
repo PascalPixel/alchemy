@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define HaidiaArashi_RunCallOutSequence Func_0200173c
-
 extern u8 Data_00000e70[];
 void Func_02005e66();
 s32 Func_02005e7c();

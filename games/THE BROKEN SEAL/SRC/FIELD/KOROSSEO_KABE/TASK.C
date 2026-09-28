@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 gEffectWork[];
 
 enum TaskMessage {
     MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
@@ -18,9 +19,6 @@ enum TaskMessage {
 };
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
-#define HexDigits Data_0200c250
-#define GetPartyInteractionRecord Func_02005e6a
-#define GetPartyMemberCount Func_02005e3a_a
 
 typedef struct Ctl {
     s16 f0;
@@ -125,7 +123,7 @@ typedef struct Position3 {
     s32 z;
 } Position3;
 
-extern u8 Data_0200c250[];
+extern u8 HexDigits[];
 extern u8 Data_0200c194[];
 extern Ctl Data_02001000;
 extern u8 *Data_03001f3c;
@@ -267,8 +265,8 @@ s32 Func_0200355c();
 void Func_02003750();
 void Func_0200417a();
 void Func_020043fe();
-PartyInteractionRecord *Func_02005e6a(void);
-s32 Func_02005e3a_a(void);
+PartyInteractionRecord *GetPartyInteractionRecord(void);
+s32 GetPartyMemberCount(void);
 void Func_02005f72(s32, s32);
 s32 Func_02006054();
 s32 Func_0200607e();
@@ -695,7 +693,7 @@ void SceneState_StoreSlotTileXToWork832To848(void)
 
 void SceneState_SetWorkByte35(void)
 {
-    u8 *record = *(u8 **)0x03001F30;
+    u8 *record = *(u8 **)gEffectWork;
 
     record[53] = 1;
 }

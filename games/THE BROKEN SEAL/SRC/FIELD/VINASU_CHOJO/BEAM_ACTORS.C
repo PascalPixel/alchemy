@@ -56,7 +56,7 @@ void VinasuChojo_UpdateBeamActors(void)
             second->scale_x += 0x200;
             second->scale_y += 0x200;
         } else {
-            if ((*(s32 *)0x03001e40 & 2) != 0) {
+            if ((*(s32 *)&gFrameCount & 2) != 0) {
                 Engine_ActorSetChildValue(ACTOR_FIRST_OF_PAIR, 15);
                 Engine_ActorSetChildValue(ACTOR_SECOND_OF_PAIR, 0);
             } else {

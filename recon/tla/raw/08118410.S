@@ -5,7 +5,9 @@
 @ stmia r4!, {r5, r6, r7} and calls the copy (mov lr, sp; bl suffix).
 @ Neither approved compiler emits the Thumb add r4, pc, #16, and neither
 @ loads a block into its own base register. TBS has no such loader.
-@ credit: handwritten — Thumb stack-copy loader of the colour-scale kernel
+@ It stays disassembly without credit: it calls through lr with the second
+@ halfword of a Thumb bl alone (0xf800), which the assembler cannot write as
+@ an instruction.
 .syntax unified
 	.thumb_func
 	.arm

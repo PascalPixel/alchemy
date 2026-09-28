@@ -2,6 +2,9 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "FIELD_EFFECT.H"
+extern struct MapRenderWork *gMapWork;
+extern u8 gEffectWork[];
+extern u8 gKeysHeld[];
 
 enum FlaggedChoreographyMessage {
     MSG_BRRRRR_CHOO_IM_FREEZING_MIA = 0x1529,
@@ -333,7 +336,7 @@ void Func_020042e8();
  *   0x0200a300  SceneWork_SetStepValue                    (0x0808a170)
  *   0x0200a310  BattleRuntime_RunThenWaitIfModeZero       (0x0808a188)
  *   0x0200a320  ObjectMotion_ArmCallback                  (0x0808a1b8)
- *   0x0200a330  BattleEffect_SpawnLinkedResourceObject    (0x0808a1e8)
+ *   0x0200a330  BattleFx_SpawnLinked    (0x0808a1e8)
  *   0x0200a338  BattleRuntime_WaitIfModeZero              (0x0808a1f0)
  *   0x0200a340  ObjectMotion_SetSpeedLimitAndAcceleration (0x0808a208)
  *   0x0200a348  ObjectMotion_PlaceWithinCameraBounds      (0x0808a210)
@@ -1163,7 +1166,7 @@ void SceneState_StoreTable96adToWork(void)
     u8 *work;
 
     Psynergy_Begin(93, 1);
-    work = *(u8 **)0x03001f30;
+    work = *(u8 **)gEffectWork;
     Psynergy_SetTarget(3, 9);
     *(s32 *)(work + 36) = (s32)Data_020096ad;
     Psynergy_RaiseHands();
@@ -1280,14 +1283,14 @@ void SceneState_UpdateZoneFlagsFromActorZero(void)
     r = GameFlag_IsSet(g);
     if (r != 0)
         return;
-    (*(State **)0x03001e70)->unk17 = r;
+    (*(State **)&gMapWork)->unk17 = r;
     Func_02003b42(g);
     GameFlag_Clear(h);
     return;
 
 rest:
     if (x > 0xE80000 && obj->unkC > 0x1E0000 && y > 0xD40000) {
-        st = *(State **)0x03001e70;
+        st = *(State **)&gMapWork;
         st->unk17 = 0;
         Func_02003b42(g);
         GameFlag_Clear(h);
@@ -1296,7 +1299,7 @@ rest:
     r = GameFlag_IsSet(h);
     if (r != 0)
         return;
-    st = *(State **)0x03001e70;
+    st = *(State **)&gMapWork;
     st->unk17 = 1;
     Func_02003b62(h);
     GameFlag_Clear(g);
@@ -1508,7 +1511,7 @@ void SceneActor_TurnTowardTableAngle(s32 z)
     }
     o->unk5A = t;
     z = 1;
-    d = Data_0200a3f0[(*(u32 *)0x03001ae8 >> 4) & 0xF];
+    d = Data_0200a3f0[(*(u32 *)gKeysHeld >> 4) & 0xF];
     z = -z;
     if (d == z) {
         Object_SetAnimation(o, 9);

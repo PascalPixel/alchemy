@@ -107,7 +107,7 @@ s32 Battle_ProcessRoundEnd(void)
                         BattleEv_Push(3, expired_entry->element * 20 + expired_entry->index + 300);
                         BattleEv_Push(14, 175);
                         BattleEv_Push(10, 0);
-                        BattleEv_Push(4, MSG_DJINN_SET);
+                        BattleEv_Push(4, (s32)&MsgDjinnSet);
                         BattleEv_Push(11, id);
                         Audio_PlayCue(212);
                         Object_SetMode(GetBattleObjectSlot(id)->object, 3);
@@ -160,9 +160,9 @@ s32 Battle_ProcessRoundEnd(void)
                     UiWork_PushValueSlotFar(id, 1);
                     UiWork_PushValueSlotFar(hp_amount, 5);
                     if (unit->hp == unit->max_hp) {
-                        UiText_ShowMessageAndWaitCoreFar(MSG_HP_FULL);
+                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgHpFull);
                     } else {
-                        UiText_ShowMessageAndWaitCoreFar(MSG_HP_RECOVER);
+                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgHpRecover);
                     }
                     Audio_PlayCue(175);
                     BattlePresentation_WaitForAdvance();
@@ -176,9 +176,9 @@ s32 Battle_ProcessRoundEnd(void)
                     UiWork_PushValueSlotFar(id, 1);
                     UiWork_PushValueSlotFar(pp_amount, 5);
                     if (unit->pp == unit->max_pp) {
-                        UiText_ShowMessageAndWaitCoreFar(MSG_PP_FULL);
+                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPpFull);
                     } else {
-                        UiText_ShowMessageAndWaitCoreFar(MSG_PP_RECOVER);
+                        UiText_ShowMessageAndWaitCoreFar((s32)&MsgPpRecover);
                     }
                     Audio_PlayCue(175);
                     BattlePresentation_WaitForAdvance();
@@ -187,75 +187,75 @@ s32 Battle_ProcessRoundEnd(void)
             if (BattleUnit_TickCounter146(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_AGI_NORMAL);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgAgiNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter132(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_ATK_NORMAL);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgAtkNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter134(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_DEF_NORMAL);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgDefNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter136(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_RES_NORMAL);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgResNormal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter138(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_CURE_DELUSION);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureDelusion);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter139(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_CONSCIOUS);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgConscious);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter13a(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_CONSCIOUS_2);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgConscious2);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter13b(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
-                UiText_ShowMessageAndWaitCoreFar(MSG_CURE_STUN);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureStun);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter13c(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
                 BattlePres_SetActorModeAndAction(id);
-                UiText_ShowMessageAndWaitCoreFar(MSG_WAKES);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgWakes);
                 BattlePresentation_WaitForAdvance();
             }
             if (Battle_AdvanceCounterAndCheckChance(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_CURE_SEAL);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgCureSeal);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter13e(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_REFRAIN_END);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgRefrainEnd);
                 BattlePresentation_WaitForAdvance();
             }
             if (BattleUnit_TickCounter13f(id) != 0) {
                 BattleUnit_BuildStatusFlags(id, GetBattleObjectSlot(id));
                 UiWork_PushValueSlotFar(id, 1);
-                UiText_ShowMessageAndWaitCoreFar(MSG_REFLECT_END);
+                UiText_ShowMessageAndWaitCoreFar((s32)&MsgReflectEnd);
                 BattlePresentation_WaitForAdvance();
             }
         }

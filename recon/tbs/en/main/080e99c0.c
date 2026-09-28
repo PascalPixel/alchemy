@@ -43,7 +43,7 @@
  * bottom clipping, steps and draws the 340 sparks with Func_080e3908, and
  * finally shakes the camera and ticks the object group.
  *
- * `Func_080072f0`, `Func_080072f4`, `Func_080072fc` and `Func_08007308` are
+ * `_call_via_r3`, `Func_080072f4`, `Func_080072fc` and `Func_08007308` are
  * NOT real callees: they are the r3/r4/r6/r9 entries of the `_call_via_rN`
  * trampoline bundle at recon/tbs/raw/080072e4.s (0x080072e4 + 4*N), so every
  * one of those `bl` sites is an indirect call through whatever function
@@ -53,7 +53,7 @@
  * (0x03001f0c), so this draft spells them as ordinary indirect calls through
  * `DrawRectangleFn` locals -- the candidate emits its own `_call_via_rN`
  * veneers for them, through different registers than the reference chose.
- * The r3 site keeps the established `Func_080072f0(dest, a, b, routine)`
+ * The r3 site keeps the established `_call_via_r3(dest, a, b, routine)`
  * spelling already used in 08003fa4.c, 08004c1c.c and 08006cdc.c, where the
  * fourth argument is the routine the veneer jumps to.
  *
@@ -129,7 +129,7 @@ extern const u16 Data_080ede48[];
 extern const u8 Data_080eef12[];
 extern const s32 Data_080eef18[];
 
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 a, s32 b);
 s32 Func_0800231c(s32 angle);
 s32 Func_08002322(s32 angle);
@@ -141,7 +141,7 @@ void Func_080030f8(s32 frames);
 /* Random16 */
 s32 Func_08004458(void);
 /* _call_via_r3 thunk, recon/tbs/raw/080072e4.s */
-void Func_080072f0(void *dest, s32 arg1, s32 arg2, void *routine);
+void _call_via_r3(void *dest, s32 arg1, s32 arg2, void *routine);
 void Func_080b5088(s32 member, s32 arg);
 void Func_080b50e8(s32 id);
 /* ObjectGroup_TickMemberTimers */
@@ -293,7 +293,7 @@ void Func_080e99c0(void *object)
                 if ((u32)life <= 17) {
                     draw(canvas,
                         (u8 *)work
-                            + (tbl[Func_080022ec(life, 3)] << 11)
+                            + (tbl[Math_Div(life, 3)] << 11)
                             + (221 << 4),
                         x - 16, y + 48, 32, 64);
                 }
@@ -433,7 +433,7 @@ void Func_080e99c0(void *object)
                     } else {
                         x = spark[i].x;
                         if ((u32)x <= 0x007EFFFF && y >= 0) {
-                            size = Func_080022ec(spark[i].variant, 5) + 1;
+                            size = Math_Div(spark[i].variant, 5) + 1;
                             draw(canvas,
                                 (u8 *)sheet + Data_080ede48[size - 1],
                                 (x >> 16) - size / 2, (y >> 16) - size,
@@ -468,10 +468,10 @@ void Func_080e99c0(void *object)
         }
 
         if (frame == 9) {
-            Func_080072f0(canvas, 128 << 7, 0x3F3F3F3F, &Value_03000168);
+            _call_via_r3(canvas, 128 << 7, 0x3F3F3F3F, &Value_03000168);
         }
         if (frame == 60) {
-            Func_080072f0(canvas, 128 << 7, 0x3F3F3F3F, &Value_03000168);
+            _call_via_r3(canvas, 128 << 7, 0x3F3F3F3F, &Value_03000168);
         }
 
         Func_080e155c(16, 16);

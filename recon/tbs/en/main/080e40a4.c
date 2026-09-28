@@ -20,8 +20,6 @@ extern u8 Value_00000648;
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattlePres_RunRingAndSparkScene Func_080e40a4
-
 /*
  * Battle-presentation ring-and-spark scene at 0x080e40a4.
  *
@@ -69,7 +67,7 @@ extern u8 Value_00000648;
  * releasing blit blocks 0x2E and 0x2F, and running seven paced frames of
  * a fading cue read from the pointer at 0x03001E74, plus 1608.
  *
- * Neither Func_080072f0, Func_080072f4 nor Func_080072f8 is a real
+ * Neither _call_via_r3, Func_080072f4 nor Func_080072f8 is a real
  * function symbol: they are entries of the _call_via_rN trampoline bundle
  * at recon/tbs/raw/080072e4.s, so they are spelled here as calls through
  * typed pointers - the IWRAM word copier at 0x03001388, the IWRAM clear
@@ -186,7 +184,7 @@ void Func_080030f8(s32 frames);
 void Func_080cdd58(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
 void *Func_08002f40(s32 id);                                       /* get */
-void Func_080072f0(void *dest, const void *src, s32 count, CopyFn copier);
+void _call_via_r3(void *dest, const void *src, s32 count, CopyFn copier);
 struct Member **Func_080b5098(s32 member);
 u32 Func_08004458(void);                                           /* random_16 */
 void Func_08009088(struct Member *member, s32 mode);
@@ -277,7 +275,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     Resource_LoadAndDecompress((s32)&Value_0000004a, (void *)0x02010000, 1, 1);
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
-        Func_080072f0((void *)0x05000000,
+        _call_via_r3((void *)0x05000000,
             Func_08002f40((s32)&Value_0000008e), 128, (CopyFn)0x03001388);
     }
 

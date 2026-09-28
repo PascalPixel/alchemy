@@ -27,4 +27,4 @@ Entry_080003c0:
 	.4byte 0x03007f00
 	.4byte 0x03007fa0
 	.4byte 0x03007ffc
-	.4byte 0x08002e01
+	.4byte System_Initialize

@@ -25,8 +25,6 @@
 #include "TYPES.H"
 #include "DMA.H"
 
-#define Map_InitializePerspectiveScene Func_080109e8
-
 /* Sets up the tilted-plane map view: clears the scene work, loads the map
    graphics and animation, programs the two affine backgrounds, builds the
    camera and projects the plane once, then tilts the camera down to its

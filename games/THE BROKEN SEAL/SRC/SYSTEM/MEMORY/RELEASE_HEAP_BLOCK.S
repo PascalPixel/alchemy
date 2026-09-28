@@ -34,9 +34,6 @@ AlchemyUncreditedEnd_08002dee:
 	.global Sys_Free
 	.thumb_func
 Sys_Free:
-	.global Func_08002df0
-	.thumb_func
-Func_08002df0:
 	.global Party_Do
 	.thumb_func
 Party_Do:
@@ -49,4 +46,4 @@ Runtime_BumpFree:
 	ands	r2, r1
 	str	r0, [r2, r4]
 	bx	lr
-	.4byte	0x03001e50
+	.4byte	gWorkSlot

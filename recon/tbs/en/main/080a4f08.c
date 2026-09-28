@@ -34,7 +34,7 @@ void Runtime_ReleaseHeapBlock(s32 slot);
 void ItemMenu_SetMsgWin7(void);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void RenderOutput_ClearListFar(s32 window);
-s32 Func_080a3d9c(s32 owner, s32 item);
+s32 InventoryMenu_GetItemQuantity(s32 owner, s32 item);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 struct RenderOutput *RenderOutput_CreateFar(s32 slot, s32 attributes, s32 window, s32 x, s32 y);

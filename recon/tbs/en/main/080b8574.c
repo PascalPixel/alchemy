@@ -43,12 +43,12 @@ s32 BattlePresentation_BuildSortedUnitEntries(
 
     first_count = BattleParty_ListLivingUnits(BATTLE_SIDE_PARTY, unit_ids);
     for (index = 0; index != 4; index++) {
-        BattleUnit_Get(index);
+        Owner_GetStateFar(index);
     }
 
     for (index = 0; index < first_count; index++) {
         s32 unit_id = unit_ids[index];
-        struct BattleUnit *unit = BattleUnit_Get(unit_id);
+        struct BattleUnit *unit = Owner_GetStateFar(unit_id);
 
         entry = &entries[index];
         entry->unit_id = unit_id;
@@ -67,7 +67,7 @@ s32 BattlePresentation_BuildSortedUnitEntries(
         index = second_count;
         do {
             s32 unit_id = *unit_id_ptr++;
-            struct BattleUnit *unit = BattleUnit_Get(unit_id);
+            struct BattleUnit *unit = Owner_GetStateFar(unit_id);
 
             entry->unit_id = unit_id;
             entry->value = unit->agility >> 1;

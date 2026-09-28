@@ -32,7 +32,7 @@ void FieldScene_RunIndexedStep5(void)
 
 void SceneEffect_SetupBlendByFlag201(void)
 {
-    u8 **base = (u8 **)0x03001ebc;
+    u8 **base = (u8 **)&gEventWork;
     u8 *state;
 
     {

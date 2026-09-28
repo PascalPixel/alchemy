@@ -25,11 +25,6 @@ enum CoordinatorMessage {
     MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
 };
 
-#define FieldScene_RunSceneFourCoordinator Scene_RunSceneFourCoordinator
-#define GetPartyInteractionRecord Func_0200593a
-#define GetPartyMemberCount Func_0200590a
-#define HexDigits Data_0200bfd0
-
 typedef struct Ctl {
     s16 f0;
     s16 f2;
@@ -107,7 +102,7 @@ extern u8 Data_0200b1c1[];
 extern volatile u32 Data_03001ae8;
 extern u8 Data_0200c008[];
 extern u8 Data_00000000[];
-extern u8 Data_02002090[];
+extern u8 gIoWriteQueue[];
 extern u8 Data_0200cbfc[];
 extern u8 Data_0200cc28[];
 extern u8 Data_0200cca4[];
@@ -184,8 +179,8 @@ void Func_0200325e();
 s32 Func_02003474();
 void Func_02004080();
 void Func_0200432e();
-PartyInteractionRecord *Func_0200593a(void);
-s32 Func_0200590a(void);
+PartyInteractionRecord *GetPartyInteractionRecord(void);
+s32 GetPartyMemberCount(void);
 void Func_0200599a(s32, s32);
 void Func_020059a4(s32, s32);
 void Func_020059ae(s32, s32);
@@ -273,7 +268,7 @@ s32 *Func_02007398();
 /* The per-frame task this owner installs: in-image code, published below as
  * its entry address plus the Thumb bit. */
 
-/* AUDITED GENERATED CALL SCRIPT for FieldScene_RunSceneFourCoordinator:
+/* AUDITED GENERATED CALL SCRIPT for Scene_RunSceneFourCoordinator:
  * A phase-two fast path, full and revisit branches, and all 42 calls across
  * the complete scene-four coordinator. */
 

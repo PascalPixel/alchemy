@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct MapRenderWork *gMapWork;
 
 extern u8 Data_02008401[];
 
@@ -50,7 +51,7 @@ s32 SuharaSabaku_RunSceneScript(void)
     s16 (*rows)[1];
 
     {
-        u8 **globals = (u8 **)0x03001e70;
+        u8 **globals = (u8 **)&gMapWork;
 
         map = globals[0];
         *(s32 *)(globals[19] + 448) = 0x201;

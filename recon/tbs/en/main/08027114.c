@@ -128,31 +128,6 @@ struct DjinnDefinition {
     u8 cost[4];             /* 0x04 */
 };
 
-#define Resource_LoadIntoFreeSlot Func_080040b4
-#define Resource_LoadIndexedIntoBuffer Func_08021c64
-#define Resource_LoadIndexedEntryToBuffer Func_08021b30
-#define Resource_LoadKind26EntryToBuffer Func_08021af0
-#define Graphics_ExpandVramTilesByColorTable Func_08021a18
-#define Link_DrawShiftedTilePair Func_080219c8
-#define Menu_BuildLocalizedPatternTiles Func_08021848
-#define Scheduler_AddOrUpdateCallback Func_080041d8
-#define Scheduler_RemoveCallback Func_08004278
-#define Runtime_ReleaseHeapBlock Func_08002dd8
-#define UpdateLinkSessionCountdown Func_08026e80
-#define Battle_DrawPartyPanelsWithEmptyList Func_080270ac
-#define Battle_ClassifyEntryKind Func_0802706c
-#define UiText_DrawLocalizedResource80d Func_080270d8
-#define UiText_ShowMessageAndWaitComplete Func_08021e48
-#define UiText_DrawCharacterAtOffset Func_0801e7c0
-#define UiWindow_SetTilemapEntry Func_08019000
-#define UiWindow_MarkVisibleTileAttributes Func_0801e318
-#define UiWork_SetParamNibble Func_0801e71c
-#define Ui_LoadEntryForKind Func_08021b80
-#define Ui_FillVramBlockPattern Func_08016738
-#define Item_ClassifyUseAbility Func_08025180
-#define BattleTarget_RunSelection Func_08026080
-#define random_16 Func_08004458
-
 extern struct LinkWork *Data_03001e74;
 extern struct LinkRoundState *Data_03001f34;
 extern volatile u16 Data_03001f64;
@@ -197,27 +172,25 @@ u8 *Item_GetData(s32 id);
 s32 GameFlag_IsSet(s32 flag);
 s32 Item_ClassifyUseAbility(s32 actor, s32 item);
 s32 BattleTarget_RunSelection(s32 actor, s32 a, s32 b, s32 kind);
-s32 random_16(void);
+s32 Random16(void);
 void Func_08018efc(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
 s32 Ui_Place(s32, s16 *, s32);
 s32 Ui_SetMode(s16 *, s32, s32, s32);
 s32 Func_08021e6c(s32 mode);
 void Func_0802281c(u16 *header);
-void Func_08023178(void *block, s32 handle, s32 actor);
-s32 Func_08023e70(s32 actor, s32 mode);
+void Ui_RunOwnerStatusScreen(void *block, s32 handle, s32 actor);
+s32 Battle_SelectAbility(s32 actor, s32 mode);
 s32 Func_08024934(s32 a, s32 b, u8 *cost);
 s32 Func_0802592c(s32 actor, u16 *list, s32 count);
 s32 Func_08025200(s32 actor, u16 *list);
-void Func_08002df0(void *block);
-struct DjinnDefinition *Func_080771e0(s32 id);
+void Sys_Free(void *block);
+struct DjinnDefinition *SummonDefinition_Get(s32 id);
 s32 Func_080771e8(s32 element, s32 index);
 s32 Func_08077208(s32 actor, s32 element, s32 index);
 s32 Func_080b5090(s32 mode, void *block);
 void Func_080b50d0(s32 offset);
 void Func_080b50e0(u16 *header, s32 mode);
 void Func_080b5130(s32 mode, u8 *cost);
-
-#define Battle_CollectPartyCommands Func_08027114
 
 s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 count)
 {
@@ -371,8 +344,8 @@ handshake_done:
             }
             handle = Func_080b5090(sel, block);
             WaitFrames(1);
-            Func_08023178(block, handle, *(u16 *)block);
-            Func_08002df0(block);
+            Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
+            Sys_Free(block);
             continue;
         }
         if (mode == 4) {
@@ -442,9 +415,9 @@ mark_visible:
                 handle = Func_080b5090(1, block);
                 state->entryActive[2] = 0;
                 WaitFrames(1);
-                Func_08023178(block, handle, actorId);
+                Ui_RunOwnerStatusScreen(block, handle, actorId);
                 state->entryActive[2] = 1;
-                Func_08002df0(block);
+                Sys_Free(block);
                 continue;
             }
             Func_080b50e0(hdr, 0);
@@ -684,7 +657,7 @@ summon_menu:
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 144);
                 Data_03001f34->result[i] = 0x80000000;
-                res = Func_08023e70(actorId, 1);
+                res = Battle_SelectAbility(actorId, 1);
                 ent->sub = 0;
                 if (res == -1) {
                     goto mark_visible;
@@ -763,7 +736,7 @@ djinn_menu:
                 kind = 6;
                 param = res;
                 WaitFrames(1);
-                djinn = Func_080771e0(res);
+                djinn = SummonDefinition_Get(res);
                 ability = Ability_GetData(djinn->id);
                 handle = Resource_LoadIntoFreeSlot(128);
                 win = UiWindow_Create(10, 17, 17, 3, 6);
@@ -790,7 +763,7 @@ djinn_menu:
                 if (ok == 0) {
                     UiWork_SetParamNibble(2);
                 }
-                UiText_DrawCharacterAtOffset(Func_080771e0(param)->id + 819,
+                UiText_DrawCharacterAtOffset(SummonDefinition_Get(param)->id + 819,
                                              win, 16, 0);
                 for (k = 0; k <= 3; k++) {
                     if (djinn->cost[k] != 0) {
@@ -833,7 +806,7 @@ commit:
             ent->actor = (u16)actorId;
             order = actor->agility;
             if (order != 0) {
-                res = random_16();
+                res = Random16();
                 order += (s32)((u32)(actor->agility * res) >> 20);
             }
             ent->order = (u16)order;

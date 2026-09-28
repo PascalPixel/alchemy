@@ -156,7 +156,7 @@ AlchemyUncreditedEnd_0813b7a0:
 	pop	{r0, r1, r9}
 	b	.L_0813b7cc
 AlchemyUncredited_0813b994:
-	.4byte	0x080028a9
+	.4byte	Runtime_ReciprocalTable + 1
 .L_0813b998:
 AlchemyUncreditedEnd_0813b994:
 	pop	{r5, r6, r7, r8, r9, sl, fp, ip, lr}

@@ -36,12 +36,10 @@ struct PositionSource_08096048 {
 };
 
 extern s32 gGameState[];
-#define PARTY_STATE gGameState
 extern u32 gFrameTick;
 
 s32 Object_GetById(u32);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Vector_AddPolarOffset(s32, s32, void *);
 void Camera_WorldToScreen(void *);
 void Audio_PlayCue(s32);
@@ -68,7 +66,7 @@ void BattleFx_UpdateDescendingOrbitObject(struct Object08095fcc *arg)
     s16 value;
     s32 y;
 
-    other = (struct Object08095fcc *)Object_GetById(PARTY_STATE[125]);
+    other = (struct Object08095fcc *)Object_GetById(gGameState[125]);
     raw = arg->timer - 1;
     arg->timer = raw;
     value = arg->timer;
@@ -93,7 +91,7 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
     u32 random;
 
     source = (struct PositionSource_08096048 *)
-        Object_GetById(PARTY_STATE[125]);
+        Object_GetById(gGameState[125]);
     state = effect->state;
 
     if (state == 0) {
@@ -101,10 +99,10 @@ void BattleFx_UpdateRadialSpread(struct EffectSlot *effect)
         position.y = source->position.y;
         position.z = source->position.z;
 
-        random = Rand() * 10 + 0xa0000;
+        random = Random16() * 10 + 0xa0000;
         Vector_AddPolarOffset(
             random,
-            Rand(),
+            Random16(),
             &position);
         Camera_WorldToScreen(&position);
 

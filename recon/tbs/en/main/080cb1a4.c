@@ -33,7 +33,7 @@
  * Unlike any of those siblings, this owner also drives a live
  * `struct MotionObject` pair through Object_ResetMotion/Object_SetPosition/
  * Object_SetMode (Func_08009140/Func_08009150/Func_08009080, aliased in
- * types.h) and FixedPoint_Ratio (Func_080022ec) -- the same low-level shape
+ * types.h) and FixedPoint_Ratio (Math_Div) -- the same low-level shape
  * games/THE BROKEN SEAL/src/battle/motion/set_approach_motion.c uses, but inlined here
  * with its own scale (90, not 80) and without that function's
  * snap_to_target/vertical_motion_strength/acceleration/speed_limit tail,

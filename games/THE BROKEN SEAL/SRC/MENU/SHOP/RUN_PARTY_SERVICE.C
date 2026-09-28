@@ -2,6 +2,7 @@
 #include "SHOP.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 extern u8 Data_03001c94[];
 extern u8 Data_03001b04[];
@@ -32,7 +33,7 @@ extern char Value_00000d27;
  * service, starts the choice again. */
 s32 Sanctum_RunPartyService(void)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     s32 price_window;
     s32 redraw;
     s32 kind;

@@ -1,11 +1,12 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void SceneActor_UpdateAnimationOnStateMatch(s32 actor, s32 state, s32 anim, s32 script);
 
 /* Pose actors 24 and 25 for dialogue steps 11 to 18. */
 void KuupuappuHeya_PoseDialogueActors(void)
 {
-    switch (*(s16 *)(*(u8 **)0x03001ebc + 0x16c)) {
+    switch (*(s16 *)(*(u8 **)&gEventWork + 0x16c)) {
     case 11:
         SceneActor_UpdateAnimationOnStateMatch(24, 1, 2, 0x200d5b0);
         SceneActor_UpdateAnimationOnStateMatch(25, 3, 4, 0x200d8bc);

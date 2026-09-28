@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 void Engine_GameFlagClear();
 s32 Engine_GameFlagIsSet();
@@ -48,7 +49,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
 
     if (Data_02000240_t[225][0] == 19) {
         Call1(Engine_GameFlagClear, 0x12f);
-        *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x209;
+        *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
     } else {
         if (Value1(Engine_GameFlagIsSet, 0x834) != 0) {
             Engine_ActorSetPosition(11, 0, 0);
@@ -90,7 +91,7 @@ s32 HaidiaBabi_RestoreEntryState(void)
                     if (Data_02000240_t[225][0] == 22) {
                         FieldScene_RunSupplementalSequenceOne();
                     } else {
-                        base5_3001ebc = 0x3001ebc;
+                        base5_3001ebc = (u32)&gEventWork;
                         *(s32 *)((*(s32 *)base5_3001ebc + 0x1c0)) = 0x209;
                         if (Value1(Engine_GameFlagIsSet, 0x834) != 0) {
                             Main_0808a2c8();

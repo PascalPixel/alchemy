@@ -60,7 +60,7 @@ u32 Func_08004458(void);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
 s32 Func_080022fc(s32 a, s32 b);
-s32 Func_080022ec(s32 a, s32 b);
+s32 Math_Div(s32 a, s32 b);
 void Func_080e3908(void *particle, s32 count, s32 flags);
 void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080e155c(s32 a, s32 b);
@@ -193,7 +193,7 @@ void Func_080d3c80(void *object)
 
                                 idx = Func_080022fc(j, 5) * 3
                                     + Func_080022fc(
-                                        Func_080022ec(
+                                        Math_Div(
                                             M2C_FIELD(sub, s32 *, 0x18),
                                             0x60),
                                         3);

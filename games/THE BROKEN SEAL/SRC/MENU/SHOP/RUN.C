@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "UI.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 /* Runs a shop visit: set up the shop from its event-table row, show the
@@ -45,7 +46,7 @@ s32 Shop_Run(s32 row, s32 keeper_id)
         row = 0;
     EventTable_ApplyRowAbilities(row);
     Shop_InitializeCursorWork();
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     shop->shop_type = EventTable_GetRowType(row);
     if (row == 16)
         ((u8 *)shop)[0x3ac] = 1;
@@ -84,7 +85,7 @@ loop:
             }
         } else if (choice == 3) {
             UiMessage_ShowAndWait(0xcb9);
-            Shop_RunPartyMemberSelection();
+            Shop_SelUnit();
         } else {
             goto done;
         }

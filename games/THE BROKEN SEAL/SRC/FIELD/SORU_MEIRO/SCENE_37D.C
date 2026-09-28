@@ -5,6 +5,7 @@
 
 #include "TYPES.H"
 #include "SCENE.H"
+extern struct Resource37deSceneRuntime *gEventWork;
 
 /* The scene's four tables, in the overlay's read-only data. */
 extern u8 SoruMeiro_SceneTable0[];
@@ -58,7 +59,7 @@ s32 Scene_InitSceneRequestAndCameraZoom(void)
     s32 zoom_y = 0x10000;
     s32 zoom_z = 0x10000;
 
-    runtime = RESOURCE37DE_SCENE_RUNTIME;
+    runtime = gEventWork;
     runtime->scene_request_1c0 = 0x204;
     runtime->scene_setup_word_1c8 = 0x10;
     if (TestSceneFlag(0x814) != 0) {

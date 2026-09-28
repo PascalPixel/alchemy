@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 extern u8 Data_02000240[];
 
@@ -14,7 +15,7 @@ extern u8 Data_0000005d[];
 s32 HaidiaDou_RunSceneScript(void)
 {
     s32 off = 448;
-    s32 *request = (s32 *)(*(u8 **)0x03001ebc + off);
+    s32 *request = (s32 *)(*(u8 **)&gEventWork + off);
 
     *request = 0x204;
     if (*(s16 *)(Data_02000240 + off) == (s32)Data_0000005d) {

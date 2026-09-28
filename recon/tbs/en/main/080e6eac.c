@@ -14,7 +14,7 @@ s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080e3908(void *particle, s32 count, s32 flags);
 void Func_080f9010(s32 id);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
 void Func_080e6d3c(void *object, s32 a, s32 b);
@@ -137,7 +137,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             u8 w;
             u8 h;
 
-            idx = Func_080022ec(frame - 8, 5);
+            idx = Math_Div(frame - 8, 5);
             if (idx < 0) {
                 idx = 0;
             }
@@ -231,7 +231,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
                     Func_080e3908(record_cursor, 64, 0);
                     ((DrawRectangleFn)rect0)(
                         canvas,
-                        (u8 *)work + 0x59D8 + Func_080022ec(age, 7) * 0x120,
+                        (u8 *)work + 0x59D8 + Math_Div(age, 7) * 0x120,
                         M2C_FIELD(record_cursor, s16 *, 2) - 6,
                         M2C_FIELD(record_cursor, s16 *, 6) - 12, 12, 24);
                 }

@@ -3,10 +3,6 @@
 #include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
-#define CalculateFacingAngle Func_02000aae
-#define GetOrbitingSceneObject Func_02001474
-#define AllocateEffectTransfer Func_0200146c
-#define UpdateOrbitingSceneObject Value_0200890d
 
 #include "FACING_OBJECT.H"
 
@@ -99,13 +95,13 @@ extern u8 Data_02008c64[];
 extern u8 Data_02008d30[];
 extern u8 Data_02008d24[];
 extern u8 LinkedMessage_HaveYouSeenBarricadeWe;
-extern u8 Value_0200890d;
+extern u8 UpdateOrbitingSceneObject;
 
-s32 Func_02000aae(s32, s32);
+s32 CalculateFacingAngle(s32, s32);
 struct SceneEntity *Func_02000fc4();
 void Func_02000a00(void);
-OrbitingSceneObject *Func_02001474(void);
-u8 *Func_0200146c(s32, s32);
+OrbitingSceneObject *GetOrbitingSceneObject(void);
+u8 *AllocateEffectTransfer(s32, s32);
 
 /* Loader-relocated overlay calls: each symbol names the pre-relocation call
  * word the image holds. */

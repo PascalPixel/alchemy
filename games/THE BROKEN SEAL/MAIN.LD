@@ -1492,7 +1492,7 @@ SECTIONS
         "*/recon/tbs/raw/080dbb9a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/ARM_BG2_AFFINE_HBLANK_DMA.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/BURST_SHOWER.o"(.text)
-        "*/recon/tbs/raw/080dc1ec.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SWIRLING_STARS.o"(.text)
         "*/recon/tbs/raw/080dc454.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/TARGET_BURSTS.o"(.text)
         "*/recon/tbs/raw/080dc968.o"(.text .rodata .data .padding)

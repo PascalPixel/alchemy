@@ -1,7 +1,16 @@
+/* NONMATCHING: resource_377 at 0x02008f90 (940 bytes with its pool),
+ * HaidiaBabi_RunEventScript01, between FIELD/COMMON/HAIDIA_BABI/HOME_TALK.C
+ * and ACTOR_EIGHT_MESSAGE.C, stays listing. It was
+ * FIELD/COMMON/HAIDIA_BABI/EVENT_SCRIPT_01.C.
+ *
+ * Remaining difference: the reference loads message 0x1c6f once from its
+ * pool into r5 and shows the later line as r5 + 3, as a link-time message
+ * symbol does; a plain constant is folded, so the second line takes its own
+ * pool word and r5 is never saved (the push and every later pool offset
+ * differ). The main image has no name for the message.
+ */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
-
-extern u8 Data_00001c6f[];
 
 void Engine_EventBegin();
 void Engine_ActorSetSpeed();
@@ -108,10 +117,7 @@ void HaidiaBabi_RunEventScript01(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
     Call3(Engine_ActorShowEmote, 8, 0x107, 60);
-    /* FAKEMATCH: message 0x1c6f comes from a link symbol so GCC keeps it in
-     * one register for both messages instead of folding base + 3 into a
-     * second pool constant. */
-    base5_1c6f = (s32)Data_00001c6f;
+    base5_1c6f = 0x1c6f;
     Engine_EventSetMessage(base5_1c6f);
     Value2(Engine_EventOpenMessage, 8, 0);
     if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 1) {

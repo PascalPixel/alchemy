@@ -1,3 +1,11 @@
+/* NONMATCHING: resource_39a at 0x02009a34 (124 bytes with its pool),
+ * ImiruFuchin_NudgeCameraByStep, before FIELD/COMMON/IMIRU_FUCHIN/DRAGON_EYE.C,
+ * stays listing. It was FIELD/COMMON/IMIRU_FUCHIN/CAMERA_STEP.C.
+ *
+ * Remaining difference: the reference loads the scene numbers from its literal
+ * pool and compares registers, as link-time scene symbols do; plain constants
+ * compile to cmp with an immediate. The tables keep their listing addresses.
+ */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 

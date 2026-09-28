@@ -6,7 +6,6 @@
 extern s8 BattleFx_RandomChildValues[];
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Animation_ApplyChildValuesFar(void *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 
@@ -18,12 +17,11 @@ struct GlobalState {
 };
 
 extern struct GlobalState gGameState;
-#define PARTY_STATE gGameState
 
 void BattleEffect_SetRandomTableValueOnObject(s32 arg0)
 {
     s8 *table = BattleFx_RandomChildValues;
-    s32 index = Rand();
+    s32 index = Random16();
     Animation_ApplyChildValuesFar((void *)arg0, table[(u32)(index * 8) >> 16]);
 }
 
@@ -34,12 +32,12 @@ void BattleEffect_PauseObject(s32 arg0)
 
     object = ObjectTable_Get(arg0);
     if (object != NULL) {
-        PARTY_STATE.saved_callback = *(u32 *)(object + 0x6C);
-        PARTY_STATE.saved_byte = 0;
+        gGameState.saved_callback = *(u32 *)(object + 0x6C);
+        gGameState.saved_byte = 0;
         if (object[0x54] == 1) {
             entry = *(u8 **)(*(u8 **)(object + 0x50) + 0x28);
             if (entry != NULL) {
-                PARTY_STATE.saved_byte = entry[5];
+                gGameState.saved_byte = entry[5];
             }
         }
         *(u32 *)(object + 0x6C) = (u32)BattleEffect_SetRandomTableValueOnObject;
@@ -53,7 +51,7 @@ void BattleFx_ResumeObject(void)
     u8 *object = ObjectTable_Get();
     if (object != 0) {
         if (*(void (**)(s32))(object + 0x6C) == BattleEffect_SetRandomTableValueOnObject) {
-            u8 *state = (u8 *)&PARTY_STATE;
+            u8 *state = (u8 *)&gGameState;
             *(s32 *)(object + 0x6C) = *(s32 *)(state + 0x250);
             *(s32 *)(state + 0x250) = 0;
             Animation_ApplyChildValuesFar(object, *(s8 *)(state + 0x249));

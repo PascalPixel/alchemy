@@ -16,7 +16,6 @@ void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
 void BattleActor_CommitPlacement(void);
 s32 BattleParty_ListPresentEnemies(s16 *entries);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
-extern u8 *Data_03001e74;
 
 /* 行動1件の対象解決。コピーを取り、命中とダメージ種別を決めて効果を出す。 */
 
@@ -40,10 +39,6 @@ struct AffinityPair {
 
 #define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 2 * 2))
 #define S8OF(v) (*(s8 *)&(v))
-
-#ifndef BATTLE_WORK
-#define BATTLE_WORK Data_03001e74
-#endif
 
 #ifndef BATTLE_REFRAIN_TURNS
 #define BATTLE_REFRAIN_TURNS 7
@@ -425,11 +420,7 @@ hit_effect_done:                                                               \
     ;
 #endif
 
-#ifndef BATTLE_RESOLVE_OWNER
-#define BATTLE_RESOLVE_OWNER Battle_ResolveTargetAction
-#endif
-
-s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
+s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 {
     /*
      * 宣言順はスピルスロット順(先頭ほど高位)。参照の割付:
@@ -504,7 +495,7 @@ s32 BATTLE_RESOLVE_OWNER(struct BattlePlan *plan, s32 slot)
     s32 tmp;
     s32 size;
     bonus = 0;
-    work = BATTLE_WORK;
+    work = gBattleWork;
     half = 0;
     dealt = 0;
     crush = 0;
@@ -1653,7 +1644,7 @@ done:
     }
     Sys_Free(copy);
     Owner_RecalculateStatsFar(target_id);
-    UiWindow_DrawPartyStatusContentsFar(((u8 *)BATTLE_WORK)[65]);
+    UiWindow_DrawPartyStatusContentsFar(((u8 *)gBattleWork)[65]);
     if (target->hp != 0)
         BattleEvent_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (BATTLE_EVIL_SPIRIT_ACTIVE()

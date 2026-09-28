@@ -77,8 +77,7 @@ void ItemMenu_BuildCmd(s8 *command_states)
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
-extern char Value_00000b33;
-#define InventoryMenu_CommandUseMessage Value_00000b33
+extern char MsgItemCommandUse;
 
 void ItemMenu_DrawCmd(void *command_states, s32 window)
 {
@@ -92,7 +91,7 @@ void ItemMenu_DrawCmd(void *command_states, s32 window)
     if (value == disabled)
         UiWork_SetParamNibbleFar(0xe);
 
-    message = (u32)&InventoryMenu_CommandUseMessage;
+    message = (u32)&MsgItemCommandUse;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 0x18);
     UiWork_SetParamNibbleFar(0xf);
     if (FIELD(command_states, s8 *, 1) == disabled)

@@ -59,8 +59,8 @@ extern u8 Value_00001540;
 extern u8 Data_03001d18;
 extern u8 Data_03001f58;
 extern const u8 Data_080f39b1[];
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
+#define REG_IME RegIme
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void *Runtime_AllocateBlock(s32 slot, s32 size);

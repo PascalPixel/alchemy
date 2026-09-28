@@ -117,7 +117,7 @@ extern u8 Data_080373e0[];  /* separator */
 extern u8 Data_080373e4[];  /* defence label */
 extern u8 Data_080310a4[];  /* cursor frame resource */
 
-extern u8 Value_00000741;  /* element glyph base */
+extern u8 MsgClassName;  /* element glyph base */
 extern u8 Value_000008ba;  /* stat label glyph base */
 extern u8 Value_000008bd;  /* alive state glyph */
 extern u8 Value_000008be;  /* downed state glyph */
@@ -465,7 +465,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                 UiText_DrawNumberInWindow(object[0x42], 3, winMain, 184, 40);
 
                 UiText_DrawCharacterAtOffset(
-                    (s32)&Value_00000741 + object[0x129], winMain, 0, 48);
+                    (s32)&MsgClassName + object[0x129], winMain, 0, 48);
                 if (extended != 0) {
                     UiText_DrawCharacterAtOffset((s32)&Value_000008ba - 1, winMain, 0, 72);
                 }

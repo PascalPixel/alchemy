@@ -90,8 +90,8 @@ extern const u8 Data_0809f168[];
 extern const u16 Data_0809f188[];
 extern const s32 Data_080a0138[];
 extern const u8 Value_0000099b;
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
+#define REG_IME RegIme
 
 s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);

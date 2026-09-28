@@ -39,8 +39,7 @@ struct FieldState {
 extern u8 gWorkSlot[];
 extern u8 Value_0000001b[];
 extern u32 gKeysRepeat;
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Event_ClearStatus1c6(void);
@@ -120,7 +119,7 @@ void Map_ShowWorldMap(void)
 
         q = &gIoWriteQueue;
         do {
-            ime = &REG_IME;
+            ime = &RegIme;
             saved = *ime;
         } while (0);
         *ime = (u16)ime;

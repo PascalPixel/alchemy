@@ -1,7 +1,5 @@
 #include "TYPES.H"
 #include "TBS_EDITION.H"
-#undef UiText_DrawCharacter
-#define UiText_DrawCharacter Func_08021d88
 
 
 void UiText_LoadRemappedGlyph(u8 *base, u32 value, s32 slot_a, s32 slot_b);

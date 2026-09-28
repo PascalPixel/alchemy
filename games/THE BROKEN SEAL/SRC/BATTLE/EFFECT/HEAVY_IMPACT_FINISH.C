@@ -7,7 +7,6 @@ void BattleFx_AdvanceSpinAngle(void);
 void BattleFx_RunAngledApproachPhases(void);
 
 extern s32 gGameState[];
-#define PARTY_STATE gGameState
 int BattleFx_ClearActiveSlotsAndScheduleUpdates();
 int ObjectMotion_ArmCallback();
 int ObjectMotion_Launch();
@@ -87,9 +86,9 @@ void BattleFx_FinishHeavyImpact(s32 arg)
     }
     while (0);
     WaitFrames(0x3C);
-    ObjectMotion_ArmCallback(PARTY_STATE[125], 0x4000, 0);
+    ObjectMotion_ArmCallback(gGameState[125], 0x4000, 0);
     WaitFrames(0x14);
-    Object_SetMode(Object_GetById(PARTY_STATE[125]), 0x1C);
+    Object_SetMode(Object_GetById(gGameState[125]), 0x1C);
     WaitFrames(0x28);
     Audio_PlayCue(0xA4);
     WaitFrames(0x64);

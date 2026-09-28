@@ -15,7 +15,7 @@
 
 s32 Func_080770c0(s32 flag);
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern u8 Value_000003e0;
 extern u8 Value_0000001f;
 
@@ -86,7 +86,7 @@ void Func_080908e0(void)
     p[0x2a00] ^= 1;
     base = p + p[0x2a00] * 0x380;
     q = &gIoWriteQueue;
-    ime = &Data_04000208;
+    ime = &RegIme;
     {
         u32 bg = (u32)(base + 0x2300);
         QUEUE_WRITE(bg, 0x05000000, 0x84000070);

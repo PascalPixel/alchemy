@@ -121,9 +121,9 @@ AlchemyUncreditedEnd_0813a44c:
 	add	sl, r9, r0
 	add	sl, sl, sl
 	add	sl, sl, #1
-	.inst	0xe1a0a00a
+	mov	sl, sl
 	str	sl, [sp]
-	.inst	0xe1a0a002
+	mov	sl, r2
 	str	sl, [sp, #16]
 	lsr	r0, r0, #8
 	lsl	fp, r9, #16
@@ -170,7 +170,7 @@ AlchemyUncreditedEnd_0813a44c:
 	movs	r5, r5
 	rsbmi	r9, r9, #0
 	lsr	r9, r9, #16
-	.inst	0xe1a09809
+	lsl	r9, r9, #16
 	orr	r9, r9, r4, lsr #16
 	asrs	r1, r1, #31
 	submi	r6, r6, #0x10000
@@ -237,8 +237,8 @@ AlchemyUncreditedEnd_0813a44c:
 	orr	r7, r7, r4, lsl #29
 	tst	r0, #1
 	bne	0x813a794
-	.inst	0xe00ba00c
-	.inst	0xe18aa02c
+	and	sl, fp, ip
+	orr	sl, sl, ip, lsr #32
 	add	ip, ip, r9
 	ldrb	sl, [r8, sl]
 	subs	sl, sl, #0
@@ -251,8 +251,8 @@ AlchemyUncreditedEnd_0813a44c:
 	subcc	r7, r7, #8
 @ Zero words that the set-up code fills by DMA3 with a copy of the words before them.
 AlchemyUncredited_0813a794:
-	.inst	0, 0, 0, 0, 0, 0, 0, 0
-	.inst	0, 0, 0
+	.4byte	0, 0, 0, 0, 0, 0, 0, 0
+	.4byte	0, 0, 0
 AlchemyUncreditedEnd_0813a794:
 	subs	r0, r0, #2
 	bgt	0x813a768

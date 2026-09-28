@@ -27,7 +27,7 @@ Func_080006fc:
 	.global MusicDriver_CallHook
 	.thumb_func
 MusicDriver_CallHook:
-	.inst.n 0x4718
+	bx	r3
 @ Builds the frame the IWRAM mixer at 0x03000659 unwinds, then jumps there.
 .syntax unified
 	.thumb

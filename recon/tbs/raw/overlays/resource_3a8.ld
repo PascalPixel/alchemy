@@ -10,8 +10,10 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/ENTRY_ACTORS.o"(.text)
         "*/resource_3a8_overlay.o"(.text.x020097e8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/SPEED_UP_ACTORS.o"(.text)
-        "*/resource_3a8_overlay.o"(.text.x02009f14)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/DANCE_ALTERNATION.o"(.text)
+        "*/resource_3a8_overlay.o"(.text.x0200a008)
         "*/resource_3a8_overlay.o"(.rodata.part1)
     }
+    .bss : { "*/resource_3a8_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

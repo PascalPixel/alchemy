@@ -51,9 +51,12 @@ struct ItemCommandWork {
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
-/* The resident word copier, addressed from the IWRAM runtime base. */
-extern u8 Value_03000000[];
-#define IWRAM_COPY_WORDS ((WordCopyFn)(Value_03000000 + 0x1388))
+/* The resident word copier, addressed from the start of the IWRAM runtime
+   bank, whose first routine is the interrupt handler. A symbol plus an
+   offset keeps the call in a register as the pool entry's schedule shows;
+   named alone, GCC emits a Thumb bl that cannot reach IWRAM. */
+extern u8 IwramIrqMain[];
+#define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + 0x1388))
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {

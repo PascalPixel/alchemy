@@ -36,7 +36,6 @@
 #define ObjectMotion_OffsetPositionAndResetMotion_3(a0, a1, a2) Value3(Engine_ActorSetDestinationOffset, a0, a1, a2)
 #define SharedWorkData_SetFirstAndSecondFields_2(args...) Func_02008788_a(args)
 #define BattleEffect_ComputeWeightedResultAndDispatch_2(args...) Func_02008788_b(args)
-#define STATE_TABLE_022B Data_02000240[0x22B]
 #define SHARED_RECORD_FIELD_448 (*(u32 *)(*(u8 **)0x03001ebc + 448))
 #define SharedWorkData_SetFirstAndSecondFields_1_02001e94(args...) Func_02007778(args)
 #define BattleEffect_ComputeWeightedResultAndDispatch_1_02001e94(args...) Func_02007782(args)
@@ -1952,7 +1951,7 @@ void PlayStoryScene(void)
         SHARED_RECORD_FIELD_448 = 512;
         Event_Wait(1);
         do {
-            STATE_TABLE_022B = 3;
+            ((u8 *)&gGameState)[0x22B] = 3;
         } while (0);
         SharedWorkData_SetFirstAndSecondFields_1((s32)&Value_000000a3, 4);
         BattleEffect_ComputeWeightedResultAndDispatch_1(98, 4);
@@ -2151,7 +2150,7 @@ void PlayStoryScene(void)
         SHARED_RECORD_FIELD_448 = 512;
         Event_Wait(1);
         do {
-            STATE_TABLE_022B = 3;
+            ((u8 *)&gGameState)[0x22B] = 3;
         } while (0);
         SharedWorkData_SetFirstAndSecondFields_2((s32)&Value_000000a3, 4);
         BattleEffect_ComputeWeightedResultAndDispatch_2(98, 4);

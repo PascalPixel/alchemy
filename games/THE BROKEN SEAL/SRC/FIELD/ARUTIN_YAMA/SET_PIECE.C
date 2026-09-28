@@ -10,7 +10,6 @@
 #define ObjectMotion_CommitCurrentPositionAndActivate_1(a0) Value1(Engine_ActorWaitForMove, a0)
 #define SharedWorkData_SetFirstAndSecondFields_1(a0, a1) Call2(Func_02006c72, a0, a1)
 #define BattleEffect_ComputeWeightedResultAndDispatch_1(a0, a1) Call2(Func_02006c6a_a, a0, a1)
-#define WORK_BYTE_22B (Data_02000240[0x22B])
 #define Scene_GetRecord_1(a0) Value1(Engine_ActorGet, a0)
 #define Scene_GetRecord_2(a0) Value1(Engine_ActorGet, a0)
 #define Scene_GetRecord_3(a0) Value1(Engine_ActorGet, a0)
@@ -1662,7 +1661,7 @@ void FieldScene_RunLateAuxiliarySequence(void)
     ObjectMotion_SetVariantCallback_1(0, 2);
     ObjectMotion_CommitCurrentPositionAndActivate_1(8);
     do {
-        WORK_BYTE_22B = 3;
+        ((u8 *)&gGameState)[0x22B] = 3;
     } while (0);
     SharedWorkData_SetFirstAndSecondFields_1((s32)&Value_00000056, 99);
     BattleEffect_ComputeWeightedResultAndDispatch_1(53, 3);

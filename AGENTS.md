@@ -112,6 +112,7 @@ MusicPlayer2000; RAM-executed ARM code uses `-marm -mno-apcs-frame`.
 ```sh
 git submodule update --init && git config core.hooksPath .hooks
 make bootstrap
+make worktree      # in a new worktree, before its first build
 make compare-all
 make test
 make coverage

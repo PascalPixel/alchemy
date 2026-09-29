@@ -9,7 +9,7 @@ s32 Func_080022fc();
 s32 Trig_Sin();
 void Func_08002dd8();
 s32 Resource_GetTableEntry();
-void Func_080030f8();
+void WaitFrames();
 s32 Func_080041d8();
 void Scheduler_RemoveCallback();
 void Render_ResetTransformState();
@@ -286,7 +286,7 @@ void Func_080c9ca8(s32 a0, s32 a1)
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
         *(s32 *)((slot64 + 0x7824)) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         v10 = (v10 + 1);
         if (v10 != slot40) {
             goto L_080c9e9a;

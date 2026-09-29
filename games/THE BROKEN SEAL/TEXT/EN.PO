@@ -9735,7 +9735,7 @@ msgctxt "message"
 msgid "02431"
 msgstr "Empty"
 
-msgctxt "message"
+msgctxt "MsgVenusDjinnJoined"
 msgid "02432"
 msgstr "The Venus Djinni {text_color:5}{argument_ability_name}{text_color:16}{line_break}joined {argument_actor_name:1}.{end_wait}"
 

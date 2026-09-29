@@ -61,7 +61,7 @@ void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 s32 Func_080022fc(s32 a, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
@@ -264,7 +264,7 @@ s32 Func_080e698c(void *object)
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

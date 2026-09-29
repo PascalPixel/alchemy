@@ -48,7 +48,7 @@ s32 Func_080022fc(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
@@ -314,7 +314,7 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
             }
 
             M2C_FIELD(work, s32 *, (s32)&Value_00007824) = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
 
             frame++;
         } while (frame

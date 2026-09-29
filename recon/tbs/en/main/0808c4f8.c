@@ -46,7 +46,7 @@
 
 void *Func_080048f4();
 void Func_08002dd8();
-void Func_080030f8();
+void WaitFrames();
 void Func_080040e8();
 s32 Func_080072e4();
 void Func_08009078();

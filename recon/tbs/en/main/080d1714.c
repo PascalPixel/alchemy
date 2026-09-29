@@ -184,7 +184,7 @@ void Object_ApplyProjectedPlacementFar(s32 handle, struct Placement *place, stru
 void ResourceObject_ReleaseFar(s32 handle);
 void BattleEffect_SetupBlendedDisplay(void);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 count);
+void WaitFrames(s32 count);
 void Func_08002dd8(s32 block);
 void BattleFx_EndCanvasLayer(void);
 
@@ -729,7 +729,7 @@ void Func_080d1714(struct EffectArgument *argument)
 
         ObjectGroup_TickMemberTimers();
         runtime->frame_ready = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     } while (frame != 400);
 

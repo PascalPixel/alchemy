@@ -35,7 +35,7 @@ void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Func_080b5088(s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_08002dd8(s32);
 s32 BattleFx_EndCanvasLayer(void);
 #define EFFECT (*(Effect **)(work + 0x7828))
@@ -228,7 +228,7 @@ void Func_080d4ce8(Effect *effect)
         Camera_ApplyShake(16, 16);
         ObjectGroup_TickMemberTimers();
         *(s32 *)(work + 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     } while (frame != 96);
     Func_08002dd8(47);

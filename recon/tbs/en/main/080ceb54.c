@@ -47,7 +47,7 @@ void EffectPosition_ApplyBaseAndYOffset(void *src, void *dest);
 s32 Func_080022fc(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
@@ -286,7 +286,7 @@ s32 Func_080ceb54(void *object, s32 variant)
 
             ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
 
             outer++;
         } while (outer != Data_080ee090[loop_start + 1]

@@ -12,7 +12,7 @@ s32 Math_Div();
 s32 Func_0800231c();
 s32 Trig_Sin();
 void Func_08002dd8();
-void Func_080030f8();
+void WaitFrames();
 void Func_080041d8();
 void Scheduler_RemoveCallback();
 u32 Random16(void);
@@ -302,7 +302,7 @@ void Func_080e94b8(s32 a0)
     v5 = 1;
     ObjectGroup_TickMemberTimers();
     *(s32 *)((0x7824 + p11)) = v5;
-    Func_080030f8(1);
+    WaitFrames(1);
     v9 = (v9 + 1);
     if (v9 != 80) {
         goto L_080e965c;

@@ -75,7 +75,7 @@ extern char Value_00000af0;
 extern char Value_00000af1;
 extern char MsgItemUseResult;
 
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
 s32 PsynergyMenu_SelectPartySlot(s32 unused);
 void ItemMenu_PosCategory(void);

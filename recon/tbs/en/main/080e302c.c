@@ -153,7 +153,7 @@ void Func_080b5088(s32 member, s32 kind);
 void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 index, s32 e);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 void BattleFx_EndCanvasLayer(void);
 
@@ -662,7 +662,7 @@ void Func_080e302c(void *object)
 
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         fp++;
     } while (fp != 0xC0);
 

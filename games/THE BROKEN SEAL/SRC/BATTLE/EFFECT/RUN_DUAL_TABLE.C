@@ -89,7 +89,7 @@ void Func_080f9010(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
@@ -323,7 +323,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
             Camera_ApplyShake(4, 4);
             ObjectGroup_TickMemberTimers();
             work->transfer_pending = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
             sp24 += 1;
         } while (sp24 != sp20);
     }

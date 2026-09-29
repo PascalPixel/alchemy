@@ -180,7 +180,7 @@ struct Member {
 };
 
 void Func_080b5030(s32 a, s32 b, s32 c);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void BattleFx_SetupCanvasTileMap(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
 void *Resource_GetTableEntry(s32 id);                                       /* get */
@@ -250,7 +250,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     STATE = object;
     Func_080b5030(
         M2C_FIELD(object, s32 *, 8), M2C_FIELD(object, s32 *, 12), 130);
-    Func_080030f8(1);
+    WaitFrames(1);
     BattleFx_SetupCanvasTileMap();
     *(u16 *)0x0400000A = (s32)&Value_00001f80;
 
@@ -266,12 +266,12 @@ void BattlePres_RunRingAndSparkScene(void *object)
 
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
-    Func_080030f8(1);
+    WaitFrames(1);
     Resource_LoadAndDecompress((s32)&Value_00000049, work, 1, 0);
 
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
-    Func_080030f8(1);
+    WaitFrames(1);
     Resource_LoadAndDecompress((s32)&Value_0000004a, (void *)0x02010000, 1, 1);
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
@@ -281,12 +281,12 @@ void BattlePres_RunRingAndSparkScene(void *object)
 
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
-    Func_080030f8(1);
+    WaitFrames(1);
     Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
 
     Func_080b5030(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
-    Func_080030f8(1);
+    WaitFrames(1);
     M2C_FIELD(work, s32 *, 0x7780) = 1;
     M2C_FIELD(work, s32 *, 0x7784) = 0;
     Func_080041d8((void *)0x080CD261, 0x480);
@@ -361,7 +361,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
                 p++;
             } while (i != 64);
             M2C_FIELD(work, s32 *, 0x7824) = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
             frame++;
         } while (frame != 32);
 
@@ -464,7 +464,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
         }
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     } while (frame != 32);
 
@@ -478,7 +478,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     i = 0;
     do {
         Func_080b5048(*cue, 6 - i);
-        Func_080030f8(1);
+        WaitFrames(1);
         i++;
     } while (i != 7);
 

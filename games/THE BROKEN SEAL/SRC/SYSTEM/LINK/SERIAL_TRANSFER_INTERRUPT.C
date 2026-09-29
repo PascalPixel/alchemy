@@ -95,7 +95,6 @@ void SerialRuntime_RemoveIrqHandlers(void)
 }
 
 extern volatile u16 gLinkStatus;
-s32 WaitFrames(s32);
 
 u32 SerialRuntime_WaitForStatusMask(s32 mask)
 {

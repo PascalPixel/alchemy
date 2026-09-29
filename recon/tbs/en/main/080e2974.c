@@ -167,7 +167,7 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
 void *Resource_GetTableEntry(s32 id);                                      /* get */
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void EffectPosition_ApplyStepAndYOffset(s32 source, s32 *out);        /* apply_step_and_y_offset */
 struct Member **GetBattleObjectSlotFar(s32 member);
 u32 Random16(void);                         /* random_16 */
@@ -263,7 +263,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
         break;
     }
     ((CopyFn)0x03001388)((void *)0x05000000, Resource_GetTableEntry(res), 0x80);
-    Func_080030f8(1);
+    WaitFrames(1);
 
     EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s16 *, 0x24), anchor);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
@@ -410,7 +410,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
             Camera_ApplyShake(8, 8);
             ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
             fp++;
         } while (fp != Data_080eed3e[scene * 7 + 5]);
     }

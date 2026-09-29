@@ -15,14 +15,8 @@ const PALETTE_REACH: usize = 4095;
 /// The longest copy each format encodes.
 const GENERAL_LONGEST: usize = 137;
 const PALETTE_LONGEST: usize = 272;
-/// The tag-2 tile compressor streams its input on the packer's general
-/// ring, so its history grows over the final read-ahead bytes as the general
-/// encoder's does.
-const MTF4_RING: Ring = Ring {
-    window: 4123,
-    read_ahead: 485,
-    max_distance: 4126,
-};
+/// Tag-2 tile streams copy from at most this many bytes back.
+const MTF4_WINDOW: usize = 4123;
 
 /// How an LZSS compressor streams its input. It keeps `read_ahead` bytes of
 /// input ahead of the byte it encodes in a ring of `window + read_ahead`
@@ -263,7 +257,7 @@ pub fn compress_tagged(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, S
 }
 
 /// The tag-2 tile compressor's controls: greedy nearest-longest copies from
-/// the general ring's history, and literals as two move-to-front nibble indices in
+/// the last 4,123 bytes, and literals as two move-to-front nibble indices in
 /// the narrowest of two, three or four bits that holds both. A copied byte
 /// never enters the move-to-front table.
 fn mtf4_tokens(decoded: &[u8]) -> Vec<Mtf4LzToken> {
@@ -272,8 +266,7 @@ fn mtf4_tokens(decoded: &[u8]) -> Vec<Mtf4LzToken> {
     let mut position = 0;
     let mut tokens = Vec::new();
     while position < decoded.len() {
-        let oldest = MTF4_RING.oldest(position, decoded.len());
-        let lowest = oldest.max(position.saturating_sub(MTF4_RING.max_distance));
+        let lowest = position.saturating_sub(MTF4_WINDOW);
         match matcher.search(position, GENERAL_LONGEST, lowest) {
             Token::Copy { length, distance } => {
                 tokens.push(Mtf4LzToken::Copy {
@@ -570,39 +563,6 @@ mod tests {
         stream.extend([0, 0]);
         let (unpacked, _) = decode_mtf4_lz(&stream, 0, stream.len(), 64).unwrap();
         assert_eq!(unpacked, decoded);
-    }
-
-    #[test]
-    fn tile_compressor_history_grows_over_the_final_read_ahead_bytes() {
-        // Eight bytes repeated 4,126 bytes back: out of reach mid-stream,
-        // in reach near the end, where the general ring stops reading.
-        let token_at = |size: usize, at: usize| {
-            let mut state = 1u32;
-            let mut decoded = (0..size)
-                .map(|_| {
-                    state = state.wrapping_mul(1_103_515_245).wrapping_add(12_345);
-                    (state >> 16) as u8
-                })
-                .collect::<Vec<_>>();
-            decoded.copy_within(at - 4126..at - 4118, at);
-            let mut position = 0;
-            for token in mtf4_tokens(&decoded) {
-                if position >= at {
-                    return (position, token);
-                }
-                position += match token {
-                    Mtf4LzToken::Literal { .. } => 1,
-                    Mtf4LzToken::Copy { length, .. } => length as usize,
-                };
-            }
-            unreachable!()
-        };
-        let far = Mtf4LzToken::Copy {
-            length: 8,
-            distance: 4126,
-        };
-        assert_eq!(token_at(8000, 7900), (7900, far));
-        assert_ne!(token_at(9000, 5000).1, far);
     }
 
     #[test]

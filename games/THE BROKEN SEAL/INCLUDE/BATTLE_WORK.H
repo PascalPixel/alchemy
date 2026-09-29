@@ -53,7 +53,14 @@ struct BattleSession {
     u8 party_status_mode;           /* 0x041 */
     u8 unknown_042;
     u8 flags_043;                   /* 0x043, bit 1: an enemy challenged */
-    u8 unknown_044[0x14];
+    u8 two_sided;                   /* 0x044, a linked battle */
+    u8 encounter_mode;              /* 0x045 */
+    u8 unknown_046[2];
+    u8 owner_slots[8];              /* 0x048, member slot per owner, 0xff none */
+    u8 link_side;                   /* 0x050 */
+    u8 unknown_051;
+    u8 link_paused;                 /* 0x052 */
+    u8 unknown_053[5];
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
     u8 unknown_074[0x278];

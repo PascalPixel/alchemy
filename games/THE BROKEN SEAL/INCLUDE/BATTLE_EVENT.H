@@ -51,9 +51,6 @@ enum BattleEventOpcode {
     BATTLE_EVENT_SOUND = 14
 };
 
-#ifndef BATTLE_EVENT_PUSH_RESULT
-#define BATTLE_EVENT_PUSH_RESULT u32
-#endif
-BATTLE_EVENT_PUSH_RESULT BattleEv_Push(u32 opcode, u32 operand);
+u32 BattleEv_Push(u32 opcode, u32 operand);
 
 #endif

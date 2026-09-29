@@ -9,9 +9,9 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
+#include "BATTLE_WORK.H"
 
 extern u8 gTransitionWork[];
-extern void *gBattleWork;
 
 struct Half {
     u16 v;
@@ -60,9 +60,9 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
 
     if (fade == 0x80) {
-        Dma_Set((u8 *)gBattleWork + 0x544, (void *)0x050000c0, 0x80000080, (volatile u32 *)0x040000d4);
+        Dma_Set(gBattleWork->palette, (void *)0x050000c0, 0x80000080, (volatile u32 *)0x040000d4);
     } else if (fade != 0) {
-        u16 *source = (u16 *)((u8 *)gBattleWork + 0x544);
+        u16 *source = gBattleWork->palette;
         u16 *destination = (u16 *)0x050000c0;
         s32 i;
         struct Half mask;

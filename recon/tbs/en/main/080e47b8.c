@@ -1,3 +1,9 @@
+/* 2026-09-29 (Mars, later): setting the kind 31 height before the first
+ * load gives 48 r9 and 2 sl as the reference does; 183 lines remain, about
+ * 98 of them the reference's jump-table words, so roughly 85 real. Kind 31
+ * still differs in low-register choice for the 2/48 constants. Unfolding
+ * gWorkSlot + 188 (local base pointer, index variable) always gives the
+ * pointer r6 and width 17 r8, 221 lines. */
 /* 2026-09-29 (Mars): the rising column takes (RectangleBlit *)gWorkSlot + 47
  * directly instead of the shared work_blitters cursor, which restores the
  * column's high-register assignment (r8 blitter, r9 column_y, sl column_x,
@@ -809,9 +815,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
             Runtime_ReleaseHeapBlock(46);
             if ((u32)(frame - 4) <= 19) {
                 pair_x = target_screen->x / 2;
+                height = 48;
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
                 work_blitters = (RectangleBlit *)gWorkSlot;
-                height = 48;
                 DrawImage(canvas, IMAGE_WORK, pair_x - 24, 48, 24, height, work_blitters + 47);
                 Runtime_ReleaseHeapBlock(47);
                 BattleEffect_LoadWork(47, 7, 7, 7, 2);

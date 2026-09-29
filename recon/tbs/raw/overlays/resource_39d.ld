@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_39d_overlay.o"(.text.x0200813c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/TABLES.o"(.text)
-        "*/resource_39d_overlay.o"(.text.x0200835c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/PRESENT.o"(.text)
         "*/resource_39d_overlay.o"(.text.x02008890)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_CHOJO/NEAREST.o"(.text)

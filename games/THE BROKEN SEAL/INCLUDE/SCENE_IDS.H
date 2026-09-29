@@ -108,5 +108,6 @@ extern char SceneId_VinasuHeya3;
 extern char SceneId_VinasuHeya4;
 extern char SceneId_VinasuHeya5;
 extern char SceneId_VinasuHeya6;
+extern char SceneId_TorebiIzumi2;
 
 #endif

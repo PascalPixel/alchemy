@@ -7,7 +7,9 @@
 	.section .rom.000f3624, "a"
 	.incbin "baserom.gba", 0xf3624, 0x60
 	.section .rom.0017b698, "a"
-	.incbin "baserom.gba", 0x17b698, 0x19c918
+	.incbin "baserom.gba", 0x17b698, 0x98c
+	.section .rom.00315f74, "a"
+	.incbin "baserom.gba", 0x315f74, 0x203c
 	.section .rom.0031b9e7, "a"
 	.incbin "baserom.gba", 0x31b9e7, 0x1
 	.section .rom.00322693, "a"

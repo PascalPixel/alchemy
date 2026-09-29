@@ -56,6 +56,14 @@
 //!   record's first row) and `rows`, then one line per glyph: its code in
 //!   hex and its halfwords.
 //!
+//! A field sprite bank reads its record table `STEM.TSV` and each sprite's
+//! PNG and TSV beside it (see ags::sprite):
+//!
+//! - `.sprites`: the bank as assembler source, which a data source
+//!   `.include`s; its lists name the labels of the frames and scripts.
+//! - `.spriteblocks`: the same, laid out sprite by sprite in the order
+//!   `LAYOUT.TSV` beside it gives.
+//!
 //! A picture made of several reads its part list `STEM.TSV`:
 //!
 //! - `.parts`: each line names a part image beside the list and that part's
@@ -109,6 +117,8 @@ fn data_form(form: &str) -> bool {
             | "icons4"
             | "blocks"
             | "script"
+            | "sprites"
+            | "spriteblocks"
     )
 }
 
@@ -160,6 +170,10 @@ pub fn build_file_with(
             "icons4" => icon4_bank(built, input, sibling)?,
             "blocks" => block_map(built, input)?,
             "script" => script(built, input)?,
+            "sprites" => crate::sprite::bank(built, input, sibling)?
+                .source()?
+                .into_bytes(),
+            "spriteblocks" => crate::sprite::blocks_source(built, input, sibling)?.into_bytes(),
             _ => encode_tilemap_delta(&table(built, input)?, form.as_bytes()[5] - b'0')
                 .map_err(|error| format!("{built}: {}", error.0))?,
         }

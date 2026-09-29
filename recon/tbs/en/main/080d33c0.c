@@ -216,7 +216,7 @@ loop_15:
         }
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(temp_r7_17, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         var_fp_203 += 1;
         if (var_fp_203 != *((u8 *)0x080EE1C4 + (s32) ((M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x18) * 2) + 1))) {
             goto loop_7;

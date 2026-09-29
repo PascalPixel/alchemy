@@ -9,7 +9,7 @@ void *Func_0808ba1c(void *entry);
 void Func_08091220(s32 value, s32 mode);
 void Func_08091200(s32 value, s32 mode);
 void Func_08091254(s32 mode);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 s32 Func_0808e4b4(s32 value, s32 count, s32 *result);
 void Func_08096b28(s32 handle, void *entry, s32 result);
 void Func_080f9010(s32 cue);
@@ -38,7 +38,7 @@ void RunBattleEffect08(void)
     Func_08091220(0x10000, 0);
     Func_08091200(0x10001, 1);
     Func_08091254(1);
-    Func_080030f8(1);
+    WaitFrames(1);
     value = Func_0808e4b4(0x50000005, 8, &result);
     if (value != 0) {
         Func_08096b28(value, *entry_slot, result);
@@ -60,7 +60,7 @@ void RunBattleEffect08(void)
     Func_0808f32c();
     frame = 0;
     do {
-        Func_080030f8(1);
+        WaitFrames(1);
         *(s16 *)(scene + 0x52a) = frame;
         frame++;
     } while (frame <= 18);

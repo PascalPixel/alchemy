@@ -94,7 +94,7 @@ void SceneTransform_ApplyPosition(s32 *record);
 void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *screen);
 s32 Math_Div(s32 value, s32 divisor);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 s32 BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunMemberBeam(void *object, s32 variant)
@@ -370,7 +370,7 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
         Runtime_ReleaseHeapBlock(47);
         Runtime_ReleaseHeapBlock(46);
         FIELD_AT_OFFSET(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

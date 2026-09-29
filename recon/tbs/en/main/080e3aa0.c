@@ -210,7 +210,7 @@ struct Member {
 /* Declared with the address spelling the link uses; the trailing comment is
    the name `alchemy inspect` resolves for that target, where it has one.
    The ones with no comment have no resolved project name. */
-void Func_080030f8(s32 frames);                      /* WaitFrames */
+void WaitFrames(s32 frames);                      /* WaitFrames */
 s32 Math_Div(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
 void Func_08002dd8(s32 id);                          /* Runtime_ReleaseHeapBlock */
 void *Resource_GetTableEntry(s32 id);                         /* get */
@@ -266,11 +266,11 @@ void BattlePres_RunBeamSequence(void *object)
     kind = M2C_FIELD(object, s32 *, 0);
     STATE = object;
     record = Owner_GetStateFar(M2C_FIELD(object, s32 *, 8));
-    Func_080030f8(1);
+    WaitFrames(1);
     BattlePres_ConfigureEffectDisplay();
     BattleFx_SetupCanvasTileMap();
     REG_BG1CNT = 0x1F80;
-    Func_080030f8(1);
+    WaitFrames(1);
 
     /* Register the two rectangle blits for the beam body. */
     if (kind == 5) {
@@ -292,7 +292,7 @@ void BattlePres_RunBeamSequence(void *object)
     }
     blit[0] = (BlitFn)Data_03001e50[46];
     blit[1] = (BlitFn)Data_03001e50[47];
-    Func_080030f8(1);
+    WaitFrames(1);
 
     /* The beam graphic itself, one resource per scene selector. */
     if (kind == 4) {
@@ -319,7 +319,7 @@ void BattlePres_RunBeamSequence(void *object)
         IWRAM_COPY((void *)0x05000000,
             Resource_GetTableEntry((s32)&Value_0000004a), 0x80);
     }
-    Func_080030f8(1);
+    WaitFrames(1);
     Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_00000099, (void *)0x02010000, 1, 0);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
@@ -342,7 +342,7 @@ void BattlePres_RunBeamSequence(void *object)
     anchor[0] = anchor[0] + dx;
     Data_03001ad0.field_0004 = (s16)dx;
     Data_03001ad0.field_0006 = 80;
-    Func_080030f8(1);
+    WaitFrames(1);
 
     /* Seed the sparks from the actor's world position. */
     member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 0x24));
@@ -452,7 +452,7 @@ void BattlePres_RunBeamSequence(void *object)
         }
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         i++;
     } while (i != 32);
 

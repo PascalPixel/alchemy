@@ -87,7 +87,7 @@ void BattlePresentation_RunUnitTransition(
 
     for (index = 0; index < 16; index++) {
         *(u16 *)0x04000052 = (16 - index) | 0x1000;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     if (selection->message_mode != 0) {
@@ -164,11 +164,11 @@ void BattlePresentation_RunUnitTransition(
     }
     for (index = 0; index < 16; index++) {
         *(u16 *)0x04000052 = index | 0x1000;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
     for (index = 0; index < refreshed_count; index++) {
         BattlePres_SetActorRecordMode(visible_units[index], 0);
     }
     BattlePres_SetupTransitionScene(0, 0, 0, 0x64);
-    Func_080030f8(1);
+    WaitFrames(1);
 }

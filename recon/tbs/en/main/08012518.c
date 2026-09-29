@@ -80,7 +80,7 @@ void Scheduler_ResetTaskTable(void);
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void Runtime_InitializeHeap(void);
 void Blend_SetDarkenTarget0(s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void RuntimeDispatch_ReturnZero(s32, void *);
 void ObjectSystem_Initialize(s32);
 void Func_0800b6b8(s32, void *, s32, s32);
@@ -182,7 +182,7 @@ restart:
     Scheduler_AddOrUpdateCallback(0x08012E29, 3200);
 
     for (;;) {
-        Func_080030f8(1);
+        WaitFrames(1);
 
         if ((*keys & 8) != 0) {
             if ((*keys & 32) != 0) {

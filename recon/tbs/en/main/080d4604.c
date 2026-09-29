@@ -12,7 +12,7 @@
  * DrawRectangleFn typedef, the work+0x7828 effect-state republication, the
  * work+0x7780 / 0x7784 / 0x7824 / 0x77a8 stores, the Func_080041d8 /
  * Func_08004278 0x080CD261 callback pair and the Func_080e155c /
- * Func_080cd52c / Func_080030f8 frame tail are all shared with them.  Every
+ * Func_080cd52c / WaitFrames frame tail are all shared with them.  Every
  * constant, offset and branch below was read from this owner's own reference
  * disassembly (recon/tbs/raw/080d4604.s), not carried over from a template.
  *
@@ -102,7 +102,7 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
@@ -390,7 +390,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
         Camera_ApplyShake(16, 16);
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

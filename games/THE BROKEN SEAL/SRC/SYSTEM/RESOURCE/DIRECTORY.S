@@ -245,7 +245,7 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesJ
 	resource , Graphics_PictureA
 	resource PictureB, Graphics_PictureB
-	resource , Graphics_PictureC
+	resource PictureC, Graphics_PictureC
 	resource , Graphics_TilesK
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB

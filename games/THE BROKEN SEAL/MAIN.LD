@@ -1575,7 +1575,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/WAIT_TWELVE_FRAMES_THEN_SET_FIELD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/REVEAL_COLUMN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_REVEAL_COLUMN.o"(.text)
-        "*/recon/tbs/raw/080ed104.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/RUN_RISING_BURST.o"(.text)
         "*/recon/tbs/raw/080ed408.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.080eda78)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SENTOU_KOUKA_GOUSEI.o"(.text .rodata .data .padding)

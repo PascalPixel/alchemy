@@ -297,7 +297,6 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-extern u8 Value_0000007e;
 union GameStateRows {
     s16 halves[512][1];
 };
@@ -359,7 +358,7 @@ void FieldScene_RunScene3b2_02001494(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
     Event_OpenScreen();
     Event_WaitForScreen();
-    GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8c8 - (s32)&Value_0000007e)));
+    GameFlag_Set((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8c8 - (s32)&SceneId_TakaraShima6)));
     Event_Wait(30);
     Map_AnimateCells(TakaraShima_EntranceCells, 44, 7);
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 3, -16);

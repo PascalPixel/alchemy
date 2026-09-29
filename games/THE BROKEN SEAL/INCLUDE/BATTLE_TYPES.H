@@ -80,7 +80,7 @@ struct BattleUnit {
     s16 pp_gauge;                   /* 0x016 */
     u8 unknown_018[0x0c];
     /* Elemental level by element, each after an unresolved halfword. */
-    struct {
+    struct BattleElementLevel {
         s16 unknown_0;
         s16 level;
     } element_levels[4];            /* 0x024 */

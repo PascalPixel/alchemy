@@ -21,6 +21,7 @@ extern char SceneId_BiribinoMura3;
 extern char SceneId_KorimaMura1;
 extern char SceneId_KorimaMura2;
 extern char SceneId_KorimaMura3;
+extern char SceneId_ToretoHeya;
 extern char SceneId_BiribinoDou1;
 extern char SceneId_BiribinoDou2;
 extern char SceneId_BiribinoDou3;

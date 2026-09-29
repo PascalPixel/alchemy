@@ -1102,10 +1102,6 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x003e78c3, 0x00000001
 	.section .unidentified.083e7bbf,"a"
 	.incbin "baserom.gba", 0x003e7bbf, 0x00000001
-	.section .unidentified.083e7f60,"a"
-	.global BattleFx_WhirlwindSheet
-BattleFx_WhirlwindSheet:
-	.incbin "baserom.gba", 0x003e7f60, 0x000016b0
 	.section .unidentified.083e9d6d,"a"
 	.incbin "baserom.gba", 0x003e9d6d, 0x00000003
 	.section .unidentified.083eab3b,"a"
@@ -1206,9 +1202,8 @@ BattleFx_IceBlockSheet:
 	.incbin "baserom.gba", 0x0040a88b, 0x00000001
 	.section .unidentified.0840c681,"a"
 	.incbin "baserom.gba", 0x0040c681, 0x00000003
-	.global BattleFx_VortexSheet
-BattleFx_VortexSheet:
-	.incbin "baserom.gba", 0x0040c684, 0x00000914
+	.section .unidentified.0840cf96,"a"
+	.incbin "baserom.gba", 0x0040cf96, 0x00000002
 	.section .unidentified.0840eaca,"a"
 	.incbin "baserom.gba", 0x0040eaca, 0x00000002
 	.section .unidentified.0840fb19,"a"

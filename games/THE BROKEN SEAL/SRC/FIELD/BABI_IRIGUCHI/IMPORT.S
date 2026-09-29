@@ -220,6 +220,9 @@ BattleFx_SetPhaseRequest:
 	.thumb_func
 FieldEffect_UpdateGridPlacement:
 	overlay_veneer FieldEffect_UpdateGridPlacementFar
+	.global battle_owner_69
+	.thumb_func
+battle_owner_69:
 	overlay_veneer battle_owner_69Far
 	overlay_veneer Event_SetStatus1c6Far
 	.global Engine_EventCloseScreen

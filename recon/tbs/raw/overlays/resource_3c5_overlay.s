@@ -491,61 +491,8 @@ Func_020025c8:
 	.4byte 0x00000985
 	.4byte 0x00001528
 	.4byte 0x00002756
-	.section .text.x0200a738,"ax",%progbits
+	.section .text.x0200a7a0,"ax",%progbits
 	.balign 4
-	.global SceneActor_RunSlotZeroFacingCheck
-	.thumb_func
-SceneActor_RunSlotZeroFacingCheck:
-	push {r5, lr}
-	movs r0, #0
-	bl 0x0200ae50
-	adds r5, r0, #0
-	bl 0x0200a660
-	ldrh r3, [r5, #6]
-	movs r1, #128
-	lsls r1, r1, #6
-	adds r5, r3, r1
-	movs r4, #249
-	ldr r3, [pc, #72]
-	lsls r4, r4, #1
-	adds r3, r3, r4
-	movs r1, #192
-	ldrb r3, [r3]
-	adds r2, r0, #0
-	lsls r1, r1, #8
-	movs r0, #1
-	ands r5, r1
-	negs r0, r0
-	cmp r3, #1
-	beq .L_02002738_0
-	cmp r2, #0
-	bne .L_02002738_1
-.L_02002738_0:
-	cmp r5, r1
-	bne .L_02002738_2
-	bl 0x0200af48
-.L_02002738_2:
-	movs r1, #128
-	lsls r1, r1, #7
-	cmp r5, r1
-	bne .L_02002738_1
-	bl 0x0200af40
-.L_02002738_1:
-	cmp r0, #0
-	beq .L_02002738_3
-	ldr r3, [pc, #20]
-	movs r2, #249
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	ldrb r3, [r3]
-	cmp r3, #1
-	beq .L_02002738_3
-	bl 0x0200a6fc
-.L_02002738_3:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
 	.global SceneData_SelectTableB91cByRuntimeSelector
 	.thumb_func
 SceneData_SelectTableB91cByRuntimeSelector:

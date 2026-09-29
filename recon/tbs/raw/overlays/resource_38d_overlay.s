@@ -1,81 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x0200809c,"ax",%progbits
-	.balign 4
-	.global Func_0200009c
-	.thumb_func
-Func_0200009c:
-	push {r5, lr}
-	ldr r3, [pc, #76]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_0200009c_0
-	ldr r5, [pc, #64]
-	adds r0, r5, #0
-	bl 0x0200a480
-	ldr r0, [pc, #60]
-	bl 0x0200a450
-	cmp r0, #0
-	beq .L_0200009c_1
-	adds r1, r5, #0
-	movs r3, #2
-	adds r1, #166
-	strb r3, [r1]
-	adds r3, r5, #0
-	movs r2, #0
-	adds r3, #190
-	strb r2, [r3]
-	adds r2, r5, #0
-	adds r2, #214
-	movs r3, #3
-	strb r3, [r2]
-	adds r2, #24
-	movs r3, #1
-	strb r3, [r2]
-.L_0200009c_1:
-	adds r0, r5, #0
-	b .L_0200009c_2
-.L_0200009c_0:
-	ldr r0, [pc, #20]
-.L_0200009c_2:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000021
-	.4byte 0x0200a9b4
-	.4byte 0x0000084e
-	.4byte 0x0200a99c
-	.global Func_02000100
-	.thumb_func
-Func_02000100:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_02000100_0
-	ldr r0, [pc, #16]
-	b .L_02000100_1
-.L_02000100_0:
-	ldr r0, [pc, #16]
-.L_02000100_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000021
-	.4byte 0x0200aca8
-	.4byte 0x0200ac9c
+	.section .text.x02008130,"ax",%progbits
 	.global Func_02000130
 	.thumb_func
 Func_02000130:
@@ -1873,12 +1798,16 @@ Placement_Messages:
 	.4byte 0x01c06021
 	.4byte 0x01d09021
 	.4byte 0x000001ff
+	.global gBiribinoKyudenPlacementsOther
+gBiribinoKyudenPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoKyudenPlacements
+gBiribinoKyudenPlacements:
 	.4byte 0x00000065
 	.4byte 0x00000001
 	.4byte 0x01090000
@@ -2065,9 +1994,13 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoKyudenEventsOther
+gBiribinoKyudenEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoKyudenEvents
+gBiribinoKyudenEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

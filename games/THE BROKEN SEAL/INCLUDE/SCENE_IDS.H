@@ -14,6 +14,8 @@ extern char SceneId_GomaSuiro1;
 extern char SceneId_GomaSuiro2;
 extern char SceneId_BiribinoMura1;
 extern char SceneId_BiribinoMura2;
+extern char SceneId_BiribinoKyuden;
+extern char SceneId_BiribinoNiwa;
 extern char SceneId_BiribinoMura3;
 extern char SceneId_KorimaMura1;
 extern char SceneId_KorimaMura2;

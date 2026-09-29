@@ -1,79 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x0200809c,"ax",%progbits
-	.balign 4
-	.global Func_0200009c
-	.thumb_func
-Func_0200009c:
-	push {lr}
-	ldr r3, [pc, #64]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_0200009c_0
-	ldr r0, [pc, #52]
-	bl 0x02008ab4
-	cmp r0, #0
-	beq .L_0200009c_1
-	ldr r3, [pc, #48]
-	movs r2, #1
-	adds r3, #118
-	strb r2, [r3]
-.L_0200009c_1:
-	ldr r0, [pc, #44]
-	bl 0x02008ab4
-	cmp r0, #0
-	beq .L_0200009c_2
-	ldr r3, [pc, #28]
-	movs r2, #0
-	adds r3, #70
-	strb r2, [r3]
-.L_0200009c_2:
-	ldr r0, [pc, #20]
-	b .L_0200009c_3
-.L_0200009c_0:
-	ldr r0, [pc, #24]
-.L_0200009c_3:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000022
-	.4byte 0x0000084f
-	.4byte 0x02008c7c
-	.4byte 0x00000845
-	.4byte 0x02008c64
-	.section .text.x02008154,"ax",%progbits
-	.balign 4
-	.global Func_02000154
-	.thumb_func
-Func_02000154:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_02000154_0
-	ldr r0, [pc, #16]
-	b .L_02000154_1
-.L_02000154_0:
-	ldr r0, [pc, #16]
-.L_02000154_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000022
-	.4byte 0x02008d30
-	.4byte 0x02008d24
+	.section .text.x02008184,"ax",%progbits
 	.global Func_02000184
 	.thumb_func
 Func_02000184:
@@ -88,47 +15,6 @@ Func_02000184:
 	pop {r0}
 	bx r0
 	.4byte 0x000013c0
-	.section .text.x020084bc,"ax",%progbits
-	.balign 4
-	.global Func_020004bc
-	.thumb_func
-Func_020004bc:
-	push {r5, lr}
-	ldr r3, [pc, #64]
-	movs r5, #224
-	ldr r2, [r3]
-	movs r3, #128
-	lsls r3, r3, #1
-	lsls r5, r5, #1
-	str r3, [r2, r5]
-	movs r0, #8
-	bl 0x02008af4
-	adds r2, r0, #0
-	adds r2, #35
-	movs r3, #0
-	strb r3, [r2]
-	ldr r1, [r0, #80]
-	ldrb r2, [r1, #9]
-	subs r3, #13
-	ands r3, r2
-	movs r2, #4
-	orrs r3, r2
-	strb r3, [r1, #9]
-	ldr r3, [pc, #24]
-	ldrsh r2, [r3, r5]
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_020004bc_0
-	bl 0x0200850c
-.L_020004bc_0:
-	movs r0, #0
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x00000022
 	.section .text.x020085dc,"ax",%progbits
 	.balign 4
 	.global BiribinoNiwa_RunGardenScene
@@ -488,12 +374,16 @@ Placement_Messages:
 	.4byte 0x00201021
 	.4byte 0x00a1d021
 	.4byte 0x000001ff
+	.global gBiribinoNiwaPlacementsOther
+gBiribinoNiwaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoNiwaPlacements
+gBiribinoNiwaPlacements:
 	.4byte 0xffff0087
 	.4byte 0x00000001
 	.4byte 0x00670000
@@ -536,9 +426,13 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoNiwaEventsOther
+gBiribinoNiwaEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoNiwaEvents
+gBiribinoNiwaEvents:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

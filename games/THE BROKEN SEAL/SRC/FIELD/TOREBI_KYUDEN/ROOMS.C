@@ -1,23 +1,19 @@
-/* resource_3b8:020080c8..020083b0 (744 bytes), still linked from the
- * listing, after TOREBI_KYUDEN/GET_PLACEMENTS.C (the placements getter this
- * draft began with, now linked). Remaining differences: the 0x105 emote is
- * loaded from the pool; FieldScene_RunBranchedSteps1FF1,
- * RunOpeningAuxiliarySequence, FieldScene_RunScene3b8_02000264 and
- * FieldScene_RunBranchedSteps2006 load one message
- * (MsgTorebiRunBabisSoldiers, MsgTorebiUseFourBeds, MsgTorebiCameRestBefore,
- * MsgTorebiPlanningEnterColosso) and derive the next ones as base + n; with
- * the messages named it was 880 bytes against 832 with the getter, 318
- * halfwords differing. */
+/* The palace guest rooms: the steward asks whether the party met Babi's
+ * soldiers, the room keeper offers the four beds or a free rest, and the
+ * last host asks about Colosso. Each question loads its first message once
+ * and adds to it for the answers. */
+/* FAKEMATCH: KYUDEN.H's inline call and value wrappers keep the game's
+ * argument order and constant sharing at the calls that use them. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "KYUDEN.H"
 extern u8 MsgTorebiTiredFeelFreeRest[];
 extern u8 MsgTorebiCameRestBefore[];
 extern u8 MsgTorebiPlanningEnterColosso[];
 extern u8 MsgTorebiRunBabisSoldiers[];
 extern u8 MsgTorebiUseFourBeds[];
 extern u8 MsgTorebiWeHaveJustEnoughExtra[];
-/* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.H. */
 
 void FieldScene_RunBranchedSteps1FF1(s32 a)
 {

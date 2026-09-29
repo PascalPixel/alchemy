@@ -1,11 +1,10 @@
-/* resource_3b8:02008524..02008af8 (1492 bytes), still linked from the
- * listing. Remaining differences: SceneDialogue_ShowMessage22a8Branch,
- * SceneDialogue_RunChoiceSequence22ab and SceneDialogue_RunChoiceSequence2352
- * derive their answer messages from one loaded base (MsgTorebiMeetBabi,
- * MsgTorebiEasternShoresKaragol, MsgTorebiFoundCloakBall; flag 0xf31 is
- * pool-loaded too); FieldScene_RunScene3b8SequenceB loads MsgTorebiGetUp
- * from the pool. With the messages named the draft is 1624 bytes against
- * 1492, and 468 halfwords differ. */
+/* The palace talks: the questions about meeting Babi and the eastern
+ * shores past Karagol, the Cloak Ball found in the guest room, and the
+ * morning the party wakes in the palace (FieldScene_RunScene3b8SequenceB).
+ * The questions load their first message once and add to it for the
+ * answers. */
+/* FAKEMATCH: KYUDEN.H's inline call and value wrappers keep the game's
+ * argument order at the calls that use them. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -13,7 +12,7 @@ extern u8 MsgTorebiGetUp[];
 extern u8 MsgTorebiEasternShoresKaragol[];
 extern u8 MsgTorebiFoundCloakBall[];
 extern u8 MsgTorebiMeetBabi[];
-/* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.H. */
+#include "KYUDEN.H"
 
 void SceneDialogue_ShowMessage22a8Branch(s32 a)
 {
@@ -77,22 +76,18 @@ void SceneDialogue_RunChoiceSequence2352(void)
 
 void FieldScene_RunScene3b8SequenceB(void)
 {
-    u32 i;
-    s32 record;
-    s32 v5;
+    struct FieldActor *record;
 
     Engine_EventBegin();
     Engine_EventSetMessage((s32)MsgTorebiGetUp);
-    v5 = 0;
-    *(u8 *)(Engine_ActorGet(0) + 84) = v5;
-    *(u8 *)(Engine_ActorGet(10) + 84) = v5;
+    Engine_ActorGet(0)->active = 0;
+    Engine_ActorGet(10)->active = 0;
     Engine_TaskWait(1);
     *(volatile u16 *)0x04000000 = 0x1140;
     Call2(Engine_EventShowMessage, -1, 0);
     *(volatile u16 *)0x04000000 = 0x140;
-    v5 = 1;
-    *(u8 *)(Engine_ActorGet(0) + 84) = v5;
-    *(u8 *)(Engine_ActorGet(10) + 84) = v5;
+    Engine_ActorGet(0)->active = 1;
+    Engine_ActorGet(10)->active = 1;
     Engine_ActorSetAnimation(0, 31);
     record = Engine_ActorGet(0);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -102,11 +97,11 @@ void FieldScene_RunScene3b8SequenceB(void)
     Engine_ActorFaceDirection(1, 0, 0);
     Engine_ActorFaceDirection(3, 0, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xe000, 0);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 60;
+    gEventWork->transition_frames = 60;
     Event_SetStatus1c6Far();
     Event_WaitValue1c8FramesFar();
     Engine_EventWait(20);
-    *(s32 *)(*(u8 **)Data_03001ebc + 0x1c8) = 24;
+    gEventWork->transition_frames = 24;
     Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
     Actor_WalkByAndWait(ACTOR_MIA, 16, 0);
     Call3(Engine_ActorFaceDirection, 3, 0x2000, 0);
@@ -116,9 +111,9 @@ void FieldScene_RunScene3b8SequenceB(void)
     Engine_EventShowMessage(3, 0);
     Engine_EventWait(10);
     record = Engine_ActorGet(0);
-    *(s32 *)(record + 16) += -0x30000;
-    record = Value1(Engine_ActorGet, 0);
-    *(s32 *)(record + 64) += -0x30000;
+    record->z.fixed += -0x30000;
+    record = Engine_ActorGet(0);
+    record->target_z += -0x30000;
     Engine_ActorSetAnimation(0, 32);
     Engine_EventWait(40);
     Engine_ActorSetAnimationAndWait(0, 34);
@@ -167,11 +162,11 @@ void FieldScene_RunScene3b8SequenceB(void)
         Engine_ActorSetAnimationAndWait(1, 3);
         Engine_EventWait(20);
         Event_ShowMessage(ACTOR_GERALD, 0);
-        AdvanceMessageCursor(1);
+        gEventWork->message += 1;
     } else {
         Engine_EventWait(10);
         Engine_ActorSetAnimationAndWait(0, 33);
-        AdvanceMessageCursor(2);
+        gEventWork->message += 2;
         Engine_EventWait(30);
         Engine_ActorSetAnimationAndWait(1, 3);
         Engine_EventWait(20);
@@ -200,26 +195,26 @@ void FieldScene_RunScene3b8SequenceB(void)
     Call3(Engine_ActorSetSpeed, 3, 0x13333, 0x9999);
     Call3(Engine_ActorSetSpeed, 2, 0x13333, 0x9999);
     Engine_ActorSetAnimation(1, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPositionFar(1, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        ObjectMotion_ResetAndSetPositionFar(1, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(1);
     Engine_ActorSetPosition(1, 0, 0);
     Engine_ActorSetAnimation(3, 2);
-    record = Value1(Engine_ActorGet, 0);
+    record = Engine_ActorGet(0);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPositionFar(3, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        ObjectMotion_ResetAndSetPositionFar(3, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(3);
     Engine_ActorSetPosition(3, 0, 0);
     Engine_ActorSetAnimation(2, 2);
-    record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
+    record = Engine_ActorGet(ACTOR_PARTY_LEADER);
     if (record != 0) {
-        ObjectMotion_ResetAndSetPositionFar(2, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        ObjectMotion_ResetAndSetPositionFar(2, record->x.part.pixel, record->z.part.pixel);
     }
     Engine_ActorWaitForMove(2);
     Engine_ActorSetPosition(2, 0, 0);
-    ((void (*)())Engine_EventWait)(10);
+    Engine_EventWait(10);
     Engine_EventEnd();
 }

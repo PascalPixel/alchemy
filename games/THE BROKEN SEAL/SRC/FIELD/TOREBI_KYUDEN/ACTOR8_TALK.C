@@ -1,12 +1,13 @@
-/* resource_3b8:0200be40..0200bf84 (324 bytes), still linked from the
- * listing. Remaining difference: its messages have catalogue names now; 147 halfwords
- * still differ from the ROM, and it names symbols no link defines (Call1,
- * Call0, Call3, Value2, ...); it also lacks declarations it needs to compile. */
+/* Actor 8's question once flag 2412 is set: the leader walks over, and a
+ * no brings actors 8 and 9 into a longer exchange. */
+/* FAKEMATCH: every call goes through KYUDEN.H's inline call and value
+ * wrappers, which pass the constants straight into the argument registers
+ * as the game does; direct calls keep them in saved registers. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 extern u8 MsgTorebiArent[];
-/* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.H. */
+#include "KYUDEN.H"
 
 void RunSupplementalSequenceOne(void)
 {

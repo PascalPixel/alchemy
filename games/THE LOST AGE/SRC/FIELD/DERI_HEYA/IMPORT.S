@@ -27,7 +27,13 @@
 	overlay_veneer Func_080ad2a0
 	overlay_veneer Func_080ad2f0
 	overlay_veneer Func_080c8010
+	.global Engine_EventBegin
+	.thumb_func
+Engine_EventBegin:
 	overlay_veneer Func_080c8018
+	.global Engine_EventEnd
+	.thumb_func
+Engine_EventEnd:
 	overlay_veneer Func_080c8020
 	overlay_veneer Func_080c8070
 	overlay_veneer Func_080c8088
@@ -36,15 +42,27 @@
 	overlay_veneer Func_080c8118
 	overlay_veneer Func_080c8138
 	overlay_veneer Func_080c8158
+	.global Engine_EventSetMessage
+	.thumb_func
+Engine_EventSetMessage:
 	overlay_veneer Func_080c8180
 	overlay_veneer Func_080c8188
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer Func_080c81a0
 	overlay_veneer Func_080c81d0
+	.global Engine_ActorSetSpritePriority
+	.thumb_func
+Engine_ActorSetSpritePriority:
 	overlay_veneer Func_080c8200
 	overlay_veneer Func_080c8210
 	overlay_veneer Func_080c82e0
 	overlay_veneer Func_080c83d8
 	overlay_veneer Func_080c8480
+	.global Engine_EventPrepareSpeakers
+	.thumb_func
+Engine_EventPrepareSpeakers:
 	overlay_veneer Func_080c84e0
 	overlay_veneer Func_080c8558
 	overlay_veneer Func_080c86f8

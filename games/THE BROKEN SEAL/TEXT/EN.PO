@@ -11323,7 +11323,7 @@ msgctxt "message"
 msgid "02828"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgRearrangeHelp"
 msgid "02829"
 msgstr "{button_icon:3}-{button_icon:4}:Rearrange"
 

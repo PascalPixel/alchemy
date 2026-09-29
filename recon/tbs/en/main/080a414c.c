@@ -28,7 +28,7 @@ void RenderOutput_RedrawSavedRectFar(s32 window);
 s32 GameFlag_TestFar(s32 flag);
 void Audio_PlayCue(s32 cue);
 
-extern u8 Value_00000075;
+extern u8 MsgItemPlainName[];
 
 /* H1 (2026-09-26): complete [080a414c,080a448c), 832 bytes.
  * Exact COMMANDS.C, cursor helpers, WINDOW.C and DRAW_SELECTED_ITEM_HEADER.C
@@ -105,7 +105,7 @@ s32 Func_080a414c(void)
         ItemMenu_DrawCmd(command_states, message_window);
         RenderOutput_RedrawSavedRectFar(menu->info_window);
         UiText_DrawCharacterAtOffsetFar(
-            (menu->selected_item & 0x1ff) + (s32)&Value_00000075,
+            (menu->selected_item & 0x1ff) + (s32)MsgItemPlainName,
             menu->info_window,
             0,
             0);

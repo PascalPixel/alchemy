@@ -47,6 +47,8 @@ struct EventRuntime {
     u16 value_1c4;
     u16 status_1c6;
     s32 value_1c8;
+    u8 unknown_1cc[0x0c];
+    u16 value_1d8;
 };
 
 extern struct EventRuntime *gWork;

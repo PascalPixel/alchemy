@@ -55,7 +55,6 @@ extern struct Cells03001ce0 gProjection;
 extern u8 Value_0000003b;
 extern u8 Value_000000b9;
 extern u8 Value_000000ba;
-extern u8 Value_00000121;
 
 typedef struct Scale {
     s32 x;
@@ -384,7 +383,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     }
     BattleEffect_SetupBlendedDisplay();
     *(u16 *)0x04000052 = 0x1010;
-    Audio_PlayCue((s32)&Value_00000121);
+    Audio_PlayCue(0x121);
 
     for (i = 0; i != 64; i++) {
         work->sparks[i].x = ((Random16() & 127) + 64) << 16;

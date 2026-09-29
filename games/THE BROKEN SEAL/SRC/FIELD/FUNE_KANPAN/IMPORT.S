@@ -20,12 +20,21 @@ WaitFrames:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Engine_MapRedraw
 	.thumb_func

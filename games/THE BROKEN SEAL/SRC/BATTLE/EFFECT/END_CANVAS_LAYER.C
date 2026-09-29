@@ -14,6 +14,7 @@
 #include "IWRAM_CALL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
 
 void Palette_StepFadeTransfer(void);
 
@@ -23,7 +24,6 @@ void BattlePresentation_ConfigurePaletteFadeFar(s32, u16, s32);
 void Func_080b5048(u16, s32);
 
 extern u8 gWorkSlot[];
-extern volatile u16 RegIme;
 
 struct Cells03001ad0 {
     u16 unk00;
@@ -48,7 +48,7 @@ extern struct Cells03001ce0 gProjection;
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
             do {                                                            \
-                ime = &RegIme;                                             \
+                ime = &REG_IME;                                             \
                 saved = *ime;                                               \
             } while (0);                                                    \
             *ime = (u16)ime;                                                \

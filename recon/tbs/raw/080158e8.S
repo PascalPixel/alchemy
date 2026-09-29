@@ -149,3 +149,5 @@ Func_080158e8:
 	bls .L_080158f4
 	pop	{r5, r6, r7, r8, r9, sl, lr}
 	bx	lr
+	.global Tile_BuildMetatilesCodeSize
+	.set Tile_BuildMetatilesCodeSize, . - Func_080158e8

@@ -1,34 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x020085f8
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	movs r0, #0
-	bx lr
-	.global Func_0200003c
-	.thumb_func
-Func_0200003c:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008628
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x0200862c
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008644
+	.section .text.x02008054,"ax",%progbits
 	.global Func_02000054
 	.thumb_func
 Func_02000054:
@@ -599,6 +571,8 @@ Func_02000454:
 	.4byte 0x84000004
 	.4byte 0x03001e70
 	.section .rodata,"a",%progbits
+	.global gTitleEntrances
+gTitleEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000000
 	.4byte 0x40000000
@@ -611,13 +585,19 @@ Func_02000454:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTitleExits
+gTitleExits:
 	.4byte 0x000001ff
+	.global gTitlePlacements
+gTitlePlacements:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTitleEvents
+gTitleEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -2,7 +2,7 @@
 //! pret links `ld_script.ld`. Every symbol resolves from its definition; the
 //! image is written for `sha1sum -c rom.sha1` and nothing is copied from a
 //! reference ROM except what the script's scaffolding reads explicitly.
-use crate::build_assets::LzMachine;
+use crate::assets::lz::{compress_tagged, LzMachine};
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
     assembly_command, compiler_assembly_command, prefer_installed_binutils,
@@ -379,7 +379,7 @@ fn base_rom(root: &Path, target: DecompTarget, output: &Path) -> Result<(), Stri
     if bytes.len() as u64 != target.rom_size {
         return Err(format!("{} has the wrong size", rom.display()));
     }
-    crate::text_catalog::verify_reference(root, target.id.as_str(), &bytes)?;
+    target.verify_reference(&bytes)?;
     fs::create_dir_all(output).map_err(|error| error.to_string())?;
     let link = output.join("baserom.gba");
     let _ = fs::remove_file(&link);
@@ -697,7 +697,7 @@ fn build_overlay(
     }
     let mut decoded = fs::read(&image).map_err(|error| error.to_string())?;
     store_thumb_calls(&mut decoded);
-    let encoded = crate::build_assets::encode_overlay_stream(&decoded, &OVERLAY_MACHINE)?;
+    let encoded = compress_tagged(&decoded, &OVERLAY_MACHINE)?;
     fs::write(&stream, encoded).map_err(|error| error.to_string())?;
     fs::write(&stamp, key).map_err(|error| error.to_string())
 }

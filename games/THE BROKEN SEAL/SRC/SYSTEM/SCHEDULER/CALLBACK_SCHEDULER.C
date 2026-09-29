@@ -1,4 +1,5 @@
 #include "CALLBACK_SCHEDULER.H"
+#include "IO_REG.H"
 
 struct SchedulerTask {
     u32 callback;
@@ -12,12 +13,10 @@ struct SchedulerTask {
 extern volatile u8 gSchedulerStatus;
 extern u8 gSchedulerTaskCount;
 extern struct SchedulerTask gSchedulerTaskTable[20];
-extern volatile u16 RegIme;
 
 /*
- * The scheduler's retained globals and the hardware interrupt master-enable
- * word. The hex symbols are the not-yet-c bindings; the aliases are
- * how this unit names them.
+ * Each table update masks interrupts by writing IME the low half of its own
+ * address (0x208, bit 0 clear) and restores the saved value afterwards.
  */
 
 void Scheduler_ResetTaskTable(void)
@@ -91,8 +90,12 @@ s32 Scheduler_FindCallback(u32 callback)
     result = -1;
     task = gSchedulerTaskTable;
     do {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if (task->callback == callback) {
@@ -101,7 +104,7 @@ s32 Scheduler_FindCallback(u32 callback)
                 }
             }
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         returned_result = result;
     } while (0);
     return returned_result;
@@ -121,8 +124,12 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
     task = gSchedulerTaskTable;
     (void)*scheduler_status;
     do {
-        saved_interrupt_state = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_state = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             i = 0;
             if (task->callback == callback) {
@@ -167,7 +174,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order)
             }
         } while (0);
         Scheduler_SortTasks();
-        RegIme = saved_interrupt_state;
+        REG_IME = saved_interrupt_state;
         returned_index = index;
     } while (0);
     return returned_index;
@@ -188,8 +195,12 @@ s32 Scheduler_RemoveCallback(u32 callback)
     result = -1;
     task = gSchedulerTaskTable;
     do {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if (task->callback == callback) {
@@ -200,7 +211,7 @@ s32 Scheduler_RemoveCallback(u32 callback)
                 }
             }
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         returned_result = result;
     } while (0);
     return returned_result;
@@ -217,8 +228,12 @@ s32 Scheduler_EnableCallbacks(u32 callback)
     result = -1;
     task = gSchedulerTaskTable;
     do {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if (callback != 0) {
@@ -229,7 +244,7 @@ s32 Scheduler_EnableCallbacks(u32 callback)
                 result = i;
             }
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         returned_result = result;
     } while (0);
     return returned_result;
@@ -246,8 +261,12 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
     result = -1;
     task = gSchedulerTaskTable;
     do {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if ((task->callback >> 24) == 2 && (task->mask & 1) == 0) {
@@ -256,7 +275,7 @@ s32 Scheduler_EnableUnmaskedOverlayCallbacks(void)
                 }
             }
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         returned_result = result;
     } while (0);
     return returned_result;
@@ -273,8 +292,12 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
     result = -1;
     task = gSchedulerTaskTable;
     do {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if (task->callback == callback) {
@@ -284,7 +307,7 @@ s32 Scheduler_SetCallbackMask(u32 callback, u32 mask)
                 }
             }
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         returned_result = result;
     } while (0);
     return returned_result;
@@ -301,8 +324,12 @@ s32 Scheduler_DisableCallbacks(u32 callback)
     result = -1;
     task = gSchedulerTaskTable;
     do {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if (callback == 0 || task->callback == callback) {
@@ -311,7 +338,7 @@ s32 Scheduler_DisableCallbacks(u32 callback)
                 }
             }
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         returned_result = result;
     } while (0);
     return returned_result;
@@ -328,8 +355,12 @@ s32 Scheduler_DisableOverlayCallbacks(void)
     result = -1;
     task = gSchedulerTaskTable;
     do {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        {
+            volatile u16 *ime = &REG_IME;
+
+            *ime = (u16)(u32)ime;
+        }
         do {
             for (i = 0; i <= 19; i++, task++) {
                 if ((task->callback >> 24) == 2) {
@@ -338,7 +369,7 @@ s32 Scheduler_DisableOverlayCallbacks(void)
                 }
             }
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         returned_result = result;
     } while (0);
     return returned_result;

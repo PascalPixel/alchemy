@@ -1,3 +1,4 @@
+/* The link lobby: the attendant's call into the circle. */
 #include "TYPES.H"
 
 s32 Engine_GameFlagIsSet(s32 flag);
@@ -9,8 +10,9 @@ s32 Engine_EventOpenMessage(s32 actor, s32 mode);
 void Engine_TaskWait(s32 frames);
 s32 Engine_EventEnd(void);
 
-/* Frames since the attendant last called out. */
-extern u32 Data_02009f50;
+/* Frames since the attendant last called out; it follows the overlay's
+ * image, after the peers' wait. */
+static u32 sCallFrames;
 
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
 {
@@ -33,8 +35,8 @@ s32 LinkLobby_CallIntoCircle(void)
     if (set != 0) {
         return set;
     }
-    if (++Data_02009f50 == 300) {
-        Data_02009f50 = 0;
+    if (++sCallFrames == 300) {
+        sCallFrames = 0;
         Call1(Engine_GameFlagClear, 0x200);
     }
     set = Value1(Engine_GameFlagIsSet, 0x200);

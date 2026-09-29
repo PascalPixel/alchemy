@@ -10,10 +10,6 @@ struct BattleSceneBuffers {
 extern struct BattleSceneBuffers Data_03001ebc;
 extern s32 Data_03001e40;
 extern const s32 Data_080a0108[];
-extern const u8 Value_00000149;
-extern const u8 Value_0000014b;
-extern const u8 Value_0000014d;
-extern const u8 Value_0000014f;
 s32 GameFlag_TestFar(s32);
 void BattleFx_ApplyColorToTargetBuffer(s32, s32);
 void BattleFx_StartBufferInterpolation(s32);
@@ -33,13 +29,13 @@ void BattleEffect_InitializeSharedScene(void)
 
     no = Data_03001e40 & 7;
     if (GameFlag_TestFar(0x148)) no = 0;
-    if (GameFlag_TestFar((s32)&Value_00000149)) no = 1;
+    if (GameFlag_TestFar(0x149)) no = 1;
     if (GameFlag_TestFar(0x14a)) no = 2;
-    if (GameFlag_TestFar((s32)&Value_0000014b)) no = 3;
+    if (GameFlag_TestFar(0x14b)) no = 3;
     if (GameFlag_TestFar(0x14c)) no = 4;
-    if (GameFlag_TestFar((s32)&Value_0000014d)) no = 5;
+    if (GameFlag_TestFar(0x14d)) no = 5;
     if (GameFlag_TestFar(0x14e)) no = 6;
-    if (GameFlag_TestFar((s32)&Value_0000014f)) no = 7;
+    if (GameFlag_TestFar(0x14f)) no = 7;
     BattleFx_ApplyColorToTargetBuffer(Data_080a0108[no], 1);
     BattleFx_StartBufferInterpolation(8);
 }

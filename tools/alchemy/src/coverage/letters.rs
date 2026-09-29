@@ -1,19 +1,116 @@
-//! The lettering of the README figures, read from the verified local ROM:
-//! the menu font's tiles and its advances. No glyph sheet, generated glyph
-//! catalog or font file is tracked.
+//! The lettering of the README figures: a small pixel face defined here, in
+//! tool source, like the marks below it. Nothing is read from a ROM, and no
+//! glyph sheet or font file is tracked.
 use std::collections::BTreeMap;
-use std::path::Path;
 
 /// Device pixels per game pixel in the README figures, drawn for retina
 /// displays and shown at half their width.
 pub(crate) const FIGURE_SCALE: u32 = 2;
-/// A text line, in game pixels: the dialogue font's cell, and the box the
-/// eight-pixel menu font sits centred in.
+/// A text line, in game pixels: the box the face's seven-pixel capitals and
+/// two-pixel descenders sit in.
 pub(crate) const LINE: u32 = 16;
 
-/// The upright menu font's 256 4bpp tiles in The Broken Seal's English ROM,
-/// by character code.
-const MENU_TILES: u32 = 0x0832_0fb0;
+/// Printable ASCII, one glyph per character: rows from the cap line down,
+/// `/` between rows, `#` ink. Capitals and digits stand seven rows high on
+/// the baseline under row seven; descenders take two rows more. A glyph
+/// advances its width and one pixel of spacing.
+const FACE: [(char, &str); 95] = [
+    (' ', "..."),
+    ('!', "#/#/#/#/#/./#"),
+    ('"', "#.#/#.#"),
+    ('#', ".#.#./.#.#./#####/.#.#./#####/.#.#./.#.#."),
+    ('$', "..#../.####/#.#../.###./..#.#/####./..#.."),
+    ('%', "##..#/##..#/...#./..#../.#.../#..##/#..##"),
+    ('&', ".##../#..#./#.#../.#.../#.#.#/#..#./.##.#"),
+    ('\'', "#/#"),
+    ('(', "..#/.#./#../#../#../.#./..#"),
+    (')', "#../.#./..#/..#/..#/.#./#.."),
+    ('*', "...../..#../#.#.#/.###./#.#.#/..#.."),
+    ('+', "...../..#../..#../#####/..#../..#.."),
+    (',', "../../../../../.#/.#/#."),
+    ('-', "..../..../..../####"),
+    ('.', "././././././#"),
+    ('/', "....#/....#/...#./..#../.#.../#..../#...."),
+    ('0', ".###./#...#/#..##/#.#.#/##..#/#...#/.###."),
+    ('1', "..#../.##../..#../..#../..#../..#../.###."),
+    ('2', ".###./#...#/....#/...#./..#../.#.../#####"),
+    ('3', "#####/...#./..#../...#./....#/#...#/.###."),
+    ('4', "...#./..##./.#.#./#..#./#####/...#./...#."),
+    ('5', "#####/#..../####./....#/....#/#...#/.###."),
+    ('6', "..##./.#.../#..../####./#...#/#...#/.###."),
+    ('7', "#####/....#/...#./..#../.#.../.#.../.#..."),
+    ('8', ".###./#...#/#...#/.###./#...#/#...#/.###."),
+    ('9', ".###./#...#/#...#/.####/....#/...#./.##.."),
+    (':', "././#/./././#"),
+    (';', "../../.#/../../../.#/#."),
+    ('<', "...#/..#./.#../#.../.#../..#./...#"),
+    ('=', "..../..../####/..../####"),
+    ('>', "#.../.#../..#./...#/..#./.#../#..."),
+    ('?', ".###./#...#/....#/...#./..#../...../..#.."),
+    ('@', ".###./#...#/#.###/#.#.#/#.###/#..../.###."),
+    ('A', ".###./#...#/#...#/#####/#...#/#...#/#...#"),
+    ('B', "####./#...#/#...#/####./#...#/#...#/####."),
+    ('C', ".###./#...#/#..../#..../#..../#...#/.###."),
+    ('D', "###../#..#./#...#/#...#/#...#/#..#./###.."),
+    ('E', "#####/#..../#..../####./#..../#..../#####"),
+    ('F', "#####/#..../#..../####./#..../#..../#...."),
+    ('G', ".###./#...#/#..../#.###/#...#/#...#/.####"),
+    ('H', "#...#/#...#/#...#/#####/#...#/#...#/#...#"),
+    ('I', "###/.#./.#./.#./.#./.#./###"),
+    ('J', "..###/...#./...#./...#./...#./#..#./.##.."),
+    ('K', "#...#/#..#./#.#../##.../#.#../#..#./#...#"),
+    ('L', "#..../#..../#..../#..../#..../#..../#####"),
+    ('M', "#...#/##.##/#.#.#/#.#.#/#...#/#...#/#...#"),
+    ('N', "#...#/#...#/##..#/#.#.#/#..##/#...#/#...#"),
+    ('O', ".###./#...#/#...#/#...#/#...#/#...#/.###."),
+    ('P', "####./#...#/#...#/####./#..../#..../#...."),
+    ('Q', ".###./#...#/#...#/#...#/#.#.#/#..#./.##.#"),
+    ('R', "####./#...#/#...#/####./#.#../#..#./#...#"),
+    ('S', ".####/#..../#..../.###./....#/....#/####."),
+    ('T', "#####/..#../..#../..#../..#../..#../..#.."),
+    ('U', "#...#/#...#/#...#/#...#/#...#/#...#/.###."),
+    ('V', "#...#/#...#/#...#/#...#/#...#/.#.#./..#.."),
+    ('W', "#...#/#...#/#...#/#.#.#/#.#.#/#.#.#/.#.#."),
+    ('X', "#...#/#...#/.#.#./..#../.#.#./#...#/#...#"),
+    ('Y', "#...#/#...#/.#.#./..#../..#../..#../..#.."),
+    ('Z', "#####/....#/...#./..#../.#.../#..../#####"),
+    ('[', "###/#../#../#../#../#../###"),
+    ('\\', "#..../#..../.#.../..#../...#./....#/....#"),
+    (']', "###/..#/..#/..#/..#/..#/###"),
+    ('^', "..#../.#.#./#...#"),
+    ('_', "...../...../...../...../...../...../...../#####"),
+    ('`', "#./.#"),
+    ('a', "...../...../.###./....#/.####/#...#/.####"),
+    ('b', "#..../#..../####./#...#/#...#/#...#/####."),
+    ('c', "..../..../.###/#.../#.../#.../.###"),
+    ('d', "....#/....#/.####/#...#/#...#/#...#/.####"),
+    ('e', "...../...../.###./#...#/#####/#..../.###."),
+    ('f', "..##/.#../####/.#../.#../.#../.#.."),
+    ('g', "...../...../.####/#...#/#...#/#...#/.####/....#/.###."),
+    ('h', "#..../#..../####./#...#/#...#/#...#/#...#"),
+    ('i', "#/./#/#/#/#/#"),
+    ('j', "..#/.../..#/..#/..#/..#/..#/#.#/.#."),
+    ('k', "#.../#.../#..#/#.#./##../#.#./#..#"),
+    ('l', "#/#/#/#/#/#/#"),
+    ('m', "...../...../##.#./#.#.#/#.#.#/#.#.#/#.#.#"),
+    ('n', "...../...../####./#...#/#...#/#...#/#...#"),
+    ('o', "...../...../.###./#...#/#...#/#...#/.###."),
+    ('p', "...../...../####./#...#/#...#/#...#/####./#..../#...."),
+    ('q', "...../...../.####/#...#/#...#/#...#/.####/....#/....#"),
+    ('r', "..../..../#.##/##../#.../#.../#..."),
+    ('s', "...../...../.####/#..../.###./....#/####."),
+    ('t', ".#../.#../####/.#../.#../.#../..##"),
+    ('u', "...../...../#...#/#...#/#...#/#...#/.####"),
+    ('v', "...../...../#...#/#...#/#...#/.#.#./..#.."),
+    ('w', "...../...../#...#/#...#/#.#.#/#.#.#/.#.#."),
+    ('x', "...../...../#...#/.#.#./..#../.#.#./#...#"),
+    ('y', "...../...../#...#/#...#/#...#/#...#/.####/....#/.###."),
+    ('z', "...../...../#####/...#./..#../.#.../#####"),
+    ('{', "..#/.#./.#./#../.#./.#./..#"),
+    ('|', "#/#/#/#/#/#/#"),
+    ('}', "#../.#./.#./..#/.#./.#./#.."),
+    ('~', "...../...../.#.../#.#.#/...#."),
+];
 
 /// One face: frames of `cell` game pixels (rows most significant bit
 /// leftmost), each frame's advance, and the characters it draws.
@@ -27,111 +124,32 @@ pub(crate) struct Letters {
     pub map: BTreeMap<char, usize>,
 }
 
-fn reference(root: &Path, target: &str) -> Result<Vec<u8>, String> {
-    let spec = crate::text_catalog::ARCHIVES
-        .iter()
-        .find(|spec| spec.target == target)
-        .ok_or_else(|| format!("unknown font edition {target}"))?;
-    let bytes =
-        std::fs::read(root.join(spec.rom)).map_err(|error| format!("{}: {error}", spec.rom))?;
-    crate::text_catalog::verify_reference(root, target, &bytes)?;
-    Ok(bytes)
-}
-
-fn advances(
-    rom: &[u8],
-    address: u32,
-    count: usize,
-    stride: usize,
-    wide: bool,
-) -> Result<Vec<u32>, String> {
-    let start = address
-        .checked_sub(0x0800_0000)
-        .ok_or("font advances precede the ROM")? as usize;
-    (0..count)
-        .map(|index| {
-            let offset = start
-                .checked_add(index.checked_mul(stride).ok_or("font record overflow")?)
-                .ok_or("font record overflow")?;
-            let low = *rom.get(offset).ok_or("font advance exceeds the ROM")?;
-            if wide {
-                let high = *rom.get(offset + 1).ok_or("font advance exceeds the ROM")?;
-                Ok(u16::from_le_bytes([low, high]) as u32)
-            } else {
-                Ok(low as u32)
-            }
-        })
-        .collect()
-}
-/// `count` 8x8 4bpp tiles at `address` as rows of ink bits, most
-/// significant bit leftmost; each byte holds two pixels, low nibble first.
-fn tiles(
-    rom: &[u8],
-    address: u32,
-    count: usize,
-    ink: impl Fn(u8) -> bool,
-) -> Result<Vec<Vec<u16>>, String> {
-    let start = address
-        .checked_sub(0x0800_0000)
-        .ok_or("font tiles precede the ROM")? as usize;
-    let bytes = start
-        .checked_add(count * 32)
-        .and_then(|end| rom.get(start..end))
-        .ok_or("font tiles exceed the ROM")?;
-    Ok(bytes
-        .chunks(32)
-        .map(|tile| {
-            tile.chunks(4)
-                .map(|row| {
-                    (0..8).fold(0u16, |bits, x| {
-                        if ink(row[x / 2] >> (x % 2 * 4) & 15) {
-                            bits | 0x8000 >> x
-                        } else {
-                            bits
-                        }
-                    })
-                })
-                .collect()
-        })
-        .collect())
-}
-/// A Western code's character; 0x7F–0x9F hold the game's own button and
-/// ornament symbols, not Latin-1, so they are left out.
-fn western(code: usize) -> Option<char> {
-    (!(0x7f..0xa0).contains(&code))
-        .then(|| char::from_u32(code as u32))
-        .flatten()
-}
-
 impl Letters {
-    /// The upright menu font: 256 8x8 tiles by character code, ink in
-    /// colour 1, advances from the menu text path's width table.
-    pub(crate) fn menu(root: &Path) -> Result<Self, String> {
-        let rom = reference(root, "tbs-en")?;
-        let rows = tiles(&rom, MENU_TILES, 256, |index| index == 1)?;
-        let mut advance = vec![0; 256];
-        advance[0x20..].copy_from_slice(&advances(&rom, 0x0803_70d4, 224, 1, false)?);
-        let mut map = BTreeMap::new();
-        for (code, rows) in rows.iter().enumerate() {
-            let blank = rows.iter().all(|row| *row == 0);
-            let Some(character) = western(code).filter(|_| code != 0x5c) else {
-                continue;
-            };
-            if advance[code] > 1 && (!blank || character == ' ') {
-                map.insert(character, code);
-            }
-        }
-        // The yen sign takes the backslash's code, as on Japanese keyboards.
-        if !map.contains_key(&'¥') && advance[0x5c] > 1 {
-            map.insert('¥', 0x5c);
-        }
-        Ok(Self {
-            cell: (8, 8),
+    /// The figures' face: every printable ASCII character of `FACE`.
+    pub(crate) fn face() -> Self {
+        let mut letters = Self {
+            cell: (8, 9),
             top: 4,
-            rows,
-            advance,
-            map,
-        })
+            rows: Vec::with_capacity(FACE.len()),
+            advance: Vec::with_capacity(FACE.len()),
+            map: BTreeMap::new(),
+        };
+        for (frame, (character, glyph)) in FACE.iter().enumerate() {
+            let mut rows = vec![0u16; letters.cell.1 as usize];
+            let mut width = 0;
+            for (y, row) in glyph.split('/').enumerate() {
+                width = row.len() as u32;
+                for (x, pixel) in row.bytes().enumerate() {
+                    if pixel == b'#' {
+                        rows[y] |= 0x8000 >> x;
+                    }
+                }
+            }
+            letters.rows.push(rows);
+            letters.advance.push(width + 1);
+            letters.map.insert(*character, frame);
+        }
+        letters
     }
     /// A character's frame, when the face draws it.
     pub(crate) fn frame(&self, character: char) -> Option<usize> {
@@ -240,7 +258,8 @@ pub(crate) fn mark_width(name: &str) -> u32 {
 
 #[cfg(test)]
 pub(crate) fn fixture() -> Letters {
-    // A three-pixel square for every Latin-1 code, advancing four.
+    // A three-pixel square for every Latin-1 code but the C1 controls,
+    // advancing four.
     let mut rows = vec![0u16; 16];
     for row in &mut rows[8..11] {
         *row = 0xe000;
@@ -250,8 +269,9 @@ pub(crate) fn fixture() -> Letters {
         top: 0,
         rows: vec![rows; 224],
         advance: vec![4; 224],
-        map: (0x20..0x100)
-            .filter_map(|code| Some((western(code)?, code - 0x20)))
+        map: (0x20..0x100u32)
+            .filter(|code| !(0x7f..0xa0).contains(code))
+            .filter_map(|code| Some((char::from_u32(code)?, code as usize - 0x20)))
             .collect(),
     }
 }
@@ -260,40 +280,34 @@ pub(crate) fn fixture() -> Letters {
 mod tests {
     use super::*;
     #[test]
-    fn font_advance_records_keep_stride_and_little_endian_widths() {
-        let data = [6, 1, 99, 99, 12, 2];
+    fn the_face_draws_printable_ascii_inside_its_cell() {
+        let face = Letters::face();
         assert_eq!(
-            advances(&data, 0x0800_0000, 2, 4, true).unwrap(),
-            [262, 524]
+            face.map.keys().copied().collect::<String>(),
+            (' '..='~').collect::<String>()
         );
-        assert_eq!(advances(&data, 0x0800_0000, 2, 4, false).unwrap(), [6, 12]);
-        assert!(advances(&data, 0x0800_0000, 3, 4, true).is_err());
-        assert!(advances(&data, 0x0700_0000, 1, 4, false).is_err());
-    }
-    #[test]
-    fn font_tiles_read_low_nibble_first_and_stay_inside_the_rom() {
-        let mut rom = vec![0u8; 32];
-        rom[0] = 0x01;
-        rom[4] = 0x10;
-        rom[31] = 0x11;
-        let rows = tiles(&rom, 0x0800_0000, 1, |index| index == 1).unwrap();
-        assert_eq!(rows[0][0], 0x8000);
-        assert_eq!(rows[0][1], 0x4000);
-        assert_eq!(rows[0][7], 0x0300);
-        assert!(tiles(&rom, 0x0800_0000, 2, |_| true).is_err());
-        assert!(tiles(&rom, 0x0700_0000, 1, |_| true).is_err());
-    }
-    #[test]
-    fn the_rom_font_draws_its_face() {
-        let root = crate::coverage::tree::root();
-        let menu = Letters::menu(&root).unwrap();
-        assert_eq!((menu.cell, menu.top, menu.rows.len()), ((8, 8), 4, 256));
-        let h = menu.frame('H').unwrap();
-        assert_eq!(h, 0x48);
-        assert!((0..8).any(|y| menu.ink(h, 0, y) || menu.ink(h, 1, y)));
-        assert!(menu.frame('é').is_some() && menu.frame('\\').is_none());
-        assert_eq!(menu.frame('\u{8c}'), None);
-        assert_eq!(menu.width("—"), menu.width("?"));
+        for (character, glyph) in FACE {
+            let rows = glyph.split('/').collect::<Vec<_>>();
+            assert!(rows.len() <= face.cell.1 as usize, "{character:?}");
+            assert!(
+                rows.iter().all(|row| row.len() == rows[0].len()
+                    && row.len() < face.cell.0 as usize
+                    && row.bytes().all(|pixel| pixel == b'.' || pixel == b'#')),
+                "{character:?}"
+            );
+            // Only a descender reaches below the baseline.
+            assert!(
+                rows.len() <= 7 || "gjpqy,;_".contains(character),
+                "{character:?}"
+            );
+        }
+        let h = face.frame('H').unwrap();
+        assert!((0..7).all(|y| face.ink(h, 0, y) && face.ink(h, 4, y)));
+        assert!(!face.ink(h, 5, 3) && !face.ink(h, 0, 7));
+        assert_eq!(face.width("Hi"), 6 + 2);
+        assert_eq!(face.width(" "), 4);
+        assert_eq!(face.frame('é'), None);
+        assert_eq!(face.width("—"), face.width("?"));
     }
     #[test]
     fn the_marks_are_one_colour_masks_on_a_line_box() {

@@ -1,257 +1,144 @@
-#include "TYPES.H"
-#include "BATTLE_EFX.H"
-
-/*
- * Draft for the battle-presentation sub-effect at 0x080e0564.
- *
- * Family-matched to games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
- * (owner 080ce85c, template-main-080ce85c) but this owner's size (860 bytes
- * vs the template's 724) shows it is a genuinely different sub-effect from
- * the same 0x03001eec "battle work" subsystem already partly recovered in
- * recon/tbs/en/main/080e7404.c, 080d59b0.c, 080d82b0.c, 080dc1ec.c and
- * 080e01e4.c.  This owner combines the template's direct/inline
- * BattleEffect_LoadWork(46,...)/BattleEffect_LoadWork(47,...) + heap_cache[7]/heap_cache[8]
- * "rectangle" readback (rather than 080e01e4's Func_080cef64 helper) with
- * 080e01e4's 96-pass outer loop / 512-slot shared particle pool shape.
- *
- * Per recon/tbs/en/dossiers.json#main:080e01e4's fully-derived evidence,
- * "Func_080072f4" and "Func_08007300" are NOT real callees: 0x080072f4 and
- * 0x08007300 are the r4 and r7 slots of the `_call_via_rN` trampoline at
- * recon/tbs/raw/080072e4.s (base 0x080072e4 + 4*4 and + 4*7).  Every `bl` to
- * either address in the retained assembly is an indirect call through
- * whatever DrawRectangleFn pointer the compiler most recently loaded into
- * that register -- here always one of the two "rectangle" pointers read
- * back from heap_cache[7]/heap_cache[8] right after the BattleEffect_LoadWork calls,
- * matching the immediate `ldr r4,[sp,#28]` / `ldr r7,[sp,#24]` right before
- * each such `bl` in recon/tbs/raw/080e0564.s.
+/* Draft, complete main:080e0564 [080e0564,080e08c0), 860 bytes.
+ * Commit 914176340 matched this owner byte for byte with the spray pool
+ * written as the literal EWRAM address 0x02010000. Literal RAM addresses
+ * are not allowed, and the pool through its linker-placed name,
+ * gMapCellBuffer, does not match: 876/860 bytes. GCC 2.96 folds a constant
+ * pool base plus the variant offset into one pool word (0x02010018), but
+ * with a symbol it loads gMapCellBuffer and adds 24 in the loop setup, and
+ * the extra register shifts the allocation of the frame, start and spout
+ * loops. The same happens in REEL_INIT_TITLE.C. Needs a named form of the
+ * pool that the compiler folds like a constant, or Pascal's ruling on it.
  */
-#define M2C_FIELD(expr, type_ptr, offset) \
-    (*(type_ptr)((u8 *)(expr) + (offset)))
+#include "TYPES.H"
+#include "SYSTEM.H"
+#include "FIXED_MATH.H"
+#include "BATTLE_EFX.H"
+#include "BATTLE_EFFECT_WORK.H"
+#include "EFFECT_STEP.H"
+#include "CALLBACK_SCHEDULER.H"
+#include "B5_CONTEXT.H"
 
-
-void Func_080cd594(s32 mode);
-s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
-void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
-u32 Func_08004458(void);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
-s32 Func_08002322(s32 angle);
-s32 Func_0800231c(s32 angle);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 b);
-void Func_080e3908(void *particle, s32 count, s32 flags);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
-void Func_080030f8(s32 frames);
-
-extern const u16 Data_080ede48[];
+extern u8 gBattleFxWork[];
+extern struct EffectStep gMapCellBuffer[];
+extern u16 ParticleStreams_CellOffsets[];
+extern u8 Value_0000006f;
 extern u8 Value_00000073;
 extern u8 Value_00000094;
-extern u8 Value_0000006f;
 
-void Func_080e0564(void *object)
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_EndCanvasLayer(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
+void BattleMotion_ApplyVariantMotionFar(s32 id, s32 mode);
+void BattleEventRuntime_BeginPhaseFar(s32 phase);
+void Camera_ApplyShake(s32 x, s32 y);
+void ObjectGroup_TickMemberTimers(void);
+void Audio_PlayCue(s32 cue);
+
+#define HI(v) (((s16 *)&(v))[1])
+
+/* Battle effect: a swinging beam sweeps across the field for 80 frames
+   while ten spouts start four frames apart from frame 16, each rising 12
+   pixels a frame; as each starts it throws sixteen droplets into the spray
+   pool, shakes every target and, for odd spouts, plays a cue. Droplets
+   fall under gravity and shrink as they age. */
+void BattleFx_RunSpoutBursts(struct BattleEffectArgument *object)
 {
     void **heap_cache;
     void **cursor;
-    void *work;
-    void *draw_destination;
-    void *extra_target;
-    void *rectangle_b;
-    void *rectangle_a;
-    u8 *ring;
-    s32 i;
-    s32 accumulator;
+    struct BattleEffectWork *work;
+    void *canvas;
     s32 frame;
+    DrawRectangleFn draw[2];
+    u8 *sheet;
+    s32 angle;
+    struct EffectStep *spout;
+    struct EffectStep *drop;
+    s32 i;
+    s32 j;
+    s32 start;
+    s32 x;
+    s32 y;
+    s32 spin;
+    s32 speed;
+    s32 size;
 
-    heap_cache = (void **) 0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
-    draw_destination = *cursor;
-    extra_target = heap_cache[2];
-    M2C_FIELD(work, s32 *, 0x7828) = (s32) object;
-    Func_080cd594(0);
-    M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
-
+    canvas = *cursor;
+    sheet = heap_cache[2];
+    work->effect = object;
+    BattleFx_BeginCanvasLayer(0);
+    *(volatile u16 *)0x04000052 = 0x1010;
     BattleEffect_LoadWork(46, 7, 7, 11, 2);
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
-    rectangle_a = heap_cache[7];
-    rectangle_b = heap_cache[8];
-
-    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
-    Resource_LoadAndDecompress((s32) &Value_00000094, work, 1, 1);
-    Resource_LoadAndDecompress((s32) &Value_0000006f, (u8 *) work + 0x2F8, 1, 0);
-
-    M2C_FIELD(work, s32 *, 0x7780) = 2;
-    M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *) 0x080CD261, 0x480);
-
-    ring = (u8 *) work + 0x7080;
+    draw[0] = heap_cache[7];
+    draw[1] = heap_cache[8];
+    Resource_LoadAndDecompress((s32)&Value_00000073, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&Value_00000094, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&Value_0000006f, (u8 *)work + 0x2f8, 1, 0);
+    work->transfer_mode = 2;
+    work->transfer_value = 75;
+    Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
     for (i = 0; i != 32; i++) {
-        M2C_FIELD(ring, s32 *, 0) = (s32) (Func_08004458() & 63);
-        M2C_FIELD(ring, s32 *, 4) = 104;
-        ring += 28;
+        spout = &work->particles[i];
+        spout->x = Random16() & 63;
+        spout->y = 104;
     }
-
-    {
-        s32 *cursor2;
-
-        cursor2 = (s32 *) 0x02010018;
-        i = 0;
-        do {
-            i++;
-            *cursor2 = -1;
-            cursor2 += 7;
-        } while (i != 512);
-    }
-
-    Func_080f9010(141);
-    frame = 0;
-    accumulator = 0x8000;
-    do {
+    for (i = 0; i != 512; i++)
+        gMapCellBuffer[i].variant = -1;
+    Audio_PlayCue(141);
+    for (frame = 0, angle = 0x8000; frame != 96; frame++) {
         if (frame <= 79) {
-            s32 sin_val;
-            s32 cos_val;
-            s32 scale;
-            s32 x;
-            s32 y;
-
-            sin_val = Func_08002322(accumulator);
-            cos_val = Func_0800231c(accumulator);
-            scale = 64 - frame * 2;
-            x = ((sin_val * 24) >> 16) + 22;
-            y = ((scale * cos_val) >> 16) + 29;
-            ((DrawRectangleFn) rectangle_b)(
-                draw_destination, work, x, y, 20, 38);
+            x = ((Trig_Sin(angle) * 3) << 3) >> 16;
+            y = ((64 - frame * 2) * Trig_Cos(angle)) >> 16;
+            draw[1](canvas, work, x + 22, y + 29, 20, 38);
         }
-
-        if (frame == 56) {
-            Func_080b50e8(133);
-        }
-
-        {
-            s32 slot;
-            s32 threshold;
-            s32 particle_base;
-            u8 *slot_ring;
-
-            slot_ring = (u8 *) work + 0x7080;
-            threshold = 16;
-            particle_base = 0;
-            slot = 0;
-            do {
-                if (frame >= threshold) {
-                    ((DrawRectangleFn) rectangle_a)(
-                        draw_destination, (u8 *) work + 0x9E0,
-                        M2C_FIELD(slot_ring, s32 *, 0) - 17,
-                        M2C_FIELD(slot_ring, s32 *, 4) - 32, 34, 65);
-
-                    if (frame == threshold) {
-                        u8 *particle;
-
-                        particle = (u8 *) 0x02010000 + particle_base;
-                        i = 0;
-                        do {
-                            u32 kind;
-                            s32 scale;
-
-                            kind = (Func_08004458() & 0x7FFF) + 0x4000;
-                            scale = (s32) (Func_08004458() & 0x1FF) + 0x100;
-                            M2C_FIELD(particle, s32 *, 0) =
-                                M2C_FIELD(slot_ring, s32 *, 0) << 16;
-                            M2C_FIELD(particle, s32 *, 4) =
-                                (M2C_FIELD(slot_ring, s32 *, 4) + 16) << 16;
-                            M2C_FIELD(particle, s32 *, 12) =
-                                (scale * Func_08002322((s32) kind)) >> 7;
-                            M2C_FIELD(particle, s32 *, 16) =
-                                (scale * Func_0800231c((s32) kind)) >> 6;
-                            M2C_FIELD(particle, s32 *, 24) =
-                                (s32) ((Func_08004458() & 15) + 32);
-                            particle += 28;
-                            i++;
-                        } while (i != 16);
-
-                        if (slot & 1) {
-                            Func_080f9010(133);
-                        }
-
-                        M2C_FIELD(work, s32 *, 0x77A8) = 4;
-                        if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
-                                s32 *, 20) != 0) {
-                            s32 member_id_offset;
-                            s32 idx;
-
-                            member_id_offset = 36;
-                            idx = 0;
-                            do {
-                                Func_080d6888(
-                                    M2C_FIELD(M2C_FIELD(work, void **,
-                                        0x7828), s16 *, member_id_offset),
-                                    7, 5, idx, 6);
-                                Func_080b5088(
-                                    M2C_FIELD(M2C_FIELD(work, void **,
-                                        0x7828), s16 *, member_id_offset),
-                                    6);
-                                idx++;
-                                member_id_offset += 2;
-                            } while (idx != M2C_FIELD(M2C_FIELD(work,
-                                    void **, 0x7828), s32 *, 20));
-                        }
+        if (frame == 56)
+            BattleEventRuntime_BeginPhaseFar(133);
+        for (i = 0, start = 16, spout = work->particles; i != 10; start += 4, spout++, i++) {
+            if (frame >= start) {
+                draw[0](canvas, (u8 *)work + 0x9e0, spout->x - 17, spout->y - 32, 34, 65);
+                if (frame == start) {
+                    for (j = 0, drop = &gMapCellBuffer[i * 32]; j != 16; j++) {
+                        spin = (Random16() & 0x7fff) + 0x4000;
+                        speed = (Random16() & 0x1ff) + 256;
+                        drop->x = spout->x << 16;
+                        drop->y = (spout->y + 16) << 16;
+                        drop->velocity_x = (Trig_Sin(spin) * speed) >> 7;
+                        drop->velocity_y = (Trig_Cos(spin) * speed) >> 6;
+                        drop->variant = (Random16() & 15) + 32;
+                        drop++;
                     }
-
-                    M2C_FIELD(slot_ring, s32 *, 4) =
-                        M2C_FIELD(slot_ring, s32 *, 4) - 12;
+                    if (i & 1)
+                        Audio_PlayCue(133);
+                    work->shake_frames = 4;
+                    for (j = 0; j != work->effect->count; j++) {
+                        ObjectGroup_UpdateMembers(work->effect->actors[j], 7, 5, j, 6);
+                        BattleMotion_ApplyVariantMotionFar(work->effect->actors[j], 6);
+                    }
                 }
-
-                particle_base += 0x380;
-                threshold += 4;
-                slot_ring += 28;
-                slot++;
-            } while (slot != 10);
-        }
-
-        {
-            u8 *particle;
-
-            particle = (u8 *) 0x02010000;
-            for (i = 0; i != 512; i++) {
-                if (M2C_FIELD(particle, s32 *, 24) != -1) {
-                    s32 lifetime;
-                    s32 idx;
-                    s32 half;
-                    s32 y;
-                    s32 h;
-
-                    lifetime = M2C_FIELD(particle, s32 *, 24);
-                    idx = ((lifetime >= 0 ? lifetime : lifetime + 15) >> 4)
-                        + 2;
-                    half = (idx + ((u32) idx >> 31)) >> 1;
-                    y = M2C_FIELD(particle, s16 *, 2) - half;
-                    h = M2C_FIELD(particle, s16 *, 6) - idx;
-                    ((DrawRectangleFn) rectangle_b)(
-                        draw_destination,
-                        (u8 *) extra_target + Data_080ede48[idx - 1],
-                        y, h, idx, idx << 1);
-                    Func_080e3908(particle, 62, 0x2000);
-                    M2C_FIELD(particle, s32 *, 24) =
-                        M2C_FIELD(particle, s32 *, 24) - 1;
-                }
-                particle += 28;
+                spout->y -= 12;
             }
         }
-
-        Func_080e155c(4, 4);
-        Func_080cd52c();
-        M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
-
-        accumulator -= 2048;
-        frame++;
-    } while (frame != 96);
-
-    Func_08004278((void *) 0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Func_080cdbc0();
+        for (i = 0; i != 512; i++) {
+            if (gMapCellBuffer[i].variant != -1) {
+                size = gMapCellBuffer[i].variant / 16 + 2;
+                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
+                    HI(gMapCellBuffer[i].x) - size / 2, HI(gMapCellBuffer[i].y) - size, size, size * 2);
+                EffectStep_AdvanceWithGravity2D(&gMapCellBuffer[i], 62, 0x2000);
+                gMapCellBuffer[i].variant--;
+            }
+        }
+        Camera_ApplyShake(4, 4);
+        ObjectGroup_TickMemberTimers();
+        work->transfer_pending = 1;
+        WaitFrames(1);
+        angle -= 0x800;
+    }
+    Scheduler_RemoveCallback((u32)BattlePresentation_ProcessPendingGraphicsTransfer);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
 }

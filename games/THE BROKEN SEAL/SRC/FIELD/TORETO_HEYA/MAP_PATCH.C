@@ -3,7 +3,7 @@
 #include "FIELD_EVENT.H"
 
 /* Each patch stores flag, enabled, source x/y and destination x/y. */
-extern s16 Data_02009ca8[];
+extern s16 ToretoHeya_MapPatches[];
 
 /* Copy the one-cell patch of each enabled entry whose flag is set. */
 void ToretoHeya_ApplyFlaggedMapPatches(void)
@@ -13,10 +13,10 @@ void ToretoHeya_ApplyFlaggedMapPatches(void)
      * sentinel and offset, matching the loop preheader. */
     struct Half { u16 v; } size;
 
-    for (i = 0; Data_02009ca8[i] != -1; i += 6) {
+    for (i = 0; ToretoHeya_MapPatches[i] != -1; i += 6) {
         size.v = 1;
-        if (Engine_GameFlagIsSet(Data_02009ca8[i]) && Data_02009ca8[i + 1] != 0)
-            Map_CopyCellsTo(Data_02009ca8[i + 2], Data_02009ca8[i + 3],
-                Data_02009ca8[i + 4], Data_02009ca8[i + 5], size.v, size.v);
+        if (Engine_GameFlagIsSet(ToretoHeya_MapPatches[i]) && ToretoHeya_MapPatches[i + 1] != 0)
+            Map_CopyCellsTo(ToretoHeya_MapPatches[i + 2], ToretoHeya_MapPatches[i + 3],
+                ToretoHeya_MapPatches[i + 4], ToretoHeya_MapPatches[i + 5], size.v, size.v);
     }
 }

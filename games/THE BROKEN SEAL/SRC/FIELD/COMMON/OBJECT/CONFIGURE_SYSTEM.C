@@ -1,8 +1,8 @@
 #include "DMA.H"
 extern u8 Func_0800a418[];
 
-/* The table size is a link-time symbol, loaded from the literal pool. */
-extern u8 Value_0000007c;
+/* The strided tile copy runs from a heap copy of itself. */
+extern u8 Tile_CopyStridedCodeSize[];
 
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
@@ -11,7 +11,8 @@ void PaletteDma_LoadBlock(void);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 /* Allocates and clears the object and state blocks (from the heap in mode
-   3), loads the object graphics and copies the 0x7c-byte object table. */
+   3), loads the object graphics and copies the strided tile copy routine
+   into heap block 53. */
 void ObjectSystem_Configure(s32 mode)
 {
     void *objects;
@@ -33,7 +34,7 @@ void ObjectSystem_Configure(s32 mode)
     zero = 0;
     Dma_Set((const void *)&zero, states, 0x85000180, (volatile u32 *)0x040000d4);
     VramBlock_LoadCached(93, 128, (const void *)0x08012f20);
-    size = (u32)&Value_0000007c;
+    size = (u32)Tile_CopyStridedCodeSize;
     table = Runtime_AllocateHeapBlock(53, size);
     Dma_Set((const void *)Func_0800a418, table, 0x84000000 | (size >> 2),
             (volatile u32 *)0x040000d4);

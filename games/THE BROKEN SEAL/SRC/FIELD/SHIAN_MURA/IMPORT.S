@@ -32,7 +32,13 @@ Vector_AddPolarOffset:
 Engine_ObjectSetAnimation:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	overlay_veneer ObjectDispatch_InitializeFar
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
+	.global Engine_MapAnimateCells
+	.thumb_func
+Engine_MapAnimateCells:
 	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
@@ -46,6 +52,9 @@ Object_CheckMovementCollision:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Engine_ObjectSetBlendMode
+	.thumb_func
+Engine_ObjectSetBlendMode:
 	overlay_veneer Animation_SetStateField5Bits2To3Far
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -95,8 +104,17 @@ Engine_ActorSetDestination:
 	.thumb_func
 Engine_ObjectMotionSetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	.global Engine_ActorWalkToAndWait
+	.thumb_func
+Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	.global Engine_ActorCenterAndWalk
+	.thumb_func
+Engine_ActorCenterAndWalk:
 	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
 	.global Engine_ActorSetDestinationOffset
 	.thumb_func
@@ -114,6 +132,9 @@ Engine_ActorSetPosition:
 	.thumb_func
 Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
+	.global Engine_ActorStartRepeatedMotion
+	.thumb_func
+Engine_ActorStartRepeatedMotion:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	.global Engine_ActorRunRepeatedMotion
 	.thumb_func
@@ -143,14 +164,29 @@ Engine_EventShowMessage:
 	.thumb_func
 Engine_EventShowMessageAndWait:
 	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	.global Engine_EventAskYesNo
+	.thumb_func
+Engine_EventAskYesNo:
 	overlay_veneer BattleEventRuntime_ProcessActionFar
 	.global Engine_ActorFaceDirection
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Engine_ActorSetSpritePriority
+	.thumb_func
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
+	.global Engine_ActorShowEmote
+	.thumb_func
+Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global BattleFx_RunPageEffectForSlot
+	.thumb_func
+BattleFx_RunPageEffectForSlot:
 	overlay_veneer BattleFx_RunPageEffectForSlotFar
 	.global BattleFx_SetQueuedSoundAndPlay
 	.thumb_func

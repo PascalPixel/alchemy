@@ -64,7 +64,6 @@ struct EffectRecord {
     u8 pad5c[6];
     u8 active;
 };
-extern u8 Value_00000925;
 u8 *Object_GetByIdFar();
 void OverlayObject_SetPositionAndHeading();
 void FieldScene_RunSceneStep();
@@ -108,7 +107,7 @@ void SceneState_RunFlagGatedSetupCascade(void)
         }
     }
 
-    if (GameFlag_IsSet((s32)&Value_00000925) != 0) {
+    if (GameFlag_IsSet(0x925) != 0) {
         FieldScene_RunSceneStep(18, 0, 0);
         return;
     }

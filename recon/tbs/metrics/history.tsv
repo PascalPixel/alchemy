@@ -75,4 +75,4 @@ date	tbs_done	tbs_executable	tbs_percent	tla_done	tla_executable	tla_percent	mod
 2026-09-26	1002076	1375934	-	42332	1975640	-	Astra 6=191;Opus 5.5=5;Sol 5.6=52;Sol 6=218	-
 2026-09-27	1013342	1375934	-	42338	1975640	-	Astra 6=398;GPT-6=1;Sol 6=171	-
 2026-09-28	735686	1369624	-	99838	1972424	-	Astra 6=17;Opus 5.5=304;Sol 6=10	Reconstruction catalogs, receipts and stored compression controls removed; DONE counts only code the linker places from maintained source in a byte-identical build.
-2026-09-29	772620	1369594	-	99838	1972424	-	Opus 5.5=116	-
+2026-09-29	846934	1369534	-	99838	1972424	-	Opus 5.5=128	-

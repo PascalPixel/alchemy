@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IO_REG.H"
 extern u8 Data_03001cb0[];
 
 #ifndef SERIAL_RUNTIME_TU
@@ -29,9 +30,6 @@ struct SerialRuntime {
 };
 
 #define SERIAL_RUNTIME ((struct SerialRuntime *)0x02002240)
-#define REG_SIODATA32 ((volatile u32 *)0x04000120)
-#define REG_SIOCNT16 (*(volatile u16 *)0x04000128)
-#define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
 #endif
 
 void SerialRuntime_HandleTransferInterrupt(void)
@@ -131,7 +129,6 @@ void SerialRuntime_RemoveIrqHandlers(void)
 }
 
 extern volatile u16 gLinkStatus;
-extern volatile u32 Data_04000128;
 s32 WaitFrames(s32);
 
 u32 SerialRuntime_WaitForStatusMask(s32 mask)
@@ -141,5 +138,6 @@ u32 SerialRuntime_WaitForStatusMask(s32 mask)
             WaitFrames(1);
         } while ((mask & gLinkStatus) != mask);
     }
-    return (Data_04000128 << 0x1A) >> 0x1E;
+    /* SIOCNT bits 4-5: this unit's multiplayer ID. */
+    return (REG_SIOCNT << 0x1A) >> 0x1E;
 }

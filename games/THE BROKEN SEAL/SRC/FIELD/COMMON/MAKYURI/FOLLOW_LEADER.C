@@ -4,7 +4,7 @@
 
 #define FrameCounter (*(u32 *)&gFrameCount)
 
-s32 Main_08000110(s32 value);
+s32 FixedSqrt(s32 value);
 
 struct FollowDetail {
     u8 unknown_00[5];
@@ -41,12 +41,12 @@ s32 Makyuri_FollowLeader(struct FieldActor *actor)
     actor->target_z = ACTOR_NO_TARGET;
     dx = (tx - actor->x.fixed) / 0x10000;
     dz = (tz - actor->z.fixed) / 0x10000;
-    dist = ((u16 (*)(s32))0x030001d8)(dx * dx + dz * dz);
+    dist = (u16)Iwram_Sqrt(dx * dx + dz * dz);
     dx = tx - actor->x.fixed;
     dz = tz - actor->z.fixed;
     dist <<= 16;
     if (dist < 0x400000)
-        dist = Main_08000110(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
+        dist = FixedSqrt(Iwram_MulQ16(dx, dx) + Iwram_MulQ16(dz, dz));
     step = dist / 8;
     if (step > actor->speed)
         step = actor->speed;
@@ -55,8 +55,8 @@ s32 Makyuri_FollowLeader(struct FieldActor *actor)
         actor->z.fixed = tz;
     } else {
         if (dist > step) {
-            dx = Iwram_MulQ16(((s32 (*)(s32, s32))0x0300013c)(dist, dx), step);
-            dz = Iwram_MulQ16(((s32 (*)(s32, s32))0x0300013c)(dist, dz), step);
+            dx = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dx), step);
+            dz = Iwram_MulQ16(Iwram_RatioMulQ14(dist, dz), step);
         }
         actor->x.fixed += dx;
         actor->z.fixed += dz;

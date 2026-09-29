@@ -8,6 +8,10 @@ void HaidiaMura_OpenVillagerLane(void);
 void Scene_RepairTheHouse(void);
 void SceneState_Send210AndApplyRectAt40x84(void);
 void BattleFx_SetQueuedSoundAndPlay(s32 value);
+void SceneActor_SetFlagByteBySlotZeroPosition(void);
+void FieldScene_RunScene373SequenceB(void);
+s32 SceneActor_RunStep18WhenTargetSet();
+extern u8 gHaidiaMuraActor22Actions[];
 
 
 
@@ -64,7 +68,7 @@ s32 HaidiaMura_ApplyEntryState(void)
         HaidiaMura_OpenVillagerLane();
         actor->unknown_22 = 3;
         actor->motion_flags = 0;
-        Engine_TaskAddCallback((void (*)(void))0x200da95, 0xc80);
+        Engine_TaskAddCallback(SceneActor_SetFlagByteBySlotZeroPosition, 0xc80);
         if (!Engine_GameFlagIsSet(0x87a)) {
             if (Value1(Engine_GameFlagIsSet, 0x815)) {
                 actor = Engine_ActorGet(21);
@@ -82,15 +86,15 @@ s32 HaidiaMura_ApplyEntryState(void)
                 if (!Engine_GameFlagIsSet(0x109)) {
                     if (Engine_GameFlagIsSet(0x823)) {
                         Call3(Engine_ActorSetPosition, 22, 0x1000000, 0x1c80000);
-                        Engine_ActorGet(22)->update = (void *)0x200d72d;
-                        Engine_ActorEnableActionCallback(22, (const u8 *)0x200e248);
+                        Engine_ActorGet(22)->update = (void *)SceneActor_RunStep18WhenTargetSet;
+                        Engine_ActorEnableActionCallback(22, gHaidiaMuraActor22Actions);
                     }
                 } else {
                     Engine_ActorGet(22)->unknown_5b = set;
                     Engine_GameFlagClear(0x241);
                 }
                 if (gGameState.entrance != 16 && !Engine_GameFlagIsSet(0x87a)) {
-                    Engine_TaskAddCallback((void (*)(void))0x200da41, 0xc80);
+                    Engine_TaskAddCallback(FieldScene_RunScene373SequenceB, 0xc80);
                 }
             }
             if (!Value1(Engine_GameFlagIsSet, 0x308) && gGameState.entrance == 17) {

@@ -10,6 +10,7 @@ const USAGE: &str = "usage: psynergy <command> [args]\n\
   decompile INPUT       recover draft C from an explicit Thumb image\n\
   disassemble INPUT     decode a bounded Thumb image\n\
   decode-lz INPUT       decode one tagged LZ stream at --offset\n\
+  convert FORMAT        convert one explicit asset file (convert --help lists formats)\n\
 No default ROM, project registry, compiler route, or adoption authority.";
 const CODE_USAGE: &str = "usage: psynergy decompile INPUT --base ADDRESS --entry ADDRESS --span BYTES [--name NAME] [--out FILE]\n\
        psynergy disassemble INPUT --base ADDRESS --entry ADDRESS --span BYTES [--source] [--out FILE]\n\
@@ -186,6 +187,8 @@ fn main() -> ExitCode {
         "decompile" | "disassemble" => code(command, rest),
         "decode-lz" if help => Ok(cli::decode_lz::USAGE.into()),
         "decode-lz" => cli::decode_lz::run(rest),
+        "convert" if help => Ok(cli::convert::USAGE.into()),
+        "convert" => cli::convert::run(rest),
         _ => Err(format!("unknown psynergy command: {command}\n{USAGE}")),
     };
     match result {

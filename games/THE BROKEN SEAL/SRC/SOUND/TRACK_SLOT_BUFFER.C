@@ -149,8 +149,6 @@ void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input)
     }
 }
 
-extern u8 Data_0000443c[];
-
 void AudioTrack_CopyBufferedBytes(u8 *destination)
 {
     u32 cnt_off = 0x4404;
@@ -162,7 +160,7 @@ void AudioTrack_CopyBufferedBytes(u8 *destination)
     u32 count = *cnt_p;
 
     if (count != 0) {
-        u32 displacement = (u32)Data_0000443c;
+        u32 displacement = 0x443c;
         u32 *offset = (u32 *)(base + displacement);
         u32 *cnt_p2;
         u8 *source;

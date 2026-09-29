@@ -12,40 +12,51 @@
    Both still coalesce dst and buffer into r5, omit the reference's r6 copy,
    and move the first zero/store; the helper also assigns its counter r2.
    Fresh retained baseline is 356 / 33 / 27. Independent reset-zero lifetime
-   alone does not recover the resource/cursor ownership; no adoption. */
-#include "DMA.H"
+   alone does not recover the resource/cursor ownership; no adoption.
+   2026-09-29 stock agscc, the decode buffer through its linker-placed
+   name gMapCellBuffer (literal RAM addresses are no longer allowed):
+   Title_ShowAnimatedSplash, 356 of 356 bytes, 49 differing lines, 52
+   aligned edits. Passing gMapCellBuffer to the decoder and then copying
+   it keeps the reference's buffer copy (r5 to the cursor) but loads the
+   symbol after the entry call; assigning it to a variable before the call
+   hoists the load like the reference but GCC then propagates the symbol
+   and drops the copy (65 lines). A constant base keeps both, a symbol
+   neither. Declaration order does not move either form. Needs a form of
+   the named buffer that is loaded before the call and still copied. */
+#include "TYPES.H"
 #include "SYSTEM.H"
+#include "DMA.H"
 
-struct BgOffset {
-    u16 x;
-    u16 y;
+struct BgScroll {
+    s16 x;
+    s16 y;
 };
 
 extern u8 Data_03001d18;
-extern u8 Value_00000019;
-extern struct BgOffset Data_03001ad0[4];
+extern u8 gMapCellBuffer[];
+extern struct BgScroll gBgScroll[4];
 extern u32 Data_03001e40;
-extern u32 Data_03001c94;
+extern volatile u32 gKeyState;
+extern u8 Value_00000019;
 
 void Scheduler_ResetTaskTable(void);
-void Blend_SetDarkenTarget16(s32 duration);
+void Blend_SetDarkenTarget16(s32 frames);
+void Blend_SetBrightenTarget0(s32 frames);
+void Blend_WaitForTransition(void);
 void Bg0_ClearTilemap(void);
 void Ui_LoadWindowGraphics(void);
-void Blend_SetBrightenTarget0(s32 duration);
-void Blend_WaitForTransition(void);
-void *Resource_GetTableEntry(s32 id);
+u8 *Resource_GetTableEntry(s32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
 
-s32 Func_080f2d54(void)
+/* Title: show the animated splash picture. Its four 1KB tile frames cycle
+   every eight frames for up to two seconds, or until A or START. */
+s32 Title_ShowAnimatedSplash(void)
 {
     s32 resource;
     u32 i;
     u8 *buffer;
-    u32 frame;
-    struct BgOffset *offset;
-    struct BgOffset *walk;
+    struct BgScroll *scroll;
     s32 zero;
-    u8 *dst;
 
     Data_03001d18 = 1;
     resource = (s32)&Value_00000019;
@@ -55,22 +66,20 @@ s32 Func_080f2d54(void)
     WaitFrames(1);
     *(volatile u16 *)0x0400000c = 0x685;
     *(volatile u16 *)0x04000000 = 0x1440;
-    offset = Data_03001ad0;
+    scroll = gBgScroll;
     zero = 0;
-    offset[2].y = zero;
-    dst = (u8 *)0x02010000;
-    Resource_DecodeType01(Resource_GetTableEntry(resource), dst);
-    buffer = dst;
-    Dma_Set(dst, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
+    scroll[2].y = zero;
+    Resource_DecodeType01(Resource_GetTableEntry(resource), gMapCellBuffer);
+    buffer = gMapCellBuffer;
+    Dma_Set(buffer, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     buffer += 0x1c0;
     Dma_Set(buffer, (void *)0x06003000, 0x84000200, (volatile u32 *)0x040000d4);
     buffer += 0x800;
     Dma_Set(buffer, (void *)0x06004000, 0x84001000, (volatile u32 *)0x040000d4);
     buffer += 0x4000;
-    walk = offset;
-    for (i = 0; i < 4; i++, walk++)
-        walk->x = walk->y = zero;
-    Dma_Set(Data_03001ad0, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
+    for (i = 0; i < 4; i++, scroll++)
+        scroll->x = scroll->y = zero;
+    Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, (volatile u32 *)0x040000d4);
     Ui_LoadWindowGraphics();
     Bg0_ClearTilemap();
     Blend_SetBrightenTarget0(1);
@@ -78,7 +87,7 @@ s32 Func_080f2d54(void)
     *(volatile u16 *)0x04000000 = 0x1540;
     for (i = 0; i < 120; i++) {
         Dma_Set(buffer + (((Data_03001e40 >> 3) & 3) << 10), (void *)0x06004100, 0x840000d0, (volatile u32 *)0x040000d4);
-        if (Data_03001c94 & 9)
+        if (gKeyState & 9)
             break;
         WaitFrames(1);
     }

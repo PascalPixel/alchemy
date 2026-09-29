@@ -124,7 +124,7 @@ struct SoundWork {
     u8 unk09;
     u8 cgb_tick;                    /* 0x00a */
     u8 transfer_period;             /* 0x00b */
-    u8 unk0c;
+    u8 max_lines;                   /* 0x00c */
     u8 unk0d[3];
     u32 frame_samples;              /* 0x010 */
     u32 output_rate;                /* 0x014 */

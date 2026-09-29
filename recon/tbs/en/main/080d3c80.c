@@ -50,21 +50,21 @@ extern u8 Value_00007824;
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 
-void Func_080cd594(s32 mode);
-void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
-u32 Func_08004458(void);
+s32 BattleFx_EndCanvasLayer(void);
+u32 Random16(void);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
 s32 Func_080022fc(s32 a, s32 b);
 s32 Math_Div(s32 a, s32 b);
-void Func_080e3908(void *particle, s32 count, s32 flags);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
 
 extern u8 Value_000000cf;
@@ -95,11 +95,11 @@ void Func_080d3c80(void *object)
     work = *cursor++;
     draw_destination = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
     Resource_LoadAndDecompress((s32) &Value_000000cf, work, 1, 1);
     callback_ptr = callbacks;
-    Func_080cef64(
+    BattleFx_FetchRectangleBlitters(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), callback_ptr);
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
@@ -112,15 +112,15 @@ void Func_080d3c80(void *object)
         record = (u8 *) work + 0x7080;
         i = 0;
         do {
-            Func_08004458();
+            Random16();
             M2C_FIELD(record, s32 *, 4) = (s32) 0xFFC00000;
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4)
                     == 1) {
-                x_base = ((Func_08004458() & 0x1F) + 0x50) << 16;
-                x_rand = 0x3F & Func_08004458();
+                x_base = ((Random16() & 0x1F) + 0x50) << 16;
+                x_rand = 0x3F & Random16();
             } else {
-                x_base = ((Func_08004458() & 0x1F) + 8) << 16;
-                x_rand = -(0x3F & Func_08004458());
+                x_base = ((Random16() & 0x1F) + 8) << 16;
+                x_rand = -(0x3F & Random16());
             }
             M2C_FIELD(record, s32 *, 0xC) = x_rand << 12;
             M2C_FIELD(record, s32 *, 0) =
@@ -206,7 +206,7 @@ void Func_080d3c80(void *object)
                                     (u8 *) work + Data_080ee214[idx]
                                         + 0x800,
                                     x, y, w, h);
-                                Func_080e3908(sub, 64, 0x2000);
+                                EffectStep_AdvanceWithGravity2D(sub, 64, 0x2000);
                                 delta = M2C_FIELD(sub, s32 *, 8);
                                 M2C_FIELD(sub, s32 *, 0x18) =
                                     M2C_FIELD(sub, s32 *, 0x18) + delta;
@@ -225,7 +225,7 @@ void Func_080d3c80(void *object)
                                 draw_destination, work,
                                 M2C_FIELD(record, s16 *, 2) - 16,
                                 M2C_FIELD(record, s16 *, 6), 32, 64);
-                            Func_080e3908(record, 64, 0x10000);
+                            EffectStep_AdvanceWithGravity2D(record, 64, 0x10000);
                             if (M2C_FIELD(record, s32 *, 4) > 0x380000) {
                                 const u8 *tbl;
                                 u8 *sub;
@@ -243,17 +243,17 @@ void Func_080d3c80(void *object)
                                     M2C_FIELD(sub, s32 *, 4) =
                                         (s32) (tbl[1] << 16);
                                     M2C_FIELD(sub, s32 *, 0xC) =
-                                        ((Func_08004458() & 0x7F) - 64)
+                                        ((Random16() & 0x7F) - 64)
                                             << 11;
                                     M2C_FIELD(sub, s32 *, 0x10) =
-                                        -(s32) (Func_08004458() & 0x7F)
+                                        -(s32) (Random16() & 0x7F)
                                             << 11;
                                     if (odd) {
                                         M2C_FIELD(sub, s32 *, 0xC) =
                                             M2C_FIELD(sub, s32 *, 0xC)
                                                 * 2;
                                         M2C_FIELD(sub, s32 *, 0x10) =
-                                            -(s32) (Func_08004458()
+                                            -(s32) (Random16()
                                                 & 0x7F)
                                                 << 12;
                                     }
@@ -272,7 +272,7 @@ void Func_080d3c80(void *object)
 
                                     m = 0;
                                     do {
-                                        Func_080d6888(
+                                        ObjectGroup_UpdateMembers(
                                             M2C_FIELD(
                                                 M2C_FIELD(work,
                                                     void **, 0x7828),
@@ -294,14 +294,14 @@ void Func_080d3c80(void *object)
                 }
             }
 
-            Func_080e155c(
+            Camera_ApplyShake(
                 M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)
                         * 2
                     + 4,
                 M2C_FIELD(M2C_FIELD(work, void **, (s32)&Value_00007828), s32 *, 0x18)
                         * 4
                     + 8);
-            Func_080cd52c();
+            ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
             Func_080030f8(1);
 
@@ -311,8 +311,8 @@ void Func_080d3c80(void *object)
                     * 2 + 1]);
     }
 
-    Func_08004278((void *) 0x080CD261);
+    Scheduler_RemoveCallback((void *) 0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

@@ -79,9 +79,9 @@ struct RuntimeCells {
 extern struct RuntimeCells Data_03001eec;
 extern u8 Data_00000073[];
 extern u8 Data_00000079[];
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080ee158[];
-extern struct EffectStep Data_02010000[];
+extern struct EffectStep gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 u32 Resource_GetTableEntry(u32 resource_id);
@@ -189,7 +189,7 @@ point_loop:
                 if (screen.y <= 127) {
                     if (screen.y >= -8) {
                         vertex = 0;
-                        trail = &Data_02010000[point_index * 10];
+                        trail = &gMapCellBuffer[point_index * 10];
                         do {
                             s32 phase;
 
@@ -229,7 +229,7 @@ point_loop:
                                     step * (next->velocity_y - y), 12);
                                 draw_rectangle[0](
                                     draw_destination,
-                                    graphics + Data_080ede48[1],
+                                    graphics + ParticleStreams_CellOffsets[1],
                                     x - 1,
                                     y - 2,
                                     2,

@@ -57,7 +57,7 @@ union SummonSprite {
 };
 
 extern struct SummonGlobals Data_03001e8c;
-extern struct SummonNavigation *Data_03001f34;
+extern struct SummonNavigation *gLinkCountdownWork;
 extern volatile u32 Data_03001c94, Data_03001b04, Data_03001e40;
 extern u8 Data_080310a4[];
 extern u8 Value_0000053a, Value_00000333, Value_00005001;
@@ -321,7 +321,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             UiWindow_SetTilemapEntry(window, (s32)&Value_0000f335, window->width - 2, -1, 0);
             render->dirty |= 2 << ((u32)(window->y - 1) >> 2);
         }
-        nav = Data_03001f34;
+        nav = gLinkCountdownWork;
         nav->page = page;
         nav->row = row;
         nav->preferred_row = preferred;
@@ -342,7 +342,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
             result = ordered[page + row];
             break;
         }
-        if (Data_03001f34->active == 0 || (pressed & 2)) {
+        if (gLinkCountdownWork->active == 0 || (pressed & 2)) {
             Audio_PlayCue(113);
             result = -1;
             break;

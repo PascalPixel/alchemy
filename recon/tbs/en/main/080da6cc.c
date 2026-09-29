@@ -58,7 +58,7 @@ typedef struct Star {
 } Star;
 
 extern u8 Data_03001e50[];
-extern const u16 Data_080ede48[];
+extern const u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080eea41[];
 extern const u8 Data_080eea44[];
 extern const u8 Data_080eea4a[];
@@ -67,27 +67,27 @@ extern const u16 Data_080eea56[];
 extern u8 Value_000000b4;
 extern u8 Value_00000073;
 
-void Func_080cd594(s32 mode);
-void **Func_080b5098(s32 member_id);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void **GetBattleObjectSlotFar(s32 member_id);
 s32 Func_080b5070(s32 member_id);
-u32 Func_08004458(void);
-s32 Func_08002322(s32 angle);
+u32 Random16(void);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_080b50e8(s32 id);
 void Func_080b5028(s32 a, s32 b, s32 c, s32 d);
 void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
-void Func_080e3944(void *source, void *screen);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_080f9010(s32 id);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 void Func_080da6cc(void *object)
 {
@@ -116,9 +116,9 @@ void Func_080da6cc(void *object)
     extra_target = heap_cache[2];
     M2C_FIELD(work, void **, 0x7828) = object;
     if (M2C_FIELD(object, s32 *, 4) == 1) {
-        Func_080cd594(1);
+        BattleFx_BeginCanvasLayer(1);
     } else {
-        Func_080cd594(0);
+        BattleFx_BeginCanvasLayer(0);
     }
     Resource_LoadAndDecompress((s32) &Value_000000b4, work, 1, 1);
     Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
@@ -130,7 +130,7 @@ void Func_080da6cc(void *object)
     rectangle_slot[1] = second_rectangle;
     *(s16 *) 0x04000052 = 0x1010;
 
-    member_obj = *Func_080b5098(
+    member_obj = *GetBattleObjectSlotFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
     y0 = M2C_FIELD(member_obj, s32 *, 12)
         + Func_080b5070(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
@@ -141,10 +141,10 @@ void Func_080da6cc(void *object)
         u32 rand1;
         s32 mag;
 
-        rand1 = Func_08004458();
-        mag = (Func_08004458() & 127) + 127;
-        star->vx = (mag * Func_08002322((s32) rand1)) >> 6;
-        star->vy = (((Func_08004458() & 127) - 16) << 16) >> 6;
+        rand1 = Random16();
+        mag = (Random16() & 127) + 127;
+        star->vx = (mag * Trig_Sin((s32) rand1)) >> 6;
+        star->vy = (((Random16() & 127) - 16) << 16) >> 6;
         star->vz = (mag * Func_0800231c((s32) rand1)) >> 6;
         star->x = M2C_FIELD(member_obj, s32 *, 8);
         star->y = y0;
@@ -179,7 +179,7 @@ void Func_080da6cc(void *object)
 
             Func_080b5028(0, 0, 0, 100);
             Func_080049ac();
-            Func_080051d8(facing, facing2);
+            Graphics_PrepareTransferInIwramWork(facing, facing2);
 
             if (Data_080eea41[M2C_FIELD(
                     M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)] != 0) {
@@ -201,7 +201,7 @@ void Func_080da6cc(void *object)
                             s32 size2;
                             s32 slot;
 
-                            Func_080e3944(cur, screen);
+                            EffectPosition_ApplyBaseAndYOffset(cur, screen);
                             dist = screen[2];
                             screen[0] = screen[0] >> 1;
                             if (dist <= 159) {
@@ -218,7 +218,7 @@ void Func_080da6cc(void *object)
                                 ((u8 *) rectangle_slot + slot))(
                                 draw_destination,
                                 (u8 *) extra_target
-                                    + Data_080ede48[size - 1],
+                                    + ParticleStreams_CellOffsets[size - 1],
                                 screen[0] - (size / 2),
                                 screen[1] - size,
                                 size, size2);
@@ -243,7 +243,7 @@ void Func_080da6cc(void *object)
                             member_id = M2C_FIELD(
                                 M2C_FIELD(work, void **, 0x7828), s16 *,
                                 36 + member_index * 2);
-                            member_obj2 = *Func_080b5098(member_id);
+                            member_obj2 = *GetBattleObjectSlotFar(member_id);
 
                             vx = cur->vx
                                 + ((M2C_FIELD(member_obj2, s32 *, 8) - cur->x)
@@ -278,7 +278,7 @@ void Func_080da6cc(void *object)
                                 landed_id = M2C_FIELD(
                                     M2C_FIELD(work, void **, 0x7828), s16 *,
                                     36 + landed_index * 2);
-                                Func_080d6888(landed_id, 10, 5, landed_index, 4);
+                                ObjectGroup_UpdateMembers(landed_id, 10, 5, landed_index, 4);
                                 M2C_FIELD(work, s32 *, 0x77A8) = 2;
                             }
                         }
@@ -327,8 +327,8 @@ void Func_080da6cc(void *object)
             if (M2C_FIELD(work, s32 *, 0x77B0) == 0) {
                 M2C_FIELD(work, s32 *, (s32)&Value_000077b0) = 1;
             }
-            Func_080e155c(8, 8);
-            Func_080cd52c();
+            Camera_ApplyShake(8, 8);
+            ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
             Func_080030f8(1);
 
@@ -339,9 +339,9 @@ void Func_080da6cc(void *object)
             + 132));
     }
 
-    Func_08004278((void *) 0x080CD261);
-    Func_08004278((void *) 0x080D6505);
+    Scheduler_RemoveCallback((void *) 0x080CD261);
+    Scheduler_RemoveCallback((void *) 0x080D6505);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

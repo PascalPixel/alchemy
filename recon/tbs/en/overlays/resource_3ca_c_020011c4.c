@@ -113,8 +113,8 @@ union RowCounter {
 };
 
 extern struct VramBlock Data_03001b10[];
-extern s16 Data_02009c1a;
-extern union RowCounter Data_02009c18;
+extern s16 BabiFune_FadeSlot;
+extern union RowCounter BabiFune_FadeStep;
 extern u32 Data_02009af8[];
 
 void Main_080001e8(struct Sprite *sprite, s32 value);
@@ -131,8 +131,8 @@ void Local_020011c4(void)
     s32 active;
     u32 remaining;
 
-    count = &Data_02009c18;
-    tile = Data_03001b10[Data_02009c1a].offset >> 5;
+    count = &BabiFune_FadeStep;
+    tile = Data_03001b10[BabiFune_FadeSlot].offset >> 5;
     w = Data_02009af8;
     active = count->signed_value;
     remaining = count->value;
@@ -160,7 +160,7 @@ first_row:
         *w++ = (i << 21) | y | 0x80004000;
         *w++ = tile;
     }
-    y = (Data_02009c18.signed_value / 2 + 0x98) & 0xff;
+    y = (BabiFune_FadeStep.signed_value / 2 + 0x98) & 0xff;
     for (i = 0; i < 8; i++) {
         *w++ = 0;
         *w++ = (i << 21) | y | 0x80004000;

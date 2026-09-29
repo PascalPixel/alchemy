@@ -46,14 +46,14 @@ extern u8 Value_00000003;
 
 void *Runtime_AllocateHeapBlock(s32 pool, s32 size);
 void Runtime_ReleaseHeapBlock(s32 pool);
-u32 Func_08077300(void);
+u32 Runtime_GetBuildStampTimeFar(void);
 s32 Modulo(s32 value, s32 divisor);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-void Func_0801ccc0(s32 icon, s32 icon_sub);
+void PaletteGlow_Update(s32 icon, s32 icon_sub);
 void *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 kind);
 void UiWindow_FillTilemapRect(void *win, s32 x, s32 y, s32 width, s32 height);
-void Func_0801e41c(void *win, s32 a, s32 b, s32 c, s32 d);
+void UiWindow_DrawDividerLine(void *win, s32 a, s32 b, s32 c, s32 d);
 void UiText_DrawResource(s32 message, void *win, s32 x, s32 y);
 void UiText_DrawString(void *text, void *win, s32 x, s32 y);
 void UiText_DrawFourNumbersInRow(void *win, void *entry);
@@ -95,7 +95,7 @@ s32 SaveMenu_SelectSlot(s32 idx, s32 mode)
     win3 = 0;
     redraw = 1;
     render = *(u8 **)0x03001E8C;
-    limit = Func_08077300();
+    limit = Runtime_GetBuildStampTimeFar();
     if (idx < 0) {
         idx = 0;
     }
@@ -187,8 +187,8 @@ ready:
         e++;
     } while (cnt >= 0);
 
-    Func_0801e41c(win, 0, 2, 27, 2);
-    Func_0801e41c(win, 0, 4, 27, 4);
+    UiWindow_DrawDividerLine(win, 0, 2, 27, 2);
+    UiWindow_DrawDividerLine(win, 0, 4, 27, 4);
     pair = RenderResource_CreatePair(mode, win, 72, -24);
 
 loop:
@@ -196,7 +196,7 @@ loop:
         redraw = 0;
         if (SLOT_PRESENT(idx) != 0) {
             e = SLOT(idx);
-            Func_0801ccc0(SLOT_ICON(idx), SLOT_ICON2(idx));
+            PaletteGlow_Update(SLOT_ICON(idx), SLOT_ICON2(idx));
             if (win1 == 0) {
                 win1 = UiWindow_Create(1, 10, 14, 9, 2);
             }
@@ -222,7 +222,7 @@ loop:
                 win3 = 0;
             }
         } else {
-            Func_0801ccc0(Data_02000240[0x205], Data_02000240[0x206]);
+            PaletteGlow_Update(Data_02000240[0x205], Data_02000240[0x206]);
             Menu_ClearSecondObjectRowAndScheduleUpdate();
             Menu_ClearFirstObjectRowAndScheduleUpdate();
             UiWork_Finalize(win3, 2);
@@ -233,8 +233,8 @@ loop:
             win1 = 0;
         }
         RenderOutput_RedrawSavedRect(win);
-        Func_0801e41c(win, 0, 2, 27, 2);
-        Func_0801e41c(win, 0, 4, 27, 4);
+        UiWindow_DrawDividerLine(win, 0, 2, 27, 2);
+        UiWindow_DrawDividerLine(win, 0, 4, 27, 4);
         UiWindow_FillTilemapRect(win, 0, idx * 2, 26, 1);
     }
     Ui_ApplyTableOffsetToPair(pair);
@@ -284,7 +284,7 @@ teardown:
     UiWork_Finalize(win, 2);
     Scheduler_ScheduleCallbackA();
     Runtime_ReleaseHeapBlock(55);
-    Func_0801ccc0(Data_02000240[0x205], Data_02000240[0x206]);
+    PaletteGlow_Update(Data_02000240[0x205], Data_02000240[0x206]);
     WaitFrames(1);
 
 done:

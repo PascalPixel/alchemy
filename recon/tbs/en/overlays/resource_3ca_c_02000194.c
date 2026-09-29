@@ -65,16 +65,16 @@ struct PositionWork {
 extern struct MapWork *Data_03001e70;
 extern s32 Data_020097e8;
 extern s32 Data_020097ec;
-extern s32 Data_020097f0;
+extern s32 BabiFune_Count;
 extern s32 Data_020097f8;
 extern s32 Data_020097fc;
 extern s32 Data_02009800;
 extern s32 Data_02009804;
 extern s32 Data_02009808;
-extern s32 Data_0200980c;
-extern s32 Data_02009810;
-extern s32 Data_02009814;
-extern s32 Data_02009818;
+extern s32 BabiFune_StoredSlot0;
+extern s32 BabiFune_StoredRecord1;
+extern s32 BabiFune_StoredSlot3;
+extern s32 BabiFune_StoredRecord2;
 
 void BabiFune_UpdateDriftingObject(u8 *obj);
 
@@ -106,7 +106,7 @@ void BabiFune_UpdateWaves(void)
     if (Data_020097e8 != 0) {
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
         /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */
-        scroll[0] = Data_020097f0 + ((bob + 8) << 8);
+        scroll[0] = BabiFune_Count + ((bob + 8) << 8);
         *(volatile u16 *)0x04000052 = scroll[0];
         Data_020097ec++;
     }
@@ -114,28 +114,28 @@ void BabiFune_UpdateWaves(void)
         bob = Iwram_MulQ16(Engine_MathSin(Data_02009800 << 9), 2) << 16;
         map->layers[6].y = Data_02009804 + bob;
         map->layers[7].y = Data_02009808 + bob;
-        if (Data_0200980c != -0x10000) {
+        if (BabiFune_StoredSlot0 != -0x10000) {
             actor = Engine_ActorGet(0);
-            actor->y.fixed = Data_0200980c + bob;
-            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
+            actor->y.fixed = BabiFune_StoredSlot0 + bob;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
         }
-        if (Data_02009810 != -0x10000) {
+        if (BabiFune_StoredRecord1 != -0x10000) {
             actor = Engine_ActorGet(1);
-            actor->y.fixed = Data_02009810 + bob;
-            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
+            actor->y.fixed = BabiFune_StoredRecord1 + bob;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
         }
-        if (Data_02009814 != -0x10000) {
+        if (BabiFune_StoredSlot3 != -0x10000) {
             actor = Engine_ActorGet(3);
-            actor->y.fixed = Data_02009814 + bob;
-            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
+            actor->y.fixed = BabiFune_StoredSlot3 + bob;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
         }
-        if (Data_02009818 != -0x10000) {
+        if (BabiFune_StoredRecord2 != -0x10000) {
             actor = Engine_ActorGet(2);
-            actor->y.fixed = Data_02009818 + bob;
-            *(s32 *)actor->unknown_14 = Data_0200980c + bob;
+            actor->y.fixed = BabiFune_StoredRecord2 + bob;
+            *(s32 *)actor->unknown_14 = BabiFune_StoredSlot0 + bob;
             actor->motion_flags = 0;
         }
         Data_02009800++;

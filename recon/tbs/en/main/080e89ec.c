@@ -13,7 +13,7 @@ typedef s32 M2C_UNK;
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 
-void Func_080cef64(s32 flag, DrawRectangleFn *out_callbacks);
+void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_callbacks);
 
 struct M2cAggregate_absolute_02010000 {
     u8 unknown_0000[4];
@@ -131,7 +131,7 @@ void BattleEffect_RunDualParticleStream(void *object) {
     work = M2C_FIELD(&absolute_03001eec, struct M2cAggregate_absolute_02010000 **, 0);
     graphics = absolute_03001eec.field_0008;
     M2C_FIELD(work, void **, 0x7828) = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000052 = 0x1010;
     Resource_LoadAndDecompress(0xC2, work, 1, 1);
     var_r7_47 = 1;
@@ -162,7 +162,7 @@ loop_2:
     Resource_LoadAndDecompress(0xB4, work + 0x3C00, 1, 1);
     Resource_LoadAndDecompress(0x7D, &absolute_02010000, 1, 0);
     callback_ptr = callbacks;
-    Func_080cef64(
+    BattleFx_FetchRectangleBlitters(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4),
         callback_ptr);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
@@ -179,10 +179,10 @@ loop_2:
         M2C_FIELD(var_r5_135, s32 *, 0) = var_r3_143;
         M2C_FIELD(var_r5_135, s32 *, 4) = 0;
         M2C_FIELD(var_r5_135, s32 *, 8) = 0;
-        M2C_FIELD(var_r5_135, s32 *, 0xC) = (s32) (((Func_08004458() & 0x3F) - 0x20) << 0xE);
-        M2C_FIELD(var_r5_135, s32 *, 0x10) = (s32) ((Func_08004458() & 0x3F) << 0xD);
+        M2C_FIELD(var_r5_135, s32 *, 0xC) = (s32) (((Random16() & 0x3F) - 0x20) << 0xE);
+        M2C_FIELD(var_r5_135, s32 *, 0x10) = (s32) ((Random16() & 0x3F) << 0xD);
         var_r6_133 += 1;
-        M2C_FIELD(var_r5_135, s32 *, 0x14) = (s32) (((Func_08004458() & 0x3F) - 0x20) << 0xE);
+        M2C_FIELD(var_r5_135, s32 *, 0x14) = (s32) (((Random16() & 0x3F) - 0x20) << 0xE);
         M2C_FIELD(var_r5_135, s32 *, 0x18) = 1;
         var_r5_135 += 0x1C;
     } while (var_r6_133 != 0x28);
@@ -197,10 +197,10 @@ loop_2:
         M2C_FIELD(var_r5_177, s32 *, 0) = var_r3_185;
         M2C_FIELD(var_r5_177, s32 *, 4) = 0x140000;
         M2C_FIELD(var_r5_177, s32 *, 8) = 0;
-        M2C_FIELD(var_r5_177, s32 *, 0xC) = (s32) (((Func_08004458() & 0x3F) - 0x20) << 0xE);
-        M2C_FIELD(var_r5_177, s32 *, 0x10) = (s32) ((Func_08004458() & 0x3F) << 0xC);
+        M2C_FIELD(var_r5_177, s32 *, 0xC) = (s32) (((Random16() & 0x3F) - 0x20) << 0xE);
+        M2C_FIELD(var_r5_177, s32 *, 0x10) = (s32) ((Random16() & 0x3F) << 0xC);
         var_r6_174 += 1;
-        M2C_FIELD(var_r5_177, s32 *, 0x14) = (s32) (((Func_08004458() & 0x3F) - 0x20) << 0xE);
+        M2C_FIELD(var_r5_177, s32 *, 0x14) = (s32) (((Random16() & 0x3F) - 0x20) << 0xE);
         M2C_FIELD(var_r5_177, s32 *, 0x18) = 0;
         var_r5_177 += 0x1C;
     } while (var_r6_174 != 0x10);
@@ -209,9 +209,9 @@ loop_2:
     var_r5_221 = work + 0x7080;
     do {
         if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) == 1) {
-            var_r3_235 = ((s32) (Func_08002322(var_r6_219) * 0x18) >> 0x10) + 0x58;
+            var_r3_235 = ((s32) (Trig_Sin(var_r6_219) * 0x18) >> 0x10) + 0x58;
         } else {
-            var_r3_235 = ((s32) (0 - (Func_08002322(var_r6_219) * 0x18)) >> 0x10) + 0x10;
+            var_r3_235 = ((s32) (0 - (Trig_Sin(var_r6_219) * 0x18)) >> 0x10) + 0x10;
         }
         M2C_FIELD(var_r5_221, s32 *, 0) = var_r3_235;
         var_r5_221->field_0004 = ((s32) (Func_0800231c(var_r6_219) * 0x10) >> 0x10) + 0x28;
@@ -221,7 +221,7 @@ loop_2:
         var_r6_219 += 0x1000;
         var_r5_221 += 0x1C;
     } while (var_r7_220 != 8);
-    motion_data = Func_08002f40(0xD3);
+    motion_data = Resource_GetTableEntry(0xD3);
     frame = 0;
     state_slot = work + 0x7828;
 loop_24:
@@ -299,7 +299,7 @@ block_35:
         var_r7_437 -= 8;
     } while (var_r6_434 != 0);
     Func_080049ac();
-    Func_080051d8(temp_fp_275, &temp_fp_275->unknown_0002[0xA]);
+    Graphics_PrepareTransferInIwramWork(temp_fp_275, &temp_fp_275->unknown_0002[0xA]);
     if (phase_frame <= 0x41U) {
         if (M2C_FIELD(*state_slot, s32 *, 4) == 1) {
             var_r3_512 = 0x40 - ((s32) (horizontal_offset + (horizontal_offset >> 0x1F)) >> 1);
@@ -348,7 +348,7 @@ block_35:
         var_r6_655 = work + 0x7160;
         do {
             if ((s32) M2C_FIELD(var_r6_655, s32 *, 4) >= 0) {
-                Func_080e3944(var_r6_655, position);
+                EffectPosition_ApplyBaseAndYOffset(var_r6_655, position);
                 position[0] >>= 1;
                 var_r3_667 = position[2];
                 if (var_r3_667 <= 0x9F) {
@@ -410,8 +410,8 @@ block_35:
             var_r6_779 += 0x1C;
         } while (var_r7_778 != 8);
     }
-    Func_080e155c(8, 8);
-    Func_080cd52c();
+    Camera_ApplyShake(8, 8);
+    ObjectGroup_TickMemberTimers();
     M2C_FIELD(work, s32 *, 0x7824) = 1;
     Func_080030f8(1);
     temp_r1_831 = frame + 1;
@@ -419,8 +419,8 @@ block_35:
     if (temp_r1_831 != 0x96) {
         goto loop_24;
     }
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

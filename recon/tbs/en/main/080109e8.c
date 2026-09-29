@@ -104,7 +104,7 @@ s32 Trig_Sin(s32);
 void WorldMap_BuildScanlineTable(s32, s32 *, void *);
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void Func_08010ff0(void);
-void Func_080111b4(void);
+void WorldMap_UpdateView(void);
 
 static __inline__ void Io_Set16(s32 value, u16 *reg)
 {
@@ -246,7 +246,7 @@ s32 Map_InitializePerspectiveScene(void)
     Data_03001ad0[7] = 0;
     work->window_top = 0;
     work->window_bottom = 159;
-    Scheduler_AddOrUpdateCallback((s32)Func_080111b4, 0xc85);
+    Scheduler_AddOrUpdateCallback((s32)WorldMap_UpdateView, 0xc85);
     Scheduler_AddOrUpdateCallback((s32)Func_08010ff0, 0x480);
     for (i = 255; i >= 0; i--)
         work->lines[i] = i;

@@ -116,9 +116,9 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 void Local_020042bc(void);
-void Local_020047c0(void);
-void Local_02001f60(void);
-void Local_020022c8(s32 mode);
+void Scene_RunEastParticleWaveSequence(void);
+void VinasuHeya_SettlePushedBlocks(void);
+void VinasuHeya_LowerFloatingBlocks(s32 mode);
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -392,7 +392,7 @@ s32 Scene_RunEntrySetup(void)
             if (Data_02000240_t.halves[225][0] == 11)
                 FieldScene_RunOpeningAuxiliarySequence();
             else if (Data_02000240_t.halves[225][0] == 20)
-                Local_020047c0();
+                Scene_RunEastParticleWaveSequence();
             break;
         case 4:
         case 5:
@@ -442,7 +442,7 @@ s32 Scene_RunEntrySetup(void)
                 Call3((void (*)())Engine_ActorSetPosition, 12, 0x2d70000, 158 << 18);
                 actor->update = UPDATE_B99;
             }
-            Local_02001f60();
+            VinasuHeya_SettlePushedBlocks();
             break;
         case 6:
             goto cue;
@@ -452,7 +452,7 @@ s32 Scene_RunEntrySetup(void)
         case 1:
         case 2:
             if (Engine_GameFlagIsSet(0x109)) {
-                Local_020022c8(0);
+                VinasuHeya_LowerFloatingBlocks(0);
                 OverlayObject_WaitUntilIdle(Engine_ActorGet(0));
                 for (i = 0; i <= 3; i++) {
                     actor = Engine_ActorGet(i + 10);

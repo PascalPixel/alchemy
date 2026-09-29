@@ -113,7 +113,7 @@ typedef void (*FillFn)(void *dest, s32 count, s32 value);
 extern void *Data_03001e50[];
 
 /* Sixteen halfword cell offsets shared with the rest of the family. */
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 
 /* Seven bytes per scene selector, read as a flat table because the ARM
    structure-size boundary would round a seven-member struct up to eight
@@ -163,27 +163,27 @@ struct Member {
 
 /* Declared with the address spelling the link uses; the trailing comment is
    the name `alchemy inspect` resolves for that target, where it has one. */
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_a, s32 *out_b);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
-void *Func_08002f40(s32 id);                                      /* get */
+void *Resource_GetTableEntry(s32 id);                                      /* get */
 void Func_080030f8(s32 frames);
-void Func_080e396c(s32 source, s32 *out);        /* apply_step_and_y_offset */
-struct Member **Func_080b5098(s32 member);
-u32 Func_08004458(void);                         /* random_16 */
-void Func_080b5078(s32 a, s32 member, s32 c, s32 d);
-void Func_080d6888(s32 member, s32 a, s32 b, s32 index, s32 e); /* update_members */
+void EffectPosition_ApplyStepAndYOffset(s32 source, s32 *out);        /* apply_step_and_y_offset */
+struct Member **GetBattleObjectSlotFar(s32 member);
+u32 Random16(void);                         /* random_16 */
+void BattleMotion_ApproachTargetFar(s32 a, s32 member, s32 c, s32 d);
+void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 index, s32 e); /* update_members */
 void Func_080b5088(s32 member, s32 kind);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 void Func_08002dd8(s32 id);                      /* Runtime_ReleaseHeapBlock */
 void Func_080049ac(void);                        /* Render_ResetTransformState */
-void Func_080051d8(void *a, void *b);            /* Graphics_PrepareTransferInIwramWork */
-void Func_080e3944(const void *source, s32 *out); /* apply_base_and_y_offset */
-void Func_080e38b8(void *particle, s32 a, s32 b); /* advance_with_gravity_3d */
-void Func_080e155c(s32 x, s32 y);                /* Camera_ApplyShake */
-void Func_080cd52c(void);                        /* ObjectGroup_TickMemberTimers */
-void Func_080cdbc0(void);
+void Graphics_PrepareTransferInIwramWork(void *a, void *b);            /* Graphics_PrepareTransferInIwramWork */
+void EffectPosition_ApplyBaseAndYOffset(const void *source, s32 *out); /* apply_base_and_y_offset */
+void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b); /* advance_with_gravity_3d */
+void Camera_ApplyShake(s32 x, s32 y);                /* Camera_ApplyShake */
+void ObjectGroup_TickMemberTimers(void);                        /* ObjectGroup_TickMemberTimers */
+void BattleFx_EndCanvasLayer(void);
 
 void BattlePres_RunBurstScene(void *object, s32 scene)
 {
@@ -219,7 +219,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
     sprite_src = heap[2];
     xfer = heap[-27];
     STATE = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(u16 *)0x04000052 = 0x1010;
     if (M2C_FIELD(STATE, s32 *, 0x1C) == 1) {
         Func_080de2f8(
@@ -262,25 +262,25 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
         res = (s32)&Value_000000b4;
         break;
     }
-    ((CopyFn)0x03001388)((void *)0x05000000, Func_08002f40(res), 0x80);
+    ((CopyFn)0x03001388)((void *)0x05000000, Resource_GetTableEntry(res), 0x80);
     Func_080030f8(1);
 
-    Func_080e396c(M2C_FIELD(STATE, s16 *, 0x24), anchor);
+    EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s16 *, 0x24), anchor);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
     Func_080041d8(0x080CD261, 0x480);
 
     /* Seed the sparks from the actor's world position. */
-    member = *Func_080b5098(M2C_FIELD(STATE, s16 *, 0x24));
+    member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 0x24));
     spark = SPARKS;
     i = 0;
     do {
         spark->x = member->x;
         spark->y = member->y + 0x190000;
         spark->z = member->z;
-        spark->vx = (s32)(Func_08004458() & 0xFF) << 12;
-        spark->vy = ((s32)(Func_08004458() & 0xFF) - 127) << 12;
-        spark->vz = ((s32)(Func_08004458() & 0xFF) - 127) << 12;
+        spark->vx = (s32)(Random16() & 0xFF) << 12;
+        spark->vy = ((s32)(Random16() & 0xFF) - 127) << 12;
+        spark->vz = ((s32)(Random16() & 0xFF) - 127) << 12;
         if (spark->x > 0) {
             spark->vx = -spark->vx;
         }
@@ -289,14 +289,14 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
         spark++;
     } while (i != 768);
 
-    Func_080b5078(
+    BattleMotion_ApproachTargetFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s16 *, 0x24), 4, 0);
 
     fp = 0;
     if (Data_080eed3e[scene * 7 + 5] != 0) {
         do {
             cnt = Data_080eed3e[scene * 7 + 2];
-            Func_080e396c(M2C_FIELD(STATE, s32 *, 8), pos);
+            EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
             pos[0] = pos[0] / 2;
             if (M2C_FIELD(STATE, s32 *, 4) == 0) {
                 BattleEffect_LoadWork(46, 7, 7, 3, 2);
@@ -341,7 +341,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
                     if (Data_080eed3e[scene * 7 + 6] == 1) {
                         ((FillFn)0x03000168)(draw_target, 0x4000, 0x2F2F2F2F);
                     }
-                    Func_080d6888(M2C_FIELD(STATE, s16 *, 0x24), 7, 5, 0, 4);
+                    ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s16 *, 0x24), 7, 5, 0, 4);
                     if (i == cnt - 1) {
                         Func_080b5088(M2C_FIELD(STATE, s16 *, 0x24), 4);
                         M2C_FIELD(work, s32 *, 0x77A8) = 8;
@@ -357,7 +357,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
                     if (Data_080eed3e[scene * 7 + 3] != 0) {
                         do {
                             SPARKS[i * 32 + j].timer =
-                                (s32)(Func_08004458() & 7) + 15;
+                                (s32)(Random16() & 7) + 15;
                             j++;
                         } while (j != Data_080eed3e[scene * 7 + 3]);
                     }
@@ -375,7 +375,7 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
             Func_08002dd8(47);
             Func_08002dd8(46);
             Func_080049ac();
-            Func_080051d8(xfer, (u8 *)xfer + 12);
+            Graphics_PrepareTransferInIwramWork(xfer, (u8 *)xfer + 12);
             BattleEffect_LoadWork(46, 7, 7, 3, 3);
             BattleEffect_LoadWork(47, 7, 7, 3, 2);
             blit[0] = (BlitFn)Data_03001e50[46];
@@ -387,15 +387,15 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
             do {
                 timer = spark->timer;
                 if (timer > 0) {
-                    Func_080e3944(spark, tmp);
+                    EffectPosition_ApplyBaseAndYOffset(spark, tmp);
                     size = (timer >> 3) + 1;
                     tmp[0] = tmp[0] / 2;
                     blit[(i / 2) & 1](draw_target,
                         (u8 *)sprite_src
-                            + *(u16 *)((u8 *)Data_080ede48
+                            + *(u16 *)((u8 *)ParticleStreams_CellOffsets
                                 + ((size * 2) - 2)),
                         tmp[0] - (size / 2), tmp[1] - size, size, size * 2);
-                    Func_080e38b8(spark, 60, -0x400);
+                    EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
                     if (spark->y <= 0x7FFFF) {
                         spark->vy = (-spark->vy) / 2;
                     }
@@ -407,14 +407,14 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
 
             Func_08002dd8(47);
             Func_08002dd8(46);
-            Func_080e155c(8, 8);
-            Func_080cd52c();
+            Camera_ApplyShake(8, 8);
+            ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
             Func_080030f8(1);
             fp++;
         } while (fp != Data_080eed3e[scene * 7 + 5]);
     }
 
-    Func_08004278(0x080CD261);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback(0x080CD261);
+    BattleFx_EndCanvasLayer();
 }

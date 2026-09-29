@@ -22,7 +22,7 @@ struct GlyphWork {
 
 extern struct GlyphWork *Data_03001e8c;
 extern volatile u32 Data_03001b04;
-extern struct DebugEntry Data_080367e4[], Data_0803680c[];
+extern struct DebugEntry SideObject_CharacterIdMap[], SideObject_ActorKindIdMap[];
 extern u8 Value_00000dd2[];
 
 struct RenderInput *UiWindow_CreateWithSideObject(s32, s32, s32, s32);
@@ -54,9 +54,9 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
     window = UiWindow_Create(10, 10, 14, 3, 2);
     index = 0;
-    for (i = 0; Data_080367e4[i].type != -1; i++) {}
+    for (i = 0; SideObject_CharacterIdMap[i].type != -1; i++) {}
     count = i;
-    for (i = 0; Data_0803680c[i].type != -1; i++) {}
+    for (i = 0; SideObject_ActorKindIdMap[i].type != -1; i++) {}
     total = count + i;
 
 next_frame:
@@ -85,9 +85,9 @@ next_frame:
             index = Math_Mod(index + total, total);
             RenderOutput_PrepareForRedraw(window);
             if (index < count)
-                glyph = Data_080367e4[index].glyph;
+                glyph = SideObject_CharacterIdMap[index].glyph;
             else
-                glyph = Data_0803680c[index - count].glyph + 128;
+                glyph = SideObject_ActorKindIdMap[index - count].glyph + 128;
             slot = work->slot;
             UiGlyph_LoadEntryWithPalette(glyph, 0, &slot, &tile, 15, 1);
             UiText_DrawNumberInWindow(index, 2, window, 0, 0);

@@ -36,26 +36,26 @@ extern u8 Value_00000073;
 extern u8 Data_080ee25e[4];
 extern u8 Data_080ee250[14];
 extern u16 Data_080ee244[6];
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 id);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 id);
 void _call_via_r3(s32 a, s32 b, s32 c, s32 target);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
-s32 Func_08004458(void);
-s32 Func_08002322(s32 angle);
+void Scheduler_RemoveCallback(void *callback);
+s32 Random16(void);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 void Func_080b5088(s32 member_id, s32 a);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
-void Func_080e3908(void *particle, s32 a, s32 b);
+void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
-s32 Func_080cdbc0(void);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 void Func_080d41a4(void *object)
 {
@@ -76,7 +76,7 @@ void Func_080d41a4(void *object)
     canvas = *cursor;
     sprite_sheet = heap_cache[2];
     M2C_FIELD(work, void **, 0x7828) = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     rectangle[0] = heap_cache[7];
@@ -91,7 +91,7 @@ void Func_080d41a4(void *object)
     Resource_LoadAndDecompress((s32)&Value_000000d1, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000073, sprite_sheet, 0, 0);
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18) != 2) {
-        void *palette = Func_08002f40((s32)&Value_00000060);
+        void *palette = Resource_GetTableEntry((s32)&Value_00000060);
         _call_via_r3(0x05000000, (s32)palette, 128, 0x03001388);
     }
     {
@@ -187,8 +187,8 @@ void Func_080d41a4(void *object)
                         s32 kind4;
                         u8 type;
 
-                        speed = Func_08004458() & 0x3FF;
-                        angle = (Func_08004458() & 0x7FFF) - 0x4000;
+                        speed = Random16() & 0x3FF;
+                        angle = (Random16() & 0x7FFF) - 0x4000;
                         kind4 = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s32 *, 4);
                         type = Data_080ee250[j + (kind4 * 7)];
@@ -196,11 +196,11 @@ void Func_080d41a4(void *object)
                         M2C_FIELD(particle, s32 *, 4) = 0x680000;
                         speed32 = speed + 32;
                         M2C_FIELD(particle, s32 *, 0xC) =
-                            (speed32 * Func_08002322(angle)) >> 7;
+                            (speed32 * Trig_Sin(angle)) >> 7;
                         M2C_FIELD(particle, s32 *, 0x10) =
                             -((speed32 * Func_0800231c(angle)) * 2) >> 7;
                         M2C_FIELD(particle, s32 *, 0x18) =
-                            (Func_08004458() & 7) + 32;
+                            (Random16() & 7) + 32;
                         spawned++;
                         kind = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
@@ -232,7 +232,7 @@ void Func_080d41a4(void *object)
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, id_offset),
                             1);
-                        Func_080d6888(
+                        ObjectGroup_UpdateMembers(
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, id_offset),
                             7, 5, k, 8);
@@ -255,7 +255,7 @@ void Func_080d41a4(void *object)
 
                     life -= 1;
                     M2C_FIELD(particle, s32 *, 0x18) = life;
-                    Func_080e3908(particle, 60, 0x1000);
+                    EffectStep_AdvanceWithGravity2D(particle, 60, 0x1000);
                     altitude = M2C_FIELD(particle, s32 *, 4);
                     if (altitude > 0x680000) {
                         M2C_FIELD(particle, s32 *, 0x10) =
@@ -274,7 +274,7 @@ void Func_080d41a4(void *object)
                             full = half * 2;
                             ((DrawRectangleFn)rectangle_slot[scan & 1])(
                                 canvas,
-                                (u8 *)sprite_sheet + Data_080ede48[half - 1],
+                                (u8 *)sprite_sheet + ParticleStreams_CellOffsets[half - 1],
                                 x_screen - (half / 2),
                                 (altitude >> 16) - half,
                                 half, full);
@@ -284,13 +284,13 @@ void Func_080d41a4(void *object)
                 particle = (u8 *)particle + 28;
             }
         }
-        Func_080e155c(8, 16);
-        Func_080cd52c();
+        Camera_ApplyShake(8, 16);
+        ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
     }
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

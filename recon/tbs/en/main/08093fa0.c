@@ -18,7 +18,7 @@ struct GridTileCell_08093fa0 {
 };
 
 extern struct GridTileCell_08093fa0 Data_0200fe00[];
-extern struct GridTileCell_08093fa0 Data_02010000[];
+extern struct GridTileCell_08093fa0 gMapCellBuffer[];
 extern struct BattleWork Data_02000240;
 extern u8 Value_00000001;
 
@@ -60,7 +60,7 @@ s32 Func_08093fa0(void)
     if (work->mode_1f2 == 0) {
         s32 index = grid_x / 16 + (grid_z / 16) * 128;
 
-        if (Data_02010000[index].kind == Data_0200fe00[index].kind) {
+        if (gMapCellBuffer[index].kind == Data_0200fe00[index].kind) {
             s32 position[6];
 
             position[0] = object->x;

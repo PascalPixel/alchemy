@@ -81,40 +81,40 @@ extern u8 Value_00000073;
 extern u8 Value_000000c0;
 
 extern s32 Data_080edac8[2];
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080eeed8[7];
 extern u8 Data_080eeee1[7];
 extern u16 Data_080eeeea[];
 extern u16 Data_080eeef8[];
 
-void Func_080cd594(s32 mode);
-void Func_080c9048(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattlePres_ConfigureEffectDisplay(void);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_080cd104(s32 a, s32 b);
-void Func_080d6750(void *object);
-void Func_080dbb24(s32 a, s32 b, s32 c);
+void Unnamed_080cd104(s32 a, s32 b);
+void BattleFx_SelectLivingTargets(void *object);
+void BattleFx_SpawnObjects(s32 a, s32 b, s32 c);
 void *Func_08009030(s32 id);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_08009020(void *object, s32 value);
 void Func_080030f8(s32 frames);
-void Func_080b5040(s32 a, s32 b, s32 c);
-s32 Func_08004458(void);
+void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
+s32 Random16(void);
 void Func_080f9010(s32 id);
-void Func_08009008(s32 handle, const s32 *pos, const s32 *clip, s32 mode);
-s32 Func_08002322(s32 angle);
+void Object_ApplyProjectedPlacementFar(s32 handle, const s32 *pos, const s32 *clip, s32 mode);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Math_Div(s32 a, s32 b);
-void Func_080e3908(SceneParticle *particle, s32 a, s32 b);
+void EffectStep_AdvanceWithGravity2D(SceneParticle *particle, s32 a, s32 b);
 void Func_080b5088(s32 member, s32 a);
-void Func_080d6888(s32 member, s32 a, s32 b, s32 c, s32 d);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 c, s32 d);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080b50e8(s32 id);
-void Func_080d67dc(void);
-void Func_08009038(s32 handle);
-void Func_08004278(void *callback);
+void BattleEffect_SetupBlendedDisplay(void);
+void ResourceObject_ReleaseFar(s32 handle);
+void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void Func_080e823c(void *object)
 {
@@ -159,15 +159,15 @@ void Func_080e823c(void *object)
     work = cursor[-1];
     sprite_sheet = cursor[1];
     ((struct BattleEffectWork *)work)->effect = object;
-    Func_080cd594(0);
-    Func_080c9048();
+    BattleFx_BeginCanvasLayer(0);
+    BattlePres_ConfigureEffectDisplay();
     *(u16 *)0x05000000 = (u16)(s32)&Value_00000000;
     *(u16 *)0x05000002 = (u16)(s32)&Value_00000000;
     ((struct BattleEffectWork *)work)->transfer_mode = 0;
     Func_080041d8((void *)0x080CD261, 0x480);
-    Func_080cd104(1, 0);
-    Func_080d6750(((struct BattleEffectWork *)work)->effect);
-    Func_080dbb24(9, 0x17B, 2);
+    Unnamed_080cd104(1, 0);
+    BattleFx_SelectLivingTargets(((struct BattleEffectWork *)work)->effect);
+    BattleFx_SpawnObjects(9, 0x17B, 2);
 
     /* Six drawable objects into handles 9..14 of the work table. */
     handle_off = 0x77FC;
@@ -199,8 +199,8 @@ void Func_080e823c(void *object)
     io += 3;
     *io = 0x1088;
     Func_080030f8(1);
-    Func_080b5040(1, (s32)&Value_0000003c, 0);
-    Func_080cd104(1, 1);
+    BattleBackground_LoadFar(1, (s32)&Value_0000003c, 0);
+    Unnamed_080cd104(1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000073, sprite_sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_000000c0, work, 1, 1);
     *(u16 *)0x04000000 = 0x7741;
@@ -219,7 +219,7 @@ void Func_080e823c(void *object)
     entry = (SceneParticle *)((u8 *)work + 0x7080);
     n = 0;
     for (i = 0; i != 6; i++) {
-        entry->x = (Func_08004458() & 0x7F) << 16;
+        entry->x = (Random16() & 0x7F) << 16;
         entry->y = n;
         entry->vx = 0;
         entry->vy = 0;
@@ -277,13 +277,13 @@ void Func_080e823c(void *object)
                     (Data_080eeed8[i] << 16) + org.bg_x + (s32)0xFFE00000;
                 pos_ptr[2] =
                     (Data_080eeee1[i] << 16) + org.bg_y + (s32)0xFFE00000;
-                Func_08009008(*handle++, pos_ptr, clip_ptr, 0);
+                Object_ApplyProjectedPlacementFar(*handle++, pos_ptr, clip_ptr, 0);
             }
 
             /* Sweep the two lead objects around a circle. */
             if (frame <= 90) {
                 angle = frame << 9;
-                org.x = (Func_08002322(angle) << 4) + 0x9C0000;
+                org.x = (Trig_Sin(angle) << 4) + 0x9C0000;
                 org.y = (Func_0800231c(angle) << 4) + 0x5C0000;
             }
 
@@ -300,10 +300,10 @@ void Func_080e823c(void *object)
                             spark->x = 0x400000;
                             spark->y = 0x600000;
                             spark->vx =
-                                ((Func_08004458() & 0xFF) - 127) << 10;
+                                ((Random16() & 0xFF) - 127) << 10;
                             spark->vy =
-                                ((Func_08004458() & 0xFF) - 127) << 10;
-                            spark->timer = Func_08004458() & 15;
+                                ((Random16() & 0xFF) - 127) << 10;
+                            spark->timer = Random16() & 15;
                             spark++;
                         }
                     }
@@ -326,10 +326,10 @@ void Func_080e823c(void *object)
                 pos[1] = (s32)0xFF000000;
                 pos[2] = org.y + (s32)0xFF000000;
                 pos[0] = org.x;
-                Func_08009008(
+                Object_ApplyProjectedPlacementFar(
                     M2C_FIELD(work, s32 *, 0x77F4), pos, clip_ptr, 0);
                 pos[0] = org.x + 0x200000;
-                Func_08009008(
+                Object_ApplyProjectedPlacementFar(
                     M2C_FIELD(work, s32 *, 0x77F8), pos, clip_ptr, 0);
             }
 
@@ -341,7 +341,7 @@ void Func_080e823c(void *object)
                 if (entry->timer != 2) {
                     pos_ptr[0] = entry->x;
                     pos_ptr[2] = entry->y;
-                    Func_08009008(
+                    Object_ApplyProjectedPlacementFar(
                         *(s32 *)((u8 *)work + (i * 4) + 0x77FC),
                         pos_ptr, clip_ptr, 0);
                     entry->x += entry->vx;
@@ -360,10 +360,10 @@ void Func_080e823c(void *object)
                                 spark->x = entry->x / 2;
                                 spark->y = entry->y + (s32)0xFFE00000;
                                 spark->vx =
-                                    ((Func_08004458() & 0xFF) - 127) << 10;
+                                    ((Random16() & 0xFF) - 127) << 10;
                                 spark->vy =
-                                    ((Func_08004458() & 0xFF) - 127) << 10;
-                                spark->timer = Func_08004458() & 15;
+                                    ((Random16() & 0xFF) - 127) << 10;
+                                spark->timer = Random16() & 15;
                                 spark++;
                             }
                         } else if (frame <= 199) {
@@ -393,7 +393,7 @@ void Func_080e823c(void *object)
                             M2C_FIELD(entry, s16 *, 6) - (size >> 1),
                             size, size);
                     }
-                    Func_080e3908(entry, 60, (s32)0xFFFFC000);
+                    EffectStep_AdvanceWithGravity2D(entry, 60, (s32)0xFFFFC000);
                     entry->timer += 1;
                 }
                 entry++;
@@ -411,7 +411,7 @@ void Func_080e823c(void *object)
                                 ((struct BattleEffectWork *)work)->effect)->actors[
                                 (off - 36) >> 1],
                             4);
-                        Func_080d6888(
+                        ObjectGroup_UpdateMembers(
                             ((struct BattleEffectArgument *)
                                 ((struct BattleEffectWork *)work)->effect)->actors[
                                 (off - 36) >> 1],
@@ -426,15 +426,15 @@ void Func_080e823c(void *object)
                 if (frame == 260) {
                     entry = (SceneParticle *)0x02010000;
                     for (n = 0; n != 512; n++) {
-                        speed = Func_08004458() & 0x3FF;
-                        angle = Func_08004458() & 0xFFFF;
+                        speed = Random16() & 0x3FF;
+                        angle = Random16() & 0xFFFF;
                         entry->x = 0x200000;
                         entry->y = 0x5C0000;
                         speed += 32;
-                        entry->vx = (speed * Func_08002322(angle)) >> 7;
+                        entry->vx = (speed * Trig_Sin(angle)) >> 7;
                         entry->vy =
                             -((speed * Func_0800231c(angle)) * 2) >> 7;
-                        entry->timer = (Func_08004458() & 15) + 32;
+                        entry->timer = (Random16() & 15) + 32;
                         entry++;
                     }
                 }
@@ -449,18 +449,18 @@ void Func_080e823c(void *object)
                     full = half * 2;
                     ((DrawRectangleFn)rectangle_slot[i & 1])(
                         canvas,
-                        (u8 *)sprite_sheet + Data_080ede48[half - 1],
+                        (u8 *)sprite_sheet + ParticleStreams_CellOffsets[half - 1],
                         M2C_FIELD(entry, s16 *, 2) - (half / 2),
                         M2C_FIELD(entry, s16 *, 6) - half,
                         half, full);
-                    Func_080e3908(entry, 62, 0x1000);
+                    EffectStep_AdvanceWithGravity2D(entry, 62, 0x1000);
                     entry->timer -= 1;
                 }
                 entry++;
             }
 
-            Func_080e155c(8, 8);
-            Func_080cd52c();
+            Camera_ApplyShake(8, 8);
+            ObjectGroup_TickMemberTimers();
             ((struct BattleEffectWork *)work)->transfer_pending = 1;
             Func_080030f8(1);
             frame++;
@@ -468,13 +468,13 @@ void Func_080e823c(void *object)
     }
 
     Func_080b50e8(0x86);
-    Func_080d67dc();
+    BattleEffect_SetupBlendedDisplay();
     handle = (s32 *)((u8 *)work + 0x77D8);
     for (i = 0; i != 15; i++) {
-        Func_08009038(*handle++);
+        ResourceObject_ReleaseFar(*handle++);
     }
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

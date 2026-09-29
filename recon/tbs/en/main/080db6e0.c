@@ -44,7 +44,7 @@ extern void *Data_03001e50[];
 /* Ten halfword cell offsets indexed by a clamped depth bucket 0..9; the
    same symbol recon/tbs/en/main/080e7404.c already declares and
    indexes the same way. */
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 
 /* Per-mode 3-byte row: [far_active_count, near_active_count, total_frames],
    selected by the mode/variant value this owner computes into `mode`. */
@@ -58,25 +58,25 @@ extern u16 Data_080eeafa[];
 extern u8 Value_000000c0;
 extern u8 Value_00000096;
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 id);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 id);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
-void Func_080e3944(void *source, void *screen);
-void Func_080e38b8(void *record, s32 a, s32 b);
-s32 Func_08004458(void);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
+void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
+void EffectStep_AdvanceWithGravity3D(void *record, s32 a, s32 b);
+s32 Random16(void);
 s32 Math_Div(s32 a, s32 b);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 mode);
 void Func_080030f8(s32 frames);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 
 void Func_080db6e0(void *object, s32 variant)
 {
@@ -118,7 +118,7 @@ void Func_080db6e0(void *object, s32 variant)
     work = *cursor++;
     canvas = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     Resource_LoadAndDecompress((s32)&Value_000000c0, work, 1, 0);
     if (variant == 1) {
         i = 0;
@@ -131,7 +131,7 @@ void Func_080db6e0(void *object, s32 variant)
         } while (i != 64);
         mode = 1;
     } else {
-        palette = Func_08002f40((s32)&Value_00000096);
+        palette = Resource_GetTableEntry((s32)&Value_00000096);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
         mode = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 24);
     }
@@ -147,11 +147,11 @@ void Func_080db6e0(void *object, s32 variant)
         M2C_FIELD(entry, s32 *, 4) = 0;
         M2C_FIELD(entry, s32 *, 8) = 0;
         M2C_FIELD(entry, s32 *, 12) =
-            (s32) (((Func_08004458() & 63) - 32) << 13);
+            (s32) (((Random16() & 63) - 32) << 13);
         M2C_FIELD(entry, s32 *, 16) =
-            (s32) (((Func_08004458() & 63) + 16) << 12);
+            (s32) (((Random16() & 63) + 16) << 12);
         M2C_FIELD(entry, s32 *, 20) =
-            (s32) (((Func_08004458() & 63) - 32) << 13);
+            (s32) (((Random16() & 63) - 32) << 13);
         i++;
         M2C_FIELD(entry, s32 *, 24) = 0;
         entry = (u8 *)entry + 28;
@@ -168,11 +168,11 @@ void Func_080db6e0(void *object, s32 variant)
         M2C_FIELD(entry, s32 *, 4) = 0;
         M2C_FIELD(entry, s32 *, 8) = 0;
         M2C_FIELD(entry, s32 *, 12) =
-            (s32) (((Func_08004458() & 63) - 32) << 13);
+            (s32) (((Random16() & 63) - 32) << 13);
         M2C_FIELD(entry, s32 *, 16) =
-            (s32) (((Func_08004458() & 31) + 8) << 13);
+            (s32) (((Random16() & 31) + 8) << 13);
         M2C_FIELD(entry, s32 *, 20) =
-            (s32) (((Func_08004458() & 63) - 32) << 13);
+            (s32) (((Random16() & 63) - 32) << 13);
         i++;
         M2C_FIELD(entry, s32 *, 24) = 0;
         entry = (u8 *)entry + 28;
@@ -192,7 +192,7 @@ void Func_080db6e0(void *object, s32 variant)
     while (frame != table[total_idx]) {
         facing = *(s32 *)0x03001E80;
         Func_080049ac();
-        Func_080051d8(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         if (frame == 2) {
             Func_080f9010(144);
         }
@@ -204,7 +204,7 @@ void Func_080db6e0(void *object, s32 variant)
             i = 0;
             do {
                 if (M2C_FIELD(particle, s32 *, 4) >= 0) {
-                    Func_080e3944(particle, screen);
+                    EffectPosition_ApplyBaseAndYOffset(particle, screen);
                     screen[0] = screen[0] >> 1;
                     screen[0] = screen[0]
                         + (M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
@@ -225,11 +225,11 @@ void Func_080db6e0(void *object, s32 variant)
                     size = index * 2;
                     ((DrawRectangleFn)draw_rectangle)(
                         canvas,
-                        (u8 *)work + Data_080ede48[index - 1]
+                        (u8 *)work + ParticleStreams_CellOffsets[index - 1]
                             + ((i & 1) * 0x302) + 0x3200,
                         screen[0] - (index / 2), screen[1] - index,
                         index, size);
-                    Func_080e38b8(particle, 64, 0xFFFFE000);
+                    EffectStep_AdvanceWithGravity3D(particle, 64, 0xFFFFE000);
                 }
                 i++;
                 particle = (u8 *)particle + 28;
@@ -240,7 +240,7 @@ void Func_080db6e0(void *object, s32 variant)
             i = 0;
             do {
                 if (i < frame && M2C_FIELD(particle, s32 *, 4) >= 0) {
-                    Func_080e3944(particle, screen);
+                    EffectPosition_ApplyBaseAndYOffset(particle, screen);
                     x = screen[0] >> 1;
                     x = x
                         + (M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
@@ -262,7 +262,7 @@ void Func_080db6e0(void *object, s32 variant)
                     if (age <= 20) {
                         M2C_FIELD(particle, s32 *, 24) = age + 1;
                     }
-                    Func_080e38b8(particle, 64, 0xFFFFE000);
+                    EffectStep_AdvanceWithGravity3D(particle, 64, 0xFFFFE000);
                 }
                 i++;
                 particle = (u8 *)particle + 28;
@@ -279,7 +279,7 @@ void Func_080db6e0(void *object, s32 variant)
                         member_id = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s16 *,
                             member_id_offset);
-                        Func_080d6888(member_id, 7, 5, i, 10);
+                        ObjectGroup_UpdateMembers(member_id, 7, 5, i, 10);
                         member_id = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s16 *,
                             member_id_offset);
@@ -302,7 +302,7 @@ void Func_080db6e0(void *object, s32 variant)
                         member_id = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s16 *,
                             member_id_offset);
-                        Func_080d6888(member_id, 7, 5, i, 10);
+                        ObjectGroup_UpdateMembers(member_id, 7, 5, i, 10);
                     }
                     i++;
                     member_id_offset += 2;
@@ -314,13 +314,13 @@ void Func_080db6e0(void *object, s32 variant)
         if (frame == 2) {
             M2C_FIELD(work, s32 *, 0x77A8) = 6;
         }
-        Func_080e155c(16, 16);
-        Func_080cd52c();
+        Camera_ApplyShake(16, 16);
+        ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
         frame++;
     }
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

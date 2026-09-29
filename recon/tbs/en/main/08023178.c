@@ -132,14 +132,14 @@ struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style)
 void UiWork_Finalize(struct UiWindow *window, s32 mode);
 void RenderOutput_RedrawSavedRect(struct UiWindow *window);
 void Ui_FillVramBlockPattern(void);
-void Func_08017248(s32 x, s32 y, s32 width, s32 height, s32 style);
-void Func_08017aa4(u16 *text, struct UiWindow *window, s32 x, s32 y);
+void UiWindow_MapTextCanvasTiles(s32 x, s32 y, s32 width, s32 height, s32 style);
+void UiText_RenderWideStringAtOffset(u16 *text, struct UiWindow *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntry(
     struct UiWindow *window, s32 id, s32 x, s32 y, s32 style);
-s32 Func_0801965c(s32 key, u16 *destination, u32 capacity);
+s32 UiText_CopyMessageString(s32 key, u16 *destination, u32 capacity);
 void UiWork_PushValueSlot(s32 value, s32 slot);
 void UiWindow_MarkVisibleTileAttributes(void);
-void Func_0801e41c(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawDividerLine(struct UiWindow *window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawCharacterAtOffset(s32 id, struct UiWindow *window, s32 x, s32 y);
 void UiText_DrawStringAtOffset(
     const u8 *text, struct UiWindow *window, s32 x, s32 y);
@@ -148,13 +148,13 @@ void UiText_DrawNumberInWindow(
 void Func_0801f200(s32 id);
 void Resource_LoadTableEntryToBuffer(s32 icon, s32 handle);
 s32 Ui_LoadEntryForKind(s32 owner, s32 handle);
-void Func_08022768(s32 x, s32 y, s32 width, s32 height, s32 style);
+void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 style);
 u8 *Runtime_GetObject(s32 owner);
 void BattleUnit_Recalculate(s32 owner);
 s32 Func_080771f8(s32 owner, s32 index);
 s32 Func_08077258(s32 owner, s32 level);
-s32 Func_08077290(s32 request);
-struct UiSpriteRecord **Func_080b5098(s32 owner);
+s32 Party_SumDjinnCountsFar(s32 request);
+struct UiSpriteRecord **GetBattleObjectSlotFar(s32 owner);
 
 
 s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
@@ -199,7 +199,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
     redraw = 1;
     handleFrame = Resource_LoadIntoFreeSlot(0x200);
     cnt = 0;
-    extended = Func_08077290(-1);
+    extended = Party_SumDjinnCountsFar(-1);
 
     screen = UI_GLOBALS.screen;
     screen->busy = 1;
@@ -286,7 +286,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             break;
         }
 
-        Func_08022768(
+        Ui_SetRectHighlight(
             winMain->x, winMain->y, winMain->width, winMain->height, 15);
 
         if (cnt != 0) {
@@ -370,7 +370,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
             cur.entry = cell[0];
             cur.col = cell[1];
             cur.row = cell[2];
-            Func_08022768(
+            Ui_SetRectHighlight(
                 winMain->x + cell[3] + 1, winMain->y + cell[4] + 1, cell[5], 1,
                 14);
         } else if (cur.mode == 1) {
@@ -394,7 +394,7 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
         M2C_FIELD(&objFace, u32 *, 4) = 0xC0002400;
         M2C_FIELD(&objFace, u32 *, 8) = 0;
-        objFace.tile = M2C_FIELD(*Func_080b5098(owner),
+        objFace.tile = M2C_FIELD(*GetBattleObjectSlotFar(owner),
             struct UiSpriteRecord **, 0x50)->tile;
         objFace.x = 0xAC;
         objFace.y = 56;
@@ -420,9 +420,9 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
 
             if ((redraw & 1) != 0) {
                 RenderOutput_RedrawSavedRect(winMain);
-                Func_08017248(winDesc->x, winDesc->y, winDesc->width,
+                UiWindow_MapTextCanvasTiles(winDesc->x, winDesc->y, winDesc->width,
                     winDesc->height, 0);
-                Func_0801e41c(winMain, 0, 14, 29, 14);
+                UiWindow_DrawDividerLine(winMain, 0, 14, 29, 14);
 
                 UiText_DrawStringAtOffset(object, winMain, 0, 0);
                 UiText_DrawStringAtOffset(Data_080373d8, winMain, 56, 0);
@@ -694,18 +694,18 @@ s32 Ui_RunOwnerStatusScreen(u16 *list, s32 listCount, s32 owner)
                     break;
                 }
                 UiWork_PushValueSlot(code, 5);
-                Func_0801965c(iconIdx + (s32)&Value_000008d2, text, 0x80);
+                UiText_CopyMessageString(iconIdx + (s32)&Value_000008d2, text, 0x80);
             } else if (cur.entry == 2 && object[15] <= 98) {
                 UiWork_PushValueSlot(
                     Func_08077258(owner, object[15] + 1)
                         - M2C_FIELD(object, s32 *, 0x124),
                     5);
-                Func_0801965c((s32)&Value_000008bf, text, 0x80);
+                UiText_CopyMessageString((s32)&Value_000008bf, text, 0x80);
             } else {
-                Func_0801965c(cur.entry + (s32)&Value_000008c0, text, 0x80);
+                UiText_CopyMessageString(cur.entry + (s32)&Value_000008c0, text, 0x80);
             }
 
-            Func_08017aa4(text, winDesc, 0, 4);
+            UiText_RenderWideStringAtOffset(text, winDesc, 0, 4);
             Sys_Free(text);
             base[0xEA3] = 1;
             redraw = 0;

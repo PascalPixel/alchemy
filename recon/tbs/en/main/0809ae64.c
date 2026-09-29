@@ -56,14 +56,14 @@ extern struct MotionScene *Data_03001f30;
 
 s32 Math_Div(s32, s32);
 void Func_080030f8(s32);
-void Func_0800447c(s32, s32, struct EffectVector *);
+void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
 void Func_08009080(void *, s32);
 void Func_080090d0(void *);
 void Func_080090f0(void *, s32, s32);
-void Func_08009240(void *, s32);
-void *Func_08096c80(s32, s32, s32, s32);
-void Func_08097384(void);
-void Func_0809748c(void);
+void Animation_ApplyChildValuesFar(void *, s32);
+void *Object_Spawn(s32, s32, s32, s32);
+void BattleEffect_InitializeSharedScene(void);
+void BattleFx_PrepareBufferInterpolation(void);
 void Func_080f9010(s32);
 
 void RunBattleEffect13(void)
@@ -87,7 +87,7 @@ void RunBattleEffect13(void)
         frame.target.y = main_object->pos.y + 0x200000;
         frame.target.z = main_object->pos.z;
         tmp = &frame.target;
-        Func_0800447c(0x200000, scene->angle, tmp);
+        Vector_AddPolarOffset(0x200000, scene->angle, tmp);
     } else {
         frame.target.x = scene->pos.x;
         frame.target.y = scene->pos.y + 0x200000;
@@ -98,9 +98,9 @@ void RunBattleEffect13(void)
     origin_cursor = &frame.origin;
     frame.scene_target.y = scene->pos.y + 0x200000;
     frame.scene_target.z = scene->pos.z;
-    if (!(object = Func_08096c80(0xd7, frame.scene_target.x, frame.scene_target.y, frame.scene_target.z)))
+    if (!(object = Object_Spawn(0xd7, frame.scene_target.x, frame.scene_target.y, frame.scene_target.z)))
         return;
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     Func_080f9010(0x8a);
     object->angle = main_object->angle;
     tmp3 = (s32)&Value_00000000;
@@ -108,7 +108,7 @@ void RunBattleEffect13(void)
     object->mode = (u16)tmp3;
     step = 0;
     Func_08009080(object, 5);
-    Func_08009240(object, 1);
+    Animation_ApplyChildValuesFar(object, 1);
     do {
         s32 value;
         s32 tmp4;
@@ -173,5 +173,5 @@ void RunBattleEffect13(void)
         ++step;
     } while (step < 11);
     Func_080090d0(object);
-    Func_0809748c();
+    BattleFx_PrepareBufferInterpolation();
 }

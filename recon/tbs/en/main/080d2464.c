@@ -112,20 +112,20 @@ void Func_080d2464(void *arg0, s32 arg1) {
     temp_r3_25 = *(void **)(graphics_globals - 4);
     sp20 = *(s32 *)(graphics_globals + 4);
     M2C_FIELD(temp_r3_25, void **, 0x7828) = arg0;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000052 = 0x1010;
     *(s16 *)0x0400000C = 0x784;
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     sp28 = *(s32 *)(graphics_globals + 0x18);
     BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);
     sp2C = *(s32 *)(graphics_globals + 0x1C);
-    temp_r0_59 = Func_08002f40(0x7D);
+    temp_r0_59 = Resource_GetTableEntry(0x7D);
     copy((void *)0x05000000, temp_r0_59, 0x80);
-    Func_08005340(temp_r0_59 + 0x80, temp_r3_25);
-    Func_08005340(Func_08002f40(0xB4) + 0x80, temp_r3_25 + 0x3000);
-    Func_08005340(Func_08002f40(0x73), (void *) sp20);
+    Resource_DecodeType01(temp_r0_59 + 0x80, temp_r3_25);
+    Resource_DecodeType01(Resource_GetTableEntry(0xB4) + 0x80, temp_r3_25 + 0x3000);
+    Resource_DecodeType01(Resource_GetTableEntry(0x73), (void *) sp20);
     if (sp38 == 1) {
-        copy((void *)0x05000000, Func_08002f40(0xC4), 0x80);
+        copy((void *)0x05000000, Resource_GetTableEntry(0xC4), 0x80);
     }
     M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 2;
     M2C_FIELD(temp_r3_25, s32 *, 0x7784) = 0x4B;
@@ -138,7 +138,7 @@ void Func_080d2464(void *arg0, s32 arg1) {
         }
     }
     if (sp38 == 1) {
-        Func_080e396c(M2C_FIELD(M2C_FIELD(temp_r3_25, void **, 0x7828), s32 *, 8), &pos);
+        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(M2C_FIELD(temp_r3_25, void **, 0x7828), s32 *, 8), &pos);
         temp_r3_147 = pos.x;
         pos.x = (s32) (temp_r3_147 + (temp_r3_147 >> 0x1F)) >> 1;
         pos.y = 0x42;
@@ -162,14 +162,14 @@ void Func_080d2464(void *arg0, s32 arg1) {
     var_r5_184 = temp_r3_25 + 0x7320;
     do {
         if (sp14 == 1) {
-            var_r0_191 = (Func_08004458() & 0x7F) + 0x80;
+            var_r0_191 = (Random16() & 0x7F) + 0x80;
         } else {
-            var_r0_191 = (Func_08004458() & 0x7F) - 0x80;
+            var_r0_191 = (Random16() & 0x7F) - 0x80;
         }
         M2C_FIELD(var_r5_184, s32 *, 0) = var_r0_191;
-        M2C_FIELD(var_r5_184, s32 *, 4) = (s32) ((7 & Func_08004458()) - 0x48);
+        M2C_FIELD(var_r5_184, s32 *, 4) = (s32) ((7 & Random16()) - 0x48);
         var_r7_182 += 1;
-        M2C_FIELD(var_r5_184, s32 *, 0x18) = (s32) (0 - (0x1F & Func_08004458()));
+        M2C_FIELD(var_r5_184, s32 *, 0x18) = (s32) (0 - (0x1F & Random16()));
         var_r5_184 += 0x1C;
     } while (var_r7_182 != 0x10);
     var_r3_215 = (s32 *)0x02010018;
@@ -180,9 +180,9 @@ void Func_080d2464(void *arg0, s32 arg1) {
         var_r3_215 += 7;
     } while (var_r7_216 != 0x200);
     if (sp38 == 0) {
-        Func_080d6750(M2C_FIELD(temp_r3_25, void **, 0x7828));
+        BattleFx_SelectLivingTargets(M2C_FIELD(temp_r3_25, void **, 0x7828));
         Func_080030f8(1);
-        Func_080dbb24(8, 0x179, 2);
+        BattleFx_SpawnObjects(8, 0x179, 2);
     }
     sp24 = 0;
     spC = sp30 + 0xC;
@@ -198,7 +198,7 @@ loop_23:
         if (M2C_FIELD(M2C_FIELD(temp_r3_25, void **, 0x7828), s32 *, 0x14) != 0) {
             var_r6_288 = 0x24;
             do {
-                Func_080d6888(M2C_FIELD(
+                ObjectGroup_UpdateMembers(M2C_FIELD(
                     M2C_FIELD(temp_r3_25, void **, 0x7828), s16 *,
                     var_r6_288), 0xA, 5, -1, 0);
                 Func_080b5088(M2C_FIELD(
@@ -211,7 +211,7 @@ loop_23:
         sp24 = 0xA0;
     }
     Func_080049ac();
-    Func_080051d8(sp30, spC);
+    Graphics_PrepareTransferInIwramWork(sp30, spC);
     if (sp24 == 0xB2) {
         Func_080b50e8(0x86);
     }
@@ -221,14 +221,14 @@ loop_23:
     if (sp24 == 0xB0) {
         M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 3;
         M2C_FIELD(temp_r3_25, s32 *, 0x7784) = 0x02020202;
-        copy((void *)0x05000000, Func_08002f40(0xB4), 0x80);
+        copy((void *)0x05000000, Resource_GetTableEntry(0xB4), 0x80);
     } else if ((u32) (sp24 - 0xA0) <= 0xFU) {
         M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 1;
         M2C_FIELD(temp_r3_25, s32 *, 0x7784) = 0x10101010;
         if (sp24 > 0xAD) {
             M2C_FIELD(temp_r3_25, s32 *, 0x7784) = 0x3F3F3F3F;
         }
-        Func_080e727c(2, 2, 2);
+        Palette_BrightenBgEntries(2, 2, 2);
     }
     if ((u32) (sp24 - 0x21) <= 0x8EU) {
         var_r8_385 = 0;
@@ -240,11 +240,11 @@ loop_23:
         var_r7_395 = 0;
         do {
             if (var_r6_394->field_0018 == -1U) {
-                M2C_FIELD(var_r6_394, s32 *, 0) = (s32) (((0xFF & Func_08004458()) - 0x20) << 0x10);
+                M2C_FIELD(var_r6_394, s32 *, 0) = (s32) (((0xFF & Random16()) - 0x20) << 0x10);
                 var_r6_394->field_0004 = 0x700000;
                 temp_r5_417 = 3 & var_r7_395;
-                var_r6_394->field_000c = ((Func_08004458() & 0x7F) + *(u8 *)(0x080EE184 + temp_r5_417)) << 9;
-                temp_r0_431 = (0 - ((Func_08004458() & 0x7F) + *(u8 *)(0x080EE184 + temp_r5_417))) << 0xB;
+                var_r6_394->field_000c = ((Random16() & 0x7F) + *(u8 *)(0x080EE184 + temp_r5_417)) << 9;
+                temp_r0_431 = (0 - ((Random16() & 0x7F) + *(u8 *)(0x080EE184 + temp_r5_417))) << 0xB;
                 var_r6_394->field_0018 = 0;
                 var_r6_394->field_0010 = temp_r0_431;
                 var_r8_385 += 1;
@@ -265,17 +265,17 @@ loop_23:
             var_r5_465 = temp_r3_25 + 0x74E0;
             do {
                 if (M2C_FIELD(var_r5_465, s32 *, 0x18) == -1) {
-                    temp_r8_476 = (0xFF & Func_08004458()) + 0x80;
-                    temp_r6_482 = (0x1FFF & Func_08004458()) + 0x4E20;
+                    temp_r8_476 = (0xFF & Random16()) + 0x80;
+                    temp_r6_482 = (0x1FFF & Random16()) + 0x4E20;
                     if (sp38 == 0) {
                         var_r3_491 = 0x460000;
-                        M2C_FIELD(var_r5_465, s32 *, 0) = (s32) (((Func_08004458() & 7) + 0x4E) << 0x10);
+                        M2C_FIELD(var_r5_465, s32 *, 0) = (s32) (((Random16() & 7) + 0x4E) << 0x10);
                     } else {
-                        M2C_FIELD(var_r5_465, s32 *, 0) = (s32) ((((Func_08004458() & 7) + (u32)pos.x) - 8) << 0x10);
+                        M2C_FIELD(var_r5_465, s32 *, 0) = (s32) ((((Random16() & 7) + (u32)pos.x) - 8) << 0x10);
                         var_r3_491 = pos.y << 0x10;
                     }
                     M2C_FIELD(var_r5_465, s32 *, 4) = var_r3_491;
-                    M2C_FIELD(var_r5_465, s32 *, 0xC) = (s32) ((s32) (temp_r8_476 * Func_08002322(temp_r6_482)) >> 9);
+                    M2C_FIELD(var_r5_465, s32 *, 0xC) = (s32) ((s32) (temp_r8_476 * Trig_Sin(temp_r6_482)) >> 9);
                     var_fp_457 += 1;
                     M2C_FIELD(var_r5_465, s32 *, 0x10) = (s32) ((s32) (temp_r8_476 * Func_0800231c(temp_r6_482)) >> 9);
                     M2C_FIELD(var_r5_465, s32 *, 0x18) = 0;
@@ -300,8 +300,8 @@ loop_23:
         var_r5_608 = temp_r3_25 + 0x7080;
         do {
             if (M2C_FIELD(var_r5_608, s32 *, 0x18) == -1) {
-                temp_r8_618 = (0xFF & Func_08004458()) + 0x80;
-                temp_r6_624 = (0x1FFF & Func_08004458()) + 0xFFFFB1E0;
+                temp_r8_618 = (0xFF & Random16()) + 0x80;
+                temp_r6_624 = (0x1FFF & Random16()) + 0xFFFFB1E0;
                 if (sp38 == 0) {
                     M2C_FIELD(var_r5_608, s32 *, 0) = 0x440000;
                     var_r3_631 = 0x400000;
@@ -310,7 +310,7 @@ loop_23:
                     var_r3_631 = pos.y << 0x10;
                 }
                 M2C_FIELD(var_r5_608, s32 *, 4) = var_r3_631;
-                M2C_FIELD(var_r5_608, s32 *, 0xC) = (s32) ((s32) (temp_r8_618 * Func_08002322(temp_r6_624)) >> 6);
+                M2C_FIELD(var_r5_608, s32 *, 0xC) = (s32) ((s32) (temp_r8_618 * Trig_Sin(temp_r6_624)) >> 6);
                 M2C_FIELD(var_r5_608, s32 *, 0x10) = (s32) ((s32) (temp_r8_618 * Func_0800231c(temp_r6_624)) >> 6);
                 M2C_FIELD(var_r5_608, s32 *, 0x18) = 0;
                 var_fp_605 += 1;
@@ -413,14 +413,14 @@ loop_23:
             Func_08009020(M2C_FIELD(temp_r3_25, s32 *, 0x77E4), 3);
             Func_08009020(M2C_FIELD(temp_r3_25, s32 *, 0x77E8), 4);
         }
-        Func_080e6d3c(3, sp18, sp1C);
+        BattleFx_PlaceFormationObjects(3, sp18, sp1C);
     }
     if (sp24 == 0x8A) {
         var_r7_943 = 0;
         if (M2C_FIELD(M2C_FIELD(temp_r3_25, void **, 0x7828), s32 *, 0x14) != 0) {
             var_r6_947 = 0x24;
             do {
-                Func_080d6888(M2C_FIELD(
+                ObjectGroup_UpdateMembers(M2C_FIELD(
                     M2C_FIELD(temp_r3_25, void **, 0x7828), s16 *,
                     var_r6_947), 0xA, 5, -1, 0);
                 Func_080b5088(M2C_FIELD(
@@ -478,8 +478,8 @@ loop_114:
             goto loop_114;
         }
     }
-    Func_080e155c(8, 8);
-    Func_080cd52c();
+    Camera_ApplyShake(8, 8);
+    ObjectGroup_TickMemberTimers();
     M2C_FIELD(temp_r3_25, s32 *, 0x7824) = 1;
     Func_080030f8(1);
     temp_r0_1132 = sp24 + 1;
@@ -487,7 +487,7 @@ loop_114:
     if (temp_r0_1132 != 0xD0) {
         goto loop_23;
     }
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
     if (sp38 == 0) {
@@ -498,8 +498,8 @@ loop_114:
             temp_r0_1155 = *var_r5_1153;
             var_r5_1153 += 1;
             var_r7_1152 += 1;
-            Func_08009038(temp_r0_1155);
+            ResourceObject_ReleaseFar(temp_r0_1155);
         } while (var_r7_1152 != 8);
     }
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

@@ -100,7 +100,7 @@ s32 Djinn_ActivateFar(s32, s32, s32);
 u32 Func_080771b8(s32, s32, s32);
 s32 Trade_RemoveOfferFar(s32, s32, s32);
 u32 *Trade_AddOfferFar(u32, u32, u32);
-s32 Func_080771d0(s32, s32, s32, s32);
+s32 Djinn_TransferFar(s32, s32, s32, s32);
 void Menu_SetFirstObjectRowCoordinates(s32);
 s32 Func_080ab314(void);
 s32 Func_080ab5e4(s32);
@@ -267,7 +267,7 @@ s32 Unnamed_080aa768(void)
             /* fall through */
         case 13:
             Audio_PlayCue(126);
-            result = Func_080771d0(menu->source_owner, menu->element[0], menu->number[0], menu->target_owner);
+            result = Djinn_TransferFar(menu->source_owner, menu->element[0], menu->number[0], menu->target_owner);
             Owner_RecalculateStatsFar(menu->source_owner);
             Owner_RecalculateStatsFar(menu->target_owner);
             menu->icon->state = 13;
@@ -299,8 +299,8 @@ s32 Unnamed_080aa768(void)
             /* fall through */
         case 14:
             Audio_PlayCue(126);
-            Func_080771d0(menu->source_owner, menu->element[0], menu->number[0], menu->target_owner);
-            result = Func_080771d0(menu->target_owner, menu->element[1], menu->number[1], menu->source_owner);
+            Djinn_TransferFar(menu->source_owner, menu->element[0], menu->number[0], menu->target_owner);
+            result = Djinn_TransferFar(menu->target_owner, menu->element[1], menu->number[1], menu->source_owner);
             Owner_RecalculateStatsFar(menu->source_owner);
             Owner_RecalculateStatsFar(menu->target_owner);
             Menu_ComputeEntryValues(menu->lists);

@@ -60,7 +60,7 @@ extern u8 Value_00000063;
 extern u8 Value_00000073;
 extern u8 Value_00002710;
 extern void *Data_03001e50[];
-extern const u16 Data_080ede48[];
+extern const u16 ParticleStreams_CellOffsets[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
@@ -193,7 +193,7 @@ void Func_080e90a8(struct ShardEffect *object)
                     out[0] >>= 1;
                     out[1] = out[1] + origin[1] - 112;
                     size = (size >> 3) + 2;
-                    routine[(i / 2) & 1](canvas, cells + Data_080ede48[size - 1], out[0] - size / 2, out[1] - size,
+                    routine[(i / 2) & 1](canvas, cells + ParticleStreams_CellOffsets[size - 1], out[0] - size / 2, out[1] - size,
                         size, size * 2);
                     EffectStep_AdvanceWithGravity3D(shard, 60, -0x400);
                     shard->life--;

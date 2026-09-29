@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "UI.H"
+#include "PARTY_STATE.H"
 extern struct ShopRuntime *gMenuWork;
 
 /* main:080b0aac Shop_SelBuy - hand-written draft, 523 of 636 halfwords
@@ -15,8 +16,10 @@ extern struct ShopRuntime *gMenuWork;
    the purchase. Artifact shops drop the bought stock and close when it
    runs out. */
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)ADDR_03001C94)
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)ADDR_03001B04)
+extern u8 gKeyState[];
+extern u8 gKeysRepeat[];
+#define INPUT_NEW_KEYS (*(volatile u32 *)gKeyState)
+#define INPUT_REPEAT_KEYS (*(volatile u32 *)gKeysRepeat)
 
 extern u8 MsgItemPlainName;
 
@@ -179,7 +182,7 @@ outer:
                     continue;
                 }
                 Inventory_RemoveFar(member, slot);
-                if ((u32)item->price > SHOP_PARTY_STATE.money)
+                if ((u32)item->price > gGameState.money)
                     goto too_expensive;
                 if (Item_IsCompatibleWithOwnerFar(member, shop->selected_item) == 0) {
                     UiWork_PushValueSlotFar(member, 1);

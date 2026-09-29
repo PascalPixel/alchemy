@@ -128,29 +128,29 @@ extern u8 Data_080373eb[];
 s32 Math_Div(s32 numerator, s32 denominator);
 void Sys_Free(void *buf);
 void Func_080030f8(s32 frames);
-void Func_0800352c(void);
-void Func_08003dec(void *slot, s32 kind);
-void Func_08003f3c(s32 resource);
-s32 Func_080040b4(s32 kind);
-s32 Func_080040d0(s32 resource, u8 *data);
-void *Func_08004970(s32 size);
-struct UiWindow *Func_080162d4(s32 x, s32 y, s32 w, s32 h, s32 pal);
-void Func_08016418(struct UiWindow *win, s32 mode);
-void Func_08016498(struct UiWindow *win);
-void Func_080164ac(struct UiWindow *win);
-void Func_08016738(void);
-void Func_08017aa4(s16 *buf, struct UiWindow *win, s32 x, s32 y);
-void Func_08019000(struct UiWindow *win, s32 tile, s32 x, s32 y, s32 flags);
-s32 Func_0801965c(s32 message, s16 *buf, s32 count);
-void Func_080198dc(void);
-void Func_08019908(s32 value, s32 width);
+void Runtime_SetMainState19(void);
+void Runtime_PushSlotEntry(void *slot, s32 kind);
+void Resource_ResetEntry(s32 resource);
+s32 Resource_LoadIntoFreeSlot(s32 kind);
+s32 Resource_GetBuffer(s32 resource, u8 *data);
+void *Runtime_BumpAllocateAlternatePool(s32 size);
+struct UiWindow *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 pal);
+void UiWork_Finalize(struct UiWindow *win, s32 mode);
+void RenderOutput_RedrawSavedRect(struct UiWindow *win);
+void RenderOutput_ClearList(struct UiWindow *win);
+void Ui_FillVramBlockPattern(void);
+void UiText_RenderWideStringAtOffset(s16 *buf, struct UiWindow *win, s32 x, s32 y);
+void UiWindow_SetTilemapEntry(struct UiWindow *win, s32 tile, s32 x, s32 y, s32 flags);
+s32 UiText_CopyMessageString(s32 message, s16 *buf, s32 count);
+void UiWork_ClearValueNameTables(void);
+void UiWork_PushValueSlot(s32 value, s32 width);
 void Func_0801e318(void);
-void Func_0801e3c8(s32 flag);
-void Func_0801e71c(s32 nibble);
-void Func_0801e7c0(s32 message, struct UiWindow *win, s32 x, s32 y);
-void Func_0801e9d4(s32 value, s32 digits, struct UiWindow *win, s32 x, s32 y);
-void Func_08022768(s32 x, s32 y, s32 w, s32 h, s32 pal);
-struct UiWindow *Func_08022b44(struct UiWindow *win, s32 owner, u32 code, s32 sel,
+void UiWork_SetAltFlagAndClearTable(s32 flag);
+void UiWork_SetParamNibble(s32 nibble);
+void UiText_DrawCharacterAtOffset(s32 message, struct UiWindow *win, s32 x, s32 y);
+void UiText_DrawNumberAtOffset(s32 value, s32 digits, struct UiWindow *win, s32 x, s32 y);
+void Ui_SetRectHighlight(s32 x, s32 y, s32 w, s32 h, s32 pal);
+struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner, u32 code, s32 sel,
                                s32 *count);
 struct PlacementTable *Func_08077000(s32 side);
 struct BattleUnitGrid *Owner_GetStateFar(s32 owner);
@@ -212,8 +212,8 @@ s32 Battle_SelectAbility(s32 owner)
     ctx = RUNTIME.ctx;
     detail_win = 0;
     prev_row = -1;
-    res = Func_080040b4(0x80);
-    tbl = (u32 *)Func_08004970(0xa8 * 2);
+    res = Resource_LoadIntoFreeSlot(0x80);
+    tbl = (u32 *)Runtime_BumpAllocateAlternatePool(0xa8 * 2);
     cnt = 0;
     prev_page = -1;
     mask = 0;
@@ -221,9 +221,9 @@ s32 Battle_SelectAbility(s32 owner)
     sub_cnt = 0;
     redraw = 0;
     is_used = 0;
-    msg_win = Func_080162d4(0, 4, 30, 4, 42);
-    Func_0801e3c8(1);
-    list_win = Func_080162d4(21, 9, 9, 11, 6);
+    msg_win = UiWindow_Create(0, 4, 30, 4, 42);
+    UiWork_SetAltFlagAndClearTable(1);
+    list_win = UiWindow_Create(21, 9, 9, 11, 6);
     page = MENU_STATE->field_34;
     row = MENU_STATE->field_30;
     saved_row = MENU_STATE->field_38;
@@ -264,16 +264,16 @@ s32 Battle_SelectAbility(s32 owner)
             cur = tbl[page + row];
             ctx[CTX_TEXT_BUSY] = 1;
             mask = 0;
-            Func_08022768(list_win->field_0c + 1, list_win->field_0e + prev_row * 2 + 1,
+            Ui_SetRectHighlight(list_win->field_0c + 1, list_win->field_0e + prev_row * 2 + 1,
                           list_win->field_08 - 2, 1, 15);
             if (sub_sel != 0) {
-                Func_08016418(msg_win, 1);
-                msg_win = Func_080162d4(0, 4, 30, 4, 42);
-                Func_08016738();
+                UiWork_Finalize(msg_win, 1);
+                msg_win = UiWindow_Create(0, 4, 30, 4, 42);
+                Ui_FillVramBlockPattern();
             }
             redraw = 0;
             if (cnt != 0) {
-                Func_080198dc();
+                UiWork_ClearValueNameTables();
                 is_used = 0;
                 for (i = 0; i <= 7; i++) {
                     if ((u32)MENU_STATE->field_e4[i] == cur) {
@@ -282,62 +282,62 @@ s32 Battle_SelectAbility(s32 owner)
                     }
                 }
                 if (is_used != 0) {
-                    Func_0801965c(0x8ef, buf, 52);
+                    UiText_CopyMessageString(0x8ef, buf, 52);
                     if (detail_win != 0) {
-                        Func_08016418(detail_win, 1);
+                        UiWork_Finalize(detail_win, 1);
                         detail_win = 0;
                         sub_sel = 0;
                     }
                 } else if (cur & 0x10000) {
                     if (cur & 0x3e0000) {
-                        Func_08019908((s32)((cur & 0x3e0000) >> 17), 5);
-                        Func_0801965c((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + 0x666,
+                        UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
+                        UiText_CopyMessageString((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + 0x666,
                                       buf, 52);
                         if (detail_win != 0) {
-                            Func_08016418(detail_win, 1);
+                            UiWork_Finalize(detail_win, 1);
                             detail_win = 0;
                             sub_sel = 0;
                         }
                     } else {
-                        detail_win = Func_08022b44(detail_win, owner, cur, sub_sel, &sub_cnt);
-                        Func_0801965c(0x899, buf, 52);
+                        detail_win = DjinnMenu_ShowChangePreview(detail_win, owner, cur, sub_sel, &sub_cnt);
+                        UiText_CopyMessageString(0x899, buf, 52);
                         mask = 1 << ((cur & 0xf00) >> 8);
                     }
                 } else {
-                    detail_win = Func_08022b44(detail_win, owner, cur, sub_sel, &sub_cnt);
-                    Func_0801965c((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + 0x666,
+                    detail_win = DjinnMenu_ShowChangePreview(detail_win, owner, cur, sub_sel, &sub_cnt);
+                    UiText_CopyMessageString((s32)(((cur & 0xf00) >> 8) * 20 + (cur & 0xff)) + 0x666,
                                   buf, 52);
                 }
             } else {
-                Func_0801965c(0x8ed, buf, 52);
+                UiText_CopyMessageString(0x8ed, buf, 52);
             }
             ctx[CTX_TEXT_BUSY] = 0;
             if (sub_sel == 0) {
                 ctx[CTX_TEXT_BUSY] = 1;
-                Func_08016418(msg_win, 1);
-                msg_win = Func_080162d4(0, 4, 30, 4, 42);
+                UiWork_Finalize(msg_win, 1);
+                msg_win = UiWindow_Create(0, 4, 30, 4, 42);
                 ctx[CTX_TEXT_BUSY] = (u8)sub_sel;
             }
-            Func_08017aa4(buf, msg_win, 0, 4);
+            UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             prev_row = row;
             if (page != prev_page) {
-                Func_08016498(list_win);
+                RenderOutput_RedrawSavedRect(list_win);
                 pos = &tbl[page];
                 code = *pos;
                 j = 0;
                 while (code != 0x80000000) {
-                    Func_08019000(list_win, (s32)((code & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
+                    UiWindow_SetTilemapEntry(list_win, (s32)((code & 0xf00) >> 8) + 0x5001, 0, j * 2, 0);
                     if (code & 0x3e0000) {
-                        Func_0801e71c(4);
+                        UiWork_SetParamNibble(4);
                     } else if (code & 0x10000) {
-                        Func_0801e71c(2);
+                        UiWork_SetParamNibble(2);
                     }
-                    Func_0801e7c0((s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + 0x45f,
+                    UiText_DrawCharacterAtOffset((s32)(((code & 0xf00) >> 8) * 20 + (code & 0xff)) + 0x45f,
                                   list_win, 8, j * 16);
                     if (code & 0x3e0000) {
-                        Func_0801e9d4((s32)((code & 0x3e0000) >> 17), 1, list_win, 48, j * 16);
+                        UiText_DrawNumberAtOffset((s32)((code & 0x3e0000) >> 17), 1, list_win, 48, j * 16);
                     }
-                    Func_0801e71c(15);
+                    UiWork_SetParamNibble(15);
                     j++;
                     if (j > 4) {
                         break;
@@ -353,10 +353,10 @@ s32 Battle_SelectAbility(s32 owner)
                     if (j == Math_Div(page, 5)) {
                         tile = j + 0xf30b;
                     }
-                    Func_08019000(list_win, tile, list_win->field_08 - pages + j - 2, -1, 0);
+                    UiWindow_SetTilemapEntry(list_win, tile, list_win->field_08 - pages + j - 2, -1, 0);
                 }
             }
-            Func_08022768(list_win->field_0c + 1, list_win->field_0e + row * 2 + 1,
+            Ui_SetRectHighlight(list_win->field_0c + 1, list_win->field_0e + row * 2 + 1,
                           list_win->field_08 - 2, 1, 14);
             ctx[CTX_LIST_DIRTY] = 1;
             ctx[CTX_TEXT_BUSY] = 0;
@@ -370,15 +370,15 @@ s32 Battle_SelectAbility(s32 owner)
                         tile = j + 0xf30b;
                     }
                 }
-                Func_08019000(list_win, tile,
+                UiWindow_SetTilemapEntry(list_win, tile,
                               list_win->field_08 - Math_Div(cnt + 4, 5) + j - 2, -1, 0);
             }
             if ((BATTLE_OPTIONS & 0x100) == 0) {
-                Func_08019000(list_win, 0xf334, list_win->field_08 - pages - 3, -1, 0);
-                Func_08019000(list_win, 0xf335, list_win->field_08 - 2, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf334, list_win->field_08 - pages - 3, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf335, list_win->field_08 - 2, -1, 0);
             } else {
-                Func_08019000(list_win, 0xf011, list_win->field_08 - pages - 3, -1, 0);
-                Func_08019000(list_win, 0xf012, list_win->field_08 - 2, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf011, list_win->field_08 - pages - 3, -1, 0);
+                UiWindow_SetTilemapEntry(list_win, 0xf012, list_win->field_08 - 2, -1, 0);
             }
             ctx[CTX_LIST_DIRTY] |= (u8)(2 << ((u32)(list_win->field_0e - 1) >> 2));
         }
@@ -420,11 +420,11 @@ s32 Battle_SelectAbility(s32 owner)
                     break;
                 }
             } else if (is_used == 0) {
-                Func_08016738();
-                Func_080198dc();
-                Func_08019908((s32)((cur & 0x3e0000) >> 17), 5);
-                Func_0801965c(0x898, buf, 52);
-                Func_08017aa4(buf, msg_win, 0, 4);
+                Ui_FillVramBlockPattern();
+                UiWork_ClearValueNameTables();
+                UiWork_PushValueSlot((s32)((cur & 0x3e0000) >> 17), 5);
+                UiText_CopyMessageString(0x898, buf, 52);
+                UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             }
             Func_080f9010(0x72);
         }
@@ -455,17 +455,17 @@ s32 Battle_SelectAbility(s32 owner)
                         if ((FRAME_COUNTER & 15) <= 11 && i == sub_sel - 1) {
                             tile = sub_sel + 0xf30b;
                         }
-                        Func_08019000(detail_win, tile,
+                        UiWindow_SetTilemapEntry(detail_win, tile,
                                       detail_win->field_08 - sub_cnt + i - 2, -1, 0);
                     }
-                    Func_08019000(detail_win, 0xf334, detail_win->field_08 - sub_cnt - 3, -1,
+                    UiWindow_SetTilemapEntry(detail_win, 0xf334, detail_win->field_08 - sub_cnt - 3, -1,
                                   0);
-                    Func_08019000(detail_win, 0xf335, detail_win->field_08 - 2, -1, 0);
+                    UiWindow_SetTilemapEntry(detail_win, 0xf335, detail_win->field_08 - 2, -1, 0);
                     ctx[CTX_LIST_DIRTY] |= (u8)(2 << (detail_win->field_0e >> 2));
                 }
                 if (sub_sel == 0 && sub_cnt != 0) {
                     if (detail_win != 0) {
-                        Func_080164ac(detail_win);
+                        RenderOutput_ClearList(detail_win);
                     }
                     sub_sel = 1;
                     redraw = 1;
@@ -493,13 +493,13 @@ s32 Battle_SelectAbility(s32 owner)
                 }
             } else if (sub_sel != 0) {
                 if (detail_win != 0) {
-                    Func_080164ac(detail_win);
+                    RenderOutput_ClearList(detail_win);
                 }
                 sub_sel = 0;
                 redraw = 1;
             } else if (rep & 16) {
                 Func_080f9010(0x6f);
-                Func_0800352c();
+                Runtime_SetMainState19();
                 if (page + 5 >= cnt) {
                     if (page != 0) {
                         row = saved_row;
@@ -517,7 +517,7 @@ s32 Battle_SelectAbility(s32 owner)
                 }
             } else if (rep & 32) {
                 Func_080f9010(0x6f);
-                Func_0800352c();
+                Runtime_SetMainState19();
                 if (page != 0) {
                     page -= 5;
                     row = saved_row;
@@ -540,13 +540,13 @@ s32 Battle_SelectAbility(s32 owner)
         slot.field_08 = 0;
         M2C_FIELD(&slot, u16 *, 8) =
             (u16)((M2C_FIELD(&slot, u16 *, 8) & 0xfffffc00) |
-                  (Func_080040d0(res, Data_080310a4) & 0x3ff));
+                  (Resource_GetBuffer(res, Data_080310a4) & 0x3ff));
         M2C_FIELD(&slot, u16 *, 6) =
             (u16)((M2C_FIELD(&slot, u16 *, 6) & 0xfffffe00) |
                   ((curs_x + (s32)((FRAME_COUNTER & 4) >> 1) + 0xfffa) & 0x1ff));
         M2C_FIELD(&slot, u8 *, 4) = (u8)(curs_y - (s32)((FRAME_COUNTER & 4) >> 2) + 248);
         if (cnt != 0) {
-            Func_08003dec(&slot, 242);
+            Runtime_PushSlotEntry(&slot, 242);
         }
         cursor = CURSOR_OWNER;
         blink = FRAME_COUNTER & 4;
@@ -557,7 +557,7 @@ s32 Battle_SelectAbility(s32 owner)
                 if (((1 << i) & mask) == 0) {
                     pal = 15;
                 }
-                Func_08022768(icon_win->field_0c + Data_080373e7[i] + 1,
+                Ui_SetRectHighlight(icon_win->field_0c + Data_080373e7[i] + 1,
                               icon_win->field_0e + Data_080373eb[i] + 1, 2, 2, pal);
             }
         }
@@ -574,14 +574,14 @@ s32 Battle_SelectAbility(s32 owner)
     cursor = CURSOR_OWNER;
     if (cursor->field_0c & 2) {
         icon_win = cursor->field_00;
-        Func_08022768(icon_win->field_0c + 1, icon_win->field_0e + 1, 4, 4, 15);
+        Ui_SetRectHighlight(icon_win->field_0c + 1, icon_win->field_0e + 1, 4, 4, 15);
     }
-    Func_08003f3c(res);
-    Func_08016418(msg_win, 1);
-    Func_08016418(detail_win, 1);
-    Func_08016418(list_win, 1);
+    Resource_ResetEntry(res);
+    UiWork_Finalize(msg_win, 1);
+    UiWork_Finalize(detail_win, 1);
+    UiWork_Finalize(list_win, 1);
     Func_0801e318();
-    Func_0801e3c8(0);
+    UiWork_SetAltFlagAndClearTable(0);
     Sys_Free(tbl);
     Func_080030f8(1);
     return ret;

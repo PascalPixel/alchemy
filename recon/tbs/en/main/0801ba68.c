@@ -2,7 +2,16 @@
    Written from the listing. Remaining: the reference keeps x + 0xfff0 and
    0xfffe/0xffe0 as word pool constants (halfword narrowing here), peels the
    first node of each relink loop without cross-jumping, and allocates the
-   new node to r5 and the kind to r6. */
+   new node to r5 and the kind to r6.
+   2026-09-29 (alchemy permute scorer): the draft scored 3515 (64
+   register-only, 14 operand, 13 reordered, 8 inserted, 13 deleted). This
+   body is the permuter's best after a 300-second search (46,000
+   candidates): 2595 (64 register-only, 13 operand, 13 reordered, 4
+   inserted, 8 deleted), mostly from computing the new node's draw x and the
+   list head through locals and reading the base after the kind. The
+   allocation described above is still the difference; the dead first relink
+   loop is now a for loop that never runs.
+ */
 #include "TYPES.H"
 
 struct SelectionNode {
@@ -48,30 +57,34 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
     struct SelectionNode *p;
     struct SelectionNode *q;
     u32 index;
+    s32 x;
     s32 base;
     u32 kind;
-    s32 x;
     s32 y;
 
     if (forward != 0) {
+        s32 tmp4;
+        struct SelectionNode *tmp3;
         index = screen->first + 4;
-        base = screen->bases[index];
         kind = screen->kinds[index];
+        base = *(screen->bases + index);
         node = Resource_FindFreeTransferEntry(0);
         if (node == 0)
             return;
         MenuSelection_SetupEntry(kind, base, node, 0);
         x = screen->x;
         node->x = x + 80;
+        tmp4 = x + 64;
         y = screen->y;
-        node->draw_x = x + 64;
+        node->draw_x = tmp4;
         node->y = y;
         node->draw_y = y;
         node->unknown_24 = 32;
         node->frames = 32;
         node->scale = 256;
         node->step_x = 0xfffe;
-        p = screen->head;
+        tmp3 = screen->head;
+        p = tmp3;
         p->unknown_24 = 0xffe0;
         p->draw_x = p->x - 16;
         q = p->next;
@@ -83,10 +96,11 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
             q = p->next;
             p->step_x = 0xfffe;
         }
-        while (0) {
+        for (; 0; p->step_x = 0xfffe) {
+            s32 tmp2;
             p = p->next;
-            p->draw_x = p->x - 16;
-            p->step_x = 0xfffe;
+            tmp2 = p->x - 16;
+            p->draw_x = tmp2;
         }
         p->next = node;
         node->next = 0;
@@ -116,7 +130,7 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         node->step_x = 2;
         node->frames = 32;
         node->unknown_24 = 32;
-        node->draw_x = node->x + 16;
+        node->draw_x = 16 + node->x;
         node->scale = 256;
         p = screen->head;
         p->prev = node;
@@ -126,10 +140,9 @@ void Menu_ScrollSelectionList(struct SelectionScreen *screen, s32 forward)
         p = node;
         p->draw_x = p->x + 16;
         p->step_x = 2;
-        while (p->next != 0) {
+        for (; p->next; p->step_x = 2) {
             p = p->next;
             p->draw_x = p->x + 16;
-            p->step_x = 2;
         }
         p->scale = 0;
         p->unknown_24 = 0xffe0;

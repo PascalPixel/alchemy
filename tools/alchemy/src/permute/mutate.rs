@@ -1825,6 +1825,15 @@ fn break_tail(items: &[Stmt]) -> Option<(usize, &Expr)> {
     }
 }
 
+/// Whether `expr` names a variable the body block declares: moving it
+/// between the body and the loop header would change what it refers to.
+fn names_body_local(items: &[Stmt], expr: &Expr) -> bool {
+    items.iter().any(|item| match item {
+        Stmt::Decl(decl) => decl.items.iter().any(|item| expr.mentions(&item.name) > 0),
+        _ => false,
+    })
+}
+
 fn loop_sites(stmts: &[Stmt], env: &Env) -> Vec<LoopSite> {
     let mut sites = Vec::new();
     for (index, stmt) in stmts.iter().enumerate() {
@@ -1842,15 +1851,22 @@ fn loop_sites(stmts: &[Stmt], env: &Env) -> Vec<LoopSite> {
                 }
                 let items = block_items_of(body);
                 if !has_continue(body)
-                    && last_code(&items).is_some_and(|last| matches!(items[last], Stmt::Expr(_)))
+                    && last_code(&items).is_some_and(|last| {
+                        matches!(&items[last], Stmt::Expr(step) if !names_body_local(&items, step))
+                    })
                 {
                     sites.push(LoopSite::WhileToFor(index));
                 }
-                if is_true(cond) && !has_continue(body) && break_tail(&items).is_some() {
+                if is_true(cond)
+                    && !has_continue(body)
+                    && break_tail(&items).is_some_and(|(_, exit)| !names_body_local(&items, exit))
+                {
                     sites.push(LoopSite::BreakToDo(index));
                 }
             }
-            Stmt::DoWhile(body, _) if !has_continue(body) => {
+            Stmt::DoWhile(body, cond)
+                if !has_continue(body) && !names_body_local(&block_items_of(body), cond) =>
+            {
                 sites.push(LoopSite::DoToBreak(index));
             }
             _ => {}
@@ -2599,6 +2615,29 @@ mod tests {
             found.contains(&"do { a++; } while (a < b); return a;".to_string()),
             "{found:?}"
         );
+        // A test or step naming a body local cannot leave the body, and a
+        // condition cannot move in where a body local would capture it.
+        let found = outcomes(
+            Kind::LoopForm,
+            "while (1) { s32 t; t = Rand(); if (t) break; }\nreturn 0;",
+        );
+        assert!(
+            !found.iter().any(|body| body.starts_with("do")),
+            "{found:?}"
+        );
+        let found = outcomes(
+            Kind::LoopForm,
+            "while (b) { s32 t; t = Rand(); Use(t); t++; }\nreturn 0;",
+        );
+        assert!(
+            !found.iter().any(|body| body.starts_with("for")),
+            "{found:?}"
+        );
+        assert!(outcomes(
+            Kind::LoopForm,
+            "do { s32 a; a = Rand(); Use(a); } while (a);\nreturn 0;"
+        )
+        .is_empty());
     }
 
     #[test]

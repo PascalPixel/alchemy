@@ -694,6 +694,8 @@ gEffectScripts:
 	.4byte 0x0200cb1c
 	.4byte 0x0200cb54
 	.4byte 0x0200cb8c
+	.global SoruStar_AngleScript
+SoruStar_AngleScript:
 	.4byte 0x00000022
 	.4byte 0x02008315
 	.4byte 0x0000000c

@@ -1,82 +1,29 @@
 #include "TYPES.H"
 extern u8 MsgFieldFlippedSwitch[];
 
-extern u8 Data_00000001[];
-void Func_020006de();
-void Func_020006f2();
-void Func_02000706();
-void Func_02000720();
-void Func_02000734();
-void Func_02000748();
-void Func_020007a8();
-void Func_020007bc();
-void Func_020007d0();
-void Func_02000802();
-void Func_02000816();
-void Func_0200082a();
-void Func_02000952();
-void Func_02001458();
-void Func_0200146e();
-void Func_02001484();
-void Func_02001492();
-void Func_0200149c();
-void Func_020014a4();
-void Func_020014c0();
-void Func_020014c2();
-void Func_020014d6();
-void Func_020014d8();
-void Func_020014e6();
-void Func_020014ee();
-void Func_020014fe();
-void Func_02001500();
-void Func_02001506();
-void Func_0200150c();
-void Func_02001514();
-void Func_02001516();
-void Func_0200151c();
-void Func_0200152a();
-void Func_0200153a();
-void Func_02001540();
-void Func_02001556();
-void Func_02001568();
-void Func_02001578();
-void Func_0200157e();
-void Func_0200158e();
-void Func_02001594();
-void Func_02001594_a();
-void Func_020015a4();
-void Func_020015aa();
-void Func_020015be();
-void Func_020015d2();
-void Func_020015de();
-void Func_020015e2();
-void Func_020015f4();
-void Func_020015f8();
-void Func_0200160a();
-void Func_0200160e();
-void Func_02001620();
-void Func_02001628();
-void Func_02001636();
-void Func_0200163a();
-void Func_0200165e();
-void Func_02001674();
-void Func_0200168a();
-void Func_020016b2();
-void Func_020016c2();
-void Func_020016c4();
-void Func_020016da();
-void Func_020016f0();
-void Func_020016f4();
-void Func_02001794();
-void Func_020017a4();
-void Func_020017ba();
-void Func_020017c6();
-void Func_020017ea();
-void Func_02001802();
-void Func_0200180e();
-void Func_0200186a();
+extern s16 *gKorimaMagariLayout;
+extern s32 KorimaMagari_ShakeChance;
+void State_CopyPresetA0d0WithOffsetB0(void);
+void State_UpdateScrollRegistersWithPreset(void);
+void KorimaMagari_DrawPanel();
+void Scene_RepaintBoardRecords();
+void Engine_TaskWait();
+void Engine_EventBegin();
+void Engine_MessageShowCentered();
+void Engine_MapCopyCells();
+void Engine_CameraSetSpeed();
+void Engine_CameraMoveTo();
+void Engine_CameraWaitForMove();
+void Engine_ActorSetPosition();
+void Engine_AudioPlayCue();
+void Engine_ActorSetAnimation();
+void Engine_TaskAddCallback();
+void Runtime_SetIrqHandler();
+void Engine_TaskRemoveCallback();
+void Engine_MapRedraw();
+void Engine_EventEnd();
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -114,111 +61,103 @@ void Scene_RunKorimaMagariSequence(void)
     s32 base5_200a0dc;
     s32 v3;
 
-    Func_02001492();
-    Call2(Func_020014e6, 0x10000, 0x2000);
-    Call4(Func_02001500, 0x1080000, -1, 0x1c00000, 1);
-    Func_0200150c();
-    Call2(Func_020014a4, (s32)MsgFieldFlippedSwitch, 1);
-    Func_0200153a(232);
-    if (*(s16 *)(*(s32 *)0x020092c8) != 0) {
+    Engine_EventBegin();
+    Call2(Engine_CameraSetSpeed, 0x10000, 0x2000);
+    Call4(Engine_CameraMoveTo, 0x1080000, -1, 0x1c00000, 1);
+    Engine_CameraWaitForMove();
+    Call2(Engine_MessageShowCentered, (s32)MsgFieldFlippedSwitch, 1);
+    Engine_AudioPlayCue(232);
+    if (*gKorimaMagariLayout != 0) {
     } else {
-        Call3(Func_02001516, 9, 0x1000000, 0x1ce0000);
-        Call6(Func_020014c2, 77, 34, 1, 2, 83, 25);
-        Func_02001458(3);
-        Call6(Func_020014d8, 78, 34, 1, 2, 83, 25);
-        Func_0200146e(3);
-        Call6(Func_020014ee, 79, 34, 1, 2, 83, 25);
+        Call3(Engine_ActorSetPosition, 9, 0x1000000, 0x1ce0000);
+        Call6(Engine_MapCopyCells, 77, 34, 1, 2, 83, 25);
+        Engine_TaskWait(3);
+        Call6(Engine_MapCopyCells, 78, 34, 1, 2, 83, 25);
+        Engine_TaskWait(3);
+        Call6(Engine_MapCopyCells, 79, 34, 1, 2, 83, 25);
         v5 = 79;
-        Func_02001484(30);
-        Call6(Func_02001506, 67, 34, 2, 5, v5, 25);
-        Func_0200149c(6);
-        Call6(Func_0200151c, 69, 34, 2, 5, v5, 25);
-        Func_02001594(9, 1);
-        Func_020015d2(240);
-        Func_020014c0(6);
-        Call6(Func_02001540, 71, 34, 2, 5, v5, 25);
-        Func_020014d6(6);
-        Call6(Func_02001556, 73, 34, 2, 5, v5, 25);
-        Call6(Func_02001568, 75, 38, 2, 1, v5, 29);
-        Func_020014fe(4);
-        Call6(Func_0200157e, 77, 38, 2, 1, v5, 29);
-        Func_02001514(6);
-        Call6(Func_02001594_a, 79, 38, 2, 1, v5, 29);
-        Func_0200152a(8);
-        Call6(Func_020015aa, 65, 53, 2, 1, v5, 29);
-        Call6(Func_020015be, 65, 40, 2, 4, 15, 28);
+        Engine_TaskWait(30);
+        Call6(Engine_MapCopyCells, 67, 34, 2, 5, v5, 25);
+        Engine_TaskWait(6);
+        Call6(Engine_MapCopyCells, 69, 34, 2, 5, v5, 25);
+        Engine_ActorSetAnimation(9, 1);
+        Engine_AudioPlayCue(240);
+        Engine_TaskWait(6);
+        Call6(Engine_MapCopyCells, 71, 34, 2, 5, v5, 25);
+        Engine_TaskWait(6);
+        Call6(Engine_MapCopyCells, 73, 34, 2, 5, v5, 25);
+        Call6(Engine_MapCopyCells, 75, 38, 2, 1, v5, 29);
+        Engine_TaskWait(4);
+        Call6(Engine_MapCopyCells, 77, 38, 2, 1, v5, 29);
+        Engine_TaskWait(6);
+        Call6(Engine_MapCopyCells, 79, 38, 2, 1, v5, 29);
+        Engine_TaskWait(8);
+        Call6(Engine_MapCopyCells, 65, 53, 2, 1, v5, 29);
+        Call6(Engine_MapCopyCells, 65, 40, 2, 4, 15, 28);
         goto L_02000626;
     }
-    Call3(Func_02001636, 9, 0x1000000, 0x1e00000);
-    Call6(Func_020015e2, 78, 34, 1, 2, 83, 25);
-    Func_02001578(3);
-    Call6(Func_020015f8, 77, 34, 1, 2, 83, 25);
-    Func_0200158e(3);
-    Call6(Func_0200160e, 76, 34, 1, 2, 83, 25);
-    Func_020015a4(30);
-    Call6(Func_02001628, 65, 45, 2, 4, 15, 28);
-    Call6(Func_0200163a, 71, 50, 2, 5, 79, 25);
-    Func_020016b2(9, 2);
-    Func_020016f0(230);
-    Func_020015de(6);
-    Call6(Func_0200165e, 69, 50, 2, 5, 79, 25);
-    Func_020015f4(6);
-    Call6(Func_02001674, 67, 50, 2, 5, 79, 25);
-    Func_0200160a(6);
-    Call6(Func_0200168a, 65, 50, 2, 5, 79, 25);
-    Func_02001620(30);
+    Call3(Engine_ActorSetPosition, 9, 0x1000000, 0x1e00000);
+    Call6(Engine_MapCopyCells, 78, 34, 1, 2, 83, 25);
+    Engine_TaskWait(3);
+    Call6(Engine_MapCopyCells, 77, 34, 1, 2, 83, 25);
+    Engine_TaskWait(3);
+    Call6(Engine_MapCopyCells, 76, 34, 1, 2, 83, 25);
+    Engine_TaskWait(30);
+    Call6(Engine_MapCopyCells, 65, 45, 2, 4, 15, 28);
+    Call6(Engine_MapCopyCells, 71, 50, 2, 5, 79, 25);
+    Engine_ActorSetAnimation(9, 2);
+    Engine_AudioPlayCue(230);
+    Engine_TaskWait(6);
+    Call6(Engine_MapCopyCells, 69, 50, 2, 5, 79, 25);
+    Engine_TaskWait(6);
+    Call6(Engine_MapCopyCells, 67, 50, 2, 5, 79, 25);
+    Engine_TaskWait(6);
+    Call6(Engine_MapCopyCells, 65, 50, 2, 5, 79, 25);
+    Engine_TaskWait(30);
     L_02000626:;
-    if (*(s16 *)(*(s32 *)0x020092c8) == 0) {
-        Func_020006de(9, 19, 16, 5, *(s16 *)(*(s32 *)0x020092c8), 9, 30);
-        Func_020006f2(9, 51, 16, 5, 1, 9, 30);
-        Func_02000706(41, 51, 16, 5, 2, 9, 30);
+    if (*gKorimaMagariLayout == 0) {
+        KorimaMagari_DrawPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 30);
+        KorimaMagari_DrawPanel(9, 51, 16, 5, 1, 9, 30);
+        KorimaMagari_DrawPanel(41, 51, 16, 5, 2, 9, 30);
     } else {
-        Func_02000720(9, 19, 16, 5, 0, 9, 30);
-        Func_02000734(9, 83, 16, 5, 1, 9, 30);
-        Func_02000748(41, 83, 16, 5, 2, 9, 30);
+        KorimaMagari_DrawPanel(9, 19, 16, 5, 0, 9, 30);
+        KorimaMagari_DrawPanel(9, 83, 16, 5, 1, 9, 30);
+        KorimaMagari_DrawPanel(41, 83, 16, 5, 2, 9, 30);
     }
 
-    *(s32 *)0x0200a0dc = 0;
-    Call2(Func_020016c4, 0x20083c1, 0xc80);
-    Func_020016c2(1);
+    KorimaMagari_ShakeChance = 0;
+    Call2(Engine_TaskAddCallback, (s32)State_CopyPresetA0d0WithOffsetB0, 0xc80);
+    Engine_TaskWait(1);
     /* FAKEMATCH: the two do/while (0) wraps keep the flag and the counter
      * address in r6 and r5. */
     do {
-        Func_020016f4(1, 0, 0x200836d);
+        Runtime_SetIrqHandler(1, 0, State_UpdateScrollRegistersWithPreset);
     } while (0);
     do {
-        Func_020017ea(231);
+        Engine_AudioPlayCue(231);
     } while (0);
-    *(s32 *)0x0200a0dc = 0;
+    KorimaMagari_ShakeChance = 0;
     do {
-        Func_020016da(1);
-        v3 = (*(s32 *)0x0200a0dc + 1);
-        *(s32 *)0x0200a0dc += 1;
+        Engine_TaskWait(1);
+        v3 = (KorimaMagari_ShakeChance + 1);
+        KorimaMagari_ShakeChance += 1;
     } while (v3 <= 100);
-    Call1(Func_02001802, 0x121);
-    if (*(s16 *)(*(s32 *)0x020092c8) == 0) {
-        Func_020007a8(9, 19, 16, 5, *(s16 *)(*(s32 *)0x020092c8), 9, 19);
-        Func_020007bc(9, 51, 16, 5, 1, 9, 19);
-        Func_020007d0(41, 51, 16, 5, 2, 9, 19);
+    Call1(Engine_AudioPlayCue, 0x121);
+    if (*gKorimaMagariLayout == 0) {
+        KorimaMagari_DrawPanel(9, 19, 16, 5, *gKorimaMagariLayout, 9, 19);
+        KorimaMagari_DrawPanel(9, 51, 16, 5, 1, 9, 19);
+        KorimaMagari_DrawPanel(41, 51, 16, 5, 2, 9, 19);
     } else {
-        Func_02000802(9, 19, 16, 5, 0, 9, 19);
-        Func_02000816(9, 83, 16, 5, 1, 9, 19);
-        Func_0200082a(41, 83, 16, 5, 2, 9, 19);
+        KorimaMagari_DrawPanel(9, 19, 16, 5, 0, 9, 19);
+        KorimaMagari_DrawPanel(9, 83, 16, 5, 1, 9, 19);
+        KorimaMagari_DrawPanel(41, 83, 16, 5, 2, 9, 19);
     }
-    Func_02001794(1);
-    Func_020017c6(1, 0, 0);
-    Func_020017a4(1);
-    Call1(Func_020017ba, 0x20083c1);
-    {
-        u16 *p = *(u16 **)0x020092c8;
-        /* FAKEMATCH: the toggle mask 1 is a HImode pool constant (short pool
-         * range), which splits the literal pool at the if/else branch. */
-        u16 m = (u16)(u32)Data_00000001;
-        u16 v = *p;
-
-        *p = v ^ m;
-    }
-    Func_02000952();
-    Func_0200180e();
-    Func_0200186a();
+    Engine_TaskWait(1);
+    Runtime_SetIrqHandler(1, 0, 0);
+    Engine_TaskWait(1);
+    Call1(Engine_TaskRemoveCallback, (s32)State_CopyPresetA0d0WithOffsetB0);
+    *(u16 *)gKorimaMagariLayout ^= 1;
+    Scene_RepaintBoardRecords();
+    Engine_MapRedraw();
+    Engine_EventEnd();
 }

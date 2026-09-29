@@ -32,7 +32,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void KorimaMagari_RunReturnSequence(void)
+void KorimaMagari_RunDepartSequence(void)
 {
     s32 v5;
 
@@ -42,11 +42,11 @@ void KorimaMagari_RunReturnSequence(void)
     Engine_AudioPlayCue(239);
     Call3(Engine_ActorSetSpeed, 8, 0x8000, 0x3333);
     Engine_ActorSetAnimation(8, 2);
-    Engine_ActorSetDestination(8, 72, 176);
+    Engine_ActorSetDestination(8, 104, 176);
     Engine_EventWait(6);
     Engine_ActorSetAnimation(0, 2);
     Call3(Engine_ActorSetSpeed, 0, 0x4ccc, 0x3333);
-    Call3(Engine_ActorSetDestinationOffset, 0, -8, 0);
+    Call3(Engine_ActorSetDestinationOffset, 0, 8, 0);
     Engine_EventWait(24);
     Engine_ActorSetAnimation(0, 1);
     Engine_ActorWaitForMove(8);
@@ -54,8 +54,8 @@ void KorimaMagari_RunReturnSequence(void)
     Call1(Engine_AudioPlayCue, 0x120);
     v5 = 9;
     Engine_AudioPlayCue(213);
-    Call6(Map_CopyCellAttributeRect, 5, 9, 1, 4, 6, v5);
-    Call6(Map_CopyCellAttributeRect, 0, 0, 1, 4, 4, v5);
-    *gKorimaMagariReturned = 1;
+    Call6(Map_CopyCellAttributeRect, 5, 9, 1, 4, 4, v5);
+    Call6(Map_CopyCellAttributeRect, 0, 0, 1, 4, 6, v5);
+    *gKorimaMagariReturned = 0;
     Engine_EventEnd();
 }

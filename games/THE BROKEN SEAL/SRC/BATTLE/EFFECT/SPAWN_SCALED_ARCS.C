@@ -1,17 +1,5 @@
-/* NONMATCHING (2026-09-28): 312/312 bytes, 18 differing halfwords,
-   9 aligned edits. The exact descending-arc sibling's initialization order
-   restores the sprite load and link store, reducing 11 aligned edits to 9.
-   An explicit byte cursor for state/step regressed to 316 bytes/40 edits;
-   retain the typed fields. The reference still advances one state cursor
-   by 15 after strb, while this candidate materializes two addresses.
-   The sibling's u8-zero placement scored 312 bytes/11 aligned edits and
-   left both addresses separate; restore the literal zeros and tied scales.
-   Previous draft (2026-09-24): 13 differing halfwords, 11 aligned edits.
-   Storing literal zeros to sprite->frame and child->phase lets GCC keep
-   the byte zero in r8, loaded from the mid-loop pool, as the reference
-   does (a zero local cost 121 halfwords). Residual: the reference derives
-   &object->step from &object->state (adds r3, #15) after the state store;
-   here the two addresses are computed together into two registers. */
+/* Battle effect: spawn the pair of scaled objects that follow the linked
+   object in mirrored arcs, one for each scaled-arc update callback. */
 #include "TYPES.H"
 
 struct ArcChild {
@@ -38,7 +26,8 @@ struct ArcSprite {
     u16 palette:4;
     u8 pad0a[18];
     u8 resource;
-    u8 flags;
+    u8 active:1;
+    u8 flags:7;
     u8 pad1e[8];
     u8 frame;
     u8 pad27;
@@ -66,8 +55,8 @@ struct ArcObject {
     void (*update)(struct ArcObject *);
 };
 
-struct VramEntry {
-    u16 base;
+struct ResourceTableEntry {
+    u16 value;
     u16 unknown:5;
     u16 tile:10;
     u16 last:1;
@@ -80,8 +69,8 @@ struct ArcScene {
     u16 resource;
 };
 
-extern struct ArcScene *Data_03001f30;
-extern struct VramEntry Data_03001b10[];
+extern struct ArcScene *gEffectWork;
+extern struct ResourceTableEntry ResourceTableEntries[];
 
 struct ArcObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void AnimationObjects_SelectAnimationFar(struct ArcSprite *sprite, s32 animation);
@@ -91,7 +80,7 @@ void BattleFx_UpdateScaledArcObjectB(struct ArcObject *obj);
 
 void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
 {
-    struct ArcScene *scene = Data_03001f30;
+    struct ArcScene *scene = gEffectWork;
     struct ArcObject *source = scene->source;
     struct ArcObject *objects[2];
     struct ArcObject *object;
@@ -115,8 +104,8 @@ void BattleFx_SpawnScaledArcObjects(struct ArcObject *link)
         sprite->frame = 0;
         Resource_ResetEntry(sprite->resource);
         sprite->resource = scene->resource;
-        sprite->flags |= 1;
-        sprite->tile = Data_03001b10[sprite->resource].tile;
+        sprite->active = 1;
+        sprite->tile = ResourceTableEntries[sprite->resource].tile;
         sprite->color = 0;
         sprite->shape = 1;
         sprite->size = 2;

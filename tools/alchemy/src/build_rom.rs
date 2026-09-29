@@ -605,10 +605,13 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
         let mut hasher = Sha256::new();
         hasher.update(with_includes(&[root, base], &root.join(source))?);
         let mut step = assembly_command(&source_text, &object_text);
-        let sounds = sound_files(root, source)
+        // Every file the build makes for this source is part of its key, so
+        // a changed recipe or encoder reassembles the object.
+        let built = sound_files(root, source)
             .into_iter()
+            .chain(graphics_files(root, source))
             .map(|built| base.join(built));
-        for stream in stream_paths(root, source, base).into_iter().chain(sounds) {
+        for stream in stream_paths(root, source, base).into_iter().chain(built) {
             hasher.update(fs::read(&stream).map_err(|error| error.to_string())?);
         }
         step.insert(1, format!("-I{}", base.display()));

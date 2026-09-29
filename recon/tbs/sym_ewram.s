@@ -22,7 +22,10 @@ gOverflowItem:
 	.space 0x0000000e
 	.global gPlayerObjectId
 gPlayerObjectId:
-	.space 0x00000b76
+	.space 0x0000005a
+	.global gSaveStamp
+gSaveStamp:
+	.space 0x00000b1c
 	.global gSceneState
 gSceneState:
 	.space 0x00000078

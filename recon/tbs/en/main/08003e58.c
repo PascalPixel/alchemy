@@ -1,3 +1,8 @@
+/* 2026-09-30 (Venus, tagged asm): still the lr/r7 preheader swap. An empty
+  asm on the map pointer, a barrier before the free check, an r7 register
+  variable for the map and a one-instruction mov copy into r7 each regress
+  (19 to 44 lines); the r7 copy comes from cse2 after loop.c hoisting and an
+  asm copy changes the whole allocation. */
 #include "TYPES.H"
 #include "VRAM_BLOCK.H"
 

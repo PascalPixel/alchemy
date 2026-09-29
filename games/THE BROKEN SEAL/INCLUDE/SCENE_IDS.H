@@ -156,6 +156,7 @@ extern char SceneId_VinasuHeya4;
 extern char SceneId_VinasuHeya5;
 extern char SceneId_VinasuHeya6;
 extern char SceneId_TorebiIzumi2;
+extern char SceneId_LinkLobby;
 extern char SceneId_VinasuChojo;
 
 

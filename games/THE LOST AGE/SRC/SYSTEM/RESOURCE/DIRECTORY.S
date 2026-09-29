@@ -129,19 +129,19 @@ Resource_DirectoryTable:
 	resource , Battle_SunbeamCloudsBackdrop
 	resource , Battle_RedHazeBackdrop
 	resource , Battle_DesertBackdrop
-	resource , Resource_Data074
+	resource , Battle_DuskCloudsBackdrop
 	resource , Battle_AerialViewBackdrop
 	resource , Battle_SunsetBackdrop
 	resource , Battle_StarfieldFlareBackdrop
 	resource , Battle_EarthHorizonBackdrop
-	resource , Resource_Data079
-	resource , Resource_Data07A
-	resource , Resource_Data07B
-	resource , Resource_Data07C
-	resource , Resource_Data07D
-	resource , Resource_Data07E
-	resource , Resource_Data07F
-	resource , Resource_Data080
+	resource , Ending_CliffDayPicture
+	resource , Ending_CliffSunsetPicture
+	resource , Ending_VillagersPictureA
+	resource , Ending_VillagersPictureB
+	resource , Ending_EmbracePicture
+	resource , Ending_ReunionPicture
+	resource , Ending_SunsetPlainPicture
+	resource , Ending_TheEndPicture
 	resource , Resource_Data081
 	resource , Slots_Icons
 	resource , Resource_Data083

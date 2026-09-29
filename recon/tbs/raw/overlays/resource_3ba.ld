@@ -37,6 +37,7 @@ SECTIONS
         "*/resource_3ba_overlay.o"(.text.x0200b3a0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/BUILD_SCENE.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x0200b84c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SCENE_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/FIND_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

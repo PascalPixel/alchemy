@@ -2,6 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 
+extern u8 *gActorEffectWork;
+
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
@@ -16,7 +18,7 @@ void BabiChika_UpdateTrackedActor(void)
     s32 limit;
 
     actor = (u8 *)Engine_ActorGet(0);
-    work = *(u8 **)0x03001ee0;
+    work = gActorEffectWork;
     limit = 0;
     if (gGameState.scene == (s32)&SceneId_BabiChika1) {
         switch (gGameState.entrance) {

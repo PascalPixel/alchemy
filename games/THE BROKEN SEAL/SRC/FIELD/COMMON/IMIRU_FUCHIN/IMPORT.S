@@ -158,6 +158,9 @@ Engine_ActorSetAnimation:
 	.thumb_func
 Engine_ActorJump:
 	overlay_veneer ObjectMotion_LaunchFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_ObjectSetPalette
 	.thumb_func
@@ -179,6 +182,9 @@ BattleFx_SetPhaseRequest:
 	.thumb_func
 Engine_ColorBufferApplyTarget:
 	overlay_veneer BattleFx_ApplyColorToTargetBufferFar
+	.global Engine_ColorBufferApplySource
+	.thumb_func
+Engine_ColorBufferApplySource:
 	overlay_veneer BattleFx_ApplyColorToSourceBufferFar
 	.global Engine_ColorBufferInterpolate
 	.thumb_func
@@ -204,6 +210,9 @@ Engine_RunRisingObjectSequence:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
+	.global BattleFx_StartFadeOverlay
+	.thumb_func
+BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	.global Battle_ResetEffectCounter
 	.thumb_func

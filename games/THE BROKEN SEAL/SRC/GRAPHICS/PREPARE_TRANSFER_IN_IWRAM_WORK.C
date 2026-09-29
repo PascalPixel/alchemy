@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
+#include "TRANSFORM.H"
 s32 Trig_Sin(s32);
 s32 Trig_Cos(s32);
 extern u8 Data_03001ce0[];
@@ -10,7 +11,7 @@ void Graphics_PrepareTransfer(void *src, void *dst, void *work);
 /* graphics/prepare_transfer_in_iwram_work.c */
 void Graphics_PrepareTransferInIwramWork(s32 src, s32 dst)
 {
-    Graphics_PrepareTransfer((void *)src, (void *)dst, (void *)0x03000350);
+    Graphics_PrepareTransfer((void *)src, (void *)dst, gTransform);
 }
 
 /* graphics/prepare_transfer_and_run.c */

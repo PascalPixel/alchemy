@@ -3,4 +3,8 @@
 	.section .rodata
 	.global Title_CamelotLogo
 Title_CamelotLogo:
+	.ifdef TBS_EDITION_JA
+	.incbin "GRAPHICS/TITLE/CAMELOT_LOGO_JA.parts.lz"
+	.else
 	.incbin "GRAPHICS/TITLE/CAMELOT_LOGO.parts.lz"
+	.endif

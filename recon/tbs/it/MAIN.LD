@@ -71,6 +71,7 @@ SECTIONS
         "*/recon/tbs/it/rom.o"(.rom.003c5a3f)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/LUCKY_DICE/BOARD.o"(.rodata)
         "*/recon/tbs/it/rom.o"(.rom.003c885d)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/LUCKY_DICE/SPRITES.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/TILE_MASK.o"(.rodata)
         "*/recon/tbs/it/rom.o"(.rom.003cbfa9)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/CYAN_SPARK.o"(.rodata)

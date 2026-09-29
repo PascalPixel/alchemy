@@ -13,6 +13,7 @@ extern char SceneId_Title;
 
 
 extern char SceneId_WorldMap;
+extern char SceneId_HaidiaMura;
 extern char SceneId_HaidiaIe;
 extern char SceneId_SoruIriguchi1;
 extern char SceneId_SoruIriguchi2;

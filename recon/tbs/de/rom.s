@@ -43,7 +43,7 @@
 	.section .rom.003c5a2f, "a"
 	.incbin "baserom.gba", 0x3c5a2f, 0x1
 	.section .rom.003c884d, "a"
-	.incbin "baserom.gba", 0x3c884d, 0x32b7
+	.incbin "baserom.gba", 0x3c884d, 0x3
 	.section .rom.003cc349, "a"
 	.incbin "baserom.gba", 0x3cc349, 0x3
 	.section .rom.003cdb5f, "a"

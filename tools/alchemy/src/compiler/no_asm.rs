@@ -150,6 +150,30 @@ fn forbidden(word: &str, attribute: bool) -> Option<String> {
         .then(|| format!("ABI attribute {word}"))
 }
 
+/// Whether inline assembly on this line carries its proof that Camelot very
+/// likely wrote it in their own C: a `/* CAMELOT_ASM: reason */` tag on the
+/// same line or the line above (Pascal, 2026-09-29).
+pub fn camelot_admitted(text: &str, line: usize) -> bool {
+    static TAG: OnceLock<Regex> = OnceLock::new();
+    let tag = regex(&TAG, r"/\*\s*CAMELOT_ASM:\s*[^\s*]");
+    let lines: Vec<&str> = text.lines().collect();
+    [line.checked_sub(1), line.checked_sub(2)]
+        .into_iter()
+        .flatten()
+        .filter_map(|row| lines.get(row))
+        .any(|text| tag.is_match(text))
+}
+
+fn admit_camelot(findings: Vec<Finding>, text: impl Fn(&str) -> Option<String>) -> Vec<Finding> {
+    findings
+        .into_iter()
+        .filter(|item| {
+            item.token.starts_with("ABI")
+                || !text(&item.file).is_some_and(|source| camelot_admitted(&source, item.line))
+        })
+        .collect()
+}
+
 pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
     let text = if Path::new(file).ends_with(DMA_HEADER) {
         mask_dma_body(text)
@@ -158,7 +182,8 @@ pub fn find_forbidden(file: &str, text: &str) -> Vec<Finding> {
     } else {
         text.into()
     };
-    scan_forbidden(file, &text, false)
+    let source = text.clone();
+    admit_camelot(scan_forbidden(file, &text, false), |_| Some(source.clone()))
 }
 
 fn scan_forbidden(file: &str, text: &str, admit_dma: bool) -> Vec<Finding> {
@@ -246,7 +271,7 @@ pub fn find_preprocessed(label: &str, text: &str) -> Vec<Finding> {
             item.line = logical + item.line - physical - 1;
         }
     }
-    findings
+    admit_camelot(findings, |file| std::fs::read_to_string(file).ok())
 }
 
 pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
@@ -361,6 +386,17 @@ mod tests {
             assert!(!find_forbidden(IWRAM_CALL_HEADER, &changed).is_empty());
             assert!(!find_preprocessed("expanded", &changed).is_empty());
         }
+    }
+
+    #[test]
+    fn camelot_asm_needs_its_proof_tag() {
+        let bare = "void f(void) {\n    asm(\"swi 0x5\");\n}\n";
+        assert_eq!(find_forbidden("fixture.c", bare).len(), 1);
+        let tagged =
+            "void f(void) {\n    /* CAMELOT_ASM: VBlankIntrWait swi */\n    asm(\"swi 0x5\");\n}\n";
+        assert!(find_forbidden("fixture.c", tagged).is_empty());
+        let empty = "void f(void) {\n    /* CAMELOT_ASM: */\n    asm(\"swi 0x5\");\n}\n";
+        assert_eq!(find_forbidden("fixture.c", empty).len(), 1);
     }
 
     #[test]

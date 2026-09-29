@@ -9,6 +9,7 @@
  * game does. A switch cannot use one as a case label.
  */
 extern char ResourceId_BuildStamp;
+extern char ResourceId_PaletteFarCalls;
 extern char ResourceId_WindowTiles;
 extern char ResourceId_NintendoLogo;
 extern char ResourceId_GoldenSunLogo;

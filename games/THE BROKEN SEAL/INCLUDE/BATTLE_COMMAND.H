@@ -5,7 +5,7 @@
 #include "ITEM.H"
 extern u8 gDebugMode[];
 extern u8 gKeysHeld[];
-extern void *gBattleWork;
+#include "BATTLE_WORK.H"
 
 /* Player/AI command consumed by the battle-command resolver. */
 struct BattleCommandRequest {

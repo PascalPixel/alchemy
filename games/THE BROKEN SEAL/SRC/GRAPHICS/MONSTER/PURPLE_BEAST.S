@@ -1,0 +1,6 @@
+@ Monster_PurpleBeastSprites: 16 frames of 64x64, front and back of each pose, drawn with the
+@ system palette; zero-skip coded and packed by the resource packer.
+	.section .rodata
+	.global Monster_PurpleBeastSprites
+Monster_PurpleBeastSprites:
+	.incbin "GRAPHICS/MONSTER/PURPLE_BEAST.frames.lz"

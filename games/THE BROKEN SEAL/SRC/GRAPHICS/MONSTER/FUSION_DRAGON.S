@@ -1,0 +1,6 @@
+@ Monster_FusionDragonSprites: 16 frames of 64x64, front and back of each pose, drawn with the
+@ system palette; zero-skip coded and packed by the resource packer.
+	.section .rodata
+	.global Monster_FusionDragonSprites
+Monster_FusionDragonSprites:
+	.incbin "GRAPHICS/MONSTER/FUSION_DRAGON.frames.lz"

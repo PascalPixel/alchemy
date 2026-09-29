@@ -73,7 +73,6 @@ extern u8 gCell[][2];
 extern s32 TakaraHashira_ShakeChance;
 
 
-extern volatile s32 Data_03001e40;
 
 s32 FieldScene_QueryActorFootprint();
 void Vector_AddPolarOffset();
@@ -90,6 +89,7 @@ void Runtime_SetIrqHandler();
 void Runtime_SetIrqHandler();
 s32 FieldScene_RunScene3b3SequenceD();
 void TakaraHashira_UpdatePillarActors();
+void FieldScene_RunScene3b3SequenceE();
 int FieldScene_RunScene3b3SequenceD(void);
 void battle_owner_69();
 

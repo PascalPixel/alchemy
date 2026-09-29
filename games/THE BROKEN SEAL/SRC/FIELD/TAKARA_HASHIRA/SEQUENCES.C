@@ -44,7 +44,7 @@ void FieldScene_RunPrimarySequence(void)
     u8 slot16[40];
 
     rec = Actor_Get(ACTOR_PARTY_LEADER);
-    flag = Data_03001e40 & 3;
+    flag = gFrameCount & 3;
     if (flag == 0) {
         base = slot16;
         *(s32 *)(base + 4) = 10;

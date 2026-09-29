@@ -1,12 +1,15 @@
 #include "HASHIRA.H"
 
+/* The four background scroll pairs; the shaken copy starts at the second. */
+extern u16 gBgScroll[];
+
 void CopyAndOffsetCoordinatePreset(void)
 {
     u32 *destination;
     const u32 *source;
     u16 *coordinates;
 
-    source = (const u32 *)0x03001ad4;
+    source = (const u32 *)&gBgScroll[2];
     destination = (u32 *)TakaraHashira_ShakenScroll;
     *destination++ = *source++;
     *destination++ = *source++;

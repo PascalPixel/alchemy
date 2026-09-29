@@ -4,7 +4,6 @@
 /* FAKEMATCH: array view of distinct linker-adjacent pointer cells preserves
  * the shared address base; it does not establish one source array. */
 extern u8 *Data_03001ebc[];
-extern u32 Data_03001e40;
 /* Current entry in the RGB tint list; a red of 99 ends the list. */
 extern s32 ToretoHeya_TintIndex;
 extern s32 ToretoHeya_TintSteps[];
@@ -28,7 +27,7 @@ void ToretoPalette_ApplyTint(void)
     src = (u16 *)Data_03001ebc[5];
     if (*(s16 *)(event + 0x17e) != 0)
         return;
-    if ((Data_03001e40 & 31) != 0)
+    if ((gFrameCount & 31) != 0)
         return;
     src += 16;
     dst = (u16 *)0x05000020;

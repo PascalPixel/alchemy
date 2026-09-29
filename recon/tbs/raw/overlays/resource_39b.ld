@@ -14,7 +14,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/LEADER_SPARKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAKYURI/PALETTE_CYCLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/SCENE_STEPS.o"(.text)
-        "*/resource_39b_overlay.o"(.text.x020091b4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/OPEN_ENTRANCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/ARRIVAL.o"(.text)
         "*/resource_39b_overlay.o"(.text.x020092e0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_IRIGUCHI/CROSS_DOORWAY.o"(.text)

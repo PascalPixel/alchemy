@@ -244,104 +244,6 @@ Func_0200013c:
 	.4byte 0x0200c62c
 	.4byte 0x02008105
 	.4byte 0xffff0000
-	.section .text.x0200834c,"ax",%progbits
-	.balign 4
-	.global Func_0200034c
-	.thumb_func
-Func_0200034c:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_0200034c_0
-	ldr r0, [pc, #16]
-	b .L_0200034c_1
-.L_0200034c_0:
-	ldr r0, [pc, #16]
-.L_0200034c_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000003c
-	.4byte 0x0200c7a8
-	.4byte 0x0200c838
-	.section .text.x02008388,"ax",%progbits
-	.balign 4
-	.global Func_02000388
-	.thumb_func
-Func_02000388:
-	push {r5, lr}
-	ldr r1, [pc, #112]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #104]
-	cmp r2, r3
-	bne .L_02000388_0
-	ldr r0, [pc, #100]
-	b .L_02000388_1
-.L_02000388_0:
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #3
-	bne .L_02000388_2
-	ldr r0, [pc, #88]
-	b .L_02000388_1
-.L_02000388_2:
-	ldr r0, [pc, #88]
-	bl 0x0200c3bc
-	cmp r0, #0
-	beq .L_02000388_3
-	ldr r0, [pc, #80]
-	ldr r1, [pc, #76]
-	adds r3, r0, #0
-	adds r3, #122
-	strh r1, [r3]
-	adds r3, #48
-	strh r1, [r3]
-	adds r2, r0, #0
-	movs r3, #144
-	adds r2, #200
-	lsls r3, r3, #17
-	str r3, [r2]
-	movs r3, #248
-	adds r2, #8
-	lsls r3, r3, #16
-	str r3, [r2]
-	movs r2, #133
-	lsls r2, r2, #1
-	adds r3, r0, r2
-	adds r2, #24
-	strh r1, [r3]
-	adds r3, r0, r2
-	strh r1, [r3]
-.L_02000388_3:
-	ldr r5, [pc, #36]
-	adds r0, r5, #0
-	bl 0x0200c3ec
-	adds r0, r5, #0
-.L_02000388_1:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000003c
-	.4byte 0x0200c8f0
-	.4byte 0x0200cae8
-	.4byte 0x00000895
-	.4byte 0x0200c998
 	.section .text.x0200902c,"ax",%progbits
 	.balign 4
 	.global ShianJiin_RunMasterScene
@@ -470,48 +372,11 @@ Func_0200102c:
 	.4byte 0x00000101
 	.4byte 0x000018ae
 	.4byte 0x000018ac
-	.section .text.x0200a574,"ax",%progbits
-	.balign 4
-	.global Func_02002574
-	.thumb_func
-Func_02002574:
-	push {lr}
-	ldr r1, [pc, #44]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02002574_0
-	ldr r0, [pc, #32]
-	b .L_02002574_1
-.L_02002574_0:
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #3
-	bne .L_02002574_2
-	ldr r0, [pc, #20]
-	b .L_02002574_1
-.L_02002574_2:
-	ldr r0, [pc, #20]
-.L_02002574_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000003c
-	.4byte 0x0200cb90
-	.4byte 0x0200d184
-	.4byte 0x0200cd40
 	.section .text.x0200a7ec,"ax",%progbits
 	.balign 4
-	.global Func_020027ec
+	.global FieldScene_RunScene39e_020027ec
 	.thumb_func
-Func_020027ec:
+FieldScene_RunScene39e_020027ec:
 	push {r5, lr}
 	bl 0x0200c3dc
 	movs r1, #128
@@ -804,293 +669,6 @@ Func_020027ec:
 	.4byte 0x000017e0
 	.4byte 0x000017c9
 	.4byte 0x00000893
-	.section .text.x0200be58,"ax",%progbits
-	.balign 4
-	.global Func_02003e58
-	.thumb_func
-Func_02003e58:
-	push {r5, lr}
-	ldr r5, [pc, #576]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r5, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #568]
-	sub sp, #8
-	cmp r2, r3
-	beq .L_02003e58_0
-	b .L_02003e58_1
-.L_02003e58_0:
-	ldr r3, [pc, #560]
-	movs r2, #224
-	ldr r3, [r3]
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r1, #225
-	adds r2, #73
-	str r2, [r3]
-	lsls r1, r1, #1
-	adds r3, r5, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #1
-	bne .L_02003e58_2
-	ldr r0, [pc, #536]
-	bl 0x0200c3bc
-	cmp r0, #0
-	beq .L_02003e58_3
-	movs r0, #8
-	movs r1, #6
-	bl 0x0200c454
-	b .L_02003e58_4
-.L_02003e58_3:
-	movs r0, #8
-	movs r1, #5
-	bl 0x0200c454
-	ldr r0, [pc, #512]
-	bl 0x0200c3bc
-	cmp r0, #0
-	bne .L_02003e58_5
-	b .L_02003e58_4
-.L_02003e58_5:
-	ldr r0, [pc, #504]
-	bl 0x0200c3bc
-	cmp r0, #0
-	beq .L_02003e58_6
-	b .L_02003e58_4
-.L_02003e58_6:
-	ldr r0, [pc, #496]
-	bl 0x0200c3bc
-	cmp r0, #0
-	beq .L_02003e58_7
-	b .L_02003e58_4
-.L_02003e58_7:
-	bl 0x0200a7ec
-	b .L_02003e58_4
-.L_02003e58_2:
-	cmp r3, #2
-	beq .L_02003e58_8
-	cmp r3, #4
-	bne .L_02003e58_9
-.L_02003e58_8:
-	ldr r0, [pc, #476]
-	bl 0x0200c3cc
-	ldr r0, [pc, #472]
-	bl 0x0200c3bc
-	adds r5, r0, #0
-	cmp r5, #0
-	bne .L_02003e58_10
-	movs r0, #19
-	bl 0x0200c404
-	adds r3, r0, #0
-	adds r3, #85
-	strb r5, [r3]
-	movs r3, #192
-	lsls r3, r3, #12
-	str r3, [r0, #12]
-	str r3, [r0, #60]
-	ldr r3, [pc, #444]
-	movs r2, #128
-	str r3, [r0, #24]
-	ldr r3, [r0, #80]
-	lsls r2, r2, #8
-	str r2, [r0, #28]
-	strh r2, [r3, #30]
-	ldr r0, [pc, #436]
-	bl 0x0200c3bc
-	cmp r0, #0
-	beq .L_02003e58_11
-	movs r1, #248
-	movs r2, #208
-	movs r0, #18
-	lsls r1, r1, #16
-	lsls r2, r2, #16
-	bl 0x0200c44c
-	ldr r0, [pc, #416]
-	bl 0x0200c3bc
-	cmp r0, #0
-	bne .L_02003e58_11
-	movs r1, #128
-	movs r2, #240
-	lsls r1, r1, #17
-	lsls r2, r2, #16
-	movs r0, #16
-	bl 0x0200c44c
-	movs r0, #18
-	bl 0x0200c404
-	ldr r5, [pc, #388]
-	str r5, [r0, #108]
-	movs r0, #13
-	bl 0x0200c404
-	str r5, [r0, #108]
-	movs r0, #14
-	bl 0x0200c404
-	str r5, [r0, #108]
-	movs r0, #15
-	bl 0x0200c404
-	str r5, [r0, #108]
-	movs r0, #16
-	bl 0x0200c404
-	str r5, [r0, #108]
-	b .L_02003e58_11
-.L_02003e58_10:
-	movs r0, #19
-	bl 0x0200c404
-	adds r2, r0, #0
-	adds r2, #85
-	movs r3, #0
-	strb r3, [r2]
-	movs r3, #192
-	lsls r3, r3, #12
-	str r3, [r0, #12]
-	str r3, [r0, #60]
-	movs r1, #128
-	ldr r3, [pc, #316]
-	lsls r1, r1, #8
-	str r3, [r0, #24]
-	str r1, [r0, #28]
-	movs r3, #89
-	adds r3, r3, r0
-	ldrb r2, [r3]
-	mov r12, r3
-	movs r3, #8
-	orrs r3, r2
-	mov r2, r12
-	strb r3, [r2]
-	ldr r3, [r0, #80]
-	movs r2, #10
-	strh r1, [r3, #30]
-	movs r3, #14
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #14
-	movs r1, #11
-	movs r2, #1
-	movs r3, #1
-	bl 0x0200c39c
-.L_02003e58_11:
-	movs r0, #152
-	movs r1, #192
-	movs r2, #224
-	lsls r1, r1, #13
-	lsls r2, r2, #16
-	movs r3, #223
-	lsls r0, r0, #17
-	bl 0x02008048
-	movs r0, #10
-	movs r1, #5
-	bl 0x0200c454
-	movs r0, #11
-	movs r1, #5
-	bl 0x0200c454
-	b .L_02003e58_4
-.L_02003e58_9:
-	cmp r3, #3
-	bne .L_02003e58_4
-	ldr r0, [pc, #220]
-	bl 0x0200c3cc
-	ldr r0, [pc, #216]
-	bl 0x0200c3bc
-	cmp r0, #0
-	bne .L_02003e58_13
-	bl 0x0200aad0
-	b .L_02003e58_4
-.L_02003e58_13:
-	ldr r0, [pc, #220]
-	bl 0x0200c3bc
-	cmp r0, #0
-	bne .L_02003e58_4
-	movs r0, #8
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200c44c
-	movs r0, #9
-	movs r1, #0
-	movs r2, #0
-.L_02003e58_12:
-	bl 0x0200c44c
-	b .L_02003e58_4
-.L_02003e58_1:
-	movs r0, #170
-	bl 0x0200c564
-	movs r0, #9
-	bl 0x0200c404
-	adds r0, #89
-	ldrb r2, [r0]
-	movs r3, #16
-	movs r1, #225
-	orrs r3, r2
-	lsls r1, r1, #1
-	strb r3, [r0]
-	adds r3, r5, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #3
-	bne .L_02003e58_14
-	ldr r0, [pc, #116]
-	bl 0x0200c3bc
-	cmp r0, #0
-	beq .L_02003e58_14
-	ldr r0, [pc, #148]
-	bl 0x0200c3bc
-	cmp r0, #0
-	bne .L_02003e58_14
-	movs r3, #10
-	movs r2, #24
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #10
-	movs r1, #84
-	movs r2, #1
-	movs r3, #1
-	bl 0x0200c39c
-.L_02003e58_14:
-	ldr r0, [pc, #120]
-	bl 0x0200c3bc
-	cmp r0, #0
-	beq .L_02003e58_4
-	movs r1, #152
-	movs r2, #196
-	movs r0, #9
-	lsls r1, r1, #16
-	lsls r2, r2, #17
-	bl 0x0200c44c
-	movs r0, #9
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200c4c4
-	movs r3, #10
-	movs r2, #22
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #10
-	movs r1, #26
-	movs r2, #1
-	movs r3, #1
-	bl 0x0200c39c
-.L_02003e58_4:
-	movs r0, #0
-	sub sp, #-8
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000003d
-	.4byte 0x03001ebc
-	.4byte 0x0000088f
-	.4byte 0x00000f14
-	.4byte 0x00000893
-	.4byte 0x00000109
-	.4byte 0x0000012f
-	.4byte 0x00000895
-	.4byte 0x0000cccc
-	.4byte 0x0000089a
-	.4byte 0x0000089b
-	.4byte 0x02008325
-	.4byte 0x000008b2
-	.4byte 0x00000894
-	.4byte 0x00000892
 	.section .rodata,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
@@ -1229,6 +807,8 @@ Func_02003e58:
 	.4byte 0x00020013
 	.4byte 0x00050002
 	.4byte 0x0000ffff
+	.global gShianJiinEntrances1
+gShianJiinEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x00000128
 	.4byte 0xc00001e8
@@ -1265,6 +845,8 @@ Func_02003e58:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gShianJiinEntrancesOther
+gShianJiinEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc0000228
@@ -1313,6 +895,8 @@ ShianJiin_XianMessages:
 	.4byte 0x00302058
 	.4byte 0x00408049
 	.4byte 0x000001ff
+	.global gShianJiinPlacements1
+gShianJiinPlacements1:
 	.4byte 0xffff006c
 	.4byte 0x00000002
 	.4byte 0x01280000
@@ -1355,6 +939,8 @@ ShianJiin_XianMessages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gShianJiinPlacements
+gShianJiinPlacements:
 	.4byte 0x00000033
 	.4byte 0x00000001
 	.4byte 0x00a80000
@@ -1439,6 +1025,8 @@ ShianJiin_XianMessages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gShianJiinPlacementsEntrance3
+gShianJiinPlacementsEntrance3:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1481,6 +1069,8 @@ ShianJiin_XianMessages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gShianJiinEvents1
+gShianJiinEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1589,6 +1179,8 @@ ShianJiin_XianMessages:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gShianJiinEvents
+gShianJiinEvents:
 	.4byte 0x00004402
 	.4byte 0xffff0001
 	.4byte 0x0200a765
@@ -1862,6 +1454,8 @@ ShianJiin_XianMessages:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gShianJiinEventsEntrance3
+gShianJiinEventsEntrance3:
 	.4byte 0x00000001
 	.4byte 0xffff0004
 	.4byte 0x00000003

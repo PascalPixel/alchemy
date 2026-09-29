@@ -1,22 +1,13 @@
-/* resource_39e:0200be58..0200c0dc (644 bytes with pool), still linked from
- * the listing. Remaining difference: the scene test loads 0x3d from the
- * literal pool, a link-time value; an integer scene compares with an
- * immediate (636 bytes, 419 differ). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 void FieldScene_RunScene39e_020027ec(void);
 void FieldScene_RunRoofEnsembleSequence(void);
 void *NewEffectObject(s32 x, s32 y, s32 z, s32 kind);
-void BattleFx_SetQueuedSoundAndPlayFar(s32 value);
+void BattleFx_SetQueuedSoundAndPlay(s32 value);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
+void FaceXianActorToPlayer(union FieldObject *object);
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -28,15 +19,15 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* Temple entry: in area 0x3d set the entrance selector and, by entrance and story flags, stage the roof and gathering actors; elsewhere restore the opened passages. */
+/* Temple entry: in the second scene set the entrance selector and, by entrance and story flags, stage the roof and gathering actors; elsewhere restore the opened passages. */
 s32 ShianJiin_ApplyEntryState(void)
 {
     struct FieldActor *actor;
     s32 set;
 
-    if (Data_02000240_t.halves[224][0] == 0x3d) {
+    if (gGameState.scene == (s32)&SceneId_ShianJiin2) {
         gEventWork->start_transition = 0x209;
-        if (Data_02000240_t.halves[225][0] == 1) {
+        if (gGameState.entrance == 1) {
             if (Engine_GameFlagIsSet(0x88f)) {
                 Engine_ActorSetAnimation(8, 6);
             } else {
@@ -45,7 +36,7 @@ s32 ShianJiin_ApplyEntryState(void)
                     FieldScene_RunScene39e_020027ec();
                 }
             }
-        } else if (Data_02000240_t.halves[225][0] == 2 || Data_02000240_t.halves[225][0] == 4) {
+        } else if (gGameState.entrance == 2 || gGameState.entrance == 4) {
             Engine_GameFlagClear(0x12f);
             set = Engine_GameFlagIsSet(0x895);
             if (set == 0) {
@@ -60,11 +51,11 @@ s32 ShianJiin_ApplyEntryState(void)
                     Engine_ActorSetPosition(18, 0xf80000, 0xd00000);
                     if (!Engine_GameFlagIsSet(0x89b)) {
                         Engine_ActorSetPosition(16, 0x1000000, 0xf00000);
-                        Engine_ActorGet(18)->update = (void *)0x2008325;
-                        Engine_ActorGet(13)->update = (void *)0x2008325;
-                        Engine_ActorGet(14)->update = (void *)0x2008325;
-                        Engine_ActorGet(15)->update = (void *)0x2008325;
-                        Engine_ActorGet(16)->update = (void *)0x2008325;
+                        Engine_ActorGet(18)->update = FaceXianActorToPlayer;
+                        Engine_ActorGet(13)->update = FaceXianActorToPlayer;
+                        Engine_ActorGet(14)->update = FaceXianActorToPlayer;
+                        Engine_ActorGet(15)->update = FaceXianActorToPlayer;
+                        Engine_ActorGet(16)->update = FaceXianActorToPlayer;
                     }
                 }
             } else {
@@ -81,7 +72,7 @@ s32 ShianJiin_ApplyEntryState(void)
             NewEffectObject(0x1300000, 0x180000, 0xe00000, 223);
             Engine_ActorSetAnimation(10, 5);
             Engine_ActorSetAnimation(11, 5);
-        } else if (Data_02000240_t.halves[225][0] == 3) {
+        } else if (gGameState.entrance == 3) {
             Engine_GameFlagClear(0x12f);
             if (!Engine_GameFlagIsSet(0x895)) {
                 FieldScene_RunRoofEnsembleSequence();
@@ -91,9 +82,9 @@ s32 ShianJiin_ApplyEntryState(void)
             }
         }
     } else {
-        BattleFx_SetQueuedSoundAndPlayFar(170);
+        BattleFx_SetQueuedSoundAndPlay(170);
         Engine_ActorGet(9)->collision_flags |= 16;
-        if (Data_02000240_t.halves[225][0] == 3 && Engine_GameFlagIsSet(0xf14) && !Engine_GameFlagIsSet(0x894)) {
+        if (gGameState.entrance == 3 && Engine_GameFlagIsSet(0xf14) && !Engine_GameFlagIsSet(0x894)) {
             Call6(Engine_MapCopyCellAttributes, 10, 84, 1, 1, 10, 24);
         }
         if (Engine_GameFlagIsSet(0x892)) {

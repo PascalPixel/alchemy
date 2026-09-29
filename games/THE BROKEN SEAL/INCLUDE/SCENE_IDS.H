@@ -27,6 +27,8 @@ extern char SceneId_ImiruMura1;
 extern char SceneId_ImiruMura2;
 extern char SceneId_ImiruFuchin1;
 extern char SceneId_MakyuriChojo1;
+extern char SceneId_ShianJiin1;
+extern char SceneId_ShianJiin2;
 extern char SceneId_ImiruFuchin2;
 extern char SceneId_ImiruFuchin3;
 extern char SceneId_ImiruFuchin4;

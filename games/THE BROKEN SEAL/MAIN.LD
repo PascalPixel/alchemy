@@ -442,7 +442,7 @@ SECTIONS
         "*/recon/tbs/raw/0801a90e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/FIND_FREE_TRANSFER_ENTRY.o"(.text)
         "*/recon/tbs/raw/0801a98c.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/0801aeec.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_DRAW_SIDE_MARKER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_OPEN_WINDOW.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RESET_OWNER_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SELECTION_SET_NODE_COORDINATES.o"(.text)

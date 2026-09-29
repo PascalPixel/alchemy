@@ -312,7 +312,10 @@ Enemy_ElementPresetTable:
 Djinn_DefinitionTable:
 	.incbin "baserom.gba", 0x0008926c, 0x00000d94
 	.section .unidentified.0809c410,"a"
-	.incbin "baserom.gba", 0x0009c410, 0x00000200
+	.incbin "baserom.gba", 0x0009c410, 0x00000100
+	.global BattleFx_ArcSparkTiles
+BattleFx_ArcSparkTiles:
+	.incbin "baserom.gba", 0x0009c510, 0x00000100
 	.global Encounter_EnemyGroupTable
 Encounter_EnemyGroupTable:
 	.incbin "baserom.gba", 0x0009c610, 0x00000b60
@@ -387,7 +390,13 @@ BattleFx_BurstParticleObjectScript:
 	.incbin "baserom.gba", 0x0009f11c, 0x00000044
 	.global BattleFx_RandomChildValues
 BattleFx_RandomChildValues:
-	.incbin "baserom.gba", 0x0009f160, 0x00000048
+	.incbin "baserom.gba", 0x0009f160, 0x00000008
+	.global WorldMap_MarkerBlendCycle
+WorldMap_MarkerBlendCycle:
+	.incbin "baserom.gba", 0x0009f168, 0x00000020
+	.global WorldMap_CursorDirectionAngles
+WorldMap_CursorDirectionAngles:
+	.incbin "baserom.gba", 0x0009f188, 0x00000020
 	.section .unidentified.0809f7f0,"a"
 	.incbin "baserom.gba", 0x0009f7f0, 0x00000020
 	.global Data_0809f810
@@ -437,7 +446,10 @@ ObjectMotion_TurnTowardLinkedScript:
 	.incbin "baserom.gba", 0x0009ff2c, 0x00000014
 	.global ObjectMotion_LinkedActionScript
 ObjectMotion_LinkedActionScript:
-	.incbin "baserom.gba", 0x0009ff40, 0x000001c8
+	.incbin "baserom.gba", 0x0009ff40, 0x00000018
+	.global FieldFx_GroundParticleTiles
+FieldFx_GroundParticleTiles:
+	.incbin "baserom.gba", 0x0009ff58, 0x000001b0
 	.global Data_080a0108
 Data_080a0108:
 	.incbin "baserom.gba", 0x000a0108, 0x00000020
@@ -446,7 +458,10 @@ BattleFx_UntargetedObjectScript:
 	.incbin "baserom.gba", 0x000a0128, 0x00000004
 	.global gEffectScripts
 gEffectScripts:
-	.incbin "baserom.gba", 0x000a012c, 0x00000ed4
+	.incbin "baserom.gba", 0x000a012c, 0x0000000c
+	.global WorldMap_PlaceMarkers
+WorldMap_PlaceMarkers:
+	.incbin "baserom.gba", 0x000a0138, 0x00000ec8
 	.section .unidentified.080aea4c,"a"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:

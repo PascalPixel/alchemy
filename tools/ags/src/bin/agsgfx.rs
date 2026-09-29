@@ -5,7 +5,9 @@ use ags::graphics::metatiles;
 use ags::lz::{
     compress_general, compress_mtf4, compress_tagged, compress_tagged_palette, LzMachine,
 };
-use psynergy::assets::image::{bgr555_palette_from_png, indexed_png, png_from_gba_tiles, GbaBpp};
+use psynergy::assets::image::{
+    bgr555_palette_from_png, indexed_png, png_from_bitmap, png_from_gba_tiles, GbaBpp,
+};
 use std::fs;
 use std::process::ExitCode;
 
@@ -13,6 +15,7 @@ const USAGE: &str = "usage: agsgfx INPUT OUTPUT [options]
   X.png  -> Y.4bpp | Y.8bpp    tiles, row-major or by metatile (-mwidth N -mheight N)
   X.png  -> Y.gbapal           the PNG's palette as little-endian BGR555
   X.4bpp | X.8bpp -> Y.png     tiles back to an indexed PNG (--palette P.gbapal|P.png --width TILES)
+  X.bitmap -> Y.png            a linear 8-bit bitmap to an indexed PNG (--palette P --width PIXELS)
   X      -> Y.lz               compress (--lz general|palette|tagged|mtf4; the LZ kinds
                                take --machine WINDOW,READ_AHEAD,MAX_DISTANCE,PALETTE_READ_AHEAD)
   X.lz   -> Y                  decompress a tagged stream (tag 0 general, 1 palette, 2 tile)";
@@ -107,6 +110,13 @@ fn run(args: &[String]) -> Result<(), String> {
             };
             png_from_gba_tiles(&data, &palette, bpp(&from), number(options, "--width", 16)?)
                 .map_err(|error| error.0)?
+        }
+        ("bitmap", "png") => {
+            let path = option(options, "--palette").ok_or("needs --palette")?;
+            let palette = fs::read(&path).map_err(|error| format!("{path}: {error}"))?;
+            let width = option(options, "--width").ok_or("needs --width")?;
+            let width = width.parse().map_err(|_| "--width takes a number")?;
+            png_from_bitmap(&data, &palette, width).map_err(|error| error.0)?
         }
         ("lz", _) => decompress(&data)?,
         (_, "lz") => match option(options, "--lz").as_deref() {

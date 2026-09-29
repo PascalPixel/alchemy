@@ -8,6 +8,9 @@
  * pointer first, which by that measure means one more mode reference or
  * two fewer key references. Parameter types, a local key pointer, a local
  * mode copy, storing *mode into *sub and name-length changes do not move it.
+ * 2026-09-29: alchemy permute scores 240 (15 register-only, the pool word
+ * moved and its pad). Ten minutes (67,766 candidates): none below 240;
+ * the rewrites do not change reference counts or live lengths.
  */
 #include "TYPES.H"
 

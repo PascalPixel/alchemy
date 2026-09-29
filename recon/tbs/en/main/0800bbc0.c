@@ -9,6 +9,15 @@
  * a two-halfword difference; u8, s16 and s32 spellings give the same ldrh.
  * The unit matched only while the zero was the address of a link-time
  * symbol at 0.
+ * 2026-09-29: the assembler encodes that pc-relative ldrh as the same ldr,
+ * so the bytes differ only in order: alchemy permute scores 60, one moved
+ * instruction. The pooled zero is the HImode mask of the id store (thumb
+ * stores a halfword field through store_fixed_bit_field; CSE then uses that
+ * mask register for zero), so its set follows the id store's position.
+ * Storing the id before the frames load moves the zero load ahead of the
+ * frames load but takes the strh with it; u32, pointer and register zero
+ * locals change nothing. Five minutes of permutation (54,198 candidates):
+ * none below 60.
  */
 #include "TYPES.H"
 

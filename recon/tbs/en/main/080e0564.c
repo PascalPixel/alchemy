@@ -1,3 +1,9 @@
+/* 2026-09-29: eight minutes of permutation (alchemy permute --symbol
+ * Func_080e0564): 2790 -> 2115 (72 register-only, 6 operand, 10 reordered,
+ * 8 inserted, 2 deleted), kept: the cell variant is read through a local
+ * cursor to the cell buffer, the sheet address is taken as &sheet[offset],
+ * and the variant is decremented through pointer arithmetic. Resource
+ * numbers 0x6f, 0x73 and 0x94 are still Value_ symbols. */
 /* Draft, complete main:080e0564 [080e0564,080e08c0), 860 bytes.
  * Commit 914176340 matched this owner byte for byte with the spray pool
  * written as the literal EWRAM address 0x02010000. Literal RAM addresses
@@ -124,11 +130,12 @@ void BattleFx_RunSpoutBursts(struct BattleEffectArgument *object)
         }
         for (i = 0; i != 512; i++) {
             if (gMapCellBuffer[i].variant != -1) {
-                size = gMapCellBuffer[i].variant / 16 + 2;
-                draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-                    HI(gMapCellBuffer[i].x) - size / 2, HI(gMapCellBuffer[i].y) - size, size, size * 2);
+                struct EffectStep *cells = gMapCellBuffer;
+
+                size = cells[i].variant / 16 + 2;
+                draw[1](canvas, &sheet[ParticleStreams_CellOffsets[size - 1]], HI(gMapCellBuffer[i].x) - size / 2, HI(gMapCellBuffer[i].y) - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(&gMapCellBuffer[i], 62, 0x2000);
-                gMapCellBuffer[i].variant--;
+                (gMapCellBuffer + i)->variant--;
             }
         }
         Camera_ApplyShake(4, 4);

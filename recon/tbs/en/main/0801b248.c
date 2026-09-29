@@ -4,8 +4,19 @@
    OAM bitfield writes merge into one read-modify-write per byte as in the
    ROM. Residual: the reference keeps the graphics pointer in fp from its
    zero initialiser (storing side->more from it) and the sprite pointer in
-   sl, which this C folds into constants and recomputes. */
+   sl, which this C folds into constants and recomputes.
+   2026-09-29 (alchemy permute scorer): the draft scored 2395; with the
+   right-marker tiles as the linked Menu_CursorObjectTiles and the left ones
+   as Data_08033ef8 (the last 0x400 bytes of the Data_08032224 scaffold
+   block, still unlabelled, one fixed operand) it scores 2530. A 300-second
+   search (36,000 candidates) reached this body at 1100 (11 register-only,
+   3 operand, 6 reordered, 5 inserted, 1 deleted); the fp/sl pointers above
+   are still the difference. The literal tile addresses are gone.
+ */
 #include "TYPES.H"
+
+extern const u8 Menu_CursorObjectTiles[];
+extern const u8 Data_08033ef8[];
 
 struct SelectionOam {
     u16 y:8;
@@ -56,33 +67,37 @@ s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 
 void Menu_SetupSelectionSide(struct SelectionMenu *menu, s32 index)
 {
-    struct SelectionSprite *sprite = &menu->sides[index].sprite;
     struct SelectionSide *side = &menu->sides[index];
     const void *gfx = 0;
+    struct SelectionSprite *sprite = &menu->sides[index].sprite;
     u32 count;
 
     side->more = (u32)gfx;
-    if (index != 0) {
+    if (0 != index) {
         count = menu->count;
         if (menu->other != 0)
             count -= menu->other;
-        if (count > 5) {
+        if (5 < count) {
             side->more = 1;
-            count = 5;
+            count = (u32)5;
         }
-        menu->sides[1].x = menu->first + (count - 1) * 16 + 17;
-        gfx = (const void *)0x080342f8;
+        menu->sides[1].x = menu->first + 16 * (count - 1) + 17;
+        gfx = Menu_CursorObjectTiles;
     } else {
+        s32 tmp2;
+        u16 tmp;
         menu->sides[0].x = menu->first - 9;
-        gfx = (const void *)0x08033ef8;
-        if (menu->other != 0)
+        tmp = menu->other;
+        gfx = Data_08033ef8;
+        tmp2 = tmp != 0;
+        if (tmp2)
             menu->sides[0].more = 1;
     }
-    if (menu->sides[index].y == 0) {
-        menu->sides[index].entry = Resource_FindFreeEntry();
+    if (!menu->sides[index].y) {
+        menu[0].sides[index].entry = Resource_FindFreeEntry();
         menu->sides[index].vram = VramBlock_LoadCached(menu->sides[index].entry, 128, gfx);
         menu->sides[index].y = menu->second;
-        menu->sides[index].frame = 0;
+        menu->sides[index].frame = (s32)0;
         sprite->oam.mode = 0;
         sprite->oam.mosaic = 0;
         sprite->oam.color = 1;

@@ -36,7 +36,7 @@ Func_08009030:
 	.global GetBattleEffectObject
 	.thumb_func
 GetBattleEffectObject:
-	overlay_veneer Func_0800bc70
+	overlay_veneer ResourceObject_Create
 	.global ResourceObject_ReleaseFar
 	.thumb_func
 ResourceObject_ReleaseFar:

@@ -1,3 +1,6 @@
+/* 2026-09-29: five minutes of permutation reached 13938 from 17183 through
+ * 107 rewrites; not kept, since the owner is far from exact and many of its
+ * ROM tables have no labels in the build yet. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFX.H"

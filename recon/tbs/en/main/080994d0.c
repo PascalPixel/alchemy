@@ -3,7 +3,14 @@
    branch, as the ROM does. Remaining: the two object aliases coalesce,
    the target/counter exchange r6/r7, and the flash mask stays in a low
    register instead of r8. The original retained draft was 424 / 186.
- */
+   2026-09-29 slice 4: 540 against 1215 (31 register-only, 1 operand, 1
+   reordered, 3 inserted). The callees and callbacks now use the build's
+   names, the spawn and flash counters step after each wait, and the
+   particle's null test is taken once into alive before the 12-frame wait,
+   as alchemy permute found (820 before the names); a second 10-minute
+   search from here found nothing lower. Left: target, object and the
+   counters take r7/r6/r5 in a different order, and this draft tests the
+   object for null once more than the reference before that wait. */
 #include "TYPES.H"
 
 struct BattleEffect03Object {
@@ -48,20 +55,20 @@ struct BattleEffect03State {
 };
 
 extern struct BattleEffect03State *Data_03001f30;
-extern u8 Data_08099341;
-extern u8 Data_080993b1;
+void BattleFx_UpdateShrinkingOrbitObject(void);
+void BattleFx_RunSparkEmitter(void);
 
-void Func_08097384(void);
-struct BattleEffect03Object *Func_08096c80(s32, s32, s32, s32);
-struct BattleEffect03Link *Func_08096c48(void *, struct BattleEffect03Link *);
+void BattleEffect_InitializeSharedScene(void);
+struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
+struct BattleEffect03Link *Object_ReplaceResourceEntry(void *, struct BattleEffect03Link *);
 void Func_080030f8(s32);
 void Func_080f9010(s32);
-void Func_08009240(struct BattleEffect03Object *, s32);
-void Func_08096bec(struct BattleEffect03Object *, s32, s32);
-void Func_08009158(struct BattleEffect03Object *);
+void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
+void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
+void Object_CommitPosition(struct BattleEffect03Object *);
 void Func_080090d0(struct BattleEffect03Object *);
-void Func_08003f3c(u8);
-void Func_0809748c(void);
+void Resource_ResetEntry(u8);
+void BattleFx_PrepareBufferInterpolation(void);
 
 void RunBattleEffect03(void)
 {
@@ -73,25 +80,26 @@ void RunBattleEffect03(void)
     u8 link_marker;
     s32 spawn_index;
     s32 flash_index;
+    s32 alive;
 
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     last = 0;
     spawn_index = 0;
 Spawn:
     {
-        object = Func_08096c80(
+        object = Object_Spawn(
             0xe9, target->x, target->y + 0x200000, target->z);
         if (object != 0) {
             object->scale_y = 0xb333;
             object->scale_x = 0xb333;
-            object->callback = &Data_08099341;
+            object->callback = BattleFx_UpdateShrinkingOrbitObject;
             object->angle = 0x78;
             object->phase = spawn_index << 13;
             object->mode = 4;
-            last = Func_08096c48(object->visual, last);
+            last = Object_ReplaceResourceEntry(object->visual, last);
         }
-        spawn_index++;
         Func_080030f8(1);
+        spawn_index++;
     }
     if (spawn_index <= 7)
         goto Spawn;
@@ -99,7 +107,7 @@ Spawn:
     link_marker = last->marker;
     Func_080f9010(0x82);
     Func_080030f8(110);
-    object = Func_08096c80(0xe9, 0, 0, 0);
+    object = Object_Spawn(0xe9, 0, 0, 0);
     particle = object;
     if (object != 0) {
         object->scale_y = 0xb333;
@@ -108,27 +116,28 @@ Spawn:
         object->y = state->y + 0x100000;
         object->z = state->z;
         object->mode = 4;
-        Func_08009240(object, 7);
+        Animation_ApplyChildValuesFar(object, 7);
     }
 
     Func_080f9010(0x83);
+    alive = particle != 0;
     Func_080030f8(12);
     if (object != 0) {
         flash_index = 0;
         do {
             if (flash_index & 3)
-                Func_08009240(particle, 9);
+                Animation_ApplyChildValuesFar(particle, 9);
             else
-                Func_08009240(particle, 10);
-            flash_index++;
+                Animation_ApplyChildValuesFar(particle, 10);
             Func_080030f8(2);
+            flash_index++;
         } while (flash_index <= 29);
     }
 
-    Func_08009240(particle, 0);
+    Animation_ApplyChildValuesFar(particle, 0);
     Func_080f9010(0x54);
-    if (particle != 0) {
-        object->callback = &Data_080993b1;
+    if (alive) {
+        object->callback = BattleFx_RunSparkEmitter;
         object->angle = 0;
         if (state->long_delay != 0)
             Func_080030f8(128);
@@ -140,13 +149,13 @@ Spawn:
         object->velocity_x = 0x50000;
         object->velocity_y = 0x6666;
         object->unknown_5a = 0;
-        Func_08096bec(object, 0xc00000, 0xe800);
-        Func_08009158(object);
+        Motion_SetTargetPositionFromMagnitudeAngle(object, 0xc00000, 0xe800);
+        Object_CommitPosition(object);
         Func_080090d0(object);
     }
     if (link_marker != 0x60)
-        Func_08003f3c(link_marker);
+        Resource_ResetEntry(link_marker);
     if (state->finish_callback != 0)
         state->finish_callback();
-    Func_0809748c();
+    BattleFx_PrepareBufferInterpolation();
 }

@@ -25,7 +25,19 @@
  * Origin-pair and coordinate-copy/consumer ownership alone do not recover
  * either invariant. Stop after the model and one follow-up; no adoption,
  * zero new DONE. No whole-phase wrapper, RA sweep, or toolchain changes.
+ * 2026-09-29: callees and globals now carry the build's names (gGameState's
+ * current owner, gFrameTick, Vector_AddPolarOffset, Camera_WorldToScreen,
+ * BattleFx_HasReachedTarget, BattleFx_ClearOwnedSlot), so alchemy permute
+ * scores only the two schedules: 280 (2 operand, 4 reordered). In state 0
+ * the sched2 dump shows the source reload (mov r1, r9) ready throughout
+ * but outranked by the increment's add, which issues first. Ten minutes
+ * (53,077 candidates), effect->state++, moving
+ * the linked read, one combined flags expression, an object local between
+ * the origin stores, x/z temporaries and an origin pointer: none below.
+ * The H2 inline wrapper (and its FAKEMATCH tag) is not needed: the launch
+ * offset written in place scores the same 280, so it is gone.
  */
+#include "PARTY_STATE.H"
 #include "FIXED_MATH.H"
 #include "TYPES.H"
 
@@ -80,31 +92,20 @@ struct PhasedParticleSlot {
     u8 flags;
 };
 
-extern s32 Data_02000240[];
-extern u32 Data_03001800;
+extern u32 gFrameTick;
 
-s32 Object_GetById(u32 id);
+void *Engine_ActorGet(s32 actor);
+
+s32 BattleFx_HasReachedTarget(void *object);
+void BattleFx_ClearOwnedSlot(void *object);
 u32 Random16(void);
-void RotateVectorByMagnitude(
+void Vector_AddPolarOffset(
     s32 magnitude,
     s32 angle,
     void *position);
-void NormalizeVector(void *position);
+void Camera_WorldToScreen(void *position);
 void Audio_PlayCue(s32 cue);
 
-/* FAKEMATCH: isolate only the coordinate input and its polar consumer. */
-static __inline__ void EffectPosition_AddLaunchOffset(
-    struct PhasedParticleSlot *effect, struct EffectVector *position)
-{
-    position->x = effect->x;
-    position->z = effect->z;
-    RotateVectorByMagnitude(
-        0x780000,
-        ((Random16() * 3 << 11) >> 16)
-            - ((Random16() * 3 << 11) >> 16)
-            + 0xc000,
-        position);
-}
 
 void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
 {
@@ -115,14 +116,21 @@ void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
     u8 linked_flags;
     u8 object_flags;
 
-    source = (struct EffectPositionSource *)Object_GetById(Data_02000240[125]);
+    source = (struct EffectPositionSource *)Engine_ActorGet(gGameState.current_owner);
     state_pointer = &effect->state;
     state = *state_pointer;
 
     if (state == 0) {
         effect->x = effect->origin.x;
         effect->z = effect->origin.z;
-        EffectPosition_AddLaunchOffset(effect, &position);
+        position.x = effect->x;
+        position.z = effect->z;
+        Vector_AddPolarOffset(
+            0x780000,
+            ((Random16() * 3 << 11) >> 16)
+                - ((Random16() * 3 << 11) >> 16)
+                + 0xc000,
+            &position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         effect->acceleration = 0x50000;
@@ -136,7 +144,7 @@ void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
         effect->object->flags = object_flags;
         effect->flags = 0;
         effect->age = 0;
-        if ((Data_03001800 & 1) != 0)
+        if ((gFrameTick & 1) != 0)
             Audio_PlayCue(134);
     } else if (state == 1) {
         if ((s16)effect->age == 3) {
@@ -144,10 +152,10 @@ void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
             effect->object->flags = object_flags;
             effect->flags = 4;
         }
-        if (EffectSlot_HasReachedTarget(effect) == 0)
+        if (BattleFx_HasReachedTarget(effect) == 0)
             (*state_pointer)--;
     } else if (state == 2) {
-        if (EffectSlot_HasReachedTarget(effect) == 0) {
+        if (BattleFx_HasReachedTarget(effect) == 0) {
             effect->origin.x = effect->x;
             effect->origin.z = effect->z;
             effect->object->flags &= -13;
@@ -163,18 +171,18 @@ void BattleEffect_UpdatePhasedRadialParticle(struct PhasedParticleSlot *effect)
         position.x = source->position.x;
         position.y = source->position.y + 0x140000;
         position.z = source->position.z;
-        NormalizeVector(&position);
-        RotateVectorByMagnitude(0x40000, Random16(), &position);
+        Camera_WorldToScreen(&position);
+        Vector_AddPolarOffset(0x40000, Random16(), &position);
         effect->target_x = position.x;
         effect->target_z = position.z;
         (*state_pointer)++;
-        if ((Data_03001800 & 1) != 0)
+        if ((gFrameTick & 1) != 0)
             Audio_PlayCue(145);
     } else if (state == 4) {
-        if (EffectSlot_HasReachedTarget(effect) == 0)
+        if (BattleFx_HasReachedTarget(effect) == 0)
             (*state_pointer)--;
     } else if (state == 5) {
-        if (EffectSlot_HasReachedTarget(effect) == 0)
-            Func_0809bb34(effect);
+        if (BattleFx_HasReachedTarget(effect) == 0)
+            BattleFx_ClearOwnedSlot(effect);
     }
 }

@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 2155 to 1640 on the permuter's scorer
+   (0 is exact); remaining 15 register-only, 4 operand, 3 reordered, 8
+   inserted, 5 deleted. Kept rewrites: 3x swap commutative operands, 3x
+   reorder local declarations, 3x introduce a temporary, 3x change loop
+   form, 3x toggle register, 1x reorder independent statements, 1x remove a
+   temporary, 1x add a same-width cast, 1x drop a same-width cast, 1x move
+   an assignment into or out of a condition. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
 /* Draft, not exact (2026-09-24): 316 bytes, 144 halfwords differ. The
    start (mark test, scene and entrance kept in r9 and fp) and the snapshot
    loop match; the zeros are pool loads in the ROM, hence Value_00000000.
@@ -47,9 +57,9 @@ void Func_0807a664(void)
     u16 *dst;
     s32 owner;
     s32 i;
-    s32 n;
     u16 item;
-    s16 scene;
+    s32 n;
+    register s16 scene;
     s16 entrance;
 
     save = Data_02001078;
@@ -58,25 +68,33 @@ void Func_0807a664(void)
         scene = Data_02000240.scene;
         entrance = Data_02000240.entrance;
         for (owner = 0; owner < 4; owner++) {
+            u16 *tmp2;
             st = Owner_GetState(owner);
             for (i = 0; i < 15; i++)
                 *save++ = st->equipment[i];
-            for (i = 0; i < 15; i++) {
-                if (Item_GetDirect(st->equipment[i])->type != 6)
+            for (i = 0; 15 > i; i++) {
+                if (6 != Item_GetDirect(st->equipment[i])->type)
                     st->equipment[i] = (s32)&Value_00000000;
             }
-            src = st->equipment;
-            dst = st->equipment;
             n = 0;
-            for (i = 0; i < 15; i++) {
-                item = *src++;
-                if (item != 0) {
-                    *dst++ = item;
-                    n++;
-                }
+            src = st->equipment;
+            tmp2 = st->equipment;
+            dst = tmp2;
+            i = 0;
+            if (15 > i) {
+                do {
+                    if ((item = *src++) != 0) {
+                        *dst++ = item;
+                        n++;
+                    }
+                    i++;
+                } while (15 > i);
             }
-            for (; n < 15; n++)
-                st->equipment[n] = (s32)&Value_00000000;
+            for (; n < 15; n++) {
+                u16 *tmp;
+                tmp = st->equipment;
+                tmp[n] = (s32)&Value_00000000;
+            }
             Owner_RefreshDerivedData(owner);
             Owner_RecalculateStats(owner);
         }

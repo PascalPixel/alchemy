@@ -1,3 +1,8 @@
+/* 2026-09-29: five minutes of permutation reached 11308 from 18460 through
+ * 206 rewrites; not kept, since the owner is far from exact. */
+/* 2026-09-29: callees carry the build's names (Ui_SetRectHighlight,
+ * UiText_CopyMessageString, UiText_RenderWideStringAtOffset); alchemy
+ * permute scores 18460, from 18620. */
 #include "TYPES.H"
 
 /* Item-list selection loop for a five-row page window.
@@ -90,9 +95,9 @@ void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
 s32 FixedPoint_Ratio(s32 dividend, s32 divisor);
 void Vram_CopyTile(s32 src, s32 dst);
-void Func_08022768(s32 col, s32 row, s32 width, s32 height, s32 fill);
-void Func_0801965c(s32 id, u8 *buf, s32 size);
-void Func_08017aa4(u8 *buf, struct UiWindowWork *win, s32 arg2, s32 arg3);
+void Ui_SetRectHighlight(s32 col, s32 row, s32 width, s32 height, s32 fill);
+void UiText_CopyMessageString(s32 id, u8 *buf, s32 size);
+void UiText_RenderWideStringAtOffset(u8 *buf, struct UiWindowWork *win, s32 arg2, s32 arg3);
 
 s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
 {
@@ -166,21 +171,21 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
     for (;;) {
         if (page != drawn_page || pos != drawn_pos) {
             work[0xEA6] = 1;
-            Func_08022768(win_list->col + 1,
+            Ui_SetRectHighlight(win_list->col + 1,
                           win_list->row + (drawn_pos * 2) + 1,
                           win_list->width - 2, 1, 15);
             Ui_FillVramBlockPattern();
 
             if (cnt != 0) {
                 if (Item_ClassifyUseAbility(owner, tbl[page + pos]) == 2) {
-                    Func_0801965c(0x8EE, msg, 52);
+                    UiText_CopyMessageString(0x8EE, msg, 52);
                 } else {
-                    Func_0801965c((tbl[page + pos] & 0x1FF) + 0x75, msg, 52);
+                    UiText_CopyMessageString((tbl[page + pos] & 0x1FF) + 0x75, msg, 52);
                 }
             } else {
-                Func_0801965c(0x8E5, msg, 52);
+                UiText_CopyMessageString(0x8E5, msg, 52);
             }
-            Func_08017aa4(msg, win_msg, 0, 4);
+            UiText_RenderWideStringAtOffset(msg, win_msg, 0, 4);
             drawn_pos = pos;
 
             if (page != drawn_page) {
@@ -233,7 +238,7 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
                 }
             }
 
-            Func_08022768(win_list->col + 1, win_list->row + pos2 + 1,
+            Ui_SetRectHighlight(win_list->col + 1, win_list->row + pos2 + 1,
                           win_list->width - 2, 1, 14);
             work[0xEA3] = 1;
             work[0xEA6] = 0;
@@ -305,14 +310,14 @@ s32 ItemList_SelectEntry(s32 owner, u16 *tbl, s32 cnt)
             }
             Audio_PlayCue(114);
             if (cls == 2) {
-                Func_0801965c(0x8EE, msg, 52);
+                UiText_CopyMessageString(0x8EE, msg, 52);
             } else if ((tbl[page + pos] & 0x400) != 0) {
-                Func_0801965c(0x8EC, msg, 52);
+                UiText_CopyMessageString(0x8EC, msg, 52);
             } else {
-                Func_0801965c(0x8EB, msg, 52);
+                UiText_CopyMessageString(0x8EB, msg, 52);
             }
             Ui_FillVramBlockPattern();
-            Func_08017aa4(msg, win_msg, 0, 4);
+            UiText_RenderWideStringAtOffset(msg, win_msg, 0, 4);
         } else if (MENU_SESSION2->field_4c == 0 || (KEY_TRIGGER & 2) != 0) {
             Audio_PlayCue(113);
             result = -1;

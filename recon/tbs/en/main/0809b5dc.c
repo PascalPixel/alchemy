@@ -8,6 +8,13 @@
  * head (mov r1, r5 before the field64 load, zero offset in r2), so the head
  * and the compare differ and the pool word goes. The unit matched only while
  * the 1 was a link-time symbol named after its own value.
+ * 2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 32,803
+ * candidates, none below the draft's score 300 (2 register-only, 3 operand,
+ * 2 reordered, 1 deleted), 23,994 level with it. The pool word 1 is the
+ * same in all six editions. A one-case switch, a 1LL, u32 or pointer
+ * comparison and a ?: divisor all compare with an immediate instead; GCC
+ * only loads a small number from the pool when it is a link-time symbol, so
+ * this draft stays until the 1 has a real name.
  */
 #include "TYPES.H"
 #include "FIXED_MATH.H"

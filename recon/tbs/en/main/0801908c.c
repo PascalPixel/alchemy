@@ -10,6 +10,13 @@
  * final x-load order differ. A u16 local adds redundant reads/shift masks
  * (340 bytes, 74 edits); retain u32. No further declaration permutations.
  * Owner was bundled with 080191cc; its complete pool ends at 080191cc.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 38,868
+ * candidates; the best scored 685 against the old draft's 1080 (21
+ * register-only, 11 operand, 1 reordered, 1 inserted, 2 deleted). Its one
+ * needed rewrite, kept here, reads the scale table through a local pointer
+ * in modes 11 and 12, which restores both reloads of the table's address.
+ * Data_080366f8 still needs its own ROM label; the remaining difference is
+ * register choice in the two mode blocks and the sprite flag byte.
  */
 #include "TYPES.H"
 
@@ -64,15 +71,19 @@ void RenderOutput_UpdateScaleAnimation(struct AnimatedOutput *output)
     case 11:
         frame = output->frame;
         if (frame <= 7) {
+            u16 *table;
             output->frame++;
-            scale = Data_080366f8[frame * 2 + 16];
+            table = Data_080366f8;
+            scale = table[frame * 2 + 16];
         }
         break;
     case 12:
         frame = output->frame;
         if (frame <= 7) {
+            u16 *table;
             output->frame++;
-            scale = Data_080366f8[frame * 2 + 16] >> 1;
+            table = Data_080366f8;
+            scale = table[frame * 2 + 16] >> 1;
         }
         break;
     }

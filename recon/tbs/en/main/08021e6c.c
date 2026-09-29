@@ -30,6 +30,14 @@
  * selection cursors, sprite pointer traversal and a signed/halfword scale
  * union do not close broad lowering; this is worse than H2. Three structural
  * hypotheses exhausted without adoption; do not tune registers on this form.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 17,661
+ * candidates; the best scored 15395 against 21273 (310 register-only, 20
+ * stack-only, 82 operand, 104 reordered, 16 inserted, 40 deleted) after 254
+ * rewrites (swap commutative operands, introduce a temporary, reorder
+ * independent statements, reorder local declarations), none of them kept.
+ * Two hundred fifty-four rewrites across the whole selection screen, search
+ * artefacts that stay out of the draft; register choice is still most of
+ * the difference.
  */
 struct UiWindowWork;
 
@@ -81,10 +89,10 @@ struct SelectionRuntime {
 struct SelectionScroll { u16 unused[2]; s16 x, y; };
 struct TradeOfferState { u32 available; };
 
-extern struct SelectionRender *Data_03001e8c;
-extern struct SelectionRuntime *Data_03001f34;
-extern struct SelectionScroll Data_03001ad0;
-extern s32 Data_03001e40, Data_03001c94, Data_03001b04;
+extern struct SelectionRender *gWindowWork;
+extern struct SelectionRuntime *gLinkCountdownWork;
+extern struct SelectionScroll gBgScroll;
+extern s32 gFrameCount, gKeyState, gKeysRepeat;
 extern u16 Data_080366f8[];
 extern volatile u16 RegIme;
 extern u8 Value_0000001f[];
@@ -127,7 +135,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     s32 slot;
     u8 *pos;
 
-    render = Data_03001e8c;
+    render = gWindowWork;
     slot = Resource_LoadIntoFreeSlot(0x400);
     rebuild = 1;
     trade_count = 0;
@@ -147,9 +155,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
         work->kinds[1] = 4;
         work->kinds[2] = 7;
         work->kinds[3] = -1;
-        work->selection = Data_03001f34->selection[0];
+        work->selection = gLinkCountdownWork->selection[0];
     } else {
-        work->selection = Data_03001f34->selection[1];
+        work->selection = gLinkCountdownWork->selection[1];
         work->kinds[0] = 0;
         work->kinds[1] = 1;
         cnt = 2;
@@ -191,11 +199,11 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 136, Graphics_ClearBg1ControlBit2);
 
     for (;;) {
-        scale = ((s32)Data_080366f8[(Data_03001e40 * 2) & 31] - 256) / 4 + 304;
+        scale = ((s32)Data_080366f8[(gFrameCount * 2) & 31] - 256) / 4 + 304;
         work->affine.scale_x = scale;
         work->affine.scale_y = scale;
-        Data_03001ad0.x = 0;
-        Data_03001ad0.y = 32;
+        gBgScroll.x = 0;
+        gBgScroll.y = 32;
         if (rebuild != 0) {
             rebuild = 0;
             render->menu_busy = 1;
@@ -274,9 +282,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
                 entry->oam.bytes.flags &= ~3;
             }
         }
-        keys = Data_03001c94;
-        runtime = Data_03001f34;
-        repeat = Data_03001b04;
+        keys = gKeyState;
+        runtime = gLinkCountdownWork;
+        repeat = gKeysRepeat;
         if (runtime->auto_phase != 0) {
             repeat = keys = 0;
             if (runtime->auto_delay == 0) {
@@ -333,7 +341,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         } else if (repeat & 0x60) {
             Audio_PlayCue(0x6f);
             work->selection = Math_Mod(work->selection + work->count - 1, work->count);
-        } else if (Data_03001f34->enabled == 0) {
+        } else if (gLinkCountdownWork->enabled == 0) {
             result = work->kinds[0];
             break;
         }
@@ -342,9 +350,9 @@ s32 Ui_RunSelectionScreen(s32 mode)
         WaitFrames(1);
     }
     if (mode != 0)
-        Data_03001f34->selection[1] = work->selection;
+        gLinkCountdownWork->selection[1] = work->selection;
     else
-        Data_03001f34->selection[0] = work->selection;
+        gLinkCountdownWork->selection[0] = work->selection;
     for (cnt = 0; cnt < work->count; cnt++)
         Resource_ResetEntry(work->entries[cnt].resource);
     render->menu_busy = 1;

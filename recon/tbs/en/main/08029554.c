@@ -9,7 +9,15 @@
  * literal key-state address produced identical code here. Remaining:
  * the key base is shared across blocks instead of reloaded, zero-copy and
  * argument scheduling differ, and 8 lives across number-rendering calls.
- * The complete 16-byte frame, row loop and both icon-loader tails match. */
+ * The complete 16-byte frame, row loop and both icon-loader tails match.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 30,830
+ * candidates; the best scored 1481 against 2305 (21 register-only, 1
+ * stack-only, 14 operand, 8 reordered, 6 deleted) after 31 rewrites
+ * (reorder independent statements, introduce a temporary, add a same-width
+ * cast, swap commutative operands), none of them kept. Its gains are
+ * statement moves and temporaries around the key and label calls; the five
+ * label tables (Data_08037440 to Data_08037460) still need ROM labels.
+ */
 #include "TYPES.H"
 #include "RENDER_INPUT.H"
 
@@ -18,7 +26,7 @@ struct DebugMenuState {
     u16 active;
 };
 
-extern struct DebugMenuState *Data_03001e68;
+extern struct DebugMenuState *gMenuCtrlWork;
 #define KEYS_PRESSED (*(volatile u32 *)0x03001b04)
 extern u8 Data_08037440[], Data_08037448[], Data_08037450[];
 extern u8 Data_08037458[], Data_08037460[];
@@ -52,7 +60,7 @@ s32 DebugMenu_BrowseIcons(void)
     window = NULL;
     page = 0;
     mode = 0;
-    Data_03001e68->active = redraw;
+    gMenuCtrlWork->active = redraw;
     WaitFrames(1);
 
 next_frame:
@@ -116,6 +124,6 @@ next_frame:
     goto next_frame;
 close:
     UiWork_Finalize(window, 2);
-    Data_03001e68->active = 0;
+    gMenuCtrlWork->active = 0;
     return 0;
 }

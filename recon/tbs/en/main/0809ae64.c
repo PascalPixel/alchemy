@@ -1,3 +1,15 @@
+/* 2026-09-29 alchemy permute: score 3735 to 2690 on the permuter's scorer
+   (0 is exact); remaining 47 register-only, 27 operand, 10 reordered, 5
+   inserted, 8 deleted. Kept rewrites: 15x swap commutative operands, 10x
+   reorder independent statements, 6x reorder local declarations, 6x change
+   loop form, 5x introduce a temporary, 5x pointer arithmetic or indexing,
+   5x test truth or compare with zero, 4x toggle register, 3x split or join
+   a compound assignment, 2x invert an if/else, 1x remove a temporary, 1x
+   add a same-width cast, 1x drop a same-width cast, 1x move an assignment
+   into or out of a condition. FAKEMATCH: the permuter's temporaries,
+   register hints and swapped operand orders below only steer allocation
+   and scheduling; no programmer would write them, so they stay tagged
+   until a natural spelling replaces them. */
 /* Draft, not exact (2026-09-26): 588 bytes, 273 differing halfwords.
    One typed frame establishes the observed 40-byte layout: secondary
    object at +0, target at +4, origin at +16, scene target at +28.
@@ -57,113 +69,109 @@ void Func_080f9010(s32);
 void RunBattleEffect13(void)
 {
     struct MotionScene *scene = Data_03001f30;
-    struct MotionObject *main_object = scene->main_object;
     struct MotionFrame frame;
-    struct EffectVector *origin_cursor;
-    struct EffectVector *target_cursor;
+    struct MotionObject *main_object = scene->main_object;
+    register struct EffectVector *origin_cursor;
     struct MotionObject *object;
+    struct EffectVector *target_cursor;
     s32 step;
-    u16 zero;
+    s32 tmp3;
 
     frame.secondary_object = scene->secondary_object;
-    frame.origin.x = main_object->pos.x;
-    frame.origin.y = main_object->pos.y + 0x100000;
+    frame.origin.x = (*main_object).pos.x;
+    frame.origin.y = 0x100000 + main_object->pos.y;
     frame.origin.z = main_object->pos.z;
-    origin_cursor = &frame.origin;
-
-    if (scene->offset_target != 0) {
+    if (scene->offset_target) {
+        struct EffectVector *tmp;
         frame.target.x = main_object->pos.x;
         frame.target.y = main_object->pos.y + 0x200000;
         frame.target.z = main_object->pos.z;
-        Func_0800447c(0x200000, scene->angle, &frame.target);
+        tmp = &frame.target;
+        Func_0800447c(0x200000, scene->angle, tmp);
     } else {
         frame.target.x = scene->pos.x;
         frame.target.y = scene->pos.y + 0x200000;
         frame.target.z = scene->pos.z;
     }
     target_cursor = &frame.target;
-
     frame.scene_target.x = scene->pos.x;
+    origin_cursor = &frame.origin;
     frame.scene_target.y = scene->pos.y + 0x200000;
     frame.scene_target.z = scene->pos.z;
-
-    object = Func_08096c80(
-        0xd7, frame.scene_target.x, frame.scene_target.y, frame.scene_target.z);
-    if (object == 0)
+    if (!(object = Func_08096c80(0xd7, frame.scene_target.x, frame.scene_target.y, frame.scene_target.z)))
         return;
-
     Func_08097384();
     Func_080f9010(0x8a);
     object->angle = main_object->angle;
+    tmp3 = (s32)&Value_00000000;
     object->speed = 0x14ccc;
-    zero = (u16)(s32)&Value_00000000;
-    object->mode = zero;
+    object->mode = (u16)tmp3;
+    step = 0;
     Func_08009080(object, 5);
     Func_08009240(object, 1);
-
-    step = 0;
     do {
         s32 value;
+        s32 tmp4;
+        s32 tmp5;
         value = origin_cursor->x;
-        value += Math_Div(step * (target_cursor->x - value), 10);
+        value += Math_Div((target_cursor->x - value) * step, 10);
         object->pos.x = value;
-        value = origin_cursor->y;
-        value += Math_Div(step * (target_cursor->y - value), 10);
+        tmp5 = origin_cursor->y;
+        value = tmp5;
+        value = value + Math_Div((target_cursor->y - value) * step, 10);
         object->pos.y = value;
         value = origin_cursor->z;
-        value += Math_Div(step * (target_cursor->z - value), 10);
+        value += Math_Div((target_cursor->z - value) * step, 10);
         object->pos.z = value;
-        value = 0x4000 + Math_Div(step * 0xc000, 10);
+        tmp4 = Math_Div(step * 0xc000, 10) + 0x4000;
+        value = tmp4;
         object->scale_x = value;
         object->scale_y = value;
         step++;
         Func_080030f8(1);
-    } while (step < 11);
-
+    } while (!(step >= 11 != 0));
     Func_080030f8(10);
     Func_08009080(object, 6);
     Func_080030f8(15);
     step = 9;
     do {
         object->pos.y -= 0x20000;
-        step--;
         Func_080030f8(1);
+        step--;
     } while (step >= 0);
-
     Func_08009080(object, 5);
     Func_080f9010(0x84);
     if (frame.secondary_object != 0)
         Func_080090f0(frame.secondary_object, -0x90000, frame.secondary_object->pos.y);
     Func_080030f8(20);
-
     step = 12;
     do {
-        object->pos.y += 0x18000;
-        step--;
+        object->pos.y = object->pos.y + 0x18000;
         Func_080030f8(1);
+        step--;
     } while (step >= 0);
-
     Func_080030f8(10);
     Func_080f9010(0x72);
     step = 0;
     do {
-        s32 value;
+        register s32 value;
+        s32 tmp2;
         value = target_cursor->x;
-        value += Math_Div(step * (origin_cursor->x - value), 10);
+        value += Math_Div((origin_cursor->x - value) * step, 10);
         object->pos.x = value;
         value = target_cursor->y;
-        value += Math_Div(step * (origin_cursor->y - value), 10);
+        value += Math_Div((origin_cursor->y - value) * step, 10);
         object->pos.y = value;
         value = target_cursor->z;
-        value += Math_Div(step * (origin_cursor->z - value), 10);
+        value += Math_Div((origin_cursor->z - value) * step, 10);
         object->pos.z = value;
-        value = 0x10000 + Math_Div(step * (s32)&Value_ffff4000, 10);
+        tmp2 = Math_Div(step * (s32)&Value_ffff4000, 10) + 0x10000;
+        value = tmp2;
         object->scale_x = value;
         object->scale_y = value;
-        step++;
         Func_080030f8(1);
+        ++step;
     } while (step < 11);
-
     Func_080090d0(object);
     Func_0809748c();
 }

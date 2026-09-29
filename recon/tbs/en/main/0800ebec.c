@@ -15,7 +15,14 @@
  * across the first probe (758 halfwords); (void)&angle, an s16 angle and
  * u16 or s16 spellings of the first test all regress. The search loop exits
  * with cmp #6; blt in the ROM where combine gives cmp #5; ble here; i <= 5,
- * i - 6 < 0, (u32)i < 6, a sizeof bound and a goto loop all keep ble. */
+ * i - 6 < 0, (u32)i < 6, a sizeof bound and a goto loop all keep ble.
+ * 2026-09-29 (alchemy permute scorer): the draft scored 6285 (73
+ * register-only, 19 operand, 23 reordered, 19 inserted, 22 deleted). This body
+ * is the permuter's best after a 300-second search (about 40,000 candidates):
+ * 5300 (67 register-only, 14 operand, 24 reordered, 12 inserted, 20
+ * deleted). Its rewrites are search output, not a
+ * reading of the ROM; the allocation above is still the difference.
+ */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 
@@ -104,8 +111,9 @@ void Field_CheckConfiguredKeys(void);
 
 s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
 {
+    /* FAKEMATCH: permuter found a cast to the operand's own type, a cast of a cast or (*p).member */
     s32 posA[3];
-    s32 posB[3];
+    register s32 posB[3];
     s32 posC[3];
     s32 unused[8];
     s16 deltas[6];
@@ -118,61 +126,58 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     s32 i;
     struct FieldActor *entry;
     s16 *timer;
+    u16 tmp;
+    u16 tmp2;
 
     blocked = 0;
     handled = 0;
-
     if (Data_03001f54 != 0 && GameFlag_TestFar(350) != 0) {
-        s32 count;
         u8 *p;
+        s32 count;
         s32 n;
-
         count = 0;
         p = Data_03001810;
         n = 512;
-        do {
+        while (1) {
             u8 v;
-
             v = *p;
             p++;
             if (v == 0xff)
                 count++;
-            n--;
-        } while (n != 0);
+            --n;
+            if (n == 0)
+                break;
+        }
         if (count - 136 < 0)
             Audio_PlayCue(135);
     }
-
     if (Data_03001f54 != 0) {
         s32 mask;
-
         mask = 0x200;
         if (Data_03001ae8 & mask) {
             s32 count;
-
             count = mask;
-wait_a:
-            count--;
+        wait_a:
+            --count;
             if (count != 0)
                 goto wait_a;
             count = 95;
-wait_b:
+        wait_b:
             count--;
             if (count >= 0)
                 goto wait_b;
             count = 63;
-wait_c:
+        wait_c:
             count--;
             if (count >= 0)
                 goto wait_c;
             count = 63;
-wait_d:
+        wait_d:
             count--;
             if (count >= 0)
                 goto wait_d;
         }
     }
-
     if (Data_03001ae8 & Data_02000240.dash_keys) {
         actor->speed = 0x18000;
         actor->accel = 0x4000;
@@ -182,65 +187,56 @@ wait_d:
         actor->accel = 0x4000;
         mode = 2;
     }
-
     if (GameFlag_TestFar(0x17f) != 0 && (Data_03001ae8 & 2)) {
         actor->speed = 0x40000;
         actor->accel = 0x10000;
         mode = 5;
     }
-
     angle = Data_08013254[(Data_03001ae8 >> 4) & 15] << 16;
-    if ((u16)((u32)angle >> 16) == 0xffff) {
+    tmp2 = (u16)((u32)angle >> 16);
+    if (tmp2 == 0xffff) {
         blocked |= 4;
         goto tail;
     }
-
-    blocked = 0;
     posA[0] = actor->pos[0];
     posA[1] = actor->pos[1];
     posA[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16), posA);
-
+    blocked = 0;
+    tmp = (u16)((u32)angle >> 16);
+    Vector_AddPolarOffset(0x80000, tmp, posA);
     if (Data_03001f54 != 0) {
         facing = angle >> 16;
         if (Data_03001ae8 & 0x200)
             goto tail;
     }
-
     if (Func_080120dc(actor, posA) != 0)
         goto search;
-
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) + 0x1000, posB);
+    Vector_AddPolarOffset(0x80000, 0x1000 + (u16)((u32)angle >> 16), posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
-
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) - 0x1000, posB);
+    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16) - 0x1000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
-
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
     posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) + 0x2000, posB);
+    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16) + 0x2000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
-
     posB[0] = actor->pos[0];
     posB[1] = actor->pos[1];
-    posB[2] = actor->pos[2];
-    Vector_AddPolarOffset(0x80000, ((u16)((u32)angle >> 16)) - 0x2000, posB);
+    posB[2] = ((s32 *)actor->pos)[2];
+    Vector_AddPolarOffset(0x80000, (u16)((u32)angle >> 16) - 0x2000, posB);
     if (Func_080120dc(actor, posB) != 0)
         goto search;
-
     facing = angle >> 16;
     goto move;
-
 search:
     dir = (u16)((u32)angle >> 16);
     deltas[0] = dir + 0x1000;
@@ -249,38 +245,32 @@ search:
     deltas[3] = dir - 0x2000;
     deltas[4] = dir + 0x3000;
     deltas[5] = dir - 0x3000;
-
     for (i = 0; i < 6; i++) {
         facing = deltas[i];
-
         posA[0] = actor->pos[0];
         posA[1] = actor->pos[1];
         posA[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing, posA);
         if (Func_080120dc(actor, posA) != 0)
             continue;
-
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing + 0x1000, posB);
         if (Func_080120dc(actor, posB) != 0)
             continue;
-
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing - 0x1000, posB);
         if (Func_080120dc(actor, posB) != 0)
             continue;
-
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
         Vector_AddPolarOffset(0x80000, (u16)facing + 0x2000, posB);
         if (Func_080120dc(actor, posB) != 0)
             continue;
-
         posB[0] = actor->pos[0];
         posB[1] = actor->pos[1];
         posB[2] = actor->pos[2];
@@ -288,23 +278,19 @@ search:
         if (Func_080120dc(actor, posB) == 0)
             goto move;
     }
-
     posA[0] = actor->pos[0];
     posA[1] = actor->pos[1];
     posA[2] = actor->pos[2];
     blocked |= 1;
-
 move:
     posC[0] = actor->pos[0];
     posC[1] = actor->pos[1];
     posC[2] = actor->pos[2];
     Vector_AddPolarOffset(0x40000, (u16)facing, posC);
-
     entry = Data_03001e64;
-    for (i = 63; i >= 0; i--, entry++) {
-        s32 radius;
+    for (i = 63; i >= 0; i -= 1, entry++) {
         s32 push;
-
+        s32 radius;
         radius = actor->radius - 2;
         if (entry->data == 0)
             continue;
@@ -316,25 +302,21 @@ move:
             continue;
         if ((entry->flags.word & 0xff000200) != 0x200)
             goto push_blocked;
-
         push = ArcTan2(entry->pos[2] - actor->pos[2], entry->pos[0] - actor->pos[0]);
-        facing = push;
-        push = (u16)push;
-
         posB[0] = entry->pos[0];
         posB[1] = entry->pos[1];
+        facing = push;
+        push = (u16)push;
         posB[2] = entry->pos[2];
         Vector_AddPolarOffset(0x4000, push, posB);
-        if (ScriptObject_CheckOverlap(entry, posB) != 0)
+        if (ScriptObject_CheckOverlap(entry, posB))
             goto push_blocked;
-
         posB[0] = entry->pos[0];
         posB[1] = entry->pos[1];
         posB[2] = entry->pos[2];
         Vector_AddPolarOffset(0xa0000, push, posB);
         if (Func_080120dc(entry, posB) != 0)
             goto push_blocked;
-
         posB[0] = entry->pos[0];
         posB[1] = entry->pos[1];
         posB[2] = entry->pos[2];
@@ -343,42 +325,36 @@ move:
             goto push_blocked;
         if (Func_080120dc(entry, posB) != 0)
             goto push_blocked;
-
         posB[0] = entry->pos[0];
-        posB[1] = entry->pos[1];
+        posB[1] = (*entry).pos[1];
         posB[2] = entry->pos[2];
         Vector_AddPolarOffset(0xa0000, push - 0x1000, posB);
         if (Func_080120dc(entry, posB) != 0)
             goto push_blocked;
-
         Vector_AddPolarOffset(0x4000, push, entry->pos);
         entry->target[0] = 0x80000000;
         entry->target[1] = 0x80000000;
         entry->target[2] = 0x80000000;
         handled |= 1;
         continue;
-push_blocked:
+    push_blocked:
         blocked |= 2;
     }
-
     if (blocked == 0 && handled != 0) {
         actor->speed = 0x4000;
         actor->accel = 0x2000;
     }
-
 tail:
     if (Data_03001ebc != 0) {
         if (blocked & 3)
-            Data_03001ebc[206]++;
+            ++Data_03001ebc[206];
         else
             Data_03001ebc[206] = 0;
     }
-
     if (handled != 0) {
         ObjectDispatch_ApplyArgumentToChildren(actor, 8);
     } else if (blocked != 0) {
         s32 kind;
-
         kind = 9;
         if (Owner_GetStateFar(Data_02000240.leader)->hp == 0)
             kind = 22;
@@ -386,7 +362,6 @@ tail:
     } else {
         ObjectDispatch_ApplyArgumentToChildren(actor, mode);
     }
-
     if (blocked != 0) {
         actor->target[0] = 0x80000000;
         actor->target[1] = 0x80000000;
@@ -395,9 +370,7 @@ tail:
         actor->velocity_z = 0;
         if (blocked & 3) {
             s32 diff;
-
-            diff = (s16)(((u16)((u32)angle >> 16)) - actor->facing);
-            if (diff > 0x1000)
+            if ((diff = (s16)((u16)((u32)angle >> 16) - actor->facing)) > 0x1000)
                 diff = 0x1000;
             if (diff < -0x1000)
                 diff = -0x1000;
@@ -407,27 +380,22 @@ tail:
         actor->step_phase = 2;
     } else {
         s32 speed;
-
         Object_SetMoveTarget(actor, posA[0], posA[1], posA[2]);
-        speed = FixedSqrt(Iwram_MulQ16(actor->velocity_x, actor->velocity_x)
-                          + Iwram_MulQ16(actor->velocity_z, actor->velocity_z));
+        speed = FixedSqrt(Iwram_MulQ16(actor->velocity_x, actor->velocity_x) + Iwram_MulQ16(actor->velocity_z, actor->velocity_z));
         actor->velocity_x = 0;
         actor->velocity_z = 0;
         Vector_AddPolarOffset(speed, (u16)facing, &actor->velocity_x);
         if (actor->step_timer != 0)
             actor->step_timer--;
     }
-
     dir = (u16)((u32)angle >> 16);
     if (Data_03001e70->footprints != 0 && actor->step_timer == 0 && blocked == 0) {
         struct FieldActor *print;
-
         print = Func_0800c150(25, actor->pos[0], actor->pos[1], actor->pos[2]);
         if (print != 0) {
-            struct FieldSprite *sprite;
             u16 *phase;
+            struct FieldSprite *sprite;
             u16 flip;
-
             print->pos[3] = actor->pos[3];
             sprite = print->sprite;
             ObjectDispatch_Initialize(print, Data_08013274);
@@ -454,7 +422,6 @@ tail:
             actor->step_phase ^= 1;
         }
     }
-
     Field_CheckConfiguredKeys();
     actor->tick++;
     return 1;

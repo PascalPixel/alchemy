@@ -24,7 +24,7 @@
  *     hands column offset 5 to Ui_SetGridColumnByte6 and column offset 6 to
  *     Ui_SetGridColumnByte5; the reference's ldrsb displacements are the
  *     evidence, and the two are not interchangeable.
- *   - The pointer Func_0800bc70 returns is the 56 byte record
+ *   - The pointer ResourceObject_Create returns is the 56 byte record
  *     ResourceMetadata_Register walks.  Byte 38 of that record is the same
  *     byte the ADDR_03001C94 toggle loop below rewrites with a stride of 56.
  *   - The project registers Func_08002f0c as RuntimeDispatch_ReservedStatusZero
@@ -80,7 +80,7 @@ void Func_080030f8(s32);
 void Func_08002f0c(s32, void *);
 void Func_0800c004(s32);
 void Func_0800b6b8(s32, void *, s32, s32);
-u8 *Func_0800bc70(s32);
+u8 *ResourceObject_Create(s32);
 s32 ResourceMetadata_Register(u8 *, s32);
 s32 Ui_FindNextNumberWithMetadata(s32, s32);
 void Func_08012b2c(s32, s32, void *);
@@ -156,7 +156,7 @@ restart:
         if (md[4] == 20 && (i & 1) != 0) {
             alt = 1;
         }
-        h = Func_0800bc70(ent[0].no + alt + (alt << 12));
+        h = ResourceObject_Create(ent[0].no + alt + (alt << 12));
         ResourceMetadata_Register(h, ent[1].no);
         ResourceMetadata_Register(h, ent[2].no);
         ResourceMetadata_Register(h, ent[3].no);

@@ -8,7 +8,16 @@
    hoists 0xfe, while do/while, while and goto spellings keep it unreduced
    but stop the party scan's rotation (duplicated exit test instead of the
    entry jump). Removal outside the enemy loop keeps 0xfe unhoisted but is
-   still reduced. */
+   still reduced.
+   2026-09-29 (alchemy permute scorer): the draft scored 575; a local
+   enemies pointer inside the enemy loop scores 445 (3 register-only,
+   5 operand, 2 reordered, 2 deleted) and matches the frame (push r5, r6).
+   The enemy scan is still reduced (base + 102 walked by 2) where the ROM
+   keeps i and rebuilds (i * 2 + 100) from base + 2 every pass. A goto
+   enemy loop gives exactly the ROM's unreduced indexing, but every goto,
+   while and do/while spelling tried (with break, goto or a label after the
+   party scan) peels or unrotates the party scan (660 to 2515). About
+   160,000 searched candidates found nothing below 445. */
 #include "TYPES.H"
 
 struct RosterTarget {
@@ -54,9 +63,11 @@ void BattleActor_RemoveFromLists(s32 actor)
             break;
     }
     for (i = 0; ; ) {
-        unit = work->enemies[i];
+        s16 *enemies = work->enemies;
+
+        unit = enemies[i];
         if (unit == actor) {
-            work->enemies[i] = 0xfe;
+            enemies[i] = 0xfe;
             goto removed;
         }
         i++;

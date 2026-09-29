@@ -1,3 +1,7 @@
+/* 2026-09-29: five minutes of permutation reached 45598 from 48704 through
+ * 170 rewrites; not kept, since the owner is far from exact. */
+/* 2026-09-29: callees carry the build's names; alchemy permute scores
+ * 48704, from 49424. */
 /* NONMATCHING: 1816 differing halfwords; 1169 halfword edits.
  * Compiles to 3648 bytes against the complete 3804-byte owner.
  * WALL: branch structure and local lifetimes differ; narrowing pad and sharing
@@ -29,16 +33,16 @@
  * base reuse. Separate display and DMA register lifetimes also improve the
  * result. Reopen only with a new control-flow, type or lifetime fact. */
 
-u32 Func_08004458(void);
-s32 Func_080022fc(s32 value, s32 modulus);
-s32 Func_08002322(s32 angle);
-s32 Func_08015010(s32 x, s32 y, s32 w, s32 h, s32 flags);
-void Func_08015018(s32 window, s32 flags);
-void Func_08015080(s32 message, s32 window, s32 x, s32 y);
-void Func_080150b0(s32 value, s32 digits, s32 window, s32 x, s32 y);
-s32 Func_08077048(s32 item);
-s32 Func_080772e0(s32 item);
-void Func_080f9010(s32 cue);
+u32 Random16(void);
+s32 Math_Mod(s32 value, s32 modulus);
+s32 Trig_Sin(s32 angle);
+s32 UiWindow_CreateFar(s32 x, s32 y, s32 w, s32 h, s32 flags);
+void UiWork_FinalizeFar(s32 window, s32 flags);
+void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
+s32 PartyInventory_RemoveFar(s32 item);
+s32 PartyInventory_CountItemFar(s32 item);
+void Audio_PlayCue(s32 cue);
 
 extern u8 Data_0200024c[];
 extern u8 Data_080f870c[];
@@ -121,7 +125,7 @@ void ReelGame_RunFrame(void)
     blend = 0x400;
     oam = 0;
 
-    Func_08004458();
+    Random16();
 
     reg = (volatile u16 *)0x040000b0;
     reg[5] &= 0xc5ff;
@@ -152,29 +156,29 @@ void ReelGame_RunFrame(void)
         goto build_objects;
 
     if (work->state == 0) {
-        coins = Func_080772e0(228);
-        Func_080150b0(coins - work->bet, 2, work->sub_win, 64, 0);
-        Func_080150b0(work->bet, 2, work->sub_win, 64, 8);
+        coins = PartyInventory_CountItemFar(228);
+        UiText_DrawNumberInWindowFar(coins - work->bet, 2, work->sub_win, 64, 0);
+        UiText_DrawNumberInWindowFar(work->bet, 2, work->sub_win, 64, 8);
         if ((work->pressed & 2) != 0) {
             work->state = 10;
             Data_0200024c[0x120] = 254;
-            Func_08015018(work->win, 1);
+            UiWork_FinalizeFar(work->win, 1);
             goto build_objects;
         }
         if ((work->pressed & 0x40) != 0) {
             if (work->bet <= 3 && coins > work->bet) {
                 work->bet += 1;
-                Func_080f9010(111);
+                Audio_PlayCue(111);
             } else {
-                Func_080f9010(113);
+                Audio_PlayCue(113);
             }
         }
         if ((work->pressed & 0x80) != 0) {
             if (work->bet > 1) {
                 work->bet -= 1;
-                Func_080f9010(111);
+                Audio_PlayCue(111);
             } else {
-                Func_080f9010(113);
+                Audio_PlayCue(113);
             }
         }
 {
@@ -186,11 +190,11 @@ void ReelGame_RunFrame(void)
             goto build_objects;
         work->state = 1;
         *(s32 *)(heap + 0x778c) = 0;
-        Func_08015018(work->win, 1);
+        UiWork_FinalizeFar(work->win, 1);
         for (i = 0; i < (u32)work->bet; i++)
-            Func_08077048(228);
-        Func_08015018(work->sub_win, 1);
-        Func_080f9010(0x130);
+            PartyInventory_RemoveFar(228);
+        UiWork_FinalizeFar(work->sub_win, 1);
+        Audio_PlayCue(0x130);
         goto build_objects;
     }
 
@@ -215,26 +219,26 @@ void ReelGame_RunFrame(void)
                     work->row[i].stop |= 255;
                 }
             } else if (work->cursor <= 4) {
-                Func_080f9010(0x131);
+                Audio_PlayCue(0x131);
                 work->row[work->cursor].held ^= 1;
             } else if (all == 0) {
-                Func_080f9010(0x130);
+                Audio_PlayCue(0x130);
                 work->state = 1;
                 work->cursor = 0;
                 for (i = 0; i < 5; i++)
                     work->row[i].stop |= 255;
                 work->spins += 1;
             } else {
-                Func_080f9010(113);
+                Audio_PlayCue(113);
             }
         } else {
             if ((work->dir & 16) != 0) {
-                work->cursor = Func_080022fc(work->cursor + 1, 6);
-                Func_080f9010(111);
+                work->cursor = Math_Mod(work->cursor + 1, 6);
+                Audio_PlayCue(111);
             }
             if ((work->dir & 32) != 0) {
-                work->cursor = Func_080022fc(work->cursor + 5, 6);
-                Func_080f9010(111);
+                work->cursor = Math_Mod(work->cursor + 5, 6);
+                Audio_PlayCue(111);
             }
         }
 
@@ -242,39 +246,39 @@ void ReelGame_RunFrame(void)
             if (work->cursor == 5) {
                 if (all != 0) {
                     if ((u32)(work->phase - 1) > 1) {
-                        Func_08015018(work->win, 1);
-                        work->win = Func_08015010(11, 0, 19, 4, 6);
-                        Func_08015080(0x912, work->win, 0, 0);
+                        UiWork_FinalizeFar(work->win, 1);
+                        work->win = UiWindow_CreateFar(11, 0, 19, 4, 6);
+                        UiText_DrawCharacterAtOffsetFar(0x912, work->win, 0, 0);
                         work->phase = 1;
                     } else if (work->phase == 1) {
-                        Func_08015080(0x913, work->win, 0, 8);
+                        UiText_DrawCharacterAtOffsetFar(0x913, work->win, 0, 8);
                         work->phase = 2;
                     }
                 } else {
                     if (work->phase != 3) {
-                        Func_08015018(work->win, 1);
-                        work->win = Func_08015010(16, 0, 14, 3, 6);
-                        Func_08015080(0x90f, work->win, 0, 0);
+                        UiWork_FinalizeFar(work->win, 1);
+                        work->win = UiWindow_CreateFar(16, 0, 14, 3, 6);
+                        UiText_DrawCharacterAtOffsetFar(0x90f, work->win, 0, 0);
                     }
                     work->phase = 3;
                 }
             } else if (work->row[work->cursor].held == 0) {
                 if (work->phase != 4) {
-                    Func_08015018(work->win, 1);
-                    work->win = Func_08015010(23, 0, 7, 3, 6);
-                    Func_08015080(0x90d, work->win, 0, 0);
+                    UiWork_FinalizeFar(work->win, 1);
+                    work->win = UiWindow_CreateFar(23, 0, 7, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar(0x90d, work->win, 0, 0);
                 }
                 work->phase = 4;
             } else {
                 if (work->phase != 5) {
-                    Func_08015018(work->win, 1);
-                    work->win = Func_08015010(23, 0, 7, 3, 6);
-                    Func_08015080(0x90e, work->win, 0, 0);
+                    UiWork_FinalizeFar(work->win, 1);
+                    work->win = UiWindow_CreateFar(23, 0, 7, 3, 6);
+                    UiText_DrawCharacterAtOffsetFar(0x90e, work->win, 0, 0);
                 }
                 work->phase = 5;
             }
         } else {
-            Func_08015018(work->win, 1);
+            UiWork_FinalizeFar(work->win, 1);
         }
         goto build_objects;
     }
@@ -285,7 +289,7 @@ void ReelGame_RunFrame(void)
         if (work->timer != 60)
             goto build_objects;
         work->state = 3;
-        Func_080f9010(93);
+        Audio_PlayCue(93);
         work->timer = 0;
 {
             volatile u16 *blendReg = (volatile u16 *)0x04000050;
@@ -303,21 +307,21 @@ void ReelGame_RunFrame(void)
         if ((work->pressed & 1) == 0)
             goto build_objects;
         work->state = 10;
-        Func_080f9010(112);
+        Audio_PlayCue(112);
         goto build_objects;
     }
 
     if (work->state == 11) {
         if (work->phase == 0) {
             work->phase = 1;
-            Func_08015080(0x90c, work->win, 0, 8);
+            UiText_DrawCharacterAtOffsetFar(0x90c, work->win, 0, 8);
         }
         if ((work->pressed & 1) == 0)
             goto build_objects;
         work->state = 5;
         work->phase = 0;
-        Func_080f9010(112);
-        Func_08015018(work->win, 1);
+        Audio_PlayCue(112);
+        UiWork_FinalizeFar(work->win, 1);
         goto build_objects;
     }
 
@@ -334,18 +338,18 @@ void ReelGame_RunFrame(void)
 
     /* Reels are turning. */
     if (work->timer == 4) {
-        work->win = Func_08015010(18, 17, 12, 3, 6);
-        Func_08015080(0x90a, work->win, 0, 0);
+        work->win = UiWindow_CreateFar(18, 17, 12, 3, 6);
+        UiText_DrawCharacterAtOffsetFar(0x90a, work->win, 0, 0);
     }
     if (work->timer == 16)
-        Func_080f9010(0x132);
+        Audio_PlayCue(0x132);
     if (work->timer > 56) {
         if (*(s32 *)(heap + 0x778c) > 31 || (work->pressed & 0x100) != 0) {
             *(s32 *)(heap + 0x778c) = 0;
             for (i = 0; i < 5; i++) {
                 if (work->row[i].held == 0 && (s8)work->row[i].stop == -1) {
-                    work->row[i].stop = (Func_08004458() & 3) + 4;
-                    Func_080f9010(0x133);
+                    work->row[i].stop = (Random16() & 3) + 4;
+                    Audio_PlayCue(0x133);
                     break;
                 }
             }
@@ -378,7 +382,7 @@ void ReelGame_RunFrame(void)
                         v = -i - (work->row[i].pos / 16) + 26;
                     else
                         v = col - (work->row[i].pos / 16) + 21;
-                    v = work->row[i].cell[Func_080022fc(v, 21)];
+                    v = work->row[i].cell[Math_Mod(v, 21)];
                     if (v != 5) {
                         if (found == -1)
                             found = v;
@@ -397,19 +401,19 @@ void ReelGame_RunFrame(void)
         if (hits != 0) {
             Data_0200024c[0x120 + hits] = 0xff;
             work->state = 2;
-            Func_080f9010(171);
+            Audio_PlayCue(171);
             *(s32 *)(heap + 0x7780) = 1;
             *(s32 *)(heap + 0x7784) = 0;
             *(u16 *)0x04000050 = 0;
-            Func_08015018(work->win, 1);
+            UiWork_FinalizeFar(work->win, 1);
         } else {
             work->state = 11;
             work->phase = 0;
-            Func_08015018(work->win, 1);
-            work->win = Func_08015010(3, 16, 24, 4, 6);
-            Func_08015080(0x90b, work->win, 0, 0);
+            UiWork_FinalizeFar(work->win, 1);
+            work->win = UiWindow_CreateFar(3, 16, 24, 4, 6);
+            UiText_DrawCharacterAtOffsetFar(0x90b, work->win, 0, 0);
             if (work->spins == 4) {
-                coins = Func_080772e0(228);
+                coins = PartyInventory_CountItemFar(228);
                 if (coins > 0)
                     work->state = 20;
                 else
@@ -425,9 +429,9 @@ void ReelGame_RunFrame(void)
                 *(s32 *)(heap + 0x7780) = 1;
                 *(s32 *)(heap + 0x7784) = 0;
                 *(u16 *)0x04000050 = 0;
-                work->sub_win = Func_08015010(18, 0, 12, 4, 6);
-                Func_08015080(0x905, work->sub_win, 0, 8);
-                Func_08015080(0x904, work->sub_win, 0, 0);
+                work->sub_win = UiWindow_CreateFar(18, 0, 12, 4, 6);
+                UiText_DrawCharacterAtOffsetFar(0x905, work->sub_win, 0, 8);
+                UiText_DrawCharacterAtOffsetFar(0x904, work->sub_win, 0, 0);
             }
         }
     }
@@ -539,7 +543,7 @@ build_objects:
         for (j = 0; j < 7; j++) {
             work->obj[oam][0] =
                 ((j * 16 + (work->row[i].pos % 16) + 4) | x) | 0x80006000;
-            v = Func_080022fc(j - (work->row[i].pos / 16) + 21, 21);
+            v = Math_Mod(j - (work->row[i].pos / 16) + 21, 21);
             work->obj[oam][1] = (work->row[i].cell[v] << 4) | 0x800;
             oam += 1;
         }
@@ -549,9 +553,9 @@ build_objects:
     y = 40;
     if (work->state == 1) {
         if (work->timer <= 47)
-            y = ((Func_08002322(work->timer * 682) << 6) >> 16) + 40;
+            y = ((Trig_Sin(work->timer * 682) << 6) >> 16) + 40;
         else if (work->timer <= 55)
-            y = ((Func_08002322((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
+            y = ((Trig_Sin((work->timer << 12) - 0x30000) << 2) >> 16) + 40;
     }
     work->obj[oam][0] = (y | blend) | 0x80d06000;
     work->obj[oam][1] = 0x500;

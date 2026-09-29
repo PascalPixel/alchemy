@@ -1,3 +1,13 @@
+/* 2026-09-29: the anonymous struct type of the mark local is now named
+ * TargetMark at file scope, because the permuter's reprint dropped the
+ * inline struct body. Eight minutes of permutation: 2688 -> 2064; with the
+ * natural spellings kept here (the next unit id read through pointer
+ * arithmetic into a local before the swap, applies declared after
+ * damage_class, Random16() * target_count) it is 2066: 73 register-only, 6
+ * stack-only, 9 operand, 8 reordered, 6 inserted, 4 deleted. Reading
+ * unit_ids[inner_index + 1] by index instead costs 5903. */
+/* 2026-09-29: Owner_GetRecordFar carries the build's name; alchemy permute
+ * scores 2688, from 2728. */
 /*
  * BattleTarget_SelectForAction draft: 1864 of 1864 bytes, 81.0% aligned
  * similarity. The normal-order scan tests turn_order->normal[target_index]
@@ -33,7 +43,7 @@ struct BattleAiProfile {
     s8 target_strategy;
 };
 
-struct BattleAiProfile *Func_08077198(s32 class_id);
+struct BattleAiProfile *Owner_GetRecordFar(s32 class_id);
 u32 Random16(void);
 
 #define COUNT_PARTIAL_CURES(unit, count)                                      \
@@ -212,6 +222,8 @@ u32 Random16(void);
         }                                                                     \
     }
 
+struct TargetMark { u16 v; };
+
 s32 BattleTarget_SelectForAction(
     s32 actor_id,
     struct BattleAction *action)
@@ -232,11 +244,11 @@ s32 BattleTarget_SelectForAction(
     s32 next_value;
     s32 temp;
     s32 opposing;
-    s32 applies;
     s32 damage_class;
+    s32 applies;
     u32 roll;
     s16 *slot;
-    struct { u16 v; } mark;
+    struct TargetMark mark;
 
     turn_order = BATTLE_TURN_ORDER;
     target_count = 0;
@@ -309,7 +321,7 @@ scan_complete:
 
     if (action->target_mode == 1
         && action->range == 1
-        && Func_08077198(Owner_GetStateFar(actor_id)->class_id)
+        && Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
                 ->target_strategy != 2
         && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
         selected = -1;
@@ -321,7 +333,7 @@ scan_complete:
                  inner_index++) {
                 unit = Owner_GetStateFar(unit_ids[inner_index]);
                 next_unit = Owner_GetStateFar(unit_ids[inner_index + 1]);
-                if (Func_08077198(Owner_GetStateFar(actor_id)->class_id)
+                if (Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
                         ->target_strategy == 0) {
                     value = unit->hp;
                     next_value = next_unit->hp;
@@ -330,8 +342,11 @@ scan_complete:
                     next_value = next_unit->max_hp;
                 }
                 if (value < next_value) {
+                    s32 next_id;
+
+                    next_id = *(unit_ids + inner_index + 1);
                     temp = unit_ids[inner_index];
-                    unit_ids[inner_index] = unit_ids[inner_index + 1];
+                    unit_ids[inner_index] = next_id;
                     unit_ids[inner_index + 1] = temp;
                     temp = target_positions[inner_index];
                     target_positions[inner_index] =
@@ -376,6 +391,5 @@ scan_complete:
         if (selected >= 0)
             return target_positions[selected];
     }
-
-    return target_positions[(u32)(target_count * Random16()) >> 16];
+    return target_positions[(u32)(Random16() * target_count) >> 16];
 }

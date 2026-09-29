@@ -1,3 +1,9 @@
+/* 2026-09-29: eight minutes of permutation: 3327 -> 2747; kept without its
+ * register temporaries for the fill offset and the palette address, 2882
+ * (11 register-only, 2 stack-only, 16 operand, 8 reordered, 7 inserted, 13
+ * deleted): the spoke loop rotated into a tested do/while that clears the
+ * state before stepping the angle, and a few operand orders. Resource
+ * numbers 0xc8..0xcb are still Value_ symbols. */
 /* Whole owner [080c1470, 080c16d0), 608 bytes including its pool.
    2026-09-26 H2: give the first loop its own angle/distance/speed locals.
    Candidate 596/608, 205 differing halfwords, 97 aligned edits. The complete
@@ -93,6 +99,7 @@ void BattleFx_InitializeStarField(s32 mode)
     u8 *data;
     volatile struct BgAffineRegisters *bg;
 
+
     gTransitionWork[2] = 1;
     work = Runtime_AllocateBlock(39, 0x13d0);
     Runtime_AllocateHeapBlock(40, 0x4000);
@@ -101,7 +108,6 @@ void BattleFx_InitializeStarField(s32 mode)
         s32 angle;
         u32 distance;
         s32 speed;
-
         angle = Random16();
         distance = Random16() + 0x10000;
         speed = distance >> 1;
@@ -109,25 +115,29 @@ void BattleFx_InitializeStarField(s32 mode)
         star->y = Iwram_MulQ16(Trig_Sin(angle), speed);
         if (star->x & 1)
             star->x = -star->x;
-        if (star->y & 1)
+        if ((star->y & 1) != 0)
             star->y = -star->y;
-        star->z = (Random16() + 0x8000) >> 2;
+        star->z = (0x8000 + Random16()) >> 2;
         star->dx = (-star->x >> 7) + (star->y >> 8);
         star->dy = (-star->y >> 7) + (-star->x >> 8);
         star->age = 0;
-        star->speed = (distance >> 13) + 1;
+        star->speed = 1 + (distance >> 13);
         star++;
     }
-    spoke = work->spokes;
     angle = 0;
-    for (i = 2; i >= 0; i--) {
-        spoke->x = Iwram_MulQ16(Trig_Cos(angle), 0x1000);
-        spoke->y = Iwram_MulQ16(Trig_Sin(angle), 0x1000);
-        spoke->inner_x = Iwram_MulQ16(Trig_Cos(angle), 0x200);
-        spoke->inner_y = Iwram_MulQ16(Trig_Sin(angle), 0x200);
-        angle += 0x5555;
-        spoke->state = 0;
-        spoke++;
+    spoke = work->spokes;
+    i = 2;
+    if (0 <= i) {
+        do {
+            spoke->x = Iwram_MulQ16(Trig_Cos(angle), 0x1000);
+            spoke->y = Iwram_MulQ16(Trig_Sin(angle), 0x1000);
+            spoke->inner_x = Iwram_MulQ16(Trig_Cos(angle), 0x200);
+            spoke->inner_y = Iwram_MulQ16(Trig_Sin(angle), 0x200);
+            spoke->state = 0;
+            angle += 0x5555;
+            spoke++;
+            i--;
+        } while (0 <= i);
     }
     work->unknown_13bc = 0;
     work->unknown_13c0 = 0;

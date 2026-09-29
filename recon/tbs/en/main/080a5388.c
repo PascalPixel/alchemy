@@ -1,3 +1,7 @@
+/* 2026-09-29: the menu, key and IWRAM-copier addresses are now gMenuWork,
+ * gKeyState, gKeysRepeat and Iwram_CopyWords; alchemy permute (--function
+ * Func_080a5388) scores 1260, from 1320. Eight minutes of permutation from
+ * 1320 found nothing lower. */
 /* NONMATCHING: the preview takes the owner again as its fourth argument,
  * and the first leave-menu flag exits to done, not cancel. Both are fixed.
  * Remaining: owner/item setup allocation and the confirmation exit's layout.
@@ -5,6 +9,7 @@
  * the reference's bhi, long cancel branch, then cue 175 before menu setup. */
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "IWRAM_CALL.H"
 
 typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
 
@@ -23,6 +28,9 @@ struct EquipMenu {
 };
 
 extern u8 Value_00000b2c;
+extern struct EquipMenu *gMenuWork;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
 void *Owner_GetStateFar(s32 owner);
 void ItemMenu_DrawEquipPreview(s32 owner, s32 item, s32 mode, s32 target);
@@ -43,14 +51,14 @@ s32 Func_080a5388(void)
 {
     s32 selection = 0;
     s32 changed = 1;
-    struct EquipMenu *menu = *(struct EquipMenu **)0x03001f2c;
+    struct EquipMenu *menu = gMenuWork;
     void *state = Owner_GetStateFar(menu->owner);
     void *backup;
     s32 window;
 
     ItemMenu_DrawEquipPreview(menu->owner, menu->item, 0, menu->owner);
     backup = Runtime_BumpAllocate(0x14c);
-    CopyWords((WordCopyFn)0x03001388, backup, state, 0x14c);
+    CopyWords((WordCopyFn)Iwram_CopyWords, backup, state, 0x14c);
     window = menu->selector_window;
     if ((u32)(Inventory_EquipFar(menu->owner, menu->item) + 2) > 1) {
         UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b2c, window, 24, 24);
@@ -63,17 +71,17 @@ s32 Func_080a5388(void)
                 changed = 0;
                 selection = Math_Mod(selection + 2, 2);
             }
-            if (*(volatile u32 *)0x03001c94 & 1) {
+            if (gKeyState & 1) {
                 Audio_PlayCue(175);
                 goto done;
             }
-            if (*(volatile u32 *)0x03001c94 & 2) {
+            if (gKeyState & 2) {
                 Audio_PlayCue(113);
                 break;
             }
             UiMenu_PositionCursor(selection * 48 + 110, 32);
             {
-                volatile u32 *repeat = (volatile u32 *)0x03001b04;
+                volatile u32 *repeat = &gKeysRepeat;
 
                 if (*repeat & 32) {
                     selection--;
@@ -95,7 +103,7 @@ done:
     if (GameFlag_TestFar(0x150))
         selection = 1;
     if (selection == 1)
-        CopyWords((WordCopyFn)0x03001388, state, backup, 0x14c);
+        CopyWords((WordCopyFn)Iwram_CopyWords, state, backup, 0x14c);
     Runtime_BumpFree(backup);
     Owner_RecalculateStatsFar(menu->owner);
     Func_080772c0(menu->owner);

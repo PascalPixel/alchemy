@@ -28,6 +28,14 @@
  * restored, with unit r6, frame 88 and the saved-role set unchanged. The u8
  * use-type still loses the reference copy and second-branch zero extension.
  * No matching-C credit claimed.
+ * 2026-09-29: callees carry the build's names; alchemy permute (with
+ * --function Func_080ba6ac) scores 2480, from 2700. Func_080c9018 stays
+ * unresolved: the BattleFx_DispatchMode veneer in SYSTEM/FAR_CALL/EFFECT.S
+ * has no label yet.
+ * Eight minutes of permutation then found 2120: the queued-command scan as a
+ * do-while that advances row before testing the command (2155 alone), the
+ * fade loop as a while with its steps at the end, and the item read through
+ * a u16 view with the use type assigned in the test.
  */
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
@@ -77,17 +85,17 @@ extern s32 *Data_03001f00;
 extern struct PresentationBattleWork *Data_03001e74;
 void BattleEvent_Playback(void);
 void Func_08009080(struct MotionObject *, s32);
-void Func_08009088(struct MotionObject *, s32);
-s32 Func_08077058(s32, s32);
+void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *, s32);
+s32 Inventory_RemoveFar(s32, s32);
 s32 Inventory_BreakFar(s32, s32);
-void Func_080b8000(s32);
-s32 Func_080b9d34(void *, struct PresentationWork *);
-u32 Func_080bb938(void);
-u32 Func_080bbabc(u32, u32);
-s32 Func_080be02c(void);
-void Func_080c10e8(u16 *, s32);
-s32 Func_080c1724(u16 *, u16 *, s32, s32);
-void Func_080c9008(struct PresentationWork *);
+void Actor_ResetMotionAtAnchor(s32);
+s32 BattlePres_BuildTargetList(void *, struct PresentationWork *);
+u32 BattleEv_DispatchQueued(void);
+u32 BattleEv_Push(u32, u32);
+s32 BattleEventRuntime_WaitForReady(void);
+void BattlePres_SetActorModes(u16 *, s32);
+s32 Graphics_ScaleRgb555Clamped(u16 *, u16 *, s32, s32);
+void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
 void Func_080c9018(struct PresentationWork *);
 
 s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
@@ -108,11 +116,11 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         facing = 0x2000;
     if (*transition != facing)
         *transition = facing;
-    Func_080b9d34(saved_input, &work);
-    Func_080c10e8(0, 0);
+    BattlePres_BuildTargetList(saved_input, &work);
+    BattlePres_SetActorModes(0, 0);
     object = GetBattleObjectSlot(work.field_08)->object;
     Func_08009080(object, 3);
-    Func_08009088(object, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     if (saved_input->target_ids[0] <= 7)
         work.field_04 = 1;
     else
@@ -134,38 +142,42 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
     if (work.field_00 != 0) {
         s32 fade = 0;
-        for (i = 0; i <= 19; i++, fade += 0x444) {
+        i = 0;
+        while (i <= 19) {
             struct PresentationBattleWork *battle = Data_03001e74;
             if (i <= 19) {
                 s32 value = 0x10000 - fade;
                 battle->palette_scale = value;
-                Func_080c1724(battle->palette, (u16 *)0x050000c0, value, 0x80);
+                Graphics_ScaleRgb555Clamped(battle->palette, (u16 *)0x050000c0, value, 0x80);
             }
             WaitFrames(1);
+            i++;
+            fade += 0x444;
         }
         if (saved_input->presentation_flags & 0x4000)
-            Func_080c9008(&work);
+            BattleFx_DispatchByIdRangeFar(&work);
         else
             Func_080c9018(&work);
     } else {
         WaitFrames(60);
     }
-    Func_080be02c();
+    BattleEventRuntime_WaitForReady();
     Func_08009080(object, 1);
     for (i = 0; i != work.count; i++)
-        Func_080b8000(work.table[i]);
+        Actor_ResetMotionAtAnchor(work.table[i]);
 
     unit = Owner_GetStateFar(saved_selection->actor_id);
-    ability = unit->inventory[saved_selection->parameter];
-    kind = Item_Get(ability)->use_type;
-    if (kind == 1) {
-        s32 result = Func_08077058(saved_selection->actor_id, saved_selection->parameter);
+    ability = ((u16 *)unit->inventory)[saved_selection->parameter];
+    if ((kind = Item_Get(ability)->use_type) == 1) {
+        s32 result = Inventory_RemoveFar(saved_selection->actor_id, saved_selection->parameter);
         s32 index = saved_selection->parameter;
         if (result == 2) {
             struct PresentationBattleWork *battle = Data_03001e74;
             u32 row;
-            for (row = 0; row <= 19; row++) {
+            row = 0;
+            do {
                 struct QueuedItemAction *command = &battle->actions[row];
+                row++;
                 if (QueuedCommand_GetKind(&command->dispatch) == 2 &&
                     command->actor_id == saved_selection->actor_id) {
                     s16 current = command->parameter;
@@ -174,14 +186,14 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
                     else if (current > index)
                         command->parameter--;
                 }
-            }
+            } while (row <= 19);
         }
     } else if ((u8)kind == 2) {
         if ((BattleRandom16Far() & 7) == 0) {
-            Func_080bbabc(2, unit->inventory[saved_selection->parameter]);
-            Func_080bbabc(4, 0x81c);
+            BattleEv_Push(2, unit->inventory[saved_selection->parameter]);
+            BattleEv_Push(4, 0x81c);
             Inventory_BreakFar(saved_selection->actor_id, saved_selection->parameter);
-            Func_080bb938();
+            BattleEv_DispatchQueued();
         }
     } else if ((u8)kind == 4) {
         if ((ability & 0x1ff) == 0xb8)

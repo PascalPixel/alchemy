@@ -8,7 +8,18 @@
    each compile identically to this draft; neither changes zero sharing
    across the creation call or the later retained-pointer stores. Correcting
    the queue callee's value return and preserving its five explicit arguments
-   also leaves this candidate unchanged (56 aligned halfword edits). */
+   also leaves this candidate unchanged (56 aligned halfword edits).
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 32,655
+   candidates; the best, 485 against 1530, writes icon[0] through an index
+   variable holding 0, icon[1] through *(icon + 1) and icon[2] with a (u32)2
+   index, which no programmer writes, so the draft keeps its spelling. The
+   dump shows why: every array element store computes the record's base into
+   a pseudo, and CSE replaces it with the older entry pointer, so all three
+   stores go through r7; the reference stores only icon[0] through r7 and
+   the other two through sp. Moving entry = icon after the window, after the
+   stores or writing *entry for icon[0] scores 1530 to 1665. The 0x1b pool
+   word is a message symbol (Value_0000001b), which blocks adoption until
+   the catalogs name it. */
 #include "TYPES.H"
 
 struct PartyJoinWork {
@@ -19,7 +30,7 @@ struct PartyJoinWork {
     u16 scroll;
 };
 
-extern struct PartyJoinWork *Data_03001e8c;
+extern struct PartyJoinWork *gWindowWork;
 extern u32 gKeyState;
 extern const u8 Value_0000001b;
 
@@ -49,7 +60,7 @@ void Party_ShowJoinedMessage(s32 member)
     u32 *entry;
     s32 zero;
 
-    work = Data_03001e8c;
+    work = gWindowWork;
     entry = icon;
     window = UiWindow_Create(2, 1, 26, 5, 0);
     zero = 0;

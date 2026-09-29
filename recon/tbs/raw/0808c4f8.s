@@ -276,7 +276,7 @@ Func_0808c4f8:
 	adds	r3, r3, r2
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
-	bl	Func_08015200
+	bl	UiTimedNotice_CreateFar
 .L_0808c750:
 	ldr	r5, [pc, #172]
 	movs	r1, #141
@@ -692,7 +692,7 @@ Func_0808c4f8:
 	bl	UiTimedNotice_CloseIfActiveFar
 	ldr	r1, [pc, #64]
 	ldr	r0, [r1, #0]
-	bl	Func_0808ddec
+	bl	BattleEffect_SelectNearbyObject
 	movs	r2, #1
 	adds	r5, r0, #0
 	negs	r2, r2

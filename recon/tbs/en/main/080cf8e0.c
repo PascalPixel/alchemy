@@ -1,3 +1,8 @@
+/* 2026-09-29: five minutes of permutation reached 10393 from 16680 through
+ * 117 rewrites; not kept, since the owner is far from exact and blocked by
+ * Value_ resource numbers below 256. */
+/* 2026-09-29: callees carry the build's names; alchemy permute scores
+ * 16680, from 16860. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -114,7 +119,7 @@ typedef struct Shard {
     s32 frame;               /* 0x18 */
 } Shard;
 
-/* The projected object Func_080b5098 resolves; only the two position words
+/* The projected object GetBattleObjectSlotFar resolves; only the two position words
    this owner reads are named. */
 struct ActorObject {
     u8 unknown_00[8];
@@ -155,24 +160,24 @@ extern u16 Data_080ee0e8[];
    lowercase spellings are static in their own units, so they are aliased
    here the way recon/tbs/en/main/08027114.c aliases random_16. */
 
-void Func_080cd594(s32 mode);
-void *Func_08002f40(s32 resource_id);   /* "get" in alchemy inspect */
-u32 Func_08005340(const void *source, void *destination);
-struct ActorObject **Func_080b5098(s32 member_id);
-void Func_080f9010(s32 cue);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 resource_id);   /* "get" in alchemy inspect */
+u32 Resource_DecodeType01(const void *source, void *destination);
+struct ActorObject **GetBattleObjectSlotFar(s32 member_id);
+void Audio_PlayCue(s32 cue);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b50e8(s32 cue);
+void BattleEventRuntime_BeginPhaseFar(s32 cue);
 s32 Math_Div(s32 numerator, s32 denominator);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 void EffectStep_AdvanceWithGravity3D(void *record, s32 mode, s32 gravity);
 s32 Random16(void);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 resource_id);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
 {
@@ -203,15 +208,15 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
     canvas = *cursor;
     facing = *(s32 *)0x03001E80;
     work->argument = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
 
-    palette = (u8 *)Func_08002f40((s32)&Value_000000bf);
+    palette = (u8 *)Resource_GetTableEntry((s32)&Value_000000bf);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    Func_08005340(palette + 128, work);
-    palette = (u8 *)Func_08002f40((s32)&Value_0000009e);
+    Resource_DecodeType01(palette + 128, work);
+    palette = (u8 *)Resource_GetTableEntry((s32)&Value_0000009e);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
-    Func_08005340(palette + 128, work->sprites + 16000);
+    Resource_DecodeType01(palette + 128, work->sprites + 16000);
 
     /* An if chain, not a switch: the reference tests 0, 1, 2, 3, 4 and 6 in
        order and cross-jumps the variant-3 arm onto the default arm, which is
@@ -230,17 +235,17 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
         resource_id = (s32)&Value_0000008d;
     else
         resource_id = (s32)&Value_00000077;
-    palette = (u8 *)Func_08002f40(resource_id);
+    palette = (u8 *)Resource_GetTableEntry(resource_id);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
 
     for (i = 0; i != 1024; i++)
         ((Shard *)0x02010000)[i].frame = -1;
 
-    source = *Func_080b5098(work->argument->source_id);
+    source = *GetBattleObjectSlotFar(work->argument->source_id);
     member = 0;
     if (work->argument->member_count != 0) {
         do {
-            target = *Func_080b5098(work->argument->member_ids[member]);
+            target = *GetBattleObjectSlotFar(work->argument->member_ids[member]);
             shard = &((Shard *)0x02010000)[member * 16];
             for (i = 0; i != 16; i++) {
                 shard->x = source->x;
@@ -288,7 +293,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
     else
         total = (work->argument->member_count * 8) + 56;
 
-    Func_080f9010(103);
+    Audio_PlayCue(103);
 
     for (frame = 0; frame != total; frame++) {
         Render_ResetTransformState();
@@ -303,7 +308,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
                     if (frame == start + 17) {
                         ObjectGroup_UpdateMembers(
                             work->argument->member_ids[member], 7, 5, member, 16);
-                        Func_080b50e8(133);
+                        BattleEventRuntime_BeginPhaseFar(133);
                     }
                     if (shard->frame >= 0) {
                         cell = Math_Div(frame - start, 3);
@@ -421,11 +426,11 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
         Camera_ApplyShake(2, 2);
         ObjectGroup_TickMemberTimers();
         work->frame_ready = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

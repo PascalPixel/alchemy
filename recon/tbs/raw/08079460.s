@@ -87,7 +87,7 @@ Func_08079460:
 	adds	r1, r4, #0
 	movs	r2, #15
 	str	r4, [sp, #0]
-	bl	0x08015028
+	bl	UiText_DecodeMessageFar
 	ldr	r4, [sp, #0]
 	movs	r5, #0
 	ldrh	r3, [r4, r5]

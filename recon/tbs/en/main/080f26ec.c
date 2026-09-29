@@ -1,3 +1,9 @@
+/* 2026-09-29: five minutes of permutation reached 2271 from 2911 through 33
+ * rewrites; not kept, since the owner is far from exact. With stock agscc
+ * the Value_ constants (0, 0x16, 0x1440, 0x1540) compile better as plain
+ * literals: 2681 (92 register-only, 1 stack-only, 12 operand, 11 reordered,
+ * 5 inserted, 8 deleted). RegIme and GetResource are still names the build
+ * does not define. */
 /* Draft, not exact (2026-09-25): 1156 of 1152 bytes, 400 differing
    halfwords, 214 differing instruction lines; the block layout matches.
    The title intro: two backgrounds scroll up a row every eight lines, the
@@ -52,10 +58,6 @@ struct Scroll {
 
 extern volatile struct Scroll gBgScroll;
 extern u32 Data_03001c94;
-extern u8 Value_00000000;
-extern u8 Value_00000016;
-extern u8 Value_00001440;
-extern u8 Value_00001540;
 extern u8 Data_03001d18;
 extern u8 Data_03001f58;
 extern const u8 Data_080f39b1[];
@@ -195,10 +197,10 @@ s32 Func_080f26ec(s32 sprites)
             Data_03001d18 = 1;
             WaitFrames(1);
             *(u16 *)0x0400000c = 0x681;
-            *(u16 *)0x04000000 = (u16)(u32)&Value_00001440;
-            scroll[5] = (u16)(u32)&Value_00000000;
+            *(u16 *)0x04000000 = (u16)0x1440;
+            scroll[5] = 0;
             {
-                u8 *palette = GetResource((s32)&Value_00000016);
+                u8 *palette = GetResource(0x16);
 
                 Dma_Set(palette, (void *)0x05000000, 0x84000078, (volatile u32 *)0x040000d4);
                 *(volatile u16 *)0x05000000 = 0;
@@ -246,7 +248,7 @@ s32 Func_080f26ec(s32 sprites)
     }
     Blend_SetBrightenTarget0(30);
     Blend_WaitForTransition();
-    *(volatile u16 *)0x04000000 = (u16)(u32)&Value_00001540;
+    *(volatile u16 *)0x04000000 = (u16)0x1540;
     if (sprites != 0) {
         limit = 3600;
     } else {
@@ -279,8 +281,8 @@ s32 Func_080f26ec(s32 sprites)
     }
     Data_03001f58 = saved;
     Runtime_ReleaseHeapBlock(43);
-    *(volatile u16 *)0x04000050 = (u16)(u32)&Value_00000000;
-    *(volatile u16 *)0x04000052 = (u16)(u32)&Value_00000000;
+    *(volatile u16 *)0x04000050 = 0;
+    *(volatile u16 *)0x04000052 = 0;
     WaitFrames(1);
     return result;
 }

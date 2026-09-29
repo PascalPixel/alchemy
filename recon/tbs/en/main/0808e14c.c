@@ -1,7 +1,16 @@
+/* NONMATCHING: complete owner main:0808e14c against recon/tbs/raw/0808e14c.s.
+ * 2026-09-29 alchemy permute (10 minutes, 59,166 candidates): 840 -> 650,
+ * 18 register-only, 1 operand, 7 reordered and 1 deleted instruction.
+ * Minimized to one natural change: the match id is read before the facing
+ * check and type. Remaining: loop-body register assignment (the facing
+ * nibble and check flag in r7/r5 where the reference has r5/r7), and the
+ * reference reads the facing halfword a second time as ldrh where this
+ * reads it once; unsigned reads of either field score worse (945, 1990).
+ * A second 8-minute run from 650 with another seed found nothing lower. */
 #include "TYPES.H"
 #include "OBJECT_LOOKUP.H"
 
-s32 Func_0808ddec(u32 object_id);
+s32 BattleEffect_SelectNearbyObject(u32 object_id);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 GetFocusedObjectCollision(void);
 
@@ -49,17 +58,16 @@ void *Func_0808e14c(u32 arg0)
     trigger = Data_03001ebc->triggers;
     object = ObjectTable_Get(Data_02000240.object_id);
     facing = object->kind;
-    id = Func_0808ddec(Data_02000240.object_id);
+    id = BattleEffect_SelectNearbyObject(Data_02000240.object_id);
     masked = arg0 & 0x1ff;
     collision = GetFocusedObjectCollision();
 
     for (; trigger->flags != (u32)-1; trigger++) {
         s32 dirNibble = trigger->facing & 0xf000;
         s16 facingWord = trigger->facing;
+        u32 matchId = facingWord & 0xff;
         s16 dirCheckEnabled = facingWord & 0x800;
         u32 type = trigger->flags & 0xf;
-        u32 matchId = facingWord & 0xff;
-
         if (type != 4)
             continue;
         if (GameFlag_IsConditionActive(trigger->condition) == 0)

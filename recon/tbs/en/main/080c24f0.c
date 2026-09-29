@@ -1,3 +1,16 @@
+/* 2026-09-29 alchemy permute: score 5390 to 520 on the permuter's scorer
+   (0 is exact); remaining 11 register-only, 1 operand, 7 reordered. Kept
+   rewrites: both linear searches as a first test and a do-while (3435 on
+   their own), slot declared after chance, and the drop test and the
+   lowest-value test with their operands swapped; then by hand the
+   permuter-only spellings reverted at equal score, plain divisions for the
+   level and floor, and the battle work by its linked name. What is left is
+   the drop test: the reference computes the threshold 0x20000 >> chance
+   before the random call and keeps it in r5, while the swapped test
+   computes it after. Spelling the test threshold first realigns the whole
+   function's allocation (3435), so the rest of this model only fits under
+   the swapped test; a later seed-7 search focused on the tail found
+   nothing below 520. */
 /* Draft, not exact (2026-09-27): complete extent [080c24f0,080c2724),
    564 reference bytes. Current fixed-spread helper model: 568 bytes,
    273 differing halfwords, 163 aligned edits; topology still different.
@@ -65,7 +78,7 @@ struct EnemyRecord {
     u16 experience;                 /* 0x52 */
 };
 
-extern struct BattleFormation *Data_03001e74;
+extern struct BattleFormation *gBattleWork;
 
 struct BattleUnit *Owner_GetStateFar(s32);
 struct EnemyRecord *Owner_GetRecordFar(s32);
@@ -73,8 +86,6 @@ s32 GameFlag_TestFar(s32);
 void GameFlag_SetBitFar(s32);
 u32 Random16(void);
 u32 BattleRandom16Far(void);
-s32 Math_Div(s32, s32);
-u32 Math_DivU(u32, u32);
 s32 Item_EncodeBankedId(s32);
 
 static __inline__ s32 BattleEnemy_CalculateCoinReward(
@@ -85,10 +96,10 @@ static __inline__ s32 BattleEnemy_CalculateCoinReward(
     s32 base;
     s32 floor;
 
-    for (i = 0; i < (u8)Math_DivU(unit->level, 10) + 1; i++)
+    for (i = 0; i < (u8)(unit->level / 10U) + 1; i++)
         bonus += ((Random16() * 6) >> 16) + 1;
     base = *reward;
-    floor = Math_Div(base * 3, 10);
+    floor = base * 3 / 10;
     if (bonus < floor)
         bonus = floor;
     return bonus + base;
@@ -102,10 +113,10 @@ static __inline__ s32 BattleEnemy_CalculateExperienceReward(
     s32 base;
     s32 floor;
 
-    for (i = 0; i < (u8)Math_DivU(unit->level, 10) + 1; i++)
+    for (i = 0; i < (u8)(unit->level / 10U) + 1; i++)
         bonus += ((Random16() * 4) >> 16) + 1;
     base = *reward;
-    floor = Math_Div(base * 3, 10);
+    floor = base * 3 / 10;
     if (bonus < floor)
         bonus = floor;
     return bonus + base;
@@ -118,35 +129,37 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     struct BattleFormation *formation;
     struct BattleSpoils *spoils;
     s32 i;
-    s32 slot;
     s32 chance;
+    s32 slot;
     s32 lowest;
     s32 lowest_slot;
     s32 value;
 
     unit = Owner_GetStateFar(unit_id);
-    formation = Data_03001e74;
+    formation = gBattleWork;
     spoils = &formation->spoils;
     if ((u32)unit_id < 8)
         return -1;
     if (unit->class_index != 0)
         return -2;
     slot = 0;
-    for (i = 0; formation->enemies[i] != unit->class_id; ) {
-        i++;
-        if (i > 5)
-            break;
+    i = 0;
+    if (formation->enemies[0] != unit->class_id) {
+        do {
+            if (++i > 5)
+                break;
+        } while (formation->enemies[i] != unit->class_id);
     }
     if (i != 6)
         slot = i;
     if (formation->defeat_state != 2) {
         if (slot < formation->first_slot)
             formation->first_slot = slot;
-        if (spoils->defeated != 0)
+        if (spoils->defeated)
             formation->defeat_state = 1;
     }
     spoils->defeated++;
-    if (GameFlag_TestFar(0x173) != 0)
+    if (GameFlag_TestFar(0x173))
         return 0;
     GameFlag_SetBitFar(unit->class_id + 0x600);
     rec = Owner_GetRecordFar(unit->class_id);
@@ -161,10 +174,12 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
     }
     if (rec->item == 0 || rec->item_chance == 0)
         return 0;
-    for (i = 0; spoils->items[i] != rec->item; ) {
-        i++;
-        if (i > 3)
-            break;
+    i = 0;
+    if (spoils->items[0] != rec->item) {
+        do {
+            if (++i > 3)
+                break;
+        } while (spoils->items[i] != rec->item);
     }
     if (i != 4)
         return 0;
@@ -173,13 +188,13 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
         chance -= 2;
     if (chance < 0)
         chance = 0;
-    if ((0x20000 >> chance) <= (s32)(BattleRandom16Far() & 0xffff))
+    if ((s32)(BattleRandom16Far() & 0xffff) >= (0x20000 >> chance))
         return 0;
     lowest = 0x40000000;
     lowest_slot = -1;
     for (i = 0; i <= 3; i++) {
         value = Item_EncodeBankedId(spoils->items[i]);
-        if (value < lowest) {
+        if (lowest > value) {
             lowest = value;
             lowest_slot = i;
         }

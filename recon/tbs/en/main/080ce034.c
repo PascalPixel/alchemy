@@ -1,3 +1,16 @@
+/* 2026-09-29 alchemy permute: score 10599 to 9104 on the permuter's scorer
+   (0 is exact); remaining 109 register-only, 19 stack-only, 66 operand, 59
+   reordered, 13 inserted, 22 deleted. Kept rewrites: 25x reorder
+   independent statements, 21x swap commutative operands, 17x introduce a
+   temporary, 15x reorder local declarations, 12x change loop form, 12x
+   pointer arithmetic or indexing, 11x split or join a compound assignment,
+   9x move an assignment into or out of a condition, 9x test truth or
+   compare with zero, 7x add a same-width cast, 3x remove a temporary, 3x
+   drop a same-width cast, 2x invert an if/else, 1x toggle register.
+   FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* NONMATCHING: shared callee return types audited on 2026-09-26.
  * 1180 of 1204 bytes, 564 differing halfwords, 339 aligned edits.
  * Canonical declarations are retained; the remaining source model is not exact. */
@@ -86,202 +99,239 @@ void Func_080ce034(s32 a0)
     s32 v1;
     s32 base6_3001eec;
     s32 none;
-    s32 v3;
     s32 v8;
+    s32 v3;
+    s32 base6_2010000;
     s32 v7;
     s32 v11;
-    s32 base6_2010000;
     s32 v12;
-    s32 v0;
     s32 slot36;
+    register s32 v0;
     s32 slot32;
     s32 slot28;
     s32 slot40;
     s32 slot8;
     s32 slot24;
-    s32 slot20;
-    s32 slot16;
     s32 slot12;
+    s32 slot20;
     u8 *p5;
     u8 *p4;
+    s32 slot16;
     u8 slot48[12];
+    s32 tmp10;
 
     base6_3001eec = 0x3001eec;
-    v1 = *(s32 *)(0x3001eec);
+    v1 = *(s32 *)0x3001eec;
     slot36 = v1;
     slot32 = *(s32 *)(0x3001eec + 4);
-    slot28 = *(s32 *)(base6_3001eec + 8);
-    *(s32 *)((slot36 + 0x7828)) = a0;
+    slot28 = ((s32 *)(base6_3001eec + 8))[0];
+    *(s32 *)(slot36 + 0x7828) = a0;
     Func_080cd594(0);
     record = Func_08002f40((s32)Data_00000073);
     ((void (*)())Func_08005340)(record, slot28);
     rec7 = Value1(Func_08002f40, (s32)Data_0000007d);
-    Call4(_call_via_r3, 0x5000000, rec7, 128, 0x3001388);
-    Value2(Func_08005340, (rec7 + 128), slot36);
+    tmp10 = (s32)0x3001388;
+    Call4(_call_via_r3, 0x5000000, rec7, 128, tmp10);
+    Value2(Func_08005340, rec7 + 128, slot36);
     ((void (*)())BattleEffect_LoadWork)(46, 7, 7, 3, 2);
     slot40 = *(s32 *)(base6_3001eec + 28);
+    slot8 = r13 + 40;
     ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 7, 2);
-    slot8 = (r13 + 40);
     *(s32 *)(slot8 + 4) = *(s32 *)(base6_3001eec + 32);
-    *(s32 *)((slot36 + 0x7780)) = 2;
-    *(s32 *)((slot36 + 0x7784)) = 75;
+    *(s32 *)(slot36 + 0x7780) = 2;
+    ((s32 *)(slot36 + 0x7784))[(u32)0] = 75;
     Call2(Func_080041d8, 0x80cd261, 0x480);
     none = 0;
-    v3 = 0x2010018;
     v8 = none;
-    do {
-        v8 = (v8 + 1);
-        *(s32 *)(v3) = 0;
-        v3 = (v3 + 28);
-    } while (v8 != 0x400);
-    record = Func_080b5098(*(s32 *)(*(s32 *)((slot36 + 0x7828)) + 8));
-    p10 = *(s32 *)(record);
-    record = Func_080b5098(*(s16 *)(*(s32 *)((slot36 + 0x7828)) + 36));
-    slot24 = *(s32 *)(record);
+    v3 = 0x2010018;
+    while (1) {
+        *(s32 *)v3 = 0;
+        v8 += (u32)1;
+        v3 += 28;
+        if (v8 == 0x400)
+            break;
+    }
+    record = Func_080b5098(*(s32 *)(*(s32 *)(slot36 + 0x7828) + 8));
     slot20 = -0xf0000;
-    if (*(s32 *)((s32)p10 + 8) <= 0) {
+    p10 = *(s32 *)record;
+    slot16 = slot36 + 0x7828;
+    record = Func_080b5098(*(s16 *)(*(s32 *)(slot36 + 0x7828) + 36));
+    slot24 = *(s32 *)record;
+    if (0 >= ((s32 *)((s32)p10 + 8))[0]) {
         slot20 = 0xf0000;
     }
-    slot16 = (slot36 + 0x7828);
-    slot12 = (r13 + 48);
+    slot12 = 48 + r13;
     none = 0;
     v7 = r8;
     v11 = none;
-    L_080ce130:;
+L_080ce130:
+    ;
     p5 = *(s32 *)0x03001e80;
     Func_080049ac();
-    Func_080051d8((s32)p5, ((s32)p5 + 12));
+    Func_080051d8((s32)p5, (s32)p5 + 12);
     if (v11 <= 17) {
         if (v11 != 0) {
             goto L_080ce164;
         }
     }
-    Func_080e3980(*(s32 *)(*(s32 *)(slot16) + 8), slot12);
-    *(s32 *)(slot12) = ((*(s32 *)(slot12) + ((u32)*(s32 *)(slot12) >> 31)) >> 1);
-    L_080ce164:;
+    Func_080e3980(*(s32 *)(*(s32 *)slot16 + 8), slot12);
+    *(s32 *)slot12 = (*(s32 *)slot12 + ((u32)*(s32 *)slot12 >> 31)) >> 1;
+L_080ce164:
+    ;
     if ((u32)(v11 - 2) <= 1) {
-        Func_080072f4(slot32, slot36, (*(s32 *)(slot12) - 16), (*(s32 *)(slot12 + 4) - 64), 32, 64);
+        Func_080072f4(slot32, slot36, *(s32 *)slot12 - 16, *(s32 *)(slot12 + 4) - 64, 32, 64);
     }
     if ((u32)(v11 - 4) <= 11) {
+        s32 tmp;
+        tmp = v11 - 4;
+        p9 = ((tmp + ((u32)(v11 - 4) >> 31)) >> 1) << 11;
         none = 0;
-        v7 = slot48;
-        p9 = ((((v11 - 4) + ((u32)(v11 - 4) >> 31)) >> 1) << 11);
         v8 = none;
-        do {
-            record = Func_08002322((v8 << 12));
-            p5 = *(s32 *)(v7);
-            record = Func_0800231c((v8 << 12));
-            Call6(Func_080072f4, slot32, (slot36 + p9), (((s32)p5 + ((v11 * record) >> 16)) - 16), (((*(s32 *)(v7 + 4) + ((v11 * record) >> 16)) - v11) - 64), 32, 64);
-            v8 = (v8 + 1);
-        } while (v8 != 16);
+        v7 = slot48;
+        while (1 != 0) {
+            s32 tmp11;
+            record = Func_08002322(v8 << 12);
+            p5 = ((s32 *)v7)[0];
+            record = Func_0800231c((s32)(v8 << 12));
+            tmp11 = (s32)p5 + ((record * v11) >> 16);
+            Call6(Func_080072f4, slot32, p9 + slot36, tmp11 - 16, *(s32 *)(v7 + 4) + ((v11 * record) >> 16) - v11 - 64, 32, 64);
+            v8 = v8 + 1;
+            if (v8 == 16)
+                break;
+        }
     }
     if (v11 == 4) {
+        s32 *tmp3;
+        s32 tmp8;
+        s32 *tmp9;
+        s32 tmp14;
+        s32 tmp5;
         *(s32 *)((s32)p10 + 40) = 0x140000;
+        tmp3 = (s32 *)(72 + (s32)p10);
         *(s32 *)((s32)p10 + 52) = 0x10000;
-        *(s32 *)((s32)p10 + 48) = 0x30000;
-        *(s32 *)((s32)p10 + 72) = 0xab85;
+        tmp9 = (s32 *)((s32)p10 + 48);
+        *tmp9 = 0x30000;
+        tmp3[0] = 0xab85;
         p10[90] = 0;
-        *(u8 *)((((s32)p10 + 90) - 2)) = 0;
-        Func_08009150((s32)p10, ((s32)(*(s32 *)((s32)p10 + 8) << 1) + *(s32 *)((s32)p10 + 8)), 0, *(s32 *)((s32)p10 + 16));
+        *(u8 *)((s32)p10 + 90 - 2) = 0;
+        tmp14 = (s32)p10;
+        tmp8 = tmp14 + 8;
+        tmp5 = (s32)p10 + 8;
+        Func_08009150((s32)p10, (*(s32 *)tmp5 << 1) + *(s32 *)tmp8, 0, *(s32 *)((s32)p10 + 16));
         Func_08009080((s32)p10, 2);
-        *(s32 *)((slot36 + 0x77a8)) = v11;
+        *(s32 *)(0x77a8 + slot36) = v11;
         Func_080f9010(136);
     }
     if (v11 == 16) {
+        s32 tmp7;
         rec7 = Value1(Func_08002f40, (s32)Data_00000089);
-        Call4(_call_via_r3, 0x5000000, rec7, 128, 0x3001388);
-        ((void (*)())Func_08005340)((rec7 + 128), slot36);
+        Call4(_call_via_r3, 0x5000000, (s32)rec7, 128, 0x3001388);
+        ((void (*)())Func_08005340)(rec7 + 128, slot36);
         *(s32 *)((s32)p10 + 72) = 0;
-        *(s32 *)((s32)p10 + 36) = 0;
+        tmp7 = 36 + (s32)p10;
+        *(s32 *)tmp7 = 0;
         *(s32 *)((s32)p10 + 40) = 0;
-        *(s32 *)((s32)p10 + 16) = *(s32 *)(slot24 + 16);
+        *(s32 *)((s32)p10 + 16) = *(s32 *)(16 + slot24);
         Func_08009140((s32)p10);
     }
-    if (v11 <= 17) {
+    if (17 >= v11) {
     } else {
-        if (*(s32 *)((s32)p10 + 12) > 0) {
+        if (*(s32 *)(12 + (s32)p10) > 0) {
             *(s32 *)((s32)p10 + 8) += slot20;
             *(s32 *)((s32)p10 + 12) += -0x80000;
-            if (*(s32 *)(*(s32 *)(slot16) + 4) == 0) {
-                Func_080072f4(slot32, slot36, (*(s32 *)(slot12) - 20), (*(s32 *)(slot12 + 4) - 52), 40, 64);
-                *(s32 *)(slot12) = (*(s32 *)(slot12) - 8);
+            if (*(s32 *)(*(s32 *)slot16 + 4) != 0 == 0) {
+                Func_080072f4(slot32, slot36, *(s32 *)slot12 - 20, *(s32 *)(slot12 + 4) - 52, 40, 64);
+                *(s32 *)slot12 -= 8;
             } else {
                 p4 = *(s32 *)(slot8 + 4);
-                Call6(Func_080072f4, slot32, slot36, (*(s32 *)(slot12) - 26), (*(s32 *)(slot12 + 4) - 52), 40, 64);
+                Call6(Func_080072f4, slot32, slot36, *(s32 *)slot12 - 26, ((s32 *)(slot12 + 4))[0] - (s32)52, 40, 64);
                 *(s32 *)(slot12 + 4) += 8;
             }
         }
-        if (*(s32 *)((s32)p10 + 12) < 0) {
+        if (*(s32 *)(12 + (s32)p10) < 0) {
             *(s32 *)((s32)p10 + 12) = 0;
             none = 0;
-            v7 = 0x2010000;
-            p9b = slot48;
             v8 = none;
+            p9b = slot48;
+            v7 = 0x2010000;
             do {
+                s32 tmp12;
                 record = Func_08004458();
                 rec8 = Func_08004458();
-                *(s32 *)(v7) = (*(s32 *)p9b << 16);
-                *(s32 *)(v7 + 4) = ((s32)(*(s32 *)(p9b + 4) - 24) << 16);
-                record = Func_08002322((rec8 & 0xffff));
-                *(s32 *)(v7 + 8) = ((((0x3ff & record) + 32) * record) >> 6);
-                record = Func_0800231c((rec8 & 0xffff));
-                *(s32 *)(v7 + 16) = (-((((0x3ff & record) + 32) * record) << 1) >> 6);
+                *(s32 *)v7 = *(s32 *)p9b << 16;
+                *(s32 *)(4 + v7) = (*(s32 *)(p9b + 4) - 24) << 16;
+                record = Func_08002322(rec8 & 0xffff);
+                *(s32 *)(v7 + 8) = (((0x3ff & record) + 32) * record) >> 6;
+                record = Func_0800231c(rec8 & 0xffff);
+                *(s32 *)(v7 + 16) = -((((0x3ff & record) + 32) * record) << 1) >> 6;
                 record = Func_08004458();
-                v8 = (v8 + 1);
-                *(s32 *)(v7 + 24) = ((7 & record) + 32);
-                v7 = (v7 + 28);
-            } while (v8 != 0x100);
-            *(s32 *)((slot36 + 0x77a8)) = 8;
+                tmp12 = 7 & record;
+                v8 = v8 + 1;
+                *(s32 *)(v7 + 24) = tmp12 + 32;
+                v7 = v7 + 28;
+            } while (0x100 != v8);
+            *(s32 *)(slot36 + 0x77a8) = 8;
             Func_080b50e8(145);
-            Func_080b5088(*(s16 *)(*(s32 *)(slot16) + 36), 4);
-            Func_080d6888(*(s16 *)(*(s32 *)(slot16) + 36), 7, 5, 0, 8);
+            Func_080b5088(*(s16 *)(*(s32 *)slot16 + 36), 4);
+            Func_080d6888(*(s16 *)(*(s32 *)slot16 + 36), 7, 5, 0, 8);
         }
     }
     base6_2010000 = 0x2010000;
     none = 0;
     v8 = none;
-    do {
-        p4 = *(s32 *)(base6_2010000 + 24);
-        if ((s32)p4 > 0) {
-            v12 = (*(s32 *)(base6_2010000) + *(s32 *)(base6_2010000 + 8));
-            *(s32 *)(base6_2010000) += *(s32 *)(base6_2010000 + 8);
-            *(s32 *)(base6_2010000 + 24) = ((s32)p4 - 1);
-            v7 = (*(s32 *)(base6_2010000 + 4) + *(s32 *)(base6_2010000 + 16));
-            *(s32 *)(base6_2010000 + 4) += *(s32 *)(base6_2010000 + 16);
-            *(s32 *)(base6_2010000 + 8) = ((((*(s32 *)(base6_2010000 + 8) << 3) - *(s32 *)(base6_2010000 + 8)) << 3) / 64);
-            v3 = (((((*(s32 *)(base6_2010000 + 16) << 3) - *(s32 *)(base6_2010000 + 16)) << 3) / 64) + 0x2000);
-            *(s32 *)(base6_2010000 + 16) = (((((*(s32 *)(base6_2010000 + 16) << 3) - *(s32 *)(base6_2010000 + 16)) << 3) / 64) + 0x2000);
-            if (v7 > 0x700000) {
-                *(s32 *)(base6_2010000 + 16) = ((-v3 + ((u32)-v3 >> 31)) >> 1);
-            } else {
-                if ((u32)v12 <= 0x7effff) {
-                    if (v7 >= 0) {
-                        v0 = ((s32)p4 - 1);
-                        if (((s32)p4 - 1) < 0) {
-                            v0 = ((s32)p4 + 6);
+    if (1 != 0) {
+        do {
+            if ((s32)(p4 = *(s32 *)(base6_2010000 + 24)) > 0) {
+                s32 tmp13;
+                v12 = *(s32 *)base6_2010000 + *(s32 *)(base6_2010000 + 8);
+                ((s32 *)base6_2010000)[0] = ((s32 *)base6_2010000)[0] + *(s32 *)(base6_2010000 + 8);
+                *(s32 *)(base6_2010000 + 24) = (s32)p4 - 1;
+                v7 = ((s32 *)(base6_2010000 + 4))[0] + *(s32 *)(base6_2010000 + 16);
+                *(s32 *)(base6_2010000 + 4) += ((s32 *)(base6_2010000 + 16))[0];
+                tmp13 = ((*(s32 *)(base6_2010000 + 8) << 3) - *(s32 *)(base6_2010000 + 8)) << 3;
+                *(s32 *)(base6_2010000 + 8) = tmp13 / 64;
+                v3 = (((*(s32 *)(base6_2010000 + 16) << 3) - *(s32 *)(base6_2010000 + 16)) << 3) / 64 + 0x2000;
+                *(s32 *)(base6_2010000 + 16) = (((*(s32 *)(base6_2010000 + 16) << 3) - *(s32 *)(base6_2010000 + 16)) << 3) / 64 + 0x2000;
+                if (v7 > 0x700000) {
+                    *(s32 *)(base6_2010000 + 16) = (-v3 + ((u32)-v3 >> 31)) >> 1;
+                } else {
+                    if ((u32)v12 <= 0x7effff) {
+                        if (v7 >= 0) {
+                            s32 tmp6;
+                            s32 tmp2;
+                            v0 = (s32)p4 - 1;
+                            if ((s32)p4 - 1 < 0) {
+                                s32 tmp4;
+                                tmp4 = (s32)p4;
+                                v0 = tmp4 + 6;
+                            }
+                            p4 = *(s32 *)(slot8 + ((1 & v8) << 2));
+                            tmp2 = v0 >> 3;
+                            tmp6 = tmp2 + 1;
+                            Call6(Func_080072f4, slot32, slot28 + *(u16 *)(0x080ede48 + ((((v0 >> 3) + 1) << 1) - 2)), (v12 >> 16) - ((1 + ((u32)((v0 >> 3) + 1) >> 31) + (v0 >> 3)) >> 1), (v7 >> 16) - tmp6, (v0 >> 3) + 1, ((v0 >> 3) + 1) << 1);
                         }
-                        p4 = *(s32 *)(((1 & v8) << 2) + slot8);
-                        Call6(Func_080072f4, slot32, (slot28 + *(u16 *)(0x080ede48 + ((((v0 >> 3) + 1) << 1) - 2))), ((v12 >> 16) - ((((v0 >> 3) + 1) + ((u32)((v0 >> 3) + 1) >> 31)) >> 1)), ((v7 >> 16) - ((v0 >> 3) + 1)), ((v0 >> 3) + 1), (((v0 >> 3) + 1) << 1));
                     }
                 }
             }
-        }
-        v8 = (v8 + 1);
-        base6_2010000 = (base6_2010000 + 28);
-    } while (v8 != 0x100);
+            v8 = v8 + 1;
+            base6_2010000 += 28;
+            if (v8 == 0x100)
+                break;
+        } while (1 != 0);
+    }
     Value2(Func_080e155c, 16, 16);
     Func_080cd52c();
-    *(s32 *)((slot36 + 0x7824)) = 1;
+    ((s32 *)(slot36 + 0x7824))[0] = 1;
     Func_080030f8(1);
-    v11 = (v11 + 1);
-    if (v11 != 88) {
+    v11++;
+    if (88 != v11) {
         goto L_080ce130;
     }
     Call1(Func_08004278, 0x80cd261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
     p9c = rec7 + 128;
+    Func_080cdbc0();
     p10b = base6_2010000;
     p11 = v7;
     v11 = p11;

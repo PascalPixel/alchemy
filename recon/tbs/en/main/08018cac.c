@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 7965 to 6875 on the permuter's scorer
+   (0 is exact); remaining 52 register-only, 32 operand, 25 reordered, 18
+   inserted, 26 deleted. Kept rewrites: 11x swap commutative operands, 11x
+   introduce a temporary, 8x reorder local declarations, 7x reorder
+   independent statements, 6x pointer arithmetic or indexing, 6x test truth
+   or compare with zero, 5x add a same-width cast, 4x drop a same-width
+   cast, 3x move an assignment into or out of a condition, 1x remove a
+   temporary, 1x toggle register. FAKEMATCH: the permuter's temporaries,
+   register hints and swapped operand orders below only steer allocation
+   and scheduling; no programmer would write them, so they stay tagged
+   until a natural spelling replaces them. */
 /* Draft, not exact: 562 of 592 bytes, 274 differing halfwords.
    Complete owner: [0x08018cac, 0x08018efc). Recovered glyph allocation,
    DMA transfer and sprite attributes. Branch layout, pointer arithmetic,
@@ -85,27 +96,28 @@ s32 UiText_DrawGlyph(
     s32 mode)
 {
     struct UiTextWork *work;
-    struct UiRenderOutput *output;
     struct UiGlyphMetrics metrics;
-    u8 *buffer;
+    struct UiRenderOutput *output;
     u8 *resource;
     s32 glyph;
-    s32 saved_x;
-    s32 saved_y;
+    u8 *buffer;
     s32 size;
+    s32 saved_x;
     u16 global_x;
+    s32 saved_y;
     u16 global_y;
     s32 result;
     s32 index;
+    u16 tmp8;
 
     saved_x = x;
-    saved_y = y;
     glyph = character;
     work = gWindowWork;
     global_x = work->free_count;
+    saved_y = y;
     global_y = work->color_a;
     if (mode != 1 && window->flags.bits.special != 0) {
-        if (**(struct UiTextWindow ***)0x03001ee4 == window) {
+        if (*((struct UiTextWindow ***)0x03001ee4)[0] == window) {
             Resource_GetTableEntry(0x14);
             Resource_GetTableEntry(0x13);
             if (glyph == 32)
@@ -116,26 +128,22 @@ s32 UiText_DrawGlyph(
             return 4;
         size = 0x318;
         buffer = Runtime_BumpAllocate(size);
-        Dma_Set((void *)0x080155d0, buffer,
-            0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
+        Dma_Set((void *)0x080155d0, buffer, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
         result = Func_080072fc(window, glyph, saved_x, saved_y, resource);
         Runtime_BumpFree(buffer);
         return result;
     }
-
     result = 5;
     if (glyph == 32)
         return result;
-    output = RenderOutput_AcquireFree();
-    if (output == 0)
+    if ((output = RenderOutput_AcquireFree()) != 0 == 0)
         return 0;
     output->one4 = 0;
+    index = (output - (struct UiRenderOutput *)((u8 *)work + 0x698)) * 4;
     output->one5 = 1;
-    index = (s32)(output - (struct UiRenderOutput *)((u8 *)work + 0x698)) * 4;
-
-    if (mode == 1) {
-        output->one5 = 2;
+    if (1 == mode) {
         result = 1;
+        output->one5 = 2;
     } else {
         switch (work->color_b) {
         case 3:
@@ -143,49 +151,58 @@ s32 UiText_DrawGlyph(
             break;
         case 4:
             output->one5 = 6;
-            *(u16 *)((u8 *)output + 12) = 8;
+            *(u16 *)&((u8 *)output)[12] = 8;
             break;
         case 5:
             output->one5 = 7;
-            *(u16 *)((u8 *)output + 12) = 0;
+            *(u16 *)((s32)12 + (u8 *)output) = 0;
             break;
         case 2:
-            output->one5 = 4;
+            (*output).one5 = 4;
             *(u16 *)((u8 *)output + 12) = 0;
             break;
         }
-        result = Func_080178b0(glyph, &metrics);
-        if (result == 0)
+        if ((u32)!(result = Func_080178b0(glyph, &metrics)))
             result = 1;
     }
-
-    if (output->one5 == 2) {
-        u16 *entry = (u16 *)((u8 *)work + 0x12b6);
+    if ((u8)output->one5 == 2) {
+        u16 *entry = (u16 *)(0x12b6 + (u8 *)work);
         u16 slot;
-
-        slot = *entry;
-        if (slot == 99) {
+        u8 tmp;
+        s32 tmp2;
+        register s32 tmp4;
+        s32 tmp6;
+        u16 tmp9;
+        if (99 == (slot = *entry)) {
             slot = Resource_FindFreeEntry();
             *entry = slot;
         }
-        *(u16 *)((u8 *)output + 22) =
-            (*(u16 *)((u8 *)output + 22) & -0x200)
-            | (((window->x + window->width + 0xfffe) << 3) + 4 & 0x1ff);
-        *(u8 *)((u8 *)output + 20) =
-            (u8)(((u8)window->y + (u8)window->height + 254) << 3) - 1;
+        tmp2 = window->x + window->width + 0xfffe;
+        tmp6 = -0x200;
+        tmp9 = *(u16 *)((u8 *)output + 22);
+        *(u16 *)((u8 *)output + 22) = ((((u32)tmp2 << 3) + 4) & 0x1ff) | (tmp6 & tmp9);
+        tmp = (u8)window->y;
+        tmp4 = window->height + tmp + 254;
+        *(u8 *)((u8 *)output + 20) = (u8)(tmp4 << 3) - 1;
     } else {
         s32 slot = *(u16 *)((u8 *)work + 0x12b8) + index;
-        Dma_Set(&metrics, (void *)(0x06010000 + (slot << 5)),
-            0x84000020, (volatile u32 *)0x040000d4);
-        *(u16 *)((u8 *)output + 20) =
-            saved_y + (global_y >> 1) + (window->y << 3) + 0xfffe;
-        *(u16 *)((u8 *)output + 22) =
-            (saved_x + (global_x >> 1) + (window->x << 3) + 2) | 0x4000;
-        output->table.half.low = slot;
+        s32 tmp3;
+        s32 tmp5;
+        u8 *tmp7;
+        s32 tmp10;
+        Dma_Set(&metrics, (void *)(0x06010000 + (slot << 5)), 0x84000020, (volatile u32 *)0x040000d4);
+        tmp10 = global_y >> 1;
+        tmp3 = window->y << 3;
+        tmp5 = saved_y + tmp10 + tmp3 + 0xfffe;
+        *(u16 *)((u8 *)output + 20) = tmp5;
+        tmp7 = (u8 *)output + 22;
+        *(u16 *)tmp7 = (((*window).x << 3) + (saved_x + (global_x >> 1)) + 2) | 0x4000;
+        output[0].table.half.low = slot;
     }
     output->sentinel = 254;
-    output->x = *(u16 *)((u8 *)output + 22) & 0x1ff;
-    output->y = *(u8 *)((u8 *)output + 20);
+    tmp8 = *(u16 *)((u8 *)output + 22);
+    output->x = 0x1ff & tmp8;
+    output->y = *((u8 *)output + 20);
     output->index = index;
     output->next = 0;
     RenderOutput_AppendToList(window, output);

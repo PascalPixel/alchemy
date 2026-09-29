@@ -154,7 +154,7 @@ Func_08018cac:
 .L_08018dc6:
 	add	r1, sp, #16
 	adds	r0, r7, #0
-	bl	Func_080178b0
+	bl	UiText_RenderGlyphPair
 	cmp	r0, #0
 	bne.n	.L_08018dd4
 	movs	r0, #1

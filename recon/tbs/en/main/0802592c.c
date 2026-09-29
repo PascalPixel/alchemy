@@ -27,6 +27,14 @@
  *    UiWork_SetParamNibble and evidently selects the same text colour.
  *  - The 0x0000f018/0x0000f019 arguments to Func_080251d4 are tilemap-shaped
  *    words whose low ten bits that helper uses as a tile index.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 21,667
+ * candidates; the best scored 5113 against 12579 (34 register-only, 88
+ * stack-only, 24 operand, 28 reordered, 11 inserted, 15 deleted) after 115
+ * rewrites (reorder independent statements, swap commutative operands, test
+ * truth or compare with zero, introduce a temporary), none of them kept.
+ * One hundred fifteen rewrites, mostly statement moves and temporaries,
+ * which trade register differences for 88 stack-only ones; they stay out of
+ * the draft. Its pooled 0x53a is MsgAbilityDescription in the catalogs.
  */
 
 
@@ -80,10 +88,10 @@ union MenuSprite {
     } attr;
 };
 
-extern volatile s32 Data_03001c94;
-extern volatile s32 Data_03001b04;
-extern volatile u32 Data_03001e40;
-extern u8 Data_080310a4[];
+extern volatile s32 gKeyState;
+extern volatile s32 gKeysRepeat;
+extern volatile u32 gFrameCount;
+extern u8 Resource_FixedBlockBTiles[];
 
 extern u8 MsgAbilityName;
 extern u8 Value_0000053a;
@@ -95,7 +103,7 @@ extern u8 Value_000008e7;
 #define MenuNav (*(struct BattleMenuNav **)0x03001f34)
 
 void WaitFrames(s32 frames);
-void Func_0800352c(void);
+void Runtime_SetMainState19(void);
 void Runtime_PushSlotEntry(union MenuSprite *entry, s32 slot);
 void Resource_ResetEntry(s32 handle);
 s32 Resource_LoadIntoFreeSlot(s32 kind);
@@ -103,9 +111,9 @@ s32 Resource_GetBuffer(s32 handle, s32 source);
 s32 Math_Div(s32 dividend, s32 divisor);
 struct UiWindowWork *UiWindow_Create(s32 x, s32 y, s32 w, s32 h, s32 style);
 void UiWork_Finalize(struct UiWindowWork *window, s32 release);
-void Func_08016498(struct UiWindowWork *window);
-s32 Func_0801965c(s32 message, s16 *buffer, s32 count);
-void Func_08017aa4(s16 *buffer, struct UiWindowWork *window, s32 x, s32 y);
+void RenderOutput_RedrawSavedRect(struct UiWindowWork *window);
+s32 UiText_CopyMessageString(s32 message, s16 *buffer, s32 count);
+void UiText_RenderWideStringAtOffset(s16 *buffer, struct UiWindowWork *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntry(
     struct UiWindowWork *window, s32 tile, s32 x, s32 y, s32 layer);
 void Ability_LoadGlyph(s32 action, s32 base, s32 *source, s32 *tile, s32 reuse);
@@ -116,8 +124,8 @@ void UiText_DrawNumberAtOffset(
     s32 value, s32 digits, struct UiWindowWork *window, s32 x, s32 y);
 void UiWindow_DrawThreeTileColumn(
     struct UiWindowWork *window, s32 x, s32 y, s32 range, s32 layer);
-void Func_08022768(s32 x, s32 y, s32 w, s32 h, s32 value);
-void Func_080251d4(s32 source, s32 destination);
+void Ui_SetRectHighlight(s32 x, s32 y, s32 w, s32 h, s32 value);
+void Vram_CopyTile(s32 source, s32 destination);
 void Ui_FillVramBlockPattern(void);
 struct BattleUnit *Runtime_GetObject(s32 unit_id);
 struct BattleAction *Ability_GetData(s32 action);
@@ -186,15 +194,15 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         sprite++;
     } while (--i >= 0);
 
-    Func_080251d4(0xf018, 0x200);
-    Func_080251d4(0xf018, 0x201);
-    Func_080251d4(0xf019, 0x210);
-    Func_080251d4(0xf019, 0x211);
+    Vram_CopyTile(0xf018, 0x200);
+    Vram_CopyTile(0xf018, 0x201);
+    Vram_CopyTile(0xf019, 0x210);
+    Vram_CopyTile(0xf019, 0x211);
 
     for (;;) {
         if (page != drawn_page || row != drawn_row) {
             render[RENDER_MENU_BUSY_OFS] = 1;
-            Func_08022768(
+            Ui_SetRectHighlight(
                 window->x + 1,
                 window->y + drawn_row * 2 + 1,
                 window->width - 2,
@@ -202,19 +210,19 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 15);
             Ui_FillVramBlockPattern();
             if (count != 0) {
-                Func_0801965c(
+                UiText_CopyMessageString(
                     (actions[page + row] & ACTION_ID_MASK) +
                         (s32)&Value_0000053a,
                     buffer,
                     52);
             } else {
-                Func_0801965c((s32)&Value_000008e7, buffer, 52);
+                UiText_CopyMessageString((s32)&Value_000008e7, buffer, 52);
             }
-            Func_08017aa4(buffer, message_window, 0, 4);
+            UiText_RenderWideStringAtOffset(buffer, message_window, 0, 4);
             drawn_row = row;
 
             if (page != drawn_page) {
-                Func_08016498(window);
+                RenderOutput_RedrawSavedRect(window);
                 for (i = 0; i < PAGE_ROWS; i++) {
                     entry = actions[page + i];
                     if (entry == 0) {
@@ -273,7 +281,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 }
             }
 
-            Func_08022768(
+            Ui_SetRectHighlight(
                 window->x + 1,
                 window->y + row * 2 + 1,
                 window->width - 2,
@@ -287,7 +295,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
             i = 0;
             while (i < (pages = Math_Div(count + 4, PAGE_ROWS))) {
                 tile = i + 0xf301;
-                if ((Data_03001e40 & 15) <= 11) {
+                if ((gFrameCount & 15) <= 11) {
                     if (i == Math_Div(page, PAGE_ROWS)) {
                         tile = i + 0xf30b;
                     }
@@ -317,9 +325,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         cursor.word.attr01 = 0x40000000;
         cursor.word.attr23 = 0;
         cursor.attr.tile =
-            Resource_GetBuffer(cursor_handle, (s32)Data_080310a4);
-        cursor.attr.x = cursor_x + ((Data_03001e40 & 4) >> 1) - 4;
-        cursor.attr.y = cursor_y - ((Data_03001e40 & 4) >> 2) - 8;
+            Resource_GetBuffer(cursor_handle, (s32)Resource_FixedBlockBTiles);
+        cursor.attr.x = cursor_x + ((gFrameCount & 4) >> 1) - 4;
+        cursor.attr.y = cursor_y - ((gFrameCount & 4) >> 2) - 8;
         if (count != 0) {
             Runtime_PushSlotEntry(&cursor, 242);
         }
@@ -329,7 +337,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
         nav->row = row;
         nav->preferred_row = preferred_row;
 
-        if ((Data_03001c94 & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             if (count != 0) {
                 result = page + row;
                 action = Ability_GetData(actions[result]);
@@ -340,21 +348,21 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                 result = -1;
                 break;
             }
-        } else if (nav->active == 0 || (Data_03001c94 & 2) != 0) {
+        } else if (nav->active == 0 || (gKeyState & 2) != 0) {
             Audio_PlayCue(113);
             result = -1;
             break;
         }
 
         if (count != 0) {
-            if ((Data_03001b04 & 128) != 0) {
+            if ((gKeysRepeat & 128) != 0) {
                 Audio_PlayCue(111);
                 row++;
                 if (row == PAGE_ROWS || page + row == count) {
                     row = 0;
                 }
                 preferred_row = row;
-            } else if ((Data_03001b04 & 64) != 0) {
+            } else if ((gKeysRepeat & 64) != 0) {
                 Audio_PlayCue(111);
                 row--;
                 if (row < 0) {
@@ -365,9 +373,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                     }
                 }
                 preferred_row = row;
-            } else if ((Data_03001b04 & 16) != 0) {
+            } else if ((gKeysRepeat & 16) != 0) {
                 Audio_PlayCue(111);
-                Func_0800352c();
+                Runtime_SetMainState19();
                 if (page + PAGE_ROWS >= count) {
                     if (page != 0) {
                         row = preferred_row;
@@ -384,9 +392,9 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
                         }
                     }
                 }
-            } else if ((Data_03001b04 & 32) != 0) {
+            } else if ((gKeysRepeat & 32) != 0) {
                 Audio_PlayCue(111);
-                Func_0800352c();
+                Runtime_SetMainState19();
                 if (page != 0) {
                     row = preferred_row;
                     page -= PAGE_ROWS;

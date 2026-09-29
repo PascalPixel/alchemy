@@ -10,7 +10,15 @@ extern struct ShopRuntime *gMenuWork;
 
    Draws how equipping an item would change a member's attack, defense
    and agility: the stat with the item tried on and without it, an arrow
-   for each change, and the name of the item it would replace. */
+   for each change, and the name of the item it would replace.
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 24,345
+   candidates; the best scored 2787 against 3586 (49 register-only, 12
+   stack-only, 12 operand, 11 reordered, 5 inserted, 11 deleted) after 6
+   rewrites (change loop form, reorder independent statements, reorder local
+   declarations, introduce a temporary), none of them kept. The gain comes
+   from rewriting the stat row loop as a guarded do-while with a comma-cast
+   step, which no programmer writes. The pooled 0xc98 label base is an
+   unnamed message; 0x182 is MsgItemName in the catalogs. */
 
 /* Bounded reprise: whole [080b1260,080b1470), 528 bytes including pools.
  * Baseline confirmed: 500/528 bytes, 192 differing halfwords, 130 aligned

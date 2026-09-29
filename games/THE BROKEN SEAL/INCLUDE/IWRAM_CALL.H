@@ -40,6 +40,7 @@ extern u8 IwramMulQ16ReturnIp[];
 #define Iwram_ClearWords ((s32 (*)(void *destination, s32 size))0x03000164) /* IwramClearWords */
 #define Iwram_FillWords ((s32 (*)(void *destination, s32 size, u32 value))0x03000168) /* IwramFillWords */
 #define Iwram_Sqrt ((s32 (*)(s32 value))0x030001d8) /* IwramSqrt */
+#define Iwram_ExpandBitRuns ((s32 (*)(const void *bits, void *destination, s32 value))0x03000214) /* IwramExpandBitRuns */
 #define Iwram_TransformVector ((void (*)(const s32 *vector, s32 *result))0x03000250) /* IwramTransformVector */
 #define Iwram_TransformMatrix ((void (*)(const s32 *matrix))0x030002c0) /* IwramTransformMatrix */
 #define Iwram_SignedDivide ((s32 (*)(s32 dividend, s32 divisor))0x03000380) /* IwramSignedDivide */

@@ -12,6 +12,7 @@ mod disasm;
 mod format;
 mod overlay;
 mod parallel;
+mod permute;
 mod raw;
 mod recovery;
 mod targets;
@@ -25,6 +26,7 @@ const USAGE: &str = "usage: alchemy <command> [args]\n\
   verify                the landing gate: every make verify gate in waves, one line each\n\
   coverage              publish README progress and both figures from verified builds\n\
   raw                   inspect or rebuild ROM-derived unresolved assembly\n\
+  permute DRAFT         search equivalent C for a draft function against its listing\n\
   check                 run repository contract checks\n\
   format                format native game data and check uppercase filenames";
 
@@ -50,6 +52,7 @@ fn main() -> ExitCode {
         "verify" => verify::entry(rest),
         "coverage" => make_target(command, rest),
         "raw" => result(raw::run(rest)),
+        "permute" => result(permute::run(rest)),
         "check" => check::entry(rest),
         "format" => result(format::run(rest)),
         "extract" | "inspect" => recovery_command(command, rest),

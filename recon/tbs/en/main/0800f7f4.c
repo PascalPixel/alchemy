@@ -37,7 +37,13 @@
    load order (472 bytes / 48 aligned edits, baseline 33). Neither explains
    the reference's shared r5-relative reload; retain the typed baseline.
    The event-work pointer is bound directly to its audited pool address
-   below so this draft scores independently without per-file bindings. */
+   below so this draft scores independently without per-file bindings.
+   2026-09-29 (alchemy permute scorer): 745 (17 register-only, 5 operand,
+   9 reordered), including the unlabelled key-angle table at 08013254
+   (inside the Script_MainScript scaffold block). Spelling MAP_CELLS as
+   the linked gMapCellBuffer instead of 0x02010000 scores 1790: with a
+   symbol, the two cell addresses share its register through CSE and the
+   allocation cascades. The literal address keeps this a draft. */
 #include "OBJECT_RUNTIME.H"
 #include "MAP.H"
 

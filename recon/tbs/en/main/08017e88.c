@@ -1,3 +1,6 @@
+/* 2026-09-29 alchemy permute (--function UiText_AppendArticleName): score
+   485 on the permuter's scorer, unchanged after a five-minute search; the
+   Value_ message numbers still block adoption. */
 /*
  * UiText_AppendArticleName (main:08017e88, 432 bytes)
  *

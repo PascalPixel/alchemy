@@ -4,9 +4,21 @@
    Count/runtime share r9, not r8; best/index exchange r6/r7. Extending the
    word through zero regresses to 106 edits. Reusing best as the no-effect
    flag changes 82 to 81 edits but does not recover the predicted roles.
-   Remaining: phase-value allocation and runtime flag-pointer scheduling. */
+   Remaining: phase-value allocation and runtime flag-pointer scheduling.
+   2026-09-29: alchemy permute (8 minutes) 465 -> 270 with three natural
+   reorders: best is declared before matches, best = 0 precedes the owner
+   count, and i = 0 precedes actor = 0. BattleEv_RunWait's name and the
+   plain 999 result code (not a Value_ symbol) bring it to 150: 18
+   register-only and one moved movs r1, #0. The register-only rows rotate
+   r5/r6/r7 among the ability-scan locals and the action id: global
+   allocation ranks best (13 references over 130 insns) above the owner
+   index i (7 over 56), so best takes r6 where the reference gives i r6 and
+   best r7. A separate no-effect flag local, counting the single-actor scan
+   into matches, a one-argument BattleEv_RunWait and testing i in the loop
+   guard do not reorder them (150 to 370). A second 8-minute search from 150
+   found nothing lower. */
 #include "TYPES.H"
-extern u8 Value_000003e7;
+
 #include "ITEM.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
@@ -61,11 +73,11 @@ void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
 void UiWork_FinalizePendingCoreFar(void);
-s32 Func_0808ddec(s32 object_id);
+s32 BattleEffect_SelectNearbyObject(s32 object_id);
 void Battle_Reset(void);
 void Event_SetValue1d8(s32 effect_id);
 /* FAKEMATCH: retain the ROM caller's r1=0; the registered callee has one argument. */
-void Func_08092f84(s32 value, s32 flag);
+void BattleEv_RunWait(s32 value, s32 flag);
 void BattleFx_FinishAction(void);
 void BattleFx_LoadActionEffectResources(s32 action_id, s32 mode);
 void BattleFx_Run(void);
@@ -81,9 +93,9 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     struct BattleItemEventRecord *event;
     u16 *p;
     s32 j;
-    s32 matches;
     /* FAKEMATCH: reuse a scalar for the inventory count and no-effect flag. */
     s32 best;
+    s32 matches;
     /* FAKEMATCH: reuse one word across the count and runtime phases. */
     union ItemCommandWork work;
 
@@ -91,14 +103,14 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
     item_id = arg & 0x3ff;
     actor = (arg >> 10) & 0xf;
     {
-        work.count = Party_CountActiveOwnersFar();
         best = 0;
+        work.count = Party_CountActiveOwnersFar();
 
         if (actor == 15) {
             s32 i;
 
-            actor = 0;
             i = 0;
+            actor = 0;
             if (actor < work.count) {
                 struct ItemPartyView *party =
                     (struct ItemPartyView *)&Data_02000240;
@@ -147,10 +159,10 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             UiText_ShowPositionedMessageAndWaitFar(0x91c, 1);
         }
         if (event->effect.id < 0x10000) {
-            s32 objref = Func_0808ddec(Data_02000240.object_id);
+            s32 objref = BattleEffect_SelectNearbyObject(Data_02000240.object_id);
             Battle_Reset();
             Event_SetValue1d8(event->effect.id);
-            Func_08092f84(objref, 0);
+            BattleEv_RunWait(objref, 0);
             BattleFx_FinishAction();
         } else {
             event->effect.callback(item_id, actor, slot);
@@ -187,7 +199,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                     b = work[289];
                     work[225] = b;
                 }
-                work.runtime->result_code = (s32)&Value_000003e7;
+                work.runtime->result_code = 999;
             }
 
             UiWork_PushValueSlotFar(actor, 1);

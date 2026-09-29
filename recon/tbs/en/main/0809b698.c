@@ -1,3 +1,16 @@
+/* 2026-09-29: the two callbacks are the build's
+   BattleFx_UpdatePairedArcSpawner and BattleFx_UpdateEffect16State rather
+   than literal Thumb addresses, 810 to 750. The VRAM source 0x0809c510
+   still needs its own label in the data before adoption. */
+/* 2026-09-29 alchemy permute: score 1180 to 810 on the permuter's scorer
+   (0 is exact); remaining 2 register-only, 2 operand, 9 reordered, 1
+   inserted, 1 deleted. Kept rewrites: 3x swap commutative operands, 2x
+   reorder independent statements, 2x introduce a temporary, 1x reorder
+   local declarations, 1x change loop form, 1x test truth or compare with
+   zero. FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* 2026-09-28: the 20-pulse loop counts up from zero (the compiler reverses
  * it itself), which gives 364 bytes and 26 differing halfwords (was 32).
  * Remaining: the opening object/record loads and the pulse-loop constant
@@ -13,20 +26,22 @@
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
 
-extern void Func_080030f8(s32);
-extern s32 Func_08003f3c(s32);
-extern s32 Func_08003fa4(s32, s32, const void *);
-extern s16 Func_08004080(void);
-extern s32 Func_080041d8(const void *, s32);
-extern void Func_08004278(const void *);
-extern void Func_080091e0(void *, s32);
-extern void Func_08009240(void *, s32);
-extern void Func_08015040(s32, s32);
+extern void WaitFrames(s32);
+extern s32 Resource_ResetEntry(s32);
+extern s32 VramBlock_LoadCached(s32, s32, const void *);
+extern s16 Resource_FindFreeEntry(void);
+extern s32 Scheduler_AddOrUpdateCallback(const void *, s32);
+extern void Scheduler_RemoveCallback(const void *);
+extern void ObjectDispatch_SetSingleChildField26Far(void *, s32);
+extern void Animation_ApplyChildValuesFar(void *, s32);
+extern void UiText_DrawMessage(s32, s32);
 extern s32 GameFlag_TestFar(s32);
-extern void Func_080f9010(s32);
+extern void Audio_PlayCue(s32);
 
-extern u8 *Data_03001f30;
-extern u8 Data_02000240[];
+extern u8 *gEffectWork;
+void BattleFx_UpdateEffect16State(void);
+void BattleFx_UpdatePairedArcSpawner(void);
+extern u8 gGameState[];
 
 void RunBattleEffect16(void)
 {
@@ -36,61 +51,65 @@ void RunBattleEffect16(void)
     u8 *entry;
     u32 saved;
     u16 value;
-    s32 index;
     s32 active;
+    s32 index;
     s32 entry_mode;
     s32 count;
 
-    scene = Data_03001f30;
+    scene = gEffectWork;
     object = *(u8 **)(scene + 16);
     group = ((struct MotionObject *)object)->records;
-    saved = ((struct MotionObject *)object)->angle;
     entry = *(u8 **)(group + 40);
-    value = Func_08004080();
+    saved = ((struct MotionObject *)object)->angle;
+    value = Resource_FindFreeEntry();
     {
         s32 zero = 0;
-        *(s16 *)(scene + 0x71a) = value;
-        Func_08003fa4((s16)value, 0x100, (const void *)0x0809c510);
+        s16 *tmp;
+        u8 *tmp2;
+        tmp = (s16 *)(0x71a + scene);
+        *tmp = value;
+        VramBlock_LoadCached((s16)value, 0x100, (const void *)0x0809c510);
         index = 145;
-        ((s32 *)Data_02000240)[index] = 0x09600000;
+        ((s32 *)gGameState)[index] = 0x09600000;
         index = 146;
-        *(s8 *)&((s32 *)Data_02000240)[index] = GameFlag_TestFar(0x145);
-        Func_08009240(object, zero);
-        *(void **)(object + 108) = (void *)0x0809b5dd;
+        *(s8 *)&((s32 *)gGameState)[index] = GameFlag_TestFar(0x145);
+        Animation_ApplyChildValuesFar(object, zero);
+        *(void **)(object + 108) = BattleFx_UpdatePairedArcSpawner;
         *(s16 *)(object + 100) = zero;
-        *(s16 *)(object + 102) = zero;
+        tmp2 = object + 102;
+        *(s16 *)tmp2 = zero;
     }
-    Func_080f9010(0x8c);
-    Func_080030f8(15);
+    Audio_PlayCue(0x8c);
+    WaitFrames(15);
     active = 1;
     *(s16 *)(object + 100) = active;
-    Func_080030f8(10);
+    WaitFrames(10);
     entry_mode = 7;
-
-    for (count = 0; count <= 19; count++) {
+    count = 0;
+    while (19 >= count) {
         *(s8 *)(entry + 5) = entry_mode;
         *(s8 *)(group + 37) = 1;
-        Func_080030f8(2);
+        WaitFrames(2);
         *(s8 *)(group + 37) = 1;
         *(s8 *)(entry + 5) = 0;
+        count++;
         *(s8 *)(group + 38) = 1;
-
-        Func_080030f8(3);
+        WaitFrames(3);
     }
     *(void **)(object + 108) = 0;
     *(u16 *)(object + 6) = saved;
-    Func_080041d8((const void *)0x0809b589, 0xc80);
-    Func_080030f8(15);
-    Func_080f9010(0xae);
-    Func_080030f8(55);
-    Func_08004278((const void *)0x0809b589);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
+    WaitFrames(15);
+    Audio_PlayCue(0xae);
+    WaitFrames(55);
+    Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
     index = 147;
-    if (((s16 *)Data_02000240)[index * 2] != 0) {
-        Func_080091e0(object, 2);
+    if (((s16 *)gGameState)[index * 2]) {
+        ObjectDispatch_SetSingleChildField26Far(object, 2);
     } else {
-        Func_080091e0(object, 1);
+        ObjectDispatch_SetSingleChildField26Far(object, 1);
     }
-    Func_08009240(object, 0);
-    Func_08003f3c(*(s16 *)(scene + 0x71a));
-    Func_08015040(0x922, 1);
+    Animation_ApplyChildValuesFar(object, 0);
+    Resource_ResetEntry(*(s16 *)(0x71a + scene));
+    UiText_DrawMessage(0x922, 1);
 }

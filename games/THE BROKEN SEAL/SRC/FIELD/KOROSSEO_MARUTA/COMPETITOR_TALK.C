@@ -18,10 +18,12 @@ void KorosseoMaruta_RunCompetitorTalk(s32 a0)
     if (entrance == 2) {
         Event_Begin();
         msg = (s32)MsgKorosseoDidntThinkBattles;
-        lines = (a0 << 1) + a0;
+        lines = a0 * 3;
         Event_SetMessage(lines + msg);
         Event_OpenMessage(a0, 0);
         if (Event_ChooseYesNo(owner, 0) == 0) {
+            /* FAKEMATCH: each answer's line goes through its own local, here
+             * and below, which keeps the reference's addition order. */
             s32 yes = msg + 1;
             Event_SetMessage(lines + yes);
             Event_ShowMessage(a0, 0);

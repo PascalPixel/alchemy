@@ -13,7 +13,6 @@ void Scene_OverhearSaturosAndMenardi(void)
     s32 x, z;
     s32 evt;
     s32 evt2;
-    s32 tbl;
 
     if (GameFlag_IsSet(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
         return;
@@ -220,10 +219,8 @@ void Scene_OverhearSaturosAndMenardi(void)
     }
     Actor_WaitForMove(ACTOR_JASMINE);
     Actor_SetPosition(ACTOR_JASMINE, 0, 0);
-
-    tbl = (s32)Sukureta_StrangerActions;
-    Call3(Object_SetTargetAndCallback, 14, 0x10000, tbl);
-    Call3(Object_SetTargetAndCallback, 15, 0x10000, tbl);
+    Call3(Object_SetTargetAndCallback, 14, 0x10000, (s32)Sukureta_StrangerActions);
+    Call3(Object_SetTargetAndCallback, 15, 0x10000, (s32)Sukureta_StrangerActions);
     Audio_PlayCueFromEventWork();
     Event_End();
 }

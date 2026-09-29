@@ -17,7 +17,7 @@ void Kyuden_RunKolimaRequest(void)
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Engine_TaskWait(1);
-    *(u8 *)((s32)Engine_EventGetViewCenter() + 85) = 0;
+    ((u8 *)Engine_EventGetViewCenter())[85] = 0;
     Call3(Engine_CameraMoveTo, 0x37e0000, -1, 0x2980000);
     Engine_TaskWait(1);
     Engine_ActorSetPosition(0, 0, 0);

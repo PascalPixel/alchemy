@@ -6,8 +6,6 @@ extern u8 MsgShianDidMonstersInAltinSpit[];
 
 void SceneDialogue_RunActor12Dialogue(void)
 {
-    void Event_SetMessage(s32);
-    s32 Event_AskYesNo(s32, s32);
 
     Event_Begin();
     Event_SetMessage((s32)MsgShianDidMonstersInAltinSpit);

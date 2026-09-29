@@ -20,6 +20,9 @@ void Engine_GameFlagClear(s32 flag);
 s32 Party_CountActiveOwners(void);
 void Engine_EventSetMessage(s32 message);
 s32 Engine_EventOpenMessage(s32 actor, s32 mode);
+/* FAKEMATCH: Engine_EventEnd is declared returning s32 so each handler
+ * returns the last callee's r0, as the battle application does, and
+ * the game state is read through a word view for the selected actor. */
 s32 Engine_EventEnd(void);
 
 extern union GameStateRows gGameState;

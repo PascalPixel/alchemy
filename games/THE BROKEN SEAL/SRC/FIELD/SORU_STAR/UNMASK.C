@@ -104,13 +104,12 @@ void Scene_UnmaskGarcia(void)
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
     Event_Wait(20);
-    tbl = Owner_GetState(1);
     cnt = 0;
-    tbl += 216;
+    tbl = Owner_GetState(1) + 216;
     left = 14;
     do {
         u32 id = *(u16 *)(tbl)& 0x1ff;
-        tbl = (tbl + 2);
+        tbl += 2;
         if (id == 220 || id == 221 || id == 223)
             cnt++;
         left--;
@@ -152,6 +151,9 @@ void Scene_UnmaskGarcia(void)
             Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0, 30);
             {
+                /* FAKEMATCH: a result temporary, not a compound or-assign: the
+                 * reference merges the byte into the mask's register, which the
+                 * two-address ORR does only when the result is its own object. */
                 u8 flags = obj[90] | 1;
 
                 obj[90] = flags;
@@ -175,6 +177,9 @@ void Scene_UnmaskGarcia(void)
     obj[90] &= 254;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x108, 0x1e2);
     {
+        /* FAKEMATCH: a result temporary, not a compound or-assign: the
+         * reference merges the byte into the mask's register, which the
+         * two-address ORR does only when the result is its own object. */
         u8 flags = obj[90] | 1;
 
         obj[90] = flags;

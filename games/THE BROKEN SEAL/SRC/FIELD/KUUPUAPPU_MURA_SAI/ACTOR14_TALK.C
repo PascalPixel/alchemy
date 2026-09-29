@@ -17,11 +17,7 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void);
 
 void KuupuappuMuraSai_RunActor14Talk(void)
 {
-    {
-        struct SceneActor *actor = (struct SceneActor *)Actor_Get(14);
-
-        actor->state_flags |= 2;
-    }
+    ((struct SceneActor *)Actor_Get(14))->state_flags |= 2;
     Event_Begin();
     if (GameFlag_IsSet(0x307) != 0) {
         Event_SetMessage((s32)MsgKuupuappuWatchingGuysMakes);

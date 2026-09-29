@@ -10,7 +10,6 @@
 #include "ITEM_IDS.H"
 
 #define SHARED_RECORD_FIELD_448 (*(u32 *)(*(u8 **)&gEventWork + 448))
-#define SCENE_PHASE_02003054 (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
 #define PRIMARY_ID 24
 #define DERIVED_ID 25
 
@@ -78,15 +77,6 @@ static __inline__ void SetSceneValue(s16 *field, s32 value)
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();
-}
-
-/*
- * Keeping this call in its own helper preserves the interleaving of the
- * handle move with the two-instruction constant.
- */
-static __inline__ void Actor_ShowEmoteAt(s32 handle)
-{
-    Actor_ShowEmote(handle, 258, 60);
 }
 
 /* Call sites spelled through these wrappers pass their constants straight

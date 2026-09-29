@@ -71,13 +71,11 @@ void HaidiaSukureta_RunActorSequence(void)
 {
     s32 record;
     s32 base;
-    s32 actions;
 
-    if (Value1(Engine_GameFlagIsSet, 0x839) != 0) {
-    } else {
+    if (Value1(Engine_GameFlagIsSet, 0x839) == 0) {
         if (Value1(Engine_GameFlagIsSet, 0x82f) != 0) {
             Engine_EventBegin();
-            ((void (*)())Engine_ActorRunRepeatedMotion)(11, 2);
+            Engine_ActorRunRepeatedMotion(11, 2);
             Call1(Engine_EventSetMessage, (s32)MsgHaidiaSaveYourselves);
             Engine_EventShowMessage(11, 0);
             Engine_EventEnd();
@@ -123,9 +121,8 @@ void HaidiaSukureta_RunActorSequence(void)
                 Engine_ActorSetAnimationAndWait(11, 3);
                 Engine_EventShowMessageAndWait(11, 0, 10);
                 Engine_ActorSetAnimationAndWait(11, 3);
-                actions = (s32)Sukureta_StrangerActions;
-                Call3(Object_SetTargetAndCallback, 0, 0x1000b, actions);
-                Call3(Object_SetTargetAndCallback, 1, 0x1000b, actions);
+                Call3(Object_SetTargetAndCallback, 0, 0x1000b, (s32)Sukureta_StrangerActions);
+                Call3(Object_SetTargetAndCallback, 1, 0x1000b, (s32)Sukureta_StrangerActions);
                 Call2(Object_SetActionCallbackAndRefreshById, 11, (s32)Sukureta_Actor11RockslideActions);
                 Engine_ActorStop(0);
                 Engine_ActorStop(1);

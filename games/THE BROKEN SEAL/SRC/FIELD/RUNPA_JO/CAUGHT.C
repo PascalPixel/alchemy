@@ -12,12 +12,12 @@ void RunActor9ScriptedSequence(void)
     Actor_SetAnimation(9, 0);
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
     {
-        u8 *t = (s32)MsgRunpaWho2;
+        s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage((s32)t);
+        Event_SetMessage(t);
         Event_ShowMessage(9, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Event_SetMessage((s32)(t + 1));
+        Event_SetMessage(t + 1);
     }
     Event_ShowMessage(9, 0);
     Event_RequestExit(60);
@@ -41,13 +41,13 @@ void RunActorScriptedSequenceA(s32 actor_id)
     Actor_SetAnimation(actor_id, 0);
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
     {
-        u8 *t = (s32)MsgRunpaWho2;
+        s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage((s32)t);
+        Event_SetMessage(t);
         Event_ShowMessage(actor_id, 0);
         Actor_FaceActor(ACTOR_PARTY_LEADER, actor_id, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 60);
-        Event_SetMessage((s32)(t + 1));
+        Event_SetMessage(t + 1);
     }
     Event_ShowMessage(actor_id, 0);
     Event_CloseScreen();

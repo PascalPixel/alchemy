@@ -32,7 +32,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall010
 	resource , Resource_FarCall010
 	resource , Resource_Data012
-	resource , Resource_Data013
+	resource , Ui_WindowTiles
 	resource , Resource_Data014
 	resource , Resource_Data015
 	resource , Title_ScreenPicture
@@ -474,14 +474,14 @@ Resource_DirectoryTable:
 	resource , Resource_Data1CA
 	resource , Resource_Data1CB
 	resource , Resource_Data1CC
-	resource , Resource_Data1CD
-	resource , Resource_Data1CE
-	resource , Resource_Data1CF
-	resource , Resource_Data1D0
-	resource , Resource_Data1D1
-	resource , Resource_Data1D2
-	resource , Resource_Data1D3
-	resource , Resource_Data1D4
+	resource , Shop_CursorFrameA
+	resource , Shop_CursorFrameB
+	resource , Shop_CursorFrameC
+	resource , Shop_CursorFrameD
+	resource , Shop_CursorFrameE
+	resource , Shop_CursorFrameF
+	resource , Shop_CursorFrameG
+	resource , Shop_CursorFrameH
 	resource , Resource_Data1D5
 	resource , Resource_Data1D6
 	resource , Ui_CommandIcons

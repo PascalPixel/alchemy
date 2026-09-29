@@ -313,7 +313,7 @@ Func_08024934:
 	adds	r5, #1
 	str	r7, [sp, #0]
 	adds	r6, #2
-	bl	Func_08018efc
+	bl	UiWindow_PutGlyph
 	cmp	r5, #3
 	ble.n	.L_08024b7e
 	ldr	r0, [sp, #32]
@@ -447,7 +447,7 @@ Func_08024934:
 	adds	r1, #48
 	ldr	r0, [sp, #76]
 	mov	r3, r8
-	bl	Func_08018efc
+	bl	UiWindow_PutGlyph
 	ldr	r4, [sp, #4]
 	adds	r5, #2
 .L_08024cbc:

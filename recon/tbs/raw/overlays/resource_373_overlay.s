@@ -567,9 +567,6 @@ Func_02002f14:
 	.global FieldScene_RunLargeStagingSequence
 	.thumb_func
 FieldScene_RunLargeStagingSequence:
-	.global Func_020034c8
-	.thumb_func
-Func_020034c8:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

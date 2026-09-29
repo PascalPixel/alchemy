@@ -1,8 +1,6 @@
-/* Named link-time values the C loads from literal pools: hardware registers
-   and constants spelled as symbols. */
-Data_00000000 = 0x00000000;
-Value_00000000 = 0x00000000;
-Value_00000001 = 0x00000001;
+/* Named link-time values the C loads from literal pools: message, resource,
+   scene and selector numbers still spelled as symbols until their
+   generators own them. */
 Value_00000002 = 0x00000002;
 MsgStatusLabel = 0x00000009;
 Value_0000000c = 0x0000000c;
@@ -19,7 +17,6 @@ Value_0000001e = 0x0000001e;
 Data_0000001f = 0x0000001f;
 Value_0000001f = 0x0000001f;
 Value_00000021 = 0x00000021;
-Data_00000024 = 0x00000024;
 Value_00000036 = 0x00000036;
 Value_00000037 = 0x00000037;
 Value_00000038 = 0x00000038;
@@ -43,8 +40,6 @@ Value_00000073 = 0x00000073;
 Value_00000075 = 0x00000075;
 Value_00000076 = 0x00000076;
 Value_0000007a = 0x0000007a;
-Data_0000007c = 0x0000007c;
-Value_0000007c = 0x0000007c;
 Value_0000007d = 0x0000007d;
 Value_0000007e = 0x0000007e;
 Value_00000083 = 0x00000083;
@@ -52,8 +47,6 @@ Value_00000084 = 0x00000084;
 Value_0000008c = 0x0000008c;
 Value_0000008d = 0x0000008d;
 Value_00000092 = 0x00000092;
-Data_0000009c = 0x0000009c;
-Value_0000009c = 0x0000009c;
 Value_0000009e = 0x0000009e;
 Value_000000a1 = 0x000000a1;
 Value_000000a6 = 0x000000a6;
@@ -75,23 +68,10 @@ Data_000000e8 = 0x000000e8;
 Value_000000f0 = 0x000000f0;
 Data_000000f1 = 0x000000f1;
 Value_000000f1 = 0x000000f1;
-Value_00000121 = 0x00000121;
-Value_00000140 = 0x00000140;
-Value_00000149 = 0x00000149;
-Value_0000014b = 0x0000014b;
-Value_0000014d = 0x0000014d;
-Value_0000014f = 0x0000014f;
 Data_00000182 = 0x00000182;
 Value_00000182 = 0x00000182;
-Value_00000214 = 0x00000214;
-Value_00000230 = 0x00000230;
-Data_00000278 = 0x00000278;
-Value_00000278 = 0x00000278;
-Value_0000027c = 0x0000027c;
-Value_000002c4 = 0x000002c4;
 Value_00000333 = 0x00000333;
 Value_0000045f = 0x0000045f;
-Data_000004e8 = 0x000004e8;
 Value_0000053a = 0x0000053a;
 MsgClassName = 0x00000741;
 Value_0000080c = 0x0000080c;
@@ -169,7 +149,6 @@ MsgCureCurse = 0x00000894;
 MsgBuffsReset = 0x00000896;
 MsgDjinnSet = 0x00000897;
 Value_000008a0 = 0x000008a0;
-Data_000008ae = 0x000008ae;
 MsgSplitOff = 0x000008f3;
 MsgSplitFail = 0x000008f4;
 MsgAppears = 0x000008f5;
@@ -287,24 +266,7 @@ Value_00000d2e = 0x00000d2e;
 Value_00000d38 = 0x00000d38;
 Value_00000d42 = 0x00000d42;
 gVal4 = 0x00000d4c;
-Value_00001001 = 0x00001001;
-Value_00001f82 = 0x00001f82;
 Value_00002080 = 0x00002080;
-Value_00002090 = 0x00002090;
-Value_00004014 = 0x00004014;
-Data_0000443c = 0x0000443c;
-Value_000077d8 = 0x000077d8;
-Value_0000c00f = 0x0000c00f;
-Value_0000ffff = 0x0000ffff;
-Value_00010001 = 0x00010001;
-Value_00020002 = 0x00020002;
-Value_001ffffe = 0x001ffffe;
-Data_040000d4 = 0x040000d4;
-Data_04000128 = 0x04000128;
-Data_04000200 = 0x04000200;
-RegIme = 0x04000208;
-Value_fff80000 = 0xfff80000;
-Value_fffffe00 = 0xfffffe00;
 /* Message numbers the C passes as pool-loaded values. */
 MsgNoBackupMemory = 0x0000000a;
 MsgSaveFailed = 0x0000000b;
@@ -312,12 +274,20 @@ MsgItemPlainName = 0x00000075;
 MsgItemName = 0x00000182;
 MsgAbilityName = 0x00000333;
 MsgEquipSlotLabels = 0x00000b24;
-/* The type-2 decoder is three assembly modules copied as one routine. */
-Resource_DecodeType2CodeSize = Resource_DecodeType2End - Func_08002808;
+/* Routines copied to RAM as one block across several modules: the length
+   of each copy runs from its entry to the end label of its last module. */
+Resource_Decode2CodeSize = Resource_Decode2End - Resource_Decode2;
+Render_DecodeFrameCodeSize = Render_DecodeFrameEnd - Render_DecodeFrame;
+Tile_Decompress4bppCodeSize = Tile_Decompress4bppEnd - Tile_Decompress4bpp;
+Tile_ExpandMaskedCodeSize = Tile_ExpandMaskedEnd - Tile_ExpandMasked;
+Tile_ExpandOpaqueCodeSize = Tile_ExpandOpaqueEnd - Tile_ExpandOpaque;
+SentouKouka_TenkaiCodeSize = SentouKouka_TenkaiEnd - SentouKouka_Tenkai;
 Value_00000050 = 0x00000050;
 Value_00000051 = 0x00000051;
 Value_00000c9b = 0x00000c9b;
 Value_00000cc6 = 0x00000cc6;
 Value_00000cf1 = 0x00000cf1;
-Data_06000600 = 0x06000600;
+/* The sound driver's link-time settings: the number of music players and
+   the mixer's scanline limit (0: none). */
 Sound_PlayerCount = 0x00000008;
+Sound_MaxLines = 0x00000000;

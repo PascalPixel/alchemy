@@ -355,3 +355,5 @@ Data_0800a494:
 	.4byte 0x080044d1
 	.4byte 0x030001d8
 	.4byte 0x0300013c
+	.global Object_UpdateAllCodeSize
+	.set Object_UpdateAllCodeSize, . - Object_UpdateAll

@@ -2,7 +2,6 @@
 #include "SERIAL_RUNTIME.H"
 extern u8 gLinkStatus[];
 
-#define LINK_STAT (*(u16 *)gLinkStatus)
 
 void Engine_GameFlagSet(s32 flag);
 void Engine_GameFlagClear(s32 flag);
@@ -16,14 +15,14 @@ struct LinkPeer {
     s32 values[6];
 };
 
-extern struct LinkPeer LinkLobby_PeerValues[2];
+extern struct LinkPeer gLinkPeerSignatures[2];
 
 /* Record whether a link is up (flag 0x303) and whether this player is a child (flag 0x302), then report whether the other player's word for this slot equals the slot's expected value. */
 s32 LinkLobby_PeerSlotMatches(s32 slot)
 {
     s32 id = -1;
 
-    if ((LINK_STAT & 3) == 3) {
+    if ((*(u16 *)gLinkStatus & 3) == 3) {
         id = (u32)(REG_SIOCNT << 26) >> 30;
         Engine_GameFlagSet(0x303);
     } else {
@@ -38,7 +37,7 @@ s32 LinkLobby_PeerSlotMatches(s32 slot)
         else
             Engine_GameFlagClear(0x302);
         {
-            struct LinkPeer *row = &LinkLobby_PeerValues[Engine_GameFlagIsSet(0x302) ^ 1];
+            struct LinkPeer *row = &gLinkPeerSignatures[Engine_GameFlagIsSet(0x302) ^ 1];
 
             if (row->values[LinkLobby_SlotColumns[slot]] == *expected)
                 return 1;

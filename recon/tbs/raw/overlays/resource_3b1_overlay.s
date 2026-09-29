@@ -374,6 +374,171 @@ Func_020050e4:
 	.4byte 0x0200e7c8
 	.4byte 0x00000301
 	.4byte 0x0000012f
+	.section .text.x0200812c,"ax",%progbits
+	.align 2
+	.global FuneHeya_RunWalkerStep
+	.thumb_func
+FuneHeya_RunWalkerStep:
+	push	{r5, r6, r7, lr}
+	adds	r5, r0, #0
+	movs	r0, #8
+	bl	0x0200e4e8
+	adds	r6, r5, #0
+	adds	r6, #102
+	movs	r2, #0
+	ldrsh	r3, [r6, r2]
+	adds	r7, r0, #0
+	cmp	r3, #12
+	bls	.L_0200012c_1a
+	b	.L_0200012c_150
+.L_0200012c_1a:
+	ldr	r2, [pc, #204]
+	lsls	r3, r3, #2
+	ldr	r3, [r3, r2]
+	mov	pc, r3
+	movs	r0, r0
+	.4byte .L_0200012c_58
+	.4byte .L_0200012c_144
+	.4byte .L_0200012c_60
+	.4byte .L_0200012c_144
+	.4byte .L_0200012c_66
+	.4byte .L_0200012c_8a
+	.4byte .L_0200012c_144
+	.4byte .L_0200012c_ba
+	.4byte .L_0200012c_144
+	.4byte .L_0200012c_ec
+	.4byte .L_0200012c_124
+	.4byte .L_0200012c_144
+	.4byte .L_0200012c_14c
+.L_0200012c_58:
+	movs	r3, #176
+	lsls	r3, r3, #8
+	strh	r3, [r5, #6]
+	b	.L_0200012c_d4
+.L_0200012c_60:
+	movs	r3, #0
+	strh	r3, [r5, #6]
+	b	.L_0200012c_d4
+.L_0200012c_66:
+	adds	r0, r5, #0
+	movs	r1, #2
+	bl	0x0200e450
+	movs	r1, #234
+	movs	r2, #128
+	movs	r3, #158
+	lsls	r3, r3, #18
+	adds	r0, r5, #0
+	lsls	r1, r1, #17
+	lsls	r2, r2, #14
+	bl	0x0200e470
+	movs	r3, #60
+	str	r3, [r5, #76]
+	ldrh	r3, [r6, #0]
+	adds	r3, #1
+	b	.L_0200012c_14e
+.L_0200012c_8a:
+	adds	r0, r5, #0
+	bl	0x020080fc
+	cmp	r0, #0
+	beq	.L_0200012c_150
+	adds	r0, r5, #0
+	movs	r1, #1
+	bl	0x0200e450
+	adds	r2, r5, #0
+	movs	r3, #0
+	adds	r2, #98
+	strb	r3, [r2, #0]
+	adds	r3, r7, #0
+	adds	r3, #91
+	ldrb	r3, [r3, #0]
+	cmp	r3, #0
+	bne	.L_0200012c_b4
+	adds	r2, #1
+	movs	r3, #1
+	strb	r3, [r2, #0]
+.L_0200012c_b4:
+	ldrh	r3, [r6, #0]
+	adds	r3, #1
+	b	.L_0200012c_14e
+.L_0200012c_ba:
+	adds	r3, r7, #0
+	adds	r3, #91
+	ldrb	r3, [r3, #0]
+	cmp	r3, #0
+	bne	.L_0200012c_d4
+	adds	r0, r5, #0
+	movs	r1, #3
+	bl	0x0200e450
+	adds	r2, r5, #0
+	adds	r2, #99
+	movs	r3, #2
+	strb	r3, [r2, #0]
+.L_0200012c_d4:
+	ldrh	r3, [r6, #0]
+	adds	r3, #1
+	strh	r3, [r6, #0]
+	ldr	r2, [pc, #8]
+	adds	r3, r5, #0
+	adds	r3, #98
+	strb	r2, [r3, #0]
+	b	.L_0200012c_150
+	.4byte 0x00000000
+	.4byte 0x02008150
+.L_0200012c_ec:
+	adds	r0, r5, #0
+	movs	r1, #2
+	bl	0x0200e450
+	movs	r1, #240
+	movs	r2, #128
+	movs	r3, #150
+	lsls	r3, r3, #18
+	adds	r0, r5, #0
+	lsls	r1, r1, #17
+	lsls	r2, r2, #14
+	bl	0x0200e470
+	movs	r3, #60
+	str	r3, [r5, #76]
+	ldrh	r3, [r6, #0]
+	adds	r3, #1
+	strh	r3, [r6, #0]
+	adds	r3, r7, #0
+	adds	r3, #91
+	ldrb	r3, [r3, #0]
+	cmp	r3, #0
+	bne	.L_0200012c_150
+	adds	r2, r5, #0
+	adds	r2, #99
+	movs	r3, #3
+	strb	r3, [r2, #0]
+	b	.L_0200012c_150
+.L_0200012c_124:
+	adds	r0, r5, #0
+	bl	0x020080fc
+	cmp	r0, #0
+	beq	.L_0200012c_150
+	adds	r0, r5, #0
+	movs	r1, #1
+	bl	0x0200e450
+	adds	r2, r5, #0
+	movs	r3, #0
+	adds	r2, #98
+	strb	r3, [r2, #0]
+	ldrh	r3, [r6, #0]
+	adds	r3, #1
+	b	.L_0200012c_14e
+.L_0200012c_144:
+	adds	r0, r5, #0
+	bl	0x020080d8
+	b	.L_0200012c_150
+.L_0200012c_14c:
+	movs	r3, #0
+.L_0200012c_14e:
+	strh	r3, [r6, #0]
+.L_0200012c_150:
+	pop	{r5, r6, r7}
+	pop	{r0}
+	bx	r0
+	movs	r0, r0
 	.section .rodata.part1,"a",%progbits
 	.global FuneHeya_TurnSteps
 FuneHeya_TurnSteps:

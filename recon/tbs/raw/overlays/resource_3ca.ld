@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/TABLE_AUDIO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/GET_DEFAULT_RESULT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/SCENE_CUES.o"(.text)
-        "*/resource_3ca_overlay.o"(.text.x020080b0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/PALETTE_CYCLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/DRIFTING_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_FUNE/COUNTDOWN.o"(.text)
         "*/resource_3ca_overlay.o"(.text.x02008194)

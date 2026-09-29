@@ -1,6 +1,6 @@
 /* resource_3af: its entry veneers, its listing with maintained code linked
    in place, as pret links objects in ROM order. Its import veneers follow
-   its code. */
+   its code. The overlay's own work follows the image. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -22,6 +22,7 @@ SECTIONS
         "*/resource_3af_overlay.o"(.text.x02008ca0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/MULTI_ENCOUNTER.o"(.text)
         "*/resource_3af_overlay.o"(.text.x020093d4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RANDOM_ACTORS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/PLACE_ACTORS20.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/DECK_ACTORS.o"(.text)
@@ -33,7 +34,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/CONFIGURE_LEAD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/PARTY_ROSTER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/FIND_FIRST.o"(.text)
-        "*/resource_3af_overlay.o"(.text.x0200b1a8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ROCK.o"(.text)
+        "*/resource_3af_overlay.o"(.text.x0200b284)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ACTIVATE_SLOT.o"(.text)
         "*/resource_3af_overlay.o"(.text.x0200b3b8)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SELECT_TABLE.o"(.text)
@@ -45,6 +47,10 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RUN_3.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/IMPORT.o"(.text)
         "*/resource_3af_overlay.o"(.rodata)
+    }
+    .bss ALIGN(16) (NOLOAD) :
+    {
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ROCK.o"(.data .bss COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

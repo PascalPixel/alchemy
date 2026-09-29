@@ -10,7 +10,7 @@ void *Runtime_BumpAllocateAlternatePool(s32 size);
 void *Runtime_BumpAllocate(u32 size);
 void Runtime_BumpFree(void *allocation);
 
-extern u8 Value_0000009c;
+extern u8 Tile_ConvertMapCodeSize[];
 
 static __inline__ void CopyWords(void *dst, const void *src, s32 size)
 {
@@ -33,7 +33,7 @@ void Tilemap_ConvertBuffer(void)
         CopyWords(saved, (const void *)0x02010000, size);
     } while (0);
     {
-        u32 code_size = (u32)&Value_0000009c;
+        u32 code_size = (u32)Tile_ConvertMapCodeSize;
 
         do {
             routine = (ConvertFn)Runtime_BumpAllocate(code_size);

@@ -1,0 +1,241 @@
+#include "GATE.H"
+
+void Scene_RunScene3c3SequenceC(void)
+{
+    extern u8 gCell[];
+    extern u8 gWork[];
+
+    s32 arg;
+    s32 v5;
+
+    arg = *(s16 *)(*(u8 **)gWork + 0x16c);
+    *(u8 *)((s32)Actor_Get(0) + 85) = 0;
+    v5 = 2;
+    Audio_PlayCue(158);
+    Map_CopyCellsTo(66, 36, 71, 8, v5, v5);
+    Task_Wait(4);
+    Map_CopyCellsTo(68, 36, 71, 8, v5, v5);
+    Task_Wait(4);
+    Actor_CenterAndWalk(0, 3, -16);
+    Event_RequestExit(arg);
+}
+
+void Dialogue_ShowMessages8fbAnd8fc(void)
+{
+    extern u8 *gWork;
+
+    s16 token = *(s16 *)(gWork + 364);
+
+    Audio_PlayCue(123);
+    GameFlag_Clear(0x8FB);
+    GameFlag_Clear(0x8FC);
+    Event_RequestExit(token);
+}
+
+void Scene_RunPrimarySequence(void)
+{
+    Event_Begin();
+    Actor_SetSpeed(8, 65536, 32768);
+    Actor_SetSpeed(9, 65536, 32768);
+    Actor_WalkTo(8, 136, 384);
+    Actor_WalkToAndWait(9, 152, 384);
+    Actor_FaceDirection(8, 16384, 0);
+    Actor_FaceDirection(9, 16384, 0);
+    Actor_SetAnimation(8, 1);
+    Map_CopyCellAttributes(6, 27, 1, 1, 7, 27);
+    Map_CopyCellAttributes(9, 26, 2, 1, 7, 26);
+    Event_End();
+}
+
+void Scene_RunScene3c3SequenceA(void)
+{
+    extern u8 gWork[];
+
+    u32 i;
+    s32 record;
+    s32 v5;
+
+    Event_Begin();
+    Actor_SetSpeed(0, 0x19999, 0xcccc);
+    Actor_WalkToAndWait(0, 120, 0x1b6);
+    Actor_FaceDirection(0, 0xc000, 0);
+    record = Actor_Get(0);
+    if (record != 0) {
+        Actor_SetPosition(11, *(s32 *)(record + 8), *(s32 *)(record + 16));
+    }
+    Task_Wait(1);
+    Actor_SetSpeed(11, 0x19999, 0xcccc);
+    Actor_WalkToAndWait(11, 108, 0x1af);
+    Actor_FaceDirection(11, 0xd000, 10);
+    Actor_ShowEmote(11, 0x100, 20);
+    Actor_FaceDirection(11, 0xd000, 20);
+    Actor_FaceDirection(11, 0, 40);
+    Actor_FaceDirection(11, 0xd000, 40);
+    Actor_FaceDirection(11, 0, 20);
+    Actor_StartRepeatedMotion(11, 2);
+    Event_SetMessage(0x2654);
+    Event_ShowMessageAndWait(11, 0, 40);
+    Actor_ShowEmote(8, 0x100, 0);
+    Actor_RunRepeatedMotion(8, 2);
+    Event_ShowMessageAndWait(8, 0, 10);
+    Actor_WalkToAndWait(11, 132, 0x1a4);
+    Actor_FaceDirection(11, 0xd000, 0);
+    Actor_FaceDirection(0, 0xe000, 0);
+    Actor_WalkToAndWait(11, 138, 0x1a0);
+    Actor_FaceDirection(11, 0xb000, 10);
+    Actor_StartRepeatedMotion(11, 2);
+    Event_ShowMessageAndWait(11, 0, 40);
+    ((void (*)())Actor_RunRepeatedMotion)(8, 2);
+    Event_ShowMessageAndWait(8, 0, 40);
+    Actor_ShowEmote(9, 0x100, 20);
+    Actor_RunRepeatedMotion(9, 2);
+    Event_ShowMessageAndWait(9, 0, 20);
+    Actor_FaceDirection(0, 0xc000, 0);
+    Actor_WalkToAndWait(11, 144, 0x1a4);
+    Event_Wait(20);
+    Actor_RunRepeatedMotion(9, 2);
+    Event_ShowMessageAndWait(9, 0, 20);
+    Actor_SetAttachedEffect(9, 0x102);
+    Actor_StartRepeatedMotion(9, 3);
+    Event_ShowMessageAndWait(9, 0, 20);
+    Actor_FaceDirection(11, 0x5000, 20);
+    Event_AskYesNo(11, 0);
+    if (GameFlag_IsSet(0x9b0) != 0) {
+        Actor_FaceDirection(11, 0xd000, 40);
+        Actor_SetAttachedEffect(11, 0x102);
+        Event_Wait(40);
+        Event_ShowMessageAndWait(11, 0, 10);
+    } else {
+        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
+    }
+    Actor_FaceDirection(11, 0x5000, 10);
+    Event_ShowMessageAndWait(11, 0, 40);
+    Actor_ShowEmote(11, 0x100, 40);
+    Actor_FaceDirection(11, 0xb000, 10);
+    Event_ShowMessageAndWait(11, 0, 10);
+    Actor_WalkToAndWait(11, 138, 0x1a0);
+    Actor_FaceDirection(11, 0xb000, 20);
+    Actor_StartRepeatedMotion(8, 2);
+    Event_ShowMessageAndWait(8, 0, 10);
+    Actor_SetAttachedEffect(11, 0x102);
+    Actor_RunRepeatedMotion(11, 1);
+    Event_Wait(20);
+    ((void (*)())Event_ShowMessageAndWait)(11, 0, 20);
+    Actor_RunRepeatedMotion(9, 2);
+    Event_Wait(20);
+    Actor_FaceDirection(0, 0xe000, 10);
+    Actor_RunRepeatedMotion(9, 1);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(9, 0, 10);
+    Actor_RunRepeatedMotion(8, 2);
+    Event_ShowMessageAndWait(8, 0, 20);
+    Actor_RunRepeatedMotion(11, 1);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(11, 0, 20);
+    Actor_FaceDirection(11, 0x5000, 10);
+    Event_ShowMessageAndWait(11, 0, 10);
+    Actor_SetAnimation(11, 2);
+    record = Actor_Get(0);
+    if (record != 0) {
+        Actor_SetDestination(11, *(s16 *)(record + 10), *(s16 *)(record + 18));
+    }
+    Actor_WaitForMove(11);
+    v5 = 7;
+    Actor_SetPosition(11, 0, 0);
+    Map_CopyCellAttributes(6, 27, 1, 1, v5, 27);
+    Map_CopyCellAttributes(9, 26, 2, 1, v5, 26);
+    GameFlag_Set(0x89f);
+    Event_End();
+}
+
+/*
+ * Dialogue bracket at 0x02000730.  The 124-byte owner includes its four-word
+ * literal pool at 0x0200079c-0x020007ab.  The tail is shared through a label
+ * rather than copied into each arm: copying it would add a fourth call site
+ * where there are three.  The skip-beat counter sits at byte offset 472 off
+ * the gWork pointer cell, which costs one dereference.  The guard is
+ * tested against zero at this site; the polarity is read per call site.
+ */
+void Scene_RunActorNinePromptDialogue(void)
+{
+    extern u8 *gWork;
+
+    u8 *work;
+
+    Event_Begin();
+
+    if (GameFlag_IsSet(0x89f) != 0) {
+        Event_SetMessage(0x2668);
+        goto close;
+    }
+
+    Event_SetMessage(0x264e);
+    {
+        s32 mode = 0;
+        s32 no = 9;
+
+        Event_OpenMessage(no, mode);
+    }
+
+    if (Event_ChooseYesNo(0, 0) != 0) {
+        goto skip;
+    }
+
+    Event_ShowMessage(9, 0);
+    Actor_SetAnimationAndWait(9, 4);
+
+close:
+    Event_ShowMessage(9, 0);
+    goto done;
+
+skip:
+    /* Skip-beat counter, two beats' worth. */
+    work = gWork;
+    *(u16 *)(work + 472) += 2;
+    Event_ShowMessage(9, 0);
+
+done:
+    Event_End();
+}
+
+void Scene_RunActorTenRepeatedMotion(void)
+{
+    extern u8 *gWork;
+
+    unsigned int beat;
+
+    Event_Begin();
+
+    Event_SetMessage(0x266d);
+    Event_ShowMessageAndWait(10, 0, 10);
+
+    beat = 0;
+    do {
+        Actor_SetChildValue(10, 0);
+        Actor_SetSpriteFlags(Actor_Get(10), 1);
+        Task_Wait(4);
+
+        Actor_SetChildValue(10, 15);
+        Actor_SetSpriteFlags(Actor_Get(10), 0);
+        beat++;
+        Task_Wait(4);
+    } while (beat <= 5);
+
+    beat = 0;
+    do {
+        Actor_SetChildValue(10, 0);
+        Actor_SetSpriteFlags(Actor_Get(10), 1);
+        Task_Wait(2);
+
+        Actor_SetChildValue(10, 15);
+        Actor_SetSpriteFlags(Actor_Get(10), 0);
+        beat++;
+        Task_Wait(2);
+    } while (beat <= 11);
+
+    Actor_SetPosition(10, 0, 0);
+
+    GameFlag_Set(0x897);
+
+    Event_End();
+}

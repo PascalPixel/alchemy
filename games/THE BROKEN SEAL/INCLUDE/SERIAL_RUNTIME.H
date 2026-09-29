@@ -3,6 +3,7 @@
 
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "IO_REG.H"
 
 #define SERIAL_RUNTIME_TU
 
@@ -60,16 +61,6 @@ struct SerialTransferState {
 #define SERIAL_RUNTIME (&gSerialRuntime)
 #define SERIAL_TRANSFER ((struct SerialTransferState *)0x02002220)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
-#define REG_SIODATA32 ((volatile u32 *)0x04000120)
-#define REG_SIOCNT (*(volatile u32 *)0x04000128)
-#define REG_SIOCNT16 (*(volatile u16 *)0x04000128)
-#define REG_SIODATA8 (*(volatile u16 *)0x0400012a)
-#define REG_RCNT (*(volatile u16 *)0x04000134)
-#define REG_TM3CNT (*(volatile u32 *)0x0400010c)
-#define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
-#define REG_IE (*(volatile u16 *)0x04000200)
-#define REG_IF (*(volatile u16 *)0x04000202)
-#define REG_IME (*(volatile u16 *)0x04000208)
 
 #define SERIAL_ACTIVE_A gSerialSendSource
 #define SERIAL_VALUE_A gSerialSendSize
@@ -89,15 +80,12 @@ void Func_080060e8(void *payload);
 u8 Func_0800615c(void *payload);
 void Func_08006240(void);
 void Func_0800651c(void);
-extern u8 Data_00000000[];
-extern u8 Data_000000c0[];
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
 extern volatile s32 gSerialSendSource;
 extern volatile u16 gSerialSendSize;
 extern volatile s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
-extern volatile u16 RegIme;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
 {
@@ -117,7 +105,7 @@ static __inline__ void SerialRuntime_ResetTransferState(void)
      * assignment keeps its allocation priority above the IME pointer. */
     do {
         state = &gSerialTransfer;
-        ime = &RegIme;
+        ime = &REG_IME;
     } while (0);
     do {
         saved = *ime;

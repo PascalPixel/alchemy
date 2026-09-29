@@ -90,19 +90,6 @@ fn visit(
     Ok(())
 }
 
-pub fn source_tree_signature(source: &Path, dirs: &[PathBuf]) -> Result<Vec<u8>, String> {
-    let mut hash = Sha256::new();
-    visit(
-        None,
-        source,
-        dirs,
-        &mut BTreeSet::new(),
-        &mut BTreeSet::new(),
-        &mut hash,
-    )?;
-    Ok(hash.finalize().to_vec())
-}
-
 pub fn compiler_source_tree_signature(
     root: &Path,
     source: &Path,
@@ -120,8 +107,8 @@ pub fn compiler_source_tree_signature(
     let mut seen = BTreeSet::new();
     let mut active = BTreeSet::new();
     visit(base, &source, &dirs, &mut seen, &mut active, &mut hash)?;
-    // Generated address bindings are compiler inputs even though the C file
-    // does not include them. Their stable filenames are not a cache identity.
+    // A forced include is a compiler input even though the C file does not
+    // include it; its contents, not its name, are the identity.
     for command in commands {
         for pair in command.windows(2) {
             if pair[0] == "-include" {
@@ -140,18 +127,18 @@ pub fn compiler_source_tree_signature(
 
 #[cfg(test)]
 #[test]
-fn forced_binding_mutation_changes_compiler_input_identity() {
+fn forced_include_mutation_changes_compiler_input_identity() {
     let root = tempfile::tempdir().unwrap();
     let source = root.path().join("owner.c");
-    let bindings = root.path().join("bindings.h");
+    let forced = root.path().join("forced.h");
     std::fs::write(&source, "void Owner(void) { Target(); }\n").unwrap();
-    std::fs::write(&bindings, "#define Target Func_08001000\n").unwrap();
-    let commands = vec![vec!["cpp0".into(), "-include".into(), "bindings.h".into()]];
+    std::fs::write(&forced, "void Target(void);\n").unwrap();
+    let commands = vec![vec!["cpp0".into(), "-include".into(), "forced.h".into()]];
     let first = compiler_source_tree_signature(root.path(), &source, &commands).unwrap();
-    std::fs::write(&bindings, "#define Target Func_08002000\n").unwrap();
+    std::fs::write(&forced, "int Target(void);\n").unwrap();
     let second = compiler_source_tree_signature(root.path(), &source, &commands).unwrap();
     assert_ne!(first, second);
-    std::fs::remove_file(&bindings).unwrap();
+    std::fs::remove_file(&forced).unwrap();
     assert!(compiler_source_tree_signature(root.path(), &source, &commands).is_err());
 }
 

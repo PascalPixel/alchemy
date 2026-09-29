@@ -10,8 +10,8 @@
 .syntax unified
 .text
 	.arm
-	.global Func_08015afc
-Func_08015afc:
+	.global Tile_Decompress4bpp
+Tile_Decompress4bpp:
 	push	{r5, r6}
 	add	r5, pc, #40
 	ldm	r5, {r2, r3}

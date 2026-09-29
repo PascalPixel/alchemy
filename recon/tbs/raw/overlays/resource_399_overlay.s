@@ -566,6 +566,120 @@ Func_02000b70:
 	.4byte 0x00000881
 	.4byte 0x0000082e
 	.4byte 0x028a0000
+	.section .text.x020095b4,"ax",%progbits
+	.align 2
+	.global ImiruMura_SwayAndSpark
+	.thumb_func
+ImiruMura_SwayAndSpark:
+	push	{r5, r6, lr}
+	adds	r6, r0, #0
+	adds	r5, r6, #0
+	adds	r5, #100
+	movs	r2, #0
+	ldrsh	r0, [r5, r2]
+	lsls	r0, r0, #10
+	sub	sp, #12
+	bl	0x0200a190
+	adds	r1, r0, #0
+	movs	r0, #192
+	ldr	r3, [pc, #188]
+	lsls	r0, r0, #11
+	mov	ip, pc
+	bx	r3
+	ldr	r3, [pc, #184]
+	ldr	r3, [r3, #0]
+	adds	r3, r3, r0
+	str	r3, [r6, #8]
+	ldrh	r3, [r5, #0]
+	adds	r3, #1
+	strh	r3, [r5, #0]
+	lsls	r3, r3, #16
+	asrs	r1, r3, #16
+	adds	r2, r1, #0
+	adds	r2, #64
+	adds	r3, r2, #0
+	cmp	r2, #0
+	bge	.L_020015b4_40
+	adds	r3, r1, #0
+	adds	r3, #127
+.L_020015b4_40:
+	asrs	r3, r3, #6
+	lsls	r3, r3, #6
+	subs	r3, r2, r3
+	strh	r3, [r5, #0]
+	ldr	r3, [pc, #148]
+	movs	r1, #3
+	ldr	r0, [r3, #0]
+	bl	0x0200a168
+	cmp	r0, #0
+	bne	.L_020015b4_f0
+	ldr	r3, [r6, #8]
+	mov	r5, sp
+	str	r3, [r5, #0]
+	movs	r2, #128
+	ldr	r3, [r6, #12]
+	lsls	r2, r2, #10
+	adds	r3, r3, r2
+	str	r3, [r5, #4]
+	ldr	r3, [r6, #16]
+	str	r3, [r5, #8]
+	bl	0x0200a180
+	adds	r6, r0, #0
+	bl	0x0200a180
+	adds	r1, r0, #0
+	lsls	r0, r6, #1
+	adds	r0, r0, r6
+	adds	r2, r5, #0
+	lsls	r0, r0, #1
+	bl	0x0200a198
+	ldr	r1, [r5, #0]
+	ldr	r2, [r5, #4]
+	ldr	r3, [r5, #8]
+	ldr	r0, [pc, #88]
+	bl	0x0200a1b8
+	adds	r5, r0, #0
+	cmp	r5, #0
+	beq	.L_020015b4_f0
+	ldr	r1, [r5, #80]
+	movs	r3, #13
+	ldrb	r2, [r1, #9]
+	negs	r3, r3
+	ands	r3, r2
+	strb	r3, [r1, #9]
+	movs	r1, #0
+	bl	0x0200a208
+	adds	r0, r5, #0
+	movs	r1, #1
+	bl	0x0200a1a0
+	ldr	r3, [pc, #56]
+	adds	r2, r5, #0
+	str	r3, [r5, #24]
+	str	r3, [r5, #28]
+	adds	r2, #35
+	movs	r3, #2
+	strb	r3, [r2, #0]
+	ldr	r3, [pc, #20]
+	adds	r2, #50
+	adds	r0, r5, #0
+	movs	r1, #9
+	strb	r3, [r2, #0]
+	bl	0x0200a2f0
+	ldr	r1, [pc, #32]
+	adds	r0, r5, #0
+	bl	0x0200a1b0
+	b	.L_020015b4_f0
+	.4byte 0x00000000
+	.4byte 0x03000118
+	.4byte 0x0200b1f0
+	.4byte 0x03001e40
+	.4byte 0x0000011d
+	.4byte 0x00009999
+	.4byte 0x0200a64c
+.L_020015b4_f0:
+	add	sp, #12
+	pop	{r5, r6}
+	pop	{r0}
+	bx	r0
 	.section .rodata,"a",%progbits
 	.global ImiruMura_KeyHeadings
 ImiruMura_KeyHeadings:

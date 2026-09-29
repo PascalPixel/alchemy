@@ -138,19 +138,6 @@ pub fn write_canonical(path: &Path, value: &Value) -> Result<(), String> {
     Ok(())
 }
 
-/// Checkers accept three spellings while the migration runs: the canonical
-/// compact form, the fully minified form, and the legacy two-space form.
-pub fn is_canonical_json_text(text: &str, value: &Value) -> bool {
-    let compact = format!("{}\n", canonical_json(value));
-    if text == compact {
-        return true;
-    }
-    if serde_json::to_string(value).is_ok_and(|s| format!("{s}\n") == text) {
-        return true;
-    }
-    serde_json::to_string_pretty(value).is_ok_and(|s| format!("{s}\n") == text)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

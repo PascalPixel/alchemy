@@ -10,8 +10,17 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Engine_TaskRemoveCallback
+	.thumb_func
+Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Engine_RandomNext
+	.thumb_func
+Engine_RandomNext:
 	overlay_veneer Random16Far
 	.global Engine_MapRedraw
 	.thumb_func
@@ -57,17 +66,17 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
-	.global Engine_UiWorkWaitThenFinalizeCapacity
+	.global Engine_EventChooseYesNo
 	.thumb_func
-Engine_UiWorkWaitThenFinalizeCapacity:
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectMotion_SetSpeedParameters
+	.global Engine_ActorSetSpeed
 	.thumb_func
-ObjectMotion_SetSpeedParameters:
+Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	.global Engine_ActorSetDestination
 	.thumb_func
@@ -121,36 +130,45 @@ Engine_EventSetMessage:
 	.thumb_func
 Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
-	.global BattleEv_RunWait
+	.global Engine_EventShowMessage
 	.thumb_func
-BattleEv_RunWait:
+Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
+	.global Engine_EventShowMessageAndWait
+	.thumb_func
+Engine_EventShowMessageAndWait:
 	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
 	.global Engine_ActorFaceDirection
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
-	.global BattleFx_SpawnLinked
+	.global Engine_ActorShowEmote
 	.thumb_func
-BattleFx_SpawnLinked:
+Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
 	.global Engine_ActorSetAttachedEffect
 	.thumb_func
 Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
-	overlay_veneer Object_AttachWorkTargetToObjectFar
-	.global ObjectTable_AllocateAndSetObjectSpeed
+	.global Engine_CameraFollowActor
 	.thumb_func
-ObjectTable_AllocateAndSetObjectSpeed:
+Engine_CameraFollowActor:
+	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Engine_CameraMoveTo
 	.thumb_func
 Engine_CameraMoveTo:
 	overlay_veneer Motion_CamBoundsFar
-	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
-	.global Event_SetValue170
+	.global Engine_CameraWaitForMove
 	.thumb_func
-Event_SetValue170:
+Engine_CameraWaitForMove:
+	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
 	.global InitializeSceneRecordBuffer
 	.thumb_func
@@ -172,9 +190,9 @@ Engine_ColorBufferInterpolate:
 	.thumb_func
 Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
-	.global Event_ClearStatus1c6
+	.global Engine_EventCloseScreen
 	.thumb_func
-Event_ClearStatus1c6:
+Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
 	.global Engine_EventWaitForScreen
 	.thumb_func

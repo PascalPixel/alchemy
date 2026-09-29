@@ -79,7 +79,7 @@ typedef void *(*SelectFn)(const void *src, void *dst);
 typedef void (*UploadFn)(const void *src, u32 w, u32 h, void *vram);
 
 extern u8 Data_000002c4[];
-extern const u8 Data_08009bb8[];
+extern const u8 Render_DecodeFrame[];
 extern const u8 Data_08009d9c[];
 
 extern const u8 Data_0801307c[];
@@ -140,8 +140,8 @@ s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
     draw = *(DrawFn *)&Data_03001e68_a[184];
     if (draw == 0) {
         block = (void *)Runtime_AllocateHeapBlock(52, (s32)Data_000002c4);
-        Dma_Set(Data_08009bb8, block,
-                (((u32)Data_08009d9c - (u32)Data_08009bb8) >> 2) | 0x84000000,
+        Dma_Set(Render_DecodeFrame, block,
+                (((u32)Data_08009d9c - (u32)Render_DecodeFrame) >> 2) | 0x84000000,
                 (volatile u32 *)0x040000d4);
         draw = *(DrawFn *)&Data_03001e68_a[184];
         held = 0;

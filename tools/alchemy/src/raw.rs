@@ -4,8 +4,7 @@
 //! Everything this command writes is disposable output under out/<target>.
 
 use crate::compiler::routing;
-use crate::overlay::assembly::OVERLAY_BASE;
-use crate::overlay::rom::CanonicalRom;
+use crate::overlay::rom::{CanonicalRom, OVERLAY_BASE};
 use crate::targets::{self, DecompTarget};
 use psynergy::assembly::{thumb_source, thumb_source_from_instructions};
 use psynergy::decode::{decode_one, Kind};
@@ -150,7 +149,7 @@ fn load_rom(
     explicit: Option<&str>,
 ) -> Result<CanonicalRom, String> {
     let rom = CanonicalRom::from_file(&root.join(explicit.unwrap_or(target.rom)), target)?;
-    crate::text_catalog::verify_reference(root, target.id.as_str(), rom.bytes())?;
+    target.verify_reference(rom.bytes())?;
     Ok(rom)
 }
 

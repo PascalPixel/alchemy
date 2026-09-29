@@ -8,8 +8,8 @@
 .syntax unified
 .text
 	.arm
-	.global Func_08015e10
-Func_08015e10:
+	.global Tile_ExpandOpaque
+Tile_ExpandOpaque:
 	push	{r5, r6, r7, r8, r9, sl}
 	add	sl, pc, #100
 	ldm	sl, {r4, r6, r7}

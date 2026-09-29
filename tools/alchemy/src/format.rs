@@ -88,48 +88,6 @@ fn listed(directory: &Path, name: &std::ffi::OsStr) -> bool {
     })
 }
 
-fn check_table_sources(path: &Path) -> Result<(), String> {
-    let text = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
-    let mut rows = text.lines().filter(|line| !line.starts_with('#'));
-    let Some(column) = rows
-        .next()
-        .and_then(|header| header.split('\t').position(|field| field == "source"))
-    else {
-        return Ok(());
-    };
-    for row in rows {
-        let Some(source) = row
-            .split('\t')
-            .nth(column)
-            .filter(|source| !source.is_empty())
-        else {
-            continue;
-        };
-        let suffix = Path::new(source)
-            .extension()
-            .and_then(|e| e.to_str())
-            .unwrap_or("");
-        if !["mid", "wav", "png", "json"]
-            .iter()
-            .any(|e| suffix.eq_ignore_ascii_case(e))
-        {
-            continue;
-        }
-        let resolved = if source.starts_with("games/") {
-            root().join(source)
-        } else {
-            path.parent().unwrap().join(source)
-        };
-        if !exact_file(&resolved) {
-            return Err(format!(
-                "{}: source filename must exist with exact spelling: {source}",
-                path.display()
-            ));
-        }
-    }
-    Ok(())
-}
-
 pub fn run(arguments: &[String]) -> Result<(), String> {
     if arguments == ["--help"] || arguments == ["-h"] {
         println!("usage: alchemy format [--check]");
@@ -173,9 +131,6 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             {
                 return Err(format!("native filenames must be uppercase: {name}"));
             }
-            if path.extension().and_then(|e| e.to_str()) == Some("TSV") {
-                check_table_sources(path)?;
-            }
             if path.extension().and_then(|e| e.to_str()) != Some("JSON") {
                 continue;
             }
@@ -201,7 +156,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
 #[cfg(test)]
 mod tests {
     #[test]
-    fn media_references_require_exact_filename_case() {
+    fn native_paths_require_exact_filename_case() {
         let dir = tempfile::tempdir().unwrap();
         std::fs::write(dir.path().join("TRACK.MID"), b"test").unwrap();
         assert!(super::exact_file(&dir.path().join("TRACK.MID")));

@@ -1,42 +1,7 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008c3c
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008da4
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008dd4
-	.global Func_02000048
-	.thumb_func
-Func_02000048:
-	push {lr}
-	ldr r0, [pc, #20]
-	bl 0x02008b34
-	cmp r0, #0
-	beq .L_02000048_0
-	ldr r0, [pc, #12]
-	b .L_02000048_1
-.L_02000048_0:
-	ldr r0, [pc, #12]
-.L_02000048_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x0000096f
-	.4byte 0x02008f28
-	.4byte 0x02008e08
+	.section .text.x0200806c,"ax",%progbits
+	.balign 4
 	.global Func_0200006c
 	.thumb_func
 Func_0200006c:
@@ -103,102 +68,8 @@ Func_0200006c:
 	.4byte 0x0000096f
 	.4byte 0x0000261c
 	.4byte 0x000025cf
-	.global Func_02000100
-	.thumb_func
-Func_02000100:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #0
-	bl 0x02008b64
-	movs r2, #128
-	ldrh r3, [r0, #6]
-	lsls r2, r2, #6
-	adds r3, r3, r2
-	ldr r2, [pc, #24]
-	ands r3, r2
-	movs r2, #192
-	lsls r3, r3, #16
-	lsls r2, r2, #24
-	cmp r3, r2
-	bne .L_02000100_0
-	movs r0, #10
-	adds r1, r5, #0
-	bl 0x02008c2c
-	b .L_02000100_1
-	.2byte 0x0000
-	.4byte 0xffffc000
-.L_02000100_0:
-	ldr r0, [pc, #44]
-	bl 0x02008b34
-	cmp r0, #0
-	beq .L_02000100_2
-	ldr r0, [pc, #40]
-	bl 0x02008bc4
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x02008bd4
-	b .L_02000100_1
-.L_02000100_2:
-	ldr r0, [pc, #28]
-	bl 0x02008bc4
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x02008bd4
-.L_02000100_1:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0000096f
-	.4byte 0x00002620
-	.4byte 0x000025d1
-	.global Func_0200016c
-	.thumb_func
-Func_0200016c:
-	push {r5, lr}
-	adds r5, r0, #0
-	movs r0, #0
-	bl 0x02008b64
-	movs r2, #128
-	ldrh r3, [r0, #6]
-	lsls r2, r2, #6
-	adds r3, r3, r2
-	ldr r2, [pc, #48]
-	ands r3, r2
-	movs r2, #192
-	lsls r3, r3, #16
-	lsls r2, r2, #24
-	cmp r3, r2
-	bne .L_0200016c_0
-	adds r0, r5, #0
-	bl 0x02008c24
-	b .L_0200016c_1
-.L_0200016c_0:
-	ldr r0, [pc, #28]
-	bl 0x02008b34
-	cmp r0, #0
-	beq .L_0200016c_2
-	ldr r0, [pc, #24]
-	bl 0x02008bc4
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x02008bd4
-	b .L_0200016c_1
-	.2byte 0x0000
-	.4byte 0xffffc000
-	.4byte 0x0000096f
-	.4byte 0x0000262c
-.L_0200016c_2:
-	ldr r0, [pc, #16]
-	bl 0x02008bc4
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x02008bd4
-.L_0200016c_1:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x000025d5
+	.section .text.x020081d4,"ax",%progbits
+	.balign 4
 	.global Func_020001d4
 	.thumb_func
 Func_020001d4:
@@ -232,24 +103,8 @@ Func_020001d4:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00002624
-	.global Func_0200021c
-	.thumb_func
-Func_0200021c:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r2, #182
-	ldr r3, [r3]
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r0, [r3, r2]
-	bl 0x02008bfc
-	movs r0, #123
-	bl 0x02008c34
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001ebc
+	.section .text.x02008240,"ax",%progbits
+	.balign 4
 	.global Func_02000240
 	.thumb_func
 Func_02000240:
@@ -1032,116 +887,9 @@ Func_02000240:
 	.4byte 0x03001ebc
 	.4byte 0x00013333
 	.4byte 0x00009999
-	.global Func_02000a54
-	.thumb_func
-Func_02000a54:
-	push {lr}
-	ldr r0, [pc, #20]
-	bl 0x02008b34
-	cmp r0, #0
-	beq .L_02000a54_0
-	ldr r0, [pc, #12]
-	b .L_02000a54_1
-.L_02000a54_0:
-	ldr r0, [pc, #12]
-.L_02000a54_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x0000096f
-	.4byte 0x020091ec
-	.4byte 0x02009090
-	.global Func_02000a78
-	.thumb_func
-Func_02000a78:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	ldr r3, [pc, #152]
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #90
-	bne .L_02000a78_0
-	ldr r0, [pc, #140]
-	bl 0x02008b3c
-.L_02000a78_0:
-	ldr r3, [pc, #140]
-	ldr r1, [r3]
-	movs r3, #224
-	lsls r3, r3, #1
-	adds r2, r1, r3
-	adds r3, #73
-	str r3, [r2]
-	subs r3, #65
-	adds r2, r1, r3
-	movs r3, #24
-	str r3, [r2]
-	movs r0, #12
-	bl 0x02008b64
-	adds r0, #89
-	ldrb r3, [r0]
-	movs r5, #4
-	orrs r3, r5
-	movs r2, #0
-	strb r3, [r0]
-	movs r0, #13
-	mov r10, r2
-	bl 0x02008b64
-	adds r0, #89
-	ldrb r3, [r0]
-	orrs r3, r5
-	strb r3, [r0]
-	movs r0, #20
-	bl 0x02008b64
-	ldr r3, [r0, #80]
-	mov r2, r10
-	adds r3, #38
-	strb r2, [r3]
-	movs r6, #128
-	ldr r3, [r0, #80]
-	lsls r6, r6, #7
-	strh r6, [r3, #30]
-	ldr r2, [pc, #48]
-	ldr r1, [r0, #80]
-	mov r8, r2
-	movs r3, #13
-	ldrb r2, [r1, #9]
-	negs r3, r3
-	ands r3, r2
-	orrs r3, r5
-	strb r3, [r1, #9]
-	movs r0, #21
-	bl 0x02008b64
-	ldr r3, [r0, #80]
-	mov r2, r8
-	adds r3, #38
-	strb r2, [r3]
-	ldr r3, [r0, #80]
-	adds r2, r0, #0
-	strh r6, [r3, #30]
-	adds r2, #85
-	movs r3, #2
-	strb r3, [r2]
-	mov r3, r10
-	str r3, [r0, #12]
-	movs r0, #0
-	b .L_02000a78_1
-	.4byte 0x00000000
-	.4byte 0x02000240
-	.4byte 0x0000096f
-	.4byte 0x03001ebc
-.L_02000a78_1:
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6}
-	pop {r1}
-	bx r1
 	.section .rodata,"a",%progbits
+	.global gSuharaHeyaEntrances
+gSuharaHeyaEntrances:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1232,6 +980,8 @@ Func_02000a78:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaHeyaRegions
+gSuharaHeyaRegions:
 	.4byte 0x001c0053
 	.4byte 0x005b0164
 	.4byte 0x016c0024
@@ -1244,6 +994,8 @@ Func_02000a78:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaHeyaExits
+gSuharaHeyaExits:
 	.4byte 0x000000a8
 	.4byte 0x001010a7
 	.4byte 0x002020a7
@@ -1257,6 +1009,8 @@ Func_02000a78:
 	.4byte 0x00e0f0a8
 	.4byte 0x00f0e0a8
 	.4byte 0x000001ff
+	.global gSuharaHeyaPlacements
+gSuharaHeyaPlacements:
 	.4byte 0xffff0066
 	.4byte 0x00000002
 	.4byte 0x01700000
@@ -1329,6 +1083,8 @@ Func_02000a78:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaHeyaPlacements96f
+gSuharaHeyaPlacements96f:
 	.4byte 0xffff0066
 	.4byte 0x00000001
 	.4byte 0x01900000
@@ -1419,6 +1175,8 @@ Func_02000a78:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaHeyaEvents
+gSuharaHeyaEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte 0x0200821d
@@ -1506,6 +1264,8 @@ Func_02000a78:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSuharaHeyaEvents96f
+gSuharaHeyaEvents96f:
 	.4byte 0x00000002
 	.4byte 0x09b00032
 	.4byte 0x02008241

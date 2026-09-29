@@ -14,45 +14,51 @@ struct MapWork {
     struct MapLayer layers[8];
 };
 
-extern struct MapWork *Data_03001e70;
-/* The two wave angles, the scroll of layer 5 and its speed. */
-extern s32 Data_0200db58;
-extern s32 Data_0200db38;
-extern s32 Data_0200db50[2];
-extern s32 Data_0200db60[2];
+extern struct MapWork *gMapWork;
+
+/* The deck's work, laid out in order just past the overlay's image: the
+ * phases of the four drifting slots and the slot work the deck scenes keep,
+ * the two wave angles, the scroll of layer 5 and its speed. */
+s32 FuneKanpan_SlotPhase[2] = { 0 };
+s32 FuneKanpan_WaveAngleY = 0;
+s32 FuneKanpan_SlotWork[5] = { 0 };
+s32 FuneKanpan_LayerScroll[2] = { 0 };
+s32 FuneKanpan_WaveAngleX = 0;
+s32 FuneKanpan_DeckSpare = 0;
+s32 FuneKanpan_LayerSpeed[2] = { 0 };
 
 /* Rocks the ship's deck: sways the camera by the cosine and sine of two
  * slowly, randomly advancing angles and scrolls map layer 5 by its speed,
  * wrapping the scroll within two cells. */
 void FuneKanpan_RockDeck(void)
 {
-    struct MapWork *map = Data_03001e70;
+    struct MapWork *map = gMapWork;
     s32 *camera = map->camera;
-    s32 dx = Engine_MathCos(Data_0200db58);
-    s32 dy = Engine_MathSin(Data_0200db38);
+    s32 dx = Engine_MathCos(FuneKanpan_WaveAngleX);
+    s32 dy = Engine_MathSin(FuneKanpan_WaveAngleY);
     struct MapLayer *layer;
 
     *camera++ += dx >> 1;
     *camera += dy;
-    Data_0200db58 += (u32)(Engine_RandomNext() * 3 << 7) >> 16;
+    FuneKanpan_WaveAngleX += (u32)(Engine_RandomNext() * 3 << 7) >> 16;
     {
-        s32 turn = Data_0200db38 + ((u32)(Engine_RandomNext() << 9) >> 16);
+        s32 turn = FuneKanpan_WaveAngleY + ((u32)(Engine_RandomNext() << 9) >> 16);
 
-        Data_0200db58 &= 0xffff;
-        Data_0200db38 = turn & 0xffff;
+        FuneKanpan_WaveAngleX &= 0xffff;
+        FuneKanpan_WaveAngleY = turn & 0xffff;
     }
     layer = &map->layers[5];
-    layer->x = Data_0200db50[0];
-    Data_0200db50[0] -= Data_0200db60[0];
-    if (Data_0200db50[0] < 0) {
-        Data_0200db50[0] += 0x200000;
+    layer->x = FuneKanpan_LayerScroll[0];
+    FuneKanpan_LayerScroll[0] -= FuneKanpan_LayerSpeed[0];
+    if (FuneKanpan_LayerScroll[0] < 0) {
+        FuneKanpan_LayerScroll[0] += 0x200000;
     }
-    if (Data_0200db50[0] > 0x200000) {
-        Data_0200db50[0] -= 0x200000;
+    if (FuneKanpan_LayerScroll[0] > 0x200000) {
+        FuneKanpan_LayerScroll[0] -= 0x200000;
     }
-    layer->y = Data_0200db50[1];
-    Data_0200db50[1] -= Data_0200db60[1];
-    if (Data_0200db50[1] < 0) {
-        Data_0200db50[1] += 0x200000;
+    layer->y = FuneKanpan_LayerScroll[1];
+    FuneKanpan_LayerScroll[1] -= FuneKanpan_LayerSpeed[1];
+    if (FuneKanpan_LayerScroll[1] < 0) {
+        FuneKanpan_LayerScroll[1] += 0x200000;
     }
 }

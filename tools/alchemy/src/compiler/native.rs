@@ -234,16 +234,6 @@ fn execute(args: &[String], root: &Path, log: &mut File) -> Result<String, Strin
     }
 }
 
-pub fn build(
-    root: &Path,
-    target: DecompTarget,
-    sources: &[PathBuf],
-    script: &Path,
-    output: &Path,
-) -> Result<Build, String> {
-    build_scoped(root, target, sources, script, output, "main", &[])
-}
-
 fn build_scoped(
     root: &Path,
     target: DecompTarget,
@@ -482,14 +472,6 @@ pub(crate) fn inspect_functions(root: &Path, build: &Build) -> Result<Vec<Functi
     let map = fs::read_to_string(&build.map).map_err(|error| error.to_string())?;
     let objects = inspect_object_tables(root, build)?;
     linked_functions(root, build, &sections, &symbols, &map, &objects)
-}
-
-/// Inspect all loaded source inputs, including data and padding without an F symbol.
-pub(crate) fn inspect_inputs(root: &Path, build: &Build) -> Result<Vec<Input>, String> {
-    let sections = inspect_loaded_sections(root, &build.elf)?;
-    let map = fs::read_to_string(&build.map).map_err(|error| error.to_string())?;
-    let objects = inspect_object_tables(root, build)?;
-    linked_inputs(root, build, &sections, &map, &objects)
 }
 
 fn inspect_object_tables(root: &Path, build: &Build) -> Result<String, String> {
@@ -1251,7 +1233,7 @@ mod tests {
         for name in ["SRC/SOURCE.C", "SRC/SOURCE.S", "MAIN.LD"] {
             fs::write(dir.path().join(game).join(name), "").unwrap();
         }
-        let error = build(
+        let error = build_scoped(
             dir.path(),
             decomp_target(Some("tbs-en")).unwrap(),
             &[
@@ -1260,6 +1242,8 @@ mod tests {
             ],
             Path::new(&format!("{game}/MAIN.LD")),
             Path::new("out/native"),
+            "main",
+            &[],
         )
         .err()
         .unwrap();

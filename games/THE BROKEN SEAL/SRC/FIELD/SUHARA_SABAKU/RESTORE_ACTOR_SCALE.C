@@ -3,8 +3,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
-
-extern volatile u16 RegIme;
+#include "IO_REG.H"
 
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
@@ -63,7 +62,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
     rec2 = Value1(Engine_GameFlagIsSet, 0x340);
     p9 = rec7->x.part.pixel;
     p11 = rec7->z.part.pixel;
-    ime = &RegIme;
+    ime = &REG_IME;
     Engine_EventBegin();
     Engine_AudioPlayCue(244);
     i = 0;

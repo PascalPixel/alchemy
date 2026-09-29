@@ -15,3 +15,5 @@
 	.4byte 0x080091b8
 @ 転送先で置換表として更新する初期化領域。
 	.space 224, 0
+	.global Render_DecodeFrameEnd
+Render_DecodeFrameEnd:

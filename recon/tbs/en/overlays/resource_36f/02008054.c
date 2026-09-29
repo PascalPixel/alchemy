@@ -18,7 +18,12 @@
  *   gMapCellBuffer from the pool after the decode call, where this C keeps
  *   the address in r5 across it (0x2e..0x44 and the pool order after): the
  *   game addressed the map cell buffer as a constant, which waits for fixed
- *   RAM buffers to be checked entries. */
+ *   RAM buffers to be checked entries.
+ *   Venus 2026-09-29: with ResourceId_GoldenSunLogo (row 0x1a) and the
+ *   checked entry Ram_MapCellBuffer, everything up to the decode call
+ *   matches, but GCC still shares the constant buffer address in r5 across
+ *   the decode call; the ROM loads it from the same pool word twice.
+ *   Permuter best 340 (150 s), still sharing it. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"

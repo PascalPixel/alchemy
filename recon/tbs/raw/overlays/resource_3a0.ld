@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/EFFECT_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/EFFECT_CONFIG.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/resource_3a0_overlay.o"(.text.x0200813c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/FIXED_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/PRESENTATION_FLAG.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SHIAN_MURA/ROTATING.o"(.text)
@@ -29,4 +29,7 @@ SECTIONS
         "*/resource_3a0_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = IwramSignedDivideEntry;
 }

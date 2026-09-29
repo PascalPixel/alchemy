@@ -1,3 +1,12 @@
+/* NONMATCHING (number-bound): Korosseo_RunGreetScene, resource_3bb at
+ * 0x020090dc (532 bytes with its pool); twin resource_3bc:0x02009a0c.
+ * Formerly FIELD/COMMON/KOROSSEO/GREET_SCENE.C, which no script linked.
+ *
+ * Remaining difference: none in the code. With every relocation masked the
+ * object is byte-identical to both copies. The message differs per stage
+ * (0x20e9 in 3bb, 0x20ed in 3bc), so one shared source needs it as a
+ * link-time number; this draft still takes it from the stand-in symbol
+ * Korosseo_GreetMessage until link-time numbers are designed. */
 #include "TYPES.H"
 
 s32 Engine_ActorGet();

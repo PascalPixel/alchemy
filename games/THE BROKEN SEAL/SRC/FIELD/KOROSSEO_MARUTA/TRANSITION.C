@@ -5,12 +5,12 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
 {
     s32 handler;
 
-    gColossoModeTaskMode = (u16)mode;
-    gColossoModeTaskParameter = (u16)(parameter << 4);
+    Korosseo_ModeTaskMode = (u16)mode;
+    Korosseo_ModeTaskParam = (u16)(parameter << 4);
 
     {
         s32 budget = 0xc80;
-        s32 task = (s32)ColossoLogRollingStage_ModeTask;
+        s32 task = (s32)Korosseo_UpdateModeTask;
         Engine_TaskAddCallback(task, budget);
     }
 
@@ -29,11 +29,11 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
         }
     }
 
-    gColossoModeTaskStep = 0;
-    gColossoModeTaskScript = handler;
-    gColossoModeTaskTimer = 0;
-    gColossoModeTaskCounterA = 0;
-    gColossoModeTaskCounterB = 0;
+    Korosseo_ModeTaskTimer = 0;
+    Korosseo_ModeTaskScript = handler;
+    Korosseo_ModeMoveTarget = 0;
+    Korosseo_ModeMoveDuration = 0;
+    Korosseo_ModeTaskPosition = 0;
 }
 
 /*

@@ -13,7 +13,7 @@ void StagedActor_ResetMotionAfterRefresh(s32 slot)
 
 void SceneState_InitCursorWhenUnset(void)
 {
-    if (KorosseoKabe_CursorSlot == -1) {
-        KorosseoKabe_CursorSlot = Resource_LoadFixedBlockBIntoFreeSlot();
+    if (Korosseo_MarkerSlot == -1) {
+        Korosseo_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
     }
 }

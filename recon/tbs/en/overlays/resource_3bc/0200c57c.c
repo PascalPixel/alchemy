@@ -1,9 +1,11 @@
-/* NONMATCHING: resource_3bc at 0x0200c57c..0x0200c5e0 (100 bytes with their
- * pools), the scene-control pair, between
- * FIELD/KOROSSEO_MARUTA/SCENE_DESCRIPTOR.C and PUSH.C, stay listing.
+/* NONMATCHING: resource_3bc at 0x0200c57c..0x0200c5d0 (84 bytes with its
+ * pool), the scene-control initializer, between
+ * FIELD/KOROSSEO_MARUTA/SCENE_DESCRIPTOR.C and COMMON/KOROSSEO/SCENE_STATE.C,
+ * stays listing. Its setter twin is COMMON/KOROSSEO/SCENE_STATE.C.
  *
- * Remaining difference: they reach the word at 0x02001000 and the resident
- * pointer at 0x03001f3c, which the main image does not name yet.
+ * Remaining difference: it reaches the word at 0x02001000, which the main
+ * image does not name yet (the resident pointer at 0x03001f3c is the work
+ * slot table gWorkSlot plus slot 59).
  */
 /* The per-site declarations this draft needs (formerly SITES.H). */
 /* Draft scaffolding for the resource_3bc drafts beside this file: the
@@ -428,10 +430,4 @@ void ColossoLogRollingStage_InitializeSceneControl(void)
 
         Func_02008dfa((s32)Data_0200bef1, event_id);
     }
-}
-
-void ColossoLogRollingStage_SetSceneControlValue(u16 value)
-{
-    u8 *workspace = *(u8 **)0x03001f3c;
-    *(u16 *)(workspace + 220) = value;
 }

@@ -1,5 +1,9 @@
 /* Draft of SceneState_SendIdBySceneId, resource_3ba at 0x02009e20 (split from FIELD/KOROSSEO_KAWA/COORDINATOR.C).
- * Remaining difference: it loads constants through address-derived symbols (Value_/Data_0000/LinkedMessage_ names) that no link defines, so the overlay keeps its listing rows. */
+ * Remaining difference: it loads constants through address-derived symbols (Value_/Data_0000/LinkedMessage_ names) that no link defines, so the overlay keeps its listing rows.
+ * Twins: resource_3bb:0x0200a0b8 and resource_3bc:0x0200ab50 hold the same
+ * 92 bytes with identical pools (scene numbers 0x8f and 0x90, messages
+ * 0x2076 and 0x2078, plus 0x207a), so this one draft serves all three once
+ * link-time numbers exist. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"

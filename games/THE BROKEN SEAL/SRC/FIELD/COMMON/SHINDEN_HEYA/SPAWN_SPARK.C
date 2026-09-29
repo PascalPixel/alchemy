@@ -4,6 +4,7 @@ s32 Engine_ActorGet();
 s32 Engine_RandomNext();
 s32 IwramUnsignedRemainder();
 s32 Engine_ObjectCreate();
+void ShindenHeya_UpdateRisingSpark();
 
 
 
@@ -62,7 +63,7 @@ void ShindenHeya_SpawnActorSpark(s32 id)
     /* FAKEMATCH: the spark frame zero held in a halfword struct. */
     zero.v = 0;
     *(u16 *)(obj + 102) = IwramUnsignedRemainder(Engine_RandomNext(), 60) + 30;
-    *(s32 *)(obj + 108) = 0x200b145;
+    *(s32 *)(obj + 108) = (s32)ShindenHeya_UpdateRisingSpark;
     ((u8 *)spr)[38] = zero.v;
     spr->layer = (*(struct Sprite378 **)(actor + 80))->layer;
 }

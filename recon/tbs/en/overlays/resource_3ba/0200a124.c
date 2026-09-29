@@ -1,3 +1,16 @@
+/* NONMATCHING (number-bound): Korosseo_LoadPortrait, resource_3ba at
+ * 0x0200a124 (148 bytes with its pool); twins resource_3bb:0x0200a3bc and
+ * resource_3bc:0x0200ae54. Formerly FIELD/COMMON/KOROSSEO/PORTRAIT.C, which
+ * no script linked.
+ *
+ * Remaining difference: none in the code. With every relocation masked the
+ * object is byte-identical to all three copies. The reference loads resource
+ * number 0xe7 (the portrait sheet) from its literal pool, as a link-time
+ * number does; a plain 0xe7 compiles to an immediate move. This draft still
+ * takes it from the stand-in symbol Korosseo_PortraitResource, which has no
+ * honest definition until link-time numbers are designed. Korosseo_PortraitSlot
+ * is labelled in all three overlays' data; the palette offset table still
+ * needs its label in each. */
 #include "DMA.H"
 
 extern u8 Korosseo_PortraitResource[];

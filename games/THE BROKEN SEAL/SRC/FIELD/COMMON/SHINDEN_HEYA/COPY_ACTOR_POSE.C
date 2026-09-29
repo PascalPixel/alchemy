@@ -3,6 +3,7 @@
 s32 Engine_ActorGet();
 void Engine_ActorSetPosition();
 void Engine_ActorSetAnimation();
+void ShindenHeya_FollowLeaderOffset();
 
 
 
@@ -60,7 +61,7 @@ void ShindenHeya_CopyActorPose(void)
     record = Value1(Engine_ActorGet, 8);
     *(u16 *)(rec7 + 6) = *(u16 *)(record + 6);
     record = Engine_ActorGet(14);
-    *(s32 *)(record + 108) = 0x200a67d;
+    *(s32 *)(record + 108) = (s32)ShindenHeya_FollowLeaderOffset;
     record = Value1(Engine_ActorGet, 14);
     p5 = *(s32 *)(record + 80);
     {

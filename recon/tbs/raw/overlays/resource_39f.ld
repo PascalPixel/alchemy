@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/SPAWNED.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/resource_39f_overlay.o"(.text.x02008ae8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/SLOT_STEP.o"(.text)
         "*/resource_39f_overlay.o"(.text.x02008cd0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MOGORU_MORI/APPLY.o"(.text)
@@ -41,4 +41,7 @@ SECTIONS
         "*/resource_39f_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = IwramSignedDivideEntry;
 }

@@ -86,6 +86,9 @@ Runtime_PushSlotEntry:
 	.thumb_func
 Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
+	.global Scheduler_SetCallbackMask
+	.thumb_func
+Scheduler_SetCallbackMask:
 	overlay_veneer Scheduler_SetCallbackMaskFar
 	.global ResourceMetadata_ClearRecordFar
 	.thumb_func
@@ -127,6 +130,9 @@ Object_CommitPosition:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Map_UpdateCellRect
+	.thumb_func
+Map_UpdateCellRect:
 	overlay_veneer Func_080091c8
 	.global Object_CheckMovementCollision
 	.thumb_func
@@ -148,6 +154,9 @@ UiWork_PushValueSlot:
 	.thumb_func
 ItemIcon_LoadTilesFar:
 	overlay_veneer Ui_PrepareTransferForItemFar
+	.global PartyTalkMenu_Choose
+	.thumb_func
+PartyTalkMenu_Choose:
 	overlay_veneer PartyTalkMenu_ChooseFar
 	.global Resource_LoadFixedBlockBIntoFreeSlot
 	.thumb_func
@@ -241,6 +250,9 @@ Engine_ActorDestroy:
 	.thumb_func
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorSetDestination
 	.thumb_func
@@ -286,6 +298,9 @@ Engine_ActorFaceActor:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func
@@ -342,8 +357,17 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Event_SetPair1d4
+	.thumb_func
+Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
 	.global Engine_LeaderCheckAhead
 	.thumb_func
@@ -369,6 +393,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
 	overlay_veneer Battle_ResetEffectCounterFar
 	.global Audio_PlayCueFromEventWork
 	.thumb_func

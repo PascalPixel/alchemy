@@ -80,6 +80,8 @@ extern char SceneId_TakaraHashira2;
 extern char SceneId_TakaraHashira3;
 extern char SceneId_TakaraHashira4;
 extern char SceneId_TakaraHashira5;
+extern char SceneId_KorosseoKawa;
+extern char SceneId_KorosseoKabe;
 extern char SceneId_ArutamiraDou1;
 extern char SceneId_ArutamiraDou2;
 extern char SceneId_ArutamiraDou3;

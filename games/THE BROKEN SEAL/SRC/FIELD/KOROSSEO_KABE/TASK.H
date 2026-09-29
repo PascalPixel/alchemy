@@ -228,19 +228,28 @@ void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z);
 void SceneActor_PlaceWithScale14000(s32 no, s32 x, s32 z);
 void Text_WriteU32AsHex(u8 *buf, u32 value);
 void SceneState_EmptyHook(void);
+/* The stage's control record, at the head of the scene state. */
+struct StageControl {
+    s16 status;
+    s16 f2;
+    s16 f4;
+    s16 f6;
+    s16 f8;
+};
+
 void SceneState_SetHalfword1000To9(void);
 void SceneState_WaitUntilStatusNine(void);
 void KorosseoKabe_SpawnRandomSceneEffect(SparkSource *a);
 s32 KorosseoKabe_RaiseLinkedSceneEffect(RaisedEffect *a);
 s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB);
 void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s32 centre, s32 extra, s32 third, s32 fourth);
-void SceneState_InitControlRecordAndStartTask(void);
+void SceneState_InitControlRecordAndStartTask(s32 resource);
 void SceneState_SetWorkHalfwordDc(s16 v);
 s32 *SceneData_FindSlotAtPosition(s32 *pos, void *self);
 void StagedActor_PushActorAhead(void);
 s32 *SceneActor_FindOccupantAheadOfSubject(void);
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */

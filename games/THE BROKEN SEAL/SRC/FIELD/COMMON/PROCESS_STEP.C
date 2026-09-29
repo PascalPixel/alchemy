@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
 
 /*
@@ -130,7 +131,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         hp[i] = Owner_GetStateFar(Data_02000240.party[i])->hp;
 
     if (work->mode == 3) {
-        tile = &((struct StepTile *)0x02020000)[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
+        tile = &((struct StepTile *)Ram_MapBlocks)[((x / 0x200000) & 31) + (((z / 0x200000) & 31) << 5)];
     } else {
         if ((u32)layer <= 2)
             tile = map->layers[layer].tiles;

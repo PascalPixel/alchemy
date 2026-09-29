@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 struct Vec {
     s32 x;
@@ -43,7 +44,7 @@ s32 Object_GetTriggerTileAheadOfCurrent(void)
         pos.z = obj->pos.z;
         Vector_AddPolarOffset(0x100000, obj->angle, &pos);
         if (*(s16 *)(state + 0x19e) == 3) {
-            cell = (u8 *)0x02020000 + ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
+            cell = Ram_MapBlocks + ((((pos.x / 0x200000) & 31) + (((pos.z / 0x200000) & 31) << 5)) << 2);
         } else {
             base = *(u8 **)(map + 0x130);
             cell = base + (((pos.x / 0x100000) + ((pos.z / 0x100000) << 7)) << 2);

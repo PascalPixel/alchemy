@@ -27,7 +27,13 @@ Runtime_BumpFree:
 Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	overlay_veneer Ui_LoadWindowGraphicsFar
+	.global Engine_ResourceGetTableEntry
+	.thumb_func
+Engine_ResourceGetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
+	.global Engine_BlendSetDarkenTarget16
+	.thumb_func
+Engine_BlendSetDarkenTarget16:
 	overlay_veneer Blend_SetDarkenTarget16Far
 	overlay_veneer SerialRuntime_InitializeFar
 	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
@@ -70,10 +76,16 @@ Engine_GameFlagIsSet:
 	overlay_veneer Runtime_GetBuildStampTimeFar
 	overlay_veneer InventorySnapshot_RestoreFar
 	overlay_veneer Battle_WaitMode0Far
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
 	overlay_veneer Event_SetPairWork1c0Far
 	overlay_veneer Event_SetStatus1c6Far
 	overlay_veneer Event_ClearStatus1c6Far
 	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Object_CallSpawnRoutineAtOriginFar
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar

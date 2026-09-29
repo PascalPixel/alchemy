@@ -83,6 +83,9 @@ Map_ClearLayerEntryFlag:
 	.thumb_func
 Map_SetLayerEntryFlag:
 	overlay_veneer Map_SetLayerEntryFlagFar
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Engine_DebugCreateWindow
 	.thumb_func
@@ -144,6 +147,9 @@ Engine_GameFlagSet:
 	.thumb_func
 Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
+	.global GameFlag_GetByte
+	.thumb_func
+GameFlag_GetByte:
 	overlay_veneer GameFlag_GetByteFar
 	.global GameFlag_SetByte
 	.thumb_func
@@ -153,6 +159,9 @@ GameFlag_SetByte:
 	.thumb_func
 Party_CountActiveOwners:
 	overlay_veneer Party_CountActiveOwnersFar
+	.global Owner_RefreshActiveRatios
+	.thumb_func
+Owner_RefreshActiveRatios:
 	overlay_veneer Owner_RefreshActiveRatiosFar
 	.global Engine_EventBegin
 	.thumb_func
@@ -214,12 +223,21 @@ Party_SetFields1ceAnd1d0:
 	.thumb_func
 Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
+	.global Engine_EventOpenScreen
+	.thumb_func
+Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
+	.global Engine_EventWaitForScreen
+	.thumb_func
+Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.global Engine_SanctumOpen
 	.thumb_func
 Engine_SanctumOpen:
 	overlay_veneer Shop_ConfirmActFar
+	.global BattlePlacement_UpdateTimedEntriesTwentyTimes
+	.thumb_func
+BattlePlacement_UpdateTimedEntriesTwentyTimes:
 	overlay_veneer BattlePlacement_UpdateTimedEntriesTwentyTimesFar
 	.global DebugParty_LoadPreset
 	.thumb_func

@@ -979,10 +979,8 @@ Title_IntroGraphicsC:
 	.global Title_NintendoLogo
 Title_NintendoLogo:
 	.incbin "baserom.gba", 0x003337a0, 0x00000828
-	.section .unidentified.08333fc8,"a"
-	.global Title_IntroTiles
-Title_IntroTiles:
-	.incbin "baserom.gba", 0x00333fc8, 0x0000182c
+	.section .unidentified.083357f1,"a"
+	.incbin "baserom.gba", 0x003357f1, 0x00000003
 	.section .unidentified.08337101,"a"
 	.incbin "baserom.gba", 0x00337101, 0x00000003
 	.section .unidentified.0833ac05,"a"

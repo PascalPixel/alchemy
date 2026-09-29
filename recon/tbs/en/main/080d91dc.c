@@ -290,12 +290,12 @@ loop_60:
             if (var_fp_344 == (sp10 + 0x50)) {
                 Func_080f9010(0xD4);
             }
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(sp28, sp20);
             M2C_FIELD(sp1C, s32 *, 0) = M2C_FIELD(temp_r5_488, s32 *, 8);
             M2C_FIELD(sp1C, s32 *, 4) = temp_r7_496;
             M2C_FIELD(sp1C, s32 *, 8) = (s32) M2C_FIELD(temp_r5_488, s32 *, 0x10);
-            Func_08004cb4(sp1C);
+            SceneTransform_ApplyPosition(sp1C);
             if (var_fp_344 == (sp10 + 0x30)) {
                 sp0 = (s32 *)0x10;
                 ObjectGroup_UpdateMembers(M2C_FIELD(M2C_FIELD(sp44, void **, 0x7828), s16 *, spC), 7, -1, sp34, 0x10);
@@ -313,15 +313,15 @@ loop_60:
                 case 1:                             /* switch 5 */
                     break;
                 case 0:                             /* switch 5 */
-                    Func_08004bd4((0 - var_fp_344) << 0xA);
+                    SceneTransform_ApplyPitch((0 - var_fp_344) << 0xA);
                     break;
                 case 2:                             /* switch 5 */
-                    Func_08004c1c(var_fp_344 << 0xA);
+                    SceneTransform_ApplyYaw(var_fp_344 << 0xA);
                     break;
                 default:                            /* switch 5 */
                     temp_r5_610 = var_fp_344 << 0xA;
-                    Func_08004c1c(temp_r5_610);
-                    Func_08004c6c(temp_r5_610);
+                    SceneTransform_ApplyYaw(temp_r5_610);
+                    SceneTransform_ApplyRoll(temp_r5_610);
                     break;
                 }
                 var_r1_620 = sp18;

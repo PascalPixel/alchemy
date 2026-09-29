@@ -49,7 +49,7 @@ void **GetBattleObjectSlotFar(s32 member_id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(const void *source, void *screen);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
@@ -153,7 +153,7 @@ void Func_080ca1fc(void *object, s32 mode)
     look_target = facing + 12;
     outer = 0;
     do {
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, look_target);
 
         particle = (void *)0x02010000;

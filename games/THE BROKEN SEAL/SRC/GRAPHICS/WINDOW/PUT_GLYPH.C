@@ -1,16 +1,3 @@
-/* Draft: complete 260-byte owner, 28 differing halfwords. First 45
- * instructions exact after correcting the resource callee and byte row
- * arithmetic. Remaining: X sum and masks, index-store scheduling.
- * Halfword columns and word/bitfield unions regressed; no allocator sweep.
- * 2026-09-29 slice 4: 165 against 480 (4 register-only, 1 operand, 2
- * reordered). Written as a number, the 0xfffe column offset folds into the
- * multiply (0x7fff4); held in its own local it stays a separate pool add,
- * which is what the link-time Value_0000fffe did. The tilemap write is an
- * element of a tile array, which puts the base first ([r5, r2]) as the
- * reference does; the window work is gWindowWork. Four alchemy permute runs
- * (about 136,000 candidates) end at this score; left: the height and y rows
- * swap r2/r3 and the attribute or sits one slot later.
- */
 #include "TYPES.H"
 
 extern u8 *gWindowWork;
@@ -52,7 +39,9 @@ struct WindowTilemap {
     u16 tiles[640];
 };
 
-void Func_08018efc(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
+/* Places a glyph: mode 1 queues it as a sprite at the window cell, other
+   modes write tiles up to 0xff into the window tilemap. */
+void UiWindow_PutGlyph(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
 {
     struct RenderOutput *out = (struct RenderOutput *)gWindowWork;
     u8 *base = (u8 *)out;
@@ -78,9 +67,9 @@ void Func_08018efc(struct UiWindow *win, u32 tile, u32 x, u32 y, s32 mode)
         if (*slot == 99)
             *slot = Resource_FindFreeEntry();
         column = 0xfffe;
-        attr->x = (win->width + (win->x + column)) * 8 + 4;
-        row = (u8)win->height + 254;
-        row += (u8)win->y;
+        /* FAKEMATCH: the volatile width read is scheduled before the column constant's pool load, as in the reference. */
+        attr->x = (win->x + (column + *(volatile u16 *)&win->width)) * 8 + 4;
+        row = (u8)win->y + (row = (u8)win->height + 254);
         attr->y = row * 8 - 1;
         out->x = attr->x;
         out->y = attr->y;

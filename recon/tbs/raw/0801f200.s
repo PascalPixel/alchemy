@@ -443,25 +443,25 @@ Func_0801f200:
 	adds	r1, #48
 	adds	r3, r7, #0
 	mov	r0, r8
-	bl	Func_08018efc
+	bl	UiWindow_PutGlyph
 	ldrb	r1, [r6, #1]
 	movs	r2, #3
 	adds	r1, #48
 	adds	r3, r7, #0
 	mov	r0, r8
-	bl	Func_08018efc
+	bl	UiWindow_PutGlyph
 	ldrb	r1, [r6, #2]
 	movs	r2, #1
 	adds	r1, #48
 	adds	r3, r5, #0
 	mov	r0, r8
-	bl	Func_08018efc
+	bl	UiWindow_PutGlyph
 	ldrb	r1, [r6, #3]
 	mov	r0, r8
 	adds	r1, #48
 	movs	r2, #3
 	adds	r3, r5, #0
-	bl	Func_08018efc
+	bl	UiWindow_PutGlyph
 .L_0801f59c:
 	ldr	r1, [sp, #32]
 	ldr	r3, [pc, #24]

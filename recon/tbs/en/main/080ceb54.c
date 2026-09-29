@@ -39,7 +39,7 @@ u32 Random16(void);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Trig_Sin(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -170,7 +170,7 @@ s32 Func_080ceb54(void *object, s32 variant)
                     Func_080b50e8(133);
                 }
             }
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing_b);
 
             scanline = (s32 *)((u8 *)work + 0x6980);

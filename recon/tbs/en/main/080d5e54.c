@@ -136,7 +136,7 @@ void Graphics_SaveTransferWorkOnce(void);
 void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_08004c6c(s32 angle);
+void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPosition(s32 *position);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
@@ -265,11 +265,11 @@ s32 BattleEffect_RunSparkTravel(void *object)
                     SceneTransform_ApplyPitch(-spin);
                     break;
                 case 2:
-                    Func_08004c6c(-spin);
+                    SceneTransform_ApplyRoll(-spin);
                     break;
                 case 3:
                     SceneTransform_ApplyPitch(-spin);
-                    Func_08004c6c(-spin);
+                    SceneTransform_ApplyRoll(-spin);
                     break;
                 }
                 EffectPosition_ApplyBaseAndYOffset((s32 *)spark_step, (struct EffectPosition *)screen);

@@ -387,7 +387,7 @@ Scene_RunParticleSequence:
 	stmia r3!, {r0, r1, r2}
 	subs r3, #12
 	bl 0x08015000
-	bl 0x080f731c
+	bl ReelGame_InitTitle
 	movs r7, #0
 	mov r10, r7
 	ldr r7, [sp, #32]

@@ -26,10 +26,12 @@ corrections separately. Timebox work that cannot move this number.
    veneer modules count as assembly; difficulty never changes that classification.
 4. Commit each adoption and attempt; keep near misses as drafts with the
    remaining difference in their header. Never throw work away.
-5. Commit code, tooling, our documentation and identified editable inputs.
-   Never commit ROMs, the cartridge logo, asset dumps, another project's Golden
-   Sun work, SDK or leaked code. Evidence comes from our ROMs, this repository
-   and public documentation.
+5. Commit code, tooling, our documentation and editable assets, as pret does:
+   indexed PNGs with the game's palettes, tilemaps, sound, text and game
+   definitions, built into the ROM by our tools. Never commit ROMs, the
+   cartridge logo, raw dumps (grey sheets, whole-area blobs, compression
+   tokens), another project's Golden Sun work, SDK or leaked code. Evidence
+   comes from our ROMs, this repository and public documentation.
 6. Only Pascal changes credit standards, approves compiler source, binaries
    and digests, or authorises pushes and parallel workflows. Record approvals below.
 
@@ -49,7 +51,10 @@ in assets. Banning forms only moves the answer; hold these invariants instead.
    the count, in any file or location, `out/` included.
 2. **The linker places.** Every name is defined where its bytes are, as a C
    definition or a label, and layout is the linker scripts' object order. No
-   equate, alias, `#define` or table gives a name an address.
+   equate, alias, `#define` or table gives a name an address, except
+   Camelot's own: ROM code calls the resident IWRAM routines through fixed
+   entry addresses, listed once in each game's `IWRAM_CALL.H` and checked by
+   the build against where the linker placed each routine.
 3. **The map counts.** DONE is pret's calcrom over the linker maps of
    byte-identical builds: the code the linker places from `games/`. `games/`
    holds only real source: C from an approved compiler, or proven library,
@@ -78,8 +83,11 @@ and proven common code in `games/COMMON`; instanced code spells no address names
 Scaffolding stays under `recon/tbs` and `recon/tla` and shrinks toward zero.
 
 Assets are individual indexed PNGs with real palettes, identified tilemap/table
-BINs, WAV, MIDI, PO and editable game definitions. Compression comes from these
-inputs and per-file encoder options; unresolved ROM-derived material stays local.
+BINs, WAV, MIDI, PO and editable game definitions, converted by our tools in
+the build as pret's gbagfx, mid2agb and preproc convert theirs. Compression
+comes from these inputs and per-file encoder options. Asset tooling and
+identified assets are source: never delete them as dumps. Bytes not yet
+identified stay in the baserom scaffold.
 
 ## Work and build
 
@@ -138,3 +146,9 @@ a verified build.
 - 2026-09-28: compilers take stock options only; a game-specific compiler flag
   is an invented answer. agscc is GCC 2.96 with its host ports, and agbcc is
   called with pret's flags.
+- 2026-09-28: pret publishes graphics, sound, text and maps as editable files
+  built by its tools; so does Alchemy.
+- 2026-09-29: do what Camelot did for IWRAM calls. The ROM loads a resident
+  IWRAM routine's address before the arguments, which only a call through a
+  fixed address reproduces; a label compiles to a direct `bl` and `long_call`
+  loads the address last.

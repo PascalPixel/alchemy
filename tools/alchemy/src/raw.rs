@@ -149,7 +149,7 @@ fn load_rom(
     explicit: Option<&str>,
 ) -> Result<CanonicalRom, String> {
     let rom = CanonicalRom::from_file(&root.join(explicit.unwrap_or(target.rom)), target)?;
-    crate::text_catalog::verify_reference(root, target.id.as_str(), rom.bytes())?;
+    target.verify_reference(rom.bytes())?;
     Ok(rom)
 }
 

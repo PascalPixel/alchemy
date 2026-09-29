@@ -277,7 +277,7 @@ fn base_rom(root: &Path, target: DecompTarget, output: &Path) -> Result<(), Stri
     if bytes.len() as u64 != target.rom_size {
         return Err(format!("{} has the wrong size", rom.display()));
     }
-    crate::text_catalog::verify_reference(root, target.id.as_str(), &bytes)?;
+    target.verify_reference(&bytes)?;
     fs::create_dir_all(output).map_err(|error| error.to_string())?;
     let link = output.join("baserom.gba");
     let _ = fs::remove_file(&link);

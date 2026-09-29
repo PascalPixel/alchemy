@@ -14,6 +14,10 @@ pub struct HuffmanArchive {
     pub context_directory: u32,
     pub directory: u32,
     pub contexts: usize,
+    /// Offsets into `bytes` of the little-endian words that hold an address
+    /// inside the archive, so a linker can relocate them from the archive's
+    /// own label instead of trusting `base`.
+    pub pointers: Vec<usize>,
 }
 
 enum Node {
@@ -165,7 +169,9 @@ pub fn encode_huffman_archive(
         bytes.push(0);
     }
     let context_directory = base + bytes.len() as u32;
+    let mut pointers = Vec::new();
     for (group, model_base) in model_bases.iter().enumerate() {
+        pointers.extend([bytes.len(), bytes.len() + 4]);
         bytes.extend(model_base.to_le_bytes());
         bytes.extend((offset_table + group as u32 * 512).to_le_bytes());
     }
@@ -208,6 +214,7 @@ pub fn encode_huffman_archive(
         bytes.extend(payload);
         bytes.extend(lengths);
     }
+    pointers.extend((0..directory.len()).step_by(4).map(|at| bytes.len() + at));
     bytes.extend(directory);
     Ok(HuffmanArchive {
         bytes,
@@ -216,6 +223,7 @@ pub fn encode_huffman_archive(
         context_directory,
         directory: address,
         contexts: contexts.iter().flatten().count(),
+        pointers,
     })
 }
 
@@ -249,6 +257,12 @@ fn huffman_archive_packs_model_payloads_and_directory() {
     assert_eq!(archive.messages, 0x101c);
     assert_eq!(archive.directory, 0x1021);
     assert_eq!(archive.contexts, 3);
+    // Every address word: the context directory's two, then the banks'.
+    assert_eq!(archive.pointers, [20, 24, 33, 37, 41, 45]);
+    for site in &archive.pointers {
+        let word = u32::from_le_bytes(archive.bytes[*site..site + 4].try_into().unwrap());
+        assert!((0x1000..=archive.directory).contains(&word));
+    }
     assert!(encode_huffman_archive(0x1000, 3, &[vec![Some(vec![3])]]).is_err());
     assert!(encode_huffman_archive(0x1000, 0x1001, &[]).is_err());
     assert_eq!(

@@ -1,7 +1,11 @@
-//! The twelve shipped message archives as ordinary GNU gettext PO catalogs.
+//! The twelve shipped message archives as ordinary GNU gettext PO catalogs,
+//! as pret's preproc turns its text into data: each catalog is encoded into a
+//! context-modelled Huffman archive whose internal addresses are words naming
+//! the archive's own label, so the linker places it.
 
+use super::asm::{Data, Label, Pointer};
 use encoding_rs::WINDOWS_1252;
-use psynergy::assets::huffman_archive::{encode_huffman_archive, HuffmanArchive};
+use psynergy::assets::huffman_archive::encode_huffman_archive;
 use psynergy::assets::po::{self, Catalog};
 use std::collections::BTreeMap;
 use std::fs;
@@ -14,130 +18,86 @@ const BANK_SIZE: usize = 256;
 pub(crate) struct ArchiveSpec {
     pub target: &'static str,
     pub language: &'static str,
-    pub rom: &'static str,
     pub output: &'static str,
-    pub rom_sha256: &'static str,
     pub characters: Option<&'static str>,
 }
 
-/// Edition identities; the alphabets map font slots,
+/// Each edition's catalog and alphabet; the alphabets map font slots,
 /// retaining unused and duplicate glyphs for lossless PO conversion.
 pub(crate) static ARCHIVES: [ArchiveSpec; 12] = [
     ArchiveSpec {
         target: "tbs-ja",
         language: "ja",
-        rom: "roms/tbs-ja.gba",
         output: "games/THE BROKEN SEAL/TEXT/JA.PO",
-        rom_sha256: "088bedae4bad8b67e87ff10035a898d3639f3182d486fe5a5d113bab223e0a26",
         characters: Some(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿名前中武器長剣発動呪使水火風地毒見宝石町行炎船海氷道具島男女力土大上玉山気目入口岩天空防母北戦手出下品同死木像以宮村東南森西灯台寺分先遺跡立人方時様主者陸説明士世光知伝金売客商屋子×年兄川官錬日民父冬古代夜雪春「」草原黄文○"),
     },
     ArchiveSpec {
         target: "tbs-en",
         language: "en",
-        rom: "roms/tbs-en.gba",
         output: "games/THE BROKEN SEAL/TEXT/EN.PO",
-        rom_sha256: "c14f1151897e8d73f25ffdd67e21eebb6dc57973ff2458872ee89fa9060aaca1",
         characters: None,
     },
     ArchiveSpec {
         target: "tbs-de",
         language: "de",
-        rom: "roms/tbs-de.gba",
         output: "games/THE BROKEN SEAL/TEXT/DE.PO",
-        rom_sha256: "d7a61803600a002bc80be8063a7d8d281bc77c2261cfb812cea552d3f95f3dd1",
         characters: None,
     },
     ArchiveSpec {
         target: "tbs-es",
         language: "es",
-        rom: "roms/tbs-es.gba",
         output: "games/THE BROKEN SEAL/TEXT/ES.PO",
-        rom_sha256: "c067f04d05a65677eca3b8e3609a6ef9b86898604ef252ccf54c2b41d49f2eb8",
         characters: None,
     },
     ArchiveSpec {
         target: "tbs-fr",
         language: "fr",
-        rom: "roms/tbs-fr.gba",
         output: "games/THE BROKEN SEAL/TEXT/FR.PO",
-        rom_sha256: "5eb59f508c25548fb0ef72911cc75a81867f16b0ef8fca2a22cb6d026a862cd8",
         characters: None,
     },
     ArchiveSpec {
         target: "tbs-it",
         language: "it",
-        rom: "roms/tbs-it.gba",
         output: "games/THE BROKEN SEAL/TEXT/IT.PO",
-        rom_sha256: "fc6ef60c1c271de7352be610eb4dca29ab5edea1e4b33f05a548a65f522a452d",
         characters: None,
     },
     ArchiveSpec {
         target: "tla-ja",
         language: "ja",
-        rom: "roms/tla-ja.gba",
         output: "games/THE LOST AGE/TEXT/JA.PO",
-        rom_sha256: "19dd48b74726f323cd829e226b60aa1b373c51fb2e840804efe2d2dc2891a890",
         characters: Some(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[¥]^_`abcdefghijklmnopqrstuvwxyz{|}~�������をぁぃぅぇぉゃゅょっ�あいうえおかきくけこさしすせそ�。｢｣、・ヲァィゥェォャュョッーアイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン゙゚たちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわん��神殿後名前黄金太陽開封印失時代力手武器長剣発動呪使水火風地毒見宝石中炎船海氷道具灯台運光様目下山男女土大上玉気左右入口岩天空防母行北戦出品同以死木像人先島陸小村寺高原町遺跡東西南古屋頂通信世界錬文明者年日士兄「」生知方売客商子主王父一官白茶×説分今立川伝森○…足夜買門冬雪月民宮春多草床正店星城外絵心闘体"),
     },
     ArchiveSpec {
         target: "tla-en",
         language: "en",
-        rom: "roms/tla-en.gba",
         output: "games/THE LOST AGE/TEXT/EN.PO",
-        rom_sha256: "4199d82f845edf3e2e92f3783bca00190b5bc102d7c8aa339b951de280b1e6cc",
         characters: None,
     },
     ArchiveSpec {
         target: "tla-de",
         language: "de",
-        rom: "roms/tla-de.gba",
         output: "games/THE LOST AGE/TEXT/DE.PO",
-        rom_sha256: "993cfc34b6b28f6a9bfb135dc04023ee2b64693841ce90ab89536b97fbb4afed",
         characters: None,
     },
     ArchiveSpec {
         target: "tla-es",
         language: "es",
-        rom: "roms/tla-es.gba",
         output: "games/THE LOST AGE/TEXT/ES.PO",
-        rom_sha256: "c6bb68229971c36febe8bdf5081a4aa658c5c5417a2f4d3c7e0c3762c3ecb18a",
         characters: None,
     },
     ArchiveSpec {
         target: "tla-fr",
         language: "fr",
-        rom: "roms/tla-fr.gba",
         output: "games/THE LOST AGE/TEXT/FR.PO",
-        rom_sha256: "8f9a854618332d4a2886170a03ab0b10624d1202ea8562dabf0002807f7b56a8",
         characters: None,
     },
     ArchiveSpec {
         target: "tla-it",
         language: "it",
-        rom: "roms/tla-it.gba",
         output: "games/THE LOST AGE/TEXT/IT.PO",
-        rom_sha256: "7f3fbb2ee3e493784e63069899b5a53cf79742cb1a64560094c570b0ed3a05c2",
         characters: None,
     },
 ];
-
-/// The approved reference identity is independent of local extraction output.
-pub(crate) fn reference_sha256(_root: &Path, target: &str) -> Result<String, String> {
-    ARCHIVES
-        .iter()
-        .find(|spec| spec.target == target)
-        .map(|spec| spec.rom_sha256.to_owned())
-        .ok_or_else(|| format!("no approved reference ROM for {target}"))
-}
-/// Refuse `rom` unless it is `target`'s approved reference ROM.
-pub(crate) fn verify_reference(root: &Path, target: &str, rom: &[u8]) -> Result<(), String> {
-    if crate::compiler::sha256::hex(rom) != reference_sha256(root, target)? {
-        return Err(format!(
-            "ROM differs from the approved {target} reference ROM"
-        ));
-    }
-    Ok(())
-}
 
 fn command(symbol: u16) -> (&'static str, bool) {
     match symbol {
@@ -360,7 +320,7 @@ fn header_number(headers: &BTreeMap<String, String>, name: &str) -> Result<usize
 }
 
 /// A PO catalog's messages and encoder options. It records no placement: the
-/// build supplies the address the archive is encoded at.
+/// linker places the archive and resolves the addresses it holds.
 #[derive(Debug)]
 pub(crate) struct SourceCatalog {
     pub target: String,
@@ -448,10 +408,40 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
     })
 }
 
-/// The archive encoded at `base`, the address its build places it at.
-pub(crate) fn encode(source: &SourceCatalog, base: u32) -> Result<HuffmanArchive, String> {
-    encode_huffman_archive(base, source.symbol_count, &source.banks)
-        .map_err(|error| error.to_string())
+/// The catalog's message archive labelled `label`, word aligned: its context
+/// models, offset table, context directory (labelled `label_Contexts`),
+/// message banks and bank directory (labelled `label_Banks`). Every address
+/// the archive holds is a word naming `label`, which the linker resolves.
+pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
+    // Laid out from a word-aligned start, its padding holds wherever the
+    // linker places it on a word boundary.
+    let built = encode_huffman_archive(0, source.symbol_count, &source.banks)
+        .map_err(|error| error.to_string())?;
+    let mut data = Data::from_bytes(built.bytes);
+    data.align = 4;
+    for (name, offset) in [
+        (label.to_owned(), 0),
+        (format!("{label}_Contexts"), built.context_directory),
+        (format!("{label}_Banks"), built.directory),
+    ] {
+        data.labels.push(Label {
+            name,
+            offset: offset as usize,
+            global: true,
+        });
+    }
+    for site in built.pointers {
+        let word = u32::from_le_bytes(data.bytes[site..site + 4].try_into().unwrap());
+        data.bytes[site..site + 4].fill(0);
+        data.pointers.push((
+            site,
+            Pointer {
+                symbol: label.to_owned(),
+                addend: i64::from(word),
+            },
+        ));
+    }
+    Ok(data)
 }
 
 #[cfg(test)]
@@ -493,20 +483,34 @@ mod tests {
     fn source_messages_derive_the_complete_archive_layout() {
         let catalog = small_catalog();
         let source = source_catalog(&catalog).unwrap();
-        let base = ROM_BASE + 0x41;
-        let archive = encode(&source, base).unwrap();
+        let archive = archive(&source, "Messages").unwrap();
         assert_eq!(
             source.banks.iter().map(Vec::len).sum::<usize>(),
             catalog.entries.len()
         );
-        // The archive placed at `base` in an image reads back every message.
+        assert_eq!(archive.align, 4);
+        let text = archive.source().unwrap();
+        assert!(
+            text.contains("\t.global Messages_Contexts\nMessages_Contexts:\n\t.4byte Messages\n")
+        );
+        // Linked on any word boundary, the archive reads back every message.
+        let base = ROM_BASE + 0x44;
+        let label = |name: &str| {
+            let offset = archive
+                .labels
+                .iter()
+                .find(|label| label.name == name)
+                .unwrap()
+                .offset;
+            base + offset as u32
+        };
         let mut rom = vec![0; (base - ROM_BASE) as usize];
-        rom.extend_from_slice(&archive.bytes);
+        rom.extend_from_slice(&archive.bytes_at(base).unwrap());
         let mut reader = MessageReader::new(
             &rom,
             ROM_BASE,
-            archive.context_directory,
-            archive.directory,
+            label("Messages_Contexts"),
+            label("Messages_Banks"),
             source.symbol_count,
         )
         .unwrap();
@@ -621,14 +625,12 @@ mod tests {
         ids.dedup();
         assert_eq!(ARCHIVES.len(), ids.len());
         assert_eq!(ids.len(), crate::targets::TARGET_IDS.len());
-        let mut identities = std::collections::HashSet::new();
         for id in crate::targets::TARGET_IDS {
             let target = crate::targets::target_for(id);
             let spec = ARCHIVES
                 .iter()
                 .find(|spec| spec.target == id.as_str())
                 .unwrap();
-            assert_eq!(spec.rom, target.rom);
             assert_eq!(
                 spec.output,
                 format!(
@@ -636,44 +638,6 @@ mod tests {
                     target.game_dir(),
                     spec.language.to_uppercase()
                 )
-            );
-            assert_eq!(spec.rom_sha256.len(), 64);
-            assert!(spec.rom_sha256.bytes().all(|byte| byte.is_ascii_hexdigit()));
-            assert!(identities.insert(spec.rom_sha256));
-        }
-    }
-
-    #[test]
-    fn local_metadata_cannot_authorize_a_different_reference_rom() {
-        let root = tempfile::tempdir().unwrap();
-        let manifest = root.path().join("recon/tbs/text.json");
-        fs::create_dir_all(manifest.parent().unwrap()).unwrap();
-        let wrong_rom = b"a local ROM is not an approved reference";
-        fs::write(
-            manifest,
-            serde_json::json!([{
-                "target": "tbs-en",
-                "rom_sha256": crate::compiler::sha256::hex(wrong_rom)
-            }])
-            .to_string(),
-        )
-        .unwrap();
-        let identity = reference_sha256(root.path(), "tbs-en").unwrap();
-        assert_ne!(identity, crate::compiler::sha256::hex(wrong_rom));
-        assert_eq!(identity, ARCHIVES[1].rom_sha256);
-        assert!(verify_reference(root.path(), "tbs-en", wrong_rom).is_err());
-    }
-
-    #[test]
-    fn reference_identity_requires_an_exact_registered_target() {
-        for target in ["", "tbs", "TBS-en", "tbs-en ", "tbs-us", "tla-us"] {
-            assert!(
-                reference_sha256(Path::new("."), target).is_err(),
-                "{target}"
-            );
-            assert!(
-                verify_reference(Path::new("."), target, b"").is_err(),
-                "{target}"
             );
         }
     }

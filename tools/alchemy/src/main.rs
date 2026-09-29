@@ -14,7 +14,6 @@ mod parallel;
 mod raw;
 mod recovery;
 mod targets;
-mod text_catalog;
 mod verify;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\

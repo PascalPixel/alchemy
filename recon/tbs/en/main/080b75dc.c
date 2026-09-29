@@ -1,3 +1,5 @@
+/* alchemy permute: BattleUnit_RefreshPlacement against recon/tbs/raw/080b75dc.s: score 1970 (32 register-only, 10 operand, 8 reordered, 5 inserted, 6 deleted).
+   Job 11, iteration 5500; rewrites: 9x swap commutative operands, 6x reorder independent statements, 4x introduce a temporary, 4x share one temporary between two statements, 4x add a same-width cast, 4x move an assignment into or out of a condition or call, 3x reorder local declarations, 3x remove a temporary, 3x drop a same-width cast, 3x change loop form, 3x split or join a compound assignment, 2x pointer arithmetic or indexing, 2x toggle register. */
 /* 2026-09-29 alchemy permute: score 3368 to 2135 on the permuter's scorer
    (0 is exact); remaining 41 register-only, 8 operand, 9 reordered, 4
    inserted, 8 deleted. Kept rewrites: 12x swap commutative operands, 7x
@@ -26,40 +28,59 @@ void Summon_LayoutPositions(u16 *ids, s32 count, s32 *x, s32 *z);
 void BattleUnit_RefreshPlacement(void)
 {
     u16 ids[14];
-    register s32 x[6];
     struct BattleSession *battle = gBattleWork;
+    register s32 x[6];
     s32 z[6];
     s32 i = 0;
     s32 count;
     s32 n;
-    u8 *p;
     s32 value;
-    u16 *cursor;
+    u8 *p;
     s32 pos;
-    s32 tmp;
+    u16 *cursor;
+    s32 tmp6;
 
-    tmp = BattleParty_PrepareActiveOwners(ids);
-    count = tmp;
-    for (n = 13; n >= 0; n--)
-        battle->placement[n] = 255;
+    tmp6 = BattleParty_PrepareActiveOwners(ids);
+    count = tmp6;
     n = 13;
-    while (n >= 8) {
-        *(battle->placement + n) = n;
+    if (n >= 0) {
+        while (1) {
+            u8 *tmp4;
+            tmp4 = battle->placement;
+            tmp4[n] = 255;
+            n--;
+            if (n < 0)
+                break;
+        }
+    }
+    n = 13;
+    while (8 <= n) {
+        u8 *tmp7;
+        tmp7 = battle->placement;
+        tmp7 = tmp7 + n;
+        *tmp7 = n;
         n--;
     }
     if (count > 0) {
-        pos = 2 * i;
+        s32 tmp;
+        s32 tmp5;
+        tmp5 = 2 * i;
+        tmp = tmp5;
         n = count;
         cursor = ids;
-        if (1 != 0) {
+        pos = tmp;
+        tmp5 = 0 != 1;
+        if (tmp = tmp5) {
             do {
                 s32 id = *cursor++;
                 s32 tmp2;
+                s32 tmp3;
                 battle->placement[id] = i;
-                tmp2 = i + 1;
-                BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, BattlePlacement_StepPairs[pos], BattlePlacement_StepPairs[1 + pos]);
-                i = tmp2;
+                tmp3 = (u32)(i + 1);
+                tmp2 = tmp3;
                 n--;
+                BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, *(pos + BattlePlacement_StepPairs), *(BattlePlacement_StepPairs + (tmp3 = 1 + pos)));
+                i = tmp2;
                 pos += 2;
                 if (!n)
                     break;
@@ -69,12 +90,11 @@ void BattleUnit_RefreshPlacement(void)
     for (i = 0; 6 > i && 0xff != battle->enemy_units[i]; ++i)
         ids[i] = battle->enemy_units[i];
     count = i;
-    Summon_LayoutPositions(ids, count, x, z);
     i = 0;
-    while (count > i) {
+    Summon_LayoutPositions(ids, count, x, z);
+    for (; i < count; i += 1) {
         s32 id = battle->enemy_units[i];
         if (id != 0xfe)
             BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, x[i], z[i]);
-        i += 1;
     }
 }

@@ -3,6 +3,9 @@
 	.global Func_0811a490
 	.thumb_func
 Func_0811a490:
+	.global Summon_ClassValid
+	.thumb_func
+Summon_ClassValid:
 	push	{r5, lr}
 	bl	0x081280fc
 	movs	r3, #192

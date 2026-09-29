@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -64,10 +65,8 @@
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
-extern u8 Value_0000007b;
 extern u8 Value_00000091;
 extern u8 Value_00000093;
-extern u8 Value_000000b1;
 
 extern const u8 Data_080ee0a2[];
 extern const u16 Data_080ee0aa[];
@@ -143,11 +142,11 @@ void BattleFx_RunMemberBeam(void *object, s32 variant)
             0, &out_x, &out_y);
     }
 
-    palette = Resource_GetTableEntry((s32)&Value_0000007b);
+    palette = Resource_GetTableEntry((s32)&ResourceId_EarthWallSheet);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     status = Resource_DecodeType01((u8 *)palette + 128, work);
 
-    palette = Resource_GetTableEntry((s32)&Value_000000b1);
+    palette = Resource_GetTableEntry((s32)&ResourceId_CrescentMoonSheet);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     status = Resource_DecodeType01((u8 *)palette + 128, (u8 *)work + 0x2710);
 

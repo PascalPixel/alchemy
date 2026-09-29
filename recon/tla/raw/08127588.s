@@ -682,6 +682,9 @@ Func_08127588:
 	movs	r0, r0
 	.2byte 0x0730
 	.2byte 0x0300
+	.global Summon_TakeCharge
+	.thumb_func
+Summon_TakeCharge:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

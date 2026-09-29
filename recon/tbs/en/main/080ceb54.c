@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -52,7 +53,6 @@ void Scheduler_RemoveCallback(void *callback);
 void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
-extern u8 Value_00000069;
 extern u8 Value_000000bb;
 extern u8 Value_0000008d;
 extern u8 Value_00000091;
@@ -80,7 +80,7 @@ s32 BattleFx_RunMemberBurst(void *object, s32 variant)
     M2C_FIELD(work, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(1);
 
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000069), work);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_MemberBurstImage), work);
 
     if (variant == 0) {
         palette_id = (s32)&Value_000000bb;

@@ -62,7 +62,6 @@ void Camera_ApplyShake(s32 mask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
 
 extern const u16 ParticleStreams_CellOffsets[];
-extern u8 Value_00000089;
 
 #define WORK_EFX ((struct BattleEffectArgument *)work->effect)
 
@@ -97,7 +96,7 @@ void Unnamed_080e01e4(struct BattleEffectArgument *effect)
     BattleFx_FetchRectangleBlitters((s32)0, (u32 *)draw);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_JupiterDjinnSmallSheet, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000089, (u8 *)work + 0x320, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameballSheet, (u8 *)work + 0x320, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);

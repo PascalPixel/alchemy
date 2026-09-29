@@ -42,7 +42,14 @@ struct BattleEventState {
  */
 struct BattleSession {
     s32 enemy_group;                /* 0x000 */
-    u8 unknown_004[0x3d];
+    s16 sprite_slots[6];            /* 0x004, unit holding each sprite slot */
+    u16 enemy_classes[6];           /* 0x010 */
+    u32 summon_masks[6];            /* 0x01c */
+    s8 summon_channels[6];          /* 0x034 */
+    u8 unknown_03a[2];
+    u16 first_defeated;             /* 0x03c, lowest slot defeated */
+    u16 defeat_state;               /* 0x03e */
+    u8 summon_count;                /* 0x040 */
     u8 party_status_mode;           /* 0x041 */
     u8 unknown_042;
     u8 flags_043;                   /* 0x043, bit 1: an enemy challenged */

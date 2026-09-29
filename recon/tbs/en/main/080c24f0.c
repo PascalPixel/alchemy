@@ -47,28 +47,14 @@
  */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
+#include "BATTLE_WORK.H"
 
 /* Counts one defeated enemy toward the battle spoils: its coins and
    experience (randomly raised in proportion to the enemy's level when the
    party earned them), the formation slot it came from, and a chance at its
    item drop, which replaces the least valuable drop so far. */
 
-struct BattleSpoils {
-    s32 coins;
-    s32 experience;
-    s32 defeated;
-    u16 items[4];
-};
 
-struct BattleFormation {
-    u8 unknown_00[0x10];
-    u16 enemies[6];                 /* 0x10 */
-    u8 unknown_1c[0x20];
-    u16 first_slot;                 /* 0x3c */
-    u16 defeat_state;               /* 0x3e */
-    u8 unknown_40[0x4f0];
-    struct BattleSpoils spoils;     /* 0x530 */
-};
 
 struct EnemyRecord {
     u8 unknown_00[0x4c];
@@ -78,7 +64,7 @@ struct EnemyRecord {
     u16 experience;                 /* 0x52 */
 };
 
-extern struct BattleFormation *gBattleWork;
+
 
 struct BattleUnit *Owner_GetStateFar(s32);
 struct EnemyRecord *Owner_GetRecordFar(s32);
@@ -126,7 +112,7 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
 {
     struct BattleUnit *unit;
     struct EnemyRecord *rec;
-    struct BattleFormation *formation;
+    struct BattleSession *formation;
     struct BattleSpoils *spoils;
     s32 i;
     s32 chance;
@@ -144,17 +130,17 @@ s32 BattleEnemy_RecordDefeat(s32 unit_id, s32 earned)
         return -2;
     slot = 0;
     i = 0;
-    if (formation->enemies[0] != unit->class_id) {
+    if (formation->enemy_classes[0] != unit->class_id) {
         do {
             if (++i > 5)
                 break;
-        } while (formation->enemies[i] != unit->class_id);
+        } while (formation->enemy_classes[i] != unit->class_id);
     }
     if (i != 6)
         slot = i;
     if (formation->defeat_state != 2) {
-        if (slot < formation->first_slot)
-            formation->first_slot = slot;
+        if (slot < formation->first_defeated)
+            formation->first_defeated = slot;
         if (spoils->defeated)
             formation->defeat_state = 1;
     }

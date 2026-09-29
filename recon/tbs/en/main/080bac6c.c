@@ -18,56 +18,44 @@
    while and do/while spelling tried (with break, goto or a label after the
    party scan) peels or unrotates the party scan (660 to 2515). About
    160,000 searched candidates found nothing below 445. */
+/* 2026-09-29 (Mercury): the lists and action queue are now BattleSession
+   fields (BATTLE_WORK.H); the enemy scan indexes 50 entries past a base
+   two bytes into the work, as Battle_ResolveTargetAction's summon insert
+   does. Still 445: the ROM keeps the enemy scan unreduced. */
 #include "TYPES.H"
-
-struct RosterTarget {
-    s16 actor;
-    u8 unknown_02[14];
-};
-
-struct BattleRoster {
-    u8 unknown_000[0x58];
-    s16 party[7];
-    s16 enemies[8];
-    u8 unknown_076[0x276];
-    struct RosterTarget targets[20];
-};
+#include "BATTLE_WORK.H"
 
 struct RosterOwner {
     u8 unknown_000[0x12a];
     u8 in_battle;
 };
 
-extern struct BattleRoster *gBattleWork;
 struct RosterOwner *Owner_GetStateFar(s32 owner);
 s32 Summon_ReleaseCharge(s32 actor);
 
-/* Takes an actor out of battle: clears its in-battle flag, marks it removed
-   in the party or enemy list, releases its summon charge and clears it as
-   a target. */
 void BattleActor_RemoveFromLists(s32 actor)
 {
-    struct BattleRoster *work;
+    struct BattleSession *work;
     s32 i;
     u32 j;
     s32 unit;
+    s16 *slots;
 
     work = gBattleWork;
     Owner_GetStateFar(actor)->in_battle = 0;
     for (i = 0; ; i++) {
-        if (work->party[i] == actor) {
-            work->party[i] = 0xfe;
+        if (work->party_units[i] == actor) {
+            work->party_units[i] = 0xfe;
             goto removed;
         }
-        if (work->party[i] == 0xff)
+        if (work->party_units[i] == 0xff)
             break;
     }
+    slots = work->enemy_units - 50;
     for (i = 0; ; ) {
-        s16 *enemies = work->enemies;
-
-        unit = enemies[i];
+        unit = slots[i + 50];
         if (unit == actor) {
-            enemies[i] = 0xfe;
+            slots[i + 50] = 0xfe;
             goto removed;
         }
         i++;
@@ -77,7 +65,7 @@ void BattleActor_RemoveFromLists(s32 actor)
 removed:
     Summon_ReleaseCharge(actor);
     for (j = 0; j < 20; j++) {
-        if (work->targets[j].actor == actor)
-            work->targets[j].actor = 0xff;
+        if (work->actions[j].unit_id == actor)
+            work->actions[j].unit_id = 0xff;
     }
 }

@@ -454,7 +454,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set21TilesA
 	resource , Tileset_Set21TilesB
 	resource , Tileset_Set21TilesC
-	resource , Tileset_Set21TilesD
+	resource , Resource_Data1B7
 	resource , Field_Map029
 	resource , Tileset_Set22Palette
 	resource , Tileset_Set22TilesA
@@ -489,7 +489,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set28Palette
 	resource , Tileset_Set28TilesA
 	resource , Tileset_Set28TilesB
-	resource , Tileset_Set28TilesC
+	resource , Resource_Data1DA
 	resource , Tileset_Set28TilesD
 	resource , Field_Map037
 	resource , Tileset_Set29Palette
@@ -560,7 +560,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set41TilesD
 	resource , Field_Map052
 	resource , Tileset_Set42Palette
-	resource , Tileset_Set42TilesA
+	resource , Resource_Data221
 	resource , Tileset_Set42TilesB
 	resource , Tileset_Set42TilesC
 	resource , Tileset_Set42TilesD

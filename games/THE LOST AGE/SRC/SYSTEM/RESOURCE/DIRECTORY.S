@@ -460,9 +460,9 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesD5
 	resource , WorldMap_TilesD6
 	resource , Resource_Data1BE
-	resource , Resource_Data1BF
+	resource , Field_WhirlwindMap
 	resource , Resource_Data1C0
-	resource , Resource_Data1C1
+	resource , Field_LightningMap
 	resource , Field_WalkPathA
 	resource , Field_WalkPathB
 	resource , Field_WalkPathC
@@ -473,7 +473,7 @@ Resource_DirectoryTable:
 	resource , Field_WalkPathH
 	resource , Field_WalkPathI
 	resource , Field_WalkPathJ
-	resource , Resource_Data1CC
+	resource , Lettering_Banner
 	resource , Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC
@@ -489,33 +489,33 @@ Resource_DirectoryTable:
 	resource , Resource_Data1D9
 	resource , Resource_Data1DA
 	resource , Resource_Data1DB
-	resource , Resource_Data1DC
-	resource , Resource_Data1DD
-	resource , Resource_Data1DE
-	resource , Resource_Data1DF
-	resource , Resource_Data1E0
-	resource , Resource_Data1E1
-	resource , Resource_Data1E2
+	resource , FieldFx_RedFlameBurst
+	resource , FieldFx_VioletFlameBurst
+	resource , FieldFx_YellowFlameBurst
+	resource , FieldFx_BlueFlameBurst
+	resource , FieldFx_Leaves
+	resource , FieldFx_DustPuffA
+	resource , FieldFx_DustPuffB
 	resource , Resource_Data1E3
-	resource , Resource_Data1E4
-	resource , Resource_Data1E5
-	resource , Resource_Data1E6
-	resource , Resource_Data1E7
+	resource , FieldFx_GoldStar
+	resource , FieldFx_GoldCrystal
+	resource , FieldFx_FlamingArrow
+	resource , FieldFx_BowDraw
 	resource , Resource_Data1E8
 	resource , Resource_Data1E9
-	resource , Resource_Data1EA
-	resource , Resource_Data1EB
-	resource , Resource_Data1EC
+	resource , FieldFx_SparkleFade
+	resource , FieldFx_StarSparkleFade
+	resource , FieldFx_WhitePuff
 	resource , Resource_Data1ED
 	resource , Resource_Data1EE
-	resource , Resource_Data1EF
-	resource , Resource_Data1F0
-	resource , Resource_Data1F1
-	resource , Resource_Data1F2
-	resource , Resource_Data1F3
-	resource , Resource_Data1F4
-	resource , Resource_Data1F5
-	resource , Resource_Data1F6
+	resource , FieldFx_ColouredOrbs
+	resource , FieldFx_FallingRock
+	resource , FieldFx_WaterSplash
+	resource , FieldFx_IceShard
+	resource , FieldFx_WhiteSparkle
+	resource , FieldFx_Runes
+	resource , FieldFx_Pebbles
+	resource , FieldFx_GoldenTrident
 	resource , Resource_Data1F7
 	resource , Resource_Data1F8
 	resource , Resource_Data1F9

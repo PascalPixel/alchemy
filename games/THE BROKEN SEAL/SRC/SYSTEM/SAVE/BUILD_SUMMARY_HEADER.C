@@ -1,31 +1,3 @@
-/* 2026-09-29 alchemy permute: score 80 on the permuter's scorer after
-   spelling the build's names (from 120): 20 is the listing's numeric call
-   target 0x08077300, which the linked build names
-   Runtime_GetBuildStampTimeFar (the scorer cannot resolve an absolute
-   listing symbol, make compare would), and 60 is the one reordered movs
-   r1, #242. 43,347 candidates in 10 minutes found nothing lower. In the
-   sched2 trace the frame load outranks the loop bound on the ready list
-   once its address load has issued (its store follows at load latency 2),
-   so it issues next; the reference's order needs the bound to rank at
-   least as high there. */
-/* Draft, not exact (2026-09-26): 412 of 412 bytes, 2 differing halfwords.
-   A separate inline checksum helper, both with a local accumulator and
-   with the initial accumulator passed in, sinks the zero initialization
-   and removes the saved r8 accumulator. The prior in-function loop in Git
-   remains the best 412-byte / two-halfword draft, restored below. The helper
-   hypothesis does not recover the frame-count/bound scheduling and is
-   preserved in commit 11637ce59, not adopted.
-   Hand-written from the assembly. Residual: the reference schedules the load
-   of the frame count after the first half of the 968 loop bound (movs r1);
-   every order of the four loop-setup statements, barriers around each, and a
-   symbol-bound game state leave it directly after its address load.
-   2026-09-28: with every literal address replaced by its named variable
-   (gGameState, gLoadedStateWord, gOptionMirror, GameFlagBytes, gSaveBuffer;
-   0x02001000 still needs its own EWRAM label) the result is the same two
-   halfwords. for, while and unsigned-bound spellings drop the jump into the
-   test (408 bytes); only the goto form keeps it. In sched2 the frame load
-   (ldr r3, [r3]) depends on the has_flag_20 byte store through memory and
-   still issues right after its address load. */
 /* Save: fill the summary header at the start of the save image (leader name
    and level, area, play time, coins, Djinn counts, party and progress
    counters) and its checksum over the rest of the image. */
@@ -138,12 +110,20 @@ u32 SaveState_BuildSummaryHeader(void)
     }
     summary->has_flag_20 = GameFlag_TestFar(32) != 0;
     {
-        s32 n;
+        /* FAKEMATCH: keeps the bound in r1 */
+        register s32 n asm("r1");
+        u32 *frame = &gGameState.unknown_000;
+        u32 frames;
 
+        n = 242;
+        /* FAKEMATCH: issues the bound's first half before the frame load */
+        asm("" : "+r"(n) : "r"(frame));
+        frames = *frame;
         word = GameFlagBytes;
         i = 0;
-        n = 968;
-        summary->frames = gGameState.unknown_000;
+        /* FAKEMATCH: finishes the bound after the loop setup, before the store */
+        asm("lsl %0, %0, #2" : "+r"(n) : "r"(word), "r"(i), "r"(frames));
+        summary->frames = frames;
         goto test;
         do {
             sum += *word++;

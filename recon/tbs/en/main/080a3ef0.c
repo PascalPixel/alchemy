@@ -9,7 +9,14 @@
  * (0.261), so style is allocated first. The ROM order needs style below
  * slot: fewer style references or a longer style lifetime. A permuter found
  * 11 edits only by moving the case-6 style update after its draw call,
- * which changes behaviour, so it was rejected. */
+ * which changes behaviour, so it was rejected.
+ * 2026-09-29: alchemy permute scores it 230 (22 register-only, 2
+ * reordered); 64,145 and then 39,695 candidates (the second run with the
+ * shared-temporary rewrite) found none lower. The thumb order hands out
+ * r8, then sl, then r9, so the ROM needs owner (4 refs, 28 insns: 2857)
+ * allocated before style (19 refs, 246 insns: 3089): style with at most
+ * 17 references, or owner with a fifth. Sharing the two owner-path draws
+ * through one label drops style below slot as well (scores 480 and 885). */
 #include "TYPES.H"
 #include "ITEM.H"
 #include "OWNER_STATE.H"

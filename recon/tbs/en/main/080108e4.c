@@ -1,17 +1,21 @@
-/* Draft, not exact (2026-09-24): 21 differing halfwords, 260 of 260 bytes.
-   Written from the listing after splitting Map_InitializePerspectiveScene
-   (main:080109e8) out of this listing. The bottom-half table goes through a
-   pointer local so it reloads per tile as in the ROM. Remaining: that load
-   lands in r7 before the top store (ROM: r2 after it), and the column and
-   row masks use r7 and r1 where the ROM uses r1 twice.
-   2026-09-26 reuse tests: a scoped CopyTile helper fixes both mask roles,
-   but merges the two table constants (260 bytes / 53 halfwords, 22 edits).
-   Separate named table symbols hoist both bases (264 / 58, 30 edits).
-   Baseline remains 260 / 21, 16 aligned edits; the helper axis is stopped.
-   This complete owner was present only under symbols and is now registered.
-   Score with --size 260: region_size prefers the older non-full manifest,
-   which still bundles the following 864-byte scene. Production's rebuilt
-   inventory independently confirms [080108e4, 080109e8), 260 bytes. */
+/* Draft, not exact: Map_WriteLayerCellTile, main:080108e4, complete
+   260-byte owner [080108e4, 080109e8).
+   2026-09-29: the buffers are named now. 0x02020000 is gMapBlocks and
+   0x02010000 is gMapCellBuffer, read as top/bottom halfword pairs, and the
+   work is gMapWork. This spelling scores 320 (4 register-only, 1 inserted,
+   2 deleted): the prologue and the tile copy match, and what remains is the
+   pair loop. The reference adds a separately loaded gMapCellBuffer + 2 to
+   the scaled id inside the loop; here CSE derives the bottom address from
+   the hoisted table base ([base + id * 4, #2]). Every spelling of the
+   bottom access that names the symbol (a bottom pointer local, byte
+   offsets, a u16 view, an address of the field) scores 1195-1255 instead,
+   because loop.c hoists gMapCellBuffer + 2 as well. The earlier draft
+   reached 300 only by spelling both buffers as literal EWRAM addresses,
+   which stand in for these symbols and cannot be adopted.
+   Earlier notes: the bottom-half table through a pointer local reloads per
+   tile as in the ROM; a scoped CopyTile helper fixes both mask roles but
+   merges the two table constants (260 bytes / 53 halfwords, 22 edits);
+   separate named table symbols hoist both bases (264 / 58, 30 edits). */
 #include "DMA.H"
 
 struct MapLayerWork {
@@ -21,12 +25,14 @@ struct MapLayerWork {
     u16 cells[8];
 };
 
+extern struct MapLayerWork *gMapWork;
+extern u32 gMapBlocks[];
 struct Halves {
     u16 top;
     u16 bottom;
 };
 
-extern struct MapLayerWork *Data_03001e70;
+extern struct Halves gMapCellBuffer[];
 
 void *Runtime_AllocateHeapBlock(s32 id, s32 size);
 void Resource_DecodeByteLz(const void *source, void *destination);
@@ -34,7 +40,7 @@ void Runtime_ReleaseHeapBlock(s32 id);
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 column, s32 row, u32 tile, s32 force)
 {
-    struct MapLayerWork *work = Data_03001e70;
+    struct MapLayerWork *work = gMapWork;
     u32 *graphics = work->cell_graphics;
     u16 *cell;
     u16 *buffer;
@@ -44,7 +50,6 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 column, s32 row, u32 tile, s32 force)
     u32 i;
     u32 j;
     u32 id;
-    u16 *bottom;
 
     column &= 1;
     row &= 1;
@@ -56,7 +61,7 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 column, s32 row, u32 tile, s32 force)
     Resource_DecodeByteLz((u8 *)graphics + graphics[tile], buffer);
 
     source = buffer;
-    destination = (u8 *)0x02020000 + (((layer * 2 + row) * 32 + column) << 6);
+    destination = (u8 *)gMapBlocks + (((layer * 2 + row) * 32 + column) << 6);
     for (i = 0; i < 16; i++) {
         Dma_Set(source, destination, 0x84000010, (volatile u32 *)0x040000d4);
         source += 32;
@@ -66,12 +71,11 @@ s32 Map_WriteLayerCellTile(s32 layer, s32 column, s32 row, u32 tile, s32 force)
     if (force != 0) {
         output = (u16 *)(0x06004000 + ((((layer * 2 + row) << 6) + column) << 5));
         source = buffer;
-        bottom = (u16 *)0x02010002;
         for (i = 0; i < 16; i++) {
             for (j = 0; j < 16; j++) {
                 id = *source;
-                output[0] = ((u16 *)0x02010000)[id * 2];
-                output[32] = bottom[id * 2];
+                output[0] = gMapCellBuffer[id].top;
+                output[32] = gMapCellBuffer[id].bottom;
                 output++;
                 source += 2;
             }

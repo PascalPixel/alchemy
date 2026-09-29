@@ -7,6 +7,12 @@
  * x/y through output pointers gives 274B/55. Both reuse the addresses but
  * coalesce away the ROM's late r5/r4 copies. One inline initialization and
  * traversal phase gives 272B/121. The original 278B candidate is retained.
+ * 2026-09-29: the permuter (29,794 candidates in six minutes) took the
+ * score from 675 to 475 by forming px before SetPosition: 4 register-only,
+ * 2 operand, 5 reordered, 1 deleted. The x address is still formed in r5
+ * and copied to r2 for the store (ROM: formed in r1, copied to r5 later),
+ * and the loop's cnt/16 pair trades r2 and r3. Loading screen->x and
+ * screen->y in the loop instead of through px/py scores 1185-1690.
  */
 #include "TYPES.H"
 
@@ -86,8 +92,8 @@ void MenuSelection_BuildEntries(void)
         index++;
     }
 
-    SetPosition(screen, cnt);
     px = &screen->x;
+    SetPosition(screen, cnt);
     py = &screen->y;
     cnt = 0;
     for (prev = screen->head; prev != 0; prev = prev->next) {

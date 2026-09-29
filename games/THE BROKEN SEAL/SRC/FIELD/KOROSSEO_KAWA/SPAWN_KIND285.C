@@ -6,10 +6,6 @@ extern u8 MsgKorosseoRobinGotItem[];
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 struct FieldActor *Object_GetById();
 
-enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a
-};
-
 typedef struct Ctl {
     s16 f0;
     s16 f2;

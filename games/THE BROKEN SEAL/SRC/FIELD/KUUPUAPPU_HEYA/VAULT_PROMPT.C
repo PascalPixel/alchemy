@@ -69,7 +69,7 @@ void RunDialoguePromptScene(void)
     u8 *rec8;
     u8 *record;
     u8 *work;
-    s32 base6_12fc;
+    s32 aftermath;
     s32 crowd;
     s32 late;
     s32 rod;
@@ -127,8 +127,8 @@ void RunDialoguePromptScene(void)
     Event_WaitForScreen();
     Event_Wait(40);
     Actor_RunRepeatedMotion(10, 2);
-    base6_12fc = (s32)MsgKuupuappuYouRobinRightWontForget;
-    Event_SetMessage(base6_12fc);
+    aftermath = (s32)MsgKuupuappuYouRobinRightWontForget;
+    Event_SetMessage(aftermath);
     SceneActor_SetModeZeroAndValue(10, 20);
     Actor_RunRepeatedMotion(9, 1);
     Event_Wait(20);
@@ -205,7 +205,7 @@ void RunDialoguePromptScene(void)
     Actor_WaitForMove(18);
     Actor_RunRepeatedMotion(18, 2);
     Event_Wait(60);
-    Message_ShowCentered((base6_12fc + 5), 1);
+    Message_ShowCentered((aftermath + 5), 1);
     Actor_SetAnimation(15, 2);
     Actor_SetPosition(18, 0, 0);
     {
@@ -246,7 +246,7 @@ void RunDialoguePromptScene(void)
     Actor_WaitForMove(19);
     Actor_RunRepeatedMotion(19, 2);
     Event_Wait(60);
-    Message_ShowCentered((base6_12fc + 8), 1);
+    Message_ShowCentered((aftermath + 8), 1);
     Actor_SetAnimation(16, 2);
     Actor_SetPosition(19, 0, 0);
     bump_halfword(off1d8, 1);

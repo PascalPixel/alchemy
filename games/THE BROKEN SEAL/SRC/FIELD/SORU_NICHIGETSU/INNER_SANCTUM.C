@@ -175,7 +175,7 @@ void Scene_EnterInnerSanctum(void)
 {
     u32 i;
     s32 record;
-    s32 base6_ffc;
+    s32 request;
     s32 base5_4010;
     s32 base5_4010_2;
 
@@ -216,8 +216,8 @@ void Scene_EnterInnerSanctum(void)
     base5_4010_2 = 0x4010;
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
     SetSolShindenActorStep(base5_4010_2, 10);
-    base6_ffc = (s32)MsgSoruMeanLookFarther;
-    Event_SetMessage(base6_ffc);
+    request = (s32)MsgSoruMeanLookFarther;
+    Event_SetMessage(request);
     Actor_FaceDirection(ACTOR_SUKURETA, 0, 40);
     Actor_ShowEmote(ACTOR_SUKURETA, 0x105, 40);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
@@ -225,10 +225,10 @@ void Scene_EnterInnerSanctum(void)
     Actor_SetAnimation(ACTOR_SUKURETA, 4);
     Event_OpenMessage(base5_4010_2, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage((base6_ffc + 1));
+        Event_SetMessage((request + 1));
         GameFlag_Set(FLAG_ROBIN_SEARCHING_FOR_SUKURETA);
     } else {
-        Event_SetMessage((base6_ffc + 2));
+        Event_SetMessage((request + 2));
     }
     Call2(SetSolShindenActorStep, 0x4010, 4);
     Camera_FollowActor(ACTOR_SUKURETA, 1);

@@ -114,7 +114,7 @@ void Villager_PlanToScareVisitors(void)
 void Scene_GiveFarewellHerb(void)
 {
     s32 callback;
-    s32 base5_11a4;
+    s32 gift;
 
     Event_Begin();
     if (GameFlag_IsSet(FLAG_GOT_FAREWELL_HERB) != 0) {
@@ -123,10 +123,10 @@ void Scene_GiveFarewellHerb(void)
         callback = (s32)gValeFaceTargetScript;
         Call3(Object_SetTargetAndCallback, 20, 0x10000, callback);
     } else {
-        base5_11a4 = (s32)MsgHaidiaThisIsMyFarewellGift;
-        Event_SetMessage(base5_11a4);
+        gift = (s32)MsgHaidiaThisIsMyFarewellGift;
+        Event_SetMessage(gift);
         Event_ShowMessageAndWait(20, 0, 20);
-        Message_ShowCentered((base5_11a4 + 1), 1);
+        Message_ShowCentered((gift + 1), 1);
         Party_GiveItem(ITEM_HERB, 0);
         GameFlag_Set(FLAG_GOT_FAREWELL_HERB);
     }

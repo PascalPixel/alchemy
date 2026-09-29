@@ -4736,7 +4736,7 @@ gVinasuHeyaEvents2:
 	.4byte 0x00002681
 	.4byte 0x00000003
 	.4byte 0xffff0023
-	.4byte SceneDialogue_RunLine2682
+	.4byte SceneDialogue_ReadRelief
 	.4byte 0x00000003
 	.4byte 0xffff0029
 	.4byte FieldScene_RunStatueDialogueSequence

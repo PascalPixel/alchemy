@@ -40,20 +40,20 @@ void FieldScene_RunScene3bf_02001cf0(s32 a0)
 {
     u32 i;
     s32 record;
-    s32 base6_2424;
+    s32 intruder;
 
-    base6_2424 = (s32)MsgRunpaShiftAlready;
-    Event_SetMessage(base6_2424);
+    intruder = (s32)MsgRunpaShiftAlready;
+    Event_SetMessage(intruder);
     Event_ShowMessage(a0, 0);
     Event_Wait(120);
     Actor_ShowEmote(a0, 0x101, 60);
-    Event_SetMessage((base6_2424 + 1));
+    Event_SetMessage((intruder + 1));
     Event_ShowMessage(a0, 0);
     Actor_RunRepeatedMotion(a0, 1);
-    Event_SetMessage((base6_2424 + 2));
+    Event_SetMessage((intruder + 2));
     Event_ShowMessage(a0, 0);
     Actor_SetAnimationAndWait(a0, 4);
-    Event_SetMessage((base6_2424 + 3));
+    Event_SetMessage((intruder + 3));
     Event_ShowMessage(a0, 0);
 }
 

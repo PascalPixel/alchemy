@@ -101,9 +101,9 @@ void SelectActor24SceneVariant(void)
 }
 
 /* Runs a gated sequence of parameterized calls on PRIMARY_ID (24) and, once
- * derived partway through, DERIVED_ID (25); a sequence id counting up from
- * 9569 is threaded through four of the calls one apart. Each of the two
- * outer gating checks has its own short fallback branch on PRIMARY_ID. */
+ * derived partway through, DERIVED_ID (25); the thanks for helping Dodonpa
+ * and the three lines after it are shown one apart. Each of the two outer
+ * gating checks has its own short fallback branch on PRIMARY_ID. */
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
     s32 sequence_id;

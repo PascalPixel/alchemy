@@ -244,7 +244,7 @@ void SceneDialogue_ShowLine12BB(void)
     Event_ShowMessage(ACTOR_GERALD, 0);
 }
 
-void SceneState_SetFlags92bAnd94b(void)
+void SceneDialogue_ShowEmptyBarrel(void)
 {
     Event_Begin();
     Message_ShowCentered((s32)MsgKuupuappuRobinCheckedBarrel, 1);
@@ -252,7 +252,7 @@ void SceneState_SetFlags92bAnd94b(void)
     Event_End();
 }
 
-void SceneState_SetFlags929And949(void)
+void SceneDialogue_ShowEmptyChest(void)
 {
     Event_Begin();
     Message_ShowCentered((s32)MsgKuupuappuRobinCheckedChest, 1);

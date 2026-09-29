@@ -7,10 +7,6 @@ extern u8 MsgKorosseoRobinYoureContestantInFinals[];
 extern u8 MsgKorosseoSiteFirstFinalsBattle[];
 extern u8 MsgKorosseoWarriorsEnterFinalsWithoutAny[];
 
-enum CoordinatorMessage {
-    MSG_ROBIN_GOT = 0x96a
-};
-
 typedef struct Ctl {
     s16 f0;
     s16 f2;

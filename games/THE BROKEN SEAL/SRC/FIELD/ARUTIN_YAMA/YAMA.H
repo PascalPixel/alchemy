@@ -16,10 +16,6 @@ enum {
     ITEM_FROST_JEWEL = 202
 };
 
-enum SetPieceMessage {
-    MSG_ROBIN_FLIPPED_SWITCH = 0x1528
-};
-
 struct Frame {
     s32 f00;
     s32 f04;

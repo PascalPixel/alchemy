@@ -15,11 +15,6 @@
  * overlay creates its effects through this routine.
  */
 
-enum EntrySetupMessage {
-    MSG_DOOR_TIGHTLY_LOCKED = 0x953,
-    MSG_STATUE_SPEAKS_ROBIN_SOUL_YE = 0x2688
-};
-
 struct Sprite {
     u8 pad00[9];
     u8 flags9;

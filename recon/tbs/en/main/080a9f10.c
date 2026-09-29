@@ -46,6 +46,12 @@
  * before the test, which requires the entry test to be duplicated only
  * after gcse (jump1 declining duplicate_loop_exit_test). A goto into the
  * do/while and an inline count accessor do not produce that.
+ * 2026-09-29 alchemy permute (seed 1, 8 jobs, 10 minutes): 233,249
+ * candidates, none below the draft's score, 96,352 level with it; a further
+ * 107,176 focused on the index, count and range statements, none below.
+ * Its rewrites (loop forms, statement and declaration order, temporaries,
+ * casts, truth tests) leave the range load after the count test. The draft
+ * still calls Func_08004458, which the build names Random16.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"

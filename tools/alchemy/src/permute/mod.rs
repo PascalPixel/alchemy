@@ -314,13 +314,8 @@ impl Problem {
     pub fn load(config: &Config, scratch: &Path) -> Result<Problem, String> {
         let draft = std::fs::read_to_string(&config.draft)
             .map_err(|error| format!("{}: {error}", config.draft.display()))?;
-        let absolute = if config.draft.is_absolute() {
-            config.draft.clone()
-        } else {
-            std::env::current_dir()
-                .map_err(|error| error.to_string())?
-                .join(&config.draft)
-        };
+        let here = std::env::current_dir().map_err(|error| error.to_string())?;
+        let absolute = here.join(&config.draft);
         let file_name = absolute
             .file_name()
             .and_then(|name| name.to_str())
@@ -346,7 +341,7 @@ impl Problem {
         let located = locate(&draft, config.function.as_deref(), &unit.typedef_names())?;
         let name = located.function.name.clone();
         let listing = match &config.listing {
-            Some(listing) => listing.clone(),
+            Some(listing) => here.join(listing),
             None => ["s", "S"]
                 .iter()
                 .map(|extension| {

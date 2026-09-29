@@ -65,9 +65,6 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
-	.global Engine_ActorGet
-	.thumb_func
-Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

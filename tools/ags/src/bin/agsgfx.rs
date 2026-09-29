@@ -6,7 +6,8 @@ use ags::lz::{
     compress_general, compress_mtf4, compress_tagged, compress_tagged_palette, LzMachine,
 };
 use psynergy::assets::image::{
-    bgr555_palette_from_png, indexed_png, png_from_bitmap, png_from_gba_tiles, GbaBpp,
+    bgr555_palette_from_png, indexed_png, png_from_bitmap, png_from_gba_tiles, tile_sheet_width,
+    GbaBpp,
 };
 use std::fs;
 use std::process::ExitCode;
@@ -17,7 +18,8 @@ const USAGE: &str = "usage: agsgfx INPUT OUTPUT [options]
   X.png  -> Y.bitmap[.lz|.mtf] any build recipe, as the build makes it (see ags::resource)
   X.bin  -> Y.delta1.lz        a data recipe from an identified BIN
   X.tsv  -> Y.parts.lz         pictures joined from a part list
-  X.4bpp | X.8bpp -> Y.png     tiles back to an indexed PNG (--palette P.gbapal|P.png --width TILES)
+  X.4bpp | X.8bpp -> Y.png     tiles back to an indexed PNG (--palette P.gbapal|P.png; --width TILES, else the width
+                               at which tile edges agree most)
   X.bitmap -> Y.png            a linear 8-bit bitmap to an indexed PNG (--palette P --width PIXELS)
   X      -> Y.lz               compress (--lz general|palette|tagged|mtf4; the LZ kinds
                                take --machine WINDOW,READ_AHEAD,MAX_DISTANCE,PALETTE_READ_AHEAD)
@@ -117,8 +119,11 @@ fn run(args: &[String]) -> Result<(), String> {
             } else {
                 palette
             };
-            png_from_gba_tiles(&data, &palette, bpp(&from), number(options, "--width", 16)?)
-                .map_err(|error| error.0)?
+            let wide = match option(options, "--width") {
+                Some(_) => number(options, "--width", 0)?,
+                None => tile_sheet_width(&data, bpp(&from)),
+            };
+            png_from_gba_tiles(&data, &palette, bpp(&from), wide).map_err(|error| error.0)?
         }
         ("bitmap", "png") => {
             let path = option(options, "--palette").ok_or("needs --palette")?;

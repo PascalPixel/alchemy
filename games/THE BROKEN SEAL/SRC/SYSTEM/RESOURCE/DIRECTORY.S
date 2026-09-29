@@ -231,18 +231,18 @@ Resource_DirectoryTable:
 	resource DefaultMapCells, Field_DefaultMapCells
 	resource , Field_PerspectiveDataB
 	resource , Field_PerspectiveDataC
-	resource , Graphics_DataA
-	resource , Graphics_TilesA
-	resource , Graphics_TilesB
-	resource , Graphics_TilesC
-	resource , Graphics_TilesD
-	resource , Graphics_TilesE
-	resource , Graphics_DataB
-	resource , Graphics_TilesF
-	resource , Graphics_TilesG
-	resource , Graphics_TilesH
-	resource , Graphics_TilesI
-	resource , Graphics_TilesJ
+	resource , WorldMap_PaletteA
+	resource , WorldMap_TilesA
+	resource , WorldMap_TilesB
+	resource , WorldMap_TilesC
+	resource , WorldMap_TilesD
+	resource , WorldMap_TilesE
+	resource , WorldMap_PaletteB
+	resource , WorldMap_TilesF
+	resource , WorldMap_TilesG
+	resource , WorldMap_TilesH
+	resource , WorldMap_TilesI
+	resource , WorldMap_TilesJ
 	resource , Graphics_PictureA
 	resource PictureB, Graphics_PictureB
 	resource , Graphics_PictureC

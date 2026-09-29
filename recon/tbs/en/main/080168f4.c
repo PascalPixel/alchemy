@@ -1,3 +1,6 @@
+/* 2026-09-29: five minutes of permutation reached 5996 from 8560 through
+ * 118 rewrites; not kept, since the owner is far from exact (the allocation
+ * residual below). */
 /* 2026-09-29: the removed ADDR_ macros are now gWindowWork, gKeysHeld and
  * Data_03001af8 and callees carry the build's names, so the draft compiles
  * again; alchemy permute scores 8560 (the residual below still holds). */

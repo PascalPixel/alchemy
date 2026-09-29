@@ -1,3 +1,11 @@
+/* 2026-09-29: with stock agscc the plain constants -0x800 and 0xa3d now
+ * load from the pool like the reference, so the Value_ symbols are gone;
+ * eight minutes of permutation also set the scale step before the start
+ * cue. Score 515, from 660: 10 register-only, 1 reordered, 3 inserted, 1
+ * deleted. What remains is the constant ownership the header describes: the
+ * reference keeps the scale step in r5 and 0x10000 in sl across the loops,
+ * where this rematerialises -0x800 inside the first loop and 0x10000 in the
+ * scale addition. */
 /* 2026-09-29: the fragment script is BattleFx_FragmentScript and the setter
  * Engine_ObjectSetScript, so the draft compiles again; alchemy permute
  * scores 660 (8 register-only, 1 operand for the Value_ constant, 4
@@ -36,8 +44,6 @@ struct ParticleInstance {
     u8 mode;
 };
 
-extern const u8 Value_fffff800;
-extern const u8 Value_00000a3d;
 
 void Audio_PlayCue(s32 sound);
 void WaitFrames(s32 frames);
@@ -55,9 +61,9 @@ void Func_080981b0(struct ParticleBurstEffect *effect)
     s32 scale_step;
     s32 base_scale;
 
+    scale_step = -0x800;
     Audio_PlayCue(0x9a);
     count = 30;
-    scale_step = (s32)&Value_fffff800;
     do {
         effect->y += 0x10000;
         effect->angle += 0x2000;
@@ -85,7 +91,7 @@ void Func_080981b0(struct ParticleBurstEffect *effect)
             scale += particle->base_scale;
             particle->scale = (s32)scale;
             particle->mode = 2;
-            particle->animation_id = (s32)&Value_00000a3d;
+            particle->animation_id = 0xa3d;
             random = Random16();
             particle->random_offset = (s32)(random - Random16());
             speed = Random16() * 24 + 0x80000;

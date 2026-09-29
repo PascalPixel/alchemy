@@ -225,7 +225,7 @@ void Func_080151e4(s32, s32, s32);
 void Func_0801521c(s32);
 void Func_080156e8(void *, void *);
 void Func_08020090(struct BattleObject *, s32);
-void Func_08020098(struct BattleObject *, s32);
+void ObjectDispatch_ApplyValueToChildrenFar(struct BattleObject *, s32);
 s32 Func_08118070(s32);
 void Func_08118088(s32, s32);
 struct BattleObject **Func_08118098(s32);
@@ -525,7 +525,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
         work->particle[i].vy = Func_08014878() & 0xffff;
         work->particle[i].vz = Func_08014878() & 0xffff;
     }
-    Func_08020098(object, 0);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 0);
     origin[0] = object->x;
     origin[1] = object->y + 0x500000;
     origin[2] = object->z;
@@ -650,7 +650,7 @@ void Func_0815f16c(struct SummonAction *action, s32 kind)
             Func_08156140(action, 8);
         return;
     }
-    Func_08020098(object, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     object->unk24 = save24;
     object->unk28 = save28;
     object->unk2c = save2c;

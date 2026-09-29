@@ -18,9 +18,9 @@ Object_SetMode:
 	bx	r4
 	.2byte 0x33d1
 	.2byte 0x0802
-	.global Func_08020098
+	.global ObjectDispatch_ApplyValueToChildrenFar
 	.thumb_func
-Func_08020098:
+ObjectDispatch_ApplyValueToChildrenFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x3411

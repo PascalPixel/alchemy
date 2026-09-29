@@ -17,7 +17,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/GUARDS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/GATE.o"(.text)
-        "*/resource_3ab_overlay.o"(.text.x02008ff0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/ESCAPE.o"(.text)
         "*/resource_3ab_overlay.o"(.text.x02009668)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/NUT.o"(.text)

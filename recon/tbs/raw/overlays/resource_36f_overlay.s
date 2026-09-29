@@ -152,63 +152,6 @@ Func_02000054:
 	.4byte 0x0000000b
 	.4byte 0x03001ae8
 	.4byte 0x00000004
-	.global Func_020001c0
-	.thumb_func
-Func_020001c0:
-	.global Title_LoadSprites
-	.thumb_func
-Title_LoadSprites:
-	push {r5, r6, lr}
-	movs r0, #164
-	lsls r0, r0, #3
-	bl 0x02008548
-	ldr r6, [pc, #88]
-	movs r2, #0
-	ldrsh r3, [r6, r2]
-	movs r2, #1
-	negs r2, r2
-	adds r5, r0, #0
-	cmp r3, r2
-	bne .L_020001c0_0
-	bl 0x02008568
-	strh r0, [r6]
-.L_020001c0_0:
-	ldr r0, [pc, #68]
-	bl 0x02008578
-	adds r1, r5, #0
-	bl 0x02008558
-	ldr r3, [pc, #60]
-	adds r0, r5, #0
-	ldr r1, [pc, #60]
-	ldr r2, [pc, #64]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	adds r2, r5, #0
-	movs r1, #160
-	adds r2, #32
-	lsls r1, r1, #3
-	movs r3, #0
-	ldrsh r0, [r6, r3]
-	bl 0x02008560
-	movs r2, #128
-	ldr r1, [pc, #32]
-	lsls r2, r2, #24
-.L_020001c0_1:
-	ldr r3, [r1, #8]
-	ands r3, r2
-	cmp r3, #0
-	bne .L_020001c0_1
-	adds r0, r5, #0
-	bl 0x02008550
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02008650
-	.4byte 0x0000001c
-	.4byte 0x040000d4
-	.4byte 0x050003e0
-	.4byte 0x84000008
 	.section .text.x02008454,"ax",%progbits
 	.global Func_02000454
 	.thumb_func

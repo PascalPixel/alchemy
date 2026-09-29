@@ -96,118 +96,6 @@ TakaraHashira_CopyCellBlock:
 	.4byte 0x02020004
 	.2byte 0x2840
 	.2byte 0x0600
-	.section .text.x02009440,"ax",%progbits
-	.balign 4
-	.global Scene_GetEntrances
-	.thumb_func
-Scene_GetEntrances:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02001440_0
-	ldr r0, [pc, #56]
-	b .L_02001440_1
-.L_02001440_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02001440_2
-	ldr r0, [pc, #56]
-	b .L_02001440_1
-.L_02001440_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02001440_3
-	ldr r0, [pc, #52]
-	b .L_02001440_1
-.L_02001440_3:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02001440_4
-	ldr r0, [pc, #52]
-	b .L_02001440_1
-.L_02001440_4:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02001440_5
-	ldr r0, [pc, #48]
-	b .L_02001440_1
-.L_02001440_5:
-	ldr r0, [pc, #48]
-.L_02001440_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000073
-	.4byte 0x0200aeac
-	.4byte 0x00000074
-	.4byte 0x0200aef4
-	.4byte 0x00000077
-	.4byte 0x0200af3c
-	.4byte 0x00000079
-	.4byte 0x0200af84
-	.4byte 0x0000007a
-	.4byte 0x0200afcc
-	.4byte 0x0200ae7c
-	.section .text.x020094c4,"ax",%progbits
-	.balign 4
-	.global Scene_GetPlacements
-	.thumb_func
-Scene_GetPlacements:
-	push {lr}
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-.L_020014d4:
-	cmp r2, r3
-	bne .L_020014d4_0
-	ldr r0, [pc, #44]
-	b .L_020014d4_1
-.L_020014d4_0:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_020014d4_2
-	ldr r0, [pc, #44]
-	b .L_020014d4_1
-.L_020014d4_2:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_020014d4_3
-	ldr r0, [pc, #40]
-	b .L_020014d4_1
-.L_020014d4_3:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020014d4_4
-	ldr r0, [pc, #40]
-	b .L_020014d4_1
-.L_020014d4_4:
-	ldr r0, [pc, #40]
-.L_020014d4_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x0073
-	.2byte 0x0000
-	.4byte 0x0200b06c
-	.4byte 0x00000074
-	.4byte 0x0200b0e4
-	.4byte 0x00000077
-	.4byte 0x0200b174
-	.4byte 0x0000007a
-	.4byte 0x0200b2dc
-	.4byte 0x0200b264
 	.section .text.x02009d84,"ax",%progbits
 	.align 2
 	.global TakaraHashira_UpdatePillarActors
@@ -501,379 +389,6 @@ TakaraHashira_UpdatePillarActors:
 	.4byte 0x84000003
 	.2byte 0xb6dc
 	.2byte 0x0200
-	.section .text.x0200a580,"ax",%progbits
-	.align 2
-	.global Scene_GetEvents
-	.thumb_func
-Scene_GetEvents:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02002580_0
-	ldr r0, [pc, #56]
-	b .L_02002580_1
-.L_02002580_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02002580_2
-	ldr r0, [pc, #56]
-	b .L_02002580_1
-.L_02002580_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02002580_3
-	ldr r0, [pc, #52]
-	b .L_02002580_1
-.L_02002580_3:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02002580_4
-	ldr r0, [pc, #52]
-	b .L_02002580_1
-.L_02002580_4:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02002580_5
-	ldr r0, [pc, #48]
-	b .L_02002580_1
-.L_02002580_5:
-	ldr r0, [pc, #48]
-.L_02002580_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000073
-	.4byte 0x0200b3a8
-	.4byte 0x00000074
-	.4byte 0x0200b438
-	.4byte 0x00000077
-	.4byte 0x0200b498
-	.4byte 0x00000079
-	.4byte 0x0200b51c
-	.4byte 0x0000007a
-	.4byte 0x0200b618
-	.4byte 0x0200b39c
-	.section .text.x0200a74c,"ax",%progbits
-	.balign 4
-	.global TakaraHashira_SetupArea
-	.thumb_func
-TakaraHashira_SetupArea:
-	push {r5, lr}
-	ldr r3, [pc, #692]
-	movs r2, #224
-	ldr r1, [r3]
-	movs r3, #129
-	lsls r3, r3, #2
-	lsls r2, r2, #1
-	str r3, [r1, r2]
-	ldr r1, [pc, #680]
-	ldrsh r2, [r1, r2]
-	ldr r3, [pc, #680]
-	sub sp, #8
-	cmp r2, r3
-	bne .L_0200274c_0
-	movs r0, #8
-	bl 0x02008ba4
-	movs r0, #9
-	bl 0x02008ba4
-	movs r0, #10
-	bl 0x02008ba4
-	movs r0, #11
-	bl 0x02008ba4
-	movs r0, #12
-	bl 0x02008ba4
-	b .L_0200274c_1
-.L_0200274c_0:
-	ldr r3, [pc, #644]
-	cmp r2, r3
-	bne .L_0200274c_2
-	movs r3, #0
-	movs r2, #64
-	str r3, [sp, #0]
-	movs r1, #0
-	movs r3, #32
-	movs r0, #32
-	str r2, [sp, #4]
-	bl 0x0200aabc
-	movs r0, #8
-	bl 0x02008ba4
-	movs r0, #9
-	bl 0x02008ba4
-	movs r0, #10
-	bl 0x02008ba4
-	movs r0, #11
-	bl 0x02008ba4
-	movs r0, #12
-	bl 0x02008ba4
-	movs r0, #13
-	bl 0x02008ba4
-	movs r0, #14
-	bl 0x02008ba4
-	movs r0, #15
-	bl 0x02008ba4
-	ldr r0, [pc, #576]
-	bl 0x0200aaec
-	cmp r0, #0
-	bne .L_0200274c_3
-	b .L_0200274c_1
-.L_0200274c_3:
-	movs r0, #128
-	lsls r0, r0, #2
-	bl 0x0200aaec
-	cmp r0, #0
-	bne .L_0200274c_4
-	b .L_0200274c_1
-.L_0200274c_4:
-	movs r3, #1
-	movs r2, #2
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #79
-	movs r1, #34
-	movs r2, #84
-	movs r3, #24
-	bl 0x0200aaa4
-	movs r5, #32
-	movs r0, #0
-	movs r1, #32
-	movs r2, #32
-	movs r3, #0
-	str r5, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x0200aaa4
-	movs r1, #32
-	movs r2, #64
-	movs r3, #0
-	movs r0, #32
-	str r5, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x0200aaa4
-	movs r0, #9
-	bl 0x02008ec8
-	movs r0, #10
-	bl 0x02008ec8
-	movs r0, #11
-	bl 0x02008ec8
-	movs r0, #12
-	bl 0x02008ec8
-	movs r0, #13
-	bl 0x02008ec8
-	movs r0, #14
-	bl 0x02008ec8
-	movs r0, #15
-	bl 0x02008ec8
-	movs r3, #24
-	movs r2, #8
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #24
-	movs r1, #3
-	b .L_0200274c_5
-.L_0200274c_2:
-	ldr r3, [pc, #444]
-	cmp r2, r3
-	bne .L_0200274c_6
-	movs r0, #146
-	movs r2, #200
-	lsls r0, r0, #18
-	lsls r2, r2, #16
-	movs r1, #0
-	movs r3, #223
-	bl 0x020080a0
-	ldr r0, [pc, #420]
-	bl 0x0200aaec
-	cmp r0, #0
-	bne .L_0200274c_8
-	movs r0, #0
-	bl 0x0200ab1c
-	movs r3, #1
-	adds r0, #98
-	strb r3, [r0]
-.L_0200274c_8:
-	movs r0, #0
-	bl 0x0200aba4
-	movs r0, #0
-	bl 0x0200ab1c
-	adds r0, #98
-	ldrb r3, [r0]
-	cmp r3, #0
-	bne .L_0200274c_9
-	bl 0x0200a09c
-.L_0200274c_9:
-	movs r0, #8
-	bl 0x0200a694
-	movs r0, #9
-	bl 0x0200a694
-	movs r0, #10
-	bl 0x0200a694
-	movs r0, #11
-	bl 0x0200a694
-	movs r4, #128
-	ldr r2, [pc, #356]
-	movs r1, #0
-	movs r0, #0
-	lsls r4, r4, #2
-.L_0200274c_10:
-	adds r3, r1, r4
-	adds r1, #1
-	str r0, [r2]
-	str r0, [r2, #4]
-	str r0, [r2, #8]
-	str r3, [r2, #16]
-	adds r2, #20
-	cmp r1, #3
-	bls .L_0200274c_10
-	bl 0x02009d84
-	movs r0, #1
-	bl 0x0200ab04
-	movs r1, #200
-	ldr r0, [pc, #320]
-	lsls r1, r1, #4
-	bl 0x0200aa3c
-	ldr r0, [pc, #300]
-	bl 0x0200aaec
-	cmp r0, #0
-	bne .L_0200274c_11
-	b .L_0200274c_1
-.L_0200274c_11:
-	movs r5, #8
-	b .L_0200274c_12
-.L_0200274c_13:
-	adds r5, #1
-.L_0200274c_12:
-	cmp r5, #11
-	bhi .L_0200274c_1
-	adds r0, r5, #0
-	bl 0x0200ab1c
-	ldr r3, [r0, #8]
-	asrs r2, r3, #20
-	cmp r2, #37
-	bne .L_0200274c_13
-	ldr r3, [r0, #16]
-	asrs r0, r3, #20
-.L_0200274c_7:
-	cmp r0, #9
-	bne .L_0200274c_13
-	str r2, [sp, #0]
-	str r0, [sp, #4]
-	movs r1, #8
-	movs r0, #27
-.L_0200274c_5:
-	movs r2, #1
-	movs r3, #1
-	bl 0x0200aac4
-	b .L_0200274c_1
-.L_0200274c_6:
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #244]
-	cmp r2, r3
-	bne .L_0200274c_1
-	movs r0, #10
-	movs r1, #2
-	bl 0x0200ab54
-	movs r1, #6
-	movs r0, #10
-	bl 0x0200ab64
-	movs r0, #8
-	bl 0x02008ba4
-	movs r0, #9
-	bl 0x02008ba4
-	movs r0, #8
-	bl 0x0200ab1c
-	movs r5, #0
-	adds r0, #85
-	strb r5, [r0]
-	movs r0, #9
-	bl 0x0200ab1c
-	adds r0, #85
-	strb r5, [r0]
-	bl 0x0200a4cc
-	movs r0, #11
-	bl 0x0200a5f8
-	movs r0, #12
-	bl 0x0200a5f8
-	movs r0, #13
-	bl 0x0200a5f8
-	movs r0, #11
-	bl 0x0200a63c
-	movs r0, #12
-	bl 0x0200a63c
-	movs r0, #13
-	bl 0x0200a63c
-	movs r0, #13
-	bl 0x0200ab1c
-	str r5, [r0, #108]
-	movs r0, #14
-	bl 0x0200a5f8
-	movs r0, #14
-	bl 0x0200ab1c
-	adds r0, #89
-	ldrb r2, [r0]
-	movs r3, #8
-	orrs r3, r2
-	strb r3, [r0]
-	ldr r0, [pc, #124]
-	bl 0x0200aaec
-	cmp r0, #0
-	bne .L_0200274c_1
-	movs r0, #13
-	bl 0x0200ab1c
-	movs r5, #192
-	lsls r5, r5, #9
-	str r5, [r0, #24]
-	movs r0, #13
-	bl 0x0200ab1c
-	str r5, [r0, #28]
-	movs r0, #13
-	bl 0x0200ab1c
-	ldr r2, [r0, #80]
-	ldrb r3, [r2, #9]
-	movs r5, #12
-	orrs r3, r5
-	strb r3, [r2, #9]
-	movs r0, #14
-	bl 0x0200ab1c
-	ldr r2, [r0, #80]
-	ldrb r3, [r2, #9]
-	orrs r3, r5
-	strb r3, [r2, #9]
-	movs r3, #22
-	movs r2, #16
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #26
-	movs r1, #12
-	movs r2, #1
-	movs r3, #1
-	bl 0x0200aac4
-.L_0200274c_1:
-	movs r0, #0
-	sub sp, #-8
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x00000074
-	.4byte 0x00000077
-	.4byte 0x00000109
-	.4byte 0x00000079
-	.4byte 0x0200b6d0
-	.4byte 0x0200a6b9
-	.4byte 0x0000007a
-	.4byte 0x00000202
-@ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001
@@ -1058,6 +573,8 @@ TakaraHashira_ShiftSteps5:
 	.4byte 0x00020035
 	.4byte 0x00010001
 	.4byte 0x0000ffff
+	.global gTakaraHashiraEntrancesOther
+gTakaraHashiraEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000098
@@ -1070,6 +587,8 @@ TakaraHashira_ShiftSteps5:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEntrances1
+gTakaraHashiraEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x000002c8
 	.4byte 0xc00002f8
@@ -1088,6 +607,8 @@ TakaraHashira_ShiftSteps5:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEntrances2
+gTakaraHashiraEntrances2:
 	.4byte 0xffff0001
 	.4byte 0x000000d8
 	.4byte 0xc0000168
@@ -1106,6 +627,8 @@ TakaraHashira_ShiftSteps5:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEntrances3
+gTakaraHashiraEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x000000b8
 	.4byte 0xc00001d8
@@ -1124,6 +647,8 @@ TakaraHashira_ShiftSteps5:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEntrances4
+gTakaraHashiraEntrances4:
 	.4byte 0xffff0001
 	.4byte 0x000002e8
 	.4byte 0xc0000208
@@ -1142,6 +667,8 @@ TakaraHashira_ShiftSteps5:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEntrances5
+gTakaraHashiraEntrances5:
 	.4byte 0xffff0001
 	.4byte 0x00000118
 	.4byte 0xc00001e8
@@ -1184,6 +711,8 @@ gTakaraHashiraExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraPlacements1
+gTakaraHashiraPlacements1:
 	.4byte 0xffff00d3
 	.4byte 0x00000001
 	.4byte 0x02e80000
@@ -1214,6 +743,8 @@ gTakaraHashiraExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraPlacements2
+gTakaraHashiraPlacements2:
 	.4byte 0xffff012a
 	.4byte 0x00000007
 	.4byte 0x00900000
@@ -1250,6 +781,8 @@ gTakaraHashiraExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraPlacements3
+gTakaraHashiraPlacements3:
 	.4byte 0xffff00cd
 	.4byte 0x00000007
 	.4byte 0x00000000
@@ -1310,6 +843,8 @@ gTakaraHashiraExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraPlacementsOther
+gTakaraHashiraPlacementsOther:
 	.4byte 0xffff0100
 	.4byte 0x00000001
 	.4byte 0x02880000
@@ -1340,6 +875,8 @@ gTakaraHashiraExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraPlacements5
+gTakaraHashiraPlacements5:
 	.4byte 0xffff00cf
 	.4byte 0x00000007
 	.4byte 0x00d00000
@@ -1388,9 +925,13 @@ gTakaraHashiraExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEventsOther
+gTakaraHashiraEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEvents1
+gTakaraHashiraEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1427,6 +968,8 @@ gTakaraHashiraExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEvents2
+gTakaraHashiraEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1451,6 +994,8 @@ gTakaraHashiraExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEvents3
+gTakaraHashiraEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1484,6 +1029,8 @@ gTakaraHashiraExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEvents4
+gTakaraHashiraEvents4:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1547,6 +1094,8 @@ gTakaraHashiraExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraHashiraEvents5
+gTakaraHashiraEvents5:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

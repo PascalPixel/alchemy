@@ -1,59 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008044,"ax",%progbits
-	.p2align 2
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_02000044_0
-	ldr r0, [pc, #16]
-	b .L_02000044_1
-.L_02000044_0:
-	ldr r0, [pc, #16]
-.L_02000044_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000bd
-	.4byte 0x02009aec
-	.4byte 0x02009cfc
-	.section .text.x020081a8,"ax",%progbits
-	.p2align 2
-	.global Func_020001a8
-	.thumb_func
-Func_020001a8:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_020001a8_0
-	ldr r0, [pc, #16]
-	b .L_020001a8_1
-.L_020001a8_0:
-	ldr r0, [pc, #16]
-.L_020001a8_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000bd
-	.4byte 0x02009f30
-	.4byte 0x02009e1c
+	.section .text.x020081d8,"ax",%progbits
+	.balign 4
 	.global Func_020001d8
 	.thumb_func
 Func_020001d8:
@@ -2390,6 +2338,8 @@ TorebiIzumi_SceneTableB:
 	.4byte 0x10205087
 	.4byte 0xffffffff
 	.4byte 0x000001ff
+	.global gTorebiIzumiPlacements2
+gTorebiIzumiPlacements2:
 	.4byte 0xffff018e
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2522,6 +2472,8 @@ TorebiIzumi_SceneTableB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiIzumiPlacementsOther
+gTorebiIzumiPlacementsOther:
 	.4byte 0xffff0094
 	.4byte 0x00000001
 	.4byte 0x00900000
@@ -2594,6 +2546,8 @@ TorebiIzumi_SceneTableB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiIzumiEventsOther
+gTorebiIzumiEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2663,6 +2617,8 @@ TorebiIzumi_SceneTableB:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiIzumiEvents2
+gTorebiIzumiEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

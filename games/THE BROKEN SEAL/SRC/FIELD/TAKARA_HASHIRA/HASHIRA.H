@@ -118,7 +118,7 @@ void battle_owner_69();
 /* Flag/id value passed to the query call and to the two closing calls, and
  * written into the flag byte at +85 when the query call returned zero. */
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */

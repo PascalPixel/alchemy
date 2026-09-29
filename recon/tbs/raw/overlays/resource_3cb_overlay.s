@@ -799,19 +799,6 @@ LinkLobby_TalkByProgress:
 	.4byte 0x00002976
 	.4byte 0x00002953
 	.4byte 0x00002958
-	.global LinkLobby_StartExchange
-	.thumb_func
-LinkLobby_StartExchange:
-	push {lr}
-	bl 0x02009754
-	movs r0, #2
-	bl 0x0200975c
-	ldr r0, [pc, #8]
-	movs r1, #1
-	bl 0x0200989c
-	pop {r1}
-	bx r1
-	.4byte 0x00000001
 	.section .text.x020091bc,"ax",%progbits
 	.p2align 2
 	.global Scene_ShowDialoguePair292a

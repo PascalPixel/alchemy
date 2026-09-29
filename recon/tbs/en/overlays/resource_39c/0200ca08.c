@@ -1,3 +1,10 @@
+/* Draft of the party scene, resource_39c at 0x0200ca08 (was the unlinked
+ * FIELD/MAKYURI_HEYA/PARTY.C).
+ * Remaining difference: the game loads message 0x1591 from its pool into a
+ * saved register and later passes it plus 5, as a link-time symbol compiles;
+ * an integer constant folds to 0x1596 and is not held across the calls. It
+ * also loads 0x1639 and 0x1597 from the pool. Its calls still use per-site
+ * names for the import veneers. */
 #include "MAKYURI_HEYA.H"
 
 extern u8 LinkedMessage_MercuryDialogue;

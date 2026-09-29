@@ -242,98 +242,6 @@ Func_02001070:
 	pop {r5, r6, r7}
 	pop {r1}
 	bx r1
-	.section .text.x02009838,"ax",%progbits
-	.balign 4
-	.global KorimaPalette_SaveFirst
-	.thumb_func
-KorimaPalette_SaveFirst:
-	ldr r2, [pc, #12]
-	ldr r3, [pc, #16]
-	ldr r0, [r2]
-	ldr r1, [pc, #16]
-	ldr r2, [pc, #16]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	bx lr
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x02009de0
-	.4byte 0x840000e0
-	.global KorimaPalette_SaveSecond
-	.thumb_func
-KorimaPalette_SaveSecond:
-	ldr r2, [pc, #12]
-	ldr r3, [pc, #16]
-	ldr r0, [r2]
-	ldr r1, [pc, #16]
-	ldr r2, [pc, #16]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	bx lr
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x0200a4e0
-	.4byte 0x840000e0
-	.global KorimaPalette_Capture
-	.thumb_func
-KorimaPalette_Capture:
-	push {lr}
-	ldr r3, [pc, #44]
-	ldr r4, [r3]
-	movs r0, #160
-	ldr r3, [pc, #40]
-	lsls r0, r0, #19
-	adds r1, r4, #0
-	ldr r2, [pc, #40]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r1, r4, r2
-	ldr r0, [pc, #32]
-	ldr r2, [pc, #24]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl 0x02009a80
-	pop {r0}
-	bx r0
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x84000070
-	.4byte 0x05000200
-	.global KorimaPalette_Restore
-	.thumb_func
-KorimaPalette_Restore:
-	push {lr}
-	ldr r3, [pc, #40]
-	ldr r1, [r3]
-	cmp r0, #0
-	beq .L_020018b8_0
-	ldr r3, [pc, #36]
-	ldr r0, [pc, #36]
-	b .L_020018b8_1
-.L_020018b8_0:
-	ldr r3, [pc, #28]
-	ldr r0, [pc, #36]
-.L_020018b8_1:
-	ldr r2, [pc, #36]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl 0x02009a78
-	bl 0x02009878
-	pop {r0}
-	bx r0
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x0200a4e0
-	.4byte 0x02009de0
-	.4byte 0x840000e0
 	.section .rodata,"a",%progbits
 	.global SceneAction_ActorOneEntry
 SceneAction_ActorOneEntry:
@@ -548,3 +456,11 @@ gKorimaKiEffectScript:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 8
+	.global KorimaPalette_First
+KorimaPalette_First:
+	.space 1792
+	.global KorimaPalette_Second
+KorimaPalette_Second:
+	.space 896

@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 extern u8 *Data_03001ebc;
+s32 ShindenHeya_MatchLeaderPriority();
 
 /* Calls use this overlay's loader veneers. The early long branch shares
  * the dialogue tail and epilogue; the two timing loops each run six times. */
@@ -743,7 +744,7 @@ dialogue:
         flags &= *actor;
         *actor = flags;
         actor = Object_GetById(0xa);
-        *(u32 *)(actor + 0x6c) = 0x02008849;
+        *(u32 *)(actor + 0x6c) = (u32)ShindenHeya_MatchLeaderPriority;
     }
     Event_End();
 }

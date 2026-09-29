@@ -1,37 +1,51 @@
-/* NONMATCHING: resource_39a at 0x02008f30 (156 bytes with its pool), an
- * exported table selector between FIELD/COMMON/IMIRU_FUCHIN/TRANSITION.C and
- * LAYOUT.C, stays listing.
+/* NONMATCHING: resource_39a at 0x02008f30 (156 bytes with its pool), the
+ * fifth entry veneer's table selector (the slot other field overlays fill
+ * with their events; the cave's trigger handlers are installed there),
+ * between FIELD/COMMON/IMIRU_FUCHIN/TRANSITION.C and LAYOUT.C, stays listing.
  *
- * Remaining difference: the reference loads the scene numbers from its literal
- * pool and compares registers, as link-time scene symbols do; plain constants
- * compile to cmp with an immediate. The tables keep their listing addresses.
+ * Remaining difference: the reference loads the scene numbers 0x34, 0x3e,
+ * 0x3f, 0x40, 0x41, 0x42 and 0x43 from its literal pool and compares
+ * registers, as link-time scene numbers do; plain constants compile to cmp
+ * with an immediate. With the seven numbers as link-time values this body
+ * compiles to the reference exactly. The tables it returns (0x0200abd8,
+ * 0x0200ac08, 0x0200ad1c, 0x0200ae24, 0x0200b058, 0x0200b130, 0x0200b184 and
+ * the default 0x0200abcc) also need labels on their listing rows.
  */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/COMMON/IMIRU_FUCHIN/IMIRU_FUCHIN.H"
 
-s32 SceneData_SelectDataByRuntimeSelectorB(void)
-{
-    s16 v = gGameState.scene;
+extern s32 gImiruFuchinEvents[];
+extern s32 gImiruFuchinRoom1Events[];
+extern s32 gImiruFuchinRoom2Events[];
+extern s32 gImiruFuchinRoom3Events[];
+extern s32 gImiruFuchinRoom4Events[];
+extern s32 gImiruFuchinRoom5Events[];
+extern s32 gImiruFuchinRoom6Events[];
+extern s32 gImiruFuchinRoom7Events[];
 
-    if (v == (s32)&Value_00000034) {
-        return (s32)Data_0200abd8;
+s32 *SceneData_SelectDataByRuntimeSelectorB(void)
+{
+    s16 scene = gGameState.scene;
+
+    if (scene == 0x34) {
+        return gImiruFuchinRoom1Events;
     }
-    if (v == (s32)&Value_0000003e) {
-        return (s32)Data_0200ac08;
+    if (scene == 0x3e) {
+        return gImiruFuchinRoom2Events;
     }
-    if (v == (s32)&Value_0000003f) {
-        return (s32)Data_0200ad1c;
+    if (scene == 0x3f) {
+        return gImiruFuchinRoom3Events;
     }
-    if (v == (s32)&Value_00000040) {
-        return (s32)Data_0200ae24;
+    if (scene == 0x40) {
+        return gImiruFuchinRoom4Events;
     }
-    if (v == (s32)&Value_00000041) {
-        return (s32)Data_0200b058;
+    if (scene == 0x41) {
+        return gImiruFuchinRoom5Events;
     }
-    if (v == (s32)&Value_00000042) {
-        return (s32)Data_0200b130;
+    if (scene == 0x42) {
+        return gImiruFuchinRoom6Events;
     }
-    if (v == (s32)&Value_00000043) {
-        return (s32)Data_0200b184;
+    if (scene == 0x43) {
+        return gImiruFuchinRoom7Events;
     }
-    return (s32)Data_0200abcc;
+    return gImiruFuchinEvents;
 }

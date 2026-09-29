@@ -9,12 +9,12 @@ void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
 {
     s32 handler;
 
-    KorosseoKabe_ModeTaskMode = (u16)mode;
-    KorosseoKabe_ModeTaskParam = (u16)(param << 4);
+    Korosseo_ModeTaskMode = (u16)mode;
+    Korosseo_ModeTaskParam = (u16)(param << 4);
 
     {
         s32 budget = 0xc80;
-        Engine_TaskAddCallback(CommandInterpolationRenderer_Update, budget);
+        Engine_TaskAddCallback(Korosseo_UpdateModeTask, budget);
     }
 
     handler = (s32)&KorosseoKabe_ModeRecordDefault;
@@ -32,11 +32,11 @@ void KorosseoKabe_InitializeModeTask(u32 mode, u32 param)
         }
     }
 
-    KorosseoKabe_ModeTaskTimer = 0;
-    KorosseoKabe_ModeTaskHandler = handler;
-    KorosseoKabe_ModeTaskStep = 0;
-    KorosseoKabe_ModeTaskCount = 0;
-    KorosseoKabe_ModeTaskWord = 0;
+    Korosseo_ModeTaskTimer = 0;
+    Korosseo_ModeTaskScript = handler;
+    Korosseo_ModeMoveTarget = 0;
+    Korosseo_ModeMoveDuration = 0;
+    Korosseo_ModeTaskPosition = 0;
 }
 
 void KorosseoKabe_RunScriptedTransition(s32 mode)

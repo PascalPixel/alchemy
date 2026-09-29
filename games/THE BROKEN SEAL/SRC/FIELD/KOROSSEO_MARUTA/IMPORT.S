@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathDivide
+	.thumb_func
+Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
 	.global Engine_MathModulo
 	.thumb_func
@@ -32,11 +35,17 @@ Engine_RandomNext:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
-	overlay_veneer Runtime_AllocateHeapBlockFar
+	.global Runtime_AllocateHeapBlockFar
+	.thumb_func
+Runtime_AllocateHeapBlockFar:
+	overlay_veneer Func_08000140
 	.global Engine_AllocateBlock
 	.thumb_func
 Engine_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
+	.global Runtime_ReleaseHeapBlock
+	.thumb_func
+Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
@@ -55,6 +64,9 @@ Resource_DecodeType01:
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
 	overlay_veneer Resource_ActivateEntryFar
+	.global VramBlock_LoadCached
+	.thumb_func
+VramBlock_LoadCached:
 	.global Engine_VramLoad
 	.thumb_func
 Engine_VramLoad:
@@ -63,10 +75,19 @@ Engine_VramLoad:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
+	.global AffineMatrix_BuildForEffect
+	.thumb_func
+AffineMatrix_BuildForEffect:
 	overlay_veneer AffineMatrix_BuildForEffectFar
+	.global Runtime_PushSlotEntry
+	.thumb_func
+Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
 	overlay_veneer Resource_GetTableEntryFar
-	overlay_veneer ResourceMetadata_ClearRecordFar
+	.global ResourceMetadata_ClearRecordFar
+	.thumb_func
+ResourceMetadata_ClearRecordFar:
+	overlay_veneer Func_08009060
 	.global Engine_ObjectSetAnimation
 	.thumb_func
 Engine_ObjectSetAnimation:
@@ -138,12 +159,18 @@ SetMapCellCollision:
 	.thumb_func
 UiText_DrawQuantity:
 	overlay_veneer UiWork_PushValueSlotFar
-	overlay_veneer ItemIcon_LoadTilesFar
+	.global ItemIcon_LoadTilesFar
+	.thumb_func
+ItemIcon_LoadTilesFar:
+	overlay_veneer Ui_PrepareTransferForItemFar
 	overlay_veneer PartyTalkMenu_ChooseFar
 	.global Resource_LoadFixedBlockBIntoFreeSlot
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlot:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlotFar
+	.global Engine_OwnerGetState
+	.thumb_func
+Engine_OwnerGetState:
 	.global Owner_GetState
 	.thumb_func
 Owner_GetState:
@@ -180,10 +207,16 @@ GameFlag_SetByte:
 	.thumb_func
 GetPartyMemberCount:
 	overlay_veneer Party_CountActiveOwnersFar
+	.global Engine_PartyAddActiveOwner
+	.thumb_func
+Engine_PartyAddActiveOwner:
 	.global Party_AddActiveOwner
 	.thumb_func
 Party_AddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
+	.global Engine_PartyRemoveActiveOwner
+	.thumb_func
+Engine_PartyRemoveActiveOwner:
 	.global Party_RemoveActiveOwner
 	.thumb_func
 Party_RemoveActiveOwner:
@@ -208,10 +241,13 @@ Engine_EventEnd:
 	.thumb_func
 Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
+	.global Object_GetByIdFar
+	.thumb_func
+Object_GetByIdFar:
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
-	overlay_veneer Object_GetByIdFar
+	overlay_veneer Func_0808a080
 	.global Engine_ActorDestroy
 	.thumb_func
 Engine_ActorDestroy:
@@ -269,6 +305,9 @@ Engine_ActorRunRepeatedMotion:
 	.thumb_func
 BattleFx_RunRisingObjectSequence:
 	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Engine_ActorFaceEachOther
 	.thumb_func
@@ -295,6 +334,9 @@ Engine_EventAskYesNo:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Engine_ActorSetSpritePriority
+	.thumb_func
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Engine_ActorShowEmote
 	.thumb_func
@@ -304,6 +346,9 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	.global Engine_ObjectAttachWorkTarget
+	.thumb_func
+Engine_ObjectAttachWorkTarget:
 	.global Engine_CameraFollowActor
 	.thumb_func
 Engine_CameraFollowActor:
@@ -364,6 +409,9 @@ ObjectTable_Get:
 	.thumb_func
 Audio_PlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
+	.global Engine_EventClearInvalidPackedValues
+	.thumb_func
+Engine_EventClearInvalidPackedValues:
 	overlay_veneer Event_ClearInvalidPackedValuesFar
 	.global Object_LinkObjectAndSetCallback
 	.thumb_func

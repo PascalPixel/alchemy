@@ -62,7 +62,7 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern s16 KorosseoKawa_ResourceEntry;
+extern s16 Korosseo_MarkerSlot;
 extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern u8 HexDigits[];
 
@@ -190,7 +190,7 @@ void OverlayObject_ResetMotionFields(void)
 void SceneState_InitHalfwordC6a6Once(void)
 {
 
-    if (KorosseoKawa_ResourceEntry == -1) {
-        KorosseoKawa_ResourceEntry = Resource_LoadFixedBlockBIntoFreeSlot();
+    if (Korosseo_MarkerSlot == -1) {
+        Korosseo_MarkerSlot = Resource_LoadFixedBlockBIntoFreeSlot();
     }
 }

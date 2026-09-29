@@ -6,7 +6,10 @@
  * movs r0, #18 before lsls r1, r1, #8 as the game does. The Camelot file ran
  * from 0x020087b8 through here, but SceneState_SyncProgressFlagsAndDispatch
  * (0x02008874) between them is still listing, so the file cannot link whole.
- * Remaining: 2 halfwords swapped at +0x8a; links once 0x02008874 does. */
+ * Remaining: 2 halfwords swapped at +0x8a; links once 0x02008874 does.
+ * 2026-09-29: declaring FieldScene_RunScene3a3SequenceC with the short_call
+ * attribute its definition would imply stops the compiler (internal error
+ * in extract_insn, recog.c:2067), and the lint refuses ABI attributes. */
 #include "ARUTIN.H"
 
 void FieldScene_RunScene3a3_02000d58(void)

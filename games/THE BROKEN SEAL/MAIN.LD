@@ -2240,6 +2240,8 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.084101cf)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/LIGHTNING_PILLAR.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08411275)
+        "*/games/THE BROKEN SEAL/SRC/MAP/WORLD/BLOCKS.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.08420c9c)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WORLD_MAP/PALETTE_A.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08424e61)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WORLD_MAP/TILES_A.o"(.rodata)

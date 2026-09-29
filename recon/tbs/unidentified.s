@@ -1295,9 +1295,7 @@ BattleFx_StagedParticleData:
 	.global BattleFx_DualStreamData
 BattleFx_DualStreamData:
 	.incbin "baserom.gba", 0x00411420, 0x00000054
-	.global Field_PerspectiveDataA
-Field_PerspectiveDataA:
-	.incbin "baserom.gba", 0x00411474, 0x0000f828
+	.section .unidentified.08420c9c,"a"
 	.global Field_DefaultMapCells
 Field_DefaultMapCells:
 	.incbin "baserom.gba", 0x00420c9c, 0x000039ec

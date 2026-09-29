@@ -5,7 +5,14 @@
    Remaining: the ROM stores the glyph style halfword to a stack slot it
    never reads (a 32-byte frame; here 28), keeps the widest line in r7, the
    height in fp, the line count in sl and its halfword offset in ip, and
-   reloads the jump-table base into lr after each line break. */
+   reloads the jump-table base into lr after each line break.
+   2026-09-29: alchemy permute took the score from 2754 to 1310 (29
+   register-only, 14 operand, 9 reordered, 3 inserted) in six minutes;
+   rerun and minimized, 19 of its 32 changed regions matter: declaration
+   and statement order, a while loop over the spacings, the final count
+   stored after the width, and a word temporary shared by the widest-line
+   test and the tile rounding (35 without it). The count reads must stay
+   *(counts + i): counts[i] scores 1917. */
 #include "TYPES.H"
 
 struct GlyphInfo {
@@ -34,24 +41,25 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
 {
     struct TextWork *work;
     u32 lines;
-    u32 height;
     u32 width;
-    u32 count;
+    u32 height;
     u32 line_width;
+    u32 count;
     u32 c;
     u32 glyph;
     u32 i;
+    u16 widths[4];
     s32 gap;
-    s16 zero;
     u32 style;
     u16 counts[4];
-    u16 widths[4];
+    u32 tmp;
+    u32 tmp2;
 
     work = (struct TextWork *)gWindowWork;
-    lines = 0;
     height = 15;
-    width = 0;
     count = 0;
+    width = 0;
+    lines = 0;
     line_width = 0;
     for (;;) {
         c = work->entries[pos];
@@ -74,15 +82,15 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
         case 1:
             goto done;
         case 3:
-            counts[lines] = ++count;
             widths[lines] = line_width;
+            counts[lines] = ++count;
             if (width < line_width)
                 width = line_width;
             if (lines < 3)
                 lines++;
-            height += 15;
-            count = 0;
             line_width = 0;
+            count = 0;
+            height += 15;
             break;
         case 14:
         case 28:
@@ -100,30 +108,33 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
         }
     }
 done:
-    counts[lines] = ++count;
     widths[lines] = line_width;
-    if (width < line_width)
+    if (width < (tmp = line_width))
         width = line_width;
-    if (work->framed != 0)
-        width += 2;
+    if (work->framed)
+        width = width + 2;
     *out_width = width;
+    counts[lines] = ++count;
+    tmp = (width + 19) >> 3;
+    tmp2 = (tmp << 3) - 16;
     *out_height = height;
-    width = ((width + 19) >> 3 << 3) - 16;
+    width = tmp2;
     if (spacing != NULL) {
-        for (i = 0; i <= lines; i++) {
-            if (counts[i] <= 1) {
-                zero = 0;
-                *spacing = zero;
+        i = 0;
+        while (i <= lines) {
+            if (*(counts + i) <= 1) {
+                *spacing = 0;
             } else {
                 gap = width - widths[i] - 4;
                 if (gap < 0)
                     gap = 0;
-                gap = Math_Div(gap << 8, counts[i] - 1);
+                gap = Math_Div(gap << 8, *(counts + i) - 1);
                 if ((u32)gap > 0xc00)
                     gap = 0x200;
                 *spacing = gap;
             }
             spacing++;
+            i++;
         }
     }
 }

@@ -10,16 +10,16 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TABLES.o"(.text)
-        "*/resource_396_overlay.o"(.text.x02008334)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/FLOOR_SWITCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/STEPS.o"(.text)
-        "*/resource_396_overlay.o"(.text.x0200869c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TABLE_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENCOUNTER.o"(.text)
-        "*/resource_396_overlay.o"(.text.x02009004)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENTER_ROOM.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/PALETTE.o"(.text)
-        "*/resource_396_overlay.o"(.text.x02009244)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TINT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/GESTURE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/SWIRL_SHRINK.o"(.text)
-        "*/resource_396_overlay.o"(.text.x0200962c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/SPAWN_SPARKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/MAP_PATCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/PALETTE_FADE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/LANDING_DUST.o"(.text)
@@ -28,7 +28,9 @@ SECTIONS
     }
     .bss : { "*/resource_396_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
-    /* The compiler calls its division helper by its ABI name; here it is the
-       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    /* The compiler calls its division helpers by their ABI names; here they
+       are the overlay's veneers into the resident IWRAM dividers, as in
+       MAIN.LD. */
     __divsi3 = Engine_MathDivide;
+    __udivsi3 = IwramUnsignedDivideEntry;
 }

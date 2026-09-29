@@ -16,7 +16,12 @@ struct GameState {
     s16 entrance;
     s16 saved_scene;
     s16 saved_entrance;
-    u8 unknown_1c8[0x2c];
+    u8 unknown_1c8[0x14];
+    /* The party's position on the map, in 16.16 fixed point. */
+    s32 x;
+    s32 y;
+    s32 z;
+    u8 unknown_1e8[0x0c];
     /* The actor whose position actor contact is measured from. */
     s32 selected_actor;
     u8 unknown_1f8[0x48];
@@ -29,6 +34,7 @@ struct GameState {
 };
 
 LAYOUT_OFFSET_GUARD(GameState_Entrance, struct GameState, entrance, 0x1c2);
+LAYOUT_OFFSET_GUARD(GameState_X, struct GameState, x, 0x1dc);
 LAYOUT_OFFSET_GUARD(GameState_SelectedActor, struct GameState, selected_actor, 0x1f4);
 LAYOUT_OFFSET_GUARD(GameState_RetreatEntrance, struct GameState, retreat_entrance, 0x242);
 LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);

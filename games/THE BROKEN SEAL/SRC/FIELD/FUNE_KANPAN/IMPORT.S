@@ -62,6 +62,9 @@ ObjectDispatch_SetSingleChildField26:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer Func_080091e0
+	.global Engine_WorkSetValuesIfNonNegative
+	.thumb_func
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
 	.global Graphics_EnableObjLayerAndCallbacks
 	.thumb_func
@@ -290,7 +293,13 @@ Event_SetValue170:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
 	.global Event_SetStatus1c6
 	.thumb_func

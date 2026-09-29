@@ -81,6 +81,9 @@ Engine_MapCopyCellsTo:
 Map_GetTerrainHeightFar:
 	overlay_veneer Func_080091a8
 	overlay_veneer GetMapCellCollisionFar
+	.global Engine_MapCopyCells
+	.thumb_func
+Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
@@ -209,6 +212,9 @@ FieldEffect_UpdateGridPlacement:
 	.thumb_func
 battle_owner_69:
 	overlay_veneer battle_owner_69Far
+	.global BattleFx_StartFadeOverlay
+	.thumb_func
+BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	.global BattleFx_PlayQueuedSound
 	.thumb_func

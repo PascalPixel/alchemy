@@ -28,6 +28,9 @@ void Owner_RefreshActiveRatios();
 s32 Motion_LaunchFromFocusedObject();
 void FieldScene_RunSecondaryScript();
 
+/* SCRIPT.C: the report the house plays when the party arrives to give it. */
+void FieldScene_RunPrimaryScript(void);
+
 /* The pose is the attached effect the actor carries. */
 static __inline__ void ConfigureActorPose(s32 actor, s32 pose)
 {

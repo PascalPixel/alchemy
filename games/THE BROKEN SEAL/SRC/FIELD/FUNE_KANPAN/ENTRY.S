@@ -10,6 +10,6 @@
 	overlay_veneer Func_020013d4
 	overlay_veneer SceneData_GetTablec994
 	overlay_veneer SceneData_GetTablecb64
-	overlay_veneer Func_02000950
-	overlay_veneer Func_020009fc
+	overlay_veneer FuneKanpan_GetPlacements
+	overlay_veneer FuneKanpan_GetEvents
 	overlay_veneer SceneData_GetTablecb44

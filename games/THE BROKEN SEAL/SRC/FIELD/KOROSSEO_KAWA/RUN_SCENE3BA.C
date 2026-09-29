@@ -54,7 +54,7 @@ void Korosseo_FinishSoloRound();
 
 void Korosseo_RestoreCompetitor();
 typedef void(*SceneTask)(void);
-s32 GameFlag_GetByteFar(s32);
+s32 GameFlag_GetByte(s32);
 s32 SceneDialogue_RunFlagGatedPromptInteraction();
 
 PartyInteractionRecord *GetPartyInteractionRecord(void);
@@ -268,8 +268,8 @@ void Scene_RunSceneFourCoordinator(s32 scene)
 void SceneActor_PlaceSlots1To3FromWork(void)
 {
     {
-        s32 x = GameFlag_GetByteFar(896);
-        s32 y = GameFlag_GetByteFar(904);
+        s32 x = GameFlag_GetByte(896);
+        s32 y = GameFlag_GetByte(904);
 
         x <<= 20;
         x += 0x80000;
@@ -278,8 +278,8 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         Actor_SetPosition(ACTOR_GERALD, x, y);
     }
     {
-        s32 x = GameFlag_GetByteFar(912);
-        s32 y = GameFlag_GetByteFar(920);
+        s32 x = GameFlag_GetByte(912);
+        s32 y = GameFlag_GetByte(920);
 
         x <<= 20;
         x += 0x80000;
@@ -288,8 +288,8 @@ void SceneActor_PlaceSlots1To3FromWork(void)
         Actor_SetPosition(ACTOR_IVAN, x, y);
     }
     {
-        s32 x = GameFlag_GetByteFar(928);
-        s32 y = GameFlag_GetByteFar(936);
+        s32 x = GameFlag_GetByte(928);
+        s32 y = GameFlag_GetByte(936);
 
         x <<= 20;
         x += 0x80000;

@@ -142,6 +142,8 @@ ShindenHeya_ChooseRestartOption:
 	.2byte 0x1800
 	.2byte 0x0300
 	.section .rodata,"a",%progbits
+	.global ShindenHeya_LeaderCircleScript
+ShindenHeya_LeaderCircleScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -197,6 +199,8 @@ ShindenHeya_ChooseRestartOption:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global ShindenHeya_GeraldCircleScript
+ShindenHeya_GeraldCircleScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -252,6 +256,8 @@ ShindenHeya_ChooseRestartOption:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global ShindenHeya_ItemIconGrowScript
+ShindenHeya_ItemIconGrowScript:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00008000
@@ -357,6 +363,8 @@ ShindenHeya_ChooseRestartOption:
 	.4byte 0x00000000
 	.4byte 0x00000002
 	.4byte 0x00000010
+	.global ShindenHeya_ItemIconEndScript
+ShindenHeya_ItemIconEndScript:
 	.4byte 0x00000000
 	.4byte 0x0000003c
 	.4byte 0x0000001b
@@ -493,6 +501,8 @@ ShindenHeya_PlacementB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global ShindenHeya_PlacementSequenceB
+ShindenHeya_PlacementSequenceB:
 	.4byte 0xffff0002
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -821,6 +831,8 @@ ShindenHeya_SceneTableI:
 	.4byte 0x00000001
 	.4byte 0x00000001
 	.4byte 0x00000001
+	.global ShindenHeya_OwnerEffectScript
+ShindenHeya_OwnerEffectScript:
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0xffff8000

@@ -12,6 +12,7 @@ extern char SceneId_Title;
 extern char SceneId_WorldMap;
 extern char SceneId_SoruIriguchi1;
 extern char SceneId_SoruIriguchi2;
+extern char SceneId_KuupuappuHeya;
 extern char SceneId_GomaSuiro1;
 extern char SceneId_GomaSuiro2;
 extern char SceneId_BiribinoMura1;

@@ -4,16 +4,11 @@
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
+#include "RESOURCE_IDS.H"
 
 extern u8 gBattleFxWork[];
 extern u8 gMapCellBuffer[];
 extern BattleEffectDrawRectangle Data_03001e50[];
-extern u8 Value_0000004b;
-extern u8 Value_0000004c;
-extern u8 Value_0000004d;
-extern u8 Value_0000004e;
-extern u8 Value_0000004f;
-extern u8 Value_00000050;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
@@ -46,14 +41,14 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     BattleFx_BeginCanvasLayer(0);
     *(volatile u16 *)0x04000050 = 0;
     if (variant == 0) {
-        Resource_LoadAndDecompress((s32)&Value_0000004f, work, 1, 0);
-        Resource_LoadAndDecompress((s32)&Value_00000050, gMapCellBuffer, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskE, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskF, gMapCellBuffer, 1, 1);
     } else if (variant == 1) {
-        Resource_LoadAndDecompress((s32)&Value_0000004d, work, 1, 0);
-        Resource_LoadAndDecompress((s32)&Value_0000004e, gMapCellBuffer, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskC, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskD, gMapCellBuffer, 1, 1);
     } else {
-        Resource_LoadAndDecompress((s32)&Value_0000004b, work, 1, 0);
-        Resource_LoadAndDecompress((s32)&Value_0000004c, gMapCellBuffer, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskA, work, 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_RevealMaskB, gMapCellBuffer, 1, 1);
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;

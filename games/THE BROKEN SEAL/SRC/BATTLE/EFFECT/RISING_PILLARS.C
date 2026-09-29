@@ -13,6 +13,7 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
+#include "RESOURCE_IDS.H"
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -28,7 +29,6 @@ void Runtime_ReleaseHeapBlock(s32);
 s32 BattleFx_EndCanvasLayer(void);
 
 extern u8 gWorkSlot[];
-extern u8 Value_0000007e;
 
 extern u8 BattleFxPillar_Kinds[];
 extern s8 BattleFxPillar_X[];
@@ -74,7 +74,7 @@ void FunctionHead_080dd9c0(struct BattleEffectArgument *efx)
     *(u16 *)0x04000020 = 0x100;
     *(u16 *)0x04000050 = 0;
     *(u16 *)0x04000052 = 0x1010;
-    Resource_LoadAndDecompress((s32)&Value_0000007e, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ThornSheet, work, 1, 1);
     if (work->effect->side == 1) {
         *(u32 *)0x04000028 = 0xffff9000;
     }

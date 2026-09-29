@@ -3,6 +3,7 @@
 #include "RESOURCE.H"
 #include "GLOBAL_CELLS.H"
 #include "SYSTEM.H"
+#include "RESOURCE_IDS.H"
 extern u8 Data_03001f38[];
 
 struct MenuSelectionState {
@@ -82,7 +83,6 @@ s32 Menu_SelectResource(s32 start, s32 goal)
     return goal;
 }
 
-extern u8 Data_000000f1[];
 
 u32 Runtime_BumpAllocate(s32 size);
 u32 Resource_DecodeByteLz(const void *, void *);
@@ -93,7 +93,7 @@ void Menu_LoadResourceSlot(s32 slot, s32 index)
 {
     s32 size = 1024;
     void *buffer = (void *)Runtime_BumpAllocate(size);
-    u16 *base = Resource_GetTableEntry((s32)Data_000000f1);
+    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
 
     /* 表内の相対位置から転送元を求める。 */
     Resource_DecodeByteLz((void *)((u32)base + base[index]), buffer);

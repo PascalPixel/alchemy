@@ -1,5 +1,6 @@
 #include "DMA.H"
 #include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
 
 typedef struct {
     u8 input[0x400];
@@ -14,7 +15,6 @@ void UiGlyph_DecodeWithHeapRoutines(GlyphTransfer *work, s32 overlay);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Runtime_ReleaseHeapBlock(s32 kind);
 
-extern u8 Value_000000f0[];
 
 void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s32 palette, s32 reuse)
 {
@@ -24,7 +24,7 @@ void UiGlyph_LoadEntryWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile, s3
     u32 index;
 
     work = Runtime_AllocateHeapBlock(17, 0x608);
-    table = Resource_GetTableEntry((s32)Value_000000f0);
+    table = Resource_GetTableEntry((s32)&ResourceId_Icons);
     if (icon <= 127)
         index = icon;
     else

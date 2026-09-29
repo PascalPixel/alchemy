@@ -5,6 +5,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
 
@@ -18,9 +19,6 @@ extern u8 gCameraWork[];
  */
 
 /* Resource ids the reference loads from its literal pool. */
-extern u8 Value_0000009e;
-extern u8 Value_0000006c;
-extern u8 Value_000000bb;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
@@ -52,9 +50,9 @@ void BattleFx_RunTargetBursts(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&Value_0000009e, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_0000006c, (u8 *)work + 0x1b00, 0, 0);
-    palette = Resource_GetTableEntry((s32)&Value_000000bb);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_TargetBurstImage, (u8 *)work + 0x1b00, 0, 0);
+    palette = Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet);
     Iwram_CopyWords((void *)0x05000000, palette, 128);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     rectangle_a = heap_cache[7];

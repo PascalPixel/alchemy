@@ -1,0 +1,35 @@
+@ Field_Map139: a field map of 3 layers.
+	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
+	.section .rodata
+	.global Field_Map139
+Field_Map139:
+	map_header 0x0, 0x5a, 0x64, 3, 3, 2, 0, 2, 2, 0x0, 0x0
+	map_layer 16, 16, 0, -1, 0x6400
+	map_layer 16, 16, 0, -1, 0x64
+	map_layer 16, 16, 0, -1, 0x40
+	.2byte 0x0
+	map_block Field_Map139, .LField_Map139_1
+	map_block Field_Map139, .LField_Map139_2
+	map_block Field_Map139, .LField_Map139_3
+	map_block Field_Map139, .LField_Map139_4
+	map_block Field_Map139, .LField_Map139_5
+	map_block Field_Map139, .LField_Map139_6
+	.incbin "MAP/MAP_139/CELLS.delta2.lz"
+	.balign 4, 0
+.LField_Map139_1:
+	.incbin "MAP/MAP_139/SLOT_1.bin.lz"
+	.balign 4, 0
+.LField_Map139_2:
+	.incbin "MAP/MAP_139/SLOT_2.bin.lz"
+	.balign 4, 0
+.LField_Map139_3:
+	.incbin "MAP/MAP_139/SLOT_3.bin.lz"
+	.balign 4, 0
+.LField_Map139_4:
+	.incbin "MAP/MAP_139/SLOT_4.bin.lz"
+	.balign 4, 0
+.LField_Map139_5:
+	.incbin "MAP/MAP_139/SLOT_5.bin.lz"
+	.balign 4, 0
+.LField_Map139_6:
+	.incbin "MAP/MAP_139/SLOT_6.bin.lz"

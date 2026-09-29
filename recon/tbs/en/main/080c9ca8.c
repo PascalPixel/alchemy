@@ -12,7 +12,7 @@ s32 Resource_GetTableEntry();
 void Func_080030f8();
 s32 Func_080041d8();
 void Scheduler_RemoveCallback();
-void Func_080049ac();
+void Render_ResetTransformState();
 void Graphics_PrepareTransferInIwramWork();
 void _call_via_r3();
 s32 Func_080072f4();
@@ -185,7 +185,7 @@ void Func_080c9ca8(s32 a0, s32 a1)
         if (v10 > slot24) {
             *(u16 *)0x04000052 = ((slot40 - v10) | (s32)Data_00001000);
         }
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(slot44, slot28);
         slot56 = 0;
         if (*(s32 *)(*(s32 *)((slot64 + 0x7828)) + 20) == 0) {

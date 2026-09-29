@@ -102,7 +102,7 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 flag);
 s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(s32 *particle, s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(const s32 *source, s32 *screen);
@@ -464,7 +464,7 @@ void Func_080ca60c(void *object, s32 kind)
             } while (i != 3);
         }
 
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, look_target);
 
         BattleEffect_LoadWork(46, 7, 7, 3, 2);

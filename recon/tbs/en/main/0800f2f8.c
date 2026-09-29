@@ -60,16 +60,16 @@ extern struct GameFlagRow Data_02000240[];
 extern const s16 Data_08013254[16];
 extern const s32 Data_0801328c[16];
 
-void Func_0800447c(s32 distance, s32 angle, struct Vec *position);
-s32 Func_080122ac(s32, struct WorldPosition *position);
-void Func_0800d14c(struct ObjectRuntime *, s32, s32, s32);
-void Func_0800c300(void *, s32);
-void Func_0800c2d8(void *, u32);
-s32 Func_0800ba30(void *, s32);
-s32 Func_0800eaf8(void);
-s32 Func_080045d4(s32);
+void Vector_AddPolarOffset(s32 distance, s32 angle, struct Vec *position);
+s32 CheckWorldMapCollisionRange(s32, struct WorldPosition *position);
+void Object_SetMoveTarget(struct ObjectRuntime *, s32, s32, s32);
+void ObjectDispatch_ApplyArgumentToChildren(void *, s32);
+void ObjectDispatch_Initialize(void *, u32);
+s32 AnimationObjects_SelectAnimation(void *, s32);
+s32 Field_CheckConfiguredKeys(void);
+s32 FixedSqrt(s32);
 struct ObjectRuntime *Func_0800c150(s32, s32, s32, s32);
-s32 Func_08012204(struct WorldPosition *);
+s32 GetWorldMapCollision(struct WorldPosition *);
 
 s32 Func_0800f2f8(struct ObjectRuntime *object)
 {
@@ -115,36 +115,36 @@ s32 Func_0800f2f8(struct ObjectRuntime *object)
     position.x = object->x;
     position.y = object->y;
     position.z = object->z;
-    Func_0800447c(0x70000, direction, &position);
+    Vector_AddPolarOffset(0x70000, direction, &position);
     if (*(u8 *)0x03001f54 != 0
         && (*(u32 *)0x03001ae8 & 0x200) != 0)
         goto update_object;
-    if (Func_080122ac((s32)object, (struct WorldPosition *)&position) != 0)
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
         goto choose_direction;
 
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Func_0800447c(0x70000, direction + 0x1000, &test_position);
-    if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+    Vector_AddPolarOffset(0x70000, direction + 0x1000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Func_0800447c(0x70000, direction - 0x1000, &test_position);
-    if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+    Vector_AddPolarOffset(0x70000, direction - 0x1000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Func_0800447c(0x70000, direction + 0x2000, &test_position);
-    if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+    Vector_AddPolarOffset(0x70000, direction + 0x2000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     test_position.x = object->x;
     test_position.y = object->y;
     test_position.z = object->z;
-    Func_0800447c(0x70000, direction - 0x2000, &test_position);
-    if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+    Vector_AddPolarOffset(0x70000, direction - 0x2000, &test_position);
+    if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
         goto choose_direction;
     goto update_object;
 
@@ -162,32 +162,32 @@ choose_direction:
         position.x = object->x;
         position.y = object->y;
         position.z = object->z;
-        Func_0800447c(0x70000, direction, &position);
-        if (Func_080122ac((s32)object, (struct WorldPosition *)&position) != 0)
+        Vector_AddPolarOffset(0x70000, direction, &position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Func_0800447c(0x70000, direction + 0x1000, &test_position);
-        if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+        Vector_AddPolarOffset(0x70000, direction + 0x1000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Func_0800447c(0x70000, direction - 0x1000, &test_position);
-        if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+        Vector_AddPolarOffset(0x70000, direction - 0x1000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Func_0800447c(0x70000, direction + 0x2000, &test_position);
-        if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+        Vector_AddPolarOffset(0x70000, direction + 0x2000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         test_position.x = object->x;
         test_position.y = object->y;
         test_position.z = object->z;
-        Func_0800447c(0x70000, direction - 0x2000, &test_position);
-        if (Func_080122ac((s32)object, (struct WorldPosition *)&test_position) != 0)
+        Vector_AddPolarOffset(0x70000, direction - 0x2000, &test_position);
+        if (CheckWorldMapCollisionRange((s32)object, (struct WorldPosition *)&test_position) != 0)
             continue;
         angle = (s16)direction;
         goto update_object;
@@ -202,9 +202,9 @@ update_object:
             *(u16 *)(*(u8 **)0x03001ebc + 0x19c) = 0;
     }
     if (collision != 0)
-        Func_0800c300(object, 9);
+        ObjectDispatch_ApplyArgumentToChildren(object, 9);
     else
-        Func_0800c300(object, mode);
+        ObjectDispatch_ApplyArgumentToChildren(object, mode);
 
     if (collision != 0) {
         object->target_x = -0x80000000;
@@ -225,13 +225,13 @@ update_object:
         goto movement_done;
     }
 
-    Func_0800d14c(object, position.x, position.y, position.z);
+    Object_SetMoveTarget(object, position.x, position.y, position.z);
     square = Iwram_MulQ16(object->velocity_x, object->velocity_x);
     square += Iwram_MulQ16(object->velocity_z, object->velocity_z);
-    square = Func_080045d4(square);
+    square = FixedSqrt(square);
     object->velocity_x = collision;
     object->velocity_z = collision;
-    Func_0800447c(square, (u16)angle, (struct Vec *)&object->velocity_x);
+    Vector_AddPolarOffset(square, (u16)angle, (struct Vec *)&object->velocity_x);
     if (object->action != 0)
         object->action--;
 
@@ -255,7 +255,7 @@ movement_done:
 
     if (object->animation_kind == 1) {
         animation = object->animation;
-        collision_kind = Func_08012204((struct WorldPosition *)&object->x);
+        collision_kind = GetWorldMapCollision((struct WorldPosition *)&object->x);
         if (collision_kind == 9) {
             *(u8 *)(*(u8 **)(animation + 44) + 6) = 1;
             *(u8 *)(animation + 38) = 0;
@@ -267,11 +267,11 @@ movement_done:
             effect = Func_0800c150(24, object->x, object->y, object->z);
             if (effect != 0) {
                 animation = effect->animation;
-                Func_0800c2d8(effect, 0x08013280);
+                ObjectDispatch_Initialize(effect, 0x08013280);
                 *((u8 *)effect + 0x55) = collision;
                 *((u8 *)effect + 0x22) = 1;
                 if (animation != 0) {
-                    Func_0800ba30(animation, 1);
+                    AnimationObjects_SelectAnimation(animation, 1);
                     *(u8 *)(animation + 38) = collision;
                     animation[5] = (animation[5] & ~12) | 4;
                     animation[9] = (animation[9] & ~12) | 8;
@@ -280,7 +280,7 @@ movement_done:
             }
         }
     }
-    Func_0800eaf8();
+    Field_CheckConfiguredKeys();
     object->step++;
     return 1;
 }

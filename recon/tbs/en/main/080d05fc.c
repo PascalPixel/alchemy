@@ -45,31 +45,31 @@ struct TriangleWork {
     s32 transfer_pending;
     Effect *effect;
 };
-extern u8 Data_03001e50[];
-extern u16 Data_080ede5c[];
+extern u8 gWorkSlot[];
+extern u16 BattleFx6_FlareCells[];
 extern s32 Data_080ee128[];
 extern u8 Value_00000073, Value_00000076, Value_00000079, Value_0000008f;
-void Func_080cd594(s32);
-void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
-u8 *Func_08002f40(s32);
-void Func_08005340(const void *, void *);
+void BattleFx_BeginCanvasLayer(s32);
+void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
+u8 *Resource_GetTableEntry(s32);
+void Resource_DecodeType01(const void *, void *);
 s32 Func_080041d8(s32, s32);
 void Func_080f9010(s32);
-void Func_080b50e8(s32);
-void Func_080d40ec(s32, s32, s32, s32);
-s32 Func_08002322(s32);
-s32 Func_0800231c(s32);
-void Func_080cef64(s32, DrawRectangle *);
-void Func_08002dd8(s32);
-void **Func_080b5098(s32);
-void Func_080049ac(void);
-void Func_080051d8(const void *, const void *);
-void Func_08004cf0(const s32 *);
-void Func_08004c6c(s32);
-void Func_08004c1c(s32);
-void Func_080030f8(s32);
-void Func_08004278(s32);
-s32 Func_080cdbc0(void);
+void BattleEventRuntime_BeginPhaseFar(s32);
+void Graphics_UpdatePhasePalette(s32, s32, s32, s32);
+s32 Trig_Sin(s32);
+s32 Trig_Cos(s32);
+void BattleFx_FetchRectangleBlitters(s32, DrawRectangle *);
+void Runtime_ReleaseHeapBlock(s32);
+void **GetBattleObjectSlotFar(s32);
+void Render_ResetTransformState(void);
+void Graphics_PrepareTransferInIwramWork(const void *, const void *);
+void SceneTransform_ApplyScale(const s32 *);
+void SceneTransform_ApplyRoll(s32);
+void SceneTransform_ApplyYaw(s32);
+void WaitFrames(s32);
+void Scheduler_RemoveCallback(s32);
+s32 BattleFx_EndCanvasLayer(void);
 #define WORK_EFFECT (work->effect)
 
 void Func_080d05fc(Effect *effect)
@@ -88,24 +88,24 @@ void Func_080d05fc(Effect *effect)
     TrailPoint *trail, *from, *to;
     s32 *actor;
 
-    cache = (u32 *)(Data_03001e50 + 39 * 4);
+    cache = (u32 *)(gWorkSlot + 39 * 4);
     entry = cache;
     work = (struct TriangleWork *)*entry++;
     dst = (void *)*entry;
     camera = (u8 *)cache[-27];
     sheet = (u8 *)cache[2];
     WORK_EFFECT = effect;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     if (WORK_EFFECT->mode == 1)
-        Func_080de2f8(effect, 3, WORK_EFFECT->side, 0, &origin_x, &origin_y);
+        BattleFx_PrepareCanvasEffect(effect, 3, WORK_EFFECT->side, 0, &origin_x, &origin_y);
     *(s16 *)0x04000020 = 0x100;
-    resource = Func_08002f40((s32)&Value_00000079);
+    resource = Resource_GetTableEntry((s32)&Value_00000079);
     ((WordCopy)0x03001388)((void *)0x05000000, resource, 128);
-    Func_08005340(resource + 128, work);
-    Func_08005340(Func_08002f40((s32)&Value_00000073), sheet);
-    Func_08005340(Func_08002f40((s32)&Value_00000076), (u8 *)work + 0x1000);
-    resource = Func_08002f40((s32)&Value_0000008f);
-    Func_08005340(resource + 128, (u8 *)work + 0x2000);
+    Resource_DecodeType01(resource + 128, work);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000073), sheet);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000076), (u8 *)work + 0x1000);
+    resource = Resource_GetTableEntry((s32)&Value_0000008f);
+    Resource_DecodeType01(resource + 128, (u8 *)work + 0x2000);
     work->transfer_mode = 3;
     work->transfer_value = 0x04040404;
     Func_080041d8(0x080cd261, 0x480);
@@ -116,23 +116,23 @@ void Func_080d05fc(Effect *effect)
     Func_080f9010(142);
     frame = 0;
     while (frame != WORK_EFFECT->count * 20 + 72) {
-        if (frame == 64) Func_080b50e8(0);
-        Func_080d40ec(frame, 0xaaab, 0x5555, 0);
+        if (frame == 64) BattleEventRuntime_BeginPhaseFar(0);
+        Graphics_UpdatePhasePalette(frame, 0xaaab, 0x5555, 0);
         if (WORK_EFFECT->mode == 1) {
-            x = ((Func_08002322(frame << 11) * 20) >> 16) + origin_x + shift - 20;
-            y = ((Func_0800231c(frame << 11) << 2) >> 16) + origin_y;
-            Func_080cef64(WORK_EFFECT->side, draw);
+            x = ((Trig_Sin(frame << 11) * 20) >> 16) + origin_x + shift - 20;
+            y = ((Trig_Cos(frame << 11) << 2) >> 16) + origin_y;
+            BattleFx_FetchRectangleBlitters(WORK_EFFECT->side, draw);
             y -= 24;
             if (frame > 32) y = y - (frame << 1) + 64;
             draw[0](dst, (u8 *)work + 0x2000, x, y, 40, 40);
             if (frame <= 3) draw[1](dst, (u8 *)work + 0x2000, x, y, 40, 40);
-            Func_08002dd8(47);
-            Func_08002dd8(46);
+            Runtime_ReleaseHeapBlock(47);
+            Runtime_ReleaseHeapBlock(46);
         }
         BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        draw[0] = (DrawRectangle)((u32 *)Data_03001e50)[46];
+        draw[0] = (DrawRectangle)((u32 *)gWorkSlot)[46];
         BattleEffect_LoadWork(47, 7, 7, 7, 2);
-        draw[1] = (DrawRectangle)((u32 *)Data_03001e50)[47];
+        draw[1] = (DrawRectangle)((u32 *)gWorkSlot)[47];
         if (frame > 16 && (frame & 15) == 0)
             work->transfer_value += 0x01010101;
         member = 0;
@@ -140,10 +140,10 @@ void Func_080d05fc(Effect *effect)
         scale_phase = frame * 3 << 9;
         tick = frame;
         do {
-            actor = (s32 *)*Func_080b5098(WORK_EFFECT->actors[member]);
+            actor = (s32 *)*GetBattleObjectSlotFar(WORK_EFFECT->actors[member]);
             if ((u32)tick <= 95) {
-                Func_080049ac();
-                Func_080051d8(camera, camera + 12);
+                Render_ResetTransformState();
+                Graphics_PrepareTransferInIwramWork(camera, camera + 12);
                 vector.x = actor[2];
                 vector.y = actor[3];
                 vector.depth = actor[4];
@@ -157,16 +157,16 @@ void Func_080d05fc(Effect *effect)
                     rotation = (64 - tick) << 9;
                     point = 0;
                     do {
-                        Func_080049ac();
+                        Render_ResetTransformState();
                         if (tick <= 63) {
                             scale.x = scale_value;
                             scale.y = scale_value;
                             scale.depth = scale_value;
-                            Func_08004cf0((s32 *)&scale);
-                            Func_08004c6c(rotation);
-                            Func_08004c1c(rotation);
+                            SceneTransform_ApplyScale((s32 *)&scale);
+                            SceneTransform_ApplyRoll(rotation);
+                            SceneTransform_ApplyYaw(rotation);
                         }
-                        Func_08004c6c(angle);
+                        SceneTransform_ApplyRoll(angle);
                         EffectPosition_ApplyBaseAndYOffset(
                             Data_080ee128, &vector);
                         trail = &work->points[point_base + point];
@@ -188,7 +188,7 @@ void Func_080d05fc(Effect *effect)
                             y = from->position.y;
                             y += Math_Div(sample * (to->position.y - y), 24);
                             x -= radius; y -= radius;
-                            draw[0](dst, (u8 *)work + Data_080ede5c[radius - 1] + 0x1000, x, y, width, width);
+                            draw[0](dst, (u8 *)work + BattleFx6_FlareCells[radius - 1] + 0x1000, x, y, width, width);
                             sample++;
                         } while (sample != 24);
                     } while (point != 3);
@@ -200,12 +200,12 @@ void Func_080d05fc(Effect *effect)
             }
             scale_phase -= 0x3000; point_base += 32; member++; tick -= 8;
         } while (member != 1);
-        Func_08002dd8(47);
-        Func_08002dd8(46);
+        Runtime_ReleaseHeapBlock(47);
+        Runtime_ReleaseHeapBlock(46);
         work->transfer_pending = member;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     }
-    Func_08004278(0x080cd261);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback(0x080cd261);
+    BattleFx_EndCanvasLayer();
 }

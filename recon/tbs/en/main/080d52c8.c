@@ -73,7 +73,7 @@ typedef s32 (*IntegerSqrtFn)(s32 value);
 
 /* Heap-block cache: Data_03001e50[kind] holds the block BattleEffect_LoadWork
    published for that display kind. */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 
 extern const u16 Data_080edebe[];
 extern const u8 Data_080edeca[];
@@ -96,44 +96,44 @@ extern u8 Value_000000ce;
 /* Callees the project has not named yet keep their address spelling; the
    names in comments are the ones `alchemy inspect` resolves. */
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_0800231c(s32 angle);
-s32 Func_08002322(s32 angle);
+s32 Trig_Cos(s32 angle);
+s32 Trig_Sin(s32 angle);
 /* Runtime_ReleaseHeapBlock */
-void Func_08002dd8(s32 kind);
+void Runtime_ReleaseHeapBlock(s32 kind);
 /* get */
-void *Func_08002f40(s32 id);
-void Func_080030f8(s32 frames);
+void *Resource_GetTableEntry(s32 id);
+void WaitFrames(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
 /* Scheduler_RemoveCallback */
 /* random_16 */
-u32 Func_08004458(void);
+u32 Random16(void);
 /* Render_ResetTransformState */
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 /* SceneTransform_ApplyPitch */
-void Func_08004bd4(s32 angle);
+void SceneTransform_ApplyPitch(s32 angle);
 /* SceneTransform_ApplyYaw */
-void Func_08004c1c(s32 angle);
+void SceneTransform_ApplyYaw(s32 angle);
 /* SceneTransform_ApplyPosition */
-void Func_08004cb4(const s32 *position);
+void SceneTransform_ApplyPosition(const s32 *position);
 /* Graphics_PrepareTransferInIwramWork */
-void Func_080051d8(void *source, void *target);
-void Func_080b5078(s32 a, s32 member_id, s32 c, s32 d);
-void Func_080b5088(s32 member_id, s32 flag);
-void **Func_080b5098(s32 member_id);
-void Func_080b50e8(s32 id);
+void Graphics_PrepareTransferInIwramWork(void *source, void *target);
+void BattleMotion_ApproachTargetFar(s32 a, s32 member_id, s32 c, s32 d);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 flag);
+void **GetBattleObjectSlotFar(s32 member_id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 /* ObjectGroup_TickMemberTimers */
-void Func_080cd52c(void);
-void Func_080cd594(s32 mode);
-s32 Func_080cdbc0(void);
+void ObjectGroup_TickMemberTimers(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 BattleFx_EndCanvasLayer(void);
 /* update_members */
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 /* load_and_decompress */
 /* Camera_ApplyShake */
-void Func_080e155c(s32 a, s32 b);
+void Camera_ApplyShake(s32 a, s32 b);
 /* apply_base_and_y_offset */
-void Func_080e3944(const void *source, s32 *screen);
+void EffectPosition_ApplyBaseAndYOffset(const void *source, s32 *screen);
 /* apply_step_and_y_offset */
-void Func_080e396c(s32 member_id, s32 *screen);
+void EffectPosition_ApplyStepAndYOffset(s32 member_id, s32 *screen);
 void Func_080f9010(s32 cue);
 
 /* 28-byte animation record.  512 of them live at 0x02010000: eight groups of
@@ -166,7 +166,7 @@ typedef struct {
 #define WORK_EFX (*(Efx **)((s8 *)work + 0x7828))
 #define WORK_S32(off) (*(s32 *)((s8 *)work + (off)))
 /* One unsigned 8-bit random sample, re-centred around zero. */
-#define RANDOM_BIASED(bias) ((s32)(Func_08004458() & 0xFF) - (bias))
+#define RANDOM_BIASED(bias) ((s32)(Random16() & 0xFF) - (bias))
 
 void BattleFx_RenderMode(void *object, u32 kind)
 {
@@ -205,7 +205,7 @@ void BattleFx_RenderMode(void *object, u32 kind)
     destination = *cursor;
     count = 16;
     WORK_EFX = (Efx *)object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&Value_0000009e, work, 1, 1);
 
     if (kind == 0) {
@@ -232,7 +232,7 @@ void BattleFx_RenderMode(void *object, u32 kind)
     }
 
     ((WordCopyFn)0x03001388)(
-        (void *)0x05000000, Func_08002f40(resource_id), 128);
+        (void *)0x05000000, Resource_GetTableEntry(resource_id), 128);
 
     if (kind == 4) {
         Resource_LoadAndDecompress((s32)&Value_000000aa, work, 1, 1);
@@ -277,23 +277,23 @@ void BattleFx_RenderMode(void *object, u32 kind)
 
         if (kind == 7) {
             if (frame == total - 46) {
-                Func_080b5078(
+                BattleMotion_ApproachTargetFar(
                     WORK_EFX->field_08, WORK_EFX->member[0], 16, 0);
             }
             if (frame == total - 32) {
-                Func_080b50e8(134);
-                Func_080b5088(WORK_EFX->member[0], 4);
+                BattleEventRuntime_BeginPhaseFar(134);
+                BattleMotion_ApplyVariantMotionFar(WORK_EFX->member[0], 4);
                 WORK_S32(0x77A8) = 8;
             }
         } else if (frame == total - 32) {
-            Func_080b50e8(133);
+            BattleEventRuntime_BeginPhaseFar(133);
         }
 
         ramp = (s32 *)((s8 *)work + (211 << 7));
         angle = frame << 12;
         j = 0;
         do {
-            *ramp++ = ((128 << 11) - (Func_08002322(angle) << 2)) >> 10;
+            *ramp++ = ((128 << 11) - (Trig_Sin(angle) << 2)) >> 10;
             angle += 128 << 4;
             j++;
         } while (j != 160);
@@ -302,49 +302,49 @@ void BattleFx_RenderMode(void *object, u32 kind)
         if (WORK_EFX->count != 0) {
             do {
                 base_frame = i * 8;
-                member_object = *Func_080b5098(WORK_EFX->member[i]);
+                member_object = *GetBattleObjectSlotFar(WORK_EFX->member[i]);
 
                 if (kind == 3 && frame > base_frame
                     && frame < base_frame + 32) {
-                    Func_080e396c(WORK_EFX->member[i], base);
+                    EffectPosition_ApplyStepAndYOffset(WORK_EFX->member[i], base);
                     j = 0;
                     do {
-                        seed = (s32)(Func_08004458() & 0xFFFF);
-                        radius = (s32)(Func_08004458() & 31) + 4;
+                        seed = (s32)(Random16() & 0xFFFF);
+                        radius = (s32)(Random16() & 31) + 4;
                         x = ((base[0] / 2)
-                                + ((radius * Func_08002322(seed)) >> 17))
+                                + ((radius * Trig_Sin(seed)) >> 17))
                             - (Data_080edeca[frame & 3] >> 1);
-                        y = (base[1] - ((radius * Func_0800231c(seed)) >> 16))
+                        y = (base[1] - ((radius * Trig_Cos(seed)) >> 16))
                             - (Data_080eded0[frame & 3] >> 1);
                         BattleEffect_LoadWork(47, 7, 7,
-                            3 | Data_080ee2ae[Func_08004458() & 3], 2);
-                        ((DrawRectangleFn)Data_03001e50[47])(destination,
+                            3 | Data_080ee2ae[Random16() & 3], 2);
+                        ((DrawRectangleFn)gWorkSlot[47])(destination,
                             ((s8 *)work + Data_080edebe[frame & 3])
                                 + (150 << 6),
                             x, y + 16, Data_080edeca[frame & 3],
                             Data_080eded0[frame & 3]);
-                        Func_08002dd8(47);
+                        Runtime_ReleaseHeapBlock(47);
                         j++;
                     } while (j != 2);
                 }
 
                 BattleEffect_LoadWork(46, 7, 7, 3, 3);
-                blit[0] = (DrawRectangleFn)Data_03001e50[46];
+                blit[0] = (DrawRectangleFn)gWorkSlot[46];
                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                blit[1] = (DrawRectangleFn)Data_03001e50[47];
+                blit[1] = (DrawRectangleFn)gWorkSlot[47];
 
-                Func_080049ac();
-                Func_080051d8(iwram, (s8 *)iwram + 12);
+                Render_ResetTransformState();
+                Graphics_PrepareTransferInIwramWork(iwram, (s8 *)iwram + 12);
 
                 screen[0] = *(s32 *)((s8 *)member_object + 8);
                 screen[1] = 160 << 13;
                 screen[2] = *(s32 *)((s8 *)member_object + 16);
-                Func_08004cb4(screen);
+                SceneTransform_ApplyPosition(screen);
 
                 if (frame > base_frame) {
-                    Func_08004c1c(frame << 9);
+                    SceneTransform_ApplyYaw(frame << 9);
                     if (kind <= 1 || kind == 4) {
-                        Func_08004bd4(frame << 9);
+                        SceneTransform_ApplyPitch(frame << 9);
                     }
 
                     j = 0;
@@ -359,7 +359,7 @@ void BattleFx_RenderMode(void *object, u32 kind)
                                     >> 9;
                                 if (distance != 0 && p->tick <= 23) {
                                     cel = p->tick / 4;
-                                    Func_080e3944(p, place);
+                                    EffectPosition_ApplyBaseAndYOffset(p, place);
                                     place[0] = place[0] >> 1;
 
                                     if (kind == 5 || kind == 7) {
@@ -414,30 +414,30 @@ void BattleFx_RenderMode(void *object, u32 kind)
                     }
                 }
 
-                Func_08002dd8(47);
-                Func_08002dd8(46);
+                Runtime_ReleaseHeapBlock(47);
+                Runtime_ReleaseHeapBlock(46);
 
                 if (frame == base_frame + 16) {
                     span = total - frame;
                     if (span > 31) {
                         span = 31;
                     }
-                    Func_080d6888(WORK_EFX->member[i], 7, 5, i, span);
+                    ObjectGroup_UpdateMembers(WORK_EFX->member[i], 7, 5, i, span);
                 }
 
                 i++;
             } while (i != WORK_EFX->count);
         }
 
-        Func_080e155c(16, 16);
-        Func_080cd52c();
+        Camera_ApplyShake(16, 16);
+        ObjectGroup_TickMemberTimers();
         WORK_S32(0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     if (!(kind <= 1 || kind == 3)) {
-        Func_08004278((void *)0x080DBB9D);
+        Scheduler_RemoveCallback((void *)0x080DBB9D);
     }
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

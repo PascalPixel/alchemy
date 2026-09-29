@@ -84,22 +84,22 @@ struct MenuNode {
     struct SlotEntry entry;
 };
 
-extern u8 *Data_03001e98;
-extern volatile u32 Data_03001800;
+extern u8 *gResQueueWork;
+extern volatile u32 gFrameTick;
 extern s8 Data_08036740[];
 extern u8 Data_080346f8[];
 
-extern s32 Func_080b50b0(s32 no, struct EffectPosition *pos);
+extern s32 BattleMotion_ProjectScaledPositionFar(s32 no, struct EffectPosition *pos);
 extern s32 GameFlag_IsSet(s32 flag);
-extern void Func_0801aeec(u8 *state, s32 index);
+extern void MenuSelection_DrawSideMarker(u8 *state, s32 index);
 extern struct MenuNode *NodeChain_GetNodeAtCount(u8 *state);
 extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 extern s32 AffineMatrix_BuildForEffect(u16 *efx);
 extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *src);
 
-void Func_0801a98c(void)
+void MenuSelection_DrawFrame(void)
 {
-    u8 *state = Data_03001e98;
+    u8 *state = gResQueueWork;
     /* +0x300 はカーソル節点 (+0x2d8) 自身の表示スロットに当たる。 */
     struct SlotEntry *cursor_entry = (struct SlotEntry *)(state + 0x300);
     struct MenuNode *cursor = (struct MenuNode *)(state + 0x2d8);
@@ -143,7 +143,7 @@ void Func_0801a98c(void)
         } else if (cnt == *(u16 *)(state + 0x39e)) {
             slot = 241;
             if (cursor->active != 0) {
-                if (Func_080b50b0(node->no, &pos) != -1) {
+                if (BattleMotion_ProjectScaledPositionFar(node->no, &pos) != -1) {
                     cursor->x_end = pos.x;
                     cursor->y_end = pos.y;
                     if (cursor->scale == 0) {
@@ -186,7 +186,7 @@ void Func_0801a98c(void)
         e->prio = 0;
         e->tile = transfer->tile_id;
         e->x = sel->x - 4;
-        e->y = sel->y + (Data_08036740[(Data_03001800 >> 1) & 15] >> 1) - 4;
+        e->y = sel->y + (Data_08036740[(gFrameTick >> 1) & 15] >> 1) - 4;
         if (transfer->scale != transfer->scale_end) {
             *(u16 *)(state + 0x340) = transfer->scale;
             *(u16 *)(state + 0x342) = transfer->scale;
@@ -203,8 +203,8 @@ void Func_0801a98c(void)
         Runtime_PushSlotEntry((s32 *)e, 248);
     }
 
-    Func_0801aeec(state, 0);
-    Func_0801aeec(state, 1);
+    MenuSelection_DrawSideMarker(state, 0);
+    MenuSelection_DrawSideMarker(state, 1);
 
     /* 三列目: 縦横の移動と倍率を同時に進める節点鎖。 */
     node = *(struct MenuNode **)(state + 0x34c);
@@ -249,7 +249,7 @@ void Func_0801a98c(void)
     if (cursor->active != 0) {
         cursor_entry->tile = VramBlock_LoadCached(
             cursor->handle, 0x100,
-            &Data_080346f8[((Data_03001800 >> 2) & 15) << 8]);
+            &Data_080346f8[((gFrameTick >> 2) & 15) << 8]);
         if (cursor->x_end != cursor->x) {
             tmp = (cursor->x_end - cursor->x) >> 1;
             if (tmp != 0) {
@@ -266,7 +266,7 @@ void Func_0801a98c(void)
                 cursor->y = cursor->y_end;
             }
         }
-        cursor_entry->y = Data_08036740[(Data_03001800 >> 2) & 15]
+        cursor_entry->y = Data_08036740[(gFrameTick >> 2) & 15]
             + cursor->y - 32;
         cursor_entry->x = cursor->x - 4;
         if (GameFlag_IsSet(0x103) != 0) {

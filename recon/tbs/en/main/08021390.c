@@ -19,7 +19,7 @@ struct PartyJoinWork {
     u16 scroll;
 };
 
-extern struct PartyJoinWork *Data_03001e8c;
+extern struct PartyJoinWork *gWindowWork;
 extern u32 gKeyState;
 extern const u8 Value_0000001b;
 
@@ -49,7 +49,7 @@ void Party_ShowJoinedMessage(s32 member)
     u32 *entry;
     s32 zero;
 
-    work = Data_03001e8c;
+    work = gWindowWork;
     entry = icon;
     window = UiWindow_Create(2, 1, 26, 5, 0);
     zero = 0;

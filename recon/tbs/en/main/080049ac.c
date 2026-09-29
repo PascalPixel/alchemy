@@ -14,22 +14,22 @@ struct TransformMatrix {
 };
 
 void *Runtime_AllocateBlock(s32 kind, s32 size);
-extern s32 Data_03001cc4;
-extern void *Data_03001d2c;
-extern struct TransformMatrix Data_03000350;
+extern s32 gTransformStackDepth;
+extern void *gTransformStackTop;
+extern struct TransformMatrix gTransform;
 
 void Render_ResetTransformState(void)
 {
     struct TransformRow row;
-    void *buf = Runtime_AllocateBlock(2, sizeof(Data_03000350));
+    void *buf = Runtime_AllocateBlock(2, sizeof(gTransform));
 
     row.value[0] = 0x10000;
     row.value[1] = 0;
     row.value[2] = 0;
     row.value[3] = 0;
-    Data_03001cc4 = 0;
-    Data_03001d2c = buf;
-    Data_03000350.row[0] = row;
-    Data_03000350.row[1] = row;
-    Data_03000350.row[2] = row;
+    gTransformStackDepth = 0;
+    gTransformStackTop = buf;
+    gTransform.row[0] = row;
+    gTransform.row[1] = row;
+    gTransform.row[2] = row;
 }

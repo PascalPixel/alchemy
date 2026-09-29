@@ -35,22 +35,22 @@ struct BattleEffectMotionState {
     struct EffectSlot records[16];
 };
 
-extern struct BattleEffectMotionState *Data_03001f30;
+extern struct BattleEffectMotionState *gEffectWork;
 
-struct BattleEffectMotionObject *Func_08096c80(s32, s32, s32, s32);
+struct BattleEffectMotionObject *Object_Spawn(s32, s32, s32, s32);
 void Func_08009080(struct BattleEffectMotionObject *, s32);
-void Func_08097384(void);
+void BattleEffect_InitializeSharedScene(void);
 s32 Math_Div(s32, s32);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_080f9010(s32);
-void Func_080974d8(s32 *);
-u32 Func_08004458(void);
-void Func_0800447c(s32, u32, s32 *);
+void Camera_WorldToScreen(s32 *);
+u32 Random16(void);
+void Vector_AddPolarOffset(s32, u32, s32 *);
 void EffectSlot_Initialize(struct EffectSlot *, s32, s32, s32);
-void Func_08009248(struct BattleEffectMotionObject *, s32);
+void ObjectGroup_SetChildValueUnlessFifteenFar(struct BattleEffectMotionObject *, s32);
 void Func_080090d0(struct BattleEffectMotionObject *);
-void Func_0809aa98(struct EffectSlot *);
-void Func_0809748c(void);
+void BattleFx_UpdateRadialCamera(struct EffectSlot *);
+void BattleFx_PrepareBufferInterpolation(void);
 
 static __inline__ s32 InterpolateCoordinate(s32 from, s32 to, s32 step)
 {
@@ -62,7 +62,7 @@ static __inline__ s32 InterpolateCoordinate(s32 from, s32 to, s32 step)
 
 void BattleEffect_RunFallbackObjectTransition(void)
 {
-    struct BattleEffectMotionState *state = Data_03001f30;
+    struct BattleEffectMotionState *state = gEffectWork;
     struct BattleEffectMotionObject *target = state->target;
     struct BattleEffectMotionObject *object;
     struct EffectSlot *record;
@@ -73,13 +73,13 @@ void BattleEffect_RunFallbackObjectTransition(void)
     s32 index;
 
     state->y = target->y;
-    object = Func_08096c80(0xfa, 0, 0, 0);
+    object = Object_Spawn(0xfa, 0, 0, 0);
     step = 0;
     Func_08009080(object, 0);
     if (object == 0)
         return;
 
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     origin.x = target->x;
     origin.y = target->y + 0x100000;
     origin.z = target->z;
@@ -97,19 +97,19 @@ Interpolate:
         object->scale_x = scale;
         object->scale_y = scale;
         step++;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
     if (step < 11)
         goto Interpolate;
 
-    Func_080030f8(5);
+    WaitFrames(5);
     Func_08009080(object, 1);
     Func_080f9010(0x6c);
-    Func_080030f8(10);
+    WaitFrames(10);
     Func_080f9010(0x6c);
-    Func_080030f8(10);
+    WaitFrames(10);
     Func_080f9010(0x6c);
-    Func_080030f8(10);
+    WaitFrames(10);
     Func_080f9010(0x6d);
 
     record = &state->records[0];
@@ -118,11 +118,11 @@ Interpolate:
         position.x = object->x;
         position.y = object->y + 0x80000;
         position.z = object->z;
-        Func_080974d8(&position.x);
-        Func_0800447c(0x40000, Func_08004458(), &position.x);
+        Camera_WorldToScreen(&position.x);
+        Vector_AddPolarOffset(0x40000, Random16(), &position.x);
         EffectSlot_Initialize(record, (s32)&Value_0000011d, position.x, position.z);
-        EffectSlot_SetCallback(record, Func_0809aa98);
-        Func_08009248(record->object, 7);
+        EffectSlot_SetCallback(record, BattleFx_UpdateRadialCamera);
+        ObjectGroup_SetChildValueUnlessFifteenFar(record->object, 7);
         record++;
         index--;
     } while (index >= 0);
@@ -130,9 +130,9 @@ Interpolate:
     position.x = object->x;
     position.y = object->y + 0x80000;
     position.z = object->z;
-    Func_080030f8(8);
+    WaitFrames(8);
     Func_080090d0(object);
-    Func_080030f8(4);
-    Func_080030f8(30);
-    Func_0809748c();
+    WaitFrames(4);
+    WaitFrames(30);
+    BattleFx_PrepareBufferInterpolation();
 }

@@ -1967,6 +1967,8 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.0885b99b)
         "*/games/THE LOST AGE/SRC/GRAPHICS/SLOTS/FINAL_GAME.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0885bc30)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/GLOW_ORB_SET.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.0887a294)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/CHARM_RING.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0887e403)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/WHIRL_BEAM.o"(.rodata)

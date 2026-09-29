@@ -41,7 +41,7 @@ Resource_DirectoryTable:
 	resource , Title_IntroGraphicsC
 	resource NintendoLogo, Title_NintendoLogo
 	resource , Title_IntroTiles
-	resource , Title_GoldenSunLogo
+	resource GoldenSunLogo, Title_GoldenSunLogo
 	resource WorldMapPicture, Field_WorldMapPicture
 	resource IntroTilesB, Title_IntroTilesB
 	resource , Battle_SuharaGateBackdrop

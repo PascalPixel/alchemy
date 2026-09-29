@@ -10,8 +10,17 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_HeapAllocate
+	.thumb_func
+Engine_HeapAllocate:
 	overlay_veneer Runtime_AllocateHeapBlockFar
+	.global Engine_HeapRelease
+	.thumb_func
+Engine_HeapRelease:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global Engine_MapAnimateCells
 	.thumb_func
@@ -37,7 +46,13 @@ Engine_MessageShowCentered:
 	.thumb_func
 UiText_DrawQuantity:
 	overlay_veneer UiWork_PushValueSlotFar
+	.global Engine_ItemLoadIcon
+	.thumb_func
+Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -47,10 +62,25 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
+	.global Owner_RecalculateRatios
+	.thumb_func
+Owner_RecalculateRatios:
 	overlay_veneer Owner_RecalculateRatiosFar
+	.global Party_AddActiveOwner
+	.thumb_func
+Party_AddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
+	.global Party_ListActiveOwners
+	.thumb_func
+Party_ListActiveOwners:
 	overlay_veneer Party_ListActiveOwnersFar
+	.global InventorySnapshot_Restore
+	.thumb_func
+InventorySnapshot_Restore:
 	overlay_veneer InventorySnapshot_RestoreFar
 	.global Engine_EventWait
 	.thumb_func

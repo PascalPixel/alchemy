@@ -129,7 +129,7 @@ typedef void (*ClearFn)(void *dest, s32 size);
  */
 /* Runtime_ReleaseHeapBlock */
 void Func_08002dd8(s32 id);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_08002322(s32 angle);
 /* Scheduler_AddOrUpdateCallback */
 /* Scheduler_RemoveCallback */
@@ -253,10 +253,10 @@ void Func_080e4e0c(
     record = *Func_080b5098(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
 
-    out[0] = Func_080022ec(M2C_FIELD(record, s32 *, 8) - origin[0], 6);
-    out[1] = Func_080022ec(
+    out[0] = Math_Div(M2C_FIELD(record, s32 *, 8) - origin[0], 6);
+    out[1] = Math_Div(
         (M2C_FIELD(record, s32 *, 12) - origin[1]) + 0x1E0000, 6);
-    out[2] = Func_080022ec(M2C_FIELD(record, s32 *, 16) - origin[2], 6);
+    out[2] = Math_Div(M2C_FIELD(record, s32 *, 16) - origin[2], 6);
 
     cur = (s8 *)work + 0x7098;
     for (i = 0; i != 64; i++) {

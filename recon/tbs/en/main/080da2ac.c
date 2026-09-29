@@ -28,7 +28,7 @@ extern const u8 Data_080eea38[];
 extern const Bounds4 Data_080eda88;
 
 void Func_080cd594(s32 mode);
-void Func_080072f0(void *dest, void *src, s32 size, WordCopyFn copier);
+void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 id);
 void Func_080049ac(void);
@@ -80,7 +80,7 @@ void Func_080da2ac(void *object)
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0;
     Resource_LoadAndDecompress((s32)&Value_0000008b, (u8 *)work + 0x1E00, 1, 1);
-    Func_080072f0(
+    _call_via_r3(
         (void *)0x02010000, (void *)0x06008000, 0x8000,
         (WordCopyFn)0x03001388);
 

@@ -3,6 +3,8 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+extern u8 gBattleFxWork[];
+extern u8 gCameraWork[];
 
 /*
  * Battle effect: a cloud of 256 stars scattered through a cube around the
@@ -43,7 +45,7 @@ void BattleFx_RunSwirlingStars(void *object)
     s32 i;
     s32 frame;
 
-    heap_cache = (void **)0x03001EEC;
+    heap_cache = (void **)gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
     canvas = *cursor;
@@ -70,7 +72,7 @@ void BattleFx_RunSwirlingStars(void *object)
     for (frame = 0; frame != 160; frame++) {
         s32 facing;
 
-        facing = *(s32 *)0x03001e80;
+        facing = *(s32 *)gCameraWork;
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         SceneTransform_ApplyPosition(record);

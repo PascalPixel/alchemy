@@ -1,5 +1,6 @@
 #ifndef MAKYURI_CHOJO_AERIE_H
 #define MAKYURI_CHOJO_AERIE_H
+extern struct EventWork *gEventWork;
 
 #if defined(TBS_EDITION_JA)
 #define MSG_LIGHTHOUSE_ALREADY_LIT 0x1725
@@ -139,7 +140,7 @@ void BattleEffect_CleanupSceneObjectsFar(void);
 
 /* Configure and publish the scene's presentation layer. */
 
-#define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
+#define SCENE_PHASE (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
 #define ACTOR_FIELD_0XA(record) (*(s16 *)((record) + 10))
 #define ACTOR_FIELD_0X12(record) (*(s16 *)((record) + 18))
 

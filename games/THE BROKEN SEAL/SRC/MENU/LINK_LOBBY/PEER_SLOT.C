@@ -1,7 +1,8 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
+extern u8 gLinkStatus[];
 
-#define LINK_STAT (*(u16 *)0x03001f64)
+#define LINK_STAT (*(u16 *)gLinkStatus)
 
 void Engine_GameFlagSet(s32 flag);
 void Engine_GameFlagClear(s32 flag);

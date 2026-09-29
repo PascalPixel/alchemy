@@ -22,19 +22,19 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
     output = unit_ids;
     living_count = 0;
     enemy_capacity = 6;
-    if (BattleFlag_Test(0x16C) != 0) {
+    if (GameFlag_TestFar(0x16C) != 0) {
         enemy_capacity = 3;
     }
     if (side_mask & BATTLE_SIDE_PARTY) {
         base = active_members;
-        active_count = BattleParty_ListActiveMembers(base);
+        active_count = BattleParty_PrepareActiveOwners(base);
         if (living_count < active_count) {
             member = base;
             remaining = active_count;
             do {
                 unit_id = *member;
                 member += 1;
-                hp = FIELD_AT_OFFSET(BattleUnit_Get(unit_id), s16, 0x38);
+                hp = FIELD_AT_OFFSET(Owner_GetStateFar(unit_id), s16, 0x38);
                 if (hp > 0) {
                     if (output != NULL) {
                         *output = unit_id;
@@ -51,7 +51,7 @@ s32 BattleParty_ListLivingUnits(s32 side_mask, u16 *unit_ids)
         enemy_limit = enemy_capacity + 0x80;
         if (remaining < enemy_limit) {
             do {
-                unit = BattleUnit_Get(remaining);
+                unit = Owner_GetStateFar(remaining);
                 if ((FIELD_AT_OFFSET(unit, u8, 0x12A) != 0) && ((s32)FIELD_AT_OFFSET(unit, s16, 0x38) > 0)) {
                     if (output != NULL) {
                         *output = (u16)remaining;

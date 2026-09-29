@@ -1,8 +1,9 @@
 #include "TYPES.H"
+extern struct EventWork *gEventWork;
 
 s32 Engine_GameFlagIsSet();
 void Engine_AudioPlayCue();
-void Main_08009188();
+void Map_ClearLayerEntryFlag();
 void Engine_EventBegin();
 void Engine_EventWait();
 void Engine_ActorSetSpeed();
@@ -11,7 +12,7 @@ void Engine_ActorSetDestinationOffset();
 void Engine_ActorCenterAndWalk();
 void Engine_EventRequestExit();
 void Engine_EventEnd();
-void Main_08009190();
+void Map_SetLayerEntryFlag();
 
 
 
@@ -35,7 +36,7 @@ void BiribinoKyuden_RunDoorExitScene(void)
     u8 *work;
     s32 lock;
 
-    work = *(u8 **)0x03001ebc;
+    work = *(u8 **)&gEventWork;
     lock = 0;
     if (*(s16 *)(work + 0x16c) == 9) {
         if (Engine_GameFlagIsSet(0x200) == 0) {
@@ -47,8 +48,8 @@ void BiribinoKyuden_RunDoorExitScene(void)
         lock = 1;
     }
     if (lock != 0) {
-        Main_08009188(1);
-        Main_08009188(2);
+        Map_ClearLayerEntryFlag(1);
+        Map_ClearLayerEntryFlag(2);
     }
     Engine_EventBegin();
     Engine_EventWait(10);
@@ -61,6 +62,6 @@ void BiribinoKyuden_RunDoorExitScene(void)
     Engine_EventWait(16);
     Engine_EventRequestExit(*(s16 *)(work + 0x16c));
     Engine_EventEnd();
-    Main_08009190(1);
-    Main_08009190(2);
+    Map_SetLayerEntryFlag(1);
+    Map_SetLayerEntryFlag(2);
 }

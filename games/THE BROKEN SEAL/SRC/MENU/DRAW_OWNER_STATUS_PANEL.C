@@ -40,7 +40,7 @@ struct PanelState {
 extern struct PanelState *Data_03001f2c;
 extern u8 Data_03001388[];
 extern u8 Data_080af20c[];
-extern u8 Value_00000741[], Value_00000333[];
+extern u8 MsgClassName[], Value_00000333[];
 extern u8 Value_00000bd6[], Value_00000bd7[], Value_00000bd8[], Value_00000bd9[];
 extern u8 Value_00000b0e[], Value_00000b21[], Value_00000b22[], Value_00000b23[];
 extern u8 Value_00000b1c[];
@@ -129,7 +129,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         state->side_object = SideObject_CreateFar(owner, 0, 0, window, 0, 0);
     switch (mode & 0xff) {
     case 0:
-        value = unit->klass + (s32)Value_00000741;
+        value = unit->klass + (s32)MsgClassName;
         UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
         Ui_DrawValuePairRows(unit, window);
         value = unit->experience;
@@ -137,7 +137,7 @@ void Menu_DrawOwnerStatusPanel(s32 unused, s32 owner, s32 slot, s32 mode)
         UiText_DrawNumberInWindowFar(value, 8, window, 24, 72);
         break;
     case 6:
-        value = unit->klass + (s32)Value_00000741;
+        value = unit->klass + (s32)MsgClassName;
         UiText_DrawCharacterAtOffsetFar(value, window, 0, 32);
         Ui_DrawValuePairRows(unit, window);
         break;

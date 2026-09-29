@@ -2,9 +2,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-#define WorldMap_RunActorSequence Func_020024a8
-#define WorldMap_PrepareTriggerActor Func_02002768
-
 extern s32 gWorldMapActor;
 extern struct SceneEvent gWorldMapEvents[];
 extern struct ScenePlacement gWorldMapPlacements[];

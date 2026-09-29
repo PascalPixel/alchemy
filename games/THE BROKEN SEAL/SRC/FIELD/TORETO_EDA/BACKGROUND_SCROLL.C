@@ -8,6 +8,8 @@
 #include "SCENE.H"
 
 #include "RESOURCE_397.H"
+extern struct EventWork *gEventWork;
+extern u8 Data_03001ecc[];
 
 /* The two tracked scene objects share this coordinate and terrain prefix. */
 struct SceneObject {
@@ -88,7 +90,7 @@ u8 *SceneData_GetTable8474(void)
 
 void Actor_ShiftObjectsByBlock(s32 bx, s32 bz)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
     struct SceneObject *obj;
     s32 dx = bx;
     s32 dz = bz;
@@ -168,7 +170,7 @@ void Effect_SetAlphaBlendForScene9(void)
     *(volatile u16 *)0x04000050 = 0x3f42;
     *(volatile u16 *)0x04000052 = 0x0c04;
 
-    disp = *(u8 **)0x03001ecc;
+    disp = *(u8 **)Data_03001ecc;
     {
         u16 *slot = (u16 *)(disp + 0x534);
         int value = 0x3f3f;
@@ -221,7 +223,7 @@ void SceneData_InitHeader8590(void)
 
 s32 State_SetRuntimeWord448To256(void)
 {
-    u8 **base = (u8 **)0x03001ebc;
+    u8 **base = (u8 **)&gEventWork;
     u8 *work;
     u8 *disp;
     s32 off = 224;

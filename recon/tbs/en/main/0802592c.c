@@ -85,15 +85,11 @@ extern volatile s32 Data_03001b04;
 extern volatile u32 Data_03001e40;
 extern u8 Data_080310a4[];
 
-extern u8 Value_00000333;
+extern u8 MsgAbilityName;
 extern u8 Value_0000053a;
 extern u8 Value_000008e7;
 
-#define ActionNameMessage Value_00000333
-#define ActionTextMessage Value_0000053a
-#define NoActionMessage Value_000008e7
 
-#define Math_Div Func_080022ec
 
 #define RenderWork (*(u8 **)0x03001e8c)
 #define MenuNav (*(struct BattleMenuNav **)0x03001f34)
@@ -208,11 +204,11 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
             if (count != 0) {
                 Func_0801965c(
                     (actions[page + row] & ACTION_ID_MASK) +
-                        (s32)&ActionTextMessage,
+                        (s32)&Value_0000053a,
                     buffer,
                     52);
             } else {
-                Func_0801965c((s32)&NoActionMessage, buffer, 52);
+                Func_0801965c((s32)&Value_000008e7, buffer, 52);
             }
             Func_08017aa4(buffer, message_window, 0, 4);
             drawn_row = row;
@@ -241,7 +237,7 @@ s32 BattleMenu_RunActionSelection(s32 unit_id, u16 *actions, s32 count)
 
                     render[RENDER_TEXT_COLOR_OFS] = 5;
                     UiText_DrawCharacterAtOffset(
-                        entry + (s32)&ActionNameMessage, window, 16, i * 16);
+                        entry + (s32)&MsgAbilityName, window, 16, i * 16);
                     UiText_DrawNumberAtOffset(
                         action->pp_cost, 2, window, 104, i * 16);
                     UiWork_SetParamNibble(15);

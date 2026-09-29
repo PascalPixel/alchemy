@@ -37,7 +37,7 @@ void BattleQueue_SortByPriority(struct BattleQueueEntry *entries, s32 count)
         if (entry->command_kind == 5) {
             struct BattleAction *action;
 
-            Func_08077008(entry->owner_id);
+            Owner_GetStateFar(entry->owner_id);
             action = BattleAction_Get(Func_080771e8(
                 (s16)entry->encoded_action >> 8 & 15, entry->encoded_action & 0xff));
             if (action->effect == 46 || action->effect == 47 || action->effect == 53) {

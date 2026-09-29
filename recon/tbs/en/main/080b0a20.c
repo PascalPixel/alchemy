@@ -7,8 +7,6 @@
  * 74 bytes, 24 edits; widening the zero then gives 72 bytes, 27 edits.
  * Retain the closest baseline; aliasing explains the missing reload. */
 
-#define ShopCursor_SetPositionImmediate Func_080b0a20
-
 struct ShopCursorSprite {
     u8 unknown_00[6];
     u16 x;

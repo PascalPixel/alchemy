@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 gTitleExtraOptionEnabled[];
 
 struct MenuModeLabelState;
 extern struct MenuModeLabelState *gMenuSelectWork;
@@ -139,7 +140,7 @@ s32 Menu_SelectSaveSlotAction(void)
         Menu_AppendResourceEntry(0x17);
     }
     Menu_AppendResourceEntry(0x18);
-    if ((*(s16 *)0x0200200C) != 0) {
+    if ((*(s16 *)gTitleExtraOptionEnabled) != 0) {
         Menu_AppendResourceEntry(0x1D);
     }
     if ((*(s16 *)0x02002010) != 0) {

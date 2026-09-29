@@ -17,7 +17,6 @@ void SceneActor_PlaceWithScale14000();
 void Engine_EventBegin();
 void Engine_ObjectSetPosition();
 void Engine_EventWait();
-void ObjectMotion_SetPositionAndReset();
 void Engine_ActorSetSpeed();
 void Engine_CameraSetSpeed();
 void Engine_EventShowMessage();
@@ -85,7 +84,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Engine_EventShowMessage(scene, 0);
         Korosseo_FadeInCompetitor(0, 632, 264);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 65536, 32768);
-        Call3(ObjectMotion_SetPositionAndReset, 0, 616, 264);
+        Call3(Engine_ActorWalkToAndWait, 0, 616, 264);
         Value3(Engine_ActorFaceDirection, 0, 49152, 20);
         battle_owner_69();
         Call2(Engine_CameraSetSpeed, 16384, 2048);

@@ -5,6 +5,7 @@
 #include "TYPES.H"
 #include "SCENE.H"
 #include "FIXED_MATH.H"
+extern u8 IwramSqrt[];
 s32 _call_via_r3(s32, s32, s32, s32);
 s32 Object_SetMoveTarget(void *, s32, s32, s32);
 void ObjectDispatch_ApplyArgumentToChildren(void *object, s32 argument);
@@ -47,7 +48,7 @@ s32 Object_ApproachLinkedObject(void *arg0)
   dz = (*((s32 *)(((u8 *)link) + 0x10))) - (*((s32 *)(p + 0x10)));
   dxh = dx >> 0x10;
   dzh = dz >> 0x10;
-  len = _call_via_r3((dxh *dxh) + (dzh *dzh), dx, dzh, 0x030001D8);
+  len = _call_via_r3((dxh *dxh) + (dzh *dzh), dx, dzh, (u32)IwramSqrt);
   if (len > 0x10)
   {
     dx2 = dx;

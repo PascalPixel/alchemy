@@ -4,8 +4,7 @@
 
 extern const u8 Func_08002cf4[];
 
-extern volatile u16 Data_04000208;
-#define REG_IME Data_04000208
+extern volatile u16 RegIme;
 
 typedef void (*QueueFlushRoutine)(struct IoWriteQueue *queue, u32 count);
 
@@ -34,7 +33,7 @@ extern u8 TransferCommandExecutor_Size[];
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
-            ime = &REG_IME;                                                 \
+            ime = &RegIme;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \

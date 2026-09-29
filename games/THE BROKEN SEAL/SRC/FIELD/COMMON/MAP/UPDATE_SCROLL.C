@@ -2,6 +2,7 @@
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
 #include "MAP_SCROLL.H"
+extern struct MapRenderWork *gMapWork;
 
 void Map_UpdateLayerScroll(void)
 {
@@ -13,7 +14,7 @@ void Map_UpdateLayerScroll(void)
     s32 base_x, base_y;
     u32 i;
 
-    work = *(struct MapScrollWork **)0x03001e70;
+    work = *(struct MapScrollWork **)&gMapWork;
     origin = work->origin;
     layer = work->layers;
     if (origin == 0)

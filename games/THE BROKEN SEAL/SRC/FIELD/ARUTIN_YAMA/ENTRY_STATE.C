@@ -1,11 +1,11 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+extern struct MapRenderWork *gMapWork;
 extern u8 ArutinYama_ActorScript[];
 
 s32 Engine_GameFlagIsSet();
 void FieldScene_RunOpeningAuxiliarySequence();
 void ArutinYama_StartPaletteAnim();
-u8 * Engine_ActorSetPosition();
-u8 * Engine_ActorGet();
 void Engine_ActorSetSpriteFlags();
 void Engine_ActorSetChildValue();
 void Engine_ActorSetAnimation();
@@ -13,10 +13,10 @@ void Engine_MapCopyCellAttributes();
 void SceneState_StoreParamsAndInstallTask();
 void Engine_ObjectSetTargetAndCallback();
 void SceneActor_ClearCollisionFlagAndPlaceMarker();
+void SceneState_ForwardByRuntimeSelector();
 
 
 extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -54,7 +54,7 @@ void ArutinYama_ApplyEntryState(void)
     u8 *p5;
 
     if (Value1(Engine_GameFlagIsSet, 0x109) == 0) {
-        if (Data_02000240_t[225][0] == 99) {
+        if (gGameState.entrance == 99) {
             FieldScene_RunOpeningAuxiliarySequence();
         }
     }
@@ -79,14 +79,14 @@ void ArutinYama_ApplyEntryState(void)
         rec8 = Value1(Engine_GameFlagIsSet, 0x905);
         if (rec8 != 0) {
             Engine_ActorSetAnimation(9, 0);
-            record = Engine_ActorGet(9);
-            *(s32 *)((s32)record + 108) = 0x200ace1;
-            *(u8 *)(Engine_ActorGet(9) + 85) = rec7;
-            record = Engine_ActorGet(9);
+            record = ((u8 *)Engine_ActorGet(9));
+            *(s32 *)((s32)record + 108) = (s32)SceneState_ForwardByRuntimeSelector;
+            *(u8 *)((u8 *)Engine_ActorGet(9) + 85) = rec7;
+            record = ((u8 *)Engine_ActorGet(9));
             *(s32 *)((s32)record + 12) = 0x200000;
             Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
             Call3((void (*)())Engine_ActorSetPosition, 10, 0x780000, 0xd70000);
-            record = Engine_ActorGet(10);
+            record = ((u8 *)Engine_ActorGet(10));
             *(u16 *)((s32)record + 6) = rec7;
             Engine_ActorSetAnimation(10, 3);
             SceneState_StoreParamsAndInstallTask(0x820000, 0, 0xa80000, 0);
@@ -96,10 +96,10 @@ void ArutinYama_ApplyEntryState(void)
             goto L_020022de;
         }
         Engine_ActorSetAnimation(9, 0);
-        record = Engine_ActorGet(9);
-        *(s32 *)((s32)record + 108) = 0x200ace1;
-        *(u8 *)(Engine_ActorGet(9) + 85) = rec8;
-        record = Engine_ActorGet(9);
+        record = ((u8 *)Engine_ActorGet(9));
+        *(s32 *)((s32)record + 108) = (s32)SceneState_ForwardByRuntimeSelector;
+        *(u8 *)((u8 *)Engine_ActorGet(9) + 85) = rec8;
+        record = ((u8 *)Engine_ActorGet(9));
         *(s32 *)((s32)record + 12) = 0x200000;
         Call6(Engine_MapCopyCellAttributes, 2, 0, 1, 1, 18, 13);
         Call3(Engine_ActorSetPosition, 10, 0x1040000, 0xd70000);
@@ -109,7 +109,7 @@ void ArutinYama_ApplyEntryState(void)
             Value3(Engine_ObjectSetTargetAndCallback, 10, 0x10000, (s32)script);
         }
     } else {
-        p5 = *(s32 *)0x03001e70;
+        p5 = *(s32 *)&gMapWork;
         Call3((void (*)())Engine_ActorSetPosition, 10, 0, 0);
         Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 2, 3, 14);
         *(u16 *)((s32)p5 + 20) &= 0xfdff;
@@ -117,7 +117,7 @@ void ArutinYama_ApplyEntryState(void)
         if (Value1(Engine_GameFlagIsSet, 0x200) != 0) {
             Engine_ActorSetAnimation(8, 5);
             Call6(Engine_MapCopyCellAttributes, 7, 13, 1, 1, 9, 13);
-            record = Engine_ActorGet(8);
+            record = ((u8 *)Engine_ActorGet(8));
             *(s32 *)((s32)record + 12) = 0;
             {
                 u8 value = *(volatile u8 *)&record[35];
@@ -129,7 +129,7 @@ void ArutinYama_ApplyEntryState(void)
         if (Value1(Engine_GameFlagIsSet, 0x201) != 0) {
             Engine_ActorSetAnimation(9, 5);
             Call6(Engine_MapCopyCellAttributes, 29, 1, 3, 1, 17, 13);
-            record = Engine_ActorGet(9);
+            record = ((u8 *)Engine_ActorGet(9));
             *(s32 *)((s32)record + 12) = 0x200000;
             {
                 u8 value = *(volatile u8 *)&record[35];

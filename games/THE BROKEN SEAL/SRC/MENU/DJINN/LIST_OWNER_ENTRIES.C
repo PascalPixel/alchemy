@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "OWNER_STATE.H"
 
-void *Owner_GetStateFar(s32 owner);
-
 /* A set Djinni's entry carries bit 15, spelled as the signed halfword flag. */
 #define DJINN_ENTRY_SET (-0x8000)
 

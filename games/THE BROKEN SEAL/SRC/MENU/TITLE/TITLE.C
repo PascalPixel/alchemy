@@ -1,6 +1,8 @@
 #include "TYPES.H"
+extern struct MapRenderWork *gMapWork;
+extern u8 gMapCellBuffer[];
 
-#define FrameCounter (*(u32 *)0x03001e40)
+#define FrameCounter (*(u32 *)&gFrameCount)
 #define QUEUE_WRITE(address, value)                                         \
     do {                                                                    \
         volatile u16 *ime;                                                  \
@@ -8,7 +10,7 @@
         s32 count;                                                          \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
-            ime = &Data_04000208;                                           \
+            ime = &RegIme;                                           \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \
@@ -60,7 +62,7 @@ extern struct VramBlock Data_03001b10[];
 extern s16 Data_02008650;
 extern s16 Data_0200868c;
 extern u32 Data_020086a0[];
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern u8 Value_0000001a[];
 extern u16 Data_03001ad0[];
 
@@ -107,7 +109,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 static __inline__ void RestoreInterrupts(u32 saved)
 {
     /* FAKEMATCH: BLEND_FADE.C keeps this address local to restoration. */
-    do { Data_04000208 = saved; } while (0);
+    do { RegIme = saved; } while (0);
 }
 
 /* FAKEMATCH: expand the destination first while the one-halfword record
@@ -122,7 +124,7 @@ static __inline__ void ResetCounter(s16 *destination)
 
 static __inline__ void DecodeBackground(const u8 *res)
 {
-    Engine_ResourceDecodeType01(res, (void *)0x02010000);
+    Engine_ResourceDecodeType01(res, (void *)gMapCellBuffer);
 }
 
 /*
@@ -327,12 +329,12 @@ void Title_RevealScreen(void)
         QUEUE_WRITE(0x4000054, 16 - i);
         Engine_TaskWait(3);
     }
-    event = *(u8 **)0x03001ebc;
+    event = *(u8 **)&gEventWork;
     *(s32 *)(event + 0x1c0) = 0;
     *(s32 *)(event + 0x1c8) = 1;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    *(s32 *)(*(u8 **)0x03001ebc + 0x1c8) = 60;
+    *(s32 *)(*(u8 **)&gEventWork + 0x1c8) = 60;
 }
 
 /* Load the title background: palette, tiles and a 30 x 20 map counting up from
@@ -357,7 +359,7 @@ void Title_LoadBackground(void)
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
     res += 0x1c0;
     DecodeBackground(res);
-    Dma_Set((void *)0x02010000, (void *)0x06006800, 0x84002580, DMA3);
+    Dma_Set((void *)gMapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
     map = (u16 *)0x06003000;
     tile = 0x1a0;
     y = 0;
@@ -386,5 +388,5 @@ col:
         scroll++;
     }
     Dma_Set(Data_03001ad0, (void *)0x04000010, 0x84000004, DMA3);
-    (*(struct TitleWork **)0x03001e70)->mode = 0x1400;
+    (*(struct TitleWork **)&gMapWork)->mode = 0x1400;
 }

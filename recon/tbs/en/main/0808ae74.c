@@ -26,8 +26,8 @@ struct FieldPartyState {
 extern u8 *Data_03001ebc;
 extern struct FieldPartyState Data_02000240;
 
-s32 Func_080770c0(s32 flag);
-u8 *Func_08077008(s32 unit);
+s32 GameFlag_TestFar(s32 flag);
+u8 *Owner_GetStateFar(s32 unit);
 s32 Func_080772c8(void);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
@@ -47,9 +47,9 @@ s32 Func_0808ae74(s32 zone, s32 steps)
     u8 *weight;
 
     work = Data_03001ebc;
-    if (Func_080770c0(0x15f) != 0)
+    if (GameFlag_TestFar(0x15f) != 0)
         goto encounter;
-    if (Func_080770c0(0x160) != 0 || Func_080770c0(0x161) != 0)
+    if (GameFlag_TestFar(0x160) != 0 || GameFlag_TestFar(0x161) != 0)
         goto none;
     if (zone == 0)
         return 0;
@@ -59,8 +59,8 @@ s32 Func_0808ae74(s32 zone, s32 steps)
     rate = entry->rate;
     if (rate == 0)
         return 0;
-    if (Func_080770c0(5) != 0) {
-        if (*(s32 *)(Func_08077008(5) + 292) > 130)
+    if (GameFlag_TestFar(5) != 0) {
+        if (*(s32 *)(Owner_GetStateFar(5) + 292) > 130)
             goto none;
     }
     level = Func_080772c8() - entry->level;

@@ -3,6 +3,7 @@
  */
 #include "TYPES.H"
 #include "SCENE.H"
+extern u8 Sound_CommandTable[];
 s32 _call_via_r2(s32, s32, s32);
 
 /*
@@ -20,7 +21,7 @@ void Runtime_CallWorkEntryWithArgs(s32 arg0, s32 arg1)
 {
   int base;
   int fn;
-  base = (fn = 0x02004000);
+  base = (fn = (u32)Sound_CommandTable);
   fn = *((s32 *)base);
   _call_via_r2(arg0, arg1, fn);
 }

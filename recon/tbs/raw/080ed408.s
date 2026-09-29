@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080ed408
-	.global Func_080ed408
+	.global BattleEffect_LoadWork
 	.thumb_func
 Unnamed_080ed408:
-Func_080ed408:
+BattleEffect_LoadWork:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

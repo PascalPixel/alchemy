@@ -4,6 +4,8 @@
 #include "WORKSPACE_OPTIONS.H"
 
 extern const u8 Resource_FixedBlockBTiles[];
+extern const u8 WorkspaceOptions_SliderTiles[];
+extern const u16 WorkspaceOptions_SliderPalette[];
 
 extern u8 Value_00000c07;
 extern u8 Value_00000c0d;
@@ -63,8 +65,8 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
 
     x = Resource_FindFreeEntry();
     if (x < 96) {
-        Dma_Set((const void *)0x08073812, (void *)0x050003c0, 0x80000020, (volatile u32 *)0x040000d4);
-        VramBlock_LoadCached(x, 256, (const void *)0x08029910);
+        Dma_Set(WorkspaceOptions_SliderPalette, (void *)0x050003c0, 0x80000020, (volatile u32 *)0x040000d4);
+        VramBlock_LoadCached(x, 256, WorkspaceOptions_SliderTiles);
         y = 0;
         out = RenderOutput_Create(x, 0x40004000, win, 134, y);
         ((u8 *)&out->table)[1] = (((u8 *)&out->table)[1] & 15) | 224;

@@ -36,15 +36,14 @@ s32 Func_080770b8(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
-s32 Func_08077030(s32 item);
+s32 PartyInventory_AddFar(s32 item);
 
 /* The word-copy entry the runtime publishes in IWRAM. */
 typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
 
-extern u8 Data_03001e74_a[];
+extern u8 *gBattleWork;
 extern u8 Value_000008a0[];
 
-#define BATTLE_SPOILS ((struct BattleSpoils *)(*(u8 **)Data_03001e74_a + 0x530))
 #define PSYNERGY_MASK 0x3fff
 
 void Battle_AwardSpoils(void)
@@ -67,7 +66,7 @@ void Battle_AwardSpoils(void)
     s16 gains[8];
     u16 units[8];
 
-    spoils = BATTLE_SPOILS;
+    spoils = (struct BattleSpoils *)(gBattleWork + 0x530);
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
         UiText_ShowMessageAndWaitCoreFar(0x83a);
@@ -164,7 +163,7 @@ void Battle_AwardSpoils(void)
         UiWork_PushValueSlotFar(spoils->items[best_slot], 2);
         UiText_ShowMessageAndWaitCoreFar(0x83c);
         BattlePresentation_WaitForAdvance();
-        if (Func_08077030(spoils->items[best_slot]) == -1) {
+        if (PartyInventory_AddFar(spoils->items[best_slot]) == -1) {
             *found = spoils->items[best_slot];
             break;
         }

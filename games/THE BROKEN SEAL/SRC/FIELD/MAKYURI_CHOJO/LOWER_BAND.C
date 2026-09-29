@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct MapRenderWork *gMapWork;
 
 void MakyuriChojo_CollectBandSlots();
 u8 * Engine_ActorGet();
@@ -32,7 +33,7 @@ void MakyuriChojo_LowerCollectedActors(void)
     s32 speed;
     u8 *actor;
 
-    work = *(u8 **)0x03001e70 + 0x164;
+    work = *(u8 **)&gMapWork + 0x164;
     speed = 0x1999;
     n = 0;
     for (i = 0; i <= 4; i++)

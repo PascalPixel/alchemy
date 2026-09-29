@@ -1406,6 +1406,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| attributes_reason(path, text))
         .or_else(|| runtime_definition_reason(path, text))
         .or_else(|| address_equate_reason(path, text))
+        .or_else(|| raw_encoding_reason(path, text))
 }
 const ADDRESS_EQUATE_REASON: &str = "assembler equate of a full address: define the name as a label where its bytes are and reference it";
 /// An assembler equate that gives a name a whole 32-bit address, such as
@@ -1425,6 +1426,194 @@ fn address_equate_reason(path: &str, text: &str) -> Option<&'static str> {
         .expect("address equate pattern")
     });
     equate.is_match(text).then_some(ADDRESS_EQUATE_REASON)
+}
+const RAW_ENCODING_REASON: &str = "credited assembly spelled as an encoding (.inst, or data that control runs into as code): write the instruction, or keep the module as disassembly in recon/<game>/raw";
+/// One statement of an assembly source, as the raw-encoding gate reads it.
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Statement {
+    /// A label; `true` for a function entry (`.thumb_func` or `.type ..., %function`).
+    Label(bool),
+    Instruction {
+        ends_flow: bool,
+    },
+    /// `.inst`, which always spells an instruction by its encoding.
+    Encoding,
+    /// A data directive; `true` inside an AlchemyUncredited_* span.
+    Data(bool),
+    /// A directive that switches section: control never runs across it.
+    Section,
+    Directive,
+    /// A macro invocation, whose expansion this gate does not read.
+    Macro,
+}
+fn assembly_instruction(mnemonic: &str) -> bool {
+    static MNEMONIC: std::sync::OnceLock<regex::Regex> = std::sync::OnceLock::new();
+    MNEMONIC
+        .get_or_init(|| {
+            regex::Regex::new(
+                r"(?i)^(?:adc|add|adr|and|asr|bic|blx|bl|bx|b|cdp|cmn|cmp|eor|ldc|ldm|ldr|lsl|lsr|mcr|mla|mov|mrc|mrs|msr|mul|mvn|neg|nop|orr|pop|push|ror|rsb|rsc|sbc|smlal|smull|stc|stm|str|sub|svc|swi|swp|teq|tst|umlal|umull)(?:eq|ne|cs|hs|cc|lo|mi|pl|vs|vc|hi|ls|ge|lt|gt|le|al|s|b|h|sb|sh|t|bt|ia|ib|da|db|fd|ed|fa|ea)*(?:\.n|\.w)?$",
+            )
+            .expect("instruction mnemonic pattern")
+        })
+        .is_match(mnemonic)
+}
+/// Whether an unconditional instruction leaves straight-line flow: a branch,
+/// a return, or any write to pc.
+fn assembly_ends_flow(mnemonic: &str, operands: &str) -> bool {
+    let mnemonic = mnemonic.to_ascii_lowercase();
+    let mnemonic = mnemonic
+        .strip_suffix(".n")
+        .or_else(|| mnemonic.strip_suffix(".w"))
+        .unwrap_or(&mnemonic);
+    let operands: String = operands
+        .chars()
+        .filter(|c| !c.is_whitespace())
+        .collect::<String>()
+        .to_ascii_lowercase();
+    let writes_pc = operands.starts_with("pc,") || operands.starts_with("r15,");
+    let lists_pc = operands
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .any(|register| register == "pc" || register == "r15");
+    match mnemonic {
+        "b" | "bal" | "bx" => true,
+        "pop" => lists_pc,
+        "ldm" | "ldmia" | "ldmib" | "ldmda" | "ldmdb" | "ldmfd" | "ldmed" | "ldmfa" | "ldmea" => {
+            lists_pc && operands.contains('{')
+        }
+        "mov" | "movs" | "add" | "adds" | "sub" | "subs" | "ldr" => writes_pc,
+        _ => false,
+    }
+}
+/// The statements of an assembly source, comments, strings and preprocessor
+/// lines removed, in order.
+fn assembly_statements(text: &str) -> Vec<Statement> {
+    let mut statements = Vec::new();
+    let (mut block, mut function_next, mut uncredited) = (false, false, false);
+    let mut functions = BTreeSet::new();
+    for line in text.lines() {
+        let mut code = String::new();
+        let mut chars = line.chars().peekable();
+        let mut quoted = false;
+        while let Some(c) = chars.next() {
+            if block {
+                if c == '*' && chars.peek() == Some(&'/') {
+                    chars.next();
+                    block = false;
+                }
+                continue;
+            }
+            if quoted {
+                quoted = c != '"';
+                continue;
+            }
+            match c {
+                '"' => quoted = true,
+                '@' => break,
+                '/' if chars.peek() == Some(&'/') => break,
+                '/' if chars.peek() == Some(&'*') => {
+                    chars.next();
+                    block = true;
+                }
+                _ => code.push(c),
+            }
+        }
+        if code.trim_start().starts_with('#') {
+            continue;
+        }
+        for part in code.split(';') {
+            let mut part = part.trim();
+            while let Some((name, rest)) = part.split_once(':').filter(|(name, _)| {
+                !name.is_empty()
+                    && name
+                        .chars()
+                        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '.' | '$'))
+            }) {
+                if name.starts_with("AlchemyUncreditedEnd_") {
+                    uncredited = false;
+                } else if name.starts_with("AlchemyUncredited_") {
+                    uncredited = true;
+                }
+                statements.push(Statement::Label(
+                    std::mem::take(&mut function_next) || functions.contains(name),
+                ));
+                part = rest.trim_start();
+            }
+            if part.is_empty() {
+                continue;
+            }
+            let (word, operands) = part
+                .split_once(char::is_whitespace)
+                .map_or((part, ""), |(word, rest)| (word, rest.trim()));
+            let directive = word.to_ascii_lowercase();
+            let statement = match directive.as_str() {
+                ".inst" | ".inst.n" | ".inst.w" => Statement::Encoding,
+                ".byte" | ".2byte" | ".hword" | ".short" | ".4byte" | ".word" | ".long"
+                | ".int" | ".fill" | ".space" | ".skip" | ".zero" => Statement::Data(uncredited),
+                ".text" | ".data" | ".bss" | ".section" | ".pushsection" | ".popsection"
+                | ".previous" => Statement::Section,
+                ".thumb_func" => {
+                    function_next = true;
+                    Statement::Directive
+                }
+                ".type" => {
+                    if let Some((name, kind)) = operands.split_once(',') {
+                        if kind.trim().trim_start_matches(['%', '@', '#']) == "function" {
+                            functions.insert(name.trim().to_owned());
+                        }
+                    }
+                    Statement::Directive
+                }
+                _ if directive.starts_with('.') => Statement::Directive,
+                _ if assembly_instruction(word) => Statement::Instruction {
+                    ends_flow: assembly_ends_flow(word, operands),
+                },
+                _ => Statement::Macro,
+            };
+            statements.push(statement);
+        }
+    }
+    statements
+}
+/// Credited assembly under `games/` is written as instructions, never as
+/// copied encodings (AGENTS.md, oracle leakage invariant 3). Refused: any
+/// `.inst`, and credited data that control reaches as code, because it follows
+/// an instruction that continues or opens a function before its first
+/// instruction. Literal pools and tables after a branch or return are data,
+/// as are the words of an AlchemyUncredited_* span, which claims no credit.
+fn raw_encoding_reason(path: &str, text: &str) -> Option<&'static str> {
+    if !path.starts_with("games/") || !listed(extension(path), &["s", "inc", "asm"]) {
+        return None;
+    }
+    let statements = assembly_statements(text);
+    for (index, statement) in statements.iter().enumerate() {
+        match statement {
+            Statement::Encoding => return Some(RAW_ENCODING_REASON),
+            Statement::Data(false) => {}
+            _ => continue,
+        }
+        let mut entry = false;
+        let before = statements[..index]
+            .iter()
+            .rev()
+            .find(|previous| match previous {
+                Statement::Label(function) => {
+                    entry |= *function;
+                    false
+                }
+                Statement::Directive => false,
+                _ => true,
+            });
+        if let Some(Statement::Instruction { ends_flow: false }) = before {
+            return Some(RAW_ENCODING_REASON);
+        }
+        let after = statements[index..]
+            .iter()
+            .find(|next| !matches!(next, Statement::Data(_) | Statement::Directive));
+        if entry && matches!(after, Some(Statement::Instruction { .. })) {
+            return Some(RAW_ENCODING_REASON);
+        }
+    }
+    None
 }
 /// The game whose asset roots hold `path`: every directory under
 /// `games/<game>/` except tooling metadata, with `asm/overlays` holding
@@ -3420,6 +3609,56 @@ mod tests {
         assert_eq!(
             check_push(root.path(), "invalid").unwrap_err(),
             "invalid pre-push update"
+        );
+    }
+    #[test]
+    fn credited_assembly_is_written_as_instructions() {
+        let tbs = "games/THE BROKEN SEAL/SRC/SOUND/HOOK.S";
+        let refused = [
+            ".syntax unified\n\t.thumb\nHook:\n\t.inst.n 0x4718\n",
+            "\t.arm\n\tmov r0, r0\n\t.inst 0xe1a0a00a\n\tbx lr\n",
+            "\t.thumb\n\tmovs r0, #1\n\t.2byte 0x4770\n",
+            "\t.arm\n\tldr r0, [pc, #4]\n\t.4byte 0xe12fff1e\n",
+            "\t.thumb\n\tbl Other\n.L_pool:\n\t.4byte 0x03000658\n",
+            "\t.arm\n\tbxeq lr\n\t.word 0xe1a00000\n",
+            "\t.thumb\n\t.global Entry\n\t.thumb_func\nEntry:\n\t.2byte 0xb500\n\tbl Other\n",
+            "\t.type Arm, %function\nArm:\n\t.4byte 0xe92d4000\n\tbl Other\n",
+            "\tmovs r0, r1 ; .hword 0x46c0\n",
+            "\tadds r0, #1\n\t.fill 1, 2, 0x4770\n",
+        ];
+        for text in refused {
+            assert_eq!(
+                raw_encoding_reason(tbs, text),
+                Some(RAW_ENCODING_REASON),
+                "{text:?}"
+            );
+            assert!(raw_encoding_reason("games/THE LOST AGE/SRC/X.INC", text).is_some());
+        }
+        let accepted = [
+            "\t.thumb\n\tpop {r4, pc}\n\t.align 2, 0\n.L_pool:\n\t.4byte Table\n\t.4byte 0x04000200\n",
+            "\t.thumb\n\tbx lr\n\t.4byte 0x03007ff0\nNext:\n\tpush {lr}\n",
+            "\t.arm\n\tb .L_end\n\t.4byte 0x03001c90\n\tldr r2, [pc, #-12]\n",
+            "\t.arm\n\tadd pc, pc, r4\n\t.2byte 0xfee0, 0x0020\n\tsub r2, r2, #2\n",
+            "\t.arm\n\tldr pc, [pc, r0, lsl #2]\n\t.4byte .L_a, .L_b\n",
+            "\t.arm\n\tldmfd sp!, {r4, pc}\n\t.4byte 1\n",
+            "\t.thumb\n\tmov pc, r0\n\t.2byte 0\n",
+            "\t.thumb\n\tbx pc\n\t.2byte 0x0200\n\t.arm\n\tpush {r4, lr}\n",
+            "\t.arm\n\tmul r9, r7, ip\nAlchemyUncredited_08000f98:\n\t.4byte 0xfedcba98\nAlchemyUncreditedEnd_08000f98:\n\tmlane r0, fp, r9, r0\n",
+            "\toverlay_veneer Target\n\t.4byte 0\n",
+            "\t.thumb\n\tmovs r0, #1\n\t.section .rodata\n\t.4byte 0x12345678\n",
+            "\t.thumb\n\tmovs r0, #1 @ .inst.n 0x4770\n\tbx lr /* .2byte 0 */\n",
+            "Table:\n\t.2byte 1, 2, 3\n\t.4byte Other\n",
+            ".macro veneer target\n\tldr r4, [pc, #0]\n\tbx r4\n\t.4byte \\target\n.endm\n",
+        ];
+        for text in accepted {
+            assert!(raw_encoding_reason(tbs, text).is_none(), "{text:?}");
+        }
+        let spelled = "\t.thumb\n\tmovs r0, #1\n\t.inst.n 0x4770\n";
+        assert!(raw_encoding_reason("recon/tbs/raw/080006fc.S", spelled).is_none());
+        assert!(raw_encoding_reason("games/THE BROKEN SEAL/SRC/X.C", spelled).is_none());
+        assert_eq!(
+            publication_data_reason(tbs, spelled.as_bytes(), None),
+            Some(RAW_ENCODING_REASON)
         );
     }
     #[test]

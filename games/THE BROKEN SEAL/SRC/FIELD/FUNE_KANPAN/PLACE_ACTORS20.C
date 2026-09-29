@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 FuneKanpan_CrewScript[];
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 u8 *Object_GetById();
 
@@ -65,7 +66,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
@@ -160,7 +161,7 @@ void FieldScene_RunScene3af_0200185c(void)
     u8 bits;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, 0x200d160);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
     Task_Wait(1);
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);
@@ -195,7 +196,7 @@ void FieldScene_RunScene3af_02001920(void)
     u8 *record;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, 0x200d160);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
     Task_Wait(1);
     Actor_SetPosition(20, 0, 0);
     Actor_SetPosition(23, 0xee0000, 0x2720000);

@@ -35,7 +35,7 @@ s32 Summon_IsEntryFlagged(s32 id);
 s32 Math_Div(s32 a, s32 b);
 u32 Random16(void);
 void *Owner_GetStateFar(s32 unit);
-s32 BattleUnit_Assign(s32 unit, s32 id, s32 charge);
+s32 BattleUnit_AssignFar(s32 unit, s32 id, s32 charge);
 s32 Owner_ApplyLevelGains(s32 owner, s32 levels);
 
 typedef void (*ClearFn)(void *destination, s32 size);
@@ -178,7 +178,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
         charge = Summon_TakeCharge(list[n], 1);
         if (charge & 0x8000)
             Summon_ResetCharge(list[n]);
-        BattleUnit_Assign(n + 128, list[n], charge & 0x7fff);
+        BattleUnit_AssignFar(n + 128, list[n], charge & 0x7fff);
         Owner_GetStateFar(n + 128);
         if (margin != 0)
             Owner_ApplyLevelGains(n + 128, margin);

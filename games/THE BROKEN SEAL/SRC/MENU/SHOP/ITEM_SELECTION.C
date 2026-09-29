@@ -1,13 +1,12 @@
 #include "SHOP.H"
+extern struct ShopRuntime *gMenuWork;
 void *Runtime_GetObject(s32);
 void UiWindow_Commit(s32);
 void UiNumber_DrawAt(s32, s32, s32, s32, s32);
 extern u8 Data_03001f2c[];
-extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 s32 Math_Mod(s32 value, s32 divisor);
 void UiWork_FinalizeFar(s32 window, s32 style);
@@ -39,7 +38,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
     s32 result = 0;
 
     Shop_InitializeCursorWork();
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     shop->item_window = UiWindow_CreateFar(16, 12, 14, 8, 2);
     list_window = UiWindow_CreateFar(0, 14, 13, 3, 2);
     cursor_anchor = RenderOutput_CreateFar(
@@ -64,12 +63,12 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             unit_id = shop->party_member_ids[selected_index];
             Shop_PlaceCursor((void *)list_window, selected_index * 24 - 12, 0);
             shop->mode = 3;
-            Shop_UpdatePartyMemberList(list_window, selected_index, 0);
-            Shop_DrawPartyMemberItemGrid(shop->item_window, unit_id);
+            Shop_DrawParty(list_window, selected_index, 0);
+            Shop_DrawUnitGrid(shop->item_window, unit_id);
         }
 
         WaitFrames(1);
-        if ((INPUT_NEW_KEYS & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             if (Inventory_CountFar(unit_id) == 0) {
                 Audio_PlayCue(0x71);
                 continue;
@@ -89,7 +88,7 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((INPUT_NEW_KEYS & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             Audio_PlayCue(0x71);
             *selected_unit = -1;
             *selected_item = -1;
@@ -97,12 +96,12 @@ s32 Shop_PickUnitItem(s32 *selected_unit, s32 *selected_item)
             goto done;
         }
 
-        if ((INPUT_REPEAT_KEYS & 0x20) != 0) {
+        if ((gKeysRepeat & 0x20) != 0) {
             Audio_PlayCue(0x6f);
             selected_index--;
             redraw = 1;
         }
-        if ((INPUT_REPEAT_KEYS & 0x10) != 0) {
+        if ((gKeysRepeat & 0x10) != 0) {
             Audio_PlayCue(0x6f);
             selected_index++;
             redraw = 1;
@@ -133,7 +132,7 @@ extern u8 MsgItemPlainName;
 
 s32 Shop_SelUse(s32 actor)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
+    struct ShopRuntime *shop = gMenuWork;
     /* win2 declared ahead of win1 (and both ahead of object) to match the
      * reference's sp+8/sp+12/sp+16 spill-slot order for these three
      * call-result locals; declaring them in call order instead misassigns
@@ -188,13 +187,13 @@ s32 Shop_SelUse(s32 actor)
             y = (Math_Div(selection, 5) << 4) + 8;
             Shop_PlaceCursor(window, x, y);
             shop->mode = 3;
-            Shop_DrawUseItemDetails(win1, actor, selection);
-            Shop_DrawMessage(win2, flags + (s32)&MsgItemPlainName);
+            Shop_DrawUseItem(win1, actor, selection);
+            Shop_DrawMsg(win2, flags + (s32)&MsgItemPlainName);
         }
 
         WaitFrames(1);
 
-        if ((*(volatile u32 *)((u32)&Data_03001c94) & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             status = Inventory_CheckDiscardFar(actor, selection);
             if (status == 0) {
                 Audio_PlayCue(112);
@@ -212,7 +211,7 @@ s32 Shop_SelUse(s32 actor)
             continue;
         }
 
-        if ((*(volatile u32 *)((u32)&Data_03001c94) & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             Audio_PlayCue(113);
             result = -1;
             goto exit_loop;
@@ -224,19 +223,19 @@ s32 Shop_SelUse(s32 actor)
          * ahead of the add; folding it into one `selection +- 1 + count`
          * expression instead subtracts/adds 1 from the sum register after
          * the add, which is a different (non-matching) instruction order. */
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x20) != 0) {
+        if ((gKeysRepeat & 0x20) != 0) {
             Audio_PlayCue(111);
             selection -= 1;
             selection = Math_Mod(selection + count, count);
             redraw = 1;
         }
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x10) != 0) {
+        if ((gKeysRepeat & 0x10) != 0) {
             Audio_PlayCue(111);
             selection += 1;
             selection = Math_Mod(selection + count, count);
             redraw = 1;
         }
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x40) != 0) {
+        if ((gKeysRepeat & 0x40) != 0) {
             selection -= 5;
             if (selection < 0)
                 selection += 15;
@@ -245,7 +244,7 @@ s32 Shop_SelUse(s32 actor)
             Audio_PlayCue(111);
             redraw = 1;
         }
-        if ((*(volatile u32 *)((u32)&Data_03001b04) & 0x80) != 0) {
+        if ((gKeysRepeat & 0x80) != 0) {
             selection += 5;
             if (selection >= count)
                 selection -= 15;
@@ -296,7 +295,7 @@ void Shop_DrawUseItem(s32 window, s32 unit_id, s32 item_id)
             s32 qty;
             s32 total;
 
-            qty = Shop_ComputeSalePrice(*(u16 *)(unit + slot_offset));
+            qty = Shop_SalePrice(*(u16 *)(unit + slot_offset));
             total = mult *qty;
 
             UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c8d, window, 8, 8);

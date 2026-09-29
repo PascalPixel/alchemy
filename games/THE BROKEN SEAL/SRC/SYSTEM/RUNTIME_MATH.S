@@ -13,6 +13,8 @@
 	.global IwramClearWords
 IwramClearWords:
 	mov	r2, #0
+	.global IwramFillWords
+IwramFillWords:
 	push	{r5, r6, r7, r8, r9}
 	mov	r3, r2
 	mov	r4, r2

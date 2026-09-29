@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
+extern u8 gLinkStatus[];
 
 s32 Main_08000170(u32 size);
 void Main_08000178(s32 heap);
@@ -15,7 +16,7 @@ static __inline__ void Call2(void (*f)(s32, u16 *), s32 a0, u16 *a1)
     f(a0, a1);
 }
 
-#define LINK_STAT (*(volatile u16 *)0x03001f64)
+#define LINK_STAT (*(volatile u16 *)gLinkStatus)
 
 /* Receives the linked player's three party records (0x154-byte transfers)
  * and then one 0x140-byte block, waiting on each transfer for at most 900

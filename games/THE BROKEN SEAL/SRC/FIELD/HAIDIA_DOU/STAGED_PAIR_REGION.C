@@ -3,27 +3,6 @@
 #include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
-#define CreateOverlayObject Func_02001cf6
-#define SetOverlayObjectMode Func_02001d58
-#define SetOverlayObjectSlot Func_02001df0
-#define RuntimeSelectorTable Data_02000240
-#define PrimaryRuntimeSelector Value_0000005d
-#define SecondaryRuntimeSelector Value_0000005e
-#define TertiaryRuntimeSelector Value_0000005f
-#define PrimaryOverlayData Data_02009f9c
-#define SecondaryOverlayData Data_0200a014
-#define TertiaryOverlayData Data_0200a134
-#define DefaultOverlayData Data_02009f6c
-#define SceneState5D Value_0000005d
-#define SceneState5E Value_0000005e
-#define SceneState5F Value_0000005f
-#define SceneDataA234 Data_0200a234
-#define SceneDataA2C4 Data_0200a2c4
-#define SceneDataA39C Data_0200a39c
-#define PrimaryOverlayData_02000d80 Data_0200a420
-#define SecondaryOverlayData_02000d80 Data_0200a450
-#define TertiaryOverlayData_02000d80 Data_0200a624
-#define DefaultOverlayData_02000d80 Data_0200a414
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "STAGED_ACTOR.H"
@@ -226,15 +205,15 @@ s32 SceneActor_FaceActorZero(u8 *obj)
 
 s32 SceneData_SelectByRuntimeSelector(void)
 {
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000005d) {
         return (s32)PrimaryOverlayData;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000005e) {
         return (s32)SecondaryOverlayData;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000005f) {
         return (s32)TertiaryOverlayData;
     }
     return (s32)DefaultOverlayData;
@@ -255,16 +234,16 @@ s32 SelectSceneDataByState(void)
 {
     s16 state = gGameState.scene;
 
-    if (state == (s32)&SceneState5D) {
-        return (s32)SceneDataA234;
+    if (state == (s32)&Value_0000005d) {
+        return (s32)Data_0200a234;
     }
-    if (state == (s32)&SceneState5E) {
-        return (s32)SceneDataA2C4;
+    if (state == (s32)&Value_0000005e) {
+        return (s32)Data_0200a2c4;
     }
-    if (state == (s32)&SceneState5F) {
-        return (s32)SceneDataA39C;
+    if (state == (s32)&Value_0000005f) {
+        return (s32)Data_0200a39c;
     }
-    return (s32)SceneDataA234;
+    return (s32)Data_0200a234;
 }
 
 /* Contiguous unnamed leaf-owner run for resource_3a6. */
@@ -401,7 +380,7 @@ void FieldScene_RunScene3a6SequenceC(void)
     p5 = gEventWork;
     if (GameFlag_IsSet(0x302) != 0) {
         off24a = 0x24a;
-        if (*(s16 *)((s32)Data_02000240 + off24a) != 8) {
+        if (*(s16 *)((s32)&gGameState + off24a) != 8) {
             idx = p5->touched_trigger;
             rec8 = Value1(Engine_ActorGet, 8);
             record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
@@ -476,15 +455,15 @@ s32 SceneData_SelectSecondaryByRuntimeSelector(void)
     extern u8 TertiaryOverlayData_02000d80[];
     extern u8 DefaultOverlayData_02000d80[];
 
-    s16 selector = RuntimeSelectorTable[224];
+    s16 selector = gGameState.scene;
 
-    if (selector == (s32)&PrimaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000005d) {
         return (s32)PrimaryOverlayData_02000d80;
     }
-    if (selector == (s32)&SecondaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000005e) {
         return (s32)SecondaryOverlayData_02000d80;
     }
-    if (selector == (s32)&TertiaryRuntimeSelector) {
+    if (selector == (s32)&Value_0000005f) {
         return (s32)TertiaryOverlayData_02000d80;
     }
     return (s32)DefaultOverlayData_02000d80;

@@ -1,4 +1,5 @@
 #include "SHOP.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
@@ -8,7 +9,7 @@ void Shop_DrawMoney(void)
     struct ShopRuntime *shop;
     s32 window;
 
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     window = shop->money_window;
     if (window != 0) {
         UiText_DrawCharacterAtOffsetFar(0xc8a, window, 0, 0);

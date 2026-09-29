@@ -1,4 +1,5 @@
 #include "DMA.H"
+extern u8 Func_0800a418[];
 
 /* The table size is a link-time symbol, loaded from the literal pool. */
 extern u8 Value_0000007c;
@@ -34,6 +35,6 @@ void ObjectSystem_Configure(s32 mode)
     VramBlock_LoadCached(93, 128, (const void *)0x08012f20);
     size = (u32)&Value_0000007c;
     table = Runtime_AllocateHeapBlock(53, size);
-    Dma_Set((const void *)0x0800a418, table, 0x84000000 | (size >> 2),
+    Dma_Set((const void *)Func_0800a418, table, 0x84000000 | (size >> 2),
             (volatile u32 *)0x040000d4);
 }

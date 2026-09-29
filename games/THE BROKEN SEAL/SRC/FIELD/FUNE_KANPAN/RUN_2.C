@@ -68,7 +68,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 static __inline__ void bump_step(s32 amount)
 {
-    u8 *work = *(u8 **)0x03001ebc;
+    u8 *work = *(u8 **)&gEventWork;
 
     *(u16 *)(work + 0x1d8) = (u16)(*(u16 *)(work + 0x1d8) + amount);
 }
@@ -166,7 +166,7 @@ void FieldScene_RunScene3af_02001b58(void)
     s32 record;
 
     Event_Begin();
-    Call1(Event_CallWithLastActiveObjectId, 0x200d160);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
     Task_Wait(1);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0xe80000, 0x27c0000);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);

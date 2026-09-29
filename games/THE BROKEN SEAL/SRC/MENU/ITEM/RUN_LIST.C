@@ -7,8 +7,8 @@
 #include "UI.H"
 s32 GameFlag_IsSet(s32 message);
 void Object_InitializeMode(s32 object, s32 mode);
-extern u8 Data_03001c94[];
-extern u8 Data_03001b04[];
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
 struct MenuEntryIcon {
     u8 unknown_00[5];
@@ -72,9 +72,6 @@ void Audio_PlayCue(s32 cue);
  * Object_InitializeMode; only the names it does not carry are declared here.
  */
 
-#define INPUT_NEW_KEYS (*(volatile u32 *)((u32)&Data_03001c94))
-#define INPUT_HELD_KEYS (*(volatile u32 *)ADDR_03001AE8)
-#define INPUT_REPEAT_KEYS (*(volatile u32 *)((u32)&Data_03001b04))
 
 #define KEY_A 1
 #define KEY_B 2
@@ -190,21 +187,21 @@ s32 ItemMenu_RunList(s32 pane)
                 changed = 0;
             }
 
-            if ((INPUT_NEW_KEYS & KEY_A) != 0
+            if ((gKeyState & KEY_A) != 0
                 && menu->items[state.selected_index] != 0) {
                 Audio_PlayCue(173);
                 result = menu->items[state.selected_index];
                 done = 1;
                 break;
             }
-            if ((INPUT_NEW_KEYS & KEY_B) != 0) {
+            if ((gKeyState & KEY_B) != 0) {
                 Audio_PlayCue(113);
                 result = -1;
                 done = 1;
                 break;
             }
-            if ((INPUT_REPEAT_KEYS & KEY_R) != 0
-                || (INPUT_REPEAT_KEYS & KEY_L) != 0) {
+            if ((gKeysRepeat & KEY_R) != 0
+                || (gKeysRepeat & KEY_L) != 0) {
                 if (pane == 1) {
                     Audio_PlayCue(114);
                     WaitFrames(1);
@@ -214,7 +211,7 @@ s32 ItemMenu_RunList(s32 pane)
                         state.selected_index;
                     tab = menu->tab_index[pane];
                     do {
-                        if ((INPUT_REPEAT_KEYS & KEY_R) != 0) {
+                        if ((gKeysRepeat & KEY_R) != 0) {
                             tab++;
                         } else {
                             tab--;

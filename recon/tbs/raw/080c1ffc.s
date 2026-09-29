@@ -425,7 +425,7 @@ Func_080c1ffc:
 	ldrh	r1, [r6, #0]
 	ands	r2, r4
 	adds	r0, r5, #0
-	bl	Func_08077140
+	bl	BattleUnit_AssignFar
 	adds	r0, r5, #0
 	bl	Owner_GetStateFar
 	ldr	r1, [sp, #32]

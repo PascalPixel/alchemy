@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+extern u8 gMapCellBuffer[];
 
 /*
  * Runs what one step of the party leader costs and triggers on the field:
@@ -134,7 +135,7 @@ void Field_ProcessStep(s32 layer, s32 x, s32 y, s32 z)
         if ((u32)layer <= 2)
             tile = map->layers[layer].tiles;
         else
-            tile = (struct StepTile *)0x02010000;
+            tile = (struct StepTile *)gMapCellBuffer;
         tile = &tile[(x / 0x100000) + ((z / 0x100000) << 7)];
     }
     event = tile->event;

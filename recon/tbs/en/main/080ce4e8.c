@@ -159,11 +159,11 @@ loop_15:
                                 temp_r5_298 - 0xC, sp3C[1] - 0xC,
                                 0x18, 0x18);
                             temp_r5_318 = M2C_FIELD(var_r6_262, s32 *, 0);
-                            M2C_FIELD(var_r6_262, s32 *, 0) = (s32) (temp_r5_318 - Func_080022ec(temp_r5_318, temp_r7_288));
+                            M2C_FIELD(var_r6_262, s32 *, 0) = (s32) (temp_r5_318 - Math_Div(temp_r5_318, temp_r7_288));
                             temp_r5_324 = M2C_FIELD(var_r6_262, s32 *, 4);
-                            M2C_FIELD(var_r6_262, s32 *, 4) = (s32) (temp_r5_324 - Func_080022ec(temp_r5_324, temp_r7_288));
+                            M2C_FIELD(var_r6_262, s32 *, 4) = (s32) (temp_r5_324 - Math_Div(temp_r5_324, temp_r7_288));
                             temp_r5_330 = M2C_FIELD(var_r6_262, s32 *, 8);
-                            M2C_FIELD(var_r6_262, s32 *, 8) = (s32) (temp_r5_330 - Func_080022ec(temp_r5_330, temp_r7_288));
+                            M2C_FIELD(var_r6_262, s32 *, 8) = (s32) (temp_r5_330 - Math_Div(temp_r5_330, temp_r7_288));
                             M2C_FIELD(var_r6_262, s32 *, 0x18) = (s32) (M2C_FIELD(var_r6_262, s32 *, 0x18) + 1);
                             var_r4_260 = sp8;
                         }

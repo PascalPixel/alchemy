@@ -58,8 +58,7 @@ struct BattleActionData {
 };
 
 extern u8 gWorkSlot[];
-extern struct GameStateActors Data_02000240;
-#define gGameState Data_02000240
+extern struct GameStateActors gGameState;
 extern u8 Value_00000035[];
 extern u8 Value_00000037[];
 extern const u8 Data_0809c410[];

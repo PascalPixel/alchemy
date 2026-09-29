@@ -24,7 +24,7 @@
  * modeled the same way those files model their own veneer slot: a direct
  * call to the veneer's own symbol with the real jump target passed as a
  * trailing argument.  The middle argument is never assigned between the
- * preceding Func_080022ec call and this call in the retained assembly (no
+ * preceding Math_Div call and this call in the retained assembly (no
  * instruction touches r1 in between), so it is passed uninitialized here,
  * matching FixedSqrt's own "unused1"/"unused2" idiom for the identical
  * situation.
@@ -43,7 +43,7 @@
 void Func_080cd594(s32 mode);
 void Func_080cef64(s32 flag, DrawRectangleFn *out_pair);
 void **Func_080b5098(s32 member_id);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080072ec(s32 a, s32 b, s32 target);
 void Func_08009140(void *object);
 void Func_08009150(void *object, s32 x, s32 y, s32 z);
@@ -132,12 +132,12 @@ s32 Func_080e698c(void *object)
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
     new_x = M2C_FIELD(member_a, s32 *, 8);
     dx = M2C_FIELD(member_b, s32 *, 8) - new_x;
-    dx_scaled = Func_080022ec(dx * 80, 100);
+    dx_scaled = Math_Div(dx * 80, 100);
     dz = M2C_FIELD(member_b, s32 *, 16) - M2C_FIELD(member_a, s32 *, 16);
-    dz_scaled = Func_080022ec(dz * 80, 100);
+    dz_scaled = Math_Div(dz * 80, 100);
     new_x = new_x + dx_scaled;
     new_z = M2C_FIELD(member_a, s32 *, 16) + dz_scaled;
-    speed = Func_080022ec(
+    speed = Math_Div(
         Func_080072ec(
             ((dx_scaled >> 8) * (dx_scaled >> 8))
                 + ((dz_scaled >> 8) * (dz_scaled >> 8)),

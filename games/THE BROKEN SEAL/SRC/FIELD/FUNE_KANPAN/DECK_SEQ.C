@@ -32,6 +32,7 @@
  * exact. No counter type, declaration-order or fixed-register changes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 FuneKanpan_CrewScript[];
 
 extern u8 FuneKanpan_DeckActionsA[];
 extern u8 FuneKanpan_DeckActionsB[];
@@ -97,7 +98,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetChildValue(0, 15);
     record = Engine_ActorGet(0);
     ObjectDispatch_SetSingleChildField26Far(record, 0);
-    Call1(Event_CallWithLastActiveObjectId, 0x200d160);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
     Call1(Event_CallWithLastActiveObjectId, 0x200d340);
     Engine_TaskWait(1);
@@ -144,7 +145,7 @@ void FieldScene_RunActorSequence(void)
     Engine_ActorSetChildValue(27, 3);
     Engine_ActorSetChildValue(28, 3);
     Engine_ActorSetChildValue(29, 3);
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x202;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x202;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(80);

@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "UI.H"
+extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
 s32 Object_GetByIdFar(s32 unit_id);
@@ -29,7 +30,7 @@ s32 Shop_ConfirmAct(s32 unit_id)
     struct ShopCursorAnchor *cursor_anchor;
 
     Shop_InitializeCursorWork();
-    shop = SHOP_RUNTIME;
+    shop = gMenuWork;
     shop->party_action = list_window;
 
     {

@@ -26,7 +26,7 @@
  */
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
@@ -39,7 +39,7 @@ extern s32 Korosseo_CompetitorStartAngle;
         s32 count;                                                           \
                                                                              \
         q = &gIoWriteQueue;                                                  \
-        ime = &Data_04000208;                                                \
+        ime = &RegIme;                                                \
         saved = *ime;                                                        \
         *ime = (u16)(u32)ime;                                                \
         count = q->count;                                                    \

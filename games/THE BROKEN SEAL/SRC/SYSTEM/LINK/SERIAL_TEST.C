@@ -1,6 +1,7 @@
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
 #include "AUDIO_ENGINE_SYMBOLS.H"
+extern u8 gMapCellBuffer[];
 
 extern u8 gKeysHeld[];
 
@@ -36,10 +37,10 @@ void SerialTest_Run(void)
         value--;
     } while (n >= 0);
     zero = 0;
-    Bios_CpuSet((const void *)&zero, (void *)0x02010000, 0x05000100);
+    Bios_CpuSet((const void *)&zero, (void *)gMapCellBuffer, 0x05000100);
     SerialRuntime_WaitForStatusMask(3);
 restart:
-    SerialRuntime_BeginTransferB((void *)0x02010000);
+    SerialRuntime_BeginTransferB((void *)gMapCellBuffer);
     for (;;) {
         if (KEYS_HELD & 1)
             SerialRuntime_BeginTransferA((const void *)0x08000000, 0x280);
@@ -53,7 +54,7 @@ restart:
             } while (tick >= 0);
         }
         if (SERIAL_ACTIVE_B == 0) {
-            Dma_Set((const void *)0x02010000, (void *)0x06001000, 0x840000a0, (volatile u32 *)0x040000d4);
+            Dma_Set((const void *)gMapCellBuffer, (void *)0x06001000, 0x840000a0, (volatile u32 *)0x040000d4);
             goto restart;
         }
         WaitFrames(1);

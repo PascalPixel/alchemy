@@ -71,7 +71,7 @@ s32 Func_08004458(void);
 s32 Func_080041d8(void (*callback)(void), s32 interval);
 void Func_080cd260(void);
 void Func_080b50e8(s32 value);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080f9010(s32 value);
 void Func_080d6888(s32, s32, s32, s32, s32);
 void Func_080cd52c(void);
@@ -264,7 +264,7 @@ void Func_080c91dc(struct EffectArgument *argument)
 
                             draw_index = runtime->argument->variant == 2;
                             image = (u8 *)runtime + 0x400
-                                + (Func_080022ec(particle->frame, 3) << 10);
+                                + (Math_Div(particle->frame, 3) << 10);
                             draw = draw_functions[draw_index];
                             draw(
                                 draw_destination,

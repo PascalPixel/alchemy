@@ -1,4 +1,5 @@
 #include "ARUTAMIRA.H"
+extern u8 gFrameTick[];
 
 void OverlayObject_UpdateThreeStateMotion(void *obj)
 {
@@ -24,7 +25,7 @@ void OverlayObject_UpdateThreeStateMotion(void *obj)
         FIELD(obj, s32, 0x20) = 0x50000;
         FIELD(obj, u8, 0x42) = state;
         (*p)++;
-        if ((*(s32 *)0x03001800 & 3) == 0)
+        if ((*(s32 *)gFrameTick & 3) == 0)
             Audio_PlayCue(0x86);
     } else if (state == 1) {
         if (BattleFx_HasReachedTarget(obj) == 0) {

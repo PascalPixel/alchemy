@@ -1,7 +1,7 @@
 #include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "MAKYURI.H"
 
-extern u16 Data_0200e064[];
+extern u16 MakyuriHeya_FloorSwitchCells[];
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -22,8 +22,8 @@ void MakyuriHeya_TriggerFloorSwitch(void)
 
     if (Value1((s32 (*)())Engine_GameFlagIsSet, 0x256) != 0)
         return;
-    x = Engine_ActorGet(0)->x.part.pixel;
-    z = Engine_ActorGet(0)->z.part.pixel;
+    x = Object_GetById(0)->x.part.pixel;
+    z = Object_GetById(0)->z.part.pixel;
     if (x < 164 || x > 171)
         return;
     if (z < 372)
@@ -32,11 +32,11 @@ void MakyuriHeya_TriggerFloorSwitch(void)
         return;
     Engine_EventBegin();
     Engine_GameFlagSet(0x256);
-    Engine_EventWait(5);
-    Engine_ActorGet(0)->y.fixed -= 0x20000;
-    Engine_ActorGet(0)->target_y = Engine_ActorGet(0)->y.fixed;
+    Battle_WaitMode0(5);
+    Object_GetById(0)->y.fixed -= 0x20000;
+    Object_GetById(0)->target_y = Object_GetById(0)->y.fixed;
     Engine_MapCopyCellsTo(6, 29, 10, 23, 1, 1);
-    Engine_AudioPlayCue(217);
-    Engine_MapAnimateCells(Data_0200e064, 10, 18);
+    Audio_PlayCue(217);
+    Engine_MapAnimateCells(MakyuriHeya_FloorSwitchCells, 10, 18);
     Engine_EventEnd();
 }

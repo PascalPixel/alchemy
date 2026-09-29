@@ -1,7 +1,5 @@
 #include "TYPES.H"
 
-#define CommandInterpolationRenderer_Update Func_02002450
-
 /*
  * resource_3bb owner at 0x02002450, 1,264 bytes. This is the independently
  * address-mapped sibling of resource_3bc:0x02002ee8 and the callback
@@ -45,7 +43,7 @@ extern void Func_0200659a();
 extern void Func_02006616();
 extern void Func_02006674();
 extern void Func_020066c8();
-void Func_02002450(void)
+void CommandInterpolationRenderer_Update(void)
 {
     volatile s16 *paletteSlot = (volatile s16 *)0x0200ca1c;
     volatile s16 *stateCell = (volatile s16 *)0x0200cc3c;

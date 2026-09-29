@@ -267,7 +267,7 @@ void SceneState_SetMode66AndPassOpeningSequence(void)
     extern s32 KorosseoKawa_Countdown;
 
     s32 value = 66;
-    s32 *mode = (s32 *)0x0200C41C;
+    s32 *mode = (s32 *)&KorosseoKawa_Countdown;
 
     *mode = value;
     Engine_ScheduleCallback(0x0200804D, 0xC80);

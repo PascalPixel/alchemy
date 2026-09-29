@@ -19,8 +19,6 @@
  * in the spread loop is indexed, not strength-reduced.
  */
 
-#define BattleTarget_RunSelection Func_08026080
-
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 /* Object list entry chained by Runtime_PushSlotEntry; ordinary GBA OAM. */
@@ -121,10 +119,6 @@ extern struct BattleGlobals Data_03001e74;
  */
 extern volatile u32 Data_03001e40;
 
-#define Resource_LoadIntoFreeSlot Func_080040b4
-#define BattleUnit_Get Func_08077008
-#define BattleFlag_Test Func_080770c0
-
 s32 Resource_LoadIntoFreeSlot(s32 id);
 s32 Resource_GetBuffer(s32 slot, s32 source);
 void Runtime_PushSlotEntry(struct DisplayEntry *entry, s32 slot);
@@ -136,11 +130,10 @@ void UiWork_Finalize(s32 work, s32 release);
 void UiText_DrawCharacterAtOffset(s32 text, s32 work, s32 x, s32 y);
 void UiText_DrawStringAtOffset(s32 text, s32 work, s32 x, s32 y);
 void UiText_DrawNumberInWindow(s32 value, s32 digits, s32 work, s32 x, s32 y);
-#define UiWork_SetParamNibble Func_0801e71c
 
 void UiWork_SetParamNibble(s32 value);
-struct BattleUnit *BattleUnit_Get(s32 id);
-s32 BattleFlag_Test(s32 flag);
+struct BattleUnit *Owner_GetStateFar(s32 id);
+s32 GameFlag_TestFar(s32 flag);
 void Func_080b50b8(s32 id, struct ScreenPos *out);
 void Func_080b50e0(u16 *ids, s32 highlight);
 void Func_0801965c(s32 message, u16 *text, s32 limit);
@@ -254,7 +247,7 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
             for (i = 0; i < cnt; i++) {
                 if (ids[i] == 0xFE)
                     continue;
-                unit = BattleUnit_Get(ids[i]);
+                unit = Owner_GetStateFar(ids[i]);
                 switch (kind) {
                 case 3:
                     if (unit->poison != 0)
@@ -307,8 +300,8 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     for (;;) {
         if (ids[cursor] == 0xFE)
             goto step_back;
-        if (BattleFlag_Test(0x16C) && mode == 1 &&
-            BattleUnit_Get(ids[cursor])->hp == 0)
+        if (GameFlag_TestFar(0x16C) && mode == 1 &&
+            Owner_GetStateFar(ids[cursor])->hp == 0)
             goto step_back;
         break;
 step_back:
@@ -421,7 +414,7 @@ step_back:
         if (kind == 0)
             goto frame_tail;
 
-        unit = BattleUnit_Get(ids[cursor]);
+        unit = Owner_GetStateFar(ids[cursor]);
         Func_080b50b8(ids[cursor], &pos);
         if (infoWin != 0)
             UiWork_Finalize(infoWin, 1);
@@ -591,7 +584,7 @@ no_condition:
 draw_name:
         if (spread == 0xFF)
             goto frame_tail;
-        unit = BattleUnit_Get(ids[cursor]);
+        unit = Owner_GetStateFar(ids[cursor]);
         Func_080b50b8(ids[cursor], &namePos);
         namePos.y += Func_08002322(Data_03001e40 << 12) / 32768;
         if (unit->class_id == 125 || unit->class_id == 122) {

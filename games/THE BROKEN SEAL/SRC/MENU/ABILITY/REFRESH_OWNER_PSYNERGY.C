@@ -12,7 +12,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     struct OwnerActionState *owner;
 
     menu = gMenuWork;
-    owner = (struct OwnerActionState *)OwnerState_GetFar(owner_id);
+    owner = (struct OwnerActionState *)Owner_GetStateFar(owner_id);
     psynergies = menu->psynergies;
     menu->psynergy_count =
         PsynergyMenu_CollectActions(owner, psynergies, 2);
@@ -21,7 +21,7 @@ void PsynergyMenu_RefreshOwnerPsynergy(s32 owner_id)
     PsynergyMenu_DrawPsynergyIcons(psynergies);
     if (menu->psynergy_count == 0) {
         UiText_DrawCharacterAtOffsetFar(
-            (s32)&PsynergyMenu_EmptyMessage,
+            (s32)&MsgPsynergyMenuEmpty,
             (s32 *)menu->psynergy_window,
             0,
             0x18);

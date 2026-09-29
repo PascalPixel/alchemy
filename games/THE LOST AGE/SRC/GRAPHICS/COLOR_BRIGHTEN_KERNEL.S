@@ -1,5 +1,5 @@
 @ Saturating colour-buffer brighten that saves a backup copy, run from the
-@ stack by its loader in COLOR_FADE_LOADERS.S (0x84000022: 34 words). Behind
+@ stack by its loader in raw 08001c90.S (0x84000022: 34 words). Behind
 @ its 4-byte Thumb entry (bx pc) the ARM body saves r5-r9 without lr
 @ (push {r5, r6, r7, r8, r9} ... bx lr); GCC saves lr with any register.
 @ After that entry its 132-byte body equals the brighten kernel of TBS

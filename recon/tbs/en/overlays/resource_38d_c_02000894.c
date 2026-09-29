@@ -4,8 +4,6 @@
  * 232 calls, one polling loop, and all explicit actor and workspace effects.
  * Recovered from the complete decoded band and checked against the original assembly. */
 
-#define FieldScene_RunMultiStageActorSequence Func_02000894
-
 void Func_02002596();
 void Func_02002ce4();
 void Func_02002d02();
@@ -227,7 +225,7 @@ void Func_0200374a();
 void Func_0200374c();
 void Func_02003750();
 
-void Func_02000894(void)
+void FieldScene_RunMultiStageActorSequence(void)
 {
     void *p1;
     void *p18;

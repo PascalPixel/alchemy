@@ -1,4 +1,5 @@
 #include "DMA.H"
+extern u8 gMapCellBuffer[];
 
 /* Display hook installed by MapAnimation_Start: selects the animation
    layout for BG1 and copies the decoded frame into character VRAM. */
@@ -11,5 +12,5 @@ void MapAnimation_PresentFrame(void)
     do {
         *(volatile u16 *)0x0400000a = control;
     } while (0);
-    Dma_Set((const void *)0x02010000, (void *)0x06006a00, 0x84002580, (volatile u32 *)0x040000d4);
+    Dma_Set((const void *)gMapCellBuffer, (void *)0x06006a00, 0x84002580, (volatile u32 *)0x040000d4);
 }

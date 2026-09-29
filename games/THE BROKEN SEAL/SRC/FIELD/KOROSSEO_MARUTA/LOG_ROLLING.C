@@ -3,6 +3,7 @@
 #include "FIELD_SCENE.H"
 
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
+extern u8 gKeysHeld[];
 
 enum LogRollingMessage {
     MSG_ROBIN_GOT = 0x96a,
@@ -373,7 +374,6 @@ static __inline__ s32 Value0(s32 (*f)())
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunSecondArrivalSequence:
  * state-routed scene setup and all 40 calls with their scene arguments. */
 
-#define FieldScene_RunSecondArrivalSequence Func_02001df8
 
 void Func_0200469a_arrival();
 s32 Func_020048b0_arrival();
@@ -442,7 +442,7 @@ void Func_02005a5c_arrival();
 #define BattleRuntime_WaitIfModeZero_31(args...) Func_02006332_b_head(args)
 #define Object_SetModeById_8(args...) Func_020063d0_b_head(args)
 #define Object_LinkObjectAndSetCallback_20(args...) Func_020064f0_head(args)
-#define SCENE_PHASE (*(s32 *)(*(u8 **)0x03001ebc + 0x1c0))
+#define SCENE_PHASE (*(s32 *)(*(u8 **)&gEventWork + 0x1c0))
 #define PENDING_CALLBACK_FLAG (*(s32 *)0x0200db80)
 
 extern u8 StageSceneWork[];
@@ -1054,7 +1054,7 @@ void FieldScene_RunEarlySequence(void)
         || (cell_center[2] - z >= 0 ? cell_center[2] - z : z - cell_center[2]) > 0x200000) {
         goto far;
     }
-    keys = (volatile s32 *)0x03001ae8;
+    keys = (volatile s32 *)gKeysHeld;
     if ((*keys & 32) != 0) {
         direction = 2;
         cell_step = -8;
@@ -1610,7 +1610,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Event_End();
 }
 
-void Func_02001df8(s32 scene)
+void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
     s32 state;
 
@@ -1938,7 +1938,7 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
     s32 value;
     u16 *field;
 
-    state = *(u8 **)0x03001ebc;
+    state = *(u8 **)&gEventWork;
     table = Data_02000240;
     slotValue = *(s32 *)&table[250];
     if (slotValue != 0) {
@@ -1971,7 +1971,7 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     s32 base;
     s32 z;
 
-    state = *(u8 **)0x03001ebc;
+    state = *(u8 **)&gEventWork;
     best_slot = 8;
     best = 0x100000;
     table = Data_02000240;
@@ -2031,8 +2031,6 @@ void ColossoLogRollingStage_SelectNearestObstacle(void)
     Event_End();
 }
 
-#define GetPartyInteractionRecord Func_020073ca_party
-#define GetPartyMemberCount Func_0200739a_party
 
 typedef struct PartyInteractionRecord {
     u8 padding_00[10];
@@ -2041,8 +2039,8 @@ typedef struct PartyInteractionRecord {
     s16 y;
 } PartyInteractionRecord;
 
-PartyInteractionRecord *Func_020073ca_party(void);
-s32 Func_0200739a_party(void);
+PartyInteractionRecord *GetPartyInteractionRecord(void);
+s32 GetPartyMemberCount(void);
 
 static inline void InitializeActorZero(void)
 {
@@ -2337,7 +2335,7 @@ void ColossoLogRollingStage_InitializeModeTask(u32 mode, u32 parameter)
  *
  * Call symbols are per-site (the raw disassembly shows a DIFFERENT veneer
  * target at every occurrence, including every repeated Func_0808a010,
- * Audio_PlayCue, Func_02002e54, Func_020033d8, Func_0808a018/360/370/020
+ * Audio_PlayCue, Func_02002e54, ColossoLogRollingStage_InitializeModeTask, Func_0808a018/360/370/020
  * call) -- declared/named as the literal per-site targets, not the shared
  * ultimate-destination symbol.
  */

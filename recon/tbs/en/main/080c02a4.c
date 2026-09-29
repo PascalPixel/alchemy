@@ -38,7 +38,7 @@ struct BgScroll {
     u16 y;
 };
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern u8 *Data_03001f00[];
 extern const u8 Data_080c5b30[];
 
@@ -165,7 +165,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
 
         q = &gIoWriteQueue;
         do {
-            ime = &Data_04000208;
+            ime = &RegIme;
             saved = *ime;
         } while (0);
         *ime = (u16)ime;

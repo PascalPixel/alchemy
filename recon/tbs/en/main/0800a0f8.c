@@ -15,7 +15,18 @@
  * loop keeping gProjection's address hoisted in r9 where the reference
  * reloads 0x03001cec each pass, and the (s16) extension of t, which the
  * reference makes before the second smull. z-first argument temporaries
- * and a (s16) cast at the multiply were the steps that helped. */
+ * and a (s16) cast at the multiply were the steps that helped.
+ * Evening (main's agbcc_arm route): reading the scale at 0x03001cec as its
+ * own s32 symbol instead of gProjection's field 0x0c stops loop.c hoisting
+ * gProjection into r9, and every long-lived register then matches the
+ * reference (cs r5, sn sl, -sn r9, count r8, z r4). That points to a
+ * separate IWRAM variable at 0x03001cec (gProjection+0x0c, center x = 120
+ * in UPDATE_VIEW.C and END_CANVAS_LAYER.C); it needs its own label in
+ * sym_iwram.s before adoption. The constant 0x8000 in a local assigned just
+ * before the two FixedMul calls puts it in r1 as the reference does, and an
+ * early-clobber lo output ("=&r") matches the ROM's RdLo choices. Left:
+ * the (s16) extension of t before the second smull, the prologue load
+ * order, and the loop tail order (subs before the struct copy). */
 typedef unsigned short u16;
 typedef short s16;
 typedef int s32;

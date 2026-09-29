@@ -1,169 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02000030_0
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02000030_2
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_2:
-	ldr r0, [pc, #24]
-.L_02000030_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000064
-	.4byte 0x020084d0
-	.4byte 0x00000065
-	.4byte 0x020086c8
-	.4byte 0x020084a0
-	.section .text.x0200807c,"ax",%progbits
-	.p2align 2
-	.global Func_0200007c
-	.thumb_func
-Func_0200007c:
-	push {r5, lr}
-	ldr r1, [pc, #72]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_0200007c_0
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #9
-	blt .L_0200007c_1
-	cmp r3, #15
-	ble .L_0200007c_2
-	cmp r3, #17
-	bne .L_0200007c_1
-.L_0200007c_2:
-	ldr r5, [pc, #40]
-	b .L_0200007c_3
-.L_0200007c_1:
-	ldr r5, [pc, #40]
-.L_0200007c_3:
-	adds r0, r5, #0
-	bl 0x02008420
-	adds r0, r5, #0
-	b .L_0200007c_4
-.L_0200007c_0:
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	bne .L_0200007c_5
-	ldr r0, [pc, #28]
-	b .L_0200007c_4
-.L_0200007c_5:
-	ldr r0, [pc, #28]
-.L_0200007c_4:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000064
-	.4byte 0x020088d4
-	.4byte 0x0200879c
-	.4byte 0x00000065
-	.4byte 0x02008a0c
-	.4byte 0x02008784
-	.global Func_020000e4
-	.thumb_func
-Func_020000e4:
-	push {lr}
-	ldr r1, [pc, #64]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_020000e4_0
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #9
-	blt .L_020000e4_1
-	cmp r3, #15
-	ble .L_020000e4_2
-	cmp r3, #17
-	bne .L_020000e4_1
-.L_020000e4_2:
-	ldr r0, [pc, #32]
-	b .L_020000e4_3
-.L_020000e4_1:
-	ldr r0, [pc, #32]
-	b .L_020000e4_3
-.L_020000e4_0:
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	bne .L_020000e4_4
-	ldr r0, [pc, #28]
-	b .L_020000e4_3
-.L_020000e4_4:
-	ldr r0, [pc, #28]
-.L_020000e4_3:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000064
-	.4byte 0x02008c88
-	.4byte 0x02008a48
-	.4byte 0x00000065
-	.4byte 0x02008eb0
-	.4byte 0x02008a3c
-	.section .text.x02008308,"ax",%progbits
-	.p2align 2
-	.global Func_02000308
-	.thumb_func
-Func_02000308:
-	push {lr}
-	ldr r3, [pc, #32]
-	movs r2, #224
-	ldr r1, [r3]
-	ldr r3, [pc, #28]
-	lsls r2, r2, #1
-	str r3, [r1, r2]
-	ldr r3, [pc, #28]
-	ldrsh r2, [r3, r2]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02000308_0
-	bl 0x0200833c
-.L_02000308_0:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x00000209
-	.4byte 0x02000240
-	.4byte 0x00000064
 	.section .rodata,"a",%progbits
+	.global gKareiHeyaEntrancesOther
+gKareiHeyaEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -176,6 +15,8 @@ Func_02000308:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaEntrances1
+gKareiHeyaEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -302,6 +143,8 @@ Func_02000308:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaEntrances2
+gKareiHeyaEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -351,12 +194,16 @@ KareiHeya_Exits:
 	.4byte 0x00000065
 	.4byte 0x00108063
 	.4byte 0x000001ff
+	.global gKareiHeyaPlacementsOther
+gKareiHeyaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaPlacements1
+gKareiHeyaPlacements1:
 	.4byte 0x0000006c
 	.4byte 0x00000001
 	.4byte 0x00650000
@@ -435,6 +282,8 @@ KareiHeya_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaPlacements1Entrance9
+gKareiHeyaPlacements1Entrance9:
 	.4byte 0x00000077
 	.4byte 0x00000001
 	.4byte 0x00780000
@@ -513,6 +362,8 @@ KareiHeya_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaPlacements2
+gKareiHeyaPlacements2:
 	.4byte 0xffff0079
 	.4byte 0x00000001
 	.4byte 0x00f80000
@@ -525,9 +376,13 @@ KareiHeya_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaEventsOther
+gKareiHeyaEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaEvents1
+gKareiHeyaEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -672,6 +527,8 @@ KareiHeya_Exits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaEvents1Entrance9
+gKareiHeyaEvents1Entrance9:
 	.4byte 0x00000001
 	.4byte 0xffff0009
 	.4byte 0x00000009
@@ -810,6 +667,8 @@ KareiHeya_Exits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiHeyaEvents2
+gKareiHeyaEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

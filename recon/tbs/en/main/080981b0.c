@@ -1,3 +1,7 @@
+/* 2026-09-29 (Mars): rewritten from ITEM_BREAK.C, BattleFx_StartItemBreak;
+ * 5 differing halfwords, from 66 in the previous draft (see history). Also
+ * tried: the 0x34 store after the 0x30 store, a chained assignment, and a
+ * loop-invariant local for 0x10000 (fixes the order, rematerialises the add). */
 /* DRAFT 080981b0 UpdateRisingParticleBurst: all but one reorder match. Remaining:
  * the ROM calls Random16 before storing 0x10000 (held in sl) to child+0x34; this
  * stores first. Calling Random16 into a local first stops the sl hoist. */

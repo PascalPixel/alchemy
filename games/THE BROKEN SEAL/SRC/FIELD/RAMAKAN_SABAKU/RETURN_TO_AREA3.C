@@ -13,6 +13,8 @@ void FieldScene_RunScene3a5_02000c38(void)
 
     Actor_RunRepeatedMotion(8, 2);
     Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);
+    /* FAKEMATCH: the do/while loads the game state's base before the 0x22b
+       offset, which fixes their registers and literal-pool order. */
     do {
         Data_02000240[0x22b] = 3;
     } while (0);

@@ -5,10 +5,6 @@ void BiribinoNiwa_ApplyEntryState(void);
 /*
  * The garden's scene start: seats scene entity 8 in its idle presentation
  * and, in the garden itself, runs the scene body.
- *
- * The handle mask is built from one register: zero is stored through fp first
- * and only then decremented by 13 to become ~0x0c, so the local carries a
- * stored value and then a mask, and must not be folded into two constants.
  */
 s32 Scene_Initialize(void)
 {
@@ -22,6 +18,9 @@ s32 Scene_Initialize(void)
 
     ent = (struct SceneEntity *)Engine_ActorGet(8);
     fp = (u8 *)ent + 35;
+    /* FAKEMATCH: one register carries the stored zero and then, decremented
+       by 13, the ~0x0c handle mask, so the two are not folded into separate
+       constants. */
     zero = 0;
     *fp = (u8)zero;
 

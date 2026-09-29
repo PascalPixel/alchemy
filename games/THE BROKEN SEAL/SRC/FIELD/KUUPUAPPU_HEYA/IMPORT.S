@@ -122,6 +122,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global FieldScene_PrepareActors
+	.thumb_func
+FieldScene_PrepareActors:
 	overlay_veneer Func_0808a038
 	.global Event_PrepareObjectAndApplyValue
 	.thumb_func
@@ -269,8 +272,17 @@ Map_SetWorkFourValues:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Event_SetPair1d4
+	.thumb_func
+Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
 	.global Engine_LeaderCheckAhead
 	.thumb_func

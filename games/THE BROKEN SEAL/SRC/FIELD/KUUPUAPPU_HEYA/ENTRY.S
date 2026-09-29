@@ -10,6 +10,6 @@
 	overlay_veneer KuupuappuHeya_ApplyEntryState
 	overlay_veneer SceneData_GetScriptTable
 	overlay_veneer SceneData_GetMessageTable
-	overlay_veneer Func_02000048
-	overlay_veneer Func_02000310
+	overlay_veneer Scene_GetPlacements
+	overlay_veneer Scene_GetEvents
 	overlay_veneer SceneData_GetRegionTable

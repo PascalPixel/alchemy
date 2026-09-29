@@ -10,6 +10,9 @@
 	.thumb_func
 Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
+	.global IwramUnsignedDivideEntry
+	.thumb_func
+IwramUnsignedDivideEntry:
 	overlay_veneer IwramUnsignedDivide
 	.global Engine_TaskWait
 	.thumb_func

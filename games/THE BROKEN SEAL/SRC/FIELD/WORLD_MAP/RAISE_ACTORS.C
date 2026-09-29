@@ -1,13 +1,12 @@
-/* Draft of resource_371 0x0200b84c..0x0200b8fc (176 bytes with pool),
- * WorldMap_RaiseActors; the listing keeps the rows. Remaining difference:
- * the reference loads the exit scene 2 for Event_SetPairWork1c0 from its
- * literal pool, a link-time value; the integer scene is an immediate (172
- * bytes, 2 differ at +0x90). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 #include "FIELD_EFFECT.H"
 
 void Event_SetPairWork1c0(s32 scene, s32 entrance);
+
+/* The selected actor and actor 54 rise out of sight together; the map closes
+   and the party is sent to the world map's entrance 27. */
 
 void WorldMap_RaiseActors(void)
 {
@@ -33,5 +32,5 @@ void WorldMap_RaiseActors(void)
     Event_WaitForScreen();
     Event_End();
     GameFlag_Set(0x122);
-    Event_SetPairWork1c0(2, 27);
+    Event_SetPairWork1c0((s32)&SceneId_WorldMap, 27);
 }

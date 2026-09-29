@@ -1,28 +1,26 @@
-/* Draft of resource_371 0x0200acb4..0x0200b130 (1148 bytes with pool),
- * FieldScene_RunActorPresentationSequence; the listing keeps the rows.
- * Remaining difference: the reference loads the exit scene 0 for
- * Event_SetPairWork1c0 from its literal pool, a link-time value; the integer
- * scene is an immediate (1142 bytes, 9 differ from +0x3dc). */
-#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/WORLD_MAP/STORY.H"
+#include "STORY.H"
 extern u8 MsgWorldMapSukuretaHowLongWillIsland[];
 
 extern u8 gPresentGuide9[];
 extern u8 gPresentGuide8[];
 extern u8 gPresentGuide5[];
 
+/* Entrance 80's scene: Jasmine and Sukureta talk on the world map until
+   actor 9 arrives and guides them off; it ends by sending the game to the
+   title scene's entrance 10. */
 void FieldScene_RunActorPresentationSequence(void)
 {
     u8 *state = (u8 *)&gGameState;
 
     PaletteGlow_Update(state[0x205], state[0x206]);
     Event_Begin();
-    Call2(BattleFx_ScheduleRatioTransition, 0x10000, 0x12c);
+    BattleFx_ScheduleRatioTransition(0x10000, 0x12c);
     Camera_MoveTo(-1, -1, -1, 0);
     Actor_SetAnimation(ACTOR_JASMINE, 19);
     Actor_SetAnimation(8, 5);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
     Task_Wait(1);
-    Call2(BattleFx_ScheduleRatioTransition, 0x18000, 16);
+    BattleFx_ScheduleRatioTransition(0x18000, 16);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     ColorBuffer_ApplyTarget(0x10003, 1);
     *(s32 *)((u8 *)gEventWork + 0x1c8) = 16;
@@ -122,5 +120,5 @@ void FieldScene_RunActorPresentationSequence(void)
     ColorBuffer_ApplyTarget(0, 0);
     ColorBuffer_Interpolate(120);
     Task_Wait(120);
-    Event_SetPairWork1c0(0, 10);
+    Event_SetPairWork1c0((s32)&SceneId_Title, 10);
 }

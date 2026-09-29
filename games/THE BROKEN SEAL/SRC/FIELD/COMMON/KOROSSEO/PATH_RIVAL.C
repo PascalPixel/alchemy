@@ -22,8 +22,8 @@ struct PathWork {
     s16 path[0x3840];
 };
 
-#define PATH_RECORDER ((struct PathRecorder *)0x02001000)
-#define PATH_WORK (*(struct PathWork **)0x03001f3c)
+#define PATH_RECORDER ((struct PathRecorder *)gSceneState)
+#define PATH_WORK ((struct PathWork *)gKorosseoWork)
 
 extern const s32 Korosseo_RivalFinishScript[];
 

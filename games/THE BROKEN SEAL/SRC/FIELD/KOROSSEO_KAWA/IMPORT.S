@@ -85,6 +85,9 @@ AffineMatrix_BuildForEffect:
 	.thumb_func
 Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
+	.global Resource_GetTableEntry
+	.thumb_func
+Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
 	.global ResourceMetadata_ClearRecordFar
 	.thumb_func
@@ -256,6 +259,9 @@ Engine_ActorDestroy:
 	.thumb_func
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorSetDestination
 	.thumb_func
@@ -349,8 +355,17 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Event_SetPair1d4
+	.thumb_func
+Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
 	.global Engine_LeaderCheckAhead
 	.thumb_func

@@ -358,7 +358,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/UPLOAD_DIRTY_BLOCKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/ERASE_BORDER_RECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_DRAW_WORK_BY_ATTRIBUTES.o"(.text)
-        "*/recon/tbs/raw/080162d4.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/CREATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/FINALIZE.o"(.text)
         "*/recon/tbs/raw/080164d2.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080164d4.o"(.text .rodata .data .padding)

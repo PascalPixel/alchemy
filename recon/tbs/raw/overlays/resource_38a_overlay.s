@@ -174,7 +174,7 @@ gGomaSuiroEventsOther:
 	.4byte 0x001000bf
 	.4byte 0x00008c15
 	.4byte 0x08640008
-	.4byte 0x02008381
+	.4byte FieldScene_RunActor8AtCell24Sequence
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

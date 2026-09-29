@@ -60,7 +60,7 @@ Func_02000d58:
 	movs r0, #18
 	lsls r1, r1, #8
 	bl 0x02008f58
-	bl 0x020087b8
+	bl FieldScene_RunScene3a3SequenceC
 	movs r0, #0
 	movs r1, #1
 	bl 0x02008f68
@@ -75,7 +75,7 @@ Func_02000d58:
 	bx r0
 	.4byte 0x00006666
 	.4byte 0x00000ccc
-	.4byte 0x02008d09
+	.4byte SceneEffect_SpawnDriftingParticle
 	.4byte 0x000008ff
 	.section .rodata,"a",%progbits
 	.4byte 0x00000016
@@ -572,13 +572,13 @@ gArutinMuraEventsOther:
 gArutinMuraEvents1:
 	.4byte 0x0000c402
 	.4byte 0xffff000a
-	.4byte 0x020086a5
+	.4byte FieldScene_RunScene3a3SequenceB
 	.4byte 0x0000c402
 	.4byte 0xffff000b
-	.4byte 0x020086a5
+	.4byte FieldScene_RunScene3a3SequenceB
 	.4byte 0x0000c402
 	.4byte 0xffff000c
-	.4byte 0x020086a5
+	.4byte FieldScene_RunScene3a3SequenceB
 	.4byte 0x00000001
 	.4byte 0xffff000d
 	.4byte 0x0000000d
@@ -587,31 +587,31 @@ gArutinMuraEvents1:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008525
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x00000000
 	.4byte 0x09090008
-	.4byte 0x0200815d
+	.4byte FieldScene_RunActorEightPromptDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001917
@@ -620,7 +620,7 @@ gArutinMuraEvents1:
 	.4byte 0x000018c2
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020081b1
+	.4byte SceneDialogue_ShowLine1918
 	.4byte 0x00000000
 	.4byte 0x0909000a
 	.4byte 0x000018c3
@@ -647,7 +647,7 @@ gArutinMuraEvents1:
 	.4byte 0x0000191e
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x020081d1
+	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000000
 	.4byte 0x0909000f
 	.4byte 0x000018c8
@@ -665,13 +665,13 @@ gArutinMuraEvents1:
 	.4byte 0x000018ca
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02008299
+	.4byte SceneDialogue_RunActor17Message1924
 	.4byte 0x00000000
 	.4byte 0xffff0014
-	.4byte 0x020083d5
+	.4byte FieldScene_RunActorTwentyFlagBranch
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008449
+	.4byte FieldScene_RunActorTwentyOneFlagBranch
 	.4byte 0x00008d15
 	.4byte 0x09090008
 	.4byte 0x000018cb
@@ -740,7 +740,7 @@ gArutinMuraEvents1:
 	.4byte 0x000018f3
 	.4byte 0x00008c15
 	.4byte 0xffff0013
-	.4byte 0x0200884d
+	.4byte SceneState_SetFlag906ByActorNineteenX
 	.4byte 0x00000002
 	.4byte 0x08ff0014
 	.4byte 0x02008d59
@@ -793,13 +793,13 @@ gArutinMuraEvents2:
 	.4byte 0x000018d6
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020082b9
+	.4byte SceneDialogue_RunActor9Message1932
 	.4byte 0x00000000
 	.4byte 0x0241000a
 	.4byte 0x00001906
 	.4byte 0x00000000
 	.4byte 0x0909000a
-	.4byte 0x020082d9
+	.4byte SceneDialogue_RunActor10Message18d9
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x00001937
@@ -826,22 +826,22 @@ gArutinMuraEvents2:
 	.4byte 0x0000193c
 	.4byte 0x00000000
 	.4byte 0x0909000e
-	.4byte 0x020082f9
+	.4byte SceneDialogue_RunActor14Message18e1
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x0000193d
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02008361
+	.4byte FieldScene_RunActorFifteenFlagBranch
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x020083d5
+	.4byte FieldScene_RunActorTwentyFlagBranch
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x02008449
+	.4byte FieldScene_RunActorTwentyOneFlagBranch
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x020084bd
+	.4byte FieldScene_RunFacingGatedDialogue18
 	.4byte 0x00000000
 	.4byte 0x09090013
 	.4byte 0x000018f8
@@ -865,7 +865,7 @@ gArutinMuraEvents2:
 	.4byte 0x000018fc
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x02008319
+	.4byte SceneDialogue_RunActor21Message194a
 	.4byte 0x00008d15
 	.4byte 0x02400008
 	.4byte 0x00001904

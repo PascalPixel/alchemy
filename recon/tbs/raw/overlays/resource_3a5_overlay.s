@@ -263,7 +263,7 @@ Func_02000e2c:
 	bl 0x02009d74
 	ldr	r1, [r0, #12]
 	adds	r0, r5, #0
-	bl 0x02008324
+	bl OverlayObject_WaitUntilField12BelowLimit
 	movs	r0, #241
 	bl 0x02009e44
 	movs	r0, #0
@@ -293,7 +293,7 @@ Func_02000e2c:
 	str	r6, [sp, #0]
 	str	r6, [sp, #4]
 	str	r4, [sp, #12]
-	bl 0x0200813c
+	bl Effect_Spawn
 	movs	r1, #130
 	movs	r0, #0
 	lsls	r1, r1, #1
@@ -363,7 +363,7 @@ Func_02000e2c:
 	adds	r0, r5, #0
 	movs	r3, #0
 	str	r4, [sp, #12]
-	bl 0x0200813c
+	bl Effect_Spawn
 	movs	r0, #144
 	lsls	r0, r0, #1
 	bl 0x02009e44

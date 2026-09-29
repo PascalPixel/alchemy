@@ -68,7 +68,7 @@
 	bl 0x0200bd20
 	adds	r0, r7, #0
 	movs	r1, #0
-	bl 0x0200b850
+	bl ArutinYama_RunRollingObject
 	movs	r0, #20
 	bl 0x0200ba78
 	bl 0x0200bd18
@@ -248,7 +248,7 @@
 	negs	r0, r0
 	bl 0x0200bb38
 	movs	r0, #5
-	bl 0x02008ec0
+	bl FieldScene_RunSharedSetPiece
 	bl 0x0200bb78
 	add	sp, #4
 	pop	{r3, r5, r6, r7}
@@ -548,7 +548,7 @@ Func_02001398:
 	movs r0, #40
 	bl 0x0200bb68
 	movs r0, #10
-	bl 0x02008ec0
+	bl FieldScene_RunSharedSetPiece
 	bl 0x0200bb78
 	pop {r5, r6}
 	pop {r0}
@@ -670,7 +670,7 @@ Func_02001398:
 	.4byte 0x01170000
 	.4byte 0x0000cccc
 	.4byte 0x00001999
-	.4byte 0x02009771
+	.4byte SceneMotion_UpdateTimedActor
 	.4byte 0x00006666
 	.4byte 0x00013333
 	.2byte 0x9999
@@ -844,7 +844,7 @@ Func_02001398:
 	movs	r3, #0
 	lsls	r0, r0, #16
 	movs	r1, #0
-	bl 0x0200abb0
+	bl SceneState_StoreParamsAndInstallTask
 	movs	r0, #60
 	bl 0x0200bb68
 	ldr	r2, [pc, #96]
@@ -982,7 +982,7 @@ Func_02002f10:
 	.4byte 0x00009999
 	.4byte 0x00001333
 	.4byte 0x00004ccc
-	.4byte 0x0200aeed
+	.4byte SceneAudio_PlayCue183EverySixtyTicks
 	.4byte 0x00001999
 	.4byte 0x00000ccc
 	.4byte 0x02000240
@@ -1199,7 +1199,7 @@ ArutinYama_PaletteScript:
 	.global ArutinYama_ActorScript
 ArutinYama_ActorScript:
 	.4byte 0x00000022
-	.4byte 0x02008041
+	.4byte OverlayObject_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -1393,7 +1393,7 @@ ArutinYama_LeaderRideScript:
 	.global ArutinYama_SparkScript
 ArutinYama_SparkScript:
 	.4byte 0x00000022
-	.4byte 0x020080bd
+	.4byte OverlayObject_IntegrateAndDamp
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -2295,16 +2295,16 @@ gArutinYamaEvents1:
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x0904000a
-	.4byte 0x02009839
+	.4byte FieldScene_BuildMultiPhasePresentation
 	.4byte 0x00000002
 	.4byte 0x0905000b
 	.4byte 0x02009d0d
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008389
+	.4byte SceneState_SetWorkByte22bTo3
 	.4byte 0x00008d15
 	.4byte 0xffff040a
-	.4byte 0x02008389
+	.4byte SceneState_SetWorkByte22bTo3
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2315,10 +2315,10 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0x00000001
 	.4byte 0x00001815
 	.4byte 0x02000008
-	.4byte 0x0200847d
+	.4byte ActorPresentation_SetCellAndLowerActorEight
 	.4byte 0x00001815
 	.4byte 0x02010009
-	.4byte 0x020084cd
+	.4byte SceneState_ApplyRectAndSetActor9Byte55
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2349,16 +2349,16 @@ gArutinYamaEvents3:
 	.4byte 0x020082cd
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020083b5
+	.4byte SceneState_SetByte22bTo3
 	.4byte 0x00008d15
 	.4byte 0xffff0409
-	.4byte 0x020083b5
+	.4byte SceneState_SetByte22bTo3
 	.4byte 0x00008f15
 	.4byte 0xffff000a
 	.4byte 0x00000000
 	.4byte 0x00000003
 	.4byte 0xffff0053
-	.4byte 0x02008a65
+	.4byte FieldScene_RunValue1528Scene
 	.4byte 0x00000013
 	.4byte 0x0f760064
 	.4byte 0x001000c0
@@ -2407,19 +2407,19 @@ gArutinYamaEvents5:
 	.4byte 0x00000001
 	.4byte 0x00001815
 	.4byte 0x02000009
-	.4byte 0x0200855d
+	.4byte SceneActor_RaiseSlot9StepB
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020083e1
+	.4byte SceneState_SetByte22bTo3AndSend51
 	.4byte 0x00008d15
 	.4byte 0xffff040a
-	.4byte 0x020083e1
+	.4byte SceneState_SetByte22bTo3AndSend51
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x020082cd
 	.4byte 0x00000003
 	.4byte 0xffff0032
-	.4byte 0x02008b0d
+	.4byte FieldScene_RunLine1528Sequence
 	.4byte 0x00002413
 	.4byte 0x0f770064
 	.4byte 0x0010007b
@@ -2454,13 +2454,13 @@ gArutinYamaEvents6:
 	.4byte 0x00000006
 	.4byte 0x00001815
 	.4byte 0x02000009
-	.4byte 0x020085ad
+	.4byte SceneState_ApplyRectAndLowerActor9
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x020082cd
 	.4byte 0x00000003
 	.4byte 0xffff0032
-	.4byte 0x02008b3d
+	.4byte FieldScene_RunScene3a4SequenceC
 	.4byte 0x00000013
 	.4byte 0x0ef20064
 	.4byte 0x00500002
@@ -2483,34 +2483,34 @@ gArutinYamaEvents7:
 	.4byte 0x001000ba
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008031
+	.4byte SceneState_SetValue14Mode23
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x020082cd
 	.4byte 0x00000003
 	.4byte 0xffff0032
-	.4byte 0x02008bd9
+	.4byte FieldScene_RunScene3a4SequenceD
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008c75
+	.4byte SceneActor_SetActor10Byte23To3
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008c89
+	.4byte SceneActor_SetActor10Byte23To1
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x0200840d
+	.4byte SceneActor_UpdateSlot10ByTileX
 	.4byte 0x00000602
 	.4byte 0xffff000c
-	.4byte 0x02008c9d
+	.4byte FieldScene_RunScene3a4_02000c9c
 	.4byte 0x00001815
 	.4byte 0x02000009
-	.4byte 0x0200850d
+	.4byte SceneActor_RaiseSlot9StepA
 	.4byte 0x00001815
 	.4byte 0x0201000b
-	.4byte 0x020085fd
+	.4byte SceneActor_RaiseSlot11AndSetFlag201
 	.4byte 0x00001815
 	.4byte 0x0204000c
-	.4byte 0x02008651
+	.4byte SceneActor_AdjustSlot12AndSetFlag204
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -1322,7 +1322,7 @@ Func_020008c0:
 	str	r3, [sp, #12]
 	adds	r3, r5, #0
 	str	r4, [sp, #4]
-	bl 0x02008ae8
+	bl Effect_Spawn
 .L_020011a6:
 	adds	r7, #1
 	cmp	r7, #7
@@ -1341,7 +1341,7 @@ Func_020008c0:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
-	.4byte 0x02009069
+	.4byte Effect_AdvanceMotion
 	.4byte 0xfffe0000
 	.4byte 0x00003332
 	.4byte 0xffff8003
@@ -1364,7 +1364,7 @@ Func_02001318:
 	movs r3, #5
 	bl 0x0200b09c
 	bl 0x020080c4
-	bl 0x0200a3a0
+	bl FieldScene_PlaceAndPinSlots8And9
 	bl 0x0200b0fc
 	sub sp, #-8
 	pop {r0}
@@ -1387,7 +1387,7 @@ Func_02001374:
 	movs r3, #5
 	bl 0x0200b09c
 	bl 0x020080c4
-	bl 0x0200a410
+	bl FieldScene_PlaceAndPinSlots10And11
 	bl 0x0200b0fc
 	sub sp, #-8
 	pop {r0}
@@ -1422,7 +1422,7 @@ Func_020013e0:
 	str r5, [sp, #0]
 	bl 0x0200b09c
 	bl 0x020080c4
-	bl 0x0200a480
+	bl FieldScene_RunScene3c4_02002480
 	bl 0x0200b0fc
 	sub sp, #-8
 	pop {r5}
@@ -1542,7 +1542,7 @@ gEffectScripts:
 	.4byte 0x0000001e
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02008cc1
+	.4byte SceneState_ApplyArgMode0AndReturnZero
 	.4byte 0x00000010
 	.4byte 0x00000015
 	.4byte 0x0000000a
@@ -1552,7 +1552,7 @@ gEffectScripts:
 	.4byte 0x00000023
 	.4byte 0x00000015
 	.4byte 0x00000026
-	.4byte 0x02008f4d
+	.4byte BabiChika_UpdateFlickerEffect
 	.4byte 0x00000000
 	.4byte 0x00000082
 	.4byte 0x00000015
@@ -2157,10 +2157,10 @@ Data_0200bc0c:
 	.4byte 0x00000012
 	.4byte 0x00004602
 	.4byte 0xffff0017
-	.4byte 0x020093a5
+	.4byte FieldScene_RunStepWith6
 	.4byte 0x00008602
 	.4byte 0xffff0017
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000202
 	.4byte 0xffff0018
 	.4byte 0x02009319
@@ -2172,118 +2172,118 @@ Data_0200bc0c:
 	.4byte 0x02009375
 	.4byte 0x00004602
 	.4byte 0xffff001b
-	.4byte 0x020093a5
+	.4byte FieldScene_RunStepWith6
 	.4byte 0x00000602
 	.4byte 0xffff001b
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00008602
 	.4byte 0xffff0032
-	.4byte 0x02009511
+	.4byte SceneState_RunUnlessActorZeroAtTile32x50
 	.4byte 0x00000602
 	.4byte 0xffff0032
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x0000c602
 	.4byte 0xffff0032
-	.4byte 0x02009531
+	.4byte SceneState_RunUnlessActorZeroAt30_52
 	.4byte 0x00004602
 	.4byte 0xffff0032
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x00004602
 	.4byte 0xffff001c
-	.4byte 0x02009425
+	.4byte SceneActor_CheckTwoUnitsAboveActorZero
 	.4byte 0x00000202
 	.4byte 0xffff001c
 	.4byte 0x020093e1
 	.4byte 0x00000202
 	.4byte 0x0971001d
-	.4byte 0x020096f5
+	.4byte FieldScene_RunFourCallSequenceB
 	.4byte 0x00000602
 	.4byte 0x0200001d
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00004602
 	.4byte 0x0200001d
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x0000c602
 	.4byte 0x0200001d
-	.4byte 0x02008df5
+	.4byte SceneActor_PassActorZeroOffsetPoint
 	.4byte 0x00008602
 	.4byte 0x0200001f
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000602
 	.4byte 0xffff001f
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00000202
 	.4byte 0x0972001e
-	.4byte 0x020098f9
+	.4byte FieldScene_RunFourStepSequenceA
 	.4byte 0x00008602
 	.4byte 0x0201001e
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00004602
 	.4byte 0x0201001e
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x0000c602
 	.4byte 0x0201001e
-	.4byte 0x02008df5
+	.4byte SceneActor_PassActorZeroOffsetPoint
 	.4byte 0x00000602
 	.4byte 0x02020020
-	.4byte 0x020098f9
+	.4byte FieldScene_RunFourStepSequenceA
 	.4byte 0x00000602
 	.4byte 0x02010020
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00008602
 	.4byte 0xffff0020
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000003
 	.4byte 0xffff0028
-	.4byte 0x02009971
+	.4byte SceneDialogue_RunFlag982Or983Dialogue
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x0200a3a1
+	.4byte FieldScene_PlaceAndPinSlots8And9
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x0200a3a1
+	.4byte FieldScene_PlaceAndPinSlots8And9
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x0200a411
+	.4byte FieldScene_PlaceAndPinSlots10And11
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x0200a411
+	.4byte FieldScene_PlaceAndPinSlots10And11
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x0200a481
+	.4byte FieldScene_RunScene3c4_02002480
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte 0x0200a481
+	.4byte FieldScene_RunScene3c4_02002480
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x0200a481
+	.4byte FieldScene_RunScene3c4_02002480
 	.4byte 0x00004e15
 	.4byte 0x0200000f
-	.4byte 0x02009459
+	.4byte SceneActor_MirrorFlag201IntoSlot14
 	.4byte 0x00004e15
 	.4byte 0x02010010
-	.4byte 0x020094ad
+	.4byte SceneActor_SetActor14Field98ByFlag200
 	.4byte 0x00004e15
 	.4byte 0x09700011
-	.4byte 0x02009501
+	.4byte SceneState_ApplyFlag970
 	.4byte 0x00008c15
 	.4byte 0x09710012
-	.4byte 0x02009551
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00001815
 	.4byte 0x02000014
-	.4byte 0x0200970d
+	.4byte ActorPresentation_ConfigureActorTwentyAndFlag200
 	.4byte 0x00008c15
 	.4byte 0x09720013
-	.4byte 0x02009745
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00001815
 	.4byte 0x02010015
-	.4byte 0x02009939
+	.4byte SceneActor_ConfigureSlot21AndSetFlag201
 	.4byte 0x10002115
 	.4byte 0x02020013
-	.4byte 0x02009911
+	.4byte FieldScene_SetActor19TableB3B8
 	.4byte 0x00002115
 	.4byte 0x02020013
-	.4byte 0x02009925
+	.4byte SceneState_SetValue202ThenCall
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2333,46 +2333,46 @@ Data_0200bef4:
 	.4byte 0x0000000e
 	.4byte 0x00000202
 	.4byte 0xffff0019
-	.4byte 0x020099cd
+	.4byte FieldScene_RunFourStepSequenceB
 	.4byte 0x00004602
 	.4byte 0xffff001a
-	.4byte 0x020093a5
+	.4byte FieldScene_RunStepWith6
 	.4byte 0x00008602
 	.4byte 0xffff001a
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00004602
 	.4byte 0xffff001b
 	.4byte 0x020090c5
 	.4byte 0x00000202
 	.4byte 0xffff001c
-	.4byte 0x02009f5d
+	.4byte FieldScene_RunThreeStepSequence
 	.4byte 0x00000602
 	.4byte 0xffff001e
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00008602
 	.4byte 0xffff001e
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000202
 	.4byte 0xffff001e
-	.4byte 0x02009f5d
+	.4byte FieldScene_RunThreeStepSequence
 	.4byte 0x00000602
 	.4byte 0xffff001d
-	.4byte 0x02009fc5
+	.4byte FieldScene_RunFourCallSequence
 	.4byte 0x00004602
 	.4byte 0xffff001d
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x0000c602
 	.4byte 0xffff001d
-	.4byte 0x02008df5
+	.4byte SceneActor_PassActorZeroOffsetPoint
 	.4byte 0x00000202
 	.4byte 0xffff0029
-	.4byte 0x0200a301
+	.4byte FieldScene_RunLayoutAt83By45
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x0200a355
+	.4byte FieldScene_RunScriptedStep953
 	.4byte 0x00000003
 	.4byte 0xffff002a
-	.4byte 0x0200a331
+	.4byte SceneState_SetValue268bInScene
 	.4byte 0x00000013
 	.4byte 0x0f320064
 	.4byte 0x00100071
@@ -2381,13 +2381,13 @@ Data_0200bef4:
 	.4byte 0x00100054
 	.4byte 0x00008c15
 	.4byte 0x02040008
-	.4byte 0x020099bd
+	.4byte FieldScene_RunTwoStepSequence
 	.4byte 0x10002115
 	.4byte 0x02030008
-	.4byte 0x020099e5
+	.4byte SceneActor_InstallSlotNineHandler
 	.4byte 0x00001815
 	.4byte 0x02040009
-	.4byte 0x02009a11
+	.4byte SceneActor_SetupSlotNineAndInstallHandler
 	.4byte 0x00008c15
 	.4byte 0xffff000c
 	.4byte 0x00000000
@@ -2399,40 +2399,40 @@ Data_0200bef4:
 	.4byte 0x00000000
 	.4byte 0x00009315
 	.4byte 0xffff000c
-	.4byte 0x02009d05
+	.4byte FieldScene_RunMiddleSequence
 	.4byte 0x00009315
 	.4byte 0xffff000d
-	.4byte 0x02009d05
+	.4byte FieldScene_RunMiddleSequence
 	.4byte 0x00009315
 	.4byte 0xffff000e
-	.4byte 0x02009d05
+	.4byte FieldScene_RunMiddleSequence
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x0200a041
+	.4byte FieldScene_RunLateSequenceSecond
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02009fdd
+	.4byte FieldScene_RunLateSequenceHead
 	.4byte 0x00008c15
 	.4byte 0xffff0011
-	.4byte 0x02009f71
+	.4byte SceneState_SetSlot17And18Selectors
 	.4byte 0x00008c15
 	.4byte 0xffff0012
-	.4byte 0x02009f71
+	.4byte SceneState_SetSlot17And18Selectors
 	.4byte 0x00008c15
 	.4byte 0xffff0013
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0014
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0015
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0016
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0017
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte 0x0000268c

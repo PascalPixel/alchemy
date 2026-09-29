@@ -255,13 +255,13 @@ gKareiKyudenEvents:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008185
+	.4byte FieldScene_RunScene3aa_02000184
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008185
+	.4byte FieldScene_RunScene3aa_02000184
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008185
+	.4byte FieldScene_RunScene3aa_02000184
 	.4byte 0x00000001
 	.4byte 0xffff0005
 	.4byte 0x00000005
@@ -291,13 +291,13 @@ gKareiKyudenEvents:
 	.4byte 0x0000000d
 	.4byte 0x0000c602
 	.4byte 0xffff000e
-	.4byte 0x02008185
+	.4byte FieldScene_RunScene3aa_02000184
 	.4byte 0x00000000
 	.4byte 0x03210008
 	.4byte 0x00001b81
 	.4byte 0x00000000
 	.4byte 0x09130008
-	.4byte 0x02008115
+	.4byte FieldScene_RunActorEightTurnDialogue
 	.4byte 0x00000000
 	.4byte 0x09410008
 	.4byte 0x00001b95
@@ -315,7 +315,7 @@ gKareiKyudenEvents:
 	.4byte 0x000025a7
 	.4byte 0x00000000
 	.4byte 0x0941000d
-	.4byte 0x020080d5
+	.4byte SceneDialogue_RunActor13Message1b83
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte 0x000025a8
@@ -333,7 +333,7 @@ gKareiKyudenEvents:
 	.4byte 0x000025aa
 	.4byte 0x00000000
 	.4byte 0x09410010
-	.4byte 0x020080f5
+	.4byte SceneDialogue_RunActor16Message1b88
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte 0x000025ab

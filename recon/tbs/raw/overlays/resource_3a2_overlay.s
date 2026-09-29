@@ -2,7 +2,7 @@
 	.thumb
 	.section .rodata,"a",%progbits
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte EventScript_PrepareActorRenderFlags
 	.4byte 0x00000010
 	.global YamaRama_HsuAction
 YamaRama_HsuAction:
@@ -345,22 +345,22 @@ YamaRama_Events:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008181
+	.4byte FieldScene_RunPrimaryScript
 	.4byte 0x00000000
 	.4byte 0x08b20009
 	.4byte 0x00001957
 	.4byte 0x00000000
 	.4byte 0x08b2000a
-	.4byte 0x020080e9
+	.4byte SceneDialogue_RunMessage1958Step
 	.4byte 0x00000000
 	.4byte 0x08b2000b
-	.4byte 0x02008141
+	.4byte SceneDialogue_RunActor11Message195d
 	.4byte 0x00000000
 	.4byte 0x08b2000c
 	.4byte 0x00001960
 	.4byte 0x00000000
 	.4byte 0x08b2000d
-	.4byte 0x02008161
+	.4byte SceneDialogue_RunActor13Message1961
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001a04
@@ -378,7 +378,7 @@ YamaRama_Events:
 	.4byte 0x00001a08
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x020088e1
+	.4byte SceneDialogue_RunActorFifteenByLeaderHeading
 	.4byte 0x00008d15
 	.4byte 0x08b20009
 	.4byte 0x00001964
@@ -414,13 +414,13 @@ YamaRama_Events:
 	.4byte 0x00001a1f
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x020088a9
+	.4byte FieldScene_RunScene3a2_020008a8
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02008871
+	.4byte ConfigureAndPlaceActorFourteen
 	.4byte 0x00000003
 	.4byte 0xffff0005
-	.4byte 0x0200884d
+	.4byte SceneDialogue_RunLine1956
 	.4byte 0x0000c403
 	.4byte 0x0350006e
 	.4byte 0x00300000
@@ -458,10 +458,10 @@ YamaRama_TempleEvents:
 	.4byte 0x00000005
 	.4byte 0x00000002
 	.4byte 0x08b0000a
-	.4byte 0x02008925
+	.4byte Scene_RunEventTransition
 	.4byte 0x00000000
 	.4byte 0x0895000a
-	.4byte 0x02008ac1
+	.4byte Scene_RunActorCue
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x000019d4
@@ -479,7 +479,7 @@ YamaRama_TempleEvents:
 	.4byte 0x00001a21
 	.4byte 0x00008f15
 	.4byte 0x08b2000b
-	.4byte 0x02008c31
+	.4byte Scene_RunActorSequence
 	.4byte 0x00008d15
 	.4byte 0x0895000a
 	.4byte 0x000018bc
@@ -500,22 +500,22 @@ YamaRama_TempleEvents:
 	.4byte 0x00001a23
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008ff1
+	.4byte FieldScene_RunPairedLayoutStepsThenSetOne
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02009029
+	.4byte SceneState_RunRect6x28Step
 	.4byte 0x10001815
 	.4byte 0x0200000e
-	.4byte 0x02009091
+	.4byte SceneActor_UpdateActorFourteenByDepth
 	.4byte 0x00001815
 	.4byte 0x0200000e
-	.4byte 0x020090b9
+	.4byte ActorPresentation_PrepareActorFourteenWithCallback
 	.4byte 0x00000c15
 	.4byte 0x0201000f
-	.4byte 0x02009145
+	.4byte FieldScene_SetSlot15Byte89AndRunStep
 	.4byte 0x00000003
 	.4byte 0xffff0007
-	.4byte 0x02008fcd
+	.4byte FieldScene_RunScriptedSteps0And1A12
 	.4byte 0x00000013
 	.4byte 0x0f710064
 	.4byte 0x001000bf

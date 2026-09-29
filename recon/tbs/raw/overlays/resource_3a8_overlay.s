@@ -496,7 +496,7 @@ Func_02000590:
 	movs r2, #0
 	movs r0, #21
 	bl 0x0200bce4
-	bl 0x02009e6c
+	bl SceneState_SetValues27Through34
 	movs r0, #40
 	bl 0x0200bbec
 	movs r0, #21
@@ -686,7 +686,7 @@ Func_02000590:
 	movs r1, #0
 	movs r2, #40
 	bl 0x0200bcd4
-	bl 0x02009ed8
+	bl KareiMachi_SpeedUpActors
 	movs r2, #136
 	movs r0, #20
 	movs r1, #178
@@ -716,7 +716,7 @@ Func_02000590:
 	movs r0, #27
 	bl 0x0200bcd4
 	movs r0, #27
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #80
 	bl 0x0200bbec
 	movs r0, #28
@@ -736,7 +736,7 @@ Func_02000590:
 	movs r0, #28
 	bl 0x0200bcd4
 	movs r0, #28
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #160
 	bl 0x0200bbec
 	movs r0, #32
@@ -757,7 +757,7 @@ Func_02000590:
 	movs r0, #32
 	bl 0x0200bcd4
 	movs r0, #32
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #80
 	bl 0x0200bbec
 	movs r0, #30
@@ -830,9 +830,9 @@ Func_02000590:
 	movs r2, #20
 	bl 0x0200bcd4
 	movs r0, #29
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #30
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 .L_02000590_6:
 	movs r0, #1
 	bl 0x0200bb14
@@ -879,7 +879,7 @@ Func_02000590:
 	movs r0, #31
 	bl 0x0200bcd4
 	movs r0, #31
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #34
 	bl 0x0200bc44
 	movs r0, #33
@@ -981,7 +981,7 @@ Func_02000590:
 	.4byte 0x00019999
 	.4byte 0x0200bfb0
 	.4byte 0x00001a9e
-	.4byte 0x02009f15
+	.4byte KareiMachi_AlternateDance
 	.4byte 0x00006666
 	.4byte 0x0200c034
 	.4byte 0x0200c0cc
@@ -1691,7 +1691,7 @@ SceneAction_GroupOffsetMotion:
 	.global KareiMachi_Script01
 KareiMachi_Script01:
 	.4byte 0x00000022
-	.4byte 0x02008041
+	.4byte SceneEffect_UpdateRandomAction
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -1917,7 +1917,7 @@ KareiMachi_DanceScriptB:
 	.global KareiMachi_Data02
 KareiMachi_Data02:
 	.4byte 0x00000022
-	.4byte 0x020080ad
+	.4byte OverlayObject_AdvanceXWhenCounterExpires
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2582,28 +2582,28 @@ gKareiMachiEventsOther:
 gKareiMachiEvents1:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x00000001
 	.4byte 0xffff000b
 	.4byte 0x0000000b
@@ -2660,7 +2660,7 @@ gKareiMachiEvents1:
 	.4byte 0x00001a7b
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020082c9
+	.4byte SceneDialogue_RunActorNineteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0014
 	.4byte 0x00001a7f
@@ -2669,13 +2669,13 @@ gKareiMachiEvents1:
 	.4byte 0x00001a80
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x02008395
+	.4byte SceneState_BranchOnSlotZeroFacing
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x020083d9
+	.4byte SceneDialogue_RunActorTwentyThreeByLeaderHeading
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x02008421
+	.4byte FieldScene_RunActorTwentyFourAngleDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001a81
@@ -2732,7 +2732,7 @@ gKareiMachiEvents1:
 	.4byte 0x00000000
 	.4byte 0x00009415
 	.4byte 0x0916001a
-	.4byte 0x02009611
+	.4byte SceneDialogue_RunActor181Line916
 	.4byte 0x00000023
 	.4byte 0x0f810064
 	.4byte 0x001000e3
@@ -2741,7 +2741,7 @@ gKareiMachiEvents1:
 	.4byte 0x001000b6
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x020081e5
+	.4byte FieldScene_RunStepWithValue29df
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2752,7 +2752,7 @@ gKareiMachiEvents2:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008505
+	.4byte RunSceneArrivalSetup
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001b97
@@ -2778,13 +2778,13 @@ gKareiMachiEvents3:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020082e9
+	.4byte FieldScene_RunSlotZeroFacingSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00002587
 	.4byte 0x00009415
 	.4byte 0x0fd6000c
-	.4byte 0x0200820d
+	.4byte FieldScene_RunStepWithValueFd6
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2838,52 +2838,52 @@ gKareiMachiEvents6:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008375
+	.4byte SceneDialogue_RunActorTenDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte 0x000025b6
 	.4byte 0x00008c15
 	.4byte 0x03020008
-	.4byte 0x0200b2a5
+	.4byte FieldScene_RunScene3a8SequenceB
 	.4byte 0x00008c15
 	.4byte 0x03030009
-	.4byte 0x0200b2a5
+	.4byte FieldScene_RunScene3a8SequenceB
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00000202
 	.4byte 0xffff000b
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00008602
 	.4byte 0xffff000e
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00004602
 	.4byte 0xffff000f
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00008602
 	.4byte 0xffff000f
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00001815
 	.4byte 0x0201000b
-	.4byte 0x0200b971
+	.4byte FieldScene_DrawTilesAndRaiseActor11
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x0200958d
+	.4byte SceneState_ClearWord24WhenFlag200
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x020095b5
+	.4byte SceneState_LinkRecordZeroWhenFlag200Clear
 	.4byte 0x00000002
 	.4byte 0xffff0012
-	.4byte 0x020095f9
+	.4byte SceneState_ClearRecordZeroBit0At35
 	.4byte 0x00000002
 	.4byte 0xffff0013
-	.4byte 0x020095e1
+	.4byte SceneActor_SetActorZeroByte35Bit0
 	.4byte 0x00000013
 	.4byte 0x0f1c0064
 	.4byte 0x00100084
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008031
+	.4byte SceneState_ApplyValues12And2And3
 	.4byte 0x00000013
 	.4byte 0x0f1e0066
 	.4byte 0x001000e3
@@ -2926,7 +2926,7 @@ KareiMachi_DoorCells:
 	.global KareiMachi_Script02
 KareiMachi_Script02:
 	.4byte 0x00000022
-	.4byte 0x0200b6f9
+	.4byte SceneEffect_UpdateMotionWithDamping
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000

@@ -69,7 +69,7 @@ Func_0200102c:
 	movs r0, #15
 	movs r1, #0
 	bl 0x0200c4b4
-	bl 0x02008f80
+	bl ShianJiin_WalkByFacing
 	movs r0, #15
 	movs r1, #3
 	bl 0x0200c474
@@ -544,7 +544,7 @@ gEffectScripts:
 	.4byte 0xc0010000
 	.4byte 0x00000010
 	.4byte 0x00000022
-	.4byte 0x02008315
+	.4byte StopXianActor
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
@@ -834,13 +834,13 @@ gShianJiinEvents1:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x0200a779
+	.4byte FieldScene_RunScene39e_02002778
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x0200a6d9
+	.4byte FieldScene_RunScene39eSequenceA
 	.4byte 0x00000002
 	.4byte 0x08940005
-	.4byte 0x02008659
+	.4byte Scene_RunActorNineTransition
 	.4byte 0x00000000
 	.4byte 0x188f0008
 	.4byte 0x000017d2
@@ -855,19 +855,19 @@ gShianJiinEvents1:
 	.4byte 0x000017d5
 	.4byte 0x00000000
 	.4byte 0x188f000c
-	.4byte 0x02008485
+	.4byte FieldScene_RunFlag88FBranch
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008415
+	.4byte FieldScene_RunScene39e_02000414
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008415
+	.4byte FieldScene_RunScene39e_02000414
 	.4byte 0x00000000
 	.4byte 0x08910009
 	.4byte 0x00001791
 	.4byte 0x00000000
 	.4byte 0x08920009
-	.4byte 0x02008519
+	.4byte ShianJiin_RunTempleWalkScene
 	.4byte 0x00000000
 	.4byte 0x0f140009
 	.4byte 0x000017b5
@@ -882,10 +882,10 @@ gShianJiinEvents1:
 	.4byte 0x00001793
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008485
+	.4byte FieldScene_RunFlag88FBranch
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200a509
+	.4byte FieldScene_DispatchByRange
 	.4byte 0x00000003
 	.4byte 0x0350006e
 	.4byte 0x00300000
@@ -941,13 +941,13 @@ gShianJiinEvents1:
 gShianJiinEvents:
 	.4byte 0x00004402
 	.4byte 0xffff0001
-	.4byte 0x0200a765
+	.4byte FieldScene_PlaySound123AndEnable
 	.4byte 0x00000001
 	.4byte 0xffff0002
 	.4byte 0x00000002
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x0200a485
+	.4byte StartSchoolDoorEvent
 	.4byte 0x00000000
 	.4byte 0x188f0008
 	.4byte 0x000017de
@@ -959,22 +959,22 @@ gShianJiinEvents:
 	.4byte 0x000017b0
 	.4byte 0x00000000
 	.4byte 0x13000008
-	.4byte 0x0200871d
+	.4byte Scene_RunScene39eSequenceB
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x0000179e
 	.4byte 0x00008d15
 	.4byte 0x188f0008
-	.4byte 0x0200a54d
+	.4byte FieldScene_ShowDialogue17DF
 	.4byte 0x00008d15
 	.4byte 0x18930008
 	.4byte 0x000017cf
 	.4byte 0x00008d15
 	.4byte 0x18910408
-	.4byte 0x02008abd
+	.4byte FieldScene_ShowDialogue17B1
 	.4byte 0x00008d15
 	.4byte 0xffff0408
-	.4byte 0x0200871d
+	.4byte Scene_RunScene39eSequenceB
 	.4byte 0x00000000
 	.4byte 0x18950009
 	.4byte 0x00001a56
@@ -983,10 +983,10 @@ gShianJiinEvents:
 	.4byte 0x00001a57
 	.4byte 0x00000000
 	.4byte 0x1895000b
-	.4byte 0x0200a465
+	.4byte FieldScene_ShowDialogue1A58
 	.4byte 0x00000000
 	.4byte 0x1895000c
-	.4byte 0x02008afd
+	.4byte FieldScene_RunRoofSceneExit
 	.4byte 0x00000000
 	.4byte 0x1895000e
 	.4byte 0x00001a5c
@@ -1007,7 +1007,7 @@ gShianJiinEvents:
 	.4byte 0x0000189d
 	.4byte 0x00000000
 	.4byte 0x189b000c
-	.4byte 0x02008afd
+	.4byte FieldScene_RunRoofSceneExit
 	.4byte 0x00000000
 	.4byte 0x189b000d
 	.4byte 0x0000189f
@@ -1043,7 +1043,7 @@ gShianJiinEvents:
 	.4byte 0x00001868
 	.4byte 0x00000000
 	.4byte 0x18990012
-	.4byte 0x02009d51
+	.4byte FieldScene_RunSkippableStoryBeat
 	.4byte 0x00000000
 	.4byte 0x1899000d
 	.4byte 0x00001871
@@ -1058,7 +1058,7 @@ gShianJiinEvents:
 	.4byte 0x00001874
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008add
+	.4byte FieldScene_ShowDialogue1825
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x00001828
@@ -1067,7 +1067,7 @@ gShianJiinEvents:
 	.4byte 0x00001829
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008afd
+	.4byte FieldScene_RunRoofSceneExit
 	.4byte 0x00000000
 	.4byte 0xffff000d
 	.4byte 0x0000182b
@@ -1076,7 +1076,7 @@ gShianJiinEvents:
 	.4byte 0x0000182c
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02008bd5
+	.4byte FieldScene_ShowDialogue182D
 	.4byte 0x00000000
 	.4byte 0xffff0010
 	.4byte 0x00001830
@@ -1187,22 +1187,22 @@ gShianJiinEvents:
 	.4byte 0x00001838
 	.4byte 0x00008602
 	.4byte 0xffff000a
-	.4byte 0x02009335
+	.4byte FieldScene_DispatchByFacing
 	.4byte 0x0000c602
 	.4byte 0xffff000a
-	.4byte 0x02009335
+	.4byte FieldScene_DispatchByFacing
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte 0x02009335
+	.4byte FieldScene_DispatchByFacing
 	.4byte 0x00004602
 	.4byte 0xffff000b
-	.4byte 0x02009335
+	.4byte FieldScene_DispatchByFacing
 	.4byte 0x00008c15
 	.4byte 0xffff0013
-	.4byte 0x020092e1
+	.4byte FieldScene_DispatchApproachByFacing
 	.4byte 0x00008e15
 	.4byte 0xffff0014
-	.4byte 0x020093b9
+	.4byte FieldScene_DispatchByFacingAndFlags
 	.4byte 0x00000033
 	.4byte 0x0f690064
 	.4byte 0x001000bb

@@ -2,7 +2,7 @@
 	.thumb
 	.section .rodata,"a",%progbits
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte SceneState_ApplyArgMode0AndReturnZero
 	.4byte 0x00000010
 	.global gBiribinoDouEntrancesOther
 gBiribinoDouEntrancesOther:
@@ -352,13 +352,13 @@ gBiribinoDouEvents3:
 	.4byte 0x00000003
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008149
+	.4byte SceneState_ConfigureRegion1_0_21x14
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008169
+	.4byte SceneState_ConfigureRegion0_0_21x14
 	.4byte 0x00000c15
 	.4byte 0x03050008
-	.4byte 0x02008425
+	.4byte ActorPresentation_SetSceneCell31AndFlag305
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -387,13 +387,13 @@ gBiribinoDouEvents2:
 	.4byte 0x00100016
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008189
+	.4byte SceneState_ApplyTwoRects
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x020081bd
+	.4byte FieldScene_RunTwoLayoutSteps
 	.4byte 0x00002115
 	.4byte 0x08820009
-	.4byte 0x020081f1
+	.4byte FieldScene_RunActor9Flag882Scene
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -416,34 +416,34 @@ gBiribinoDouEvents1:
 	.4byte 0x00000005
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte 0x0200844d
+	.4byte SceneState_SetGlobalByte17
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x0200845d
+	.4byte SceneState_ClearRuntimeByte17
 	.4byte 0x00002115
 	.4byte 0x08830008
-	.4byte 0x02008215
+	.4byte FieldScene_RunScene398SequenceA
 	.4byte 0x00001815
 	.4byte 0x0883000f
-	.4byte 0x02008281
+	.4byte FieldScene_RunActorFifteenScene
 	.4byte 0x00001815
 	.4byte 0xffff0010
-	.4byte 0x020082ad
+	.4byte FieldScene_RunActorSixteenScene
 	.4byte 0x00001815
 	.4byte 0x13020011
-	.4byte 0x020082d9
+	.4byte FieldScene_RunActor17Steps28AndD2
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x02008305
+	.4byte FieldScene_RunScene398SequenceB
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x02008305
+	.4byte FieldScene_RunScene398SequenceB
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x020087f9
+	.4byte StagedActor_PushActorAhead
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte 0x020087f9
+	.4byte StagedActor_PushActorAhead
 	.4byte 0x00000013
 	.4byte 0x0f5e0064
 	.4byte 0x001000b6

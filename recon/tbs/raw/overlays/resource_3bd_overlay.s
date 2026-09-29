@@ -20,7 +20,7 @@ Func_02000abc:
 	ldrsh r3, [r3, r2]
 	cmp r3, #0
 	bne .L_02000acc_0
-	bl 0x02008a54
+	bl ArutamiraDou_ApplyFadeBlend
 .L_02000acc_0:
 	pop {r0}
 	bx r0
@@ -128,7 +128,7 @@ Func_02000f94:
 	strh r3, [r2, #6]
 	ldrh r0, [r2, #6]
 	str r4, [sp, #0]
-	bl 0x02008f6c
+	bl SceneActor_PlaceFiveActorsInRow
 	ldr r4, [sp, #0]
 	ldr r1, [r4]
 	ldrh r3, [r1, #10]
@@ -162,7 +162,7 @@ Func_02000f94:
 	.4byte 0x02001002
 	.4byte 0xc2ff0000
 	.4byte 0x05fe0000
-	.4byte 0x02008ee1
+	.4byte ArutamiraDou_UpdateScalePulse
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -270,7 +270,7 @@ Func_02000f94:
 	adds	r0, r5, #0
 	lsls	r1, r1, #13
 	str	r4, [sp, #0]
-	bl 0x02008f10
+	bl SceneActor_SetPositionFromTransformedBase
 	movs	r0, #151
 	bl 0x0200be70
 	adds	r0, r5, #0
@@ -508,7 +508,7 @@ Func_02000f94:
 	adds	r2, r5, #0
 	adds	r0, r6, #0
 	mov	r1, r8
-	bl 0x02008f10
+	bl SceneActor_SetPositionFromTransformedBase
 	ldr	r2, [pc, #112]
 	ldr	r4, [sp, #0]
 	adds	r5, r5, r2
@@ -540,7 +540,7 @@ Func_02000f94:
 	adds	r4, #1
 	cmp	r4, #4
 	ble.n	.L_0200139a
-	bl 0x0200bad4
+	bl ArutamiraDou_ReleaseWallBurst
 	movs	r0, #80
 	bl 0x0200be70
 .L_020013ba:
@@ -1114,31 +1114,31 @@ gArutamiraDouEventsOther:
 	.4byte 0x00000004
 	.4byte 0x00000002
 	.4byte 0xffff003c
-	.4byte 0x02008ae9
+	.4byte FieldScene_RunIndexedStep0
 	.4byte 0x00000002
 	.4byte 0xffff003d
-	.4byte 0x02008af5
+	.4byte FieldScene_RunIndexedStep1
 	.4byte 0x00000002
 	.4byte 0xffff003e
-	.4byte 0x02008b01
+	.4byte FieldScene_RunIndexedStep2
 	.4byte 0x00000002
 	.4byte 0xffff003f
-	.4byte 0x02008b0d
+	.4byte FieldScene_RunIndexedStep3
 	.4byte 0x00000002
 	.4byte 0xffff0040
-	.4byte 0x02008b19
+	.4byte FieldScene_RunIndexedStep4
 	.4byte 0x00000002
 	.4byte 0xffff0041
-	.4byte 0x02008b25
+	.4byte FieldScene_RunIndexedStep5
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008bc9
+	.4byte ArutamiraDou_ApplyRoomVisuals
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02008c2d
+	.4byte SceneState_RunFlag200SetupAndPlaceActors16To20
 	.4byte 0x10009585
 	.4byte 0xffff0000
-	.4byte 0x02008c99
+	.4byte ArutamiraDou_RespawnActorObject
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1152,13 +1152,13 @@ gArutamiraDouEvents2:
 	.4byte 0x0000000b
 	.4byte 0x00000000
 	.4byte 0x09600008
-	.4byte 0x0200ac45
+	.4byte FieldScene_RunBranchingCutsceneSequence
 	.4byte 0x00000000
 	.4byte 0x0f300008
 	.4byte 0x0200b4bd
 	.4byte 0x00000000
 	.4byte 0x09620008
-	.4byte 0x020093f9
+	.4byte FieldScene_RunExtendedActorPresentation
 	.4byte 0x00000002
 	.2byte 0x0013
 	.2byte 0x0961

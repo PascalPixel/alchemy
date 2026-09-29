@@ -449,13 +449,13 @@ gHaidiaDouEventsOther:
 gHaidiaDouEvents1:
 	.4byte 0x00000002
 	.4byte 0xffff0001
-	.4byte 0x02009749
+	.4byte SceneAudio_PlayCue123AndDispatchWork364
 	.4byte 0x00000002
 	.4byte 0xffff0002
-	.4byte 0x02009749
+	.4byte SceneAudio_PlayCue123AndDispatchWork364
 	.4byte 0x00000002
 	.4byte 0xffff0003
-	.4byte 0x02009749
+	.4byte SceneAudio_PlayCue123AndDispatchWork364
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -493,67 +493,67 @@ gHaidiaDouEvents2:
 	.4byte 0x0000000a
 	.4byte 0x00000602
 	.4byte 0xffff0014
-	.4byte 0x020098b5
+	.4byte FieldScene_RunShiftAndSetFlag301
 	.4byte 0x00008602
 	.4byte 0xffff0015
-	.4byte 0x020098f5
+	.4byte FieldScene_RunActor11Transition301
 	.4byte 0x00004602
 	.4byte 0xffff0015
-	.4byte 0x020090e1
+	.4byte FieldScene_RunPrimarySequence
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte 0x02009bfd
+	.4byte ActorPresentation_AdvanceActorElevenStates
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x02009bfd
+	.4byte ActorPresentation_AdvanceActorElevenStates
 	.4byte 0x00000202
 	.4byte 0x02010018
-	.4byte 0x020090c9
+	.4byte FieldScene_RunInitBracketThenSequence
 	.4byte 0x00000002
 	.4byte 0x00700028
-	.4byte 0x020091a1
+	.4byte FieldScene_RunScene3a6SequenceA
 	.4byte 0x00000002
 	.4byte 0x00700029
-	.4byte 0x02009259
+	.4byte FieldScene_RunScene3a6SequenceB
 	.4byte 0x00000002
 	.4byte 0x0070002d
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x0070002e
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x0070002f
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700030
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700031
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700032
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700033
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700034
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700035
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700036
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700037
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000002
 	.4byte 0x00700038
-	.4byte 0x02009301
+	.4byte FieldScene_RunScene3a6SequenceC
 	.4byte 0x00000007
 	.4byte 0xffff0008
-	.4byte 0x02008cc1
+	.4byte SceneState_SetValues8_3_4
 	.4byte 0x00000013
 	.4byte 0x0fc20064
 	.4byte 0x001000cc
@@ -562,19 +562,19 @@ gHaidiaDouEvents2:
 	.4byte 0x001000b5
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008de9
+	.4byte FieldScene_ConfigureRegionAtRow17
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02008dcd
+	.4byte FieldScene_ConfigureRegionAtRow15
 	.4byte 0x00008c15
 	.4byte 0x02000009
-	.4byte 0x02008e05
+	.4byte HaidiaDou_SinkPillarColumn23
 	.4byte 0x00008c15
 	.4byte 0x0201000a
-	.4byte 0x02008f79
+	.4byte HaidiaDou_SinkPillarColumn27
 	.4byte 0x00009115
 	.4byte 0xffff0008
-	.4byte 0x02009379
+	.4byte FieldScene_RunActor8ZeroStep
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -597,13 +597,13 @@ gHaidiaDouEvents3:
 	.4byte 0x00000005
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x02009391
+	.4byte HaidiaDou_RunProbedColumnScene
 	.4byte 0x00000602
 	.4byte 0xffff0015
-	.4byte 0x020094ad
+	.4byte FieldScene_RunScene3a6_020014ac
 	.4byte 0x00000202
 	.4byte 0xffff0016
-	.4byte 0x020095cd
+	.4byte HaidiaDou_RunLoweredActorScene
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

@@ -151,7 +151,7 @@ Func_02001244:
 	bl 0x0200ada4
 	movs r0, #11
 	movs r1, #0
-	bl 0x02008ea8
+	bl FieldScene_RunSixCallSetupSequence
 	movs r1, #204
 	movs r2, #228
 	movs r3, #192
@@ -173,7 +173,7 @@ Func_02001244:
 	str r4, [sp, #0]
 	str r4, [sp, #4]
 	str r4, [sp, #12]
-	bl 0x02008ae8
+	bl Effect_Spawn
 	movs r0, #11
 	movs r1, #1
 	bl 0x0200ae54
@@ -243,7 +243,7 @@ Func_02001454:
 	bl 0x0200ada4
 	add r5, sp, #8
 	adds r0, r5, #0
-	bl 0x02008474
+	bl StagedActor_FindClearPosition
 	cmp r0, #0
 	beq .L_02001454_0
 	mov r3, sp
@@ -254,7 +254,7 @@ Func_02001454:
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
 	ldr r2, [r5, #8]
-	bl 0x02008608
+	bl SceneActor_MoveAndRedraw
 	ldr r3, [r5, #4]
 	cmp r3, #8
 	bne .L_02001454_1
@@ -319,7 +319,7 @@ Func_02001454:
 	movs r2, #30
 	movs r3, #1
 	str r5, [sp, #4]
-	bl 0x02008244
+	bl StagedActor_FillGridAttributeRectangle
 .L_02001454_0:
 	bl 0x0200adac
 	sub sp, #-32
@@ -338,7 +338,7 @@ Func_020019b8:
 	add r5, sp, #8
 	adds r0, r5, #0
 	movs r6, #0
-	bl 0x02008474
+	bl StagedActor_FindClearPosition
 	cmp r0, #0
 	beq .L_020019b8_0
 	mov r2, sp
@@ -349,7 +349,7 @@ Func_020019b8:
 	ldr r0, [r5]
 	ldr r1, [r5, #4]
 	ldr r2, [r5, #8]
-	bl 0x02008608
+	bl SceneActor_MoveAndRedraw
 	ldr r3, [r5, #4]
 	cmp r3, #9
 	beq .L_020019b8_1
@@ -468,7 +468,7 @@ Func_02001d04:
 	bl 0x0200ada4
 	movs r0, #15
 	movs r1, #0
-	bl 0x02008ea8
+	bl FieldScene_RunSixCallSetupSequence
 	lsls r6, r6, #12
 	movs r1, #236
 	adds r3, r6, #0
@@ -490,7 +490,7 @@ Func_02001d04:
 	str r4, [sp, #0]
 	str r4, [sp, #4]
 	str r4, [sp, #12]
-	bl 0x02008ae8
+	bl Effect_Spawn
 	movs r0, #15
 	movs r1, #1
 	bl 0x0200ae54
@@ -654,7 +654,7 @@ gEffectScripts:
 	.4byte 0x00000023
 	.4byte 0x00000006
 	.4byte 0x00000022
-	.4byte 0x02008d6d
+	.4byte OverlayObject_ApplyField100
 	.4byte 0x00000010
 	.global MogoruMori_ActorScript
 MogoruMori_ActorScript:
@@ -668,9 +668,9 @@ MogoruMori_ActorScript:
 	.4byte 0x00000023
 	.4byte 0x0000000f
 	.4byte 0x00000022
-	.4byte 0x02008d6d
+	.4byte OverlayObject_ApplyField100
 	.4byte 0x00000022
-	.4byte 0x02008d81
+	.4byte OverlayObject_ApplyZero
 	.4byte 0x00000010
 	.4byte 0x00000015
 	.4byte 0x0000001a
@@ -682,7 +682,7 @@ MogoruMori_ActorScript:
 	.4byte 0x00000012
 	.4byte 0x80000000
 	.4byte 0x00000022
-	.4byte 0x02008d81
+	.4byte OverlayObject_ApplyZero
 	.4byte 0x00000000
 	.4byte 0x00000002
 	.4byte 0x00000010
@@ -1332,28 +1332,28 @@ gMogoruMoriEvents1:
 	.4byte 0x00000009
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x02008f95
+	.4byte MogoruMori_RunProbedActorNineScene
 	.4byte 0x0000c602
 	.4byte 0xffff0019
-	.4byte 0x0200903d
+	.4byte SceneActor_PassOffsetPointOfActorZero
 	.4byte 0x00004602
 	.4byte 0xffff001a
-	.4byte 0x02009079
+	.4byte SceneActor_BobActorZeroWhenAheadClear
 	.4byte 0x00000003
 	.4byte 0xffff001b
-	.4byte 0x0200912d
+	.4byte FieldScene_RunScriptedSteps0And17E6
 	.4byte 0x00008e15
 	.4byte 0x0300000d
-	.4byte 0x02009151
+	.4byte FieldScene_RunActor10WaypointSequence
 	.4byte 0x00008e15
 	.4byte 0x0301000e
 	.4byte 0x02009245
 	.4byte 0x00008e15
 	.4byte 0x0302000f
-	.4byte 0x02009329
+	.4byte SceneActor_RunActorTwelveThreeWaypointMotion
 	.4byte 0x00009415
 	.4byte 0x0fd40010
-	.4byte 0x02009421
+	.4byte FieldScene_RunStepFD4WithActor181
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1400,25 +1400,25 @@ gMogoruMoriEvents2:
 	.4byte 0x02009455
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x02009521
+	.4byte SceneState_ApplyCrossRectsAroundActor11
 	.4byte 0x00008e15
 	.4byte 0x0303000f
-	.4byte 0x020095d1
+	.4byte MogoruMori_RunBranchHopScene
 	.4byte 0x00008e15
 	.4byte 0x03040010
-	.4byte 0x020096f1
+	.4byte FieldScene_RunActorThirteenPresentationBeat
 	.4byte 0x00008e15
 	.4byte 0x03050011
-	.4byte 0x02009819
+	.4byte FieldScene_RunScene39f_02001818
 	.4byte 0x00008e15
 	.4byte 0x03060011
-	.4byte 0x02009881
+	.4byte SceneActor_RunActorFourteenFourWaypointMotion
 	.4byte 0x00000013
 	.4byte 0x0f1b0064
 	.4byte 0x001000c1
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x02008cc1
+	.4byte SceneState_SetValue18Mode2
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1468,34 +1468,34 @@ gMogoruMoriEvents3:
 	.4byte 0x020099b9
 	.4byte 0x00008602
 	.4byte 0xffff0019
-	.4byte 0x02009ac9
+	.4byte SceneActor_BobActorZeroWhenTargetClear
 	.4byte 0x00000002
 	.4byte 0x089d0016
-	.4byte 0x0200a1b1
+	.4byte FieldScene_RunScene39f_020021b0
 	.4byte 0x00000002
 	.4byte 0x089e0017
-	.4byte 0x0200a2c1
+	.4byte MogoruMori_RunClosingChoreography
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte 0x02009b85
+	.4byte SceneActor_MarkActorThirteenTileAndPark
 	.4byte 0x00008c15
 	.4byte 0x0214000e
-	.4byte 0x02009c35
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00008e15
 	.4byte 0x03070013
 	.4byte 0x02009d05
 	.4byte 0x00008e15
 	.4byte 0x03080014
-	.4byte 0x02009de1
+	.4byte FieldScene_RunSlot16WaypointSequence
 	.4byte 0x00008e15
 	.4byte 0x03090015
-	.4byte 0x02009ef1
+	.4byte FieldScene_RunActor17CameraSequence
 	.4byte 0x00008e15
 	.4byte 0x030a0016
-	.4byte 0x0200a005
+	.4byte FieldScene_RunScene39f_02002004
 	.4byte 0x00008e15
 	.4byte 0x030b0016
-	.4byte 0x0200a079
+	.4byte FieldScene_RunActorEighteenEffectSequence
 	.4byte 0x00000013
 	.4byte 0x0f1a0064
 	.4byte 0x0010005d

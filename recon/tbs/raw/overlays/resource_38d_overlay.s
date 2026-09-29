@@ -1546,7 +1546,7 @@ FieldScene_RunLongBranchingChoreography:
 	.global Kyuden_FacingActions
 Kyuden_FacingActions:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte OverlayObject_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2027,7 +2027,7 @@ gBiribinoKyudenEvents:
 	.4byte 0x00000008
 	.4byte 0x0000c402
 	.4byte 0xffff0009
-	.4byte 0x02008339
+	.4byte BiribinoKyuden_RunDoorExitScene
 	.4byte 0x00000001
 	.4byte 0xffff000a
 	.4byte 0x0000000a
@@ -2036,10 +2036,10 @@ gBiribinoKyudenEvents:
 	.4byte 0x0000000b
 	.4byte 0x0000c402
 	.4byte 0xffff000c
-	.4byte 0x02008339
+	.4byte BiribinoKyuden_RunDoorExitScene
 	.4byte 0x0000c402
 	.4byte 0xffff000d
-	.4byte 0x02008339
+	.4byte BiribinoKyuden_RunDoorExitScene
 	.4byte 0x00000001
 	.4byte 0xffff000e
 	.4byte 0x0000000e
@@ -2129,7 +2129,7 @@ gBiribinoKyudenEvents:
 	.4byte 0x0000142b
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008151
+	.4byte FieldScene_RunStartledGuard
 	.4byte 0x00000000
 	.4byte 0x084f000f
 	.4byte 0x0000142e
@@ -2138,19 +2138,19 @@ gBiribinoKyudenEvents:
 	.4byte 0x00001467
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x020081b5
+	.4byte FieldScene_RunScene38dSequenceA
 	.4byte 0x00000000
 	.4byte 0x084e0010
 	.4byte 0x0000142f
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020081f5
+	.4byte SceneDialogue_RunActor16Message1769
 	.4byte 0x00000000
 	.4byte 0xffff0013
 	.4byte 0x00001747
 	.4byte 0x00000000
 	.4byte 0xffff0011
-	.4byte 0x02008215
+	.4byte FieldScene_RunActorSeventeenFlaggedDialogue
 	.4byte 0x00000000
 	.4byte 0x084e0012
 	.4byte 0x00001466
@@ -2207,7 +2207,7 @@ gBiribinoKyudenEvents:
 	.4byte 0x0000146b
 	.4byte 0x00008d15
 	.4byte 0xffff000f
-	.4byte 0x0200828d
+	.4byte SceneDialogue_RunActor15Flag303Scene
 	.4byte 0x00008d15
 	.4byte 0x084e0010
 	.4byte 0x00001431
@@ -2219,7 +2219,7 @@ gBiribinoKyudenEvents:
 	.4byte 0x0000174a
 	.4byte 0x00008d15
 	.4byte 0xffff0011
-	.4byte 0x020082cd
+	.4byte FieldScene_RunActorSeventeenFlagDialogue
 	.4byte 0x00008d15
 	.4byte 0x084e0012
 	.4byte 0x0000146a
@@ -2228,22 +2228,22 @@ gBiribinoKyudenEvents:
 	.4byte 0x00001755
 	.4byte 0x00000003
 	.4byte 0xffff0064
-	.4byte 0x0200843d
+	.4byte FieldScene_RunStep210ByFlag84e
 	.4byte 0x00000003
 	.4byte 0xffff0065
-	.4byte 0x02008469
+	.4byte FieldScene_RunStep211ByFlag84e
 	.4byte 0x00000003
 	.4byte 0xffff0066
-	.4byte 0x02008495
+	.4byte FieldScene_RunStep212ByFlag84e
 	.4byte 0x00000003
 	.4byte 0xffff0067
-	.4byte 0x020084c1
+	.4byte FieldScene_RunStep213ByFlag84e
 	.4byte 0x00000002
 	.4byte 0x03330032
-	.4byte 0x020085f5
+	.4byte FieldScene_RunPalaceFarewell
 	.4byte 0x00000002
 	.4byte 0x03330033
-	.4byte 0x02008569
+	.4byte FieldScene_RunRewardReminder
 	.4byte 0x00000033
 	.4byte 0x0f550078
 	.4byte 0x001000bc

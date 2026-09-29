@@ -187,7 +187,7 @@ ImiruMura_SwayHeadings:
 	.global ImiruMura_ActorScriptA
 ImiruMura_ActorScriptA:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte OverlayObject_UpdateWobbleByCounter
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -351,7 +351,7 @@ ImiruMura_MiaScriptB:
 	.global ImiruMura_PrimaryScript
 ImiruMura_PrimaryScript:
 	.4byte 0x00000022
-	.4byte 0x020080d9
+	.4byte OverlayObject_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -707,49 +707,49 @@ gImiruMuraEventsOther:
 	.4byte 0x0000000c
 	.4byte 0x00008c15
 	.4byte 0x0200000b
-	.4byte 0x02009961
+	.4byte SceneState_UpdateActor11WithFlag203
 	.4byte 0x0000c602
 	.4byte 0xffff0033
-	.4byte 0x020086c1
+	.4byte ImiruMura_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0034
-	.4byte 0x020086c1
+	.4byte ImiruMura_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0035
-	.4byte 0x020086c1
+	.4byte ImiruMura_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0036
-	.4byte 0x020086c1
+	.4byte ImiruMura_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0037
-	.4byte 0x020086c1
+	.4byte ImiruMura_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0038
-	.4byte 0x020086c1
+	.4byte ImiruMura_RunExitDoor
 	.4byte 0x00000002
 	.4byte 0xffff0004
-	.4byte 0x02009991
+	.4byte SceneActor_SetActorZeroFacingC000AndRun
 	.4byte 0x00000002
 	.4byte 0xffff005a
-	.4byte 0x020081e1
+	.4byte FieldScene_Forward2188
 	.4byte 0x00000000
 	.4byte 0x08810008
-	.4byte 0x0200821d
+	.4byte SceneDialogue_RunActorEightFlagGatedDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x0000163a
 	.4byte 0x00000000
 	.4byte 0x08810009
-	.4byte 0x0200828d
+	.4byte SceneDialogue_RunActor9Line
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x0000163b
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020082b9
+	.4byte SceneDialogue_RunActorTenFlag881Dialogue
 	.4byte 0x00008d15
 	.4byte 0x08810008
-	.4byte 0x02008255
+	.4byte SceneDialogue_ShowLine1571Or152F
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001640
@@ -787,22 +787,22 @@ gImiruMuraEvents2:
 	.4byte 0x00001539
 	.4byte 0x00000000
 	.4byte 0x08810008
-	.4byte 0x020085dd
+	.4byte FieldScene_RunScene399_020005dc
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001643
 	.4byte 0x00000000
 	.4byte 0x082c0009
-	.4byte 0x02008385
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0x082b0009
 	.4byte 0x00001538
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008385
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00000000
 	.4byte 0x182b000a
-	.4byte 0x0200865d
+	.4byte FieldScene_RunSingleStep
 	.4byte 0x00000000
 	.4byte 0x0881000b
 	.4byte 0x0000153c
@@ -811,31 +811,31 @@ gImiruMuraEvents2:
 	.4byte 0x00001649
 	.4byte 0x00000000
 	.4byte 0x0881000c
-	.4byte 0x02008511
+	.4byte SceneDialogue_RunActor12Line
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x020087a5
+	.4byte ImiruMura_RunWeaponShop
 	.4byte 0x00000000
 	.4byte 0x0881000d
 	.4byte 0x00001544
 	.4byte 0x00000000
 	.4byte 0xffff000d
-	.4byte 0x0200888d
+	.4byte ImiruMura_RunArmorShop
 	.4byte 0x00000000
 	.4byte 0x0881000f
 	.4byte 0x00001548
 	.4byte 0x00000000
 	.4byte 0xffff000f
-	.4byte 0x02008975
+	.4byte ImiruMura_RunItemShop
 	.4byte 0x00000000
 	.4byte 0x0881000e
-	.4byte 0x02008975
+	.4byte ImiruMura_RunItemShop
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x00001650
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x02008a3d
+	.4byte FieldScene_RunScene399_02000a3c
 	.4byte 0x00000000
 	.4byte 0x08810011
 	.4byte 0x0000154c
@@ -844,28 +844,28 @@ gImiruMuraEvents2:
 	.4byte 0x00001656
 	.4byte 0x00000000
 	.4byte 0x08810012
-	.4byte 0x02008531
+	.4byte SceneDialogue_RunActor18Line
 	.4byte 0x00000000
 	.4byte 0xffff0012
 	.4byte 0x00001657
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x02008abd
+	.4byte FieldScene_RunScene399_02000abc
 	.4byte 0x00000000
 	.4byte 0x08810014
-	.4byte 0x02008551
+	.4byte SceneDialogue_RunActor20BranchScene
 	.4byte 0x00000000
 	.4byte 0xffff0014
 	.4byte 0x00001672
 	.4byte 0x00008d15
 	.4byte 0x08810008
-	.4byte 0x02008609
+	.4byte SceneDialogue_RunActorEightBranchedDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001647
 	.4byte 0x00008d15
 	.4byte 0x082c0409
-	.4byte 0x02008385
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00008d15
 	.4byte 0x082b0009
 	.4byte 0x0000153a
@@ -877,7 +877,7 @@ gImiruMuraEvents2:
 	.4byte 0x00001648
 	.4byte 0x00008d15
 	.4byte 0x182b000a
-	.4byte 0x02008669
+	.4byte SceneDialogue_ShowLine156E
 	.4byte 0x00008d15
 	.4byte 0x0881000b
 	.4byte 0x0000153d
@@ -928,22 +928,22 @@ gImiruMuraEvents2:
 	.4byte 0x0000165a
 	.4byte 0x00008d15
 	.4byte 0x08810013
-	.4byte 0x02008689
+	.4byte SceneDialogue_ShowLine1573Or155A
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte 0x00001673
 	.4byte 0x00008d15
 	.4byte 0x08810014
-	.4byte 0x020085a5
+	.4byte SceneDialogue_RunActor20FlaggedLine
 	.4byte 0x00008d15
 	.4byte 0xffff0014
 	.4byte 0x00001674
 	.4byte 0x0000c403
 	.4byte 0x0881000a
-	.4byte 0x020087a5
+	.4byte ImiruMura_RunWeaponShop
 	.4byte 0x0000c403
 	.4byte 0x0881000b
-	.4byte 0x0200888d
+	.4byte ImiruMura_RunArmorShop
 	.4byte 0x00000013
 	.4byte 0x0f260064
 	.4byte 0x001000b9

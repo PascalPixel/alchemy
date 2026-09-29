@@ -279,7 +279,7 @@ BiribinoNiwa_RunGardenScene:
 	movs r1, #1
 	movs r0, #11
 	bl 0x02008b2c
-	bl 0x020088e8
+	bl FieldScene_OpenGate
 	movs r0, #40
 	bl 0x02008acc
 	movs r1, #164
@@ -343,7 +343,7 @@ Niwa_GateCells:
 	.global BiribinoNiwa_GuardScript
 BiribinoNiwa_GuardScript:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte SceneActor_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -438,7 +438,7 @@ gBiribinoNiwaEvents:
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x0200845d
+	.4byte FieldScene_RunScene38e_0200045c
 	.4byte 0x00000000
 	.4byte 0x08450008
 	.4byte 0x000013bf
@@ -453,7 +453,7 @@ gBiribinoNiwaEvents:
 	.4byte 0x000016d1
 	.4byte 0x00000000
 	.4byte 0x0845000a
-	.4byte 0x020081a5
+	.4byte SceneDialogue_RunActor10Message13c3
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x000016d2
@@ -465,10 +465,10 @@ gBiribinoNiwaEvents:
 	.4byte 0x00001468
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x020081c5
+	.4byte SceneDialogue_RunActor11Message1751
 	.4byte 0x00000000
 	.4byte 0x084f000c
-	.4byte 0x020081e5
+	.4byte BiribinoNiwa_RunGardenEvent
 	.4byte 0x00000000
 	.4byte 0x084e000c
 	.4byte 0x00001469
@@ -516,10 +516,10 @@ gBiribinoNiwaEvents:
 	.4byte 0x00001758
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x0200812d
+	.4byte FieldScene_RunStepWithValue29de
 	.4byte 0x00009415
 	.4byte 0x0fd2000d
-	.4byte 0x020080f9
+	.4byte FieldScene_RunStepWithValueFd2
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

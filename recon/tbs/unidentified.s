@@ -1323,30 +1323,7 @@ Field_PerspectiveDataA:
 	.incbin "baserom.gba", 0x00434ca6, 0x00000002
 	.section .unidentified.08435ef7,"a"
 	.incbin "baserom.gba", 0x00435ef7, 0x00000001
-	.global Shop_CursorFrameA
-Shop_CursorFrameA:
-	.incbin "baserom.gba", 0x00435ef8, 0x00000100
-	.global Shop_CursorFrameB
-Shop_CursorFrameB:
-	.incbin "baserom.gba", 0x00435ff8, 0x00000100
-	.global Shop_CursorFrameC
-Shop_CursorFrameC:
-	.incbin "baserom.gba", 0x004360f8, 0x00000100
-	.global Shop_CursorFrameD
-Shop_CursorFrameD:
-	.incbin "baserom.gba", 0x004361f8, 0x00000100
-	.global Shop_CursorFrameE
-Shop_CursorFrameE:
-	.incbin "baserom.gba", 0x004362f8, 0x00000100
-	.global Shop_CursorFrameF
-Shop_CursorFrameF:
-	.incbin "baserom.gba", 0x004363f8, 0x00000100
-	.global Shop_CursorFrameG
-Shop_CursorFrameG:
-	.incbin "baserom.gba", 0x004364f8, 0x00000100
-	.global Shop_CursorFrameH
-Shop_CursorFrameH:
-	.incbin "baserom.gba", 0x004365f8, 0x00000100
+	.section .unidentified.084366f8,"a"
 	.global Ui_Icons
 Ui_Icons:
 	.incbin "baserom.gba", 0x004366f8, 0x0000592c

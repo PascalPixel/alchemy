@@ -2279,6 +2279,8 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.08434ca6)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/KOROSSEO/LETTERING.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08435ef7)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/SHOP/CURSOR.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.084366f8)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/COMMAND_ICONS.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.0843f866)
         "*/games/COMMON/SRC/GRAPHICS/MONSTER/AXE_GOBLIN.o"(.rodata)

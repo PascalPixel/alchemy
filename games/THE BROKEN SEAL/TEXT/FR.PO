@@ -22619,7 +22619,7 @@ msgctxt "MsgMakyuriWhoHonorsHeart"
 msgid "05652"
 msgstr "Celui qui honore le{line_break}coeur de la déesse{line_break}doit se tenir au centre{page_break}de tout, comme un cygne{line_break}au centre d'une mare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriHonorsGoddessRainbows"
 msgid "05653"
 msgstr "Celui qui honore la{line_break}déesse sera guidé{page_break}jusqu'au ciel par des{line_break}ailes d'une grâce céleste.{end_wait}"
 

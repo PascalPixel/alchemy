@@ -24311,7 +24311,7 @@ msgctxt "MsgMakyuriWhoHonorsHeart"
 msgid "06075"
 msgstr "女神のこころに いのりし者{line_break}3つのはもんの きせきにより{line_break}はくちょうのごとく みなもに立つ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriHonorsGoddessRainbows"
 msgid "06076"
 msgstr "にじの女神に いのりし者{line_break}大いなる ながれの きせきにより{line_break}天空へと みちびかれる。{end_wait}"
 

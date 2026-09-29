@@ -1,73 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_02000030_0
-	ldr r0, [pc, #16]
-	b .L_02000030_1
-.L_02000030_0:
-	ldr r0, [pc, #16]
-.L_02000030_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000008b
-	.4byte 0x0200ca1c
-	.4byte 0x0200c614
-	.section .text.x02008070,"ax",%progbits
-	.global Func_02000070
-	.thumb_func
-Func_02000070:
-	push {lr}
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_02000070_0
-	ldr r0, [pc, #44]
-	b .L_02000070_1
-.L_02000070_0:
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_02000070_2
-	ldr r0, [pc, #32]
-	b .L_02000070_1
-.L_02000070_2:
-	ldr r0, [pc, #32]
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_02000070_3
-	ldr r0, [pc, #28]
-	b .L_02000070_1
-.L_02000070_3:
-	ldr r0, [pc, #28]
-.L_02000070_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000008b
-	.4byte 0x0200cb3c
-	.4byte 0x0200ce6c
-	.4byte 0x00000962
-	.4byte 0x0200cd64
-	.4byte 0x0200cb84
+	.section .text.x020080c8,"ax",%progbits
 	.global Func_020000c8
 	.thumb_func
 Func_020000c8:
@@ -522,9 +455,9 @@ Func_020005a4:
 	.2byte 0x0000
 	.4byte 0x00002352
 	.4byte 0x00000f31
-	.global Func_02000674
+	.global FieldScene_RunScene3b8SequenceB
 	.thumb_func
-Func_02000674:
+FieldScene_RunScene3b8SequenceB:
 	push {r5, r6, lr}
 	bl 0x0200c3e0
 	ldr r0, [pc, #104]
@@ -1104,355 +1037,6 @@ Func_02003e40:
 	.2byte 0x0000
 	.4byte 0x0000096c
 	.4byte 0x00002233
-	.section .text.x0200c034,"ax",%progbits
-	.global Func_02004034
-	.thumb_func
-Func_02004034:
-	push {lr}
-	ldr r3, [pc, #88]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_02004034_0
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_02004034_1
-	ldr r0, [pc, #64]
-	b .L_02004034_2
-.L_02004034_1:
-	ldr r0, [pc, #64]
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_02004034_3
-	ldr r0, [pc, #60]
-	b .L_02004034_2
-.L_02004034_3:
-	ldr r0, [pc, #60]
-	b .L_02004034_2
-.L_02004034_0:
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_02004034_4
-	ldr r0, [pc, #48]
-	b .L_02004034_2
-.L_02004034_4:
-	ldr r0, [pc, #32]
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_02004034_5
-	ldr r0, [pc, #36]
-	b .L_02004034_2
-.L_02004034_5:
-	ldr r0, [pc, #36]
-.L_02004034_2:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000008b
-	.4byte 0x0200dad8
-	.4byte 0x00000962
-	.4byte 0x0200da48
-	.4byte 0x0200d9e8
-	.4byte 0x0200d688
-	.4byte 0x0200d394
-	.4byte 0x0200d004
-	.global Func_020040b4
-	.thumb_func
-Func_020040b4:
-	push {r5, r6, r7, lr}
-	movs r0, #1
-	sub sp, #32
-	bl 0x0200c370
-	movs r0, #2
-	bl 0x0200c370
-	movs r0, #4
-	bl 0x0200c370
-	ldr r6, [pc, #588]
-	movs r1, #225
-	lsls r1, r1, #1
-	adds r5, r6, r1
-	movs r1, #0
-	ldrsh r3, [r5, r1]
-	ldrh r2, [r5]
-	cmp r3, #90
-	bne .L_020040b4_0
-	ldr r0, [pc, #572]
-	bl 0x0200c3a8
-	ldrh r2, [r5]
-.L_020040b4_0:
-	lsls r3, r2, #16
-	movs r2, #182
-	lsls r2, r2, #15
-	cmp r3, r2
-	bne .L_020040b4_1
-	ldr r0, [pc, #556]
-	bl 0x0200c3a8
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x0200c3a8
-.L_020040b4_1:
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r6, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #536]
-	cmp r2, r3
-	bne .L_020040b4_2
-	b .L_020040b4_3
-.L_020040b4_2:
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #11
-	bne .L_020040b4_4
-	ldr r0, [pc, #524]
-	bl 0x0200c3b0
-.L_020040b4_4:
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_020040b4_5
-	ldr r0, [pc, #508]
-	bl 0x0200c3a0
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_020040b4_6
-	movs r0, #16
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200c458
-	b .L_020040b4_7
-.L_020040b4_6:
-	movs r0, #16
-	bl 0x0200c400
-	adds r1, r0, #0
-	adds r2, r1, #0
-	adds r2, #92
-	movs r3, #1
-	strb r3, [r2]
-	adds r3, r1, #0
-	adds r3, #85
-	strb r5, [r3]
-	movs r3, #128
-	ldr r6, [r1, #80]
-	lsls r3, r3, #11
-	str r3, [r1, #12]
-	adds r3, r6, #0
-	adds r3, #39
-	strb r5, [r3]
-	movs r3, #33
-	ldrb r2, [r6, #5]
-	negs r3, r3
-	ands r3, r2
-	ldrb r2, [r6, #9]
-	strb r3, [r6, #5]
-	movs r3, #15
-	ands r3, r2
-	movs r1, #193
-	strb r3, [r6, #9]
-	lsls r1, r1, #3
-	movs r0, #17
-	bl 0x0200c348
-	adds r5, r0, #0
-	movs r0, #205
-	bl 0x0200c390
-	movs r3, #128
-	lsls r3, r3, #3
-	adds r5, r5, r3
-	ldrb r0, [r6, #28]
-	movs r1, #128
-	adds r2, r5, #0
-	bl 0x0200c358
-	movs r0, #17
-	bl 0x0200c350
-.L_020040b4_7:
-	ldr r3, [pc, #376]
-	movs r1, #225
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #33
-	bne .L_020040b4_8
-	ldr r0, [pc, #380]
-	bl 0x0200c3a0
-	cmp r0, #0
-	bne .L_020040b4_8
-	ldr r0, [pc, #368]
-	bl 0x0200c3a8
-	movs r1, #208
-	movs r2, #176
-	movs r0, #14
-	lsls r1, r1, #16
-	lsls r2, r2, #18
-	bl 0x0200c458
-	bl 0x0200a014
-.L_020040b4_8:
-	movs r1, #5
-	movs r0, #14
-	bl 0x0200c460
-	movs r0, #14
-	bl 0x0200c400
-	movs r1, #0
-	bl 0x0200c378
-	b .L_020040b4_9
-.L_020040b4_5:
-	ldr r0, [pc, #308]
-	bl 0x0200c3a0
-	cmp r0, #0
-	beq .L_020040b4_9
-	ldr r0, [pc, #316]
-	bl 0x0200c3a0
-	cmp r0, #0
-	bne .L_020040b4_9
-	movs r1, #240
-	movs r2, #144
-	movs r0, #10
-	lsls r1, r1, #15
-	lsls r2, r2, #15
-	bl 0x0200c458
-.L_020040b4_9:
-	ldr r3, [pc, #296]
-	movs r1, #224
-	ldr r3, [r3]
-	lsls r1, r1, #1
-	ldr r2, [pc, #292]
-	adds r3, r3, r1
-	str r2, [r3]
-	movs r0, #9
-	bl 0x0200c400
-	adds r0, #89
-	ldrb r2, [r0]
-	movs r3, #4
-	orrs r3, r2
-	movs r1, #225
-	ldr r2, [pc, #240]
-	lsls r1, r1, #1
-	strb r3, [r0]
-	adds r3, r2, r1
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #99
-	bne .L_020040b4_10
-	add r0, sp, #16
-	bl 0x0200c3c8
-	cmp r0, #0
-	ble .L_020040b4_11
-	add r7, sp, #16
-	movs r6, #0
-	adds r5, r0, #0
-.L_020040b4_12:
-	ldrsh r0, [r6, r7]
-	bl 0x0200c398
-	ldrh r3, [r0, #52]
-	strh r3, [r0, #56]
-	ldrh r3, [r0, #54]
-	subs r5, #1
-	strh r3, [r0, #58]
-	ldrsh r0, [r6, r7]
-	bl 0x0200c3b8
-	adds r6, #2
-	cmp r5, #0
-	bne .L_020040b4_12
-.L_020040b4_11:
-	movs r0, #1
-	bl 0x0200c3c0
-	movs r0, #2
-	bl 0x0200c3c0
-	movs r0, #3
-	bl 0x0200c3c0
-	bl 0x0200c3d0
-	bl 0x020097e8
-	ldr r2, [pc, #152]
-	movs r3, #225
-	lsls r3, r3, #1
-	adds r1, r2, r3
-	movs r3, #8
-	strh r3, [r1]
-.L_020040b4_10:
-	movs r1, #225
-	lsls r1, r1, #1
-	adds r3, r2, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #98
-	bne .L_020040b4_3
-	mov r0, sp
-	bl 0x0200c3c8
-	cmp r0, #0
-	ble .L_020040b4_13
-	mov r7, sp
-	movs r6, #0
-	adds r5, r0, #0
-.L_020040b4_14:
-	ldrsh r0, [r6, r7]
-	bl 0x0200c398
-	ldrh r3, [r0, #52]
-	strh r3, [r0, #56]
-	ldrh r3, [r0, #54]
-	subs r5, #1
-	strh r3, [r0, #58]
-	ldrsh r0, [r6, r7]
-	bl 0x0200c3b8
-	adds r6, #2
-	cmp r5, #0
-	bne .L_020040b4_14
-.L_020040b4_13:
-	movs r0, #1
-	bl 0x0200c3c0
-	movs r0, #2
-	bl 0x0200c3c0
-	movs r0, #3
-	bl 0x0200c3c0
-	bl 0x0200c3d0
-	ldr r0, [pc, #84]
-	bl 0x0200c3a8
-	ldr r0, [pc, #92]
-	bl 0x0200c3a8
-	movs r1, #224
-	movs r2, #240
-	movs r0, #10
-	lsls r1, r1, #14
-	lsls r2, r2, #15
-	bl 0x0200c458
-	movs r1, #240
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #10
-	bl 0x0200c4b0
-	bl 0x02008674
-	ldr r3, [pc, #20]
-	movs r1, #225
-	lsls r1, r1, #1
-	adds r2, r3, r1
-	movs r3, #8
-	strh r3, [r2]
-.L_020040b4_3:
-	movs r0, #0
-	sub sp, #-32
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000962
-	.4byte 0x0000008b
-	.4byte 0x0000012f
-	.4byte 0x00000f31
-	.4byte 0x0000096f
-	.4byte 0x00000966
-	.4byte 0x03001ebc
-	.4byte 0x00000209
-	.4byte 0x00000967
 	.section .rodata,"a",%progbits
 	.global TorebiKyuden_CellSteps
 TorebiKyuden_CellSteps:
@@ -1507,6 +1091,8 @@ TorebiKyuden_MiddleActionScript:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global gTorebiKyudenEntrancesOther
+gTorebiKyudenEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1765,6 +1351,8 @@ TorebiKyuden_MiddleActionScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenEntrances2
+gTorebiKyudenEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x00000108
 	.4byte 0x400001b8
@@ -1841,6 +1429,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0x0010b087
 	.4byte 0x0020108a
 	.4byte 0x000001ff
+	.global gTorebiKyudenPlacements2
+gTorebiKyudenPlacements2:
 	.4byte 0xffff0098
 	.4byte 0x00000001
 	.4byte 0x00e80000
@@ -1859,6 +1449,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenPlacementsOther
+gTorebiKyudenPlacementsOther:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1979,6 +1571,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenPlacementsColosso
+gTorebiKyudenPlacementsColosso:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2045,6 +1639,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenPlacementsAfterColosso
+gTorebiKyudenPlacementsAfterColosso:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2147,6 +1743,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenEventsOther
+gTorebiKyudenEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2375,6 +1973,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenEventsColosso
+gTorebiKyudenEventsColosso:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2564,6 +2164,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenEventsAfterColosso
+gTorebiKyudenEventsAfterColosso:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2780,6 +2382,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenEvents2
+gTorebiKyudenEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2804,6 +2408,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenEvents2Colosso
+gTorebiKyudenEvents2Colosso:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2840,6 +2446,8 @@ TorebiKyuden_MessageTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTorebiKyudenEvents2AfterColosso
+gTorebiKyudenEvents2AfterColosso:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

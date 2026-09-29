@@ -1485,6 +1485,8 @@ RisingBurst_SparkSizes:
 Data_080ef034:
 	.incbin "baserom.gba", 0x000ef034, 0x00000fcc
 	.section .unidentified.080f0a5c,"a"
+	.global DisplayScroll_SlideResources
+DisplayScroll_SlideResources:
 	.incbin "baserom.gba", 0x000f0a5c, 0x00000760
 	.global Data_080f11bd
 Data_080f11bd:

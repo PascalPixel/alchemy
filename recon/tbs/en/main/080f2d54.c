@@ -32,6 +32,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "DMA.H"
+#include "RESOURCE_IDS.H"
 
 struct BgScroll {
     s16 x;
@@ -43,7 +44,6 @@ extern u8 gMapCellBuffer[];
 extern struct BgScroll gBgScroll[4];
 extern u32 gFrameCount;
 extern volatile u32 gKeyState;
-extern u8 Value_00000019;
 
 void Scheduler_ResetTaskTable(void);
 void Blend_SetDarkenTarget16(s32 frames);
@@ -65,7 +65,7 @@ s32 Title_ShowAnimatedSplash(void)
     s32 zero;
 
     Data_03001d18 = 1;
-    resource = (s32)&Value_00000019;
+    resource = (s32)&ResourceId_CamelotLogo;
     Scheduler_ResetTaskTable();
     Blend_SetDarkenTarget16(1);
     Bg0_ClearTilemap();

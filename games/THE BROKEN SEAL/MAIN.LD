@@ -1159,7 +1159,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CREATE_PRICE_SPRITE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/RESTORE_SCENE_TILES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/PREPARE_EFFECT_RUNTIME_ENTRY.o"(.text)
-        "*/recon/tbs/raw/080b08b8.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CURSOR_ADVANCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CURSOR_MOVE_TOWARD_TARGET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/SHOP/CURSOR_SET.o"(.text)
         "*/recon/tbs/raw/080b0a1e.o"(.text .rodata .data .padding)

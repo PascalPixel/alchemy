@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/EFFECT9.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/STEP_SCRIPT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/DIALOG_A.o"(.text)
-        "*/resource_3b1_overlay.o"(.text.x02008a80)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/DIALOG_11.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/DIALOG_A2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/TURN_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/DIALOG_B.o"(.text)

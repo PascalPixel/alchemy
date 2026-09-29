@@ -42,8 +42,10 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/ACTOR_NEAR_POINT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/CHECK_TILE.o"(.text)
         "*/resource_383_overlay.o"(.text.x0200c8c8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/STOP_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_HEYA/IMPORT.o"(.text)
         "*/resource_383_overlay.o"(.rodata)
     }
+    .bss : { "*/resource_383_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -5,7 +5,7 @@
 extern u8 Data_0200e088[];
 extern u8 Data_0200e130[];
 void SceneEffect_SpawnParticlesAboveActor();
-void Func_020056a0();
+void VinasuChojo_RunTransitionStep();
 /* The transition task's frame count and step, past the overlay's image. */
 extern s32 VinasuChojo_TransitionTimer;
 extern s32 VinasuChojo_TransitionStep;
@@ -257,7 +257,7 @@ void VinasuChojo_RunActorTransition(void)
     Engine_ActorSetSpritePriority(23, 2);
     VinasuChojo_TransitionStep = none;
     VinasuChojo_TransitionTimer = 240;
-    Call2((void (*)())Engine_TaskAddCallback, (s32)Func_020056a0, 0xc80);
+    Call2((void (*)())Engine_TaskAddCallback, (s32)VinasuChojo_RunTransitionStep, 0xc80);
     do {
         Engine_TaskWait(1);
     } while (Value1(Engine_GameFlagIsSet, 0x237) == 0);

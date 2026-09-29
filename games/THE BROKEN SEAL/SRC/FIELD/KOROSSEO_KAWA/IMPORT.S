@@ -105,6 +105,9 @@ Engine_ObjectSetScript:
 	.thumb_func
 Object_CreateFar:
 	overlay_veneer Func_080090c8
+	.global ObjectDispatch_InitFromTable4WithArgument
+	.thumb_func
+ObjectDispatch_InitFromTable4WithArgument:
 	overlay_veneer ObjectDispatch_InitFromTable4WithArgumentFar
 	.global ObjectDispatch_InitFromTable6
 	.thumb_func
@@ -129,6 +132,9 @@ Script_WaitForEventTimeout:
 	.thumb_func
 Map_GetTerrainHeightFar:
 	overlay_veneer Func_080091a8
+	.global Engine_MapCopyCells
+	.thumb_func
+Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
@@ -275,6 +281,9 @@ Engine_ActorWalkTo:
 	.thumb_func
 Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
+	.global Engine_ActorWaitForMove
+	.thumb_func
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func

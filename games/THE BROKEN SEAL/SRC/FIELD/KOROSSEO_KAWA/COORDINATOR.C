@@ -482,3 +482,90 @@ void SceneActor_ShiftActorEighteenByInputAndLeaderColumn(void)
     Map_CopyCellAttributes(63, 25, 1, 3, column, 9);
 }
 void StagedActor_PushActorAhead(void);
+
+void ObjectDispatch_InitFromTable4WithArgument(s32 table, struct FieldActor *object);
+u8 *Engine_AllocateBlock(s32 id, s32 size);
+
+void KorosseoKawa_RaisePipes(void)
+{
+    s32 leader_id;
+    struct FieldActor *leader;
+    struct FieldActor *actor;
+    s32 none;
+
+    leader_id = gGameState.selected_actor;
+    leader = Object_GetById(leader_id);
+    actor = Object_GetById(12);
+    GameFlag_Set(0x302);
+    Event_Begin();
+    Actor_SetAnimation(leader_id, 8);
+    Event_Wait(6);
+    actor->speed = 0x8000;
+    actor->acceleration = 0x3333;
+    Audio_PlayCue(239);
+    Object_SetAnimation(actor, 2);
+    Object_SetMoveTarget(actor, actor->x.fixed - 0x300000, 0, actor->z.fixed);
+    Event_Wait(6);
+    Actor_SetAnimation(leader_id, 2);
+    ObjectDispatch_InitFromTable4WithArgument(*(s32 *)(Engine_AllocateBlock(27, 0xccc) + 480), actor);
+    Actor_SetSpeed(leader_id, 0x4ccc, 0x3333);
+    Object_SetMoveTarget(leader, leader->x.fixed - 0x180000, 0, leader->z.fixed);
+    Actor_WaitForMove(leader_id);
+    Actor_SetAnimation(leader_id, 1);
+    Script_WaitForEventTimeout(actor);
+    Object_SetAnimation(actor, 1);
+    Audio_PlayCue(288);
+    Audio_PlayCue(213);
+    Event_Wait(15);
+    Event_End();
+    Map_CopyCellAttributes(37, 7, 1, 4, 34, 7);
+    Map_CopyCellAttributes(36, 7, 1, 4, 37, 7);
+    none = GameFlag_IsSet(0x301);
+    if (none != 0) {
+        Event_Begin();
+        Camera_SetSpeed(0x20000, 0x4000);
+        Camera_MoveTo(0x2280000, -1, 0xc80000, 1);
+        Camera_WaitForMove();
+        Map_CopyCells(96, 29, 1, 3, 34, 38);
+        Event_Wait(3);
+        Map_CopyCells(97, 29, 1, 3, 34, 38);
+        Event_Wait(3);
+        Map_CopyCells(98, 29, 1, 3, 34, 38);
+        Event_Wait(3);
+        Map_CopyCells(99, 29, 1, 3, 34, 38);
+        Event_Wait(3);
+        Map_CopyCells(100, 29, 1, 3, 34, 38);
+        Event_Wait(15);
+        Event_End();
+        return;
+    }
+    GameFlag_Set(0x301);
+    Event_Begin();
+    Camera_SetSpeed(0x20000, 0x4000);
+    Camera_MoveTo(0x2580000, -1, 0xc80000, 1);
+    Camera_WaitForMove();
+    actor = Object_GetById(13);
+    actor->motion_flags = none;
+    actor->acceleration = 0x6666;
+    actor->speed = 0xcccc;
+    Object_SetMoveTarget(actor, actor->x.fixed, 0x80000, actor->z.fixed);
+    Object_SetAnimation(actor, 3);
+    Map_CopyCells(96, 29, 1, 3, 34, 38);
+    Event_Wait(3);
+    Map_CopyCells(97, 29, 1, 3, 34, 38);
+    Event_Wait(3);
+    Map_CopyCells(98, 29, 1, 3, 34, 38);
+    Event_Wait(3);
+    Map_CopyCells(99, 29, 1, 3, 34, 38);
+    Event_Wait(3);
+    Map_CopyCells(100, 29, 1, 3, 34, 38);
+    actor = Object_GetById(14);
+    actor->motion_flags = none;
+    actor->acceleration = 0x6666;
+    actor->speed = 0xcccc;
+    Object_SetMoveTarget(actor, actor->x.fixed, 0x200000, actor->z.fixed);
+    Script_WaitForEventTimeout(actor);
+    Event_Wait(15);
+    Event_End();
+    Map_CopyCellAttributes(43, 12, 1, 1, 41, 12);
+}

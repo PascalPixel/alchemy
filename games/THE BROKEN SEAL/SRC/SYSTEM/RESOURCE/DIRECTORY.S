@@ -243,7 +243,7 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesH
 	resource , WorldMap_TilesI
 	resource , WorldMap_TilesJ
-	resource , Korosseo_RivalPathA
+	resource RivalPathA, Korosseo_RivalPathA
 	resource RivalPathB, Korosseo_RivalPathB
 	resource RivalPathC, Korosseo_RivalPathC
 	resource Lettering, Korosseo_Lettering

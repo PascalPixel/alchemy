@@ -1,80 +1,21 @@
-/* NONMATCHING 2026-09-27: early return for a null factory result compiles to
- * the identical 238/244-byte draft (73 differing halfwords, 16 aligned edits).
- * The fall-through still forwards r0 past the null branch, omitting the
- * reference's r7-to-r0 copy before sprite load. Restore the simpler branch.
- * NONMATCHING: 238 of 244 bytes, 73 differing halfwords, 16 halfword edits
- * Sol Venus Summit recheck 2026-09-27: full normalized diff and complete
- * extent unchanged. The existing OrbitEffect producer/consumer view already
- * supplies Haidia's typed nullable ownership. Drift's random switch is absent;
- * no new evidence supplies a surviving reload boundary. Prior axes stay closed.
- * (2026-09-27). Full-width Value_0ffff000 restores the separate field-store
- * addresses and mask register. The plain sprite-flags zero retains r8 and
- * both pool boundaries. Remaining: the object-type shift is early, the
- * script call lacks the reference's r7-to-r0 copy, and the tail is short.
- * Three structural hypotheses tested: link constants (retained mask only;
- * a symbolic zero loses r8 and the first pool), integer object return
- * (unchanged), Object_Create inline helper (234 bytes, 28 edits). Missing
- * flag/script bindings restored from the overlay's own import and pool.
+/* NONMATCHING: resource_3c9 0x0200b6d0 (244 bytes with its pool),
+ * SceneEffect_SpawnParticlesAboveActor, meant for the end of
+ * FIELD/VINASU_CHOJO/ORBIT.C (which also needs OrbitEffect's u16
+ * unknown_66 after angle), stays listing. Its script is the listing's
+ * VinasuChojo_OrbitParticleScript.
  *
- * 2026-09-27 one bounded family-ownership model:
- * Exact SCRIPTED_PRESENTATION.C:SceneEffect_UpdateOrbitAroundActor at
- * 02003600 consumes +30 as integer orbit radius and +64 as binary angle.
- * Transfer that view into the spawn owner and bind the existing callback
- * name at runtime 0200b600. Own RUNTIME_DIVIDE.S/DIVISION_ENTRY.S prove
- * 030003e0 is unsigned remainder; gFrameCount is u32, so ordinary % 3
- * binds __umodsi3 to the same 0200dbf4 import instead of a signed prototype.
- * Result: 238/73/16, byte-identical to the retained baseline. The full
- * normalized diff and both pool boundaries were checked. This clarifies
- * module ownership but does not repair factory type scheduling, the script
- * argument copy or the short tail. Stop with no second spelling trial and
- * no DONE credit. No exact consumer or shared header was changed.
- *
- * 2026-09-27 bounded producer/consumer boundary audit:
- * Own full listing and canonical allocator dumps locate the missing script
- * argument copy precisely: r0 = spark survives through local allocation,
- * then reload CSE deletes it, forwarding the factory return across the
- * fall-through null check. The approved compiler forgets those equivalences
- * at labels, not conditional fall-throughs. A tagged one-pass boundary
- * around factory-result publication was tested using the exact world-map
- * DISPLAY_TRANSITION.C boundary precedent. Result: 238/73/16, binary-identical
- * to baseline; its exit label is gone before reload and the copy is still
- * deleted. Full normalized diff retains r8 zero and both pool shapes.
- * The second pool remains four bytes early: the absent two-byte copy plus
- * two-byte pool alignment account for that displacement. The reference also
- * ends with a two-byte zero pad after bx r0; no setup call or tail operation
- * is absent. The factory type shift still precedes x/z loads, rather than
- * following them. This boundary trial did not satisfy its admission check.
- * Failed model preserved at 5270c6cd7; restore the simpler baseline here.
- * Stop without a second spelling/prototype trial; zero DONE credit.
- *
- * 2026-09-27 paired-spawn transfer audit (no source model admitted):
- * Fresh full baseline remains 238/244, 73 halfwords / 16 aligned edits.
- * Own task registration in the paired-actor scene supplies no arguments;
- * exact 3600 consumes the existing radius/angle view. The main dispatch
- * implementation and 08009098 veneer confirm a void script initializer.
- * Exact LAMP and sibling 5a28 have MathDivide between ObjectCreate and
- * script setup; that real call invalidates the factory r0 equivalence.
- * There is no such call or other clobber in this owner's complete ROM.
- * Reproduced -da/-fsched-verbose=5 assembly equals the ordinary baseline:
- * lreg insn 151 still sets r0 from spark 33; greg deletes that instruction.
- * reload_cse_noop_set_p compares cselib values; cselib_process_insn forgets
- * them at a CODE_LABEL or call, not a fall-through conditional. The earlier
- * one-pass publication label was already proved absent before this pass.
- * Neither Title's HI-zero boundary nor the exact callback introduces the
- * missing control-flow/call boundary. No new wrapper, null test, declaration
- * or compilation variant is justified by these sources. Preserve canonical
- * and stop; missing evidence is a source boundary surviving through reload
- * while retaining the reference's fall-through null test and all calls. */
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
+ * Remaining difference: one instruction. After the null check the game
+ * copies the new effect back into r0 (adds r0, r7, #0) before the script
+ * call; GCC still knows r0 holds it and drops the copy, so the body is two
+ * bytes short and loses its alignment halfword. Everything else matches,
+ * including the pooled zero kept in r8 for sprite->flags. Tried: inline and
+ * direct create and script calls, Call2 and Value4 wrappers, if/else, goto
+ * and do-while forms, sprite load order, and 50k permuter candidates.
+ */
+#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO.H"
 
-extern const s32 VinasuChojo_SparkScript[];
-extern u8 Value_0ffff000;
-
-/* The orbit callback consumes these words as radius and angle, rather than
- * walking speed and actor state. Its ordinary actor prefix owns the sprite. */
 union OrbitEffect {
-    struct FieldActor actor;
+    s32 words[26];
     struct {
         u8 unknown_00[8];
         s32 x;
@@ -92,37 +33,44 @@ union OrbitEffect {
     } orbit;
 };
 
+enum {
+    ORBIT_CENTER_ACTOR = 24
+};
+
 void SceneEffect_UpdateOrbitAroundActor(union OrbitEffect *effect);
+extern const s32 VinasuChojo_OrbitParticleScript[];
 
-void Func_020036d0(void)
+void SceneEffect_SpawnParticlesAboveActor(void)
 {
-    struct FieldActor *source;
-    union OrbitEffect *spark;
+    struct FieldActor *center;
+    union OrbitEffect *effect;
     struct FieldSprite *sprite;
-    s32 rise;
+    u32 rise;
+    s32 angle;
 
-    if (!GameFlag_IsSet(0x236) && gFrameCount % 3 != 0)
+    if (GameFlag_IsSet(0x236) == 0 && IwramUnsignedRemainder(gFrameCount, 3) != 0)
         return;
-    source = Engine_ActorGet(24);
-    if (GameFlag_IsSet(0x236)) {
-        rise = Engine_RandomNext();
+    center = Actor_Get(ORBIT_CENTER_ACTOR);
+    if (GameFlag_IsSet(0x236) != 0) {
+        rise = Random_Next();
         rise <<= 8;
     } else {
-        rise = Engine_RandomNext();
+        rise = Random_Next();
         rise <<= 6;
     }
-    spark = (union OrbitEffect *)Engine_ObjectCreate(
-        0x11c, source->x.fixed, ((u32)rise >> 16 << 16) + source->y.fixed - 0x1c0000,
-        source->z.fixed);
-    if (spark != 0) {
-        sprite = spark->actor.sprite;
-        Engine_ObjectSetScript(&spark->actor, VinasuChojo_SparkScript);
-        Engine_ObjectSetPalette(&spark->actor, 1);
-        spark->actor.motion_flags = 0;
-        spark->orbit.angle = Engine_RandomNext() & (u32)&Value_0ffff000;
-        spark->orbit.unknown_66 = 0;
-        spark->actor.update = (void (*)(union FieldObject *))SceneEffect_UpdateOrbitAroundActor;
-        spark->orbit.radius = Engine_MathSin((u32)(Engine_RandomNext() * 0xffff) >> 20) * 24 >> 16;
+    effect = (union OrbitEffect *)Engine_ObjectCreate(284, center->x.fixed,
+                                                (s32)(rise >> 16 << 16) + center->y.fixed + (s32)0xffe40000,
+                                                center->z.fixed);
+    if (effect != 0) {
+        sprite = ((struct FieldEffect *)effect)->sprite;
+        Object_SetScript((struct FieldActor *)effect, VinasuChojo_OrbitParticleScript);
+        Object_SetPalette((struct FieldActor *)effect, 1);
+        ((struct FieldEffect *)effect)->motion_flags = 0;
+        angle = Random_Next() & 0xffff000;
+        effect->orbit.angle = angle;
+        effect->orbit.unknown_66 = 0;
+        ((struct FieldEffect *)effect)->update = (void (*)(union FieldObject *))SceneEffect_UpdateOrbitAroundActor;
+        effect->orbit.radius = Math_Sin((u32)(Random_Next() * 0xffff) >> 20) * 24 >> 16;
         sprite->flags = 0;
         sprite->priority = 1;
     }

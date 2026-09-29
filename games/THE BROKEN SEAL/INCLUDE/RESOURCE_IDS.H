@@ -64,6 +64,7 @@ extern char ResourceId_VioletPaletteD;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_CrystalSheet;
 extern char ResourceId_DefaultMapCells;
+extern char ResourceId_RivalPathA;
 extern char ResourceId_RivalPathB;
 extern char ResourceId_RivalPathC;
 extern char ResourceId_Lettering;

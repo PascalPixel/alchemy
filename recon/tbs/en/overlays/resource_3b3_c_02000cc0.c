@@ -1,69 +1,61 @@
-/* NONMATCHING: 184/184 bytes, 42 halfwords / 39 aligned edits (2026-09-27).
- * Pillars H1 transfers the own-ROM equivalent 394:02000098
- * draft's per-cell ReadFirstTile/CopySecondTile consumer model. Predict
- * complete 184-byte extent, frame8, all six pool offsets/words and tile
- * table reloads per cell; retain only with the complete normalized diff.
- * One transfer trial, no row-limit/declaration/constant spelling sweep.
- * Full normalized diff read: predicted frame, per-cell table reloads and
- * complete extent/pool all hold. Retain this stronger consumer model.
- * Remaining row bound lives in r8 rather than sp+4; source/top r4/r5
- * rather than r5/r4; width/mask/bank/stride high-register roles disagree.
- * The sibling's bounds-record and parameter-reuse trials already closed
- * that allocation axis. Do not repeat them; no adoption or alignment credit.
- * Historical restored 192/184 bytes, 84 halfwords / 56 edits (2026-09-27).
- * Rejected typed-table/helper transfer is committed in 0b4bfe722:
- * 196/184 bytes, 84 differing halfwords / 71 aligned edits, frame 20 vs 8.
- * Named strided arrays hoisted table bases into saved registers. The older
- * historical direct-base model was stronger than that transfer:
- * frame 12 versus reference 8, compared with the rejected trial's 20.
- * STOP the named-array transfer; no declaration or register spelling sweep.
- * Original baseline: 192 of 184 bytes, 84 differing halfwords (2026-09-24).
- * Hand-written from the disassembly: copies a width x height block of the
- * 128-wide cell map at 0x02010000 into the BG screen block at 0x06002800 (two
- * words per cell from the table at 0x02020000). The loop shape matches;
- * register allocation does not: the reference keeps top in r4, src in r5,
- * width in sl, block << 4 in r9 and 128 - width in fp and spills only bottom
- * and the row base, here two more values spill. */
+/* NONMATCHING: resource_3b3 at 0x02008cc0, TakaraHashira_CopyCellBlock,
+ * 184/184 bytes with its pool (2026-09-29). Placed as
+ * FIELD/TAKARA_HASHIRA/COPY_CELL_BLOCK.C in place of the listing section
+ * .text.x02008cc0, it scores 290 under alchemy permute: 9 register-only and
+ * 4 reordered instructions, frame 8 and every pool word agree.
+ *
+ * Remaining difference, all in the inner loop's preheader: the reference
+ * hoists 0xfff (r8), 15 (r7), the row base (sp+0), 0x06002800 (lr) and only
+ * then copies the column bound into ip, keeping 0x02020004 in r6 and
+ * 0x06002840 in r1. Here the bound is copied into ip first and 0xfff into r8
+ * last, which swaps r1/r2 and r2/r6 in the body. A named bound variable
+ * (680) and a plain nested for loop (1065) are worse; three permute runs of
+ * 400-580 s from this draft found nothing below 290.
+ *
+ * The chains of copied pointers are permute output that keeps the two
+ * 0x02020000/0x02020004 loads from being CSEd into one base register; the
+ * plain spelling hoists 0x02020000 and spills two more words. Tag them
+ * FAKEMATCH (forced temporaries) if this is ever adopted. */
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
-/* FAKEMATCH: the exact row renderer's helper scope gives each tile-table
- * pointer its own lifetime; this rectangle uses word-sized cells. */
-static __inline__ u32 ReadFirstTile(u32 cell)
+/* Draws a width by height block of map cells, starting at cell (x, y), into
+ * the background plane's screen blocks at (destX, destY), each cell's tile
+ * entries read from its metatile. */
+void TakaraHashira_CopyCellBlock(s32 x, s32 y, s32 width, s32 height, s32 plane, s32 destX, s32 destY)
 {
-    u32 *tiles = (u32 *)0x02020000;
+    u32 *cell = (u32 *)Ram_MapCellBuffer + (y * 128 + x);
+    s32 row;
+    s32 col;
 
-    return tiles[cell * 2];
-}
-
-static __inline__ void CopySecondTile(u32 cell, s32 base)
-{
-    u32 *tiles;
-    u32 *dest;
-
-    tiles = (u32 *)0x02020004;
-    tiles += cell * 2;
-    dest = (u32 *)0x06002840;
-    dest += base;
-    *dest = *tiles;
-}
-
-void TakaraHashira_CopyCellBlock(s32 x, s32 y, s32 width, s32 height, s32 block, s32 left, s32 top)
-{
-    u32 *src;
-    s32 bounds[1];
-    s32 base;
-    s32 cell;
-
-    src = (u32 *)0x02010000 + (y * 128 + x);
-    /* FAKEMATCH: retain the sibling's one-word local bounds record. */
-    bounds[0] = top + height;
-    for (; top < bounds[0]; top++) {
-        for (x = left; x < left + width; x++) {
-            cell = *src++ & 0xfff;
-            base = ((top & 15) + block * 16) * 32 + (x & 15);
-            ((u32 *)0x06002800)[base] = ReadFirstTile(cell);
-            CopySecondTile(cell, base);
-        }
-        src += 128 - width;
+    row = destY;
+    if (row < destY + height) {
+        do {
+            col = destX;
+            while ((u32)(col < width + destX) != 0) {
+                u32 offset = (0xfff & *cell++) * 8;
+                s32 index = (plane * 16 + (row & 15)) * 32 + (col & 15);
+                u32 *tmp;
+                u32 *tmp3;
+                u32 *tmp2;
+                u32 *tmp4;
+                u32 *tmp5;
+                tmp3 = (u32 *)0x06002800 + index;
+                tmp = tmp3;
+                tmp5 = (u32 *)(Ram_MapBlocks + offset);
+                tmp4 = tmp5;
+                tmp3 = tmp4;
+                tmp2 = tmp3;
+                *tmp = *tmp2;
+                col++;
+                tmp5 = (u32 *)0x06002840;
+                tmp2 = tmp5;
+                tmp = tmp2;
+                tmp4 = (u32 *)(offset + (Ram_MapBlocks + 4));
+                tmp[index] = *tmp4;
+            }
+            cell += 128 - width;
+            (u32)row++;
+        } while (row < destY + height);
     }
 }

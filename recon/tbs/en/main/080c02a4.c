@@ -39,7 +39,7 @@ struct BgScroll {
 };
 
 extern volatile u16 RegIme;
-extern u8 *Data_03001f00[];
+extern u8 *gTransitionWork[];
 extern const u8 Data_080c5b30[];
 
 void *Runtime_AllocateHeapBlock(s32 slot, u32 size);
@@ -85,7 +85,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
     volatile u16 *ime;
     u32 saved;
 
-    work = (struct TransitionWork *)Data_03001f00[0];
+    work = (struct TransitionWork *)gTransitionWork[0];
     timer = Runtime_AllocateHeapBlock(42, 4);
     if (kind != 0x15b) {
         Dma_Set(Data_080c5b30, (void *)0x06005020, 0x84000008, (volatile u32 *)0x040000d4);
@@ -148,7 +148,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         scroll[0].y = zero;
         Runtime_SetIrqHandler(2, 0, 0);
     } else {
-        link = *(u8 **)((u8 *)Data_03001f00 - 140); /* FAKEMATCH: 0x03001e74 spelled from the work cell so both share one pool entry */
+        link = *(u8 **)((u8 *)gTransitionWork - 140); /* FAKEMATCH: 0x03001e74 spelled from the work cell so both share one pool entry */
         work->visible = 1;
         work->done = 0;
         count = BattleParty_ListActorIds(3, party);

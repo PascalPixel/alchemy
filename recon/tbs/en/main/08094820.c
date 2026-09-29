@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 1434 to 1084 on the permuter's scorer
+   (0 is exact); remaining 49 register-only, 4 stack-only, 1 operand, 8
+   reordered, 1 inserted, 2 deleted. Kept rewrites: 4x introduce a
+   temporary, 3x reorder local declarations, 2x reorder independent
+   statements, 2x remove a temporary, 2x add a same-width cast, 1x swap
+   commutative operands, 1x drop a same-width cast, 1x toggle register.
+   FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* Draft, not exact (2026-09-24): candidate=392 reference=392 differing_halfwords=166.
    The body's instruction sequence matches; the difference is allocation. The
    reference keeps the shape/size mask 63 in fp across the loop (view in sl,
@@ -59,18 +69,19 @@ void Func_08094820(void)
     struct DustParticle *p = work->particles;
     u32 i;
 
-    for (i = 0; i < 32; i++, p++) {
+    for (i = 0; i < 32; (s32)i++, p++) {
+        s32 y;
         s16 *frame;
         s32 x;
-        s32 y;
-
+        s32 tmp2;
         if (--p->timer == 0xffff)
             continue;
         if (GameFlag_TestFar(0x166))
             p->timer++;
-        frame = &Data_0809ef84[p->timer * 5];
+        frame = &Data_0809ef84[5 * p->timer];
         x = (p->pos_x - camera_x) / 0x10000 + *frame++;
-        y = (p->pos_z - p->pos_y - camera_z) / 0x10000 + *frame++;
+        tmp2 = p->pos_y;
+        y = (p->pos_z - tmp2 - camera_z) / 0x10000 + *frame++;
         if ((u32)(x + 16) <= 255 && y >= -32 && y <= 159) {
             p->priority = 1;
             p->x = x;
@@ -82,13 +93,14 @@ void Func_08094820(void)
             Runtime_PushSlotEntry(p, 240);
         }
         if (p->timer == 0) {
-            s32 *leader = view->leader;
+            register s32 *leader = view->leader;
             s32 nx = leader[0] + (Random16() << 8) - 0x800000;
             s32 nz = leader[2] + (Random16() << 8) - 0x800000;
-
+            s32 tmp3;
+            tmp3 = nx >> 16;
             p->pos_x = nx;
             p->pos_z = nz;
-            p->pos_y = Map_GetTerrainHeightFar(0, nx >> 16, nz >> 16) << 16;
+            p->pos_y = Map_GetTerrainHeightFar(0, tmp3, nz >> 16) << 16;
             p->timer = 16;
         }
     }

@@ -10803,7 +10803,7 @@ msgctxt "message"
 msgid "02698"
 msgstr "C'est un objet maudit."
 
-msgctxt "message"
+msgctxt "MsgConfirmDrop"
 msgid "02699"
 msgstr "Voulez-vous vraiment"
 
@@ -11139,7 +11139,7 @@ msgctxt "message"
 msgid "02782"
 msgstr "Anneau"
 
-msgctxt "message"
+msgctxt "MsgYes"
 msgid "02783"
 msgstr "Oui"
 

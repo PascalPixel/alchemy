@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32 parity)
 {
@@ -6,11 +7,11 @@ static __inline__ void CopyBlock(u32 *map, u8 *base, u32 rowmod, u32 colmod, u32
     u8 *destination;
     u32 index = ((*map << 20) >> 18) + parity;
 
-    colors = (u16 *)0x02020000;
+    colors = (u16 *)Ram_MapBlocks;
     colors += index;
     destination = base + (rowmod + colmod + parity) * 2;
     *(u16 *)destination = *colors;
-    colors = (u16 *)0x02020004;
+    colors = (u16 *)(Ram_MapBlocks + 4);
     colors += index;
     *(u16 *)(destination + 64) = *colors;
 }
@@ -26,7 +27,7 @@ void Map_RenderPaletteMappedBlock(u32 a0, s32 a1, s32 a2)
     u32 counter;
 
     for (counter = 0; counter <= 10; counter++) {
-        u32 *map = (u32 *)0x02010000;
+        u32 *map = (u32 *)Ram_MapCellBuffer;
 
         map += row + col;
         CopyBlock(map, destination, rowmod, colmod, parity);

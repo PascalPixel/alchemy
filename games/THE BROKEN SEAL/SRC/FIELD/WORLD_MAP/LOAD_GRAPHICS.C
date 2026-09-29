@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "MAP.H"
+#include "RAM_BUFFER.H"
 
 u32 Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
@@ -19,7 +20,7 @@ struct WorldCell {
 };
 
 #define BG_PALETTE ((s16 *)0x05000000)
-#define WORLD_CELLS ((struct WorldCell *)0x02020000)
+#define WORLD_CELLS ((struct WorldCell *)Ram_MapBlocks)
 
 struct WorldMapState {
     u8 unk_000[0x11c];
@@ -62,12 +63,12 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     tiles = gBgTileBuffer;
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), tiles);
     Dma_Set(tiles, (void *)0x06008000, 0x84000800, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), (void *)0x0203a000);
-    Dma_Set((void *)0x0203a000, (void *)0x0600a000, 0x84000800, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), (void *)0x0203c000);
-    Dma_Set((void *)0x0203c000, (void *)0x0600c000, 0x84000800, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), (void *)0x0203e000);
-    Dma_Set((void *)0x0203e000, (void *)0x0600e000, 0x84000800, (volatile u32 *)0x040000d4);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
+    Dma_Set(Ram_BgTileBuffer + 0x2000, (void *)0x0600a000, 0x84000800, (volatile u32 *)0x040000d4);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
+    Dma_Set(Ram_BgTileBuffer + 0x4000, (void *)0x0600c000, 0x84000800, (volatile u32 *)0x040000d4);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
+    Dma_Set(Ram_BgTileBuffer + 0x6000, (void *)0x0600e000, 0x84000800, (volatile u32 *)0x040000d4);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[5]), (void *)gMapLayerData);
     fill = 0xf07ff07f;
     Dma_Set((const void *)&fill, (void *)0x06002800, 0x85000180, (volatile u32 *)0x040000d4);

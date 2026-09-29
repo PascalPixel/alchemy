@@ -10,6 +10,8 @@
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
+extern u8 gMapCellBuffer[];
 
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
@@ -89,7 +91,7 @@ struct Mode6Work {
     struct BattleEffectArgument *effect;
 };
 
-#define PARTICLES ((struct EffectStep *)0x02010000)
+#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
 #define HI(v) (((s16 *)&(v))[1])
 
 void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
@@ -204,9 +206,9 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
             Audio_PlayCue(145);
         }
         if (frame >= 0 && frame < 16) {
-            u16 *phase = (u16 *)0x02010000;
+            u16 *phase = (u16 *)Ram_MapCellBuffer;
             if (frame == 1) {
-                u8 *noise = (u8 *)0x02010002;
+                u8 *noise = gMapCellBuffer + 2;
                 s32 k;
                 for (k = 0; k != 128; k++) {
                     noise[k] = Random16() & 63;

@@ -9,6 +9,7 @@
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -96,8 +97,8 @@ struct Mode10Work {
     struct BattleEffectArgument *effect;
 };
 
-#define PARTICLES ((struct EffectStep *)0x02010000)
-#define TRAILS ((struct EffectStep *)0x02010e00)
+#define PARTICLES ((struct EffectStep *)Ram_MapCellBuffer)
+#define TRAILS ((struct EffectStep *)(gMapCellBuffer + 0xe00))
 #define HI(v) (((s16 *)&(v))[1])
 
 void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
@@ -176,7 +177,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
         if (frame >= 0 && frame < 16) {
             u16 *phase = (u16 *)gMapCellBuffer;
             if (frame == 1) {
-                u8 *noise = (u8 *)0x02010002;
+                u8 *noise = Ram_MapCellBuffer + 2;
                 s32 n;
                 for (n = 0; n != 128; n++) {
                     noise[n] = Random16() & 63;

@@ -146,7 +146,7 @@ pub(crate) fn link(
         if let Some(pass) = &symbols {
             same_addresses(root, pass, &elf)?;
         }
-        iwram_entries(root, target, &elf)?;
+        checked_entries(root, target, &elf)?;
     }
     if let Err(error) = linked {
         if !keep_going || !elf.is_file() {
@@ -275,20 +275,57 @@ fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
     }
 }
 
+/// A game header of Camelot's own fixed addresses: each `#define <prefix>X`
+/// spells one address its code used as a constant, beside the name the
+/// linker places there, and the build checks every entry against the link.
+struct EntryHeader {
+    /// The header, relative to the game directory.
+    path: &'static str,
+    /// The prefix of every entry's macro name.
+    prefix: &'static str,
+    /// The address digits an entry may spell, after `0x`.
+    region: &'static str,
+    /// Digits, after `0x`, that no definition but an entry may spell.
+    refused: &'static str,
+}
+
 /// ROM code calls the resident IWRAM routines through fixed entry addresses,
 /// as Camelot's did: a call through a label compiles to a direct `bl`, which
 /// cannot reach IWRAM. Some callers instead add a routine's offset to the
-/// bank's first label. Each game's IWRAM_CALL.H lists those entries and
-/// offsets, each naming its routines, and every one must agree with where
-/// the linker put them.
-fn iwram_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), String> {
-    let header = Path::new(target.game_dir()).join("INCLUDE/IWRAM_CALL.H");
-    let Ok(text) = fs::read_to_string(root.join(&header)) else {
-        return Ok(());
-    };
-    let entries =
-        iwram_entry_list(&text).map_err(|error| format!("{}: {error}", header.display()))?;
-    if entries.is_empty() {
+/// bank's first label.
+const IWRAM_CALLS: EntryHeader = EntryHeader {
+    path: "INCLUDE/IWRAM_CALL.H",
+    prefix: "Iwram_",
+    region: "0?3[0-9a-fA-F]{6}",
+    refused: "0?3[0-9a-fA-F]{6}",
+};
+
+/// Camelot's code also reached fixed RAM buffers through constant addresses,
+/// which GCC folds with their offsets where it cannot fold a label: into
+/// strength-reduced loop bounds and literals shared between neighbours.
+const RAM_BUFFERS: EntryHeader = EntryHeader {
+    path: "INCLUDE/RAM_BUFFER.H",
+    prefix: "Ram_",
+    region: "0?[23][0-9a-fA-F]{6}",
+    refused: "0?[0-9a-fA-F]{7}",
+};
+
+/// Every entry of the game's IWRAM_CALL.H and RAM_BUFFER.H must agree with
+/// where the linker put the names beside it.
+fn checked_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), String> {
+    let mut headers = Vec::new();
+    for kind in [&IWRAM_CALLS, &RAM_BUFFERS] {
+        let header = Path::new(target.game_dir()).join(kind.path);
+        let Ok(text) = fs::read_to_string(root.join(&header)) else {
+            continue;
+        };
+        let entries =
+            entry_list(kind, &text).map_err(|error| format!("{}: {error}", header.display()))?;
+        if !entries.is_empty() {
+            headers.push((header, entries));
+        }
+    }
+    if headers.is_empty() {
         return Ok(());
     }
     let symbols = command(
@@ -303,25 +340,31 @@ fn iwram_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), St
             Some((name, u32::from_str_radix(value, 16).ok()?))
         })
         .collect();
-    let linked = |name: &str| {
-        placed
-            .get(name)
-            .copied()
-            .ok_or_else(|| format!("{}: {name} is not linked", header.display()))
-    };
-    for entry in &entries {
+    for (header, entries) in &headers {
+        entries_agree(entries, |name| placed.get(name).copied())
+            .map_err(|error| format!("{}: {error}", header.display()))?;
+    }
+    Ok(())
+}
+
+/// Each entry against `linked`, the address the link gave a name.
+fn entries_agree(
+    entries: &[CheckedEntry],
+    linked: impl Fn(&str) -> Option<u32>,
+) -> Result<(), String> {
+    let linked = |name: &str| linked(name).ok_or_else(|| format!("{name} is not linked"));
+    for entry in entries {
         let value = match &entry.from {
-            None => linked(&entry.routine)?,
-            Some(from) => linked(&entry.routine)?.wrapping_sub(linked(from)?),
+            None => linked(&entry.name)?,
+            Some(from) => linked(&entry.name)?.wrapping_sub(linked(from)?),
         };
         if value != entry.value {
             let listed = match &entry.from {
-                None => format!("{} is listed at", entry.routine),
-                Some(from) => format!("{} - {from} is listed as", entry.routine),
+                None => format!("{} is listed at", entry.name),
+                Some(from) => format!("{} - {from} is listed as", entry.name),
             };
             return Err(format!(
-                "{}: {listed} {:#x} but linked as {value:#x}",
-                header.display(),
+                "{listed} {:#x} but linked as {value:#x}",
                 entry.value
             ));
         }
@@ -329,48 +372,51 @@ fn iwram_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), St
     Ok(())
 }
 
-/// One IWRAM_CALL.H entry: the routine's address, or its offset from another
-/// routine of the bank when `from` names that routine.
+/// One checked entry: the named place's address, or its offset from another
+/// name when `from` names that one.
 #[derive(Debug, PartialEq)]
-struct IwramEntry {
-    routine: String,
+struct CheckedEntry {
+    name: String,
     from: Option<String>,
     value: u32,
 }
 
-/// The `#define Iwram_X ((type)0x03......) /* Routine */` entries and the
-/// `#define Iwram_XOffset 0x.... /* Routine - FromRoutine */` offsets; any
-/// other definition spelling an IWRAM address or an Iwram offset is refused.
-fn iwram_entry_list(text: &str) -> Result<Vec<IwramEntry>, String> {
-    let entry = regex::Regex::new(
-        r"^#define\s+Iwram_\w+\s+\(\(.*\)\s*0x(0?3[0-9a-fA-F]{6})\)\s*/\*\s*(\w+)\s*\*/\s*$",
-    )
+/// The `#define <prefix>X ((type)0x........) /* Name */` entries and the
+/// `#define <prefix>XOffset 0x.... /* Name - FromName */` offsets; any other
+/// definition spelling an address the header refuses, or an offset, is
+/// refused.
+fn entry_list(kind: &EntryHeader, text: &str) -> Result<Vec<CheckedEntry>, String> {
+    let (prefix, region, refused) = (kind.prefix, kind.region, kind.refused);
+    let entry = regex::Regex::new(&format!(
+        r"^#define\s+{prefix}\w+\s+\(\(.*\)\s*0x({region})\)\s*/\*\s*(\w+)\s*\*/\s*$"
+    ))
     .expect("static pattern");
-    let offset = regex::Regex::new(
-        r"^#define\s+Iwram_\w+Offset\s+0x([0-9a-fA-F]+)\s*/\*\s*(\w+)\s*-\s*(\w+)\s*\*/\s*$",
-    )
+    let offset = regex::Regex::new(&format!(
+        r"^#define\s+{prefix}\w+Offset\s+0x([0-9a-fA-F]+)\s*/\*\s*(\w+)\s*-\s*(\w+)\s*\*/\s*$"
+    ))
     .expect("static pattern");
-    let address = regex::Regex::new(r"0x0?3[0-9a-fA-F]{6}").expect("static pattern");
-    let offset_name = regex::Regex::new(r"^#define\s+Iwram_\w+Offset\b").expect("static pattern");
+    let address = regex::Regex::new(&format!("0x{refused}")).expect("static pattern");
+    let offset_name =
+        regex::Regex::new(&format!(r"^#define\s+{prefix}\w+Offset\b")).expect("static pattern");
     let mut entries = Vec::new();
     for line in text
         .lines()
         .filter(|line| line.trim_start().starts_with("#define"))
     {
         if let Some(capture) = entry.captures(line) {
-            entries.push(IwramEntry {
-                routine: capture[2].to_owned(),
+            entries.push(CheckedEntry {
+                name: capture[2].to_owned(),
                 from: None,
                 value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
             });
         } else if let Some(capture) = offset.captures(line) {
-            entries.push(IwramEntry {
-                routine: capture[2].to_owned(),
+            entries.push(CheckedEntry {
+                name: capture[2].to_owned(),
                 from: Some(capture[3].to_owned()),
                 value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
             });
         } else if address.is_match(line) || offset_name.is_match(line) {
-            return Err(format!("an IWRAM entry without its routines: {line}"));
+            return Err(format!("an entry without its linked name: {line}"));
         }
     }
     Ok(entries)
@@ -905,13 +951,8 @@ mod tests {
             #define Iwram_Sqrt ((s32 (*)(s32))0x030001d8) /* IwramSqrt */\n\
             #define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords - IwramIrqMain */\n\
             #define SCREEN_WIDTH 240\n";
-        let entry = |routine: &str, from: Option<&str>, value| IwramEntry {
-            routine: routine.to_owned(),
-            from: from.map(str::to_owned),
-            value,
-        };
         assert_eq!(
-            iwram_entry_list(header).unwrap(),
+            entry_list(&IWRAM_CALLS, header).unwrap(),
             [
                 entry("IwramCopyWords", None, 0x0300_1388),
                 entry("IwramSqrt", None, 0x0300_01d8),
@@ -925,8 +966,72 @@ mod tests {
             "#define Iwram_CopyWordsOffset 0x1388\n",
             "#define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords */\n",
         ] {
-            assert!(iwram_entry_list(unnamed).is_err(), "{unnamed}");
+            assert!(entry_list(&IWRAM_CALLS, unnamed).is_err(), "{unnamed}");
         }
+    }
+
+    fn entry(name: &str, from: Option<&str>, value: u32) -> CheckedEntry {
+        CheckedEntry {
+            name: name.to_owned(),
+            from: from.map(str::to_owned),
+            value,
+        }
+    }
+
+    #[test]
+    fn every_ram_buffer_names_its_linked_object() {
+        let header = "/* 0x02010000 is only prose here */\n\
+            #define Ram_MapCellBuffer ((u8 *)0x02010000) /* gMapCellBuffer */\n\
+            #define Ram_IwramHeapEnd ((u8 *)0x03007800) /* gIwramHeapEnd */\n\
+            #define SCREEN_WIDTH 240\n";
+        assert_eq!(
+            entry_list(&RAM_BUFFERS, header).unwrap(),
+            [
+                entry("gMapCellBuffer", None, 0x0201_0000),
+                entry("gIwramHeapEnd", None, 0x0300_7800),
+            ]
+        );
+        for unnamed in [
+            "#define Ram_MapCellBuffer ((u8 *)0x02010000)\n",
+            "#define MAP_CELLS ((u8 *)0x02010000) /* gMapCellBuffer */\n",
+            "#define PARTICLES ((struct EffectStep *)0x02010000)\n",
+            "#define CELL_ADDR 0x03001F30\n",
+            "#define Ram_MapCellBufferOffset 0x82\n",
+            // A ROM address is no RAM buffer: ROM data has labels.
+            "#define Ram_Table ((u8 *)0x0809e8a0) /* Table */\n",
+        ] {
+            assert!(entry_list(&RAM_BUFFERS, unnamed).is_err(), "{unnamed}");
+        }
+    }
+
+    #[test]
+    fn entries_must_agree_with_the_link() {
+        let placed = |name: &str| match name {
+            "gMapCellBuffer" => Some(0x0201_0000),
+            "IwramIrqMain" => Some(0x0300_0000),
+            "IwramCopyWords" => Some(0x0300_1388),
+            _ => None,
+        };
+        let agreeing = [
+            entry("gMapCellBuffer", None, 0x0201_0000),
+            entry("IwramCopyWords", Some("IwramIrqMain"), 0x1388),
+        ];
+        assert_eq!(entries_agree(&agreeing, placed), Ok(()));
+        assert_eq!(
+            entries_agree(&[entry("gMapCellBuffer", None, 0x0201_0002)], placed),
+            Err("gMapCellBuffer is listed at 0x2010002 but linked as 0x2010000".into())
+        );
+        assert_eq!(
+            entries_agree(
+                &[entry("IwramCopyWords", Some("IwramIrqMain"), 0x1380)],
+                placed
+            ),
+            Err("IwramCopyWords - IwramIrqMain is listed as 0x1380 but linked as 0x1388".into())
+        );
+        assert_eq!(
+            entries_agree(&[entry("gMapBlocks", None, 0x0202_0000)], placed),
+            Err("gMapBlocks is not linked".into())
+        );
     }
 
     #[test]

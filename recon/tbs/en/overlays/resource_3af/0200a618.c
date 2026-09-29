@@ -1,3 +1,5 @@
+/* Draft of FuneKanpan_RunJumpScene, resource_3af at 0x0200a618 (from FIELD/FUNE_KANPAN/JUMP_SCENE.C).
+ * Remaining difference: the return map values 0x6f and 0x6d come from the literal pool as link-time values, which only symbols at those addresses reproduce and no link defines; an integer is a movs. The actor 22 callback (0x020088c1, OverlayObject_DecayFields24And28) and the effect table passed to the main routine (0x0200d418) are still numbers rather than their names, and the rodata row there is not yet labelled. */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 

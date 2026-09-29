@@ -27,6 +27,7 @@ struct SealScene {
     s32 actor;
     s32 actor_x;
     s32 actor_z;
+    s32 unknown_c4[3];
 };
 
 /* The seal scene the guarded steps fill in; the first of the overlay's own work. */

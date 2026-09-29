@@ -1,22 +1,7 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02009a08
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	movs r0, #0
-	bx lr
-	.global Func_0200003c
-	.thumb_func
-Func_0200003c:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02009ac8
+	.section .text.x02008044,"ax",%progbits
+	.p2align 2
 	.global Func_02000044
 	.thumb_func
 Func_02000044:
@@ -108,81 +93,8 @@ Func_020000bc:
 	bx r0
 	.2byte 0x0000
 	.4byte 0x00000e19
-	.global Func_02000104
-	.thumb_func
-Func_02000104:
-	push {r5, lr}
-	ldr r3, [pc, #72]
-	movs r2, #250
-	lsls r2, r2, #1
-	movs r0, #128
-	adds r3, r3, r2
-	lsls r0, r0, #2
-	ldr r5, [r3]
-	bl 0x020098e4
-	cmp r0, #0
-	bne .L_02000104_0
-	movs r0, #128
-	lsls r0, r0, #2
-	bl 0x020098ec
-	bl 0x02008880
-.L_02000104_0:
-	bl 0x0200991c
-	adds r0, r5, #0
-	movs r1, #120
-	movs r2, #152
-	bl 0x02009944
-	movs r1, #128
-	lsls r1, r1, #7
-	movs r2, #0
-	adds r0, r5, #0
-	bl 0x0200997c
-	bl 0x02008ac8
-	bl 0x02009924
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
-	.global Func_02000154
-	.thumb_func
-Func_02000154:
-	push {lr}
-	bl 0x0200991c
-	ldr r0, [pc, #24]
-	bl 0x02009964
-	movs r0, #1
-	movs r1, #0
-	negs r0, r0
-	bl 0x0200996c
-	bl 0x02009924
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00000e34
-	.global Func_02000178
-	.thumb_func
-Func_02000178:
-	push {lr}
-	bl 0x0200991c
-	ldr r0, [pc, #24]
-	bl 0x02009964
-	movs r0, #1
-	movs r1, #0
-	negs r0, r0
-	bl 0x0200996c
-	bl 0x02009924
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00000e35
-	.global Func_0200019c
-	.thumb_func
-Func_0200019c:
-	push {lr}
-	movs r0, #0
-	bl 0x020088f8
-	pop {r0}
-	bx r0
+	.section .text.x020081a8,"ax",%progbits
+	.p2align 2
 	.global Func_020001a8
 	.thumb_func
 Func_020001a8:
@@ -910,65 +822,11 @@ Func_020001d8:
 	pop	{r0}
 	bx	r0
 	.2byte 0x0000
-	.global Func_02000880
+	.section .text.x020088f8,"ax",%progbits
+	.p2align 2
+	.global TorebiIzumi_OfferLuckyWheels
 	.thumb_func
-Func_02000880:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	ldr r3, [pc, #84]
-	movs r0, #216
-	ldr r5, [r3]
-	bl 0x020099c4
-	movs r2, #178
-	lsls r2, r2, #1
-	adds r5, r5, r2
-	movs r6, #15
-.L_02000880_0:
-	ldr r3, [r5, #12]
-	ldr r2, [pc, #68]
-	adds r3, r3, r2
-	str r3, [r5, #12]
-	movs r0, #4
-	subs r6, #1
-	bl 0x02009864
-	cmp r6, #0
-	bge .L_02000880_0
-	ldr r3, [pc, #56]
-	ldr r2, [pc, #56]
-	ldr r5, [pc, #60]
-	ldr r7, [pc, #60]
-	mov r10, r3
-	mov r8, r2
-	movs r6, #7
-.L_02000880_1:
-	mov r3, r10
-	mov r2, r8
-	strh r3, [r2]
-	ldrh r3, [r5]
-	adds r5, #2
-	strh r3, [r7]
-	movs r0, #8
-	subs r6, #1
-	bl 0x02009864
-	cmp r6, #0
-	bge .L_02000880_1
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.4byte 0x03001e70
-	.4byte 0xffff0000
-	.4byte 0x00003f42
-	.4byte 0x04000050
-	.4byte 0x02009fc0
-	.4byte 0x04000052
-	.global Func_020008f8
-	.thumb_func
-Func_020008f8:
+TorebiIzumi_OfferLuckyWheels:
 	push {r5, r6, r7, lr}
 	adds r5, r0, #0
 	movs r0, #228
@@ -1161,6 +1019,9 @@ Func_020009f8:
 	.4byte 0x000001fd
 	.4byte 0x00000089
 	.4byte 0x03001ebc
+	.global TorebiIzumi_RunSpringGame
+	.thumb_func
+TorebiIzumi_RunSpringGame:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1472,131 +1333,11 @@ Func_020009f8:
 	.4byte 0x0000011d
 	.2byte 0x9fd0
 	.2byte 0x0200
-	.global Func_02000d70
+	.section .text.x02008e5c,"ax",%progbits
+	.p2align 2
+	.global FieldScene_RunSecondaryScript
 	.thumb_func
-Func_02000d70:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r7, r0, #0
-	movs r0, #0
-	cmp r7, #0
-	blt .L_02000d70_0
-	cmp r7, #5
-	bne .L_02000d70_1
-	bl 0x02009874
-	lsls r3, r0, #2
-	adds r3, r3, r0
-	lsrs r7, r3, #16
-.L_02000d70_1:
-	ldr r3, [pc, #56]
-	mov r8, r3
-	movs r3, #154
-	lsls r3, r3, #1
-	adds r6, r7, r3
-	mov r3, r8
-	ldrsb r5, [r3, r6]
-	bl 0x02009874
-	lsls r0, r0, #1
-	lsrs r0, r0, #16
-	adds r5, r5, r0
-	adds r5, #4
-	adds r0, r5, #0
-	movs r1, #3
-	bl 0x0200985c
-	mov r3, r8
-	strb r0, [r3, r6]
-	lsls r3, r7, #1
-	adds r3, r3, r7
-	adds r3, r3, r0
-	ldr r2, [pc, #16]
-	lsls r3, r3, #2
-	ldr r0, [r2, r3]
-.L_02000d70_0:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0200a018
-	.global Func_02000dd0
-	.thumb_func
-Func_02000dd0:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	adds r6, r1, #0
-	mov r8, r2
-	adds r7, r3, #0
-	bl 0x0200993c
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02000dd0_0
-	ldmia r6!, {r3}
-	str r3, [r5, #8]
-	ldmia r6!, {r3}
-	str r3, [r5, #12]
-	ldr r3, [r6]
-	str r3, [r5, #16]
-	mov r3, r8
-	strh r3, [r5, #6]
-	ldr r2, [pc, #40]
-	adds r3, r5, #0
-	adds r3, #85
-	strb r2, [r3]
-	ldr r3, [r5, #80]
-	adds r3, #38
-	strb r2, [r3]
-	ldr r1, [sp, #20]
-	bl 0x02009894
-.L_02000dd0_0:
-	ldr r0, [r5, #80]
-	adds r3, r0, #0
-	adds r3, #39
-	ldrb r3, [r3]
-	cmp r3, #0
-	beq .L_02000dd0_1
-	movs r4, #255
-	adds r0, #40
-	adds r1, r3, #0
-	b .L_02000dd0_2
-	.2byte 0x0000
-	.4byte 0x00000000
-.L_02000dd0_2:
-	ldmia r0!, {r2}
-	ldrb r3, [r2, #5]
-	cmp r3, r7
-	beq .L_02000dd0_3
-	ldrb r3, [r2, #22]
-	orrs r3, r4
-	strb r7, [r2, #5]
-	strb r3, [r2, #22]
-.L_02000dd0_3:
-	subs r1, #1
-	cmp r1, #0
-	bne .L_02000dd0_2
-.L_02000dd0_1:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.global Func_02000e44
-	.thumb_func
-Func_02000e44:
-	push {r5, lr}
-	adds r5, r1, #0
-	bl 0x0200993c
-	cmp r0, #0
-	beq .L_02000e44_0
-	adds r3, r0, #0
-	adds r3, #84
-	strb r5, [r3]
-.L_02000e44_0:
-	pop {r5}
-	pop {r0}
-	bx r0
+FieldScene_RunSecondaryScript:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9
@@ -2653,195 +2394,9 @@ Func_02000e44:
 	.4byte 0x0000ffff
 	.2byte 0xa0c0
 	.2byte 0x0200
-	.global Func_020016a8
-	.thumb_func
-Func_020016a8:
-	push {r5, r6, r7, lr}
-	ldr r0, [pc, #112]
-	ldr r6, [pc, #112]
-	ldr r2, [pc, #116]
-	ldr r5, [pc, #116]
-	ldr r4, [pc, #120]
-	movs r7, #0
-	movs r1, #0
-.L_020016a8_0:
-	ldrb r3, [r6]
-	lsls r3, r3, #16
-	str r3, [r2]
-	ldrb r3, [r4]
-	lsls r3, r3, #16
-	str r3, [r2, #8]
-	ldrh r3, [r5]
-	adds r7, #1
-	str r1, [r2, #4]
-	strh r3, [r2, #12]
-	strh r1, [r2, #14]
-	strh r1, [r2, #16]
-	strh r1, [r2, #18]
-	strh r1, [r2, #20]
-	adds r6, #1
-	adds r4, #1
-	adds r5, #2
-	adds r2, #24
-	cmp r7, #4
-	bne .L_020016a8_0
-	ldr r3, [pc, #76]
-	str r3, [r0, #4]
-	movs r3, #200
-	movs r2, #0
-	lsls r3, r3, #15
-	str r2, [r0, #8]
-	str r3, [r0, #12]
-	str r2, [r0, #64]
-	str r2, [r0, #68]
-	str r2, [r0, #72]
-	str r2, [r0, #76]
-	movs r0, #20
-	bl 0x0200993c
-	movs r1, #2
-	bl 0x0200988c
-	movs r0, #21
-	bl 0x0200993c
-	movs r1, #2
-	bl 0x0200988c
-	ldr r1, [pc, #36]
-	ldr r0, [pc, #36]
-	bl 0x0200986c
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.4byte 0x0200a070
-	.4byte 0x0200a05a
-	.4byte 0x0200a0d0
-	.4byte 0x0200a062
-	.4byte 0x0200a05e
-	.4byte 0xffe20000
-	.4byte 0x00000c83
-	.4byte 0x02008e5d
-	.global Func_0200173c
-	.thumb_func
-Func_0200173c:
-	push {r5, r6, r7, lr}
-	ldr r5, [pc, #240]
-	ldr r3, [pc, #240]
-	movs r2, #0
-	str r2, [r5, #8]
-	str r2, [r5, #20]
-	str r2, [r5, #32]
-	str r2, [r5, #44]
-	str r0, [r3]
-	ldr r3, [pc, #232]
-	str r2, [r3]
-	ldr r3, [pc, #232]
-	strh r3, [r5, #2]
-	ldr r3, [pc, #232]
-	ldr r7, [pc, #232]
-	adds r6, r3, #0
-	str r2, [r3]
-	b .L_0200173c_0
-.L_0200173c_4:
-	ldr r3, [r6]
-	adds r3, #1
-	str r3, [r6]
-.L_0200173c_0:
-	ldr r3, [r6]
-	cmp r3, #50
-	bne .L_0200173c_1
-	movs r0, #150
-	lsls r0, r0, #1
-	bl 0x020099c4
-	ldr r3, [r6]
-.L_0200173c_1:
-	cmp r3, #16
-	bne .L_0200173c_2
-	ldr r0, [r7]
-	movs r1, #29
-	bl 0x02009954
-	movs r3, #0
-	strh r3, [r5, #2]
-	ldr r3, [pc, #192]
-	str r3, [r5, #64]
-	movs r3, #128
-	lsls r3, r3, #11
-	str r3, [r5, #68]
-	ldr r3, [pc, #184]
-	str r3, [r5, #72]
-	movs r3, #240
-	lsls r3, r3, #15
-	str r3, [r5, #4]
-	movs r3, #128
-	lsls r3, r3, #13
-	str r3, [r5, #8]
-	movs r3, #152
-	lsls r3, r3, #16
-	str r3, [r5, #12]
-	movs r3, #150
-	lsls r3, r3, #1
-	str r3, [r5, #76]
-	ldr r3, [pc, #132]
-	ldr r3, [r3]
-	cmp r3, #1
-	bne .L_0200173c_3
-	movs r0, #16
-	bl 0x0200993c
-	movs r1, #3
-	bl 0x0200988c
-	movs r0, #17
-	bl 0x0200993c
-	movs r1, #0
-	bl 0x0200988c
-	movs r0, #15
-	movs r1, #1
-	bl 0x02008e44
-	movs r0, #14
-	movs r1, #1
-	bl 0x02008e44
-	movs r0, #13
-	movs r1, #1
-	bl 0x02008e44
-	b .L_0200173c_2
-.L_0200173c_3:
-	movs r0, #11
-	bl 0x0200993c
-	movs r1, #3
-	bl 0x0200988c
-	movs r0, #12
-	bl 0x0200993c
-	movs r1, #0
-	bl 0x0200988c
-	movs r0, #10
-	movs r1, #1
-	bl 0x02008e44
-	movs r0, #9
-	movs r1, #1
-	bl 0x02008e44
-	movs r0, #8
-	movs r1, #1
-	bl 0x02008e44
-.L_0200173c_2:
-	movs r0, #1
-	bl 0x02009864
-	ldr r3, [pc, #24]
-	ldr r3, [r3]
-	cmp r3, #1
-	bne .L_0200173c_4
-	ldr r3, [pc, #40]
-	ldr r0, [r3]
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x0200a070
-	.4byte 0x0200a0c0
-	.4byte 0x0200a134
-	.4byte 0x0000ffff
-	.4byte 0x0200a130
-	.4byte 0x02000434
-	.4byte 0x00014ccc
-	.4byte 0xfffe0000
-	.4byte 0x0200a138
-@ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
+	.global TorebiIzumi_SceneTableA
+TorebiIzumi_SceneTableA:
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000098
@@ -2890,6 +2445,8 @@ Func_0200173c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global TorebiIzumi_SceneTableB
+TorebiIzumi_SceneTableB:
 	.4byte 0x000000bd
 	.4byte 0x10114087
 	.4byte 0xffffffff
@@ -3208,6 +2765,8 @@ Func_0200173c:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global TorebiIzumi_AlphaSteps
+TorebiIzumi_AlphaSteps:
 	.4byte 0x0a08090a
 	.4byte 0x0c040b06
 	.4byte 0x0e020d03
@@ -3230,6 +2789,8 @@ Func_0200173c:
 	.4byte 0x000a0014
 	.4byte 0x00010002
 	.4byte 0x00000000
+	.global TorebiIzumi_TopicIds
+TorebiIzumi_TopicIds:
 	.4byte 0x000000fa
 	.4byte 0x000000fb
 	.4byte 0x000000fc
@@ -3246,8 +2807,17 @@ Func_0200173c:
 	.4byte 0x000000ba
 	.4byte 0x000000bc
 	.4byte 0x00090100
-	.4byte 0xa0500403
-	.4byte 0x68204850
-	.4byte 0x00004844
+	.2byte 0x0403
+	.global TorebiIzumi_ActorTileX
+TorebiIzumi_ActorTileX:
+	.2byte 0xa050
+	.2byte 0x4850
+	.global TorebiIzumi_ActorTileZ
+TorebiIzumi_ActorTileZ:
+	.2byte 0x6820
+	.2byte 0x4844
+	.global TorebiIzumi_ActorHeadings
+TorebiIzumi_ActorHeadings:
+	.2byte 0x0000
 	.4byte 0x00000001
 	.2byte 0x8000

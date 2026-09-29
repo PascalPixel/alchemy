@@ -10,12 +10,33 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Runtime_AllocateBlock
+	.thumb_func
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
+	.global Engine_HeapRelease
+	.thumb_func
+Engine_HeapRelease:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
+	.global Resource_DecodeByteLz
+	.thumb_func
+Resource_DecodeByteLz:
 	overlay_veneer Resource_DecodeByteLzFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
+	.global Resource_FindFreeEntry
+	.thumb_func
+Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
+	.global Runtime_PushSlotEntry
+	.thumb_func
+Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -29,6 +50,9 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Engine_ActorSetSpriteFlags
+	.thumb_func
+Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	.global Engine_WorkSetValuesIfNonNegative
 	.thumb_func
@@ -134,6 +158,9 @@ Engine_EventSetMessage:
 	.thumb_func
 UiText_OpenMessageAtObject:
 	overlay_veneer UiText_OpenMessageAtObjectFar
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
 	.global Engine_ActorFaceDirection
 	.thumb_func
@@ -167,7 +194,13 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global Engine_LeaderCheckAhead
+	.thumb_func
+Engine_LeaderCheckAhead:
 	overlay_veneer Field_TryJumpForwardFar
+	.global InitializeSceneRecordBuffer
+	.thumb_func
+InitializeSceneRecordBuffer:
 	overlay_veneer Func_0808a2f8
 	.global Engine_EventOpenScreen
 	.thumb_func
@@ -181,6 +214,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global BattleFx_SetQueuedSoundAndPlay
+	.thumb_func
+BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global Engine_AudioPlayCue
 	.thumb_func

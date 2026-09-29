@@ -46,6 +46,14 @@
  * before the test, which requires the entry test to be duplicated only
  * after gcse (jump1 declining duplicate_loop_exit_test). A goto into the
  * do/while and an inline count accessor do not produce that.
+ * 2026-09-29 alchemy permute (seed 1, 8 jobs, 10 minutes): 233,249
+ * candidates, none below the draft's score, 96,352 level with it; a further
+ * 107,176 focused on the index, count and range statements, none below.
+ * Its rewrites (loop forms, statement and declaration order, temporaries,
+ * casts, truth tests) leave the range load after the count test. The draft
+ * still calls Func_08004458, which the build names Random16.
+ * 2026-09-29 slice 4: names first; the draft now calls Random16 and reads
+ * gMenuWork, so its score is 375, all of it the range-load placement above.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
@@ -78,14 +86,14 @@ struct Runtime_080a9f10 {
     s16 result_code;
 };
 
-extern struct Runtime_080a9f10 *Data_03001f2c;
+extern struct Runtime_080a9f10 *gMenuWork;
 
 struct Object_080a9f10 *Owner_GetStateFar(s32);
 void BattleUnit_Recalculate(s32);
 struct BattleAction *BattleAction_Get(s32);
 void Owner_RecalculateRatiosFar(s32);
 s32 Battle_CalcRestore(s32, s32, s32);
-s32 Func_08004458(void);
+s32 Random16(void);
 void Func_08015120(s32, s32);
 s32 Math_Div(s32, s32);
 
@@ -109,7 +117,7 @@ s32 BattleEffect_ApplyToTargets(
     s32 result_code;
 
     effect = BattleAction_Get(effect_id);
-    runtime = Data_03001f2c;
+    runtime = gMenuWork;
     changed = 0;
     result_code = 0;
     later_target = 0;
@@ -170,7 +178,7 @@ s32 BattleEffect_ApplyToTargets(
                 break;
 
             case 9:
-                random_adjust = ((u32)Func_08004458() * 4) >> 16;
+                random_adjust = ((u32)Random16() * 4) >> 16;
                 if (random_adjust == 0) {
                     random_adjust = -1;
                 } else {

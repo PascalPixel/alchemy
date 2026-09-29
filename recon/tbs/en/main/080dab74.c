@@ -42,6 +42,10 @@
  *   - The roles of Data_080eea62/91/99/a2/b2/b8/bb/c3/cc are only known from
  *     their use here (screen slot pairs, widths, heights and sprite offsets),
  *     so the names stay address-derived.
+ * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+ * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores
+ * 15,246 with 23 symbols the linked build does not define, too far for a
+ * 10-minute search, so none was run.
  */
 
 

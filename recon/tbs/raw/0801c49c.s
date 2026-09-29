@@ -59,7 +59,7 @@ Menu_Check:
 	add	r0, sp, #16
 	add	r1, sp, #12
 	adds	r2, r7, #0
-	bl	Func_0801c8a0
+	bl	Menu_FindShortcutEntries
 	movs	r5, #2
 	movs	r1, #6
 	movs	r2, #20

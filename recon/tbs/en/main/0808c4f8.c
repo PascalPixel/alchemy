@@ -65,7 +65,7 @@ void Func_08015000();
 void Func_08015040();
 void Func_08015120();
 void Func_080151e8();
-void Func_08015200();
+void UiTimedNotice_CreateFar();
 void Func_08015208();
 void Func_08015288();
 void Func_08015290();
@@ -95,7 +95,7 @@ void BattleFx_RunKind6DescriptorAction();
 void BattleAction_RunDescriptor();
 void Battle_DispatchInputEvent();
 void Func_0808d9a4();
-s32 Func_0808ddec();
+s32 BattleEffect_SelectNearbyObject();
 void Battle_ResetEffectCounter();
 void Func_0808e23c();
 void BattleCommand_ExecuteSelectedAction();
@@ -247,7 +247,7 @@ s32 Func_0808c4f8(void)
         }
         if (GameFlag_IsSet(0x12F) != 0) {
             GameFlag_Clear(0x12F);
-            Func_08015200(FIELD_AT_OFFSET(g, s16 *, 0x1C0));
+            UiTimedNotice_CreateFar(FIELD_AT_OFFSET(g, s16 *, 0x1C0));
         }
         if (FIELD_AT_OFFSET(g, s16 *, 0x234) != 0) {
             Func_08095778(FIELD_AT_OFFSET(g, s16 *, 0x234), 1);
@@ -375,7 +375,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(work, u16 *, 0x16E) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x174) != 0) {
                 Func_08015208();
-                v = Func_0808ddec(Data_02000434);
+                v = BattleEffect_SelectNearbyObject(Data_02000434);
                 ok = 0;
                 if (v != -1) {
                     ok = BattleFx_FindDescriptorWithOverride() != 0;

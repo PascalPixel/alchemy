@@ -1,6 +1,11 @@
 /* NONMATCHING: shared callee return types audited on 2026-09-26.
  * 1020 of 1056 bytes, 515 differing halfwords, 314 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
+ * Canonical declarations are retained; the remaining source model is not exact.
+ * 2026-09-29 slice 4: once alchemy permute kept function-pointer casts
+ * abstract it could parse this draft; Unnamed_080ae2f4 scores 9,488 (85
+ * register-only, 18 stack-only, 35 operand, 53 reordered, 15 inserted, 35
+ * deleted), too far for a 10-minute search, so none was run.
+ */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"

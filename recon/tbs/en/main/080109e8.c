@@ -101,7 +101,7 @@ void SceneTransform_ApplyPitch(s32);
 void Graphics_PrepareTransferInIwramWork(s32, s32);
 s32 Trig_Cos(s32);
 s32 Trig_Sin(s32);
-void Func_080123f4(s32, s32 *, void *);
+void WorldMap_BuildScanlineTable(s32, s32 *, void *);
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void Func_08010ff0(void);
 void Func_080111b4(void);
@@ -215,7 +215,7 @@ s32 Map_InitializePerspectiveScene(void)
     size = (s32)&Value_00000284;
     Dma_Set((void *)0x0800a0f8, (void *)Runtime_AllocateHeapBlock(46, size),
             0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
-    Func_080123f4(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
+    WorldMap_BuildScanlineTable(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles);
     Data_03001f60 = 0;
     Data_03001af4 = *pitch;

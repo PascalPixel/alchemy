@@ -89,6 +89,9 @@ extern volatile u16 gSerialReceivedSize;
 extern u8 gSerialPeerPayloads[4][24];
 /* The block transfer's seven-bit packet sequence number. */
 extern volatile u8 gSerialBlockSequence;
+/* A byte the link lobby's party-record exchange writes and serial start-up
+   clears, just past the runtime record. */
+extern u8 gLinkExchangeState;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
 {

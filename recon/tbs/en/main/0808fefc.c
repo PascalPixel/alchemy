@@ -1,3 +1,9 @@
+/* 2026-09-29: alchemy permute (8 minutes) found 1000; its one natural
+ * change, the display-control value written as dispcnt | DISPCNT rather
+ * than DISPCNT | dispcnt, gives 1200 (18 register-only, 8 operand, 7
+ * reordered, 2 inserted, 3 deleted) and is kept. The rest of the 1000
+ * candidate reshuffles case 4 around its Value_ zero and 80 through
+ * temporaries, which cannot be adopted anyway. */
 /* Draft, not exact (2026-09-26): 708 of 708 bytes, 151 differing halfwords.
    Best complete model restored. Preserved experiments: plain halfword
    aggregate carriers with a queue-value snapshot gave 708 / 281;
@@ -129,7 +135,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         BattleFx_ApplyColorToSourceBuffer(0x8000, *(u16 *)0x05000000);
         BattleFx_StartBufferInterpolation(frames);
         WaitFrames(1);
-        QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+        QUEUE_DISPLAY_CONTROL(display->dispcnt | *(volatile u16 *)0x04000000);
         BattleFx_SetPrimaryBufferValue(0);
         return;
     case 2: {
@@ -141,7 +147,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
         Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
         WaitFrames(1);
-        QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+        QUEUE_DISPLAY_CONTROL(display->dispcnt | *(volatile u16 *)0x04000000);
         state->start = 0;
         state->end = 32;
         state->frames = frames;
@@ -155,7 +161,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         DisplayTransition_FillTilemapAndSolidTile(15);
         WaitFrames(1);
         Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateFrame, 0xc80);
-        QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+        QUEUE_DISPLAY_CONTROL(display->dispcnt | *(volatile u16 *)0x04000000);
         state->start = 0;
         state->end = 32;
         state->frames = frames;
@@ -183,5 +189,5 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         break;
     }
     }
-    QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);
+    QUEUE_DISPLAY_CONTROL(display->dispcnt | *(volatile u16 *)0x04000000);
 }

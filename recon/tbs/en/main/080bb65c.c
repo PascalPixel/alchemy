@@ -20,7 +20,13 @@
    16 is loaded before the 0x04000052 address, the tile/x bitfield inserts
    load both masks first and interleave the origin loads, the Resource_GetBuffer
    arguments are set r1 then r0, and the literal pool order differs.
-   Three structural hypotheses exhausted; do not re-sweep these mask spellings. */
+   Three structural hypotheses exhausted; do not re-sweep these mask spellings.
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 930 against the
+   old draft's 1090 with the declaration order above and the x offset
+   shifted into its own local; the search's best, 830, also wrote the second
+   OAM word through an index variable holding 1, which no programmer writes,
+   so it is not kept. Remaining: 15 register-only, 10 reordered, 1 inserted,
+   1 deleted. */
 #include "TYPES.H"
 
 struct SpriteAttr {
@@ -83,13 +89,14 @@ void Runtime_PushSlotEntry(void *entry, s32 value);
 
 s32 BattlePresentation_WaitForAdvance(void)
 {
-    struct AdvanceSprite sprite;
     struct AdvanceSprite *spr;
+    struct AdvanceSprite sprite;
     s32 frame;
     s32 slot;
-    s32 src;
     struct UiCursorOrigin *origin;
+    s32 src;
     struct UiCursorOffset *offset;
+    s32 offset_x;
 
     while (!UiWork_IsCompleteFar())
         WaitFrames(1);
@@ -106,7 +113,8 @@ loop:
     spr->oam.raw[0] = 0xa400;
     spr->oam.raw[1] = 0;
     spr->oam.attr.tile = Resource_GetBuffer(slot, src);
-    spr->oam.attr.x = origin->col * 8 + (offset->x >> 8) + 4;
+    offset_x = offset->x >> 8;
+    spr->oam.attr.x = origin->col * 8 + offset_x + 4;
     spr->oam.attr.y = Trig_Sin(Data_03001e40 << 12) / 32768 + origin->row * 8 + (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(spr, 240);
     if (!(Data_03001ae8 & 2) && !(Data_03001c94 & 0x303) && (frame <= 15 || !(Data_03001ae8 & 0x303))) {

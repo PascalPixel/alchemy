@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 1170 to 480 on the permuter's scorer
+   (0 is exact); remaining 21 register-only, 6 operand, 4 reordered. Kept
+   rewrites: 11x reorder independent statements, 8x swap commutative
+   operands, 5x reorder local declarations, 5x introduce a temporary, 3x
+   change loop form, 2x pointer arithmetic or indexing, 2x split or join a
+   compound assignment, 2x move an assignment into or out of a condition,
+   2x toggle register, 1x remove a temporary, 1x add a same-width cast, 1x
+   drop a same-width cast, 1x test truth or compare with zero. FAKEMATCH:
+   the permuter's temporaries, register hints and swapped operand orders
+   below only steer allocation and scheduling; no programmer would write
+   them, so they stay tagged until a natural spelling replaces them. */
 /* Draft, not exact (2026-09-28): 328 of 328 bytes, 83 differing lines
    (from 119). Crossfades the 33 slide images between BG2 and BG3, then
    restores the menu display. Hardware writes go through an inline taking an
@@ -39,42 +50,56 @@ static __inline__ void WriteHalf(volatile u16 *port, s32 value)
 
 s32 DisplayScroll_RunSlideshow(void)
 {
-    u32 slide;
-    s32 alpha;
-    s32 base;
+    register u32 slide;
     const u32 *resource;
+    s32 alpha;
+    s32 tmp;
+    register s32 base;
+    s32 tmp2;
+    void *tmp4;
 
     Data_03001d18 = 0;
     Data_03001f58 = 0;
+    tmp4 = (void *)0x0600f800;
     Data_03001ac4 = 0;
     Data_03001d08 = 0;
     Scheduler_ResetTaskTable();
-    Scheduler_AddOrUpdateCallback((s32)DisplayScroll_StepPositionEveryFourFrames, 0x480);
+    tmp2 = (s32)DisplayScroll_StepPositionEveryFourFrames;
+    Scheduler_AddOrUpdateCallback(tmp2, 0x480);
     WriteHalf((volatile u16 *)0x04000000, 0x40);
     DisplayScroll_BuildHblankWordTable((void *)0x06007800);
-    DisplayScroll_BuildHblankWordTable((void *)0x0600f800);
+    DisplayScroll_BuildHblankWordTable(tmp4);
+    tmp = 0x2844;
     Graphics_ClearCharacterBlockAndPalette(0);
     Graphics_ClearCharacterBlockAndPalette(1);
     WriteHalf((volatile u16 *)0x0400000c, 0x1f8a);
     WriteHalf((volatile u16 *)0x0400000e, 0xf83);
     WriteHalf((volatile u16 *)0x04000000, 0x1c40);
-    WriteHalf((volatile u16 *)0x04000050, 0x2844);
+    WriteHalf((volatile u16 *)0x04000050, tmp);
     DisplayScroll_InitObjectTable();
     WaitFrames(300);
+    slide = 0;
     resource = DisplayScroll_SlideResources;
-    for (slide = 0; slide <= 32; slide++) {
-        Graphics_LoadCharacterBlockAndPalette(*resource, (slide & 1) ^ 1);
-        base = 0xf00;
-        for (alpha = 1; alpha <= 16; alpha++) {
-            if (slide & 1)
-                WriteHalf((volatile u16 *)0x04000052, (alpha << 8) | (16 - alpha));
-            else
-                WriteHalf((volatile u16 *)0x04000052, base | alpha);
-            WaitFrames(4);
-            base -= 256;
-        }
-        WaitFrames(267);
-        resource++;
+    if (slide <= 32) {
+        do {
+            Graphics_LoadCharacterBlockAndPalette(*resource, 1 ^ (slide & 1));
+            alpha = 1;
+            base = 0xf00;
+            while (alpha <= 16) {
+                s32 tmp3;
+                tmp3 = 0 != (slide & 1);
+                if (tmp3)
+                    WriteHalf((volatile u16 *)0x04000052, (alpha << 8) | (16 - alpha));
+                else
+                    WriteHalf((volatile u16 *)0x04000052, base | alpha);
+                WaitFrames(4);
+                base -= 256;
+                ++alpha;
+            }
+            WaitFrames(267);
+            resource += 1;
+            slide++;
+        } while (slide <= 32);
     }
     WriteHalf((volatile u16 *)0x04000050, 0);
     WriteHalf((volatile u16 *)0x04000000, 0x1040);

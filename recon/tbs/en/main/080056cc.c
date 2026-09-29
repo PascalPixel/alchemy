@@ -5,7 +5,12 @@
  * counter recovers the total extent. Allocation and the first pool placement
  * remain different. A separate record-id snapshot enlarged the frame to 28
  * bytes; explicit retry-success goto and array-header trials changed the
- * block layout and were not retained. */
+ * block layout and were not retained.
+ * 2026-09-29 slice 4: with its function-pointer cast now parsed, the draft
+ * still does not compile against the current headers (an undeclared
+ * identifier at line 44 of the scratch copy), so alchemy permute could not
+ * score it.
+ */
 #include "save_state_family.h"
 
 s32 Func_080056cc(void)

@@ -40,6 +40,9 @@
  * here; because of it the reference has one more live value than this draft,
  * spills the script argument, and reloads the ring mask from the literal pool
  * at every use instead of holding it in a register.
+ * 2026-09-29 slice 4: the draft does not compile against the current
+ * headers (undeclared identifiers in UiText_BuildRenderEntries), so alchemy
+ * permute could not score it.
  */
 
 /* Companion of the ring write cursor: where the current message started. */

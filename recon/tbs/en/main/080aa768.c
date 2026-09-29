@@ -39,6 +39,13 @@
  * instead of r4/sp+0; frame is 4/8 and extra r9 is saved. STOP after the
  * corrected model and two follow-ups. Preserve the recovered semantics,
  * record boundaries and goto-loop fact; no blind allocation sweep.
+ * 2026-09-29 (alchemy permute scorer): the draft scored 9395 (114
+ * register-only, 5 stack-only, 59 operand, 12 reordered, 40 inserted, 29
+ * deleted). This body
+ * is the permuter's best after a 300-second search (about 40,000 candidates):
+ * 7080 (148 register-only, 5 stack-only, 33 operand, 11 reordered,
+ * 27 inserted, 23 deleted). Its rewrites are search output, not a
+ * reading of the ROM.
  */
 #include "TYPES.H"
 
@@ -140,19 +147,21 @@ s32 Unnamed_080aa768(void)
     s32 done;
     s32 i;
 
-    menu = gMenuWork;
     result = 0;
     ret = 0;
     done = 0;
+    menu = gMenuWork;
     menu->icon->state = 13;
     menu->icon->timer = 0;
     Menu_OpenBackdropScreen();
     WaitFrames(1);
     state = 2;
-    do {
+    while (1) {
         switch (state) {
+            s32 tmp;
+            s32 tmp2;
         case 0:
-            if (result < 0) {
+            if (0 > result) {
                 ret = -1;
                 done = 1;
             }
@@ -208,9 +217,14 @@ s32 Unnamed_080aa768(void)
             menu->owner = menu->owners[menu->column[0]];
             menu->source_owner = menu->owners[menu->column[0]];
             FourObjectMotion_SetSlotPosition(0, menu->column[0] * 56 + 48, 54, 0);
-            result = Func_080ab5e4(1);
-            for (i = 0; i < menu->owner_count; i++)
+            tmp2 = Func_080ab5e4(1);
+            tmp = tmp2;
+            result = tmp;
+            i = 0;
+            while (i < menu->owner_count) {
                 menu->row_y[i] += 8;
+                i += 1;
+            }
             if (result == -2)
                 done = 1;
             if (result < 0) {
@@ -253,8 +267,7 @@ s32 Unnamed_080aa768(void)
             /* fall through */
         case 13:
             Audio_PlayCue(126);
-            result = Func_080771d0(menu->source_owner, menu->element[0],
-                                  menu->number[0], menu->target_owner);
+            result = Func_080771d0(menu->source_owner, menu->element[0], menu->number[0], menu->target_owner);
             Owner_RecalculateStatsFar(menu->source_owner);
             Owner_RecalculateStatsFar(menu->target_owner);
             menu->icon->state = 13;
@@ -300,7 +313,7 @@ s32 Unnamed_080aa768(void)
                 state = 2;
                 break;
             }
-            if (menu->flags & 1)
+            if ((menu->flags & 1) != 0)
                 state = 8;
             else if (menu->flags & 2)
                 state = 7;
@@ -317,17 +330,19 @@ s32 Unnamed_080aa768(void)
             Audio_PlayCue(139);
             Djinn_ActivateFar(menu->source_owner, menu->element[0], menu->number[0]);
             result = Trade_RemoveOfferFar(menu->source_owner, menu->element[0], menu->number[0]);
-refresh_owner:
+        refresh_owner:
+            state = 2;
             Owner_RecalculateStatsFar(menu->source_owner);
             menu->icon->state = 13;
             RenderOutput_ClearListFar(menu->window);
             menu->icon->state = 1;
-            state = 2;
             break;
         default:
             done = 1;
             break;
         }
-    } while (!done);
+        if (done != 0)
+            break;
+    }
     return ret;
 }

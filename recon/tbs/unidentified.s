@@ -56,6 +56,8 @@ Data_08007c10:
 	.section .unidentified.08007c64,"a"
 	.incbin "baserom.gba", 0x00007c64, 0x0000139c
 	.section .unidentified.080092b8,"a"
+	.global ResourceSlot_ConversionTables
+ResourceSlot_ConversionTables:
 	.incbin "baserom.gba", 0x000092b8, 0x00000500
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
@@ -64,6 +66,8 @@ Runtime_ByteRemapTable:
 	.global Object_ShadowTiles
 Object_ShadowTiles:
 	.incbin "baserom.gba", 0x00012f20, 0x00000080
+	.global ResourceSlot_NumberTable
+ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x00012fa0, 0x000001ac
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
@@ -85,7 +89,10 @@ WorldMap_TerrainBehaviorTable:
 	.incbin "baserom.gba", 0x0001353c, 0x00000048
 	.global Battle_FormationPlacementScale
 Battle_FormationPlacementScale:
-	.incbin "baserom.gba", 0x00013584, 0x0000000c
+	.incbin "baserom.gba", 0x00013584, 0x00000008
+	.global ObjectDispatch_DefaultScript
+ObjectDispatch_DefaultScript:
+	.incbin "baserom.gba", 0x0001358c, 0x00000004
 	.global ObjectDispatch_Table0Script
 ObjectDispatch_Table0Script:
 	.incbin "baserom.gba", 0x00013590, 0x00000018
@@ -155,7 +162,10 @@ RomBytes_080317e4:
 	.incbin "baserom.gba", 0x000317e4, 0x00000080
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
-	.incbin "baserom.gba", 0x00031864, 0x000009c0
+	.incbin "baserom.gba", 0x00031864, 0x000005c0
+	.global UiText_SecondGlyphs
+UiText_SecondGlyphs:
+	.incbin "baserom.gba", 0x00031e24, 0x00000400
 	.global Data_08032224
 Data_08032224:
 	.incbin "baserom.gba", 0x00032224, 0x000020d4

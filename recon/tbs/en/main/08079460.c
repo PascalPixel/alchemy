@@ -5,7 +5,18 @@
    frame and walks the name by index with the test at the loop bottom, and
    its equipment loop keeps the count in r8 with item offsets in sl and ip;
    a named buffer pointer local alone makes it worse (184).
-   Func_08015028 copies a message into a u16 buffer. */
+   UiText_DecodeMessageFar copies a message into a u16 buffer.
+   2026-09-29 (alchemy permute scorer): the draft scored 4037 (28
+   register-only, 2 stack-only, 15 operand, 11 reordered, 13 inserted, 16
+   deleted). The message copy is the unlabelled far-call slot at 08015028,
+   now named UiText_DecodeMessageFar in SYSTEM/FAR_CALL/WINDOW.S and in the
+   listing. This body is the permuter's best after a 300-second search
+   (50,000 candidates): 1805 (12 register-only, 15 operand, 7 reordered, 6
+   inserted, 4 deleted), with the name loop entered through an explicit
+   first-character test and the decode call after the stat copies. Its
+   temporaries are search noise; the frame and name-buffer spill described
+   above remain.
+ */
 
 #include "TYPES.H"
 
@@ -64,7 +75,7 @@ struct BattleUnitRecord {
 extern struct EnemyDefinition Data_08080ec8[];
 
 struct BattleUnitRecord *Owner_GetState(s32 owner);
-void Func_08015028(s32 message, u16 *buffer, s32 length);
+void UiText_DecodeMessageFar(s32 message, u16 *buffer, s32 length);
 u32 Owner_BuildDigitTiles(s32 owner, void *digits);
 void Owner_RecalculateStats(s32 owner);
 
@@ -77,11 +88,16 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     struct BattleUnitRecord *unit;
     struct EnemyDefinition *enemy;
     u16 name[15];
-    u32 index;
     s32 n;
-    s32 count;
+    u32 index;
     s32 k;
     s32 q;
+    s32 count;
+    struct EnemyDefinition *tmp3;
+    u8 tmp;
+    u8 tmp4;
+    u32 tmp2;
+    u8 tmp5;
 
     index = enemy_id - 8;
     if (unit_id <= 127)
@@ -92,9 +108,10 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
         return 0;
     unit = Owner_GetState(unit_id);
     IwramClear(unit, 332);
-    if (index > 164)
+    if (164 < index)
         index = 0;
-    enemy = &Data_08080ec8[index];
+    tmp3 = Data_08080ec8;
+    enemy = &tmp3[index];
     unit->level = enemy->level;
     unit->base_hp = enemy->hp;
     unit->hp = enemy->hp;
@@ -109,38 +126,43 @@ s32 BattleUnit_Assign(s32 unit_id, s32 enemy_id, s32 suffix)
     unit->agility = enemy->agility;
     unit->luck = enemy->luck;
     unit->turns = enemy->turns;
-    unit->stat_20 = enemy->stat_1c;
-    unit->stat_21 = enemy->stat_1d;
-    Func_08015028(index + 0x28f, name, 15);
+    tmp4 = enemy->stat_1c;
+    unit->stat_20 = tmp4;
+    tmp5 = enemy->stat_1d;
+    tmp2 = 0x28f + index;
+    unit->stat_21 = tmp5;
     n = 0;
-    while (name[n] != 0) {
-        unit->name[n] = name[n];
-        n++;
-        if (n > 13)
-            break;
+    UiText_DecodeMessageFar(tmp2, name, 15);
+    if (name[n] != 0) {
+        do {
+            unit->name[n] = name[n];
+            n++;
+            if (n > 13)
+                break;
+        } while (name[n]);
     }
     if (suffix <= 8) {
-        unit->name[n] = suffix + '1';
+        unit->name[n] = '1' + suffix;
         n++;
     }
     unit->name[n] = 0;
     unit->name_flags = 0;
     count = 0;
-    for (k = 0; k < 4; k++) {
-        if (enemy->items[k] == 0 || enemy->counts[k] == 0)
+    for (k = 0; 4 > k; k++) {
+        if (enemy->items[k] == 0 || !enemy->counts[k])
             continue;
-        for (q = enemy->counts[k]; q != 0; q--) {
-            if (count <= 14)
+        for (q = enemy->counts[k]; q; q--) {
+            if (14 >= count)
                 unit->equipment[count++] = enemy->items[k];
         }
     }
     unit->rewards = enemy->rewards;
     unit->class_id = 0;
-    unit->enemy = enemy_id;
-    Owner_BuildDigitTiles(unit_id, unit->digits);
+    unit[0].enemy = enemy_id;
+    Owner_BuildDigitTiles(unit_id, unit[0].digits);
     Owner_RecalculateStats(unit_id);
     unit->side = 1;
-    if (unit->enemy <= 171 && unit->enemy >= 158)
+    if (171 >= (tmp = unit->enemy) && 158 <= unit->enemy)
         unit->side = 2;
     return 1;
 }

@@ -3,14 +3,18 @@
    the stack (called through r4), the divide through fp (0x030003f0) and the
    square root through 0x030001d8. The reference spills dx/dy/dz to
    sp+28/24/20, ux to sp+16 and keeps out in r9, the divide in fp; here the
-   allocation differs throughout. */
+   allocation differs throughout.
+   2026-09-29: the divide and square root go through Iwram_UnsignedDivide
+   and Iwram_Sqrt. alchemy permute took the score from 2833 to 2375 (37
+   register-only, 6 operand, 20 reordered, 5 inserted, 3 deleted); the
+   rerun candidate, minimized, keeps five changed regions whose word
+   temporaries (tmp, tmp2, tmp3) are the permuter's and would need
+   natural spellings before adoption. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IWRAM_CALL.H"
 
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
-typedef s32 (*SqrtFn)(s32 value);
-typedef u32 (*DivFn)(u32 numerator, u32 denominator);
 
 s32 FixedSqrt(s32 value);
 
@@ -25,25 +29,32 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
     s32 scale;
     s32 ex, ez;
     u32 code[7];
+    s32 tmp;
+    s32 tmp2;
+    s32 tmp3;
 
     dot = (Dot3Fn)code;
     Dma_Set((void *)0x08007994, code, 0x84000007, (volatile u32 *)0x040000d4);
     dx = target[0] - eye[0];
-    dy = target[1] - eye[1];
+    tmp2 = target[1] - eye[1];
+    dy = tmp2;
+    tmp = dy >> 8;
     dz = target[2] - eye[2];
-    scale = -(((DivFn)0x030003f0)(0x80000000, ((SqrtFn)0x030001d8)(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8))) >> 15);
+    scale = -(Iwram_UnsignedDivide(0x80000000, Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, tmp, dz >> 8, dz >> 8))) >> 15);
     dx = Iwram_MulQ16(dx, scale);
     dy = Iwram_MulQ16(dy, scale);
     dz = Iwram_MulQ16(dz, scale);
-    uz = -dx;
-    if (0x10000 - Iwram_MulQ16(dy, dy) > 0)
-        scale = ((DivFn)0x030003f0)(0x80000000, FixedSqrt(0x10000 - Iwram_MulQ16(dy, dy))) << 1;
+    tmp3 = -dx;
+    uz = tmp3;
+    tmp3 = (s32)0;
+    if (0x10000 - Iwram_MulQ16(dy, dy) > tmp3)
+        scale = Iwram_UnsignedDivide(0x80000000, FixedSqrt(0x10000 - Iwram_MulQ16(dy, dy))) << 1;
     ux = Iwram_MulQ16(dz, scale);
     uz = Iwram_MulQ16(uz, scale);
     vx = Iwram_MulQ16(dy, uz);
     vy = Iwram_MulQ16(dz, ux) - Iwram_MulQ16(dx, uz);
     vz = -Iwram_MulQ16(dy, ux);
-    scale = ((DivFn)0x030003f0)(0x80000000, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
+    scale = Iwram_UnsignedDivide(0x80000000, FixedSqrt(dot(vx, vx, vy, vy, vz, vz))) << 1;
     vx = Iwram_MulQ16(vx, scale);
     vy = Iwram_MulQ16(vy, scale);
     vz = Iwram_MulQ16(vz, scale);
@@ -61,6 +72,7 @@ void Graphics_PrepareTransfer(s32 *eye, s32 *target, s32 *out)
     out[2] = dx;
     out[5] = dy;
     out[8] = dz;
-    out[11] = -dot(ex, dx, ey, dy, ez, dz);
+    tmp2 = -dot(ex, dx, ey, dy, ez, dz);
+    out[11] = tmp2;
 }
 

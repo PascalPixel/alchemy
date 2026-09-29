@@ -1,3 +1,10 @@
+/* 2026-09-29: five minutes of permutation reached 7394 from 16667 through
+ * 71 rewrites; not kept, since the owner (4888 bytes) is far from exact and
+ * its messages 0xb98 and 0xc40 are still Value_ symbols. */
+/* 2026-09-29: the address macros for the menu, window and key cells are now
+ * extern declarations of the build's names (gMenuWork, gWindowWork,
+ * gKeysHeld, gKeysRepeat, gKeyState, Data_03001af8) and callees are
+ * renamed, so the draft compiles again; alchemy permute scores 16667. */
 /* NONMATCHING: shared callee return types audited on 2026-09-26.
  * 4872 of 4888 bytes, 2287 differing halfwords, 1169 aligned edits.
  * Canonical declarations are retained; the remaining source model is not exact. */
@@ -101,26 +108,26 @@ enum DjinnTutorialMessage {
 #define DJINN_MESSAGE(n) ((s32)&Value_00000b98 + (n))
 #define TUTORIAL_MESSAGE(n) ((s32)&Value_00000c40 + (n))
 
-#define gDjinnMenu (*(struct DjinnMenuState **)ADDR_03001F2C)
-#define gUiWork (*(u8 **)ADDR_03001E8C)
-#define gKeysHeld (*(u32 *)ADDR_03001AE8)
-#define gKeysShoulderLatch (*(u32 *)ADDR_03001AF8)
-#define gKeysRepeat (*(u32 *)ADDR_03001B04)
-#define gKeysPressed (*(u32 *)ADDR_03001C94)
+extern struct DjinnMenuState *gMenuWork;
+extern u8 *gWindowWork;
+extern u32 gKeysHeld;
+extern u32 Data_03001af8;
+extern u32 gKeysRepeat;
+extern u32 gKeyState;
 extern const char Data_080af28c[];
 extern u8 gGameState[];
 
 struct DjinnMenuOwner *Runtime_GetObject(s32 owner);
 void BattleUnit_Recalculate(s32 owner);
-s32 Func_08077210(s32 owner, s32 element, s32 number);
+s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 number);
 s32 Func_08077208(s32 owner, s32 element, s32 number);
-s32 Func_080771b0(s32 owner, s32 element, s32 number);
+s32 Djinn_ActivateFar(s32 owner, s32 element, s32 number);
 s32 Func_080771b8(s32 owner, s32 element, s32 number);
-void Func_080771c0(s32 owner, s32 element, s32 number);
-void Func_080771c8(s32 owner, s32 element, s32 number);
+void Trade_RemoveOfferFar(s32 owner, s32 element, s32 number);
+void Trade_AddOfferFar(s32 owner, s32 element, s32 number);
 void UiWindow_Commit(s32 window);
-void Func_08015278(s32 window);
-void Func_08015068(s32 window, s32 x, s32 y, s32 width, s32 height);
+void RenderOutput_ClearListFar(s32 window);
+void UiWindow_ClearInteriorTilesFar(s32 window, s32 x, s32 y, s32 width, s32 height);
 void UiText_DrawAt(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawStringAtOffsetFar(const char *text, s32 window, s32 x, s32 y);
@@ -133,11 +140,11 @@ void UiWindow_Close(s32 work, s32 mode);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
 void UiMenu_PositionCursor(s32 x, s32 y);
-s32 Func_080a1ac0(s32 x, s32 y);
+s32 UiMenu_SlideCursor(s32 x, s32 y);
 s32 Menu_GetModuloOfSum(s32 value, s32 count);
 s32 Menu_DrawAtWindowOffset(s32 window, s32 x, s32 y, s32 width, s32 kind, s32 tile);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 kind);
-void Func_080aafb8(struct DjinnMenuLists *lists);
+void DjinnMenu_DrawElementList(struct DjinnMenuLists *lists);
 s32 Djinn_MarkBalancedEntries(u8 *balanced, s32 self);
 s32 FourObjectMotion_SetSlotPosition(s32 slot, s32 x, s32 y, s32 hidden);
 void FourObjectMotion_SetSlotPhase(s32 slot, s32 phase);
@@ -177,7 +184,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
     s32 step;
     s8 *status;
 
-    state = gDjinnMenu;
+    state = gMenuWork;
     lists = state->lists;
     redraw = 1;
     cursor = state->cursor[mode];
@@ -193,7 +200,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         status[i] = 0;
 
     if (mode == 0) {
-        Func_080aafb8(lists);
+        DjinnMenu_DrawElementList(lists);
         for (i = 0; i < state->party_count; i++) {
             if (lists->counts[i] == 0)
                 status[i] = 4;
@@ -283,9 +290,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                         UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_SET_ALL), state->message_window, 0, 0);
                     else
                         UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_ALL_STANDBY), state->message_window, 0, 0);
-                    if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                    if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
                         || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
-                        if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
+                        if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                         else
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
@@ -299,9 +306,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                         FourObjectMotion_SetSlotPhase(mode, 0);
                 } else {
                     UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_CHOOSE), state->message_window, 0, 0);
-                    if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                    if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
                         || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
-                        if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
+                        if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
                             UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_SET_HELP), state->message_window, 0, 16);
                             FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                         } else {
@@ -318,9 +325,9 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                         FourObjectMotion_SetSlotPhase(mode, 0);
                 }
             } else {
-                if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
                     || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))) {
-                    if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
+                    if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
                         FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 1);
                     else
                         FourObjectMotion_ReplaceSlot(mode, DJINN_ELEMENT(djinn), 2);
@@ -332,15 +339,15 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 if (refresh & 2)
                     FourObjectMotion_SetSlotPhase(mode, 0);
             }
-            Func_08015278(state->djinn_window);
+            RenderOutput_ClearListFar(state->djinn_window);
             if (sel != -1) {
                 UiText_DrawAt(DJINN_MESSAGE(DJINN_MSG_UNLEASH_EFFECT), state->djinn_window, 0, 80);
-                Func_08015068(state->djinn_window, 0, 96, 224, 104);
+                UiWindow_ClearInteriorTilesFar(state->djinn_window, 0, 96, 224, 104);
                 UiText_DrawAt(DJINN_ELEMENT(djinn) * 20 + DJINN_NUMBER(djinn) + 0x666, state->djinn_window, 0, 96);
             }
             if (!(buf[x] & 1))
                 Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 14);
-            gUiWork[RENDER_DIRTY_OFS] = 1;
+            gWindowWork[RENDER_DIRTY_OFS] = 1;
         }
 
         if (buf[x] & 1)
@@ -348,7 +355,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         else
             UiMenu_PositionCursor(x * 56 - 8, y * 8 + 60);
         WaitFrames(1);
-        if (!(gKeysHeld & 0x100) || (gKeysShoulderLatch & 0x100)) {
+        if (!(gKeysHeld & 0x100) || (Data_03001af8 & 0x100)) {
             if (groupMode)
                 redraw = 1;
             groupMode = 0;
@@ -356,7 +363,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
         }
 
         repeat = gKeysRepeat;
-        pressed = gKeysPressed;
+        pressed = gKeyState;
         step = lists->tutorial_step;
         if (step != 0) {
             lists->tutorial_timer++;
@@ -364,7 +371,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             repeat = 0;
             switch (step) {
             case 28:
-                while (!(gKeysPressed & 1)) {
+                while (!(gKeyState & 1)) {
                     UiMenu_PositionCursor(150, 26);
                     WaitFrames(1);
                 }
@@ -378,20 +385,20 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
                     UiWindow_Close(work, 1);
-                    Func_080aafb8(lists);
+                    DjinnMenu_DrawElementList(lists);
                     WaitFrames(1);
                     work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_SET_AGAIN), 9, 9, 1);
                     gGameState[0x20c] = 1;
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
                     UiWindow_Close(work, 1);
-                    Func_080aafb8(lists);
+                    DjinnMenu_DrawElementList(lists);
                     lists->tutorial_timer = 0;
                     Func_080b50f8();
                     Func_080b50f8();
                     Func_080b50f8();
                     Func_080771b8(0, 0, 0);
-                    Func_080771c8(0, 0, 0);
+                    Trade_AddOfferFar(0, 0, 0);
                     BattleUnit_Recalculate(0);
                     repeat = 2;
                     pressed = 2;
@@ -404,7 +411,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
                     UiWindow_Close(work, 1);
-                    Func_080aafb8(lists);
+                    DjinnMenu_DrawElementList(lists);
                     lists->tutorial_timer = 0;
                     lists->tutorial_step = 2;
                 }
@@ -437,7 +444,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
                     UiWindow_Close(work, 1);
-                    Func_080aafb8(lists);
+                    DjinnMenu_DrawElementList(lists);
                     lists->tutorial_timer = 0;
                     lists->tutorial_step = 8;
                 }
@@ -462,35 +469,35 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 if (lists->tutorial_timer == 60) {
                     gGameState[0x20c] = 1;
                     work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_POWERS), 9, 9, 1);
-                    Func_080a1ac0(2, 146);
+                    UiMenu_SlideCursor(2, 146);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
-                    while (!(gKeysPressed & 1)) {
+                    while (!(gKeyState & 1)) {
                         UiMenu_PositionCursor(2, 146);
                         WaitFrames(1);
                     }
                     UiWindow_Close(work, 1);
-                    Func_080aafb8(lists);
+                    DjinnMenu_DrawElementList(lists);
                     WaitFrames(1);
                     work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_UNLEASH), 9, 9, 1);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
-                    while (!(gKeysPressed & 1)) {
+                    while (!(gKeyState & 1)) {
                         UiMenu_PositionCursor(2, 146);
                         WaitFrames(1);
                     }
                     UiWindow_Close(work, 1);
-                    Func_080aafb8(lists);
+                    DjinnMenu_DrawElementList(lists);
                     WaitFrames(1);
                     work = UiWork_Create(TUTORIAL_MESSAGE(TUTORIAL_MSG_DEMONSTRATE), 9, 9, 1);
                     while (UiWork_IsCompleteFar() == 0)
                         WaitFrames(1);
-                    while (!(gKeysPressed & 1)) {
+                    while (!(gKeyState & 1)) {
                         UiMenu_PositionCursor(2, 146);
                         WaitFrames(1);
                     }
                     UiWindow_Close(work, 1);
-                    Func_080aafb8(lists);
+                    DjinnMenu_DrawElementList(lists);
                     WaitFrames(1);
                     lists->tutorial_timer = 0;
                     lists->tutorial_step = 16;
@@ -530,15 +537,15 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                 continue;
             }
             ok = 0;
-            if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+            if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
                 || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
                 ok = 1;
             groupMode = 1;
-            gKeysShoulderLatch = 0;
+            Data_03001af8 = 0;
             if (ok == 0) {
                 Audio_PlayCue(114);
-                Func_08015278(state->djinn_window);
-                Func_08015068(state->djinn_window, 0, 80, 216, 104);
+                RenderOutput_ClearListFar(state->djinn_window);
+                UiWindow_ClearInteriorTilesFar(state->djinn_window, 0, 80, 216, 104);
                 UiText_DrawMessageAt(DJINN_MESSAGE(DJINN_MSG_NOW_RECOVERING), state->djinn_window, 0, 96);
                 redraw = 1;
                 continue;
@@ -546,14 +553,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
             if (djinn & 0x8000) {
                 Audio_PlayCue(175);
                 Func_080771b8(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
-                Func_080771c8(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
+                Trade_AddOfferFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
             } else {
                 Audio_PlayCue(139);
-                Func_080771b0(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
-                Func_080771c0(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
+                Djinn_ActivateFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
+                Trade_RemoveOfferFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn));
             }
             BattleUnit_Recalculate(DJINN_OWNER(djinn));
-            Func_080aafb8(lists);
+            DjinnMenu_DrawElementList(lists);
             redraw = 1;
         }
         if (mode == 0 && (pressed & 0x200)) {
@@ -569,14 +576,14 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                     continue;
                 }
                 ok = 0;
-                if (Func_08077210(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
+                if (Trade_CanOfferDjinnFar(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn))
                     || Func_08077208(DJINN_OWNER(djinn), DJINN_ELEMENT(djinn), DJINN_NUMBER(djinn)))
                     ok = 1;
             }
             if (ok == 0) {
                 Audio_PlayCue(114);
-                Func_08015278(state->djinn_window);
-                Func_08015068(state->djinn_window, 0, 80, 216, 104);
+                RenderOutput_ClearListFar(state->djinn_window);
+                UiWindow_ClearInteriorTilesFar(state->djinn_window, 0, 80, 216, 104);
                 UiText_DrawMessageAt(DJINN_MESSAGE(DJINN_MSG_NOW_RECOVERING), state->djinn_window, 0, 96);
                 continue;
             }
@@ -618,25 +625,25 @@ s32 DjinnMenu_SelectDjinn(s32 mode)
                         s32 usable;
 
                         usable = 0;
-                        if (Func_08077210(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry))
+                        if (Trade_CanOfferDjinnFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry))
                             || Func_08077208(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry)))
                             usable = 1;
                         if (usable) {
                             if (setAll) {
                                 if (!(entry & 0x8000)) {
-                                    Func_080771b0(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
-                                    Func_080771c0(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
+                                    Djinn_ActivateFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
+                                    Trade_RemoveOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
                                     BattleUnit_Recalculate(DJINN_OWNER(entry));
                                 }
                             } else if (entry & 0x8000) {
                                 Func_080771b8(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
-                                Func_080771c8(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
+                                Trade_AddOfferFar(DJINN_OWNER(entry), DJINN_ELEMENT(entry), DJINN_NUMBER(entry));
                                 BattleUnit_Recalculate(DJINN_OWNER(entry));
                             }
                         }
                     }
                 }
-                Func_080aafb8(lists);
+                DjinnMenu_DrawElementList(lists);
                 redraw = 1;
             } else {
                 Menu_DrawAtWindowOffset(state->djinn_window, x * 7 + 1, y + 2, 6, 1, 15);

@@ -1,3 +1,17 @@
+/* 2026-09-29 alchemy permute: score 1385 to 1360 on the permuter's scorer
+   (0 is exact); remaining 29 register-only, 19 operand, 10 reordered, 1
+   inserted, 1 deleted. Kept rewrites: 1x reorder independent statements,
+   1x introduce a temporary. FAKEMATCH: the permuter's temporaries,
+   register hints and swapped operand orders below only steer allocation
+   and scheduling; no programmer would write them, so they stay tagged
+   until a natural spelling replaces them. */
+/* 2026-09-29 alchemy permute: score 1795 to 1385 on the permuter's scorer
+   (0 is exact); remaining 30 register-only, 18 operand, 6 reordered, 3
+   inserted, 2 deleted. Kept rewrites: 1x swap commutative operands, 1x
+   introduce a temporary. FAKEMATCH: the permuter's temporaries, register
+   hints and swapped operand orders below only steer allocation and
+   scheduling; no programmer would write them, so they stay tagged until a
+   natural spelling replaces them. */
 /* NONMATCHING: 408 / 404 bytes, 176 differing halfwords, 92 aligned edits.
  * 2026-09-26 bounded H1: explicit 32-byte work ownership for the two
  * positions, base distance and squared leash. Whole owner [0800dd70,0800df04)
@@ -56,8 +70,10 @@ s32 Object_Wander(struct ObjectRuntime *object)
     s32 tries;
     s32 dx;
     s32 dz;
+    s32 *tmp;
 
-    args = &object->script[object->step + 1];
+    tmp = object->script;
+    args = &tmp[object->step + 1];
     work.base = *args++;
     range = *args++;
     work.limit = *args / 0x10000;
@@ -66,6 +82,7 @@ s32 Object_Wander(struct ObjectRuntime *object)
 retry:
     tries++;
     if (tries <= 7) {
+        s32 tmp2;
         work.pos.x = object->x;
         work.pos.y = object->y;
         work.pos.z = object->z;
@@ -94,8 +111,9 @@ retry:
         if (Func_080120dc(object, &work.probe) != 0)
             goto retry;
         dx = work.pos.x / 0x10000 - object->action;
+        tmp2 = dx * dx;
         dz = work.pos.z / 0x10000 - object->unknown_66;
-        if (dx * dx + dz * dz > work.limit)
+        if (dz * dz + tmp2 > work.limit)
             goto retry;
         goto found;
     }

@@ -1,9 +1,4 @@
-/* Draft of resource_3c7 0x0200904c..0x020091dc (400 bytes with pool),
- * Scene_Initialize, the overlay's first entry; the listing keeps the rows.
- * Remaining difference: the reference compares the scene with the sanctum's
- * and the house's ids 0xb3 and 0xb4 loaded from its literal pool, link-time
- * values; integer scenes are immediates (388 bytes, 268 differ from +0xe). */
-#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RARIBERO_HEYA/HEYA.H"
+#include "HEYA.H"
 
 enum {
     ENTRANCE_SANCTUM_RETURN = 12,
@@ -24,8 +19,6 @@ enum {
 enum {
     FLAG_AERIE_EVENTS_DONE = 0x9a7
 };
-
-/* The sanctum and the house, fixed when the overlay is linked. */
 
 /* The action table actor 14 takes while flag 0x300 is set. */
 extern const u8 gRariberoPoseAction[];
@@ -49,7 +42,7 @@ s32 Scene_Initialize(void)
     }
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     scene = gGameState.scene;
-    if (scene == 0xb3) {
+    if (scene == (s32)&SceneId_RariberoHeya1) {
         actor = Actor_Get(ACTOR_SANCTUM_FIRST);
         actor->priority_flags = 0;
         actor->collision_flags |= 4;
@@ -69,7 +62,7 @@ s32 Scene_Initialize(void)
             gGameState.saved_entrance = entrance;
         }
     }
-    if (gGameState.scene == 0xb4) {
+    if (gGameState.scene == (s32)&SceneId_RariberoHeya2) {
         actor = Actor_Get(ACTOR_HOUSE_RESIDENT);
         actor->collision_flags |= 4;
         actor->priority_flags = 0;
@@ -78,7 +71,7 @@ s32 Scene_Initialize(void)
             Actor_EnableActionCallback(14, gRariberoPoseAction);
         }
         if (gGameState.entrance == ENTRANCE_HOUSE_REPORT) {
-            Scene_RunPrimaryScript();
+            FieldScene_RunPrimaryScript();
             Actor_SetActionCallback(Actor_Get(ACTOR_HOUSE_REPORT_FIRST), 6);
             Actor_SetActionCallback(Actor_Get(ACTOR_HOUSE_REPORT_SECOND), 6);
             gGameState.entrance = ENTRANCE_HOUSE_AFTER_REPORT;

@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 3186 to 2646 on the permuter's scorer
+   (0 is exact); remaining 38 register-only, 21 stack-only, 6 operand, 18
+   reordered, 11 inserted, 1 deleted. Kept rewrites: 9x reorder independent
+   statements, 6x swap commutative operands, 6x reorder local declarations,
+   6x test truth or compare with zero, 5x introduce a temporary, 3x remove
+   a temporary, 3x change loop form, 3x pointer arithmetic or indexing, 2x
+   split or join a compound assignment, 2x move an assignment into or out
+   of a condition, 2x toggle register. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
 #include "TYPES.H"
 
 /* main:080a8604, whole 768-byte owner through 080a8904.
@@ -83,41 +94,43 @@ s32 Func_080771f8(s32 unit, s32 element);
 void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
 {
     struct MenuState *state;
+    struct StatusUnit *status;
     s32 has_djinn;
     s32 total;
-    struct StatusUnit *status;
+    register s32 count;
     s32 row;
+    register s32 text;
     s32 keep;
-    s32 count;
     s32 y;
-    s32 text;
     s32 power_x;
     s32 level_x;
     u8 ailments[8];
+    struct MenuState *tmp2;
 
-    state = gMenuWork;
+    tmp2 = gMenuWork;
+    state = tmp2;
     total = Party_SumDjinnCountsFar(-1);
     /* FAKEMATCH: spell the reference's branchless nonzero encoding. */
     has_djinn = (u32)(-total | total) >> 31;
     status = Owner_GetStateFar(unit);
     row = 7;
-    if ((mode & 0xff) != 1)
+    if ((0xff & mode) != 1)
         row = 10;
     state->cursor->state = 1;
     ItemMenu_DrawOwnerStatus(window, unit, mode);
     CharacterMenu_BuildAvailability(ailments, 1, unit);
     CharacterMenu_UpdateSelectionIcons(ailments);
     keep = mode & 0x100;
-    if (keep == 0)
+    if (!(keep != 0))
         UiWindow_ClearInteriorTilesFar(window, 0, 40, 96, 96);
     count = 0;
-    if (ailments[0] != 0) {
+    if (ailments[0]) {
         UiText_DrawCharacterAtOffsetFar(0xbd5, window, 16, 40);
         count = 1;
     }
-    if (ailments[1] != 0) {
+    if (ailments[1]) {
         UiText_DrawCharacterAtOffsetFar(0xbd6, window, 16, count * 16 + 40);
-        count++;
+        count += 1;
     }
     if (ailments[2] != 0) {
         UiText_DrawCharacterAtOffsetFar(0xbd7, window, 16, count * 16 + 40);
@@ -129,7 +142,7 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
     }
     if (ailments[4] != 0) {
         UiText_DrawCharacterAtOffsetFar(0xbd9, window, 16, count * 16 + 40);
-        count++;
+        count += 1;
     }
     if (count == 0)
         UiText_DrawCharacterAtOffsetFar(0xbd4, window, 0, 40);
@@ -142,6 +155,8 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiWindow_ClearInteriorTilesFar(window, 64, 56, 224, 96);
     }
     UiWork_SetParamNibbleFar(15);
+    level_x = 120;
+    count = 0;
     if (mode == 1 || has_djinn == 1) {
         UiWindow_SetTilemapEntryFar(window, 1, 15, row, 4);
         UiWindow_SetTilemapEntryFar(window, 2, 19, row, 4);
@@ -150,8 +165,8 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
     }
     if (has_djinn)
         UiText_DrawCharacterAtOffsetFar(0xafd, window, 64, row * 8 + 8);
-    if (mode == 1) {
-        if (!has_djinn)
+    if (1 == mode) {
+        if (!(0 != has_djinn))
             row--;
         y = row * 8;
         UiText_DrawStringAtOffsetFar(Menu_LvString, window, 64, y + 16);
@@ -160,20 +175,24 @@ void CharacterMenu_DrawStatusAilments(void *window, s32 unit, s32 mode)
         UiText_DrawCharacterAtOffsetFar(text + 1, window, 64, y + 32);
     }
     power_x = 104;
-    level_x = 120;
-    for (count = 0; count <= 3; count++) {
-        if (has_djinn)
-            UiText_DrawNumberInWindowFar(status->djinn_set[count], 1, window, level_x, row * 8 + 8);
-        if ((mode & 0xff) == 1) {
-            if (has_djinn) {
-                UiText_DrawNumberInWindowFar(status->djinn_total[count], 1, window, power_x, row * 8 + 8);
-                UiText_DrawStringInWindowFar(Data_080af230, window, level_x - 8, row * 8 + 8);
+    if (count <= 3) {
+        do {
+            if (has_djinn != 0)
+                UiText_DrawNumberInWindowFar(*(status->djinn_set + count), 1, window, level_x, row * 8 + 8);
+            if ((mode & 0xff) == 1) {
+                s32 tmp;
+                tmp = level_x - 8;
+                if (has_djinn) {
+                    UiText_DrawNumberInWindowFar(status->djinn_total[count], 1, window, power_x, 8 + row * 8);
+                    UiText_DrawStringInWindowFar(Data_080af230, window, level_x - 8, 8 + row * 8);
+                }
+                UiText_DrawNumberInWindowFar(Func_080771f8(unit, count), 2, window, tmp, row * 8 + 16);
+                UiText_DrawNumberInWindowFar(status->element_stats[count].power, 3, window, power_x, row * 8 + 24);
+                UiText_DrawNumberInWindowFar(status[0].element_stats[count].resistance, 3, window, power_x, row * 8 + 32);
             }
-            UiText_DrawNumberInWindowFar(Func_080771f8(unit, count), 2, window, level_x - 8, row * 8 + 16);
-            UiText_DrawNumberInWindowFar(status->element_stats[count].power, 3, window, power_x, row * 8 + 24);
-            UiText_DrawNumberInWindowFar(status->element_stats[count].resistance, 3, window, power_x, row * 8 + 32);
-        }
-        power_x += 32;
-        level_x += 32;
+            count++;
+            power_x += 32;
+            level_x += 32;
+        } while (count <= 3);
     }
 }

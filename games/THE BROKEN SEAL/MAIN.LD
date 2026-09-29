@@ -1085,7 +1085,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/BUILD_AVAILABILITY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/RANGE_PAGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/SELECT_ACTION.o"(.text)
-        "*/recon/tbs/raw/080a9370.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/ACTION_RETURN_TRUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/DRAW_PREPARED_PSYNERGY_ICONS.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.080a939e)
         "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/DRAW_EQUIP_PAGE.o"(.text)

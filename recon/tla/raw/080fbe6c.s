@@ -69,7 +69,7 @@ Func_080fbe6c:
 	ands	r1, r3
 	bl	Func_080fad48
 	str	r0, [sp, #4]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	str	r0, [sp, #16]
 	cmp	r0, #96
 	bne.n	.L_080fbf04
@@ -726,7 +726,7 @@ Func_080fbe6c:
 	lsls	r3, r3, #18
 	adds	r3, #220
 	ldr	r5, [r3, #0]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #238
@@ -735,7 +735,7 @@ Func_080fbe6c:
 	ldr	r2, [pc, #28]
 	movs	r1, #128
 	bl	Func_08108088
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r3, #158
 	lsls	r3, r3, #3
 	adds	r5, r5, r3

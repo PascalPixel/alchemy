@@ -47,7 +47,7 @@ UiTextResource_Release:
 	ldrh	r3, [r5, #10]
 	cmp	r3, #0
 	bne.n	.L_0803f726
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	strh	r0, [r5, #12]
 .L_0803f726:
 	movs	r1, #128

@@ -91,7 +91,7 @@ Func_0803e7c8:
 	mov	r9, r2
 	cmp	r2, #0
 	bne.n	.L_0803e8d8
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r7, #0
 	adds	r5, #12
 	strh	r0, [r6, r5]

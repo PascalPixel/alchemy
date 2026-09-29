@@ -614,7 +614,7 @@ Func_08044a58:
 	mov	r9, r1
 	adds	r6, r2, #0
 	mov	sl, r3
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r7, r0, #0
 	movs	r0, #0
 	cmp	r7, #95

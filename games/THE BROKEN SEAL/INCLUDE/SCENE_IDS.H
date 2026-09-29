@@ -11,6 +11,7 @@
 extern char SceneId_WorldMap;
 extern char SceneId_ImiruMura1;
 extern char SceneId_ImiruMura2;
+extern char SceneId_MakyuriChojo1;
 extern char SceneId_MogoruMori1;
 extern char SceneId_MogoruMori2;
 extern char SceneId_MogoruMori3;

@@ -59,7 +59,7 @@ s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void Runtime_ReleaseHeapBlock(s32 slot);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-void Func_08094e7c(void);
+void FieldEffect_UpdateSparkles(void);
 
 static __inline__ void ClearDustWork(struct DustWork *work)
 {
@@ -109,5 +109,5 @@ loop:
     p++;
     if (i < 32)
         goto loop;
-    Scheduler_AddOrUpdateCallback(Func_08094e7c, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
 }

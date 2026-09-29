@@ -120,8 +120,8 @@ typedef char UiAnimatedItem_sprite[
     (u32)&((struct UiAnimatedItem *)0)->sprite == 16 ? 1 : -1];
 typedef char UiEffect_size[sizeof(struct UiEffect) == 8 ? 1 : -1];
 
-extern struct UiAnimationWork *Data_03001e8c;
-extern u32 Data_03001800;
+extern struct UiAnimationWork *gWindowWork;
+extern u32 gFrameTick;
 extern const u8 Data_080368d4[];
 extern const u8 Data_08033e60[];
 extern const u8 Data_08033eb0[];
@@ -136,7 +136,7 @@ void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 
 void UiWork_AnimateSpriteSlots(void)
 {
-    struct UiAnimationWork *work = Data_03001e8c;
+    struct UiAnimationWork *work = gWindowWork;
     struct UiAnimationSlot *slot = work->slots;
     s32 no;
     struct UiEffect effect;
@@ -148,7 +148,7 @@ void UiWork_AnimateSpriteSlots(void)
         if (!(slot->flags & 1))
             continue;
         item = slot->head;
-        phase = (Data_03001800 >> 2) & 7;
+        phase = (gFrameTick >> 2) & 7;
         while (item != NULL) {
             union UiSprite *sprite = &item->sprite;
             if (slot->mode == 4) {
@@ -176,14 +176,14 @@ void UiWork_AnimateSpriteSlots(void)
                     sprite->bytes.flags = flags;
                     y = *(u8 *)&item->y;
                     table = Data_08033e60;
-                    step = Math_ModU(Data_03001800, 80);
+                    step = Math_ModU(gFrameTick, 80);
                     sprite->fields.y = y + table[step] + 2;
                     sprite->bytes.flags = flags & ~3;
                     sprite->bytes.x_high = x_high & ~62;
                 }
                 break;
             case 5:
-                if (Data_03001800 & 1) {
+                if (gFrameTick & 1) {
                     u32 a, b;
                     a = Random16();
                     b = Random16();
@@ -219,7 +219,7 @@ void UiWork_AnimateSpriteSlots(void)
                 sprite->fields.y = *(u8 *)&item->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
                 break;
             case 4:
-                if (Data_03001800 & 1)
+                if (gFrameTick & 1)
                     item->frame++;
                 sprite->fields.x = item->x +
                     (s8)Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2];
@@ -274,7 +274,7 @@ void UiWork_AnimateSpriteSlots(void)
                 Runtime_PushSlotEntry(&sprite->fields.next, item->priority);
             }
             item = item->next;
-            phase = (Data_03001800 >> 2) & 7;
+            phase = (gFrameTick >> 2) & 7;
         }
     }
 }

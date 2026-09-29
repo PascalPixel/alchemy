@@ -15,8 +15,8 @@ extern volatile u16 RegIme;
 extern u8 Value_0000001f;
 
 s32 Func_080041d8(u32 callback, s32 interval);
-void Func_080c0098(void *);
-void Func_080c00d8(void *);
+void Graphics_BuildSequentialTileTable(void *);
+void BattlePresentation_BuildTilemap(void *);
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
@@ -87,6 +87,6 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         }
     }
 
-    Func_080c0098((void *)0x06003800);
-    Func_080c00d8((void *)0x0600f800);
+    Graphics_BuildSequentialTileTable((void *)0x06003800);
+    BattlePresentation_BuildTilemap((void *)0x0600f800);
 }

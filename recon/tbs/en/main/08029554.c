@@ -18,7 +18,7 @@ struct DebugMenuState {
     u16 active;
 };
 
-extern struct DebugMenuState *Data_03001e68;
+extern struct DebugMenuState *gMenuCtrlWork;
 #define KEYS_PRESSED (*(volatile u32 *)0x03001b04)
 extern u8 Data_08037440[], Data_08037448[], Data_08037450[];
 extern u8 Data_08037458[], Data_08037460[];
@@ -52,7 +52,7 @@ s32 DebugMenu_BrowseIcons(void)
     window = NULL;
     page = 0;
     mode = 0;
-    Data_03001e68->active = redraw;
+    gMenuCtrlWork->active = redraw;
     WaitFrames(1);
 
 next_frame:
@@ -116,6 +116,6 @@ next_frame:
     goto next_frame;
 close:
     UiWork_Finalize(window, 2);
-    Data_03001e68->active = 0;
+    gMenuCtrlWork->active = 0;
     return 0;
 }

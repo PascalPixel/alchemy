@@ -27,7 +27,7 @@ struct BattleSetup {
     u8 battle_type;
 };
 
-extern struct BattleSetup *Data_03001e74;
+extern struct BattleSetup *gBattleWork;
 
 s32 GameFlag_TestFar(s32 flag);
 s32 BattleFormation_SelectLevelMatchedCandidate(s32 *out_margin);
@@ -67,7 +67,7 @@ s32 BattleFormation_BuildEnemyList(s32 record_id)
     u32 i;
     s32 j;
 
-    work = Data_03001e74;
+    work = gBattleWork;
     list = list_buffer;
     margin = 0;
     work->unknown_40 = 0;

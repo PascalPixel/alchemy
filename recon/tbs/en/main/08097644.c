@@ -52,8 +52,8 @@ struct WaveFxWork {
     u8 counter;
 };
 
-extern struct WaveFxWork *Data_03001ea8;
-extern u8 Data_00000000[];
+extern struct WaveFxWork *gBattleBgFxWork;
+extern u8 Sound_MaxLines[];
 
 u32 Math_DivU(u32 numerator, u32 denominator);
 s32 Trig_Sin(s32 angle);
@@ -72,7 +72,7 @@ void BattleFx_SetCallbackWhenTargetUnset(void);
 
 void Func_08097644(void)
 {
-    struct WaveFxWork *work = Data_03001ea8;
+    struct WaveFxWork *work = gBattleBgFxWork;
     u16 *line;
     u32 i;
     struct FxObject *source;

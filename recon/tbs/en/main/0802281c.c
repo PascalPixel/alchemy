@@ -16,14 +16,14 @@
  */
 #include "TYPES.H"
 
-extern u8 *Data_03001e74;
+extern u8 *gBattleWork;
 
 s32 Func_080b5090(s32 side, s32 group);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
 
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
 {
-    u8 *battle = Data_03001e74;
+    u8 *battle = gBattleWork;
     s32 count;
     s32 i;
     s32 j;

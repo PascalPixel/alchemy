@@ -50,7 +50,7 @@ s32 SceneActor_UpdateBit1ByPositionToSlotZero(u8 *actor)
     return 0;
 }
 
-void FieldScene_RunScene3b3_020020f0(s32 a0)
+void TakaraHashira_RunActorAction(s32 a0)
 {
     u32 i;
     s32 rec7;
@@ -58,7 +58,7 @@ void FieldScene_RunScene3b3_020020f0(s32 a0)
 
     rec7 = Value0(Engine_ActorGet);
     Event_Begin();
-    *(s32 *)(rec7 + 108) = 0x200a0b9;
+    *(s32 *)(rec7 + 108) = (s32)SceneActor_UpdateBit1ByPositionToSlotZero;
     Map_CopyCellAttributes(20, 14, 1, 1, (*(s32 *)(rec7 + 8) >> 20), (*(s32 *)(rec7 + 16) >> 20));
     GameFlag_Set((a0 + 0x1f5));
     Value2(Engine_ActorEnableActionCallback, a0, (s32)TakaraHashira_ActionTable);
@@ -70,13 +70,13 @@ void FieldScene_RunScene3b3_020020f0(s32 a0)
 /* Complete 12-byte actor-11 wrapper before 0x02002150. */
 void FieldScene_RunActor11Step(void)
 {
-    FieldScene_RunScene3b3_020020f0(11);
+    TakaraHashira_RunActorAction(11);
 }
 
 /* Complete 12-byte actor-12 wrapper before 0x0200215c. */
 void FieldScene_RunActor12Step(void)
 {
-    FieldScene_RunScene3b3_020020f0(12);
+    TakaraHashira_RunActorAction(12);
 }
 
 void FieldScene_RunScene3b3_0200215c(void)

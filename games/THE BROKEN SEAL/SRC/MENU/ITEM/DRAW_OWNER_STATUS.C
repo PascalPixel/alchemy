@@ -4,10 +4,10 @@
 
 extern u8 gMenuWork[];
 
-/* Message identities link as offsets from the "Attack" label, as in
-   Shop_DrawItemPage; the class-name base is a link-time symbol loaded from
-   the literal pool. */
-extern u8 MsgStatLabel[];
+/* The panel loads the "Exp" label from the literal pool and reaches the four
+   stat labels, which sit 23 messages before it, by subtracting; the
+   class-name base is loaded from the pool too. */
+extern u8 MsgExpLabel[];
 extern u8 MsgClassName;
 
 /* Fixed labels drawn with the panel. */
@@ -54,16 +54,16 @@ void ItemMenu_DrawOwnerStatus(s32 window, s32 owner, s32 flags)
     UiText_DrawNumberInWindowFar(unit->pp, 4, window, 72, 24);
     UiText_DrawNumberInWindowFar(unit->max_pp, 4, window, 112, 24);
     UiText_DrawStringInWindowFar(Data_080af230, window, 104, 24);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgStatLabel + 23, window, 40, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel, window, 40, 8);
     UiText_DrawNumberInWindowFar(unit->experience, 7, window, 88, 8);
     if (flags == 0) {
         WaitFrames(1);
         UiWindow_ClearInteriorTilesFar(window, 144, 0, 224, 40);
     }
-    UiText_DrawCharacterAtOffsetFar((s32)MsgStatLabel, window, 152, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgStatLabel + 1, window, 152, 8);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgStatLabel + 2, window, 152, 16);
-    UiText_DrawCharacterAtOffsetFar((s32)MsgStatLabel + 3, window, 152, 24);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 23, window, 152, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 22, window, 152, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 21, window, 152, 16);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgExpLabel - 20, window, 152, 24);
     UiText_DrawNumberInWindowFar(unit->attack, 3, window, 200, 0);
     UiText_DrawNumberInWindowFar(unit->defense, 3, window, 200, 8);
     UiText_DrawNumberInWindowFar(unit->agility, 3, window, 200, 16);

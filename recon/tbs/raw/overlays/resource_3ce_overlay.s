@@ -1,55 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008180,"ax",%progbits
-	.balign 4
-	.global Func_02000180
-	.thumb_func
-Func_02000180:
-	push {lr}
-	ldr r0, [pc, #12]
-	ldr r1, [pc, #12]
-	subs r1, r1, r0
-	bl 0x0200807c
-	pop {r0}
-	bx r0
-	.4byte 0x00000d21
-	.4byte 0x00000d4c
-	.section .text.x020081b8,"ax",%progbits
-	.balign 4
-	.global Func_020001b8
-	.thumb_func
-Func_020001b8:
-	push {lr}
-	ldr r3, [pc, #16]
-	ldr r1, [pc, #16]
-	ldr r0, [pc, #20]
-	subs r1, r1, r3
-	bl 0x0200807c
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00000c9b
-	.4byte 0x00000cc6
-	.4byte 0x00000d77
-	.global Func_020001d8
-	.thumb_func
-Func_020001d8:
-	push {lr}
-	ldr r3, [pc, #16]
-	ldr r1, [pc, #16]
-	ldr r0, [pc, #20]
-	subs r1, r1, r3
-	bl 0x0200807c
-	pop {r0}
-.L_020001e8:
-	bx r0
-	.2byte 0x0000
-	.2byte 0x0c9b
-	.2byte 0x0000
-	.2byte 0x0cc6
-	.2byte 0x0000
-	.2byte 0x0da2
-	.2byte 0x0000
 	.section .rodata,"a",%progbits
 	.4byte 0x00500050
 	.4byte 0x00000000

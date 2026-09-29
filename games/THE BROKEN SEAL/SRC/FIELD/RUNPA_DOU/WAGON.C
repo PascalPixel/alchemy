@@ -1,4 +1,11 @@
 #include "CAVE.H"
+extern u8 MsgRunpaBunzaAsksAboutUnfinishedBusiness[];
+extern u8 MsgRunpaGeraldAsksAboutUnfinishedBusiness[];
+extern u8 MsgRunpaGeraldAsksIfNotRiding[];
+extern u8 MsgRunpaGeraldChecksNothingLeft[];
+extern u8 MsgRunpaLetsTakeWagon[];
+extern u8 MsgRunpaMiaAsksIfRidingAfter[];
+extern u8 MsgRunpaTotallyConfusedChanged[];
 
 /*
  * Bunza leads the way to his wagon and Gerald asks whether the party rides
@@ -11,7 +18,7 @@ void WagonChoice_Run(void)
     s32 insisted;
     s32 confusion;
 
-    wagon = 0x2547;
+    wagon = (s32)MsgRunpaLetsTakeWagon;
     Event_SetMessage(wagon + WAGON_BUNZA_LEADS_THE_WAY);
     Event_ShowMessage(ACTOR_BUNZA, 0);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 0);
@@ -55,7 +62,7 @@ check_nothing_left:
             if (Mia_AsksIfRidingAfterAll()) {
                 goto ask_about_business;
             }
-            confusion = 0x254b;
+            confusion = (s32)MsgRunpaTotallyConfusedChanged;
             Event_SetMessage(confusion + CONFUSION_IVAN_IS_CONFUSED);
             Event_ShowMessage(ACTOR_IVAN, 0);
             Event_SetMessage(confusion + CONFUSION_GERALD_ASKS_AGAIN);
@@ -79,14 +86,14 @@ u8 Leader_AnswersYes(void)
 
 u8 Gerald_AsksIfNotRiding(void)
 {
-    Event_SetMessage(MSG_GERALD_ASKS_IF_NOT_RIDING);
+    Event_SetMessage((s32)MsgRunpaGeraldAsksIfNotRiding);
     Event_OpenMessage(ACTOR_GERALD, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 u8 Gerald_AsksAboutUnfinishedBusiness(void)
 {
-    Event_SetMessage(MSG_GERALD_ASKS_ABOUT_UNFINISHED_BUSINESS);
+    Event_SetMessage((s32)MsgRunpaGeraldAsksAboutUnfinishedBusiness);
     Event_OpenMessage(ACTOR_GERALD, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
@@ -98,21 +105,21 @@ u8 Party_ConfirmsStaying(void)
 
 u8 Bunza_AsksAboutUnfinishedBusiness(void)
 {
-    Event_SetMessage(MSG_BUNZA_ASKS_ABOUT_UNFINISHED_BUSINESS);
+    Event_SetMessage((s32)MsgRunpaBunzaAsksAboutUnfinishedBusiness);
     Event_OpenMessage(ACTOR_BUNZA, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }
 
 u8 Gerald_ChecksNothingLeftToDo(void)
 {
-    Event_SetMessage(MSG_GERALD_CHECKS_NOTHING_LEFT);
+    Event_SetMessage((s32)MsgRunpaGeraldChecksNothingLeft);
     Event_OpenMessage(ACTOR_GERALD, 0);
     return TRUE;
 }
 
 u8 Mia_AsksIfRidingAfterAll(void)
 {
-    Event_SetMessage(MSG_MIA_ASKS_IF_RIDING_AFTER_ALL);
+    Event_SetMessage((s32)MsgRunpaMiaAsksIfRidingAfter);
     Event_OpenMessage(ACTOR_MIA, 0);
     return Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0;
 }

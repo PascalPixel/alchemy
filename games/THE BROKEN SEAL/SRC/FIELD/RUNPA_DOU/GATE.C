@@ -1,4 +1,5 @@
 #include "CAVE.H"
+extern u8 MsgFieldFlippedSwitch[];
 
 const struct SceneEvent *Scene_GetEvents(void)
 {
@@ -105,7 +106,7 @@ void LoweringSwitch_Flip(void)
 {
     if (GameFlag_IsSet(FLAG_CAVE_GATE_LOWERED) == 0) {
         if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
-            Message_ShowCentered(MSG_FLIPPED_SWITCH, 1);
+            Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
             Audio_PlayCue(SOUND_GATE_MOVE);
             Gate_Lower();
             GameFlag_Set(FLAG_CAVE_GATE_LOWERED);
@@ -133,7 +134,7 @@ void RaisingSwitch_Flip(void)
 {
     if (GameFlag_IsSet(FLAG_CAVE_GATE_PROPPED) == 0) {
         if (GameFlag_IsSet(FLAG_CAVE_GATE_RAISED) == 0) {
-            Message_ShowCentered(MSG_FLIPPED_SWITCH, 1);
+            Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
             Audio_PlayCue(SOUND_GATE_MOVE);
             Gate_Raise();
             GameFlag_Set(FLAG_CAVE_GATE_RAISED);

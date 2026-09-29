@@ -1,4 +1,6 @@
 #include "YAMA.H"
+extern u8 MsgArutinGuardianStatuesWereCreatedLong[];
+extern u8 MsgArutinWeDidRobinWeBeat[];
 
 /*
  * Bit 1 of the runtime status word at 0x03001e40 selects mode 7 or mode 6
@@ -63,7 +65,7 @@ void RunEventScript01(void)
     Actor_FaceDirection(ACTOR_MIA, 0xc000, 40);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 10);
-    Event_SetMessage(MSG_WE_DID_ROBIN_WE_BEAT);
+    Event_SetMessage((s32)MsgArutinWeDidRobinWeBeat);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
     Actor_FaceDirection(ACTOR_IVAN, 0xa000, 10);
@@ -82,7 +84,7 @@ void RunEventScript01(void)
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_MIA, 2);
-    Event_SetMessage(MSG_GUARDIAN_STATUES_WERE_CREATED_LONG);
+    Event_SetMessage((s32)MsgArutinGuardianStatuesWereCreatedLong);
     Event_ShowMessage(ACTOR_MIA, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x4000, 10);
     Actor_ShowEmote(ACTOR_GERALD, 0x102, 60);

@@ -1,4 +1,5 @@
 #include "FUNE.H"
+extern u8 MsgFuneShipsCourseClear[];
 
 void FieldScene_RunScene3b0_0200040c(void)
 {
@@ -49,7 +50,7 @@ void FieldScene_RunScene3b0_020004b0(void)
     Actor_WalkToAndWait(8, 164, 0x14e);
     Actor_Jump(8, 4, 40);
     Actor_StartRepeatedMotion(8, 2);
-    Event_SetMessage(MSG_SHIPS_COURSE_CLEAR);
+    Event_SetMessage((s32)MsgFuneShipsCourseClear);
     Event_ShowMessageAndWait(8, 0, 20);
     Event_CloseScreen();
     Event_WaitForScreen();

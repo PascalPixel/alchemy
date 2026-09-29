@@ -15,6 +15,7 @@ SECTIONS
         "*/resource_3bb_overlay.o"(.text.x02008a1c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/ENTRANCE_WALK.o"(.text)
         "*/resource_3bb_overlay.o"(.text.x02008bd4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/GREET_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/STAGE_INTRO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/STAGE_SCENES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KABE/LIFTED_ACTOR_COORDINATOR.o"(.text)

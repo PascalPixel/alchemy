@@ -1,4 +1,7 @@
 #include "VILLAGE.H"
+extern u8 MsgRunpaGeraldRefusesToReturn[];
+extern u8 MsgRunpaGuardsWarnPartyAway[];
+extern u8 MsgRunpaGuardsCatchParty[];
 
 /* After the escape, walking up to the fortress raises Gerald's objection. */
 void Party_WatchForFortress(void)
@@ -15,7 +18,7 @@ void Gerald_RefusesToReturn(void)
 {
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Event_SetMessage(MSG_GERALD_REFUSES_TO_RETURN);
+    Event_SetMessage((s32)MsgRunpaGeraldRefusesToReturn);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -157,7 +160,7 @@ void Guards_BlockGate(void)
         Actor_Stop(ACTOR_RIGHT_GUARD);
         Actor_SetAnimation(ACTOR_RIGHT_GUARD, 0);
         Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
-        Event_SetMessage(MSG_GUARDS_WARN_PARTY_AWAY);
+        Event_SetMessage((s32)MsgRunpaGuardsWarnPartyAway);
         Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
         GameFlag_Set(FLAG_GATE_GUARDS_BLOCKING);
         Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);
@@ -178,4 +181,59 @@ void Cloak_Begin(void)
     Map_CopyCellAttributes(6, 11, 1, 1, 8, 11);
     Map_CopyCellAttributes(6, 11, 1, 1, 9, 11);
     GameFlag_Set(FLAG_GATE_CLOAK_CAST);
+}
+
+void Guards_CatchParty(void)
+{
+    struct FieldActor *leader;
+    s32 warning;
+
+    if (GameFlag_IsSet(FLAG_GATE_PARTY_CAUGHT) != 0) {
+        return;
+    }
+    GameFlag_Set(FLAG_GATE_PARTY_CAUGHT);
+    Event_Begin();
+    leader = Actor_Get(ACTOR_PARTY_LEADER);
+    Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
+    Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
+    Actor_StartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
+    Event_Wait(20);
+    Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 2, 60);
+    warning = (s32)MsgRunpaGuardsCatchParty;
+    Event_SetMessage(warning + CATCH_LEFT_GUARD_CHALLENGES);
+    Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
+    Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_LEFT_GUARD, 0x20000, 0x10000);
+    Actor_SetSpeed(ACTOR_RIGHT_GUARD, 0x20000, 0x10000);
+    Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_SHAKE_HEAD);
+    Event_Wait(35);
+    Event_SetMessage(warning + CATCH_RIGHT_GUARD_WONDERS);
+    Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
+    Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 3, 30);
+    Event_SetMessage(warning + CATCH_LEFT_GUARD_REFUSES_ENTRY);
+    Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
+    Actor_SetAnimation(ACTOR_RIGHT_GUARD, ANIM_NOD);
+    Event_Wait(25);
+    Event_SetMessage(warning + CATCH_RIGHT_GUARD_SENDS_PARTY_OFF);
+    Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
+    Actor_WalkTo(ACTOR_LEFT_GUARD, leader->x.part.pixel - 1, leader->z.part.pixel);
+    Actor_WaitForMove(ACTOR_LEFT_GUARD);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 216);
+    Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 200);
+    Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 200);
+    Actor_WaitForMove(ACTOR_LEFT_GUARD);
+    Actor_WaitForMove(ACTOR_RIGHT_GUARD);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
+    Actor_FaceActor(ACTOR_RIGHT_GUARD, ACTOR_PARTY_LEADER, 0);
+    Event_Wait(12);
+    Actor_WalkTo(ACTOR_PARTY_LEADER, 160, 272);
+    Actor_WalkTo(ACTOR_LEFT_GUARD, 152, 256);
+    Actor_WalkTo(ACTOR_RIGHT_GUARD, 168, 256);
+    Actor_WaitForMove(ACTOR_LEFT_GUARD);
+    Actor_WaitForMove(ACTOR_RIGHT_GUARD);
+    Actor_WaitForMove(ACTOR_PARTY_LEADER);
+    Event_End();
+    Task_AddCallback(Guards_Watch, TASK_PRIORITY_SCENE);
 }

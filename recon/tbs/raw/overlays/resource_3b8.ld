@@ -14,7 +14,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/CUTSCENE.o"(.text)
         "*/resource_3b8_overlay.o"(.text.x0200be40)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/SHOWLINE.o"(.text)
-        "*/resource_3b8_overlay.o"(.text.x0200bfc4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/WATER.o"(.text)
         "*/resource_3b8_overlay.o"(.text.x0200c034)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/IMPORT.o"(.text)

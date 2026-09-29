@@ -1,34 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020088cc,"ax",%progbits
-	.align 2
-	.global Func_020008cc
-	.thumb_func
-Func_020008cc:
-	push {lr}
-	bl 0x020099b8
-	ldr r0, [pc, #48]
-	bl 0x02009a50
-	movs r0, #21
-	movs r1, #0
-	movs r2, #2
-	bl 0x0200973c
-	movs r2, #0
-	ldr r1, [pc, #32]
-	movs r0, #21
-	bl 0x02009a78
-	movs r0, #30
-	bl 0x020099b0
-	movs r1, #0
-	movs r0, #21
-	bl 0x02009a58
-	bl 0x020099c0
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x000012c0
-	.4byte 0x00000103
-@ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
 	.4byte 0x00000001

@@ -1,4 +1,5 @@
 #include "ENTRY_SETUP.H"
+extern u8 MsgVinasuThoughtIdExploreAfterDoor[];
 
 void FieldScene_SetupActorTenCamera(void)
 {
@@ -16,7 +17,7 @@ void FieldScene_SetupActorTenCamera(void)
         *target = shown;
     }
     Event_Begin();
-    Event_SetMessage(MSG_THOUGHT_ID_EXPLORE_AFTER_DOOR);
+    Event_SetMessage((s32)MsgVinasuThoughtIdExploreAfterDoor);
     Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_ShowMessageAndWait(10, 0, 20);

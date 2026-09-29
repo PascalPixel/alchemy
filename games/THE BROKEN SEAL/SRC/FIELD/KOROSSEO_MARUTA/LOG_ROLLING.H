@@ -8,27 +8,6 @@
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
 extern u8 gKeysHeld[];
 
-enum LogRollingMessage {
-    MSG_ROBIN_GOT = 0x96a,
-    MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
-    MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
-    MSG_DO_YOUR_BEST = 0x2083,
-    MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE = 0x2084,
-    MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE = 0x2085,
-    MSG_YOUR_GOAL_IN_STAGE_SIMPLE = 0x20b6,
-    MSG_STEPPING_STONE_STAGE = 0x20b7,
-    MSG_CLEAR_STAGE_MUST_ABLE_CHANGE = 0x20be,
-    MSG_PLACE_NORMALLY_CALLED_FREE_CLIMB = 0x20bf,
-    MSG_IN_STAGE_MUST_TRY_OUTPACE = 0x20c2,
-    MSG_CALLED_MOVING_SIDEWALK_STAGE = 0x20c3,
-    MSG_HERE_MUST_FIGURE_OUT_HOW = 0x20c6,
-    MSG_ANOTHER_LOG_ROLLING_AREA = 0x20c7,
-    MSG_ROBIN_DID_GET_GOOD_LOOK = 0x20e5,
-    MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8,
-    MSG_ROBIN = 0x20f1,
-    MSG_ROBIN_FELL_ASLEEP = 0x214c
-};
-
 extern u8 gColossoHexChars[];
 
 typedef struct ActorSpriteRef {
@@ -193,6 +172,14 @@ static __inline__ s32 Value0(s32 (*f)())
  * A value-returning call also sets r0 last of its arguments. */
 
 extern u8 gColossoMultiPhaseData[];
+/* The action scripts the multi-phase sequence gives actor 8 and the leader. */
+extern u8 KorosseoMaruta_Actor8Action[];
+extern u8 KorosseoMaruta_LeaderActionA[];
+extern u8 KorosseoMaruta_LeaderActionB[];
+extern u8 KorosseoMaruta_LeaderActionC[];
+
+/* COMMON/KOROSSEO/SOLO_COMPETITOR.C: enter one competitor's trial. */
+void Korosseo_SelectSoloCompetitor(s32 competitor);
 
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)

@@ -24,23 +24,6 @@ enum {
     ITEM_HERB = 180
 };
 
-enum ValeHouseMessage {
-    MSG_GOOD_WEAPONS_DRAW_OUT_STRENGTH = 0xf53,
-    MSG_GOOD_ARMOR_DRAWS_OUT_STRENGTH = 0xf54,
-    MSG_A_WISE_MAN_FLEES_WHEN_INJURED = 0xf55,
-    MSG_SUKURETA_CAME_TO_STUDY_MT_ALEPH = 0xf6d,
-    MSG_LETS_SCARE_SUKURETAS_VISITORS = 0xf73,
-    MSG_VALE_FEELS_EMPTY = 0x11a2,
-    MSG_IM_NOT_SAD_JUST_GO = 0x11a3,
-    MSG_YOU_MUST_SAVE_JASMINE = 0x11a6,
-    MSG_THE_CULPRITS_HAD_STRANGE_POWERS = 0x11be,
-    MSG_YOU_CAME_BACK = 0x1c06,
-    MSG_THE_RUMOR_WAS_TRUE = 0x1c09,
-    MSG_WHEN_DID_YOU_COME_BACK = 0x1c0a,
-    MSG_HEY = 0x1c1e,
-    MSG_YOURE_LEAVING_AGAIN_SOON = 0x1c33,
-    MSG_DID_YOU_HEAR_ABOUT_DORA = 0x1c3d
-};
 
 typedef struct {
     u8 pad_to_position[8];
@@ -68,10 +51,6 @@ union SceneField {
     u8 bytes[2];
 } __attribute__((packed, aligned(2)));
 
-enum {
-    MSG_THIS_IS_MY_FAREWELL_GIFT = 0x11a4,
-    MSG_HOPE_YOU_DIDNT_GET_SICK = 0x1c40
-};
 
 extern u8 gValeFaceTargetScript[];
 extern u8 gValeActor10Script[];

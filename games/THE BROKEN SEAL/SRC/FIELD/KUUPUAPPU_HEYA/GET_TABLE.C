@@ -6,62 +6,16 @@ void Owner_RecalculateStats();
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 s32 Object_GetById();
 
+/* The scene's tables, in the overlay's read-only data. */
+extern u8 KuupuappuHeya_Scripts[];
+extern u8 KuupuappuHeya_Messages[];
+extern u8 KuupuappuHeya_Regions[];
+
 enum {
     /* Message 0x182 + 189. */
     ITEM_WATER_OF_LIFE = 189,
     /* Message 0x182 + 231. */
     ITEM_BONE = 231
-};
-
-enum PromptMessage {
-    MSG_ROBIN_CHECKED_CHEST = 0x929,
-    MSG_ROBIN_CHECKED_BARREL = 0x92b,
-    MSG_BUT_CHEST_WAS_EMPTY = 0x949,
-    MSG_BUT_DIDNT_FIND_ANYTHING = 0x94b,
-    MSG_IF_ONLY_THESE_ROCKS_WERE = 0x1243,
-    MSG_OK_MISTER_LET_ME_SEE = 0x1245,
-    MSG_MISTER_FUN_SEE_STRANGE_NEW = 0x1247,
-    MSG_WONDER_OUTSIDE_WORLD_LIKE = 0x124b,
-    MSG_JUST_ME_OR_AM_MISSING = 0x124c,
-    MSG_COULD_THEY_THIEVES_GOOD_DONT = 0x124e,
-    MSG_COULD_SOMEONE_PLEASE_HELP_IVAN = 0x1250,
-    MSG_IVAN_HAS_GREAT_POWERS_WOULDNT = 0x1253,
-    MSG_DO_POSSESS_STRANGE_POWERS = 0x1256,
-    MSG_WOULD_REALLY_WOULD_HELP_ME = 0x125d,
-    MSG_YOURE_GOING_HELP_IVAN = 0x1276,
-    MSG_PLEASE_LOOK_AFTER_IVAN = 0x1278,
-    MSG_TICKLES_BEING_TICKLED_BY_BOY = 0x127c,
-    MSG_THIEVES_DIDNT_HIT_OUR_HOUSE = 0x1282,
-    MSG_DID_JUST_ARRIVE_IN_TOWN = 0x1284,
-    MSG_EVERYONE_THINKS_OUR_GUESTS_THIEVES = 0x128d,
-    MSG_THOSE_THREE_STRANGERS_SURE_HAVE = 0x128e,
-    MSG_MASTER_HIS_WIFE_BLINDED_BY = 0x1294,
-    MSG_ROBIN_TAKE_LEAD = 0x129f,
-    MSG_OW_STOP = 0x12ac,
-    MSG_WE_DONT_HAVE_TIME_FOR = 0x12bb,
-    MSG_THESE_KIDS_NOTHING_WORRY_ABOUT = 0x12dd,
-    MSG_THEY_THEY_GOT_US = 0x12e4,
-    MSG_SEE_THATS_HAPPENED = 0x12f2,
-    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
-    MSG_THANK_GOODNESS_THOSE_THIEVES_WERE = 0x1353,
-    MSG_IF_ROCK_WORTHLESS_MAYBE_THATS = 0x1355,
-    MSG_DID_THOSE_THIEVES_COME_FROM = 0x1356,
-    MSG_MY_FATHER_WORRIED_ABOUT_THOSE = 0x1359,
-    MSG_FATHER_LOOKS_SAD_WORRYING_LIKE = 0x135b,
-    MSG_THIEVES_HID_STOLEN_TREASURE_IN = 0x135c,
-    MSG_GUESS_NOTHING_IN_OUR_HOUSE = 0x135e,
-    MSG_HEADING_OUT_BEYOND_GOMA_RANGE = 0x1364,
-    MSG_HEARD_DEFEATED_THOSE_THIEVES = 0x1368,
-    MSG_CAVE_IN_GOMA_RANGE_DANGEROUS = 0x136c,
-    MSG_WE_FOUND_OUR_STOLEN_WEAPONS = 0x1370,
-    MSG_IF_YOURE_GONNA_HEAD_INTO = 0x1372,
-    MSG_WITH_BRIDGE_OUT_WILL_QUITE = 0x1374,
-    MSG_THEY_HID_THOSE_STOLEN_GOODS = 0x137b,
-    MSG_HAVE_LOT_LEFTOVER_BONES_FROM = 0x137c,
-    MSG_GEE_ALWAYS_GET_HUNGRY_WHEN = 0x1382,
-    MSG_WOW_HAVE_MANY_THINGS_ARENT = 0x1384,
-    MSG_WANT_MORE_BONES = 0x1385,
-    MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
 };
 
 /*
@@ -232,38 +186,17 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/*
- * Head export stub at 0x02000030. The eight-byte owner includes its one pool
- * word at 0x02000034, which the load reads and which sits past the return.
- * The word is an address returned without being dereferenced, so this is a
- * getter for an in-image table; it names bytes only while this overlay is
- * resident at 0x02000000.
- */
-u8 *SceneData_GetTableD8f8(void)
+u8 *SceneData_GetScriptTable(void)
 {
-    return (u8 *)0x0200d8f8;
+    return KuupuappuHeya_Scripts;
 }
 
-/*
- * Head export stub at 0x02000038. The eight-byte owner includes its one pool
- * word at 0x0200003c, which the load reads and which sits past the return.
- * The word is an address returned without being dereferenced, so this is a
- * getter for an in-image table; it names bytes only while this overlay is
- * resident at 0x02000000.
- */
-u8 *SceneData_GetTableDa60(void)
+u8 *SceneData_GetRegionTable(void)
 {
-    return (u8 *)0x0200da60;
+    return KuupuappuHeya_Regions;
 }
 
-/*
- * Head export stub at 0x02000040. The eight-byte owner includes its one pool
- * word at 0x02000044, which the load reads and which sits past the return.
- * The word is an address returned without being dereferenced, so this is a
- * getter for an in-image table; it names bytes only while this overlay is
- * resident at 0x02000000.
- */
-u8 *SceneData_GetTableDa80(void)
+u8 *SceneData_GetMessageTable(void)
 {
-    return (u8 *)0x0200da80;
+    return KuupuappuHeya_Messages;
 }

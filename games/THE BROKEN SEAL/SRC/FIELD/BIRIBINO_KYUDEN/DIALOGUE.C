@@ -1,4 +1,17 @@
 #include "KYUDEN.H"
+extern u8 MsgBiribinoAaaah[];
+extern u8 MsgBiribinoDoThinkTheseBilibinsGreat[];
+extern u8 MsgBiribinoFineWarrior[];
+extern u8 MsgBiribinoGoodTreasureIfGetTurned[];
+extern u8 MsgBiribinoGotPrettyNiceRewardBut[];
+extern u8 MsgBiribinoItsVeryRecklessForSuch[];
+extern u8 MsgBiribinoLookedVeryCourageousWalkingToward[];
+extern u8 MsgBiribinoMayChooseOnlyOneItem[];
+extern u8 MsgBiribinoNonethelessIfYourLuckSour[];
+extern u8 MsgBiribinoRewardReceivedWasIndeedGreatest[];
+extern u8 MsgBiribinoSometimesWeNeedChildrenRemind[];
+extern u8 MsgBiribinoWasWatchingFromHereAfter[];
+extern u8 MsgBiribinoWeReallyGivingOurTreasure[];
 
 void FieldScene_RunStartledGuard(void)
 {
@@ -9,7 +22,7 @@ void FieldScene_RunStartledGuard(void)
     Actor_ShowEmote(14, 0x102, 0);
     Actor_RunRepeatedMotion(14, 2);
     Event_Wait(40);
-    Event_SetMessage(MSG_AAAAH);
+    Event_SetMessage((s32)MsgBiribinoAaaah);
     Event_ShowMessageAndWait(14, 0, 20);
     Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
     Event_Wait(20);
@@ -24,9 +37,9 @@ void FieldScene_RunScene38dSequenceA(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_FINE_WARRIOR);
+    Event_SetMessage((s32)MsgBiribinoFineWarrior);
     if (GameFlag_IsSet(0x302) != 0) {
-        Event_SetMessage(MSG_ITS_VERY_RECKLESS_FOR_SUCH);
+        Event_SetMessage((s32)MsgBiribinoItsVeryRecklessForSuch);
     }
     Event_ShowMessage(15, 0);
     GameFlag_Set(0x302);
@@ -36,7 +49,7 @@ void FieldScene_RunScene38dSequenceA(void)
 void SceneDialogue_RunActor16Message1769(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_WAS_WATCHING_FROM_HERE_AFTER);
+    Event_SetMessage((s32)MsgBiribinoWasWatchingFromHereAfter);
     Event_AskYesNo(16, 0);
     Event_End();
 }
@@ -46,11 +59,11 @@ void FieldScene_RunActorSeventeenFlaggedDialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage(MSG_MAY_CHOOSE_ONLY_ONE_ITEM);
+        Event_SetMessage((s32)MsgBiribinoMayChooseOnlyOneItem);
     } else if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
-        Event_SetMessage(MSG_REWARD_RECEIVED_WAS_INDEED_GREATEST);
+        Event_SetMessage((s32)MsgBiribinoRewardReceivedWasIndeedGreatest);
     } else {
-        Event_SetMessage(MSG_DO_THINK_THESE_BILIBINS_GREAT);
+        Event_SetMessage((s32)MsgBiribinoDoThinkTheseBilibinsGreat);
         if (GameFlag_IsSet(0x84d) != 0) {
             gEventWork->message++;
         }
@@ -66,9 +79,9 @@ void SceneDialogue_RunActor15Flag303Scene(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_SOMETIMES_WE_NEED_CHILDREN_REMIND);
+    Event_SetMessage((s32)MsgBiribinoSometimesWeNeedChildrenRemind);
     if (GameFlag_IsSet(0x303) != 0) {
-        Event_SetMessage(MSG_LOOKED_VERY_COURAGEOUS_WALKING_TOWARD);
+        Event_SetMessage((s32)MsgBiribinoLookedVeryCourageousWalkingToward);
     }
     Event_ShowMessage(15, 0);
     GameFlag_Set(0x303);
@@ -80,13 +93,13 @@ void FieldScene_RunActorSeventeenFlagDialogue(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage(MSG_NONETHELESS_IF_YOUR_LUCK_SOUR);
+        Event_SetMessage((s32)MsgBiribinoNonethelessIfYourLuckSour);
     } else if (GameFlag_IsSet(0x845) == 0) {
-        Event_SetMessage(MSG_GOOD_TREASURE_IF_GET_TURNED);
+        Event_SetMessage((s32)MsgBiribinoGoodTreasureIfGetTurned);
     } else {
-        Event_SetMessage(MSG_WE_REALLY_GIVING_OUR_TREASURE);
+        Event_SetMessage((s32)MsgBiribinoWeReallyGivingOurTreasure);
         if (GameFlag_IsSet(FLAG_REWARD_TAKEN) != 0) {
-            Event_SetMessage(MSG_GOT_PRETTY_NICE_REWARD_BUT);
+            Event_SetMessage((s32)MsgBiribinoGotPrettyNiceRewardBut);
         }
     }
 

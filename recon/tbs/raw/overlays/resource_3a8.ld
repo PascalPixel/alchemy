@@ -15,7 +15,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/GROUP_FX4.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/EXIT_DOOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/STAGED_GROUP.o"(.text)
-        "*/resource_3a8_overlay.o"(.text.x02008590)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/STAGED_SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/WORK_WORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/STAGED_GROUP2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KAREI_MACHI/SCENE_INIT.o"(.text)

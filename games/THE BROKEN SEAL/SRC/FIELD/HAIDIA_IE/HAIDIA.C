@@ -1,5 +1,10 @@
 /* Facing, scene tables and the villagers' first lines. */
 #include "HAIDIA.H"
+extern u8 MsgHaidiaADifficultTimeThreeYears[];
+extern u8 MsgHaidiaCheckedThePsynergyStone[];
+extern u8 MsgHaidiaDidTheTravelersMeetThe[];
+extern u8 MsgHaidiaMeditateOnMtAlephDaily[];
+extern u8 MsgHaidiaPartyPpRestored[];
 
 s32 Object_UpdateFacingTowardTarget(struct FacingObject *object)
 {
@@ -70,11 +75,11 @@ void *SceneData_SelectTableByFlags834And87a(void)
 void Scene_CheckPsynergyStone(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_CHECKED_THE_PSYNERGY_STONE, 1);
+    Message_ShowCentered((s32)MsgHaidiaCheckedThePsynergyStone, 1);
     Audio_PlayCue(126);
     BattleParty_ApplyDrain(0x3e7, 0);
     Event_Wait(10);
-    Message_ShowCentered(MSG_PARTY_PP_RESTORED, 1);
+    Message_ShowCentered((s32)MsgHaidiaPartyPpRestored, 1);
     UiWork_FinalizePendingCore();
     GameFlag_Clear(322);
     Event_End();
@@ -100,7 +105,7 @@ void *SceneData_SelectTableByFlags87a_815_834(void)
 void Villager_AskAboutMeditation(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_MEDITATE_ON_MT_ALEPH_DAILY);
+    Event_SetMessage((s32)MsgHaidiaMeditateOnMtAlephDaily);
     Actor_FaceEachOther(23, ACTOR_PARTY_LEADER, 2);
     Event_AskYesNo(23, 0);
     Event_End();
@@ -109,7 +114,7 @@ void Villager_AskAboutMeditation(void)
 void Villager_RecallThreeYearsAgo(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_A_DIFFICULT_TIME_THREE_YEARS_AGO);
+    Event_SetMessage((s32)MsgHaidiaADifficultTimeThreeYears);
     Actor_FaceEachOther(24, ACTOR_PARTY_LEADER, 2);
     Event_AskYesNo(24, 0);
     Event_End();
@@ -118,7 +123,7 @@ void Villager_RecallThreeYearsAgo(void)
 void Villager_AskAboutTheTravelers(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DID_THE_TRAVELERS_MEET_THE_MAYOR);
+    Event_SetMessage((s32)MsgHaidiaDidTheTravelersMeetThe);
     Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 2);
     Event_AskYesNo(15, 0);
     Event_End();

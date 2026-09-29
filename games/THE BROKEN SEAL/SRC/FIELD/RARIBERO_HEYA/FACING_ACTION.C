@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgRariberoBabiIsntBuilding[];
+extern u8 MsgRariberoBabiLighthouseStruck[];
 
 /*
  * Raribero house: a face-toward action. If the party faces the door (north)
@@ -19,10 +21,10 @@ void Dialogue_HandleFacingAction(s32 no)
     if (party_facing == 0xc000) {
         Shop_ConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
-        Engine_EventSetMessage(0x28fc);
+        Engine_EventSetMessage((s32)MsgRariberoBabiLighthouseStruck);
         Engine_EventShowMessage(no, 0);
     } else {
-        Engine_EventSetMessage(0x26f6);
+        Engine_EventSetMessage((s32)MsgRariberoBabiIsntBuilding);
         Engine_EventShowMessage(no, 0);
     }
 }

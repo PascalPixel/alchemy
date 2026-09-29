@@ -1,10 +1,11 @@
 /* resource_3b8:0200be40..0200bf84 (324 bytes), still linked from the
- * listing. Remaining difference: message 0x2233 is loaded once and the
- * following messages are derived as base + n; an integer message is
- * propagated into separate constants (328 bytes, 132 differ). */
+ * listing. Remaining difference: its messages have catalogue names now; 147 halfwords
+ * still differ from the ROM, and it names symbols no link defines (Call1,
+ * Call0, Call3, Value2, ...); it also lacks declarations it needs to compile. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgTorebiArent[];
 /* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/TOREBI_KYUDEN/KYUDEN.H. */
 
 void RunSupplementalSequenceOne(void)
@@ -18,7 +19,7 @@ void RunSupplementalSequenceOne(void)
     Call3(Engine_ActorWalkToAndWait, 0, 200, 272);
     Call3(Engine_ActorFaceDirection, 0, 49152, 0);
     Call1(Engine_EventWait, 20);
-    p = 0x2233;
+    p = (s32)MsgTorebiArent;
     Engine_EventSetMessage(p);
     Value2(Engine_EventOpenMessage, 8, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {

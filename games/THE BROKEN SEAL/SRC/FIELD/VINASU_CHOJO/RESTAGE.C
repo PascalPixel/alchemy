@@ -1,5 +1,6 @@
 /* Restaging the party. */
 #include "CHOJO.H"
+extern u8 MsgVinasuNoooo[];
 
 enum {
     PARTICLE_SOURCE_ACTOR = 23
@@ -93,7 +94,7 @@ void FieldScene_RunScene3c9_02004b28(void)
     u32 i;
     s32 record;
 
-    Event_SetMessage(0x2829);
+    Event_SetMessage((s32)MsgVinasuNoooo);
     VinasuChojo_ShowMessage(21);
     Audio_PlayCue(62);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);

@@ -7,9 +7,10 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/COMMANDS.o"(.text)
-        "*/resource_3ce_overlay.o"(.text.x02008180)
+        "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/BLOCK_D21.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/BLOCK_D4C.o"(.text)
-        "*/resource_3ce_overlay.o"(.text.x020081b8)
+        "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/BLOCK_D77.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/BLOCK_DA2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/SLOTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/SELECT_ITEM.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/COMMAND_LIST.o"(.text)

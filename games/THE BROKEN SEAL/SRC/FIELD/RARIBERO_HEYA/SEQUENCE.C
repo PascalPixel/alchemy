@@ -1,4 +1,5 @@
 #include "HEYA.H"
+extern u8 MsgRariberoPleaseWaitForMeOutside[];
 
 void FieldScene_RunSequenceA(void)
 {
@@ -10,7 +11,7 @@ void FieldScene_RunSequenceA(void)
     Camera_MoveTo(0x780000, -1, 0x600000, 1);
     Camera_WaitForMove();
     Event_Wait(0x1E);
-    Event_SetMessage(MSG_PLEASE_WAIT_FOR_ME_OUTSIDE);
+    Event_SetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
     Event_ShowMessage(0xC, 0);
     Event_Wait(0xA);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 0xC, 0);
@@ -25,7 +26,7 @@ void FieldScene_RunThreeCallSequence(void)
     void Event_ShowMessage(s32, s32);
 
     GameFlag_Set(0x9BC);
-    Event_SetMessage(MSG_PLEASE_WAIT_FOR_ME_OUTSIDE);
+    Event_SetMessage((s32)MsgRariberoPleaseWaitForMeOutside);
     Event_ShowMessage(0xC, 0);
 }
 

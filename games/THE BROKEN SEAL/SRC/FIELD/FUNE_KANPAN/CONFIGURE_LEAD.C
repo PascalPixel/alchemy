@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 FuneKanpan_LeadActionsB[];
+extern u8 FuneKanpan_LeadActionsC[];
+extern u8 MsgFuneCanSeeLand[];
+extern u8 MsgFuneThankRobinDidGoodAgainst[];
 extern u8 FuneKanpan_CrewScript[];
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 s32 Object_GetById();
@@ -11,31 +15,12 @@ void FieldScene_CallPairWith10();
 
 #define SCENE_PHASE (*(s32 *)(*(u8 *volatile *)Data_03001ebc + 0x1c0))
 
-enum MultiEncounterMessage {
-    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
-    MSG_TOLD_WERE_LEAVING_SOON_SET = 0x1d36,
-    MSG_IF_WE_DONT_LEAVE_SOON = 0x1d37,
-    MSG_SOMEBODY_STOP_THEM = 0x1d6f,
-    MSG_THEY_CANT_PLANNING_MUTINY = 0x1d70,
-    MSG_DIDNT_DO_ANYTHING = 0x1d8d,
-    MSG_NOW_WE_HAVE_PROTECT_SHIP = 0x1e08,
-    MSG_HAVE_MAKE_THEM_PROMISE_HELP = 0x1e09,
-    MSG_PREPARATIONS_READY = 0x1e39,
-    MSG_AYE_CAPTAIN_SEA_MONSTERS = 0x1e41,
-    MSG_THANK_ROBIN_DID_GOOD_AGAINST = 0x1ee1,
-    MSG_CAN_SEE_LAND = 0x1ee5,
-    MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT = 0x1f53,
-    MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR = 0x1f55,
-    MSG_SEE_YOURE_GOING_GO_FOR = 0x1f5b,
-    MSG_HOW_WAS_ROBIN_DID_EXPLORE = 0x1f69
-};
 
 union Slot {
     s32 w;
     s16 h[2];
 };
 
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 BuildMotionCountdown(s32, s16);
 
@@ -151,7 +136,7 @@ void FieldScene_ConfigureLeadActors(void)
 
         *(u16 *)(record + 6) = shown;
     }
-    Actor_EnableActionCallback(22, 0x200c980);
+    Actor_EnableActionCallback(22, FuneKanpan_LeadActionsC);
     {
         /* Set the high bit of the flag byte at +89. */
         u8 *record = ((u8 *(*)())Object_GetById)(21);
@@ -161,7 +146,7 @@ void FieldScene_ConfigureLeadActors(void)
         record[89] = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
-    Actor_EnableActionCallback(21, 0x200c628);
+    Actor_EnableActionCallback(21, FuneKanpan_LeadActionsB);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Event_OpenScreen();
     Event_WaitForScreen();
@@ -171,7 +156,7 @@ void FieldScene_ConfigureLeadActors(void)
     FieldScene_CallPairWith10(20, 0);
     Value2(FieldScene_CallPairWith10, 0, 0x8000);
     Actor_RunRepeatedMotion(20, 1);
-    Event_SetMessage(MSG_THANK_ROBIN_DID_GOOD_AGAINST);
+    Event_SetMessage((s32)MsgFuneThankRobinDidGoodAgainst);
     ((void (*)())FieldScene_RunStepThen10)(20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     Event_Wait(40);
@@ -241,7 +226,7 @@ void FieldScene_ConfigureThreeActors(void)
     Event_Wait(20);
     Actor_Jump(22, 4, 10);
     Actor_Jump(22, 6, 20);
-    Event_SetMessage(MSG_CAN_SEE_LAND);
+    Event_SetMessage((s32)MsgFuneCanSeeLand);
     FieldScene_RunStepThen10(22);
     Actor_SetAnimationAndWait(20, 3);
     Actor_SetSpeed(21, 0x30000, 0x18000);

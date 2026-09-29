@@ -54,9 +54,10 @@
 #include "FIELD_EVENT.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
+extern u8 MsgAbilityDescription[];
+extern u8 MsgAbilityName[];
 
 extern u8 Value_00000333;
-extern u8 Value_0000053a;
 extern u8 Data_0200890c[];
 extern u8 Data_02008914[];
 extern volatile u32 gDebugKeysPressed;
@@ -104,9 +105,9 @@ void DebugMenu_SelectAbility(void)
             UiText_DrawNumberAtOffsetFar(ability, 0, window, 80, 0);
             UiText_DrawStringInWindowFar(Data_02008914, window, 0, 72);
             index = ability & 0x3fff;
-            UiText_DrawCharacterAtOffsetFar(index + (s32)&Value_00000333, window, 120, 0);
-            UiText_DrawCharacterAtOffsetFar(index + (s32)&Value_0000053a, window, 0, 24);
-            Main_08015078(index + (s32)&Value_0000053a, window, 0, 48);
+            UiText_DrawCharacterAtOffsetFar(index + (s32)MsgAbilityName, window, 120, 0);
+            UiText_DrawCharacterAtOffsetFar(index + (s32)MsgAbilityDescription, window, 0, 24);
+            Main_08015078(index + (s32)MsgAbilityDescription, window, 0, 48);
         }
         if (gDebugKeysPressed & 2) {
             Engine_AudioPlayCue(113);

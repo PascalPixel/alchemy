@@ -1,4 +1,5 @@
 #include "ARUTAMIRA.H"
+extern u8 MsgArutamiraWait[];
 
 void FieldScene_RunFlagGatedActorEightDialogue(void)
 {
@@ -9,7 +10,7 @@ void FieldScene_RunFlagGatedActorEightDialogue(void)
 
     GameFlag_Set(0x961);
     Event_Begin();
-    Event_SetMessage(0x217d);
+    Event_SetMessage((s32)MsgArutamiraWait);
     Event_ShowMessage(8, 0);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);

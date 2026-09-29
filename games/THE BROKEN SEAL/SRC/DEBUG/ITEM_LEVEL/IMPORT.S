@@ -7,21 +7,39 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedRemainder
+	.global Engine_TaskWait
+	.thumb_func
+Engine_TaskWait:
 	overlay_veneer WaitFramesFar
 	.global UiWindow_Create
 	.thumb_func
 UiWindow_Create:
 	overlay_veneer UiWindow_CreateFar
+	.global UiWork_Finalize
+	.thumb_func
+UiWork_Finalize:
 	overlay_veneer UiWork_FinalizeFar
+	.global UiText_DrawResource
+	.thumb_func
+UiText_DrawResource:
 	overlay_veneer UiText_DrawResourceFar
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
+	.global UiText_DrawStringAtOffset
+	.thumb_func
+UiText_DrawStringAtOffset:
 	overlay_veneer UiText_DrawStringAtOffsetFar
 	.global UiText_DrawStringInWindow
 	.thumb_func
 UiText_DrawStringInWindow:
 	overlay_veneer UiText_DrawStringInWindowFar
 	overlay_veneer UiText_DrawNumberAtOffsetFar
+	.global UiText_DrawNumberInWindow
+	.thumb_func
+UiText_DrawNumberInWindow:
 	overlay_veneer UiText_DrawNumberInWindowFar
+	.global RenderOutput_RedrawSavedRect
+	.thumb_func
+RenderOutput_RedrawSavedRect:
 	overlay_veneer RenderOutput_RedrawSavedRectFar
 	overlay_veneer RenderOutput_ClearListFar
 	.global DebugMenu_BrowseIcons
@@ -77,4 +95,7 @@ Engine_ActorShowEmote:
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
 	overlay_veneer ItemMenu_DrawItemDetailsFar
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar

@@ -1,5 +1,7 @@
 /* The second competitor's arrival. */
 #include "LOG_ROLLING.H"
+extern u8 MsgKorosseoSteppingStoneStage[];
+extern u8 MsgKorosseoYourGoalInStageSimple[];
 
 void FieldScene_RunSecondArrivalSequence(s32 scene)
 {
@@ -17,7 +19,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Event_Begin();
     state = ColossoLogRollingStage_RunStateInteraction(scene, 2);
     if (state == 0) {
-    Event_SetMessage(MSG_STEPPING_STONE_STAGE);
+    Event_SetMessage((s32)MsgKorosseoSteppingStoneStage);
     Camera_SetSpeed(196608, 24576);
     Camera_MoveTo(24641536, -1, 9961472, 1);
     Camera_WaitForMove();
@@ -51,7 +53,7 @@ void FieldScene_RunSecondArrivalSequence(s32 scene)
     Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
     ColossoLogRollingStage_InitializeStateInteraction(scene, 2);
     } else if (state == 1) {
-        Event_SetMessage(MSG_YOUR_GOAL_IN_STAGE_SIMPLE);
+        Event_SetMessage((s32)MsgKorosseoYourGoalInStageSimple);
         Event_ShowMessage(scene, 0);
     }
     Value3(FieldScene_RunMiddleSequence, state, scene, 2);

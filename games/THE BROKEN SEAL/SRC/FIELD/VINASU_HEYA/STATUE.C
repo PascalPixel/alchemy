@@ -1,9 +1,17 @@
 #include "ENTRY_SETUP.H"
+extern u8 gVinasuLeaderApproachScript[];
+s32 SceneEffect_SpawnRandomEveryEightFramesB();
+extern u8 MsgFieldDoorTightlyLocked[];
+extern u8 MsgFieldVenusLighthouseWasAttackedBy[];
+extern u8 MsgVinasuHmmmWeCantPushBlock[];
+extern u8 MsgVinasuIveWaitedLongSeeIts[];
+extern u8 MsgVinasuStatueSpeaksRobinSoulYe[];
+extern u8 MsgVinasuThereWordsCarvedIntoRelief[];
 
 void SceneState_SetFlag953(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_DOOR_TIGHTLY_LOCKED, 1);
+    Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
     Event_End();
 }
 
@@ -16,7 +24,7 @@ void FieldScene_RunActorEightTenStepLoop(void)
 
     Event_Begin();
     Actor_RunRepeatedMotion(8, 3);
-    Event_SetMessage(MSG_VENUS_LIGHTHOUSE_WAS_ATTACKED_BY);
+    Event_SetMessage((s32)MsgFieldVenusLighthouseWasAttackedBy);
     n = 10;
     w = 8;
     Event_ShowMessageAndWait(8, 0, 20);
@@ -41,7 +49,7 @@ void FieldScene_RunActorEightTenStepLoop(void)
 void SceneDialogue_RunActorElevenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_IVE_WAITED_LONG_SEE_ITS);
+    Event_SetMessage((s32)MsgVinasuIveWaitedLongSeeIts);
     Event_ShowMessageAndWait(11, 0, 20);
     Actor_RunRepeatedMotion(11, 2);
     Event_ShowMessage(11, 0);
@@ -60,13 +68,16 @@ void FieldScene_SetFlag987AtActorTwelveTile(void)
     Event_End();
 }
 
-void SceneDialogue_RunLine2682(void)
+#if defined(TBS_EDITION_EN)
+/* Only the English edition reads the words carved into the relief. */
+void SceneDialogue_ReadRelief(void)
 {
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered(MSG_THERE_WORDS_CARVED_INTO_RELIEF, 1);
+    Message_ShowCentered((s32)MsgVinasuThereWordsCarvedIntoRelief, 1);
     Event_End();
 }
+#endif
 
 void SceneState_ApplySixRectsAfter161(void)
 {
@@ -119,7 +130,7 @@ void FieldScene_RunLeaderSurpriseApproach(void)
 
     actor = Actor_Get(ACTOR_PARTY_LEADER);
     Event_Begin();
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 0x200d21c);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, gVinasuLeaderApproachScript);
     Engine_ActorStartAction(0);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 6);
     actor->velocity_y = 0x40000;
@@ -135,7 +146,7 @@ void FieldScene_RunLeaderSurpriseApproach(void)
     Event_Wait(1);
     SetFlagBits(&Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a, 1);
     Event_Wait(20);
-    actor->update = (void (*)(union FieldObject *))0x20085e5;
+    actor->update = (void (*)(union FieldObject *))SceneEffect_SpawnRandomEveryEightFramesB;
     Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 4);
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
@@ -154,7 +165,7 @@ void FieldScene_RunStatueDialogueSequence(void)
     work->field_cb6 = 1;
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered(MSG_STATUE_SPEAKS_ROBIN_SOUL_YE, 1);
+    Message_ShowCentered((s32)MsgVinasuStatueSpeaksRobinSoulYe, 1);
     ColorBuffer_ApplySource(0x10000, 0);
     ColorBuffer_ApplyTarget(0x10005, 0);
     ColorBuffer_Interpolate(120);
@@ -248,7 +259,7 @@ void FieldScene_RunFlag986ActorOneScene(void)
             Event_Wait(20);
             Actor_SetAnimationAndWait(ACTOR_GERALD, 4);
             Event_Wait(20);
-            Event_SetMessage(MSG_HMMM_WE_CANT_PUSH_BLOCK);
+            Event_SetMessage((s32)MsgVinasuHmmmWeCantPushBlock);
             Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
             Actor_FaceDirection(ACTOR_GERALD, 0, 10);
             Actor_ShowEmote(ACTOR_GERALD, h, 60);

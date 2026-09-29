@@ -1,5 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgTorebiComeAgain[];
+extern u8 MsgTorebiCongratulations[];
+extern u8 MsgTorebiWonItemGo[];
+extern u8 MsgTorebiWonItemGo2[];
+extern u8 MsgTorebiYaLostNumber[];
+extern u8 MsgTorebiYaWonNumber[];
 extern u8 Data_03001d18[];
 
 void SceneState_InitFourActorRecordsAndInstallTask(void);
@@ -16,7 +22,6 @@ union GameStateRows {
 
 extern union GameStateRows Data_02000240_t;
 extern u8 Data_000000bd[];
-extern u8 TorebiIzumi_AndYouWonMessage;
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {
@@ -83,12 +88,12 @@ s32 TorebiIzumi_OpenScene(void)
                     Engine_AudioPlayCue(91);
                 }
                 Engine_EventWait(20);
-                Engine_EventSetMessage(0xe13);
+                Engine_EventSetMessage((s32)MsgTorebiYaWonNumber);
                 Main_08015120(diff, 5);
                 Engine_EventShowMessage(9, 0);
                 Main_080b0060();
             } else if (diff < 0) {
-                Engine_EventSetMessage(0xe14);
+                Engine_EventSetMessage((s32)MsgTorebiYaLostNumber);
                 Main_08015120(-diff, 5);
                 Engine_EventShowMessage(9, 0);
             }
@@ -103,14 +108,14 @@ s32 TorebiIzumi_OpenScene(void)
             if (list[0] == -1) {
                 TorebiIzumi_OfferLuckyWheels(1);
             } else if (list[0] != -2) {
-                Engine_EventSetMessage(0xe2e);
+                Engine_EventSetMessage((s32)MsgTorebiCongratulations);
                 Engine_EventShowMessage(8, 0);
                 if (*list != -1) {
                     for (i = 0; list[i] != -1; i++) {
                         if (i == 0) {
-                            Engine_EventSetMessage(0xe2f);
+                            Engine_EventSetMessage((s32)MsgTorebiWonItemGo);
                         } else {
-                            Engine_EventSetMessage((s32)&TorebiIzumi_AndYouWonMessage);
+                            Engine_EventSetMessage((s32)MsgTorebiWonItemGo2);
                         }
                         item = SceneDialogue_PickTopicVariantId(list[i]);
                         Main_08015120(item, 2);
@@ -123,7 +128,7 @@ s32 TorebiIzumi_OpenScene(void)
                     }
                 }
                 Data_02000240_t.bytes[150][0] = 0xfe;
-                Engine_EventSetMessage(0xe31);
+                Engine_EventSetMessage((s32)MsgTorebiComeAgain);
                 Engine_EventShowMessage(8, 0);
             }
             Engine_EventEnd();

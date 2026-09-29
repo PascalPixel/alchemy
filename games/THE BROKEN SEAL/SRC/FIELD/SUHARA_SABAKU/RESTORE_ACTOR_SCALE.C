@@ -4,6 +4,7 @@
 #include "FIELD_EVENT.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
+extern u8 MsgSuharaSandstorm[];
 
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
@@ -117,7 +118,7 @@ void SuharaSabaku_RestoreActorScaleAndBlend(s32 a0)
             SetFlagBits(&Engine_ActorGet(0)->unknown_5a, 1);
             Engine_ActorSetAnimation(13, 1);
             Call3(Engine_ActorFaceDirection, 0, 0x4000, 0);
-            Call1(Engine_EventSetMessage, 0x262e);
+            Call1(Engine_EventSetMessage, (s32)MsgSuharaSandstorm);
             Call3(Engine_ActorShowEmote, 13, 0x106, 60);
             Engine_EventShowMessage(13, 0);
             Call3(Engine_ActorShowEmote, 13, 0x102, 60);

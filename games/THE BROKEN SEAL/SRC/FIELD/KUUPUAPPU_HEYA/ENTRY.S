@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer KuupuappuHeya_ApplyEntryState
-	overlay_veneer SceneData_GetTableD8f8
-	overlay_veneer SceneData_GetTableDa80
+	overlay_veneer SceneData_GetScriptTable
+	overlay_veneer SceneData_GetMessageTable
 	overlay_veneer Func_02000048
 	overlay_veneer Func_02000310
-	overlay_veneer SceneData_GetTableDa60
+	overlay_veneer SceneData_GetRegionTable

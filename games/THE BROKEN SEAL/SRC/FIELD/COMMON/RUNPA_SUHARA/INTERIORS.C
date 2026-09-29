@@ -1,4 +1,11 @@
 #include "INTERIORS.H"
+extern u8 MsgRunpaChefOffersStory[];
+extern u8 MsgRunpaChefThinksOfPrisoner[];
+extern u8 MsgRunpaInnClerkAsksAboutGuest[];
+extern u8 MsgRunpaInnkeeperOffersOwnHome[];
+extern u8 MsgRunpaInnkeeperOffersRoom[];
+extern u8 MsgRunpaTemplePriestReopened[];
+extern u8 MsgRunpaTemplePriestSealed[];
 
 const struct SceneEntrance *Scene_GetEntrances(void)
 {
@@ -44,10 +51,10 @@ void Innkeeper_Talk(void)
     }
     Event_Begin();
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_SetMessage(MSG_INNKEEPER_OFFERS_ROOM);
+        Event_SetMessage((s32)MsgRunpaInnkeeperOffersRoom);
         Event_AskYesNo(ACTOR_INNKEEPER, 0);
     } else {
-        Event_SetMessage(MSG_INNKEEPER_OFFERS_OWN_HOME);
+        Event_SetMessage((s32)MsgRunpaInnkeeperOffersOwnHome);
         Event_AskYesNo(ACTOR_INNKEEPER, 0);
     }
     Event_End();
@@ -56,7 +63,7 @@ void Innkeeper_Talk(void)
 void Chef_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_CHEF_OFFERS_STORY);
+    Event_SetMessage((s32)MsgRunpaChefOffersStory);
     Event_AskYesNo(ACTOR_CHEF, 0);
     GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
     Event_End();
@@ -65,7 +72,7 @@ void Chef_Talk(void)
 void Chef_ReadMind(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_CHEF_THINKS_OF_PRISONER);
+    Event_SetMessage((s32)MsgRunpaChefThinksOfPrisoner);
     Event_ShowMessage(ACTOR_CHEF, 0);
     GameFlag_Set(FLAG_LUNPA_HEARD_OF_PRISONER);
     Event_End();
@@ -74,7 +81,7 @@ void Chef_ReadMind(void)
 void InnClerk_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_INN_CLERK_ASKS_ABOUT_GUEST);
+    Event_SetMessage((s32)MsgRunpaInnClerkAsksAboutGuest);
     Event_AskYesNo(ACTOR_INN_CLERK, 0);
     Event_End();
 }
@@ -88,12 +95,12 @@ void TemplePriest_Talk(void)
         Sanctum_Open(ACTOR_TEMPLE_PRIEST);
     } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
         Event_Begin();
-        Event_SetMessage(MSG_TEMPLE_PRIEST_REOPENED);
+        Event_SetMessage((s32)MsgRunpaTemplePriestReopened);
         Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
         Event_End();
     } else {
         Event_Begin();
-        Event_SetMessage(MSG_TEMPLE_PRIEST_SEALED);
+        Event_SetMessage((s32)MsgRunpaTemplePriestSealed);
         Event_ShowMessage(ACTOR_TEMPLE_PRIEST, 0);
         Event_End();
     }

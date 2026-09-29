@@ -1104,40 +1104,6 @@ Func_02003e40:
 	.2byte 0x0000
 	.4byte 0x0000096c
 	.4byte 0x00002233
-	.section .text.x0200bfc4,"ax",%progbits
-	.global Func_02003fc4
-	.thumb_func
-Func_02003fc4:
-	push {r5, r6, lr}
-	ldr r6, [pc, #64]
-	adds r5, r0, #0
-	adds r0, r6, #0
-	bl 0x0200c498
-	movs r1, #0
-	adds r0, r5, #0
-	bl 0x0200c4a0
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200c3f8
-	cmp r0, #0
-	bne .L_02003fc4_0
-	adds r0, r6, #1
-	bl 0x0200c498
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x0200c4a8
-	b .L_02003fc4_1
-.L_02003fc4_0:
-	adds r0, r6, #2
-	bl 0x0200c498
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x0200c4a8
-.L_02003fc4_1:
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.4byte 0x000022a3
 	.section .text.x0200c034,"ax",%progbits
 	.global Func_02004034
 	.thumb_func
@@ -1488,6 +1454,8 @@ Func_020040b4:
 	.4byte 0x00000209
 	.4byte 0x00000967
 	.section .rodata,"a",%progbits
+	.global TorebiKyuden_CellSteps
+TorebiKyuden_CellSteps:
 	.4byte 0x001c0019
 	.4byte 0x00030001
 	.4byte 0x001a0005

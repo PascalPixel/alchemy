@@ -6,6 +6,10 @@
 #include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKuupuappuRumorsThievesLunpa[];
+extern u8 MsgKuupuappuTalkingMayorStrong[];
+extern u8 MsgKuupuappuVolcanoStaysCalm[];
+extern u8 MsgKuupuappuWarriorsWhoCaptured[];
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -329,7 +333,7 @@ void SceneDialogue_RunActor8FlagScene(void)
     Event_Begin();
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 2);
     GameFlag_Set(0x305);
-    Event_SetMessage(0x1cab);
+    Event_SetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
     Event_ShowMessage(8, 0);
     Event_End();
 }
@@ -337,7 +341,7 @@ void SceneDialogue_RunActor8FlagScene(void)
 void SceneDialogue_RunActor11Line(void)
 {
 
-    Event_SetMessage(0x1cae);
+    Event_SetMessage((s32)MsgKuupuappuRumorsThievesLunpa);
     Actor_FaceEachOther(11, ACTOR_PARTY_LEADER, 2);
     ActorPresentation_RunActorModeOneThenZero(11);
 }
@@ -349,7 +353,7 @@ void SceneDialogue_RunActor12TwoFlagScene(void)
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 2);
     GameFlag_Set(0x306);
     GameFlag_Set(0x868);
-    Event_SetMessage(0x1caf);
+    Event_SetMessage((s32)MsgKuupuappuTalkingMayorStrong);
     Event_ShowMessage(12, 0);
     Event_End();
 }
@@ -357,7 +361,7 @@ void SceneDialogue_RunActor12TwoFlagScene(void)
 void SceneDialogue_ShowLine1CB0ForActor13(void)
 {
 
-    Event_SetMessage(0x1cb0);
+    Event_SetMessage((s32)MsgKuupuappuVolcanoStaysCalm);
     Actor_FaceEachOther(13, ACTOR_PARTY_LEADER, 2);
     ActorPresentation_RunActorModeOneThenZero(13);
 }

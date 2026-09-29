@@ -1,4 +1,5 @@
 #include "HASHIRA.H"
+extern u8 MsgFieldFlippedSwitch[];
 
 /* The four background scroll pairs; the shaken copy starts at the second. */
 extern u16 gBgScroll[];
@@ -72,7 +73,7 @@ void FieldScene_RunFlaggedDisplayScene(void)
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(0x1190000, -1, 0x1b00000, 1);
     Camera_WaitForMove();
-    Message_ShowCentered(0x1528, 1);
+    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
     queried = GameFlag_IsSet(QUERY_FLAG);
     if (queried == 0) {
         Audio_PlayCue(232);

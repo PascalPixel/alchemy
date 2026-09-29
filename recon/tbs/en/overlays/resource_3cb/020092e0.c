@@ -8,6 +8,11 @@
  * draft; exact 1060-byte extent, including literal pools (2026-09-26). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgLobbyNotBadNextMonster[];
+extern u8 MsgLobbyNoteCantUse[];
+extern u8 MsgLobbyWonNumberBattle[];
+extern u8 MsgLobbyWonNumberBattleBroke[];
+extern u8 MsgLobbyWonNumberBattleTold[];
 extern u8 gOptionMirror[];
 
 void Sound_LoadPresetParameters(s32 value);
@@ -122,7 +127,7 @@ s32 LinkLobby_RunRoundResult(void)
         union GameStateRows *state = (union GameStateRows *)gGameState;
 
         Engine_ActorFaceActor(8, state->words[125], 0);
-        Call1(Engine_EventSetMessage, 0x293e + msg);
+        Call1(Engine_EventSetMessage, (s32)MsgLobbyNotBadNextMonster + msg);
         Engine_EventOpenMessage(8, 0);
         if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) == 0) {
             if (wins > 90) {
@@ -139,11 +144,11 @@ s32 LinkLobby_RunRoundResult(void)
             score = *(u16 *)score;
             if (state->halves[340][0] < score) {
                 state->halves[340][0] = score;
-                Engine_EventSetMessage(0x293c);
+                Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
                 Engine_EventOpenMessage(8, 0);
                 Scene_ShowDialoguePair292c();
             } else {
-                Engine_EventSetMessage(0x2939);
+                Engine_EventSetMessage((s32)MsgLobbyWonNumberBattle);
                 Engine_EventOpenMessage(8, 0);
             }
             LinkLobby_WriteSlotValue(0);
@@ -164,11 +169,11 @@ s32 LinkLobby_RunRoundResult(void)
         score = *(u16 *)score;
         if (ROW(340) < score) {
             ROW(340) = score;
-            Engine_EventSetMessage(0x293c);
+            Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
             Engine_EventOpenMessage(8, 0);
             Scene_ShowDialoguePair292c();
         } else {
-            Engine_EventSetMessage(0x293a);
+            Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleTold);
             Engine_EventOpenMessage(8, 0);
         }
         ROW(341) = 0;
@@ -233,7 +238,7 @@ s32 LinkLobby_RunRoundResult(void)
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
             Engine_ActorFaceActor(8, *(s32 *)gGameState[250], 0);
-            Engine_EventSetMessage(0x2929);
+            Engine_EventSetMessage((s32)MsgLobbyNoteCantUse);
             Engine_EventShowMessage(8, 0);
             Engine_EventEnd();
         }

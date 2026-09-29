@@ -1,10 +1,10 @@
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaOh[];
+extern u8 MsgHaidiaTwoDontEnough[];
 
 void SceneDialogue_RunActorTenFlag30dDialogue(void)
 {
     s32 v2000 = 0x2000;
-    s32 msg1 = 0xEA5;
-    s32 msg0 = 0xEA4;
     u8 *tbl;
 
     Event_Begin();
@@ -12,10 +12,10 @@ void SceneDialogue_RunActorTenFlag30dDialogue(void)
     Event_Wait(10);
     Actor_FaceEachOther(10, ACTOR_PARTY_LEADER, 20);
     if (GameFlag_IsSet(0x30d) != 0) {
-        Event_SetMessage(msg1);
+        Event_SetMessage((s32)MsgHaidiaTwoDontEnough);
         Event_ShowMessageAndWait(10, 0, 10);
     } else {
-        Event_SetMessage(msg0);
+        Event_SetMessage((s32)MsgHaidiaOh);
         Actor_StartRepeatedMotion(10, 1);
         Event_ShowMessageAndWait(10, 0, 10);
         Actor_StartRepeatedMotion(10, 2);

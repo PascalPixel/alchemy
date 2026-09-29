@@ -1,4 +1,7 @@
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaCantGetAroundThisRock[];
+extern u8 MsgHaidiaNorthLeadsToMtAleph[];
+extern u8 MsgHaidiaTheBoulderIsFalling[];
 
 /*
  * The overlay's own work, after its image: whether the boulder has stopped
@@ -22,7 +25,7 @@ void FieldScene_RunScene372SequenceD(void)
     Actor_WalkToAndWait(22, 0x119, 0x1fb);
     Actor_FaceEachOther(22, ACTOR_PARTY_LEADER, 0);
     Event_Wait(30);
-    Event_SetMessage(MSG_NORTH_LEADS_TO_MT_ALEPH);
+    Event_SetMessage((s32)MsgHaidiaNorthLeadsToMtAleph);
     Event_ShowMessage(22, 0);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 22, 0);
     Event_Wait(10);
@@ -58,7 +61,7 @@ void SceneActor_RunActor22PlacementSequence(s32 x, s32 y)
     Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, 0x102);
     Event_Wait(40);
-    Event_SetMessage(MSG_CANT_GET_AROUND_THIS_ROCK);
+    Event_SetMessage((s32)MsgHaidiaCantGetAroundThisRock);
     Event_ShowMessage(22, 0);
     Actor_RunRepeatedMotion(22, 2);
     Event_ShowMessage(22, 0);
@@ -122,7 +125,7 @@ void Scene_BoulderFalls(void)
         ObjectMotion_SetActionVariant(33, 2);
         ObjectMotion_SetActionVariant(30, 3);
         ObjectMotion_SetActionVariant(29, 3);
-        Event_SetMessage(MSG_THE_BOULDER_IS_FALLING);
+        Event_SetMessage((s32)MsgHaidiaTheBoulderIsFalling);
         Event_ShowMessageAndWait(28, 0, 20);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
         Actor_FaceDirection(22, 0xc000, 20);

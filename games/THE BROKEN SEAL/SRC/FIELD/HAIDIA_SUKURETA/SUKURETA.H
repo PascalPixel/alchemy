@@ -27,20 +27,6 @@ enum CottageFlag {
 
 #define NULL ((void *)0)
 
-enum CottageMessage {
-    MSG_SATUROS_GO = 0xf98,
-    MSG_SUKURETA_OH_ROBIN = 0xfa6,
-    MSG_SUKURETA_I_WAITED_YEARS_FOR_THE_SANCTUM = 0xfb1,
-    MSG_JASMINE_THEY_MIGHT_BE_THIEVES = 0xfb2,
-    MSG_SUKURETA_WE_ONLY_CHECK_THE_MOUNTAIN = 0xfbd,
-    MSG_SUKURETA_WE_ONLY_CHECK_MT_ALEPH = 0xfbe,
-    MSG_JASMINE_OUR_SECRET = 0xfc2,
-    MSG_GERALD_YOU_CAN_HANDLE_THE_DANGER = 0xfc6,
-    MSG_GERALD_ILL_TAKE_OVER_IF_NERVOUS = 0xfc9,
-    MSG_SUKURETA_OUR_BEST_BET = 0xfcc,
-    MSG_ILL_CLIMB_THE_FENCE_SOMEDAY = 0x11c4,
-    MSG_MEMORIES_OF_THIS_COTTAGE = 0x1c96
-};
 
 /* The scene's tables, laid out after the code. */
 extern u8 Placement_Scripts[];

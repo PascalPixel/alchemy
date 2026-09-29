@@ -1,20 +1,18 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgYamaAdeptsLetMeThankAgain[];
+extern u8 MsgYamaAmTravelingAroundWorldSpread[];
+extern u8 MsgYamaDidKnowMasterHamaGreatest[];
+extern u8 MsgYamaDoDoWarriorShouldReturn[];
+extern u8 MsgYamaDoKnowMeditation[];
+extern u8 MsgYamaHeWhoHasPowerSee[];
+extern u8 MsgYamaHsuOkay[];
+extern u8 MsgYamaNorthAltinMineWestLama[];
+extern u8 MsgYamaRobinDidLiftBoulder[];
+extern u8 MsgYamaYahhSilkRoadBouldersBlock[];
+extern u8 MsgYamaYoungWarriorsDoComeFrom[];
 
-enum EventSetupSceneMessage {
-    MSG_YAHH_SILK_ROAD_BOULDERS_BLOCK = 0x18b5,
-    MSG_DO_DO_WARRIOR_SHOULD_RETURN = 0x18b9,
-    MSG_HE_WHO_HAS_POWER_SEE = 0x1956,
-    MSG_YOUNG_WARRIORS_DO_COME_FROM = 0x1958,
-    MSG_DO_KNOW_MEDITATION = 0x195d,
-    MSG_DID_KNOW_MASTER_HAMA_GREATEST = 0x1961,
-    MSG_HSU_OKAY = 0x19cf,
-    MSG_ROBIN_DID_LIFT_BOULDER = 0x19da,
-    MSG_ADEPTS_LET_ME_THANK_AGAIN = 0x19e9,
-    MSG_NORTH_ALTIN_MINE_WEST_LAMA = 0x1a12,
-    MSG_AM_TRAVELING_AROUND_WORLD_SPREAD = 0x1a1e
-};
 
 
 #define FIELD_AT_OFFSET(base, type, offset)     (*(type)((u8 *)(base) + (offset)))
@@ -143,7 +141,7 @@ void SceneDialogue_RunMessage1958Step(void)
     u8 *work;
 
     Event_Begin();
-    Event_SetMessage(MSG_YOUNG_WARRIORS_DO_COME_FROM);
+    Event_SetMessage((s32)MsgYamaYoungWarriorsDoComeFrom);
     Event_OpenMessage(10, 0);
 
     if (Event_ChooseYesNo(0, 0) == 1) {
@@ -161,7 +159,7 @@ void SceneDialogue_RunMessage1958Step(void)
 void SceneDialogue_RunActor11Message195d(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DO_KNOW_MEDITATION);
+    Event_SetMessage((s32)MsgYamaDoKnowMeditation);
     Event_AskYesNo(11, 0);
     Event_End();
 }
@@ -169,7 +167,7 @@ void SceneDialogue_RunActor11Message195d(void)
 void SceneDialogue_RunActor13Message1961(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DID_KNOW_MASTER_HAMA_GREATEST);
+    Event_SetMessage((s32)MsgYamaDidKnowMasterHamaGreatest);
     Event_AskYesNo(13, 0);
     Event_End();
 }
@@ -208,7 +206,7 @@ void FieldScene_RunScene3a2SequenceA(void)
     Event_Wait(60);
     Actor_SetAnimationAndWait(8, 3);
     Event_Wait(20);
-    Event_SetMessage(MSG_ADEPTS_LET_ME_THANK_AGAIN);
+    Event_SetMessage((s32)MsgYamaAdeptsLetMeThankAgain);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
     Actor_SetAnimation(ACTOR_GERALD, 3);
@@ -377,7 +375,7 @@ void SceneDialogue_RunLine1956(void)
 
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered(MSG_HE_WHO_HAS_POWER_SEE, 1);
+    Message_ShowCentered((s32)MsgYamaHeWhoHasPowerSee, 1);
     Event_End();
 }
 
@@ -410,7 +408,7 @@ void SceneDialogue_RunActorFifteenByLeaderHeading(void)
     if (heading - 0xA001 <= 0x3FFE) {
         Sanctum_Open(15);
     } else {
-        Event_SetMessage(MSG_AM_TRAVELING_AROUND_WORLD_SPREAD);
+        Event_SetMessage((s32)MsgYamaAmTravelingAroundWorldSpread);
         Event_ShowMessage(15, 0);
     }
     Event_End();
@@ -425,7 +423,7 @@ void Scene_RunEventTransition(void)
     } else {
         Event_Begin();
         Actor_SetPosition(10, 0x2180000, 0xd80000);
-        Event_SetMessage(MSG_YAHH_SILK_ROAD_BOULDERS_BLOCK);
+        Event_SetMessage((s32)MsgYamaYahhSilkRoadBouldersBlock);
         Event_ShowMessageAndWait(10, 0, 20);
         Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Event_Wait(20);
@@ -480,7 +478,7 @@ void Scene_RunEventTransition(void)
 void Scene_RunActorCue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DO_DO_WARRIOR_SHOULD_RETURN);
+    Event_SetMessage((s32)MsgYamaDoDoWarriorShouldReturn);
     Actor_ShowEmote(10, 0x105, 60);
     Event_OpenMessage(10, 0);
     if (Event_ChooseYesNo(0, 0) == 1) {
@@ -504,7 +502,7 @@ void Scene_RunActorExchange(void)
     Camera_WaitForMove();
     Actor_RunRepeatedMotion(8, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_HSU_OKAY);
+    Event_SetMessage((s32)MsgYamaHsuOkay);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_RunRepeatedMotion(9, 1);
     Event_Wait(20);
@@ -539,7 +537,7 @@ void Scene_RunActorSequence(void)
     Actor_SetAttachedEffect(8, 0x102);
     Actor_StartRepeatedMotion(8, 2);
     Event_Wait(60);
-    Event_SetMessage(MSG_ROBIN_DID_LIFT_BOULDER);
+    Event_SetMessage((s32)MsgYamaRobinDidLiftBoulder);
     Event_ShowMessageAndWait(8, 0, 20);
     Actor_SetAttachedEffect(10, 0x102);
     Actor_Jump(10, 4, 0);
@@ -653,7 +651,7 @@ void FieldScene_RunScriptedSteps0And1A12(void)
 {
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
-    Message_ShowCentered(MSG_NORTH_ALTIN_MINE_WEST_LAMA, 1);
+    Message_ShowCentered((s32)MsgYamaNorthAltinMineWestLama, 1);
     Event_End();
 }
 

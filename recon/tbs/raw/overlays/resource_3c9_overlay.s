@@ -5530,3 +5530,10 @@ Data_0200e6ec:
 	.4byte 0x00000000
 	.4byte 0x0000001e
 	.4byte 0x0000001b
+	.section .bss,"aw",%nobits
+	.global VinasuChojo_TransitionTimer
+VinasuChojo_TransitionTimer:
+	.space 4
+	.global VinasuChojo_TransitionStep
+VinasuChojo_TransitionStep:
+	.space 4

@@ -9,7 +9,7 @@
 	.balign 4
 	overlay_veneer Func_02000308
 	overlay_veneer Func_02000030
-	overlay_veneer SceneData_GetTable8728
+	overlay_veneer KareiHeya_GetExits
 	overlay_veneer Func_0200007c
 	overlay_veneer Func_020000e4
 	overlay_veneer SceneData_ReturnZero

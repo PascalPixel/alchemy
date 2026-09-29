@@ -84,6 +84,7 @@
  * No state, zero, loop or counter model changed; zero new DONE bytes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgArutamiraRotatedRock[];
 
 struct PuzzleState {
     u8 state;
@@ -131,7 +132,7 @@ void FieldScene_RunStatefulSequence(s32 action)
 
     Engine_EventBegin();
     Engine_EventResetEffectCounter();
-    Call1(Engine_EventSetMessage, 0x21db);
+    Call1(Engine_EventSetMessage, (s32)MsgArutamiraRotatedRock);
     Engine_EventShowMessage(16, 0);
     Engine_EventEnd();
     for (i = 0; i <= 4; i++) {

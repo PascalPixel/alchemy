@@ -1,5 +1,11 @@
 /* The four-step actor motion, actor placement and the opening sequence. */
 #include "LOG_ROLLING.H"
+extern u8 MsgKorosseoAnotherLogRollingArea[];
+extern u8 MsgKorosseoCalledMovingSidewalkStage[];
+extern u8 MsgKorosseoClearStageMustAbleChange[];
+extern u8 MsgKorosseoHereMustFigureOutHow[];
+extern u8 MsgKorosseoInStageMustTryOutpace[];
+extern u8 MsgKorosseoPlaceNormallyCalledFreeClimb[];
 
 void FieldScene_RunFourStepActorMotion(s32 a0)
 {
@@ -24,7 +30,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
         Event_Begin();
         result = Value2(ColossoLogRollingStage_RunStateInteraction, a0, 4);
         if (result == 0) {
-            Event_SetMessage(MSG_PLACE_NORMALLY_CALLED_FREE_CLIMB);
+            Event_SetMessage((s32)MsgKorosseoPlaceNormallyCalledFreeClimb);
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x3580000, -1, 0xa80000, 1);
             Camera_WaitForMove();
@@ -62,7 +68,7 @@ void FieldScene_RunFourStepActorMotion(s32 a0)
             Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
             ColossoLogRollingStage_InitializeStateInteraction(a0, 4);
         } else if (result == 1) {
-            Event_SetMessage(MSG_CLEAR_STAGE_MUST_ABLE_CHANGE);
+            Event_SetMessage((s32)MsgKorosseoClearStageMustAbleChange);
             Event_ShowMessage(a0, 0);
         }
         Value3(FieldScene_RunMiddleSequence, result, a0, 4);
@@ -124,7 +130,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
         rec2 = Value2(ColossoLogRollingStage_RunStateInteraction, a0, 5);
         if (rec2 != 0) {
         } else {
-            Event_SetMessage(MSG_CALLED_MOVING_SIDEWALK_STAGE);
+            Event_SetMessage((s32)MsgKorosseoCalledMovingSidewalkStage);
             Camera_SetSpeed(0x30000, 0x6000);
             Camera_MoveTo(0x4380000, -1, 0xa80000, 1);
             Camera_WaitForMove();
@@ -165,7 +171,7 @@ void FieldScene_RunOpeningAuxiliarySequence(s32 a0)
             goto L_02002494;
         }
         if (rec2 == 1) {
-            Event_SetMessage(MSG_IN_STAGE_MUST_TRY_OUTPACE);
+            Event_SetMessage((s32)MsgKorosseoInStageMustTryOutpace);
             Event_ShowMessage(a0, 0);
         }
         L_02002494:;
@@ -189,7 +195,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
     state = ColossoLogRollingStage_RunStateInteraction(actor, 6);
 
     if (state == 0) {
-        Event_SetMessage(MSG_ANOTHER_LOG_ROLLING_AREA);
+        Event_SetMessage((s32)MsgKorosseoAnotherLogRollingArea);
         Camera_SetSpeed(0x30000, 0x6000);
         Camera_MoveTo(0x5080000, -1, 0x980000, 1);
         Camera_WaitForMove();
@@ -209,7 +215,7 @@ void ColossoLogRollingStage_RunLogRollingInteraction(s32 actor)
         Camera_FollowActor(ACTOR_PARTY_LEADER, 0);
         ColossoLogRollingStage_InitializeStateInteraction(actor, 6);
     } else if (state == 1) {
-        Event_SetMessage(MSG_HERE_MUST_FIGURE_OUT_HOW);
+        Event_SetMessage((s32)MsgKorosseoHereMustFigureOutHow);
         Event_ShowMessage(actor, 0);
     }
 

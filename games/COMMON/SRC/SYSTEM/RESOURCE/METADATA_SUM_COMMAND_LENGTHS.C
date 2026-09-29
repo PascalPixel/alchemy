@@ -41,3 +41,4 @@ s32 ResourceMetadata_SumCommandLengths(s32 id, u32 no, s32 cnt)
     }
     return sum;
 }
+

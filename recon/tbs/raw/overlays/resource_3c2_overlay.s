@@ -68,41 +68,6 @@ Func_0200006c:
 	.4byte 0x0000096f
 	.4byte 0x0000261c
 	.4byte 0x000025cf
-	.section .text.x020081d4,"ax",%progbits
-	.balign 4
-	.global Func_020001d4
-	.thumb_func
-Func_020001d4:
-	push {r5, r6, lr}
-	ldr r5, [pc, #64]
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl 0x02008bc4
-	movs r1, #0
-	adds r0, r6, #0
-	bl 0x02008bcc
-	movs r0, #0
-	movs r1, #0
-	bl 0x02008b5c
-	cmp r0, #0
-	bne .L_020001d4_0
-	movs r0, #10
-	bl 0x02008b44
-	adds r0, r5, #1
-	bl 0x02008bc4
-	b .L_020001d4_1
-.L_020001d4_0:
-	adds r0, r5, #2
-	bl 0x02008bc4
-.L_020001d4_1:
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x02008bd4
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00002624
 	.section .text.x02008240,"ax",%progbits
 	.balign 4
 	.global Func_02000240

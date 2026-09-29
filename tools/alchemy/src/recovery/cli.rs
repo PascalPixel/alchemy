@@ -174,14 +174,21 @@ fn disasm(root: &Path, options: &Options) -> Result<(), String> {
     Ok(())
 }
 
-/// Prints every call site of an owner resolved to its real target, one JSON
-/// object per line, for the humanizing passes that annotate the units.
+/// Prints every call site of an owner resolved to its real target, one TSV
+/// row per site (site, symbol, target, kind, main, name), for the
+/// humanizing passes that annotate the units.
 fn imports_owner(root: &Path, options: &Options) -> Result<i32, String> {
     let owner = owner_argument(options)?;
     for import in super::imports::imports_for(root, options.target, owner, options.span)? {
+        let hex = |value: Option<u32>| value.map_or(String::new(), |value| format!("{value:08x}"));
         println!(
-            "{}",
-            serde_json::to_string(&import).map_err(|error| error.to_string())?
+            "{:08x}\t{}\t{:08x}\t{}\t{}\t{}",
+            import.site,
+            import.symbol,
+            import.target,
+            import.kind,
+            hex(import.main),
+            import.name.as_deref().unwrap_or("")
         );
     }
     Ok(0)

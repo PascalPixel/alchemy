@@ -13,7 +13,7 @@ use psynergy::decode::{decode_window_at, Kind, MAIN_BASE, OVERLAY_BASE};
 use std::path::Path;
 
 /// One call site of a lifted unit, resolved.
-#[derive(Debug, Clone, serde::Serialize)]
+#[derive(Debug, Clone)]
 pub struct Import {
     /// The site's address.
     pub site: u32,

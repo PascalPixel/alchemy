@@ -713,7 +713,7 @@ fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"(GRAPHICS/[A-Za-z0-9_./]+)""#)
+    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"((?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#)
         .expect("static pattern");
     pattern
         .captures_iter(&text)
@@ -739,10 +739,13 @@ fn build_graphics_files(
         }
         let image = Path::new(target.game_dir())
             .join("SRC")
-            .join(ags::resource::image_name(&built)?);
+            .join(ags::resource::input_name(&built)?);
         let png = fs::read(root.join(&image))
             .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
-        let encoded = ags::resource::build_file(&built, &png)?;
+        let encoded = ags::resource::build_file_with(&built, &png, &|name| {
+            let path = root.join(image.with_file_name(name));
+            fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
+        })?;
         let path = output.join(&built);
         if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
             continue;

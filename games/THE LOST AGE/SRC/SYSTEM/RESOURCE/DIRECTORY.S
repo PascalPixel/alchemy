@@ -528,58 +528,58 @@ Resource_DirectoryTable:
 	resource , Resource_Data200
 	resource , Resource_Data201
 	resource , Resource_Data202
-	resource , Resource_Data203
-	resource , Resource_Data204
-	resource , Resource_Data205
-	resource , Resource_Data206
-	resource , Resource_Data207
-	resource , Resource_Data208
-	resource , Resource_Data209
-	resource , Resource_Data20A
-	resource , Resource_Data20B
-	resource , Resource_Data20C
-	resource , Resource_Data20D
-	resource , Resource_Data20E
-	resource , Resource_Data20F
-	resource , Resource_Data210
-	resource , Resource_Data211
-	resource , Resource_Data212
-	resource , Resource_Data213
-	resource , Resource_Data214
-	resource , Resource_Data215
-	resource , Resource_Data216
-	resource , Resource_Data217
-	resource , Resource_Data218
-	resource , Resource_Data219
-	resource , Resource_Data21A
-	resource , Resource_Data21B
-	resource , Resource_Data21C
-	resource , Resource_Data21D
-	resource , Resource_Data21E
+	resource , Monster_BlueDevilSprites
+	resource , Monster_PinkBruteSprites
+	resource , Monster_ClubTrollSprites
+	resource , Monster_JesterImpSprites
+	resource , Monster_GoldDragonSprites
+	resource , Monster_ApeSprites
+	resource , Monster_SwordImpSprites
+	resource , Monster_RedBeastSprites
+	resource , Monster_RedBeetleSprites
+	resource , Monster_PinkWormSprites
+	resource , Monster_BanditSprites
+	resource , Monster_SeaDragonSprites
+	resource , Monster_SkullMageSprites
+	resource , Monster_ManEaterSprites
+	resource , Monster_BlueCrabSprites
+	resource , Monster_OstrichSprites
+	resource , Monster_BlueWyvernSprites
+	resource , Monster_DarkWizardSprites
+	resource , Monster_WhiteKnightSprites
+	resource , Monster_GoldenBirdSprites
+	resource , Monster_DarkKnightSprites
+	resource , Monster_TreantSprites
+	resource , Monster_GreenOgreSprites
+	resource , Monster_PinkOgreSprites
+	resource , Monster_WerewolfSprites
+	resource , Monster_MummySprites
+	resource , Monster_RaptorSprites
+	resource , Monster_GreenKnightSprites
 	resource , Resource_Data21F
-	resource , Resource_Data220
-	resource , Resource_Data221
-	resource , Resource_Data222
-	resource , Resource_Data223
-	resource , Resource_Data224
-	resource , Resource_Data225
-	resource , Resource_Data226
-	resource , Resource_Data227
-	resource , Resource_Data228
-	resource , Resource_Data229
-	resource , Resource_Data22A
-	resource , Resource_Data22B
-	resource , Resource_Data22C
-	resource , Resource_Data22D
-	resource , Resource_Data22E
-	resource , Resource_Data22F
-	resource , Resource_Data230
-	resource , Resource_Data231
-	resource , Resource_Data232
-	resource , Resource_Data233
-	resource , Resource_Data234
-	resource , Resource_Data235
-	resource , Resource_Data236
+	resource , Monster_HydraSprites
+	resource , Monster_LarvaSprites
+	resource , Monster_JackalSprites
+	resource , Monster_UrchinSprites
+	resource , Monster_DemonWarriorSprites
+	resource , Monster_DragonLeftSprites
+	resource , Monster_DragonRightSprites
+	resource , Monster_SeaSerpentSprites
+	resource , Monster_SwordsmanSprites
+	resource , Monster_StorkSprites
+	resource , Monster_VultureSprites
+	resource , Monster_ToadSprites
+	resource , Monster_SwordMaidenSprites
+	resource , Monster_BeastLordSprites
+	resource , Monster_BrawlerSprites
+	resource , Monster_MiniKnightSprites
+	resource , Monster_ScorpionSprites
+	resource , Monster_MermanSprites
+	resource , Monster_YoungSwordsmanSprites
+	resource , Monster_GreenMageSprites
+	resource , Monster_BlueOrbSprites
+	resource , Monster_AxeWarriorSprites
+	resource , Monster_SpearWarriorSprites
 	resource , Monster_AxeGoblinSprites
 	resource , Monster_GhoulSprites
 	resource , Monster_HarpySprites
@@ -604,7 +604,7 @@ Resource_DirectoryTable:
 	resource , Monster_MushroomSprites
 	resource , Monster_RedWormSprites
 	resource , Monster_BatSprites
-	resource , Resource_Data24F
+	resource , Monster_JellySprites
 	resource , Monster_SmallLizardSprites
 	resource , Monster_WalkingPlantSprites
 	resource , Monster_FlySprites

@@ -2,6 +2,10 @@
 #include "FIELD_EVENT.H"
 
 extern s16 SuharaMura_CellAnimationOrigins[];
+extern const u16 SuharaMura_CellSteps0[];
+extern const u16 SuharaMura_CellSteps1[];
+extern u8 SuharaMura_Extras[];
+extern u8 SuharaMura_ExtrasFlag96f[];
 
 /*
  * Scene script for overlay resource_3c1: the layout step, the indexed effect
@@ -9,11 +13,6 @@ extern s16 SuharaMura_CellAnimationOrigins[];
  */
 
 static __inline__ void SetOffset(s32 actor, s32 axis, s32 offset)
-{
-    Actor_WalkBy(actor, axis, offset);
-}
-
-static __inline__ void SetOffset_020004ba(s32 actor, s32 axis, s32 offset)
 {
     Actor_WalkBy(actor, axis, offset);
 }
@@ -27,7 +26,7 @@ void FieldScene_RunLayoutStepThenSet201(void)
     GameFlag_Set(0x201);
 }
 
-void SceneEffect_ConfigureIndexedEffect85e8(void)
+void SuharaMura_AnimateCells0(void)
 {
     u8 *work = *(u8 **)&gEventWork;
     s32 no = *(s16 *)(work + 364);
@@ -35,13 +34,13 @@ void SceneEffect_ConfigureIndexedEffect85e8(void)
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
     Audio_PlayCue(158);
-    Map_AnimateCells(0x020085e8, x, y);
+    Map_AnimateCells(SuharaMura_CellSteps0, x, y);
     SetOffset(0, 0, -16);
     *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
     Event_RequestExit(no);
 }
 
-void SceneEffect_ConfigureIndexedEffect85fe(void)
+void SuharaMura_AnimateCells1(void)
 {
     u8 *work = *(u8 **)&gEventWork;
     s32 no = *(s16 *)(work + 364);
@@ -49,18 +48,18 @@ void SceneEffect_ConfigureIndexedEffect85fe(void)
     u16 y = SuharaMura_CellAnimationOrigins[no * 2 + 1];
 
     Audio_PlayCue(158);
-    Map_AnimateCells(0x020085fe, x, y);
-    SetOffset_020004ba(0, 0, -16);
+    Map_AnimateCells(SuharaMura_CellSteps1, x, y);
+    SetOffset(0, 0, -16);
     *(s32 *)(*(u8 **)&gEventWork + 456) = 16;
     Event_RequestExit(no);
 }
 
-s32 SceneData_SelectTable8614ByFlag96f(void)
+s32 SceneData_SelectExtraTableByFlag96f(void)
 {
     if (GameFlag_IsSet(0x96F) != 0) {
-        return 0x02008758;
+        return (s32)SuharaMura_ExtrasFlag96f;
     }
-    return 0x02008614;
+    return (s32)SuharaMura_Extras;
 }
 
 s32 SceneState_InitEntryWorkspaceAndFlag96f(void)

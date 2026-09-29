@@ -253,7 +253,7 @@ void InspectEmptySceneObject(void);
 
 void RunActor12InteractionSequence(void);
 
-void FieldScene_RunScene3bf_020021c4(void);
+void RunActors13And21InteractionSequence(void);
 
 void ConfigureInteractionRegionA(void);
 
@@ -293,7 +293,7 @@ void FieldScene_SelectActorTwentyOneMessage(void);
 
 void FieldScene_RunActorTwentyOneSequence(void);
 
-void FieldScene_RunScene3bf_02004794(void);
+void FieldScene_RunDonpaSleepingSequence(void);
 
 void SelectActor25SceneVariant(void);
 

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgSoruFloatingEyeThing[];
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
@@ -79,7 +80,7 @@ void SoruNichigetsu_RunLightScene(void)
     Call3((void (*)())Engine_WorkSetValuesIfNonNegative, -1, -1, 0xe666);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(1, 2);
-    Engine_EventSetMessage(0x1119);
+    Engine_EventSetMessage((s32)MsgSoruFloatingEyeThing);
     Engine_EventOpenMessage(1, 0);
     Engine_EventChooseYesNo(0, 0);
     Engine_ActorSetAnimation(0, 1);

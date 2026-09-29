@@ -28,36 +28,6 @@ enum StarRoomActor {
     ACTOR_ALEX
 };
 
-enum StarRoomMessage {
-    MSG_SUKURETA_WHERE_ARE_WE = 0x103c,
-    MSG_SUKURETA_THE_ELEMENTS_ARE_THE_SOURCE = 0x1048,
-    MSG_SUKURETA_THE_WISDOM_STONE = 0x1056,
-    MSG_THE_STARS_HAVE_ENORMOUS_POWER = 0x105b,
-    MSG_JASMINE_WONT_YOU_PLEASE = 0x1068,
-    MSG_JASMINE_THANK_YOU = 0x1069,
-    MSG_THE_BAGS_ARE_FROM_SUKURETAS_COTTAGE = 0x106d,
-    MSG_NO_STARS_OUT_THERE = 0x1072,
-    MSG_JUPITER_STAR_BAGGED = 0x1077,
-    MSG_MARS_STAR_BAGGED = 0x1078,
-    MSG_SUKURETA_BRING_THE_STARS_HERE = 0x1079,
-    MSG_JASMINE_BE_CAREFUL = 0x107a,
-    MSG_SUKURETA_FETCH_THE_OTHERS = 0x107b,
-    MSG_JASMINE_SUKURETA_IS_GIDDY = 0x107c,
-    MSG_MENARDI_DONT_YOU_WANT_THEM_SAFE = 0x109b,
-    MSG_GERALD_ILL_TAKE_THEM = 0x10b4,
-    MSG_GERALD_THEY_WONT_LET_JASMINE_GO = 0x10b5,
-    MSG_ALEX_YOUR_FRIENDS = 0x10c3,
-    MSG_ALEX_THANK_YOU = 0x10c4,
-    MSG_ALEX_I_ASK_AGAIN = 0x10c6,
-    MSG_MENARDI_BRING_THE_FINAL_GEM = 0x10c7,
-    MSG_GARCIA_SILENCE = 0x10c8,
-    MSG_JASMINE_MY_BROTHER_IS_ALIVE = 0x10c9,
-    MSG_SATUROS_BRING_THE_FINAL_STAR = 0x10ca,
-    MSG_SUKURETA_I_AM_RESPONSIBLE = 0x10cb,
-    MSG_ALEX_ONLY_ONE_LEFT = 0x10cc,
-    MSG_GOT_FOUR_MYTHRIL_BAGS = 0x111b,
-    MSG_TOO_MANY_ITEMS = 0x111c
-};
 
 enum StarRoomFlag {
     FLAG_STAR_ROOM_EXPLAINED = 0x83b,
@@ -158,6 +128,10 @@ void Engine_ActorFaceDirection();
  * and waits.
  */
 
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants
+ * straight into the argument registers; a direct call precomputes a costly
+ * constant into a pseudo that the compiler then shares with later uses in
+ * the block. A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -219,12 +193,5 @@ extern s32 Placement_Messages[];
 extern s32 Placement_Actors[];
 extern s32 Placement_Effects[];
 
-enum SoruStarMessage {
-    MSG_VENUS_STAR_BAGGED = 0x1075,
-    MSG_MERCURY_STAR_BAGGED = 0x1076,
-    MSG_TAKE_THE_STARS_TO_THEM = 0x10b0,
-    MSG_THEY_WONT_LET_JASMINE_GO = 0x10b2,
-    MSG_ALEX_ASKS_FOR_STARS = 0x10b6
-};
 
 #endif

@@ -1,34 +1,32 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgBiribinoCurseOnKolimaScaryDevelopment[];
+extern u8 MsgBiribinoDoBelieveTreeSpiritCan[];
+extern u8 MsgBiribinoDoKnowIfHolyTree[];
+extern u8 MsgBiribinoDoKnowSilk[];
+extern u8 MsgBiribinoEvenFrozenImilMustFeel[];
+extern u8 MsgBiribinoForSomeReasonOceanFills[];
+extern u8 MsgBiribinoGrrr[];
+extern u8 MsgBiribinoHaveEverHeardOcean[];
+extern u8 MsgBiribinoIfWantMealSpeakWaitress[];
+extern u8 MsgBiribinoImReallyWorriedAboutKolima[];
+extern u8 MsgBiribinoLetsSeeServeThemWater[];
+extern u8 MsgBiribinoMustUsedTypesDangerBeing[];
+extern u8 MsgBiribinoOurWeaponsBestCanFind[];
+extern u8 MsgBiribinoReallyThinkHeadChefHas[];
+extern u8 MsgBiribinoThereWasAbleHealerIn[];
+extern u8 MsgBiribinoTurnedOutWarriorsHiredBy[];
+extern u8 MsgBiribinoTwoSpecialsOneDinnerOne[];
+extern u8 MsgBiribinoWasSomeMealDontJust[];
+extern u8 MsgBiribinoWasntCurseInKolimaHorrifying[];
+extern u8 MsgBiribinoWhenSpringComesWantGo[];
 
 /* The room's scene tables, where the overlay's data lies. */
 extern u8 BiribinoHeya_PrimaryTable[];
 extern u8 BiribinoHeya_SecondaryTable[];
 extern u8 BiribinoHeya_TertiaryTable[];
 
-enum MessageBranchMessage {
-    MSG_WHEN_SPRING_COMES_WANT_GO = 0x13d9,
-    MSG_THERE_WAS_ABLE_HEALER_IN = 0x13e3,
-    MSG_HAVE_EVER_HEARD_OCEAN = 0x13e5,
-    MSG_MUST_USED_TYPES_DANGER_BEING = 0x13e9,
-    MSG_CURSE_ON_KOLIMA_SCARY_DEVELOPMENT = 0x13eb,
-    MSG_IM_REALLY_WORRIED_ABOUT_KOLIMA = 0x13ed,
-    MSG_GRRR = 0x13f0,
-    MSG_DO_BELIEVE_TREE_SPIRIT_CAN = 0x13f6,
-    MSG_EVEN_FROZEN_IMIL_MUST_FEEL = 0x146f,
-    MSG_DO_KNOW_IF_HOLY_TREE = 0x16e1,
-    MSG_DO_KNOW_SILK = 0x16ec,
-    MSG_OUR_WEAPONS_BEST_CAN_FIND = 0x16f5,
-    MSG_FOR_SOME_REASON_OCEAN_FILLS = 0x16f7,
-    MSG_TURNED_OUT_WARRIORS_HIRED_BY = 0x16f9,
-    MSG_WASNT_CURSE_IN_KOLIMA_HORRIFYING = 0x16fb,
-    MSG_TWO_SPECIALS_ONE_DINNER_ONE = 0x16ff,
-    MSG_IF_WANT_MEAL_SPEAK_WAITRESS = 0x1702,
-    MSG_REALLY_THINK_HEAD_CHEF_HAS = 0x1703,
-    MSG_LETS_SEE_SERVE_THEM_WATER = 0x1705,
-    MSG_WAS_SOME_MEAL_DONT_JUST = 0x170a
-};
 
 
 /* Marks which of a scene's placements lie inside the current view. */
@@ -125,9 +123,9 @@ void FieldScene_RunActor16MessageBranch(void)
         Shop_Open(7, 16);
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
-            Event_SetMessage(MSG_THERE_WAS_ABLE_HEALER_IN);
+            Event_SetMessage((s32)MsgBiribinoThereWasAbleHealerIn);
         } else {
-            Event_SetMessage(MSG_OUR_WEAPONS_BEST_CAN_FIND);
+            Event_SetMessage((s32)MsgBiribinoOurWeaponsBestCanFind);
         }
         Event_ShowMessage(16, 0);
     }
@@ -147,9 +145,9 @@ void FieldScene_RunActor18MessageBranch(void)
         Shop_Open(9, 18);
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
-            Event_SetMessage(MSG_MUST_USED_TYPES_DANGER_BEING);
+            Event_SetMessage((s32)MsgBiribinoMustUsedTypesDangerBeing);
         } else {
-            Event_SetMessage(MSG_TURNED_OUT_WARRIORS_HIRED_BY);
+            Event_SetMessage((s32)MsgBiribinoTurnedOutWarriorsHiredBy);
         }
         Event_ShowMessage(18, 0);
     }
@@ -172,13 +170,13 @@ void FieldScene_RunActor17MessageBranch(void)
         Shop_Open(8, 17);
     } else {
         if (GameFlag_IsSet(0x845) == 0) {
-            Event_SetMessage(MSG_HAVE_EVER_HEARD_OCEAN);
+            Event_SetMessage((s32)MsgBiribinoHaveEverHeardOcean);
             Actor_FaceActor(17, ACTOR_PARTY_LEADER, 0);
             Event_Wait(10);
             Event_AskYesNo(17, 0);
             Actor_FaceDirection(17, 0x3000, 10);
         } else {
-            Event_SetMessage(MSG_FOR_SOME_REASON_OCEAN_FILLS);
+            Event_SetMessage((s32)MsgBiribinoForSomeReasonOceanFills);
             Event_ShowMessage(17, 0);
         }
     }
@@ -188,7 +186,7 @@ void FieldScene_RunActor17MessageBranch(void)
 void FieldScene_ConfigureActor21Scene(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_IM_REALLY_WORRIED_ABOUT_KOLIMA);
+    Event_SetMessage((s32)MsgBiribinoImReallyWorriedAboutKolima);
     Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
     Event_ShowMessage(21, 0);
     SetScale(21, 0xc000, 10);
@@ -201,7 +199,7 @@ void FieldScene_RunActor24Sequence(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_GRRR);
+    Event_SetMessage((s32)MsgBiribinoGrrr);
     Event_ShowMessageAndWait(24, 0, 20);
     Actor_FaceActor(24, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
@@ -222,7 +220,7 @@ void FieldScene_RunActor27Sequence(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_DO_BELIEVE_TREE_SPIRIT_CAN);
+    Event_SetMessage((s32)MsgBiribinoDoBelieveTreeSpiritCan);
     Actor_FaceActor(27, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
     Event_OpenMessage(27, 0);
@@ -237,7 +235,7 @@ void FieldScene_RunActor27Sequence(void)
 void FieldScene_RunActor8Message(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DO_KNOW_IF_HOLY_TREE);
+    Event_SetMessage((s32)MsgBiribinoDoKnowIfHolyTree);
     Event_AskYesNo(8, 0);
     Event_End();
 }
@@ -245,7 +243,7 @@ void FieldScene_RunActor8Message(void)
 void FieldScene_RunActor13Message(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DO_KNOW_SILK);
+    Event_SetMessage((s32)MsgBiribinoDoKnowSilk);
     Event_AskYesNo(13, 0);
     Event_End();
 }
@@ -262,10 +260,10 @@ void FieldScene_RunActor19MessageBranch(void)
     if (dir + 0xFFFF5FFF <= 0x3FFE) {
         Inn_Open(2, 19);
     } else if (GameFlag_IsSet(0x845) != 0) {
-        Event_SetMessage(MSG_WASNT_CURSE_IN_KOLIMA_HORRIFYING);
+        Event_SetMessage((s32)MsgBiribinoWasntCurseInKolimaHorrifying);
         Event_AskYesNo(19, 0);
     } else {
-        Event_SetMessage(MSG_CURSE_ON_KOLIMA_SCARY_DEVELOPMENT);
+        Event_SetMessage((s32)MsgBiribinoCurseOnKolimaScaryDevelopment);
         Event_ShowMessage(19, 0);
     }
 
@@ -281,7 +279,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x300) == 0) {
-        Event_SetMessage(MSG_TWO_SPECIALS_ONE_DINNER_ONE);
+        Event_SetMessage((s32)MsgBiribinoTwoSpecialsOneDinnerOne);
         Event_ShowMessage(21, 0);
         Actor_FaceDirection(21, 0x8000, 20);
         Event_ShowMessage(21, 0);
@@ -293,7 +291,7 @@ void FieldScene_RunActor21SequenceOnFlag300(void)
         GameFlag_Set(0x300);
     }
     Actor_FaceActor(21, ACTOR_PARTY_LEADER, 0);
-    Event_SetMessage(MSG_IF_WANT_MEAL_SPEAK_WAITRESS);
+    Event_SetMessage((s32)MsgBiribinoIfWantMealSpeakWaitress);
     Event_ShowMessage(21, 0);
     Actor_FaceDirection(21, 0xc000, 10);
     Event_End();
@@ -304,7 +302,7 @@ void FieldScene_ConfigureActor22Scene(void)
     void Actor_FaceActor(s32, s32, s32);
 
     Event_Begin();
-    Event_SetMessage(MSG_REALLY_THINK_HEAD_CHEF_HAS);
+    Event_SetMessage((s32)MsgBiribinoReallyThinkHeadChefHas);
     Event_ShowMessage(0x16, 0);
     Actor_FaceActor(0x16, ACTOR_PARTY_LEADER, 0);
     Event_ShowMessage(0x16, 0);
@@ -316,7 +314,7 @@ void FieldScene_ConfigureActor23Scene(void)
 {
 
     Event_Begin();
-    Event_SetMessage(MSG_LETS_SEE_SERVE_THEM_WATER);
+    Event_SetMessage((s32)MsgBiribinoLetsSeeServeThemWater);
     Event_ShowMessage(23, 0);
     Actor_FaceActor(23, ACTOR_PARTY_LEADER, 0);
     Event_ShowMessage(23, 0);
@@ -329,7 +327,7 @@ void FieldScene_RunActor27Message(void)
     void Event_ShowMessage(s32, s32);
 
     Event_Begin();
-    Event_SetMessage(MSG_WAS_SOME_MEAL_DONT_JUST);
+    Event_SetMessage((s32)MsgBiribinoWasSomeMealDontJust);
     Event_AskYesNo(27, 0);
     Event_End();
 }
@@ -342,9 +340,9 @@ void FieldScene_RunActor10MessageBranch(void)
 
     Event_Begin();
     if (GameFlag_IsSet(3) != 0) {
-        Event_SetMessage(MSG_EVEN_FROZEN_IMIL_MUST_FEEL);
+        Event_SetMessage((s32)MsgBiribinoEvenFrozenImilMustFeel);
     } else {
-        Event_SetMessage(MSG_WHEN_SPRING_COMES_WANT_GO);
+        Event_SetMessage((s32)MsgBiribinoWhenSpringComesWantGo);
     }
     Event_ShowMessage(10, 0);
     Event_End();

@@ -94,11 +94,17 @@ Engine_ActorEnableActionCallback:
 	.thumb_func
 Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
+	.global Engine_ActorStop
+	.thumb_func
+Engine_ActorStop:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
 	.global Engine_ActorSetDestination
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ActorMoveToAndWait
+	.thumb_func
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -132,7 +138,13 @@ Engine_ActorSetAnimation:
 	.thumb_func
 Engine_ActorSetAnimationAndWait:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	.global Engine_ActorJump
+	.thumb_func
+Engine_ActorJump:
 	overlay_veneer ObjectMotion_LaunchFar
+	.global Engine_ActorStartRepeatedMotion
+	.thumb_func
+Engine_ActorStartRepeatedMotion:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	.global Engine_ActorRunRepeatedMotion
 	.thumb_func

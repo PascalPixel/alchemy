@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "SYSTEM.H"
+extern u8 MsgLobbyAwaitingOpponent[];
+extern u8 MsgLobbyGoodLuck[];
 
 /* Run the link-lobby connection sequence and copy the received party data.
  * Reconstructed from the complete own-ROM 820-byte owner, including pools. */
@@ -61,7 +63,7 @@ s32 LinkLobby_RunConnectionSequence(void)
         Engine_GameFlagSet(0x203);
         LinkLobby_WriteSlotValue(2);
         if (!LinkLobby_PeerSlotMatches(2))
-            window = UiText_OpenMessageWindowFar(0x2928, 5, 4, 1);
+            window = UiText_OpenMessageWindowFar((s32)MsgLobbyAwaitingOpponent, 5, 4, 1);
         while (!LinkLobby_PeerSlotMatches(2)) {
             Engine_TaskWait(1);
             stop = 0;
@@ -98,7 +100,7 @@ s32 LinkLobby_RunConnectionSequence(void)
         Main_08009190(5);
         if (Engine_GameFlagIsSet(0x173)) {
             Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
-            Engine_EventSetMessage(0x293b);
+            Engine_EventSetMessage((s32)MsgLobbyGoodLuck);
             Engine_EventOpenMessage(8, 0);
             Engine_TaskWait(45);
             Actor_SetSpeed(0, 0x10000, 0x8000);

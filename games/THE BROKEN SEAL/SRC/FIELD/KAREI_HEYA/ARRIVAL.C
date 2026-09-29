@@ -3,14 +3,12 @@
 #include "FIELD_SCENE.H"
 
 #include "RESOURCE_3A9.H"
+extern u8 MsgKareiCanLiveInPeaceIn[];
+extern u8 MsgKareiDoKnowAboutContinentSouth[];
+extern u8 MsgKareiGoingTolbiAlso[];
+extern u8 MsgKareiOurInnFeelsEmptyNow[];
+extern u8 MsgKareiPleaseFinishEatingIfTaking[];
 
-enum ArrivalMessage {
-    MSG_CAN_LIVE_IN_PEACE_IN = 0x1a8f,
-    MSG_GOING_TOLBI_ALSO = 0x1ad7,
-    MSG_PLEASE_FINISH_EATING_IF_TAKING = 0x1add,
-    MSG_DO_KNOW_ABOUT_CONTINENT_SOUTH = 0x1ae3,
-    MSG_OUR_INN_FEELS_EMPTY_NOW = 0x1afb
-};
 
 /* Table selection, dialogue and arrival scripts for resource_3a9. */
 typedef struct Placement {
@@ -26,7 +24,7 @@ u8 *Object_GetById(s32);
 void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_PLEASE_FINISH_EATING_IF_TAKING);
+    Event_SetMessage((s32)MsgKareiPleaseFinishEatingIfTaking);
     Event_ShowMessage(0xC, 0);
     GameFlag_Set(0x910);
     Event_End();
@@ -35,7 +33,7 @@ void SceneDialogue_RunActor12DialogueAndSetFlag910(void)
 void SceneDialogue_RunActor16Dialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DO_KNOW_ABOUT_CONTINENT_SOUTH);
+    Event_SetMessage((s32)MsgKareiDoKnowAboutContinentSouth);
     Event_AskYesNo(16, 0);
     Event_End();
 }
@@ -55,10 +53,10 @@ void SceneDialogue_RunActor8FlaggedDialogue(void)
         Event_Begin();
 
         if (GameFlag_IsSet(0x911) != 0) {
-            Event_SetMessage(MSG_OUR_INN_FEELS_EMPTY_NOW);
+            Event_SetMessage((s32)MsgKareiOurInnFeelsEmptyNow);
             Event_ShowMessage(8, 0);
         } else {
-            Event_SetMessage(MSG_GOING_TOLBI_ALSO);
+            Event_SetMessage((s32)MsgKareiGoingTolbiAlso);
             Event_AskYesNo(8, 0);
             GameFlag_Set(0x910);           /* 145 << 4 */
         }
@@ -79,7 +77,7 @@ void SceneDialogue_RunActor8FacingDialogue(void)
         Sanctum_Open(8);
     } else {
         Event_Begin();
-        Event_SetMessage(MSG_CAN_LIVE_IN_PEACE_IN);
+        Event_SetMessage((s32)MsgKareiCanLiveInPeaceIn);
         Event_ShowMessage(8, 0);
         Event_End();
     }

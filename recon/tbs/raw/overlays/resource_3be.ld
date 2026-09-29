@@ -15,7 +15,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/GET_INITIAL.o"(.text)
         "*/resource_3be_overlay.o"(.text.x02008d20)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/RUN_ACTOR.o"(.text)
-        "*/resource_3be_overlay.o"(.text.x02008fd0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/STAGED_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/SPINNING_LEAP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KARAGORU_DOU/NOOP_SCENE.o"(.text)

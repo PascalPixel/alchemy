@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgKorashiamuHeyYouRe[];
 extern struct EventWork *gEventWork;
 extern u8 KorashiamuIriguchi_ActionTable1[];
 extern u8 KorashiamuIriguchi_ActionTable2[];
@@ -102,7 +103,7 @@ void Scene_RunBranchingActorPresentation(void)
     Engine_ActorFaceDirection(17, 0, 60);
     Call3(Engine_ActorShowEmote, 17, 0x100, 40);
     SceneState_ForwardMaskedHalfwordWith10(17, (value << 6));
-    Call1(Engine_EventSetMessage, 0x2267);
+    Call1(Engine_EventSetMessage, (s32)MsgKorashiamuHeyYouRe);
     Engine_ActorStartRepeatedMotion(17, 2);
     FieldScene_CallPairWith10(17);
     Engine_ActorFaceDirection(18, (value << 6), 0);

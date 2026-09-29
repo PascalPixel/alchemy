@@ -4,6 +4,7 @@
 #include "OVERLAY_OBJECT.H"
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 #include "AERIE.H"
+extern u8 MsgMakyuriLighthouseAlreadyLit[];
 
 void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
@@ -78,7 +79,7 @@ void RunScene58Sequence(void)
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0x14);
     Call0(Engine_CameraWaitForMove);
     Call2(Engine_ActorSetAnimationAndWait, 1, 4);
-    Call1(Event_SetValue1d8Far, MSG_LIGHTHOUSE_ALREADY_LIT);
+    Call1(Event_SetValue1d8Far, (s32)MsgMakyuriLighthouseAlreadyLit);
     Call3(Engine_EventShowMessageAndWait, 1, 0, 0x14);
     Call2(Engine_ActorSetAttachedEffect, 3, 0x102);
     Call1(Engine_EventWait, 0x3C);

@@ -1,6 +1,19 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKuupuappuCouldSomeonePleaseHelpIvan[];
+extern u8 MsgKuupuappuDidJustArriveInTown[];
+extern u8 MsgKuupuappuIfOnlyTheseRocksWere[];
+extern u8 MsgKuupuappuIvanHasGreatPowersWouldnt[];
+extern u8 MsgKuupuappuJustMeOrAmMissing[];
+extern u8 MsgKuupuappuMisterFunSeeStrangeNew[];
+extern u8 MsgKuupuappuOwStop[];
+extern u8 MsgKuupuappuPleaseLookAfterIvan[];
+extern u8 MsgKuupuappuThankGoodnessThoseThievesWere[];
+extern u8 MsgKuupuappuThievesHidStolenTreasureIn[];
+extern u8 MsgKuupuappuThoseThreeStrangersSureHave[];
+extern u8 MsgKuupuappuWithBridgeOutWillQuite[];
+extern u8 MsgKuupuappuYoureGoingHelpIvan[];
 /* FAKEMATCH: calls that cast Owner_RecalculateStats to another return type keep their original register order. */
 void Owner_RecalculateStats();
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
@@ -13,70 +26,14 @@ enum {
     ITEM_BONE = 231
 };
 
-enum PromptMessage {
-    MSG_ROBIN_CHECKED_CHEST = 0x929,
-    MSG_ROBIN_CHECKED_BARREL = 0x92b,
-    MSG_BUT_CHEST_WAS_EMPTY = 0x949,
-    MSG_BUT_DIDNT_FIND_ANYTHING = 0x94b,
-    MSG_IF_ONLY_THESE_ROCKS_WERE = 0x1243,
-    MSG_OK_MISTER_LET_ME_SEE = 0x1245,
-    MSG_MISTER_FUN_SEE_STRANGE_NEW = 0x1247,
-    MSG_WONDER_OUTSIDE_WORLD_LIKE = 0x124b,
-    MSG_JUST_ME_OR_AM_MISSING = 0x124c,
-    MSG_COULD_THEY_THIEVES_GOOD_DONT = 0x124e,
-    MSG_COULD_SOMEONE_PLEASE_HELP_IVAN = 0x1250,
-    MSG_IVAN_HAS_GREAT_POWERS_WOULDNT = 0x1253,
-    MSG_DO_POSSESS_STRANGE_POWERS = 0x1256,
-    MSG_WOULD_REALLY_WOULD_HELP_ME = 0x125d,
-    MSG_YOURE_GOING_HELP_IVAN = 0x1276,
-    MSG_PLEASE_LOOK_AFTER_IVAN = 0x1278,
-    MSG_TICKLES_BEING_TICKLED_BY_BOY = 0x127c,
-    MSG_THIEVES_DIDNT_HIT_OUR_HOUSE = 0x1282,
-    MSG_DID_JUST_ARRIVE_IN_TOWN = 0x1284,
-    MSG_EVERYONE_THINKS_OUR_GUESTS_THIEVES = 0x128d,
-    MSG_THOSE_THREE_STRANGERS_SURE_HAVE = 0x128e,
-    MSG_MASTER_HIS_WIFE_BLINDED_BY = 0x1294,
-    MSG_ROBIN_TAKE_LEAD = 0x129f,
-    MSG_OW_STOP = 0x12ac,
-    MSG_WE_DONT_HAVE_TIME_FOR = 0x12bb,
-    MSG_THESE_KIDS_NOTHING_WORRY_ABOUT = 0x12dd,
-    MSG_THEY_THEY_GOT_US = 0x12e4,
-    MSG_SEE_THATS_HAPPENED = 0x12f2,
-    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
-    MSG_THANK_GOODNESS_THOSE_THIEVES_WERE = 0x1353,
-    MSG_IF_ROCK_WORTHLESS_MAYBE_THATS = 0x1355,
-    MSG_DID_THOSE_THIEVES_COME_FROM = 0x1356,
-    MSG_MY_FATHER_WORRIED_ABOUT_THOSE = 0x1359,
-    MSG_FATHER_LOOKS_SAD_WORRYING_LIKE = 0x135b,
-    MSG_THIEVES_HID_STOLEN_TREASURE_IN = 0x135c,
-    MSG_GUESS_NOTHING_IN_OUR_HOUSE = 0x135e,
-    MSG_HEADING_OUT_BEYOND_GOMA_RANGE = 0x1364,
-    MSG_HEARD_DEFEATED_THOSE_THIEVES = 0x1368,
-    MSG_CAVE_IN_GOMA_RANGE_DANGEROUS = 0x136c,
-    MSG_WE_FOUND_OUR_STOLEN_WEAPONS = 0x1370,
-    MSG_IF_YOURE_GONNA_HEAD_INTO = 0x1372,
-    MSG_WITH_BRIDGE_OUT_WILL_QUITE = 0x1374,
-    MSG_THEY_HID_THOSE_STOLEN_GOODS = 0x137b,
-    MSG_HAVE_LOT_LEFTOVER_BONES_FROM = 0x137c,
-    MSG_GEE_ALWAYS_GET_HUNGRY_WHEN = 0x1382,
-    MSG_WOW_HAVE_MANY_THINGS_ARENT = 0x1384,
-    MSG_WANT_MORE_BONES = 0x1385,
-    MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
-};
 
 /*
  * resource_383 owner at 0x02002ba0, 80 bytes.
  * Points two records at a third: each gets the angle from its own offset to the
  * reference record, stored as a halfword at +6.
  */
-extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
-extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern s32 KuupuappuHeya_StepActions[];
 extern s32 KuupuappuHeya_IdleActions[];
-extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
-extern u8 LinkedMessage_TheyreBack[];
-extern u8 LinkedMessage_YouRobinRightWontForget[];
-extern u8 LinkedMessage_IvanGotShamansRod[];
 
 s32 PartyInventory_HasSpace(void);
 void Battle_InitializeRenderObject(void);
@@ -266,7 +223,7 @@ void SceneDialogue_PromptAndCountSkip(s32 x)
 void SceneDialogue_RunActorElevenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_MISTER_FUN_SEE_STRANGE_NEW);
+    Event_SetMessage((s32)MsgKuupuappuMisterFunSeeStrangeNew);
     Actor_SetAnimation(11, 1);
     SceneDialogue_PromptAndCountSkip(11);
     Event_End();
@@ -278,7 +235,7 @@ void FieldScene_RunScene383_02000428(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_IVAN_HAS_GREAT_POWERS_WOULDNT);
+    Event_SetMessage((s32)MsgKuupuappuIvanHasGreatPowersWouldnt);
     SceneDialogue_PromptAndCountSkip(15);
     Actor_FaceDirection(15, 0x8000, 0);
     Event_End();
@@ -292,10 +249,10 @@ void SceneState_BranchOnSlotZeroFacingAndFlag855(void)
     if (value >= 0xa001 && value <= 0xdfff) {
         Shop_Open(6, 21);
     } else if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(MSG_DID_JUST_ARRIVE_IN_TOWN);
+        Event_SetMessage((s32)MsgKuupuappuDidJustArriveInTown);
         SceneDialogue_PromptAndCountSkip(21);
     } else {
-        Event_SetMessage(MSG_WITH_BRIDGE_OUT_WILL_QUITE);
+        Event_SetMessage((s32)MsgKuupuappuWithBridgeOutWillQuite);
         Event_ShowMessage(21, 0);
     }
     Event_End();
@@ -305,9 +262,9 @@ void SceneDialogue_RunActor9FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(MSG_IF_ONLY_THESE_ROCKS_WERE);
+        Event_SetMessage((s32)MsgKuupuappuIfOnlyTheseRocksWere);
     } else {
-        Event_SetMessage(MSG_THANK_GOODNESS_THOSE_THIEVES_WERE);
+        Event_SetMessage((s32)MsgKuupuappuThankGoodnessThoseThievesWere);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(9);
     Event_End();
@@ -317,9 +274,9 @@ void SceneDialogue_RunActorTwelveFlaggedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) != 0) {
-        Event_SetMessage(MSG_THIEVES_HID_STOLEN_TREASURE_IN);
+        Event_SetMessage((s32)MsgKuupuappuThievesHidStolenTreasureIn);
     } else {
-        Event_SetMessage(MSG_JUST_ME_OR_AM_MISSING);
+        Event_SetMessage((s32)MsgKuupuappuJustMeOrAmMissing);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(12);
     Event_End();
@@ -332,16 +289,16 @@ void FieldScene_RunFlag856DialogueBranch(void)
     Event_Begin();
     if (GameFlag_IsSet(0x856) != 0) {
         if (GameFlag_IsSet(g) == 0) {
-            Event_SetMessage(MSG_YOURE_GOING_HELP_IVAN);
+            Event_SetMessage((s32)MsgKuupuappuYoureGoingHelpIvan);
             ActorPresentation_RunActorModeOneThenZeroWithStep(16);
             Event_Wait(10);
             SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
             GameFlag_Set(g);
         } else {
-            Event_SetMessage(MSG_PLEASE_LOOK_AFTER_IVAN);
+            Event_SetMessage((s32)MsgKuupuappuPleaseLookAfterIvan);
         }
     } else {
-        Event_SetMessage(MSG_COULD_SOMEONE_PLEASE_HELP_IVAN);
+        Event_SetMessage((s32)MsgKuupuappuCouldSomeonePleaseHelpIvan);
     }
     ActorPresentation_RunActorModeOneThenZeroWithStep(16);
     Event_End();
@@ -350,7 +307,7 @@ void FieldScene_RunFlag856DialogueBranch(void)
 void SceneDialogue_ShowLine128E(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_THOSE_THREE_STRANGERS_SURE_HAVE);
+    Event_SetMessage((s32)MsgKuupuappuThoseThreeStrangersSureHave);
     ActorPresentation_RunActorModeOneThenZeroWithStep(18);
     Event_End();
 }
@@ -365,7 +322,7 @@ void SceneActor_StepActor24AnimationByFacing(void)
     p = ((struct FieldActor *(*)())Object_GetById)(24);
     Event_Begin();
     Actor_RunRepeatedMotion(24, 2);
-    Event_SetMessage(MSG_OW_STOP);
+    Event_SetMessage((s32)MsgKuupuappuOwStop);
     Event_ShowMessage(24, 0);
     Actor_SetSpeed(24, 0x40000, 0x20000);
     if ((u32)((p->facing & 0xf000) - 0x5000) <= 0x6000) {

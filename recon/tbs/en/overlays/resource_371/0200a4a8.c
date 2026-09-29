@@ -5,6 +5,8 @@
  * from +0x255). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgWorldMapLook[];
+extern u8 MsgWorldMapNowUseOnShip[];
 
 void WorldMap_ActivateSite138(s32 actor);
 void Battle_SetObjectFlag5bWhenMode3(void);
@@ -38,7 +40,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0, 20);
     Engine_ActorShowEmote(gWorldMapTriggerActor, 0x100, 60);
     Engine_ActorStartRepeatedMotion(gWorldMapTriggerActor, 2);
-    Engine_EventSetMessage(0x263c);
+    Engine_EventSetMessage((s32)MsgWorldMapLook);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor | 0x1000, 0, 10);
     Engine_ActorFaceDirection(0, 0, 0);
     Battle_ClearObjectFlag5bWhenMode3();
@@ -82,7 +84,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_ItemShowFound(242, 3);
     Engine_PartyGiveItem(242, 0);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
-    Engine_EventSetMessage(0x2642);
+    Engine_EventSetMessage((s32)MsgWorldMapNowUseOnShip);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x3000, 0);
     Battle_ClearObjectFlag5bWhenMode3();

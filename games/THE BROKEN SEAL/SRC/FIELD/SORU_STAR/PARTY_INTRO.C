@@ -1,5 +1,24 @@
 /* The Mars star, the party's talk and entering the star room. */
 #include "STAR.H"
+extern u8 MsgSoruAlexOnlyOneLeft[];
+extern u8 MsgSoruGarciaSilence[];
+extern u8 MsgSoruJasmineBeCareful[];
+extern u8 MsgSoruJasmineMyBrotherIsAlive[];
+extern u8 MsgSoruJasmineSukuretaIsGiddy[];
+extern u8 MsgSoruJasmineThankYou[];
+extern u8 MsgSoruJasmineWontYouPlease[];
+extern u8 MsgSoruMarsStarBagged[];
+extern u8 MsgSoruMenardiBringTheFinalGem[];
+extern u8 MsgSoruNoStarsOutThere[];
+extern u8 MsgSoruSaturosBringTheFinalStar[];
+extern u8 MsgSoruSukuretaBringTheStarsHere[];
+extern u8 MsgSoruSukuretaFetchTheOthers[];
+extern u8 MsgSoruSukuretaIAmResponsible[];
+extern u8 MsgSoruSukuretaTheElementsAreThe[];
+extern u8 MsgSoruSukuretaTheWisdomStone[];
+extern u8 MsgSoruSukuretaWhereAreWe[];
+extern u8 MsgSoruTheBagsAreFromSukuretas[];
+extern u8 MsgSoruTheStarsHaveEnormousPower[];
 
 void Scene_BagMarsStar(void)
 {
@@ -27,7 +46,7 @@ void Scene_BagMarsStar(void)
     rec7 = Value4(Scene_PresentItem, 222, 0xe80000, 0x100000, 0x900000);
     Event_Wait(40);
     UiWork_PushValueSlotFar(rec7, 1);
-    Message_ShowCentered(MSG_MARS_STAR_BAGGED, 1);
+    Message_ShowCentered((s32)MsgSoruMarsStarBagged, 1);
     Actor_SetPosition(ACTOR_JASMINE, 0x1330000, 0x1150000);
     Actor_SetPosition(ACTOR_SUKURETA, 0x1330000, 0x1150000);
     Actor_SetPosition(ACTOR_MENARDI, 0x1330000, 0x1150000);
@@ -78,13 +97,13 @@ void Sukureta_Talk(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
-        Event_SetMessage(MSG_SUKURETA_I_AM_RESPONSIBLE);
+        Event_SetMessage((s32)MsgSoruSukuretaIAmResponsible);
         Event_ShowMessage(ACTOR_SUKURETA, 0);
     } else {
         if (GameFlag_IsSet(FLAG_FIRST_STAR_BAGGED) == 0)
-            Event_SetMessage(MSG_SUKURETA_BRING_THE_STARS_HERE);
+            Event_SetMessage((s32)MsgSoruSukuretaBringTheStarsHere);
         else
-            Event_SetMessage(MSG_SUKURETA_FETCH_THE_OTHERS);
+            Event_SetMessage((s32)MsgSoruSukuretaFetchTheOthers);
         Actor_FaceEachOther(ACTOR_SUKURETA, ACTOR_PARTY_LEADER, 0);
         Event_Wait(10);
         Event_ShowMessage(ACTOR_SUKURETA, 0);
@@ -97,13 +116,13 @@ void Jasmine_Talk(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(FLAG_STARS_GIVEN_TO_ALEX)) {
-        Event_SetMessage(MSG_JASMINE_MY_BROTHER_IS_ALIVE);
+        Event_SetMessage((s32)MsgSoruJasmineMyBrotherIsAlive);
         Event_ShowMessage(ACTOR_JASMINE, 0);
     } else {
         if (GameFlag_IsSet(FLAG_FIRST_STAR_BAGGED) == 0)
-            Event_SetMessage(MSG_JASMINE_BE_CAREFUL);
+            Event_SetMessage((s32)MsgSoruJasmineBeCareful);
         else
-            Event_SetMessage(MSG_JASMINE_SUKURETA_IS_GIDDY);
+            Event_SetMessage((s32)MsgSoruJasmineSukuretaIsGiddy);
         Actor_FaceEachOther(ACTOR_JASMINE, ACTOR_PARTY_LEADER, 0);
         Event_Wait(10);
         Event_ShowMessage(ACTOR_JASMINE, 0);
@@ -115,7 +134,7 @@ void Jasmine_Talk(void)
 void Saturos_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_SATUROS_BRING_THE_FINAL_STAR);
+    Event_SetMessage((s32)MsgSoruSaturosBringTheFinalStar);
     Event_ShowMessage(ACTOR_SATUROS, 0);
     Event_End();
 }
@@ -124,7 +143,7 @@ void Saturos_Talk(void)
 void Menardi_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_MENARDI_BRING_THE_FINAL_GEM);
+    Event_SetMessage((s32)MsgSoruMenardiBringTheFinalGem);
     Event_ShowMessage(ACTOR_MENARDI, 0);
     Event_End();
 }
@@ -133,7 +152,7 @@ void Menardi_Talk(void)
 void Garcia_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_GARCIA_SILENCE);
+    Event_SetMessage((s32)MsgSoruGarciaSilence);
     Event_ShowMessage(ACTOR_GARCIA, 0);
     Event_End();
 }
@@ -142,7 +161,7 @@ void Garcia_Talk(void)
 void Alex_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_ALEX_ONLY_ONE_LEFT);
+    Event_SetMessage((s32)MsgSoruAlexOnlyOneLeft);
     Event_ShowMessage(ACTOR_ALEX, 0);
     Event_End();
 }
@@ -154,7 +173,7 @@ void Alex_Talk(void)
 void SceneDialogue_RunLine1072WithPair9And10(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_NO_STARS_OUT_THERE);
+    Event_SetMessage((s32)MsgSoruNoStarsOutThere);
     Event_SayThenWait(9, 10);
     Event_End();
 }
@@ -325,7 +344,7 @@ void Scene_EnterStarRoom(void)
     *p10b = zero;
     *(s32 *)(rec + 12) = 0x280000;
     Event_Wait(1);
-    Event_SetMessage(MSG_SUKURETA_WHERE_ARE_WE);
+    Event_SetMessage((s32)MsgSoruSukuretaWhereAreWe);
     Event_ShowMessage(ACTOR_SUKURETA, 0);
     Actor_Jump(ACTOR_PARTY_LEADER, 4, 0);
     Actor_Jump(ACTOR_JASMINE, 4, 0);
@@ -480,7 +499,7 @@ void Scene_EnterStarRoom(void)
     }
     Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 30);
     Event_SayThenWait(ACTOR_SUKURETA, 30);
-    Event_SetMessage(MSG_SUKURETA_THE_ELEMENTS_ARE_THE_SOURCE);
+    Event_SetMessage((s32)MsgSoruSukuretaTheElementsAreThe);
     Actor_FaceDirection(ACTOR_JASMINE, 0x2000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 30);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
@@ -596,7 +615,7 @@ void Scene_EnterStarRoom(void)
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GERALD, 0x8000, 10);
     Event_SayThenWait(ACTOR_GERALD, 10);
-    Event_SetMessage(MSG_SUKURETA_THE_WISDOM_STONE);
+    Event_SetMessage((s32)MsgSoruSukuretaTheWisdomStone);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
     Actor_Jump(ACTOR_SUKURETA, 4, 40);
     Event_SayThenWait(0x8009, 10);
@@ -620,7 +639,7 @@ void Scene_EnterStarRoom(void)
     Actor_FaceDirection(ACTOR_JASMINE, 0x2000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0x5000, 20);
     Event_SayThenWait(0x8009, 40);
-    Event_SetMessage(MSG_THE_STARS_HAVE_ENORMOUS_POWER);
+    Event_SetMessage((s32)MsgSoruTheStarsHaveEnormousPower);
     Actor_SetAnimation(ACTOR_JASMINE, 4);
     Event_SayThenWait(5, 10);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 10);
@@ -757,12 +776,12 @@ void Scene_EnterStarRoom(void)
     Event_OpenMessage(ACTOR_JASMINE, 0);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x8000, 0);
     while (Event_ChooseYesNo(0, 0) != 0) {
-        Event_SetMessage(MSG_JASMINE_WONT_YOU_PLEASE);
+        Event_SetMessage((s32)MsgSoruJasmineWontYouPlease);
         Actor_ShowEmote(ACTOR_JASMINE, 0x107, 0);
         Actor_Jump(ACTOR_JASMINE, 4, 60);
         Event_OpenMessage(ACTOR_JASMINE, 0);
     }
-    Event_SetMessage(MSG_JASMINE_THANK_YOU);
+    Event_SetMessage((s32)MsgSoruJasmineThankYou);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_JASMINE, 3);
     Event_Wait(20);
@@ -785,7 +804,7 @@ void Scene_EnterStarRoom(void)
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_THE_BAGS_ARE_FROM_SUKURETAS_COTTAGE);
+    Event_SetMessage((s32)MsgSoruTheBagsAreFromSukuretas);
     Event_SayThenWait(5, 30);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xb000, 30);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);

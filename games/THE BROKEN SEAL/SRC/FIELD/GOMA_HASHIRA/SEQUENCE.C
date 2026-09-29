@@ -105,10 +105,8 @@ static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 #include "TYPES.H"
+extern u8 MsgGomaGotWowThatsPrettyImpressive[];
 
-enum StagedPlacementMessage {
-    MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE = 0x132f
-};
 
 /* Sets bits in an actor's flag byte. */
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
@@ -123,7 +121,7 @@ void FieldScene_RunActor13Departure(void)
     Actor_ShowEmote(13, 0x100, 30);
     Actor_RunRepeatedMotion(13, 2);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
-    Event_SetMessage(MSG_GOT_WOW_THATS_PRETTY_IMPRESSIVE);
+    Event_SetMessage((s32)MsgGomaGotWowThatsPrettyImpressive);
     Event_ShowMessage(13, 0);
     Actor_SetAnimationAndWait(13, 3);
     Goma_Wait(30);

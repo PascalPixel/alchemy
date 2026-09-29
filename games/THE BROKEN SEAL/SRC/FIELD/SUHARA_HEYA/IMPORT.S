@@ -14,9 +14,15 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_EventWait
+	.thumb_func
+Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
 	overlay_veneer Battle_ResetFar
 	overlay_veneer BattleFx_FinishActionFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
@@ -37,6 +43,9 @@ Engine_ActorGet:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
@@ -53,6 +62,9 @@ Engine_EventRequestExit:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
 	overlay_veneer Motion_LaunchFromFocusedObjectFar
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	.global Engine_ShopOpen
+	.thumb_func
+Engine_ShopOpen:
 	overlay_veneer Shop_RunFar
 	.global Shop_ConfirmAct
 	.thumb_func

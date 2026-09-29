@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgFuneReachedIslandRowers[];
+extern u8 MsgFuneShipWentOff[];
 
 extern struct EventWork *gEventWork;
 
@@ -115,7 +117,7 @@ void Scene_RunFourActorProgressPresentation(void)
     Call3(Engine_ActorWalkToAndWait, 27, 0x198, 142);
     Call3(Engine_ActorFaceDirection, 27, 0x3000, 20);
     Engine_ActorStartRepeatedMotion(27, 2);
-    Call1(Engine_EventSetMessage, 0x1f29);
+    Call1(Engine_EventSetMessage, (s32)MsgFuneReachedIslandRowers);
     FieldScene_RunStepThen10(27);
     Engine_EventWait(120);
     FieldScene_RunSceneStep(12, rec7, 0);
@@ -140,7 +142,7 @@ void Scene_RunFourActorProgressPresentation(void)
     }
     Engine_ActorStartRepeatedMotion(rec7, 2);
     FieldScene_RunStepThen10(rec7);
-    Call1(Engine_EventSetMessage, 0x1f2d);
+    Call1(Engine_EventSetMessage, (s32)MsgFuneShipWentOff);
     Engine_ActorSetAnimationAndWait(27, 4);
     FieldScene_RunStepThen10(27);
     Call3(Engine_ActorShowEmote, rec7, 0x102, 0);

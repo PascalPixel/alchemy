@@ -20,6 +20,7 @@
  * listing keeps these rows. */
 >>>>>>>> main:recon/tbs/en/overlays/resource_3ca/02008430.c
 #include "TYPES.H"
+extern u8 MsgFieldLooksLikeFinally[];
 
 extern u8 gMapWork[];
 extern u8 *gEventWork;
@@ -98,7 +99,7 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Call6(Engine_MapCopyCellAttributes, 18, 0, 3, 1, 18, 12);
-    Call1(Engine_EventSetMessage, 10494);
+    Call1(Engine_EventSetMessage, (s32)MsgFieldLooksLikeFinally);
     Call4(Motion_LaunchFromFocusedObject, 1, -10, 16, 49152);
     Call4(Motion_LaunchFromFocusedObject, 3, 0, 24, 49152);
     Call4(Motion_LaunchFromFocusedObject, 2, 10, 16, 49152);

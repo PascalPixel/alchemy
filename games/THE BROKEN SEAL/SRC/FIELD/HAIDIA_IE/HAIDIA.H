@@ -78,7 +78,11 @@ union PairObject {
 void HaidiaIe_SpawnEffectPair(union PairObject *parent);
 void FieldScene_RunGroupChoreography(void);
 void FieldScene_RunStep15(void);
+void FieldScene_RunStep17(void);
 void FieldScene_RunStep20(void);
+void SceneState_ApplyPair140And0(void);
+void FieldScene_Forward4dac(void);
+void OverlayObject_UpdateOnFrameBit1(s32 obj);
 struct SceneVerticalEffect;
 void SceneEffect_AnimateVerticalPositive(struct SceneVerticalEffect *effect);
 void SceneEffect_AnimateVerticalNegative(struct SceneVerticalEffect *effect);
@@ -182,7 +186,7 @@ void Object_LinkObjectAndSetCallback();
 void ObjectMotion_Launch();
 void Owner_RefreshActiveRatios();
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -244,7 +248,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -266,7 +270,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -275,7 +279,7 @@ static __inline__ s32 Value0(s32 (*f)())
     return f();
 }
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -308,26 +312,6 @@ static __inline__ void Callback3(void (*f)(s32, s32, const u8 *), s32 actor, s32
     f(actor, target, table);
 }
 
-enum ValeMessage {
-    MSG_PARTY_PP_RESTORED = 0x974,
-    MSG_CAN_I_USE_PSYNERGY = 0xea8,
-    MSG_I_HAVE_SOME_PSYNERGY_LEFT = 0xeae,
-    MSG_JASMINE_WENT_OFF_THAT_WAY = 0xeb0,
-    MSG_BE_SURE_TO_HELP_GARCIA = 0xeb1,
-    MSG_MEDITATE_ON_MT_ALEPH_DAILY = 0xf3c,
-    MSG_A_DIFFICULT_TIME_THREE_YEARS_AGO = 0xf3f,
-    MSG_DID_THE_TRAVELERS_MEET_THE_MAYOR = 0xf44,
-    MSG_HAVE_I_SHOWN_YOU_MY_ABILITY = 0xf48,
-    MSG_BEHOLD_THE_POWER_OF_PSYNERGY = 0xf4b,
-    MSG_CHECKED_THE_PSYNERGY_STONE = 0x111f,
-    MSG_YOU_SAW_THE_WISE_ONE = 0x1191,
-    MSG_ARENT_YOU_WORRIED_ABOUT_CROSSING = 0x1197,
-    MSG_THE_STONE_FELL_ON_THE_HUT = 0x11c7,
-    MSG_YOU_CAME_BACK_HOME = 0x1be3,
-    MSG_THIS_IS_VALE = 0x1be4,
-    MSG_ANYTHING_INTERESTING_ON_YOUR_TRIP = 0x1be8,
-    MSG_THE_PSYNERGY_STONE_IS_GONE = 0x1c94
-};
 
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 

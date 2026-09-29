@@ -6,14 +6,14 @@
  * actor table the event flag 0x96f selects.
  */
 
-/*
- * Returns the in-image table address 0x020082f0, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr.
- */
+extern u8 SuharaMura_Scripts[];
+extern u8 SuharaMura_Messages[];
+extern u8 SuharaMura_Actors[];
+extern u8 SuharaMura_ActorsFlag96f[];
+
 u8 *SceneData_GetScriptTable(void)
 {
-    return (u8 *)0x020082f0;
+    return SuharaMura_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -21,20 +21,15 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/*
- * Returns the in-image table address 0x020083c8, loaded and returned
- * without being dereferenced. The eight-byte owner includes its one pool
- * word, which sits past the bx lr.
- */
 u8 *SceneData_GetMessageTable(void)
 {
-    return (u8 *)0x020083c8;
+    return SuharaMura_Messages;
 }
 
 s32 SceneData_SelectActorTableByFlag96f(void)
 {
     if (GameFlag_IsSet(0x96f) != 0) {
-        return 0x020084e0;
+        return (s32)SuharaMura_ActorsFlag96f;
     }
-    return 0x020083f0;
+    return (s32)SuharaMura_Actors;
 }

@@ -2,6 +2,11 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+extern const u16 TorebiKyuden_CellSteps[];
+extern u8 MsgTorebiCallsName[];
+extern u8 MsgTorebiIodemIodem[];
+extern u8 MsgTorebiLikeSleep[];
+extern u8 MsgTorebiWaitingCompanions[];
 
 void FieldScene_RunScene3b8SequenceA(void)
 {
@@ -13,7 +18,7 @@ void FieldScene_RunScene3b8SequenceA(void)
     dir = (*(u16 *)(record + 6) + 0x2000) & -0x4000;
     Engine_EventBegin();
     Battle_ResetEffectCounterFar();
-    Engine_EventSetMessage(0x1ffb);
+    Engine_EventSetMessage((s32)MsgTorebiLikeSleep);
     Value2(Engine_EventOpenMessage, -1, 0);
     if (Value2(Engine_EventChooseYesNo, 0, 0) != 0) {
     } else {
@@ -174,7 +179,7 @@ void RunPrimaryEffectSequence(void)
     Call1_scene_effect_sequence_head(Engine_GameFlagSet, 2411);
     Call0(Engine_EventBegin);
     Call0(Battle_ResetEffectCounterFar);
-    Call1_scene_effect_sequence_head(Engine_EventSetMessage, 8225);
+    Call1_scene_effect_sequence_head(Engine_EventSetMessage, (s32)MsgTorebiIodemIodem);
     Call3_scene_effect_sequence_head(Engine_ActorWalkToAndWait, 0, 520, 424);
     Call3_scene_effect_sequence_head(Engine_ActorFaceDirection, 0, 57344, 0);
     Camera_MoveTo(36700160, -1, 24117248, 1);
@@ -432,7 +437,7 @@ void FieldScene_RunBranchingActorSequence(void)
     u8 *work;
 
     Engine_EventBegin();
-    Engine_EventSetMessage(0x228c);
+    Engine_EventSetMessage((s32)MsgTorebiCallsName);
     Engine_ActorSetAnimation(0, 31);
     record = Engine_ActorGet(0);
     Engine_ActorSetSpriteFlags(record, 0);
@@ -697,7 +702,7 @@ void FieldScene_RunMainCutsceneSequence(void)
 
     carry = Value1(Engine_AudioPlayCue, 30);
     Call1(Engine_EventBegin, carry);
-    carry = Value1(Engine_EventSetMessage, 0x22c4);
+    carry = Value1(Engine_EventSetMessage, (s32)MsgTorebiWaitingCompanions);
     carry = Event_SetStatus1c6Far(carry);
     Event_WaitValue1c8FramesFar(carry);
     carry = Value4(Engine_CameraMoveTo, 0xd80000, -1, 0x2e00000, 1);
@@ -1652,7 +1657,7 @@ void RunSceneEffectSetup(void)
     Event_Begin();
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
     Audio_PlayCue(158);
-    Map_AnimateCells(33604944, 36, 10);
+    Map_AnimateCells(TorebiKyuden_CellSteps, 36, 10);
     SetSceneEffectOffset(0, 2, -16);
     Event_Wait(16);
     Event_RequestExit(2);

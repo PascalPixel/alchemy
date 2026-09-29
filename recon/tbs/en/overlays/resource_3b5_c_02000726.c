@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgTorebiWantTestLuck[];
 
 /* Audited retained supplemental scene body.
  * The complete production span preserves 42 calls, 0 loop(s), and 5 explicit memory operation(s).
@@ -93,7 +94,7 @@ void Scene_RunSupplementalSequenceOne(void)
     Func_020016ce(0, 49152, 0);
     Func_020016da(28, 16384, 0);
     Func_02001618(20);
-    Func_020016be(3645);
+    Func_020016be((s32)MsgTorebiWantTestLuck);
     Func_020016ce(28, 0);
     if (Func_0200164e(0, 0) == 0) {
         Func_020016fa(28, 0);

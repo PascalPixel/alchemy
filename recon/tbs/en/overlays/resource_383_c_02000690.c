@@ -59,7 +59,7 @@
  * Full normalized diff read; normal and diagnostic text agree. Reject this
  * read-boundary model (dff213f78); H2 restored byte-for-byte. Do not tune
  * the non-admitted scheduling improvement or retry scalar read wrappers.
- * Actor-25 event-table entries reference this callback; message 0x12ad is
+ * Actor-25 event-table entries reference this callback; MsgKuupuappuNoLeaveAlone is
  * the refusal response. Restored EventEnd and all three data bindings.
  * Three bounded hypotheses: volatile aggregate reads gave 332/316 and
  * 93 edits; a full actor-tail aggregate gave 340/316 and 90 edits; a signed
@@ -97,6 +97,7 @@
  * both cached-HI sharing and the late forward-arm merge. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgKuupuappuNoLeaveAlone[];
 
 extern const u8 Data_0200d8bc[];
 extern const u8 Data_0200d858[];
@@ -125,7 +126,7 @@ void KuupuappuHeya_RunActor25Response(void)
     half = *side >> 1;
     Engine_EventBegin();
     Engine_ActorRunRepeatedMotion(25, 2);
-    Engine_EventSetMessage(0x12ad);
+    Engine_EventSetMessage((s32)MsgKuupuappuNoLeaveAlone);
     Engine_EventShowMessage(25, 0);
     Actor_SetSpeed(25, 0x38000, 0x1c000);
     switch (*side) {

@@ -1,14 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKareiHasLegacyLordHammetsSilk[];
+extern u8 MsgKareiLordHammetWillReleasedSoon[];
+extern u8 MsgKareiRobinSneakedIntoLunpaThats[];
 
-enum PartyEventsMessage {
-    MSG_WHEN_HEARD_WERE_BACK_IVAN = 0x1b21,
-    MSG_LORD_HAMMET_WILL_RELEASED_SOON = 0x1b83,
-    MSG_HAS_LEGACY_LORD_HAMMETS_SILK = 0x1b88,
-    MSG_ROBIN_SNEAKED_INTO_LUNPA_THATS = 0x1b91,
-    MSG_ITS_IVAN_HIS_COMPANIONS_PERFECT = 0x2588
-};
 
 void Map_ClearLayerEntryFlag();
 void Map_SetLayerEntryFlag();
@@ -118,7 +114,7 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
 void SceneDialogue_RunActor13Message1b83(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_LORD_HAMMET_WILL_RELEASED_SOON);
+    Event_SetMessage((s32)MsgKareiLordHammetWillReleasedSoon);
     Event_AskYesNo(13, 0);
     Event_End();
 }
@@ -126,7 +122,7 @@ void SceneDialogue_RunActor13Message1b83(void)
 void SceneDialogue_RunActor16Message1b88(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_HAS_LEGACY_LORD_HAMMETS_SILK);
+    Event_SetMessage((s32)MsgKareiHasLegacyLordHammetsSilk);
     Event_AskYesNo(16, 0);
     Event_End();
 }
@@ -137,7 +133,7 @@ void FieldScene_RunActorEightTurnDialogue(void)
 
     Event_Begin();
     Actor_ShowEmote(8, 0x100, 0x3C);
-    Event_SetMessage(MSG_ROBIN_SNEAKED_INTO_LUNPA_THATS);
+    Event_SetMessage((s32)MsgKareiRobinSneakedIntoLunpaThats);
     Event_ShowMessageAndWait(8, 0, 0xA);
     Actor_RunRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 0xA);

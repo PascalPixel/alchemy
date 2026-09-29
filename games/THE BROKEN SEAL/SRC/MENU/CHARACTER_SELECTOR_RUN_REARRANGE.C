@@ -27,9 +27,10 @@ struct CharacterSelectWork {
     u16 slot_y[4];
 };
 
-/* The help lines are messages 0xB0D (Rearrange), 0xB16 (Djinn list) and
- * 0xB0A (Details); the first and last share one message-base symbol. */
-extern u8 MsgExpToNextLevel[], MsgDjinnListHelp[];
+/* The help lines: Rearrange, the Djinn list and Details. The code loads the
+ * Rearrange line from the literal pool and reaches Details, three messages
+ * before it, by subtracting. */
+extern u8 MsgRearrangeHelp[], MsgDjinnListHelp[];
 extern volatile u32 gKeyState;
 extern volatile u32 gKeysRepeat;
 
@@ -81,10 +82,10 @@ s32 CharacterSelector_RunRearrange(void)
         if (redraw) {
             redraw = 0;
             RenderOutput_RedrawSavedRectFar(work->window);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgExpToNextLevel[0xd], work->window, 0, 0);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgRearrangeHelp, work->window, 0, 0);
             if (GameFlag_TestFar(48))
                 UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnListHelp, work->window, 0, 16);
-            UiText_DrawCharacterAtOffsetFar((s32)&MsgExpToNextLevel[0xa], work->window, 0, 8);
+            UiText_DrawCharacterAtOffsetFar((s32)MsgRearrangeHelp - 3, work->window, 0, 8);
             cursor = Math_Mod(cursor + count, count);
             Owner_GetStateFar(work->owners[cursor]);
             page = Math_Mod(page + 3, 3);

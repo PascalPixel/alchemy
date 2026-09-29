@@ -13,30 +13,6 @@ enum {
     FLAG_REWARD_TAKEN = 0x84e
 };
 
-enum KyudenMessage {
-    MSG_DO_THINK_THESE_BILIBINS_GREAT = 0x1432,
-    MSG_WE_REALLY_GIVING_OUR_TREASURE = 0x1434,
-    MSG_GOOD_TREASURE_IF_GET_TURNED = 0x1436,
-    MSG_YEHVE_HAD_CHANGE_HEART_YEH = 0x1442,
-    MSG_WEVE_BROUGHT_WARRIORS_MILORD = 0x1728,
-    MSG_HUMBLY_THANK = 0x1737,
-    MSG_NAE_YEH_DINNAE_NEED_TAE = 0x1738,
-    MSG_WAS_BUT_WORRIED_YEH_MIGHT = 0x1739,
-    MSG_PLEASE_TAKE_YOUR_REWARD_BEFORE = 0x1748,
-    MSG_ALWAYS_WELCOME_IN_PALACE_LORD = 0x1749,
-    MSG_MAY_CHOOSE_ONLY_ONE_ITEM = 0x174b,
-    MSG_NONETHELESS_IF_YOUR_LUCK_SOUR = 0x174c,
-    MSG_ROBIN_CHECKED_CHEST_BUT_WAS = 0x174d,
-    MSG_TREASURE_CHEST_LOCKED = 0x174e,
-    MSG_FINE_WARRIOR = 0x1750,
-    MSG_SOMETIMES_WE_NEED_CHILDREN_REMIND = 0x1756,
-    MSG_AAAAH = 0x1764,
-    MSG_ITS_VERY_RECKLESS_FOR_SUCH = 0x1768,
-    MSG_WAS_WATCHING_FROM_HERE_AFTER = 0x1769,
-    MSG_LOOKED_VERY_COURAGEOUS_WALKING_TOWARD = 0x176c,
-    MSG_REWARD_RECEIVED_WAS_INDEED_GREATEST = 0x176e,
-    MSG_GOT_PRETTY_NICE_REWARD_BUT = 0x176f
-};
 
 /* The scene's tables and action tables, laid out after the code. */
 extern u8 Placement_Scripts[];
@@ -55,7 +31,7 @@ s32 BattleFx_PlayCueAndStartEmitterOnTarget(s32, s32, s32);
 
 void FieldScene_RunChestStep(s32 flag);
 void FieldScene_RunSlotSubjectBranch(s32 actor, s32 item, s32 flag);
-void FieldScene_RunLongBranchingChoreography(void);
+void Kyuden_RunKolimaRequest(void);
 void FieldScene_RunPalaceGreeting(void);
 void ConfigurePrimarySceneChannels(void);
 void ConfigureSecondarySceneChannels(void);

@@ -7,6 +7,13 @@
  * from inspect --asm. */
 /* Save selection, link transfer and password display. */
 #include "TYPES.H"
+extern u8 MsgNoBackupMemory[];
+extern u8 MsgSaveAdventureQuestion[];
+extern u8 MsgSaveDataCorrupted[];
+extern u8 MsgClearCommunicationError[];
+extern u8 MsgClearSendingData[];
+extern u8 MsgClearPasswordLabel[];
+extern u8 MsgClearSaveLabel[];
 
 extern u8 Data_02000000[];
 extern u8 Data_02000240[];
@@ -227,13 +234,13 @@ s32 SaveMenu_Run(void)
     Func_020018c0();
     if (*(s16 *)(Data_02000240 + 0x1c2) == 2) {
         do {
-            Func_020017b2(0x7, 5);
+            Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
             rec = Value1(Func_020094c4, 1);
             Func_020017ee();
             if (rec != 0) {
                 break;
             }
-            Func_020017ca((0x7 + 1), 1);
+            Func_020017ca(((s32)MsgSaveAdventureQuestion + 1), 1);
             base3_2000240 = (s32)Data_02000240;
             *(u8 *)((base3_2000240 + 0x20f)) = 1;
             rec = Func_02001830();
@@ -264,7 +271,7 @@ s32 SaveMenu_Run(void)
                 base3_2000240 = (s32)Data_02000240;
                 *(u8 *)((base3_2000240 + 0x22a)) = 1;
                 *(u8 *)0x03001d08 = 1;
-                Func_020093dc(0xa, 1, 8);
+                Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
             }
         }
         if (rec8 == 0) {
@@ -347,8 +354,8 @@ s32 SaveMenu_Run(void)
                 Func_0200945c(0x13e);
             } else {
                 if (*(s32 *)(base5_2000240 + 4) != *(s32 *)Data_02001100) {
-                    Value2(Func_020019ca, 0x4, 9);
-                    Func_020019d2((0x4 + 1), 13);
+                    Value2(Func_020019ca, (s32)MsgSaveDataCorrupted, 9);
+                    Func_020019d2(((s32)MsgSaveDataCorrupted + 1), 13);
                     if (Value4(Func_02001a6e, 1, 0, 0, 0) != 0) {
                         Func_02001a16();
                         goto L_020004a8;
@@ -434,7 +441,7 @@ s32 SaveMenu_Run(void)
             goto L_020009cc;
         }
         rec8 = Func_02001b84(6, 5, 18, 8, 2);
-        link_message = 0xc83;
+        link_message = (s32)MsgClearSaveLabel;
         v6 = rec8;
         Func_020093ac(link_message, v6, 0, 4);
         Func_02001bca((link_message + 1), v6, 0, 16);
@@ -482,7 +489,7 @@ s32 SaveMenu_Run(void)
         }
         rec8 = Func_02001c80(5, 10, 20, 4, 2);
         v6 = rec8;
-        Call4(Func_02001cb6, 0xc85, v6, 0, 4);
+        Call4(Func_02001cb6, (s32)MsgClearSendingData, v6, 0, 4);
         Func_02001c34(10);
         Value2(Func_02001c94, (s32)Data_02000000, 0x1004);
         Func_02001c42(10);
@@ -511,7 +518,7 @@ s32 SaveMenu_Run(void)
     L_0200095e:;
     if (v4 == 0) {
         Func_0200939c(v6, v1);
-        Call4(Func_02001d1e, 0xc87, v6, 0, 4);
+        Call4(Func_02001d1e, (s32)MsgClearCommunicationError, v6, 0, 4);
             base7_3001c94 = 0x3001c94;
         v5 = 1;
         do {
@@ -552,7 +559,7 @@ s32 SaveMenu_Run(void)
         none = 0;
         page_count = (Func_02009314(encoded_size, 50) + 1);
         record = Func_02001dce(10, 0, 10, 4, v6);
-        page_message = 0xc82;
+        page_message = (s32)MsgClearPasswordLabel;
         heading_window = record;
         Func_02001e06(page_message, heading_window, 6, 4);
         v7 = 1;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgFieldFlippedSwitch[];
 
 extern u8 Data_00000001[];
 void Func_020006de();
@@ -117,7 +118,7 @@ void Scene_RunKorimaMagariSequence(void)
     Call2(Func_020014e6, 0x10000, 0x2000);
     Call4(Func_02001500, 0x1080000, -1, 0x1c00000, 1);
     Func_0200150c();
-    Call2(Func_020014a4, 0x1528, 1);
+    Call2(Func_020014a4, (s32)MsgFieldFlippedSwitch, 1);
     Func_0200153a(232);
     if (*(s16 *)(*(s32 *)0x020092c8) != 0) {
     } else {

@@ -19,14 +19,6 @@ enum SanctumEntranceFlag {
     FLAG_SEARCHING_FOR_HIDDEN_PASSAGE = 0x804
 };
 
-enum SanctumEntranceMessage {
-    MSG_THE_DOOR_IS_LOCKED = 0x953,
-    MSG_SUKURETA_FIRST_TIME_AT_SOL_SANCTUM = 0xfd3,
-    MSG_GERALD_WHATS_WRONG_SUKURETA = 0xfd6,
-    MSG_MINOTAUR_RELIEF_ONE_EYE = 0x1031,
-    MSG_MINOTAUR_RELIEF_BOTH_EYES = 0x1034,
-    MSG_MORE_STATUES_OUT_OF_REACH = 0x103a
-};
 
 #define GATE_ID 2081
 #define RECORD_A32(rec) (*(s32 *)((rec) + 8))
@@ -44,12 +36,11 @@ void Scene_RunActorFormation(s32 a0);
 void Scene_UpdateCueTimer(s32 a0, s32 a1, s32 a2);
 
 /*
- * Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments.
+ * FAKEMATCH: call sites spelled through these wrappers pass their constants
+ * straight into the argument registers; a direct call precomputes a costly
+ * constant into a pseudo that the compiler then shares with later uses in
+ * the block. A value-returning call also sets r0 last of its arguments.
  */
-
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
@@ -60,12 +51,6 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/*
- * These wrappers pass their constants straight into the argument registers.
- * A direct call precomputes a costly constant into a pseudo that is then
- * shared with later uses in the block.  A value-returning call also sets r0
- * last of its arguments.
- */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);

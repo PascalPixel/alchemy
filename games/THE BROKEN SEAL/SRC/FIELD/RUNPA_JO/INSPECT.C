@@ -1,5 +1,7 @@
 /* The Lunpa fortress: the interaction regions and the searchable objects. */
 #include "FORTRESS.H"
+extern u8 MsgFieldFlippedSwitch[];
+extern u8 MsgRunpaPrepareBecomeMonster[];
 
 void ConfigureInteractionRegionA(void)
 {
@@ -24,7 +26,7 @@ void InspectVillageWell(void)
 
     if (*(s16 *)(((u8*)gEventWork) + 0xcb8) != 0) {
         if (GameFlag_IsSet(0x947) == 0) {
-            Message_ShowCentered(0x1528, 1);
+            Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
             Audio_PlayCue(188);
             Event_Wait(1);
             Map_CopyCells(6, 77, 1, 2, 17, 82);
@@ -42,7 +44,7 @@ void RunSecondaryMapInteraction(void)
 
     if (*(s16 *)(((u8*)gEventWork) + 0xcb8) != 0) {
         if (GameFlag_IsSet(0x948) == 0) {
-            Message_ShowCentered(0x1528, 1);
+            Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
             Audio_PlayCue(188);
             Event_Wait(1);
             Map_CopyCells(6, 77, 1, 2, 3, 55);
@@ -157,7 +159,7 @@ void FieldScene_RunScene3bf_0200269c(void)
     Camera_MoveToActor(11, 1);
     Camera_WaitForMove();
     Event_Wait(60);
-    Event_SetMessage(0x247c);
+    Event_SetMessage((s32)MsgRunpaPrepareBecomeMonster);
     Event_ShowMessage(13, 0);
     Actor_SetSpeed(11, 0x10000, 0x8000);
     Actor_SetSpeed(15, 0x10000, 0x8000);

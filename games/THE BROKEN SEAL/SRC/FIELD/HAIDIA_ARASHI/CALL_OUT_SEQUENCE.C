@@ -1,31 +1,28 @@
 #include "TYPES.H"
 
-extern u8 Data_00000e70[];
-void Func_02005e66();
-s32 Func_02005e7c();
-void Func_02005e90();
-void Func_02005ea0();
-void Func_02005ef0();
-s32 Func_02005f08();
-void Func_02005f12();
-void Func_02005f1a();
-s32 Func_02005f20();
-void Func_02005f22();
-void Func_02005f2a();
-void Func_02005f36();
-void Func_02005f40();
-void Func_02005f50();
-void Func_02005f52();
-void Func_02005f62();
-void Func_02005f68();
-void Func_02005f6a();
-void Func_02005f78();
-void Func_02005f8a();
-void Func_02005f92();
-void Func_02005f9a();
-void Func_02005fb2();
+extern u8 MsgHaidiaKnowRightOk[];
+extern u8 MsgHaidiaRightDitchStuff[];
+extern u8 MsgHaidiaRockHitsLose[];
+extern u8 MsgHaidiaThinkForgetThings[];
+s32 Engine_EventOpenMessage();
+void Engine_ActorFaceEachOther();
+s32 Engine_EventChooseYesNo();
+void Engine_EventSetMessage();
+void Engine_EventWait();
+void Engine_EventShowMessageAndWait();
+void Engine_ActorSetAttachedEffect();
+void Engine_ActorSetAnimation();
+void Engine_ActorFaceActor();
+void Engine_ActorSetAnimationAndWait();
+void Engine_EventShowMessage();
+s32 Engine_ActorGet();
+void Engine_ActorSetDestination();
+void Engine_ActorWaitForMove();
+void Engine_ActorSetPosition();
+void Event_PrepareObjectAndApplyValue();
+void Engine_GameFlagSet();
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -49,46 +46,44 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
     return f(a0, a1);
 }
-void Func_02005f9a_a();
-void Func_02005f9a_b();
 
 void HaidiaArashi_RunCallOutSequence(void)
 {
     s32 record;
     s32 v5;
 
-    Value2(Func_02005f20, 22, 0);
-    Func_02005f12(0, 22, 0);
+    Value2(Engine_EventOpenMessage, 22, 0);
+    Engine_ActorFaceEachOther(0, 22, 0);
     v5 = 0;
-    if (Value2(Func_02005e7c, 0, 0) == 0) {
-        Call1(Func_02005f36, 0xee5);
+    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
+        Call1(Engine_EventSetMessage, (s32)MsgHaidiaThinkForgetThings);
         v5 = 1;
     } else {
-        Call1(Func_02005f40, 0xee6);
+        Call1(Engine_EventSetMessage, (s32)MsgHaidiaRockHitsLose);
     }
-    Func_02005e66(20);
-    Func_02005f68(22, 0, 40);
-    Call2(Func_02005f9a_a, 22, 0x100);
-    Func_02005f22(21, 3);
-    Func_02005f2a(22, 1);
-    Func_02005e90(40);
-    Func_02005f62(22, 0, 0);
-    Func_02005ea0(20);
-    Func_02005f50(22, 3);
+    Engine_EventWait(20);
+    Engine_EventShowMessageAndWait(22, 0, 40);
+    Call2(Engine_ActorSetAttachedEffect, 22, 0x100);
+    Engine_ActorSetAnimation(21, 3);
+    Engine_ActorSetAnimation(22, 1);
+    Engine_EventWait(40);
+    Engine_ActorFaceActor(22, 0, 0);
+    Engine_EventWait(20);
+    Engine_ActorSetAnimationAndWait(22, 3);
     if (v5 != 0) {
-        /* FAKEMATCH: 0xe70 comes from the literal pool through a link symbol. */
-        Func_02005f92((s32)Data_00000e70);
+
+        Engine_EventSetMessage((s32)MsgHaidiaKnowRightOk);
     } else {
-        Call1(Func_02005f9a_b, 0xee7);
+        Call1(Engine_EventSetMessage, (s32)MsgHaidiaRightDitchStuff);
     }
-    Func_02005fb2(22, 0);
-    Func_02005f6a(22, 2);
-    record = Value1(Func_02005f08, 0);
+    Engine_EventShowMessage(22, 0);
+    Engine_ActorSetAnimation(22, 2);
+    record = Value1(Engine_ActorGet, 0);
     if (record != 0) {
-        Func_02005f52(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
+        Engine_ActorSetDestination(22, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
-    Func_02005f78(22);
-    Func_02005f8a(22, 0, 0);
-    Func_02005f1a(1, 1);
-    Call1(Func_02005ef0, 0x837);
+    Engine_ActorWaitForMove(22);
+    Engine_ActorSetPosition(22, 0, 0);
+    Event_PrepareObjectAndApplyValue(1, 1);
+    Call1(Engine_GameFlagSet, 0x837);
 }

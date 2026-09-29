@@ -1,4 +1,8 @@
 #include "TYPES.H"
+extern u8 MsgLobbyLooksLikeFirst[];
+extern u8 MsgLobbyLooksLikeFirstTime[];
+extern u8 MsgLobbyTellConsecutiveWins[];
+extern u8 MsgLobbyTellTotalWins[];
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -32,14 +36,14 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
     Engine_EventBegin();
     Engine_ActorFaceActor(actor, gGameState.words[125], 0);
     if ((u32)(facing - 0xa001) <= 0x3ffe) {
-        base = 0x297b;
+        base = (s32)MsgLobbyLooksLikeFirst;
         count = &gGameState.counts[342];
         if (*count == 0) {
-            Engine_EventSetMessage(0x2988);
+            Engine_EventSetMessage((s32)MsgLobbyTellTotalWins);
             return Engine_EventShowMessage(actor, 0);
         }
     } else {
-        base = 0x297d;
+        base = (s32)MsgLobbyLooksLikeFirstTime;
         count = &gGameState.counts[345];
         if (*count == 0)
             goto none;
@@ -49,6 +53,6 @@ s32 LinkLobby_TalkLinkedWins(s32 actor)
     Engine_EventSetMessage(base + 1);
     return Engine_EventShowMessage(actor, 0);
 none:
-    Engine_EventSetMessage(0x2989);
+    Engine_EventSetMessage((s32)MsgLobbyTellConsecutiveWins);
     return Engine_EventShowMessage(actor, 0);
 }

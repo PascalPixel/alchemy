@@ -326,6 +326,8 @@ Func_02000308:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global KareiHeya_Exits
+KareiHeya_Exits:
 	.4byte 0x00000064
 	.4byte 0x00101063
 	.4byte 0x00202063

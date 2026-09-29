@@ -1,4 +1,9 @@
 #include "TASK.H"
+extern u8 MsgKorosseoDoYourBest[];
+extern u8 MsgKorosseoIfKnowWhoWantCheer[];
+extern u8 MsgKorosseoRobinWillCheerForWay[];
+extern u8 MsgKorosseoUnfortunatelyWeHaveFullHouse[];
+extern u8 MsgKorosseoWouldLikeFriendCheerFor[];
 
 /* The game state's cells, read here as bytes. */
 extern u8 gCell[];
@@ -29,12 +34,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             buf[i] = gCell[504 + i];
         }
         if (count <= 1) {
-            Event_SetMessage(MSG_DO_YOUR_BEST);
+            Event_SetMessage((s32)MsgKorosseoDoYourBest);
             Event_ShowMessage(owner, 0);
             return;
         }
         if (GameFlag_IsSet(base + 512) != 0) {
-            Event_SetMessage(MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE);
+            Event_SetMessage((s32)MsgKorosseoUnfortunatelyWeHaveFullHouse);
             Event_ShowMessage(owner, 0);
             return;
         }
@@ -42,7 +47,7 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             state = 0;
             Task_Wait(6);
         } else {
-            Event_SetMessage(MSG_WOULD_LIKE_FRIEND_CHEER_FOR);
+            Event_SetMessage((s32)MsgKorosseoWouldLikeFriendCheerFor);
             Event_OpenMessage(owner, 0);
             state = Event_ChooseYesNo(0, 0);
         }
@@ -69,12 +74,12 @@ void FieldScene_RunMiddleSequence(s32 mode, s32 owner, s32 base)
             }
         }
     }
-    Event_SetMessage(MSG_IF_KNOW_WHO_WANT_CHEER);
+    Event_SetMessage((s32)MsgKorosseoIfKnowWhoWantCheer);
     Event_ShowMessage(owner, 0);
     return;
 L_main:
     ((void (*)())UiWork_PushValueSlot)(obj, 1);
-    Event_SetMessage(MSG_ROBIN_WILL_CHEER_FOR_WAY);
+    Event_SetMessage((s32)MsgKorosseoRobinWillCheerForWay);
     Event_ShowMessage(owner, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
     Actor_SetSpeed(obj, 0x10000, 0x8000);

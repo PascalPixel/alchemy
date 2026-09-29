@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgRariberoGuessPeopleAngara[];
+extern u8 MsgRariberoImpossibleGoOcean[];
 
 /*
  * Raribero house: choose which dialogue branch to play. If the party faces
@@ -20,10 +22,10 @@ void Dialogue_HandleAlternateFacingBranch(s32 no)
     if (party_facing == 0xc000) {
         Shop_Run(34, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
-        Engine_EventSetMessage(0x28f4);
+        Engine_EventSetMessage((s32)MsgRariberoImpossibleGoOcean);
         Engine_EventShowMessage(no, 0);
     } else {
-        Engine_EventSetMessage(0x26e9);
+        Engine_EventSetMessage((s32)MsgRariberoGuessPeopleAngara);
         Engine_EventShowMessage(no, 0);
     }
 }

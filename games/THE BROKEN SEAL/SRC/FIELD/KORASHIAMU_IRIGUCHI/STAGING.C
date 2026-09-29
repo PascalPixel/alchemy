@@ -1,4 +1,7 @@
 #include "STATUS.H"
+extern u8 MsgKorashiamuHaveMakeThroughCountlessMatches[];
+extern u8 MsgKorashiamuHavePerfectTechniquesLikeThose[];
+extern u8 MsgKorashiamuSilence[];
 
 void SceneState_ForwardMaskedHalfwordWith10();
 
@@ -30,12 +33,12 @@ void FieldScene_RunConditionalSceneSetup(void)
     flag_8a4 = GameFlag_IsSet(0x8a4);
     if (flag_8a4 != 0) {
         Actor_FaceEachOther(RECORD_17, ACTOR_PARTY_LEADER, 40);
-        Event_SetMessage(MSG_HAVE_PERFECT_TECHNIQUES_LIKE_THOSE);
+        Event_SetMessage((s32)MsgKorashiamuHavePerfectTechniquesLikeThose);
         FieldScene_CallPairWith10(RECORD_17);
         Actor_FaceDirection(RECORD_17, 0x3000, 20);
     } else {
         Actor_StartRepeatedMotion(RECORD_17, 2);
-        Event_SetMessage(MSG_SILENCE);
+        Event_SetMessage((s32)MsgKorashiamuSilence);
         Event_ShowMessage(RECORD_17, 0);
         /* Byte at +85 of the record returned by ((u8 *)Engine_EventGetViewCenter()); written
          * with the (already known zero) flag value here. */
@@ -187,7 +190,7 @@ void SceneState_SetRuntimeWord448To513(void)
 
     Event_Wait(20);
     SceneState_ForwardMaskedHalfwordWith10(17, 160 << 7);
-    Event_SetMessage(MSG_HAVE_MAKE_THROUGH_COUNTLESS_MATCHES);
+    Event_SetMessage((s32)MsgKorashiamuHaveMakeThroughCountlessMatches);
 
     if (GameFlag_IsSet(0x8a4) != 0) {
         *(u16 *)((u8 *)gEventWork + 472) =

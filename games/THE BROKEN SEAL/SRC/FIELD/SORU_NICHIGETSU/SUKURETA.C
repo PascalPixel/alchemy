@@ -1,4 +1,6 @@
 #include "SANCTUM.H"
+extern u8 MsgSoruSukuretaJustWaitOverThere[];
+extern u8 MsgSoruSukuretaLetMeKnowWhat[];
 
 void Sukureta_Talk(void)
 {
@@ -7,9 +9,9 @@ void Sukureta_Talk(void)
 
     Event_Begin();
     if (GameFlag_IsSet(FLAG_ROBIN_SEARCHING_FOR_SUKURETA) != 0) {
-        Event_SetMessage(MSG_SUKURETA_LET_ME_KNOW_WHAT_YOU_FIND);
+        Event_SetMessage((s32)MsgSoruSukuretaLetMeKnowWhat);
     } else {
-        Event_SetMessage(MSG_SUKURETA_JUST_WAIT_OVER_THERE);
+        Event_SetMessage((s32)MsgSoruSukuretaJustWaitOverThere);
     }
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xc000, 10);

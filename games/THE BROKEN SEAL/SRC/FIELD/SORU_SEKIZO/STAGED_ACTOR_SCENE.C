@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgSoruHmphWellTold[];
+extern u8 MsgSoruHonestlyDoubtUnderstand[];
+extern u8 MsgSoruTryFindSolution[];
+extern u8 MsgSoruWait[];
 
 /* Staged scene for actors 8, 5, 1 and 0. The shared work pointer is fetched
  * again at the tail after the intervening calls. Runtime veneer bindings
@@ -61,7 +65,7 @@ void FieldScene_RunStagedActorScene(void)
     Engine_EventWait(20);
     Call3(Engine_ActorSetPosition, 8, 0x2400000, 0x1280000);
     Engine_EventWait(1);
-    Call1(Engine_EventSetMessage, 0x1004);
+    Call1(Engine_EventSetMessage, (s32)MsgSoruWait);
     Event_SayThenWait(8, 6);
     Camera_SetSpeed(0xcccc, 0x1999);
     Call4(Engine_CameraMoveTo, 0x23e0000, -1, 0xb40000, 1);
@@ -168,12 +172,12 @@ void FieldScene_RunStagedActorScene(void)
     Call3(Engine_ActorFaceDirection, 5, 0x4000, 0);
     Call3(Engine_ActorFaceDirection, 1, 0x4000, 0);
     if (Value2(Inventory_PromptAndSetObjectMode, 0, 0) == 0) {
-        Call1(Engine_EventSetMessage, 0x1010);
+        Call1(Engine_EventSetMessage, (s32)MsgSoruHonestlyDoubtUnderstand);
     } else {
-        Call1(Engine_EventSetMessage, 0x1011);
+        Call1(Engine_EventSetMessage, (s32)MsgSoruHmphWellTold);
     }
     Event_SayThenWait(8, 6);
-    Call1(Engine_EventSetMessage, 0x1012);
+    Call1(Engine_EventSetMessage, (s32)MsgSoruTryFindSolution);
     Engine_ActorRunRepeatedMotion(8, 2);
     Event_SayThenWait(8, 6);
     Call3(Engine_ActorShowEmote, 1, 0x102, 0);

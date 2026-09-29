@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/SCENE.o"(.text)
-        "*/resource_395_overlay.o"(.text.x02008088)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/MESSAGE_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/TRANSIT.o"(.text)
         "*/resource_395_overlay.o"(.text.x02009070)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KI/EFFECTS.o"(.text)

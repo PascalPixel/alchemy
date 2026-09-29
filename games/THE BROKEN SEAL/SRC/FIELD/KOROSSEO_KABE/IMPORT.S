@@ -242,6 +242,9 @@ Engine_ActorDestroy:
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer Object_RefreshSelectorByIdFar
+	.global Engine_ActorSetDestination
+	.thumb_func
+Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -267,6 +270,9 @@ Engine_ActorSetAnimation:
 	.thumb_func
 Engine_ActorSetAnimationAndWait:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	.global Engine_ActorRunRepeatedMotion
+	.thumb_func
+Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
 	.global BattleFx_RunRisingObjectSequence
 	.thumb_func

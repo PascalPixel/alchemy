@@ -1,4 +1,5 @@
 #include "STAGED_MOTION.H"
+extern u8 MsgHaidiaNotSneakingUpMtAleph[];
 
 void SceneState_RunFlag204Step(void)
 {
@@ -63,7 +64,7 @@ void FieldScene_RunScene373SequenceE(void)
     Actor_FaceDirection(22, 0x4000, 20);
     Actor_StartRepeatedMotion(22, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_NOT_SNEAKING_UP_MT_ALEPH);
+    Event_SetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
     *(s32 *)(record + 108) = (s32)SceneActor_RunStep18WhenTargetSet;
@@ -110,7 +111,7 @@ void FieldScene_RunScene373_02001490(s32 a0, s32 a1)
     record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
     *(s32 *)(record + 24) = 0x10000;
     *(s32 *)(record + 28) = 0x10000;
-    Event_SetMessage(MSG_NOT_SNEAKING_UP_MT_ALEPH);
+    Event_SetMessage((s32)MsgHaidiaNotSneakingUpMtAleph);
     Event_AskYesNo(22, 0);
     record = Actor_Get(22);
     *(s32 *)(record + 108) = (s32)SceneActor_RunStep18WhenTargetSet;

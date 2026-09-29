@@ -1981,6 +1981,8 @@ Func_020003cc:
 	.4byte 0x09f0a7c2
 	.4byte 0xfbc22b0d
 	.4byte 0x00000000
+	.global Clear_ScriptTable
+Clear_ScriptTable:
 	.4byte 0xffff0000
 	.4byte 0x00000000
 	.4byte 0x40000000
@@ -1993,13 +1995,19 @@ Func_020003cc:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Clear_MessageTable
+Clear_MessageTable:
 	.4byte 0x000001ff
+	.global Clear_ActorTable
+Clear_ActorTable:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Clear_EffectTable
+Clear_EffectTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

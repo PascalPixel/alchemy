@@ -1,28 +1,16 @@
 #include "TYPES.H"
 #include "SCENE.H"
 
-/*
- * The eight-byte owner at 0x02000030 includes its one pool word, which holds
- * the returned table address 0x02009658.
- */
+extern u8 Clear_ScriptTable[];
+extern u8 Clear_MessageTable[];
+extern u8 Clear_ActorTable[];
+extern u8 Clear_EffectTable[];
 
-/*
- * The eight-byte owner at 0x0200003c includes its one pool word, which holds
- * the returned table address 0x02009688.
- */
-
-/*
- * The eight-byte owner at 0x02000044 includes its one pool word, which holds
- * the returned table address 0x0200968c.
- */
-
-/*
- * The eight-byte owner at 0x0200004c includes its one pool word, which holds
- * the returned table address 0x020096a4.
- */
+/* Each getter is eight bytes including the one pool word that holds the
+ * table it returns. */
 u8 *SceneData_GetScriptTable(void)
 {
-    return (u8 *)0x02009658;
+    return Clear_ScriptTable;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -32,15 +20,15 @@ s32 SceneData_ReturnZero(void)
 
 u8 *SceneData_GetMessageTable(void)
 {
-    return (u8 *)0x02009688;
+    return Clear_MessageTable;
 }
 
 u8 *SceneData_GetActorTable(void)
 {
-    return (u8 *)0x0200968c;
+    return Clear_ActorTable;
 }
 
 u8 *SceneData_GetEffectTable(void)
 {
-    return (u8 *)0x020096a4;
+    return Clear_EffectTable;
 }

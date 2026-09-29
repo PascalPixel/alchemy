@@ -1,22 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008298,"ax",%progbits
-	.balign 4
-	.global Func_02000298
-	.thumb_func
-Func_02000298:
-	push {lr}
-	bl 0x0200919c
-	ldr r0, [pc, #20]
-	bl 0x02009244
-	ldr r0, [pc, #16]
-	movs r1, #0
-	bl 0x02009254
-	bl 0x020091a4
-	pop {r0}
-	bx r0
-	.4byte 0x00001c40
-	.4byte 0x0000800b
 	.section .rodata,"a",%progbits
 	.global gValeFaceTargetScript
 gValeFaceTargetScript:

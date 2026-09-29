@@ -1441,7 +1441,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SET_TRANSITION_FLAG_AND_DISPLAY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SETUP_CANVAS_TILE_MAP.o"(.text)
         "*/recon/tbs/raw/080cde8e.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080cde90.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/CANVAS_DRAW_CLIPPED_LINE.o"(.text)
         "*/recon/tbs/raw/080ce034.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080ce4e8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.o"(.text)

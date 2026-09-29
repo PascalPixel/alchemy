@@ -967,12 +967,10 @@ Ui_WindowTiles:
 	.global UiText_GlyphData
 UiText_GlyphData:
 	.incbin "baserom.gba", 0x00322fb0, 0x000008c0
-	.global Title_IntroGraphicsA
-Title_IntroGraphicsA:
-	.incbin "baserom.gba", 0x00323870, 0x00001178
-	.global Title_IntroGraphicsB
-Title_IntroGraphicsB:
-	.incbin "baserom.gba", 0x003249e8, 0x000066c0
+	.section .unidentified.083249e7,"a"
+	.incbin "baserom.gba", 0x003249e7, 0x00000001
+	.section .unidentified.0832b0a6,"a"
+	.incbin "baserom.gba", 0x0032b0a6, 0x00000002
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032b0a8, 0x000086f8

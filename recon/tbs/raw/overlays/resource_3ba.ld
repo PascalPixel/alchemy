@@ -26,7 +26,7 @@ SECTIONS
         "*/resource_3ba_overlay.o"(.text.x0200a124)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RUN_TWO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.o"(.text)
-        "*/resource_3ba_overlay.o"(.text.x0200aaec)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RESET_MOTION.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x0200abec)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RELEASE_TABLE.o"(.text)

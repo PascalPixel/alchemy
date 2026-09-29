@@ -30,7 +30,7 @@ SECTIONS
         "*/resource_3bc_overlay.o"(.text.x0200ae54)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/TRANSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/FADE_IN_COMPETITOR.o"(.text)
-        "*/resource_3bc_overlay.o"(.text.x0200b81c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/RESTORE_COMPETITOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/MOTION_RESET.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x0200b91c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/PALETTE_TASK.o"(.text)

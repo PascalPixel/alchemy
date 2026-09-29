@@ -286,12 +286,12 @@ void Scene_RunActorEntrySequence(void)
     } else {
         Event_Wait(20);
         Actor_SetAnimationAndWait(20, 4);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
         advanceStep = 0;
     }
     VinasuChojo_ShowMessage(20);
     if (advanceStep != 0) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
     }
     Call3(Engine_ActorFaceDirection, 1, 0x8000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0x8000, 0);
@@ -308,12 +308,12 @@ void Scene_RunActorEntrySequence(void)
     } else {
         Event_Wait(20);
         Actor_SetAnimation(ACTOR_IVAN, 4);
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
         advanceStep = 0;
     }
     VinasuChojo_ShowMessage(2);
     if (advanceStep != 0) {
-        *(u16 *)((*(s32 *)0x03001ebc + 0x1d8)) += 1;
+        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
     }
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     VinasuChojo_FaceActor(1, 0x4000);

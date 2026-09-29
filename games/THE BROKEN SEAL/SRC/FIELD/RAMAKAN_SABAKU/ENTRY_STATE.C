@@ -70,7 +70,7 @@ s32 RamakanSabaku_ApplyEntryState(void)
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 6, 46);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 27, 55);
             Call6(Engine_MapCopyCells, 70, 68, 4, 2, 43, 56);
-            goto L_020007e6;
+            goto clear_actors;
         }
         if (gGameState[224][0] == (s32)&SceneId_RamakanSabaku3) {
             Call6(Engine_MapCopyCellsLayered, 69, 99, 4, 2, 8, 16);
@@ -87,7 +87,7 @@ s32 RamakanSabaku_ApplyEntryState(void)
             Call6(Engine_MapCopyCellAttributes, 9, 0, 3, 3, 9, 6);
         }
     }
-    L_020007e6:;
+    clear_actors:;
     Engine_ActorSetPosition(8, 0, 0);
     Engine_ActorSetPosition(9, 0, 0);
     Engine_ActorSetPosition(10, 0, 0);

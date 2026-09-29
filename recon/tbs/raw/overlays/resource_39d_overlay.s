@@ -2,9 +2,9 @@
 	.thumb
 	.section .text.x0200b4bc,"ax",%progbits
 	.balign 4
-	.global Func_020034bc
+	.global MakyuriChojo_FlickerActorEight
 	.thumb_func
-Func_020034bc:
+MakyuriChojo_FlickerActorEight:
 	push {r5, r6, r7, lr}
 	mov r7, r10
 	mov r6, r9

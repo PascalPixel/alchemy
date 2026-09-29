@@ -58,7 +58,7 @@ s32 RamakanSabaku_ConfigureAreaLayout(void)
         Call3(Engine_ActorSetPosition, 9, 0x1900000, 0x16c0000);
     } else {
         if (gGameState[224][0] != (s32)&SceneId_RamakanSabaku2) {
-            goto L_02000af6;
+            goto third_area;
         }
         Call6(Engine_MapCopyCells, 64, 126, 4, 2, 42, 5);
         Call6(Engine_MapCopyCells, 68, 126, 4, 2, 20, 11);
@@ -84,8 +84,8 @@ s32 RamakanSabaku_ConfigureAreaLayout(void)
         Call3(Engine_ActorSetPosition, 12, 0x2400000, 0x2cc0000);
         Call3(Engine_ActorSetPosition, 13, 0x2880000, 0x1980000);
     }
-    goto L_02000bde;
-    L_02000af6:;
+    goto reset_objects;
+    third_area:;
     if (gGameState[224][0] == (s32)&SceneId_RamakanSabaku3) {
         Call6(Engine_MapCopyCells, 64, 124, 4, 4, 8, 14);
         Call6(Engine_MapCopyCells, 68, 124, 4, 4, 6, 18);
@@ -102,7 +102,7 @@ s32 RamakanSabaku_ConfigureAreaLayout(void)
             Call6(Engine_MapCopyCells, 0, 119, 3, 1, 9, 5);
         }
     }
-    L_02000bde:;
+    reset_objects:;
     for (i = 100; i <= 107; i++) {
         Call3(Engine_MapObjectSetPosition, i, -1, -1);
     }

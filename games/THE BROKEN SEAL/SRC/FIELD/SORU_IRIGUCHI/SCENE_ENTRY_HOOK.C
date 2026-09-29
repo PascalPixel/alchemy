@@ -7,7 +7,7 @@ void BattleFx_SetQueuedSoundAndPlay();
 s32 Scene_RunActorFormation();
 void Scene_RunTransitionCue();
 void Scene_EnterSolSanctum();
-void Func_02000f8c();
+void SoruIriguchi_RunArrivalEvent();
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -82,7 +82,7 @@ void FieldScene_RunSceneEntryHook(void)
         Engine_ActorSetSpriteFlags(Engine_ActorGet(18), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(19), 0);
         if (Value1(Engine_GameFlagIsSet, 0x804) == 0)
-            Func_02000f8c();
+            SoruIriguchi_RunArrivalEvent();
         if (Value1(Engine_GameFlagIsSet, 0x303) != 0)
             Call3(Engine_ActorSetPosition, 9, 0x5d80000, 0x880000);
         else if (GameFlag_IsSet(0x302) != 0)

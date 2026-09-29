@@ -8,7 +8,7 @@
 #include "FIELD_SCENE.H"
 /* Declarations and helpers: games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/TEMPLE.H. */
 
-void FieldScene_RunScene39e_020027ec(void)
+void ShianJiin_RunPraiseEvent(void)
 {
     u32 i;
     s32 record;

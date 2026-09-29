@@ -4,7 +4,7 @@
 extern const u16 KareiTorebi_LeaveCells1[];
 extern const u16 KareiTorebi_LeaveCells3[];
 
-void FieldScene_RunScene3ae_020007dc(void)
+void KareiTorebi_LeaveScene(void)
 {
     Event_Begin();
     Audio_PlayCue(158);

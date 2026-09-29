@@ -140,9 +140,9 @@ Func_02000420:
 	.4byte 0x00000143
 	.section .text.x02008f8c,"ax",%progbits
 	.balign 4
-	.global Func_02000f8c
+	.global SoruIriguchi_RunArrivalEvent
 	.thumb_func
-Func_02000f8c:
+SoruIriguchi_RunArrivalEvent:
 	push {lr}
 .L_02000f8e:
 	bl 0x02009bac

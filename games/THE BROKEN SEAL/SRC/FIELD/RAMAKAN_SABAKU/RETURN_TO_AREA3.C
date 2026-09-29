@@ -7,7 +7,7 @@ void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 /* Actor 8 repeats its motion, and the party is set to come back to the
    desert's third area by its fifth entrance. */
-void FieldScene_RunScene3a5_02000c38(void)
+void RamakanSabaku_ReturnToArea3(void)
 {
     Actor_RunRepeatedMotion(8, 2);
     Party_SetFields1ceAnd1d0((s32)&SceneId_RamakanSabaku3, 5);

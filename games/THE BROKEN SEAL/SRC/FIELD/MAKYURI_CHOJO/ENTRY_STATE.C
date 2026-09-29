@@ -5,7 +5,7 @@
 s32 FindNearestF2Actor(void);
 void FieldScene_RunFourActorPresentation(void);
 void RunScene59Sequence(void);
-void Func_020034bc(void);
+void MakyuriChojo_FlickerActorEight(void);
 
 struct MapLayer {
     u8 unknown_00[12];
@@ -37,7 +37,7 @@ s32 MakyuriChojo_ApplyEntryState(void)
     gEventWork->start_transition = 0x204;
     if (gGameState.scene == (s32)&SceneId_MakyuriChojo1) {
     Engine_GameFlagSet(0x144);
-    Engine_TaskAddCallback(Func_020034bc, 0xc80);
+    Engine_TaskAddCallback(MakyuriChojo_FlickerActorEight, 0xc80);
     Engine_ActorSetSpritePriority(0, 1);
     Engine_ActorSetSpritePriority(1, 1);
     Engine_ActorSetSpritePriority(2, 1);

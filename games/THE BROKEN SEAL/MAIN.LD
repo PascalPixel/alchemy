@@ -580,7 +580,7 @@ SECTIONS
         "*/recon/tbs/raw/0802281c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_NUMBER_TO_HALFWORDS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/DJINN_CHANGE_LIST.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/RENDER/CREATE_OUTPUT_FROM_RESOURCE_SLOT.o"(.text)
         "*/recon/tbs/raw/08022a7a.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08022a7c.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/08022b44.o"(.text .rodata .data .padding)

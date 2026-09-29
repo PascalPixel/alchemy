@@ -1,3 +1,15 @@
+/*
+ * resource_3ca:02000430 Scene_RunExtendedPresentationSequence - draft; the
+ * range links as disassembly (section .text.x02008430 of the overlay
+ * listing).
+ *
+ * Remaining: the last call passes a zero that the reference loads from the
+ * literal pool (ldr r0, last pool word 0). Written as a plain zero below,
+ * GCC passes mov r0, #0 and the pool loses its last word, four bytes
+ * shorter; a u16 or u8 zero and the backdrop's blank variable give the
+ * same. The unit matched only while the zero was a link-time symbol named
+ * after its own value.
+ */
 #include "TYPES.H"
 
 extern u8 gMapWork[];
@@ -6,7 +18,6 @@ extern const s32 BabiFune_ActionScriptA[];
 extern const s32 BabiFune_ActionScriptB[];
 extern const s32 BabiFune_ActionScriptC[];
 extern const s32 BabiFune_ActionScriptD[];
-extern u8 Value_00000000;
 
 void Engine_EventBegin();
 void Engine_CameraMoveTo();
@@ -287,5 +298,5 @@ void Scene_RunExtendedPresentationSequence(void)
     Engine_EventWaitForScreen();
     Call1(Engine_EventWait, 30);
     Call1(Engine_GameFlagSet, 282);
-    Call2(Event_SetPairWork1c0Far, (s32)&Value_00000000, 9);
+    Call2(Event_SetPairWork1c0Far, 0, 9);
 }

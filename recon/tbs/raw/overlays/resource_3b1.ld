@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/STAGED.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/WALKER_STEP.o"(.text)
+        "*/resource_3b1_overlay.o"(.text.x0200812c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/EFFECT9.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/STEP_SCRIPT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_HEYA/DIALOG_A.o"(.text)

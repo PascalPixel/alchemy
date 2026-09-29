@@ -4,7 +4,12 @@
    The return tail is 12 bytes short; the heal loop additionally schedules
    the PP store after HP sign extension. An out-of-branch fallback label
    gives 488 bytes and 22 edits, but moves the defeat fallback past entry
-   loads and reloads the state pointer before the both-unset home case. */
+   loads and reloads the state pointer before the both-unset home case.
+   2026-09-29: Party_SetReturnPoint scores 910 (5 register-only, 5
+   operand, 3 reordered, 1 inserted, 5 deleted), was 1340: the permuter
+   read entry_y before entry_x and tested x != -1 first; its 900 also
+   stored the home y through a pointer temporary, left out as unnatural.
+   The listing holds only Party_SetReturnPoint (score with --function). */
 #include "TYPES.H"
 #include "BATTLE_TYPES.H"
 
@@ -104,15 +109,15 @@ void Party_SetReturnPoint(s32 reason)
             (&Data_02000240)->return_x = x;
         }
     } else {
-        x = (&Data_02000240)->entry_x;
         y = (&Data_02000240)->entry_y;
-        if (x == -1) {
+        x = (&Data_02000240)->entry_x;
+        if (x != -1) {
+            (&Data_02000240)->return_x = x;
+        } else {
             if (y == -1)
                 goto home;
 default_x:
             (&Data_02000240)->return_x = (&Data_02000240)->home_x;
-        } else {
-            (&Data_02000240)->return_x = x;
         }
     }
     if (y != -1)

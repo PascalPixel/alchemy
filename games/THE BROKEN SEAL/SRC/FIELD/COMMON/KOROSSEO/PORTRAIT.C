@@ -38,7 +38,7 @@ void Korosseo_LoadPortrait(s32 id)
     off = Korosseo_PortraitPaletteOffsets[id];
     if (id == 8)
         id = 4;
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_TilesK), buf);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_Lettering), buf);
     Dma_Set(buf + off, (void *)0x050003e0, 0x84000008, (volatile u32 *)0x040000d4);
     Call3(VramBlock_LoadCached, Korosseo_PortraitSlot, 0x400, (id << 10) + (s32)buf + 160);
     Dma_Wait((volatile u32 *)0x040000d4);

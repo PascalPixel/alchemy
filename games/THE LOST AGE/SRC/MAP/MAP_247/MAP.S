@@ -1,32 +1,33 @@
-@ Field_Map247: a field map of 3 layers.
+@ Field_Map247: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map247
 Field_Map247:
-	map_header 0x0, 0x80, 0x80, 3, 2, 1, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x80
-	map_layer 16, 16, 0, -1, 0x8000
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map247, .LField_Map247_1
-	map_block Field_Map247, .LField_Map247_2
-	map_block Field_Map247, .LField_Map247_3
-	map_block Field_Map247, .LField_Map247_4
+	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map247, .LField_Map247_METATILES
+	map_block Field_Map247, .LField_Map247_SHAPES
+	map_block Field_Map247, .LField_Map247_GRID
+	map_block Field_Map247, .LField_Map247_SHAPE_GRID
+	map_block Field_Map247, .LField_Map247_ANIMATION
 	map_block Field_Map247
-	map_block Field_Map247, .LField_Map247_6
-	.incbin "MAP/MAP_247/CELLS.delta1.lz"
+	map_block Field_Map247, .LField_Map247_SCENE
+.LField_Map247_METATILES:
+	.incbin "MAP/MAP_247/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map247_1:
-	.incbin "MAP/MAP_247/SLOT_1.bin.lz"
+.LField_Map247_SHAPES:
+	.incbin "MAP/MAP_247/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map247_2:
-	.incbin "MAP/MAP_247/SLOT_2.bin.lz"
+.LField_Map247_GRID:
+	.incbin "MAP/MAP_247/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map247_3:
-	.incbin "MAP/MAP_247/SLOT_3.bin.lz"
+.LField_Map247_SHAPE_GRID:
+	.incbin "MAP/MAP_247/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map247_4:
-	.incbin "MAP/MAP_247/SLOT_4.bin.lz"
+.LField_Map247_ANIMATION:
+	.incbin "MAP/MAP_012/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map247_6:
-	.incbin "MAP/MAP_247/SLOT_6.bin.lz"
+.LField_Map247_SCENE:
+	.incbin "MAP/MAP_247/SCENE.parts.lz"

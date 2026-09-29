@@ -1,0 +1,37 @@
+cell:u8	grid:128x128	fill:0	at:2,5
+00 00 00 00 00 00 00 00 00 00 ff 00 ff ff ff
+00 00 00 00 00 00 00 00 ff ff ff ff ff 02 ff ff ff
+00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 ff ff ff ff ff ff ff
+00 00 00 00 00 ff ff ff ff ff 00 00 00 00 00 00 00 ff ff ff ff ff ff
+00 00 00 00 ff ff 01 ff ff ff 00 00 00 00 00 00 00 ff ff ff 03 ff ff
+00 00 00 00 ff 00 00 00 ff ff 00 ff ff ff ff ff 00 ff ff 00 00 00 ff
+00 00 00 00 ff 00 00 00 00 00 00 ff ff ff ff ff 00 00 00 00 00 00 ff
+00 00 00 00 ff 00 00 00 00 00 00 ff ff ff ff ff 00 00 00 00 00 00 ff
+00 00 00 00 ff 00 00 00 00 00 00 ff ff ff ff ff 00 00 00 00 ff ff ff
+00 00 00 00 ff 00 00 00 00 00 00 ff ff 04 ff ff 00 ff ff ff ff ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff
+00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff 00 00 ff
+00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff
+
+
+00 00 05
+
+
+
+
+00 ff ff ff
+ff ff 06 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff 00 00 00 ff ff ff ff 32 32 32 32 32 32 ff 32 32 32 ff 32 32 32 ff ff ff
+ff 00 00 00 00 00 00 ff 32 32 ff 32 32 32 32 32 32 32 32 32 32 32 32 ff ff ff ff
+ff 00 00 00 00 00 00 00 32 32 32 32 32 32 32 32 32 32 32 ff 32 32 32 32 ff ff ff
+ff 00 00 00 00 00 00 ff 32 32 32 32 ff 00 ff 32 ff 32 32 32 32 32 32 ff 00 00 ff
+ff ff ff ff 00 00 00 ff 32 ff 32 32 00 00 ff 32 32 32 32 32 32 32 32 32 00 00 ff
+ff ff ff ff ff ff ff ff 32 32 32 32 ff 00 ff 32 32 32 32 32 32 32 32 ff 00 00 ff
+00 00 00 00 00 00 00 ff 32 32 32 32 32 32 32 32 32 ff 32 ff 00 ff ff ff 00 00 ff
+00 00 00 00 00 00 00 ff 32 32 32 ff ff 32 32 32 32 32 32 32 32 32 ff ff ff ff ff
+00 00 00 00 00 00 00 ff 32 32 32 32 32 32 ff ff 32 32 ff 32 32 32 ff ff ff
+00 00 00 00 00 00 00 ff ff 32 ff 32 ff ff 00 00 ff ff 00 ff 32 ff 00 ff ff
+00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff

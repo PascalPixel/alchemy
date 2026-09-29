@@ -1,0 +1,52 @@
+cell:u8	grid:128x128	fill:0	at:4,2
+ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff f4 f4 ff 07 07 00 ff ff 00 00 00 00 00 00 00 00 ff ff ff ff 00 00 00 08 ff f4 f4 ff ff ff 00 00 00 00 00 ff ff 00 00 00 00 00 f4 f4 f4 f4 f4 ff ff
+ff ff ff f4 f4 ff 00 00 00 ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 f3 00 00 f4 f4 f4 ff ff 00 00 00 00 00 ff ff ff ff 00 00 00 f3 00 f4 f4 00 ff ff
+ff ff f3 f4 f4 00 00 17 17 ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 00 ff ff
+ff ff f3 00 00 00 ff 16 16 ff ff 00 00 00 00 00 00 00 00 ff f2 00 00 00 00 00 00 00 00 ff ff ff ff 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 00 ff ff
+ff ff 00 00 00 00 00 16 16 ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff ff ff 00 00 00 00 00 00 00 00 ff ff
+ff ff 00 00 00 1e 1e 17 17 ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff 00 00 00 00 00 00 ff 00 00 00 ff ff
+ff ff 00 15 14 15 00 00 00 ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 f4 f4 f4 00 00 ff ff ff ff 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff ff 00 00 ff ff
+ff ff 00 15 15 15 00 00 00 ff ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 f3 f4 00 00 00 ff ff ff ff 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff ff 01 01 ff ff
+ff ff 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 ff ff f2 f2 00 00 00 ff ff ff ff ff ff ff
+ff ff ff ff ff ff 03 03 ff ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff f3 00 00 00 00 f2 00 ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff
+
+
+
+
+00 ff 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff
+00 ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff
+00 ff ff f4 f4 00 00 00 f3 ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 ff ff ff
+00 ff ff f4 f4 f4 00 00 00 ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 ff ff ff ff
+00 ff f2 f4 f4 f4 00 00 00 ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff
+00 ff f2 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 ff ff 00 00 00 00 ff ff
+00 ff f3 f3 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff
+00 ff 00 00 00 00 ff ff ff ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff
+00 ff ff 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff
+00 ff ff 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 00 00 ff ff
+00 ff ff 00 00 00 00 00 00 ff 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 ff ff ff
+00 ff ff ff ff ff 02 02 ff ff 00 00 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 ff ff ff ff
+00 ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff 05 05 ff ff ff ff ff ff
+00 ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff
+
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff
+00 ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff
+00 ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff
+00 ff 00 00 09 ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 ff 0a 00 ff ff
+00 ff 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff
+00 ff 00 00 00 00 00 00 ff ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff
+00 ff 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 ff 00 00 ff ff
+00 ff ff ff 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff
+00 ff 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff
+00 ff 00 00 00 00 ff ff ff ff ff 00 00 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 ff ff
+00 ff 00 00 00 00 00 00 00 ff ff 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff
+00 ff ff ff 00 00 00 00 00 ff ff
+00 ff ff ff ff ff 04 04 ff ff ff
+00 ff ff ff ff ff ff ff ff ff ff
+00 ff ff ff ff ff ff ff ff ff ff

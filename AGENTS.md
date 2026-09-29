@@ -112,6 +112,7 @@ MusicPlayer2000; RAM-executed ARM code uses `-marm -mno-apcs-frame`.
 ```sh
 git submodule update --init && git config core.hooksPath .hooks
 make bootstrap
+make worktree      # in a new worktree, before its first build
 make compare-all
 make test
 make coverage
@@ -170,3 +171,5 @@ a verified build.
 - 2026-09-29: JSON is banned from the repository for good: tables are TSV,
   sequence skeletons and events are text, and the publication check refuses
   JSON by name or content.
+- 2026-09-29: a PNG may carry an all-grey palette when the build writes that
+  palette into the ROM from the PNG, as pret's grey images with their own palettes do.

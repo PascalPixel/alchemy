@@ -14,7 +14,13 @@
    permute scores 35: 15 for the error code in r6 instead of r7, 20 for the
    missing gSaveStamp label. Writing the codes as -9/-2/-3 also gives the
    reference allocation, but move2add then rewrites -9 as subs r7, #9 from
-   the known zero. Ten minutes of permutation from here: none below 35. */
+   the known zero. Ten minutes of permutation from here: none below 35.
+   2026-09-29 (Venus): with gSaveStamp split out of gPlayerObjectId
+   (0x5a in) the draft scores 15, only the error code in r6. One result
+   variable (9 and 3 negated at the shared label) scores 55, a pure r6/r7
+   swap with the slot address, also with a local slot pointer; -9 folds to
+   subs from the known zero; reusing value or found as the code scores
+   over 1000. Two minutes of permutation each found nothing lower. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RUNTIME_MEM.H"

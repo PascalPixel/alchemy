@@ -1,35 +1,36 @@
-@ Field_Map066: a field map of 3 layers.
+@ Field_Map066: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map066
 Field_Map066:
-	map_header 0x0, 0x80, 0x80, 3, 2, 1, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x80
-	map_layer 16, 16, 0, -1, 0x8000
-	map_layer 16, 16, 514, 3855, 0x40
-	.2byte 0x0
-	map_block Field_Map066, .LField_Map066_1
-	map_block Field_Map066, .LField_Map066_2
-	map_block Field_Map066, .LField_Map066_3
-	map_block Field_Map066, .LField_Map066_4
-	map_block Field_Map066, .LField_Map066_5
-	map_block Field_Map066, .LField_Map066_6
-	.incbin "MAP/MAP_066/CELLS.delta2.lz"
+	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 2, 2, 0xf, 0xf
+	map_block Field_Map066, .LField_Map066_METATILES
+	map_block Field_Map066, .LField_Map066_SHAPES
+	map_block Field_Map066, .LField_Map066_GRID
+	map_block Field_Map066, .LField_Map066_SHAPE_GRID
+	map_block Field_Map066, .LField_Map066_ANIMATION
+	map_block Field_Map066, .LField_Map066_BLEND
+	map_block Field_Map066, .LField_Map066_SCENE
+.LField_Map066_METATILES:
+	.incbin "MAP/MAP_066/METATILES.delta2.lz"
 	.balign 4, 0
-.LField_Map066_1:
-	.incbin "MAP/MAP_066/SLOT_1.bin.lz"
+.LField_Map066_SHAPES:
+	.incbin "MAP/MAP_025/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map066_2:
-	.incbin "MAP/MAP_066/SLOT_2.bin.lz"
+.LField_Map066_GRID:
+	.incbin "MAP/MAP_066/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map066_3:
-	.incbin "MAP/MAP_066/SLOT_3.bin.lz"
+.LField_Map066_SHAPE_GRID:
+	.incbin "MAP/MAP_066/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map066_4:
-	.incbin "MAP/MAP_066/SLOT_4.bin.lz"
+.LField_Map066_ANIMATION:
+	.incbin "MAP/MAP_062/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map066_5:
-	.incbin "MAP/MAP_066/SLOT_5.bin.lz"
+.LField_Map066_BLEND:
+	.incbin "MAP/MAP_060/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map066_6:
-	.incbin "MAP/MAP_066/SLOT_6.bin.lz"
+.LField_Map066_SCENE:
+	.incbin "MAP/MAP_066/SCENE.parts.lz"

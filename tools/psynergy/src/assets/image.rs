@@ -467,6 +467,38 @@ pub fn png_from_bitmap(pixels: &[u8], palette: &[u8], width: usize) -> Result<Ve
     )
 }
 
+/// The sheet width, in tiles, at which neighbouring tile edges agree most:
+/// pictures drawn across several tiles line up again when the rows are as wide
+/// as the artist drew them. Only widths that divide the tile count are tried.
+pub fn tile_sheet_width(tiles: &[u8], bpp: GbaBpp) -> usize {
+    let count = tiles.len() / bpp.tile_bytes();
+    let pixel = |tile: usize, x: usize, y: usize| match bpp {
+        GbaBpp::Bpp4 => (tiles[tile * 32 + y * 4 + x / 2] >> (x % 2 * 4)) & 0x0f,
+        GbaBpp::Bpp8 => tiles[tile * 64 + y * 8 + x],
+    };
+    let mut best = (count.clamp(1, 32), -1.0);
+    for wide in (2..=count.min(64)).filter(|wide| count % wide == 0) {
+        let (mut same, mut total) = (0usize, 0usize);
+        for tile in 0..count {
+            for edge in 0..8 {
+                if tile % wide + 1 < wide {
+                    total += 1;
+                    same += usize::from(pixel(tile, 7, edge) == pixel(tile + 1, 0, edge));
+                }
+                if tile + wide < count {
+                    total += 1;
+                    same += usize::from(pixel(tile, edge, 7) == pixel(tile + wide, edge, 0));
+                }
+            }
+        }
+        let score = same as f64 / total.max(1) as f64;
+        if score > best.1 {
+            best = (wide, score);
+        }
+    }
+    best.0
+}
+
 pub fn png_from_gba_tiles(
     tiles: &[u8],
     palette: &[u8],
@@ -567,6 +599,23 @@ mod tile_tests {
             assert_eq!(gba_tiles_from_png(&output, bpp).unwrap(), tiles);
             assert_eq!(bgr555_palette_from_png(&output).unwrap(), palette);
         }
+    }
+
+    #[test]
+    fn tile_sheet_width_finds_the_width_pictures_were_drawn_at() {
+        // A 32x24 diagonal pattern cut into twelve 4bpp tiles, 4 tiles wide.
+        let pixel = |tile: usize, x: usize, y: usize| {
+            ((tile % 4 * 8 + x + tile / 4 * 8 + y) / 3 % 16) as u8
+        };
+        let tiles: Vec<u8> = (0..12)
+            .flat_map(|tile| {
+                (0..32).map(move |byte| {
+                    pixel(tile, byte % 4 * 2, byte / 4)
+                        | pixel(tile, byte % 4 * 2 + 1, byte / 4) << 4
+                })
+            })
+            .collect();
+        assert_eq!(tile_sheet_width(&tiles, GbaBpp::Bpp4), 4);
     }
 
     #[test]

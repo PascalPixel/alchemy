@@ -1,35 +1,36 @@
-@ Field_Map124: a field map of 3 layers.
+@ Field_Map124: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map124
 Field_Map124:
-	map_header 0x0, 0x78, 0x78, 3, 1, 2, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x78
-	map_layer 16, 16, 0, -1, 0x7800
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map124, .LField_Map124_1
-	map_block Field_Map124, .LField_Map124_2
-	map_block Field_Map124, .LField_Map124_3
-	map_block Field_Map124, .LField_Map124_4
-	map_block Field_Map124, .LField_Map124_5
-	map_block Field_Map124, .LField_Map124_6
-	.incbin "MAP/MAP_124/CELLS.delta1.lz"
+	map_header 0, 0, 120, 120, 3, 1, 2, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map124, .LField_Map124_METATILES
+	map_block Field_Map124, .LField_Map124_SHAPES
+	map_block Field_Map124, .LField_Map124_GRID
+	map_block Field_Map124, .LField_Map124_SHAPE_GRID
+	map_block Field_Map124, .LField_Map124_ANIMATION
+	map_block Field_Map124, .LField_Map124_BLEND
+	map_block Field_Map124, .LField_Map124_SCENE
+.LField_Map124_METATILES:
+	.incbin "MAP/MAP_124/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map124_1:
-	.incbin "MAP/MAP_124/SLOT_1.bin.lz"
+.LField_Map124_SHAPES:
+	.incbin "MAP/MAP_124/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map124_2:
-	.incbin "MAP/MAP_124/SLOT_2.bin.lz"
+.LField_Map124_GRID:
+	.incbin "MAP/MAP_124/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map124_3:
-	.incbin "MAP/MAP_124/SLOT_3.bin.lz"
+.LField_Map124_SHAPE_GRID:
+	.incbin "MAP/MAP_124/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map124_4:
-	.incbin "MAP/MAP_124/SLOT_4.bin.lz"
+.LField_Map124_ANIMATION:
+	.incbin "MAP/MAP_124/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map124_5:
-	.incbin "MAP/MAP_124/SLOT_5.bin.lz"
+.LField_Map124_BLEND:
+	.incbin "MAP/MAP_010/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map124_6:
-	.incbin "MAP/MAP_124/SLOT_6.bin.lz"
+.LField_Map124_SCENE:
+	.incbin "MAP/MAP_124/SCENE.parts.lz"

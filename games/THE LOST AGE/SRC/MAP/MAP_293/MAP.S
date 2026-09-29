@@ -1,29 +1,30 @@
-@ Field_Map293: a field map of 3 layers.
+@ Field_Map293: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map293
 Field_Map293:
-	map_header 0x0, 0x40, 0x40, 3, 0, 0, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x0
-	map_layer 16, 16, 0, -1, 0x0
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map293, .LField_Map293_1
-	map_block Field_Map293, .LField_Map293_2
-	map_block Field_Map293, .LField_Map293_3
+	map_header 0, 0, 64, 64, 3, 0, 0, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map293, .LField_Map293_METATILES
+	map_block Field_Map293, .LField_Map293_SHAPES
+	map_block Field_Map293, .LField_Map293_GRID
+	map_block Field_Map293, .LField_Map293_SHAPE_GRID
 	map_block Field_Map293
 	map_block Field_Map293
-	map_block Field_Map293, .LField_Map293_6
-	.incbin "MAP/MAP_293/CELLS.delta0.lz"
+	map_block Field_Map293, .LField_Map293_SCENE
+.LField_Map293_METATILES:
+	.incbin "MAP/MAP_000/METATILES.delta0.lz"
 	.balign 4, 0
-.LField_Map293_1:
-	.incbin "MAP/MAP_293/SLOT_1.bin.lz"
+.LField_Map293_SHAPES:
+	.incbin "MAP/MAP_041/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map293_2:
-	.incbin "MAP/MAP_293/SLOT_2.bin.lz"
+.LField_Map293_GRID:
+	.incbin "MAP/MAP_293/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map293_3:
-	.incbin "MAP/MAP_293/SLOT_3.bin.lz"
+.LField_Map293_SHAPE_GRID:
+	.incbin "MAP/MAP_293/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map293_6:
-	.incbin "MAP/MAP_293/SLOT_6.bin.lz"
+.LField_Map293_SCENE:
+	.incbin "MAP/MAP_000/SCENE.parts.lz"

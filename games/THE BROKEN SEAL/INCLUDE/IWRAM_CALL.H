@@ -31,4 +31,11 @@ extern u8 IwramMulQ16ReturnIp[];
 
 #define Iwram_MulQ16(left, right) Iwram_Call2((left), (right), IwramMulQ16ReturnIp)
 
+/* The resident runtime's entries that ROM code calls. They run in IWRAM,
+ * beyond a ROM bl's reach, and ROM code reaches them as Camelot's did:
+ * through their fixed entry addresses, loaded before the arguments. A call
+ * through a label compiles to a direct bl instead. The build checks each
+ * entry against the routine named beside it. */
+#define Iwram_CopyWords ((s32 (*)(void *destination, const void *source, s32 size))0x03001388) /* IwramCopyWords */
+
 #endif

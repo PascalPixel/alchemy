@@ -1,6 +1,6 @@
 #include "TYPES.H"
 
-void WaitFrames();
+void Engine_TaskWait();
 void Engine_ObjectSetPosition();
 void Object_CommitPosition();
 void Engine_GameFlagSet();
@@ -53,13 +53,13 @@ void KorosseoKabe_SpinActorAway(void)
     Call4(Engine_ObjectSetPosition, rec2, 0x1500000, 0xa0000, 0x1080000);
     for (spin = 0, frames = 9; frames >= 0; frames--) {
         *(u16 *)((s32)p6 + 30) -= spin;
-        WaitFrames(1);
+        Engine_TaskWait(1);
         spin += 36;
     }
     Call4(Engine_ObjectSetPosition, rec2, 0x14a0000, -0x100000, 0x1080000);
     for (spin2 = 0x168, frames2 = 21; frames2 >= 0; frames2--) {
         *(u16 *)((s32)p6 + 30) -= spin2;
-        WaitFrames(1);
+        Engine_TaskWait(1);
         spin2 += 36;
     }
     Object_CommitPosition(rec2);

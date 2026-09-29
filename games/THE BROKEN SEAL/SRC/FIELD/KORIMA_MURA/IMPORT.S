@@ -102,9 +102,9 @@ Engine_EventChooseYesNo:
 	.thumb_func
 Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
-	.global ObjectTable_DestroyById
+	.global Engine_ActorDestroy
 	.thumb_func
-ObjectTable_DestroyById:
+Engine_ActorDestroy:
 	overlay_veneer ObjectTable_DestroyByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

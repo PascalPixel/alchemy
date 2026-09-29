@@ -1,7 +1,6 @@
 #include "TYPES.H"
+#include "SCENE_IDS.H"
 
-
-extern u8 Value_0000006f[];
 extern u8 gGameState[];
 s32 Engine_GameFlagIsSet();
 void Engine_GameFlagClear();
@@ -37,21 +36,20 @@ void FuneHeya_RunFlagBranchSequence(void)
     Battle_ResetEffectCounterFar();
     base3_2000240 = (s32)gGameState;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
-    /* FAKEMATCH: the do/while orders the flag store before this call, and
-     * 0x6f comes from the literal pool through a link symbol. */
+    /* FAKEMATCH: the do/while orders the flag store before this call. */
     do {
         Call1(Engine_GameFlagClear, 0x8f0);
     } while (0);
     if (Value1(Engine_GameFlagIsSet, 0x928) == 0) {
-        Party_SetFields1ceAnd1d0((s32)Value_0000006f, 16);
+        Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 16);
         BattleFx_SetWeightedResult(62, 0);
     } else {
         if (Value1(Engine_GameFlagIsSet, 0x929) == 0) {
-            Party_SetFields1ceAnd1d0((s32)Value_0000006f, 18);
+            Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 18);
             BattleFx_SetWeightedResult(62, 1);
         } else {
             if (Value1(Engine_GameFlagIsSet, 0x92a) == 0) {
-                Party_SetFields1ceAnd1d0((s32)Value_0000006f, 20);
+                Party_SetFields1ceAnd1d0((s32)&SceneId_FuneHeya, 20);
                 BattleFx_SetWeightedResult(62, 2);
             }
         }

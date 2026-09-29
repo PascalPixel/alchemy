@@ -10,6 +10,9 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global ArcTan2
 	.thumb_func
@@ -19,6 +22,9 @@ ArcTan2:
 	.thumb_func
 AnimationObjects_SelectAnimation:
 	overlay_veneer AnimationObjects_SelectAnimationFar
+	.global Engine_ObjectSetAnimation
+	.thumb_func
+Engine_ObjectSetAnimation:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
 	.global Engine_ObjectSetScript
 	.thumb_func
@@ -32,7 +38,13 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Engine_ObjectSetPosition
+	.thumb_func
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
+	.global Engine_ObjectCommitPosition
+	.thumb_func
+Engine_ObjectCommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
 	.global Engine_MapAnimateCells
 	.thumb_func
@@ -46,6 +58,9 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Object_CheckMovementCollision
+	.thumb_func
+Object_CheckMovementCollision:
 	overlay_veneer Func_080091d8
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func

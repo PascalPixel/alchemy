@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MapAnimateCells
+	.thumb_func
+Engine_MapAnimateCells:
 	overlay_veneer Map_PlayMetatileCopySequenceFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
@@ -90,6 +93,9 @@ Engine_ActorEnableActionCallback:
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global Engine_ActorWalkToAndWait
 	.thumb_func
@@ -175,6 +181,9 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
 	.global Engine_EventOpenScreen
 	.thumb_func

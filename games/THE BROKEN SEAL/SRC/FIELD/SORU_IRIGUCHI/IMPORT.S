@@ -82,6 +82,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global FieldScene_PrepareActors
+	.thumb_func
+FieldScene_PrepareActors:
 	overlay_veneer Func_0808a038
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
@@ -170,6 +173,9 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global InitializeSceneRecordBuffer
+	.thumb_func
+InitializeSceneRecordBuffer:
 	overlay_veneer Func_0808a2f8
 	.global Engine_EventOpenScreen
 	.thumb_func
@@ -187,6 +193,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 Battle_ResetEffectCounter:
 	overlay_veneer Battle_ResetEffectCounterFar
+	.global BattleFx_SetQueuedSoundAndPlay
+	.thumb_func
+BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global Engine_AudioPlayCue
 	.thumb_func

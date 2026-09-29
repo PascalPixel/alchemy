@@ -1,187 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020080ec,"ax",%progbits
-	.align 2
-	.global Func_020000ec
-	.thumb_func
-Func_020000ec:
-	push {lr}
-	ldr r3, [pc, #76]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_020000ec_0
-	ldr r0, [pc, #64]
-	b .L_020000ec_1
-.L_020000ec_0:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_020000ec_2
-	ldr r0, [pc, #64]
-	b .L_020000ec_1
-.L_020000ec_2:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_020000ec_3
-	ldr r0, [pc, #60]
-	b .L_020000ec_1
-.L_020000ec_3:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000ec_4
-	ldr r0, [pc, #60]
-	b .L_020000ec_1
-.L_020000ec_4:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000ec_5
-	ldr r0, [pc, #56]
-	b .L_020000ec_1
-.L_020000ec_5:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_020000ec_6
-	ldr r0, [pc, #56]
-	b .L_020000ec_1
-.L_020000ec_6:
-	ldr r0, [pc, #56]
-.L_020000ec_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000063
-	.4byte 0x0200c2c8
-	.4byte 0x00000066
-	.4byte 0x0200c448
-	.4byte 0x00000099
-	.4byte 0x0200c4a8
-	.4byte 0x0000009a
-	.4byte 0x0200c520
-	.4byte 0x0000009b
-	.4byte 0x0200c580
-	.4byte 0x0000009c
-	.4byte 0x0200c628
-	.4byte 0x0200c298
-	.section .text.x02008180,"ax",%progbits
-	.align 2
-	.global Func_02000180
-	.thumb_func
-Func_02000180:
-	push {lr}
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_02000180_0
-	ldr r0, [pc, #44]
-	b .L_02000180_1
-.L_02000180_0:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02000180_2
-	ldr r0, [pc, #44]
-	b .L_02000180_1
-.L_02000180_2:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02000180_3
-	ldr r0, [pc, #40]
-	b .L_02000180_1
-.L_02000180_3:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000180_4
-	ldr r0, [pc, #40]
-	b .L_02000180_1
-.L_02000180_4:
-	ldr r0, [pc, #40]
-.L_02000180_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000063
-	.4byte 0x0200c768
-	.4byte 0x00000066
-	.4byte 0x0200ca20
-	.4byte 0x00000099
-	.4byte 0x0200ca80
-	.4byte 0x0000009c
-	.4byte 0x0200cb58
-	.4byte 0x0200c750
-	.section .text.x02008240,"ax",%progbits
-	.align 2
-	.global Func_02000240
-	.thumb_func
-Func_02000240:
-	push {lr}
-	ldr r3, [pc, #76]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000240_0
-	ldr r0, [pc, #64]
-	b .L_02000240_1
-.L_02000240_0:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_02000240_2
-	ldr r0, [pc, #64]
-	b .L_02000240_1
-.L_02000240_2:
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_02000240_3
-	ldr r0, [pc, #60]
-	b .L_02000240_1
-.L_02000240_3:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000240_4
-	ldr r0, [pc, #60]
-	b .L_02000240_1
-.L_02000240_4:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000240_5
-	ldr r0, [pc, #56]
-	b .L_02000240_1
-.L_02000240_5:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000240_6
-	ldr r0, [pc, #56]
-	b .L_02000240_1
-.L_02000240_6:
-	ldr r0, [pc, #56]
-.L_02000240_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000063
-	.4byte 0x0200cbf4
-	.4byte 0x00000066
-	.4byte 0x0200ce88
-	.4byte 0x00000099
-	.4byte 0x0200cedc
-	.4byte 0x0000009a
-	.4byte 0x0200cf24
-	.4byte 0x0000009b
-	.4byte 0x0200cf54
-	.4byte 0x0000009c
-	.4byte 0x0200cf9c
-	.4byte 0x0200cbe8
 	.section .text.x02008590,"ax",%progbits
 	.align 2
 	.global Func_02000590
@@ -678,7 +496,7 @@ Func_02000590:
 	movs r2, #0
 	movs r0, #21
 	bl 0x0200bce4
-	bl 0x02009e6c
+	bl SceneState_SetValues27Through34
 	movs r0, #40
 	bl 0x0200bbec
 	movs r0, #21
@@ -868,7 +686,7 @@ Func_02000590:
 	movs r1, #0
 	movs r2, #40
 	bl 0x0200bcd4
-	bl 0x02009ed8
+	bl KareiMachi_SpeedUpActors
 	movs r2, #136
 	movs r0, #20
 	movs r1, #178
@@ -898,7 +716,7 @@ Func_02000590:
 	movs r0, #27
 	bl 0x0200bcd4
 	movs r0, #27
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #80
 	bl 0x0200bbec
 	movs r0, #28
@@ -918,7 +736,7 @@ Func_02000590:
 	movs r0, #28
 	bl 0x0200bcd4
 	movs r0, #28
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #160
 	bl 0x0200bbec
 	movs r0, #32
@@ -939,7 +757,7 @@ Func_02000590:
 	movs r0, #32
 	bl 0x0200bcd4
 	movs r0, #32
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #80
 	bl 0x0200bbec
 	movs r0, #30
@@ -1012,9 +830,9 @@ Func_02000590:
 	movs r2, #20
 	bl 0x0200bcd4
 	movs r0, #29
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #30
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 .L_02000590_6:
 	movs r0, #1
 	bl 0x0200bb14
@@ -1061,7 +879,7 @@ Func_02000590:
 	movs r0, #31
 	bl 0x0200bcd4
 	movs r0, #31
-	bl 0x02009ea4
+	bl SceneEffect_SetSlotVariantAndDescriptor
 	movs r0, #34
 	bl 0x0200bc44
 	movs r0, #33
@@ -1163,7 +981,7 @@ Func_02000590:
 	.4byte 0x00019999
 	.4byte 0x0200bfb0
 	.4byte 0x00001a9e
-	.4byte 0x02009f15
+	.4byte KareiMachi_AlternateDance
 	.4byte 0x00006666
 	.4byte 0x0200c034
 	.4byte 0x0200c0cc
@@ -1789,105 +1607,6 @@ Func_02000590:
 	.4byte 0x01670000
 	.4byte 0x01c70000
 	.4byte 0x00000911
-	.global Func_0200158c
-	.thumb_func
-Func_0200158c:
-	push {lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	bl 0x0200bbd4
-	cmp r0, #0
-	beq .L_0200158c_0
-	ldr r3, [pc, #20]
-	ldr r2, [r3]
-	movs r0, #128
-	movs r3, #0
-	str r3, [r2, #24]
-	lsls r0, r0, #2
-	bl 0x0200bbe4
-.L_0200158c_0:
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001ee0
-	.global SceneState_LinkRecordZeroWhenFlag200Clear
-	.thumb_func
-SceneState_LinkRecordZeroWhenFlag200Clear:
-	.global Func_020015b4
-	.thumb_func
-Func_020015b4:
-	push {r5, lr}
-	movs r0, #128
-	lsls r0, r0, #2
-	bl 0x0200bbd4
-	cmp r0, #0
-	bne .L_020015b4_0
-	ldr r3, [pc, #24]
-	movs r0, #0
-	ldr r5, [r3]
-	bl 0x0200bc1c
-	str r0, [r5, #24]
-	movs r0, #128
-	lsls r0, r0, #2
-	bl 0x0200bbdc
-.L_020015b4_0:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x03001ee0
-	.section .text.x0200964c,"ax",%progbits
-	.align 2
-	.global Func_0200164c
-	.thumb_func
-Func_0200164c:
-	push {lr}
-	ldr r0, [pc, #80]
-	bl 0x0200bbdc
-	ldr r3, [pc, #76]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_0200164c_0
-	bl 0x020096bc
-	b .L_0200164c_1
-.L_0200164c_0:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_0200164c_2
-	bl 0x020097e8
-	b .L_0200164c_1
-.L_0200164c_2:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_0200164c_3
-	bl 0x02009858
-	b .L_0200164c_1
-.L_0200164c_3:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_0200164c_4
-	bl 0x020098a4
-	b .L_0200164c_1
-.L_0200164c_4:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_0200164c_1
-	bl 0x02009930
-.L_0200164c_1:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.4byte 0x0000087a
-	.4byte 0x02000240
-	.4byte 0x00000063
-	.4byte 0x00000066
-	.4byte 0x00000099
-	.4byte 0x0000009b
-	.4byte 0x0000009c
 	.section .rodata.part1,"a",%progbits
 	.global KareiMachi_Data01
 KareiMachi_Data01:
@@ -1972,7 +1691,7 @@ SceneAction_GroupOffsetMotion:
 	.global KareiMachi_Script01
 KareiMachi_Script01:
 	.4byte 0x00000022
-	.4byte 0x02008041
+	.4byte SceneEffect_UpdateRandomAction
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2198,7 +1917,7 @@ KareiMachi_DanceScriptB:
 	.global KareiMachi_Data02
 KareiMachi_Data02:
 	.4byte 0x00000022
-	.4byte 0x020080ad
+	.4byte OverlayObject_AdvanceXWhenCounterExpires
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -2232,6 +1951,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x0000006c
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global gKareiMachiEntrancesOther
+gKareiMachiEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2244,6 +1965,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances1
+gKareiMachiEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000e0
 	.4byte 0x40000118
@@ -2340,6 +2063,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances2
+gKareiMachiEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2364,6 +2089,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances3
+gKareiMachiEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2394,6 +2121,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances4
+gKareiMachiEntrances4:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2418,6 +2147,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances5
+gKareiMachiEntrances5:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2460,6 +2191,8 @@ KareiMachi_ActionScript01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEntrances6
+gKareiMachiEntrances6:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -2536,12 +2269,16 @@ KareiMachi_SceneTable01:
 	.4byte 0x0030209b
 	.4byte 0x0040e063
 	.4byte 0x000001ff
+	.global gKareiMachiPlacementsOther
+gKareiMachiPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements1
+gKareiMachiPlacements1:
 	.4byte 0xffff0099
 	.4byte 0x00000001
 	.4byte 0x00bc0000
@@ -2716,6 +2453,8 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements2
+gKareiMachiPlacements2:
 	.4byte 0xffff0002
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2740,6 +2479,8 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements3
+gKareiMachiPlacements3:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -2794,6 +2535,8 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiPlacements6
+gKareiMachiPlacements6:
 	.4byte 0xffff00cb
 	.4byte 0x00000001
 	.4byte 0x01780000
@@ -2830,33 +2573,37 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEventsOther
+gKareiMachiEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents1
+gKareiMachiEvents1:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008465
+	.4byte KareiMachi_RunExitDoor
 	.4byte 0x00000001
 	.4byte 0xffff000b
 	.4byte 0x0000000b
@@ -2913,7 +2660,7 @@ KareiMachi_SceneTable01:
 	.4byte 0x00001a7b
 	.4byte 0x00000000
 	.4byte 0xffff0013
-	.4byte 0x020082c9
+	.4byte SceneDialogue_RunActorNineteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff0014
 	.4byte 0x00001a7f
@@ -2922,13 +2669,13 @@ KareiMachi_SceneTable01:
 	.4byte 0x00001a80
 	.4byte 0x00000000
 	.4byte 0xffff0016
-	.4byte 0x02008395
+	.4byte SceneState_BranchOnSlotZeroFacing
 	.4byte 0x00000000
 	.4byte 0xffff0017
-	.4byte 0x020083d9
+	.4byte SceneDialogue_RunActorTwentyThreeByLeaderHeading
 	.4byte 0x00000000
 	.4byte 0xffff0018
-	.4byte 0x02008421
+	.4byte FieldScene_RunActorTwentyFourAngleDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00001a81
@@ -2985,7 +2732,7 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00009415
 	.4byte 0x0916001a
-	.4byte 0x02009611
+	.4byte SceneDialogue_RunActor181Line916
 	.4byte 0x00000023
 	.4byte 0x0f810064
 	.4byte 0x001000e3
@@ -2994,16 +2741,18 @@ KareiMachi_SceneTable01:
 	.4byte 0x001000b6
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x020081e5
+	.4byte FieldScene_RunStepWithValue29df
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents2
+gKareiMachiEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008505
+	.4byte RunSceneArrivalSetup
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x00001b97
@@ -3019,6 +2768,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents3
+gKareiMachiEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3027,16 +2778,18 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x020082e9
+	.4byte FieldScene_RunSlotZeroFacingSequence
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x00002587
 	.4byte 0x00009415
 	.4byte 0x0fd6000c
-	.4byte 0x0200820d
+	.4byte FieldScene_RunStepWithValueFd6
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents4
+gKareiMachiEvents4:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3049,6 +2802,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents5
+gKareiMachiEvents5:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3067,6 +2822,8 @@ KareiMachi_SceneTable01:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiMachiEvents6
+gKareiMachiEvents6:
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3081,52 +2838,52 @@ KareiMachi_SceneTable01:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008375
+	.4byte SceneDialogue_RunActorTenDialogue
 	.4byte 0x00008d15
 	.4byte 0xffff000a
 	.4byte 0x000025b6
 	.4byte 0x00008c15
 	.4byte 0x03020008
-	.4byte 0x0200b2a5
+	.4byte FieldScene_RunScene3a8SequenceB
 	.4byte 0x00008c15
 	.4byte 0x03030009
-	.4byte 0x0200b2a5
+	.4byte FieldScene_RunScene3a8SequenceB
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00000202
 	.4byte 0xffff000b
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00008602
 	.4byte 0xffff000e
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00004602
 	.4byte 0xffff000f
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00008602
 	.4byte 0xffff000f
-	.4byte 0x0200b1b9
+	.4byte FieldScene_RunLateSequence
 	.4byte 0x00001815
 	.4byte 0x0201000b
-	.4byte 0x0200b971
+	.4byte FieldScene_DrawTilesAndRaiseActor11
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x0200958d
+	.4byte SceneState_ClearWord24WhenFlag200
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x020095b5
+	.4byte SceneState_LinkRecordZeroWhenFlag200Clear
 	.4byte 0x00000002
 	.4byte 0xffff0012
-	.4byte 0x020095f9
+	.4byte SceneState_ClearRecordZeroBit0At35
 	.4byte 0x00000002
 	.4byte 0xffff0013
-	.4byte 0x020095e1
+	.4byte SceneActor_SetActorZeroByte35Bit0
 	.4byte 0x00000013
 	.4byte 0x0f1c0064
 	.4byte 0x00100084
 	.4byte 0x00000000
 	.4byte 0xffff000c
-	.4byte 0x02008031
+	.4byte SceneState_ApplyValues12And2And3
 	.4byte 0x00000013
 	.4byte 0x0f1e0066
 	.4byte 0x001000e3
@@ -3169,7 +2926,7 @@ KareiMachi_DoorCells:
 	.global KareiMachi_Script02
 KareiMachi_Script02:
 	.4byte 0x00000022
-	.4byte 0x0200b6f9
+	.4byte SceneEffect_UpdateMotionWithDamping
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000

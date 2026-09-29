@@ -7,7 +7,8 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/FACING.o"(.text)
-        "*/resource_38d_overlay.o"(.text.x0200809c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/GET_TABLES.o"(.text)
+        "*/resource_38d_overlay.o"(.text.x02008130)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/DIALOGUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/DOOR_EXIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_KYUDEN/CHEST.o"(.text)

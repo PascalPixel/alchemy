@@ -1,43 +1,19 @@
 #include "TYPES.H"
-extern struct EventWork *gEventWork;
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+#include "CALLBACK_SCHEDULER.H"
 
-s32 Engine_GameFlagIsSet();
-void Engine_MapCopyCellAttributes();
-void Main_080091b8();
-void Engine_TaskWait();
-void Engine_MapRedraw();
-void Engine_GameFlagClear();
-u8 *Engine_ActorGet();
-void SceneActor_InitSlots10To15AndStartTask();
-void Engine_ActorSetAnimation();
-void SceneState_ApplyRectAndMarkActor16();
-void SceneState_ConfigureRegion26_30AndMarkActor17();
-void SceneState_ConfigureRegion26_30AndClearActor18Mode();
-void SceneState_ApplyRectAndSetupActor19();
-void SceneActor_SetupSlotTwenty();
-void SceneActor_MarkSlot21AndSetFlag205();
-void Engine_TaskAddCallback();
-void SceneState_ApplyThreeRects();
-void Engine_ActorSetPosition();
-void Engine_ActorSetSpriteFlags();
-void SceneActor_SetupActors11To14AndInstallTask();
-void SceneState_ApplyThreeRectsRows9And10();
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_00000060[];
-extern u8 Data_00000061[];
-extern u8 Data_00000062[];
-
-struct ActorFlags {
-    u8 pad[89];
-    u8 flags;
-};
+void SceneActor_InitSlots10To15AndStartTask(void);
+void SceneState_ApplyRectAndMarkActor16(void);
+void SceneState_ConfigureRegion26_30AndMarkActor17(void);
+void SceneState_ConfigureRegion26_30AndClearActor18Mode(void);
+void SceneState_ApplyRectAndSetupActor19(void);
+void SceneActor_SetupSlotTwenty(void);
+void SceneActor_MarkSlot21AndSetFlag205(void);
+void SceneState_ApplyThreeRects(void);
+void SceneActor_SetupActors11To14AndInstallTask(void);
+void SceneState_ApplyThreeRectsRows9And10(void);
+void SceneState_DispatchByActorZeroDepth(void);
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
@@ -54,12 +30,16 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Kuupuappu Cave entry: set the entrance selector, then for each of the three areas set the actors and map cells of its story state. */
+/*
+ * Kuupuappu Cave entry: open the screen with the window transition, then
+ * for each of the cave's three areas set its actors and map cells for the
+ * story so far. Retreat returns the party to the first area.
+ */
 s32 KuupuappuDou_ApplyEntryState(void)
 {
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x204;
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000060) {
-        switch (Data_02000240_t.halves[225][0]) {
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+    if (gGameState.scene == (s32)&SceneId_KuupuappuDou1) {
+        switch (gGameState.entrance) {
         case 5:
         case 6:
         case 7:
@@ -68,11 +48,11 @@ s32 KuupuappuDou_ApplyEntryState(void)
             if (Engine_GameFlagIsSet(0x9a8) == 0) {
                 Call6((void (*)())Engine_MapCopyCellAttributes, 22, 29, 1, 1, 21, 29);
             } else {
-                Call6((void (*)())Main_080091b8, 108, 27, 1, 1, 92, 27);
+                Call6((void (*)())Engine_MapCopyCells, 108, 27, 1, 1, 92, 27);
                 Engine_TaskWait(1);
-                Call6((void (*)())Main_080091b8, 19, 83, 15, 8, 19, 91);
+                Call6((void (*)())Engine_MapCopyCells, 19, 83, 15, 8, 19, 91);
                 Engine_TaskWait(1);
-                Call6((void (*)())Main_080091b8, 2, 24, 1, 2, 25, 27);
+                Call6((void (*)())Engine_MapCopyCells, 2, 24, 1, 2, 25, 27);
             }
             Engine_MapRedraw();
             Engine_TaskWait(1);
@@ -82,17 +62,17 @@ s32 KuupuappuDou_ApplyEntryState(void)
             break;
         }
     }
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000061) {
+    if (gGameState.scene == (s32)&SceneId_KuupuappuDou2) {
         if (Engine_GameFlagIsSet(0x300) == 0) {
-            *(s32 *)(Engine_ActorGet(22) + 28) = 0x18000;
+            Engine_ActorGet(22)->scale_y = 0x18000;
         }
-        switch (Data_02000240_t.halves[225][0]) {
+        switch (gGameState.entrance) {
         case 1:
         case 2:
         case 3:
         case 4:
             if (Engine_GameFlagIsSet(0x9a8) == 0) {
-                Call6((void (*)())Main_080091b8, 5, 81, 11, 7, 5, 73);
+                Call6((void (*)())Engine_MapCopyCells, 5, 81, 11, 7, 5, 73);
             } else {
                 Call6((void (*)())Engine_MapCopyCellAttributes, 5, 12, 1, 1, 6, 12);
                 Call6((void (*)())Engine_MapCopyCellAttributes, 12, 10, 1, 1, 12, 11);
@@ -126,7 +106,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
                 Call2((void (*)())Engine_ActorSetAnimation, 21, 5);
                 SceneActor_MarkSlot21AndSetFlag205();
             }
-            Call2((void (*)())Engine_TaskAddCallback, 0x20086e5, 0xc80);
+            Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)SceneState_DispatchByActorZeroDepth, 0xc80);
             break;
         case 10:
         case 11:
@@ -134,16 +114,16 @@ s32 KuupuappuDou_ApplyEntryState(void)
                 SceneState_ApplyThreeRects();
                 Call3((void (*)())Engine_ActorSetPosition, 9, 0xf80000, 0x36c0000);
             }
-            Engine_ActorGet(8)[35] = 2;
+            Engine_ActorGet(8)->priority_flags = 2;
             break;
         }
         Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
         Call2((void (*)())Engine_ActorSetAnimation, 9, 2);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
-        Engine_ActorGet(9)[89] = 1;
+        Engine_ActorGet(9)->collision_flags = 1;
     }
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000062) {
+    if (gGameState.scene == (s32)&SceneId_KuupuappuDou3) {
         Call2((void (*)())Engine_ActorSetAnimation, 8, 2);
         if (Engine_GameFlagIsSet(0x207) == 0) {
             Call2((void (*)())Engine_ActorSetAnimation, 10, 2);
@@ -151,19 +131,19 @@ s32 KuupuappuDou_ApplyEntryState(void)
         Engine_ActorSetSpriteFlags(Engine_ActorGet(8), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(10), 0);
         Engine_ActorSetSpriteFlags(Engine_ActorGet(9), 0);
-        Engine_ActorGet(10)[89] |= 0x80;
-        ((struct ActorFlags *)Engine_ActorGet(9))->flags |= 0x80;
-        switch (Data_02000240_t.halves[225][0]) {
+        Engine_ActorGet(10)->collision_flags |= 0x80;
+        Engine_ActorGet(9)->collision_flags |= 0x80;
+        switch (gGameState.entrance) {
         case 5:
         case 6:
             SceneActor_SetupActors11To14AndInstallTask();
-            Engine_ActorGet(11)[89] = 2;
-            Engine_ActorGet(12)[89] = 2;
-            Engine_ActorGet(13)[89] = 2;
-            Engine_ActorGet(14)[89] = 2;
-            Engine_ActorGet(8)[89] = 1;
-            Engine_ActorGet(10)[89] = 1;
-            Engine_ActorGet(9)[89] = 1;
+            Engine_ActorGet(11)->collision_flags = 2;
+            Engine_ActorGet(12)->collision_flags = 2;
+            Engine_ActorGet(13)->collision_flags = 2;
+            Engine_ActorGet(14)->collision_flags = 2;
+            Engine_ActorGet(8)->collision_flags = 1;
+            Engine_ActorGet(10)->collision_flags = 1;
+            Engine_ActorGet(9)->collision_flags = 1;
             if (Engine_GameFlagIsSet(0x9aa) != 0) {
                 SceneState_ApplyThreeRectsRows9And10();
                 Call3((void (*)())Engine_ActorSetPosition, 10, 0x1080000, 0xcc0000);
@@ -171,7 +151,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
             break;
         }
     }
-    Data_02000240_t.halves[289][0] = 10;
-    Data_02000240_t.halves[288][0] = (s32)Data_00000060;
+    gGameState.retreat_entrance = 10;
+    gGameState.retreat_scene = (s32)&SceneId_KuupuappuDou1;
     return 0;
 }

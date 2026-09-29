@@ -267,7 +267,7 @@ void FieldScene_RunScene3c4SequenceA(void)
     if (v6 == 5) {
         if (GameFlag_IsSet(0x984) != 0) {
             Event_End();
-            goto L_020022e4;
+            goto done;
         }
         Event_Wait(20);
         Camera_SetSpeed(0xcccc, 0x1999);
@@ -294,7 +294,7 @@ void FieldScene_RunScene3c4SequenceA(void)
         }
     }
     Event_End();
-    L_020022e4:;
+    done:;
 }
 
 void FieldScene_RunLayoutAt83By45(void)
@@ -328,7 +328,7 @@ void FieldScene_RunScriptedStep953(void)
 
 s32 SceneData_SelectTableByWord224(void)
 {
-    if (gGameState.scene == (s32)&Value_000000ac) {
+    if (gGameState.scene == (s32)&SceneId_BabiChika1) {
         return (s32)Data_0200bc0c;
     }
     return (s32)Data_0200bef4;

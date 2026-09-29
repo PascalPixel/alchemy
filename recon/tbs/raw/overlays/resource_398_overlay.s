@@ -1,173 +1,11 @@
 .syntax unified
 	.thumb
-	.section .text.x02008040,"ax",%progbits
-	.balign 4
-	.global SceneData_SelectByRuntimeSelector
-	.thumb_func
-SceneData_SelectByRuntimeSelector:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000040_0
-	ldr r0, [pc, #36]
-	b .L_02000040_1
-.L_02000040_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000040_2
-	ldr r0, [pc, #36]
-	b .L_02000040_1
-.L_02000040_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000040_3
-	ldr r0, [pc, #32]
-	b .L_02000040_1
-.L_02000040_3:
-	ldr r0, [pc, #32]
-.L_02000040_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000031
-	.4byte 0x020089ec
-	.4byte 0x00000030
-	.4byte 0x02008a64
-	.4byte 0x0000002f
-	.4byte 0x02008b24
-	.4byte 0x020089bc
-	.section .text.x020080a0,"ax",%progbits
-	.balign 4
-	.global SceneData_SelectSecondaryDataByRuntimeSelector
-	.thumb_func
-SceneData_SelectSecondaryDataByRuntimeSelector:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020000a0_0
-	ldr r0, [pc, #36]
-	b .L_020000a0_1
-.L_020000a0_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020000a0_2
-	ldr r0, [pc, #36]
-	b .L_020000a0_1
-.L_020000a0_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020000a0_3
-	ldr r0, [pc, #32]
-	b .L_020000a0_1
-.L_020000a0_3:
-	ldr r0, [pc, #32]
-.L_020000a0_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000031
-	.4byte 0x02008c2c
-	.4byte 0x00000030
-	.4byte 0x02008c5c
-	.4byte 0x0000002f
-	.4byte 0x02008cbc
-	.4byte 0x02008c14
-	.global SceneData_SelectDataByRuntimeSelector
-	.thumb_func
-SceneData_SelectDataByRuntimeSelector:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020000f4_0
-	ldr r0, [pc, #36]
-	b .L_020000f4_1
-.L_020000f4_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020000f4_2
-	ldr r0, [pc, #36]
-	b .L_020000f4_1
-.L_020000f4_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020000f4_3
-	ldr r0, [pc, #32]
-	b .L_020000f4_1
-.L_020000f4_3:
-	ldr r0, [pc, #32]
-.L_020000f4_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000031
-	.4byte 0x02008ea8
-	.4byte 0x00000030
-	.4byte 0x02008efc
-	.4byte 0x0000002f
-	.4byte 0x02008f80
-	.4byte 0x02008e9c
-	.section .text.x0200846c,"ax",%progbits
-	.balign 4
-	.global FieldScene_DispatchByScenarioId
-	.thumb_func
-FieldScene_DispatchByScenarioId:
-	push {lr}
-	ldr r3, [pc, #52]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_0200046c_0
-	bl 0x020084b4
-	b .L_0200046c_1
-.L_0200046c_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_0200046c_2
-	bl 0x020084e8
-	b .L_0200046c_1
-.L_0200046c_2:
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_0200046c_1
-	bl 0x02008538
-.L_0200046c_1:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000031
-	.4byte 0x00000030
-	.4byte 0x0000002f
 	.section .rodata,"a",%progbits
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte SceneState_ApplyArgMode0AndReturnZero
 	.4byte 0x00000010
+	.global gBiribinoDouEntrancesOther
+gBiribinoDouEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000048
 	.4byte 0xc00001e8
@@ -180,6 +18,8 @@ FieldScene_DispatchByScenarioId:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouEntrances3
+gBiribinoDouEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x00000174
 	.4byte 0xc0000110
@@ -210,6 +50,8 @@ FieldScene_DispatchByScenarioId:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouEntrances2
+gBiribinoDouEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x00000360
 	.4byte 0x400000a8
@@ -258,6 +100,8 @@ FieldScene_DispatchByScenarioId:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouEntrances1
+gBiribinoDouEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x4000012c
@@ -320,12 +164,16 @@ gBiribinoDouExits:
 	.4byte 0x0040502f
 	.4byte 0x0050402f
 	.4byte 0x000001ff
+	.global gBiribinoDouPlacementsOther
+gBiribinoDouPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouPlacements3
+gBiribinoDouPlacements3:
 	.4byte 0xffff00ee
 	.4byte 0x00000001
 	.4byte 0x00880000
@@ -338,6 +186,8 @@ gBiribinoDouExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouPlacements2
+gBiribinoDouPlacements2:
 	.4byte 0xffff00f6
 	.4byte 0x00000001
 	.4byte 0x03480000
@@ -362,6 +212,8 @@ gBiribinoDouExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouPlacements1
+gBiribinoDouPlacements1:
 	.4byte 0xffff00f7
 	.4byte 0x00000001
 	.4byte 0x01180000
@@ -482,9 +334,13 @@ gBiribinoDouExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouEventsOther
+gBiribinoDouEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouEvents3
+gBiribinoDouEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -496,16 +352,18 @@ gBiribinoDouExits:
 	.4byte 0x00000003
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008149
+	.4byte SceneState_ConfigureRegion1_0_21x14
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008169
+	.4byte SceneState_ConfigureRegion0_0_21x14
 	.4byte 0x00000c15
 	.4byte 0x03050008
-	.4byte 0x02008425
+	.4byte ActorPresentation_SetSceneCell31AndFlag305
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouEvents2
+gBiribinoDouEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -529,16 +387,18 @@ gBiribinoDouExits:
 	.4byte 0x00100016
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x02008189
+	.4byte SceneState_ApplyTwoRects
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x020081bd
+	.4byte FieldScene_RunTwoLayoutSteps
 	.4byte 0x00002115
 	.4byte 0x08820009
-	.4byte 0x020081f1
+	.4byte FieldScene_RunActor9Flag882Scene
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoDouEvents1
+gBiribinoDouEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -556,34 +416,34 @@ gBiribinoDouExits:
 	.4byte 0x00000005
 	.4byte 0x00000002
 	.4byte 0xffff0014
-	.4byte 0x0200844d
+	.4byte SceneState_SetGlobalByte17
 	.4byte 0x00000002
 	.4byte 0xffff0015
-	.4byte 0x0200845d
+	.4byte SceneState_ClearRuntimeByte17
 	.4byte 0x00002115
 	.4byte 0x08830008
-	.4byte 0x02008215
+	.4byte FieldScene_RunScene398SequenceA
 	.4byte 0x00001815
 	.4byte 0x0883000f
-	.4byte 0x02008281
+	.4byte FieldScene_RunActorFifteenScene
 	.4byte 0x00001815
 	.4byte 0xffff0010
-	.4byte 0x020082ad
+	.4byte FieldScene_RunActorSixteenScene
 	.4byte 0x00001815
 	.4byte 0x13020011
-	.4byte 0x020082d9
+	.4byte FieldScene_RunActor17Steps28AndD2
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x02008305
+	.4byte FieldScene_RunScene398SequenceB
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x02008305
+	.4byte FieldScene_RunScene398SequenceB
 	.4byte 0x00000202
 	.4byte 0xffff000a
-	.4byte 0x020087f9
+	.4byte StagedActor_PushActorAhead
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte 0x020087f9
+	.4byte StagedActor_PushActorAhead
 	.4byte 0x00000013
 	.4byte 0x0f5e0064
 	.4byte 0x001000b6

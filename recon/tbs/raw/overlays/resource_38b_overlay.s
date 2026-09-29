@@ -1,349 +1,23 @@
 .syntax unified
 	.thumb
-	.section .text.x02008088,"ax",%progbits
-	.balign 4
-	.global Func_02000088
-	.thumb_func
-Func_02000088:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000088_0
-	ldr r0, [pc, #36]
-	b .L_02000088_1
-.L_02000088_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000088_2
-	ldr r0, [pc, #36]
-	b .L_02000088_1
-.L_02000088_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000088_3
-	ldr r0, [pc, #32]
-	b .L_02000088_1
-.L_02000088_3:
-	ldr r0, [pc, #32]
-.L_02000088_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000001e
-	.4byte 0x020091ec
-	.4byte 0x00000023
-	.4byte 0x0200930c
-	.4byte 0x00000020
-	.4byte 0x0200936c
-	.4byte 0x020091d4
-	.global Func_020000dc
-	.thumb_func
-Func_020000dc:
-	push {lr}
-	ldr r3, [pc, #24]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #16]
-	movs r0, #0
-	cmp r2, r3
-	bne .L_020000dc_0
-	ldr r0, [pc, #12]
-.L_020000dc_0:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000020
-	.4byte 0x020093fc
-	.section .text.x0200811c,"ax",%progbits
-	.balign 4
-	.global Func_0200011c
-	.thumb_func
-Func_0200011c:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_0200011c_0
-	ldr r0, [pc, #36]
-	b .L_0200011c_1
-.L_0200011c_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_0200011c_2
-	ldr r0, [pc, #36]
-	b .L_0200011c_1
-.L_0200011c_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_0200011c_3
-	ldr r0, [pc, #32]
-	b .L_0200011c_1
-.L_0200011c_3:
-	ldr r0, [pc, #32]
-.L_0200011c_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000001e
-	.4byte 0x02009498
-	.4byte 0x00000023
-	.4byte 0x02009600
-	.4byte 0x00000020
-	.4byte 0x020096f0
-	.4byte 0x02009480
-	.section .text.x02008198,"ax",%progbits
-	.balign 4
-	.global Func_02000198
-	.thumb_func
-Func_02000198:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000198_0
-	ldr r0, [pc, #36]
-	b .L_02000198_1
-.L_02000198_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000198_2
-	ldr r0, [pc, #36]
-	b .L_02000198_1
-.L_02000198_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000198_3
-	ldr r0, [pc, #32]
-	b .L_02000198_1
-.L_02000198_3:
-	ldr r0, [pc, #32]
-.L_02000198_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000001e
-	.4byte 0x02009744
-	.4byte 0x00000023
-	.4byte 0x02009a2c
-	.4byte 0x00000020
-	.4byte 0x02009bc4
-	.4byte 0x02009738
-	.section .text.x02008890,"ax",%progbits
-	.balign 4
-	.global Func_02000890
-	.thumb_func
-Func_02000890:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r2, #224
-	ldr r1, [r3]
-	movs r3, #128
-	lsls r2, r2, #1
-	lsls r3, r3, #1
-	str r3, [r1, r2]
-	ldr r3, [pc, #56]
-	ldrsh r2, [r3, r2]
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000890_0
-	bl 0x020088f0
-	b .L_02000890_1
-.L_02000890_0:
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_02000890_2
-	bl 0x02008ae0
-	movs r1, #200
-	ldr r0, [pc, #40]
-	lsls r1, r1, #4
-	bl 0x02009020
-	b .L_02000890_1
-.L_02000890_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000890_1
-	bl 0x02008d10
-.L_02000890_1:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x0000001e
-	.4byte 0x00000023
-	.4byte 0x02008ed9
-	.4byte 0x00000020
-	.section .text.x02008db4,"ax",%progbits
-	.balign 4
-	.global Func_02000db4
-	.thumb_func
-Func_02000db4:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r9
-	mov r5, r8
-	push {r5, r6, r7}
-	movs r0, #0
-	sub sp, #12
-	bl 0x020090d0
-	ldrh r3, [r0, #6]
-	ldr r2, [pc, #240]
-	lsrs r3, r3, #12
-	lsls r5, r3, #2
-	ldr r3, [r2, r5]
-	mov r8, r0
-	movs r1, #10
-	ldrsh r0, [r0, r1]
-	mov r10, r2
-	asrs r2, r3, #16
-	adds r0, r0, r2
-	mov r2, r8
-	movs r4, #18
-	ldrsh r1, [r2, r4]
-	lsls r3, r3, #16
-	asrs r3, r3, #16
-	adds r1, r1, r3
-	asrs r0, r0, #4
-	asrs r1, r1, #4
-	bl 0x02008d80
-	adds r7, r0, #0
-	cmp r7, #0
-	beq .L_02000db4_0
-	movs r3, #0
-	adds r2, r7, #0
-	adds r2, #34
-	mov r9, r3
-	movs r3, #2
-	strb r3, [r2]
-	mov r4, r10
-	ldr r1, [r4, r5]
-	ldr r2, [pc, #184]
-	ldr r3, [r7, #8]
-	ands r2, r1
-	mov r6, sp
-	adds r3, r3, r2
-	str r3, [r6]
-	ldr r3, [r7, #12]
-	str r3, [r6, #4]
-	ldr r3, [r7, #16]
-	lsls r1, r1, #16
-	adds r3, r3, r1
-	adds r1, r6, #0
-	str r3, [r6, #8]
-	bl 0x02009080
-	cmp r0, #0
-	bgt .L_02000db4_0
-	movs r1, #8
-	mov r0, r8
-	bl 0x02009038
-	ldr r5, [pc, #144]
-	movs r0, #15
-	bl 0x02009018
-	movs r0, #185
-	bl 0x020091b8
-	str r5, [r7, #48]
-	str r5, [r7, #52]
-	adds r0, r7, #0
-	ldr r1, [r6]
-	ldr r2, [r6, #4]
-	ldr r3, [r6, #8]
-	bl 0x02009058
-	mov r1, r8
-	str r5, [r1, #48]
-	str r5, [r1, #52]
-	mov r0, r8
-	ldr r1, [r6]
-	ldr r2, [r6, #4]
-	ldr r3, [r6, #8]
-	bl 0x02009058
-	adds r0, r7, #0
-	bl 0x02009060
-	ldr r3, [r6]
-	str r3, [r7, #8]
-	ldr r3, [r6, #8]
-	mov r2, r9
-	str r3, [r7, #16]
-	str r2, [r7, #36]
-	str r2, [r7, #44]
-	movs r1, #1
-	mov r0, r8
-	bl 0x02009038
-	ldr r3, [pc, #72]
-	movs r4, #224
-	lsls r4, r4, #1
-	adds r3, r3, r4
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_02000db4_1
-	bl 0x02008cb4
-	b .L_02000db4_0
-.L_02000db4_1:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000db4_2
-	bl 0x020089cc
-	b .L_02000db4_0
-.L_02000db4_2:
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_02000db4_0
-	bl 0x02008fa0
-.L_02000db4_0:
-	sub sp, #-12
-	pop {r3, r5, r6}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02009d3c
-	.4byte 0xffff0000
-	.4byte 0x00003333
-	.4byte 0x02000240
-	.4byte 0x00000023
-	.4byte 0x0000001e
-	.4byte 0x00000020
 	.section .rodata,"a",%progbits
 	.global Mura_VillagerActions
 Mura_VillagerActions:
 	.4byte 0x00000022
-	.4byte 0x02008031
+	.4byte SceneActor_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global gBiribinoMuraEntrancesOther
+gBiribinoMuraEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
 	.4byte 0xffff0000
 	.4byte 0xffffffff
 	.4byte 0x0000ffff
+	.global gBiribinoMuraEntrances1
+gBiribinoMuraEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x000000f0
 	.4byte 0xc00001d8
@@ -416,6 +90,8 @@ Mura_VillagerActions:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraEntrances3
+gBiribinoMuraEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0x400000a8
@@ -440,6 +116,8 @@ Mura_VillagerActions:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraEntrances2
+gBiribinoMuraEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000e8
 	.4byte 0x40000090
@@ -476,6 +154,8 @@ Mura_VillagerActions:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraRegions2
+gBiribinoMuraRegions2:
 	.4byte 0x001a0042
 	.4byte 0x004e0080
 	.4byte 0x008c0026
@@ -511,12 +191,16 @@ Placement_Messages:
 	.4byte 0x00106002
 	.4byte 0x0022f002
 	.4byte 0x000001ff
+	.global gBiribinoMuraPlacementsOther
+gBiribinoMuraPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraPlacements1
+gBiribinoMuraPlacements1:
 	.4byte 0xffff00f8
 	.4byte 0x00000001
 	.4byte 0x00280000
@@ -607,6 +291,8 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraPlacements3
+gBiribinoMuraPlacements3:
 	.4byte 0xffff00f1
 	.4byte 0x00000007
 	.4byte 0x00880000
@@ -667,6 +353,8 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraPlacements2
+gBiribinoMuraPlacements2:
 	.4byte 0xffff00f3
 	.4byte 0x00000001
 	.4byte 0x00e80000
@@ -685,9 +373,13 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraEventsOther
+gBiribinoMuraEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraEvents1
+gBiribinoMuraEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -702,31 +394,31 @@ Placement_Messages:
 	.4byte 0x0000000b
 	.4byte 0x0000c602
 	.4byte 0xffff0003
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0006
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0007
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0008
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008329
+	.4byte FieldScene_RunEarlySequence
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008241
+	.4byte FieldScene_RunScene38b_02000240
 	.4byte 0x00000000
 	.4byte 0xffff0015
-	.4byte 0x020082c9
+	.4byte SceneDialogue_ShowLine16BF
 	.4byte 0x00000000
 	.4byte 0x0845000a
 	.4byte 0x000013b1
@@ -741,7 +433,7 @@ Placement_Messages:
 	.4byte 0x000016c3
 	.4byte 0x00000000
 	.4byte 0x0845000c
-	.4byte 0x02008289
+	.4byte SceneDialogue_RunActorTwelveDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x000016c4
@@ -753,7 +445,7 @@ Placement_Messages:
 	.4byte 0x000016c5
 	.4byte 0x00000000
 	.4byte 0x0845000e
-	.4byte 0x020082a9
+	.4byte SceneDialogue_RunActorFourteenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000e
 	.4byte 0x000016c6
@@ -768,7 +460,7 @@ Placement_Messages:
 	.4byte 0x000013bb
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x020082e9
+	.4byte SceneDialogue_RunActorSixteenDialogue
 	.4byte 0x00000000
 	.4byte 0x08450011
 	.4byte 0x000013bc
@@ -780,7 +472,7 @@ Placement_Messages:
 	.4byte 0x000013bd
 	.4byte 0x00000000
 	.4byte 0xffff0012
-	.4byte 0x02008309
+	.4byte SceneDialogue_ShowLine16CC
 	.4byte 0x00000000
 	.4byte 0x08450013
 	.4byte 0x000013be
@@ -855,10 +547,10 @@ Placement_Messages:
 	.4byte 0x000016dd
 	.4byte 0x00008c15
 	.4byte 0xffff0014
-	.4byte 0x020089cd
+	.4byte Scene_UpdatePuzzleActors
 	.4byte 0x00000202
 	.4byte 0xffff0014
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00004e15
 	.4byte 0xffff0008
 	.4byte 0x00000000
@@ -870,10 +562,12 @@ Placement_Messages:
 	.4byte 0x00200005
 	.4byte 0x00000003
 	.4byte 0xffff005a
-	.4byte 0x02008171
+	.4byte FieldScene_RunScriptedSteps947And29DD
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraEvents3
+gBiribinoMuraEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -882,16 +576,16 @@ Placement_Messages:
 	.4byte 0x00000002
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00000000
 	.4byte 0xffff0010
-	.4byte 0x02008225
+	.4byte SceneDialogue_RunLine1470
 	.4byte 0x00008d15
 	.4byte 0x18810009
 	.4byte 0x00001771
@@ -948,34 +642,36 @@ Placement_Messages:
 	.4byte 0x00001783
 	.4byte 0x00000003
 	.4byte 0xffff000b
-	.4byte 0x020081ed
+	.4byte FieldScene_RunScriptedStep1472
 	.4byte 0x00000003
 	.4byte 0xffff001e
 	.4byte 0x00400953
 	.4byte 0x00000002
 	.4byte 0x0849000d
-	.4byte 0x02008585
+	.4byte FieldScene_RunScene38b_02000584
 	.4byte 0x00008c15
 	.4byte 0x0848000b
-	.4byte 0x02008405
+	.4byte FieldScene_RunScene38bSequenceC
 	.4byte 0x0000c602
 	.4byte 0xffff0009
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00008602
 	.4byte 0xffff000a
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00004602
 	.4byte 0xffff000a
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000202
 	.4byte 0xffff000c
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x02008cb5
+	.4byte ActorPresentation_RepaintTenCellsAndActorEightCell
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBiribinoMuraEvents2
+gBiribinoMuraEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -984,31 +680,31 @@ Placement_Messages:
 	.4byte 0x00000002
 	.4byte 0x00000003
 	.4byte 0xffff000a
-	.4byte 0x02008209
+	.4byte FieldScene_RunScriptedStep146E
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x0200810d
+	.4byte SceneState_SetValues9_3_0
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x02008fa1
+	.4byte FieldScene_DrawTilesByActor8Row
 	.4byte 0x00004602
 	.4byte 0xffff000b
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x0000c602
 	.4byte 0xffff000c
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000202
 	.4byte 0xffff000d
-	.4byte 0x02008db5
+	.4byte BiribinoMura_PushFacedBlock
 	.4byte 0x00000602
 	.4byte 0xffff000b
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00008602
 	.4byte 0xffff000b
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0x00004602
 	.4byte 0xffff000c
-	.4byte 0x02008579
+	.4byte FieldScene_CallHelper170c
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -1076,6 +772,8 @@ Mura_RepaintCells:
 	.4byte 0x130a1309
 	.4byte 0x1409130b
 	.4byte 0x140b140a
+	.global BiribinoMura_FacingCellSteps
+BiribinoMura_FacingCellSteps:
 	.4byte 0x00100000
 	.4byte 0x00100000
 	.4byte 0x00100000

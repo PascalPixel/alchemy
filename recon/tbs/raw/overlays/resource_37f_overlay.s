@@ -1,148 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008030,"ax",%progbits
-	.balign 4
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02000030_0
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02000030_2
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_2:
-	ldr r0, [pc, #24]
-.L_02000030_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000013
-	.4byte 0x02009d04
-	.4byte 0x00000010
-	.4byte 0x02009d64
-	.4byte 0x02009cd4
-	.section .text.x0200807c,"ax",%progbits
-	.balign 4
-	.global Func_0200007c
-	.thumb_func
-Func_0200007c:
-	push {r5, lr}
-	ldr r1, [pc, #76]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_0200007c_0
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #11
-	blt .L_0200007c_1
-	cmp r3, #13
-	ble .L_0200007c_2
-	cmp r3, #16
-	bgt .L_0200007c_1
-	ldr r0, [pc, #44]
-	b .L_0200007c_3
-.L_0200007c_2:
-	ldr r0, [pc, #44]
-	b .L_0200007c_3
-.L_0200007c_1:
-	ldr r5, [pc, #44]
-	adds r0, r5, #0
-	bl 0x02009bbc
-	adds r0, r5, #0
-	b .L_0200007c_3
-.L_0200007c_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_0200007c_4
-	ldr r0, [pc, #32]
-	b .L_0200007c_3
-.L_0200007c_4:
-	ldr r0, [pc, #32]
-.L_0200007c_3:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000010
-	.4byte 0x0200a1b8
-	.4byte 0x0200a050
-	.4byte 0x02009fd8
-	.4byte 0x00000013
-	.4byte 0x0200a2a8
-	.4byte 0x02009fc0
-	.global Func_020000ec
-	.thumb_func
-Func_020000ec:
-	push {lr}
-	ldr r1, [pc, #68]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000ec_0
-	ldr r0, [pc, #56]
-	b .L_020000ec_1
-.L_020000ec_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_020000ec_2
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #11
-	blt .L_020000ec_3
-	cmp r3, #13
-	ble .L_020000ec_4
-	cmp r3, #16
-	bgt .L_020000ec_3
-	ldr r0, [pc, #32]
-	b .L_020000ec_1
-.L_020000ec_4:
-	ldr r0, [pc, #32]
-	b .L_020000ec_1
-.L_020000ec_3:
-	ldr r0, [pc, #32]
-	b .L_020000ec_1
-.L_020000ec_2:
-	ldr r0, [pc, #32]
-.L_020000ec_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000013
-	.4byte 0x0200a2e4
-	.4byte 0x00000010
-	.4byte 0x0200a524
-	.4byte 0x0200a41c
-	.4byte 0x0200a32c
-	.4byte 0x0200a2d8
 	.section .text.x02008420,"ax",%progbits
 	.balign 4
 	.global Func_02000420
@@ -281,416 +138,11 @@ Func_02000420:
 	.4byte 0x00001032
 	.4byte 0x0000e666
 	.4byte 0x00000143
-	.section .text.x020088f4,"ax",%progbits
-	.balign 4
-	.align 2
-	.global Func_020008f4
-	.thumb_func
-Func_020008f4:
-	push {lr}
-	ldr r3, [pc, #40]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	bne .L_020008f4_0
-	bl 0x0200892c
-	b .L_020008f4_1
-.L_020008f4_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_020008f4_1
-	bl 0x02008a24
-.L_020008f4_1:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000013
-	.4byte 0x00000010
-	.section .text.x02008a24,"ax",%progbits
-	.balign 4
-	.global Func_02000a24
-	.thumb_func
-Func_02000a24:
-	push {r5, r6, lr}
-	ldr r3, [pc, #700]
-	movs r0, #224
-	ldr r3, [r3]
-	lsls r0, r0, #1
-	movs r2, #129
-	adds r3, r3, r0
-	lsls r2, r2, #2
-	str r2, [r3]
-	ldr r0, [pc, #688]
-	sub sp, #8
-	bl 0x02009b8c
-	cmp r0, #0
-	beq .L_02000a24_0
-	movs r0, #141
-	bl 0x02009cc4
-	movs r0, #128
-	movs r1, #128
-	movs r2, #128
-	lsls r0, r0, #9
-	lsls r1, r1, #9
-	lsls r2, r2, #9
-	bl 0x02009b7c
-	bl 0x02009c9c
-.L_02000a24_0:
-	ldr r1, [pc, #652]
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	subs r3, #1
-	cmp r3, #15
-	bls .L_02000a24_1
-	b .L_02000a24_2
-.L_02000a24_1:
-	ldr r2, [pc, #636]
-	lsls r3, r3, #2
-	ldr r3, [r3, r2]
-	mov pc, r3
-	ldrh r0, [r7, #20]
-	lsls r0, r0, #8
-	ldrh r0, [r7, #20]
-	lsls r0, r0, #8
-	ldrh r0, [r2, #24]
-	lsls r0, r0, #8
-	ldrh r2, [r3, #38]
-	lsls r0, r0, #8
-	ldrh r2, [r3, #38]
-	lsls r0, r0, #8
-	ldrh r2, [r3, #38]
-	lsls r0, r0, #8
-	ldrh r2, [r3, #38]
-	lsls r0, r0, #8
-	ldrh r6, [r3, #24]
-	lsls r0, r0, #8
-	ldrh r2, [r3, #38]
-	lsls r0, r0, #8
-	ldrh r2, [r3, #38]
-	lsls r0, r0, #8
-	ldrh r2, [r0, #26]
-	lsls r0, r0, #8
-	ldrh r2, [r0, #26]
-	lsls r0, r0, #8
-	ldrh r2, [r0, #26]
-	lsls r0, r0, #8
-	ldrh r0, [r6, #32]
-	lsls r0, r0, #8
-	ldrh r0, [r6, #32]
-	lsls r0, r0, #8
-	ldrh r0, [r6, #32]
-	lsls r0, r0, #8
-	ldr r0, [pc, #568]
-	bl 0x02009b8c
-	cmp r0, #0
-	bne .L_02000a24_3
-	b .L_02000a24_2
-.L_02000a24_3:
-	movs r5, #1
-	movs r0, #1
-	movs r1, #109
-	movs r2, #4
-	movs r3, #81
-	str r5, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x02009b5c
-	movs r0, #0
-	movs r1, #70
-	movs r2, #30
-	movs r3, #42
-	str r5, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x02009b5c
-	movs r3, #2
-	str r3, [sp, #4]
-	movs r6, #3
-	movs r0, #0
-	movs r1, #29
-	movs r2, #3
-	movs r3, #1
-	str r6, [sp, #0]
-	bl 0x02009b5c
-	movs r0, #0
-	movs r1, #29
-	movs r2, #3
-	movs r3, #2
-	str r6, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x02009b64
-	bl 0x02009b44
-	b .L_02000a24_2
-	.2byte 0x2009
-	.2byte 0xf001
-	.2byte 0xf85b
-	.2byte 0x2100
-	.2byte 0xf001
-	.2byte 0xf82c
-	.2byte 0xe0dd
-	.2byte 0x2090
-	.2byte 0x4a75
-	.2byte 0x0080
-	.2byte 0x180b
-	.2byte 0x801a
-	.2byte 0x4b74
-	.2byte 0x18ca
-	.2byte 0x2308
-	.2byte 0x8013
-	.2byte 0x4873
-	.2byte 0xf001
-	.2byte 0xf82b
-	.2byte 0x2800
-	.2byte 0xd000
-	.2byte 0xe0ce
-	.2byte 0xf000
-	.2byte 0xf8ee
-	.2byte 0xe0cb
-	.2byte 0x2009
-	.2byte 0xf001
-	.2byte 0xf842
-	.2byte 0x2100
-	.2byte 0xf001
-	.2byte 0xf813
-	.2byte 0x200a
-	.2byte 0xf001
-	.2byte 0xf83c
-	.2byte 0x2100
-	.2byte 0xf001
-	.2byte 0xf80d
-	.2byte 0x200b
-	.2byte 0xf001
-	.2byte 0xf836
-	.2byte 0x2100
-	.2byte 0xf001
-	.2byte 0xf807
-	.2byte 0x200c
-	.2byte 0xf001
-	.2byte 0xf830
-	.2byte 0x2100
-	.2byte 0xf001
-	.2byte 0xf801
-	.2byte 0x200d
-	.2byte 0xf001
-	.2byte 0xf82a
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfffb
-	.2byte 0x200e
-	.2byte 0xf001
-	.2byte 0xf824
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfff5
-	.2byte 0x200f
-	.2byte 0xf001
-	.2byte 0xf81e
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xffef
-	.2byte 0x2010
-	.2byte 0xf001
-	.2byte 0xf818
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xffe9
-	.2byte 0x2011
-	.2byte 0xf001
-	.2byte 0xf812
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xffe3
-	.2byte 0x2012
-	.2byte 0xf001
-	.2byte 0xf80c
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xffdd
-	.2byte 0x2013
-	.2byte 0xf001
-	.2byte 0xf806
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xffd7
-	.2byte 0x484f
-	.2byte 0xf000
-	.2byte 0xffe0
-	.2byte 0x2800
-	.2byte 0xd101
-	.2byte 0xf000
-	.2byte 0xf9dc
-	.2byte 0x484c
-	.2byte 0xf000
-	.2byte 0xffd9
-	.2byte 0x2800
-	.2byte 0xd007
-	.2byte 0x21bb
-	.2byte 0x2288
-	.2byte 0x2009
-	.2byte 0x04c9
-	.2byte 0x0412
-	.2byte 0xf001
-	.2byte 0xf808
-	.2byte 0xe00b
-	.2byte 0x4847
-	.2byte 0xf000
-	.2byte 0xffcc
-	.2byte 0x2800
-	.2byte 0xd006
-	.2byte 0x21bf
-	.2byte 0x2288
-	.2byte 0x2009
-	.2byte 0x04c9
-	.2byte 0x0412
-	.2byte 0xf000
-	.2byte 0xfffb
-	.2byte 0x4842
-	.2byte 0xf000
-	.2byte 0xffc0
-	.2byte 0x2800
-	.2byte 0xd001
-	.2byte 0x21e3
-	.2byte 0xe006
-	.2byte 0x20c0
-	.2byte 0x0080
-	.2byte 0xf000
-	.2byte 0xffb8
-	.2byte 0x2800
-	.2byte 0xd05c
-	.2byte 0x21e7
-	.2byte 0x2288
-	.2byte 0x200a
-	.2byte 0x04c9
-	.2byte 0x0412
-	.2byte 0xf000
-	.2byte 0xffe7
-	.2byte 0xe054
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xffcb
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xff9c
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xffc5
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xff96
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xffbf
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xff90
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xffb9
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xff8a
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xffb3
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xff84
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xffad
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xff7e
-	.2byte 0x4826
-	.2byte 0xf000
-	.2byte 0xff87
-	.2byte 0x2800
-	.2byte 0xd101
-	.2byte 0xf000
-	.2byte 0xfccb
-	.2byte 0x2001
-	.2byte 0xf000
-	.2byte 0xfd9a
-	.2byte 0x208d
-	.2byte 0x0080
-	.2byte 0xf000
-	.2byte 0xff80
-	.2byte 0x4820
-	.2byte 0xf000
-	.2byte 0xff79
-	.2byte 0x2800
-	.2byte 0xd01d
-	.2byte 0x2501
-	.2byte 0x2000
-	.2byte 0x2147
-	.2byte 0x2264
-	.2byte 0x2347
-	.2byte 0x9500
-	.2byte 0x9501
-	.2byte 0xf000
-	.2byte 0xff56
-	.2byte 0x2302
-	.2byte 0x9301
-	.2byte 0x207a
-	.2byte 0x2114
-	.2byte 0x2278
-	.2byte 0x231e
-	.2byte 0x9500
-	.2byte 0xf000
-	.2byte 0xff4d
-	.2byte 0x2378
-	.2byte 0x221e
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x207a
-	.2byte 0x2114
-	.2byte 0x2201
-	.2byte 0x2302
-	.2byte 0xf000
-	.2byte 0xff47
-	.2byte 0xf000
-	.2byte 0xff35
-.L_02000a24_2:
-	sub sp, #-8
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x00000814
-	.4byte 0x02000240
-	.4byte 0x02008a78
-	.4byte 0x0000081a
-	.2byte 0x0010
-	.2byte 0x0000
-	.2byte 0x0242
-	.2byte 0x0000
-	.2byte 0x0802
-	.2byte 0x0000
-	.2byte 0x0804
-	.2byte 0x0000
-	.2byte 0x0303
-	.2byte 0x0000
-	.2byte 0x0302
-	.2byte 0x0000
-	.2byte 0x0301
-	.2byte 0x0000
-	.2byte 0x0825
-	.2byte 0x0000
-	.2byte 0x0821
-	.2byte 0x0000
 	.section .text.x02008f8c,"ax",%progbits
 	.balign 4
-	.global Func_02000f8c
+	.global SoruIriguchi_RunArrivalEvent
 	.thumb_func
-Func_02000f8c:
+SoruIriguchi_RunArrivalEvent:
 	push {lr}
 .L_02000f8e:
 	bl 0x02009bac
@@ -1363,6 +815,8 @@ Func_02000f8c:
 	.4byte 0x00000804
 	.4byte 0x0000012f
 	.section .rodata.part1,"a",%progbits
+	.global gSoruIriguchiEntrancesOther
+gSoruIriguchiEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1375,6 +829,8 @@ Func_02000f8c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEntrances2
+gSoruIriguchiEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1399,6 +855,8 @@ Func_02000f8c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEntrances1
+gSoruIriguchiEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1552,12 +1010,16 @@ SoruIriguchi_Exits:
 	.4byte 0x1100100b
 	.4byte 0xffffffff
 	.4byte 0x000001ff
+	.global gSoruIriguchiPlacementsOther
+gSoruIriguchiPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements1
+gSoruIriguchiPlacements1:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1588,6 +1050,8 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements1Entrances11To13
+gSoruIriguchiPlacements1Entrances11To13:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1678,6 +1142,8 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements1Entrances14To16
+gSoruIriguchiPlacements1Entrances14To16:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1738,6 +1204,8 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements2
+gSoruIriguchiPlacements2:
 	.4byte 0xffff007a
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1750,18 +1218,22 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEventsOther
+gSoruIriguchiEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents2
+gSoruIriguchiEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008155
+	.4byte FieldScene_RunScene37fSequenceA
 	.4byte 0x00000003
 	.4byte 0xffff000a
-	.4byte 0x02009aad
+	.4byte FieldScene_RunScriptedStep953
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x0000111d
@@ -1771,6 +1243,8 @@ SoruIriguchi_Exits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents1
+gSoruIriguchiEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1824,13 +1298,15 @@ SoruIriguchi_Exits:
 	.4byte 0x001000e1
 	.4byte 0x0000e104
 	.4byte 0xffff0414
-	.4byte 0x02008259
+	.4byte FieldScene_RunOpeningAuxiliarySequence
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x02008201
+	.4byte SceneDialogue_RunFlag81aMessageBranch
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents1Entrances11To13
+gSoruIriguchiEvents1Entrances11To13:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1881,22 +1357,24 @@ SoruIriguchi_Exits:
 	.4byte 0x00000010
 	.4byte 0x00008c15
 	.4byte 0x02340009
-	.4byte 0x0200856d
+	.4byte Scene_UpdateOuterActor9Flags
 	.4byte 0x00008c15
 	.4byte 0x0234000a
-	.4byte 0x020085ad
+	.4byte Scene_UpdateOuterActor10Flags
 	.4byte 0x00000202
 	.4byte 0xffff0016
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0x00000602
 	.4byte 0xffff0017
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0x00008602
 	.4byte 0xffff0019
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents1Entrances14To16
+gSoruIriguchiEvents1Entrances14To16:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1947,31 +1425,31 @@ SoruIriguchi_Exits:
 	.4byte 0x00000010
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x020085ed
+	.4byte Scene_UpdateFormationActor9Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x02008635
+	.4byte Scene_UpdateFormationActor10Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x0200867d
+	.4byte Scene_UpdateFormationActor11Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x020086c5
+	.4byte Scene_UpdateFormationActor12Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte 0x0200870d
+	.4byte Scene_UpdateFormationActor13Flags
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x02008755
+	.4byte Scene_UpdateFormationActor14Flags
 	.4byte 0x00000202
 	.4byte 0xffff0018
-	.4byte 0x020087d1
+	.4byte SoruIriguchi_PushFacedBlock
 	.4byte 0x0000e104
 	.4byte 0xffff0415
 	.4byte 0x02008421
 	.4byte 0x00000003
 	.4byte 0xffff0015
-	.4byte 0x020083bd
+	.4byte FieldScene_RunFlag821Dialogue
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000

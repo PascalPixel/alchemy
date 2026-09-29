@@ -54,11 +54,6 @@ typedef struct {
 
 extern u8 ArutamiraDou_SceneTableA[];
 extern u8 ArutamiraDou_SceneTableB[];
-extern u8 PrimaryRuntimeSelector;
-extern u8 Value_00000094;
-extern u8 SecondaryRuntimeSelector;
-extern u8 Value_00000096;
-extern u8 TertiaryRuntimeSelector;
 extern u8 Data_0200c688[];
 extern u8 Data_0200c724[];
 extern u8 Data_0200c76c[];

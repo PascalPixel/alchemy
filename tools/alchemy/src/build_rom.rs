@@ -742,7 +742,10 @@ fn build_graphics_files(
             .join(ags::resource::input_name(&built)?);
         let png = fs::read(root.join(&image))
             .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
-        let encoded = ags::resource::build_file(&built, &png)?;
+        let encoded = ags::resource::build_file_with(&built, &png, &|name| {
+            let path = root.join(image.with_file_name(name));
+            fs::read(&path).map_err(|error| format!("{}: {error}", path.display()))
+        })?;
         let path = output.join(&built);
         if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
             continue;

@@ -1,9 +1,12 @@
 /* NONMATCHING: resource_372 at 0x020096cc, from FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_D.C, stays listing.
  *
- * Remaining difference: the ROM loads message 0xed0 from its literal pool, so the source named it by a link-time symbol; the main image has no name for it, and a plain constant builds it with a move and a shift.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names a symbol no link defines (Func_02002e5e).
  */
 
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaBoulderNeedGet[];
+extern u8 MsgHaidiaWantDumpStuff[];
 
 void FieldScene_RunScene372SequenceC(void)
 {
@@ -14,14 +17,14 @@ void FieldScene_RunScene372SequenceC(void)
         Event_Begin();
         Actor_FaceActor(22, ACTOR_PARTY_LEADER, 0);
         Event_Wait(20);
-        Event_SetMessage(MSG_ROBIN_BOULDER_WE_NEED_GET);
+        Event_SetMessage((s32)MsgHaidiaBoulderNeedGet);
         Event_ShowMessage(22, 0);
         Actor_FaceDirection(22, 0xe000, 10);
         Event_End();
     } else {
         if (GameFlag_IsSet(0x837) == 0) {
             Event_Begin();
-            Event_SetMessage(MSG_DUMP_MY_STUFF);
+            Event_SetMessage((s32)MsgHaidiaWantDumpStuff);
             Func_02002e5e();
             Event_End();
         }

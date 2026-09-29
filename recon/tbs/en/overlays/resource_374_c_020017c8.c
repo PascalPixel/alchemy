@@ -10,6 +10,8 @@
  * table lifetimes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgHaidiaFarewell[];
+extern u8 MsgHaidiaWhysEveryoneHanging[];
 extern u8 Data_0200ac14[];
 extern u8 Data_0200ac00[];
 extern u8 Data_0200ac90[];
@@ -116,7 +118,7 @@ void Scene_RunExtendedActorSequence(void)
     Call3((void (*)())Engine_ActorShowEmote, 12, 0x101, 40);
     face_west = 0x7000;
     SceneActor_SetPairZeroAndValue(12, face_west, 20);
-    Engine_EventSetMessage(0x11fa);
+    Engine_EventSetMessage((s32)MsgHaidiaWhysEveryoneHanging);
     Call2((void (*)())Event_SayThenWait, 12, 10);
     Call3((void (*)())Engine_ActorShowEmote, 11, 0x102, 20);
     face_east = 0x1000;
@@ -365,7 +367,7 @@ void Scene_RunExtendedActorSequence(void)
     Engine_ActorJump(22, 4, 0);
     Engine_ActorJump(25, 4, 0);
     Engine_ActorJump(28, 4, 0);
-    Engine_MessageShowCentered(0x1214, 1);
+    Engine_MessageShowCentered((s32)MsgHaidiaFarewell, 1);
     v5 = 1;
     Engine_EventWait(80);
     *(u8 *)(((u8 *)Engine_ActorGet(0)) + 35) |= v5;

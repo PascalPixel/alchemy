@@ -1,10 +1,14 @@
 /* Draft of resource_37f 0x02008f8c, from
  * games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C.
- * Remaining difference: the ROM loads scene or message numbers from the
- * literal pool, as link-time symbols would; C builds those constants
- * with movs. The Value_/Data_ spellings below are the old address-named
- * forms. The listing keeps these rows. */
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_02002b6a,
+ * Func_02002b7e, Func_02002b92, Engine_ActorSetAnimationAndWait,
+ * Engine_ActorStartRepeatedMotion, Engine_ActorSetAttachedEffect, ...); it
+ * also lacks declarations it needs to compile. The listing keeps these rows. */
 #include "SORU.H"
+extern u8 MsgSoruCantSeriouslyWant[];
+extern u8 MsgSoruDangerousSplitStay[];
+extern u8 MsgSoruWrongSukureta[];
 
 void Scene_SukuretaSuspectsHiddenPassage(void)
 {
@@ -92,7 +96,7 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xa000, 10);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 20);
-    Event_SetMessage(MSG_GERALD_WHATS_WRONG_SUKURETA);
+    Event_SetMessage((s32)MsgSoruWrongSukureta);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     Actor_ShowEmote(ACTOR_SUKURETA, 0x102, 60);
     Actor_StartRepeatedMotion(ACTOR_SUKURETA, 2);
@@ -140,11 +144,11 @@ void Scene_SukuretaSuspectsHiddenPassage(void)
     Event_OpenMessage(ACTOR_GERALD, 0); /* main:0808a178 */
     if (Event_ChooseYesNo(0, 0) == 0) {
         /* Passes the address of Value_00000fe0 in place of a record pointer. */
-        Value1(Engine_EventSetMessage, (s32)&Value_00000fe0);
+        Value1(Engine_EventSetMessage, (s32)MsgSoruDangerousSplitStay);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
         Value3(Engine_EventShowMessageAndWait, 1, 0, 10);
     } else {
-        Value1(Engine_EventSetMessage, 0xfe1);
+        Value1(Engine_EventSetMessage, (s32)MsgSoruCantSeriouslyWant);
         Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 20);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
         Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);

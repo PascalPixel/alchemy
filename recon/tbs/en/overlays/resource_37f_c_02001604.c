@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgSoruMoreStatuesOutOfReach[];
 
 /* AUDITED GENERATED CALL SCRIPT for RunEventScript02: 82 calls, 0 loops, 0 memory operations.
  * Recovered from the complete decoded owner. Calls, arguments, control flow,
@@ -114,7 +115,7 @@ void RunEventScript02(void)
     Func_020032ac(20);
     Func_02003334(8, 2);
     Func_02003376(8, 0, 30);
-    Func_02003354(4154);
+    Func_02003354((s32)MsgSoruMoreStatuesOutOfReach);
     Func_02003376(16392, 0, 10);
     Func_020033a2(8, 256, 40);
     Func_02003362(8, 1);

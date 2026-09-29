@@ -1,10 +1,9 @@
-/* Draft of resource_373 0x0200acb0..0x0200af14 (612 bytes with pool),
- * FieldScene_RunSecondaryActorSequence; the listing keeps the rows. Remaining
- * difference: the reference keeps message 0x1c45 in r5 (push {r5, lr}) and
- * derives the following lines from it, as a link-time message symbol is
- * loaded; with the constant each line is its own pool load and r5 is never
- * used (559 bytes differ). */
+/* Draft of resource_373 0x0200acb0 (FieldScene_RunSecondaryActorSequence): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgHaidiaAh). The listing keeps these
+ * rows until the draft is adopted. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.H"
+extern u8 MsgHaidiaAh[];
 
 /* Runs a scripted movement/pose sequence for actors 0, 1 and 8, reading two
  * lookup records along the way (one 32-bit-field record, one 16-bit-field
@@ -18,7 +17,7 @@ void FieldScene_RunSecondaryActorSequence(void)
     Event_Begin();
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
-    slot_table = MSG_AH;
+    slot_table = (s32)MsgHaidiaAh;
     Event_SetMessage(slot_table);
     Actor_StartRepeatedMotion(8, 2);
     Event_ShowMessageAndWait(8, 0, 20);

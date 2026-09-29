@@ -192,33 +192,16 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  */
 
 #include "TYPES.H"
+extern u8 MsgShindenAreYouSure[];
+extern u8 MsgShindenChildHasAwakenedOurTeachings[];
+extern u8 MsgShindenDirtyGoldenStatueCleanedUp[];
+extern u8 MsgShindenDoFeelAnyChangeIn[];
+extern u8 MsgShindenHealerMustWorriedAboutNever[];
+extern u8 MsgShindenPolishedGoldStatueReturnedUs[];
+extern u8 MsgShindenRobinYourNewFriendsAdepts[];
+extern u8 MsgShindenWhenStrayFromYourWorldly[];
+extern u8 MsgShindenWonderIfEverSeeOur[];
 
-enum FacingGatedMessage {
-    MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS = 0x1035,
-    MSG_WE_HAD_IDEA_TRUE_SANCTUM = 0x1138,
-    MSG_ROBIN_WILL_ACCEPT_RESPONSIBILITY_FOR = 0x1162,
-    MSG_ARE_YOU_SURE = 0x1164,
-    MSG_ONCE_STEP_OUTSIDE_VILLAGE_CANNOT = 0x116c,
-    MSG_ACCEPT_ROBIN_CANT_MEAN = 0x1171,
-    MSG_MY_CONTROL_OVER_PSYNERGY_HAS = 0x119d,
-    MSG_DO_FEEL_ANY_CHANGE_IN = 0x119f,
-    MSG_WE_WILL_HELP_ANYTIME_AS = 0x1288,
-    MSG_HEALER_MUST_WORRIED_ABOUT_NEVER = 0x1289,
-    MSG_WONDER_IF_EVER_SEE_OUR = 0x128b,
-    MSG_WAS_HAND_FATE_RETURNED_GOLD = 0x1376,
-    MSG_WHEN_STRAY_FROM_YOUR_WORLDLY = 0x1377,
-    MSG_CHILD_HAS_AWAKENED_OUR_TEACHINGS = 0x1379,
-    MSG_AM_STARTING_FEEL_ONLY_BEGINNING = 0x1408,
-    MSG_CURSE_MAY_OVER_BUT_WE = 0x171c,
-    MSG_CAME_XIAN_FROM_VERY_DISTANT = 0x1823,
-    MSG_WAS_AFTER_EERIE_NIGHT_WHEN = 0x190a,
-    MSG_SAVED_ALTIN_FROM_MONSTERS_CLEARLY = 0x1951,
-    MSG_PATH_SOL_SANCTUM_STILL_CLOSED = 0x1bfc,
-    MSG_ROBIN_YOUR_NEW_FRIENDS_ADEPTS = 0x1bfd,
-    MSG_MAY_WRONG_BUT_LATELY_THERE = 0x1ce8,
-    MSG_POLISHED_GOLD_STATUE_RETURNED_US = 0x1ce9,
-    MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP = 0x1ceb
-};
 
 extern u8 ShindenHeya_TableA;
 extern u8 ShindenHeya_TableB;
@@ -371,13 +354,13 @@ void FieldScene_RunActorNineFlagDialogueA(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x855) != 0) {
-        Event_SetMessage(MSG_WHEN_STRAY_FROM_YOUR_WORLDLY);
+        Event_SetMessage((s32)MsgShindenWhenStrayFromYourWorldly);
     } else {
-        Event_SetMessage(MSG_HEALER_MUST_WORRIED_ABOUT_NEVER);
+        Event_SetMessage((s32)MsgShindenHealerMustWorriedAboutNever);
     }
 
     if (gGameState.entrance == 11) {
-        Event_SetMessage(MSG_POLISHED_GOLD_STATUE_RETURNED_US);
+        Event_SetMessage((s32)MsgShindenPolishedGoldStatueReturnedUs);
     }
 
     Actor_SetAnimation(9, 1);
@@ -394,13 +377,13 @@ void FieldScene_RunActorNineFlagDialogueB(void)
     Event_Begin();
 
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(MSG_WONDER_IF_EVER_SEE_OUR);
+        Event_SetMessage((s32)MsgShindenWonderIfEverSeeOur);
     } else {
-        Event_SetMessage(MSG_CHILD_HAS_AWAKENED_OUR_TEACHINGS);
+        Event_SetMessage((s32)MsgShindenChildHasAwakenedOurTeachings);
     }
 
     if (gGameState.entrance == 11) {
-        Event_SetMessage(MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP);
+        Event_SetMessage((s32)MsgShindenDirtyGoldenStatueCleanedUp);
     }
 
     Actor_Stop(9);
@@ -414,7 +397,7 @@ void FieldScene_RunActorNineFlagDialogueB(void)
 void FieldScene_RunSupplementalSequenceOne(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_ARE_YOU_SURE);
+    Event_SetMessage((s32)MsgShindenAreYouSure);
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Actor_SetAnimationAndWait(8, 3);
@@ -474,7 +457,7 @@ void FieldScene_RunScene378SequenceB(void)
     Event_Begin();
     Call1(Event_CallWithLastActiveObjectId, (s32)ShindenHeya_PlacementSequenceB);
     Call1((void (*)())Engine_TaskWait, 1);
-    Event_SetMessage(MSG_ROBIN_YOUR_NEW_FRIENDS_ADEPTS);
+    Event_SetMessage((s32)MsgShindenRobinYourNewFriendsAdepts);
     Event_OpenMessage(9, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(9, 0);
@@ -492,7 +475,7 @@ void FieldScene_RunActorTenCountStep(void)
     Event_Begin();
     Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
-    Event_SetMessage(MSG_DO_FEEL_ANY_CHANGE_IN);
+    Event_SetMessage((s32)MsgShindenDoFeelAnyChangeIn);
     Event_OpenMessage(10, 0);
 
     if (Event_ChooseYesNo(0, 0) == 1) {

@@ -1,9 +1,16 @@
 /* NONMATCHING: resource_372 at 0x0200a8a4, from FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_E.C, stays listing.
  *
- * Remaining difference: the ROM keeps messages 0xe9b and 0xea1 in registers and adds the choice offsets to them, as it does for link-time symbols; the main image has no names for them, and plain constants load each message from the pool.
+ * Remaining difference: its messages have catalogue names now; 316 halfwords
+ * still differ from the ROM, and it names symbols no link defines
+ * (ObjectMotion_EnableActionAndSetCallback_1,
+ * ObjectMotion_MarkActiveAndSetActionCallback_1,
+ * BattleEffect_PlayQueuedSound_1, Scene_GetRecord_1_020028a4, ...); it also
+ * lacks declarations it needs to compile.
  */
 
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaDontSupposeTwo[];
+extern u8 MsgHaidiaGoLookNorth[];
 
 /* Sets up records 26, 24, 25, 9 and 10 (position/speed, facing, movement),
  * runs several timed particle/object sequences against constant tables, then
@@ -84,7 +91,7 @@ void RunEventScript01(void)
     Object_LookupAndStep_2(26);
     BattleEffect_PlayQueuedSound_4();
     Event_Wait(40);
-    base5_e9b = 0xe9b;
+    base5_e9b = (s32)MsgHaidiaGoLookNorth;
     Event_SetMessage(base5_e9b);
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_SetAnimationAndWait(26, 3);
@@ -119,7 +126,7 @@ void RunEventScript01(void)
     Event_ShowMessage(0x8009, 0);
     Actor_FaceDirection(22, 0x8000, 40);
     Actor_ShowEmote(9, 0x100, 30);
-    base5_ea1 = 0xea1;
+    base5_ea1 = (s32)MsgHaidiaDontSupposeTwo;
     Event_SetMessage(base5_ea1);
     Event_OpenMessage(0x8009, 0);
     /* Branch on a condition; each side reads a different byte of the

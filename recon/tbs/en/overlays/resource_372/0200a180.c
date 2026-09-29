@@ -1,9 +1,13 @@
 /* NONMATCHING: resource_372 at 0x0200a180, from FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_E.C, stays listing.
  *
- * Remaining difference: the ROM keeps a message number in a saved register and loads it from the literal pool where the source named a link-time symbol; the main image has no name for it, and a plain constant is loaded ahead of the preceding call instead. Register allocation follows from it: the source's function saves r7 as well.
+ * Remaining difference: its messages have catalogue names now; 679 halfwords
+ * still differ from the ROM, and it names symbols no link defines
+ * (Func_020067f6, Func_02006850, Func_02006890, Func_02006c84, ...); it also
+ * lacks declarations it needs to compile.
  */
 
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaNoBrother[];
 
 void FieldScene_RunFlagGatedActorSequence(void)
 {
@@ -148,7 +152,7 @@ void FieldScene_RunFlagGatedActorSequence(void)
     Actor_FaceDirection(23, kc000_1, 0);
     Actor_SetSpriteFlags(Actor_Get(23), 0);
     Task_Wait(3);
-    Event_SetMessage(MSG_NO_MY_BROTHER);
+    Event_SetMessage((s32)MsgHaidiaNoBrother);
     Event_ShowMessage(0x201a, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, k100_1, 20);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 150, k446_1);

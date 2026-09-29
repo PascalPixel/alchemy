@@ -23,7 +23,7 @@ msgctxt "message"
 msgid "00003"
 msgstr "(Partida dañada)."
 
-msgctxt "message"
+msgctxt "MsgSaveDataCorrupted"
 msgid "00004"
 msgstr "Algunos datos estaban{line_break}dañados y se han perdido.{page_break}"
 
@@ -35,7 +35,7 @@ msgctxt "message"
 msgid "00006"
 msgstr "{text_color:5}Desafortunadamente, no se{line_break}han recuperado los datos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveAdventureQuestion"
 msgid "00007"
 msgstr "¿Quieres guardar?{end_now}"
 
@@ -10515,7 +10515,7 @@ msgctxt "message"
 msgid "02626"
 msgstr "No hay nada ahí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorTightlyLocked"
 msgid "02627"
 msgstr "Está firmemente cerrada.{end_wait}"
 
@@ -10647,7 +10647,7 @@ msgctxt "message"
 msgid "02659"
 msgstr "¡El cofre era en{line_break}realidad un Mimo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaPartyPpRestored"
 msgid "02660"
 msgstr "¡PP del equipo restablecidos!{end_wait}"
 
@@ -12719,7 +12719,7 @@ msgctxt "message"
 msgid "03177"
 msgstr "¡Esto es lo que tienes{line_break}que hacer para liberar{line_break}un Djinn asignado!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapOh"
 msgid "03178"
 msgstr "¡Anda!{end_wait}"
 
@@ -12771,7 +12771,7 @@ msgctxt "message"
 msgid "03190"
 msgstr "¿Qué opináis? ¿Puedo{line_break}ir con vosotros?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapComePromiseWont"
 msgid "03191"
 msgstr "¡Venga! ¡Os prometo que{line_break}no os defraudaré! ¡Por{line_break}favor, llevadme!{end_now}"
 
@@ -12795,15 +12795,15 @@ msgctxt "message"
 msgid "03196"
 msgstr "¡Llevadme con vosotros!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapMeanieDontCare"
 msgid "03197"
 msgstr "¡Cabezotas!{page_break}¡No me importa lo que{line_break}digáis! ¡Yo me uno a{line_break}vosotros!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapSeeWontRegret"
 msgid "03198"
 msgstr "¡Ya veréis!{line_break}¡No os decepcionaré!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapAbilityVenusDjinni"
 msgid "03199"
 msgstr "¡{text_color:5}{argument_ability_name}{text_color:16}, el Djinn de Venus,{line_break}es ahora un aliado de {actor_name:1}!{end_wait}"
 
@@ -12811,15 +12811,15 @@ msgctxt "message"
 msgid "03200"
 msgstr "Ahora, os enseñaré{line_break}cómo usar los{line_break}Djinn.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapAfterBringingDjinniIntoYour"
 msgid "03201"
 msgstr "Cuando añadáis un Djinn{line_break}al equipo, asignadlo{line_break}a alguien.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapNextIllShowHowCan"
 msgid "03202"
 msgstr "Ahora, os mostraré{line_break}cómo podéis usarnos{line_break}durante la batalla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapSeeDjinnUseful"
 msgid "03203"
 msgstr "¿Ves? Los Djinn podemos{line_break}ser muy útiles, ¿no crees?{end_wait}"
 
@@ -12827,7 +12827,7 @@ msgctxt "message"
 msgid "03204"
 msgstr "Ah, una cosa más...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapGoSetStandby"
 msgid "03205"
 msgstr "Entonces, de estar{line_break}asignados pasamos a estar{line_break}preparados, y después nos{page_break}recuperamos, para luego{line_break}volver a autoasignarnos.{end_wait}"
 
@@ -12839,7 +12839,7 @@ msgctxt "message"
 msgid "03207"
 msgstr "¿Os habéis enterado?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapHmmmmExplainAgain"
 msgid "03208"
 msgstr "Mmmm...{pause_20_skippable} ¿Queréis que os{line_break}lo vuelva a explicar?{end_now}"
 
@@ -12847,7 +12847,7 @@ msgctxt "message"
 msgid "03209"
 msgstr "Bueno. Entonces creo{line_break}que empezaré por el{line_break}principio, ¿vale?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapYeahWantLearn"
 msgid "03210"
 msgstr "¡Bien! Si necesitáis saber{line_break}más sobre los Djinn, consultad{line_break}la ayuda, ¿vale?{end_wait}"
 
@@ -12923,11 +12923,11 @@ msgctxt "message"
 msgid "03228"
 msgstr "Izda./Dcha.:Pasa página  {button_icon:2}:Volver"
 
-msgctxt "message"
+msgctxt "MsgClearPasswordLabel"
 msgid "03229"
 msgstr "Contraseña"
 
-msgctxt "message"
+msgctxt "MsgClearSaveLabel"
 msgid "03230"
 msgstr "Guardar"
 
@@ -12935,7 +12935,7 @@ msgctxt "message"
 msgid "03231"
 msgstr "Preparando información"
 
-msgctxt "message"
+msgctxt "MsgClearSendingData"
 msgid "03232"
 msgstr "Enviando información"
 
@@ -12943,7 +12943,7 @@ msgctxt "message"
 msgid "03233"
 msgstr "{button_icon:2}:Salir"
 
-msgctxt "message"
+msgctxt "MsgClearCommunicationError"
 msgid "03234"
 msgstr "Error de comunicación"
 
@@ -14551,7 +14551,7 @@ msgctxt "message"
 msgid "03635"
 msgstr "Mmm... Me pregunto si{line_break}estos chicos se quedarán{line_break}con los mejores objetos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWake"
 msgid "03636"
 msgstr "¡{actor_name:1}, levántate!{end_wait}"
 
@@ -14587,11 +14587,11 @@ msgctxt "message"
 msgid "03644"
 msgstr "Muy bien, {actor_name:1}.{line_break}Un objeto se puede{line_break}reemplazar; una vida no.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoraHurryBoulder"
 msgid "03645"
 msgstr "¡{actor_name:1}, Dora, rápido!{line_break}¡La Roca podría caer{line_break}en cualquier momento!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaKyleAbleStop"
 msgid "03646"
 msgstr "Frank... ¿Serán capaces{line_break}de detener la Roca?{end_wait}"
 
@@ -14627,15 +14627,15 @@ msgctxt "message"
 msgid "03654"
 msgstr "Podrás apañártelas,{line_break}¿no, {actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaBigBoyWhy"
 msgid "03655"
 msgstr "Vamos, ya eres todo un{line_break}hombrecito, {actor_name:1}. ¿No eres{line_break}capaz de ir solo?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaKnowWayGo"
 msgid "03656"
 msgstr "Ya sabes el camino, ve{line_break}hacia el sur para llegar a{line_break}la plaza. ¡Y ten cuidado!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHuh"
 msgid "03657"
 msgstr "¿Mm? ¿{actor_name:1}?{end_wait}"
 
@@ -14655,7 +14655,7 @@ msgctxt "message"
 msgid "03661"
 msgstr "Bueno...{pause_20_skippable} Será mejor que{line_break}vayamos a la plaza antes{line_break}de que caiga la Roca.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaUghHrnghhh"
 msgid "03662"
 msgstr "{text_effect:4}¡Mmm...! {pause_20_skippable}¡Vengaaa...!{end_wait}"
 
@@ -14663,7 +14663,7 @@ msgctxt "message"
 msgid "03663"
 msgstr "¿Qué quieres, {actor_name:1}?{line_break}¡Sólo intento{line_break}salvar mis cosas!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWantDumpStuff"
 msgid "03664"
 msgstr "¿Cómo? ¿Pretendes que{line_break}deje aquí todas mis cosas?"
 
@@ -14671,11 +14671,11 @@ msgctxt "message"
 msgid "03665"
 msgstr "Me imagino que andar por ahí{line_break}tirando de este cofre no{line_break}debe de ser muy seguro...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaKnowRightOk"
 msgid "03666"
 msgstr "Bueno, vale. Tienes razón.{pause_20_skippable}{line_break}¡Salgamos de aquí!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontLeaveMeHere"
 msgid "03667"
 msgstr "No irás a dejarme aquí,{line_break}¿no, {actor_name:1}?{end_now}"
 
@@ -14687,7 +14687,7 @@ msgctxt "message"
 msgid "03669"
 msgstr "Bueno, vale. Tienes razón.{pause_20_skippable}{line_break}¡Salgamos de aquí!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHey"
 msgid "03670"
 msgstr "¡Eh! ¡{actor_name:1}!{end_wait}"
 
@@ -14715,7 +14715,7 @@ msgctxt "message"
 msgid "03676"
 msgstr "Todo el mundo va hacia el{line_break}sur, a la plaza de la aldea.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNorthLeadsToMtAleph"
 msgid "03677"
 msgstr "No deberíamos ir al norte...{line_break}Ese camino nos lleva al{line_break}Monte Aleph.{end_wait}"
 
@@ -14723,7 +14723,7 @@ msgctxt "message"
 msgid "03678"
 msgstr "La plaza está por{line_break}ese camino. Tenemos{line_break}que ir hacia el sur.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCantGetAroundThisRock"
 msgid "03679"
 msgstr "¡No podemos rodear{line_break}esta roca!{end_wait}"
 
@@ -14731,7 +14731,7 @@ msgctxt "message"
 msgid "03680"
 msgstr "Tendremos que buscar{line_break}otro camino.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheBoulderIsFalling"
 msgid "03681"
 msgstr "{text_effect:4}¡Ahhh! ¡La Roca!{line_break}¡Está cayendo!{end_wait}"
 
@@ -14755,7 +14755,7 @@ msgctxt "message"
 msgid "03686"
 msgstr "¡Vamos, {actor_name:1}, corre!{line_break}¡La Roca se acerca!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRockslideDestroyedFence"
 msgid "03687"
 msgstr "La roca... destruyó la{line_break}valla... Hay monstruos{line_break}por todas partes...{end_wait}"
 
@@ -14779,11 +14779,11 @@ msgctxt "message"
 msgid "03692"
 msgstr "¡Pero no era broma lo de los{line_break}monstruos, así que tened{line_break}cuidado yendo a la plaza!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSaveYourselves"
 msgid "03693"
 msgstr "Esto es el fin.{line_break}Salvaos vosotros...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNoBrother"
 msgid "03694"
 msgstr "¡Oh, no! ¡Mi hermano!{end_wait}"
 
@@ -14843,7 +14843,7 @@ msgctxt "message"
 msgid "03708"
 msgstr "Bien, ¡en marcha!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoLookNorth"
 msgid "03709"
 msgstr "Iré a buscar hacia el norte...{line_break}Tú ve hacia la plaza, ¿vale?{end_wait}"
 
@@ -14867,7 +14867,7 @@ msgctxt "message"
 msgid "03714"
 msgstr "Busco a alguien que{line_break}pueda ayudar a {actor_name:5}.{line_break}Ha caído al río.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontSupposeTwo"
 msgid "03715"
 msgstr "No creo que...{pause_20_skippable}{line_break}¿Podéis ayudarme{line_break}vosotros?{end_now}"
 
@@ -14879,11 +14879,11 @@ msgctxt "message"
 msgid "03717"
 msgstr "No tenéis por qué hacerlo{line_break}si no queréis...{pause_20_skippable}{line_break}Simplemente id a la plaza.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaOh"
 msgid "03718"
 msgstr "Oh, {actor_name:1}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTwoDontEnough"
 msgid "03719"
 msgstr "No tenéis suficiente Psinergía{line_break}para salvar a {actor_name:5}.{line_break}Id a buscar ayuda.{end_wait}"
 
@@ -14895,7 +14895,7 @@ msgctxt "message"
 msgid "03721"
 msgstr "¡No te rindas, {actor_name:5}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCanIUsePsynergy"
 msgid "03722"
 msgstr "¿Mmm?{pause_20_skippable} ¿Me... estás{line_break}preguntando si puedo{line_break}usar Psinergía, {actor_name:1}?{end_now}"
 
@@ -14919,7 +14919,7 @@ msgctxt "message"
 msgid "03727"
 msgstr "¿Cómo?{pause_20_skippable} ¿Que el pequeño{line_break}{actor_name:5} se ha caído al río?{page_break}Entonces, es por eso por lo{line_break}que {actor_name:6} parecía tan{line_break}preocupada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIHaveSomePsynergyLeft"
 msgid "03728"
 msgstr "Todavía me queda algo{line_break}de Psinergía.{end_wait}"
 
@@ -14927,11 +14927,11 @@ msgctxt "message"
 msgid "03729"
 msgstr "¿Ves?{page_break}¡¿No es impresionante?!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWentOffWay"
 msgid "03730"
 msgstr "¡{actor_name:6} se fue por ahí!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSureHelp"
 msgid "03731"
 msgstr "No te olvides de{line_break}ayudar a {actor_name:5}.{end_wait}"
 
@@ -14951,7 +14951,7 @@ msgctxt "message"
 msgid "03735"
 msgstr "{actor_name:6} me pidió que{line_break}ayudara a {actor_name:5}.{page_break}¡Si no tuviera que usar{line_break}Psinergía, iría al{line_break}instante!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoAidElders"
 msgid "03736"
 msgstr "¡Id a ayudar a los ancianos!{line_break}La Roca es demasiado pesada{line_break}para que la sigan manteniendo.{end_wait}"
 
@@ -15015,7 +15015,7 @@ msgctxt "message"
 msgid "03751"
 msgstr "¡Esto es una lucha contra{line_break}el tiempo! ¡No podéis perder{line_break}un segundo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMomDadBack"
 msgid "03752"
 msgstr "¡Madre! ¡Padre!{pause_20_skippable}{line_break}¡Hemos vuelto!{end_wait}"
 
@@ -15055,19 +15055,19 @@ msgctxt "message"
 msgid "03761"
 msgstr "Madre, padre...{pause_20_skippable} {actor_name:5}...{pause_20_skippable}{pause_20_skippable}{line_break}Por favor...{pause_20_skippable} No me{line_break}abandonéis...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaBoulderNeedGet"
 msgid "03762"
 msgstr "{actor_name:1}... La Roca...{pause_20_skippable}{pause_20_skippable}{line_break}Necesitamos ayuda o todo{line_break}el mundo se ahogará...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIllGo"
 msgid "03763"
 msgstr "{text_effect:4}Oh,{pause_20_skippable} ohhh...{pause_20_skippable} Yo...{line_break}¡Yo iré!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaICantMoveGetHelp"
 msgid "03764"
 msgstr "{text_effect:4}No puedo.{pause_20_skippable} No puedo moverme...{pause_20_skippable}{pause_20_skippable}{line_break}¡Por favor, {actor_name:1}, busca ayuda!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRobin"
 msgid "03765"
 msgstr "¡{actor_name:1}...!{end_wait}"
 
@@ -15079,7 +15079,7 @@ msgctxt "message"
 msgid "03767"
 msgstr "¡En momentos como éste{line_break}los hombres debemos{line_break}mantenernos unidos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaOnlyTwoSurvived"
 msgid "03768"
 msgstr "Sólo hemos sobrevivido{line_break}nosotros dos...{end_wait}"
 
@@ -15135,23 +15135,23 @@ msgctxt "message"
 msgid "03781"
 msgstr "No os preocupéis...{line_break}¡Os ayudaremos a olvidar!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoorWontOpen"
 msgid "03782"
 msgstr "La puerta no se abre.{page_break}La fuerza del impacto ha{line_break}debido descolgarla de las{line_break}bisagras.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThinkForgetThings"
 msgid "03783"
 msgstr "¿Crees que debería olvidar{line_break}todas estas cosas y salvar{line_break}mi propia vida?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRockHitsLose"
 msgid "03784"
 msgstr "Mmm... Si me llegara a{line_break}golpear una roca, perdería{line_break}mi cofre y mi vida.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRightDitchStuff"
 msgid "03785"
 msgstr "Tienes razón. Debería{line_break}dejar aquí todas mis{line_break}cosas. Vámonos de aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRepairCaption"
 msgid "03786"
 msgstr "Tres años más tarde...{end_wait}"
 
@@ -15259,7 +15259,7 @@ msgctxt "message"
 msgid "03812"
 msgstr "{actor_name:6}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoodJob"
 msgid "03813"
 msgstr "Buen trabajo, {actor_name:1}.{end_wait}"
 
@@ -15287,7 +15287,7 @@ msgctxt "message"
 msgid "03819"
 msgstr "Lo suponía... {actor_name:1}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWorkingYourselvesBone"
 msgid "03820"
 msgstr "{actor_name:2} y tú habéis estado{line_break}estudiando Psinergía todo{line_break}este tiempo.{end_wait}"
 
@@ -15303,7 +15303,7 @@ msgctxt "message"
 msgid "03823"
 msgstr "Mmmm...{pause_20_skippable} Me pregunto...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDevastatedWhenKyle"
 msgid "03824"
 msgstr "Cuando Frank murió,{line_break}quedé destrozada...{end_wait}"
 
@@ -15403,7 +15403,7 @@ msgctxt "message"
 msgid "03848"
 msgstr "Me alegra que intentes{line_break}complacerme, pero sé que{line_break}no es lo que quieres.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAsStubbornAsYourFather"
 msgid "03849"
 msgstr "¡Eres un testarudo,{line_break}como lo era tu padre!{end_wait}"
 
@@ -15475,7 +15475,7 @@ msgctxt "message"
 msgid "03866"
 msgstr "Espera, {actor_name:2}...{pause_20_skippable}{pause_20_skippable}{line_break}Cuidado{pause_20_skippable} por dónde pisas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaIsWaitingForUs"
 msgid "03867"
 msgstr "Kraden nos está esperando.{line_break}Debemos ir a su casa.{end_wait}"
 
@@ -15487,7 +15487,7 @@ msgctxt "message"
 msgid "03869"
 msgstr "Kraden tenía visita{line_break}cuando pasé por su{line_break}casa esta mañana.{page_break}Me pregunto qué{line_break}pasó con ellos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMeditateOnMtAlephDaily"
 msgid "03870"
 msgstr "¡{protagonist_name}! ¿Recuerdas{line_break}meditar sobre el Mt.{line_break}Aleph todos los días?{end_now}"
 
@@ -15499,7 +15499,7 @@ msgctxt "message"
 msgid "03872"
 msgstr "¡Pero bueno, {protagonist_name}!{line_break}El Mt. Aleph cuida{line_break}de Tale.{page_break}Meditar todos los{line_break}días nos mantiene{line_break}a salvo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaADifficultTimeThreeYears"
 msgid "03873"
 msgstr "Pasaste un mal trago{line_break}hace tres años, ¿no?{end_now}"
 
@@ -15519,7 +15519,7 @@ msgctxt "message"
 msgid "03877"
 msgstr "Hace mucho, mi abuelo{line_break}fue un poderoso Adepto...{line_break}Estoy muy orgullosa de él.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDidTheTravelersMeetThe"
 msgid "03878"
 msgstr "¿Los viajeros que{line_break}llegaron hoy fueron a{line_break}ver al alcalde?{end_now}"
 
@@ -15535,7 +15535,7 @@ msgctxt "message"
 msgid "03881"
 msgstr "En la Psinergía, cuanto{line_break}más practicas, más{line_break}aprendes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaShownNewAbility"
 msgid "03882"
 msgstr "Eh, {protagonist_name}, ¿te{line_break}he enseñado ya mi{line_break}nueva habilidad?{end_now}"
 
@@ -15547,7 +15547,7 @@ msgctxt "message"
 msgid "03884"
 msgstr "¿No? Bueno, ¡aquí tienes{line_break}una pequeña muestra!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaBeholdPowerPsynergy"
 msgid "03885"
 msgstr "¡Contempla el poder de{line_break}la Psinergía!{pause_20_skippable} ¡Ahh!{pause_20_skippable}{line_break}Impresiona, ¿verdad?{end_wait}"
 
@@ -15555,7 +15555,7 @@ msgctxt "message"
 msgid "03886"
 msgstr "Si te quedas sin Psinergía,{line_break}sólo tienes que caminar. La{line_break}irás recuperando poco a poco.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRrruffRrrruff"
 msgid "03887"
 msgstr "¡Grrr! ¡Guau! ¡Guau!{end_wait}"
 
@@ -15563,7 +15563,7 @@ msgctxt "message"
 msgid "03888"
 msgstr "¡Guau! ¡Guau!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaPuppiesPlayingOver"
 msgid "03889"
 msgstr "Hay unos cachorritos{line_break}jugando allí.{page_break}Mejor no molestarlos.{end_wait}"
 
@@ -15579,15 +15579,15 @@ msgctxt "message"
 msgid "03892"
 msgstr "La Psinergía debe ser{line_break}usada para la paz...{pause_20_skippable}{line_break}¡Nunca para la maldad!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoodWeaponsDrawOutStrength"
 msgid "03893"
 msgstr "Un buen arma no es sólo la{line_break}afilada. También necesita{line_break}la fuerza del que la usa.{page_break}O eso decía mi padre.{line_break}¿Sabes qué quería decir con{line_break}eso, {protagonist_name}? Yo sí...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoodArmorDrawsOutStrength"
 msgid "03894"
 msgstr "Una buena armadura no es sólo{line_break}la robusta. También necesita{line_break}la fuerza del que la usa.{page_break}...O eso es lo que se{line_break}dice, pero no comprendo{line_break}su significado...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAWiseManFleesWhen"
 msgid "03895"
 msgstr "Un hombre sabio sabe{line_break}abandonar la batalla{line_break}cuando está herido.{end_wait}"
 
@@ -15599,7 +15599,7 @@ msgctxt "message"
 msgid "03897"
 msgstr "Mi hijo es joven todavía,{line_break}así que no lo hago{line_break}trabajar mucho.{page_break}Pero ha salido a su padre{line_break}y estoy segura de que se{line_break}convertirá en un buen hombre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheThreeTravelersSeemOdd"
 msgid "03898"
 msgstr "Puede que esos tres{line_break}viajeros no sean{line_break}ladrones, pero hay{page_break}algo extraño en ellos.{end_wait}"
 
@@ -15611,7 +15611,7 @@ msgctxt "message"
 msgid "03900"
 msgstr "Dos de los tres{line_break}invitados han salido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHeyBoy"
 msgid "03901"
 msgstr "Eh...{pause_20_skippable} Chico...{end_wait}"
 
@@ -15643,7 +15643,7 @@ msgctxt "message"
 msgid "03908"
 msgstr "{actor_name:2} y tú sois mayores{line_break}ya, y no podéis desperdiciar{line_break}el tiempo por ahí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouMakeMeSoMad"
 msgid "03909"
 msgstr "¡{actor_name:2}, a veces me{line_break}pones de los nervios!{end_wait}"
 
@@ -15655,7 +15655,7 @@ msgctxt "message"
 msgid "03911"
 msgstr "Ya verás en casa...{line_break}{pause_20_skippable}¡Espera {pause_20_skippable}a {pause_20_skippable}que {pause_20_skippable}se {pause_20_skippable}enteren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIllGetYouForMy"
 msgid "03912"
 msgstr "¡Voy a chivarme por lo{line_break}de las flores!{pause_20_skippable} ¡Ya{line_break}verás.{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable} esta noche!{end_wait}"
 
@@ -15663,11 +15663,11 @@ msgctxt "message"
 msgid "03913"
 msgstr "Ahora sí que te la has{line_break}cargado, {actor_name:2}...{page_break}¡Tu hermana está hecha una fiera!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIToldGeraldItWas"
 msgid "03914"
 msgstr "Le he dicho al torpe de{line_break}{actor_name:2} que no pasa nada...{page_break}Pero, ¿qué voy a hacer{line_break}con los agujeros?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaItWontRainForSome"
 msgid "03915"
 msgstr "Parece que no lloverá{line_break}en mucho tiempo...{page_break}Así que imagino que lo podrás{line_break}arreglar después, {actor_name:1}.{end_wait}"
 
@@ -15683,7 +15683,7 @@ msgctxt "message"
 msgid "03918"
 msgstr "{actor_name:6} está saliendo{line_break}a su madre, a quien{line_break}perdimos aquel día...{page_break}Sólo quiero que {actor_name:6}{line_break}sea feliz.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaCameToStudyMt"
 msgid "03919"
 msgstr "Así que Kraden vino{line_break}a Tale a estudiar{line_break}el Mt. Aleph, ¿no?{end_now}"
 
@@ -15707,7 +15707,7 @@ msgctxt "message"
 msgid "03924"
 msgstr "Pocas personas fuera{line_break}de Tale conocen el{line_break}poder de la Psinergía.{page_break}Por eso necesitamos{line_break}permiso para abandonar{line_break}la aldea...{page_break}{pause_20_skippable}Para proteger el{line_break}secreto de la Psinergía.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaLetsScareSukuretasVisitors"
 msgid "03925"
 msgstr "Oí que Kraden{line_break}tiene visita.{page_break}{pause_20_skippable}¡Usemos la Psinergía{line_break}para asustarlos!{end_now}"
 
@@ -15719,7 +15719,7 @@ msgctxt "message"
 msgid "03927"
 msgstr "¿Qué? Eres demasiado{line_break}serio, {actor_name:1}...{page_break}{pause_20_skippable}Sólo alguien que posea{line_break}Psinergía se daría{line_break}cuenta...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHearAwfulGrowls"
 msgid "03928"
 msgstr "¿Oyes esos horribles{line_break}aullidos que vienen del{line_break}otro lado de la valla?"
 
@@ -15743,7 +15743,7 @@ msgctxt "message"
 msgid "03933"
 msgstr "Esta cabaña se usa para{line_break}almacenar comida, por lo que{line_break}ya no hay temor, ni siquiera{page_break}en invierno. Si las cosas{line_break}hubieran sido diferentes{line_break}hace tres años...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoYouNeedToGo"
 msgid "03934"
 msgstr "¿Necesitas pasar{line_break}por aquí?{end_now}"
 
@@ -15751,7 +15751,7 @@ msgctxt "message"
 msgid "03935"
 msgstr "Debes de ir a la casa{line_break}de Kraden...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontGoBeyondSukuretasCottage"
 msgid "03936"
 msgstr "No debes ir más allá{line_break}de la casa de Kraden.{page_break}Hay monstruos sueltos{line_break}por todas partes.{end_wait}"
 
@@ -15763,7 +15763,7 @@ msgctxt "message"
 msgid "03938"
 msgstr "Tale se mantiene prístina{line_break}por la pureza del Mt. Aleph.{page_break}Intenta manchar esa pureza{line_break}y corres el riesgo de{line_break}recibir el justo castigo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYourGrandpaIsTheMayor"
 msgid "03939"
 msgstr "Te envidio, {actor_name:2},{line_break}porque tu abuelo es{line_break}el alcalde.{page_break}¿Tú también lo{line_break}envidias, {actor_name:1}?{end_now}"
 
@@ -15779,7 +15779,7 @@ msgctxt "message"
 msgid "03942"
 msgstr "Tale debe mantenerse oculta.{line_break}La Psinergía no debería caer{line_break}nunca en las manos equivocadas.{page_break}Es una de las leyes de nuestra{line_break}aldea,{pause_20_skippable} creada hace ya{line_break}mucho, mucho tiempo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheyKnowLittleOfThe"
 msgid "03943"
 msgstr "Parecen saber poco{line_break}sobre los misterios{line_break}del Templo Sonne.{end_wait}"
 
@@ -15827,7 +15827,7 @@ msgctxt "message"
 msgid "03954"
 msgstr "¡Mmmm!{pause_20_skippable} Me imagino que{line_break}puedo fiarme de tu palabra...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYoureTheOnesSneakingAround"
 msgid "03955"
 msgstr "¡Oye! ¡Vosotros sois los{line_break}que estabais husmeando!{end_wait}"
 
@@ -15855,7 +15855,7 @@ msgctxt "message"
 msgid "03961"
 msgstr "Aun así, Kraden ya nos{line_break}atendió. Os está esperando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSaturosGo"
 msgid "03962"
 msgstr "Id...{end_wait}"
 
@@ -15883,7 +15883,7 @@ msgctxt "message"
 msgid "03968"
 msgstr "Será mejor que os vayáis antes{line_break}de que cambiemos de parecer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWho"
 msgid "03969"
 msgstr "¿Pero quiénes eran?{end_wait}"
 
@@ -15911,7 +15911,7 @@ msgctxt "message"
 msgid "03975"
 msgstr "Ésas son cosas que ni siquiera{line_break}yo,{pause_20_skippable} un sabio de la Alquimia,{line_break}sabía.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaOhRobin"
 msgid "03976"
 msgstr "¡Ah! {protagonist_name}...{end_wait}"
 
@@ -15951,15 +15951,15 @@ msgctxt "message"
 msgid "03985"
 msgstr "¿No es extraño?"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCannotEnterMtAleph"
 msgid "03986"
 msgstr "Sí.{pause_20_skippable} No se puede{line_break}entrar al Mt. Aleph{line_break}sin una buena razón.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaIWaitedYearsFor"
 msgid "03987"
 msgstr "Incluso yo tuve que esperar{line_break}años hasta que fui admitido{line_break}en el templo.{page_break}Todo esto es muy{line_break}extraño.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaJasmineTheyMightBeThieves"
 msgid "03988"
 msgstr "Y, si han entrado en{line_break}secreto, puede que{line_break}sean{pause_20_skippable} ¡ladrones!{end_wait}"
 
@@ -16003,15 +16003,15 @@ msgctxt "message"
 msgid "03998"
 msgstr "¿Sólo porque escalar{line_break}el Mt. Aleph está{line_break}prohibido?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaWeOnlyCheckThe"
 msgid "03999"
 msgstr "Sólo vamos a comprobar{line_break}si han estado en la{line_break}montaña.{page_break}{pause_20_skippable}¡Evidentemente, esto{line_break}debe ser aceptable!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaWeOnlyCheckMt"
 msgid "04000"
 msgstr "Cierto. {pause_20_skippable}Sólo vamos a{line_break}comprobar si estuvieron{line_break}en el Mt. Aleph.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaFineIfTheyDontSee"
 msgid "04001"
 msgstr "No pasará nada mientras{line_break}no nos vean, ¿cierto?{end_now}"
 
@@ -16023,7 +16023,7 @@ msgctxt "message"
 msgid "04003"
 msgstr "¡Claro! ¡Dices que no{line_break}pero yo sé que quieres!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaJasmineOurSecret"
 msgid "04004"
 msgstr "Este será nuestro pequeño{pause_20_skippable}{line_break}secreto, ¿vale?{end_now}"
 
@@ -16039,7 +16039,7 @@ msgctxt "message"
 msgid "04007"
 msgstr "{protagonist_name}, te vamos a nombrar{line_break}el líder, ¿te parece?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGeraldYouCanHandleThe"
 msgid "04008"
 msgstr "Hay lugares muy peligrosos{line_break}entre el Mt. Aleph y el{line_break}Templo Sonne, pero seguro{page_break}que puedes con ello,{line_break}¿verdad, {protagonist_name}?{end_wait}"
 
@@ -16051,7 +16051,7 @@ msgctxt "message"
 msgid "04010"
 msgstr "No tienes que ser tan{line_break}directa...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGeraldIllTakeOverIf"
 msgid "04011"
 msgstr "Hay lugares muy peligrosos{line_break}entre el Mt. Aleph y el{line_break}Templo Sonne, así que{page_break}yo tomaré las riendas{line_break}si te pones nervioso.{end_wait}"
 
@@ -16063,7 +16063,7 @@ msgctxt "message"
 msgid "04013"
 msgstr "No seas tan mala{line_break}conmigo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaOurBestBet"
 msgid "04014"
 msgstr "Es nuestra mejor opción.{end_wait}"
 
@@ -16071,7 +16071,7 @@ msgctxt "message"
 msgid "04015"
 msgstr "¡Muy bien!{pause_20_skippable} ¡En marcha!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNotSneakingUpMtAleph"
 msgid "04016"
 msgstr "No estarás pensando en{line_break}husmear por el Mt. Aleph,{line_break}¿no?{end_now}"
 
@@ -16091,7 +16091,7 @@ msgctxt "message"
 msgid "04020"
 msgstr "A partir de aquí, el camino{line_break}está plagado de monstruos,{line_break}así que vayamos con cuidado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaFirstTimeAtSol"
 msgid "04021"
 msgstr "Ésta es la entrada al Templo{line_break}Sonne. Es la primera vez{line_break}que venís, ¿no?{end_now}"
 
@@ -16103,7 +16103,7 @@ msgctxt "message"
 msgid "04023"
 msgstr "Lo dudo... Pocos han tenido{line_break}la oportunidad de ver este{line_break}templo de primera mano.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWrongSukureta"
 msgid "04024"
 msgstr "¿Qué ocurre, Kraden?{end_wait}"
 
@@ -16143,11 +16143,11 @@ msgctxt "message"
 msgid "04033"
 msgstr "¡Creo que sabe lo que se{line_break}hace! ¿Debemos ayudarlo,{line_break}{actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruDangerousSplitStay"
 msgid "04034"
 msgstr "Pero es muy peligroso que{line_break}nos separemos. Debemos{line_break}permanecer juntos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruCantSeriouslyWant"
 msgid "04035"
 msgstr "No querrás echarte atrás{line_break}a estas alturas...{end_wait}"
 
@@ -16155,7 +16155,7 @@ msgctxt "message"
 msgid "04036"
 msgstr "Ayudemos a Kraden.{line_break}Debemos permanecer{line_break}unidos después de todo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruFound"
 msgid "04037"
 msgstr "¡Esto es! ¡Lo encontramos!{end_wait}"
 
@@ -16207,15 +16207,15 @@ msgctxt "message"
 msgid "04049"
 msgstr "¿Qué opináis? ¿Podemos{line_break}avanzar un poco más?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruThank"
 msgid "04050"
 msgstr "¡Gracias!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruGoBackVillage"
 msgid "04051"
 msgstr "Entonces podéis{line_break}volveros a la{line_break}aldea sin mí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruPutWayDont"
 msgid "04052"
 msgstr "Si lo pintas de esa manera,{line_break}no nos queda otra elección.{end_wait}"
 
@@ -16231,7 +16231,7 @@ msgctxt "message"
 msgid "04055"
 msgstr "¡Vale! Está decidido.{line_break}¡Sigamos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWhRoom"
 msgid "04056"
 msgstr "¿Para...{pause_20_skippable} para qué es esta sala?{end_wait}"
 
@@ -16247,19 +16247,19 @@ msgctxt "message"
 msgid "04059"
 msgstr "Estas salas deben de estar{line_break}conectadas de alguna{line_break}forma, ¿no crees?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruLunaSolRooms"
 msgid "04060"
 msgstr "Mond y Sonne.{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{line_break}Estas salas deben{line_break}encerrar algo.{page_break}¿Qué podrá ser?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruRoomLunaOne"
 msgid "04061"
 msgstr "Pero tener una sala para Mond{line_break}y otra para Sonne... No es{line_break}una simple coincidencia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMeanLookFarther"
 msgid "04062"
 msgstr "¿Qué significará todo esto?{line_break}{actor_name:1}, ¿puedes echar{line_break}un vistazo por ese pasadizo?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaLetMeKnowWhat"
 msgid "04063"
 msgstr "Avísame si encuentras{line_break}algo.{end_wait}"
 
@@ -16267,15 +16267,15 @@ msgctxt "message"
 msgid "04064"
 msgstr "Pues quédate por aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaJustWaitOverThere"
 msgid "04065"
 msgstr "Quédate por aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWayLeadsOutSanctum"
 msgid "04066"
 msgstr "Este camino lleva a la{line_break}salida del templo. Debe{line_break}de estar en estas salas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWhatsHappening"
 msgid "04067"
 msgstr "{text_effect:4}¿Qué...{pause_20_skippable} qué...{line_break}qué está ocurriendo?{end_wait}"
 
@@ -16287,7 +16287,7 @@ msgctxt "message"
 msgid "04069"
 msgstr "¡{actor_name:1}! ¡¡Para!! ¡Estás{line_break}a punto de cometer un{line_break}grave error!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWait"
 msgid "04070"
 msgstr "¡Espera, {actor_name:1}!{end_wait}"
 
@@ -16335,15 +16335,15 @@ msgctxt "message"
 msgid "04081"
 msgstr "¿Queréis que os cuente más?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruHonestlyDoubtUnderstand"
 msgid "04082"
 msgstr "Mmm... Bueno, creo que no{line_break}podríais entender mucho si{line_break}os lo explicara ahora.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruHmphWellTold"
 msgid "04083"
 msgstr "Mmm...{pause_20_skippable} Bueno, aunque os{line_break}lo contara no podríais{line_break}comprenderlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruTryFindSolution"
 msgid "04084"
 msgstr "Tenemos que encontrar{line_break}la solución al misterio.{end_wait}"
 
@@ -16367,7 +16367,7 @@ msgctxt "message"
 msgid "04089"
 msgstr "{actor_name:1}{pause_20_skippable}, veamos si podemos{line_break}resolverlo por nosotros{line_break}mismos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWhatsHappeningAtTheTrap"
 msgid "04090"
 msgstr "{text_effect:4}¿Qué...{pause_20_skippable} qué...{line_break}qué está pasando?{end_wait}"
 
@@ -16375,7 +16375,7 @@ msgctxt "message"
 msgid "04091"
 msgstr "¡{actor_name:1}{pause_20_skippable} debe de haber{line_break}encontrado algo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaYouFoundIt"
 msgid "04092"
 msgstr "¡Lo hiciste, {actor_name:1}!{end_wait}"
 
@@ -16419,7 +16419,7 @@ msgctxt "message"
 msgid "04102"
 msgstr "Iré a observar a la sala{line_break}Mond, donde estaré seguro.{line_break}¡Ocúpate tú del resto!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruYouFoundIt"
 msgid "04103"
 msgstr "Lo has encontrado, {actor_name:1}.{end_wait}"
 
@@ -16427,7 +16427,7 @@ msgctxt "message"
 msgid "04104"
 msgstr "Continúa hasta que la{line_break}luz cubra los cuadrantes{line_break}restantes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruThePictureOfLunaChanged"
 msgid "04105"
 msgstr "¡Mira, {actor_name:1}!{pause_20_skippable} ¡La imagen de{line_break}Mond cambió a la de Sonne!{end_wait}"
 
@@ -16443,7 +16443,7 @@ msgctxt "message"
 msgid "04108"
 msgstr "En algún lugar, algo más{line_break}ha debido de cambiar.{line_break}Debemos encontrarlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruLookSymbolFloor"
 msgid "04109"
 msgstr "¡Mira!{pause_20_skippable} ¡El símbolo del{line_break}suelo! ¡Ha pasado de ser{line_break}el de Sonne al de Mond!{end_wait}"
 
@@ -16455,7 +16455,7 @@ msgctxt "message"
 msgid "04111"
 msgstr "Si vamos en esa dirección{line_break}saldremos del Templo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruHa"
 msgid "04112"
 msgstr "¡Ajá! Tiene que ser esto.{end_wait}"
 
@@ -16467,11 +16467,11 @@ msgctxt "message"
 msgid "04114"
 msgstr "Espérame, {actor_name:1}...{line_break}¡Allá voy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMinotaurReliefOneEye"
 msgid "04115"
 msgstr "Es un relieve de{line_break}un minotauro.{page_break}El ojo derecho está{line_break}brillando, pero hay un{line_break}hueco donde debería{page_break}estar el ojo izquierdo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSetSmallGem"
 msgid "04116"
 msgstr "{protagonist_name} colocó la joya{line_break}pequeña en el hueco.{end_wait}"
 
@@ -16479,11 +16479,11 @@ msgctxt "message"
 msgid "04117"
 msgstr "Se oyó el ruido de una{line_break}roca deslizándose.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMinotaurReliefBothEyes"
 msgid "04118"
 msgstr "Es el relieve de un minotauro,{line_break}con dos ojos brillantes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWieldersPsynergyCalledAdeptsAdepts"
 msgid "04119"
 msgstr "Los poseedores de la{line_break}Psinergía son los Adeptos.{page_break}Los Adeptos son los{line_break}mensajeros del bien...{line_break}Nunca lo olvides.{end_wait}"
 
@@ -16495,7 +16495,7 @@ msgctxt "message"
 msgid "04121"
 msgstr "La Psinergía es un poder que{line_break}sólo debe ser usado para el{line_break}bien... ¡Nunca para el mal!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSomethingClicked"
 msgid "04122"
 msgstr "¡Algo hizo clic!{end_wait}"
 
@@ -16503,7 +16503,7 @@ msgctxt "message"
 msgid "04123"
 msgstr "Parece que hemos encontrado{line_break}el pasadizo oculto.{page_break}Todo va a ser más peligroso{line_break}a partir de ahora, así{line_break}que mirad dónde pisáis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMoreStatuesOutOfReach"
 msgid "04124"
 msgstr "Más estatuas...{pause_20_skippable} Mmm...{pause_20_skippable}{line_break}No parece que las podamos{line_break}alcanzar desde aquí.{end_wait}"
 
@@ -17395,7 +17395,7 @@ msgctxt "message"
 msgid "04346"
 msgstr "Ah.{pause_20_skippable} Ya veo.{line_break}Os ayudaré...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruFloatingEyeThing"
 msgid "04347"
 msgstr "¿Nos salvó{pause_20_skippable} la cosa{line_break}del ojo?{end_now}"
 
@@ -17419,11 +17419,11 @@ msgctxt "message"
 msgid "04352"
 msgstr "Estoy totalmente solo{line_break}en este peligroso lugar.{page_break}¿Cómo puede tratarme{line_break}así el Sumo Curandero?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCheckedThePsynergyStone"
 msgid "04353"
 msgstr "{protagonist_name} tocó la{line_break}Piedra Psinérgica.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSChestValuables"
 msgid "04354"
 msgstr "Es el cofre de tesoros{line_break}de {actor_name:2}.{end_wait}"
 
@@ -17431,7 +17431,7 @@ msgctxt "message"
 msgid "04355"
 msgstr "Es una roca que ni{line_break}siquiera el poder de{line_break}{protagonist_name} puede mover.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMtAlephWasInactive"
 msgid "04356"
 msgstr "Creí que el Mt. Aleph{line_break}estaba{pause_20_skippable} inactivo...{end_wait}"
 
@@ -17519,7 +17519,7 @@ msgctxt "message"
 msgid "04377"
 msgstr "Entrad en el templo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWeHadIdeaTrueSanctum"
 msgid "04378"
 msgstr "No teníamos ni idea...{line_break}El templo real...{end_wait}"
 
@@ -17687,7 +17687,7 @@ msgctxt "message"
 msgid "04419"
 msgstr "No sé lo que hacer.{line_break}{actor_name:1}, decide tú.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenRobinWillAcceptResponsibilityFor"
 msgid "04420"
 msgstr "{actor_name:1}, ¿aceptas la{line_break}responsabilidad del{line_break}destino del mundo?{end_now}"
 
@@ -17695,7 +17695,7 @@ msgctxt "message"
 msgid "04421"
 msgstr "No te puedo culpar...{line_break}Yo no podría hacerlo si{line_break}estuviera en tu lugar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenAreYouSure"
 msgid "04422"
 msgstr "¿Estás seguro?{end_now}"
 
@@ -17727,15 +17727,15 @@ msgctxt "message"
 msgid "04429"
 msgstr "Está claro que el Sumo{line_break}Curandero quiere que{line_break}aceptes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenOnceStepOutsideVillageCannot"
 msgid "04430"
 msgstr "Una vez que hayas salido{line_break}de la aldea, no podrás{line_break}cambiar tu decisión.{page_break}Piénsatelo antes de{line_break}abandonar el Templo,{line_break}{actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWorldBeganDrifting"
 msgid "04431"
 msgstr "Y así, el mundo se dirigió{line_break}a su destrucción predestinada...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenGreatHealer"
 msgid "04432"
 msgstr "Desde el Sumo Curandero{end_wait}"
 
@@ -17747,7 +17747,7 @@ msgctxt "message"
 msgid "04434"
 msgstr "Reiniciar el juego{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenAcceptRobinCantMean"
 msgid "04435"
 msgstr "¿Aceptas? {actor_name:1}...{line_break}{pause_20_skippable}Estarás de broma...{end_wait}"
 
@@ -17875,7 +17875,7 @@ msgctxt "message"
 msgid "04466"
 msgstr "El aire está brillando{line_break}a causa de la erupción{line_break}del Monte Aleph.{page_break}¿No crees que lo que{line_break}cae es polvo de{line_break}Piedras Psinérgicas?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouSawTheWiseOne"
 msgid "04467"
 msgstr "¿Viste a El Sabio?{line_break}¿El mismo Sabio del que{line_break}hablan los curanderos?{end_now}"
 
@@ -17899,7 +17899,7 @@ msgctxt "message"
 msgid "04472"
 msgstr "Si andas corto de Psinergía,{line_break}toca una Piedra Psinérgica{line_break}para restablecerla.{page_break}Desafortunadamente, la{line_break}erupción destruyó todas{line_break}las piedras en un instante.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaArentWorriedCrossing"
 msgid "04473"
 msgstr "¿No estáis preocupados{line_break}por recorreros el mundo{line_break}vosotros dos solos?{end_now}"
 
@@ -17923,7 +17923,7 @@ msgctxt "message"
 msgid "04478"
 msgstr "Restablece tu Psinergía{line_break}antes de entrar en una{line_break}mazmorra.{page_break}Los guerreros inteligentes{line_break}saben que es necesario.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenMyControlOverPsynergyHas"
 msgid "04479"
 msgstr "Mi control sobre la{line_break}Psinergía creció desde{line_break}ayer por la tarde...{page_break}Debe de ser porque{line_break}conocí a El Sabio.{end_wait}"
 
@@ -17931,7 +17931,7 @@ msgctxt "message"
 msgid "04480"
 msgstr "El poder del Mt. Aleph{line_break}proviene de las Piedras{line_break}Psinérgicas.{page_break}Si la erupción esparce{line_break}las Piedras Psinérgicas{line_break}por toda la tierra...{page_break}quizás entonces{line_break}nuevos Adeptos...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenDoFeelAnyChangeIn"
 msgid "04481"
 msgstr "¿Has notado algún cambio{line_break}en tu Psinergía?"
 
@@ -17943,15 +17943,15 @@ msgctxt "message"
 msgid "04483"
 msgstr "El Sumo Curandero dijo{line_break}que mi Psinergía creció{line_break}cuando conocí a El Sabio.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaValeFeelsEmpty"
 msgid "04484"
 msgstr "Tale ha estado muy{line_break}tranquila y silenciosa{line_break}desde que os fuisteis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaImNotSadJustGo"
 msgid "04485"
 msgstr "¡Sniff! No...{pause_20_skippable} no estoy{line_break}triste en absoluto...{line_break}Idos. {pause_20_skippable}¡Vamos, marchad!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThisIsMyFarewellGift"
 msgid "04486"
 msgstr "Éste es mi regalo de{line_break}despedida.{end_wait}"
 
@@ -17959,7 +17959,7 @@ msgctxt "message"
 msgid "04487"
 msgstr "{actor_name:1} tomó{line_break}una Hierba.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouMustSaveJasmine"
 msgid "04488"
 msgstr "¡Tienes que salvar a{line_break}{actor_name:6},{pause_20_skippable} {actor_name:1}!{end_wait}"
 
@@ -17971,11 +17971,11 @@ msgctxt "message"
 msgid "04490"
 msgstr "Quería que {actor_name:6}{line_break}fuese mi nuera...{pause_20_skippable}{page_break}Pero ya no podrá ser.{line_break}Es terrible...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheVisitorsCausedTheEruption"
 msgid "04491"
 msgstr "Esos viajeros provocaron{line_break}la erupción y secuestraron{line_break}a {actor_name:6}.{page_break}Sabía que había algo{line_break}extraño en ellos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheMaskedManWasGarcia"
 msgid "04492"
 msgstr "El hombre enmascarado...{line_break}Era {actor_name:5}, ¿no?{end_now}"
 
@@ -18023,7 +18023,7 @@ msgctxt "message"
 msgid "04503"
 msgstr "Por favor, cuida de{line_break}mi hermano{pause_20_skippable}, {actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCantBeRobin"
 msgid "04504"
 msgstr "¿Quién eres tú?{pause_20_skippable}{pause_20_skippable} No puede{line_break}ser... No serás {actor_name:1}, ¿no?{end_now}"
 
@@ -18055,7 +18055,7 @@ msgctxt "message"
 msgid "04511"
 msgstr "Fue porque Kraden{line_break}estudiaba la Alquimia...{page_break}Por eso entró en erupción{line_break}la montaña, ¿no?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheCulpritsHadStrangePowers"
 msgid "04512"
 msgstr "Se dice que la gente que{line_break}causó todo tenían extraños{line_break}poderes...{pause_20_skippable}{page_break}¿Es eso cierto?{end_now}"
 
@@ -18079,7 +18079,7 @@ msgctxt "message"
 msgid "04517"
 msgstr "No tenía ni idea de que{line_break}el Templo Sonne albergara{line_break}tal secreto.{page_break}Si lo hubiéramos sabido,{line_break}habríamos podido parar{line_break}todo esto.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIllClimbTheFenceSomeday"
 msgid "04518"
 msgstr "Cuando tenga tu edad,{line_break}{actor_name:1}, saltaré{line_break}la valla...{page_break}¡y viajaré por todas esas{line_break}tierras desconocidas!{end_wait}"
 
@@ -18091,7 +18091,7 @@ msgctxt "message"
 msgid "04520"
 msgstr "No culpo a {actor_name:5}.{page_break}Ojalá pudiéramos haberle{line_break}salvado aquel día...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheStoneFellOnThe"
 msgid "04521"
 msgstr "Mira, {actor_name:1}.{pause_20_skippable} Esa{line_break}gigantesca Piedra Psinérgica{line_break}cayó encima del tejado.{end_wait}"
 
@@ -18099,7 +18099,7 @@ msgctxt "message"
 msgid "04522"
 msgstr "Me asusto sólo de pensar{line_break}que algo tan grande{line_break}pueda caer del cielo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaHasntComeBack"
 msgid "04523"
 msgstr "Me imagino que Kraden no{line_break}habrá vuelto todavía.{end_wait}"
 
@@ -18111,7 +18111,7 @@ msgctxt "message"
 msgid "04525"
 msgstr "Desde que comenzaron los{line_break}temblores en el Mt. Aleph,{line_break}ha sido imposible escalarlo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheGroundStillShakes"
 msgid "04526"
 msgstr "El suelo todavía tiembla a{line_break}veces, pero todos dicen{line_break}que el peligro ha pasado.{end_wait}"
 
@@ -18295,7 +18295,7 @@ msgctxt "message"
 msgid "04571"
 msgstr "La gente de Tale nunca{line_break}volverá a confiar en{line_break}los viajeros.{page_break}Claro, que yo nunca me{line_break}fié mucho de ellos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWhysEveryoneHanging"
 msgid "04572"
 msgstr "¿Por qué está todo el{line_break}mundo en la entrada{line_break}del pueblo?{end_wait}"
 
@@ -18399,11 +18399,11 @@ msgctxt "message"
 msgid "04597"
 msgstr "Así que,{pause_20_skippable} ¡démosles{line_break}la última despedida!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaFarewell"
 msgid "04598"
 msgstr "{text_effect:2}¡Buen viaje!{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapWeCantStayAnotherMinute"
 msgid "04599"
 msgstr "No podemos permanecer ni{line_break}un minuto más en un{line_break}lugar tan peligroso.{page_break}¡Nos volvemos a Kalay{line_break}de inmediato!{end_wait}"
 
@@ -18863,11 +18863,11 @@ msgctxt "message"
 msgid "04713"
 msgstr "Ahh... Esperamos una{line_break}bajada de las ventas{line_break}después de la erupción.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWeWillHelpAnytimeAs"
 msgid "04714"
 msgstr "Te ayudaremos cuando sea,{line_break}siempre que tengas{line_break}un corazón puro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenHealerMustWorriedAboutNever"
 msgid "04715"
 msgstr "El curandero debe de{line_break}estar preocupado...{page_break}Bueno, no importa.{line_break}No te interesa.{end_wait}"
 
@@ -18875,7 +18875,7 @@ msgctxt "message"
 msgid "04716"
 msgstr "Si así alivias tus{line_break}ansiedades, entonces,{line_break}adelante...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWonderIfEverSeeOur"
 msgid "04717"
 msgstr "Me pregunto si alguna vez{line_break}veremos devuelta la estatua{line_break}de oro que robaron...{end_wait}"
 
@@ -19815,11 +19815,11 @@ msgctxt "message"
 msgid "04951"
 msgstr "¿Por qué están tan{line_break}ansiosos por irse?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWasHandFateReturnedGold"
 msgid "04952"
 msgstr "Fue el destino el que{line_break}devolvió la estatua de{line_break}oro al Templo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWhenStrayFromYourWorldly"
 msgid "04953"
 msgstr "Cuando te extravíes de tu{line_break}camino por el mundo, el{line_break}destino te guiará de nuevo.{end_wait}"
 
@@ -19827,7 +19827,7 @@ msgctxt "message"
 msgid "04954"
 msgstr "Adelante... si es que{line_break}eso alivia la ansiedad{line_break}en tu mente...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenChildHasAwakenedOurTeachings"
 msgid "04955"
 msgstr "¡Este chico ha despertado{line_break}a nuestras enseñanzas!{line_break}Guiadle bien.{end_wait}"
 
@@ -20399,7 +20399,7 @@ msgctxt "message"
 msgid "05097"
 msgstr "Se dice que un hada{line_break}llamada Tret vive{line_break}dentro del árbol sagrado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenAmStartingFeelOnlyBeginning"
 msgid "05098"
 msgstr "Estoy empezando a{line_break}pensar que esto es{line_break}sólo el comienzo.{end_wait}"
 
@@ -23551,7 +23551,7 @@ msgctxt "message"
 msgid "05885"
 msgstr "Parece que están ocurriendo{line_break}cosas horrorosas por todo{line_break}el mundo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenCurseMayOverButWe"
 msgid "05886"
 msgstr "Puede que la maldición se{line_break}haya roto, pero no debemos{line_break}bajar la guardia.{page_break}Todavía no es muy seguro{line_break}salir de la aldea.{end_wait}"
 
@@ -24603,7 +24603,7 @@ msgctxt "message"
 msgid "06148"
 msgstr "Hay menos viajeros y, en{line_break}consecuencia, menos clientes.{page_break}¿Dónde están todos{line_break}los viajeros?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenCameXianFromVeryDistant"
 msgid "06149"
 msgstr "Vine a Xian desde muy{line_break}lejos para fomentar{line_break}la buena voluntad.{end_wait}"
 
@@ -25527,7 +25527,7 @@ msgctxt "message"
 msgid "06379"
 msgstr "Odio estar todo el día{line_break}sentada aquí. ¡Quiero{line_break}irme a casa!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWasAfterEerieNightWhen"
 msgid "06380"
 msgstr "Fue después de la noche{line_break}espeluznante en la que{line_break}cayeron gemas del cielo.{page_break}¡Fue entonces cuando{line_break}las bestias escupe-agua{line_break}aparecieron en la mina!{end_wait}"
 
@@ -25811,7 +25811,7 @@ msgctxt "message"
 msgid "06450"
 msgstr "Altin tardará algún{line_break}tiempo en recuperarse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenSavedAltinFromMonstersClearly"
 msgid "06451"
 msgstr "Habéis salvado a Altin{line_break}de los monstruos.{page_break}Se ve claramente que{line_break}es obra de la Fortuna.{end_wait}"
 
@@ -28443,11 +28443,11 @@ msgctxt "message"
 msgid "07108"
 msgstr "Si algún extranjero causa{line_break}algún problema en la aldea,{page_break}Dodonpa nos culpará a{line_break}nosotros.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCameBackHome"
 msgid "07109"
 msgstr "¡Vaya,{pause_20_skippable} pero si es{line_break}{actor_name:1}! Regresaste a{line_break}casa, ¿eh?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThisIsVale"
 msgid "07110"
 msgstr "¡Esto es Tale!{pause_20_skippable}{line_break}Espera, todavía te{line_break}acuerdas, ¿no, {actor_name:1}?{end_wait}"
 
@@ -28463,7 +28463,7 @@ msgctxt "message"
 msgid "07113"
 msgstr "El agua del río bajó muy{line_break}caliente después de que{line_break}entrara en erupción el{page_break}Mt. Aleph. Todo el mundo se{line_break}preocupó pensando que había{line_break}manantiales calientes en la{page_break}montaña, pero después el{line_break}río volvió a enfriarse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAnythingInterestingOnYourTrip"
 msgid "07114"
 msgstr "¿Has visto algo interesante{line_break}en tu viaje, {actor_name:1}?{end_now}"
 
@@ -28543,11 +28543,11 @@ msgctxt "message"
 msgid "07133"
 msgstr "La fisura en la ladera{line_break}noroeste del Mt. Aleph{line_break}se está abriendo.{page_break}¡A este ritmo, todo el{line_break}contienente se partirá{line_break}en dos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenPathSolSanctumStillClosed"
 msgid "07134"
 msgstr "El camino al Templo{line_break}Sonne sigue cerrado.{page_break}Tendrás que esperar{line_break}hasta que la actividad{line_break}volcánica decrezca.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenRobinYourNewFriendsAdepts"
 msgid "07135"
 msgstr "{actor_name:1}, ¿tus amigos{line_break}no serán Adeptos por{line_break}casualidad?{end_now}"
 
@@ -28583,7 +28583,7 @@ msgctxt "message"
 msgid "07143"
 msgstr "¡No es justo! También quiero{line_break}tener una Psinergía fuerte,{line_break}pero odio trabajarla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCameBack"
 msgid "07144"
 msgstr "Vaya, {pause_20_skippable}eres tú, {actor_name:1}.{line_break}¿Has regresado?{end_now}"
 
@@ -28595,11 +28595,11 @@ msgctxt "message"
 msgid "07146"
 msgstr "Vaya, ¿no has vuelto para{line_break}quedarte? Qué pena.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheRumorWasTrue"
 msgid "07147"
 msgstr "Oí que habías vuelto.{line_break}Ya veo que el rumor{line_break}era cierto.{page_break}¿Vas a contarnos las{line_break}historias de tu viaje?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWhenDidYouComeBack"
 msgid "07148"
 msgstr "¡{actor_name:1}! ¿Cuándo has{line_break}vuelto? Después de ver{line_break}cómo te fuiste,{page_break}pensé que nunca te{line_break}volvería a ver.{page_break}Estoy muy feliz de{line_break}verte de nuevo.{end_wait}"
 
@@ -28635,15 +28635,15 @@ msgctxt "message"
 msgid "07156"
 msgstr "¿Qué ha pasado con {actor_name:6}?{line_break}¿Todavía no la han encontrado?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouveGrownSoMuch"
 msgid "07157"
 msgstr "¡Pero si es {actor_name:1}!{page_break}¡Has crecido tanto{line_break}que casi no te{line_break}reconozco!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCameBack2"
 msgid "07158"
 msgstr "Ah, eres tú, {actor_name:1}.{line_break}¿Has vuelto?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHomeJustToStay"
 msgid "07159"
 msgstr "¿Has recorrido tanto camino de{line_break}vuelta a casa para quedarte?{line_break}¿Estás seguro?{end_now}"
 
@@ -28663,11 +28663,11 @@ msgctxt "message"
 msgid "07163"
 msgstr "¿No te alegras de{line_break}ver que la aldea{line_break}no ha cambiado?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoraWasStruckWithIllness"
 msgid "07164"
 msgstr "¿Sabe {actor_name:1} que{line_break}Dora está enferma?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoraWouldntLetHimStay"
 msgid "07165"
 msgstr "Me pregunto si {actor_name:1}{line_break}vino aquí porque Dora no{line_break}le dejaría quedarse...{page_break}Excepto el alcalde,{line_break}nadie más sabe sobre la{line_break}enfermedad de Dora...{end_wait}"
 
@@ -28679,7 +28679,7 @@ msgctxt "message"
 msgid "07167"
 msgstr "Tale nunca cambiará,{line_break}así que puedes volver{line_break}a casa cuando quieras.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHey2"
 msgid "07168"
 msgstr "Eh...{end_wait}"
 
@@ -28763,7 +28763,7 @@ msgctxt "message"
 msgid "07188"
 msgstr "¿Todavía no? Bueno, me alegro{line_break}de que estés en casa, aunque{line_break}sea para poco tiempo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYoureLeavingAgainSoon"
 msgid "07189"
 msgstr "Pronto te irás otra{line_break}vez... ¿no?{end_wait}"
 
@@ -28803,7 +28803,7 @@ msgctxt "message"
 msgid "07198"
 msgstr "Ese {actor_name:3} parece ser{line_break}un chico inteligente...{page_break}Ojalá te parecieras más{line_break}a {actor_name:3}, {actor_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDidYouHearAboutDora"
 msgid "07199"
 msgstr "¿Nos has oído cuando{line_break}hablábamos de Dora?{end_now}"
 
@@ -28815,7 +28815,7 @@ msgctxt "message"
 msgid "07201"
 msgstr "¿No lo oíste? Pero{line_break}pareces preocupado...{page_break}Cuidaremos de tu madre,{line_break}así que no te preocupes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHopeDidntGet"
 msgid "07202"
 msgstr "Espero que no hayas{line_break}enfermado durante{line_break}tu viaje...{page_break}{actor_name:2} siempre come{line_break}demasiado... Siempre me{line_break}tiene preocupada.{end_wait}"
 
@@ -28835,7 +28835,7 @@ msgctxt "message"
 msgid "07206"
 msgstr "{actor_name:2} parece haber{line_break}madurado un poco en{line_break}este difícil viaje.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAh"
 msgid "07207"
 msgstr "¡Ah!{end_wait}"
 
@@ -28891,7 +28891,7 @@ msgctxt "message"
 msgid "07220"
 msgstr "No te esfuerces demasiado...{line_break}{pause_20_skippable}cuando tengas que partir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHowHaveYouBeen"
 msgid "07221"
 msgstr "Eh, ¿cómo has estado?{end_wait}"
 
@@ -28943,7 +28943,7 @@ msgctxt "message"
 msgid "07233"
 msgstr "¡Eh! ¡Así no{line_break}ayudas nada!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaEverProtectFamily"
 msgid "07234"
 msgstr "HAGAS{pause_20_skippable} LO{pause_20_skippable} QUE{pause_20_skippable} HAGAS{pause_20_skippable},{line_break}debes proteger a la familia{line_break}mientras no esté.{page_break}¿Vale? ¡Cuento contigo!{end_wait}"
 
@@ -28967,7 +28967,7 @@ msgctxt "message"
 msgid "07239"
 msgstr "Iría contigo si fuera{line_break}un poco mayor... No{line_break}es justo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCoughCoughWho"
 msgid "07240"
 msgstr "¡{text_effect:4}Coff, coff{pause_20_skippable}{pause_20_skippable}! {reset_text_style}¿Quién es?{pause_20_skippable}{line_break}¿Eres el posadero?{pause_20_skippable}{pause_20_skippable}{line_break}¿Es la hora de comer?{end_wait}"
 
@@ -29003,7 +29003,7 @@ msgctxt "message"
 msgid "07248"
 msgstr "¿Estabas más preocupado{line_break}por mí que por mantener{line_break}tu promesa?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWhoToldIll"
 msgid "07249"
 msgstr "¿Quién te dijo que estaba{line_break}enferma? ¿El alcalde? ¿O...{line_break}{text_effect:4}coff{reset_text_style}, fue el posadero?{end_now}"
 
@@ -29035,7 +29035,7 @@ msgctxt "message"
 msgid "07256"
 msgstr "No te preocupes por mí. Hazlo{line_break}lo mejor que sepas para{line_break}terminar tu aventura.{pause_20_skippable}{pause_20_skippable} ¿Vale?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontWorryBest"
 msgid "07257"
 msgstr "No te preocupes por mí.{line_break}Sólo preocúpate por tu{line_break}misión.{page_break}{text_effect:4}Coff, coff...{reset_text_style}{end_wait}"
 
@@ -29043,7 +29043,7 @@ msgctxt "message"
 msgid "07258"
 msgstr "Siento haber sido{line_break}dura, {actor_name:1}...{page_break}Me ha alegrado mucho verte,{line_break}y estaré esperándote el día{line_break}que vuelvas para quedarte...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaUnnOhhKyle"
 msgid "07259"
 msgstr "{text_effect:4}Umm...{pause_20_skippable} Oh...{pause_20_skippable}{pause_20_skippable} Frank...{pause_20_skippable}{line_break}No te vayas...{end_wait}"
 
@@ -29123,7 +29123,7 @@ msgctxt "message"
 msgid "07278"
 msgstr "No puedo dejar de pensar{line_break}qué habrá tras esta valla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIsJasmineBackYet"
 msgid "07279"
 msgstr "Vaya, {pause_20_skippable}eres {actor_name:1}, ¿no?{line_break}¿Ha vuelto {pause_20_skippable}{actor_name:6}{pause_20_skippable} ya?{page_break}Prométemelo, {actor_name:1}...{line_break}{pause_20_skippable}Prométeme que traerás a{line_break}{actor_name:6} contigo la próxima vez.{end_wait}"
 
@@ -29135,7 +29135,7 @@ msgctxt "message"
 msgid "07281"
 msgstr "¿No has traído a{line_break}{actor_name:6} contigo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIUsedToPlayHere"
 msgid "07282"
 msgstr "Todavía recuerdo cuando{line_break}{actor_name:5} y yo solíamos{line_break}jugar aquí... Snif.{end_wait}"
 
@@ -29151,7 +29151,7 @@ msgctxt "message"
 msgid "07285"
 msgstr "Así que había peces{line_break}monstruosos en este{line_break}río...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThePsynergyStoneIsGone"
 msgid "07286"
 msgstr "¡Eh!{pause_20_skippable} ¿Adónde ha ido{line_break}esa Piedra Psinérgica?{line_break}¡Ha desaparecido!{end_wait}"
 
@@ -29159,7 +29159,7 @@ msgctxt "message"
 msgid "07287"
 msgstr "Todo lo que queda es un{line_break}gran hueco en mi tejado.{page_break}Pero el recuerdo de la{line_break}erupción no se irá, ni{line_break}siquiera cuando lo arregle.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMemoriesOfThisCottage"
 msgid "07288"
 msgstr "Debes de tener muchos{line_break}recuerdos de esta casa,{line_break}¿no?{end_now}"
 
@@ -29175,7 +29175,7 @@ msgctxt "message"
 msgid "07291"
 msgstr "¡La erupción del Mt. Aleph{line_break}fue tan potente que hizo{line_break}que el continente se quebrara!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIFeltAnotherOne"
 msgid "07292"
 msgstr "¡Aghh!{pause_20_skippable} ¡He sentido otro!{end_wait}"
 
@@ -29187,7 +29187,7 @@ msgctxt "message"
 msgid "07294"
 msgstr "Dicen que el peligro ha{line_break}pasado, aunque los{line_break}temblores continúen...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNoTravelersSinceTheEruption"
 msgid "07295"
 msgstr "Me pregunto por qué no{line_break}habremos visto viajeros{line_break}desde la erupción...{page_break}¿Tú sabes por{line_break}qué, {actor_name:1}?{end_now}"
 
@@ -29487,11 +29487,11 @@ msgctxt "message"
 msgid "07369"
 msgstr "¿Por qué iba a mantener{line_break}abierta la tienda si no{line_break}hay clientes?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenMayWrongButLatelyThere"
 msgid "07370"
 msgstr "Quizás esté equivocado, pero{line_break}parece que últimamente el Mt.{line_break}Aleph está temblando mucho.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenPolishedGoldStatueReturnedUs"
 msgid "07371"
 msgstr "Le he sacado brillo{line_break}a la estatua de oro{line_break}que nos devolviste.{page_break}¡Está tan reluciente{line_break}que no la reconocerías!{end_wait}"
 
@@ -29499,7 +29499,7 @@ msgctxt "message"
 msgid "07372"
 msgstr "Espero que los temblores no{line_break}sean la señal de que algo{line_break}peor va a suceder...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenDirtyGoldenStatueCleanedUp"
 msgid "07373"
 msgstr "Esa sucia estatua dorada{line_break}se dejó limpiar muy bien.{line_break}Me hace sentir mejor.{end_wait}"
 
@@ -35443,7 +35443,7 @@ msgctxt "message"
 msgid "08858"
 msgstr "¡Cuando se termine el{line_break}Faro de Babi, quiero{line_break}mudarme allí!{page_break}Pasaré el rato{line_break}escudriñando las{line_break}Ruinas de Venus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaFolksSeemKnow"
 msgid "08859"
 msgstr "Parece que sabéis mucho{line_break}sobre Kraden, ¿no?{end_now}"
 
@@ -39039,7 +39039,7 @@ msgctxt "message"
 msgid "09757"
 msgstr "Bueno, quizás sea mejor que{line_break}nos dirijamos allí primero.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapLook"
 msgid "09758"
 msgstr "¡Mirad esto!{end_wait}"
 
@@ -39063,15 +39063,15 @@ msgctxt "message"
 msgid "09763"
 msgstr "Recibiste el Orbe Negro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapNowUseOnShip"
 msgid "09764"
 msgstr "Ahora, úsalo...{line_break}con el barco.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapRobinWhereGoingSaidUse"
 msgid "09765"
 msgstr "{actor_name:1}, ¿adónde vas?{line_break}¡Te dije que usaras el{line_break}Orbe con el barco de Babi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapMatter"
 msgid "09766"
 msgstr "¿Qué pasa?{end_wait}"
 
@@ -39103,7 +39103,7 @@ msgctxt "message"
 msgid "09773"
 msgstr "Volveremos al barco{line_break}más tarde.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapWreckageShipScuttledOffCoast"
 msgid "09774"
 msgstr "Los restos de un barco{line_break}escollados en la costa.{end_wait}"
 
@@ -41947,7 +41947,7 @@ msgctxt "message"
 msgid "10484"
 msgstr "¡{actor_name:6} nos está{line_break}esperando!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapSukuretaHowLongWillIsland"
 msgid "10485"
 msgstr "Kraden... ¿Cuánto tiempo{line_break}vamos a estar a la deriva{line_break}en esta isla?{end_wait}"
 

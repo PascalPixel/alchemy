@@ -1,8 +1,9 @@
 /* Draft of resource_375 0x02008170 (Scene_PlanSanctumVisit), from games/THE
- * BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference: the ROM
- * loads messages from the literal pool and derives the following lines from
- * them, as link-time message values would; C constants are each built or
- * loaded on their own. Its imports still carry their old call-site names.
+ * BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_ActorFaceEachOther, Func_02001c6e, Engine_EventOpenMessage,
+ * Engine_EventChooseYesNo, Engine_ActorFaceActor,
+ * Engine_ActorSetAttachedEffect, ...).
  * The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
@@ -29,32 +30,23 @@ enum CottageFlag {
 #define NULL ((void *)0)
 
 #include "FACING_OBJECT.H"
+extern u8 MsgHaidiaFineIfTheyDontSee[];
+extern u8 MsgHaidiaGeraldIllTakeOverIf[];
+extern u8 MsgHaidiaGeraldYouCanHandleThe[];
+extern u8 MsgHaidiaJasmineOurSecret[];
+extern u8 MsgHaidiaJasmineTheyMightBeThieves[];
+extern u8 MsgHaidiaSukuretaIWaitedYearsFor[];
+extern u8 MsgHaidiaSukuretaOhRobin[];
+extern u8 MsgHaidiaSukuretaWeOnlyCheckMt[];
+extern u8 MsgHaidiaSukuretaWeOnlyCheckThe[];
+extern u8 MsgHaidiaYouCannotEnterMtAleph[];
 
-enum CottageMessage {
-    MSG_SATUROS_GO = 0xf98,
-    MSG_SUKURETA_OH_ROBIN = 0xfa6,
-    MSG_SUKURETA_I_WAITED_YEARS_FOR_THE_SANCTUM = 0xfb1,
-    MSG_JASMINE_THEY_MIGHT_BE_THIEVES = 0xfb2,
-    MSG_SUKURETA_WE_ONLY_CHECK_THE_MOUNTAIN = 0xfbd,
-    MSG_SUKURETA_WE_ONLY_CHECK_MT_ALEPH = 0xfbe,
-    MSG_JASMINE_OUR_SECRET = 0xfc2,
-    MSG_GERALD_YOU_CAN_HANDLE_THE_DANGER = 0xfc6,
-    MSG_GERALD_ILL_TAKE_OVER_IF_NERVOUS = 0xfc9,
-    MSG_SUKURETA_OUR_BEST_BET = 0xfcc,
-    MSG_ILL_CLIMB_THE_FENCE_SOMEDAY = 0x11c4,
-    MSG_MEMORIES_OF_THIS_COTTAGE = 0x1c96
-};
 
 extern u8 Data_0200a028[];
 extern u8 Data_02009fb0[];
 extern u8 Data_02009efc[];
-extern u8 LinkedMessage_YouCannotEnterMtAleph[];
-extern u8 LinkedMessage_FineIfTheyDontSeeUs[];
 extern u8 Data_03001ebc[];
 extern u8 Data_0200a0ac[];
-extern u8 Value_00000f76;
-extern u8 LinkedMessage_TheyKnowLittleOfTheSanctum[];
-extern u8 LinkedMessage_YoureTheOnesSneakingAround[];
 extern u8 Data_02009ce0[];
 
 s32 CalculateFacingAngle(s32, s32);
@@ -277,7 +269,7 @@ void Scene_PlanSanctumVisit(void)
     } else {
         Event_Begin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-        Event_SetMessage(MSG_SUKURETA_OH_ROBIN);
+        Event_SetMessage((s32)MsgHaidiaSukuretaOhRobin);
         Actor_RunRepeatedMotion(ACTOR_SUKURETA, 1);
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 232, 0x108);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
@@ -340,15 +332,15 @@ void Scene_PlanSanctumVisit(void)
         Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
         Event_OpenMessage(ACTOR_SUKURETA, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage((s32)LinkedMessage_YouCannotEnterMtAleph);
+            Event_SetMessage((s32)MsgHaidiaYouCannotEnterMtAleph);
         } else {
-            Event_SetMessage(MSG_SUKURETA_I_WAITED_YEARS_FOR_THE_SANCTUM);
+            Event_SetMessage((s32)MsgHaidiaSukuretaIWaitedYearsFor);
         }
         Event_Wait(20);
         Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         Event_Wait(10);
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
-        Event_SetMessage(MSG_JASMINE_THEY_MIGHT_BE_THIEVES);
+        Event_SetMessage((s32)MsgHaidiaJasmineTheyMightBeThieves);
         Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
         Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
         Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 6);
@@ -410,12 +402,12 @@ void Scene_PlanSanctumVisit(void)
         Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
         Event_OpenMessage(ACTOR_SUKURETA, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage(MSG_SUKURETA_WE_ONLY_CHECK_THE_MOUNTAIN);
+            Event_SetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckThe);
         } else {
-            Event_SetMessage(MSG_SUKURETA_WE_ONLY_CHECK_MT_ALEPH);
+            Event_SetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckMt);
         }
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
-        base5_fbf = (s32)LinkedMessage_FineIfTheyDontSeeUs;
+        base5_fbf = (s32)MsgHaidiaFineIfTheyDontSee;
         Event_SetMessage(base5_fbf);
         Actor_FaceDirection(ACTOR_GERALD, 0, 10);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
@@ -426,7 +418,7 @@ void Scene_PlanSanctumVisit(void)
             Event_SetMessage((base5_fbf + 2));
         }
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
-        Event_SetMessage(MSG_JASMINE_OUR_SECRET);
+        Event_SetMessage((s32)MsgHaidiaJasmineOurSecret);
         Actor_FaceDirection(ACTOR_JASMINE, 0x8000, 10);
         Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
         Event_OpenMessage(ACTOR_JASMINE, 0);
@@ -458,9 +450,9 @@ void Scene_PlanSanctumVisit(void)
         Event_OpenMessage(ACTOR_SUKURETA, 0);
         Event_Wait(4);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage(MSG_GERALD_YOU_CAN_HANDLE_THE_DANGER);
+            Event_SetMessage((s32)MsgHaidiaGeraldYouCanHandleThe);
         } else {
-            Event_SetMessage(MSG_GERALD_ILL_TAKE_OVER_IF_NERVOUS);
+            Event_SetMessage((s32)MsgHaidiaGeraldIllTakeOverIf);
         }
         ((void (*)())Engine_EventWait)(10);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);

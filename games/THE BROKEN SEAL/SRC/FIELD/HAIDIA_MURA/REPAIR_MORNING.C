@@ -1,6 +1,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgHaidiaAsStubbornAsYourFather[];
+extern u8 MsgHaidiaDevastatedWhenKyle[];
+extern u8 MsgHaidiaGoodJob[];
+extern u8 MsgHaidiaWorkingYourselvesBone[];
 
 /*
  * Outside Robin's house in Vale. He boards up three holes in the wall
@@ -9,12 +13,6 @@
  * Sukureta.
  */
 
-enum HouseMessage {
-    MSG_DORA_GOOD_JOB = 0xf03,
-    MSG_DORA_STUDYING_PSYNERGY_TO_THE_BONE = 0xf0a,
-    MSG_DORA_DEVASTATED_WHEN_KYLE_DIED = 0xf0e,
-    MSG_AS_STUBBORN_AS_YOUR_FATHER = 0xf27
-};
 
 enum HouseActor {
     /* Robin's mother; the villagers call her Dora. */
@@ -174,7 +172,7 @@ void HouseScene_RunRepairMorning(void)
     leader->scale_y = 0x10000;
 
     /* His mother praises the work and talks about his father. */
-    Event_SetMessage(MSG_DORA_GOOD_JOB);
+    Event_SetMessage((s32)MsgHaidiaGoodJob);
     Actor_Jump(ACTOR_DORA, 2, 20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_STEP, 20);
@@ -211,7 +209,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_SetAnimationAndWait(ACTOR_DORA, ANIM_SHAKE_HEAD);
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
-    Event_SetMessage(MSG_DORA_STUDYING_PSYNERGY_TO_THE_BONE);
+    Event_SetMessage((s32)MsgHaidiaWorkingYourselvesBone);
     Actor_WalkToAndWait(ACTOR_DORA, 386, 841);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
@@ -228,7 +226,7 @@ void HouseScene_RunRepairMorning(void)
     Actor_FaceDirection(ACTOR_DORA, FACING_NORTH + FACING_STEP, 60);
     Actor_RunRepeatedMotion(ACTOR_DORA, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_DORA_DEVASTATED_WHEN_KYLE_DIED);
+    Event_SetMessage((s32)MsgHaidiaDevastatedWhenKyle);
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
     Actor_WalkToAndWait(ACTOR_DORA, 386, 825);
     Event_Wait(10);
@@ -374,7 +372,7 @@ void HouseScene_RunRepairMorning(void)
     Event_ShowMessageAndWait(ACTOR_DORA, 0, 20);
 
     /* She slips from the step; Gerald catches her. */
-    Event_SetMessage(MSG_AS_STUBBORN_AS_YOUR_FATHER);
+    Event_SetMessage((s32)MsgHaidiaAsStubbornAsYourFather);
     Actor_ShowEmote(ACTOR_DORA, EMOTE_IN_FRONT | 3, 0);
     Actor_RunRepeatedMotion(ACTOR_DORA, 3);
     Event_Wait(30);

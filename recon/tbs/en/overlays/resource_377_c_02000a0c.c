@@ -42,6 +42,7 @@
  * Full diff read; negative witness committed at 19fd9a714. H2 restored
  * byte-identically. Do not extend this uniform-writer axis. */
 #include "FIELD_EVENT.H"
+extern u8 MsgHaidiaDoraHurryBoulder[];
 
 void Main_080000c0();
 void Main_08009180(s32 x0, s32 y0, s32 x1, s32 y1, s32 arg4, s32 arg5);
@@ -194,7 +195,7 @@ void FieldScene_RunPaletteRampSequence(void)
     Call3(Main_0808a0f0, 9, 27131904, 34734080);
     Call3(Main_0808a0d0, 9, 427, 483);
     Main_0808a218();
-    Call1(Main_0808a170, 3675);
+    Call1(Main_0808a170, (s32)MsgHaidiaDoraHurryBoulder);
     Call3(Main_0808a188, 32777, 0, 10);
     Call2(Main_0808a208, 98304, 12288);
     Call4(Main_0808a210, 31457280, -1, 29097984, 1);

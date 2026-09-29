@@ -38,7 +38,13 @@ Engine_MathSin:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.global Engine_HeapAllocate
+	.thumb_func
+Engine_HeapAllocate:
 	overlay_veneer Runtime_AllocateHeapBlockFar
+	.global Engine_HeapRelease
+	.thumb_func
+Engine_HeapRelease:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
@@ -56,6 +62,9 @@ Resource_DecodeType01:
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global QueueIoWriteDelay2
 	.thumb_func
@@ -81,11 +90,17 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
+	.global ObjectDispatch_InitFromTable6
+	.thumb_func
+ObjectDispatch_InitFromTable6:
 	overlay_veneer ObjectDispatch_InitFromTable6Far
 	.global Engine_ObjectSetPosition
 	.thumb_func
 Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
+	.global Engine_ObjectCommitPosition
+	.thumb_func
+Engine_ObjectCommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
 	.global Map_LoadDefaultCellsAndUpdateBlock
 	.thumb_func
@@ -115,7 +130,13 @@ Engine_ObjectSetPartPalettes:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiWork_PushValueSlot
+	.thumb_func
+UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
+	.global Engine_ItemLoadIcon
+	.thumb_func
+Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
 	.global PaletteGlow_Update
 	.thumb_func
@@ -145,8 +166,17 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
+	.global Djinn_AddToOwner
+	.thumb_func
+Djinn_AddToOwner:
 	overlay_veneer Djinn_AddToOwnerFar
+	.global Trade_AddOffer
+	.thumb_func
+Trade_AddOffer:
 	overlay_veneer Trade_AddOfferFar
+	.global Owner_RefreshActiveRatios
+	.thumb_func
+Owner_RefreshActiveRatios:
 	overlay_veneer Owner_RefreshActiveRatiosFar
 	.global PartyInventory_Discard
 	.thumb_func
@@ -168,11 +198,17 @@ Engine_EventEnd:
 	.thumb_func
 Engine_PartyGiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
+	.global Engine_ActorDestroy
+	.thumb_func
+Engine_ActorDestroy:
 	overlay_veneer ObjectTable_DestroyByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func
@@ -254,6 +290,9 @@ Engine_ObjectSetPalette:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
@@ -351,8 +390,17 @@ Battle_ClearObjectFlag5bWhenMode3:
 	.thumb_func
 Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
+	.global Engine_PsynergyBegin
+	.thumb_func
+Engine_PsynergyBegin:
 	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	.global BattleEffect_CleanupSceneObjects
+	.thumb_func
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
+	.global BattleFx_RunPageEffectForSlot
+	.thumb_func
+BattleFx_RunPageEffectForSlot:
 	overlay_veneer BattleFx_RunPageEffectForSlotFar
 	.global BattleFx_ScheduleRatioTransition
 	.thumb_func

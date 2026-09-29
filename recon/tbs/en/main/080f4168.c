@@ -1,3 +1,5 @@
+/* 2026-09-29: Party_GetAverageLevelFar carries the build's name; alchemy
+ * permute scores 32589, from 32629. */
 /* NONMATCHING: shared callee return types audited on 2026-09-26.
  * 4632 of 4724 bytes, 2259 differing halfwords, 1550 aligned edits.
  * Canonical declarations are retained; the remaining source model is not exact. */
@@ -121,7 +123,7 @@ void Func_08015000(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
-s32 Func_080772c8(void);
+s32 Party_GetAverageLevelFar(void);
 void Audio_PlayCue(s32 cue);
 
 #define REG_DISPCNT (*(u16 *)0x04000000)
@@ -423,7 +425,7 @@ void LuckyDice_Run(void)
             if (work->die[1].y > 0xa00000) {
                 work->die[1].y = 0xa00000;
             }
-            if (Data_02000240.coins < (u32)(Func_080772c8() * 10)) {
+            if (Data_02000240.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
                 UiWork_FinalizeFar(sprites->help_window, 1);
                 break;
             }
@@ -436,7 +438,7 @@ void LuckyDice_Run(void)
                 Audio_PlayCue(0x12e);
                 UiWork_FinalizeFar(sprites->help_window, 1);
                 state = 1;
-                bet = Func_080772c8() * 10;
+                bet = Party_GetAverageLevelFar() * 10;
                 if ((u32)bet > Data_02000240.coins) {
                     bet = Data_02000240.coins;
                 }

@@ -1,3 +1,5 @@
+/* 2026-09-29: callees carry the build's names; alchemy permute scores 8151,
+ * from 8331. */
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -13,7 +15,7 @@
  * Data_080ede48 sprite-cell table this owner reuses.
  *
  * The owner is one 102-frame animation pass, one frame per iteration, with
- * Func_080030f8(1) as the frame barrier.  Before the pass it seeds three
+ * WaitFrames(1) as the frame barrier.  Before the pass it seeds three
  * record tables of struct EffectStep:
  *
  *   - 32 records at work + 0x7080 (loop bound 32) get a radial position
@@ -33,9 +35,9 @@
  * owner.  That asymmetry is in the shipped code, not a transcription slip;
  * whether it was intentional is not established here.
  *
- * Per frame it calls Func_080e46f0 with one id over frames 25..47 and with a
- * second id over frames > 56, cues Func_080f9010 at frames 4, 32 and 60 plus
- * Func_080b50e8(134) at frame 60, draws the 16 work + 0x7080 billboards once
+ * Per frame it calls BattleFx_StepPaletteToResource with one id over frames 25..47 and with a
+ * second id over frames > 56, cues Audio_PlayCue at frames 4, 32 and 60 plus
+ * BattleEventRuntime_BeginPhaseFar(134) at frame 60, draws the 16 work + 0x7080 billboards once
  * frame > 55, seeds dust from the parked table (frame 28, then at most
  * sixteen records per frame over frames 32..63), scrolls a 34x104 strip
  * through a wrapping pair of blits, steps and draws the dust with per-lane
@@ -43,7 +45,7 @@
  * bottom clipping, steps and draws the 340 sparks with Func_080e3908, and
  * finally shakes the camera and ticks the object group.
  *
- * `_call_via_r3`, `Func_080072f4`, `Func_080072fc` and `Func_08007308` are
+ * `_call_via_r3`, `_call_via_r4`, `_call_via_r6` and `_call_via_r9` are
  * NOT real callees: they are the r3/r4/r6/r9 entries of the `_call_via_rN`
  * trampoline bundle at recon/tbs/raw/080072e4.s (0x080072e4 + 4*N), so every
  * one of those `bl` sites is an indirect call through whatever function
@@ -71,7 +73,7 @@
  *     evaluations of the same `(u32)(frame - 32) <= 31` guard.
  *
  * Uncertain: the role of the halfword read at object + 0x24 (an actor id fed
- * to Func_080e3980, Func_080d6888 and Func_080b5088) and of the count at
+ * to Func_080e3980, ObjectGroup_UpdateMembers and BattleMotion_ApplyVariantMotionFar) and of the count at
  * object + 0x14; whether the two high-half reads spelled
  * `*(s16 *)((u8 *)&rec + 2)` here were a union member in the original rather
  * than the `>> 16` the spark loop uses for the same datum; and whether the
@@ -130,26 +132,26 @@ extern const u8 Data_080eef12[];
 extern const s32 Data_080eef18[];
 
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 a, s32 b);
-s32 Func_0800231c(s32 angle);
-s32 Func_08002322(s32 angle);
+s32 Math_Mod(s32 a, s32 b);
+s32 Trig_Cos(s32 angle);
+s32 Trig_Sin(s32 angle);
 /* Runtime_ReleaseHeapBlock */
 void Func_08002dd8(s32 kind);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
 /* Scheduler_RemoveCallback */
 /* Random16 */
 s32 Func_08004458(void);
 /* _call_via_r3 thunk, recon/tbs/raw/080072e4.s */
 void _call_via_r3(void *dest, s32 arg1, s32 arg2, void *routine);
-void Func_080b5088(s32 member, s32 arg);
-void Func_080b50e8(s32 id);
+void BattleMotion_ApplyVariantMotionFar(s32 member, s32 arg);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 /* ObjectGroup_TickMemberTimers */
 void Func_080cd52c(void);
-void Func_080cd594(s32 mode);
-s32 Func_080cdbc0(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 BattleFx_EndCanvasLayer(void);
 /* object/group/update_members.c */
-void Func_080d6888(s32 member, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member, s32 b, s32 c, s32 d, s32 e);
 /* Resource_LoadAndDecompress */
 /* Camera_ApplyShake */
 void Func_080e155c(s32 a, s32 b);
@@ -157,8 +159,8 @@ void Func_080e155c(s32 a, s32 b);
 void Func_080e3908(struct EffectStep *step, s32 damping, s32 gravity);
 /* EffectPosition_ApplyAlternateStepAndYOffset */
 void Func_080e3980(s32 actor, struct EffectPosition *out);
-void Func_080e46f0(s32 id);
-void Func_080f9010(s32 cue);
+void BattleFx_StepPaletteToResource(s32 id);
+void Audio_PlayCue(s32 cue);
 
 void Func_080e99c0(void *object)
 {
@@ -200,7 +202,7 @@ void Func_080e99c0(void *object)
     spark = SPARK;
 
     *(void **)((u8 *)work + 0x7828) = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
     Func_080e3980(
         *(s16 *)((u8 *)(*(void **)((u8 *)work + 0x7828)) + 0x24), &pos);
@@ -224,8 +226,8 @@ void Func_080e99c0(void *object)
     i = 0;
     do {
         ang = Func_08004458() & 0xFFFF;
-        RAIN(work)[i].x = (i * 2) * Func_08002322(ang);
-        RAIN(work)[i].y = -((i * 2) * Func_0800231c(ang));
+        RAIN(work)[i].x = (i * 2) * Trig_Sin(ang);
+        RAIN(work)[i].y = -((i * 2) * Trig_Cos(ang));
         RAIN(work)[i].variant = i / 2 + 25;
         i++;
     } while (i != 32);
@@ -245,8 +247,8 @@ void Func_080e99c0(void *object)
         spark[i].x = origin;
         spark[i].y = 176 << 15;
         mag += 32;
-        spark[i].velocity_x = (mag * Func_08002322(ang)) >> 5;
-        spark[i].velocity_y = -(mag * Func_0800231c(ang)) >> 6;
+        spark[i].velocity_x = (mag * Trig_Sin(ang)) >> 5;
+        spark[i].velocity_y = -(mag * Trig_Cos(ang)) >> 6;
         spark[i].variant = (Func_08004458() & 7) + 32;
         i++;
     } while (i != 170 << 1);
@@ -254,10 +256,10 @@ void Func_080e99c0(void *object)
     frame = 0;
     do {
         if (frame >= 25 && frame <= 47) {
-            Func_080e46f0((s32)&Value_000000c0);
+            BattleFx_StepPaletteToResource((s32)&Value_000000c0);
         }
         if (frame > 56) {
-            Func_080e46f0((s32)&Value_000000c4);
+            BattleFx_StepPaletteToResource((s32)&Value_000000c4);
         }
 
         if (frame == 8) {
@@ -271,14 +273,14 @@ void Func_080e99c0(void *object)
         }
 
         if (frame == 4) {
-            Func_080f9010(212);
+            Audio_PlayCue(212);
         }
         if (frame == 32) {
-            Func_080f9010(164);
+            Audio_PlayCue(164);
         }
         if (frame == 60) {
-            Func_080f9010(145);
-            Func_080b50e8(134);
+            Audio_PlayCue(145);
+            BattleEventRuntime_BeginPhaseFar(134);
         }
 
         if (frame > 55) {
@@ -310,9 +312,9 @@ void Func_080e99c0(void *object)
                 if (dust[i].variant == -1) {
                     mag = Func_08004458() & 63;
                     ang = Func_08004458() & 0xFFFF;
-                    dust[i].x = ((mag * Func_08002322(ang)) >> 3) + origin;
+                    dust[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
                     dust[i].y =
-                        ((mag * Func_0800231c(ang)) >> 2) + (192 << 15);
+                        ((mag * Trig_Cos(ang)) >> 2) + (192 << 15);
                     dust[i].velocity_x = ((Func_08004458() & 63) - 32) << 14;
                     dust[i].velocity_y = (-(Func_08004458() & 63) - 8) << 13;
                     dust[i].variant = 0;
@@ -330,9 +332,9 @@ void Func_080e99c0(void *object)
                 if (dust[i].variant == -1) {
                     mag = Func_08004458() & 63;
                     ang = Func_08004458() & 0xFFFF;
-                    dust[i].x = ((mag * Func_08002322(ang)) >> 3) + origin;
+                    dust[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
                     dust[i].y =
-                        ((mag * Func_0800231c(ang)) >> 2) + (192 << 15);
+                        ((mag * Trig_Cos(ang)) >> 2) + (192 << 15);
                     dust[i].velocity_x = ((Func_08004458() & 63) - 32) << 14;
                     cnt++;
                     dust[i].velocity_y = (-(Func_08004458() & 63) - 8) << 13;
@@ -347,7 +349,7 @@ void Func_080e99c0(void *object)
 
         /* The same guard again: a 34x104 strip wrapping through 104 rows. */
         if ((u32)step <= 31) {
-            size = Func_080022fc(frame * 16 - 256, 104);
+            size = Math_Mod(frame * 16 - 256, 104);
             draw(canvas, work, half - 17, 4 - size, 34, 104);
             draw(canvas, work, half - 17, 108 - size, 34, size);
         }
@@ -356,7 +358,7 @@ void Func_080e99c0(void *object)
             i = 0;
             do {
                 if (dust[i].variant >= 0) {
-                    size = Func_080022fc(i, 3) + 2;
+                    size = Math_Mod(i, 3) + 2;
                     if (dust[i].velocity_y > 0) {
                         size += 2;
                     }
@@ -451,11 +453,11 @@ void Func_080e99c0(void *object)
                 i = 0;
                 cnt = 36;
                 do {
-                    Func_080d6888(
+                    ObjectGroup_UpdateMembers(
                         *(s16 *)((u8 *)(*(void **)((u8 *)work + 0x7828))
                             + cnt),
                         7, 5, i, 16);
-                    Func_080b5088(
+                    BattleMotion_ApplyVariantMotionFar(
                         *(s16 *)((u8 *)(*(void **)((u8 *)work + 0x7828))
                             + cnt),
                         7);
@@ -477,12 +479,12 @@ void Func_080e99c0(void *object)
         Func_080e155c(16, 16);
         Func_080cd52c();
         *(s32 *)((u8 *)work + 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame++;
     } while (frame != 102);
 
     Func_08004278((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

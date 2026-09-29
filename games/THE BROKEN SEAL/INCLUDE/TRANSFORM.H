@@ -12,4 +12,13 @@ extern s32 gTransform[12];
 extern s32 gTransformStackDepth;
 extern u8 *gTransformStackTop;
 
+/* Loads the identity into a 12-word transform: each row 0x10000, 0, 0 and a
+   zero translation. Eight routines (the transform stack's resets at
+   0x080049ac-0x08004d04 and the battle transition entries) store it through
+   the same fixed r0-r4, three stmia r0!, {r1, r2, r3, r4} after copying the
+   matrix address into r0, and use r4 without saving it. GCC 2.96 emits
+   neither for C stores or structure copies, so Camelot wrote this macro. */
+/* CAMELOT_ASM: eight routines share this fixed-register identity store */
+#define Transform_SetIdentity(matrix) __asm__ volatile("mov r0, %0\n\tmov r1, #128\n\tmov r2, #0\n\tmov r3, #0\n\tmov r4, #0\n\tlsl r1, r1, #9\n\tstmia r0!, {r1, r2, r3, r4}\n\tstmia r0!, {r1, r2, r3, r4}\n\tstmia r0!, {r1, r2, r3, r4}" : : "r"(matrix) : "r0", "r1", "r2", "r3", "r4", "memory")
+
 #endif

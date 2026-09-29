@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/VILLAGER.o"(.text)
-        "*/resource_376_overlay.o"(.text.x02008298)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/HOPE_TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/TIMED_EVENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/IMPORT.o"(.text)
         "*/resource_376_overlay.o"(.rodata)

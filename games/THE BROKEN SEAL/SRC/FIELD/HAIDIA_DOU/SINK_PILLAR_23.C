@@ -2,6 +2,7 @@
 #include "FIELD_EFFECT.H"
 
 struct FieldActor *OverlayObject_CreateConfigured(s32 x, s32 y, s32 z, s32 kind);
+void Map_CopyCellAttributeRect();
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
@@ -26,7 +27,7 @@ void HaidiaDou_SinkPillarColumn23(void)
 
     Engine_EventBegin();
     if (Engine_ActorGet(9)->x.fixed >> 20 == 23) {
-        Call3((void (*)())Engine_ObjectMotionSetPositionAndCommit, 0, 360, 664);
+        Call3((void (*)())Engine_ActorMoveToAndWait, 0, 360, 664);
         Engine_ActorFaceDirection(0, 0xe000, 10);
         Engine_ActorGet(9)->x.fixed += 0x20000;
         left = OverlayObject_CreateConfigured(Engine_ActorGet(9)->x.fixed, 0,
@@ -38,23 +39,23 @@ void HaidiaDou_SinkPillarColumn23(void)
         o->start_scale_x = 0x9999;
         o->start_scale_y = 0x9999;
         o->palette = 7;
-        Engine_AudioPlayCue(216);
+        Audio_PlayCue(216);
         for (i = 0; i < 68; i++) {
             s32 x = (((u32)(Engine_RandomNext() * 17) >> 16) << 16) + 0x1700000;
             s32 z = (((u32)(Engine_RandomNext() * 14) >> 16) << 16) + 0x2700000;
 
             Effect_Spawn(x, 0, z, 0, 0, 0, 0x90000, o);
             Engine_ActorGet(9)->y.fixed -= 0x8000;
-            Engine_EventWait(1);
+            Battle_WaitMode0(1);
         }
-        Call6((void (*)())Engine_MapCopyCellAttributes, 23, 41, 1, 1, 23, 39);
+        Call6((void (*)())Map_CopyCellAttributeRect, 23, 41, 1, 1, 23, 39);
         Engine_ActorGet(9)->priority_flags |= 2;
         Engine_GameFlagSet(0x200);
         Engine_ActorGet(9)->y.fixed = -0x80000;
-        Engine_ActorSetAnimation(9, 2);
+        Object_SetModeById(9, 2);
         Engine_ObjectDispatchRelease(left);
         Engine_ObjectDispatchRelease(right);
-        Engine_EventWait(30);
+        Battle_WaitMode0(30);
     }
     Engine_EventEnd();
 }

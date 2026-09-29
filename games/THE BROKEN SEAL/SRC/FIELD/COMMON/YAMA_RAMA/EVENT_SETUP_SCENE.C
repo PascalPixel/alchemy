@@ -46,43 +46,19 @@ struct Actor {
     s32 f10;
 };
 
-extern u8 Value_0000004a;
-extern u8 Data_02009844[];
-extern u8 Data_020097b4[];
-extern u8 Data_02009a38[];
-extern u8 Data_02009918[];
-extern u8 Data_02009c9c[];
-extern u8 Data_02009b10[];
+/* Tables laid out after the code. */
+extern const u16 YamaRama_BoulderCells[];
+extern const u16 YamaRama_BoulderCellsBack[];
+extern const u8 YamaRama_HsuAction[];
+extern const u8 YamaRama_LeaderAction[];
 
-s16 Func_0200150e(s32, s32);
-void *Func_02001564(s32);
-s32 Func_0200169e();
-void Func_02001b98();
-u8 *Func_02001e6e();
-s32 Func_02001e78();
-u8 *Func_02001eb4();
-void Func_02001f3c();
-u8 *Func_02001f50();
-void Func_02001f5c();
-s32 Func_02002214();
-s32 Func_02002226_b();
-u8 *Func_02002408();
-struct Actor02001060 *Func_02002570(s32);
-struct Actor *Func_0200259e(s32);
-struct Actor *Func_020025a6(s32);
-u8 *Func_020025cc();
-u8 *Func_020025de();
-u8 *Func_020025ec();
-u8 *Func_020025f8();
-u8 *Func_0200266c();
+void *Object_GetById(u32 id);
+void Object_RefreshSelectorById();
+void BattleFx_PlayQueuedSound(void);
+s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor);
+s32 OverlayObject_SetFacingTowardObject10(void *self);
 
-/* Scene event steps and table getters for resource_3a2. */
-
-/*
- * Table getter at 0x020000b0. The eight-byte owner includes its one pool word
- * at 0x020000b4, which holds 0x020098ec; the pc-relative load reads it. The
- * word is an address, returned without being dereferenced.
- */
+/* Scene event steps for resource_3a2. */
 
 /* Value-returning: the reference sets r1 before r0 at this site. */
 
@@ -161,52 +137,8 @@ static __inline__ void Scene_AdvanceStep(s32 amount)
     gEventWork->message += amount;
 }
 
-s32 EventScript_PrepareActorRenderFlags(struct EventActor *actor)
-{
-    actor->flags &= ~1;
-    actor->render_state[9] |= 0xc;
-    actor->render_state[21] |= 0xc;
-    return 0;
-}
-
-s32 OverlayObject_SetFacingTowardObject10(void *self)
-{
-    void *obj;
-
-    obj = Func_02001564(0xA);
-    FIELD_AT_OFFSET(self, s16 *, 6) = Func_0200150e(FIELD_AT_OFFSET(obj, s32 *, 0x10) - FIELD_AT_OFFSET(self, s32 *, 0x10), FIELD_AT_OFFSET(obj, s32 *, 8) - FIELD_AT_OFFSET(self, s32 *, 8));
-    return 0;
-}
-
-s32 SceneData_SelectTable97b4ByState(void)
-{
-    if (gGameState.scene == (s32)&Value_0000004a) {
-        return (s32)Data_02009844;
-    }
-    return (s32)Data_020097b4;
-}
-
-s32 SceneData_ReturnZero(void)
-{
-    return 0;
-}
-
-u8 *SceneData_GetTable98ec(void)
-{
-    return (u8 *)0x020098ec;
-}
-
-s32 SceneData_SelectTable9918ByState(void)
-{
-    if (gGameState.scene == (s32)&Value_0000004a) {
-        return (s32)Data_02009a38;
-    }
-    return (s32)Data_02009918;
-}
-
 void SceneDialogue_RunMessage1958Step(void)
 {
-    extern u8 *Data_03001ebc;
 
     u8 *work;
 
@@ -218,7 +150,7 @@ void SceneDialogue_RunMessage1958Step(void)
         Event_Wait(20);
         Event_ShowMessage(10, 0);
     } else {
-        work = Data_03001ebc;
+        work = (u8 *)gEventWork;
         *(u16 *)(work + 472) += 1;
         Event_AskYesNo(10, 0);
     }
@@ -245,8 +177,8 @@ void SceneDialogue_RunActor13Message1961(void)
 void FieldScene_RunPrimaryScript(void)
 {
     Audio_PlayCue(188);
-    Map_AnimateCells(0x2009788, 67, 6);
-    *(u8 *)(Func_0200169e(0) + 85) = 0;
+    Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
+    *(u8 *)(Object_GetById(0) + 85) = 0;
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0xcccc, 0x6666);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 2);
@@ -354,14 +286,14 @@ void FieldScene_RunScene3a2SequenceA(void)
     Event_Wait(20);
     Actor_FaceDirection(8, 0xc000, 30);
     Audio_PlayCue(188);
-    Map_AnimateCells(0x2009788, 67, 6);
+    Map_AnimateCells(YamaRama_BoulderCells, 67, 6);
     Actor_SetSpeed(8, 0xcccc, 0x6666);
     Actor_WalkToAndWait(8, 136, 136);
     Actor_SetPosition(8, 0, 0);
     Audio_PlayCue(188);
-    Map_AnimateCells(0x200979e, 67, 6);
+    Map_AnimateCells(YamaRama_BoulderCellsBack, 67, 6);
     Event_Wait(60);
-    Func_02001b98();
+    BattleFx_PlayQueuedSound();
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_GERALD, 0x6000, 20);
@@ -471,9 +403,8 @@ void FieldScene_RunScene3a2_020008a8(void)
 
 void SceneDialogue_RunActorFifteenByLeaderHeading(void)
 {
-    struct Slot020008e0 *Func_02001dee_a(s32);
 
-    u32 heading = Func_02001dee_a(0)->heading;
+    u32 heading = ((struct Slot020008e0 *)Object_GetById(0))->heading;
 
     Event_Begin();
     if (heading - 0xA001 <= 0x3FFE) {
@@ -498,9 +429,9 @@ void Scene_RunEventTransition(void)
         Event_ShowMessageAndWait(10, 0, 20);
         Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Event_Wait(20);
-        record = Func_02001e6e(0);
-        *(s32 *)((s32)record + 108) = 0x2008055;
-        record = Value1(Func_02001e78, 0);
+        record = Object_GetById(0);
+        *(s32 *)((s32)record + 108) = (s32)OverlayObject_SetFacingTowardObject10;
+        record = Value1(Object_GetById, 0);
         if ((*(s32 *)((s32)record + 16) >> 20) == 13) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
         }
@@ -508,7 +439,7 @@ void Scene_RunEventTransition(void)
         Actor_SetSpritePriority(10, 2);
         Actor_WalkToAndWait(10, 0x198, 216);
         {
-            u8 *record = Func_02001eb4(10);
+            u8 *record = Object_GetById(10);
             u32 flag = 1;
 
             flag = flag | record[35];
@@ -521,17 +452,17 @@ void Scene_RunEventTransition(void)
         Actor_SetAttachedEffect(10, 0x102);
         Event_Wait(60);
         Event_ShowMessageAndWait(10, 0, 20);
-        Value2(Engine_ActorEnableActionCallback, 10, 0x200962c);
+        Value2(Engine_ActorEnableActionCallback, 10, (s32)YamaRama_HsuAction);
         Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
         GameFlag_Set(0x8b0);
-        Func_02001f3c(10);
+        Object_RefreshSelectorById(10);
         Camera_WaitForMove();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-        Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 0x20096b8);
-        Func_02001f5c(0);
+        Actor_EnableActionCallback(ACTOR_PARTY_LEADER, YamaRama_LeaderAction);
+        Object_RefreshSelectorById(0);
         Event_Wait(10);
         none = 0;
-        record = Func_02001f50(0);
+        record = Object_GetById(0);
         *(s32 *)((s32)record + 108) = none;
         Event_Wait(30);
         Actor_RunRepeatedMotion(10, 2);
@@ -630,8 +561,8 @@ void Scene_RunActorSequence(void)
     Event_Wait(20);
     mask = 254;
     Event_ShowMessageAndWait(8, 0, 20);
-    *(u8 *)(Func_02002214(8) + 90) &= mask;
-    *(u8 *)(Func_02002226_b(10) + 90) &= mask;
+    *(u8 *)(Object_GetById(8) + 90) &= mask;
+    *(u8 *)(Object_GetById(10) + 90) &= mask;
     Actor_SetSpeed(8, 0x3333, 0x1999);
     Actor_SetSpeed(10, 0x3333, 0x1999);
     Actor_SetAnimation(8, 5);
@@ -691,7 +622,7 @@ void Scene_RunActorSequence(void)
     Event_ShowMessageAndWait(8, 0, 30);
     Event_ShowMessageAndWait(8, 0, 20);
     {
-        u8 *record = Func_02002408(10);
+        u8 *record = Object_GetById(10);
         u32 flag = 1;
 
         flag = flag | record[90];
@@ -762,7 +693,7 @@ void SceneState_RunRect6x28Step(void)
 
 s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor)
 {
-    if (Func_02002570(0)->rank > actor->rank) {
+    if (((struct Actor02001060 *)Object_GetById(0))->rank > actor->rank) {
         actor->flags |= 2;
     } else {
         actor->flags &= 0xFD;
@@ -771,8 +702,8 @@ s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor)
 
 void SceneActor_UpdateActorFourteenByDepth(void)
 {
-    struct Actor *current = Func_0200259e(0);
-    struct Actor *other = Func_020025a6(14);
+    struct Actor *current = Object_GetById(0);
+    struct Actor *other = Object_GetById(14);
 
     if (current->f10 <= other->f10) {
         Actor_SetSpritePriority(14, 1);
@@ -786,10 +717,10 @@ void ActorPresentation_PrepareActorFourteenWithCallback(void)
     zero = 0;
     Event_Begin();
 
-    Func_020025cc(14)[35] &= 0xfd;
-    Func_020025de(14)[89] &= 0xfd;
-    Func_020025ec(14)[85] = zero;
-    *(void **)(Func_020025f8(14) + 108) = (void *)0x02009061;
+    ((u8 *)Object_GetById(14))[35] &= 0xfd;
+    ((u8 *)Object_GetById(14))[89] &= 0xfd;
+    ((u8 *)Object_GetById(14))[85] = zero;
+    *(void **)(Object_GetById(14) + 108) = (void *)SceneActor_SetFlagBitByRankAgainstActorZero;
 
     Map_CopyCellAttributes(55, 16, 1, 1, 56, 18);
     Map_CopyCellAttributes(55, 16, 1, 1, 20, 18);
@@ -811,16 +742,9 @@ void FieldScene_SetSlot15Byte89AndRunStep(void)
 
         Map_CopyCellAttributes(14, 6, 1, 2, fifth, sixth);
     }
-    slot = Func_0200266c(15) + 89;
+    slot = Object_GetById(15) + 89;
     *slot = 254;
     GameFlag_Set(0x201);
     Event_End();
 }
 
-s32 SceneData_SelectTableByWord224(void)
-{
-    if (gGameState.scene == (s32)&Value_0000004a) {
-        return (s32)Data_02009c9c;
-    }
-    return (s32)Data_02009b10;
-}

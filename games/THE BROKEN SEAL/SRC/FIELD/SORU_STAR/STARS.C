@@ -41,7 +41,7 @@ void Scene_BagJupiterStar(void)
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Event_Wait(20);
     Audio_PlayCue(144);
-    Engine_MapAnimateCells(Data_0200d088, 65, 31);
+    Engine_MapAnimateCells(SoruStar_StarCells, 65, 31);
     Map_CopyCellAttributes(0, 0, 1, 1, 10, 31);
     Map_CopyCellsTo(87, 42, 10, 33, 1, 2);
     Event_Wait(40);
@@ -52,7 +52,7 @@ void Scene_BagJupiterStar(void)
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Event_Wait(20);
     Audio_PlayCue(144);
-    Engine_MapAnimateCells(Data_0200d088, 79, 9);
+    Engine_MapAnimateCells(SoruStar_StarCells, 79, 9);
     Map_CopyCellAttributes(0, 0, 1, 1, 24, 9);
     Map_CopyCellsTo(87, 42, 24, 11, 1, 2);
     Event_Wait(40);
@@ -63,7 +63,7 @@ void Scene_BagJupiterStar(void)
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Event_Wait(20);
     Audio_PlayCue(144);
-    Engine_MapAnimateCells(Data_0200d088, 91, 10);
+    Engine_MapAnimateCells(SoruStar_StarCells, 91, 10);
     Map_CopyCellAttributes(0, 0, 1, 1, 36, 10);
     Map_CopyCellsTo(87, 42, 36, 12, 1, 2);
     Event_Wait(40);

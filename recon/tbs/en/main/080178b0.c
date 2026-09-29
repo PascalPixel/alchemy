@@ -11,7 +11,15 @@
    Wrapping the second call in a one-pass loop only delays the r5 update and
    changes the first call's schedule. A void expansion prototype also changes
    that schedule; indexing buf[length+offset] additionally swaps r5/r6.
-   u16 colour adds a spill and grows the frame; keep the s32 colour local. */
+   u16 colour adds a spill and grows the frame; keep the s32 colour local.
+   2026-09-28: the two literal routine addresses are IwramClearWords and
+   IwramExpandBitRuns. Casting either symbol to a function pointer folds to
+   a direct bl (a linker veneer here), not the reference's pool load and
+   _call_via_rN; the long_call attribute would give that shape but the
+   no-asm check forbids it, so adoption needs a reviewed IWRAM call form.
+   The five-halfword residual is a local-alloc tie: the else branch's dst
+   dies at dst + 32, so combine_regs gives the sum dst's register and GCC
+   adds in place; a function-scope dst is still block-local and ties too. */
 #include "TYPES.H"
 
 struct GlyphRuntime {

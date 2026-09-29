@@ -3,7 +3,7 @@
 
 void Effect_Spawn();
 void RamakanSabaku_UpdateTravelDust(void);
-s32 Main_080091d8(struct FieldActor *object, s32 *pos);
+s32 Object_CheckMovementCollision(struct FieldActor *object, s32 *pos);
 
 struct DustParams {
     u8 unknown_00[34];
@@ -17,7 +17,6 @@ union GameStateRows {
     s32 words[256];
 };
 
-extern union GameStateRows Data_02000240_t;
 
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
 {
@@ -39,14 +38,14 @@ void RamakanSabaku_UpdateDustAndProbe(void)
     {
         struct EventWork *event = gEventWork;
 
-        id = Data_02000240_t.words[125];
+        id = gGameState.selected_actor;
         center = event->view_center;
     }
     actor = Engine_ActorGet(id);
     pos[0] = actor->x.fixed;
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + 0x18000;
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     phase = gFrameCount & 4;
     if (phase == 0) {
         params.angle = ((u32)(Engine_RandomNext() << 12) >> 16) + 0xf800;
@@ -69,21 +68,21 @@ void RamakanSabaku_UpdateDustAndProbe(void)
     pos[0] = actor->x.fixed;
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + 0x80000;
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     if (hit > 0) {
         return;
     }
     pos[0] = actor->x.fixed + 0x5b333;
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + 0x5b333;
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     if (hit > 0) {
         return;
     }
     pos[0] = actor->x.fixed - 0x5b333;
     pos[1] = actor->y.fixed;
     pos[2] = actor->z.fixed + 0x5b333;
-    hit = Main_080091d8(actor, pos);
+    hit = Object_CheckMovementCollision(actor, pos);
     if (hit > 0) {
         return;
     }

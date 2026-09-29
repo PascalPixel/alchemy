@@ -92,6 +92,79 @@ pub fn find(haystack: &[u8], shape: &Shape, address: u32) -> Vec<usize> {
     out
 }
 
+/// A halfword with its placement-dependent bits removed: calls and pool words
+/// vanish, and branch offsets are dropped so inserted code does not hide an
+/// otherwise equal instruction.
+fn key(half: u16, compared: bool) -> u16 {
+    if !compared {
+        return 0;
+    }
+    match half >> 11 {
+        0x1a | 0x1b | 0x1c => half & 0xff00,
+        _ => half,
+    }
+}
+
+/// Four consecutive keys packed into one value.
+fn grams(keys: &[u16]) -> Vec<u64> {
+    let mut out: Vec<u64> = keys
+        .windows(4)
+        .filter(|w| w.iter().all(|k| *k != 0))
+        .map(|w| w.iter().fold(0u64, |a, k| a << 16 | u64::from(*k)))
+        .collect();
+    out.sort_unstable();
+    out
+}
+
+/// Shared entries of two sorted lists, counting repeats.
+fn shared(a: &[u64], b: &[u64]) -> usize {
+    let (mut i, mut j, mut n) = (0, 0, 0);
+    while i < a.len() && j < b.len() {
+        match a[i].cmp(&b[j]) {
+            std::cmp::Ordering::Less => i += 1,
+            std::cmp::Ordering::Greater => j += 1,
+            std::cmp::Ordering::Equal => {
+                n += 1;
+                i += 1;
+                j += 1;
+            }
+        }
+    }
+    n
+}
+
+/// The closest place for a function whose shape differs in `haystack`, as in
+/// another game: starts that repeat its first `prologue` compared halfwords
+/// (its register saves) are ranked by the share of its four-instruction
+/// sequences they contain over the function's length. Best first.
+pub fn nearest(haystack: &[u8], shape: &Shape, prologue: usize) -> Vec<(usize, f64)> {
+    let n = shape.halves.len();
+    let keys: Vec<u16> = (0..n)
+        .map(|i| key(shape.halves[i], shape.compared[i]))
+        .collect();
+    let head: Vec<usize> = (0..n)
+        .filter(|i| shape.compared[*i])
+        .take(prologue)
+        .collect();
+    let mine = grams(&keys);
+    if head.is_empty() || mine.is_empty() || haystack.len() < n * 2 {
+        return Vec::new();
+    }
+    let half = |at: usize| u16::from_le_bytes([haystack[at], haystack[at + 1]]);
+    let mut out = Vec::new();
+    let mut start = 0;
+    while start + n * 2 <= haystack.len() {
+        if head.iter().all(|i| half(start + i * 2) == shape.halves[*i]) {
+            let theirs: Vec<u16> = (0..n).map(|i| key(half(start + i * 2), true)).collect();
+            let score = shared(&mine, &grams(&theirs)) as f64 / mine.len() as f64;
+            out.push((start, score));
+        }
+        start += 2;
+    }
+    out.sort_by(|a, b| b.1.total_cmp(&a.1));
+    out
+}
+
 pub fn word(bytes: &[u8], at: usize) -> Option<u32> {
     bytes
         .get(at..at + 4)
@@ -219,6 +292,32 @@ mod tests {
         assert_eq!(found, vec![0x20]);
         assert_eq!(word(&elsewhere, 0x20 + 12), Some(0x4c));
         assert!(find(&elsewhere[..0x2c], &s, 0x0200_1000).is_empty());
+    }
+
+    #[test]
+    fn nearest_ranks_a_changed_twin_above_a_same_prologue_stranger() {
+        let halves = |hs: &[u16]| hs.iter().flat_map(|h| h.to_le_bytes()).collect::<Vec<u8>>();
+        // push {r5, lr}; adds r5, r0, #0; movs r0, #1; adds r1, r5, #0;
+        // lsls r2, r1, #2; adds r3, r2, r5; strh r3, [r5, #2]; movs r0, #0;
+        // pop {r5}; pop {r1}; bx r1
+        let body = [
+            0xb520, 0x1c05, 0x2001, 0x1c29, 0x008a, 0x1953, 0x806b, 0x2000, 0xbc20, 0xbc02, 0x4708,
+        ];
+        let s = shape(&halves(&body), 0x0800_1000);
+        let mut twin = body.to_vec();
+        twin.insert(3, 0x3001); // adds r0, #1
+        let stranger = [
+            0xb520, 0x2207, 0x4352, 0x1e52, 0xd1fd, 0x6812, 0x6013, 0x2301, 0x3304, 0x3305, 0x4708,
+        ];
+        let mut rom = halves(&stranger);
+        rom.extend(halves(&[0; 4]));
+        let twin_at = rom.len();
+        rom.extend(halves(&twin));
+        rom.extend(halves(&[0; 8]));
+        let ranked = nearest(&rom, &s, 1);
+        assert_eq!(ranked[0].0, twin_at, "{ranked:?}");
+        assert!(ranked[0].1 >= 0.5 && ranked[1].1 < 0.2, "{ranked:?}");
+        assert!(find(&rom, &s, 0x0800_1000).is_empty());
     }
 
     #[test]

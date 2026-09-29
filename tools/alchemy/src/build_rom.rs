@@ -75,13 +75,14 @@ pub(crate) fn script_objects(script: &str) -> Vec<String> {
         .collect()
 }
 
-/// The maintained source an object path names: C, then assembly.
+/// The maintained source an object path names: C, then assembly, then a
+/// sequence MIDI, which the build converts to assembly as pret's mid2agb does.
 fn source_for(root: &Path, object: &str) -> Result<PathBuf, String> {
-    ["C", "c", "S", "s"]
+    ["C", "c", "S", "s", "MID"]
         .iter()
         .map(|extension| PathBuf::from(format!("{object}.{extension}")))
         .find(|path| root.join(path).is_file())
-        .ok_or_else(|| format!("{object}.o has no C or assembly source"))
+        .ok_or_else(|| format!("{object}.o has no C, assembly or MIDI source"))
 }
 
 pub(crate) fn link(
@@ -104,6 +105,9 @@ pub(crate) fn link(
     }
     let output = root.join(output);
     base_rom(root, target, &output)?;
+    for source in &sources {
+        build_sound_files(root, target, source, &output)?;
+    }
     // Sources that read built overlay streams wait for the overlays, and the
     // overlays link against the main image's symbols: a first pass links the
     // main image with empty streams, which move nothing the overlays can see.
@@ -430,10 +434,11 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
     let stamp = object.with_extension("o.key");
     let source_text = source.to_string_lossy().into_owned();
     let object_text = object.to_string_lossy().into_owned();
-    let c = matches!(
-        source.extension().and_then(|extension| extension.to_str()),
-        Some("C" | "c")
-    );
+    let extension = source.extension().and_then(|extension| extension.to_str());
+    if extension == Some("MID") {
+        return compile_sequence(root, source, object);
+    }
+    let c = matches!(extension, Some("C" | "c"));
     let (key, steps) = if c {
         let assembly = object.with_extension("s");
         let preprocessed = object.with_extension("i");
@@ -468,7 +473,10 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
             .ancestors()
             .find(|path| path.join("baserom.gba").exists())
             .ok_or("the base ROM link is missing")?;
-        for stream in stream_paths(root, source, base) {
+        let sounds = sound_files(root, source)
+            .into_iter()
+            .map(|built| base.join(built));
+        for stream in stream_paths(root, source, base).into_iter().chain(sounds) {
             hasher.update(fs::read(&stream).map_err(|error| error.to_string())?);
         }
         step.insert(1, format!("-I{}", base.display()));
@@ -483,6 +491,84 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
         command(step, root)?;
     }
     fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+/// Convert a sequence MIDI to assembly beside its object and assemble it,
+/// reusing the object while the converted text and command are unchanged.
+fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), String> {
+    let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
+    let text = crate::assets::sound::sequence_assembly(&midi)?;
+    let assembly = object.with_extension("s");
+    let step = assembly_command(&assembly.to_string_lossy(), &object.to_string_lossy());
+    let mut hasher = Sha256::new();
+    hasher.update(text.as_bytes());
+    hasher.update(step.join("\0").as_bytes());
+    let key = format!("{:x}", hasher.finalize());
+    let stamp = object.with_extension("o.key");
+    if object.is_file() && fs::read_to_string(&stamp).ok().as_deref() == Some(key.as_str()) {
+        return Ok(());
+    }
+    let _ = fs::remove_file(&stamp);
+    fs::write(&assembly, text).map_err(|error| error.to_string())?;
+    command(&step, root)?;
+    fs::write(&stamp, key).map_err(|error| error.to_string())
+}
+
+/// The sound files a game's data source reads, as pret's data files read the
+/// `.bin` files its build makes: `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"`
+/// names the file the build writes from `SOUND/SAMPLE/WAVE_00.PCM8.WAV`,
+/// relative to the build directory.
+fn sound_files(root: &Path, source: &Path) -> Vec<String> {
+    let Ok(text) = fs::read_to_string(root.join(source)) else {
+        return Vec::new();
+    };
+    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"(SOUND/[A-Za-z0-9_./]+\.bin)""#)
+        .expect("static pattern");
+    pattern
+        .captures_iter(&text)
+        .map(|capture| capture[1].to_owned())
+        .collect()
+}
+
+/// Write every sound file `source` reads from the game's editable input of
+/// the same name, rewriting a file only when its bytes change.
+fn build_sound_files(
+    root: &Path,
+    target: DecompTarget,
+    source: &Path,
+    output: &Path,
+) -> Result<(), String> {
+    for built in sound_files(root, source) {
+        let stem = built.strip_suffix(".bin").expect("pattern ends in .bin");
+        if stem.split('/').any(|part| part.is_empty() || part == "..") {
+            return Err(format!(
+                "{}: {built} is not a sound file path",
+                source.display()
+            ));
+        }
+        let inputs: Vec<PathBuf> = ["WAV", "PCM4"]
+            .iter()
+            .map(|extension| Path::new(target.game_dir()).join(format!("{stem}.{extension}")))
+            .filter(|path| root.join(path).is_file())
+            .collect();
+        let [input] = inputs.as_slice() else {
+            return Err(format!(
+                "{}: {built} needs exactly one WAV or PCM4 input",
+                source.display()
+            ));
+        };
+        let bytes = fs::read(root.join(input)).map_err(|error| error.to_string())?;
+        let encoded = crate::assets::sound::build_sound_file(&input.to_string_lossy(), &bytes)
+            .map_err(|error| format!("{}: {error}", input.display()))?;
+        let path = output.join(&built);
+        if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
+            continue;
+        }
+        fs::create_dir_all(path.parent().expect("sound file directory"))
+            .map_err(|error| error.to_string())?;
+        fs::write(&path, encoded).map_err(|error| error.to_string())?;
+    }
+    Ok(())
 }
 
 /// The compressor Camelot's resource packer ran on every code overlay, as

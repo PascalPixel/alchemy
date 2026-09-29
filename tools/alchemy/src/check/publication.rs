@@ -417,12 +417,14 @@ fn check_documents(root: &Path) -> Result<(), String> {
         ))
     }
 }
-/// An `.incbin` directive, except two forms in scaffolding that commit no
-/// bytes: pret's base-ROM range `.incbin "baserom.gba", OFFSET, SIZE`, which
-/// reads the builder's own ROM as pokeemerald's early data files did, and a
-/// code overlay the build links from its listing and compresses,
-/// `.incbin "overlays/resource_XXX.lz"`, as pret's data files read the
-/// compressed files its build makes.
+/// An `.incbin` directive, except three forms that commit no bytes. In
+/// scaffolding: pret's base-ROM range `.incbin "baserom.gba", OFFSET, SIZE`,
+/// which reads the builder's own ROM as pokeemerald's early data files did,
+/// and a code overlay the build links from its listing and compresses,
+/// `.incbin "overlays/resource_XXX.lz"`. In a game's sound data sources: a
+/// file the build makes from the like-named editable input beside them,
+/// `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"` from `WAVE_00.PCM8.WAV`, as
+/// pret's data files read the `.bin` files wav2agb makes.
 fn incbin(path: &str, data: &[u8]) -> bool {
     let base_rom = regex::Regex::new(
         r#"^\s*\.incbin\s+"baserom\.gba"\s*,\s*0x[0-9a-f]+\s*,\s*0x[0-9a-f]+\s*$"#,
@@ -430,10 +432,18 @@ fn incbin(path: &str, data: &[u8]) -> bool {
     .expect("base ROM range pattern");
     let overlay = regex::Regex::new(r#"^\s*\.incbin\s+"overlays/resource_[0-9a-f]+\.lz"\s*$"#)
         .expect("built overlay pattern");
+    let built_sound =
+        regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
+            .expect("built sound pattern");
     let scaffolding = path.starts_with("recon/");
+    let sound_source = matches!(
+        path.split('/').collect::<Vec<_>>().as_slice(),
+        ["games", game, "SOUND", .., _] if *game != "COMMON"
+    );
     let text = String::from_utf8_lossy(data);
     text.split(['\n', '\r'])
         .filter(|line| !(scaffolding && (base_rom.is_match(line) || overlay.is_match(line))))
+        .filter(|line| !(sound_source && built_sound.is_match(line)))
         .any(|line| {
             let trimmed =
                 line.trim_start_matches(|ch: char| ch.is_whitespace() || ch == '\u{feff}');
@@ -3450,6 +3460,51 @@ mod tests {
             "recon/tbs/overlays.s",
             b".incbin \"overlays/resource_36f.bin\"\n"
         ));
+    }
+
+    #[test]
+    fn sound_data_sources_may_incbin_only_the_sound_files_the_build_makes() {
+        let sample = b"Sound_Wave00:\n\t.incbin \"SOUND/SAMPLE/WAVE_00.PCM8.bin\"\n";
+        let wave = b"\t.incbin \"SOUND/SAMPLE/CGB_WAVE_0.bin\"\n";
+        for path in [
+            "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+            "games/THE LOST AGE/SOUND/CGB_WAVES.S",
+        ] {
+            assert!(!super::incbin(path, sample), "{path}");
+            assert!(!super::incbin(path, wave), "{path}");
+        }
+        // Only a game's sound sources, and only built files under SOUND.
+        for (path, line) in [
+            ("games/THE BROKEN SEAL/SRC/SOUND/DATA.S", sample.as_slice()),
+            ("recon/tbs/unidentified.s", sample),
+            ("games/COMMON/SOUND/SAMPLES.S", sample),
+            (
+                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+                b".incbin \"baserom.gba\", 0x000fd048, 0x000002ac\n",
+            ),
+            (
+                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+                b".incbin \"SOUND/SAMPLE/WAVE_00.PCM8.WAV\"\n",
+            ),
+            (
+                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+                b".incbin \"SOUND/../../../roms/tbs-en.bin\"\n",
+            ),
+            (
+                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+                b".incbin \"SOUND/SAMPLE/WAVE_00.PCM8.bin\", 0, 16\n",
+            ),
+            (
+                "games/THE BROKEN SEAL/SOUND/SAMPLES.S",
+                b".incbin \"overlays/resource_36f.lz\"\n",
+            ),
+        ] {
+            assert!(super::incbin(path, line), "{path}");
+        }
+        assert_eq!(
+            super::publication_data_reason("games/THE BROKEN SEAL/SOUND/SAMPLES.S", sample, None),
+            None
+        );
     }
 
     use super::*;

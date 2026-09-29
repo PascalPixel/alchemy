@@ -986,6 +986,15 @@ pub(crate) fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
     });
     build_sequence_source(&source)
 }
+/// The assembler source `build rom` assembles for a sequence MIDI, as pret's
+/// mid2agb writes one song's: the sequence in `.rodata`, its header label
+/// exported and every address word a label the linker resolves.
+pub(crate) fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
+    Ok(format!(
+        "\t.section .rodata\n{}",
+        build_midi_sequence(midi)?.source()?
+    ))
+}
 /// Turn a playback MIDI into the sequence MIDI of an editable sequence
 /// layout. Its conductor becomes the layout's skeleton and the first time
 /// signature, in `ADOPTION_BARS` order, under which the converter reads every
@@ -1359,6 +1368,94 @@ pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
     bytes.extend(&wave.samples);
     bytes.resize(size, 0);
     Ok(bytes)
+}
+
+/// The bytes a sound data source reads for one editable input, as pret's
+/// wav2agb builds `.bin` files from `.wav`: a WAV's PCM wave record, or the
+/// sixteen bytes of a `.PCM4` CGB wave RAM pattern (32 four-bit samples).
+pub(crate) fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
+    let extension = name.rsplit_once('.').map_or("", |(_, suffix)| suffix);
+    if extension.eq_ignore_ascii_case("wav") {
+        build_pcm_record(input)
+    } else if extension.eq_ignore_ascii_case("pcm4") {
+        if input.len() != 16 {
+            return Err("a CGB wave RAM pattern is 16 bytes".into());
+        }
+        Ok(input.to_vec())
+    } else {
+        Err(format!("{name} is not a sound input"))
+    }
+}
+
+#[test]
+fn sound_files_build_from_wav_and_pcm4_inputs_only() {
+    use psynergy::assets::wav::{write_pcm8, Pcm8};
+    let wave = write_pcm8(&Pcm8 {
+        rate: 8_000,
+        samples: vec![1, 2, 3],
+        unity_note: 60,
+        pitch_fraction: 0,
+        loop_range: None,
+    })
+    .unwrap();
+    assert_eq!(
+        build_sound_file("SAMPLE/X.PCM8.WAV", &wave).unwrap(),
+        build_pcm_record(&wave).unwrap()
+    );
+    assert_eq!(
+        build_sound_file("SAMPLE/X.PCM4", &[0x5a; 16]).unwrap(),
+        [0x5a; 16]
+    );
+    assert!(build_sound_file("SAMPLE/X.PCM4", &[0; 15]).is_err());
+    assert!(build_sound_file("SAMPLE/X.BIN", &[0; 16]).is_err());
+}
+
+#[test]
+fn sequence_assembly_places_the_song_in_rodata_by_label() {
+    let source = serde_json::json!({
+        "format": 1, "engine": "smsh-sequence",
+        "layout": [
+            {"kind": "stream", "label": "track_1", "events": [["fine"]]},
+            {"kind": "align", "boundary": 4, "fill": 0},
+            {"kind": "header", "label": "sound_001", "tracks": ["track_1"],
+             "block_count": 0, "priority": 0, "reverb": 0, "tone_bank": "Voices"}
+        ]
+    });
+    let track = |events: &[MidiEvent]| {
+        let data = encode_midi_track(events).unwrap();
+        [
+            b"MTrk".as_slice(),
+            &(data.len() as u32).to_be_bytes(),
+            &data,
+        ]
+        .concat()
+    };
+    let fine = MidiEvent {
+        tick: 0,
+        track: 1,
+        order: 0,
+        body: EventBody::Meta {
+            meta: 0x06,
+            data: br#"["fine"]"#.to_vec(),
+        },
+    };
+    let playback = [
+        b"MThd\0\0\0\x06\0\x01\0\x02\0\x60".as_slice(),
+        &track(&[]),
+        &track(&[fine]),
+    ]
+    .concat();
+    let midi = adopt_midi(&source, &playback).unwrap();
+    let text = sequence_assembly(&midi).unwrap();
+    assert!(
+        text.starts_with("\t.section .rodata\n\t.balign 4\n"),
+        "{text}"
+    );
+    assert!(text.contains("\t.global sound_001\nsound_001:\n"), "{text}");
+    assert!(
+        text.contains("\t.4byte Voices\n\t.4byte track_1\n"),
+        "{text}"
+    );
 }
 
 #[test]

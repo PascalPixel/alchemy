@@ -48,11 +48,15 @@ struct Actor {
 
 /* Tables laid out after the code. */
 extern const u16 YamaRama_BoulderCells[];
+extern const u16 YamaRama_BoulderCellsBack[];
+extern const u8 YamaRama_HsuAction[];
+extern const u8 YamaRama_LeaderAction[];
 
 void *Object_GetById(u32 id);
 void Object_RefreshSelectorById();
 void BattleFx_PlayQueuedSound(void);
 s32 SceneActor_SetFlagBitByRankAgainstActorZero(struct Actor02001060 *actor);
+s32 OverlayObject_SetFacingTowardObject10(void *self);
 
 /* Scene event steps for resource_3a2. */
 
@@ -287,7 +291,7 @@ void FieldScene_RunScene3a2SequenceA(void)
     Actor_WalkToAndWait(8, 136, 136);
     Actor_SetPosition(8, 0, 0);
     Audio_PlayCue(188);
-    Map_AnimateCells(0x200979e, 67, 6);
+    Map_AnimateCells(YamaRama_BoulderCellsBack, 67, 6);
     Event_Wait(60);
     BattleFx_PlayQueuedSound();
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
@@ -426,7 +430,7 @@ void Scene_RunEventTransition(void)
         Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
         Event_Wait(20);
         record = Object_GetById(0);
-        *(s32 *)((s32)record + 108) = 0x2008055;
+        *(s32 *)((s32)record + 108) = (s32)OverlayObject_SetFacingTowardObject10;
         record = Value1(Object_GetById, 0);
         if ((*(s32 *)((s32)record + 16) >> 20) == 13) {
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x1b8, 200);
@@ -448,13 +452,13 @@ void Scene_RunEventTransition(void)
         Actor_SetAttachedEffect(10, 0x102);
         Event_Wait(60);
         Event_ShowMessageAndWait(10, 0, 20);
-        Value2(Engine_ActorEnableActionCallback, 10, 0x200962c);
+        Value2(Engine_ActorEnableActionCallback, 10, (s32)YamaRama_HsuAction);
         Camera_MoveTo(0x1280000, -1, 0x1580000, 1);
         GameFlag_Set(0x8b0);
         Object_RefreshSelectorById(10);
         Camera_WaitForMove();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-        Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 0x20096b8);
+        Actor_EnableActionCallback(ACTOR_PARTY_LEADER, YamaRama_LeaderAction);
         Object_RefreshSelectorById(0);
         Event_Wait(10);
         none = 0;

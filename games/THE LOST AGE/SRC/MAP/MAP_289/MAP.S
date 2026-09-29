@@ -18,19 +18,19 @@ Field_Map289:
 	.incbin "MAP/MAP_289/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map289_SHAPES:
-	.incbin "MAP/MAP_289/SHAPES.table.lz"
+	.incbin "MAP/MAP_179/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map289_GRID:
 	.incbin "MAP/MAP_289/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map289_SHAPE_GRID:
-	.incbin "MAP/MAP_289/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_289/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map289_ANIMATION:
 	.incbin "MAP/MAP_289/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map289_BLEND:
-	.incbin "MAP/MAP_289/BLEND.script.lz"
+	.incbin "MAP/MAP_001/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map289_SCENE:
-	.incbin "MAP/MAP_289/SCENE.parts.lz"
+	.incbin "MAP/MAP_236/SCENE.parts.lz"

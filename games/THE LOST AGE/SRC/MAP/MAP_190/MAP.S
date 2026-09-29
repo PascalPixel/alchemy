@@ -24,7 +24,7 @@ Field_Map190:
 	.incbin "MAP/MAP_190/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map190_SHAPE_GRID:
-	.incbin "MAP/MAP_190/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_190/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map190_ANIMATION:
 	.incbin "MAP/MAP_190/ANIMATION.script.lz"

@@ -15,16 +15,16 @@ Field_Map295:
 	map_block Field_Map295
 	map_block Field_Map295, .LField_Map295_SCENE
 .LField_Map295_METATILES:
-	.incbin "MAP/MAP_295/METATILES.delta0.lz"
+	.incbin "MAP/MAP_000/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map295_SHAPES:
-	.incbin "MAP/MAP_295/SHAPES.table.lz"
+	.incbin "MAP/MAP_018/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map295_GRID:
 	.incbin "MAP/MAP_295/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map295_SHAPE_GRID:
-	.incbin "MAP/MAP_295/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_018/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map295_SCENE:
-	.incbin "MAP/MAP_295/SCENE.parts.lz"
+	.incbin "MAP/MAP_000/SCENE.parts.lz"

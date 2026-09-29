@@ -1,44 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_08043bec
-	.thumb_func
-Func_08043bec:
-.L_08043bec:
-	push	{r5, r6, r7, lr}
-	mov	r7, r8
-	push	{r7}
-	adds	r7, r0, #0
-	sub	sp, #8
-	cmp	r7, #0
-	beq.n	.L_08043c28
-	movs	r3, #16
-	adds	r5, r1, #0
-	movs	r4, #0
-	mov	r8, r3
-	movs	r6, #3
-	adds	r5, #40
-.L_08043c06:
-	ldrb	r0, [r5, #0]
-	mov	r3, r8
-	lsls	r0, r0, #24
-	str	r3, [sp, #0]
-	asrs	r0, r0, #24
-	adds	r3, r4, #0
-	movs	r1, #2
-	adds	r2, r7, #0
-	str	r4, [sp, #4]
-	bl	UiText_DrawNumberAtOffset
-	ldr	r4, [sp, #4]
-	subs	r6, #1
-	adds	r5, #1
-	adds	r4, #24
-	cmp	r6, #0
-	bge.n	.L_08043c06
-.L_08043c28:
-	add	sp, #8
-	pop	{r3}
-	mov	r8, r3
-	pop	{r5, r6, r7, pc}
 .L_08043c30:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
@@ -613,7 +574,7 @@ Func_08043bec:
 .L_080440a2:
 	ldr	r0, [sp, #24]
 	adds	r1, r6, #0
-	bl	.L_08043bec
+	bl	UiText_DrawFourNumbersInRow
 	movs	r0, #1
 	bl	0x080f8080
 	b.n	.L_0804410a

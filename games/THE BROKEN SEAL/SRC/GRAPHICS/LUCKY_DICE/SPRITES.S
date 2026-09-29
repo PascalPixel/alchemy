@@ -3,5 +3,5 @@
 	.section .rodata
 	.global LuckyDice_Sprites
 LuckyDice_Sprites:
-	.incbin "GRAPHICS/LUCKY_DICE/SPRITES.gbapal"
-	.incbin "GRAPHICS/LUCKY_DICE/SPRITES.8bpp.lz"
+	.incbin "GRAPHICS/LUCKY_DICE/SPRITES_1.gbapal"
+	.incbin "GRAPHICS/LUCKY_DICE/SPRITES.parts.lz"

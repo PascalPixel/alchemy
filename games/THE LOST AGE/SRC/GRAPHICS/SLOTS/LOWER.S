@@ -4,4 +4,4 @@
 	.global Slots_LowerBanner
 Slots_LowerBanner:
 	.incbin "GRAPHICS/SLOTS/LOWER.gbapal"
-	.incbin "GRAPHICS/SLOTS/LOWER.4bpp.lz"
+	.incbin "GRAPHICS/SLOTS/LOWER.4bpp32x32.lz"

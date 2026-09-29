@@ -1,3 +1,5 @@
+/* 2026-09-29: five minutes of permutation reached 45598 from 48704 through
+ * 170 rewrites; not kept, since the owner is far from exact. */
 /* 2026-09-29: callees carry the build's names; alchemy permute scores
  * 48704, from 49424. */
 /* NONMATCHING: 1816 differing halfwords; 1169 halfword edits.

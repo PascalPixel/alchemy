@@ -1,3 +1,7 @@
+/* 2026-09-29: eight minutes of permutation (--function Func_0808d9a4)
+ * reached 2985 from 3650 through 26 rewrites; not kept, since the owner's
+ * topology still differs (below) and message 0x970 and 0x1000 are still
+ * spelled as Data_ symbols. */
 /* 2026-09-29: callees carry the build's names; alchemy permute (--function
  * Func_0808d9a4) scores 3650, from 4630. */
 #include "TYPES.H"

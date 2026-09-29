@@ -1,3 +1,5 @@
+/* 2026-09-29: five minutes of permutation reached 26685 from 32589 through
+ * 227 rewrites; not kept, since the owner is far from exact. */
 /* 2026-09-29: Party_GetAverageLevelFar carries the build's name; alchemy
  * permute scores 32589, from 32629. */
 /* NONMATCHING: shared callee return types audited on 2026-09-26.

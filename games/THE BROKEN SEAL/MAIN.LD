@@ -1523,7 +1523,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MOTION_SET_APPROACH_MOTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/PACK_ROWS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD_VARIANT.o"(.text)
-        "*/recon/tbs/raw/080dfa48.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PARTICLE_FIELD_VARIANT_RUN.o"(.text)
         "*/games/COMMON/SRC/GRAPHICS/TILE/TRANSPOSE_COPY.o"(.text)
         "*/recon/tbs/raw/080dfe2a.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/080dfe2c.o"(.text .rodata .data .padding)

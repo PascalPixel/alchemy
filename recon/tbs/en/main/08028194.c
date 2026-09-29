@@ -1,3 +1,6 @@
+/* 2026-09-29: eight minutes of permutation reached 4740 from 6970 through
+ * 64 rewrites; not kept, since the owner is far from exact and its scale
+ * table, Data_080366f8, has no label in the build yet. */
 /* Draft, not exact (2026-09-25): 856 of 840 bytes, 381 differing halfwords.
    Written from the listing after splitting this owner out of the main:08027f82
    fragment. The prologue, scale pulse, affine matrix set-up and sprite

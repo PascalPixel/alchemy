@@ -290,6 +290,8 @@ SECTIONS
         "*/recon/tla/raw/0802632c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080279b0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08027e20.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
+        "*/recon/tla/raw/0802a5e4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0802b344.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0802b63c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0802b700.o"(.text .rodata .data .padding)

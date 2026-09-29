@@ -283,7 +283,7 @@ SECTIONS
         "*/recon/tbs/raw/0800f7f2.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0800f7f4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/REMAP_BYTES_BY_TABLE.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/TILE/DECODE_STAGED_BUFFER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENUMBER_FILLER_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILE/CONVERT_BUFFER.o"(.text)
         "*/recon/tbs/raw/0800fb38.o"(.text .rodata .data .padding)

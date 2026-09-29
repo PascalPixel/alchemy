@@ -1,5 +1,5 @@
 #include "TYPES.H"
-#include "MAP.H"
+extern u32 gMapBlocks[];
 #include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
 

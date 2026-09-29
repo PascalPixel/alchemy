@@ -479,7 +479,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/ADJUST_BYTE205_BY_DIRECTION.o"(.text)
         "*/recon/tbs/raw/0801c49c.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/COLLECT_RESOURCES.o"(.text)
-        "*/recon/tbs/raw/0801c8a0.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/ABILITY/FIND_SHORTCUT_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/RUN_SELECTION_HOOK.o"(.text)
         "*/recon/tbs/raw/0801c92e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/MENU/ALLOCATE_SELECTION_WORKSPACE.o"(.text)

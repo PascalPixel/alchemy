@@ -1354,7 +1354,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/CLEAR_BG0_VOFS.o"(.text)
         "*/recon/tbs/raw/080c02a4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/SET_PALETTE_LEVEL.o"(.text)
-        "*/recon/tbs/raw/080c0774.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/CONFIGURE_PALETTE_FADE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/INITIALIZE_WORK_AND_RESET_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/MEMORY/RELEASE_HEAP_BLOCK_10.o"(.text)
         "*/recon/tbs/raw/080c08ec.o"(.text .rodata .data .padding)

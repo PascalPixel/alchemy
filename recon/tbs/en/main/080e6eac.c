@@ -15,7 +15,7 @@ s32 Func_0800231c(s32 angle);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void Func_080f9010(s32 id);
 s32 Math_Div(s32 numerator, s32 denominator);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 void BattleFx_PlaceFormationObjects(void *object, s32 a, s32 b);
 
@@ -244,7 +244,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
         }
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

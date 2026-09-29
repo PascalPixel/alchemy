@@ -64,7 +64,7 @@ void Func_080f9010(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 b, s32 c, s32 d, s32 e);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
@@ -319,7 +319,7 @@ loop_38:
         } while (var_i != 0x200);
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(temp_r1_17, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         temp_r1_629 = sp18 + 1;
         sp18 = temp_r1_629;
         if (temp_r1_629 != Data_080ededc[(M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18) * 4) + 3]) {

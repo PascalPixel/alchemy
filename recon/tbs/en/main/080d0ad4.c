@@ -253,7 +253,7 @@ loop_23:
         Func_08002dd8(0x2F);
         Func_08002dd8(0x2E);
         M2C_FIELD(sp44, s32 *, 0x7824) = temp_r5_429;
-        Func_080030f8(1);
+        WaitFrames(1);
         sp3C += 1;
         if (sp3C != ((M2C_FIELD(M2C_FIELD(sp44, void **, 0x7828), s32 *, 0x14) * 0x14) + 0x48)) {
             goto loop_3;

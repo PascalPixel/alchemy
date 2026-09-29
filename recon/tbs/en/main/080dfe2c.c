@@ -13,7 +13,7 @@
  * assembly, not transcribed from the assigned template. In particular the
  * heap_cache/cursor prologue, the M2C_FIELD field-offset idiom, the
  * DrawRectangleFn typedef, and the Func_080cef64/Resource_LoadAndDecompress/
- * Func_080e3908/Func_080e155c/Func_080cd52c/Func_080030f8 calling shapes are
+ * Func_080e3908/Func_080e155c/Func_080cd52c/WaitFrames calling shapes are
  * shared with 080e01e4.c and documented there; the 512-slot sentinel-init
  * loop at 0x02010018, the final 256-slot particle-scan draw (idx = (lifetime
  * >>4)+2, half = (idx+(idx>>31))>>1, src = extra_target+Data_080ede48[idx-1])
@@ -52,7 +52,7 @@ void Func_080b5088(s32 member_id, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 
 extern const u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080eec5a[];
@@ -277,7 +277,7 @@ void Func_080dfe2c(void *object)
         Camera_ApplyShake(4, 4);
         ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
 
         frame++;
     } while (frame != 96);

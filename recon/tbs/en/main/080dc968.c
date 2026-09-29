@@ -147,7 +147,7 @@ void Func_080dc968(void *arg0) {
     draw_args[0] = (DrawRectangleFn)*(void **)(battle_globals + 8);
     draw_args[1] = (DrawRectangleFn)*(void **)(battle_globals + 0x0C);
     gProjection[4] = 0xF0;
-    Func_080030f8(1);
+    WaitFrames(1);
     BattleBackground_LoadFar(1, 0x3B, 0);
     M2C_FIELD(temp_r3_25, s32 *, 0x7790) = 0;
     M2C_FIELD(temp_r3_25, s32 *, 0x7794) = 4;
@@ -358,7 +358,7 @@ block_36:
             goto loop_20;
         }
         M2C_FIELD(temp_r3_25, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         temp_r0_786 = sp28 + 1;
         sp28 = temp_r0_786;
         if ((temp_r0_786 != 0xDC) && !(*(u32 *)0x03001B04 & 3)) {
@@ -487,7 +487,7 @@ loop_58:
     Camera_ApplyShake(4, 8);
     ObjectGroup_TickMemberTimers();
     M2C_FIELD(temp_r3_25, s32 *, 0x7824) = 1;
-    Func_080030f8(1);
+    WaitFrames(1);
     temp_r0_1119 = sp28 + 1;
     sp28 = temp_r0_1119;
     if (temp_r0_1119 != 0x58) {

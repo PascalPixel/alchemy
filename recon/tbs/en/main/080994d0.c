@@ -61,7 +61,7 @@ void BattleFx_RunSparkEmitter(void);
 void BattleEffect_InitializeSharedScene(void);
 struct BattleEffect03Object *Object_Spawn(s32, s32, s32, s32);
 struct BattleEffect03Link *Object_ReplaceResourceEntry(void *, struct BattleEffect03Link *);
-void Func_080030f8(s32);
+void WaitFrames(s32);
 void Func_080f9010(s32);
 void Animation_ApplyChildValuesFar(struct BattleEffect03Object *, s32);
 void Motion_SetTargetPositionFromMagnitudeAngle(struct BattleEffect03Object *, s32, s32);
@@ -98,7 +98,7 @@ Spawn:
             object->mode = 4;
             last = Object_ReplaceResourceEntry(object->visual, last);
         }
-        Func_080030f8(1);
+        WaitFrames(1);
         spawn_index++;
     }
     if (spawn_index <= 7)
@@ -106,7 +106,7 @@ Spawn:
 
     link_marker = last->marker;
     Func_080f9010(0x82);
-    Func_080030f8(110);
+    WaitFrames(110);
     object = Object_Spawn(0xe9, 0, 0, 0);
     particle = object;
     if (object != 0) {
@@ -121,7 +121,7 @@ Spawn:
 
     Func_080f9010(0x83);
     alive = particle != 0;
-    Func_080030f8(12);
+    WaitFrames(12);
     if (object != 0) {
         flash_index = 0;
         do {
@@ -129,7 +129,7 @@ Spawn:
                 Animation_ApplyChildValuesFar(particle, 9);
             else
                 Animation_ApplyChildValuesFar(particle, 10);
-            Func_080030f8(2);
+            WaitFrames(2);
             flash_index++;
         } while (flash_index <= 29);
     }
@@ -140,9 +140,9 @@ Spawn:
         object->callback = BattleFx_RunSparkEmitter;
         object->angle = 0;
         if (state->long_delay != 0)
-            Func_080030f8(128);
+            WaitFrames(128);
         else
-            Func_080030f8(192);
+            WaitFrames(192);
     }
     if (object != 0) {
         object->angle = -1;

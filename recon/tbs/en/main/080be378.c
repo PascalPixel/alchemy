@@ -34,7 +34,7 @@ extern void BattleEventRuntime_SchedulePhase(s32 phase);            /* BattleEve
 extern void BattleEventRuntime_WaitForReady(void);                 /* BattleEventRuntime_WaitForReady */
 extern s32 Func_080c1798(s16 id, s8 a, s32 mode, s32 arg3);
 extern void BattlePres_SetActorModes(s32 a, s32 b);
-extern void Func_080030f8(s32 frames);           /* WaitFrames */
+extern void WaitFrames(s32 frames);           /* WaitFrames */
 extern struct BattleTurnOrder *Data_03001e74;
 extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
                                            * truth (this pass) shows it takes
@@ -600,7 +600,7 @@ L_080bec62:
     Func_08015120(abilityId, 4);
     Func_080f9010(114);
     UiText_ShowMessageAndWaitCoreFar(TEXT_TIER5_BUSY_MSG);
-    Func_080030f8(60);
+    WaitFrames(60);
     goto L_080bf1d6_shared;
 
 L_080bec90:

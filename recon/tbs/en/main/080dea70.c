@@ -107,7 +107,7 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 flag);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 
 extern u8 Value_0000005b;
 extern u8 Value_0000005c;
@@ -834,7 +834,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
             Camera_ApplyShake(4, 4);
             ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
 
             frame++;
         } while (frame != total);

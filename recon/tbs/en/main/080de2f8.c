@@ -127,7 +127,7 @@ void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *out_vector);
 void Graphics_RestoreTransferWork(void);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 
 extern u8 Value_0000008e;
 extern u8 Value_00000090;
@@ -414,7 +414,7 @@ void BattleFx_PrepareCanvasEffect(
             }
 
             M2C_FIELD(work, s32 *, 0x7824) = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
             frame++;
         } while (frame != total);
     }

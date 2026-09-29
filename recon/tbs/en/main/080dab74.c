@@ -130,7 +130,7 @@ s32 Func_08002304(s32 value, s32 range);
 s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 resource_id);
 void BattleFx_EndCanvasLayer(void);
 
@@ -417,7 +417,7 @@ void BattleEffect_RunRisingMotes(struct EffectArgument *object)
 
         limit = 1;
         work->frame_ready = limit;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Func_08002dd8(47);

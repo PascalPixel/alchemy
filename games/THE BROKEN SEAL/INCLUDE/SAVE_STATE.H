@@ -60,7 +60,7 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 extern s16 gTitleSendOptionEnabled;
 
 void *Func_080048f4(s32 kind, s32 size);
-s32 Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 s32 _call_via_r3(s32, s32, s32, s32);
 s32 Flash_VerifySector(u16 sector, s32 source);
 s32 Func_080058ac(s32 index);

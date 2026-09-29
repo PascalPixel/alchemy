@@ -96,7 +96,7 @@ void BattleFx_SpawnObjects(s32 a, s32 b, s32 c);
 void *Func_08009030(s32 id);
 s32 Func_080022fc(s32 a, s32 b);
 void Func_08009020(void *object, s32 value);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
 s32 Random16(void);
 void Func_080f9010(s32 id);
@@ -198,7 +198,7 @@ void Func_080e823c(void *object)
     *io = 0xF0;
     io += 3;
     *io = 0x1088;
-    Func_080030f8(1);
+    WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&Value_0000003c, 0);
     Unnamed_080cd104(1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000073, sprite_sheet, 0, 0);
@@ -462,7 +462,7 @@ void Func_080e823c(void *object)
             Camera_ApplyShake(8, 8);
             ObjectGroup_TickMemberTimers();
             ((struct BattleEffectWork *)work)->transfer_pending = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
             frame++;
         } while (frame != 320 && (*(s32 *)0x03001B04 & 3) == 0);
     }

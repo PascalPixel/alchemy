@@ -118,7 +118,7 @@ enum SelectByRuntimeSelectorMessage {
 };
 
 extern u8 *Object_GetById(s32);
-void FieldScene_RunSupplementalSequenceOne(void);
+void KuupuappuDou_RunRumble(void);
 
 void FieldScene_RunScene3a7SequenceB(void)
 {
@@ -143,6 +143,6 @@ void FieldScene_RunScene3a7SequenceB(void)
         Event_Wait(40);
         Map_CopyCells(2, 24, 1, 2, v6, v5);
         Event_Wait(40);
-        FieldScene_RunSupplementalSequenceOne();
+        KuupuappuDou_RunRumble();
     }
 }

@@ -16,16 +16,25 @@ gGameState:
 	.space 0x00000140
 	.global gItemCounters
 gItemCounters:
-	.space 0x0000010a
+	.space 0x000000fc
+	.global gOverflowItem
+gOverflowItem:
+	.space 0x0000000e
 	.global gPlayerObjectId
 gPlayerObjectId:
-	.space 0x00000bee
+	.space 0x00000b76
+	.global gSceneState
+gSceneState:
+	.space 0x00000078
 	.global gInventorySnapshot
 gInventorySnapshot:
 	.space 0x000000ac
 	.global Data_02001124
 Data_02001124:
-	.space 0x00000ee0
+	.space 0x00000edc
+	.global gSleepActive
+gSleepActive:
+	.space 0x00000004
 	.global gSaveSlot
 gSaveSlot:
 	.space 0x00000004
@@ -34,7 +43,13 @@ gSerialSendSize:
 	.space 0x00000004
 	.global gTitleExtraOptionEnabled
 gTitleExtraOptionEnabled:
-	.space 0x00000018
+	.space 0x00000004
+	.global gTitleSendOptionEnabled
+gTitleSendOptionEnabled:
+	.space 0x00000010
+	.global gSerialPeerPayloads
+gSerialPeerPayloads:
+	.space 0x00000004
 	.global gLinkPeerSignatures
 gLinkPeerSignatures:
 	.space 0x0000005c
@@ -52,7 +67,13 @@ gSerialReceivedSize:
 	.space 0x00000008
 	.global gSerialRuntime
 gSerialRuntime:
-	.space 0x0000016c
+	.space 0x00000164
+	.global gSerialBlockSequence
+gSerialBlockSequence:
+	.space 0x00000004
+	.global gBattleRandomSeed
+gBattleRandomSeed:
+	.space 0x00000004
 	.global gSerialReceiveDest
 gSerialReceiveDest:
 	.space 0x00000c54
@@ -156,7 +177,10 @@ gEraseFlashSector:
 Data_02004c18:
 	.global Flash_Handler4
 Flash_Handler4:
-	.space 0x00000008
+	.space 0x00000004
+	.global gFlashReadRoutine
+gFlashReadRoutine:
+	.space 0x00000004
 	.global gFlashTimerNum
 gFlashTimerNum:
 	.space 0x00000002
@@ -180,3 +204,18 @@ gMapCellBuffer:
 	.space 0x0000c000
 	.global gDecodeBuffer
 gDecodeBuffer:
+	.space 0x00004000
+	.global gMapBlocks
+gMapBlocks:
+	.space 0x00008000
+	.global gMapLayerData
+gMapLayerData:
+	.space 0x00004000
+	.global gMapCollision
+gMapCollision:
+	.space 0x00004000
+	.global gEwramHeap
+gEwramHeap:
+	.space 0x00008000
+	.global gBgTileBuffer
+gBgTileBuffer:

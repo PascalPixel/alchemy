@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SHOP.H"
+#include "PARTY_STATE.H"
 #include "GLOBAL_CELLS.H"
 #include "SOUND_IDS.H"
 extern struct ShopRuntime *gMenuWork;
@@ -109,7 +110,7 @@ s32 Sanctum_RunPartyService(void)
                 retry = 1;
                 continue;
             }
-            if ((u32)price > (u32)SHOP_PARTY_STATE.money) {
+            if ((u32)price > (u32)gGameState.money) {
                 Audio_PlayCue(SOUND_MENU_CANCEL);
                 UiMessage_ShowResolvedAndRestoreState(message + 1);
                 retry = 1;

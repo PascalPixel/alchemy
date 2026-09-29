@@ -2,6 +2,7 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 #include "UI.H"
+#include "SHOP.H"
 
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
@@ -73,7 +74,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                 if (changed) {
                     changed = 0;
                     count = Math_Mod(count + maximum, maximum);
-                    Dma_Set((const void *)0x080b3f80, buffer, 0x84000040, (volatile u32 *)0x040000d4);
+                    Dma_Set(Shop_QuantityTiles, buffer, 0x84000040, (volatile u32 *)0x040000d4);
                     Shop_FillSelector(30, 14, buffer);
                     Shop_FillSelector(minimum + maximum, 0, buffer);
                     Shop_FillSelector(minimum + count + 1, 10, buffer);

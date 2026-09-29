@@ -12,6 +12,9 @@ extern volatile u32 Data_03001b04;
 extern volatile u32 Data_03001ae8;
 extern volatile u32 Data_03001e40;
 
+/* The compressed swatch tiles, one filled with each colour index. */
+extern const u8 Debug_PaletteSwatchTiles[];
+
 void Resource_DecompressHalfwords(const void *source, void *destination);
 void WaitFrames(s32 count);
 void Ui_LoadWindowGraphics(void);
@@ -36,7 +39,7 @@ void Debug_RunPaletteEditor(void)
     u32 blue;
     u32 i;
 
-    Resource_DecompressHalfwords((const void *)0x0809e4ce, (void *)0x06001a00);
+    Resource_DecompressHalfwords(Debug_PaletteSwatchTiles, (void *)0x06001a00);
 redraw:
     tile = (palette << 12) + 0xd1;
     colors = &PALETTE[palette * 16 + 1];

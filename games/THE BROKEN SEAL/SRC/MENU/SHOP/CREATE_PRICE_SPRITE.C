@@ -2,6 +2,7 @@
 #include "DMA.H"
 #include "SYSTEM.H"
 #include "RESOURCE.H"
+#include "SHOP.H"
 
 s32 Math_Div(s32, s32);
 s32 Math_Mod(s32, s32);
@@ -19,7 +20,7 @@ u8 *Shop_CreatePriceSprite(s32 value, s32 window, s32 x, s32 y)
 
     buf = Runtime_AllocateBlock(14, 0x400);
     sprite = 0;
-    Dma_Set((const void *)0x080b3e80, buf, 0x84000040, (volatile u32 *)0x040000d4);
+    Dma_Set(Shop_PriceTiles, buf, 0x84000040, (volatile u32 *)0x040000d4);
     Shop_CopyGlyphs(Math_Mod(value, 10), buf, 0);
     value = Math_Div(value, 10);
     if (value != 0) {

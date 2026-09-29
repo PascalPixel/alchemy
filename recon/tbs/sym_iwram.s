@@ -96,7 +96,10 @@ gDebugTextCursor:
 	.space 0x00000004
 	.global Data_03001cc0
 Data_03001cc0:
-	.space 0x0000000c
+	.space 0x00000004
+	.global gTransformStackDepth
+gTransformStackDepth:
+	.space 0x00000008
 	.global Data_03001ccc
 Data_03001ccc:
 	.space 0x00000008
@@ -144,7 +147,10 @@ gPostLoadCounter:
 	.space 0x00000004
 	.global Data_03001d28
 Data_03001d28:
-	.space 0x0000000c
+	.space 0x00000004
+	.global gTransformStackTop
+gTransformStackTop:
+	.space 0x00000008
 	.global gSchedulerTaskCount
 gSchedulerTaskCount:
 	.space 0x0000000c
@@ -181,7 +187,10 @@ gObjectSlots:
 Data_03001e68:
 	.global gMenuCtrlWork
 gMenuCtrlWork:
-	.space 0x00000008
+	.space 0x00000004
+	.global gMapAnimationPages
+gMapAnimationPages:
+	.space 0x00000004
 	.global Data_03001e70
 Data_03001e70:
 	.global gCam
@@ -254,7 +263,10 @@ Data_03001ed0:
 	.space 0x00000008
 	.global gHBlankScrollWork
 gHBlankScrollWork:
-	.space 0x0000000c
+	.space 0x00000008
+	.global gActorEffectWork
+gActorEffectWork:
+	.space 0x00000004
 	.global Data_03001ee4
 Data_03001ee4:
 	.global gBattleDisplayWork
@@ -297,7 +309,10 @@ gLinkCountdownWork:
 Data_03001f38:
 	.global gMenuSelectWork
 gMenuSelectWork:
-	.space 0x0000001c
+	.space 0x00000004
+	.global gKorosseoWork
+gKorosseoWork:
+	.space 0x00000018
 	.global gDebugMode
 gDebugMode:
 	.space 0x00000004
@@ -322,3 +337,6 @@ Data_03001f78:
 	.space 0x00000002
 	.global Data_03001f7a
 Data_03001f7a:
+	.space 0x00000086
+	.global gIwramHeap
+gIwramHeap:

@@ -134,7 +134,7 @@ s32 SaveState_WriteRecord(s32 record_id, void *source)
 
     START_DMA(source, work->slot.record.payload, 0x840003fc);
     WAIT_DMA();
-    START_DMA(SAVE_HEADER_TEMPLATE, &header, 0x84000002);
+    START_DMA(Save_HeaderTemplate, &header, 0x84000002);
     WAIT_DMA();
     header.record_id = record_id;
     header.checksum = SaveState_ChecksumWorkspace();
@@ -279,7 +279,7 @@ s32 SaveState_InvalidateSlot(s32 index)
     zero = 0;
     START_DMA(&zero, &header, 0x85000004);
     WAIT_DMA();
-    START_DMA(SAVE_HEADER_TEMPLATE, &header, 0x84000002);
+    START_DMA(Save_HeaderTemplate, &header, 0x84000002);
     WAIT_DMA();
     header.record_id = 0x10;
     header.sequence = 0;

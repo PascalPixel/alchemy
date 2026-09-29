@@ -55,7 +55,7 @@ extern void *Data_03001e74;
 
 struct Slot_080b12c0 *Func_080b7dd0(s32 id);
 s32 Func_080044d0(s32 first, s32 second);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_080c10e8(u16 *actors, s32 mode);
 void Func_080b9d34(void *input, struct Work_080b12c0 *work);
 struct Unit_080b12c0 *Func_08077008(s32 id);
@@ -118,10 +118,10 @@ s32 RunBattlePresentation(struct Input_080b12c0 *input)
 
     if (*facing == facing_angle) {
         *facing = facing_angle;
-        Func_080030f8(5);
+        WaitFrames(5);
     } else {
         *facing = facing_angle;
-        Func_080030f8(10);
+        WaitFrames(10);
     }
 
     Func_080c10e8(0, 0);
@@ -159,11 +159,11 @@ s32 RunBattlePresentation(struct Input_080b12c0 *input)
     *(volatile u16 *)0x04000000 |= 0x6000;
 
     if (direct != 0) {
-        Func_080030f8(10);
+        WaitFrames(10);
         Func_080b8178(work.members[0]);
-        Func_080030f8(2);
-        Func_080030f8(4);
-        Func_080030f8(10);
+        WaitFrames(2);
+        WaitFrames(4);
+        WaitFrames(10);
         Func_080bbabc(0, saved_input->secondary_id);
         Func_080bbabc(4, 0x853);
         Func_080bb938();
@@ -200,7 +200,7 @@ s32 RunBattlePresentation(struct Input_080b12c0 *input)
                         loop_second,
                         Func_080022ec(index * 30, divisor) + 100);
                 }
-                Func_080030f8(1);
+                WaitFrames(1);
             }
         }
 

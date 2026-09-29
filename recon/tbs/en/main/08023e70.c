@@ -127,7 +127,7 @@ extern u8 Data_080373eb[];
 
 s32 Math_Div(s32 numerator, s32 denominator);
 void Sys_Free(void *buf);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Runtime_SetMainState19(void);
 void Runtime_PushSlotEntry(void *slot, s32 kind);
 void Resource_ResetEntry(s32 resource);
@@ -568,7 +568,7 @@ s32 Battle_SelectAbility(s32 owner)
             VRAM_FILL(0x06006500, 32, 0x44444444);
             VRAM_COPY(0x06006520, Data_08037308, 32);
         }
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     cursor = CURSOR_OWNER;
@@ -583,6 +583,6 @@ s32 Battle_SelectAbility(s32 owner)
     Func_0801e318();
     UiWork_SetAltFlagAndClearTable(0);
     Sys_Free(tbl);
-    Func_080030f8(1);
+    WaitFrames(1);
     return ret;
 }

@@ -73,7 +73,7 @@ SECTIONS
         "*/recon/tbs/raw/0800300a.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/INSTALL_IWRAM_AND_IRQS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SET_IRQ_HANDLER.o"(.text)
-        "*/recon/tbs/raw/080030f8.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/WAIT_FRAMES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/SET_MAIN_STATE_19.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/UPDATE_KEY_REPEAT_AND_DIRECTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/VBLANK_HANDLER.o"(.text)

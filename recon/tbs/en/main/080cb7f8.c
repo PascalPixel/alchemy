@@ -49,7 +49,7 @@ s32 Func_0800231c();
 s32 Trig_Sin();
 void Func_08002dd8();
 s32 Resource_GetTableEntry();
-void Func_080030f8();
+void WaitFrames();
 s32 Func_080041d8();
 void Scheduler_RemoveCallback();
 s32 Random16();
@@ -276,7 +276,7 @@ L_080cb982:
     } while (v8 != 32);
     ObjectGroup_TickMemberTimers();
     *(s32 *)(0x7824 + r9) = 1;
-    Func_080030f8(1);
+    WaitFrames(1);
     tmp4 = p4b + 1;
     v10 = tmp4;
     p4c = v10;

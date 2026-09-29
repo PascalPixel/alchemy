@@ -133,7 +133,7 @@ void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 s32 Random16(void);
 void BattleFx_SelectLivingTargets(void *argument);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, s32 variant);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
@@ -212,7 +212,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
         ((Particle *)0x02010000)[i].life = -1;
 
     BattleFx_SelectLivingTargets(work->argument);
-    Func_080030f8(1);
+    WaitFrames(1);
     BattleFx_SpawnObjects(12, 380, 2);
 
     for (frame = 0; frame != 124; frame++) {
@@ -399,7 +399,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
         }
 
         work->frame_ready = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

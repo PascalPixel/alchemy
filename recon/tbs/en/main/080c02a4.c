@@ -63,13 +63,13 @@ void BattlePres_SetupTransitionScene(s32 a, s32 b, s32 c, s32 frames);
 void BattlePres_AdvanceTransitionTimer(void);
 void BattlePres_DrawTransitionRows(void);
 void Graphics_ClearBg0Vofs(void);
-void Func_08015128(s32 terrain);
+void UiWindow_CreateWithLayoutBoundsFar(s32 terrain);
 void BattleIntro_AnnounceEncounter(s32 enemy_count);
 s32 BattleParty_ListActorIds(s32 side, u16 *ids);
 u8 *GetBattleObjectSlot(s32 object_id);
 u8 *Owner_GetStateFar(s32 id);
 void BattleActor_SpawnObjectsForList(u16 *ids, s32 mode);
-void Func_080c9028(struct ActorList *list);
+void BattleEffect_RunTileAndPaletteAnimationFar(struct ActorList *list);
 void BattlePres_SetActorRecordMode(s32 id, s32 mode);
 
 void Func_080c02a4(s32 enemy_count, s32 kind)
@@ -149,7 +149,7 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         scroll[0].y = 32;
         WaitFrames(1);
-        Func_08015128((*(u8 **)0x03001e74)[65]);
+        UiWindow_CreateWithLayoutBoundsFar((*(u8 **)0x03001e74)[65]);
         WaitFrames(20);
         QueueIoWriteDelay10(0x04000008, 2);
         QueueIoWriteDelay6(0x04000008, 0);
@@ -196,14 +196,14 @@ void Func_080c02a4(s32 enemy_count, s32 kind)
         list.count = BattleParty_ListActorIds(2, list.ids);
         list.ids[list.count] = 0xff;
         BattleActor_SpawnObjectsForList(list.ids, 0);
-        Func_080c9028(&list);
+        BattleEffect_RunTileAndPaletteAnimationFar(&list);
         BattlePres_SetupTransitionScene(0, 0, 0, 100);
         zero = 0;
         *timer = zero;
         Runtime_SetIrqHandler(2, 32, Graphics_ClearBg0Vofs);
         WaitFrames(1);
         WaitFrames(20);
-        Func_08015128((*(u8 **)0x03001e74)[65]);
+        UiWindow_CreateWithLayoutBoundsFar((*(u8 **)0x03001e74)[65]);
         QueueIoWriteDelay10(0x04000008, 2);
         QueueIoWriteDelay6(0x04000008, 0);
         *(volatile u16 *)0x04000050 = 0x3f40;

@@ -36,7 +36,7 @@ s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
 void BattleFx_SetQueuedSoundAndPlay(s32 sound);
 void Unnamed_08094820(void);
 
-extern s32 **Data_03001e70;
+extern s32 **gMapWork;
 extern const u8 FieldFx_GroundParticleTiles[];
 
 void Unnamed_08094ac8(void)
@@ -52,7 +52,7 @@ void Unnamed_08094ac8(void)
     s32 value;
 
     work = (struct FxWork *)Runtime_AllocateBlock(29, 0x410);
-    origin = *Data_03001e70;
+    origin = *gMapWork;
     BattleFx_SetQueuedSoundAndPlay(170);
     particle = work->particles;
     fill = 0;

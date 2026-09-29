@@ -16,7 +16,7 @@
  * distance/velocity setup between two specific tracked members (the ids at
  * target+8 and (s16)target+36) rather than looping over a member list.
  *
- * Func_080072ec is the r2-slot `_call_via_rN` veneer at
+ * _call_via_r2 is the r2-slot `_call_via_rN` veneer at
  * recon/tbs/raw/080072e4.s (0x080072e4 + 4*2).  The retained assembly loads
  * 0x030001D8 -- the same relocated IWRAM square-root routine documented in
  * games/THE BROKEN SEAL/src/math/fixed_sqrt.c and games/THE BROKEN SEAL/src/unidentified/main/
@@ -29,11 +29,11 @@
  * matching FixedSqrt's own "unused1"/"unused2" idiom for the identical
  * situation.
  *
- * Func_080e3980 is EffectPosition_ApplyAlternateStepAndYOffset
- * (games/THE BROKEN SEAL/INCLUDE/TYPES.H), sibling of Func_080e3944
+ * EffectPosition_ApplyAlternateStepAndYOffset is EffectPosition_ApplyAlternateStepAndYOffset
+ * (games/THE BROKEN SEAL/INCLUDE/TYPES.H), sibling of EffectPosition_ApplyBaseAndYOffset
  * (EffectPosition_ApplyBaseAndYOffset, used by the template).  Its first
  * argument here is read from target+8 as a plain s32 -- the same field
- * passed directly to Func_080b5098 earlier in this owner -- so it is
+ * passed directly to GetBattleObjectSlotFar earlier in this owner -- so it is
  * modeled as taking a member id rather than a position-record pointer.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
@@ -44,25 +44,25 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_pair);
 void **GetBattleObjectSlotFar(s32 member_id);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080072ec(s32 a, s32 b, s32 target);
-void Func_08009140(void *object);
-void Func_08009150(void *object, s32 x, s32 y, s32 z);
-void Func_08009080(void *object, s32 mode);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 _call_via_r2(s32 a, s32 b, s32 target);
+void Object_ResetMotion(void *object);
+void Object_SetPosition(void *object, s32 x, s32 y, s32 z);
+void Object_SetMode(void *object, s32 mode);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 member_id, void *screen);
-void Func_080b50e8(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 mode);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 mode);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
-s32 Func_080022fc(s32 a, s32 b);
+s32 Math_Mod(s32 a, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 extern u8 Value_00000073;
@@ -74,7 +74,7 @@ extern const s8 Data_080eee17[];
 extern const u8 Data_080eedf4[];
 extern const u8 Data_080eedfb[];
 
-s32 Func_080e698c(void *object)
+s32 Unnamed_080e698c(void *object)
 {
     void **heap_cache;
     void **cursor;
@@ -111,7 +111,7 @@ s32 Func_080e698c(void *object)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     {
         s32 *reset_cursor;
@@ -138,7 +138,7 @@ s32 Func_080e698c(void *object)
     new_x = new_x + dx_scaled;
     new_z = M2C_FIELD(member_a, s32 *, 16) + dz_scaled;
     speed = Math_Div(
-        Func_080072ec(
+        _call_via_r2(
             ((dx_scaled >> 8) * (dx_scaled >> 8))
                 + ((dz_scaled >> 8) * (dz_scaled >> 8)),
             leftover, 0x030001D8)
@@ -151,9 +151,9 @@ s32 Func_080e698c(void *object)
     M2C_FIELD(member_a, s32 *, 0x48) = 0xDEB8;
     M2C_FIELD(member_a, s32 *, 0x44) = 0;
     M2C_FIELD(member_a, s8 *, 0x5A) = 1;
-    Func_08009140(member_a);
-    Func_08009150(member_a, new_x, 0, new_z);
-    Func_08009080(member_a, 2);
+    Object_ResetMotion(member_a);
+    Object_SetPosition(member_a, new_x, 0, new_z);
+    Object_SetMode(member_a, 2);
 
     for (frame = 0; frame != 70; frame++) {
         EffectPosition_ApplyAlternateStepAndYOffset(
@@ -191,11 +191,11 @@ s32 Func_080e698c(void *object)
             u8 *particle;
             s32 i;
 
-            Func_080b50e8(134);
+            BattleEventRuntime_BeginPhaseFar(134);
             ObjectGroup_UpdateMembers(
                 M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
                 7, 5, 0, 8);
-            Func_080b5088(
+            BattleMotion_ApplyVariantMotionFar(
                 M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36), 6);
             M2C_FIELD(work, s32 *, 0x77A8) = 4;
 
@@ -211,7 +211,7 @@ s32 Func_080e698c(void *object)
                 M2C_FIELD(particle, s32 *, 12) =
                     (magnitude * Trig_Sin((s32)angle)) >> 7;
                 M2C_FIELD(particle, s32 *, 16) =
-                    -(magnitude * Func_0800231c((s32)angle)) >> 6;
+                    -(magnitude * Trig_Cos((s32)angle)) >> 6;
                 M2C_FIELD(particle, s32 *, 24) = (Random16() & 15) + 16;
                 particle += 28;
             }
@@ -249,7 +249,7 @@ s32 Func_080e698c(void *object)
                             if (cell < 0) {
                                 cell += 3;
                             }
-                            cell = Func_080022fc(cell >> 2, 6);
+                            cell = Math_Mod(cell >> 2, 6);
                             draw_pair[0](
                                 draw_destination,
                                 (u8 *)work + 0x3E80 + (cell << 8),
@@ -268,7 +268,7 @@ s32 Func_080e698c(void *object)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     return BattleFx_EndCanvasLayer();
 }

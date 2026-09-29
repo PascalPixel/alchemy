@@ -22,8 +22,8 @@
 #include "ITEM.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
-extern struct BattleWork Data_02000240;
-extern struct BattleRuntime *Data_03001ebc;
+extern struct BattleWork gGameState;
+extern struct BattleRuntime *gEventWork;
 
 struct BattleUnitObject {
     u8 unknown_000[0xd8];
@@ -113,7 +113,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             actor = 0;
             if (actor < work.count) {
                 struct ItemPartyView *party =
-                    (struct ItemPartyView *)&Data_02000240;
+                    (struct ItemPartyView *)&gGameState;
                 do {
                     obj = (struct BattleUnitObject *)Owner_GetStateFar(party->active_owners[i]);
                     matches = 0;
@@ -159,7 +159,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             UiText_ShowPositionedMessageAndWaitFar(0x91c, 1);
         }
         if (event->effect.id < 0x10000) {
-            s32 objref = BattleEffect_SelectNearbyObject(Data_02000240.object_id);
+            s32 objref = BattleEffect_SelectNearbyObject(gGameState.object_id);
             Battle_Reset();
             Event_SetValue1d8(event->effect.id);
             BattleEv_RunWait(objref, 0);
@@ -175,7 +175,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
         GameFlag_ClearBitFar(0x143);
         GameFlag_SetBitFar(best);
         action_id = Item_Get(item_id)->action_id;
-        work.runtime = (struct ItemCommandRuntime *)Data_03001ebc;
+        work.runtime = (struct ItemCommandRuntime *)gEventWork;
 
         if (action_id != 0) {
             GameFlag_SetBitFar(0x145);
@@ -192,7 +192,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
                     return 0;
 
                 {
-                    u16 *work = (u16 *)&Data_02000240;
+                    u16 *work = (u16 *)&gGameState;
                     s32 a, b;
                     a = work[288];
                     work[224] = a;

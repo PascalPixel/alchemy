@@ -56,8 +56,8 @@ struct BattleAction {
     u8 pp_cost;
 };
 
-extern volatile u32 Data_03001b04;
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeysRepeat;
+extern volatile u32 gKeyState;
 extern u8 Value_00000b19[];
 extern u8 Value_00000b1e[];
 extern u8 Value_00000066[];
@@ -163,7 +163,7 @@ void Debug_SelectAbilityPair(void)
             UiText_DrawCharacterAtOffset(0x53a + ability, info, 0, 0);
         }
         WaitFrames(1);
-        if (Data_03001b04 & 0x20) {
+        if (gKeysRepeat & 0x20) {
             Audio_PlayCue(0x6f);
             if (row != 0)
                 second--;
@@ -171,7 +171,7 @@ void Debug_SelectAbilityPair(void)
                 first--;
             redraw = 1;
         }
-        if (Data_03001b04 & 0x10) {
+        if (gKeysRepeat & 0x10) {
             Audio_PlayCue(0x6f);
             if (row != 0)
                 second++;
@@ -179,21 +179,21 @@ void Debug_SelectAbilityPair(void)
                 first++;
             redraw = 1;
         }
-        if (Data_03001b04 & 0x40) {
+        if (gKeysRepeat & 0x40) {
             Audio_PlayCue(0x6f);
             row--;
             redraw = 1;
         }
-        if (Data_03001b04 & 0x80) {
+        if (gKeysRepeat & 0x80) {
             Audio_PlayCue((s32)0x6f);
             row++;
             redraw = 1;
         }
-        if (Data_03001c94 & 1) {
+        if (gKeyState & 1) {
             Audio_PlayCue(0x70);
-        } else if (Data_03001c94 & 2) {
+        } else if (gKeyState & 2) {
             Audio_PlayCue(0x71);
-        } else if (Data_03001c94 & 8) {
+        } else if (gKeyState & 8) {
             Audio_PlayCue(0x71);
         } else {
             goto loop;

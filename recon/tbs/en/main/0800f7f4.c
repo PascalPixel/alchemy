@@ -7,7 +7,7 @@
  * The recovered join is an admission invariant for subsequent experiments.
  * Whole owner [0800f7f4,0800f9cc) includes eight owned pool words. Callback
  * pointers occur at 08013688 and 08114db0; all five callees were audited.
- * gKeysHeld already binds to the named Data_03001ae8 linker symbol, so the
+ * gKeysHeld already binds to the named gKeysHeld linker symbol, so the
  * independently successful literal-key-address correction is inapplicable.
  * H1 is preserved at 6c1ca77f3 (472 bytes, 33 halfwords, 32 edits).
  * H2 applies explicit mutually exclusive action selection, unchanged case
@@ -67,7 +67,7 @@ struct KeyMovePosition {
 };
 
 extern volatile u32 gKeysHeld;
-extern struct KeyMoveEventWork *Data_03001ebc;
+extern struct KeyMoveEventWork *gEventWork;
 extern const s16 Data_08013254[16];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, struct KeyMovePosition *position);
@@ -144,11 +144,11 @@ s32 Object_MoveByKeys(struct ObjectRuntime *object)
             }
         }
     }
-    if (Data_03001ebc != NULL) {
+    if (gEventWork != NULL) {
         if (blocked & 3)
-            Data_03001ebc->blocked_steps++;
+            gEventWork->blocked_steps++;
         else
-            Data_03001ebc->blocked_steps = 0;
+            gEventWork->blocked_steps = 0;
     }
     ObjectDispatch_ApplyArgumentToChildren(object, motion);
     if (blocked != 0) {

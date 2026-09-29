@@ -25,16 +25,16 @@
    default options, the first party member, the build stamp and the
    Psynergy cost table. */
 
-extern u16 Data_02000240[];
+extern u16 gGameState[];
 extern u8 gSceneState[];
 extern u8 GameFlagBytes[];
 extern u8 Data_02000500[];
 extern u8 Value_00000000, Value_00000001, Value_00000004, Value_00000008;
 extern u8 Value_ffffffff;
 
-#define GS8(off) (((u8 *)Data_02000240)[off])
-#define GS16(off) (Data_02000240[(off) / 2])
-#define GS32(off) (((u32 *)Data_02000240)[(off) / 4])
+#define GS8(off) (((u8 *)gGameState)[off])
+#define GS16(off) (gGameState[(off) / 2])
+#define GS32(off) (((u32 *)gGameState)[(off) / 4])
 #define DMA3 ((volatile u32 *)0x040000d4)
 
 void Owner_InitRecords(void);
@@ -54,7 +54,7 @@ void GameState_InitDefaults(void)
     u32 tmp8;
 
     zero = 0;
-    Dma_Set((void *)&zero, Data_02000240, 0x850000b0, DMA3);
+    Dma_Set((void *)&zero, gGameState, 0x850000b0, DMA3);
     zero = 0;
     Dma_Set((void *)&zero, gSceneState, 0x850003e1, DMA3);
     while (0x80000000 & DMA3[2]);

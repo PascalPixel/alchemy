@@ -58,18 +58,18 @@ void *Resource_GetTableEntry(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
-s32 Func_080b5070(s32 member_id);
+s32 Battle_GetObjectTableValueFar(s32 member_id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Trig_Cos(s32 angle);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 s32 Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void BattleFx_EndCanvasLayer(void);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-s32 Func_080022fc(s32 a, s32 b);
+s32 Math_Mod(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -79,7 +79,7 @@ extern const s32 Data_080ee9f8[];
 extern u8 Value_00000073;
 extern u8 Value_000000b9;
 
-void Func_080d82b0(void *object)
+void Unnamed_080d82b0(void *object)
 {
     void **heap_cache;
     void **cursor;
@@ -146,7 +146,7 @@ seed_member:
             member_ptr = *GetBattleObjectSlotFar(member_id);
             target = work->effect;
             member_id = M2C_FIELD(target, s16 *, member_id_offset);
-            result0 = Func_080b5070(member_id);
+            result0 = Battle_GetObjectTableValueFar(member_id);
             result0 = result0 / 2;
             sp44_ptr[0] = M2C_FIELD(member_ptr, s32 *, 8);
             sp44_ptr[1] = result0;
@@ -170,7 +170,7 @@ seed_particle:
                 *(s32 *)particle =
                     (s32) (((s32) (kind * sin_val) >> 7)
                         + (sp32_ptr[0] << 16));
-                cos_val = Func_0800231c((s32) angle);
+                cos_val = Trig_Cos((s32) angle);
                 *(s32 *)((u8 *)particle + 4) =
                     (s32) (((s32) (kind * cos_val) >> 3)
                         + (sp32_ptr[1] << 16));
@@ -196,7 +196,7 @@ seed_particle:
 
     work->transfer_mode = 2;
     work->transfer_value = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     target = work->effect;
     if (target->count * 20 != -56) {
@@ -205,7 +205,7 @@ seed_particle:
             s32 pass_count;
 
             if (outer == 32) {
-                Func_080b50e8(0);
+                BattleEventRuntime_BeginPhaseFar(0);
             }
             target = work->effect;
             pass_count = target->count;
@@ -220,7 +220,7 @@ seed_particle:
                     if (outer == stagger) {
                         s32 member_id;
 
-                        Func_080f9010(143);
+                        Audio_PlayCue(143);
                         target = work->effect;
                         member_id = target->actors[member];
                         ObjectGroup_UpdateMembers(member_id, 7, -1, member, 20);
@@ -239,7 +239,7 @@ draw_particle:
                                 s32 y;
                                 s32 h;
 
-                                raw = Func_080022fc(pool_index, 3);
+                                raw = Math_Mod(pool_index, 3);
                                 idx = raw + 1;
                                 half = idx / 2;
                                 y = *(s16 *)((u8 *)particle + 2) - half;
@@ -281,6 +281,6 @@ draw_particle:
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

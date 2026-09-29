@@ -9,12 +9,12 @@
  * template -- and diverges from it in several concrete ways confirmed by
  * reading recon/tbs/raw/080d3854.s and its objdump-resolved literal pools:
  *
- *   - Func_080cd594 is called with mode 1, not 0.
+ *   - BattleFx_BeginCanvasLayer is called with mode 1, not 0.
  *   - The palette resource id is loaded from a literal pool word 0xCE
  *     (Value_000000ce), not 0xAF, following the same absolute-link-time-
  *     constant idiom already established for Value_000000af.
  *   - The second BattleEffect_LoadWork call's third size argument is 7, not 15.
- *   - Only ONE finish-callback is ever registered (Func_080041d8 with
+ *   - Only ONE finish-callback is ever registered (Scheduler_AddOrUpdateCallback with
  *     0x080CD261): the template's separate 0x080DBB9D registration does not
  *     happen here at all.
  *   - Instead of the template's 160-entry per-scanline BG2 affine table,
@@ -23,7 +23,7 @@
  *     up front, then faded in/out at 0x04000052 during frames 0-16 and
  *     64-79.
  *   - It seeds a 16-entry, 28-byte-stride particle table at work+0x7080
- *     with randomized fields (via Func_08004458()) before the main loop,
+ *     with randomized fields (via Random16()) before the main loop,
  *     something the template does not do at all.
  *   - Every 8th frame in {16,24,...,64} it clears a canvas region through
  *     an indirect call to a small runtime routine at 0x03000168 (called via
@@ -41,8 +41,8 @@
  *     spaced 8 frames apart per member (member_offset+16, +24, ..., +64,
  *     with member_offset advancing by 3 per member) rather than the
  *     template's single frame==member*16+32 check, and calls
- *     Func_080d6888(member_id,7,5,member,4) followed by
- *     Func_080b5088(member_id,6) -- a callee the template never uses.
+ *     ObjectGroup_UpdateMembers(member_id,7,5,member,4) followed by
+ *     BattleMotion_ApplyVariantMotionFar(member_id,6) -- a callee the template never uses.
  *
  * The `status` bindings on the early calls are load-bearing for the same
  * reason documented in the template: they give the following BattleEffect_LoadWork
@@ -60,23 +60,23 @@ extern u8 Value_000000ce;
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void WaitFrames(s32 frames);
 u32 Random16(void);
-void Func_080f9010(s32 id);
+void Audio_PlayCue(s32 id);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
-void Func_080b50e8(s32 id);
-s32 Func_080022fc(s32 a, s32 b);
+s32 Trig_Cos(s32 angle);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+s32 Math_Mod(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 mode);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 mode);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
-void Func_080d3854(void *object)
+void Unnamed_080d3854(void *object)
 {
     void **heap_cache;
     void **cursor;
@@ -123,10 +123,10 @@ void Func_080d3854(void *object)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1000;
     WaitFrames(1);
-    Func_080f9010(141);
+    Audio_PlayCue(141);
 
     while (frame != 80) {
         s32 x_delta;
@@ -134,7 +134,7 @@ void Func_080d3854(void *object)
 
         wave = Trig_Sin(frame << 10) << 4;
         if (frame == 32) {
-            Func_080b50e8(133);
+            BattleEventRuntime_BeginPhaseFar(133);
         }
 
         {
@@ -185,10 +185,10 @@ void Func_080d3854(void *object)
                 sin_val = Trig_Sin(angle);
                 y_pos = (((*(u8 *)(0x080ee1ca + idx + 1)) * sin_val + wave)
                     >> 16) + 40;
-                cos_val = Func_0800231c(angle);
+                cos_val = Trig_Cos(angle);
                 x_delta = (cos_val << 1) >> 16;
 
-                layer = Func_080022fc(frame / 2, 3);
+                layer = Math_Mod(frame / 2, 3);
                 layer5 = layer * 5;
                 layer_base = (u8 *)work + layer * 0xA00;
                 ((DrawRectangleFn)rectangle[0])(canvas,
@@ -254,7 +254,7 @@ void Func_080d3854(void *object)
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, member_id_offset),
                             7, 5, member, 4);
-                        Func_080b5088(
+                        BattleMotion_ApplyVariantMotionFar(
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, member_id_offset),
                             6);
@@ -284,8 +284,8 @@ void Func_080d3854(void *object)
         frame++;
     }
 
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback((void *)0x080CD261);
     BattleFx_EndCanvasLayer();
 }

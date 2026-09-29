@@ -35,13 +35,13 @@ void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void PsynergyMenu_InitializeEntryObjectsFar(s32 window, s32 column, s32 row, s32 height, s32 flags);
 void Menu_ReleaseEntryObjectsFar(void);
 s32 Item_GetEquipmentGroupFar(s32 item);
-void Func_080b1260(s32 window, s32 unit_id, s32 item_id);
+void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id);
 s32 Inventory_AddItemFar(s32 unit_id, s32 item_id);
 void Inventory_RemoveFar(s32 unit_id, s32 slot);
 s32 Inventory_CountFar(s32 unit_id);
 s32 Item_IsCompatibleWithOwnerFar(s32 unit_id, s32 item_id);
 void Shop_BuySpecialItem(s32 window, s32 item_window);
-void Func_08077240(s32 item, s32 delta);
+void Ability_GetMaximum(s32 item, s32 delta);
 s32 AbilityMenu_BuildAvailableList(void);
 void Audio_PlayCue(s32 cue);
 void WaitFrames(s32 frames);
@@ -167,7 +167,7 @@ outer:
                 if (Item_GetEquipmentGroupFar(shop->selected_item) == 0)
                     Shop_DrawUnitItem(item_window, member, shop->selected_item);
                 else
-                    Func_080b1260(item_window, member, shop->selected_item);
+                    Shop_DrawEquipComparison(item_window, member, shop->selected_item);
             }
             if ((INPUT_NEW_KEYS & 1) != 0) {
                 slot = Inventory_AddItemFar(member, shop->selected_item);
@@ -224,7 +224,7 @@ outer:
         WaitFrames(1);
         if (result == 0 && shop->party_action == 2) {
             for (i = result; i < quantity; i++)
-                Func_08077240(shop->selected_item, -1);
+                Ability_GetMaximum(shop->selected_item, -1);
             if (AbilityMenu_BuildAvailableList() == 0)
                 goto leave;
             if (selected > shop->stock_count - 1)

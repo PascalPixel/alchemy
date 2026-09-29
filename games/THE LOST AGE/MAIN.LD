@@ -27,6 +27,7 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/SOUND/VSYNC_DMA_REFRESH.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08000630.o"(.text .rodata .data .padding)
     } > ROM
+    iwram_slots 0x3000000 (NOLOAD) : { "*/recon/tla/sym_iwram.o"(.sym_iwram_slots) } > IWRAM
     /* Startup copies this resident module bank to IWRAM with DMA3. */
     .iwram_runtime 0x3000100 :
     {

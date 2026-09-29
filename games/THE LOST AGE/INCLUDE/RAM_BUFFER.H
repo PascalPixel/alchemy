@@ -15,4 +15,15 @@
  * the copy writes to without an extra instruction. */
 #define Ram_SoundMixer ((u8 *)0x03006000) /* SoundDriver_Mixer */
 
+/* The heap's slot words, which hold the resident work blocks, open IWRAM.
+ * GCC reaches a slot from the constant base with the slot's offset in the
+ * load, as it does for a field of a structure at a constant address. */
+struct HeapSlots {
+    void *unknown_00[27];
+    /* The event work, as The Broken Seal keeps it in its slot 27. */
+    void *event_work;
+};
+
+#define Ram_HeapSlots ((struct HeapSlots *)0x03000000) /* gHeapSlots */
+
 #endif

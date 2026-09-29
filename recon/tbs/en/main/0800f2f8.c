@@ -63,7 +63,7 @@ struct GameFlagRow {
     u16 second;
 };
 
-extern struct GameFlagRow Data_02000240[];
+extern struct GameFlagRow gGameState[];
 extern const s16 Data_08013254[16];
 extern const s32 Data_0801328c[16];
 
@@ -97,7 +97,7 @@ s32 Func_0800f2f8(struct ObjectRuntime *object)
 
     mode = 2;
     collision = 0;
-    if (Data_02000240[135].first
+    if (gGameState[135].first
         & *(u32 *)0x03001ae8) {
         object->speed_limit = 0x10000;
         object->acceleration = 0x14000;

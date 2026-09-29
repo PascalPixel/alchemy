@@ -11,11 +11,11 @@
  * 080ddde0.c and 080d82b0.c: identical heap_cache=(void**)0x03001EEC /
  * cursor / work / draw_destination prologue, the same
  * M2C_FIELD(work, ..., 0x7828) = object republish, the same
- * Func_080cd594() / Func_080041d8(0x080CD261, 0x480) /
- * Func_08004278(0x080CD261) / Func_08002dd8(46) / Func_080cdbc0() bracket,
- * and the same Data_03001e50[46] / Data_03001e50[47] blit-callback slots
+ * BattleFx_BeginCanvasLayer() / Scheduler_AddOrUpdateCallback(0x080CD261, 0x480) /
+ * Scheduler_RemoveCallback(0x080CD261) / Runtime_ReleaseHeapBlock(46) / BattleFx_EndCanvasLayer() bracket,
+ * and the same gWorkSlot[46] / gWorkSlot[47] blit-callback slots
  * (0x03001f08 / 0x03001f0c) that BattleEffect_LoadWork(id, ...) installs and
- * Func_08002dd8(id) releases.
+ * Runtime_ReleaseHeapBlock(id) releases.
  *
  * Behaviour: a `kind`-parameterised projectile volley.  One projectile
  * record per (member, shot) pair lives in the work buffer at
@@ -72,7 +72,7 @@
  * (notably the &work[0x7828] address and `kind * 4`).  Reordering the
  * local declarations to reproduce the reference slot order was tried and
  * moved nothing (1443 vs 1440), and inlining the two masked
- * Func_08004458() spreads into their enclosing expressions made it worse
+ * Random16() spreads into their enclosing expressions made it worse
  * (1581), so both were reverted.  Forcing either allocation from source
  * would be contrivance; this stays an honest draft.
  */
@@ -84,27 +84,27 @@
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
 
 void BattleFx_BeginCanvasLayer(s32 mode);
-void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_x, s32 *out_y);
+void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_x, s32 *out_y);
 void *Resource_GetTableEntry(s32 id);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void **GetBattleObjectSlotFar(s32 member_id);
-s32 Func_080b5070(s32 member_id);
+s32 Battle_GetObjectTableValueFar(s32 member_id);
 u32 Random16(void);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 value, s32 divisor);
+s32 Math_Mod(s32 value, s32 divisor);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(void *source, s32 *out_pair);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 flag);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 flag);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
@@ -122,7 +122,7 @@ extern u8 Value_000000b8;
 extern u8 Value_000000b9;
 extern u8 Value_000000c7;
 
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern u8 Data_080eebec[];  /* [kind][5]: shots, aim divisor, shot stagger,
                              * member stagger, burst size */
 extern u8 Data_080eebe9[];  /* per-variant impact flare height */
@@ -178,7 +178,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
     }
 
     if (M2C_FIELD(STATE, s32 *, 28) == 1) {
-        Func_080de2f8(object, 1, M2C_FIELD(STATE, s32 *, 4), 2,
+        BattleFx_PrepareCanvasEffect(object, 1, M2C_FIELD(STATE, s32 *, 4), 2,
             &anchor_x, &anchor_y);
     }
 
@@ -195,7 +195,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
             BattleEffect_LoadWork(46, 7, 7, 3, 3);
         }
     }
-    draw_cb = (DrawRectangleFn) Data_03001e50[46];
+    draw_cb = (DrawRectangleFn) gWorkSlot[46];
 
     Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
 
@@ -248,14 +248,14 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
         M2C_FIELD(work, s32 *, 0x7784) = 50;
     }
 
-    Func_080041d8((void *) 0x080CD261, 144 << 3);
+    Scheduler_AddOrUpdateCallback((void *) 0x080CD261, 144 << 3);
 
     launcher = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
     shots = Data_080eebec[kind * 5];
     aim_divisor = Data_080eebec[kind * 5 + 1];
     shot_stagger = Data_080eebec[kind * 5 + 2];
     member_stagger = Data_080eebec[kind * 5 + 3];
-    launch_half = Func_080b5070(M2C_FIELD(STATE, s32 *, 8));
+    launch_half = Battle_GetObjectTableValueFar(M2C_FIELD(STATE, s32 *, 8));
     if (M2C_FIELD(STATE, s32 *, 20) * shots > 63) {
         M2C_FIELD(STATE, s32 *, 20) = 1;
     }
@@ -276,7 +276,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
 
             target = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, id_offset));
             target_half =
-                Func_080b5070(M2C_FIELD(STATE, s16 *, id_offset));
+                Battle_GetObjectTableValueFar(M2C_FIELD(STATE, s16 *, id_offset));
             shot = 0;
             if (shots != 0) {
                 half = launch_half / 2;
@@ -411,18 +411,18 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
 
             if (kind == 6) {
                 if (frame == 4) {
-                    Func_080f9010(136);
+                    Audio_PlayCue(136);
                 }
                 if (frame == 32) {
-                    Func_080b50e8(134);
+                    BattleEventRuntime_BeginPhaseFar(134);
                 }
             } else if (kind == 7) {
                 if (frame == 48) {
-                    Func_080b50e8(133);
+                    BattleEventRuntime_BeginPhaseFar(133);
                 }
             } else if (kind != 5) {
                 if (frame == 16) {
-                    Func_080b50e8(133);
+                    BattleEventRuntime_BeginPhaseFar(133);
                 }
             }
 
@@ -435,7 +435,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                 angle = frame << 11;
                 muzzle_x = ((-Trig_Sin(angle) << 2) >> 16)
                     + anchor_x / 2 - 10;
-                muzzle_y = ((Func_0800231c(angle) << 1) >> 16) + anchor_y - 24;
+                muzzle_y = ((Trig_Cos(angle) << 1) >> 16) + anchor_y - 24;
                 if (frame > 69) {
                     muzzle_y = muzzle_y - (frame << 1) + 138;
                 }
@@ -445,14 +445,14 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                 } else {
                     BattleEffect_LoadWork(47, 7, 7, 3, 3);
                 }
-                flash_cb = (DrawRectangleFn) Data_03001e50[47];
+                flash_cb = (DrawRectangleFn) gWorkSlot[47];
                 if (frame <= 3) {
                     flash_cb(draw_destination, (s8 *)work + 0x65C0,
                         muzzle_x, muzzle_y, 20, 40);
                 }
                 flash_cb(draw_destination, (s8 *)work + 0x65C0,
                     muzzle_x, muzzle_y, 20, 40);
-                Func_08002dd8(47);
+                Runtime_ReleaseHeapBlock(47);
             }
 
             Render_ResetTransformState();
@@ -548,11 +548,11 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                             projectile[6] = 1;
 
                                             if (kind == 5) {
-                                                Func_080b50e8(134);
+                                                BattleEventRuntime_BeginPhaseFar(134);
                                             } else if (kind != 6) {
                                                 if (cooldown == 0) {
                                                     cooldown = 8;
-                                                    Func_080f9010(132);
+                                                    Audio_PlayCue(132);
                                                 }
                                             }
 
@@ -588,11 +588,11 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                                     || kind == 10) {
                                                 /* no reaction pose */
                                             } else if (kind == 5) {
-                                                Func_080b5088(
+                                                BattleMotion_ApplyVariantMotionFar(
                                                     M2C_FIELD(STATE, s16 *,
                                                         member_id_offset), 4);
                                             } else {
-                                                Func_080b5088(
+                                                BattleMotion_ApplyVariantMotionFar(
                                                     M2C_FIELD(STATE, s16 *,
                                                         member_id_offset), 5);
                                             }
@@ -635,25 +635,25 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                     } else {
                                         BattleEffect_LoadWork(47, 7, 7, 3, 2);
                                     }
-                                    ((DrawRectangleFn) Data_03001e50[47])(
+                                    ((DrawRectangleFn) gWorkSlot[47])(
                                         draw_destination,
                                         (s8 *)work + (128 << 5),
                                         pos[0] - 16,
                                         pos[1] - Data_080eebe9[variant],
                                         32, Data_080eebe9[variant]);
-                                    Func_08002dd8(47);
+                                    Runtime_ReleaseHeapBlock(47);
 
                                     if (M2C_FIELD(STATE, s32 *, 4) == 1) {
                                         BattleEffect_LoadWork(47, 7, 7, 15, 2);
                                     } else {
                                         BattleEffect_LoadWork(47, 7, 7, 11, 2);
                                     }
-                                    ((DrawRectangleFn) Data_03001e50[47])(
+                                    ((DrawRectangleFn) gWorkSlot[47])(
                                         draw_destination,
                                         (s8 *)work + (128 << 5),
                                         pos[0] - 16, pos[1],
                                         32, Data_080eebe9[variant]);
-                                    Func_08002dd8(47);
+                                    Runtime_ReleaseHeapBlock(47);
                                 } else if (kind == 1) {
                                     s32 travelled;
                                     s32 reach;
@@ -669,7 +669,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                     if (travelled <= reach) {
                                         s32 cell;
 
-                                        cell = Func_080022fc(frame, 6);
+                                        cell = Math_Mod(frame, 6);
                                         draw_cb(draw_destination,
                                             (s8 *)work + cell * 768,
                                             pos[0] - 16, pos[1] - 12, 32, 24);
@@ -683,7 +683,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                 } else if (kind == 2) {
                                     s32 cell;
 
-                                    cell = Func_080022fc(shot, 6);
+                                    cell = Math_Mod(shot, 6);
                                     draw_cb(draw_destination,
                                         (s8 *)work + (cell << 7),
                                         pos[0] - 4, pos[1] - 8, 8, 16);
@@ -731,17 +731,17 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                             half = impact[2] / 2;
                             if ((member & 1) == 0) {
                                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                                ((DrawRectangleFn) Data_03001e50[47])(
+                                ((DrawRectangleFn) gWorkSlot[47])(
                                     draw_destination,
                                     (s8 *)work + Data_080eec44[half],
                                     impact[0] - Data_080eec28[half],
                                     impact[1] - Data_080eec3d[half],
                                     Data_080eec28[half],
                                     Data_080eec2f[half]);
-                                Func_08002dd8(47);
+                                Runtime_ReleaseHeapBlock(47);
 
                                 BattleEffect_LoadWork(47, 7, 7, 15, 2);
-                                ((DrawRectangleFn) Data_03001e50[47])(
+                                ((DrawRectangleFn) gWorkSlot[47])(
                                     draw_destination,
                                     (s8 *)work + Data_080eec44[half],
                                     impact[0],
@@ -749,20 +749,20 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                         - Data_080eec3d[half],
                                     Data_080eec28[half],
                                     Data_080eec2f[half]);
-                                Func_08002dd8(47);
+                                Runtime_ReleaseHeapBlock(47);
                             } else {
                                 BattleEffect_LoadWork(47, 7, 7, 3, 2);
-                                ((DrawRectangleFn) Data_03001e50[47])(
+                                ((DrawRectangleFn) gWorkSlot[47])(
                                     draw_destination,
                                     (s8 *)work + Data_080eec44[half] + 0x128A,
                                     impact[0] - Data_080eec3d[half],
                                     impact[1] - Data_080eec28[half],
                                     Data_080eec36[half],
                                     Data_080eec28[half]);
-                                Func_08002dd8(47);
+                                Runtime_ReleaseHeapBlock(47);
 
                                 BattleEffect_LoadWork(47, 7, 7, 15, 2);
-                                ((DrawRectangleFn) Data_03001e50[47])(
+                                ((DrawRectangleFn) gWorkSlot[47])(
                                     draw_destination,
                                     (s8 *)work + Data_080eec44[half] + 0x128A,
                                     impact[0] + Data_080eec36[half]
@@ -770,7 +770,7 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
                                     impact[1],
                                     Data_080eec2f[half],
                                     Data_080eec28[half]);
-                                Func_08002dd8(47);
+                                Runtime_ReleaseHeapBlock(47);
                             }
 
                             impact[2]++;
@@ -841,6 +841,6 @@ s32 BattleFx_RunProjectileVolley(void *object, s32 kind)
     }
 
     Scheduler_RemoveCallback((void *) 0x080CD261);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     return BattleFx_EndCanvasLayer();
 }

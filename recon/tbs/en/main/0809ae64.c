@@ -52,23 +52,23 @@ struct MotionFrame {
     struct EffectVector scene_target;
 };
 
-extern struct MotionScene *Data_03001f30;
+extern struct MotionScene *gEffectWork;
 
 s32 Math_Div(s32, s32);
 void WaitFrames(s32);
 void Vector_AddPolarOffset(s32, s32, struct EffectVector *);
-void Func_08009080(void *, s32);
-void Func_080090d0(void *);
-void Func_080090f0(void *, s32, s32);
+void Object_SetMode(void *, s32);
+void Object_Destroy(void *);
+void Object_SetPositionAndResetMotionFar(void *, s32, s32);
 void Animation_ApplyChildValuesFar(void *, s32);
 void *Object_Spawn(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 
 void RunBattleEffect13(void)
 {
-    struct MotionScene *scene = Data_03001f30;
+    struct MotionScene *scene = gEffectWork;
     struct MotionFrame frame;
     struct MotionObject *main_object = scene->main_object;
     register struct EffectVector *origin_cursor;
@@ -101,13 +101,13 @@ void RunBattleEffect13(void)
     if (!(object = Object_Spawn(0xd7, frame.scene_target.x, frame.scene_target.y, frame.scene_target.z)))
         return;
     BattleEffect_InitializeSharedScene();
-    Func_080f9010(0x8a);
+    Audio_PlayCue(0x8a);
     object->angle = main_object->angle;
     tmp3 = (s32)&Value_00000000;
     object->speed = 0x14ccc;
     object->mode = (u16)tmp3;
     step = 0;
-    Func_08009080(object, 5);
+    Object_SetMode(object, 5);
     Animation_ApplyChildValuesFar(object, 1);
     do {
         s32 value;
@@ -131,7 +131,7 @@ void RunBattleEffect13(void)
         WaitFrames(1);
     } while (!(step >= 11 != 0));
     WaitFrames(10);
-    Func_08009080(object, 6);
+    Object_SetMode(object, 6);
     WaitFrames(15);
     step = 9;
     do {
@@ -139,10 +139,10 @@ void RunBattleEffect13(void)
         WaitFrames(1);
         step--;
     } while (step >= 0);
-    Func_08009080(object, 5);
-    Func_080f9010(0x84);
+    Object_SetMode(object, 5);
+    Audio_PlayCue(0x84);
     if (frame.secondary_object != 0)
-        Func_080090f0(frame.secondary_object, -0x90000, frame.secondary_object->pos.y);
+        Object_SetPositionAndResetMotionFar(frame.secondary_object, -0x90000, frame.secondary_object->pos.y);
     WaitFrames(20);
     step = 12;
     do {
@@ -151,7 +151,7 @@ void RunBattleEffect13(void)
         step--;
     } while (step >= 0);
     WaitFrames(10);
-    Func_080f9010(0x72);
+    Audio_PlayCue(0x72);
     step = 0;
     do {
         register s32 value;
@@ -172,6 +172,6 @@ void RunBattleEffect13(void)
         WaitFrames(1);
         ++step;
     } while (step < 11);
-    Func_080090d0(object);
+    Object_Destroy(object);
     BattleFx_PrepareBufferInterpolation();
 }

@@ -17,7 +17,7 @@ void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 extern u8 Value_000000cd;
 
 
-s32 Func_080d33c0(s32 actor) {
+s32 Unnamed_080d33c0(s32 actor) {
     s32 sp8;
     DrawRectangleFn rectangle[2];
     void *canvas;
@@ -72,7 +72,7 @@ s32 Func_080d33c0(s32 actor) {
     *(s16 *)0x04000052 = 0xF0F;
     rectangle[1] = (DrawRectangleFn)heap_cache[8];
     temp_r6_64 = *GetBattleObjectSlotFar(M2C_FIELD(*temp_r8_25, s32 *, 8));
-    temp_r9_71 = M2C_FIELD(temp_r6_64, s32 *, 0xC) + Func_080b5070(M2C_FIELD(*temp_r8_25, s32 *, 8));
+    temp_r9_71 = M2C_FIELD(temp_r6_64, s32 *, 0xC) + Battle_GetObjectTableValueFar(M2C_FIELD(*temp_r8_25, s32 *, 8));
     var_r8_76 = 0;
     var_r5_78 = temp_r7_17 + 0x7080;
     do {
@@ -106,11 +106,11 @@ s32 Func_080d33c0(s32 actor) {
     }
     M2C_FIELD(temp_r7_17, s32 *, 0x77AC) = 0;
     M2C_FIELD(temp_r7_17, s32 *, 0x77B0) = 0;
-    Func_080041d8(0x080D6505, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080D6505, 0x480);
     M2C_FIELD(temp_r7_17, s32 *, 0x7780) = 2;
     M2C_FIELD(temp_r7_17, s32 *, 0x7784) = 0x4B;
-    Func_080041d8(0x080CD261, 0x480);
-    Func_080f9010(0xA4);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
+    Audio_PlayCue(0xA4);
     var_fp_203 = 0;
     if (*((u8 *)0x080EE1C4 + (s32) ((M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x18) * 2) + 1)) == 0) {
 
@@ -126,7 +126,7 @@ loop_7:
         }
         *var_r2_216 = var_r3_217;
         if (var_fp_203 == (*((u8 *)0x080EE1C4 + (s32) ((M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x18) * 2) + 1)) - 0x10)) {
-            Func_080b50e8(0x84);
+            BattleEventRuntime_BeginPhaseFar(0x84);
         }
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(temp_r6_209, temp_r6_209 + 12);
@@ -156,7 +156,7 @@ loop_15:
                 M2C_FIELD(var_r6_260, s32 *, 8) = (s32) (M2C_FIELD(var_r6_260, s32 *, 8) + M2C_FIELD(var_r6_260, s32 *, 0x14));
             }
             if ((var_fp_203 > (s32) (var_r9_259 + 0x30)) && ((s8) ((u8 *)0x02010000)[var_r8_251] == 0)) {
-                temp_r1_333 = temp_r7_17 + (Func_080022fc(var_r8_251, M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x14)) * 0x1C);
+                temp_r1_333 = temp_r7_17 + (Math_Mod(var_r8_251, M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x14)) * 0x1C);
                 temp_r0_340 = M2C_FIELD(var_r6_260, s32 *, 0xC) + ((s32) (M2C_FIELD(temp_r1_333, s32 *, 0x7400) - M2C_FIELD(var_r6_260, s32 *, 0)) >> 9);
                 M2C_FIELD(var_r6_260, s32 *, 0xC) = temp_r0_340;
                 temp_r4_347 = M2C_FIELD(var_r6_260, s32 *, 0x10) + ((s32) (M2C_FIELD(temp_r1_333, s32 *, 0x7404) - M2C_FIELD(var_r6_260, s32 *, 4)) >> 9);
@@ -188,19 +188,19 @@ loop_15:
                     M2C_FIELD(var_r6_260, s32 *, 0) = (s32) M2C_FIELD(&sp18, s32 *, 0);
                     M2C_FIELD(var_r6_260, s32 *, 4) = (s32) ((M2C_FIELD(&sp18, s32 *, 4) + (0x1F & Random16())) - 0x10);
                     temp_r5_407 = M2C_FIELD(temp_r7_17, void **, 0x7828);
-                    member_offset = (Func_080022fc(var_r8_251, M2C_FIELD(temp_r5_407, s32 *, 0x14)) * 2) + 0x24;
+                    member_offset = (Math_Mod(var_r8_251, M2C_FIELD(temp_r5_407, s32 *, 0x14)) * 2) + 0x24;
                     ObjectGroup_UpdateMembers(*(s16 *)((u8 *)temp_r5_407 + member_offset), 7, 5, member_offset, 4);
                     temp_r5_422 = M2C_FIELD(temp_r7_17, void **, 0x7828);
-                    Func_080b5088(*(s16 *)((u8 *)temp_r5_422 + ((Func_080022fc(var_r8_251, M2C_FIELD(temp_r5_422, s32 *, 0x14)) * 2) + 0x24)), 0);
+                    BattleMotion_ApplyVariantMotionFar(*(s16 *)((u8 *)temp_r5_422 + ((Math_Mod(var_r8_251, M2C_FIELD(temp_r5_422, s32 *, 0x14)) * 2) + 0x24)), 0);
                     M2C_FIELD(temp_r7_17, s32 *, 0x77A8) = 4;
-                    Func_080f9010(0x84);
+                    Audio_PlayCue(0x84);
                 }
             }
             temp_r3_438 = M2C_FIELD(var_r6_260, u32 *, 0x18);
             if (temp_r3_438 <= 0xFU) {
-                rectangle[0](canvas, temp_r7_17 + (Func_080022fc((s32) (temp_r3_438 + (temp_r3_438 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0) - 0x10, M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
+                rectangle[0](canvas, temp_r7_17 + (Math_Mod((s32) (temp_r3_438 + (temp_r3_438 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0) - 0x10, M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
                 temp_r0_460 = M2C_FIELD(var_r6_260, u32 *, 0x18);
-                rectangle[1](canvas, temp_r7_17 + (Func_080022fc((s32) (temp_r0_460 + (temp_r0_460 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0), M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
+                rectangle[1](canvas, temp_r7_17 + (Math_Mod((s32) (temp_r0_460 + (temp_r0_460 >> 0x1F)) >> 1, 3) << 0xA), M2C_FIELD(var_r6_260, s32 *, 0), M2C_FIELD(var_r6_260, s32 *, 4) - 0x38, 0x10, 0x40);
                 M2C_FIELD(var_r6_260, u32 *, 0x18) = (u32) (M2C_FIELD(var_r6_260, u32 *, 0x18) + 1);
             }
             var_r8_251 += 1;
@@ -224,7 +224,7 @@ loop_15:
     }
     Scheduler_RemoveCallback(0x080D6505);
     Scheduler_RemoveCallback(0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     return BattleFx_EndCanvasLayer();
 }

@@ -34,7 +34,7 @@ typedef struct {
 } SceneEntry;
 
 /* Allocation-id keyed heap cache shared by this family. */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 
 /* IWRAM cell this owner clears before the sequence starts. */
 extern u8 Data_0200024c[];
@@ -57,31 +57,31 @@ extern u8 Value_000000bf;
 extern u8 Value_000000f0;
 
 void *Runtime_AllocateHeapBlock(s32 id, s32 size);
-void *Func_080048f4(s32 id, s32 size);
+void *Runtime_AllocateBlock(s32 id, s32 size);
 void RuntimeDispatch_NoOpHook(s32 id);
 void Scheduler_ResetTaskTable(void);
 void *Resource_GetTableEntry(s32 id);
 u32 Resource_DecodeType01(const void *source, void *destination);
 void _call_via_r3(void *dest, s32 size, s32 source, void *state);
-void Func_08015000(void);
+void FarCall_WindowTable(void);
 void ReelGame_InitTitle(void);
 u32 Random16(void);
-s32 Func_08002304(s32 value, s32 divisor);
-s32 Func_080022fc(s32 value, s32 divisor);
+s32 Math_ModU(s32 value, s32 divisor);
+s32 Math_Mod(s32 value, s32 divisor);
 s32 Math_Div(s32 value, s32 divisor);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
-s32 Func_080c9000(s32 id, s32 a, s32 b, s32 c, s32 d);
+s32 Trig_Cos(s32 angle);
+s32 FarCall_EffectTable(s32 id, s32 a, s32 b, s32 c, s32 d);
 s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count);
 s32 PartyInventory_CountItemFar(s32 id);
 void *UiWindow_CreateFar(s32 kind, s32 x, s32 y, s32 width, s32 height);
-void Func_08015080(s32 text, void *window, s32 x, s32 y);
+void UiText_DrawCharacterAtOffsetFar(s32 text, void *window, s32 x, s32 y);
 void Palette_DarkenSceneStep(void);
 void Palette_StepTowardResource(s32 id);
 void BattleFx_DrawCanvasLine(s32 a, s32 b, s32 c, s32 d, s32 e);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void WaitFrames(s32 frames);
 
 void Scene_RunParticleSequence(void)
@@ -124,8 +124,8 @@ void Scene_RunParticleSequence(void)
 
     sprites = (u8 *)Runtime_AllocateHeapBlock(41, 0x60E);
     canvas = (u8 *)Runtime_AllocateHeapBlock(40, 0x8000);
-    work = (u8 *)Func_080048f4(39, 0x782C);
-    state = (u8 *)Func_080048f4(45, 0x61C);
+    work = (u8 *)Runtime_AllocateBlock(39, 0x782C);
+    state = (u8 *)Runtime_AllocateBlock(45, 0x61C);
     tiles = (u8 *)0x02010000;
     flagBase = Data_0200024c;
     RuntimeDispatch_NoOpHook((s32)&Value_0000000c);
@@ -241,7 +241,7 @@ void Scene_RunParticleSequence(void)
     Resource_DecodeType01(resource + 32, tiles);
     Dma_Set(tiles, (void *)0x06016E00, 0x84000480,
         (volatile u32 *)0x040000d4);
-    Func_08015000();
+    FarCall_WindowTable();
     ReelGame_InitTitle();
 
     /* Seed the five records: 21 cells of 0..4 each. */
@@ -251,7 +251,7 @@ void Scene_RunParticleSequence(void)
         entry->unk19 = 0;
         entry->unk1a = 0xFF;
         for (j = 0; j != 21; j++) {
-            entry->cells[j] = (u8)Func_08002304((s32)Random16(), 5);
+            entry->cells[j] = (u8)Math_ModU((s32)Random16(), 5);
         }
         entry++;
     }
@@ -261,7 +261,7 @@ void Scene_RunParticleSequence(void)
     entry = (SceneEntry *)state;
     for (i = 0; i != 5; i++) {
         for (j = 0; j != 8; j++) {
-            pick[j] = Func_08002304((s32)Random16(), 21);
+            pick[j] = Math_ModU((s32)Random16(), 21);
             for (k = 0; k != j; k++) {
                 if (pick[j] == pick[k]) {
                     j--;
@@ -279,10 +279,10 @@ void Scene_RunParticleSequence(void)
         entry++;
     }
 
-    Func_080c9000(46, 8, 7, 3, 2);
-    routine[0] = (DrawRectangleFn)Data_03001e50[46];
-    Func_080c9000(47, 8, 7, 3, 3);
-    routine[1] = (DrawRectangleFn)Data_03001e50[47];
+    FarCall_EffectTable(46, 8, 7, 3, 2);
+    routine[0] = (DrawRectangleFn)gWorkSlot[46];
+    FarCall_EffectTable(47, 8, 7, 3, 3);
+    routine[1] = (DrawRectangleFn)gWorkSlot[47];
     _call_via_r3(canvas, 0x8000, 0, (void *)0x03000168);
 
     Dma_Set(canvas, (void *)0x06003500, 0x84002000,
@@ -298,17 +298,17 @@ void Scene_RunParticleSequence(void)
     if (PartyInventory_CountItemFar(228) == 1) {
         window = UiWindow_CreateFar(6, 16, 18, 3, 6);
         M2C_FIELD(state, void **, 0x4C8) = window;
-        Func_08015080(0x909, window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar(0x909, window, 0, 0);
     } else {
         window = UiWindow_CreateFar(2, 16, 26, 4, 6);
         M2C_FIELD(state, void **, 0x4C8) = window;
-        Func_08015080(0x908, window, 0, 0);
-        Func_08015080(0x909, M2C_FIELD(state, void **, 0x4C8), 0, 8);
+        UiText_DrawCharacterAtOffsetFar(0x908, window, 0, 0);
+        UiText_DrawCharacterAtOffsetFar(0x909, M2C_FIELD(state, void **, 0x4C8), 0, 8);
     }
 
     M2C_FIELD(work, s32 *, 0x7824) = 0;
-    Func_080041d8((void *)0x080F6441, 1152);
-    Func_080041d8((void *)0x080F60A1, 1152);
+    Scheduler_AddOrUpdateCallback((void *)0x080F6441, 1152);
+    Scheduler_AddOrUpdateCallback((void *)0x080F60A1, 1152);
 
     frame = 0;
     while (M2C_FIELD(state, s32 *, 0x8C) != 10) {
@@ -319,7 +319,7 @@ void Scene_RunParticleSequence(void)
         }
 
         if (M2C_FIELD(state, s32 *, 0x8C) == 3) {
-            phase = Func_080022fc(frame, 80);
+            phase = Math_Mod(frame, 80);
             if (phase <= 15) {
                 Palette_StepTowardResource((s32)&Value_00000091);
             } else if (phase <= 31) {
@@ -345,7 +345,7 @@ void Scene_RunParticleSequence(void)
                     particle->x = x;
                     particle->y = y;
                     particle->vx = (speed * Trig_Sin(angle)) >> 6;
-                    particle->vy = (-(speed * Func_0800231c(angle))) >> 6;
+                    particle->vy = (-(speed * Trig_Cos(angle))) >> 6;
                     particle->life = (s32)(Random16() & 0xF) + 16;
                     particle++;
                 }
@@ -441,12 +441,12 @@ void Scene_RunParticleSequence(void)
         WaitFrames(1);
     }
 
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback((void *)0x080F60A1);
     Scheduler_RemoveCallback((void *)0x080F6441);
-    Func_08002dd8(45);
-    Func_08002dd8(40);
-    Func_08002dd8(39);
-    Func_08002dd8(41);
+    Runtime_ReleaseHeapBlock(45);
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
+    Runtime_ReleaseHeapBlock(41);
 }

@@ -37,7 +37,7 @@ extern u8 Value_00005001, Value_00005002, Value_00005003, Value_00005004;
 
 s32 BattleParty_PrepareActiveOwnersFar(s32);
 s32 Party_CountActiveOwnersFar(void);
-s32 Func_080b5130(s32, u8 *);
+s32 BattlePlacement_CountValidEntriesFar(s32, u8 *);
 void UiWindow_EraseBorderRect(s32, s32, u32, u32);
 void RenderOutput_RedrawSavedRect(struct RenderInput *);
 void UiWindow_DrawColumnBorders(struct RenderInput *, s32);
@@ -92,7 +92,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         flags = layout->flags;
     if (!(flags & 1))
         flags &= -3;
-    if (work->battle == 0 || Func_080b5130(0, 0) == 0)
+    if (work->battle == 0 || BattlePlacement_CountValidEntriesFar(0, 0) == 0)
         flags &= -3;
     if (flags == 9) {
         UiWindow_EraseBorderRect(layout->x, layout->y, layout->width, layout->height);
@@ -161,7 +161,7 @@ void UiWindow_DrawPartyStatusContents(s32 flags)
         s32 row = y;
         if (flags & 1)
             row++;
-        Func_080b5130(0, djinn);
+        BattlePlacement_CountValidEntriesFar(0, djinn);
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005001, 0, row, 0);
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005002, 2, row, 0);
         UiWindow_SetTilemapEntry(window, (s32)&Value_00005003, 0, row + 1, 0);

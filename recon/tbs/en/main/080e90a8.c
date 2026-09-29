@@ -59,7 +59,7 @@ extern u8 Value_00000096;
 extern u8 Value_00000063;
 extern u8 Value_00000073;
 extern u8 Value_00002710;
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -85,7 +85,7 @@ void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
-void Func_080e90a8(struct ShardEffect *object)
+void Unnamed_080e90a8(struct ShardEffect *object)
 {
     void **heap_cache;
     void **cursor;
@@ -153,7 +153,7 @@ void Func_080e90a8(struct ShardEffect *object)
             } else {
                 BattleEffect_LoadWork(46, 7, 7, 7, 3);
             }
-            routine[0] = Data_03001e50[46];
+            routine[0] = gWorkSlot[46];
             if (work->effect->mirror == 0) {
                 routine[0](canvas, work->cells + (frame - 6) * 0xd80, position[0] / 2 - 24, position[1] - 24, 48, 72);
             } else {
@@ -166,7 +166,7 @@ void Func_080e90a8(struct ShardEffect *object)
             s32 base;
 
             BattleEffect_LoadWork(46, 7, 7, 3, 2);
-            routine[0] = Data_03001e50[46];
+            routine[0] = gWorkSlot[46];
             if (step > 2) {
                 step = 2;
             }

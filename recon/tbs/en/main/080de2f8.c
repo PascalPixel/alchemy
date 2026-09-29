@@ -9,13 +9,13 @@
  * owner), 080dea70.c, 080ce4e8.c and 080d85d0.c: the same
  * heap_cache = (void **)0x03001EEC / cursor / work / draw_destination
  * prologue, the same M2C_FIELD(work, void **, 0x7828) = object republish,
- * the same Func_080cd594(0) / Func_080041d8(0x080CD261, 0x480) /
- * Func_08004278(0x080CD261) / Func_08002dd8(46) bracket, and the same
- * Data_03001e50[46] / Data_03001e50[47] blit-callback slots that
- * BattleEffect_LoadWork(id, ...) installs and Func_08002dd8(id) releases.
+ * the same BattleFx_BeginCanvasLayer(0) / Scheduler_AddOrUpdateCallback(0x080CD261, 0x480) /
+ * Scheduler_RemoveCallback(0x080CD261) / Runtime_ReleaseHeapBlock(46) bracket, and the same
+ * gWorkSlot[46] / gWorkSlot[47] blit-callback slots that
+ * BattleEffect_LoadWork(id, ...) installs and Runtime_ReleaseHeapBlock(id) releases.
  *
  * This owner is the callee 080dea70.c already declares as
- * `void Func_080de2f8(void *object, s32 a, s32 b, s32 c, s32 *out_x,
+ * `void BattleFx_PrepareCanvasEffect(void *object, s32 a, s32 b, s32 c, s32 *out_x,
  * s32 *out_y)`; the two pointer parameters are read from the reference
  * frame at sp+140 / sp+144, which is exactly the fifth/sixth stack argument
  * of that declaration.
@@ -36,7 +36,7 @@
  *     that published position, which frames 64.. then draw and decay.
  *   - Frames 76.. fade the effect out through BLDALPHA (0x04000052).
  *
- * Every `_call_via_r3` / `Func_080072f4` / `Func_080072f8` call site is an
+ * Every `_call_via_r3` / `_call_via_r4` / `_call_via_r5` call site is an
  * indirect call through the value the reference loads into r3/r4/r5
  * immediately before the `bl`, not a real callee: those addresses are
  * consecutive slots of the `_call_via_rN` trampoline bank at
@@ -54,7 +54,7 @@
  * Uncertain / not established here:
  *   - the meaning of the work-relative words 0x77b4 / 0x77b8 / 0x7780 /
  *     0x7784 / 0x7824 is read off their use sites only.
- *   - Data_080ede48 is the shared per-step sprite-size halfword table
+ *   - ParticleStreams_CellOffsets is the shared per-step sprite-size halfword table
  *     already used by 080d82b0.c and 080ddde0.c; its contents were not
  *     decoded here.
  *   - the `switch (anchor_kind)` default arm leaves `target` unwritten in
@@ -109,12 +109,12 @@ u32 Resource_DecodeType01(const void *source, void *destination);
 void **GetBattleObjectSlotFar(s32 member_id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
-void Func_080f9010(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
+void Audio_PlayCue(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void SceneTransform_ApplyPosition(s32 *vector);
@@ -136,7 +136,7 @@ extern u8 Value_00000094;
 extern u8 Value_00000073;
 extern u8 Value_000000a8;
 
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[]; /* shared per-step sprite-size table */
 
 void BattleFx_PrepareCanvasEffect(
@@ -214,8 +214,8 @@ void BattleFx_PrepareCanvasEffect(
         BattleEffect_LoadWork(46, 7, 7, 3, 3);
         BattleEffect_LoadWork(47, 7, 7, 3, 2);
     }
-    flash_cb = (DrawRectangleFn) Data_03001e50[47];
-    draw_cb = (DrawRectangleFn) Data_03001e50[46];
+    flash_cb = (DrawRectangleFn) gWorkSlot[47];
+    draw_cb = (DrawRectangleFn) gWorkSlot[46];
 
     caster = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
     target_actor = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 36));
@@ -231,7 +231,7 @@ void BattleFx_PrepareCanvasEffect(
         p[2] = 0;
         p[3] = speed * Trig_Sin(angle) >> 5;
         p[4] = 0;
-        p[5] = speed * Func_0800231c(angle) >> 5;
+        p[5] = speed * Trig_Cos(angle) >> 5;
         p[6] = 0;
         i++;
         p += 7;
@@ -239,7 +239,7 @@ void BattleFx_PrepareCanvasEffect(
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *) 0x080CD261, 144 << 3);
+    Scheduler_AddOrUpdateCallback((void *) 0x080CD261, 144 << 3);
 
     base[0] = M2C_FIELD(caster, s32 *, 8);
     base[1] = 0;
@@ -287,7 +287,7 @@ void BattleFx_PrepareCanvasEffect(
                     ((s32) &Value_000000a8 - frame * 2) | 0x1000;
             }
             if (frame == 8) {
-                Func_080f9010(212);
+                Audio_PlayCue(212);
             }
 
             Render_ResetTransformState();
@@ -386,7 +386,7 @@ void BattleFx_PrepareCanvasEffect(
                     p[0] = *out_x << 15;
                     p[1] = *out_y << 16;
                     p[3] = speed * Trig_Sin(angle) >> 6;
-                    p[4] = speed * Func_0800231c(angle) >> 5;
+                    p[4] = speed * Trig_Cos(angle) >> 5;
                     p[6] = (s32)(Random16() & 15) + 8;
                     i++;
                     p += 7;
@@ -420,8 +420,8 @@ void BattleFx_PrepareCanvasEffect(
     }
 
     Scheduler_RemoveCallback((void *) 0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback((void *) 0x080CD4B5);
     ((FillFn) 0x03000164)((void *) 0x06004000, 0x4000);
     ((FillFn) 0x03000164)(draw_destination, 0x4000);

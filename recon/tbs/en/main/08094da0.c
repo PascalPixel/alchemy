@@ -32,7 +32,7 @@ void Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 void Resource_DecodeByteLz(const void *src, void *dst);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *src);
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
-void Func_08094bbc(void);
+void Unnamed_08094bbc(void);
 
 struct Mote {
     s32 state;
@@ -54,9 +54,9 @@ struct MoteWork {
 
 struct Blend { u16 cnt; u16 alpha; u16 y; };
 
-extern s32 **Data_03001e70;
+extern s32 **gMapWork;
 
-void Func_08094da0(void)
+void Unnamed_08094da0(void)
 {
     struct MoteWork *work;
     struct Mote *mote;
@@ -75,7 +75,7 @@ void Func_08094da0(void)
     work->vram = VramBlock_LoadCached(work->resource, 0x300, tiles);
     Runtime_ReleaseHeapBlock(14);
     for (i = 0; i < 32; i++) {
-        s32 *pos = *Data_03001e70;
+        s32 *pos = *gMapWork;
         s32 *p = &mote->state;
         s32 x, z;
         *p++ = 0;
@@ -90,5 +90,5 @@ void Func_08094da0(void)
         mote++;
     }
     do { s32 v; v = 0x3f00; reg = (volatile u16 *)0x04000050; *reg = v; v = 0x1008; reg++; *reg = v; reg++; *reg = 0; } while (0);
-    Scheduler_AddOrUpdateCallback(Func_08094bbc, 0xc80);
+    Scheduler_AddOrUpdateCallback(Unnamed_08094bbc, 0xc80);
 }

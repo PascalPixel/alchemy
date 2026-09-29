@@ -18,14 +18,14 @@ struct MapWork {
 };
 struct TilePos { s32 x, y; };
 
-extern struct MapWork *Data_03001e70;
+extern struct MapWork *gMapWork;
 
 void Map_CopyMetatileIndicesRect(s32 src_x, s32 src_y,
     u32 dst_x, u32 dst_y, u32 width, u32 height)
 {
     u32 *src = (u32 *)0x02010000 + (src_y * 128 + src_x);
     u32 *dst = (u32 *)0x02010000 + (dst_y * 128 + dst_x);
-    struct LayerScroll *layer = Data_03001e70->layers;
+    struct LayerScroll *layer = gMapWork->layers;
     struct TilePos tile[3];
     struct TilePos *pos = tile;
     s32 i;

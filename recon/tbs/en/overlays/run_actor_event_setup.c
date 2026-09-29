@@ -21,7 +21,7 @@ void Scene_RunActorExchange();
 
 extern u8 Data_0000004a[];
 extern u8 Data_00000058[];
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -55,7 +55,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 }
 
 /* NONMATCHING: 744 of 744 bytes, 2 halfword edits (2026-09-24). The reference
- * loads the Data_02000240 base after the event-work store; here it is
+ * loads the gGameState base after the event-work store; here it is
  * scheduled first. A do-while wrap, volatile spellings and a local for the
  * area id did not move it. */
 s32 Func_020011b0(void)

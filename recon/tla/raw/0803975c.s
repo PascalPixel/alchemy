@@ -119,7 +119,7 @@ Func_0803975c:
 	ands	r1, r3
 	lsls	r1, r1, #16
 	lsrs	r1, r1, #16
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r3, [r5, #0]
 	mov	r2, r8
 	strh	r6, [r5, #4]

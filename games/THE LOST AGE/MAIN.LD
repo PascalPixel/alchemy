@@ -468,6 +468,8 @@ SECTIONS
         "*/recon/tla/raw/0804d9a4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804d9e0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804dabc.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/MENU/RUN_SELECTION_WITH_CURSOR_OBJECT.o"(.text)
+        "*/recon/tla/raw/0804de52.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804de54.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804e0a4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/0804e0d0.o"(.text .rodata .data .padding)

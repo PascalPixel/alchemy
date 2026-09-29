@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f698
+	.global UiTextResource_SetPosition
 	.thumb_func
-Func_0803f698:
+UiTextResource_SetPosition:
 	push	{lr}
 	ldr	r3, [pc, #24]
 	ldrh	r4, [r0, #6]

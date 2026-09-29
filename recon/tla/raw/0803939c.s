@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803939c
+	.global UiWork_Finalize
 	.thumb_func
-Func_0803939c:
+UiWork_Finalize:
 	push	{r5, r6, r7, lr}
 	adds	r5, r0, #0
 	adds	r7, r1, #0

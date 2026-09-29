@@ -102,7 +102,7 @@ Func_0804cb92:
 	cmp	r0, #0
 	beq.n	.L_0804cc58
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0804cc58:
 	ldr	r0, [sp, #48]
 	bl	0x08014274
@@ -244,7 +244,7 @@ Func_0804cb92:
 	cmp	r0, #0
 	beq.n	.L_0804cd78
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0804cd78:
 	movs	r0, #0
 	bl	0x081180d0
@@ -735,7 +735,7 @@ Func_0804cb92:
 	cmp	r0, #0
 	beq.n	.L_0804d134
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0804d134:
 	adds	r2, r5, #0
 	adds	r2, #142

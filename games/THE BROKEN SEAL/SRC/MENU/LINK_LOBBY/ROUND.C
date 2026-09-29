@@ -1,16 +1,9 @@
-/* Draft of LinkLobby_RunRoundResult, resource_3cb at 0x020092e0 (was
- * MENU/LINK_LOBBY/ROUND.C).
- * Remaining difference: the ROM loads 0x4b and 0x4c from its literal pool as
- * link-time values, and it reads words just past the loaded image.
- * psynergy editions (2026-09-29): 0x54, 0x41, 0x4c and 0x4b are the same in all
- * six tbs editions, so they are plain numbers, not ids; the message numbers
- * and 03001ebc, 03001d08 are the words that differ.
- * The listing keeps these rows. */
-/* Apply the link round's result, update records, and reopen lobby dialogue.
- * Reconstructed from this owner's complete own-ROM listing and registered
- * draft; exact 1060-byte extent, including literal pools (2026-09-26). */
+/* Apply a link round's result: reset the lobby's frame counters, mark "TALK"
+ * in the outgoing payload, record which party members stay, then by the
+ * round's outcome update the win counts and records and reopen the lobby's
+ * dialogue, and restart the peer poll. */
 #include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "SERIAL_RUNTIME.H"
 extern u8 MsgLobbyNotBadNextMonster[];
 extern u8 MsgLobbyNoteCantUse[];
 extern u8 MsgLobbyWonNumberBattle[];
@@ -18,26 +11,50 @@ extern u8 MsgLobbyWonNumberBattleBroke[];
 extern u8 MsgLobbyWonNumberBattleTold[];
 extern u8 gOptionMirror[];
 
+struct EventWork {
+    u8 unknown_000[0x182];
+    s16 raised_trigger;
+    u8 unknown_184[0x3c];
+    s32 start_transition;
+};
+
+void Engine_TaskWait(s32 frames);
+void Engine_TaskAddCallback(void (*callback)(void), s32 priority);
+void Engine_MapCopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
+                                  s32 dest_y);
+s32 Engine_GameFlagIsSet(s32 flag);
+void Engine_GameFlagSet(s32 flag);
+void Engine_GameFlagClear(s32 flag);
+void Engine_EventBegin(void);
+void Engine_EventOpenScreen(void);
+void Engine_EventWaitForScreen(void);
+s32 Engine_EventEnd(void);
+void Engine_ActorFaceActor(s32 actor, s32 target, s32 frames);
+void Engine_EventSetMessage(s32 message);
+s32 Engine_EventOpenMessage(s32 actor, s32 mode);
+void Engine_EventShowMessage(s32 actor, s32 mode);
+s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
+extern struct EventWork *gEventWork;
+extern u16 gGameState[][1];
+
+u32 State_RunQueryWithInterruptMasterSaved(void);
+s32 LinkLobby_DrawThreeDigitValue(s32 value);
+s32 LinkLobby_SaveBattleResults(void);
+s32 LinkLobby_SaveMonsterBattleResults(void);
 void Sound_LoadPresetParameters(s32 value);
-void Scene_DrawThreeDigitValue(s32 value);
 void LinkLobby_WriteSlotValue(s32 mode);
 void Map_SetLayerEntryFlag(s32 value);
 s32 LinkLobby_PartyContains(s32 index);
 s32 GameFlag_GetByte(s32 counter);
-void Engine_GameFlagWriteValue(s32 counter, s32 value);
+void GameFlag_SetByte(s32 counter, s32 value);
 void UiText_DrawQuantity(s32 value, s32 digits);
-void Scene_ShowDialoguePair292c(void);
-void Scene_ShowDialoguePair292a(void);
-void State_RunQueryWithInterruptMasterSaved(void);
 void SerialRuntime_Initialize(void);
 void Scheduler_SetCallbackMask(void (*callback)(void), s32 value);
 void Owner_RefreshActiveRatios(s32 value);
 void BattlePlacement_UpdateTimedEntriesTwentyTimes(void);
 
-extern u16 gGameState[][1];
-extern u16 Data_02002224[];
-extern s32 Data_02009f50;
-extern s32 Data_02009f4c;
+extern u32 gLinkLobbyCallFrames;
+extern s32 gLinkLobbyWaitFrames;
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -47,6 +64,10 @@ union GameStateRows {
 
 #define ROW(n) gGameState[n][0]
 
+void LinkLobby_PollPeerReady(void);
+
+/* FAKEMATCH: calls through these inline wrappers keep the constant
+   arguments out of the registers GCC would otherwise share. */
 static __inline__ s32 Value1(s32 (*fn)(), s32 value)
 {
     return fn(value);
@@ -62,11 +83,6 @@ static __inline__ void Call2(void (*fn)(), s32 left, s32 right)
     fn(left, right);
 }
 
-static __inline__ void Name_StoreLetter(s32 letter, u16 *dst, s32 index)
-{
-    dst[index] = letter;
-}
-
 s32 LinkLobby_RunRoundResult(void)
 {
     s32 i;
@@ -74,11 +90,11 @@ s32 LinkLobby_RunRoundResult(void)
     struct EventWork *ew;
     void (*callback)(void);
 
-    Data_02009f50 = 0;
-    Data_02009f4c = 0;
+    gLinkLobbyCallFrames = 0;
+    gLinkLobbyWaitFrames = 0;
     gEventWork->start_transition = 0x201;
     Sound_LoadPresetParameters(2);
-    Scene_DrawThreeDigitValue(ROW(344));
+    LinkLobby_DrawThreeDigitValue(ROW(344));
     {
         s32 a = 13, b = 10;
         ((void (*)())Engine_MapCopyCellAttributes)(11, 11, 1, 1, a, b);
@@ -86,12 +102,15 @@ s32 LinkLobby_RunRoundResult(void)
     LinkLobby_WriteSlotValue(4);
     Engine_TaskWait(1);
     Map_SetLayerEntryFlag(5);
-    /* FAKEMATCH: word-sized locals retain halfword-mode link constants,
-     * giving the short literal-pool reach used by the original name stores. */
-    Name_StoreLetter((u16)0x54, Data_02002224, 4);
-    Name_StoreLetter((u16)0x41, Data_02002224, 5);
-    Name_StoreLetter((u16)0x4c, Data_02002224, 6);
-    Name_StoreLetter((u16)0x4b, Data_02002224, 7);
+    /* Through a pointer the halfword letters load from the literal pool. */
+    {
+        u16 *name = (u16 *)gSerialTransfer.reserved;
+
+        name[4] = 'T';
+        name[5] = 'A';
+        name[6] = 'L';
+        name[7] = 'K';
+    }
     for (i = 0; i < 8; i++) {
         Engine_GameFlagClear(0x2f0 + i);
         if (LinkLobby_PartyContains(i)) {
@@ -120,11 +139,11 @@ s32 LinkLobby_RunRoundResult(void)
         }
         v = Value1(GameFlag_GetByte, 1000);
         if (v == 2) {
-            Call2(Engine_GameFlagWriteValue, 1000, 0);
+            Call2(GameFlag_SetByte, 1000, 0);
             wins++;
             msg++;
         } else {
-            Call2(Engine_GameFlagWriteValue, 1000, v + 1);
+            Call2(GameFlag_SetByte, 1000, v + 1);
         }
         {
         union GameStateRows *state = (union GameStateRows *)gGameState;
@@ -132,15 +151,15 @@ s32 LinkLobby_RunRoundResult(void)
         Engine_ActorFaceActor(8, state->words[125], 0);
         Call1(Engine_EventSetMessage, (s32)MsgLobbyNotBadNextMonster + msg);
         Engine_EventOpenMessage(8, 0);
-        if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) == 0) {
+        if (Engine_EventChooseYesNo(0, 0) == 0) {
             if (wins > 90) {
                 wins = 90;
             }
-            Call2(Engine_GameFlagWriteValue, 0x3f8, wins);
+            Call2(GameFlag_SetByte, 0x3f8, wins);
         } else {
 
             Engine_GameFlagClear(0x173);
-            Call2(Engine_GameFlagWriteValue, 0x3f8, -1);
+            Call2(GameFlag_SetByte, 0x3f8, -1);
             /* FAKEMATCH: one scalar holds the row address, then its score. */
             score = (u32)state->halves[341];
             Call2(UiText_DrawQuantity, *(u16 *)score, 5);
@@ -149,7 +168,7 @@ s32 LinkLobby_RunRoundResult(void)
                 state->halves[340][0] = score;
                 Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
                 Engine_EventOpenMessage(8, 0);
-                Scene_ShowDialoguePair292c();
+                LinkLobby_SaveMonsterBattleResults();
             } else {
                 Engine_EventSetMessage((s32)MsgLobbyWonNumberBattle);
                 Engine_EventOpenMessage(8, 0);
@@ -174,14 +193,14 @@ s32 LinkLobby_RunRoundResult(void)
             ROW(340) = score;
             Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleBroke);
             Engine_EventOpenMessage(8, 0);
-            Scene_ShowDialoguePair292c();
+            LinkLobby_SaveMonsterBattleResults();
         } else {
             Engine_EventSetMessage((s32)MsgLobbyWonNumberBattleTold);
             Engine_EventOpenMessage(8, 0);
         }
         ROW(341) = 0;
         Engine_GameFlagClear(0x173);
-        Call2(Engine_GameFlagWriteValue, 0x3f8, -1);
+        Call2(GameFlag_SetByte, 0x3f8, -1);
         LinkLobby_WriteSlotValue(0);
         Engine_EventEnd();
     } else if ((s16)ROW(225) == 10) {
@@ -210,8 +229,8 @@ s32 LinkLobby_RunRoundResult(void)
             if (*(u16 *)score < (u16)v) {
                 *(u16 *)score = v;
             }
-            Scene_DrawThreeDigitValue(*(u16 *)score);
-            Scene_ShowDialoguePair292a();
+            LinkLobby_DrawThreeDigitValue(*(u16 *)score);
+            LinkLobby_SaveBattleResults();
             Engine_GameFlagSet(0x304);
             Engine_GameFlagSet(0x305);
         }
@@ -227,7 +246,7 @@ s32 LinkLobby_RunRoundResult(void)
         if ((v = Engine_GameFlagIsSet(0x173)) == 0) {
             ROW(343)++;
             ROW(345) = v;
-            Scene_ShowDialoguePair292a();
+            LinkLobby_SaveBattleResults();
         }
         Engine_GameFlagSet(0x304);
         Engine_GameFlagClear(0x305);
@@ -235,7 +254,7 @@ s32 LinkLobby_RunRoundResult(void)
     } else {
         SerialRuntime_Initialize();
         Engine_GameFlagClear(0x172);
-        Call2(Engine_GameFlagWriteValue, 0x3f8, -1);
+        Call2(GameFlag_SetByte, 0x3f8, -1);
         if (*(u8 *)gGameState[277] != 0) {
             Engine_EventBegin();
             Engine_EventOpenScreen();
@@ -250,7 +269,7 @@ s32 LinkLobby_RunRoundResult(void)
         LinkLobby_WriteSlotValue(0);
         LinkLobby_WriteSlotValue(4);
     }
-    callback = (void (*)(void))0x2008149;
+    callback = LinkLobby_PollPeerReady;
     Engine_TaskAddCallback(callback, 0xc80);
     Scheduler_SetCallbackMask(callback, 1);
     if ((s16)ROW(225) != 8 || !Engine_GameFlagIsSet(0x173)) {

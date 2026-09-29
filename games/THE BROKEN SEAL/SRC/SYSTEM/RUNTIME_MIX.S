@@ -138,7 +138,7 @@ AlchemyUncredited_08000e86:
 @ 合成作業域の先頭番地。
 .L_audio_workspace_pointer:
 AlchemyUncreditedEnd_08000e86:
-	.4byte 0x03000df8
+	.4byte IwramSoundMixWorkspace
 
 @ 標本補間と四語単位の混合を行うアーム合成核。
 	.global IwramSoundMixArm

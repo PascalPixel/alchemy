@@ -1,5 +1,6 @@
 /* Scene tables, layouts and supplemental sequences. */
 #include "BABI.H"
+s32 SceneActor_CopyActor8PositionWhenAtRow10();
 
 void SceneActor_CheckTwoUnitsAboveActorZero(void)
 {
@@ -295,7 +296,7 @@ void SceneActor_InstallSlotNineHandler(void)
     Actor_EnableActionCallback(8, 0x0200B3B8);
     GameFlag_Set(0x203);
     owner = Actor_Get(9);
-    *(s32 *)(owner + 108) = 0x02008FE9;
+    *(s32 *)(owner + 108) = (s32)SceneActor_CopyActor8PositionWhenAtRow10;
 }
 
 /*

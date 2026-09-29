@@ -67,7 +67,10 @@ Object_ShadowTiles:
 	.incbin "baserom.gba", 0x00012fa0, 0x000001ac
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:
-	.incbin "baserom.gba", 0x0001314c, 0x000000f4
+	.incbin "baserom.gba", 0x0001314c, 0x00000044
+	.global Camera_FixedViewMatrix
+Camera_FixedViewMatrix:
+	.incbin "baserom.gba", 0x00013190, 0x000000b0
 	.global Script_MainScript
 Script_MainScript:
 	.incbin "baserom.gba", 0x00013240, 0x0000008c
@@ -233,7 +236,10 @@ Menu_SaveSlotActionByPosition:
 	.incbin "baserom.gba", 0x0003740f, 0x00000019
 	.global Menu_ColonString
 Menu_ColonString:
-	.incbin "baserom.gba", 0x00037428, 0x0000003c
+	.incbin "baserom.gba", 0x00037428, 0x00000004
+	.global Menu_HexDigitsString
+Menu_HexDigitsString:
+	.incbin "baserom.gba", 0x0003742c, 0x00000038
 	.section .unidentified.08073808,"a"
 	.incbin "baserom.gba", 0x00073808, 0x0000000a
 	.global WorkspaceOptions_SliderPalette
@@ -336,7 +342,10 @@ RomBytes_0809e75c:
 	.incbin "baserom.gba", 0x0009e75c, 0x00000120
 	.global BattleFx_ParticleScript
 BattleFx_ParticleScript:
-	.incbin "baserom.gba", 0x0009e87c, 0x00000174
+	.incbin "baserom.gba", 0x0009e87c, 0x00000024
+	.global BattleFx_MarkerParticleScript
+BattleFx_MarkerParticleScript:
+	.incbin "baserom.gba", 0x0009e8a0, 0x00000150
 	.global BattleFx_DefinitionTable
 BattleFx_DefinitionTable:
 	.incbin "baserom.gba", 0x0009e9f0, 0x0000020c
@@ -444,7 +453,16 @@ Data_080aedcc:
 	.incbin "baserom.gba", 0x000aedcc, 0x00000440
 	.global Data_080af20c
 Data_080af20c:
-	.incbin "baserom.gba", 0x000af20c, 0x00000010
+	.incbin "baserom.gba", 0x000af20c, 0x00000004
+	.global Ui_HpString
+Ui_HpString:
+	.incbin "baserom.gba", 0x000af210, 0x00000004
+	.global Ui_SlashString
+Ui_SlashString:
+	.incbin "baserom.gba", 0x000af214, 0x00000004
+	.global Ui_PpString
+Ui_PpString:
+	.incbin "baserom.gba", 0x000af218, 0x00000004
 	.global Data_080af21c
 Data_080af21c:
 	.incbin "baserom.gba", 0x000af21c, 0x00000004
@@ -884,6 +902,8 @@ Func_080f2b6c:
 ReelGame_TitleLetterWidths:
 	.incbin "baserom.gba", 0x000f8736, 0x000008ca
 	.section .unidentified.080fb7a0,"a"
+	.global Sound_CommandTableTemplate
+Sound_CommandTableTemplate:
 	.incbin "baserom.gba", 0x000fb7a0, 0x00000090
 	.global Sound_PcmPitchCodes
 Sound_PcmPitchCodes:
@@ -905,7 +925,10 @@ Sound_NoisePitchCodes:
 	.incbin "baserom.gba", 0x000fb9c8, 0x0000003c
 	.global Sound_Cgb3LevelCodes
 Sound_Cgb3LevelCodes:
-	.incbin "baserom.gba", 0x000fba04, 0x00000044
+	.incbin "baserom.gba", 0x000fba04, 0x00000010
+	.global Sound_ClockLengths
+Sound_ClockLengths:
+	.incbin "baserom.gba", 0x000fba14, 0x00000034
 	.global Sound_ExtendedCommandTable
 Sound_ExtendedCommandTable:
 	.incbin "baserom.gba", 0x000fba48, 0x00000030

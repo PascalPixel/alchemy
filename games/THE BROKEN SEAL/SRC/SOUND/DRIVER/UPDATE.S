@@ -403,6 +403,6 @@ SoundDriver_CallViaR3:
 AlchemyUncredited_080f9eea:
 	.2byte	0x0000
 AlchemyUncreditedEnd_080f9eea:
-	.4byte 0x080fba14
+	.4byte Sound_ClockLengths
 	.4byte 0x03007ff0
 	.4byte 0x68736d53

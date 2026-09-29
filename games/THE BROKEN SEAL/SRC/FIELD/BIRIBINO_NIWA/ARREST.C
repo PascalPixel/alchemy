@@ -35,7 +35,7 @@ void Engine_EventWaitForScreen();
 void Engine_EventRequestExit();
 void Engine_EventEnd();
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -103,7 +103,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Call3(Engine_ActorFaceDirection, 11, 0x3000, 0);
     Call3(Engine_ActorFaceDirection, 12, 0x5000, 10);
     Engine_ActorRunRepeatedMotion(11, 1);
-    ((void (*)())Engine_EventShowMessageAndWait)(11, 0, 10);
+    Engine_EventShowMessageAndWait(11, 0, 10);
     Engine_ActorRunRepeatedMotion(12, 1);
     Value2(Engine_EventOpenMessage, 12, 0);
     Call3(Engine_ActorFaceDirection, 0, 0xe000, 0);
@@ -137,9 +137,12 @@ void BiribinoNiwa_RunGardenScene(void)
         Engine_EventWait(1);
         {
             u8 *record = Engine_ActorGet(12);
-            u8 value = *(volatile u8 *)&record[90];
-        
-            record[90] = (u8)(value | 1);
+            /* FAKEMATCH: a result temporary, not a compound or-assign: the
+             * reference merges the byte into the mask's register, which the
+             * two-address ORR does only when the result is its own object. */
+            u8 merged = (u8)(record[90] | 1);
+
+            record[90] = merged;
         }
     }
     Call3(Engine_ActorSetSpeed, 11, 0xcccc, 0x6666);

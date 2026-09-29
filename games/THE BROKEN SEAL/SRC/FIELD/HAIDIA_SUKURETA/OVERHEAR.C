@@ -186,15 +186,10 @@ void Scene_OverhearSaturosAndMenardi(void)
     *(record + 90) |= 1;
     record = (u8 *)Engine_ActorGet(15);
     {
-        /*
-         * A result temporary, not the compound or-assign the first
-         * occurrence above uses. The reference writes the result into
-         * the mask register rather than the loaded value, and the
-         * two-address ORR only does that when the merged result is its
-         * own object; the compound form keeps the loaded value as
-         * destination. Same technique already adopted in the sibling
-         * owners resource_3bd:020013f8 and resource_39e:02001494.
-         */
+        /* FAKEMATCH: a result temporary, not the compound or-assign the
+         * first occurrence above uses: the reference merges the byte into
+         * the mask's register, which the two-address ORR does only when
+         * the result is its own object. */
         u8 merged = (u8)(*(record + 90) | 1);
 
         *(record + 90) = merged;

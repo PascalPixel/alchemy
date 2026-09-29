@@ -11,6 +11,8 @@ extern u8 gKeyState[];
 void FieldScene_RunCountAdjustPanel(void)
 {
     u8 *record;
+    /* FAKEMATCH: reading the held keys through a volatile pointer loads
+     * them once per test, where the reference does not merge the tests. */
     volatile u32 *key;
     s32 win;
     s32 flag;

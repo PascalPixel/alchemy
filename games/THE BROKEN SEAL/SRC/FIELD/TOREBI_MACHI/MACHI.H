@@ -67,10 +67,11 @@ s32 UiWindow_CreateWithSideObject();
 void UiText_OpenMessageWindow();
 
 /*
- * Call sites spelled through the wrappers below pass their constants straight
- * into the argument registers. A direct call instead precomputes a costly
- * constant into a temporary that is then shared with later uses in the same
- * block. A value-returning call sets r0 last of its arguments.
+ * FAKEMATCH: call sites spelled through the wrappers below pass their
+ * constants straight into the argument registers. A direct call instead
+ * precomputes a costly constant into a temporary that is then shared with
+ * later uses in the same block. A value-returning call sets r0 last of its
+ * arguments.
  */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {

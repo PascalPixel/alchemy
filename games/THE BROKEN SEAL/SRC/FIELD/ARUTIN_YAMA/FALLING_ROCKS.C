@@ -26,7 +26,7 @@ void FieldScene_RunFallingRocksWarning(void)
             Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
             record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
             if ((s32)record != 0) {
-                Actor_SetPosition(ACTOR_GERALD, *(volatile s32 *)((s32)record + 8), *(volatile s32 *)((s32)record + 16));
+                Actor_SetPosition(ACTOR_GERALD, *(s32 *)(record + 8), *(s32 *)(record + 16));
             }
             Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
             Actor_WalkToAndWait(ACTOR_GERALD, 0x320, 140);
@@ -47,10 +47,13 @@ void FieldScene_RunFallingRocksWarning(void)
             Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 120);
             Event_Wait(1);
             {
-                u8 *record = Actor_Get(ACTOR_GERALD);
-                u8 value = *(volatile u8 *)&record[90];
+                u8 *record = (u8 *)Actor_Get(ACTOR_GERALD);
+                /* FAKEMATCH: a result temporary, not a compound or-assign: the
+                 * reference merges the byte into the mask's register, which the
+                 * two-address ORR does only when the result is its own object. */
+                u8 merged = (u8)(record[90] | 1);
 
-                record[90] = (u8)(value | 1);
+                record[90] = merged;
             }
             Work_SetValuesIfNonNegative(-1, -1, 0xe666);
             Event_Wait(80);

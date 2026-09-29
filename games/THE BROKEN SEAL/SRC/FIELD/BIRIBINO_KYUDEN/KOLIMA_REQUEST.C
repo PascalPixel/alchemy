@@ -128,9 +128,13 @@ void Kyuden_RunKolimaRequest(void)
         Call3(Engine_ActorFaceDirection, 1, 0xe000, 0);
         Call3(Engine_ActorFaceDirection, 2, 0xa000, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            goto L_02000f86;
+            /* FAKEMATCH: the first offer and the change of heart share one
+             * refusal and one acceptance by jumping into each other's
+             * blocks, which keeps the reference's single copy of each in
+             * this order. */
+            goto accepted;
         }
-    L_02000cb6:
+    declined:
         Engine_EventSetMessage((s32)MsgBiribinoTooYoungForTheJob);
         Call3(Engine_EventShowMessageAndWait, 0x2012, 0, 10);
         Call3(Engine_ActorFaceDirection, 19, 0x3000, 0);
@@ -166,7 +170,7 @@ void Kyuden_RunKolimaRequest(void)
         gEventWork->transition_frames = 16;
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
-        goto L_0200177e;
+        goto leave;
     }
     Call3(Engine_ActorSetSpeed, 0, 0x9999, 0x4ccc);
     Call3(Engine_ActorWalkTo, 0, 0x37e, 0x2ac);
@@ -212,9 +216,10 @@ void Kyuden_RunKolimaRequest(void)
     Event_SetMessage((s32)MsgBiribinoYehveChangeHeart);
     Value2(Engine_EventOpenMessage, 0x2012, 0);
     if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
-        goto L_02000cb6;
+        /* FAKEMATCH: into the first offer's refusal, as above. */
+        goto declined;
     }
-L_02000f86:
+accepted:
     Call3(Engine_ActorFaceDirection, 3, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 0, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 1, 0xc000, 0);
@@ -430,7 +435,7 @@ L_02000f86:
     Event_CloseScreen();
     Engine_EventWaitForScreen();
     Call1((void (*)())Engine_GameFlagSet, 0x321);
-L_0200177e:
+leave:
     Event_RequestExit(29);
     Engine_EventEnd();
 }

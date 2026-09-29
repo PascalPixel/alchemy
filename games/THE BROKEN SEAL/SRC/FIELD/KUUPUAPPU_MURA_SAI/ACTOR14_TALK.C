@@ -31,10 +31,5 @@ void KuupuappuMuraSai_RunActor14Talk(void)
         GameFlag_Set(0x307);
     }
     Event_End();
-    {
-        u8 *record = (u8 *)Actor_Get(14);
-        s32 shown = 1;
-
-        *(volatile u16 *)((s32)record + 100) = shown;
-    }
+    ((struct SceneActor *)Actor_Get(14))->state_flags = 1;
 }

@@ -34,7 +34,7 @@ void Engine_EventEnd();
 
 
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */
@@ -152,9 +152,12 @@ void HaidiaBabi_RunSickbedVisit(void)
     Call3(Engine_ActorFaceDirection, 8, 0x8000, 40);
     {
         u8 *record = Engine_ActorGet(0);
-        u8 value = *(volatile u8 *)&record[90];
-    
-        record[90] = (u8)(value | 1);
+        /* FAKEMATCH: a result temporary, not a compound or-assign: the
+         * reference merges the byte into the mask's register, which the
+         * two-address ORR does only when the result is its own object. */
+        u8 merged = (u8)(record[90] | 1);
+
+        record[90] = merged;
     }
     Call3(Engine_ActorFaceDirection, 8, 0xc000, 8);
     Engine_ActorFaceDirection(8, 0, 8);

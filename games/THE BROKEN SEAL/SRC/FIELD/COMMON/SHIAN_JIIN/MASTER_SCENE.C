@@ -5,6 +5,10 @@ extern u8 MsgShianCannotPushHands[];
 extern u8 MsgShianGreatWarriorTrain[];
 extern u8 MsgShianWarriorsCannotUse[];
 
+/* FAKEMATCH: call sites spelled through this wrapper pass their constants
+ * straight into the argument registers; a direct call precomputes a costly
+ * constant into a pseudo that the compiler then shares with later uses in
+ * the block. */
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);

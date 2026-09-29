@@ -24,8 +24,8 @@ void SceneActor_SetModeZeroAndValue(s32 a, s32 b);
 
 void FieldScene_RunSplitTripleSteps(s32 a, s32 b, s32 c);
 
-/* FAKEMATCH: calls spelled through these value wrappers, and the volatile
- * reads of the event work, keep the reference's argument and reload order. */
+/* FAKEMATCH: calls spelled through these value wrappers keep the
+ * reference's argument and reload order. */
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();
@@ -75,14 +75,17 @@ void RunDialoguePromptScene(void)
     s32 rod;
     u8 *p7;
 
-    p7 = *(volatile s32 *)&gEventWork;
+    p7 = (u8 *)gEventWork;
     GameFlag_Set(0x855);
     Event_Begin();
     {
         u8 *record = ((u8 * (*)())Engine_ActorGet)(12);
-        u8 value = *(volatile u8 *)&record[35];
+        /* FAKEMATCH: a result temporary, not a compound or-assign: the
+         * reference merges the byte into the mask's register, which the
+         * two-address ORR does only when the result is its own object. */
+        u8 merged = (u8)(record[35] | 1);
 
-        record[35] = (u8)(value | 1);
+        record[35] = merged;
     }
     Actor_MoveToAndWait(15, 0x368, 0x1a9);
     Actor_MoveToAndWait(16, 0x368, 0x199);
@@ -116,10 +119,10 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(ACTOR_PARTY_LEADER, 10, 0);
     Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Actor_FaceActor(ACTOR_IVAN, 10, 0);
-    work = *(u8 *volatile *)&gEventWork;
+    work = (u8 *)gEventWork;
     off1c8 = 0x1c8;
-    *(volatile s32 *)((s32)work + off1c8) = 30;
-    *(volatile s32 *)(((s32)work + 0x1c0)) = 0x201;
+    *(s32 *)(work + off1c8) = 30;
+    *(s32 *)(work + 0x1c0) = 0x201;
     Event_OpenScreen();
     Event_WaitForScreen();
     Event_Wait(40);
@@ -512,7 +515,7 @@ void RunDialoguePromptScene(void)
     Actor_SetPosition(11, 0, 0);
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(ACTOR_IVAN, 0, 0);
-    *(s32 *)((*(u8 *volatile *)&gEventWork + 0x1c0)) = 0x209;
+    *(s32 *)((u8 *)gEventWork + 0x1c0) = 0x209;
     Event_End();
 }
 

@@ -33,7 +33,7 @@ void Villager_ShowOffPsynergy(void)
         }
         Event_ShowMessage(17, 0);
     } else {
-        origin = *(s32 * volatile *)&Data_03001e70->origin;
+        origin = Data_03001e70->origin;
         Event_SetMessage((s32)MsgHaidiaShownNewAbility);
         Actor_FaceEachOther(17, ACTOR_PARTY_LEADER, 0);
         Event_AskYesNo(17, 0);
@@ -51,9 +51,9 @@ void Villager_ShowOffPsynergy(void)
         for (i = 0; i != 180; i++) {
             if (Value2(IwramUnsignedRemainder, i, 10) == 0) {
                 if ((1 & shakes) != 0) {
-                    *(volatile s32 *)origin = *(volatile s32 *)origin - 0x10000;
+                    *origin -= 0x10000;
                 } else {
-                    *(volatile s32 *)origin = *(volatile s32 *)origin + 0x10000;
+                    *origin += 0x10000;
                 }
                 shakes = shakes + 1;
             }

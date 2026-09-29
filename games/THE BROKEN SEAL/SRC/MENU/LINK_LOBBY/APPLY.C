@@ -82,6 +82,9 @@ s32 LinkLobby_RunBattleApplication(void)
         }
         if (Engine_GameFlagIsSet(0x202)) {
             line = msg + 3;
+            /* FAKEMATCH: the first branch's answers jump into this block's
+             * message tail, and an accepted challenge back into its opening,
+             * which keeps the reference's single copy of each. */
 message:
             Engine_EventSetMessage(line);
 open_message:

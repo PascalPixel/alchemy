@@ -3,7 +3,6 @@ extern u8 MsgTorebiSeenAnyoneWho[];
 
 void FieldScene_RunPrimarySequence(void)
 {
-    s32 object32_id;
     s32 base;
 
     Engine_EventBegin();
@@ -15,8 +14,7 @@ void FieldScene_RunPrimarySequence(void)
     Call3(Engine_ActorSetPosition, 29, 0x480000, 0xd00000);
     Call3(Engine_ActorSetPosition, 30, 0x380000, 0xd00000);
     Engine_ActorSetChildValue(32, 15);
-    object32_id = Engine_ActorGet(32);
-    Engine_ActorSetSpriteFlags(object32_id, 0); /* main:080091e0 */
+    Engine_ActorSetSpriteFlags(Engine_ActorGet(32), 0);
     Call3(Engine_ActorSetPosition, 32, 0x5f0000, 0x280000);
     Engine_ActorWalkTo(29, 72, 248);
     Engine_ActorWalkTo(30, 56, 248);
@@ -29,14 +27,14 @@ void FieldScene_RunPrimarySequence(void)
     Engine_ActorFaceActor(29, 0, 0);
     Engine_ActorFaceActor(30, 0, 0);
     Engine_EventWait(20);
-    Actor_SetAttachedEffect(29, 0x102); /* main:0808a1f0 */
-    Call2(Engine_ActorSetAttachedEffect, 30, 0x102); /* main:0808a1f0 */
+    Actor_SetAttachedEffect(29, 0x102);
+    Call2(Engine_ActorSetAttachedEffect, 30, 0x102);
     Engine_ActorStartRepeatedMotion(29, 2);
     Actor_RunRepeatedMotion(30, 2);
     Engine_EventWait(20);
-    Event_OpenMessage(29, 0); /* main:0808a178 */
+    Event_OpenMessage(29, 0);
     Engine_EventWait(25);
-    Value4(UiWindow_CreateWithSideObject, 52, 0, 12, 7); /* main:080150f8 */
+    Value4(UiWindow_CreateWithSideObject, 52, 0, 12, 7);
     UiText_OpenMessageWindow((base + 3), 11, 12, 2);
     SCENE_OBJECT_ID = 32;
     if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) { /* object_id 0, force 0 */
@@ -77,7 +75,7 @@ void FieldScene_RunPrimarySequence(void)
         Engine_EventWait(20);
         Engine_ActorFaceDirection(29, 0, 0);
         Engine_EventWait(30);
-        bump_step_02000980(1);
+        gEventWork->message += 1;
         Engine_EventShowMessage(29, 0);
         Engine_EventWait(20);
         Call3(Engine_ActorFaceDirection, 29, 0x4000, 0);

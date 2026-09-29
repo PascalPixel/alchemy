@@ -45,6 +45,9 @@ void FieldScene_ConfigurePairedActors(void)
     Value2((s32 (*)())Engine_ActorEnableActionCallback, 25, (s32)KuupuappuHeya_PairScriptO);
     Actor_EnableActionCallback(24, KuupuappuHeya_PairScriptB);
     Object_RefreshSelectorById(24);
+    /* FAKEMATCH: each shown state is parked in a word-sized local before
+     * its halfword store, which keeps the constants' loads where the
+     * reference has them. */
     {
         u8 *record = (u8 *)Engine_ActorGet(24);
         s32 shown = 1;

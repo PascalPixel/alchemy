@@ -13,6 +13,8 @@ void RariberoHeya_RunItemShop(s32 keeper)
 {
     struct FieldActor *leader = Engine_ActorGet(0);
 
+    /* FAKEMATCH: the halfword cast of the masked facing keeps the
+     * reference's compare. */
     if ((u16)((leader->facing + 0x2000) & 0xc000) == 0xc000) {
         Shop_Run(32, keeper);
     } else if (Engine_GameFlagIsSet(0x9a7)) {

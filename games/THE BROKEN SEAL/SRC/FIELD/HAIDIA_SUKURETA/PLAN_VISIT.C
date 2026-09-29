@@ -45,8 +45,7 @@ void Scene_PlanSanctumVisit(void)
     s32 x, y;
     s32 sneak;
 
-    if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
-    } else {
+    if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
         Event_Begin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
         Event_SetMessage((s32)MsgHaidiaSukuretaOhRobin);
@@ -234,7 +233,7 @@ void Scene_PlanSanctumVisit(void)
         } else {
             Event_SetMessage((s32)MsgHaidiaGeraldIllTakeOverIf);
         }
-        ((void (*)())Engine_EventWait)(10);
+        Engine_EventWait(10);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Actor_FaceDirection(ACTOR_GERALD, 0, 10);
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);

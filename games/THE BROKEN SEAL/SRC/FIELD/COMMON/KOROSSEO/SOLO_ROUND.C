@@ -40,7 +40,9 @@ void Korosseo_FinishSoloRound(s32 id)
     s32 msg;
     s32 res;
 
-    work = *(s32 *)&gEventWork;
+    work = (s32)gEventWork;
+    /* FAKEMATCH: the reference looks the speaker up twice here and drops
+     * both results; no use of them is recovered. */
     Engine_ActorGet(id);
     Engine_ActorGet(id);
     slot = gGameState[125];
@@ -49,6 +51,9 @@ void Korosseo_FinishSoloRound(s32 id)
     msg = (s32)MsgKorosseoCheering;
     Engine_EventSetMessage(msg);
     Value2((s32 (*)())Engine_EventOpenMessage, id, 0);
+    /* FAKEMATCH: the choice list and its count go through one work pointer
+     * and word-sized locals, which keeps the reference's pool loads and
+     * halfword stores in its order. */
     {
         u8 *w = *(u8 **)&gEventWork;
         s32 v = (s32)MsgKorosseoCheeringChoices;
@@ -79,7 +84,7 @@ void Korosseo_FinishSoloRound(s32 id)
             Korosseo_SelectSoloCompetitor(slot);
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
-            *(s32 *)(work + 0x1c0) = res;
+            *(s32 *)(work + 0x1c0) = 0;
         }
     } else {
         Engine_EventSetMessage(msg + 2);

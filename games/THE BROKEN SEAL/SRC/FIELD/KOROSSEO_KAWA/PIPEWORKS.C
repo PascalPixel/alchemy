@@ -62,8 +62,7 @@ void Korosseo_RunPipeworksIntro(s32 a0)
     } else {
         Engine_EventBegin();
         rec4 = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 2);
-        if (rec4 != 0) {
-        } else {
+        if (rec4 == 0) {
             Call1((void (*)())Engine_EventSetMessage, (s32)MsgKorosseoAreaCalledPipeworks);
             Call2((void (*)())Engine_CameraSetSpeed, 0x30000, 0x6000);
             Call4((void (*)())Engine_CameraMoveTo, 0x2500000, -1, 0x780000, 1);
@@ -81,27 +80,27 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             SceneState_ReleaseTableAndResetC6a6();
             Engine_TaskWait(2);
             record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 13);
-            record[85] = rec4;
-            *(s32 *)((s32)record + 52) = 0x6666;
-            *(s32 *)((s32)record + 48) = 0xcccc;
-            Call4(Engine_ObjectSetPosition, (s32)record, *(s32 *)((s32)record + 8), 0x80000, *(s32 *)((s32)record + 16));
+            record[85] = 0;
+            *(s32 *)(record + 52) = 0x6666;
+            *(s32 *)(record + 48) = 0xcccc;
+            Call4(Engine_ObjectSetPosition, (s32)record, *(s32 *)(record + 8), 0x80000, *(s32 *)(record + 16));
             rec7 = (u8 *)Value1((s32 (*)())Engine_ActorGet, 14);
-            rec7[85] = rec4;
-            *(s32 *)((s32)rec7 + 52) = 0x6666;
-            *(s32 *)((s32)rec7 + 48) = 0xcccc;
-            Call4(Engine_ObjectSetPosition, (s32)rec7, *(s32 *)((s32)rec7 + 8), 0x200000, *(s32 *)((s32)rec7 + 16));
+            rec7[85] = 0;
+            *(s32 *)(rec7 + 52) = 0x6666;
+            *(s32 *)(rec7 + 48) = 0xcccc;
+            Call4(Engine_ObjectSetPosition, (s32)rec7, *(s32 *)(rec7 + 8), 0x200000, *(s32 *)(rec7 + 16));
             Script_WaitForEventTimeout((s32)rec7);
             Engine_EventWait(45);
             record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 13);
-            record[85] = rec4;
-            *(s32 *)((s32)record + 52) = 0x6666;
-            *(s32 *)((s32)record + 48) = 0xcccc;
-            Call4(Engine_ObjectSetPosition, (s32)record, *(s32 *)((s32)record + 8), 0x180000, *(s32 *)((s32)record + 16));
+            record[85] = 0;
+            *(s32 *)(record + 52) = 0x6666;
+            *(s32 *)(record + 48) = 0xcccc;
+            Call4(Engine_ObjectSetPosition, (s32)record, *(s32 *)(record + 8), 0x180000, *(s32 *)(record + 16));
             rec7 = (u8 *)Value1((s32 (*)())Engine_ActorGet, 14);
-            rec7[85] = rec4;
-            *(s32 *)((s32)rec7 + 52) = 0x6666;
-            *(s32 *)((s32)rec7 + 48) = 0xcccc;
-            Engine_ObjectSetPosition((s32)rec7, *(s32 *)((s32)rec7 + 8), 0, *(s32 *)((s32)rec7 + 16));
+            rec7[85] = 0;
+            *(s32 *)(rec7 + 52) = 0x6666;
+            *(s32 *)(rec7 + 48) = 0xcccc;
+            Engine_ObjectSetPosition((struct FieldActor *)rec7, *(s32 *)(rec7 + 8), 0, *(s32 *)(rec7 + 16));
             Script_WaitForEventTimeout((s32)rec7);
             Engine_EventWait(15);
             Engine_EventShowMessage(a0, 0);
@@ -116,13 +115,10 @@ void Korosseo_RunPipeworksIntro(s32 a0)
             Engine_TaskWait(2);
             Engine_CameraFollowActor(0, 0);
             SceneState_SendIdBySceneId(a0, 2);
-            goto done;
-        }
-        if (rec4 == 1) {
+        } else if (rec4 == 1) {
             Call1((void (*)())Engine_EventSetMessage, (s32)MsgKorosseoObjectiveMakeGood);
             Engine_EventShowMessage(a0, 0);
         }
-    done:
         Value3(FieldScene_RunMiddleSequence, rec4, a0, 2);
         Engine_EventEnd();
     }

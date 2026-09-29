@@ -27,8 +27,6 @@ void SceneDialogue_AskStay(s32 subject)
 
 void SceneDialogue_RunExcitedLines(s32 a0)
 {
-    void Event_ShowMessage();
-
     s32 msg;
 
     Event_Begin();

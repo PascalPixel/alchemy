@@ -4,6 +4,8 @@ extern u8 MsgSoruDoubtHowFeel[];
 extern u8 MsgSoruPermitRelieveElemental[];
 extern u8 MsgSoruThankCooperation[];
 
+/* FAKEMATCH: the flag byte's or-assign goes through this helper, which
+ * keeps the reference's register for the byte. */
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {
     *flags |= bits;
@@ -49,6 +51,8 @@ void Scene_AlexTakesStars(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Value1(Engine_ActorGet, ACTOR_GERALD);
     rec[90] &= 254;
+    /* FAKEMATCH: the zero is parked here, well before its one store, which
+     * keeps it in the register the reference holds it in. */
     none = 0;
     Actor_WalkToAndWait(ACTOR_GERALD, 0x178, 0x1d6);
     Event_Wait(30);

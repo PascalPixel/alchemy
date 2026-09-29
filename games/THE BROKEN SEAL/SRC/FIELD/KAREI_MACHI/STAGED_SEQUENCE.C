@@ -22,12 +22,6 @@ struct Obj {
     u16 f06;
 };
 
-struct Obj_02000040 {
-    u8 filler00[100];
-    u16 f64;
-    u16 f66;
-};
-
 struct Object {
     u8 filler00[6];
     u16 x;
@@ -51,37 +45,10 @@ struct SceneWork {
     u16 step;
 };
 
-struct Obj_020036f8 {
-    u8 filler00[8];
-    s32 f08;
-    s32 f0c;
-    u8 filler10[8];
-    s32 f18;
-    s32 f1c;
-    s32 f20;
-    s32 f24;
-    s32 f28;
-    u8 filler2c[56];
-    s16 f64;
-};
-
 typedef struct RenderData {
     unsigned char pad00[0x1E];
     s16 rotation;
 } RenderData;
-
-typedef struct Effect_0200390c {
-    unsigned char pad00[8];
-    s32 x;
-    s32 y;
-    unsigned char pad10[0x20];
-    s32 angle;
-    unsigned char pad34[4];
-    s32 base_x;
-    s32 base_y;
-    unsigned char pad40[0x10];
-    RenderData *render;
-} Effect_0200390c;
 
 typedef struct OrbitingSceneObjectSprite {
     u8 padding_00[5];
@@ -143,7 +110,6 @@ void FieldScene_RunStagedGroupSequence(void)
 {
 
     s32 messageId;
-    const u32 *actionDescriptor;
     s32 idleState;
     s32 actionEnabled;
     u8 *actor20PairedWait;
@@ -160,7 +126,7 @@ void FieldScene_RunStagedGroupSequence(void)
     u8 *actor20AfterSecondMove;
     u8 *sceneWorkspace;
 
-    sceneWorkspace = *(u8 **)&gEventWork;
+    sceneWorkspace = (u8 *)gEventWork;
     Event_Begin();
     if (GameFlag_IsSet(2320) == 0) {
         goto skip_scene;
@@ -202,28 +168,29 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_SetSpeed(33, 45875, 22937);
     Actor_SetSpeed(34, 45875, 22937);
     Actor_SetSpeed(21, 39321, 19660);
-    actionDescriptor = SceneAction_GroupMotion;
-    Engine_ActorEnableActionCallback(20, actionDescriptor);
-    Engine_ActorEnableActionCallback(27, actionDescriptor);
-    Engine_ActorEnableActionCallback(28, actionDescriptor);
-    Engine_ActorEnableActionCallback(29, actionDescriptor);
-    Engine_ActorEnableActionCallback(30, actionDescriptor);
-    Engine_ActorEnableActionCallback(32, actionDescriptor);
-    Engine_ActorEnableActionCallback(31, actionDescriptor);
-    Engine_ActorEnableActionCallback(33, actionDescriptor);
-    Engine_ActorEnableActionCallback(34, actionDescriptor);
+    Engine_ActorEnableActionCallback(20, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(27, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(28, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(29, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(30, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(32, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(31, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(33, SceneAction_GroupMotion);
+    Engine_ActorEnableActionCallback(34, SceneAction_GroupMotion);
     actor21OpeningWait = Actor_Get(21);
     {
+        /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+         * a word; the direct store changes the literal pools. */
         s32 value = 0;
         *(u16 *)(actor21OpeningWait + 100) = value;
     }
-    Engine_ActorEnableActionCallback(21, actionDescriptor);
+    Engine_ActorEnableActionCallback(21, SceneAction_GroupMotion);
     Camera_MoveTo(12189696, -1, 17825792, 1);
     Object_RefreshSelectorById(20);
     Actor_FaceDirection(20, 0, 0);
     do {
         Task_Wait(1);
-    } while (*(s16 *)((u8 *)actor21OpeningWait + 100) == 0);
+    } while (*(s16 *)(actor21OpeningWait + 100) == 0);
     Event_Wait(40);
     Actor_RunRepeatedMotion(27, 2);
     Actor_FaceDirection(27, 20480, 20);
@@ -255,12 +222,17 @@ void FieldScene_RunStagedGroupSequence(void)
     actor20BeforeFirstMove = Actor_Get(20);
     {
         s32 flags = actor20BeforeFirstMove[90] & 0xfe;
+        /* FAKEMATCH: flags is a result temporary, and idleState parks the
+         * zero the two paired waits store much later; both keep the
+         * reference's registers. */
         idleState = 0;
         actor20BeforeFirstMove[90] = flags;
     }
     Actor_WalkToAndWait(20, 172, 264);
     Event_Wait(1);
     actor20AfterFirstMove = Actor_Get(20);
+    /* FAKEMATCH: the flag bit is parked in actionEnabled, which then
+     * serves as the result temporary of both merges below. */
     actionEnabled = 1;
     {
         s32 flags = actor20AfterFirstMove[90];
@@ -274,7 +246,7 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_SetAnimationAndWait(20, 3);
     Event_Wait(20);
     actor20BeforeSecondMove = Actor_Get(20);
-    *(u8 *)((u8 *)(actor20BeforeSecondMove) + 90) &= 0xfe;
+    actor20BeforeSecondMove[90] &= 0xfe;
     Actor_WalkToAndWait(20, 172, 272);
     Event_Wait(1);
     actor20AfterSecondMove = Actor_Get(20);
@@ -536,23 +508,24 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_Stop(20);
     Actor_Stop(21);
     Task_Wait(1);
-    actionDescriptor = SceneAction_GroupOffsetMotion;
-    Engine_ActorEnableActionCallback(20, actionDescriptor);
-    Engine_ActorEnableActionCallback(27, actionDescriptor);
-    Engine_ActorEnableActionCallback(28, actionDescriptor);
-    Engine_ActorEnableActionCallback(29, actionDescriptor);
-    Engine_ActorEnableActionCallback(30, actionDescriptor);
-    Engine_ActorEnableActionCallback(32, actionDescriptor);
-    Engine_ActorEnableActionCallback(31, actionDescriptor);
-    Engine_ActorEnableActionCallback(33, actionDescriptor);
-    Engine_ActorEnableActionCallback(34, actionDescriptor);
+    Engine_ActorEnableActionCallback(20, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(27, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(28, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(29, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(30, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(32, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(31, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(33, SceneAction_GroupOffsetMotion);
+    Engine_ActorEnableActionCallback(34, SceneAction_GroupOffsetMotion);
     closingWaitRecord = Actor_Get(21);
     {
+        /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+         * a word; the direct store changes the literal pools. */
         u16 *state = (u16 *)(closingWaitRecord + 100);
         s32 value = 0;
         *state = value;
     }
-    Engine_ActorEnableActionCallback(21, actionDescriptor);
+    Engine_ActorEnableActionCallback(21, SceneAction_GroupOffsetMotion);
     do {
         Task_Wait(1);
     } while (*(s16 *)((u8 *)Actor_Get(21) + 100) != 1);
@@ -579,6 +552,8 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_SetSpeed(14, 78643, 39321);
     closingWaitRecord = Actor_Get(14);
     {
+        /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+         * a word; the direct store changes the literal pools. */
         u16 *state = (u16 *)(closingWaitRecord + 100);
         s32 value = 0;
         *state = value;
@@ -590,18 +565,24 @@ void FieldScene_RunStagedGroupSequence(void)
     Actor_SetPosition(14, 23527424, 20578304);
     actor14FinalFacing = Actor_Get(14);
     {
+        /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+         * a word; the direct store changes the literal pools. */
         s32 value = 53248;
         *(u16 *)(actor14FinalFacing + 6) = value;
     }
     Actor_SetPosition(20, 29818880, 28442624);
     actor20FinalFacing = Actor_Get(20);
     {
+        /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+         * a word; the direct store changes the literal pools. */
         s32 value = 53248;
         *(u16 *)(actor20FinalFacing + 6) = value;
     }
     Actor_SetPosition(21, 30408704, 27262976);
     actor21FinalFacing = Actor_Get(21);
     {
+        /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+         * a word; the direct store changes the literal pools. */
         s32 value = 20480;
         *(u16 *)(actor21FinalFacing + 6) = value;
     }
@@ -618,6 +599,8 @@ void FieldScene_RunStagedGroupSequence(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 224, 458);
         playerFinalFacing = Actor_Get(ACTOR_PARTY_LEADER);
         {
+            /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+             * a word; the direct store changes the literal pools. */
             s32 value = 49152;
             *(u16 *)(playerFinalFacing + 6) = value;
         }
@@ -625,6 +608,8 @@ void FieldScene_RunStagedGroupSequence(void)
         Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 40, 248);
         playerFinalFacing = Actor_Get(ACTOR_PARTY_LEADER);
         {
+            /* FAKEMATCH: a word-sized local keeps the halfword store's constant
+             * a word; the direct store changes the literal pools. */
             s32 value = 16384;
             *(u16 *)(playerFinalFacing + 6) = value;
         }

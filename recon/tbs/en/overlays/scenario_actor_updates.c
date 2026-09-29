@@ -5,7 +5,7 @@
 extern s32 *Func_0200213e(s32);
 extern void Func_0200211c(s32);
 extern void Func_02002122(s32);
-extern void Func_02002124(s32);
+extern void Korosseo_LoadPortrait(s32);
 extern void Func_02002130(s32);
 
 void Func_0200056c(void)
@@ -20,7 +20,7 @@ void Func_0200056c(void)
     Func_0200211c(0x302);
     Func_02002122(0x303);
     if (dir == 93) {
-        Func_02002124(0x303);
+        Korosseo_LoadPortrait(0x303);
     } else if (dir == 95) {
         Func_02002130(0x302);
     }

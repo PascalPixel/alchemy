@@ -1,3 +1,10 @@
+/* 2026-09-29: eight minutes of permutation found 1656 from 1936; the
+ * natural reorders kept here (locals, cursor steps, the puff base as offset
+ * plus work) score 1856. The rest of the 1656 candidate repeats the
+ * particle-cursor assignment before i = 0 and spells the size-table read as
+ * pointer arithmetic, which is not kept. Resource numbers 0x73, 0x8e, 0xb4
+ * and 0xb7 are still Value_ symbols, and 0x02010000 is still a literal
+ * address. */
 /* Draft, complete main:080e08c0 [080e08c0,080e0c84), 964 bytes.
  * Baseline: 968 bytes, 307 differing halfwords, 147 aligned edits, frame 32.
  * H1: recover the puff/particle module using exact PUFF_ARC's work/argument
@@ -101,8 +108,8 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
     struct EffectStep *particle;
     s32 burst_offset;
     s32 member;
-    s32 i;
     s32 frame;
+    s32 i;
     s32 curtain_y;
 
     heap_cache = (void **)0x03001eec;
@@ -135,6 +142,7 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
         else
             puff->x += 32;
         puff->tick = -(member * 2);
+
         i = 0;
         particle = (struct EffectStep *)((u8 *)0x02010000 + burst_offset);
         {
@@ -151,8 +159,8 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
                 particle++;
             } while (i != 16);
         }
+        ++puff;
         member++;
-        puff++;
         burst_offset += 16 * sizeof(struct EffectStep);
     } while (member != 9);
 
@@ -182,8 +190,8 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
             Resource_LoadAndDecompress((s32)&Value_000000b4, work, 1, 1);
         }
         if (frame > 31) {
-            puff = (struct Puff *)((u8 *)work + 0x7080);
             member = 0;
+            puff = (struct Puff *)(0x7080 + (u8 *)work);
             do {
                 if (puff->tick >= 0 && puff->tick <= 47) {
                     s32 cell = puff->tick / 8;
@@ -207,7 +215,6 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
                 s32 size;
                 s32 x;
                 s32 angle;
-
                 x = ((s16 *)&particle->x)[1]
                     + ((Trig_Sin(particle->z) * 4) >> 16);
                 size = (member & 1) + 3;
@@ -239,8 +246,8 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);
-        frame++;
         curtain_y += 8;
+        frame++;
     } while (frame != 112);
     Scheduler_RemoveCallback(0x080cd261);
     Runtime_ReleaseHeapBlock(47);

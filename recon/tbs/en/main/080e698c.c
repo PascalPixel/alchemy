@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -65,7 +66,6 @@ void WaitFrames(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
-extern u8 Value_00000073;
 extern u8 Value_00000061;
 extern u8 Value_0000006d;
 extern const u16 Data_080eee02[];
@@ -103,7 +103,7 @@ s32 Unnamed_080e698c(void *object)
     M2C_FIELD(work, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
-    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra_target, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_00000061, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_0000006d, (u8 *)work + 0x3E80, 1, 0);
     BattleFx_FetchRectangleBlitters(

@@ -201,7 +201,7 @@ Engine_LeaderCheckAhead:
 	.global InitializeSceneRecordBuffer
 	.thumb_func
 InitializeSceneRecordBuffer:
-	overlay_veneer Func_0808a2f8
+	overlay_veneer FieldEffect_InitSparklesFar
 	.global Engine_EventOpenScreen
 	.thumb_func
 Engine_EventOpenScreen:

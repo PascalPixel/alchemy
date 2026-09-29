@@ -1,3 +1,7 @@
+/* 2026-09-30 (Venus, tagged asm): the constant 1 and the changed test take
+  r3 instead of r2. An r2 register variable for the constant or the test, an
+  asm "=r"/"0" copy in r2 and an r3 clobber all move changed out of r8 into
+  sl or reshuffle the frame (30 to 45 lines). */
 /* 2026-09-29: the two confirmation messages are now named in the PO files
    (MsgConfirmDrop and MsgYes, in every edition), and the callees and key
    words carry their build names: 60 on the permuter scorer before a

@@ -2,6 +2,7 @@
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 extern u8 Value_00007828;
 extern u8 Value_00001010;
 extern u8 Value_00007780;
@@ -67,7 +68,6 @@ void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 
-extern u8 Value_000000cf;
 extern const u8 Data_080ee1f5[];
 extern const u8 Data_080ee1d3[];
 extern const u8 Data_080ee1fb[];
@@ -97,7 +97,7 @@ void Unnamed_080d3c80(void *object)
     M2C_FIELD(work, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(0);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
-    Resource_LoadAndDecompress((s32) &Value_000000cf, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &ResourceId_CrystalSheet, work, 1, 1);
     callback_ptr = callbacks;
     BattleFx_FetchRectangleBlitters(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4), callback_ptr);

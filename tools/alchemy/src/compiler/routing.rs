@@ -155,6 +155,11 @@ fn base_cflags(target: CompilerTarget) -> Vec<String> {
     for flag in ["-mcpu=arm7tdmi", "-nostdinc", "-fcall-used-r4"] {
         flags.push(flag.to_string());
     }
+    // TLA's game code, main image and overlays alike, builds Thumb
+    // constants from a shifted byte and an add (Pascal, 2026-09-29).
+    if target == CompilerTarget::Tla {
+        flags.push("-mthumb-split-constants".to_string());
+    }
     flags.push(include_flag(target));
     flags
 }
@@ -312,7 +317,10 @@ mod target_tests {
             .iter()
             .filter(|flag| *flag != "-mthumb-interwork" && !flag.starts_with("-I"))
             .collect();
-        let derived: Vec<&String> = tla.iter().filter(|flag| !flag.starts_with("-I")).collect();
+        let derived: Vec<&String> = tla
+            .iter()
+            .filter(|flag| *flag != "-mthumb-split-constants" && !flag.starts_with("-I"))
+            .collect();
         assert_eq!(shared, derived);
         for flags in [&tbs, &tla] {
             assert!(!flags
@@ -333,11 +341,66 @@ mod target_tests {
             bundle_for(CompilerTarget::Tla)
         );
         for flags in [&tbs, &tla] {
-            // No game-specific compiler option exists: both games use stock GCC.
+            // No invented -mgs option: TLA adds only -mthumb-split-constants.
             assert!(!flags.iter().any(|flag| flag.starts_with("-mgs")));
             assert!(flags.iter().any(|flag| flag == "-fcall-used-r4"));
             assert!(flags.iter().any(|flag| flag == "-mthumb"));
         }
+    }
+    /// Only TLA's game family splits Thumb constants; its inherited library
+    /// files and all of TBS keep stock constant loading.
+    #[test]
+    fn only_tla_game_code_splits_constants() {
+        let split = |flags: Vec<String>| flags.iter().any(|flag| flag == "-mthumb-split-constants");
+        assert!(split(cflags_for_target_source(
+            CompilerTarget::Tla,
+            "GAME/FLAGS/GET_BYTE.C"
+        )));
+        assert!(!split(cflags_for_target_source(
+            CompilerTarget::Tbs,
+            "MENU/INPUT_CANCEL_SOUND_TICK.C"
+        )));
+        assert!(!split(cflags()));
+        assert!(!split(cflags_for_target_source(
+            CompilerTarget::Tla,
+            "SOUND/MUSIC_TRACK_OPERATE_WORK_BYTE.C"
+        )));
+    }
+    /// 301 is not a shifted byte, so stock GCC loads it from the pool; the
+    /// split builds it as 46 + 255.
+    #[test]
+    fn split_constants_build_an_odd_constant_with_an_add() {
+        let work = tempfile::tempdir().unwrap();
+        let source = work.path().join("k.c");
+        std::fs::write(&source, "int f(void) { return 301; }\n").unwrap();
+        let compile = |split: bool| {
+            let output = work.path().join(if split { "split.s" } else { "stock.s" });
+            let mut arguments: Vec<String> = ["-O2", "-mthumb", "-S", "-o"]
+                .iter()
+                .map(|s| (*s).to_string())
+                .collect();
+            arguments.push(output.to_string_lossy().into_owned());
+            if split {
+                arguments.push("-mthumb-split-constants".into());
+            }
+            arguments.push(source.to_string_lossy().into_owned());
+            let argv = crate::compiler::bundle::compiler_command_for_target(
+                CompilerTarget::Tla,
+                &arguments,
+            )
+            .unwrap();
+            let status = std::process::Command::new(&argv[0])
+                .args(&argv[1..])
+                .status()
+                .unwrap();
+            assert!(status.success());
+            std::fs::read_to_string(output).unwrap()
+        };
+        let split = compile(true);
+        assert!(split.contains("mov\tr0, #46") && split.contains("add\tr0, r0, #255"));
+        assert!(!split.contains("ldr"));
+        let stock = compile(false);
+        assert!(stock.contains("ldr\tr0, .L") && stock.contains(".word\t301"));
     }
     #[test]
     fn game_code_always_compiles_with_the_canonical_flags() {

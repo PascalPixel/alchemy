@@ -13,38 +13,18 @@ enum {
 /*
  * Work item assembled by the battle-command resolver and consumed once for
  * each selected target.  The parallel arrays deliberately remain separate:
- * callers populate and consume them with different signedness.  TLA uses the
- * first byte of this area for a second actor and therefore has thirteen
- * direct target IDs.
+ * callers populate and consume them with different signedness.
  */
 struct BattlePlan {
     u8 actor_id;                                  /* 0x00 */
     s8 target_count;                              /* 0x01 */
-#ifdef BATTLE_SECOND_ACTOR
-    u8 actor_id2;                                 /* 0x02 */
-    u8 target_ids[BATTLE_TARGET_CAPACITY - 1];    /* 0x03 */
-    s8 target_offset0;                            /* 0x10 */
-    s8 target_offsets[BATTLE_TARGET_CAPACITY - 1]; /* 0x11 */
-    s8 target_adjustment0;                        /* 0x1e */
-    s8 target_adjustments[BATTLE_TARGET_CAPACITY - 1]; /* 0x1f */
-    s8 target_modifier0;                          /* 0x2c */
-    s8 target_modifiers[BATTLE_TARGET_CAPACITY - 1]; /* 0x2d */
-    s8 target_result0;                            /* 0x3a */
-    s8 target_results[BATTLE_TARGET_CAPACITY - 1]; /* 0x3b */
-#else
     u8 target_ids[BATTLE_TARGET_CAPACITY];        /* 0x02 */
     s8 target_offsets[BATTLE_TARGET_CAPACITY];    /* 0x10 */
     s8 target_adjustments[BATTLE_TARGET_CAPACITY]; /* 0x1e */
     s8 target_modifiers[BATTLE_TARGET_CAPACITY];  /* 0x2c */
     s8 target_results[BATTLE_TARGET_CAPACITY];    /* 0x3a */
-#endif
-#ifdef BATTLE_SECOND_ACTOR
-    u8 unknown_48[2];                             /* 0x48 */
-    s16 command;                                  /* 0x4a */
-#else
     s16 command;                                  /* 0x48 */
     u8 unknown_4a[2];
-#endif
     s32 action_id;                  /* 0x4c */
     s32 range_index;                /* 0x50 */
     s32 outcome;                    /* 0x54 */
@@ -143,18 +123,6 @@ struct BattleUnit {
 };
 
 LAYOUT_SIZE_GUARD(BattlePlan_Size, struct BattlePlan, BATTLE_PLAN_SIZE);
-#ifdef BATTLE_SECOND_ACTOR
-LAYOUT_OFFSET_GUARD(
-    BattlePlan_TargetIds,
-    struct BattlePlan,
-    target_ids,
-    0x03);
-LAYOUT_OFFSET_GUARD(
-    BattlePlan_TargetAdjustments,
-    struct BattlePlan,
-    target_adjustments,
-    0x1f);
-#else
 LAYOUT_OFFSET_GUARD(
     BattlePlan_TargetIds,
     struct BattlePlan,
@@ -165,7 +133,6 @@ LAYOUT_OFFSET_GUARD(
     struct BattlePlan,
     target_adjustments,
     0x1e);
-#endif
 LAYOUT_OFFSET_GUARD(
     BattlePlan_ActionId,
     struct BattlePlan,

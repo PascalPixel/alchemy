@@ -1,3 +1,7 @@
+/* 2026-09-30 (Venus, tagged asm): the fragment store to +0x34 follows
+  Random16 in the ROM with 0x10000 hoisted into sl. Calling Random16 first,
+  in C or pinned by an asm on its result, loses the sl hoist (16 to 25
+  lines); a hoisted unit local pinned by asm reshuffles the preheader. */
 /* 2026-09-29 (Mars): rewritten from ITEM_BREAK.C, BattleFx_StartItemBreak;
  * 5 differing halfwords, from 66 in the previous draft (see history). Also
  * tried: the 0x34 store after the 0x30 store, a chained assignment, and a

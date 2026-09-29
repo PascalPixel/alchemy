@@ -2,21 +2,12 @@
 #include "BATTLE_MSG.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_TYPES.H"
+#include "BATTLE_WORK.H"
 
 struct BattleMotionSlot {
     void *object;
 };
 
-struct BattleState {
-    u8 unknown_00[0x44];
-    u8 two_sided;
-    u8 unknown_45[0x0b];
-    u8 flag_50;
-    u8 unknown_51[0x5f7];
-    u16 palette_648;
-};
-
-extern struct BattleState *gBattleWork;
 
 /* The two party groups in the order their round-end effects resolve. */
 struct BattleGroupOrder {
@@ -42,7 +33,6 @@ void BattleUnit_BuildStatusFlags(s32 unit_id, void *slot);
 void BattlePres_SetActorModeAndAction(s32 unit_id);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void BattlePresentation_WaitForAdvance(void);
-s32 BattleEv_Push(u32 opcode, u32 operand);
 void BattleEventRuntime_SchedulePhase(s32 phase);
 u32 BattleEventRuntime_Reset(void);
 void BattleEventRuntime_WaitForReady(void);
@@ -67,7 +57,7 @@ s32 BattleFx_PlayUnitElementEffect(s32 unit_id, s32 element, s32 mode, s32 arg);
    Declared int like its callers expect, though it returns nothing. */
 s32 Battle_ProcessRoundEnd(void)
 {
-    struct BattleState *work;
+    struct BattleSession *work;
     s32 side;
     s32 sides;
     s32 count;
@@ -126,7 +116,7 @@ s32 Battle_ProcessRoundEnd(void)
             } while (i < list->count);
         }
     }
-    BattlePresentation_ConfigurePaletteFade(2, gBattleWork->palette_648, 0);
+    BattlePresentation_ConfigurePaletteFade(2, gBattleWork->background, 0);
     {
     s32 *group_list;
     struct BattleGroupOrder order = BattleParty_RoundEndGroupOrder;
@@ -134,7 +124,7 @@ s32 Battle_ProcessRoundEnd(void)
     s32 group;
     s32 j;
 
-    if (work->two_sided != 0 && work->flag_50 != 0) {
+    if (work->two_sided != 0 && work->link_side != 0) {
         order.group[0] = 2;
         order.group[1] = 1;
     }

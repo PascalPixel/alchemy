@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -55,7 +56,6 @@
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef void (*FillFn)(void *dest, s32 size, u32 pattern);
 
-extern u8 Value_000000ce;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
@@ -96,7 +96,7 @@ void Unnamed_080d3854(void *object)
     M2C_FIELD(work, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(1);
     M2C_FIELD((void *)0x04000052, s16 *, 0) = 0x1010;
-    palette = Resource_GetTableEntry((s32)&Value_000000ce);
+    palette = Resource_GetTableEntry((s32)&ResourceId_TornadoSheet);
     status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     status = Resource_DecodeType01((u8 *)palette + 128, work);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);

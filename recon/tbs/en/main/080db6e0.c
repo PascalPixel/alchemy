@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -55,8 +56,6 @@ extern u8 Data_080eeae2[];
 extern u16 Data_080eeaec[];
 extern u16 Data_080eeafa[];
 
-extern u8 Value_000000c0;
-extern u8 Value_00000096;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
@@ -119,7 +118,7 @@ void RunParticleFieldEffect(void *object, s32 variant)
     canvas = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(1);
-    Resource_LoadAndDecompress((s32)&Value_000000c0, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 0);
     if (variant == 1) {
         i = 0;
         pal = (s16 *)0x05000000;
@@ -131,7 +130,7 @@ void RunParticleFieldEffect(void *object, s32 variant)
         } while (i != 64);
         mode = 1;
     } else {
-        palette = Resource_GetTableEntry((s32)&Value_00000096);
+        palette = Resource_GetTableEntry((s32)&ResourceId_FireStreakSheet);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
         mode = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 24);
     }

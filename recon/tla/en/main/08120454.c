@@ -17,6 +17,31 @@
  * into shared code once both games compile from one source. */
 #include "../../../../games/THE LOST AGE/INCLUDE/TYPES.H"
 
+/* ⚓️'s plan: the same 0x64 bytes as ☀️'s, but the first target byte is a
+   second actor, so thirteen targets follow and the command moves to 0x4a. */
+struct BattlePlan {
+    u8 actor_id;                    /* 0x00 */
+    s8 target_count;                /* 0x01 */
+    u8 actor_id2;                   /* 0x02 */
+    u8 target_ids[13];              /* 0x03 */
+    s8 target_offset0;              /* 0x10 */
+    s8 target_offsets[13];          /* 0x11 */
+    s8 target_adjustment0;          /* 0x1e */
+    s8 target_adjustments[13];      /* 0x1f */
+    s8 target_modifier0;            /* 0x2c */
+    s8 target_modifiers[13];        /* 0x2d */
+    s8 target_result0;              /* 0x3a */
+    s8 target_results[13];          /* 0x3b */
+    u8 unknown_48[2];
+    s16 command;                    /* 0x4a */
+    s32 action_id;                  /* 0x4c */
+    s32 range_index;                /* 0x50 */
+    s32 outcome;                    /* 0x54 */
+    u32 presentation_flags;         /* 0x58 */
+    s32 failure;                    /* 0x5c */
+    u32 pending_amount_60;          /* 0x60 */
+};
+
 void *GetBattleObjectSlot(s32 unit);
 void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
 void BattleActor_CommitPlacement(void);

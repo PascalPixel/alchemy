@@ -1,55 +1,33 @@
-/* NONMATCHING: shared callee return types audited on 2026-09-26.
- * 388 of 388 bytes, 163 differing halfwords, 85 aligned edits.
- * Canonical declarations are retained; the remaining source model is not exact. */
+/* Draft, not exact (2026-09-29, Mercury): score 2105 (was 2325) on the
+   permuter's scorer. The debug battle menu reads its keys and the game
+   state's rule byte and special halfword as named fields of gGameState;
+   the ROM derives the second field's address from the first (movs #85;
+   negs; add), keeps 362 in r5 across the first two flag calls and
+   allocates the menu values differently. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
-extern u8 gKeysHeld[];
-extern u8 gKeysRepeat[];
 
-/*
- * Draft reconstruction, not yet verified byte-exact against
- * recon/tbs/raw/080b56e0.s. Traced directly from the retained assembly;
- * see recon/tbs/en/dossiers.json#main:080b56e0 for the evidence log.
- *
- * Structurally: an outer loop polls ADDR_03001AE8 (held-key level bits)
- * for bit 0x80 (Down) each pass. While Down is not held it calls two
- * flag-style calls and loops (Battle_RunEncounter with a fixed 0x101). Once
- * Down is held it never returns to that outer poll again -- the
- * function has no epilogue in the retained assembly (push with no
- * matching pop anywhere), so both branches are provably infinite from
- * GCC's point of view.
- *
- * Once armed, an inner loop reads ADDR_03001B04 (newly-pressed trigger
- * bits) every pass, exactly mirroring the repeated-volatile-read idiom
- * already adopted in games/THE BROKEN SEAL/src/shop/sel/repair.c and
- * games/THE BROKEN SEAL/src/shop/sel/use.c (a fresh dereference per `if`,
- * not a cached local): Right/Left adjust val1 by +-1, Up/Down adjust it
- * by +-10, R/L adjust val2 by +-1, and A breaks out. While waiting for
- * A, Start calls Unnamed_080b5534 and Select calls the already-adopted
- * Battle_ReservedNoOp2A08 (games/THE BROKEN SEAL/src/battle/runtime/
- * reserved_no_op_a.c); B (or the sticky `held` flag it sets) writes 5 to
- * *(u8*)0x0200046b every pass once triggered once. When val2 changes,
- * GameState_InitDefaultsFar (a plain far-call veneer, see recon/tbs/raw/
- * 08077098.s) and DebugParty_LoadPreset(val2) run once.
- *
- * The unusual `(u16 *)(0x0200046b - 85)` pointer is deliberate: the
- * reference computes it at runtime from the same r9=0x0200046b constant
- * (movs #85; negs; add) rather than loading a second literal-pool word,
- * mirroring games/THE BROKEN SEAL/src/game_flags/set.c's plain `(u8 *)0x02000040`
- * address-cast idiom for the base and letting the compiler synthesize
- * the second constant.
- */
+extern volatile u32 gKeysHeld;
+extern volatile u32 gKeysRepeat;
 
-extern void GameState_InitDefaultsFar(void);
-extern void Ui_LoadWindowGraphics(void);
-extern void Bg0_ClearTilemap(void);
-extern void Runtime_InitializeHeap(void);
-extern void GameFlag_SetBitFar(s32);
-extern void GameFlag_ClearBitFar(s32);
-extern void Unnamed_080b5534(void);
-extern s32 DebugParty_LoadPreset(s32);
-extern void Battle_RunEncounter(s32);
+struct DebugBattleGameState {
+    u8 unknown_000[0x1d6];
+    u16 special;                    /* 0x1d6 */
+    u8 unknown_1d8[0x53];
+    u8 battle_rule;                 /* 0x22b */
+};
 
+extern struct DebugBattleGameState gGameState;
+
+void GameState_InitDefaultsFar(void);
+void Ui_LoadWindowGraphics(void);
+void Bg0_ClearTilemap(void);
+void Runtime_InitializeHeap(void);
+void GameFlag_SetBitFar(s32);
+void GameFlag_ClearBitFar(s32);
+void Unnamed_080b5534(void);
+s32 DebugParty_LoadPreset(s32);
+void Battle_RunEncounter(s32);
 void WaitFrames(s32);
 void Resource_InitializeTable(void);
 void Scheduler_ResetTaskTable(void);
@@ -59,15 +37,12 @@ void BattleUnit_Recalculate(s32);
 void Unnamed_080b56e0(void)
 {
     s32 held;
-    s32 val1;
-    s32 val2;
-    s32 prev2;
-    u8 *bytePtr;
-    u16 *halfPtr;
+    s32 encounter;
+    s32 preset;
+    s32 loaded;
 
     held = 0;
     GameState_InitDefaultsFar();
-
     for (;;) {
         Ui_LoadWindowGraphics();
         Bg0_ClearTilemap();
@@ -75,63 +50,56 @@ void Unnamed_080b56e0(void)
         Runtime_InitializeHeap();
         Resource_InitializeTable();
         GameFlag_SetBitFar(362);
-        val1 = 257;
-
-        if ((*(volatile u32 *)gKeysHeld & 0x80) == 0) {
+        encounter = 257;
+        if (!(gKeysHeld & 0x80)) {
             GameFlag_SetBitFar(354);
             Battle_RunEncounter(257);
             continue;
         }
-
-        prev2 = -1;
+        loaded = -1;
         GameFlag_ClearBitFar(362);
-        bytePtr = (u8 *)0x0200046b;
-        halfPtr = (u16 *)(bytePtr - 85);
-        val2 = 0;
-
+        preset = 0;
         for (;;) {
             GameFlag_ClearBitFar(32);
             WaitFrames(1);
-
             for (;;) {
-                if ((*(volatile u32 *)gKeysRepeat & 0x10) != 0)
-                    val1 += 1;
-                if ((*(volatile u32 *)gKeysRepeat & 0x20) != 0)
-                    val1 -= 1;
-                if ((*(volatile u32 *)gKeysRepeat & 0x40) != 0)
-                    val1 -= 10;
-                if ((*(volatile u32 *)gKeysRepeat & 0x80) != 0)
-                    val1 += 10;
-                if ((*(volatile u32 *)gKeysRepeat & 0x100) != 0)
-                    val2 += 1;
-                if ((*(volatile u32 *)gKeysRepeat & 0x200) != 0)
-                    val2 -= 1;
-                if ((*(volatile u32 *)gKeysRepeat & 1) != 0)
+                if (gKeysRepeat & 0x10)
+                    encounter++;
+                if (gKeysRepeat & 0x20)
+                    encounter--;
+                if (gKeysRepeat & 0x40)
+                    encounter -= 10;
+                if (gKeysRepeat & 0x80)
+                    encounter += 10;
+                if (gKeysRepeat & 0x100)
+                    preset++;
+                if (gKeysRepeat & 0x200)
+                    preset--;
+                if (gKeysRepeat & 1)
                     break;
-                if ((*(volatile u32 *)gKeysRepeat & 8) != 0)
+                if (gKeysRepeat & 8)
                     Unnamed_080b5534();
-                if ((*(volatile u32 *)gKeysRepeat & 4) != 0)
+                if (gKeysRepeat & 4)
                     Battle_ReservedNoOp2A08();
-                if ((*(volatile u32 *)gKeysRepeat & 2) != 0 || held != 0) {
+                if ((gKeysRepeat & 2) || held) {
                     held = 1;
-                    *bytePtr = 5;
+                    gGameState.battle_rule = 5;
                 }
-                if (val2 != prev2) {
+                if (preset != loaded) {
                     GameState_InitDefaultsFar();
-                    DebugParty_LoadPreset(val2);
-                    prev2 = val2;
+                    DebugParty_LoadPreset(preset);
+                    loaded = preset;
                 }
                 WaitFrames(1);
             }
-
-            if ((*(volatile u32 *)gKeysHeld & 0x80) != 0)
+            if (gKeysHeld & 0x80)
                 GameFlag_SetBitFar(364);
             BattleUnit_Recalculate(0);
-            *halfPtr = 29;
-            if (val1 == 28)
+            gGameState.special = 29;
+            if (encounter == 28)
                 GameFlag_SetBitFar(366);
             GameFlag_SetBitFar(354);
-            Battle_RunEncounter(val1);
+            Battle_RunEncounter(encounter);
             Ui_LoadWindowGraphics();
             Bg0_ClearTilemap();
             Scheduler_ResetTaskTable();

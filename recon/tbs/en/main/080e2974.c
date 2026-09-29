@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -130,9 +131,7 @@ extern u8 Data_080eed3e[];
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
 extern u8 Value_0000006b;
-extern u8 Value_00000073;
 extern u8 Value_0000008d;
-extern u8 Value_00000099;
 extern u8 Value_000000a0;
 extern u8 Value_000000b4;
 extern u8 Value_000000b5;
@@ -225,8 +224,8 @@ void BattlePres_RunBurstScene(void *object, s32 scene)
         BattleFx_PrepareCanvasEffect(
             object, 7, M2C_FIELD(STATE, s32 *, 4), 2, &out_a, &out_b);
     }
-    Resource_LoadAndDecompress((s32)&Value_00000073, sprite_src, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000099, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprite_src, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
 
     /* 288 rows of forty source bytes folded onto twenty destination
        bytes each, at work + 0x5100. */

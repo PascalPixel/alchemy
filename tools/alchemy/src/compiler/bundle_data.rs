@@ -3,8 +3,9 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
-// Licensed agscc 70b81d0: stock GCC 2.96 with its host ports; both games
-// use this bundle with stock options.
+// Licensed agscc 002c421: GCC 2.96 with its host ports and
+// -mthumb-split-constants, off by default; both games use this bundle and
+// TLA's game code turns the option on (Pascal, 2026-09-29).
 const GAME: &[ExecutableDigests] = &[
     (
         "xgcc",
@@ -20,7 +21,13 @@ const GAME: &[ExecutableDigests] = &[
     ),
     (
         "cc1",
-        &["763c141e6d82c3a525610a3af9cc5e5fef2edfcd71558d4de027fc7dab286afe"],
+        // Pascal-approved 2026-09-29/30 (agscc 002c421, with the deterministic
+        // hashing fix); the stock 70b81d0 binary cannot take TLA's option, so
+        // it is no longer admitted. The digest depends on the build directory.
+        &[
+            "b8cccb0243ee353ac91ef78c5ee20204cc06ac679f840040d3d81177f87b81a7",
+            "89182424c7f15cf31a905ca5ac4b608cd663c8b2869784fd3a113e4d732424ce",
+        ],
     ),
     (
         "as",

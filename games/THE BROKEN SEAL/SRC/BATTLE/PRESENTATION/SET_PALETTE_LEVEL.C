@@ -8,19 +8,13 @@
 #include "TYPES.H"
 #include "DMA.H"
 
-extern u8 gBattleWork[];
-
-struct BattleScreen {
-    u8 unknown_000[0x544];
-    u16 palette[128];
-    s32 brightness;
-};
+#include "BATTLE_WORK.H"
 
 s32 Graphics_ScaleRgb555Clamped(u16 *source, u16 *destination, s32 scale, s32 count);
 
 void BattlePresentation_SetPaletteLevel(s32 unused, s32 level)
 {
-    struct BattleScreen *screen = *(struct BattleScreen **)gBattleWork;
+    struct BattleSession *screen = gBattleWork;
     u16 *palette = screen->palette;
     volatile u32 ime;
 

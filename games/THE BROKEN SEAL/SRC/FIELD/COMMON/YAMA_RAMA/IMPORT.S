@@ -26,6 +26,9 @@ Engine_MapCopyCellsTo:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Engine_ActorSetSpriteFlags
+	.thumb_func
+Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
 	.global Engine_MessageShowCentered
 	.thumb_func
@@ -39,6 +42,9 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
 	.global Engine_EventWait
 	.thumb_func
@@ -59,6 +65,9 @@ Engine_EventChooseYesNo:
 	.global Object_GetById
 	.thumb_func
 Object_GetById:
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func
@@ -180,6 +189,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 Engine_MapObjectSetPosition:
 	overlay_veneer EffectRuntime_SetCurrentPositionFar
+	.global BattleFx_SetQueuedSoundAndPlay
+	.thumb_func
+BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global BattleFx_PlayQueuedSound
 	.thumb_func

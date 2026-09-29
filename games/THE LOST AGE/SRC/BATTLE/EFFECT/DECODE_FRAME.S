@@ -82,7 +82,7 @@ AlchemyUncreditedEnd_080c93ec:
 	ands	r2, r2, r2, lsr #8
 	bne	.L_080c9450
 	b	.L_080c93f0
-	.4byte	0x03001174
+	.4byte	gDecodeFillByte
 	ldr	r2, [pc, #-12]
 	ldrb	r2, [r2]
 	b	.L_080c94d8

@@ -115,6 +115,9 @@ Engine_ObjectSetPartPalettes:
 	.thumb_func
 Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiWork_PushValueSlot
+	.thumb_func
+UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
 	overlay_veneer ItemIcon_LoadTilesFar
 	.global PaletteGlow_Update
@@ -145,8 +148,17 @@ GameFlag_GetByte:
 	.thumb_func
 GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
+	.global Djinn_AddToOwner
+	.thumb_func
+Djinn_AddToOwner:
 	overlay_veneer Djinn_AddToOwnerFar
+	.global Trade_AddOffer
+	.thumb_func
+Trade_AddOffer:
 	overlay_veneer Trade_AddOfferFar
+	.global Owner_RefreshActiveRatios
+	.thumb_func
+Owner_RefreshActiveRatios:
 	overlay_veneer Owner_RefreshActiveRatiosFar
 	.global PartyInventory_Discard
 	.thumb_func
@@ -168,6 +180,9 @@ Engine_EventEnd:
 	.thumb_func
 Engine_PartyGiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
@@ -254,6 +269,9 @@ Engine_ObjectSetPalette:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
@@ -351,8 +369,17 @@ Battle_ClearObjectFlag5bWhenMode3:
 	.thumb_func
 Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
+	.global Engine_PsynergyBegin
+	.thumb_func
+Engine_PsynergyBegin:
 	overlay_veneer BattleFx_LoadActionEffectResourcesFar
+	.global BattleEffect_CleanupSceneObjects
+	.thumb_func
+BattleEffect_CleanupSceneObjects:
 	overlay_veneer BattleEffect_CleanupSceneObjectsFar
+	.global BattleFx_RunPageEffectForSlot
+	.thumb_func
+BattleFx_RunPageEffectForSlot:
 	overlay_veneer BattleFx_RunPageEffectForSlotFar
 	.global BattleFx_ScheduleRatioTransition
 	.thumb_func

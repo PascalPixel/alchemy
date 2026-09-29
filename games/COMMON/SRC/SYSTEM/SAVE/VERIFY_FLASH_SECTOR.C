@@ -11,7 +11,7 @@ struct FlashChipType {
 
 typedef s32 (*FlashVerifyCore)(s32 source, u8 *flash, u32 size);
 
-extern const struct FlashChipType Data_08007abc;
+extern const struct FlashChipType Flash_ChipUnknown;
 
 /* Copies the byte comparison loop into a stack buffer, since it must run
    outside the cartridge bus, and compares one whole sector with source. */
@@ -33,5 +33,5 @@ s32 Flash_VerifySector(u16 sector, s32 source)
         count--;
     }
     core = (FlashVerifyCore)((u8 *)code + 1);
-    return core(source, (u8 *)0x0e000000 + (sector << Data_08007abc.sector_shift), Data_08007abc.sector_size);
+    return core(source, (u8 *)0x0e000000 + (sector << Flash_ChipUnknown.sector_shift), Flash_ChipUnknown.sector_size);
 }

@@ -266,8 +266,6 @@
 	.incbin "baserom.gba", 0x42c2de, 0x2
 	.section .rom.0042d1e2, "a"
 	.incbin "baserom.gba", 0x42d1e2, 0x2
-	.section .rom.0042d9e4, "a"
-	.incbin "baserom.gba", 0x42d9e4, 0x5c40
 	.section .rom.00436e66, "a"
 	.incbin "baserom.gba", 0x436e66, 0x2
 	.section .rom.0043901a, "a"

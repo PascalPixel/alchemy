@@ -270,36 +270,20 @@ s32 OverlayObject_RunObject2WhenFlagged(void)
 }
 
 #include "TYPES.H"
+extern u8 MsgFieldPeeredWell[];
+extern u8 MsgKuupuappuAccusingUsStealingHammetsTreasured[];
+extern u8 MsgKuupuappuCanHearWaterRumblingDown[];
+extern u8 MsgKuupuappuGuessFolksGot[];
+extern u8 MsgKuupuappuLeavingImStillWorriedAbout[];
+extern u8 MsgKuupuappuMasterHammetsCaravan[];
+extern u8 MsgKuupuappuNobodysStealingAnything[];
+extern u8 MsgKuupuappuOffOnAdventure[];
+extern u8 MsgKuupuappuPoorGuyLeft[];
+extern u8 MsgKuupuappuRuffRrruff[];
+extern u8 MsgKuupuappuThoseTravelersLeftInBig[];
+extern u8 MsgKuupuappuWaitDontWantTakeYour[];
+extern u8 MsgKuupuappuWasntEruptionMtAlephIncredible[];
 
-enum ActorPresentationMessage {
-    MSG_ROBIN_PEERED_INTO = 0x947,
-    MSG_WASNT_ERUPTION_MT_ALEPH_INCREDIBLE = 0x1223,
-    MSG_THOSE_TRAVELERS_LEFT_IN_BIG = 0x1229,
-    MSG_ACCUSING_US_STEALING_HAMMETS_TREASURED = 0x122f,
-    MSG_OFF_ON_ADVENTURE = 0x1232,
-    MSG_RUFF_RRRUFF = 0x1235,
-    MSG_MAN_SHOULD_STEAL_FROM_ANOTHER = 0x1239,
-    MSG_GROUP_TRAVELERS_WAS_STRANGE_BUNCH = 0x123b,
-    MSG_BET_WAS_THOSE_THREE_CREEPS = 0x123c,
-    MSG_SUPPOSE_DOESNT_MATTER_HOW_RICH = 0x123d,
-    MSG_EVERYONE_KNOWS_THOSE_THREE_AT = 0x123e,
-    MSG_STEALING_IN_MIDST_VOLCANIC_ERUPTION = 0x1241,
-    MSG_LEAVING_IM_STILL_WORRIED_ABOUT = 0x1327,
-    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
-    MSG_YOURE_HITTING_ROAD_AGAIN = 0x1330,
-    MSG_TALKING_ABOUT_HAMMETS_SERVANT_IVAN = 0x1336,
-    MSG_THOSE_MEN_CAPTURED_THEYRE_IN = 0x133c,
-    MSG_ONES_WHO_CAPTURED_THIEVES = 0x133f,
-    MSG_RUFF_RRRUFF_2 = 0x1342,
-    MSG_WITH_ROAD_OUT_ONLY_WAY = 0x1348,
-    MSG_WHERE_DID_IVAN_GO_BY = 0x1349,
-    MSG_MUST_STRONGER_THAN_LOOK_HAVE = 0x134b,
-    MSG_IF_BRING_ME_BONE_ILL = 0x134e,
-    MSG_THANK_FOR_OTHER_DAY_LEAVING = 0x137f,
-    MSG_CAREFUL_SEARCH_WILL_REVEAL_PASSAGE = 0x13ab,
-    MSG_HE_SHOULD_BE_FIXING_ROOF_NOW = 0x12c0,
-    MSG_CAN_HEAR_WATER_RUMBLING_DOWN = 0x29dc
-};
 
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -339,11 +323,11 @@ void FieldScene_RunScene382_020004a0(void)
     }
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_IVAN, 0);
     Event_Wait(20);
-    Event_SetMessage(MSG_LEAVING_IM_STILL_WORRIED_ABOUT);
+    Event_SetMessage((s32)MsgKuupuappuLeavingImStillWorriedAbout);
     Event_ShowMessageAndWait(0x9002, 0, 20);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
     if (Value0(OverlayObject_GetObject2Byte280)!= 0) {
-        Event_SetMessage(MSG_WAIT_DONT_WANT_TAKE_YOUR);
+        Event_SetMessage((s32)MsgKuupuappuWaitDontWantTakeYour);
         Event_ShowMessage(ACTOR_IVAN, 0);
         OverlayObject_RunObject2WhenFlagged();
         Task_Wait(20);
@@ -358,8 +342,8 @@ void FieldScene_RunScene382_020004a0(void)
 void SceneState_SetFlags947And29dc(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
-    Message_ShowCentered(MSG_CAN_HEAR_WATER_RUMBLING_DOWN, 1);
+    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
+    Message_ShowCentered((s32)MsgKuupuappuCanHearWaterRumblingDown, 1);
     Event_End();
 }
 
@@ -376,7 +360,7 @@ void SceneDialogue_RunActor9LineAndAdvance(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_WASNT_ERUPTION_MT_ALEPH_INCREDIBLE);
+    Event_SetMessage((s32)MsgKuupuappuWasntEruptionMtAlephIncredible);
     SceneActor_ApplyActorCueThenWait(9, 0, 2);
     Event_OpenMessage(9, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -392,7 +376,7 @@ void ActorPresentation_RunActorThirteenSceneSetup(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(MSG_THOSE_TRAVELERS_LEFT_IN_BIG);
+    Event_SetMessage((s32)MsgKuupuappuThoseTravelersLeftInBig);
     Actor_SetAnimation(13, 1);
     SceneActor_ApplyActorCueThenWait(13, 0, 2);
     Event_OpenMessage(13, 0);
@@ -411,7 +395,7 @@ void ActorPresentation_RunActorSeventeenSceneSetup(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(MSG_ACCUSING_US_STEALING_HAMMETS_TREASURED);
+    Event_SetMessage((s32)MsgKuupuappuAccusingUsStealingHammetsTreasured);
     SceneActor_ApplyActorCueThenWait(17, 0, 2);
     Event_OpenMessage(17, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -427,7 +411,7 @@ void ActorPresentation_RunActorEighteenSceneSetup(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(MSG_OFF_ON_ADVENTURE);
+    Event_SetMessage((s32)MsgKuupuappuOffOnAdventure);
     SceneActor_ApplyActorCueThenWait(18, 0, 2);
     Event_OpenMessage(18, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -438,15 +422,15 @@ void ActorPresentation_RunActorEighteenSceneSetup(void)
     Event_End();
 }
 
-void SceneDialogue_RunActor11Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1227); SceneActor_RunActorStep(11); Engine_EventEnd(); }
+void SceneDialogue_RunActor11Line(void) { Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuGuessFolksGot); SceneActor_RunActorStep(11); Engine_EventEnd(); }
 
-void SceneDialogue_RunActor16Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x122e); SceneActor_RunActorStep(16); Engine_EventEnd(); }
+void SceneDialogue_RunActor16Line(void) { Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuNobodysStealingAnything); SceneActor_RunActorStep(16); Engine_EventEnd(); }
 
 void SceneDialogue_RunActor19Line(void)
 {
     void Event_ShowMessage(int, int);
 
-    Event_Begin(); Event_SetMessage(MSG_RUFF_RRRUFF); Actor_SetAnimation(19, 0);
+    Event_Begin(); Event_SetMessage((s32)MsgKuupuappuRuffRrruff); Actor_SetAnimation(19, 0);
     SceneActor_ApplyActorCueThenWait(19, 0, 2); Event_ShowMessage(19, 0); Event_End();
 }
 
@@ -459,7 +443,7 @@ void ActorPresentation_RunActorFourteenDialogue(void)
 
     actor->presentation_flags |= 2;
     Event_Begin();
-    Engine_EventSetMessage(0x122c);
+    Engine_EventSetMessage((s32)MsgKuupuappuPoorGuyLeft);
     Actor_SetAnimation(14, 0);
     SceneActor_ApplyActorCueThenWait(14, 0, 2);
     SceneActor_ApplyActorZeroThenWait(14, 10);
@@ -476,7 +460,7 @@ void ActorPresentation_RunActorFifteenDialogue(void)
 
     actor->presentation_flags |= 2;
     Event_Begin();
-    Engine_EventSetMessage(0x122d);
+    Engine_EventSetMessage((s32)MsgKuupuappuMasterHammetsCaravan);
     Actor_SetAnimation(15, 0);
     SceneActor_ApplyActorCueThenWait(15, 0, 2);
     SceneActor_ApplyActorZeroThenWait(15, 10);

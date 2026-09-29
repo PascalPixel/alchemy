@@ -10347,7 +10347,7 @@ msgctxt "message"
 msgid "02584"
 msgstr "{text_color:16}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRobinCheckedChest"
 msgid "02585"
 msgstr "{protagonist_name} controlla la cassa...{page_break}"
 
@@ -10355,7 +10355,7 @@ msgctxt "message"
 msgid "02586"
 msgstr "{protagonist_name} controlla il vaso...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRobinCheckedBarrel"
 msgid "02587"
 msgstr "{protagonist_name} controlla il barile...{page_break}"
 
@@ -10467,7 +10467,7 @@ msgctxt "message"
 msgid "02614"
 msgstr "{protagonist_name} guarda tra i libri...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgFieldPeeredWell"
 msgid "02615"
 msgstr "{protagonist_name} guarda nel pozzo...{page_break}"
 
@@ -10475,7 +10475,7 @@ msgctxt "message"
 msgid "02616"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgKuupuappuButChestWasEmpty"
 msgid "02617"
 msgstr "ma la cassa è vuota.{end_wait}"
 
@@ -10483,7 +10483,7 @@ msgctxt "message"
 msgid "02618"
 msgstr "ma non trova nulla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuButDidntFindAnything"
 msgid "02619"
 msgstr "ma non trova nulla.{end_wait}"
 
@@ -16511,7 +16511,7 @@ msgctxt "message"
 msgid "04125"
 msgstr "Forse occorre la{line_break}Psinergia...{page_break}{protagonist_name}{pause_20_skippable}, prova ad{line_break}usare la tua!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaWhereAreWe"
 msgid "04126"
 msgstr "Ma{pause_20_skippable} dove siamo?{end_wait}"
 
@@ -16559,7 +16559,7 @@ msgctxt "message"
 msgid "04137"
 msgstr "No, {protagonist_name}...{line_break}{actor_name:2} ha ragione!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaTheElementsAreThe"
 msgid "04138"
 msgstr "Come dico spesso, gli{line_break}elementi sono l'origine{line_break}di tutta la materia.{end_wait}"
 
@@ -16615,7 +16615,7 @@ msgctxt "message"
 msgid "04151"
 msgstr "Beh, allora non dev'essere{line_break}facile per te...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaTheWisdomStone"
 msgid "04152"
 msgstr "La Pietra di Sapienza...{line_break}la Pietra dei{line_break}Saggi.{end_wait}"
 
@@ -16635,7 +16635,7 @@ msgctxt "message"
 msgid "04156"
 msgstr "Davvero continui a non{line_break}capire?{page_break}L'Alchimia esiste{pause_20_skippable} grazie{line_break}agli Astri elementali.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruTheStarsHaveEnormousPower"
 msgid "04157"
 msgstr "Non so se ho capito bene,{line_break}ma{pause_20_skippable}{pause_20_skippable} devono essere{line_break}potentissimi,{pause_20_skippable} vero?{end_wait}"
 
@@ -16687,11 +16687,11 @@ msgctxt "message"
 msgid "04169"
 msgstr "{protagonist_name} sarà felice di{line_break}prenderli per te,{line_break}vero?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruJasmineWontYouPlease"
 msgid "04170"
 msgstr "E dai! Non farti pregare!{pause_20_skippable}{line_break}Lo farai?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruJasmineThankYou"
 msgid "04171"
 msgstr "Grazie!{end_wait}"
 
@@ -16707,7 +16707,7 @@ msgctxt "message"
 msgid "04174"
 msgstr "Non puoi trasportare altri{line_break}oggetti. Organizza i tuoi{line_break}strumenti!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruTheBagsAreFromSukuretas"
 msgid "04175"
 msgstr "Le hai portate da casa{line_break}tua, vero, Kraden?{end_wait}"
 
@@ -16727,7 +16727,7 @@ msgctxt "message"
 msgid "04179"
 msgstr "Ora vai a prendere gli{line_break}Astri elementali e{line_break}mettili nelle borse.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruNoStarsOutThere"
 msgid "04180"
 msgstr "Ehi, ma qui non ci sono{line_break}Astri elementali!{end_wait}"
 
@@ -16739,39 +16739,39 @@ msgctxt "message"
 msgid "04182"
 msgstr "Bene, bene!{line_break}Ora recupera gli altri!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruVenusStarBagged"
 msgid "04183"
 msgstr "{argument_actor_name:1} mette{line_break}l'Astro Venere in una{line_break}Borsa di Mythril.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruPutMercuryStar"
 msgid "04184"
 msgstr "{argument_actor_name:1} mette{line_break}l'Astro Mercurio in una{line_break}Borsa di mythril.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruJupiterStarBagged"
 msgid "04185"
 msgstr "{argument_actor_name:1} mette{line_break}l'Astro Giove in una{line_break}Borsa di mythril.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMarsStarBagged"
 msgid "04186"
 msgstr "{argument_actor_name:1} mette{line_break}l'Astro Marte in una{line_break}Borsa di mythril.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaBringTheStarsHere"
 msgid "04187"
 msgstr "Ora metti gli Astri{line_break}elementali in quelle{line_break}borse e torna qui.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruJasmineBeCareful"
 msgid "04188"
 msgstr "Fate attenzione, voi due!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaFetchTheOthers"
 msgid "04189"
 msgstr "Bene, bene.{line_break}Ora prendi gli altri!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruJasmineSukuretaIsGiddy"
 msgid "04190"
 msgstr "Ehi, Kraden! Sei felice{line_break}come un ragazzino!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruLooksLikeTheyveSpottedUs"
 msgid "04191"
 msgstr "Pare che ci abbiano{line_break}scoperti!{end_wait}"
 
@@ -16835,7 +16835,7 @@ msgctxt "message"
 msgid "04206"
 msgstr "Ottimo, {actor_name:1}!{pause_20_skippable}{line_break}Non devi dargli gli{line_break}Astri elementali!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWhyDenyDont"
 msgid "04207"
 msgstr "Ehi, vuoi farci arrabbiare?{line_break}Non ci tieni ai tuoi{line_break}amici?{end_wait}"
 
@@ -16891,7 +16891,7 @@ msgctxt "message"
 msgid "04220"
 msgstr "Cercammo per settimane,{line_break}ma non fu mai{line_break}ritrovato.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMenardiDontYouWantThem"
 msgid "04221"
 msgstr "Che succede, {actor_name:5}...{pause_20_skippable}{line_break}Non vuoi che si{line_break}sentano più sicuri?{end_wait}"
 
@@ -16975,7 +16975,7 @@ msgctxt "message"
 msgid "04241"
 msgstr "Non abbiamo altra scelta.{line_break}Dobbiamo dar loro gli{line_break}Astri elementali?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruGuessTakeElemental"
 msgid "04242"
 msgstr "Credo che dovrei{line_break}portar loro gli Astri{line_break}elementali!{end_wait}"
 
@@ -16983,7 +16983,7 @@ msgctxt "message"
 msgid "04243"
 msgstr "{actor_name:1} porge gli{line_break}Astri elementali.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruDontHandOver"
 msgid "04244"
 msgstr "Se non glieli diamo,{line_break}non lasceranno andare{line_break}{actor_name:6}!{end_wait}"
 
@@ -16991,15 +16991,15 @@ msgctxt "message"
 msgid "04245"
 msgstr "{actor_name:2} prende gli{line_break}Astri elementali.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruRightTake"
 msgid "04246"
 msgstr "Va bene, li{line_break}prenderò.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWontLetGo"
 msgid "04247"
 msgstr "Non lasceranno andare {actor_name:6}{line_break}se non glieli dai!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruPermitRelieveElemental"
 msgid "04248"
 msgstr "Permetti che ti sottragga{line_break}questi Astri elementali?{end_wait}"
 
@@ -17051,11 +17051,11 @@ msgctxt "message"
 msgid "04260"
 msgstr "Smetti di lagnarti e{line_break}portaci l'ultimo Astro!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruDontWantAnything"
 msgid "04261"
 msgstr "Non vorrai che capiti{line_break}qualcosa ai tuoi{line_break}amici, vero?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruThankCooperation"
 msgid "04262"
 msgstr "Grazie per la{line_break}collaborazione!{end_wait}"
 
@@ -17063,35 +17063,35 @@ msgctxt "message"
 msgid "04263"
 msgstr "Stiamo aspettando!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruDoubtHowFeel"
 msgid "04264"
 msgstr "Forse non hai capito{line_break}la domanda. Te la{line_break}ripeto.{page_break}Non vorrai che capiti{line_break}qualcosa ai tuoi{line_break}amici, vero?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruMenardiBringTheFinalGem"
 msgid "04265"
 msgstr "Cosa aspetti?{line_break}Portaci l'ultima pietra!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruGarciaSilence"
 msgid "04266"
 msgstr "...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruJasmineMyBrotherIsAlive"
 msgid "04267"
 msgstr "Mio fratello è vivo...{line_break}Ma perché non me l'ha{line_break}mai fatto sapere?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSaturosBringTheFinalStar"
 msgid "04268"
 msgstr "Se vuoi salvarli dovrai{line_break}portarci l'ultimo{line_break}Astro Elementale.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaIAmResponsible"
 msgid "04269"
 msgstr "Scusatemi tutti...{line_break}È mia la colpa di{line_break}tutto questo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruAlexOnlyOneLeft"
 msgid "04270"
 msgstr "Ne manca solo uno.{line_break}Ce l'hai quasi fatta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruJasmineWhatHappened"
 msgid "04271"
 msgstr "Che succede?{pause_20_skippable}{line_break}Che c'è?{end_wait}"
 
@@ -17127,15 +17127,15 @@ msgctxt "message"
 msgid "04279"
 msgstr "Quel masso...{pause_20_skippable} sospeso...{pause_20_skippable}{line_break}Sai cos'è,{line_break}{actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruIKnowItsARock"
 msgid "04280"
 msgstr "Lo so anch'io che{line_break}è una roccia!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSomeoneIsLiftingIt"
 msgid "04281"
 msgstr "Neppure io... Pare che{line_break}qualcuno lo stia sollevando{line_break}usando la Psinergia...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaCouldThatBeThe"
 msgid "04282"
 msgstr "Non sarà per caso{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}.{line_break}il Saggio?!?{end_wait}"
 
@@ -17263,7 +17263,7 @@ msgctxt "message"
 msgid "04313"
 msgstr "È un peccato lasciarlo{line_break}qui, ma credo che lo{line_break}riavremo presto...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWellTurnedBadly"
 msgid "04314"
 msgstr "Le cose si sono messe{line_break}male, non credi?{end_now}"
 
@@ -17275,7 +17275,7 @@ msgctxt "message"
 msgid "04316"
 msgstr "Ma come fai ad essere così{line_break}calmo in un momento simile?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruFriendsGone"
 msgid "04317"
 msgstr "Abbiamo perso {actor_name:6} e Kraden!{end_wait}"
 
@@ -17283,15 +17283,15 @@ msgctxt "message"
 msgid "04318"
 msgstr "Credi che faranno del{line_break}male a {actor_name:6}{line_break}e Kraden?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruThanksALot"
 msgid "04319"
 msgstr "Dai, non scherzare!{line_break}Sinceramente credo che {actor_name:6}{line_break}e Kraden siano al sicuro.{page_break}{actor_name:5} è con loro...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruTheyllBeSafe"
 msgid "04320"
 msgstr "Sì{pause_20_skippable}, sono al sicuro.{line_break}{actor_name:5} è con loro...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruThisIsTerrible"
 msgid "04321"
 msgstr "È una situazione{line_break}terribile...{end_wait}"
 
@@ -17307,11 +17307,11 @@ msgctxt "message"
 msgid "04324"
 msgstr "Vediamo di uscire di qui...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruQuitActingTough"
 msgid "04325"
 msgstr "Smetti di fare il duro!{line_break}E cerchiamo di fuggire!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruOverHere"
 msgid "04326"
 msgstr "Ehi, {actor_name:1}...{pause_20_skippable}{line_break}{actor_name:1}, sono qui.{pause_20_skippable}{line_break}Dai, dobbiamo andare.{end_wait}"
 
@@ -17343,11 +17343,11 @@ msgctxt "message"
 msgid "04333"
 msgstr "Porta fuori{pause_20_skippable}{line_break}l'Astro Elementale...{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruCannotResist"
 msgid "04334"
 msgstr "{actor_name:1} non resisterà.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruReturnStarToBag"
 msgid "04335"
 msgstr "Rimettilo nella sua borsa.{end_wait}"
 
@@ -17403,11 +17403,11 @@ msgctxt "message"
 msgid "04348"
 msgstr "Ah, bene!{line_break}Usciamo di qui...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruGotFourMythrilBags"
 msgid "04349"
 msgstr "{protagonist_name} ha preso{line_break}quattro Borse mythril.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruTooManyItems"
 msgid "04350"
 msgstr "Hai troppi strumenti.{line_break}Vuoi buttare{line_break}qualcosa?{end_wait}"
 
@@ -18459,7 +18459,7 @@ msgctxt "message"
 msgid "04612"
 msgstr "Questa è Vault,{line_break}la città nel cuore{line_break}di Angara.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWasntEruptionMtAlephIncredible"
 msgid "04613"
 msgstr "L'eruzione del Mt. Aleph{line_break}è stata incredibile, vero?{end_now}"
 
@@ -18475,7 +18475,7 @@ msgctxt "message"
 msgid "04616"
 msgstr "È stato rubato il prezioso{line_break}bastone di Hammet, un ricco{line_break}mercante e proprietario{page_break}terriero di Kalay.{line_break}È furioso...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGuessFolksGot"
 msgid "04617"
 msgstr "Immagino che molti siano{line_break}stati derubati dopo l'eruzione{line_break}del vulcano.{end_wait}"
 
@@ -18483,7 +18483,7 @@ msgctxt "message"
 msgid "04618"
 msgstr "Il servitore di Hammet non{line_break}potrà tornare a Kalay prima{line_break}d'aver recuperato il bastone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThoseTravelersLeftInBig"
 msgid "04619"
 msgstr "Quei viandanti sono{line_break}andati via in fretta e furia.{page_break}Erano davvero di corsa.{line_break}Li hai visti, entrando?{end_now}"
 
@@ -18495,19 +18495,19 @@ msgctxt "message"
 msgid "04621"
 msgstr "Mah, forse sono andati{line_break}via prima di quando{line_break}credessi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuPoorGuyLeft"
 msgid "04622"
 msgstr "Povero {actor_name:3}!{page_break}L'hanno lasciato dal sindaco,{line_break}per cercare il bastone{line_break}rubato.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuMasterHammetsCaravan"
 msgid "04623"
 msgstr "La carovana di Hammet{line_break}ha lasciato la città appena{line_break}è terminata l'eruzione...{page_break}Quel vulcano deve averlo{line_break}davvero terrorizzato!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuNobodysStealingAnything"
 msgid "04624"
 msgstr "Nessuno può farmela{line_break}sotto il naso...{page_break}Sono certo che i ladri{line_break}non siano di qui.{page_break}Non possono esserlo!{line_break}Quelli di qui non{line_break}violerebbero mai la legge!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuAccusingUsStealingHammetsTreasured"
 msgid "04625"
 msgstr "Ci stai accusando di aver{line_break}rubato il prezioso Bastone{line_break}sciamanico di Hammet?{end_now}"
 
@@ -18519,7 +18519,7 @@ msgctxt "message"
 msgid "04627"
 msgstr "Giusto! Sapevo che eri{line_break}troppo intelligente per{line_break}credere ai pettegolezzi.{page_break}No, non siamo stati noi.{line_break}A dire il vero, non sappiamo{line_break}neppure cos'abbiamo rubato!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuOffOnAdventure"
 msgid "04628"
 msgstr "Siete in viaggio per una{line_break}missione, vero?{end_now}"
 
@@ -18531,7 +18531,7 @@ msgctxt "message"
 msgid "04630"
 msgstr "Beh, già che siete qui,{line_break}date un'occhiata al{line_break}nostro tempio!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRuffRrruff"
 msgid "04631"
 msgstr "Ruff! Rrruff!!{end_wait}"
 
@@ -18547,7 +18547,7 @@ msgctxt "message"
 msgid "04634"
 msgstr "Non capisco perché uno come{line_break}Hammet faccia tante storie{line_break}per aver perso un bastone!{page_break}Con tutti i soldi che ha,{line_break}può comprarsene benissimo{line_break}uno nuovo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuManShouldStealFromAnother"
 msgid "04635"
 msgstr "Approfittare di un'eruzione{line_break}per rubare...{page_break}È imperdonabile...{end_wait}"
 
@@ -18555,19 +18555,19 @@ msgctxt "message"
 msgid "04636"
 msgstr "Povero {actor_name:3}...{line_break}Se il bastone non salta{page_break}fuori... potrebbe rimanere{line_break}qui per sempre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGroupTravelersWasStrangeBunch"
 msgid "04637"
 msgstr "Quei viaggiatori erano{pause_20_skippable}{line_break}una strana banda,{line_break}vero?{page_break}Credo che fossero diretti{line_break}verso nordest, dalle parti{line_break}della Grotta di Goma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuBetWasThoseThreeCreeps"
 msgid "04638"
 msgstr "Scommetto che sono stati{line_break}quei tre ceffi alla locanda{line_break}a rubare il bastone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuSupposeDoesntMatterHowRich"
 msgid "04639"
 msgstr "Puoi avere tutti{line_break}i soldi di questo{line_break}mondo...{page_break}...ma contro un vulcano,{line_break}non serve.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuEveryoneKnowsThoseThreeAt"
 msgid "04640"
 msgstr "Tutti sanno che sono{line_break}stati quei tre alla{line_break}locanda a rubare il bastone.{page_break}È così... così...{line_break}frustrante!!!{end_wait}"
 
@@ -18579,7 +18579,7 @@ msgctxt "message"
 msgid "04642"
 msgstr "Durante l'eruzione stavo{line_break}per abbandonare la{line_break}città.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuStealingInMidstVolcanicEruption"
 msgid "04643"
 msgstr "Rubare nel bel mezzo di{line_break}un'eruzione vulcanica...{page_break}Per molti, il denaro è più{line_break}importante della loro{line_break}stessa vita.{end_wait}"
 
@@ -18587,7 +18587,7 @@ msgctxt "message"
 msgid "04644"
 msgstr "La roccia è stata lanciata{line_break}fin qui dal vulcano!{page_break}Pazzesco, vero?{line_break}Brilla quasi come{line_break}una gemma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuIfOnlyTheseRocksWere"
 msgid "04645"
 msgstr "Se queste rocce fossero gemme{line_break}saremmo tutti ricchi!{end_wait}"
 
@@ -18595,7 +18595,7 @@ msgctxt "message"
 msgid "04646"
 msgstr "Tutte le altre rocce{line_break}scintillanti si sono{line_break}sgretolate cadendo...{page_break}Ma questa che ho trovato{line_break}sul tetto è intatta.{line_break}Che fortuna, vero?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuOkMisterLetMeSee"
 msgid "04647"
 msgstr "OK...{line_break}fammi vedere quella roccia!{end_wait}"
 
@@ -18603,7 +18603,7 @@ msgctxt "message"
 msgid "04648"
 msgstr "Il mio vicino non me la{line_break}racconta giusta... Con{line_break}quel sorriso sornione...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuMisterFunSeeStrangeNew"
 msgid "04649"
 msgstr "Dimmi un po'...{line_break}È bello vedere sempre{line_break}posti nuovi?{end_now}"
 
@@ -18619,11 +18619,11 @@ msgctxt "message"
 msgid "04652"
 msgstr "Chissà... E se il ladro fosse{line_break}il mio vicino?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWonderOutsideWorldLike"
 msgid "04653"
 msgstr "Mi chiedo{pause_20_skippable} come{line_break}sarà il mondo là fuori...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuJustMeOrAmMissing"
 msgid "04654"
 msgstr "È solo un'impressione o{line_break}manca qualcosa?{end_wait}"
 
@@ -18631,7 +18631,7 @@ msgctxt "message"
 msgid "04655"
 msgstr "Da quando c'è stata{line_break}l'eruzione, il nonno ha sempre{line_break}paura che manchi qualcosa.{page_break}Non si rende conto che{line_break}non abbiamo nulla che valga{line_break}la pena di essere rubato!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuCouldTheyThievesGoodDont"
 msgid "04656"
 msgstr "E se fossero loro i ladri?{line_break}È assurdo!{page_break}Non si sa più di chi ci{line_break}si può fidare!{end_wait}"
 
@@ -18639,7 +18639,7 @@ msgctxt "message"
 msgid "04657"
 msgstr "Non mi hai mai comprato nulla{line_break}che fosse degno d'essere rubato!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuCouldSomeonePleaseHelpIvan"
 msgid "04658"
 msgstr "Qualcuno potrebbe{line_break}aiutare {actor_name:3}?{end_wait}"
 
@@ -18651,7 +18651,7 @@ msgctxt "message"
 msgid "04660"
 msgstr "Se avessi qualche anno{line_break}in più, potrei aiutare{line_break}{actor_name:3}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuIvanHasGreatPowersWouldnt"
 msgid "04661"
 msgstr "{actor_name:3} ha grandi poteri.{line_break}Vorresti sapere quali{line_break}sono?{end_now}"
 
@@ -18663,7 +18663,7 @@ msgctxt "message"
 msgid "04663"
 msgstr "Guarda che se è una bugia,{line_break}{actor_name:3} lo capisce{line_break}immediatamente!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuDoPossessStrangePowers"
 msgid "04664"
 msgstr "È vero...{line_break}Ho strani poteri.{end_wait}"
 
@@ -18691,7 +18691,7 @@ msgctxt "message"
 msgid "04670"
 msgstr "Capisco... In fondo,{line_break}non ci conosciamo{line_break}neppure...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWouldReallyWouldHelpMe"
 msgid "04671"
 msgstr "Dici davvero?{line_break}Davvero potreste aiutarmi{line_break}a ritrovare il bastone?{end_now}"
 
@@ -18699,7 +18699,7 @@ msgctxt "message"
 msgid "04672"
 msgstr "Non voglio approfittare{line_break}della vostra gentilezza.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThankHelpBelieve"
 msgid "04673"
 msgstr "Grazie! So che con il{line_break}vostro aiuto potremo{line_break}recuperare il bastone.{end_wait}"
 
@@ -18791,7 +18791,7 @@ msgctxt "message"
 msgid "04695"
 msgstr "Scoprirò chi ha rubato il{line_break}bastone leggendo nella mente{line_break}della gente di qui.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuYoureGoingHelpIvan"
 msgid "04696"
 msgstr "Come? Aiuterete{line_break}{actor_name:3}?{end_wait}"
 
@@ -18799,7 +18799,7 @@ msgctxt "message"
 msgid "04697"
 msgstr "Ah, grazie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuPleaseLookAfterIvan"
 msgid "04698"
 msgstr "Prendetevi cura di {actor_name:3},{line_break}vi prego!{end_wait}"
 
@@ -18815,7 +18815,7 @@ msgctxt "message"
 msgid "04701"
 msgstr "Visto che state aiutando{line_break}{actor_name:3}, vi dirò un{line_break}segreto...{page_break}{actor_name:3} ha la capacità{line_break}di parlare con gli animali!{line_break}...Forte, vero?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTicklesBeingTickledByBoy"
 msgid "04702"
 msgstr "Ehi, fa il solletico...{line_break}Non mi piace quando mi{line_break}fanno il solletico!{end_wait}"
 
@@ -18831,7 +18831,7 @@ msgctxt "message"
 msgid "04705"
 msgstr "Mi piacerebbe sapere cosa{line_break}dicono gli animali. Vorrei{line_break}proprio avere quel potere!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuMasterHammetIsntOnlyOne"
 msgid "04706"
 msgstr "Hammet non è l'unico{line_break}a cui è stato rubato{line_break}qualcosa.{page_break}Abbiamo perso molti{line_break}beni preziosi.{end_wait}"
 
@@ -18839,7 +18839,7 @@ msgctxt "message"
 msgid "04707"
 msgstr "Tutte le nostre armi migliori{line_break}sono state rubate...{page_break}Sono rimaste soltanto{line_break}quelle a basso prezzo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThievesDidntHitOurHouse"
 msgid "04708"
 msgstr "Durante l'eruzione non{line_break}abbiamo subito furti a{line_break}casa nostra, ma ho una rabbia!{page_break}Appena troveremo quei{line_break}ladri la pagheranno{line_break}cara!{end_wait}"
 
@@ -18847,7 +18847,7 @@ msgctxt "message"
 msgid "04709"
 msgstr "Se saranno andati soltanto{line_break}perché le nostre armature{line_break}valgono poco?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuDidJustArriveInTown"
 msgid "04710"
 msgstr "Siete arrivati in{line_break}città oggi stesso?{end_now}"
 
@@ -18883,11 +18883,11 @@ msgctxt "message"
 msgid "04718"
 msgstr "Gli ospiti della locanda{line_break}non erano nella loro{line_break}camera durante l'eruzione.{page_break}Dopo l'eruzione abbiamo{line_break}perquisito la stanza,{line_break}senza trovare nulla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuEveryoneThinksOurGuestsThieves"
 msgid "04719"
 msgstr "Qualcuno pensa che i nostri{line_break}ospiti siano i ladri, ma{page_break}credo che sia ingiusto{line_break}accusarli senza alcuna prova.{page_break}Magari hanno un'apparenza{line_break}sospetta, ma sono educati.{line_break}E poi, pagano sempre in anticipo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThoseThreeStrangersSureHave"
 msgid "04720"
 msgstr "Quei tre stranieri hanno{line_break}senz'altro ingannato il{line_break}locandiere e la moglie.{page_break}Sono il tipo di persone{line_break}che credono di potersela{line_break}cavare sempre facilmente.{end_wait}"
 
@@ -18911,7 +18911,7 @@ msgctxt "message"
 msgid "04725"
 msgstr "Abbiamo già perso molto{line_break}lavoro a causa del{line_break}vulcano! E ora questo furto...{page_break}Quei tre ci pagano{line_break}molto bene.{page_break}Devo difenderli{line_break}a tutti i costi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuMasterHisWifeBlindedBy"
 msgid "04726"
 msgstr "Il padrone e sua moglie{line_break}sono accecati dai soldi!{page_break}Se continuano ad ostacolare{line_break}la ricerca dei ladri, potrebbero{line_break}avere grossi guai!{end_wait}"
 
@@ -18919,7 +18919,7 @@ msgctxt "message"
 msgid "04727"
 msgstr "Riparare il tetto?{page_break}Perché pagare un falegname{line_break}se posso farlo benissimo{line_break}da solo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWant"
 msgid "04728"
 msgstr "Che vuoi?{end_wait}"
 
@@ -18931,7 +18931,7 @@ msgctxt "message"
 msgid "04730"
 msgstr "Non lo sopporto.{line_break}Non sopporto di{line_break}averlo vicino!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheyreActingSuspiciousSomethingsNot"
 msgid "04731"
 msgstr "Si comportano stranamente...{line_break}C'è qualcosa che non{line_break}va in loro...{end_wait}"
 
@@ -18955,11 +18955,11 @@ msgctxt "message"
 msgid "04736"
 msgstr "Non ti preoccupare!{line_break}Vedrai che funziona!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRobinTakeLead"
 msgid "04737"
 msgstr "{actor_name:1}, sarai{line_break}tu a guidarci.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheyreBack"
 msgid "04738"
 msgstr "Ehi, stanno tornando!{end_wait}"
 
@@ -18971,15 +18971,15 @@ msgctxt "message"
 msgid "04740"
 msgstr "Tieniti alla larga da{line_break}quella gente, a tutti{line_break}i costi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheresNowhereRun"
 msgid "04741"
 msgstr "Non posso fuggire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuImSurrounded"
 msgid "04742"
 msgstr "Ah! Sono circondato!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuNowIvan"
 msgid "04743"
 msgstr "Ora, {actor_name:3}!{end_wait}"
 
@@ -19007,15 +19007,15 @@ msgctxt "message"
 msgid "04749"
 msgstr "Via! Via di qui!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuOwStop"
 msgid "04750"
 msgstr "Smettila!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuNoLeaveAlone"
 msgid "04751"
 msgstr "Lasciami in pace!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuLearn"
 msgid "04752"
 msgstr "Cosa hai{line_break}appreso, {actor_name:3}?{end_wait}"
 
@@ -19067,11 +19067,11 @@ msgctxt "message"
 msgid "04764"
 msgstr "Beh, se è così,{line_break}andiamo, {actor_name:3}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWeDontHaveTimeFor"
 msgid "04765"
 msgstr "Non c'è tempo per{line_break}queste cose, {actor_name:1}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuLeave"
 msgid "04766"
 msgstr "Lascia fare a noi!{end_wait}"
 
@@ -19087,11 +19087,11 @@ msgctxt "message"
 msgid "04769"
 msgstr "Bene, allora è deciso.{line_break}Andiamo, {actor_name:3}!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuFixingRoofCant"
 msgid "04770"
 msgstr "Dovrebbe riparare il tetto,{line_break}ma dove si sarà{line_break}cacciato?{page_break}Sarà a bighellonare{line_break}come sempre.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuSneakWastingTime"
 msgid "04771"
 msgstr "Che scansafatiche... Starà{line_break}sicuramente perdendo tempo{line_break}invece di riparare il tetto!{end_wait}"
 
@@ -19099,7 +19099,7 @@ msgctxt "message"
 msgid "04772"
 msgstr "Ehi! La Psinergia di {actor_name:1}{line_break}può muovere gli oggetti, giusto?{line_break}È incredibile...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuUhnnUhnn"
 msgid "04773"
 msgstr "Ehi... Ehi...{end_wait}"
 
@@ -19107,7 +19107,7 @@ msgctxt "message"
 msgid "04774"
 msgstr "Aiuto!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuVaultCutFree"
 msgid "04775"
 msgstr "{protagonist_name} l'ha{line_break}liberato.{end_wait}"
 
@@ -19199,11 +19199,11 @@ msgctxt "message"
 msgid "04797"
 msgstr "E c'è solo un modo{line_break}per farlo: avanti,{line_break}prendeteli!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuVaultThievesCaught"
 msgid "04798"
 msgstr "Come dici? Anche se restituiamo{line_break}tutto abbiamo pur sempre{line_break}commesso un reato? Anche se{page_break}chiediamo scusa?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheseKidsNothingWorryAbout"
 msgid "04799"
 msgstr "Non c'è da preoccuparsi{line_break}di questi ragazzini.{end_wait}"
 
@@ -19219,7 +19219,7 @@ msgctxt "message"
 msgid "04802"
 msgstr "Chiudete la bocca{line_break}se volete aiutarlo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWontGoAway"
 msgid "04803"
 msgstr "Non se ne vogliono andare,{line_break}eh!? Stanno tornando!{end_wait}"
 
@@ -19231,7 +19231,7 @@ msgctxt "message"
 msgid "04805"
 msgstr "Vi faremo pentire di{line_break}essere nati!{line_break}Prendeteli!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheyTheyGotUs"
 msgid "04806"
 msgstr "Ci...{pause_20_skippable} hanno preso...{end_wait}"
 
@@ -19287,7 +19287,7 @@ msgctxt "message"
 msgid "04819"
 msgstr "Se lo dici tu, {actor_name:1}...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuSeeThatsHappened"
 msgid "04820"
 msgstr "Capisco...{line_break}Ah, ecco cos'è successo...{end_wait}"
 
@@ -19327,7 +19327,7 @@ msgctxt "message"
 msgid "04829"
 msgstr "Ehi, puoi aiutarmi{line_break}a legarli?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuYouRobinRightWontForget"
 msgid "04830"
 msgstr "Ehi, tu! Ti chiami {actor_name:1},{line_break}vero? La pagherai!{end_wait}"
 
@@ -19487,7 +19487,7 @@ msgctxt "message"
 msgid "04869"
 msgstr "No, avete già fatto troppo{line_break}per me. Non voglio crearvi{line_break}altre preoccupazioni.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuIvanGotShamansRod"
 msgid "04870"
 msgstr "{actor_name:3} prende il{line_break}bastone sciamanico.{end_wait}"
 
@@ -19499,11 +19499,11 @@ msgctxt "message"
 msgid "04872"
 msgstr "Beh, è meglio che{line_break}partiamo anche noi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuLeavingImStillWorriedAbout"
 msgid "04873"
 msgstr "State andando via?{line_break}Io sono ancora preoccupato{line_break}per il bastone, quindi{page_break}resterò qui fino al{line_break}vostro ritorno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWelcomeBackTwo"
 msgid "04874"
 msgstr "Bentornati!{line_break}Cerchiamo il bastone!{end_wait}"
 
@@ -19511,7 +19511,7 @@ msgctxt "message"
 msgid "04875"
 msgstr "Come? È pur sempre un{line_break}reato, anche se restituiamo{line_break}tutto il malloppo...{page_break}e siamo pentitissimi, anzi{line_break}ultrapentiti?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWaitDontWantTakeYour"
 msgid "04876"
 msgstr "Sì, ma non voglio{line_break}prendere il vostro Djinn.{page_break}Lo lascerò con{line_break}{actor_name:1}.{line_break}Fate presto!{end_wait}"
 
@@ -19531,11 +19531,11 @@ msgctxt "message"
 msgid "04880"
 msgstr "Conosco il tipo...{line_break}Prima o poi si{line_break}rifarà vivo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGomaGotWowThatsPrettyImpressive"
 msgid "04881"
 msgstr "L'hai preso?{line_break}Davvero?{line_break}Fantastico!{page_break}Guardati in giro, potrebbero{line_break}essercene altri.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuYoureHittingRoadAgain"
 msgid "04882"
 msgstr "Di nuovo in{line_break}partenza, eh?{end_now}"
 
@@ -19555,11 +19555,11 @@ msgctxt "message"
 msgid "04886"
 msgstr "Ho sentito dire che Hammet,{line_break}il vecchio mercante, non{line_break}ha raggiunto Kalay.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGreatCaughtThieves"
 msgid "04887"
 msgstr "Siete stati grandi a{line_break}catturare quei ladri!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTalkingAboutHammetsServantIvan"
 msgid "04888"
 msgstr "Stai parlando del servitore{line_break}di Hammet, {actor_name:3}?{line_break}È andato a Lunpa.{end_wait}"
 
@@ -19567,11 +19567,11 @@ msgctxt "message"
 msgid "04889"
 msgstr "Capisco, {actor_name:3}... Credo{line_break}che fosse impossibile{line_break}salvare Hammet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuEruptionDevastatedRoads"
 msgid "04890"
 msgstr "L'eruzione ha devastato molte{line_break}strade in tutta Angara...{page_break}Quando il ponte a sud sarà{line_break}riparato si potrà{line_break}andare a Kalay...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuDidntGoLunpa"
 msgid "04891"
 msgstr "Non mi dirai che {actor_name:3}{line_break}è andato a Lunpa{line_break}tutto solo, vero?{end_wait}"
 
@@ -19579,11 +19579,11 @@ msgctxt "message"
 msgid "04892"
 msgstr "Aaah... Sapevo che non avrei{line_break}dovuto preoccuparmi per {actor_name:3}...{page_break}Quando vi siete{line_break}incontrati, {actor_name:1}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuEveryoneGratefulCaptured"
 msgid "04893"
 msgstr "Vi sono tutti molto{line_break}grati per aver catturato{line_break}i ladri!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThoseMenCapturedTheyreIn"
 msgid "04894"
 msgstr "Quelli che avete preso...{line_break}Sono in galera adesso?{end_now}"
 
@@ -19595,7 +19595,7 @@ msgctxt "message"
 msgid "04896"
 msgstr "Sono sempre agitati e dicono{line_break}un mucchio di cattiverie.{line_break}È davvero triste...{page_break}Potreste andare a{line_break}dare un'occhiata.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuOnesWhoCapturedThieves"
 msgid "04897"
 msgstr "Siete voi quelli che{line_break}avete catturato i ladri?{end_now}"
 
@@ -19607,7 +19607,7 @@ msgctxt "message"
 msgid "04899"
 msgstr "Che coraggio, e che{line_break}umiltà!{page_break}Vorrei che tutti i{line_break}giovani avessero la{line_break}vostra stessa modestia!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRuffRrruff2"
 msgid "04900"
 msgstr "Ruff!{pause_20_skippable} Rrruff!!{end_wait}"
 
@@ -19623,7 +19623,7 @@ msgctxt "message"
 msgid "04903"
 msgstr "Di tanti posti... Com'è{line_break}venuto in mente a Hammet{line_break}di andare a cacciarsi a Lunpa?{page_break}Non capirò mai la testa{line_break}di questi ricconi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuHowPunishPrisoners"
 msgid "04904"
 msgstr "Qual è il modo migliore per{line_break}punire i prigionieri?{page_break}L'umiliazione pubblica?{line_break}O forse le botte...{end_wait}"
 
@@ -19631,11 +19631,11 @@ msgctxt "message"
 msgid "04905"
 msgstr "A Lunpa entrano soltanto{line_break}i ladri e le loro{line_break}vittime.{page_break}Non riuscirete mai a{line_break}salvare Hammet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWithRoadOutOnlyWay"
 msgid "04906"
 msgstr "Con la strada fuori uso,{line_break}l'unica via d'uscita è la{line_break}Grotta di Goma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWhereDidIvanGoBy"
 msgid "04907"
 msgstr "Ma {actor_name:3} dov'è{line_break}andato tutto solo?{line_break}Che preoccupazione...{end_wait}"
 
@@ -19643,11 +19643,11 @@ msgctxt "message"
 msgid "04908"
 msgstr "Ma quando si sono uniti{line_break}a {actor_name:3}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuMustStrongerThanLookHave"
 msgid "04909"
 msgstr "Devi essere più forte di{line_break}quel che sembri per aver{line_break}catturato quei ladri.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuFeelMuchBetter"
 msgid "04910"
 msgstr "Ora che quei ladri sono{line_break}al fresco, mi sento{line_break}più al sicuro!{end_wait}"
 
@@ -19655,7 +19655,7 @@ msgctxt "message"
 msgid "04911"
 msgstr "Quando catturi un ladro,{line_break}c'è sempre da lottare.{page_break}Ma non mi preoccupo{line_break}di rischi del genere...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuIfBringMeBoneIll"
 msgid "04912"
 msgstr "Se mi porti un osso{line_break}ti dico qualcosa{line_break}di utile.{end_wait}"
 
@@ -19675,7 +19675,7 @@ msgctxt "message"
 msgid "04916"
 msgstr "Ora che i ladri sono{line_break}in prigione, dormo{line_break}di nuovo bene.{page_break}Avevo sempre paura che mi{line_break}avrebbero preso la gemma.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThankGoodnessThoseThievesWere"
 msgid "04917"
 msgstr "Grazie al cielo i ladri{line_break}sono stati catturati prima{line_break}che rubassero la nostra gemma.{end_wait}"
 
@@ -19683,11 +19683,11 @@ msgctxt "message"
 msgid "04918"
 msgstr "Tutti vogliono rubare{line_break}la mia roccia!{line_break}Non posso abbassare{page_break}la guardia neppure{line_break}per un secondo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuIfRockWorthlessMaybeThats"
 msgid "04919"
 msgstr "E se quella roccia fosse{line_break}inutile? Magari è per quello{line_break}che non l'hanno rubata.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuDidThoseThievesComeFrom"
 msgid "04920"
 msgstr "Quei ladri provengono{line_break}da Lunpa?{end_now}"
 
@@ -19699,7 +19699,7 @@ msgctxt "message"
 msgid "04922"
 msgstr "Gli abitanti di Lunpa rimasero{line_break}nobili ladri fino al regno{line_break}del figlio di Lunpa, Donpa.{page_break}È tutta colpa di Dodonpa{line_break}se sono diventati{line_break}malvagi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuMyFatherWorriedAboutThose"
 msgid "04923"
 msgstr "Mio padre è così{line_break}preoccupato per quei{line_break}prigionieri di Lunpa.{page_break}Se Dodonpa e i suoi{line_break}ci attaccano ci{line_break}difenderete, vero?{end_wait}"
 
@@ -19707,11 +19707,11 @@ msgctxt "message"
 msgid "04924"
 msgstr "La gente di Lunpa s'è{line_break}guastata perché Donpa ha{line_break}viziato suo figlio, Dodonpa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuFatherLooksSadWorryingLike"
 msgid "04925"
 msgstr "È triste vedere mio{line_break}padre così preoccupato.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThievesHidStolenTreasureIn"
 msgid "04926"
 msgstr "I ladri hanno nascosto il{line_break}tesoro nella soffitta{line_break}della locanda...{page_break}...e hanno nascosto altri{line_break}oggetti nel cimitero.{end_wait}"
 
@@ -19719,7 +19719,7 @@ msgctxt "message"
 msgid "04927"
 msgstr "Come pensavo, dalla{line_break}casa non è stato{line_break}rubato nulla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGuessNothingInOurHouse"
 msgid "04928"
 msgstr "Credo che a casa nostra{line_break}non abbiano trovato nulla che{line_break}fosse degno d'essere rubato.{page_break}Non so se devo esserne{line_break}tanto felice...{end_wait}"
 
@@ -19727,7 +19727,7 @@ msgctxt "message"
 msgid "04929"
 msgstr "Come vorrei avere qualcosa che{line_break}fosse degno d'essere rubato!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuYouWereSuchGreatHelp"
 msgid "04930"
 msgstr "Ci sei stato di{line_break}grande aiuto, {actor_name:1}.{end_wait}"
 
@@ -19743,7 +19743,7 @@ msgctxt "message"
 msgid "04933"
 msgstr "{actor_name:1}! Tu e i{line_break}tuoi amici avete già{line_break}troppi strumenti!{page_break}Torna qui dopo aver{line_break}fatto un po' di{line_break}posto!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuHeadingOutBeyondGomaRange"
 msgid "04934"
 msgstr "Siete per caso diretti{line_break}alla Grotta di{line_break}Goma?{end_now}"
 
@@ -19759,7 +19759,7 @@ msgctxt "message"
 msgid "04937"
 msgstr "Sei tu la persona che{line_break}ha riportato indietro{line_break}l'urna, vero?{page_break}Grazie mille.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuHeardDefeatedThoseThieves"
 msgid "04938"
 msgstr "Ho sentito dire che hai{line_break}sconfitto quei ladri!{end_now}"
 
@@ -19775,7 +19775,7 @@ msgctxt "message"
 msgid "04941"
 msgstr "{actor_name:3} ha appreso{line_break}molto parlando con{line_break}gli animali...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuCaveInGomaRangeDangerous"
 msgid "04942"
 msgstr "La Grotta di Goma è un{line_break}luogo pericoloso, ma ve la{line_break}caverete senz'altro.{end_wait}"
 
@@ -19791,7 +19791,7 @@ msgctxt "message"
 msgid "04945"
 msgstr "...Vorrei avere le ali{line_break}come un uccello...{page_break}Che bello sarebbe...{line_break}...Volare in alto{line_break}nel cielo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWeFoundOurStolenWeapons"
 msgid "04946"
 msgstr "Abbiamo trovato le nostre{line_break}armi nel cimitero, ma{line_break}completamente arrugginite.{page_break}Prima di poterle vendere{line_break}dobbiamo affilarle{line_break}per bene.{end_wait}"
 
@@ -19799,7 +19799,7 @@ msgctxt "message"
 msgid "04947"
 msgstr "Le mie armi sono state{line_break}ritrovate nel cimitero...{line_break}E allora? Non vorrai{page_break}per caso insinuare{line_break}che sono armi{line_break}vecchie?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuIfYoureGonnaHeadInto"
 msgid "04948"
 msgstr "Se state andando alla{line_break}Grotta di Goma, dovrete{line_break}essere preparati.{end_wait}"
 
@@ -19807,7 +19807,7 @@ msgctxt "message"
 msgid "04949"
 msgstr "Pare che a Imil, a nord{line_break}della Grotta di Goma,{line_break}stia nevicando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWithBridgeOutWillQuite"
 msgid "04950"
 msgstr "Con il ponte distrutto, non si{line_break}potrà andare a Kalay{line_break}per parecchio tempo.{end_wait}"
 
@@ -19835,11 +19835,11 @@ msgctxt "message"
 msgid "04956"
 msgstr "Che sorpresa! Quei nostri{line_break}ospiti si sono rivelati{line_break}dei ladri!?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheyHidThoseStolenGoods"
 msgid "04957"
 msgstr "Hanno nascosto tutta quella{line_break}refurtiva nella nostra soffitta!?{page_break}Beh, almeno li abbiamo{line_break}acciuffati! Ora la città è{line_break}di nuovo in pace...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuHaveLotLeftoverBonesFrom"
 msgid "04958"
 msgstr "Ho ancora parecchi ossi{line_break}avanzati dalla cena.{line_break}Ne vuoi un po'?{end_now}"
 
@@ -19851,7 +19851,7 @@ msgctxt "message"
 msgid "04960"
 msgstr "Beh, hai ragione.{line_break}Per crescere, un ragazzino{line_break}non può vivere solo di ossi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThankForOtherDayLeaving"
 msgid "04961"
 msgstr "Grazie per quello che{line_break}avete fatto. State{line_break}già lasciando la città?{page_break}Pregherò per{line_break}voi.{end_wait}"
 
@@ -19863,7 +19863,7 @@ msgctxt "message"
 msgid "04963"
 msgstr "Naturalmente, ho sempre{line_break}sospettato che fossero{line_break}dei poco di buono.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGeeAlwaysGetHungryWhen"
 msgid "04964"
 msgstr "Uhmmm...{line_break}Quando cucino mi viene{line_break}sempre una fame...{page_break}Ma un assaggino non{line_break}può farmi male,{line_break}giusto?{end_wait}"
 
@@ -19871,11 +19871,11 @@ msgctxt "message"
 msgid "04965"
 msgstr "Ah, il profumo della{line_break}carne al fuoco...{page_break}Se ne asssaggio un pezzo{line_break}non se ne accorgerà nessuno!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWowHaveManyThingsArent"
 msgid "04966"
 msgstr "Eh, ma hai già{line_break}tante cose!{line_break}Che golosone!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWantMoreBones"
 msgid "04967"
 msgstr "Come? Vuoi altri{line_break}ossi?{end_now}"
 
@@ -19887,15 +19887,15 @@ msgctxt "message"
 msgid "04969"
 msgstr "Ti capisco. Solo{page_break}i cani non farebbero{line_break}altro che mangiare{line_break}ossi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuLeftThiefRegretsEscape"
 msgid "04970"
 msgstr "Se solo fossimo fuggiti{line_break}verso la Grotta di{line_break}Goma, a nordest.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRightThiefRegretsStaying"
 msgid "04971"
 msgstr "Al diavolo! Avremmo dovuto{line_break}smammarcela prima!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThiefLeaderSilencesThieves"
 msgid "04972"
 msgstr "Taci!{end_wait}"
 
@@ -19903,19 +19903,19 @@ msgctxt "message"
 msgid "04973"
 msgstr "Stavolta ci è{line_break}andata male...{line_break}Ma la pagheranno!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuLeftThiefThoughts"
 msgid "04974"
 msgstr "Sigh...{line_break}Tornerò mai{line_break}in libertà?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRightThiefThoughts"
 msgid "04975"
 msgstr "Mi chiedo se tutto ciò sia{line_break}successo solo per aver rubato il{line_break}bastone sciamanico di Hammet...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThiefLeaderThoughts"
 msgid "04976"
 msgstr "Sarò fuori di qui prima che{line_break}tu possa immaginare...{line_break}Vedrai!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgGomaNoUsePsynergy"
 msgid "04977"
 msgstr "Niente da fare... La nostra{line_break}Psinergia non basta per{line_break}spostare quel tronco...{end_wait}"
 
@@ -20027,7 +20027,7 @@ msgctxt "message"
 msgid "05004"
 msgstr "Ora dimmi la verità: è{line_break}stata l'Alchimia a far{line_break}eruttare il Monte Aleph?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuCarefulSearchWillRevealPassage"
 msgid "05005"
 msgstr "Cercando con attenzione si può{line_break}{pause_20_skippable}trovare{pause_20_skippable} un passaggio{line_break}che porta nei sotterranei.{page_break}Potreste trovare un{line_break}tesoro laggiù!{end_wait}"
 
@@ -20039,7 +20039,7 @@ msgctxt "message"
 msgid "05007"
 msgstr "Imil si trova nell'{line_break}estremo nord.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoItsTreeButAlmostLooks"
 msgid "05008"
 msgstr "È un albero, ma{line_break}sembra quasi...{line_break}una persona?{end_wait}"
 
@@ -20059,7 +20059,7 @@ msgctxt "message"
 msgid "05012"
 msgstr "Ho sentito dire che un folto{line_break}gruppo ha attraversato la{line_break}Grotta di Goma, verso Imil.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoDidSeeTreeAtEntrance"
 msgid "05013"
 msgstr "Avete visto un albero{line_break}all'ingresso?{end_now}"
 
@@ -20075,7 +20075,7 @@ msgctxt "message"
 msgid "05016"
 msgstr "Lord McCoy è rimasto{line_break}piuttosto sconvolto{line_break}dall'incidente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoHaveTriedHeadingSoutheastFrom"
 msgid "05017"
 msgstr "Avete provato ad andare{line_break}verso sudest da qui?{end_now}"
 
@@ -20111,7 +20111,7 @@ msgctxt "message"
 msgid "05025"
 msgstr "Dopo l'incidente, la legna{line_break}che avevo ordinato da{line_break}Kolima è scomparsa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoHaveYouSeenBarricadeWe"
 msgid "05026"
 msgstr "Hai visto la palizzata{line_break}che abbiamo costruito sulla{line_break}strada per Kolima?{end_now}"
 
@@ -20123,7 +20123,7 @@ msgctxt "message"
 msgid "05028"
 msgstr "Devi andare verso est{line_break}se vuoi vederla.{page_break}È un po' improvvisata,{line_break}perché l'ho costruita{line_break}in gran fretta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoTellingMeImResponsibleFor"
 msgid "05029"
 msgstr "Intendi dire che sono io la{line_break}responsabile di questo?{end_now}"
 
@@ -20211,7 +20211,7 @@ msgctxt "message"
 msgid "05050"
 msgstr "È raro che cada la{line_break}neve a Bilibin.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWhenSpringComesWantGo"
 msgid "05051"
 msgstr "La prossima primavera voglio{line_break}assolutamente andare a{line_break}trovare {actor_name:4}: è angelica...{end_wait}"
 
@@ -20251,7 +20251,7 @@ msgctxt "message"
 msgid "05060"
 msgstr "L'Acqua magica è{line_break}svanita anni fa...{page_break}D'altronde, nulla{line_break}è eterno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoThereWasAbleHealerIn"
 msgid "05061"
 msgstr "Un tempo, in un villaggio{line_break}chiamato Vale viveva un ottimo{line_break}guaritore, ma ora non più.{end_wait}"
 
@@ -20259,7 +20259,7 @@ msgctxt "message"
 msgid "05062"
 msgstr "Il mondo non conoscerà mai più{line_break}un guaritore così abile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoHaveEverHeardOcean"
 msgid "05063"
 msgstr "Hai mai sentito parlare{line_break}dell'oceano?{end_now}"
 
@@ -20275,7 +20275,7 @@ msgctxt "message"
 msgid "05066"
 msgstr "Mi piacerebbe vedere un{line_break}altro mondo! Se solo{line_break}fossi più giovane...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoMustUsedTypesDangerBeing"
 msgid "05067"
 msgstr "Essendo dei viaggiatori,{line_break}sarete sicuramente preparati{line_break}ad ogni pericolo.{page_break}Potreste essere molto{line_break}utili a Lord McCoy.{end_wait}"
 
@@ -20283,7 +20283,7 @@ msgctxt "message"
 msgid "05068"
 msgstr "Bisogna essere davvero{line_break}coraggiosi per andare in un{line_break}luogo così spaventoso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoCurseOnKolimaScaryDevelopment"
 msgid "05069"
 msgstr "Una maledizione su Kolima?{line_break}Che brutta cosa!{end_wait}"
 
@@ -20291,7 +20291,7 @@ msgctxt "message"
 msgid "05070"
 msgstr "Non si può raggiungere{line_break}Kolima, in nessun modo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoImReallyWorriedAboutKolima"
 msgid "05071"
 msgstr "Ho molto a cuore il{line_break}destino di Kolima. È la{line_break}mia città, capisci?{page_break}Non riesco più neppure a{line_break}cucinare, per la preoccupazione...{end_wait}"
 
@@ -20303,7 +20303,7 @@ msgctxt "message"
 msgid "05073"
 msgstr "Allora, inizia a{line_break}cucinare, su!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoGrrr"
 msgid "05074"
 msgstr "Grrr...{end_wait}"
 
@@ -20327,7 +20327,7 @@ msgctxt "message"
 msgid "05079"
 msgstr "Quel grande albero nel{line_break}cuore della foresta ha{line_break}un aspetto sinistro!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoDoBelieveTreeSpiritCan"
 msgid "05080"
 msgstr "Credi davvero che lo spirito di{line_break}un albero possa maledire?{end_now}"
 
@@ -20419,7 +20419,7 @@ msgctxt "message"
 msgid "05102"
 msgstr "Lord McCoy è così sconvolto{line_break}per la maledizione che non{line_break}riesce neppure a mangiare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoLordOnlyMeet"
 msgid "05103"
 msgstr "Lord McCoy incontra solo{line_break}i guerrieri forti e{line_break}coraggiosi.{page_break}Voi pensate di essere{line_break}all'altezza?{end_now}"
 
@@ -20443,11 +20443,11 @@ msgctxt "message"
 msgid "05108"
 msgstr "Bene...{line_break}Vi farò passare.{line_break}Seguitemi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoLordMccoyDifficult"
 msgid "05109"
 msgstr "Lord McCoy è un uomo{line_break}difficile da trattare. Fate{line_break}attenzione a come vi comportate.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWhere"
 msgid "05110"
 msgstr "Dov'eravate?{end_wait}"
 
@@ -20455,7 +20455,7 @@ msgctxt "message"
 msgid "05111"
 msgstr "Lord McCoy è adirato{line_break}perché non poteva{line_break}trovarvi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoMasterQuiteCranky"
 msgid "05112"
 msgstr "A volte, il signore è{line_break}un po' irascibile...{line_break}Sbrigatevi, su...{end_wait}"
 
@@ -20495,7 +20495,7 @@ msgctxt "message"
 msgid "05121"
 msgstr "Cercate di non{line_break}offendere Lord McCoy!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoYouWillingGoKolimaForest"
 msgid "05122"
 msgstr "Bene, volete andare alla{line_break}Foresta di Kolima?{end_now}"
 
@@ -20567,7 +20567,7 @@ msgctxt "message"
 msgid "05139"
 msgstr "La Foresta di Kolima era{line_break}così verde un tempo.{line_break}Dopo che l'albero fu{page_break}tagliato, tutto{line_break}diventò marrone. La Foresta{line_break}di Kolima sta morendo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoDoThinkTheseBilibinsGreat"
 msgid "05140"
 msgstr "Che ne dite?{line_break}Questi sono i grandi{line_break}tesori di Bilibin.{page_break}Chi pone fine alla{line_break}maledizione, potrà dire{line_break}che questi tesori sono suoi.{end_wait}"
 
@@ -20575,7 +20575,7 @@ msgctxt "message"
 msgid "05141"
 msgstr "Prendete uno dei{line_break}quattro tesori.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWeReallyGivingOurTreasure"
 msgid "05142"
 msgstr "Vogliamo davvero offrire{line_break}i nostri tesori a dei{line_break}ragazzini?{end_wait}"
 
@@ -20583,11 +20583,11 @@ msgctxt "message"
 msgid "05143"
 msgstr "Avrete il resto se{line_break}riuscirete nell'impresa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoGoodTreasureIfGetTurned"
 msgid "05144"
 msgstr "A che serve avere un{line_break}tesoro se sei un{line_break}albero?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoMatter"
 msgid "05145"
 msgstr "Qual è il problema?{end_wait}"
 
@@ -20623,7 +20623,7 @@ msgctxt "message"
 msgid "05153"
 msgstr "E dovrei credere che{line_break}voi potete salvare{line_break}Kolima?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoTooYoungForTheJob"
 msgid "05154"
 msgstr "Siete troppo giovani.{line_break}Non siete all'altezza{line_break}del lavoro.{end_wait}"
 
@@ -20631,11 +20631,11 @@ msgctxt "message"
 msgid "05155"
 msgstr "Ora potete andare...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoYehveChangeHeart"
 msgid "05156"
 msgstr "Che succede?{pause_20_skippable} Avete{line_break}cambiato idea? Ora{line_break}volete salvare Kolima?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoHmmmWellGrant"
 msgid "05157"
 msgstr "Beh!{pause_20_skippable} Ammetto che{line_break}siete piuttosto arditi.{end_wait}"
 
@@ -20651,11 +20651,11 @@ msgctxt "message"
 msgid "05160"
 msgstr "Ci sta prendendo in giro!{line_break}Ci ha chiamato bambini!{pause_20_skippable}{page_break}È davvero irritante, non{line_break}credi, {actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoSeriousDoesntBother"
 msgid "05161"
 msgstr "Davvero, {actor_name:1}?{line_break}Non ti dà fastidio?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWellDontLet"
 msgid "05162"
 msgstr "Beh, cerchiamo di{line_break}mantenere la calma.{page_break}Dobbiamo solo dimostrare di{line_break}poter fare il nostro lavoro,{line_break}qualunque esso sia!{end_wait}"
 
@@ -20679,11 +20679,11 @@ msgctxt "message"
 msgid "05167"
 msgstr "Sai che possiamo farcela,{line_break}vero, {actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoComeSaidYoud"
 msgid "05168"
 msgstr "Avanti, {actor_name:1}!{line_break}Prima volevi accettare!{pause_20_skippable}{line_break}Lo faremo, vero?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWellSGoing"
 msgid "05169"
 msgstr "Se va {actor_name:1}{line_break}vado anch'io!{end_wait}"
 
@@ -20743,7 +20743,7 @@ msgctxt "message"
 msgid "05183"
 msgstr "Spiacente, ma dovete{pause_20_skippable}{line_break}andarvene ora.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoNameSorryRejected"
 msgid "05184"
 msgstr "{actor_name:1}!{line_break}Mi dispiace molto che{line_break}siate stati respinti.{end_wait}"
 
@@ -20807,15 +20807,15 @@ msgctxt "message"
 msgid "05199"
 msgstr "Sapevo che non vi avrebbero{line_break}lasciato andare...{line_break}Siete troppo giovani!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoMccoysHiddenWarehouseDoNot"
 msgid "05200"
 msgstr "Magazzino segreto di McCoy{line_break}Vietato l'ingresso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoEvenFrozenImilMustFeel"
 msgid "05201"
 msgstr "A Imil fa così freddo, ma{line_break}{actor_name:4} la fa{line_break}sembrare caldissima!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoThereTreeLooksLikePerson"
 msgid "05202"
 msgstr "C'è un albero che{line_break}sembra una persona.{end_wait}"
 
@@ -20823,11 +20823,11 @@ msgctxt "message"
 msgid "05203"
 msgstr "Sono...{pause_20_skippable} così pesanti...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoAreaOffLimitsThoseWithout"
 msgid "05204"
 msgstr "Vietato l'accesso a chi{line_break}non è autorizzato.{line_break}     {em_dash}Lord McCoy{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaQuiet"
 msgid "05205"
 msgstr "Che pace...{end_wait}"
 
@@ -20859,7 +20859,7 @@ msgctxt "message"
 msgid "05212"
 msgstr "Capisco...{line_break}E chi può mai saperlo?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWhatIsIt"
 msgid "05213"
 msgstr "Che succede, {actor_name:3}?{end_wait}"
 
@@ -20911,11 +20911,11 @@ msgctxt "message"
 msgid "05225"
 msgstr "No, credo che {actor_name:2}{line_break}abbia ragione.{page_break}Credo di sapere cosa{line_break}fossero quelle campane...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaKnowThoseFieldsWere"
 msgid "05226"
 msgstr "Sai cos'erano quei{line_break}campi magnetici?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWasOurPsynergy"
 msgid "05227"
 msgstr "Era la nostra Psinergia.{end_wait}"
 
@@ -20995,7 +20995,7 @@ msgctxt "message"
 msgid "05246"
 msgstr "Tu...{pause_20_skippable}{pause_20_skippable}{line_break}Non ti vedo molto{line_break}interessato, vero?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWatchOutItsHappeningAgain"
 msgid "05247"
 msgstr "Attenzione!{line_break}Sta accadendo di nuovo!{end_wait}"
 
@@ -21087,7 +21087,7 @@ msgctxt "message"
 msgid "05269"
 msgstr "Ci affidiamo a te{line_break}{actor_name:1}.{line_break}Dobbiamo salvarli tutti!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaHesAsStumpedAsWe"
 msgid "05270"
 msgstr "Neanche lui sa che pesci{line_break}pigliare{pause_20_skippable}, ma ha detto{line_break}che aiuterà...{end_wait}"
 
@@ -21095,7 +21095,7 @@ msgctxt "message"
 msgid "05271"
 msgstr "Mi fido di {actor_name:1}.{pause_20_skippable}{line_break}Sicuramente si farà{line_break}venire una buona idea.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaYoureRobinThereIsntMuch"
 msgid "05272"
 msgstr "Hai ragione, {actor_name:1}...{line_break}Al momento non possiamo{line_break}fare molto.{end_wait}"
 
@@ -21131,7 +21131,7 @@ msgctxt "message"
 msgid "05280"
 msgstr "Promettimi{pause_20_skippable} che farai{line_break}del tuo meglio per{line_break}salvare Kolima.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaThatsReliefRobinThoughtYoud"
 msgid "05281"
 msgstr "Che sollievo, {actor_name:1}!{pause_20_skippable}{line_break}Pensavo che volessi abbandonare{line_break}Kolima al suo destino.{end_wait}"
 
@@ -23131,7 +23131,7 @@ msgctxt "message"
 msgid "05780"
 msgstr "Era così bello sentire{line_break}le mie foglie accarezzate{line_break}dai raggi del sole...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaToldHolyTrees"
 msgid "05781"
 msgstr "Ho sentito che la causa{line_break}dell'orribile incidente è{line_break}l'albero sacro.{page_break}Ma credi davvero che quella{line_break}sia l'unica causa?{end_now}"
 
@@ -23179,7 +23179,7 @@ msgctxt "message"
 msgid "05792"
 msgstr "Se avessi potuto trattenere{line_break}alcune delle gemme che{line_break}cadevano dal cielo...{page_break}Devono valere{line_break}una fortuna!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWasTurnedIntoTreeFor"
 msgid "05793"
 msgstr "Sono stato un albero{line_break}per un po'...{line_break}Ci crederesti?{end_now}"
 
@@ -23215,7 +23215,7 @@ msgctxt "message"
 msgid "05801"
 msgstr "In tutta quella confusione{line_break}per la maledizione, quei{line_break}tre bambini sono scomparsi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoCurseWasBrokenThanksEfforts"
 msgid "05802"
 msgstr "La maledizione è stata{line_break}vinta grazie a tre{line_break}valorosi guerrieri.{page_break}Ma siete voi,{line_break}per caso?{end_now}"
 
@@ -23231,7 +23231,7 @@ msgctxt "message"
 msgid "05805"
 msgstr "Gli uomini di Lord McCoy{line_break}dicono di aver visto quelli{line_break}che hanno salvato il villaggio.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoHaveEverBeenVillageImil"
 msgid "05806"
 msgstr "Siete mai stati nel{line_break}villaggio di Imil,{line_break}su a nord?{end_now}"
 
@@ -23315,7 +23315,7 @@ msgctxt "message"
 msgid "05826"
 msgstr "Ha detto di aver bloccato{line_break}la costruzione a causa{line_break}della maledizione...{page_break}Ma credo che stia solo{line_break}cercando di non mantenere{line_break}la sua promessa!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoDoKnowIfHolyTree"
 msgid "05827"
 msgstr "Sapete se l'albero{line_break}sacro è sopravvissuto?{end_now}"
 
@@ -23359,7 +23359,7 @@ msgctxt "message"
 msgid "05837"
 msgstr "La strada per Kolima è{line_break}stata riaperta. Finalmente{line_break}possiamo proseguire.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoDoKnowSilk"
 msgid "05838"
 msgstr "Sai cos'è la seta?{end_now}"
 
@@ -23395,7 +23395,7 @@ msgctxt "message"
 msgid "05846"
 msgstr "E allora?{line_break}In fondo, è solo{line_break}un faro!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoOurWeaponsBestCanFind"
 msgid "05847"
 msgstr "Le nostre armi sono le{line_break}migliori...{page_break}Ma anche la bottega{line_break}di Altin non è male,{line_break}di là dal fiume.{end_wait}"
 
@@ -23403,7 +23403,7 @@ msgctxt "message"
 msgid "05848"
 msgstr "Ad Altin hanno buone armi,{line_break}ma credo proprio che le{line_break}nostre siano migliori.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoForSomeReasonOceanFills"
 msgid "05849"
 msgstr "Pensare all'oceano{line_break}mi riempie sempre di{line_break}speranze e desideri...{page_break}Se mai lo vedrete, pensate{line_break}un po' anche a me, che{line_break}lo sogno sempre.{end_wait}"
 
@@ -23411,7 +23411,7 @@ msgctxt "message"
 msgid "05850"
 msgstr "Vorrei navigare sull'{line_break}oceano! Forse dovrei{line_break}partire per un bel viaggio...{page_break}Ma purtroppo... non ne{line_break}ho il coraggio.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoTurnedOutWarriorsHiredBy"
 msgid "05851"
 msgstr "Tutti i guerrieri mandati da{line_break}Lord McCoy si sono rivelati{line_break}inutili!{page_break}Tranne quelli che ci hanno{line_break}liberato dalla maledizione,{line_break}naturalmente.{end_wait}"
 
@@ -23419,7 +23419,7 @@ msgctxt "message"
 msgid "05852"
 msgstr "Dicono di essere{line_break}guerrieri...{page_break}Ma non si può contare{line_break}su di loro nel momento{line_break}del bisogno!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWasntCurseInKolimaHorrifying"
 msgid "05853"
 msgstr "La maledizione di Kolima è{line_break}stata spaventosa, eh?{end_now}"
 
@@ -23435,7 +23435,7 @@ msgctxt "message"
 msgid "05856"
 msgstr "Ora che è finito tutto{line_break}avremo senz'altro{line_break}meno clienti.{page_break}Non ci hanno fatto un{line_break}grande favore, liberandoci{line_break}dalla maledizione...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoTwoSpecialsOneDinnerOne"
 msgid "05857"
 msgstr "Due minestre! Tre stufati!{line_break}Un panino! Un dessert!{line_break}Dai, dai!{end_wait}"
 
@@ -23447,11 +23447,11 @@ msgctxt "message"
 msgid "05859"
 msgstr "Quasi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoIfWantMealSpeakWaitress"
 msgid "05860"
 msgstr "Se volete mangiare,{line_break}parlate con la cameriera.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoReallyThinkHeadChefHas"
 msgid "05861"
 msgstr "Il capocuoco è davvero{line_break}cambiato!{line_break}È così attivo!{end_wait}"
 
@@ -23459,7 +23459,7 @@ msgctxt "message"
 msgid "05862"
 msgstr "Non riesco a stargli{line_break}dietro: ha troppa energia!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoLetsSeeServeThemWater"
 msgid "05863"
 msgstr "Servi l'acqua a quei{line_break}signori... Poi prendi{line_break}l'argenteria.{end_wait}"
 
@@ -23479,7 +23479,7 @@ msgctxt "message"
 msgid "05867"
 msgstr "Oggi le porzioni{line_break}sono enormi!{page_break}Se non le diminuiscono{line_break}andranno{line_break}in rovina!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWasSomeMealDontJust"
 msgid "05868"
 msgstr "Che pasto da re!{line_break}Hanno un cibo{line_break}favoloso, vero?{end_now}"
 
@@ -23567,7 +23567,7 @@ msgctxt "message"
 msgid "05889"
 msgstr "Finché continueremo a{line_break}meditare, sarà preservata{line_break}la pace.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoOhItS"
 msgid "05890"
 msgstr "Oh!{pause_20_skippable} Ma è...{end_wait}"
 
@@ -23583,7 +23583,7 @@ msgctxt "message"
 msgid "05893"
 msgstr "La maledizione dell'albero{line_break}sacro... {pause_20_skippable}Ce ne avete{line_break}liberato voi, vero?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoNotTrueWitnesses"
 msgid "05894"
 msgstr "Non è vero! Ci sono testimoni{line_break}che vi hanno visto{line_break}nella foresta!{end_wait}"
 
@@ -23591,7 +23591,7 @@ msgctxt "message"
 msgid "05895"
 msgstr "Siete stati voi, vero?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoUnderArrest"
 msgid "05896"
 msgstr "Siete in arresto!{end_wait}"
 
@@ -23599,7 +23599,7 @@ msgctxt "message"
 msgid "05897"
 msgstr "Andate.{line_break}Lord McCoy v'aspetta.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWeveBroughtWarriorsMilord"
 msgid "05898"
 msgstr "Mio signore, ti abbiamo{line_break}portato i guerrieri.{end_wait}"
 
@@ -23659,15 +23659,15 @@ msgctxt "message"
 msgid "05912"
 msgstr "Non siete forse voi ad{line_break}aver messo fine alla{line_break}maledizione dell'albero sacro?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoHumblyThank"
 msgid "05913"
 msgstr "Permettetemi di ringraziarvi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoNaeYehDinnaeNeedTae"
 msgid "05914"
 msgstr "Non potete nascondermelo.{pause_20_skippable}{line_break}I miei uomini mi hanno già{line_break}riferito...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWasButWorriedYehMight"
 msgid "05915"
 msgstr "Temevo che non voleste{line_break}fermarvi qui sulla{line_break}strada del ritorno.{end_wait}"
 
@@ -23719,7 +23719,7 @@ msgctxt "message"
 msgid "05927"
 msgstr "Seguitemi, vi{line_break}condurrò nella{line_break}stanza del tesoro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoLordMccoyOrdered"
 msgid "05928"
 msgstr "Lord McCoy ha dato ordine che{line_break}{actor_name:1} e i suoi amici{line_break}fossero condotti qui.{page_break}Mostrategli la{line_break}loro ricompensa!{end_wait}"
 
@@ -23727,11 +23727,11 @@ msgctxt "message"
 msgid "05929"
 msgstr "Potrete prendere un solo{line_break}strumento tra queste{line_break}quattro ceste.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoPleaseTakeYourRewardBefore"
 msgid "05930"
 msgstr "Scegliete la vostra{line_break}ricompensa, prima!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoAlwaysWelcomeInPalaceLord"
 msgid "05931"
 msgstr "Sarete sempre i benvenuti nel{line_break}palazzo di Lord McCoy.{end_wait}"
 
@@ -23739,19 +23739,19 @@ msgctxt "message"
 msgid "05932"
 msgstr "Questi valorosi guerrieri{line_break}meritano di ricevere la{line_break}ricompensa del nostro signore.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoMayChooseOnlyOneItem"
 msgid "05933"
 msgstr "Potrete ricevere un solo{line_break}strumento, ma credo che siano{line_break}tutti piuttosto utili.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoNonethelessIfYourLuckSour"
 msgid "05934"
 msgstr "Tuttavia... se non avrete{line_break}fortuna, vi potrà capitare uno{line_break}strumento che non vi serve.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoRobinCheckedChestButWas"
 msgid "05935"
 msgstr "{protagonist_name} controlla{line_break}la cassa...{page_break}...ma è vuota.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoTreasureChestLocked"
 msgid "05936"
 msgstr "La cassa del tesoro{line_break}è chiusa a chiave.{end_wait}"
 
@@ -23759,11 +23759,11 @@ msgctxt "message"
 msgid "05937"
 msgstr "Mi avete insegnato che non{line_break}si può giudicare un uomo{line_break}soltanto dalle apparenze.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoFineWarrior"
 msgid "05938"
 msgstr "Sei{pause_20_skippable} un buon guerriero.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoDoThinkCanBecomeAs"
 msgid "05939"
 msgstr "Credi che potrò diventare{line_break}anch'io un buon guerriero{line_break}come te?{end_now}"
 
@@ -23783,7 +23783,7 @@ msgctxt "message"
 msgid "05943"
 msgstr "Ma non riesco a immaginare{line_break}come abbiate fatto a{line_break}superare la palizzata...{page_break}Non avevate{line_break}neppure la chiave...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoSometimesWeNeedChildrenRemind"
 msgid "05944"
 msgstr "A volte abbiamo bisogno che{line_break}i bambini ci mettano davanti{line_break}alle nostre responsabilità.{end_wait}"
 
@@ -23839,7 +23839,7 @@ msgctxt "message"
 msgid "05957"
 msgstr "Una volta tanto il signore{line_break}non si è lasciato comandare{line_break}a bacchetta da Lady McCoy!{page_break}Finalmente si sa far{line_break}valere...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoAaaah"
 msgid "05958"
 msgstr "AAAAH!!!{end_wait}"
 
@@ -23855,11 +23855,11 @@ msgctxt "message"
 msgid "05961"
 msgstr "In questa camicia da notte{line_break}c'è un buco che diventa{line_break}sempre più grande.{page_break}L'avrà indossata{line_break}qualcuno?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoItsVeryRecklessForSuch"
 msgid "05962"
 msgstr "È davvero imprudente che{line_break}guerrieri così giovani{line_break}affrontino l'albero magico...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoWasWatchingFromHereAfter"
 msgid "05963"
 msgstr "Stavo osservando da qui.{line_break}Dopo quello che è successo,{line_break}siete andati a Kolima?{end_now}"
 
@@ -23871,7 +23871,7 @@ msgctxt "message"
 msgid "05965"
 msgstr "Non dire bugie! Vi ho{line_break}visti mentre scavalcavate{line_break}la palizzata!{page_break}E poi vi ho visti tornare{line_break}attraverso la foresta,{line_break}di nuovo verde!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoLookedVeryCourageousWalkingToward"
 msgid "05966"
 msgstr "È stato davvero{line_break}coraggioso andare{line_break}fino a Kolima.{end_wait}"
 
@@ -23879,11 +23879,11 @@ msgctxt "message"
 msgid "05967"
 msgstr "Un guerriero coraggioso non{line_break}ha certamente paura di essere{line_break}trasformato in un albero.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoRewardReceivedWasIndeedGreatest"
 msgid "05968"
 msgstr "La ricompensa che avete{line_break}ricevuto è un dono{line_break}davvero prezioso.{page_break}La fortuna bacia{line_break}i coraggiosi!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoGotPrettyNiceRewardBut"
 msgid "05969"
 msgstr "Avete avuto una buona{line_break}ricompensa, ma siete stati{line_break}un po' sfortunati.{page_break}Ma non voglio che{line_break}ve la prendiate per{line_break}quello che dico.{end_wait}"
 
@@ -23903,11 +23903,11 @@ msgctxt "message"
 msgid "05973"
 msgstr "Aiuto! Qualcuno{line_break}mi aiuti!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoThankSavedMeFromBeing"
 msgid "05974"
 msgstr "Grazie! Stavo per{line_break}essere travolta{line_break}dalla corrente!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoYoureGuy"
 msgid "05975"
 msgstr "Ehi!{pause_20_skippable} Ma sei tu!{end_wait}"
 
@@ -23927,7 +23927,7 @@ msgctxt "message"
 msgid "05979"
 msgstr "Tieni,{pause_20_skippable} prendi questo.{pause_20_skippable}{line_break}È un piccolo segno{line_break}del mio apprezzamento.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoJillGaveRobinSpecialGift"
 msgid "05980"
 msgstr "Jill dà {actor_name:1} un{line_break}dono speciale.{end_wait}"
 
@@ -23975,7 +23975,7 @@ msgctxt "message"
 msgid "05991"
 msgstr "Che mondo crudele!{line_break}Tutto questo soltanto per{line_break}esserci arrampicati!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaGoingCrossBridge"
 msgid "05992"
 msgstr "Volete attraversare{line_break}il ponte?{end_wait}"
 
@@ -29243,7 +29243,7 @@ msgctxt "message"
 msgid "07308"
 msgstr "È triste che non ci{line_break}sia nessun viaggiatore...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWarriorsWhoCaptured"
 msgid "07309"
 msgstr "Ehi, voi siete i guerrieri che{line_break}hanno catturato quei ladri{line_break}tempo fa, vero?{page_break}Bentornati a Vault!{end_wait}"
 
@@ -29255,19 +29255,19 @@ msgctxt "message"
 msgid "07311"
 msgstr "Chissà cos'è successo a{line_break}Hammet quando è andato{line_break}a Lunpa...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRumorsThievesLunpa"
 msgid "07312"
 msgstr "S'è sentito parlare di{line_break}ladri di Lunpa fuori{line_break}controllo, ma non vi{page_break}abbiamo mai fatto{line_break}molta attenzione.{page_break}Chissà perché{line_break}ultimamente sono{line_break}così calmi...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTalkingMayorStrong"
 msgid "07313"
 msgstr "Ah sei tu... Stavo proprio{line_break}parlando di voi con{line_break}il sindaco.{page_break}Dicevo che siete proprio{line_break}forti, e che con voi non c'è{line_break}nulla da temere dai ladri.{page_break}Con voi non possono{line_break}farla franca!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuVolcanoStaysCalm"
 msgid "07314"
 msgstr "Se il vulcano non riprende{line_break}ad eruttare e il ponte non{line_break}si rompe di nuovo, non{page_break}avremo alcun{line_break}problema.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWarriorGuy"
 msgid "07315"
 msgstr "Ehi, è quel giovane{line_break}guerriero!{end_wait}"
 
@@ -29279,11 +29279,11 @@ msgctxt "message"
 msgid "07317"
 msgstr "Sono così felice che siate{line_break}tornati a Vault!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWishVaultsElders"
 msgid "07318"
 msgstr "Magari gli anziani di Vault{line_break}avessero il vostro coraggio!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGuysCheckJail"
 msgid "07319"
 msgstr "Avete controllato{line_break}la prigione?{end_now}"
 
@@ -29315,7 +29315,7 @@ msgctxt "message"
 msgid "07326"
 msgstr "Sì, alcuni guerrieri di{line_break}Kalay sono venuti a Vault{line_break}chiedendo di Hammet.{page_break}Ma Hammet è stato{line_break}davvero catturato?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuOnceDodonpaTook"
 msgid "07327"
 msgstr "Da quando Dodonpa è al{line_break}potere, i ladri di Lunpa sono{line_break}diventati dei comuni ladri.{page_break}Se quei tipi sono così{line_break}calmi, un motivo{line_break}ci dev'essere.{end_wait}"
 
@@ -29323,19 +29323,19 @@ msgctxt "message"
 msgid "07328"
 msgstr "Quei ladracci sono fuggiti{line_break}e non sappiamo{line_break}dove siano...{page_break}Odiavano quei ragazzini che{line_break}li avevano catturati.{line_break}Non vorrei che...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGreatEverythingSolved"
 msgid "07329"
 msgstr "Sarebbe stato bello{line_break}risolvere tutto prima{line_break}dell'inverno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWatchingGuysMakes"
 msgid "07330"
 msgstr "Guardarvi mi infonde{line_break}coraggio.{page_break}Spero che un giorno{line_break}mi raccontiate dei{line_break}vostri viaggi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuGrownUpsAlways"
 msgid "07331"
 msgstr "Gli adulti sono sempre{line_break}così preoccupati quando{line_break}accade qualcosa.{page_break}Non li{line_break}sopporto più...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuNotLikeEasy"
 msgid "07332"
 msgstr "Non è così facile{line_break}procurarsi la chiave{line_break}di quella cella.{page_break}Sono stati capaci di{line_break}trovarla, quindi sapevano{line_break}il segreto della serratura...{page_break}Devono essere{line_break}formidabili!{end_wait}"
 
@@ -29363,7 +29363,7 @@ msgctxt "message"
 msgid "07338"
 msgstr "{text_effect:4}Aaah! {reset_text_style}{pause_20_skippable}{line_break}Un gatto ha mangiato la mia{line_break}preziosa pietra!{page_break}Non so come sia potuto{line_break}succedere, ma è vero.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThoughtSawCatGetUp"
 msgid "07339"
 msgstr "Credo di aver visto un gatto{line_break}salire sul tavolo e{line_break}mangiarsi la gemma...{page_break}Così, il mio tesoro è nella{line_break}sua pancia, ora!{end_wait}"
 
@@ -29379,7 +29379,7 @@ msgctxt "message"
 msgid "07342"
 msgstr "I prigionieri dicevano di{line_break}voler evadere prima che{line_break}iniziasse il Colossum.{page_break}Il Colossum... Non è quel{line_break}grande festival a Tolbi?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuDodonpasHenchmenNeverAttackedUs"
 msgid "07343"
 msgstr "Gli scagnozzi di Dodonpa non{line_break}ci hanno mai attaccato...{page_break}Magari quei ladruncoli{line_break}non erano neppure{line_break}di Lunpa.{end_wait}"
 
@@ -29391,7 +29391,7 @@ msgctxt "message"
 msgid "07345"
 msgstr "Papà non s'è mai preoccupato,{line_break}perché non abbiamo mai avuto{line_break}attacchi da Dodonpa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuItsNearTimeForColosso"
 msgid "07346"
 msgstr "A Tolbi sta per iniziare{line_break}il Colossum, vero?{page_break}Prima di morire, vorrei{line_break}andarci ancora una volta.{end_wait}"
 
@@ -29407,7 +29407,7 @@ msgctxt "message"
 msgid "07349"
 msgstr "Negli ultimi tempi mio{line_break}marito parla solo{line_break}del Colossum.{page_break}Chissà se mi ci{line_break}porta quest'anno...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuRobinYouveComeBackVault"
 msgid "07350"
 msgstr "Oh, {actor_name:1}!{line_break}Bentornato{line_break}a Vault!{end_wait}"
 
@@ -29431,7 +29431,7 @@ msgctxt "message"
 msgid "07355"
 msgstr "Va bene...{line_break}Ma fate attenzione... Chissà{line_break}cosa potrebbero fare...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuThoseGuysReallyWantedRevenge"
 msgid "07356"
 msgstr "Quei tipi volevano vendicarsi{line_break}di voi, quindi state{line_break}molto attenti.{end_wait}"
 
@@ -29463,7 +29463,7 @@ msgctxt "message"
 msgid "07363"
 msgstr "Mi piacciono i festival!{line_break}Credo proprio che il{line_break}Colossum sia incredibile.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheresRiverFireOnOther"
 msgid "07364"
 msgstr "Sul lato opposto del Monte{line_break}Aleph s'è formato un{line_break}fiume di fuoco. Sta accadendo{page_break}qualcosa di brutto.{end_wait}"
 
@@ -29471,7 +29471,7 @@ msgctxt "message"
 msgid "07365"
 msgstr "Pensa che tragedia{line_break}se fosse{line_break}successo qui!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuTheySayVolcanoOnMt"
 msgid "07366"
 msgstr "Pare che il vulcano del{line_break}Monte Aleph abbia tagliato il{line_break}continente in due parti!{page_break}L'eruzione del è stata{line_break}talmente potente da spezzare{line_break}in due un continente.{end_wait}"
 
@@ -29479,7 +29479,7 @@ msgctxt "message"
 msgid "07367"
 msgstr "Ma è un bene che si sia{line_break}aperta quell'enorme{line_break}crepa.{page_break}Altrimenti la lava{line_break}sarebbe giunta{line_break}fin qui!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuWeHaventBeenGettingMany"
 msgid "07368"
 msgstr "Ultimamente abbiamo{line_break}avuto pochi clienti.{page_break}Credo che oggi{line_break}chiuderò prima.{end_wait}"
 
@@ -29503,7 +29503,7 @@ msgctxt "MsgShindenDirtyGoldenStatueCleanedUp"
 msgid "07373"
 msgstr "Quella statua d'oro ora{line_break}è pulitissima.{line_break}Ciò mi rende felice.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuMmmmNothingDoNothingDo"
 msgid "07374"
 msgstr "Niente da fare, niente{line_break}da fare! Che brutta situazione!{page_break}Con il vulcano e tutto quello{line_break}che è successo, nessuno{line_break}viene al villaggio.{end_wait}"
 
@@ -29511,7 +29511,7 @@ msgctxt "message"
 msgid "07375"
 msgstr "D'inverno non arrivano{line_break}molti viaggiatori.{page_break}La primavera{line_break}sembra così{line_break}lontana...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuDidSomeCookingNowIve"
 msgid "07376"
 msgstr "Ho ancora parecchi ossi{line_break}avanzati dalla cena.{line_break}Ne vuoi un po'?{end_now}"
 
@@ -29535,7 +29535,7 @@ msgctxt "message"
 msgid "07381"
 msgstr "Dopo aver fatto questo{line_break}lavoro per un po'{line_break}s'inizia a capire...{page_break}Gli affari vanno male per un{line_break}po', ma poi si riprendono.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuHeReallyLikesBonesWonder"
 msgid "07382"
 msgstr "Gli piacciono proprio gli ossi.{line_break}Hmmm... Non vorrei che avesse{line_break}carenza di calcio.{end_wait}"
 
@@ -42751,15 +42751,15 @@ msgctxt "message"
 msgid "10685"
 msgstr "C'è un libro intitolato{line_break}\"L'ospitalità\".{page_break}\"L'attenzione ai{line_break}dettagli sta alla base{line_break}dell'ospitalità...\"{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKuupuappuCanHearWaterRumblingDown"
 msgid "10686"
 msgstr "Si sente il rumore dell'{line_break}acqua laggiù in fondo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoBottomNotVisibleLooksVery"
 msgid "10687"
 msgstr "Non si vede il fondo{line_break}del pozzo. Dev'essere{line_break}profondissimo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgBiribinoUponCloserInspectionSeemsDried"
 msgid "10688"
 msgstr "Guardando meglio,{line_break}pare che il pozzo{line_break}sia asciutto.{end_wait}"
 

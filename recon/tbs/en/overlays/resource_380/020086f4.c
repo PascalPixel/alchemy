@@ -1,10 +1,9 @@
-/* Draft of resource_380 0x020086f4 (Scene_BagMercuryStar), built with
- * games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STAR.H. Remaining difference:
- * the ROM loads message 0x1076 from the literal pool after the preceding
- * call and derives the next line from it, as a link-time message value
- * would; the C constant is loaded before the call instead. The listing
- * keeps these rows. */
+/* Draft of resource_380 0x020086f4 (Scene_BagMercuryStar): it matches the ROM
+ * byte for byte now that the message it loads from the literal pool has a
+ * catalogue name (MsgSoruPutMercuryStar). The listing keeps these rows until
+ * the draft is adopted. */
 #include "STAR.H"
+extern u8 MsgSoruPutMercuryStar[];
 
 void Scene_BagMercuryStar(void)
 {
@@ -78,7 +77,7 @@ void Scene_BagMercuryStar(void)
     obj = Scene_PresentItem(221, 0x2c80000, 0x100000, 0x900000);
     Event_Wait(40);
     UiWork_PushValueSlotFar(obj, 1);
-    mes = MSG_MERCURY_STAR_BAGGED;
+    mes = (s32)MsgSoruPutMercuryStar;
     Value2(Engine_MessageShowCentered, mes, 1);
     Actor_FaceDirection(ACTOR_SUKURETA, 0xe000, 0);
     Actor_FaceDirection(ACTOR_JASMINE, 0xe000, 20);

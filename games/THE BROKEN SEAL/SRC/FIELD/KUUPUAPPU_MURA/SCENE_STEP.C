@@ -164,36 +164,31 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 #include "TYPES.H"
+extern u8 MsgKuupuappuBetWasThoseThreeCreeps[];
+extern u8 MsgKuupuappuCarefulSearchWillRevealPassage[];
+extern u8 MsgKuupuappuDidntGoLunpa[];
+extern u8 MsgKuupuappuEruptionDevastatedRoads[];
+extern u8 MsgKuupuappuEveryoneGratefulCaptured[];
+extern u8 MsgKuupuappuEveryoneKnowsThoseThreeAt[];
+extern u8 MsgKuupuappuFeelMuchBetter[];
+extern u8 MsgKuupuappuGreatCaughtThieves[];
+extern u8 MsgKuupuappuGroupTravelersWasStrangeBunch[];
+extern u8 MsgKuupuappuHowPunishPrisoners[];
+extern u8 MsgKuupuappuIfBringMeBoneIll[];
+extern u8 MsgKuupuappuManShouldStealFromAnother[];
+extern u8 MsgKuupuappuMustStrongerThanLookHave[];
+extern u8 MsgKuupuappuOnesWhoCapturedThieves[];
+extern u8 MsgKuupuappuRuffRrruff2[];
+extern u8 MsgKuupuappuSneakWastingTime[];
+extern u8 MsgKuupuappuStealingInMidstVolcanicEruption[];
+extern u8 MsgKuupuappuSupposeDoesntMatterHowRich[];
+extern u8 MsgKuupuappuTalkingAboutHammetsServantIvan[];
+extern u8 MsgKuupuappuThankForOtherDayLeaving[];
+extern u8 MsgKuupuappuThoseMenCapturedTheyreIn[];
+extern u8 MsgKuupuappuWhereDidIvanGoBy[];
+extern u8 MsgKuupuappuWithRoadOutOnlyWay[];
+extern u8 MsgKuupuappuYoureHittingRoadAgain[];
 
-enum ActorPresentationMessage {
-    MSG_ROBIN_PEERED_INTO = 0x947,
-    MSG_WASNT_ERUPTION_MT_ALEPH_INCREDIBLE = 0x1223,
-    MSG_THOSE_TRAVELERS_LEFT_IN_BIG = 0x1229,
-    MSG_ACCUSING_US_STEALING_HAMMETS_TREASURED = 0x122f,
-    MSG_OFF_ON_ADVENTURE = 0x1232,
-    MSG_RUFF_RRRUFF = 0x1235,
-    MSG_MAN_SHOULD_STEAL_FROM_ANOTHER = 0x1239,
-    MSG_GROUP_TRAVELERS_WAS_STRANGE_BUNCH = 0x123b,
-    MSG_BET_WAS_THOSE_THREE_CREEPS = 0x123c,
-    MSG_SUPPOSE_DOESNT_MATTER_HOW_RICH = 0x123d,
-    MSG_EVERYONE_KNOWS_THOSE_THREE_AT = 0x123e,
-    MSG_STEALING_IN_MIDST_VOLCANIC_ERUPTION = 0x1241,
-    MSG_LEAVING_IM_STILL_WORRIED_ABOUT = 0x1327,
-    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
-    MSG_YOURE_HITTING_ROAD_AGAIN = 0x1330,
-    MSG_TALKING_ABOUT_HAMMETS_SERVANT_IVAN = 0x1336,
-    MSG_THOSE_MEN_CAPTURED_THEYRE_IN = 0x133c,
-    MSG_ONES_WHO_CAPTURED_THIEVES = 0x133f,
-    MSG_RUFF_RRRUFF_2 = 0x1342,
-    MSG_WITH_ROAD_OUT_ONLY_WAY = 0x1348,
-    MSG_WHERE_DID_IVAN_GO_BY = 0x1349,
-    MSG_MUST_STRONGER_THAN_LOOK_HAVE = 0x134b,
-    MSG_IF_BRING_ME_BONE_ILL = 0x134e,
-    MSG_THANK_FOR_OTHER_DAY_LEAVING = 0x137f,
-    MSG_CAREFUL_SEARCH_WILL_REVEAL_PASSAGE = 0x13ab,
-    MSG_HE_SHOULD_BE_FIXING_ROOF_NOW = 0x12c0,
-    MSG_CAN_HEAR_WATER_RUMBLING_DOWN = 0x29dc
-};
 
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -234,22 +229,22 @@ void SceneActor_RunActorCommandWithFlag91(s32 x)
 void ActorPresentation_RunActorEightSceneSetup(void)
 {
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(MSG_YOURE_HITTING_ROAD_AGAIN); SceneActor_ApplyActorCueThenWait(8, 0, 2); Event_OpenMessage(8, 0);
+    Event_Begin(); Event_SetMessage((s32)MsgKuupuappuYoureHittingRoadAgain); SceneActor_ApplyActorCueThenWait(8, 0, 2); Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
     Event_ShowMessage(8, 0); Event_End();
 }
 
-void SceneDialogue_RunActor11SecondLine(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1335); SceneActor_RunActorStep(11); Engine_EventEnd(); }
+void SceneDialogue_RunActor11SecondLine(void) { Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuGreatCaughtThieves); SceneActor_RunActorStep(11); Engine_EventEnd(); }
 
 void SceneDialogue_RunActor12LineAndAdvance(void)
 {
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(MSG_TALKING_ABOUT_HAMMETS_SERVANT_IVAN);
+    Event_Begin(); Event_SetMessage((s32)MsgKuupuappuTalkingAboutHammetsServantIvan);
     if (GameFlag_IsSet(2) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
     SceneActor_RunActorStep(12); Event_End();
 }
 
-void SceneDialogue_RunActor13Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x1338); SceneActor_RunActorStep(13); Engine_EventEnd(); }
+void SceneDialogue_RunActor13Line(void) { Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuEruptionDevastatedRoads); SceneActor_RunActorStep(13); Engine_EventEnd(); }
 
 void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 {
@@ -263,7 +258,7 @@ void ActorPresentation_RunActorFourteenDialogueAndAdvanceStory(void)
 
     *flags = (tmp = *flags | 2);
     Event_Begin();
-    Engine_EventSetMessage(0x1339);
+    Engine_EventSetMessage((s32)MsgKuupuappuDidntGoLunpa);
     if (GameFlag_IsSet(2) != 0)
         ++gEventWork->message;
     Actor_SetAnimation(14, 0);
@@ -282,7 +277,7 @@ void ActorPresentation_RunActorFifteenFollowupDialogue(void)
 
     actor->presentation_flags |= 2;
     Event_Begin();
-    Engine_EventSetMessage(0x133b);
+    Engine_EventSetMessage((s32)MsgKuupuappuEveryoneGratefulCaptured);
     Actor_SetAnimation(15, 0);
     SceneActor_ApplyActorCueThenWait(15, 0, 2);
     SceneActor_ApplyActorZeroThenWait(15, 10);
@@ -295,7 +290,7 @@ void ActorPresentation_RunActorFifteenFollowupDialogue(void)
 void ActorPresentation_RunActorSixteenSceneSetup(void)
 {
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(MSG_THOSE_MEN_CAPTURED_THEYRE_IN); Actor_SetAnimation(16, 1); SceneActor_ApplyActorCueThenWait(16, 0, 2); Event_OpenMessage(16, 0);
+    Event_Begin(); Event_SetMessage((s32)MsgKuupuappuThoseMenCapturedTheyreIn); Actor_SetAnimation(16, 1); SceneActor_ApplyActorCueThenWait(16, 0, 2); Event_OpenMessage(16, 0);
     if (Event_ChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
     Event_ShowMessage(16, 0); Event_End();
 }
@@ -305,7 +300,7 @@ void ActorPresentation_RunActorEighteenFollowupSceneSetup(void)
     void Event_ShowMessage(int, int);
 
     u8 *workspace;
-    Event_Begin(); Event_SetMessage(MSG_ONES_WHO_CAPTURED_THIEVES); SceneActor_ApplyActorCueThenWait(18, 0, 2); Event_OpenMessage(18, 0);
+    Event_Begin(); Event_SetMessage((s32)MsgKuupuappuOnesWhoCapturedThieves); SceneActor_ApplyActorCueThenWait(18, 0, 2); Event_OpenMessage(18, 0);
     if (Event_ChooseYesNo(0, 0) != 0) { workspace = gWork; ++*(u16 *)(workspace + 472); }
     Event_ShowMessage(18, 0); Event_End();
 }
@@ -316,7 +311,7 @@ void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
     void Actor_SetAnimation(s32, s32);
 
     Event_Begin();
-    Event_SetMessage(MSG_RUFF_RRRUFF_2);
+    Event_SetMessage((s32)MsgKuupuappuRuffRrruff2);
     Actor_SetAnimation(19, 0);
     SceneActor_ApplyActorCueThenWait(19, 0, 2);
     Event_ShowMessage(19, 0);
@@ -332,7 +327,7 @@ void ActorPresentation_RunActorNineteenDialogueAndSetSceneState(void)
 
 void SceneDialogue_RunActor20Line(void)
 {
-    Event_Begin(); Event_SetMessage(MSG_THANK_FOR_OTHER_DAY_LEAVING); SceneActor_ApplyActorCueThenWait(20, 0, 2); Actor_SetAnimationAndWait(20, 3);
+    Event_Begin(); Event_SetMessage((s32)MsgKuupuappuThankForOtherDayLeaving); SceneActor_ApplyActorCueThenWait(20, 0, 2); Actor_SetAnimationAndWait(20, 3);
     Event_Wait(20); Event_ShowMessage(20, 0); Event_End();
 }
 
@@ -341,7 +336,7 @@ void SceneDialogue_RunActor11FlaggedLine(void)
     int GameFlag_IsSet(int);
 
     Event_Begin();
-    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(MSG_MAN_SHOULD_STEAL_FROM_ANOTHER); else Event_SetMessage(0x1346);
+    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage((s32)MsgKuupuappuManShouldStealFromAnother); else Event_SetMessage((s32)MsgKuupuappuHowPunishPrisoners);
     SceneActor_RunActorCommandWithFlag91(11); Event_End();
 }
 
@@ -349,9 +344,9 @@ void SceneDialogue_RunActor13FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(MSG_GROUP_TRAVELERS_WAS_STRANGE_BUNCH);
+        Event_SetMessage((s32)MsgKuupuappuGroupTravelersWasStrangeBunch);
     } else {
-        Event_SetMessage(MSG_WITH_ROAD_OUT_ONLY_WAY);
+        Event_SetMessage((s32)MsgKuupuappuWithRoadOutOnlyWay);
     }
     SceneActor_RunActorCommandWithFlag91(13);
     Event_End();
@@ -362,9 +357,9 @@ void ActorPresentation_RunActorFourteenFlaggedDialogue(void)
     ((struct SceneActor *)Actor_Get(14))->presentation_flags |= 2;
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(MSG_BET_WAS_THOSE_THREE_CREEPS);
+        Event_SetMessage((s32)MsgKuupuappuBetWasThoseThreeCreeps);
     } else {
-        Event_SetMessage(MSG_WHERE_DID_IVAN_GO_BY);
+        Event_SetMessage((s32)MsgKuupuappuWhereDidIvanGoBy);
         if (GameFlag_IsSet(2) != 0)
             ++gEventWork->message;
     }
@@ -380,9 +375,9 @@ void ActorPresentation_RunActorFifteenScriptBranch(void)
     ((struct SceneActor *)Actor_Get(15))->presentation_flags |= 2;
     Event_Begin();
     if (GameFlag_IsSet(0x855) == 0)
-        Event_SetMessage(MSG_SUPPOSE_DOESNT_MATTER_HOW_RICH);
+        Event_SetMessage((s32)MsgKuupuappuSupposeDoesntMatterHowRich);
     else
-        Event_SetMessage(MSG_MUST_STRONGER_THAN_LOOK_HAVE);
+        Event_SetMessage((s32)MsgKuupuappuMustStrongerThanLookHave);
     SceneActor_RunActorCommandWithFlag91(15);
     Event_End();
     ((struct SceneActor *)Actor_Get(15))->presentation_flags &= 1;
@@ -393,7 +388,7 @@ void ActorPresentation_RunActorSixteenScriptBranch(void)
     void Event_SetMessage(int);
 
     Event_Begin();
-    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage(MSG_EVERYONE_KNOWS_THOSE_THREE_AT); else Event_SetMessage(0x134c);
+    if (GameFlag_IsSet(0x855) == 0) Event_SetMessage((s32)MsgKuupuappuEveryoneKnowsThoseThreeAt); else Event_SetMessage((s32)MsgKuupuappuFeelMuchBetter);
     SceneActor_RunActorCommandWithFlag91(16); Event_End();
 }
 
@@ -403,16 +398,16 @@ void ActorPresentation_RunActorNineteenScriptBranch(void)
 
     u8 *actor = Actor_Get(19); actor[91] = 1; Event_Begin();
     if (GameFlag_IsSet(0x855) == 0) {
-        Event_SetMessage(MSG_STEALING_IN_MIDST_VOLCANIC_ERUPTION); Actor_SetAnimation(19, 0); Event_Wait(2);
+        Event_SetMessage((s32)MsgKuupuappuStealingInMidstVolcanicEruption); Actor_SetAnimation(19, 0); Event_Wait(2);
     } else if (GameFlag_IsSet(0x858) != 0) {
-        Event_SetMessage(MSG_CAREFUL_SEARCH_WILL_REVEAL_PASSAGE);
+        Event_SetMessage((s32)MsgKuupuappuCarefulSearchWillRevealPassage);
     } else {
-        Event_SetMessage(MSG_IF_BRING_ME_BONE_ILL);
+        Event_SetMessage((s32)MsgKuupuappuIfBringMeBoneIll);
     }
     Event_ShowMessage(19, 0); Event_End(); actor[91] = 0;
 }
 
-void SceneDialogue_RunActor21Line(void) { Engine_EventBegin(); Engine_EventSetMessage(0x12c1); SceneActor_RunActorCommandWithFlag91(21); Engine_EventEnd(); }
+void SceneDialogue_RunActor21Line(void) { Engine_EventBegin(); Engine_EventSetMessage((s32)MsgKuupuappuSneakWastingTime); SceneActor_RunActorCommandWithFlag91(21); Engine_EventEnd(); }
 
 void SceneState_Apply200ThenPlace55_26(void)
 {

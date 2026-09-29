@@ -1,4 +1,6 @@
 #include "NIWA.H"
+extern u8 MsgBiribinoUponCloserInspectionSeemsDried[];
+extern u8 MsgFieldPeeredWell[];
 
 void FieldScene_RunStepWithValueFd2(void)
 {
@@ -13,7 +15,7 @@ void FieldScene_RunStepWithValueFd2(void)
 void FieldScene_RunStepWithValue29de(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_PEERED_INTO, 1);
-    Message_ShowCentered(MSG_UPON_CLOSER_INSPECTION_SEEMS_DRIED, 1);
+    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
+    Message_ShowCentered((s32)MsgBiribinoUponCloserInspectionSeemsDried, 1);
     Event_End();
 }

@@ -1,16 +1,20 @@
 #include "KYUDEN.H"
+extern u8 MsgBiribinoAlwaysWelcomeInPalaceLord[];
+extern u8 MsgBiribinoPleaseTakeYourRewardBefore[];
+extern u8 MsgBiribinoRobinCheckedChestButWas[];
+extern u8 MsgBiribinoTreasureChestLocked[];
 
 void FieldScene_ShowChestEmpty(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_CHECKED_CHEST_BUT_WAS, 1);
+    Message_ShowCentered((s32)MsgBiribinoRobinCheckedChestButWas, 1);
     Event_End();
 }
 
 void FieldScene_ShowChestLocked(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_TREASURE_CHEST_LOCKED, 1);
+    Message_ShowCentered((s32)MsgBiribinoTreasureChestLocked, 1);
     Event_End();
 }
 
@@ -94,7 +98,7 @@ void FieldScene_RunRewardReminder(void)
             Actor_FaceDirection(19, 0x7000, 10);
             Actor_RunRepeatedMotion(19, 2);
             Event_Wait(20);
-            Event_SetMessage(MSG_PLEASE_TAKE_YOUR_REWARD_BEFORE);
+            Event_SetMessage((s32)MsgBiribinoPleaseTakeYourRewardBefore);
             Event_ShowMessage(19, 0);
             Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x268, 0x2fa);
@@ -121,7 +125,7 @@ void FieldScene_RunPalaceFarewell(void)
         Actor_FaceActor(19, ACTOR_PARTY_LEADER, 0);
         Event_Wait(20);
         Actor_SetAnimationAndWait(19, 3);
-        Event_SetMessage(MSG_ALWAYS_WELCOME_IN_PALACE_LORD);
+        Event_SetMessage((s32)MsgBiribinoAlwaysWelcomeInPalaceLord);
         Event_ShowMessageAndWait(19, 0, 10);
         Actor_SetSpeed(19, 0xcccc, 0x6666);
         Actor_WalkToAndWait(19, 0x23a, 0x2f6);

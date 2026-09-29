@@ -1,5 +1,9 @@
 /* Scene tables, the hostage scene and small callbacks. */
 #include "FUNKA.H"
+extern u8 MsgSoruIKnowItsARock[];
+extern u8 MsgSoruJasmineWhatHappened[];
+extern u8 MsgSoruSomeoneIsLiftingIt[];
+extern u8 MsgSoruSukuretaCouldThatBeThe[];
 
 u8 *SceneData_GetScriptTable(void)
 {
@@ -87,7 +91,7 @@ void Scene_SaturosTakesHostages(void)
     Actor_Jump(ACTOR_GERALD, 6, 20);
     FieldScene_RunVariantStep(1, 20, 20);
     FieldScene_RunVariantStep(0, 20, 40);
-    Event_SetMessage(MSG_JASMINE_WHAT_HAPPENED);
+    Event_SetMessage((s32)MsgSoruJasmineWhatHappened);
     Call3((void (*)())Engine_EventShowMessageAndWait, 11, 0, 20);
     Call2((void (*)())Engine_EventShowMessage, 10, 0);
     FieldScene_RunVariantStep(1, 20, 0);
@@ -141,12 +145,12 @@ void Scene_SaturosTakesHostages(void)
     Event_Wait(200);
     Event_OpenMessage(0x1001, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(MSG_I_KNOW_ITS_A_ROCK);
+        Event_SetMessage((s32)MsgSoruIKnowItsARock);
     } else {
-        Event_SetMessage(MSG_SOMEONE_IS_LIFTING_IT);
+        Event_SetMessage((s32)MsgSoruSomeoneIsLiftingIt);
     }
     Event_ShowMessageAndWait(0x1001, 0, 80);
-    Event_SetMessage(MSG_SUKURETA_COULD_THAT_BE_THE_WISE_ONE);
+    Event_SetMessage((s32)MsgSoruSukuretaCouldThatBeThe);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
     FieldScene_RunVariantStep(1, 20, 0);
     *(s32 *)(((s32)p7 + 0x40c)) = 0;

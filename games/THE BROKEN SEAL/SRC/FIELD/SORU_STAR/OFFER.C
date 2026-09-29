@@ -1,5 +1,6 @@
 /* Offering the guarantee. */
 #include "STAR.H"
+extern u8 MsgSoruMenardiDontYouWantThem[];
 
 void Scene_OfferGuarantee(void)
 {
@@ -65,7 +66,7 @@ void Scene_OfferGuarantee(void)
     Event_Wait(10);
     Event_AskYesNo(ACTOR_GERALD, 0);
     Event_Wait(10);
-    Event_SetMessage(MSG_MENARDI_DONT_YOU_WANT_THEM_SAFE);
+    Event_SetMessage((s32)MsgSoruMenardiDontYouWantThem);
     Event_ShowMessage(ACTOR_MENARDI, 0);
     Actor_FaceDirection(ACTOR_MENARDI, 0xd000, 10);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);

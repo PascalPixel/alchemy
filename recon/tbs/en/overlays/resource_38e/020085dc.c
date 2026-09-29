@@ -1,9 +1,12 @@
 /* Draft of resource_38e 0x020085dc (BiribinoNiwa_RunGardenScene), from
- * games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA. Remaining difference: the
- * ROM loads message 0x1720 from the literal pool, as a link-time message
- * value would; the C constant is built with a move and a shift. Its imports
- * still carry their old names. The listing keeps these rows. */
+ * games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Engine_CameraMoveTo,
+ * Engine_MapRedraw, Engine_EventOpenScreen, Engine_CameraSetSpeed,
+ * Engine_UiWorkWaitThenFinalizeCapacity, Engine_ActorSetAttachedEffect, ...). The listing keeps these rows. */
 #include "TYPES.H"
+extern u8 MsgBiribinoNotTrueWitnesses[];
+extern u8 MsgBiribinoOhItS[];
+extern u8 MsgBiribinoUnderArrest[];
 extern struct EventWork *gEventWork;
 
 void Engine_EventBegin();
@@ -38,9 +41,6 @@ void Engine_EventRequestExit();
 void Engine_EventEnd();
 
 
-/* FAKEMATCH: ids the reference loads from the literal pool rather than
- * building inline are spelled as link symbols at those values. */
-extern u8 Data_00001720[];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -99,7 +99,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Call3(Engine_ActorFaceDirection, 11, 0x3000, 10);
     Engine_ActorStartRepeatedMotion(11, 2);
     Call3(Engine_ActorShowEmote, 11, 0x100, 60);
-    Engine_EventSetMessage((s32)Data_00001720);
+    Engine_EventSetMessage((s32)MsgBiribinoOhItS);
     Engine_EventShowMessageAndWait(11, 0, 10);
     Call3(Engine_ActorFaceDirection, 12, 0x5000, 10);
     Engine_ActorStartRepeatedMotion(12, 2);
@@ -117,7 +117,7 @@ void BiribinoNiwa_RunGardenScene(void)
     for (;;) {
         if (!(Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) != 0)) break;
         Call3(Engine_ActorShowEmote, 12, 0x100, 60);
-        Call1(Engine_EventSetMessage, 0x1724);
+        Call1(Engine_EventSetMessage, (s32)MsgBiribinoNotTrueWitnesses);
         Engine_EventShowMessageAndWait(12, 0, 10);
         Engine_ActorStartRepeatedMotion(12, 2);
         Engine_EventOpenMessage(12, 0);
@@ -129,7 +129,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Engine_ActorSetAnimationAndWait(12, 3);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(11, 1);
-    Call1(Engine_EventSetMessage, 0x1726);
+    Call1(Engine_EventSetMessage, (s32)MsgBiribinoUnderArrest);
     Engine_EventShowMessageAndWait(11, 0, 10);
     Call3(Engine_ActorSetSpeed, 11, 0x10000, 0x8000);
     Call3(Engine_ActorWalkToAndWait, 11, 0x13a, 0x118);

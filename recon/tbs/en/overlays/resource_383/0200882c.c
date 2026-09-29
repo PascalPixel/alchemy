@@ -1,8 +1,13 @@
 /* Draft of FieldScene_RunScene383SequenceC, resource_383 at 0x0200882c (split from FIELD/KUUPUAPPU_HEYA/PROMPT.C).
- * Remaining difference: it loads constants through address-derived symbols (Value_/Data_0000/LinkedMessage_ names) that no link defines, so the overlay keeps its listing rows. */
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Func_02004e3e_a,
+ * Func_02004e90, Func_02004e50, Func_02004ea8, Func_020055d6,
+ * Func_02004ea8_a). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKuupuappuHeadingOutBeyondGomaRange[];
+extern u8 MsgKuupuappuYouWereSuchGreatHelp[];
 
 enum {
     /* Message 0x182 + 189. */
@@ -11,56 +16,6 @@ enum {
     ITEM_BONE = 231
 };
 
-enum PromptMessage {
-    MSG_ROBIN_CHECKED_CHEST = 0x929,
-    MSG_ROBIN_CHECKED_BARREL = 0x92b,
-    MSG_BUT_CHEST_WAS_EMPTY = 0x949,
-    MSG_BUT_DIDNT_FIND_ANYTHING = 0x94b,
-    MSG_IF_ONLY_THESE_ROCKS_WERE = 0x1243,
-    MSG_OK_MISTER_LET_ME_SEE = 0x1245,
-    MSG_MISTER_FUN_SEE_STRANGE_NEW = 0x1247,
-    MSG_WONDER_OUTSIDE_WORLD_LIKE = 0x124b,
-    MSG_JUST_ME_OR_AM_MISSING = 0x124c,
-    MSG_COULD_THEY_THIEVES_GOOD_DONT = 0x124e,
-    MSG_COULD_SOMEONE_PLEASE_HELP_IVAN = 0x1250,
-    MSG_IVAN_HAS_GREAT_POWERS_WOULDNT = 0x1253,
-    MSG_DO_POSSESS_STRANGE_POWERS = 0x1256,
-    MSG_WOULD_REALLY_WOULD_HELP_ME = 0x125d,
-    MSG_YOURE_GOING_HELP_IVAN = 0x1276,
-    MSG_PLEASE_LOOK_AFTER_IVAN = 0x1278,
-    MSG_TICKLES_BEING_TICKLED_BY_BOY = 0x127c,
-    MSG_THIEVES_DIDNT_HIT_OUR_HOUSE = 0x1282,
-    MSG_DID_JUST_ARRIVE_IN_TOWN = 0x1284,
-    MSG_EVERYONE_THINKS_OUR_GUESTS_THIEVES = 0x128d,
-    MSG_THOSE_THREE_STRANGERS_SURE_HAVE = 0x128e,
-    MSG_MASTER_HIS_WIFE_BLINDED_BY = 0x1294,
-    MSG_ROBIN_TAKE_LEAD = 0x129f,
-    MSG_OW_STOP = 0x12ac,
-    MSG_WE_DONT_HAVE_TIME_FOR = 0x12bb,
-    MSG_THESE_KIDS_NOTHING_WORRY_ABOUT = 0x12dd,
-    MSG_THEY_THEY_GOT_US = 0x12e4,
-    MSG_SEE_THATS_HAPPENED = 0x12f2,
-    MSG_WAIT_DONT_WANT_TAKE_YOUR = 0x132a,
-    MSG_THANK_GOODNESS_THOSE_THIEVES_WERE = 0x1353,
-    MSG_IF_ROCK_WORTHLESS_MAYBE_THATS = 0x1355,
-    MSG_DID_THOSE_THIEVES_COME_FROM = 0x1356,
-    MSG_MY_FATHER_WORRIED_ABOUT_THOSE = 0x1359,
-    MSG_FATHER_LOOKS_SAD_WORRYING_LIKE = 0x135b,
-    MSG_THIEVES_HID_STOLEN_TREASURE_IN = 0x135c,
-    MSG_GUESS_NOTHING_IN_OUR_HOUSE = 0x135e,
-    MSG_HEADING_OUT_BEYOND_GOMA_RANGE = 0x1364,
-    MSG_HEARD_DEFEATED_THOSE_THIEVES = 0x1368,
-    MSG_CAVE_IN_GOMA_RANGE_DANGEROUS = 0x136c,
-    MSG_WE_FOUND_OUR_STOLEN_WEAPONS = 0x1370,
-    MSG_IF_YOURE_GONNA_HEAD_INTO = 0x1372,
-    MSG_WITH_BRIDGE_OUT_WILL_QUITE = 0x1374,
-    MSG_THEY_HID_THOSE_STOLEN_GOODS = 0x137b,
-    MSG_HAVE_LOT_LEFTOVER_BONES_FROM = 0x137c,
-    MSG_GEE_ALWAYS_GET_HUNGRY_WHEN = 0x1382,
-    MSG_WOW_HAVE_MANY_THINGS_ARENT = 0x1384,
-    MSG_WANT_MORE_BONES = 0x1385,
-    MSG_HE_REALLY_LIKES_BONES_WONDER = 0x1cf4
-};
 
 #define Scene_GetRecord_1(args...) Func_02005ae2(args)
 #define Scene_GetRecord_2(args...) Func_02005b1c(args)
@@ -100,21 +55,14 @@ enum PromptMessage {
 extern s16 Data_02000240[];
 extern u8 Data_0200dcc8[];
 extern u8 Data_0200dab8[];
-extern u8 LinkedMessage_MasterHammetIsntOnlyOne;
 extern u8 Data_0200e1fc[];
 extern u8 Data_0200e250[];
 extern u8 Data_0200de30[];
 extern u8 Data_0200cf2c[];
-extern u8 LinkedMessage_YouWereSuchGreatHelp[];
 extern u8 MsgNoEffect;
-extern u8 Value_000012c3;
 extern s32 Data_0200e4a8[];
 extern s32 Data_0200e4c0[];
-extern u8 LinkedMessage_TheyreActingSuspiciousSomethingsNot[];
-extern u8 LinkedMessage_TheyreBack[];
 extern u8 Data_0200d17c[];
-extern u8 LinkedMessage_YouRobinRightWontForget[];
-extern u8 LinkedMessage_IvanGotShamansRod[];
 extern u8 Data_0200d354[];
 extern u8 Data_0200d4c8[];
 extern u16 Data_0200e4f8;
@@ -525,7 +473,7 @@ void FieldScene_RunScene383SequenceC(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x857) == 0) {
-        Event_SetMessage((s32)LinkedMessage_YouWereSuchGreatHelp);
+        Event_SetMessage((s32)MsgKuupuappuYouWereSuchGreatHelp);
         Func_02004e3e_a(16, 20);
         Func_02004e90(16, 3, 20);
         Func_02004e50(16, 30);
@@ -537,7 +485,7 @@ void FieldScene_RunScene383SequenceC(void)
         SceneEffect_ApplyThreeValuesAndFinish(16, 3, 20);
         bump_step(1);
         if (Value0(Func_020055d6) == 0) {
-            Event_SetMessage(((s32)LinkedMessage_YouWereSuchGreatHelp + 3));
+            Event_SetMessage(((s32)MsgKuupuappuYouWereSuchGreatHelp + 3));
             Func_02004ea8_a(16, 20);
             Event_End();
             goto L_02000906;
@@ -545,7 +493,7 @@ void FieldScene_RunScene383SequenceC(void)
         GameFlag_Set(0x857);
         Party_GiveItem(ITEM_WATER_OF_LIFE, 0);
     }
-    Event_SetMessage(MSG_HEADING_OUT_BEYOND_GOMA_RANGE);
+    Event_SetMessage((s32)MsgKuupuappuHeadingOutBeyondGomaRange);
     Event_OpenMessage(16, 0);
     Event_Wait(20);
     if (Event_ChooseYesNo(0, 0) != 0) {

@@ -7,14 +7,13 @@
 use super::boxtree::{
     content_mix, directories, disk_tiles, legend_items, quiet, source_name, tracked_only,
 };
-use super::history::{day_number, percent, UNTAGGED};
+use super::history::{day_number, Day, History, Measure, UNTAGGED};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
 use super::model::{treemap, Rect, Tile};
 use super::palette::{BAND, BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
 use super::raster::{Canvas, Relief};
 use super::sessions::{family, Family};
-use serde_json::Value;
 use std::path::Path;
 
 /// Both figures are this many game pixels wide, shown at 838 CSS pixels,
@@ -25,15 +24,15 @@ pub(crate) const MAP: &str = "PROGRESS.png";
 /// Where both figures send a reader; the README links each image there too.
 pub(crate) const LINK: &str = "github.com/PascalPixel/alchemy";
 
-fn latest_label(history: &Value, game: &str) -> Option<String> {
-    if history["pending"][game] == true {
+fn latest_label(history: &History, game: &str) -> Option<String> {
+    if history.pending(game) {
         return Some("?%".into());
     }
-    history["days"]
-        .as_array()?
+    history
+        .days
         .iter()
         .rev()
-        .find_map(|row| percent(&row[game]))
+        .find_map(|row| row.game(game).and_then(Measure::percent))
         // Floored to two places, as the README's status line reads.
         .map(|value| format!("{:.2}%", ((value * 100.0) + 1e-6).floor() / 100.0))
 }
@@ -50,22 +49,19 @@ fn masthead(canvas: &mut Canvas, letters: &Letters, y: i32, heading: &str) -> i3
 /// The daily chart of `history`: x is calendar days since the project
 /// began, y is 0–100%, stricter-rule days are light bands, and today's
 /// values are labelled at the right end.
-pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
-    let days = history["days"].as_array().cloned().unwrap_or_default();
-    let models = models_shown(&days);
+pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
+    let days = &history.days;
+    let models = models_shown(days);
     // 16:9 (Pascal, 2026-09-24): the plot grows to fill what the strip and key leave.
     let height = WIDTH * 9 / 16;
     let footer = 72 + (legend_rows(letters, &models) - 1) * KEY_ROW;
     let mut canvas = Canvas::new(WIDTH, height, FACE);
     canvas.bevel(0, 0, WIDTH, height, Relief::Raised);
     canvas.clear_corners(0, 0, WIDTH, height);
-    let began = history["began"]
-        .as_str()
-        .and_then(day_number)
-        .unwrap_or_default();
+    let began = day_number(&history.began).unwrap_or_default();
     let last = days
         .iter()
-        .filter_map(|row| row["date"].as_str().and_then(day_number))
+        .filter_map(|row| day_number(&row.date))
         .max()
         .unwrap_or(began)
         .max(began + 1);
@@ -73,7 +69,7 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         ("tbs", "The Broken Seal", GOLD),
         ("tla", "The Lost Age", BLUE),
     ];
-    let pending = series.map(|(key, _, _)| history["pending"][key] == true);
+    let pending = series.map(|(key, _, _)| history.pending(key));
     let latest = series.map(|(key, _, _)| latest_label(history, key));
     // Title and key along the top line; each game's mark, in its line's
     // colour, is its swatch.
@@ -129,8 +125,8 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         bottom - 1 - ((value.clamp(0.0, 100.0) / 100.0) * (plot_h - 2) as f64).round() as i32
     };
     canvas.fill(left, top, plot_w, plot_h, WELL);
-    for change in history["stricter"].as_array().into_iter().flatten() {
-        if let Some(day) = change["date"].as_str().and_then(day_number) {
+    for (date, _) in history.stricter() {
+        if let Some(day) = day_number(date) {
             // The band covers the step into the stricter day.
             let (from, to) = (x_of(day - 1) + 1, x_of(day) + 1);
             canvas.fill(from, top + 1, to - from, plot_h - 2, BAND);
@@ -185,8 +181,8 @@ pub(crate) fn chart(letters: &Letters, history: &Value) -> Canvas {
         let points = days
             .iter()
             .filter_map(|row| {
-                let day = row["date"].as_str().and_then(day_number)?;
-                Some((x_of(day), y_of(percent(&row[*key])?)))
+                let day = day_number(&row.date)?;
+                Some((x_of(day), y_of(row.game(key).and_then(Measure::percent)?)))
             })
             .collect::<Vec<_>>();
         for pair in points.windows(2) {
@@ -254,15 +250,14 @@ fn model_colour(model: &str) -> &'static str {
 /// The models the strip shows with their colours, in the order each first
 /// appears in the history (release order within a day), untagged last. The
 /// key reads left to right and the strip stacks bottom to top in this order.
-fn models_shown(days: &[Value]) -> Vec<(String, &'static str)> {
+fn models_shown(days: &[Day]) -> Vec<(String, &'static str)> {
     let mut first = std::collections::BTreeMap::<String, String>::new();
     for row in days {
-        let date = row["date"].as_str().unwrap_or("");
-        for (model, count) in row["models"].as_object().into_iter().flatten() {
-            if count.as_u64().unwrap_or(0) > 0 {
+        for (model, count) in &row.models {
+            if *count > 0 {
                 first
                     .entry(model.clone())
-                    .or_insert_with(|| date.to_string());
+                    .or_insert_with(|| row.date.clone());
             }
         }
     }
@@ -328,7 +323,7 @@ fn legend_rows(letters: &Letters, models: &[(String, &'static str)]) -> i32 {
 fn models_strip(
     canvas: &mut Canvas,
     letters: &Letters,
-    days: &[Value],
+    days: &[Day],
     models: &[(String, &'static str)],
     (left, right, top): (i32, i32, i32),
     x_of: &dyn Fn(i64) -> i32,
@@ -336,12 +331,11 @@ fn models_strip(
     canvas.rounded_fill(left - 1, top - 1, right - left + 2, STRIP + 2, DARK);
     // Only days with commits draw; each column reaches halfway to the next
     // such day on either side, so a day without commits leaves no hole.
-    let present: Vec<(i64, &serde_json::Map<String, Value>)> = days
+    let present: Vec<(i64, &std::collections::BTreeMap<String, u64>)> = days
         .iter()
         .filter_map(|row| {
-            let day = row["date"].as_str().and_then(day_number)?;
-            let counts = row["models"].as_object()?;
-            (counts.values().filter_map(Value::as_u64).sum::<u64>() > 0).then_some((day, counts))
+            let day = day_number(&row.date)?;
+            (row.models.values().sum::<u64>() > 0).then_some((day, &row.models))
         })
         .collect();
     for (index, (day, counts)) in present.iter().enumerate() {
@@ -352,10 +346,10 @@ fn models_strip(
             ((x_of(before) + x_of(day)) / 2 + 1).max(left),
             ((x_of(day) + x_of(after)) / 2 + 1).min(right),
         );
-        let total: u64 = counts.values().filter_map(Value::as_u64).sum();
+        let total: u64 = counts.values().sum();
         let mut below = 0u64;
         for (model, colour) in models {
-            let Some(count) = counts.get(model).and_then(Value::as_u64).filter(|n| *n > 0) else {
+            let Some(count) = counts.get(model).copied().filter(|n| *n > 0) else {
                 continue;
             };
             let y0 = top + STRIP - (below * STRIP as u64 / total) as i32;
@@ -624,8 +618,21 @@ fn caption(letters: &Letters, name: &str, body: Box, folder: bool) -> Option<(Ve
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::coverage::history::Current;
     use crate::coverage::letters::fixture;
-    use serde_json::json;
+    fn row(date: &str, tbs: Option<f64>, tla: Option<f64>) -> Day {
+        Day {
+            tbs: tbs.map(Measure::published),
+            tla: tla.map(Measure::published),
+            ..Day::new(date)
+        }
+    }
+    fn counted(date: &str, models: &[(&str, u64)]) -> Day {
+        Day {
+            models: models.iter().map(|(m, n)| (m.to_string(), *n)).collect(),
+            ..Day::new(date)
+        }
+    }
     #[test]
     fn folder_names_fit_by_their_glyph_advances() {
         let letters = fixture();
@@ -676,12 +683,15 @@ mod tests {
     }
     #[test]
     fn the_model_key_groups_each_company_weakest_to_strongest() {
-        let days = json!([
-            {"date": "2026-07-16", "models": {"Untagged": 5, "Opus 5": 0}},
-            {"date": "2026-07-17", "models": {"Opus 5.5": 1, "Fable 5": 2, "GPT-9 Nova": 1}},
-            {"date": "2026-07-18", "models": {"Grok 4.6": 1, "Opus 5": 1}}
-        ]);
-        let shown = models_shown(days.as_array().unwrap());
+        let days = [
+            counted("2026-07-16", &[("Untagged", 5), ("Opus 5", 0)]),
+            counted(
+                "2026-07-17",
+                &[("Opus 5.5", 1), ("Fable 5", 2), ("GPT-9 Nova", 1)],
+            ),
+            counted("2026-07-18", &[("Grok 4.6", 1), ("Opus 5", 1)]),
+        ];
+        let shown = models_shown(&days);
         let names = shown.iter().map(|(m, _)| m.as_str()).collect::<Vec<_>>();
         assert_eq!(
             names,
@@ -701,12 +711,23 @@ mod tests {
     #[test]
     fn the_chart_starts_each_line_at_its_first_measurement() {
         let letters = fixture();
-        let history = json!({"began": "2026-07-16", "stricter": [{"date": "2026-09-09"}], "days": [
-            {"date": "2026-07-16", "tbs": {"percent": 1.0}},
-            {"date": "2026-09-09", "tbs": {"percent": 44.0}},
-            {"date": "2026-09-18", "tbs": {"percent": 56.0}, "tla": {"percent": 0.2}},
-            {"date": "2026-09-24", "tbs": {"done": 6486, "executable": 10000}, "tla": {"done": 213, "executable": 10000}, "models": {"Opus 5.5": 3, "Untagged": 1}}
-        ]});
+        let history = History {
+            began: "2026-07-16".into(),
+            days: vec![
+                row("2026-07-16", Some(1.0), None),
+                Day {
+                    correction: Some("stricter".into()),
+                    ..row("2026-09-09", Some(44.0), None)
+                },
+                row("2026-09-18", Some(56.0), Some(0.2)),
+                Day {
+                    tbs: Some(Measure::bytes(6486, 10000)),
+                    tla: Some(Measure::bytes(213, 10000)),
+                    ..counted("2026-09-24", &[("Opus 5.5", 3), ("Untagged", 1)])
+                },
+            ],
+            ..History::default()
+        };
         let canvas = chart(&letters, &history);
         assert_eq!((canvas.width, canvas.height), (838, 471));
         let gold = super::super::raster::rgb(GOLD);
@@ -730,12 +751,20 @@ mod tests {
     }
     #[test]
     fn pending_audits_label_unknown_and_keep_the_historical_lines() {
-        let history = json!({"began": "2026-09-27", "pending": {"tbs": true, "tla": true},
-        "days": [
-            {"date": "2026-09-27", "tbs": {"percent": 70.0}, "tla": {"percent": 2.0}},
-            {"date": "2026-09-28", "tbs": {"percent": 73.0}, "tla": {"percent": 2.1}}
-        ]});
-        let published = history["days"].clone();
+        let history = History {
+            began: "2026-09-27".into(),
+            current: Some(Current {
+                date: "2026-09-28".into(),
+                tbs_pending: true,
+                tla_pending: true,
+            }),
+            days: vec![
+                row("2026-09-27", Some(70.0), Some(2.0)),
+                row("2026-09-28", Some(73.0), Some(2.1)),
+            ],
+            ..History::default()
+        };
+        let published = history.days.clone();
         assert_eq!(latest_label(&history, "tbs").as_deref(), Some("?%"));
         assert_eq!(latest_label(&history, "tla").as_deref(), Some("?%"));
         let canvas = chart(&fixture(), &history);
@@ -743,6 +772,6 @@ mod tests {
             let ink = super::super::raster::rgb(ink);
             assert!((32..399).any(|y| canvas.get(41, y) == Some(ink)));
         }
-        assert_eq!(history["days"], published);
+        assert_eq!(history.days, published);
     }
 }

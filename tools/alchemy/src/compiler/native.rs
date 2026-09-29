@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 
 const USAGE: &str = "usage: alchemy build native --script FILE [--target GAME-EDITION] [--image main|resource_HEX] [--archive FILE] [--output DIR] SOURCE...\nCompile unchanged whole source files with the approved toolchain and link the ordered objects.\nArchives must be rebuilt under tools/out/compiler-runtime from approved compiler source.";
 
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Section {
     pub name: String,
     pub size: u64,
@@ -18,7 +18,7 @@ pub struct Section {
     pub load_address: u64,
 }
 
-#[derive(Debug, serde::Serialize, serde::Deserialize)]
+#[derive(Debug)]
 pub struct Build {
     pub image: String,
     pub sources: Vec<PathBuf>,
@@ -34,7 +34,7 @@ pub struct Build {
     pub functions: Vec<Function>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Function {
     pub name: String,
     pub section: String,
@@ -138,10 +138,8 @@ pub fn run(args: &[String]) -> Result<(), String> {
         &options.image,
         &options.archives,
     )?;
-    super::canonical_json::write_canonical(
-        &options.output.join("native.json"),
-        &serde_json::to_value(&result).map_err(|error| error.to_string())?,
-    )?;
+    fs::write(options.output.join("native.tsv"), native_table(&result))
+        .map_err(|error| error.to_string())?;
     for (name, path) in [
         ("elf", &result.elf),
         ("binary", &result.binary),
@@ -164,6 +162,25 @@ pub fn run(args: &[String]) -> Result<(), String> {
         );
     }
     Ok(())
+}
+
+/// A build's placed functions as TSV, one row each, under a header row.
+fn native_table(build: &Build) -> String {
+    let mut table = String::from("name\tsection\tsource\tobject\taddress\tload\tsize\tgroup\n");
+    for function in &build.functions {
+        table += &format!(
+            "{}\t{}\t{}\t{}\t{:08x}\t{:08x}\t{}\t{}\n",
+            function.name,
+            function.section,
+            function.source.display(),
+            function.object.display(),
+            function.address,
+            function.load_address,
+            function.size,
+            function.group_size
+        );
+    }
+    table
 }
 
 fn rooted(root: &Path, path: &Path) -> PathBuf {
@@ -309,7 +326,7 @@ fn build_scoped(
         sections: Vec::new(),
         functions: Vec::new(),
     };
-    let metadata = output.join("native.json");
+    let metadata = output.join("native.tsv");
     for path in [
         &result.elf,
         &result.binary,

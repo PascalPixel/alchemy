@@ -1,8 +1,7 @@
-use crate::compiler::{canonical_json::canonical_json, routing::root};
-use serde_json::Value;
+use crate::compiler::routing::root;
 use std::path::Path;
 
-/// Camelot-shaped roots: uppercase names and canonical JSON.
+/// Camelot-shaped roots: every name uppercase and spelled exactly.
 pub const NATIVE_ROOTS: [&str; 9] = [
     "games/COMMON/SRC",
     "games/THE LOST AGE/SRC",
@@ -14,26 +13,6 @@ pub const NATIVE_ROOTS: [&str; 9] = [
     "games/THE BROKEN SEAL/SOUND",
     "games/THE BROKEN SEAL/TEXT",
 ];
-
-/// Rewrite, or under `check` record, one JSON file that is not canonical.
-fn canonical_file(
-    path: &Path,
-    name: &str,
-    check: bool,
-    changed: &mut Vec<String>,
-) -> Result<(), String> {
-    let original = std::fs::read_to_string(path).map_err(|e| e.to_string())?;
-    let value: Value = serde_json::from_str(&original).map_err(|e| format!("{name}: {e}"))?;
-    let formatted = format!("{}\n", canonical_json(&value));
-    if original != formatted {
-        if check {
-            changed.push(name.to_string());
-        } else {
-            std::fs::write(path, formatted).map_err(|e| e.to_string())?;
-        }
-    }
-    Ok(())
-}
 
 fn exact_file(path: &Path) -> bool {
     let mut current = std::path::PathBuf::new();
@@ -93,11 +72,9 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
         println!("usage: alchemy format [--check]");
         return Ok(());
     }
-    let check = arguments == ["--check"];
-    if !check && !arguments.is_empty() {
+    if arguments != ["--check"] && !arguments.is_empty() {
         return Err("usage: alchemy format [--check]".into());
     }
-    let mut changed = Vec::new();
     let mut count = 0;
     for directory in NATIVE_ROOTS {
         for entry in walkdir::WalkDir::new(root().join(directory)) {
@@ -131,25 +108,10 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             {
                 return Err(format!("native filenames must be uppercase: {name}"));
             }
-            if path.extension().and_then(|e| e.to_str()) != Some("JSON") {
-                continue;
-            }
-            canonical_file(path, name, check, &mut changed)?;
             count += 1;
         }
     }
-    if !changed.is_empty() {
-        return Err(format!(
-            "run alchemy format; noncanonical native data: {}",
-            changed
-                .iter()
-                .take(10)
-                .cloned()
-                .collect::<Vec<_>>()
-                .join(", ")
-        ));
-    }
-    println!("native format ok: json_files={count} width=120 uppercase=true");
+    println!("native format ok: files={count} uppercase=true");
     Ok(())
 }
 

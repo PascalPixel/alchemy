@@ -9,7 +9,6 @@ tools/out/
 /games/*/SRC/**/CHR.PNG
 /games/*/SRC/**/*_CHR.PNG
 /games/*/SRC/**/*.BIN
-/games/*/SRC/GRAPHICS/COMMON/PALETTE.JSON
 /games/*/SRC/GRAPHICS/COMMON/STILL.PNG
 /games/*/SRC/GRAPHICS/COMMON/TILE.PNG
 /games/*/SRC/GRAPHICS/COMMON/PORTRAIT.PNG

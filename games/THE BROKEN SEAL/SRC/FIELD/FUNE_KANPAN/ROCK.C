@@ -17,11 +17,13 @@ struct MapWork {
 extern struct MapWork *gMapWork;
 
 /* The deck's work, laid out in order just past the overlay's image: the
- * phases of the four drifting slots and the slot work the deck scenes keep,
- * the two wave angles, the scroll of layer 5 and its speed. */
-s32 FuneKanpan_SlotPhase[2] = { 0 };
+ * phases of the four drifting slots, the slot work the deck scenes keep and
+ * the eight slot values whose bands pace them, the two wave angles, the
+ * scroll of layer 5 and its speed. */
+u16 FuneKanpan_SlotPhase[4] = { 0 };
 s32 FuneKanpan_WaveAngleY = 0;
-s32 FuneKanpan_SlotWork[5] = { 0 };
+s32 FuneKanpan_SlotWork = 0;
+u16 FuneKanpan_SlotValue[8] = { 0 };
 s32 FuneKanpan_LayerScroll[2] = { 0 };
 s32 FuneKanpan_WaveAngleX = 0;
 s32 FuneKanpan_DeckSpare = 0;

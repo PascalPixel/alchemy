@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "IO_REG.H"
 #include "SERIAL_RUNTIME.H"
-extern u8 Data_03001cb0[];
+extern u8 gSerialExchangeActive[];
 
 void SerialRuntime_HandleTransferInterrupt(void)
 {
@@ -83,7 +83,7 @@ void SerialRuntime_RemoveIrqHandlers(void)
     s16 *work;
     s32 handler;
 
-    work = (s16 *)((u32)&Data_03001cb0);
+    work = (s16 *)((u32)&gSerialExchangeActive);
     do {
         do {
         } while (0);

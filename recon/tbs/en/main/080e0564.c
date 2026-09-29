@@ -16,6 +16,7 @@
  * pool that the compiler folds like a constant, or Pascal's ruling on it.
  */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "BATTLE_EFX.H"
@@ -27,9 +28,6 @@
 extern u8 gBattleFxWork[];
 extern struct EffectStep gMapCellBuffer[];
 extern u16 ParticleStreams_CellOffsets[];
-extern u8 Value_0000006f;
-extern u8 Value_00000073;
-extern u8 Value_00000094;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
@@ -81,9 +79,9 @@ void BattleFx_RunSpoutBursts(struct BattleEffectArgument *object)
     BattleEffect_LoadWork(47, 7, 7, 3, 3);
     draw[0] = heap_cache[7];
     draw[1] = heap_cache[8];
-    Resource_LoadAndDecompress((s32)&Value_00000073, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000094, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_0000006f, (u8 *)work + 0x2f8, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_VenusDjinnSmallSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, (u8 *)work + 0x2f8, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback((s32)BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);

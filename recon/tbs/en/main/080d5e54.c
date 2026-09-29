@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -112,9 +113,6 @@ typedef s32 (*SqrtFn)(s32 value);
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
-extern u8 Value_00000073;
-extern u8 Value_00000092;
-extern u8 Value_000000ba;
 
 /* Depth-scaled spark cells: one source offset per size 1..9. */
 extern const u16 ParticleStreams_CellOffsets[];
@@ -187,8 +185,8 @@ s32 BattleEffect_RunSparkTravel(void *object)
     graphics = heap_cache[2];
     STATE = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32) &Value_00000092, work, 1, 1);
-    Resource_LoadAndDecompress((s32) &Value_00000073, graphics, 0, 0);
+    Resource_LoadAndDecompress((s32) &ResourceId_MercuryDjinnSmallSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &ResourceId_ParticleSpritesA, graphics, 0, 0);
     BattleFx_FetchRectangleBlitters(M2C_FIELD(STATE, s32 *, 4) ^ 1, blit);
     actor = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
     goal = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 36));
@@ -328,7 +326,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
         step++;
     } while (i != 512);
 
-    Resource_LoadAndDecompress((s32) &Value_000000ba, graphics, 0, 0);
+    Resource_LoadAndDecompress((s32) &ResourceId_SparkleDots, graphics, 0, 0);
 
     if (M2C_FIELD(STATE, s32 *, 20) * 8 + 72 != 0) {
         frame = 0;

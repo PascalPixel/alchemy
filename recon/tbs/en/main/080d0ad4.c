@@ -6,6 +6,7 @@
    with 18 symbols the linked build does not define, too far for a 10-minute
    search, so none was run. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 extern u8 Value_00007828;
 extern u8 Value_00000100;
 extern u8 Value_00001000;
@@ -36,9 +37,6 @@ typedef void (*BattleEffectDrawFn)(
     s32 width,
     s32 height);
 
-extern u8 Value_00000073;
-extern u8 Value_00000076;
-extern u8 Value_00000079;
 extern void *gWorkSlot[];
 extern const u16 BattleFx6_FlareCells[];
 
@@ -109,14 +107,14 @@ s32 Unnamed_080d0ad4(s32 actor) {
     M2C_FIELD(temp_r2_18, s32 *, 0x7828) = actor;
     BattleFx_BeginCanvasLayer(0);
     *(u16 *)0x04000020 = 0x100;
-    palette = Resource_GetTableEntry((s32)&Value_00000079);
+    palette = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
     ((WordCopy)0x03001388)((void *)0x05000000, palette, 0x80);
     Resource_DecodeType01(palette + 0x80, sp44);
     Resource_DecodeType01(
-        Resource_GetTableEntry((s32)&Value_00000073),
+        Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA),
         temp_r6_25);
     Resource_DecodeType01(
-        Resource_GetTableEntry((s32)&Value_00000076),
+        Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD),
         temp_r2_18 + 0x1000);
     M2C_FIELD(sp44, s32 *, 0x7780) = 3;
     M2C_FIELD(sp44, s32 *, 0x7784) = 0x04040404;

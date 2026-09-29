@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /* Only the m2c spellings this draft actually uses. */
@@ -7,8 +8,6 @@
 void **GetBattleObjectSlotFar(s32 member_id);
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef s32 (*MagnitudeFn)(s32 squared_distance);
-extern u8 Value_000000a9;
-extern u8 Value_000000bb;
 
 s32 Unnamed_080ce4e8(s32 actor) {
     s32 sp8;
@@ -53,11 +52,11 @@ s32 Unnamed_080ce4e8(s32 actor) {
     temp_sl_23 = *(void **)0x03001EEC;
     M2C_FIELD(temp_sl_23, s32 *, 0x7828) = actor;
     BattleFx_BeginCanvasLayer(0);
-    temp_r0_29 = Resource_GetTableEntry((s32)&Value_000000a9);
+    temp_r0_29 = Resource_GetTableEntry((s32)&ResourceId_SkullSheet);
     ((WordCopyFn)0x03001388)((void *)0x05000000, temp_r0_29, 0x80);
     Resource_DecodeType01(temp_r0_29 + 0x80, temp_sl_23);
     ((WordCopyFn)0x03001388)((void *)0x05000000,
-        Resource_GetTableEntry((s32)&Value_000000bb), 0x80);
+        Resource_GetTableEntry((s32)&ResourceId_PinkBurstSheet), 0x80);
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
     sp20 = *(u32 *)0x03001F08;
     BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);

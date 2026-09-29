@@ -50,6 +50,7 @@
  * and an Iwram_CopyWords entry. H1 stays canonical.
  */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
@@ -85,10 +86,7 @@ extern u8 PuffArc_CellWidths[];
 extern u8 PuffArc_CellHeights[];
 extern u8 PuffArc_CellBiasY[];
 extern u16 PuffArc_CellSourceOffsets[];
-extern u8 Value_00000073;
-extern u8 Value_0000008e;
 extern u8 Value_000000b7;
-extern u8 Value_000000b4;
 
 #define WORK_EFX ((struct BattleEffectArgument *)work->effect)
 
@@ -122,8 +120,8 @@ void Unnamed_080e08c0(struct BattleEffectArgument *effect)
     draw = callbacks;
     BattleFx_FetchRectangleBlitters(0, (u32 *)draw);
 
-    Resource_LoadAndDecompress((s32)&Value_00000073, sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_0000008e, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MarsDjinnSmallSheet, work, 1, 0);
     Resource_LoadAndDecompress((s32)&Value_000000b7, (u8 *)work + 0x320, 1, 1);
     work->transfer_mode = 2;
     work->transfer_value = 75;
@@ -176,7 +174,7 @@ void Unnamed_080e08c0(struct BattleEffectArgument *effect)
         }
         if (frame == 20) {
             ((WordCopyFn)0x03001388)((void *)0x05000000,
-                Resource_GetTableEntry((s32)&Value_0000008e), 128);
+                Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128);
         }
         if ((u32)(frame - 20) <= 11) {
             if (frame > 23)
@@ -187,7 +185,7 @@ void Unnamed_080e08c0(struct BattleEffectArgument *effect)
         if (frame == 32) {
             Audio_PlayCue(0x91);
             *(s32 *)((u8 *)work + 0x77a8) = 8;
-            Resource_LoadAndDecompress((s32)&Value_000000b4, work, 1, 1);
+            Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
         }
         if (frame > 31) {
             member = 0;

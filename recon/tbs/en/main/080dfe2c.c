@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -56,9 +57,6 @@ void WaitFrames(s32 frames);
 
 extern const u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080eec5a[];
-extern u8 Value_00000073;
-extern u8 Value_00000092;
-extern u8 Value_0000006f;
 
 void Func_080dfe2c(void *object)
 {
@@ -88,9 +86,9 @@ void Func_080dfe2c(void *object)
     BattleFx_BeginCanvasLayer(0);
     callback_ptr = callbacks;
     BattleFx_FetchRectangleBlitters(0, callback_ptr);
-    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000092, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_0000006f, (void *)0x02010000, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, (void *)0x02010000, 1, 1);
     Graphics_TransposeCopy(0x02010000, (s32)((u8 *)work + 0x2A8), 17, 104);
     Graphics_TransposeCopy(0x020106E8, (s32)((u8 *)work + 0x990), 34, 65);
 

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 #include "FIXED_MATH.H"
@@ -57,7 +58,6 @@ struct TriangleWork {
 extern u8 gWorkSlot[];
 extern u16 BattleFx6_FlareCells[];
 extern s32 Data_080ee128[];
-extern u8 Value_00000073, Value_00000076, Value_00000079, Value_0000008f;
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 u8 *Resource_GetTableEntry(s32);
@@ -108,11 +108,11 @@ void Func_080d05fc(Effect *effect)
     if (WORK_EFFECT->mode == 1)
         BattleFx_PrepareCanvasEffect(effect, 3, WORK_EFFECT->side, 0, &origin_x, &origin_y);
     *(s16 *)0x04000020 = 0x100;
-    resource = Resource_GetTableEntry((s32)&Value_00000079);
+    resource = Resource_GetTableEntry((s32)&ResourceId_RuneSheet);
     ((WordCopy)0x03001388)((void *)0x05000000, resource, 128);
     Resource_DecodeType01(resource + 128, work);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000073), sheet);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000076), (u8 *)work + 0x1000);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), sheet);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesD), (u8 *)work + 0x1000);
     resource = Resource_GetTableEntry((s32)&Value_0000008f);
     Resource_DecodeType01(resource + 128, (u8 *)work + 0x2000);
     work->transfer_mode = 3;

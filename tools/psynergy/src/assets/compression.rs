@@ -466,3 +466,88 @@ fn delta7_image_uses_declared_layout() {
     assert!(delta7_image(&png, 16, 8, 2).is_err());
     assert!(delta7_image(&png, 8, 8, 128).is_err());
 }
+
+/// The 4-bit icon coder's prefix code for each move-to-front position, then
+/// its terminator, in the order the bits are read.
+const ICON4_CODES: [&str; 17] = [
+    "0",
+    "100",
+    "1010",
+    "1011",
+    "1100",
+    "1101",
+    "1110",
+    "111100",
+    "111101",
+    "111110",
+    "11111100",
+    "11111101",
+    "11111110",
+    "1111111100",
+    "1111111101",
+    "1111111110",
+    "1111111111",
+];
+
+/// 4-bit pixels as move-to-front positions over the sixteen values, each a
+/// prefix code read least significant bit first, then the terminator; the
+/// last byte's unused bits are set.
+pub fn encode_icon4(pixels: &[u8]) -> Result<Vec<u8>, AssetError> {
+    let mut table: [u8; 16] = std::array::from_fn(|i| i as u8);
+    let mut bits = Bits::default();
+    let mut put = |code: &str| {
+        for bit in code.bytes() {
+            bits.put(u32::from(bit - b'0'), 1);
+        }
+    };
+    for &pixel in pixels {
+        let index = table
+            .iter()
+            .position(|&p| p == pixel)
+            .ok_or_else(|| AssetError("icon pixel exceeds four bits".into()))?;
+        put(ICON4_CODES[index]);
+        table[..=index].rotate_right(1);
+    }
+    put(ICON4_CODES[16]);
+    bits.align(8, 1);
+    Ok(bits.bytes)
+}
+
+/// The pixels of a 4-bit icon stream, up to its terminator.
+pub fn decode_icon4(bytes: &[u8]) -> Result<Vec<u8>, AssetError> {
+    let mut cursor = 0usize;
+    let mut table: [u8; 16] = std::array::from_fn(|i| i as u8);
+    let mut pixels = Vec::new();
+    loop {
+        let mut code = String::new();
+        let index = loop {
+            let byte = bytes
+                .get(cursor / 8)
+                .ok_or_else(|| AssetError("truncated icon stream".into()))?;
+            code.push(if (byte >> (cursor % 8)) & 1 == 0 {
+                '0'
+            } else {
+                '1'
+            });
+            cursor += 1;
+            if let Some(index) = ICON4_CODES.iter().position(|c| *c == code) {
+                break index;
+            }
+        };
+        if index == 16 {
+            return Ok(pixels);
+        }
+        pixels.push(table[index]);
+        table[..=index].rotate_right(1);
+    }
+}
+
+#[test]
+fn icon4_inverse_moves_to_front_and_terminates() {
+    assert_eq!(encode_icon4(&[0, 1, 1]).unwrap(), [0xe2, 0xff]);
+    let pixels = (0..16u8).rev().cycle().take(1024).collect::<Vec<_>>();
+    let encoded = encode_icon4(&pixels).unwrap();
+    assert_eq!(decode_icon4(&encoded).unwrap(), pixels);
+    assert!(decode_icon4(&encoded[..encoded.len() - 2]).is_err());
+    assert!(encode_icon4(&[16]).is_err());
+}

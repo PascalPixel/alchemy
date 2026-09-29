@@ -961,13 +961,10 @@ Character_DescriptorTable:
 	.global Resource_BuildStamp
 Resource_BuildStamp:
 	.incbin "baserom.gba", 0x00320fa0, 0x00000010
-	.section .unidentified.08323870,"a"
-	.global Title_IntroGraphicsA
-Title_IntroGraphicsA:
-	.incbin "baserom.gba", 0x00323870, 0x00001178
-	.global Title_IntroGraphicsB
-Title_IntroGraphicsB:
-	.incbin "baserom.gba", 0x003249e8, 0x000066c0
+	.section .unidentified.083249e7,"a"
+	.incbin "baserom.gba", 0x003249e7, 0x00000001
+	.section .unidentified.0832b0a6,"a"
+	.incbin "baserom.gba", 0x0032b0a6, 0x00000002
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032b0a8, 0x000086f8
@@ -1282,10 +1279,6 @@ BattleFx_CrystalSheet:
 	.incbin "baserom.gba", 0x004101cf, 0x00000001
 	.section .unidentified.08411275,"a"
 	.incbin "baserom.gba", 0x00411275, 0x00000003
-	.section .unidentified.08411474,"a"
-	.global Field_PerspectiveDataA
-Field_PerspectiveDataA:
-	.incbin "baserom.gba", 0x00411474, 0x0000f828
 	.section .unidentified.08424687,"a"
 	.incbin "baserom.gba", 0x00424687, 0x00000001
 	.section .unidentified.084247d9,"a"
@@ -1318,10 +1311,6 @@ Field_PerspectiveDataA:
 	.incbin "baserom.gba", 0x00434ca6, 0x00000002
 	.section .unidentified.08435ef7,"a"
 	.incbin "baserom.gba", 0x00435ef7, 0x00000001
-	.section .unidentified.084366f8,"a"
-	.global Ui_Icons
-Ui_Icons:
-	.incbin "baserom.gba", 0x004366f8, 0x0000592c
 	.section .unidentified.0843f866,"a"
 	.incbin "baserom.gba", 0x0043f866, 0x00000002
 	.section .unidentified.08441a1a,"a"

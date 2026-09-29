@@ -22,7 +22,7 @@ s32 FindNearestF2Actor(void)
         Actor *actor = *actor_slot++;
         if (actor != 0) {
             if (*actor->data->kind == 0xf2) {
-                s32 dist = MeasureFixedPointPositionDistance(
+                s32 dist = FixedPoint_Distance(
                     (u8 *)origin + 8, (u8 *)actor + 8);
                 if (dist < min_dist) {
                     min_dist = dist;

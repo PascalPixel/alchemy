@@ -4,11 +4,11 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 {
     SceneState_InitCursorWhenUnset(x, y, style);
 
-    KorosseoKabe_MarkerX = (u16)x;
-    KorosseoKabe_MarkerY = (u16)y;
-    KorosseoKabe_MarkerStyle = (u16)(style & 3);
-    KorosseoKabe_MarkerFrame = 0;
-    KorosseoKabe_MarkerDuration = 0;
+    Korosseo_MarkerX = (u16)x;
+    Korosseo_MarkerY = (u16)y;
+    Korosseo_MarkerPriority = (u16)(style & 3);
+    Korosseo_MarkerBlink = 0;
+    Korosseo_MarkerSteps = 0;
 
     {
         s32 budget = 0xc80;
@@ -18,12 +18,12 @@ void SceneEffect_SeedMarkerAndInstallTask(u32 x, u32 y, u32 style)
 
 void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
 {
-    KorosseoKabe_MarkerTargetX = (u16)x;
-    KorosseoKabe_MarkerTargetY = (u16)y;
-    KorosseoKabe_MarkerStartX = KorosseoKabe_MarkerX;
-    KorosseoKabe_MarkerStartY = KorosseoKabe_MarkerY;
-    KorosseoKabe_MarkerDuration = (u16)duration;
-    KorosseoKabe_MarkerElapsed = 0;
+    Korosseo_MarkerEndX = (u16)x;
+    Korosseo_MarkerEndY = (u16)y;
+    Korosseo_MarkerStartX = Korosseo_MarkerX;
+    Korosseo_MarkerStartY = Korosseo_MarkerY;
+    Korosseo_MarkerSteps = (u16)duration;
+    Korosseo_MarkerStep = 0;
 
     {
         s32 frame_budget = 0xc80;
@@ -35,8 +35,8 @@ void SceneState_StartMarkerMove(u32 x, u32 y, u32 duration)
 void SceneEffect_RemoveMarkerTask(void)
 {
     Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
-    Resource_ResetEntry(KorosseoKabe_CursorSlot);
-    KorosseoKabe_CursorSlot = -1;
+    Resource_ResetEntry(Korosseo_MarkerSlot);
+    Korosseo_MarkerSlot = -1;
 }
 
 void SceneActor_PlaceWithScale20000(s32 selector, s32 x, s32 z)

@@ -228,45 +228,8 @@ SceneData_SelectDataByRuntimeSelectorB:
 	.4byte 0x00000043
 	.4byte 0x0200b184
 	.4byte 0x0200abcc
-	.section .text.x0200970c,"ax",%progbits
+	.section .text.x02009750,"ax",%progbits
 	.balign 4
-	.global Func_0200170c
-	.thumb_func
-Func_0200170c:
-	push {r5, lr}
-	ldr r3, [pc, #24]
-	ldr r3, [r3]
-	cmp r3, #0
-	beq .L_0200170c_0
-	ldr r3, [pc, #20]
-	movs r0, #0
-	ldr r5, [r3]
-	bl 0x0200a350
-	str r0, [r5, #24]
-.L_0200170c_0:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x0200b328
-	.4byte 0x03001ee0
-	.global Func_02001730
-	.thumb_func
-Func_02001730:
-	push {lr}
-	ldr r3, [pc, #20]
-	ldr r3, [r3]
-	cmp r3, #0
-	beq .L_02001730_0
-	ldr r3, [pc, #16]
-	ldr r2, [r3]
-	movs r3, #0
-	str r3, [r2, #24]
-.L_02001730_0:
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0200b328
-	.4byte 0x03001ee0
 	.global ImiruFuchin_ApplyEntryHook
 	.thumb_func
 ImiruFuchin_ApplyEntryHook:
@@ -645,55 +608,6 @@ Func_02001a34:
 	.4byte 0x0000003f
 	.4byte 0x00000040
 	.4byte 0x00000309
-	.section .text.x02009fac,"ax",%progbits
-	.balign 4
-	.global Func_02001fac
-	.thumb_func
-Func_02001fac:
-	push {lr}
-	ldr r3, [pc, #80]
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #6
-	bgt .L_02001fac_0
-	ldr r3, [pc, #68]
-	ldr r2, [r3]
-	movs r0, #1
-	subs r3, #100
-	adds r2, #52
-	ldr r1, [r3]
-	strb r0, [r2]
-	ldr r2, [pc, #56]
-	movs r4, #0
-	adds r3, r1, r2
-	subs r2, #2
-	strb r4, [r3]
-	adds r3, r1, r2
-	strb r0, [r3]
-	ldr r3, [pc, #48]
-	adds r1, r1, r3
-	strb r0, [r1]
-	movs r0, #0
-	movs r1, #1
-	bl 0x0200a3b8
-	ldr r0, [pc, #36]
-	movs r1, #1
-	bl 0x0200a3b0
-	movs r0, #16
-	bl 0x0200a3c0
-	movs r0, #16
-	bl 0x0200a260
-.L_02001fac_0:
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
-	.4byte 0x03001f30
-	.4byte 0x0000053e
-	.4byte 0x0000053d
-	.4byte 0x00203108
 	.section .rodata,"a",%progbits
 	.global gEffectScripts
 gEffectScripts:

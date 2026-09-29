@@ -9,10 +9,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/STAGED_PALETTE.o"(.text)
-        "*/resource_393_overlay.o"(.text.x02008d5c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KORIMA/PALETTE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORIMA_KAWA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_393_overlay.o"(.rodata.part1)
     }
+    .bss : { "*/resource_393_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

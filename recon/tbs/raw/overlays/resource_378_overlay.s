@@ -141,71 +141,9 @@ ShindenHeya_ChooseRestartOption:
 	.4byte 0x03001b04
 	.2byte 0x1800
 	.2byte 0x0300
-	.section .text.x0200b144,"ax",%progbits
-	.p2align 2
-	.global Func_02003144
-	.thumb_func
-Func_02003144:
-	push {lr}
-	adds r3, r0, #0
-	adds r3, #100
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [r0, #12]
-	lsls r2, r2, #12
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	str r3, [r0, #60]
-	adds r1, r0, #0
-	adds r1, #102
-	ldrh r3, [r1]
-	lsls r3, r3, #16
-	asrs r2, r3, #18
-	ldr r3, [pc, #28]
-	ands r2, r3
-	movs r4, #0
-	cmp r2, #1
-	beq .L_02003144_0
-	cmp r2, #1
-	bgt .L_02003144_1
-	cmp r2, #0
-	beq .L_02003144_2
-	b .L_02003144_3
-.L_02003144_1:
-	cmp r2, #2
-	beq .L_02003144_4
-	cmp r2, #3
-	beq .L_02003144_0
-	b .L_02003144_3
-	.4byte 0x00000003
-.L_02003144_2:
-	movs r4, #128
-	lsls r4, r4, #9
-	b .L_02003144_3
-.L_02003144_0:
-	ldr r4, [pc, #32]
-	b .L_02003144_3
-.L_02003144_4:
-	ldr r4, [pc, #32]
-.L_02003144_3:
-	str r4, [r0, #24]
-	str r4, [r0, #28]
-	ldrh r3, [r1]
-	subs r3, #1
-	strh r3, [r1]
-	lsls r3, r3, #16
-	cmp r3, #0
-	bgt .L_02003144_5
-	ldr r1, [pc, #16]
-	bl 0x0200b568
-.L_02003144_5:
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0000cccc
-	.4byte 0x00009999
-	.4byte 0x0200c18c
 	.section .rodata,"a",%progbits
+	.global ShindenHeya_LeaderCircleScript
+ShindenHeya_LeaderCircleScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -261,6 +199,8 @@ Func_02003144:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global ShindenHeya_GeraldCircleScript
+ShindenHeya_GeraldCircleScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -316,6 +256,8 @@ Func_02003144:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global ShindenHeya_ItemIconGrowScript
+ShindenHeya_ItemIconGrowScript:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00008000
@@ -421,6 +363,8 @@ Func_02003144:
 	.4byte 0x00000000
 	.4byte 0x00000002
 	.4byte 0x00000010
+	.global ShindenHeya_ItemIconEndScript
+ShindenHeya_ItemIconEndScript:
 	.4byte 0x00000000
 	.4byte 0x0000003c
 	.4byte 0x0000001b
@@ -557,6 +501,8 @@ ShindenHeya_PlacementB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global ShindenHeya_PlacementSequenceB
+ShindenHeya_PlacementSequenceB:
 	.4byte 0xffff0002
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -885,6 +831,8 @@ ShindenHeya_SceneTableI:
 	.4byte 0x00000001
 	.4byte 0x00000001
 	.4byte 0x00000001
+	.global ShindenHeya_OwnerEffectScript
+ShindenHeya_OwnerEffectScript:
 	.4byte 0x00000016
 	.4byte 0x00000006
 	.4byte 0xffff8000
@@ -897,4 +845,6 @@ ShindenHeya_SceneTableI:
 	.4byte 0x00000060
 	.4byte 0x00000000
 	.4byte 0x0000001b
+	.global ShindenHeya_SparkEndScript
+ShindenHeya_SparkEndScript:
 	.4byte 0x0000001b

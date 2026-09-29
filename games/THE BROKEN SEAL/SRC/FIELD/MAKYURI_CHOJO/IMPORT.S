@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global IwramSignedDivideEntry
+	.thumb_func
+IwramSignedDivideEntry:
 	overlay_veneer IwramSignedDivide
 	.global Engine_TaskWait
 	.thumb_func
@@ -32,7 +35,13 @@ Vector_AddPolarOffsetFar:
 	.thumb_func
 Engine_ObjectSetAnimation:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	.global Engine_ObjectSetScript
+	.thumb_func
+Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	.global CreateOverlayObject
 	.thumb_func
 CreateOverlayObject:
@@ -150,6 +159,9 @@ Object_LinkPairFar:
 	.thumb_func
 Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
+	.global Engine_ObjectSetPalette
+	.thumb_func
+Engine_ObjectSetPalette:
 	.global SetOverlayObjectSlot
 	.thumb_func
 SetOverlayObjectSlot:

@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/OBJ_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/OBJECT_CONFIG.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/resource_3b3_overlay.o"(.text.x0200813c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/STAGED_ACTOR.o"(.text)
         "*/resource_3b3_overlay.o"(.text.x02008cc0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TAKARA_HASHIRA/SETTLE.o"(.text)
@@ -50,4 +50,7 @@ SECTIONS
     }
     .bss : { "*/resource_3b3_overlay.o"(.bss) }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = Engine_MathDivide;
 }

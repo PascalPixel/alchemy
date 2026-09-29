@@ -6,8 +6,17 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global IwramSignedDivideEntry
+	.thumb_func
+IwramSignedDivideEntry:
 	overlay_veneer IwramSignedDivide
+	.global Engine_ObjectSetAnimation
+	.thumb_func
+Engine_ObjectSetAnimation:
 	overlay_veneer ObjectDispatch_ApplyArgumentToChildrenFar
+	.global Engine_ObjectSetScript
+	.thumb_func
+Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
 	.global Engine_ObjectCreate
 	.thumb_func

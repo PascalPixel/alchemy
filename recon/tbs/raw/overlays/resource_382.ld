@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/resource_382_overlay.o"(.text.x0200813c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/ACTOR_PRESENTATION.o"(.text)
         "*/resource_382_overlay.o"(.text.x020088cc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_MURA/SCENE_STEP.o"(.text)
@@ -23,4 +23,7 @@ SECTIONS
         "*/resource_382_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = Engine_MathDivide;
 }

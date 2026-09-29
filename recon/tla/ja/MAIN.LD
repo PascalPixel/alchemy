@@ -5,6 +5,7 @@ SECTIONS
     .rom :
     {
         "*/recon/tla/ja/rom.o"(.rom.00000000)
+        "*/games/COMMON/SRC/GRAPHICS/UI/WINDOW_TILES.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/UI/SMALL_FONT.o"(.rodata)
         "*/recon/tla/ja/rom.o"(.rom.006848d0)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TITLE/TITLE_SCREEN.o"(.rodata)
@@ -1340,7 +1341,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILESET/SET_46/TILES_B.o"(.rodata)
         "*/recon/tla/ja/rom.o"(.rom.00c03861)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILESET/SET_46/TILES_C.o"(.rodata)
-        "*/recon/tla/ja/rom.o"(.rom.00c04a64)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/TILESET/SET_46/TILES_D.o"(.rodata)
+        "*/recon/tla/ja/rom.o"(.rom.00c04ba3)
         "*/games/THE LOST AGE/SRC/MAP/MAP_096/MAP.o"(.rodata)
         "*/recon/tla/ja/rom.o"(.rom.00c07115)
         "*/games/THE LOST AGE/SRC/GRAPHICS/TILESET/SET_47/PALETTE.o"(.rodata)

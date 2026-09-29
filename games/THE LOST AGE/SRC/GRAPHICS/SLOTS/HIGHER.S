@@ -7,6 +7,26 @@ Slots_HigherBanner:
 	.incbin "GRAPHICS/SLOTS/HIGHER_JA.gbapal"
 	.incbin "GRAPHICS/SLOTS/HIGHER_JA.4bpp32x32.lz"
 	.else
+	.ifdef TLA_EDITION_DE
+	.incbin "GRAPHICS/SLOTS/HIGHER_DE.gbapal"
+	.incbin "GRAPHICS/SLOTS/HIGHER_DE.4bpp32x32.lz"
+	.else
+	.ifdef TLA_EDITION_ES
+	.incbin "GRAPHICS/SLOTS/HIGHER_ES.gbapal"
+	.incbin "GRAPHICS/SLOTS/HIGHER_ES.4bpp32x32.lz"
+	.else
+	.ifdef TLA_EDITION_FR
+	.incbin "GRAPHICS/SLOTS/HIGHER_FR.gbapal"
+	.incbin "GRAPHICS/SLOTS/HIGHER_FR.4bpp32x32.lz"
+	.else
+	.ifdef TLA_EDITION_IT
+	.incbin "GRAPHICS/SLOTS/HIGHER_IT.gbapal"
+	.incbin "GRAPHICS/SLOTS/HIGHER_IT.4bpp32x32.lz"
+	.else
 	.incbin "GRAPHICS/SLOTS/HIGHER.gbapal"
 	.incbin "GRAPHICS/SLOTS/HIGHER.4bpp32x32.lz"
+	.endif
+	.endif
+	.endif
+	.endif
 	.endif

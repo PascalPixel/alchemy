@@ -2221,6 +2221,8 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.0895383f)
         "*/games/THE LOST AGE/SRC/GRAPHICS/WORLD_MAP/TILES_D6.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08953b92)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/UI/COMMAND_ICONS.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.08967f12)
         "*/games/THE LOST AGE/SRC/GRAPHICS/MONSTER/BLUE_DEVIL.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08970727)
         "*/games/THE LOST AGE/SRC/GRAPHICS/MONSTER/PINK_BRUTE.o"(.rodata)

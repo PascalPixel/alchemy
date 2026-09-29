@@ -1054,9 +1054,8 @@ Resource_Data1D5:
 	.global Resource_Data1D6
 Resource_Data1D6:
 	.incbin "baserom.gba", 0x0095bb58, 0x00008734
-	.global Resource_Data1D7
-Resource_Data1D7:
-	.incbin "baserom.gba", 0x0096428c, 0x00003c88
+	.section .unidentified.08967f12,"a"
+	.incbin "baserom.gba", 0x00967f12, 0x00000002
 	.global Resource_Data1D8
 Resource_Data1D8:
 	.incbin "baserom.gba", 0x00967f14, 0x00000100

@@ -65,7 +65,7 @@ struct ObjectSpriteList {
 extern struct ObjectSpriteList *Data_03001e68;
 
 struct FieldObject *ObjectDispatch_FindFreeObject(void);
-void *Func_0800bc70(s32 id);
+void *ResourceObject_Create(s32 id);
 struct AnimationMetadata *Func_08185000(s32 id);
 void Object_SetPositionAndResetMotion(struct FieldObject *object, s32 x, s32 y, s32 z);
 
@@ -86,7 +86,7 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
     object->radius = 16;
     switch (kind) {
     case 0:
-        sprite = Func_0800bc70(id);
+        sprite = ResourceObject_Create(id);
         if (sprite != NULL) {
             object->animation_kind = 1;
             object->animation = sprite;
@@ -104,13 +104,13 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
         zero = 0;
         object->animation = entry;
         Dma_Set(&zero, entry, 0x85000004, (volatile u32 *)0x040000d4);
-        sprite = Func_0800bc70(id);
+        sprite = ResourceObject_Create(id);
         if (sprite != NULL) {
             object->radius = Func_08185000(id)->radius >> 1;
             *entry = (u32)sprite;
             entry = list + 3;
         }
-        sprite = Func_0800bc70(id + 1);
+        sprite = ResourceObject_Create(id + 1);
         if (sprite != NULL)
             *entry = (u32)sprite;
         break;

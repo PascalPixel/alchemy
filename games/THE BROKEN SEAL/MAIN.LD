@@ -237,7 +237,7 @@ SECTIONS
         "*/recon/tbs/raw/0800bbc0.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0800bc46.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/CLEAR_METADATA_RECORD.o"(.text)
-        "*/recon/tbs/raw/0800bc70.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/CREATE_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/RELEASE_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/METADATA_SUM_COMMAND_LENGTHS.o"(.text)
         "*/recon/tbs/raw/0800be6e.o"(.text .rodata .data .padding)

@@ -40,7 +40,7 @@ Func_0800c150:
 	b.n	.L_0800c230
 .L_0800c196:
 	adds	r0, r7, #0
-	bl	Func_0800bc70
+	bl	ResourceObject_Create
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0800c1ba
@@ -91,7 +91,7 @@ Func_0800c150:
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
 	adds	r0, r7, #0
-	bl	Func_0800bc70
+	bl	ResourceObject_Create
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0800c220
@@ -107,7 +107,7 @@ Func_0800c150:
 	mov	r8, r3
 .L_0800c220:
 	adds	r0, r7, #1
-	bl	Func_0800bc70
+	bl	ResourceObject_Create
 	adds	r5, r0, #0
 	cmp	r5, #0
 	beq.n	.L_0800c230

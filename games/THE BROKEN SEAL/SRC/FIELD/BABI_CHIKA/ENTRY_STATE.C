@@ -1,13 +1,8 @@
-/* Draft of resource_3c4 0x0200a59c (FieldScene_InitializeActorGroups), from
- * games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY_STATE.C. Remaining
- * difference: the ROM loads scene numbers 0xad and 0xb0 from the literal
- * pool, as link-time values would; C constants are built with movs. The
- * listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 
-void Main_0808a408(s32 value);
-void Main_080091b8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void BattleFx_StartFadeOverlay(s32 value);
 void FieldScene_PlaceAndPinSlots8And9(void);
 void FieldScene_PlaceAndPinSlots10And11(void);
 void FieldScene_RunScene3c4_02002480(void);
@@ -47,35 +42,28 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Local_0200252c(void);
-void Local_02001abc(s32 mode);
+void BabiChika_MarkActorCells(void);
+void BabiChika_SettleSteps(s32 wait);
 
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
+s32 SceneActor_SetFlagBitByRelativeDepth();
+s32 OverlayObject_SetYAboveLinkedActor();
+void BabiChika_UpdateTrackedActor(void);
 
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_000000ac[];
-extern u8 Data_000000ad[];
-extern u8 Data_000000b0[];
-
-#define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))0x2008ec9)
-#define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))0x2009a99)
-#define SCENE_TASK ((void (*)(void))0x2008e21)
+#define ACTOR_UPDATE_IDLE ((void (*)(union FieldObject *))SceneActor_SetFlagBitByRelativeDepth)
+#define ACTOR_UPDATE_PANEL ((void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor)
+#define SCENE_TASK BabiChika_UpdateTrackedActor
 
 /* Entry setup for the underground passage: by area and entrance, restores the lift cells, pins and parks the paired actors and re-applies each flagged block. */
 s32 FieldScene_InitializeActorGroups(void)
 {
     gEventWork->start_transition = 0x204;
-    if (Data_02000240_t.halves[224][0] == (s32)Data_000000ac || Data_02000240_t.halves[224][0] == (s32)Data_000000ad) {
-        Main_0808a408(0);
-        Data_02000240_t.halves[289][0] = 1;
-        Data_02000240_t.halves[288][0] = (s32)Data_000000ac;
+    if (gGameState.scene == (s32)&SceneId_BabiChika1 || gGameState.scene == (s32)&SceneId_BabiChika2) {
+        BattleFx_StartFadeOverlay(0);
+        gGameState.retreat_entrance = 1;
+        gGameState.retreat_scene = (s32)&SceneId_BabiChika1;
     }
-    if (Data_02000240_t.halves[224][0] == (s32)Data_000000ac) {
-        switch (Data_02000240_t.halves[225][0]) {
+    if (gGameState.scene == (s32)&SceneId_BabiChika1) {
+        switch (gGameState.entrance) {
         case 1:
         case 2:
             if (Engine_GameFlagIsSet(0x982)) {
@@ -112,9 +100,9 @@ s32 FieldScene_InitializeActorGroups(void)
         case 6:
         case 7:
             if (Engine_GameFlagIsSet(0x982))
-                Call6((void (*)())Main_080091b8, 23, 17, 1, 2, 30, 8);
+                Call6((void (*)())Engine_MapCopyCells, 23, 17, 1, 2, 30, 8);
             if (Engine_GameFlagIsSet(0x983))
-                Call6((void (*)())Main_080091b8, 23, 17, 1, 2, 32, 10);
+                Call6((void (*)())Engine_MapCopyCells, 23, 17, 1, 2, 32, 10);
             break;
         case 8:
         case 9:
@@ -186,14 +174,14 @@ s32 FieldScene_InitializeActorGroups(void)
             break;
         }
     } else {
-        switch (Data_02000240_t.halves[225][0]) {
+        switch (gGameState.entrance) {
         case 0:
             break;
         case 1:
         case 2:
         case 3:
-            Data_02000240_t.halves[289][0] = 1;
-            Data_02000240_t.halves[288][0] = (s32)Data_000000b0;
+            gGameState.retreat_entrance = 1;
+            gGameState.retreat_scene = (s32)&SceneId_BabiIriguchi3;
             Engine_GameFlagClear(0x12f);
             Call2((void (*)())Engine_ActorSetChildValue, 17, 6);
             Call2((void (*)())Engine_ActorSetChildValue, 18, 6);
@@ -201,7 +189,7 @@ s32 FieldScene_InitializeActorGroups(void)
                 Call3((void (*)())Engine_ActorSetPosition, 17, 182 << 18, 156 << 17);
             if (Engine_GameFlagIsSet(0x975))
                 Call3((void (*)())Engine_ActorSetPosition, 18, 186 << 18, 156 << 17);
-            Local_0200252c();
+            BabiChika_MarkActorCells();
             break;
         case 6:
         case 7:
@@ -244,7 +232,7 @@ s32 FieldScene_InitializeActorGroups(void)
                 Engine_ActorGet(12)->unknown_64 = 0;
                 Engine_ActorGet(13)->unknown_64 = 0;
                 Engine_ActorGet(14)->unknown_64 = 0;
-                if (Data_02000240_t.halves[225][0] != 5)
+                if (gGameState.entrance != 5)
                     break;
                 Engine_ActorGet(10)->y.fixed = -0x200000;
                 Engine_ActorGet(11)->y.fixed = -0x400000;
@@ -267,16 +255,16 @@ s32 FieldScene_InitializeActorGroups(void)
                 Engine_GameFlagSet(0x201);
                 Engine_GameFlagSet(0x202);
             }
-            Local_02001abc(0);
+            BabiChika_SettleSteps(0);
             break;
         case 8:
         case 9:
         case 10:
         case 11:
             if (Engine_GameFlagIsSet(0x982))
-                Call6((void (*)())Main_080091b8, 10, 30, 1, 2, 16, 30);
+                Call6((void (*)())Engine_MapCopyCells, 10, 30, 1, 2, 16, 30);
             if (Engine_GameFlagIsSet(0x983))
-                Call6((void (*)())Main_080091b8, 10, 30, 1, 2, 22, 30);
+                Call6((void (*)())Engine_MapCopyCells, 10, 30, 1, 2, 22, 30);
             Engine_GameFlagSet(0x973);
             break;
         case 12:
@@ -288,7 +276,7 @@ s32 FieldScene_InitializeActorGroups(void)
         case 14:
             Engine_EventWait(1);
             if (Engine_GameFlagIsSet(0x984)) {
-                Call6((void (*)())Main_080091b8, 24, 59, 1, 2, 32, 46);
+                Call6((void (*)())Engine_MapCopyCells, 24, 59, 1, 2, 32, 46);
                 Call3((void (*)())Engine_ActorSetPosition, 19, 204 << 17, 198 << 18);
                 Call3((void (*)())Engine_ActorSetPosition, 20, 188 << 17, 198 << 18);
                 Call3((void (*)())Engine_ActorSetPosition, 21, 204 << 17, 190 << 18);

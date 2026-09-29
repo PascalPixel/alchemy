@@ -29,7 +29,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SETTLE_STEPS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/MARK_ACTOR_CELLS.o"(.text)
-        "*/resource_3c4_overlay.o"(.text.x0200a59c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3c4_overlay.o"(.rodata.part1)

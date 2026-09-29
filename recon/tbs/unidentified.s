@@ -1124,30 +1124,18 @@ BattleFx_RedPaletteA:
 	.global BattleFx_YellowPaletteA
 BattleFx_YellowPaletteA:
 	.incbin "baserom.gba", 0x003cd00c, 0x00000084
-	.global BattleFx_StarBurstSheet
-BattleFx_StarBurstSheet:
-	.incbin "baserom.gba", 0x003cd090, 0x00000488
-	.global BattleFx_CrescentSheet
-BattleFx_CrescentSheet:
-	.incbin "baserom.gba", 0x003cd518, 0x000005ec
-	.global BattleFx_RevealMaskA
-BattleFx_RevealMaskA:
-	.incbin "baserom.gba", 0x003cdb04, 0x000006c4
-	.global BattleFx_RevealMaskB
-BattleFx_RevealMaskB:
-	.incbin "baserom.gba", 0x003ce1c8, 0x000002e8
-	.global BattleFx_RevealMaskC
-BattleFx_RevealMaskC:
-	.incbin "baserom.gba", 0x003ce4b0, 0x0000057c
-	.global BattleFx_RevealMaskD
-BattleFx_RevealMaskD:
-	.incbin "baserom.gba", 0x003cea2c, 0x000006e8
-	.global BattleFx_RevealMaskE
-BattleFx_RevealMaskE:
-	.incbin "baserom.gba", 0x003cf114, 0x00000700
-	.global BattleFx_RevealMaskF
-BattleFx_RevealMaskF:
-	.incbin "baserom.gba", 0x003cf814, 0x000003ec
+	.section .unidentified.083cd517,"a"
+	.incbin "baserom.gba", 0x003cd517, 0x00000001
+	.section .unidentified.083cdb02,"a"
+	.incbin "baserom.gba", 0x003cdb02, 0x00000002
+	.section .unidentified.083ce1c6,"a"
+	.incbin "baserom.gba", 0x003ce1c6, 0x00000002
+	.section .unidentified.083ce4ad,"a"
+	.incbin "baserom.gba", 0x003ce4ad, 0x00000003
+	.section .unidentified.083cf813,"a"
+	.incbin "baserom.gba", 0x003cf813, 0x00000001
+	.section .unidentified.083cfbfd,"a"
+	.incbin "baserom.gba", 0x003cfbfd, 0x00000003
 	.global BattleFx_LimeColumnSheet
 BattleFx_LimeColumnSheet:
 	.incbin "baserom.gba", 0x003cfc00, 0x000003d0

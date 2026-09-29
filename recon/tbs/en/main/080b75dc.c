@@ -14,7 +14,7 @@ struct PlacementWork {
 };
 
 extern struct PlacementWork *gBattleWork;
-extern const s8 Data_080c2a62[];
+extern const s8 BattlePlacement_StepPairs[];
 s32 BattleParty_PrepareActiveOwners(u16 *ids);
 void *GetBattleObjectSlot(s32 owner);
 void BattlePresentation_SpawnActorObject(void *object, s32 owner, s32 x, s32 z);
@@ -46,7 +46,7 @@ void BattleUnit_RefreshPlacement(void)
         do {
             s32 id = *cursor++;
             battle->order[id] = i;
-            BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, Data_080c2a62[pos], Data_080c2a62[pos + 1]);
+            BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, BattlePlacement_StepPairs[pos], BattlePlacement_StepPairs[pos + 1]);
             n--;
             pos += 2;
             i++;

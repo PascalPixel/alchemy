@@ -67,22 +67,22 @@ struct MarkerServices {
     struct MarkerEvent *(*events)(void);
 };
 
-extern struct MarkerGlobals Data_03001e70;
-extern struct MarkerServices Data_02008000;
+extern struct MarkerGlobals gMapWork;
+extern struct MarkerServices gOverlayArea;
 
 struct MarkerObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
 void ObjectMotion_SnapToTerrain(struct MarkerObject *object);
 void ObjectDispatch_SetSingleChildField26Far(struct MarkerObject *object, s32 value);
 s32 GameFlag_TestFar(s32 flag);
-void Func_080090d0(struct MarkerObject *object);
+void Object_Destroy(struct MarkerObject *object);
 void Object_SetMode(struct MarkerObject *object, s32 mode);
-void Func_08009140(struct MarkerObject *object);
+void Object_ResetMotion(struct MarkerObject *object);
 
 void Battle_PlaceMapMarkers(void)
 {
     u32 id;
-    struct MarkerMap *map = Data_03001e70.map;
-    struct MarkerWork *work = Data_03001e70.work;
+    struct MarkerMap *map = gMapWork.map;
+    struct MarkerWork *work = gMapWork.work;
     s32 count = 0;
     u8 *list = map->markers;
     struct MarkerSlot *slot = work->slots;
@@ -103,7 +103,7 @@ void Battle_PlaceMapMarkers(void)
         id = *list++;
         if (id < 100 || id > 239)
             goto next;
-        event = Data_02008000.events();
+        event = gOverlayArea.events();
         for (; event->kind != -1; event++) {
             if (event->id != id)
                 continue;
@@ -115,12 +115,12 @@ void Battle_PlaceMapMarkers(void)
                 ObjectDispatch_SetSingleChildField26Far(object, 0);
                 if (GameFlag_TestFar(event->flag)) {
                     if ((event->mode & 0xfff00000) == 0x500000) {
-                        Func_080090d0(object);
+                        Object_Destroy(object);
                         continue;
                     }
                     Object_SetMode(object, 2);
                 }
-                Func_08009140(object);
+                Object_ResetMotion(object);
                 object->home_x = object->x / 0x10000;
                 object->home_z = object->z / 0x10000;
                 object->unknown_23 = 1;
@@ -139,7 +139,7 @@ void Battle_PlaceMapMarkers(void)
                     continue;
                 ObjectMotion_SnapToTerrain(object);
                 ObjectDispatch_SetSingleChildField26Far(object, 0);
-                Func_08009140(object);
+                Object_ResetMotion(object);
                 Object_SetMode(object, 1);
                 object->home_x = object->x / 0x10000;
                 object->home_z = object->z / 0x10000;

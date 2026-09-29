@@ -344,6 +344,7 @@ SECTIONS
         "*/recon/tbs/it/rom.o"(.rom.004334be)
         "*/games/THE BROKEN SEAL/SRC/MAP/KOROSSEO/RIVAL_PATH_C.o"(.rodata)
         "*/recon/tbs/it/rom.o"(.rom.00434f4e)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/KOROSSEO/LETTERING.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/SHOP/CURSOR.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/ICONS.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/COMMAND_ICONS.o"(.rodata)

@@ -4,7 +4,7 @@
  * value; a plain constant becomes movs #0x6f). Remaining: the scene id. */
 #include "FUNE.H"
 
-void Func_02000e78(void)
+void FieldScene_RunSevenActorEnsemble(void)
 {
     s32 ensemble;
     s32 selector;
@@ -13,7 +13,7 @@ void Func_02000e78(void)
     Actor_SetChildValue(ACTOR_PARTY_LEADER, 15);
     ensemble = Func_020020be(0);
     Actor_SetSpriteFlags(ensemble, 0);
-    Call1(Func_020020ba, 33593196);
+    Call1(Func_020020ba, (s32)FuneHobashira_EnsembleObjects);
     Task_Wait(1);
     OverlayObject_InitWithRandomFields(9);
     OverlayObject_InitWithRandomFields(10);
@@ -22,7 +22,7 @@ void Func_02000e78(void)
     OverlayObject_InitWithRandomFields(13);
     OverlayObject_InitWithRandomFields(14);
     OverlayObject_InitWithRandomFields(15);
-    Actor_EnableActionCallback(8, 33592220);
+    Actor_EnableActionCallback(8, FuneHobashira_LookoutActions);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 3);
     Event_OpenScreen();
     Event_WaitForScreen();

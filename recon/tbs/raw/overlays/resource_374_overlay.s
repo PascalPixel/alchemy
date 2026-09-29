@@ -193,9 +193,6 @@ Func_020005e8:
 	.global FieldScene_RunGroupChoreography
 	.thumb_func
 FieldScene_RunGroupChoreography:
-	.global Func_02001274
-	.thumb_func
-Func_02001274:
 	push {r5, r6, lr}
 	mov r6, r8
 	push {r6}

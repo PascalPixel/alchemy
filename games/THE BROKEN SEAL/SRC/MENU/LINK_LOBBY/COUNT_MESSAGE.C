@@ -1,10 +1,10 @@
 #include "TYPES.H"
 
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 
 void Engine_EventBegin();
 void Engine_ActorFaceActor();
-void Main_08015120();
+void UiText_DrawQuantity();
 void Engine_EventSetMessage();
 s32 Engine_EventOpenMessage();
 s32 Engine_EventEnd();
@@ -21,10 +21,10 @@ s32 LinkLobby_ShowCountMessage(s32 id)
     u8 *gs;
 
     Engine_EventBegin();
-    gs = Data_02000240;
+    gs = gGameState;
     Call3(Engine_ActorFaceActor, id, *(s32 *)(gs + 500), 0);
     if (*(u16 *)(gs + 680) != 0) {
-        Main_08015120(*(u16 *)(gs + 680), 5);
+        UiText_DrawQuantity(*(u16 *)(gs + 680), 5);
         Engine_EventSetMessage(0x298a);
     } else {
         Engine_EventSetMessage(0x298b);

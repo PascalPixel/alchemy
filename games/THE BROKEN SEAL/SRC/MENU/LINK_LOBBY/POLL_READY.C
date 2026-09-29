@@ -1,18 +1,18 @@
+/* The link lobby: poll whether the peers stand ready in the circle. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "IWRAM_CALL.H"
 
 struct LobbyPanel {
     u8 unknown_00[24];
 };
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
-/* The IWRAM panel routine, called through a function pointer. */
-typedef void (*PanelFn)(struct LobbyPanel *panel, s32 value);
-#define LobbyPanel_Update ((PanelFn)0x03000164)
 void LinkLobby_WriteSlotValue(s32 slot);
 
-extern s32 Data_02009f4c;
-extern struct LobbyPanel Data_02002024[];
+/* Frames the peers have been waited for; it follows the overlay's image. */
+static s32 sWaitFrames;
+extern struct LobbyPanel gLinkPeerSignatures[];
 
 s32 LinkLobby_PollPeerReady(void)
 {
@@ -28,17 +28,17 @@ s32 LinkLobby_PollPeerReady(void)
     if (work->raised_trigger != 2) {
         LinkLobby_PeerSlotMatches(0);
         if (!Engine_GameFlagIsSet(0x303)) {
-            if (++Data_02009f4c > 25) {
+            if (++sWaitFrames > 25) {
                 for (i = 0; i < 4; i++) {
-                    LobbyPanel_Update(&Data_02002024[i], 20);
+                    Iwram_ClearWords(&gLinkPeerSignatures[i], 20);
                 }
-                Data_02009f4c = 0;
+                sWaitFrames = 0;
                 LinkLobby_WriteSlotValue(4);
             }
         } else {
-            Data_02009f4c = 0;
+            sWaitFrames = 0;
         }
-        if (Data_02009f4c == 0) {
+        if (sWaitFrames == 0) {
             if (LinkLobby_PeerSlotMatches(0)
                 && (LinkLobby_PeerSlotMatches(1) || LinkLobby_PeerSlotMatches(2))) {
                 Engine_GameFlagSet(0x201);
@@ -56,7 +56,7 @@ s32 LinkLobby_PollPeerReady(void)
         }
     }
     if ((GameFlag_IsSet(0x201) || GameFlag_IsSet(0x202)) && !GameFlag_IsSet(0x173)
-        && !LinkLobby_PeerSlotMatches(0) && Data_02009f4c > 24) {
+        && !LinkLobby_PeerSlotMatches(0) && sWaitFrames > 24) {
         work->raised_trigger = 2;
         GameFlag_Set(0x205);
         GameFlag_Clear(0x201);

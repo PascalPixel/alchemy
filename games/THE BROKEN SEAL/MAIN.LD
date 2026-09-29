@@ -383,7 +383,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/SHOW_POSITIONED_MESSAGE_AND_WAIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/RUNTIME_PROCESS_ALL.o"(.text)
         "*/recon/tbs/raw/080178ae.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/080178b0.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_GLYPH_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/GET_WIDE_STRING_WIDTH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_WIDE_STRING_AT_OFFSET.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/RENDER_GLYPH_TILE_AT_WORK_OFFSET.o"(.text)

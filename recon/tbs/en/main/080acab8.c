@@ -96,7 +96,7 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
     sp20 = (s32)*(u8 *)(temp_r0_29 + temp_r1_49);
     sp1C = (s32)*(u8 *)(temp_r4_27 + temp_r1_49);
     sp18 = (s32)(u16)(0x8000 & *(u16 *)(temp_r4_27 + ((arg5 * 2) + 0x178)));
-    temp_r0_65 = Func_08004938(0x14C);
+    temp_r0_65 = Runtime_BumpAllocate(0x14C);
     sp30 = temp_r0_65;
     _call_via_r3(temp_r0_65, sp34, 0x14C, 0x03001388);
     if (arg7 != 0) {
@@ -132,7 +132,7 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
     switch (arg6) {                                 /* irregular */
     case 0:
         temp_r5_230 = 0x1F & sp1C;
-        Func_080771a8(sp38, sp20, temp_r5_230);
+        Djinn_AddToOwnerFar(sp38, sp20, temp_r5_230);
         Func_080771b0(sp38, sp20, temp_r5_230);
         break;
     case 1:
@@ -145,14 +145,14 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
             Func_080771b8(sp38, sp2C);
         }
         temp_r5_264 = 0x1F & sp1C;
-        Func_080771a8(sp38, sp20, temp_r5_264);
+        Djinn_AddToOwnerFar(sp38, sp20, temp_r5_264);
         if (sp18 != 0) {
             Func_080771b0(sp38, sp20, temp_r5_264);
         }
         break;
     case 4:
         temp_r5_280 = 0x1F & sp1C;
-        Func_080771a8(sp38, sp20, temp_r5_280);
+        Djinn_AddToOwnerFar(sp38, sp20, temp_r5_280);
         if (sp18 != 0) {
             Func_080771b0(sp38, sp20, temp_r5_280);
         }
@@ -183,7 +183,7 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
             temp_r2_399 = sp40 * 8;
             var_fp_402 = temp_r2_399;
             Func_08015080(M2C_FIELD(sp34, u8 *, 0x129) + 0x741, arg0, temp_r2_399, (sp3C * 8) + 0x30);
-            Func_08015280(arg0, 0xF296, sp40 + 2, 5, arg7);
+            UiWindow_SetTilemapEntryFar(arg0, 0xF296, sp40 + 2, 5, arg7);
         } else {
             var_fp_402 = sp40 * 8;
         }
@@ -198,8 +198,8 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
         var_r5_453 = var_r2_438;
         do {
             sp8 = var_r4_446;
-            Func_08015280(arg0, var_r4_446 + 0x5001, var_r5_453, temp_r1_447, 0);
-            Func_08015280(arg0, *var_r6_452 + 0xF030, var_r7_451, temp_r1_447, 0);
+            UiWindow_SetTilemapEntryFar(arg0, var_r4_446 + 0x5001, var_r5_453, temp_r1_447, 0);
+            UiWindow_SetTilemapEntryFar(arg0, *var_r6_452 + 0xF030, var_r7_451, temp_r1_447, 0);
             var_r4_446 += 1;
             var_r6_452 += 1;
             var_r7_451 += 2;
@@ -273,7 +273,7 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
         temp_r2_712 = 3 ^ arg6;
         temp_r0_719 = 6 - ((u32) ((0 - temp_r2_712) | temp_r2_712) >> 0x1F);
         var_r8_726 = temp_r0_719 * (arg7 - 1);
-        temp_r0_735 = Func_080aae14(sp30 + 0x58, sp34 + 0x58, (u16 (*)[]) &sp4C[0], &sp48, &sp44);
+        temp_r0_735 = OwnerAction_DiffSlots(sp30 + 0x58, sp34 + 0x58, (u16 (*)[]) &sp4C[0], &sp48, &sp44);
         sp10 = temp_r0_735 << 0x18;
         temp_r0_740 = sp40 * 8;
         var_r2_741 = 0;
@@ -284,14 +284,14 @@ s32 Func_080acab8(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5
                 spC = 0;
                 var_r7_753 = &(&sp4C[0])[var_r8_726];
 loop_62:
-                Func_080ae958(arg0, var_fp_743, ((sp3C + ((s32) (var_r2_741 << 0x18) >> 0x17)) * 8) + 4, *var_r7_753 & 0x3FFF);
+                UiIcon_CreateWithLoadedResource(arg0, var_fp_743, ((sp3C + ((s32) (var_r2_741 << 0x18) >> 0x17)) * 8) + 4, *var_r7_753 & 0x3FFF);
                 temp_r2_767 = *var_r7_753;
                 if (0x8000 & temp_r2_767) {
-                    Func_080150b8(4);
+                    UiWork_SetParamNibbleFar(4);
                 } else if (0x4000 & temp_r2_767) {
-                    Func_080150b8(2);
+                    UiWork_SetParamNibbleFar(2);
                 } else {
-                    Func_080150b8(0xF);
+                    UiWork_SetParamNibbleFar(0xF);
                 }
                 temp_r6_798 = var_r2_741;
                 temp_r5_807 = ((sp3C + (temp_r6_798 * 2)) * 8) + 8;
@@ -313,31 +313,31 @@ loop_62:
                 var_fp_743 = sp40 * 8;
             }
         }
-        Func_080150b8(0xF);
+        UiWork_SetParamNibbleFar(0xF);
         temp_r6_852 = sp3C * 8;
         Func_08015080(0xAED, arg0, var_fp_743 + 0x58, temp_r6_852);
         if (arg6 != 3) {
             var_r5_862 = 0;
             if (sp48 != 0) {
-                Func_080150b8(4);
+                UiWork_SetParamNibbleFar(4);
                 Func_08015080(0xBA2, arg0, var_fp_743, temp_r6_852 + 0x58);
                 var_r5_862 = 1;
             }
             if (sp44 != 0) {
-                Func_080150b8(2);
+                UiWork_SetParamNibbleFar(2);
                 Func_08015080(0xBA3, arg0, var_fp_743, ((sp3C + var_r5_862) * 8) + 0x58);
                 var_r5_862 += 1;
             }
             if (var_r5_862 == 0) {
                 Func_08015080(0xBA8, arg0, var_fp_743, temp_r6_852 + 0x58);
             }
-            Func_080150b8(0xF);
-            Func_08015070(arg0, 0, 0xB, 0xD, 0xB);
+            UiWork_SetParamNibbleFar(0xF);
+            UiWindow_DrawDividerLineFar(arg0, 0, 0xB, 0xD, 0xB);
         }
         M2C_FIELD(gWindowWork, s8 *, 0xEA3) = 1;
     }
     if (arg7 == 0) {
-        Func_080150d8(sp38, 0, arg8, arg0, arg7, arg7);
+        SideObject_CreateFar(sp38, 0, arg8, arg0, arg7, arg7);
     }
     _call_via_r3(sp34, sp30, 0x14C, 0x03001388);
     Sys_Free(sp30);

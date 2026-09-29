@@ -151,7 +151,7 @@ typedef void (*CopyFn)(void *dest, const void *src, s32 count);
 extern void *Data_03001e50[];
 
 /* Sixteen halfword cell offsets shared with the rest of the family. */
-extern const u16 Data_080ede5c[];
+extern const u16 BattleFx6_FlareCells[];
 
 /* Four parallel per-step tables: cell offset, x offset, width, height. */
 extern const u16 Data_080eedbe[];
@@ -213,24 +213,24 @@ struct Member {
 void Func_080030f8(s32 frames);                      /* WaitFrames */
 s32 Math_Div(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
 void Func_08002dd8(s32 id);                          /* Runtime_ReleaseHeapBlock */
-void *Func_08002f40(s32 id);                         /* get */
-u32 Func_08004458(void);                             /* random_16 */
+void *Resource_GetTableEntry(s32 id);                         /* get */
+u32 Random16(void);                             /* random_16 */
 void Func_080049ac(void);                            /* Render_ResetTransformState */
-void Func_080051d8(void *a, void *b);                /* Graphics_PrepareTransferInIwramWork */
-void Func_08005268(const struct Spark *position, s32 *out);
+void Graphics_PrepareTransferInIwramWork(void *a, void *b);                /* Graphics_PrepareTransferInIwramWork */
+void Render_ProjectPoint(const struct Spark *position, s32 *out);
 void *Owner_GetStateFar(s32 id);                         /* Runtime_GetObject */
 s32 Func_080b5058(s32 id);
 s32 Func_080b5070(s32 id);
 void Func_080b5088(s32 member, s32 kind);
-struct Member **Func_080b5098(s32 member);
+struct Member **GetBattleObjectSlotFar(s32 member);
 void Func_080b50e8(s32 id);
-void Func_080c9048(void);
-void Func_080cdd14(void);   /* BattleFx_SetTransitionFlagAndDisplay */
-void Func_080cdd58(void);
+void BattlePres_ConfigureEffectDisplay(void);
+void BattleFx_SetTransitionFlagAndDisplay(void);   /* BattleFx_SetTransitionFlagAndDisplay */
+void BattleFx_SetupCanvasTileMap(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b); /* load_and_decompress */
-void Func_080e38b8(struct Spark *spark, s32 a, s32 b); /* advance_with_gravity_3d */
-void Func_080e3958(s32 value, s32 *out);             /* apply_animation_and_y_offset */
-void Func_080e396c(s32 value, s32 *out);             /* apply_step_and_y_offset */
+void EffectStep_AdvanceWithGravity3D(struct Spark *spark, s32 a, s32 b); /* advance_with_gravity_3d */
+void EffectPosition_ApplyAnimationAndYOffset(s32 value, s32 *out);             /* apply_animation_and_y_offset */
+void EffectPosition_ApplyStepAndYOffset(s32 value, s32 *out);             /* apply_step_and_y_offset */
 
 void BattlePres_RunBeamSequence(void *object)
 {
@@ -267,8 +267,8 @@ void BattlePres_RunBeamSequence(void *object)
     STATE = object;
     record = Owner_GetStateFar(M2C_FIELD(object, s32 *, 8));
     Func_080030f8(1);
-    Func_080c9048();
-    Func_080cdd58();
+    BattlePres_ConfigureEffectDisplay();
+    BattleFx_SetupCanvasTileMap();
     REG_BG1CNT = 0x1F80;
     Func_080030f8(1);
 
@@ -314,10 +314,10 @@ void BattlePres_RunBeamSequence(void *object)
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
         IWRAM_COPY((void *)0x05000000,
-            Func_08002f40((s32)&Value_0000008e), 0x80);
+            Resource_GetTableEntry((s32)&Value_0000008e), 0x80);
     } else {
         IWRAM_COPY((void *)0x05000000,
-            Func_08002f40((s32)&Value_0000004a), 0x80);
+            Resource_GetTableEntry((s32)&Value_0000004a), 0x80);
     }
     Func_080030f8(1);
     Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
@@ -327,7 +327,7 @@ void BattlePres_RunBeamSequence(void *object)
     Func_080041d8(0x080CD261, 0x480);
     REG_BG1CNT = 0x1F81;
 
-    Func_080e3958(M2C_FIELD(STATE, s16 *, 0x24), anchor);
+    EffectPosition_ApplyAnimationAndYOffset(M2C_FIELD(STATE, s16 *, 0x24), anchor);
     if (M2C_FIELD(STATE, s32 *, 4) == 0) {
         dx = 96 - anchor[0];
     } else {
@@ -345,7 +345,7 @@ void BattlePres_RunBeamSequence(void *object)
     Func_080030f8(1);
 
     /* Seed the sparks from the actor's world position. */
-    member = *Func_080b5098(M2C_FIELD(STATE, s16 *, 0x24));
+    member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 0x24));
     half = Func_080b5070(M2C_FIELD(STATE, s16 *, 0x24)) / 2;
     spark = SPARKS;
     i = 0;
@@ -353,9 +353,9 @@ void BattlePres_RunBeamSequence(void *object)
         spark->x = member->x;
         spark->y = member->y + half;
         spark->z = member->z;
-        spark->vx = (s32)(Func_08004458() & 0xFF) << 10;
-        spark->vy = ((s32)(Func_08004458() & 0xFF) - 32) << 10;
-        spark->vz = ((s32)(Func_08004458() & 0xFF) - 127) << 10;
+        spark->vx = (s32)(Random16() & 0xFF) << 10;
+        spark->vy = ((s32)(Random16() & 0xFF) - 32) << 10;
+        spark->vz = ((s32)(Random16() & 0xFF) - 127) << 10;
         if (spark->x > 0) {
             spark->vx = -spark->vx;
         }
@@ -378,7 +378,7 @@ void BattlePres_RunBeamSequence(void *object)
             Func_080b5088(M2C_FIELD(STATE, s16 *, 0x24), 0);
         }
 
-        Func_080e396c(M2C_FIELD(STATE, s32 *, 8), pos);
+        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
         pos[1] = pos[1] + 16;
 
         /* The beam body, one rectangle per scene family. */
@@ -428,7 +428,7 @@ void BattlePres_RunBeamSequence(void *object)
         }
 
         Func_080049ac();
-        Func_080051d8(xfer, (u8 *)xfer + 12);
+        Graphics_PrepareTransferInIwramWork(xfer, (u8 *)xfer + 12);
 
         /* Step and draw the live sparks; each one is visited twice. */
         if (i >= 4 && i <= 31) {
@@ -438,13 +438,13 @@ void BattlePres_RunBeamSequence(void *object)
                 spark = &SPARKS[slot];
                 timer = spark->timer;
                 if (timer > 0) {
-                    Func_08005268(spark, tmp);
+                    Render_ProjectPoint(spark, tmp);
                     size = (timer >> 3) + 2;
                     tmp[0] = tmp[0] + dx;
                     blit[slot & 1](draw_target,
-                        (u8 *)sprite_src + Data_080ede5c[size - 1],
+                        (u8 *)sprite_src + BattleFx6_FlareCells[size - 1],
                         tmp[0] - size, tmp[1] - size, size * 2, size * 2);
-                    Func_080e38b8(spark, 60, -0x400);
+                    EffectStep_AdvanceWithGravity3D(spark, 60, -0x400);
                     spark->timer = spark->timer - 1;
                 }
                 j++;
@@ -456,9 +456,9 @@ void BattlePres_RunBeamSequence(void *object)
         i++;
     } while (i != 32);
 
-    Func_08004278(0x080CD261);
+    Scheduler_RemoveCallback(0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
     Data_03001ad0.field_0006 = (s16)i;
-    Func_080cdd14();
+    BattleFx_SetTransitionFlagAndDisplay();
 }

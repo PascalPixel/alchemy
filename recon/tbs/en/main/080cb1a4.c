@@ -49,20 +49,20 @@
 
 extern u8 Value_0000007d;
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Func_080b5070(s32 member_id);
-void Func_080e3944(void *source, void *screen);
-s32 Func_08002322(s32 angle);
+void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
-void Func_080e155c(s32 a, s32 b);
+s32 BattleFx_EndCanvasLayer(void);
+void Camera_ApplyShake(s32 a, s32 b);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
 
@@ -96,7 +96,7 @@ void Func_080cb1a4(void *object_param)
     work = *cursor++;
     canvas = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object_param;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32)&Value_0000007d, work, 1, 1);
 
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
@@ -105,9 +105,9 @@ void Func_080cb1a4(void *object_param)
     M2C_FIELD(work, s32 *, 0x7784) = 75;
     Func_080041d8((void *)0x080CD261, 0x480);
 
-    first_context = Func_080b5098(
+    first_context = GetBattleObjectSlotFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
-    second_context = Func_080b5098(
+    second_context = GetBattleObjectSlotFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
     object = first_context->object;
     target = second_context->object;
@@ -141,7 +141,7 @@ void Func_080cb1a4(void *object_param)
 
         facing = *(s32 *)0x03001E80;
         Func_080049ac();
-        Func_080051d8(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
         if (frame == 0) {
             target->velocity_y = 0xF0000;
@@ -156,7 +156,7 @@ void Func_080cb1a4(void *object_param)
             target->y += y_offset_member;
         }
         if (frame == 54) {
-            Func_080d6888(
+            ObjectGroup_UpdateMembers(
                 M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
                 7, 5, 0, 10);
             target->velocity_y = 0x80000;
@@ -171,12 +171,12 @@ void Func_080cb1a4(void *object_param)
         }
 
         Func_080049ac();
-        Func_080051d8(facing, facing + 12);
+        Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
         record_ptr[0] = object->x;
         record_ptr[1] = object->y;
         record_ptr[2] = object->z;
-        Func_080e3944(record_ptr, screen_ptr);
+        EffectPosition_ApplyBaseAndYOffset(record_ptr, screen_ptr);
         screen_ptr[0] = screen_ptr[0] >> 1;
 
         if (frame == 54 || frame == 55) {
@@ -196,7 +196,7 @@ void Func_080cb1a4(void *object_param)
 
                 angle = i << 12;
                 rx = (screen_ptr[0]
-                    + ((radius * Func_08002322(angle)) >> 16)) - 16;
+                    + ((radius * Trig_Sin(angle)) >> 16)) - 16;
                 ry = (radius * Func_0800231c(angle) >> 16) - frame + 100;
                 draw[0](canvas, (u8 *)work + offset, rx, ry, 32, 64);
             }
@@ -221,12 +221,12 @@ void Func_080cb1a4(void *object_param)
             M2C_FIELD(work, s32 *, 0x77A8) = 6;
         }
 
-        Func_080e155c(16, 16);
+        Camera_ApplyShake(16, 16);
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
     }
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

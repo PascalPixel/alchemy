@@ -45,11 +45,11 @@
  */
 
 /* Resolved project symbols. */
-void Func_08004278(void *callback);  /* Scheduler_RemoveCallback */
+void Scheduler_RemoveCallback(void *callback);  /* Scheduler_RemoveCallback */
 void Func_08015268(void *lines);
-u32 Func_08004458(void);             /* Random16 */
+u32 Random16(void);             /* Random16 */
 s32 Math_Div(s32 num, s32 den); /* Math_Div */
-void *Func_0808ba1c(s32 id);         /* ObjectTable_Get */
+void *ObjectTable_Get(s32 id);         /* ObjectTable_Get */
 
 struct BattleSelectionWork {
     u8 unk_000[500];
@@ -148,8 +148,8 @@ void DisplayTransition_UpdateScanlineTable(void)
                 } else {
                     REG_DISPCNT &= 0x9fff;
                 }
-                Func_08004278((void *)0x0808f499);
-                Func_08004278((void *)0x0808f52d);
+                Scheduler_RemoveCallback((void *)0x0808f499);
+                Scheduler_RemoveCallback((void *)0x0808f52d);
                 REG_DMA0CNT_H &= 0xc5ff;
                 REG_DMA0CNT_H &= 0x7fff;
                 REG_DMA0CNT_H;
@@ -181,7 +181,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         }
         lo = Data_0809e8ac[k];
         for (i = 0; i < 160; i++) {
-            t = ((u32)(241 - lo) * Func_08004458()) >> 16;
+            t = ((u32)(241 - lo) * Random16()) >> 16;
             dst[0] = (u16)((t << 8) | (t + lo));
             dst += 2;
         }
@@ -243,7 +243,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         }
         r = (v & 31) << 4;
         for (i = 0; i < 160; i++) {
-            t = r + ((16 * Func_08004458()) >> 16);
+            t = r + ((16 * Random16()) >> 16);
             if (t > 255) {
                 t = 255;
             }
@@ -311,7 +311,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)Func_0808ba1c(Data_02000240.object_id);
+        obj = (s32 *)ObjectTable_Get(Data_02000240.object_id);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 16;
         FrameCounter;
@@ -407,7 +407,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)Func_0808ba1c(Data_02000240.object_id);
+        obj = (s32 *)ObjectTable_Get(Data_02000240.object_id);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 16;
         FrameCounter;
@@ -448,7 +448,7 @@ void DisplayTransition_UpdateScanlineTable(void)
         cam = (s32 *)(sys + 0xe4);
         ax = cam[0] & 0xffff0000;
         ay = cam[1] & 0xffff0000;
-        obj = (s32 *)Func_0808ba1c(Data_02000240.object_id);
+        obj = (s32 *)ObjectTable_Get(Data_02000240.object_id);
         cx = (obj[2] - ax) / 0x10000;
         cy = ((obj[4] - obj[3]) - ay) / 0x10000 - 8;
         FrameCounter;

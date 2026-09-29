@@ -23,8 +23,8 @@ struct WorkspaceMenu {
     struct RenderOutput *entries[6];
 };
 
-extern u8 Data_03001f54;
-extern const s8 Data_080367dc[];
+extern u8 gDebugMode;
+extern const s8 Menu_WorkspaceIconFrames[];
 extern u8 Value_00000c23, Value_00000c25, Value_00000c27;
 
 s32 GameFlag_TestFar(s32 flag);
@@ -57,7 +57,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
         first = 2;
         rows = 1;
     }
-    if (Data_03001f54 != 0)
+    if (gDebugMode != 0)
         rows += 3;
     width = 8 - rows;
     height = rows * 3 + 1;
@@ -84,7 +84,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
     }
     UiText_DrawResource((s32)&Value_00000c25, window, 48, y);
     y += 24;
-    if (Data_03001f54 != 0) {
+    if (gDebugMode != 0) {
         msg = (s32)&Value_00000c27;
         UiText_DrawResource(msg, window, 48, y);
         y += 24;
@@ -103,7 +103,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
     y = -4;
     if (rows > 0) {
         struct RenderOutput **out = work->entries;
-        const s8 *entry = Data_080367dc + first;
+        const s8 *entry = Menu_WorkspaceIconFrames + first;
         s32 n = rows;
         do {
             *out++ = RenderOutput_CreateFrame(*entry++, 0, window, 12, y);

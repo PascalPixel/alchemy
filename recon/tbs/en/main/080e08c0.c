@@ -80,11 +80,11 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 void Camera_ApplyShake(s32 mask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
 
-extern u16 Data_080ede48[];
-extern u8 Data_080ede9f[];
-extern u8 Data_080edea5[];
-extern u8 Data_080edeab[];
-extern u16 Data_080edeb2[];
+extern u16 ParticleStreams_CellOffsets[];
+extern u8 PuffArc_CellWidths[];
+extern u8 PuffArc_CellHeights[];
+extern u8 PuffArc_CellBiasY[];
+extern u16 PuffArc_CellSourceOffsets[];
 extern u8 Value_00000073;
 extern u8 Value_0000008e;
 extern u8 Value_000000b7;
@@ -197,10 +197,10 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
                     s32 cell = puff->tick / 8;
                     u32 width;
 
-                    callbacks[0](canvas, (u8 *)work + Data_080edeb2[cell],
-                        puff->x - ((width = Data_080ede9f[cell]) >> 1),
-                        puff->y + Data_080edeab[cell],
-                        width, Data_080edea5[cell]);
+                    callbacks[0](canvas, (u8 *)work + PuffArc_CellSourceOffsets[cell],
+                        puff->x - ((width = PuffArc_CellWidths[cell]) >> 1),
+                        puff->y + PuffArc_CellBiasY[cell],
+                        width, PuffArc_CellHeights[cell]);
                 }
                 member++;
                 puff->tick++;
@@ -218,7 +218,7 @@ void Func_080e08c0(struct BattleEffectArgument *effect)
                 x = ((s16 *)&particle->x)[1]
                     + ((Trig_Sin(particle->z) * 4) >> 16);
                 size = (member & 1) + 3;
-                draw[1](canvas, (u8 *)sheet + Data_080ede48[size - 1],
+                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                     x - ((u32)size >> 1),
                     ((s16 *)&particle->y)[1] - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(particle, 64, -0x2000);

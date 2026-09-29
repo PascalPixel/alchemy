@@ -58,28 +58,28 @@ struct DrawRegistry {
 
 extern struct RuntimeCells Data_03001eec;
 extern struct DrawRegistry Data_03001e50;
-extern u16 Data_080ede84[];
-extern u8 Data_080ede96[];
+extern u16 BattleFx_PuffCells[];
+extern u8 BattleFx_PuffSizes[];
 extern u8 Data_080eded6[];
 extern char Value_000000b3;
 extern char Value_000000ba;
 extern char Value_0000027f;
 
-void Func_080cd594(s32 mode);
-void Func_080c9048(void);
-s32 Func_08004458(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattlePres_ConfigureEffectDisplay(void);
+s32 Random16(void);
 s32 Func_080041d8(void (*callback)(void), s32 interval);
-void Func_080cd260(void);
+void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 void Func_080b50e8(s32 value);
 s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080f9010(s32 value);
-void Func_080d6888(s32, s32, s32, s32, s32);
-void Func_080cd52c(void);
-void Func_080e155c(s32, s32);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+void ObjectGroup_TickMemberTimers(void);
+void Camera_ApplyShake(s32, s32);
 void Func_080030f8(s32 frames);
-s32 Func_08004278(void (*callback)(void));
+s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08002dd8(s32 resource_id);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void Func_080c91dc(struct EffectArgument *argument)
 {
@@ -107,11 +107,11 @@ void Func_080c91dc(struct EffectArgument *argument)
     graphics = cells->graphics;
     runtime->argument = argument;
 
-    Func_080cd594(0x2001);
+    BattleFx_BeginCanvasLayer(0x2001);
     *(u16 *)0x04000020 = 0x100;
     Resource_LoadAndDecompress(&Value_000000b3, runtime, 1, 1);
     Resource_LoadAndDecompress(&Value_000000ba, graphics, 0, 0);
-    Func_080c9048();
+    BattlePres_ConfigureEffectDisplay();
     *(u16 *)0x04000050 = 0x3f44;
     *(u16 *)0x04000048 = 0x3337;
 
@@ -122,8 +122,8 @@ void Func_080c91dc(struct EffectArgument *argument)
     do {
         s32 x;
 
-        x = (Func_08004458() & 0x3f)
-            + (Func_08004458() & 7)
+        x = (Random16() & 0x3f)
+            + (Random16() & 7)
             + 24;
         if (runtime->argument->direction == 1)
             x += x_offset + 24;
@@ -194,7 +194,7 @@ void Func_080c91dc(struct EffectArgument *argument)
         runtime->display_value = 75;
     else
         runtime->display_value = 50;
-    Func_080041d8(Func_080cd260, 0x480);
+    Func_080041d8(BattlePresentation_ProcessPendingGraphicsTransfer, 0x480);
 
     frame = 0;
     if (Data_080eded6[runtime->argument->variant * 2 + 1] != 0) {
@@ -238,7 +238,7 @@ void Func_080c91dc(struct EffectArgument *argument)
                             burst_index = 0;
                             if (runtime->argument->target_count != 0) {
                                 do {
-                                    Func_080d6888(
+                                    ObjectGroup_UpdateMembers(
                                         runtime->argument->target_ids[burst_index],
                                         9,
                                         5,
@@ -283,9 +283,9 @@ void Func_080c91dc(struct EffectArgument *argument)
                                     s32 burst_y;
 
                                     burst->frame = 18;
-                                    burst->x = ((Func_08004458() & 31)
+                                    burst->x = ((Random16() & 31)
                                         + particle->x / 8) * 8 + 8;
-                                    burst_y = (Func_08004458() & 15)
+                                    burst_y = (Random16() & 15)
                                         + particle->y / 8 - 15;
                                     burst->y = burst_y * 8;
                                     break;
@@ -318,14 +318,14 @@ void Func_080c91dc(struct EffectArgument *argument)
 
                         image = burst->frame / 2;
                         draw_x = burst->x / 8;
-                        size = Data_080ede96[image];
+                        size = BattleFx_PuffSizes[image];
                         half_size = (u32)size >> 1;
                         draw_x -= half_size;
                         draw_y = burst->y / 8 - half_size;
                         draw = draw_functions[runtime->argument->variant == 2];
                         draw(
                             draw_destination,
-                            graphics + Data_080ede84[image],
+                            graphics + BattleFx_PuffCells[image],
                             draw_x,
                             draw_y,
                             size,
@@ -338,8 +338,8 @@ void Func_080c91dc(struct EffectArgument *argument)
                 burst++;
             } while (particle_index != 32);
 
-            Func_080cd52c();
-            Func_080e155c(4, 4);
+            ObjectGroup_TickMemberTimers();
+            Camera_ApplyShake(4, 4);
             runtime->frame_ready = 1;
             Func_080030f8(1);
             frame++;
@@ -347,10 +347,10 @@ void Func_080c91dc(struct EffectArgument *argument)
             != Data_080eded6[runtime->argument->variant * 2 + 1]);
     }
 
-    Func_08004278(Func_080cd260);
-    Func_08004278((void (*)(void))0x080c91a5);
+    Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
+    Scheduler_RemoveCallback((void (*)(void))0x080c91a5);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
-    Func_080c9048();
+    BattleFx_EndCanvasLayer();
+    BattlePres_ConfigureEffectDisplay();
 }

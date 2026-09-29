@@ -43,8 +43,8 @@ extern struct GameLoopState Data_02000240;
 extern u8 Value_00000000;
 extern u8 Value_00000001;
 extern u8 Value_00000005;
-extern u8 Data_03001f54;
-extern struct SceneEntry Data_0809f1a8[];
+extern u8 gDebugMode;
+extern struct SceneEntry Field_SceneTable[];
 
 void Runtime_BumpFree(void *buffer);
 void Runtime_SetIrqHandler(s32 index, s32 a, s32 b);
@@ -54,13 +54,13 @@ void Bg0_ClearTilemap(void);
 void Runtime_InitializeHeap(void);
 void *Runtime_BumpAllocate(s32 size);
 void PaletteGlow_UpdateFar(s32 a, s32 b);
-void Func_08077098();
+void GameState_InitDefaultsFar();
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
 void MapGroupTable_SelectEntry(void);
 void Party_SetReturnPoint(s32 value);
 void BattleFx_LoadResourceGroup(s32 group);
-void Func_0808ab74(s32 scene, s32 flag);
+void Scene_ResetFlagsOnEnter(s32 scene, s32 flag);
 void Audio_PlayCueFromEventWork(void);
 void Scene_ResolveInteractionResult(void);
 void Func_0808c4f8(s32 entrance);
@@ -88,8 +88,8 @@ void Game_ResetForNewGame(s32 mode)
     s32 entrance;
     void *saved;
 
-    table = Data_0809f1a8;
-    if (Data_03001f54) {
+    table = Field_SceneTable;
+    if (gDebugMode) {
         if (mode == 1) {
             Data_02000240.scene = (s32)&Value_00000005;
             Data_02000240.entrance = mode;
@@ -101,7 +101,7 @@ void Game_ResetForNewGame(s32 mode)
             goto start;
         }
     }
-    Func_08077098();
+    GameState_InitDefaultsFar();
     Data_02000240.scene = (s32)&Value_00000000;
     Data_02000240.entrance = 2;
 start:
@@ -152,7 +152,7 @@ start:
             Party_SetReturnPoint(entrance);
             continue;
         }
-        Func_0808ab74(Data_02000240.scene, GameFlag_TestFar(0x109));
+        Scene_ResetFlagsOnEnter(Data_02000240.scene, GameFlag_TestFar(0x109));
         Scene_ResolveInteractionResult();
         if (!GameFlag_TestFar(0x109)) {
             if (GameFlag_TestFar(0x11a) || GameFlag_TestFar(0x11b))

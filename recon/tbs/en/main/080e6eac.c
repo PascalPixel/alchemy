@@ -8,21 +8,21 @@
 typedef void (*ClearFn)(void *dest, s32 size);
 
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
-u32 Func_08004458(void);
-s32 Func_08002322(s32 angle);
+void Scheduler_RemoveCallback(void *callback);
+u32 Random16(void);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_080e3908(void *particle, s32 count, s32 flags);
+void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void Func_080f9010(s32 id);
 s32 Math_Div(s32 numerator, s32 denominator);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-void Func_080e6d3c(void *object, s32 a, s32 b);
+void BattleFx_PlaceFormationObjects(void *object, s32 a, s32 b);
 
 #define Table_080eee66 ((u16 *)0x080EEE66)
 #define Table_080eee56 ((u8 *)0x080EEE56)
 #define Table_080eee5e ((u8 *)0x080EEE5E)
-extern const u16 Data_080ede48[];
+extern const u16 ParticleStreams_CellOffsets[];
 
 void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
 {
@@ -71,16 +71,16 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             u16 seed;
             s32 amp;
 
-            amp = (0xFF & Func_08004458()) + 0x100;
-            seed = (u16)Func_08004458();
+            amp = (0xFF & Random16()) + 0x100;
+            seed = (u16)Random16();
             M2C_FIELD(record_cursor, s32 *, 0) = half_x;
             M2C_FIELD(record_cursor, s32 *, 4) = y_arg;
             M2C_FIELD(record_cursor, s32 *, 0xC) =
-                (amp * Func_08002322(seed)) >> 7;
+                (amp * Trig_Sin(seed)) >> 7;
             M2C_FIELD(record_cursor, s32 *, 0x10) =
                 0 - ((amp * Func_0800231c(seed)) >> 6);
             M2C_FIELD(record_cursor, s32 *, 0x18) =
-                (0xF & Func_08004458()) + 0x10;
+                (0xF & Random16()) + 0x10;
             record_cursor = (u8 *)record_cursor + 0x1C;
         }
     }
@@ -95,7 +95,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             M2C_FIELD(record_cursor, s32 *, 0) = half_x;
             M2C_FIELD(record_cursor, s32 *, 4) = y_arg;
             M2C_FIELD(record_cursor, s32 *, 0xC) =
-                (Func_08002322(angle) << 5) >> 6;
+                (Trig_Sin(angle) << 5) >> 6;
             M2C_FIELD(record_cursor, s32 *, 0x10) =
                 0 - ((Func_0800231c(angle) << 5) >> 5);
             angle += 0x5555;
@@ -111,16 +111,16 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             u16 seed;
             s32 amp;
 
-            amp = (0xFF & Func_08004458()) + 0x20;
-            seed = (u16)Func_08004458();
+            amp = (0xFF & Random16()) + 0x20;
+            seed = (u16)Random16();
             M2C_FIELD(record_cursor, s32 *, 0) = half_x;
             M2C_FIELD(record_cursor, s32 *, 4) = y_arg;
             M2C_FIELD(record_cursor, s32 *, 0xC) =
-                (amp * Func_08002322(seed)) >> 6;
+                (amp * Trig_Sin(seed)) >> 6;
             M2C_FIELD(record_cursor, s32 *, 0x10) =
                 0 - ((amp * Func_0800231c(seed)) >> 5);
             M2C_FIELD(record_cursor, s32 *, 0x18) =
-                (0xF & Func_08004458()) + 0x14;
+                (0xF & Random16()) + 0x14;
             record_cursor = (u8 *)record_cursor + 0x1C;
         }
     }
@@ -163,7 +163,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
                         s32 half;
 
                         M2C_FIELD(record_cursor, s32 *, 0x18) = timer - 1;
-                        Func_080e3908(record_cursor, 60, 0);
+                        EffectStep_AdvanceWithGravity2D(record_cursor, 60, 0);
                         phase = M2C_FIELD(record_cursor, s32 *, 0x18);
                         if (phase < 0) {
                             phase += 15;
@@ -173,7 +173,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
                         half = phase / 2;
                         ((DrawRectangleFn)rect1)(
                             canvas,
-                            (u8 *)aux + Data_080ede48[phase - 1],
+                            (u8 *)aux + ParticleStreams_CellOffsets[phase - 1],
                             M2C_FIELD(record_cursor, s16 *, 2) - half,
                             M2C_FIELD(record_cursor, s16 *, 6) - phase,
                             phase, tile);
@@ -187,7 +187,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             void *record_cursor;
             const u16 *table;
 
-            table = Data_080ede48;
+            table = ParticleStreams_CellOffsets;
             record_cursor = (void *)0x02010000;
             for (i = 0; i != 60; i++) {
                 if (frame > 35) {
@@ -200,7 +200,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
                         s32 half;
 
                         M2C_FIELD(record_cursor, s32 *, 0x18) = timer - 1;
-                        Func_080e3908(record_cursor, 60, 0);
+                        EffectStep_AdvanceWithGravity2D(record_cursor, 60, 0);
                         phase = M2C_FIELD(record_cursor, s32 *, 0x18);
                         if (phase < 0) {
                             phase += 15;
@@ -228,7 +228,7 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
             record_cursor = (u8 *)work + 0x772C;
             for (i = 0; i != 3; i++) {
                 if ((u32)age <= 27) {
-                    Func_080e3908(record_cursor, 64, 0);
+                    EffectStep_AdvanceWithGravity2D(record_cursor, 64, 0);
                     ((DrawRectangleFn)rect0)(
                         canvas,
                         (u8 *)work + 0x59D8 + Math_Div(age, 7) * 0x120,
@@ -240,14 +240,14 @@ void Func_080e6eac(void *object, s32 x_arg, s32 y_arg)
         }
 
         if (frame <= 35) {
-            Func_080e6d3c(object, raw_x, y_arg);
+            BattleFx_PlaceFormationObjects(object, raw_x, y_arg);
         }
 
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
     }
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     ((ClearFn)0x03000164)((void *)0x06004000, 0x4000);
     Func_08002dd8(47);
     Func_08002dd8(46);

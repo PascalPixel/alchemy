@@ -124,7 +124,7 @@ s32 Resource_GetBuffer(s32 slot, s32 source);
 void Runtime_PushSlotEntry(struct DisplayEntry *entry, s32 slot);
 s32 AffineMatrix_BuildForEffect(struct Effect *source);
 s32 Modulo(s32 numerator, s32 denominator);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 UiWindow_Create(s32 x, s32 y, s32 width, s32 height, s32 style);
 void UiWork_Finalize(s32 work, s32 release);
 void UiText_DrawCharacterAtOffset(s32 text, s32 work, s32 x, s32 y);
@@ -135,10 +135,10 @@ void UiWork_SetParamNibble(s32 value);
 struct BattleUnit *Owner_GetStateFar(s32 id);
 s32 GameFlag_TestFar(s32 flag);
 void Func_080b50b8(s32 id, struct ScreenPos *out);
-void Func_080b50e0(u16 *ids, s32 highlight);
-void Func_0801965c(s32 message, u16 *text, s32 limit);
+void BattlePres_SetActorModesFar(u16 *ids, s32 highlight);
+void UiText_CopyMessageString(s32 message, u16 *text, s32 limit);
 s32 UiText_GetWideStringWidth(u16 *text);
-void Func_08017aa4(u16 *text, s32 work, s32 x, s32 y);
+void UiText_RenderWideStringAtOffset(u16 *text, s32 work, s32 x, s32 y);
 void Ui_ClearVramBlock(void);
 void Resource_ResetEntry(s32 slot);
 void WaitFrames(s32 frames);
@@ -326,7 +326,7 @@ step_back:
         M2C_FIELD(head, s32 *, 8) = pending;
         head->tile = Resource_GetBuffer(
             slotId, (((Data_03001e40 >> 2) & 31) << 8) + 0x080346F8);
-        i = Func_08002322(Data_03001e40 << 12);
+        i = Trig_Sin(Data_03001e40 << 12);
         if (i < 0)
             i += 0x7FFF;
         pos.y += i >> 15;
@@ -405,7 +405,7 @@ step_back:
         }
 
         selIds[cnt] = 0xFF;
-        Func_080b50e0(selIds, 1);
+        BattlePres_SetActorModesFar(selIds, 1);
 
         if (ids[cursor] > 7)
             goto draw_name;
@@ -586,12 +586,12 @@ draw_name:
             goto frame_tail;
         unit = Owner_GetStateFar(ids[cursor]);
         Func_080b50b8(ids[cursor], &namePos);
-        namePos.y += Func_08002322(Data_03001e40 << 12) / 32768;
+        namePos.y += Trig_Sin(Data_03001e40 << 12) / 32768;
         if (unit->class_id == 125 || unit->class_id == 122) {
             width = 0x80E;
             if (unit->class_id == 125)
                 width++;
-            Func_0801965c(width, name, 14);
+            UiText_CopyMessageString(width, name, 14);
         } else {
             for (i = 0; i <= 13; i++) {
                 name[i] = j = unit->name[i];
@@ -608,7 +608,7 @@ draw_name:
         if (namePos.x < 0)
             namePos.x = 0;
         Ui_ClearVramBlock();
-        Func_08017aa4(name, window, namePos.x, 4);
+        UiText_RenderWideStringAtOffset(name, window, namePos.x, 4);
 
 frame_tail:
         redraw &= ~1;
@@ -618,7 +618,7 @@ frame_end:
             for (i = 1; i < cnt; i++, entry++) {
                 slot = &tbl[selSlot[i]];
                 Func_080b50b8(selIds[i], &targetPos);
-                targetPos.y += Func_08002322(Data_03001e40 << 12) / 32768;
+                targetPos.y += Trig_Sin(Data_03001e40 << 12) / 32768;
                 *entry = *head;
                 if (slot->flags & 1) {
                     targetPos.x = (targetPos.x + slot->x) / 2;
@@ -709,7 +709,7 @@ frame_end:
     if (infoWin != 0)
         UiWork_Finalize(infoWin, 1);
     UiWork_Finalize(window, 1);
-    Func_080b50e0(ids, 0);
+    BattlePres_SetActorModesFar(ids, 0);
     Data_03001e74.session->slide_offset = 0;
     WaitFrames(1);
     return cursor;

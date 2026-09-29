@@ -57,7 +57,7 @@ struct EfxObj *Func_080912b8(s32 obj_id, s32 item)
                   ((((world_y >> 0x10) & 0xFFF0) - camera_y) & 0x1FF));
         FIELD(records, s8, 4) =
             (s8)((((world_x >> 0x10) & 0xF0) - camera_x) - first_height + 0x10);
-        Func_08003dec(records, 0);
+        Runtime_PushSlotEntry(records, 0);
     }
     second_world_y = world_y + 0x100000;
     second_height =
@@ -85,7 +85,7 @@ struct EfxObj *Func_080912b8(s32 obj_id, s32 item)
                   ((((second_world_y >> 0x10) & 0xFFF0) - camera_y) & 0x1FF));
         FIELD(second_record, s8, 4) =
             (s8)((((world_x >> 0x10) & 0xF0) - camera_x) - second_height + 0x10);
-        return_value = (s32)Func_08003dec(second_record, 0);
+        return_value = (s32)Runtime_PushSlotEntry(second_record, 0);
     }
     return (struct EfxObj *)return_value;
 }

@@ -58,7 +58,7 @@ extern u8 Value_000000c4;
 /* Heap-block address cache; Data_03001e50[kind] holds that kind's block. */
 extern void *Data_03001e50[];
 
-extern const u16 Data_080ede48[];
+extern const u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080ee294[];
 
 /* Five-halfword rows at 0x080ee262, indexed by the effect state's field_18.
@@ -83,29 +83,28 @@ typedef struct Spark {
     s32 timer;
 } Spark;
 
-extern Spark Data_02010000[];
+extern Spark gMapCellBuffer[];
 
 #define WORK_EFX (*(struct BattleEffectArgument **)((s8 *)work + 0x7828))
 
-void Func_080cd594(s32 mode);
-void Func_080e396c(s32 source, s32 *out);
-void *Func_08002f40(s32 id);
-s32 Func_08004458(void);
-s32 Func_08002322(s32 angle);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void *Resource_GetTableEntry(s32 id);
+s32 Random16(void);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_080b50e8(s32 id);
 void Func_080f9010(s32 id);
-void Func_080e3908(void *particle, s32 step, s32 gravity);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void EffectStep_AdvanceWithGravity2D(void *particle, s32 step, s32 gravity);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080b5088(s32 member_id, s32 b);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunSparkGroups(void *object, s32 kind)
 {
@@ -135,16 +134,16 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
     WORK_EFX = (struct BattleEffectArgument *)object;
 
     if (kind == 0) {
-        Func_080cd594(1);
+        BattleFx_BeginCanvasLayer(1);
         base_x = 60;
         base_y = 48;
     } else if (kind == 1) {
-        Func_080cd594(0);
+        BattleFx_BeginCanvasLayer(0);
         base_x = 60;
         base_y = 64;
     } else {
-        Func_080cd594(0);
-        Func_080e396c(WORK_EFX->actor, pos);
+        BattleFx_BeginCanvasLayer(0);
+        EffectPosition_ApplyStepAndYOffset(WORK_EFX->actor, pos);
         base_x = pos[0] / 2;
         base_y = pos[1] + 48;
     }
@@ -161,10 +160,10 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
     Resource_LoadAndDecompress((s32)&Value_00000073, extra, 0, 0);
 
     if (kind == 1) {
-        palette = Func_08002f40((s32)&Value_00000087);
+        palette = Resource_GetTableEntry((s32)&Value_00000087);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     } else if (kind == 2) {
-        palette = Func_08002f40((s32)&Value_000000c4);
+        palette = Resource_GetTableEntry((s32)&Value_000000c4);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     }
     (void)status;
@@ -181,8 +180,8 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                 s32 radius;
 
                 radius = i * 2;
-                angle = Func_08004458() & 0xFFFF;
-                ring->x = radius * Func_08002322(angle);
+                angle = Random16() & 0xFFFF;
+                ring->x = radius * Trig_Sin(angle);
                 ring->y = -(radius * Func_0800231c(angle));
                 ring->timer = (i / 2) + 25;
                 ring++;
@@ -202,10 +201,10 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                     s32 x;
 
                     efx = WORK_EFX;
-                    spark = &Data_02010000[
+                    spark = &gMapCellBuffer[
                         SPARK_PATTERN_COUNT(efx->variant) * group + i];
-                    magnitude = (Func_08004458() & 0x3FF) + 32;
-                    angle = Func_08004458() & 0xFFFF;
+                    magnitude = (Random16() & 0x3FF) + 32;
+                    angle = Random16() & 0xFFFF;
                     efx = WORK_EFX;
                     offset = SPARK_PATTERN_OFFSET(efx->variant, group);
                     if (efx->side == 1) {
@@ -215,10 +214,10 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                     }
                     spark->x = x << 16;
                     spark->y = y_fixed;
-                    spark->vx = (magnitude * Func_08002322(angle)) >> 6;
+                    spark->vx = (magnitude * Trig_Sin(angle)) >> 6;
                     spark->vy = -((magnitude * Func_0800231c(angle)) << 1) >> 6;
                     i++;
-                    spark->timer = (Func_08004458() & 7) + 32;
+                    spark->timer = (Random16() & 7) + 32;
                 } while (i != SPARK_PATTERN_COUNT(WORK_EFX->variant));
             }
 
@@ -339,14 +338,14 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                         do {
                             Spark *spark;
 
-                            spark = &Data_02010000[
+                            spark = &gMapCellBuffer[
                                 SPARK_PATTERN_COUNT(WORK_EFX->variant) * group + i];
                             if (spark->timer > 0) {
                                 s32 timer;
                                 s32 x;
                                 s32 y;
 
-                                Func_080e3908(spark, 60, gravity);
+                                EffectStep_AdvanceWithGravity2D(spark, 60, gravity);
                                 timer = spark->timer - 1;
                                 y = spark->y;
                                 spark->timer = timer;
@@ -360,7 +359,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                                         size = Math_Div(timer, 5) + 1;
                                         rectangle_slot[i & 1](canvas,
                                             (s8 *)extra
-                                                + Data_080ede48[size - 1],
+                                                + ParticleStreams_CellOffsets[size - 1],
                                             (x >> 16) - (size / 2),
                                             (y >> 16) - size,
                                             size, size * 2);
@@ -376,7 +375,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                 if (WORK_EFX->count != 0) {
                     do {
                         if (frame == start + 6) {
-                            Func_080d6888(WORK_EFX->actors[i], 7, 5, i, 10);
+                            ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 10);
                             Func_080b5088(WORK_EFX->actors[i], 4);
                         }
                         i++;
@@ -388,14 +387,14 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
             } while (group != SPARK_PATTERN_GROUPS(WORK_EFX->variant));
         }
 
-        Func_080e155c(16, 16);
-        Func_080cd52c();
+        Camera_ApplyShake(16, 16);
+        ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
     }
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

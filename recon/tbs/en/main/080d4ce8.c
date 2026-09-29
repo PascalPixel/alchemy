@@ -16,28 +16,28 @@ extern void *Data_03001e50[];
 extern u8 Value_00000085, Value_00000073, Value_00000086, Value_00000087;
 extern u8 Data_080ee29a[], Data_080ee2a9[];
 extern s8 Data_080ee29d[];
-extern u16 Data_080ede48[];
-void Func_080cd594(s32);
-void *Func_08002f40(s32);
-void **Func_080b5098(s32);
-s32 Func_08004458(void);
+extern u16 ParticleStreams_CellOffsets[];
+void BattleFx_BeginCanvasLayer(s32);
+void *Resource_GetTableEntry(s32);
+void **GetBattleObjectSlotFar(s32);
+s32 Random16(void);
 s32 Func_080041d8(s32, s32);
-void Func_08004278(s32);
+void Scheduler_RemoveCallback(s32);
 void Func_080049ac(void);
-void Func_080051d8(void *, void *);
+void Graphics_PrepareTransferInIwramWork(void *, void *);
 void Func_080b50e8(s32);
-void Func_080e3944(void *, s32 *);
+void EffectPosition_ApplyBaseAndYOffset(void *, s32 *);
 void Func_080f9010(s32);
 s32 Func_080022fc(s32, s32);
-s32 Func_08002322(s32);
+s32 Trig_Sin(s32);
 s32 Func_0800231c(s32);
-void Func_080d6888(s32, s32, s32, s32, s32);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void Func_080b5088(s32, s32);
-void Func_080e155c(s32, s32);
-void Func_080cd52c(void);
+void Camera_ApplyShake(s32, s32);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32);
 void Func_08002dd8(s32);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 #define EFFECT (*(Effect **)(work + 0x7828))
 #define PARTICLES ((Particle *)0x02010000)
 
@@ -69,15 +69,15 @@ void Func_080d4ce8(Effect *effect)
     destination = *entry;
     extra = cache[2];
     EFFECT = effect;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
     Resource_LoadAndDecompress((s32)&Value_00000085, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000073, extra, 0, 0);
     if (EFFECT->variant == 0) {
-        palette = Func_08002f40((s32)&Value_00000086);
+        palette = Resource_GetTableEntry((s32)&Value_00000086);
         status = ((CopyWords)0x03001388)((void *)0x05000000, palette, 128);
     } else if (EFFECT->variant == 2) {
-        palette = Func_08002f40((s32)&Value_00000087);
+        palette = Resource_GetTableEntry((s32)&Value_00000087);
         status = ((CopyWords)0x03001388)((void *)0x05000000, palette, 128);
     }
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
@@ -93,12 +93,12 @@ void Func_080d4ce8(Effect *effect)
         particle->life = 0;
         particle++;
     } while (i != 1024);
-    actor = *Func_080b5098(EFFECT->actors[0]);
+    actor = *GetBattleObjectSlotFar(EFFECT->actors[0]);
     anchor = (Anchor *)(work + 0x7080);
     i = 0;
     do {
         s32 x;
-        x = ((Func_08004458() & 15) + 72) << 16;
+        x = ((Random16() & 15) + 72) << 16;
         anchor->y = 0;
         anchor->x = x;
         anchor->z = Data_080ee29d[EFFECT->variant * 4 + i] << 16;
@@ -122,7 +122,7 @@ void Func_080d4ce8(Effect *effect)
         if (frame == 16)
             Func_080b50e8(134);
         Func_080049ac();
-        Func_080051d8(camera, (u8 *)camera + 12);
+        Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera + 12);
         if (frame <= 63) {
             slot = 0;
             if (Data_080ee29a[EFFECT->variant] != 0) {
@@ -131,7 +131,7 @@ void Func_080d4ce8(Effect *effect)
                 overlay = work + 0xdd0;
                 trigger = Data_080ee2a9;
                 do {
-                    Func_080e3944(anchor, screen);
+                    EffectPosition_ApplyBaseAndYOffset(anchor, screen);
                     screen[0] /= 2;
                     screen[1] -= 8;
                     if (frame == *trigger)
@@ -159,20 +159,20 @@ void Func_080d4ce8(Effect *effect)
                         do {
                             if (particle->life == 0) {
                                 s32 magnitude, angle;
-                                magnitude = Func_08004458() & 0x3ff;
-                                angle = Func_08004458();
+                                magnitude = Random16() & 0x3ff;
+                                angle = Random16();
                                 particle->x = screen[0] << 8;
                                 particle->y = (screen[1] << 8) + 4096;
                                 angle = (angle & 0x7fff) - 0x4000;
-                                particle->vx = ((magnitude + 32) * Func_08002322(angle)) >> 15;
+                                particle->vx = ((magnitude + 32) * Trig_Sin(angle)) >> 15;
                                 magnitude += 32;
                                 particle->vy = -((magnitude * Func_0800231c(angle)) << 1) >> 15;
                                 spawned++;
                                 if (frame == *trigger) {
-                                    particle->life = (Func_08004458() & 7) + 48;
+                                    particle->life = (Random16() & 7) + 48;
                                     if (spawned == 200) break;
                                 } else {
-                                    particle->life = (Func_08004458() & 7) + 24;
+                                    particle->life = (Random16() & 7) + 24;
                                     if (spawned == 4) break;
                                 }
                             }
@@ -184,7 +184,7 @@ void Func_080d4ce8(Effect *effect)
                         *(s32 *)(work + 0x77a8) = 2;
                         i = 0;
                         while (i != EFFECT->count) {
-                            Func_080d6888(EFFECT->actors[i], 10, 5, i, 8);
+                            ObjectGroup_UpdateMembers(EFFECT->actors[i], 10, 5, i, 8);
                             Func_080b5088(EFFECT->actors[i], 1);
                             i++;
                         }
@@ -217,7 +217,7 @@ void Func_080d4ce8(Effect *effect)
                     if (px <= 126 && y >= 0) {
                         size = (life - 17) / 8;
                         if (size <= 0) size = 1;
-                        draws[i & 1](destination, extra + Data_080ede48[size - 1],
+                        draws[i & 1](destination, extra + ParticleStreams_CellOffsets[size - 1],
                             px - size / 2, py - size, size, size * 2);
                     }
                 }
@@ -225,14 +225,14 @@ void Func_080d4ce8(Effect *effect)
             i++;
             particle++;
         } while (i != 1024);
-        Func_080e155c(16, 16);
-        Func_080cd52c();
+        Camera_ApplyShake(16, 16);
+        ObjectGroup_TickMemberTimers();
         *(s32 *)(work + 0x7824) = 1;
         Func_080030f8(1);
         frame++;
     } while (frame != 96);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_08004278(0x080cd261);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback(0x080cd261);
+    BattleFx_EndCanvasLayer();
 }

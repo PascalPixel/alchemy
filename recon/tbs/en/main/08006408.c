@@ -14,6 +14,8 @@
  * sets -1 only after the branch. Returning through value itself (as
  * SerialRuntime_BeginTransferA does) stops the if-conversion but lets the
  * shared HImode zero take r0 first. */
+extern u8 Data_00000000[];
+
 s32 Func_08006408(s32 value)
 {
     volatile s32 *active;
@@ -26,7 +28,7 @@ s32 Func_08006408(s32 value)
         current = *active;
     } while (0);
     active = &SERIAL_ACTIVE_B;
-    state = SERIAL_TRANSFER;
+    state = &gSerialTransfer;
     if (current == 0)
         goto begin_transfer;
     value = -1;
@@ -34,8 +36,8 @@ s32 Func_08006408(s32 value)
 
 begin_transfer:
     {
-        saved_interrupt_master = RegIme;
-        RegIme = (u16)&RegIme;
+        saved_interrupt_master = REG_IME;
+        REG_IME = (u16)&REG_IME;
         do {
             state->status = 0x81;
             SERIAL_VALUE_B = current;
@@ -47,10 +49,10 @@ begin_transfer:
             /* FAKEMATCH: keep the result clear as a distinct linked zero. */
             do {
                 value = (u32)Data_00000000;
-                SERIAL_RESULT = value;
+                gSerialBlockSequence = value;
             } while (0);
         } while (0);
-        RegIme = saved_interrupt_master;
+        REG_IME = saved_interrupt_master;
         value = 0;
     }
 transfer_complete:

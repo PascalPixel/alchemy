@@ -132,7 +132,7 @@ extern char Value_00000085;
 extern char Value_000000c0;
 extern char Value_000000c4;
 
-extern const u16 Data_080ede48[];
+extern const u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080eef12[];
 extern const s32 Data_080eef18[];
 
@@ -146,24 +146,24 @@ void WaitFrames(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
 /* Scheduler_RemoveCallback */
 /* Random16 */
-s32 Func_08004458(void);
+s32 Random16(void);
 /* _call_via_r3 thunk, recon/tbs/raw/080072e4.s */
 void _call_via_r3(void *dest, s32 arg1, s32 arg2, void *routine);
 void BattleMotion_ApplyVariantMotionFar(s32 member, s32 arg);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
 /* ObjectGroup_TickMemberTimers */
-void Func_080cd52c(void);
+void ObjectGroup_TickMemberTimers(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
 /* object/group/update_members.c */
 void ObjectGroup_UpdateMembers(s32 member, s32 b, s32 c, s32 d, s32 e);
 /* Resource_LoadAndDecompress */
 /* Camera_ApplyShake */
-void Func_080e155c(s32 a, s32 b);
+void Camera_ApplyShake(s32 a, s32 b);
 /* EffectStep_AdvanceWithGravity2D */
-void Func_080e3908(struct EffectStep *step, s32 damping, s32 gravity);
+void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 gravity);
 /* EffectPosition_ApplyAlternateStepAndYOffset */
-void Func_080e3980(s32 actor, struct EffectPosition *out);
+void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor, struct EffectPosition *out);
 void BattleFx_StepPaletteToResource(s32 id);
 void Audio_PlayCue(s32 cue);
 
@@ -209,7 +209,7 @@ void Func_080e99c0(void *object)
     *(void **)((u8 *)work + 0x7828) = object;
     BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
-    Func_080e3980(
+    EffectPosition_ApplyAlternateStepAndYOffset(
         *(s16 *)((u8 *)(*(void **)((u8 *)work + 0x7828)) + 0x24), &pos);
     half = pos.x / 2;
 
@@ -230,7 +230,7 @@ void Func_080e99c0(void *object)
     /* Sixteen drawn billboards (the table holds more) at work + 0x7080. */
     i = 0;
     do {
-        ang = Func_08004458() & 0xFFFF;
+        ang = Random16() & 0xFFFF;
         RAIN(work)[i].x = (i * 2) * Trig_Sin(ang);
         RAIN(work)[i].y = -((i * 2) * Trig_Cos(ang));
         RAIN(work)[i].variant = i / 2 + 25;
@@ -247,14 +247,14 @@ void Func_080e99c0(void *object)
     origin = half << 16;
     i = 0;
     do {
-        mag = Func_08004458() & 0x1FF;
-        ang = Func_08004458() & 0xFFFF;
+        mag = Random16() & 0x1FF;
+        ang = Random16() & 0xFFFF;
         spark[i].x = origin;
         spark[i].y = 176 << 15;
         mag += 32;
         spark[i].velocity_x = (mag * Trig_Sin(ang)) >> 5;
         spark[i].velocity_y = -(mag * Trig_Cos(ang)) >> 6;
-        spark[i].variant = (Func_08004458() & 7) + 32;
+        spark[i].variant = (Random16() & 7) + 32;
         i++;
     } while (i != 170 << 1);
 
@@ -315,13 +315,13 @@ void Func_080e99c0(void *object)
             i = 0;
             do {
                 if (dust[i].variant == -1) {
-                    mag = Func_08004458() & 63;
-                    ang = Func_08004458() & 0xFFFF;
+                    mag = Random16() & 63;
+                    ang = Random16() & 0xFFFF;
                     dust[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
                     dust[i].y =
                         ((mag * Trig_Cos(ang)) >> 2) + (192 << 15);
-                    dust[i].velocity_x = ((Func_08004458() & 63) - 32) << 14;
-                    dust[i].velocity_y = (-(Func_08004458() & 63) - 8) << 13;
+                    dust[i].velocity_x = ((Random16() & 63) - 32) << 14;
+                    dust[i].velocity_y = (-(Random16() & 63) - 8) << 13;
                     dust[i].variant = 0;
                 }
                 i++;
@@ -335,14 +335,14 @@ void Func_080e99c0(void *object)
             i = 0;
             do {
                 if (dust[i].variant == -1) {
-                    mag = Func_08004458() & 63;
-                    ang = Func_08004458() & 0xFFFF;
+                    mag = Random16() & 63;
+                    ang = Random16() & 0xFFFF;
                     dust[i].x = ((mag * Trig_Sin(ang)) >> 3) + origin;
                     dust[i].y =
                         ((mag * Trig_Cos(ang)) >> 2) + (192 << 15);
-                    dust[i].velocity_x = ((Func_08004458() & 63) - 32) << 14;
+                    dust[i].velocity_x = ((Random16() & 63) - 32) << 14;
                     cnt++;
-                    dust[i].velocity_y = (-(Func_08004458() & 63) - 8) << 13;
+                    dust[i].velocity_y = (-(Random16() & 63) - 8) << 13;
                     dust[i].variant = 0;
                     if (cnt == 16) {
                         break;
@@ -382,7 +382,7 @@ void Func_080e99c0(void *object)
                     if (frame > 76) {
                         size = 10;
                     }
-                    draw(canvas, (u8 *)sheet + Data_080ede48[size - 1],
+                    draw(canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                         *(s16 *)((u8 *)&dust[i] + 2) - size / 2,
                         *(s16 *)((u8 *)&dust[i] + 6) - size,
                         size, size * 2);
@@ -432,7 +432,7 @@ void Func_080e99c0(void *object)
             i = 0;
             do {
                 if (spark[i].variant > 0) {
-                    Func_080e3908(&spark[i], 64, 128 << 6);
+                    EffectStep_AdvanceWithGravity2D(&spark[i], 64, 128 << 6);
                     y = spark[i].y;
                     spark[i].variant--;
                     if (y > (216 << 15)) {
@@ -442,7 +442,7 @@ void Func_080e99c0(void *object)
                         if ((u32)x <= 0x007EFFFF && y >= 0) {
                             size = Math_Div(spark[i].variant, 5) + 1;
                             draw(canvas,
-                                (u8 *)sheet + Data_080ede48[size - 1],
+                                (u8 *)sheet + ParticleStreams_CellOffsets[size - 1],
                                 (x >> 16) - size / 2, (y >> 16) - size,
                                 size, size * 2);
                         }
@@ -481,14 +481,14 @@ void Func_080e99c0(void *object)
             Iwram_FillWords(canvas, 128 << 7, 0x3F3F3F3F);
         }
 
-        Func_080e155c(16, 16);
-        Func_080cd52c();
+        Camera_ApplyShake(16, 16);
+        ObjectGroup_TickMemberTimers();
         *(s32 *)((u8 *)work + 0x7824) = 1;
         WaitFrames(1);
         frame++;
     } while (frame != 102);
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(47);
     Func_08002dd8(46);
     BattleFx_EndCanvasLayer();

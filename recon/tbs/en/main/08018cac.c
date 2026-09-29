@@ -85,7 +85,7 @@ extern void Runtime_BumpFree(void *buffer);
 extern void *RenderOutput_AcquireFree(void);
 extern void RenderOutput_AppendToList(void *window, void *output);
 extern s32 Resource_FindFreeEntry(void);
-extern s32 Func_080178b0(s32 character, struct UiGlyphMetrics *metrics);
+extern s32 UiText_RenderGlyphPair(s32 character, struct UiGlyphMetrics *metrics);
 extern s32 Func_080072fc(void *window, s32 character, s32 x, s32 y, u8 *resource);
 
 s32 UiText_DrawGlyph(
@@ -162,7 +162,7 @@ s32 UiText_DrawGlyph(
             *(u16 *)((u8 *)output + 12) = 0;
             break;
         }
-        if ((u32)!(result = Func_080178b0(glyph, &metrics)))
+        if ((u32)!(result = UiText_RenderGlyphPair(glyph, &metrics)))
             result = 1;
     }
     if ((u8)output->one5 == 2) {

@@ -117,33 +117,33 @@ extern u8 Value_00000092;
 extern u8 Value_000000ba;
 
 /* Depth-scaled spark cells: one source offset per size 1..9. */
-extern const u16 Data_080ede48[];
+extern const u16 ParticleStreams_CellOffsets[];
 
 /* Gather-cell pair: source offset and square edge, nine animation cels. */
-extern const u16 Data_080ede84[];
-extern const u8 Data_080ede96[];
+extern const u16 BattleFx_PuffCells[];
+extern const u8 BattleFx_PuffSizes[];
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_FetchRectangleBlitters(s32 alternate, void **output);
-void **Func_080b5098(s32 member_id);
-u32 Func_08004458(void);
-s32 Func_08002322(s32 angle);
+void **GetBattleObjectSlotFar(s32 member_id);
+u32 Random16(void);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Math_Div(s32 value, s32 divisor);
 s32 Func_080022fc(s32 value, s32 divisor);
 void Render_ResetTransformState(void);
-void Func_080049e8(void);
-void Func_08004a5c(void);
+void Graphics_SaveTransferWorkOnce(void);
+void Graphics_RestoreTransferWork(void);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
 void Func_08004c6c(s32 angle);
 void SceneTransform_ApplyPosition(s32 *position);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Func_080f9010(s32 id);
 void Func_080030f8(s32 frames);
 void Runtime_ReleaseHeapBlock(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 s32 BattleEffect_RunSparkTravel(void *object)
 {
@@ -186,24 +186,24 @@ s32 BattleEffect_RunSparkTravel(void *object)
     draw_destination = *cursor;
     graphics = heap_cache[2];
     STATE = object;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     Resource_LoadAndDecompress((s32) &Value_00000092, work, 1, 1);
     Resource_LoadAndDecompress((s32) &Value_00000073, graphics, 0, 0);
     BattleFx_FetchRectangleBlitters(M2C_FIELD(STATE, s32 *, 4) ^ 1, blit);
-    actor = *Func_080b5098(M2C_FIELD(STATE, s32 *, 8));
-    goal = *Func_080b5098(M2C_FIELD(STATE, s16 *, 36));
+    actor = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s32 *, 8));
+    goal = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 36));
 
     step = (struct EffectStep *)0x02010000;
     i = 0;
     do {
         s32 speed;
 
-        heading = Func_08004458() & 0xFFFF;
-        speed = Func_08004458() & 0xFF;
+        heading = Random16() & 0xFFFF;
+        speed = Random16() & 0xFF;
         step->x = 0;
-        step->y = ((Func_08004458() & 31) + 20) << 16;
+        step->y = ((Random16() & 31) + 20) << 16;
         step->z = 0;
-        step->velocity_x = (Func_08002322(heading) * (speed + 128)) >> 5;
+        step->velocity_x = (Trig_Sin(heading) * (speed + 128)) >> 5;
         step->velocity_y = 0;
         step->velocity_z = (Func_0800231c(heading) * (speed + 128)) >> 5;
         step->variant = 0;
@@ -243,10 +243,10 @@ s32 BattleEffect_RunSparkTravel(void *object)
         }
         SceneTransform_ApplyPosition(pos);
         if (frame == 0) {
-            Func_080d6888(M2C_FIELD(STATE, s32 *, 8), 7, -1, -1, 0);
+            ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s32 *, 8), 7, -1, -1, 0);
         }
         if (frame == 24) {
-            Func_080d6888(M2C_FIELD(STATE, s32 *, 8), 0, -1, -1, 0);
+            ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s32 *, 8), 0, -1, -1, 0);
         }
 
         spin = frame << 8;
@@ -256,7 +256,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
             if (frame > slot && spark_step->variant == 0) {
                 s32 scale;
 
-                Func_080049e8();
+                Graphics_SaveTransferWorkOnce();
                 switch (slot & 3) {
                 case 0:
                     SceneTransform_ApplyYaw(spin);
@@ -274,7 +274,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                 }
                 EffectPosition_ApplyBaseAndYOffset((s32 *)spark_step, (struct EffectPosition *)screen);
                 screen[0] = screen[0] >> 1;
-                Func_08004a5c();
+                Graphics_RestoreTransferWork();
                 if (screen[2] < 250) {
                     screen[2] = 250;
                 }
@@ -284,7 +284,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                 scale = 9 - (screen[2] - 250) / 64;
                 ((DrawRectangleFn)blit[0])(
                     draw_destination,
-                    (u8 *)graphics + Data_080ede48[scale - 1],
+                    (u8 *)graphics + ParticleStreams_CellOffsets[scale - 1],
                     screen[0] - scale / 2,
                     screen[1] - scale,
                     scale,
@@ -303,7 +303,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
 
         if (frame > 82) {
             spark[0] = 0;
-            spark[1] = Func_08002322(frame << 10) << 2;
+            spark[1] = Trig_Sin(frame << 10) << 2;
             spark[2] = 0;
             EffectPosition_ApplyBaseAndYOffset(spark, (struct EffectPosition *)screen);
             screen[0] = screen[0] >> 1;
@@ -320,9 +320,9 @@ s32 BattleEffect_RunSparkTravel(void *object)
     step = (struct EffectStep *)0x02010000;
     i = 0;
     do {
-        step->x = ((Func_08004458() & 255) - 127) << 15;
-        step->y = ((Func_08004458() & 127) + 64) << 15;
-        step->z = ((Func_08004458() & 255) - 127) << 15;
+        step->x = ((Random16() & 255) - 127) << 15;
+        step->y = ((Random16() & 127) + 64) << 15;
+        step->z = ((Random16() & 255) - 127) << 15;
         step->variant = 0;
         i++;
         step++;
@@ -341,7 +341,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
             }
             record[0] = target[0];
             record[1] = target[1];
-            record[2] = target[2] + Func_08002322(frame << 11) * 40;
+            record[2] = target[2] + Trig_Sin(frame << 11) * 40;
             EffectPosition_ApplyBaseAndYOffset(record, (struct EffectPosition *)view);
             view[0] = view[0] >> 1;
             ((DrawRectangleFn)blit[0])(
@@ -356,7 +356,7 @@ s32 BattleEffect_RunSparkTravel(void *object)
                     void *member_object;
                     s32 stagger;
 
-                    member_object = *Func_080b5098(
+                    member_object = *GetBattleObjectSlotFar(
                         M2C_FIELD(STATE, s16 *, id_offset));
                     stagger = member * 8;
                     Render_ResetTransformState();
@@ -369,11 +369,11 @@ s32 BattleEffect_RunSparkTravel(void *object)
                         Func_080f9010(126);
                     }
                     if (frame == stagger + 40) {
-                        Func_080d6888(M2C_FIELD(STATE, s16 *, id_offset),
+                        ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s16 *, id_offset),
                             7, -1, -1, 0);
                     }
                     if (frame == stagger + 64) {
-                        Func_080d6888(M2C_FIELD(STATE, s16 *, id_offset),
+                        ObjectGroup_UpdateMembers(M2C_FIELD(STATE, s16 *, id_offset),
                             0, -1, -1, 0);
                     }
                     if (frame > stagger) {
@@ -408,8 +408,8 @@ s32 BattleEffect_RunSparkTravel(void *object)
                                         view[2] = 634;
                                     }
                                     cel = Func_080022fc(grain * 4 + frame, 9);
-                                    src = (u8 *)graphics + Data_080ede84[cel];
-                                    size = Data_080ede96[cel];
+                                    src = (u8 *)graphics + BattleFx_PuffCells[cel];
+                                    size = BattleFx_PuffSizes[cel];
                                     half = (u32)size >> 1;
                                     ((DrawRectangleFn)blit[1])(
                                         draw_destination, src,
@@ -443,5 +443,5 @@ s32 BattleEffect_RunSparkTravel(void *object)
     Scheduler_RemoveCallback((void *)0x080CD261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    return Func_080cdbc0();
+    return BattleFx_EndCanvasLayer();
 }

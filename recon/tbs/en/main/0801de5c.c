@@ -16,8 +16,8 @@
 typedef void (*ClearFn)(void *, s32);
 typedef void (*FillFn)(void *, s32, u32);
 
-void *Func_08004938(s32 size);
-void *Func_08002f40(s32 resource_id);
+void *Runtime_BumpAllocate(s32 size);
+void *Resource_GetTableEntry(s32 resource_id);
 extern u8 Value_00000013;
 
 s32 UiText_RenderStringTiles(
@@ -68,8 +68,8 @@ s32 UiText_RenderStringTiles(
     var_r8_18 = start_column;
     var_r6_23 = script;
     temp_fp_25 = *(void **)0x03001e8c;
-    sp8 = Func_08004938(0x800);
-    sp4 = Func_08002f40((s32)&Value_00000013);
+    sp8 = Runtime_BumpAllocate(0x800);
+    sp4 = Resource_GetTableEntry((s32)&Value_00000013);
     sp0 = M2C_FIELD(temp_fp_25, u8 *, 0xEA7) << 0xC;
     ((ClearFn)0x03000164)(palette_map, 0x10);
     if (sp0 == 0xF000) {

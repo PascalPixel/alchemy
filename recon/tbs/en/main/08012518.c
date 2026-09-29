@@ -58,6 +58,10 @@
 #include "GLOBAL_CELLS.H"
 #include "METADATA_LOOKUP.H"
 #include "DMA.H"
+extern u8 gKeysHeld[];
+extern u8 gKeysRepeat[];
+extern u8 gKeyState[];
+extern u8 gSpriteObjects[];
 
 
 /* One editable column of the icon grid.  Eight bytes: the reference indexes
@@ -74,11 +78,11 @@ void *Runtime_AllocateBlock(s32, s32);
 void Resource_InitializeTable(void);
 void Scheduler_ResetTaskTable(void);
 s32 Scheduler_AddOrUpdateCallback(s32, s32);
-void Func_08004858(void);
+void Runtime_InitializeHeap(void);
 void Blend_SetDarkenTarget0(s32);
 void Func_080030f8(s32);
-void Func_08002f0c(s32, void *);
-void Func_0800c004(s32);
+void RuntimeDispatch_ReturnZero(s32, void *);
+void ObjectSystem_Initialize(s32);
 void Func_0800b6b8(s32, void *, s32, s32);
 u8 *ResourceObject_Create(s32);
 s32 ResourceMetadata_Register(u8 *, s32);
@@ -110,8 +114,8 @@ void Ui_RunIconMonitor(void)
     s32 moved;
     u32 i;
 
-    keys = (volatile u32 *)ADDR_03001AE8;
-    trig = (volatile u32 *)ADDR_03001B04;
+    keys = (volatile u32 *)gKeysHeld;
+    trig = (volatile u32 *)gKeysRepeat;
     x = 144;
     y = 96;
     mode = 1;
@@ -139,11 +143,11 @@ void Ui_RunIconMonitor(void)
     Blend_SetDarkenTarget0(1);
 
 restart:
-    Func_08004858();
+    Runtime_InitializeHeap();
     Scheduler_ResetTaskTable();
     work = Runtime_AllocateBlock(9, 160);
     Resource_InitializeTable();
-    Func_0800c004(2);
+    ObjectSystem_Initialize(2);
     Func_0800b6b8(0, (void *)0x02010000, ent[0].no, 0);
     md = (u8 *)Func_08185000(ent[0].no);
     if (md[4] == 20) {
@@ -213,8 +217,8 @@ restart:
             }
         }
 
-        if ((*(s32 *)ADDR_03001C94 & 8) != 0) {
-            tbl = *(u8 **)ADDR_03001E60;
+        if ((*(s32 *)gKeyState & 8) != 0) {
+            tbl = *(u8 **)gSpriteObjects;
             flag = flag ^ 1;
             tbl += 38;
             for (i = 0; i <= 9; i++) {
@@ -364,9 +368,9 @@ restart:
         if ((*trig & 4) != 0) {
             Scheduler_ResetTaskTable();
             if ((*keys & 2) != 0) {
-                Func_08002f0c(17, (void *)0x08185000);
+                RuntimeDispatch_ReturnZero(17, (void *)0x08185000);
             } else {
-                Func_08002f0c(18, (void *)0x08185000);
+                RuntimeDispatch_ReturnZero(18, (void *)0x08185000);
             }
             goto restart;
         }

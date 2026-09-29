@@ -39,27 +39,27 @@ typedef struct Particle {
 typedef void (*DrawFn)(void *, const void *, s32, s32, s32, s32);
 typedef s32 (*CopyFn)(void *, const void *, s32);
 
-extern u16 Data_080ede48[];
+extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080eeadc[];
 extern u8 Value_000000c4;
 extern u8 Value_00000073;
 
-s32 Func_080cdb24(s32);
-s32 Func_08004458(void);
-s32 Func_08002322(s32);
+s32 BattleFx_BeginTiledCanvas(s32);
+s32 Random16(void);
+s32 Trig_Sin(s32);
 s32 Func_0800231c(s32);
 s32 Func_080041d8(void *, s32);
 void Func_080f9010(s32);
 void Func_080b50e8(s32);
 s32 Func_080022fc(s32, s32);
-void Func_080e3908(void *, s32, s32);
-void Func_080d6888(s16, s32, s32, s32, s32);
-void Func_080e155c(s32, s32);
-void Func_080cd52c(void);
+void EffectStep_AdvanceWithGravity2D(void *, s32, s32);
+void ObjectGroup_UpdateMembers(s16, s32, s32, s32, s32);
+void Camera_ApplyShake(s32, s32);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32);
-void Func_08004278(void *);
+void Scheduler_RemoveCallback(void *);
 void Func_08002dd8(s32);
-void Func_080cdbc0(void);
+void BattleFx_EndCanvasLayer(void);
 
 void Func_080db264(void *object)
 {
@@ -92,7 +92,7 @@ void Func_080db264(void *object)
     canvas = *cursor;
     source = cache[2];
     FIELD(work, void *, 0x7828) = object;
-    Func_080cdb24(1);
+    BattleFx_BeginTiledCanvas(1);
 
     if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 2)
         *(volatile u16 *)0x04000020 = 0x80;
@@ -118,11 +118,11 @@ void Func_080db264(void *object)
     particle = (Particle *)0x02010000;
     i = 0;
     do {
-        radius = (Func_08004458() & 0x3ff) + 0x100;
-        random_angle = (Func_08004458() & 0x7fff) - 0x4000;
+        radius = (Random16() & 0x3ff) + 0x100;
+        random_angle = (Random16() & 0x7fff) - 0x4000;
         particle->x = 0x4000;
         particle->y = 0x7000;
-        particle->z = radius * Func_08002322(random_angle) >> 16;
+        particle->z = radius * Trig_Sin(random_angle) >> 16;
         particle->vz = -(radius * Func_0800231c(random_angle) * 2) >> 16;
         particle->life = 0;
         i++;
@@ -146,29 +146,29 @@ void Func_080db264(void *object)
             do {
                 spawned = 0;
                 radius = pass * (angle + 0x4000);
-                center_x = ((32 - frame) * Func_08002322(radius) >> 16) + 64;
+                center_x = ((32 - frame) * Trig_Sin(radius) >> 16) + 64;
                 center_y = -(Func_0800231c(radius) * 8 >> 16) - 8;
-                sprite = (u8 *)work + (Func_08004458() & 3) * 0xb40 + 0x60e;
+                sprite = (u8 *)work + (Random16() & 3) * 0xb40 + 0x60e;
                 if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 0) {
                     rectangles[0](canvas, sprite,
-                        center_x + (Func_08004458() & 7) - 16,
+                        center_x + (Random16() & 7) - 16,
                         center_y, 24, 120);
                 } else {
                     rectangles[pass & 1](canvas, sprite,
-                        center_x + (Func_08004458() & 7) - 16,
+                        center_x + (Random16() & 7) - 16,
                         center_y, 24, 120);
                 }
                 particle = (Particle *)0x02010000;
                 i = 0;
                 do {
                     if (particle->life == 0) {
-                        velocity = (Func_08004458() & 0x1ff) + 0x80;
-                        random_angle = (Func_08004458() & 0x7fff) - 0x4000;
+                        velocity = (Random16() & 0x1ff) + 0x80;
+                        random_angle = (Random16() & 0x7fff) - 0x4000;
                         particle->y = (center_y + 112) << 16;
                         particle->x = center_x << 16;
-                        particle->vx = velocity * Func_08002322(random_angle) >> 9;
+                        particle->vx = velocity * Trig_Sin(random_angle) >> 9;
                         particle->vy = -(velocity * Func_0800231c(random_angle) * 2) >> 7;
-                        particle->life = (Func_08004458() & 7) + 32;
+                        particle->life = (Random16() & 7) + 32;
                         spawned++;
                         if (spawned == Data_080eeadc[FIELD(FIELD(work, void *, 0x7828), s32, 24) * 2 + 1])
                             break;
@@ -186,7 +186,7 @@ void Func_080db264(void *object)
         do {
             if (particle->life > 0) {
                 particle->life--;
-                Func_080e3908(particle, 60, -0x800);
+                EffectStep_AdvanceWithGravity2D(particle, 60, -0x800);
                 if (particle->y > 0x780000) {
                     particle->vy = (-particle->vy + ((u32)-particle->vy >> 31)) >> 1;
                 } else if ((u32)particle->x <= 0x7effff && particle->y >= 0) {
@@ -195,7 +195,7 @@ void Func_080db264(void *object)
                         size += 7;
                     size = (size >> 3) + 1;
                     rectangles[0](canvas,
-                        (u8 *)source + Data_080ede48[size - 1],
+                        (u8 *)source + ParticleStreams_CellOffsets[size - 1],
                         (particle->x >> 16) - ((size + ((u32)size >> 31)) >> 1),
                         (particle->y >> 16) - size, size, size * 2);
                 }
@@ -210,21 +210,21 @@ void Func_080db264(void *object)
             member_frame = 4;
             while (member != FIELD(FIELD(work, void *, 0x7828), s32, 20)) {
                 if (frame == member_frame)
-                    Func_080d6888(FIELD(FIELD(work, void *, (s32)&Value_00007828), s16, member_offset), 7, 5, member, 10);
+                    ObjectGroup_UpdateMembers(FIELD(FIELD(work, void *, (s32)&Value_00007828), s16, member_offset), 7, 5, member, 10);
                 member++;
                 member_offset += 2;
                 member_frame += 4;
             }
         }
-        Func_080e155c(2, 4);
-        Func_080cd52c();
+        Camera_ApplyShake(2, 4);
+        ObjectGroup_TickMemberTimers();
         FIELD(work, s32, 0x7824) = 1;
         Func_080030f8(1);
         frame++;
     } while (frame != 64);
 
-    Func_08004278((void *)0x080cd261);
+    Scheduler_RemoveCallback((void *)0x080cd261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

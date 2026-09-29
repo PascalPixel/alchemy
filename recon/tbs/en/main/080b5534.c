@@ -11,10 +11,12 @@
  */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 gKeysRepeat[];
+extern u8 gWindowWork[];
 
 void Func_08015020(s32, u16 *);
 void Func_08015000(void);
-void Func_08015118(void);
+void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32, s32);
 s32 UiWork_Create(s32, s32, s32, s32);
 s32 UiWork_IsCompleteFar(void);
@@ -77,7 +79,7 @@ void Func_080b5534(void)
 
 next_message:
         *flag_ptr = flag_val;
-        Func_08015118();
+        UiWork_ClearValueNameTablesFar();
         UiText_DrawQuantity(0x3e7, 5);
         UiText_DrawQuantity(0, 3);
         UiText_DrawQuantity(1, 1);
@@ -93,7 +95,7 @@ next_message:
         range = (s32)Value_00002850 - (s32)Value_000026fa;
 
 read_keys:
-            if (*(volatile u32 *)ADDR_03001B04 & 2) {
+            if (*(volatile u32 *)gKeysRepeat & 2) {
                 if (state != 0) {
                     state = 0;
                 } else {
@@ -101,26 +103,26 @@ read_keys:
                     state = 1;
                 }
             }
-            if (*(volatile u32 *)ADDR_03001B04 & 0x10)
+            if (*(volatile u32 *)gKeysRepeat & 0x10)
                 cursor++;
-            if (*(volatile u32 *)ADDR_03001B04 & 0x20)
+            if (*(volatile u32 *)gKeysRepeat & 0x20)
                 cursor -= 2;
-            if (*(volatile u32 *)ADDR_03001B04 & 0x40)
+            if (*(volatile u32 *)gKeysRepeat & 0x40)
                 state = 1;
-            if (*(volatile u32 *)ADDR_03001B04 & 0x80)
+            if (*(volatile u32 *)gKeysRepeat & 0x80)
                 state = 0;
-            if (*(volatile u32 *)ADDR_03001B04 & 0x100)
+            if (*(volatile u32 *)gKeysRepeat & 0x100)
                 cursor += 10;
-            if (*(volatile u32 *)ADDR_03001B04 & 0x200)
+            if (*(volatile u32 *)gKeysRepeat & 0x200)
                 cursor -= 10;
             if (cursor < 0)
                 cursor = 0;
             if ((u32)cursor >= (u32)(range + 5))
                 cursor = range + 5;
 
-            if (*(volatile u32 *)ADDR_03001B04 & 0x3f2)
+            if (*(volatile u32 *)gKeysRepeat & 0x3f2)
                 goto close_message;
-            if (UiWork_IsCompleteFar() != 0 && (*(volatile u32 *)ADDR_03001B04 & 1))
+            if (UiWork_IsCompleteFar() != 0 && (*(volatile u32 *)gKeysRepeat & 1))
                 goto close_message;
             WaitFrames(1);
             goto read_keys;
@@ -129,6 +131,6 @@ close_message:
         Func_08015148(1);
         UiWindow_Close(window, 1);
         flag_val = 0;
-        flag_ptr = (u8 *)(*(s32 *)ADDR_03001E8C + 0x12f8);
+        flag_ptr = (u8 *)(*(s32 *)gWindowWork + 0x12f8);
         goto next_message;
 }

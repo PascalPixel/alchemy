@@ -24,16 +24,16 @@ extern u8 Value_00000059;
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 
-void Func_080cd594(s32);
-s32 Func_080cdbc0(void);
+void BattleFx_BeginCanvasLayer(s32);
+s32 BattleFx_EndCanvasLayer(void);
 s32 Func_080041d8(s32, s32);
-void Func_08004278(s32);
+void Scheduler_RemoveCallback(s32);
 void Func_080f9010(s32);
 void Func_080030f8(s32);
 void Func_08002dd8(s32);
 void Func_080b50e8(s32);
-void Func_080d6888(s32, s32, s32, s32, s32);
-void Func_080cd52c(void);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+void ObjectGroup_TickMemberTimers(void);
 void EffectPosition_ApplyStepAndYOffset(s32, struct EffectPosition *);
 
 void Func_080ccebc(void *arg0)
@@ -53,7 +53,7 @@ void Func_080ccebc(void *arg0)
 
     base->effect = arg0;
     tmp2 = (u16 *)0x04000020;
-    Func_080cd594(2);
+    BattleFx_BeginCanvasLayer(2);
     tmp3 = &Value_00000059;
     *tmp2 = 0x100;
     *(u16 *)0x04000052 = 0x1000;
@@ -105,7 +105,7 @@ next_frame:
                     void *p = base->effect;
                     s32 tmp;
                     tmp = -1;
-                    Func_080d6888(*(s16 *)((u8 *)p + offset), 7, tmp, i, 8);
+                    ObjectGroup_UpdateMembers(*(s16 *)((u8 *)p + offset), 7, tmp, i, 8);
                 }
                 i += 1;
                 offset += 2;
@@ -113,13 +113,13 @@ next_frame:
                     goto next_actor;
             }
         }
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         base->transfer_pending = flash;
         Func_080030f8(1);
         frame += 1;
         if (frame != 63)
             goto next_frame;
     }
-    Func_08004278(0x080cd261);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback(0x080cd261);
+    BattleFx_EndCanvasLayer();
 }

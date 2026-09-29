@@ -70,7 +70,7 @@ struct PillarSlot {
     s32 flag;
 };
 
-extern struct PillarSlot Data_0200b6d0[];
+extern struct PillarSlot TakaraHashira_PillarSlots[];
 extern s32 Data_0200b720[];
 
 s32 Engine_CheckMovementCollision(struct FieldActor *object, s32 *pos);
@@ -104,8 +104,8 @@ void TakaraHashira_UpdatePillarActors(void)
         actor = Engine_ActorGet(id);
         actor->unknown_22 = 2;
         i = id - 8;
-        slot = &Data_0200b6d0[i];
-        if ((actor->x.fixed >> 20) == Data_0200b6d0[i].x && (actor->z.fixed >> 20) == Data_0200b6d0[i].z
+        slot = &TakaraHashira_PillarSlots[i];
+        if ((actor->x.fixed >> 20) == TakaraHashira_PillarSlots[i].x && (actor->z.fixed >> 20) == TakaraHashira_PillarSlots[i].z
             && actor->velocity_y == 0) {
             continue;
         }
@@ -115,8 +115,8 @@ void TakaraHashira_UpdatePillarActors(void)
             actor->motion_flags = 3;
         }
         flags = &actor->motion_flags;
-        TakaraHashira_SetCellAttributes(0, Data_0200b6d0[i].x, Data_0200b6d0[i].z, &Data_0200b6d0[i].cell);
-        TakaraHashira_SetCellAttributes(2, slot->x, Data_0200b6d0[i].z, &Data_0200b6d0[i].cell);
+        TakaraHashira_SetCellAttributes(0, TakaraHashira_PillarSlots[i].x, TakaraHashira_PillarSlots[i].z, &TakaraHashira_PillarSlots[i].cell);
+        TakaraHashira_SetCellAttributes(2, slot->x, TakaraHashira_PillarSlots[i].z, &TakaraHashira_PillarSlots[i].cell);
         if (*flags & 1) {
             if (Engine_MapQueryPosition(2, actor->x.fixed, actor->z.fixed) == 50) {
                 Engine_AudioPlayCue(189);
@@ -140,25 +140,25 @@ void TakaraHashira_UpdatePillarActors(void)
             }
             *flags = 0;
         }
-        TakaraHashira_ReadMapCell(0, actor->x.fixed >> 20, actor->z.fixed >> 20, &Data_0200b6d0[i].cell);
+        TakaraHashira_ReadMapCell(0, actor->x.fixed >> 20, actor->z.fixed >> 20, &TakaraHashira_PillarSlots[i].cell);
         if (actor->y.fixed >= 0) {
             TakaraHashira_ReadMapCell(0, 27, (actor->y.fixed >> 20) + 6, &cell);
             TakaraHashira_SetCellAttributes(0, actor->x.fixed >> 20, actor->z.fixed >> 20, &cell);
             cell.kind = slot->cell.kind;
             TakaraHashira_SetCellAttributes(2, actor->x.fixed >> 20, actor->z.fixed >> 20, &cell);
         }
-        Data_0200b6d0[i].x = actor->x.fixed >> 20;
-        Data_0200b6d0[i].y = actor->y.fixed >> 20;
-        Data_0200b6d0[i].z = actor->z.fixed >> 20;
+        TakaraHashira_PillarSlots[i].x = actor->x.fixed >> 20;
+        TakaraHashira_PillarSlots[i].y = actor->y.fixed >> 20;
+        TakaraHashira_PillarSlots[i].z = actor->z.fixed >> 20;
         for (k = 0; k <= 3; k++) {
             if (k == i) {
                 continue;
             }
-            Engine_GameFlagClear(Data_0200b6d0[k].flag);
+            Engine_GameFlagClear(TakaraHashira_PillarSlots[k].flag);
             other = Engine_ActorGet(k + 8);
             if ((actor->x.fixed >> 20) == (other->x.fixed >> 20) && (actor->z.fixed >> 20) == (other->z.fixed >> 20)
                 && actor->y.fixed > other->y.fixed) {
-                Engine_GameFlagSet(Data_0200b6d0[k].flag);
+                Engine_GameFlagSet(TakaraHashira_PillarSlots[k].flag);
             }
         }
     }

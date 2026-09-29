@@ -129,9 +129,9 @@ struct DjinnDefinition {
 };
 
 extern struct LinkWork *Data_03001e74;
-extern struct LinkRoundState *Data_03001f34;
+extern struct LinkRoundState *gLinkCountdownWork;
 extern volatile u16 Data_03001f64;
-extern volatile u8 Data_03001f54;
+extern volatile u8 gDebugMode;
 extern volatile u32 Data_03001ae8;
 extern u8 *Data_03001e8c;
 
@@ -188,8 +188,8 @@ struct DjinnDefinition *SummonDefinition_Get(s32 id);
 s32 Func_080771e8(s32 element, s32 index);
 s32 Func_08077208(s32 actor, s32 element, s32 index);
 s32 Func_080b5090(s32 mode, void *block);
-void Func_080b50d0(s32 offset);
-void Func_080b50e0(u16 *header, s32 mode);
+void Camera_ConfigureSceneFar(s32 offset);
+void BattlePres_SetActorModesFar(u16 *header, s32 mode);
 void Func_080b5130(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 count)
@@ -239,7 +239,7 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
         u16 data[2];
         data[0] = 0xff;
         Func_0802281c(data);
-        Func_080b50e0(data, 1);
+        BattlePres_SetActorModesFar(data, 1);
     }
 
     s32 DrawLocalizedResource(void)
@@ -337,7 +337,7 @@ handshake_done:
         }
         if (mode == 7) {
             block = Runtime_BumpAllocate(12);
-            if (Data_03001f54 != 0 && (Data_03001ae8 & 8) != 0) {
+            if (gDebugMode != 0 && (Data_03001ae8 & 8) != 0) {
                 sel = 2;
             } else {
                 sel = 1;
@@ -386,9 +386,9 @@ handshake_done:
             ent = (struct BattleCommandEntry *)((u8 *)out + off16);
             actorId = *(u16 *)((u8 *)in + off2);
             actor = Runtime_GetObject(actorId);
-            Data_03001f34->actorId = actorId;
-            Data_03001f34->unk_40 = 0;
-            slot = Data_03001f34->entries[2];
+            gLinkCountdownWork->actorId = actorId;
+            gLinkCountdownWork->unk_40 = 0;
+            slot = gLinkCountdownWork->entries[2];
             M2C_FIELD(slot, u32 *, 4) = 0x80000400;
             M2C_FIELD(slot, u32 *, 8) = 0;
             res = Ui_LoadEntryForKind(actor->kind, res512);
@@ -401,11 +401,11 @@ handshake_done:
 
 mark_visible:
             UiWindow_MarkVisibleTileAttributes();
-            Data_03001f34->entryActive[0] = 0;
-            Data_03001f34->result[i] = 0x80000000;
+            gLinkCountdownWork->entryActive[0] = 0;
+            gLinkCountdownWork->result[i] = 0x80000000;
             hdr[0] = (u16)actorId;
             hdr[1] = 255;
-            Func_080b50e0(hdr, 1);
+            BattlePres_SetActorModesFar(hdr, 1);
             Func_0802281c(hdr);
             WaitFrames(1);
             mode = Func_08021e6c(1);
@@ -420,7 +420,7 @@ mark_visible:
                 Sys_Free(block);
                 continue;
             }
-            Func_080b50e0(hdr, 0);
+            BattlePres_SetActorModesFar(hdr, 0);
             if (mode == -1) {
                 if (i == 0) {
                     goto next_round;
@@ -433,10 +433,10 @@ mark_visible:
             }
 
             /* A countdown that has run out forces the defend command. */
-            if (Data_03001f34->timer == 0) {
+            if (gLinkCountdownWork->timer == 0) {
                 mode = 3;
             }
-            slot = Data_03001f34->entries[0];
+            slot = gLinkCountdownWork->entries[0];
             M2C_FIELD(slot, u32 *, 8) = 0;
             M2C_FIELD(slot, u32 *, 4) = 0x80002400;
             res = Resource_LoadIndexedIntoBuffer(res1024, mode);
@@ -474,9 +474,9 @@ mark_visible:
                 /* Psynergy: list the castable abilities, then target one. */
                 Audio_PlayCue(112);
 psynergy_menu:
-                Data_03001f34->unk_34 = 0;
-                Data_03001f34->unk_30 = 0;
-                Data_03001f34->unk_38 = 0;
+                gLinkCountdownWork->unk_34 = 0;
+                gLinkCountdownWork->unk_30 = 0;
+                gLinkCountdownWork->unk_38 = 0;
                 slot = state->entries[0];
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 48);
@@ -559,9 +559,9 @@ psynergy_menu:
                 /* Item: usable entries first, then the rest. */
                 Audio_PlayCue(112);
 item_menu:
-                Data_03001f34->unk_34 = 0;
-                Data_03001f34->unk_30 = 0;
-                Data_03001f34->unk_38 = 0;
+                gLinkCountdownWork->unk_34 = 0;
+                gLinkCountdownWork->unk_30 = 0;
+                gLinkCountdownWork->unk_38 = 0;
                 slot = state->entries[0];
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 96);
@@ -650,13 +650,13 @@ item_menu:
                 /* Summon: pick an element and rank, then target. */
                 Audio_PlayCue(112);
 summon_menu:
-                Data_03001f34->unk_34 = 0;
-                Data_03001f34->unk_30 = 0;
-                Data_03001f34->unk_38 = 0;
+                gLinkCountdownWork->unk_34 = 0;
+                gLinkCountdownWork->unk_30 = 0;
+                gLinkCountdownWork->unk_38 = 0;
                 slot = state->entries[0];
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 144);
-                Data_03001f34->result[i] = 0x80000000;
+                gLinkCountdownWork->result[i] = 0x80000000;
                 res = Battle_SelectAbility(actorId, 1);
                 ent->sub = 0;
                 if (res == -1) {
@@ -664,7 +664,7 @@ summon_menu:
                 }
                 kind = 5;
                 param = res;
-                Data_03001f34->result[i] = res;
+                gLinkCountdownWork->result[i] = res;
                 element = (res >> 8) & 15;
                 index = res & 255;
                 if (Func_08077208(actorId, element, index) != 0) {
@@ -721,9 +721,9 @@ summon_menu:
                 /* Djinn: the four element costs gate the selection. */
                 Audio_PlayCue(112);
 djinn_menu:
-                Data_03001f34->unk_34 = 0;
-                Data_03001f34->unk_30 = 0;
-                Data_03001f34->unk_38 = 0;
+                gLinkCountdownWork->unk_34 = 0;
+                gLinkCountdownWork->unk_30 = 0;
+                gLinkCountdownWork->unk_38 = 0;
                 slot = state->entries[0];
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 80);
@@ -891,7 +891,7 @@ finish:
             UiWork_Finalize((struct UiWindowWork *)state->displayHandle, 1);
         }
     }
-    Func_080b50d0(0);
+    Camera_ConfigureSceneFar(0);
     Runtime_ReleaseHeapBlock(57);
     return count;
 }

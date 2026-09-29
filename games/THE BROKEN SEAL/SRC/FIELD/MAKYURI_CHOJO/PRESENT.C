@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "OVERLAY_OBJECT.H"
@@ -122,7 +123,7 @@ s32 MeasureFixedPointPositionDistance(s32 *first_position, s32 *second_position)
     s32 delta_y_squared = delta_y *delta_y;
     s32 delta_z_squared = delta_z *delta_z;
 
-    return ((IwramIntegerSquareRoot)0x030001D8)(delta_x_squared + delta_y_squared + delta_z_squared);
+    return Iwram_Sqrt(delta_x_squared + delta_y_squared + delta_z_squared);
 }
 
 s32 FindNearestF2Actor(void)

@@ -1,5 +1,6 @@
 #include "B5_CONTEXT.H"
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "MOTION_OBJECT.H"
 #include "FIXED_MATH.H"
 
@@ -26,7 +27,7 @@ void BattleFx_SetApproachMotion(s32 first, s32 second, s32 divisor)
     s32 short_z = delta_z >> 8;
     s32 distance;
 
-    distance = ((s32 (*)(s32))0x030001d8)(short_x *short_x + short_z *short_z);
+    distance = Iwram_Sqrt(short_x *short_x + short_z *short_z);
     distance = Math_Div(distance << 8, divisor);
     object->acceleration = distance;
     object->speed_limit = distance;

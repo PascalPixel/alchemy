@@ -423,42 +423,42 @@ Resource_DirectoryTable:
 	resource , Resource_Data197
 	resource , Resource_Data198
 	resource , Resource_Data199
-	resource , Resource_Data19A
+	resource , WorldMap_PaletteA
 	resource , Resource_Data19B
 	resource , Resource_Data19C
-	resource , Resource_Data19D
-	resource , Resource_Data19E
-	resource , Resource_Data19F
-	resource , Resource_Data1A0
-	resource , Resource_Data1A1
-	resource , Resource_Data1A2
-	resource , Resource_Data1A3
+	resource , WorldMap_TilesA1
+	resource , WorldMap_TilesA2
+	resource , WorldMap_TilesA3
+	resource , WorldMap_TilesA4
+	resource , WorldMap_TilesA5
+	resource , WorldMap_TilesA6
+	resource , WorldMap_PaletteB
 	resource , Resource_Data1A4
 	resource , Resource_Data1A5
-	resource , Resource_Data1A6
-	resource , Resource_Data1A7
-	resource , Resource_Data1A8
-	resource , Resource_Data1A9
-	resource , Resource_Data1AA
-	resource , Resource_Data1AB
-	resource , Resource_Data1AC
+	resource , WorldMap_TilesB1
+	resource , WorldMap_TilesB2
+	resource , WorldMap_TilesB3
+	resource , WorldMap_TilesB4
+	resource , WorldMap_TilesB5
+	resource , WorldMap_TilesB6
+	resource , WorldMap_PaletteC
 	resource , Resource_Data1AD
 	resource , Resource_Data1AE
-	resource , Resource_Data1AF
-	resource , Resource_Data1B0
-	resource , Resource_Data1B1
-	resource , Resource_Data1B2
-	resource , Resource_Data1B3
-	resource , Resource_Data1B4
-	resource , Resource_Data1B5
+	resource , WorldMap_TilesC1
+	resource , WorldMap_TilesC2
+	resource , WorldMap_TilesC3
+	resource , WorldMap_TilesC4
+	resource , WorldMap_TilesC5
+	resource , WorldMap_TilesC6
+	resource , WorldMap_PaletteD
 	resource , Resource_Data1B6
 	resource , Resource_Data1B7
-	resource , Resource_Data1B8
-	resource , Resource_Data1B9
-	resource , Resource_Data1BA
-	resource , Resource_Data1BB
-	resource , Resource_Data1BC
-	resource , Resource_Data1BD
+	resource , WorldMap_TilesD1
+	resource , WorldMap_TilesD2
+	resource , WorldMap_TilesD3
+	resource , WorldMap_TilesD4
+	resource , WorldMap_TilesD5
+	resource , WorldMap_TilesD6
 	resource , Resource_Data1BE
 	resource , Resource_Data1BF
 	resource , Resource_Data1C0

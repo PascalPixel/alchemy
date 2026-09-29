@@ -1,6 +1,7 @@
 /* resource_3cb: its entry veneers, its listing with maintained code and
    the compiler library linked in place, as pret links objects and libgcc
-   members in ROM order. Its import veneers follow its code. */
+   members in ROM order. Its import veneers follow its code. The lobby's own
+   counters follow the image. */
 EXTERN(_call_via_r0)
 SECTIONS
 {
@@ -10,7 +11,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/TABLES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/PEER_SLOT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/WRITE_SLOT.o"(.text)
-        "*/resource_3cb_overlay.o"(.text.x02008148)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/POLL_READY.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CIRCLE_CALL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CLEAR_FLAGS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/RECEIVE_PARTY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/COPY_ENTRIES.o"(.text)
@@ -27,6 +29,11 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)
         "*/resource_3cb_overlay.o"(.rodata.part1)
+    }
+    .bss (NOLOAD) :
+    {
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/POLL_READY.o"(.bss)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/CIRCLE_CALL.o"(.bss)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

@@ -39,7 +39,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *, s32, s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
-void Func_080cde90(s32, s32, s32, s32, s32);
+void BattleFx_DrawClippedCanvasLine(s32, s32, s32, s32, s32);
 void Runtime_ReleaseHeapBlock(s32);
 s32 BattleFx_EndCanvasLayer(void);
 
@@ -360,7 +360,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
                 if (i & 1) {
                     d = -d;
                 }
-                Func_080cde90(d + 48, 0, d / 2 + 111, 63 - (d + 1) / 2, w);
+                BattleFx_DrawClippedCanvasLine(d + 48, 0, d / 2 + 111, 63 - (d + 1) / 2, w);
             }
         }
 

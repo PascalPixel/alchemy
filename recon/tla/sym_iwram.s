@@ -1,5 +1,10 @@
 @ IWRAM variables not yet defined in C, in address order, as pret's
 @ sym files list them. Each .space runs to the next variable.
+@ The heap's slot words open IWRAM, below the resident modules.
+	.section .sym_iwram_slots,"aw",%nobits
+	.global gHeapSlots
+gHeapSlots:
+	.space 0x00000070
 	.section .sym_iwram,"aw",%nobits
 	.space 0x000000d4
 	.global gDecodeFillByte

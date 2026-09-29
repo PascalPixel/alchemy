@@ -23631,7 +23631,7 @@ msgctxt "message"
 msgid "05905"
 msgstr "Now, I am quite famished.{line_break}Shall we get moving?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriBeenBefore"
 msgid "05906"
 msgstr "You don't look familiar.{line_break}Have you been to Daila before?{end_now}"
 
@@ -23643,11 +23643,11 @@ msgctxt "message"
 msgid "05908"
 msgstr "Well then, welcome to Daila,{line_break}the northernmost town on{line_break}the continent of Indra!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWaveNoInjuries"
 msgid "05909"
 msgstr "We were hit by a gigantic{line_break}tidal wave, but there were{line_break}no injuries...{page_break}It was miraculous!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriIndraMoved"
 msgid "05910"
 msgstr "Didn't it feel like all of Indra{line_break}moved when that wave hit?{end_now}"
 
@@ -23687,7 +23687,7 @@ msgctxt "message"
 msgid "05919"
 msgstr "Our village survived the{line_break}wave, but all our boats{line_break}were destroyed...{page_break}We won't be sailing for{line_break}a while, but we'll pull{line_break}through somehow...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWantBoat"
 msgid "05920"
 msgstr "Hm? You want a boat?{end_now}"
 
@@ -23859,7 +23859,7 @@ msgctxt "message"
 msgid "05962"
 msgstr "If those two scamps knew{line_break}there were travelers in town,{line_break}they'd have a field day.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiWorry"
 msgid "05963"
 msgstr "I haven't seen Tavi and{line_break}Riki around lately...{page_break}I like those little guys,{line_break}so I'm kind of worried{line_break}about 'em.{end_wait}"
 
@@ -24487,7 +24487,7 @@ msgctxt "message"
 msgid "06119"
 msgstr "Ah, the sea is calm again,{line_break}and we can all get back{line_break}to our normal lives.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHurtHip"
 msgid "06120"
 msgstr "I bet you thought it was{line_break}the wave that knocked me{line_break}over and hurt my hip, huh?{end_now}"
 
@@ -24803,7 +24803,7 @@ msgctxt "message"
 msgid "06198"
 msgstr "Maybe they hid treasure{line_break}here because this town{line_break}is so mazelike...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiHome"
 msgid "06199"
 msgstr "Tavi and Riki{line_break}are back home, safe{line_break}and sound...{page_break}They stopped by{line_break}to say hello on their{line_break}way... What nice kids.{end_wait}"
 

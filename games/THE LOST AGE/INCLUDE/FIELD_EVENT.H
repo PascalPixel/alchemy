@@ -27,7 +27,9 @@ struct FieldSprite {
 
 /* The runtime object behind an actor or a spawned effect. */
 struct FieldActor {
-    u8 unknown_00[8];
+    u8 unknown_00[6];
+    /* The direction the actor faces; 0xc000 faces up the screen. */
+    u16 facing;
     s32 x;
     s32 y;
     s32 z;
@@ -39,7 +41,9 @@ struct FieldActor {
     struct FieldSprite *sprite;
     u8 unknown_54 : 4;
     u8 unknown_54_high : 4;
-    u8 unknown_55;
+    /* Keeps the actor on the terrain height and lets it fall; cleared to
+       move it freely. */
+    u8 motion_flags;
     u8 unknown_56[0x0e];
     /* Counts up while the object's update runs. */
     u16 timer;
@@ -63,5 +67,43 @@ void Actor_SetSpriteFlags(struct FieldActor *actor, s32 flags);
 void Map_CopyCellsTo(s32 src_x, s32 src_y, s32 dest_x, s32 dest_y, s32 width, s32 height);
 void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
 void Audio_PlayCue(s32 cue);
+
+/* The engine's event work. */
+struct EventWork {
+    u8 unknown_000[0x154];
+    /* The exit the current event leaves by. */
+    s16 exit;
+};
+
+/*
+ * The engine entry points a scene overlay imports, named as The Broken
+ * Seal's scenes name them. Each is one of the overlay's import veneers.
+ */
+void Engine_EventBegin(void);
+void Engine_EventEnd(void);
+void Engine_EventWait(s32 frames);
+/* Readies the party members who may speak in the event; 0 for all. */
+void Engine_EventPrepareSpeakers(s32 flags);
+void Engine_EventSetMessage(s32 message);
+s32 Engine_EventOpenMessage(s32 speaker, s32 flags);
+void Engine_EventShowMessage(s32 speaker, s32 flags);
+s32 Engine_EventChooseYesNo(s32 actor, s32 flags);
+void Engine_EventRequestExit(s32 exit);
+void Engine_EventCloseScreen(void);
+void Engine_EventWaitForScreen(void);
+/* The actor that stands for the party: its leader. */
+s32 Engine_PartyGetLeaderActor(void);
+struct FieldActor *Engine_ActorGet(s32 actor);
+void Engine_ActorSetSpeed(s32 actor, s32 speed, s32 acceleration);
+void Engine_ActorCenterAndWalk(s32 actor, s32 priority, s32 dz);
+void Engine_ActorSetAnimation(s32 actor, s32 animation);
+void Engine_ActorSetSpritePriority(s32 actor, s32 priority);
+/* Answers a Psynergy search: in mode 2 sets the flag and puts the actor
+   back where the map placed it. */
+void Engine_ActorReturnHome(s32 mode, s32 actor, s32 flag);
+s32 Engine_GameFlagIsSet(s32 flag);
+void Engine_GameFlagSet(s32 flag);
+void Engine_ShopOpen(s32 shop, s32 keeper);
+void Engine_AudioPlayCue(s32 cue);
 
 #endif

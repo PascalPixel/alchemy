@@ -12,6 +12,7 @@ extern char ResourceId_BuildStamp;
 extern char ResourceId_WindowTiles;
 extern char ResourceId_NintendoLogo;
 extern char ResourceId_WorldMapPicture;
+extern char ResourceId_IntroTilesB;
 extern char ResourceId_VinasuChojoStormBackdrop;
 extern char ResourceId_BeachBackdrop;
 extern char ResourceId_SnowfieldBackdrop;

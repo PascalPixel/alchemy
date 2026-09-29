@@ -5,6 +5,7 @@
 #include "CALLBACK_SCHEDULER.H"
 
 extern u8 gBattleFxWork[];
+extern u8 gMapCellBuffer[];
 extern BattleEffectDrawRectangle Data_03001e50[];
 extern u8 IwramClearWords[];
 extern u8 Value_0000004b;
@@ -29,7 +30,7 @@ void ObjectGroup_TickMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
 /* Battle effect: load one of three column pictures (by variant) into the
-   work canvas and the 0x02010000 buffer, move the actor towards its
+   work canvas and gMapCellBuffer, move the actor towards its
    target, then for 21 frames blit the four 120x120 quarters in turn, flood
    the canvas with colour 0x3f for frames 16..19, start event phase 134 at
    frame 18 and shake the target at frame 20, with the camera shaking
@@ -50,13 +51,13 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
     *(volatile u16 *)0x04000050 = 0;
     if (variant == 0) {
         Resource_LoadAndDecompress((s32)&Value_0000004f, work, 1, 0);
-        Resource_LoadAndDecompress((s32)&Value_00000050, (void *)0x02010000, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_00000050, gMapCellBuffer, 1, 1);
     } else if (variant == 1) {
         Resource_LoadAndDecompress((s32)&Value_0000004d, work, 1, 0);
-        Resource_LoadAndDecompress((s32)&Value_0000004e, (void *)0x02010000, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_0000004e, gMapCellBuffer, 1, 1);
     } else {
         Resource_LoadAndDecompress((s32)&Value_0000004b, work, 1, 0);
-        Resource_LoadAndDecompress((s32)&Value_0000004c, (void *)0x02010000, 1, 1);
+        Resource_LoadAndDecompress((s32)&Value_0000004c, gMapCellBuffer, 1, 1);
     }
     work->transfer_mode = 1;
     work->transfer_value = 0;
@@ -78,9 +79,9 @@ void BattleFx_RunRevealColumn(struct BattleEffectArgument *effect, s32 variant)
         else if (frame <= 7)
             draw[0](canvas, (u8 *)work + 0x3840, 0, 0, 120, 120);
         else if (frame <= 11)
-            draw[0](canvas, (void *)0x02010000, 0, 0, 120, 120);
+            draw[0](canvas, gMapCellBuffer, 0, 0, 120, 120);
         else if (frame <= 15)
-            draw[0](canvas, (void *)0x02013840, 0, 0, 120, 120);
+            draw[0](canvas, gMapCellBuffer + 0x3840, 0, 0, 120, 120);
         if (frame >= 16 && frame <= 19)
             ((FillWordsFn)(IwramClearWords + 4))(canvas, 0x4000, 0x3f3f3f3f);
         if (frame == 18)

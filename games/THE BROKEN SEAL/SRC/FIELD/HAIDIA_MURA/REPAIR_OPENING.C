@@ -1,8 +1,5 @@
-/* Draft of resource_373 0x0200b4c8 (FieldScene_RunLargeStagingSequence): it
- * matches the ROM byte for byte now that the message it loads from the
- * literal pool has a catalogue name (MsgHaidiaRepairCaption). The listing
- * keeps these rows until the draft is adopted. */
-#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.H"
+/* Three years later: the opening of the repair morning. */
+#include "STAGED_MOTION.H"
 extern u8 MsgHaidiaRepairCaption[];
 
 void FieldScene_RunLargeStagingSequence(void)
@@ -13,11 +10,11 @@ void FieldScene_RunLargeStagingSequence(void)
     u8 *rec8;
     u8 *record;
     s32 none2;
-    s32 base7_200e590;
-    s32 base5_ee8;
-    s32 p1;
+    s32 action;
+    s32 msg;
+    s32 callback_a;
     s32 k;
-    s32 p2;
+    s32 callback_b;
     s32 facing;
 
     rec3 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
@@ -55,11 +52,11 @@ void FieldScene_RunLargeStagingSequence(void)
     record = Engine_ActorGet(12);
     Actor_SetSpriteFlags((s32)record, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    base7_200e590 = (s32)gLeaderHammerAction;
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, base7_200e590);
+    action = (s32)gLeaderHammerAction;
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, action);
     Graphics_EnableObjLayerAndCallbacks();
-    base5_ee8 = (s32)MsgHaidiaRepairCaption;
-    UiText_ShowCenteredMessage(base5_ee8, 0, 0);
+    msg = (s32)MsgHaidiaRepairCaption;
+    UiText_ShowCenteredMessage(msg, 0, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Camera_MoveTo(0x1530000, 0xa00000, 0x4950000, 0);
     Map_Redraw();
@@ -103,7 +100,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Camera_MoveTo(0x1830000, 0xa00000, 0x3620000, 1);
     Camera_WaitForMove();
     Actor_Jump(10, 2, 20);
-    Event_SetMessage((base5_ee8 + 1));
+    Event_SetMessage(msg + 1);
     Event_ShowMessageAndWait(0x100a, 0, 10);
     *(s32 *)(rec3 + 24) = 0x10000;
     *(s32 *)(rec3 + 28) = 0x10000;
@@ -116,7 +113,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Event_Wait(40);
     Event_ShowMessageAndWait(0x100a, 0, 40);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, base7_200e590);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, action);
     Camera_FollowActor(ACTOR_JASMINE, 1);
     Camera_WaitForMove();
     Event_Wait(40);
@@ -153,10 +150,10 @@ void FieldScene_RunLargeStagingSequence(void)
         Task_Wait(1);
     }
     Actor_SetSpritePriority(ACTOR_GERALD, 1);
-    p1 = 0x200d5b1;
-    Call2(Engine_TaskAddCallback, p1, 0xc80);
-    p2 = 0x200d5d1;
-    Value2(Engine_TaskAddCallback, p2, 0xc80);
+    callback_a = (s32)SceneState_SetValue1ThenCall;
+    Call2(Engine_TaskAddCallback, callback_a, 0xc80);
+    callback_b = (s32)FieldScene_RunStep9;
+    Value2(Engine_TaskAddCallback, callback_b, 0xc80);
     record = Engine_ActorGet(14);
     Actor_SetSpriteFlags((s32)record, 0);
     none2 = 0;
@@ -166,7 +163,7 @@ void FieldScene_RunLargeStagingSequence(void)
     *(s32 *)((s32)rec8 + 16) = 0x2480000;
     facing = 0x8000;
     *(u16 *)((s32)rec8 + 6) = facing;
-    *(s32 *)((s32)rec8 + 108) = 0x200d75d;
+    *(s32 *)((s32)rec8 + 108) = (s32)Effect_ConfigureSpawnedParticle;
     Event_Wait(4);
     Actor_SetSpeed(14, 0x20000, 0x20000);
     Call4(Object_SetPosition, (s32)rec8, 0x1980000, 0xd00000, 0x2480000);
@@ -181,8 +178,8 @@ void FieldScene_RunLargeStagingSequence(void)
     *(s32 *)((s32)rec8 + 108) = none2;
     Actor_SetSpritePriority(ACTOR_GERALD, 2);
     Actor_Get(ACTOR_GERALD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-    Scheduler_RemoveCallback(p1);
-    Scheduler_RemoveCallback(p2);
+    Scheduler_RemoveCallback(callback_a);
+    Scheduler_RemoveCallback(callback_b);
     Task_Wait(1);
     Actor_SetChildValue(ACTOR_GERALD, 0);
     Actor_SetChildValue(9, 0);

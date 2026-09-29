@@ -89,7 +89,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     } else {
         Actor_SetAnimation(8, 8);
     }
-    Value2(Engine_ActorEnableActionCallback, 8, 0x200d668);
+    Value2(Engine_ActorEnableActionCallback, 8, (s32)KorosseoMaruta_Actor8Action);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x5e00000, 0xc00000);
     record = Engine_ActorGet(0);
     {
@@ -98,7 +98,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
 
         *(u16 *)(record + 6) = shown;
     }
-    Value2(Engine_ActorEnableActionCallback, 0, 0x200d738);
+    Value2(Engine_ActorEnableActionCallback, 0, (s32)KorosseoMaruta_LeaderActionA);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 35);
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Actor_SetSpeed(ACTOR_IVAN, 0x10000, 0x8000);
@@ -148,7 +148,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     record = Engine_ActorGet(0);
     Actor_SetSpriteFlags(record, 0);
     Event_Wait(20);
-    Value2(Engine_ActorEnableActionCallback, 0, 0x200d808);
+    Value2(Engine_ActorEnableActionCallback, 0, (s32)KorosseoMaruta_LeaderActionB);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(20);
     Call3(Engine_ActorWalkToAndWait, 1, 0x5e0, 176);
@@ -185,7 +185,7 @@ void FieldScene_RunMultiPhaseActorSequence(s32 a0)
     Object_LinkObjectAndSetCallback(1, 3);
     Engine_EventWait(20);
     Event_ShowMessage(ACTOR_MIA, 0);
-    Value2(Engine_ActorEnableActionCallback, 0, 0x200d8ac);
+    Value2(Engine_ActorEnableActionCallback, 0, (s32)KorosseoMaruta_LeaderActionC);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Object_LinkObjectAndSetCallback(1, 0);
     Event_Wait(20);

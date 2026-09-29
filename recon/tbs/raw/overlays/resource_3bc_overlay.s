@@ -197,89 +197,7 @@ ColossoLogRollingStage_WaitForSceneEventTask:
 	.4byte 0x00000361
 	.4byte 0x0200d480
 	.4byte 0x0200804d
-	.section .text.x02008ba4,"ax",%progbits
-	.balign 4
-	.global FieldScene_RunSupplementalSequenceOne
-	.thumb_func
-FieldScene_RunSupplementalSequenceOne:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	ldr r3, [pc, #160]
-	ldr r2, [pc, #164]
-	ldr r3, [r3]
-	movs r1, #250
-	lsls r1, r1, #1
-	mov r10, r3
-	adds r3, r2, r1
-	ldr r3, [r3]
-	subs r1, #50
-	mov r8, r3
-	adds r3, r2, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	adds r6, r0, #0
-	cmp r3, #2
-	bne .L_02000ba4_0
-	bl 0x0200ca00
-	lsls r3, r6, #1
-	ldr r7, [pc, #132]
-	adds r5, r3, r6
-	adds r0, r5, r7
-	bl 0x0200cab0
-	movs r1, #0
-	adds r0, r6, #0
-	bl 0x0200cab8
-	mov r0, r8
-	movs r1, #0
-	bl 0x0200ca10
-	cmp r0, #0
-	bne .L_02000ba4_1
-	adds r0, r7, #1
-	adds r0, r5, r0
-	bl 0x0200cab0
-	movs r1, #0
-	adds r0, r6, #0
-	bl 0x0200cac0
-	movs r2, #224
-	lsls r2, r2, #1
-	movs r3, #128
-	add r2, r10
-	lsls r3, r3, #2
-	str r3, [r2]
-	movs r2, #228
-	lsls r2, r2, #1
-	add r2, r10
-	movs r3, #15
-	str r3, [r2]
-	bl 0x0200cb58
-	bl 0x0200cb60
-	adds r0, r6, #0
-	bl 0x0200a640
-	bl 0x0200cb50
-	bl 0x0200cb60
-	b .L_02000ba4_2
-.L_02000ba4_1:
-	adds r0, r7, #2
-	adds r0, r5, r0
-	bl 0x0200cab0
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x0200cac0
-.L_02000ba4_2:
-	bl 0x0200ca08
-.L_02000ba4_0:
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x00002073
+	.section .text.x02008c5c,"ax",%progbits
 	.global KorosseoMaruta_RunStageStart
 	.thumb_func
 KorosseoMaruta_RunStageStart:
@@ -3237,6 +3155,8 @@ gKorosseoMarutaEvents:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global KorosseoMaruta_Actor8Action
+KorosseoMaruta_Actor8Action:
 	.4byte 0x00000016
 	.4byte 0x0000000a
 	.4byte 0x00000200
@@ -3289,6 +3209,8 @@ gKorosseoMarutaEvents:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global KorosseoMaruta_LeaderActionA
+KorosseoMaruta_LeaderActionA:
 	.4byte 0x00000016
 	.4byte 0x0000000a
 	.4byte 0x00000200
@@ -3341,6 +3263,8 @@ gKorosseoMarutaEvents:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global KorosseoMaruta_LeaderActionB
+KorosseoMaruta_LeaderActionB:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -3382,6 +3306,8 @@ gKorosseoMarutaEvents:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000010
+	.global KorosseoMaruta_LeaderActionC
+KorosseoMaruta_LeaderActionC:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000

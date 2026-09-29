@@ -43299,7 +43299,7 @@ msgctxt "message"
 msgid "10822"
 msgstr "{actor_name:7}様 いまごろ・・・{line_break}どこをただよってるのか{line_break}・・・しんぱいだなあ。{end_wait}"
 
-msgctxt "MsgRariberoCue28be"
+msgctxt "MsgRariberoLeavingLalivero"
 msgid "10823"
 msgstr "あなたたち ラリベロを{line_break}出発するのね?{end_now}"
 

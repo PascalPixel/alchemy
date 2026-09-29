@@ -176,6 +176,14 @@ static __inline__ s32 Value0(s32 (*f)())
  * A value-returning call also sets r0 last of its arguments. */
 
 extern u8 gColossoMultiPhaseData[];
+/* The action scripts the multi-phase sequence gives actor 8 and the leader. */
+extern u8 KorosseoMaruta_Actor8Action[];
+extern u8 KorosseoMaruta_LeaderActionA[];
+extern u8 KorosseoMaruta_LeaderActionB[];
+extern u8 KorosseoMaruta_LeaderActionC[];
+
+/* COMMON/KOROSSEO/SOLO_COMPETITOR.C: enter one competitor's trial. */
+void Korosseo_SelectSoloCompetitor(s32 competitor);
 
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)

@@ -140,7 +140,7 @@ s32 SceneActor_CopyActor8PositionWithFixedY(struct Frame *dst);
 s32 OverlayObject_IntegrateAndDamp(u8 *p);
 u8 *SceneData_GetTableC85c(void);
 void FieldScene_RunSharedSetPiece(s32 a0);
-void FieldScene_RunScene3a4_02001398(void);
+void FieldScene_RunFallingRocksWarning(void);
 void SceneState_SetByte22bTo3AndSend51(void);
 void SceneActor_UpdateSlot10ByTileX(void);
 void ActorPresentation_SetCellAndLowerActorEight(void);

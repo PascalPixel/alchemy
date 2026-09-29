@@ -1,11 +1,4 @@
-/* Draft of FieldScene_RunMainScriptSequence, resource_3bf at 0x0200b054, built with
- * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines
- * (Engine_ActorStartRepeatedMotion, Engine_EventOpenMessage,
- * Engine_EventChooseYesNo, Engine_CameraMoveTo,
- * Engine_ActorSetAttachedEffect, Engine_EventCloseScreen, ...).
- * The listing keeps these rows. */
+/* The Lunpa fortress: Dodonpa freed and reunited with his father. */
 #include "FORTRESS.H"
 extern u8 MsgRunpaAbleGet[];
 extern u8 MsgRunpaDad[];

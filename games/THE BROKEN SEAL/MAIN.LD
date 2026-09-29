@@ -2118,7 +2118,7 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.083da5f7)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/FIRE_BURST.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083dc1f5)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/CRESC_B.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083dc416)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/OVERLAY_A.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083dc853)

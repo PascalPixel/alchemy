@@ -2197,7 +2197,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.088bb937)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/FIRE_BURST.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088bd535)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088bd756)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/VIOLET_MOTE.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.088bdca5)

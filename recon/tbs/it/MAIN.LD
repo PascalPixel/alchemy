@@ -401,7 +401,7 @@ SECTIONS
         "*/recon/tbs/it/rom.o"(.rom.003da89f)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/FIRE_BURST.o"(.rodata)
         "*/recon/tbs/it/rom.o"(.rom.003dc49d)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/CRESC_B.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
         "*/recon/tbs/it/rom.o"(.rom.003dc6be)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/OVERLAY_A.o"(.rodata)
         "*/recon/tbs/it/rom.o"(.rom.003dcafb)

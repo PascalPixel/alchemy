@@ -33723,7 +33723,7 @@ msgctxt "message"
 msgid "08428"
 msgstr "Ummm{pause_20_skippable}, {actor_name:1} non{line_break}può vedere anche i{line_break}livelli finali?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08429"
 msgstr "Vuoi apprendere il più{line_break}possibile sulle finali,{line_break}vero, {actor_name:1}?{end_now}"
 

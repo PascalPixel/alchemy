@@ -75,7 +75,7 @@ s32 GetPartyMemberCount(void);
 Rec *Owner_GetState(s32);
 struct FieldActor *ObjectTable_GetFar(s32);
 void ObjectDispatch_InitFromTable6(struct FieldActor *);
-void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
+void Object_SetPosition(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
 
 /* Contiguous unnamed leaf-owner run for resource_3ba. */
@@ -201,7 +201,7 @@ void SceneActor_StartMode5MoveToTile(s32 a, s32 b, s32 c)
         o->unknown_5b = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetAnimation(o, 5);
-        Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
+        Object_SetPosition(o, b << 16, o->y.fixed, c << 16);
     }
 }
 
@@ -218,7 +218,7 @@ void OverlayObject_PlaceWithScale14000(s32 a, s32 b, s32 c)
         o->unknown_5b = z;
         ObjectDispatch_InitFromTable6(o);
         Object_SetAnimation(o, 5);
-        Object_SetMoveTarget(o, b << 16, o->y.fixed, c << 16);
+        Object_SetPosition(o, b << 16, o->y.fixed, c << 16);
         Script_WaitForEventTimeout(o);
         Object_SetAnimation(o, 1);
     }

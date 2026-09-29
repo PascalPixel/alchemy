@@ -98,12 +98,12 @@ void StagedActor_PushActorAhead(void)
 
     target->rate_x = 0x3333;
     target->rate_z = 0x3333;
-    Engine_ObjectSetPosition(target, pos.x, pos.y, pos.z);
+    Object_SetPosition(target, pos.x, pos.y, pos.z);
 
     /* The same destination block, moved onto the subject this time. */
     subject->rate_x = 0x3333;
     subject->rate_z = 0x3333;
-    Engine_ObjectSetPosition(subject, pos.x, pos.y, pos.z);
+    Object_SetPosition(subject, pos.x, pos.y, pos.z);
 
     Audio_PlayCue(0xee);
     Object_CommitPosition(target);

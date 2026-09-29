@@ -142,6 +142,7 @@ void *Engine_AllocateBlock();
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();
+void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 s32 Runtime_BumpAllocateAlternatePool();
 void Runtime_BumpFree();
 void Resource_ResetEntry();

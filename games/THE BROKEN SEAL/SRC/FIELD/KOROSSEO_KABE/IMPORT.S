@@ -118,9 +118,9 @@ ObjectDispatch_InitFromTable6:
 	.thumb_func
 ObjectDispatch_WaitForValue16:
 	overlay_veneer ObjectDispatch_WaitForValue16Far
-	.global Engine_ObjectSetPosition
+	.global Object_SetPosition
 	.thumb_func
-Engine_ObjectSetPosition:
+Object_SetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func

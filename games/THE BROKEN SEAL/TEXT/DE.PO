@@ -33723,7 +33723,7 @@ msgctxt "message"
 msgid "08428"
 msgstr "Ähm{pause_20_skippable}, kann {actor_name:1} nicht{line_break}auch die letzten Runden{line_break}sehen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08429"
 msgstr "Ich wette, du willst so{line_break}viel wie möglich über die{line_break}Finalrunden erfahren.{page_break}Nicht wahr, {actor_name:1}?{end_now}"
 

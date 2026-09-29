@@ -30,6 +30,9 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
+	.global Math_Atan2
+	.thumb_func
+Math_Atan2:
 	overlay_veneer ArcTan2Far
 	.global Vector_AddPolarOffset
 	.thumb_func

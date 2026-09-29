@@ -33723,7 +33723,7 @@ msgctxt "message"
 msgid "08428"
 msgstr "ここから 島を見ても{line_break}モンスターがいるかどうか{line_break}まったく わからないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08429"
 msgstr "あんがい こんな島に{line_break}宝が あったりして・・・。{end_wait}"
 

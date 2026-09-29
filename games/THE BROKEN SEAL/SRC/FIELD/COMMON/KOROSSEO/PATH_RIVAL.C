@@ -2,6 +2,7 @@
 #include "FIELD_EVENT.H"
 
 u16 Math_Atan2(s32 dy, s32 dx);
+void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 struct PathRecorder {
     s16 mode;
@@ -64,7 +65,7 @@ void Korosseo_UpdatePathRival(void)
             obj->unknown_64 = *facing;
             obj->acceleration = 0x4000;
             obj->speed = 0x10000;
-            Engine_ObjectSetPosition(obj, x, 0, fz);
+            Object_SetPosition(obj, x, 0, fz);
             Engine_GameFlagSet(0x211);
             Engine_ObjectSetScript(obj, Korosseo_RivalFinishScript);
             return;

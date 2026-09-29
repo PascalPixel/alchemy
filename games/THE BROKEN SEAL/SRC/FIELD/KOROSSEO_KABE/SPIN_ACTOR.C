@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 void Engine_TaskWait();
-void Engine_ObjectSetPosition();
+void Object_SetPosition();
 void Object_CommitPosition();
 void Engine_GameFlagSet();
 void Engine_MapCopyCellAttributes();
@@ -50,13 +50,13 @@ void KorosseoKabe_SpinActorAway(void)
     *(s32 *)(rec2 + 52) = 0x1999;
     *(s32 *)(rec2 + 48) = 0x13333;
     Engine_AudioPlayCue(227);
-    Call4(Engine_ObjectSetPosition, rec2, 0x1500000, 0xa0000, 0x1080000);
+    Call4(Object_SetPosition, rec2, 0x1500000, 0xa0000, 0x1080000);
     for (spin = 0, frames = 9; frames >= 0; frames--) {
         *(u16 *)((s32)p6 + 30) -= spin;
         Engine_TaskWait(1);
         spin += 36;
     }
-    Call4(Engine_ObjectSetPosition, rec2, 0x14a0000, -0x100000, 0x1080000);
+    Call4(Object_SetPosition, rec2, 0x14a0000, -0x100000, 0x1080000);
     for (spin2 = 0x168, frames2 = 21; frames2 >= 0; frames2--) {
         *(u16 *)((s32)p6 + 30) -= spin2;
         Engine_TaskWait(1);

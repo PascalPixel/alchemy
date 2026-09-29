@@ -1,5 +1,8 @@
+/* Colosso's greeting scene, shared by the wall and log-rolling trials. Each
+ * trial's GREET.C defines KOROSSEO_GREET_MESSAGE, the finals match its
+ * site announces, and includes this body. */
 #include "TYPES.H"
-extern u8 MsgKorosseoSiteSecondFinals[];
+extern u8 KOROSSEO_GREET_MESSAGE[];
 
 s32 Engine_ActorGet();
 void Engine_EventBegin();
@@ -77,7 +80,7 @@ void Korosseo_RunGreetScene(s32 a0)
     Engine_CameraFollowActor(0, 0);
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
-    Call1(Engine_EventSetMessage, (s32)MsgKorosseoSiteSecondFinals);
+    Call1(Engine_EventSetMessage, (s32)KOROSSEO_GREET_MESSAGE);
     Engine_ActorSetAnimationAndWait(a0, 3);
     Engine_EventShowMessage(a0, 0);
     Engine_ActorRunRepeatedMotion(a0, 2);

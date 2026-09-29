@@ -11,6 +11,7 @@
 pub mod asm;
 pub mod graphics;
 pub mod lz;
+pub mod resource;
 pub mod sound;
 pub mod table;
 pub mod text;

@@ -31363,7 +31363,7 @@ msgctxt "message"
 msgid "07838"
 msgstr "船長 きげんがいいから{line_break}船をかいほうしちゃったよ{line_break}まったく ちょうしいいなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTicketsPlease"
 msgid "07839"
 msgstr "チケットをはいけんします。{end_wait}"
 
@@ -31403,7 +31403,7 @@ msgctxt "message"
 msgid "07848"
 msgstr "どうぞ 船にのって{line_break}しゅっこうをおまち下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoAshore"
 msgid "07849"
 msgstr "陸に 上がりたいですか?{end_now}"
 
@@ -31415,7 +31415,7 @@ msgctxt "message"
 msgid "07851"
 msgstr "もう しゅっこうですから{line_break}船で おまち下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiFinishedOutHereBoardShip"
 msgid "07852"
 msgstr "ようが おすみでしたら{line_break}船に おのり下さい。{end_wait}"
 

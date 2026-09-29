@@ -29791,7 +29791,7 @@ msgctxt "message"
 msgid "07445"
 msgstr "The captain's in a good{line_break}mood. That's why he{line_break}opened the ship up.{page_break}Everything's going great.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTicketsPlease"
 msgid "07446"
 msgstr "Tickets, please. Please{line_break}show your tickets.{end_wait}"
 
@@ -29831,7 +29831,7 @@ msgctxt "message"
 msgid "07455"
 msgstr "Please board the ship and{line_break}wait to set sail.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoAshore"
 msgid "07456"
 msgstr "Do you want to{line_break}go ashore?{end_now}"
 
@@ -29843,7 +29843,7 @@ msgctxt "message"
 msgid "07458"
 msgstr "We'll be setting sail{line_break}soon, so please board{line_break}the ship.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiFinishedOutHereBoardShip"
 msgid "07459"
 msgstr "When you're finished{line_break}out here, please{line_break}board the ship.{end_wait}"
 

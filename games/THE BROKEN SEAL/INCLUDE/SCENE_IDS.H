@@ -68,6 +68,7 @@ extern char SceneId_KareiMachi1;
 extern char SceneId_KareiMachi2;
 extern char SceneId_KareiKyuden;
 extern char SceneId_RunpaSuhara;
+extern char SceneId_RunpaDou;
 extern char SceneId_KareiTorebi1;
 extern char SceneId_KareiTorebi2;
 extern char SceneId_FuneHeya;

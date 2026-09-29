@@ -80,8 +80,6 @@ void Func_080060e8(void *payload);
 u8 Func_0800615c(void *payload);
 void Func_08006240(void);
 void Func_0800651c(void);
-extern u8 Data_00000000[];
-extern u8 Data_000000c0[];
 extern struct SerialTransferState gSerialTransfer;
 extern struct SerialRuntime gSerialRuntime;
 extern volatile s32 gSerialSendSource;

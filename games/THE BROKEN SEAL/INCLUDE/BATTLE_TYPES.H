@@ -78,7 +78,12 @@ struct BattleUnit {
     u8 unknown_010[4];
     s16 hp_gauge;                   /* 0x014, hp / max_hp in 1/0x4000 */
     s16 pp_gauge;                   /* 0x016 */
-    u8 unknown_018[0x1c];
+    u8 unknown_018[0x0c];
+    /* Elemental level by element, each after an unresolved halfword. */
+    struct {
+        s16 unknown_0;
+        s16 level;
+    } element_levels[4];            /* 0x024 */
     s16 max_hp;                     /* 0x034 */
     s16 max_pp;                     /* 0x036 */
     s16 hp;                         /* 0x038 */
@@ -91,10 +96,10 @@ struct BattleUnit {
     u8 hp_regen;                    /* 0x044 */
     u8 pp_regen;                    /* 0x045 */
     u8 unknown_046[2];
-    /* Elemental power by element, each followed by an unresolved word. */
+    /* Elemental power and resistance by element. */
     struct {
         s16 power;
-        s16 unknown_2;
+        s16 resist;
     } elements[4];                  /* 0x048 */
     u8 unknown_058[0x80];
     u16 inventory[15];              /* 0x0d8 */
@@ -105,7 +110,7 @@ struct BattleUnit {
     u8 class_index;                 /* 0x129 */
     u8 status_12a;                  /* 0x12a */
     /* Nonzero levels reduce incoming damage to 1/2 or 1/10. */
-    u8 guard_level;                 /* 0x12b */
+    s8 guard_level;                 /* 0x12b */
     u8 status_12c;                  /* 0x12c */
     u8 status_12d;                  /* 0x12d */
     u8 status_12e;                  /* 0x12e */
@@ -194,6 +199,18 @@ LAYOUT_OFFSET_GUARD(
 
 LAYOUT_SIZE_GUARD(BattleUnit_Size, struct BattleUnit, BATTLE_UNIT_SIZE);
 LAYOUT_OFFSET_GUARD(BattleUnit_Hp, struct BattleUnit, hp, 0x038);
+LAYOUT_OFFSET_GUARD(
+    BattleUnit_ElementLevels,
+    struct BattleUnit,
+    element_levels,
+    0x024);
+LAYOUT_OFFSET_GUARD(BattleUnit_Level, struct BattleUnit, level, 0x00f);
+LAYOUT_OFFSET_GUARD(BattleUnit_Elements, struct BattleUnit, elements, 0x048);
+LAYOUT_OFFSET_GUARD(
+    BattleUnit_ReadyPose,
+    struct BattleUnit,
+    ready_pose,
+    0x144);
 LAYOUT_OFFSET_GUARD(
     BattleUnit_Inventory,
     struct BattleUnit,

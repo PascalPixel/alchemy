@@ -20,190 +20,6 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 
 /* 行動1件の対象解決。コピーを取り、命中とダメージ種別を決めて効果を出す。 */
 
-#define BytePtr(p) ((u8 *)(p))
-
-#ifndef BATTLE_COMMAND_VALUE
-#define BATTLE_COMMAND_VALUE (*cmd)
-#endif
-
-#ifdef BATTLE_ACTION_POWER_SHARED
-#define BATTLE_DAMAGE_POWER apwr
-#else
-#define BATTLE_DAMAGE_POWER dmg
-#endif
-
-/* 属性テーブルはユニット+36 の s16 対。威力テーブルは +72。 */
-struct AffinityPair {
-    s16 low;
-    s16 high;
-};
-
-#define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 2 * 2))
-#define S8OF(v) (*(s8 *)&(v))
-
-#ifndef BATTLE_REFRAIN_TURNS
-#define BATTLE_REFRAIN_TURNS 7
-#endif
-
-#ifndef BATTLE_SURVIVES_KO
-#define BATTLE_SURVIVES_KO() 0
-#endif
-
-#ifndef BATTLE_DAMAGE_KO_CONDITION
-#define BATTLE_DAMAGE_KO_CONDITION(cur, dmg)                                 \
-    (GameFlag_TestFar(366) != 0 && BATTLE_COMMAND_VALUE == 6 && (cur) > (dmg))
-#define BATTLE_AFTER_DAMAGE(cur)
-#endif
-
-#ifndef BATTLE_SCALE_DEFENSE
-#define BATTLE_SCALE_DEFENSE()                                               \
-    if (half != 0)                                                          \
-        scale = (u32)def >> 1
-#endif
-
-#ifndef BATTLE_ATTACK_STAT
-#define BATTLE_ATTACK_STAT (actor->attack)
-#define BATTLE_ATTACK_PREP()
-#endif
-
-#ifndef BATTLE_ATTACK_DIRECT_STAT
-#define BATTLE_ATTACK_DIRECT_STAT BATTLE_ATTACK_STAT
-#endif
-
-#ifndef BATTLE_ATTACK_LOADS
-#define BATTLE_ATTACK_LOADS()                                                \
-    hp0 = target->hp;                                                        \
-    def = target->defense;                                                   \
-    scale = def;                                                             \
-    cur = hp0
-#endif
-
-#ifndef BATTLE_ATTACK_HP
-#define BATTLE_ATTACK_HP cur
-#endif
-
-#ifndef BATTLE_HP_HEAL_GATE
-#define BATTLE_HP_HEAL_GATE(cur)
-#endif
-
-#ifndef BATTLE_DAMAGE_BLOCKED
-#define BATTLE_DAMAGE_BLOCKED() 0
-#endif
-
-#ifndef BATTLE_DAMAGE_GATE
-#define BATTLE_DAMAGE_GATE() 1
-#endif
-
-#ifndef BATTLE_POWER_BONUS
-#define BATTLE_POWER_BONUS(dmg)                                              \
-    if (BATTLE_COMMAND_VALUE == 6) {                                       \
-        s32 item;                                                           \
-                                                                             \
-        item = action_id - 380;                                             \
-        if ((u32)item <= 21) {                                              \
-            switch (item) {                                                \
-            case 0:                                                        \
-            case 6:                                                        \
-            case 12:                                                       \
-            case 18:                                                       \
-                kind = 3;                                                  \
-                break;                                                     \
-            case 1:                                                        \
-            case 7:                                                        \
-            case 13:                                                       \
-            case 19:                                                       \
-                kind = 6;                                                  \
-                break;                                                     \
-            case 2:                                                        \
-            case 8:                                                        \
-            case 14:                                                       \
-            case 20:                                                       \
-                kind = 9;                                                  \
-                break;                                                     \
-            case 3:                                                        \
-            case 9:                                                        \
-            case 15:                                                       \
-            case 21:                                                       \
-                kind = 12;                                                 \
-                break;                                                     \
-            }                                                              \
-        }                                                                  \
-        (dmg) += Math_Div(target->max_hp * kind, 100);                     \
-    }
-#endif
-
-#ifndef BATTLE_PLAN_ACTOR_ID
-#define BATTLE_PLAN_ACTOR_ID(plan, action_id) ((plan)->actor_id)
-#define BATTLE_PLAN_TARGET_ID(plan, slot) ((plan)->target_ids[(slot)])
-#define BATTLE_PLAN_ADJUST(plan, slot) ((plan)->target_adjustments[(slot)])
-#define BATTLE_PLAN_MODIFIER(plan, slot) ((plan)->target_modifiers[(slot)])
-#define BATTLE_PLAN_OFFSET(plan, slot) ((plan)->target_offsets[(slot)])
-#define BATTLE_PLAN_RESULT(plan, slot) ((plan)->target_results[(slot)])
-#define BATTLE_PLAN_COMMAND(plan) ((plan)->command)
-#define BATTLE_PLAN_PENDING(plan) ((plan)->pending_amount_60)
-#endif
-
-#ifndef BATTLE_PLAN_LOADS
-#define BATTLE_PLAN_LOADS()                                                  \
-    {                                                                        \
-        actor_id = BATTLE_PLAN_ACTOR_ID(plan, action_id);                    \
-        target_id = BATTLE_PLAN_TARGET_ID(plan, slot);                       \
-        action_id = plan->action_id;                                         \
-        range = plan->range_index;                                           \
-        adjust = BATTLE_PLAN_ADJUST(plan, slot);                             \
-        modifier = BATTLE_PLAN_MODIFIER(plan, slot);                         \
-    }
-#endif
-
-#ifndef BATTLE_SET_COMMAND
-#define BATTLE_SET_COMMAND() (cmd = &BATTLE_PLAN_COMMAND(plan))
-#endif
-
-#ifndef BATTLE_CURE_SLEEP_ALL
-#define BATTLE_CURE_SLEEP_ALL() (target->sleep = 0)
-#define BATTLE_CURE_SLEEP_PART() (target->sleep = 0)
-#endif
-
-#ifndef BATTLE_AFTER_COPY
-#define BATTLE_COPY_UNIT(copy, target, size) \
-    Iwram_CopyWords((copy), (target), (size))
-#define BATTLE_AFTER_COPY()
-#define BATTLE_BEFORE_HIT()
-#define BATTLE_HIT_PREP()
-#define BATTLE_BEFORE_EFFECTS()
-#define BATTLE_EFFECT_GATE()                                                 \
-    if (BattleFx_IsReviveFar(action->effect) == 0 && target->hp == 0       \
-        && BattleFx_CanAffectDefeatedUnit(action->effect) == 0)                        \
-        goto done;                                                          \
-    if (hit == 0)                                                           \
-        goto done
-#define BATTLE_EXTRA_EFFECT_CASES
-#define BATTLE_HEAL_CASES
-#define BATTLE_HEAL_AMOUNT(heal, maxv)                                        \
-    if (action->effect == EFX_HEAL_60)                                        \
-        (heal) += Math_Div((maxv) * 60, 100);                                 \
-    else                                                                       \
-        (heal) += Math_Div((maxv) * 30, 100)
-#define BATTLE_PP_HEAL_CASES
-#define BATTLE_PP_HEAL_AMOUNT(heal, maxv)                                     \
-    (heal) += Math_Div((maxv) * 7, 100)
-#define BATTLE_REVIVE_CASES
-#define BATTLE_DELUSION_CASES
-#define BATTLE_STUN_CASES
-#define BATTLE_DEATH_CASES
-#define BATTLE_PP_LEECH_CASES
-#define BATTLE_IMMOBILIZE_CASES
-#define BATTLE_GUARD1_CASES
-#define BATTLE_BETWEEN_GUARD_CASES
-#define BATTLE_GUARD2_CASES
-#define BATTLE_GUARD2_THRESHOLD 1
-#define BATTLE_GUARD2_LEVEL 2
-#define BATTLE_POST_GUARD_CASES
-#define BATTLE_AFTER_TEXT_CASES
-#define BATTLE_DONE_PREP()
-#define BATTLE_EFFECT_MAX 69
-#endif
-
 #define CLAMP_MOD(v)                                                           \
     {                                                                          \
         if ((v) < -4)                                                          \
@@ -212,71 +28,16 @@ struct AffinityPair {
             (v) = 4;                                                           \
     }
 
+/* Power against the target's resistance in the action's element. */
 #define TAKE_BONUS()                                                           \
     {                                                                          \
-        if (range != 4) {                                                      \
-            s32 off;                                                           \
-                                                                               \
-            off = range * 4 + 72;                                              \
-            bonus = power - ((s16 *)((u8 *)target + off))[1];                  \
-        }                                                                      \
+        if (range != 4)                                                        \
+            bonus = power - target->elements[range].resist;                    \
     }
 
-#ifndef BATTLE_GUARD_DAMAGE
-#define BATTLE_GUARD_DAMAGE()                                                 \
-    if (guard != 0) {                                                         \
-        if (guard == 1)                                                       \
-            dmg /= 2;                                                         \
-        else                                                                  \
-            dmg = Math_Div(dmg, 10);                                          \
-    }
-#endif
-
-#ifndef BATTLE_GUARD_VALUE
-#define BATTLE_GUARD_VALUE(target) S8OF((target)->guard_level)
-#endif
-
-#ifndef BATTLE_EVIL_SPIRIT_ACTIVE
-#define BATTLE_EVIL_SPIRIT_ACTIVE() (actor->evil_spirit != 0)
-#endif
-
-#define APPLY_GUARD()                                                         \
-    {                                                                         \
-        guard = BATTLE_GUARD_VALUE(target);                                   \
-        BATTLE_GUARD_DAMAGE();                                                \
-    }
-
-#ifndef BATTLE_ATTACK_REPORT
-#define BATTLE_ATTACK_REPORT()                                               \
-    {                                                                         \
-        BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);                \
-        BattleEv_Push(BATTLE_EVENT_UNIT, target_id);                       \
-        BATTLE_ATTACK_HP -= dmg;                                              \
-        BattleEv_Push(BATTLE_EVENT_VALUE, dmg);                            \
-    }
-#endif
-
-#ifndef BATTLE_PP_DAMAGE_LIMIT
-#define BATTLE_PP_DAMAGE_LIMIT(dmg, pp)
-#endif
-
-#ifndef BATTLE_DAMAGE_ROUND_DECL
-#define BATTLE_DAMAGE_ROUND_DECL
-#define BATTLE_DAMAGE_ROUND pass
-#endif
-
-/* 文面を変数に決めてから1回だけ積む形。呼び先を挟んで統合できない共有尾は
- * ソース側の変数だった(crossjump は bl を跨いで一致を探せない)。 */
-#define TEXT_SIDE_V(player, enemy)                                             \
-{                                                                              \
-    s32 text;                                                                  \
-                                                                               \
-    if ((u32)target_id <= 7)                                                   \
-        text = (player);                                                       \
-    else                                                                       \
-        text = (enemy);                                                        \
-    BattleEv_Push(BATTLE_EVENT_TEXT, text);                                 \
-}
+#define BytePtr(p) ((u8 *)(p))
+#define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 2 * 2))
+struct AffinityPair { s16 low; s16 high; };
 
 #define TEXT_SIDE(player, enemy)                                               \
 {                                                                              \
@@ -286,74 +47,17 @@ struct AffinityPair {
         BattleEv_Push(BATTLE_EVENT_TEXT, (enemy));                          \
 }
 
-#define TAKE_PWR()                                                             \
-{                                                                              \
-    pwr = action->power;                                                       \
-    if (pwr == 0)                                                              \
-        break;                                                                 \
-}
-
-#define APPLY_HP_HIT(ko_lo, ko_hi)                                             \
-{                                                                              \
-    if (target->hp <= dmg) {                                                   \
-        dealt = target->hp;                                                    \
-        target->hp = 0;                                                        \
-        BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);                  \
-        BattleEv_Push(BATTLE_EVENT_UNIT, target_id);                           \
-        TEXT_SIDE(ko_lo, ko_hi);                                               \
-    } else {                                                                   \
-        dealt = dmg;                                                           \
-        target->hp = (s16)(target->hp - dmg);                                  \
-        BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);                   \
-    }                                                                          \
-}
-
-#define APPLY_PP_HIT()                                                         \
-{                                                                              \
-    if (target->pp <= dmg) {                                                   \
-        dealt = target->pp;                                                    \
-        target->pp = 0;                                                        \
-    } else {                                                                   \
-        dealt = dmg;                                                           \
-        target->pp = (s16)(target->pp - dmg);                                  \
-    }                                                                          \
-}
-
-#define HEAL_CUR(cur, maxv, full_text, part_text)                              \
-{                                                                              \
-    if ((cur) + dmg > (maxv)) {                                                \
-        dmg = (maxv) - (cur);                                                  \
-        (cur) = (maxv);                                                        \
-    } else {                                                                   \
-        (cur) = (s16)((cur) + dmg);                                            \
-    }                                                                          \
-    BattleEv_Push(BATTLE_EVENT_UNIT, target_id);                               \
-    if ((cur) == (maxv))                                                       \
-        BattleEv_Push(BATTLE_EVENT_TEXT, (full_text));                         \
-    else {                                                                     \
-        BattleEv_Push(BATTLE_EVENT_VALUE, dmg);                                \
-        BattleEv_Push(BATTLE_EVENT_TEXT, (part_text));                         \
-    }                                                                          \
-}
-
-/* ターン数フィールドはオフセット定数で渡す。冒頭の代入が call-saved に住み、
- * プッシュ2回をまたいで生き延びる(306 は即値に畳めず const-prop が残す)。 */
-#define ATK_TURNS 0x132
-#define DEF_TURNS 0x134
-#define RES_TURNS 0x136
-
-#define ADJUST_ATKDEF(field, delta, toff_c, value_expr, text)                  \
-{                                                                              \
-    s32 toff;                                                                  \
-                                                                               \
-    toff = (toff_c);                                                           \
-    (field) += (delta);                                                        \
-    CLAMP_MOD(field);                                                          \
-    Owner_RecalculateStatsFar(target_id);                                         \
-    BattleEv_Push(BATTLE_EVENT_VALUE, (value_expr));                           \
-    BattleEv_Push(BATTLE_EVENT_TEXT, (text));                                  \
-    *BytePtr((u8 *)target + toff) = 7;                                          \
-}
+/* Guard levels 1 and 2 cut the damage to a half and a tenth. */
+#define APPLY_GUARD()                                                         \
+    {                                                                         \
+        guard = target->guard_level;                                          \
+        if (guard != 0) {                                                     \
+            if (guard == 1)                                                   \
+                dmg /= 2;                                                     \
+            else                                                              \
+                dmg = Math_Div(dmg, 10);                                      \
+        }                                                                     \
+    }
 
 #define ADJUST_RES(delta, value_expr, text)                                 \
 {                                                                              \
@@ -364,60 +68,11 @@ struct AffinityPair {
     target->res_modifier_turns = 7;                                                    \
 }
 
-#define SET_STATUS_TURNS(field, text, turns)                                       \
+#define SET_STATUS7(field, text)                                               \
 {                                                                              \
     BattleEv_Push(BATTLE_EVENT_TEXT, (text));                                  \
-    (field) = (turns);                                                         \
+    (field) = 7;                                                               \
 }
-#define SET_STATUS7(field, text) SET_STATUS_TURNS(field, text, 7)
-
-#ifndef BATTLE_HIT_EFFECTS
-/* Keep the first-entry test outside the remaining-entry scan macro scope. */
-#define BATTLE_HIT_EFFECTS()                                                  \
-    if (action->effect == EFX_IMMOBILIZE) {                                  \
-        s32 hidx;                                                             \
-                                                                              \
-        hit = 0;                                                              \
-        hidx = 748;                                                           \
-        if (*(s16 *)(BytePtr(work) + hidx) == target_id) {                   \
-            hit = 1;                                                         \
-            goto hit_effect_done;                                             \
-        } else {                                                              \
-            do {                                                              \
-                n = 0;                                                        \
-            scan_next:                                                        \
-                n++;                                                          \
-                if ((u32)n <= 19) {                                           \
-                    s32 idx;                                                  \
-                                                                              \
-                    idx = ((n << 1) << 3) + 748;                               \
-                    if (*(s16 *)(BytePtr(work) + idx) == target_id)            \
-                        hit = 1;                                              \
-                    else                                                      \
-                        goto scan_next;                                       \
-                }                                                             \
-                goto hit_effect_done;                                         \
-            } while (0);                                                      \
-        }                                                                     \
-    }                                                                         \
-    if (action->effect == EFX_HALF_DEF) {                                    \
-        half = 1;                                                            \
-    } else if (action->effect == EFX_LETHAL) {                               \
-        crush = 1;                                                           \
-    } else if (action->effect == EFX_INSTANT_DOWN) {                         \
-        skip = 1;                                                            \
-    } else if (action->effect == EFX_ACTOR_FLASH) {                          \
-        if (actor->hp != 0)                                                  \
-            BattleEv_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);           \
-    } else if (action->effect == EFX_DRAIN_PP) {                             \
-        if (target->pp != 0)                                                 \
-            nibble = 10;                                                     \
-        else                                                                 \
-            hit = 0;                                                        \
-    }                                                                         \
-hit_effect_done:                                                               \
-    ;
-#endif
 
 s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 {
@@ -428,26 +83,13 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
      * skip=28 nibble=24 affinity=20 copy=16 power=12 (temp)=8 cmd=4
      * target=r7 target_id=sl range=r9 saved=84..
      */
-#ifndef BATTLE_OFFSET_LATE
     s32 offset;
-#endif
     struct BattleAction *action;
-#ifdef BATTLE_ACTION_ID_EARLY
-    s32 action_id;
-#endif
     struct BattleUnit *actor;
     s32 actor_id;
-#ifdef BATTLE_RANGE_EARLY
-    s32 range;
-#endif
-#ifndef BATTLE_ACTION_ID_EARLY
     s32 action_id;
-#endif
     s32 bonus;
     void *work;
-#ifdef BATTLE_OFFSET_LATE
-    s32 offset;
-#endif
     s32 half;
     s32 adjust;
     s32 dealt;
@@ -462,31 +104,16 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 power;
     s16 hp0;
     s32 kind;
-#ifdef BATTLE_ATTACK_STACK_ORDER
-    s32 scale;
-    s32 pass;
-#endif
     s16 *cmd;
-#ifdef BATTLE_NARROW_TARGET_ID
-    u8 target_id;
-#else
     s32 target_id;
-#endif
     s8 *rm;
-#ifndef BATTLE_RANGE_EARLY
     s32 range;
-#endif
     struct BattleUnit *target;
     s32 n;
     s32 value;
-#ifdef BATTLE_SUMMON_BLOCK
-    s32 affi;
-#endif
     s32 dmg;
-#ifndef BATTLE_ATTACK_STACK_ORDER
     s32 scale;
     s32 pass;
-#endif
     s8 *am;
     s32 guard;
     s16 saved[8];
@@ -503,16 +130,20 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     size = sizeof(struct BattleUnit);
     copy = (struct BattleUnit *)Runtime_BumpAllocate(size);
 
-    BATTLE_PLAN_LOADS();
+    actor_id = plan->actor_id;
+    target_id = plan->target_ids[slot];
+    action_id = plan->action_id;
+    range = plan->range_index;
+    adjust = plan->target_adjustments[slot];
+    modifier = plan->target_modifiers[slot];
 
     action = BattleAction_Get(action_id);
     actor = Owner_GetStateFar(actor_id);
     target = Owner_GetStateFar(target_id);
-    BATTLE_COPY_UNIT(copy, target, size);
-    BATTLE_AFTER_COPY();
+    Iwram_CopyWords(copy, target, size);
 
     if (action->range != 255) {
-        offset = BATTLE_PLAN_OFFSET(plan, slot);
+        offset = plan->target_offsets[slot];
         if (offset < 0)
             offset = -offset;
     } else {
@@ -560,8 +191,8 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 
     /* 攻撃力。元素武器でなければ 100。 */
     if ((u32)plan->range_index <= 3) {
-        BATTLE_SET_COMMAND();
-        if (BATTLE_COMMAND_VALUE != 2) {
+        cmd = &plan->command;
+        if (*cmd != 2) {
             s32 off;
 
             off = plan->range_index * 4 + 72;
@@ -569,11 +200,11 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
             goto after_power;
         }
     } else
-        BATTLE_SET_COMMAND();
+        cmd = &plan->command;
     power = 100;
 after_power:
 
-    if (BATTLE_PLAN_COMMAND(plan) == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
+    if (plan->command == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
         s32 chance;
 
         {
@@ -588,12 +219,12 @@ after_power:
             BattleEv_Push(BATTLE_EVENT_SCRIPT_UPDATE, 5);
     }
 
-    BATTLE_BEFORE_HIT();
+
     nibble = action->target_flags & 15;
     {
         s32 first;
 
-        first = BATTLE_PLAN_RESULT(plan, slot);
+        first = plan->target_results[slot];
         if (first == -1)
             hit = Battle_HitCheck(
                 actor_id, target_id, range, action->effect,
@@ -601,7 +232,6 @@ after_power:
         else
             hit = first;
     }
-#ifndef BATTLE_SUMMON_BLOCK
     if ((u8)(action->effect + 206) <= 1) {
         s32 st;
         s32 rec;
@@ -706,26 +336,63 @@ after_power:
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgNoOneCame);
         }
     }
-#else
-    BATTLE_SUMMON_BLOCK();
-#endif
+
 
     if (hit != 0) {
         s32 efx;
 
-        BATTLE_HIT_PREP();
         efx = action->effect;
-        BATTLE_HIT_EFFECTS();
+        if (action->effect == EFX_IMMOBILIZE) {
+            s32 hidx;
+
+            hit = 0;
+            hidx = 748;
+            if (*(s16 *)(BytePtr(work) + hidx) == target_id) {
+                hit = 1;
+                goto hit_effect_done;
+            } else {
+                do {
+                    n = 0;
+                scan_next:
+                    n++;
+                    if ((u32)n <= 19) {
+                        s32 idx;
+
+                        idx = ((n << 1) << 3) + 748;
+                        if (*(s16 *)(BytePtr(work) + idx) == target_id)
+                            hit = 1;
+                        else
+                            goto scan_next;
+                    }
+                    goto hit_effect_done;
+                } while (0);
+            }
+        }
+        if (action->effect == EFX_HALF_DEF) {
+            half = 1;
+        } else if (action->effect == EFX_LETHAL) {
+            crush = 1;
+        } else if (action->effect == EFX_INSTANT_DOWN) {
+            skip = 1;
+        } else if (action->effect == EFX_ACTOR_FLASH) {
+            if (actor->hp != 0)
+                BattleEv_Push(BATTLE_EVENT_ACTOR_EFFECT, actor_id);
+        } else if (action->effect == EFX_DRAIN_PP) {
+            if (target->pp != 0)
+                nibble = 10;
+            else
+                hit = 0;
+        }
+    hit_effect_done:
+        ;
     }
 
     /* ダメージ種別。HP が残っているか、分類が非ゼロなら種別スイッチへ。 */
-    if (BATTLE_DAMAGE_GATE() && skip == 0
+    if (skip == 0
         && (target->hp != 0 || BattleFx_IsReviveFar(action->effect) != 0)) {
         s32 pp;
         s32 cur;
-#ifdef BATTLE_ACTION_POWER_SHARED
-        s32 apwr;
-#endif
+
 
         /*
          * -1 PPダメージ(別系)  1 HP回復  2 HPダメージ  3/4 武器攻撃
@@ -737,14 +404,15 @@ after_power:
         case BATTLE_DAMAGE_WEAPON_SCALED:
         {
             s32 def;
-#ifndef BATTLE_ACTION_POWER_SHARED
             s32 apwr;
-#endif
 
-            if (BATTLE_DAMAGE_BLOCKED())
-                break;
-            BATTLE_ATTACK_LOADS();
-            BATTLE_SCALE_DEFENSE();
+
+            hp0 = target->hp;
+            def = target->defense;
+            scale = def;
+            cur = hp0;
+            if (half != 0)
+                scale = (u32)def >> 1;
             pass = 1;
             do {
                 TAKE_BONUS();
@@ -753,13 +421,13 @@ after_power:
                 apwr = action->power;
                 if (nibble == 4)
                     dmg = Math_Div(
-                        Battle_CalcAttack(BATTLE_ATTACK_DIRECT_STAT, scale, 0,
+                        Battle_CalcAttack(actor->attack, scale, 0,
                                           bonus)
                             * apwr,
                         10);
                 else {
-                    BATTLE_ATTACK_PREP();
-                    dmg = Battle_CalcAttack(BATTLE_ATTACK_STAT, scale, apwr,
+
+                    dmg = Battle_CalcAttack(actor->attack, scale, apwr,
                                             bonus);
                 }
                 dmg *= adjust;
@@ -786,19 +454,22 @@ after_power:
                 if (dmg <= 0)
                     dmg = 1;
                 if (crush != 0) {
-                    if (dmg < BATTLE_ATTACK_HP - 1) {
-                        dmg = BATTLE_ATTACK_HP - 1;
+                    if (dmg < cur - 1) {
+                        dmg = cur - 1;
                         if (dmg <= 0)
                             dmg = 1;
                     }
                 }
-                if (GameFlag_TestFar(366) != 0 && BATTLE_COMMAND_VALUE == 5
-                    && BATTLE_ATTACK_HP <= dmg) {
-                    dmg = BATTLE_ATTACK_HP - 1;
+                if (GameFlag_TestFar(366) != 0 && *cmd == 5
+                    && cur <= dmg) {
+                    dmg = cur - 1;
                 }
                 pass++;
             } while (pass <= 1);
-            BATTLE_ATTACK_REPORT();
+            BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
+            BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
+            cur -= dmg;
+            BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             {
                 s32 text;
 
@@ -808,29 +479,23 @@ after_power:
                     text = (s32)&MsgDmgEmphE + affinity;
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
             }
-            if (BATTLE_ATTACK_HP <= 0 && BATTLE_SURVIVES_KO())
-                BATTLE_ATTACK_HP = 1;
-            if (BATTLE_ATTACK_HP <= 0) {
-#ifdef BATTLE_KO_TAIL
-                BATTLE_KO_TAIL();
-#else
+
+            if (cur <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-                BATTLE_ATTACK_HP = 0;
+                cur = 0;
                 TEXT_SIDE((s32)&MsgGoesDown, (s32)&MsgFelled);
-#endif
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-            dealt = target->hp - BATTLE_ATTACK_HP;
-            target->hp = (s16)BATTLE_ATTACK_HP;
+            dealt = target->hp - cur;
+            target->hp = (s16)cur;
             Owner_RecalculateRatiosFar(target_id);
             break;
         }
 
         case BATTLE_DAMAGE_PP_DRAIN:
         {
-            if (BATTLE_DAMAGE_BLOCKED())
-                break;
+
             if (action->power == 0)
                 break;
             pp = target->pp;
@@ -841,14 +506,14 @@ after_power:
                 off = off + 72;
                 bonus = power - ((s16 *)((u8 *)target + off))[1];
             }
-            BATTLE_DAMAGE_POWER = action->power;
-            dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
+            dmg = action->power;
+            dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
             dmg *= adjust;
             APPLY_GUARD();
             if (action->effect == EFX_DRAIN_PP && dmg > pp)
                 dmg = pp;
-            BATTLE_PP_DAMAGE_LIMIT(dmg, pp);
+
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -876,9 +541,9 @@ after_power:
             if (action->power == 0)
                 break;
             cur = target->hp;
-            BATTLE_HP_HEAL_GATE(cur);
-            BATTLE_DAMAGE_POWER = action->power;
-            dmg = Battle_CalcRestore(BATTLE_DAMAGE_POWER, range == 4 ? 100 : power, 256);
+
+            dmg = action->power;
+            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * HpHealFalloff[offset], 100);
             dmg *= adjust;
             dmg += BattleRandom16Far() & 3;
@@ -902,14 +567,13 @@ after_power:
 
         case BATTLE_DAMAGE_PP_DIRECT:
         {
-            if (BATTLE_DAMAGE_BLOCKED())
-                break;
+
             if (action->power == 0)
                 break;
             pp = target->pp;
             TAKE_BONUS();
-            BATTLE_DAMAGE_POWER = action->power;
-            dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
+            dmg = action->power;
+            dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(dmg * PpDmgFalloff[offset], 100);
             dmg *= adjust;
             APPLY_GUARD();
@@ -936,21 +600,52 @@ after_power:
         case BATTLE_DAMAGE_HP_ADDITIVE_7:
         case BATTLE_DAMAGE_HP_ADDITIVE_9:
         {
-            BATTLE_DAMAGE_ROUND_DECL;
 
-            if (BATTLE_DAMAGE_BLOCKED())
-                break;
+
             if (action->power == 0)
                 break;
             cur = target->hp;
-            BATTLE_DAMAGE_ROUND = 1;
+            pass = 1;
             do {
                 TAKE_BONUS();
-                if (BATTLE_DAMAGE_ROUND == 0)
+                if (pass == 0)
                     bonus = 0;
-                BATTLE_DAMAGE_POWER = action->power;
-                BATTLE_POWER_BONUS(BATTLE_DAMAGE_POWER);
-                dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
+                dmg = action->power;
+                if (*cmd == 6) {
+                    s32 item;
+
+                    item = action_id - 380;
+                    if ((u32)item <= 21) {
+                        switch (item) {
+                        case 0:
+                        case 6:
+                        case 12:
+                        case 18:
+                            kind = 3;
+                            break;
+                        case 1:
+                        case 7:
+                        case 13:
+                        case 19:
+                            kind = 6;
+                            break;
+                        case 2:
+                        case 8:
+                        case 14:
+                        case 20:
+                            kind = 9;
+                            break;
+                        case 3:
+                        case 9:
+                        case 15:
+                        case 21:
+                            kind = 12;
+                            break;
+                        }
+                    }
+                    dmg += Math_Div(target->max_hp * kind, 100);
+                }
+                dmg = Battle_CalcPower(dmg, bonus, 256);
                 dmg *= adjust;
                 switch (nibble & 15) {
                 case 5:
@@ -965,11 +660,11 @@ after_power:
                 }
                 dmg += BattleRandom16Far() & 3;
                 APPLY_GUARD();
-                if (BATTLE_DAMAGE_KO_CONDITION(cur, dmg)) {
+                if (GameFlag_TestFar(366) != 0 && *cmd == 6 && cur > dmg) {
                     dmg = cur;
                 }
-                BATTLE_DAMAGE_ROUND++;
-            } while (BATTLE_DAMAGE_ROUND <= 1);
+                pass++;
+            } while (pass <= 1);
             BattleEv_Push(BATTLE_EVENT_ACTOR_BEGIN, target_id);
             BattleEv_Push(BATTLE_EVENT_VALUE, dmg);
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -983,9 +678,7 @@ after_power:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && BATTLE_SURVIVES_KO())
-                cur = 1;
-            BATTLE_AFTER_DAMAGE(cur);
+
             if (cur <= 0) {
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
@@ -1012,8 +705,8 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            BATTLE_DAMAGE_POWER = action->power;
-            dmg = Battle_CalcRestore(BATTLE_DAMAGE_POWER, range == 4 ? 100 : power, 256);
+            dmg = action->power;
+            dmg = Battle_CalcRestore(dmg, range == 4 ? 100 : power, 256);
             dmg = Math_Div(dmg * PpHealFalloff[offset], 100);
             dmg *= adjust;
             pp += dmg;
@@ -1041,21 +734,13 @@ pp_store:
             break;
 
         case BATTLE_DAMAGE_HP_POWER:
-#ifdef BATTLE_HP_POWER_GUARD_FIRST
-            if (BATTLE_DAMAGE_BLOCKED())
-                break;
-#endif
             if (hit != 0) {
-#ifndef BATTLE_HP_POWER_GUARD_FIRST
-            if (BATTLE_DAMAGE_BLOCKED())
-                break;
-#endif
             if (action->power == 0)
                 break;
             cur = target->hp;
             TAKE_BONUS();
-            BATTLE_DAMAGE_POWER = action->power;
-            dmg = Battle_CalcPower(BATTLE_DAMAGE_POWER, bonus, 256);
+            dmg = action->power;
+            dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg *= adjust;
             dmg = Math_Div(dmg * HpDmgFalloff[offset], 100);
             APPLY_GUARD();
@@ -1072,20 +757,15 @@ pp_store:
                 BattleEv_Push(BATTLE_EVENT_TEXT, text);
                 cur -= dmg;
             }
-            if (cur <= 0 && BATTLE_SURVIVES_KO())
-                cur = 1;
+
             if (cur <= 0) {
-#ifdef BATTLE_KO_TAIL
-                BATTLE_KO_TAIL();
-#else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
                 BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
                 cur = 0;
                 TEXT_SIDE((s32)&MsgGoesDown, (s32)&MsgFelled);
-#endif
             } else
                 BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-dealt = target->hp - cur;
+            dealt = target->hp - cur;
             target->hp = (s16)cur;
             Owner_RecalculateRatiosFar(target_id);
             break;
@@ -1099,14 +779,18 @@ dealt = target->hp - cur;
     }
 
     /* 付加効果 */
-    BATTLE_BEFORE_EFFECTS();
+
     BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
-    BATTLE_EFFECT_GATE();
-    if ((u32)(action->effect - 3) > BATTLE_EFFECT_MAX - 3)
+    if (BattleFx_IsReviveFar(action->effect) == 0 && target->hp == 0
+        && BattleFx_CanAffectDefeatedUnit(action->effect) == 0)
+        goto done;
+    if (hit == 0)
+        goto done;
+    if ((u32)(action->effect - 3) > 69 - 3)
         goto done;
 
     switch (action->effect) {
-    BATTLE_EXTRA_EFFECT_CASES
+
     case EFX_CURE_ALL:
         if (target->delusion != 0) {
             target->delusion = 0;
@@ -1119,7 +803,7 @@ dealt = target->hp - cur;
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
         }
-        BATTLE_CURE_SLEEP_ALL();
+        target->sleep = 0;
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureSeal);
@@ -1155,7 +839,7 @@ dealt = target->hp - cur;
             BattleEv_Push(BATTLE_EVENT_UNIT, target_id);
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgCureStun);
         }
-        BATTLE_CURE_SLEEP_PART();
+        target->sleep = 0;
         if (target->psy_seal != 0) {
             target->psy_seal = 0;
             BattleEv_Push(BATTLE_EVENT_RESET, 0);
@@ -1172,7 +856,7 @@ dealt = target->hp - cur;
 
     case EFX_HEAL_60:
     case EFX_HEAL_30:
-    BATTLE_HEAL_CASES
+
     {
         s32 old;
         s32 maxu;
@@ -1180,17 +864,17 @@ dealt = target->hp - cur;
         s32 heal;
         u16 *stat_ptr;
 
-#ifdef BATTLE_HEAL_PREP
-        BATTLE_HEAL_PREP(old, heal, maxu, maxv, stat_ptr);
-#else
+
         stat_ptr = (u16 *)&target->hp;
         old = *stat_ptr--;
         heal = *(s16 *)(stat_ptr + 1);
         stat_ptr--;
         maxu = *stat_ptr--;
         maxv = *(s16 *)(stat_ptr + 1);
-        BATTLE_HEAL_AMOUNT(heal, maxv);
-#endif
+        if (action->effect == EFX_HEAL_60)
+            heal += Math_Div(maxv * 60, 100);
+        else
+            heal += Math_Div(maxv * 30, 100);
         if (heal > (s16)maxu)
             heal = (s16)maxu;
         tmp = heal - (s16)old;
@@ -1208,11 +892,9 @@ dealt = target->hp - cur;
     }
 
     case EFX_PP_RESTORE_7:
-    BATTLE_PP_HEAL_CASES
+
     {
-#ifdef BATTLE_PP_RESTORE_BODY
-        BATTLE_PP_RESTORE_BODY();
-#else
+
         s32 old;
         s32 maxv;
         s32 heal;
@@ -1220,7 +902,7 @@ dealt = target->hp - cur;
         heal = target->pp;
         maxv = target->max_pp;
         old = heal;
-        BATTLE_PP_HEAL_AMOUNT(heal, maxv);
+        heal += Math_Div(maxv * 7, 100);
         if (heal > maxv)
             heal = maxv;
         tmp = heal - old;
@@ -1235,11 +917,10 @@ dealt = target->hp - cur;
         target->pp = (s16)heal;
         Owner_RecalculateRatiosFar(target_id);
         break;
-#endif
     }
 
     case EFX_AGI_SET_UP8:
-        S8OF(target->agility_modifier) = 8;
+        target->agility_modifier = 8;
         target->agility_modifier_turns = 5;
         Owner_RecalculateStatsFar(target_id);
         BattleEv_Push(BATTLE_EVENT_VALUE, target->agility - copy->agility);
@@ -1247,7 +928,7 @@ dealt = target->hp - cur;
         break;
 
     case EFX_AGI_SET_DOWN4:
-        am = &S8OF(target->agility_modifier);
+        am = &target->agility_modifier;
     {
         u8 v;
 
@@ -1357,7 +1038,7 @@ dealt = target->hp - cur;
         Owner_RecalculateRatiosFar(target_id);
         break;
 
-    BATTLE_REVIVE_CASES
+
 
     case EFX_CURE_POISON:
         if (target->poison != 0)
@@ -1389,7 +1070,7 @@ dealt = target->hp - cur;
     case EFX_RES_UP2:
     {
         target->res_modifier += 2;
-        if (*(rm = &S8OF(target->res_modifier)) < -4)
+        if (*(rm = &target->res_modifier) < -4)
             target->res_modifier = -4;
         if (target->res_modifier > 4)
             target->res_modifier = 4;
@@ -1414,7 +1095,7 @@ dealt = target->hp - cur;
         break;
 
     case EFX_DELUSION:
-    BATTLE_DELUSION_CASES
+
         SET_STATUS7(target->delusion, (s32)&MsgDelusion);
         break;
 
@@ -1427,7 +1108,7 @@ dealt = target->hp - cur;
         break;
 
     case EFX_STUN:
-    BATTLE_STUN_CASES
+
         SET_STATUS7(target->stun, (s32)&MsgStunned);
         break;
 
@@ -1446,8 +1127,7 @@ dealt = target->hp - cur;
         break;
 
     case EFX_INSTANT_DOWN:
-        if (BATTLE_SURVIVES_KO())
-            break;
+
         BattleEv_Push(BATTLE_EVENT_ACTOR_RESOLVE, target_id);
         if (target->status_12a == 2)
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgKoDown);
@@ -1460,7 +1140,7 @@ dealt = target->hp - cur;
         break;
 
     case EFX_REFRAIN:
-        SET_STATUS_TURNS(target->refrain, (s32)&MsgRefrain, BATTLE_REFRAIN_TURNS);
+        SET_STATUS7(target->refrain, (s32)&MsgRefrain);
         break;
 
     case EFX_REFLECT:
@@ -1470,9 +1150,7 @@ dealt = target->hp - cur;
     case EFX_DRAIN_HP:
     case EFX_DRAIN_HP_HALF:
     {
-#ifdef BATTLE_HP_DRAIN_BODY
-        BATTLE_HP_DRAIN_BODY();
-#else
+
         s32 heal;
 
         heal = actor->hp;
@@ -1494,7 +1172,6 @@ dealt = target->hp - cur;
         }
         actor->hp = (s16)heal;
         Owner_RecalculateRatiosFar(actor_id);
-#endif
         break;
     }
 
@@ -1536,7 +1213,7 @@ dealt = target->hp - cur;
         Owner_AdjustSecondValueFar(actor_id, dmg);
         break;
 
-    BATTLE_PP_LEECH_CASES
+
 
     case EFX_BUFF_CLEAR:
         if (target->attack_modifier > 0) {
@@ -1566,7 +1243,7 @@ dealt = target->hp - cur;
         break;
 
     case EFX_DEATH_CURSE:
-    BATTLE_DEATH_CASES
+
         if (target->death_count == 0) {
             BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgDeathCurse);
             target->death_count = 7;
@@ -1581,7 +1258,7 @@ dealt = target->hp - cur;
 
     case EFX_READY:
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgReadies);
-        ((u8 *)target)[0x144] = 2;  /* ready_pose。構造体表記だと共有尾が壊れる */
+        target->ready_pose = 2;
         break;
 
     case EFX_CHALLENGE:
@@ -1592,37 +1269,37 @@ dealt = target->hp - cur;
         break;
 
     case EFX_IMMOBILIZE:
-    BATTLE_IMMOBILIZE_CASES
+
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgImmobile);
         target->cannot_move = 1;
         break;
 
     case EFX_GUARD1:
-    BATTLE_GUARD1_CASES
+
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura);
-        if (BATTLE_GUARD_VALUE(target) > 0)
+        if (target->guard_level > 0)
             break;
         g1 = 1;
-        S8OF(target->guard_level) = g1;
+        target->guard_level = g1;
         break;
 
-    BATTLE_BETWEEN_GUARD_CASES
+
 
     case EFX_GUARD2:
-    BATTLE_GUARD2_CASES
+
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgAura2);
-        if (BATTLE_GUARD_VALUE(target) > BATTLE_GUARD2_THRESHOLD)
+        if (target->guard_level > 1)
             break;
-        S8OF(target->guard_level) = BATTLE_GUARD2_LEVEL;
+        target->guard_level = 2;
         break;
 
-    BATTLE_POST_GUARD_CASES
+
 
     case EFX_TEXT_NONE:
         BattleEv_Push(BATTLE_EVENT_TEXT, (u32)-1);
         break;
 
-    BATTLE_AFTER_TEXT_CASES
+
 
     default:
         break;
@@ -1631,7 +1308,7 @@ dealt = target->hp - cur;
 done:
     /* 終了処理 */
     BattleEv_Push(BATTLE_EVENT_RESET, 0);
-    BATTLE_DONE_PREP();
+
     if (target->hp != 0) {
         if (target->sleep != 0)
         if (target->sleep <= 6
@@ -1646,13 +1323,13 @@ done:
     UiWindow_DrawPartyStatusContentsFar(((u8 *)gBattleWork)[65]);
     if (target->hp != 0)
         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
-    if (BATTLE_EVIL_SPIRIT_ACTIVE()
+    if (actor->evil_spirit != 0
         && (BattleRandom16Far() & 3) == 0 && dealt > 0) {
         s32 share;
 
         share = dealt >> 2;
         if (share == 0)
             share = 1;
-        BATTLE_PLAN_PENDING(plan) += share;
+        plan->pending_amount_60 += share;
     }
 }

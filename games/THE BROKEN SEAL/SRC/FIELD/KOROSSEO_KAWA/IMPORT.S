@@ -193,9 +193,9 @@ Engine_GameFlagSet:
 	.thumb_func
 GameFlag_GetByteFar:
 	overlay_veneer Func_080770e0
-	.global GameFlag_SetByteFar
+	.global GameFlag_SetByte
 	.thumb_func
-GameFlag_SetByteFar:
+GameFlag_SetByte:
 	overlay_veneer Func_080770e8
 	.global Party_CountActiveOwnersFar
 	.thumb_func

@@ -57,7 +57,7 @@ s32 Object_GetById();
 void Party_RemoveActiveOwner();
 void Party_AddActiveOwner();
 void UiWork_PushValueSlot();
-void GameFlag_SetByteFar();
+void GameFlag_SetByte();
 void Object_LinkObjectAndSetCallback();
 s32 Menu_OpenCharacterSelector();
 Rec *Owner_GetState(s32);
@@ -269,9 +269,9 @@ L_main:
     ((void (*)())Engine_GameFlagSet)(base + 512);
     rec = Value1(Object_GetById, obj);
     sx = rec->x.fixed >> 20;
-    GameFlag_SetByteFar((obj << 4) + 880, sx);
+    GameFlag_SetByte((obj << 4) + 880, sx);
     sy = rec->z.fixed >> 20;
-    GameFlag_SetByteFar((obj << 4) + 888, sy);
+    GameFlag_SetByte((obj << 4) + 888, sy);
 }
 
 void SceneActor_ApplyValueAndMatchingSlots(s32 a, s32 b)

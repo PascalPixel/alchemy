@@ -81,7 +81,7 @@ s32 Engine_ScheduleCallback(s32, s32);
 
 s32 Map_GetTerrainHeightFar(s32, s32, s32);
 
-void GameFlag_SetByteFar(s32, s32);
+void GameFlag_SetByte(s32, s32);
 
 void Object_SetMoveTarget(struct FieldActor *, s32, s32, s32);
 void Script_WaitForEventTimeout(struct FieldActor *);
@@ -320,7 +320,7 @@ void SceneState_ApplyRectsForActorsNineAndTen(void)
     {
         s32 x = actor->x.fixed >> 20;
 
-        GameFlag_SetByteFar(784, x);
+        GameFlag_SetByte(784, x);
     }
     {
         s32 x = actor->x.fixed >> 20;

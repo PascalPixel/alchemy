@@ -11,7 +11,7 @@ s32 Engine_EventChooseYesNo();
 void Engine_EventShowMessage();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
-void GameFlag_SetByteFar();
+void GameFlag_SetByte();
 void Engine_EventRequestExit();
 void Engine_GameFlagSet();
 void Korosseo_SelectSoloCompetitor();
@@ -74,8 +74,8 @@ void Korosseo_FinishSoloRound(s32 id)
         *(s32 *)(work + 0x1c8) = 15;
         Engine_EventCloseScreen();
         Engine_EventWaitForScreen();
-        Call2(GameFlag_SetByteFar, (slot << 4) + 0x370, *(s32 *)(obj + 8) >> 20);
-        Call2(GameFlag_SetByteFar, (slot << 4) + 0x378, *(s32 *)(obj + 16) >> 20);
+        Call2(GameFlag_SetByte, (slot << 4) + 0x370, *(s32 *)(obj + 8) >> 20);
+        Call2(GameFlag_SetByte, (slot << 4) + 0x378, *(s32 *)(obj + 16) >> 20);
         slot++;
         if (slot > 3) {
             Engine_EventRequestExit(10);

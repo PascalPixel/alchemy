@@ -1,27 +1,19 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 extern u8 MsgTorebiComeAgain[];
 extern u8 MsgTorebiCongratulations[];
 extern u8 MsgTorebiWonItemGo[];
 extern u8 MsgTorebiWonItemGo2[];
 extern u8 MsgTorebiYaLostNumber[];
 extern u8 MsgTorebiYaWonNumber[];
-extern u8 Data_03001d18[];
+extern u8 Data_03001d18; /* OAM buffer pending */
 
 void SceneState_InitFourActorRecordsAndInstallTask(void);
 void UiWork_PushValueSlot(s32 value, s32 digits);
-void Main_080b0060(void);
+void AudioCommand_WaitForStateByteClear(void);
 void TorebiIzumi_OfferLuckyWheels(s32 mode);
 s32 SceneDialogue_PickTopicVariantId(s32 topic);
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_000000bd[];
 
 static __inline__ void Io_SetBlendControl(s32 value)
 {
@@ -41,7 +33,7 @@ s32 TorebiIzumi_OpenScene(void)
     s32 i;
     s32 item;
 
-    if (Data_02000240_t.halves[224][0] == (s32)Data_000000bd) {
+    if (gGameState.scene == (s32)&SceneId_TorebiIzumi2) {
         gEventWork->start_transition = 0x100;
         do { Io_SetBlendControl(0x3f42); } while (0); /* FAKEMATCH: each do/while loads the value before the register address */
         do { Io_SetBlendAlpha(0x80c); } while (0);
@@ -52,7 +44,7 @@ s32 TorebiIzumi_OpenScene(void)
         Engine_ActorGet(24)->priority_flags = 2;
         Engine_ActorGet(25)->priority_flags = 2;
         Engine_EventOpenScreen();
-        if (Data_02000240_t.halves[225][0] == 1) {
+        if (gGameState.entrance == 1) {
             SceneState_InitFourActorRecordsAndInstallTask();
             if (Engine_GameFlagIsSet(0x200)) {
                 Io_SetBlendControl(0x3f42);
@@ -63,13 +55,13 @@ s32 TorebiIzumi_OpenScene(void)
         if (Engine_GameFlagIsSet(0x950)) {
             Engine_ActorSetPosition(17, 0, 0);
         }
-        *(u8 *)Data_03001d18 = 1;
+        Data_03001d18 = 1;
         gEventWork->start_transition = 0x209;
-        if (Data_02000240_t.halves[225][0] == 10) {
+        if (gGameState.entrance == 10) {
             Engine_ActorSetChildValue(8, 1);
             Engine_ActorSetChildValue(9, 2);
         }
-        if (Data_02000240_t.halves[225][0] == 13 && !Engine_GameFlagIsSet(0x109)) {
+        if (gGameState.entrance == 13 && !Engine_GameFlagIsSet(0x109)) {
             Engine_EventBegin();
             Engine_ActorSetChildValue(8, 1);
             Engine_ActorSetChildValue(9, 2);
@@ -78,7 +70,7 @@ s32 TorebiIzumi_OpenScene(void)
             Engine_EventWait(10);
             Engine_ActorWalkToAndWait(0, 120, 112);
             Engine_EventWait(20);
-            diff = Data_02000240_t.words[4] - *(s32 *)0x02001000;
+            diff = gGameState.coins - *(s32 *)gSceneState;
             if (diff > 0) {
                 if (diff > 19999) {
                     Engine_AudioPlayCue(93);
@@ -91,7 +83,7 @@ s32 TorebiIzumi_OpenScene(void)
                 Engine_EventSetMessage((s32)MsgTorebiYaWonNumber);
                 UiWork_PushValueSlot(diff, 5);
                 Engine_EventShowMessage(9, 0);
-                Main_080b0060();
+                AudioCommand_WaitForStateByteClear();
             } else if (diff < 0) {
                 Engine_EventSetMessage((s32)MsgTorebiYaLostNumber);
                 UiWork_PushValueSlot(-diff, 5);
@@ -99,8 +91,8 @@ s32 TorebiIzumi_OpenScene(void)
             }
             Engine_EventEnd();
         }
-        if (Data_02000240_t.halves[225][0] == 12 && !Engine_GameFlagIsSet(0x109)) {
-            list = (s8 *)Data_02000240_t.bytes[150];
+        if (gGameState.entrance == 12 && !Engine_GameFlagIsSet(0x109)) {
+            list = gGameState.won_prizes;
             Engine_EventBegin();
             Engine_EventOpenScreen();
             Engine_EventWaitForScreen();
@@ -127,7 +119,7 @@ s32 TorebiIzumi_OpenScene(void)
                         Engine_EventWait(30);
                     }
                 }
-                Data_02000240_t.bytes[150][0] = 0xfe;
+                gGameState.won_prizes[0] = -2;
                 Engine_EventSetMessage((s32)MsgTorebiComeAgain);
                 Engine_EventShowMessage(8, 0);
             }

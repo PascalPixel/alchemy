@@ -74,7 +74,13 @@ Engine_VramLoad:
 	.thumb_func
 Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
+	.global AffineMatrix_BuildForEffect
+	.thumb_func
+AffineMatrix_BuildForEffect:
 	overlay_veneer AffineMatrix_BuildForEffectFar
+	.global Runtime_PushSlotEntry
+	.thumb_func
+Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
 	.global Resource_GetTableEntry
 	.thumb_func

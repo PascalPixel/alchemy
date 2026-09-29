@@ -1373,623 +1373,7 @@ Korosseo_LoadPortrait:
 	.4byte 0x040000d4
 	.4byte 0x050003e0
 	.4byte 0x84000008
-	push	{r5, r6, r7, lr}
-	mov	r7, fp
-	mov	r6, sl
-	mov	r5, r9
-	push	{r5, r6, r7}
-	mov	r7, r8
-	push	{r7}
-	ldr	r0, [pc, #340]
-	sub	sp, #20
-	str	r0, [sp, #8]
-	ldr	r3, [pc, #336]
-	movs	r1, #0
-	ldrsh	r3, [r3, r1]
-	ldr	r2, [pc, #336]
-	lsls	r3, r3, #2
-	adds	r3, r3, r2
-	ldrh	r3, [r3, #2]
-	lsrs	r3, r3, #5
-	mov	sl, r0
-	mov	r8, r3
-.L_020021e0:
-	ldr	r1, [pc, #324]
-	movs	r2, #0
-	ldrsh	r4, [r1, r2]
-	ldrh	r3, [r1, #0]
-	cmp	r4, #0
-	bne.n	.L_020022b6
-	ldr	r5, [pc, #316]
-	ldr	r0, [r5, #0]
-	ldrh	r3, [r0, #0]
-	movs	r2, #128
-	lsls	r3, r3, #16
-	adds	r0, #2
-	asrs	r3, r3, #16
-	lsls	r2, r2, #6
-	str	r0, [r5, #0]
-	cmp	r3, r2
-	beq.n	.L_0200227c
-	cmp	r3, r2
-	bgt.n	.L_02002218
-	movs	r1, #1
-	negs	r1, r1
-	cmp	r3, r1
-	beq.n	.L_020022a4
-	movs	r2, #128
-	lsls	r2, r2, #5
-	cmp	r3, r2
-	beq.n	.L_02002264
-	b.n	.L_020021e0
-.L_02002218:
-	movs	r2, #128
-	lsls	r2, r2, #7
-	cmp	r3, r2
-	beq.n	.L_02002236
-	cmp	r3, r2
-	bgt.n	.L_0200222e
-	movs	r1, #192
-	lsls	r1, r1, #6
-	cmp	r3, r1
-	beq.n	.L_0200224c
-	b.n	.L_020021e0
-.L_0200222e:
-	ldr	r2, [pc, #256]
-	cmp	r3, r2
-	beq.n	.L_0200229a
-	b.n	.L_020021e0
-.L_02002236:
-	movs	r1, #0
-	ldrsh	r3, [r0, r1]
-	ldr	r2, [pc, #248]
-	lsls	r3, r3, #8
-	str	r3, [r2, #0]
-	adds	r2, r0, #2
-	ldrh	r3, [r2, #0]
-	ldr	r1, [pc, #240]
-	strh	r3, [r1, #0]
-	ldr	r3, [pc, #240]
-	b.n	.L_02002292
-.L_0200224c:
-	ldr	r2, [pc, #232]
-	ldr	r1, [pc, #240]
-	ldrh	r3, [r2, #0]
-	strh	r3, [r1, #0]
-	ldrh	r3, [r0, #0]
-	strh	r3, [r2, #0]
-	adds	r2, r0, #2
-	ldrh	r3, [r2, #0]
-	ldr	r1, [pc, #220]
-	strh	r3, [r1, #0]
-	ldr	r3, [pc, #224]
-	b.n	.L_02002292
-.L_02002264:
-	ldr	r2, [pc, #224]
-	ldr	r1, [pc, #228]
-	ldrh	r3, [r2, #0]
-	strh	r3, [r1, #0]
-	ldrh	r3, [r0, #0]
-	strh	r3, [r2, #0]
-	adds	r2, r0, #2
-	ldrh	r3, [r2, #0]
-	ldr	r1, [pc, #216]
-	strh	r3, [r1, #0]
-	ldr	r3, [pc, #216]
-	b.n	.L_02002292
-.L_0200227c:
-	ldr	r2, [pc, #216]
-	ldr	r1, [pc, #220]
-	ldrh	r3, [r2, #0]
-	strh	r3, [r1, #0]
-	ldrh	r3, [r0, #0]
-	strh	r3, [r2, #0]
-	adds	r2, r0, #2
-	ldrh	r3, [r2, #0]
-	ldr	r1, [pc, #208]
-	strh	r3, [r1, #0]
-	ldr	r3, [pc, #208]
-.L_02002292:
-	adds	r2, #2
-	str	r2, [r5, #0]
-	strh	r4, [r3, #0]
-	b.n	.L_020021e0
-.L_0200229a:
-	ldrh	r3, [r0, #0]
-	strh	r3, [r1, #0]
-	adds	r3, r0, #2
-	str	r3, [r5, #0]
-	b.n	.L_020021e0
-.L_020022a4:
-	ldr	r0, [pc, #192]
-	bl 0x0200bb18
-	ldr	r3, [pc, #116]
-	movs	r2, #0
-	ldrsh	r0, [r3, r2]
-	bl 0x0200bb68
-	b.n	.L_0200266c
-.L_020022b6:
-	subs	r3, #1
-	strh	r3, [r1, #0]
-	ldr	r3, [pc, #148]
-	movs	r5, #0
-	ldrsh	r7, [r3, r5]
-	mov	r9, r3
-	cmp	r7, #0
-	bne.n	.L_020022d0
-	ldr	r3, [pc, #128]
-	movs	r1, #0
-	ldrsh	r0, [r3, r1]
-	mov	fp, r0
-	b.n	.L_02002302
-.L_020022d0:
-	ldr	r3, [pc, #120]
-	movs	r2, #0
-	ldrsh	r6, [r3, r2]
-	ldr	r2, [pc, #124]
-	ldr	r3, [pc, #108]
-	movs	r5, #0
-	ldrsh	r3, [r3, r5]
-	ldrh	r5, [r2, #0]
-	adds	r5, #1
-	strh	r5, [r2, #0]
-	lsls	r5, r5, #16
-	subs	r3, r3, r6
-	asrs	r5, r5, #16
-	adds	r0, r5, #0
-	muls	r0, r3
-	adds	r1, r7, #0
-	bl 0x0200bb00
-	adds	r6, r6, r0
-	mov	fp, r6
-	cmp	r5, r7
-	blt.n	.L_02002302
-	ldr	r3, [pc, #24]
-	mov	r0, r9
-	strh	r3, [r0, #0]
-.L_02002302:
-	ldr	r1, [pc, #92]
-	movs	r2, #0
-	ldrsh	r7, [r1, r2]
-	mov	r9, r1
-	cmp	r7, #0
-	bne.n	.L_0200236c
-	ldr	r3, [pc, #72]
-	movs	r0, #0
-	ldrsh	r5, [r3, r0]
-	str	r5, [sp, #4]
-	b.n	.L_0200239e
-	.4byte 0x00000000
-	.4byte 0x0200c7c0
-	.4byte 0x0200c57c
-	.4byte 0x03001b10
-	.4byte 0x0200c79c
-	.4byte 0x0200c7a0
-	.4byte 0x00007fff
-	.4byte 0x0200c770
-	.4byte 0x0200c7f8
-	.4byte 0x0200c76c
-	.4byte 0x0200c7f0
-	.4byte 0x0200c77c
-	.4byte 0x0200c778
-	.4byte 0x0200c768
-	.4byte 0x0200c754
-	.4byte 0x0200c7fc
-	.4byte 0x0200c794
-	.4byte 0x0200c798
-	.4byte 0x0200c7a8
-	.4byte 0x0200c784
-	.2byte 0xa1b9
-	.2byte 0x0200
-.L_0200236c:
-	ldr	r3, [pc, #72]
-	movs	r1, #0
-	ldrsh	r6, [r3, r1]
-	ldr	r3, [pc, #72]
-	movs	r2, #0
-	ldrsh	r3, [r3, r2]
-	ldr	r2, [pc, #68]
-	ldrh	r5, [r2, #0]
-	adds	r5, #1
-	strh	r5, [r2, #0]
-	lsls	r5, r5, #16
-	subs	r3, r3, r6
-	asrs	r5, r5, #16
-	adds	r0, r5, #0
-	muls	r0, r3
-	adds	r1, r7, #0
-	bl 0x0200bb00
-	adds	r6, r6, r0
-	str	r6, [sp, #4]
-	cmp	r5, r7
-	blt.n	.L_0200239e
-	ldr	r3, [pc, #24]
-	mov	r5, r9
-	strh	r3, [r5, #0]
-.L_0200239e:
-	ldr	r0, [pc, #36]
-	movs	r1, #0
-	ldrsh	r7, [r0, r1]
-	mov	r9, r0
-	cmp	r7, #0
-	bne.n	.L_020023cc
-	ldr	r3, [pc, #28]
-	movs	r2, #0
-	ldrsh	r6, [r3, r2]
-	b.n	.L_020023fc
-	.2byte 0x0000
-	.4byte 0x00000000
-	.4byte 0x0200c798
-	.4byte 0x0200c794
-	.4byte 0x0200c784
-	.4byte 0x0200c76c
-	.2byte 0xc7f8
-	.2byte 0x0200
-.L_020023cc:
-	ldr	r2, [pc, #100]
-	ldr	r3, [pc, #104]
-	movs	r5, #0
-	ldrsh	r6, [r3, r5]
-	ldrh	r5, [r2, #0]
-	ldr	r3, [pc, #100]
-	adds	r5, #1
-	movs	r0, #0
-	ldrsh	r3, [r3, r0]
-	strh	r5, [r2, #0]
-	lsls	r5, r5, #16
-	subs	r3, r3, r6
-	asrs	r5, r5, #16
-	adds	r0, r5, #0
-	muls	r0, r3
-	adds	r1, r7, #0
-	bl 0x0200bb00
-	adds	r6, r6, r0
-	cmp	r5, r7
-	blt.n	.L_020023fc
-	ldr	r3, [pc, #56]
-	mov	r1, r9
-	strh	r3, [r1, #0]
-.L_020023fc:
-	add	r0, sp, #12
-	ldr	r3, [r0, #4]
-	ldr	r2, [pc, #60]
-	ands	r3, r2
-	str	r3, [r0, #4]
-	mov	r3, fp
-	lsls	r1, r3, #16
-	ldr	r3, [sp, #12]
-	lsrs	r1, r1, #16
-	ands	r3, r2
-	ldr	r2, [pc, #48]
-	orrs	r3, r1
-	ands	r3, r2
-	lsls	r1, r1, #16
-	orrs	r3, r1
-	str	r3, [sp, #12]
-	bl 0x0200bb88
-	ldr	r2, [pc, #36]
-	ldr	r3, [r2, #0]
-	lsls	r0, r0, #16
-	adds	r3, r3, r6
-	asrs	r0, r0, #16
-	str	r3, [r2, #0]
-	b.n	.L_0200244c
-	.2byte 0x0000
-	.4byte 0x00000000
-	.4byte 0x0200c77c
-	.4byte 0x0200c7f0
-	.4byte 0x0200c7f8
-	.4byte 0xffff0000
-	.4byte 0x0000ffff
-	.2byte 0xc770
-	.2byte 0x0200
-.L_0200244c:
-	cmp	r3, #0
-	bge.n	.L_02002452
-	adds	r3, #255
-.L_02002452:
-	asrs	r6, r3, #8
-	ldr	r3, [pc, #552]
-	movs	r5, #0
-	ldrsh	r3, [r3, r5]
-	cmp	r3, #2
-	bne.n	.L_02002460
-	b.n	.L_020025b8
-.L_02002460:
-	cmp	r3, #2
-	bgt.n	.L_0200246a
-	cmp	r3, #1
-	beq.n	.L_02002474
-	b.n	.L_0200260a
-.L_0200246a:
-	cmp	r3, #3
-	beq.n	.L_020024ea
-	cmp	r3, #4
-	beq.n	.L_02002566
-	b.n	.L_0200260a
-.L_02002474:
-	lsls	r0, r0, #25
-	ldr	r4, [pc, #524]
-	movs	r5, #0
-	movs	r7, #56
-	mov	r9, r0
-.L_0200247e:
-	lsls	r3, r5, #5
-	subs	r3, #48
-	mov	r0, fp
-	muls	r0, r3
-	adds	r3, r0, #0
-	cmp	r3, #0
-	bge.n	.L_0200248e
-	adds	r3, #255
-.L_0200248e:
-	asrs	r3, r3, #8
-	adds	r3, r6, r3
-	ldr	r1, [pc, #500]
-	adds	r2, r3, #0
-	adds	r3, #152
-	adds	r2, #88
-	cmp	r3, r1
-	bhi.n	.L_020024de
-	ldr	r3, [pc, #492]
-	ldr	r1, [sp, #8]
-	ands	r2, r3
-	movs	r3, #0
-	stmia	r1!, {r3}
-	lsls	r3, r2, #16
-	orrs	r3, r7
-	orrs	r3, r4
-	mov	r2, r9
-	orrs	r3, r2
-	movs	r2, #224
-	lsls	r2, r2, #3
-	adds	r0, r1, #0
-	orrs	r3, r2
-	str	r0, [sp, #8]
-	stmia	r1!, {r3}
-	movs	r3, #244
-	adds	r0, r1, #0
-	lsls	r3, r3, #8
-	mov	r1, r8
-	orrs	r3, r1
-	stmia	r0!, {r3}
-	movs	r1, #12
-	adds	r2, r0, #0
-	mov	r0, sl
-	add	sl, r1
-	movs	r1, #236
-	str	r4, [sp, #0]
-	str	r2, [sp, #8]
-	bl 0x0200bb90
-	ldr	r4, [sp, #0]
-.L_020024de:
-	movs	r2, #8
-	adds	r5, #1
-	add	r8, r2
-	cmp	r5, #3
-	ble.n	.L_0200247e
-	b.n	.L_0200260a
-.L_020024ea:
-	lsls	r0, r0, #25
-	ldr	r4, [pc, #404]
-	movs	r5, #0
-	movs	r7, #48
-	mov	r9, r0
-.L_020024f4:
-	lsls	r3, r5, #5
-	subs	r3, #16
-	mov	r0, fp
-	muls	r0, r3
-	adds	r3, r0, #0
-	cmp	r3, #0
-	bge.n	.L_02002504
-	adds	r3, #255
-.L_02002504:
-	asrs	r3, r3, #8
-	adds	r3, r6, r3
-	ldr	r1, [pc, #380]
-	adds	r2, r3, #0
-	adds	r3, #152
-	adds	r2, #88
-	cmp	r3, r1
-	bhi.n	.L_0200255a
-	ldr	r3, [pc, #372]
-	ldr	r1, [sp, #8]
-	ands	r2, r3
-	movs	r3, #0
-	stmia	r1!, {r3}
-	lsls	r3, r2, #16
-	orrs	r3, r7
-	orrs	r3, r4
-	mov	r2, r9
-	orrs	r3, r2
-	movs	r2, #224
-	lsls	r2, r2, #3
-	adds	r0, r1, #0
-	orrs	r3, r2
-	str	r0, [sp, #8]
-	stmia	r1!, {r3}
-	ldr	r3, [pc, #344]
-	adds	r0, r1, #0
-	movs	r1, #0
-	ldrsh	r3, [r3, r1]
-	movs	r2, #244
-	lsls	r2, r2, #8
-	add	r3, r8
-	orrs	r3, r2
-	stmia	r0!, {r3}
-	movs	r1, #12
-	adds	r2, r0, #0
-	mov	r0, sl
-	add	sl, r1
-	movs	r1, #236
-	str	r4, [sp, #0]
-	str	r2, [sp, #8]
-	bl 0x0200bb90
-	ldr	r4, [sp, #0]
-.L_0200255a:
-	movs	r2, #8
-	adds	r5, #1
-	add	r8, r2
-	cmp	r5, #1
-	ble.n	.L_020024f4
-	b.n	.L_0200260a
-.L_02002566:
-	adds	r3, r6, #0
-	movs	r5, #152
-	adds	r2, r6, #0
-	adds	r3, #120
-	lsls	r5, r5, #1
-	movs	r7, #48
-	ldr	r4, [pc, #288]
-	adds	r2, #56
-	cmp	r3, r5
-	bcs.n	.L_0200260a
-	ldr	r3, [pc, #272]
-	mov	r1, sl
-	ands	r2, r3
-	movs	r3, #0
-	stmia	r1!, {r3}
-	lsls	r3, r2, #16
-	orrs	r3, r7
-	lsls	r2, r0, #25
-	orrs	r3, r4
-	orrs	r3, r2
-	movs	r2, #224
-	lsls	r2, r2, #3
-	adds	r5, r1, #0
-	orrs	r3, r2
-	str	r5, [sp, #8]
-	stmia	r1!, {r3}
-	adds	r2, r1, #0
-	str	r2, [sp, #8]
-	ldr	r3, [pc, #240]
-	movs	r5, #0
-	ldrsh	r3, [r3, r5]
-	movs	r2, #244
-	add	r3, r8
-	lsls	r2, r2, #8
-	orrs	r3, r2
-	str	r3, [r1, #0]
-	mov	r0, sl
-	movs	r1, #236
-	bl 0x0200bb90
-	b.n	.L_0200260a
-.L_020025b8:
-	adds	r3, r6, #0
-	movs	r1, #152
-	movs	r4, #128
-	adds	r2, r6, #0
-	adds	r3, #152
-	lsls	r1, r1, #1
-	movs	r7, #48
-	lsls	r4, r4, #24
-	adds	r2, #88
-	cmp	r3, r1
-	bcs.n	.L_0200260a
-	ldr	r3, [pc, #188]
-	mov	r5, sl
-	ands	r2, r3
-	movs	r3, #0
-	stmia	r5!, {r3}
-	lsls	r3, r2, #16
-	orrs	r3, r7
-	lsls	r2, r0, #25
-	orrs	r3, r4
-	orrs	r3, r2
-	movs	r2, #224
-	lsls	r2, r2, #3
-	adds	r1, r5, #0
-	orrs	r3, r2
-	str	r1, [sp, #8]
-	stmia	r5!, {r3}
-	adds	r0, r5, #0
-	str	r0, [sp, #8]
-	ldr	r3, [pc, #156]
-	movs	r1, #0
-	ldrsh	r3, [r3, r1]
-	movs	r2, #244
-	add	r3, r8
-	lsls	r2, r2, #8
-	orrs	r3, r2
-	str	r3, [r5, #0]
-	mov	r0, sl
-	movs	r1, #236
-	bl 0x0200bb90
-.L_0200260a:
-	ldr	r0, [pc, #140]
-	ldr	r1, [pc, #140]
-	ldrh	r3, [r1, #0]
-	adds	r4, r3, #0
-	strh	r1, [r1, #0]
-	ldrh	r2, [r0, #0]
-	cmp	r2, #31
-	bgt.n	.L_02002638
-	lsls	r3, r2, #1
-	adds	r3, r3, r2
-	lsls	r3, r3, #2
-	adds	r2, #1
-	adds	r3, r3, r0
-	strh	r2, [r0, #0]
-	movs	r2, #252
-	adds	r3, #4
-	lsls	r2, r2, #6
-	stmia	r3!, {r2}
-	ldr	r2, [pc, #112]
-	stmia	r3!, {r2}
-	movs	r2, #128
-	lsls	r2, r2, #10
-	str	r2, [r3, #0]
-.L_02002638:
-	strh	r4, [r1, #0]
-	ldrh	r3, [r1, #0]
-	adds	r4, r3, #0
-	strh	r1, [r1, #0]
-	ldrh	r3, [r0, #0]
-	cmp	r3, #31
-	bgt.n	.L_0200266a
-	lsls	r2, r3, #1
-	adds	r2, r2, r3
-	adds	r3, #1
-	strh	r3, [r0, #0]
-	ldr	r5, [sp, #4]
-	movs	r3, #16
-	lsls	r2, r2, #2
-	subs	r3, r3, r5
-	adds	r2, r2, r0
-	lsls	r3, r3, #8
-	adds	r2, #4
-	orrs	r3, r5
-	stmia	r2!, {r3}
-	ldr	r3, [pc, #64]
-	stmia	r2!, {r3}
-	movs	r3, #128
-	lsls	r3, r3, #10
-	str	r3, [r2, #0]
-.L_0200266a:
-	strh	r4, [r1, #0]
-.L_0200266c:
-	add	sp, #20
-	pop	{r3, r5, r6, r7}
-	mov	r8, r3
-	mov	r9, r5
-	mov	sl, r6
-	mov	fp, r7
-	pop	{r5, r6, r7}
-	pop	{r0}
-	bx	r0
-	.2byte 0x0000
-	.4byte 0x0200c790
-	.4byte 0x80004000
-	.4byte 0x0000012f
-	.4byte 0x000001ff
-	.4byte 0x0200c764
-	.4byte 0xc0004000
-	.4byte 0x02002090
-	.4byte 0x04000208
-	.4byte 0x04000050
-	.2byte 0x0052
-	.2byte 0x0400
+	.section .text.x0200a6a8,"ax",%progbits
 	.global Func_020026a8
 	.thumb_func
 Func_020026a8:
@@ -3333,6 +2717,8 @@ KorosseoKawa_SceneTableD:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Korosseo_PortraitSlot
+Korosseo_PortraitSlot:
 	.2byte 0xffff
 	.global KorosseoKawa_RoundSpans
 KorosseoKawa_RoundSpans:
@@ -3461,13 +2847,67 @@ Korosseo_RivalFinishScript:
 	.4byte 0x00000001
 	.4byte 0x00000010
 	.section .bss,"aw",%nobits
-	.space 12
+	.space 4
+	.global Korosseo_ModeScaleDuration
+Korosseo_ModeScaleDuration:
+	.space 8
 	.global Korosseo_CompetitorStartZ
 Korosseo_CompetitorStartZ:
-	.space 44
+	.space 8
+	.global Korosseo_ModeTaskParam
+Korosseo_ModeTaskParam:
+	.space 4
+	.global Korosseo_ModeScaleStart
+Korosseo_ModeScaleStart:
+	.space 4
+	.global Korosseo_ModeMoveDuration
+Korosseo_ModeMoveDuration:
+	.space 4
+	.global Korosseo_ModeTaskPosition
+Korosseo_ModeTaskPosition:
+	.space 8
+	.global Korosseo_ModeScaleTarget
+Korosseo_ModeScaleTarget:
+	.space 4
+	.global Korosseo_ModeMoveStep
+Korosseo_ModeMoveStep:
+	.space 8
+	.global Korosseo_ModeBlendStep
+Korosseo_ModeBlendStep:
+	.space 4
 	.global Korosseo_CompetitorStartAngle
 Korosseo_CompetitorStartAngle:
-	.space 124
+	.space 8
+	.global Korosseo_ModeTaskMode
+Korosseo_ModeTaskMode:
+	.space 4
+	.global Korosseo_ModeBlendTarget
+Korosseo_ModeBlendTarget:
+	.space 4
+	.global Korosseo_ModeBlendStart
+Korosseo_ModeBlendStart:
+	.space 4
+	.global Korosseo_ModeTaskTimer
+Korosseo_ModeTaskTimer:
+	.space 4
+	.global Korosseo_ModeTaskScript
+Korosseo_ModeTaskScript:
+	.space 8
+	.global Korosseo_ModeBlendDuration
+Korosseo_ModeBlendDuration:
+	.space 24
+	.global Korosseo_ModeTaskSprites
+Korosseo_ModeTaskSprites:
+	.space 48
+	.global Korosseo_ModeMoveStart
+Korosseo_ModeMoveStart:
+	.space 8
+	.global Korosseo_ModeMoveTarget
+Korosseo_ModeMoveTarget:
+	.space 4
+	.global Korosseo_ModeScaleStep
+Korosseo_ModeScaleStep:
+	.space 8
 	.global Korosseo_CompetitorStartX
 Korosseo_CompetitorStartX:
 	.space 4

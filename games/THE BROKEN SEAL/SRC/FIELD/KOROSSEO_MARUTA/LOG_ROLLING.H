@@ -117,13 +117,13 @@ typedef struct ActiveSubjectSlot {
     void *handle;
 } ActiveSubjectSlot;
 
-extern u16 gColossoModeTaskMode;
-extern u16 gColossoModeTaskParameter;
-extern u16 gColossoModeTaskStep;
-extern s32 gColossoModeTaskScript;
-extern u16 gColossoModeTaskTimer;
-extern u16 gColossoModeTaskCounterA;
-extern s32 gColossoModeTaskCounterB;
+extern u16 Korosseo_ModeTaskMode;
+extern u16 Korosseo_ModeTaskParam;
+extern u16 Korosseo_ModeTaskTimer;
+extern s32 Korosseo_ModeTaskScript;
+extern u16 Korosseo_ModeMoveTarget;
+extern u16 Korosseo_ModeMoveDuration;
+extern s32 Korosseo_ModeTaskPosition;
 extern s32 gColossoModeScriptDefault;   /* default handler (mode not 2/3/4) */
 extern s32 gColossoModeScript2;   /* handler for mode == 2 */
 extern s32 gColossoModeScript4;   /* handler for mode == 4 */
@@ -317,7 +317,7 @@ extern s32 gColossoParticleCount;
 
 /* The stage's per-frame tasks, still in the listing. */
 void ColossoLogRollingStage_SceneTask(void);
-void ColossoLogRollingStage_ModeTask(void);
+void Korosseo_UpdateModeTask(void);
 void ColossoLogRollingStage_PaletteTask(void);
 
 #endif

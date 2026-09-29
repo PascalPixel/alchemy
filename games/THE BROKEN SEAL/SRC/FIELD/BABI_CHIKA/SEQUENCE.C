@@ -19,16 +19,16 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
 
         if (slot == subject) continue;
 
-        if ((((Slot_02001c2c* (*)())Engine_ActorGet)(slot)->x >> 20) != (((Slot_02001c2c* (*)())Engine_ActorGet)(subject)->x >> 20)) continue;
-        if ((((Slot_02001c2c* (*)())Engine_ActorGet)(slot)->z >> 20) != (((Slot_02001c2c* (*)())Engine_ActorGet)(subject)->z >> 20)) continue;
+        if ((((Slot_02001c2c* (*)())Object_GetById)(slot)->x >> 20) != (((Slot_02001c2c* (*)())Object_GetById)(subject)->x >> 20)) continue;
+        if ((((Slot_02001c2c* (*)())Object_GetById)(slot)->z >> 20) != (((Slot_02001c2c* (*)())Object_GetById)(subject)->z >> 20)) continue;
 
         /*
          * 0x00100000 is one whole unit above the candidate's own height. The
          * comparison is signed, and a tie updates the best.
          */
-        if (best > ((Slot_02001c2c* (*)())Engine_ActorGet)(slot)->y + 0x100000) continue;
+        if (best > ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000) continue;
 
-        best = ((Slot_02001c2c* (*)())Engine_ActorGet)(slot)->y + 0x100000;
+        best = ((Slot_02001c2c* (*)())Object_GetById)(slot)->y + 0x100000;
         *(u16 *)((u8 *)Actor_Get(subject) + 100) = (u16)slot;
     }
 
@@ -41,9 +41,9 @@ void SceneActor_LandOnHighestPlatform(s32 subject)
     {
         Slot_02001c2c *target = Actor_Get(subject);
         Slot_02001c2c *from = Actor_Get(subject);
-        s32 z = ((Slot_02001c2c* (*)())Engine_ActorGet)(subject)->z;
+        s32 z = ((Slot_02001c2c* (*)())Object_GetById)(subject)->z;
 
-        Engine_ObjectSetPosition(target, from->x, best, z);
+        Object_SetPosition(target, from->x, best, z);
     }
 
     Actor_WaitForMove(subject);
@@ -61,7 +61,7 @@ void FieldScene_RunMiddleSequence(void)
 
     Event_Begin();
     for (i = 0; i <= 2; i++) {
-        if (((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->sprite->priority == 3
+        if (((struct FieldActor *)Value1(Object_GetById, i + 12))->sprite->priority == 3
             && GameFlag_IsSet(i + 0x200) == 0) {
             Actor_Get(i + 12);
             SceneActor_WaitValueBelowLimit();
@@ -69,25 +69,25 @@ void FieldScene_RunMiddleSequence(void)
             GameFlag_Set(i + 0x200);
             break;
         }
-        if ((((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->z.fixed >> 20) == 9
+        if ((((struct FieldActor *)Value1(Object_GetById, i + 12))->z.fixed >> 20) == 9
             && GameFlag_IsSet(i + 0x200) == 0) {
-            *(s32 *)(Value1(Engine_ActorGet, i + 12) + 20) = 0;
-            ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->velocity_y = 0;
-            *(s32 *)(((s32 (*)())Engine_ActorGet)(i + 12) + 60) = -0x80000000;
+            *(s32 *)(Value1(Object_GetById, i + 12) + 20) = 0;
+            ((struct FieldActor *)Value1(Object_GetById, i + 12))->velocity_y = 0;
+            *(s32 *)(((s32 (*)())Object_GetById)(i + 12) + 60) = -0x80000000;
             ((struct FieldActor *)Actor_Get(i + 12))->motion_flags = 0;
-            *(u16 *)(((s32 (*)())Engine_ActorGet)(i + 12) + 100) = 0;
+            *(u16 *)(((s32 (*)())Object_GetById)(i + 12) + 100) = 0;
             found = i;
             for (j = 0; j < i; j++) {
                 if (GameFlag_IsSet(0x200 + j) == 0) {
-                    saved.x.fixed = ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->x.fixed;
-                    saved.y.fixed = ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->y.fixed;
-                    saved.z.fixed = ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->z.fixed;
+                    saved.x.fixed = ((struct FieldActor *)Value1(Object_GetById, i + 12))->x.fixed;
+                    saved.y.fixed = ((struct FieldActor *)Value1(Object_GetById, i + 12))->y.fixed;
+                    saved.z.fixed = ((struct FieldActor *)Value1(Object_GetById, i + 12))->z.fixed;
                     ((struct FieldActor *)Actor_Get(i + 12))->x.fixed =
-                        ((struct FieldActor *)Value1(Engine_ActorGet, j + 12))->x.fixed;
-                    ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->y.fixed =
-                        ((struct FieldActor *)Value1(Engine_ActorGet, j + 12))->y.fixed;
-                    ((struct FieldActor *)Value1(Engine_ActorGet, i + 12))->z.fixed =
-                        ((struct FieldActor *)Value1(Engine_ActorGet, j + 12))->z.fixed;
+                        ((struct FieldActor *)Value1(Object_GetById, j + 12))->x.fixed;
+                    ((struct FieldActor *)Value1(Object_GetById, i + 12))->y.fixed =
+                        ((struct FieldActor *)Value1(Object_GetById, j + 12))->y.fixed;
+                    ((struct FieldActor *)Value1(Object_GetById, i + 12))->z.fixed =
+                        ((struct FieldActor *)Value1(Object_GetById, j + 12))->z.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->x.fixed = saved.x.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->y.fixed = saved.y.fixed;
                     ((struct FieldActor *)Actor_Get(j + 12))->z.fixed = saved.z.fixed;
@@ -95,22 +95,22 @@ void FieldScene_RunMiddleSequence(void)
                     break;
                 }
             }
-            *(s32 *)(((s32 (*)())Engine_ActorGet)(found + 12) + 20) = 0;
+            *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 20) = 0;
             ((struct FieldActor *)Actor_Get(found + 12))->velocity_y = 0;
-            *(s32 *)(((s32 (*)())Engine_ActorGet)(found + 12) + 60) = -0x80000000;
+            *(s32 *)(((s32 (*)())Object_GetById)(found + 12) + 60) = -0x80000000;
             ((struct FieldActor *)Actor_Get(found + 12))->motion_flags = 0;
-            *(u16 *)(((s32 (*)())Engine_ActorGet)(found + 12) + 100) = 0;
+            *(u16 *)(((s32 (*)())Object_GetById)(found + 12) + 100) = 0;
             Value2(Engine_CameraSetSpeed, 0x30000, 0x6000);
             ((struct FieldActor *)Battle_GetWorkObject1e0())->motion_flags = 0;
             Camera_MoveTo(0xa80000, 0x80000, 0xb80000, 1);
             Camera_WaitForMove();
             SceneActor_LandOnHighestPlatform(found + 12);
-            if ((((struct FieldActor *)Value1(Engine_ActorGet, found + 12))->x.fixed >> 20) == 8) {
-                (*(s16 *)(((s32 (*)())Engine_ActorGet)(10) + 100))++;
-                (*(s16 *)(((s32 (*)())Engine_ActorGet)(11) + 100))--;
+            if ((((struct FieldActor *)Value1(Object_GetById, found + 12))->x.fixed >> 20) == 8) {
+                (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))++;
+                (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))--;
             } else {
-                (*(s16 *)(((s32 (*)())Engine_ActorGet)(10) + 100))--;
-                (*(s16 *)(((s32 (*)())Engine_ActorGet)(11) + 100))++;
+                (*(s16 *)(((s32 (*)())Object_GetById)(10) + 100))--;
+                (*(s16 *)(((s32 (*)())Object_GetById)(11) + 100))++;
             }
             ((struct FieldActor *)Actor_Get(found + 12))->update = (void (*)(union FieldObject *))OverlayObject_SetYAboveLinkedActor;
             BabiChika_SettleSteps(40);
@@ -135,13 +135,13 @@ void SceneState_SetSlot17And18Selectors(void)
 {
     Event_Begin();
 
-    if ((((Slot_02001f70* (*)())Engine_ActorGet)(17)->w8 >> 20) == 45) {
+    if ((((Slot_02001f70* (*)())Object_GetById)(17)->w8 >> 20) == 45) {
         GameFlag_Set(0x974);
     } else {
         GameFlag_Clear(0x974);
     }
 
-    if ((((Slot_02001f70* (*)())Engine_ActorGet)(18)->w8 >> 20) == 46) {
+    if ((((Slot_02001f70* (*)())Object_GetById)(18)->w8 >> 20) == 46) {
         GameFlag_Set(0x975);
     } else {
         GameFlag_Clear(0x975);
@@ -199,67 +199,67 @@ void FieldScene_RunScene3c4SequenceA(void)
     v6 = 0;
     Engine_EventBegin();
     Map_CopyCellAttributes(83, 45, 11, 8, 19, 45);
-    record = Value1(Engine_ActorGet, 19);
+    record = Value1(Object_GetById, 19);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Engine_ActorGet, 19) + 16);
+    q = *(s32 *)(Value1(Object_GetById, 19) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Engine_ActorGet, 20);
+    record = Value1(Object_GetById, 20);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Engine_ActorGet, 20) + 16);
+    q = *(s32 *)(Value1(Object_GetById, 20) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Engine_ActorGet, 21);
+    record = Value1(Object_GetById, 21);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Engine_ActorGet, 21) + 16);
+    q = *(s32 *)(Value1(Object_GetById, 21) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Engine_ActorGet, 22);
+    record = Value1(Object_GetById, 22);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Engine_ActorGet, 22) + 16);
+    q = *(s32 *)(Value1(Object_GetById, 22) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Engine_ActorGet, 23);
+    record = Value1(Object_GetById, 23);
     p5 = *(s32 *)(record + 8);
-    q = *(s32 *)(Value1(Engine_ActorGet, 23) + 16);
+    q = *(s32 *)(Value1(Object_GetById, 23) + 16);
     q >>= 20;
     p5 >>= 20;
     Map_CopyCellAttributes(20, 56, 1, 1, p5, q);
-    record = Value1(Engine_ActorGet, 19);
+    record = Value1(Object_GetById, 19);
     if ((*(s32 *)(record + 8) >> 20) == 25) {
-        record = Value1(Engine_ActorGet, 19);
+        record = Value1(Object_GetById, 19);
         if ((*(s32 *)(record + 16) >> 20) == 49) {
             v6 = 1;
         }
     }
-    record = Value1(Engine_ActorGet, 20);
+    record = Value1(Object_GetById, 20);
     if ((*(s32 *)(record + 8) >> 20) == 23) {
-        record = Value1(Engine_ActorGet, 20);
+        record = Value1(Object_GetById, 20);
         if ((*(s32 *)(record + 16) >> 20) == 49) {
             v6 = (v6 + 1);
         }
     }
-    record = Value1(Engine_ActorGet, 21);
+    record = Value1(Object_GetById, 21);
     if ((*(s32 *)(record + 8) >> 20) == 25) {
-        record = Value1(Engine_ActorGet, 21);
+        record = Value1(Object_GetById, 21);
         if ((*(s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
-    record = Value1(Engine_ActorGet, 22);
+    record = Value1(Object_GetById, 22);
     if ((*(s32 *)(record + 8) >> 20) == 23) {
-        record = Value1(Engine_ActorGet, 22);
+        record = Value1(Object_GetById, 22);
         if ((*(s32 *)(record + 16) >> 20) == 47) {
             v6 = (v6 + 1);
         }
     }
-    record = Value1(Engine_ActorGet, 23);
+    record = Value1(Object_GetById, 23);
     if ((*(s32 *)(record + 8) >> 20) == 24) {
-        record = Value1(Engine_ActorGet, 23);
+        record = Value1(Object_GetById, 23);
         if ((*(s32 *)(record + 16) >> 20) == 48) {
             v6 = (v6 + 1);
         }
@@ -347,14 +347,14 @@ void FieldScene_PlaceAndPinSlots8And9(void)
     SceneState_SwapSlotPairByRank(9, 8);
 
     {
-        s32 col = ((Slot_020023a0* (*)())Engine_ActorGet)(8)->column >> 20;
-        row = ((Slot_020023a0* (*)())Engine_ActorGet)(8)->row >> 20;
+        s32 col = ((Slot_020023a0* (*)())Object_GetById)(8)->column >> 20;
+        row = ((Slot_020023a0* (*)())Object_GetById)(8)->row >> 20;
         Map_CopyCellAttributes(2, 36, 1, 1, col, row);
     }
 
     {
-        s32 col = ((Slot_020023a0* (*)())Engine_ActorGet)(9)->column >> 20;
-        row = ((Slot_020023a0* (*)())Engine_ActorGet)(9)->row >> 20;
+        s32 col = ((Slot_020023a0* (*)())Object_GetById)(9)->column >> 20;
+        row = ((Slot_020023a0* (*)())Object_GetById)(9)->row >> 20;
         Map_CopyCellAttributes(2, 36, 1, 1, col, row);
     }
 }
@@ -370,14 +370,14 @@ void FieldScene_PlaceAndPinSlots10And11(void)
     SceneState_SwapSlotPairByRank(11, 10);
 
     {
-        s32 col20 = ((Slot_02002410* (*)())Engine_ActorGet)(10)->column >> 20;
-        row = ((Slot_02002410* (*)())Engine_ActorGet)(10)->row >> 20;
+        s32 col20 = ((Slot_02002410* (*)())Object_GetById)(10)->column >> 20;
+        row = ((Slot_02002410* (*)())Object_GetById)(10)->row >> 20;
         Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
     }
 
     {
-        s32 col20 = ((Slot_02002410* (*)())Engine_ActorGet)(11)->column >> 20;
-        row = ((Slot_02002410* (*)())Engine_ActorGet)(11)->row >> 20;
+        s32 col20 = ((Slot_02002410* (*)())Object_GetById)(11)->column >> 20;
+        row = ((Slot_02002410* (*)())Object_GetById)(11)->row >> 20;
         Map_CopyCellAttributes(2, 36, 1, 1, col20, row);
     }
 }
@@ -389,20 +389,20 @@ void FieldScene_RunScene3c4_02002480(void)
 
     Map_CopyCellAttributes(89, 49, 3, 2, 25, 49);
     Map_CopyCellAttributes(89, 51, 8, 5, 25, 51);
-    *(u8 *)(((s32 (*)())Engine_ActorGet)(14) + 34) = 1;
-    record = Value1(Engine_ActorGet, 12);
+    *(u8 *)(((s32 (*)())Object_GetById)(14) + 34) = 1;
+    record = Value1(Object_GetById, 12);
     p5 = *(s32 *)(record + 8);
-    record = Value1(Engine_ActorGet, 12);
+    record = Value1(Object_GetById, 12);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
-    record = Value1(Engine_ActorGet, 13);
+    record = Value1(Object_GetById, 13);
     p5 = *(s32 *)(record + 8);
-    record = Value1(Engine_ActorGet, 13);
+    record = Value1(Object_GetById, 13);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
-    record = Value1(Engine_ActorGet, 14);
+    record = Value1(Object_GetById, 14);
     p5 = *(s32 *)(record + 8);
-    record = Value1(Engine_ActorGet, 14);
+    record = Value1(Object_GetById, 14);
     p5 = p5 >> 20;
     Map_CopyCellAttributes(22, 52, 1, 1, p5, (*(s32 *)(record + 16) >> 20));
 }

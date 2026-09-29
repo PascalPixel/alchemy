@@ -17,7 +17,7 @@ void FuneKanpan_RunJumpScene(void);
 void FieldScene_ConfigureLeadActors(void);
 void FieldScene_ConfigureThreeActors(void);
 void FieldScene_RunPartyRosterScene(void);
-void FieldScene_ConfigureFourActorPresentation(void);
+void FuneKanpan_ArriveAtTolbi(void);
 void FuneKanpan_PlaceDeckActors(void);
 void FieldScene_RunScene3af_02001920(void);
 void FieldScene_RunScene3af_0200185c(void);
@@ -111,7 +111,7 @@ void FuneKanpan_ApplyEntryState(void)
         }
         return;
     case 19:
-        FieldScene_ConfigureFourActorPresentation();
+        FuneKanpan_ArriveAtTolbi();
         return;
     }
     if (Engine_GameFlagIsSet(0x93e) != 0) {

@@ -34,6 +34,7 @@ extern char SceneId_BiribinoDou3;
 extern char SceneId_ImiruMura1;
 extern char SceneId_ImiruMura2;
 extern char SceneId_ImiruFuchin1;
+extern char SceneId_MakyuriIriguchi;
 extern char SceneId_MakyuriHeya1;
 extern char SceneId_MakyuriHeya2;
 extern char SceneId_MakyuriHeya3;

@@ -34,10 +34,10 @@ void State_NoOp(void);
 
 u8 *LinkLobby_GetEvents(void);
 
-s32 Scene_ShowDialoguePair292a(void);
+s32 LinkLobby_SaveBattleResults(void);
 
-s32 Scene_ShowDialoguePair292c(void);
+s32 LinkLobby_SaveMonsterBattleResults(void);
 
-s32 Scene_DrawThreeDigitValue(s32 value);
+s32 LinkLobby_DrawThreeDigitValue(s32 value);
 
 #endif

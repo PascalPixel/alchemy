@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 
 /* The floor height of each step, by the actor's step index. */
@@ -16,27 +17,27 @@ void BabiChika_SettleSteps(s32 wait)
 {
     u32 i;
 
-    Call3((void (*)())Engine_ActorSetSpeed, 10, 0x8000, 0x4000);
-    Call3((void (*)())Engine_ActorSetSpeed, 11, 0x8000, 0x4000);
+    Call3((void (*)())ObjectMotion_SetSpeedParameters, 10, 0x8000, 0x4000);
+    Call3((void (*)())ObjectMotion_SetSpeedParameters, 11, 0x8000, 0x4000);
     if (wait != 0) {
-        Engine_AudioPlayCue(180);
+        Audio_PlayCue(180);
     }
-    Engine_ObjectSetPosition(Engine_ActorGet(10), Engine_ActorGet(10)->x.fixed,
-                             Data_0200b350[(s16)Engine_ActorGet(10)->unknown_64], Engine_ActorGet(10)->z.fixed);
-    Engine_ObjectSetPosition(Engine_ActorGet(11), Engine_ActorGet(11)->x.fixed,
-                             Data_0200b350[(s16)Engine_ActorGet(11)->unknown_64], Engine_ActorGet(11)->z.fixed);
-    Engine_ActorWaitForMove(10);
-    Engine_ActorWaitForMove(11);
-    Engine_ActorGet(10)->y.fixed = Data_0200b350[(s16)Engine_ActorGet(10)->unknown_64];
-    Engine_ActorGet(11)->y.fixed = Data_0200b350[(s16)Engine_ActorGet(11)->unknown_64];
+    Object_SetPosition(Object_GetById(10), Object_GetById(10)->x.fixed,
+                             Data_0200b350[(s16)Object_GetById(10)->unknown_64], Object_GetById(10)->z.fixed);
+    Object_SetPosition(Object_GetById(11), Object_GetById(11)->x.fixed,
+                             Data_0200b350[(s16)Object_GetById(11)->unknown_64], Object_GetById(11)->z.fixed);
+    ObjectMotion_CommitCurrentPositionAndActivate(10);
+    ObjectMotion_CommitCurrentPositionAndActivate(11);
+    Object_GetById(10)->y.fixed = Data_0200b350[(s16)Object_GetById(10)->unknown_64];
+    Object_GetById(11)->y.fixed = Data_0200b350[(s16)Object_GetById(11)->unknown_64];
     if (wait != 0) {
-        Engine_AudioPlayCue(0x121);
+        Audio_PlayCue(0x121);
     }
     for (i = 0; i < 5; i++) {
-        if (Engine_ActorGet(i + 10)->y.fixed / 0x10000 < 0 && Engine_ActorGet(i + 10)->y.fixed / 0x10000 > -30) {
-            Engine_MapCopyCellAttributes(4, 9, 1, 1, Engine_ActorGet(i + 10)->x.fixed >> 20,
-                                         Engine_ActorGet(i + 10)->z.fixed >> 20);
+        if (Object_GetById(i + 10)->y.fixed / 0x10000 < 0 && Object_GetById(i + 10)->y.fixed / 0x10000 > -30) {
+            Map_CopyCellAttributeRect(4, 9, 1, 1, Object_GetById(i + 10)->x.fixed >> 20,
+                                         Object_GetById(i + 10)->z.fixed >> 20);
         }
     }
-    Engine_EventWait(wait);
+    Battle_WaitMode0(wait);
 }

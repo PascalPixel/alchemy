@@ -14,6 +14,7 @@
    `DrawRectangle blit[2]` with only blit[0] used reproduces the
    unreferenced slot above blit46. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -48,8 +49,6 @@ s32 BattleFx_EndCanvasLayer(void);
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
 extern u8 gWorkSlot[];
-extern u8 Value_00000073;
-extern u8 Value_00000079;
 extern s32 BattleFxBolt_RingOffsets[][3];
 extern u16 BattleFx12_DotCells[];
 
@@ -117,8 +116,8 @@ void Region_080d0ee0(struct BattleEffectArgument *efx)
     caster = *GetBattleObjectSlotFar(efx->actor);
     work->effect = efx;
     BattleFx_BeginCanvasLayer(1);
-    ((WordCopyFn)0x03001388)((void *)0x05000000, Resource_GetTableEntry((s32)&Value_00000079), 128);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000073), aux);
+    ((WordCopyFn)0x03001388)((void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_RuneSheet), 128);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), aux);
     Object_SetMode(caster, 2);
     ObjectDispatch_ApplyValueToChildrenFar(caster, 48);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);

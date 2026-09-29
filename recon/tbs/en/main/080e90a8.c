@@ -12,6 +12,7 @@
    every use. The reference also recomputes work + 0x7828 once in the frame
    loop instead of using the hoisted copy. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "DMA.H"
 #include "BATTLE_EFX.H"
 
@@ -55,9 +56,7 @@ struct SlotObject {
     s32 z;
 };
 
-extern u8 Value_00000096;
 extern u8 Value_00000063;
-extern u8 Value_00000073;
 extern u8 Value_00002710;
 extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
@@ -112,9 +111,9 @@ void Unnamed_080e90a8(struct ShardEffect *object)
     transfer = heap_cache[-27];
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&Value_00000096, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FireStreakSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000063, (void *)0x02010000, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000073, cells, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, cells, 0, 0);
     BattleMotion_ApproachTargetFar(work->effect->position, work->effect->target, 4, 0);
     WaitFrames(1);
     slot = *GetBattleObjectSlotFar(work->effect->target);

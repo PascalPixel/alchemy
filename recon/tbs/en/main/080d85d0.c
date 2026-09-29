@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -59,9 +60,6 @@ void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void WaitFrames(s32 frames);
 void ObjectGroup_TickMemberTimers(void);
 
-extern u8 Value_00000073;
-extern u8 Value_000000b9;
-extern u8 Value_000000c0;
 extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
 
@@ -93,11 +91,11 @@ s32 Unnamed_080d85d0(void *object)
     STATE = object;
 
     BattleFx_BeginCanvasLayer(1);
-    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &ResourceId_ParticleSpritesA, extra_target, 0, 0);
     if (variant) {
-        palette = Resource_GetTableEntry((s32) &Value_000000c0);
+        palette = Resource_GetTableEntry((s32) &ResourceId_BlastSheet);
     } else {
-        palette = Resource_GetTableEntry((s32) &Value_000000b9);
+        palette = Resource_GetTableEntry((s32) &ResourceId_IceBlockSheet);
     }
     _call_via_r3((void *)(160 << 19), palette, 128, (WordCopyFn)0x03001388);
 

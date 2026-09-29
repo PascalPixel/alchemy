@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -133,7 +134,6 @@ extern u8 Value_0000008e;
 extern u8 Value_00000090;
 extern u8 Value_00000092;
 extern u8 Value_00000094;
-extern u8 Value_00000073;
 extern u8 Value_000000a8;
 
 extern void *gWorkSlot[];
@@ -205,7 +205,7 @@ void BattleFx_PrepareCanvasEffect(
     palette = Resource_GetTableEntry(palette_id);
     ((WordCopyFn) 0x03001388)((void *)(160 << 19), palette, 128);
     Resource_DecodeType01((s8 *)palette + 128, work);
-    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &ResourceId_ParticleSpritesA, extra_target, 0, 0);
 
     if (mode == 1) {
         BattleEffect_LoadWork(46, 7, 7, 7, 3);

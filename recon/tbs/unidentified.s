@@ -400,12 +400,6 @@ BattleFx_UntargetedObjectScript:
 	.global gEffectScripts
 gEffectScripts:
 	.incbin "baserom.gba", 0x000a012c, 0x00000ed4
-	.section .unidentified.080a5784,"a"
-	.incbin "baserom.gba", 0x000a5784, 0x00000004
-	.section .unidentified.080a63e0,"a"
-	.incbin "baserom.gba", 0x000a63e0, 0x00000004
-	.section .unidentified.080a939e,"a"
-	.incbin "baserom.gba", 0x000a939e, 0x00000006
 	.section .unidentified.080aea4c,"a"
 	.global UiIcon_ResourceTiles
 UiIcon_ResourceTiles:

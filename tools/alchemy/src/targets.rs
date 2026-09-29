@@ -84,6 +84,15 @@ impl DecompTarget {
         }
         Ok(())
     }
+    /// The linker script that composes this edition: the game's `MAIN.LD`
+    /// for English, otherwise the edition's scaffold `recon/<game>/<lang>/MAIN.LD`,
+    /// as pret's early versions linked through `baserom.gba`.
+    pub fn script(&self) -> std::path::PathBuf {
+        match self.id.as_str().split_once('-') {
+            Some((_, "en")) | None => std::path::Path::new(self.game_dir()).join("MAIN.LD"),
+            Some((game, lang)) => ["recon", game, lang, "MAIN.LD"].iter().collect(),
+        }
+    }
     /// The game's physical root, `games/THE BROKEN SEAL` or `games/THE LOST AGE`.
     pub fn game_dir(&self) -> &'static str {
         self.source_dir

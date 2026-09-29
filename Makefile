@@ -111,7 +111,7 @@ COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
 .PHONY: compare-editions $(COMPARE_EDITIONS)
 compare-editions: compare-all $(COMPARE_EDITIONS)
 $(COMPARE_EDITIONS): compare-%:
-	$(BUILD) rom --target $* --script recon/$(subst -,/,$*)/MAIN.LD
+	$(BUILD) rom --target $*
 	@grep -F ' out/$*/' rom.sha1 | $(SHA1) -
 
 build-full build-rom:

@@ -121,7 +121,10 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Camera_MoveTo(0xd80000, -1, 0x3160000, 1);
         {
             /* Set the low bit of the flag byte at +35 of actor 20's record. */
-            u8 *record = ((u8 *(*)())Engine_ActorGet)(20);
+            u8 *record = (u8 *)Engine_ActorGet(20);
+            /* FAKEMATCH: a result temporary, not a compound or-assign: the
+             * reference merges the byte into the mask's register, which the
+             * two-address ORR does only when the result is its own object. */
             u8 bits = 1;
 
             bits |= record[35];
@@ -137,7 +140,7 @@ void FieldScene_RunActorAndEffectPresentationSetup(void)
         Actor_WalkToAndWait(20, 216, 0x31e);
         Actor_SetPosition(20, 0, 0);
         /* Set the fixed-point word at +24 of actor 20's record to 1.0. */
-        record = ((u8 *(*)())Engine_ActorGet)(20);
+        record = (u8 *)Engine_ActorGet(20);
         *(s32 *)(record + 24) = 0x10000;
         /* Set the fixed-point word at +28 of actor 20's record to 1.0. */
         record = (u8 *)Value1((s32 (*)())Engine_ActorGet, 20);

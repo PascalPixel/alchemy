@@ -663,7 +663,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_WalkTo(12, 0x160, 0x168);
     Event_Wait(20);
     Audio_PlayCue(17);
-    SCENE_PHASE_02003054 = 0x203;
+    gEventWork->start_transition = 0x203;
     Event_CloseScreen();
     Event_Wait(1);
     Event_Wait(210);

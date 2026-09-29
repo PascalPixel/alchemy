@@ -48,8 +48,10 @@ static __inline__ s32 Value3(s32 (*f)(), s32 a0, s32 a1, s32 a2)
 
 static __inline__ void bump_halfword(s32 off, s32 amount)
 {
-    u8 *work = *(u8 **)&gEventWork;
-    u16 *slot = (u16 *)((s32)work + off);
+    u8 *work = (u8 *)gEventWork;
+    u16 *slot = (u16 *)(work + off);
+    /* FAKEMATCH: the sum goes through a word-sized temporary before the
+     * halfword store, as the reference computes it. */
     s32 next = *slot + amount;
 
     *slot = next;
@@ -63,15 +65,11 @@ s32 OverlayObject_RunObjectTwoWhenFlagged(void);
  * takes its leave. */
 void RunDialoguePromptScene(void)
 {
-    u32 i;
-    s32 off1c8;
     s32 off1d8;
     u8 *rec8;
     u8 *record;
     u8 *work;
     s32 aftermath;
-    s32 crowd;
-    s32 late;
     s32 rod;
     u8 *p7;
 
@@ -79,7 +77,7 @@ void RunDialoguePromptScene(void)
     GameFlag_Set(0x855);
     Event_Begin();
     {
-        u8 *record = ((u8 * (*)())Engine_ActorGet)(12);
+        u8 *record = (u8 *)Engine_ActorGet(12);
         /* FAKEMATCH: a result temporary, not a compound or-assign: the
          * reference merges the byte into the mask's register, which the
          * two-address ORR does only when the result is its own object. */
@@ -99,12 +97,12 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(11, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(10, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-    record = ((u8 * (*)())Engine_ActorGet)(10);
-    Actor_SetSpriteFlags((s32)record, 1);
-    record = ((u8 * (*)())Engine_ActorGet)(11);
-    Actor_SetSpriteFlags((s32)record, 1);
-    record = ((u8 * (*)())Engine_ActorGet)(12);
-    Actor_SetSpriteFlags((s32)record, 1);
+    record = (u8 *)Engine_ActorGet(10);
+    Actor_SetSpriteFlags((struct FieldActor *)record, 1);
+    record = (u8 *)Engine_ActorGet(11);
+    Actor_SetSpriteFlags((struct FieldActor *)record, 1);
+    record = (u8 *)Engine_ActorGet(12);
+    Actor_SetSpriteFlags((struct FieldActor *)record, 1);
     Actor_SetPosition(13, 0x3000000, 0x1980000);
     Actor_SetPosition(14, 0x3000000, 0x1a80000);
     Actor_MoveToAndWait(9, 0x310, 0x1a8);
@@ -120,8 +118,7 @@ void RunDialoguePromptScene(void)
     Actor_FaceActor(ACTOR_GERALD, 10, 0);
     Actor_FaceActor(ACTOR_IVAN, 10, 0);
     work = (u8 *)gEventWork;
-    off1c8 = 0x1c8;
-    *(s32 *)(work + off1c8) = 30;
+    *(s32 *)(work + 0x1c8) = 30;
     *(s32 *)(work + 0x1c0) = 0x201;
     Event_OpenScreen();
     Event_WaitForScreen();
@@ -143,12 +140,11 @@ void RunDialoguePromptScene(void)
     Actor_WalkTo(13, 0x2ea, 0x198);
     Actor_FaceDirection(9, 0xb000, 0);
     Actor_FaceDirection(14, 0xb000, 0);
-    crowd = (s32)KuupuappuHeya_VaultScriptB;
-    Actor_EnableActionCallback(11, crowd);
+    Actor_EnableActionCallback(11, (s32)KuupuappuHeya_VaultScriptB);
     Event_Wait(20);
-    Actor_EnableActionCallback(10, crowd);
+    Actor_EnableActionCallback(10, (s32)KuupuappuHeya_VaultScriptB);
     Event_Wait(15);
-    Actor_EnableActionCallback(12, crowd);
+    Actor_EnableActionCallback(12, (s32)KuupuappuHeya_VaultScriptB);
     Event_Wait(35);
     Actor_EnableActionCallback(8, KuupuappuHeya_VaultScriptA);
     Event_Wait(20);
@@ -182,12 +178,12 @@ void RunDialoguePromptScene(void)
     Value2((s32 (*)())Engine_ActorEnableActionCallback, 9, (s32)KuupuappuHeya_VaultScriptD);
     Actor_SetSpeed(ACTOR_GERALD, 0xcccc, 0x6666);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x318, off1c8);
+    Actor_WalkToAndWait(ACTOR_GERALD, 0x318, 0x1c8);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
     Event_Wait(30);
     Actor_WalkToAndWait(ACTOR_IVAN, 0x318, 0x198);
     Actor_FaceDirection(ACTOR_IVAN, 0, 0);
-    Actor_WalkToAndWait(ACTOR_GERALD, 0x328, off1c8);
+    Actor_WalkToAndWait(ACTOR_GERALD, 0x328, 0x1c8);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 0);
     Event_Wait(100);
     FieldScene_RunSplitTripleSteps(14, 9, 60);
@@ -209,12 +205,15 @@ void RunDialoguePromptScene(void)
     Actor_SetAnimation(15, 2);
     Actor_SetPosition(18, 0, 0);
     {
-        u8 *work0 = *(u8 **)&gEventWork;
+        u8 *work0 = (u8 *)gEventWork;
         u16 *slot0;
         s32 next0;
 
+        /* FAKEMATCH: the step offset is parked in off1d8 for the later
+         * bump and the sum goes through a word-sized temporary; both keep
+         * the reference's registers. */
         off1d8 = 0x1d8;
-        slot0 = (u16 *)((s32)work0 + off1d8);
+        slot0 = (u16 *)(work0 + off1d8);
         next0 = *slot0 + 1;
         *slot0 = next0;
     }
@@ -233,10 +232,12 @@ void RunDialoguePromptScene(void)
     Actor_SetAnimation(16, 4);
     {
         u8 *rec;
+        /* FAKEMATCH: the zero is spelled as a sum of a zero local with
+         * itself, which keeps the reference's register for it. */
         s32 t = 0;
         u16 zero_sym = (u16)(t + t);
 
-        rec = (u8 *)((s32 (*)())Engine_ActorGet)(19);
+        rec = (u8 *)Engine_ActorGet(19);
         rec[85] = zero_sym;
     }
     Actor_SetSpritePriority(19, 1);
@@ -352,10 +353,9 @@ void RunDialoguePromptScene(void)
     SceneActor_SetPairZeroAndValue(9, 14, 20);
     SceneActor_SetModeZeroAndValue(9, 20);
     Actor_WalkToAndWait(14, 0x358, 0x198);
-    late = (s32)KuupuappuHeya_VaultScriptE;
-    Actor_EnableActionCallback(9, late);
-    Actor_EnableActionCallback(14, late);
-    Actor_WalkTo(ACTOR_GERALD, 0x318, off1c8);
+    Actor_EnableActionCallback(9, (s32)KuupuappuHeya_VaultScriptE);
+    Actor_EnableActionCallback(14, (s32)KuupuappuHeya_VaultScriptE);
+    Actor_WalkTo(ACTOR_GERALD, 0x318, 0x1c8);
     Actor_SetSpeed(ACTOR_IVAN, 0xcccc, 0x6666);
     Actor_WalkTo(ACTOR_IVAN, 0x308, 0x1b0);
     Actor_WaitForMove(ACTOR_GERALD);
@@ -367,13 +367,15 @@ void RunDialoguePromptScene(void)
     rec8 = Value1(((s32 (*)())Engine_ActorGet), 14);
     {
         u8 *target = rec8 + 91;
+        /* FAKEMATCH: the flag goes through a word-sized local and a
+         * pointer temporary, which keeps the reference's registers. */
         s32 shown = 1;
 
         *target = shown;
     }
-    *(s32 *)((s32)rec8 + 56) = -0x80000000;
-    *(s32 *)((s32)rec8 + 60) = -0x80000000;
-    *(s32 *)((s32)rec8 + 64) = -0x80000000;
+    *(s32 *)(rec8 + 56) = ACTOR_NO_TARGET;
+    *(s32 *)(rec8 + 60) = ACTOR_NO_TARGET;
+    *(s32 *)(rec8 + 64) = ACTOR_NO_TARGET;
     Actor_ShowEmote(9, 0x100, 0);
     Actor_SetAnimation(14, 1);
     Event_Wait(50);
@@ -459,7 +461,7 @@ void RunDialoguePromptScene(void)
     Event_Wait(60);
     rod = (s32)MsgKuupuappuIvanGotShamansRod;
     Message_ShowCentered(rod, 1);
-    Engine_ObjectDispatchRelease((s32)rec8);
+    Engine_ObjectDispatchRelease((struct FieldActor *)rec8);
     Actor_SetAnimation(17, 2);
     Event_Wait(20);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
@@ -477,7 +479,7 @@ void RunDialoguePromptScene(void)
     SceneActor_SetModeZeroAndValue(2, 20);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 3);
     {
-        u16 *slot = (u16 *)((s32)p7 + 0x1d8);
+        u16 *slot = (u16 *)(p7 + 0x1d8);
         s32 saved = *(s16 *)slot;
 
         if (Value0(OverlayObject_GetObjectTwoByte118)!= 0) {
@@ -501,8 +503,8 @@ void RunDialoguePromptScene(void)
     SceneEffect_ApplyThreeValuesAndFinish(0, 3, 20);
     Actor_SetAnimation(ACTOR_GERALD, 2);
     record = Value1(((s32 (*)())Engine_ActorGet), 0);
-    if ((s32)record != 0) {
-        Actor_SetDestination(ACTOR_GERALD, *(s16 *)((s32)record + 10), *(s16 *)((s32)record + 18));
+    if (record != 0) {
+        Actor_SetDestination(ACTOR_GERALD, *(s16 *)(record + 10), *(s16 *)(record + 18));
     }
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_SetPosition(ACTOR_GERALD, 0, 0);

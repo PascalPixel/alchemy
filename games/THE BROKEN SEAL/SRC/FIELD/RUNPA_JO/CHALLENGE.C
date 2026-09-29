@@ -13,12 +13,12 @@ void RunActor12InteractionSequence(void)
     Audio_PlayCue(113);
     Actor_ShowEmote(12, 256, 60);
     {
-        u8 *t = (s32)MsgRunpaWho2;
+        s32 t = (s32)MsgRunpaWho2;
 
-        Event_SetMessage((s32)t);
+        Event_SetMessage(t);
         Event_ShowMessage(12, 0);
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 258, 50);
-        Event_SetMessage((s32)(t + 1));
+        Event_SetMessage(t + 1);
     }
     Event_ShowMessage(12, 0);
     Event_CloseScreen();

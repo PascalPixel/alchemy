@@ -10,7 +10,7 @@ extern u8 MsgSuharaWonderWhySandstorms[];
 
 void Dialogue_HandleFacingChoice(s32 no)
 {
-    u16 facing = (((u16 *)Engine_ActorGet(ACTOR_PARTY_LEADER))[3] + 0x2000) & ~0x3fff;
+    u16 facing = (Actor_Get(ACTOR_PARTY_LEADER)->facing + 0x2000) & ~0x3fff;
     if (facing == 0xc000) {
         Engine_ShopOpen(31, no);
     } else if (Engine_GameFlagIsSet(0x96f)) {

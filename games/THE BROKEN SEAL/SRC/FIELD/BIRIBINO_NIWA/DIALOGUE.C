@@ -3,7 +3,7 @@ extern u8 MsgBiribinoDoThinkCanBecomeAs[];
 extern u8 MsgBiribinoTellingMeImResponsibleFor[];
 extern u8 MsgBiribinoHaveYouSeenBarricadeWe[];
 
-void SceneDialogue_RunActor9Message13c0(void)
+void SceneDialogue_AskAboutBarricade(void)
 {
     Event_Begin();
     Event_SetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
@@ -11,7 +11,7 @@ void SceneDialogue_RunActor9Message13c0(void)
     Event_End();
 }
 
-void SceneDialogue_RunActor10Message13c3(void)
+void SceneDialogue_AskIfResponsible(void)
 {
     Event_Begin();
     Event_SetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
@@ -19,7 +19,7 @@ void SceneDialogue_RunActor10Message13c3(void)
     Event_End();
 }
 
-void SceneDialogue_RunActor11Message1751(void)
+void SceneDialogue_AskIfFineWarrior(void)
 {
     Event_Begin();
     Event_SetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);

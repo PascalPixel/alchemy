@@ -5,12 +5,12 @@ extern u8 MsgRunpaWrongTurnOver[];
 
 void ConfigureActor13Interaction(void)
 {
-    u8 *msg = (s32)MsgRunpaWrongTurnOver;
+    s32 msg = (s32)MsgRunpaWrongTurnOver;
 
-    Event_SetMessage((s32)msg);
+    Event_SetMessage(msg);
     Event_ShowMessage(0x800d, 0);
     if (PartyInventory_FindOwner(234) != -1) {
-        Message_ShowCentered((s32)(msg + 2), 1);
+        Message_ShowCentered(msg + 2, 1);
     }
 }
 

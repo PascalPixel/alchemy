@@ -124,7 +124,7 @@ gBiribinoNiwaEvents:
 	.4byte 0x000016d1
 	.4byte 0x00000000
 	.4byte 0x0845000a
-	.4byte SceneDialogue_RunActor10Message13c3
+	.4byte SceneDialogue_AskIfResponsible
 	.4byte 0x00000000
 	.4byte 0xffff000a
 	.4byte 0x000016d2
@@ -136,7 +136,7 @@ gBiribinoNiwaEvents:
 	.4byte 0x00001468
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte SceneDialogue_RunActor11Message1751
+	.4byte SceneDialogue_AskIfFineWarrior
 	.4byte 0x00000000
 	.4byte 0x084f000c
 	.4byte BiribinoNiwa_RunGardenEvent

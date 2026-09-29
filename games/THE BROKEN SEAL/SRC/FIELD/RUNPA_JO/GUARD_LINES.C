@@ -7,18 +7,18 @@ extern u8 MsgRunpaShiftAlready[];
 
 void RunActorScriptedSequenceB(s32 handle)
 {
-    u8 *id;
+    s32 id;
 
     Actor_RunRepeatedMotion(handle, 1);
     id = (s32)MsgRunpaIntruder;
-    Event_SetMessage((s32)id);
+    Event_SetMessage(id);
     Event_ShowMessage(handle, 0);
-    Actor_ShowEmoteAt(handle);
-    Event_SetMessage((s32)(id + 1));
+    Actor_ShowEmote(handle, 258, 60);
+    Event_SetMessage(id + 1);
     Event_ShowMessage(handle, 0);
     id += 2;
     Actor_SetAnimationAndWait(handle, 4);
-    Event_SetMessage((s32)id);
+    Event_SetMessage(id);
     Event_ShowMessage(handle, 0);
 }
 

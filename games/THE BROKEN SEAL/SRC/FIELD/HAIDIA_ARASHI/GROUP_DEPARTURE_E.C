@@ -8,10 +8,8 @@ void FieldScene_RunScene372SequenceE(void)
 {
     s32 record;
     s32 base;
-    s32 v6;
 
-    if (GameFlag_IsSet(0x837) != 0) {
-    } else {
+    if (GameFlag_IsSet(0x837) == 0) {
         Event_Begin();
         Actor_SetAttachedEffect(22, 0x100);
         base = (s32)MsgHaidiaHey;
@@ -27,9 +25,8 @@ void FieldScene_RunScene372SequenceE(void)
         Event_Wait(30);
         Value2((s32 (*)())Engine_ActorEnableActionCallback, 22, (s32)HaidiaArashi_ActorTwentyTwoScriptB);
         Event_ShowMessage(22, 0);
-        v6 = 128;
         record = Actor_Get(22);
-        *(s32 *)(record + 28) = v6 << 9;
+        *(s32 *)(record + 28) = 0x10000;
         Actor_RunRepeatedMotion(22, 1);
         Event_Wait(20);
         Event_AskYesNo(22, 0);
@@ -40,7 +37,7 @@ void FieldScene_RunScene372SequenceE(void)
         Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
         Actor_SetAnimationAndWait(22, 3);
         Event_ShowMessage(22, 0);
-        Actor_SetSpeed(22, (v6 << 9), 0x8000);
+        Actor_SetSpeed(22, 0x10000, 0x8000);
         Actor_SetAnimation(22, 2);
         record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
         if (record != 0) {

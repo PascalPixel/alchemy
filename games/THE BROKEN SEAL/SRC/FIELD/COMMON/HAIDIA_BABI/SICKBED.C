@@ -61,7 +61,6 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 void HaidiaBabi_RunSickbedVisit(void)
 {
-    u32 i;
     u8 *record;
     s32 msg;
 
@@ -103,7 +102,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_ActorSetAnimation(8, 13);
     Value2(Engine_EventOpenMessage, 8, 0);
     if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
@@ -115,7 +114,7 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventSetMessage(msg);
     Value2(Engine_EventOpenMessage, 8, 0);
     if (Value2(Engine_EventChooseYesNo, 0, 0) == 1) {
-        *(u16 *)((*(s32 *)&gEventWork + 0x1d8)) += 1;
+        *(u16 *)((u8 *)gEventWork + 0x1d8) += 1;
     }
     if (Value1(Engine_GameFlagIsSet, 0x81c) != 0) {
         Call3(Engine_ActorShowEmote, 8, 0x102, 60);
@@ -137,12 +136,15 @@ void HaidiaBabi_RunSickbedVisit(void)
     Engine_EventWait(40);
     record = Engine_ActorGet(0);
     {
+        /* FAKEMATCH: the facing is parked in a word-sized local before its
+         * halfword store, so its constant is a word; the direct store makes
+         * a halfword constant whose short pool reach moves the literal pools. */
         s32 shown = 0;
-    
-        *(u16 *)((s32)record + 6) = shown;
+
+        *(u16 *)(record + 6) = shown;
     }
     Engine_TaskWait(1);
-    *(u8 *)(Engine_ActorGet(0) + 90) &= 254;
+    Engine_ActorGet(0)[90] &= 254;
     Call3(Engine_ActorSetDestination, 0, 0x22e, 0x184);
     Call3(Engine_ActorSetSpeed, 8, 0x13333, 0x9999);
     Engine_ActorSetAnimation(8, 14);

@@ -24,7 +24,7 @@ void ShianJiin_AskIfCurious(void)
     Actor_StartRepeatedMotion(8, 2);
     Actor_SetAttachedEffect(8, 0x102);
     Event_Wait(60);
-    *(u8 *)(((s32)Engine_ActorGet(8)) + 91) = 0;
+    ((u8 *)Engine_ActorGet(8))[91] = 0;
     Audio_PlayCue(152);
     record = Actor_Get(8);
     *(s32 *)(record + 40) = 0x80000;
@@ -66,6 +66,8 @@ void ShianJiin_AskIfCurious(void)
         Actor_ShowEmote(8, 0x102, 60);
         Event_SetMessage((s32)MsgShianCanReadMindsKnowCurious);
         Event_OpenMessage(8, 0);
+        /* FAKEMATCH: the question repeats through this label rather than a
+         * while loop, which keeps the reference's block order. */
     ask_again:
         if (Event_ChooseYesNo(0, 0) == 1) {
             Event_Wait(10);

@@ -46,4 +46,10 @@ extern u8 IwramMulQ16ReturnIp[];
 #define Iwram_UnsignedDivide ((u32 (*)(u32 dividend, u32 divisor))0x030003f0) /* IwramUnsignedDivide */
 #define Iwram_CopyWords ((s32 (*)(void *destination, const void *source, s32 size))0x03001388) /* IwramCopyWords */
 
+/* The item menu reaches the copier from the bank's first routine instead,
+ * its label plus the copier's offset, which GCC schedules as a symbol:
+ * after the arguments. The build checks the offset against both labels. */
+extern u8 IwramIrqMain[];
+#define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords - IwramIrqMain */
+
 #endif

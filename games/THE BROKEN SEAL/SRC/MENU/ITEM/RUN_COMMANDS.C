@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "ITEM.H"
 #include "OWNER_STATE.H"
 #include "GLOBAL_CELLS.H"
@@ -55,8 +56,7 @@ typedef s32 (*WordCopyFn)(void *dst, const void *src, s32 size);
    bank, whose first routine is the interrupt handler. A symbol plus an
    offset keeps the call in a register as the pool entry's schedule shows;
    named alone, GCC emits a Thumb bl that cannot reach IWRAM. */
-extern u8 IwramIrqMain[];
-#define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + 0x1388))
+#define IWRAM_COPY_WORDS ((WordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
 static __inline__ s32 CopyWords(WordCopyFn copy, void *dst, const void *src, s32 size)
 {

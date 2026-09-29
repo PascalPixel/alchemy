@@ -272,8 +272,10 @@ fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
 
 /// ROM code calls the resident IWRAM routines through fixed entry addresses,
 /// as Camelot's did: a call through a label compiles to a direct `bl`, which
-/// cannot reach IWRAM. Each game's IWRAM_CALL.H lists those entries, each
-/// naming its routine, and every routine must sit where the linker put it.
+/// cannot reach IWRAM. Some callers instead add a routine's offset to the
+/// bank's first label. Each game's IWRAM_CALL.H lists those entries and
+/// offsets, each naming its routines, and every one must agree with where
+/// the linker put them.
 fn iwram_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), String> {
     let header = Path::new(target.game_dir()).join("INCLUDE/IWRAM_CALL.H");
     let Ok(text) = fs::read_to_string(root.join(&header)) else {
@@ -296,39 +298,74 @@ fn iwram_entries(root: &Path, target: DecompTarget, elf: &Path) -> Result<(), St
             Some((name, u32::from_str_radix(value, 16).ok()?))
         })
         .collect();
-    for (routine, address) in &entries {
-        match placed.get(routine.as_str()) {
-            Some(value) if value == address => {}
-            Some(value) => {
-                return Err(format!(
-                    "{}: {routine} is listed at {address:#010x} but linked at {value:#010x}",
-                    header.display()
-                ))
-            }
-            None => return Err(format!("{}: {routine} is not linked", header.display())),
+    let linked = |name: &str| {
+        placed
+            .get(name)
+            .copied()
+            .ok_or_else(|| format!("{}: {name} is not linked", header.display()))
+    };
+    for entry in &entries {
+        let value = match &entry.from {
+            None => linked(&entry.routine)?,
+            Some(from) => linked(&entry.routine)?.wrapping_sub(linked(from)?),
+        };
+        if value != entry.value {
+            let listed = match &entry.from {
+                None => format!("{} is listed at", entry.routine),
+                Some(from) => format!("{} - {from} is listed as", entry.routine),
+            };
+            return Err(format!(
+                "{}: {listed} {:#x} but linked as {value:#x}",
+                header.display(),
+                entry.value
+            ));
         }
     }
     Ok(())
 }
 
-/// The (routine, address) pairs of `#define Iwram_X ((type)0x03......) /* Routine */`
-/// lines; any other definition spelling an IWRAM address is refused.
-fn iwram_entry_list(text: &str) -> Result<Vec<(String, u32)>, String> {
+/// One IWRAM_CALL.H entry: the routine's address, or its offset from another
+/// routine of the bank when `from` names that routine.
+#[derive(Debug, PartialEq)]
+struct IwramEntry {
+    routine: String,
+    from: Option<String>,
+    value: u32,
+}
+
+/// The `#define Iwram_X ((type)0x03......) /* Routine */` entries and the
+/// `#define Iwram_XOffset 0x.... /* Routine - FromRoutine */` offsets; any
+/// other definition spelling an IWRAM address or an Iwram offset is refused.
+fn iwram_entry_list(text: &str) -> Result<Vec<IwramEntry>, String> {
     let entry = regex::Regex::new(
         r"^#define\s+Iwram_\w+\s+\(\(.*\)\s*0x(0?3[0-9a-fA-F]{6})\)\s*/\*\s*(\w+)\s*\*/\s*$",
     )
     .expect("static pattern");
+    let offset = regex::Regex::new(
+        r"^#define\s+Iwram_\w+Offset\s+0x([0-9a-fA-F]+)\s*/\*\s*(\w+)\s*-\s*(\w+)\s*\*/\s*$",
+    )
+    .expect("static pattern");
     let address = regex::Regex::new(r"0x0?3[0-9a-fA-F]{6}").expect("static pattern");
+    let offset_name = regex::Regex::new(r"^#define\s+Iwram_\w+Offset\b").expect("static pattern");
     let mut entries = Vec::new();
     for line in text
         .lines()
         .filter(|line| line.trim_start().starts_with("#define"))
     {
         if let Some(capture) = entry.captures(line) {
-            let value = u32::from_str_radix(&capture[1], 16).expect("hex digits");
-            entries.push((capture[2].to_owned(), value));
-        } else if address.is_match(line) {
-            return Err(format!("an IWRAM address without its routine: {line}"));
+            entries.push(IwramEntry {
+                routine: capture[2].to_owned(),
+                from: None,
+                value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
+            });
+        } else if let Some(capture) = offset.captures(line) {
+            entries.push(IwramEntry {
+                routine: capture[2].to_owned(),
+                from: Some(capture[3].to_owned()),
+                value: u32::from_str_radix(&capture[1], 16).expect("hex digits"),
+            });
+        } else if address.is_match(line) || offset_name.is_match(line) {
+            return Err(format!("an IWRAM entry without its routines: {line}"));
         }
     }
     Ok(entries)
@@ -772,18 +809,27 @@ mod tests {
         let header = "/* 0x03000000 is only prose here */\n\
             #define Iwram_CopyWords ((s32 (*)(void *, const void *, s32))0x03001388) /* IwramCopyWords */\n\
             #define Iwram_Sqrt ((s32 (*)(s32))0x030001d8) /* IwramSqrt */\n\
+            #define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords - IwramIrqMain */\n\
             #define SCREEN_WIDTH 240\n";
+        let entry = |routine: &str, from: Option<&str>, value| IwramEntry {
+            routine: routine.to_owned(),
+            from: from.map(str::to_owned),
+            value,
+        };
         assert_eq!(
             iwram_entry_list(header).unwrap(),
             [
-                ("IwramCopyWords".to_owned(), 0x0300_1388),
-                ("IwramSqrt".to_owned(), 0x0300_01d8)
+                entry("IwramCopyWords", None, 0x0300_1388),
+                entry("IwramSqrt", None, 0x0300_01d8),
+                entry("IwramCopyWords", Some("IwramIrqMain"), 0x1388),
             ]
         );
         for unnamed in [
             "#define Iwram_Sqrt ((s32 (*)(s32))0x030001d8)\n",
             "#define SQRT ((s32 (*)(s32))0x030001d8) /* IwramSqrt */\n",
             "#define WORK ((u8 *)0x03001ebc)\n",
+            "#define Iwram_CopyWordsOffset 0x1388\n",
+            "#define Iwram_CopyWordsOffset 0x1388 /* IwramCopyWords */\n",
         ] {
             assert!(iwram_entry_list(unnamed).is_err(), "{unnamed}");
         }

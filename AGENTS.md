@@ -53,8 +53,9 @@ in assets. Banning forms only moves the answer; hold these invariants instead.
    definition or a label, and layout is the linker scripts' object order. No
    equate, alias, `#define` or table gives a name an address, except
    Camelot's own: ROM code calls the resident IWRAM routines through fixed
-   entry addresses, listed once in each game's `IWRAM_CALL.H` and checked by
-   the build against where the linker placed each routine.
+   entry addresses or offsets from the bank's first routine, listed once in
+   each game's `IWRAM_CALL.H` and checked by the build against where the
+   linker placed each routine.
 3. **The map counts.** DONE is pret's calcrom over the linker maps of
    byte-identical builds: the code the linker places from `games/`. `games/`
    holds only real source: C from an approved compiler, or proven library,

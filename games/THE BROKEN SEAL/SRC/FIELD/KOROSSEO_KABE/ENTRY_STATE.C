@@ -167,7 +167,7 @@ s32 KorosseoKabe_ApplyEntryState(void)
         Object_LinkObjectAndSetCallback(1, 0);
         Object_LinkObjectAndSetCallback(2, 0);
         Object_LinkObjectAndSetCallback(3, 0);
-        SceneState_InitControlRecordAndStartTask((s32)&ResourceId_PictureB);
+        SceneState_InitControlRecordAndStartTask((s32)&ResourceId_RivalPathB);
         break;
     case 2:
         Engine_TaskAddCallback(KorosseoKabe_MarkSceneProgress, 0xc80);

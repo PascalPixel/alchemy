@@ -6,6 +6,9 @@
 //! - `.gbapal`: the image's palette as little-endian BGR555.
 //! - `.bitmap`: the pixels row by row, one palette index per byte.
 //! - `.4bpp`, `.8bpp`: the pixels as GBA tiles, row-major.
+//! - `.glyphs`: 1-bit glyphs. The image is one glyph, 8 pixels, wide with its
+//!   glyphs stacked; each row is a byte, its leftmost pixel in bit 0 and any
+//!   non-zero index inked.
 //! - `.icons`: an icon bank. The image is one 32x32 icon wide with its icons
 //!   stacked. The bank is a table of each icon's halfword offset, then each
 //!   icon as 8-bit tiles in the packer's palette LZ without its tag,
@@ -21,6 +24,13 @@
 //! - `.delta0`, `.delta1`, `.delta2`: the tilemap's 16-bit entries
 //!   delta-coded in that mode (Psynergy's tilemap delta).
 //!
+//! A table reads its text `STEM.TSV`:
+//!
+//! - `.table`: records of little-endian fields. The first line names each
+//!   column and its type, such as `x:s16\ty:s16` (`u8`, `s8`, `u16`, `s16`,
+//!   `u32` or `s32`); each further line is a record of decimal or `0x` hex
+//!   values in those columns. Only the last record may stop short.
+//!
 //! A font reads two inputs, `STEM.PNG` and its table `STEM.TSV`:
 //!
 //! - `.font`: one record per glyph, cut from the sheet's 16x16 cells in
@@ -34,8 +44,8 @@
 //! A picture made of several reads its part list `STEM.TSV`:
 //!
 //! - `.parts`: each line names a part image beside the list and that part's
-//!   form, such as `BLUE_FLAME_COLUMN\tbitmap`; the parts are built in turn and
-//!   joined.
+//!   form, such as `BLUE_FLAME_COLUMN\tbitmap`, or `table` for a table beside
+//!   it; the parts are built in turn and joined.
 //!
 //! Either may then be packed:
 //!
@@ -57,7 +67,10 @@ pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
 /// Whether a form reads a table or tilemap rather than an image.
 fn data_form(form: &str) -> bool {
-    matches!(form, "bin" | "delta0" | "delta1" | "delta2" | "parts")
+    matches!(
+        form,
+        "bin" | "delta0" | "delta1" | "delta2" | "parts" | "table"
+    )
 }
 
 /// The input a built file name reads, relative to the same directory: the
@@ -69,7 +82,7 @@ pub fn input_name(built: &str) -> Result<String, String> {
         .ok_or_else(|| format!("{built} names no form"))?;
     let form = rest.split('.').next().unwrap_or_default();
     let extension = match form {
-        "parts" => "TSV",
+        "parts" | "table" => "TSV",
         form if data_form(form) => "BIN",
         _ => "PNG",
     };
@@ -103,6 +116,7 @@ pub fn build_file_with(
         match form {
             "bin" => input.to_vec(),
             "parts" => parts(built, input, sibling)?,
+            "table" => table(built, input)?,
             _ => encode_tilemap_delta(input, form.as_bytes()[5] - b'0')
                 .map_err(|error| format!("{built}: {}", error.0))?,
         }
@@ -136,11 +150,68 @@ fn parts(
         let (part, form) = line
             .split_once('\t')
             .ok_or_else(|| format!("{built}: {line:?} needs a part and its form"))?;
-        if data_form(form) || form == "font" {
-            return Err(format!("{built}: part {part} must be an image form"));
+        if (data_form(form) && form != "table") || form == "font" {
+            return Err(format!(
+                "{built}: part {part} must be an image form or a table"
+            ));
         }
         let name = format!("{part}.{form}");
         output.extend(build_file(&name, &sibling(&input_name(&name)?)?)?);
+    }
+    Ok(output)
+}
+
+/// A table's records, each field little-endian in its column's type.
+fn table(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(text).map_err(|_| format!("{built}: table is not text"))?;
+    let mut lines = text.lines().filter(|line| !line.trim().is_empty());
+    let columns = lines
+        .next()
+        .ok_or_else(|| format!("{built}: table names no columns"))?
+        .split('\t')
+        .map(
+            |column| match column.rsplit_once(':').map(|(_, kind)| kind) {
+                Some("u8") => Ok((1, false)),
+                Some("s8") => Ok((1, true)),
+                Some("u16") => Ok((2, false)),
+                Some("s16") => Ok((2, true)),
+                Some("u32") => Ok((4, false)),
+                Some("s32") => Ok((4, true)),
+                _ => Err(format!("{built}: column {column:?} needs NAME:TYPE")),
+            },
+        )
+        .collect::<Result<Vec<(usize, bool)>, _>>()?;
+    let mut output = Vec::new();
+    let mut short = false;
+    for line in lines {
+        let fields: Vec<&str> = line.split('\t').collect();
+        if short || fields.len() > columns.len() {
+            return Err(format!("{built}: record {line:?} does not fit the columns"));
+        }
+        short = fields.len() < columns.len();
+        for (field, &(size, signed)) in fields.iter().zip(&columns) {
+            let field = field.trim();
+            let (negative, digits) = match field.strip_prefix('-') {
+                Some(digits) => (true, digits),
+                None => (false, field),
+            };
+            let magnitude = match digits.strip_prefix("0x") {
+                Some(hex) => i64::from_str_radix(hex, 16),
+                None => digits.parse::<i64>(),
+            }
+            .map_err(|_| format!("{built}: {field:?} is not a number"))?;
+            let value = if negative { -magnitude } else { magnitude };
+            let bits = 8 * size as u32;
+            let (low, high) = if signed {
+                (-(1i64 << (bits - 1)), (1i64 << (bits - 1)) - 1)
+            } else {
+                (0, (1i64 << bits) - 1)
+            };
+            if value < low || value > high {
+                return Err(format!("{built}: {field} does not fit its column"));
+            }
+            output.extend(&value.to_le_bytes()[..size]);
+        }
     }
     Ok(output)
 }
@@ -257,6 +328,15 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
         "frames" => sprite_bank(built, &indices(&image), width, height)?,
         "icons" => icon_bank(built, &indices(&image), width, height)?,
+        "glyphs" if width == 8 => indices(&image)
+            .chunks(8)
+            .map(|row| {
+                row.iter()
+                    .enumerate()
+                    .fold(0u8, |byte, (x, &pixel)| byte | u8::from(pixel != 0) << x)
+            })
+            .collect(),
+        "glyphs" => return Err(format!("{built}: glyphs are 8 pixels wide, stacked")),
         other => return Err(format!("{built}: unknown form .{other}")),
     })
 }
@@ -319,6 +399,31 @@ mod tests {
         })
         .unwrap();
         assert_eq!(joined, [1, 2, 3]);
+        // 1-bit glyph rows: the leftmost pixel in bit 0.
+        let mut rows = vec![0u8; 16];
+        rows[0] = 1;
+        rows[15] = 2;
+        let glyphs = png_from_bitmap(&rows, &[0, 0, 0xff, 0x7f, 0x1f, 0], 8).unwrap();
+        assert_eq!(build_file("G.glyphs", &glyphs).unwrap(), [1, 0x80]);
+        assert!(build_file("G.glyphs", &png_from_bitmap(&[0; 32], &[0, 0], 16).unwrap()).is_err());
+        // A table packs each record's fields in their columns' types.
+        assert_eq!(input_name("M/PATH.table.lz").unwrap(), "M/PATH.TSV");
+        assert_eq!(
+            build_file("T.table", b"x:s8\ty:u16\n-1\t0x102\n2\n").unwrap(),
+            [0xff, 2, 1, 2]
+        );
+        assert!(build_file("T.table", b"x:s8\n128\n").is_err());
+        assert!(build_file("T.table", b"x:u8\ty:u8\n1\n2\t3\n").is_err());
+        assert!(build_file("T.table", b"x\n1\n").is_err());
+        // A part list may join a table after an image.
+        let mixed = build_file_with("P.parts", b"A\tbitmap\nM\ttable\n", &|name| {
+            Ok(match name {
+                "A.PNG" => png_from_bitmap(&[1, 2], &[0, 0, 1, 0, 2, 0, 3, 0], 2).unwrap(),
+                _ => b"v:u16\n0x304\n".to_vec(),
+            })
+        })
+        .unwrap();
+        assert_eq!(mixed, [1, 2, 4, 3]);
         let palette: Vec<u8> = (0..16u16)
             .flat_map(|color| (color * 0x421).to_le_bytes())
             .collect();

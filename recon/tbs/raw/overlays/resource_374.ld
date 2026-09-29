@@ -7,9 +7,9 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HAIDIA.o"(.text)
-        "*/resource_374_overlay.o"(.text.x02008248)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SHOW_OFF.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/STONE.o"(.text)
-        "*/resource_374_overlay.o"(.text.x020085e8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HELP_ADVICE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/RESTORE.o"(.text)
         "*/resource_374_overlay.o"(.text.x02009274)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SCENES.o"(.text)

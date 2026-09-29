@@ -1,19 +1,18 @@
 /* resource_370 0x02008054..0x02008154 Clear_LoadBackground (256 bytes with
  * pool), formerly MENU/CLEAR/BG_SETUP.C; the listing keeps the rows.
- * Remaining difference: the reference loads resource id 0x1a from its
- * literal pool into r5 before the first call, the shape of a link-time
- * symbol, which this draft spells as the equate Value_0000001a; and GCC
- * keeps gMapCellBuffer in r5 across the decode call where the reference
- * reloads it from the pool (139 bytes differ, 4 bytes longer). Data_03001ad0
- * is gBgScroll. */
+ * The resource it loads is row 0x1a of the resource directory, now
+ * ResourceId_GoldenSunLogo, and the scroll buffer is gBgScroll. Remaining
+ * difference: GCC keeps gMapCellBuffer in r5 across the decode call where
+ * the reference reloads it from the pool (260 bytes against 256, 76
+ * halfwords differ). */
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 extern struct MapRenderWork *gMapWork;
 extern u8 gMapCellBuffer[];
 
-extern u8 Value_0000001a[];
-extern u16 Data_03001ad0[];
+#include "RESOURCE_IDS.H"
+extern u16 gBgScroll[];
 
 struct ClearWork {
     u8 unknown_00[20];
@@ -46,10 +45,10 @@ void Clear_LoadBackground(void)
     s32 blank;
     u16 zero;
 
-    id = (s32)Value_0000001a;
+    id = (s32)&ResourceId_GoldenSunLogo;
     Engine_BlendSetDarkenTarget16(0);
     *(volatile u16 *)0x0400000c = 0x681;
-    Data_03001ad0[5] = 0;
+    gBgScroll[5] = 0;
     blank = 0x1ff;
     res = Engine_ResourceGetTableEntry(id);
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
@@ -77,13 +76,13 @@ col:
     }
     if (++y <= 19)
         goto col;
-    scroll = (struct ScrollPair *)Data_03001ad0;
+    scroll = (struct ScrollPair *)gBgScroll;
     for (y = 0; y <= 3; y++) {
         scroll->y = 0;
         scroll->x = 0;
         scroll++;
     }
-    Dma_Set(Data_03001ad0, (void *)0x04000010, 0x84000004, DMA3);
+    Dma_Set(gBgScroll, (void *)0x04000010, 0x84000004, DMA3);
     (*(struct ClearWork **)&gMapWork)->mode = 0x1400;
     {
         struct FieldActor *leader;

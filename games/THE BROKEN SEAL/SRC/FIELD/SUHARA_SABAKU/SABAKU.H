@@ -27,16 +27,15 @@ struct SceneWork_02000400 {
     u16 state_one_marker;
 };
 
-extern u8 gSuharaSabakuEventsA6[];
 extern u8 gSuharaSabakuExits[];
 extern u8 gSuharaSabakuActor12Action[];
 
+/* The encounter palette's level, kept while the encounter pulses it. */
 extern u16 gSuharaSabakuShownLevel;
 s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void BattleFx_SetPhaseRequest();
 void BattleFx_EmitRandomParticle();
-extern u8 gSuharaSabakuEvents[];
 
 #define ACTOR_ID 13
 
@@ -112,13 +111,9 @@ s32 OverlayObject_ApplyZeroAndClearByte89(u8 *obj);
 
 s32 OverlayObject_ToggleField84Bit0(u8 *obj);
 
-s32 SceneData_SelectDataByRuntimeSelector(void);
-
 s32 SceneData_ReturnZero(void);
 
 u8 *SuharaSabaku_GetExits(void);
-
-s32 SceneData_SelectOverlayDataByRuntimeSelector(void);
 
 void SuharaSabaku_SyncSelectedActorProgress(void);
 
@@ -152,10 +147,12 @@ void SceneState_SetStateByte52(void);
 
 void EncounterPalette_Pulse(void);
 
-s32 FieldScene_RunOpeningAuxiliarySequence(s32 a0);
+s32 FieldScene_RunOpeningAuxiliarySequence(void);
 
-s32 FieldScene_RunScene3c0SequenceA(s32 a0);
+s32 FieldScene_RunScene3c0SequenceA(void);
 
-s32 SuharaSabaku_SelectEvents(void);
+void SuharaSabaku_ApplyVisitFlagBlend(void);
+
+void SuharaSabaku_ApplyAltarFlagBlend(void);
 
 #endif

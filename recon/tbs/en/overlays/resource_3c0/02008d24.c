@@ -1,31 +1,34 @@
-/* Draft of resource_3c0 0x02008d24, built with
- * games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SABAKU.H.
- * Remaining difference: the ROM loads scene 0xa5 from its literal pool as a
- * link-time value, and it reads a halfword just past the loaded image
- * (0x02009a00), which the listing link does not place.
- * The listing keeps these rows. */
-#include "SABAKU.H"
+/* NONMATCHING: resource_3c0 0x02008d24 (164 bytes with its pool),
+ * FieldScene_RunOpeningAuxiliarySequence, before
+ * FIELD/SUHARA_SABAKU/ENCOUNTER.C, stays listing.
+ *
+ * Its scene is SceneId_SuharaSabaku2 and the level it restores is the
+ * linked gSuharaSabakuShownLevel. Remaining difference: 2 halfwords in the
+ * third cell copy. The game sets r1 first and r0 last (r1, r2, r3, r0); the
+ * value-call wrapper below gives r3, r2, r1, r0, and a plain call r3, r2,
+ * r0, r1. The forced temporary before the palette write is needed for the
+ * game's load order.
+ */
+#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SABAKU.H"
 
-s32 FieldScene_RunOpeningAuxiliarySequence(s32 a0)
+s32 FieldScene_RunOpeningAuxiliarySequence(void)
 {
-    u32 i;
     s32 record;
 
-    if (gGameState.scene == 0xa5) {
-        *(u8 *)(Engine_ActorGet(14) + 35) = 2;
-        *(u8 *)(Engine_ActorGet(14) + 85) = 3;
+    if (gGameState.scene == (s32)&SceneId_SuharaSabaku2) {
+        Engine_ActorGet(14)->priority_flags = 2;
+        Engine_ActorGet(14)->motion_flags = 3;
         Actor_SetPosition(14, 0, 0);
         Map_CopyCellAttributes(16, 44, 1, 1, 15, 44);
         MapObject_SetPosition(100, 0, 0);
         Map_CopyCellAttributes(12, 71, 1, 1, 127, 127);
         Value6(Engine_MapCopyCellAttributes, 11, 71, 1, 1, 12, 71);
-        record = Value1(Engine_TaskRemoveCallback, (s32)EncounterPalette_Pulse);
-        do {
+        record = Task_RemoveCallback(EncounterPalette_Pulse);
+        {
             s32 shown = gSuharaSabakuShownLevel;
 
-            *(volatile u16 *)0x0500019e = shown;
-        } while (0);
+            EncounterPalette = shown;
+        }
         return record;
     }
-    return a0;
 }

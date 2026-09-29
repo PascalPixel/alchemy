@@ -60,7 +60,7 @@ s32 ColossoLogRollingStage_RaiseLinkedSceneEffect();
 s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_handle);
 void ColossoLogRollingStage_SetupSceneDescriptor(s32 first_actor, s32 second_actor, s32 mode, s32 centre,
                    s32 extra, s32 third_actor, s32 fourth_actor);
-void ColossoLogRollingStage_InitializeSceneControl(void);
+void ColossoLogRollingStage_InitializeSceneControl(s32 resource);
 void ColossoLogRollingStage_SetSceneControlValue(u16 value);
 void ColossoLogRollingStage_PushStagedActor(void);
 s32 *ColossoLogRollingStage_FindActorAhead(void);

@@ -83,6 +83,9 @@ AffineMatrix_BuildForEffect:
 	.thumb_func
 Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
+	.global Resource_GetTableEntry
+	.thumb_func
+Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
 	.global ResourceMetadata_ClearRecordFar
 	.thumb_func
@@ -108,6 +111,9 @@ ObjectDispatch_InitFromTable4WithArgument:
 	.thumb_func
 ObjectDispatch_InitFromTable6:
 	overlay_veneer ObjectDispatch_InitFromTable6Far
+	.global ObjectDispatch_WaitForValue16
+	.thumb_func
+ObjectDispatch_WaitForValue16:
 	overlay_veneer ObjectDispatch_WaitForValue16Far
 	.global Object_SetPosition
 	.thumb_func
@@ -154,6 +160,9 @@ Graphics_EnableObjLayerAndCallbacks:
 	.thumb_func
 SetMapCellCollision:
 	overlay_veneer SetMapCellCollisionFar
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	.global UiText_DrawQuantity
 	.thumb_func
@@ -163,6 +172,9 @@ UiText_DrawQuantity:
 	.thumb_func
 ItemIcon_LoadTilesFar:
 	overlay_veneer Ui_PrepareTransferForItemFar
+	.global PartyTalkMenu_Choose
+	.thumb_func
+PartyTalkMenu_Choose:
 	overlay_veneer PartyTalkMenu_ChooseFar
 	.global Resource_LoadFixedBlockBIntoFreeSlot
 	.thumb_func
@@ -260,6 +272,9 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorSetDestination
 	.thumb_func
@@ -369,8 +384,17 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Event_SetPair1d4
+	.thumb_func
+Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
 	.global Engine_LeaderCheckAhead
 	.thumb_func
@@ -404,6 +428,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
 	overlay_veneer Battle_ResetEffectCounterFar
 	.global Audio_PlayCueFromEventWork
 	.thumb_func

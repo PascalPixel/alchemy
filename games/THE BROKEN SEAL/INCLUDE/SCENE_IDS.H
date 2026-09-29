@@ -10,6 +10,7 @@
  */
 extern char SceneId_Clear;
 extern char SceneId_WorldMap;
+extern char SceneId_HaidiaIe;
 extern char SceneId_SoruIriguchi1;
 extern char SceneId_SoruIriguchi2;
 extern char SceneId_GomaSuiro1;
@@ -29,6 +30,10 @@ extern char SceneId_BiribinoDou3;
 extern char SceneId_ImiruMura1;
 extern char SceneId_ImiruMura2;
 extern char SceneId_ImiruFuchin1;
+extern char SceneId_MakyuriHeya1;
+extern char SceneId_MakyuriHeya2;
+extern char SceneId_MakyuriHeya3;
+extern char SceneId_MakyuriHeya4;
 extern char SceneId_MakyuriChojo1;
 extern char SceneId_ShianJiin1;
 extern char SceneId_ShianJiin2;
@@ -84,6 +89,13 @@ extern char SceneId_TakaraHashira4;
 extern char SceneId_TakaraHashira5;
 extern char SceneId_KorosseoKawa;
 extern char SceneId_KorosseoKabe;
+extern char SceneId_TakaraAshiba1;
+extern char SceneId_TakaraAshiba2;
+extern char SceneId_TakaraAshiba3;
+extern char SceneId_TorebiKyuden1;
+extern char SceneId_TorebiKyuden2;
+extern char SceneId_KorosseoMaruta;
+
 extern char SceneId_ArutamiraDou1;
 extern char SceneId_ArutamiraDou2;
 extern char SceneId_ArutamiraDou3;
@@ -102,6 +114,10 @@ extern char SceneId_RunpaJo4;
 extern char SceneId_SuharaGate1;
 extern char SceneId_SuharaGate2;
 extern char SceneId_SuharaGate3;
+extern char SceneId_SuharaSabaku1;
+extern char SceneId_SuharaSabaku2;
+extern char SceneId_SuharaSabaku3;
+
 extern char SceneId_BabiChika1;
 extern char SceneId_BabiChika2;
 extern char SceneId_BabiIriguchi3;

@@ -768,7 +768,7 @@ SECTIONS
         "*/recon/tla/es/rom.o"(.rom.008bbda3)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/FIRE_BURST.o"(.rodata)
         "*/recon/tla/es/rom.o"(.rom.008bd9a1)
-        "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
+        "*/games/COMMON/SRC/GRAPHICS/BATTLE_FX/BLUE_CRESCENT.o"(.rodata)
         "*/recon/tla/es/rom.o"(.rom.008bdbc2)
         "*/games/THE LOST AGE/SRC/GRAPHICS/BATTLE_FX/VIOLET_MOTE.o"(.rodata)
         "*/recon/tla/es/rom.o"(.rom.008be111)

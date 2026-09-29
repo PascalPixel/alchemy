@@ -106,4 +106,4 @@ AlchemyUncreditedEnd_08038438:
 	movs	r0, r1
 	pop	{r5, r6}
 	bx	lr
-	.4byte	0x08060c30
+	.4byte	Text_MessageContexts

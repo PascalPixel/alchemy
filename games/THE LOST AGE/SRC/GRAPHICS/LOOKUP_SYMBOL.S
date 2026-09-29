@@ -42,4 +42,4 @@ AlchemyUncreditedEnd_0803857c:
 	mov	r1, #0
 	stm	r0, {r1, r2, r3}
 	bx	lr
-	.4byte	0x080a9f54
+	.4byte	Text_MessageBanks

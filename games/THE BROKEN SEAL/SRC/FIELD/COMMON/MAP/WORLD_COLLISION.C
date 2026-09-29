@@ -95,7 +95,7 @@ u8 GetWorldMapTerrainBehavior(struct WorldPosition *position, s32 *terrain_kind)
         y += 0x1fffff;
 
     index = tile_x + (((y >> 21) & 31) << 5);
-    tile = (u32 *)0x02020000 + index;
+    tile = gMapBlocks + index;
     if (((u8 *)tile)[3] & 0x80)
         flag = 0x10;
 

@@ -4,7 +4,7 @@
 #include "IO_REG.H"
 
 
-void Main_0808a5e0(s32 cue);
+void QueueSceneSound(s32 cue);
 
 /* QueueIoWriteDelay2 (SYSTEM/IO_WRITE_QUEUE.C) written out in place, with
  * that function's one-pass loops around the IME read and the queue update. */
@@ -75,7 +75,7 @@ void SuharaSabaku_ApplyVisitFlagBlend(void)
     QUEUE_IO_WRITE(0x04000050, 0x3f42);
     if (Engine_GameFlagIsSet(0x340)) {
         alpha = 16;
-        Main_0808a5e0(244);
+        QueueSceneSound(244);
     }
     QUEUE_IO_WRITE(0x04000052, ((16 - alpha) << 8) | alpha);
 }

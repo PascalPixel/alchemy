@@ -59,5 +59,11 @@ extern char SceneId_KareiTorebi3;
 extern char SceneId_BabiChika1;
 extern char SceneId_BabiChika2;
 extern char SceneId_BabiIriguchi3;
+extern char SceneId_VinasuHeya1;
+extern char SceneId_VinasuHeya2;
+extern char SceneId_VinasuHeya3;
+extern char SceneId_VinasuHeya4;
+extern char SceneId_VinasuHeya5;
+extern char SceneId_VinasuHeya6;
 
 #endif

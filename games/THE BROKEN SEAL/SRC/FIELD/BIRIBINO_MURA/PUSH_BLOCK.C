@@ -1,25 +1,16 @@
-/* Draft of resource_38b 0x02008db4 (BiribinoMura_PushFacedBlock), from
- * games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_MURA. Remaining difference: the
- * ROM loads the scene numbers it compares from the literal pool, as
- * link-time values would; C constants compare against immediates. The
- * listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 struct FieldActor *SceneActor_FindAtTileXZ(s32 x, s32 z);
-s32 Main_080091d8(struct FieldActor *actor, union FieldCoordinate *pos);
+s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
 void ActorPresentation_RepaintTenCellsAndActorEightCell(void);
 void Scene_UpdatePuzzleActors(void);
 void FieldScene_DrawTilesByActor8Row(void);
 
-extern s16 Data_02000240_t[][1];
-extern u8 Value_0000001e[];
-extern u8 Value_00000020[];
-extern u8 Value_00000023[];
-
 /* One cell step per facing sixteenth: x in the high half, z in the low. */
-extern s32 Data_02009d3c[];
+extern s32 BiribinoMura_FacingCellSteps[];
 
 static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 {
@@ -28,7 +19,6 @@ static __inline__ s32 Value2(s32 (*f)(), s32 a0, s32 a1)
 
 /* Pushes the block the leader faces one cell ahead when nothing is in the
  * way, walking the leader along with it. */
-/* Pushes the block the leader faces one cell ahead when nothing is in the way, walking the leader along with it. */
 void BiribinoMura_PushFacedBlock(void)
 {
     struct FieldActor *leader;
@@ -42,17 +32,17 @@ void BiribinoMura_PushFacedBlock(void)
     leader = Engine_ActorGet(0);
     dir = leader->facing >> 12;
     block = SceneActor_FindAtTileXZ(
-        (leader->x.part.pixel + (Data_02009d3c[dir] >> 16)) >> 4,
-        (leader->z.part.pixel + (s16)Data_02009d3c[dir]) >> 4);
+        (leader->x.part.pixel + (BiribinoMura_FacingCellSteps[dir] >> 16)) >> 4,
+        (leader->z.part.pixel + (s16)BiribinoMura_FacingCellSteps[dir]) >> 4);
     if (block != NULL) {
         zero = 0;
         block->unknown_22 = 2;
         p = pos;
-        step = Data_02009d3c[dir];
+        step = BiribinoMura_FacingCellSteps[dir];
         p[0].fixed = block->x.fixed + (step & -0x10000);
         p[1].fixed = block->y.fixed;
         p[2].fixed = block->z.fixed + (step << 16);
-        if (Value2((s32 (*)())Main_080091d8, (s32)block, (s32)p) <= 0) {
+        if (Value2((s32 (*)())Object_CheckMovementCollision, (s32)block, (s32)p) <= 0) {
             Engine_ObjectSetAnimation(leader, 8);
             Engine_TaskWait(15);
             Engine_AudioPlayCue(185);
@@ -68,11 +58,11 @@ void BiribinoMura_PushFacedBlock(void)
             block->velocity_x = zero;
             block->velocity_z = zero;
             Engine_ObjectSetAnimation(leader, 1);
-            if (Data_02000240_t[224][0] == (s32)Value_00000023)
+            if (gGameState.scene == (s32)&SceneId_BiribinoMura3)
                 ActorPresentation_RepaintTenCellsAndActorEightCell();
-            else if (Data_02000240_t[224][0] == (s32)Value_0000001e)
+            else if (gGameState.scene == (s32)&SceneId_BiribinoMura1)
                 Scene_UpdatePuzzleActors();
-            else if (Data_02000240_t[224][0] == (s32)Value_00000020)
+            else if (gGameState.scene == (s32)&SceneId_BiribinoMura2)
                 FieldScene_DrawTilesByActor8Row();
         }
     }

@@ -10,7 +10,7 @@ struct GlyphWork {
 };
 
 extern struct GlyphWork *gWindowWork;
-extern u8 Data_08032224[];
+extern u8 UiText_Glyphs[];
 extern u8 UiText_SecondGlyphs[];
 
 /* Render a character, and the second glyph its upper bits name, into a
@@ -44,7 +44,7 @@ s32 UiText_RenderGlyphPair(s32 code, u32 *out)
         transparent = 1;
         colour = work->colour;
     }
-    input = Data_08032224 + ((code - 32) << 5);
+    input = UiText_Glyphs + ((code - 32) << 5);
     length = *(const u16 *)input;
     input += 2;
     if (work->outlined == 1) {

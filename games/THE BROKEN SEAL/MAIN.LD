@@ -628,6 +628,8 @@ SECTIONS
         "*/recon/tbs/raw/08029554.o"(.text .rodata .data .padding)
         "*/recon/tbs/raw/0802977c.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.08029910)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.08033e24)
         "*/games/THE BROKEN SEAL/TEXT/MESSAGES.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08073808)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/GAME.o"(.text .rodata .data .padding)

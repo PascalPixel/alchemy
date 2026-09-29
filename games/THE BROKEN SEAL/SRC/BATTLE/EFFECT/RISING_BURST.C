@@ -1,14 +1,5 @@
-/* 2026-09-30 (Venus, tagged asm): the fragment store to +0x34 follows
-  Random16 in the ROM with 0x10000 hoisted into sl. Calling Random16 first,
-  in C or pinned by an asm on its result, loses the sl hoist (16 to 25
-  lines); a hoisted unit local pinned by asm reshuffles the preheader. */
-/* 2026-09-29 (Mars): rewritten from ITEM_BREAK.C, BattleFx_StartItemBreak;
- * 5 differing halfwords, from 66 in the previous draft (see history). Also
- * tried: the 0x34 store after the 0x30 store, a chained assignment, and a
- * loop-invariant local for 0x10000 (fixes the order, rematerialises the add). */
-/* DRAFT 080981b0 UpdateRisingParticleBurst: all but one reorder match. Remaining:
- * the ROM calls Random16 before storing 0x10000 (held in sl) to child+0x34; this
- * stores first. Calling Random16 into a local first stops the sl hoist. */
+/* UpdateRisingParticleBurst: lift and spin the source for 31 frames, then
+   burst eight item-break fragments with random speeds and headings. */
 #include "TYPES.H"
 #include "OBJECT_EFX.H"
 #include "SYSTEM.H"
@@ -19,13 +10,14 @@ extern void Engine_ObjectSetScript(void *object, const void *script);
 extern void Object_Destroy(void *object);
 extern void Audio_PlayCue(s32);
 
-/* Lift and spin the source for 31 frames, then burst eight fragments. */
 void UpdateRisingParticleBurst(void *source)
 {
     s32 count;
     s32 dist;
     u32 vel;
     void *child;
+    /* FAKEMATCH: holds 0x10000 in sl across the burst loop as the ROM does */
+    register s32 unit asm("sl");
 
     Audio_PlayCue(154);
     for (count = 30; count >= 0; count--) {
@@ -35,14 +27,20 @@ void UpdateRisingParticleBurst(void *source)
         *(s32 *)((s8 *)source + 28) += -0x800;
         WaitFrames(1);
     }
-    for (count = 7; count >= 0; count--) {
+    count = 7;
+    unit = 0x10000;
+    for (; count >= 0; count--) {
         child = Object_Spawn(0x11d, *(s32 *)((s8 *)source + 8),
                              *(s32 *)((s8 *)source + 12),
                              *(s32 *)((s8 *)source + 16));
         if (child != 0) {
             Engine_ObjectSetScript(child, &BattleFx_FragmentScript);
-            *(s32 *)((s8 *)child + 0x34) = 0x10000;
-            *(s32 *)((s8 *)child + 0x30) = Random16() + 0x10000;
+            {
+                s32 speed = Random16();
+
+                *(s32 *)((s8 *)child + 0x34) = unit;
+                *(s32 *)((s8 *)child + 0x30) = speed + unit;
+            }
             *(s8 *)((s8 *)child + 0x55) = 2;
             *(s32 *)((s8 *)child + 0x48) = 0xa3d;
             vel = Random16();

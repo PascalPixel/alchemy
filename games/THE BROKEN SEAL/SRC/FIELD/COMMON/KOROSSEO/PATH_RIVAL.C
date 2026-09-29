@@ -23,7 +23,7 @@ struct PathWork {
 };
 
 #define PATH_RECORDER ((struct PathRecorder *)gSceneState)
-#define PATH_WORK (*(struct PathWork **)&gKorosseoWork)
+#define PATH_WORK ((struct PathWork *)gKorosseoWork)
 
 extern const s32 Korosseo_RivalFinishScript[];
 

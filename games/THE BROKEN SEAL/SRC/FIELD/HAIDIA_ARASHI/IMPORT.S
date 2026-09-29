@@ -280,6 +280,9 @@ BattleFx_StartTwelveFrameBlend:
 	.thumb_func
 BattleFx_SetBlock30ValuesMaxZero:
 	overlay_veneer BattleFx_SetBlock30ValuesMaxZeroFar
+	.global BattleFx_SetBlock30Values12Zero
+	.thumb_func
+BattleFx_SetBlock30Values12Zero:
 	overlay_veneer BattleFx_SetBlock30Values12ZeroFar
 	.global BattleFx_SetBlock30Values128One
 	.thumb_func

@@ -1,15 +1,15 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-void Main_08000128(s32 distance, s32 angle, union FieldCoordinate *pos);
-s32 Main_080091a8(s32 layer, s32 x, s32 z);
-s32 Main_080091b0(s32 layer, s32 x, s32 z);
-void Main_08009048(struct FieldSprite *sprite, s32 mode);
-struct FieldActor *Main_0808a400(s32 actor);
+void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
+s32 GetMapCellCollision(s32 layer, s32 x, s32 z);
+void ResourceMetadata_Register(struct FieldSprite *sprite, s32 mode);
+struct FieldActor *ObjectTable_Get(s32 actor);
 void Engine_ObjectCommitPosition(struct FieldActor *object);
 void SceneState_SetRecordWord102AndPlayCue288();
-void Local_020035ac(struct FieldActor *object);
-void Local_02003668(struct FieldActor *object);
+void ArutinYama_TurnRollingObjectA(struct FieldActor *object);
+void ArutinYama_TurnRollingObjectB(struct FieldActor *object);
 void ArutinYama_SettleAndMountLeader(struct FieldActor *object);
 void ArutinYama_AdvanceRollingObject(struct FieldActor *object);
 
@@ -28,7 +28,7 @@ struct Byte {
 void ArutinYama_RunRollingObject(s32 id, s32 heading)
 {
     struct FieldActor *object = Engine_ActorGet(id);
-    struct FieldActor *leader = Main_0808a400(gGameState.selected_actor);
+    struct FieldActor *leader = ObjectTable_Get(gGameState.selected_actor);
     union FieldCoordinate pos[3];
     union FieldCoordinate *p;
     struct Byte zero;
@@ -42,8 +42,8 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
         pos[0].fixed = object->x.fixed;
         pos[1].fixed = object->y.fixed;
         pos[2].fixed = object->z.fixed;
-        Main_08000128(0x100000, heading, pos);
-        if (Main_080091a8(2, pos[0].fixed, pos[2].fixed) == object->y.fixed) {
+        Vector_AddPolarOffset(0x100000, heading, pos);
+        if (Map_GetTerrainHeight(2, pos[0].fixed, pos[2].fixed) == object->y.fixed) {
             break;
         }
         heading += 0x4000;
@@ -54,7 +54,7 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
     object->unknown_22 = 2;
     leader->x.fixed = 0;
     leader->z.fixed = 0;
-    Main_08009048(object->sprite, 16);
+    ResourceMetadata_Register(object->sprite, 16);
     Engine_CameraFollowActor(id, 1);
     Engine_CameraWaitForMove();
     Call2((void (*)())Engine_CameraSetSpeed, 0x100000, 0x20000);
@@ -68,17 +68,17 @@ void ArutinYama_RunRollingObject(s32 id, s32 heading)
     pos[0].fixed = object->x.fixed;
     pos[1].fixed = object->y.fixed;
     pos[2].fixed = object->z.fixed;
-    Main_08000128(0x180000, heading, pos);
+    Vector_AddPolarOffset(0x180000, heading, pos);
     Engine_ObjectSetPosition(object, pos[0].fixed, object->y.fixed, pos[2].fixed);
     Engine_ObjectCommitPosition(object);
     Engine_AudioPlayCue(233);
     for (;;) {
-        switch (Main_080091b0(2, object->x.fixed, object->z.fixed)) {
+        switch (GetMapCellCollision(2, object->x.fixed, object->z.fixed)) {
         case 98:
-            Local_020035ac(object);
+            ArutinYama_TurnRollingObjectA(object);
             break;
         case 97:
-            Local_02003668(object);
+            ArutinYama_TurnRollingObjectB(object);
             break;
         case 96:
             SceneState_SetRecordWord102AndPlayCue288(object);

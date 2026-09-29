@@ -240,6 +240,8 @@ KareiKyuden_PartyActions:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Placement_Messages
+Placement_Messages:
 	.4byte 0x00000067
 	.4byte 0x00102066
 	.4byte 0x00206067

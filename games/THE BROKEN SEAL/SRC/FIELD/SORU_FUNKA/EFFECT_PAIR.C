@@ -32,12 +32,12 @@ struct PairWork {
 LAYOUT_OFFSET_GUARD(PairSprite_Detail, struct PairSprite, detail, 0x28);
 LAYOUT_OFFSET_GUARD(PairObject_Parent, union PairObject, link.parent, 0x68);
 
-extern struct PairWork *Data_03001f30;
+extern struct PairWork *gEffectWork;
 struct WorldMapVramBlock {
     u16 base;
     u16 offset;
 };
-extern struct WorldMapVramBlock Data_03001b10[];
+extern struct WorldMapVramBlock gVramBlockCache[];
 void Resource_ResetEntry(s32 block);
 s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
 
@@ -57,7 +57,7 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
     union PairObject *child;
     struct PairSprite *part;
     struct FieldSprite *sprite;
-    struct PairWork *work = Data_03001f30;
+    struct PairWork *work = gEffectWork;
     s32 i;
 
     Engine_AudioPlayCue(292);
@@ -82,7 +82,7 @@ void SoruFunka_SpawnEffectPair(union PairObject *parent)
                  * leaves a dead QImode zero that takes r3 from the +85
                  * address. */
                 *(u8 *)&sprite->unknown_1d |= 1;
-                sprite->tile = (Data_03001b10[sprite->vram_block].offset >> 5) & 0x3ff;
+                sprite->tile = (gVramBlockCache[sprite->vram_block].offset >> 5) & 0x3ff;
                 sprite->full_color = 0;
                 sprite->shape = 1;
                 ((struct WorldMapOam *)sprite)->size = 2;

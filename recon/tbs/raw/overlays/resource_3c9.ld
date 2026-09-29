@@ -9,7 +9,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/OBJECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
-        "*/resource_3c9_overlay.o"(.text.x0200813a)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SETUP.o"(.text)
         "*/resource_3c9_overlay.o"(.text.x020088b4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SCENE_A.o"(.text)
@@ -35,4 +35,7 @@ SECTIONS
         "*/resource_3c9_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
+    /* The compiler calls its division helper by its ABI name; here it is the
+       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    __divsi3 = IwramSignedDivideEntry;
 }

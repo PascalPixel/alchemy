@@ -2866,8 +2866,8 @@ Soru_UpdateRing:
 	.4byte 0x00000000
 	.4byte 0x00000002
 	.4byte 0x00000010
-	.global Data_0200cd88
-Data_0200cd88:
+	.global Placement_Scripts
+Placement_Scripts:
 	.4byte 0xffff0000
 	.4byte 0x000001d8
 	.4byte 0x40000142
@@ -2880,13 +2880,13 @@ Data_0200cd88:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200cdb8
-Data_0200cdb8:
+	.global Placement_Messages
+Placement_Messages:
 	.4byte 0x00000011
 	.4byte 0x0020a012
 	.4byte 0x000001ff
-	.global Data_0200cdc4
-Data_0200cdc4:
+	.global Placement_Actors
+Placement_Actors:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -3007,8 +3007,8 @@ Data_0200cdc4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200cfa4
-Data_0200cfa4:
+	.global Placement_Effects
+Placement_Effects:
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x0200a675
@@ -3066,8 +3066,8 @@ Data_0200cfa4:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global Data_0200d088
-Data_0200d088:
+	.global SoruStar_StarCells
+SoruStar_StarCells:
 	.4byte 0x0028003b
 	.4byte 0x00040003
 	.4byte 0x003e0006

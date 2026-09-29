@@ -13,6 +13,8 @@ void Engine_EventShowMessageAndWait();
 void Engine_CameraSetSpeed();
 void Engine_CameraMoveTo();
 void Engine_ActorEnableActionCallback();
+/* Actor 9's action table for the run through the storm. */
+extern u8 HaidiaArashi_StormRunActions[];
 void Engine_EventWait();
 void Engine_CameraWaitForMove();
 void Engine_ActorFaceActor();
@@ -123,7 +125,7 @@ void HaidiaArashi_RunScene02DEC(void)
             Call2(Engine_CameraSetSpeed, 0x13333, 0x2666);
             Call4(Engine_CameraMoveTo, 0x650000, -1, 0x4ad0000, 1);
             Call3(Engine_ActorSetSpeed, 9, 0x16666, 0xb333);
-            Call2(Engine_ActorEnableActionCallback, 9, 0x200cd1c);
+            Call2(Engine_ActorEnableActionCallback, 9, (s32)HaidiaArashi_StormRunActions);
             Engine_EventWait(60);
             Call2(Engine_CameraSetSpeed, 0x9999, 0x1333);
             Call4(Engine_CameraMoveTo, 0xbb0000, -1, 0x5300000, 1);

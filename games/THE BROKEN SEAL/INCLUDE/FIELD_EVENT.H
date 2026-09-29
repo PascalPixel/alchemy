@@ -380,6 +380,25 @@ void Engine_ObjectDispatchRelease(struct FieldActor *object);
 void Engine_MapWaitWorkValuesBelow256(void);
 void Engine_RunRisingObjectSequence(struct FieldActor *object, s32 mode);
 
+#ifdef FIELD_STAGED_ACTOR_IMPORTS
+/*
+ * An overlay that links the staged-actor code (FIELD/COMMON/OBJECT/
+ * STAGED_ACTOR.C) names these imports as that code does, by the main image's
+ * names, so each of its import veneers carries one name. Its scenes define
+ * FIELD_STAGED_ACTOR_IMPORTS and reach the same imports by those names.
+ */
+void Battle_WaitMode0(s32 frames);
+void WaitFrames(s32 frames);
+struct FieldActor *Object_GetById(s32 actor);
+void ObjectMotion_SetSpeedParameters(s32 actor, s32 speed, s32 acceleration);
+void ObjectMotion_CommitCurrentPositionAndActivate(s32 actor);
+void Object_SetModeById(s32 actor, s32 animation);
+void Object_SetMode(struct FieldActor *object, s32 animation);
+void Map_CopyCellAttributeRect(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x,
+                               s32 dest_y);
+void Audio_PlayCue(s32 cue);
+#endif
+
 /* Holding the party still while an event plays; waits count frames. */
 static inline void Event_Begin(void)
 {
@@ -391,15 +410,29 @@ static inline void Event_End(void)
     Engine_EventEnd();
 }
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Event_Wait(s32 frames)
 {
     Engine_EventWait(frames);
 }
+#else
+static inline void Event_Wait(s32 frames)
+{
+    Battle_WaitMode0(frames);
+}
+#endif
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Task_Wait(s32 frames)
 {
     Engine_TaskWait(frames);
 }
+#else
+static inline void Task_Wait(s32 frames)
+{
+    WaitFrames(frames);
+}
+#endif
 
 /*
  * Dialogue: choose the message, then let an actor say it. Each message shown
@@ -461,20 +494,34 @@ static inline void Event_WaitForScreen(void)
  * Actors. Positions set directly are fixed-point; destinations and offsets
  * are whole pixels. Walking plays the walk animation on the way.
  */
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline struct FieldActor *Actor_Get(s32 actor)
 {
     return Engine_ActorGet(actor);
 }
+#else
+static inline struct FieldActor *Actor_Get(s32 actor)
+{
+    return Object_GetById(actor);
+}
+#endif
 
 static inline void Actor_SetPosition(s32 actor, s32 fixed_x, s32 fixed_z)
 {
     Engine_ActorSetPosition(actor, fixed_x, fixed_z);
 }
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
 {
     Engine_ActorSetSpeed(actor, speed, acceleration);
 }
+#else
+static inline void Actor_SetSpeed(s32 actor, s32 speed, s32 acceleration)
+{
+    ObjectMotion_SetSpeedParameters(actor, speed, acceleration);
+}
+#endif
 
 static inline void Actor_SetDestination(s32 actor, s32 x, s32 z)
 {
@@ -497,10 +544,17 @@ static inline void Actor_WalkBy(s32 actor, s32 dx, s32 dz)
 }
 
 /* Waits until the actor reaches its destination, then stands it still. */
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Actor_WaitForMove(s32 actor)
 {
     Engine_ActorWaitForMove(actor);
 }
+#else
+static inline void Actor_WaitForMove(s32 actor)
+{
+    ObjectMotion_CommitCurrentPositionAndActivate(actor);
+}
+#endif
 
 static inline void Actor_FaceDirection(s32 actor, s32 facing, s32 frames)
 {
@@ -522,10 +576,17 @@ static inline void Actor_FaceEachOther(s32 actor, s32 other, s32 frames)
     Engine_ActorFaceEachOther(actor, other, frames);
 }
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Actor_SetAnimation(s32 actor, s32 animation)
 {
     Engine_ActorSetAnimation(actor, animation);
 }
+#else
+static inline void Actor_SetAnimation(s32 actor, s32 animation)
+{
+    Object_SetModeById(actor, animation);
+}
+#endif
 
 static inline void Actor_SetAnimationAndWait(s32 actor, s32 animation)
 {
@@ -600,11 +661,19 @@ static inline void Map_CopyCells(s32 src_x, s32 src_y, s32 width, s32 height, s3
     Engine_MapCopyCells(src_x, src_y, width, height, dest_x, dest_y);
 }
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
                                           s32 dest_x, s32 dest_y)
 {
     Engine_MapCopyCellAttributes(src_x, src_y, width, height, dest_x, dest_y);
 }
+#else
+static inline void Map_CopyCellAttributes(s32 src_x, s32 src_y, s32 width, s32 height,
+                                          s32 dest_x, s32 dest_y)
+{
+    Map_CopyCellAttributeRect(src_x, src_y, width, height, dest_x, dest_y);
+}
+#endif
 
 static inline void Map_Redraw(void)
 {
@@ -639,10 +708,12 @@ static inline void GameFlag_Clear(s32 flag)
     Engine_GameFlagClear(flag);
 }
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Audio_PlayCue(s32 cue)
 {
     Engine_AudioPlayCue(cue);
 }
+#endif
 
 static inline void Shop_Open(s32 shop, s32 keeper)
 {
@@ -710,10 +781,17 @@ static inline struct FieldActor *Object_Create(s32 type, s32 fixed_x, s32 fixed_
     return Engine_ObjectCreate(type, fixed_x, fixed_y, fixed_z);
 }
 
+#ifndef FIELD_STAGED_ACTOR_IMPORTS
 static inline void Object_SetAnimation(struct FieldActor *object, s32 animation)
 {
     Engine_ObjectSetAnimation(object, animation);
 }
+#else
+static inline void Object_SetAnimation(struct FieldActor *object, s32 animation)
+{
+    Object_SetMode(object, animation);
+}
+#endif
 
 static inline void Object_SetScript(struct FieldActor *object, const s32 *script)
 {

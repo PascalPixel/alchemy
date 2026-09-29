@@ -1,20 +1,20 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
 
 extern const u8 System_BasicColorPalette[];
 
 /* The window frame colours of background bank 15. */
 extern const u16 Ui_WindowPalette[];
 
-extern u8 Value_00000013;
 
 /* Loads the shared window graphics: resource 0x13 into BG character block
    0, the window palette into background bank 15, the bank-15 frame colours
    and the object palettes. */
 void Ui_LoadWindowGraphics(void)
 {
-    Dma_Set(Resource_GetTableEntry((s32)&Value_00000013), (void *)0x06000000, 0x84000800,
+    Dma_Set(Resource_GetTableEntry((s32)&ResourceId_WindowTiles), (void *)0x06000000, 0x84000800,
             (volatile u32 *)0x040000d4);
     Dma_Set((const void *)Ui_WindowPalette, (void *)0x050001e0, 0x80000010,
             (volatile u32 *)0x040000d4);

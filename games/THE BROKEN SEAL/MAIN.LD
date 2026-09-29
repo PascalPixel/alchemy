@@ -1994,6 +1994,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/ANIMREF1.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/ANIMREF2.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.08189814)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/DIRECTORY.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.083203c8)
         "*/recon/tbs/overlays.o"(.overlays)
         "*/recon/tbs/unidentified.o"(.unidentified.087fd4b9)
     } > ROM

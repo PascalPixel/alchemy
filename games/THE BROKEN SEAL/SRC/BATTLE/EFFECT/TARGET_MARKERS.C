@@ -3,6 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "RESOURCE_IDS.H"
 
 /*
  * Battle effect that pops a marker over each affected unit in turn. Unit i
@@ -14,7 +15,6 @@
  */
 
 extern void *gWorkSlot[];
-extern u8 Value_0000007a;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
@@ -44,7 +44,7 @@ void BattleFx_RunTargetMarkers(struct BattleEffectArgument *efx)
     BattleFx_BeginCanvasLayer(1);
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
-    Resource_LoadAndDecompress((s32)&Value_0000007a, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlameColumnSheet, work, 1, 1);
     if (work->effect->side == 1) {
         *(s32 *)0x04000028 = -0x7000;
     }

@@ -4,6 +4,7 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "PARTY_STATE.H"
+#include "RESOURCE_IDS.H"
 
 extern struct PartyState gGameState;
 void GameFlag_ClearBit(s32 flag);
@@ -44,7 +45,6 @@ void GameFlag_RefreshLureCap(void)
 
 /* runtime/System_GetBuildStampTime.c */
 extern u8 gDebugMode;
-extern u8 Value_00000002[];
 
 u16 Runtime_GetBuildStampTime(void)
 {
@@ -62,7 +62,7 @@ u16 Runtime_GetBuildStampTime(void)
     s32 shifted;
     s32 result;
 
-    digits = Resource_GetTableEntry((s32)Value_00000002);
+    digits = Resource_GetTableEntry((s32)&ResourceId_BuildStamp);
     hourTens = *digits;
     hours = (hourTens - '0') * 10;
     digits++;

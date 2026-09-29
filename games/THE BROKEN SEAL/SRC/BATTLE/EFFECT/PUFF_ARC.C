@@ -4,6 +4,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -15,9 +16,8 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
    This owner reads kinds 39 (its work block), 40 and 46. */
 extern u8 gWorkSlot[];
 
-/* Value_ symbols carry a literal the reference loads from its pool rather
-   than materializing with a mov. */
-extern u8 Value_000000b4;
+/* Resource numbers are ResourceId_ rows, which the reference loads from its
+   pool rather than materializing with a mov. */
 
 void BattleFx_BeginCanvasLayer(s32);
 void Audio_PlayCue(s32);
@@ -88,7 +88,7 @@ void BattleFx_RunPuffArc(struct BattleEffectArgument *efx)
     BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000050 = 0x3F46;
     *(s16 *)0x04000052 = 0x100E;
-    Resource_LoadAndDecompress((s32)&Value_000000b4, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_EmberStreakSheet, work, 1, 1);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     draw = (DrawRectangle)cache[46 - 39];
     if (WORK_EFX->actors[0] > 127) {

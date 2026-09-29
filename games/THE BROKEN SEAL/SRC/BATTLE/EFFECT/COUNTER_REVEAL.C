@@ -4,6 +4,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 extern u8 gMapCellBuffer[];
 
 extern u8 gBattleFxWork[];
@@ -22,7 +23,7 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * Unlike the member-orbit effect this owner drives a single fixed party
  * member (its slot index lives at object+0x24, not an iterated array from
  * +0x24), runs a fixed 132-frame count rather than member_count*16+48, loads
- * a second graphics resource (Value_000000ac) straight into OBJ VRAM at
+ * a second graphics resource (ResourceId_RedCrescentSheetA) straight into OBJ VRAM at
  * 0x02010000, and drives BG2PC (0x04000052) directly rather than the BG2
  * reference-point registers.  Frames 88-99 additionally reveal a run of
  * glyph-style rectangles (width/height pairs 57x98, 99x69, 128x91, 128x59,
@@ -38,8 +39,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * pointer, not a call to a real symbol at that address.
  */
 
-extern u8 Value_000000ab;
-extern u8 Value_000000ac;
 extern u8 *gBattleWork;
 /* The two seven-byte-stride rectangle tables are plain, non-const arrays:
  * their element loads are ordered against the outgoing-argument stores at
@@ -87,12 +86,12 @@ void BattleFx_RunCounterReveal(void *object)
     BattleFx_BeginTiledCanvas(0);
     (*(s16 *)((u8 *)((void *)0x04000020) + (0))) = 0x100;
     (*(s16 *)((u8 *)((void *)0x04000020) + (0x32))) = 0x1010;
-    palette = Resource_GetTableEntry((s32)&Value_000000ab);
+    palette = Resource_GetTableEntry((s32)&ResourceId_CounterRevealSheet);
     status = Iwram_CopyWords((void *)0x05000000, palette, 128);
     palette = (u8 *)palette + 128;
     status = Resource_DecodeType01(palette, work);
     sprite_vram = (void *)0x02010000;
-    palette = Resource_GetTableEntry((s32)&Value_000000ac);
+    palette = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
     palette = (u8 *)palette + 128;
     status = Resource_DecodeType01(palette, sprite_vram);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 1);

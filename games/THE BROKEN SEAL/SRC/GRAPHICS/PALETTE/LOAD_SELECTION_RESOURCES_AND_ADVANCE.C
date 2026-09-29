@@ -1,10 +1,10 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
+#include "RESOURCE_IDS.H"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 
 extern u8 *gSelectionWork;
-extern u8 Data_000000e8[];
 
 void ShopCursor_AdvanceFar(void *);
 void ShopCursor_MoveTowardTargetFar(void *);
@@ -26,9 +26,9 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
     if (sel == 0) {
         src0 = (FIELD(base, u16, 0x57C) & 7) +
-            (s32)Data_000000e8;
+            (s32)&ResourceId_ShopCursorFrames;
     } else {
-        src0 = (s32)Data_000000e8;
+        src0 = (s32)&ResourceId_ShopCursorFrames;
     }
     VramBlock_LoadCached(
         FIELD(FIELD(base, void *, 0x5B4), u8, 14),
@@ -37,9 +37,9 @@ void GraphicsPalette_LoadSelectionResourcesAndAdvance(void)
 
     if (sel == 1) {
         src1 = (FIELD(base, u16, 0x57C) & 7) +
-            (s32)Data_000000e8;
+            (s32)&ResourceId_ShopCursorFrames;
     } else {
-        src1 = (s32)Data_000000e8;
+        src1 = (s32)&ResourceId_ShopCursorFrames;
     }
     VramBlock_LoadCached(
         FIELD(FIELD(base, void *, 0x5C4), u8, 14),

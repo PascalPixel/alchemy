@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "DMA.H"
+#include "RESOURCE_IDS.H"
 
 struct BgScroll {
     s16 x;
@@ -10,7 +11,6 @@ struct BgScroll {
 extern u8 Data_03001d18;
 extern struct BgScroll gBgScroll[4];
 extern volatile u32 gKeyState;
-extern u8 Value_00000018[];
 
 void Audio_PlayCue(s32 cue);
 void Scheduler_ResetTaskTable(void);
@@ -38,7 +38,7 @@ s32 Title_ShowSplashScreen(s32 mode)
 
     Audio_PlayCue(110);
     Data_03001d18 = 1;
-    resource = (s32)Value_00000018;
+    resource = (s32)&ResourceId_NintendoLogo;
     blank = 0x1ff;
     Scheduler_ResetTaskTable();
     Blend_SetDarkenTarget16(1);

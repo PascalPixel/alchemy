@@ -6,6 +6,10 @@
 //! - `.gbapal`: the image's palette as little-endian BGR555.
 //! - `.bitmap`: the pixels row by row, one palette index per byte.
 //! - `.4bpp`, `.8bpp`: the pixels as GBA tiles, row-major.
+//! - `.frames`: a sprite bank. The image is one square frame wide with its
+//!   frames stacked, a front and a back pose in turn. The bank is a table of
+//!   each frame's offset in that order, ending 0, then the back frames and
+//!   then the front frames, each zero-skip coded.
 //!
 //! Data forms read the identified table or tilemap `STEM.BIN`:
 //!
@@ -23,6 +27,12 @@
 //!   record's first row) and `rows`, then one line per glyph: its code in
 //!   hex and its halfwords.
 //!
+//! A picture made of several reads its part list `STEM.TSV`:
+//!
+//! - `.parts`: each line names a part image beside the list and that part's
+//!   form, such as `BLUE_FLAME_COLUMN\tbitmap`; the parts are built in turn and
+//!   joined.
+//!
 //! Either may then be packed:
 //!
 //! - `.lz`: the packer's LZ, the smaller of its general (tag 0) and
@@ -33,7 +43,7 @@
 //!   before it.
 use crate::graphics::{indices, metatiles};
 use crate::lz::{compress_mtf4, compress_palette, compress_tagged, LzMachine};
-use psynergy::assets::compression::{encode_delta7, encode_tilemap_delta};
+use psynergy::assets::compression::{encode_delta7, encode_tilemap_delta, encode_zero_skip};
 use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
 /// The resource packer's compressor, as the streams in both games show: the
@@ -43,7 +53,7 @@ pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 
 /// Whether a form reads a table or tilemap rather than an image.
 fn data_form(form: &str) -> bool {
-    matches!(form, "bin" | "delta0" | "delta1" | "delta2")
+    matches!(form, "bin" | "delta0" | "delta1" | "delta2" | "parts")
 }
 
 /// The input a built file name reads, relative to the same directory: the
@@ -54,7 +64,11 @@ pub fn input_name(built: &str) -> Result<String, String> {
         .split_once('.')
         .ok_or_else(|| format!("{built} names no form"))?;
     let form = rest.split('.').next().unwrap_or_default();
-    let extension = if data_form(form) { "BIN" } else { "PNG" };
+    let extension = match form {
+        "parts" => "TSV",
+        form if data_form(form) => "BIN",
+        _ => "PNG",
+    };
     Ok(if directory.is_empty() {
         format!("{stem}.{extension}")
     } else {
@@ -84,6 +98,7 @@ pub fn build_file_with(
     let pixels = if data_form(form) {
         match form {
             "bin" => input.to_vec(),
+            "parts" => parts(built, input, sibling)?,
             _ => encode_tilemap_delta(input, form.as_bytes()[5] - b'0')
                 .map_err(|error| format!("{built}: {}", error.0))?,
         }
@@ -103,6 +118,27 @@ pub fn build_file_with(
         Some("d7") => encode_delta7(&pixels).map_err(|error| format!("{built}: {}", error.0)),
         Some(other) => Err(format!("{built}: unknown codec .{other}")),
     }
+}
+
+/// The joined parts a part list names, each built from its image beside it.
+fn parts(
+    built: &str,
+    list: &[u8],
+    sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
+) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(list).map_err(|_| format!("{built}: part list is not text"))?;
+    let mut output = Vec::new();
+    for line in text.lines().filter(|line| !line.trim().is_empty()) {
+        let (part, form) = line
+            .split_once('\t')
+            .ok_or_else(|| format!("{built}: {line:?} needs a part and its form"))?;
+        if data_form(form) || form == "font" {
+            return Err(format!("{built}: part {part} must be an image form"));
+        }
+        let name = format!("{part}.{form}");
+        output.extend(build_file(&name, &sibling(&input_name(&name)?)?)?);
+    }
+    Ok(output)
 }
 
 /// A font's glyph records from its sheet and table.
@@ -164,6 +200,32 @@ fn font(built: &str, png: &[u8], table: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
+/// A sprite bank of square frames stacked in one column.
+fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
+    if width == 0 || !height.is_multiple_of(width) {
+        return Err(format!("{built}: frames must be square and stacked"));
+    }
+    let frames: Vec<&[u8]> = pixels.chunks(width * width).collect();
+    let table = 4 * (frames.len() + 1);
+    let mut offsets = vec![0u32; frames.len()];
+    let mut body = Vec::new();
+    let back = (1..frames.len()).step_by(2);
+    let front = (0..frames.len()).step_by(2);
+    for index in back.chain(front) {
+        offsets[index] = (table + body.len()) as u32;
+        body.extend(
+            encode_zero_skip(frames[index]).map_err(|error| format!("{built}: {}", error.0))?,
+        );
+    }
+    let mut output: Vec<u8> = offsets
+        .iter()
+        .chain([&0])
+        .flat_map(|offset| offset.to_le_bytes())
+        .collect();
+    output.extend(body);
+    Ok(output)
+}
+
 fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
     let image = indexed_bitmap_png(png).map_err(|error| format!("{built}: {}", error.0))?;
     let (width, height) = (image.width as usize, image.height as usize);
@@ -172,6 +234,7 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "bitmap" => indices(&image),
         "4bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp4, 1, 1)?,
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
+        "frames" => sprite_bank(built, &indices(&image), width, height)?,
         other => return Err(format!("{built}: unknown form .{other}")),
     })
 }
@@ -212,6 +275,15 @@ mod tests {
         .unwrap();
         assert_eq!(built, [8, 0, 0, 0, 1, 0x80, 0, 0]);
         assert!(build_file("F.font", &sheet).is_err());
+        // Parts join in list order.
+        let joined = build_file_with("P.parts", b"A\tbitmap\nB\tbitmap\n", &|name| {
+            Ok(match name {
+                "A.PNG" => png_from_bitmap(&[1, 2], &[0, 0, 1, 0, 2, 0, 3, 0], 2).unwrap(),
+                _ => png_from_bitmap(&[3], &[0, 0, 1, 0, 2, 0, 3, 0], 1).unwrap(),
+            })
+        })
+        .unwrap();
+        assert_eq!(joined, [1, 2, 3]);
         let palette: Vec<u8> = (0..16u16)
             .flat_map(|color| (color * 0x421).to_le_bytes())
             .collect();
@@ -225,6 +297,12 @@ mod tests {
         assert_eq!(build_file("A.4bpp.mtf", &png).unwrap()[0], 2);
         assert_eq!(build_file("A.bitmap.d7", &png).unwrap().len() % 2, 0);
         assert!(build_file("A.4bpp.zip", &png).is_err());
+        // Two 2x2 frames: the back one (1) is stored before the front one (0).
+        let bank = png_from_bitmap(&[1, 0, 0, 2, 3, 3, 3, 3], &palette, 2).unwrap();
+        assert_eq!(
+            build_file("A.frames", &bank).unwrap(),
+            [17, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 3, 3, 3, 3, 0, 1, 0xe1, 2, 0]
+        );
         // A bitmap may be any size; tiles need whole tiles.
         let odd = png_from_bitmap(&[3; 60], &palette, 12).unwrap();
         assert_eq!(build_file("A.bitmap", &odd).unwrap().len(), 60);

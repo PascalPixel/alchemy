@@ -86,7 +86,7 @@ impl Kind {
             Kind::LoopForm => "change loop form",
             Kind::PointerIndex => "pointer arithmetic or indexing",
             Kind::CompoundAssignment => "split or join a compound assignment",
-            Kind::ConditionAssignment => "move an assignment into or out of a condition",
+            Kind::ConditionAssignment => "move an assignment into or out of a condition or call",
             Kind::Register => "toggle register",
             Kind::InvertIf => "invert an if/else",
             Kind::ZeroTest => "test truth or compare with zero",
@@ -1994,9 +1994,20 @@ enum ConditionSite {
     OutOf(usize),
 }
 
+/// A call statement, or the assignment of a call's result: its arguments
+/// can take an assignment the way a condition can.
+fn call_statement(expr: &Expr) -> bool {
+    match expr {
+        Expr::Call(..) => true,
+        Expr::Assign(_, _, value) => matches!(value.as_ref(), Expr::Call(..)),
+        _ => false,
+    }
+}
+
 fn condition_of(stmt: &Stmt) -> Option<&Expr> {
     match stmt {
         Stmt::If(cond, ..) | Stmt::Switch(cond, _) => Some(cond),
+        Stmt::Expr(expr) if call_statement(expr) => Some(expr),
         _ => None,
     }
 }
@@ -2004,8 +2015,28 @@ fn condition_of(stmt: &Stmt) -> Option<&Expr> {
 fn condition_of_mut(stmt: &mut Stmt) -> Option<&mut Expr> {
     match stmt {
         Stmt::If(cond, ..) | Stmt::Switch(cond, _) => Some(cond),
+        Stmt::Expr(expr) if call_statement(expr) => Some(expr),
         _ => None,
     }
+}
+
+/// Where an assignment can sit embedded: a condition, or a call. A call's
+/// result assignment is the statement itself, so only its call counts.
+fn embedding_of(stmt: &Stmt) -> Option<&Expr> {
+    match condition_of(stmt)? {
+        Expr::Assign(_, _, value) if matches!(stmt, Stmt::Expr(_)) => Some(value),
+        cond => Some(cond),
+    }
+}
+
+fn embedding_of_mut(stmt: &mut Stmt) -> Option<&mut Expr> {
+    if matches!(stmt, Stmt::Expr(Expr::Assign(..))) {
+        let Some(Expr::Assign(_, _, value)) = condition_of_mut(stmt) else {
+            return None;
+        };
+        return Some(value);
+    }
+    condition_of_mut(stmt)
 }
 
 /// The only unguarded, evaluated occurrence of `name` in `cond`.
@@ -2075,7 +2106,7 @@ fn condition_sites(stmts: &[Stmt], env: &Env) -> Vec<ConditionSite> {
                 }
             }
         }
-        if let Some(cond) = condition_of(&stmts[index]) {
+        if let Some(cond) = embedding_of(&stmts[index]) {
             if let Some((name, value)) = embedded_assignment(cond, env) {
                 let mut copy = cond.clone();
                 let mut replaced = false;
@@ -2120,12 +2151,12 @@ fn condition_apply(stmts: &mut Vec<Stmt>, site: ConditionSite, env: &Env, _: &mu
         }
         ConditionSite::OutOf(index) => {
             let Some((name, value)) =
-                condition_of(&stmts[index]).and_then(|cond| embedded_assignment(cond, env))
+                embedding_of(&stmts[index]).and_then(|cond| embedded_assignment(cond, env))
             else {
                 return false;
             };
             let assignment = Expr::Assign(None, Box::new(Expr::ident(&name)), Box::new(value));
-            let Some(cond) = condition_of_mut(&mut stmts[index]) else {
+            let Some(cond) = embedding_of_mut(&mut stmts[index]) else {
                 return false;
             };
             let mut replaced = false;
@@ -2228,7 +2259,7 @@ mod tests {
     use super::super::parse::{locate, scan_unit};
     use super::*;
 
-    const HEADER: &str = "typedef signed char s8;\ntypedef unsigned char u8;\ntypedef signed short s16;\ntypedef unsigned short u16;\ntypedef signed int s32;\ntypedef unsigned int u32;\nstruct Unit { u16 hp; u16 max; u8 flags; };\nextern struct Unit *gUnit;\nextern s32 gX;\nextern s32 gY;\nextern u16 gTable[8];\ns32 Rand(void);\nvoid Use(s32);\n";
+    const HEADER: &str = "typedef signed char s8;\ntypedef unsigned char u8;\ntypedef signed short s16;\ntypedef unsigned short u16;\ntypedef signed int s32;\ntypedef unsigned int u32;\nstruct Unit { u16 hp; u16 max; u8 flags; };\nextern struct Unit *gUnit;\nextern s32 gX;\nextern s32 gY;\nextern u16 gTable[8];\ns32 Rand(void);\nvoid Use(s32);\ns32 Use2(s32);\n";
 
     fn load(body: &str) -> (Function, Env) {
         let source = format!("{HEADER}s32 F(s32 a, s32 b)\n{{\n{body}\n}}\n");
@@ -2644,6 +2675,22 @@ mod tests {
             "s32 x;\nx = Rand();\nif (x == x + 1) return 1;\nreturn 0;"
         )
         .is_empty());
+        // A call's argument takes the assignment as a condition does.
+        let found = outcomes(
+            Kind::ConditionAssignment,
+            "s32 x;\nx = a + 1;\nUse(x);\nreturn x;",
+        );
+        assert_eq!(found, vec!["s32 x; Use(x = a + 1); return x;".to_string()]);
+        let found = outcomes(
+            Kind::ConditionAssignment,
+            "s32 x;\ngX = Use2(x = a + 1);\nreturn x;",
+        );
+        assert_eq!(
+            found,
+            vec!["s32 x; x = a + 1; gX = Use2(x); return x;".to_string()]
+        );
+        // The result assignment of a call is the statement, not embedded.
+        assert!(outcomes(Kind::ConditionAssignment, "gX = Rand();\nreturn 0;").is_empty());
     }
 
     #[test]

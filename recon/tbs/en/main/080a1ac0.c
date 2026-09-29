@@ -1,3 +1,9 @@
+/* 2026-09-28: 264/264 bytes, 34 aligned edits (was 40). Reading the cursor
+ * y into py before its eight-pixel pull-back, and again after it, gives the
+ * reference's single y load kept in r6 for the test and the slide. The
+ * remaining edits are register roles only: the reference allocates px and
+ * py (r5/r6) before the cursor pointer (r7); here the cursor wins r5, since
+ * its 21 references over 72 insns outrank both coordinates. */
 #include "TYPES.H"
 
 /* main:080a1ac0, complete 264-byte body through 080a1bc8.
@@ -93,11 +99,11 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     if (cursor->x - 8 > 0) {
         cursor->x -= 8;
     }
-    if (cursor->y - 8 > 0) {
-        cursor->y -= 8;
-    }
-    px = cursor->x << 4;
     py = cursor->y;
+    if (py - 8 > 0)
+        cursor->y = py - 8;
+    py = cursor->y;
+    px = cursor->x << 4;
     dx = Math_Div((x << 4) - px + 1, 2);
     py <<= 4;
     dy = Math_Div((y << 4) - py + 1, 2);

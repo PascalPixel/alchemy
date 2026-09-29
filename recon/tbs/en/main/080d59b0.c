@@ -1,18 +1,24 @@
-/* Draft, byte-exact but not adoptable (2026-09-28): 664 of 664 bytes,
- * 0 differing halfwords. Rewritten from the listing in the style of the
+/* Draft, not exact (2026-09-29): 664 of 664 bytes, 19 differing halfwords,
+ * all one register swap. Rewritten from the listing in the style of the
  * matched effect family (TARGET_BURSTS.C, SWIRLING_STARS.C): 32 rocks are
  * dropped from above the scene, the first twelve drawn from frame i * 4,
  * bouncing once they pass the floor; each affected unit is lifted with
- * ObjectGroup_UpdateMembers on frame i * 16 + 64. The last residual closed
- * when the bounce takes the speed (vy + 1) before placing the rock on the
- * floor and stepping z.
- * Blockers before adoption:
- * - the resource id 0xa8 is a literal-pool word in the reference, which
- *   only the name-decoded link constant Value_000000a8 reproduces here; it
- *   needs a real resource symbol, not a new equate;
- * - the rock buffer is spelled as the literal 0x02010000: the named
- *   gMapCellBuffer (same address) changes the seeding loop's induction
- *   (672 bytes, or 664 bytes and 48 edits as a walking pointer). */
+ * ObjectGroup_UpdateMembers on frame i * 16 + 64. The bounce takes the
+ * speed (vy + 1) before placing the rock on the floor and stepping z.
+ * 2026-09-29: the literal buffer address is gone. The rocks now live in the
+ * linker-placed gMapCellBuffer, reached through a pointer taken once at the
+ * top; the seeding loop then keeps the ROM's walking pointer. Spelling the
+ * symbol at each use instead gives 672 bytes.
+ * Remaining: in the draw loop the ROM keeps the rock pointer in r6 and the
+ * floor constant 0x5c0000 in r5; here they are swapped. Global allocation
+ * ranks the pointer (50 weighted references over 69 insns) above the
+ * constant (9 over 10), so the pointer takes r5 first; the ROM allocated the
+ * constant first. Index-derived pointers, a separate seeding pointer, the
+ * loop-header initialiser, >= 0x5c0001 and 92 << 16 leave it unchanged.
+ * Blocker before adoption: the resource id 0xa8 is a literal-pool word in
+ * the reference, which a link-time constant reproduces (main names
+ * resource ids this way, e.g. Value_0000004f); Value_000000a8 is not yet
+ * defined in CONSTANTS.LD. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -22,6 +28,7 @@
 extern u8 Value_000000a8;
 extern void *gBattleFxWork[];
 extern s32 gCameraWork;
+extern struct EffectStep gMapCellBuffer[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_EndCanvasLayer(void);
@@ -43,12 +50,14 @@ void BattleFx_RunBouncingRocks(void *object)
     s32 record[3];
 
     struct EffectStep *rock;
+    struct EffectStep *rocks;
     s32 i;
     s32 frame;
     DrawRectangleFn draw_b;
     DrawRectangleFn draw_a;
     s32 member;
 
+    rocks = gMapCellBuffer;
     heap_cache = gBattleFxWork;
     cursor = heap_cache;
     work = *cursor++;
@@ -63,7 +72,7 @@ void BattleFx_RunBouncingRocks(void *object)
     BattleEffect_LoadWork(47, 7, 7, 15, 1);
     draw_b = (DrawRectangleFn)heap_cache[8];
     for (i = 0; i != 32; i++) {
-        rock = &((struct EffectStep *)0x02010000)[i];
+        rock = &rocks[i];
         rock->x = ((Random16() & 63) + 32) << 16;
         rock->y = -0x200000;
         rock->velocity_y = Random16() & 0;
@@ -95,7 +104,7 @@ void BattleFx_RunBouncingRocks(void *object)
             if (frame == member * 16 + 64)
                 ObjectGroup_UpdateMembers(work->effect->actors[member], 0, 5, -1, 0);
         }
-        rock = (struct EffectStep *)0x02010000;
+        rock = rocks;
         for (i = 0; i != 12; i++, rock++) {
             if (frame > i * 4 && rock->y <= 0x7fffff) {
                 s32 cel;

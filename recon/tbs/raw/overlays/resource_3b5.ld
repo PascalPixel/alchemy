@@ -8,7 +8,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/EFFECT.o"(.text)
-        "*/resource_3b5_overlay.o"(.text.x02008040)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/DISTANCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/PROXIMITY.o"(.text)
         "*/resource_3b5_overlay.o"(.text.x020082f0)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_MACHI/EVENTS.o"(.text)

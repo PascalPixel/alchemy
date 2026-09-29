@@ -150,6 +150,9 @@ Engine_ActorStartRepeatedMotion:
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

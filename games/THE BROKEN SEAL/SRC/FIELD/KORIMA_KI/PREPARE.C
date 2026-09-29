@@ -1,11 +1,8 @@
-/* Draft of resource_395 0x02009070..0x020091e8 (376 bytes with pool),
- * KorimaKi_PrepareActors, the overlay's first entry; the listing keeps the
- * rows. Remaining difference: the reference loads 40 and 0 from its literal
- * pool, link-time values; integers are immediates (372 bytes, 175 differ
- * from +0x31). */
+/* Korima's tree: the overlay's first entry stages the tree actors and sets
+ * Retreat to return the party to the Korima bridge. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-
+#include "SCENE_IDS.H"
 
 void PaletteScene_AdjustPaletteWindow(s32 step);
 
@@ -22,9 +19,11 @@ s32 KorimaKi_PrepareActors(void)
     second = Engine_ActorGet(11);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(14, 15);
-    *(s32 *)(*(u8 **)&gEventWork + 0x1c0) = 0x204;
-    ((u16 *)&gGameState)[288] = 40;
-    ((u16 *)&gGameState)[289] = 4;
+    gEventWork->start_transition = 0x204;
+    gGameState.retreat_scene = (s32)&SceneId_KorimaHashi;
+    gGameState.retreat_entrance = 4;
+    /* FAKEMATCH: the heights are cleared through a u8 local zero, which the
+     * compiler loads from the pool. */
     zero = 0;
     if (!Engine_GameFlagIsSet(0x845))
         PaletteScene_AdjustPaletteWindow(3);

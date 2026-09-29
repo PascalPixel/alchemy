@@ -1,138 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008cd0,"ax",%progbits
-	.balign 4
-	.global RamakanSabaku_RaiseQuarterTriggers
-	.thumb_func
-RamakanSabaku_RaiseQuarterTriggers:
-	push	{r5, r6, lr}
-	ldr	r0, [pc, #268]
-	ldr	r3, [pc, #268]
-	ldr	r2, [pc, #272]
-	ldr	r6, [r3, #0]
-	adds	r3, r2, r0
-	movs	r0, #0
-	ldrsh	r1, [r3, r0]
-	movs	r3, #100
-	adds	r0, r1, #0
-	muls	r0, r3
-	movs	r1, #139
-	lsls	r1, r1, #2
-	adds	r2, r2, r1
-	movs	r3, #0
-	ldrsh	r1, [r2, r3]
-	bl 0x02009c84
-	adds	r5, r0, #0
-	ldr	r0, [pc, #244]
-	bl 0x02009d44
-	cmp	r0, #0
-	bne.n	.L_02000dda
-	ldr	r0, [pc, #236]
-	bl 0x02009d44
-	cmp	r0, #0
-	beq.n	.L_02000d28
-	cmp	r5, #74
-	bgt.n	.L_02000d28
-	ldr	r0, [pc, #224]
-	bl 0x02009d54
-	ldr	r0, [pc, #220]
-	bl 0x02009d54
-	movs	r0, #193
-	lsls	r0, r0, #2
-	bl 0x02009d54
-	ldr	r0, [pc, #212]
-	bl 0x02009d54
-.L_02000d28:
-	ldr	r0, [pc, #208]
-	bl 0x02009d44
-	cmp	r0, #0
-	beq.n	.L_02000d50
-	cmp	r5, #49
-	bgt.n	.L_02000d50
-	ldr	r0, [pc, #196]
-	bl 0x02009d54
-	ldr	r0, [pc, #180]
-	bl 0x02009d54
-	movs	r0, #193
-	lsls	r0, r0, #2
-	bl 0x02009d54
-	ldr	r0, [pc, #172]
-	bl 0x02009d54
-.L_02000d50:
-	movs	r0, #192
-	lsls	r0, r0, #2
-	bl 0x02009d44
-	cmp	r0, #0
-	beq.n	.L_02000d7c
-	cmp	r5, #24
-	bgt.n	.L_02000d7c
-	movs	r0, #192
-	lsls	r0, r0, #2
-	bl 0x02009d54
-	ldr	r0, [pc, #136]
-	bl 0x02009d54
-	movs	r0, #193
-	lsls	r0, r0, #2
-	bl 0x02009d54
-	ldr	r0, [pc, #128]
-	bl 0x02009d54
-.L_02000d7c:
-	movs	r0, #192
-	lsls	r0, r0, #2
-	bl 0x02009d44
-	cmp	r0, #0
-	bne.n	.L_02000d9e
-	cmp	r5, #24
-	ble.n	.L_02000d9e
-	movs	r0, #192
-	lsls	r0, r0, #2
-	bl 0x02009d4c
-	movs	r0, #193
-	lsls	r0, r0, #1
-	adds	r2, r6, r0
-	movs	r3, #1
-	strh	r3, [r2, #0]
-.L_02000d9e:
-	ldr	r0, [pc, #92]
-	bl 0x02009d44
-	cmp	r0, #0
-	bne.n	.L_02000dbc
-	cmp	r5, #49
-	ble.n	.L_02000dbc
-	ldr	r0, [pc, #76]
-	bl 0x02009d4c
-	movs	r1, #193
-	lsls	r1, r1, #1
-	adds	r2, r6, r1
-	movs	r3, #2
-	strh	r3, [r2, #0]
-.L_02000dbc:
-	ldr	r0, [pc, #48]
-	bl 0x02009d44
-	cmp	r0, #0
-	bne.n	.L_02000dda
-	cmp	r5, #74
-	ble.n	.L_02000dda
-	ldr	r0, [pc, #36]
-	bl 0x02009d4c
-	movs	r3, #193
-	lsls	r3, r3, #1
-	adds	r2, r6, r3
-	movs	r3, #3
-	strh	r3, [r2, #0]
-.L_02000dda:
-	pop	{r5, r6}
-	pop	{r0}
-	bx	r0
-	.4byte 0x00000232
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x00000201
-	.4byte 0x00000302
-	.4byte 0x00000303
-	.4byte 0x00000305
-	.2byte 0x0301
-	.2byte 0x0000
 	.section .text.x02008e2c,"ax",%progbits
 	.global Func_02000e2c
 	.thumb_func
@@ -857,12 +724,16 @@ Func_020018a4:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
+	.global RamakanSabaku_SafePoints1
+RamakanSabaku_SafePoints1:
 	.4byte 0x01800000
 	.4byte 0x00800000
 	.4byte 0x01200000
 	.4byte 0x02b00000
 	.4byte 0x02600000
 	.4byte 0x02d00000
+	.global RamakanSabaku_SafePoints2
+RamakanSabaku_SafePoints2:
 	.4byte 0x02c00000
 	.4byte 0x00600000
 	.4byte 0x01c00000
@@ -873,6 +744,8 @@ Func_020018a4:
 	.4byte 0x02f00000
 	.4byte 0x01d00000
 	.4byte 0x03800000
+	.global RamakanSabaku_SafePointsOther
+RamakanSabaku_SafePointsOther:
 	.4byte 0x00c00000
 	.4byte 0x00e00000
 	.4byte 0x00c00000

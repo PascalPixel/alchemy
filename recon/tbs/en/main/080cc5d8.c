@@ -83,7 +83,7 @@ s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080022fc(s32 numerator, s32 denominator);
 void Func_08002dd8(s32 id);
 void ObjectGroup_TickMemberTimers(void);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 s32 BattleFx_EndCanvasLayer(void);
 
 void Func_080cc5d8(void *object)
@@ -234,7 +234,7 @@ void Func_080cc5d8(void *object)
 
         ObjectGroup_TickMemberTimers();
         do { M2C_FIELD(work, s32 *, 0x7824) = 1; } while (0);
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Func_08002dd8(46);

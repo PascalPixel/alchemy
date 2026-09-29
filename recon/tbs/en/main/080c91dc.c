@@ -76,7 +76,7 @@ void Func_080f9010(s32 value);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void Camera_ApplyShake(s32, s32);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 s32 Scheduler_RemoveCallback(void (*callback)(void));
 void Func_08002dd8(s32 resource_id);
 void BattleFx_EndCanvasLayer(void);
@@ -341,7 +341,7 @@ void Func_080c91dc(struct EffectArgument *argument)
             ObjectGroup_TickMemberTimers();
             Camera_ApplyShake(4, 4);
             runtime->frame_ready = 1;
-            Func_080030f8(1);
+            WaitFrames(1);
             frame++;
         } while (frame
             != Data_080eded6[runtime->argument->variant * 2 + 1]);

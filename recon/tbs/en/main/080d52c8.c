@@ -23,7 +23,7 @@
  *
  * The frame loop runs (state->count * 8 + 64) frames for the converging
  * variants and (state->count * 8 + 32) for the falling ones, one frame per
- * Func_080030f8(1).  Each frame it rebuilds a 160-entry sine ramp at
+ * WaitFrames(1).  Each frame it rebuilds a 160-entry sine ramp at
  * work + 0x6980, then walks the members: member `i` starts at frame i * 8,
  * fires Func_080d6888 at frame i * 8 + 16, and animates its own 64-record
  * particle group.  Variant 3 additionally scatters two random decorations

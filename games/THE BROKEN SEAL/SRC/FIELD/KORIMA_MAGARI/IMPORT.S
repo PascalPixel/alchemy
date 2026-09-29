@@ -26,11 +26,17 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Random16Far:
 	overlay_veneer Func_080000f8
+	.global Vector_AddPolarOffset
+	.thumb_func
+Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
 	.global Runtime_SetIrqHandler
 	.thumb_func
 Runtime_SetIrqHandler:
 	overlay_veneer Runtime_SetIrqHandlerFar
+	.global Engine_AllocateBlock
+	.thumb_func
+Engine_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	.global Engine_ObjectSetAnimation
 	.thumb_func
@@ -40,12 +46,21 @@ Engine_ObjectSetAnimation:
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
+	.global ObjectDispatch_InitFromTable4WithArgument
+	.thumb_func
+ObjectDispatch_InitFromTable4WithArgument:
 	overlay_veneer ObjectDispatch_InitFromTable4WithArgumentFar
 	.global Engine_MapRedraw
 	.thumb_func
 Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
+	.global Object_SetPosition
+	.thumb_func
+Object_SetPosition:
 	overlay_veneer Object_SetMoveTargetFar
+	.global Object_CommitPosition
+	.thumb_func
+Object_CommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
 	.global Map_GetTerrainHeightFar
 	.thumb_func

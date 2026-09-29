@@ -8,11 +8,10 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/COORDINATOR.o"(.text)
-        "*/resource_3ba_overlay.o"(.text.x02008540)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/APPLY_VALUE768.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/STAGE_START.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RUN_BRANCHED.o"(.text)
-        "*/resource_3ba_overlay.o"(.text.x02008a3c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RUN_COMMAND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/STAGE_INTRO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/PIPEWORKS.o"(.text)

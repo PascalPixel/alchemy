@@ -32,7 +32,7 @@ s32 Func_080056cc(void)
             return 1;
         if ((u16)IdentifyFlash() == 0)
             break;
-        Func_080030f8(1);
+        WaitFrames(1);
         index++;
     }
 

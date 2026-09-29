@@ -166,7 +166,7 @@ void Func_080eb754(s32 arg0) {
     BattleFx_SelectLivingTargets(work->effect);
     *(u16 *)0x04000048 = 0x2737;
     *(u16 *)0x04000038 = (u16) (s32) &Value_000000ca;
-    Func_080030f8(1);
+    WaitFrames(1);
     BattleBackground_LoadFar(1, (s32) &Value_0000003a, 0);
     Unnamed_080cd104(1, 1);
     Resource_LoadAndDecompress((s32) &Value_00000073, sheet, 0, 0);
@@ -343,7 +343,7 @@ void Func_080eb754(s32 arg0) {
             gBgScroll[3] = 0x20;
         }
         ((struct BattleEffectWork *)work)->transfer_pending = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     gBgScroll[2] = saved_row;
@@ -493,7 +493,7 @@ void Func_080eb754(s32 arg0) {
         Camera_ApplyShake(8, 8);
         ObjectGroup_TickMemberTimers();
         ((struct BattleEffectWork *)work)->transfer_pending = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         slide += 0xC;
     }
 

@@ -413,7 +413,7 @@ block_35:
     Camera_ApplyShake(8, 8);
     ObjectGroup_TickMemberTimers();
     M2C_FIELD(work, s32 *, 0x7824) = 1;
-    Func_080030f8(1);
+    WaitFrames(1);
     temp_r1_831 = frame + 1;
     frame = temp_r1_831;
     if (temp_r1_831 != 0x96) {

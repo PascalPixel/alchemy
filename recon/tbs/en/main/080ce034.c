@@ -24,7 +24,7 @@ s32 Func_0800231c();
 s32 Trig_Sin();
 void Func_08002dd8();
 s32 Resource_GetTableEntry();
-void Func_080030f8();
+void WaitFrames();
 void Func_080041d8();
 void Scheduler_RemoveCallback();
 s32 Random16();
@@ -322,7 +322,7 @@ L_080ce164:
     Value2(Camera_ApplyShake, 16, 16);
     ObjectGroup_TickMemberTimers();
     ((s32 *)(slot36 + 0x7824))[0] = 1;
-    Func_080030f8(1);
+    WaitFrames(1);
     v11++;
     if (88 != v11) {
         goto L_080ce130;

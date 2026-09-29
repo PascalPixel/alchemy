@@ -227,10 +227,10 @@ Resource_DirectoryTable:
 	resource , BattleFx_LightningPillarSheet
 	resource , BattleFx_StagedParticlePath
 	resource , BattleFx_DualStreamPath
-	resource , Field_PerspectiveDataA
+	resource PerspectiveDataA, Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
-	resource , Field_DefaultMapAnimation
-	resource , Field_DefaultMetatileAttributes
+	resource DefaultMapAnimation, Field_DefaultMapAnimation
+	resource DefaultMetatileAttributes, Field_DefaultMetatileAttributes
 	resource , WorldMap_PaletteA
 	resource , WorldMap_TilesA
 	resource , WorldMap_TilesB
@@ -243,7 +243,7 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesH
 	resource , WorldMap_TilesI
 	resource , WorldMap_TilesJ
-	resource , Korosseo_RivalPathA
+	resource RivalPathA, Korosseo_RivalPathA
 	resource RivalPathB, Korosseo_RivalPathB
 	resource RivalPathC, Korosseo_RivalPathC
 	resource Lettering, Korosseo_Lettering

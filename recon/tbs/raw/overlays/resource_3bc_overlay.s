@@ -646,6 +646,8 @@ KorosseoMaruta_Record30Script:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global KorosseoMaruta_LogPattern
+KorosseoMaruta_LogPattern:
 	.4byte 0x05070507
 	.4byte 0x06040b07
 	.4byte 0x0a040604

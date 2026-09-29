@@ -31,12 +31,17 @@
    2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes, --function
    Map_UpdateWorldMapMarkers): 37,258 candidates, none below the draft's
    score 270, 16,782 level with it. Seven of its ten differences are names:
-   the three ROM tables need labels, Func_08015060 carries two build names
-   (UiWindow_Clear and RenderOutput_PrepareForRedrawFar), Func_080153c0 has
+   the three ROM tables need labels, UiWindow_Clear carries two build names
+   (UiWindow_Clear and RenderOutput_PrepareForRedrawFar), UiText_MeasureResourceEntriesFar has
    no label, the 0x99b message is MsgDebugEntryName in the catalogs and
    RegIme is REG_IME; the rest is the two marker byte accesses one slot
-   apart and one register. */
+   apart and one register.
+   2026-09-29: every name is now real (the three tables labelled, the
+   window, text and measure veneers, MsgDebugEntryName, REG_IME); the
+   residual is only the four scheduling halfwords at 0x0809be9a and
+   0x0809bed2. */
 #include "TYPES.H"
+#include "IO_REG.H"
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"
 
@@ -94,20 +99,19 @@ struct WorldMapVramBlock {
 extern struct WorldMapVramBlock Data_03001b10[];
 extern u32 Data_03001e40;
 extern u32 Data_03001ae8;
-extern const u8 Data_0809f168[];
-extern const u16 Data_0809f188[];
-extern const s32 Data_080a0138[];
-extern const u8 Value_0000099b;
-extern volatile u16 RegIme;
+extern const u8 WorldMap_MarkerBlendCycle[];
+extern const u16 WorldMap_CursorDirectionAngles[];
+extern const s32 WorldMap_PlaceMarkers[];
+extern u8 MsgDebugEntryName[];
 
 s32 GameFlag_TestFar(s32 flag);
 struct MapObject *ObjectTable_Get(s32 id);
 void Vector_AddPolarOffset(s32 magnitude, s32 angle, s32 *position);
 void Runtime_PushSlotEntry(void *entry, s32 slot);
 s32 BattleFx_FindConditionResource(s32 id, s32 kind);
-void Func_08015060(s32 window);
-void Func_08015078(s32 message, s32 window, s32 x, s32 y);
-void Func_080153c0(s32 message, s32 *width, s32 *height);
+void UiWindow_Clear(s32 window);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
+void UiText_MeasureResourceEntriesFar(s32 message, s32 *width, s32 *height);
 
 #define QUEUE_IO_WRITE_DELAY2(address, value) {                             \
         u32 saved;                                                          \
@@ -189,12 +193,12 @@ void Map_UpdateWorldMapMarkers(void)
 
     work = &Data_02010000;
     leader = gGameState.current_owner;
-    place = Data_080a0138;
+    place = WorldMap_PlaceMarkers;
     tile_base = Data_03001b10[work->vram_block].offset >> 5;
     marker = work->markers;
     best = -1;
     best_distance = 100;
-    blend = Data_0809f168[(Data_03001e40 >> 1) & 31];
+    blend = WorldMap_MarkerBlendCycle[(Data_03001e40 >> 1) & 31];
     if (!GameFlag_TestFar(0x11c) && (Data_03001ae8 & 0x300)) {
         object = ObjectTable_Get(gGameState.current_owner);
         if (object == NULL)
@@ -202,7 +206,7 @@ void Map_UpdateWorldMapMarkers(void)
         cursor_x = ((object->x - 0x10000000) >> 16) * 240 / 4096;
         cursor_y = object->z.part.whole * 160 / 4096;
     } else {
-        angle = Data_0809f188[(Data_03001ae8 >> 4) & 15];
+        angle = WorldMap_CursorDirectionAngles[(Data_03001ae8 >> 4) & 15];
         if (angle != 0xffff) {
             position[0] = work->x.value;
             position[1] = 0;
@@ -282,13 +286,13 @@ markers:
     Runtime_PushSlotEntry(marker, 246);
     if (work->shown != best) {
         work->shown = best;
-        Func_08015060(work->window);
+        UiWindow_Clear(work->window);
         if (best != -1) {
             if (best == 0)
                 best_message = 0x984;
             else
-                best_message = BattleFx_FindConditionResource(best_message, 1) + (s32)&Value_0000099b;
-            Func_080153c0(best_message, &width, &height);
+                best_message = BattleFx_FindConditionResource(best_message, 1) + (s32)MsgDebugEntryName;
+            UiText_MeasureResourceEntriesFar(best_message, &width, &height);
             cursor_x = best_x;
             cursor_y = best_y;
             cursor_x--;
@@ -299,14 +303,14 @@ markers:
             }
             if (cursor_y < 0)
                 cursor_y = 0;
-            Func_08015078(best_message, work->window, cursor_x, cursor_y);
+            UiText_DrawMessageAt(best_message, work->window, cursor_x, cursor_y);
         }
     }
     /* FAKEMATCH: resolve the shared queue before the interrupt snapshot. */
     do {
         q = &gIoWriteQueue;
     } while (0);
-    ime = &RegIme;
+    ime = &REG_IME;
     QUEUE_IO_WRITE_DELAY2(0x04000050, 0x3f00);
     QUEUE_IO_WRITE_DELAY2_BARRIER(0x04000052, ((16 - blend) << 8) | blend);
 }

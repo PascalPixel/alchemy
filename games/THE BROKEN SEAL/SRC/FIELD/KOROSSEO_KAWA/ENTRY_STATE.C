@@ -1,10 +1,11 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "RESOURCE_IDS.H"
 
-s32 Main_080091a8(s32 layer, s32 x, s32 z);
-s32 Main_080770e0(s32 flag);
-void Main_080091b8(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
-void Main_080091c8(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
+s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
+s32 GameFlag_GetByteFar(s32 flag);
+
+void Map_UpdateCellRect(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5);
 s32 Korosseo_ShowItemIcon(s32 slot, s32 item);
 s32 FieldScene_BuildSceneDescriptorAndInstallTask(s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5, s32 a6);
 void Korosseo_SelectSoloCompetitor(s32 index);
@@ -15,7 +16,8 @@ void FieldScene_RunCommandSequence(s32 actor);
 void FieldScene_RunSixSteps380To3A8(void);
 void FieldScene_RunScene3ba_02000974(s32 direction);
 void SceneState_InitControlWhenFlag109Clear(s32 value);
-void Engine_ActorFollow(s32 actor, s32 leader);
+void Object_LinkObjectAndSetCallback(s32 actor, s32 leader);
+s32 Engine_ScheduleCallback(void (*callback)(void), s32 priority);
 void FieldScene_RunOpeningAuxiliarySequence(void);
 void SceneState_SetStateHalfword386To99WhenMatched(void);
 
@@ -24,8 +26,7 @@ union GameStateRows {
     s16 halves[512][1];
 };
 
-extern union GameStateRows Data_02000240_t;
-extern u8 Value_000000e4;
+
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -50,13 +51,13 @@ s32 KorosseoKawa_ApplyEntryState(void)
     gEventWork->start_transition = 0;
     Call1(Engine_GameFlagSet, 0x144);
     actor = Engine_ActorGet(9);
-    hit = Main_080091a8(0, actor->x.fixed, actor->z.fixed);
+    hit = Map_GetTerrainHeightFar(0, actor->x.fixed, actor->z.fixed);
     if (actor->y.fixed == 0 && hit == 0) {
         actor->priority_flags = 2;
         actor->motion_flags = hit;
         Call6(Engine_MapCopyCellAttributes, 14, 13, 1, 1, actor->x.fixed >> 20, actor->z.fixed >> 20);
     }
-    x = Main_080770e0(0x310);
+    x = GameFlag_GetByteFar(0x310);
     if (x == 0) {
         x = 25;
     }
@@ -65,7 +66,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     actor->motion_flags = 0;
     actor->priority_flags = 2;
     Call6(Engine_MapCopyCellAttributes, 14, 13, 1, 1, x, 12);
-    Engine_TaskAddCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
+    Engine_ScheduleCallback(FieldScene_RunOpeningAuxiliarySequence, 0xc80);
     actor = Engine_ActorGet(15);
     actor->unknown_22 = 1;
     zero = 0;
@@ -89,7 +90,7 @@ s32 KorosseoKawa_ApplyEntryState(void)
     if (Engine_GameFlagIsSet(0x302)) {
         Call6(Engine_MapCopyCellAttributes, 37, 7, 1, 4, 34, 7);
         Call6(Engine_MapCopyCellAttributes, 36, 7, 1, 4, 37, 7);
-        Call6(Main_080091b8, 100, 29, 1, 3, 34, 38);
+        Call6(Engine_MapCopyCells, 100, 29, 1, 3, 34, 38);
     }
     actor = Engine_ActorGet(13);
     if (Engine_GameFlagIsSet(0x301)) {
@@ -105,10 +106,10 @@ s32 KorosseoKawa_ApplyEntryState(void)
     Engine_ActorGet(14)->priority_flags = 2;
     Korosseo_ShowItemIcon(24, 120);
     Korosseo_ShowItemIcon(25, 127);
-    switch (Data_02000240_t.halves[225][0]) {
+    switch (((union GameStateRows *)&gGameState)->halves[225][0]) {
     case 1:
         FieldScene_BuildSceneDescriptorAndInstallTask(0, 8, 4, 0x5180000, 0xc00000, 24, 25);
-        Call6(Main_080091c8, 127, 0, 1, 2, 19, 2);
+        Call6(Map_UpdateCellRect, 127, 0, 1, 2, 19, 2);
         Engine_ActorDestroy(19);
         Engine_ActorDestroy(20);
         Engine_ActorDestroy(21);
@@ -123,13 +124,13 @@ s32 KorosseoKawa_ApplyEntryState(void)
             SceneActor_MarkObjectAtTiles94To95(3);
             FieldScene_RunTwoArmSequence(1);
         }
-        Engine_ActorFollow(1, 0);
-        Engine_ActorFollow(2, 0);
-        Engine_ActorFollow(3, 0);
-        SceneState_InitControlWhenFlag109Clear((s32)&Value_000000e4);
+        Object_LinkObjectAndSetCallback(1, 0);
+        Object_LinkObjectAndSetCallback(2, 0);
+        Object_LinkObjectAndSetCallback(3, 0);
+        SceneState_InitControlWhenFlag109Clear((s32)&ResourceId_RivalPathA);
         break;
     case 2:
-        Engine_TaskAddCallback(SceneState_SetStateHalfword386To99WhenMatched, 0xc80);
+        Engine_ScheduleCallback(SceneState_SetStateHalfword386To99WhenMatched, 0xc80);
         Engine_ActorDestroy(24);
         Engine_ActorDestroy(25);
         if (!Engine_GameFlagIsSet(0x109)) {

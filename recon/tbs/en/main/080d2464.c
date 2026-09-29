@@ -181,7 +181,7 @@ void Func_080d2464(void *arg0, s32 arg1) {
     } while (var_r7_216 != 0x200);
     if (sp38 == 0) {
         BattleFx_SelectLivingTargets(M2C_FIELD(temp_r3_25, void **, 0x7828));
-        Func_080030f8(1);
+        WaitFrames(1);
         BattleFx_SpawnObjects(8, 0x179, 2);
     }
     sp24 = 0;
@@ -481,7 +481,7 @@ loop_114:
     Camera_ApplyShake(8, 8);
     ObjectGroup_TickMemberTimers();
     M2C_FIELD(temp_r3_25, s32 *, 0x7824) = 1;
-    Func_080030f8(1);
+    WaitFrames(1);
     temp_r0_1132 = sp24 + 1;
     sp24 = temp_r0_1132;
     if (temp_r0_1132 != 0xD0) {

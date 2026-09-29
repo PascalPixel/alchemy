@@ -63,7 +63,7 @@ void Func_08099da4(void) {
         BattleFx_PrepareBufferInterpolation();
         return;
     }
-    Func_080030f8(0xF);
+    WaitFrames(0xF);
     temp_r1_77 = M2C_FIELD(temp_r7_20, s32 *, 8);
     M2C_FIELD(&sp20, s32 *, 0) = temp_r1_77;
     M2C_FIELD(&sp20, s32 *, 4) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + 0x100000);
@@ -89,7 +89,7 @@ void Func_08099da4(void) {
             M2C_FIELD(temp_r0_63, s32 *, 0xC) = (s32) (M2C_FIELD(temp_r0_63, s32 *, 0xC) + var_r1_149);
             M2C_FIELD(temp_r7_20, s32 *, 0xC) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + var_r1_149);
             sp0 = var_r1_149;
-            Func_080030f8(1);
+            WaitFrames(1);
         } while ((s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) - M2C_FIELD(temp_r7_20, s32 *, 0x14)) <= 0x180000);
     }
     M2C_FIELD(sp14, s32 *, 0x30) = 0x40000;
@@ -103,7 +103,7 @@ void Func_08099da4(void) {
     *spC = 2;
     sp8 = sp18;
 loop_18:
-    Func_080030f8(1);
+    WaitFrames(1);
     if (!(*(s32 *)0x03001C94 & 0x303)) {
         temp_r6_207 = BattleFx_GetCycledTableWord(*(s32 *)0x03001AE8);
         if (temp_r6_207 == 0xFFFF) {
@@ -143,7 +143,7 @@ loop_18:
         temp_r6_318 = M2C_FIELD(&sp20, s32 *, 8);
         Func_08009080(sp14, 4);
         Func_08009080(sp18, 4);
-        Func_080030f8(0xF);
+        WaitFrames(0xF);
         M2C_FIELD(temp_r7_20, s8 *, 0x5B) = temp_r0_277;
         M2C_FIELD(temp_r7_20, s32 *, 0x30) = 0x3333;
         M2C_FIELD(temp_r7_20, s32 *, 0x34) = 0x3333;
@@ -159,15 +159,15 @@ loop_18:
         M2C_FIELD(temp_r7_20, s32 *, 0x10) = temp_r6_318;
         M2C_FIELD(temp_r7_20, s32 *, 0x24) = (s32) temp_r0_277;
         M2C_FIELD(temp_r7_20, s32 *, 0x2C) = (s32) temp_r0_277;
-        Func_080030f8(0xA);
+        WaitFrames(0xA);
     }
     Func_08009080(sp14, 4);
     Func_08009080(sp18, 4);
     Scheduler_RemoveCallback(0x08099D19);
     Func_080f9010(0x87);
-    Func_080030f8(0xF);
+    WaitFrames(0xF);
     Func_080f9010(0x87);
-    Func_080030f8(0xF);
+    WaitFrames(0xF);
     M2C_FIELD(&sp20, s32 *, 0) = (s32) M2C_FIELD(temp_r7_20, s32 *, 8);
     M2C_FIELD(&sp20, s32 *, 4) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + 0x100000);
     M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x10);
@@ -204,7 +204,7 @@ loop_18:
         var_r8_528 = 0;
         if ((s32) M2C_FIELD(temp_r7_20, s32 *, 0x28) >= 0) {
 loop_26:
-            Func_080030f8(1);
+            WaitFrames(1);
             var_r8_528 += 1;
             if (var_r8_528 <= 0x59) {
                 if ((s32) M2C_FIELD(temp_r7_20, s32 *, 0x28) >= 0) {
@@ -212,11 +212,11 @@ loop_26:
                 }
             }
         }
-        Func_080030f8(1);
+        WaitFrames(1);
         var_r8_547 = 0;
         if ((s32) M2C_FIELD(temp_r7_20, s32 *, 0x28) < 0) {
 loop_29:
-            Func_080030f8(1);
+            WaitFrames(1);
             var_r8_547 += 1;
             if (var_r8_547 <= 0x59) {
                 if ((s32) M2C_FIELD(temp_r7_20, s32 *, 0x28) < 0) {
@@ -226,7 +226,7 @@ loop_29:
         }
         BattleFx_SpawnRadialParticleRing(temp_r7_20);
         BattleFx_PrepareBufferInterpolation();
-        Func_080030f8(0x1E);
+        WaitFrames(0x1E);
         return;
     }
     BattleFx_PrepareBufferInterpolation();

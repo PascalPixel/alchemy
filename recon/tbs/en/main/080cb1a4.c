@@ -59,7 +59,7 @@ void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 void Camera_ApplyShake(s32 a, s32 b);
@@ -129,7 +129,7 @@ void Func_080cb1a4(void *object_param)
     object->acceleration = 0x20000;
     object->speed_limit = 0x80000;
 
-    Func_080030f8(20);
+    WaitFrames(20);
     frame = 0;
 
     record_ptr = record;
@@ -223,7 +223,7 @@ void Func_080cb1a4(void *object_param)
 
         Camera_ApplyShake(16, 16);
         M2C_FIELD(work, s32 *, 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);

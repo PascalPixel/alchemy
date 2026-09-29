@@ -29,7 +29,7 @@ struct SpriteRecord {
 
 extern u8 *Data_03001e8c;
 extern s16 Data_080371fe[];
-extern u8 Value_00000980[];
+extern u8 MsgVenusDjinnJoined[];
 
 struct MessageWindow *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct MessageWindow *, s32, s32, s32, s32);
@@ -83,7 +83,7 @@ void Djinn_ShowJoinedMessage(s32 p1, s32 p2, s32 p3)
         UiWork_PushValueSlot(p1, 1);
         UiWork_PushValueSlot(p2 * 20 + p3 + 300, 4);
 
-        d2 = UiText_BuildRenderEntriesMode1(p2 + (s32)Value_00000980);
+        d2 = UiText_BuildRenderEntriesMode1(p2 + (s32)MsgVenusDjinnJoined);
 
         UiText_QueueRenderEntries(obj, d2, 36, 2, zero);
 

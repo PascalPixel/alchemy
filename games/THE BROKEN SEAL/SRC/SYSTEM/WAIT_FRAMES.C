@@ -1,18 +1,13 @@
-/* Draft, not exact (2026-09-29): WaitFrames, 403 of 403 instructions in
-   order; the one remaining difference is the outer soft reset's entry
-   address, which local allocation puts in r1 where the ROM has r0. The
-   debug-pause reset (inside the pause loop, hoisted to r8) matches.
+/* WaitFrames (2026-09-29): exact. The soft reset calls the cartridge entry
+   through a pointer returning a value, which keeps the address in r0 as
+   the ROM does; a void pointer put it in r1.
    What lined up: sl as a register variable the end's sp read keeps live,
    so i and frames spill; a bare asm (no outputs, no clobbers) for the
    second sp write, which flushes CSE and reloads gSavedStackSize's
    address; the do/while (0) register-write macro, whose loop notes keep
    sched2 from moving pool loads across the stores; volatile idle, combo,
    sleep and key-repeat counters, which the ROM re-reads after each store;
-   and the soft reset as one inline with the entry address in a local.
-   Tried for r0: the reset pointer as a block, function-scope, register or
-   parameter local, before or after the flag and magic stores, the whole
-   check inlined, an absolute magic word, extra do/while (0) barriers: all
-   stay in r1. */
+   and the soft reset as one inline with the entry address in a local. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_REG.H"
@@ -65,7 +60,7 @@ extern u16 gSleepActive;
 
 static __inline__ void System_SoftReset(void)
 {
-    void (*reset)(void) = (void (*)(void))0x08000000;
+    s32 (*reset)(void) = (s32 (*)(void))0x08000000;
 
     Data_03007800 = 0x19670704;
     Io_Write16(0, &REG_IME);
@@ -166,6 +161,7 @@ void WaitFrames(s32 frames)
                         break;
                     gDebugPaused = 1;
                 }
+                /* CAMELOT_ASM: Halt in VBlankIntrWait */
                 VBlankIntrWait();
                 Input_UpdateKeyRepeatAndDirection();
                 if (Data_03001cb8) {
@@ -176,6 +172,7 @@ void WaitFrames(s32 frames)
         }
         gLagFramesShown = Data_03001ccc;
         Data_03001ccc = 0;
+        /* CAMELOT_ASM: Halt in VBlankIntrWait */
         VBlankIntrWait();
         Runtime_ReleaseHeapBlock(52);
         Graphics_ResetFrameState();
@@ -194,6 +191,7 @@ void WaitFrames(s32 frames)
                 Io_Write16(0, &REG_DISPCNT);
                 Io_Write16(0x7fff, &PLTT_BACKDROP);
                 for (j = 0; j < 60; j++)
+                    /* CAMELOT_ASM: Halt in VBlankIntrWait */
                     VBlankIntrWait();
                 gSleepActive = 1;
                 Io_Write16(0xc300, &REG_KEYCNT);
@@ -206,6 +204,7 @@ void WaitFrames(s32 frames)
                 Io_Write16(dispcnt, &REG_DISPCNT);
                 Io_Write16(backdrop, &PLTT_BACKDROP);
                 for (j = 0; j < 10; j++)
+                    /* CAMELOT_ASM: Halt in VBlankIntrWait */
                     VBlankIntrWait();
                 gSleepRequested = 0;
                 gPostLoadCounter = 0;

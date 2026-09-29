@@ -73,7 +73,7 @@ struct SerialTransferState {
 } while (0)
 
 void Func_0800307c(s32 index, s32 priority, InterruptHandler handler);
-s32 Func_080030f8(s32 frames);
+void WaitFrames(s32 frames);
 void Func_080060e8(void *payload);
 u8 Func_0800615c(void *payload);
 void Func_08006240(void);

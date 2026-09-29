@@ -582,10 +582,6 @@
 	.4byte 0x0004cccc
 	.2byte 0x0905
 	.2byte 0x0000
-	.section .text.x0200b5a8,"ax",%progbits
-	.balign 4
-	.2byte 0x4770
-	.2byte 0x0000
 	.section .rodata,"a",%progbits
 	.global ArutinYama_PaletteScript
 ArutinYama_PaletteScript:

@@ -93,7 +93,7 @@ typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
 
 void *Runtime_AllocateHeapBlock(s32 id, s32 size);
 void Func_08002dd8(s32 id);
-void Func_080030f8(s32 arg0);
+void WaitFrames(s32 arg0);
 s32 Func_080041d8(s32 entry, s32 arg1);
 void Scheduler_RemoveCallback(s32 entry);
 s32 Random16(void);
@@ -558,7 +558,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
 
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame += 1;
     } while (frame != 0x80);
 
@@ -570,7 +570,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
     gBgScroll[3] = 0x20;
     BattlePresentation_ConfigurePaletteFadeFar(2, M2C_FIELD(sys, u16 *, 0x648), 0);
-    Func_080030f8(1);
+    WaitFrames(1);
 
     ime = *(u16 *)0x04000208;
     *(u16 *)0x04000208 = 0x04000208;

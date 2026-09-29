@@ -10,6 +10,7 @@ mod compiler;
 mod coverage;
 mod disasm;
 mod format;
+mod gate;
 mod overlay;
 mod parallel;
 mod permute;

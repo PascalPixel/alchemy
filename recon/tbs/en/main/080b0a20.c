@@ -1,3 +1,9 @@
+/* 2026-09-30 (Venus, tagged asm): a memory barrier after the x attribute
+  store and a separate pointer for the first anchor load give every
+  instruction (0 diff lines), but the pool order differs: the ROM puts
+  0xffff first, which GCC does only for a HImode constant (halfword entries
+  precede word entries); u16, struct Half and asm-copied masks either fold,
+  spill or keep it a word. */
 /* Draft, not exact (2026-09-29, Mercury): score 465, only the anchor reload
    differs. OAM attribute bitfields give the ROM's word masks (0xfffffe00,
    0x1ff) and a one-halfword struct keeps the zero a pool constant

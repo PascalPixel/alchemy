@@ -816,7 +816,7 @@ fn store_thumb_calls(block: &mut [u8]) {
 
 /// The plan's preprocessing step when it has one, or a `-E` run of the same
 /// driver command, so the cache key covers every included header.
-fn preprocessor_only(
+pub(crate) fn preprocessor_only(
     steps: &[Vec<String>],
     source: &str,
     preprocessed: &Path,

@@ -105,7 +105,7 @@ fn parse(arguments: &[String]) -> Result<Options, String> {
 }
 
 /// The origin and reported source of an object path the linker map names.
-fn classify(root: &Path, object: &str) -> (Origin, String) {
+pub fn classify(root: &Path, object: &str) -> (Origin, String) {
     let file = object.rsplit('/').next().unwrap_or(object);
     let Some(at) = object.find("/obj/") else {
         if file.ends_with("_overlay.o") {
@@ -137,7 +137,7 @@ fn classify(root: &Path, object: &str) -> (Origin, String) {
     (Origin::Other, relative.to_string())
 }
 
-fn images_in(build: &Path) -> Result<Vec<PathBuf>, String> {
+pub fn images_in(build: &Path) -> Result<Vec<PathBuf>, String> {
     let mut elfs = Vec::new();
     for dir in [build.to_path_buf(), build.join("overlays")] {
         let Ok(entries) = fs::read_dir(&dir) else {

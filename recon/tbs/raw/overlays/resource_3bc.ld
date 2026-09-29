@@ -33,7 +33,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/MOTION_RESET.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x0200b91c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/PALETTE_TASK.o"(.text)
-        "*/resource_3bc_overlay.o"(.text.x0200bbd0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/ITEM_ICON.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/HEX.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x0200bcc4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/SCENE_EFFECT.o"(.text)

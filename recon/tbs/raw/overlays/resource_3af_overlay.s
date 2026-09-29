@@ -403,56 +403,6 @@
 	.4byte 0x0027fffe
 	.2byte 0x8000
 	.2byte 0xffff
-	.section .text.x020093d4,"ax",%progbits
-	.p2align 2
-	.global Func_020013d4
-	.thumb_func
-Func_020013d4:
-	push {r5, r6, lr}
-	ldr r6, [pc, #88]
-	movs r2, #130
-	ldr r5, [r6]
-	movs r0, #142
-	lsls r2, r2, #1
-	lsls r0, r0, #1
-	adds r5, r5, r2
-	bl 0x0200c2dc
-	ldr r3, [r6, #76]
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r6, #0
-	adds r2, #73
-	str r2, [r3]
-	str r6, [r5, #28]
-	ldr r5, [pc, #56]
-	bl 0x0200c26c
-	lsls r0, r0, #16
-	lsrs r0, r0, #16
-	str r0, [r5]
-	ldr r5, [pc, #48]
-	bl 0x0200c26c
-	ldr r3, [pc, #48]
-	lsls r0, r0, #16
-	lsrs r0, r0, #16
-	str r0, [r5]
-	str r6, [r3]
-	str r6, [r3, #4]
-	ldr r3, [pc, #40]
-	str r6, [r3]
-	bl 0x0200c284
-	movs r0, #1
-	bl 0x0200c25c
-	bl 0x02009444
-	movs r0, #0
-	pop {r5, r6}
-	pop {r1}
-	bx r1
-	.4byte 0x03001e70
-	.4byte 0x0200db58
-	.4byte 0x0200db38
-	.4byte 0x0200db50
-	.4byte 0x0200db60
 	.section .text.x0200b284,"ax",%progbits
 	.p2align 2
 	.global SceneEffect_InitSlotsEightToNineteen

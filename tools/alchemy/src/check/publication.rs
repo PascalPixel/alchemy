@@ -661,7 +661,8 @@ fn exact_indexed_stream(data: &[u8]) -> Option<()> {
 /// A standard MIDI file exactly as the sequence build reads it: MThd then only
 /// MTrk chunks covering the file, every track closed by end-of-track, text
 /// meta events as text and the rest at their specified sizes, and no
-/// system-exclusive payloads.
+/// system-exclusive payloads. JSON is banned: a text event that opens an
+/// object or array is refused.
 fn midi_reason(data: &[u8]) -> Option<&'static str> {
     const MALFORMED: &str =
         "MIDI is not an exact sequence build input: MThd, MTrk, sized or text metas only";
@@ -696,6 +697,9 @@ fn midi_reason(data: &[u8]) -> Option<&'static str> {
                 | (0x58, 4)
                 | (0x59, 2) => {}
                 (0x01..=0x0f | 0x7f, _) => match std::str::from_utf8(data) {
+                    Ok(value) if value.trim_start().starts_with(['{', '[']) => {
+                        return Some("MIDI text is JSON; the format is banned")
+                    }
                     Ok(value) => {
                         text.push_str(value);
                         text.push('\n');
@@ -734,7 +738,7 @@ fn placement_reason(text: &str) -> Option<&'static str> {
             .count()
             >= 4
     });
-    let placement = ["\"base\"", "\"externals\""]
+    let placement = ["base=", "externals="]
         .iter()
         .any(|field| text.contains(field));
     (address || placement)
@@ -2742,25 +2746,32 @@ fn binary_fixtures() -> Vec<Fixture> {
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/SKELETON.MID",
-            meta(
-                0x01,
-                br#"{"format":1,"engine":"smsh-sequence","layout":[{"kind":"stream","label":"track_1"}]}"#,
-            ),
+            meta(0x01, b"smsh-sequence 1\nstream track_1\n"),
             None,
         ),
         (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/JSON.MID",
+            meta(0x01, br#"{"format":1,"layout":[]}"#),
+            Some("JSON"),
+        ),
+        (
+            "games/THE BROKEN SEAL/SOUND/SEQUENCE/MARKER.MID",
+            meta(0x06, br#"["fine"]"#),
+            Some("JSON"),
+        ),
+        (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/PLACED.MID",
-            meta(0x01, br#"{"format":1,"base":"0x08000000","layout":[]}"#),
+            meta(0x01, b"smsh-sequence 1\nheader s base=0x08000000\n"),
             Some("ROM address or placement"),
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/TONE_BANK.MID",
-            meta(0x01, br#"{"externals":{"tone_bank":"tone_bank"}}"#),
+            meta(0x01, b"smsh-sequence 1\nheader s externals=tone_bank\n"),
             Some("ROM address or placement"),
         ),
         (
             "games/THE BROKEN SEAL/SOUND/SEQUENCE/LITERAL.MID",
-            meta(0x06, br#"["goto","0x0815fb78"]"#),
+            meta(0x06, b"goto 0x0815fb78"),
             Some("ROM address or placement"),
         ),
         (

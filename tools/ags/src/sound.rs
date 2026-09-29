@@ -1,28 +1,225 @@
 //! The sound encoders, as pret's mid2agb and wav2agb: engine sequences from
-//! editable JSON layouts or from sequence MIDI files, and PCM wave records
-//! from WAV files. A sequence's jumps, pattern calls, track list and tone bank
-//! are address words naming labels, so the linker places every sequence.
+//! sequence MIDI files, and PCM wave records from WAV files. A sequence's
+//! jumps, pattern calls, track list and tone bank are address words naming
+//! labels, so the linker places every sequence.
+//!
+//! A sequence MIDI's conductor track carries the sequence's skeleton as a
+//! text event, one segment per line:
+//!
+//! ```text
+//! smsh-sequence 1
+//! stream track_1
+//! align 4 0
+//! header sound_000 block_count=0 priority=0 reverb=178 tone_bank=Voices tracks=track_1
+//! ```
+//!
+//! and each stream track carries the events that are not notes as marker
+//! events of one line each, such as `volume 100` or `goto loop_1`: the
+//! event's kind, then its integers and labels.
 use super::asm::{identifier, Data, Pointer};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
-use serde_json::Value;
 use std::collections::{BTreeSet, HashMap};
+use std::fmt;
 
-fn number(value: &Value, label: &str) -> Result<usize, String> {
-    let text = match value {
-        Value::Number(value) => value.to_string(),
-        Value::String(value) => value.clone(),
-        _ => return Err(format!("{label} must be an integer")),
-    };
-    let parsed = match text.strip_prefix("0x").or_else(|| text.strip_prefix("0X")) {
-        Some(hex) => usize::from_str_radix(hex, 16),
-        None => text.parse::<usize>(),
-    };
-    parsed.map_err(|_| format!("{label} must be an integer"))
+/// One argument of a sequence event: an integer or a label.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Arg {
+    Int(i64),
+    Sym(String),
 }
-fn json_string<'a>(value: &'a Value, label: &str) -> Result<&'a str, String> {
-    value
-        .as_str()
-        .ok_or_else(|| format!("{label} must be a string"))
+impl fmt::Display for Arg {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Arg::Int(value) => write!(f, "{value}"),
+            Arg::Sym(name) => f.write_str(name),
+        }
+    }
+}
+impl From<i64> for Arg {
+    fn from(value: i64) -> Self {
+        Arg::Int(value)
+    }
+}
+impl From<&str> for Arg {
+    fn from(name: &str) -> Self {
+        Arg::Sym(name.to_string())
+    }
+}
+
+/// One sequence event: its kind and arguments, written `kind arg arg`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Event {
+    pub kind: String,
+    pub args: Vec<Arg>,
+}
+impl Event {
+    pub fn new(kind: &str, args: Vec<Arg>) -> Self {
+        Event {
+            kind: kind.to_string(),
+            args,
+        }
+    }
+    /// Read an event from its one-line text.
+    pub fn parse(text: &str) -> Result<Self, String> {
+        let mut words = text.split(' ');
+        let kind = words.next().filter(|kind| identifier(kind));
+        let kind = kind.ok_or_else(|| format!("sequence event {text:?} has no kind"))?;
+        let args = words
+            .map(|word| {
+                if identifier(word) {
+                    Ok(Arg::Sym(word.to_string()))
+                } else {
+                    word.parse::<i64>()
+                        .map(Arg::Int)
+                        .map_err(|_| format!("sequence event {text:?}: {word:?} is neither"))
+                }
+            })
+            .collect::<Result<_, _>>()?;
+        Ok(Event::new(kind, args))
+    }
+}
+impl fmt::Display for Event {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(&self.kind)?;
+        for arg in &self.args {
+            write!(f, " {arg}")?;
+        }
+        Ok(())
+    }
+}
+
+/// One segment of a sequence's layout, in order.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Segment {
+    /// A track's events under its label.
+    Stream { label: String, events: Vec<Event> },
+    /// Padding to a power-of-two boundary with a fill byte.
+    Align { boundary: i64, fill: i64 },
+    /// The song header: its exported label, settings, tone bank and tracks.
+    Header {
+        label: String,
+        block_count: i64,
+        priority: i64,
+        reverb: i64,
+        tone_bank: String,
+        tracks: Vec<String>,
+    },
+}
+
+const SKELETON_ENGINE: &str = "smsh-sequence 1";
+
+/// A skeleton's text: the engine line, then one line per segment. Streams
+/// carry only their labels; their events live in their tracks.
+pub fn skeleton_text(segments: &[Segment]) -> String {
+    let mut text = format!("{SKELETON_ENGINE}\n");
+    for segment in segments {
+        text += &match segment {
+            Segment::Stream { label, .. } => format!("stream {label}\n"),
+            Segment::Align { boundary, fill } => format!("align {boundary} {fill}\n"),
+            Segment::Header {
+                label,
+                block_count,
+                priority,
+                reverb,
+                tone_bank,
+                tracks,
+            } => format!(
+                "header {label} block_count={block_count} priority={priority} reverb={reverb} tone_bank={tone_bank} tracks={}\n",
+                tracks.join(",")
+            ),
+        };
+    }
+    text
+}
+
+/// Read a skeleton's text; streams come back without events.
+pub fn parse_skeleton(text: &str) -> Result<Vec<Segment>, String> {
+    let mut lines = text.lines();
+    if lines.next() != Some(SKELETON_ENGINE) {
+        return Err(format!("sequence skeleton must begin {SKELETON_ENGINE:?}"));
+    }
+    let integer = |word: &str, label: &str| {
+        word.parse::<i64>()
+            .map_err(|_| format!("{label} must be an integer"))
+    };
+    let mut segments = Vec::new();
+    for line in lines {
+        let words: Vec<&str> = line.split(' ').collect();
+        segments.push(match words.as_slice() {
+            ["stream", label] => Segment::Stream {
+                label: symbol(label, "stream label")?,
+                events: Vec::new(),
+            },
+            ["align", boundary, fill] => Segment::Align {
+                boundary: integer(boundary, "alignment boundary")?,
+                fill: integer(fill, "alignment fill")?,
+            },
+            ["header", label, fields @ ..] => {
+                let mut values = HashMap::new();
+                for field in fields {
+                    let (key, value) = field
+                        .split_once('=')
+                        .ok_or_else(|| format!("header field {field:?} has no value"))?;
+                    if !matches!(
+                        key,
+                        "block_count" | "priority" | "reverb" | "tone_bank" | "tracks"
+                    ) {
+                        return Err(format!(
+                            "sequence header records {key}; the build supplies placement and symbols"
+                        ));
+                    }
+                    if values.insert(key, value).is_some() {
+                        return Err(format!("header repeats {key}"));
+                    }
+                }
+                let get = |key: &str| {
+                    values
+                        .get(key)
+                        .copied()
+                        .ok_or_else(|| format!("header {key} is missing"))
+                };
+                Segment::Header {
+                    label: symbol(label, "header label")?,
+                    block_count: integer(get("block_count")?, "header block_count")?,
+                    priority: integer(get("priority")?, "header priority")?,
+                    reverb: integer(get("reverb")?, "header reverb")?,
+                    tone_bank: symbol(get("tone_bank")?, "tone bank")?,
+                    tracks: get("tracks")?
+                        .split(',')
+                        .filter(|track| !track.is_empty())
+                        .map(|track| symbol(track, "track symbol"))
+                        .collect::<Result<_, _>>()?,
+                }
+            }
+            _ => return Err(format!("unsupported skeleton line {line:?}")),
+        });
+    }
+    Ok(segments)
+}
+
+fn symbol(word: &str, label: &str) -> Result<String, String> {
+    if identifier(word) {
+        Ok(word.to_string())
+    } else {
+        Err(format!("{label} is invalid"))
+    }
+}
+fn int(arg: Option<&Arg>, label: &str) -> Result<i64, String> {
+    match arg {
+        Some(Arg::Int(value)) => Ok(*value),
+        Some(Arg::Sym(_)) => Err(format!("{label} must be an integer")),
+        None => Err(format!("{label} is missing")),
+    }
+}
+fn number(arg: Option<&Arg>, label: &str) -> Result<usize, String> {
+    usize::try_from(int(arg, label)?).map_err(|_| format!("{label} must be an integer"))
+}
+fn sequence_symbol(arg: Option<&Arg>, label: &str) -> Result<String, String> {
+    match arg {
+        Some(Arg::Sym(name)) => symbol(name, label),
+        Some(Arg::Int(_)) => Err(format!("{label} must be a label")),
+        None => Err(format!("{label} is missing")),
+    }
 }
 const SEQUENCE_DURATIONS: [usize; 49] = [
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 28,
@@ -49,47 +246,36 @@ fn sequence_control_opcode(name: &str) -> Option<u8> {
 fn sequence_sets_running_status(opcode: u8) -> bool {
     opcode != 0xbb
 }
-fn sequence_duration_index(value: &Value, label: &str) -> Result<u8, String> {
-    let ticks = number(value, label)?;
+fn sequence_duration_index(arg: Option<&Arg>, label: &str) -> Result<u8, String> {
+    let ticks = number(arg, label)?;
     SEQUENCE_DURATIONS
         .iter()
         .position(|candidate| *candidate == ticks)
         .map(|index| index as u8)
         .ok_or_else(|| format!("{label} is not representable by the engine duration table"))
 }
-fn sequence_symbol(value: &Value, label: &str) -> Result<String, String> {
-    let symbol = json_string(value, label)?;
-    if !identifier(symbol) {
-        return Err(format!("{label} is invalid"));
-    }
-    Ok(symbol.to_string())
-}
-fn sequence_parameter(value: &Value, name: &str) -> Result<u8, String> {
-    let number = match value.as_i64() {
-        Some(number) => number,
-        None => number(value, name)? as i64,
-    };
+fn sequence_parameter(arg: Option<&Arg>, name: &str) -> Result<u8, String> {
+    let number = int(arg, name)?;
     let signed = matches!(name, "key_shift" | "pan" | "pitch_bend" | "tuning");
     if signed {
         if !(-128..=127).contains(&number) {
             return Err(format!("{name} does not fit s8"));
         }
         Ok((number as i8) as u8)
-    } else if number <= 0xff {
+    } else if (0..=0xff).contains(&number) {
         Ok(number as u8)
     } else {
         Err(format!("{name} does not fit u8"))
     }
 }
-fn sequence_note_parameters(event: &[Value], start: usize, label: &str) -> Result<Vec<u8>, String> {
-    if event.len() < start || event.len() - start > 3 {
+fn sequence_note_parameters(args: &[Arg], label: &str) -> Result<Vec<u8>, String> {
+    if args.len() > 3 {
         return Err(format!("{label} has more than three parameters"));
     }
-    event[start..]
-        .iter()
+    args.iter()
         .enumerate()
-        .map(|(index, value)| {
-            let number = number(value, &format!("{label} parameter {index}"))?;
+        .map(|(index, arg)| {
+            let number = number(Some(arg), &format!("{label} parameter {index}"))?;
             if number >= 0x80 {
                 return Err(format!("{label} parameter {index} must be below 0x80"));
             }
@@ -101,96 +287,65 @@ struct EncodedSequenceStream {
     data: Vec<u8>,
     labels: Vec<(String, usize)>,
     pointers: Vec<(usize, String)>,
-    events: usize,
 }
-fn encode_sequence_stream(events: &[Value]) -> Result<EncodedSequenceStream, String> {
+fn encode_sequence_stream(events: &[Event]) -> Result<EncodedSequenceStream, String> {
     let mut data = Vec::new();
     let mut local_labels = Vec::new();
     let mut pointers = Vec::new();
     let mut running: Option<u8> = None;
-    let mut event_count = 0;
-    for raw in events {
-        let event = raw.as_array().ok_or("sequence event is malformed")?;
-        let kind = event
-            .first()
-            .and_then(Value::as_str)
-            .ok_or("sequence event has no kind")?;
+    for event in events {
+        let (kind, args) = (event.kind.as_str(), event.args.as_slice());
         if kind == "label" {
-            let name =
-                sequence_symbol(event.get(1).ok_or("event label is missing")?, "event label")?;
-            local_labels.push((name, data.len()));
+            local_labels.push((sequence_symbol(args.first(), "event label")?, data.len()));
             continue;
         }
-        event_count += 1;
         let mut encoded = Vec::new();
         match kind {
-            "wait" => encoded.push(
-                0x80 + sequence_duration_index(
-                    event.get(1).ok_or("wait duration is missing")?,
-                    "wait duration",
-                )?,
-            ),
+            "wait" => encoded.push(0x80 + sequence_duration_index(args.first(), "wait duration")?),
             "fine" => {
-                if event.len() != 1 {
+                if !args.is_empty() {
                     return Err("fine takes no parameters".to_string());
                 }
                 encoded.push(0xb1);
             }
             "goto" | "pattern" => {
-                if event.len() != 2 {
+                if args.len() != 1 {
                     return Err(format!("{kind} takes one target"));
                 }
-                let target = sequence_symbol(
-                    event.get(1).ok_or("sequence target is missing")?,
-                    "sequence target",
-                )?;
+                let target = sequence_symbol(args.first(), "sequence target")?;
                 encoded.push(if kind == "goto" { 0xb2 } else { 0xb3 });
                 pointers.push((data.len() + 1, target));
                 encoded.extend_from_slice(&[0; 4]);
             }
             "pattern_end" => {
-                if event.len() != 1 {
+                if !args.is_empty() {
                     return Err("pattern_end takes no parameters".to_string());
                 }
                 encoded.push(0xb4);
             }
             "repeat" => {
-                if event.len() != 3 {
+                if args.len() != 2 {
                     return Err("repeat requires a count and target".to_string());
                 }
-                let count = number(
-                    event.get(1).ok_or("repeat count is missing")?,
-                    "repeat count",
-                )?;
+                let count = number(args.first(), "repeat count")?;
                 if count > 0xff {
                     return Err("repeat count does not fit u8".to_string());
                 }
-                let target = sequence_symbol(
-                    event.get(2).ok_or("repeat target is missing")?,
-                    "repeat target",
-                )?;
+                let target = sequence_symbol(args.get(1), "repeat target")?;
                 encoded.push(0xb5);
                 encoded.push(count as u8);
                 pointers.push((data.len() + 2, target));
                 encoded.extend_from_slice(&[0; 4]);
             }
             "note" => {
-                let opcode = 0xcf
-                    + sequence_duration_index(
-                        event.get(1).ok_or("note duration is missing")?,
-                        "note duration",
-                    )?;
+                let opcode = 0xcf + sequence_duration_index(args.first(), "note duration")?;
                 encoded.push(opcode);
-                encoded.extend(sequence_note_parameters(event, 2, "note")?);
+                encoded.extend(sequence_note_parameters(&args[1..], "note")?);
                 running = Some(opcode);
             }
             "note_running" => {
-                let opcode = 0xcf
-                    + sequence_duration_index(
-                        event.get(1).ok_or("running note duration is missing")?,
-                        "running note duration",
-                    )?;
-                let values = sequence_note_parameters(event, 2, "running note")?;
+                let opcode = 0xcf + sequence_duration_index(args.first(), "running note duration")?;
+                let values = sequence_note_parameters(&args[1..], "running note")?;
                 if values.is_empty() {
                     return Err("running note emits no bytes".to_string());
                 }
@@ -201,21 +356,15 @@ fn encode_sequence_stream(events: &[Value]) -> Result<EncodedSequenceStream, Str
                 running = Some(opcode);
             }
             "control_running" => {
-                if event.len() != 3 {
+                if args.len() != 2 {
                     return Err("control_running requires a name and value".to_string());
                 }
-                let name = json_string(
-                    event.get(1).ok_or("running control name is missing")?,
-                    "running control name",
-                )?;
-                let opcode = sequence_control_opcode(name).ok_or("unknown running control")?;
+                let name = sequence_symbol(args.first(), "running control name")?;
+                let opcode = sequence_control_opcode(&name).ok_or("unknown running control")?;
                 if !sequence_sets_running_status(opcode) {
                     return Err(format!("{name} cannot use running status"));
                 }
-                let value = sequence_parameter(
-                    event.get(2).ok_or("running control value is missing")?,
-                    name,
-                )?;
+                let value = sequence_parameter(args.get(1), &name)?;
                 if value >= 0x80 {
                     return Err(
                         "running control parameter would be parsed as a command".to_string()
@@ -228,10 +377,10 @@ fn encode_sequence_stream(events: &[Value]) -> Result<EncodedSequenceStream, Str
                 running = Some(opcode);
             }
             "note_end_running" => {
-                if event.len() != 2 {
+                if args.len() != 1 {
                     return Err("running note_end requires a value".to_string());
                 }
-                let value = sequence_note_parameters(event, 1, "running note_end")?[0];
+                let value = sequence_note_parameters(args, "running note_end")?[0];
                 if running.is_some_and(|active| active != 0xce) {
                     return Err("running note_end status differs from active status".to_string());
                 }
@@ -239,26 +388,21 @@ fn encode_sequence_stream(events: &[Value]) -> Result<EncodedSequenceStream, Str
                 running = Some(0xce);
             }
             "note_end" => {
-                if event.len() > 2 {
+                if args.len() > 1 {
                     return Err("note_end has too many parameters".to_string());
                 }
                 encoded.push(0xce);
-                if event.len() == 2 {
-                    encoded.extend(sequence_note_parameters(event, 1, "note_end")?);
-                }
+                encoded.extend(sequence_note_parameters(args, "note_end")?);
                 running = Some(0xce);
             }
             _ => {
                 let opcode = sequence_control_opcode(kind)
                     .ok_or_else(|| format!("unsupported sequence event: {kind}"))?;
-                if event.len() != 2 {
+                if args.len() != 1 {
                     return Err(format!("{kind} requires one parameter"));
                 }
                 encoded.push(opcode);
-                encoded.push(sequence_parameter(
-                    event.get(1).ok_or("control value is missing")?,
-                    kind,
-                )?);
+                encoded.push(sequence_parameter(args.first(), kind)?);
                 if sequence_sets_running_status(opcode) {
                     running = Some(opcode);
                 }
@@ -270,49 +414,21 @@ fn encode_sequence_stream(events: &[Value]) -> Result<EncodedSequenceStream, Str
         data,
         labels: local_labels,
         pointers,
-        events: event_count,
     })
 }
-fn sequence_fields(source: &Value) -> Result<(), String> {
-    let fields = source
-        .as_object()
-        .ok_or("sequence source is not an object")?;
-    if let Some(field) = fields
-        .keys()
-        .find(|field| !matches!(field.as_str(), "format" | "engine" | "layout"))
-    {
-        return Err(format!(
-            "sequence source records {field}; the build supplies placement and symbols"
-        ));
-    }
-    if number(&source["format"], "sequence format")? != 1
-        || source["engine"].as_str() != Some("smsh-sequence")
-    {
-        return Err("unsupported sequence source".into());
-    }
-    Ok(())
-}
-/// An engine sequence from its editable layout: `header`, `stream` and
-/// `align` segments in order. The header's label is exported; the tone bank
-/// it names is linked from elsewhere, and every other symbol (tracks, jump,
-/// repeat and pattern targets) must be a label the sequence defines.
-pub fn build_sequence_source(source: &Value) -> Result<Data, String> {
-    sequence_fields(source)?;
-    let layout = source["layout"]
-        .as_array()
-        .ok_or("sequence layout is missing")?;
+/// An engine sequence from its layout: `header`, `stream` and `align`
+/// segments in order. The header's label is exported; the tone bank it names
+/// is linked from elsewhere, and every other symbol (tracks, jump, repeat and
+/// pattern targets) must be a label the sequence defines.
+pub fn build_sequence(layout: &[Segment]) -> Result<Data, String> {
     let mut data = Data::default();
     let mut tone_banks = BTreeSet::new();
-    for (index, segment) in layout.iter().enumerate() {
-        match segment["kind"].as_str() {
-            Some("stream") => {
+    for segment in layout {
+        match segment {
+            Segment::Stream { label, events } => {
                 let offset = data.bytes.len();
-                data.label(&sequence_symbol(&segment["label"], "stream label")?, false);
-                let encoded = encode_sequence_stream(
-                    segment["events"]
-                        .as_array()
-                        .ok_or("stream events are missing")?,
-                )?;
+                data.label(&symbol(label, "stream label")?, false);
+                let encoded = encode_sequence_stream(events)?;
                 data.labels
                     .extend(
                         encoded
@@ -332,42 +448,43 @@ pub fn build_sequence_source(source: &Value) -> Result<Data, String> {
                 );
                 data.bytes.extend(encoded.data);
             }
-            Some("align") => {
-                let boundary = number(&segment["boundary"], "alignment boundary")?;
+            Segment::Align { boundary, fill } => {
+                let boundary = usize::try_from(*boundary).unwrap_or(0);
                 if !(2..=0x100).contains(&boundary) || !boundary.is_power_of_two() {
                     return Err(
                         "alignment boundary must be a power of two from 2 through 256".into(),
                     );
                 }
-                let fill = u8::try_from(number(&segment["fill"], "alignment fill")?)
-                    .map_err(|_| "alignment fill does not fit u8")?;
+                let fill = u8::try_from(*fill).map_err(|_| "alignment fill does not fit u8")?;
                 data.align_to(boundary, fill)?;
             }
-            Some("header") => {
-                data.label(&sequence_symbol(&segment["label"], "header label")?, true);
-                let tracks = segment["tracks"]
-                    .as_array()
-                    .ok_or("header tracks are missing")?;
+            Segment::Header {
+                label,
+                block_count,
+                priority,
+                reverb,
+                tone_bank,
+                tracks,
+            } => {
+                data.label(&symbol(label, "header label")?, true);
                 if tracks.is_empty() || tracks.len() > 16 {
                     return Err("header track list is invalid".into());
                 }
-                if number(&segment["block_count"], "header block_count")? != 0 {
+                if *block_count != 0 {
                     return Err("nonzero sequence block_count is not supported".into());
                 }
-                let priority = u8::try_from(number(&segment["priority"], "header priority")?)
-                    .map_err(|_| "header value does not fit u8")?;
-                let reverb = u8::try_from(number(&segment["reverb"], "header reverb")?)
-                    .map_err(|_| "header value does not fit u8")?;
-                let tone_bank = sequence_symbol(&segment["tone_bank"], "tone bank")?;
+                let priority =
+                    u8::try_from(*priority).map_err(|_| "header value does not fit u8")?;
+                let reverb = u8::try_from(*reverb).map_err(|_| "header value does not fit u8")?;
+                let tone_bank = symbol(tone_bank, "tone bank")?;
                 data.bytes
                     .extend_from_slice(&[tracks.len() as u8, 0, priority, reverb]);
                 data.pointer(&tone_bank, 0);
                 tone_banks.insert(tone_bank);
                 for track in tracks {
-                    data.pointer(&sequence_symbol(track, "track symbol")?, 0);
+                    data.pointer(&symbol(track, "track symbol")?, 0);
                 }
             }
-            _ => return Err(format!("unsupported layout segment {index}")),
         }
     }
     let defined: BTreeSet<&str> = data.labels.iter().map(|l| l.name.as_str()).collect();
@@ -382,22 +499,47 @@ pub fn build_sequence_source(source: &Value) -> Result<Data, String> {
     }
     Ok(data)
 }
+#[cfg(test)]
+fn events(lines: &[&str]) -> Vec<Event> {
+    lines
+        .iter()
+        .map(|line| Event::parse(line).unwrap())
+        .collect()
+}
+#[cfg(test)]
+fn song(track_events: Vec<Event>) -> Vec<Segment> {
+    vec![
+        Segment::Header {
+            label: "song".into(),
+            block_count: 0,
+            priority: 1,
+            reverb: 0,
+            tone_bank: "voicegroup".into(),
+            tracks: vec!["track".into()],
+        },
+        Segment::Align {
+            boundary: 16,
+            fill: 0,
+        },
+        Segment::Stream {
+            label: "track".into(),
+            events: track_events,
+        },
+    ]
+}
 #[test]
 fn sequences_link_their_tracks_jumps_and_tone_bank_by_label() {
-    let source = serde_json::json!({
-        "format": 1, "engine": "smsh-sequence",
-        "layout": [
-            {"kind": "header", "label": "song", "tracks": ["track"],
-             "block_count": 0, "priority": 1, "reverb": 0, "tone_bank": "voicegroup"},
-            {"kind": "align", "boundary": 16, "fill": 0},
-            {"kind": "stream", "label": "track", "events": [
-                ["goto", "end"], ["label", "loop"], ["note", 1, 60, 100],
-                ["wait", 1], ["repeat", 2, "loop"], ["label", "end"],
-                ["pattern", "loop"], ["fine"]
-            ]}
-        ]
-    });
-    let data = build_sequence_source(&source).unwrap();
+    let track = events(&[
+        "goto end",
+        "label loop",
+        "note 1 60 100",
+        "wait 1",
+        "repeat 2 loop",
+        "label end",
+        "pattern loop",
+        "fine",
+    ]);
+    let data = build_sequence(&song(track.clone())).unwrap();
     assert_eq!(
         data.bytes,
         [
@@ -427,55 +569,85 @@ fn sequences_link_their_tracks_jumps_and_tone_bank_by_label() {
         "{text}"
     );
     assert!(text.contains("\ntrack:\n") && !text.contains(".global track"));
-    for (path, value, error) in [
-        (
-            "/layout/2/events/0/1",
-            serde_json::json!("missing"),
-            "unknown sequence symbol",
-        ),
-        (
-            "/layout/2/label",
-            serde_json::json!("song"),
-            "duplicate local label",
-        ),
-        ("/layout/0/block_count", serde_json::json!(1), "nonzero"),
-        ("/layout/0/priority", serde_json::json!(256), "header value"),
-        ("/layout/0/reverb", serde_json::json!(256), "header value"),
-        ("/layout/0/tracks", serde_json::json!([]), "track list"),
-        ("/layout/1/boundary", serde_json::json!(3), "power of two"),
-        ("/layout/1/fill", serde_json::json!(256), "alignment fill"),
+    let mut missing = song(track.clone());
+    if let Segment::Stream { events, .. } = &mut missing[2] {
+        events[0] = Event::parse("goto missing").unwrap();
+    }
+    assert!(build_sequence(&missing)
+        .unwrap_err()
+        .contains("unknown sequence symbol"));
+    let mut duplicate = song(track.clone());
+    if let Segment::Stream { label, .. } = &mut duplicate[2] {
+        *label = "song".into();
+    }
+    assert!(build_sequence(&duplicate)
+        .unwrap_err()
+        .contains("duplicate local label"));
+    for (edit, error) in [
+        ((1i64, 1i64, 0i64, 1usize), "nonzero"),
+        ((0, 256, 0, 1), "header value"),
+        ((0, 1, 256, 1), "header value"),
+        ((0, 1, 0, 0), "track list"),
     ] {
-        let mut invalid = source.clone();
-        *invalid.pointer_mut(path).unwrap() = value;
+        let mut invalid = song(track.clone());
+        if let Segment::Header {
+            block_count,
+            priority,
+            reverb,
+            tracks,
+            ..
+        } = &mut invalid[0]
+        {
+            (*block_count, *priority, *reverb) = (edit.0, edit.1, edit.2);
+            tracks.truncate(edit.3);
+        }
         assert!(
-            build_sequence_source(&invalid).unwrap_err().contains(error),
-            "{path}"
+            build_sequence(&invalid).unwrap_err().contains(error),
+            "{error}"
         );
     }
-    for (field, value) in [
-        ("base", serde_json::json!("0x08000000")),
-        ("externals", serde_json::json!({"voicegroup": "0x08010000"})),
-    ] {
-        let mut recorded = source.clone();
-        recorded[field] = value;
-        assert!(build_sequence_source(&recorded)
-            .unwrap_err()
-            .contains(&format!("records {field}")));
+    for (boundary, fill, error) in [(3, 0, "power of two"), (16, 256, "alignment fill")] {
+        let mut invalid = song(track.clone());
+        invalid[1] = Segment::Align { boundary, fill };
+        assert!(
+            build_sequence(&invalid).unwrap_err().contains(error),
+            "{error}"
+        );
     }
 }
 #[test]
+fn skeletons_and_events_read_back_their_text() {
+    let layout = song(Vec::new());
+    let text = skeleton_text(&layout);
+    assert_eq!(
+        text,
+        "smsh-sequence 1\nheader song block_count=0 priority=1 reverb=0 tone_bank=voicegroup tracks=track\nalign 16 0\nstream track\n"
+    );
+    assert_eq!(parse_skeleton(&text).unwrap(), layout);
+    assert!(parse_skeleton("{\"format\":1}").is_err());
+    assert!(
+        parse_skeleton(&text.replace("reverb=0", "reverb=0 base=0x08000000"))
+            .unwrap_err()
+            .contains("records base")
+    );
+    for line in ["volume 100", "goto loop_1", "note_end", "key_shift -1"] {
+        assert_eq!(Event::parse(line).unwrap().to_string(), line);
+    }
+    assert!(Event::parse("[\"fine\"]").is_err());
+    assert!(Event::parse("volume 1.5").is_err());
+}
+#[test]
 fn running_status_follows_the_engine_and_tempo_never_runs() {
-    let events = serde_json::json!([
-        ["priority", 5],
-        ["control_running", "priority", 6],
-        ["key_shift", -1],
-        ["control_running", "key_shift", 1],
-        ["tempo", 30]
-    ]);
-    let encoded = encode_sequence_stream(events.as_array().unwrap()).unwrap();
+    let encoded = encode_sequence_stream(&events(&[
+        "priority 5",
+        "control_running priority 6",
+        "key_shift -1",
+        "control_running key_shift 1",
+        "tempo 30",
+    ]))
+    .unwrap();
     assert_eq!(encoded.data, [0xba, 5, 6, 0xbc, 0xff, 1, 0xbb, 30]);
-    let invalid = serde_json::json!([["tempo", 30], ["control_running", "tempo", 31]]);
-    assert!(encode_sequence_stream(invalid.as_array().unwrap()).is_err());
+    assert!(encode_sequence_stream(&events(&["tempo 30", "control_running tempo 31"])).is_err());
 }
 /// Prefix of the retired per-event sequence sidecars. The converter derives
 /// every encoding choice, so a MIDI still carrying one is refused.
@@ -562,12 +734,12 @@ struct MidiNode {
     compact_tick: i64,
     raw_tick: i64,
     order: usize,
-    event: Value,
+    event: Event,
 }
 fn reconstruct_midi_stream(
     events: &[MidiEvent],
     meter: &[(i64, i64)],
-) -> Result<Vec<Value>, String> {
+) -> Result<Vec<Event>, String> {
     let mut nodes = Vec::<MidiNode>::new();
     let mut grid = Vec::<usize>::new();
     let mut pending = HashMap::<u8, Vec<usize>>::new();
@@ -605,14 +777,14 @@ fn reconstruct_midi_stream(
                 if depth > 0 {
                     continue;
                 }
-                let value = serde_json::from_slice::<Value>(data)
-                    .map_err(|e| format!("MIDI event marker: {e}"))?;
+                let text = std::str::from_utf8(data)
+                    .map_err(|_| "MIDI event marker is not UTF-8".to_string())?;
                 let index = nodes.len();
                 nodes.push(MidiNode {
                     compact_tick: event.tick - removed,
                     raw_tick: event.tick,
                     order: event.order,
-                    event: value,
+                    event: Event::parse(text).map_err(|e| format!("MIDI event marker: {e}"))?,
                 });
                 grid.push(index);
             }
@@ -630,7 +802,10 @@ fn reconstruct_midi_stream(
                         compact_tick: event.tick - removed,
                         raw_tick: event.tick,
                         order: event.order,
-                        event: serde_json::json!(["note", 0, key, data[1]]),
+                        event: Event::new(
+                            "note",
+                            vec![0.into(), i64::from(key).into(), i64::from(data[1]).into()],
+                        ),
                     });
                     if depth == 0 {
                         grid.push(index);
@@ -645,8 +820,7 @@ fn reconstruct_midi_stream(
                         .copied()
                         .ok_or("MIDI note-off has no note-on")?;
                     queue.remove(0);
-                    nodes[index].event[1] =
-                        Value::from((event.tick - nodes[index].raw_tick) as usize);
+                    nodes[index].event.args[0] = Arg::Int(event.tick - nodes[index].raw_tick);
                 }
             }
             _ => {}
@@ -670,7 +844,7 @@ fn reconstruct_midi_stream(
         // have already advanced the bar position.
         let gap = node.compact_tick - cursor;
         for wait in rest_waits(node.raw_tick - gap, gap, meter)? {
-            output.push(serde_json::json!(["wait", wait]));
+            output.push(Event::new("wait", vec![(wait as i64).into()]));
         }
         cursor = node.compact_tick;
         output.push(node.event.clone());
@@ -684,28 +858,18 @@ fn reconstruct_midi_stream(
 /// velocity are written when they change. A label, pattern call, repeat or
 /// jump forgets the running command, key and velocity, because another path
 /// reaches the event after it; a pattern end changes nothing.
-fn default_sequence(events: &[Value]) -> Result<Vec<Value>, String> {
+fn default_sequence(events: &[Event]) -> Result<Vec<Event>, String> {
     let mut output = Vec::new();
     let mut running: Option<u8> = None;
     let (mut key, mut velocity) = (None::<usize>, None::<usize>);
     let mut after_rest = false;
     for event in events {
-        let values = event.as_array().ok_or("sequence event is malformed")?;
-        let kind = values
-            .first()
-            .and_then(Value::as_str)
-            .ok_or("sequence event has no kind")?;
+        let (kind, args) = (event.kind.as_str(), event.args.as_slice());
         match kind {
             "note" | "note_running" => {
-                let duration = number(
-                    values.get(1).ok_or("note duration is missing")?,
-                    "note duration",
-                )?;
-                let note_key = number(values.get(2).ok_or("note key is missing")?, "note key")?;
-                let note_velocity = number(
-                    values.get(3).ok_or("note velocity is missing")?,
-                    "note velocity",
-                )?;
+                let duration = number(args.first(), "note duration")?;
+                let note_key = number(args.get(1), "note key")?;
+                let note_velocity = number(args.get(2), "note velocity")?;
                 let opcode = SEQUENCE_DURATIONS
                     .iter()
                     .position(|candidate| *candidate == duration)
@@ -719,12 +883,12 @@ fn default_sequence(events: &[Value]) -> Result<Vec<Value>, String> {
                 };
                 let continues =
                     after_rest && opcode.is_some() && running == opcode && !params.is_empty();
-                let mut rebuilt = vec![
-                    Value::from(if continues { "note_running" } else { "note" }),
-                    Value::from(duration),
-                ];
-                rebuilt.extend(params.into_iter().map(Value::from));
-                output.push(Value::Array(rebuilt));
+                let mut rebuilt = vec![Arg::Int(duration as i64)];
+                rebuilt.extend(params.into_iter().map(|value| Arg::Int(value as i64)));
+                output.push(Event::new(
+                    if continues { "note_running" } else { "note" },
+                    rebuilt,
+                ));
                 running = opcode;
                 key = Some(note_key);
                 velocity = Some(note_velocity);
@@ -746,9 +910,9 @@ fn default_sequence(events: &[Value]) -> Result<Vec<Value>, String> {
                 ));
             }
             "note_end" => {
-                let continues = running == Some(0xce) && values.len() == 2;
+                let continues = running == Some(0xce) && args.len() == 1;
                 output.push(if continues {
-                    serde_json::json!(["note_end_running", values[1]])
+                    Event::new("note_end_running", args.to_vec())
                 } else {
                     event.clone()
                 });
@@ -758,15 +922,14 @@ fn default_sequence(events: &[Value]) -> Result<Vec<Value>, String> {
                 .filter(|opcode| sequence_sets_running_status(*opcode))
             {
                 Some(opcode) => {
-                    let value = values
-                        .get(1)
-                        .ok_or_else(|| format!("{kind} value is missing"))?;
                     let continues = after_rest
                         && running == Some(opcode)
-                        && values.len() == 2
-                        && sequence_parameter(value, kind)? < 0x80;
+                        && args.len() == 1
+                        && sequence_parameter(args.first(), kind)? < 0x80;
                     output.push(if continues {
-                        serde_json::json!(["control_running", kind, value])
+                        let mut running_args = vec![Arg::Sym(kind.to_string())];
+                        running_args.extend(args.iter().cloned());
+                        Event::new("control_running", running_args)
                     } else {
                         event.clone()
                     });
@@ -902,7 +1065,7 @@ fn repack_midi_tracks(midi: &[u8], native_tracks: usize) -> Result<Vec<u8>, Stri
 /// A sequence MIDI's events by track, its stream skeleton and its bar lines.
 struct SequenceMidi {
     tracks: HashMap<usize, Vec<MidiEvent>>,
-    skeleton: Option<Value>,
+    skeleton: Option<Vec<Segment>>,
     meter: Vec<(i64, i64)>,
 }
 /// A MIDI file's events by track and its ticks per quarter note.
@@ -924,9 +1087,10 @@ fn read_sequence_midi(midi: &[u8]) -> Result<SequenceMidi, String> {
                 return Err("MIDI carries a retired sequence sidecar directive".to_string())
             }
             EventBody::Meta { meta: 0x01, data } if skeleton.is_none() => {
+                let text = std::str::from_utf8(data)
+                    .map_err(|_| "MIDI conductor skeleton is not UTF-8".to_string())?;
                 skeleton = Some(
-                    serde_json::from_slice::<Value>(data)
-                        .map_err(|e| format!("MIDI conductor skeleton: {e}"))?,
+                    parse_skeleton(text).map_err(|e| format!("MIDI conductor skeleton: {e}"))?,
                 );
             }
             _ => {}
@@ -944,7 +1108,7 @@ fn read_midi_stream(
     midi: &SequenceMidi,
     track: usize,
     meter: &[(i64, i64)],
-) -> Result<Vec<Value>, String> {
+) -> Result<Vec<Event>, String> {
     default_sequence(&reconstruct_midi_stream(
         midi.tracks.get(&track).map(Vec::as_slice).unwrap_or(&[]),
         meter,
@@ -959,32 +1123,20 @@ pub fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
         .skeleton
         .as_ref()
         .ok_or("MIDI conductor skeleton is missing")?;
-    sequence_fields(skeleton)?;
-    let skeleton_layout = skeleton
-        .get("layout")
-        .and_then(Value::as_array)
-        .ok_or("MIDI skeleton layout is missing")?;
     let mut stream_index = 0usize;
     let mut layout = Vec::new();
-    for segment in skeleton_layout {
-        if segment.get("kind").and_then(Value::as_str) != Some("stream") {
+    for segment in skeleton {
+        let Segment::Stream { label, .. } = segment else {
             layout.push(segment.clone());
             continue;
-        }
+        };
         stream_index += 1;
-        let label = json_string(&segment["label"], "MIDI stream label")?.to_string();
-        layout.push(serde_json::json!({
-            "kind": "stream",
-            "label": label,
-            "events": read_midi_stream(&midi, stream_index, &midi.meter)?
-        }));
+        layout.push(Segment::Stream {
+            label: label.clone(),
+            events: read_midi_stream(&midi, stream_index, &midi.meter)?,
+        });
     }
-    let source = serde_json::json!({
-        "format": skeleton["format"],
-        "engine": skeleton["engine"],
-        "layout": layout
-    });
-    build_sequence_source(&source)
+    build_sequence(&layout)
 }
 /// The assembler source `build rom` assembles for a sequence MIDI, as pret's
 /// mid2agb writes one song's: the sequence in `.rodata`, its header label
@@ -995,31 +1147,24 @@ pub fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
         build_midi_sequence(midi)?.source()?
     ))
 }
-/// Turn a playback MIDI into the sequence MIDI of an editable sequence
-/// layout. Its conductor becomes the layout's skeleton and the first time
-/// signature, in `ADOPTION_BARS` order, under which the converter reads every
-/// stream of the layout back exactly; without one, adoption refuses and names
-/// the first difference. Nothing here reads a ROM: both inputs are editable.
-pub fn adopt_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
-    sequence_fields(source)?;
-    let source_layout = source
-        .get("layout")
-        .and_then(Value::as_array)
-        .ok_or("sequence source layout is missing")?;
+/// Turn a playback MIDI into the sequence MIDI of a sequence layout. Its
+/// conductor becomes the layout's skeleton and the first time signature, in
+/// `ADOPTION_BARS` order, under which the converter reads every stream of the
+/// layout back exactly; without one, adoption refuses and names the first
+/// difference. Nothing here reads a ROM: both inputs are editable.
+pub fn adopt_midi(layout: &[Segment], midi: &[u8]) -> Result<Vec<u8>, String> {
     let mut streams = Vec::new();
-    let mut skeleton_layout = Vec::new();
-    for segment in source_layout {
-        if segment.get("kind").and_then(Value::as_str) != Some("stream") {
-            skeleton_layout.push(segment.clone());
-            continue;
+    let mut skeleton = Vec::new();
+    for segment in layout {
+        if let Segment::Stream { label, events } = segment {
+            streams.push((label.as_str(), events));
+            skeleton.push(Segment::Stream {
+                label: label.clone(),
+                events: Vec::new(),
+            });
+        } else {
+            skeleton.push(segment.clone());
         }
-        let label = json_string(&segment["label"], "stream label")?;
-        let native = segment
-            .get("events")
-            .and_then(Value::as_array)
-            .ok_or("sequence stream events missing")?;
-        streams.push((label, native));
-        skeleton_layout.push(serde_json::json!({"kind":"stream", "label":label}));
     }
     let midi = repack_midi_tracks(midi, streams.len())?;
     // The conductor is replaced, so nothing it carried is read.
@@ -1044,12 +1189,13 @@ pub fn adopt_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
                         .zip(native.iter())
                         .take_while(|(a, b)| a == b)
                         .count();
+                    let show = |event: Option<&Event>| {
+                        event.map_or("nothing".to_string(), Event::to_string)
+                    };
                     first_difference = Some(format!(
                         "{label} event {at}: native {} but MIDI reads {}",
-                        native
-                            .get(at)
-                            .map_or("nothing".to_string(), Value::to_string),
-                        read.get(at).map_or("nothing".to_string(), Value::to_string)
+                        show(native.get(at)),
+                        show(read.get(at))
                     ));
                 }
                 continue 'bars;
@@ -1064,11 +1210,6 @@ pub fn adopt_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
             first_difference.unwrap_or_default()
         )
     })?;
-    let skeleton = serde_json::json!({
-        "format": source["format"],
-        "engine": source["engine"],
-        "layout": skeleton_layout,
-    });
     let conductor = encode_midi_track(&[
         MidiEvent {
             tick: 0,
@@ -1076,7 +1217,7 @@ pub fn adopt_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
             order: 0,
             body: EventBody::Meta {
                 meta: 0x01,
-                data: serde_json::to_vec(&skeleton).map_err(|error| error.to_string())?,
+                data: skeleton_text(&skeleton).into_bytes(),
             },
         },
         MidiEvent {
@@ -1108,17 +1249,20 @@ pub fn adopt_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
     );
     Ok(output)
 }
-#[test]
-fn sequence_midi_reading_follows_bar_lines_time_slots_and_jump_targets() {
-    let marker = |tick, order, event: Value| MidiEvent {
+#[cfg(test)]
+fn marker(tick: i64, order: usize, text: &str) -> MidiEvent {
+    MidiEvent {
         tick,
         track: 1,
         order,
         body: EventBody::Meta {
             meta: 0x06,
-            data: serde_json::to_vec(&event).unwrap(),
+            data: text.as_bytes().to_vec(),
         },
-    };
+    }
+}
+#[test]
+fn sequence_midi_reading_follows_bar_lines_time_slots_and_jump_targets() {
     let note = |tick, order, status: u8, key| MidiEvent {
         tick,
         track: 1,
@@ -1128,37 +1272,37 @@ fn sequence_midi_reading_follows_bar_lines_time_slots_and_jump_targets() {
             data: vec![key, 100],
         },
     };
-    let events = [
+    let stream = [
         note(0, 0, 0x90, 60),
         note(0, 1, 0x90, 64),
         note(5, 2, 0x80, 60),
         note(5, 3, 0x80, 64),
         note(12, 4, 0x90, 67),
         note(17, 5, 0x80, 67),
-        marker(24, 6, serde_json::json!(["label", "loop"])),
+        marker(24, 6, "label loop"),
         note(24, 7, 0x90, 67),
         note(29, 8, 0x80, 67),
-        marker(200, 9, serde_json::json!(["goto", "loop"])),
+        marker(200, 9, "goto loop"),
     ];
-    let read = |bar| {
-        Value::Array(
-            default_sequence(&reconstruct_midi_stream(&events, &[(0, bar)]).unwrap()).unwrap(),
-        )
-    };
-    let opening = serde_json::json!([
-        ["note", 5, 60, 100],
-        ["note", 5, 64],
-        ["wait", 12],
-        ["note_running", 5, 67],
-        ["wait", 12],
-        ["label", "loop"],
-        ["note", 5, 67, 100]
-    ]);
-    let with_rest = |waits: &[usize]| {
-        let mut expected = opening.as_array().unwrap().clone();
-        expected.extend(waits.iter().map(|wait| serde_json::json!(["wait", wait])));
-        expected.push(serde_json::json!(["goto", "loop"]));
-        Value::Array(expected)
+    let read =
+        |bar| default_sequence(&reconstruct_midi_stream(&stream, &[(0, bar)]).unwrap()).unwrap();
+    let with_rest = |waits: &[i64]| {
+        let mut expected = events(&[
+            "note 5 60 100",
+            "note 5 64",
+            "wait 12",
+            "note_running 5 67",
+            "wait 12",
+            "label loop",
+            "note 5 67 100",
+        ]);
+        expected.extend(
+            waits
+                .iter()
+                .map(|wait| Event::new("wait", vec![(*wait).into()])),
+        );
+        expected.push(Event::parse("goto loop").unwrap());
+        expected
     };
     assert_eq!(read(96), with_rest(&[72, 96, 8]));
     assert_eq!(read(72), with_rest(&[48, 72, 56]));
@@ -1180,67 +1324,56 @@ fn sequence_midi_reading_follows_bar_lines_time_slots_and_jump_targets() {
 }
 #[test]
 fn sequence_midi_reading_derives_control_running_status() {
-    let marker = |tick, order, event: Value| MidiEvent {
-        tick,
-        track: 1,
-        order,
-        body: EventBody::Meta {
-            meta: 0x06,
-            data: serde_json::to_vec(&event).unwrap(),
-        },
-    };
-    let events = [
-        marker(0, 0, serde_json::json!(["volume", 80])),
-        marker(12, 1, serde_json::json!(["volume", 90])),
-        marker(12, 2, serde_json::json!(["pan", 64])),
-        marker(12, 3, serde_json::json!(["pan", 60])),
-        marker(24, 4, serde_json::json!(["note_end", 60])),
-        marker(24, 5, serde_json::json!(["note_end", 64])),
-        marker(36, 6, serde_json::json!(["note_end", 62])),
-        marker(36, 7, serde_json::json!(["note_end"])),
-        marker(48, 8, serde_json::json!(["fine"])),
+    let stream = [
+        marker(0, 0, "volume 80"),
+        marker(12, 1, "volume 90"),
+        marker(12, 2, "pan 64"),
+        marker(12, 3, "pan 60"),
+        marker(24, 4, "note_end 60"),
+        marker(24, 5, "note_end 64"),
+        marker(36, 6, "note_end 62"),
+        marker(36, 7, "note_end"),
+        marker(48, 8, "fine"),
     ];
-    let read = default_sequence(&reconstruct_midi_stream(&events, &[(0, 96)]).unwrap()).unwrap();
+    let read = default_sequence(&reconstruct_midi_stream(&stream, &[(0, 96)]).unwrap()).unwrap();
     assert_eq!(
-        Value::Array(read),
-        serde_json::json!([
-            ["volume", 80],
-            ["wait", 12],
-            ["control_running", "volume", 90],
-            ["pan", 64],
-            ["pan", 60],
-            ["wait", 12],
-            ["note_end", 60],
-            ["note_end_running", 64],
-            ["wait", 12],
-            ["note_end_running", 62],
-            ["note_end"],
-            ["wait", 12],
-            ["fine"]
+        read,
+        events(&[
+            "volume 80",
+            "wait 12",
+            "control_running volume 90",
+            "pan 64",
+            "pan 60",
+            "wait 12",
+            "note_end 60",
+            "note_end_running 64",
+            "wait 12",
+            "note_end_running 62",
+            "note_end",
+            "wait 12",
+            "fine",
         ])
     );
-    let spelled = [marker(
-        0,
-        0,
-        serde_json::json!(["control_running", "volume", 1]),
-    )];
+    let spelled = [marker(0, 0, "control_running volume 1")];
     assert!(
         default_sequence(&reconstruct_midi_stream(&spelled, &[(0, 96)]).unwrap())
             .unwrap_err()
             .contains("derives")
     );
+    assert!(reconstruct_midi_stream(&[marker(0, 0, "[\"fine\"]")], &[(0, 96)]).is_err());
+}
+#[cfg(test)]
+fn track_chunk(events: &[MidiEvent]) -> Vec<u8> {
+    let data = encode_midi_track(events).unwrap();
+    [
+        b"MTrk".as_slice(),
+        &(data.len() as u32).to_be_bytes(),
+        &data,
+    ]
+    .concat()
 }
 #[test]
 fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
-    let track = |events: &[MidiEvent]| {
-        let data = encode_midi_track(events).unwrap();
-        [
-            b"MTrk".as_slice(),
-            &(data.len() as u32).to_be_bytes(),
-            &data,
-        ]
-        .concat()
-    };
     let at = |tick, order, body| MidiEvent {
         tick,
         track: 1,
@@ -1249,8 +1382,8 @@ fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
     };
     let playback = [
         b"MThd\0\0\0\x06\0\x01\0\x02\0\x60".as_slice(),
-        &track(&[]),
-        &track(&[
+        &track_chunk(&[]),
+        &track_chunk(&[
             at(
                 0,
                 0,
@@ -1272,51 +1405,46 @@ fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
                 2,
                 EventBody::Meta {
                     meta: 0x06,
-                    data: br#"["fine"]"#.to_vec(),
+                    data: b"fine".to_vec(),
                 },
             ),
         ]),
     ]
     .concat();
-    let source = |waits: Value| {
-        let mut events = vec![serde_json::json!(["note", 5, 60, 100])];
-        events.extend(
+    let layout = |waits: &[i64]| {
+        let mut stream = events(&["note 5 60 100"]);
+        stream.extend(
             waits
-                .as_array()
-                .unwrap()
                 .iter()
-                .map(|wait| serde_json::json!(["wait", wait])),
+                .map(|wait| Event::new("wait", vec![(*wait).into()])),
         );
-        events.push(serde_json::json!(["fine"]));
-        serde_json::json!({
-            "format": 1, "engine": "smsh-sequence",
-            "layout": [{"kind": "stream", "label": "track_1", "events": events}]
-        })
+        stream.push(Event::parse("fine").unwrap());
+        vec![Segment::Stream {
+            label: "track_1".into(),
+            events: stream,
+        }]
     };
-    let adopted_midi = adopt_midi(&source(serde_json::json!([72, 24])), &playback).unwrap();
+    let adopted_midi = adopt_midi(&layout(&[72, 24]), &playback).unwrap();
     // The adopted MIDI builds exactly the sequence its layout describes.
     assert_eq!(
         build_midi_sequence(&adopted_midi).unwrap(),
-        build_sequence_source(&source(serde_json::json!([72, 24]))).unwrap()
+        build_sequence(&layout(&[72, 24])).unwrap()
     );
     let adopted = read_sequence_midi(&adopted_midi).unwrap();
     assert_eq!(adopted.meter, [(0, 72)]);
     assert_eq!(
         adopted.skeleton.unwrap(),
-        serde_json::json!({"format": 1, "engine": "smsh-sequence",
-            "layout": [{"kind": "stream", "label": "track_1"}]})
+        [Segment::Stream {
+            label: "track_1".into(),
+            events: Vec::new()
+        }]
     );
-    let mut placed = source(serde_json::json!([72, 24]));
-    placed["base"] = serde_json::json!("0x08000000");
-    assert!(adopt_midi(&placed, &playback)
-        .unwrap_err()
-        .contains("records base"));
-    let refusal = adopt_midi(&source(serde_json::json!([50, 46])), &playback).unwrap_err();
+    let refusal = adopt_midi(&layout(&[50, 46]), &playback).unwrap_err();
     assert!(refusal.contains("no time signature"), "{refusal}");
     let directive = [MIDI_BUILD_DIRECTIVE, b"{}"].concat();
     let retired = [
         b"MThd\0\0\0\x06\0\x01\0\x01\0\x60".as_slice(),
-        &track(&[MidiEvent {
+        &track_chunk(&[MidiEvent {
             tick: 0,
             track: 0,
             order: 0,
@@ -1330,9 +1458,6 @@ fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
     assert!(read_sequence_midi(&retired).is_err());
 }
 
-/// The engine's PCM wave record of a WAV: control word (forward loop flag),
-/// pitch at middle C in 1/1024 Hz, loop start, last sample index, then the
-/// signed samples, zero padded to a word.
 pub fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
     let wave = psynergy::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
     let last_sample = u32::try_from(
@@ -1412,15 +1537,24 @@ fn sound_files_build_from_wav_and_pcm4_inputs_only() {
 
 #[test]
 fn sequence_assembly_places_the_song_in_rodata_by_label() {
-    let source = serde_json::json!({
-        "format": 1, "engine": "smsh-sequence",
-        "layout": [
-            {"kind": "stream", "label": "track_1", "events": [["fine"]]},
-            {"kind": "align", "boundary": 4, "fill": 0},
-            {"kind": "header", "label": "sound_001", "tracks": ["track_1"],
-             "block_count": 0, "priority": 0, "reverb": 0, "tone_bank": "Voices"}
-        ]
-    });
+    let source = vec![
+        Segment::Stream {
+            label: "track_1".into(),
+            events: events(&["fine"]),
+        },
+        Segment::Align {
+            boundary: 4,
+            fill: 0,
+        },
+        Segment::Header {
+            label: "sound_001".into(),
+            block_count: 0,
+            priority: 0,
+            reverb: 0,
+            tone_bank: "Voices".into(),
+            tracks: vec!["track_1".into()],
+        },
+    ];
     let track = |events: &[MidiEvent]| {
         let data = encode_midi_track(events).unwrap();
         [
@@ -1436,7 +1570,7 @@ fn sequence_assembly_places_the_song_in_rodata_by_label() {
         order: 0,
         body: EventBody::Meta {
             meta: 0x06,
-            data: br#"["fine"]"#.to_vec(),
+            data: b"fine".to_vec(),
         },
     };
     let playback = [

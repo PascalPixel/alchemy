@@ -446,7 +446,10 @@ ObjectMotion_TurnTowardLinkedScript:
 	.incbin "baserom.gba", 0x0009ff2c, 0x00000014
 	.global ObjectMotion_LinkedActionScript
 ObjectMotion_LinkedActionScript:
-	.incbin "baserom.gba", 0x0009ff40, 0x000001c8
+	.incbin "baserom.gba", 0x0009ff40, 0x00000018
+	.global FieldFx_GroundParticleTiles
+FieldFx_GroundParticleTiles:
+	.incbin "baserom.gba", 0x0009ff58, 0x000001b0
 	.global Data_080a0108
 Data_080a0108:
 	.incbin "baserom.gba", 0x000a0108, 0x00000020

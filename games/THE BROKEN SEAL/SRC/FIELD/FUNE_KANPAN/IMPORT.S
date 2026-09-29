@@ -269,6 +269,9 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	.global ObjectVisual_CopyAttributes
+	.thumb_func
+ObjectVisual_CopyAttributes:
 	overlay_veneer ObjectVisual_CopyAttributesFar
 	.global Engine_CameraFollowActor
 	.thumb_func

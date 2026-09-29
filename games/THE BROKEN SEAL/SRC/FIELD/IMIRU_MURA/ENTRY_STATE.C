@@ -1,24 +1,14 @@
-/* Draft of resource_399 0x02008b70 (ImiruMura_ApplyEntryState), from
- * the former games/THE BROKEN SEAL/SRC/FIELD/IMIRU_MURA/ENTRY_STATE.C.
- * Remaining difference: none in its bytes, but the ROM loads scene numbers 0x32 and 0x33 from the literal pool as link-time values, and no source defines those values.
- * The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 void SceneState_UpdateActor11WithFlag203(void);
 void RunEventScript02(void);
 void FieldScene_RunPrimaryScriptChoreography(void);
 void FieldScene_RunThreeActorChoreography(void);
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_00000032[];
-extern u8 Data_00000033[];
+void FieldScene_RunScene399SequenceA(void);
+void SceneState_UpdateZoneFlagsFromActorZero(void);
+extern u8 ImiruMura_ActorScriptA[];
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -53,7 +43,7 @@ s32 ImiruMura_ApplyEntryState(void)
     struct FieldActor *leader;
     s32 entrance;
 
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000032) {
+    if (gGameState.scene == (s32)&SceneId_ImiruMura1) {
         leader = Engine_ActorGet(0);
         gEventWork->start_transition = 0x100;
         Engine_ActorSetAnimation(10, 9);
@@ -63,18 +53,18 @@ s32 ImiruMura_ApplyEntryState(void)
         }
         leader->unknown_64 = 0;
         leader->unknown_66 = 0;
-        Value2(Engine_TaskAddCallback, 0x2009795, 0xc80);
-        Value2(Engine_TaskAddCallback, 0x20098c5, 0xc80);
+        Value2(Engine_TaskAddCallback, (s32)FieldScene_RunScene399SequenceA, 0xc80);
+        Value2(Engine_TaskAddCallback, (s32)SceneState_UpdateZoneFlagsFromActorZero, 0xc80);
         Engine_ActorSetSpritePriority(11, 1);
         if (Engine_GameFlagIsSet(0x203)) {
             SceneState_UpdateActor11WithFlag203();
         }
-        if (!Value1(Engine_GameFlagIsSet, 0x109) && Data_02000240_t.halves[225][0] == 9) {
+        if (!Value1(Engine_GameFlagIsSet, 0x109) && gGameState.entrance == 9) {
             RunEventScript02();
         }
-    } else if (Data_02000240_t.halves[224][0] == (s32)Data_00000033) {
+    } else if (gGameState.scene == (s32)&SceneId_ImiruMura2) {
         gEventWork->start_transition = 0x209;
-        entrance = Data_02000240_t.halves[225][0];
+        entrance = gGameState.entrance;
         if (entrance == 1) {
             Engine_ActorSetChildValue(21, 15);
             Engine_ActorGet(21)->collision_flags |= 8;
@@ -105,7 +95,7 @@ s32 ImiruMura_ApplyEntryState(void)
                     Call3(Engine_ActorSetPosition, 8, 0x950000, 0x740000);
                     Engine_ActorGet(8)->facing = 0;
                     Engine_ActorGet(9)->unknown_66 = 0;
-                    Engine_ActorEnableActionCallback(9, (const u8 *)0x200a4f4);
+                    Engine_ActorEnableActionCallback(9, ImiruMura_ActorScriptA);
                 } else {
                     Engine_ActorEnableActionCallback(8, (const u8 *)2);
                 }
@@ -113,7 +103,7 @@ s32 ImiruMura_ApplyEntryState(void)
         } else if (entrance == 2) {
             if (!Engine_GameFlagIsSet(0x881)) {
                 Engine_ActorGet(11)->unknown_66 = 1;
-                Engine_ActorEnableActionCallback(11, (const u8 *)0x200a4f4);
+                Engine_ActorEnableActionCallback(11, ImiruMura_ActorScriptA);
             }
         } else if (entrance == 4) {
             if (Engine_GameFlagIsSet(0x881)) {

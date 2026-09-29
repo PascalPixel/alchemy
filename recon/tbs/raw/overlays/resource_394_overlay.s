@@ -1,33 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008054,"ax",%progbits
-	.p2align 2
-	.global Func_02000054
-	.thumb_func
-Func_02000054:
-	push {r5, lr}
-	ldr r5, [pc, #48]
-	ldr r0, [r5]
-	sub sp, #8
-	bl 0x02008c2c
-	movs r3, #0
-	str r3, [sp, #0]
-	str r3, [sp, #4]
-	movs r2, #32
-	movs r3, #32
-	movs r0, #0
-	movs r1, #64
-	bl 0x02009074
-	movs r1, #255
-	ldr r0, [r5]
-	bl 0x02008b3c
-	bl 0x02008150
-	sub sp, #-8
-	pop {r5}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x020092c0
 	.section .text.x02008098,"ax",%progbits
 	.p2align 2
 	push	{r5, r6, r7, lr}
@@ -1084,51 +1056,10 @@ Func_02000980:
 	.2byte 0x0000
 	.4byte 0x03001ebc
 	.4byte 0x00000845
-	.section .text.x02008be4,"ax",%progbits
-	.p2align 2
-	.global Func_02000be4
+	.section .text.x02008c2c,"ax",%progbits
+	.global Scene_PushBlockAlongRun
 	.thumb_func
-Func_02000be4:
-	push {r5, r6, r7, lr}
-	ldr r7, [pc, #60]
-	ldr r6, [pc, #60]
-	adds r5, r2, #0
-	movs r2, #0
-.L_02000be4_5:
-	lsls r3, r1, #7
-	adds r3, r0, r3
-	lsls r3, r3, #2
-	adds r4, r3, r7
-	ldrb r3, [r4, #2]
-	cmp r3, #255
-	beq .L_02000be4_0
-	ldrb r3, [r4, #3]
-	lsls r3, r3, #2
-	ldrb r3, [r3, r6]
-	cmp r3, #0
-	beq .L_02000be4_1
-.L_02000be4_0:
-	movs r0, #1
-	negs r0, r0
-	b .L_02000be4_2
-.L_02000be4_1:
-	cmp r5, #0
-	bne .L_02000be4_3
-	adds r0, #1
-	b .L_02000be4_4
-.L_02000be4_3:
-	adds r1, #1
-.L_02000be4_4:
-	adds r2, #1
-	cmp r2, #3
-	ble .L_02000be4_5
-	movs r0, #0
-.L_02000be4_2:
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.4byte 0x02010000
-	.4byte 0x0202c000
+Scene_PushBlockAlongRun:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1550,7 +1481,10 @@ Func_02000e64:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.section .bss,"aw",%nobits
-	.space 24
+	.space 8
+	.global gKorimaMagariRecords
+gKorimaMagariRecords:
+	.space 16
 	.global KorimaPalette_First
 KorimaPalette_First:
 	.space 1792

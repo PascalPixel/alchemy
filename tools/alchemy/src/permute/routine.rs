@@ -53,9 +53,13 @@ impl Symbols {
             if name.is_empty() || name.starts_with('$') || !defined(&symbol) {
                 continue;
             }
+            let st_type = match symbol.flags() {
+                object::SymbolFlags::Elf { st_info, .. } => st_info & 0xf,
+                _ => 0,
+            };
             addresses
                 .entry(name.to_string())
-                .or_insert(symbol.address() as u32);
+                .or_insert(linked_value(symbol.address() as u32, st_type));
         }
         Ok(Symbols { addresses })
     }
@@ -316,6 +320,19 @@ pub fn routine(
 
 /// Defined in a section. Old-ABI Thumb functions (`STT_ARM_TFUNC`) and Thumb
 /// labels have processor-specific types that `is_definition` rejects.
+/// The value a data word relocated against a symbol holds. Labels an
+/// assembly listing marks as Thumb code (STT_ARM_TFUNC, or the older
+/// STT_ARM_16BIT) keep an even symbol value, and the linker sets the Thumb
+/// bit when it stores their address; compiled functions already carry it.
+fn linked_value(value: u32, st_type: u8) -> u32 {
+    const STT_ARM_TFUNC: u8 = 13;
+    const STT_ARM_16BIT: u8 = 15;
+    match st_type {
+        STT_ARM_TFUNC | STT_ARM_16BIT => value | 1,
+        _ => value,
+    }
+}
+
 fn defined(symbol: &object::Symbol) -> bool {
     symbol.section_index().is_some() && symbol.kind() != SymbolKind::Section
 }
@@ -487,4 +504,20 @@ fn sweep(reader: &Reader, symbols: &Symbols) -> Layout {
         pc += size;
     }
     (rows, padding, pool)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn thumb_labels_are_stored_with_the_thumb_bit() {
+        // An assembly `.thumb_func` label: the pool word holds address | 1.
+        assert_eq!(linked_value(0x0809_4bbc, 13), 0x0809_4bbd);
+        assert_eq!(linked_value(0x0809_4bbc, 15), 0x0809_4bbd);
+        // A compiled Thumb function already has the bit; data has none.
+        assert_eq!(linked_value(0x0808_b869, 2), 0x0808_b869);
+        assert_eq!(linked_value(0x0202_c000, 0), 0x0202_c000);
+        assert_eq!(linked_value(0x0202_c000, 1), 0x0202_c000);
+    }
 }

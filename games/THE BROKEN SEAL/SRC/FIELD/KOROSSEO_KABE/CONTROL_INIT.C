@@ -7,7 +7,7 @@ void SceneState_InitControlRecordAndStartTask(s32 resource)
     u8 *state = *(u8 **)(gWorkSlot + WORK_SLOT_STAGE * 4);
     struct StageControl *m = (struct StageControl *)gSceneState;
 
-    Engine_ResourceDecodeType01((const u8 *)Resource_GetTableEntry(resource), state + 240);
+    Resource_DecodeType01((const u8 *)Resource_GetTableEntry(resource), state + 240);
     if (GameFlag_IsSet(0x109) == 0) {
         m->status = 1;
         m->f2 = 1;

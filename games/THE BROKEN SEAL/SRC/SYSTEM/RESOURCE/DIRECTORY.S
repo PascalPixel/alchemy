@@ -245,8 +245,8 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesJ
 	resource , Korosseo_RivalPathA
 	resource RivalPathB, Korosseo_RivalPathB
-	resource , Korosseo_RivalPathC
-	resource , Korosseo_Lettering
+	resource RivalPathC, Korosseo_RivalPathC
+	resource Lettering, Korosseo_Lettering
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC

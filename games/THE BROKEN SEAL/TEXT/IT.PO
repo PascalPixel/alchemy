@@ -21971,7 +21971,7 @@ msgctxt "message"
 msgid "05490"
 msgstr "Prima la statua{line_break}non c'era... Sarà{line_break}stato Alex...{page_break}No, Alex non l'avrebbe{line_break}mai fatto. Ma forse{line_break}non è solo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriSavedMeAgain"
 msgid "05491"
 msgstr "Mi avete salvato{line_break}di nuovo!{end_wait}"
 
@@ -21995,7 +21995,7 @@ msgctxt "message"
 msgid "05496"
 msgstr "Avanti, non{line_break}mentite!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriThoughtSo"
 msgid "05497"
 msgstr "Lo sapevo...{end_wait}"
 
@@ -22643,7 +22643,7 @@ msgctxt "message"
 msgid "05658"
 msgstr "{argument_actor_name:1} riceve{line_break}{argument_item_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDontHideTruth"
 msgid "05659"
 msgstr "Per favore, non nascondetemi{line_break}nulla! Voglio sapere{line_break}tutta la verità!{end_now}"
 

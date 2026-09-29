@@ -189,7 +189,7 @@ s32 Runtime_BumpAllocateAlternatePool();            /* reserve a graphics handle
 
 void Resource_DecodeType01();           /* upload image data to a handle */
 
-s32 Resource_FindFreeEntryFar();            /* next palette slot index */
+s32 Resource_FindFreeEntry();            /* next palette slot index */
 
 void Engine_ScheduleCallback();           /* install a per-frame task (callback, rate) */
 

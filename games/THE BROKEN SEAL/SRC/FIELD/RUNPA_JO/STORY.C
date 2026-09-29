@@ -1,32 +1,22 @@
-/* Draft of PlayStoryScene, resource_3bf at 0x0200a7b0, built with
- * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: it compiles 16 bytes short of the ROM's 0x8a4, and the
- * ROM loads scene 0xa3 from its literal pool as a link-time value.
- * The listing keeps these rows. */
+/* Lunpa fortress: Dodonpa's story. Unless the story has already been told,
+ * the party meets him and, on the first visit, hears it at length; either
+ * way the scene ends by sending the party on to the fortress's fourth
+ * scene. */
 #include "FORTRESS.H"
+#include "SCENE_IDS.H"
 extern u8 MsgRunpaBackMoreGuess[];
 extern u8 MsgRunpaDodonpaPulledLever[];
 extern u8 MsgRunpaTimeEat[];
 
-void Func_020057ec();
-s32 Func_02007e76();
-s32 Func_0200804e();
-void Func_020080e6_a();
-void Func_020080e6_b();
-void Func_02008788_a();
-void Func_02008788_b();
-
-/* Runs one of two long fixed sequences (chosen by a status check), each
- * placing actors, panning/animating them, and running dialogue lines built
- * from a base text pointer plus a running line offset. */
+/* FAKEMATCH: the calls spelled through FORTRESS.H's Value2 and Value3
+ * wrappers set r0 last of their arguments, as the game's code does. The
+ * dialogue lines count on from each sequence's first message. */
 void PlayStoryScene(void)
 {
-
     s32 text_line;
 
-    if (GameFlag_IsSet(769) != 0) {
-        Func_020057ec();
-    }
+    if (GameFlag_IsSet(769) != 0)
+        return;
     GameFlag_Set(624);
     Event_Begin();
     if (GameFlag_IsSet(2370) != 0) {
@@ -37,7 +27,7 @@ void PlayStoryScene(void)
         Actor_ShowEmote(12, 256, 60);
         Actor_FaceDirection(12, 32768, 0);
         Actor_Jump(12, 4, 0);
-        Actor_SetSpriteFlags(Func_02007e76(12), 1);
+        Actor_SetSpriteFlags(Object_GetById(12), 1);
         Event_Wait(30);
         Actor_SetSpeed(ACTOR_IVAN, 45875, 22937);
         Value3(Engine_ActorWalkTo, 2, 464, 192);
@@ -80,8 +70,8 @@ void PlayStoryScene(void)
         do {
             gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
         } while (0);
-        Func_020080e6_a(0xa3, 4);
-        Func_020080e6_b(98, 4);
+        Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
+        BattleFx_SetWeightedResult(98, 4);
     } else {
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
         Audio_PlayCue(17);
@@ -93,7 +83,7 @@ void PlayStoryScene(void)
         Event_Wait(140);
         Actor_FaceDirection(12, 32768, 0);
         Actor_Jump(12, 4, 0);
-        Actor_SetSpriteFlags(Func_0200804e(12), 1);
+        Actor_SetSpriteFlags(Object_GetById(12), 1);
         Event_SetMessage(text_line + 1);
         Event_ShowMessage(12, 0);
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 32768, 16384);
@@ -279,8 +269,8 @@ void PlayStoryScene(void)
         do {
             gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
         } while (0);
-        Func_02008788_a(0xa3, 4);
-        Func_02008788_b(98, 4);
+        Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo4, 4);
+        BattleFx_SetWeightedResult(98, 4);
     }
     Event_End();
 }

@@ -40,7 +40,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_MODES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SELECT_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_BANDS.o"(.text)
-        "*/resource_3af_overlay.o"(.text.x0200b5ec)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_POSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/INIT_ACTOR_SLOTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/APPLY_FIVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/TOLBI_ARRIVAL.o"(.text)

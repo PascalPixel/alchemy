@@ -78,6 +78,7 @@ compilers: compiler-sources
 compiler-sources: compiler-source-check
 	sh agscc/build.sh
 	$(MAKE) -C agbcc/gcc old -j1
+	cd agbcc/gcc_arm && ./configure --target=arm-elf --host=i386-linux-gnu && $(MAKE) cc1 && mv cc1 ../agbcc_arm
 
 compiler-source-check:
 	@set -e; for repo in agbcc agscc; do \

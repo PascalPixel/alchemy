@@ -261,7 +261,7 @@
 	.section .rom.004334be, "a"
 	.incbin "baserom.gba", 0x4334be, 0x2
 	.section .rom.00434f4e, "a"
-	.incbin "baserom.gba", 0x434f4e, 0xc7a
+	.incbin "baserom.gba", 0x434f4e, 0x2
 	.section .rom.0043f536, "a"
 	.incbin "baserom.gba", 0x43f536, 0x2
 	.section .rom.004416ea, "a"
@@ -345,7 +345,9 @@
 	.section .rom.004c528d, "a"
 	.incbin "baserom.gba", 0x4c528d, 0x3
 	.section .rom.004c97f9, "a"
-	.incbin "baserom.gba", 0x4c97f9, 0x51c7
+	.incbin "baserom.gba", 0x4c97f9, 0x3
+	.section .rom.004ce9bd, "a"
+	.incbin "baserom.gba", 0x4ce9bd, 0x3
 	.section .rom.004ceb53, "a"
 	.incbin "baserom.gba", 0x4ceb53, 0x1
 	.section .rom.004d17a7, "a"
@@ -524,8 +526,10 @@
 	.incbin "baserom.gba", 0x55a9de, 0x2
 	.section .rom.0055cada, "a"
 	.incbin "baserom.gba", 0x55cada, 0x2
-	.section .rom.0055ee94, "a"
-	.incbin "baserom.gba", 0x55ee94, 0x2c6c
+	.section .rom.00560bba, "a"
+	.incbin "baserom.gba", 0x560bba, 0x2
+	.section .rom.00561aff, "a"
+	.incbin "baserom.gba", 0x561aff, 0x1
 	.section .rom.005644e6, "a"
 	.incbin "baserom.gba", 0x5644e6, 0x2
 	.section .rom.00564682, "a"
@@ -575,7 +579,9 @@
 	.section .rom.0059458f, "a"
 	.incbin "baserom.gba", 0x59458f, 0x1
 	.section .rom.005961e7, "a"
-	.incbin "baserom.gba", 0x5961e7, 0x1899
+	.incbin "baserom.gba", 0x5961e7, 0x1
+	.section .rom.00597a7f, "a"
+	.incbin "baserom.gba", 0x597a7f, 0x1
 	.section .rom.00597c03, "a"
 	.incbin "baserom.gba", 0x597c03, 0x1
 	.section .rom.0059a73f, "a"
@@ -583,7 +589,9 @@
 	.section .rom.0059ceb9, "a"
 	.incbin "baserom.gba", 0x59ceb9, 0x3
 	.section .rom.0059dea6, "a"
-	.incbin "baserom.gba", 0x59dea6, 0x16c2
+	.incbin "baserom.gba", 0x59dea6, 0x2
+	.section .rom.0059f567, "a"
+	.incbin "baserom.gba", 0x59f567, 0x1
 	.section .rom.0059f711, "a"
 	.incbin "baserom.gba", 0x59f711, 0x3
 	.section .rom.005a24a5, "a"
@@ -613,7 +621,9 @@
 	.section .rom.005b9b35, "a"
 	.incbin "baserom.gba", 0x5b9b35, 0x3
 	.section .rom.005bb43a, "a"
-	.incbin "baserom.gba", 0x5bb43a, 0x182e
+	.incbin "baserom.gba", 0x5bb43a, 0x2
+	.section .rom.005bcc67, "a"
+	.incbin "baserom.gba", 0x5bcc67, 0x1
 	.section .rom.005bcde5, "a"
 	.incbin "baserom.gba", 0x5bcde5, 0x3
 	.section .rom.005c16d9, "a"
@@ -693,7 +703,7 @@
 	.section .rom.005fabd3, "a"
 	.incbin "baserom.gba", 0x5fabd3, 0x1
 	.section .rom.005fee1a, "a"
-	.incbin "baserom.gba", 0x5fee1a, 0x1cb2
+	.incbin "baserom.gba", 0x5fee1a, 0x2
 	.section .rom.00600c11, "a"
 	.incbin "baserom.gba", 0x600c11, 0x3
 	.section .rom.00603dbf, "a"
@@ -946,8 +956,8 @@
 	.incbin "baserom.gba", 0x6d7515, 0x3
 	.section .rom.006d8473, "a"
 	.incbin "baserom.gba", 0x6d8473, 0x1
-	.section .rom.006d860c, "a"
-	.incbin "baserom.gba", 0x6d860c, 0x1118
+	.section .rom.006d9723, "a"
+	.incbin "baserom.gba", 0x6d9723, 0x1
 	.section .rom.006d98de, "a"
 	.incbin "baserom.gba", 0x6d98de, 0x2
 	.section .rom.006dc382, "a"
@@ -1031,9 +1041,15 @@
 	.section .rom.0071279e, "a"
 	.incbin "baserom.gba", 0x71279e, 0x2
 	.section .rom.00713e1a, "a"
-	.incbin "baserom.gba", 0x713e1a, 0xee2
+	.incbin "baserom.gba", 0x713e1a, 0x2
+	.section .rom.00714cfb, "a"
+	.incbin "baserom.gba", 0x714cfb, 0x1
 	.section .rom.00714e66, "a"
-	.incbin "baserom.gba", 0x714e66, 0x3ab6
+	.incbin "baserom.gba", 0x714e66, 0x2
+	.section .rom.0071683a, "a"
+	.incbin "baserom.gba", 0x71683a, 0x2
+	.section .rom.007177b6, "a"
+	.incbin "baserom.gba", 0x7177b6, 0x1166
 	.section .rom.0071a101, "a"
 	.incbin "baserom.gba", 0x71a101, 0x3
 	.section .rom.0071bfff, "a"
@@ -1077,7 +1093,9 @@
 	.section .rom.00745523, "a"
 	.incbin "baserom.gba", 0x745523, 0x1
 	.section .rom.0074876d, "a"
-	.incbin "baserom.gba", 0x74876d, 0x19c7
+	.incbin "baserom.gba", 0x74876d, 0x3
+	.section .rom.0074a133, "a"
+	.incbin "baserom.gba", 0x74a133, 0x1
 	.section .rom.0074a2a5, "a"
 	.incbin "baserom.gba", 0x74a2a5, 0x3
 	.section .rom.0074ba16, "a"
@@ -1099,7 +1117,9 @@
 	.section .rom.0075359f, "a"
 	.incbin "baserom.gba", 0x75359f, 0x1
 	.section .rom.00753745, "a"
-	.incbin "baserom.gba", 0x753745, 0x213f
+	.incbin "baserom.gba", 0x753745, 0x3
+	.section .rom.007557a0, "a"
+	.incbin "baserom.gba", 0x7557a0, 0xe4
 	.section .rom.0075859b, "a"
 	.incbin "baserom.gba", 0x75859b, 0x1
 	.section .rom.00758782, "a"
@@ -1112,8 +1132,8 @@
 	.incbin "baserom.gba", 0x760126, 0x2
 	.section .rom.00761cf9, "a"
 	.incbin "baserom.gba", 0x761cf9, 0x3
-	.section .rom.00761e6c, "a"
-	.incbin "baserom.gba", 0x761e6c, 0x1940
+	.section .rom.007637a9, "a"
+	.incbin "baserom.gba", 0x7637a9, 0x3
 	.section .rom.00763905, "a"
 	.incbin "baserom.gba", 0x763905, 0x3
 	.section .rom.00764de3, "a"

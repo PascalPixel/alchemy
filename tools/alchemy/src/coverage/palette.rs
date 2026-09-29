@@ -8,8 +8,7 @@
 /// corner than this step along the diagonal are cut away, so the bevel steps
 /// diagonally past them. 2 is the smallest step, the corner pixel alone.
 pub(crate) const CORNER: i32 = 8;
-/// The opacity in percent of every light bevel line (`LIGHT`, and `BAND` as
-/// the inner highlight); dark bevels stay opaque.
+/// The opacity in percent of every bevel line and text shadow.
 pub(crate) const LIGHT_OPACITY: u32 = 50;
 
 /// The raised face of every panel, chart and folder.
@@ -20,8 +19,9 @@ pub(crate) const DARK: &str = "#103840";
 /// A sunken well cut into the face, with its quiet rules.
 pub(crate) const WELL: &str = "#17606f";
 pub(crate) const GRID: &str = "#246f7e";
-/// A lighter band across a well: a marked day, a selected row.
-pub(crate) const BAND: &str = "#6e2a30";
+/// A band across a well, a marked day: black at `BAND_OPACITY`.
+pub(crate) const BAND: &str = "#000000";
+pub(crate) const BAND_OPACITY: u32 = 25;
 /// Labels: white ink over a black one-pixel shadow; muted and hover tones.
 pub(crate) const INK: &str = "#ffffff";
 pub(crate) const SHADOW: &str = "#000000";

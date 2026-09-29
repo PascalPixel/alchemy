@@ -1,3 +1,5 @@
+/* 2026-09-29 (Mars): state 2 still 11 halfwords with the origin written as
+ * one struct copy, and with the object pointer read through an s32 view. */
 /* NONMATCHING: 11 differing halfwords, all scheduling: in state 0 the ROM
  * copies source to r1 one instruction earlier, and in state 2 it loads the
  * object pointer after the first origin store. Statement order, const,

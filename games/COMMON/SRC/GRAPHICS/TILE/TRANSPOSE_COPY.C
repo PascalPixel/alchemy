@@ -32,3 +32,4 @@ void Graphics_TransposeCopy(const u8 *source_base, u8 *destination_base,
         } while (column_index != column_count);
     }
 }
+

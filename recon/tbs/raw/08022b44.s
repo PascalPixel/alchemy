@@ -379,7 +379,7 @@ DjinnMenu_ShowChangePreview:
 	.word	32768
 	.word	16384
 	.word	50336648
-	.word	Data_000008ae
+	.word	2222
 	.word	2221
 	.word	20481
 	.word	16383

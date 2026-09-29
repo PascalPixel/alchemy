@@ -51,3 +51,5 @@ Func_0800a37c:
 	bne	.L_0800a3d0
 	pop	{r5, r6, r7, r8}
 	bx	lr
+	.global Tile_ConvertMapCodeSize
+	.set Tile_ConvertMapCodeSize, . - Func_0800a37c

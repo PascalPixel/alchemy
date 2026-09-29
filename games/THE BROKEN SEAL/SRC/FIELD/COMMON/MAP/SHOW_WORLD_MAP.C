@@ -11,6 +11,7 @@
 #include "DMA.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
 void Map_UpdateWorldMapMarkers(void);
 extern u8 gMapCellBuffer[];
 
@@ -41,7 +42,6 @@ struct FieldState {
 extern u8 gWorkSlot[];
 extern u8 Value_0000001b[];
 extern u32 gKeysRepeat;
-extern volatile u16 RegIme;
 
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Event_ClearStatus1c6(void);
@@ -121,7 +121,7 @@ void Map_ShowWorldMap(void)
 
         q = &gIoWriteQueue;
         do {
-            ime = &RegIme;
+            ime = &REG_IME;
             saved = *ime;
         } while (0);
         *ime = (u16)ime;

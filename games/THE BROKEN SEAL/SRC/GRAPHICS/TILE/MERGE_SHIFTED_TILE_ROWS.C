@@ -69,7 +69,6 @@ void Link_DrawShiftedTilePair(s32 offset)
 }
 
 /* graphics/tile/expand_vram_tiles_by_color_table.c */
-extern u16 Data_06000600[];
 extern u16 Graphics_ExpandNibbleTable[];
 
 void Graphics_ExpandVramTilesByColorTable(u16 *dst)
@@ -84,7 +83,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst)
 
         do {
             u16 *out = (u16 *)((u8 *)dst + dst_ofs);
-            u16 *src = (u16 *)((u8 *)Data_06000600 + (row << 5));
+            u16 *src = (u16 *)((u8 *)0x06000600 + (row << 5));
             s32 col = 0;
 
             do {

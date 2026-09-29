@@ -44,3 +44,5 @@ Func_0800a418:
 	bgt	.L_0800a428
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
+	.global Tile_CopyStridedCodeSize
+	.set Tile_CopyStridedCodeSize, . - Func_0800a418

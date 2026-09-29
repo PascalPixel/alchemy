@@ -16,8 +16,6 @@ s32 BattlePres_RunUnitAction(s16 *);
 s32 BattlePresentation_RunPairedUnitTransition(s16 *);
 void BattleMotion_SetupEscapeObject(s32);
 
-extern u16 Value_fffffe00;
-
 void BattlePres_AdjustCameraByShoulderKeys(void)
 {
     void **slot = (void **)((u32)&Data_03001e80);
@@ -29,7 +27,7 @@ void BattlePres_AdjustCameraByShoulderKeys(void)
         cam->yaw += 512;
     }
     if ((*keys & 256) != 0) {
-        cam->yaw += (u16)(u32)&Value_fffffe00;
+        cam->yaw -= 512;
     }
     if (trans->flag == 0) {
         BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);

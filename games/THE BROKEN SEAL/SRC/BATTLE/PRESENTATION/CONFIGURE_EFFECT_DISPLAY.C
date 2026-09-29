@@ -9,10 +9,10 @@
    pointer. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
+#include "IO_REG.H"
 
 void WaitFrames(s32 frames);
 
-extern volatile u16 RegIme;
 
 void BattlePres_ConfigureEffectDisplay(void)
 {
@@ -32,7 +32,7 @@ void BattlePres_ConfigureEffectDisplay(void)
 
     q = &gIoWriteQueue;
     do {
-        ime = &RegIme;
+        ime = &REG_IME;
         saved = *ime;
     } while (0);
     *ime = (u16)ime;

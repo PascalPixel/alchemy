@@ -376,5 +376,5 @@ AlchemyUncreditedEnd_08002cdc:
 	and	r8, ip, sl, lsr #28
 	lsl	r9, sl, #4
 	b	.L_08002c10
-	.global Resource_DecodeType2End
-Resource_DecodeType2End:
+	.global Resource_Decode2End
+Resource_Decode2End:

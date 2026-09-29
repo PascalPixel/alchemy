@@ -176,3 +176,5 @@ Func_08009e7c:
 	bne	.L_08009e8c
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
+	.global TileMap_DrawRowsCodeSize
+	.set TileMap_DrawRowsCodeSize, . - TileMap_DrawRows

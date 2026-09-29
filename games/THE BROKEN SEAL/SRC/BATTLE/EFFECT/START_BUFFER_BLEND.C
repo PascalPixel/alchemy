@@ -1,8 +1,6 @@
 #include "DMA.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
 
-extern u8 Value_00001f82;
-
 u8 *Runtime_AllocateBlock(s32 slot, u32 size);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 priority);
 s32 BattleFx_BuildBuffer(s32 source, void *reference, void *destination, s32 mode);
@@ -37,6 +35,6 @@ void BattleFx_StartBufferBlend(s32 from, s32 to)
     value = 120;
     *frames = value;
     value = 0;
-    *(u16 *)(work + (s32)&Value_00001f82) = value;
+    *(u16 *)(work + 0x1f82) = value;
     Scheduler_AddOrUpdateCallback(BattleFx_UpdateStormFlash, 0xc80);
 }

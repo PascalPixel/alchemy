@@ -13,7 +13,6 @@ struct FieldPartyState {
 };
 
 extern u8 *gEventWork;
-extern u8 Value_00002090[];
 extern struct FieldPartyState gGameState;
 
 struct FieldActor *ObjectTable_Get(s32 index);
@@ -37,6 +36,10 @@ void FieldEffect_WatchLeaderDistance(void)
     }
     dx = Iwram_MulQ16(*(s16 *)(work + 0xcbc) - actor->x / 0x10000, 0xd105);
     dz = *(s16 *)(work + 0xcbe) - (actor->z - actor->y) / 0x10000;
-    if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 0xcba) == 0)
-        *(u16 *)(work + 382) = (u32)Value_00002090;
+    if (dx * dx + dz * dz >= 3600 || *(s16 *)(work + 0xcba) == 0) {
+        u16 *slot = (u16 *)(work + 382);
+        u32 request = 0x2090;
+
+        *slot = request;
+    }
 }

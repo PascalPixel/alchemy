@@ -12,7 +12,6 @@ typedef struct {
 } BattleEffectObject;
 
 extern u32 gBattleFxWork;
-extern u8 Value_000077d8;
 
 
 BattleEffectObject *GetBattleEffectObject(s32);
@@ -27,7 +26,8 @@ void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
     if (entry_count == 0) {
         return;
     }
-    offset = (u32)&Value_000077d8;
+    /* The object pointers start 0x77d8 bytes into the effect work. */
+    offset = 0x77d8;
     do {
         BattleEffectObject *object = GetBattleEffectObject(kind);
 

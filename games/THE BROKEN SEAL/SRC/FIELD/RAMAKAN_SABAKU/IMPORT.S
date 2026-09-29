@@ -178,6 +178,9 @@ Engine_EventRequestExit:
 	.thumb_func
 BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
 	.global Engine_DisplayScrollStartHBlankDma
 	.thumb_func

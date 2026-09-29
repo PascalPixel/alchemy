@@ -1,141 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020083ac,"ax",%progbits
-	.balign 4
-	.global Func_020003ac
-	.thumb_func
-Func_020003ac:
-	push {lr}
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_020003ac_0
-	ldr r0, [pc, #44]
-	b .L_020003ac_1
-.L_020003ac_0:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_020003ac_2
-	ldr r0, [pc, #44]
-	b .L_020003ac_1
-.L_020003ac_2:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_020003ac_3
-	ldr r0, [pc, #40]
-	b .L_020003ac_1
-.L_020003ac_3:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020003ac_4
-	ldr r0, [pc, #40]
-	b .L_020003ac_1
-.L_020003ac_4:
-	ldr r0, [pc, #40]
-.L_020003ac_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000059
-	.4byte 0x0200a174
-	.4byte 0x0000005a
-	.4byte 0x0200a1d4
-	.4byte 0x0000005b
-	.4byte 0x0200a234
-	.4byte 0x0000005c
-	.4byte 0x0200a2dc
-	.4byte 0x0200a12c
-	.section .text.x0200841c,"ax",%progbits
-	.balign 4
-	.global Func_0200041c
-	.thumb_func
-Func_0200041c:
-	push {r5, lr}
-	ldr r5, [pc, #84]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r5, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_0200041c_0
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r5, r2
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #5
-	bne .L_0200041c_0
-	ldr r0, [pc, #60]
-	bl 0x02009d4c
-.L_0200041c_0:
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r5, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_0200041c_1
-	ldr r0, [pc, #44]
-	b .L_0200041c_2
-.L_0200041c_1:
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_0200041c_3
-	ldr r0, [pc, #44]
-	b .L_0200041c_2
-.L_0200041c_3:
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_0200041c_4
-	ldr r0, [pc, #36]
-	b .L_0200041c_2
-.L_0200041c_4:
-	ldr r0, [pc, #36]
-.L_0200041c_2:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000005b
-	.4byte 0x0000090a
-	.4byte 0x00000059
-	.4byte 0x0200a3c8
-	.4byte 0x0000005a
-	.4byte 0x0200a410
-	.4byte 0x0200a4b8
-	.4byte 0x0200a3b0
-	.section .text.x02008c38,"ax",%progbits
-	.global Func_02000c38
-	.thumb_func
-Func_02000c38:
-	push {lr}
-	movs r0, #8
-	movs r1, #2
-	bl 0x02009dc4
-	ldr r0, [pc, #28]
-	movs r1, #5
-	bl 0x02009e0c
-	ldr r3, [pc, #24]
-	ldr r2, [pc, #24]
-	adds r3, r3, r2
-	movs r2, #3
-	strb r2, [r3]
-	movs r0, #53
-	movs r1, #5
-	bl 0x02009e04
-	pop {r0}
-	bx r0
-	.4byte 0x0000005b
-	.4byte 0x02000240
-	.4byte 0x0000022b
 	.section .text.x02008cd0,"ax",%progbits
 	.balign 4
 	.global Func_02000cd0
@@ -1207,6 +1071,8 @@ gEffectScripts:
 	lsls	r0, r0, #8
 	ldr	r6, [sp, #992]
 	lsls	r0, r0, #8
+	.global gRamakanSabakuEntrancesOther
+gRamakanSabakuEntrancesOther:
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x0100
@@ -1244,6 +1110,8 @@ gEffectScripts:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gRamakanSabakuEntrances1
+gRamakanSabakuEntrances1:
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x0100
@@ -1294,6 +1162,8 @@ gEffectScripts:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gRamakanSabakuEntrances2
+gRamakanSabakuEntrances2:
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x0100
@@ -1346,6 +1216,8 @@ gEffectScripts:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gRamakanSabakuEntrances3
+gRamakanSabakuEntrances3:
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x0100
@@ -1440,6 +1312,8 @@ gEffectScripts:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gRamakanSabakuEntrances4
+gRamakanSabakuEntrances4:
 	movs	r0, r0
 	.2byte 0xffff
 	.2byte 0x01a8
@@ -1558,6 +1432,8 @@ RamakanSabaku_Exits:
 	lsls	r0, r0, #1
 	lsls	r7, r7, #7
 	movs	r0, r0
+	.global gRamakanSabakuPlacementsOther
+gRamakanSabakuPlacementsOther:
 	.2byte 0xffff
 	.2byte 0x0000
 	.2byte 0x0000
@@ -1571,6 +1447,8 @@ RamakanSabaku_Exits:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gRamakanSabakuPlacements1
+gRamakanSabakuPlacements1:
 	lsls	r3, r0, #3
 	lsrs	r2, r1, #4
 	movs	r1, r0
@@ -1611,6 +1489,8 @@ RamakanSabaku_Exits:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gRamakanSabakuPlacements2
+gRamakanSabakuPlacements2:
 	lsls	r3, r0, #3
 	lsrs	r2, r1, #4
 	movs	r1, r0
@@ -1703,6 +1583,8 @@ RamakanSabaku_Exits:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gRamakanSabakuPlacements3
+gRamakanSabakuPlacements3:
 	lsls	r3, r0, #3
 	lsrs	r2, r1, #4
 	movs	r1, r0

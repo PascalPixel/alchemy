@@ -8,8 +8,8 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer ShianMura_SetupScene
-	overlay_veneer Func_0200059c
-	overlay_veneer Func_020005a8
-	overlay_veneer Func_020005b0
-	overlay_veneer Func_02001140
-	overlay_veneer Func_020005a4
+	overlay_veneer SceneEffect_GetPrimaryData
+	overlay_veneer SceneEffect_GetSecondaryData
+	overlay_veneer SceneEffect_PrepareState
+	overlay_veneer SceneEffect_GetTertiaryData
+	overlay_veneer SceneEffect_GetInitialValue

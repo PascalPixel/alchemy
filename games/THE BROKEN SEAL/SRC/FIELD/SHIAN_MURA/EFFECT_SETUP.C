@@ -1,0 +1,29 @@
+#include "SHIAN.H"
+
+void SetEffectRecordMode(struct EffectWork *work, s32 mode)
+{
+    work->record->mode = mode;
+}
+
+void *SceneEffect_SpawnPrimary(s32 x, s32 y, s32 z, s32 kind)
+{
+    u8 *effect = Object_Create(kind, x, y, z);
+
+    if (effect != NULL) {
+        u8 *sprite = *(u8 **)(effect + 0x50);
+        s32 flags;
+        s32 mask = 13;
+
+        flags = sprite[9];
+        mask = -mask;
+        mask &= flags;
+        sprite[9] = mask;
+        effect[0x55] = 0;
+        effect[0x59] = 8;
+        Actor_SetSpriteFlags(effect, 0);
+        Object_SetPalette(effect, 14);
+        Object_SetBlendMode(effect, 1);
+        return effect;
+    }
+    return NULL;
+}

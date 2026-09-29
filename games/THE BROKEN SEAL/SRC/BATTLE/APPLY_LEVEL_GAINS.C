@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 struct OwnerElementStats {
     s16 power;
@@ -24,8 +25,6 @@ struct OwnerState {
     struct OwnerStats stats;
 };
 
-typedef s32 (*WordCopyFn)(const void *source, void *destination, s32 size);
-
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 struct OwnerState *Owner_GetStateFar(s32 owner);
 s32 Math_Div(s32 numerator, s32 denominator);
@@ -47,7 +46,7 @@ s32 Owner_ApplyLevelGains(s32 owner, s32 levels)
     base = Runtime_BumpAllocateAlternatePool(sizeof(struct OwnerStats));
     state = Owner_GetStateFar(owner);
     stats = &state->stats;
-    ((WordCopyFn)0x03001388)(base, stats, sizeof(struct OwnerStats));
+    Iwram_CopyWords(base, stats, sizeof(struct OwnerStats));
 
     value = stats->max_hp;
     value += Math_Div(levels * 97, 10);

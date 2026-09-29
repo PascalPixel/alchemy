@@ -51,7 +51,10 @@ in assets. Banning forms only moves the answer; hold these invariants instead.
    the count, in any file or location, `out/` included.
 2. **The linker places.** Every name is defined where its bytes are, as a C
    definition or a label, and layout is the linker scripts' object order. No
-   equate, alias, `#define` or table gives a name an address.
+   equate, alias, `#define` or table gives a name an address, except
+   Camelot's own: ROM code calls the resident IWRAM routines through fixed
+   entry addresses, listed once in each game's `IWRAM_CALL.H` and checked by
+   the build against where the linker placed each routine.
 3. **The map counts.** DONE is pret's calcrom over the linker maps of
    byte-identical builds: the code the linker places from `games/`. `games/`
    holds only real source: C from an approved compiler, or proven library,
@@ -145,3 +148,7 @@ a verified build.
   called with pret's flags.
 - 2026-09-28: pret publishes graphics, sound, text and maps as editable files
   built by its tools; so does Alchemy.
+- 2026-09-29: do what Camelot did for IWRAM calls. The ROM loads a resident
+  IWRAM routine's address before the arguments, which only a call through a
+  fixed address reproduces; a label compiles to a direct `bl` and `long_call`
+  loads the address last.

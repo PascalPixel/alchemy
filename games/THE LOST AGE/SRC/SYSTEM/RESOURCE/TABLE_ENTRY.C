@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
-extern u32 Data_08680000[];
+extern u32 Resource_DirectoryTable[];
 
 u32 Resource_GetTableEntry(u32 index)
 {
-    return Data_08680000[index];
+    return Resource_DirectoryTable[index];
 }

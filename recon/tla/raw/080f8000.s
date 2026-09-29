@@ -1,5 +1,7 @@
 .syntax unified
 	.thumb
+	.global Resource_FarCall007
+Resource_FarCall007:
 	.global Func_080f8000
 	.thumb_func
 Func_080f8000:

@@ -1,0 +1,6 @@
+@ Tileset_Set116TilesC: 512 tiles of 4-bit colour, drawn with one of its set's palettes, packed by
+@ the tile compressor.
+	.section .rodata
+	.global Tileset_Set116TilesC
+Tileset_Set116TilesC:
+	.incbin "GRAPHICS/TILESET/SET_116/TILES_C.4bpp.mtf"

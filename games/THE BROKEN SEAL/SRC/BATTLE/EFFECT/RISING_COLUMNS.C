@@ -4,6 +4,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
@@ -18,7 +19,6 @@ typedef struct Column {
 } Column;
 extern u8 gWorkSlot[];
 extern s8 RisingColumns_ColumnOffsets[];
-extern u8 Value_000000a6;
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 void Audio_PlayCue(s32);
@@ -48,7 +48,7 @@ void BattleEffect_RunRisingColumns(struct BattleEffectArgument *effect)
     BattleFx_BeginCanvasLayer(1);
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
-    Resource_LoadAndDecompress((s32)&Value_000000a6, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_GreenVineSheet, work, 1, 1);
     EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[0], &first);
     EffectPosition_ApplyStepAndYOffset(WORK_EFFECT->actors[WORK_EFFECT->count - 1], &last);
     middle = first.x;

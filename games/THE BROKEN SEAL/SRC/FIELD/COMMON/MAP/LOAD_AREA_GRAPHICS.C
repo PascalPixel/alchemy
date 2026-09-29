@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "MAP.H"
+#include "RESOURCE_IDS.H"
 extern u8 gMapCellBuffer[];
 extern u8 Data_03001cfc[];
 
@@ -14,7 +15,6 @@ void Map_ShowBg1FromBuffer(void);
 void MapAnimation_Update(void);
 
 extern u8 *Data_03001e70;
-extern u8 Value_000000d5;
 
 #define BG_PALETTE ((s16 *)0x05000000)
 
@@ -49,7 +49,7 @@ void Map_LoadAreaGraphics(void)
     ((struct MapWindow *)state)->top = 0;
     ((struct MapWindow *)state)->bottom = 159;
     WaitFrames(1);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)&Value_000000d5), buffer);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry((u32)&ResourceId_DefaultMapCells), buffer);
     /* FAKEMATCH: the byte flag is written from the halfword local cleared
        before the call; the reference keeps that zero in r5 and loads it
        from a short-range halfword pool placed before the epilogue. */

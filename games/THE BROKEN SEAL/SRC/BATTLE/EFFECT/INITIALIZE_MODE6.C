@@ -9,6 +9,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 
 void Graphics_ResetBg2Pa(void);
 void Graphics_SetBg2AffineScaleHalf(void);
@@ -57,11 +58,6 @@ struct Cells03001ce0 {
 };
 extern struct Cells03001ce0 gProjection;
 
-extern u8 Value_0000003d;
-extern u8 Value_0000006e;
-extern u8 Value_0000006f;
-extern u8 Value_00000073;
-extern u8 Value_00000076;
 
 typedef struct Scale {
     s32 x;
@@ -147,10 +143,10 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
     BattleFx_SpawnObjects(8, 0x17a, 1);
     gProjection.unk10 = 240;
     WaitFrames(1);
-    BattleBackground_LoadFar(1, (s32)&Value_0000003d, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000073, aux, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_0000006e, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000076, work->sheet + 0x4e20, 0, 0);
+    BattleBackground_LoadFar(1, (s32)&ResourceId_StormCloudBackdrop, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, work->sheet + 0x4e20, 0, 0);
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x1010;
@@ -458,7 +454,7 @@ void BattleFx_InitializeMode6(struct BattleEffectArgument *efx)
         EffectPosition_ApplyStepAndYOffset(work->effect->actors[i], (struct EffectPosition *)seat);
         work->sparks[i].x = seat[0] / 2;
     }
-    Resource_LoadAndDecompress((s32)&Value_0000006f, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueFlameSheet, work, 1, 1);
     Audio_PlayCue(0x121);
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x1010;

@@ -3,6 +3,7 @@
 #include "BATTLE_EFFECT_WORK.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
+#include "RESOURCE_IDS.H"
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
 
@@ -16,7 +17,6 @@ extern u8 gCameraWork[];
  */
 
 /* Resource id the reference loads from its literal pool. */
-extern u8 Value_0000008c;
 extern const u16 ParticleStreams_CellOffsets[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -51,7 +51,7 @@ void BattleFx_RunSwirlingStars(void *object)
     canvas = *cursor;
     work->effect = object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&Value_0000008c, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work, 1, 1);
     BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, (u32 *)draw);
     for (i = 0; i != 256; i++) {
         star = &((struct EffectStep *)0x02010000)[i];

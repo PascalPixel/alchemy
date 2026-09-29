@@ -1,8 +1,8 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
+#include "RESOURCE_IDS.H"
 
-extern u8 Data_000000f1[];
 
 s32 Runtime_AllocateHeapBlock(s32 arg0, s32 arg1);
 u32 Resource_DecodeByteLz(const void *, void *);
@@ -11,7 +11,7 @@ s32 Resource_GetBuffer(s32 index, s32 value);
 s32 Resource_LoadIndexedIntoBuffer(s32 arg0, s32 arg1)
 {
     void *buffer = Runtime_AllocateHeapBlock(0x11, 0x608);
-    u16 *base = Resource_GetTableEntry((s32)Data_000000f1);
+    u16 *base = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
     void **slot = (void **)((u32)buffer + 0x604);
     void *target = (void *)((u32)base + base[arg1]);
     s32 ret;

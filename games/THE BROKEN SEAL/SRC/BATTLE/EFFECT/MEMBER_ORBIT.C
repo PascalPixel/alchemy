@@ -4,6 +4,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
@@ -21,7 +22,6 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
 
 /* A small absolute link-time constant.  The resource id must be built from a
  * literal pool word, which an ordinary integer literal cannot produce. */
-extern u8 Value_000000af;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
@@ -66,7 +66,7 @@ void BattleFx_RunMemberOrbit(void *object)
     FIELD_AT_OFFSET(work, void **, 0x7828) = object;
     BattleFx_BeginCanvasLayer(0);
     FIELD_AT_OFFSET((void *)0x04000020, s16 *, 0) = 0x100;
-    palette = Resource_GetTableEntry((s32)&Value_000000af);
+    palette = Resource_GetTableEntry((s32)&ResourceId_SpiralSheet);
     status = Iwram_CopyWords((void *)0x05000000, palette, 128);
     status = Resource_DecodeType01((u8 *)palette + 128, work);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);

@@ -294,6 +294,9 @@ Engine_EventAskYesNo:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Engine_ActorSetSpritePriority
+	.thumb_func
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Engine_ActorShowEmote
 	.thumb_func

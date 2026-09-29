@@ -1024,12 +1024,10 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x003c3cf5, 0x00000003
 	.section .unidentified.083c5677,"a"
 	.incbin "baserom.gba", 0x003c5677, 0x00000001
-	.global LuckyDice_GraphicsA
-LuckyDice_GraphicsA:
-	.incbin "baserom.gba", 0x003c5678, 0x00002e20
-	.global LuckyDice_GraphicsB
-LuckyDice_GraphicsB:
-	.incbin "baserom.gba", 0x003c8498, 0x00003024
+	.section .unidentified.083c8495,"a"
+	.incbin "baserom.gba", 0x003c8495, 0x00000003
+	.section .unidentified.083cb4b9,"a"
+	.incbin "baserom.gba", 0x003cb4b9, 0x00000003
 	.section .unidentified.083cbd01,"a"
 	.incbin "baserom.gba", 0x003cbd01, 0x00000003
 	.global BattleFx_CyanSparkSheet

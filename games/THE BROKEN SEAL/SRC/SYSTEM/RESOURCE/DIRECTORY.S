@@ -81,8 +81,8 @@ Resource_DirectoryTable:
 	resource , Slots_Screen
 	resource , Slots_Icons
 	resource , Slots_Jackpot
-	resource , LuckyDice_GraphicsA
-	resource , LuckyDice_GraphicsB
+	resource , LuckyDice_Board
+	resource , LuckyDice_Sprites
 	resource , BattleFx_TileAnimationMask
 	resource , BattleFx_CyanSparkSheet
 	resource , BattleFx_VioletPaletteA

@@ -3616,9 +3616,9 @@ Func_020001d4:
 .L_02002652:
 	.2byte 0xf460
 	.2byte 0x3c19
-	ldrb	r5, [r5, #9]
-	str	r3, [sp, #832]
-	str	r7, [r6, #24]
+	.2byte 0x7a6d
+	.2byte 0x93d0
+	.2byte 0x61b7
 	.2byte 0xe3cf
 	.2byte 0xda7d
 	.4byte 0x9a0500c4
@@ -3644,14 +3644,14 @@ Func_020001d4:
 	.4byte 0x0fc7843e
 	.4byte 0xe7dedaca
 	.2byte 0x69c2
-	push	{r0, r2, r3, r6, lr}
-	movs	r4, #147
-	ldrh	r1, [r0, #2]
-	add	r7, pc, #184
-	movs	r4, #229
-	subs	r4, r3, r0
-	str	r2, [sp, #528]
-	b.n	.L_02002652
+	.2byte 0xb54d
+	.2byte 0x2493
+	.2byte 0x8841
+	.2byte 0xa72e
+	.2byte 0x24e5
+	.2byte 0x1a1c
+	.2byte 0x9284
+	.2byte 0xe7c3
 	.2byte 0xa2c0
 	.4byte 0xc071f037
 	.4byte 0x69c5e7eb
@@ -3700,8 +3700,8 @@ Func_020001d4:
 	.2byte 0xcd3c
 	.2byte 0x4284
 .L_02002780:
-	ldrb	r7, [r6, #7]
-	subs	r7, r3, r0
+	.2byte 0x79f7
+	.2byte 0x1a1f
 	.2byte 0xe3cf
 	.2byte 0x7c69
 	.4byte 0x41f3ea0c
@@ -4080,8 +4080,8 @@ Func_020001d4:
 	.4byte 0x2c9ec2ae
 	.2byte 0x30f2
 .L_02002d62:
-	str	r7, [sp, #512]
-	b.n	.L_02002dde
+	.2byte 0x9780
+	.2byte 0xe03b
 	.2byte 0xcf1a
 	.4byte 0xf7b673b3
 	.4byte 0xb82a0739
@@ -4114,183 +4114,183 @@ Func_020001d4:
 	.4byte 0x98f48901
 	.2byte 0xa4dc
 .L_02002dde:
-	add	r6, pc, #504
+	.2byte 0xa67e
 	.2byte 0xe8dd
 	.2byte 0x2e51
-	add	r6, sp, #416
+	.2byte 0xae68
 .L_02002de6:
-	ldrb	r2, [r4, #23]
-	strh	r0, [r0, #28]
-	str	r7, [r0, #28]
-	asrs	r1, r2, #26
-	ldr	r0, [pc, #848]
+	.2byte 0x7de2
+	.2byte 0x8380
+	.2byte 0x61c7
+	.2byte 0x1691
+	.2byte 0x48d4
 .L_02002df0:
-	b.n	.L_02002780
+	.2byte 0xe4c6
 	.2byte 0xa81e
 	.4byte 0x3c556aa6
 	.4byte 0x5a34d8e1
 	.2byte 0x4828
 .L_02002dfe:
-	ldrh	r6, [r3, #0]
+	.2byte 0x881e
 	.2byte 0xfa47
 	.2byte 0x483d
-	strb	r0, [r0, r5]
-	add	r0, sp, #816
-	ldr	r4, [sp, #680]
-	movs	r4, #193
+	.2byte 0x5540
+	.2byte 0xa8cc
+	.2byte 0x9caa
+	.2byte 0x24c1
 .L_02002e0c:
-	adds	r5, #56
+	.2byte 0x3538
 	.2byte 0xec3e
 	.2byte 0x8c7d
-	ldrh	r3, [r3, #40]
+	.2byte 0x8d1b
 	.2byte 0xfc1b
 	.2byte 0xf91e
 .L_02002e18:
-	bcc.n	.L_02002d62
-	lsrs	r7, r0, #28
-	adds	r3, r4, r3
+	.2byte 0xd3a3
+	.2byte 0x0f07
+	.2byte 0x18e3
 	.2byte 0xf90d
 	.2byte 0xae59
-	tst	r7, r2
-	lsls	r0, r4, #30
-	cmp	r0, r2
-	ldr	r1, [sp, #660]
-	movs	r2, #177
-	strh	r7, [r1, r6]
+	.2byte 0x4217
+	.2byte 0x07a0
+	.2byte 0x4290
+	.2byte 0x99a5
+	.2byte 0x22b1
+	.2byte 0x538f
 .L_02002e2e:
-	adds	r0, r2, r5
-	lsrs	r7, r0, #10
+	.2byte 0x1950
+	.2byte 0x0a87
 	.2byte 0xdc30
 	.2byte 0xd923
-	ldrb	r2, [r3, r5]
-	subs	r2, #207
-	add	r1, pc, #356
+	.2byte 0x5d5a
+	.2byte 0x3acf
+	.2byte 0xa159
 	.2byte 0x47bc
 	.2byte 0x460f
 	.2byte 0xee60
 	.2byte 0xd623
 	.2byte 0xfe70
 	.2byte 0x1e23
-	subs	r0, #240
-	subs	r2, #16
-	ldmia	r7, {r5, r6, r7}
+	.2byte 0x38f0
+	.2byte 0x3a10
+	.2byte 0xcfe0
 .L_02002e4e:
-	subs	r6, #172
-	lsrs	r0, r6
-	ldmia	r7, {r3, r7}
+	.2byte 0x3eac
+	.2byte 0x40f0
+	.2byte 0xcf88
 	.2byte 0xf4e3
 	.2byte 0x7c60
-	strh	r6, [r7, #24]
-	stmia	r0!, {r0, r1, r2}
+	.2byte 0x833e
+	.2byte 0xc007
 	.2byte 0xf221
 	.2byte 0x53b6
-	add	r7, pc, #828
-	stmia	r2!, {r1, r2, r4, r6}
-	ldr	r6, [sp, #244]
+	.2byte 0xa7cf
+	.2byte 0xc256
+	.2byte 0x9e3d
 .L_02002e66:
-	stmia	r5!, {r0, r1, r2}
+	.2byte 0xc507
 .L_02002e68:
-	add	r7, pc, #924
-	subs	r4, #66
-	ldmia	r4!, {r1, r3, r6}
-	adds	r5, #227
-	lsls	r4, r7, #9
+	.2byte 0xa7e7
+	.2byte 0x3c42
+	.2byte 0xcc4a
+	.2byte 0x35e3
+	.2byte 0x027c
 .L_02002e72:
-	stmia	r6!, {r1, r2, r3, r5}
+	.2byte 0xc62e
 	.2byte 0xf1c7
 	.2byte 0x3cf8
-	str	r4, [sp, #8]
+	.2byte 0x9402
 .L_02002e7a:
 	.2byte 0xf805
 	.2byte 0xac22
 .L_02002e7e:
-	ldrh	r1, [r7, #40]
+	.2byte 0x8d39
 .L_02002e80:
-	ldrh	r4, [r2, #14]
-	ldr	r0, [sp, #120]
+	.2byte 0x89d4
+	.2byte 0x981e
 	.2byte 0xf3bf
 	.2byte 0x523c
 	.2byte 0xf85e
 	.2byte 0xc30d
 .L_02002e8c:
-	stmia	r6!, {r0, r2, r3, r4, r5, r6}
+	.2byte 0xc67d
 .L_02002e8e:
-	str	r5, [r7, r2]
-	lsrs	r3, r2, #24
+	.2byte 0x50bd
+	.2byte 0x0e13
 	.2byte 0xe9ed
 	.2byte 0xf311
 .L_02002e96:
-	strb	r0, [r6, #4]
-	str	r3, [r4, #124]
-	ldr	r4, [sp, #28]
-	asrs	r5, r7, #6
+	.2byte 0x7130
+	.2byte 0x67e3
+	.2byte 0x9c07
+	.2byte 0x11bd
 .L_02002e9e:
-	asrs	r4, r0, #32
+	.2byte 0x1004
 	.2byte 0xb92c
 .L_02002ea2:
 	.2byte 0xfe66
 	.2byte 0x58eb
-	ldrh	r6, [r6, #20]
-	lsls	r5, r2, #20
-	pop	{r0, r2, r3, r4, r5, r6}
-	push	{r0, r1, r2, r3, r7}
+	.2byte 0x8ab6
+	.2byte 0x0515
+	.2byte 0xbc7d
+	.2byte 0xb48f
 .L_02002eae:
-	lsls	r7, r0, #10
+	.2byte 0x0287
 .L_02002eb0:
-	ldrh	r4, [r4, #12]
-	lsls	r0, r4, #27
-	movs	r2, #77
-	ldr	r0, [sp, #988]
-	lsls	r1, r4, #3
-	strb	r4, [r2, r2]
+	.2byte 0x89a4
+	.2byte 0x06e0
+	.2byte 0x224d
+	.2byte 0x98f7
+	.2byte 0x00e1
+	.2byte 0x5494
 .L_02002ebc:
-	ldrb	r3, [r0, #4]
-	ldmia	r0, {r0, r4, r6}
-	strh	r7, [r0, #4]
-	strb	r6, [r0, r2]
-	stmia	r3!, {r5}
+	.2byte 0x7903
+	.2byte 0xc851
+	.2byte 0x8087
+	.2byte 0x5486
+	.2byte 0xc320
 .L_02002ec6:
-	subs	r0, r6, #7
+	.2byte 0x1ff0
 .L_02002ec8:
 	.2byte 0xb180
-	str	r1, [sp, #852]
-	subs	r6, #145
-	movs	r0, r3
-	ldr	r7, [sp, #452]
+	.2byte 0x91d5
+	.2byte 0x3e91
+	.2byte 0x0018
+	.2byte 0x9f71
 .L_02002ed2:
-	ldrb	r0, [r6, #26]
-	ldr	r1, [sp, #572]
-	strb	r2, [r4, #4]
-	add	r7, pc, #68
-	movs	r0, #212
-	ldrh	r7, [r4, #0]
+	.2byte 0x7eb0
+	.2byte 0x998f
+	.2byte 0x7122
+	.2byte 0xa711
+	.2byte 0x20d4
+	.2byte 0x8827
 	.2byte 0xbf00
 .L_02002ee0:
 	.2byte 0xb187
-	lsls	r2, r3, #20
-	ldr	r0, [pc, #248]
-	lsrs	r4, r7, #16
+	.2byte 0x051a
+	.2byte 0x483e
+	.2byte 0x0c3c
 .L_02002ee8:
-	strh	r6, [r2, #0]
+	.2byte 0x8016
 .L_02002eea:
 	.2byte 0xf0df
 	.2byte 0x3062
-	lsls	r1, r5, #30
-	sub	sp, #44
+	.2byte 0x07a9
+	.2byte 0xb08b
 .L_02002ef2:
-	udf	#125
+	.2byte 0xde7d
 	.2byte 0xf447
 	.2byte 0xb3a1
 	.2byte 0xef17
 	.2byte 0x4818
-	lsrs	r0, r6, #16
-	subs	r1, r4, #3
+	.2byte 0x0c30
+	.2byte 0x1ee1
 	.2byte 0xefcf
 	.2byte 0x8758
-	subs	r5, #195
+	.2byte 0x3dc3
 .L_02002f06:
-	ldrb	r6, [r7, #8]
-	b.n	0x0200b2c8
+	.2byte 0x7a3e
+	.2byte 0xe1de
 	.2byte 0x0788
 	.4byte 0x0d71c34e
 	.4byte 0xc52011d4
@@ -4298,17 +4298,17 @@ Func_020001d4:
 	.2byte 0x7406
 	.2byte 0x53be
 .L_02002f1c:
-	bvs.n	.L_02002f42
-	stmia	r7!, {r0, r1, r6, r7}
-	ldmia	r2!, {r0, r6, r7}
+	.2byte 0xd611
+	.2byte 0xc7c3
+	.2byte 0xcac1
 .L_02002f22:
-	adds	r4, r7, #7
+	.2byte 0x1dfc
 .L_02002f24:
-	lsls	r4, r2, #30
+	.2byte 0x0794
 .L_02002f26:
-	subs	r1, #74
-	cmp	r1, #103
-	b.n	.L_02002f1c
+	.2byte 0x394a
+	.2byte 0x2967
+	.2byte 0xe7f7
 	.4byte 0x083097e1
 	.4byte 0x0de41669
 	.4byte 0x9fac26f4
@@ -4316,26 +4316,26 @@ Func_020001d4:
 	.4byte 0x0e4f8239
 	.2byte 0x390a
 .L_02002f42:
-	str	r3, [r6, #80]
-	ands	r4, r6
-	ldr	r4, [pc, #120]
+	.2byte 0x6533
+	.2byte 0x4034
+	.2byte 0x4c1e
 	.2byte 0xe840
 	.2byte 0x5c81
 	.2byte 0xba0f
-	strh	r2, [r0, #6]
-	svc	133
-	add	r2, pc, #12
+	.2byte 0x80c2
+	.2byte 0xdf85
+	.2byte 0xa203
 	.2byte 0xfe30
 	.2byte 0x2443
-	movs	r5, #129
-	stmia	r1!, {r0, r5, r6, r7}
-	lsls	r6, r4, #26
-	add	r1, pc, #368
-	adds	r6, #199
+	.2byte 0x2581
+	.2byte 0xc1e1
+	.2byte 0x06a6
+	.2byte 0xa15c
+	.2byte 0x36c7
 	.2byte 0xfc0b
 	.2byte 0x869c
-	ldrh	r7, [r2, #12]
-	b.n	0x0200b3e0
+	.2byte 0x8997
+	.2byte 0xe23a
 	.2byte 0x0d69
 	.4byte 0x3e43c8dc
 	.4byte 0x10180a4d

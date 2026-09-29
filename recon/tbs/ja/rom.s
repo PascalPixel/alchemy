@@ -966,8 +966,8 @@
 	.incbin "baserom.gba", 0x6d3ef5, 0x3
 	.section .rom.006d52dd, "a"
 	.incbin "baserom.gba", 0x6d52dd, 0x3
-	.section .rom.006d5498, "a"
-	.incbin "baserom.gba", 0x6d5498, 0x3858
+	.section .rom.006d8ced, "a"
+	.incbin "baserom.gba", 0x6d8ced, 0x3
 	.section .rom.006d8e97, "a"
 	.incbin "baserom.gba", 0x6d8e97, 0x1
 	.section .rom.006db292, "a"

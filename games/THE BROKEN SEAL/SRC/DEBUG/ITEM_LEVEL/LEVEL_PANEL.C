@@ -1,41 +1,22 @@
-/* Draft of FieldScene_RunCountAdjustPanel, resource_3cd at 0x020080ec (was
- * part of DEBUG/ITEM_LEVEL/RECORD_COUNT.C).
- * Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines (UiText_DrawResource,
- * RenderOutput_RedrawSavedRect, UiText_DrawStringAtOffset,
- * UiText_DrawNumberInWindow, Engine_AudioPlayCue, Engine_TaskWait, ...).
- * The listing keeps these rows. */
-#include "../../../../../games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL.H"
+/* The item and level debug room's level panel: a 30x9 window with three
+ * caption lines and the current owner's name and level, looping on the
+ * button latch until B closes it. Select and Start raise every listed owner
+ * by five and A by one. */
+#include "LEVEL.H"
+#include "PARTY_STATE.H"
 extern u8 MsgDebugRaiseEveryonesLevel[];
 
-extern s32 gGameStateWords[];
-extern u8 gItemLevelIcon[];
 extern u8 gKeyState[];
-void Engine_TaskWait();
-void UiWork_Finalize();
-void UiText_DrawResource();
-void UiText_DrawStringAtOffset();
-void UiText_DrawNumberInWindow();
-void RenderOutput_RedrawSavedRect();
-void Engine_AudioPlayCue();
 
-/*
- * An interactive panel: open a 30x9 window, draw three caption lines plus the
- * current record's icon and count, then loop on the button latch until B
- * closes it.  Up and down (Select and Start) take five from every listed
- * record, A adds one.
- */
 void FieldScene_RunCountAdjustPanel(void)
 {
     u8 *record;
-    s32 *work;
     volatile u32 *key;
     s32 win;
     s32 flag;
     s32 msg;
 
-    work = gGameStateWords;
-    record = Owner_GetState(work[125]);
+    record = Owner_GetState(gGameState.current_owner);
     win = UiWindow_Create(0, 0, 30, 9, 2);
 
     msg = (s32)MsgDebugRaiseEveryonesLevel;
@@ -49,7 +30,7 @@ void FieldScene_RunCountAdjustPanel(void)
         if (flag != 0) {
             RenderOutput_RedrawSavedRect(win);
             UiText_DrawStringAtOffset(record, win, 0, 48);
-            UiText_DrawStringInWindow(gItemLevelIcon, win, 48, 48);
+            UiText_DrawStringInWindow(gItemLevelLvLabel, win, 48, 48);
             flag = 0;
             UiText_DrawNumberInWindow(record[15], 0, win, 72, 48);
         }

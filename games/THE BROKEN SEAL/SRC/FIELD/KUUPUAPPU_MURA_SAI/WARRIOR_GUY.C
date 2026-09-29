@@ -1,14 +1,8 @@
-/*
- * Draft: overlay 385 (KUUPUAPPU_MURA_SAI) at 0x0200858c, between
- * MOTION_EVENT.C and DIALOGUE.C; its rows stay in the listing.
- *
- * Remaining difference: its messages have catalogue names now; 46 halfwords
- * still differ from the ROM, and it names symbols no link defines
- * (ACTOR_PARTY_LEADER); it also lacks declarations it needs to compile.
- */
-
+/* Actor 14's first talk: "Hey, it's that warrior guy!", with its opening
+ * lines only until flag 0x300 is set. It sets flag 0x307. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 extern u8 MsgKuupuappuWarriorGuy[];
 
 struct SceneActor {

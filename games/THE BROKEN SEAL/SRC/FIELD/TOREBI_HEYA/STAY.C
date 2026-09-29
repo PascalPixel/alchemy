@@ -1,31 +1,46 @@
-/* Draft of resource_3b6 0x020087b0 (FieldScene_RunScene3b6_020007b0): it
- * matches the ROM byte for byte now that the messages it loads from the
- * literal pool have catalogue names (MsgTorebiHeeHeeLook, MsgTorebiHello,
- * MsgTorebiHoHumFine). The listing keeps these rows until the draft is
- * adopted. */
+/* The offer to stay, and the excited girl's lines. */
 #include "TOREBI.H"
 extern u8 MsgTorebiHeeHeeLook[];
 extern u8 MsgTorebiHello[];
 extern u8 MsgTorebiHoHumFine[];
+extern u8 MsgTorebiWantStay[];
 
-void FieldScene_RunScene3b6_020007b0(s32 a0)
+void SceneDialogue_AskStay(s32 subject)
+{
+    s32 msg;
+
+    Event_Begin();
+
+    msg = (s32)MsgTorebiWantStay;
+    Event_SetMessage(msg);
+    Event_OpenMessage(subject, 0);
+    if (Event_ChooseYesNo(0, 0) == 0) {
+        Event_Wait(10);
+        Event_SetMessage(msg + 1);
+    } else {
+        Event_SetMessage(msg + 2);
+    }
+
+    Event_ShowMessage(subject, 0);
+    Event_End();
+}
+
+void SceneDialogue_RunExcitedLines(s32 a0)
 {
     void Event_ShowMessage();
 
-    u32 i;
-    s32 record;
-    s32 base5_2399;
+    s32 msg;
 
     Event_Begin();
     if (GameFlag_IsSet(0x8bd) == 0) {
-        base5_2399 = (s32)MsgTorebiHeeHeeLook;
-        Event_SetMessage(base5_2399);
+        msg = (s32)MsgTorebiHeeHeeLook;
+        Event_SetMessage(msg);
         Event_OpenMessage(a0, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_Wait(10);
-            Event_SetMessage((base5_2399 + 1));
+            Event_SetMessage(msg + 1);
         } else {
-            Event_SetMessage((base5_2399 + 2));
+            Event_SetMessage(msg + 2);
         }
         Event_ShowMessage(a0, 0);
     } else {

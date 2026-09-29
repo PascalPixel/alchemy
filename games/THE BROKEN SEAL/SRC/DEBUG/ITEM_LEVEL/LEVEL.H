@@ -17,6 +17,8 @@ extern u8 gItemLevelEvents[];
 extern u8 gItemLevelGlyphsUpper[];
 extern u8 gItemLevelGlyphsLower[];
 extern u8 gItemLevelGlyphsMarks[];
+/* The "Lv" beside the level the count panel shows. */
+extern u8 gItemLevelLvLabel[];
 
 /* Old-style declarations: the import veneers vary in arity between call
  * sites. */
@@ -31,7 +33,14 @@ void Engine_EventSetMessage();
 void Engine_EventShowMessage();
 void Engine_EventRequestExit();
 s32 UiWindow_Create();
+void UiWork_Finalize();
+void UiText_DrawResource();
+void UiText_DrawStringAtOffset();
 void UiText_DrawStringInWindow();
+void UiText_DrawNumberInWindow();
+void RenderOutput_RedrawSavedRect();
+void Engine_AudioPlayCue();
+void Engine_TaskWait();
 s32 DebugMenu_BrowseIcons(void);
 s32 DebugMenu_BrowseEntryGlyphs(void);
 

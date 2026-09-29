@@ -99,6 +99,9 @@ Engine_EventEnd:
 	.thumb_func
 Engine_PartyGiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Object_GetById
 	.thumb_func
@@ -108,7 +111,13 @@ Object_GetById:
 	.thumb_func
 ObjectMotion_SetSpeedParameters:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Engine_ActorEnableActionCallback
+	.thumb_func
+Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Object_RefreshSelectorById
+	.thumb_func
+Object_RefreshSelectorById:
 	overlay_veneer Object_RefreshSelectorByIdFar
 	.global Engine_ActorStop
 	.thumb_func
@@ -143,7 +152,13 @@ Object_SetModeById:
 	.thumb_func
 Engine_ActorSetAnimationAndWait:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
+	.global Engine_ActorJump
+	.thumb_func
+Engine_ActorJump:
 	overlay_veneer ObjectMotion_LaunchFar
+	.global Engine_ActorStartRepeatedMotion
+	.thumb_func
+Engine_ActorStartRepeatedMotion:
 	overlay_veneer ObjectMotion_SetVariantCallbackFar
 	.global Engine_ActorRunRepeatedMotion
 	.thumb_func
@@ -165,6 +180,9 @@ Engine_ActorSetChildValue:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
@@ -186,12 +204,18 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
 	.global Engine_CameraFollowActor
 	.thumb_func
 Engine_CameraFollowActor:
 	overlay_veneer Object_AttachWorkTargetToObjectFar
 	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	.global Engine_CameraMoveTo
+	.thumb_func
+Engine_CameraMoveTo:
 	overlay_veneer Motion_CamBoundsFar
 	.global Engine_CameraWaitForMove
 	.thumb_func
@@ -205,6 +229,9 @@ Engine_CameraMoveToActor:
 	.thumb_func
 Engine_EventGetViewCenter:
 	overlay_veneer Battle_GetWorkObject1e0Far
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
 	.global BattleFx_SetWeightedResult
 	.thumb_func
@@ -215,6 +242,9 @@ BattleFx_SetWeightedResult:
 	.thumb_func
 Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
+	.global Engine_EventCloseScreen
+	.thumb_func
+Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
 	.global BattleFx_PlayCueAndStartEmitterOnTarget
 	.thumb_func

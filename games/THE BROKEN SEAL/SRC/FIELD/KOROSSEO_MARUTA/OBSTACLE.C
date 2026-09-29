@@ -28,7 +28,6 @@ void ColossoLogRollingStage_MarkSceneProgress(void)
 void ColossoLogRollingStage_SelectNearestObstacle(void)
 {
     extern void GameFlag_SetByte();
-    extern void Korosseo_SelectSoloCompetitor(s32);
 
 
     u8 *state;

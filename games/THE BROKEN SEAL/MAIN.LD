@@ -2257,6 +2257,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WORLD_MAP/TILES_I.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WORLD_MAP/TILES_J.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.084303b3)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/COMMAND_ICONS.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.0843f866)
         "*/games/COMMON/SRC/GRAPHICS/MONSTER/AXE_GOBLIN.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.08441a1a)
         "*/games/COMMON/SRC/GRAPHICS/MONSTER/GHOUL.o"(.rodata)

@@ -1366,9 +1366,8 @@ Shop_CursorFrameH:
 	.global Ui_Icons
 Ui_Icons:
 	.incbin "baserom.gba", 0x004366f8, 0x0000592c
-	.global Ui_CommandIcons
-Ui_CommandIcons:
-	.incbin "baserom.gba", 0x0043c024, 0x00003844
+	.section .unidentified.0843f866,"a"
+	.incbin "baserom.gba", 0x0043f866, 0x00000002
 	.section .unidentified.08441a1a,"a"
 	.incbin "baserom.gba", 0x00441a1a, 0x00000002
 	.section .unidentified.08445b81,"a"

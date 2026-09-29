@@ -24,5 +24,7 @@ extern char SceneId_KuupuappuDou2;
 extern char SceneId_KuupuappuDou3;
 extern char SceneId_FuneHeya;
 extern char SceneId_BabiChika1;
+extern char SceneId_BabiChika2;
+extern char SceneId_BabiIriguchi3;
 
 #endif

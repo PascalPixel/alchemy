@@ -5,6 +5,8 @@ SECTIONS
     .rom :
     {
         "*/recon/tbs/ja/rom.o"(.rom.00000000)
+        "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
+        "*/recon/tbs/ja/rom.o"(.rom.000345e0)
         "*/games/THE BROKEN SEAL/SOUND/VOICES.o"(.rodata)
         "*/recon/tbs/ja/rom.o"(.rom.000f3504)
         "*/games/THE BROKEN SEAL/SOUND/CGB_WAVES.o"(.rodata)

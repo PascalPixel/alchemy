@@ -1,3 +1,11 @@
+/* Draft of the room's entry dispatcher, resource_39c at 0x0200bd20 (was the
+ * unlinked FIELD/MAKYURI_HEYA/ENTRY_STATE.C).
+ * Remaining difference: it compares the scene with 0x36..0x39, which the
+ * game loads from its literal pool as link-time values; an integer compares
+ * with an immediate. It also names its task callbacks by address (TASK_*),
+ * where the linked names are Makyuri_CyclePalette (0x02008d58) and the
+ * linked functions at 0x0200a2c4, 0x0200adcc and 0x0200a648, and calls
+ * Local_02004c68, now MakyuriHeya_RideLift. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

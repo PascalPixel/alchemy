@@ -10,6 +10,9 @@
 	.thumb_func
 IwramSignedDivideEntry:
 	overlay_veneer IwramSignedDivide
+	.global IwramUnsignedRemainderEntry
+	.thumb_func
+IwramUnsignedRemainderEntry:
 	overlay_veneer IwramUnsignedRemainder
 	.global WaitFrames
 	.thumb_func
@@ -66,6 +69,9 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Object_SetPosition
 	.thumb_func
@@ -84,6 +90,9 @@ Engine_MapAnimateCells:
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
 	overlay_veneer DisplayBlend_DisableRunScriptFar
+	.global DisplayBlend_EnableRunScript
+	.thumb_func
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func

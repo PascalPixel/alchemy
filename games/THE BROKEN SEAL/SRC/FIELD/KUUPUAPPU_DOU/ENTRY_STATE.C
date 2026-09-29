@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+#include "CALLBACK_SCHEDULER.H"
 
 void SceneActor_InitSlots10To15AndStartTask(void);
 void SceneState_ApplyRectAndMarkActor16(void);
@@ -105,7 +106,7 @@ s32 KuupuappuDou_ApplyEntryState(void)
                 Call2((void (*)())Engine_ActorSetAnimation, 21, 5);
                 SceneActor_MarkSlot21AndSetFlag205();
             }
-            Call2((void (*)())Engine_TaskAddCallback, (s32)SceneState_DispatchByActorZeroDepth, 0xc80);
+            Call2((void (*)())Scheduler_AddOrUpdateCallback, (s32)SceneState_DispatchByActorZeroDepth, 0xc80);
             break;
         case 10:
         case 11:

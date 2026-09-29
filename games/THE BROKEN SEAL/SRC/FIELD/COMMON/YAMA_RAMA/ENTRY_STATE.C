@@ -9,6 +9,7 @@ void FieldScene_RunScene3a2SequenceA(void);
 void ActorPresentation_PrepareActorFourteenWithCallback(void);
 void FieldScene_SetSlot15Byte89AndRunStep(void);
 void Scene_RunActorExchange(void);
+struct FieldActor *Object_GetById(s32 actor);
 
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -49,8 +50,8 @@ s32 YamaRama_ApplyEntryState(void)
             FieldScene_RunScene3a2SequenceA();
         }
     } else if (gGameState.scene == (s32)&SceneId_YamaRama1) {
-        Engine_ActorSetSpriteFlags(Engine_ActorGet(14), 0);
-        Engine_ActorGet(14)->priority_flags |= 2;
+        Engine_ActorSetSpriteFlags(Object_GetById(14), 0);
+        Object_GetById(14)->priority_flags |= 2;
         if (Engine_GameFlagIsSet(0x200)) {
             Engine_ActorSetAnimation(14, 5);
             ActorPresentation_PrepareActorFourteenWithCallback();
@@ -86,12 +87,12 @@ s32 YamaRama_ApplyEntryState(void)
             Call3(Engine_ActorFaceDirection, 8, 0x5000, 0);
             Call3(Engine_ActorFaceDirection, 10, 0xb000, 0);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
-            Engine_ActorGet(9)->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
         }
         if (!Value1(Engine_GameFlagIsSet, 0x8b2)) {
             Call3(Engine_ActorSetPosition, 9, 0xa40000, 0x1180000);
             Engine_ActorEnableActionCallback(9, YamaRama_ActorNineAction);
-            Engine_ActorGet(9)->scale_x = -0x10000;
+            Object_GetById(9)->scale_x = -0x10000;
         }
         if (gGameState.entrance == 5 && !Value1(Engine_GameFlagIsSet, 0x8b1) && !Value1(Engine_GameFlagIsSet, 0x109) && !Value1(Engine_GameFlagIsSet, 0x8b2)) {
             Scene_RunActorExchange();

@@ -18,9 +18,6 @@ Engine_TaskWait:
 	.global Scheduler_AddOrUpdateCallback
 	.thumb_func
 Scheduler_AddOrUpdateCallback:
-	.global Engine_TaskAddCallback
-	.thumb_func
-Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func

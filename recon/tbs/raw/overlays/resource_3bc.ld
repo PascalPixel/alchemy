@@ -15,7 +15,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/COMPETITOR_TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/STAGE_START.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/EVENT_STATE.o"(.text)
-        "*/resource_3bc_overlay.o"(.text.x02008da4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/STAGE_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/PARTICLES.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x02009a0c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/ARRIVAL.o"(.text)

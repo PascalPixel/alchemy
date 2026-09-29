@@ -14,6 +14,15 @@
    Writing the test as two != 0 tests merges them into one word load,
    which the ROM does not do. Otherwise the code is the ROM's, including
    the count - 5 loop.
+   2026-09-29 (alchemy permute scorer): the draft scored 280 (16
+   register-only, 2 deleted). Storing the wrap's zero through the count
+   variable (more_below = i = 0) scores 65, 13 register-only rows: the OR
+   test, its r1-to-r3 copy and the fresh wrap zero now match. Remaining:
+   the zero takes r1 (i's register) where the ROM uses r0, and in both row
+   loops y and the hoisted 12/0xfff4 take r2/r1 where the ROM has r1/r2;
+   plus one commutative add order (state + offset). A separate zero
+   variable is constant-propagated back to the old code. Two 400-second
+   searches (256,000 candidates) found nothing below 65.
 
    The mirror of Menu_StepRight: step the cursor left, wrap a long list to
    its last page, or scroll one row up at the first slot. */
@@ -85,8 +94,8 @@ void Menu_StepLeft(struct StepMenu *state)
             }
         } else {
             node = state->nodes;
-            state->more_below = 0;
             y = 64;
+            state->more_below = i = 0;
             while (node->next != NULL) {
                 node->target_y = node->y + y;
                 node->speed = 12;

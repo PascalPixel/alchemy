@@ -9,6 +9,15 @@
  * metatile*4 takes r0 and the second address reuses r1. Retyping metatile
  * (u8, s32), scaling it once, and reordering the operands do not move it.
  * Callers (0800cacc, 0800f7f4) call it as Func_08011f54.
+ * 2026-09-29 (alchemy permute scorer): 100 = 8 register-only rows plus
+ * the push/pop of r7 and the unlabelled table. The literal addresses keep
+ * it a draft, and naming them does not work yet: with gMapCellBuffer and
+ * gMapCollision (both defined at these addresses) GCC's CSE relates
+ * gMapCollision+1 to gMapCollision, so the second pool word becomes an
+ * add of 1 and the shape load a reg+reg ldrb; six symbol spellings (array
+ * index, pointer arithmetic, u32 casts, scaling once) all score 500
+ * (19 register-only, 1 inserted, 2 deleted). The ROM's code reads as if
+ * the two addresses were unrelated integer constants.
  */
 #include "TYPES.H"
 

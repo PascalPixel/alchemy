@@ -66,7 +66,7 @@ void *Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
 s32 OwnerAction_AddFar(s32 owner, s32 action);
 s32 Object_CollectResources(struct AbilityPair *output);
-void Func_0801c8a0(u32 *first, u32 *second, struct AbilityPair *list);
+void Menu_FindShortcutEntries(u32 *first, u32 *second, struct AbilityPair *list);
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 s32 Resource_FindFreeEntry(void);
 void VramBlock_LoadCached(s32 slot, s32 size, const void *source);
@@ -118,7 +118,7 @@ void Debug_SelectAbilityPair(void)
     if (count) {
         u32 *tmp3;
         tmp3 = &second;
-        Func_0801c8a0(&first, tmp3, list);
+        Menu_FindShortcutEntries(&first, tmp3, list);
         win = UiWindow_Create(4, 6, 20, 7, 2);
         title = UiWindow_Create(4, 3, 20, 3, 2);
         info = UiWindow_Create(4, 14, 20, 5, 2);

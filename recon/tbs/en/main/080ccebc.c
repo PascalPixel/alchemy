@@ -9,7 +9,14 @@
    lifetimes, high-register assignment, rectangle-slot address hoisting,
    indexed effect-slot loads, and eight missing bytes. Two fresh hypotheses
    preserved at the lane checkpoint; no exact-C credit.
-   Wraps marked FAKEMATCH only move scheduling. */
+   Wraps marked FAKEMATCH only move scheduling.
+   2026-09-29 (alchemy permute scorer): the draft scored 2725 (56
+   register-only, 16 operand, 10 reordered, 6 inserted, 9 deleted). This body
+   is the permuter's best after a 300-second search (about 40,000 candidates):
+   2330 (60 register-only, 15 operand, 10 reordered, 5 inserted, 6
+   deleted). Its rewrites are search output, not a
+   reading of the ROM; the literal addresses still keep it a draft.
+ */
 #include "TYPES.H"
 extern u8 Value_00000059;
 #include "GLOBAL_CELLS.H"
@@ -41,90 +48,78 @@ void Func_080ccebc(void *arg0)
     s32 flash;
     s32 shade;
     s32 i;
-    s32 count;
+    u16 *tmp2;
+    u8 *tmp3;
 
     base->effect = arg0;
+    tmp2 = (u16 *)0x04000020;
     Func_080cd594(2);
-    *(u16 *)0x04000020 = 0x100;
+    tmp3 = &Value_00000059;
+    *tmp2 = 0x100;
     *(u16 *)0x04000052 = 0x1000;
-
-    EffectPosition_ApplyStepAndYOffset(
-        ((struct BattleEffectArgument *)base->effect)->actors[0], &local1);
-    EffectPosition_ApplyStepAndYOffset(
-        ((struct BattleEffectArgument *)base->effect)->actors[
-            ((struct BattleEffectArgument *)base->effect)->count - 1], &local2);
+    EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)base->effect)->actors[0], &local1);
+    EffectPosition_ApplyStepAndYOffset(((struct BattleEffectArgument *)base->effect)->actors[((struct BattleEffectArgument *)base->effect)->count - 1], &local2);
     mid = local1.x + (local2.x - local1.x) / 2;
     local1.x = mid;
-
     *(s32 *)0x04000028 = (64 - mid) << 8;
-    Resource_LoadAndDecompress((s32)&Value_00000059, base, 1, 1);
-
+    Resource_LoadAndDecompress((s32)tmp3, base, 1, 1);
     base->transfer_mode = 1;
     base->transfer_value = 0;
     Func_080041d8(0x080cd261, 0x480);
-
     Func_080f9010(0x8f);
-
     frame = 0;
     flash = 1;
     shade = 32;
 next_frame:
     {
         if (frame <= 8)
-            *(u16 *)0x04000052 = (frame << 1) | 0x1000;
-        if (frame > 53)
+            *(u16 *)0x04000052 = (frame << 1) | (u32)0x1000;
+        if (53 < frame)
             *(u16 *)0x04000052 = (0x7c - (frame << 1)) | 0x1000;
-
         BattleEffect_LoadWork(0x2e, 7, 7, 3, flash);
-        (*(DrawRectangleFn *)0x03001F08)(
-            second, (void *)base, 33, 41, shade, shade);
-        do { Func_08002dd8(0x2e); } while (0); /* FAKEMATCH */
-
+        (*(DrawRectangleFn *)0x03001F08)(second, (void *)base, 33, 41, shade, shade);
+        do {
+            Func_08002dd8(0x2e);
+        } while (0);
+        /* FAKEMATCH */
         BattleEffect_LoadWork(0x2e, 7, 7, 7, flash);
-        (*(DrawRectangleFn *)0x03001F08)(
-            second, (void *)base, 64, 41, shade, shade);
-        do { Func_08002dd8(0x2e); } while (0); /* FAKEMATCH */
-
-        BattleEffect_LoadWork(0x2e, 7, 7, 11, flash);
-        (*(DrawRectangleFn *)0x03001F08)(
-            second, (void *)base, 33, 72, shade, shade);
+        (*(DrawRectangleFn *)0x03001F08)(second, (void *)base, 64, 41, shade, shade);
+        do {
+            Func_08002dd8(0x2e);
+        } while (0);
+        /* FAKEMATCH */
+        BattleEffect_LoadWork(0x2e, 7, 7, 11, (s32)flash);
+        (*(DrawRectangleFn *)0x03001F08)(second, (void *)base, 33, 72, shade, shade);
         Func_08002dd8(0x2e);
-
         BattleEffect_LoadWork(0x2e, 7, 7, 15, flash);
-        (*(DrawRectangleFn *)0x03001F08)(
-            second, (void *)base, 64, 72, shade, shade);
+        ((DrawRectangleFn *)0x03001F08)[0](second, (void *)base, 64, 72, shade, shade);
         Func_08002dd8(0x2e);
-
         if (frame == 32)
             Func_080b50e8(0x8f);
-
-        count = ((struct BattleEffectArgument *)base->effect)->count;
         i = 0;
-        if (count != 0) {
+        if (((struct BattleEffectArgument *)base->effect)->count) {
             s32 offset = 36;
-next_actor:
+        next_actor:
             {
                 if (frame == 10) {
                     void *p = base->effect;
-                    Func_080d6888(
-                        *(s16 *)((u8 *)p + offset), 7, -1, i, 8);
+                    s32 tmp;
+                    tmp = -1;
+                    Func_080d6888(*(s16 *)((u8 *)p + offset), 7, tmp, i, 8);
                 }
-                i++;
+                i += 1;
                 offset += 2;
-                if (i != ((struct BattleEffectArgument *)base->effect)->count)
+                if (i != base->effect->count)
                     goto next_actor;
             }
         }
-
         Func_080cd52c();
         base->transfer_pending = flash;
         Func_080030f8(1);
-
-        frame++;
+        frame += 1;
         if (frame != 63)
             goto next_frame;
     }
-
     Func_08004278(0x080cd261);
     Func_080cdbc0();
 }

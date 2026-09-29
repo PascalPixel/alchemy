@@ -1,3 +1,6 @@
+/* 2026-09-29: five minutes of permutation reached 10393 from 16680 through
+ * 117 rewrites; not kept, since the owner is far from exact and blocked by
+ * Value_ resource numbers below 256. */
 /* 2026-09-29: callees carry the build's names; alchemy permute scores
  * 16680, from 16860. */
 #include "TYPES.H"

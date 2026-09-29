@@ -1,3 +1,10 @@
+/* 2026-09-29: eight minutes of permutation (--function
+ * RunAssetSelectionScreen): 1530 -> 820 (11 register-only, 6 operand, 4
+ * reordered, 2 inserted, 2 deleted) by taking the address of the
+ * Value_00000001 symbol before the list clear and storing it after. A plain
+ * 1, in any local type, gives 1570: the reference loads that 1 from the
+ * pool before the call, as a link-time value does, so this draft stays
+ * blocked on it. */
 /* 2026-09-29: Resource_LoadPairedBlocks carries the build's name; alchemy
  * permute (--function RunAssetSelectionScreen) scores 1530, from 1550. */
 /* NONMATCHING: 428/432 bytes, 195 differing halfwords, 137 aligned edits.
@@ -115,6 +122,7 @@ s32 RunAssetSelectionScreen(void)
     s32 result;
     s32 size;
     CopyFn copy;
+    u8 *busy;
 
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
@@ -137,20 +145,17 @@ s32 RunAssetSelectionScreen(void)
     Menu_CancelSoundReset();
     result = ItemMenu_RunCommands(&category, &value, &index);
     Menu_EnsureCancelSound();
-
     if (result == 1) {
         u8 *selection = (&Data_03001e68)->selection_state;
-
         u16 packed = (category << 10) | (index & 0x1ff);
         s32 style;
-
         *(u16 *)(selection + 0x180) = packed;
         style = screen->selection_style;
         *(u16 *)(selection + 0x19a) = style;
     }
-
+    busy = &Value_00000001;
     RenderOutput_ClearListFar(screen->resource_handle);
-    (&Data_03001e68)->process_state[0xea6] = (s32)&Value_00000001;
+    (&Data_03001e68)->process_state[0xea6] = (s32)busy;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Menu_ResetTwoResourceEntries();

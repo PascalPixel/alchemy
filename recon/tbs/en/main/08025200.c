@@ -1,3 +1,5 @@
+/* 2026-09-29: five minutes of permutation reached 11308 from 18460 through
+ * 206 rewrites; not kept, since the owner is far from exact. */
 /* 2026-09-29: callees carry the build's names (Ui_SetRectHighlight,
  * UiText_CopyMessageString, UiText_RenderWideStringAtOffset); alchemy
  * permute scores 18460, from 18620. */

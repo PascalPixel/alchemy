@@ -2,7 +2,8 @@
  * Func_080f2d54): 910 -> 765 by setting the zero before the
  * display-register writes. Remaining: the extra saved r7 and the
  * buffer/cursor ownership described below, plus the resource number 0x19,
- * still a Value_ symbol. */
+ * still a Value_ symbol (a plain 0x19 gives 980). A second 8-minute run
+ * from 765 with another seed found nothing lower. */
 /* Draft, not exact (2026-09-24): 33 differing halfwords, 356 of 356 bytes.
    Control flow, pools and stores match. Residual is allocation: the
    reference keeps the resource id and then the decode buffer in r6 (a

@@ -276,7 +276,7 @@ Func_0808c4f8:
 	adds	r3, r3, r2
 	movs	r4, #0
 	ldrsh	r0, [r3, r4]
-	bl	Func_08015200
+	bl	UiTimedNotice_CreateFar
 .L_0808c750:
 	ldr	r5, [pc, #172]
 	movs	r1, #141

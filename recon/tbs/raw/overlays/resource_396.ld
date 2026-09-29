@@ -6,7 +6,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/OBJECT_SETUP.o"(.text)
-        "*/resource_396_overlay.o"(.text.x020080a0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/OBJECT_CONFIG.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/resource_396_overlay.o"(.text.x0200813c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TORETO_HEYA/TABLES.o"(.text)

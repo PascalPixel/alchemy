@@ -78,9 +78,9 @@ Resource_DirectoryTable:
 	resource DesertBackdrop, Battle_DesertBackdrop
 	resource StormCloudBackdrop, Battle_StormCloudBackdrop
 	resource , Battle_AerialViewBackdrop
-	resource , BattleFx_ParticleSequenceDataA
-	resource , BattleFx_ParticleSequenceDataB
-	resource , BattleFx_ParticleSequenceDataC
+	resource , BattleFx_FrameScreen
+	resource , BattleFx_ParticleSheet
+	resource , BattleFx_GlowLetters
 	resource , LuckyDice_GraphicsA
 	resource , LuckyDice_GraphicsB
 	resource , BattleFx_TileAnimationMask

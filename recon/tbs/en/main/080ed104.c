@@ -1,9 +1,12 @@
-/* Draft of BattleFx_RunRisingBurst (0x080ed104, 772 bytes): this C matches
- * byte for byte, but only through the value-named symbols Value_00000051,
+/* Draft of BattleFx_RunRisingBurst (0x080ed104, 772 bytes): this C matched
+ * byte for byte through the value-named symbols Value_00000051,
  * Value_00000073 and Value_000000c0, which it passes as resource numbers:
  * the ROM loads each from the literal pool, which GCC 2.96 does only for a
- * link-time symbol. It links again once resource numbers have an honest,
- * linker-computed definition. */
+ * link-time symbol. Value_00000051 and Value_000000c0 are no longer defined
+ * anywhere, so the draft does not link; it waits for resource numbers to
+ * have an honest, linker-computed definition. 0x51 is a resource here, not a
+ * scene: it must not take the address of SceneId_ArutinYama5, the scene row
+ * that happens to share its value. */
 
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -17,6 +20,7 @@
 extern u8 gBattleFxWork[];
 extern const u16 RisingBurst_SparkCells[];
 extern const u16 RisingBurst_SparkSizes[];
+/* Resource numbers 0x51, 0x73 and 0xc0, waiting for resource names. */
 extern u8 Value_00000051;
 extern u8 Value_00000073;
 extern u8 Value_000000c0;

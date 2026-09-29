@@ -32,7 +32,7 @@ fn table(name: &str) -> Option<&'static str> {
         Some(scene.1)
     } else if name.starts_with(resource.0) {
         Some(resource.1)
-    } else if crate::assets::text::message_name(name) {
+    } else if ags::text::message_name(name) {
         Some(message.1)
     } else {
         None

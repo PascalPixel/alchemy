@@ -2,12 +2,12 @@
 //! pret links `ld_script.ld`. Every symbol resolves from its definition; the
 //! image is written for `sha1sum -c rom.sha1` and nothing is copied from a
 //! reference ROM except what the script's scaffolding reads explicitly.
-use crate::assets::lz::{compress_tagged, LzMachine};
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
     assembly_command, compiler_assembly_command, prefer_installed_binutils,
 };
 use crate::targets::{decomp_target, DecompTarget};
+use ags::lz::{compress_tagged, LzMachine};
 use psynergy::process::run as command;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeSet;
@@ -620,7 +620,7 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
 /// reusing the object while the converted text and command are unchanged.
 fn compile_sequence(root: &Path, source: &Path, object: &Path) -> Result<(), String> {
     let midi = fs::read(root.join(source)).map_err(|error| error.to_string())?;
-    let text = crate::assets::sound::sequence_assembly(&midi)?;
+    let text = ags::sound::sequence_assembly(&midi)?;
     let assembly = object.with_extension("s");
     let step = assembly_command(&assembly.to_string_lossy(), &object.to_string_lossy());
     let mut hasher = Sha256::new();
@@ -681,7 +681,7 @@ fn build_sound_files(
             ));
         };
         let bytes = fs::read(root.join(input)).map_err(|error| error.to_string())?;
-        let encoded = crate::assets::sound::build_sound_file(&input.to_string_lossy(), &bytes)
+        let encoded = ags::sound::build_sound_file(&input.to_string_lossy(), &bytes)
             .map_err(|error| format!("{}: {error}", input.display()))?;
         let path = output.join(&built);
         if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {

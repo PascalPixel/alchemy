@@ -98,9 +98,10 @@ disjoint slices. Inspect complete functions and their neighbours, reuse proven
 source, and change one hypothesis at a time. After 30 minutes or three attempts
 without a new idea, commit the draft and move on.
 
-Alchemy owns compilation, encoding, linking and verification; Psynergy owns
-portable reading, decoding, analysis and comparison. Prefer existing commands
-and read `--help`. Scripts are TypeScript on Bun or Rust. New tooling must solve
+Alchemy owns compilation, linking and verification; the ags crate owns
+encoding, with the pret-style tools agsgfx, mid2ags, wav2ags and po2ags;
+Psynergy owns portable reading, decoding, analysis and comparison. Prefer
+existing commands and read `--help`. Scripts are TypeScript on Bun or Rust. New tooling must solve
 a demonstrated recurring blocker and carry a test.
 
 Use approved agscc (GCC 2.96) for both games with stock options. Compiler family and flags

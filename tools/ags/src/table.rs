@@ -74,7 +74,7 @@ fn encode_integer(value: i64, kind: &str) -> Result<Vec<u8>, String> {
 /// A (possibly nested) JSON array of integers in one element encoding:
 /// `u8-array`, `s8-array`, `le-u16-array`, `le-s16-array`, `be-s16-array`,
 /// `le-u32-array` or `le-s32-array`.
-pub(crate) fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
+pub fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String> {
     let mut output = Vec::new();
     for value in value.as_array().ok_or("integer array is not an array")? {
         if value.is_array() {
@@ -89,7 +89,7 @@ pub(crate) fn integer_array(value: &Value, kind: &str) -> Result<Vec<u8>, String
 /// A table of records whose fields are written as text in `radix`, less
 /// `bias`, in the element encoding `element`; `index_field` numbers the
 /// records from zero.
-pub(crate) fn record_table(document: &Value) -> Result<Vec<u8>, String> {
+pub fn record_table(document: &Value) -> Result<Vec<u8>, String> {
     let fields = document["fields"]
         .as_array()
         .ok_or("record fields missing")?;
@@ -444,7 +444,7 @@ fn resolve_glyphs(
 /// `ascii-fixed` text, an `ascii-pool` of aligned strings, or `pool-pointer`
 /// words addressing a pool's strings. A named segment is labelled
 /// `label_name`. `images` opens the PNG a glyph segment names.
-pub(crate) fn typed_table(
+pub fn typed_table(
     label: &str,
     document: &Value,
     images: &dyn Fn(&str) -> Result<IndexedImage, String>,

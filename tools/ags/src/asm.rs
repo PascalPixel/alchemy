@@ -6,14 +6,14 @@ use std::fmt::Write;
 
 /// A little-endian word of [`Data`] that holds `symbol + addend`.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Pointer {
+pub struct Pointer {
     pub symbol: String,
     pub addend: i64,
 }
 
 /// A label defined `offset` bytes into [`Data`]; `global` exports it.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Label {
+pub struct Label {
     pub name: String,
     pub offset: usize,
     pub global: bool,
@@ -23,7 +23,7 @@ pub(crate) struct Label {
 /// stored as zero bytes and written as a `.4byte` of its label, so the data
 /// itself never carries an address.
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct Data {
+pub struct Data {
     pub bytes: Vec<u8>,
     pub labels: Vec<Label>,
     /// Byte offsets of the words that hold addresses, in ascending order.
@@ -46,14 +46,14 @@ impl Default for Data {
 
 impl Data {
     /// Plain bytes with no labels or addresses.
-    pub(crate) fn from_bytes(bytes: Vec<u8>) -> Self {
+    pub fn from_bytes(bytes: Vec<u8>) -> Self {
         Self {
             bytes,
             ..Self::default()
         }
     }
     /// Define `name` at the current end of the data.
-    pub(crate) fn label(&mut self, name: &str, global: bool) {
+    pub fn label(&mut self, name: &str, global: bool) {
         self.labels.push(Label {
             name: name.to_owned(),
             offset: self.bytes.len(),
@@ -61,7 +61,7 @@ impl Data {
         });
     }
     /// Append a word that holds the address of `symbol + addend`.
-    pub(crate) fn pointer(&mut self, symbol: &str, addend: i64) {
+    pub fn pointer(&mut self, symbol: &str, addend: i64) {
         self.pointers.push((
             self.bytes.len(),
             Pointer {
@@ -73,7 +73,7 @@ impl Data {
     }
     /// Zero bytes up to the next multiple of `boundary` from the data's start,
     /// raising the data's own alignment to at least `boundary`.
-    pub(crate) fn align_to(&mut self, boundary: usize, fill: u8) -> Result<(), String> {
+    pub fn align_to(&mut self, boundary: usize, fill: u8) -> Result<(), String> {
         if !boundary.is_power_of_two() {
             return Err(format!("alignment {boundary} is not a power of two"));
         }
@@ -83,7 +83,7 @@ impl Data {
         Ok(())
     }
     /// Append `other`, which must start on its own alignment.
-    pub(crate) fn append(&mut self, other: Data) -> Result<(), String> {
+    pub fn append(&mut self, other: Data) -> Result<(), String> {
         let offset = self.bytes.len();
         if offset % other.align != 0 {
             return Err(format!(
@@ -110,7 +110,7 @@ impl Data {
     /// labels resolved as if the data started at `base`: the layout of a
     /// stream that is compressed before it is placed, whose words hold
     /// offsets into the stream. A word naming any other symbol is refused.
-    pub(crate) fn bytes_at(&self, base: u32) -> Result<Vec<u8>, String> {
+    pub fn bytes_at(&self, base: u32) -> Result<Vec<u8>, String> {
         self.check()?;
         let mut bytes = self.bytes.clone();
         for (site, pointer) in &self.pointers {
@@ -169,7 +169,7 @@ impl Data {
     /// The assembler source: the data's alignment, its labels, `.byte` rows
     /// and a `.4byte` expression for each address word. The caller chooses
     /// the section.
-    pub(crate) fn source(&self) -> Result<String, String> {
+    pub fn source(&self) -> Result<String, String> {
         self.check()?;
         let mut text = String::new();
         if self.align > 1 {
@@ -223,7 +223,7 @@ impl Data {
 }
 
 /// Whether `name` is a plain assembler and C symbol.
-pub(crate) fn identifier(name: &str) -> bool {
+pub fn identifier(name: &str) -> bool {
     let mut characters = name.chars();
     characters
         .next()

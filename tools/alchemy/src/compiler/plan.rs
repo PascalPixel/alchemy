@@ -42,8 +42,8 @@ fn posix_names_preserve_dotfiles_unicode_and_trailing_slashes() {
     );
 }
 use crate::compiler::routing::{
-    agbcc_driver, bundle_for, cflags_for_target_source, include_flag, uses_agbcc_compiler,
-    CompilerTarget,
+    agbcc_arm_driver, agbcc_driver, bundle_for, cflags_for_target_source, include_flag, is_arm,
+    uses_agbcc_compiler, CompilerTarget,
 };
 pub type Result<T> = std::result::Result<T, String>;
 #[derive(Debug, Clone)]
@@ -121,7 +121,11 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
         .unwrap_or_else(|| basename(&options.routing_source).to_string());
     let mut steps = Vec::new();
     if old_agbcc {
-        let driver = agbcc_driver();
+        let driver = if is_arm(options.target, &options.routing_source) {
+            agbcc_arm_driver()
+        } else {
+            agbcc_driver()
+        };
         validate_agbcc_bundle()?;
         let compiler_input = options
             .preprocessed_output
@@ -277,7 +281,7 @@ mod tests {
     fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
         for source in [
             "games/THE BROKEN SEAL/SRC/MENU/INPUT_CANCEL_SOUND_TICK.C",
-            "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
         ] {
             let mut options = SourceToAssemblyPlanOptions::new(
                 CompilerTarget::Tbs,
@@ -319,7 +323,7 @@ mod tests {
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tbs,
-            "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
             "candidate.c",
             "candidate.s",
         );

@@ -4,7 +4,7 @@
 //! reference ROM except what the script's scaffolding reads explicitly.
 use crate::compiler::plan::{source_to_assembly_plan, SourceToAssemblyPlanOptions};
 use crate::compiler::routing::{
-    assembly_command, compiler_assembly_command, prefer_installed_binutils,
+    assembly_command, compiler_assembly_command, is_arm, prefer_installed_binutils,
 };
 use crate::targets::{decomp_target, DecompTarget};
 use ags::lz::{compress_tagged, LzMachine};
@@ -614,6 +614,7 @@ fn compile(root: &Path, target: DecompTarget, source: &Path, object: &Path) -> R
         steps.push(compiler_assembly_command(
             &assembly.to_string_lossy(),
             &object_text,
+            is_arm(target.compiler, &source_text),
         ));
         // The routed compile reads its own preprocessed text, so the key is
         // that text plus every command; headers are covered by preprocessing.

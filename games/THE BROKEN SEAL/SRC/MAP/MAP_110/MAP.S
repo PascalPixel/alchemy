@@ -3,6 +3,58 @@
 	.section .rodata
 	.global Field_Map110
 Field_Map110:
+	.ifdef TBS_EDITION_JA
+	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map110, .LField_Map110_METATILES
+	map_block Field_Map110, .LField_Map110_SHAPES
+	map_block Field_Map110, .LField_Map110_GRID
+	map_block Field_Map110, .LField_Map110_ANIMATION
+	map_block Field_Map110
+	map_block Field_Map110, .LField_Map110_MARKERS
+.LField_Map110_METATILES:
+	.incbin "MAP/MAP_110/METATILES.delta1.lz"
+	.balign 4, 0
+.LField_Map110_SHAPES:
+	.incbin "MAP/MAP_110/SHAPES.table.lz"
+	.balign 4, 0
+.LField_Map110_GRID:
+	.incbin "MAP/MAP_110/GRID_JA.parts.lz"
+	.balign 4, 0
+.LField_Map110_ANIMATION:
+	.incbin "MAP/MAP_110/ANIMATION.script.lz"
+	.balign 4, 0
+.LField_Map110_MARKERS:
+	.incbin "MAP/MAP_110/MARKERS_JA.table"
+	.else
+	.ifdef TBS_EDITION_DE
+	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map110, .LField_Map110_METATILES
+	map_block Field_Map110, .LField_Map110_SHAPES
+	map_block Field_Map110, .LField_Map110_GRID
+	map_block Field_Map110, .LField_Map110_ANIMATION
+	map_block Field_Map110
+	map_block Field_Map110, .LField_Map110_MARKERS
+.LField_Map110_METATILES:
+	.incbin "MAP/MAP_110/METATILES.delta1.lz"
+	.balign 4, 0
+.LField_Map110_SHAPES:
+	.incbin "MAP/MAP_110/SHAPES.table.lz"
+	.balign 4, 0
+.LField_Map110_GRID:
+	.incbin "MAP/MAP_110/GRID_JA.parts.lz"
+	.balign 4, 0
+.LField_Map110_ANIMATION:
+	.incbin "MAP/MAP_110/ANIMATION.script.lz"
+	.balign 4, 0
+.LField_Map110_MARKERS:
+	.incbin "MAP/MAP_110/MARKERS_JA.table"
+	.else
 	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
 	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
 	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
@@ -27,3 +79,5 @@ Field_Map110:
 	.balign 4, 0
 .LField_Map110_MARKERS:
 	.incbin "MAP/MAP_110/MARKERS.table"
+	.endif
+	.endif

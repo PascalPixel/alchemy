@@ -7,7 +7,29 @@ Resource_Data000:
 	.section .unidentified.080178b4,"a"
 	.incbin "baserom.gba", 0x000178b4, 0x00000430
 	.section .unidentified.08017d08,"a"
-	.incbin "baserom.gba", 0x00017d08, 0x000082f8
+	.incbin "baserom.gba", 0x00017d08, 0x0000005c
+	.global Flash_Chips
+Flash_Chips:
+	.incbin "baserom.gba", 0x00017d64, 0x00000014
+	.section .unidentified.08017dc0,"a"
+	.incbin "baserom.gba", 0x00017dc0, 0x00000024
+	.section .unidentified.08017dfc,"a"
+	.incbin "baserom.gba", 0x00017dfc, 0x00000018
+	.global Flash_ChipUnknown
+Flash_ChipUnknown:
+	.incbin "baserom.gba", 0x00017e14, 0x00000058
+	.section .unidentified.08017e90,"a"
+	.incbin "baserom.gba", 0x00017e90, 0x0000008c
+	.section .unidentified.08017f24,"a"
+	.incbin "baserom.gba", 0x00017f24, 0x00000018
+	.global Flash_ChipAtmel
+Flash_ChipAtmel:
+	.incbin "baserom.gba", 0x00017f3c, 0x0000002c
+	.global Flash_ChipAtmelLayout
+Flash_ChipAtmelLayout:
+	.incbin "baserom.gba", 0x00017f68, 0x0000002c
+	.section .unidentified.08017fbc,"a"
+	.incbin "baserom.gba", 0x00017fbc, 0x00008044
 	.section .unidentified.080203a8,"a"
 	.incbin "baserom.gba", 0x000203a8, 0x00000a00
 	.section .unidentified.0802e89c,"a"

@@ -460,7 +460,7 @@ void FieldScene_RunActorEventSequence(void)
     Iriguchi_Wait(30);
     Camera_FollowActor(10, 1);
     Actor_WalkByAndWait(10, 0, -32);
-    FieldScene_RunScene3c5_02002548();
+    BabiIriguchi_CloseTruthDoor();
     GameFlag_Clear(0x301);
     Camera_MoveTo(-1, -1, -1, 0);
     Event_Begin();

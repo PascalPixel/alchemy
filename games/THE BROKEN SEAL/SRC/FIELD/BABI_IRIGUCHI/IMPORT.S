@@ -14,7 +14,13 @@ IwramSignedDivideEntry:
 	.thumb_func
 WaitFrames:
 	overlay_veneer WaitFramesFar
+	.global Engine_MathSin
+	.thumb_func
+Engine_MathSin:
 	overlay_veneer Trig_SinFar
+	.global Engine_MathCos
+	.thumb_func
+Engine_MathCos:
 	overlay_veneer Trig_CosFar
 	.global Engine_ObjectSetAnimation
 	.thumb_func
@@ -31,6 +37,9 @@ Engine_ObjectSetScript:
 	.thumb_func
 Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Object_SetPosition
 	.thumb_func
@@ -65,7 +74,13 @@ Engine_ActorSetSpriteFlags:
 	.thumb_func
 Engine_ObjectSetBlendMode:
 	overlay_veneer Animation_SetStateField5Bits2To3Far
+	.global Engine_WorkSetValuesIfNonNegative
+	.thumb_func
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	.global Engine_MapRenderWaitForValues
+	.thumb_func
+Engine_MapRenderWaitForValues:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
 	.global Engine_MessageShowCentered
 	.thumb_func
@@ -162,6 +177,9 @@ BattleFx_RunRisingObjectSequence:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_ObjectSetPalette
 	.thumb_func
@@ -191,6 +209,9 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
 	.global Engine_CameraFollowActor
 	.thumb_func
@@ -224,6 +245,9 @@ FieldEffect_UpdateGridPlacement:
 	.thumb_func
 battle_owner_69:
 	overlay_veneer battle_owner_69Far
+	.global Engine_EventOpenScreen
+	.thumb_func
+Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
 	.global Engine_EventCloseScreen
 	.thumb_func

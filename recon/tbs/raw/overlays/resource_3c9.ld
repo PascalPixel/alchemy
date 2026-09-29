@@ -13,7 +13,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SETUP.o"(.text)
         "*/resource_3c9_overlay.o"(.text.x020088b4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SCENE_A.o"(.text)
-        "*/resource_3c9_overlay.o"(.text.x020092c8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY_SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/EFFECTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/PAIR_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/STEPS.o"(.text)

@@ -9,6 +9,8 @@
  * use one as a case label.
  */
 extern char SceneId_Clear;
+extern char SceneId_Title;
+
 extern char SceneId_WorldMap;
 extern char SceneId_HaidiaIe;
 extern char SceneId_SoruIriguchi1;
@@ -72,6 +74,8 @@ extern char SceneId_KuupuappuDou1;
 extern char SceneId_KuupuappuDou2;
 extern char SceneId_KuupuappuDou3;
 extern char SceneId_KareiMachi1;
+extern char SceneId_KareiHeya1;
+extern char SceneId_KareiHeya2;
 extern char SceneId_KareiMachi2;
 extern char SceneId_KareiKyuden;
 extern char SceneId_RunpaMura1;
@@ -95,6 +99,10 @@ extern char SceneId_TakaraAshiba3;
 extern char SceneId_TorebiKyuden1;
 extern char SceneId_TorebiKyuden2;
 extern char SceneId_KorosseoMaruta;
+
+extern char SceneId_KorashiamuIriguchi1;
+extern char SceneId_KorashiamuIriguchi2;
+extern char SceneId_KorashiamuIriguchi3;
 
 extern char SceneId_ArutamiraDou1;
 extern char SceneId_ArutamiraDou2;
@@ -120,6 +128,8 @@ extern char SceneId_SuharaSabaku3;
 
 extern char SceneId_BabiChika1;
 extern char SceneId_BabiChika2;
+extern char SceneId_BabiIriguchi1;
+extern char SceneId_BabiIriguchi2;
 extern char SceneId_BabiIriguchi3;
 extern char SceneId_RariberoHeya1;
 extern char SceneId_RariberoHeya2;
@@ -130,5 +140,7 @@ extern char SceneId_VinasuHeya4;
 extern char SceneId_VinasuHeya5;
 extern char SceneId_VinasuHeya6;
 extern char SceneId_TorebiIzumi2;
+extern char SceneId_VinasuChojo;
+
 
 #endif

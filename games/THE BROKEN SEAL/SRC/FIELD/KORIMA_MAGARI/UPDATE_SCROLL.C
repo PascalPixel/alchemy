@@ -2,6 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "SCENE.H"
 extern u8 gBgScroll[];
+extern u32 KorimaMagari_ShakeScroll[];
+extern u32 KorimaMagari_ShakeChance;
 
 struct TileRun {
     s16 id;
@@ -103,8 +105,8 @@ void State_UpdateScrollRegistersWithPreset(void)
     destination = (volatile u32 *)0x04000014;
 
     if (line == 227 || line <= 52) {
-        if (((Random16Far() * 100) >> 16) < *(u32 *)0x0200a0dc) {
-            source = (u32 *)0x0200a0d0;
+        if (((Random16Far() * 100) >> 16) < KorimaMagari_ShakeChance) {
+            source = KorimaMagari_ShakeScroll;
         }
     }
 
@@ -121,11 +123,11 @@ void State_CopyPresetA0d0WithOffsetB0(void)
     u16 *p;
 
     src = (const u32 *)(gBgScroll + 4);
-    dst = (u32 *)0x0200a0d0;
+    dst = KorimaMagari_ShakeScroll;
     *dst++ = *src++;
     *dst++ = *src++;
     *dst = *src;
-    p = (u16 *)0x0200a0d0;
+    p = (u16 *)KorimaMagari_ShakeScroll;
     p[1] += 0xb0;
     p[3] += 0xb0;
     p[5] += 0xb0;

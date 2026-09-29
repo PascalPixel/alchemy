@@ -7,9 +7,11 @@ pub mod cache;
 pub mod compare;
 pub mod decode;
 pub mod discovery;
+pub mod elf;
 pub mod lift;
 pub mod process;
 pub mod sched;
+pub mod similar;
 pub mod thumb;
 pub mod unit;
 #[cfg(test)]

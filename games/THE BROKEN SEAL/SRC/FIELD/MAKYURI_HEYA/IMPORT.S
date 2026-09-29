@@ -355,6 +355,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
+	.global ObjectTable_Get
+	.thumb_func
+ObjectTable_Get:
 	overlay_veneer ObjectTable_GetFar
 	.global BattleFx_StartFadeOverlay
 	.thumb_func

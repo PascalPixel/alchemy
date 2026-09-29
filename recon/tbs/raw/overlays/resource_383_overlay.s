@@ -399,139 +399,6 @@ KuupuappuHeya_UpdateActorStops:
 	.global Func_02004b2c
 	.thumb_func
 Func_02004b2c:
-	.global FieldScene_RunScene383_02004b2c
-	.thumb_func
-FieldScene_RunScene383_02004b2c:
-	push {lr}
-	bl 0x0200cd44
-	movs r0, #168
-	movs r1, #1
-	movs r2, #164
-	movs r3, #1
-	lsls r0, r0, #16
-	negs r1, r1
-	lsls r2, r2, #18
-	bl 0x0200ce54
-	movs r0, #0
-	ldr r1, [pc, #260]
-	ldr r2, [pc, #260]
-	bl 0x0200cd84
-	movs r0, #1
-	ldr r1, [pc, #248]
-	ldr r2, [pc, #252]
-	bl 0x0200cd84
-	movs r0, #2
-	ldr r1, [pc, #240]
-	ldr r2, [pc, #240]
-	bl 0x0200cd84
-	movs r2, #174
-	movs r0, #0
-	movs r1, #248
-	lsls r2, r2, #2
-	bl 0x0200cdb4
-	movs r1, #248
-	movs r2, #174
-	movs r0, #1
-	lsls r1, r1, #16
-	lsls r2, r2, #18
-	bl 0x0200cdcc
-	movs r1, #248
-	movs r2, #174
-	movs r0, #2
-	lsls r1, r1, #16
-	lsls r2, r2, #18
-	bl 0x0200cdcc
-	movs r2, #174
-	movs r0, #0
-	movs r1, #200
-	lsls r2, r2, #2
-	bl 0x0200cdac
-	movs r2, #178
-	movs r0, #1
-	movs r1, #248
-.L_02004b9c:
-	lsls r2, r2, #2
-	bl 0x0200cdac
-	movs r2, #174
-	movs r1, #232
-	lsls r2, r2, #2
-	movs r0, #2
-	bl 0x0200cdb4
-	movs r0, #1
-	bl 0x0200cdc4
-	movs r1, #192
-	movs r0, #1
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x0200ce2c
-	movs r1, #128
-	movs r2, #0
-	lsls r1, r1, #8
-	movs r0, #2
-	bl 0x0200ce2c
-	movs r0, #0
-	bl 0x0200cdc4
-	movs r0, #1
-	movs r1, #12
-	bl 0x0200cdd4
-	bl 0x02009e80
-	movs r0, #192
-	movs r1, #144
-	movs r2, #144
-	movs r3, #184
-	lsls r3, r3, #18
-	lsls r0, r0, #14
-	lsls r1, r1, #18
-	lsls r2, r2, #17
-	bl 0x0200ce64
-	movs r1, #128
-	movs r2, #128
-	movs r0, #1
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200cd84
-	movs r1, #192
-	movs r2, #192
-	movs r0, #2
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	bl 0x0200cd84
-	movs r1, #128
-	movs r0, #24
-	lsls r1, r1, #9
-	ldr r2, [pc, #60]
-	bl 0x0200cd84
-	movs r1, #192
-	movs r2, #192
-	movs r0, #25
-	lsls r1, r1, #9
-	lsls r2, r2, #9
-	bl 0x0200cd84
-	ldr r3, [pc, #44]
-	ldr r2, [pc, #28]
-	ldr r1, [pc, #44]
-	strh r2, [r3]
-	ldr r0, [pc, #44]
-	bl 0x0200cc74
-	ldr r0, [pc, #44]
-	bl 0x0200cd24
-	bl 0x0200cd4c
-	movs r0, #9
-	bl 0x0200cf24
-	b .L_02004b9c_0
-	.4byte 0x00000000
-	.2byte 0xcccc
-	.2byte 0x0000
-	.2byte 0x6666
-	.2byte 0x0000
-	.4byte 0x00013333
-	.4byte 0x0200e4f8
-	.4byte 0x00000c94
-	.4byte 0x0200c8c9
-	.4byte 0x000001ff
-.L_02004b9c_0:
-	pop {r0}
-	bx r0
 	.section .rodata,"a",%progbits
 	.global KuupuappuHeya_Stops
 KuupuappuHeya_Stops:
@@ -1998,3 +1865,7 @@ KuupuappuHeya_IdleActions:
 	.4byte 0x0200d768
 	.4byte 0x0200d808
 	.4byte 0x0200d8bc
+	.section .bss,"aw",%nobits
+	.global KuupuappuHeya_StopTimer
+KuupuappuHeya_StopTimer:
+	.space 4

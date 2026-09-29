@@ -813,52 +813,6 @@ Func_020018a4:
 	.4byte 0x0200a6be
 	.2byte 0x01ff
 	.2byte 0x0000
-	.global RamakanSabaku_ClaimSandEffectVram
-	.thumb_func
-RamakanSabaku_ClaimSandEffectVram:
-	push {r5, lr}
-	ldr r1, [pc, #52]
-	ldr r0, [pc, #52]
-	bl 0x02009cbc
-	ldr r5, [pc, #52]
-	bl 0x02009cd4
-	movs r1, #144
-	strh r0, [r5]
-	lsls r0, r0, #16
-	lsls r1, r1, #3
-	movs r2, #0
-	asrs r0, r0, #16
-	bl 0x02009ccc
-	ldr r2, [pc, #16]
-	ldr r3, [pc, #32]
-	strh r2, [r3]
-	ldr r3, [pc, #32]
-	ldr r1, [pc, #32]
-	strh r2, [r3]
-	ldr r0, [pc, #32]
-	bl 0x02009c94
-	b .L_02001c1c_0
-	.4byte 0x00000000
-	.4byte 0x0200a730
-	.4byte 0x02009fa0
-	.4byte 0x0200a6d0
-	.4byte 0x0200a6be
-	.4byte 0x0200b030
-	.4byte 0x00000c76
-	.4byte 0x020098a5
-.L_02001c1c_0:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.global SceneState_SetHalfwordB030
-	.thumb_func
-SceneState_SetHalfwordB030:
-	ldr r3, [pc, #4]
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-	.4byte 0x0200b030
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000000
@@ -931,6 +885,8 @@ SceneState_SetHalfwordB030:
 	.4byte 0x50007c00
 	.4byte 0x00147fff
 	.4byte 0x2f1f0000
+	.global RamakanSabaku_SandEffectTiles
+RamakanSabaku_SandEffectTiles:
 	.4byte 0x5c020100
 	.4byte 0x3fc01eef
 	.4byte 0x9de2abb8
@@ -1846,5 +1802,20 @@ RamakanSabaku_Events:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global RamakanSabaku_SandCounter
+RamakanSabaku_SandCounter:
 	.2byte 0x0000
 	.2byte 0x0000
+	.section .bss,"aw",%nobits
+	.global RamakanSabaku_SandVramSlot
+RamakanSabaku_SandVramSlot:
+	.space 16
+	.global RamakanSabaku_SandWork
+RamakanSabaku_SandWork:
+	.space 0x50
+	.global RamakanSabaku_SandTileBuffer
+RamakanSabaku_SandTileBuffer:
+	.space 0x900
+	.global RamakanSabaku_SandPhase
+RamakanSabaku_SandPhase:
+	.space 2

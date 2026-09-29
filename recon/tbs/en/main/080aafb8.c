@@ -97,7 +97,7 @@ void RenderOutput_RedrawSavedRectFar(void *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message, void *window, s32 x, s32 y);
 void UiWork_SetParamNibbleFar(s32 value);
 s32 Trade_CanOfferDjinnFar(s32 owner, s32 element, s32 djinn);
-s32 Func_08077208(s32 owner, s32 element, s32 djinn);
+s32 Djinn_IsActiveFar(s32 owner, s32 element, s32 djinn);
 void UiWindow_SetTilemapEntryFar(void *window, s32 tile, s32 x, s32 y, s32 flags);
 void UiWindow_DrawDividerLineFar(void *window, s32 x, s32 y, s32 width, s32 height);
 
@@ -144,7 +144,7 @@ void DjinnMenu_DrawElementList(struct DjinnListTable *tbl)
                     flag = 1;
                 else {
                     v = *id;
-                    if (Func_08077208((v & 0xf00) >> 8, (v & mask) >> 5, v & 31))
+                    if (Djinn_IsActiveFar((v & 0xf00) >> 8, (v & mask) >> 5, v & 31))
                         flag = 1;
                 }
                 if (!flag)

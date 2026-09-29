@@ -9,11 +9,11 @@
  * prologue (work = heap[0], draw destination = heap[1], effect state
  * republished at work + 0x7828), the `Value_XXXXXXXX` pooled resource-id
  * idiom, the BattleEffect_LoadWork(46/47, ...) blit-routine publication into
- * Data_03001e50[] and the Data_080edebe/eca/ed0 decoration tables are all
+ * gWorkSlot[] and the Data_080edebe/eca/ed0 decoration tables are all
  * reused from those owners unchanged.
  *
  * Behaviour: the second argument selects one of eight scene variants.  The
- * variant chooses the palette resource fetched through Func_08002f40 and
+ * variant chooses the palette resource fetched through Resource_GetTableEntry and
  * copied to 0x05000000, how many extra graphics sets are decompressed into
  * the work buffer, how many particles per member are animated (16, 24 or
  * 32), the seeding scale of the 512-record particle field at 0x02010000
@@ -25,7 +25,7 @@
  * variants and (state->count * 8 + 32) for the falling ones, one frame per
  * WaitFrames(1).  Each frame it rebuilds a 160-entry sine ramp at
  * work + 0x6980, then walks the members: member `i` starts at frame i * 8,
- * fires Func_080d6888 at frame i * 8 + 16, and animates its own 64-record
+ * fires ObjectGroup_UpdateMembers at frame i * 8 + 16, and animates its own 64-record
  * particle group.  Variant 3 additionally scatters two random decorations
  * per member during the member's first 32 frames.
  *
@@ -80,7 +80,7 @@
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);
 typedef s32 (*IntegerSqrtFn)(s32 value);
 
-/* Heap-block cache: Data_03001e50[kind] holds the block BattleEffect_LoadWork
+/* Heap-block cache: gWorkSlot[kind] holds the block BattleEffect_LoadWork
    published for that display kind. */
 extern void *gWorkSlot[];
 
@@ -143,7 +143,7 @@ void Camera_ApplyShake(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(const void *source, s32 *screen);
 /* apply_step_and_y_offset */
 void EffectPosition_ApplyStepAndYOffset(s32 member_id, s32 *screen);
-void Func_080f9010(s32 cue);
+void Audio_PlayCue(s32 cue);
 
 /* 28-byte animation record.  512 of them live at 0x02010000: eight groups of
    64, one group per battle member. */
@@ -274,12 +274,12 @@ void BattleFx_RenderMode(void *object, u32 kind)
     }
 
     if (!(kind <= 1 || kind == 3)) {
-        Func_080041d8((void *)0x080DBB9D, 0x480);
+        Scheduler_AddOrUpdateCallback((void *)0x080DBB9D, 0x480);
     }
     WORK_S32(0x7780) = 2;
     WORK_S32(0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
-    Func_080f9010(142);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    Audio_PlayCue(142);
 
     for (frame = 0; frame != total; frame++) {
         iwram = *(void **)0x03001E80;

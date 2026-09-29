@@ -118,7 +118,7 @@ extern void Runtime_SetIrqHandler(u32 irq, s32 line, void (*handler)(void));
 extern void Graphics_SetBg1Priority3(void);
 extern void Graphics_ClearBg1ControlBit2(void);
 extern struct TradeOfferState *Trade_GetOfferStateFar(s32 index);
-extern void Func_080b5130(s32 index, u8 *party);
+extern void BattlePlacement_CountValidEntriesFar(s32 index, u8 *party);
 extern void Func_080b5128(s32 x, s32 y);
 extern void Audio_PlayCue(s32 cue);
 
@@ -162,7 +162,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
         work->kinds[1] = 1;
         cnt = 2;
         if (Trade_GetOfferStateFar(0)->available != 0) {
-            Func_080b5130(0, party);
+            BattlePlacement_CountValidEntriesFar(0, party);
             for (pos = party; pos <= &party[3]; pos++)
                 trade_count += *pos;
             work->kinds[2] = 15;

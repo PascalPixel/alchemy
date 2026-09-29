@@ -120,7 +120,7 @@ struct BattleUnitGrid {
     u32 field_108[4];
 };
 
-extern u8 Data_080310a4[];
+extern u8 Resource_FixedBlockBTiles[];
 extern u8 Data_08037308[];
 extern u8 Data_080373e7[];
 extern u8 Data_080373eb[];
@@ -144,7 +144,7 @@ void UiWindow_SetTilemapEntry(struct UiWindow *win, s32 tile, s32 x, s32 y, s32 
 s32 UiText_CopyMessageString(s32 message, s16 *buf, s32 count);
 void UiWork_ClearValueNameTables(void);
 void UiWork_PushValueSlot(s32 value, s32 width);
-void Func_0801e318(void);
+void UiWindow_MarkVisibleTileAttributes(void);
 void UiWork_SetAltFlagAndClearTable(s32 flag);
 void UiWork_SetParamNibble(s32 nibble);
 void UiText_DrawCharacterAtOffset(s32 message, struct UiWindow *win, s32 x, s32 y);
@@ -152,9 +152,9 @@ void UiText_DrawNumberAtOffset(s32 value, s32 digits, struct UiWindow *win, s32 
 void Ui_SetRectHighlight(s32 x, s32 y, s32 w, s32 h, s32 pal);
 struct UiWindow *DjinnMenu_ShowChangePreview(struct UiWindow *win, s32 owner, u32 code, s32 sel,
                                s32 *count);
-struct PlacementTable *Func_08077000(s32 side);
+struct PlacementTable *Trade_GetOfferStateFar(s32 side);
 struct BattleUnitGrid *Owner_GetStateFar(s32 owner);
-void Func_080f9010(s32 cue);
+void Audio_PlayCue(s32 cue);
 
 /* The two IWRAM helpers below are reached through the compiler's call-via
  * veneer bank, so they are modelled as what they are: typed indirect calls
@@ -238,7 +238,7 @@ s32 Battle_SelectAbility(s32 owner)
                 pos++;
                 cnt++;
             } else if (unit->field_0f8[x] & (u32)(1 << y)) {
-                list = &Func_08077000((u32)owner > 7 ? 1 : 0)->list;
+                list = &Trade_GetOfferStateFar((u32)owner > 7 ? 1 : 0)->list;
                 for (i = 0; i < list->count; i++) {
                     if (list->entries[i].id == owner && list->entries[i].x == x &&
                         list->entries[i].y == y) {
@@ -401,7 +401,7 @@ s32 Battle_SelectAbility(s32 owner)
         }
         menu = MENU_STATE;
         if (menu->field_4c == 0 || (trig & 2)) {
-            Func_080f9010(0x71);
+            Audio_PlayCue(0x71);
             ret = -1;
             break;
         }
@@ -426,19 +426,19 @@ s32 Battle_SelectAbility(s32 owner)
                 UiText_CopyMessageString(0x898, buf, 52);
                 UiText_RenderWideStringAtOffset(buf, msg_win, 0, 4);
             }
-            Func_080f9010(0x72);
+            Audio_PlayCue(0x72);
         }
 
         if (cnt != 0) {
             if (rep & 0x80) {
-                Func_080f9010(0x6f);
+                Audio_PlayCue(0x6f);
                 row++;
                 if (row == 5 || page + row == cnt) {
                     row = 0;
                 }
                 saved_row = row;
             } else if (rep & 0x40) {
-                Func_080f9010(0x6f);
+                Audio_PlayCue(0x6f);
                 row--;
                 if (row < 0) {
                     if (page == Math_Div(cnt - 1, 5) * 5) {
@@ -475,14 +475,14 @@ s32 Battle_SelectAbility(s32 owner)
                     }
                     if (sub_sel != 0) {
                         if (rep & 16) {
-                            Func_080f9010(0x6f);
+                            Audio_PlayCue(0x6f);
                             sub_sel++;
                             if (sub_sel > sub_cnt) {
                                 sub_sel = 1;
                             }
                             redraw = 1;
                         } else if (rep & 32) {
-                            Func_080f9010(0x6f);
+                            Audio_PlayCue(0x6f);
                             sub_sel--;
                             if (sub_sel <= 0) {
                                 sub_sel = sub_cnt;
@@ -498,7 +498,7 @@ s32 Battle_SelectAbility(s32 owner)
                 sub_sel = 0;
                 redraw = 1;
             } else if (rep & 16) {
-                Func_080f9010(0x6f);
+                Audio_PlayCue(0x6f);
                 Runtime_SetMainState19();
                 if (page + 5 >= cnt) {
                     if (page != 0) {
@@ -516,7 +516,7 @@ s32 Battle_SelectAbility(s32 owner)
                     }
                 }
             } else if (rep & 32) {
-                Func_080f9010(0x6f);
+                Audio_PlayCue(0x6f);
                 Runtime_SetMainState19();
                 if (page != 0) {
                     page -= 5;
@@ -540,7 +540,7 @@ s32 Battle_SelectAbility(s32 owner)
         slot.field_08 = 0;
         M2C_FIELD(&slot, u16 *, 8) =
             (u16)((M2C_FIELD(&slot, u16 *, 8) & 0xfffffc00) |
-                  (Resource_GetBuffer(res, Data_080310a4) & 0x3ff));
+                  (Resource_GetBuffer(res, Resource_FixedBlockBTiles) & 0x3ff));
         M2C_FIELD(&slot, u16 *, 6) =
             (u16)((M2C_FIELD(&slot, u16 *, 6) & 0xfffffe00) |
                   ((curs_x + (s32)((FRAME_COUNTER & 4) >> 1) + 0xfffa) & 0x1ff));
@@ -580,7 +580,7 @@ s32 Battle_SelectAbility(s32 owner)
     UiWork_Finalize(msg_win, 1);
     UiWork_Finalize(detail_win, 1);
     UiWork_Finalize(list_win, 1);
-    Func_0801e318();
+    UiWindow_MarkVisibleTileAttributes();
     UiWork_SetAltFlagAndClearTable(0);
     Sys_Free(tbl);
     WaitFrames(1);

@@ -10,12 +10,12 @@
  * stand in for whatever kept it a variable. */
 #include "TYPES.H"
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 
 /* Mark attributes used by the visible 30 by 20 tilemap and clear stale marks. */
 void UiWindow_MarkVisibleTileAttributes(void)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork;
     u16 *cursor = (u16 *)base;
     s32 row = 20;
     u32 alternate = base[0xea2];

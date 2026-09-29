@@ -12,14 +12,14 @@ struct PaletteSlotWork {
     u16 next;
 };
 
-extern struct PaletteSlotWork *Data_03001e8c;
+extern struct PaletteSlotWork *gWindowWork;
 
 u8 *Resource_GetTableEntry(s32 index);
 extern u8 Value_00000013;
 
 void Func_0801dd28(u16 *entry, u16 *mirror, s32 index, u8 *remap)
 {
-    struct PaletteSlotWork *work = Data_03001e8c;
+    struct PaletteSlotWork *work = gWindowWork;
     u8 *table = Resource_GetTableEntry((s32)&Value_00000013);
     u32 slot = *(u8 *)entry;
     u8 buf[128];

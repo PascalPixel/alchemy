@@ -18,7 +18,7 @@ void Func_02001d48(void);
 void Func_02001f60(void);
 void Func_020022c8(s32);
 void Func_02002b14(void);
-void Func_0200300c(s32);
+void gMusicPitchStep(s32);
 void Func_020042bc(void);
 void Func_02004610(void);
 void Func_020047c0(void);
@@ -85,26 +85,26 @@ s32 Scene_RunEntrySetup(void)
     if (((s16 *)&gGameState)[224] == (s32)&Value_000000b5) {
         WORK->start_transition = 0x100;
         if (!Func_02004e74(0x981))
-            Func_0200300c(8);
+            gMusicPitchStep(8);
         else
             Func_02004e34(7, 17, 2, 1, 7, 16);
-        Func_0200300c(9);
-        Func_0200300c(10);
-        Func_0200300c(11);
+        gMusicPitchStep(9);
+        gMusicPitchStep(10);
+        gMusicPitchStep(11);
         Func_02004f64(11, 2);
-        Func_0200300c(12);
+        gMusicPitchStep(12);
         Func_02004f64(12, 2);
-        Func_0200300c(13);
-        Func_0200300c(14);
+        gMusicPitchStep(13);
+        gMusicPitchStep(14);
     } else if (((s16 *)&gGameState)[224] == (s32)&Value_000000b6) {
         switch (((s16 *)&gGameState)[225]) {
         case 1: case 2:
-            Func_0200300c(8);
+            gMusicPitchStep(8);
             break;
         case 5:
             Func_02004e84(0x120);
         case 3: case 4: case 6:
-            Func_0200300c(9);
+            gMusicPitchStep(9);
             break;
         case 20: case 21:
             if (Func_02004e74(0x982)) {

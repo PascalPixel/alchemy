@@ -51,7 +51,7 @@
  * 107,176 focused on the index, count and range statements, none below.
  * Its rewrites (loop forms, statement and declaration order, temporaries,
  * casts, truth tests) leave the range load after the count test. The draft
- * still calls Func_08004458, which the build names Random16.
+ * still calls Random16, which the build names Random16.
  * 2026-09-29 slice 4: names first; the draft now calls Random16 and reads
  * gMenuWork, so its score is 375, all of it the range-load placement above.
  */
@@ -94,7 +94,7 @@ struct BattleAction *BattleAction_Get(s32);
 void Owner_RecalculateRatiosFar(s32);
 s32 Battle_CalcRestore(s32, s32, s32);
 s32 Random16(void);
-void Func_08015120(s32, s32);
+void UiWork_PushValueSlotFar(s32, s32);
 s32 Math_Div(s32, s32);
 
 s32 BattleEffect_ApplyToTargets(
@@ -211,13 +211,13 @@ s32 BattleEffect_ApplyToTargets(
                     break;
                 case 0x106:
                     target->stat_18 += amount + random_adjust;
-                    Func_08015120(3, 5);
+                    UiWork_PushValueSlotFar(3, 5);
                     result_code = 0x14;
                     changed = 1;
                     break;
                 case 0x107:
                     target->stat_1a += amount + random_adjust;
-                    Func_08015120(4, 5);
+                    UiWork_PushValueSlotFar(4, 5);
                     result_code = 0x15;
                     changed = 1;
                     break;

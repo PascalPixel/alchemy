@@ -59,7 +59,7 @@ typedef s32 M2C_UNK;
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 void **GetBattleObjectSlotFar(s32 actor_id);
-void Func_080de2f8(void *, s32, s32, s32, s32 *, s32 *);
+void BattleFx_PrepareCanvasEffect(void *, s32, s32, s32, s32 *, s32 *);
 
 void BattleEffectA(s32 arg0, u32 arg1) {
     void **heap_base;
@@ -158,10 +158,10 @@ void BattleEffectA(s32 arg0, u32 arg1) {
         temp_r3_39 = 6 ^ arg1;
         temp_r1_44 = 2 - ((u32) ((0 - temp_r3_39) | temp_r3_39) >> 0x1F);
         if ((arg1 == 6) || (arg1 == 0)) {
-            Func_080de2f8(arg0, temp_r1_44,
+            BattleFx_PrepareCanvasEffect(arg0, temp_r1_44,
                 M2C_FIELD(temp_r5_33, s32 *, 4), 0, &sp58, &sp54);
         } else {
-            Func_080de2f8(arg0, temp_r1_44,
+            BattleFx_PrepareCanvasEffect(arg0, temp_r1_44,
                 M2C_FIELD(temp_r5_33, s32 *, 4), 1, &sp58, &sp54);
         }
         M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 0x18) = 0;
@@ -242,7 +242,7 @@ void BattleEffectA(s32 arg0, u32 arg1) {
             temp_r5_304 = temp_r5_301 + 0x20;
             M2C_FIELD(var_r7_292, s32 *, 0) = (s32) (temp_r5_304 * Trig_Sin(temp_r6_298));
             var_r7_292->field_0004 = 0xFFCE0000;
-            var_r7_292->field_0008 = temp_r5_304 * Func_0800231c(temp_r6_298);
+            var_r7_292->field_0008 = temp_r5_304 * Trig_Cos(temp_r6_298);
             var_r7_292->field_0010 = ((0x1F & Random16()) + 0x20) << 0xD;
             var_r7_292->field_0018 = 0;
             var_r8_293 += 1;
@@ -289,7 +289,7 @@ block_47:
     }
     M2C_FIELD(sp48, s32 *, 0x7780) = 2;
     M2C_FIELD(sp48, s32 *, 0x7784) = 0x4B;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     var_fp_449 = 0;
     if (sp40 == 0) {
 
@@ -298,13 +298,13 @@ block_47:
 loop_55:
         sp24 = gCameraWork;
         if (var_fp_449 == 0x28) {
-            Func_080b50e8(0);
+            BattleEventRuntime_BeginPhaseFar(0);
         }
         if (M2C_FIELD(M2C_FIELD(sp48, void **, 0x7828), s32 *, 0x1C) != 1) {
 
         } else if (sp2C == 0) {
             temp_r8_489 = (((s32) (Trig_Sin((u16) spC) * 0x14) >> 0x10) + sp58 + sp30) - 0x14;
-            var_r5_497 = (((s32) (Func_0800231c((u16) spC) * 4) >> 0x10) + sp54) - 0x18;
+            var_r5_497 = (((s32) (Trig_Cos((u16) spC) * 4) >> 0x10) + sp54) - 0x18;
             if (var_fp_449 > 0x20) {
                 var_r5_497 = (var_r5_497 - (var_fp_449 * 2)) + 0x40;
             }
@@ -321,7 +321,7 @@ loop_55:
             }
         } else {
             temp_r9_580 = (((s32) (Trig_Sin((u16) spC) * 0xA) >> 0x10) + ((s32) (sp58 + (sp58 >> 0x1F)) >> 1)) - 0xA;
-            var_r5_588 = (((s32) (Func_0800231c((u16) spC) * 4) >> 0x10) + sp54) - 0x18;
+            var_r5_588 = (((s32) (Trig_Cos((u16) spC) * 4) >> 0x10) + sp54) - 0x18;
             if (var_fp_449 > 0x20) {
                 var_r5_588 = (var_r5_588 - (var_fp_449 * 2)) + 0x40;
             }
@@ -356,7 +356,7 @@ loop_72:
             M2C_FIELD(sp1C, s32 *, 8) = (s32) M2C_FIELD(temp_r5_657, s32 *, 0x10);
             SceneTransform_ApplyPosition(sp1C);
             if (var_fp_449 == (temp_r3_656 + 0x14)) {
-                Func_080f9010(0x7E);
+                Audio_PlayCue(0x7E);
             }
             if (var_fp_449 == (temp_r3_656 + 0x24)) {
                 sp0 = (u32 *)0x1C;
@@ -436,7 +436,7 @@ loop_90:
                             var_r4_848 = 3 - (var_r2_839 >> 7);
                             switch (arg1) {         /* switch 3; irregular */
                             case 0:                 /* switch 3 */
-                                var_r4_848 = Func_080022fc((var_r8_743 * 4) + var_fp_449, 9);
+                                var_r4_848 = Math_Mod((var_r8_743 * 4) + var_fp_449, 9);
                                 /* fallthrough */
                             case 3:                 /* switch 3 */
                             case 4:                 /* switch 3 */
@@ -490,7 +490,7 @@ loop_90:
         }
     }
     Scheduler_RemoveCallback(0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     BattleFx_EndCanvasLayer();
 }

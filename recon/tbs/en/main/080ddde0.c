@@ -58,7 +58,7 @@ extern u16 ParticleStreams_CellOffsets[];     /* per-step halfword table (shared
  * routine is the entry at 0x03000168 itself, not a pointer stored there.
  * Each kind-47 draw uses the freshly allocated callback. */
 
-void Func_080ddde0(struct BattleEffectArgument *table_param)
+void Region_080ddde0(struct BattleEffectArgument *table_param)
 {
     void *draw_destination;
     void **heap_cache;

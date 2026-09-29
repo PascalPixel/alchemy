@@ -67,8 +67,8 @@ struct PanelActor {
 };
 
 extern u8 Data_00000000[];
-extern u8 Data_000000ae[];
-extern u8 Data_000000af[];
+extern u8 SceneId_BabiIriguchi1[];
+extern u8 SceneId_BabiIriguchi2[];
 extern u8 Data_000000b0[];
 extern u8 Data_000000b1[];
 
@@ -157,7 +157,7 @@ s32 BabiIriguchi_SetupScene(void)
         ((u8 *)panel->sprite)[38] = zero;
         panel->sprite->angle = 0x8000;
         Engine_ActorSetAnimation(14, 0);
-    } else if (scene == (s32)Data_000000af) {
+    } else if (scene == (s32)SceneId_BabiIriguchi2) {
         switch (state->entrance) {
         case 10:
             Engine_GameFlagSet(0x980);
@@ -191,7 +191,7 @@ s32 BabiIriguchi_SetupScene(void)
             }
             break;
         }
-    } else if (scene == (s32)Data_000000ae) {
+    } else if (scene == (s32)SceneId_BabiIriguchi1) {
         Engine_ActorGet(8)->unknown_5a &= 0xfe;
         Engine_ActorGet(9)->unknown_5a &= 0xfe;
         Actor_SetSpeed(8, 0x10000, 0x8000);

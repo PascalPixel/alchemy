@@ -28,11 +28,11 @@
  * 0x02013800.
  *
  * The frame loop then draws a staged foreground element (record[0] == 0
- * uses the Math_Div/Func_080022fc phase tables at 0x080edf58..0x080edf76,
+ * uses the Math_Div/Math_Mod phase tables at 0x080edf58..0x080edf76,
  * record[0] != 0 uses a 27-cell strip inside the work buffer), retriggers
  * the three pools at fixed phase boundaries, optionally scatters three
  * decorations, and finally redraws the pools through the display-kind 46/47
- * routines cached in Data_03001e50[].
+ * routines cached in gWorkSlot[].
  *
  * Uncertain: the roles of Data_080edf04's individual record bytes are read
  * off the arithmetic only; the two one-iteration `do/while (... != 1)` loops
@@ -60,7 +60,7 @@
 
 typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
 extern const u16 Data_080edebe[];
 extern const u8 Data_080edeca[];
@@ -92,16 +92,16 @@ void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyAlternateStepAndYOffset(s32 member_id, s32 *out);
 void EffectPosition_ApplyStepAndYOffset(s32 member_id, s32 *out);
 u32 Random16(void);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 numerator, s32 denominator);
-void Func_08002dd8(s32 id);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+s32 Math_Mod(s32 numerator, s32 denominator);
+void Runtime_ReleaseHeapBlock(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 flag);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 flag);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectStep_AdvanceWithGravity2D(s32 *particle, s32 a, s32 b);
@@ -113,7 +113,7 @@ void WaitFrames(s32 frames);
 void Scheduler_RemoveCallback(void *callback);
 s32 BattleFx_EndCanvasLayer(void);
 
-void Func_080ca60c(void *object, s32 kind)
+void BattleFx_RunTwelveMode(void *object, s32 kind)
 {
     void **heap_cache;
     void **cursor;
@@ -273,7 +273,7 @@ void Func_080ca60c(void *object, s32 kind)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     EffectPosition_ApplyStepAndYOffset(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36), base_pos);
@@ -289,13 +289,13 @@ void Func_080ca60c(void *object, s32 kind)
 
         if (Data_080edf04[kind * 7] == 0) {
             if (frame < count * 6) {
-                cell = Func_080022fc(
+                cell = Math_Mod(
                     Math_Div(frame, Data_080edf04[kind * 7 + 4]), 6);
 
                 if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4)
                         == 1) {
                     BattleEffect_LoadWork(46, 7, 7, 7, 2);
-                    ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
+                    ((DrawRectangleFn)gWorkSlot[46])(draw_destination,
                         (s8 *)work + Data_080edf64[cell],
                         ((base_pos[0] / 2) - (Data_080edf70[cell] >> 1)
                             - Data_080edf58[cell]) + 8,
@@ -303,21 +303,21 @@ void Func_080ca60c(void *object, s32 kind)
                         Data_080edf58[cell], Data_080edf5e[cell]);
                 } else {
                     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-                    ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
+                    ((DrawRectangleFn)gWorkSlot[46])(draw_destination,
                         (s8 *)work + Data_080edf64[cell],
                         ((base_pos[0] / 2) + (Data_080edf70[cell] >> 1)) - 8,
                         base_pos[1] - (Data_080edf5e[cell] >> 1),
                         Data_080edf58[cell], Data_080edf5e[cell]);
                 }
-                Func_08002dd8(46);
+                Runtime_ReleaseHeapBlock(46);
 
-                if (Func_080022fc(frame, Data_080edf04[kind * 7 + 4] * 6)
+                if (Math_Mod(frame, Data_080edf04[kind * 7 + 4] * 6)
                         == Data_080edf04[kind * 7 + 4] * 4) {
                     if (kind == 8) {
-                        Func_080b50e8(134);
+                        BattleEventRuntime_BeginPhaseFar(134);
                     } else {
-                        Func_080f9010(133);
-                        Func_080b50e8(133);
+                        Audio_PlayCue(133);
+                        BattleEventRuntime_BeginPhaseFar(133);
                     }
 
                     if ((Data_080edf04[kind * 7 + 2] & 16) != 0) {
@@ -326,7 +326,7 @@ void Func_080ca60c(void *object, s32 kind)
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, 36),
                             7, 5, 0, 12);
-                        Func_080b5088(
+                        BattleMotion_ApplyVariantMotionFar(
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, 36),
                             4);
@@ -378,18 +378,18 @@ void Func_080ca60c(void *object, s32 kind)
             }
 
             BattleEffect_LoadWork(46, 7, 7, 3, Data_080edf04[kind * 7 + 5]);
-            ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
+            ((DrawRectangleFn)gWorkSlot[46])(draw_destination,
                 ((s8 *)work + (200 << 4)) + (idx * 27) * 32,
                 (base_pos[0] / 2) - 18, 56, 18, 48);
-            Func_08002dd8(46);
+            Runtime_ReleaseHeapBlock(46);
 
             BattleEffect_LoadWork(46, 7, 7, 7, Data_080edf04[kind * 7 + 5]);
-            ((DrawRectangleFn)Data_03001e50[46])(draw_destination,
+            ((DrawRectangleFn)gWorkSlot[46])(draw_destination,
                 ((s8 *)work + (200 << 4)) + (idx * 27) * 32,
                 base_pos[0] / 2, 56, 18, 48);
-            Func_08002dd8(46);
+            Runtime_ReleaseHeapBlock(46);
 
-            if (Func_080022fc(frame, Data_080edf04[kind * 7 + 4] * 4)
+            if (Math_Mod(frame, Data_080edf04[kind * 7 + 4] * 4)
                     == Data_080edf04[kind * 7 + 4] * 3) {
                 ObjectGroup_UpdateMembers(
                     M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
@@ -398,9 +398,9 @@ void Func_080ca60c(void *object, s32 kind)
 
                 if (frame > (Data_080edf04[kind * 7 + 1] * 4 - 4)
                         * Data_080edf04[kind * 7 + 4]) {
-                    Func_080b50e8(133);
+                    BattleEventRuntime_BeginPhaseFar(133);
                 } else {
-                    Func_080f9010(133);
+                    Audio_PlayCue(133);
                 }
 
                 i = 0;
@@ -452,14 +452,14 @@ void Func_080ca60c(void *object, s32 kind)
                 x = ((base_pos[0] / 2)
                         + ((radius * Trig_Sin(angle)) >> 17))
                     - (Data_080edeca[frame & 3] >> 1);
-                y = (base_pos[1] - ((radius * Func_0800231c(angle)) >> 17))
+                y = (base_pos[1] - ((radius * Trig_Cos(angle)) >> 17))
                     - (Data_080eded0[frame & 3] >> 1);
                 BattleEffect_LoadWork(47, 7, 7,
                     3 | Data_080edf7b[Random16() & 3], 3);
-                ((DrawRectangleFn)Data_03001e50[47])(draw_destination,
+                ((DrawRectangleFn)gWorkSlot[47])(draw_destination,
                     (s8 *)work + Data_080edebe[frame & 3], x, y,
                     Data_080edeca[frame & 3], Data_080eded0[frame & 3]);
-                Func_08002dd8(47);
+                Runtime_ReleaseHeapBlock(47);
                 i++;
             } while (i != 3);
         }
@@ -468,9 +468,9 @@ void Func_080ca60c(void *object, s32 kind)
         Graphics_PrepareTransferInIwramWork(facing, look_target);
 
         BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        blit[0] = (DrawRectangleFn)Data_03001e50[46];
+        blit[0] = (DrawRectangleFn)gWorkSlot[46];
         BattleEffect_LoadWork(47, 7, 7, 3, 2);
-        blit[1] = (DrawRectangleFn)Data_03001e50[47];
+        blit[1] = (DrawRectangleFn)gWorkSlot[47];
 
         pass = 0;
         do {
@@ -572,8 +572,8 @@ void Func_080ca60c(void *object, s32 kind)
             pass++;
         } while (pass != 1);
 
-        Func_08002dd8(47);
-        Func_08002dd8(46);
+        Runtime_ReleaseHeapBlock(47);
+        Runtime_ReleaseHeapBlock(46);
 
         if ((Data_080edf04[kind * 7 + 2] & 16) != 0) {
             Camera_ApplyShake(8, 8);

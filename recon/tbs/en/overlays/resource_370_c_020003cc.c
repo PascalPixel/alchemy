@@ -15,15 +15,15 @@ extern u8 MsgClearSendingData[];
 extern u8 MsgClearPasswordLabel[];
 extern u8 MsgClearSaveLabel[];
 
-extern u8 Data_02000000[];
-extern u8 Data_02000240[];
+extern u8 gSaveBuffer[];
+extern u8 gGameState[];
 extern u8 Data_02001100[];
-extern u8 Data_02002080[];
+extern u8 gSerialSendSource[];
 extern u8 Data_02002224[];
 extern u8 Data_02002226[];
 extern u8 Data_02002228[];
 extern u8 Data_0200222a[];
-extern u8 Data_03001ebc[];
+extern u8 gEventWork[];
 void Func_02000438();
 s32 Func_0200096c();
 s32 Func_020009e0();
@@ -229,10 +229,10 @@ s32 SaveMenu_Run(void)
     started = 0;
     Func_02000438();
     Value2(Func_0200171a, 0x20081fd, 0xc80);
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = started;
+    *(s32 *)((*(u8 **)gEventWork + 0x1c0)) = started;
     Func_020094ac();
     Func_020018c0();
-    if (*(s16 *)(Data_02000240 + 0x1c2) == 2) {
+    if (*(s16 *)(gGameState + 0x1c2) == 2) {
         do {
             Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
             rec = Value1(Func_020094c4, 1);
@@ -241,7 +241,7 @@ s32 SaveMenu_Run(void)
                 break;
             }
             Func_020017ca(((s32)MsgSaveAdventureQuestion + 1), 1);
-            base3_2000240 = (s32)Data_02000240;
+            base3_2000240 = (s32)gGameState;
             *(u8 *)((base3_2000240 + 0x20f)) = 1;
             rec = Func_02001830();
             v5 = 0x7;
@@ -268,7 +268,7 @@ s32 SaveMenu_Run(void)
         rec8 = Value0(Func_020018b6);
         if (rec8 < 0) {
             if (*(u8 *)0x03001f54 != 0) {
-                base3_2000240 = (s32)Data_02000240;
+                base3_2000240 = (s32)gGameState;
                 *(u8 *)((base3_2000240 + 0x22a)) = 1;
                 *(u8 *)0x03001d08 = 1;
                 Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
@@ -291,8 +291,8 @@ s32 SaveMenu_Run(void)
             goto L_0200057a;
         }
         Func_02001956();
-        base3_2000240 = (s32)Data_02000240;
-        base2_2000240 = (s32)Data_02000240;
+        base3_2000240 = (s32)gGameState;
+        base2_2000240 = (s32)gGameState;
         Func_02001938(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base2_2000240 + 0x206)));
         v7 = 0;
         v5 = 1;
@@ -317,11 +317,11 @@ s32 SaveMenu_Run(void)
         goto L_02000522;
     }
     Func_020019dc();
-    *(u16 *)(Data_02000240 + 0x1c0) = 0x8;
+    *(u16 *)(gGameState + 0x1c0) = 0x8;
     {
         s32 shown = 20;
 
-        *(u16 *)(Data_02000240 + 0x1c2) = shown;
+        *(u16 *)(gGameState + 0x1c2) = shown;
     }
     goto L_02000c96;
     L_0200057a:;
@@ -332,24 +332,24 @@ s32 SaveMenu_Run(void)
             goto L_020004a8;
         }
         Call1(Func_020019f0, 0x109);
-        base5_2000240 = (s32)Data_02000240;
+        base5_2000240 = (s32)gGameState;
         v5 = base5_2000240;
         v5 = base5_2000240;
-        base3_2000240 = (s32)Data_02000240;
-        base3_2000240 = (s32)Data_02000240;
+        base3_2000240 = (s32)gGameState;
+        base3_2000240 = (s32)gGameState;
         Func_020019c2(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base3_2000240 + 0x206)));
         record = Func_02001a2e();
         if (*(s32 *)base5_2000240 != record) {
-            *(u16 *)(Data_02000240 + 0x1c0) = *(u16 *)(Data_02000240 + 0x1c4);
-            *(u16 *)(Data_02000240 + 0x1c2) = *(u16 *)(Data_02000240 + 0x1c6);
+            *(u16 *)(gGameState + 0x1c0) = *(u16 *)(gGameState + 0x1c4);
+            *(u16 *)(gGameState + 0x1c2) = *(u16 *)(gGameState + 0x1c6);
             Call1(Func_02001a38, 0x109);
         } else {
             if ((*(s32 *)0x03001ae8 & 0x208) == 0x208) {
                 if (Value0(Func_0200096c) != 0) {
                     goto L_02000664;
                 }
-                *(u16 *)(Data_02000240 + 0x1c0) = *(u16 *)(Data_02000240 + 0x1c4);
-                *(u16 *)(Data_02000240 + 0x1c2) = *(u16 *)(Data_02000240 + 0x1c6);
+                *(u16 *)(gGameState + 0x1c0) = *(u16 *)(gGameState + 0x1c4);
+                *(u16 *)(gGameState + 0x1c2) = *(u16 *)(gGameState + 0x1c6);
                 Func_02009464(0x109);
                 Func_0200945c(0x13e);
             } else {
@@ -366,8 +366,8 @@ s32 SaveMenu_Run(void)
                         Func_020019fc(0x6, 9);
                         goto L_020004a8;
                     }
-                    *(u16 *)(Data_02000240 + 0x1c0) = *(u16 *)(Data_02000240 + 0x1c4);
-                    *(u16 *)(Data_02000240 + 0x1c2) = *(u16 *)(Data_02000240 + 0x1c6);
+                    *(u16 *)(gGameState + 0x1c0) = *(u16 *)(gGameState + 0x1c4);
+                    *(u16 *)(gGameState + 0x1c2) = *(u16 *)(gGameState + 0x1c6);
                     Call1(Func_02001af2, 0x109);
                     Call1(Func_02001af0, 0x13f);
                 }
@@ -392,7 +392,7 @@ s32 SaveMenu_Run(void)
         v5 = 0x2000240;
         v5 = 0x2000240;
         v5 = 0x2000240;
-        *(s32 *)(Data_02000240 + 0x1f4) = 0;
+        *(s32 *)(gGameState + 0x1f4) = 0;
         if (Value1(Func_02001b8e, 0x952) != 0) {
             Func_0200948c();
             Func_02009474(0);
@@ -404,8 +404,8 @@ s32 SaveMenu_Run(void)
             Func_02001bd8(2);
             Func_02001bde(3);
         }
-        base3_2000240 = (s32)Data_02000240;
-        base3_2000240 = (s32)Data_02000240;
+        base3_2000240 = (s32)gGameState;
+        base3_2000240 = (s32)gGameState;
         Func_02001b9e(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base3_2000240 + 0x206)));
         Call1(Func_02001bec, 0x109);
         Func_02009464(0x106);
@@ -430,8 +430,8 @@ s32 SaveMenu_Run(void)
             if (rec8 == -1) {
                 goto L_020004a8;
             }
-            base3_2000240 = (s32)Data_02000240;
-            base2_2000240 = (s32)Data_02000240;
+            base3_2000240 = (s32)gGameState;
+            base2_2000240 = (s32)gGameState;
             Func_02001bf6(*(u8 *)((base3_2000240 + 0x205)), *(u8 *)((base2_2000240 + 0x206)));
             L_020007dc:;
             rec8 = Func_02001bb4(0);
@@ -491,7 +491,7 @@ s32 SaveMenu_Run(void)
         v6 = rec8;
         Call4(Func_02001cb6, (s32)MsgClearSendingData, v6, 0, 4);
         Func_02001c34(10);
-        Value2(Func_02001c94, (s32)Data_02000000, 0x1004);
+        Value2(Func_02001c94, (s32)gSaveBuffer, 0x1004);
         Func_02001c42(10);
         missing_link_frames = 0;
         count = 0;
@@ -508,7 +508,7 @@ s32 SaveMenu_Run(void)
             if (missing_link_frames == 10) {
                 goto L_020007ae;
             }
-            if (*(s32 *)Data_02002080 == 0) {
+            if (*(s32 *)gSerialSendSource == 0) {
                 break;
             }
             Func_02001c56(1);
@@ -687,7 +687,7 @@ s32 SaveMenu_Run(void)
     Call1(Func_02001fb4, 0x12c);
     goto L_020004a8;
     L_02000c96:;
-    *(u16 *)((*(u8 **)Data_03001ebc + 0x170)) = 0x3e7;
+    *(u16 *)((*(u8 **)gEventWork + 0x170)) = 0x3e7;
     Func_0200213c(30);
     Func_0200217a(17);
     Func_02002166();

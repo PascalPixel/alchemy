@@ -12,7 +12,7 @@
  * party member, positioned at that member's rest coordinates with a random
  * outward kick) and then, once per displayed frame, drawn and pulled toward
  * a single currently-tracked member (state offset 8) with a staggered
- * per-member release gate.  Field offsets, the Value_/Data_03001e50
+ * per-member release gate.  Field offsets, the Value_/gWorkSlot
  * absolute-symbol conventions, and the 0x02010018/0x02010000 particle-pool
  * reset idiom are the same evidence already recorded for the sibling owners
  * above; see those files for the supporting citations.
@@ -42,19 +42,19 @@ typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
-s32 Func_080b5070(s32 member_id);
+s32 Battle_GetObjectTableValueFar(s32 member_id);
 u32 Random16(void);
 void EffectPosition_ApplyBaseAndYOffset(void *src, void *dest);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
+void Audio_PlayCue(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void WaitFrames(s32 frames);
 void ObjectGroup_TickMemberTimers(void);
@@ -62,10 +62,10 @@ void ObjectGroup_TickMemberTimers(void);
 extern u8 Value_00000073;
 extern u8 Value_000000b9;
 extern u8 Value_000000c0;
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
 
-s32 Func_080d85d0(void *object)
+s32 Unnamed_080d85d0(void *object)
 {
     void **heap_cache;
     void **cursor;
@@ -123,7 +123,7 @@ s32 Func_080d85d0(void *object)
             member_id = M2C_FIELD(STATE, s16 *, member_id_offset);
             member_ptr = *GetBattleObjectSlotFar(member_id);
             member_id = M2C_FIELD(STATE, s16 *, member_id_offset);
-            half = Func_080b5070(member_id);
+            half = Battle_GetObjectTableValueFar(member_id);
             half = half / 2;
 
             particle = (s32 *)((u8 *)0x02010000 + particle_offset);
@@ -145,11 +145,11 @@ s32 Func_080d85d0(void *object)
     }
 
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw_rectangle_fn = (DrawRectangleFn) Data_03001e50[46];
+    draw_rectangle_fn = (DrawRectangleFn) gWorkSlot[46];
     M2C_FIELD(work, s32 *, 0x7780) = 3;
     M2C_FIELD(work, s32 *, 0x7784) = 0x04040404;
-    Func_080041d8((void *)0x080CD261, 0x480);
-    Func_080f9010(142);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
+    Audio_PlayCue(142);
 
     if (M2C_FIELD(STATE, s32 *, 20) * 20 != -72) {
         fp = 0;
@@ -161,11 +161,11 @@ s32 Func_080d85d0(void *object)
             member_id = M2C_FIELD(STATE, s32 *, 8);
             member_ptr = *GetBattleObjectSlotFar(member_id);
             member_id = M2C_FIELD(STATE, s32 *, 8);
-            half = Func_080b5070(member_id);
+            half = Battle_GetObjectTableValueFar(member_id);
             half = half / 2;
 
             if (fp == 64) {
-                Func_080b50e8(133);
+                BattleEventRuntime_BeginPhaseFar(133);
             }
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing + 12);
@@ -250,6 +250,6 @@ s32 Func_080d85d0(void *object)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     return BattleFx_EndCanvasLayer();
 }

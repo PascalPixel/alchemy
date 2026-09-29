@@ -95,9 +95,9 @@ struct MenuRenderWork {
 };
 
 extern struct MenuActionWork *gMenuWork;
-extern struct MenuRenderWork *Data_03001e8c;
-extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001b04;
+extern struct MenuRenderWork *gWindowWork;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 extern u8 Data_000000c8[];
 
 void Runtime_BumpFree(void *block);
@@ -112,7 +112,7 @@ s32 UiWindow_UpdateOrCreate(struct RenderInput **window,
 void UiWindow_CloseIfOpen(struct RenderInput **window, s32 release);
 void RenderOutput_ClearListFar(struct RenderInput *window);
 void RenderOutput_RedrawSavedRectFar(struct RenderInput *window);
-void Func_08015060(struct RenderInput *window);
+void UiWindow_Clear(struct RenderInput *window);
 void UiText_DrawCharacterAtOffsetFar(s32 message,
     struct RenderInput *window, s32 x, s32 y);
 void UiWindow_SetTilemapEntryFar(struct RenderInput *window,
@@ -207,13 +207,13 @@ s32 Unnamed_080ae2f4(void)
     none = 0;
 
     for (;;) {
-        render = Data_03001e8c;
-        keys = Data_03001c94;
-        repeat = Data_03001b04;
+        render = gWindowWork;
+        keys = gKeyState;
+        repeat = gKeysRepeat;
         if (pending) {
             render->menu_busy = 1;
-            Func_08015060(work->left_window);
-            Func_08015060(work->right_window);
+            UiWindow_Clear(work->left_window);
+            UiWindow_Clear(work->right_window);
             DjinnMenu_DrawStatPreview(work->left_window, 0, 0,
                 work->preview_owner, none, none, 3, none, 1);
             DjinnMenu_DrawStatPreview(work->right_window, 0, 0,
@@ -279,7 +279,7 @@ s32 Unnamed_080ae2f4(void)
         break;
     }
     Scheduler_AddOrUpdateCallback((s32)Menu_UpdateEntryObjectTransforms, 0xc80);
-    Data_03001e8c->menu_busy = 1;
+    gWindowWork->menu_busy = 1;
     UiWindow_CloseIfOpen(&work->message_window, 1);
     WaitFrames(1);
     UiWindow_UpdateOrCreate(&work->message_window, 13, 0, 17, 5, 2);
@@ -288,7 +288,7 @@ s32 Unnamed_080ae2f4(void)
     RenderOutput_RedrawSavedRectFar(work->list_window);
     RenderOutput_RedrawSavedRectFar(work->saved_window);
     RenderOutput_RedrawSavedRectFar(work->title_window);
-    Data_03001e8c->menu_busy = 0;
+    gWindowWork->menu_busy = 0;
     WaitFrames(1);
     return result;
 }

@@ -44,7 +44,7 @@ typedef s32 M2C_UNK;
     draw_args[0]( \
         (void *)(destination), (source), (x), (y), sp0, sp4)
 
-void Func_080dc968(void *arg0) {
+void BattleEffect_RunStagedParticles(void *arg0) {
     s32 sp0;
     s32 sp4;
     s32 sp8;
@@ -132,7 +132,7 @@ void Func_080dc968(void *arg0) {
     *(s16 *)0x05000000 = 0;
     *(s16 *)0x05000002 = 0;
     M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 0;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     Unnamed_080cd104(0, 0);
     BattleFx_SelectLivingTargets(M2C_FIELD(temp_r3_25, void **, 0x7828));
     BattleFx_SpawnObjects(9, 0x172, 1);
@@ -153,7 +153,7 @@ void Func_080dc968(void *arg0) {
     M2C_FIELD(temp_r3_25, s32 *, 0x7794) = 4;
     M2C_FIELD(temp_r3_25, s32 *, 0x7798) = -1;
     M2C_FIELD(temp_r3_25, s32 *, 0x779C) = 0;
-    Func_080041d8(0x080C90E5, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080C90E5, 0x480);
     sp38->field_0010 = 1;
     Unnamed_080cd104(0, 1);
     M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
@@ -165,7 +165,7 @@ void Func_080dc968(void *arg0) {
     sp2C = 0;
     var_r7_185 = temp_r3_25 + 0x7080;
     do {
-        M2C_FIELD(var_r7_185, s32 *, 0) = (s32) ((Func_08002304(Random16(), 0x60) + 0xC) << 0x10);
+        M2C_FIELD(var_r7_185, s32 *, 0) = (s32) ((Math_ModU(Random16(), 0x60) + 0xC) << 0x10);
         M2C_FIELD(var_r7_185, s32 *, 4) = ((0x3F & Random16()) + 0x20) << 0x10;
         M2C_FIELD(var_r7_185, s32 *, 0xC) = 0;
         M2C_FIELD(var_r7_185, s32 *, 0x10) = 0;
@@ -254,7 +254,7 @@ loop_20:
             temp_r8_454 = M2C_FIELD(temp_r5_449, s16 *, 2);
             temp_sl_455 = M2C_FIELD(temp_r5_449, s16 *, 6);
             if (sp28 == (temp_r6_436 + 0x54)) {
-                Func_080f9010(0xD4);
+                Audio_PlayCue(0xD4);
             }
             if (sp28 >= (s32) (temp_r6_436 + 0x55)) {
                 temp_r1_469 = M2C_FIELD(temp_r5_449, s32 *, 0xC);
@@ -384,7 +384,7 @@ block_36:
     sp2C = 0;
     var_r5_836 = temp_r3_25 + 0x7080;
     do {
-        temp_r0_841 = Func_080022fc(sp2C, 6);
+        temp_r0_841 = Math_Mod(sp2C, 6);
         temp_r2_844 = M2C_FIELD(temp_r3_25, void **, 0x7828);
         if (temp_r0_841 < (s32) M2C_FIELD(temp_r2_844, s32 *, 0x14)) {
             EffectPosition_ApplyStepAndYOffset(M2C_FIELD(temp_r2_844, s16 *,
@@ -463,15 +463,15 @@ loop_58:
             if ((s32) temp_r3_1064 > 0x4F) {
                 M2C_FIELD(var_r7_927, s32 *, 0x18) = 0;
                 M2C_FIELD(temp_r3_25, s32 *, 0x77A8) = 2;
-                Func_080f9010(0x86);
-                temp_r0_1078 = Func_080022fc(sp2C, 6);
+                Audio_PlayCue(0x86);
+                temp_r0_1078 = Math_Mod(sp2C, 6);
                 temp_r2_1081 = M2C_FIELD(temp_r3_25, void **, 0x7828);
                 if (temp_r0_1078 < (s32) M2C_FIELD(temp_r2_1081, s32 *, 0x14)) {
                     temp_r5_1087 = (temp_r0_1078 * 2) + 0x24;
                     sp0 = 8;
                     ObjectGroup_UpdateMembers(M2C_FIELD(temp_r2_1081, s16 *,
                         temp_r5_1087), 7, 5, temp_r0_1078, 8);
-                    Func_080b5088(M2C_FIELD(
+                    BattleMotion_ApplyVariantMotionFar(M2C_FIELD(
                         M2C_FIELD(temp_r3_25, void **, 0x7828), s16 *,
                         temp_r5_1087), 1);
                 }
@@ -494,7 +494,7 @@ loop_58:
         goto loop_57;
     }
     Scheduler_RemoveCallback(0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     BattleFx_EndCanvasLayer();
 }

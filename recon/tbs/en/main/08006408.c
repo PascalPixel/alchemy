@@ -1,4 +1,4 @@
-#include "serial_runtime_family.h"
+#include "SERIAL_RUNTIME.H"
 
 /* 2026-09-29: psynergy editions shows the pooled zero is the same in all six
  * editions, a plain constant, not a link-time id; written as 0. Still blocked
@@ -19,7 +19,7 @@
  * SerialRuntime_BeginTransferA does) stops the if-conversion but lets the
  * shared HImode zero take r0 first. */
 
-s32 Func_08006408(s32 value)
+s32 SerialRuntime_BeginTransferB(s32 value)
 {
     volatile s32 *active;
     struct SerialTransferState *state;

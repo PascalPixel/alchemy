@@ -34,7 +34,7 @@ struct ReturnPointState {
     s16 reason;                     /* 0x236 */
 };
 
-extern struct ReturnPointState Data_02000240;
+extern struct ReturnPointState gGameState;
 
 s32 Math_Div(s32, s32);
 struct BattleUnit *Owner_GetStateFar(s32);
@@ -79,9 +79,9 @@ void Party_SetReturnPoint(s32 reason)
     s32 x;
     s32 y;
 
-    (&Data_02000240)->reason = reason;
+    (&gGameState)->reason = reason;
     if (reason == -1) {
-        unit = Owner_GetStateFar((&Data_02000240)->current_owner);
+        unit = Owner_GetStateFar((&gGameState)->current_owner);
         if (unit->hp == 0) {
             unit->hp = 1;
             Unit_UpdateGauges(unit);
@@ -96,37 +96,37 @@ void Party_SetReturnPoint(s32 reason)
             if (++i <= 1)
                 goto heal;
         }
-        x = (&Data_02000240)->defeat_x;
-        y = (&Data_02000240)->defeat_y;
+        x = (&gGameState)->defeat_x;
+        y = (&gGameState)->defeat_y;
         if (x == -1) {
             if (y == -1) {
-                (&Data_02000240)->return_x = (&Data_02000240)->sanctum_x;
-                (&Data_02000240)->return_y = (&Data_02000240)->sanctum_y;
+                (&gGameState)->return_x = (&gGameState)->sanctum_x;
+                (&gGameState)->return_y = (&gGameState)->sanctum_y;
                 return;
             }
             goto default_x;
         } else {
-            (&Data_02000240)->return_x = x;
+            (&gGameState)->return_x = x;
         }
     } else {
-        y = (&Data_02000240)->entry_y;
-        x = (&Data_02000240)->entry_x;
+        y = (&gGameState)->entry_y;
+        x = (&gGameState)->entry_x;
         if (x != -1) {
-            (&Data_02000240)->return_x = x;
+            (&gGameState)->return_x = x;
         } else {
             if (y == -1)
                 goto home;
 default_x:
-            (&Data_02000240)->return_x = (&Data_02000240)->home_x;
+            (&gGameState)->return_x = (&gGameState)->home_x;
         }
     }
     if (y != -1)
-        (&Data_02000240)->return_y = y;
+        (&gGameState)->return_y = y;
     else
-        (&Data_02000240)->return_y = (&Data_02000240)->home_y;
+        (&gGameState)->return_y = (&gGameState)->home_y;
     return;
 home:
-    (&Data_02000240)->return_x = (&Data_02000240)->home_x;
-    (&Data_02000240)->return_y = (&Data_02000240)->home_y;
+    (&gGameState)->return_x = (&gGameState)->home_x;
+    (&gGameState)->return_y = (&gGameState)->home_y;
     GameFlag_SetBitFar(0x109);
 }

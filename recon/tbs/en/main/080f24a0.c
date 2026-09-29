@@ -20,7 +20,7 @@ extern u8 Value_00000017;
 void *Resource_GetTableEntry(s32 index);
 void Resource_DecodeByteLz(const void *source, void *destination);
 
-void Func_080f24a0(void)
+void Unnamed_080f24a0(void)
 {
     s32 *work = *(s32 **)0x03001efc;
     u8 *resource;

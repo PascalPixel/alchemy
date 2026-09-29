@@ -82,8 +82,8 @@ struct TileEntry {
 };
 
 extern struct KawaState *Data_03001f3c;
-extern struct TileEntry Data_03001b10[];
-extern u32 Data_03001e40;
+extern struct TileEntry gVramBlockCache[];
+extern u32 gFrameCount;
 
 void Scene_RunScene3baSequenceA(void)
 {
@@ -104,7 +104,7 @@ void Scene_RunScene3baSequenceA(void)
     entry = state->oam;
     p = &entry->header;
     id = &state->id;
-    tile = Data_03001b10[*id].tile >> 5;
+    tile = gVramBlockCache[*id].tile >> 5;
     count = state->count;
     if (state->raised != 0) {
         state->rise = 2;
@@ -160,7 +160,7 @@ void Scene_RunScene3baSequenceA(void)
     *p++ = ((count * 16 + 128) << 16) | y | shape | 0x10000000;
     *p++ = tile | 0xe400;
     Engine_OamSubmitRecord(entry++, 255);
-    if ((Data_03001e40 & 15) <= 4)
+    if ((gFrameCount & 15) <= 4)
         return;
     shape = 0x40000000;
     {

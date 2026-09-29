@@ -128,12 +128,12 @@ struct DjinnDefinition {
     u8 cost[4];             /* 0x04 */
 };
 
-extern struct LinkWork *Data_03001e74;
+extern struct LinkWork *gBattleWork;
 extern struct LinkRoundState *gLinkCountdownWork;
-extern volatile u16 Data_03001f64;
+extern volatile u16 gLinkStatus;
 extern volatile u8 gDebugMode;
-extern volatile u32 Data_03001ae8;
-extern u8 *Data_03001e8c;
+extern volatile u32 gKeysHeld;
+extern u8 *gWindowWork;
 
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
@@ -176,21 +176,21 @@ s32 Random16(void);
 void UiWindow_PutGlyph(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
 s32 Ui_Place(s32, s16 *, s32);
 s32 Ui_SetMode(s16 *, s32, s32, s32);
-s32 Func_08021e6c(s32 mode);
-void Func_0802281c(u16 *header);
+s32 Ui_RunSelectionScreen(s32 mode);
+void BattleLayout_HighlightPartyPanels(u16 *header);
 void Ui_RunOwnerStatusScreen(void *block, s32 handle, s32 actor);
 s32 Battle_SelectAbility(s32 actor, s32 mode);
 s32 Func_08024934(s32 a, s32 b, u8 *cost);
-s32 Func_0802592c(s32 actor, u16 *list, s32 count);
-s32 Func_08025200(s32 actor, u16 *list);
+s32 BattleMenu_RunActionSelection(s32 actor, u16 *list, s32 count);
+s32 ItemList_SelectEntry(s32 actor, u16 *list);
 void Sys_Free(void *block);
 struct DjinnDefinition *SummonDefinition_Get(s32 id);
-s32 Func_080771e8(s32 element, s32 index);
-s32 Func_08077208(s32 actor, s32 element, s32 index);
-s32 Func_080b5090(s32 mode, void *block);
+s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
+s32 Djinn_IsActiveFar(s32 actor, s32 element, s32 index);
+s32 BattleParty_ListActorIdsFar(s32 mode, void *block);
 void Camera_ConfigureSceneFar(s32 offset);
 void BattlePres_SetActorModesFar(u16 *header, s32 mode);
-void Func_080b5130(s32 mode, u8 *cost);
+void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 count)
 {
@@ -238,7 +238,7 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
     {
         u16 data[2];
         data[0] = 0xff;
-        Func_0802281c(data);
+        BattleLayout_HighlightPartyPanels(data);
         BattlePres_SetActorModesFar(data, 1);
     }
 
@@ -259,7 +259,7 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
     Graphics_ExpandVramTilesByColorTable(0x06006000);
     Link_DrawShiftedTilePair(0x06006680);
     Menu_BuildLocalizedPatternTiles();
-    link = Data_03001e74;
+    link = gBattleWork;
     word = state->result;
     k = 7;
     do {
@@ -292,7 +292,7 @@ s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 cou
             if (link->paused != 0) {
                 goto handshake_failed;
             }
-            if ((Data_03001f64 & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 miss++;
                 if (miss > 24) {
                     goto handshake_failed;
@@ -331,18 +331,18 @@ handshake_done:
             state->hintTimer = 60;
         }
         if (count > 0) {
-            mode = Func_08021e6c(0);
+            mode = Ui_RunSelectionScreen(0);
         } else {
             mode = 14;
         }
         if (mode == 7) {
             block = Runtime_BumpAllocate(12);
-            if (gDebugMode != 0 && (Data_03001ae8 & 8) != 0) {
+            if (gDebugMode != 0 && (gKeysHeld & 8) != 0) {
                 sel = 2;
             } else {
                 sel = 1;
             }
-            handle = Func_080b5090(sel, block);
+            handle = BattleParty_ListActorIdsFar(sel, block);
             WaitFrames(1);
             Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
             Sys_Free(block);
@@ -376,7 +376,7 @@ handshake_done:
         for (;;) {
             /* Carry the previous member's element budget into this round. */
             if (i == 0) {
-                Func_080b5130(0, state->cost[0]);
+                BattlePlacement_CountValidEntriesFar(0, state->cost[0]);
             } else {
                 for (k = 0; k < 4; k++) {
                     state->cost[i][k] = state->cost[i - 1][k];
@@ -406,13 +406,13 @@ mark_visible:
             hdr[0] = (u16)actorId;
             hdr[1] = 255;
             BattlePres_SetActorModesFar(hdr, 1);
-            Func_0802281c(hdr);
+            BattleLayout_HighlightPartyPanels(hdr);
             WaitFrames(1);
-            mode = Func_08021e6c(1);
+            mode = Ui_RunSelectionScreen(1);
             WaitFrames(1);
             if (mode == -2) {
                 block = Runtime_BumpAllocate(12);
-                handle = Func_080b5090(1, block);
+                handle = BattleParty_ListActorIdsFar(1, block);
                 state->entryActive[2] = 0;
                 WaitFrames(1);
                 Ui_RunOwnerStatusScreen(block, handle, actorId);
@@ -502,7 +502,7 @@ psynergy_menu:
                 }
                 state->pick[cnt] = 0;
                 state->list[cnt] = 0;
-                res = Func_0802592c(actorId, state->list, cnt);
+                res = BattleMenu_RunActionSelection(actorId, state->list, cnt);
                 if (res == -1) {
                     goto mark_visible;
                 }
@@ -511,7 +511,7 @@ psynergy_menu:
                 ability = Ability_GetData(param);
                 cost = ability[8];
                 handle = Resource_LoadIntoFreeSlot(128);
-                ui = Data_03001e8c;
+                ui = gWindowWork;
                 win = UiWindow_Create(8, 17, 18, 3, 6);
                 slot = state->entries[0];
                 M2C_FIELD(slot, u16 *, 6) =
@@ -601,7 +601,7 @@ item_menu:
                     } while (cur != 0);
                 }
                 state->list[cnt] = 0;
-                res = Func_08025200(actorId, state->list);
+                res = ItemList_SelectEntry(actorId, state->list);
                 if (res == -1) {
                     goto mark_visible;
                 }
@@ -667,8 +667,8 @@ summon_menu:
                 gLinkCountdownWork->result[i] = res;
                 element = (res >> 8) & 15;
                 index = res & 255;
-                if (Func_08077208(actorId, element, index) != 0) {
-                    ability = Ability_GetData(Func_080771e8(element, index));
+                if (Djinn_IsActiveFar(actorId, element, index) != 0) {
+                    ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
                     cost = ability[8];
                     win = UiWindow_Create(11, 17, 10, 3, 6);
                     slot = state->entries[0];
@@ -727,9 +727,9 @@ djinn_menu:
                 slot = state->entries[0];
                 M2C_FIELD(slot, u16 *, 6) =
                     (u16)((M2C_FIELD(slot, u16 *, 6) & ~0x1ff) | 80);
-                Func_0802281c(hdr);
+                BattleLayout_HighlightPartyPanels(hdr);
                 res = Func_08024934(0, 0, state->cost[i]);
-                Func_0802281c(hdr);
+                BattleLayout_HighlightPartyPanels(hdr);
                 if (res == -1) {
                     goto mark_visible;
                 }
@@ -853,7 +853,7 @@ finish:
     Resource_ResetEntry(res1024);
     Scheduler_RemoveCallback(UpdateLinkSessionCountdown);
     if (state->enabled != 0) {
-        link = Data_03001e74;
+        link = gBattleWork;
         miss = 0;
         if (state->displayHandle == 0 && link->paused == 0) {
             state->displayHandle = (s32)UiWindow_Create(0, 16, 30, 4, 42);
@@ -868,7 +868,7 @@ finish:
                 count = -1;
                 break;
             }
-            if ((Data_03001f64 & 3) != 3) {
+            if ((gLinkStatus & 3) != 3) {
                 miss++;
                 if (miss > 24) {
                     count = -1;

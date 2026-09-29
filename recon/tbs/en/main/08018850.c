@@ -30,7 +30,7 @@ struct TextWork {
 };
 
 extern u8 *gWindowWork;
-extern struct GlyphInfo Data_08032224[];
+extern struct GlyphInfo UiText_Glyphs[];
 
 s32 Math_Div(s32 numerator, s32 denominator);
 
@@ -69,7 +69,7 @@ void UiText_MeasureEntryDimensions(s32 pos, u32 *out_width, u32 *out_height, u16
                 line_width += 5;
                 count++;
             } else {
-                glyph = Data_08032224[c - 32].width;
+                glyph = UiText_Glyphs[c - 32].width;
                 style = work->style;
                 if (style == 1 || style == 5)
                     glyph++;

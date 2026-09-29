@@ -98,7 +98,7 @@ union TimedActor {
 };
 
 struct Half { u16 v; };
-extern s32 Data_03001c94;
+extern s32 gKeyState;
 
 void FieldScene_RunMultiPhasePresentation(void)
 {
@@ -196,14 +196,14 @@ void FieldScene_RunMultiPhasePresentation(void)
     Call4(SceneState_StoreParamsAndInstallTask, 0x820000, 0, 0xa80000, 0);
     Engine_EventWait(60);
     n = 0;
-    if (Data_03001c94 == 0) {
+    if (gKeyState == 0) {
         do {
             n++;
             Engine_EventWait(1);
             if (n > 59) {
                 break;
             }
-        } while (Data_03001c94 == 0);
+        } while (gKeyState == 0);
     }
     actor = (union TimedActor *)Engine_ActorGet(0);
     Call2(Engine_CameraSetSpeed, 0x4cccc, 0x9999);

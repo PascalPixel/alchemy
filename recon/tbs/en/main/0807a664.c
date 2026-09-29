@@ -37,7 +37,7 @@ struct GameStateView {
     s16 entrance;               /* 0x222 */
 };
 
-extern struct GameStateView Data_02000240;
+extern struct GameStateView gGameState;
 extern u8 Value_00000000;
 
 struct OwnerEquipment *Owner_GetState(s32 owner);
@@ -65,8 +65,8 @@ void Func_0807a664(void)
     save = gInventorySnapshot;
     if (*save != EQUIPMENT_SNAPSHOT_MARK) {
         *save++ = EQUIPMENT_SNAPSHOT_MARK;
-        scene = Data_02000240.scene;
-        entrance = Data_02000240.entrance;
+        scene = gGameState.scene;
+        entrance = gGameState.entrance;
         for (owner = 0; owner < 4; owner++) {
             u16 *tmp2;
             st = Owner_GetState(owner);
@@ -100,8 +100,8 @@ void Func_0807a664(void)
         }
         *save++ = scene;
         *save++ = entrance;
-        save[0] = Data_02000240.leader_x;
-        save[1] = Data_02000240.leader_z;
+        save[0] = gGameState.leader_x;
+        save[1] = gGameState.leader_z;
         Inventory_AddAndEquip(0, 16);
         GameFlag_SetBit(0x952);
     }

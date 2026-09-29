@@ -1,5 +1,5 @@
 /* 2026-09-29: eight minutes of permutation (alchemy permute --symbol
- * Func_080f2d54): 910 -> 765 by setting the zero before the
+ * Unnamed_080f2d54): 910 -> 765 by setting the zero before the
  * display-register writes. Remaining: the extra saved r7 and the
  * buffer/cursor ownership described below, plus the resource number 0x19,
  * still a Value_ symbol (a plain 0x19 gives 980). A second 8-minute run
@@ -41,7 +41,7 @@ struct BgScroll {
 extern u8 Data_03001d18;
 extern u8 gMapCellBuffer[];
 extern struct BgScroll gBgScroll[4];
-extern u32 Data_03001e40;
+extern u32 gFrameCount;
 extern volatile u32 gKeyState;
 extern u8 Value_00000019;
 
@@ -92,7 +92,7 @@ s32 Title_ShowAnimatedSplash(void)
     Blend_WaitForTransition();
     *(volatile u16 *)0x04000000 = 0x1540;
     for (i = 0; i < 120; i++) {
-        Dma_Set(buffer + (((Data_03001e40 >> 3) & 3) << 10), (void *)0x06004100, 0x840000d0, (volatile u32 *)0x040000d4);
+        Dma_Set(buffer + (((gFrameCount >> 3) & 3) << 10), (void *)0x06004100, 0x840000d0, (volatile u32 *)0x040000d4);
         if (gKeyState & 9)
             break;
         WaitFrames(1);

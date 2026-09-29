@@ -36,12 +36,12 @@ struct MapAnimation {
     u16 paused;
 };
 
-extern u8 *Data_03001e70;
+extern u8 *gMapWork;
 extern u8 Data_06004000[];
 
 void MapAnimation_Update(void)
 {
-    u8 *work = Data_03001e70;
+    u8 *work = gMapWork;
     struct MapAnimation *anim = (struct MapAnimation *)(work + 24);
     u32 i;
 

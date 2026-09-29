@@ -12,7 +12,7 @@ typedef struct Particle {
 typedef struct Anchor {
     s32 x, y, z, unused0c, unused10, unused14, unused18;
 } Anchor;
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern u8 Value_00000085, Value_00000073, Value_00000086, Value_00000087;
 extern u8 Data_080ee29a[], Data_080ee2a9[];
 extern s8 Data_080ee29d[];
@@ -21,29 +21,29 @@ void BattleFx_BeginCanvasLayer(s32);
 void *Resource_GetTableEntry(s32);
 void **GetBattleObjectSlotFar(s32);
 s32 Random16(void);
-s32 Func_080041d8(s32, s32);
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void Scheduler_RemoveCallback(s32);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *, void *);
-void Func_080b50e8(s32);
+void BattleEventRuntime_BeginPhaseFar(s32);
 void EffectPosition_ApplyBaseAndYOffset(void *, s32 *);
-void Func_080f9010(s32);
-s32 Func_080022fc(s32, s32);
+void Audio_PlayCue(s32);
+s32 Math_Mod(s32, s32);
 s32 Trig_Sin(s32);
-s32 Func_0800231c(s32);
+s32 Trig_Cos(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
-void Func_080b5088(s32, s32);
+void BattleMotion_ApplyVariantMotionFar(s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32);
-void Func_08002dd8(s32);
+void Runtime_ReleaseHeapBlock(s32);
 s32 BattleFx_EndCanvasLayer(void);
 #define EFFECT (*(Effect **)(work + 0x7828))
 #define PARTICLES ((Particle *)0x02010000)
 
 /* Four projected columns emit particles into a shared pool. The complete
  * owner ends at 080d5258, including both internal and final literal pools. */
-void Func_080d4ce8(Effect *effect)
+void Region_080d4ce8(Effect *effect)
 {
     void **cache;
     void **entry;
@@ -63,7 +63,7 @@ void Func_080d4ce8(Effect *effect)
     u8 *trigger;
     u8 *overlay;
 
-    cache = &Data_03001e50[39];
+    cache = &gWorkSlot[39];
     entry = cache;
     work = *entry++;
     destination = *entry;
@@ -81,9 +81,9 @@ void Func_080d4ce8(Effect *effect)
         status = ((CopyWords)0x03001388)((void *)0x05000000, palette, 128);
     }
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw[0] = (DrawRectangle)Data_03001e50[46];
+    draw[0] = (DrawRectangle)gWorkSlot[46];
     status = BattleEffect_LoadWork(47, 7, 7, 7, 2);
-    second = (DrawRectangle)Data_03001e50[47];
+    second = (DrawRectangle)gWorkSlot[47];
     draws = draw;
     draws[1] = second;
     i = 0;
@@ -109,10 +109,10 @@ void Func_080d4ce8(Effect *effect)
     } while (i != 4);
     *(s32 *)(work + 0x7780) = 2;
     *(s32 *)(work + 0x7784) = 50;
-    Func_080041d8(0x080cd261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
     frame = 0;
     do {
-        camera = Data_03001e50[12];
+        camera = gWorkSlot[12];
         if (EFFECT->variant == 2 && frame <= 63) {
             if (EFFECT->side == 0)
                 *(u16 *)((u8 *)camera + 54) += 192;
@@ -120,7 +120,7 @@ void Func_080d4ce8(Effect *effect)
                 *(u16 *)((u8 *)camera + 54) -= 192;
         }
         if (frame == 16)
-            Func_080b50e8(134);
+            BattleEventRuntime_BeginPhaseFar(134);
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera + 12);
         if (frame <= 63) {
@@ -135,10 +135,10 @@ void Func_080d4ce8(Effect *effect)
                     screen[0] /= 2;
                     screen[1] -= 8;
                     if (frame == *trigger)
-                        Func_080f9010(145);
+                        Audio_PlayCue(145);
                     if (frame >= *trigger + 4) {
                         s32 spin;
-                        spin = Func_080022fc(slot * 25 + (frame << 4), 104);
+                        spin = Math_Mod(slot * 25 + (frame << 4), 104);
                         draws[slot & 1](destination, work, screen[0] - 17,
                             screen[1] - spin - 104, 34, 104);
                         draws[slot & 1](destination, work, screen[0] - 17,
@@ -166,7 +166,7 @@ void Func_080d4ce8(Effect *effect)
                                 angle = (angle & 0x7fff) - 0x4000;
                                 particle->vx = ((magnitude + 32) * Trig_Sin(angle)) >> 15;
                                 magnitude += 32;
-                                particle->vy = -((magnitude * Func_0800231c(angle)) << 1) >> 15;
+                                particle->vy = -((magnitude * Trig_Cos(angle)) << 1) >> 15;
                                 spawned++;
                                 if (frame == *trigger) {
                                     particle->life = (Random16() & 7) + 48;
@@ -185,7 +185,7 @@ void Func_080d4ce8(Effect *effect)
                         i = 0;
                         while (i != EFFECT->count) {
                             ObjectGroup_UpdateMembers(EFFECT->actors[i], 10, 5, i, 8);
-                            Func_080b5088(EFFECT->actors[i], 1);
+                            BattleMotion_ApplyVariantMotionFar(EFFECT->actors[i], 1);
                             i++;
                         }
                     }
@@ -231,8 +231,8 @@ void Func_080d4ce8(Effect *effect)
         WaitFrames(1);
         frame++;
     } while (frame != 96);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback(0x080cd261);
     BattleFx_EndCanvasLayer();
 }

@@ -49,18 +49,18 @@ struct BattleMotionSlot {
     struct BattleMotionActor *actor;
 };
 
-extern struct BattlePresentationTransition *Data_03001f00;
-extern u8 *Data_03001e74;
+extern struct BattlePresentationTransition *gTransitionWork;
+extern u8 *gBattleWork;
 
 void WaitFrames(s32 frames);
 s32 BattleObject_IsValidId(s32 object_id);
 s32 BattleParty_ListLivingUnits(s32 side_mask, s16 *unit_ids);
 void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
-void Func_08009080(void *actor, s32 mode);
+void Object_SetMode(void *actor, s32 mode);
 void ObjectDispatch_ApplyValueToChildrenFar(void *actor, s32 mode);
 void Func_080c9020(struct BattlePresentationWork *work);
-void Func_080c9018(struct BattlePresentationWork *work);
+void BattleFx_DispatchModeFar(struct BattlePresentationWork *work);
 void Actor_ResetMotionAtAnchor(s32 unit_id);
 
 s32 BattlePres_RunUnitAction(s16 *action)
@@ -75,7 +75,7 @@ s32 BattlePres_RunUnitAction(s16 *action)
     s16 *unit_list;
     s32 i;
 
-    transition = Data_03001f00;
+    transition = gTransitionWork;
     facing = -0x2000;
     if (saved_action[0] <= 4)
         facing = 0x2000;
@@ -103,10 +103,10 @@ s32 BattlePres_RunUnitAction(s16 *action)
         side_mask = 1;
     }
     work.unit_count = BattleParty_ListLivingUnits(side_mask, unit_list);
-    UiWindow_DrawPartyStatusContentsFar(Data_03001e74[65] & ~1);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork[65] & ~1);
 
     primary_actor = GetBattleObjectSlot(work.primary_unit)->actor;
-    Func_08009080(primary_actor, 3);
+    Object_SetMode(primary_actor, 3);
     ObjectDispatch_ApplyValueToChildrenFar(primary_actor, 16);
 
     if ((u16)saved_action[5] <= 7) {
@@ -152,9 +152,9 @@ s32 BattlePres_RunUnitAction(s16 *action)
     work.stage = 3;
     Func_080c9020(&work);
     work.stage = 0;
-    Func_080c9018(&work);
+    BattleFx_DispatchModeFar(&work);
 
-    Func_08009080(primary_actor, 1);
+    Object_SetMode(primary_actor, 1);
     i = 0;
     if (work.unit_count != 0) {
         do {

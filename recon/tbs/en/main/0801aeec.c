@@ -62,7 +62,7 @@ struct MenuSelection {
     u16 mode;
 };
 extern u32 gFrameTick;
-extern u8 Menu_CursorObjectTiles[], Data_08033ef8[];
+extern u8 Menu_CursorObjectTiles[], Menu_CursorLeftObjectTiles[];
 extern s32 GameFlag_IsSet(s32 flag);
 extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
@@ -86,7 +86,7 @@ void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
         if (state->nodes[1].offset != 0)
             entry->x = (entry->x + state->nodes[1].offset) & x_mask;
     } else {
-        frames = Data_08033ef8;
+        frames = Menu_CursorLeftObjectTiles;
         if (state->nodes[0].offset != 0)
             entry->x = (entry->x - state->nodes[0].offset) & x_mask;
     }

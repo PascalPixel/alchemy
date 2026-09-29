@@ -1,5 +1,9 @@
 #include "serial_runtime_family.h"
 
+/* 2026-09-29: psynergy editions shows the pooled zero is the same in all six
+ * editions, a plain constant, not a link-time id; written as 0. Still blocked
+ * on why the reference loads that zero from the pool. */
+
 /* SerialRuntime_BeginTransferB: NONMATCHING, 15 of 40 halfwords differ.
  * Complete 80-byte draft (2026-09-26). Reusing value for the return and
  * separating the destination store closes the busy-path/register mismatch.
@@ -14,7 +18,6 @@
  * sets -1 only after the branch. Returning through value itself (as
  * SerialRuntime_BeginTransferA does) stops the if-conversion but lets the
  * shared HImode zero take r0 first. */
-extern u8 Data_00000000[];
 
 s32 Func_08006408(s32 value)
 {
@@ -46,9 +49,8 @@ begin_transfer:
             do {
                 *active = value;
             } while (0);
-            /* FAKEMATCH: keep the result clear as a distinct linked zero. */
             do {
-                value = (u32)Data_00000000;
+                value = 0;
                 gSerialBlockSequence = value;
             } while (0);
         } while (0);

@@ -234,7 +234,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/METADATA_SLOTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/RENDER/SELECTION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/CONFIGURE_SYSTEM.o"(.text)
-        "*/recon/tbs/raw/0800bbc0.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/ANIMATION_ALLOCATE.o"(.text)
         "*/recon/tbs/raw/0800bc46.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/CLEAR_METADATA_RECORD.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/CREATE_OBJECT.o"(.text)

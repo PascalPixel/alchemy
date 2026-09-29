@@ -188,7 +188,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0AC
 	resource , Resource_Data0AD
 	resource , Resource_Data0AE
-	resource , Resource_Data0AF
+	resource , BattleFx_GlowOrbSetSheet
 	resource , Resource_Data0B0
 	resource , Resource_Data0B1
 	resource , Resource_Data0B2

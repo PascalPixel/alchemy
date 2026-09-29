@@ -6,10 +6,16 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathDivide
+	.thumb_func
+Engine_MathDivide:
 	.global IwramSignedDivideEntry
 	.thumb_func
 IwramSignedDivideEntry:
 	overlay_veneer IwramSignedDivide
+	.global Engine_MathModulo
+	.thumb_func
+Engine_MathModulo:
 	overlay_veneer IwramUnsignedRemainder
 	.global WaitFrames
 	.thumb_func
@@ -66,6 +72,9 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Object_SetPosition
 	.thumb_func
@@ -84,6 +93,9 @@ Engine_MapAnimateCells:
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
 	overlay_veneer DisplayBlend_DisableRunScriptFar
+	.global DisplayBlend_EnableRunScript
+	.thumb_func
+DisplayBlend_EnableRunScript:
 	overlay_veneer DisplayBlend_EnableRunScriptFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func

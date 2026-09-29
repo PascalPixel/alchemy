@@ -20,7 +20,7 @@ void ColossoLogRollingStage_EnsurePaletteHandle(void)
 {
     extern s32 Resource_LoadFixedBlockBIntoFreeSlot(void);
 
-    s16 *cursor = &gColossoPaletteHandle;
+    s16 *cursor = &Korosseo_MarkerSlot;
 
     if (*cursor == -1) {
         *cursor = Resource_LoadFixedBlockBIntoFreeSlot();

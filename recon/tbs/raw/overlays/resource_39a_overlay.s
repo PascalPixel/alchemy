@@ -1,54 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02009fac,"ax",%progbits
-	.balign 4
-	.global Func_02001fac
-	.thumb_func
-Func_02001fac:
-	push {lr}
-	ldr r3, [pc, #80]
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #6
-	bgt .L_02001fac_0
-	ldr r3, [pc, #68]
-	ldr r2, [r3]
-	movs r0, #1
-	subs r3, #100
-	adds r2, #52
-	ldr r1, [r3]
-	strb r0, [r2]
-	ldr r2, [pc, #56]
-	movs r4, #0
-	adds r3, r1, r2
-	subs r2, #2
-	strb r4, [r3]
-	adds r3, r1, r2
-	strb r0, [r3]
-	ldr r3, [pc, #48]
-	adds r1, r1, r3
-	strb r0, [r1]
-	movs r0, #0
-	movs r1, #1
-	bl 0x0200a3b8
-	ldr r0, [pc, #36]
-	movs r1, #1
-	bl 0x0200a3b0
-	movs r0, #16
-	bl 0x0200a3c0
-	movs r0, #16
-	bl 0x0200a260
-.L_02001fac_0:
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
-	.4byte 0x03001f30
-	.4byte 0x0000053e
-	.4byte 0x0000053d
-	.4byte 0x00203108
 	.section .rodata,"a",%progbits
 	.global gEffectScripts
 gEffectScripts:
@@ -1070,7 +1021,3 @@ gImiruFuchinEvents7:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000001b
-	.section .bss,"aw",%nobits
-	.global ImiruFuchin_EntryFlag
-ImiruFuchin_EntryFlag:
-	.space 4

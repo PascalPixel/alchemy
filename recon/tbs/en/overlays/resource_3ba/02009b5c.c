@@ -1,3 +1,15 @@
+/* NONMATCHING (number-bound): Korosseo_FinishSoloRound, resource_3ba at
+ * 0x02009b5c (288 bytes with its pool); twins resource_3bb:0x02009df4 and
+ * resource_3bc:0x0200a88c. Formerly FIELD/COMMON/KOROSSEO/SOLO_ROUND.C,
+ * which no script linked.
+ *
+ * Remaining difference: none in the code. With every relocation masked the
+ * object is byte-identical to all three copies. The reference loads message
+ * 0x2086 once from its pool and shows 0x2087 and 0x2088 as that register
+ * plus one and two, as a link-time message symbol does; a plain constant is
+ * folded into three pool words. This draft still takes the message from the
+ * stand-in symbol Korosseo_RoundMessage until link-time numbers are designed.
+ * The solo competitor is word 125 of gGameState. */
 #include "TYPES.H"
 extern struct EventWork *gEventWork;
 
@@ -17,7 +29,7 @@ void Engine_EventOpenScreen();
 void Engine_EventEnd();
 
 
-extern s32 gGameStateRows[][1];
+extern s32 gGameState[];
 extern u8 Korosseo_RoundMessage;
 
 
@@ -40,7 +52,7 @@ void Korosseo_FinishSoloRound(s32 id)
     work = *(s32 *)&gEventWork;
     Engine_ActorGet(id);
     Engine_ActorGet(id);
-    slot = gGameStateRows[125][0];
+    slot = gGameState[125];
     obj = Engine_ActorGet(slot);
     Engine_EventBegin();
     msg = (s32)&Korosseo_RoundMessage;

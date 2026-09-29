@@ -1,3 +1,15 @@
+/* NONMATCHING (address-bound): Makyuri_RunActorMove, resource_39b at
+ * 0x0200a030 (832 bytes with its pool); twin resource_39c:0x0200d5c0.
+ * Formerly FIELD/COMMON/MAKYURI/ACTOR_MOVE.C, which no script linked.
+ *
+ * Remaining difference: 828 of 832 bytes, 267 differing halfwords. The only
+ * cause is the map cell buffer at 0x02010000: spelled as the integer that
+ * MAP_CELLS once was, this source is byte-identical to both copies. Through
+ * the symbol gMapCellBuffer, agscc loads the base from the constant pool,
+ * CSE orders it second in the cell address sums and the allocation and pool
+ * layout move. The reference therefore used the address as a compile-time
+ * number; it links once the map cell buffer has an honest link-time number
+ * (literal RAM addresses stay out of maintained C). */
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "IWRAM_CALL.H"

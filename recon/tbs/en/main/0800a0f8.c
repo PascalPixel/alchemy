@@ -10,6 +10,12 @@
  * register as an input (smull r3, r2, r1, r2), which GCC's own
  * early-clobber mulsidi3 pattern never allocates; an asm with plain "=r"
  * outputs does. */
+/* 2026-09-29 later: with agbcc_arm the draft is 161 of 161 words and the
+ * register-blind shape differs in 34+34 words: the prologue loads, the
+ * loop keeping gProjection's address hoisted in r9 where the reference
+ * reloads 0x03001cec each pass, and the (s16) extension of t, which the
+ * reference makes before the second smull. z-first argument temporaries
+ * and a (s16) cast at the multiply were the steps that helped. */
 typedef unsigned short u16;
 typedef short s16;
 typedef int s32;
@@ -77,7 +83,6 @@ typedef s32 (*TrigFn)(s32);
 
 void Transform_UpdateVertices(struct Position *from, struct Position *to, struct Vertex *v, struct VertexPair *out)
 {
-    struct FarCallStub *stubs;
     u32 angle;
     s32 ox;
     s32 oz;
@@ -92,14 +97,15 @@ void Transform_UpdateVertices(struct Position *from, struct Position *to, struct
     s32 x;
     s32 z;
 
-    stubs = WaitFramesFar;
-    angle = (u16)((ArcTan2Fn)stubs[8].target)((to->x - from->x) >> 4, (to->z - from->z) >> 4);
+    z = to->z - from->z;
+    x = to->x - from->x;
+    angle = (u16)((ArcTan2Fn)WaitFramesFar[8].target)(x >> 4, z >> 4);
     ox = FIXED_MUL(0x8000, to->x);
     oz = FIXED_MUL(0x8000, to->z);
     if (angle != Data_03001f60) {
         Data_03001f60 = angle;
-        sn = ((TrigFn)stubs[11].target)(angle);
-        cs = ((TrigFn)stubs[12].target)(angle);
+        sn = ((TrigFn)WaitFramesFar[11].target)(angle);
+        cs = ((TrigFn)WaitFramesFar[12].target)(angle);
         for (i = 0; i < 160; i++) {
             x = v->x;
             z = v->z;

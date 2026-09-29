@@ -159,7 +159,20 @@ pub fn run(arguments: &[String]) -> Result<String, String> {
         let name = edition(rom_path);
         match found.len() {
             0 => {
-                let _ = writeln!(text, "{name}: not found (the shape differs)");
+                let near: Vec<String> = editions::nearest(&rom, &shape, 6)
+                    .into_iter()
+                    .take(3)
+                    .filter(|(_, score)| *score > 0.0)
+                    .map(|(at, score)| {
+                        format!("{:08x} ({:.0}%)", 0x0800_0000 + at as u32, score * 100.0)
+                    })
+                    .collect();
+                let hint = if near.is_empty() {
+                    String::new()
+                } else {
+                    format!("; nearest by shared instruction runs: {}", near.join(", "))
+                };
+                let _ = writeln!(text, "{name}: not found (the shape differs){hint}");
             }
             n => {
                 let f = &found[0];

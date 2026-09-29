@@ -1778,6 +1778,8 @@ SECTIONS
         "*/games/THE LOST AGE/SOUND/SEQUENCE/BGM_754.o"(.rodata)
         "*/games/THE LOST AGE/SOUND/SEQUENCE/BGM_799.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.082f9030)
+        "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DIRECTORY.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.08682000)
         "*/recon/tla/overlays.o"(.overlays)
         "*/recon/tla/unidentified.o"(.unidentified.08f79646)
     } > ROM

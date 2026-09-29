@@ -1,5 +1,7 @@
 .syntax unified
 	.thumb
+	.global Resource_FarCall008
+Resource_FarCall008:
 	.4byte 0x47204c00
 	.4byte 0x08108465
 	.global Func_08108008

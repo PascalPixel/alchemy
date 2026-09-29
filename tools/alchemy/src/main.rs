@@ -1,6 +1,5 @@
 use std::process::ExitCode;
 
-mod assets;
 mod bootstrap;
 mod build;
 mod build_rom;

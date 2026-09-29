@@ -3,7 +3,7 @@
 # Each crate is a workspace member and a row in the tooling index of AGENTS.md.
 [workspace]
 resolver = "2"
-members = ["alchemy", "psynergy"]
+members = ["ags", "alchemy", "psynergy"]
 exclude = ["compilers"]
 
 [workspace.package]

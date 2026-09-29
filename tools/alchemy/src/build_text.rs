@@ -5,10 +5,9 @@
 //! `Msg<Name>` for each message the code names, set to that message's number
 //! in this edition. The linker places the archive and fills every literal
 //! pool that loads a message number.
-use crate::assets::text::{self, ARCHIVES};
 use crate::targets::{DecompTarget, TARGET_IDS};
+use ags::text::{self, ARCHIVES};
 use std::collections::BTreeSet;
-use std::fmt::Write;
 use std::fs;
 use std::path::Path;
 
@@ -30,14 +29,7 @@ pub(crate) fn build(root: &Path, target: DecompTarget, output: &Path) -> Result<
     if source.target != spec.target {
         return Err(format!("{} is the {} catalog", spec.output, source.target));
     }
-    let mut assembly = format!(
-        "@ {}'s message archive and message numbers, built from {}.\n",
-        spec.target, spec.output
-    );
-    assembly.push_str(&text::archive(&source, LABEL)?.source()?);
-    for (name, number) in &source.names {
-        writeln!(assembly, "\t.global {name}\n\t.set {name}, {number}").unwrap();
-    }
+    let assembly = text::messages_include(&source, LABEL, spec.output)?;
     let path = output.join(INCLUDE);
     if fs::read_to_string(&path).ok().as_deref() == Some(assembly.as_str()) {
         return Ok(());
@@ -154,5 +146,34 @@ mod tests {
         assert_eq!(used.into_iter().collect::<Vec<_>>(), ["MsgHpRecover"]);
         assert_eq!(problems.len(), 1);
         assert!(problems[0].contains("MsgHpFull is numbered by hand"));
+    }
+}
+
+#[cfg(test)]
+mod archive_layout_tests {
+    use ags::text::ARCHIVES;
+
+    #[test]
+    fn layouts_cover_each_registered_target_once() {
+        let mut ids = ARCHIVES.iter().map(|spec| spec.target).collect::<Vec<_>>();
+        ids.sort_unstable();
+        ids.dedup();
+        assert_eq!(ARCHIVES.len(), ids.len());
+        assert_eq!(ids.len(), crate::targets::TARGET_IDS.len());
+        for id in crate::targets::TARGET_IDS {
+            let target = crate::targets::target_for(id);
+            let spec = ARCHIVES
+                .iter()
+                .find(|spec| spec.target == id.as_str())
+                .unwrap();
+            assert_eq!(
+                spec.output,
+                format!(
+                    "{}/TEXT/{}.PO",
+                    target.game_dir(),
+                    spec.language.to_uppercase()
+                )
+            );
+        }
     }
 }

@@ -38,6 +38,16 @@ pub struct IndexedImage {
 }
 
 pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
+    let image = indexed_bitmap_png(data)?;
+    if !image.width.is_multiple_of(8) || !image.height.is_multiple_of(8) {
+        return err("PNG dimensions must be nonzero multiples of eight");
+    }
+    Ok(image)
+}
+
+/// An indexed PNG of any nonzero size, for pixels stored as a linear bitmap
+/// rather than as tiles.
+pub fn indexed_bitmap_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
     let (output, bytes, info) = decode(data)?;
     if output.color_type != png::ColorType::Indexed
         || !matches!(
@@ -48,8 +58,8 @@ pub fn indexed_png(data: &[u8]) -> Result<IndexedImage, AssetError> {
         return err("PNG must use an indexed 1/2/4/8-bit palette");
     }
     let (width, height) = (output.width, output.height);
-    if width == 0 || height == 0 || !width.is_multiple_of(8) || !height.is_multiple_of(8) {
-        return err("PNG dimensions must be nonzero multiples of eight");
+    if width == 0 || height == 0 {
+        return err("PNG lacks a nonempty IHDR");
     }
     let depth = output.bit_depth as u32;
     let raw_palette = info
@@ -375,11 +385,15 @@ pub fn gba_tiles_from_png(data: &[u8], bpp: GbaBpp) -> Result<Vec<u8>, AssetErro
 
 /// Convert an opaque indexed PNG palette to little-endian, 15-bit BGR555 words.
 pub fn bgr555_palette_from_png(data: &[u8]) -> Result<Vec<u8>, AssetError> {
-    let image = indexed_png(data)?;
+    bgr555_palette_of(&indexed_bitmap_png(data)?)
+}
+
+/// An indexed image's palette as little-endian BGR555.
+pub fn bgr555_palette_of(image: &IndexedImage) -> Result<Vec<u8>, AssetError> {
     if image.has_transparency {
         return err("GBA BGR555 palettes cannot represent transparent PNG entries");
     }
-    bgr555_palette(&image)
+    bgr555_palette(image)
 }
 
 fn palette_rgb(palette: &[u8], bpp: GbaBpp) -> Result<Vec<u8>, AssetError> {
@@ -433,6 +447,26 @@ fn image_shape(
 }
 
 /// Convert GBA tile-major 4bpp or 8bpp pixels and a LE BGR555 palette to PNG.
+/// A linear 8-bit bitmap, one palette index per byte, as an indexed PNG
+/// `width` pixels wide.
+pub fn png_from_bitmap(pixels: &[u8], palette: &[u8], width: usize) -> Result<Vec<u8>, AssetError> {
+    let rgb = palette_rgb(palette, GbaBpp::Bpp8)?;
+    if width == 0 || pixels.is_empty() || !pixels.len().is_multiple_of(width) {
+        return err("a bitmap needs whole nonempty rows");
+    }
+    if pixels.iter().any(|index| *index as usize >= rgb.len() / 3) {
+        return err("bitmap references an index outside the BGR555 palette");
+    }
+    encode_png(
+        width,
+        pixels.len() / width,
+        png::ColorType::Indexed,
+        png::BitDepth::Eight,
+        Some(&rgb),
+        pixels,
+    )
+}
+
 pub fn png_from_gba_tiles(
     tiles: &[u8],
     palette: &[u8],

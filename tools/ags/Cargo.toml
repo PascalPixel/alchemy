@@ -1,0 +1,17 @@
+[package]
+name = "ags"
+description = "Golden Sun asset encoders and their command-line tools: agsgfx, mid2ags, wav2ags and po2ags."
+version.workspace = true
+edition.workspace = true
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
+psynergy = { path = "../psynergy" }
+serde_json = { version = "1", features = ["preserve_order"] }
+encoding_rs = "0.8"
+unicode-normalization = "0.1"
+
+[dev-dependencies]
+tempfile = "3"

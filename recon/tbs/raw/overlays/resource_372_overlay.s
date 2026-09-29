@@ -741,468 +741,6 @@ FieldScene_RunFlagGatedActorSequence:
 	.2byte 0x0000
 	.2byte 0x083a
 	.2byte 0x0000
-	.global Func_020028a4
-	.thumb_func
-Func_020028a4:
-	.global RunEventScript01
-	.thumb_func
-RunEventScript01:
-	push {r5, lr}
-	movs r1, #192
-	movs r0, #26
-	lsls r1, r1, #6
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #208
-	movs r0, #24
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #176
-	movs r0, #25
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #192
-	movs r0, #9
-	lsls r1, r1, #6
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #208
-.L_020028d8:
-	movs r2, #20
-	movs r0, #10
-	lsls r1, r1, #8
-	bl 0x0200c7fc
-	movs r0, #26
-	movs r1, #3
-	bl 0x0200c794
-	movs r0, #24
-.L_020028ec:
-	movs r1, #3
-	bl 0x0200c794
-	movs r0, #25
-	movs r1, #3
-	bl 0x0200c794
-	movs r0, #9
-	movs r1, #3
-	bl 0x0200c794
-	movs r1, #3
-	movs r0, #25
-	bl 0x0200c79c
-	movs r0, #20
-	bl 0x0200c6f4
-	movs r0, #128
-	movs r1, #128
-	lsls r0, r0, #9
-	lsls r1, r1, #6
-	bl 0x0200c81c
-	movs r0, #134
-	movs r1, #1
-	movs r3, #1
-	lsls r0, r0, #16
-	negs r1, r1
-	ldr r2, [pc, #920]
-	bl 0x0200c824
-	movs r0, #26
-	ldr r1, [pc, #916]
-	ldr r2, [pc, #916]
-	bl 0x0200c73c
-	ldr r2, [pc, #912]
-	movs r0, #9
-	ldr r1, [pc, #904]
-	bl 0x0200c73c
-	ldr r1, [pc, #904]
-	movs r0, #26
-	bl 0x0200c744
-	ldr r1, [pc, #900]
-	movs r0, #9
-	bl 0x0200c75c
-	movs r0, #158
-	bl 0x0200c8b4
-	movs r1, #38
-	movs r2, #72
-	ldr r0, [pc, #888]
-	bl 0x0200c68c
-	movs r0, #10
-	bl 0x0200c6f4
-	movs r0, #9
-	movs r1, #149
-	ldr r2, [pc, #876]
-	bl 0x0200c77c
-	movs r0, #9
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200c78c
-	movs r0, #25
-	movs r1, #250
-	ldr r2, [pc, #860]
-	bl 0x0200c77c
-	bl 0x0200c8ac
-	movs r1, #192
-	movs r0, #10
-	lsls r1, r1, #6
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #192
-	movs r0, #24
-	lsls r1, r1, #6
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #192
-	movs r2, #0
-	movs r0, #25
-	lsls r1, r1, #6
-	bl 0x0200c7fc
-	movs r0, #10
-	movs r1, #5
-	bl 0x0200c794
-	movs r0, #24
-	movs r1, #6
-	bl 0x0200c794
-	movs r1, #6
-	movs r0, #25
-	bl 0x0200c794
-	movs r0, #10
-	bl 0x0200c72c
-	adds r5, r0, #0
-	bl 0x0200c654
-	movs r1, #90
-	bl 0x0200c634
-	adds r5, #100
-	adds r0, #60
-	strh r0, [r5]
-	movs r0, #24
-	bl 0x0200c72c
-	adds r5, r0, #0
-	bl 0x0200c654
-	movs r1, #90
-	bl 0x0200c634
-	adds r5, #100
-	adds r0, #60
-	strh r0, [r5]
-	movs r0, #25
-	bl 0x0200c72c
-	adds r5, r0, #0
-	bl 0x0200c654
-	movs r1, #90
-	bl 0x0200c634
-	adds r5, #100
-	adds r0, #60
-	strh r0, [r5]
-	ldr r5, [pc, #720]
-	movs r0, #10
-	adds r1, r5, #0
-	bl 0x0200c744
-	adds r1, r5, #0
-	movs r0, #24
-	bl 0x0200c744
-	adds r1, r5, #0
-	movs r0, #25
-	bl 0x0200c744
-	movs r0, #26
-	bl 0x0200c74c
-	movs r0, #10
-	bl 0x0200c6f4
-	movs r0, #159
-	bl 0x0200c8b4
-	movs r1, #38
-	movs r2, #72
-	ldr r0, [pc, #676]
-	bl 0x0200c68c
-	movs r0, #30
-	bl 0x0200c6f4
-	bl 0x0200c8ac
-	movs r0, #224
-	movs r1, #1
-	movs r3, #1
-	negs r1, r1
-	ldr r2, [pc, #656]
-	lsls r0, r0, #15
-	bl 0x0200c824
-	movs r0, #158
-	bl 0x0200c8b4
-	movs r2, #73
-	movs r1, #35
-	ldr r0, [pc, #644]
-	bl 0x0200c68c
-	movs r0, #20
-	bl 0x0200c6f4
-	bl 0x0200c8ac
-	ldr r1, [pc, #632]
-	movs r0, #9
-	bl 0x0200c744
-	movs r0, #20
-	bl 0x0200c6f4
-	ldr r1, [pc, #620]
-	movs r0, #26
-	bl 0x0200c744
-	movs r0, #40
-	bl 0x0200c6f4
-	movs r0, #159
-	bl 0x0200c8b4
-	movs r1, #35
-	movs r2, #73
-	ldr r0, [pc, #600]
-	bl 0x0200c68c
-	movs r0, #26
-	bl 0x0200c74c
-	bl 0x0200c8ac
-	movs r0, #40
-	bl 0x0200c6f4
-	ldr r5, [pc, #584]
-	adds r0, r5, #0
-	bl 0x0200c7d4
-	movs r2, #20
-.L_02002abc:
-	movs r0, #9
-	movs r1, #0
-	bl 0x0200c7ec
-	movs r0, #26
-	movs r1, #3
-	bl 0x0200c79c
-	movs r2, #40
-	ldr r0, [pc, #560]
-	movs r1, #0
-	bl 0x0200c7ec
-	movs r0, #9
-	movs r1, #3
-	bl 0x0200c794
-	movs r1, #3
-	movs r0, #26
-	bl 0x0200c79c
-	movs r0, #30
-	bl 0x0200c6f4
-	ldr r1, [pc, #532]
-	movs r0, #9
-	bl 0x0200c744
-	ldr r1, [pc, #528]
-	movs r0, #26
-	bl 0x0200c744
-	movs r0, #40
-	bl 0x0200c6f4
-	movs r0, #128
-	movs r1, #128
-	lsls r0, r0, #10
-	lsls r1, r1, #7
-	bl 0x0200c81c
-	movs r0, #210
-	movs r1, #1
-	movs r3, #1
-	negs r1, r1
-	ldr r2, [pc, #500]
-	lsls r0, r0, #15
-	bl 0x0200c824
-	movs r0, #9
-	bl 0x0200c74c
-	movs r0, #9
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #128
-	movs r0, #9
-	lsls r1, r1, #1
-	movs r2, #40
-	bl 0x0200c80c
-	movs r0, #9
-	movs r1, #0
-	movs r2, #10
-	bl 0x0200c7ec
-	movs r1, #128
-	movs r0, #0
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r1, #128
-	movs r0, #22
-	lsls r1, r1, #8
-	movs r2, #10
-	bl 0x0200c7fc
-	ldr r2, [pc, #432]
-	movs r0, #9
-	movs r1, #105
-	bl 0x0200c77c
-	movs r0, #9
-	movs r1, #2
-	bl 0x0200c7b4
-	movs r1, #0
-	ldr r0, [pc, #416]
-	bl 0x0200c7dc
-	movs r0, #22
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200c7fc
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200c724
-	cmp r0, #0
-	bne .L_02002abc_0
-	movs r0, #9
-	movs r1, #3
-	bl 0x0200c79c
-	adds r0, r5, #4
-	bl 0x0200c7d4
-	b .L_02002abc_1
-.L_02002abc_0:
-	movs r0, #9
-	movs r1, #2
-	bl 0x0200c7b4
-	adds r0, r5, #5
-	bl 0x0200c7d4
-.L_02002abc_1:
-	ldr r0, [pc, #360]
-	movs r1, #0
-	bl 0x0200c7e4
-	movs r1, #128
-	movs r0, #22
-	lsls r1, r1, #8
-	movs r2, #40
-	bl 0x0200c7fc
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #30
-	movs r0, #9
-	bl 0x0200c80c
-	ldr r5, [pc, #332]
-	adds r0, r5, #0
-	bl 0x0200c7d4
-	movs r1, #0
-	ldr r0, [pc, #316]
-	bl 0x0200c7dc
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200c724
-	cmp r0, #0
-	bne .L_02002abc_2
-	movs r1, #3
-	movs r0, #9
-	bl 0x0200c79c
-	adds r0, r5, #1
-	bl 0x0200c7d4
-	ldr r0, [pc, #284]
-	movs r1, #0
-	movs r2, #30
-	bl 0x0200c7ec
-	movs r1, #128
-	movs r2, #20
-	movs r0, #22
-	lsls r1, r1, #8
-	bl 0x0200c7fc
-	movs r0, #0
-	movs r1, #3
-	bl 0x0200c794
-	movs r0, #22
-	movs r1, #3
-	bl 0x0200c794
-	movs r0, #9
-	movs r1, #3
-	bl 0x0200c79c
-	movs r0, #40
-	bl 0x0200c6f4
-	b .L_02002abc_3
-.L_02002abc_2:
-	movs r0, #9
-	ldr r1, [pc, #236]
-	movs r2, #90
-	bl 0x0200c80c
-	movs r2, #40
-	movs r0, #9
-	ldr r1, [pc, #228]
-	bl 0x0200c80c
-	movs r1, #4
-	movs r0, #9
-	bl 0x0200c794
-	adds r0, r5, #2
-	bl 0x0200c7d4
-	ldr r0, [pc, #196]
-	movs r1, #0
-	bl 0x0200c7e4
-.L_02002abc_3:
-	ldr r1, [pc, #204]
-	movs r0, #9
-	bl 0x0200c744
-	movs r0, #90
-	bl 0x0200c6f4
-	movs r2, #0
-	movs r1, #22
-	movs r0, #0
-	bl 0x0200c7c4
-	movs r0, #40
-	bl 0x0200c6f4
-	movs r0, #0
-	movs r1, #3
-	bl 0x0200c794
-	movs r1, #3
-	movs r0, #22
-	bl 0x0200c79c
-	movs r0, #20
-	bl 0x0200c6f4
-	movs r0, #22
-	movs r1, #2
-	bl 0x0200c794
-	movs r0, #0
-	bl 0x0200c72c
-	cmp r0, #0
-	beq .L_02002abc_4
-	movs r3, #10
-	ldrsh r1, [r0, r3]
-	movs r3, #18
-	ldrsh r2, [r0, r3]
-	movs r0, #22
-	bl 0x0200c764
-.L_02002abc_4:
-	movs r0, #22
-	bl 0x0200c784
-	movs r0, #22
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200c78c
-	pop {r5}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0x04ab
-	.2byte 0x9999
-	.2byte 0x0001
-	.2byte 0xcccc
-	.2byte 0x0000
-	.2byte 0xcab4
-	.2byte 0x0200
-	.2byte 0xca78
-	.2byte 0x0200
-	.2byte 0xd7a0
-	.2byte 0x0200
-	.2byte 0x0497
-	.2byte 0x0000
-	.2byte 0x04be
-	.2byte 0x0000
-	.2byte 0xcec8
-	.2byte 0x0200
-	.2byte 0xd7e2
-	.2byte 0x0200
-	.2byte 0x0000
-	.2byte 0x04c9
-	.2byte 0xd78a
-	.2byte 0x0200
-	.2byte 0xcb28
-	.2byte 0x0200
-	.2byte 0xcb9c
-	.2byte 0x0200
-	.2byte 0xd7cc
-	.2byte 0x0200
-	.2byte 0x0e9b
-	.2byte 0x0000
-	.4byte 0x0000201a
-	.4byte 0x0200cc0c
-	.4byte 0x0200cc5c
-	.4byte 0x043e0000
-	.4byte 0x0000043e
-	.4byte 0x00008009
-	.4byte 0x00000ea1
-	.4byte 0x00000105
-	.4byte 0x00000103
-	.4byte 0x0200cca8
 	.section .text.x0200b1ac,"ax",%progbits
 	.global Scene_RunActorGroupDepartureSequence
 	.thumb_func
@@ -2413,6 +1951,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x00000000
 	.4byte 0x0000001e
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorNineScriptA
+HaidiaArashi_ActorNineScriptA:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -2428,6 +1968,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorTwentySixScriptA
+HaidiaArashi_ActorTwentySixScriptA:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -2457,6 +1999,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorNineScriptB
+HaidiaArashi_ActorNineScriptB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -2486,6 +2030,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorTwentySixScriptB
+HaidiaArashi_ActorTwentySixScriptB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000015
@@ -2514,6 +2060,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x00000003
 	.4byte 0x00008000
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorNineScriptC
+HaidiaArashi_ActorNineScriptC:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -2534,6 +2082,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorTwentySixScriptC
+HaidiaArashi_ActorTwentySixScriptC:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -2553,6 +2103,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorNineScriptD
+HaidiaArashi_ActorNineScriptD:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -3290,12 +2842,17 @@ HaidiaArashi_CellSteps3:
 	.4byte 0x00600006
 	.4byte 0x00020002
 	.4byte 0xffff0002
+	.global HaidiaArashi_CellSteps4
+HaidiaArashi_CellSteps4:
 	.4byte 0x00600000
 	.4byte 0x00020002
 	.4byte 0x00320002
 	.4byte 0x0002002c
 	.4byte 0x00020002
-	.4byte 0x0004ffff
+	.2byte 0xffff
+	.global HaidiaArashi_CellSteps5
+HaidiaArashi_CellSteps5:
+	.2byte 0x0004
 	.4byte 0x00020062
 	.4byte 0x00020002
 	.4byte 0x006c002c

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+extern u8 gMapCellBuffer[];
 extern u8 Data_03001cfc[];
 
 u32 Resource_GetTableEntry(u32 index);
@@ -33,7 +34,7 @@ void Map_LoadAreaGraphics(void)
     s16 value;
 
     state = Data_03001e70;
-    buffer = (u8 *)0x02010000;
+    buffer = (u8 *)gMapCellBuffer;
     resources = *(u32 **)(state + 0x11c);
     value = BG_PALETTE[0];
     Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);

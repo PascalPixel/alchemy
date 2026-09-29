@@ -210,8 +210,8 @@ loop_23:
                     temp_r6_346 = M2C_FIELD(sp20, s32 *, 0xC);
                     sp8 = var_r4_339;
                     temp_r5_357 = M2C_FIELD(sp20, s32 *, 0x10);
-                    temp_r6_359 = temp_r6_346 + Func_080022ec(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0xC) - temp_r6_346), 0x18);
-                    temp_r3_376 = (temp_r5_357 + Func_080022ec(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0x10) - temp_r5_357), 0x18)) - var_r4_339;
+                    temp_r6_359 = temp_r6_346 + Math_Div(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0xC) - temp_r6_346), 0x18);
+                    temp_r3_376 = (temp_r5_357 + Math_Div(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0x10) - temp_r5_357), 0x18)) - var_r4_339;
                     sp34(sp40,
                         (u8 *)sp44
                             + Data_080ede5c[var_r4_339 - 1]

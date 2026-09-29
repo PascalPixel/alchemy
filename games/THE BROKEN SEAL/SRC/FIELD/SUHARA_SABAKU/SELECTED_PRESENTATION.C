@@ -3,13 +3,11 @@
 #include "FIELD_SCENE.H"
 
 #define NULL ((void *)0)
-#define CreateOverlayObject Func_020012d6
-#define SetOverlayObjectMode Func_02001318
-#define SetOverlayObjectSlot Func_020013d8
 
 #include "CREATE_CONFIGURED_OVERLAY_OBJECT.H"
 
 #include "TYPES.H"
+extern u8 gEffectWork[];
 
 /*
  * Complete selected-actor presentation/progress synchronizer.  It derives the
@@ -169,7 +167,7 @@ static __inline__ void PlaceActor(s32 actor, s32 x, s32 y)
 
 #include "TYPES.H"
 
-#define FrameCounter (*(u32 *)0x03001e40)
+#define FrameCounter (*(u32 *)&gFrameCount)
 #define EncounterPalette (*(volatile u16 *)0x0500019e)
 
 struct EffectRecord {
@@ -427,7 +425,7 @@ void PlaceActorTwelveWhenFlagClear(void)
 
 void SceneState_SetStateByte52(void)
 {
-    u8 *state = *(u8 **)0x03001f30;
+    u8 *state = *(u8 **)gEffectWork;
     state[52] = 1;
 }
 

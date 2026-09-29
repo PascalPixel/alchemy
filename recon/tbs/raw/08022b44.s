@@ -717,11 +717,11 @@ DjinnMenu_ShowChangePreview:
 	ldr	r1, [sp, #52]
 	bl	_call_via_r3
 	ldr	r0, [sp, #24]
-	bl	Func_08002df0
+	bl	Sys_Free
 	ldr	r0, [sp, #52]
-	bl	Func_08002df0
+	bl	Sys_Free
 	ldr	r0, [sp, #48]
-	bl	Func_08002df0
+	bl	Sys_Free
 	mov	r2, sl
 	ldr	r0, [r2]
 .L2:

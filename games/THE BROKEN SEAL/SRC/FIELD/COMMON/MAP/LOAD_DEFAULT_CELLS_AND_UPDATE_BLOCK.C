@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+extern u8 gMapCellBuffer[];
 extern u8 Data_03001e70[];
 extern u8 Data_03001cfc[];
 
@@ -25,7 +26,7 @@ void Map_LoadDefaultCellsAndUpdateBlock(void)
     work->first = 0;
     work->second = 0x9f;
     WaitFrames(1U);
-    Resource_DecodeType01((s32)Resource_GetTableEntry((s32)Value_000000d5), 0x02010000);
+    Resource_DecodeType01((s32)Resource_GetTableEntry((s32)Value_000000d5), (u32)gMapCellBuffer);
     Map_UpdateCurrentTileBlock();
     Scheduler_DisableCallbacks((u32)MapAnimation_Update);
     WaitFrames(1U);

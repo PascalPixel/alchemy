@@ -1,5 +1,6 @@
 #include "SHOP.H"
 #include "BATTLE_RUNTIME.H"
+extern struct ShopRuntime *gMenuWork;
 
 /* main:080b1260 Shop_DrawEquipComparison - hand-written draft, 192 of 264
    halfwords differ (500 of 528 bytes). Left: the ROM dumps two literal
@@ -59,8 +60,8 @@ void UiWindow_DrawDividerLineFar(s32 window, s32 x, s32 y, s32 width, s32 style)
 
 void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 {
-    struct ShopRuntime *shop = SHOP_RUNTIME;
-    struct BattleUnit *unit = BattleUnit_Get(unit_id);
+    struct ShopRuntime *shop = gMenuWork;
+    struct BattleUnit *unit = Owner_GetStateFar(unit_id);
     struct ItemDefinition *item = Item_Get(item_id);
     s32 replaced = -1;
     s32 slot;

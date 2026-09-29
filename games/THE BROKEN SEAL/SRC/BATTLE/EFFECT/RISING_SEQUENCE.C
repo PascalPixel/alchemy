@@ -41,7 +41,6 @@ struct Object_08092624 {
 extern struct Object_08092624 *Object_CreateFar(s32, s32, s32, s32);
 extern s32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 void Object_SetMode(void *, s32);
 extern void ObjectDispatch_InitializeFar(struct Object_08092624 *, const void *);
 extern void ObjectGroup_SetChildValue(struct Object_08092624 *);
@@ -66,7 +65,7 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
     object = Object_CreateFar(222, source->x, source->y, source->z);
     if (object != 0) {
         child = object->child;
-        switch (Rand() & 1) {
+        switch (Random16() & 1) {
         case 1:
             Object_SetMode(object, 2);
             ObjectDispatch_InitializeFar(object, BattleFx_BurstParticleScriptA);
@@ -81,9 +80,9 @@ void BattleFx_SpawnBurstParticle(struct Object_08092624 *source, s32 optional)
             ObjectGroup_SetChildValue(object);
 
         object->mode_55 = 0;
-        value = Math_ModU(Rand(), 10) + 5;
+        value = Math_ModU(Random16(), 10) + 5;
         object->field_34 = -0x1999 * value;
-        value = Math_ModU(Rand(), 15) - 7;
+        value = Math_ModU(Random16(), 15) - 7;
         value <<= 1;
         object->field_30 = 0x1999 * value;
         object->field_64 = 0;

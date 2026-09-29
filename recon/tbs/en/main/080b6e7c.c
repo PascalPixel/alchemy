@@ -7,7 +7,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #undef Resource_FindFreeSlot
-#define Resource_FindFreeSlot Func_080b6e7c
 
 extern u16 Data_080c593c_a[];
 

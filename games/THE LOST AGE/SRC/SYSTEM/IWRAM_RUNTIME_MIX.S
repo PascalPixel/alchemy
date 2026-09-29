@@ -1,5 +1,5 @@
 @ Thumb entry of the per-channel sound mixing in TLA's resident runtime,
-@ entered at 0x030007b5 by SOUND/CHANNEL_UPDATE_ENTRY.S. It tests channel
+@ entered at 0x030007b5 by raw 08000630.S. It tests channel
 @ flags with tst and branches on flags left by lsls (lsls r0, r6, #25;
 @ bcc; bmi), then switches to ARM inside the routine (add r1, pc, #8;
 @ bx r1) into IWRAM_RUNTIME_MIX_LANES.S. Neither approved compiler emits

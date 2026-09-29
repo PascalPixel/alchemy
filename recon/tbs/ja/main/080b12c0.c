@@ -80,15 +80,11 @@ void Func_080be02c(void);
 void Func_080b6cb0(void);
 void Func_080c0cec(s32 first, s32 second, s32 third, s32 fourth);
 
-#ifndef BATTLE_SEQUENCE_OWNER
-#define RunBattlePresentation Func_080b12c0
-#define BATTLE_SEQUENCE_OWNER RunBattlePresentation
-#endif
 #ifndef BATTLE_SEQUENCE_CALLBACK
 #define BATTLE_SEQUENCE_CALLBACK ((void *)0x080b4899)
 #endif
 
-s32 BATTLE_SEQUENCE_OWNER(struct Input_080b12c0 *input)
+s32 RunBattlePresentation(struct Input_080b12c0 *input)
 {
     struct Work_080b12c0 work;
     struct Input_080b12c0 *saved_input;

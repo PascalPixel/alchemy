@@ -13,16 +13,12 @@ s32 Func_080bd3e4(s32 table);
 #define OWNER_FIELD(base, type, offset) \
     (*(type *)((u8 *)(base) + (offset)))
 
-#ifndef BATTLE_COMMAND_SELECT_OWNER
-#define BATTLE_COMMAND_SELECT_OWNER Func_080b4424
-#endif
-
 /*
  * Choose a legal automatic command for one combatant.  The class profile at
  * Func_08077198 supplies a strategy byte at +0x36, availability bits at
  * +0x37, and the candidate action IDs beginning at +0x38.
  */
-void BATTLE_COMMAND_SELECT_OWNER(
+void BattleCommand_SelectAutomatic(
     struct BattleCommandRequest *request,
     s32 retry)
 {

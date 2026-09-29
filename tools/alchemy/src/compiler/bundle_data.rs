@@ -3,41 +3,24 @@ pub type TargetExecutables = (&'static str, &'static [ExecutableDigests]);
 pub type HostTargets = (&'static str, &'static [TargetExecutables]);
 pub type HostDigests = (&'static str, &'static [&'static str]);
 
-// Licensed agscc f209503: TLA lowering is opt-in; both games use this bundle.
-// The second entries restore source-bootstrap builds of the same pinned
-// sources. Game flags and compiler families remain unchanged.
+// Licensed agscc 70b81d0: stock GCC 2.96 with its host ports; both games
+// use this bundle with stock options.
 const GAME: &[ExecutableDigests] = &[
     (
         "xgcc",
-        &[
-            "701fbabb93c11e665550b5106f610169924315ea2be2136fb9e7b9261bfecf8b",
-            "7303ec4e1b246415db0edaa888cd8d01550ca2752df825c41f9ec08e8814245f",
-            "4f63bf82c5f20c6cb02186f95b63617188efa67be6e58c02f9a39c89505daa49",
-        ],
+        &["0ac37eee7e242069bad7a66e49f735712f136dad14408627f7755c6fd2e6a6ac"],
     ),
     (
         "cpp0",
-        &[
-            "affded82f0de6e12dac30857528cd9931e0568ce7f28fadc9f519718e2e75353",
-            "4edb7644d5875f3524e40d4830653ab8a232e33984bf6a5700c783f19070887c",
-            "d54535b56093896a15df114b3dd55c77eb096dd4b269379b58a589c6f158a7be",
-        ],
+        &["7ca2629e8f5df7c17f150abcf333b90a6fd4c03e32d94d70856b0f472151f382"],
     ),
     (
         "tradcpp0",
-        &[
-            "d7638783dff6726bdf50a63fce1a8ca1c163d32976c285cdd94dfb2497c87ed8",
-            "c54bbb4c4bc1b9eb79bbe4fdc85d75facd55fd77bb622288e77cf24d61f97214",
-            "35193e2e806e478896453a4d0e9d9f8f1ef0f2d5b474d2f6e6ff2fa1302a4eb2",
-        ],
+        &["0ffad7ce8988daa84f5868d6afb604202f50850c9894ed25a06c73cb8e3e74ac"],
     ),
     (
         "cc1",
-        &[
-            "2cc1e7ca0e33f55d3974df1818403f325f4adc64686eeb228d0f575b8a2f432d",
-            "80cbeb50f7e0829a8e27e9492a3fcffb4c7ce6dedbe873464278414003469ee9",
-            "a3d3f0d19e0ab039abc0456cb4690f9a3cf1f5007032dc550dd09952169acdd7",
-        ],
+        &["763c141e6d82c3a525610a3af9cc5e5fef2edfcd71558d4de027fc7dab286afe"],
     ),
     (
         "as",

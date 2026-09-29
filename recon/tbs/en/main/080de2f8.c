@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
 
-#define BattleEffect_RunSparkDescent Func_080de2f8
-
 /*
  * Battle-presentation sub-effect at 0x080de2f8 (1660 bytes, one function).
  *
@@ -38,7 +36,7 @@
  *     that published position, which frames 64.. then draw and decay.
  *   - Frames 76.. fade the effect out through BLDALPHA (0x04000052).
  *
- * Every `Func_080072f0` / `Func_080072f4` / `Func_080072f8` call site is an
+ * Every `_call_via_r3` / `Func_080072f4` / `Func_080072f8` call site is an
  * indirect call through the value the reference loads into r3/r4/r5
  * immediately before the `bl`, not a real callee: those addresses are
  * consecutive slots of the `_call_via_rN` trampoline bank at
@@ -112,7 +110,7 @@ void **Func_080b5098(s32 member_id);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-s32 Func_080022ec(s32 numerator, s32 denominator);
+s32 Math_Div(s32 numerator, s32 denominator);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 void Func_08002dd8(s32 id);
@@ -141,7 +139,7 @@ extern u8 Value_000000a8;
 extern void *Data_03001e50[];
 extern const u16 Data_080ede48[]; /* shared per-step sprite-size table */
 
-void BattleEffect_RunSparkDescent(
+void BattleFx_PrepareCanvasEffect(
     void *object, s32 kind, s32 mode, s32 anchor_kind,
     s32 *out_x, s32 *out_y)
 {
@@ -275,9 +273,9 @@ void BattleEffect_RunSparkDescent(
         break;
     }
 
-    step[0] = Func_080022ec(target[0] - base[0], 40);
-    step[1] = Func_080022ec(target[1] - base[1], 40);
-    step[2] = Func_080022ec(target[2] - base[2], 40);
+    step[0] = Math_Div(target[0] - base[0], 40);
+    step[1] = Math_Div(target[1] - base[1], 40);
+    step[2] = Math_Div(target[2] - base[2], 40);
 
     frame = 0;
     if (total != 0) {

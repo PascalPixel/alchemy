@@ -86,7 +86,7 @@ extern struct SelectionRuntime *Data_03001f34;
 extern struct SelectionScroll Data_03001ad0;
 extern s32 Data_03001e40, Data_03001c94, Data_03001b04;
 extern u16 Data_080366f8[];
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern u8 Value_0000001f[];
 
 extern s32 Resource_LoadIntoFreeSlot(s32 size);
@@ -367,7 +367,7 @@ s32 Ui_RunSelectionScreen(s32 mode)
     Runtime_SetIrqHandler(2, 0, 0);
     {
         struct IoWriteQueue *queue = &gIoWriteQueue;
-        volatile u16 *ime = &Data_04000208;
+        volatile u16 *ime = &RegIme;
         u32 saved = *ime;
         s32 count;
         *ime = (u16)ime;

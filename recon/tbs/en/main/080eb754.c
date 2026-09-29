@@ -1,8 +1,13 @@
-#include "shared-aggregates.h"
 #include "BATTLE_EFFECT_WORK.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
+
+extern u16 gBgScroll[];
+extern u32 gProjection[];
+extern u32 gWorkSlot[];
+extern u8 gKeysRepeat[];
+extern u8 gMapCellBuffer[];
 
 /*
  * Battle-presentation scene at 0x080eb754.
@@ -30,7 +35,7 @@
  *   Func_080d6888 update_members                  Func_080e155c Camera_ApplyShake
  *   Func_080cd52c ObjectGroup_TickMemberTimers
  *
- * Indirect calls: the cached word at absolute_03001e50.field_00b8 is a six
+ * Indirect calls: the cached word at gWorkSlot[46] is a six
  * argument rectangle blitter. Every retained call site branches through the
  * `bx rN` veneer bank at 0x080072e4 (0x080072f4 is the r4 slot, 0x08007300 the
  * r7 slot), so this is one function pointer used five times, not two ROM
@@ -70,7 +75,7 @@
 
 #define SPARK_POOL 0x7080  /* 64 records inside the battle work block */
 #define OBJECT_LIST 0x77D8 /* nine attached presentation objects */
-#define SCENE_POOL ((struct ScenePoint *)0x02010000) /* 320 records */
+#define SCENE_POOL ((struct ScenePoint *)gMapCellBuffer) /* 320 records */
 
 struct EffectPos {
     s32 x;
@@ -150,16 +155,16 @@ void Func_080eb754(s32 arg0) {
     work->effect = (void *)arg0;
     Func_080cd594(0);
     Func_080c9048();
-    absolute_0400000c.field_0000 = 0x784;
+    *(u16 *)0x0400000c = 0x784;
     M2C_FIELD((void *)0x05000000, s16 *, 0) = (s16) (s32) &Value_00000000;
     M2C_FIELD((void *)0x05000000, s16 *, 2) = (s16) (s32) &Value_00000000;
     work->transfer_mode = 0;
     Func_080041d8(0x080CD261, 0x480);
     Func_080cd104(1, 0);
     Func_080dbb24(9, 0x175, 1);
-    absolute_03001ce0.field_0010 = 0xF0;
+    gProjection[4] = 0xF0;
     Func_080d6750(work->effect);
-    absolute_04000048.field_0000 = 0x2737;
+    *(u16 *)0x04000048 = 0x2737;
     *(u16 *)0x04000038 = (u16) (s32) &Value_000000ca;
     Func_080030f8(1);
     Func_080b5040(1, (s32) &Value_0000003a, 0);
@@ -172,7 +177,7 @@ void Func_080eb754(s32 arg0) {
     M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0x3F44;
     base_x = 0;
     grow = 0;
-    saved_row = (s32) absolute_03001ad0.field_0004;
+    saved_row = (s32) gBgScroll[2];
     ctrl = cursor[4];
     shift = 0;
     work->transfer_mode = 1;
@@ -188,8 +193,8 @@ void Func_080eb754(s32 arg0) {
     }
 
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 3);
-    blit = (BlitRectFn) absolute_03001e50.field_00b8;
-    absolute_0400000c.field_0000 = 0x786;
+    blit = (BlitRectFn) gWorkSlot[46];
+    *(u16 *)0x0400000c = 0x786;
 
     for (frame = 0; frame != 0x78; frame++) {
         wave = 0;
@@ -208,7 +213,7 @@ void Func_080eb754(s32 arg0) {
         if (frame == 0x68) {
             Func_080f9010(0x9A);
         }
-        if ((*(s32 *)0x03001B04 & 3) != 0) {
+        if ((*(s32 *)gKeysRepeat & 3) != 0) {
             if (frame > 0x10) {
                 break;
             }
@@ -220,7 +225,7 @@ void Func_080eb754(s32 arg0) {
             shift = 0x18;
         }
         if (frame <= 0x87) {
-            absolute_03001ad0.field_0004 -= shift;
+            gBgScroll[2] -= shift;
             grow += shift;
         }
         if (frame <= 0x95) {
@@ -286,7 +291,7 @@ void Func_080eb754(s32 arg0) {
             ((struct BattleEffectWork *)work)->transfer_value = 0x32;
         }
         if (frame == 0x1C) {
-            absolute_0400000c.field_0000 = 0x784;
+            *(u16 *)0x0400000c = 0x784;
         }
         if (frame > 0x11) {
             sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);
@@ -332,19 +337,19 @@ void Func_080eb754(s32 arg0) {
         tmp = M2C_FIELD(work, s32 *, 0x77A8);
         if (tmp > 0) {
             M2C_FIELD(work, s32 *, 0x77A8) = (s32) (tmp - 1);
-            absolute_03001ad0.field_0006 =
+            gBgScroll[3] =
                 (Func_08004458() & (s32) &Value_00000007) + 0x1C;
         } else {
-            absolute_03001ad0.field_0006 = 0x20;
+            gBgScroll[3] = 0x20;
         }
         ((struct BattleEffectWork *)work)->transfer_pending = 1;
         Func_080030f8(1);
     }
 
-    absolute_03001ad0.field_0004 = saved_row;
+    gBgScroll[2] = saved_row;
     M2C_FIELD(ctrl, s32 *, 0x10) = 0;
     Func_080d67dc();
-    absolute_04000040.field_0000 = (u16) (s32) &Value_000000f0;
+    *(u16 *)0x04000040 = (u16) (s32) &Value_000000f0;
 
     objs = (s32 *)((s8 *)work + OBJECT_LIST);
     for (k = 0; k != 9; k++) {
@@ -366,8 +371,8 @@ void Func_080eb754(s32 arg0) {
     }
     ((struct BattleEffectWork *)work)->transfer_mode = 2;
     ((struct BattleEffectWork *)work)->transfer_value = 0x4B;
-    absolute_0400000c.field_0000 = 0x784;
-    absolute_0400000c.field_0046 = 0x1010;
+    *(u16 *)0x0400000c = 0x784;
+    *(u16 *)0x04000052 = 0x1010;
     slide = 0xFFFFFE20;
 
     for (frame = 0; frame != 0x60; frame++) {

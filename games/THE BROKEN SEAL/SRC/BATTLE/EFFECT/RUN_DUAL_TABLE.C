@@ -17,6 +17,7 @@
    - The spark blits halve a signed table byte with a plain / 2. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+extern u8 gMapCellBuffer[];
 
 extern u8 gBattleFxWork[];
 
@@ -270,7 +271,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
                             cue_frame = sp0C + 4;
                         }
                         if ((sp24 == cue_frame) || (sp24 == (sp0C + 8))) {
-                            var_r5_297 = 0x02010000;
+                            var_r5_297 = (u32)gMapCellBuffer;
                             n = 0;
                             while (n != 0x200) {
                                 if (((struct DualSpark *)var_r5_297)->age == -1) {
@@ -289,7 +290,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
             }
 
             i = 0;
-            spark = (struct DualSpark *)0x02010000;
+            spark = (struct DualSpark *)gMapCellBuffer;
             do {
                 temp_r2_474 = spark->age;
                 if (temp_r2_474 >= 0) {

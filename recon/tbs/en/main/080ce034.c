@@ -4,8 +4,6 @@
 #include "types.h"
 #include "BATTLE_EFX.H"
 
-#define Function Func_080ce034
-
 extern u8 Data_00000073[];
 extern u8 Data_0000007d[];
 extern u8 Data_00000089[];
@@ -20,7 +18,7 @@ s32 Func_08004458();
 void Func_080049ac();
 void Func_080051d8();
 s32 Func_08005340();
-void Func_080072f0();
+void _call_via_r3();
 void Func_080072f4();
 void Func_08009080();
 void Func_08009140();
@@ -71,7 +69,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Function(s32 a0)
+void Func_080ce034(s32 a0)
 {
     u32 i;
     u8 *p10;
@@ -118,7 +116,7 @@ void Function(s32 a0)
     record = Func_08002f40((s32)Data_00000073);
     ((void (*)())Func_08005340)(record, slot28);
     rec7 = Value1(Func_08002f40, (s32)Data_0000007d);
-    Call4(Func_080072f0, 0x5000000, rec7, 128, 0x3001388);
+    Call4(_call_via_r3, 0x5000000, rec7, 128, 0x3001388);
     Value2(Func_08005340, (rec7 + 128), slot36);
     ((void (*)())BattleEffect_LoadWork)(46, 7, 7, 3, 2);
     slot40 = *(s32 *)(base6_3001eec + 28);
@@ -191,7 +189,7 @@ void Function(s32 a0)
     }
     if (v11 == 16) {
         rec7 = Value1(Func_08002f40, (s32)Data_00000089);
-        Call4(Func_080072f0, 0x5000000, rec7, 128, 0x3001388);
+        Call4(_call_via_r3, 0x5000000, rec7, 128, 0x3001388);
         ((void (*)())Func_08005340)((rec7 + 128), slot36);
         *(s32 *)((s32)p10 + 72) = 0;
         *(s32 *)((s32)p10 + 36) = 0;

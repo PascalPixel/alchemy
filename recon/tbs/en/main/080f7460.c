@@ -6,8 +6,6 @@
 #include "DMA.H"
 #include "BATTLE_EFX.H"
 
-#define Scene_RunParticleSequence Func_080f7460
-
 /* Builds and presents the particle scene, then releases its work blocks. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
@@ -64,13 +62,13 @@ void Func_08002f3c(s32 id);
 void Func_080040e8(void);
 void *Func_08002f40(s32 id);
 u32 Func_08005340(const void *source, void *destination);
-void Func_080072f0(void *dest, s32 size, s32 source, void *state);
+void _call_via_r3(void *dest, s32 size, s32 source, void *state);
 void Func_08015000(void);
 void Func_080f731c(void);
 u32 Func_08004458(void);
 s32 Func_08002304(s32 value, s32 divisor);
 s32 Func_080022fc(s32 value, s32 divisor);
-s32 Func_080022ec(s32 value, s32 divisor);
+s32 Math_Div(s32 value, s32 divisor);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080c9000(s32 id, s32 a, s32 b, s32 c, s32 d);
@@ -177,7 +175,7 @@ void Scene_RunParticleSequence(void)
         }
     }
 
-    Func_080072f0((void *)0x06002D00, 768, (s32)tiles, (void *)0x03000164);
+    _call_via_r3((void *)0x06002D00, 768, (s32)tiles, (void *)0x03000164);
 
     /* Screen block 6: consecutive tiles inside rows 2..16, one filler
        tile outside them. */
@@ -285,7 +283,7 @@ void Scene_RunParticleSequence(void)
     routine[0] = (DrawRectangleFn)Data_03001e50[46];
     Func_080c9000(47, 8, 7, 3, 3);
     routine[1] = (DrawRectangleFn)Data_03001e50[47];
-    Func_080072f0(canvas, 0x8000, 0, (void *)0x03000168);
+    _call_via_r3(canvas, 0x8000, 0, (void *)0x03000168);
 
     Dma_Set(canvas, (void *)0x06003500, 0x84002000,
         (volatile u32 *)0x040000d4);
@@ -361,7 +359,7 @@ void Scene_RunParticleSequence(void)
                     if ((u32)px <= 0x00FFFFFF) {
                         py = particle->y;
                         if (py <= 0x007FFFFF && py >= 0) {
-                            half = Func_080022ec(particle->life, 12) + 1;
+                            half = Math_Div(particle->life, 12) + 1;
                             routine[i & 1](canvas,
                                 sprites + Data_080f86f8[half - 1],
                                 (px >> 16) - half,

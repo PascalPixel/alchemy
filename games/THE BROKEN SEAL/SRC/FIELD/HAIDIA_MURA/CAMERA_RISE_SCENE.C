@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern struct MapRenderWork *gMapWork;
 
 
 s32 Engine_GameFlagIsSet();
@@ -57,7 +58,7 @@ void HaidiaMura_RunCameraRiseScene(void)
     s32 pos[3];
 
     if (Value1(Engine_GameFlagIsSet, 0x808) == 0) {
-        cam = *(s32 ***)0x03001e70;
+        cam = *(s32 ***)&gMapWork;
         Engine_EventBegin();
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x10000, 0x8000);
         Object_SetModeById(0, 1);

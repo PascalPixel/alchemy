@@ -57,10 +57,9 @@ struct DisplayWork {
     u16 split_bottom;
 };
 
-extern volatile u16 Data_04000208;
+extern volatile u16 RegIme;
 extern u8 Value_00000000;
 extern u8 Value_00000050;
-#define REG_IME Data_04000208
 
 void *DisplayTransition_AllocateAndClearState(void);
 void DisplayTransition_FillTilemapAndSolidTile(s32 color);
@@ -72,7 +71,7 @@ void Blend_SetDarkenTarget16(s32 duration);
 void BattleFx_ApplyColorToSourceBuffer(s32 color, s32 mode);
 void BattleFx_StartBufferInterpolation(s32 frames);
 void BattleFx_SetPrimaryBufferValue(unsigned int value);
-void Func_0808f52c(void);
+void DisplayTransition_UpdateScanlineTable(void);
 void BattleFx_StartWindowHBlankDma(void);
 void DisplayTransition_UpdateFrame(void);
 void DisplayTransition_Update(void);
@@ -92,7 +91,7 @@ void DisplayTransition_UpdateScanline(void);
                                                                             \
         q = &gIoWriteQueue;                                                 \
         do {                                                                \
-            ime = &REG_IME;                                                 \
+            ime = &RegIme;                                                 \
             saved = *ime;                                                   \
         } while (0);                                                        \
         *ime = (u16)ime;                                                    \
@@ -139,7 +138,7 @@ void DisplayTransition_Start(s32 mode, s32 frames)
         state->timer = 0;
         state->level = 63;
         state->step = 1;
-        Scheduler_AddOrUpdateCallback(Func_0808f52c, 0xc80);
+        Scheduler_AddOrUpdateCallback(DisplayTransition_UpdateScanlineTable, 0xc80);
         Scheduler_AddOrUpdateCallback(BattleFx_StartWindowHBlankDma, 0x480);
         WaitFrames(1);
         QUEUE_DISPLAY_CONTROL(*(volatile u16 *)0x04000000 | display->dispcnt);

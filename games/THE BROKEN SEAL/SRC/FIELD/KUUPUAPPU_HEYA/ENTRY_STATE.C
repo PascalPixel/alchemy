@@ -60,7 +60,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
 /* Place the room's actors and map cells for the current story state. */
 s32 KuupuappuHeya_ApplyEntryState(void)
 {
-    *(s32 *)((*(s32 *)0x03001ebc + 0x1c0)) = 0x209;
+    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x209;
     switch (gGameState.entrance) {
     case 5:
         {

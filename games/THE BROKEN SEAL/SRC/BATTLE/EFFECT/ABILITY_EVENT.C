@@ -2,7 +2,6 @@
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "BATTLE_EFFECT_RUNTIME.H"
-#define PARTY_STATE Data_02000240
 
 u8 *BattleAction_Get(s32);
 void *ObjectTable_Get(u32);
@@ -35,8 +34,8 @@ s32 BattleFx_FindMatchingEvent(s32 requested_flags, s32 group, void *result)
         (struct BattleEffectRuntime *)Data_03001ebc;
     struct BattleEffectEventRecord *event = runtime->events;
     s32 reference = ((struct BattleEffectValueRecord *)ObjectTable_Get(
-        PARTY_STATE.object_id))->value;
-    s32 selected = BattleEffect_SelectNearbyTargetObject(PARTY_STATE.object_id, group);
+        Data_02000240.object_id))->value;
+    s32 selected = BattleEffect_SelectNearbyTargetObject(Data_02000240.object_id, group);
     s32 alternate;
     s32 ignore_flags = 0;
 
@@ -96,11 +95,11 @@ s32 BattleFx_ExecutePackedAbilityEffect(s32 packed)
     index = packed & 0x3FF;
     mode = ((u32)packed >> 10) & 0xF;
     object = Ability_GetData(index)[0xC];
-    ObjectTable_Get(PARTY_STATE.object_id);
+    ObjectTable_Get(Data_02000240.object_id);
     first = (void *)BattleFx_FindMatchingEvent(0x30000005, object, &output);
     second = (void *)BattleFx_FindMatchingEvent(0x20000005, object, &output);
     BattleFx_LoadActionEffectResources(index, 0);
-    BattleFx_SetupObjectPair(PARTY_STATE.object_id, output);
+    BattleFx_SetupObjectPair(Data_02000240.object_id, output);
     BattleFx_RunEventAction(first, mode, output);
     FieldEvent_RunTypeHandler();
     EffectRuntime_StopCurrentObject();

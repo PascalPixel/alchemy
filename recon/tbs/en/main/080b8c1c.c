@@ -1,11 +1,5 @@
 #include "TYPES.H"
 
-#define BattlePres_RunUnitAction Func_080b8c1c
-#define BattleObject_IsValidId Func_080b8808
-#define BattleParty_ListLivingUnits Func_080b6b40
-#define GetBattleObjectSlot Func_080b7dd0
-#define Actor_ResetMotionAtAnchor Func_080b8000
-
 struct BattlePresentationTransition {
     s32 angle;
     s32 timer;
@@ -48,15 +42,15 @@ extern struct BattlePresentationTransition *Data_03001f00;
 extern u8 *Data_03001e74;
 
 void WaitFrames(s32 frames);
-s32 Func_080b8808(s32 object_id);
-s32 Func_080b6b40(s32 side_mask, s16 *unit_ids);
+s32 BattleObject_IsValidId(s32 object_id);
+s32 BattleParty_ListLivingUnits(s32 side_mask, s16 *unit_ids);
 void Func_08015130(s32 mode);
-struct BattleMotionSlot *Func_080b7dd0(s32 unit_id);
+struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void Func_08009080(void *actor, s32 mode);
 void Func_08009088(void *actor, s32 mode);
 void Func_080c9020(struct BattlePresentationWork *work);
 void Func_080c9018(struct BattlePresentationWork *work);
-void Func_080b8000(s32 unit_id);
+void Actor_ResetMotionAtAnchor(s32 unit_id);
 
 s32 BattlePres_RunUnitAction(s16 *action)
 {

@@ -1,12 +1,10 @@
 #include "types.h"
 #include "BATTLE_EFX.H"
 
-#define Func_080c9ca8 Func_080c9ca8
-
 extern u8 Data_00000058[];
 extern u8 Data_000000b4[];
 extern u8 Data_00001000[];
-s32 Func_080022ec();
+s32 Math_Div();
 s32 Func_080022fc();
 s32 Func_08002322();
 void Func_08002dd8();
@@ -16,7 +14,7 @@ s32 Func_080041d8();
 void Func_08004278();
 void Func_080049ac();
 void Func_080051d8();
-void Func_080072f0();
+void _call_via_r3();
 s32 Func_080072f4();
 void Func_080b5088();
 s32 Func_080b5098();
@@ -130,7 +128,7 @@ void Func_080c9ca8(s32 a0, s32 a1)
     } else {
     }
     record = Value1(Func_08002f40, (s32)Data_000000b4);
-    Call4(Func_080072f0, 0x5000000, record, 128, 0x3001388);
+    Call4(_call_via_r3, 0x5000000, record, 128, 0x3001388);
     *(s32 *)((slot64 + 0x7780)) = 2;
     *(s32 *)((slot64 + 0x7784)) = 50;
     Value2(Func_080041d8, 0x80cd261, 0x480);
@@ -154,11 +152,11 @@ void Func_080c9ca8(s32 a0, s32 a1)
                 *(s32 *)(v7 + 4) = ((s32)p5 + 0x140000);
                 p6 = *(s32 *)(p10 + 16);
                 *(s32 *)(v7 + 8) = (s32)p6;
-                record = Value2(Func_080022ec, (*(s32 *)(p8 + 8) - *(s32 *)(p10 + 8)), 24);
+                record = Value2(Math_Div, (*(s32 *)(p8 + 8) - *(s32 *)(p10 + 8)), 24);
                 *(s32 *)(v7 + 12) = record;
-                record = Value2(Func_080022ec, ((s32)(*(s32 *)(p8 + 12) + 0x140000) - (s32)((s32)p5 + 0x140000)), 24);
+                record = Value2(Math_Div, ((s32)(*(s32 *)(p8 + 12) + 0x140000) - (s32)((s32)p5 + 0x140000)), 24);
                 *(s32 *)(v7 + 16) = record;
-                record = Value2(Func_080022ec, (*(s32 *)(p8 + 16) - (s32)p6), 24);
+                record = Value2(Math_Div, (*(s32 *)(p8 + 16) - (s32)p6), 24);
                 *(s32 *)(v7 + 20) = record;
                 v11 = (v11 + 1);
                 *(s32 *)(v7 + 24) = 0;

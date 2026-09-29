@@ -1,4 +1,5 @@
 #include "FIELD_EVENT.H"
+extern u8 gMenuCtrlWork[];
 
 struct CompetitorIoQueue {
     u16 count;
@@ -62,7 +63,7 @@ void Korosseo_FadeInCompetitor(s32 id, s32 x, s32 z)
     } *sprite;
     s32 i;
 
-    state = *(struct CompetitorState **)0x03001e68;
+    state = *(struct CompetitorState **)gMenuCtrlWork;
     actor = Engine_ActorGet(id);
     {
         /* FAKEMATCH: a word temporary keeps 1 out of a halfword pool. */

@@ -235,7 +235,7 @@ void SceneState_SetWord1c0To209AndRun(void)
 {
     u8 *state;
 
-    state = *(u8 **)0x03001ebc;
+    state = *(u8 **)&gEventWork;
     *(s32 *)(state + 0x1c0) = 0x209;
     Event_OpenScreen();
     Event_WaitForScreen();

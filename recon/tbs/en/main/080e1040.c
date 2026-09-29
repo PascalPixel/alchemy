@@ -1,8 +1,6 @@
 #include "types.h"
 #include "BATTLE_EFX.H"
 
-#define Func_080e1040 Func_080e1040
-
 extern u8 Data_00000094[];
 extern u8 Data_000000a7[];
 s32 Func_08002304();

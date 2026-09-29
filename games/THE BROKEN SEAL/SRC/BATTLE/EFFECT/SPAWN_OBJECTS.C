@@ -14,10 +14,9 @@ typedef struct {
 extern u32 gBattleFxWork;
 extern u8 Value_000077d8;
 
-#define InitBattleEffectObject AnimationObjects_SelectAnimationFar
 
 BattleEffectObject *GetBattleEffectObject(s32);
-void InitBattleEffectObject(BattleEffectObject *, s32);
+void AnimationObjects_SelectAnimationFar(BattleEffectObject *, s32);
 
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
 {
@@ -35,7 +34,7 @@ void BattleFx_SpawnObjects(s32 entry_count, s32 kind, u32 variant)
         *(BattleEffectObject **)(offset + base) = object;
         if (object != 0) {
             object->enabled = 0;
-            InitBattleEffectObject(object, entry_index);
+            AnimationObjects_SelectAnimationFar(object, entry_index);
             (*(BattleEffectObject **)(offset + base))->variant = variant;
         }
         entry_index++;

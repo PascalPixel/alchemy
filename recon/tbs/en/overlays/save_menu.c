@@ -103,7 +103,6 @@
 #include "SERIAL_RUNTIME.H"
 #include "FIELD_EVENT.H"
 
-#define SaveMenu_Run Func_020003cc
 
 extern volatile u32 Data_03001c94;
 void Engine_UiWorkFinalize(s32 window, s32 mode);

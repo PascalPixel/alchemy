@@ -16,7 +16,7 @@ void BattleFx_SelectBattleCue(s32 first, s32 second)
     u16 cue;
     u16 value;
 
-    if (BattleFlag_Test(0x16c)) {
+    if (GameFlag_TestFar(0x16c)) {
         cue = 18;
     } else {
         for (;;) {

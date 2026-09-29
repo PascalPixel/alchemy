@@ -26,10 +26,7 @@
 #include "BATTLE_TYPES.H"
 #include "FIXED_MATH.H"
 
-#define BattleTarget_SelectForAction Func_080bae40
-
-s32 Func_080772b8(s32 effect);
-#define BattleFx_Classify Func_080772b8
+s32 BattleFx_IsReviveFar(s32 effect);
 
 struct BattleAiProfile {
     u8 unknown_00[0x35];
@@ -185,7 +182,7 @@ u32 Random16(void);
             break;                                                            \
         }                                                                     \
         if ((unit)->hp == 0                                                   \
-            && BattleFx_Classify((action)->effect) == 0)                  \
+            && BattleFx_IsReviveFar((action)->effect) == 0)                  \
             (applies) = 0;                                                    \
         if ((applies) == 0) {                                                 \
             (damage_class) = ((action)->target_flags & 0x0f) - 1;             \
@@ -298,7 +295,7 @@ scan_complete:
     for (target_index = 0;
          target_index < candidate_count;
          target_index++) {
-        unit = BattleUnit_Get(unit_ids[target_index]);
+        unit = Owner_GetStateFar(unit_ids[target_index]);
         CHECK_EFFECT_TARGET(unit, action, applies, damage_class);
         if (applies != 0) {
             unit_ids[target_count] = unit_ids[target_index];
@@ -312,7 +309,7 @@ scan_complete:
 
     if (action->target_mode == 1
         && action->range == 1
-        && Func_08077198(BattleUnit_Get(actor_id)->class_id)
+        && Func_08077198(Owner_GetStateFar(actor_id)->class_id)
                 ->target_strategy != 2
         && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
         selected = -1;
@@ -322,9 +319,9 @@ scan_complete:
             for (inner_index = target_index;
                  inner_index < target_count - 1;
                  inner_index++) {
-                unit = BattleUnit_Get(unit_ids[inner_index]);
-                next_unit = BattleUnit_Get(unit_ids[inner_index + 1]);
-                if (Func_08077198(BattleUnit_Get(actor_id)->class_id)
+                unit = Owner_GetStateFar(unit_ids[inner_index]);
+                next_unit = Owner_GetStateFar(unit_ids[inner_index + 1]);
+                if (Func_08077198(Owner_GetStateFar(actor_id)->class_id)
                         ->target_strategy == 0) {
                     value = unit->hp;
                     next_value = next_unit->hp;

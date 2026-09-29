@@ -1,6 +1,25 @@
-#include "shared-aggregates.h"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
+
+/* A record of the effect scratch buffer at gMapCellBuffer, with the offsets
+   the battle effects touch. */
+struct EffectScratch {
+    u8 unknown_0000[0x4];
+    u32 field_0004;
+    u32 field_0008;
+    u32 field_000c;
+    u32 field_0010;
+    u32 field_0014;
+    u32 field_0018;
+    u8 unknown_001c[0x4];
+    u32 field_0020;
+    u8 unknown_0024[0x10];
+    u32 field_0034;
+    u8 unknown_0038[0x2];
+    u8 field_003a;
+};
+
+extern u8 gMapCellBuffer[];
 
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
@@ -63,8 +82,8 @@ void Func_080d2464(void *arg0, s32 arg1) {
     s32 var_r7_943;
     s32 var_r7_978;
     s32 var_r8_385;
-    struct M2cAggregate_absolute_02010000 *var_r5_769;
-    struct M2cAggregate_absolute_02010000 *var_r6_394;
+    struct EffectScratch *var_r5_769;
+    struct EffectScratch *var_r6_394;
     u32 temp_r0_431;
     u32 temp_r1_797;
     u32 temp_r2_804;
@@ -217,7 +236,7 @@ loop_23:
         if (sp24 > 0x67) {
             sp10 = 8;
         }
-        var_r6_394 = &absolute_02010000;
+        var_r6_394 = (struct EffectScratch *)gMapCellBuffer;
         var_r7_395 = 0;
         do {
             if (var_r6_394->field_0018 == -1U) {
@@ -341,7 +360,7 @@ loop_23:
         var_r5_722 += 0x1C;
     } while (var_r7_720 != 0x18);
     if (sp24 <= 0xAF) {
-        var_r5_769 = &absolute_02010000;
+        var_r5_769 = (struct EffectScratch *)gMapCellBuffer;
         var_r7_770 = 0;
         do {
             if ((s32) var_r5_769->field_0018 >= 0) {

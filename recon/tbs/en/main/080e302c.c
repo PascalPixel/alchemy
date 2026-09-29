@@ -31,7 +31,7 @@
  * steps the sparks through Func_08009008, pokes every real party member,
  * applies the camera shake, ticks the object group and waits one frame.
  *
- * Neither `Func_080072f0` nor `Func_080072f4`, `Func_080072fc`,
+ * Neither `_call_via_r3` nor `Func_080072f4`, `Func_080072fc`,
  * `Func_08007304` and `Func_0800730c` is a real function symbol: they are
  * entries 3, 4, 6, 8 and 10 of the `_call_via_rN` trampoline bundle at
  * recon/tbs/raw/080072e4.s, four bytes per slot from base 0x080072e4, i.e.
@@ -145,7 +145,7 @@ s32 Func_080041d8(void *callback, s32 interval);
 void Func_08004278(void *callback);
 u32 Func_08004458(void);
 s32 Func_08002304(s32 value, s32 range);
-s32 Func_080022ec(s32 value, s32 shift);
+s32 Math_Div(s32 value, s32 shift);
 s32 Func_080022fc(s32 value, s32 divisor);
 void Func_080f9010(s32 id);
 void Func_080b50e8(s32 id);
@@ -465,7 +465,7 @@ void Func_080e302c(void *object)
 
         /* Four band rows scrolling in, then the same rows scrolling out. */
         if ((u32)(fp - 0xC) <= 0x4BU) {
-            idx = Func_080022ec(fp - 0x40, 3);
+            idx = Math_Div(fp - 0x40, 3);
             if (idx < 0) {
                 idx = 0;
             }
@@ -486,7 +486,7 @@ void Func_080e302c(void *object)
         }
 
         if ((u32)(fp - 0xA0) <= 0x17U) {
-            idx = 7 - Func_080022ec(fp - 0xA0, 3);
+            idx = 7 - Math_Div(fp - 0xA0, 3);
             if (idx < 0) {
                 idx = 0;
             }

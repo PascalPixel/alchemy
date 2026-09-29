@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0808f52c
+	.global DisplayTransition_UpdateScanlineTable
 	.thumb_func
-Func_0808f52c:
+DisplayTransition_UpdateScanlineTable:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

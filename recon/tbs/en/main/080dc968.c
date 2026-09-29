@@ -1,5 +1,37 @@
-#include "shared-aggregates.h"
 #include "BATTLE_EFX.H"
+
+/* A record of the effect scratch buffer at gMapCellBuffer, with the offsets
+   the battle effects touch. */
+struct EffectScratch {
+    u8 unknown_0000[0x4];
+    u32 field_0004;
+    u32 field_0008;
+    u32 field_000c;
+    u32 field_0010;
+    u32 field_0014;
+    u32 field_0018;
+    u8 unknown_001c[0x4];
+    u32 field_0020;
+    u8 unknown_0024[0x10];
+    u32 field_0034;
+    u8 unknown_0038[0x2];
+    u8 field_003a;
+};
+
+/* The transition state gTransitionWork points at. */
+struct TransitionWork {
+    u32 field_0000;
+    u32 field_0004;
+    u8 unknown_0008[0x8];
+    u32 field_0010;
+    u32 field_0014;
+    u8 unknown_0018[0x7];
+    u8 field_001f;
+};
+
+extern u8 gMapCellBuffer[];
+extern u16 gBgScroll[];
+extern u32 gProjection[];
 
 typedef void (*WordCopyFn)(void *dst, const void *src, s32 size);
 
@@ -23,12 +55,12 @@ void Func_080dc968(void *arg0) {
     s32 sp18;
     s32 sp1C;
     s32 sp20;
-    struct M2cAggregate_absolute_02010000 *sp24;
+    struct EffectScratch *sp24;
     s32 sp28;
     s32 sp2C;
     void *sp30;
     s32 sp34;
-    struct M2cAggregate_deref_absolute_03001f00_0 *sp38;
+    struct TransitionWork *sp38;
     s32 actor_position[3];
     struct { s32 x; s32 y; s32 z; s32 color; } sp50;
     struct { s32 x; s32 y; s32 z; } sp60;
@@ -88,14 +120,14 @@ void Func_080dc968(void *arg0) {
     u8 *battle_globals;
 
     battle_globals = (u8 *)0x03001F00;
-    sp38 = *(struct M2cAggregate_deref_absolute_03001f00_0 **)battle_globals;
+    sp38 = *(struct TransitionWork **)battle_globals;
     sp34 = *(s32 *)(battle_globals - 0x10);
     temp_r3_25 = *(u8 **)(battle_globals - 0x14);
-    sp24 = *(struct M2cAggregate_absolute_02010000 **)(battle_globals - 0x0C);
-    sp20 = (s32) absolute_03001ad0.field_0004;
+    sp24 = *(struct EffectScratch **)(battle_globals - 0x0C);
+    sp20 = (s32) gBgScroll[2];
     M2C_FIELD(temp_r3_25, void **, 0x7828) = arg0;
     Func_080cd594(0x2000);
-    absolute_04000020.field_0000 = 0x100;
+    *(u16 *)0x04000020 = 0x100;
     Func_080c9048();
     *(s16 *)0x05000000 = 0;
     *(s16 *)0x05000002 = 0;
@@ -114,7 +146,7 @@ void Func_080dc968(void *arg0) {
     BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);
     draw_args[0] = (DrawRectangleFn)*(void **)(battle_globals + 8);
     draw_args[1] = (DrawRectangleFn)*(void **)(battle_globals + 0x0C);
-    absolute_03001ce0.field_0010 = 0xF0;
+    gProjection[4] = 0xF0;
     Func_080030f8(1);
     Func_080b5040(1, 0x3B, 0);
     M2C_FIELD(temp_r3_25, s32 *, 0x7790) = 0;
@@ -125,7 +157,7 @@ void Func_080dc968(void *arg0) {
     sp38->field_0010 = 1;
     Func_080cd104(0, 1);
     M2C_FIELD((void *)0x04000000, s16 *, 0) = 0x7741;
-    absolute_04000020.field_0000 = 0x80;
+    *(u16 *)0x04000020 = 0x80;
     M2C_FIELD((void *)0x04000000, s16 *, 0x52) = 0x1010;
     *(s16 *)0x04000050 = 0x3F44;
     sp1C = 0;
@@ -140,7 +172,7 @@ void Func_080dc968(void *arg0) {
         M2C_FIELD(var_r7_185, s32 *, 0x18) = 0;
         var_r9_242 = 0;
         var_r6_247 = (sp2C * 0x480) + 0x02013800;
-        var_r5_252 = (u8 *)&absolute_02010000 + (sp2C * 0x2A0);
+        var_r5_252 = gMapCellBuffer + (sp2C * 0x2A0);
 loop_4:
         *(s32 *)var_r5_252 = (0xF & Func_08004458()) + 0x30;
         Func_080049ac();
@@ -160,7 +192,7 @@ loop_4:
     } while (temp_r1_282 != 0x10);
     M2C_FIELD(temp_r3_25, s32 *, 0x7780) = 2;
     M2C_FIELD(temp_r3_25, s32 *, 0x7784) = 0x32;
-    absolute_0400000c.field_0000 = 0x784;
+    *(u16 *)0x0400000c = 0x784;
     sp28 = 0;
     if (*(s32 *)0x03001B04 & 3) {
 
@@ -247,7 +279,7 @@ loop_20:
             if (sp28 < (s32) (temp_r6_436 + 0x50)) {
                 var_r9_710 = 0;
                 var_r7_717 = (sp2C * 0x480) + 0x02013800;
-                var_r5_723 = (u8 *)&absolute_02010000 + (sp2C * 0x2A0);
+                var_r5_723 = gMapCellBuffer + (sp2C * 0x2A0);
                 do {
                     if (*(s32 *)var_r5_723 > 0) {
                         Func_08004a44(var_r7_717);
@@ -335,7 +367,7 @@ block_36:
     }
     Func_08004278(0x080C90E5);
     sp38->field_0010 = 0;
-    absolute_03001ad0.field_0004 = sp20;
+    gBgScroll[2] = sp20;
     Func_080d67dc();
     sp2C = 0;
     var_r5_811 = temp_r3_25 + 0x77D8;
@@ -346,9 +378,9 @@ block_36:
         temp_r0_816 = sp2C + 1;
         sp2C = temp_r0_816;
     } while (temp_r0_816 != 9);
-    absolute_04000020.field_0000 = 0x80;
+    *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000000 = 0x7741;
-    Resource_LoadAndDecompress(0xB4, &absolute_02010000, 1, 0);
+    Resource_LoadAndDecompress(0xB4, gMapCellBuffer, 1, 0);
     sp2C = 0;
     var_r5_836 = temp_r3_25 + 0x7080;
     do {
@@ -391,8 +423,8 @@ loop_58:
                 sp0 = (s32) temp_r5_956;
                 sp4 = *(u8 *)(0x080EDEA5 + temp_r6_949);
                 draw_args[sp2C & 1]((void *)sp34,
-                    (struct M2cAggregate_absolute_02010000 *)
-                        &absolute_02010000.unknown_0000[
+                    (struct EffectScratch *)
+                        &gMapCellBuffer[
                             *(u16 *)(0x080EDEB2 + (temp_r6_949 * 2))],
                     (M2C_FIELD(var_r7_927, s32 *, 0) -
                         (temp_r5_956 >> 1)) - 8,

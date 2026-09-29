@@ -79,7 +79,7 @@ AlchemyUncredited_080f965a:
 AlchemyUncreditedEnd_080f965a:
 	.4byte 0x03007ff0
 	.4byte 0x68736d53
-	.4byte 0x03007001
+	.4byte Func_080f9674
 	.4byte 0x04000006
 	.4byte 0x00000350
 	.4byte 0x00000630

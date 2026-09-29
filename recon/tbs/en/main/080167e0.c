@@ -3,7 +3,7 @@
    per row as the old header claimed; the reference keeps DMA control in fp
    and reloads the routine into r3. The row pointer and fill size therefore
    also get different saved registers/spills. The exact item-menu pattern
-   (Value_03000000 + 0x168) emits identical bytes, as does changing the fill
+   (IwramIrqMain + 0x168) emits identical bytes, as does changing the fill
    result to void. Stop that call-address axis without new loop evidence. */
 #include "DMA.H"
 

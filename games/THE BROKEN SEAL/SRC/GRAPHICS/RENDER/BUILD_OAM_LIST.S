@@ -68,9 +68,9 @@ Render_BuildOamList:
 .L_08001e90:
 	pop	{r5, r6, r7, r8, r9, lr}
 	bx	lr
-	.4byte	0x03001800
-	.4byte	0x03000168
-	.4byte	0x03001d00
-	.4byte	0x03001d40
+	.4byte	gFrameTick
+	.4byte	IwramFillWords
+	.4byte	gObjAffineCount
+	.4byte	gObjAffineMatrices
 	.global LoadedRuntime_Size
 	.set LoadedRuntime_Size, . - Render_BuildOamList

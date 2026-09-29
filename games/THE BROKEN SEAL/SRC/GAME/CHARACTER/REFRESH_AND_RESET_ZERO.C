@@ -37,8 +37,8 @@ u32 Party_GetAverageLevel(void)
         return 0;
     }
     for (i = 0; i < count; i++) {
-        total += ((u8 *)OwnerState_Get(
-            Data_02000240.active_owners[i]))[15];
+        total += ((u8 *)Owner_GetState(
+            gGameState.active_owners[i]))[15];
     }
     total = Math_Div(total, count);
     return total;

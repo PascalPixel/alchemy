@@ -1,10 +1,10 @@
 .syntax unified
 	.thumb
 	.global Unnamed_080f7460
-	.global Func_080f7460
+	.global Scene_RunParticleSequence
 	.thumb_func
 Unnamed_080f7460:
-Func_080f7460:
+Scene_RunParticleSequence:
 	push {r5, r6, r7, lr}
 	mov r7, r11
 	mov r6, r10

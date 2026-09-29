@@ -54,13 +54,11 @@ struct CameraWork {
     s32 camera_z;
 };
 
-extern struct ParticleWork *Data_03001ec4;
-#define gParticleWork Data_03001ec4
+extern struct ParticleWork *gParticleWork;
 /* FAKEMATCH: derive the adjacent map cell from the particle-work cell,
  * as in the exact Sparkles routine, to preserve the reference loads. */
-#define gCamera (*(struct CameraWork **)((u8 *)&Data_03001ec4 - 84))
-extern unsigned long Data_03001e40;
-#define gFrameCounter Data_03001e40
+#define gCamera (*(struct CameraWork **)((u8 *)&gParticleWork - 84))
+extern unsigned long gFrameCount;
 
 void Unnamed_08094bbc(void)
 {
@@ -104,7 +102,7 @@ void Unnamed_08094bbc(void)
                 } else {
                     p->tile = work->tile;
                 }
-                if ((gFrameCounter >> 3) & 1)
+                if ((gFrameCount >> 3) & 1)
                     p->tile += 4;
                 p->x = sx - 1;
                 p->y = sy - (p->fall >> 2);

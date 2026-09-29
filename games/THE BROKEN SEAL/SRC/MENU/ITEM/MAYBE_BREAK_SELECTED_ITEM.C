@@ -10,7 +10,6 @@ extern u8 Data_03001f2c[];
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
-#define Rand Random16
 s32 InventoryMenu_ShowModalMessage(s32, s32, s32);
 s32 Audio_PlayCue(s32);
 
@@ -19,7 +18,7 @@ void ItemMenu_TryBreak(void)
     void *menu;
 
     menu = *(void **)((u32)&Data_03001f2c);
-    if ((FIELD(Item_Get(0x1FF & FIELD(menu, u16 *, 0x178)), u8 *, 0xC) == 2) && (Rand() < 0x2000U)) {
+    if ((FIELD(Item_Get(0x1FF & FIELD(menu, u16 *, 0x178)), u8 *, 0xC) == 2) && (Random16() < 0x2000U)) {
         Inventory_BreakFar(
             FIELD(menu, u8 *, 0x21A),
             FIELD(menu, u16 *, 0x174));

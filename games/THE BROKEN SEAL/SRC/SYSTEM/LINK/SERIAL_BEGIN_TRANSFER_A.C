@@ -26,8 +26,8 @@ s32 SerialRuntime_BeginTransferA(s32 value, s32 transfer_value)
     goto transfer_complete;
 
 begin_transfer:
-    saved_interrupt_master = Data_04000208;
-    Data_04000208 = (u16)&Data_04000208;
+    saved_interrupt_master = RegIme;
+    RegIme = (u16)&RegIme;
     do {
         state->status = 0x80;
         SERIAL_VALUE_A = transfer;
@@ -35,7 +35,7 @@ begin_transfer:
         *active = value;
         state->active = 1;
     } while (0);
-    Data_04000208 = saved_interrupt_master;
+    RegIme = saved_interrupt_master;
     value = 0;
 
 transfer_complete:

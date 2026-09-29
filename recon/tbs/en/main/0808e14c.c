@@ -1,8 +1,6 @@
 #include "TYPES.H"
 #include "OBJECT_LOOKUP.H"
 
-#define GetFocusedObjectCollision Func_0808bd24
-
 s32 Func_0808ddec(u32 object_id);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 GetFocusedObjectCollision(void);

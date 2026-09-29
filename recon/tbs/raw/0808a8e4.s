@@ -210,7 +210,7 @@ Func_0808a8e4:
 	movs	r6, #0
 .L_0808aaa0:
 	adds	r0, r6, #0
-	bl	Func_0808a6e4
+	bl	Party_SetReturnPoint
 	b.n	.L_0808a96e
 .L_0808aaa8:
 	ldr	r5, [pc, #140]

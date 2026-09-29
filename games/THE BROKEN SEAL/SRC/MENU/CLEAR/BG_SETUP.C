@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"
+extern struct MapRenderWork *gMapWork;
+extern u8 gMapCellBuffer[];
 
 extern u8 Value_0000001a[];
 extern u16 Data_03001ad0[];
@@ -17,7 +19,7 @@ struct ScrollPair {
 
 static __inline__ void DecodeBackground(const u8 *res)
 {
-    Engine_ResourceDecodeType01(res, (void *)0x02010000);
+    Engine_ResourceDecodeType01(res, (void *)gMapCellBuffer);
 }
 
 #define DMA3 ((volatile u32 *)0x040000d4)
@@ -45,7 +47,7 @@ void Clear_LoadBackground(void)
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
     res += 0x1c0;
     DecodeBackground(res);
-    Dma_Set((void *)0x02010000, (void *)0x06006800, 0x84002580, DMA3);
+    Dma_Set((void *)gMapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
     map = (u16 *)0x06003000;
     tile = 0x1a0;
     y = 0;
@@ -74,7 +76,7 @@ col:
         scroll++;
     }
     Dma_Set(Data_03001ad0, (void *)0x04000010, 0x84000004, DMA3);
-    (*(struct ClearWork **)0x03001e70)->mode = 0x1400;
+    (*(struct ClearWork **)&gMapWork)->mode = 0x1400;
     {
         struct FieldActor *leader;
 

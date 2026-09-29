@@ -81,14 +81,14 @@ s32 BattlePresentation_RunPairedUnitTransition(s16 *action)
         u32 count = BattleParty_ListLivingUnits(2, visible_units);
         for (index = 0; living_count != count; index++) {
             u32 unit = index + 0x80;
-            if (BattleUnit_Get(unit)->hp > 0) {
+            if (Owner_GetStateFar(unit)->hp > 0) {
                 visible_units[living_count++] = unit;
             }
         }
     } else {
         u32 count = BattleParty_ListLivingUnits(1, visible_units);
         for (index = 0; living_count != count; index++) {
-            if (BattleUnit_Get(index)->hp > 0) {
+            if (Owner_GetStateFar(index)->hp > 0) {
                 visible_units[living_count++] = index;
             }
         }

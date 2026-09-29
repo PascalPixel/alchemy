@@ -1,7 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_080022ec
-Func_080022ec:
 
 
 	.macro IwramEntry name, target

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+extern u8 IwramClearWords[];
 extern u8 Data_03001eec[];
 
 /*
@@ -17,6 +18,6 @@ void Runtime_ApplyValueToWork7818(u32 arg2)
   unsigned long val;
   s32 base;
   base = *((s32 *)((u32)&Data_03001eec));
-  _call_via_r3(base + 0x7818, 8, val, 0x03000164);
+  _call_via_r3(base + 0x7818, 8, val, (u32)IwramClearWords);
   val = arg2;
 }

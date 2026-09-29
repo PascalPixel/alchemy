@@ -12,6 +12,4 @@ extern u8 Value_00000037;
 extern u8 Value_00000038;
 extern u8 Value_00000039;
 
-#define MAKYURI_EVENT_WORK ((u8 *)gEventWork)
-
 #endif

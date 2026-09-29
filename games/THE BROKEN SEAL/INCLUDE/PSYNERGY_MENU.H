@@ -140,11 +140,9 @@ LAYOUT_OFFSET_GUARD(
 
 extern struct PsynergyMenuState *gMenuWork;
 extern struct PsynergyMenuGlobalState Data_02000240;
-extern char Value_00000af2;
+extern char MsgPsynergyMenuEmpty;
 
 /* Shared icon-grid helper used by both inventory and Psynergy menu modes. */
-
-#define PsynergyMenu_EmptyMessage              Value_00000af2
 
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner);

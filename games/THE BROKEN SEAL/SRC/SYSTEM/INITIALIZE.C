@@ -6,7 +6,7 @@ void System_VBlankHandler(void);
 extern u8 Value_00004014;
 extern u8 Value_0000c00f;
 
-extern s32 Data_02002090;
+extern s32 gIoWriteQueue;
 extern u8 Data_03001ac4;
 extern u8 gDebugMode;
 extern u8 Data_03001f58;
@@ -46,7 +46,7 @@ void System_Initialize(void)
     Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, (volatile u32 *)0x040000d4);
     Runtime_InitializeHeap();
     Runtime_InstallIwramAndIrqs();
-    Data_02002090 = 0;
+    gIoWriteQueue = 0;
     Data_03001ac4 = 0;
     gDebugMode = 0;
     Data_03001f58 = 0;

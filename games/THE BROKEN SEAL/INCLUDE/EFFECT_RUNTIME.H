@@ -17,6 +17,5 @@ struct EffectRuntime {
     struct EffectRuntimeSlot slots[10];
 };
 
-#define EFFECT_RUNTIME (*(struct EffectRuntime **)Data_03001ebc_a)
 
 #endif

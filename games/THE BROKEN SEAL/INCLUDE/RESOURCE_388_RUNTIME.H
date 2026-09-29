@@ -38,8 +38,6 @@ typedef char Resource388SlotView_unknown_59_offset[
 ];
 #undef RESOURCE388_RUNTIME_OFFSET
 
-#define RESOURCE388_RUNTIME ((struct Resource388Runtime *)EFFECT_RUNTIME)
-
 s32 Resource388_TestSetupGate(s32);
 u8 Resource388_SetSlotOption(s32, s32);
 void Resource388_SetSlotPosition(s32, s32, s32);

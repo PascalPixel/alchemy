@@ -28,7 +28,7 @@ Func_080056cc:
 	subs	r3, #12
 	ldr	r1, [pc, #44]
 	movs	r0, #2
-	bl	Func_080069c8
+	bl	SetFlashTimerIntr
 	movs	r7, #0
 	b.n	.L_0800570c
 .L_08005704:
@@ -38,7 +38,7 @@ Func_080056cc:
 .L_0800570c:
 	cmp	r7, #7
 	bhi.n	.L_0800571c
-	bl	Func_08006910
+	bl	IdentifyFlash
 	lsls	r0, r0, #16
 	cmp	r0, #0
 	bne.n	.L_08005704

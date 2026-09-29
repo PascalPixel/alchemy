@@ -3,8 +3,6 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
-#define BattleEffect_RunSparkTravel Func_080d5e54
-
 /*
  * Battle-presentation sub-effect at 0x080d5e54, from the same 0x03001eec
  * "battle work" subsystem family already recovered in
@@ -93,7 +91,7 @@
  * Resource_LoadAndDecompress, Func_08004458 and Func_080d6888 declarations
  * below remain outside this narrow interface audit and keep their
  * Func_ spelling here, as the sibling owners do.  Func_080072f4 and
- * Func_080072f0 are never named in this source: they are the compiler
+ * _call_via_r3 are never named in this source: they are the compiler
  * runtime's call-via-r4 and call-via-r3 thunks and are reached only as typed
  * indirect calls.
  */
@@ -131,7 +129,7 @@ void **Func_080b5098(s32 member_id);
 u32 Func_08004458(void);
 s32 Func_08002322(s32 angle);
 s32 Func_0800231c(s32 angle);
-s32 Func_080022ec(s32 value, s32 divisor);
+s32 Math_Div(s32 value, s32 divisor);
 s32 Func_080022fc(s32 value, s32 divisor);
 void Render_ResetTransformState(void);
 void Func_080049e8(void);
@@ -223,9 +221,9 @@ s32 BattleEffect_RunSparkTravel(void *object)
     target[0] = M2C_FIELD(goal, s32 *, 8);
     target[1] = 0x5A0000;
     target[2] = 0;
-    delta[0] = Func_080022ec(target[0] - pos[0], 40);
-    delta[1] = Func_080022ec(target[1] - pos[1], 40);
-    delta[2] = Func_080022ec(target[2] - pos[2], 40);
+    delta[0] = Math_Div(target[0] - pos[0], 40);
+    delta[1] = Math_Div(target[1] - pos[1], 40);
+    delta[2] = Math_Div(target[2] - pos[2], 40);
 
     frame = 0;
     do {
@@ -418,11 +416,11 @@ s32 BattleEffect_RunSparkTravel(void *object)
                                         view[0] - half,
                                         view[1] - half,
                                         size, size);
-                                    grain_step->x -= Func_080022ec(
+                                    grain_step->x -= Math_Div(
                                         grain_step->x, distance);
-                                    grain_step->y -= Func_080022ec(
+                                    grain_step->y -= Math_Div(
                                         grain_step->y, distance);
-                                    grain_step->z -= Func_080022ec(
+                                    grain_step->z -= Math_Div(
                                         grain_step->z, distance);
                                 }
                             }

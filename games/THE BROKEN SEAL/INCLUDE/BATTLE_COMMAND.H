@@ -3,6 +3,9 @@
 
 #include "BATTLE_RUNTIME.H"
 #include "ITEM.H"
+extern u8 gDebugMode[];
+extern u8 gKeysHeld[];
+extern void *gBattleWork;
 
 /* Player/AI command consumed by the battle-command resolver. */
 struct BattleCommandRequest {
@@ -87,18 +90,16 @@ LAYOUT_OFFSET_GUARD(
     0x66);
 
 #define BATTLE_TURN_ORDER \
-    (*(struct BattleTurnOrder **)0x03001e74)
-#define BATTLE_AUTO_MODE    (*(volatile u8 *)0x03001f54)
-#define BATTLE_OPTIONS      (*(volatile u32 *)0x03001ae8)
+    (*(struct BattleTurnOrder **)&gBattleWork)
+#define BATTLE_AUTO_MODE    (*(volatile u8 *)gDebugMode)
+#define BATTLE_OPTIONS      (*(volatile u32 *)gKeysHeld)
 
 #define BATTLE_ACTION_FLAGS  ((const u32 *)0x080c2da0)
 #define BATTLE_ACTION_STATUS ((const u8 *)0x080c2b98)
 
-s32 Func_080be378(
+s32 BattleCommand_BuildPlan(
     struct BattleCommandRequest *request,
     struct BattlePlan *plan);
 s32 Func_080bbb0c(struct BattlePlan *plan, s32 target_slot);
-
-#define BattleCommand_BuildPlan Func_080be378
 
 #endif

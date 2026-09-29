@@ -1,6 +1,18 @@
 /*
  * Draft: the parent matches but its nested arrow renderer does not yet, so the
  * unit links as assembly (recon/tbs/raw/08022a7c.s and 08022b44.s).
+ *
+ * 2026-09-28, why the zero moves: the byte stores to one5/one4 expand as
+ * read-modify-write with a zero mask (every byte member store does with this
+ * compiler), CSE reuses that zero pseudo for the tile clear, and its REG_EQUIV
+ * doubles its live length. With the tile clear last (the reference store
+ * order), r5's local ratio 2/34 falls below the static chain pseudo's 2/22,
+ * so global.c's find_reg evicts the zero from r5 ("utilized poorly by
+ * local-alloc") and hands r5 to the chain; with the clear right after the
+ * entry pointer (this draft) the ratio is 2/20 and nothing moves. u8-cast
+ * byte stores remove the mask, give the reference's late zero and its store
+ * order, but then the zero takes r2 and the chain r7. All 360 orders of the
+ * index, entry, zero, sentinel, x, y and word statements were scored.
  */
 /* DjinnMenu_ShowChangePreview (main:08022b44, 1588 bytes) is exact. Its
  * nested arrow renderer DjinnMenu_DrawStatArrow (main:08022a7c) is emitted
@@ -79,12 +91,8 @@ struct BattleUnitRecord {
 
 /* Callees the owner register already names, spelled the way types.h spells
  * its own aliases: the address symbol stays the ABI. */
-#define UiWork_SetParamNibble UiWork_SetParamNibble
-#define UiWindow_SetTilemapEntry UiWindow_SetTilemapEntry
-#define UiWindow_DrawThreeTileColumn UiWindow_DrawThreeTileColumn
-#define UiText_FormatNumberToHalfwords UiText_FormatNumberToHalfwords
 
-void Func_08002df0(void *block);
+void Sys_Free(void *block);
 s32 _call_via_r3(void *dst, const void *src, s32 size, s32 proc);
 s32 UiText_RenderWideStringInWindow(s16 *text, struct RenderInput *win, s32 x, s32 y);
 void UiWindow_DrawDividerLine(struct RenderInput *win, s32 x, s32 y, s32 w, s32 h);
@@ -357,8 +365,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
     /* Put the record back the way it was and release the scratch blocks. */
     _call_via_r3(unit, snap, 332, VRAM_COPY_PROC);
-    Func_08002df0(list);
-    Func_08002df0(snap);
-    Func_08002df0(buf);
+    Sys_Free(list);
+    Sys_Free(snap);
+    Sys_Free(buf);
     return win;
 }

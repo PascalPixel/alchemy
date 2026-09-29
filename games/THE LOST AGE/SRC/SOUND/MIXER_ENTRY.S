@@ -74,7 +74,7 @@ AlchemyUncredited_081c12f6:
 AlchemyUncreditedEnd_081c12f6:
 	.4byte	0x03007ff0
 	.4byte	0x68736d53
-	.4byte	0x03006001
+	.4byte	SoundDriver_Mixer
 	.4byte	0x04000006
 	.4byte	0x00000350
 	.4byte	0x00000630

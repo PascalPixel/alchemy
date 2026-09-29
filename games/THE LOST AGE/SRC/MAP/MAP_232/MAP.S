@@ -24,10 +24,10 @@ Field_Map232:
 	.incbin "MAP/MAP_232/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map232_SHAPE_GRID:
-	.incbin "MAP/MAP_232/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_232/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map232_ANIMATION:
-	.incbin "MAP/MAP_232/ANIMATION.script.lz"
+	.incbin "MAP/MAP_182/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map232_BLEND:
 	.incbin "MAP/MAP_232/BLEND.script.lz"

@@ -23,4 +23,4 @@ Field_Map001:
 	.incbin "MAP/MAP_001/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map001_MARKERS:
-	.incbin "MAP/MAP_001/MARKERS.table"
+	.incbin "MAP/MAP_000/MARKERS.table"

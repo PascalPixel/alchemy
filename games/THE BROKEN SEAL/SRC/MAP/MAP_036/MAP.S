@@ -26,7 +26,7 @@ Field_Map036:
 	.incbin "MAP/MAP_036/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map036_BLEND:
-	.incbin "MAP/MAP_036/BLEND.script.lz"
+	.incbin "MAP/MAP_020/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map036_MARKERS:
 	.incbin "MAP/MAP_036/MARKERS.table"

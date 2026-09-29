@@ -26,4 +26,4 @@ Field_Map104:
 	.incbin "MAP/MAP_104/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map104_MARKERS:
-	.incbin "MAP/MAP_104/MARKERS.table"
+	.incbin "MAP/MAP_000/MARKERS.table"

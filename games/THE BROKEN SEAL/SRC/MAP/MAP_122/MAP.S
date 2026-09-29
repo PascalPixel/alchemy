@@ -23,4 +23,4 @@ Field_Map122:
 	.incbin "MAP/MAP_122/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map122_MARKERS:
-	.incbin "MAP/MAP_122/MARKERS.table"
+	.incbin "MAP/MAP_000/MARKERS.table"

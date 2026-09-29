@@ -24,10 +24,10 @@ Field_Map245:
 	.incbin "MAP/MAP_245/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map245_SHAPE_GRID:
-	.incbin "MAP/MAP_245/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_245/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map245_ANIMATION:
-	.incbin "MAP/MAP_245/ANIMATION.script.lz"
+	.incbin "MAP/MAP_012/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map245_SCENE:
 	.incbin "MAP/MAP_245/SCENE.parts.lz"

@@ -125,7 +125,7 @@ Func_0803a448:
 	cmp	r0, #0
 	beq.n	.L_0803a54a
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r3, #0
 	str	r3, [r5, #0]
 .L_0803a54a:
@@ -196,7 +196,7 @@ Func_0803a448:
 	bne.n	.L_0803a5d6
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0803a5d6:
 	add	sp, #4
 	pop	{r3, r5}

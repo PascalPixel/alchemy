@@ -223,10 +223,10 @@ Func_0804d754:
 	bl	0x080393fc
 	ldr	r0, [r6, #0]
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [r7, #124]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	bl	0x0804d118

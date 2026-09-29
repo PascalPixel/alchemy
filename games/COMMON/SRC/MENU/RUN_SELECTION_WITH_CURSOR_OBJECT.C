@@ -38,3 +38,4 @@ s32 Menu_RunSelectionWithCursorObject(void)
     UiWork_Finalize(win, 2);
     return 0;
 }
+

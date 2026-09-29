@@ -117,7 +117,7 @@ Func_0803f82c:
 	adds	r3, r1, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r0, [pc, #8]
 	bl	Func_08014644
 .L_0803f934:
@@ -139,7 +139,7 @@ Func_0803f82c:
 	cmp	r3, #0
 	beq.n	.L_0803f962
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r0, [pc, #4]
 	bl	Func_08014644
 .L_0803f962:
@@ -1508,10 +1508,10 @@ Func_0803f82c:
 .L_080404a0:
 	ldr	r0, [sp, #16]
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	mov	r0, r8
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	cmp	r6, #0
 	bne.n	.L_08040574
 	ldr	r5, [pc, #176]

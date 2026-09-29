@@ -80,6 +80,9 @@ Func_080391c4:
 	.4byte 0x06002500
 	.2byte 0x4444
 	.2byte 0x4444
+	.global UiWindow_Create
+	.thumb_func
+UiWindow_Create:
 	push	{r5, r6, r7, lr}
 	mov	r7, r8
 	push	{r7}

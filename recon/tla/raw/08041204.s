@@ -302,7 +302,7 @@ Func_08041204:
 .L_0804146e:
 	mov	r0, sl
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	bl	.L_08041254
 	movs	r0, #1
 	bl	0x08013560

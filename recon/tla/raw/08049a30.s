@@ -849,10 +849,10 @@ Func_08049a30:
 .L_0804a0e0:
 	ldr	r0, [sp, #52]
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #1
 	mov	r0, fp
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	ldr	r0, [sp, #56]
@@ -1755,10 +1755,10 @@ Func_08049a30:
 .L_0804a816:
 	ldr	r0, [sp, #44]
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	mov	r0, r9
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	ldr	r5, [sp, #16]
@@ -2602,7 +2602,7 @@ Func_08049a30:
 	cmp	r0, #0
 	beq.n	.L_0804ae8a
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0804ae8a:
 	ldr	r3, [sp, #80]
 	subs	r3, #1
@@ -3619,11 +3619,11 @@ Func_08049a30:
 	beq.n	.L_0804b66a
 	mov	r0, r9
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0804b66a:
 	ldr	r0, [sp, #72]
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #0
 	ldr	r0, [sp, #20]
 	bl	0x081180e0
@@ -3874,7 +3874,7 @@ Func_08049a30:
 .L_0804b85c:
 	mov	r0, sl
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0804b864:
 	mov	r0, r8
 	add	sp, #132

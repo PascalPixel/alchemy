@@ -1,3 +1,7 @@
+/* 2026-09-30 (Venus, tagged asm): a memory barrier after origin.x and the
+  object pointer loaded before the origin.z store fix the state-2 object
+  load; left are movs #13 against the flag load, the +71 address against the
+  flag store, and mov r1, r9 against the counter increment (6 lines). */
 /* 2026-09-29 (Mars): state 2 still 11 halfwords with the origin written as
  * one struct copy, and with the object pointer read through an s32 view. */
 /* NONMATCHING: 11 differing halfwords, all scheduling: in state 0 the ROM

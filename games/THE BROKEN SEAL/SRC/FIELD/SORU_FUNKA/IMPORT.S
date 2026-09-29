@@ -270,10 +270,10 @@ Engine_EventGetViewCenter:
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
-	.global Unnamed_0809509c
+	.global FieldEffect_InitSparkles
 	.thumb_func
-Unnamed_0809509c:
-	overlay_veneer Func_0808a2f8
+FieldEffect_InitSparkles:
+	overlay_veneer FieldEffect_InitSparklesFar
 	.global Engine_ColorBufferApplyTarget
 	.thumb_func
 Engine_ColorBufferApplyTarget:

@@ -8,7 +8,15 @@
  * loads z (sl) before x (r9); the 0x800 scale step and the 0x100000 height
  * build one instruction later. All sit just before a branch to the shared
  * finish; direct Engine_ calls, temporaries, if/else in place of goto finish
- * and 40k permuter candidates change nothing. */
+ * and 40k permuter candidates change nothing.
+ * 2026-09-29 (Mars): with the listing's calls masked the score is 130
+ * (2 register-only, 2 reordered plus the five argument loads). In the greg
+ * dump every Actor_Jump loads r0, r1, r2 in order; sched2 alone reorders
+ * them, and the same calls in a small test file never reorder, so the
+ * order follows the surrounding block, not the call's spelling. Every
+ * inline-wrapper parameter order, unprototyped casts of Engine_ActorJump
+ * and Engine_EventSetMessage, a do/while barrier, and a duplicated tail
+ * left for cross-jumping to merge all leave it unchanged. */
 /* The world map's Venus Djinni: on the first meeting it joins Isaac, grows
  * from a speck and explains itself, asking until the party agrees to listen;
  * later it offers to explain Djinn again. */

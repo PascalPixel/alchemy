@@ -447,7 +447,7 @@ void Resource381_NoOpCallbackB(void)
 s32 FieldScene_RunWhenWord225Is10(void)
 {
     if (gGameState.entrance == 10) {
-        Unnamed_0809509c();
+        FieldEffect_InitSparkles();
         Scene_SaturosTakesHostages();
     }
     return 0;

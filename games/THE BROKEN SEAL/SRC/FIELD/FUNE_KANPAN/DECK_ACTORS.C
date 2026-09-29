@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 FuneKanpan_CrewScriptD[];
 extern struct MapRenderWork *gMapWork;
 
 void Engine_EventBegin();
@@ -46,7 +47,7 @@ void FuneKanpan_PlaceDeckActors(s32 a0, s32 a1)
 
     *(s32 *)(*(s32 *)&gMapWork + 236) = 0x410000;
     Engine_EventBegin();
-    Call1(Event_CallWithLastActiveObjectId, 0x200d418);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptD);
     Engine_TaskWait(1);
     Engine_ActorDestroy(24);
     Call3(Engine_ActorSetPosition, 23, 0xee0000, 0x2720000);

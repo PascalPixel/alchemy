@@ -242,6 +242,9 @@ Engine_EventShowMessage:
 	.thumb_func
 Engine_EventShowMessageAndWait:
 	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	.global Engine_EventAskYesNo
+	.thumb_func
+Engine_EventAskYesNo:
 	overlay_veneer BattleEventRuntime_ProcessActionFar
 	.global Engine_ActorFaceDirection
 	.thumb_func

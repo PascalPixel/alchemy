@@ -5,12 +5,7 @@ struct ObjectSlot_080babdc {
     void *object;
 };
 
-struct Runtime_080babdc {
-    u8 padding_00[65];
-    u8 mode;
-};
-
-extern struct Runtime_080babdc *gBattleWork;
+#include "BATTLE_WORK.H"
 
 void *Owner_GetStateFar(s32 id);
 struct ObjectSlot_080babdc *GetBattleObjectSlot(s32 id);
@@ -47,5 +42,5 @@ void BattleMotion_RunValueSequence(s32 id)
         remaining--;
     } while (remaining >= 0);
 
-    UiWindow_DrawPartyStatusContentsFar(gBattleWork->mode);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
 }

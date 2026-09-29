@@ -33,7 +33,7 @@
 #include "GLOBAL_CELLS.H"
 #undef Resource_FindFreeSlot
 
-extern u16 Data_080c593c_a[];
+extern u16 Resource_SlotAssignments[];
 
 s32 Resource_FindFreeSlot(s32 key)
 {
@@ -42,10 +42,10 @@ s32 Resource_FindFreeSlot(s32 key)
   s32 result;
   for (index = 0; ; index += 1)
   {
-    entry = Data_080c593c_a[index];
+    entry = Resource_SlotAssignments[index];
     if (key == (entry & 0x1FF))
     {
-      result = *(u16 *) ((u8 *) Data_080c593c_a + index * 2) >> 9;
+      result = *(u16 *) (index * 2 + (u8 *) Resource_SlotAssignments) >> 9;
       goto done;
     }
     if (((s16) entry) == -1)

@@ -1,3 +1,17 @@
+/*
+ * Draft of resource_3b1 0x0200812c (FuneHeya_RunWalkerStep), from games/THE
+ * BROKEN SEAL/SRC/FIELD/FUNE_HEYA; the range links as disassembly (section
+ * .text.x0200812c of the overlay listing).
+ *
+ * Remaining: in the shared advance tail the reference loads the zero it
+ * stores into rise_counter from the literal pool after the step store
+ * (strh, then ldrb from the pool). Written as a plain zero below, GCC also
+ * takes it from the pool but schedules that load above the step store, a
+ * swap of two halfwords; u8, u16 and s32 spellings, a function-scope zero,
+ * step = step + 1 and storing the zero first all keep or worsen the swap.
+ * The unit matched only while the zero was the address of a link-time
+ * symbol at 0.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
@@ -10,8 +24,6 @@ struct Walker {
     u8 unknown_50[0x16];
     s16 step;
 };
-
-extern u8 Data_00000000[];
 
 static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 {
@@ -56,11 +68,7 @@ void FuneHeya_RunWalkerStep(struct FieldActor *obj)
         }
     advance:
         walker->step++;
-        {
-            u8 zero = (u32)Data_00000000;
-
-            obj->rise_counter = zero;
-        }
+        obj->rise_counter = 0;
         break;
     case 9:
         Engine_ObjectSetAnimation(obj, 2);

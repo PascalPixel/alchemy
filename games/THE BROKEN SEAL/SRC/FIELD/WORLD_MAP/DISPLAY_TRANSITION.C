@@ -6,6 +6,7 @@
  * Reconstructed from our own ROM and the existing world-map queue model. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "IO_REG.H"
 
 struct DisplayTransfer {
     const void *source;
@@ -20,7 +21,6 @@ struct DisplayTransferQueue {
 };
 
 extern struct DisplayTransferQueue gIoWriteQueue;
-extern volatile u16 RegIme;
 u16 gWorldMapBlend;
 extern const u8 gWorldMapPalettes[];
 extern const u8 gWorldMapPackedTiles[];
@@ -78,8 +78,12 @@ void Scene_RunScene371SequenceA(s32 palette)
     Map_ResumeAnimation();
     Resource_DecodeType01(gWorldMapPackedTiles, buffer);
     Resource_DecodeType01(gWorldMapPackedFrames, buffer + 0x1000);
-    q = &gIoWriteQueue;
-    ime = &RegIme;
+    /* FAKEMATCH: one scope keeps the queue ahead of the IME pointer in
+     * register allocation and the literal pool. */
+    do {
+        q = &gIoWriteQueue;
+        ime = &REG_IME;
+    } while (0);
     QueueTransfer(gWorldMapPalettes + palette * 32, (void *)0x050001c0, 0x80000010)
     QueueTransfer(buffer, (void *)0x06001000, 0x84000400)
     StartCallback(SceneEffect_RestoreBlendRegisters, 0xc80);

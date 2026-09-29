@@ -1,10 +1,7 @@
 #include "DMA.H"
+#include "IO_REG.H"
 
 void System_VBlankHandler(void);
-
-/* WAITCNT and SIOCNT values, link-time symbols loaded from the pool. */
-extern u8 Value_00004014;
-extern u8 Value_0000c00f;
 
 extern s32 gIoWriteQueue;
 extern u8 Data_03001ac4;
@@ -41,7 +38,7 @@ void System_Initialize(void)
         dma0[5];
     }
     /* FAKEMATCH: the do-while wraps pin the register writes in place. */
-    do { u32 value = (u32)&Value_00004014; *(u16 *)0x04000204 = value; } while (0);
+    do { u32 value = WAITCNT_GAME; REG_WAITCNT = value; } while (0);
     zero = 0;
     Dma_Set((const void *)&zero, (void *)0x03000000, 0x85001e00, (volatile u32 *)0x040000d4);
     Runtime_InitializeHeap();
@@ -55,7 +52,7 @@ void System_Initialize(void)
     Bg0_ClearTilemap();
     *(u16 *)0x04000000 = 0x140;
     Runtime_SetIrqHandler(0, 1, (void (*)(void))System_VBlankHandler);
-    do { u32 value = (u32)&Value_0000c00f; *(u16 *)0x04000132 = value; } while (0);
+    do { u32 value = KEYCNT_SOFT_RESET; REG_KEYCNT = value; } while (0);
     Audio_InitializeRuntimeDefaultsFar();
     Resource_InitializeTable();
     Scheduler_ResetTaskTable();

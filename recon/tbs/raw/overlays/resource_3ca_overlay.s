@@ -725,45 +725,6 @@ Func_020011c4:
 	.4byte 0x02009af8
 	.2byte 0x4000
 	.2byte 0x8000
-	.section .text.x020080b0,"ax",%progbits
-	.balign 4
-	.global Func_020000b0
-	.thumb_func
-Func_020000b0:
-	push {r5, lr}
-	ldr r5, [pc, #56]
-	movs r1, #6
-	ldrh r0, [r5]
-	bl 0x02009314
-	ldr r2, [pc, #48]
-	lsls r0, r0, #16
-	lsrs r0, r0, #15
-	adds r0, r0, r2
-	ldr r3, [pc, #44]
-	ldr r1, [pc, #48]
-	ldr r2, [pc, #48]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	ldrh r3, [r5]
-	movs r2, #140
-	adds r3, #1
-	strh r3, [r5]
-	lsls r2, r2, #14
-	lsls r3, r3, #16
-	cmp r3, r2
-	bls .L_020000b0_0
-	ldr r3, [pc, #8]
-	strh r3, [r5]
-.L_020000b0_0:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x00000000
-	.4byte 0x0200981c
-	.4byte 0x020094ac
-	.4byte 0x040000d4
-	.4byte 0x050000e8
-	.4byte 0x80000006
 	.section .text.x02008430,"ax",%progbits
 	.balign 4
 	.global Func_02000430

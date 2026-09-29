@@ -56,7 +56,7 @@
  * restore the record from the snapshot. The arrow renderer is a GNU C nested
  * function (main:08022a7c) that reaches the window through the static chain.
  *
- * The six stat labels load one linked message base (Data_000008ae) and the
+ * The six stat labels start at message 0x8ae and the
  * ability names another (Value_00000333); _call_via_r3,
  * UiText_RenderWideStringInWindow and UiWindow_DrawThreeTileColumn are
  * declared returning a value so r0 is set last at each call. The locals are
@@ -113,7 +113,6 @@ struct RenderOutput *RenderOutput_AcquireFree(void);
 s32 Resource_LoadIntoFreeSlot(s32);
 s32 Resource_GetBuffer(s32, const void *);
 void RenderOutput_AppendToList(struct RenderInput *, struct RenderOutput *);
-extern u8 Data_000008ae[];
 extern u8 Value_00000333[];
 extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
@@ -216,12 +215,12 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
 
     if (page == 0) {
         /* Stat labels down the left edge, then the pre-change column. */
-        UiText_DrawCharacterAtOffset((s32)Data_000008ae, win, 0, 8);
-        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 1, win, 0, 16);
-        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 2, win, 0, 24);
-        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 3, win, 0, 32);
-        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 4, win, 0, 40);
-        UiText_DrawCharacterAtOffset((s32)Data_000008ae + 5, win, 0, 48);
+        UiText_DrawCharacterAtOffset(0x8ae, win, 0, 8);
+        UiText_DrawCharacterAtOffset(0x8ae + 1, win, 0, 16);
+        UiText_DrawCharacterAtOffset(0x8ae + 2, win, 0, 24);
+        UiText_DrawCharacterAtOffset(0x8ae + 3, win, 0, 32);
+        UiText_DrawCharacterAtOffset(0x8ae + 4, win, 0, 40);
+        UiText_DrawCharacterAtOffset(0x8ae + 5, win, 0, 48);
 
         oldHp = snap->hp;
         UiText_FormatNumberToHalfwords(buf, oldHp);

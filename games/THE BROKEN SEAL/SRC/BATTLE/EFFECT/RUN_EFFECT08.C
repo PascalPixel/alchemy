@@ -29,7 +29,6 @@ struct PartyTargetState {
 };
 extern struct EffectGlobals Data_03001ebc;
 extern struct PartyTargetState Data_02000240;
-extern const u8 Value_00010001;
 void ObjectDispatch_ApplyValueToKind200Children(s32);
 void DisplayTransition_InitializeBattleEffectState(s32);
 struct EffectTarget *ObjectTable_Get(s32);
@@ -69,7 +68,7 @@ void RunBattleEffect08(void)
     work->x = target->x;
     work->height = target->z - target->y;
     BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
-    BattleFx_ApplyColorToTargetBuffer((s32)&Value_00010001, 1);
+    BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
     BattleFx_StartBufferInterpolation(1);
     WaitFrames(1);
     result = BattleFx_FindMatchingEvent(0x50000005, 8, &resource);

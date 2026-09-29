@@ -1,3 +1,15 @@
+/*
+ * main:0800bbc0 AnimationObject_Allocate - draft; the range links as
+ * disassembly (recon/tbs/raw/0800bbc0.s).
+ *
+ * Remaining: the reference loads the zero it stores into state and field_05
+ * as a word from the literal pool (ldr r3, =0) before the frames load and
+ * keeps it in r8. Written as zero = 0 below, GCC also takes the zero from
+ * the pool into r8 but as a halfword (ldrh) scheduled after the frames load,
+ * a two-halfword difference; u8, s16 and s32 spellings give the same ldrh.
+ * The unit matched only while the zero was the address of a link-time
+ * symbol at 0.
+ */
 #include "TYPES.H"
 
 struct AnimationMetadata {
@@ -31,7 +43,6 @@ struct AnimationObject {
 };
 
 extern struct AnimationObject *gAnimationObjects[];
-extern u8 Data_00000000[];
 
 struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 s32 Animation_LookupValueByKey(s32 key);
@@ -66,7 +77,7 @@ struct AnimationObject *AnimationObject_Allocate(s32 id)
             }
         }
         if (found != NULL) {
-            zero = (u16)(u32)Data_00000000;
+            zero = 0;
             frames = metadata->frames;
             object = found;
             object->id = (s16)id;

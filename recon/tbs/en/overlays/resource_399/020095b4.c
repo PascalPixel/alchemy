@@ -1,10 +1,22 @@
+/*
+ * Draft of resource_399 0x020095b4 (ImiruMura_SwayAndSpark), from games/THE
+ * BROKEN SEAL/SRC/FIELD/IMIRU_MURA; the range links as disassembly (section
+ * .text.x020095b4 of the overlay listing).
+ *
+ * Remaining: the reference stores the spark's motion flags from a zero it
+ * loads from the literal pool (ldrb, first pool word). Written as a plain
+ * zero below, GCC reuses the register that held the frame modulo, which is
+ * known to be zero inside the test, keeps it in r7 across the calls and
+ * drops the pool word; a u8 or u16 zero variable, a block-scope zero and a
+ * negated test give the same. The unit matched only while the zero was a
+ * link-time symbol named after its own value.
+ */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
 
 extern s32 ImiruMura_ArcOrigin;
-extern u8 Value_00000000;
 extern u8 ImiruMura_SparkScript[];
 
 void Vector_AddPolarOffset(s32 radius, s32 angle, s32 *pos);
@@ -17,7 +29,6 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
     s32 pos[3];
     struct FieldActor *spark;
     s32 radius;
-    u8 zero;
 
     phase = (s16 *)&actor->unknown_64;
     actor->x.fixed = ImiruMura_ArcOrigin + Iwram_MulQ16(0x60000, Engine_MathSin(*phase << 10));
@@ -37,8 +48,7 @@ void ImiruMura_SwayAndSpark(struct FieldActor *actor)
             spark->scale_x = 0x9999;
             spark->scale_y = 0x9999;
             spark->priority_flags = 2;
-            zero = (u8)(u32)&Value_00000000;
-            spark->motion_flags = zero;
+            spark->motion_flags = 0;
             Engine_ObjectSetPalette(spark, 9);
             Engine_ObjectSetScript(spark, (const s32 *)ImiruMura_SparkScript);
         }

@@ -1,5 +1,6 @@
 #include "EVENT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
+#include "RESOURCE_IDS.H"
 extern struct EventRuntime *Data_03001ebc;
 
 struct ResultWork {
@@ -12,7 +13,6 @@ struct ResultWork {
 };
 
 extern struct ResultWork gGameState;
-extern u8 Value_00000021;
 u16 BattleFx_GetWeightedResult(s32 arg0, s32 arg1);
 s16 BattleFx_GetPhaseResult(s32 value);
 s32 BattleFx_LookupResult(void *arg0);
@@ -26,8 +26,10 @@ void BattleFx_SetWeightedResult(s32 arg0, s32 arg1)
     register struct EventRuntime *runtime = Data_03001ebc;
 
     runtime->value_17c = BattleFx_GetWeightedResult(first, second);
+    /* Request 98, 0 sets the next battle's backdrop (game state halfword
+       235) to the storm-lit Venus Lighthouse aerie. */
     if (first == 98 && second == 0)
-        gGameState.special = (u16)(s32)&Value_00000021;
+        gGameState.special = (u16)(s32)&ResourceId_VinasuChojoStormBackdrop;
     if (runtime->mode_19e == 3)
         BattleFx_LookupResult((u8 *)ObjectTable_Get(gGameState.object_id) + 8);
     BattleFx_SelectBattleCue(first, second);

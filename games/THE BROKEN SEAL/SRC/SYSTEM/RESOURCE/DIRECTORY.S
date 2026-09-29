@@ -48,7 +48,7 @@ Resource_DirectoryTable:
 	resource , Battle_TakaraShimaBackdrop
 	resource , Battle_TakaraShimaCaveBackdrop
 	resource , Battle_KorosseoBackdrop
-	resource , Battle_VinasuChojoStormBackdrop
+	resource VinasuChojoStormBackdrop, Battle_VinasuChojoStormBackdrop
 	resource , Battle_VinasuChojoBackdrop
 	resource , Battle_VinasuHeyaBackdrop
 	resource , Battle_SuharaSabakuBackdrop
@@ -69,13 +69,13 @@ Resource_DirectoryTable:
 	resource , Battle_MakyuriHeyaBackdrop
 	resource , Battle_HaidiaArashiBackdrop
 	resource , Battle_ToretoEdaBackdrop
-	resource , Battle_BeachBackdrop
-	resource , Battle_SnowfieldBackdrop
-	resource , Battle_GrasslandBackdrop
-	resource , Battle_SoruShindenBackdrop
-	resource , Battle_ForestBackdrop
+	resource BeachBackdrop, Battle_BeachBackdrop
+	resource SnowfieldBackdrop, Battle_SnowfieldBackdrop
+	resource GrasslandBackdrop, Battle_GrasslandBackdrop
+	resource SoruShindenBackdrop, Battle_SoruShindenBackdrop
+	resource ForestBackdrop, Battle_ForestBackdrop
 	resource VioletSkyBackdrop, Battle_VioletSkyBackdrop
-	resource , Battle_DesertBackdrop
+	resource DesertBackdrop, Battle_DesertBackdrop
 	resource StormCloudBackdrop, Battle_StormCloudBackdrop
 	resource , Battle_AerialViewBackdrop
 	resource , BattleFx_ParticleSequenceDataA

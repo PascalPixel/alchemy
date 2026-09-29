@@ -1,38 +1,28 @@
-/* resource_3bb 0x02009ffc..0x0200a114: two owners that compiled exactly with
- * GCC 2.96 before the overlay was split into per-run sources; written against
- * the old single TASK.C declarations (see FIELD/KOROSSEO_KABE/TASK.H).
- * Remaining difference: both load the scene numbers 0x8f and 0x90 from their
- * literal pools, which only a link-time symbol explains, and the main image
- * defines no such names (the old Value_ equates were aliases). The calls it
- * still spells by address need the names of the veneers they reach before
- * adopting. */
 #include "TASK.H"
 extern u8 MsgKorosseoStageFirstFinalsMatch[];
 extern u8 MsgKorosseoStageSecondFinalsMatch[];
 extern u8 MsgKorosseoStageThirdFinalsMatch[];
 extern u8 MsgKorosseoWouldYouLikeHearDescription[];
 
-extern u8 Value_0000008f;
-extern u8 Value_00000090;
-extern s16 SceneStateHalfwords[];
-void Func_02006084(void);
-void Func_02005ebc(s32, s32);
-s32 Func_02005f1e(s32);
-void Func_02005f72(s32, s32);
+void Battle_ResetEffectCounter(void);
+s32 PartyTalkMenu_Choose(s32 mode);
 
+/* A finals competitor names the match by the stage the party stands on, the
+ * river, the wall or the log-rolling stage; the first time, the competitor
+ * offers to describe it. Returns the choice, or 2 and 3 for a party that has
+ * heard it before. */
 s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
 {
-
     s32 v;
     s32 id;
     s32 r;
 
-    Func_02006084();
-    Func_02005ebc(b, 5);
-    v = SceneStateHalfwords[224];
-    if (v == (s32)&Value_0000008f) {
+    Battle_ResetEffectCounter();
+    UiWork_PushValueSlot(b, 5);
+    v = gGameState.scene;
+    if (v == (s32)&SceneId_KorosseoKawa) {
         id = (s32)MsgKorosseoStageFirstFinalsMatch;
-    } else if (v == (s32)&Value_00000090) {
+    } else if (v == (s32)&SceneId_KorosseoKabe) {
         id = (s32)MsgKorosseoStageSecondFinalsMatch;
     } else {
         id = (s32)MsgKorosseoStageThirdFinalsMatch;
@@ -43,7 +33,7 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
         return 2;
     }
     if (GameFlag_IsSet(b + 520) != 0) {
-        r = Func_02005f1e(0);
+        r = PartyTalkMenu_Choose(0);
         if (r == 1) {
             return 2;
         }
@@ -58,17 +48,17 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
     return Event_ChooseYesNo(0, 0);
 }
 
+/* The competitor's follow-up line for the stage's match. */
 void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b)
 {
-
     s32 v;
     s32 id;
 
-    Func_02005f72(b, 5);
-    v = SceneStateHalfwords[224];
-    if (v == (s32)&Value_0000008f) {
+    UiWork_PushValueSlot(b, 5);
+    v = gGameState.scene;
+    if (v == (s32)&SceneId_KorosseoKawa) {
         id = (s32)MsgKorosseoStageFirstFinalsMatch;
-    } else if (v == (s32)&Value_00000090) {
+    } else if (v == (s32)&SceneId_KorosseoKabe) {
         id = (s32)MsgKorosseoStageSecondFinalsMatch;
     } else {
         id = (s32)MsgKorosseoStageThirdFinalsMatch;

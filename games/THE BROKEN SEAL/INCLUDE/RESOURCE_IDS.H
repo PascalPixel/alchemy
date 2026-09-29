@@ -61,6 +61,7 @@ extern char ResourceId_VioletPaletteD;
 extern char ResourceId_TornadoSheet;
 extern char ResourceId_CrystalSheet;
 extern char ResourceId_DefaultMapCells;
+extern char ResourceId_PictureB;
 extern char ResourceId_ShopCursorFrames;
 extern char ResourceId_Icons;
 extern char ResourceId_CommandIcons;

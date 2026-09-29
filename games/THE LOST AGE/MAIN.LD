@@ -801,6 +801,8 @@ SECTIONS
         "*/recon/tla/raw/080f8058.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8090.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f80a8.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GRAPHICS/TEXT/DRAW_NUMBER_RIGHT_ALIGNED_FAR.o"(.text)
+        "*/recon/tla/raw/080f8656.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8658.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8a44.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080f8ab4.o"(.text .rodata .data .padding)

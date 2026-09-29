@@ -37,6 +37,8 @@ extern char SceneId_MogoruMori1;
 extern char SceneId_MogoruMori2;
 extern char SceneId_MogoruMori3;
 extern char SceneId_YamaRama1;
+extern char SceneId_ArutinMura1;
+extern char SceneId_ArutinMura2;
 extern char SceneId_ArutinYama1;
 extern char SceneId_ArutinYama2;
 extern char SceneId_ArutinYama3;

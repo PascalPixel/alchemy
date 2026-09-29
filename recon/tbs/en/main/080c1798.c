@@ -26,7 +26,7 @@ void WaitFrames(s32);
 void QueueIoWriteDelay2(u32, u32);
 void _call_via_r3(void *, s32);
 void BattleMotion_ProjectScaledPosition(s32, struct ScreenPosition *);
-void Func_080c0774(s32, u16, s32);
+void BattlePresentation_ConfigurePaletteFade(s32, u16, s32);
 void Func_080c1470(s32);
 void Graphics_ResetVramBlockAndReleaseHeapBlocks(s32);
 void Graphics_ScaleRgb555Clamped(void *, void *, s32, s32);
@@ -59,7 +59,7 @@ void Func_080c1798(s32 actor, s32 value, s32 mode, s32 parameter)
     s32 i;
 
     WaitFrames(1);
-    Func_080c0774(1, FIELD(battle, u16, 0x648), 0);
+    BattlePresentation_ConfigurePaletteFade(1, FIELD(battle, u16, 0x648), 0);
     _call_via_r3((void *)0x03000164, 0x4000);
     QueueIoWriteDelay2(0x04000000, 0x3741);
     QueueIoWriteDelay2(0x0400000c, 0x3741);

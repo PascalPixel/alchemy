@@ -1,3 +1,19 @@
+/* NONMATCHING (address-bound): Makyuri_SpawnLightObjects, resource_39b at
+ * 0x02009a3c (396 bytes with its pool and alignment); twin
+ * resource_39c:0x0200cfcc. Formerly FIELD/COMMON/MAKYURI/LIGHT_OBJECTS.C,
+ * which no script linked.
+ *
+ * Remaining difference: 394 of 394 code bytes, 5 differing halfwords, all
+ * in the cell address sum and the state pointer's scratch copy: the
+ * reference adds the index to the base (adds r2, r2, r3) and copies the
+ * state into r0, this source the base to the index into r3 with the state
+ * copy in r2. Spelled with the map cell buffer as the integer 0x02010000
+ * the source is byte-identical to both copies: agscc then folds the
+ * address into the add as a constant, while the symbol gMapCellBuffer comes
+ * from the constant pool and CSE orders it second. Declaring the buffer as
+ * a typed array, a local base pointer, or the base assigned before the add
+ * (4 halfwords: the sum then forms in sl) did not reproduce it. It links
+ * once the map cell buffer has an honest link-time number. */
 #include "DMA.H"
 extern u8 gMapCellBuffer[];
 
@@ -51,8 +67,7 @@ struct MakyuriCell {
     u8 pad03;
 };
 
-extern s32 Data_02000240_t[];
-extern u8 Makyuri_ZeroWord[];
+extern s32 gGameState[];
 extern u8 Makyuri_LowerLightScript[];
 extern u8 Makyuri_UpperLightScript[];
 struct MakyuriLights **Runtime_AllocateBlockFar(s32 slot, s32 size);
@@ -84,7 +99,7 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
         st->region = region;
         return;
     }
-    actor = ObjectTable_GetFar(Data_02000240_t[125]);
+    actor = ObjectTable_GetFar(gGameState[125]);
     z = actor->z;
     cell = (struct MakyuriCell *)gMapCellBuffer + ((z / 0x100000) << 7) + actor->x / 0x100000;
     if (st->lit != 0 && st->lower != 0) {
@@ -120,13 +135,16 @@ upper:
         obj->scale = 0x40000;
         if (anim != 0) {
             AnimationObjects_SelectAnimationFar(anim, 6);
-            /* FAKEMATCH: the zero frame is a HImode pool constant, whose
-             * short pool range dumps the literal pool before the tail. */
+            /* FAKEMATCH: a one-halfword aggregate holds the zero frame, a
+             * halfword pool constant whose short pool range dumps the
+             * literal pool before the tail. */
             {
-                u8 *frame = &anim->frame;
-                s32 zero = (u16)(u32)Makyuri_ZeroWord;
+                struct Half {
+                    u16 v;
+                } zero;
 
-                *frame = zero;
+                zero.v = 0;
+                anim->frame = zero.v;
             }
         }
         st->upper = obj;

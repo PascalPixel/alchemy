@@ -1,10 +1,9 @@
-/* Draft of resource_373 0x0200b4c8..0x0200bfb0 (2792 bytes with pool),
- * FieldScene_RunLargeStagingSequence; the listing keeps the rows. Remaining
- * difference: the reference loads message 0xee8 into r5 after the two calls
- * that precede its first use, as a link-time message symbol is loaded; the
- * constant is hoisted above them, which shifts every later pool offset (1192
- * bytes differ from +0x126, same size). */
+/* Draft of resource_373 0x0200b4c8 (FieldScene_RunLargeStagingSequence): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgHaidiaRepairCaption). The listing
+ * keeps these rows until the draft is adopted. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.H"
+extern u8 MsgHaidiaRepairCaption[];
 
 void FieldScene_RunLargeStagingSequence(void)
 {
@@ -59,7 +58,7 @@ void FieldScene_RunLargeStagingSequence(void)
     base7_200e590 = (s32)gLeaderHammerAction;
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, base7_200e590);
     Graphics_EnableObjLayerAndCallbacks();
-    base5_ee8 = MSG_REPAIR_CAPTION;
+    base5_ee8 = (s32)MsgHaidiaRepairCaption;
     UiText_ShowCenteredMessage(base5_ee8, 0, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Camera_MoveTo(0x1530000, 0xa00000, 0x4950000, 0);

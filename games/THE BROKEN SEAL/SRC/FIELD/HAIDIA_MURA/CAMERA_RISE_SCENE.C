@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgHaidiaPuppiesPlayingOver[];
+extern u8 MsgHaidiaRrruffRrrruff[];
 extern struct MapRenderWork *gMapWork;
 
 
@@ -47,7 +49,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 /* Until flag 0x808 is set, raise the camera 40 steps above an actor while
- * message 0xf4d plays, show message 0xf4f, lower it again and return the
+ * MsgHaidiaRrruffRrrruff plays, show MsgHaidiaPuppiesPlayingOver, lower it again and return the
  * camera to its target. */
 void HaidiaMura_RunCameraRiseScene(void)
 {
@@ -63,7 +65,7 @@ void HaidiaMura_RunCameraRiseScene(void)
         Call3(ObjectMotion_SetSpeedParameters, 0, 0x10000, 0x8000);
         Object_SetModeById(0, 1);
         Battle_WaitMode0(2);
-        Call1(Engine_EventSetMessage, 0xf4d);
+        Call1(Engine_EventSetMessage, (s32)MsgHaidiaRrruffRrrruff);
         Engine_EventShowMessageAndWait(15, 0, 2);
         Engine_EventShowMessageAndWait(16, 0, 2);
         rec = (s32 *)Value1(Object_GetById, 0);
@@ -80,7 +82,7 @@ void HaidiaMura_RunCameraRiseScene(void)
             Engine_MapRedraw();
         } while (n != 40);
         Battle_WaitMode0(60);
-        Call2(Engine_MessageShowCentered, 0xf4f, 1);
+        Call2(Engine_MessageShowCentered, (s32)MsgHaidiaPuppiesPlayingOver, 1);
         n = 0;
         Battle_WaitMode0(6);
         do {

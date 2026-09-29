@@ -1,4 +1,5 @@
 #include "STAGED_MOTION.H"
+extern u8 MsgHaidiaDoorWontOpen[];
 
 void Effect_PlayStepSound(void)
 {
@@ -9,7 +10,7 @@ void Effect_PlayStepSound(void)
 void FieldScene_RunScriptedStepEE4(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_DOOR_WONT_OPEN_FORCE_IMPACT, 1);
+    Message_ShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
     Event_End();
 }
 

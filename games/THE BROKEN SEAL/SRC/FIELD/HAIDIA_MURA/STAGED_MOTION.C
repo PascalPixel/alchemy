@@ -1,4 +1,18 @@
 #include "STAGED_MOTION.H"
+extern u8 MsgHaidiaDoYouNeedToGo[];
+extern u8 MsgHaidiaDontGoBeyondSukuretasCottage[];
+extern u8 MsgHaidiaIFeltAnotherOne[];
+extern u8 MsgHaidiaIToldGeraldItWas[];
+extern u8 MsgHaidiaIllGetYouForMy[];
+extern u8 MsgHaidiaIsJasmineBackYet[];
+extern u8 MsgHaidiaItWontRainForSome[];
+extern u8 MsgHaidiaNoTravelersSinceTheEruption[];
+extern u8 MsgHaidiaSukuretaHasntComeBack[];
+extern u8 MsgHaidiaSukuretaIsWaitingForUs[];
+extern u8 MsgHaidiaTheGroundStillShakes[];
+extern u8 MsgHaidiaYouCantBeRobin[];
+extern u8 MsgHaidiaYouMakeMeSoMad[];
+extern u8 MsgHaidiaYourGrandpaIsTheMayor[];
 
 s32 MapStagedScene_SelectPrimaryData(void)
 {
@@ -60,10 +74,10 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Event_SetMessage(MSG_THE_GROUND_STILL_SHAKES);
+        Event_SetMessage((s32)MsgHaidiaTheGroundStillShakes);
         Event_ShowMessage(10, 0);
     } else {
-        Event_SetMessage(MSG_YOUR_GRANDPA_IS_THE_MAYOR);
+        Event_SetMessage((s32)MsgHaidiaYourGrandpaIsTheMayor);
         Actor_FaceEachOther(10, ACTOR_PARTY_LEADER, 4);
         Event_AskYesNo(10, 0);
     }
@@ -75,15 +89,15 @@ void SceneDialogue_RunActorFourteenTalk(void)
     s32 flag = 0x806;
     Event_Begin();
     if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Event_SetMessage(MSG_SUKURETA_HASNT_COME_BACK);
+        Event_SetMessage((s32)MsgHaidiaSukuretaHasntComeBack);
         Event_ShowMessage(14, 0);
     } else if (GameFlag_IsSet(flag) == 0) {
         GameFlag_Set(flag);
-        Event_SetMessage(MSG_DO_YOU_NEED_TO_GO_PAST);
+        Event_SetMessage((s32)MsgHaidiaDoYouNeedToGo);
         Actor_FaceEachOther(14, ACTOR_PARTY_LEADER, 4);
         Event_AskYesNo(14, 0);
     } else {
-        Event_SetMessage(MSG_DONT_GO_BEYOND_SUKURETAS_COTTAGE);
+        Event_SetMessage((s32)MsgHaidiaDontGoBeyondSukuretasCottage);
         Actor_FaceEachOther(14, ACTOR_PARTY_LEADER, 4);
         Event_ShowMessage(14, 0);
     }
@@ -98,7 +112,7 @@ void FieldScene_RunFlag807BranchSequence(void)
     Event_Begin();
     if (GameFlag_IsSet(0x807) == 0) {
         GameFlag_Set(0x807);
-        Event_SetMessage(MSG_YOU_MAKE_ME_SO_MAD);
+        Event_SetMessage((s32)MsgHaidiaYouMakeMeSoMad);
         Actor_ShowEmote(18, 0x103, 0);
         Actor_FaceEachOther(ACTOR_PARTY_LEADER, 18, 20);
         Event_ShowMessageAndWait(18, 0, 6);
@@ -111,7 +125,7 @@ void FieldScene_RunFlag807BranchSequence(void)
         Actor_ShowEmote(ACTOR_PARTY_LEADER, 0x102, 60);
     } else {
         Actor_ShowEmote(18, 0x103, 0);
-        Event_SetMessage(MSG_ILL_GET_YOU_FOR_MY_FLOWERS);
+        Event_SetMessage((s32)MsgHaidiaIllGetYouForMy);
         Event_ShowMessageAndWait(18, 0, 20);
     }
     Event_End();
@@ -121,9 +135,9 @@ void SceneDialogue_RunActor21FlaggedLine(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x202) != 0) {
-        Event_SetMessage(MSG_I_TOLD_GERALD_IT_WAS_ALL_RIGHT);
+        Event_SetMessage((s32)MsgHaidiaIToldGeraldItWas);
     } else {
-        Event_SetMessage(MSG_IT_WONT_RAIN_FOR_SOME_TIME);
+        Event_SetMessage((s32)MsgHaidiaItWontRainForSome);
     }
     Event_ShowMessage(21, 0);
     Event_End();
@@ -133,7 +147,7 @@ void SceneDialogue_RunActor10LineAndFlag81f(void)
 {
     Event_Begin();
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 10, 20);
-    Event_SetMessage(MSG_IS_JASMINE_BACK_YET);
+    Event_SetMessage((s32)MsgHaidiaIsJasmineBackYet);
     Event_ShowMessage(10, 0);
     GameFlag_Set(0x81f);
     Event_End();
@@ -148,7 +162,7 @@ void FieldScene_RunScene373_02000cd0(void)
     Work_SetValuesIfNonNegative(0x30000, 0x30000, 0x10000);
     Task_Wait(10);
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Event_SetMessage(MSG_I_FELT_ANOTHER_ONE);
+    Event_SetMessage((s32)MsgHaidiaIFeltAnotherOne);
     Event_ShowMessageAndWait(17, 0, 20);
     Actor_FaceActor(17, ACTOR_PARTY_LEADER, 20);
     Event_ShowMessage(17, 0);
@@ -161,7 +175,7 @@ void SceneDialogue_RunActorNineteenDialogue(void)
     Actor_RunRepeatedMotion(19, 2);
     Event_Wait(20);
     Actor_FaceActor(19, ACTOR_PARTY_LEADER, 20);
-    Event_SetMessage(MSG_NO_TRAVELERS_SINCE_THE_ERUPTION);
+    Event_SetMessage((s32)MsgHaidiaNoTravelersSinceTheEruption);
     Event_AskYesNo(19, 0);
     GameFlag_Set(0x307);
     Event_End();
@@ -250,7 +264,7 @@ void SceneDialogue_RunFlag815GatedStep(void)
 {
     if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0 && GameFlag_IsSet(0x87a) == 0) {
         Event_Begin();
-        Event_SetMessage(MSG_YOU_CANT_BE_ROBIN);
+        Event_SetMessage((s32)MsgHaidiaYouCantBeRobin);
         Event_OpenMessage(21, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_ShowMessageAndWait(21, 0, 60);
@@ -325,7 +339,7 @@ void FieldScene_RunScene373SequenceC(void)
     Actor_SetSpeed(ACTOR_JASMINE, 0x10000, 0x8000);
     Actor_WalkToAndWait(ACTOR_JASMINE, 110, 0x11b);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_JASMINE, 2);
-    Event_SetMessage(MSG_SUKURETA_IS_WAITING_FOR_US);
+    Event_SetMessage((s32)MsgHaidiaSukuretaIsWaitingForUs);
     if (*(s32 *)(rec8 + 8) < *(s32 *)(rec7 + 8)) {
         Event_ShowMessageAndWait(0xa005, 0, 2);
     } else {

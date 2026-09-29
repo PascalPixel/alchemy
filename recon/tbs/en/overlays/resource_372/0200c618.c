@@ -1,13 +1,14 @@
-/* NONMATCHING: resource_372 at 0x0200c618, from FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_H.C, stays listing.
- *
- * Remaining difference: the ROM loads message 0x1120 from its literal pool, so the source named it by a link-time symbol; the main image has no name for it, and a plain constant builds it with a move and a shift.
- */
+/* Draft of resource_372 0x0200c618 (FieldScene_RunScriptedStep1120): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgHaidiaSChestValuables). The listing
+ * keeps these rows until the draft is adopted. */
 
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaSChestValuables[];
 
 void FieldScene_RunScriptedStep1120(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_ITS_GERALD_CHEST_VALUABLES, 1);
+    Message_ShowCentered((s32)MsgHaidiaSChestValuables, 1);
     Event_End();
 }

@@ -23,7 +23,7 @@ msgctxt "message"
 msgid "00003"
 msgstr "(データがこわれています)"
 
-msgctxt "message"
+msgctxt "MsgSaveDataCorrupted"
 msgid "00004"
 msgstr "データのいちぶが こわれているため{line_break}ただしく ふっきできません{page_break}"
 
@@ -35,7 +35,7 @@ msgctxt "message"
 msgid "00006"
 msgstr "{text_color:5}・・・おきのどくですが {line_break}ふっきできませんでした{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveAdventureQuestion"
 msgid "00007"
 msgstr "ぼうけんを きろくしますか?{end_now}"
 
@@ -9703,7 +9703,7 @@ msgctxt "message"
 msgid "02423"
 msgstr "なにも ないようだ{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldDoorTightlyLocked"
 msgid "02424"
 msgstr "とびらは かたくとざされている{end_wait}"
 
@@ -9835,7 +9835,7 @@ msgctxt "message"
 msgid "02456"
 msgstr "宝ばこはミミックだった!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaPartyPpRestored"
 msgid "02457"
 msgstr "みんなのEPがまんたん!{end_wait}"
 
@@ -14183,7 +14183,7 @@ msgctxt "message"
 msgid "03543"
 msgstr "これで ボクたちを{line_break}セットじょうたいから{line_break}ときはなてるんですよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapOh"
 msgid "03544"
 msgstr "あっ!{end_wait}"
 
@@ -14235,7 +14235,7 @@ msgctxt "message"
 msgid "03556"
 msgstr "どうです このボクを{line_break}おともにしてくれます?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapComePromiseWont"
 msgid "03557"
 msgstr "そんなあ ボク ぜったい{line_break}ソンは させませんから{line_break}おともにして下さいよ!{end_now}"
 
@@ -14259,15 +14259,15 @@ msgctxt "message"
 msgid "03562"
 msgstr "つれてって!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapMeanieDontCare"
 msgid "03563"
 msgstr "・・・いじわる{page_break}もう こうなったら いじでも{line_break}ついて行きますからねっ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapSeeWontRegret"
 msgid "03564"
 msgstr "そう いってくれると{line_break}おもってました。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapAbilityVenusDjinni"
 msgid "03565"
 msgstr "ヴィーナスのジン {text_color:5}{argument_ability_name}{text_color:16}が{line_break}{actor_name:1}の しもべになった{end_wait}"
 
@@ -14275,15 +14275,15 @@ msgctxt "message"
 msgid "03566"
 msgstr "それじゃ ジンの使い方{line_break}かんたんに おしえます。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapAfterBringingDjinniIntoYour"
 msgid "03567"
 msgstr "ボクらをなかまにしたら{line_break}まず パーティのだれかに{line_break}セットしてみて下さいね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapNextIllShowHowCan"
 msgid "03568"
 msgstr "つぎは せんとうの時の{line_break}きほんてきな使い方です。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapSeeDjinnUseful"
 msgid "03569"
 msgstr "ねっ! ボクらジンは{line_break}すっごく やくに立つでしょ。{end_wait}"
 
@@ -14291,7 +14291,7 @@ msgctxt "message"
 msgid "03570"
 msgstr "それから もうひとつ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapGoSetStandby"
 msgid "03571"
 msgstr "つまり セット スタンバイ{line_break}リカバリー そしてまたセットの{line_break}サイクルで ボクらは動くんです。{end_wait}"
 
@@ -14303,7 +14303,7 @@ msgctxt "message"
 msgid "03573"
 msgstr "だいたい わかってもらえました?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapHmmmmExplainAgain"
 msgid "03574"
 msgstr "うーん{pause_20_skippable} それじゃ もういちど{line_break}説明しましょうか?{end_now}"
 
@@ -14311,7 +14311,7 @@ msgctxt "message"
 msgid "03575"
 msgstr "じゃあ さいしょから{line_break}説明しますね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapYeahWantLearn"
 msgid "03576"
 msgstr "あっ そうだ! ジンのことを{line_break}もっと くわしく知りたければ{line_break}ルールを 見て下さいね。{end_wait}"
 
@@ -14383,11 +14383,11 @@ msgctxt "message"
 msgid "03593"
 msgstr "さゆうで べつページのひょうじ   B:もどる"
 
-msgctxt "message"
+msgctxt "MsgClearPasswordLabel"
 msgid "03594"
 msgstr "パスワード"
 
-msgctxt "message"
+msgctxt "MsgClearSaveLabel"
 msgid "03595"
 msgstr "ぼうけんのきろく"
 
@@ -14395,7 +14395,7 @@ msgctxt "message"
 msgid "03596"
 msgstr "そうしん じゅんび中です"
 
-msgctxt "message"
+msgctxt "MsgClearSendingData"
 msgid "03597"
 msgstr "データを そうしん中です"
 
@@ -14403,7 +14403,7 @@ msgctxt "message"
 msgid "03598"
 msgstr "B:やめる"
 
-msgctxt "message"
+msgctxt "MsgClearCommunicationError"
 msgid "03599"
 msgstr "つうしんが せつだんされました"
 
@@ -16243,7 +16243,7 @@ msgctxt "message"
 msgid "04058"
 msgstr "さーて こんどのお客様は{line_break}お目あての 品ものを{line_break}あてられるかしら・・・?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWake"
 msgid "04059"
 msgstr "おきるのよ {actor_name:1}。{end_wait}"
 
@@ -16279,11 +16279,11 @@ msgctxt "message"
 msgid "04067"
 msgstr "そのとおりだわ {actor_name:1}{line_break}いのちさえあれば あとで{line_break}なんでも 手に入るわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoraHurryBoulder"
 msgid "04068"
 msgstr "いそげ キニー {actor_name:1}{line_break}大岩が くるぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaKyleAbleStop"
 msgid "04069"
 msgstr "大岩はとめられそう・・・?{end_wait}"
 
@@ -16319,15 +16319,15 @@ msgctxt "message"
 msgid "04077"
 msgstr "行けるわね {actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaBigBoyWhy"
 msgid "04078"
 msgstr "あなたは 男の子でしょ{line_break}ひとりで 行ってちょうだい{pause_20_skippable}{line_break}行けるわね {actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaKnowWayGo"
 msgid "04079"
 msgstr "わかってると おもうけど{line_break}南に行けば ひろばよ{pause_20_skippable}{line_break}気をつけて行ってね!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHuh"
 msgid "04080"
 msgstr "なんだ・・・{actor_name:1}か!{end_wait}"
 
@@ -16347,7 +16347,7 @@ msgctxt "message"
 msgid "04084"
 msgstr "さあ{pause_20_skippable} 大岩がくる前に{line_break}ひろばへ にげるんだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaUghHrnghhh"
 msgid "04085"
 msgstr "{text_effect:4}ウーン・・・{pause_20_skippable} ウーン・・・。{end_wait}"
 
@@ -16355,7 +16355,7 @@ msgctxt "message"
 msgid "04086"
 msgstr "なにしてるって {actor_name:1}・・・{line_break}ボクのだいじな 宝ものを{line_break}もち出そうと してるのさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWantDumpStuff"
 msgid "04087"
 msgstr "宝ものより いのち・・・{line_break}そういうのか {actor_name:1}?"
 
@@ -16363,11 +16363,11 @@ msgctxt "message"
 msgid "04088"
 msgstr "こんな おもたいはこをもって{line_break}いどうしてたらキケンか・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaKnowRightOk"
 msgid "04089"
 msgstr "たしかに キミのいうとおりだ{line_break}よし{pause_20_skippable} いそいでにげようぜ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontLeaveMeHere"
 msgid "04090"
 msgstr "このボクをおいて・・・{line_break}にげようってのか {actor_name:1}?{end_now}"
 
@@ -16379,7 +16379,7 @@ msgctxt "message"
 msgid "04092"
 msgstr "たしかに キミのいうとおりだ{line_break}よし{pause_20_skippable} いそいでにげようぜ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHey"
 msgid "04093"
 msgstr "おーい {actor_name:1}!{end_wait}"
 
@@ -16407,7 +16407,7 @@ msgctxt "message"
 msgid "04099"
 msgstr "ひなんばしょは 南だ{line_break}南のひろばをめざそう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNorthLeadsToMtAleph"
 msgid "04100"
 msgstr "ここを 北にむかったら{line_break}アルファ山のほうがくだよ。{end_wait}"
 
@@ -16415,7 +16415,7 @@ msgctxt "message"
 msgid "04101"
 msgstr "ひなんばしょは あっちだ{line_break}南に むかうんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCantGetAroundThisRock"
 msgid "04102"
 msgstr "アルファ山の らく石で{line_break}道が ふさがれてるぞ。{end_wait}"
 
@@ -16423,7 +16423,7 @@ msgctxt "message"
 msgid "04103"
 msgstr "この道は あきらめて{line_break}べつの道から にげよう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheBoulderIsFalling"
 msgid "04104"
 msgstr "{text_effect:4}ワーッ 大岩がくるぞ!{end_wait}"
 
@@ -16447,7 +16447,7 @@ msgctxt "message"
 msgid "04109"
 msgstr "いそいでにげよう {actor_name:1}{line_break}大岩がころがってくるぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRockslideDestroyedFence"
 msgid "04110"
 msgstr "岩で サクがこわれて{line_break}モンスターが・・・。{end_wait}"
 
@@ -16471,11 +16471,11 @@ msgctxt "message"
 msgid "04115"
 msgstr "モンスターのこと・・・{line_break}ホントだから ちゅういして{line_break}ひろばに にげておいでよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSaveYourselves"
 msgid "04116"
 msgstr "オレは もう ダメだ{line_break}お前たちだけでも にげろ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNoBrother"
 msgid "04117"
 msgstr "{actor_name:5}兄さん・・・!{end_wait}"
 
@@ -16535,7 +16535,7 @@ msgctxt "message"
 msgid "04131"
 msgstr "さあ 行きましょう!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoLookNorth"
 msgid "04132"
 msgstr "わたしは 北に行くから・・・{line_break}あなたは ひろばに行ってね。{end_wait}"
 
@@ -16559,7 +16559,7 @@ msgctxt "message"
 msgid "04137"
 msgstr "川におちた{actor_name:5}の{line_break}たすけをよびに行くのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontSupposeTwo"
 msgid "04138"
 msgstr "そうだ{pause_20_skippable} あなたたちも{line_break}手伝ってちょうだい?{end_now}"
 
@@ -16571,11 +16571,11 @@ msgctxt "message"
 msgid "04140"
 msgstr "イヤだったら いいけど・・・{pause_20_skippable}{line_break}とにかく ひろばに行きなさい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaOh"
 msgid "04141"
 msgstr "ああ {actor_name:1}か・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTwoDontEnough"
 msgid "04142"
 msgstr "お前たちの エナジーでは{line_break}{actor_name:5}は すくえない{line_break}だれか つれてきてくれ。{end_wait}"
 
@@ -16587,7 +16587,7 @@ msgctxt "message"
 msgid "04144"
 msgstr "{actor_name:5} しっかり・・・{line_break}クイをはなしちゃダメよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCanIUsePsynergy"
 msgid "04145"
 msgstr "えっ{pause_20_skippable} このワシが・・・{line_break}エナジーを使えるかと{line_break}きいとるんか {actor_name:1}?{end_now}"
 
@@ -16611,7 +16611,7 @@ msgctxt "message"
 msgid "04150"
 msgstr "まあ{pause_20_skippable} {actor_name:5}ちゃんが・・・{line_break}川で おぼれそうなの!{page_break}それで {actor_name:6}ちゃんが{line_break}あわてて やってきたのね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIHaveSomePsynergyLeft"
 msgid "04151"
 msgstr "ボク エナジーのこってるよ。{end_wait}"
 
@@ -16619,11 +16619,11 @@ msgctxt "message"
 msgid "04152"
 msgstr "どう{pause_20_skippable} ボク すごいでしょ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWentOffWay"
 msgid "04153"
 msgstr "{actor_name:6}の おねえちゃんは{line_break}おくのほうに 行ったわよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSureHelp"
 msgid "04154"
 msgstr "{actor_name:5}お兄ちゃん・・・{line_break}きっと たすけてあげてね。{end_wait}"
 
@@ -16643,7 +16643,7 @@ msgctxt "message"
 msgid "04158"
 msgstr "{actor_name:5}をたすけてくれって{line_break}{actor_name:6}に たのまれたよ{page_break}エナジーさえ 使ってなきゃ{line_break}すぐ 行ってやるんだが・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoAidElders"
 msgid "04159"
 msgstr "大岩が村にせまっておる{line_break}神官たちのもとへ{line_break}いますぐ むかうのじゃ。{end_wait}"
 
@@ -16707,7 +16707,7 @@ msgctxt "message"
 msgid "04174"
 msgstr "ことは いっこくをあらそう{line_break}すぐに 行ってやっておくれ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMomDadBack"
 msgid "04175"
 msgstr "パパ ママ{pause_20_skippable} わたしよ!{end_wait}"
 
@@ -16747,19 +16747,19 @@ msgctxt "message"
 msgid "04184"
 msgstr "パパ ママ{pause_20_skippable} 兄さん・・・{pause_20_skippable}{pause_20_skippable}{line_break}おねがいよ わたしを・・・{line_break}ひとりに しないで・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaBoulderNeedGet"
 msgid "04185"
 msgstr "{actor_name:1}・・・あの大岩が・・・{pause_20_skippable}{pause_20_skippable}{line_break}たすけをよびに 行かなくちゃ{line_break}みんな おぼれちゃうよ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIllGo"
 msgid "04186"
 msgstr "{text_effect:4}お{pause_20_skippable} おお{pause_20_skippable} オレが・・・{line_break}たすけをよびに行くぜ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaICantMoveGetHelp"
 msgid "04187"
 msgstr "{text_effect:4}ダメだ{pause_20_skippable} こしがぬけて・・・{pause_20_skippable}{pause_20_skippable}{line_break}{actor_name:1} 行ってきてくれ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRobin"
 msgid "04188"
 msgstr "{actor_name:1}が 行っちゃった・・・。{end_wait}"
 
@@ -16771,7 +16771,7 @@ msgctxt "message"
 msgid "04190"
 msgstr "こういう時 だからこそ{line_break}男であるオレたちが{line_break}しっかり しなきゃな!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaOnlyTwoSurvived"
 msgid "04191"
 msgstr "のこったのは ふたりだけか・・・。{end_wait}"
 
@@ -16827,23 +16827,23 @@ msgctxt "message"
 msgid "04204"
 msgstr "あんしんしろ いまから・・・{line_break}わすれられるように してやる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoorWontOpen"
 msgid "04205"
 msgstr "とびらは ひらかない{page_break}大岩の しょうげきで{line_break}たてつけが わるくなったようだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThinkForgetThings"
 msgid "04206"
 msgstr "まず いのちが たすかるように{line_break}宝ものは あきらめろってのか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRockHitsLose"
 msgid "04207"
 msgstr "こんなデカイはこをもったまま{line_break}岩がころがってきたら・・・{line_break}いのちも宝も おしまいだって?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRightDitchStuff"
 msgid "04208"
 msgstr "わかった キミのいうとおりだ{line_break}ざんねんだけど 宝はおいて{line_break}いそいで にげることにしよう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRepairCaption"
 msgid "04209"
 msgstr "あれから 3年がたった。{end_wait}"
 
@@ -16951,7 +16951,7 @@ msgctxt "message"
 msgid "04235"
 msgstr "{actor_name:6}・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoodJob"
 msgid "04236"
 msgstr "ごくろうさま {actor_name:1}。{end_wait}"
 
@@ -16979,7 +16979,7 @@ msgctxt "message"
 msgid "04242"
 msgstr "やっぱりね {actor_name:1}・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWorkingYourselvesBone"
 msgid "04243"
 msgstr "あれから あなたと{actor_name:2}{line_break}まるで人が かわったみたいに{line_break}エナジーをきたえてるわ・・・。{end_wait}"
 
@@ -16995,7 +16995,7 @@ msgctxt "message"
 msgid "04246"
 msgstr "ふーん{pause_20_skippable} そうかなあ?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDevastatedWhenKyle"
 msgid "04247"
 msgstr "わたしだってショックだったわ{line_break}ドリーが 死ぬなんて・・・。{end_wait}"
 
@@ -17095,7 +17095,7 @@ msgctxt "message"
 msgid "04271"
 msgstr "わたしの気もちは わかるけど{line_break}ともだちも だいじなわけね?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAsStubbornAsYourFather"
 msgid "04272"
 msgstr "ドリーに にて ガンコなんだから!{end_wait}"
 
@@ -17167,7 +17167,7 @@ msgctxt "message"
 msgid "04289"
 msgstr "まって {actor_name:2}・・・{pause_20_skippable}{pause_20_skippable}{line_break}ゆっくり{pause_20_skippable} たのむわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaIsWaitingForUs"
 msgid "04290"
 msgstr "スクレータが まっているわ{line_break}スクレータのいえへ 行きましょ。{end_wait}"
 
@@ -17179,7 +17179,7 @@ msgctxt "message"
 msgid "04292"
 msgstr "けさ スクレータをたずねて{line_break}たび人が やってきたけど{line_break}どうなったかしら・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMeditateOnMtAlephDaily"
 msgid "04293"
 msgstr "{protagonist_name}よ まいにち{line_break}ちゃんと アルファ山に{line_break}いのりをささげてるかな?{end_now}"
 
@@ -17191,7 +17191,7 @@ msgctxt "message"
 msgid "04295"
 msgstr "それはいかんぞ {protagonist_name}!{line_break}アルファ山はハイディア村を{line_break}まもってくれて いるのだ{page_break}まいにち かかさずに{line_break}いのりを ささげにゃならん。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaADifficultTimeThreeYears"
 msgid "04296"
 msgstr "3年前 あんたがたは{line_break}すごく つらかっただろ?{end_now}"
 
@@ -17211,7 +17211,7 @@ msgctxt "message"
 msgid "04300"
 msgstr "むかし うちのジイさんは{line_break}すごい エナジストでさ・・・{line_break}あたしゃ ほれちまったよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDidTheTravelersMeetThe"
 msgid "04301"
 msgstr "きょうきた たびのヤツら{line_break}村長の ところへは{line_break}あいさつに 行ったかなぁ?{end_now}"
 
@@ -17227,7 +17227,7 @@ msgctxt "message"
 msgid "04304"
 msgstr "エナジーをしゅぎょうすると{line_break}ワザの しゅるいがふえて{line_break}とても やくに立つらしいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaShownNewAbility"
 msgid "04305"
 msgstr "オレのエナジーのつよさは{line_break}知ってるよな? {protagonist_name}{end_now}"
 
@@ -17239,7 +17239,7 @@ msgctxt "message"
 msgid "04307"
 msgstr "お前が わすれてるなら{line_break}おもいださせてやるぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaBeholdPowerPsynergy"
 msgid "04308"
 msgstr "これが オレのエナジーだ{pause_20_skippable}{line_break}なっ{pause_20_skippable} すごいだろう?{end_wait}"
 
@@ -17247,7 +17247,7 @@ msgctxt "message"
 msgid "04309"
 msgstr "エナジーが へってきたら{line_break}しばらく あるくといいぞ{line_break}ゆっくり かいふくするぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaRrruffRrrruff"
 msgid "04310"
 msgstr "ワン ワン{end_wait}"
 
@@ -17255,7 +17255,7 @@ msgctxt "message"
 msgid "04311"
 msgstr "キャン キャン{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaPuppiesPlayingOver"
 msgid "04312"
 msgstr "子いぬたちが あそんでいる{page_break}ここは じゃましないで おこう。{end_wait}"
 
@@ -17271,15 +17271,15 @@ msgctxt "message"
 msgid "04315"
 msgstr "エナジーの力は へいわのために{line_break}使われるべきもの・・・けっして{line_break}あくよう させてはならない!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoodWeaponsDrawOutStrength"
 msgid "04316"
 msgstr "いい武器というのは するどいだけじゃなく{line_break}もつ者の力を ひき出すものなんだ{page_break}・・・って おやじが いってた{line_break}{protagonist_name} わかるかい?{line_break}オ オレはわかってるさ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGoodArmorDrawsOutStrength"
 msgid "04317"
 msgstr "いい防具というのは かたいだけじゃなく{line_break}もつ者の力を ひき出すものなんだ{page_break}・・・って ヤツはいうんだ{line_break}オレには なんのことやら・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAWiseManFleesWhen"
 msgid "04318"
 msgstr "戦いに キズついた時は{line_break}ぜったい ムリしちゃダメよ。{end_wait}"
 
@@ -17291,7 +17291,7 @@ msgctxt "message"
 msgid "04320"
 msgstr "むすこは まだ みじゅくで{line_break}いいしごとが できないのさ{page_break}でも 父ちゃんの子だから{line_break}きっと 1人前になるわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheThreeTravelersSeemOdd"
 msgid "04321"
 msgstr "きょうの うちのおとまりは{line_break}3人づれの たびのお客さんよ{page_break}金ばらいは いいんだけど{pause_20_skippable}{line_break}なんだか ちょっと ぶきみでねぇ。{end_wait}"
 
@@ -17303,7 +17303,7 @@ msgctxt "message"
 msgid "04323"
 msgstr "3人できた お客さん・・・{line_break}ふたりは でかけちゃったわよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHeyBoy"
 msgid "04324"
 msgstr "お {pause_20_skippable}お前は・・・。{end_wait}"
 
@@ -17335,7 +17335,7 @@ msgctxt "message"
 msgid "04331"
 msgstr "もう あなたも{actor_name:2}も{line_break}いいかげん いい年なんだから{line_break}あそびも ほどほどにするのよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouMakeMeSoMad"
 msgid "04332"
 msgstr "おとうとの{actor_name:2}ったら{line_break}あったま きちゃう!{end_wait}"
 
@@ -17347,7 +17347,7 @@ msgctxt "message"
 msgid "04334"
 msgstr "こんばん どうなるか{pause_20_skippable}・{pause_20_skippable}・{pause_20_skippable}・{pause_20_skippable}{line_break}たのしみに してなさいな!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIllGetYouForMy"
 msgid "04335"
 msgstr "おはなのおれいは するわよ{pause_20_skippable}{line_break}こんばん どうなるか・・・{line_break}たのしみに してなさいな!{end_wait}"
 
@@ -17355,11 +17355,11 @@ msgctxt "message"
 msgid "04336"
 msgstr "{actor_name:2}兄ちゃん{line_break}まずいよ・・・{page_break}・・・ねえちゃん{line_break}ほんきで おこってるぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIToldGeraldItWas"
 msgid "04337"
 msgstr "あとはいいから っていったけど{line_break}もう {actor_name:2}ったら・・・{line_break}どうするのよ このアナ・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaItWontRainForSome"
 msgid "04338"
 msgstr "しばらく あめもなさそうだし{line_break}やっぱり やねのしゅうりは{line_break}あなたがやってね {actor_name:1}。{end_wait}"
 
@@ -17375,7 +17375,7 @@ msgctxt "message"
 msgid "04341"
 msgstr "ホント {actor_name:6}ちゃんは{line_break}あの日なくなった おかあさんに{line_break}いきうつしだこと・・・{page_break}{actor_name:6}ちゃんだけには{line_break}しあわせになってほしいわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaCameToStudyMt"
 msgid "04342"
 msgstr "がくしゃのスクレータさんは{line_break}アルファ山のけんきゅうで{line_break}村にやってきたんだっけ?{end_now}"
 
@@ -17399,7 +17399,7 @@ msgctxt "message"
 msgid "04347"
 msgstr "村の そとのせかいでは・・・{line_break}エナジーは とくべつな力だそうよ{page_break}村を出るのに ゆるしがいるのは{line_break}エナジーを知られないためなんだわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaLetsScareSukuretasVisitors"
 msgid "04348"
 msgstr "スクレータのところに たび人の{line_break}お客さんがきているらしいんだ{line_break}{pause_20_skippable}エナジーで おどかしてやるか?{end_now}"
 
@@ -17411,7 +17411,7 @@ msgctxt "message"
 msgid "04350"
 msgstr "なんだ {actor_name:1} わりと{line_break}まじめ なんだなぁ・・・{page_break}エナジーをもってないヤツには{line_break}どうせ わかりゃしないのに。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHearAwfulGrowls"
 msgid "04351"
 msgstr "その サクのむこうから{line_break}おそろしい うなりごえが{line_break}きこえてこない?"
 
@@ -17435,7 +17435,7 @@ msgctxt "message"
 msgid "04356"
 msgstr "このこやに しょくりょうを{line_break}たくわえているから{line_break}冬も こわくないのじゃ{page_break}もっとも 3年前のようなことが{line_break}なければ・・・じゃがな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoYouNeedToGo"
 msgid "04357"
 msgstr "ここをとおりたいの?{end_now}"
 
@@ -17443,7 +17443,7 @@ msgctxt "message"
 msgid "04358"
 msgstr "スクレータさんの こやへ{line_break}行くつもりなのね?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontGoBeyondSukuretasCottage"
 msgid "04359"
 msgstr "スクレータさんの こやから{line_break}むこうへは 行っちゃダメよ{line_break}マモノがいたらキケンだからね。{end_wait}"
 
@@ -17455,7 +17455,7 @@ msgctxt "message"
 msgid "04361"
 msgstr "ハイディア村がクリーンなのは{line_break}アルファ山が神の山だからさ{page_break}神の山をよごしたんじゃ{line_break}バチがあたるってもんだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYourGrandpaIsTheMayor"
 msgid "04362"
 msgstr "{actor_name:2}は おじいちゃんが{line_break}村長で うらやましいわ{line_break}{actor_name:1}も そうおもうよね?{end_now}"
 
@@ -17471,7 +17471,7 @@ msgctxt "message"
 msgid "04365"
 msgstr "ハイディア村は かくれ村だ{line_break}なるべく 気づかれないように{line_break}しなければならないのだよ{page_break}それが むかしからの・・・{line_break}この村の おきてなのさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheyKnowLittleOfThe"
 msgid "04366"
 msgstr "ソル神殿のことは あまり知らぬらしい。{end_wait}"
 
@@ -17519,7 +17519,7 @@ msgctxt "message"
 msgid "04377"
 msgstr "ふふ {pause_20_skippable}ちがうと いうのなら{line_break}しんじてあげましょう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYoureTheOnesSneakingAround"
 msgid "04378"
 msgstr "あんたたちこそ ここで{line_break}なんの ワルだくみだい!{end_wait}"
 
@@ -17547,7 +17547,7 @@ msgctxt "message"
 msgid "04384"
 msgstr "しかし スクレータは{line_break}われわれを おいかえした・・・{line_break}お前たちをえらんだのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSaturosGo"
 msgid "04385"
 msgstr "行くがいい・・・。{end_wait}"
 
@@ -17575,7 +17575,7 @@ msgctxt "message"
 msgid "04391"
 msgstr "われわれが{line_break}おとなしくしているうちに{line_break}行ってしまうことだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWho"
 msgid "04392"
 msgstr "いったい なに者じゃ?{end_wait}"
 
@@ -17603,7 +17603,7 @@ msgctxt "message"
 msgid "04398"
 msgstr "錬金じゅつがくしゃのワシが{line_break}ちー{pause_20_skippable}っとも わからん。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaOhRobin"
 msgid "04399"
 msgstr "おお {protagonist_name}。{end_wait}"
 
@@ -17643,15 +17643,15 @@ msgctxt "message"
 msgid "04408"
 msgstr "のう おかしいじゃろ?"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCannotEnterMtAleph"
 msgid "04409"
 msgstr "そうじゃ {pause_20_skippable}アルファ山には{line_break}よっぽどのことがなければ{line_break}入れないんじゃからな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaIWaitedYearsFor"
 msgid "04410"
 msgstr "ワシだって なん年もまって{line_break}やっと 入れたんじゃぞ{line_break}・・・おかしいにきまっとる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaJasmineTheyMightBeThieves"
 msgid "04411"
 msgstr "だまって 入ってるなら{line_break}あいつら・・・とうぞくかな!{end_wait}"
 
@@ -17695,15 +17695,15 @@ msgctxt "message"
 msgid "04421"
 msgstr "アルファ山に 入ることが{line_break}きんじられて いるからかな?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaWeOnlyCheckThe"
 msgid "04422"
 msgstr "その山に ヤツらが入ったか{line_break}たしかめに 行くだけだ・・・{pause_20_skippable}{line_break}それなら ゆるされよう?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaWeOnlyCheckMt"
 msgid "04423"
 msgstr "そうじゃ {pause_20_skippable}あやしいヤツらが{line_break}アルファ山に入ったかどうか{line_break}たしかめに 行くだけなのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaFineIfTheyDontSee"
 msgid "04424"
 msgstr "見つからなければ・・・{line_break}だいじょうぶかな?{end_now}"
 
@@ -17715,7 +17715,7 @@ msgctxt "message"
 msgid "04426"
 msgstr "ダメだなんて いったって{line_break}行きたいってかおしてるぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaJasmineOurSecret"
 msgid "04427"
 msgstr "これ{pause_20_skippable} 3人のひみつだね?{end_now}"
 
@@ -17731,7 +17731,7 @@ msgctxt "message"
 msgid "04430"
 msgstr "それでは {protagonist_name}{pause_20_skippable}{line_break}お前がリーダーだ いいね?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGeraldYouCanHandleThe"
 msgid "04431"
 msgstr "アルファ山からソル神殿まで{line_break}キケンなばしょもあるし・・・{line_break}{protagonist_name}で だいじょうぶかな?{end_wait}"
 
@@ -17743,7 +17743,7 @@ msgctxt "message"
 msgid "04433"
 msgstr "ずいぶん ハッキリいうな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaGeraldIllTakeOverIf"
 msgid "04434"
 msgstr "アルファ山からソル神殿まで{line_break}キケンなばしょもあるし・・・{line_break}こころぼそいなら かわろうか?{end_wait}"
 
@@ -17755,7 +17755,7 @@ msgctxt "message"
 msgid "04436"
 msgstr "ずいぶん ハッキリいうな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaOurBestBet"
 msgid "04437"
 msgstr "ねんのための よういじゃよ。{end_wait}"
 
@@ -17763,7 +17763,7 @@ msgctxt "message"
 msgid "04438"
 msgstr "よし{pause_20_skippable} 出発じゃ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNotSneakingUpMtAleph"
 msgid "04439"
 msgstr "どこに行くつもりかね?{line_break}まさか アルファ山かな?{end_now}"
 
@@ -17783,7 +17783,7 @@ msgctxt "message"
 msgid "04443"
 msgstr "ここからの 山道には{line_break}マモノが すんでいるから{line_break}ちゅういして すすむのじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaFirstTimeAtSol"
 msgid "04444"
 msgstr "ソル神殿の 入り口じゃ{line_break}みんな はじめてじゃろ?{end_now}"
 
@@ -17795,7 +17795,7 @@ msgctxt "message"
 msgid "04446"
 msgstr "おや そうじゃったか・・・{line_break}めったに見られない神殿じゃ{line_break}まあ なんど見てもよかろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWrongSukureta"
 msgid "04447"
 msgstr "スクレータ どうしたんです?{end_wait}"
 
@@ -17835,11 +17835,11 @@ msgctxt "message"
 msgid "04456"
 msgstr "スクレータ ほんきだ・・・{line_break}手伝ってやっか {actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruDangerousSplitStay"
 msgid "04457"
 msgstr "でも バラバラはキケンだから{line_break}みんな いっしょにやろうぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruCantSeriouslyWant"
 msgid "04458"
 msgstr "イヤだって いったって・・・{line_break}スクレータを とめられる?{end_wait}"
 
@@ -17847,7 +17847,7 @@ msgctxt "message"
 msgid "04459"
 msgstr "スクレータを手伝おうぜ{line_break}でも バラバラはキケンだから{line_break}みんな いっしょにやろうぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruFound"
 msgid "04460"
 msgstr "あった これじゃ!{end_wait}"
 
@@ -17899,15 +17899,15 @@ msgctxt "message"
 msgid "04472"
 msgstr "どうじゃろう? もうすこしだけ{line_break}中を見てから もどるのは?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruThank"
 msgid "04473"
 msgstr "そりゃあ ありがたい!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruGoBackVillage"
 msgid "04474"
 msgstr "だったら お前たちだけで{line_break}先に かえったらええわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruPutWayDont"
 msgid "04475"
 msgstr "ここまで いうんじゃ{line_break}しかたないわよねぇ・・・。{end_wait}"
 
@@ -17923,7 +17923,7 @@ msgctxt "message"
 msgid "04478"
 msgstr "よし きまりじゃ{line_break}先をいそごうぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWhRoom"
 msgid "04479"
 msgstr "こ {pause_20_skippable}このへやは なんじゃ?{end_wait}"
 
@@ -17939,19 +17939,19 @@ msgctxt "message"
 msgid "04482"
 msgstr "ソルの えがかれたへやと このへやは{line_break}たがいに ついに なっているのでは?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruLunaSolRooms"
 msgid "04483"
 msgstr "ソルとルナのへやには{line_break}なにか ひみつがある・・・{pause_20_skippable}{pause_20_skippable}{line_break}それはいったい なんじゃ?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruRoomLunaOne"
 msgid "04484"
 msgstr "それにしては ソルとルナの{line_break}ふたつのへやがあるのは・・・{line_break}できすぎているようじゃぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMeanLookFarther"
 msgid "04485"
 msgstr "ダメじゃ ちっともわからん{pause_20_skippable}{line_break}{actor_name:1}よ わるいが・・・{line_break}先を見てきてくれんか?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaLetMeKnowWhat"
 msgid "04486"
 msgstr "それじゃ たのんだぞ。{end_wait}"
 
@@ -17959,15 +17959,15 @@ msgctxt "message"
 msgid "04487"
 msgstr "だったら そのへんで{line_break}まっていておくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaJustWaitOverThere"
 msgid "04488"
 msgstr "そのへんで{line_break}まっていておくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWayLeadsOutSanctum"
 msgid "04489"
 msgstr "そっちに 行ったら・・・{line_break}もどってしまうじゃろう?{pause_20_skippable}{line_break}はんたいの 方じゃよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWhatsHappening"
 msgid "04490"
 msgstr "{text_effect:4}な{pause_20_skippable} なんじゃ・・・{line_break}なにが おきたんじゃ?{end_wait}"
 
@@ -17979,7 +17979,7 @@ msgctxt "message"
 msgid "04492"
 msgstr "いかんぞ {actor_name:1}・・・{line_break}いま お前は まちがいを{line_break}おかそうと しているのじゃ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWait"
 msgid "04493"
 msgstr "まつのじゃ {actor_name:1}!{end_wait}"
 
@@ -18027,15 +18027,15 @@ msgctxt "message"
 msgid "04504"
 msgstr "知りたいかの?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSoruHonestlyDoubtUnderstand"
 msgid "04505"
 msgstr "ふむ ざんねんじゃが{line_break}いま はなしたとしても{line_break}りかいは むずかしかろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruHmphWellTold"
 msgid "04506"
 msgstr "ふむ{pause_20_skippable} いま はなしたとしても{line_break}りかいは むずかしかろう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruTryFindSolution"
 msgid "04507"
 msgstr "ここには ほかにも なにか{line_break}ナゾが かくされているはず{pause_20_skippable}{line_break}それを とかなければならぬ。{end_wait}"
 
@@ -18059,7 +18059,7 @@ msgctxt "message"
 msgid "04512"
 msgstr "{actor_name:1}{pause_20_skippable} スクレータのいう{line_break}かくされたナゾというのを{line_break}まず さがしましょう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruWhatsHappeningAtTheTrap"
 msgid "04513"
 msgstr "{text_effect:4}な{pause_20_skippable} なんじゃ・・・{line_break}なにが おきたんじゃ?{end_wait}"
 
@@ -18067,7 +18067,7 @@ msgctxt "message"
 msgid "04514"
 msgstr "{actor_name:1}{pause_20_skippable} なにかを{line_break}発見したんじゃな!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSukuretaYouFoundIt"
 msgid "04515"
 msgstr "見つけたか {actor_name:1}!{end_wait}"
 
@@ -18111,7 +18111,7 @@ msgctxt "message"
 msgid "04525"
 msgstr "ワシは ねんのためじゃ・・・{line_break}ルナのへやをかんししていよう{line_break}では あとも たのんだぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruYouFoundIt"
 msgid "04526"
 msgstr "見つけたのじゃな {actor_name:1}。{end_wait}"
 
@@ -18119,7 +18119,7 @@ msgctxt "message"
 msgid "04527"
 msgstr "そのちょうしで 光を{line_break}のこるすべてに そそぐのじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruThePictureOfLunaChanged"
 msgid "04528"
 msgstr "見よ {actor_name:1}{pause_20_skippable} ルナのえが{line_break}ソルのえへと かわった!{end_wait}"
 
@@ -18135,7 +18135,7 @@ msgctxt "message"
 msgid "04531"
 msgstr "どこか ほかにも{line_break}かわったものが あるはずじゃ{line_break}それを さがさねばならぬのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruLookSymbolFloor"
 msgid "04532"
 msgstr "おお{pause_20_skippable} ソルのへやのゆかが{line_break}ルナのえにかわっている!{end_wait}"
 
@@ -18147,7 +18147,7 @@ msgctxt "message"
 msgid "04534"
 msgstr "ここを行くと 神殿から{line_break}出てしまうことになるぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruHa"
 msgid "04535"
 msgstr "きっと これこそが・・・{line_break}もとめていたばしょじゃよ。{end_wait}"
 
@@ -18159,11 +18159,11 @@ msgctxt "message"
 msgid "04537"
 msgstr "{actor_name:1}よ まっとれ・・・{pause_20_skippable}{line_break}ワシも すぐに 行く!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMinotaurReliefOneEye"
 msgid "04538"
 msgstr "みぎ目が かがやき{line_break}ひだり目に ちいさなくぼみのある{line_break}ミノタウロスのレリーフがある。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSetSmallGem"
 msgid "04539"
 msgstr "{protagonist_name}たちは ちいさなほうせきを{line_break}レリーフのひだり目に はめこんだ。{end_wait}"
 
@@ -18171,11 +18171,11 @@ msgctxt "message"
 msgid "04540"
 msgstr "どこかで なにかが{line_break}ひらく おとがした。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMinotaurReliefBothEyes"
 msgid "04541"
 msgstr "りょう目が かがやく{line_break}ミノタウロスのレリーフがある。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWieldersPsynergyCalledAdeptsAdepts"
 msgid "04542"
 msgstr "エナジーをもつ者のことを{line_break}エナジストと よぶのだ{page_break}エナジストは神のしもべ・・・{line_break}けっして わすれるでないぞ!{end_wait}"
 
@@ -18187,7 +18187,7 @@ msgctxt "message"
 msgid "04544"
 msgstr "エナジーの力は へいわのために{line_break}使われるべきもの・・・けっして{line_break}あくよう させてはならない!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruSomethingClicked"
 msgid "04545"
 msgstr "なにかがはずれる おとがした。{end_wait}"
 
@@ -18195,7 +18195,7 @@ msgctxt "message"
 msgid "04546"
 msgstr "かくしつうろは {line_break}発見できたようじゃな{page_break}これからが たいへんじゃ{line_break}気をつけて 行動するんじゃぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruMoreStatuesOutOfReach"
 msgid "04547"
 msgstr "いくつもの 像がある・・・{pause_20_skippable}{pause_20_skippable}{line_break}ウーム{pause_20_skippable} じゃが このままでは{line_break}動かせそうに ないのう。{end_wait}"
 
@@ -19087,7 +19087,7 @@ msgctxt "message"
 msgid "04769"
 msgstr "わかった{pause_20_skippable} 手伝おう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSoruFloatingEyeThing"
 msgid "04770"
 msgstr "あの石{pause_20_skippable} オレたちを{line_break}たすけてくれたのか?{end_now}"
 
@@ -19111,11 +19111,11 @@ msgctxt "message"
 msgid "04775"
 msgstr "こんな きけんなところに{line_break}わたし ひとりぼっちとは{line_break}大神官も ひどい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCheckedThePsynergyStone"
 msgid "04776"
 msgstr "{protagonist_name}は エナジーロックをしらべた{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSChestValuables"
 msgid "04777"
 msgstr "{actor_name:2}の宝ものを{line_break}入れたハコだ。{end_wait}"
 
@@ -19123,7 +19123,7 @@ msgctxt "message"
 msgid "04778"
 msgstr "{protagonist_name}の力では{line_break}ビクともしない大岩だ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMtAlephWasInactive"
 msgid "04779"
 msgstr "まさか{pause_20_skippable} アルファ山が{line_break}ふん火しようとは・・・。{end_wait}"
 
@@ -19211,7 +19211,7 @@ msgctxt "message"
 msgid "04800"
 msgstr "ふたりとも 神殿へ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWeHadIdeaTrueSanctum"
 msgid "04801"
 msgstr "まさか そんなことが{line_break}おこっておったとは!{end_wait}"
 
@@ -19379,7 +19379,7 @@ msgctxt "message"
 msgid "04842"
 msgstr "オレ どうしたらいいか・・・{line_break}{actor_name:1} お前がきめてくれよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenRobinWillAcceptResponsibilityFor"
 msgid "04843"
 msgstr "{actor_name:1} あなたは地上の{line_break}うんめいをせおいますか?{end_now}"
 
@@ -19387,7 +19387,7 @@ msgctxt "message"
 msgid "04844"
 msgstr "しかたないじゃろうのう・・・{line_break}ワシが そのたちばじゃったら{line_break}イエスとは いえんわい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenAreYouSure"
 msgid "04845"
 msgstr "けついは かたいのですか?{end_now}"
 
@@ -19419,15 +19419,15 @@ msgctxt "message"
 msgid "04852"
 msgstr "大神官は ホントはキミに{line_break}イエスって いってほしいんだ{line_break}わたしには それがわかる。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenOnceStepOutsideVillageCannot"
 msgid "04853"
 msgstr "そこを いっぽ出たなら{line_break}けつだんは くつがえせない{page_break}そのことを こころえた上で{line_break}神殿を出るがいいぞ {actor_name:1}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWorldBeganDrifting"
 msgid "04854"
 msgstr "そして地上は やがて{line_break}ほろびの道を あゆみはじめた。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenGreatHealer"
 msgid "04855"
 msgstr "大神官の前から{end_wait}"
 
@@ -19439,7 +19439,7 @@ msgctxt "message"
 msgid "04857"
 msgstr "ゲームをはじめから{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenAcceptRobinCantMean"
 msgid "04858"
 msgstr "ひきうけるのか? {actor_name:1}・・・{line_break}まさか オレたち そんな・・・。{end_wait}"
 
@@ -19567,7 +19567,7 @@ msgctxt "message"
 msgid "04889"
 msgstr "空気がキラキラしてるのは{line_break}アルファ山の ふん火のためね{page_break}まさか エナジーストーンが{line_break}こなみたいになって{line_break}ふっているのかしらねぇ?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouSawTheWiseOne"
 msgid "04890"
 msgstr "われわれの あがめておる{line_break}あのワイズマンを・・・{line_break}あんた 見たんじゃと?{end_now}"
 
@@ -19591,7 +19591,7 @@ msgctxt "message"
 msgid "04895"
 msgstr "エナジーがなくなったら{line_break}エナジーストーンにさわると{line_break}エナジーがかいふくするのよ{page_break}でもエナジーストーンが{line_break}ふん火で みんな・・・{line_break}とばされちゃったのよね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaArentWorriedCrossing"
 msgid "04896"
 msgstr "大陸を たびしてあるくのに{line_break}ふたりじゃ しんぱいだろう?{end_now}"
 
@@ -19615,7 +19615,7 @@ msgctxt "message"
 msgid "04901"
 msgstr "ダンジョンに 入る前には{line_break}エナジーを ほじゅうする{line_break}それが戦士のちえってヤツだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenMyControlOverPsynergyHas"
 msgid "04902"
 msgstr "どうやら わたしのエナジーに{line_break}ゆうべから へんかが・・・{page_break}これはきっと ワイズマンに{line_break}おあいした おかげなのです。{end_wait}"
 
@@ -19623,7 +19623,7 @@ msgctxt "message"
 msgid "04903"
 msgstr "アルファ山の れい力とは{line_break}エナジーストーンのことです{page_break}エナジーストーンが ふん火で{line_break}かく地に とばされたら・・・{line_break}あらたなエナジストが・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenDoFeelAnyChangeIn"
 msgid "04904"
 msgstr "お前たち エナジーに{line_break}へんかは ないかな?"
 
@@ -19635,15 +19635,15 @@ msgctxt "message"
 msgid "04906"
 msgstr "ワイズマンと かかわって{line_break}エナジーが せいちょうしたと{line_break}大神官様は いわれていたぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaValeFeelsEmpty"
 msgid "04907"
 msgstr "ふたりが いなくなっちまうと{line_break}ずいぶん ハイディア村も{line_break}さみしくなっちまうなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaImNotSadJustGo"
 msgid "04908"
 msgstr "ぐすん オレはちっとも{line_break}さみしかないぜ・・・{line_break}はやく 行っちまいな!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThisIsMyFarewellGift"
 msgid "04909"
 msgstr "これ せんべつよ。{end_wait}"
 
@@ -19651,7 +19651,7 @@ msgctxt "message"
 msgid "04910"
 msgstr "{actor_name:1}は{line_break}やくそうをうけとった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouMustSaveJasmine"
 msgid "04911"
 msgstr "{actor_name:6}ちゃんたちを{line_break}かならず すくってきてね{pause_20_skippable}{line_break}たのんだわよ {actor_name:1}!{end_wait}"
 
@@ -19663,11 +19663,11 @@ msgctxt "message"
 msgid "04913"
 msgstr "むすこの ヨメにかんがえてた{line_break}{actor_name:6}が さらわれ・・・{line_break}ああ なんてことだろうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheVisitorsCausedTheEruption"
 msgid "04914"
 msgstr "うちの とまり客が・・・{line_break}アルファ山をふん火させ{line_break}{actor_name:6}をさらったのね{page_break}ああ あやしいヤツらだと{line_break}さいしょから おもってたよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheMaskedManWasGarcia"
 msgid "04915"
 msgstr "あの かめんの男・・・{line_break}{actor_name:5}だったそうだな?{end_now}"
 
@@ -19715,7 +19715,7 @@ msgctxt "message"
 msgid "04926"
 msgstr "ふつつかな 兄さんですが{line_break}どうかよろしくね{pause_20_skippable} {actor_name:1}。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCantBeRobin"
 msgid "04927"
 msgstr "だれ? ・・・{pause_20_skippable}{pause_20_skippable}まさか・・・{line_break}{actor_name:1}じゃないわよね?{end_now}"
 
@@ -19747,7 +19747,7 @@ msgctxt "message"
 msgid "04934"
 msgstr "つれさられたスクレータさんの{line_break}錬金じゅつの けんきゅうが{line_break}山のふん火を ひきおこした{page_break}そうじゃないのかい・・・{line_break}{actor_name:1} {actor_name:2}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheCulpritsHadStrangePowers"
 msgid "04935"
 msgstr "さわぎを おこしたヤツらは{line_break}おかしな力を 使ってたって{line_break}・・・それ{pause_20_skippable} ホントなのかい?{end_now}"
 
@@ -19771,7 +19771,7 @@ msgctxt "message"
 msgid "04940"
 msgstr "あのソル神殿の おくに{line_break}大神官たちも知らない{line_break}ナゾがあったとはねぇ・・・{page_break}それさえ わかっていたら{line_break}こんどの じけんだって{line_break}おきなかっただろうにな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIllClimbTheFenceSomeday"
 msgid "04941"
 msgstr "{actor_name:1}たちの 年になったら{line_break}そのサクをのりこえて・・・{line_break}むこうに いってみよっと!{end_wait}"
 
@@ -19783,7 +19783,7 @@ msgctxt "message"
 msgid "04943"
 msgstr "オレは {actor_name:5}が{line_break}わるいとは おもわない{page_break}3年前の あの日・・・{line_break}あんなことさえ なければ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheStoneFellOnThe"
 msgid "04944"
 msgstr "あれを見ておくれ {actor_name:1}{pause_20_skippable}{line_break}大きなエナジーストーンが{line_break}こやに ちょくげきじゃ。{end_wait}"
 
@@ -19791,7 +19791,7 @@ msgctxt "message"
 msgid "04945"
 msgstr "もっとも あんなでかいのが{line_break}あたまに ふってきてたらと{line_break}かんがえたら おそろしいのう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaSukuretaHasntComeBack"
 msgid "04946"
 msgstr "やっぱり スクレータさん{line_break}もどってきてないわよ。{end_wait}"
 
@@ -19803,7 +19803,7 @@ msgctxt "message"
 msgid "04948"
 msgstr "ふん火の えいきょうで{line_break}山には のぼれないそうだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheGroundStillShakes"
 msgid "04949"
 msgstr "地しんは つづいているけど{line_break}もう キケンはないってさ。{end_wait}"
 
@@ -19987,7 +19987,7 @@ msgctxt "message"
 msgid "04994"
 msgstr "もう ハイディアの者は{line_break}たび人を しんじないぞ{page_break}むろん オレもぜったい{line_break}こころを ゆるさないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWhysEveryoneHanging"
 msgid "04995"
 msgstr "村長さんや大神官たち・・・{line_break}村の入り口にあつまって{line_break}どうしたのかしらね?{end_wait}"
 
@@ -20091,11 +20091,11 @@ msgctxt "message"
 msgid "05020"
 msgstr "みんなで おくってやろう!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaFarewell"
 msgid "05021"
 msgstr "{text_effect:2}行ってらっしゃい!{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapWeCantStayAnotherMinute"
 msgid "05022"
 msgstr "こんな キケンなばしょには{line_break}もう いっこくも いられません{pause_20_skippable}{line_break}カレイの町に かえりましょう!{end_wait}"
 
@@ -20555,11 +20555,11 @@ msgctxt "message"
 msgid "05136"
 msgstr "ああ ふん火なんかあると{line_break}しばらく お客さん・・・{line_break}へっちゃうんだろうなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWeWillHelpAnytimeAs"
 msgid "05137"
 msgstr "神の しもべでさえあれば{line_break}われわれは いつなん時でも{line_break}おたすけ もうしあげますぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenHealerMustWorriedAboutNever"
 msgid "05138"
 msgstr "大神官様 あのことは・・・{line_break}しんぱいじゃないのかなあ{page_break}いや なんでもない・・・{line_break}こっちのことです・・・。{end_wait}"
 
@@ -20567,7 +20567,7 @@ msgctxt "message"
 msgid "05139"
 msgstr "そうやって こころのふあんが{line_break}きえさっていくのなら・・・{line_break}どうぞ つづけなさい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWonderIfEverSeeOur"
 msgid "05140"
 msgstr "あの火山の ふん火の日に{line_break}ぬすまれた金の像は・・・{line_break}かえってこないのだろうか?{end_wait}"
 
@@ -21507,11 +21507,11 @@ msgctxt "message"
 msgid "05374"
 msgstr "この人たち なぜ そんなに{line_break}たびをいそいでいるの?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWasHandFateReturnedGold"
 msgid "05375"
 msgstr "神の おみちびきにより{line_break}金の像は こうして{line_break}神殿に もどりました・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWhenStrayFromYourWorldly"
 msgid "05376"
 msgstr "人の道を 見うしなった時{line_break}神に おすがりなさい・・・{line_break}きっと力になってくれます。{end_wait}"
 
@@ -21519,7 +21519,7 @@ msgctxt "message"
 msgid "05377"
 msgstr "そうやって こころのふあんが{line_break}きえさっていくのなら・・・{line_break}どうぞ つづけなさい・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenChildHasAwakenedOurTeachings"
 msgid "05378"
 msgstr "われらの おしえにめざめ{line_break}このしょうねんは こうして{line_break}すがってくれています 神よ。{end_wait}"
 
@@ -22091,7 +22091,7 @@ msgctxt "message"
 msgid "05520"
 msgstr "むかしから ご神木には{line_break}トレントという ようせいが{line_break}すんでいると いわれます。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenAmStartingFeelOnlyBeginning"
 msgid "05521"
 msgstr "これらのことは まだ{line_break}はじまりに すぎない・・・{line_break}そんな 気がしています。{end_wait}"
 
@@ -25243,7 +25243,7 @@ msgctxt "message"
 msgid "06308"
 msgstr "おかしなことに なってるのは{line_break}どうやらビリビノの町の{line_break}まわりだけじゃなさそうだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenCurseMayOverButWe"
 msgid "06309"
 msgstr "コリマの森が 呪いから{line_break}すくわれたからといって{line_break}あんしんしてはなりません{page_break}わざわいの けはいは{line_break}なくなっていません。{end_wait}"
 
@@ -26295,7 +26295,7 @@ msgctxt "message"
 msgid "06571"
 msgstr "たび人さん へったから{line_break}ごはん たべる人こないヨ{line_break}たび人さん どうしたアル。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenCameXianFromVeryDistant"
 msgid "06572"
 msgstr "わたしは はるかとおくから{line_break}神のことばを伝えるために{line_break}シーアン村に やってきた。{end_wait}"
 
@@ -27219,7 +27219,7 @@ msgctxt "message"
 msgid "06802"
 msgstr "こうしてノンビリするのも{line_break}あんまり長くなると{line_break}なんだか おちつかないね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenWasAfterEerieNightWhen"
 msgid "06803"
 msgstr "空から 宝石がふる・・・という{line_break}ふきつな できごとのあとです{page_break}アルティンこう山の中などに{line_break}水をはき出すモンスターが{line_break}すがたをあらわしたのは!{end_wait}"
 
@@ -27503,7 +27503,7 @@ msgctxt "message"
 msgid "06873"
 msgstr "アルティン村が立ちなおるには{line_break}まだ しばらくかかるかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenSavedAltinFromMonstersClearly"
 msgid "06874"
 msgstr "みなさんが モンスターから{line_break}アルティンをすくったのです{page_break}ああ! これはきっと{line_break}神の おみちびきでしょう。{end_wait}"
 
@@ -30135,11 +30135,11 @@ msgctxt "message"
 msgid "07531"
 msgstr "あやしいヤツを村に入れて{line_break}じけんでもおきたら オレたちが{line_break}ドドンパ様に おこられちまうぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCameBackHome"
 msgid "07532"
 msgstr "やあ{pause_20_skippable} {actor_name:1}じゃないか!{line_break}村にもどってきたんだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThisIsVale"
 msgid "07533"
 msgstr "ここは ハイディア村だよ!{pause_20_skippable}{line_break}・・・なんて {actor_name:1}たちに{line_break}いっても しょうがないよな。{end_wait}"
 
@@ -30155,7 +30155,7 @@ msgctxt "message"
 msgid "07536"
 msgstr "アルファ山の ふん火のあと{line_break}村の中をながれる川の水が{line_break}あつく なっちゃったのよ{page_break}おんせんが出たのかと{line_break}よろこんだんだけど{line_break}すぐにつめたくなったわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAnythingInterestingOnYourTrip"
 msgid "07537"
 msgstr "{actor_name:1}や たびをしてみて{line_break}おもしろいことはあったかの?{end_now}"
 
@@ -30235,11 +30235,11 @@ msgctxt "message"
 msgid "07556"
 msgstr "山の北西の 地われは{line_break}ドンドン ひろがっている{page_break}このままでは この大陸は{line_break}ふたつに わかれてしまうよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenPathSolSanctumStillClosed"
 msgid "07557"
 msgstr "ソル神殿への道は・・・{line_break}いぜん とざされたままです{page_break}火山の かつどうがとまるまで{line_break}あきらめるしか ないですな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenRobinYourNewFriendsAdepts"
 msgid "07558"
 msgstr "おや {actor_name:1} もしや{line_break}あたらしい おなかまは{line_break}エナジストですかな?{end_now}"
 
@@ -30275,7 +30275,7 @@ msgctxt "message"
 msgid "07566"
 msgstr "大神官様のエナジー力は{line_break}ますます つよくなってるぞ{line_break}まったく ふこうへいだよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouCameBack"
 msgid "07567"
 msgstr "ありゃ{pause_20_skippable} {actor_name:1}じゃないか{line_break}そうか かえってきたのか?{end_now}"
 
@@ -30287,11 +30287,11 @@ msgctxt "message"
 msgid "07569"
 msgstr "なんだ かえってきた{line_break}わけじゃないのか・・・{line_break}そりゃ ざんねんだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaTheRumorWasTrue"
 msgid "07570"
 msgstr "お前たちを見かけたって{line_break}ウワサを きいたけど{line_break}ホントだったんだね{page_break}たびの みやげばなしを{line_break}そのうち ゆっくりと{line_break}きかせてほしいなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWhenDidYouComeBack"
 msgid "07571"
 msgstr "んまあ {actor_name:1}たち{line_break}いつ かえってきたのよ!{page_break}あのたびだちのふんいきでは{line_break}もう にどとあえないかと{line_break}おもってたけど よかったわ。{end_wait}"
 
@@ -30327,15 +30327,15 @@ msgctxt "message"
 msgid "07579"
 msgstr "{actor_name:6}は・・・{line_break}とりかえしてきたんじゃ{line_break}ないのかしら・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYouveGrownSoMuch"
 msgid "07580"
 msgstr "なんだ よく見りゃ{line_break}{actor_name:1}たちじゃないか{page_break}たくましくなったから{line_break}見ちがえちまったぜ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCameBack2"
 msgid "07581"
 msgstr "あら {actor_name:1}じゃない{line_break}村に もどってたんだね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHomeJustToStay"
 msgid "07582"
 msgstr "あんたたち せっかく{line_break}ふるさとに かえったのに{line_break}ここに とまるってのかい?{end_now}"
 
@@ -30355,11 +30355,11 @@ msgctxt "message"
 msgid "07586"
 msgstr "村に かえってみて{line_break}かわってないことに{line_break}ホッとしたでしょうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoraWasStruckWithIllness"
 msgid "07587"
 msgstr "キニーが やまいに{line_break}たおれたこと {actor_name:1}は{line_break}知っているのかな?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDoraWouldntLetHimStay"
 msgid "07588"
 msgstr "{actor_name:1}が ウチにきたのは{line_break}やっぱり キニーが・・・{line_break}いえに入れなかったのかね{page_break}キニーが びょうきなのは{line_break}あたしらと 村長たちしか{line_break}知らないけど・・・。{end_wait}"
 
@@ -30371,7 +30371,7 @@ msgctxt "message"
 msgid "07590"
 msgstr "ハイディア村は ずっと{line_break}このまま かわらないから{line_break}いつでも かえってきてね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHey2"
 msgid "07591"
 msgstr "なあ・・・。{end_wait}"
 
@@ -30455,7 +30455,7 @@ msgctxt "message"
 msgid "07611"
 msgstr "そうか しめいのとちゅう{line_break}立ちよった だけなのか・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaYoureLeavingAgainSoon"
 msgid "07612"
 msgstr "すぐに また たびに{line_break}でるつもりね・・・。{end_wait}"
 
@@ -30495,7 +30495,7 @@ msgctxt "message"
 msgid "07621"
 msgstr "{actor_name:3}という しょうねんは{line_break}かしこそうな子だね・・・{page_break}{actor_name:2}も{actor_name:3}くんみたいだと{line_break}よかったんだけどのう・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDidYouHearAboutDora"
 msgid "07622"
 msgstr "さっき キニーのはなしを{line_break}きいてしまったのかな?{end_now}"
 
@@ -30507,7 +30507,7 @@ msgctxt "message"
 msgid "07624"
 msgstr "きいていないと いってるけど{line_break}しんぱいそうな かおだぞ{page_break}キミの 母さんのことは{line_break}わたしも 気にかけてるし{line_break}・・・あんしんしておくれ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHopeDidntGet"
 msgid "07625"
 msgstr "たびで おなかをこわしたり{line_break}しなかったろうね・・・{page_break}{actor_name:2}は とにかく{line_break}よくたべるコだから・・・{line_break}母さん しんぱいなんだよ。{end_wait}"
 
@@ -30527,7 +30527,7 @@ msgctxt "message"
 msgid "07629"
 msgstr "つらいたびを したためかしら{line_break}{actor_name:2} なんだか・・・{line_break}すこし 大人になったわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaAh"
 msgid "07630"
 msgstr "あっ!{end_wait}"
 
@@ -30583,7 +30583,7 @@ msgctxt "message"
 msgid "07643"
 msgstr "また たびをはじめても{line_break}ムリ・・・{pause_20_skippable}するんじゃないよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaHowHaveYouBeen"
 msgid "07644"
 msgstr "よう げんきだったか!{end_wait}"
 
@@ -30635,7 +30635,7 @@ msgctxt "message"
 msgid "07656"
 msgstr "オレが いないあいだは{line_break}お前が ウチをまもるんだ{line_break}なっ たのんだぞ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaEverProtectFamily"
 msgid "07657"
 msgstr "と・{pause_20_skippable}に・{pause_20_skippable}か・{pause_20_skippable}く!{pause_20_skippable}{line_break}オレが いないあいだは{line_break}お前が ウチをまもるんだ{page_break}なっ たのんだぞ!{end_wait}"
 
@@ -30659,7 +30659,7 @@ msgctxt "message"
 msgid "07662"
 msgstr "ボクが もっと大きかったら{line_break}いっしょに 行きたいのに{line_break}すごく ざんねんだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaCoughCoughWho"
 msgid "07663"
 msgstr "{text_effect:4}コホコホ{pause_20_skippable}{pause_20_skippable} {reset_text_style}だれ?{pause_20_skippable} やど屋さん?{pause_20_skippable}{pause_20_skippable}{line_break}もう しょくじかしら?{end_wait}"
 
@@ -30695,7 +30695,7 @@ msgctxt "message"
 msgid "07671"
 msgstr "やくそくしたことなんかより{line_break}わたしの からだのことが{line_break}しんぱいだったというの。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaWhoToldIll"
 msgid "07672"
 msgstr "まあ そんなこといったのは{line_break}村長さんたち・・・それとも{line_break}{text_effect:4}コホコホ{reset_text_style} やど屋さん?{end_now}"
 
@@ -30727,7 +30727,7 @@ msgctxt "message"
 msgid "07679"
 msgstr "母さん だいじょうぶだから{line_break}あなたも しめいのために{line_break}ガンバんなさい{pause_20_skippable}{pause_20_skippable} わかった?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaDontWorryBest"
 msgid "07680"
 msgstr "母さん だいじょうぶだから{pause_20_skippable}{line_break}あなたも しめいのために{line_break}ガンバんなさい {text_effect:4}コホコホ{reset_text_style}。{end_wait}"
 
@@ -30735,7 +30735,7 @@ msgctxt "message"
 msgid "07681"
 msgstr "きびしいことをいって{line_break}ごめんね {actor_name:1}・・・{page_break}母さん ホントは・・・{line_break}あなたにあえて うれしいわ{line_break}またあえるまで わたし・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaUnnOhhKyle"
 msgid "07682"
 msgstr "{text_effect:4}ううん・・・{pause_20_skippable}ううん・・・{pause_20_skippable}{pause_20_skippable}{line_break}ドリー・・・{pause_20_skippable}あなた・・・。{end_wait}"
 
@@ -30815,7 +30815,7 @@ msgctxt "message"
 msgid "07701"
 msgstr "そのサクのむこうが{line_break}やっぱり気になるよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIsJasmineBackYet"
 msgid "07702"
 msgstr "あっ{pause_20_skippable} {actor_name:1}じゃないか!{line_break}それで {actor_name:6}は{line_break}・{pause_20_skippable}・{pause_20_skippable}・{pause_20_skippable}いないのか{page_break}やくそくだ {actor_name:1}・・・{pause_20_skippable}{line_break}こんど かえってくるときは{line_break}{actor_name:6}も いっしょだぞ。{end_wait}"
 
@@ -30827,7 +30827,7 @@ msgctxt "message"
 msgid "07704"
 msgstr "{actor_name:6}を つれて{line_break}かえってきたワケじゃ{line_break}なかったのか・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIUsedToPlayHere"
 msgid "07705"
 msgstr "むかしここで {actor_name:5}と{line_break}オレ あそんでたっけなぁ{line_break}おもいだすぜ・・・グスッ。{end_wait}"
 
@@ -30843,7 +30843,7 @@ msgctxt "message"
 msgid "07708"
 msgstr "やっぱり この川には{line_break}バケモノのサカナが{line_break}いたんだなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaThePsynergyStoneIsGone"
 msgid "07709"
 msgstr "アレ{pause_20_skippable} 知らぬあいだに{line_break}エナジーストーンが{line_break}きえているではないか!{end_wait}"
 
@@ -30851,7 +30851,7 @@ msgctxt "message"
 msgid "07710"
 msgstr "こやに アナだけ・・・{line_break}のこってしまったわい{page_break}しかし あれをなおしても{line_break}あの ふん火のキズあとを{line_break}わすれたりは できんぞい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaMemoriesOfThisCottage"
 msgid "07711"
 msgstr "この こやの中には{line_break}おもいでが いっぱい{line_break}つまっているでしょ?{end_now}"
 
@@ -30867,7 +30867,7 @@ msgctxt "message"
 msgid "07714"
 msgstr "アルファ火山のふん火は{line_break}大陸が われてしまうほど{line_break}すごかったんじゃのう!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaIFeltAnotherOne"
 msgid "07715"
 msgstr "きゃっ{pause_20_skippable} また ゆれたよ。{end_wait}"
 
@@ -30879,7 +30879,7 @@ msgctxt "message"
 msgid "07717"
 msgstr "地しんは つづいているけど{line_break}もう キケンはないってさ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaNoTravelersSinceTheEruption"
 msgid "07718"
 msgstr "火山のふん火から 村には{line_break}たび人が やってこないけど{line_break}どうしてなんだろう・・・{page_break}{actor_name:1}は なにか{line_break}知ってるかい?{end_now}"
 
@@ -31179,11 +31179,11 @@ msgctxt "message"
 msgid "07792"
 msgstr "お客さんが きてくれないと{line_break}いくら おみせをあけていても{line_break}ムダなだけですもんね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenMayWrongButLatelyThere"
 msgid "07793"
 msgstr "気のせいか すこし前から{line_break}また アルファ山のじしんが{line_break}ふえてきたようにかんじるのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenPolishedGoldStatueReturnedUs"
 msgid "07794"
 msgstr "あなたが 見つけてくれた{line_break}金の像を みがきました{page_break}あんなにピカピカになって{line_break}見ちがえるようでしょ!{end_wait}"
 
@@ -31191,7 +31191,7 @@ msgctxt "message"
 msgid "07795"
 msgstr "じしんが わるいことのおきる{line_break}前ぶれでないとよいのだが。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShindenDirtyGoldenStatueCleanedUp"
 msgid "07796"
 msgstr "よごれていた 金の像が{line_break}こんなに きれいになった{line_break}ウーン 気もちいいなあ。{end_wait}"
 
@@ -37135,7 +37135,7 @@ msgctxt "message"
 msgid "09281"
 msgstr "バビの灯台が かんせいし{line_break}こうじが おわったなら{line_break}あそこに うつりたいわい{page_break}そして ヴィーナスの遺跡を{line_break}じっくり しらべるんじゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgHaidiaFolksSeemKnow"
 msgid "09282"
 msgstr "お主たち スクレータ様のこと{line_break}よく ぞんじているそうじゃな?{end_now}"
 
@@ -40731,7 +40731,7 @@ msgctxt "message"
 msgid "10180"
 msgstr "とにかく まずは{line_break}ゲートにむかうとしよう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapLook"
 msgid "10181"
 msgstr "これは・・・!{end_wait}"
 
@@ -40755,15 +40755,15 @@ msgctxt "message"
 msgid "10186"
 msgstr "ブラックオーブをうけとった。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapNowUseOnShip"
 msgid "10187"
 msgstr "さあ それを・・・{line_break}その船に 使うのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapRobinWhereGoingSaidUse"
 msgid "10188"
 msgstr "{actor_name:1} どこに行く{line_break}それを 船に{line_break}使ってみてほしいのだ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapMatter"
 msgid "10189"
 msgstr "おお これは・・・!{end_wait}"
 
@@ -40795,7 +40795,7 @@ msgctxt "message"
 msgid "10196"
 msgstr "船のことは また{line_break}あとで ゆっくり{line_break}かんがえるとしよう。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapWreckageShipScuttledOffCoast"
 msgid "10197"
 msgstr "船の ようなものが{line_break}海に しずんでいる。{end_wait}"
 
@@ -43639,7 +43639,7 @@ msgctxt "message"
 msgid "10907"
 msgstr "きっと {actor_name:6}たちが{line_break}わたしたちをまってますわ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWorldMapSukuretaHowLongWillIsland"
 msgid "10908"
 msgstr "ああ スクレータ・・・{line_break}この島 いつまで{line_break}ながされてるのかしら?{end_wait}"
 

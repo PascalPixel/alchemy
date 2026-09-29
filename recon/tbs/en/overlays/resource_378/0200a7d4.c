@@ -2,15 +2,13 @@
  * words), ShindenHeya_ChooseRestartOption, between SPAWN_EFFECT.C and
  * RUN_PAIRED.C in FIELD/COMMON/SHINDEN_HEYA, stays listing.
  *
- * Remaining differences, measured 2026-09-29 with the stock agscc: 324
- * bytes against 312, code 296 against 292 and seven pool words against
- * five.
+ * Remaining differences, measured 2026-09-29 with the stock agscc after its
+ * messages were named: 320 bytes against 312.
  *
- * 1. Message numbers. The reference loads message 0x116e (the restart
+ * 1. Message numbers. The reference loads MsgShindenGreatHealer (the restart
  *    question) once from its pool into r5 and draws the two answers as
- *    r5 + 1 and r5 + 2, as a link-time message symbol does. The plain
- *    number below folds 0x116e, 0x116f and 0x1170 into three pool words.
- *    The main image has no name for these messages yet.
+ *    r5 + 1 and r5 + 2. The draft now spells the question by that name and
+ *    derives the answers from it.
  *
  * 2. The cursor address. The reference rematerializes the cursor record's
  *    address (sp + 8) at each of its four calls and keeps window r7,
@@ -32,6 +30,7 @@
  * The input words are the linker-placed IWRAM names.
  */
 #include "TYPES.H"
+extern u8 MsgShindenGreatHealer[];
 
 /* A text cursor record the text-resource routines fill and move. */
 struct TextObject {
@@ -78,7 +77,7 @@ s32 ShindenHeya_ChooseRestartOption(void)
     Engine_ColorBufferInterpolate(1);
     Engine_EventWait(1);
     window = UiWindow_Create(2, 7, 25, 5, 1);
-    text = 0x116e;
+    text = (s32)MsgShindenGreatHealer;
     UiText_DrawResource(text, window, 16, 0);
     if (SaveState_CountRecordsExcludingFlagged(1) == 0)
         UiText_DrawResource(text + 2, window, 16, 16);

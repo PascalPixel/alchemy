@@ -1,9 +1,9 @@
-/* Draft of resource_376 0x02008298..0x020082bc (36 bytes with pool),
- * FieldScene_RunScene376_02000298; the listing keeps the rows. Remaining
- * difference: the reference loads message 0x1c40 from its literal pool, as a
- * link-time message symbol is loaded; the constant compiles to movs #113 /
- * lsls #6 (23 bytes differ). */
+/* Draft of resource_376 0x02008298 (FieldScene_RunScene376_02000298): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgHaidiaHopeDidntGet). The listing
+ * keeps these rows until the draft is adopted. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_HEYA/TIMED_EVENTS.H"
+extern u8 MsgHaidiaHopeDidntGet[];
 
 void FieldScene_RunScene376_02000298(void)
 {
@@ -11,7 +11,7 @@ void FieldScene_RunScene376_02000298(void)
     s32 record;
 
     Event_Begin();
-    Event_SetMessage(MSG_HOPE_YOU_DIDNT_GET_SICK);
+    Event_SetMessage((s32)MsgHaidiaHopeDidntGet);
     Event_ShowMessage(0x800b, 0);
     Event_End();
 }

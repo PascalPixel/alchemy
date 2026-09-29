@@ -1,5 +1,10 @@
 /* Return visits, supplemental sequences and the entry state. */
 #include "HAIDIA.H"
+extern u8 MsgHaidiaGoAidElders[];
+extern u8 MsgHaidiaOnlyTwoSurvived[];
+extern u8 MsgHaidiaThePsynergyStoneIsGone[];
+extern u8 MsgHaidiaThisIsVale[];
+extern u8 MsgHaidiaYouCameBackHome[];
 
 void Villager_WelcomeBack(void)
 {
@@ -8,9 +13,9 @@ void Villager_WelcomeBack(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x302) != 0) {
-        Event_SetMessage(MSG_THIS_IS_VALE);
+        Event_SetMessage((s32)MsgHaidiaThisIsVale);
     } else {
-        Event_SetMessage(MSG_YOU_CAME_BACK_HOME);
+        Event_SetMessage((s32)MsgHaidiaYouCameBackHome);
         GameFlag_Set(0x302);
     }
     Event_ShowMessage(11, 0);
@@ -30,7 +35,7 @@ void Scene_PsynergyStoneIsGone(void)
     p->f06 = 0xb000;
     Event_Wait(20);
     Actor_StartRepeatedMotion(21, 2);
-    Event_SetMessage(MSG_THE_PSYNERGY_STONE_IS_GONE);
+    Event_SetMessage((s32)MsgHaidiaThePsynergyStoneIsGone);
     Event_ShowMessageAndWait(21, 0, 40);
     Actor_FaceActor(21, ACTOR_PARTY_LEADER, 20);
     Actor_StartRepeatedMotion(21, 2);
@@ -280,7 +285,7 @@ s32 HaidiaIe_RestoreEntryState(void)
 }
 
 /* Runs once flag 0x834 is set, until this event sets flag 0x840 at its end.
- * The dialogue starts at message 0xeb6, urging the party to aid the elders,
+ * The dialogue starts at MsgHaidiaGoAidElders, urging the party to aid the elders,
  * while the actors move, turn and animate around it. After the prompt an
  * answer of 1 shows the next reply and skips the one after it; any other
  * answer skips straight to that second reply. */
@@ -297,7 +302,7 @@ void FieldScene_RunElderAidEvent(void)
         Call2(Engine_CameraSetSpeed, 0x19999, 0x3333);
         Camera_MoveTo(0xc50000, -1, 0x3000000, 1);
         BattleFx_CommitObjectPositionAndWait();
-        Call1(Engine_EventSetMessage, 0xeb6);
+        Call1(Engine_EventSetMessage, (s32)MsgHaidiaGoAidElders);
         Engine_ActorRunRepeatedMotion(19, 2);
         Call3(Engine_EventShowMessageAndWait, 0x4013, 0, 10);
         Call3(Engine_ActorSetSpeed, 0, 0x10000, 0x8000);
@@ -446,7 +451,7 @@ void HaidiaIe_RunScriptScene(void)
     Engine_TaskWait(1);
     Call3(Engine_ActorSetSpeed, 0, 0x13333, 0x9999);
     Call3(Engine_ActorWalkToAndWait, 0, 93, 0x157);
-    Call1(Engine_EventSetMessage, 0xed6);
+    Call1(Engine_EventSetMessage, (s32)MsgHaidiaOnlyTwoSurvived);
     Engine_EventShowMessage(23, 0);
     Engine_AudioPlayCue(61);
     rec7[85] = 0;

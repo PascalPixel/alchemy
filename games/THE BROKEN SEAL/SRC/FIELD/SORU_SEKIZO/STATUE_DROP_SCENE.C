@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgSoruSomethingClicked[];
 
 u8 * Engine_ActorGet();
 void SetMapCellCollision();
@@ -147,7 +148,7 @@ void SoruSekizo_RunStatueDropScene(void)
                         }
                     }
                     Engine_EventWait(40);
-                    Call2(Engine_MessageShowCentered, 0x1038, 1);
+                    Call2(Engine_MessageShowCentered, (s32)MsgSoruSomethingClicked, 1);
                     Call6(Engine_MapCopyCellAttributes, 0, 1, 2, 1, 17, 8);
                     Call6(Engine_MapCopyCellAttributes, 17, 9, 2, 1, 17, 7);
                 }

@@ -1,19 +1,14 @@
-/* NONMATCHING: resource_377 at 0x02008118 (72 bytes with its pool),
- * FieldScene_RunActorCueBranch, between FIELD/COMMON/HAIDIA_BABI/FACING_TARGET.C
- * and EXITS.C, stays listing.
- *
- * Remaining difference: the reference loads message 0x22b9 once from its
- * pool into r5 and shows the answers as r5 + 1 and r5 + 2, as a link-time
- * message symbol does; a plain constant (with or without a do/while wrap)
- * is folded into three pool words, 76 bytes. The main image has no name
- * for the message.
- */
+/* Draft of resource_377 0x02008118 (FieldScene_RunActorCueBranch): it matches
+ * the ROM byte for byte now that the message it loads from the literal pool
+ * has a catalogue name (MsgHaidiaFolksSeemKnow). The listing keeps these rows
+ * until the draft is adopted. */
 
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/COMMON/HAIDIA_BABI/HAIDIA_BABI.H"
+extern u8 MsgHaidiaFolksSeemKnow[];
 
 void FieldScene_RunActorCueBranch(s32 object)
 {
-    s32 cue = 0x22b9;
+    s32 cue = (s32)MsgHaidiaFolksSeemKnow;
 
     Event_SetMessage(cue);
     Event_OpenMessage(object, 0);

@@ -1,4 +1,5 @@
 #include "SUKURETA.H"
+extern u8 MsgHaidiaMemoriesOfThisCottage[];
 
 void SceneState_SetWorkAndFlag87d(void)
 {
@@ -35,7 +36,7 @@ void SceneState_SetWorkAndFlag87e(void)
 void SceneDialogue_RunActorSixteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_MEMORIES_OF_THIS_COTTAGE);
+    Event_SetMessage((s32)MsgHaidiaMemoriesOfThisCottage);
     Event_AskYesNo(16, 0);
     Event_End();
 }

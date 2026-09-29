@@ -28,6 +28,12 @@
 //!   column and its type, such as `x:s16\ty:s16` (`u8`, `s8`, `u16`, `s16`,
 //!   `u32` or `s32`); each further line is a record of decimal or `0x` hex
 //!   values in those columns. Only the last record may stop short.
+//! - `.plane`: a grid plane of cells, such as a map's 128x128 grid. The
+//!   first line gives the cell type, the grid's size, the fill of every
+//!   cell not written and the top-left cell of the written rows:
+//!   `cell:u16\tgrid:128x128\tfill:fff\tat:2,0`. Each further line is one
+//!   grid row from that cell, its cells in hex separated by spaces; the rest
+//!   of the row is fill, and an empty line a row of fill.
 //! - `.delta0`, `.delta1`, `.delta2`: the table's bytes as 16-bit tilemap
 //!   entries, delta-coded in that mode (Psynergy's tilemap delta).
 //! - `.script`: a halfword command script, one command per line, its values
@@ -88,7 +94,16 @@ pub const PACKER: LzMachine = LzMachine::new(4123, 485, 4126, 272);
 fn data_form(form: &str) -> bool {
     matches!(
         form,
-        "bin" | "delta0" | "delta1" | "delta2" | "parts" | "table" | "icons4" | "blocks" | "script"
+        "bin"
+            | "delta0"
+            | "delta1"
+            | "delta2"
+            | "parts"
+            | "table"
+            | "plane"
+            | "icons4"
+            | "blocks"
+            | "script"
     )
 }
 
@@ -136,6 +151,7 @@ pub fn build_file_with(
             "bin" => input.to_vec(),
             "parts" => parts(built, input, sibling)?,
             "table" => table(built, input)?,
+            "plane" => plane(built, input)?,
             "icons4" => icon4_bank(built, input, sibling)?,
             "blocks" => block_map(built, input)?,
             "script" => script(built, input)?,
@@ -172,7 +188,7 @@ fn parts(
         let (part, form) = line
             .split_once('\t')
             .ok_or_else(|| format!("{built}: {line:?} needs a part and its form"))?;
-        if (data_form(form) && form != "table") || form == "font" {
+        if (data_form(form) && !matches!(form, "table" | "plane")) || form == "font" {
             return Err(format!(
                 "{built}: part {part} must be an image form or a table"
             ));
@@ -276,6 +292,60 @@ fn script(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
         }
     }
     Ok(words.iter().flat_map(|word| word.to_le_bytes()).collect())
+}
+
+/// A grid plane of cells, cropped to where it differs from its fill.
+fn plane(built: &str, text: &[u8]) -> Result<Vec<u8>, String> {
+    let text = std::str::from_utf8(text).map_err(|_| format!("{built}: plane is not text"))?;
+    // Rows follow the header line by line; an empty row is all fill.
+    let mut lines = text.lines();
+    let header = lines
+        .next()
+        .ok_or_else(|| format!("{built}: plane has no header"))?;
+    let field = |key: &str| {
+        header
+            .split('\t')
+            .find_map(|pair| pair.strip_prefix(key)?.strip_prefix(':'))
+            .ok_or_else(|| format!("{built}: header needs {key}"))
+    };
+    let number = |value: &str| {
+        value
+            .parse::<usize>()
+            .map_err(|_| format!("{built}: {value:?} is not a number"))
+    };
+    let pair = |value: &str, separator: char| -> Result<(usize, usize), String> {
+        let (a, b) = value
+            .split_once(separator)
+            .ok_or_else(|| format!("{built}: {value:?} needs two numbers"))?;
+        Ok((number(a)?, number(b)?))
+    };
+    let size = match field("cell")? {
+        "u8" => 1,
+        "u16" => 2,
+        "u32" => 4,
+        other => return Err(format!("{built}: cell type {other:?}")),
+    };
+    let (width, height) = pair(field("grid")?, 'x')?;
+    let (left, top) = pair(field("at")?, ',')?;
+    let hex = |word: &str| match u32::from_str_radix(word, 16) {
+        Ok(value) if word.len() <= 2 * size && !word.starts_with('+') => Ok(value),
+        _ => Err(format!("{built}: {word:?} is not a hex cell")),
+    };
+    let fill = hex(field("fill")?)?;
+    let mut cells = vec![fill; width * height];
+    for (y, line) in lines.enumerate() {
+        let row = line.split_whitespace().collect::<Vec<_>>();
+        if top + y >= height || left + row.len() > width {
+            return Err(format!("{built}: row {y} leaves the grid"));
+        }
+        for (x, cell) in row.iter().enumerate() {
+            cells[(top + y) * width + left + x] = hex(cell)?;
+        }
+    }
+    Ok(cells
+        .iter()
+        .flat_map(|cell| cell.to_le_bytes().into_iter().take(size))
+        .collect())
 }
 
 /// A bank of 16x16 blocks of words cut from a grid, each packed.
@@ -588,6 +658,37 @@ mod tests {
         assert!(build_file("T.table", b"x:s8\n128\n").is_err());
         assert!(build_file("T.table", b"x:u8\ty:u8\n1\n2\t3\n").is_err());
         assert!(build_file("T.table", b"x\n1\n").is_err());
+        // A plane fills around its written rows; cells are hex, space-separated.
+        assert_eq!(
+            input_name("M/GRID_SHAPE.plane").unwrap(),
+            "M/GRID_SHAPE.TSV"
+        );
+        assert_eq!(
+            build_file(
+                "P.plane",
+                b"cell:u16\tgrid:3x2\tfill:fff\tat:1,1\n001 0a2\n"
+            )
+            .unwrap(),
+            [0xff, 0xf, 0xff, 0xf, 0xff, 0xf, 0xff, 0xf, 1, 0, 0xa2, 0]
+        );
+        assert_eq!(
+            build_file("P.plane", b"cell:u8\tgrid:2x1\tfill:7\tat:0,0\n").unwrap(),
+            [7, 7]
+        );
+        assert!(build_file("P.plane", b"cell:u8\tgrid:2x1\tfill:0\tat:1,0\n01 02\n").is_err());
+        // A short row ends in fill; an empty row is all fill.
+        assert_eq!(
+            build_file(
+                "P.plane",
+                b"cell:u8\tgrid:2x3\tfill:9\tat:0,0\n01\n\n02 03\n"
+            )
+            .unwrap(),
+            [1, 9, 9, 9, 2, 3]
+        );
+        assert!(build_file("P.plane", b"cell:u8\tgrid:2x1\tfill:0\tat:0,0\n010\n").is_err());
+        assert!(build_file("P.plane", b"cell:u8\tgrid:1x1\tfill:0\tat:0,0\n\n\n").is_err());
+        assert!(build_file("P.plane", b"cell:u8\tgrid:2x2\tfill:100\tat:0,0\n").is_err());
+        assert!(build_file("P.plane", b"cell:u8\tgrid:2x2\tat:0,0\n").is_err());
         // A part list may join a table after an image.
         let mixed = build_file_with("P.parts", b"A\tbitmap\nM\ttable\n", &|name| {
             Ok(match name {

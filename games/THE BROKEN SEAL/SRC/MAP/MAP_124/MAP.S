@@ -17,7 +17,7 @@ Field_Map124:
 	.incbin "MAP/MAP_124/METATILES.delta1.lz"
 	.balign 4, 0
 .LField_Map124_SHAPES:
-	.incbin "MAP/MAP_124/SHAPES.table.lz"
+	.incbin "MAP/MAP_001/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map124_GRID:
 	.incbin "MAP/MAP_124/GRID.parts.lz"
@@ -29,4 +29,4 @@ Field_Map124:
 	.incbin "MAP/MAP_124/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map124_MARKERS:
-	.incbin "MAP/MAP_124/MARKERS.table"
+	.incbin "MAP/MAP_000/MARKERS.table"

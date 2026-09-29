@@ -23,10 +23,10 @@ Field_Map155:
 	.incbin "MAP/MAP_155/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map155_ANIMATION:
-	.incbin "MAP/MAP_155/ANIMATION.script.lz"
+	.incbin "MAP/MAP_054/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map155_BLEND:
-	.incbin "MAP/MAP_155/BLEND.script.lz"
+	.incbin "MAP/MAP_054/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map155_MARKERS:
-	.incbin "MAP/MAP_155/MARKERS.table"
+	.incbin "MAP/MAP_000/MARKERS.table"

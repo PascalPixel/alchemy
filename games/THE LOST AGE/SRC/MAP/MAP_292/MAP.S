@@ -15,7 +15,7 @@ Field_Map292:
 	map_block Field_Map292
 	map_block Field_Map292, .LField_Map292_SCENE
 .LField_Map292_METATILES:
-	.incbin "MAP/MAP_292/METATILES.delta0.lz"
+	.incbin "MAP/MAP_000/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map292_SHAPES:
 	.incbin "MAP/MAP_292/SHAPES.table.lz"
@@ -24,7 +24,7 @@ Field_Map292:
 	.incbin "MAP/MAP_292/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map292_SHAPE_GRID:
-	.incbin "MAP/MAP_292/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_292/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map292_SCENE:
-	.incbin "MAP/MAP_292/SCENE.parts.lz"
+	.incbin "MAP/MAP_000/SCENE.parts.lz"

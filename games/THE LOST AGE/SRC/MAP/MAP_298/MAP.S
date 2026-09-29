@@ -15,16 +15,16 @@ Field_Map298:
 	map_block Field_Map298
 	map_block Field_Map298, .LField_Map298_SCENE
 .LField_Map298_METATILES:
-	.incbin "MAP/MAP_298/METATILES.delta0.lz"
+	.incbin "MAP/MAP_000/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map298_SHAPES:
-	.incbin "MAP/MAP_298/SHAPES.table.lz"
+	.incbin "MAP/MAP_231/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map298_GRID:
 	.incbin "MAP/MAP_298/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map298_SHAPE_GRID:
-	.incbin "MAP/MAP_298/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_231/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map298_SCENE:
-	.incbin "MAP/MAP_298/SCENE.parts.lz"
+	.incbin "MAP/MAP_000/SCENE.parts.lz"

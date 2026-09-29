@@ -15,16 +15,16 @@ Field_Map294:
 	map_block Field_Map294
 	map_block Field_Map294, .LField_Map294_SCENE
 .LField_Map294_METATILES:
-	.incbin "MAP/MAP_294/METATILES.delta0.lz"
+	.incbin "MAP/MAP_000/METATILES.delta0.lz"
 	.balign 4, 0
 .LField_Map294_SHAPES:
-	.incbin "MAP/MAP_294/SHAPES.table.lz"
+	.incbin "MAP/MAP_220/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map294_GRID:
 	.incbin "MAP/MAP_294/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map294_SHAPE_GRID:
-	.incbin "MAP/MAP_294/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_294/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map294_SCENE:
-	.incbin "MAP/MAP_294/SCENE.parts.lz"
+	.incbin "MAP/MAP_000/SCENE.parts.lz"

@@ -43975,7 +43975,7 @@ msgctxt "message"
 msgid "10991"
 msgstr "がんばってね!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWonToldCountOn"
 msgid "10992"
 msgstr "やった かったぜ!{line_break}やっぱり オレがいると{line_break}たよりになるだろ!{end_wait}"
 

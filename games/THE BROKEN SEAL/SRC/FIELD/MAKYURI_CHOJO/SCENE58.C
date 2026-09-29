@@ -10,7 +10,6 @@ void BattleFx_SetWeightedResult();
 
 void RunScene58Sequence(void)
 {
-    extern u8 Data_02000240[];
     void *temp_r0;
     void *temp_r0_10;
     void *temp_r0_11;
@@ -474,7 +473,7 @@ void RunScene58Sequence(void)
     /* FAKEMATCH: the do/while loads the game state's base before the 0x22b
        offset, which fixes their registers and literal-pool order. */
     do {
-        Data_02000240[0x22B] = 3;
+        gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
     } while (0);
     Call2(BattleFx_SetWeightedResult, 0x24, 2);
     Call0(Engine_EventEnd);

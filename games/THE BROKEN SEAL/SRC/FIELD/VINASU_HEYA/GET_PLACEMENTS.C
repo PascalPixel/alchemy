@@ -16,14 +16,10 @@ void FieldScene_PrepareActors(u8 *placements);
    prepared before it is returned. */
 const struct ScenePlacement *Scene_GetPlacements(void)
 {
-    extern s16 Data_02000240[];
-
     u8 *ret;
-    s16 *tbl;
     s16 v;
 
-    tbl = Data_02000240;
-    v = tbl[224];
+    v = gGameState.scene;
     if (v == (s32)&SceneId_VinasuHeya1) {
         return (const struct ScenePlacement *)gVinasuHeyaPlacements1;
     }

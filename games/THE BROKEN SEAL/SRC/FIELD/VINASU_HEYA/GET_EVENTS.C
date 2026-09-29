@@ -12,10 +12,7 @@ extern u8 gVinasuHeyaEvents6[];
 /* What each room answers; other scenes take the second room's events. */
 const struct SceneEvent *Scene_GetEvents(void)
 {
-    extern u8 Data_02000240[];
-
-    s32 off = 0x1c0;
-    s32 v = *(s16 *)(Data_02000240 + off);
+    s32 v = gGameState.scene;
 
     if (v == (s32)&SceneId_VinasuHeya1) {
         return (const struct SceneEvent *)gVinasuHeyaEvents1;

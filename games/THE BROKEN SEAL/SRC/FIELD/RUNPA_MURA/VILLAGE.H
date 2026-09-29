@@ -350,6 +350,7 @@ void LeftGuard_Talk(void);
 void RightGuard_Talk(void);
 void LeftGuard_MindRead(void);
 void RightGuard_MindRead(void);
+void Party_WatchForFortress(void);
 void Gerald_RefusesToReturn(void);
 void Door_Enter(void);
 void HiddenPassage_Enter(void);

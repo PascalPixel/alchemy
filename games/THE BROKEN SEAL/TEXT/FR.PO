@@ -33603,7 +33603,7 @@ msgctxt "message"
 msgid "08398"
 msgstr "{actor_name:1}, ce premier{line_break}duel était incroyable.{page_break}Je ne bougerai pas,{line_break}alors dites-moi quand{line_break}vous aurez terminé.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08399"
 msgstr "C'est ici qu'aura lieu{line_break}le troisième duel des{line_break}finales.{end_wait}"
 

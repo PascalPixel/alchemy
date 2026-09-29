@@ -30,6 +30,9 @@ Engine_TaskRemoveCallback:
 	.thumb_func
 Engine_RandomNext:
 	overlay_veneer Random16Far
+	.global Math_Atan2
+	.thumb_func
+Math_Atan2:
 	overlay_veneer ArcTan2Far
 	.global Vector_AddPolarOffset
 	.thumb_func
@@ -118,6 +121,9 @@ ObjectDispatch_WaitForValue16:
 	.global Object_SetPosition
 	.thumb_func
 Object_SetPosition:
+	.global Engine_ObjectSetPosition
+	.thumb_func
+Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	.global Object_CommitPosition
 	.thumb_func

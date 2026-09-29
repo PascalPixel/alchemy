@@ -35295,7 +35295,7 @@ msgctxt "message"
 msgid "08821"
 msgstr "・・・{actor_name:1}殿{line_break}だい1しあいは{line_break}おみごとでした{page_break}わたしは ここにいますから{line_break}下見が おわりましたら{line_break}また こえを かけて下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoSiteThirdFinals"
 msgid "08822"
 msgstr "ここがファイナル{line_break}だい3しあいの{line_break}かいじょうです。{end_wait}"
 

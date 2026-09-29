@@ -19,6 +19,15 @@ enum TransitionMessage {
 
 #define NULL ((void *)0)
 
+/* The engine's heap-allocation cache: each slot holds its kind's block. */
+extern void *gWorkSlot[];
+
+/* The work in slot 36; its word at +24 is the actor it tracks. */
+struct TrackingWork {
+    u8 unknown_00[24];
+    struct FieldActor *actor;
+};
+
 /* Prepare service zero, set its +6 halfword, and run the follow-up sequence. */
 struct SceneService {
     u16 unknown00[3];

@@ -5,6 +5,7 @@ SECTIONS
     .rom :
     {
         "*/recon/tbs/es/rom.o"(.rom.00000000)
+        "*/games/COMMON/SRC/GRAPHICS/UI/WINDOW_TILES.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/UI/SMALL_FONT.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/INTRO_SUN.o"(.rodata)
         "*/recon/tbs/es/rom.o"(.rom.003261e7)

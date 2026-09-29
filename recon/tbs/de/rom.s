@@ -1,5 +1,7 @@
 	.section .rom.00000000, "a"
-	.incbin "baserom.gba", 0x0, 0x322db0
+	.incbin "baserom.gba", 0x0, 0x30fd4
+	.section .rom.00032bd4, "a"
+	.incbin "baserom.gba", 0x32bd4, 0x2ee1dc
 	.section .rom.003247e7, "a"
 	.incbin "baserom.gba", 0x3247e7, 0x1
 	.section .rom.0032ae9b, "a"

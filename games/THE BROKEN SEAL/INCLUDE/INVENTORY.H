@@ -32,4 +32,7 @@ s32 Inventory_CountItem(s32 owner, s32 item);
 s32 PartyInventory_CountItem(s32 item);
 s32 Equipment_HasValue(s32 owner, s32 value);
 
+/* An item from the battle spoils that the party had no room to carry. */
+extern u16 gOverflowItem;
+
 #endif

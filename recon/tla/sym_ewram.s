@@ -22,3 +22,6 @@ Sound_CgbNotes:
 	.space 0x000002c0
 	.global Sound_WorkBytes
 Sound_WorkBytes:
+	.space 0x000009d2
+	.global gScrollTarget
+gScrollTarget:

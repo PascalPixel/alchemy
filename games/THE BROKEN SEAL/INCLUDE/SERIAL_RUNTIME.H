@@ -58,7 +58,6 @@ struct SerialTransferState {
 };
 
 #define SERIAL_RUNTIME (&gSerialRuntime)
-#define SERIAL_TRANSFER ((struct SerialTransferState *)0x02002220)
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define REG_SIODATA32 ((volatile u32 *)0x04000120)
 #define REG_SIOCNT (*(volatile u32 *)0x04000128)
@@ -75,7 +74,6 @@ struct SerialTransferState {
 #define SERIAL_VALUE_A gSerialSendSize
 #define SERIAL_ACTIVE_B gSerialReceiveDest
 #define SERIAL_VALUE_B gSerialReceivedSize
-#define SERIAL_RESULT (*(volatile u8 *)0x020023a4)
 
 #define START_DMA(source_, destination_, control_) do { \
     DMA3->source = (u32)(source_); \
@@ -98,6 +96,11 @@ extern volatile u16 gSerialSendSize;
 extern volatile s32 gSerialReceiveDest;
 extern volatile u16 gSerialReceivedSize;
 extern volatile u16 RegIme;
+/* The four peers' 24-byte payloads that each frame's exchange receives;
+   gSerialTransfer holds the payload this console sends. */
+extern u8 gSerialPeerPayloads[4][24];
+/* The block transfer's seven-bit packet sequence number. */
+extern volatile u8 gSerialBlockSequence;
 
 static inline s32 SerialRuntime_AddParentFlag(s32 status)
 {

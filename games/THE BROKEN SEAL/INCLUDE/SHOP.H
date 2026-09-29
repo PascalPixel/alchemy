@@ -153,8 +153,6 @@ LAYOUT_SIZE_GUARD(
     struct ShopPartyState,
     0x14);
 
-#define SHOP_PARTY_STATE (*(struct ShopPartyState *)0x02000240)
-
 void Shop_SetCursor(
     struct ShopCursor *cursor,
     s32 target_x,

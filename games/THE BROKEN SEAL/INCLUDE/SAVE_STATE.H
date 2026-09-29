@@ -52,6 +52,10 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 
 #define WAIT_DMA() WaitDma(DMA3)
 
+/* Set by the save scan when a slot's summary marks it for sending and R
+   and Left are held; the title menu then offers Send. */
+extern s16 gTitleSendOptionEnabled;
+
 void *Func_080048f4(s32 kind, s32 size);
 s32 Func_080030f8(s32 frames);
 s32 _call_via_r3(s32, s32, s32, s32);

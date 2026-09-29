@@ -1,4 +1,5 @@
 #include "SHOP.H"
+#include "PARTY_STATE.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
 
@@ -13,6 +14,6 @@ void Shop_DrawMoney(void)
     window = shop->money_window;
     if (window != 0) {
         UiText_DrawCharacterAtOffsetFar(0xc8a, window, 0, 0);
-        UiText_DrawNumberInWindowFar(SHOP_PARTY_STATE.money, 6, window, 0x20, 8);
+        UiText_DrawNumberInWindowFar(gGameState.money, 6, window, 0x20, 8);
     }
 }

@@ -1,35 +1,25 @@
-#include "TYPES.H"
-extern struct EventWork *gEventWork;
+/* The entrance opens: the scene restarts at its entrance 31. */
+#include "ENTRANCE.H"
+#include "SCENE_IDS.H"
 
-extern u8 Data_00000035[];
-extern u8 Data_02000240[];
-void Func_02003694();
-void Func_0200369a();
-void Func_020036d6();
-void Func_02003704();
-void Func_02003790();
-void Func_0200379a();
-
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
+void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
+void BattleFx_SetWeightedResult(s32 value, s32 weight);
 
 void MakyuriIriguchi_OpenEntrance(void)
 {
-    s32 base3_2000240;
+    s32 game;
 
-    Func_02003694();
-    Func_02003704(8, 2);
-    Func_0200369a(20);
-    *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x200;
-    /* FAKEMATCH: 0x35 is loaded from the literal pool through a link
-     * symbol, and the do/while keeps the flag store before the call. */
-    Func_02003790((s32)Data_00000035, 31);
-    base3_2000240 = (s32)Data_02000240;
+    Event_Begin();
+    Engine_ActorRunRepeatedMotion(8, 2);
+    Event_Wait(20);
+    gEventWork->start_transition = 0x200;
+    Party_SetFields1ceAnd1d0((s32)&SceneId_MakyuriIriguchi, 31);
+    game = (s32)&gGameState;
+    /* FAKEMATCH: the do/while loads the game state's address ahead of the
+     * offset for the byte store. */
     do {
-        *(u8 *)((base3_2000240 + 0x22b)) = 3;
-        Func_0200379a(36, 1);
+        *(u8 *)(game + 0x22b) = 3;
+        BattleFx_SetWeightedResult(36, 1);
     } while (0);
-    Func_020036d6();
+    Event_End();
 }

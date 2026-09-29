@@ -1,42 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020091b4,"ax",%progbits
-	.p2align 2
-	.global MakyuriIriguchi_OpenEntrance
-	.thumb_func
-MakyuriIriguchi_OpenEntrance:
-	push {lr}
-	bl 0x0200a4dc
-	movs r1, #2
-	movs r0, #8
-	bl 0x0200a544
-	movs r0, #20
-	bl 0x0200a4d4
-	ldr r3, [pc, #44]
-	movs r2, #224
-	ldr r3, [r3]
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	adds r2, #64
-	str r2, [r3]
-	ldr r0, [pc, #36]
-	movs r1, #31
-	bl 0x0200a5b4
-	ldr r3, [pc, #32]
-	ldr r2, [pc, #32]
-	adds r3, r3, r2
-	movs r2, #3
-	strb r2, [r3]
-	movs r0, #36
-	movs r1, #1
-	bl 0x0200a5ac
-	bl 0x0200a4e4
-	pop {r0}
-	bx r0
-	.4byte 0x03001ebc
-	.4byte 0x00000035
-	.4byte 0x02000240
-	.4byte 0x0000022b
 	.section .text.x020092e0,"ax",%progbits
 	.p2align 2
 	.global Func_020012e0

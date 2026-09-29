@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+#include "INVENTORY.H"
 
 /* Hands out the battle spoils: experience to every living party member,
    with the level-up, newly learned Psynergy and stat-gain messages each
@@ -32,7 +33,6 @@ void BattlePresentation_WaitForAdvance(void);
 s32 BattleParty_ListLivingUnits(s32 side, u16 *units);
 struct SpoilsUnit *Runtime_BumpAllocateAlternatePool(s32 size);
 void Runtime_BumpFree(void *block);
-struct SpoilsUnit *Owner_GetStateFar(s32 unit_id);
 s32 Func_080770b8(s32 unit_id, s16 *gains);
 void Audio_PlayCue(s32 cue);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
@@ -85,7 +85,7 @@ void Battle_AwardSpoils(void)
     backup = Runtime_BumpAllocateAlternatePool(sizeof(struct SpoilsUnit));
     for (i = 0; i < count; i++) {
         unit_id = list[i];
-        unit = Owner_GetStateFar(unit_id);
+        unit = (struct SpoilsUnit *)Owner_GetStateFar(unit_id);
         unit->experience += spoils->experience;
         while (Iwram_CopyWords(backup, unit, sizeof(struct SpoilsUnit)),
             Func_080770b8(unit_id, gains) != 0) {
@@ -153,7 +153,7 @@ void Battle_AwardSpoils(void)
         Party_AdjustSixDigitCounterAFar(spoils->coins);
         BattlePresentation_WaitForAdvance();
     }
-    found = (u16 *)0x0200047c;
+    found = &gOverflowItem;
     for (;;) {
         best_slot = -1;
         best = -1;

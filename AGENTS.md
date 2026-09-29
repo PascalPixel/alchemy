@@ -164,3 +164,6 @@ a verified build.
   image; scene and resource ids come only from their tables and are used
   whole; one name per place; sound sources may include the files the build
   makes from MIDI and WAV.
+- 2026-09-29: gates: asset sources may include the files the build makes
+  from their editable inputs (PNGs, tilemaps, fonts, maps), as pret's do.
+  The symbols-pass check compares global symbols only.

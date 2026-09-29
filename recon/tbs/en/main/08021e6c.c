@@ -30,6 +30,14 @@
  * selection cursors, sprite pointer traversal and a signed/halfword scale
  * union do not close broad lowering; this is worse than H2. Three structural
  * hypotheses exhausted without adoption; do not tune registers on this form.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 17,661
+ * candidates; the best scored 15395 against 21273 (310 register-only, 20
+ * stack-only, 82 operand, 104 reordered, 16 inserted, 40 deleted) after 254
+ * rewrites (swap commutative operands, introduce a temporary, reorder
+ * independent statements, reorder local declarations), none of them kept.
+ * Two hundred fifty-four rewrites across the whole selection screen, search
+ * artefacts that stay out of the draft; register choice is still most of
+ * the difference.
  */
 struct UiWindowWork;
 

@@ -2,7 +2,15 @@
  * 1472 halfword edits (2026-09-25). Battle effect mode 9: receding sprites,
  * sparks, concentric ellipses and palette ramps. The verified canvas-layer
  * queue shape reduces the baseline by 53 edits.
- * WALL: Second-phase callback spills and palette-loop source structure. */
+ * WALL: Second-phase callback spills and palette-loop source structure.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 5,617
+ * candidates; the best scored 31834 against 34547 (698 register-only, 39
+ * stack-only, 131 operand, 204 reordered, 53 inserted, 75 deleted) after
+ * 271 rewrites (swap commutative operands, reorder local declarations,
+ * reorder independent statements, introduce a temporary), none of them
+ * kept. At about ten candidates a second the search barely samples a
+ * function this size; its rewrites stay out of the draft.
+ */
 #include "TYPES.H"
 #include "DMA.H"
 #include "BATTLE_EFFECT_WORK.H"

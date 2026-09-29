@@ -7,11 +7,12 @@ void DisplayScroll_UpdateObjects(void);
 void DisplayScroll_RenderEnteringLine(void);
 
 void *Runtime_BumpAllocateAlternatePool(s32 size);
-s32 Func_080f07f0(void *resource, s32 offset, s32 mode);
+s32 Func_080f07f0(const void *resource, s32 offset, s32 mode);
 
 extern u16 Data_02004c00;
 extern u16 Data_02004c08;
 extern u16 Data_02004c04;
+extern const void *DisplayScroll_LineTable[];
 
 /* Allocate the scrolling display's object table, clear OBJ VRAM and fill its
    last tiles with colour 1, then lay out the entries: three strips of eight
@@ -76,5 +77,5 @@ void DisplayScroll_InitObjectTable(void)
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_UpdateObjects, 0x480);
     Scheduler_AddOrUpdateCallback((s32)DisplayScroll_RenderEnteringLine, 0xc80);
     for (i = 0; i < 32; i++)
-        Func_080f07f0(*(void **)0x080f1220, i * 24, 1);
+        Func_080f07f0(DisplayScroll_LineTable[0], i * 24, 1);
 }

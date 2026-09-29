@@ -1,8 +1,14 @@
 #include "FLASH.H"
 
+extern u8 *gFlash;
+extern volatile u8 gFlashTimerNum;
+extern u8 gFlashTimeoutFlag;
+extern u16 *volatile gFlashTimerReg;
+extern volatile u16 Data_02004c2c;
+
 void StopFlashTimer(void)
 {
-    u16 *volatile *cursor = (u16 *volatile *)0x02004c28;
+    u16 *volatile *cursor = &gFlashTimerReg;
     u16 *record = *cursor;
 
     *record = 0;
@@ -13,8 +19,8 @@ void StopFlashTimer(void)
     *cursor = record;
 
     *(volatile u16 *)0x04000208 = 0;
-    *(volatile u16 *)0x04000200 &= ~(u16)(8 << *(volatile u8 *)0x02004c20);
-    *(volatile u16 *)0x04000208 = *(volatile u16 *)0x02004c2c;
+    *(volatile u16 *)0x04000200 &= ~(u16)(8 << gFlashTimerNum);
+    *(volatile u16 *)0x04000208 = Data_02004c2c;
 }
 
 u8 ReadFlashByte(u8 *value)
@@ -30,7 +36,7 @@ void CopyFlashReadRoutineToRam(void *rawDestination)
     u32 begin;
     u16 value;
 
-    *(u8 **)0x02004c1c = destination + 1;
+    gFlashReadRoutine = (u8 (*)(u8 *))(destination + 1);
     source = (u8 *)ReadFlashByte;
     source = (u8 *)((u32)source ^ (u32)1);
     begin = ((u32)(u8 *)CopyFlashReadRoutineToRam -
@@ -50,11 +56,11 @@ check:
 }
 
 /*
- * The callee stored at 0x02004c1c is invoked through the compiler's r1
+ * The routine in gFlashReadRoutine is invoked through the compiler's r1
  * indirect-call veneer, so it takes one real argument.  The explicit byte
  * narrowing mirrors the three byte-valued inputs at the call boundary.
  */
-typedef s32 (*Callee_02004c1c)(s32 argument);
+typedef s32 (*FlashPollRoutine)(s32 argument);
 
 void StartFlashTimer(s32 timing_index);
 
@@ -65,18 +71,18 @@ s32 WaitForFlashWrite(u8 value, s32 argument, u8 expected)
     s32 local_argument = argument;
     u32 local_expected = expected;
     s32 result;
-    Callee_02004c1c *callee_slot;
+    FlashPollRoutine *callee_slot;
 
     narrowed = (narrowed << 24) >> 24;
     local_expected = (local_expected << 24) >> 24;
     result = 0;
     StartFlashTimer(narrowed);
-    callee_slot = (Callee_02004c1c *)0x02004c1c;
+    callee_slot = (FlashPollRoutine *)&gFlashReadRoutine;
     packed = (narrowed | 0xc000) << 16;
     goto loop;
 
 failure:
-    if (*(u16 *)(*(u8 **)0x02004c08 + 20) == 0x1cc2)
+    if (*(u16 *)(gFlash + 20) == 0x1cc2)
         *(u8 *)0x0e005555 = 0xf0;
     result = packed >> 16;
     goto done;
@@ -84,7 +90,7 @@ failure:
 loop:
     if ((u8)(*callee_slot)(local_argument) == local_expected)
         goto done;
-    if (*(u8 *)0x02004c24 == 0)
+    if (gFlashTimeoutFlag == 0)
         goto loop;
     if ((u8)(*callee_slot)(local_argument)!= local_expected)
         goto failure;

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "SAVE_STATE.H"
 extern u8 Data_03001f1c[];
 extern u8 Data_03001ae8[];
 
@@ -63,11 +64,11 @@ s32 SaveState_ScanRecordFlags(void)
 
         ret = SaveState_LoadSummaryRecords();
         p = (s8 *)(*(s32 *)((u32)&Data_03001f1c) + 0x1070);
-        *(s16 *)0x02002010 = 0;
+        gTitleSendOptionEnabled = 0;
         gTitleExtraOptionEnabled = 0;
         for (i = 0; i < 3; i++) {
             if (p[i * 0x40 + 1] != 0) {
-                *(s16 *)0x02002010 = 1;
+                gTitleSendOptionEnabled = 1;
                 cnt++;
             }
             if (p[i * 0x40 + 2] != 0) {
@@ -76,7 +77,7 @@ s32 SaveState_ScanRecordFlags(void)
         }
 
         if ((*(volatile s32 *)((u32)&Data_03001ae8) & 0x120) != 0x120) {
-            *(s16 *)0x02002010 = 0;
+            gTitleSendOptionEnabled = 0;
         }
     }
     SaveState_ReleaseWorkspace();

@@ -2,6 +2,9 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 extern u8 *Data_03001ebc;
+/* The action-callback paths that walk the leader and Gerald in circles. */
+extern const s32 ShindenHeya_LeaderCircleScript[];
+extern const s32 ShindenHeya_GeraldCircleScript[];
 
 /* Calls use this overlay's loader veneers. The early long branch shares
  * the dialogue tail and epilogue; the two timing loops each run six times. */
@@ -391,8 +394,8 @@ void FieldScene_RunPairedActorChoreography(void)
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(10);
-    Value2(Engine_ActorEnableActionCallback, 0, 0x200b740);
-    Call2_scene_primary_script(Engine_ActorEnableActionCallback, 1, 0x200b81c);
+    Value2(Engine_ActorEnableActionCallback, 0, (s32)ShindenHeya_LeaderCircleScript);
+    Call2_scene_primary_script(Engine_ActorEnableActionCallback, 1, (s32)ShindenHeya_GeraldCircleScript);
     Object_RefreshSelectorById(0); /* main:0808a0a0 */
     Object_RefreshSelectorById(1); /* main:0808a0a0 */
     Call3_scene_primary_script(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);

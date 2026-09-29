@@ -1,145 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200807c,"ax",%progbits
-	.global Func_0200007c
-	.thumb_func
-Func_0200007c:
-	push {r5, lr}
-	ldr r3, [pc, #116]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #108]
-	cmp r2, r3
-	bne .L_0200007c_0
-	ldr r0, [pc, #104]
-	bl 0x02008e88
-	cmp r0, #0
-	beq .L_0200007c_1
-	ldr r3, [pc, #100]
-	adds r1, r3, #0
-	movs r2, #0
-	adds r1, #142
-	adds r3, #166
-	strb r2, [r1]
-	strb r2, [r3]
-.L_0200007c_1:
-	ldr r0, [pc, #84]
-	b .L_0200007c_2
-.L_0200007c_0:
-	ldr r3, [pc, #84]
-	cmp r2, r3
-	bne .L_0200007c_3
-	ldr r0, [pc, #84]
-	bl 0x02008e88
-	cmp r0, #0
-	beq .L_0200007c_4
-	ldr r3, [pc, #76]
-	movs r2, #1
-	adds r3, #46
-	strb r2, [r3]
-.L_0200007c_4:
-	ldr r0, [pc, #72]
-	bl 0x02008e88
-	cmp r0, #0
-	bne .L_0200007c_5
-	ldr r0, [pc, #68]
-	bl 0x02008e88
-	cmp r0, #0
-	beq .L_0200007c_6
-.L_0200007c_5:
-	ldr r3, [pc, #48]
-	movs r2, #1
-	adds r3, #94
-	strb r2, [r3]
-.L_0200007c_6:
-	ldr r5, [pc, #40]
-	adds r0, r5, #0
-	bl 0x02008eb8
-	adds r0, r5, #0
-	b .L_0200007c_2
-.L_0200007c_3:
-	ldr r0, [pc, #40]
-.L_0200007c_2:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000004b
-	.4byte 0x00000909
-	.4byte 0x0200940c
-	.4byte 0x0000004c
-	.4byte 0x000008fd
-	.4byte 0x020095bc
-	.4byte 0x000008fe
-	.4byte 0x00000907
-	.4byte 0x020093f4
-	.section .text.x02008874,"ax",%progbits
-	.global Func_02000874
-	.thumb_func
-Func_02000874:
-	push {lr}
-	ldr r0, [pc, #108]
-	bl 0x02008e88
-	cmp r0, #0
-	beq .L_02000874_0
-	movs r0, #144
-	lsls r0, r0, #2
-	bl 0x02008e90
-.L_02000874_0:
-	ldr r0, [pc, #92]
-	bl 0x02008e88
-	cmp r0, #0
-	bne .L_02000874_1
-	ldr r0, [pc, #88]
-	bl 0x02008e88
-	cmp r0, #0
-	beq .L_02000874_2
-.L_02000874_1:
-	ldr r0, [pc, #80]
-	bl 0x02008e90
-.L_02000874_2:
-	ldr r0, [pc, #68]
-	bl 0x02008e88
-	cmp r0, #0
-	beq .L_02000874_3
-	ldr r0, [pc, #60]
-	bl 0x02008e88
-	cmp r0, #0
-	beq .L_02000874_3
-	ldr r0, [pc, #60]
-	bl 0x02008e90
-.L_02000874_3:
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_02000874_4
-	bl 0x02008904
-	b .L_02000874_5
-.L_02000874_4:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000874_5
-	bl 0x02008b2c
-.L_02000874_5:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.4byte 0x000008fd
-	.4byte 0x000008fe
-	.4byte 0x00000907
-	.4byte 0x00000241
-	.4byte 0x00000242
-	.4byte 0x02000240
-	.4byte 0x0000004b
-	.4byte 0x0000004c
 	.section .text.x02008d58,"ax",%progbits
 	.global Func_02000d58
 	.thumb_func
@@ -493,12 +353,16 @@ Placement_Messages:
 	.4byte 0x0080904c
 	.4byte 0x0090804c
 	.4byte 0x000001ff
+	.global gArutinMuraPlacementsOther
+gArutinMuraPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinMuraPlacements1
+gArutinMuraPlacements1:
 	.4byte 0xffff0072
 	.4byte 0x00000001
 	.4byte 0x01b80000
@@ -607,6 +471,8 @@ Placement_Messages:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinMuraPlacements2
+gArutinMuraPlacements2:
 	.4byte 0xffff006c
 	.4byte 0x00000001
 	.4byte 0x00680000

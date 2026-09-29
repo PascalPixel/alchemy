@@ -82,6 +82,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global FieldScene_PrepareActors
+	.thumb_func
+FieldScene_PrepareActors:
 	overlay_veneer Func_0808a038
 	.global Engine_EventChooseYesNo
 	.thumb_func

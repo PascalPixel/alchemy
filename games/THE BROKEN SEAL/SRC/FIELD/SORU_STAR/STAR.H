@@ -213,11 +213,11 @@ struct ObjectRuntime;
 
 void Event_SayThenWait(s32 speaker, s32 frames);
 
-extern u16 Data_0200d088[];
-extern s32 Data_0200cd88[];
-extern s32 Data_0200cdb8[];
-extern s32 Data_0200cdc4[];
-extern s32 Data_0200cfa4[];
+extern u16 SoruStar_StarCells[];
+extern s32 Placement_Scripts[];
+extern s32 Placement_Messages[];
+extern s32 Placement_Actors[];
+extern s32 Placement_Effects[];
 
 enum SoruStarMessage {
     MSG_VENUS_STAR_BAGGED = 0x1075,

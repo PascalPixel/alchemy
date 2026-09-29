@@ -2,9 +2,9 @@
 	.thumb
 	.section .text.x02008040,"ax",%progbits
 	.balign 4
-	.global Func_02000040
+	.global SceneData_SelectByRuntimeSelector
 	.thumb_func
-Func_02000040:
+SceneData_SelectByRuntimeSelector:
 	push {lr}
 	ldr r3, [pc, #48]
 	movs r1, #224
@@ -45,9 +45,9 @@ Func_02000040:
 	.4byte 0x020089bc
 	.section .text.x020080a0,"ax",%progbits
 	.balign 4
-	.global Func_020000a0
+	.global SceneData_SelectSecondaryDataByRuntimeSelector
 	.thumb_func
-Func_020000a0:
+SceneData_SelectSecondaryDataByRuntimeSelector:
 	push {lr}
 	ldr r3, [pc, #48]
 	movs r1, #224
@@ -86,9 +86,9 @@ Func_020000a0:
 	.4byte 0x0000002f
 	.4byte 0x02008cbc
 	.4byte 0x02008c14
-	.global Func_020000f4
+	.global SceneData_SelectDataByRuntimeSelector
 	.thumb_func
-Func_020000f4:
+SceneData_SelectDataByRuntimeSelector:
 	push {lr}
 	ldr r3, [pc, #48]
 	movs r1, #224
@@ -129,9 +129,9 @@ Func_020000f4:
 	.4byte 0x02008e9c
 	.section .text.x0200846c,"ax",%progbits
 	.balign 4
-	.global Func_0200046c
+	.global FieldScene_DispatchByScenarioId
 	.thumb_func
-Func_0200046c:
+FieldScene_DispatchByScenarioId:
 	push {lr}
 	ldr r3, [pc, #52]
 	movs r1, #224
@@ -300,8 +300,8 @@ Func_0200046c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global BiribinoDou_EventTable
-BiribinoDou_EventTable:
+	.global gBiribinoDouExits
+gBiribinoDouExits:
 	.4byte 0x00000031
 	.4byte 0x00123002
 	.4byte 0x00201030

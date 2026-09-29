@@ -1,34 +1,10 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 
-/* Unit bindings for scoring (declare as absolute_symbols of a unit on
- * resource_3a5:02001180):
- *   Engine_ActorGet = 0x02009d74 (thumb)
- *   Engine_GameFlagSet = 0x02009d4c (thumb)
- *   Engine_ActorSetAnimation = 0x02009dac (thumb)
- *   Engine_ActorFaceActor = 0x02009dcc (thumb)
- *   Engine_EventWait = 0x02009d5c (thumb)
- *   Engine_ActorSetAttachedEffect = 0x02009df4 (thumb)
- *   Engine_ActorStartRepeatedMotion = 0x02009dbc (thumb)
- *   Main_0808a108 = 0x02009db4 (thumb)
- *   Engine_ActorSetSpeed = 0x02009d7c (thumb)
- *   Engine_ActorSetDestination = 0x02009d84 (thumb)
- *   Engine_ActorShowEmote = 0x02009dec (thumb)
- *   Engine_Import0808a250 = 0x02009e04 (thumb)
- */
-extern s32 Data_02000240_t[][1];
 
-s32 Engine_ActorGet();
-void Engine_GameFlagSet();
-void Engine_ActorSetAnimation();
-void Engine_ActorFaceActor();
-void Engine_EventWait();
-void Engine_ActorSetAttachedEffect();
-void Engine_ActorStartRepeatedMotion();
-void Main_0808a108();
-void Engine_ActorSetSpeed();
-void Engine_ActorSetDestination();
-void Engine_ActorShowEmote();
-void Engine_Import0808a250();
+void Object_SetActionById();
+s32 RamakanSabaku_EmitSandEffect(u8 *actor);
+void BattleFx_SetWeightedResult();
 
 
 
@@ -70,7 +46,7 @@ void RamakanSabaku_FaceNearestActor(void)
     s32 dx;
     s32 dz;
 
-    target = Value1(Engine_ActorGet, Data_02000240_t[125][0]);
+    target = Value1(Engine_ActorGet, gGameState.selected_actor);
     best = 9;
     Call1(Engine_GameFlagSet, 0x200);
     min = 0x100000;
@@ -97,7 +73,7 @@ void RamakanSabaku_FaceNearestActor(void)
         }
     }
     Engine_ActorSetAnimation(0, 1);
-    *(u8 *)(Engine_ActorGet(0) + 90) &= 254;
+    *((u8 *)Engine_ActorGet(0) + 90) &= 254;
     Engine_ActorFaceActor(0, best, 0);
     Engine_EventWait(20);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x102);
@@ -108,10 +84,10 @@ void RamakanSabaku_FaceNearestActor(void)
     record = Engine_ActorGet(0);
     *(u16 *)(actor + 6) = (*(u16 *)(record + 6) + 0x8000) & -0x1000;
     Engine_ActorSetAnimation(0, 5);
-    Main_0808a108(0, 24);
+    Object_SetActionById(0, 24);
     Call3(Engine_ActorSetSpeed, 0, 0x1999, 0xccc);
     record = Engine_ActorGet(0);
-    *(s32 *)(record + 108) = 0x2008345;
+    *(s32 *)(record + 108) = (s32)RamakanSabaku_EmitSandEffect;
     record = Value1(Engine_ActorGet, best);
     if (record != 0) {
         Engine_ActorSetDestination(0, *(s16 *)(record + 10), *(s16 *)(record + 18));
@@ -120,8 +96,8 @@ void RamakanSabaku_FaceNearestActor(void)
     Call3(Engine_ActorShowEmote, best, 0x104, 0);
     Engine_EventWait(60);
     Call2(Engine_ActorSetAttachedEffect, 0, 0x100);
-    *(u8 *)(Engine_ActorGet(0) + 90) |= 1;
+    *((u8 *)Engine_ActorGet(0) + 90) |= 1;
     record = Engine_ActorGet(0);
     *(s32 *)(record + 108) = 0;
-    Engine_Import0808a250(53, 4);
+    BattleFx_SetWeightedResult(53, 4);
 }

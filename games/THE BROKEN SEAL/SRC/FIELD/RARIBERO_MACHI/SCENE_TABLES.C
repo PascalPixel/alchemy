@@ -11,6 +11,15 @@ enum {
 
 void BattleFx_RunPageEffectForSlot(s32, s32, s32);
 
+/* The scene's tables, laid out after the code; the actor table has an
+ * alternate once flag 0x9a7 is set. */
+extern u8 Placement_Scripts[];
+extern u8 Placement_Messages[];
+extern u8 Placement_Actors[];
+extern u8 Placement_Actors9a7[];
+/* The lamenting villager's action table. */
+extern const u8 RariberoMachi_LamentActions[];
+
 /* A value-returning call sets r0 last of its arguments. */
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
@@ -24,14 +33,9 @@ void SceneActor_SetActor23Params2And6(void)
     BattleFx_RunPageEffectForSlot(0x17, 2, 6);
 }
 
-/*
- * Returns the in-image table at 0x0200975c. The eight-byte owner includes its
- * one pool word, which holds that address and is returned without being
- * dereferenced.
- */
-u8 *SceneData_GetTable975c(void)
+u8 *SceneData_GetScriptTable(void)
 {
-    return (u8 *)0x0200975c;
+    return Placement_Scripts;
 }
 
 s32 SceneData_ReturnZero(void)
@@ -39,25 +43,20 @@ s32 SceneData_ReturnZero(void)
     return 0;
 }
 
-/*
- * Returns the in-image table at 0x020098c4. The eight-byte owner includes its
- * one pool word, which holds that address and is returned without being
- * dereferenced.
- */
-u8 *SceneData_GetTable98c4(void)
+u8 *SceneData_GetMessageTable(void)
 {
-    return (u8 *)0x020098c4;
+    return Placement_Messages;
 }
 
 s32 SceneData_SelectTableByFlag9a7(void)
 {
     if (GameFlag_IsSet(0x9A7) != 0) {
-        return 0x02009A98;
+        return (s32)Placement_Actors9a7;
     }
-    return 0x02009900;
+    return (s32)Placement_Actors;
 }
 
-void SceneActor_SetupActorForTable9638(s32 actor)
+void SceneActor_StartLament(s32 actor)
 {
     void Actor_FaceDirection();
 
@@ -71,5 +70,5 @@ void SceneActor_SetupActorForTable9638(s32 actor)
     Event_ShowMessage(actor, 0);
     Actor_FaceDirection(actor, 0xc000, 0);
     Event_Wait(20);
-    Engine_ActorEnableActionCallback(actor, 0x2009638);
+    Engine_ActorEnableActionCallback(actor, RariberoMachi_LamentActions);
 }

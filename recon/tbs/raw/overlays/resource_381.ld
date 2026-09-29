@@ -1,6 +1,6 @@
 /* resource_381: its entry veneers, its listing with maintained code linked
    in place, as pret links objects in ROM order. Its import veneers follow
-   its code. */
+   its code. The overlay's own work follows the image. */
 SECTIONS
 {
     .text 0x2008000 :
@@ -8,13 +8,21 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/EXTENDED_EFFECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ERUPTION_RING.o"(.text)
-        "*/resource_381_overlay.o"(.text.x02009084)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/SLOTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/STEP_EMBERS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/TIMER.o"(.text)
+        "*/resource_381_overlay.o"(.text.x02009410)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ARCS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/EFFECT_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/STEPS.o"(.text)
         "*/resource_381_overlay.o"(.text.x0200b01c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/RING_SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/IMPORT.o"(.text)
         "*/resource_381_overlay.o"(.rodata)
+    }
+    .bss (NOLOAD) :
+    {
+        "*/resource_381_overlay.o"(.bss)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

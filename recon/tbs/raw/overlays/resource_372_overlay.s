@@ -3322,6 +3322,8 @@ HaidiaArashi_ActorTwentyTwoScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaArashi_StormRunActions
+HaidiaArashi_StormRunActions:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

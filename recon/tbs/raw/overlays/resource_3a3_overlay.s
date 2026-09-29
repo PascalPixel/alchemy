@@ -524,6 +524,8 @@ Func_02000d58:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global Placement_Messages
+Placement_Messages:
 	.4byte 0x0000004b
 	.4byte 0x00110002
 	.4byte 0x0020704c

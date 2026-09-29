@@ -107,6 +107,7 @@ pub(crate) fn link(
     base_rom(root, target, &output)?;
     for source in &sources {
         build_sound_files(root, target, source, &output)?;
+        build_graphics_files(root, target, source, &output)?;
     }
     crate::build_text::build(root, target, &output)?;
     // Sources that read built overlay streams wait for the overlays, and the
@@ -702,11 +703,56 @@ fn build_sound_files(
     Ok(())
 }
 
-/// The compressor Camelot's resource packer ran on every code overlay, as
-/// the streams in both games show: the general ring's window, read-ahead and
-/// reach, and the palette ring's read-ahead. Each overlay takes the smaller
-/// of the two encodings, the palette one on ties.
-const OVERLAY_MACHINE: LzMachine = LzMachine::new(4123, 485, 4126, 272);
+/// The compressor Camelot's resource packer ran on every code overlay. Each
+/// overlay takes the smaller of the two encodings, the palette one on ties.
+const OVERLAY_MACHINE: LzMachine = ags::resource::PACKER;
+
+/// The resource files an assembly source reads with
+/// `.incbin "GRAPHICS/..."`, each named by its recipe.
+fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
+    let Ok(text) = fs::read_to_string(root.join(source)) else {
+        return Vec::new();
+    };
+    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"(GRAPHICS/[A-Za-z0-9_./]+)""#)
+        .expect("static pattern");
+    pattern
+        .captures_iter(&text)
+        .map(|capture| capture[1].to_owned())
+        .collect()
+}
+
+/// Write every resource file `source` reads from the indexed PNG its name
+/// gives under the game's `SRC`, as pret's graphics rules build what its data sources read,
+/// rewriting a file only when its bytes change.
+fn build_graphics_files(
+    root: &Path,
+    target: DecompTarget,
+    source: &Path,
+    output: &Path,
+) -> Result<(), String> {
+    for built in graphics_files(root, source) {
+        if built.split('/').any(|part| part.is_empty() || part == "..") {
+            return Err(format!(
+                "{}: {built} is not a resource file path",
+                source.display()
+            ));
+        }
+        let image = Path::new(target.game_dir())
+            .join("SRC")
+            .join(ags::resource::image_name(&built)?);
+        let png = fs::read(root.join(&image))
+            .map_err(|error| format!("{}: {}: {error}", source.display(), image.display()))?;
+        let encoded = ags::resource::build_file(&built, &png)?;
+        let path = output.join(&built);
+        if fs::read(&path).ok().as_deref() == Some(encoded.as_slice()) {
+            continue;
+        }
+        fs::create_dir_all(path.parent().expect("resource file directory"))
+            .map_err(|error| error.to_string())?;
+        fs::write(&path, encoded).map_err(|error| error.to_string())?;
+    }
+    Ok(())
+}
 
 /// The code overlays an assembly source reads with
 /// `.incbin "overlays/resource_XXX.lz"`, each linked from its listing beside

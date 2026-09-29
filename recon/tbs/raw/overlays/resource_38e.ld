@@ -15,7 +15,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/GATE.o"(.text)
         "*/resource_38e_overlay.o"(.text.x020084bc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ENTRY_STATE.o"(.text)
-        "*/resource_38e_overlay.o"(.text.x020085dc)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ARREST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/ORBITING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA/IMPORT.o"(.text)
         "*/resource_38e_overlay.o"(.rodata)

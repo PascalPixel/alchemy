@@ -1,14 +1,10 @@
-/* Draft of resource_371 0x020086ec..0x02008a8c (928 bytes with pool),
- * WorldMap_EnterScene, the overlay's first entry; the listing keeps the rows.
- * Remaining difference: the reference loads the exit scenes 0x3a and 0xbb
- * for Event_SetPairWork1c0 from its literal pool, link-time values; integer
- * scenes are immediates (920 bytes, 54 differ from +0x38). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 
 void Scene_RunScene371SequenceA(s32 direction);
 void Event_SetPairWork1c0(s32 a0, s32 a1);
-void Engine_PartyRemoveItem(s32 item);
+void PartyInventory_Discard(s32 item);
 void Engine_CameraSetSpeed(s32 speed, s32 acceleration);
 void Map_SetWindowCellTile(s32 a0, s32 a1, s32 a2, s32 a3);
 s32 GameFlag_GetByte(s32 flag);
@@ -32,6 +28,9 @@ void StoryScene_UpdateSelectedActorProgress(void);
 
 extern s32 gWorldMapTriggerActor;
 
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants
+   straight into the argument registers, and a value-returning call sets r0
+   last of its arguments; a direct call builds the constants first. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -67,13 +66,13 @@ s32 WorldMap_EnterScene(void)
     }
     if (*entrance == 90) {
         Scene_RunScene371SequenceA(0);
-        Event_SetPairWork1c0(0x3a, 1);
+        Event_SetPairWork1c0((s32)&SceneId_MakyuriChojo1, 1);
     } else if (*entrance == 91) {
         Scene_RunScene371SequenceA(1);
-        Event_SetPairWork1c0(0xbb, 93);
+        Event_SetPairWork1c0((s32)&SceneId_VinasuChojo, 93);
     } else if (*entrance == 78) {
         Engine_EventBegin();
-        Engine_PartyRemoveItem(242);
+        PartyInventory_Discard(242);
         Engine_EventRequestExit(112);
     } else {
         Engine_GameFlagSet(0x144);

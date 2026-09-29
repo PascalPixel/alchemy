@@ -1,10 +1,6 @@
-/* Draft of resource_371 0x0200a4a8..0x0200a768 (704 bytes with pool),
- * WorldMap_RunBlackOrbScene; the listing keeps the rows. Remaining
- * difference: the reference loads the saved scene 2 from its literal pool, a
- * link-time value; the integer scene is an immediate (700 bytes, 8 differ
- * from +0x255). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 extern u8 MsgWorldMapLook[];
 extern u8 MsgWorldMapNowUseOnShip[];
 
@@ -14,13 +10,16 @@ void Battle_ClearObjectFlag5bWhenMode3(void);
 void BattleFx_ScheduleRatioTransition(s32 speed, s32 frames);
 
 extern s32 gWorldMapTriggerActor;
+extern const u8 gBlackOrbLeaderScript[];
 
+/* FAKEMATCH: call sites spelled through this wrapper pass their constants
+   straight into the argument registers; a direct call builds them first. */
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
     f(a0, a1, a2);
 }
 
-/* World-map Black Orb scene: the trigger actor walks up, the camera shows the site, and the party receives the Black Orb before the map is sent to area 2, entrance 78. */
+/* World-map Black Orb scene: the trigger actor walks up, the camera shows the site, and the party receives the Black Orb before the map is sent to the world map's entrance 78. */
 void WorldMap_RunBlackOrbScene(void)
 {
     struct FieldActor *leader;
@@ -58,7 +57,7 @@ void WorldMap_RunBlackOrbScene(void)
     Call3(Engine_ActorWalkToAndWait, gWorldMapTriggerActor, 0x1794, 0xd48);
     Engine_ActorFaceDirection(gWorldMapTriggerActor, 0x3000, 20);
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
-    Engine_ActorEnableActionCallback(0, (const u8 *)0x200cf20);
+    Engine_ActorEnableActionCallback(0, gBlackOrbLeaderScript);
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(gWorldMapTriggerActor, 1);
     Engine_EventShowMessageAndWait(gWorldMapTriggerActor, 0, 10);
@@ -92,7 +91,7 @@ void WorldMap_RunBlackOrbScene(void)
     Engine_EventWait(20);
     Engine_GameFlagSet(0x234);
     Engine_GameFlagSet(0x9bf);
-    gGameState.saved_scene = 2;
+    gGameState.saved_scene = (s32)&SceneId_WorldMap;
     gGameState.saved_entrance = 78;
     Engine_EventEnd();
 }

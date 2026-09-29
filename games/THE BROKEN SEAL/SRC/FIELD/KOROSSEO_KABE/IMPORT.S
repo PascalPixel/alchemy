@@ -7,17 +7,29 @@
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
 	overlay_veneer IwramSignedDivide
-	.global WaitFrames
+	.global Engine_TaskWait
 	.thumb_func
-WaitFrames:
+Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Engine_TaskRemoveCallback
+	.thumb_func
+Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Engine_RandomNext
+	.thumb_func
+Engine_RandomNext:
 	overlay_veneer Random16Far
 	.global Math_Atan2
 	.thumb_func
 Math_Atan2:
 	overlay_veneer ArcTan2Far
+	.global Vector_AddPolarOffset
+	.thumb_func
+Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
 	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Engine_AllocateBlock
@@ -25,15 +37,36 @@ Math_Atan2:
 Engine_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
 	overlay_veneer Runtime_ReleaseHeapBlockFar
+	.global Runtime_BumpAllocateAlternatePool
+	.thumb_func
+Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
+	.global Sys_Free
+	.thumb_func
+Sys_Free:
 	overlay_veneer Sys_FreeFar
+	.global Engine_ResourceDecodeType01
+	.thumb_func
+Engine_ResourceDecodeType01:
 	overlay_veneer Resource_DecodeType01Far
+	.global Resource_ResetEntry
+	.thumb_func
+Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
 	overlay_veneer Resource_ActivateEntryFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
+	.global Resource_FindFreeEntry
+	.thumb_func
+Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
 	overlay_veneer AffineMatrix_BuildForEffectFar
 	overlay_veneer Runtime_PushSlotEntryFar
+	.global Resource_GetTableEntry
+	.thumb_func
+Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
 	overlay_veneer Scheduler_SetCallbackMaskFar
 	overlay_veneer ResourceMetadata_ClearRecordFar
@@ -45,12 +78,21 @@ Engine_ObjectSetAnimation:
 	.thumb_func
 Engine_ObjectSetScript:
 	overlay_veneer ObjectDispatch_InitializeFar
+	.global Engine_ObjectCreate
+	.thumb_func
+Engine_ObjectCreate:
 	overlay_veneer Object_CreateFar
 	.global ObjectDispatch_InitFromTable4WithArgument
 	.thumb_func
 ObjectDispatch_InitFromTable4WithArgument:
 	overlay_veneer ObjectDispatch_InitFromTable4WithArgumentFar
+	.global ObjectDispatch_InitFromTable6
+	.thumb_func
+ObjectDispatch_InitFromTable6:
 	overlay_veneer ObjectDispatch_InitFromTable6Far
+	.global ObjectDispatch_WaitForValue16
+	.thumb_func
+ObjectDispatch_WaitForValue16:
 	overlay_veneer ObjectDispatch_WaitForValue16Far
 	.global Engine_ObjectSetPosition
 	.thumb_func
@@ -65,15 +107,39 @@ Object_CommitPosition:
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
 	overlay_veneer Func_080091c8
+	.global Object_CheckMovementCollision
+	.thumb_func
+Object_CheckMovementCollision:
 	overlay_veneer Func_080091d8
+	.global Engine_ActorSetSpriteFlags
+	.thumb_func
+Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global UiWork_PushValueSlot
+	.thumb_func
+UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
 	overlay_veneer ItemIcon_LoadTilesFar
 	overlay_veneer PartyTalkMenu_ChooseFar
+	.global Resource_LoadFixedBlockBIntoFreeSlot
+	.thumb_func
+Resource_LoadFixedBlockBIntoFreeSlot:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlotFar
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
+	.global Inventory_AddItem
+	.thumb_func
+Inventory_AddItem:
 	overlay_veneer Inventory_AddItemFar
+	.global Inventory_Equip
+	.thumb_func
+Inventory_Equip:
 	overlay_veneer Inventory_EquipFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -83,12 +149,33 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
+	.global GameFlag_GetByte
+	.thumb_func
+GameFlag_GetByte:
 	overlay_veneer GameFlag_GetByteFar
+	.global GameFlag_SetByte
+	.thumb_func
+GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
+	.global Party_CountActiveOwners
+	.thumb_func
+Party_CountActiveOwners:
 	overlay_veneer Party_CountActiveOwnersFar
+	.global Party_AddActiveOwner
+	.thumb_func
+Party_AddActiveOwner:
 	overlay_veneer Party_AddActiveOwnerFar
+	.global Party_RemoveActiveOwner
+	.thumb_func
+Party_RemoveActiveOwner:
 	overlay_veneer Party_RemoveActiveOwnerFar
+	.global Owner_RefreshActiveRatios
+	.thumb_func
+Owner_RefreshActiveRatios:
 	overlay_veneer Owner_RefreshActiveRatiosFar
 	.global Engine_EventWait
 	.thumb_func
@@ -102,11 +189,17 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
 Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
+	.global Engine_ActorDestroy
+	.thumb_func
+Engine_ActorDestroy:
 	overlay_veneer ObjectTable_DestroyByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func
@@ -114,10 +207,13 @@ Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
 	overlay_veneer Object_RefreshSelectorByIdFar
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
-	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
-	.global ObjectMotion_SetPositionAndReset
+	.global Engine_ActorWalkTo
 	.thumb_func
-ObjectMotion_SetPositionAndReset:
+Engine_ActorWalkTo:
+	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	.global Engine_ActorWalkToAndWait
+	.thumb_func
+Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	.global ObjectMotion_CommitCurrentPositionAndActivate
 	.thumb_func
@@ -131,24 +227,39 @@ Engine_ActorSetPosition:
 	.thumb_func
 Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
+	.global Engine_ActorSetAnimationAndWait
+	.thumb_func
+Engine_ActorSetAnimationAndWait:
 	overlay_veneer Motion_SetModeAndWaitAnimationFar
 	overlay_veneer Motion_SetVarCbAndRefreshFar
 	.global BattleFx_RunRisingObjectSequence
 	.thumb_func
 BattleFx_RunRisingObjectSequence:
 	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Engine_ActorFaceEachOther
+	.thumb_func
+Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
+	.global Engine_EventAskYesNo
+	.thumb_func
+Engine_EventAskYesNo:
 	overlay_veneer BattleEventRuntime_ProcessActionFar
 	.global Engine_ActorFaceDirection
 	.thumb_func
@@ -179,27 +290,60 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
 	overlay_veneer BattleFx_SetWeightedResultFar
 	overlay_veneer Party_SetFields1ceAnd1d0Far
 	overlay_veneer Event_SetPair1d4Far
+	.global Engine_LeaderCheckAhead
+	.thumb_func
+Engine_LeaderCheckAhead:
 	overlay_veneer Field_TryJumpForwardFar
 	.global battle_owner_69
 	.thumb_func
 battle_owner_69:
 	overlay_veneer battle_owner_69Far
+	.global Engine_EventOpenScreen
+	.thumb_func
+Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
+	.global Engine_EventCloseScreen
+	.thumb_func
+Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
+	.global Engine_EventWaitForScreen
+	.thumb_func
+Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Engine_ActorLookup
+	.thumb_func
+Engine_ActorLookup:
 	overlay_veneer ObjectTable_GetFar
 	overlay_veneer Battle_ResetEffectCounterFar
+	.global Audio_PlayCueFromEventWork
+	.thumb_func
+Audio_PlayCueFromEventWork:
 	overlay_veneer Audio_PlayCueFromEventWorkFar
 	overlay_veneer Event_ClearInvalidPackedValuesFar
+	.global Object_LinkObjectAndSetCallback
+	.thumb_func
+Object_LinkObjectAndSetCallback:
 	overlay_veneer Object_LinkObjectAndSetCallbackFar
+	.global BattleEffect_PauseObject
+	.thumb_func
+BattleEffect_PauseObject:
 	overlay_veneer BattleEffect_PauseObjectFar
+	.global Menu_OpenCharacterSelector
+	.thumb_func
+Menu_OpenCharacterSelector:
 	overlay_veneer Menu_OpenCharacterSelectorFar
 	.global Engine_AudioPlayCue
 	.thumb_func
 Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar
+	.global AudioCommand_GetStateByte
+	.thumb_func
+AudioCommand_GetStateByte:
 	overlay_veneer AudioCommand_GetStateByteFar

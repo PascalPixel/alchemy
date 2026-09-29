@@ -78,6 +78,9 @@ Engine_DebugGetItem:
 	.thumb_func
 PartyInventory_Add:
 	overlay_veneer PartyInventory_AddFar
+	.global Engine_DebugGetAbility
+	.thumb_func
+Engine_DebugGetAbility:
 	overlay_veneer Func_08077080
 	.global Party_ListActiveOwners
 	.thumb_func

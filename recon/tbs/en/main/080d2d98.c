@@ -120,7 +120,6 @@ struct EffectRuntime {
     struct EffectArgument *argument; /* 0x7828 */
 };
 
-extern u8 Value_00000085;
 
 extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080ee1ac[];
@@ -183,7 +182,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     palette += 128;
     Resource_DecodeType01(palette, work);
-    palette = (u8 *)Resource_GetTableEntry((s32)&Value_00000085);
+    palette = (u8 *)Resource_GetTableEntry((s32)&ResourceId_FirePillarSheetA);
     palette += 128;
     Resource_DecodeType01(palette, work->column_tiles);
     Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_ParticleSpritesA), graphics);

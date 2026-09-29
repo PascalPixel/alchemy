@@ -51,7 +51,6 @@ typedef s32 (*FillWordsFn)(void *dest, s32 bytes, s32 value);
 /* Small absolute link-time constants: every retained Resource_GetTableEntry /
    Resource_LoadAndDecompress call site loads its resource id from a literal pool rather
    than an immediate, which an ordinary integer literal cannot produce. */
-extern u8 Value_00000087;
 
 /* Heap-block address cache; gWorkSlot[kind] holds that kind's block. */
 extern void *gWorkSlot[];
@@ -158,7 +157,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra, 0, 0);
 
     if (kind == 1) {
-        palette = Resource_GetTableEntry((s32)&Value_00000087);
+        palette = Resource_GetTableEntry((s32)&ResourceId_OrangePaletteB);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     } else if (kind == 2) {
         palette = Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);

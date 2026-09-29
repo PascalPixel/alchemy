@@ -31,8 +31,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 
-extern u8 Value_00000060;
-extern u8 Value_000000d1;
 extern u8 Data_080ee25e[4];
 extern u8 Data_080ee250[14];
 extern u16 Data_080ee244[6];
@@ -88,10 +86,10 @@ void Func_080d41a4(void *object)
         rectangle_slot = rectangle;
         rectangle_slot[1] = second_rectangle;
     }
-    Resource_LoadAndDecompress((s32)&Value_000000d1, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningPillarSheet, work, 1, 1);
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprite_sheet, 0, 0);
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18) != 2) {
-        void *palette = Resource_GetTableEntry((s32)&Value_00000060);
+        void *palette = Resource_GetTableEntry((s32)&ResourceId_VioletPaletteB);
         _call_via_r3(0x05000000, (s32)palette, 128, 0x03001388);
     }
     {

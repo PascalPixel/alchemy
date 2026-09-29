@@ -151,8 +151,6 @@ extern u16 BattleFx6_FlareCells[];
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov. */
-extern u8 Value_00000049;
-extern u8 Value_0000004a;
 
 /* 28-byte records at work + 0x7080, reused by both phases: the first
    phase treats the first word as a shrinking radius and words 3..5 as
@@ -266,12 +264,12 @@ void BattlePres_RunRingAndSparkScene(void *object)
     BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     WaitFrames(1);
-    Resource_LoadAndDecompress((s32)&Value_00000049, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_StarBurstSheet, work, 1, 0);
 
     BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     WaitFrames(1);
-    Resource_LoadAndDecompress((s32)&Value_0000004a, (void *)0x02010000, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_CrescentSheet, (void *)0x02010000, 1, 1);
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
         _call_via_r3((void *)0x05000000,

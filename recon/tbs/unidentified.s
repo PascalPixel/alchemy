@@ -959,7 +959,6 @@ Character_DescriptorTable:
 	.section .unidentified.08189814,"a"
 	.incbin "baserom.gba", 0x00189814, 0x001967ec
 	.section .unidentified.083203c8,"a"
-	.incbin "baserom.gba", 0x003203c8, 0x00000bd8
 	.global Resource_BuildStamp
 Resource_BuildStamp:
 	.incbin "baserom.gba", 0x00320fa0, 0x00000010
@@ -1632,6 +1631,1916 @@ Ui_Icons:
 	.global Ui_CommandIcons
 Ui_CommandIcons:
 	.incbin "baserom.gba", 0x0043c024, 0x00003844
-	.incbin "baserom.gba", 0x0043f868, 0x00339920
+	.global Resource_Data0F2
+Resource_Data0F2:
+	.incbin "baserom.gba", 0x0043f868, 0x000021b4
+	.global Resource_Data0F3
+Resource_Data0F3:
+	.incbin "baserom.gba", 0x00441a1c, 0x000018f4
+	.global Resource_Data0F4
+Resource_Data0F4:
+	.incbin "baserom.gba", 0x00443310, 0x00002874
+	.global Resource_Data0F5
+Resource_Data0F5:
+	.incbin "baserom.gba", 0x00445b84, 0x00003224
+	.global Resource_Data0F6
+Resource_Data0F6:
+	.incbin "baserom.gba", 0x00448da8, 0x00001704
+	.global Resource_Data0F7
+Resource_Data0F7:
+	.incbin "baserom.gba", 0x0044a4ac, 0x00002c9c
+	.global Resource_Data0F8
+Resource_Data0F8:
+	.incbin "baserom.gba", 0x0044d148, 0x0000193c
+	.global Resource_Data0F9
+Resource_Data0F9:
+	.incbin "baserom.gba", 0x0044ea84, 0x00002610
+	.global Resource_Data0FA
+Resource_Data0FA:
+	.incbin "baserom.gba", 0x00451094, 0x00004b04
+	.global Resource_Data0FB
+Resource_Data0FB:
+	.incbin "baserom.gba", 0x00455b98, 0x00003e80
+	.global Resource_Data0FC
+Resource_Data0FC:
+	.incbin "baserom.gba", 0x00459a18, 0x00004490
+	.global Resource_Data0FD
+Resource_Data0FD:
+	.incbin "baserom.gba", 0x0045dea8, 0x0000364c
+	.global Resource_Data0FE
+Resource_Data0FE:
+	.incbin "baserom.gba", 0x004614f4, 0x00003094
+	.global Resource_Data0FF
+Resource_Data0FF:
+	.incbin "baserom.gba", 0x00464588, 0x00003410
+	.global Resource_Data100
+Resource_Data100:
+	.incbin "baserom.gba", 0x00467998, 0x0000286c
+	.global Resource_Data101
+Resource_Data101:
+	.incbin "baserom.gba", 0x0046a204, 0x00000ca8
+	.global Resource_Data102
+Resource_Data102:
+	.incbin "baserom.gba", 0x0046aeac, 0x00000e48
+	.global Resource_Data103
+Resource_Data103:
+	.incbin "baserom.gba", 0x0046bcf4, 0x00000e18
+	.global Resource_Data104
+Resource_Data104:
+	.incbin "baserom.gba", 0x0046cb0c, 0x00000cec
+	.global Resource_Data105
+Resource_Data105:
+	.incbin "baserom.gba", 0x0046d7f8, 0x00002b48
+	.global Resource_Data106
+Resource_Data106:
+	.incbin "baserom.gba", 0x00470340, 0x00002324
+	.global Resource_Data107
+Resource_Data107:
+	.incbin "baserom.gba", 0x00472664, 0x000035f4
+	.global Resource_Data108
+Resource_Data108:
+	.incbin "baserom.gba", 0x00475c58, 0x0000105c
+	.global Resource_Data109
+Resource_Data109:
+	.incbin "baserom.gba", 0x00476cb4, 0x00000d0c
+	.global Resource_Data10A
+Resource_Data10A:
+	.incbin "baserom.gba", 0x004779c0, 0x00000a84
+	.global Resource_Data10B
+Resource_Data10B:
+	.incbin "baserom.gba", 0x00478444, 0x00000eb0
+	.global Resource_Data10C
+Resource_Data10C:
+	.incbin "baserom.gba", 0x004792f4, 0x000007e0
+	.global Resource_Data10D
+Resource_Data10D:
+	.incbin "baserom.gba", 0x00479ad4, 0x00000c70
+	.global Resource_Data10E
+Resource_Data10E:
+	.incbin "baserom.gba", 0x0047a744, 0x00000c18
+	.global Resource_Data10F
+Resource_Data10F:
+	.incbin "baserom.gba", 0x0047b35c, 0x00000774
+	.global Resource_Data110
+Resource_Data110:
+	.incbin "baserom.gba", 0x0047bad0, 0x00000c18
+	.global Resource_Data111
+Resource_Data111:
+	.incbin "baserom.gba", 0x0047c6e8, 0x00000c78
+	.global Resource_Data112
+Resource_Data112:
+	.incbin "baserom.gba", 0x0047d360, 0x000009d0
+	.global Resource_Data113
+Resource_Data113:
+	.incbin "baserom.gba", 0x0047dd30, 0x00000c1c
+	.global Resource_Data114
+Resource_Data114:
+	.incbin "baserom.gba", 0x0047e94c, 0x000026b4
+	.global Resource_Data115
+Resource_Data115:
+	.incbin "baserom.gba", 0x00481000, 0x00002714
+	.global Resource_Data116
+Resource_Data116:
+	.incbin "baserom.gba", 0x00483714, 0x00004f54
+	.global Resource_Data117
+Resource_Data117:
+	.incbin "baserom.gba", 0x00488668, 0x000018f0
+	.global Resource_Data118
+Resource_Data118:
+	.incbin "baserom.gba", 0x00489f58, 0x00002a3c
+	.global Resource_Data119
+Resource_Data119:
+	.incbin "baserom.gba", 0x0048c994, 0x00000bec
+	.global Resource_Data11A
+Resource_Data11A:
+	.incbin "baserom.gba", 0x0048d580, 0x00004bb4
+	.global Resource_Data11B
+Resource_Data11B:
+	.incbin "baserom.gba", 0x00492134, 0x0000236c
+	.global Resource_Data11C
+Resource_Data11C:
+	.incbin "baserom.gba", 0x004944a0, 0x000019a0
+	.global Resource_Data11D
+Resource_Data11D:
+	.incbin "baserom.gba", 0x00495e40, 0x00003bfc
+	.global Resource_Data11E
+Resource_Data11E:
+	.incbin "baserom.gba", 0x00499a3c, 0x00000cc8
+	.global Resource_Data11F
+Resource_Data11F:
+	.incbin "baserom.gba", 0x0049a704, 0x000040c8
+	.global Resource_Data120
+Resource_Data120:
+	.incbin "baserom.gba", 0x0049e7cc, 0x000036c8
+	.global Resource_Data121
+Resource_Data121:
+	.incbin "baserom.gba", 0x004a1e94, 0x00004228
+	.global Resource_Data122
+Resource_Data122:
+	.incbin "baserom.gba", 0x004a60bc, 0x00003da8
+	.global Resource_Data123
+Resource_Data123:
+	.incbin "baserom.gba", 0x004a9e64, 0x00002b1c
+	.global Resource_Data124
+Resource_Data124:
+	.incbin "baserom.gba", 0x004ac980, 0x000047f4
+	.global Resource_Data125
+Resource_Data125:
+	.incbin "baserom.gba", 0x004b1174, 0x00004f80
+	.global Resource_Data126
+Resource_Data126:
+	.incbin "baserom.gba", 0x004b60f4, 0x0000279c
+	.global Resource_Data127
+Resource_Data127:
+	.incbin "baserom.gba", 0x004b8890, 0x00001ec8
+	.global Resource_Data128
+Resource_Data128:
+	.incbin "baserom.gba", 0x004ba758, 0x0000034c
+	.global Resource_Data129
+Resource_Data129:
+	.incbin "baserom.gba", 0x004baaa4, 0x0000000c
+	.global Resource_Data12A
+Resource_Data12A:
+	.incbin "baserom.gba", 0x004baab0, 0x00000150
+	.global Resource_Data12B
+Resource_Data12B:
+	.incbin "baserom.gba", 0x004bac00, 0x00000140
+	.global Resource_Data12C
+Resource_Data12C:
+	.incbin "baserom.gba", 0x004bad40, 0x00000140
+	.global Resource_Data12D
+Resource_Data12D:
+	.incbin "baserom.gba", 0x004bae80, 0x00000140
+	.global Resource_Data12E
+Resource_Data12E:
+	.incbin "baserom.gba", 0x004bafc0, 0x00005410
+	.global Resource_Data12F
+Resource_Data12F:
+	.incbin "baserom.gba", 0x004c03d0, 0x00000190
+	.global Resource_Data130
+Resource_Data130:
+	.incbin "baserom.gba", 0x004c0560, 0x00002b34
+	.global Resource_Data131
+Resource_Data131:
+	.incbin "baserom.gba", 0x004c3094, 0x0000252c
+	.global Resource_Data132
+Resource_Data132:
+	.incbin "baserom.gba", 0x004c55c0, 0x000026dc
+	.global Resource_Data133
+Resource_Data133:
+	.incbin "baserom.gba", 0x004c7c9c, 0x00001e90
+	.global Resource_Data134
+Resource_Data134:
+	.incbin "baserom.gba", 0x004c9b2c, 0x000051c8
+	.global Resource_Data135
+Resource_Data135:
+	.incbin "baserom.gba", 0x004cecf4, 0x00000194
+	.global Resource_Data136
+Resource_Data136:
+	.incbin "baserom.gba", 0x004cee88, 0x00002c54
+	.global Resource_Data137
+Resource_Data137:
+	.incbin "baserom.gba", 0x004d1adc, 0x00002608
+	.global Resource_Data138
+Resource_Data138:
+	.incbin "baserom.gba", 0x004d40e4, 0x000027e0
+	.global Resource_Data139
+Resource_Data139:
+	.incbin "baserom.gba", 0x004d68c4, 0x00001ecc
+	.global Resource_Data13A
+Resource_Data13A:
+	.incbin "baserom.gba", 0x004d8790, 0x0000313c
+	.global Resource_Data13B
+Resource_Data13B:
+	.incbin "baserom.gba", 0x004db8cc, 0x00000180
+	.global Resource_Data13C
+Resource_Data13C:
+	.incbin "baserom.gba", 0x004dba4c, 0x000027bc
+	.global Resource_Data13D
+Resource_Data13D:
+	.incbin "baserom.gba", 0x004de208, 0x00002648
+	.global Resource_Data13E
+Resource_Data13E:
+	.incbin "baserom.gba", 0x004e0850, 0x000026e4
+	.global Resource_Data13F
+Resource_Data13F:
+	.incbin "baserom.gba", 0x004e2f34, 0x00001074
+	.global Resource_Data140
+Resource_Data140:
+	.incbin "baserom.gba", 0x004e3fa8, 0x00002154
+	.global Resource_Data141
+Resource_Data141:
+	.incbin "baserom.gba", 0x004e60fc, 0x00000194
+	.global Resource_Data142
+Resource_Data142:
+	.incbin "baserom.gba", 0x004e6290, 0x00002840
+	.global Resource_Data143
+Resource_Data143:
+	.incbin "baserom.gba", 0x004e8ad0, 0x00001e18
+	.global Resource_Data144
+Resource_Data144:
+	.incbin "baserom.gba", 0x004ea8e8, 0x000026e0
+	.global Resource_Data145
+Resource_Data145:
+	.incbin "baserom.gba", 0x004ecfc8, 0x00001148
+	.global Resource_Data146
+Resource_Data146:
+	.incbin "baserom.gba", 0x004ee110, 0x00003114
+	.global Resource_Data147
+Resource_Data147:
+	.incbin "baserom.gba", 0x004f1224, 0x000001ac
+	.global Resource_Data148
+Resource_Data148:
+	.incbin "baserom.gba", 0x004f13d0, 0x00001a7c
+	.global Resource_Data149
+Resource_Data149:
+	.incbin "baserom.gba", 0x004f2e4c, 0x00002540
+	.global Resource_Data14A
+Resource_Data14A:
+	.incbin "baserom.gba", 0x004f538c, 0x000015fc
+	.global Resource_Data14B
+Resource_Data14B:
+	.incbin "baserom.gba", 0x004f6988, 0x000012c8
+	.global Resource_Data14C
+Resource_Data14C:
+	.incbin "baserom.gba", 0x004f7c50, 0x00003418
+	.global Resource_Data14D
+Resource_Data14D:
+	.incbin "baserom.gba", 0x004fb068, 0x00000190
+	.global Resource_Data14E
+Resource_Data14E:
+	.incbin "baserom.gba", 0x004fb1f8, 0x00001db0
+	.global Resource_Data14F
+Resource_Data14F:
+	.incbin "baserom.gba", 0x004fcfa8, 0x0000256c
+	.global Resource_Data150
+Resource_Data150:
+	.incbin "baserom.gba", 0x004ff514, 0x0000160c
+	.global Resource_Data151
+Resource_Data151:
+	.incbin "baserom.gba", 0x00500b20, 0x0000150c
+	.global Resource_Data152
+Resource_Data152:
+	.incbin "baserom.gba", 0x0050202c, 0x00000bd4
+	.global Resource_Data153
+Resource_Data153:
+	.incbin "baserom.gba", 0x00502c00, 0x00000100
+	.global Resource_Data154
+Resource_Data154:
+	.incbin "baserom.gba", 0x00502d00, 0x000013e4
+	.global Resource_Data155
+Resource_Data155:
+	.incbin "baserom.gba", 0x005040e4, 0x00001184
+	.global Resource_Data156
+Resource_Data156:
+	.incbin "baserom.gba", 0x00505268, 0x00000988
+	.global Resource_Data157
+Resource_Data157:
+	.incbin "baserom.gba", 0x00505bf0, 0x00000854
+	.global Resource_Data158
+Resource_Data158:
+	.incbin "baserom.gba", 0x00506444, 0x00002428
+	.global Resource_Data159
+Resource_Data159:
+	.incbin "baserom.gba", 0x0050886c, 0x000000e4
+	.global Resource_Data15A
+Resource_Data15A:
+	.incbin "baserom.gba", 0x00508950, 0x000011ec
+	.global Resource_Data15B
+Resource_Data15B:
+	.incbin "baserom.gba", 0x00509b3c, 0x00001c88
+	.global Resource_Data15C
+Resource_Data15C:
+	.incbin "baserom.gba", 0x0050b7c4, 0x0000050c
+	.global Resource_Data15D
+Resource_Data15D:
+	.incbin "baserom.gba", 0x0050bcd0, 0x00000140
+	.global Resource_Data15E
+Resource_Data15E:
+	.incbin "baserom.gba", 0x0050be10, 0x0000121c
+	.global Resource_Data15F
+Resource_Data15F:
+	.incbin "baserom.gba", 0x0050d02c, 0x0000015c
+	.global Resource_Data160
+Resource_Data160:
+	.incbin "baserom.gba", 0x0050d188, 0x000029d8
+	.global Resource_Data161
+Resource_Data161:
+	.incbin "baserom.gba", 0x0050fb60, 0x00001a4c
+	.global Resource_Data162
+Resource_Data162:
+	.incbin "baserom.gba", 0x005115ac, 0x000014ec
+	.global Resource_Data163
+Resource_Data163:
+	.incbin "baserom.gba", 0x00512a98, 0x00000844
+	.global Resource_Data164
+Resource_Data164:
+	.incbin "baserom.gba", 0x005132dc, 0x00000d78
+	.global Resource_Data165
+Resource_Data165:
+	.incbin "baserom.gba", 0x00514054, 0x00000134
+	.global Resource_Data166
+Resource_Data166:
+	.incbin "baserom.gba", 0x00514188, 0x00002480
+	.global Resource_Data167
+Resource_Data167:
+	.incbin "baserom.gba", 0x00516608, 0x00000d7c
+	.global Resource_Data168
+Resource_Data168:
+	.incbin "baserom.gba", 0x00517384, 0x00000ae0
+	.global Resource_Data169
+Resource_Data169:
+	.incbin "baserom.gba", 0x00517e64, 0x00000e78
+	.global Resource_Data16A
+Resource_Data16A:
+	.incbin "baserom.gba", 0x00518cdc, 0x00000154
+	.global Resource_Data16B
+Resource_Data16B:
+	.incbin "baserom.gba", 0x00518e30, 0x00001f80
+	.global Resource_Data16C
+Resource_Data16C:
+	.incbin "baserom.gba", 0x0051adb0, 0x00000948
+	.global Resource_Data16D
+Resource_Data16D:
+	.incbin "baserom.gba", 0x0051b6f8, 0x00000c4c
+	.global Resource_Data16E
+Resource_Data16E:
+	.incbin "baserom.gba", 0x0051c344, 0x00000228
+	.global Resource_Data16F
+Resource_Data16F:
+	.incbin "baserom.gba", 0x0051c56c, 0x00000d28
+	.global Resource_Data170
+Resource_Data170:
+	.incbin "baserom.gba", 0x0051d294, 0x00000c18
+	.global Resource_Data171
+Resource_Data171:
+	.incbin "baserom.gba", 0x0051deac, 0x00000114
+	.global Resource_Data172
+Resource_Data172:
+	.incbin "baserom.gba", 0x0051dfc0, 0x000010bc
+	.global Resource_Data173
+Resource_Data173:
+	.incbin "baserom.gba", 0x0051f07c, 0x0000090c
+	.global Resource_Data174
+Resource_Data174:
+	.incbin "baserom.gba", 0x0051f988, 0x00000148
+	.global Resource_Data175
+Resource_Data175:
+	.incbin "baserom.gba", 0x0051fad0, 0x00000620
+	.global Resource_Data176
+Resource_Data176:
+	.incbin "baserom.gba", 0x005200f0, 0x00001aac
+	.global Resource_Data177
+Resource_Data177:
+	.incbin "baserom.gba", 0x00521b9c, 0x00000128
+	.global Resource_Data178
+Resource_Data178:
+	.incbin "baserom.gba", 0x00521cc4, 0x00001888
+	.global Resource_Data179
+Resource_Data179:
+	.incbin "baserom.gba", 0x0052354c, 0x00001364
+	.global Resource_Data17A
+Resource_Data17A:
+	.incbin "baserom.gba", 0x005248b0, 0x00000f40
+	.global Resource_Data17B
+Resource_Data17B:
+	.incbin "baserom.gba", 0x005257f0, 0x00000140
+	.global Resource_Data17C
+Resource_Data17C:
+	.incbin "baserom.gba", 0x00525930, 0x00002008
+	.global Resource_Data17D
+Resource_Data17D:
+	.incbin "baserom.gba", 0x00527938, 0x0000010c
+	.global Resource_Data17E
+Resource_Data17E:
+	.incbin "baserom.gba", 0x00527a44, 0x00001fe4
+	.global Resource_Data17F
+Resource_Data17F:
+	.incbin "baserom.gba", 0x00529a28, 0x00001724
+	.global Resource_Data180
+Resource_Data180:
+	.incbin "baserom.gba", 0x0052b14c, 0x00000f74
+	.global Resource_Data181
+Resource_Data181:
+	.incbin "baserom.gba", 0x0052c0c0, 0x00000140
+	.global Resource_Data182
+Resource_Data182:
+	.incbin "baserom.gba", 0x0052c200, 0x00001ce8
+	.global Resource_Data183
+Resource_Data183:
+	.incbin "baserom.gba", 0x0052dee8, 0x0000015c
+	.global Resource_Data184
+Resource_Data184:
+	.incbin "baserom.gba", 0x0052e044, 0x00001f48
+	.global Resource_Data185
+Resource_Data185:
+	.incbin "baserom.gba", 0x0052ff8c, 0x00000184
+	.global Resource_Data186
+Resource_Data186:
+	.incbin "baserom.gba", 0x00530110, 0x00002b54
+	.global Resource_Data187
+Resource_Data187:
+	.incbin "baserom.gba", 0x00532c64, 0x000026c4
+	.global Resource_Data188
+Resource_Data188:
+	.incbin "baserom.gba", 0x00535328, 0x00002758
+	.global Resource_Data189
+Resource_Data189:
+	.incbin "baserom.gba", 0x00537a80, 0x00001854
+	.global Resource_Data18A
+Resource_Data18A:
+	.incbin "baserom.gba", 0x005392d4, 0x00002700
+	.global Resource_Data18B
+Resource_Data18B:
+	.incbin "baserom.gba", 0x0053b9d4, 0x000001a0
+	.global Resource_Data18C
+Resource_Data18C:
+	.incbin "baserom.gba", 0x0053bb74, 0x00001c2c
+	.global Resource_Data18D
+Resource_Data18D:
+	.incbin "baserom.gba", 0x0053d7a0, 0x00002548
+	.global Resource_Data18E
+Resource_Data18E:
+	.incbin "baserom.gba", 0x0053fce8, 0x000012cc
+	.global Resource_Data18F
+Resource_Data18F:
+	.incbin "baserom.gba", 0x00540fb4, 0x00000cb0
+	.global Resource_Data190
+Resource_Data190:
+	.incbin "baserom.gba", 0x00541c64, 0x00000a6c
+	.global Resource_Data191
+Resource_Data191:
+	.incbin "baserom.gba", 0x005426d0, 0x000000f4
+	.global Resource_Data192
+Resource_Data192:
+	.incbin "baserom.gba", 0x005427c4, 0x0000112c
+	.global Resource_Data193
+Resource_Data193:
+	.incbin "baserom.gba", 0x005438f0, 0x000007ac
+	.global Resource_Data194
+Resource_Data194:
+	.incbin "baserom.gba", 0x0054409c, 0x00000188
+	.global Resource_Data195
+Resource_Data195:
+	.incbin "baserom.gba", 0x00544224, 0x00000da4
+	.global Resource_Data196
+Resource_Data196:
+	.incbin "baserom.gba", 0x00544fc8, 0x00001b38
+	.global Resource_Data197
+Resource_Data197:
+	.incbin "baserom.gba", 0x00546b00, 0x0000019c
+	.global Resource_Data198
+Resource_Data198:
+	.incbin "baserom.gba", 0x00546c9c, 0x00002d54
+	.global Resource_Data199
+Resource_Data199:
+	.incbin "baserom.gba", 0x005499f0, 0x0000268c
+	.global Resource_Data19A
+Resource_Data19A:
+	.incbin "baserom.gba", 0x0054c07c, 0x000027e0
+	.global Resource_Data19B
+Resource_Data19B:
+	.incbin "baserom.gba", 0x0054e85c, 0x00001884
+	.global Resource_Data19C
+Resource_Data19C:
+	.incbin "baserom.gba", 0x005500e0, 0x000010f4
+	.global Resource_Data19D
+Resource_Data19D:
+	.incbin "baserom.gba", 0x005511d4, 0x000000cc
+	.global Resource_Data19E
+Resource_Data19E:
+	.incbin "baserom.gba", 0x005512a0, 0x000027a4
+	.global Resource_Data19F
+Resource_Data19F:
+	.incbin "baserom.gba", 0x00553a44, 0x0000215c
+	.global Resource_Data1A0
+Resource_Data1A0:
+	.incbin "baserom.gba", 0x00555ba0, 0x00000fac
+	.global Resource_Data1A1
+Resource_Data1A1:
+	.incbin "baserom.gba", 0x00556b4c, 0x00000140
+	.global Resource_Data1A2
+Resource_Data1A2:
+	.incbin "baserom.gba", 0x00556c8c, 0x00001430
+	.global Resource_Data1A3
+Resource_Data1A3:
+	.incbin "baserom.gba", 0x005580bc, 0x00000124
+	.global Resource_Data1A4
+Resource_Data1A4:
+	.incbin "baserom.gba", 0x005581e0, 0x00002c18
+	.global Resource_Data1A5
+Resource_Data1A5:
+	.incbin "baserom.gba", 0x0055adf8, 0x000020fc
+	.global Resource_Data1A6
+Resource_Data1A6:
+	.incbin "baserom.gba", 0x0055cef4, 0x00001da4
+	.global Resource_Data1A7
+Resource_Data1A7:
+	.incbin "baserom.gba", 0x0055ec98, 0x00000614
+	.global Resource_Data1A8
+Resource_Data1A8:
+	.incbin "baserom.gba", 0x0055f2ac, 0x00001d24
+	.global Resource_Data1A9
+Resource_Data1A9:
+	.incbin "baserom.gba", 0x00560fd0, 0x00000f44
+	.global Resource_Data1AA
+Resource_Data1AA:
+	.incbin "baserom.gba", 0x00561f14, 0x000029e8
+	.global Resource_Data1AB
+Resource_Data1AB:
+	.incbin "baserom.gba", 0x005648fc, 0x0000019c
+	.global Resource_Data1AC
+Resource_Data1AC:
+	.incbin "baserom.gba", 0x00564a98, 0x00002444
+	.global Resource_Data1AD
+Resource_Data1AD:
+	.incbin "baserom.gba", 0x00566edc, 0x00002458
+	.global Resource_Data1AE
+Resource_Data1AE:
+	.incbin "baserom.gba", 0x00569334, 0x00000ac8
+	.global Resource_Data1AF
+Resource_Data1AF:
+	.incbin "baserom.gba", 0x00569dfc, 0x00001a38
+	.global Resource_Data1B0
+Resource_Data1B0:
+	.incbin "baserom.gba", 0x0056b834, 0x00002f40
+	.global Resource_Data1B1
+Resource_Data1B1:
+	.incbin "baserom.gba", 0x0056e774, 0x00002dcc
+	.global Resource_Data1B2
+Resource_Data1B2:
+	.incbin "baserom.gba", 0x00571540, 0x00001ce4
+	.global Resource_Data1B3
+Resource_Data1B3:
+	.incbin "baserom.gba", 0x00573224, 0x0000019c
+	.global Resource_Data1B4
+Resource_Data1B4:
+	.incbin "baserom.gba", 0x005733c0, 0x00002bb0
+	.global Resource_Data1B5
+Resource_Data1B5:
+	.incbin "baserom.gba", 0x00575f70, 0x000020d4
+	.global Resource_Data1B6
+Resource_Data1B6:
+	.incbin "baserom.gba", 0x00578044, 0x00002058
+	.global Resource_Data1B7
+Resource_Data1B7:
+	.incbin "baserom.gba", 0x0057a09c, 0x00001cec
+	.global Resource_Data1B8
+Resource_Data1B8:
+	.incbin "baserom.gba", 0x0057bd88, 0x000017ac
+	.global Resource_Data1B9
+Resource_Data1B9:
+	.incbin "baserom.gba", 0x0057d534, 0x0000019c
+	.global Resource_Data1BA
+Resource_Data1BA:
+	.incbin "baserom.gba", 0x0057d6d0, 0x00002b40
+	.global Resource_Data1BB
+Resource_Data1BB:
+	.incbin "baserom.gba", 0x00580210, 0x00001dd0
+	.global Resource_Data1BC
+Resource_Data1BC:
+	.incbin "baserom.gba", 0x00581fe0, 0x00000140
+	.global Resource_Data1BD
+Resource_Data1BD:
+	.incbin "baserom.gba", 0x00582120, 0x00001304
+	.global Resource_Data1BE
+Resource_Data1BE:
+	.incbin "baserom.gba", 0x00583424, 0x00001d58
+	.global Resource_Data1BF
+Resource_Data1BF:
+	.incbin "baserom.gba", 0x0058517c, 0x00000184
+	.global Resource_Data1C0
+Resource_Data1C0:
+	.incbin "baserom.gba", 0x00585300, 0x00002df8
+	.global Resource_Data1C1
+Resource_Data1C1:
+	.incbin "baserom.gba", 0x005880f8, 0x000028c8
+	.global Resource_Data1C2
+Resource_Data1C2:
+	.incbin "baserom.gba", 0x0058a9c0, 0x0000295c
+	.global Resource_Data1C3
+Resource_Data1C3:
+	.incbin "baserom.gba", 0x0058d31c, 0x00001b98
+	.global Resource_Data1C4
+Resource_Data1C4:
+	.incbin "baserom.gba", 0x0058eeb4, 0x00002a74
+	.global Resource_Data1C5
+Resource_Data1C5:
+	.incbin "baserom.gba", 0x00591928, 0x000001a8
+	.global Resource_Data1C6
+Resource_Data1C6:
+	.incbin "baserom.gba", 0x00591ad0, 0x000016fc
+	.global Resource_Data1C7
+Resource_Data1C7:
+	.incbin "baserom.gba", 0x005931cc, 0x00000900
+	.global Resource_Data1C8
+Resource_Data1C8:
+	.incbin "baserom.gba", 0x00593acc, 0x00000d78
+	.global Resource_Data1C9
+Resource_Data1C9:
+	.incbin "baserom.gba", 0x00594844, 0x00000160
+	.global Resource_Data1CA
+Resource_Data1CA:
+	.incbin "baserom.gba", 0x005949a4, 0x00001c58
+	.global Resource_Data1CB
+Resource_Data1CB:
+	.incbin "baserom.gba", 0x005965fc, 0x0000189c
+	.global Resource_Data1CC
+Resource_Data1CC:
+	.incbin "baserom.gba", 0x00597e98, 0x00000184
+	.global Resource_Data1CD
+Resource_Data1CD:
+	.incbin "baserom.gba", 0x0059801c, 0x00002b3c
+	.global Resource_Data1CE
+Resource_Data1CE:
+	.incbin "baserom.gba", 0x0059ab58, 0x0000277c
+	.global Resource_Data1CF
+Resource_Data1CF:
+	.incbin "baserom.gba", 0x0059d2d4, 0x00000fec
+	.global Resource_Data1D0
+Resource_Data1D0:
+	.incbin "baserom.gba", 0x0059e2c0, 0x000016cc
+	.global Resource_Data1D1
+Resource_Data1D1:
+	.incbin "baserom.gba", 0x0059f98c, 0x000001ac
+	.global Resource_Data1D2
+Resource_Data1D2:
+	.incbin "baserom.gba", 0x0059fb38, 0x00002d94
+	.global Resource_Data1D3
+Resource_Data1D3:
+	.incbin "baserom.gba", 0x005a28cc, 0x00002718
+	.global Resource_Data1D4
+Resource_Data1D4:
+	.incbin "baserom.gba", 0x005a4fe4, 0x0000197c
+	.global Resource_Data1D5
+Resource_Data1D5:
+	.incbin "baserom.gba", 0x005a6960, 0x00000140
+	.global Resource_Data1D6
+Resource_Data1D6:
+	.incbin "baserom.gba", 0x005a6aa0, 0x00001ec8
+	.global Resource_Data1D7
+Resource_Data1D7:
+	.incbin "baserom.gba", 0x005a8968, 0x000001a4
+	.global Resource_Data1D8
+Resource_Data1D8:
+	.incbin "baserom.gba", 0x005a8b0c, 0x000020a0
+	.global Resource_Data1D9
+Resource_Data1D9:
+	.incbin "baserom.gba", 0x005aabac, 0x00000f8c
+	.global Resource_Data1DA
+Resource_Data1DA:
+	.incbin "baserom.gba", 0x005abb38, 0x000022d8
+	.global Resource_Data1DB
+Resource_Data1DB:
+	.incbin "baserom.gba", 0x005ade10, 0x00001254
+	.global Resource_Data1DC
+Resource_Data1DC:
+	.incbin "baserom.gba", 0x005af064, 0x000018a0
+	.global Resource_Data1DD
+Resource_Data1DD:
+	.incbin "baserom.gba", 0x005b0904, 0x00000184
+	.global Resource_Data1DE
+Resource_Data1DE:
+	.incbin "baserom.gba", 0x005b0a88, 0x00002c20
+	.global Resource_Data1DF
+Resource_Data1DF:
+	.incbin "baserom.gba", 0x005b36a8, 0x000022e4
+	.global Resource_Data1E0
+Resource_Data1E0:
+	.incbin "baserom.gba", 0x005b598c, 0x00002848
+	.global Resource_Data1E1
+Resource_Data1E1:
+	.incbin "baserom.gba", 0x005b81d4, 0x0000050c
+	.global Resource_Data1E2
+Resource_Data1E2:
+	.incbin "baserom.gba", 0x005b86e0, 0x000016d8
+	.global Resource_Data1E3
+Resource_Data1E3:
+	.incbin "baserom.gba", 0x005b9db8, 0x000001a4
+	.global Resource_Data1E4
+Resource_Data1E4:
+	.incbin "baserom.gba", 0x005b9f5c, 0x00001904
+	.global Resource_Data1E5
+Resource_Data1E5:
+	.incbin "baserom.gba", 0x005bb860, 0x0000182c
+	.global Resource_Data1E6
+Resource_Data1E6:
+	.incbin "baserom.gba", 0x005bd08c, 0x00000180
+	.global Resource_Data1E7
+Resource_Data1E7:
+	.incbin "baserom.gba", 0x005bd20c, 0x00002b84
+	.global Resource_Data1E8
+Resource_Data1E8:
+	.incbin "baserom.gba", 0x005bfd90, 0x00001d70
+	.global Resource_Data1E9
+Resource_Data1E9:
+	.incbin "baserom.gba", 0x005c1b00, 0x00001044
+	.global Resource_Data1EA
+Resource_Data1EA:
+	.incbin "baserom.gba", 0x005c2b44, 0x00000e24
+	.global Resource_Data1EB
+Resource_Data1EB:
+	.incbin "baserom.gba", 0x005c3968, 0x00001344
+	.global Resource_Data1EC
+Resource_Data1EC:
+	.incbin "baserom.gba", 0x005c4cac, 0x0000015c
+	.global Resource_Data1ED
+Resource_Data1ED:
+	.incbin "baserom.gba", 0x005c4e08, 0x000025bc
+	.global Resource_Data1EE
+Resource_Data1EE:
+	.incbin "baserom.gba", 0x005c73c4, 0x00000178
+	.global Resource_Data1EF
+Resource_Data1EF:
+	.incbin "baserom.gba", 0x005c753c, 0x00002b84
+	.global Resource_Data1F0
+Resource_Data1F0:
+	.incbin "baserom.gba", 0x005ca0c0, 0x00001d70
+	.global Resource_Data1F1
+Resource_Data1F1:
+	.incbin "baserom.gba", 0x005cbe30, 0x00000a68
+	.global Resource_Data1F2
+Resource_Data1F2:
+	.incbin "baserom.gba", 0x005cc898, 0x00000840
+	.global Resource_Data1F3
+Resource_Data1F3:
+	.incbin "baserom.gba", 0x005cd0d8, 0x00001e00
+	.global Resource_Data1F4
+Resource_Data1F4:
+	.incbin "baserom.gba", 0x005ceed8, 0x00000168
+	.global Resource_Data1F5
+Resource_Data1F5:
+	.incbin "baserom.gba", 0x005cf040, 0x00001148
+	.global Resource_Data1F6
+Resource_Data1F6:
+	.incbin "baserom.gba", 0x005d0188, 0x00001d5c
+	.global Resource_Data1F7
+Resource_Data1F7:
+	.incbin "baserom.gba", 0x005d1ee4, 0x00000168
+	.global Resource_Data1F8
+Resource_Data1F8:
+	.incbin "baserom.gba", 0x005d204c, 0x00002890
+	.global Resource_Data1F9
+Resource_Data1F9:
+	.incbin "baserom.gba", 0x005d48dc, 0x00000134
+	.global Resource_Data1FA
+Resource_Data1FA:
+	.incbin "baserom.gba", 0x005d4a10, 0x00002c3c
+	.global Resource_Data1FB
+Resource_Data1FB:
+	.incbin "baserom.gba", 0x005d764c, 0x00001fdc
+	.global Resource_Data1FC
+Resource_Data1FC:
+	.incbin "baserom.gba", 0x005d9628, 0x000017c4
+	.global Resource_Data1FD
+Resource_Data1FD:
+	.incbin "baserom.gba", 0x005dadec, 0x00001a7c
+	.global Resource_Data1FE
+Resource_Data1FE:
+	.incbin "baserom.gba", 0x005dc868, 0x000018d0
+	.global Resource_Data1FF
+Resource_Data1FF:
+	.incbin "baserom.gba", 0x005de138, 0x0000017c
+	.global Resource_Data200
+Resource_Data200:
+	.incbin "baserom.gba", 0x005de2b4, 0x00002bb0
+	.global Resource_Data201
+Resource_Data201:
+	.incbin "baserom.gba", 0x005e0e64, 0x00002274
+	.global Resource_Data202
+Resource_Data202:
+	.incbin "baserom.gba", 0x005e30d8, 0x00002870
+	.global Resource_Data203
+Resource_Data203:
+	.incbin "baserom.gba", 0x005e5948, 0x00000ed8
+	.global Resource_Data204
+Resource_Data204:
+	.incbin "baserom.gba", 0x005e6820, 0x0000248c
+	.global Resource_Data205
+Resource_Data205:
+	.incbin "baserom.gba", 0x005e8cac, 0x00000190
+	.global Resource_Data206
+Resource_Data206:
+	.incbin "baserom.gba", 0x005e8e3c, 0x00001fe4
+	.global Resource_Data207
+Resource_Data207:
+	.incbin "baserom.gba", 0x005eae20, 0x00002c44
+	.global Resource_Data208
+Resource_Data208:
+	.incbin "baserom.gba", 0x005eda64, 0x00000c84
+	.global Resource_Data209
+Resource_Data209:
+	.incbin "baserom.gba", 0x005ee6e8, 0x00000140
+	.global Resource_Data20A
+Resource_Data20A:
+	.incbin "baserom.gba", 0x005ee828, 0x00001570
+	.global Resource_Data20B
+Resource_Data20B:
+	.incbin "baserom.gba", 0x005efd98, 0x0000016c
+	.global Resource_Data20C
+Resource_Data20C:
+	.incbin "baserom.gba", 0x005eff04, 0x00001d5c
+	.global Resource_Data20D
+Resource_Data20D:
+	.incbin "baserom.gba", 0x005f1c60, 0x00000140
+	.global Resource_Data20E
+Resource_Data20E:
+	.incbin "baserom.gba", 0x005f1da0, 0x00002800
+	.global Resource_Data20F
+Resource_Data20F:
+	.incbin "baserom.gba", 0x005f45a0, 0x00000140
+	.global Resource_Data210
+Resource_Data210:
+	.incbin "baserom.gba", 0x005f46e0, 0x00001a18
+	.global Resource_Data211
+Resource_Data211:
+	.incbin "baserom.gba", 0x005f60f8, 0x000001a0
+	.global Resource_Data212
+Resource_Data212:
+	.incbin "baserom.gba", 0x005f6298, 0x000013dc
+	.global Resource_Data213
+Resource_Data213:
+	.incbin "baserom.gba", 0x005f7674, 0x0000153c
+	.global Resource_Data214
+Resource_Data214:
+	.incbin "baserom.gba", 0x005f8bb0, 0x00000190
+	.global Resource_Data215
+Resource_Data215:
+	.incbin "baserom.gba", 0x005f8d40, 0x000022b8
+	.global Resource_Data216
+Resource_Data216:
+	.incbin "baserom.gba", 0x005faff8, 0x00001758
+	.global Resource_Data217
+Resource_Data217:
+	.incbin "baserom.gba", 0x005fc750, 0x00000188
+	.global Resource_Data218
+Resource_Data218:
+	.incbin "baserom.gba", 0x005fc8d8, 0x00002968
+	.global Resource_Data219
+Resource_Data219:
+	.incbin "baserom.gba", 0x005ff240, 0x00001c98
+	.global Resource_Data21A
+Resource_Data21A:
+	.incbin "baserom.gba", 0x00600ed8, 0x00000148
+	.global Resource_Data21B
+Resource_Data21B:
+	.incbin "baserom.gba", 0x00601020, 0x00001cf4
+	.global Resource_Data21C
+Resource_Data21C:
+	.incbin "baserom.gba", 0x00602d14, 0x000014b8
+	.global Resource_Data21D
+Resource_Data21D:
+	.incbin "baserom.gba", 0x006041cc, 0x00002634
+	.global Resource_Data21E
+Resource_Data21E:
+	.incbin "baserom.gba", 0x00606800, 0x0000029c
+	.global Resource_Data21F
+Resource_Data21F:
+	.incbin "baserom.gba", 0x00606a9c, 0x000028bc
+	.global Resource_Data220
+Resource_Data220:
+	.incbin "baserom.gba", 0x00609358, 0x000001c8
+	.global Resource_Data221
+Resource_Data221:
+	.incbin "baserom.gba", 0x00609520, 0x00002904
+	.global Resource_Data222
+Resource_Data222:
+	.incbin "baserom.gba", 0x0060be24, 0x00001eac
+	.global Resource_Data223
+Resource_Data223:
+	.incbin "baserom.gba", 0x0060dcd0, 0x00001c5c
+	.global Resource_Data224
+Resource_Data224:
+	.incbin "baserom.gba", 0x0060f92c, 0x00001570
+	.global Resource_Data225
+Resource_Data225:
+	.incbin "baserom.gba", 0x00610e9c, 0x00000e18
+	.global Resource_Data226
+Resource_Data226:
+	.incbin "baserom.gba", 0x00611cb4, 0x00001a10
+	.global Resource_Data227
+Resource_Data227:
+	.incbin "baserom.gba", 0x006136c4, 0x00000170
+	.global Resource_Data228
+Resource_Data228:
+	.incbin "baserom.gba", 0x00613834, 0x000028c0
+	.global Resource_Data229
+Resource_Data229:
+	.incbin "baserom.gba", 0x006160f4, 0x000027c8
+	.global Resource_Data22A
+Resource_Data22A:
+	.incbin "baserom.gba", 0x006188bc, 0x000012fc
+	.global Resource_Data22B
+Resource_Data22B:
+	.incbin "baserom.gba", 0x00619bb8, 0x00001944
+	.global Resource_Data22C
+Resource_Data22C:
+	.incbin "baserom.gba", 0x0061b4fc, 0x00001b0c
+	.global Resource_Data22D
+Resource_Data22D:
+	.incbin "baserom.gba", 0x0061d008, 0x00001e40
+	.global Resource_Data22E
+Resource_Data22E:
+	.incbin "baserom.gba", 0x0061ee48, 0x00001b28
+	.global Resource_Data22F
+Resource_Data22F:
+	.incbin "baserom.gba", 0x00620970, 0x00002178
+	.global Resource_Data230
+Resource_Data230:
+	.incbin "baserom.gba", 0x00622ae8, 0x00000f28
+	.global Resource_Data231
+Resource_Data231:
+	.incbin "baserom.gba", 0x00623a10, 0x00002f80
+	.global Resource_Data232
+Resource_Data232:
+	.incbin "baserom.gba", 0x00626990, 0x000001c0
+	.global Resource_Data233
+Resource_Data233:
+	.incbin "baserom.gba", 0x00626b50, 0x000021b8
+	.global Resource_Data234
+Resource_Data234:
+	.incbin "baserom.gba", 0x00628d08, 0x00000fd4
+	.global Resource_Data235
+Resource_Data235:
+	.incbin "baserom.gba", 0x00629cdc, 0x000001dc
+	.global Resource_Data236
+Resource_Data236:
+	.incbin "baserom.gba", 0x00629eb8, 0x000024f0
+	.global Resource_Data237
+Resource_Data237:
+	.incbin "baserom.gba", 0x0062c3a8, 0x0000186c
+	.global Resource_Data238
+Resource_Data238:
+	.incbin "baserom.gba", 0x0062dc14, 0x00001574
+	.global Resource_Data239
+Resource_Data239:
+	.incbin "baserom.gba", 0x0062f188, 0x00000b9c
+	.global Resource_Data23A
+Resource_Data23A:
+	.incbin "baserom.gba", 0x0062fd24, 0x00000e60
+	.global Resource_Data23B
+Resource_Data23B:
+	.incbin "baserom.gba", 0x00630b84, 0x00000158
+	.global Resource_Data23C
+Resource_Data23C:
+	.incbin "baserom.gba", 0x00630cdc, 0x00000c64
+	.global Resource_Data23D
+Resource_Data23D:
+	.incbin "baserom.gba", 0x00631940, 0x00000dd0
+	.global Resource_Data23E
+Resource_Data23E:
+	.incbin "baserom.gba", 0x00632710, 0x00001290
+	.global Resource_Data23F
+Resource_Data23F:
+	.incbin "baserom.gba", 0x006339a0, 0x00000ee8
+	.global Resource_Data240
+Resource_Data240:
+	.incbin "baserom.gba", 0x00634888, 0x000010d8
+	.global Resource_Data241
+Resource_Data241:
+	.incbin "baserom.gba", 0x00635960, 0x000031c8
+	.global Resource_Data242
+Resource_Data242:
+	.incbin "baserom.gba", 0x00638b28, 0x0000016c
+	.global Resource_Data243
+Resource_Data243:
+	.incbin "baserom.gba", 0x00638c94, 0x00002d9c
+	.global Resource_Data244
+Resource_Data244:
+	.incbin "baserom.gba", 0x0063ba30, 0x00002190
+	.global Resource_Data245
+Resource_Data245:
+	.incbin "baserom.gba", 0x0063dbc0, 0x00000708
+	.global Resource_Data246
+Resource_Data246:
+	.incbin "baserom.gba", 0x0063e2c8, 0x00000c14
+	.global Resource_Data247
+Resource_Data247:
+	.incbin "baserom.gba", 0x0063eedc, 0x000035d4
+	.global Resource_Data248
+Resource_Data248:
+	.incbin "baserom.gba", 0x006424b0, 0x00003b08
+	.global Resource_Data249
+Resource_Data249:
+	.incbin "baserom.gba", 0x00645fb8, 0x00003d10
+	.global Resource_Data24A
+Resource_Data24A:
+	.incbin "baserom.gba", 0x00649cc8, 0x00004060
+	.global Resource_Data24B
+Resource_Data24B:
+	.incbin "baserom.gba", 0x0064dd28, 0x00002288
+	.global Resource_Data24C
+Resource_Data24C:
+	.incbin "baserom.gba", 0x0064ffb0, 0x00000194
+	.global Resource_Data24D
+Resource_Data24D:
+	.incbin "baserom.gba", 0x00650144, 0x00001510
+	.global Resource_Data24E
+Resource_Data24E:
+	.incbin "baserom.gba", 0x00651654, 0x00001de4
+	.global Resource_Data24F
+Resource_Data24F:
+	.incbin "baserom.gba", 0x00653438, 0x00001094
+	.global Resource_Data250
+Resource_Data250:
+	.incbin "baserom.gba", 0x006544cc, 0x00000554
+	.global Resource_Data251
+Resource_Data251:
+	.incbin "baserom.gba", 0x00654a20, 0x00001d1c
+	.global Resource_Data252
+Resource_Data252:
+	.incbin "baserom.gba", 0x0065673c, 0x00000198
+	.global Resource_Data253
+Resource_Data253:
+	.incbin "baserom.gba", 0x006568d4, 0x00001fa4
+	.global Resource_Data254
+Resource_Data254:
+	.incbin "baserom.gba", 0x00658878, 0x00000164
+	.global Resource_Data255
+Resource_Data255:
+	.incbin "baserom.gba", 0x006589dc, 0x00002c10
+	.global Resource_Data256
+Resource_Data256:
+	.incbin "baserom.gba", 0x0065b5ec, 0x00002064
+	.global Resource_Data257
+Resource_Data257:
+	.incbin "baserom.gba", 0x0065d650, 0x00002754
+	.global Resource_Data258
+Resource_Data258:
+	.incbin "baserom.gba", 0x0065fda4, 0x0000130c
+	.global Resource_Data259
+Resource_Data259:
+	.incbin "baserom.gba", 0x006610b0, 0x00002b6c
+	.global Resource_Data25A
+Resource_Data25A:
+	.incbin "baserom.gba", 0x00663c1c, 0x000001cc
+	.global Resource_Data25B
+Resource_Data25B:
+	.incbin "baserom.gba", 0x00663de8, 0x00002348
+	.global Resource_Data25C
+Resource_Data25C:
+	.incbin "baserom.gba", 0x00666130, 0x000017dc
+	.global Resource_Data25D
+Resource_Data25D:
+	.incbin "baserom.gba", 0x0066790c, 0x000001b4
+	.global Resource_Data25E
+Resource_Data25E:
+	.incbin "baserom.gba", 0x00667ac0, 0x00001574
+	.global Resource_Data25F
+Resource_Data25F:
+	.incbin "baserom.gba", 0x00669034, 0x000029d0
+	.global Resource_Data260
+Resource_Data260:
+	.incbin "baserom.gba", 0x0066ba04, 0x000022c8
+	.global Resource_Data261
+Resource_Data261:
+	.incbin "baserom.gba", 0x0066dccc, 0x000015d8
+	.global Resource_Data262
+Resource_Data262:
+	.incbin "baserom.gba", 0x0066f2a4, 0x000020c0
+	.global Resource_Data263
+Resource_Data263:
+	.incbin "baserom.gba", 0x00671364, 0x0000232c
+	.global Resource_Data264
+Resource_Data264:
+	.incbin "baserom.gba", 0x00673690, 0x00002c24
+	.global Resource_Data265
+Resource_Data265:
+	.incbin "baserom.gba", 0x006762b4, 0x00001488
+	.global Resource_Data266
+Resource_Data266:
+	.incbin "baserom.gba", 0x0067773c, 0x00000d24
+	.global Resource_Data267
+Resource_Data267:
+	.incbin "baserom.gba", 0x00678460, 0x00000160
+	.global Resource_Data268
+Resource_Data268:
+	.incbin "baserom.gba", 0x006785c0, 0x0000193c
+	.global Resource_Data269
+Resource_Data269:
+	.incbin "baserom.gba", 0x00679efc, 0x00001e1c
+	.global Resource_Data26A
+Resource_Data26A:
+	.incbin "baserom.gba", 0x0067bd18, 0x00000164
+	.global Resource_Data26B
+Resource_Data26B:
+	.incbin "baserom.gba", 0x0067be7c, 0x000034c4
+	.global Resource_Data26C
+Resource_Data26C:
+	.incbin "baserom.gba", 0x0067f340, 0x00002820
+	.global Resource_Data26D
+Resource_Data26D:
+	.incbin "baserom.gba", 0x00681b60, 0x000000f4
+	.global Resource_Data26E
+Resource_Data26E:
+	.incbin "baserom.gba", 0x00681c54, 0x000028f0
+	.global Resource_Data26F
+Resource_Data26F:
+	.incbin "baserom.gba", 0x00684544, 0x0000220c
+	.global Resource_Data270
+Resource_Data270:
+	.incbin "baserom.gba", 0x00686750, 0x00000140
+	.global Resource_Data271
+Resource_Data271:
+	.incbin "baserom.gba", 0x00686890, 0x00001a18
+	.global Resource_Data272
+Resource_Data272:
+	.incbin "baserom.gba", 0x006882a8, 0x000024e0
+	.global Resource_Data273
+Resource_Data273:
+	.incbin "baserom.gba", 0x0068a788, 0x000028e8
+	.global Resource_Data274
+Resource_Data274:
+	.incbin "baserom.gba", 0x0068d070, 0x00001fa0
+	.global Resource_Data275
+Resource_Data275:
+	.incbin "baserom.gba", 0x0068f010, 0x0000017c
+	.global Resource_Data276
+Resource_Data276:
+	.incbin "baserom.gba", 0x0068f18c, 0x00001fac
+	.global Resource_Data277
+Resource_Data277:
+	.incbin "baserom.gba", 0x00691138, 0x00002778
+	.global Resource_Data278
+Resource_Data278:
+	.incbin "baserom.gba", 0x006938b0, 0x00001868
+	.global Resource_Data279
+Resource_Data279:
+	.incbin "baserom.gba", 0x00695118, 0x00000c04
+	.global Resource_Data27A
+Resource_Data27A:
+	.incbin "baserom.gba", 0x00695d1c, 0x00002e1c
+	.global Resource_Data27B
+Resource_Data27B:
+	.incbin "baserom.gba", 0x00698b38, 0x000001c8
+	.global Resource_Data27C
+Resource_Data27C:
+	.incbin "baserom.gba", 0x00698d00, 0x00002378
+	.global Resource_Data27D
+Resource_Data27D:
+	.incbin "baserom.gba", 0x0069b078, 0x0000206c
+	.global Resource_Data27E
+Resource_Data27E:
+	.incbin "baserom.gba", 0x0069d0e4, 0x00001bf8
+	.global Resource_Data27F
+Resource_Data27F:
+	.incbin "baserom.gba", 0x0069ecdc, 0x000012d4
+	.global Resource_Data280
+Resource_Data280:
+	.incbin "baserom.gba", 0x0069ffb0, 0x00000dfc
+	.global Resource_Data281
+Resource_Data281:
+	.incbin "baserom.gba", 0x006a0dac, 0x00001178
+	.global Resource_Data282
+Resource_Data282:
+	.incbin "baserom.gba", 0x006a1f24, 0x00001dc4
+	.global Resource_Data283
+Resource_Data283:
+	.incbin "baserom.gba", 0x006a3ce8, 0x00000184
+	.global Resource_Data284
+Resource_Data284:
+	.incbin "baserom.gba", 0x006a3e6c, 0x00001fc8
+	.global Resource_Data285
+Resource_Data285:
+	.incbin "baserom.gba", 0x006a5e34, 0x0000018c
+	.global Resource_Data286
+Resource_Data286:
+	.incbin "baserom.gba", 0x006a5fc0, 0x00001a84
+	.global Resource_Data287
+Resource_Data287:
+	.incbin "baserom.gba", 0x006a7a44, 0x0000097c
+	.global Resource_Data288
+Resource_Data288:
+	.incbin "baserom.gba", 0x006a83c0, 0x000026bc
+	.global Resource_Data289
+Resource_Data289:
+	.incbin "baserom.gba", 0x006aaa7c, 0x000001c4
+	.global Resource_Data28A
+Resource_Data28A:
+	.incbin "baserom.gba", 0x006aac40, 0x00000f34
+	.global Resource_Data28B
+Resource_Data28B:
+	.incbin "baserom.gba", 0x006abb74, 0x0000014c
+	.global Resource_Data28C
+Resource_Data28C:
+	.incbin "baserom.gba", 0x006abcc0, 0x00001f68
+	.global Resource_Data28D
+Resource_Data28D:
+	.incbin "baserom.gba", 0x006adc28, 0x000001a8
+	.global Resource_Data28E
+Resource_Data28E:
+	.incbin "baserom.gba", 0x006addd0, 0x00002c44
+	.global Resource_Data28F
+Resource_Data28F:
+	.incbin "baserom.gba", 0x006b0a14, 0x000023e4
+	.global Resource_Data290
+Resource_Data290:
+	.incbin "baserom.gba", 0x006b2df8, 0x00001f88
+	.global Resource_Data291
+Resource_Data291:
+	.incbin "baserom.gba", 0x006b4d80, 0x00000e08
+	.global Resource_Data292
+Resource_Data292:
+	.incbin "baserom.gba", 0x006b5b88, 0x000001c0
+	.global Resource_Data293
+Resource_Data293:
+	.incbin "baserom.gba", 0x006b5d48, 0x00001358
+	.global Resource_Data294
+Resource_Data294:
+	.incbin "baserom.gba", 0x006b70a0, 0x0000119c
+	.global Resource_Data295
+Resource_Data295:
+	.incbin "baserom.gba", 0x006b823c, 0x000001d4
+	.global Resource_Data296
+Resource_Data296:
+	.incbin "baserom.gba", 0x006b8410, 0x00002090
+	.global Resource_Data297
+Resource_Data297:
+	.incbin "baserom.gba", 0x006ba4a0, 0x00002100
+	.global Resource_Data298
+Resource_Data298:
+	.incbin "baserom.gba", 0x006bc5a0, 0x00002218
+	.global Resource_Data299
+Resource_Data299:
+	.incbin "baserom.gba", 0x006be7b8, 0x0000099c
+	.global Resource_Data29A
+Resource_Data29A:
+	.incbin "baserom.gba", 0x006bf154, 0x00000aec
+	.global Resource_Data29B
+Resource_Data29B:
+	.incbin "baserom.gba", 0x006bfc40, 0x000001d4
+	.global Resource_Data29C
+Resource_Data29C:
+	.incbin "baserom.gba", 0x006bfe14, 0x00001358
+	.global Resource_Data29D
+Resource_Data29D:
+	.incbin "baserom.gba", 0x006c116c, 0x000001e4
+	.global Resource_Data29E
+Resource_Data29E:
+	.incbin "baserom.gba", 0x006c1350, 0x000013f4
+	.global Resource_Data29F
+Resource_Data29F:
+	.incbin "baserom.gba", 0x006c2744, 0x00001798
+	.global Resource_Data2A0
+Resource_Data2A0:
+	.incbin "baserom.gba", 0x006c3edc, 0x00001274
+	.global Resource_Data2A1
+Resource_Data2A1:
+	.incbin "baserom.gba", 0x006c5150, 0x00000568
+	.global Resource_Data2A2
+Resource_Data2A2:
+	.incbin "baserom.gba", 0x006c56b8, 0x00001d80
+	.global Resource_Data2A3
+Resource_Data2A3:
+	.incbin "baserom.gba", 0x006c7438, 0x000001a8
+	.global Resource_Data2A4
+Resource_Data2A4:
+	.incbin "baserom.gba", 0x006c75e0, 0x000021b8
+	.global Resource_Data2A5
+Resource_Data2A5:
+	.incbin "baserom.gba", 0x006c9798, 0x00000194
+	.global Resource_Data2A6
+Resource_Data2A6:
+	.incbin "baserom.gba", 0x006c992c, 0x000011e8
+	.global Resource_Data2A7
+Resource_Data2A7:
+	.incbin "baserom.gba", 0x006cab14, 0x00000188
+	.global Resource_Data2A8
+Resource_Data2A8:
+	.incbin "baserom.gba", 0x006cac9c, 0x00001ed8
+	.global Resource_Data2A9
+Resource_Data2A9:
+	.incbin "baserom.gba", 0x006ccb74, 0x00002674
+	.global Resource_Data2AA
+Resource_Data2AA:
+	.incbin "baserom.gba", 0x006cf1e8, 0x00000154
+	.global Resource_Data2AB
+Resource_Data2AB:
+	.incbin "baserom.gba", 0x006cf33c, 0x00000140
+	.global Resource_Data2AC
+Resource_Data2AC:
+	.incbin "baserom.gba", 0x006cf47c, 0x00000cd4
+	.global Resource_Data2AD
+Resource_Data2AD:
+	.incbin "baserom.gba", 0x006d0150, 0x00000180
+	.global Resource_Data2AE
+Resource_Data2AE:
+	.incbin "baserom.gba", 0x006d02d0, 0x000018b8
+	.global Resource_Data2AF
+Resource_Data2AF:
+	.incbin "baserom.gba", 0x006d1b88, 0x00000184
+	.global Resource_Data2B0
+Resource_Data2B0:
+	.incbin "baserom.gba", 0x006d1d0c, 0x00001a90
+	.global Resource_Data2B1
+Resource_Data2B1:
+	.incbin "baserom.gba", 0x006d379c, 0x0000017c
+	.global Resource_Data2B2
+Resource_Data2B2:
+	.incbin "baserom.gba", 0x006d3918, 0x00001d3c
+	.global Resource_Data2B3
+Resource_Data2B3:
+	.incbin "baserom.gba", 0x006d5654, 0x0000012c
+	.global Resource_Data2B4
+Resource_Data2B4:
+	.incbin "baserom.gba", 0x006d5780, 0x00000178
+	.global Resource_Data2B5
+Resource_Data2B5:
+	.incbin "baserom.gba", 0x006d58f8, 0x00001ea4
+	.global Resource_Data2B6
+Resource_Data2B6:
+	.incbin "baserom.gba", 0x006d779c, 0x00000188
+	.global Resource_Data2B7
+Resource_Data2B7:
+	.incbin "baserom.gba", 0x006d7924, 0x00000f5c
+	.global Resource_Data2B8
+Resource_Data2B8:
+	.incbin "baserom.gba", 0x006d8880, 0x00000198
+	.global Resource_Data2B9
+Resource_Data2B9:
+	.incbin "baserom.gba", 0x006d8a18, 0x0000110c
+	.global Resource_Data2BA
+Resource_Data2BA:
+	.incbin "baserom.gba", 0x006d9b24, 0x000001bc
+	.global Resource_Data2BB
+Resource_Data2BB:
+	.incbin "baserom.gba", 0x006d9ce0, 0x00002aa4
+	.global Resource_Data2BC
+Resource_Data2BC:
+	.incbin "baserom.gba", 0x006dc784, 0x00000174
+	.global Resource_Data2BD
+Resource_Data2BD:
+	.incbin "baserom.gba", 0x006dc8f8, 0x000013e8
+	.global Resource_Data2BE
+Resource_Data2BE:
+	.incbin "baserom.gba", 0x006ddce0, 0x000001b8
+	.global Resource_Data2BF
+Resource_Data2BF:
+	.incbin "baserom.gba", 0x006dde98, 0x00002928
+	.global Resource_Data2C0
+Resource_Data2C0:
+	.incbin "baserom.gba", 0x006e07c0, 0x000001a8
+	.global Resource_Data2C1
+Resource_Data2C1:
+	.incbin "baserom.gba", 0x006e0968, 0x000023fc
+	.global Resource_Data2C2
+Resource_Data2C2:
+	.incbin "baserom.gba", 0x006e2d64, 0x00000190
+	.global Resource_Data2C3
+Resource_Data2C3:
+	.incbin "baserom.gba", 0x006e2ef4, 0x00003280
+	.global Resource_Data2C4
+Resource_Data2C4:
+	.incbin "baserom.gba", 0x006e6174, 0x000001e0
+	.global Resource_Data2C5
+Resource_Data2C5:
+	.incbin "baserom.gba", 0x006e6354, 0x00000f0c
+	.global Resource_Data2C6
+Resource_Data2C6:
+	.incbin "baserom.gba", 0x006e7260, 0x00001688
+	.global Resource_Data2C7
+Resource_Data2C7:
+	.incbin "baserom.gba", 0x006e88e8, 0x00000190
+	.global Resource_Data2C8
+Resource_Data2C8:
+	.incbin "baserom.gba", 0x006e8a78, 0x00002a70
+	.global Resource_Data2C9
+Resource_Data2C9:
+	.incbin "baserom.gba", 0x006eb4e8, 0x00000188
+	.global Resource_Data2CA
+Resource_Data2CA:
+	.incbin "baserom.gba", 0x006eb670, 0x00000b4c
+	.global Resource_Data2CB
+Resource_Data2CB:
+	.incbin "baserom.gba", 0x006ec1bc, 0x00000168
+	.global Resource_Data2CC
+Resource_Data2CC:
+	.incbin "baserom.gba", 0x006ec324, 0x00002a14
+	.global Resource_Data2CD
+Resource_Data2CD:
+	.incbin "baserom.gba", 0x006eed38, 0x00001c40
+	.global Resource_Data2CE
+Resource_Data2CE:
+	.incbin "baserom.gba", 0x006f0978, 0x000004bc
+	.global Resource_Data2CF
+Resource_Data2CF:
+	.incbin "baserom.gba", 0x006f0e34, 0x00001378
+	.global Resource_Data2D0
+Resource_Data2D0:
+	.incbin "baserom.gba", 0x006f21ac, 0x00001544
+	.global Resource_Data2D1
+Resource_Data2D1:
+	.incbin "baserom.gba", 0x006f36f0, 0x0000018c
+	.global Resource_Data2D2
+Resource_Data2D2:
+	.incbin "baserom.gba", 0x006f387c, 0x000010dc
+	.global Resource_Data2D3
+Resource_Data2D3:
+	.incbin "baserom.gba", 0x006f4958, 0x00000190
+	.global Resource_Data2D4
+Resource_Data2D4:
+	.incbin "baserom.gba", 0x006f4ae8, 0x00001b04
+	.global Resource_Data2D5
+Resource_Data2D5:
+	.incbin "baserom.gba", 0x006f65ec, 0x00000150
+	.global Resource_Data2D6
+Resource_Data2D6:
+	.incbin "baserom.gba", 0x006f673c, 0x000029e0
+	.global Resource_Data2D7
+Resource_Data2D7:
+	.incbin "baserom.gba", 0x006f911c, 0x00001c94
+	.global Resource_Data2D8
+Resource_Data2D8:
+	.incbin "baserom.gba", 0x006fadb0, 0x00001898
+	.global Resource_Data2D9
+Resource_Data2D9:
+	.incbin "baserom.gba", 0x006fc648, 0x00001908
+	.global Resource_Data2DA
+Resource_Data2DA:
+	.incbin "baserom.gba", 0x006fdf50, 0x000020a8
+	.global Resource_Data2DB
+Resource_Data2DB:
+	.incbin "baserom.gba", 0x006ffff8, 0x0000014c
+	.global Resource_Data2DC
+Resource_Data2DC:
+	.incbin "baserom.gba", 0x00700144, 0x00002908
+	.global Resource_Data2DD
+Resource_Data2DD:
+	.incbin "baserom.gba", 0x00702a4c, 0x00001c4c
+	.global Resource_Data2DE
+Resource_Data2DE:
+	.incbin "baserom.gba", 0x00704698, 0x00001448
+	.global Resource_Data2DF
+Resource_Data2DF:
+	.incbin "baserom.gba", 0x00705ae0, 0x00001e80
+	.global Resource_Data2E0
+Resource_Data2E0:
+	.incbin "baserom.gba", 0x00707960, 0x00001a94
+	.global Resource_Data2E1
+Resource_Data2E1:
+	.incbin "baserom.gba", 0x007093f4, 0x0000013c
+	.global Resource_Data2E2
+Resource_Data2E2:
+	.incbin "baserom.gba", 0x00709530, 0x00002734
+	.global Resource_Data2E3
+Resource_Data2E3:
+	.incbin "baserom.gba", 0x0070bc64, 0x00001c44
+	.global Resource_Data2E4
+Resource_Data2E4:
+	.incbin "baserom.gba", 0x0070d8a8, 0x00001448
+	.global Resource_Data2E5
+Resource_Data2E5:
+	.incbin "baserom.gba", 0x0070ecf0, 0x00001b7c
+	.global Resource_Data2E6
+Resource_Data2E6:
+	.incbin "baserom.gba", 0x0071086c, 0x00001230
+	.global Resource_Data2E7
+Resource_Data2E7:
+	.incbin "baserom.gba", 0x00711a9c, 0x0000015c
+	.global Resource_Data2E8
+Resource_Data2E8:
+	.incbin "baserom.gba", 0x00711bf8, 0x00000fa8
+	.global Resource_Data2E9
+Resource_Data2E9:
+	.incbin "baserom.gba", 0x00712ba0, 0x0000167c
+	.global Resource_Data2EA
+Resource_Data2EA:
+	.incbin "baserom.gba", 0x0071421c, 0x00000ed8
+	.global Resource_Data2EB
+Resource_Data2EB:
+	.incbin "baserom.gba", 0x007150f4, 0x0000016c
+	.global Resource_Data2EC
+Resource_Data2EC:
+	.incbin "baserom.gba", 0x00715260, 0x000019b8
+	.global Resource_Data2ED
+Resource_Data2ED:
+	.incbin "baserom.gba", 0x00716c18, 0x00000f74
+	.global Resource_Data2EE
+Resource_Data2EE:
+	.incbin "baserom.gba", 0x00717b8c, 0x00001164
+	.global Resource_Data2EF
+Resource_Data2EF:
+	.incbin "baserom.gba", 0x00718cf0, 0x0000019c
+	.global Resource_Data2F0
+Resource_Data2F0:
+	.incbin "baserom.gba", 0x00718e8c, 0x0000164c
+	.global Resource_Data2F1
+Resource_Data2F1:
+	.incbin "baserom.gba", 0x0071a4d8, 0x00000140
+	.global Resource_Data2F2
+Resource_Data2F2:
+	.incbin "baserom.gba", 0x0071a618, 0x00001dbc
+	.global Resource_Data2F3
+Resource_Data2F3:
+	.incbin "baserom.gba", 0x0071c3d4, 0x00001348
+	.global Resource_Data2F4
+Resource_Data2F4:
+	.incbin "baserom.gba", 0x0071d71c, 0x0000017c
+	.global Resource_Data2F5
+Resource_Data2F5:
+	.incbin "baserom.gba", 0x0071d898, 0x0000277c
+	.global Resource_Data2F6
+Resource_Data2F6:
+	.incbin "baserom.gba", 0x00720014, 0x00000198
+	.global Resource_Data2F7
+Resource_Data2F7:
+	.incbin "baserom.gba", 0x007201ac, 0x000029ec
+	.global Resource_Data2F8
+Resource_Data2F8:
+	.incbin "baserom.gba", 0x00722b98, 0x000013ec
+	.global Resource_Data2F9
+Resource_Data2F9:
+	.incbin "baserom.gba", 0x00723f84, 0x00001508
+	.global Resource_Data2FA
+Resource_Data2FA:
+	.incbin "baserom.gba", 0x0072548c, 0x00003ec0
+	.global Resource_Data2FB
+Resource_Data2FB:
+	.incbin "baserom.gba", 0x0072934c, 0x000001c0
+	.global Resource_Data2FC
+Resource_Data2FC:
+	.incbin "baserom.gba", 0x0072950c, 0x00001170
+	.global Resource_Data2FD
+Resource_Data2FD:
+	.incbin "baserom.gba", 0x0072a67c, 0x00000158
+	.global Resource_Data2FE
+Resource_Data2FE:
+	.incbin "baserom.gba", 0x0072a7d4, 0x000010a0
+	.global Resource_Data2FF
+Resource_Data2FF:
+	.incbin "baserom.gba", 0x0072b874, 0x00000164
+	.global Resource_Data300
+Resource_Data300:
+	.incbin "baserom.gba", 0x0072b9d8, 0x000029cc
+	.global Resource_Data301
+Resource_Data301:
+	.incbin "baserom.gba", 0x0072e3a4, 0x000012ec
+	.global Resource_Data302
+Resource_Data302:
+	.incbin "baserom.gba", 0x0072f690, 0x00002240
+	.global Resource_Data303
+Resource_Data303:
+	.incbin "baserom.gba", 0x007318d0, 0x000000f8
+	.global Resource_Data304
+Resource_Data304:
+	.incbin "baserom.gba", 0x007319c8, 0x00002a70
+	.global Resource_Data305
+Resource_Data305:
+	.incbin "baserom.gba", 0x00734438, 0x000018d8
+	.global Resource_Data306
+Resource_Data306:
+	.incbin "baserom.gba", 0x00735d10, 0x00000174
+	.global Resource_Data307
+Resource_Data307:
+	.incbin "baserom.gba", 0x00735e84, 0x00001b68
+	.global Resource_Data308
+Resource_Data308:
+	.incbin "baserom.gba", 0x007379ec, 0x000000e4
+	.global Resource_Data309
+Resource_Data309:
+	.incbin "baserom.gba", 0x00737ad0, 0x00002618
+	.global Resource_Data30A
+Resource_Data30A:
+	.incbin "baserom.gba", 0x0073a0e8, 0x000027b0
+	.global Resource_Data30B
+Resource_Data30B:
+	.incbin "baserom.gba", 0x0073c898, 0x0000106c
+	.global Resource_Data30C
+Resource_Data30C:
+	.incbin "baserom.gba", 0x0073d904, 0x00001a28
+	.global Resource_Data30D
+Resource_Data30D:
+	.incbin "baserom.gba", 0x0073f32c, 0x000026ac
+	.global Resource_Data30E
+Resource_Data30E:
+	.incbin "baserom.gba", 0x007419d8, 0x000001e4
+	.global Resource_Data30F
+Resource_Data30F:
+	.incbin "baserom.gba", 0x00741bbc, 0x00001e80
+	.global Resource_Data310
+Resource_Data310:
+	.incbin "baserom.gba", 0x00743a3c, 0x00001ebc
+	.global Resource_Data311
+Resource_Data311:
+	.incbin "baserom.gba", 0x007458f8, 0x00001c3c
+	.global Resource_Data312
+Resource_Data312:
+	.incbin "baserom.gba", 0x00747534, 0x00001610
+	.global Resource_Data313
+Resource_Data313:
+	.incbin "baserom.gba", 0x00748b44, 0x000019c0
+	.global Resource_Data314
+Resource_Data314:
+	.incbin "baserom.gba", 0x0074a504, 0x00000174
+	.global Resource_Data315
+Resource_Data315:
+	.incbin "baserom.gba", 0x0074a678, 0x00001770
+	.global Resource_Data316
+Resource_Data316:
+	.incbin "baserom.gba", 0x0074bde8, 0x0000189c
+	.global Resource_Data317
+Resource_Data317:
+	.incbin "baserom.gba", 0x0074d684, 0x000001b8
+	.global Resource_Data318
+Resource_Data318:
+	.incbin "baserom.gba", 0x0074d83c, 0x00001870
+	.global Resource_Data319
+Resource_Data319:
+	.incbin "baserom.gba", 0x0074f0ac, 0x00000180
+	.global Resource_Data31A
+Resource_Data31A:
+	.incbin "baserom.gba", 0x0074f22c, 0x0000192c
+	.global Resource_Data31B
+Resource_Data31B:
+	.incbin "baserom.gba", 0x00750b58, 0x00001edc
+	.global Resource_Data31C
+Resource_Data31C:
+	.incbin "baserom.gba", 0x00752a34, 0x00000174
+	.global Resource_Data31D
+Resource_Data31D:
+	.incbin "baserom.gba", 0x00752ba8, 0x00000188
+	.global Resource_Data31E
+Resource_Data31E:
+	.incbin "baserom.gba", 0x00752d30, 0x00000c40
+	.global Resource_Data31F
+Resource_Data31F:
+	.incbin "baserom.gba", 0x00753970, 0x000001a8
+	.global Resource_Data320
+Resource_Data320:
+	.incbin "baserom.gba", 0x00753b18, 0x00002040
+	.global Resource_Data321
+Resource_Data321:
+	.incbin "baserom.gba", 0x00755b58, 0x000000e4
+	.global Resource_Data322
+Resource_Data322:
+	.incbin "baserom.gba", 0x00755c3c, 0x00002d18
+	.global Resource_Data323
+Resource_Data323:
+	.incbin "baserom.gba", 0x00758954, 0x000001e8
+	.global Resource_Data324
+Resource_Data324:
+	.incbin "baserom.gba", 0x00758b3c, 0x000025fc
+	.global Resource_Data325
+Resource_Data325:
+	.incbin "baserom.gba", 0x0075b138, 0x00000ca0
+	.global Resource_Data326
+Resource_Data326:
+	.incbin "baserom.gba", 0x0075bdd8, 0x00004604
+	.global Resource_Data327
+Resource_Data327:
+	.incbin "baserom.gba", 0x007603dc, 0x00000108
+	.global Resource_Data328
+Resource_Data328:
+	.incbin "baserom.gba", 0x007604e4, 0x00001bd4
+	.global Resource_Data329
+Resource_Data329:
+	.incbin "baserom.gba", 0x007620b8, 0x00000170
+	.global Resource_Data32A
+Resource_Data32A:
+	.incbin "baserom.gba", 0x00762228, 0x00001940
+	.global Resource_Data32B
+Resource_Data32B:
+	.incbin "baserom.gba", 0x00763b68, 0x0000015c
+	.global Resource_Data32C
+Resource_Data32C:
+	.incbin "baserom.gba", 0x00763cc4, 0x000014dc
+	.global Resource_Data32D
+Resource_Data32D:
+	.incbin "baserom.gba", 0x007651a0, 0x00001550
+	.global Resource_Data32E
+Resource_Data32E:
+	.incbin "baserom.gba", 0x007666f0, 0x00001ec4
+	.global Resource_Data32F
+Resource_Data32F:
+	.incbin "baserom.gba", 0x007685b4, 0x00001954
+	.global Resource_Data330
+Resource_Data330:
+	.incbin "baserom.gba", 0x00769f08, 0x00000104
+	.global Resource_Data331
+Resource_Data331:
+	.incbin "baserom.gba", 0x0076a00c, 0x00000a1c
+	.global Resource_Data332
+Resource_Data332:
+	.incbin "baserom.gba", 0x0076aa28, 0x000000e8
+	.global Resource_Data333
+Resource_Data333:
+	.incbin "baserom.gba", 0x0076ab10, 0x0000029c
+	.global Resource_Data334
+Resource_Data334:
+	.incbin "baserom.gba", 0x0076adac, 0x00002168
+	.global Resource_Data335
+Resource_Data335:
+	.incbin "baserom.gba", 0x0076cf14, 0x00001ef4
+	.global Resource_Data336
+Resource_Data336:
+	.incbin "baserom.gba", 0x0076ee08, 0x000005b4
+	.global Resource_Data337
+Resource_Data337:
+	.incbin "baserom.gba", 0x0076f3bc, 0x00000f94
+	.global Resource_Data338
+Resource_Data338:
+	.incbin "baserom.gba", 0x00770350, 0x000001ac
+	.global Resource_Data339
+Resource_Data339:
+	.incbin "baserom.gba", 0x007704fc, 0x00001858
+	.global Resource_Data33A
+Resource_Data33A:
+	.incbin "baserom.gba", 0x00771d54, 0x00000c70
+	.global Resource_Data33B
+Resource_Data33B:
+	.incbin "baserom.gba", 0x007729c4, 0x000002a8
+	.global Resource_Data33C
+Resource_Data33C:
+	.incbin "baserom.gba", 0x00772c6c, 0x00000e84
+	.global Resource_Data33D
+Resource_Data33D:
+	.incbin "baserom.gba", 0x00773af0, 0x00001190
+	.global Resource_Data33E
+Resource_Data33E:
+	.incbin "baserom.gba", 0x00774c80, 0x000001c8
+	.global Resource_Data33F
+Resource_Data33F:
+	.incbin "baserom.gba", 0x00774e48, 0x0000034c
+	.global Resource_Data340
+Resource_Data340:
+	.incbin "baserom.gba", 0x00775194, 0x0000000c
+	.global Resource_Data341
+Resource_Data341:
+	.incbin "baserom.gba", 0x007751a0, 0x00000150
+	.global Resource_Data342
+Resource_Data342:
+	.incbin "baserom.gba", 0x007752f0, 0x00000140
+	.global Resource_Data343
+Resource_Data343:
+	.incbin "baserom.gba", 0x00775430, 0x00000140
+	.global Resource_Data344
+Resource_Data344:
+	.incbin "baserom.gba", 0x00775570, 0x00000140
+	.global Resource_Data345
+Resource_Data345:
+	.incbin "baserom.gba", 0x007756b0, 0x0000034c
+	.global Resource_Data346
+Resource_Data346:
+	.incbin "baserom.gba", 0x007759fc, 0x0000000c
+	.global Resource_Data347
+Resource_Data347:
+	.incbin "baserom.gba", 0x00775a08, 0x00000150
+	.global Resource_Data348
+Resource_Data348:
+	.incbin "baserom.gba", 0x00775b58, 0x00000140
+	.global Resource_Data349
+Resource_Data349:
+	.incbin "baserom.gba", 0x00775c98, 0x00000140
+	.global Resource_Data34A
+Resource_Data34A:
+	.incbin "baserom.gba", 0x00775dd8, 0x00000140
+	.global Resource_Data34B
+Resource_Data34B:
+	.incbin "baserom.gba", 0x00775f18, 0x0000034c
+	.global Resource_Data34C
+Resource_Data34C:
+	.incbin "baserom.gba", 0x00776264, 0x0000000c
+	.global Resource_Data34D
+Resource_Data34D:
+	.incbin "baserom.gba", 0x00776270, 0x00000150
+	.global Resource_Data34E
+Resource_Data34E:
+	.incbin "baserom.gba", 0x007763c0, 0x00000140
+	.global Resource_Data34F
+Resource_Data34F:
+	.incbin "baserom.gba", 0x00776500, 0x00000140
+	.global Resource_Data350
+Resource_Data350:
+	.incbin "baserom.gba", 0x00776640, 0x00000140
+	.global Resource_Data351
+Resource_Data351:
+	.incbin "baserom.gba", 0x00776780, 0x0000034c
+	.global Resource_Data352
+Resource_Data352:
+	.incbin "baserom.gba", 0x00776acc, 0x0000000c
+	.global Resource_Data353
+Resource_Data353:
+	.incbin "baserom.gba", 0x00776ad8, 0x00000150
+	.global Resource_Data354
+Resource_Data354:
+	.incbin "baserom.gba", 0x00776c28, 0x00000140
+	.global Resource_Data355
+Resource_Data355:
+	.incbin "baserom.gba", 0x00776d68, 0x00000140
+	.global Resource_Data356
+Resource_Data356:
+	.incbin "baserom.gba", 0x00776ea8, 0x00000140
+	.global Resource_Data357
+Resource_Data357:
+	.incbin "baserom.gba", 0x00776fe8, 0x0000034c
+	.global Resource_Data358
+Resource_Data358:
+	.incbin "baserom.gba", 0x00777334, 0x0000000c
+	.global Resource_Data359
+Resource_Data359:
+	.incbin "baserom.gba", 0x00777340, 0x00000150
+	.global Resource_Data35A
+Resource_Data35A:
+	.incbin "baserom.gba", 0x00777490, 0x00000140
+	.global Resource_Data35B
+Resource_Data35B:
+	.incbin "baserom.gba", 0x007775d0, 0x00000140
+	.global Resource_Data35C
+Resource_Data35C:
+	.incbin "baserom.gba", 0x00777710, 0x00000140
+	.global Resource_Data35D
+Resource_Data35D:
+	.incbin "baserom.gba", 0x00777850, 0x0000034c
+	.global Resource_Data35E
+Resource_Data35E:
+	.incbin "baserom.gba", 0x00777b9c, 0x0000000c
+	.global Resource_Data35F
+Resource_Data35F:
+	.incbin "baserom.gba", 0x00777ba8, 0x00000150
+	.global Resource_Data360
+Resource_Data360:
+	.incbin "baserom.gba", 0x00777cf8, 0x00000140
+	.global Resource_Data361
+Resource_Data361:
+	.incbin "baserom.gba", 0x00777e38, 0x00000140
+	.global Resource_Data362
+Resource_Data362:
+	.incbin "baserom.gba", 0x00777f78, 0x00000140
+	.global Resource_Data363
+Resource_Data363:
+	.incbin "baserom.gba", 0x007780b8, 0x0000034c
+	.global Resource_Data364
+Resource_Data364:
+	.incbin "baserom.gba", 0x00778404, 0x0000000c
+	.global Resource_Data365
+Resource_Data365:
+	.incbin "baserom.gba", 0x00778410, 0x00000150
+	.global Resource_Data366
+Resource_Data366:
+	.incbin "baserom.gba", 0x00778560, 0x00000140
+	.global Resource_Data367
+Resource_Data367:
+	.incbin "baserom.gba", 0x007786a0, 0x00000140
+	.global Resource_Data368
+Resource_Data368:
+	.incbin "baserom.gba", 0x007787e0, 0x00000140
+	.global Resource_Data369
+Resource_Data369:
+	.incbin "baserom.gba", 0x00778920, 0x0000034c
+	.global Resource_Data36A
+Resource_Data36A:
+	.incbin "baserom.gba", 0x00778c6c, 0x0000000c
+	.global Resource_Data36B
+Resource_Data36B:
+	.incbin "baserom.gba", 0x00778c78, 0x00000150
+	.global Resource_Data36C
+Resource_Data36C:
+	.incbin "baserom.gba", 0x00778dc8, 0x00000140
+	.global Resource_Data36D
+Resource_Data36D:
+	.incbin "baserom.gba", 0x00778f08, 0x00000140
+	.global Resource_Data36E
+Resource_Data36E:
+	.incbin "baserom.gba", 0x00779048, 0x00000140
 	.section .unidentified.087fd4b9,"a"
 	.incbin "baserom.gba", 0x007fd4b9, 0x00002b47

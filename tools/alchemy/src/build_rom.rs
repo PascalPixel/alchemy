@@ -238,18 +238,26 @@ fn symbols_pass(
             objects.push(output.join("obj").join(source).with_extension("o"));
         }
     }
+    // The stubs define nothing, so the labels of the streamed sources, such as
+    // the directory rows naming each overlay, stay unresolved here; each is a
+    // word whose size does not depend on its value, and the final link
+    // resolves them all.
     let elf = pass.join(format!("{name}.elf"));
-    command(&link_command(root, script, text, &objects, &elf), root)?;
+    let mut arguments = link_command(root, script, text, &objects, &elf);
+    arguments.insert(1, "--unresolved-symbols=ignore-all".to_owned());
+    command(&arguments, root)?;
     Ok(elf)
 }
 
-/// Every symbol the overlays could see keeps its address in the final image.
+/// Every global symbol, the only kind the overlays can see, keeps its
+/// address in the final image.
 fn same_addresses(root: &Path, pass: &Path, elf: &Path) -> Result<(), String> {
     let table = |path: &Path| -> Result<std::collections::BTreeMap<String, String>, String> {
         let text = command(
             &[
                 "arm-none-eabi-nm",
                 "--defined-only",
+                "--extern-only",
                 &path.to_string_lossy(),
             ],
             root,

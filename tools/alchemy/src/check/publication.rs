@@ -426,9 +426,10 @@ fn check_documents(root: &Path) -> Result<(), String> {
 /// `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"` from `WAVE_00.PCM8.WAV`, as
 /// pret's data files read the `.bin` files wav2agb makes. In a game's asset
 /// sources under `SRC`: a file the build makes from the like-named indexed
-/// PNG, named by its recipe, `.incbin "GRAPHICS/FX/STAR.bitmap.lz"` from
-/// `SRC/GRAPHICS/FX/STAR.PNG`, as pret's data files read the `.4bpp.lz`
-/// files gbagfx makes.
+/// PNG or identified BIN, named by its recipe,
+/// `.incbin "GRAPHICS/FX/STAR.bitmap.lz"` from `SRC/GRAPHICS/FX/STAR.PNG` or
+/// `.incbin "MAP/M/CELLS.delta1.lz"` from `SRC/MAP/M/CELLS.BIN`, as pret's
+/// data files read the `.4bpp.lz` files gbagfx makes.
 fn incbin(path: &str, data: &[u8]) -> bool {
     let base_rom = regex::Regex::new(
         r#"^\s*\.incbin\s+"baserom\.gba"\s*,\s*0x[0-9a-f]+\s*,\s*0x[0-9a-f]+\s*$"#,
@@ -440,7 +441,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"GRAPHICS(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp)(?:\.(?:lz|mtf))?"\s*$"#,
+        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012])(?:\.(?:lz|mtf))?"\s*$"#,
     )
     .expect("built graphics pattern");
     let scaffolding = path.starts_with("recon/");
@@ -3526,7 +3527,7 @@ mod tests {
     fn asset_sources_may_incbin_only_the_graphics_files_the_build_makes() {
         let sheet = b"BattleFx_Star:\n\t.incbin \"GRAPHICS/FX/STAR.gbapal\"\n\t.incbin \"GRAPHICS/FX/STAR.bitmap.lz\"\n";
         let tiles =
-            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n";
+            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"MAP/M/CELLS.delta1.lz\"\n\t.incbin \"MAP/M/END.bin\"\n";
         for path in [
             "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S",
             "games/THE LOST AGE/SRC/BATTLE/EFFECT/STAR.S",
@@ -3541,8 +3542,10 @@ mod tests {
             ("games/COMMON/SRC/GRAPHICS/STAR.S", sheet),
             ("games/THE BROKEN SEAL/SOUND/STAR.S", sheet),
             (star, b".incbin \"GRAPHICS/FX/STAR.PNG\"\n"),
-            (star, b".incbin \"GRAPHICS/FX/STAR.bin\"\n"),
+            (star, b".incbin \"GRAPHICS/FX/STAR.raw\"\n"),
             (star, b".incbin \"GRAPHICS/FX/STAR.4bpp.zip\"\n"),
+            (star, b".incbin \"MAP/M/CELLS.delta3.lz\"\n"),
+            (star, b".incbin \"TEXT/M/CELLS.bin\"\n"),
             (star, b".incbin \"GRAPHICS/FX/star.4bpp\"\n"),
             (star, b".incbin \"GRAPHICS/../../roms/tbs-en.4bpp\"\n"),
             (star, b".incbin \"GRAPHICS/FX/STAR.4bpp\", 0, 16\n"),

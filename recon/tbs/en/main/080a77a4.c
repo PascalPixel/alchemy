@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 1005 to 985 on the permuter's scorer
+   (0 is exact); remaining 12 register-only, 3 operand, 1 reordered, 2
+   inserted, 6 deleted. Kept rewrites: 6x pointer arithmetic or indexing,
+   5x swap commutative operands, 5x introduce a temporary, 3x reorder local
+   declarations, 3x move an assignment into or out of a condition, 3x
+   toggle register, 2x reorder independent statements, 2x add a same-width
+   cast, 2x drop a same-width cast, 2x invert an if/else, 1x test truth or
+   compare with zero. FAKEMATCH: the permuter's temporaries, register hints
+   and swapped operand orders below only steer allocation and scheduling;
+   no programmer would write them, so they stay tagged until a natural
+   spelling replaces them. */
 /* 2026-09-29 alchemy permute: score 1330 to 1005 on the permuter's scorer
    (0 is exact); remaining 13 register-only, 2 operand, 2 inserted, 7
    deleted. Kept rewrites: 6x swap commutative operands, 3x reorder
@@ -62,39 +73,49 @@ void WaitFrames(s32 frames);
 s32 CharacterMenu_SelectOwner(s32 slot)
 {
     register s32 index;
-    register struct OwnerSelectMenu *menu;
     s32 result;
+    register struct OwnerSelectMenu *menu;
     register s32 cursor_offset;
     register s32 owner_offset;
-    struct OwnerCursor *cursor;
-    s32 tmp;
+    register s32 tmp;
+    register struct OwnerCursor *cursor;
+    register s32 tmp2;
+    s8 tmp5;
 
     result = 0;
     menu = gMenuWork;
-    tmp = slot * 4;
+    tmp = 4 * slot;
     cursor_offset = tmp;
-    owner_offset = slot + 28;
     {
         s32 off = cursor_offset + 20;
         cursor = *(struct OwnerCursor **)(off + (u8 *)menu);
     }
+    owner_offset = slot + 28;
     cursor->state = 1;
     cursor->frame = result;
-    index = *(s8 *)((u8 *)menu + owner_offset);
+    tmp5 = *(s8 *)(owner_offset + (u8 *)menu);
+    index = tmp5;
     RenderOutput_RedrawSavedRectFar(menu->window);
-    if (GameFlag_TestFar(0x172) != 0)
+    if (GameFlag_TestFar(0x172))
         UiWindow_DrawDividerLineFar(menu->window, 9, 1, 9, 3);
-    if (-1 == index)
-        *(s8 *)((u8 *)menu + owner_offset) = 0;
-    else
-        UiMenu_SlideCursor(index * 24 - 10, 16);
+    if ((tmp2 = -1) == index) {
+        s8 *tmp4;
+        tmp4 = (s8 *)&*((u8 *)menu + owner_offset);
+        *tmp4 = 0;
+    } else {
+        UiMenu_SlideCursor(24 * index - 10, 16);
+    }
     if (menu->mode == 3)
         result = PsynergyMenu_SelectOwner();
     else
         result = CharacterSelector_RunRearrange();
     {
+        struct OwnerCursor **tmp3;
         register s32 off = 20 + cursor_offset;
-        UiIcon_PrepareObject(*(struct OwnerCursor **)(off + (u8 *)menu));
+        u8 *tmp6;
+        tmp6 = (u8 *)menu;
+        tmp3 = (struct OwnerCursor **)(off + tmp6);
+        UiIcon_PrepareObject(*tmp3);
     }
     WaitFrames(1);
     return result;

@@ -1,3 +1,10 @@
+/* 2026-09-29 alchemy permute: score 1205 to 1170 on the permuter's scorer
+   (0 is exact); remaining 79 register-only, 1 operand, 7 reordered, 1
+   inserted, 2 deleted. Kept rewrites: 2x swap commutative operands, 1x
+   reorder independent statements, 1x introduce a temporary. FAKEMATCH: the
+   permuter's temporaries, register hints and swapped operand orders below
+   only steer allocation and scheduling; no programmer would write them, so
+   they stay tagged until a natural spelling replaces them. */
 /* 2026-09-29 alchemy permute: score 2025 to 1205 on the permuter's scorer
    (0 is exact); remaining 79 register-only, 1 operand, 6 reordered, 1
    inserted, 3 deleted. Kept rewrites: 17x reorder independent statements,
@@ -51,6 +58,7 @@ s32 Func_08019bfc(struct Func_08019bfcState *state)
     s32 tmp2;
     s32 mask2;
     s32 tmp3;
+    u8 tmp4;
 
     hi = state->code >> 8;
     offset = hi << 3;
@@ -67,14 +75,15 @@ s32 Func_08019bfc(struct Func_08019bfcState *state)
     sentinel = 0x80;
     goto L0;
 L7:
-    bitA = bufA & mask;
+    bitA = mask & bufA;
     bufA = bufA >> 1;
     if (0 == bitA)
         goto L0;
     if (0 != bufA)
         goto L1;
-    bufA = *readPtr;
+    tmp4 = *readPtr;
     readPtr++;
+    bufA = tmp4;
     bitA = mask & bufA;
     bufA >>= 1;
     bufA |= sentinel;
@@ -125,7 +134,7 @@ L0:
 L8:
     if (bitB == 0)
         goto L7;
-    if (((4 * (idx = 3 * rank)) & 7) == 0) {
+    if ((((idx = 3 * rank) * 4) & 7) == 0) {
         u8 tmp;
         half = idx >> 1;
         result = anchor[-(s32)half] << 4;

@@ -1,15 +1,10 @@
 #include "FIELD_EVENT.H"
+#include "IO_REG.H"
+#include "IO_WRITE_QUEUE.H"
 extern u8 gMenuCtrlWork[];
 
-struct CompetitorIoQueue {
-    u16 count;
-    u16 pad;
-    u32 entries[32][3];
-};
-
-extern struct CompetitorIoQueue gCompetitorIoQueue;
-
-extern volatile u16 gInterruptMasterEnable;
+/* The competitor's starting position and facing, kept in the overlay's
+ * variables while a round runs. */
 extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
@@ -19,15 +14,15 @@ extern s32 Korosseo_CompetitorStartAngle;
 #define QUEUE_IO_WRITE(address, value, delay)                                \
     do {                                                                     \
         volatile u16 *ime;                                                   \
-        struct CompetitorIoQueue *q;                                              \
+        struct IoWriteQueue *q;                                              \
         u32 saved;                                                           \
         s32 count;                                                           \
                                                                              \
-        q = &gCompetitorIoQueue;                                                  \
-        do {                                                                \
-            ime = &gInterruptMasterEnable;                                            \
+        q = &gIoWriteQueue;                                                  \
+        do {                                                                 \
+            ime = &REG_IME;                                                  \
             saved = *ime;                                                    \
-        } while (0);                                                        \
+        } while (0);                                                         \
         *ime = (u16)(u32)ime;                                                \
         count = q->count;                                                    \
         if (count <= 31) {                                                   \

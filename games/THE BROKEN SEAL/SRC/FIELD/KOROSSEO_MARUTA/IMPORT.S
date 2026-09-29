@@ -287,6 +287,9 @@ Engine_ActorRunRepeatedMotion:
 	.thumb_func
 BattleFx_RunRisingObjectSequence:
 	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Engine_ActorFaceEachOther
 	.thumb_func
@@ -313,6 +316,9 @@ Engine_EventAskYesNo:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Engine_ActorSetSpritePriority
+	.thumb_func
+Engine_ActorSetSpritePriority:
 	overlay_veneer ObjectMotion_SetActionVariantFar
 	.global Engine_ActorShowEmote
 	.thumb_func

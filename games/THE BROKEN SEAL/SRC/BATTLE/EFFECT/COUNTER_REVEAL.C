@@ -223,19 +223,19 @@ void BattleFx_RunCounterReveal(void *object)
                 }
                 if ((u32)(frame - 94) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                        canvas, (void *)0x02012D80,
+                        canvas, gMapCellBuffer + 0x2d80,
                         CounterReveal_PanelX[idx_a * 7 + 4],
                         CounterReveal_PanelY[idx_b * 7 + 4] + screen_y, 128, 59);
                 }
                 if ((u32)(frame - 96) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                        canvas, (void *)0x02014B00,
+                        canvas, gMapCellBuffer + 0x4b00,
                         CounterReveal_PanelX[idx_a * 7 + 5],
                         CounterReveal_PanelY[idx_b * 7 + 5] + screen_y, 122, 29);
                 }
                 if ((u32)(frame - 98) <= 1U) {
                     ((DrawRectangleFn)rectangle[(*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4)))])(
-                        canvas, (void *)0x020158D2,
+                        canvas, gMapCellBuffer + 0x58d2,
                         CounterReveal_PanelX[idx_a * 7 + 6],
                         CounterReveal_PanelY[idx_b * 7 + 6] + screen_y, 76, 25);
                 }

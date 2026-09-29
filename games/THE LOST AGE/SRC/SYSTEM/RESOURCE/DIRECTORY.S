@@ -53,36 +53,36 @@ Resource_DirectoryTable:
 	resource , Resource_Data025
 	resource , Resource_Data026
 	resource , Resource_Data027
-	resource , Resource_Data028
-	resource , Resource_Data029
-	resource , Resource_Data02A
-	resource , Resource_Data02B
-	resource , Resource_Data02C
-	resource , Resource_Data02D
-	resource , Resource_Data02E
-	resource , Resource_Data02F
-	resource , Resource_Data030
-	resource , Resource_Data031
-	resource , Resource_Data032
-	resource , Resource_Data033
-	resource , Resource_Data034
-	resource , Resource_Data035
-	resource , Resource_Data036
-	resource , Resource_Data037
-	resource , Resource_Data038
-	resource , Resource_Data039
-	resource , Resource_Data03A
-	resource , Resource_Data03B
-	resource , Resource_Data03C
-	resource , Resource_Data03D
-	resource , Resource_Data03E
-	resource , Resource_Data03F
-	resource , Resource_Data040
-	resource , Resource_Data041
-	resource , Resource_Data042
-	resource , Resource_Data043
-	resource , Resource_Data044
-	resource , Resource_Data045
+	resource , Battle_SuharaGateBackdrop
+	resource , Battle_TakaraShimaBackdrop
+	resource , Battle_TakaraShimaCaveBackdrop
+	resource , Battle_KorosseoBackdrop
+	resource , Battle_VinasuChojoStormBackdrop
+	resource , Battle_VinasuChojoBackdrop
+	resource , Battle_VinasuHeyaBackdrop
+	resource , Battle_SuharaSabakuBackdrop
+	resource , Battle_ArutamiraDouBackdrop
+	resource , Battle_BabiChikaBackdrop
+	resource , Battle_BabiIriguchiBackdrop
+	resource , Battle_RamakanSabakuBackdrop
+	resource , Battle_MogoruMoriBackdrop
+	resource , Battle_MakyuriChojoBackdrop
+	resource , Battle_FuneHeyaBackdrop
+	resource , Battle_ImiruFuchinBackdrop
+	resource , Battle_KorimaMoriBackdrop
+	resource , Battle_ToretoHeyaBackdrop
+	resource , Battle_InteriorBackdrop
+	resource , Battle_ArutinYamaBackdrop
+	resource , Battle_FuneKanpanBackdrop
+	resource , Battle_MakyuriHeyaBackdrop
+	resource , Battle_HaidiaArashiBackdrop
+	resource , Battle_ToretoEdaBackdrop
+	resource , Battle_BeachBackdrop
+	resource , Battle_SnowfieldBackdrop
+	resource , Battle_GrasslandBackdrop
+	resource , Battle_SoruShindenBackdrop
+	resource , Battle_ForestBackdrop
+	resource , Battle_VioletSkyBackdrop
 	resource , Resource_Data046
 	resource , Resource_Data047
 	resource , Resource_Data048

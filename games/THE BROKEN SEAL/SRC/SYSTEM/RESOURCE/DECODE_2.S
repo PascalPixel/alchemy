@@ -8,8 +8,8 @@
 @ credit: library — TBS/TLA common ARM graphics and runtime kernel bank
 .syntax unified
 	.arm
-	.global Func_08002808
-Func_08002808:
+	.global Resource_Decode2
+Resource_Decode2:
 	ldrb	r2, [r0], #1
 	cmp	r2, #2
 	movne	r0, #4

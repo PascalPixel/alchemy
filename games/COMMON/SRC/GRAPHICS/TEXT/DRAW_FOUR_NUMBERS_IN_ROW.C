@@ -15,3 +15,4 @@ void UiText_DrawFourNumbersInRow(struct TextRenderWork *work, struct NumberRow *
             UiText_DrawNumberAtOffset(row->values[i], 2, work, i * 0x18, 0x10);
     }
 }
+

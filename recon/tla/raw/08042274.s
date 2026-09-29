@@ -176,35 +176,3 @@ RenderOutput_Create:
 .L_080423c0:
 	add	sp, #4
 	pop	{r5, r6, pc}
-	push	{r5, r6, r7, lr}
-	mov	r7, sl
-	mov	r6, r8
-	push	{r6, r7}
-	sub	sp, #4
-	adds	r6, r0, #0
-	adds	r7, r1, #0
-	mov	r8, r2
-	mov	sl, r3
-	bl	Resource_FindFreeEntry
-	adds	r5, r0, #0
-	movs	r0, #0
-	cmp	r5, #96
-	beq.n	.L_080423fe
-	adds	r1, r7, #0
-	adds	r2, r5, #0
-	adds	r0, r6, #0
-	bl	0x0803d8ac
-	ldr	r3, [sp, #28]
-	movs	r1, #128
-	str	r3, [sp, #0]
-	lsls	r1, r1, #23
-	adds	r0, r5, #0
-	mov	r2, r8
-	mov	r3, sl
-	bl	RenderOutput_Create
-.L_080423fe:
-	add	sp, #4
-	pop	{r3, r5}
-	mov	r8, r3
-	mov	sl, r5
-	pop	{r5, r6, r7, pc}

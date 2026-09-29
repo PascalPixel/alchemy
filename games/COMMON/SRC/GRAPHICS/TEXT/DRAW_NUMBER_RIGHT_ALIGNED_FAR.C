@@ -20,3 +20,4 @@ void UiText_DrawNumberRightAlignedFar(s32 number, s32 layer, s32 x, s32 y)
     x -= digits << 3;
     UiText_DrawNumberAtOffsetFar(number, digits, layer, x, y);
 }
+

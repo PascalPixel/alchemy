@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "OBJECT_LOOKUP.H"
 
-s32 Func_0808ddec(u32 object_id);
+s32 BattleEffect_SelectNearbyObject(u32 object_id);
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 GetFocusedObjectCollision(void);
 
@@ -49,7 +49,7 @@ void *Func_0808e14c(u32 arg0)
     trigger = Data_03001ebc->triggers;
     object = ObjectTable_Get(Data_02000240.object_id);
     facing = object->kind;
-    id = Func_0808ddec(Data_02000240.object_id);
+    id = BattleEffect_SelectNearbyObject(Data_02000240.object_id);
     masked = arg0 & 0x1ff;
     collision = GetFocusedObjectCollision();
 

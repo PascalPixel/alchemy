@@ -728,7 +728,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EVENT_DISPATCH_INPUT_EVENT.o"(.text)
         "*/recon/tbs/raw/0808d9a4.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MAP_KEY_THROUGH_TABLE.o"(.text)
-        "*/recon/tbs/raw/0808ddec.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SELECT_NEARBY_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/SELECT_NEARBY_TARGET_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/PLAY_CUE_AND_START_EMITTER_ON_TARGET.o"(.text)
         "*/recon/tbs/raw/0808e0ae.o"(.text .rodata .data .padding)

@@ -66,7 +66,8 @@
 //!   line names a 32x32 icon image beside the list, or `-` for an empty
 //!   slot. The bank is a table of each slot's halfword offset, 0 when empty,
 //!   then each icon's 16-colour palette and its pixels, row by row, in the
-//!   4-bit icon coder (Psynergy's icon4), zero-padded to a word.
+//!   4-bit icon coder (Psynergy's icon4), zero-padded to a word, or to the
+//!   hex boundary an `align` line gives (the Japanese ☀️ bank pads to 20).
 //!
 //! A block map reads its grid `STEM.TSV`, one line per row of hex words:
 //!
@@ -397,10 +398,19 @@ fn icon4_bank(
     sibling: &dyn Fn(&str) -> Result<Vec<u8>, String>,
 ) -> Result<Vec<u8>, String> {
     let text = std::str::from_utf8(list).map_err(|_| format!("{built}: icon list is not text"))?;
-    let slots: Vec<&str> = text
-        .lines()
-        .filter(|line| !line.trim().is_empty())
-        .collect();
+    let mut align = 4;
+    let mut slots: Vec<&str> = Vec::new();
+    for line in text.lines().filter(|line| !line.trim().is_empty()) {
+        match line.strip_prefix("align\t") {
+            Some(value) => {
+                align = usize::from_str_radix(value.trim(), 16)
+                    .ok()
+                    .filter(|align| align.is_power_of_two())
+                    .ok_or_else(|| format!("{built}: align {value} is not a power of two"))?
+            }
+            None => slots.push(line),
+        }
+    }
     let mut output = vec![0u8; 2 * slots.len()];
     for (index, slot) in slots.iter().enumerate() {
         if *slot == "-" {
@@ -420,7 +430,7 @@ fn icon4_bank(
             encode_icon4(&indices(&image))
                 .map_err(|error| format!("{built}: {slot}: {}", error.0))?,
         );
-        output.resize(output.len().next_multiple_of(4), 0);
+        output.resize(output.len().next_multiple_of(align), 0);
     }
     Ok(output)
 }
@@ -679,6 +689,12 @@ mod tests {
         assert_eq!(&bank[..4], [0, 0, 4, 0]);
         assert_eq!(bank.len(), 4 + 32 + 132);
         assert_eq!(&bank[36..40], [0, 0, 0, 0]);
+        let wide = build_file_with("B.icons4", b"align\t20\n-\nA\n", &|_| {
+            Ok(png_from_bitmap(&[0; 32 * 32], &[0; 32], 32).unwrap())
+        })
+        .unwrap();
+        assert_eq!(wide.len(), 192);
+        assert!(build_file_with("B.icons4", b"align\t3\nA\n", &|_| Ok(Vec::new())).is_err());
         // A block map: two blocks side by side, a word offset each.
         let row = format!("{}\n", ["c80"; 32].join("\t"));
         let blocks = build_file("M.blocks", row.repeat(16).as_bytes()).unwrap();

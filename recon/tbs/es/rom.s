@@ -527,7 +527,9 @@
 	.section .rom.00552a6b, "a"
 	.incbin "baserom.gba", 0x552a6b, 0x1
 	.section .rom.0055822d, "a"
-	.incbin "baserom.gba", 0x55822d, 0x143
+	.incbin "baserom.gba", 0x55822d, 0x3
+	.section .rom.0055836f, "a"
+	.incbin "baserom.gba", 0x55836f, 0x1
 	.section .rom.0055979d, "a"
 	.incbin "baserom.gba", 0x55979d, 0x3
 	.section .rom.0055c4da, "a"

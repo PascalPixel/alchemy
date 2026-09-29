@@ -463,16 +463,16 @@ Resource_DirectoryTable:
 	resource , Resource_Data1BF
 	resource , Resource_Data1C0
 	resource , Resource_Data1C1
-	resource , Resource_Data1C2
-	resource , Resource_Data1C3
-	resource , Resource_Data1C4
-	resource , Resource_Data1C5
-	resource , Resource_Data1C6
-	resource , Resource_Data1C7
-	resource , Resource_Data1C8
-	resource , Resource_Data1C9
-	resource , Resource_Data1CA
-	resource , Resource_Data1CB
+	resource , Field_WalkPathA
+	resource , Field_WalkPathB
+	resource , Field_WalkPathC
+	resource , Field_WalkPathD
+	resource , Field_WalkPathE
+	resource , Field_WalkPathF
+	resource , Field_WalkPathG
+	resource , Field_WalkPathH
+	resource , Field_WalkPathI
+	resource , Field_WalkPathJ
 	resource , Resource_Data1CC
 	resource , Shop_CursorFrameA
 	resource , Shop_CursorFrameB

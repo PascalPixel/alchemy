@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathDivide
+	.thumb_func
+Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
 	overlay_veneer IwramSignedRemainder
 	.global IwramUnsignedDivide
@@ -91,6 +94,9 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
 	.global Engine_PartyRemoveItem
 	.thumb_func
@@ -199,6 +205,9 @@ Engine_ActorFaceActor:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func

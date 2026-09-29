@@ -80,7 +80,7 @@
 #include "FIELD_EFFECT.H"
 
 void SceneState_SetHalfwordB030(s32 value);
-s32 CalculatePlanarDistance(s32 *from, s32 *to);
+s32 RamakanSabaku_CalculatePlanarDistance(s32 *from, s32 *to);
 void OverlayObject_WaitUntilField12BelowLimit(struct FieldActor *actor, s32 limit);
 
 struct LandingSpot {
@@ -148,7 +148,7 @@ void Func_02000e2c(void)
     if (count != 0) {
         offset = 0;
         do {
-            distance = CalculatePlanarDistance(&Engine_ActorGet(0)->x.fixed, spot);
+            distance = RamakanSabaku_CalculatePlanarDistance(&Engine_ActorGet(0)->x.fixed, spot);
             if (distance <= best) {
                 best = distance;
                 pick = left - count;

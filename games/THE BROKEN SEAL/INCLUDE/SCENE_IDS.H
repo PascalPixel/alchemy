@@ -26,6 +26,8 @@ extern char SceneId_ArutinYama8;
 extern char SceneId_ArutinYama9;
 extern char SceneId_ArutinYama10;
 extern char SceneId_ArutinYama11;
+extern char SceneId_YamaRama1;
+extern char SceneId_YamaRama2;
 extern char SceneId_RamakanSabaku1;
 extern char SceneId_RamakanSabaku2;
 extern char SceneId_RamakanSabaku3;

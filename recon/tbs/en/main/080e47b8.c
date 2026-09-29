@@ -13,6 +13,7 @@
  * (189 aligned edits); loading the moving x before subtracting gives
  * 7808 bytes / 182 halfwords / 116 edits. The closer model is retained. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "CALLBACK_SCHEDULER.H"
@@ -28,36 +29,7 @@
 
 typedef BattleEffectDrawRectangle RectangleBlit;
 extern u8 gWorkSlot[];
-extern u8 Value_0000008d;
-extern u8 Value_000000a3;
-extern u8 Value_000000a4;
-extern u8 Value_000000a0;
-extern u8 Value_000000bb;
-extern u8 Value_000000b9;
-extern u8 Value_000000c0;
 
-extern u8 Value_00000053;
-extern u8 Value_0000006f;
-extern u8 Value_00000073;
-extern u8 Value_00000079;
-extern u8 Value_0000007d;
-extern u8 Value_0000008e;
-extern u8 Value_00000090;
-extern u8 Value_00000092;
-extern u8 Value_00000094;
-extern u8 Value_00000096;
-extern u8 Value_00000099;
-extern u8 Value_0000009e;
-extern u8 Value_000000a9;
-extern u8 Value_000000ab;
-extern u8 Value_000000ac;
-extern u8 Value_000000ad;
-extern u8 Value_000000ae;
-extern u8 Value_000000b4;
-extern u8 Value_000000b8;
-extern u8 Value_000000c3;
-extern u8 Value_000000c4;
-extern u8 Value_000000ce;
 
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPitch(s32 angle);
@@ -232,9 +204,9 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         BattleFx_BeginCanvasLayer(0);
     }
     *(volatile u16 *)0x04000052 = 0x1010;
-    LoadResource((s32)&Value_00000073, sprites, 0, 0);
-    LoadResource((s32)&Value_00000096, work, 1, 0);
-    LoadResource((s32)&Value_00000099, IMAGE_WORK, 1, 0);
+    LoadResource((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+    LoadResource((s32)&ResourceId_FireStreakSheet, work, 1, 0);
+    LoadResource((s32)&ResourceId_YellowOrbSheet, IMAGE_WORK, 1, 0);
     /* FAKEMATCH: Local dimensions preserve the packing argument order. */
     {
         s32 width = 40;
@@ -242,28 +214,28 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         PackRows(IMAGE_WORK, (u8 *)work + 0x5100, width, height);
     }
     if (kind == 5 || kind == 23) {
-        LoadResource((s32)&Value_0000007d, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_FlashBurstSheet, IMAGE_WORK, 1, 0);
     } else if (kind == 12) {
-        LoadResource((s32)&Value_000000a9, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_SkullSheet, IMAGE_WORK, 1, 0);
     } else if (kind == 6 || kind == 27) {
-        LoadResource((s32)&Value_000000ce, IMAGE_WORK, 1, 0);
-        LoadResource((s32)&Value_000000c4, (void *)0x02010c56, 1, 0);
+        LoadResource((s32)&ResourceId_TornadoSheet, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_LightningBoltSheet, (void *)0x02010c56, 1, 0);
     } else if (kind == 31) {
-        LoadResource((s32)&Value_00000079, IMAGE_WORK, 1, 1);
+        LoadResource((s32)&ResourceId_RuneSheet, IMAGE_WORK, 1, 1);
     } else if (kind == 8) {
-        LoadResource((s32)&Value_000000c3, IMAGE_WORK, 1, 1);
+        LoadResource((s32)&ResourceId_RockSpireSheet, IMAGE_WORK, 1, 1);
     } else if (kind == 14) {
-        LoadResource((s32)&Value_0000006f, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_BlueFlameSheet, IMAGE_WORK, 1, 0);
     } else if (kind == 30) {
-        LoadResource((s32)&Value_000000ce, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_TornadoSheet, IMAGE_WORK, 1, 0);
     } else if (kind == 16) {
-        LoadResource((s32)&Value_000000b8, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_IceChipSheet, IMAGE_WORK, 1, 0);
     } else if (kind == 20) {
-        LoadResource((s32)&Value_000000b4, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_EmberStreakSheet, IMAGE_WORK, 1, 0);
     } else if ((u32)(kind - 33) <= 1) {
-        LoadResource((s32)&Value_00000053, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_FlameSheetA, IMAGE_WORK, 1, 0);
     } else if (kind != 11 && kind != 32) {
-        LoadResource((s32)&Value_0000009e, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_SmokeSheet, IMAGE_WORK, 1, 0);
     }
     switch (kind) {
     case 0:
@@ -276,7 +248,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 12:
     case 13:
     case 33:
-        LoadResource((s32)&Value_00000094, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_VenusDjinnSmallSheet, (void *)0x02013c56, 1, 1);
         break;
     case 2:
     case 14:
@@ -285,7 +257,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 17:
     case 18:
     case 19:
-        LoadResource((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, (void *)0x02013c56, 1, 1);
         break;
     case 3:
     case 5:
@@ -297,7 +269,7 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 25:
     case 34:
     case 35:
-        LoadResource((s32)&Value_0000008e, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_MarsDjinnSmallSheet, (void *)0x02013c56, 1, 1);
         break;
     case 1:
     case 6:
@@ -308,10 +280,10 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
     case 30:
     case 31:
     case 32:
-        LoadResource((s32)&Value_00000090, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_JupiterDjinnSmallSheet, (void *)0x02013c56, 1, 1);
         break;
     case 100:
-        LoadResource((s32)&Value_00000092, (void *)0x02013c56, 1, 1);
+        LoadResource((s32)&ResourceId_MercuryDjinnSmallSheet, (void *)0x02013c56, 1, 1);
         break;
     }
     work->transfer_mode = 2;
@@ -528,13 +500,13 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
     }
     if (kind == 11) {
-        LoadResource((s32)&Value_000000ab, work, 1, 1);
-        LoadResource((s32)&Value_000000ac, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_CounterRevealSheet, work, 1, 1);
+        LoadResource((s32)&ResourceId_RedCrescentSheetA, IMAGE_WORK, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind == 32) {
-        LoadResource((s32)&Value_000000ad, work, 1, 1);
-        LoadResource((s32)&Value_000000ae, IMAGE_WORK, 1, 0);
+        LoadResource((s32)&ResourceId_BlueBeastSheet, work, 1, 1);
+        LoadResource((s32)&ResourceId_RedCrescentSheetB, IMAGE_WORK, 1, 0);
         *(volatile u16 *)0x04000052 = 0xe10;
     }
     if (kind != 7 && kind != 13 && kind != 18 && kind != 11 && kind != 32 && kind != 19) {
@@ -613,51 +585,51 @@ void BattleFx_RunCastingImpact(struct BattleEffectArgument *command, s32 kind)
         }
         switch (kind) {
         case 33:
-            BattleFx_StepPaletteToResource((s32)&Value_00000053);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_FlameSheetA);
             break;
         case 14:
-            BattleFx_StepPaletteToResource((s32)&Value_0000006f);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_BlueFlameSheet);
             break;
         case 31:
-            BattleFx_StepPaletteToResource((s32)&Value_00000079);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_RuneSheet);
             break;
         case 8:
-            BattleFx_StepPaletteToResource((s32)&Value_000000c3);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_RockSpireSheet);
             break;
         case 0:
         case 10:
-            BattleFx_StepPaletteToResource((s32)&Value_0000008d);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_MarsDjinnSheet);
             break;
         case 12:
         case 13:
         case 25:
-            BattleFx_StepPaletteToResource((s32)&Value_000000bb);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_PinkBurstSheet);
             break;
         case 18:
-            BattleFx_StepPaletteToResource((s32)&Value_000000b9);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_IceBlockSheet);
             break;
         case 19:
-            BattleFx_StepPaletteToResource((s32)&Value_000000c0);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_BlastSheet);
             break;
         case 2:
         case 29:
-            BattleFx_StepPaletteToResource((s32)&Value_000000a4);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_TanPalette);
             break;
         case 1:
         case 28:
-            BattleFx_StepPaletteToResource((s32)&Value_000000a3);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_CyanPalette);
             break;
         case 3:
         case 20:
         case 22:
-            BattleFx_StepPaletteToResource((s32)&Value_000000b4);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_EmberStreakSheet);
             break;
         case 9:
-            BattleFx_StepPaletteToResource((s32)&Value_000000a0);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_LimePalette);
             break;
         case 5:
         case 23:
-            BattleFx_StepPaletteToResource((s32)&Value_0000007d);
+            BattleFx_StepPaletteToResource((s32)&ResourceId_FlashBurstSheet);
             break;
         }
         if (kind != 11 && kind != 8 && kind != 32) {

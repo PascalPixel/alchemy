@@ -74,4 +74,18 @@ extern char ResourceId_MagentaSwirlSheet;
 extern char ResourceId_MagentaTailSheet;
 extern char ResourceId_LimePalette;
 
+extern char ResourceId_FireStreakSheet;
+extern char ResourceId_YellowOrbSheet;
+extern char ResourceId_SkullSheet;
+extern char ResourceId_LightningBoltSheet;
+extern char ResourceId_RuneSheet;
+extern char ResourceId_RockSpireSheet;
+extern char ResourceId_FlameSheetA;
+extern char ResourceId_VenusDjinnSmallSheet;
+extern char ResourceId_MarsDjinnSmallSheet;
+extern char ResourceId_JupiterDjinnSmallSheet;
+extern char ResourceId_BlueBeastSheet;
+extern char ResourceId_RedCrescentSheetB;
+extern char ResourceId_TanPalette;
+extern char ResourceId_CyanPalette;
 #endif

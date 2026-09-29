@@ -1,34 +1,14 @@
 #include "TYPES.H"
-extern struct EventWork *gEventWork;
+#include "FIELD_EVENT.H"
+#include "COLOSSO_LOG_ROLLING_STAGE.H"
 
-void Local_0200288c();
-void Engine_EventBegin();
-s32 ColossoLogRollingStage_RunStateInteraction();
-void Engine_EventSetMessage();
-void Local_02000188();
-void Engine_CameraSetSpeed();
-void Engine_CameraMoveTo();
-void Engine_CameraWaitForMove();
-void Engine_EventWait();
-void Engine_EventShowMessage();
-void Local_020001b4();
-s32 Local_02003640();
-s32 Engine_ActorFaceDirection();
-void Local_020001c8();
-void Engine_ActorSetSpeed();
-void ColossoLogRollingStage_PositionScaledObject();
-void Engine_TaskWait();
-void Local_02000b30();
-void Engine_ActorShowEmote();
+void Korosseo_FinishSoloRound();
+s32 Korosseo_FadeInCompetitor();
 void Korosseo_RestoreCompetitor();
-void Engine_CameraFollowActor();
-void ColossoLogRollingStage_InitializeStateInteraction();
 s32 FieldScene_RunMiddleSequence();
-void Engine_EventEnd();
 
 
-extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
+
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -73,26 +53,26 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
     s32 p8;
     s32 rec8;
 
-    if (Data_02000240_t[225][0] == 2) {
-        Local_0200288c();
+    if (gGameState.entrance == 2) {
+        Korosseo_FinishSoloRound();
     } else {
         Engine_EventBegin();
         rec8 = Value2(ColossoLogRollingStage_RunStateInteraction, a0, 3);
         if (rec8 == 0) {
             p8 = *(s32 *)&gEventWork;
             Call1(Engine_EventSetMessage, 0x20bb);
-            Local_02000188();
+            ColossoLogRollingStage_ResetAndRunSceneTask();
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
             Call4(Engine_CameraMoveTo, 0x2680000, -1, 0xb80000, 1);
             Engine_CameraWaitForMove();
             Engine_EventWait(30);
             Engine_EventShowMessage(a0, 0);
-            Local_020001b4();
+            ColossoLogRollingStage_StartSceneTask();
             Engine_EventWait(60);
             Engine_EventShowMessage(a0, 0);
-            Value3(Local_02003640, 0, 0x1f8, 200);
+            Value3(Korosseo_FadeInCompetitor, 0, 0x1f8, 200);
             Value3(Engine_ActorFaceDirection, 0, 0, 0);
-            Local_020001c8();
+            ColossoLogRollingStage_WaitForSceneTask();
             Call3(Engine_ActorSetSpeed, 0, 0x18000, 0xc000);
             ColossoLogRollingStage_PositionScaledObject(0, 0x2a8, 200);
             if (*(s16 *)(p8 + 0x182) != 5) {
@@ -103,7 +83,7 @@ void KorosseoMaruta_RunStageIntro(s32 a0)
                     }
                 } while (*(s16 *)(p8 + 0x182) != 5);
             }
-            Local_02000b30();
+            ColossoLogRollingStage_ClampAndOffsetActiveActor();
             Call3(Engine_ActorFaceDirection, 0, 0xc000, 20);
             Call3(Engine_ActorShowEmote, 0, 0x103, 60);
             Engine_EventShowMessage(a0, 0);

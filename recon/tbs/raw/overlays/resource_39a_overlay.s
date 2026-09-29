@@ -2,9 +2,9 @@
 	.thumb
 	.section .text.x02008050,"ax",%progbits
 	.balign 4
-	.global Func_02000050
+	.global SceneData_SelectTableBySceneId
 	.thumb_func
-Func_02000050:
+SceneData_SelectTableBySceneId:
 	push {lr}
 	ldr r3, [pc, #88]
 	movs r1, #224
@@ -77,9 +77,9 @@ Func_02000050:
 	.4byte 0x0200a48c
 	.section .text.x020080f8,"ax",%progbits
 	.balign 4
-	.global Func_020000f8
+	.global SceneData_SelectDataByRuntimeSelector
 	.thumb_func
-Func_020000f8:
+SceneData_SelectDataByRuntimeSelector:
 	push {lr}
 	ldr r3, [pc, #76]
 	movs r1, #224
@@ -143,9 +143,9 @@ Func_020000f8:
 	.4byte 0x0200a9a4
 	.section .text.x02008f30,"ax",%progbits
 	.balign 4
-	.global Func_02000f30
+	.global SceneData_SelectDataByRuntimeSelectorB
 	.thumb_func
-Func_02000f30:
+SceneData_SelectDataByRuntimeSelectorB:
 	push {lr}
 	ldr r3, [pc, #88]
 	movs r1, #224
@@ -267,9 +267,9 @@ Func_02001730:
 	.2byte 0x0000
 	.4byte 0x0200b328
 	.4byte 0x03001ee0
-	.global Func_02001750
+	.global ImiruFuchin_ApplyEntryHook
 	.thumb_func
-Func_02001750:
+ImiruFuchin_ApplyEntryHook:
 	push {lr}
 	ldr r3, [pc, #68]
 	movs r1, #224

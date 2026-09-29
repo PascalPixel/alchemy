@@ -1,3 +1,10 @@
+/* NONMATCHING: resource_3bc at 0x02008da4 (1496 bytes with its pool),
+ * StageSetup_BuildAndDispatch, the overlay's exported entry, stays listing.
+ * It was FIELD/KOROSSEO_MARUTA/LOG_ROLLING_SETUP.C.
+ *
+ * Remaining difference: it loads 0xe6 from its pool, as a link-time symbol
+ * does, and names its callbacks and data by literal addresses.
+ */
 #include "TYPES.H"
 
 /*

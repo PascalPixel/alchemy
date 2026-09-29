@@ -27,7 +27,7 @@ void SceneState_ClearWorkWord24(void)
     }
 }
 
-s32 Func_02001750(void)
+s32 ImiruFuchin_ApplyEntryHook(void)
 {
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
     if (GameFlag_IsSet(0x109) == 0 && Data_02000240_t[224][0] == (s32)Data_00000034) {

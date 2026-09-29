@@ -1,17 +1,17 @@
 #include "REGION.H"
 
 /* Two of the scene hooks the entry veneers export: no follow-up, and the
- * cave's event table. */
+ * cave's exits. */
 
-/* The event table, in the overlay's read-only data. */
-extern u8 BiribinoDou_EventTable[];
+/* The exits, in the overlay's read-only data. */
+extern u8 gBiribinoDouExits[];
 
 s32 SceneData_ReturnZero(void)
 {
     return 0;
 }
 
-u8 *SceneData_GetEventTable(void)
+u8 *BiribinoDou_GetExits(void)
 {
-    return BiribinoDou_EventTable;
+    return gBiribinoDouExits;
 }

@@ -1112,7 +1112,7 @@ Func_08100e5c:
 	strb	r3, [r7, #5]
 	mov	r3, sl
 	str	r7, [r3, #20]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	cmp	r5, #95
 	bgt.n	.L_081017b2

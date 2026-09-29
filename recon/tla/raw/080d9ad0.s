@@ -52,7 +52,7 @@ Func_080d9ad0:
 	ldr	r2, [pc, #60]
 	stmia	r3!, {r0, r1, r2}
 	subs	r3, #12
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r1, r6, #0
 	str	r0, [r5, #8]
 	ldr	r0, [pc, #48]

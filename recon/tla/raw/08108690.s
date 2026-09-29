@@ -253,7 +253,7 @@ Func_08108690:
 	movs	r2, #4
 	bl	.L_08108788
 .L_08108896:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	cmp	r5, #96
 	beq.n	.L_081088ba

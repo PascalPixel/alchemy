@@ -223,7 +223,7 @@ Func_0804e1d8:
 	bl	0x08042314
 	b.n	.L_0804e3ac
 .L_0804e38c:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #0
 	adds	r2, r0, #0
 	adds	r0, r5, #0

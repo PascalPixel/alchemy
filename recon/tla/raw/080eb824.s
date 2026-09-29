@@ -176,7 +176,7 @@ Func_080eb824:
 	bl	Resource_GetTableEntry
 	ldr	r1, [sp, #32]
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r5, #128
 	lsls	r5, r5, #3
 	adds	r1, r5, #0

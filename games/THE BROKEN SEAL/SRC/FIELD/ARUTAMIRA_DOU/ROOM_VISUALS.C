@@ -1,10 +1,6 @@
-/* NONMATCHING: resource_3bd 0x02008bc8, ArutamiraDou_ApplyRoomVisuals, formerly
- * FIELD/ARUTAMIRA_DOU/ROOM_VIS.C (2026-09-28).
- * Compares the scene with ids 0x92 and 0x97 that the game loads from literals
- * (link-time values; plain constants become cmp #imm). Remaining: the scene
- * ids. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -13,8 +9,8 @@ union GameStateRows {
     s32 words[256];
 };
 
-extern union GameStateRows gGameStateRows;
-extern u8 Data_00000092[], Data_00000097[];
+/* The game state read as rows of halfwords. */
+#define gGameStateRows (*(union GameStateRows *)&gGameState)
 
 /* Restore the room's blend setting and the five actors' child poses. */
 void ArutamiraDou_ApplyRoomVisuals(void)
@@ -26,13 +22,13 @@ void ArutamiraDou_ApplyRoomVisuals(void)
 
     map.value = gGameStateRows.snapshot[224][0];
 
-    if (gGameStateRows.halves[224][0] == (s32)Data_00000092)
+    if (gGameStateRows.halves[224][0] == (s32)&SceneId_ArutamiraDou1)
     {
         s32 alpha = 0x1000;
 
         *(volatile u16 *)0x04000052 = alpha;
     }
-    if ((s16)map.value == (s32)Data_00000097) {
+    if ((s16)map.value == (s32)&SceneId_ArutamiraDou6) {
         Engine_ActorSetChildValue(16, 1);
         Engine_ActorSetChildValue(17, 4);
         Engine_ActorSetChildValue(18, 11);

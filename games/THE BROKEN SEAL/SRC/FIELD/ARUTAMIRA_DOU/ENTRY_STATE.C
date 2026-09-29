@@ -1,29 +1,16 @@
-/* NONMATCHING: resource_3bd 0x0200b644, ArutamiraDou_ApplyEntryState, formerly
- * FIELD/ARUTAMIRA_DOU/ENTRY_STATE.C (2026-09-28).
- * Compares the scene with ids 0x92..0x97 loaded from literals (link-time
- * values). Remaining: the scene ids. */
 #include "TYPES.H"
+#include "SCENE_IDS.H"
 #include "DMA.H"
 #include "FIELD_EVENT.H"
 
-void Main_080091c8(s32 src_x, s32 src_y, s32 width, s32 height, s32 dest_x, s32 dest_y);
+void ArutamiraDou_MatchLeaderPriority(union FieldObject *object);
+
+/* A pointer to the words the entry clears when the party arrives by entrance
+   52 of the cave's last area. */
+extern void *ArutamiraDou_ClearTarget;
 void SceneActor_PlaceFiveActorsInRow(s32 spacing);
 void SceneEffect_SetupBlendByFlag201(void);
 void FieldScene_RedrawActorFootprint(s32 actor);
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
-
-extern union GameStateRows Data_02000240_t;
-extern u8 Data_00000092[];
-extern u8 Data_00000093[];
-extern u8 Data_00000094[];
-extern u8 Data_00000095[];
-extern u8 Data_00000096[];
-extern u8 Data_00000097[];
 
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
@@ -48,40 +35,40 @@ s32 ArutamiraDou_ApplyEntryState(void)
     volatile s32 zero;
     s32 i;
 
-    if (Data_02000240_t.halves[225][0] == 0) {
-        if (Data_02000240_t.halves[224][0] == (s32)Data_00000093) {
-            Data_02000240_t.halves[225][0] = 10;
+    if (gGameState.entrance == 0) {
+        if (gGameState.scene == (s32)&SceneId_ArutamiraDou2) {
+            gGameState.entrance = 10;
         }
-        if (Data_02000240_t.halves[224][0] == (s32)Data_00000094) {
-            Data_02000240_t.halves[225][0] = 20;
+        if (gGameState.scene == (s32)&SceneId_ArutamiraDou3) {
+            gGameState.entrance = 20;
         }
-        if (Data_02000240_t.halves[224][0] == (s32)Data_00000095) {
-            Data_02000240_t.halves[225][0] = 30;
+        if (gGameState.scene == (s32)&SceneId_ArutamiraDou4) {
+            gGameState.entrance = 30;
         }
-        if (Data_02000240_t.halves[224][0] == (s32)Data_00000096) {
-            Data_02000240_t.halves[225][0] = 40;
+        if (gGameState.scene == (s32)&SceneId_ArutamiraDou5) {
+            gGameState.entrance = 40;
         }
-        if (Data_02000240_t.halves[224][0] == (s32)Data_00000097) {
-            Data_02000240_t.halves[225][0] = 50;
+        if (gGameState.scene == (s32)&SceneId_ArutamiraDou6) {
+            gGameState.entrance = 50;
         }
     }
     Engine_GameFlagSet(0x200);
     Call1(Engine_GameFlagClear, 0x201);
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000092) {
-        if (Data_02000240_t.halves[225][0] == 1) {
+    if (gGameState.scene == (s32)&SceneId_ArutamiraDou1) {
+        if (gGameState.entrance == 1) {
             if (!Engine_GameFlagIsSet(0x109)) {
-                *(u8 *)0x02001004 = 0;
+                *(u8 *)((u32)gSceneState + 4) = 0;
             }
             Call1(Engine_GameFlagSet, 0x201);
         }
-        if (Data_02000240_t.halves[225][0] == 2) {
+        if (gGameState.entrance == 2) {
             if (!Engine_GameFlagIsSet(0x109)) {
-                *(u8 *)0x02001004 = 5;
+                *(u8 *)((u32)gSceneState + 4) = 5;
             }
             Call1(Engine_GameFlagSet, 0x201);
         }
     }
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000093) {
+    if (gGameState.scene == (s32)&SceneId_ArutamiraDou2) {
         if (Engine_GameFlagIsSet(0x962)) {
             Engine_ActorSetPosition(8, 0, 0);
         } else {
@@ -91,7 +78,7 @@ s32 ArutamiraDou_ApplyEntryState(void)
             actor->sprite->rotation = 0x4000;
         }
     }
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000095) {
+    if (gGameState.scene == (s32)&SceneId_ArutamiraDou4) {
         Engine_GameFlagClear(0x200);
         FieldScene_RedrawActorFootprint(8);
         FieldScene_RedrawActorFootprint(9);
@@ -107,30 +94,30 @@ s32 ArutamiraDou_ApplyEntryState(void)
             Call6(Engine_MapCopyCellAttributes, 30, 20, 1, 1, 32, 20);
         }
     }
-    if (Data_02000240_t.halves[224][0] == (s32)Data_00000097) {
+    if (gGameState.scene == (s32)&SceneId_ArutamiraDou6) {
         Engine_GameFlagClear(0x200);
         FieldScene_RedrawActorFootprint(8);
         FieldScene_RedrawActorFootprint(9);
         FieldScene_RedrawActorFootprint(10);
         /* FAKEMATCH: the three callbacks are stored as s32, so the entrance read
          * after them may alias them and stays below the last store. */
-        *(s32 *)&Engine_ActorGet(8)->update = 0x200b611;
-        *(s32 *)&Engine_ActorGet(9)->update = 0x200b611;
-        *(s32 *)&Engine_ActorGet(10)->update = 0x200b611;
-        if (Data_02000240_t.halves[225][0] == 52) {
+        *(s32 *)&Engine_ActorGet(8)->update = (s32)ArutamiraDou_MatchLeaderPriority;
+        *(s32 *)&Engine_ActorGet(9)->update = (s32)ArutamiraDou_MatchLeaderPriority;
+        *(s32 *)&Engine_ActorGet(10)->update = (s32)ArutamiraDou_MatchLeaderPriority;
+        if (gGameState.entrance == 52) {
             zero = 0;
-            Dma_Set(&zero, *(void **)0x0200bf6c, 0x85000003, (volatile u32 *)0x040000d4);
+            Dma_Set(&zero, ArutamiraDou_ClearTarget, 0x85000003, (volatile u32 *)0x040000d4);
             if (!Engine_GameFlagIsSet(0x109)) {
-                u8 *race = (u8 *)0x02001000;
+                u8 *race = gSceneState;
 
                 race[0] = 0;
                 race[1] = 0;
                 race[2] = 4;
             }
         }
-        state = (s8 *)0x02001001;
+        state = (s8 *)&gSceneState[1];
         if (state[0] == 99) {
-            Call6(Main_080091c8, 41, 55, 3, 2, 30, 55);
+            Call6((void (*)())Engine_MapCopyCellsTo, 41, 55, 3, 2, 30, 55);
             Call6(Engine_MapCopyCellAttributes, 42, 8, 1, 1, 31, 8);
         }
         if (state[0] == 2) {

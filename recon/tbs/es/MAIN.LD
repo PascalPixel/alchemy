@@ -919,6 +919,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_18/TILES_B.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_18/TILES_C.o"(.rodata)
         "*/recon/tbs/es/rom.o"(.rom.0055822d)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_18/TILES_D.o"(.rodata)
+        "*/recon/tbs/es/rom.o"(.rom.0055836f)
         "*/games/THE BROKEN SEAL/SRC/MAP/MAP_022/MAP.o"(.rodata)
         "*/recon/tbs/es/rom.o"(.rom.0055979d)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TILESET/SET_19/PALETTE.o"(.rodata)

@@ -12091,27 +12091,27 @@ msgctxt "message"
 msgid "03020"
 msgstr "Auto-Schlaf ein-/ausschalten."
 
-msgctxt "message"
+msgctxt "MsgDebugWentLevel"
 msgid "03021"
 msgstr "Du bist einen Level aufgestiegen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugBodyTornApart"
 msgid "03022"
 msgstr "Der Körper wird fast zerrissen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotTreasure"
 msgid "03023"
 msgstr "Du findest Schätze!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotDjinni"
 msgid "03024"
 msgstr "Du findest einen Dschinn!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotItem"
 msgid "03025"
 msgstr "Du findest ein Item!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotSturdyEquipment"
 msgid "03026"
 msgstr "Du findest robuste Ausrüstung!{end_wait}"
 
@@ -13903,7 +13903,7 @@ msgctxt "message"
 msgid "03473"
 msgstr "Waaaas! Du willst es nicht?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorArmorShopWelcome"
 msgid "03474"
 msgstr "Sprich mit mir, Krieger!{line_break}Ich habe gute Rüstungen.{end_now}"
 
@@ -14075,7 +14075,7 @@ msgctxt "message"
 msgid "03516"
 msgstr "Du brauchst es nicht,{line_break}Krieger?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorItemShopWelcome"
 msgid "03517"
 msgstr "Ich habe jede Menge{line_break}Reisezubehör. Sieh dich{line_break}nur um.{end_now}"
 

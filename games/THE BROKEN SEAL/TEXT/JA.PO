@@ -13971,27 +13971,27 @@ msgctxt "message"
 msgid "03490"
 msgstr "じどうでスリープするかどうかをきめます"
 
-msgctxt "message"
+msgctxt "MsgDebugWentLevel"
 msgid "03491"
 msgstr "レベルアップ!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugBodyTornApart"
 msgid "03492"
 msgstr "ひきさかれるにくたい{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotTreasure"
 msgid "03493"
 msgstr "おたからゲット!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotDjinni"
 msgid "03494"
 msgstr "ジンをゲット!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotItem"
 msgid "03495"
 msgstr "しょうひアイテムゲット!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotSturdyEquipment"
 msgid "03496"
 msgstr "つよそうなそうびひんゲット{end_wait}"
 
@@ -15367,7 +15367,7 @@ msgctxt "message"
 msgid "03839"
 msgstr "アイヤー! いらないアルか{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorArmorShopWelcome"
 msgid "03840"
 msgstr "戦士さん 防具のこと{line_break}ワタシにまかせる いいネ。{end_now}"
 
@@ -15539,7 +15539,7 @@ msgctxt "message"
 msgid "03882"
 msgstr "戦士さん ひつようないアルか{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorItemShopWelcome"
 msgid "03883"
 msgstr "たびの道具 いっぱいあるヨ{line_break}ゆっくり見る いいネ。{end_now}"
 

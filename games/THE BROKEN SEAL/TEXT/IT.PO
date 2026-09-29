@@ -12091,27 +12091,27 @@ msgctxt "message"
 msgid "03020"
 msgstr "Attiva la funzione auto-riposo."
 
-msgctxt "message"
+msgctxt "MsgDebugWentLevel"
 msgid "03021"
 msgstr "Livello aumentato di uno!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugBodyTornApart"
 msgid "03022"
 msgstr "Il corpo è fatto a pezzi.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotTreasure"
 msgid "03023"
 msgstr "Ottenuto un tesoro!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotDjinni"
 msgid "03024"
 msgstr "Ottenuto un Djinn!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotItem"
 msgid "03025"
 msgstr "Ottenuto strumento!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugGotSturdyEquipment"
 msgid "03026"
 msgstr "Ottenuta potente dotazione!{end_wait}"
 
@@ -13903,7 +13903,7 @@ msgctxt "message"
 msgid "03473"
 msgstr "Non vuoi lo strumento?!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorArmorShopWelcome"
 msgid "03474"
 msgstr "Se vuoi una buona{line_break}armatura, chiedi a me!{end_now}"
 
@@ -14075,7 +14075,7 @@ msgctxt "message"
 msgid "03516"
 msgstr "Davvero non ti{line_break}serve?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWarriorItemShopWelcome"
 msgid "03517"
 msgstr "Ho molti strumenti{line_break}da viaggio.{end_now}"
 

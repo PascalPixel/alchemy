@@ -6,6 +6,8 @@
 .syntax unified
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
+	.global FarCall_WindowTable
+FarCall_WindowTable:
 	.global Func_08015000
 	.thumb_func
 Func_08015000:

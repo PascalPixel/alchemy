@@ -4,6 +4,7 @@
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 
 void WaitFrames(s32);
 
@@ -19,17 +20,8 @@ typedef s32 (*CopyWords)(void *, const void *, s32);
    This owner reads kinds 39 (its work block), 40, 41, 46 and 47. */
 extern u8 gWorkSlot[];
 
-/* Value_ symbols carry a literal the reference loads from its pool rather
-   than materializing with a mov. */
-extern u8 Value_00000054;
-extern u8 Value_0000005a;
-extern u8 Value_0000006e;
-extern u8 Value_00000073;
-extern u8 Value_0000007d;
-extern u8 Value_0000008d;
-extern u8 Value_000000a1;
-extern u8 Value_000000b9;
-extern u8 Value_000000ce;
+/* Resource numbers are ResourceId_ rows, which the reference loads from its
+   pool rather than materializing with a mov. */
 
 void BattleFx_BeginCanvasLayer(s32);
 void BattleFx_FetchRectangleBlitters(s32, u32 *);
@@ -141,14 +133,14 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         BattleFx_FetchRectangleBlitters(WORK_EFX->side, (u32 *)blit);
     }
 
-    Resource_LoadAndDecompress((s32)&Value_000000ce, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
     if (mode == 5) {
-        Resource_LoadAndDecompress((s32)&Value_0000005a, SHEET, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_VioletLightningSheetA, SHEET, 1, 1);
     } else if (mode == 7) {
-        Resource_LoadAndDecompress((s32)&Value_00000054, SHEET, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_DemonFaceSheet, SHEET, 1, 1);
     } else {
-        Resource_LoadAndDecompress((s32)&Value_0000007d, SHEET, 1, 1);
-        Resource_LoadAndDecompress((s32)&Value_00000073, aux, 0, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, SHEET, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, aux, 0, 0);
         if (mode == 6) {
             for (i = 0, pal = (u16 *)0x05000000; i != 64; i++) {
                 lum = i / 4;
@@ -159,20 +151,20 @@ void BattleEffect_RunBurstShower(Efx *efx, s32 mode)
         } else {
             switch (mode) {
             case 0:
-                id = (s32)&Value_0000007d;
+                id = (s32)&ResourceId_FlashBurstSheet;
                 break;
             case 1:
-                id = (s32)&Value_000000b9;
+                id = (s32)&ResourceId_IceBlockSheet;
                 break;
             case 2:
-                id = (s32)&Value_0000006e;
+                id = (s32)&ResourceId_WaterSpraySheet;
                 break;
             case 3:
-                id = (s32)&Value_000000a1;
+                id = (s32)&ResourceId_PinkPalette;
                 break;
             case 4:
             default:
-                id = (s32)&Value_0000008d;
+                id = (s32)&ResourceId_MarsDjinnSheet;
                 break;
             }
             CopyPalette(Iwram_CopyWords, (void *)0x05000000, Resource_GetTableEntry(id), 128);

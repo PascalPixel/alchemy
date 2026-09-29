@@ -22,7 +22,7 @@ struct TextWork {
 };
 
 extern u8 *gWindowWork;
-extern struct GlyphInfo Data_08032224[];
+extern struct GlyphInfo UiText_Glyphs[];
 
 void UiWork_ResetCounters(void);
 s32 Func_08018cac(struct TextWindow *window, u32 c, s32 x, s32 y, s32 flags);
@@ -86,7 +86,7 @@ void UiText_RenderWideStringAtOffset(u16 *text, struct TextWindow *window, s32 x
             if ((window->flags & 8) == 0) {
                 next = *text;
                 if (c > 32 && next > 32
-                    && (u16)(Data_08032224[c - 32].width + Data_08032224[next - 32].width) <= 15) {
+                    && (u16)(UiText_Glyphs[c - 32].width + UiText_Glyphs[next - 32].width) <= 15) {
                     c |= next << 8;
                     text++;
                 }

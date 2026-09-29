@@ -40,18 +40,18 @@ Flash_Chips:
 	.section .unidentified.08007aa4,"a"
 	.incbin "baserom.gba", 0x00007aa4, 0x00000010
 	.incbin "baserom.gba", 0x00007ab4, 0x00000008
-	.global Data_08007abc
-Data_08007abc:
+	.global Flash_ChipUnknown
+Flash_ChipUnknown:
 	.incbin "baserom.gba", 0x00007abc, 0x00000058
 	.section .unidentified.08007b38,"a"
 	.incbin "baserom.gba", 0x00007b38, 0x0000008c
 	.section .unidentified.08007bcc,"a"
 	.incbin "baserom.gba", 0x00007bcc, 0x00000018
-	.global Data_08007be4
-Data_08007be4:
+	.global Flash_ChipAtmel
+Flash_ChipAtmel:
 	.incbin "baserom.gba", 0x00007be4, 0x0000002c
-	.global Data_08007c10
-Data_08007c10:
+	.global Flash_ChipAtmelLayout
+Flash_ChipAtmelLayout:
 	.incbin "baserom.gba", 0x00007c10, 0x0000002c
 	.section .unidentified.08007c64,"a"
 	.incbin "baserom.gba", 0x00007c64, 0x0000139c

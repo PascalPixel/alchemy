@@ -44,7 +44,7 @@ Func_08016054:
 	movs	r1, #0
 	adds	r2, r6, #0
 	movs	r3, #64
-	bl	Func_0801713c
+	bl	ReadFlash
 	adds	r0, r5, #1
 	lsls	r0, r0, #16
 	adds	r2, r6, #0
@@ -52,7 +52,7 @@ Func_08016054:
 	lsrs	r0, r0, #16
 	adds	r2, #56
 	movs	r1, #16
-	bl	Func_0801713c
+	bl	ReadFlash
 	movs	r3, #1
 	add	sl, r3
 .L_080160c0:
@@ -98,7 +98,7 @@ Func_08016054:
 	movs	r1, #0
 	adds	r2, r6, #0
 	movs	r3, #64
-	bl	Func_0801713c
+	bl	ReadFlash
 	movs	r3, #196
 	adds	r0, r5, #1
 	lsls	r3, r3, #6
@@ -109,7 +109,7 @@ Func_08016054:
 	adds	r2, r7, r3
 	lsls	r1, r1, #1
 	movs	r3, #4
-	bl	Func_0801713c
+	bl	ReadFlash
 	movs	r0, #1
 	b.n	.L_08016138
 .L_08016136:

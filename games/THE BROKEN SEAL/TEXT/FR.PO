@@ -42283,7 +42283,7 @@ msgctxt "message"
 msgid "10568"
 msgstr "Battez-les!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyWonToldCountOn"
 msgid "10569"
 msgstr "Ouais! On a gagné!{line_break}Je t'avais dit, vous{line_break}pouvez compter sur moi!{end_wait}"
 

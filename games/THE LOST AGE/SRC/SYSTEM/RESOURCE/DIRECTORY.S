@@ -197,8 +197,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data0B5
 	resource , BattleFx_CharmRingSheet
 	resource , BattleFx_WhirlBeamSheet
-	resource , Resource_Data0B8
-	resource , Resource_Data0B9
+	resource , BattleFx_EffectPalette00
+	resource , BattleFx_EffectPalette01
 	resource , Resource_Data0BA
 	resource , Resource_Data0BB
 	resource , BattleFx_ThinBoltSheet
@@ -277,9 +277,9 @@ Resource_DirectoryTable:
 	resource , BattleFx_CloudPuffSheet
 	resource , Resource_Data106
 	resource , Resource_Data107
-	resource , Resource_Data108
-	resource , Resource_Data109
-	resource , Resource_Data10A
+	resource , BattleFx_VioletPaletteA
+	resource , BattleFx_RedPaletteA
+	resource , BattleFx_YellowPaletteA
 	resource , BattleFx_GreyCrescentSheet
 	resource , BattleFx_StarCrescentSheet
 	resource , BattleFx_RevealMaskA
@@ -303,7 +303,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_ShurikenSheet
 	resource , Resource_Data120
 	resource , Resource_Data121
-	resource , Resource_Data122
+	resource , BattleFx_VioletPaletteB
 	resource , Resource_Data123
 	resource , BattleFx_VioletLightningSheetB
 	resource , BattleFx_FireBurstSheet
@@ -325,12 +325,12 @@ Resource_DirectoryTable:
 	resource , Resource_Data135
 	resource , Resource_Data136
 	resource , Resource_Data137
-	resource , Resource_Data138
+	resource , BattleFx_GreenPalette
 	resource , BattleFx_CrossedDaggersSheet
 	resource , BattleFx_RuneSheet
 	resource , BattleFx_FlameColumnSheet
 	resource , Resource_Data13C
-	resource , Resource_Data13D
+	resource , BattleFx_OrangePaletteA
 	resource , BattleFx_FlashBurstSheet
 	resource , Resource_Data13F
 	resource , BattleFx_CometSheetA
@@ -340,10 +340,10 @@ Resource_DirectoryTable:
 	resource , Resource_Data144
 	resource , Resource_Data145
 	resource , Resource_Data146
-	resource , Resource_Data147
-	resource , Resource_Data148
-	resource , Resource_Data149
-	resource , Resource_Data14A
+	resource , BattleFx_RedPaletteB
+	resource , BattleFx_OrangePaletteB
+	resource , BattleFx_EffectPalette02
+	resource , BattleFx_EffectPalette03
 	resource , Resource_Data14B
 	resource , BattleFx_FlameballSheet
 	resource , Resource_Data14D
@@ -367,14 +367,14 @@ Resource_DirectoryTable:
 	resource , BattleFx_DaggerSheet
 	resource , Resource_Data160
 	resource , Resource_Data161
-	resource , Resource_Data162
-	resource , Resource_Data163
-	resource , Resource_Data164
-	resource , Resource_Data165
-	resource , Resource_Data166
-	resource , Resource_Data167
-	resource , Resource_Data168
-	resource , Resource_Data169
+	resource , BattleFx_BluePalette
+	resource , BattleFx_LimePalette
+	resource , BattleFx_PinkPalette
+	resource , BattleFx_VioletPaletteC
+	resource , BattleFx_CyanPalette
+	resource , BattleFx_TanPalette
+	resource , BattleFx_EffectPalette04
+	resource , BattleFx_EffectPalette05
 	resource , BattleFx_WispSheet
 	resource , BattleFx_GreenVineSheet
 	resource , Resource_Data16C
@@ -409,10 +409,10 @@ Resource_DirectoryTable:
 	resource , Resource_Data189
 	resource , Resource_Data18A
 	resource , Resource_Data18B
-	resource , Resource_Data18C
+	resource , BattleFx_YellowPaletteB
 	resource , Resource_Data18D
-	resource , Resource_Data18E
-	resource , Resource_Data18F
+	resource , BattleFx_RedPaletteC
+	resource , BattleFx_VioletPaletteD
 	resource , Resource_Data190
 	resource , BattleFx_VortexSheet
 	resource , Resource_Data192

@@ -105,6 +105,9 @@ Engine_ActorGet:
 	.global ObjectTable_DestroyById
 	.thumb_func
 ObjectTable_DestroyById:
+	.global Engine_ActorDestroy
+	.thumb_func
+Engine_ActorDestroy:
 	overlay_veneer ObjectTable_DestroyByIdFar
 	.global Engine_ActorSetSpeed
 	.thumb_func

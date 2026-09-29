@@ -1,24 +1,3 @@
-/*
- * main:0800bbc0 AnimationObject_Allocate - draft; the range links as
- * disassembly (recon/tbs/raw/0800bbc0.s).
- *
- * Remaining: the reference loads the zero it stores into state and field_05
- * as a word from the literal pool (ldr r3, =0) before the frames load and
- * keeps it in r8. Written as zero = 0 below, GCC also takes the zero from
- * the pool into r8 but as a halfword (ldrh) scheduled after the frames load,
- * a two-halfword difference; u8, s16 and s32 spellings give the same ldrh.
- * The unit matched only while the zero was the address of a link-time
- * symbol at 0.
- * 2026-09-29: the assembler encodes that pc-relative ldrh as the same ldr,
- * so the bytes differ only in order: alchemy permute scores 60, one moved
- * instruction. The pooled zero is the HImode mask of the id store (thumb
- * stores a halfword field through store_fixed_bit_field; CSE then uses that
- * mask register for zero), so its set follows the id store's position.
- * Storing the id before the frames load moves the zero load ahead of the
- * frames load but takes the strh with it; u32, pointer and register zero
- * locals change nothing. Five minutes of permutation (54,198 candidates):
- * none below 60.
- */
 #include "TYPES.H"
 
 struct AnimationMetadata {
@@ -71,7 +50,11 @@ struct AnimationObject *AnimationObject_Allocate(s32 id)
     s32 i;
     s32 frames;
     s32 animation;
-    s32 zero;
+    /* FAKEMATCH: the zero stored into state and field_05 is a halfword field of
+       a struct, so GCC takes it from the literal pool ahead of the frames
+       load and keeps it in r8, as the ROM does; a plain zero local loads
+       it after the frames. */
+    struct { u16 v; } zero;
 
     found = NULL;
     metadata = Resource_GetMetadataRecordFar(id);
@@ -86,7 +69,7 @@ struct AnimationObject *AnimationObject_Allocate(s32 id)
             }
         }
         if (found != NULL) {
-            zero = 0;
+            zero.v = 0;
             frames = metadata->frames;
             object = found;
             object->id = (s16)id;
@@ -98,9 +81,9 @@ struct AnimationObject *AnimationObject_Allocate(s32 id)
             object->frame_codec = metadata->frame_codec;
             object->marker = 0xff;
             object->current = *(u32 *)animation;
-            object->state = zero;
+            object->state = zero.v;
             object->draw_kind = metadata->draw_kind;
-            object->field_05 = zero;
+            object->field_05 = zero.v;
         }
     }
     return object;

@@ -1,10 +1,10 @@
 @ Finds the start of a message for DECODE_SYMBOL.S: it indexes the block table
-@ at 0x080736b8 by the message number's high byte, adds the lengths of the
+@ Text_MessageBanks by the message number's high byte, adds the lengths of the
 @ preceding messages in the block (a 0xff byte continues a length), and stores
 @ the reader state {0, word pointer, bit word}, putting a sentinel bit on top
 @ of the bit word with rrx from the carry of rsbs r4, r3, r4, lsl #3. It runs
 @ from a RAM copy of exactly these 96 bytes. GCC never emits rrx. Every TBS
-@ and TLA edition has it, differing only in the table address.
+@ and TLA edition has it, differing only in where the table lies.
 @ credit: library — TBS/TLA common ARM text and tile kernel bank
 .syntax unified
 .text
@@ -37,6 +37,6 @@ Func_08015570:
 	mov	r1, #0
 	stm	r0, {r1, r2, r3}
 	bx	lr
-	.4byte 0x080736b8
+	.4byte Text_MessageBanks
 	.global UiText_LookupMessageCodeSize
 	.set UiText_LookupMessageCodeSize, . - Func_08015570

@@ -34,3 +34,4 @@ s32 Graphics_ScaleRgb555Buffer(u16 *source, u16 *destination, s32 scale, s32 cou
     }
     return 0;
 }
+

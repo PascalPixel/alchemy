@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "RESOURCE.H"
 #include "SYSTEM.H"
+#include "RESOURCE_IDS.H"
 
 struct SelectionNode_0801c188 {
     u8 padding_00[8];
@@ -26,7 +27,6 @@ struct ResourceBuffer_0801c188 {
 };
 
 extern u8 *gResQueueWork;
-extern u8 Value_000000f1;
 
 struct SelectionNode_0801c188 *NodeChain_GetNodeAtCount(void *state);
 struct ResourceBuffer_0801c188 *Runtime_AllocateHeapBlock(s32 owner, s32 size);
@@ -49,7 +49,7 @@ void Menu_LoadSelectedResource(void)
     buffer = Runtime_AllocateHeapBlock(17, 0x608);
     transfer = (struct TransferState_0801c188 *)(state + 0x30C);
     no = selection->no;
-    tbl = Resource_GetTableEntry((s32)&Value_000000f1);
+    tbl = Resource_GetTableEntry((s32)&ResourceId_CommandIcons);
     {
         void **destination = &buffer->resource;
         resource = tbl

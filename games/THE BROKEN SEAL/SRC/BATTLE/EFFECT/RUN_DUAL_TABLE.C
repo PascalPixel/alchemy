@@ -17,6 +17,7 @@
    - The spark blits halve a signed table byte with a plain / 2. */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"
+#include "RESOURCE_IDS.H"
 extern u8 gMapCellBuffer[];
 
 extern u8 gBattleFxWork[];
@@ -64,8 +65,6 @@ struct DualTableWork {
     struct DualTableEffect *effect;
 };
 
-extern u8 Value_00000083;
-extern u8 Value_00000084;
 
 extern void *Data_03001e50[];
 
@@ -154,9 +153,9 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
     *(s16 *)0x04000020 = 0x100;
     *(s16 *)0x04000050 = 0;
     if (mode == 1) {
-        Resource_LoadAndDecompress((s32)&Value_00000083, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_GreenPillarSheet, work, 1, 1);
     } else {
-        Resource_LoadAndDecompress((s32)&Value_00000084, work, 1, 1);
+        Resource_LoadAndDecompress((s32)&ResourceId_VineSheet, work, 1, 1);
     }
     if (work->effect->mirror == 1) {
         *(s32 *)0x04000028 = 0xFFFF9000;

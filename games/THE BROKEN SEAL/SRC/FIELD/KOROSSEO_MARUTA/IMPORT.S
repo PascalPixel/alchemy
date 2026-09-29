@@ -143,6 +143,9 @@ GetMapCellCollision:
 	.thumb_func
 Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer Func_080091c8
 	.global Object_CheckMovementCollision
 	.thumb_func
@@ -328,6 +331,9 @@ Engine_ActorFaceActor:
 	.thumb_func
 Engine_ActorFaceEachOther:
 	overlay_veneer Object_LinkPairFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_EventSetMessage
 	.thumb_func
@@ -444,6 +450,9 @@ Engine_EventClearInvalidPackedValues:
 	.thumb_func
 Object_LinkObjectAndSetCallback:
 	overlay_veneer Object_LinkObjectAndSetCallbackFar
+	.global BattleEffect_PauseObject
+	.thumb_func
+BattleEffect_PauseObject:
 	overlay_veneer BattleEffect_PauseObjectFar
 	.global Menu_OpenCharacterSelector
 	.thumb_func

@@ -6,6 +6,9 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
+	.global Engine_MathRemainder
+	.thumb_func
+Engine_MathRemainder:
 	overlay_veneer IwramSignedRemainder
 	.global IwramUnsignedRemainder
 	.thumb_func
@@ -27,6 +30,9 @@ Engine_RandomNext:
 	.thumb_func
 Vector_AddPolarOffset:
 	overlay_veneer Vector_AddPolarOffsetFar
+	.global QueueIoWriteDelay2
+	.thumb_func
+QueueIoWriteDelay2:
 	overlay_veneer QueueIoWriteDelay2Far
 	.global Engine_ObjectSetAnimation
 	.thumb_func
@@ -71,7 +77,13 @@ Object_CheckMovementCollision:
 	.thumb_func
 Engine_ActorSetSpriteFlags:
 	overlay_veneer ObjectDispatch_SetSingleChildField26Far
+	.global Engine_WorkSetValuesIfNonNegative
+	.thumb_func
+Engine_WorkSetValuesIfNonNegative:
 	overlay_veneer Runtime_SetWorkTripleIfNonNegativeFar
+	.global Engine_MapRenderWaitForValues
+	.thumb_func
+Engine_MapRenderWaitForValues:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
 	.global Engine_MessageShowCentered
 	.thumb_func
@@ -93,7 +105,13 @@ Engine_GameFlagClear:
 	.thumb_func
 Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
+	.global Engine_EventBegin
+	.thumb_func
+Engine_EventBegin:
 	overlay_veneer Battle_ResetFar
+	.global Engine_EventEnd
+	.thumb_func
+Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
 	.global Engine_ActorGet
 	.thumb_func

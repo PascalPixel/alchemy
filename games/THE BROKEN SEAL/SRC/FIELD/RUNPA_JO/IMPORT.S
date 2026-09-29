@@ -134,6 +134,9 @@ Engine_ActorSetDestination:
 	.thumb_func
 Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	.global Engine_ActorWalkToAndWait
+	.thumb_func
+Engine_ActorWalkToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndResetFar
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
@@ -215,6 +218,9 @@ Engine_ActorSetAttachedEffect:
 	.thumb_func
 Engine_CameraFollowActor:
 	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
 	.global Engine_CameraMoveTo
 	.thumb_func
@@ -240,6 +246,9 @@ Engine_EventRequestExit:
 	.thumb_func
 BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
 	.global Engine_EventOpenScreen
 	.thumb_func

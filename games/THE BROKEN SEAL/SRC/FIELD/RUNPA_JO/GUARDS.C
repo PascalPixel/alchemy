@@ -1,18 +1,11 @@
-/* Draft of FieldScene_UpdateActorPairInteraction, resource_3bf at 0x02009150,
- * built with games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: its double arithmetic reaches compiler-library float
- * routines that this overlay carries among its data rows (0x0200da78,
- * 0x0200daf0, 0x0200db6c), which are not linked from the library yet.
- * The listing keeps these rows. */
+/* Lunpa fortress: each frame the two guards sway with the map, and unless
+ * the alarm is already raised they watch for the party: a cloaked party
+ * that walks within four steps of either guard is caught, and an uncloaked
+ * one they can talk to sets the alarm. */
 #include "FORTRESS.H"
-
-double Func_02006ce6(s32);
-double Func_02006c7a(double, double);
-s32 Func_02006d72(double);
 
 void FieldScene_UpdateActorPairInteraction(void)
 {
-
     struct ObjectRuntime *actor = Object_GetById(9);
     struct ObjectRuntime *other = Object_GetById(10);
     s32 *work = (s32 *)(*(u8 **)gCam + 0x164);
@@ -32,7 +25,7 @@ void FieldScene_UpdateActorPairInteraction(void)
         actor->movement_state = 0;
         other->movement_state = 0;
         if (!GameFlag_IsSet(0x214) && actor->movement_state == 0) {
-            work[8] = Func_02006d72(Func_02006c7a(8912896.0, Func_02006ce6(actor->x)));
+            work[8] = 8912896.0 - actor->x;
         }
         if (!IsPlayerInAccidentTriggerArea()) {
             if (gGameState.cloaked != 0) {

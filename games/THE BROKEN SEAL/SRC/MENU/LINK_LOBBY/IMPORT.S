@@ -18,9 +18,21 @@ Engine_MathRemainder:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Engine_TaskRemoveCallback
+	.thumb_func
+Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Runtime_AllocateBlock
+	.thumb_func
+Runtime_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
+	.global Runtime_ReleaseHeapBlock
+	.thumb_func
+Runtime_ReleaseHeapBlock:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Runtime_BumpAllocateAlternatePool
 	.thumb_func
@@ -51,6 +63,9 @@ SerialRuntime_BeginTransferB:
 	.thumb_func
 SerialRuntime_GetActiveTransfers:
 	overlay_veneer SerialRuntime_GetActiveTransfersFar
+	.global Scheduler_SetCallbackMask
+	.thumb_func
+Scheduler_SetCallbackMask:
 	overlay_veneer Scheduler_SetCallbackMaskFar
 	.global Engine_MapRedraw
 	.thumb_func
@@ -60,7 +75,13 @@ Engine_MapRedraw:
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
+	.global Map_ClearLayerEntryFlag
+	.thumb_func
+Map_ClearLayerEntryFlag:
 	overlay_veneer Map_ClearLayerEntryFlagFar
+	.global Map_SetLayerEntryFlag
+	.thumb_func
+Map_SetLayerEntryFlag:
 	overlay_veneer Map_SetLayerEntryFlagFar
 	overlay_veneer Map_CopyCellAttributeRectFar
 	.global Engine_DebugCreateWindow
@@ -149,8 +170,17 @@ Engine_EventChooseYesNo:
 	.thumb_func
 Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
+	.global Engine_ActorSetSpeed
+	.thumb_func
+Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
+	.global Engine_ActorWaitForMove
+	.thumb_func
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorFaceActor
 	.thumb_func
@@ -172,8 +202,17 @@ Engine_EventShowMessage:
 	.thumb_func
 Event_SetPairWork1c0:
 	overlay_veneer Event_SetPairWork1c0Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Event_SetPair1d4
+	.thumb_func
+Event_SetPair1d4:
 	overlay_veneer Event_SetPair1d4Far
 	overlay_veneer Event_SetStatus1c6Far
 	overlay_veneer Event_WaitValue1c8FramesFar

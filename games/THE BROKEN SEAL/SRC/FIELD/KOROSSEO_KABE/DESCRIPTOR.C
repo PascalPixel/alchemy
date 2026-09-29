@@ -40,7 +40,7 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     *(u16 *)(descriptor + 218) = 0;
     *(u16 *)(descriptor + 220) = 0;
 
-    Engine_ResourceDecodeType01(KorosseoKabe_MarkerGraphics, handle);
+    Resource_DecodeType01(KorosseoKabe_MarkerGraphics, handle);
 
     extent = Resource_FindFreeEntry();
     *(u16 *)(descriptor + 216) = (u16)extent;
@@ -49,5 +49,5 @@ void FieldScene_BuildDescriptorAndInstallTask(s32 first, s32 second, s32 mode, s
     /* The stage task runs every frame. */
     Engine_TaskAddCallback(FieldScene_RunExtendedActorSequence, 0xc76);
 
-    Sys_Free(handle);
+    Runtime_BumpFree(handle);
 }

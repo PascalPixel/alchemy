@@ -143,7 +143,7 @@ s32 GameFlag_GetByte();
 void GameFlag_SetByte();
 void Vector_AddPolarOffset();
 s32 Runtime_BumpAllocateAlternatePool();
-void Sys_Free();
+void Runtime_BumpFree();
 void Resource_ResetEntry();
 s32 Resource_FindFreeEntry();
 s32 Resource_GetTableEntry();

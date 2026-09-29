@@ -25,7 +25,7 @@ void Party_SetFields1ceAnd1d0();
 void BattleFx_SetWeightedResult();
 void Engine_EventEnd();
 
-extern u8 Data_02000240[];
+extern struct GameState gGameState;
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -73,7 +73,7 @@ void MogoruMori_RunClosingChoreography(void)
     s32 x;
     s32 z;
     s32 zero;
-    s32 base3_2000240;
+    s32 game;
 
     actor = (u8 *)Value1(Engine_ActorGet, 18);
     Engine_EventBegin();
@@ -132,8 +132,8 @@ void MogoruMori_RunClosingChoreography(void)
     /* FAKEMATCH: an empty do-while here moves px into r1 after the
      * other arguments of the call above. */
     do { } while (0);
-    base3_2000240 = (s32)Data_02000240;
-    *(u8 *)((base3_2000240 + 0x22b)) = 3;
+    game = (s32)&gGameState;
+    *(u8 *)(game + 0x22b) = 3;
     Party_SetFields1ceAnd1d0((s32)&SceneId_MogoruMori3, 15);
     BattleFx_SetWeightedResult(53, 1);
     Engine_EventEnd();

@@ -1,22 +1,17 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
-extern struct EventWork *gEventWork;
-
-extern u8 Data_02000240[];
 
 void WaitFrames();
-void Engine_ActorSetSpritePriority();
-void Engine_GameFlagClear();
 void HaidiaDou_ApplyEntryState();
 
 
 s32 HaidiaDou_RunSceneScript(void)
 {
-    s32 off = 448;
-    s32 *request = (s32 *)(*(u8 **)&gEventWork + off);
+    s32 *request = &gEventWork->start_transition;
 
     *request = 0x204;
-    if (*(s16 *)(Data_02000240 + off) == (s32)&SceneId_HaidiaDou1) {
+    if (gGameState.scene == (s32)&SceneId_HaidiaDou1) {
         *request = 0x100;
         WaitFrames(1);
         Engine_ActorSetSpritePriority(11, 3);

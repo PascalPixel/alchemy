@@ -1,7 +1,7 @@
 #include "TYPES.H"
 #include "SCENE_IDS.H"
 
-extern u8 Data_02000240[];
+extern struct GameState gGameState;
 
 extern struct EventWork *gEventWork;
 
@@ -79,14 +79,10 @@ s32 FieldScene_RunSceneEntryHook(void)
         s32 off = 448;
 
         *(s32 *)(work + off) = 0x204;
-        mode = *(s16 *)(Data_02000240 + off);
+        mode = *(s16 *)((u8 *)&gGameState + off);
     }
     if (mode == (s32)&SceneId_MogoruMori1) {
-        {
-            s32 off = 450;
-
-            step = *(s16 *)(Data_02000240 + off);
-        }
+        step = *(s16 *)((u8 *)&gGameState + 450);
         switch (step) {
         case 1:
         case 2:
@@ -160,11 +156,7 @@ s32 FieldScene_RunSceneEntryHook(void)
             break;
         }
     } else if (mode == (s32)&SceneId_MogoruMori2) {
-        {
-            s32 off = 450;
-
-            step = *(s16 *)(Data_02000240 + off);
-        }
+        step = *(s16 *)((u8 *)&gGameState + 450);
         switch (step) {
         case 3:
         case 4:
@@ -223,11 +215,7 @@ s32 FieldScene_RunSceneEntryHook(void)
             break;
         }
     } else if (mode == (s32)&SceneId_MogoruMori3) {
-        {
-            s32 off = 450;
-
-            step = *(s16 *)(Data_02000240 + off);
-        }
+        step = *(s16 *)((u8 *)&gGameState + 450);
         switch (step) {
         case 3:
         case 4:

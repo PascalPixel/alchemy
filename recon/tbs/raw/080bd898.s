@@ -318,7 +318,7 @@ Func_080bd898:
 	bl	BattleMotion_GetSlotField14
 	adds	r1, r0, #0
 	ldr	r0, [r6, #0]
-	bl	Unnamed_080ba918
+	bl	BattleMotion_SetRecordChildValues
 	ldr	r0, [r7, r5]
 	bl	BattlePres_SetActorModeAndAction
 .L_080bdb3e:
@@ -589,7 +589,7 @@ Func_080bd898:
 	bl	BattleMotion_GetSlotField14
 	adds	r1, r0, #0
 	ldr	r0, [r6, #0]
-	bl	Unnamed_080ba918
+	bl	BattleMotion_SetRecordChildValues
 	b.n	.L_080bdd90
 .L_080bdd6e:
 	movs	r1, #178
@@ -606,7 +606,7 @@ Func_080bd898:
 	bl	GetBattleObjectSlot
 	movs	r1, #7
 	ldr	r0, [r0, #0]
-	bl	Unnamed_080ba918
+	bl	BattleMotion_SetRecordChildValues
 .L_080bdd90:
 	mov	r0, r9
 	bl	BattleLayout_HighlightPartyPanelsFar

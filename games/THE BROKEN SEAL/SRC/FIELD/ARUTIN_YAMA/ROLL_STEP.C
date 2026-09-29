@@ -2,11 +2,11 @@
 #include "FIELD_EVENT.H"
 #include "IWRAM_CALL.H"
 
-void Main_08000128(s32 distance, s32 angle, union FieldCoordinate *pos);
-s32 Main_080091a8(s32 layer, s32 x, s32 z);
+void Vector_AddPolarOffset(s32 distance, s32 angle, union FieldCoordinate *pos);
+s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 /* Step lengths by height difference, centred on entry 16. */
-extern s32 Data_0200d1b4[];
+extern s32 ArutinYama_RollRadii[];
 
 /* Rolls the object a step along its heading, sized by how far it sits
  * below its target height; counts down its rolling timer (cues at 20 and
@@ -23,7 +23,7 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
 
     angle &= object->facing;
     radius = object->y.fixed / 0x10000;
-    radius = Data_0200d1b4[(s16)object->unknown_64 - radius + 16];
+    radius = ArutinYama_RollRadii[(s16)object->unknown_64 - radius + 16];
     timer = (s16 *)&object->unknown_66;
     if (*timer != 0) {
         if ((s16)--*timer == 20) {
@@ -37,12 +37,12 @@ void ArutinYama_AdvanceRollingObject(struct FieldActor *object)
     p[0].fixed = object->x.fixed;
     p[1].fixed = object->y.fixed;
     p[2].fixed = object->z.fixed;
-    Main_08000128(Iwram_MulQ16(radius, 0xc000), angle, p);
+    Vector_AddPolarOffset(Iwram_MulQ16(radius, 0xc000), angle, p);
     object->x.fixed = p[0].fixed;
     object->z.fixed = p[2].fixed;
-    ahead = Main_080091a8(2, p[0].fixed, p[2].fixed);
-    Main_08000128(-Iwram_MulQ16(radius, 0x18000), angle, p);
-    behind = Main_080091a8(2, p[0].fixed, p[2].fixed);
+    ahead = Map_GetTerrainHeight(2, p[0].fixed, p[2].fixed);
+    Vector_AddPolarOffset(-Iwram_MulQ16(radius, 0x18000), angle, p);
+    behind = Map_GetTerrainHeight(2, p[0].fixed, p[2].fixed);
     if (*timer <= 20) {
         if (ahead == behind) {
             Engine_ObjectSetAnimation(object, 2);

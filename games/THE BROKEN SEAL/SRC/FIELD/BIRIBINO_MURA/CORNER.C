@@ -7,7 +7,7 @@ void OverlayObject_SpawnKind24AtActor(struct FieldActor *actor);
 struct SpawnCounter {
     s16 frames;
 };
-extern struct SpawnCounter gCornerSpawnCounter;
+struct SpawnCounter gCornerSpawnCounter;
 
 /* Spawn a kind-24 effect every thirty calls while the selected actor is
  * below both coordinate limits. Only the y limit resets the counter. */

@@ -22091,7 +22091,7 @@ msgctxt "message"
 msgid "05520"
 msgstr "This statue wasn't{line_break}here before. I wonder{line_break}if Alex...{page_break}No, Alex wouldn't do{line_break}that...but what if he's{line_break}not alone?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriSavedMeAgain"
 msgid "05521"
 msgstr "You've saved me again,{line_break}haven't you!{end_wait}"
 
@@ -22115,7 +22115,7 @@ msgctxt "message"
 msgid "05526"
 msgstr "Please tell me{line_break}the truth!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriThoughtSo"
 msgid "05527"
 msgstr "I thought so...{end_wait}"
 
@@ -22763,7 +22763,7 @@ msgctxt "message"
 msgid "05688"
 msgstr "{argument_actor_name:1} got{line_break}{argument_item_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDontHideTruth"
 msgid "05689"
 msgstr "Please, don't hide{line_break}anything. Just tell{line_break}me the truth!{end_now}"
 

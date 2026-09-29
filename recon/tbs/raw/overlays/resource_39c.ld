@@ -43,7 +43,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/OPEN_STAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/SPAWN_BURSTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/SCENE_INIT.o"(.text)
-        "*/resource_39c_overlay.o"(.text.x0200ca08)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/PARTY_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RIDE_LIFT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/CAST_PSYNERGY.o"(.text)
         "*/resource_39c_overlay.o"(.text.x0200cfcc)

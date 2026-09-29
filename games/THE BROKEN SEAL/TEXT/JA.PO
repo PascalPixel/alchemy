@@ -23663,7 +23663,7 @@ msgctxt "message"
 msgid "05913"
 msgstr "この像は こんなばしょに{line_break}ありませんでしたわ{line_break}まさかアレクスが・・・{page_break}いいえアレクスにはムリ・・・{line_break}とすれば だれかとともに{line_break}いるのでしょうか?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriSavedMeAgain"
 msgid "05914"
 msgstr "わたしのことを たすけて{line_break}くださったのですね?{end_wait}"
 
@@ -23687,7 +23687,7 @@ msgctxt "message"
 msgid "05919"
 msgstr "ほんとうのことを{line_break}おっしゃってください!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriThoughtSo"
 msgid "05920"
 msgstr "やはり そうでしたか。{end_wait}"
 
@@ -24335,7 +24335,7 @@ msgctxt "message"
 msgid "06081"
 msgstr "{argument_actor_name:234}{line_break}{argument_item_name:134} 手に入れた{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriDontHideTruth"
 msgid "06082"
 msgstr "どうか かくさずに{line_break}ほんとうのことを{line_break}おっしゃってください!{end_now}"
 

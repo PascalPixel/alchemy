@@ -140,6 +140,9 @@ UiText_ShowCenteredMessage:
 	.thumb_func
 Owner_GetState:
 	overlay_veneer Owner_GetStateFar
+	.global Owner_RecalculateStats
+	.thumb_func
+Owner_RecalculateStats:
 	overlay_veneer Owner_RecalculateStatsFar
 	.global Inventory_Find
 	.thumb_func
@@ -161,7 +164,13 @@ Engine_GameFlagSet:
 	.thumb_func
 Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
+	.global Djinn_AddToOwner
+	.thumb_func
+Djinn_AddToOwner:
 	overlay_veneer Djinn_AddToOwnerFar
+	.global Djinn_Activate
+	.thumb_func
+Djinn_Activate:
 	overlay_veneer Djinn_ActivateFar
 	.global Battle_WaitMode0
 	.thumb_func
@@ -175,6 +184,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global Event_PrepareObjectAndApplyValue
+	.thumb_func
+Event_PrepareObjectAndApplyValue:
 	overlay_veneer Event_PrepareObjectAndApplyValueFar
 	.global Engine_EventChooseYesNo
 	.thumb_func
@@ -251,6 +263,9 @@ Engine_ActorRunRepeatedMotion:
 	.thumb_func
 BattleFx_RunRisingObjectSequence:
 	overlay_veneer BattleFx_RunRisingObjectSequenceFar
+	.global Engine_ActorFaceActor
+	.thumb_func
+Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Engine_ActorFaceEachOther
 	.thumb_func

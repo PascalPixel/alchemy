@@ -1,9 +1,3 @@
-/* Draft of resource_37a 0x02008488 (FieldScene_RunScene37aSequenceF): it
- * matches the ROM byte for byte now that the messages it loads from the
- * literal pool have catalogue names (MsgSoruFound, MsgSoruGoBackVillage,
- * MsgSoruLunaSolRooms, MsgSoruMeanLookFarther, MsgSoruPutWayDont,
- * MsgSoruRoomLunaOne, MsgSoruThank, MsgSoruWayLeadsOutSanctum,
- * MsgSoruWhRoom). The listing keeps these rows until the draft is adopted. */
 #include "SANCTUM.H"
 extern u8 MsgSoruWayLeadsOutSanctum[];
 extern u8 MsgSoruThank[];
@@ -14,8 +8,6 @@ extern u8 MsgSoruMeanLookFarther[];
 extern u8 MsgSoruPutWayDont[];
 extern u8 MsgSoruRoomLunaOne[];
 extern u8 MsgSoruWhRoom[];
-
-/* The old link-time names the shape needs; none is defined anywhere now. */
 
 void FieldScene_RunScene37aSequenceF(void)
 {

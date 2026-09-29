@@ -247,7 +247,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/RESOURCE/TABLE_RESERVED_NO_OP_2.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISPATCH_FIND_FREE_OBJECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISPATCH_RELEASE.o"(.text)
-        "*/recon/tbs/raw/0800c150.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/CREATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISPATCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/OBJECT/DISPATCH_RETURN_TRUE.o"(.text)
         "*/recon/tbs/raw/0800c62c.o"(.text .rodata .data .padding)

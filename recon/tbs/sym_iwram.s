@@ -8,7 +8,10 @@ Data_03001400:
 Data_03001800:
 	.global gFrameTick
 gFrameTick:
-	.space 0x00000010
+	.space 0x00000004
+	.global gSavedStackSize
+gSavedStackSize:
+	.space 0x0000000c
 	.global ResourceBlockOwners
 ResourceBlockOwners:
 	.space 0x00000200
@@ -36,7 +39,10 @@ gKeysHeld:
 	.space 0x00000004
 	.global gBlendStartLevel
 gBlendStartLevel:
-	.space 0x00000008
+	.space 0x00000004
+	.global gCpuLoadTimer
+gCpuLoadTimer:
+	.space 0x00000004
 	.global Data_03001af4
 Data_03001af4:
 	.space 0x00000004
@@ -79,7 +85,10 @@ gLoadedStateWord:
 	.space 0x00000004
 	.global Data_03001ca0
 Data_03001ca0:
-	.space 0x00000008
+	.space 0x00000004
+	.global gCpuLoadPeak
+gCpuLoadPeak:
+	.space 0x00000004
 	.global gBlendTargetLevel
 gBlendTargetLevel:
 	.space 0x00000008
@@ -108,7 +117,10 @@ gSleepRequested:
 	.space 0x00000004
 	.global Data_03001ccc
 Data_03001ccc:
-	.space 0x00000008
+	.space 0x00000004
+	.global gLagFramesShown
+gLagFramesShown:
+	.space 0x00000004
 	.global gBlendBrighten
 gBlendBrighten:
 	.space 0x0000000c
@@ -147,7 +159,10 @@ Data_03001d18:
 	.space 0x00000004
 	.global Data_03001d1c
 Data_03001d1c:
-	.space 0x00000008
+	.space 0x00000004
+	.global gDebugPaused
+gDebugPaused:
+	.space 0x00000004
 	.global gPostLoadCounter
 gPostLoadCounter:
 	.space 0x00000004
@@ -324,7 +339,10 @@ gDebugMode:
 	.space 0x00000004
 	.global Data_03001f58
 Data_03001f58:
-	.space 0x00000008
+	.space 0x00000004
+	.global gSleepComboFrames
+gSleepComboFrames:
+	.space 0x00000004
 	.global Data_03001f60
 Data_03001f60:
 	.space 0x00000004

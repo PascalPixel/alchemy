@@ -23,7 +23,7 @@ void **GetBattleObjectSlotFar(s32);
 s32 Random16(void);
 s32 Func_080041d8(s32, s32);
 void Scheduler_RemoveCallback(s32);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *, void *);
 void Func_080b50e8(s32);
 void EffectPosition_ApplyBaseAndYOffset(void *, s32 *);
@@ -121,7 +121,7 @@ void Func_080d4ce8(Effect *effect)
         }
         if (frame == 16)
             Func_080b50e8(134);
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(camera, (u8 *)camera + 12);
         if (frame <= 63) {
             slot = 0;

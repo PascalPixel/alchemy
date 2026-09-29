@@ -160,7 +160,7 @@ loop_11:
         if ((u32) var_fp_191 > 0x5FU) {
 
         } else {
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(sp2C, sp2C + 0xC);
             vector_work.position[0] = M2C_FIELD(temp_r6_203, s32 *, 8);
             vector_work.position[1] = M2C_FIELD(temp_r6_203, s32 *, 0xC);
@@ -177,16 +177,16 @@ loop_11:
                 temp_r3_257 = (0x40 - var_fp_191) << 9;
                 var_r7_258 = 0;
                 do {
-                    Func_080049ac();
+                    Render_ResetTransformState();
                     if (var_fp_191 <= 0x3F) {
                         vector_work.modulation[0] = temp_r1_252;
                         vector_work.modulation[1] = temp_r1_252;
                         vector_work.modulation[2] = temp_r1_252;
                         SceneTransform_ApplyScale(vector_work.modulation);
-                        Func_08004c6c(temp_r3_257);
-                        Func_08004c1c(temp_r3_257);
+                        SceneTransform_ApplyRoll(temp_r3_257);
+                        SceneTransform_ApplyYaw(temp_r3_257);
                     }
-                    Func_08004c6c(sp14);
+                    SceneTransform_ApplyRoll(sp14);
                     EffectPosition_ApplyBaseAndYOffset((s32 *)0x080EE134, vector_work.position);
                     M2C_FIELD(var_r5_253, s32 *, 0xC) =
                         vector_work.position[0] + vector_work.projected[0];

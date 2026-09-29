@@ -79,7 +79,10 @@ gBattleRandomSeed:
 	.space 0x00000004
 	.global gSerialReceiveDest
 gSerialReceiveDest:
-	.space 0x00000c54
+	.space 0x00000004
+	.global gSavedStack
+gSavedStack:
+	.space 0x00000c50
 	.global RomBytes_02003000
 RomBytes_02003000:
 	.global gMusicRestoreDelay

@@ -215,7 +215,7 @@ s32 Math_Div(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
 void Func_08002dd8(s32 id);                          /* Runtime_ReleaseHeapBlock */
 void *Resource_GetTableEntry(s32 id);                         /* get */
 u32 Random16(void);                             /* random_16 */
-void Func_080049ac(void);                            /* Render_ResetTransformState */
+void Render_ResetTransformState(void);                            /* Render_ResetTransformState */
 void Graphics_PrepareTransferInIwramWork(void *a, void *b);                /* Graphics_PrepareTransferInIwramWork */
 void Render_ProjectPoint(const struct Spark *position, s32 *out);
 void *Owner_GetStateFar(s32 id);                         /* Runtime_GetObject */
@@ -427,7 +427,7 @@ void BattlePres_RunBeamSequence(void *object)
                 anchor[0] - 16, anchor[1] - 24, 40, 48);
         }
 
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(xfer, (u8 *)xfer + 12);
 
         /* Step and draw the live sparks; each one is visited twice. */

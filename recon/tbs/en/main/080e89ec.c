@@ -298,7 +298,7 @@ block_35:
         var_r6_434 -= 1;
         var_r7_437 -= 8;
     } while (var_r6_434 != 0);
-    Func_080049ac();
+    Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(temp_fp_275, &temp_fp_275->unknown_0002[0xA]);
     if (phase_frame <= 0x41U) {
         if (M2C_FIELD(*state_slot, s32 *, 4) == 1) {

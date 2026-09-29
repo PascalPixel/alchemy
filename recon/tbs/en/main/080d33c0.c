@@ -128,7 +128,7 @@ loop_7:
         if (var_fp_203 == (*((u8 *)0x080EE1C4 + (s32) ((M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x18) * 2) + 1)) - 0x10)) {
             Func_080b50e8(0x84);
         }
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(temp_r6_209, temp_r6_209 + 12);
         var_r8_251 = 0;
         if (*((u8 *)0x080EE1C4 + (M2C_FIELD(M2C_FIELD(temp_r7_17, void **, 0x7828), s32 *, 0x18) * 2)) == 0) {

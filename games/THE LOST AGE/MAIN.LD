@@ -497,6 +497,8 @@ SECTIONS
         "*/recon/tla/raw/080ae410.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080ae834.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aeaa0.o"(.text .rodata .data .padding)
+        "*/games/COMMON/SRC/GAME/CHARACTER/RATIOS_SECOND_INPUT.o"(.text)
+        "*/recon/tla/raw/080aeb9a.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aeb9c.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aebd0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/080aec04.o"(.text .rodata .data .padding)

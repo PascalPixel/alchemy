@@ -15,7 +15,7 @@ struct OwnerRatioPairState {
     s16 inputY;
 };
 
-s32 FixedPoint_Ratio(s32, s32);
+s32 Math_Div(s32, s32);
 
 void Owner_UpdateSecondInputAndRatios(
     struct OwnerRatioPairState *state, s32 input)
@@ -38,7 +38,7 @@ void Owner_UpdateSecondInputAndRatios(
     } while (0);
     value = state->inputX;
     value <<= 14;
-    value = FixedPoint_Ratio(value, state->limitX);
+    value = Math_Div(value, state->limitX);
 
     {
         s32 output = 0x4000;
@@ -61,7 +61,7 @@ void Owner_UpdateSecondInputAndRatios(
 
         numerator = state->inputY;
         divisor = state->limitY;
-        value = FixedPoint_Ratio(numerator << 14, divisor);
+        value = Math_Div(numerator << 14, divisor);
     }
     {
         s32 output = 0x4000;
@@ -78,3 +78,4 @@ void Owner_UpdateSecondInputAndRatios(
         }
     }
 }
+

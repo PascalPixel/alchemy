@@ -3,4 +3,12 @@
 	.section .rodata
 	.global UiText_Glyphs
 UiText_Glyphs:
+	.ifdef TBS_EDITION_DE
+	.incbin "GRAPHICS/FONT/TEXT_DE.font"
+	.else
+	.ifdef TBS_EDITION_IT
+	.incbin "GRAPHICS/FONT/TEXT_IT.font"
+	.else
 	.incbin "GRAPHICS/FONT/TEXT.font"
+	.endif
+	.endif

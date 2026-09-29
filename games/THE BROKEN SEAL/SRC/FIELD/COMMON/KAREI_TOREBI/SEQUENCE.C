@@ -1,5 +1,7 @@
 #include "KAREI.H"
 
+extern u8 KareiTorebi_ActorSixteenScript[];
+
 extern u8 MsgKareiIncredibleOcean[];
 extern u8 MsgKareiReturnedTicketCost[];
 
@@ -289,7 +291,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     Actor_WalkByAndWait(10, 24, 0);
     Audio_PlayCue(133);
     Actor_Jump(16, 6, 0);
-    Actor_EnableActionCallback(16, 0x20096e4);
+    Actor_EnableActionCallback(16, KareiTorebi_ActorSixteenScript);
     *(u8 *)(((s32)Engine_ActorGet(10)) + 90) &= v5;
     Actor_Jump(10, 6, 0);
     Actor_WalkByAndWait(10, -12, 4);

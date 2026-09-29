@@ -220,7 +220,7 @@ testPendingWork:
 
     ((u8 *)Engine_ActorGet(12))[91] = 0;
 
-    Actor_EnableActionCallback(12, (u8 *)0x0200c638);
+    Actor_EnableActionCallback(12, ShianJiin_ActorTwelveScript);
     Event_End();
 }
 

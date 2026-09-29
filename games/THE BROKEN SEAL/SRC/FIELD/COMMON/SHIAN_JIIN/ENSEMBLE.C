@@ -136,7 +136,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 128 << 6, 0);
     Actor_FaceDirection(16, 192 << 8, 20);
     Audio_PlayCue(158);
-    Map_AnimateCells(0x0200c77a, 78, 13);
+    Map_AnimateCells((const u16 *)ShianJiin_CellStepsB, 78, 13);
     Actor_RunRepeatedMotion(16, 2);
     Event_Wait(20);
     Actor_SetSpeed(16, 192 << 9, 192 << 8);
@@ -188,7 +188,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_FaceDirection(18, 160 << 7, 0);
     Actor_WaitForMove(17);
     Audio_PlayCue(159);
-    Map_AnimateCells(0x0200c790, 78, 13);
+    Map_AnimateCells((const u16 *)ShianJiin_CellStepsC, 78, 13);
     Event_ShowMessageAndWait(18, 0, 20);
     Actor_FaceActor(9, 17, 0);
     Actor_FaceActor(10, 17, 0);
@@ -380,7 +380,7 @@ finish:
     Actor_FaceDirection(11, 128 << 8, 20);
     Actor_SetAnimation(10, 5);
     Actor_SetAnimation(11, 5);
-    Engine_ActorEnableActionCallback(12, 0x0200c638);
+    Engine_ActorEnableActionCallback(12, ShianJiin_ActorTwelveScript);
 }
 
 void FieldScene_RunSkippableStoryBeat(void)
@@ -589,7 +589,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Actor_SetAnimation(10, 5);
     Actor_SetAnimation(11, 5);
     Actor_WaitForMove(12);
-    ObjectMotion_EnableActionAndSetCallback_1(12, 0x200c638);
+    ObjectMotion_EnableActionAndSetCallback_1(12, (s32)ShianJiin_ActorTwelveScript);
     Actor_SetSpeed(15, 0xcccc, 0x6666);
     Actor_WalkToAndWait(15, 216, 168);
     Actor_WalkToAndWait(15, 232, 168);
@@ -631,7 +631,7 @@ void StartSchoolDoorEvent(void)
         Event_End();
     } else {
         Audio_PlayCue(158);
-        Map_AnimateCells(0x0200c77a, 78, 13);
+        Map_AnimateCells((const u16 *)ShianJiin_CellStepsB, 78, 13);
         SetScale(0, 0x8000, 0x4000);
         SetPosition(0, 306, 248);
         Actor_WalkTo(ACTOR_PARTY_LEADER, 304, 216);

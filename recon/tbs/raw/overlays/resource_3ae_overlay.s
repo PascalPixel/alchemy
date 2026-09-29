@@ -17,6 +17,8 @@ KareiTorebi_LeaveCells3:
 	.4byte 0x0007005c
 	.4byte 0x00020002
 	.4byte 0xffff0005
+	.global KareiTorebi_ActorSixteenScript
+KareiTorebi_ActorSixteenScript:
 	.4byte 0x00000016
 	.4byte 0x00000003
 	.4byte 0xffffe000

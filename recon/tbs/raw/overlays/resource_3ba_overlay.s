@@ -1862,6 +1862,8 @@ Korosseo_RivalFinishScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KorosseoKawa_ApproachScript
+KorosseoKawa_ApproachScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000001

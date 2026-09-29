@@ -48,6 +48,8 @@ gEffectScripts:
 	.4byte 0x0200c584
 	.4byte 0x0200c5bc
 	.4byte 0x0200c5f4
+	.global ShianJiin_ActorTwelveScript
+ShianJiin_ActorTwelveScript:
 	.4byte 0x0000001c
 	.4byte 0x00000000
 	.4byte 0x00000015
@@ -123,17 +125,24 @@ gEffectScripts:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global ShianJiin_CellStepsA
+ShianJiin_CellStepsA:
 	.4byte 0x002e0042
 	.4byte 0x00020003
 	.4byte 0x003f0005
 	.4byte 0x0003002e
 	.4byte 0x00050002
-	.4byte 0x003effff
+	.2byte 0xffff
+	.global ShianJiin_CellStepsB
+ShianJiin_CellStepsB:
+	.2byte 0x003e
 	.4byte 0x00020013
 	.4byte 0x00050002
 	.4byte 0x00130040
 	.4byte 0x00020002
 	.4byte 0xffff0005
+	.global ShianJiin_CellStepsC
+ShianJiin_CellStepsC:
 	.4byte 0x0013003e
 	.4byte 0x00020002
 	.4byte 0x003c0005
@@ -810,6 +819,8 @@ gShianJiinEventsEntrance3:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global ShianJiin_ShotScript
+ShianJiin_ShotScript:
 	.4byte 0x00000015
 	.4byte 0x00000003
 	.4byte 0x0000c000

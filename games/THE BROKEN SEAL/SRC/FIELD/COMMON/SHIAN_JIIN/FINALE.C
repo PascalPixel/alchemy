@@ -68,14 +68,14 @@ void FieldScene_RunParticleRain(void)
     s32 scale;
 
     Audio_PlayCue(0x83);
-    *(u32 *)(((u8 *)Engine_ActorGet(8)) + 108) = 0x0200c1c5;
+    *(u32 *)(((u8 *)Engine_ActorGet(8)) + 108) = (u32)FieldScene_SelectActorModeFromInputBit;
     Event_Wait(40);
     ColorBuffer_ApplySource(128 << 9, 0);
     ColorBuffer_ApplyTarget(0x205c54, 1);
     ColorBuffer_Interpolate(60);
     Event_Wait(40);
     Audio_PlayCue(0x83);
-    *(u32 *)(((u8 *)Engine_ActorGet(2)) + 108) = 0x0200c1c5;
+    *(u32 *)(((u8 *)Engine_ActorGet(2)) + 108) = (u32)FieldScene_SelectActorModeFromInputBit;
     Event_Wait(120);
     record = Actor_Get(8);
     descriptor.field0 = 1;

@@ -4,6 +4,7 @@
 
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+void ActorPresentation_PlaceActorFourteenOnActorNine(void);
 
 enum {
     /* Message 0x182 + 243. */
@@ -143,7 +144,7 @@ void FieldScene_RunScene3b4_02001bc4(void)
     u32 i;
     s32 record;
 
-    Call1(Scheduler_RemoveCallbackFar, 0x2009e95);
+    Call1(Scheduler_RemoveCallbackFar, (s32)ActorPresentation_PlaceActorFourteenOnActorNine);
     Actor_SetPosition(14, 0, 0);
     if (GameFlag_IsSet(0x207) != 0) {
         Map_CopyCellAttributes(58, 36, 1, 1, 45, 43);

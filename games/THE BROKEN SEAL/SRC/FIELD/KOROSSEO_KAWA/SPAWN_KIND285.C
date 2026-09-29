@@ -227,7 +227,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handle_a, s32 handle_b)
 {
     extern u8 Data_02000240[];
 
-    u8 *work = *(u8 **)0x03001f3c;
+    u8 *work = gKorosseoWork;
     u8 *shared;
     u8 *rec;
     s32 flag;

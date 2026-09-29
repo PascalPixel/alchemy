@@ -7,6 +7,7 @@ pub mod cache;
 pub mod compare;
 pub mod decode;
 pub mod discovery;
+pub mod editions;
 pub mod elf;
 pub mod lift;
 pub mod process;

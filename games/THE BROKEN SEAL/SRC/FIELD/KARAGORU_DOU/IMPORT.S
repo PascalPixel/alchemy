@@ -124,6 +124,9 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global ObjectMotion_OffsetPositionAndResetMotion
 	.thumb_func
@@ -171,6 +174,9 @@ Engine_EventOpenMessage:
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
+	.global Engine_ActorFaceDirection
+	.thumb_func
+Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
 	.global Engine_EventRequestExit
 	.thumb_func

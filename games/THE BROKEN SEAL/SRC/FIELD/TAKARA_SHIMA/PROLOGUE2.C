@@ -5,7 +5,7 @@
 #include "STAGED_ACTOR.H"
 #include "FIELD_EFFECT.H"
 
-extern u8 TakaraShima_SceneTable17[];
+extern const u32 gTakaraShimaExits[];
 
 enum {
     /* Message 0x182 + 181. */
@@ -299,14 +299,14 @@ typedef struct OrbitingSceneObject {
     u32 callback;
 } OrbitingSceneObject;
 
-/* Complete four-byte leaf: movs r0,#0 followed by bx lr. */
-s32 GetEmptySceneData(void)
+/* The island has no regions. */
+const struct SceneRegion *Scene_GetRegions(void)
 {
     return 0;
 }
 
-/* Complete eight-byte literal-address getter, including its sole pool word. */
-u8 *GetDefaultSceneData(void)
+/* Every island scene leaves through one exit table. */
+const u32 *Scene_GetExits(void)
 {
-    return TakaraShima_SceneTable17;
+    return gTakaraShimaExits;
 }

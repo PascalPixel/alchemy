@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "MAP.H"
 
 u32 Runtime_BumpAllocate(s32 size);
 void Runtime_BumpFree(void *block);
@@ -38,6 +39,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     struct WorldMapState *state;
     u32 *resources;
     u8 *buffer;
+    u8 *tiles;
     u32 *cursor;
     u32 tile;
     s32 variant;
@@ -57,15 +59,16 @@ void WorldMap_LoadGraphics(s32 x, s32 z)
     Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
     Dma_Set(buffer, BG_PALETTE, 0x84000070, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), (void *)0x02038000);
-    Dma_Set((void *)0x02038000, (void *)0x06008000, 0x84000800, (volatile u32 *)0x040000d4);
+    tiles = gBgTileBuffer;
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), tiles);
+    Dma_Set(tiles, (void *)0x06008000, 0x84000800, (volatile u32 *)0x040000d4);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), (void *)0x0203a000);
     Dma_Set((void *)0x0203a000, (void *)0x0600a000, 0x84000800, (volatile u32 *)0x040000d4);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), (void *)0x0203c000);
     Dma_Set((void *)0x0203c000, (void *)0x0600c000, 0x84000800, (volatile u32 *)0x040000d4);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), (void *)0x0203e000);
     Dma_Set((void *)0x0203e000, (void *)0x0600e000, 0x84000800, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[5]), (void *)0x02028000);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[5]), (void *)gMapLayerData);
     fill = 0xf07ff07f;
     Dma_Set((const void *)&fill, (void *)0x06002800, 0x85000180, (volatile u32 *)0x040000d4);
     cursor = (u32 *)0x06003000;

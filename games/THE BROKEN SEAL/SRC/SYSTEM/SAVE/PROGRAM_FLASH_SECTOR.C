@@ -8,6 +8,7 @@ struct FlashChipInfo {
     u16 control;
 };
 
+extern struct FlashChipInfo *gFlash;
 extern u16 Data_02004c0c;
 
 u16 ProgramFlashSector(u16 sector, u8 *source)
@@ -26,11 +27,11 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
     CopyFlashReadRoutineToRam(savedCode);
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xFFFC) |
-        (*(struct FlashChipInfo **)0x02004C08)->control;
+        gFlash->control;
     Data_02004c0c =
-        (*(struct FlashChipInfo **)0x02004C08)->size;
+        gFlash->size;
     destination = (u8 *)(
-        (sector << (*(struct FlashChipInfo **)0x02004C08)->shift) +
+        (sector << gFlash->shift) +
         0x0E000000);
 
     while (Data_02004c0c != 0) {

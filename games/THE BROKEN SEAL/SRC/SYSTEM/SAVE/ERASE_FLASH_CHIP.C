@@ -26,8 +26,9 @@
  *     pattern-matched against other files.
  */
 #include "FLASH.H"
+#include "FLASH_DATA.H"
 
-/* 0x02004c08 が指すフラッシュ管理ブロック。control は待ち時間設定値。 */
+/* gFlash が指すフラッシュ管理ブロック。control は待ち時間設定値。 */
 struct FlashChipInfo {
     u8 unknown_00[4];
     s32 size;
@@ -35,6 +36,9 @@ struct FlashChipInfo {
     u8 unknown_09[7];
     u16 control;
 };
+
+extern struct FlashChipInfo *gFlash;
+extern FlashWaitProc Flash_Handler3;
 
 s32 _call_via_r3(s32, u8 *, u8, s32);
 
@@ -49,7 +53,7 @@ u16 EraseFlashChip(void)
 
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xFFFC) |
-        (*(struct FlashChipInfo **)0x02004C08)->control;
+        gFlash->control;
 
     *(volatile u8 *)0x0E005555 = 0xAA;
     *(volatile u8 *)0x0E002AAA = 0x55;
@@ -60,7 +64,7 @@ u16 EraseFlashChip(void)
 
     CopyFlashReadRoutineToRam(savedCode);
 
-    status = (s32 *)0x02004C00;
+    status = (s32 *)&Flash_Handler3;
     result = _call_via_r3(3, (u8 *)0x0E000000, 255, *status);
 
     *(volatile u16 *)0x04000204 =

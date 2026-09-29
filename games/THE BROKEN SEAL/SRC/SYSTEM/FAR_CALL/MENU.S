@@ -45,7 +45,7 @@ ItemMenu_Open:
 	.global Func_080a1040
 	.thumb_func
 Func_080a1040:
-	overlay_veneer Func_080aa56c
+	overlay_veneer ItemMenu_Run
 	.global ItemMenu_DrawItemDetailsFar
 	.thumb_func
 ItemMenu_DrawItemDetailsFar:

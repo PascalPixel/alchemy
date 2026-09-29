@@ -7,11 +7,13 @@ extern const u8 Resource_FixedBlockBTiles[];
 extern const u8 WorkspaceOptions_SliderTiles[];
 extern const u16 WorkspaceOptions_SliderPalette[];
 
-extern u8 Value_00000c07;
-extern u8 Value_00000c0d;
+extern u8 MsgWindowColorLabel;
+extern u8 MsgMessageSpeedLabel;
 extern s8 Data_080367c9[];
 extern s8 Data_080367cc[];
 extern s8 Data_080367ce[];
+extern u8 MsgSpeechLabel[];
+extern u8 MsgAutoSleepLabel[];
 
 struct RenderInput *UiWindow_Create(s32, s32, s32, s32, s32);
 void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
@@ -42,16 +44,16 @@ struct RenderInput *Menu_OpenWorkspaceOptions(void)
     UiWindow_DrawDividerLine(win, 0, 4, 27, 4);
     UiWindow_DrawDividerLine(win, 0, 7, 27, 7);
     UiWindow_DrawDividerLine(win, 0, 10, 27, 10);
-    msg = (s32)&Value_00000c07;
+    msg = (s32)&MsgWindowColorLabel;
     UiText_DrawCharacterAtOffset(msg, win, 8, 0);
     msg++;
     UiText_DrawCharacterAtOffset(msg, win, 8, 16);
-    msg = (s32)&Value_00000c0d;
+    msg = (s32)&MsgMessageSpeedLabel;
     UiText_DrawCharacterAtOffset(msg, win, 8, 32);
     msg++;
     UiText_DrawCharacterAtOffset(msg, win, 32, 40);
-    UiText_DrawCharacterAtOffset(0xc0f, win, 8, 64);
-    UiText_DrawCharacterAtOffset(0xc12, win, 8, 88);
+    UiText_DrawCharacterAtOffset((s32)MsgSpeechLabel, win, 8, 64);
+    UiText_DrawCharacterAtOffset((s32)MsgAutoSleepLabel, win, 8, 88);
 
     x = Resource_FindFreeEntry();
     if (x < 96) {

@@ -38,6 +38,14 @@
  * the tail's two range copies and dynamic count reload. Current exact family
  * provides none. Do not invent a shared cursor, const promise or ABI change.
  * No second hypothesis without that new fact; closed with zero new credit.
+ * 2026-09-29 (stock agscc): the first range load is gcse PRE placing the
+ * body read on the entry edge. With the do/while precheck, and with every
+ * for, while and for(;;)-break spelling (43 halfwords; they keep the
+ * reference cmp of the index register), that edge is critical, so the load
+ * lands in a split block after the count test. The reference inserts it
+ * before the test, which requires the entry test to be duplicated only
+ * after gcse (jump1 declining duplicate_loop_exit_test). A goto into the
+ * do/while and an inline count accessor do not produce that.
  */
 #include "TYPES.H"
 #include "BATTLE_EFX.H"

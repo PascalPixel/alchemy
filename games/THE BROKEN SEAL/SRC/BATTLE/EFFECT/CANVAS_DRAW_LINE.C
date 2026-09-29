@@ -1,5 +1,7 @@
 #include "TYPES.H"
 
+extern u8 gBattleFxWork[];
+
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 
 /* Draw a line into the effect canvas (8bpp tiles, 32 tiles to a row) with
@@ -10,7 +12,7 @@ void BattleFx_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color)
     s32 dx = x1 - x0;
     s32 dy = y1 - y0;
     s32 frac = 0x80;
-    u8 *canvas = *(u8 **)0x03001ef0;
+    u8 *canvas = ((u8 **)gBattleFxWork)[1];
     s32 step;
     s32 i;
     s32 x;

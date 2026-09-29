@@ -373,4 +373,4 @@ Func_0803cfd0:
 	mov	sl, r6
 	mov	fp, r7
 	pop	{r5, r6, r7, pc}
-	.4byte 0x08060c30
+	.4byte Text_MessageContexts

@@ -3,14 +3,14 @@
 
 #include "TYPES.H"
 
-/* games/THE BROKEN SEAL/TEXT/MESSAGE_ARCHIVE.JSON の英文から付けた識別名。 */
-/* 番号はリンク時定数。プールされる絶対シンボルとして参照する。 */
-extern char Value_00000810;
-extern char Value_00000811;
-extern char Value_00000812;
-extern char Value_00000813;
-extern char Value_00000814;
-extern char Value_00000816;
+/* 名前は各版の TEXT/*.PO の msgctxt。番号は版ごとに異なり、ビルドが */
+/* カタログからリンク時定数として定義する。プールされる絶対シンボルとして参照する。 */
+extern char MsgEnemyAppeared;
+extern char MsgLastEnemyAppeared;
+extern char MsgPartyStrikesFirst;
+extern char MsgPartySurprised;
+extern char MsgActorAttacks;
+extern char MsgActorDefends;
 extern char MsgHpRecover; /* 「HPが N かいふくした！」 */
 extern char MsgPpRecover; /* 「PPが N かいふくした！」 */
 extern char MsgHpFull; /* 「HPがぜんかいふくした！」 */
@@ -25,8 +25,8 @@ extern char MsgPpLossE; /* 「PPを Nうしなった！」敵側 */
 extern char MsgPpLossP; /* 「PPを Nうしなった！」味方側 */
 extern char MsgDmgEmphE; /* 相性で句読点が変わる・敵側 */
 extern char MsgDmgEmphP; /* 相性で句読点が変わる・味方側 */
-extern char Value_00000843;
-extern char Value_00000844;
+extern char MsgPartyFlees;
+extern char MsgCannotEscape;
 extern char MsgCurseDamage; /* A curse does N damage (English text) */
 extern char MsgSpiritDrain; /* 「せいしんを すいとられた！」 */
 extern char MsgKoDown; /* 「たおれた！」 */

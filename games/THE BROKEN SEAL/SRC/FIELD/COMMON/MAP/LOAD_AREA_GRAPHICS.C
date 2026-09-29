@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "MAP.H"
 extern u8 gMapCellBuffer[];
 extern u8 Data_03001cfc[];
 
@@ -40,7 +41,7 @@ void Map_LoadAreaGraphics(void)
     Resource_DecodeByteLz((const void *)Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = value;
     Dma_Set(buffer, BG_PALETTE, 0x84000070, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), (void *)0x02038000);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), (void *)gBgTileBuffer);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), (void *)0x0203a000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), (void *)0x0203c000);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), (void *)0x0203e000);

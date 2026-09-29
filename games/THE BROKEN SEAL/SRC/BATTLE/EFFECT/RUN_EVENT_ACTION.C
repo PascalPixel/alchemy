@@ -17,7 +17,7 @@ void UiText_ShowPositionedMessageAndWaitFar(s32, s32);
 s32 GameFlag_TestFar(s32);
 void Battle_Reset();
 
-extern char Value_00000927;
+extern char MsgNothingHappens;
 
 s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
 {
@@ -37,7 +37,7 @@ s32 BattleFx_RunEventAction(void *arg0, s32 arg1, s32 arg2)
         }
         if (GameFlag_TestFar(0x142) != 0) {
             Battle_Reset();
-            UiText_ShowPositionedMessageAndWaitFar((s32)&Value_00000927, 1);
+            UiText_ShowPositionedMessageAndWaitFar((s32)&MsgNothingHappens, 1);
             BattleFx_FinishAction();
         }
     }

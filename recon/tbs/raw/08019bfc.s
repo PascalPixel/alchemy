@@ -148,4 +148,4 @@ Func_08019bfc:
 	pop	{r5, r6, r7}
 	pop	{r1}
 	bx	r1
-	.4byte 0x0803842c
+	.4byte Text_MessageContexts

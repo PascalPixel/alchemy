@@ -1,8 +1,10 @@
 #include "TYPES.H"
+#include "SAVE_STATE.H"
 extern u8 gTitleExtraOptionEnabled[];
 
 struct MenuModeLabelState;
 extern struct MenuModeLabelState *gMenuSelectWork;
+extern u8 MsgPasswordLevel[];
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
 
@@ -143,7 +145,7 @@ s32 Menu_SelectSaveSlotAction(void)
     if ((*(s16 *)gTitleExtraOptionEnabled) != 0) {
         Menu_AppendResourceEntry(0x1D);
     }
-    if ((*(s16 *)0x02002010) != 0) {
+    if (gTitleSendOptionEnabled != 0) {
         Menu_AppendResourceEntry(0x1E);
     }
     Menu_CenterResourceEntries(0x11, TYPE_MENU_WIDTH, 0);
@@ -182,7 +184,7 @@ void Menu_DrawModeLabel(void)
                 goto mode_other;
 
             {
-                s32 text = 0xc7b;
+                s32 text = (s32)MsgPasswordLevel;
 
                 UiText_DrawCharacterAtOffset(text, state->window, 18, 40);
                 UiText_DrawCharacterAtOffset(text + 1, state->window, 18, 48);
@@ -195,7 +197,7 @@ void Menu_DrawModeLabel(void)
         }
 
         {
-            s32 text = 0xc7b;
+            s32 text = (s32)MsgPasswordLevel;
 
             UiText_DrawCharacterAtOffset(text, state->window, 18, 40);
             UiText_DrawCharacterAtOffset(text + 1, state->window, 18, 48);
@@ -206,7 +208,7 @@ void Menu_DrawModeLabel(void)
 
 mode_other:
         {
-            s32 text = 0xc7b;
+            s32 text = (s32)MsgPasswordLevel;
 
             UiText_DrawCharacterAtOffset(text++, state->window, 18, 40);
             UiText_DrawCharacterAtOffset(text, state->window, 18, 48);
@@ -219,8 +221,8 @@ done:
 void RenderOutput_PrepareForRedraw(void *);
 void UiText_DrawResource(s32 no, s32 work, s32 x, s32 y);
 
-extern u8 Value_00000c71;
-extern u8 Value_00000c73;
+extern u8 MsgPasswordTransferHelp;
+extern u8 MsgCableTransferHelp;
 
 void Menu_DrawModeIndicator(void)
 {
@@ -233,16 +235,16 @@ void Menu_DrawModeIndicator(void)
         *shown = (u16)*current;
         RenderOutput_PrepareForRedraw(*(void **)(state + 124));
         if (*current == 0) {
-            UiText_DrawResource((s32)&Value_00000c71,
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp,
                 *(void **)(state + 124), 16, 4);
-            UiText_DrawResource((s32)&Value_00000c71 + 1,
+            UiText_DrawResource((s32)&MsgPasswordTransferHelp + 1,
                 *(void **)(state + 124), 16, 16);
         } else {
-            UiText_DrawResource((s32)&Value_00000c73,
+            UiText_DrawResource((s32)&MsgCableTransferHelp,
                 *(void **)(state + 124), 0, 4);
-            UiText_DrawResource((s32)&Value_00000c73 + 1,
+            UiText_DrawResource((s32)&MsgCableTransferHelp + 1,
                 *(void **)(state + 124), 0, 16);
-            UiText_DrawResource((s32)&Value_00000c73 + 2,
+            UiText_DrawResource((s32)&MsgCableTransferHelp + 2,
                 *(void **)(state + 124), 0, 28);
         }
     }

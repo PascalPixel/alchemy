@@ -35,6 +35,13 @@ LAYOUT_OFFSET_GUARD(GameState_Cloaked, struct GameState, cloaked, 0x24c);
 
 extern struct GameState gGameState;
 
+/* Saved words the current scene keeps for itself: a puzzle's board, a
+   recorded course, the coins counted before paying. */
+extern u8 gSceneState[];
+
+/* The Korosseo stage's work, which its scenes share. */
+extern u8 *gKorosseoWork;
+
 /* Counts the frames the game has drawn. */
 extern u32 gFrameCount;
 

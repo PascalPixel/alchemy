@@ -20,8 +20,8 @@ u32 SaveState_DeleteRecord(s32);
 /* save/state/confirm_and_process_selected_slot.c */
 /* save/state/state_confirm_and_process_selected_slot.c */
 /* save/state/confirm_and_process_selected_slot.c */
-extern u8 Value_00000014;
-extern u8 Value_00000017;
+extern u8 MsgOverwriteConfirm;
+extern u8 MsgGameSaved;
 
 s32 UiWork_IsComplete(void);
 
@@ -32,7 +32,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
 {
     s32 result;
 
-    UiText_OpenMessageWindow((s32)&Value_00000014, 8, 12, 2);
+    UiText_OpenMessageWindow((s32)&MsgOverwriteConfirm, 8, 12, 2);
     while (UiWork_IsComplete() == 0) {
         WaitFrames(1);
     }
@@ -43,7 +43,7 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
         Audio_PlayCue(85);
         result = SaveState_ProcessSelectedSlot();
         if (result >= 0) {
-            UiText_ShowPositionedMessageAndWait((s32)&Value_00000017, 1);
+            UiText_ShowPositionedMessageAndWait((s32)&MsgGameSaved, 1);
         }
     }
     return result;
@@ -52,9 +52,9 @@ s32 SaveState_ConfirmAndProcessSelectedSlot(void)
 /* save/state/copy_slot_pair.c */
 extern u8 gSaveBuffer;
 extern u8 MsgNoBackupMemory;
-extern u8 Value_0000000c;
-extern u8 Value_0000000d;
-extern u8 Value_00000019;
+extern u8 MsgLoadFailed;
+extern u8 MsgEraseFailed;
+extern u8 MsgFileCopied;
 
 s32 SaveState_CopySlotPair(void)
 {
@@ -80,21 +80,21 @@ s32 SaveState_CopySlotPair(void)
             upper = (u8 *)lower + 0x1000;
             found |= SaveState_ReadRecordPayload(value + 3, upper);
             if (found != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&Value_0000000c, 1);
+                UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
                 result = -2;
             } else {
                 value = SaveState_FindFreeSummarySlot();
                 if (value == 999) {
-                    UiText_ShowPositionedMessageAndWait((s32)&Value_0000000d, 1);
+                    UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
                     result = -5;
                 } else {
                     found = SaveState_WriteRecord(value, lower);
                     found |= SaveState_WriteRecord(value + 3, upper);
                     if (found != 0) {
-                        UiText_ShowPositionedMessageAndWait((s32)&Value_0000000d, 1);
+                        UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
                         result = -3;
                     } else {
-                        UiText_ShowPositionedMessageAndWait((s32)&Value_00000019, 1);
+                        UiText_ShowPositionedMessageAndWait((s32)&MsgFileCopied, 1);
                     }
                 }
             }
@@ -106,8 +106,8 @@ s32 SaveState_CopySlotPair(void)
 }
 
 /* save/state/delete_selected_slot.c */
-extern u8 Value_00000016;
-extern u8 Value_00000018;
+extern u8 MsgEraseConfirm;
+extern u8 MsgFileErased;
 
 s32 SaveState_DeleteSelectedSlot(void)
 {
@@ -125,7 +125,7 @@ s32 SaveState_DeleteSelectedSlot(void)
         if (value == -1) {
             result = value;
         } else {
-            UiText_OpenMessageWindow((s32)&Value_00000016, 8, 1, 2);
+            UiText_OpenMessageWindow((s32)&MsgEraseConfirm, 8, 1, 2);
             while (UiWork_IsComplete() == 0) {
                 WaitFrames(1);
             }
@@ -136,10 +136,10 @@ s32 SaveState_DeleteSelectedSlot(void)
                 found = SaveState_DeleteRecord(value);
                 found |= SaveState_DeleteRecord(value + 3);
                 if (found != 0) {
-                    UiText_ShowPositionedMessageAndWait((s32)&Value_0000000d, 1);
+                    UiText_ShowPositionedMessageAndWait((s32)&MsgEraseFailed, 1);
                     result = -4;
                 } else {
-                    UiText_ShowPositionedMessageAndWait((s32)&Value_00000018, 1);
+                    UiText_ShowPositionedMessageAndWait((s32)&MsgFileErased, 1);
                 }
             }
         }

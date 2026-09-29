@@ -11,6 +11,7 @@ void UiText_DrawNumberInWindow(s32, s32, s32, s32, s32);
 extern u8 MsgStatusLabel;
 extern u8 MsgClassName;
 extern u8 StatusMenu_LevelLetterString[];
+extern u8 MsgCoins[];
 
 
 /* Draws one character entry into the summary surface: its name, the two-digit
@@ -33,6 +34,6 @@ void StatusMenu_DrawCharacterSummary(s32 surface, u8 *st)
         UiText_DrawStringInWindow(Text_FormatPlayTime(*(s32 *)(st + 32), buf), surface, 48, 40);
         extra = 48;
         UiText_DrawNumberInWindow(*(s32 *)(st + 36), 6, surface, 0, extra);
-        UiText_DrawCharacterAtOffset(0xc88, surface, 48, 48);
+        UiText_DrawCharacterAtOffset((s32)MsgCoins, surface, 48, 48);
     }
 }

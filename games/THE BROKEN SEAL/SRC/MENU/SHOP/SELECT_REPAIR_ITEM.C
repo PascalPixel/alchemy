@@ -16,7 +16,7 @@ void UiMessage_ShowAndWait(s32);
 void Shop_RepairItem(s32, s32);
 
 extern u8 MsgItemPlainName;
-extern u8 Value_00000cc2;
+extern u8 MsgRepairAnythingElse;
 
 /*
  * Repair flow reached from Shop_PickUnit when the shop's party
@@ -119,7 +119,7 @@ done:
             break;
 
         Shop_RepairItem(unit_id, selection);
-        UiMessage_ShowAndWait((s32)&Value_00000cc2);
+        UiMessage_ShowAndWait((s32)&MsgRepairAnythingElse);
         if (Inventory_CountFar(unit_id) == 0)
             break;
     }

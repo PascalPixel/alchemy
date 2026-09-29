@@ -69,3 +69,8 @@ s32 InventoryMenu_ItemNamePageReturnTrue(void)
 {
     return 1;
 }
+
+/* An empty routine after the name page; nothing in the ROM refers to it. */
+void InventoryMenu_ItemNamePageNoOp(void)
+{
+}

@@ -15,7 +15,7 @@ struct MenuResourceList {
     struct MenuResourceNode *head;
 };
 
-extern u8 Data_0000001f;
+extern u8 MsgCommandName;
 void Ui_BuildPairedPatternsToSlot(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, s32 arg4);
 
 void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index)
@@ -29,7 +29,7 @@ void Menu_ReloadNodeResource(struct MenuResourceList *state, u32 index)
         node = node->next;
     }
     if (node->type == 1 || node->type == 6) {
-        u32 first = node->base - (u32)&Data_0000001f;
+        u32 first = node->base - (u32)&MsgCommandName;
 
         value = node->value;
         Ui_BuildPairedPatternsToSlot(first, 0, &value, &output, 1);
@@ -53,7 +53,7 @@ void Menu_LoadSelectionNodeResource(struct MenuResourceList *state, u32 index)
         node = node->next;
     }
     if (node->type == 1 || node->type == 6) {
-        u32 id = node->base - (u32)&Data_0000001f;
+        u32 id = node->base - (u32)&MsgCommandName;
 
         value = node->value;
         Ui_BuildPairedPatternsToSlot(id, 0, &value, &res, 1);

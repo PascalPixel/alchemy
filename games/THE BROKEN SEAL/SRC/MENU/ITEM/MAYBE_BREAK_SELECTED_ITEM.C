@@ -6,6 +6,7 @@
 #include "SOUND_IDS.H"
 #include "SYSTEM.H"
 extern u8 Data_03001f2c[];
+extern u8 MsgItemBroke[];
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
@@ -23,6 +24,6 @@ void ItemMenu_TryBreak(void)
             FIELD(menu, u8 *, 0x21A),
             FIELD(menu, u16 *, 0x174));
         Audio_PlayCue(SOUND_ITEM_BREAK);
-        InventoryMenu_ShowModalMessage(0xB86, 0, -1);
+        InventoryMenu_ShowModalMessage((s32)MsgItemBroke, 0, -1);
     }
 }

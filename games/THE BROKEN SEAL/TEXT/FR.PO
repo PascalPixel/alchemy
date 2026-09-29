@@ -29671,7 +29671,7 @@ msgctxt "message"
 msgid "07415"
 msgstr "Le capitaine est de{line_break}bonne humeur et donc on{line_break}peut visiter le navire.{page_break}Tout se passe bien!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTicketsPlease"
 msgid "07416"
 msgstr "Tickets, s'il vous plaît.{line_break}Veuillez montrer vos{line_break}tickets.{end_wait}"
 
@@ -29711,7 +29711,7 @@ msgctxt "message"
 msgid "07425"
 msgstr "Veuillez embarquer et{line_break}vous préparer au départ.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoAshore"
 msgid "07426"
 msgstr "Voulez-vous retourner{line_break}sur terre?{end_now}"
 
@@ -29723,7 +29723,7 @@ msgctxt "message"
 msgid "07428"
 msgstr "Nous allons bientôt{line_break}larguer les amarres.{line_break}Veuillez embarquer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiFinishedOutHereBoardShip"
 msgid "07429"
 msgstr "Quand vous aurez{line_break}fini, n'oubliez pas{line_break}d'embarquer.{end_wait}"
 

@@ -398,7 +398,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012]|font|frames|icons|parts|table)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
+        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012]|font|frames|glyphs|icons|parts|table)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
     )
     .expect("built graphics pattern");
     let scaffolding = path.starts_with("recon/");
@@ -3106,7 +3106,7 @@ mod tests {
     fn asset_sources_may_incbin_only_the_graphics_files_the_build_makes() {
         let sheet = b"BattleFx_Star:\n\t.incbin \"GRAPHICS/FX/STAR.gbapal\"\n\t.incbin \"GRAPHICS/FX/STAR.bitmap.lz\"\n";
         let tiles =
-            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"MAP/M/CELLS.delta1.lz\"\n\t.incbin \"MAP/M/END.bin\"\n\t.incbin \"MAP/M/PATH.table.lz\"\n";
+            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"MAP/M/CELLS.delta1.lz\"\n\t.incbin \"MAP/M/END.bin\"\n\t.incbin \"MAP/M/PATH.table.lz\"\n\t.incbin \"GRAPHICS/FX/FONT.glyphs\"\n";
         for path in [
             "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S",
             "games/THE LOST AGE/SRC/BATTLE/EFFECT/STAR.S",

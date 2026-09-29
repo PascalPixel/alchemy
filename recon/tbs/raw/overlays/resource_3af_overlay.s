@@ -3534,6 +3534,8 @@ FuneKanpan_CrewScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global FuneKanpan_CrewScriptB
+FuneKanpan_CrewScriptB:
 	.4byte 0xffff00bd
 	.4byte 0x00000007
 	.4byte 0x00000000
@@ -3558,8 +3560,8 @@ FuneKanpan_CrewScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global FuneKanpan_CrewScriptB
-FuneKanpan_CrewScriptB:
+	.global FuneKanpan_CrewScriptC
+FuneKanpan_CrewScriptC:
 	.4byte 0xffff00c4
 	.4byte 0x00000007
 	.4byte 0x00000000
@@ -3614,8 +3616,8 @@ FuneKanpan_CrewScriptB:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global FuneKanpan_CrewScriptC
-FuneKanpan_CrewScriptC:
+	.global FuneKanpan_CrewScriptD
+FuneKanpan_CrewScriptD:
 	.4byte 0xffff00bd
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -3670,8 +3672,8 @@ FuneKanpan_CrewScriptC:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global FuneKanpan_CrewScriptD
-FuneKanpan_CrewScriptD:
+	.global FuneKanpan_CrewScriptE
+FuneKanpan_CrewScriptE:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000

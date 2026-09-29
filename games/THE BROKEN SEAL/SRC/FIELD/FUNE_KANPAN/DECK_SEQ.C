@@ -32,7 +32,7 @@
  * exact. No counter type, declaration-order or fixed-register changes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
-extern u8 FuneKanpan_CrewScriptC[];
+extern u8 FuneKanpan_CrewScriptD[];
 extern u8 MsgFuneArrgh[];
 extern u8 FuneKanpan_CrewScript[];
 
@@ -102,7 +102,7 @@ void FieldScene_RunActorSequence(void)
     ObjectDispatch_SetSingleChildField26Far(record, 0);
     Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScript);
     Engine_TaskWait(1);
-    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptC);
+    Call1(Event_CallWithLastActiveObjectId, (u32)FuneKanpan_CrewScriptD);
     Engine_TaskWait(1);
     Call3(Engine_ActorSetPosition, 22, 0xb00000, 0x2b80000);
     record = Engine_ActorGet(22);

@@ -1,17 +1,10 @@
-/* resource_396 0x02009244..0x02009424 ToretoPalette_ApplyTint (480 bytes with
- * pool), formerly FIELD/TORETO_HEYA/TINT.C; the listing keeps the rows.
- * Compiles exactly. Remaining difference: its divisions by 3 and 5 call
- * the compiler's __divsi3, a name the publication gate keeps out of game
- * source, while the overlay's divider veneer is Engine_MathDivide. Spelled
- * as explicit Engine_MathDivide calls (plain, const-attributed, and with
- * the halving split around the call) the schedule differs: the libcall
- * lets GCC place the halves on either side of each call. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 
-/* FAKEMATCH: array view of distinct linker-adjacent pointer cells preserves
- * the shared address base; it does not establish one source array. */
-extern u8 *Data_03001ebc[];
+/* FAKEMATCH: reading the event work and the palette work through the
+ * engine's table of work pointers keeps one address base for both cells,
+ * where their own names would each take a pool word. */
+extern u8 *gWork[];
 /* Current entry in the RGB tint list; a red of 99 ends the list. */
 extern s32 ToretoHeya_TintIndex;
 extern s32 ToretoHeya_TintSteps[];
@@ -31,8 +24,8 @@ void ToretoPalette_ApplyTint(void)
     u32 color;
     u8 *event;
 
-    event = Data_03001ebc[0];
-    src = (u16 *)Data_03001ebc[5];
+    event = gWork[0];
+    src = (u16 *)gWork[5];
     if (*(s16 *)(event + 0x17e) != 0)
         return;
     if ((gFrameCount & 31) != 0)

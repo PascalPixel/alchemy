@@ -1,44 +1,16 @@
-/* resource_396 0x02009004..0x02009224 ToretoHeya_EnterRoom (544 bytes with
- * pool), formerly FIELD/TORETO_HEYA/ENTER_ROOM.C; the listing keeps the rows.
- * Compiles exactly with this spelling. Remaining difference: it loads map
- * 0x2d from its literal pool, the shape of a link-time symbol, spelled here
- * as the equate Data_0000002d; it reaches the EWRAM buffer at 0x02001000,
- * which the main image does not name; and the tint callback it installs is
- * ToretoPalette_ApplyTint, still spelled by address. */
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
+#include "HEYA.H"
 #include "IWRAM_CALL.H"
 extern struct MapRenderWork *gMapWork;
 
 void ToretoPalette_CaptureBank(void);
-void ToretoHeya_PlayGesture(s32 gesture);
 void ToretoHeya_ApplyFlaggedMapPatches(void);
 void SceneState_ApplyRectsByFlag844(s32 flag);
 void ToretoHeya_RunLandingDustScene(void);
-void Main_0808a238(s32 map, s32 entrance);
+void Event_SetPairWork1c0(s32 scene, s32 entrance);
 
-/* The game state as halfwords: [225] is the entrance, [250] the leader. */
-extern s16 Data_02000240_t[][1];
-extern s16 *Data_0200add0;
-extern u8 Data_02001000[];
-extern u8 Data_0000002d[];
-
-/* Spelled through these wrappers, the constants go straight into the
- * argument registers instead of a shared pseudo. */
-static __inline__ s32 Value1(s32 (*f)(), s32 a0)
-{
-    return f(a0);
-}
-
-static __inline__ void Call2(void (*f)(), s32 a0, s32 a1)
-{
-    f(a0, a1);
-}
-
-static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
-{
-    f(a0, a1, a2, a3);
-}
+/* FAKEMATCH: the map work and the event work are read as cells of one
+ * pointer array based at gMapWork (the event work is its twentieth), which
+ * keeps one pool address for both. */
 
 /* Enter the room: hide the lamps, drift the camera, set the room flags, and
  * finish the fall from the floor above when entered through entrance 20 to
@@ -54,7 +26,7 @@ s32 ToretoHeya_EnterRoom(void)
     s32 leader;
 
     lamp = Engine_ActorGet(8);
-    Data_0200add0 = (s16 *)Data_02001000;
+    ToretoHeya_PaletteBuffer = (s16 *)gSceneState;
     ToretoPalette_CaptureBank();
     lamp->motion_flags = 0;
     lamp->y.fixed = -0xa0000;
@@ -66,8 +38,8 @@ s32 ToretoHeya_EnterRoom(void)
     }
     Engine_ActorSetChildValue(9, 15);
     ToretoHeya_PlayGesture(0);
-    if (Data_02000240_t[225][0] != 19)
-        Call2(Engine_TaskAddCallback, 0x02009245, 0xc80);
+    if (gGameState.entrance != 19)
+        Call2((void (*)())Engine_TaskAddCallback, (s32)ToretoPalette_ApplyTint, 0xc80);
     if (Engine_GameFlagIsSet(0x844)) {
         Engine_ActorSetPosition(9, 0, 0);
         Engine_ActorSetPosition(8, 0, 0);
@@ -88,8 +60,8 @@ s32 ToretoHeya_EnterRoom(void)
     Engine_TaskWait(1);
     SceneState_ApplyRectsByFlag844(0);
     *(s32 *)(globals[19] + 0x1c0) = 0x202;
-    entrance = Data_02000240_t[225][0];
-    leader = *(s32 *)Data_02000240_t[250];
+    entrance = gGameState.entrance;
+    leader = gGameState.selected_actor;
     actor = Engine_ActorGet(leader);
     if (entrance == 50 || entrance == 40 || entrance == 30 || entrance == 20) {
         Engine_EventOpenScreen();
@@ -102,7 +74,7 @@ s32 ToretoHeya_EnterRoom(void)
         *(s32 *)((u8 *)actor + 20) = -0xa00000;
         *(s32 *)((u8 *)actor + 72) = 0x8000;
         Engine_AudioPlayCue(204);
-        Main_0808a238((s32)Data_0000002d, entrance - 10);
+        Event_SetPairWork1c0((s32)&SceneId_ToretoHeya, entrance - 10);
         Engine_EventWait(20);
         actor->unknown_22 = 2;
         Engine_ActorSetSpritePriority(leader, 3);

@@ -10,6 +10,9 @@
 	.thumb_func
 Engine_MathDivide:
 	overlay_veneer IwramSignedDivide
+	.global IwramUnsignedDivideEntry
+	.thumb_func
+IwramUnsignedDivideEntry:
 	overlay_veneer IwramUnsignedDivide
 	.global Engine_TaskWait
 	.thumb_func
@@ -155,6 +158,9 @@ Engine_ActorStartRepeatedMotion:
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_ObjectSetPalette
 	.thumb_func
@@ -204,8 +210,17 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Event_SetPairWork1c0
+	.thumb_func
+Event_SetPairWork1c0:
 	overlay_veneer Event_SetPairWork1c0Far
+	.global BattleFx_SetWeightedResult
+	.thumb_func
+BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
 	.global Engine_LeaderCheckAhead
 	.thumb_func

@@ -10,7 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/DIALOGUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/BLOWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/STATE.o"(.text)
-        "*/resource_3c2_overlay.o"(.text.x02008240)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/PRIMARY_SCRIPT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/RECORDS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/IMPORT.o"(.text)
         "*/resource_3c2_overlay.o"(.rodata)

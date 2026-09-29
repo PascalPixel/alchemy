@@ -1,6 +1,6 @@
 /* 2026-09-29: the menu, key and IWRAM-copier addresses are now gMenuWork,
  * gKeyState, gKeysRepeat and Iwram_CopyWords; alchemy permute (--function
- * Func_080a5388) scores 1260, from 1320. Eight minutes of permutation from
+ * Unnamed_080a5388) scores 1260, from 1320. Eight minutes of permutation from
  * 1320 found nothing lower. */
 /* NONMATCHING: the preview takes the owner again as its fourth argument,
  * and the first leave-menu flag exits to done, not cancel. Both are fixed.
@@ -47,7 +47,7 @@ s32 Math_Mod(s32 numerator, s32 denominator);
 void Owner_RecalculateStatsFar(s32 owner);
 void Func_080772c0(s32 owner);
 
-s32 Func_080a5388(void)
+s32 Unnamed_080a5388(void)
 {
     s32 selection = 0;
     s32 changed = 1;

@@ -72,10 +72,10 @@ struct UiDisplay {
     struct UiCursorOffset *offset;
 };
 
-extern u32 Data_03001e40;
-extern struct UiDisplay *Data_03001ee4;
-extern volatile u32 Data_03001ae8;
-extern volatile u32 Data_03001c94;
+extern u32 gFrameCount;
+extern struct UiDisplay *gBattleDisplayWork;
+extern volatile u32 gKeysHeld;
+extern volatile u32 gKeyState;
 s32 UiWork_IsCompleteFar(void);
 s32 Resource_LoadIntoFreeSlot(s32 kind);
 void QueueIoWriteDelay10(s32 reg, s32 value);
@@ -104,9 +104,9 @@ s32 BattlePresentation_WaitForAdvance(void)
     slot = Resource_LoadIntoFreeSlot(128);
     frame = 0;
 loop:
-    src = ((Data_03001e40 >> 2) & 7) * 128 + 0x080c3734;
-    origin = Data_03001ee4->origin;
-    offset = Data_03001ee4->offset;
+    src = ((gFrameCount >> 2) & 7) * 128 + 0x080c3734;
+    origin = gBattleDisplayWork->origin;
+    offset = gBattleDisplayWork->offset;
     QueueIoWriteDelay10(0x0400004a, 4);
     QueueIoWriteDelay6(0x0400004a, 16);
     ((struct Io *)0x04000052)->a = 16;
@@ -115,9 +115,9 @@ loop:
     spr->oam.attr.tile = Resource_GetBuffer(slot, src);
     offset_x = offset->x >> 8;
     spr->oam.attr.x = origin->col * 8 + offset_x + 4;
-    spr->oam.attr.y = Trig_Sin(Data_03001e40 << 12) / 32768 + origin->row * 8 + (offset->y >> 8) + 6;
+    spr->oam.attr.y = Trig_Sin(gFrameCount << 12) / 32768 + origin->row * 8 + (offset->y >> 8) + 6;
     Runtime_PushSlotEntry(spr, 240);
-    if (!(Data_03001ae8 & 2) && !(Data_03001c94 & 0x303) && (frame <= 15 || !(Data_03001ae8 & 0x303))) {
+    if (!(gKeysHeld & 2) && !(gKeyState & 0x303) && (frame <= 15 || !(gKeysHeld & 0x303))) {
         WaitFrames(1);
         frame++;
         goto loop;

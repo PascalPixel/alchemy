@@ -14,8 +14,8 @@
 extern u8 gKeysRepeat[];
 extern u8 gWindowWork[];
 
-void Func_08015020(s32, u16 *);
-void Func_08015000(void);
+void Ui_AdjustValueWithoutLimitFar(s32, u16 *);
+void FarCall_WindowTable(void);
 void UiWork_ClearValueNameTablesFar(void);
 void UiText_DrawQuantity(s32, s32);
 s32 UiWork_Create(s32, s32, s32, s32);
@@ -34,9 +34,9 @@ struct DebugMessageWork {
     u8 mode;
 };
 
-extern struct DebugMessageWork Data_02000240;
+extern struct DebugMessageWork gGameState;
 
-void Func_080b5534(void)
+void Unnamed_080b5534(void)
 {
     u16 text[64];
     u8 *name;
@@ -51,7 +51,7 @@ void Func_080b5534(void)
 
     state = 0;
     name = Runtime_GetObject(0);
-    Func_08015020(0x903, text);
+    Ui_AdjustValueWithoutLimitFar(0x903, text);
     ch = text[state];
     name[0] = (u8)ch;
     i = 0;
@@ -70,11 +70,11 @@ void Func_080b5534(void)
     }
     name[14] = 0;
 
-    Func_08015000();
+    FarCall_WindowTable();
     Audio_PlayCue(71);
     cursor = 0;
     *(volatile u16 *)0x04000000 = (u32)&Value_00001341;
-    flag_ptr = &Data_02000240.mode;
+    flag_ptr = &gGameState.mode;
     flag_val = 2;
 
 next_message:

@@ -96,7 +96,7 @@ void Local_02000c8c(void)
     struct FieldActor *leader;
     s32 side;
 
-    camera = Data_03001e70;
+    camera = gMapWork;
     leader = Engine_ActorGet(0);
     if (leader->z.fixed < 0xb30000) {
         Call3((void (*)())Engine_ActorWalkToAndWait, 0, 0x23f, 132);

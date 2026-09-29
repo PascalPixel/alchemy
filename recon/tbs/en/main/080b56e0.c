@@ -25,12 +25,12 @@ extern u8 gKeysRepeat[];
  * games/THE BROKEN SEAL/src/shop/sel/use.c (a fresh dereference per `if`,
  * not a cached local): Right/Left adjust val1 by +-1, Up/Down adjust it
  * by +-10, R/L adjust val2 by +-1, and A breaks out. While waiting for
- * A, Start calls Func_080b5534 and Select calls the already-adopted
+ * A, Start calls Unnamed_080b5534 and Select calls the already-adopted
  * Battle_ReservedNoOp2A08 (games/THE BROKEN SEAL/src/battle/runtime/
  * reserved_no_op_a.c); B (or the sticky `held` flag it sets) writes 5 to
  * *(u8*)0x0200046b every pass once triggered once. When val2 changes,
- * Func_08077098 (a plain far-call veneer, see recon/tbs/raw/
- * 08077098.s) and Func_080b5368(val2) run once.
+ * GameState_InitDefaultsFar (a plain far-call veneer, see recon/tbs/raw/
+ * 08077098.s) and DebugParty_LoadPreset(val2) run once.
  *
  * The unusual `(u16 *)(0x0200046b - 85)` pointer is deliberate: the
  * reference computes it at runtime from the same r9=0x0200046b constant
@@ -45,8 +45,8 @@ extern void Ui_LoadWindowGraphics(void);
 extern void Bg0_ClearTilemap(void);
 extern void Runtime_InitializeHeap(void);
 extern void GameFlag_SetBitFar(s32);
-extern void Func_080770d0(s32);
-extern void Func_080b5534(void);
+extern void GameFlag_ClearBitFar(s32);
+extern void Unnamed_080b5534(void);
 extern s32 DebugParty_LoadPreset(s32);
 extern void Battle_RunEncounter(s32);
 
@@ -56,7 +56,7 @@ void Scheduler_ResetTaskTable(void);
 void Battle_ReservedNoOp2A08(void);
 void BattleUnit_Recalculate(s32);
 
-void Func_080b56e0(void)
+void Unnamed_080b56e0(void)
 {
     s32 held;
     s32 val1;
@@ -84,13 +84,13 @@ void Func_080b56e0(void)
         }
 
         prev2 = -1;
-        Func_080770d0(362);
+        GameFlag_ClearBitFar(362);
         bytePtr = (u8 *)0x0200046b;
         halfPtr = (u16 *)(bytePtr - 85);
         val2 = 0;
 
         for (;;) {
-            Func_080770d0(32);
+            GameFlag_ClearBitFar(32);
             WaitFrames(1);
 
             for (;;) {
@@ -109,7 +109,7 @@ void Func_080b56e0(void)
                 if ((*(volatile u32 *)gKeysRepeat & 1) != 0)
                     break;
                 if ((*(volatile u32 *)gKeysRepeat & 8) != 0)
-                    Func_080b5534();
+                    Unnamed_080b5534();
                 if ((*(volatile u32 *)gKeysRepeat & 4) != 0)
                     Battle_ReservedNoOp2A08();
                 if ((*(volatile u32 *)gKeysRepeat & 2) != 0 || held != 0) {

@@ -76,7 +76,7 @@ struct RuntimeCells {
     DrawRectangle draw_rectangle;
 };
 
-extern struct RuntimeCells Data_03001eec;
+extern struct RuntimeCells gBattleFxWork;
 extern u8 Data_00000073[];
 extern u8 Data_00000079[];
 extern u16 ParticleStreams_CellOffsets[];
@@ -119,7 +119,7 @@ void Unnamed_080d1350(struct BattleEffectArgument *argument)
     struct BattleEffectArgument **argument_cell;
     void **cell_cursor;
 
-    cells = &Data_03001eec;
+    cells = &gBattleFxWork;
     cell_cursor = (void **)cells;
     runtime = *cell_cursor++;
     draw_destination = *cell_cursor;

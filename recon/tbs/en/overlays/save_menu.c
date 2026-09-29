@@ -88,7 +88,7 @@
  * Score with --unit retained-save-menu: scoring the owner alone selects
  * the stale legacy 2368-byte draft. No serial or pool variants reopened.
  * Cleanup H2 restores pre-H1 flow and transfers the exact workspace/flag
- * menu volatile Data_03001c94 interface for password input, plus the
+ * menu volatile gKeyState interface for password input, plus the
  * void UiWork_Finalize(window, mode) interface from SELECT_RESOURCE_LAYOUT.
  * Own veneers 08015018 -> 08016418 and 08015060 -> 08016478 establish the
  * finalize/redraw bindings. Both password exits now use one declaration
@@ -111,11 +111,11 @@ extern u8 MsgClearPasswordLabel[];
 extern u8 MsgClearSaveLabel[];
 
 
-extern volatile u32 Data_03001c94;
+extern volatile u32 gKeyState;
 void Engine_UiWorkFinalize(s32 window, s32 mode);
 void Engine_RenderOutputPrepareForRedraw(s32 window);
 
-extern u8 Data_02000000[];
+extern u8 gSaveBuffer[];
 /* The menu consumes the saved-location fields and the same record's header
  * words and bytes. FIELD_EVENT.H owns the shared location layout; names for
  * the remaining bytes stay neutral until their consumers prove a meaning. */
@@ -140,7 +140,7 @@ LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value205, struct SaveMenuRecord, value_205, 0
 LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value20f, struct SaveMenuRecord, value_20f, 0x20f);
 LAYOUT_OFFSET_GUARD(SaveMenuRecord_Value22a, struct SaveMenuRecord, value_22a, 0x22a);
 
-extern union SaveMenuState Data_02000240;
+extern union SaveMenuState gGameState;
 extern u8 Data_02001100[];
 struct SaveLinkGreeting {
     u16 code[4];
@@ -149,8 +149,8 @@ struct SaveLinkGreeting {
 
 
 extern struct SaveLinkGreeting Data_02002224;
-extern struct SaveLinkGreeting Data_02002024[4];
-extern u8 Data_03001ebc[];
+extern struct SaveLinkGreeting gLinkPeerSignatures[4];
+extern u8 gEventWork[];
 void Func_02000438();
 s32 Func_0200096c();
 s32 Func_020009e0();
@@ -349,10 +349,10 @@ s32 SaveMenu_Run(void)
     started = 0;
     Func_02000438();
     Value2(Func_0200171a, 0x20081fd, 0xc80);
-    *(s32 *)((*(u8 **)Data_03001ebc + 0x1c0)) = started;
+    *(s32 *)((*(u8 **)gEventWork + 0x1c0)) = started;
     Func_020094ac();
     Func_020018c0();
-    if (Data_02000240.location.entrance == 2) {
+    if (gGameState.location.entrance == 2) {
         do {
             Func_020017b2((s32)MsgSaveAdventureQuestion, 5);
             rec = Value1(Func_020094c4, 1);
@@ -361,8 +361,8 @@ s32 SaveMenu_Run(void)
                 break;
             }
             Func_020017ca(((s32)MsgSaveAdventureQuestion + 1), 1);
-            base3_2000240 = (s32)&Data_02000240;
-            Data_02000240.record.value_20f = 1;
+            base3_2000240 = (s32)&gGameState;
+            gGameState.record.value_20f = 1;
             rec = Func_02001830();
             v5 = 0x7;
             v7 = rec;
@@ -388,8 +388,8 @@ s32 SaveMenu_Run(void)
         v6 = Value0(Func_020018b6);
         if (v6 < 0) {
             if (*(u8 *)0x03001f54 != 0) {
-                base3_2000240 = (s32)&Data_02000240;
-                Data_02000240.record.value_22a = 1;
+                base3_2000240 = (s32)&gGameState;
+                gGameState.record.value_22a = 1;
                 *(u8 *)0x03001d08 = 1;
                 Func_020093dc((s32)MsgNoBackupMemory, 1, 8);
             }
@@ -411,9 +411,9 @@ s32 SaveMenu_Run(void)
             goto L_0200057a;
         }
         Func_02001956();
-        base3_2000240 = (s32)&Data_02000240;
-        base2_2000240 = (s32)&Data_02000240;
-        Func_02001938(Data_02000240.record.value_205, Data_02000240.record.value_206);
+        base3_2000240 = (s32)&gGameState;
+        base2_2000240 = (s32)&gGameState;
+        Func_02001938(gGameState.record.value_205, gGameState.record.value_206);
         v7 = 0;
         v5 = 1;
         L_02000522:;
@@ -437,11 +437,11 @@ s32 SaveMenu_Run(void)
         goto L_02000522;
     }
     Func_020019dc();
-    Data_02000240.location.scene = 0x8;
+    gGameState.location.scene = 0x8;
     {
         s32 shown = 20;
 
-        Data_02000240.location.entrance = shown;
+        gGameState.location.entrance = shown;
     }
     goto L_02000c96;
     L_0200057a:;
@@ -452,28 +452,28 @@ s32 SaveMenu_Run(void)
             goto L_020004a8;
         }
         Call1(Func_020019f0, 0x109);
-        base5_2000240 = (s32)&Data_02000240;
+        base5_2000240 = (s32)&gGameState;
         v5 = base5_2000240;
         v5 = base5_2000240;
-        base3_2000240 = (s32)&Data_02000240;
-        base3_2000240 = (s32)&Data_02000240;
-        Func_020019c2(Data_02000240.record.value_205, Data_02000240.record.value_206);
+        base3_2000240 = (s32)&gGameState;
+        base3_2000240 = (s32)&gGameState;
+        Func_020019c2(gGameState.record.value_205, gGameState.record.value_206);
         record = Func_02001a2e();
-        if (Data_02000240.record.word_00 != record) {
-            Data_02000240.location.scene = Data_02000240.location.saved_scene;
-            Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
+        if (gGameState.record.word_00 != record) {
+            gGameState.location.scene = gGameState.location.saved_scene;
+            gGameState.location.entrance = gGameState.location.saved_entrance;
             Call1(Func_02001a38, 0x109);
         } else {
             if ((*(s32 *)0x03001ae8 & 0x208) == 0x208) {
                 if (Value0(Func_0200096c) != 0) {
                     goto L_02000664;
                 }
-                Data_02000240.location.scene = Data_02000240.location.saved_scene;
-                Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
+                gGameState.location.scene = gGameState.location.saved_scene;
+                gGameState.location.entrance = gGameState.location.saved_entrance;
                 Func_02009464(0x109);
                 Func_0200945c(0x13e);
             } else {
-                if (Data_02000240.record.word_04 != *(s32 *)Data_02001100) {
+                if (gGameState.record.word_04 != *(s32 *)Data_02001100) {
                     Value2(Func_020019ca, (s32)MsgSaveDataCorrupted, 9);
                     Func_020019d2(((s32)MsgSaveDataCorrupted + 1), 13);
                     if (Value4(Func_02001a6e, 1, 0, 0, 0) != 0) {
@@ -486,8 +486,8 @@ s32 SaveMenu_Run(void)
                         Func_020019fc(0x6, 9);
                         goto L_020004a8;
                     }
-                    Data_02000240.location.scene = Data_02000240.location.saved_scene;
-                    Data_02000240.location.entrance = Data_02000240.location.saved_entrance;
+                    gGameState.location.scene = gGameState.location.saved_scene;
+                    gGameState.location.entrance = gGameState.location.saved_entrance;
                     Call1(Func_02001af2, 0x109);
                     Call1(Func_02001af0, 0x13f);
                 }
@@ -512,7 +512,7 @@ s32 SaveMenu_Run(void)
         v5 = 0x2000240;
         v5 = 0x2000240;
         v5 = 0x2000240;
-        Data_02000240.location.selected_actor = 0;
+        gGameState.location.selected_actor = 0;
         if (Value1(Func_02001b8e, 0x952) != 0) {
             Func_0200948c();
             Func_02009474(0);
@@ -524,9 +524,9 @@ s32 SaveMenu_Run(void)
             Func_02001bd8(2);
             Func_02001bde(3);
         }
-        base3_2000240 = (s32)&Data_02000240;
-        base3_2000240 = (s32)&Data_02000240;
-        Func_02001b9e(Data_02000240.record.value_205, Data_02000240.record.value_206);
+        base3_2000240 = (s32)&gGameState;
+        base3_2000240 = (s32)&gGameState;
+        Func_02001b9e(gGameState.record.value_205, gGameState.record.value_206);
         Call1(Func_02001bec, 0x109);
         Func_02009464(0x106);
         Func_0200945c(0x17e);
@@ -550,9 +550,9 @@ s32 SaveMenu_Run(void)
             if (v6 == -1) {
                 goto L_020004a8;
             }
-            base3_2000240 = (s32)&Data_02000240;
-            base2_2000240 = (s32)&Data_02000240;
-            Func_02001bf6(Data_02000240.record.value_205, Data_02000240.record.value_206);
+            base3_2000240 = (s32)&gGameState;
+            base2_2000240 = (s32)&gGameState;
+            Func_02001bf6(gGameState.record.value_205, gGameState.record.value_206);
             L_020007dc:;
             v6 = Func_02001bb4(0);
 
@@ -576,7 +576,7 @@ s32 SaveMenu_Run(void)
         v7 = 0;
         v1 = 0;
         {
-            struct SaveLinkGreeting *greeting = Data_02002024;
+            struct SaveLinkGreeting *greeting = gLinkPeerSignatures;
 
             do {
                 v1 = (v1 + 1);
@@ -591,7 +591,7 @@ s32 SaveMenu_Run(void)
             if ((3 & *(u16 *)0x03001f64) == 3) {
                 u32 control = REG_SIOCNT;
                 u32 peer = ((control << 26) >> 30) ^ 1;
-                u16 *received = Data_02002024[peer].code;
+                u16 *received = gLinkPeerSignatures[peer].code;
 
                 if (received[0] == 85) {
                     if (received[1] == 86) {
@@ -615,7 +615,7 @@ s32 SaveMenu_Run(void)
 
         Call4(Func_02001cb6, (s32)MsgClearSendingData, v6, 0, 4);
         Func_02001c34(10);
-        Value2(Func_02001c94, (s32)Data_02000000, 0x1004);
+        Value2(Func_02001c94, (s32)gSaveBuffer, 0x1004);
         Func_02001c42(10);
         missing_link_frames = 0;
         count = 0;
@@ -701,10 +701,10 @@ s32 SaveMenu_Run(void)
         page = none;
         L_02000aaa:;
         Call1(Func_02001ee2, 0x6002500);
-        if ((Data_03001c94 & 2) != 0) {
+        if ((gKeyState & 2) != 0) {
             goto L_020009a6;
         }
-        if ((Data_03001c94 & 1) != 0) {
+        if ((gKeyState & 1) != 0) {
             page = (page + 1);
             v7 = 1;
             if (page == page_count) {
@@ -712,7 +712,7 @@ s32 SaveMenu_Run(void)
             }
             Func_02001fa2(111);
         } else {
-            if ((Data_03001c94 & 32) != 0) {
+            if ((gKeyState & 32) != 0) {
                 if (page_count <= 1) {
                     goto L_02000b30;
                 }
@@ -720,7 +720,7 @@ s32 SaveMenu_Run(void)
                 rec5 = Func_02001e6e(((page + page_count) - 1), page_count);
             } else {
                 L_02000b30:;
-                if ((Data_03001c94 & 16) == 0) {
+                if ((gKeyState & 16) == 0) {
                     goto L_02000b58;
                 }
                 if (page_count <= 1) {
@@ -811,7 +811,7 @@ s32 SaveMenu_Run(void)
     Call1(Func_02001fb4, 0x12c);
     goto L_020004a8;
     L_02000c96:;
-    *(u16 *)((*(u8 **)Data_03001ebc + 0x170)) = 0x3e7;
+    *(u16 *)((*(u8 **)gEventWork + 0x170)) = 0x3e7;
     Func_0200213c(30);
     Func_0200217a(17);
     Func_02002166();

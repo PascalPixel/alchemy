@@ -32,7 +32,7 @@ struct PlayerTable {
 };
 
 extern struct WorkPointers gWindowWork;
-extern struct PlayerTable Data_02000240;
+extern struct PlayerTable gGameState;
 
 s32 ObjectTable_ReadActiveValue(s32 key);
 u8 *ObjectTable_Get(s32 id);
@@ -103,14 +103,14 @@ s32 UiText_OpenMessageAtObject(u32 arg)
             }
         } else if (id <= 7) {
             speaker = id;
-            object = ObjectTable_Get(Data_02000240.leader);
+            object = ObjectTable_Get(gGameState.leader);
             if (work->view_mode == 3) {
                 Render_ProjectPoint((s32 *)(object + 8), pos);
                 x = pos[0] >> 3;
                 y = pos[1] >> 3;
                 visible = 1;
             } else {
-                visible = Object_GetScreenPosition(Data_02000240.leader, pos) != -1;
+                visible = Object_GetScreenPosition(gGameState.leader, pos) != -1;
                 x = pos[0] >> 3;
                 y = pos[1] >> 3;
             }

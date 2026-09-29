@@ -92,9 +92,9 @@ typedef void (*BlitFn)(void *dst, const void *src, s32 x, s32 y, s32 w, s32 h);
 #define PLOT_AT(off) (*(u8 *)(WORK_PIXELS + (off)) = 2)
 
 void *Runtime_AllocateHeapBlock(s32 id, s32 size);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void WaitFrames(s32 arg0);
-s32 Func_080041d8(s32 entry, s32 arg1);
+s32 Scheduler_AddOrUpdateCallback(s32 entry, s32 arg1);
 void Scheduler_RemoveCallback(s32 entry);
 s32 Random16(void);
 void Func_080b5028(s32 a, s32 b, s32 c, s32 d);
@@ -104,7 +104,7 @@ void Runtime_ApplyValueToWork7818(void);
 void ObjectGroup_TickMemberTimers(void);
 void ObjectGroup_UpdateMembers(s32 set, s32 object, s32 group, s32 slot, s32 value);
 void EffectStep_AdvanceWithGravity2D(void *ent, s32 arg1, s32 arg2);
-void Func_080f9010(s32 id);
+void Audio_PlayCue(s32 id);
 
 /* Only the m2c spellings this draft actually uses. */
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
@@ -248,7 +248,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     Resource_LoadAndDecompress(0x44, work, 1, 1);
     work->transfer_mode = 1;
     work->transfer_value = 0;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 1);
     draw0 = (BlitFn)gWorkSlot[46];
     BattleEffect_LoadWork(0x2F, 7, 7, 3, 2);
@@ -294,17 +294,17 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     *(u16 *)0x04000208 = (u16) ime;
 
     fill((void *)0x050000C0, 0x100, 0x7FFF7FFF);
-    Func_080f9010(0xD4);
+    Audio_PlayCue(0xD4);
     ObjectGroup_UpdateMembers(((struct BattleEffectArgument *)work->effect)->actors[0],
                   7, 3, 0, 0x1E);
 
     frame = 0;
     do {
         if (frame == 2) {
-            Func_080f9010(0xD4);
+            Audio_PlayCue(0xD4);
         }
         if (frame == 3) {
-            Func_080f9010(0xD4);
+            Audio_PlayCue(0xD4);
         }
         if (frame == 0x1C) {
             ObjectGroup_UpdateMembers(
@@ -312,10 +312,10 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
                 -1, 3, -1, 0);
         }
         if (frame == 0x20) {
-            Func_080f9010(0x95);
+            Audio_PlayCue(0x95);
         }
         if (frame == 5) {
-            Func_080f9010(0x91);
+            Audio_PlayCue(0x91);
             gBgScroll[2] = (u16) M2C_FIELD(work, s32 *, 0x77A0);
             BattleBackground_LoadFar(1, M2C_FIELD(sys, u16 *, 0x648), -1);
         }
@@ -562,8 +562,8 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
         frame += 1;
     } while (frame != 0x80);
 
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     Scheduler_RemoveCallback(0x080CD261);
     ObjectGroup_UpdateMembers(((struct BattleEffectArgument *)work->effect)->actors[0],
                   -1, 1, -1, 0);
@@ -584,7 +584,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     }
     *(u16 *)0x04000208 = (u16) ime;
 
-    Func_08002dd8(0x29);
-    Func_08002dd8(0x28);
-    Func_08002dd8(0x27);
+    Runtime_ReleaseHeapBlock(0x29);
+    Runtime_ReleaseHeapBlock(0x28);
+    Runtime_ReleaseHeapBlock(0x27);
 }

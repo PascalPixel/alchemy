@@ -20,10 +20,10 @@
  * cursor/row/column allocation. Three bounded hypotheses; no credit. */
 #include "RENDER_INPUT.H"
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 void UiWindow_ClearTileAttributesInRect(s32 x, s32 y, u32 width, u32 height);
 
-void Func_080164d4(const struct RenderInput *window,
+void UiWindow_ClearInteriorTiles(const struct RenderInput *window,
     u32 left, u32 top, u32 right, u32 bottom)
 {
     u8 *work;
@@ -41,7 +41,7 @@ void Func_080164d4(const struct RenderInput *window,
     y = top >> 3;
     tmp4 = right + 7;
     tmp = (bottom + 7) >> 3;
-    work = Data_03001e8c;
+    work = gWindowWork;
     bottom = tmp;
     x = left >> 3;
     right = tmp4 >> 3;

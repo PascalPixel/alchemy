@@ -88,7 +88,7 @@ struct BoltWork {
 
 #define TRAIL ((struct EffectStep *)0x02010000)
 
-void Func_080d0ee0(struct BattleEffectArgument *efx)
+void Region_080d0ee0(struct BattleEffectArgument *efx)
 {
     s32 out[3];
     s32 base[3];

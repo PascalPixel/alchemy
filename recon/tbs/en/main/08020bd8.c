@@ -19,10 +19,10 @@
 #include "SHOP.H"
 #include "WORKSPACE_OPTIONS.H"
 
-extern u8 *Data_03001e8c;
-extern u32 Data_03001800;
-extern u32 Data_03001b04;
-extern u32 Data_03001c94;
+extern u8 *gWindowWork;
+extern u32 gFrameTick;
+extern u32 gKeysRepeat;
+extern u32 gKeyState;
 extern s8 Data_080371f6[];
 
 u8 *Owner_GetStateFar(s32 owner);
@@ -54,7 +54,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
     u8 text[16];
     u8 *input = text + 1;
     u8 *saved = Owner_GetStateFar(entry);
-    u8 *work = Data_03001e8c;
+    u8 *work = gWindowWork;
     s32 text_dirty = 1;
     s32 cursor_dirty = 1;
     struct RenderInput *window;
@@ -125,7 +125,7 @@ s32 NameEntry_EditOwnerName(s32 entry)
         ShopCursor_AdvanceFar(&cursor);
         ShopCursor_MoveTowardTargetFar(&caret);
         {
-            u32 frame = (Data_03001800 >> 1) & 7;
+            u32 frame = (gFrameTick >> 1) & 7;
             u8 *sprite = (u8 *)caret.output;
             s8 *wave = Data_080371f6;
             u32 x = (*(u16 *)(sprite+6) + wave[frame]) & 511;
@@ -133,31 +133,31 @@ s32 NameEntry_EditOwnerName(s32 entry)
             frame = (frame+5)&7;
             sprite[20] = sprite[8] + ((u8 *)wave)[frame];
         }
-        if(Data_03001b04 & 64) {
+        if(gKeysRepeat & 64) {
             Audio_PlayCue(111); cursor_dirty = 1; row--;
             if(column != 18) { if(row == -1) row = 5; }
             else row = 5 - (row != 3);
         }
-        if(Data_03001b04 & 128) {
+        if(gKeysRepeat & 128) {
             Audio_PlayCue(111); cursor_dirty = 1; row++;
             if(column != 18) { if(row == 6) row = 0; }
             else row = 4 + (row != 6);
         }
-        if(Data_03001b04 & 32) {
+        if(gKeysRepeat & 32) {
             Audio_PlayCue(111); cursor_dirty = 1; column--;
             if(column == -1) { column = 18; if((u32)(row-4)>1) column = 16; }
             else if(column==5 || column==11 || column==17) column--;
         }
-        if(Data_03001b04 & 16) {
+        if(gKeysRepeat & 16) {
             Audio_PlayCue(111); cursor_dirty = 1; column++;
             if(column == 19) column=0;
             else if(column==5 || column==11 || column==17) column++;
             if(column==18 && (u32)(row-4)>1) column=0;
         }
-        if(Data_03001c94 & 8) {
+        if(gKeyState & 8) {
             Audio_PlayCue(111); cursor_dirty=1; column=18; row=5;
         }
-        if(Data_03001b04 & 2) {
+        if(gKeysRepeat & 2) {
             Audio_PlayCue(113);
 remove_character:
             if(length != 0) {
@@ -170,7 +170,7 @@ remove_character:
             result=-1;
             break;
         }
-        if(!(Data_03001b04 & 1)) continue;
+        if(!(gKeysRepeat & 1)) continue;
         Audio_PlayCue(112);
         if(column==18) {
             if(row==5) {

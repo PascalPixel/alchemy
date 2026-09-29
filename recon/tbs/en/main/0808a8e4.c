@@ -37,7 +37,7 @@ struct GameLoopState {
     s16 resume_cue;             /* 0x21e */
 };
 
-extern struct GameLoopState Data_02000240;
+extern struct GameLoopState gGameState;
 
 /* Scene numbers are link-time values. */
 extern u8 Value_00000000;
@@ -65,8 +65,8 @@ void Audio_PlayCueFromEventWork(void);
 void Scene_ResolveInteractionResult(void);
 void Func_0808c4f8(s32 entrance);
 s32 Func_080b50a0(s32 entrance);
-s32 Func_080f4000(s32 entrance);
-s32 Func_080f6000(s32 entrance);
+s32 FarCall_BlankRunTable(s32 entrance);
+s32 FarCall_BlankLoadTable(s32 entrance);
 void Audio_PlayCue(s32 cue);
 
 #define PALETTE_OBJ_1C0 ((void *)0x050001c0)
@@ -91,21 +91,21 @@ void Game_ResetForNewGame(s32 mode)
     table = Field_SceneTable;
     if (gDebugMode) {
         if (mode == 1) {
-            Data_02000240.scene = (s32)&Value_00000005;
-            Data_02000240.entrance = mode;
+            gGameState.scene = (s32)&Value_00000005;
+            gGameState.entrance = mode;
             goto start;
         }
         if (mode == 2) {
-            Data_02000240.scene = (s32)&Value_00000001;
-            Data_02000240.entrance = 1;
+            gGameState.scene = (s32)&Value_00000001;
+            gGameState.entrance = 1;
             goto start;
         }
     }
     GameState_InitDefaultsFar();
-    Data_02000240.scene = (s32)&Value_00000000;
-    Data_02000240.entrance = 2;
+    gGameState.scene = (s32)&Value_00000000;
+    gGameState.entrance = 2;
 start:
-    PaletteGlow_UpdateFar(Data_02000240.glow_205, Data_02000240.glow_206);
+    PaletteGlow_UpdateFar(gGameState.glow_205, gGameState.glow_206);
     Resource_InitializeTable();
     Scheduler_ResetTaskTable();
     Scheduler_ResetTaskTable();
@@ -115,8 +115,8 @@ start:
             GameFlag_ClearBitFar(0x101);
         else
             Audio_PlayCue(0x120);
-        entry = &table[Data_02000240.scene];
-        entrance = Data_02000240.entrance;
+        entry = &table[gGameState.scene];
+        entrance = gGameState.entrance;
         REG_DMA0->control &= 0xc5ff;
         REG_DMA0->control &= 0x7fff;
         REG_DMA0->control;
@@ -126,22 +126,22 @@ start:
         Runtime_InitializeHeap();
         Bg0_ClearTilemap();
         Resource_InitializeTable();
-        if (Data_02000240.scene > 0x1fa) {
-            switch (Data_02000240.scene) {
+        if (gGameState.scene > 0x1fa) {
+            switch (gGameState.scene) {
             case 0x1fb:
                 entrance = 0;
                 break;
             case 0x1fc:
                 saved = Runtime_BumpAllocate(64);
                 Dma_Set(palette, saved, 0x84000010, REG_DMA3);
-                entrance = Func_080f6000(entrance);
+                entrance = FarCall_BlankLoadTable(entrance);
                 Dma_Set(saved, palette, 0x84000010, REG_DMA3);
                 Runtime_BumpFree(saved);
                 break;
             case 0x1fd:
                 saved = Runtime_BumpAllocate(64);
                 Dma_Set(palette, saved, 0x84000010, REG_DMA3);
-                entrance = Func_080f4000(entrance);
+                entrance = FarCall_BlankRunTable(entrance);
                 Dma_Set(saved, palette, 0x84000010, REG_DMA3);
                 Runtime_BumpFree(saved);
                 break;
@@ -152,19 +152,19 @@ start:
             Party_SetReturnPoint(entrance);
             continue;
         }
-        Scene_ResetFlagsOnEnter(Data_02000240.scene, GameFlag_TestFar(0x109));
+        Scene_ResetFlagsOnEnter(gGameState.scene, GameFlag_TestFar(0x109));
         Scene_ResolveInteractionResult();
         if (!GameFlag_TestFar(0x109)) {
             if (GameFlag_TestFar(0x11a) || GameFlag_TestFar(0x11b))
                 GameFlag_ClearBitFar(0x11a);
             else
                 Audio_PlayCueFromEventWork();
-        } else if (Data_02000240.resume_cue != -1) {
-            Audio_PlayCue(Data_02000240.resume_cue);
+        } else if (gGameState.resume_cue != -1) {
+            Audio_PlayCue(gGameState.resume_cue);
         } else {
             Audio_PlayCueFromEventWork();
         }
-        Data_02000240.scene_music = entry->music;
+        gGameState.scene_music = entry->music;
         BattleFx_LoadResourceGroup(0);
         Func_0808c4f8(entrance);
         MapGroupTable_SelectEntry();

@@ -56,10 +56,10 @@ union SummonSprite {
     } attr;
 };
 
-extern struct SummonGlobals Data_03001e8c;
+extern struct SummonGlobals gWindowWork;
 extern struct SummonNavigation *gLinkCountdownWork;
-extern volatile u32 Data_03001c94, Data_03001b04, Data_03001e40;
-extern u8 Data_080310a4[];
+extern volatile u32 gKeyState, gKeysRepeat, gFrameCount;
+extern u8 Resource_FixedBlockBTiles[];
 extern u8 Value_0000053a, Value_00000333, Value_00005001;
 extern u8 Value_0000f301, Value_0000f30b, Value_0000f334, Value_0000f335;
 extern u8 Value_0000fffc;
@@ -108,16 +108,16 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
     s32 id, tile, affordable, cursor_x, cursor_y;
     s32 pressed, repeated, result;
 
-    render = Data_03001e8c.render;
+    render = gWindowWork.render;
     drawn_row = -1;
     drawn_page = -1;
     cursor_handle = (s16)Resource_LoadIntoFreeSlot(128);
     description = UiWindow_Create(0, 4, 30, 4, 42);
     counts = UiWindow_Create(20, 8, 10, 3, 6);
     mask = 0;
-    page = Data_03001e8c.navigation->page;
-    row = Data_03001e8c.navigation->row;
-    preferred = Data_03001e8c.navigation->preferred_row;
+    page = gWindowWork.navigation->page;
+    row = gWindowWork.navigation->row;
+    preferred = gWindowWork.navigation->preferred_row;
     window = UiWindow_Create(13, 11, 17, 9, 6);
     {
         s32 index;
@@ -291,11 +291,11 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         cursor_y = (row * 2 + window->y) * 8 + 20;
         cursor.word.attr01 = 0x40000000;
         cursor.word.attr23 = 0;
-        cursor.attr.tile = Resource_GetBuffer((u16)cursor_handle, Data_080310a4);
-        cursor.attr.x = cursor_x + ((Data_03001e40 & 4) >> 1) + (s32)&Value_0000fffc;
-        cursor.attr.y = cursor_y - ((Data_03001e40 & 4) >> 2) + 248;
+        cursor.attr.tile = Resource_GetBuffer((u16)cursor_handle, Resource_FixedBlockBTiles);
+        cursor.attr.x = cursor_x + ((gFrameCount & 4) >> 1) + (s32)&Value_0000fffc;
+        cursor.attr.y = cursor_y - ((gFrameCount & 4) >> 2) + 248;
         Runtime_PushSlotEntry(&cursor, 242);
-        affordable = Data_03001e40 & 8;
+        affordable = gFrameCount & 8;
         {
             s32 element;
 
@@ -312,7 +312,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
 
                 for (index = 0; index < (count + 3) / 4; index++) {
                     tile = index + (s32)&Value_0000f301;
-                    if ((Data_03001e40 & 15) <= 11 && index == page / 4)
+                    if ((gFrameCount & 15) <= 11 && index == page / 4)
                         tile = index + (s32)&Value_0000f30b;
                     UiWindow_SetTilemapEntry(window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
                 }
@@ -325,8 +325,8 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
         nav->page = page;
         nav->row = row;
         nav->preferred_row = preferred;
-        pressed = Data_03001c94;
-        repeated = Data_03001b04;
+        pressed = gKeyState;
+        repeated = gKeysRepeat;
         if (nav->automatic != 0) {
             repeated = 0;
             pressed = 0;

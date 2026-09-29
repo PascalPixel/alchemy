@@ -6,7 +6,7 @@
  * remove_slot_node.c, consume_slot_bytes.c, copy_buffered_bytes.c).
  *
  * The work block lives at 0x02010000 and is published through the pointer
- * cell Data_02004c00, exactly the block the four siblings already index.
+ * cell Flash_Handler3, exactly the block the four siblings already index.
  * Offsets recovered from the literal pools of recon/tbs/raw/080f7f78.s and
  * cross-checked against consume_slot_bytes.c:
  *
@@ -90,7 +90,7 @@ struct AudioPackWork {
 /* The owner register carries no name for this address yet, so the readable
    name is bound to the Func_<address> compatibility alias here. */
 
-extern struct AudioPackWork *Data_02004c00;
+extern struct AudioPackWork *Flash_Handler3;
 
 void AudioTrack_ResetSlotBuckets(void);
 void AudioTrack_ConsumeSlotBytes(s32 start, s32 count, const u8 *input);
@@ -111,11 +111,11 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
     s32 dist;
     s32 len;
 
-    Data_02004c00->match_len = 1;
-    if (Data_02004c00->val[start] == -1) {
+    Flash_Handler3->match_len = 1;
+    if (Flash_Handler3->val[start] == -1) {
         return;
     }
-    node = Data_02004c00->bucket[Data_02004c00->val[start]];
+    node = Flash_Handler3->bucket[Flash_Handler3->val[start]];
     if (start + (MATCH_MAX + 1) > WINDOW_MASK) {
         /* The forward run can wrap the ring, so both sides need masking. */
         while (node != NULL) {
@@ -124,13 +124,13 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
             if ((u32)(dist - 1) <= (u32)(DIST_MAX - 1)) {
                 len = 1;
                 while (len <= MATCH_MAX
-                       && Data_02004c00->val[(start + len) & WINDOW_MASK]
-                          == Data_02004c00->val[(cand + len) & WINDOW_MASK]) {
+                       && Flash_Handler3->val[(start + len) & WINDOW_MASK]
+                          == Flash_Handler3->val[(cand + len) & WINDOW_MASK]) {
                     len++;
                 }
-                if (Data_02004c00->match_len < len) {
-                    Data_02004c00->match_ofs = dist;
-                    Data_02004c00->match_len = len;
+                if (Flash_Handler3->match_len < len) {
+                    Flash_Handler3->match_ofs = dist;
+                    Flash_Handler3->match_len = len;
                     if (len == MATCH_MAX + 1) {
                         return;
                     }
@@ -146,13 +146,13 @@ static __inline__ void AudioTrack_FindWindowMatch(s32 start)
             if ((u32)(dist - 1) <= (u32)(DIST_MAX - 1)) {
                 len = 1;
                 while (len <= MATCH_MAX
-                       && Data_02004c00->val[start + len]
-                          == Data_02004c00->val[(cand + len) & WINDOW_MASK]) {
+                       && Flash_Handler3->val[start + len]
+                          == Flash_Handler3->val[(cand + len) & WINDOW_MASK]) {
                     len++;
                 }
-                if (Data_02004c00->match_len < len) {
-                    Data_02004c00->match_ofs = dist;
-                    Data_02004c00->match_len = len;
+                if (Flash_Handler3->match_len < len) {
+                    Flash_Handler3->match_ofs = dist;
+                    Flash_Handler3->match_len = len;
                     if (len == MATCH_MAX + 1) {
                         return;
                     }
@@ -177,103 +177,103 @@ s32 AudioTrack_PackStream(const u8 *input, u8 *dst, s32 size)
     s16 code;
 
     defer = 0;
-    Data_02004c00 = (struct AudioPackWork *)0x02010000;
+    Flash_Handler3 = (struct AudioPackWork *)0x02010000;
     AudioTrack_ResetSlotBuckets();
-    Data_02004c00->input_limit = size;
-    Data_02004c00->pos = 0;
-    Data_02004c00->input_cursor = 0;
-    Data_02004c00->out_total = 0;
-    Data_02004c00->flag_mask = 0x80;
+    Flash_Handler3->input_limit = size;
+    Flash_Handler3->pos = 0;
+    Flash_Handler3->input_cursor = 0;
+    Flash_Handler3->out_total = 0;
+    Flash_Handler3->flag_mask = 0x80;
     /* The reference reads the low byte of the `defer` slot here, so the
        cleared control byte and the cleared flag share one value. */
-    Data_02004c00->out_buf[0] = (u8)defer;
-    Data_02004c00->out_cnt = 1;
+    Flash_Handler3->out_buf[0] = (u8)defer;
+    Flash_Handler3->out_cnt = 1;
     AudioTrack_ConsumeSlotBytes(0, PRIME_COUNT, input);
 
-    while (Data_02004c00->val[Data_02004c00->pos] != -1) {
-        AudioTrack_FindWindowMatch(Data_02004c00->pos);
+    while (Flash_Handler3->val[Flash_Handler3->pos] != -1) {
+        AudioTrack_FindWindowMatch(Flash_Handler3->pos);
         if (defer == 0) {
-            len = Data_02004c00->match_len;
+            len = Flash_Handler3->match_len;
             if (len > 1) {
                 /* Lazy evaluation: prefer one literal plus the match one slot
                    later when that pair covers at least as much as this match
                    plus whatever follows it. */
-                save_ofs = Data_02004c00->match_ofs;
+                save_ofs = Flash_Handler3->match_ofs;
                 save_len = len;
-                AudioTrack_FindWindowMatch((Data_02004c00->pos + 1) & WINDOW_MASK);
-                ahead = Data_02004c00->match_len;
+                AudioTrack_FindWindowMatch((Flash_Handler3->pos + 1) & WINDOW_MASK);
+                ahead = Flash_Handler3->match_len;
                 if (ahead > 2) {
                     /* The reference forms ahead + 1 and spills it here, before
                        the third search clobbers match_len, so the increment is
                        written on the local rather than at the comparison. */
                     ahead++;
-                    AudioTrack_FindWindowMatch((Data_02004c00->pos + len) & WINDOW_MASK);
-                    if (ahead >= Data_02004c00->match_len + len) {
+                    AudioTrack_FindWindowMatch((Flash_Handler3->pos + len) & WINDOW_MASK);
+                    if (ahead >= Flash_Handler3->match_len + len) {
                         save_len = 1;
                         defer = 1;
                     }
                 }
-                Data_02004c00->match_ofs = save_ofs;
-                Data_02004c00->match_len = save_len;
+                Flash_Handler3->match_ofs = save_ofs;
+                Flash_Handler3->match_len = save_len;
             }
         }
 
-        if (Data_02004c00->match_len > 1) {
+        if (Flash_Handler3->match_len > 1) {
             defer = 0;
-            Data_02004c00->out_buf[0] |= (u8)Data_02004c00->flag_mask;
-            if (Data_02004c00->match_len > 16) {
+            Flash_Handler3->out_buf[0] |= (u8)Flash_Handler3->flag_mask;
+            if (Flash_Handler3->match_len > 16) {
                 /* Extended form: empty length nibble, run length in a third
                    byte. Lengths 17..272 map onto 0..255. */
-                ofs = Data_02004c00->match_ofs;
+                ofs = Flash_Handler3->match_ofs;
                 work = ((ofs << 4) & ~0xfff) | (ofs & 0xff);
                 code = (s16)work;
-                cnt = Data_02004c00->out_cnt;
-                Data_02004c00->out_buf[cnt] = (u8)(code >> 8);
-                Data_02004c00->out_cnt = cnt + 1;
-                Data_02004c00->out_buf[cnt + 1] = (u8)code;
-                Data_02004c00->out_cnt = cnt + 2;
-                Data_02004c00->out_buf[cnt + 2] =
-                    (u8)(Data_02004c00->match_len - 17);
-                Data_02004c00->out_cnt = cnt + 3;
+                cnt = Flash_Handler3->out_cnt;
+                Flash_Handler3->out_buf[cnt] = (u8)(code >> 8);
+                Flash_Handler3->out_cnt = cnt + 1;
+                Flash_Handler3->out_buf[cnt + 1] = (u8)code;
+                Flash_Handler3->out_cnt = cnt + 2;
+                Flash_Handler3->out_buf[cnt + 2] =
+                    (u8)(Flash_Handler3->match_len - 17);
+                Flash_Handler3->out_cnt = cnt + 3;
             } else {
                 /* Short form: lengths 2..16 fit the nibble as length - 1. */
-                ofs = Data_02004c00->match_ofs;
+                ofs = Flash_Handler3->match_ofs;
                 work = ((ofs << 4) & ~0xfff) | (ofs & 0xff)
-                       | (((u32)(Data_02004c00->match_len - 1) << 8) & 0xf00);
+                       | (((u32)(Flash_Handler3->match_len - 1) << 8) & 0xf00);
                 code = (s16)work;
-                cnt = Data_02004c00->out_cnt;
-                Data_02004c00->out_buf[cnt] = (u8)(code >> 8);
-                Data_02004c00->out_cnt = cnt + 1;
-                Data_02004c00->out_buf[cnt + 1] = (u8)code;
-                Data_02004c00->out_cnt = cnt + 2;
+                cnt = Flash_Handler3->out_cnt;
+                Flash_Handler3->out_buf[cnt] = (u8)(code >> 8);
+                Flash_Handler3->out_cnt = cnt + 1;
+                Flash_Handler3->out_buf[cnt + 1] = (u8)code;
+                Flash_Handler3->out_cnt = cnt + 2;
             }
         } else {
-            cnt = Data_02004c00->out_cnt;
-            Data_02004c00->out_buf[cnt] =
-                (u8)Data_02004c00->val[Data_02004c00->pos];
-            Data_02004c00->out_cnt = cnt + 1;
-            Data_02004c00->match_len = 1;
+            cnt = Flash_Handler3->out_cnt;
+            Flash_Handler3->out_buf[cnt] =
+                (u8)Flash_Handler3->val[Flash_Handler3->pos];
+            Flash_Handler3->out_cnt = cnt + 1;
+            Flash_Handler3->match_len = 1;
         }
 
-        AudioTrack_ConsumeSlotBytes(Data_02004c00->pos + PRIME_COUNT,
-                                    Data_02004c00->match_len, input);
-        Data_02004c00->pos =
-            (Data_02004c00->pos + Data_02004c00->match_len) & WINDOW_MASK;
-        Data_02004c00->flag_mask >>= 1;
-        if (Data_02004c00->flag_mask == 0) {
+        AudioTrack_ConsumeSlotBytes(Flash_Handler3->pos + PRIME_COUNT,
+                                    Flash_Handler3->match_len, input);
+        Flash_Handler3->pos =
+            (Flash_Handler3->pos + Flash_Handler3->match_len) & WINDOW_MASK;
+        Flash_Handler3->flag_mask >>= 1;
+        if (Flash_Handler3->flag_mask == 0) {
             AudioTrack_CopyBufferedBytes(dst);
-            Data_02004c00->flag_mask = 0x80;
-            Data_02004c00->out_buf[0] = 0;
-            Data_02004c00->out_cnt = 1;
+            Flash_Handler3->flag_mask = 0x80;
+            Flash_Handler3->out_buf[0] = 0;
+            Flash_Handler3->out_cnt = 1;
         }
     }
 
-    Data_02004c00->out_buf[0] |= (u8)Data_02004c00->flag_mask;
-    cnt = Data_02004c00->out_cnt;
-    Data_02004c00->out_buf[cnt] = 0;
-    Data_02004c00->out_cnt = cnt + 1;
-    Data_02004c00->out_buf[cnt + 1] = 0;
-    Data_02004c00->out_cnt = cnt + 2;
+    Flash_Handler3->out_buf[0] |= (u8)Flash_Handler3->flag_mask;
+    cnt = Flash_Handler3->out_cnt;
+    Flash_Handler3->out_buf[cnt] = 0;
+    Flash_Handler3->out_cnt = cnt + 1;
+    Flash_Handler3->out_buf[cnt + 1] = 0;
+    Flash_Handler3->out_cnt = cnt + 2;
     AudioTrack_CopyBufferedBytes(dst);
-    return Data_02004c00->out_total;
+    return Flash_Handler3->out_total;
 }

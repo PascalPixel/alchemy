@@ -15,20 +15,20 @@
  * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (owner 080ce85c) at
  * structural score 8031/10000, but this owner allocates its own kind-39
  * (work), kind-40 (canvas) and kind-41 (trail_source) heap blocks up front
- * via Func_080048b0 instead of reading pre-existing ones out of the shared
+ * via Runtime_AllocateHeapBlock instead of reading pre-existing ones out of the shared
  * heap-allocation cache, and frees them again (in LIFO order) at the end --
  * see games/THE BROKEN SEAL/src/battle/effects/objects/start_effect_22.c for the
- * Func_080048b0(asset_id, size) signature.
+ * Runtime_AllocateHeapBlock(asset_id, size) signature.
  *
- * Data_03001e50[kind] is that same heap-allocation cache (see the comment
+ * gWorkSlot[kind] is that same heap-allocation cache (see the comment
  * in recon/tbs/en/main/080e7404.c and games/THE BROKEN SEAL/src/battle/effects/
  * puff_arc/run.c); this owner reads it directly at kinds 46 and 47 rather
  * than through a locally-renamed "heap_cache" pointer, since it never reads
  * kinds 39/40/41 back out of it (it made those blocks itself).
  *
- * Field offsets 0x7780/0x7784/0x7824/0x7828 and the Func_080cd594/
- * Resource_LoadAndDecompress/Func_080041d8/Func_08004278/BattleEffect_LoadWork/Func_08002dd8/
- * Func_080cdbc0/Func_080d6888 calling shapes follow the 0x03001eec "battle
+ * Field offsets 0x7780/0x7784/0x7824/0x7828 and the BattleFx_BeginCanvasLayer/
+ * Resource_LoadAndDecompress/Scheduler_AddOrUpdateCallback/Scheduler_RemoveCallback/BattleEffect_LoadWork/Runtime_ReleaseHeapBlock/
+ * BattleFx_EndCanvasLayer/ObjectGroup_UpdateMembers calling shapes follow the 0x03001eec "battle
  * work" subsystem already recovered in
  * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C and
  * recon/tbs/en/main/080d59b0.c.  The fixed 0x02010000 "star" array and
@@ -45,9 +45,9 @@
  * every one of these is loaded from a literal pool rather than an
  * immediate, which an ordinary integer literal cannot produce.
  *
- * Data_080ee058/080ee05c/080ee060 and Data_080ede5c are pre-existing ROM
+ * Data_080ee058/080ee05c/080ee060 and BattleFx6_FlareCells are pre-existing ROM
  * tables already catalogued in games/THE BROKEN SEAL/SRC/BATTLE/DATA/SENTOU_KOUKA_HYOU_A.JSON
- * (hyou_a_030/031/032 and hyou_a_001 respectively); Data_080ede48 in
+ * (hyou_a_030/031/032 and hyou_a_001 respectively); ParticleStreams_CellOffsets in
  * recon/tbs/en/main/080dc1ec.c documents the extern-array convention
  * used for that same asset.
  */
@@ -56,7 +56,7 @@
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern const u8 Data_080ee058[4];
 extern const u8 Data_080ee05c[4];
 extern const u8 Data_080ee060[4];
@@ -72,16 +72,16 @@ void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 u32 Random16(void);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_080f9010(s32 id);
+void Audio_PlayCue(s32 id);
 void EffectPosition_ApplyStepAndYOffset(s32 source, void *screen);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 numerator, s32 denominator);
-void Func_08002dd8(s32 id);
+s32 Math_Mod(s32 numerator, s32 denominator);
+void Runtime_ReleaseHeapBlock(s32 id);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 s32 BattleFx_EndCanvasLayer(void);
@@ -154,11 +154,11 @@ void Func_080cc5d8(void *object)
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
     callback_interval = 0x480;
-    Func_080041d8((void *)0x080CD261, callback_interval);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, callback_interval);
 
     status = BattleEffect_LoadWork(46, 7, 7, 7, 3);
-    rectangle[0] = (DrawRectangleFn)Data_03001e50[46];
-    Func_080f9010(140);
+    rectangle[0] = (DrawRectangleFn)gWorkSlot[46];
+    Audio_PlayCue(140);
 
     for (frame = 0; frame != 56; frame++) {
         EffectPosition_ApplyStepAndYOffset(M2C_FIELD(object, s32 *, 8), screen);
@@ -170,7 +170,7 @@ void Func_080cc5d8(void *object)
         }
 
         if (frame == 26) {
-            Func_080f9010(212);
+            Audio_PlayCue(212);
             ObjectGroup_UpdateMembers(
                 M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
                 7, -1, 0, 20);
@@ -185,7 +185,7 @@ void Func_080cc5d8(void *object)
         }
 
         if ((u32)frame <= 14) {
-            s32 offset = (Func_080022fc(Math_Div(frame, 3), 5)) << 10;
+            s32 offset = (Math_Mod(Math_Div(frame, 3), 5)) << 10;
 
             for (i = 0; i != 4; i++) {
                 s32 x;
@@ -194,9 +194,9 @@ void Func_080cc5d8(void *object)
                 status = BattleEffect_LoadWork(47, 7, 7, Data_080ee060[i] | 3, 2);
                 x = (s8)Data_080ee058[i] + 32;
                 y = (screen[1] + (s8)Data_080ee05c[i]) - 32;
-                rectangle[1] = (DrawRectangleFn)Data_03001e50[47];
+                rectangle[1] = (DrawRectangleFn)gWorkSlot[47];
                 rectangle[1](canvas, (u8 *)work + offset, x, y, 32, 32);
-                Func_08002dd8(47);
+                Runtime_ReleaseHeapBlock(47);
             }
         }
 
@@ -216,7 +216,7 @@ void Func_080cc5d8(void *object)
                         * Trig_Sin(M2C_FIELD(slot, s32 *, 0))) >> 16)
                         + 64;
                     radius_y = ((M2C_FIELD(slot, s32 *, 4)
-                        * Func_0800231c(M2C_FIELD(slot, s32 *, 0))) >> 16)
+                        * Trig_Cos(M2C_FIELD(slot, s32 *, 0))) >> 16)
                         + screen[1];
                     if (half <= 0) {
                         half = 1;
@@ -237,10 +237,10 @@ void Func_080cc5d8(void *object)
         WaitFrames(1);
     }
 
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     Scheduler_RemoveCallback((void *)0x080CD261);
     BattleFx_EndCanvasLayer();
-    Func_08002dd8(41);
-    Func_08002dd8(40);
-    Func_08002dd8(39);
+    Runtime_ReleaseHeapBlock(41);
+    Runtime_ReleaseHeapBlock(40);
+    Runtime_ReleaseHeapBlock(39);
 }

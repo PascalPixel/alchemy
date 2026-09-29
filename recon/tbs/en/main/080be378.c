@@ -16,10 +16,10 @@
 extern s32 Battle_GetTaggedSlotValue(s16 arg0);
 extern void BattleEventRuntime_Reset(void);                 /* BattleEventRuntime_Reset */
 extern void UiWork_ClearValueNameTablesFar(void);
-extern void Func_08015120(s16 value, s16 mode);  /* UiText_DrawQuantity */
+extern void UiWork_PushValueSlotFar(s16 value, s16 mode);  /* UiText_DrawQuantity */
 extern void UiText_ShowMessageAndWaitCoreFar(void *text);           /* UiText_ShowMessageAndWait */
 extern s32 BattleRandom16Far(void);
-extern s32 Func_080771b0(s16 id, s8 a, u8 b);
+extern s32 Djinn_ActivateFar(s16 id, s8 a, u8 b);
 extern void Trade_RemoveOfferFar(s16 id, s8 a, u8 b);
 extern s32 Trade_AddOfferFar(s16 id, s8 a, u8 b);
 extern s32 SummonDefinition_Get(s16 id);
@@ -27,26 +27,26 @@ extern s32 Func_080771e8(s8 a, u8 b);
 extern s32 Func_08077208(s16 id, s8 a, u8 b);
 extern s32 Trade_CanOfferDjinnFar(s16 id, s8 a, u8 b);
 extern void *GetBattleObjectSlot(s16 id);              /* GetBattleObjectSlot */
-extern void Func_08009080(void *obj, s32 mode);  /* Object_SetMode */
+extern void Object_SetMode(void *obj, s32 mode);  /* Object_SetMode */
 extern void ObjectDispatch_ApplyValueToChildrenFar(void *obj, s32 action);/* Object_SetAction */
-extern void Func_080f9010(s32 cue);              /* Audio_PlayCue */
+extern void Audio_PlayCue(s32 cue);              /* Audio_PlayCue */
 extern void BattleEventRuntime_SchedulePhase(s32 phase);            /* BattleEventRuntime_SchedulePhase */
 extern void BattleEventRuntime_WaitForReady(void);                 /* BattleEventRuntime_WaitForReady */
-extern s32 Func_080c1798(s16 id, s8 a, s32 mode, s32 arg3);
+extern s32 BattleFx_PlayUnitElementEffect(s16 id, s8 a, s32 mode, s32 arg3);
 extern void BattlePres_SetActorModes(s32 a, s32 b);
 extern void WaitFrames(s32 frames);           /* WaitFrames */
-extern struct BattleTurnOrder *Data_03001e74;
+extern struct BattleTurnOrder *gBattleWork;
 extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
                                            * truth (this pass) shows it takes
                                            * actor and its r0 return value is
                                            * used directly as abilityId */
-extern s32 Func_08077078(void *actor, s32 flag);
+extern s32 Inventory_GetEquippedItemFar(void *actor, s32 flag);
 extern void BattleEv_SetRuntimeField8(void);
 extern s32 GameFlag_TestFar(s32 flagId);            /* GameFlag_IsSet */
 extern s32 Func_08077170(s16 id);
 extern s32 Battle_GetEntryField2LowBits(u8 value);
 extern s32 Func_080771a0_rng(void);
-extern void Func_080bb65c(void);
+extern void BattlePresentation_WaitForAdvance(void);
 extern void Func_080bf1d4(void); /* unreachable; long-branch veneer target only, never a real call site */
 extern void Math_Div(s32 a, s32 b);         /* FixedPoint_Ratio */
 extern void Func_080772f8(s16 id);
@@ -121,7 +121,7 @@ extern s32 Battle_HitCheck(s16 id, u8 a, u8 b, u8 c, s32 mode);
  * literal pool (0x080bef58/5c/60/7c, all past this region's 608 bytes of
  * code) read the word straight out of roms/tbs-en.gba at (target-0x08000000).
  */
-#define TEXT_TIER5_CUE_MSG      ((void *)0x897)  /* 2199; L_080beb48 Func_080bbabc(4, ...) arg */
+#define TEXT_TIER5_CUE_MSG      ((void *)0x897)  /* 2199; L_080beb48 BattleEv_Push(4, ...) arg */
 #define TEXT_TIER5_BUSY_MSG     ((void *)0x85b)  /* 2139; L_080bec62 tail */
 #define TEXT_TIER6_MSG          ((void *)0x83f)  /* 2111; L_080bec90/tier==6 tail */
 #define TEXT_TIER5_STATUS_MSG   ((void *)0x814)  /* 2068; L_080beea8 status message */
@@ -145,7 +145,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
     s32 lookupResult;
 
 
-    s32 Func_080be18c(s32 id)
+    s32 BattleCommand_SelectTargets(s32 id)
     {
         struct BattleAction *action = BattleAction_Get(id);
         s32 kind = action->target_mode;
@@ -198,7 +198,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
             }
             plan->target_count = count;
             if(count <= 0) {
-                Func_08015120(*(s16 *)req,1);
+                UiWork_PushValueSlotFar(*(s16 *)req,1);
                 UiText_ShowMessageAndWaitCoreFar((void *)0x816);
                 if (*(s8 *)((u8 *)actor+0x12b) == 0) ((u8 *)actor)[0x12b] = 1;
                 return -1;
@@ -207,7 +207,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
     }
 
     actor = Owner_GetStateFar(*(s16 *)(req + 0));
-    battle = Data_03001e74;
+    battle = gBattleWork;
     targetPowerBase = Battle_GetTaggedSlotValue(*(s16 *)(req + 10));
     BattleEventRuntime_Reset();
 
@@ -228,24 +228,24 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
 
     if (((u8 *)actor)[ACTOR_FAINT_FLAG_OFF]) {
         ((u8 *)actor)[ACTOR_FAINT_FLAG_OFF] = 0;
-        Func_08015120(*(s16 *)(req + 0), 1);
+        UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
         UiText_ShowMessageAndWaitCoreFar(ACTOR_FAINT_MSG);
         goto L_080bec8a;
     }
     if (((u8 *)actor)[ACTOR_SILENCE_FLAG_OFF]) {
-        Func_08015120(*(s16 *)(req + 0), 1);
+        UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
         UiText_ShowMessageAndWaitCoreFar(ACTOR_SILENCE_MSG);
         goto L_080bec8a;
     }
     if (((u8 *)actor)[ACTOR_SEAL_FLAG_OFF]) {
-        Func_08015120(*(s16 *)(req + 0), 1);
+        UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
         UiText_ShowMessageAndWaitCoreFar(ACTOR_SEAL_MSG);
         goto L_080bec8a;
     }
     if (((u8 *)actor)[ACTOR_STATUSFLAG_OFF] & 1) {
         if (*(s16 *)(req + 6) != 3) {
             if ((BattleRandom16Far() & 3) == 0) {
-                Func_08015120(*(s16 *)(req + 0), 1);
+                UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
                 UiText_ShowMessageAndWaitCoreFar(ACTOR_STATUSFLAG_MSG);
                 goto L_080bec8a;
             }
@@ -331,10 +331,10 @@ L_080be700:
         if (reqId > 7) {
             UiText_ShowMessageAndWaitCoreFar(TEXT_REQID_HIGH);
         } else {
-            Func_08015120((s16)reqId, 1);
+            UiWork_PushValueSlotFar((s16)reqId, 1);
             UiText_ShowMessageAndWaitCoreFar(TEXT_REQID_LOW);
         }
-        Func_080bb65c();
+        BattlePresentation_WaitForAdvance();
         *(s32 *)(tgt + 84) = 7;
         goto L_080bf1d6_shared;
     }
@@ -345,24 +345,24 @@ L_080be76c:
      * Ground-truth fix (this pass): standalone objdump of
      * recon/tbs/raw/080be76c.s shows `ldr r4,[sp,#12]` (actor) feeding
      * Func_08077160's argument, and its r0 return value moved straight into
-     * fp and used as the Func_080be18c argument -- the prior draft had
+     * fp and used as the BattleCommand_SelectTargets argument -- the prior draft had
      * mislabeled the call argument as req+0 and separately recomputed
      * abilityId from req+0 (a value never actually reloaded on this path).
      */
     abilityId = Func_08077160(actor);
-    lookupResult = Func_080be18c(abilityId);
+    lookupResult = BattleCommand_SelectTargets(abilityId);
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
     }
     if (abilityId == 1) {
         goto L_080bee08;
     }
-    Func_08077078(actor, 1);
-    Func_08015120(*(s16 *)(req + 0), 2);
+    Inventory_GetEquippedItemFar(actor, 1);
+    UiWork_PushValueSlotFar(*(s16 *)(req + 0), 2);
     textPtr = TEXT_TIER0_MSG1;
     UiText_ShowMessageAndWaitCoreFar(textPtr);
     BattleEv_SetRuntimeField8();
-    Func_08015120(abilityId, 4);
+    UiWork_PushValueSlotFar(abilityId, 4);
     textPtr = TEXT_TIER0_MSG2;
     goto L_080be7ca;
 
@@ -370,12 +370,12 @@ L_080be76c:
 L_080be7d0:
     abilityId = *(s16 *)(req + 8);
     abilityData = BattleAction_Get(abilityId);
-    lookupResult = Func_080be18c(abilityId);
+    lookupResult = BattleCommand_SelectTargets(abilityId);
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
     }
-    Func_08015120(*(s16 *)(req + 0), 1);
-    Func_08015120(abilityId, 4);
+    UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
+    UiWork_PushValueSlotFar(abilityId, 4);
     UiText_ShowMessageAndWaitCoreFar(TEXT_TIER1_MSG);
     {
         s32 costOk = 1;
@@ -409,7 +409,7 @@ L_080be888:
     {
         s16 slotIdx = *(s16 *)(req + 8);
         if (slotIdx < 0) {
-            Func_08015120(*(s16 *)(req + 0), 1);
+            UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
             UiText_ShowMessageAndWaitCoreFar(TEXT_TIER2_NOSLOT_MSG);
             goto L_080bec8a;
         }
@@ -438,7 +438,7 @@ L_080be888:
 L_080be8dc:
         req = req; /* r1 = req (already held) */
 L_080be8e0:
-        Func_08015120(*(s16 *)(req + 0), 1);
+        UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
         UiText_ShowMessageAndWaitCoreFar(TEXT_TIER2_NOABILITY_MSG);
         /*
          * Ground-truth fix (this pass): `ldr r4,[sp,#12]` (actor), not
@@ -450,12 +450,12 @@ L_080be8e0:
         }
         goto L_080bec8a;
 L_080be908:
-        lookupResult = Func_080be18c(abilityId);
+        lookupResult = BattleCommand_SelectTargets(abilityId);
         if (lookupResult == -1) {
             goto L_080bf1d6_shared;
         }
-        Func_08015120(*(s16 *)(req + 0), 1);
-        Func_08015120(*(u16 *)((u8 *)actor + 216 + (*(s16 *)(req + 8)) * 2), 2);
+        UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
+        UiWork_PushValueSlotFar(*(u16 *)((u8 *)actor + 216 + (*(s16 *)(req + 8)) * 2), 2);
         {
             u8 kind12 = *((u8 *)abilityData + 12);
             u8 kind2 = *((u8 *)abilityData + 2);
@@ -472,19 +472,19 @@ L_080be908:
 
     /* ---- case tier==3 and tier==7 (shared), address 0x080be96e ---- */
 L_080be96e:
-    Func_08015120(*(s16 *)(req + 0), 1);
+    UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
     UiText_ShowMessageAndWaitCoreFar(TEXT_TIER3_MSG);
     goto L_080bec8a;
 
     /* ---- case tier==4, address 0x080be984 ---- */
 L_080be984:
     abilityId = *(s16 *)(req + 8);
-    lookupResult = Func_080be18c(abilityId);
+    lookupResult = BattleCommand_SelectTargets(abilityId);
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
     }
-    Func_08015120(*(s16 *)(req + 0), 1);
-    Func_08015120(abilityId, 4);
+    UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
+    UiWork_PushValueSlotFar(abilityId, 4);
     abilityData = BattleAction_Get(abilityId);
     if ((*((u8 *)abilityData + 1) & 0x0f) == 6) {
         textPtr = (void *)0x8f1;  /* 2289 */
@@ -575,7 +575,7 @@ L_080beb48:
 
     BattleAction_Get(abilityId);
     BattlePres_SetActorModes(0, 0);
-    Func_080771b0(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
+    Djinn_ActivateFar(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
     Trade_RemoveOfferFar(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
@@ -588,31 +588,31 @@ L_080beb48:
     BattleEv_Push(10, 0);
     BattleEv_Push(4, (s32)TEXT_TIER5_CUE_MSG);
     BattleEv_Push(11, *(s16 *)(req + 0));
-    Func_080f9010(212);
-    Func_08009080(GetBattleObjectSlot(*(s16 *)(req + 0)), 3);
+    Audio_PlayCue(212);
+    Object_SetMode(GetBattleObjectSlot(*(s16 *)(req + 0)), 3);
     ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(*(s16 *)(req + 0)), 32);
-    Func_080c1798(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK, 3, 0);
+    BattleFx_PlayUnitElementEffect(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK, 3, 0);
     BattleEventRuntime_WaitForReady();
     goto L_080bf1d6_shared;
 
 L_080bec62:
-    Func_08015120(*(s16 *)(req + 0), 1);
-    Func_08015120(abilityId, 4);
-    Func_080f9010(114);
+    UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
+    UiWork_PushValueSlotFar(abilityId, 4);
+    Audio_PlayCue(114);
     UiText_ShowMessageAndWaitCoreFar(TEXT_TIER5_BUSY_MSG);
     WaitFrames(60);
     goto L_080bf1d6_shared;
 
 L_080bec90:
-    lookupResult = Func_080be18c(abilityId);
+    lookupResult = BattleCommand_SelectTargets(abilityId);
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
     }
     Trade_AddOfferFar(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
     abilityData = BattleAction_Get(abilityId);
-    Func_08015120(*(s16 *)(req + 0), 1);
-    Func_08015120(abilityId, 4);
+    UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
+    UiWork_PushValueSlotFar(abilityId, 4);
     UiText_ShowMessageAndWaitCoreFar(TEXT_TIER6_MSG);
     *(u32 *)(tgt + 80) = *((u8 *)abilityData + 2);
     goto L_080bee00;
@@ -681,7 +681,7 @@ L_080beea6:
      * subclass 4 converges on; modeled directly above via the
      * per-case assignment before falling into this shared label. */
 L_080beea8:
-    Func_08015120(*(s16 *)(req + 0), 1);
+    UiWork_PushValueSlotFar(*(s16 *)(req + 0), 1);
     UiText_ShowMessageAndWaitCoreFar(TEXT_TIER5_STATUS_MSG);
 
     /*
@@ -727,7 +727,7 @@ L_080befb4_shared:
     {
         s16 impactPower;
         s32 rangeMask;
-        impactPower = *(s16 *)(req + 0); /* placeholder wiring for Func_080772f8/Func_080022ec chain */
+        impactPower = *(s16 *)(req + 0); /* placeholder wiring for Func_080772f8/Math_Div chain */
         Func_080772f8(impactPower);
         Math_Div(200 << 16, 0);
         rangeMask = BattleRandom16Far();

@@ -78,7 +78,7 @@ void Func_02004c68(void)
     s32 speed;
     u16 lower_height;
 
-    layer = &Data_03001e70->layers[2];
+    layer = &gMapWork->layers[2];
     speed = 0x9c28;
     layer->offset_y = 0x4890000;
     layer->speed_y = 0;

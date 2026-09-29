@@ -91,7 +91,7 @@ typedef struct Particle {
     u8 pad14[8];
 } Particle;
 
-void Func_080cb4ec(struct BattleEffectArgument *efx)
+void Unnamed_080cb4ec(struct BattleEffectArgument *efx)
 {
     void **heap_cache;
     void **cursor;

@@ -32,7 +32,7 @@
  * Resource_LoadIntoFreeSlot=080040b4; Resource_GetBuffer=080040d0;
  * Resource_ResetEntry=08003f3c; Runtime_PushSlotEntry=08003dec;
  * QueueIoWriteDelay10=080039fc; QueueIoWriteDelay6=0800393c.
- * Data_03001c94=03001c94; Data_03001e40=03001e40.
+ * gKeyState=03001c94; gFrameCount=03001e40.
  */
 union BattlePromptEntry {
     s32 words[3];
@@ -61,8 +61,8 @@ struct PromptBlendRegister {
     u16 next;
 };
 
-extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001e40;
+extern volatile u32 gKeyState;
+extern volatile u32 gFrameCount;
 
 /* Existing unnamed veneer of Ui_GetTableWordZero; no new address alias. */
 s32 Func_080153f0(s32 index);
@@ -101,11 +101,11 @@ loop:
     *&prompt->words[2] = 0;
     (*prompt).sprite.tile = Resource_GetBuffer(sprite, tiles);
     tmp3 = *tmp;
-    prompt->sprite.x = tmp3 + 0xfffc + ((4 & Data_03001e40) >> 1);
-    tmp2 = pos[1] - ((Data_03001e40 & 4) >> 2) + 248;
+    prompt->sprite.x = tmp3 + 0xfffc + ((4 & gFrameCount) >> 1);
+    tmp2 = pos[1] - ((gFrameCount & 4) >> 2) + 248;
     prompt->sprite.y = tmp2;
     Runtime_PushSlotEntry(prompt->words, 240);
-    if (!((0x303 & Data_03001c94) != 0)) {
+    if (!((0x303 & gKeyState) != 0)) {
         WaitFrames(1);
         goto loop;
     }

@@ -128,24 +128,24 @@ typedef void (*ClearFn)(void *dest, s32 size);
  * Targets with no comment are ones the project has not yet named.
  */
 /* Runtime_ReleaseHeapBlock */
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 /* Scheduler_AddOrUpdateCallback */
 /* Scheduler_RemoveCallback */
 /* random_16 */
-u32 Func_08004458(void);
-void Func_08009080(void *unit, s32 mode);
-void Func_08009088(void *unit, s32 mode);
-s32 Func_080b5070(s32 id);
-void **Func_080b5098(s32 id);
-void Func_080d4604(void *object, s32 mode);
+u32 Random16(void);
+void Object_SetMode(void *unit, s32 mode);
+void ObjectDispatch_ApplyValueToChildrenFar(void *unit, s32 mode);
+s32 Battle_GetObjectTableValueFar(s32 id);
+void **GetBattleObjectSlotFar(s32 id);
+void BattleFx_RunSparkGroups(void *object, s32 mode);
 /* BattleFx_RenderMode5 */
-void Func_080d52a4(void *object);
-void Func_080dea70(void *object, s32 mode);
+void BattleFx_RenderMode5(void *object);
+void BattleFx_RunProjectileVolley(void *object, s32 mode);
 /* load_and_decompress */
 /* apply_step_and_y_offset */
-void Func_080e396c(s32 value, s32 *step);
+void EffectPosition_ApplyStepAndYOffset(s32 value, s32 *step);
 
 /*
  * The four resource identifiers below reach r0 through a pc-relative literal
@@ -212,25 +212,25 @@ void Func_080e4e0c(
         IWRAM_CLEAR((void *)0x06004000, 0x4000);
         IWRAM_CLEAR(canvas, 0x4000);
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 28) = 0;
-        Func_08004278((void *)0x080CD4B5);
-        Func_08004278((void *)0x080CD261);
-        Func_08002dd8(47);
-        Func_08002dd8(46);
-        Func_08009080(unit, 3);
+        Scheduler_RemoveCallback((void *)0x080CD4B5);
+        Scheduler_RemoveCallback((void *)0x080CD261);
+        Runtime_ReleaseHeapBlock(47);
+        Runtime_ReleaseHeapBlock(46);
+        Object_SetMode(unit, 3);
         if (kind == 15) {
-            Func_080dea70(object, 9);
+            BattleFx_RunProjectileVolley(object, 9);
         }
         if (kind == 24) {
-            Func_080d52a4(object);
+            BattleFx_RenderMode5(object);
         }
         if (kind != 26) {
             Func_080e65f8();
         }
-        Func_080dea70(object, 8);
+        BattleFx_RunProjectileVolley(object, 8);
         Func_080e65f8();
     }
 
-    Func_08009088(unit, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(unit, 16);
     M2C_FIELD(unit, s32 *, 36) = field36;
     M2C_FIELD(unit, s32 *, 40) = field40;
     M2C_FIELD(unit, s32 *, 44) = field44;
@@ -241,16 +241,16 @@ void Func_080e4e0c(
         IWRAM_CLEAR((void *)0x06004000, 0x4000);
         IWRAM_CLEAR(canvas, 0x4000);
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 28) = 0;
-        Func_08004278((void *)0x080CD4B5);
-        Func_08004278((void *)0x080CD261);
-        Func_08002dd8(47);
-        Func_08002dd8(46);
+        Scheduler_RemoveCallback((void *)0x080CD4B5);
+        Scheduler_RemoveCallback((void *)0x080CD261);
+        Runtime_ReleaseHeapBlock(47);
+        Runtime_ReleaseHeapBlock(46);
         M2C_FIELD(object, s32 *, 24) = 3;
-        Func_080d4604(object, 2);
+        BattleFx_RunSparkGroups(object, 2);
         Func_080e65f8();
     }
 
-    record = *Func_080b5098(
+    record = *GetBattleObjectSlotFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
 
     out[0] = Math_Div(M2C_FIELD(record, s32 *, 8) - origin[0], 6);
@@ -265,7 +265,7 @@ void Func_080e4e0c(
     }
 
     if (kind != 14) {
-        half = Func_080b5070(
+        half = Battle_GetObjectTableValueFar(
             M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
         half = half / 2;
         cur = (s8 *)work + 0x7080;
@@ -275,17 +275,17 @@ void Func_080e4e0c(
             M2C_FIELD(cur, s32 *, 8) = M2C_FIELD(record, s32 *, 16);
             if (kind == 31) {
                 M2C_FIELD(cur, s32 *, 12) =
-                    ((s32)(Func_08004458() & 255) - 127) << 12;
+                    ((s32)(Random16() & 255) - 127) << 12;
                 M2C_FIELD(cur, s32 *, 16) =
-                    ((s32)(Func_08004458() & 255) - 64) << 10;
+                    ((s32)(Random16() & 255) - 64) << 10;
             } else {
                 M2C_FIELD(cur, s32 *, 12) =
-                    ((s32)(Func_08004458() & 255) - 127) << 12;
+                    ((s32)(Random16() & 255) - 127) << 12;
                 M2C_FIELD(cur, s32 *, 16) =
-                    ((s32)(Func_08004458() & 255) - 64) << 12;
+                    ((s32)(Random16() & 255) - 64) << 12;
             }
             M2C_FIELD(cur, s32 *, 20) =
-                ((s32)(Func_08004458() & 255) - 127) << 12;
+                ((s32)(Random16() & 255) - 127) << 12;
             M2C_FIELD(cur, s32 *, 24) = i / 2 + 32;
             cur = (s8 *)cur + 28;
         }
@@ -317,25 +317,25 @@ void Func_080e4e0c(
             M2C_FIELD(cur, s32 *, 8) = M2C_FIELD(record, s32 *, 16);
             if (kind == 5 || kind == 23) {
                 M2C_FIELD(cur, s32 *, 12) =
-                    ((s32)(Func_08004458() & 255) - 127) << 11;
+                    ((s32)(Random16() & 255) - 127) << 11;
                 M2C_FIELD(cur, s32 *, 16) =
-                    (s32)(Func_08004458() & 255) << 11;
+                    (s32)(Random16() & 255) << 11;
                 M2C_FIELD(cur, s32 *, 20) =
-                    ((s32)(Func_08004458() & 255) - 127) << 11;
+                    ((s32)(Random16() & 255) - 127) << 11;
             } else if (kind == 25) {
                 M2C_FIELD(cur, s32 *, 12) =
-                    ((s32)(Func_08004458() & 255) - 127) << 11;
+                    ((s32)(Random16() & 255) - 127) << 11;
                 M2C_FIELD(cur, s32 *, 16) =
-                    (s32)(Func_08004458() & 127) << 10;
+                    (s32)(Random16() & 127) << 10;
                 M2C_FIELD(cur, s32 *, 20) =
-                    ((s32)(Func_08004458() & 255) - 127) << 11;
+                    ((s32)(Random16() & 255) - 127) << 11;
             } else {
                 M2C_FIELD(cur, s32 *, 12) =
-                    ((s32)(Func_08004458() & 255) - 127) << 10;
+                    ((s32)(Random16() & 255) - 127) << 10;
                 M2C_FIELD(cur, s32 *, 16) =
-                    (s32)(Func_08004458() & 127) << 10;
+                    (s32)(Random16() & 127) << 10;
                 M2C_FIELD(cur, s32 *, 20) =
-                    ((s32)(Func_08004458() & 255) - 127) << 10;
+                    ((s32)(Random16() & 255) - 127) << 10;
             }
             M2C_FIELD(cur, s32 *, 24) = 0;
             cur = (s8 *)cur + 28;
@@ -344,7 +344,7 @@ void Func_080e4e0c(
 
     if (kind - 2 <= 1 || kind == 12 || kind == 22 || kind == 29 ||
         kind == 28) {
-        Func_080041d8((void *)0x080DBB9D, 144 << 3);
+        Scheduler_AddOrUpdateCallback((void *)0x080DBB9D, 144 << 3);
     }
 
     if (kind - 4 <= 2 || kind == 23 || kind == 30 || kind == 27 ||
@@ -376,7 +376,7 @@ void Func_080e4e0c(
         cur = (s8 *)work + 0x6980;
         angle = *frame << 12;
         for (i = 0; i != 160; i++) {
-            M2C_FIELD(cur, s32 *, 0) = (0x40000 - (Func_08002322(angle) << 2))
+            M2C_FIELD(cur, s32 *, 0) = (0x40000 - (Trig_Sin(angle) << 2))
                 >> 10;
             cur = (s8 *)cur + 4;
             angle += 0x800;
@@ -384,7 +384,7 @@ void Func_080e4e0c(
     }
 
     if (*frame <= 2) {
-        Func_080e396c(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8),
+        EffectPosition_ApplyStepAndYOffset(M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8),
             step);
         step[0] = step[0] / 2;
         step[1] += 16;

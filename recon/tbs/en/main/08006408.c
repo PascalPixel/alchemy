@@ -19,7 +19,7 @@
  * SerialRuntime_BeginTransferA does) stops the if-conversion but lets the
  * shared HImode zero take r0 first. */
 
-s32 Func_08006408(s32 value)
+s32 SerialRuntime_BeginTransferB(s32 value)
 {
     volatile s32 *active;
     struct SerialTransferState *state;

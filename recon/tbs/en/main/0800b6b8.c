@@ -39,7 +39,7 @@ struct BufferControl {
     struct BufferSlot slots[8];
 };
 
-extern struct BufferControl *Data_03001e68;
+extern struct BufferControl *gMenuCtrlWork;
 extern struct ResourceNoEntry ResourceSlot_NumberTable[];
 extern u8 ResourceSlot_ConversionTables[][256];
 
@@ -66,7 +66,7 @@ s32 ResourceSlot_Load(u32 slot, u32 *buf, s32 no, u32 kind)
 
     if (slot > 7)
         return 0;
-    tmp = Data_03001e68;
+    tmp = gMenuCtrlWork;
     rec = &tmp->slots[slot];
     meta = Resource_GetMetadataRecordFar(no);
     rec->tag = (slot << 12) | no;

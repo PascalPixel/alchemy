@@ -5,7 +5,7 @@
  * Battle/overlay particle-field effect owner at 0x080db6e0.  The retained
  * assembly already names the global entry point RunParticleFieldEffect, so
  * that name is kept in recon/tbs/source-paths.json, but the working symbol
- * here is Func_080db6e0 so the family-transplant/candidate-show tooling can
+ * here is RunParticleFieldEffect so the family-transplant/candidate-show tooling can
  * find it by address like every other in-progress owner.
  *
  * Structural template: games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C
@@ -26,7 +26,7 @@
  * family: its 128- and 512- record particle initializers at 0x02010000 /
  * 0x02010e00 (masked-RNG field 0xC/0x10/0x14 triples) are the same
  * structural shape as this owner's two initializer loops, and its
- * Func_080e38b8 / Resource_LoadAndDecompress / Data_03001e50 / Data_080ede48 usages are
+ * EffectStep_AdvanceWithGravity3D / Resource_LoadAndDecompress / gWorkSlot / ParticleStreams_CellOffsets usages are
  * reused here verbatim.  Following that draft's own established style,
  * every temporary below is declared flat at the top of the function
  * (never in a nested block) so the compiler's size-class frame allocator
@@ -37,9 +37,9 @@
 
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kind 46 only (its single rectangle-blit routine). */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 
 /* Ten halfword cell offsets indexed by a clamped depth bucket 0..9; the
    same symbol recon/tbs/en/main/080e7404.c already declares and
@@ -60,9 +60,9 @@ extern u8 Value_00000096;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
@@ -71,14 +71,14 @@ void EffectStep_AdvanceWithGravity3D(void *record, s32 a, s32 b);
 s32 Random16(void);
 s32 Math_Div(s32 a, s32 b);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 mode);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 mode);
 void WaitFrames(s32 frames);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
+void Audio_PlayCue(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 
-void Func_080db6e0(void *object, s32 variant)
+void RunParticleFieldEffect(void *object, s32 variant)
 {
     void **heap_cache;
     void **cursor;
@@ -178,10 +178,10 @@ void Func_080db6e0(void *object, s32 variant)
         entry = (u8 *)entry + 28;
     } while (i != 1024);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw_rectangle = Data_03001e50[46];
+    draw_rectangle = gWorkSlot[46];
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     base = mode * 2;
     far_idx = base + mode;
@@ -194,10 +194,10 @@ void Func_080db6e0(void *object, s32 variant)
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         if (frame == 2) {
-            Func_080f9010(144);
+            Audio_PlayCue(144);
         }
         if (frame == Data_080eeae2[base + mode + 2] - 48) {
-            Func_080b50e8(133);
+            BattleEventRuntime_BeginPhaseFar(133);
         }
         if (table[far_idx] != 0) {
             particle = (void *)0x02010000;
@@ -283,7 +283,7 @@ void Func_080db6e0(void *object, s32 variant)
                         member_id = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s16 *,
                             member_id_offset);
-                        Func_080b5088(member_id, 2);
+                        BattleMotion_ApplyVariantMotionFar(member_id, 2);
                     }
                     i++;
                     member_id_offset += 2;
@@ -321,6 +321,6 @@ void Func_080db6e0(void *object, s32 variant)
         frame++;
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

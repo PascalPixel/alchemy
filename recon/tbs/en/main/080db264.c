@@ -47,21 +47,21 @@ extern u8 Value_00000073;
 s32 BattleFx_BeginTiledCanvas(s32);
 s32 Random16(void);
 s32 Trig_Sin(s32);
-s32 Func_0800231c(s32);
-s32 Func_080041d8(void *, s32);
-void Func_080f9010(s32);
-void Func_080b50e8(s32);
-s32 Func_080022fc(s32, s32);
+s32 Trig_Cos(s32);
+s32 Scheduler_AddOrUpdateCallback(void *, s32);
+void Audio_PlayCue(s32);
+void BattleEventRuntime_BeginPhaseFar(s32);
+s32 Math_Mod(s32, s32);
 void EffectStep_AdvanceWithGravity2D(void *, s32, s32);
 void ObjectGroup_UpdateMembers(s16, s32, s32, s32, s32);
 void Camera_ApplyShake(s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32);
 void Scheduler_RemoveCallback(void *);
-void Func_08002dd8(s32);
+void Runtime_ReleaseHeapBlock(s32);
 void BattleFx_EndCanvasLayer(void);
 
-void Func_080db264(void *object)
+void Unnamed_080db264(void *object)
 {
     void **cache;
     void **cursor;
@@ -123,7 +123,7 @@ void Func_080db264(void *object)
         particle->x = 0x4000;
         particle->y = 0x7000;
         particle->z = radius * Trig_Sin(random_angle) >> 16;
-        particle->vz = -(radius * Func_0800231c(random_angle) * 2) >> 16;
+        particle->vz = -(radius * Trig_Cos(random_angle) * 2) >> 16;
         particle->life = 0;
         i++;
         particle++;
@@ -131,15 +131,15 @@ void Func_080db264(void *object)
 
     FIELD(work, s32, 0x7780) = 2;
     FIELD(work, s32, 0x7784) = 75;
-    Func_080041d8((void *)0x080cd261, 0x480);
-    Func_080f9010(138);
+    Scheduler_AddOrUpdateCallback((void *)0x080cd261, 0x480);
+    Audio_PlayCue(138);
 
     frame = 0;
     do {
         if (frame == 20)
-            Func_080b50e8(133);
+            BattleEventRuntime_BeginPhaseFar(133);
         if (frame <= 15) {
-            if (Func_080022fc(frame, 5) == 2)
+            if (Math_Mod(frame, 5) == 2)
                 ((CopyFn)0x03000168)(canvas, (void *)0x10101010, 0x4000);
             pass = 0;
             angle = frame << 11;
@@ -147,7 +147,7 @@ void Func_080db264(void *object)
                 spawned = 0;
                 radius = pass * (angle + 0x4000);
                 center_x = ((32 - frame) * Trig_Sin(radius) >> 16) + 64;
-                center_y = -(Func_0800231c(radius) * 8 >> 16) - 8;
+                center_y = -(Trig_Cos(radius) * 8 >> 16) - 8;
                 sprite = (u8 *)work + (Random16() & 3) * 0xb40 + 0x60e;
                 if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 0) {
                     rectangles[0](canvas, sprite,
@@ -167,7 +167,7 @@ void Func_080db264(void *object)
                         particle->y = (center_y + 112) << 16;
                         particle->x = center_x << 16;
                         particle->vx = velocity * Trig_Sin(random_angle) >> 9;
-                        particle->vy = -(velocity * Func_0800231c(random_angle) * 2) >> 7;
+                        particle->vy = -(velocity * Trig_Cos(random_angle) * 2) >> 7;
                         particle->life = (Random16() & 7) + 32;
                         spawned++;
                         if (spawned == Data_080eeadc[FIELD(FIELD(work, void *, 0x7828), s32, 24) * 2 + 1])
@@ -224,7 +224,7 @@ void Func_080db264(void *object)
     } while (frame != 64);
 
     Scheduler_RemoveCallback((void *)0x080cd261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

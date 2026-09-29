@@ -1,25 +1,25 @@
 #include "TYPES.H"
 
-extern u8 *Data_03001ebc;
-extern u8 Data_02000240[];
+extern u8 *gEventWork;
+extern u8 gGameState[];
 
-void Func_08098294(s32 mode);
-void Func_0808fe38(s32 mode);
-void *Func_0808ba1c(void *entry);
-void Func_08091220(s32 value, s32 mode);
-void Func_08091200(s32 value, s32 mode);
-void Func_08091254(s32 mode);
+void ObjectDispatch_ApplyValueToKind200Children(s32 mode);
+void DisplayTransition_InitializeBattleEffectState(s32 mode);
+void *ObjectTable_Get(void *entry);
+void BattleFx_ApplyColorToSourceBuffer(s32 value, s32 mode);
+void BattleFx_ApplyColorToTargetBuffer(s32 value, s32 mode);
+void BattleFx_StartBufferInterpolation(s32 mode);
 void WaitFrames(s32 frames);
-s32 Func_0808e4b4(s32 value, s32 count, s32 *result);
-void Func_08096b28(s32 handle, void *entry, s32 result);
-void Func_080f9010(s32 cue);
-void Func_0808f32c(void);
-s32 Func_080041d8(const void *callback, s32 delay);
-void Func_080982dc(void);
+s32 BattleFx_FindMatchingEvent(s32 value, s32 count, s32 *result);
+void BattleFx_RunEventAction(s32 handle, void *entry, s32 result);
+void Audio_PlayCue(s32 cue);
+void FieldEffect_SpawnNearbyMarkers(void);
+s32 Scheduler_AddOrUpdateCallback(const void *callback, s32 delay);
+void FieldEffect_WatchLeaderDistance(void);
 
 void RunBattleEffect08(void)
 {
-    u8 **state_slot = &Data_03001ebc;
+    u8 **state_slot = &gEventWork;
     u8 *state = *state_slot;
     u8 *scene;
     void **entry_slot;
@@ -28,22 +28,22 @@ void RunBattleEffect08(void)
     s32 value;
     s16 frame;
 
-    Func_08098294(6);
-    Func_0808fe38(8);
+    ObjectDispatch_ApplyValueToKind200Children(6);
+    DisplayTransition_InitializeBattleEffectState(8);
     scene = state_slot[4];
-    entry_slot = (void **)(Data_02000240 + 500);
-    object = Func_0808ba1c(*entry_slot);
+    entry_slot = (void **)(gGameState + 500);
+    object = ObjectTable_Get(*entry_slot);
     *(s32 *)(scene + 0x52c) = *(s32 *)(object + 8);
     *(s32 *)(scene + 0x530) = *(s32 *)(object + 16) - *(s32 *)(object + 12);
-    Func_08091220(0x10000, 0);
-    Func_08091200(0x10001, 1);
-    Func_08091254(1);
+    BattleFx_ApplyColorToSourceBuffer(0x10000, 0);
+    BattleFx_ApplyColorToTargetBuffer(0x10001, 1);
+    BattleFx_StartBufferInterpolation(1);
     WaitFrames(1);
-    value = Func_0808e4b4(0x50000005, 8, &result);
+    value = BattleFx_FindMatchingEvent(0x50000005, 8, &result);
     if (value != 0) {
-        Func_08096b28(value, *entry_slot, result);
+        BattleFx_RunEventAction(value, *entry_slot, result);
     }
-    Func_080f9010(0x83);
+    Audio_PlayCue(0x83);
     *(s16 *)(state + 0xcb8) = 1;
     value = *(s32 *)(scene + 0x52c);
     if (value < 0) {
@@ -57,12 +57,12 @@ void RunBattleEffect08(void)
     *(s16 *)(state + 0xcbe) = value >> 16;
     *(s16 *)(state + 0xcba) = 0x258;
     *(s16 *)(state + 0xcc0) = 1;
-    Func_0808f32c();
+    FieldEffect_SpawnNearbyMarkers();
     frame = 0;
     do {
         WaitFrames(1);
         *(s16 *)(scene + 0x52a) = frame;
         frame++;
     } while (frame <= 18);
-    Func_080041d8(Func_080982dc, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldEffect_WatchLeaderDistance, 0xc80);
 }

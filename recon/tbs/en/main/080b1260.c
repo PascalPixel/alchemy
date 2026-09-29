@@ -57,8 +57,8 @@ extern u8 Value_00000c98[];
 extern u8 MsgItemName[];
 
 struct ItemDefinition *Item_Get(s32 item);
-void Func_08015060(s32 window);
-void Func_08015078(s32 message, s32 window, s32 x, s32 y);
+void UiWindow_Clear(s32 window);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 s32 Item_CanOwnerEquip(s32 unit_id, s32 item_id);
 s32 Inventory_FindEquippedFar(s32 unit_id, s32 kind);
 struct ShopCursorAnchor *RenderOutput_CreateFar(u32 resource, u32 flags, s32 window, s32 x, s32 y);
@@ -83,9 +83,9 @@ void Shop_DrawEquipComparison(s32 window, s32 unit_id, s32 item_id)
 
     if (window == 0)
         return;
-    Func_08015060(window);
+    UiWindow_Clear(window);
     if (!Item_CanOwnerEquip(unit_id, item_id)) {
-        Func_08015078(0xc8e, window, 8, 24);
+        UiText_DrawMessageAt(0xc8e, window, 8, 24);
         return;
     }
     slot = Inventory_FindEquippedFar(unit_id, item->type);

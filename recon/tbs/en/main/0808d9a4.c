@@ -18,7 +18,7 @@
 
 extern u8 Data_00000970[];
 extern u8 Data_00001000[];
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 extern u16 Data_02000240_t[][2];
 void WaitFrames();
 void Engine_ObjectSetAnimation();
@@ -110,7 +110,7 @@ s32 Func_0808d9a4(s32 a0)
     u8 *p5;
 
     p8 = a0;
-    p6 = *(s32 *)((s16 *)Data_02000240 + 250);
+    p6 = *(s32 *)((s16 *)gGameState + 250);
     i = p8 - 242;
     if (i <= 5) {
         Battle_InitializeRenderObject();
@@ -141,7 +141,7 @@ s32 Func_0808d9a4(s32 a0)
             } else {
                 if (Value1(GameFlag_IsConditionActive, p10) != 0) {
                     rec->action.callback(
-                        *(s32 *)((s16 *)Data_02000240 + 250));
+                        *(s32 *)((s16 *)gGameState + 250));
                 }
                 if (Value1(GameFlag_TestFar, 0x142) == 0) {
                     goto L_0808dd6a;
@@ -208,7 +208,7 @@ s32 Func_0808d9a4(s32 a0)
                         }
                         record = Value2(BattleFx_GetWeightedResult, 99, rec->action.message);
                         *(u16 *)(((s32)p5 + 0x17c)) = record;
-                        base2_2000240 = (s32)Data_02000240;
+                        base2_2000240 = (s32)gGameState;
                         *(u8 *)((base2_2000240 + 0x22b)) = 2;
                         BattleFx_SelectBattleCue(99, rec->action.message);
                         Audio_PlayCue(*(s16 *)(0x200042e));

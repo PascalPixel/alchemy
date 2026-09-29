@@ -1,7 +1,7 @@
 /* 2026-09-29: psynergy editions: the pooled 1 is the same in all five
  * matching editions, a plain constant, so it is written as 1 (score 1570,
  * was 820 with an invented symbol). The reference also keeps
- * &Data_03001e68.process_state in r6 and reuses the screen register for
+ * &gMenuCtrlWork.process_state in r6 and reuses the screen register for
  * 0xea6 after RenderOutput_ClearListFar. */
 /* 2026-09-29: eight minutes of permutation (--function
  * RunAssetSelectionScreen): 1530 -> 820 (11 register-only, 6 operand, 4
@@ -73,7 +73,7 @@ struct AssetSelectionScreen {
     u8 session_mode;
 };
 
-extern struct AssetSelectionGlobals Data_03001e68;
+extern struct AssetSelectionGlobals gMenuCtrlWork;
 
 typedef s32 (*CopyFn)(void *dst, const void *src, s32 size);
 typedef s32 (*FillFn)(void *dst, s32 size, u32 value);
@@ -129,7 +129,7 @@ s32 RunAssetSelectionScreen(void)
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
     screen = Runtime_AllocateHeapBlock(0x37, 0xa70);
-    (&Data_03001e68)->display_state->busy = 1;
+    (&gMenuCtrlWork)->display_state->busy = 1;
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     WaitFrames(1);
     UiWindow_InitializeWork(0);
@@ -148,7 +148,7 @@ s32 RunAssetSelectionScreen(void)
     result = ItemMenu_RunCommands(&category, &value, &index);
     Menu_EnsureCancelSound();
     if (result == 1) {
-        u8 *selection = (&Data_03001e68)->selection_state;
+        u8 *selection = (&gMenuCtrlWork)->selection_state;
         u16 packed = (category << 10) | (index & 0x1ff);
         s32 style;
         *(u16 *)(selection + 0x180) = packed;
@@ -156,22 +156,22 @@ s32 RunAssetSelectionScreen(void)
         *(u16 *)(selection + 0x19a) = style;
     }
     RenderOutput_ClearListFar(screen->resource_handle);
-    (&Data_03001e68)->process_state[0xea6] = 1;
+    (&gMenuCtrlWork)->process_state[0xea6] = 1;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Menu_ResetTwoResourceEntries();
     Runtime_ReleaseHeapBlock(0x37);
-    (&Data_03001e68)->display_state->busy = 0;
+    (&gMenuCtrlWork)->display_state->busy = 0;
     Func_080152a8();
     Func_080153e0(0);
     CopyWords(copy, (void *)0x06004000, backup, size);
-    (&Data_03001e68)->process_state[0xea6] = 0;
+    (&gMenuCtrlWork)->process_state[0xea6] = 0;
     Runtime_BumpFree(backup);
     WaitFrames(1);
     Scheduler_DisableOverlayCallbacksWithFlags();
     WaitFrames(1);
     UiWindow_EraseBorderRectFar(0, 0, 30, 20);
-    (&Data_03001e68)->process_state[0xea6] = 0;
+    (&gMenuCtrlWork)->process_state[0xea6] = 0;
     Event_ClearInvalidPackedValuesFar();
     return result;
 }

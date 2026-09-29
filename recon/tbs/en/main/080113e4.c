@@ -33,11 +33,11 @@ struct MapTileWindow_080113e4 {
     u16 tiles[256];
 };
 
-extern struct MapTileWindow_080113e4 *Data_03001e70;
+extern struct MapTileWindow_080113e4 *gMapWork;
 
 s32 Map_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update);
 
-void Func_080113e4(void)
+void Map_UpdateCurrentTileBlock(void)
 {
     struct MapTileWindow_080113e4 *window;
     struct MapPosition_080113e4 *position;
@@ -52,7 +52,7 @@ void Func_080113e4(void)
 
     origin_y = 0;
     origin_x = 0;
-    tmp = Data_03001e70;
+    tmp = gMapWork;
     window = tmp;
     position = window->position;
     if (position != 0) {

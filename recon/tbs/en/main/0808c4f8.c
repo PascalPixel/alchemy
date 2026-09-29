@@ -13,7 +13,7 @@
  *     slots are a dense s16 band at +0x16C..+0x186 polled highest-priority
  *     first by the inner dispatch chain; every handler clears its own slot.
  *     +0x14 is the actor pointer table, +0x19E the battle mode, +0x1C0 and
- *     +0x1C8 the pair handed to Func_0808fefc / Func_080901c0, +0x1C6 the
+ *     +0x1C8 the pair handed to DisplayTransition_Start / DisplayTransition_Finish, +0x1C6 the
  *     flag saying that pair is live.
  *   - g: the shared progress/party block at 0x02000240.  Held in a pointer
  *     because the reference addresses every field of it as base register plus
@@ -23,14 +23,14 @@
  *   - actor: work's actor table entry selected by Data_02000434.
  *   - mode: 3 when g+0x1DA holds 1, otherwise 2.  Stored to work+0x19E and
  *     passed to Func_08009078; it also picks between Func_08009130/38 and
- *     Func_08009128 and, in the tail, between Func_080090a8 and Func_080090a0.
+ *     Map_ApplyWorkOriginAndSpanFar and, in the tail, between Func_080090a8 and Func_080090a0.
  *   - result: the returned value.  0 normally, the code a handler posted at
  *     work+0x170 when one is pending, or 999 on the path that ends the battle
  *     from the -1 request.
  *
  * Uncertain and deliberately left neutral: the role of most g fields, the
  * 0x1000 bit OR-ed into work+0x178, the -888 / -889 request codes, and the
- * 136 threshold on the 512-byte census over Data_03001810.
+ * 136 threshold on the 512-byte census over ResourceBlockOwners.
  *
  * Residual: this is a draft, not a match.  Every reference call, branch,
  * store and loop is represented and the call multiset is identical, but the
@@ -44,26 +44,26 @@
 
 #define FIELD_AT_OFFSET(base, type, offset) (*(type)((u8 *)(base) + (offset)))
 
-void *Func_080048f4();
-void Func_08002dd8();
+void *Runtime_AllocateBlock();
+void Runtime_ReleaseHeapBlock();
 void WaitFrames();
-void Func_080040e8();
-s32 Func_080072e4();
+void Scheduler_ResetTaskTable();
+s32 _call_via_r0();
 void Func_08009078();
-void Func_08009080();
+void Object_SetMode();
 void Func_080090a0();
 void Func_080090a8();
 void Func_080090b0();
 void Func_080090b8();
 void Func_08009110();
 void Func_08009118();
-void Func_08009128();
+void Map_ApplyWorkOriginAndSpanFar();
 void Func_08009130();
 void Func_08009138();
-void Func_08009140();
-void Func_08015000();
-void Func_08015040();
-void Func_08015120();
+void Object_ResetMotion();
+void FarCall_WindowTable();
+void UiText_ShowPositionedMessageAndWaitFar();
+void UiWork_PushValueSlotFar();
 void Func_080151e8();
 void UiTimedNotice_CreateFar();
 void UiTimedNotice_CloseIfActiveFar();
@@ -73,16 +73,16 @@ void Func_08015370();
 s32 Math_Div();
 void *Owner_GetStateFar();
 s32 GameFlag_TestFar();
-void Func_080770c8();
-void Func_080770d0();
-void Func_080772f0();
+void GameFlag_SetBitFar();
+void GameFlag_ClearBitFar();
+void GameFlag_RefreshLureCapFar();
 void BattleFx_SelectLocationRule();
 void Party_ResolveTablePair();
 void ObjectTable_ResetForObject();
 void ObjectTable_Snapshot();
-void Func_0808bb2c();
-void Func_0808bc44();
-s32 Func_0808bc9c();
+void ObjectTable_Restore();
+void BattleFx_ResetCounters();
+s32 BattleFx_SumCounters();
 void Field_ProcessStep();
 void Battle_SetObjectFlag5bWhenMode3();
 void Battle_ClearObjectFlag5bWhenMode3();
@@ -97,35 +97,35 @@ void Battle_DispatchInputEvent();
 void Func_0808d9a4();
 s32 BattleEffect_SelectNearbyObject();
 void Battle_ResetEffectCounter();
-void Func_0808e23c();
+void BattleCommand_ExecuteSelectedItem();
 void BattleCommand_ExecuteSelectedAction();
-void Func_0808e9c0();
-void Func_0808fefc();
+void Battle_PlaceMapMarkers();
+void DisplayTransition_Start();
 void DisplayTransition_Finish();
 void BattleEffect_InitializeBuffers();
-void Func_08091200();
-void Func_08091660();
+void BattleFx_ApplyColorToTargetBuffer();
+void Battle_InitializeRenderObject();
 s32 Party_CheckMemberValueTotal();
-void Func_08091a58();
+void PartyInventory_GiveItem();
 void Func_080941e0();
 s32 ObjectEffect_RunPendingFlagEvent();
 void FieldObject_PlaceSceneActors();
 void Djinn_ResolvePendingEvent();
 void BattleFx_ScheduleCallbackWhenValue24cSet();
 void Map_ShowWorldMap();
-void Func_0809c3a4();
-void Func_080f9010();
+void BattleFx_RunVisibilityTransition();
+void Audio_PlayCue();
 s32 Func_080f9070();
 
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 extern u16 Data_02000402;
 extern u16 Data_0200042c;
 extern s32 Data_02000434;
 extern s32 Data_02000478;
 extern u8 gOverlayArea[];
 extern u8 ResourceBlockOwners[];
-extern volatile u32 Data_03001ae8;
-extern void *Data_03001e68;
+extern volatile u32 gKeysHeld;
+extern void *gMenuCtrlWork;
 extern volatile u8 gDebugMode;
 
 s32 Func_0808c4f8(void)
@@ -147,7 +147,7 @@ s32 Func_0808c4f8(void)
     s32 n;
     u32 i;
 
-    g = Data_02000240;
+    g = gGameState;
     ov = gOverlayArea;
     work = Runtime_AllocateBlock(0x1B, 0xCCC);
     result = 0;
@@ -182,15 +182,15 @@ s32 Func_0808c4f8(void)
     }
     FIELD_AT_OFFSET(work, s16 *, 0x19E) = mode;
     Func_08009078(mode);
-    Func_08015000();
+    FarCall_WindowTable();
     BattleFx_ResetCounters();
     FIELD_AT_OFFSET(work, s32 *, 0x10) =
-        Func_080072e4(FIELD_AT_OFFSET(ov, s32 *, 36));
+        _call_via_r0(FIELD_AT_OFFSET(ov, s32 *, 36));
     BattleMap_ApplyEntranceView();
-    Func_080072e4(FIELD_AT_OFFSET(ov, s32 *, 28));
+    _call_via_r0(FIELD_AT_OFFSET(ov, s32 *, 28));
     ObjectTable_ResetForObject();
     if (GameFlag_IsSet(0x109) != 0) {
-        Func_0808bb2c();
+        ObjectTable_Restore();
     }
     if (FIELD_AT_OFFSET(g, s16 *, 0x234) != 0) {
         FieldObject_PlaceSceneActors();
@@ -200,9 +200,9 @@ s32 Func_0808c4f8(void)
         Func_08009138(FIELD_AT_OFFSET(g, s32 *, 0x1DC),
                       FIELD_AT_OFFSET(g, s32 *, 0x1E4));
     } else {
-        Func_08009128();
+        Map_ApplyWorkOriginAndSpanFar();
     }
-    Func_0808e9c0();
+    Battle_PlaceMapMarkers();
     BattleEffect_InitializeBuffers();
     BattleFx_ApplyColorToTargetBuffer(0x10000, 0);
 
@@ -226,7 +226,7 @@ s32 Func_0808c4f8(void)
     }
     BattleFx_ScheduleCallbackWhenValue24cSet();
     FIELD_AT_OFFSET(work, u16 *, 0xCC8) = 0xFFFF;
-    Func_080072e4(FIELD_AT_OFFSET(ov, s32 *, 4));
+    _call_via_r0(FIELD_AT_OFFSET(ov, s32 *, 4));
 
     result = FIELD_AT_OFFSET(work, s16 *, 0x170);
     if (result != 0) {
@@ -237,7 +237,7 @@ s32 Func_0808c4f8(void)
     GameFlag_Clear(0x109);
     if (BattleFx_SumCounters() == 0) {
         if (FIELD_AT_OFFSET(work, u16 *, 0x1C6) == 0) {
-            Func_0808fefc(FIELD_AT_OFFSET(work, s32 *, 0x1C0),
+            DisplayTransition_Start(FIELD_AT_OFFSET(work, s32 *, 0x1C0),
                           FIELD_AT_OFFSET(work, s32 *, 0x1C8));
             FIELD_AT_OFFSET(work, u16 *, 0x1C6) = 1;
             *(u16 *)0x05000000 = 0;
@@ -399,8 +399,8 @@ s32 Func_0808c4f8(void)
                 Audio_PlayCue(111);
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_Set(0x106);
-                if (gDebugMode != 0 && (Data_03001ae8 & 2) != 0
-                    && (Data_03001ae8 & 4) != 0) {
+                if (gDebugMode != 0 && (gKeysHeld & 2) != 0
+                    && (gKeysHeld & 4) != 0) {
                     Func_08015290();
                 } else if (GameFlag_IsSet(0x107) != 0) {
                     FIELD_AT_OFFSET(work, u16 *, 0x182) = 250;
@@ -411,7 +411,7 @@ s32 Func_0808c4f8(void)
                 }
                 Battle_ClearObjectFlag5bWhenMode3();
                 GameFlag_Clear(0x106);
-                Func_080772f0();
+                GameFlag_RefreshLureCapFar();
                 FIELD_AT_OFFSET(work, u16 *, 0x172) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x178) != 0) {
                 Battle_SetObjectFlag5bWhenMode3();
@@ -443,9 +443,9 @@ s32 Func_0808c4f8(void)
                 Battle_InitializeRenderObject();
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_Set(0x106);
-                if (gDebugMode != 0 && (Data_03001ae8 & 2) != 0) {
+                if (gDebugMode != 0 && (gKeysHeld & 2) != 0) {
                     Func_08015288();
-                } else if (gDebugMode != 0 && (Data_03001ae8 & 0x200) != 0) {
+                } else if (gDebugMode != 0 && (gKeysHeld & 0x200) != 0) {
                     Debug_RunPaletteEditor();
                 } else if (GameFlag_IsSet(0x107) != 0) {
                     FIELD_AT_OFFSET(work, u16 *, 0x182) = 250;
@@ -454,7 +454,7 @@ s32 Func_0808c4f8(void)
                     UiTimedNotice_CloseIfActiveFar();
                     FIELD_AT_OFFSET(g, u16 *, 0x21E) = Func_080f9070();
                     if (GameFlag_IsSet(0x17E) == 0) {
-                        obj = Data_03001e68;
+                        obj = gMenuCtrlWork;
                         pos = ResourceBlockOwners;
                         cnt = 0;
                         n = 512;

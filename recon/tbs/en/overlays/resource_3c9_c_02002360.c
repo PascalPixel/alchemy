@@ -23,7 +23,7 @@ void Engine_Import08077268();
 
 
 extern u8 Data_00000000[];
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 
 /* FAKEMATCH: Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -709,7 +709,7 @@ void Scene_RunPairedActorEffectSequence(void)
     Engine_EventWait(20);
     Scene_RunSetupSequence35c4();
     Engine_EventWait(20);
-    base3_2000240 = (s32)Data_02000240;
+    base3_2000240 = (s32)gGameState;
     *(u8 *)((base3_2000240 + 0x22b)) = 3;
     Value2(Engine_GameStateSetReturn, (s32)&SceneId_VinasuChojo, 3);
     Call2((void (*)())Engine_Import0808a268, (s32)&SceneId_VinasuChojo, 9);

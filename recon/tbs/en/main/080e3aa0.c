@@ -17,7 +17,7 @@
  *
  * Setup: read the scene selector out of the object's first word, publish
  * the object, resolve the actor record through Runtime_GetObject, wait a
- * frame, run the two presentation helpers Func_080c9048 / Func_080cdd58,
+ * frame, run the two presentation helpers BattlePres_ConfigureEffectDisplay / BattleFx_SetupCanvasTileMap,
  * and program BG1CNT with 0x1F80.  The two rectangle-blit routines 0x2E
  * and 0x2F are then registered with a shade that depends both on the
  * scene selector (5 or not) and on the state's s32 at 4 -- the "which
@@ -44,9 +44,9 @@
  * again unconditionally; that pair is reproduced literally.
  *
  * The frame loop runs 32 frames.  Frame 5 passes one of two ids (134 or
- * 133) to Func_080b50e8, selected by Func_080b5058 applied to the actor
+ * 133) to BattleEventRuntime_BeginPhaseFar, selected by Func_080b5058 applied to the actor
  * record's byte at 296; neither callee has a resolved project name, so
- * calling them a cue is a guess.  Frame 4 calls Func_080b5088 on the
+ * calling them a cue is a guess.  Frame 4 calls BattleMotion_ApplyVariantMotionFar on the
  * actor with kind 0.  Every frame re-resolves the state's own
  * screen position through EffectPosition_ApplyStepAndYOffset, lifts it
  * by 16, and draws the beam body with blit 0x2F: for selector 4 a
@@ -67,7 +67,7 @@
  * counter (32) is written back over the 0x03001AD6 halfword and the
  * scene closes through BattleFx_SetTransitionFlagAndDisplay.
  *
- * `_call_via_r3` and `Func_080072f4` are not real function symbols: they
+ * `_call_via_r3` and `_call_via_r4` are not real function symbols: they
  * are entries of the `_call_via_rN` trampoline bundle at
  * recon/tbs/raw/080072e4.s, i.e. indirect calls through whatever pointer
  * the compiler kept in r3 and r4.  Here they are the IWRAM copy routine
@@ -143,12 +143,12 @@ typedef void (*CopyFn)(void *dest, const void *src, s32 count);
 #define IWRAM_COPY ((CopyFn)0x03001388)
 
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 12 (the transfer work), 39 (its work block),
    40 (the draw target), 41 (the sprite source) and the two blit entries
    46 and 47.  The family spells the 39.. window through its own base,
    which is what the reference's single 0x03001eec pool word is. */
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 
 /* Sixteen halfword cell offsets shared with the rest of the family. */
 extern const u16 BattleFx6_FlareCells[];
@@ -196,7 +196,7 @@ struct CameraRecord {
     s16 field_0006;
 };
 
-extern struct CameraRecord Data_03001ad0;
+extern struct CameraRecord gBgScroll;
 
 /* Only the world position this owner copies out of the member context. */
 struct Member {
@@ -212,7 +212,7 @@ struct Member {
    The ones with no comment have no resolved project name. */
 void WaitFrames(s32 frames);                      /* WaitFrames */
 s32 Math_Div(s32 numerator, s32 denominator);   /* FixedPoint_Ratio */
-void Func_08002dd8(s32 id);                          /* Runtime_ReleaseHeapBlock */
+void Runtime_ReleaseHeapBlock(s32 id);                          /* Runtime_ReleaseHeapBlock */
 void *Resource_GetTableEntry(s32 id);                         /* get */
 u32 Random16(void);                             /* random_16 */
 void Render_ResetTransformState(void);                            /* Render_ResetTransformState */
@@ -220,10 +220,10 @@ void Graphics_PrepareTransferInIwramWork(void *a, void *b);                /* Gr
 void Render_ProjectPoint(const struct Spark *position, s32 *out);
 void *Owner_GetStateFar(s32 id);                         /* Runtime_GetObject */
 s32 Func_080b5058(s32 id);
-s32 Func_080b5070(s32 id);
-void Func_080b5088(s32 member, s32 kind);
+s32 Battle_GetObjectTableValueFar(s32 id);
+void BattleMotion_ApplyVariantMotionFar(s32 member, s32 kind);
 struct Member **GetBattleObjectSlotFar(s32 member);
-void Func_080b50e8(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void BattlePres_ConfigureEffectDisplay(void);
 void BattleFx_SetTransitionFlagAndDisplay(void);   /* BattleFx_SetTransitionFlagAndDisplay */
 void BattleFx_SetupCanvasTileMap(void);
@@ -257,7 +257,7 @@ void BattlePres_RunBeamSequence(void *object)
     s32 i;
     s32 j;
 
-    heap = &Data_03001e50[39];
+    heap = &gWorkSlot[39];
     cursor = heap;
     work = (u8 *)*cursor++;
     draw_target = *cursor;
@@ -290,8 +290,8 @@ void BattlePres_RunBeamSequence(void *object)
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
         }
     }
-    blit[0] = (BlitFn)Data_03001e50[46];
-    blit[1] = (BlitFn)Data_03001e50[47];
+    blit[0] = (BlitFn)gWorkSlot[46];
+    blit[1] = (BlitFn)gWorkSlot[47];
     WaitFrames(1);
 
     /* The beam graphic itself, one resource per scene selector. */
@@ -324,7 +324,7 @@ void BattlePres_RunBeamSequence(void *object)
     Resource_LoadAndDecompress((s32)&Value_00000099, (void *)0x02010000, 1, 0);
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     REG_BG1CNT = 0x1F81;
 
     EffectPosition_ApplyAnimationAndYOffset(M2C_FIELD(STATE, s16 *, 0x24), anchor);
@@ -340,13 +340,13 @@ void BattlePres_RunBeamSequence(void *object)
         dx = -128;
     }
     anchor[0] = anchor[0] + dx;
-    Data_03001ad0.field_0004 = (s16)dx;
-    Data_03001ad0.field_0006 = 80;
+    gBgScroll.field_0004 = (s16)dx;
+    gBgScroll.field_0006 = 80;
     WaitFrames(1);
 
     /* Seed the sparks from the actor's world position. */
     member = *GetBattleObjectSlotFar(M2C_FIELD(STATE, s16 *, 0x24));
-    half = Func_080b5070(M2C_FIELD(STATE, s16 *, 0x24)) / 2;
+    half = Battle_GetObjectTableValueFar(M2C_FIELD(STATE, s16 *, 0x24)) / 2;
     spark = SPARKS;
     i = 0;
     do {
@@ -369,13 +369,13 @@ void BattlePres_RunBeamSequence(void *object)
     do {
         if (i == 5) {
             if (Func_080b5058(M2C_FIELD(record, u8 *, 296)) != 0) {
-                Func_080b50e8(134);
+                BattleEventRuntime_BeginPhaseFar(134);
             } else {
-                Func_080b50e8(133);
+                BattleEventRuntime_BeginPhaseFar(133);
             }
         }
         if (i == 4) {
-            Func_080b5088(M2C_FIELD(STATE, s16 *, 0x24), 0);
+            BattleMotion_ApplyVariantMotionFar(M2C_FIELD(STATE, s16 *, 0x24), 0);
         }
 
         EffectPosition_ApplyStepAndYOffset(M2C_FIELD(STATE, s32 *, 8), pos);
@@ -457,8 +457,8 @@ void BattlePres_RunBeamSequence(void *object)
     } while (i != 32);
 
     Scheduler_RemoveCallback(0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Data_03001ad0.field_0006 = (s16)i;
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    gBgScroll.field_0006 = (s16)i;
     BattleFx_SetTransitionFlagAndDisplay();
 }

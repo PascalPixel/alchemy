@@ -15,7 +15,7 @@
 
 /* 選択メニューの毎フレーム描画更新。
  *
- * Data_03001e98 が指す選択状態ブロックから四組の表示要素を組み立て、
+ * gResQueueWork が指す選択状態ブロックから四組の表示要素を組み立て、
  * それぞれを Runtime_PushSlotEntry でランタイムの表示スロット列に積む。
  *
  *   1. +0x348 の節点鎖   … 各項目の横移動を進め、選択中の項目だけ
@@ -25,13 +25,13 @@
  *   3. +0x34c の節点鎖   … 縦横両方向の移動と倍率を進める。
  *   4. +0x2d8 のカーソル … 資源を読み直し、目標へ半分ずつ寄せて描画する。
  *
- * 2 と 3 の間で Func_0801aeec を引数 0 と 1 で二度呼ぶ。この呼び出しが
+ * 2 と 3 の間で MenuSelection_DrawSideMarker を引数 0 と 1 で二度呼ぶ。この呼び出しが
  * 何を描くかはここからは分からない。最後に +0x3a2 の u16 を一つ進める。
  *
  * 判明していない点:
  *   - 状態ブロックの全体像。ここでは既知の相対位置だけを直接参照する。
  *   - 節点 +0x00 と +0x1c..+0x21 の役割。
- *   - Func_080b50b0 は項目番号から座標を引く照会。既存の
+ *   - BattleMotion_ProjectScaledPositionFar は項目番号から座標を引く照会。既存の
  *     games/THE BROKEN SEAL/src/effects/position/apply_step_and_y_offset.c は同じ
  *     入口を戻り値なしで宣言しているが、この所有者は戻り値を -1 と
  *     比較して失敗を判定する。名前は未確定。
@@ -62,7 +62,7 @@ struct SlotEntry {
 };
 
 /* 効果位置。既存の games/THE BROKEN SEAL/src/battle/effects/radial_camera/update.c と
-   同じ三語の並び。Func_080b50b0 は三語すべてを書き、ここでは x と y だけを読む。 */
+   同じ三語の並び。BattleMotion_ProjectScaledPositionFar は三語すべてを書き、ここでは x と y だけを読む。 */
 struct EffectPosition {
     s32 x;
     s32 y;

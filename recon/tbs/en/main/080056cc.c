@@ -13,7 +13,7 @@
  */
 #include "save_state_family.h"
 
-s32 Func_080056cc(void)
+s32 SaveState_InitializeWorkspace(void)
 {
     struct SaveWorkspace *work;
     struct SaveSlotHeader header;
@@ -21,7 +21,7 @@ s32 Func_080056cc(void)
     u32 index;
     u16 empty = 0;
 
-    work = Func_080048f4(0x33, sizeof(*work));
+    work = Runtime_AllocateBlock(0x33, sizeof(*work));
     zero = 0;
     START_DMA(&zero, work, 0x85000440);
     SetFlashTimerIntr(2, (void (**)(void))0x030000f4);

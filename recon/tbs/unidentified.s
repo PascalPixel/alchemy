@@ -2124,3 +2124,723 @@ Resource_Data36E:
 	.incbin "baserom.gba", 0x00779048, 0x00000140
 	.section .unidentified.087fd4b9,"a"
 	.incbin "baserom.gba", 0x007fd4b9, 0x00002b47
+	.section .unidentified.084ba758,"a"
+	.global Field_Map001
+Field_Map001:
+	.incbin "baserom.gba", 0x004ba758, 0x0000034c
+	.section .unidentified.084bafc0,"a"
+	.global Field_Map000
+Field_Map000:
+	.incbin "baserom.gba", 0x004bafc0, 0x00005410
+	.section .unidentified.084c9b2c,"a"
+	.global Field_Map002
+Field_Map002:
+	.incbin "baserom.gba", 0x004c9b2c, 0x000051c8
+	.section .unidentified.084d8790,"a"
+	.global Field_Map003
+Field_Map003:
+	.incbin "baserom.gba", 0x004d8790, 0x0000313c
+	.section .unidentified.084e3fa8,"a"
+	.global Field_Map004
+Field_Map004:
+	.incbin "baserom.gba", 0x004e3fa8, 0x00002154
+	.section .unidentified.084ee110,"a"
+	.global Field_Map005
+Field_Map005:
+	.incbin "baserom.gba", 0x004ee110, 0x00003114
+	.section .unidentified.084f7c50,"a"
+	.global Field_Map006
+Field_Map006:
+	.incbin "baserom.gba", 0x004f7c50, 0x00003418
+	.section .unidentified.0850202c,"a"
+	.global Field_Map007
+Field_Map007:
+	.incbin "baserom.gba", 0x0050202c, 0x00000bd4
+	.section .unidentified.08506444,"a"
+	.global Field_Map008
+Field_Map008:
+	.incbin "baserom.gba", 0x00506444, 0x00002428
+	.section .unidentified.0850be10,"a"
+	.global Field_Map009
+Field_Map009:
+	.incbin "baserom.gba", 0x0050be10, 0x0000121c
+	.section .unidentified.085132dc,"a"
+	.global Field_Map010
+Field_Map010:
+	.incbin "baserom.gba", 0x005132dc, 0x00000d78
+	.section .unidentified.08517e64,"a"
+	.global Field_Map011
+Field_Map011:
+	.incbin "baserom.gba", 0x00517e64, 0x00000e78
+	.section .unidentified.0851c56c,"a"
+	.global Field_Map012
+Field_Map012:
+	.incbin "baserom.gba", 0x0051c56c, 0x00000d28
+	.section .unidentified.0851d294,"a"
+	.global Field_Map013
+Field_Map013:
+	.incbin "baserom.gba", 0x0051d294, 0x00000c18
+	.section .unidentified.085200f0,"a"
+	.global Field_Map014
+Field_Map014:
+	.incbin "baserom.gba", 0x005200f0, 0x00001aac
+	.section .unidentified.08525930,"a"
+	.global Field_Map015
+Field_Map015:
+	.incbin "baserom.gba", 0x00525930, 0x00002008
+	.section .unidentified.0852c200,"a"
+	.global Field_Map016
+Field_Map016:
+	.incbin "baserom.gba", 0x0052c200, 0x00001ce8
+	.section .unidentified.0852e044,"a"
+	.global Field_Map017
+Field_Map017:
+	.incbin "baserom.gba", 0x0052e044, 0x00001f48
+	.section .unidentified.085392d4,"a"
+	.global Field_Map018
+Field_Map018:
+	.incbin "baserom.gba", 0x005392d4, 0x00002700
+	.section .unidentified.08541c64,"a"
+	.global Field_Map019
+Field_Map019:
+	.incbin "baserom.gba", 0x00541c64, 0x00000a6c
+	.section .unidentified.08544fc8,"a"
+	.global Field_Map020
+Field_Map020:
+	.incbin "baserom.gba", 0x00544fc8, 0x00001b38
+	.section .unidentified.085500e0,"a"
+	.global Field_Map021
+Field_Map021:
+	.incbin "baserom.gba", 0x005500e0, 0x000010f4
+	.section .unidentified.08556c8c,"a"
+	.global Field_Map022
+Field_Map022:
+	.incbin "baserom.gba", 0x00556c8c, 0x00001430
+	.section .unidentified.0855f2ac,"a"
+	.global Field_Map023
+Field_Map023:
+	.incbin "baserom.gba", 0x0055f2ac, 0x00001d24
+	.section .unidentified.08560fd0,"a"
+	.global Field_Map024
+Field_Map024:
+	.incbin "baserom.gba", 0x00560fd0, 0x00000f44
+	.section .unidentified.08561f14,"a"
+	.global Field_Map025
+Field_Map025:
+	.incbin "baserom.gba", 0x00561f14, 0x000029e8
+	.section .unidentified.0856b834,"a"
+	.global Field_Map026
+Field_Map026:
+	.incbin "baserom.gba", 0x0056b834, 0x00002f40
+	.section .unidentified.0856e774,"a"
+	.global Field_Map027
+Field_Map027:
+	.incbin "baserom.gba", 0x0056e774, 0x00002dcc
+	.section .unidentified.08571540,"a"
+	.global Field_Map028
+Field_Map028:
+	.incbin "baserom.gba", 0x00571540, 0x00001ce4
+	.section .unidentified.0857bd88,"a"
+	.global Field_Map029
+Field_Map029:
+	.incbin "baserom.gba", 0x0057bd88, 0x000017ac
+	.section .unidentified.08582120,"a"
+	.global Field_Map030
+Field_Map030:
+	.incbin "baserom.gba", 0x00582120, 0x00001304
+	.section .unidentified.08583424,"a"
+	.global Field_Map031
+Field_Map031:
+	.incbin "baserom.gba", 0x00583424, 0x00001d58
+	.section .unidentified.0858eeb4,"a"
+	.global Field_Map032
+Field_Map032:
+	.incbin "baserom.gba", 0x0058eeb4, 0x00002a74
+	.section .unidentified.08593acc,"a"
+	.global Field_Map033
+Field_Map033:
+	.incbin "baserom.gba", 0x00593acc, 0x00000d78
+	.section .unidentified.085965fc,"a"
+	.global Field_Map034
+Field_Map034:
+	.incbin "baserom.gba", 0x005965fc, 0x0000189c
+	.section .unidentified.0859e2c0,"a"
+	.global Field_Map035
+Field_Map035:
+	.incbin "baserom.gba", 0x0059e2c0, 0x000016cc
+	.section .unidentified.085a6aa0,"a"
+	.global Field_Map036
+Field_Map036:
+	.incbin "baserom.gba", 0x005a6aa0, 0x00001ec8
+	.section .unidentified.085af064,"a"
+	.global Field_Map037
+Field_Map037:
+	.incbin "baserom.gba", 0x005af064, 0x000018a0
+	.section .unidentified.085b86e0,"a"
+	.global Field_Map038
+Field_Map038:
+	.incbin "baserom.gba", 0x005b86e0, 0x000016d8
+	.section .unidentified.085bb860,"a"
+	.global Field_Map039
+Field_Map039:
+	.incbin "baserom.gba", 0x005bb860, 0x0000182c
+	.section .unidentified.085c3968,"a"
+	.global Field_Map040
+Field_Map040:
+	.incbin "baserom.gba", 0x005c3968, 0x00001344
+	.section .unidentified.085c4e08,"a"
+	.global Field_Map041
+Field_Map041:
+	.incbin "baserom.gba", 0x005c4e08, 0x000025bc
+	.section .unidentified.085cd0d8,"a"
+	.global Field_Map042
+Field_Map042:
+	.incbin "baserom.gba", 0x005cd0d8, 0x00001e00
+	.section .unidentified.085d0188,"a"
+	.global Field_Map043
+Field_Map043:
+	.incbin "baserom.gba", 0x005d0188, 0x00001d5c
+	.section .unidentified.085d204c,"a"
+	.global Field_Map044
+Field_Map044:
+	.incbin "baserom.gba", 0x005d204c, 0x00002890
+	.section .unidentified.085dc868,"a"
+	.global Field_Map045
+Field_Map045:
+	.incbin "baserom.gba", 0x005dc868, 0x000018d0
+	.section .unidentified.085e6820,"a"
+	.global Field_Map046
+Field_Map046:
+	.incbin "baserom.gba", 0x005e6820, 0x0000248c
+	.section .unidentified.085ee828,"a"
+	.global Field_Map047
+Field_Map047:
+	.incbin "baserom.gba", 0x005ee828, 0x00001570
+	.section .unidentified.085f46e0,"a"
+	.global Field_Map048
+Field_Map048:
+	.incbin "baserom.gba", 0x005f46e0, 0x00001a18
+	.section .unidentified.085f7674,"a"
+	.global Field_Map049
+Field_Map049:
+	.incbin "baserom.gba", 0x005f7674, 0x0000153c
+	.section .unidentified.085faff8,"a"
+	.global Field_Map050
+Field_Map050:
+	.incbin "baserom.gba", 0x005faff8, 0x00001758
+	.section .unidentified.085ff240,"a"
+	.global Field_Map051
+Field_Map051:
+	.incbin "baserom.gba", 0x005ff240, 0x00001c98
+	.section .unidentified.08606a9c,"a"
+	.global Field_Map052
+Field_Map052:
+	.incbin "baserom.gba", 0x00606a9c, 0x000028bc
+	.section .unidentified.08610e9c,"a"
+	.global Field_Map053
+Field_Map053:
+	.incbin "baserom.gba", 0x00610e9c, 0x00000e18
+	.section .unidentified.08611cb4,"a"
+	.global Field_Map054
+Field_Map054:
+	.incbin "baserom.gba", 0x00611cb4, 0x00001a10
+	.section .unidentified.0861b4fc,"a"
+	.global Field_Map055
+Field_Map055:
+	.incbin "baserom.gba", 0x0061b4fc, 0x00001b0c
+	.section .unidentified.0861d008,"a"
+	.global Field_Map056
+Field_Map056:
+	.incbin "baserom.gba", 0x0061d008, 0x00001e40
+	.section .unidentified.0861ee48,"a"
+	.global Field_Map057
+Field_Map057:
+	.incbin "baserom.gba", 0x0061ee48, 0x00001b28
+	.section .unidentified.08620970,"a"
+	.global Field_Map058
+Field_Map058:
+	.incbin "baserom.gba", 0x00620970, 0x00002178
+	.section .unidentified.08622ae8,"a"
+	.global Field_Map059
+Field_Map059:
+	.incbin "baserom.gba", 0x00622ae8, 0x00000f28
+	.section .unidentified.08623a10,"a"
+	.global Field_Map060
+Field_Map060:
+	.incbin "baserom.gba", 0x00623a10, 0x00002f80
+	.section .unidentified.08628d08,"a"
+	.global Field_Map061
+Field_Map061:
+	.incbin "baserom.gba", 0x00628d08, 0x00000fd4
+	.section .unidentified.0862fd24,"a"
+	.global Field_Map062
+Field_Map062:
+	.incbin "baserom.gba", 0x0062fd24, 0x00000e60
+	.section .unidentified.08630cdc,"a"
+	.global Field_Map063
+Field_Map063:
+	.incbin "baserom.gba", 0x00630cdc, 0x00000c64
+	.section .unidentified.08631940,"a"
+	.global Field_Map064
+Field_Map064:
+	.incbin "baserom.gba", 0x00631940, 0x00000dd0
+	.section .unidentified.08632710,"a"
+	.global Field_Map065
+Field_Map065:
+	.incbin "baserom.gba", 0x00632710, 0x00001290
+	.section .unidentified.086339a0,"a"
+	.global Field_Map066
+Field_Map066:
+	.incbin "baserom.gba", 0x006339a0, 0x00000ee8
+	.section .unidentified.08634888,"a"
+	.global Field_Map067
+Field_Map067:
+	.incbin "baserom.gba", 0x00634888, 0x000010d8
+	.section .unidentified.08635960,"a"
+	.global Field_Map068
+Field_Map068:
+	.incbin "baserom.gba", 0x00635960, 0x000031c8
+	.section .unidentified.0863eedc,"a"
+	.global Field_Map069
+Field_Map069:
+	.incbin "baserom.gba", 0x0063eedc, 0x000035d4
+	.section .unidentified.086424b0,"a"
+	.global Field_Map070
+Field_Map070:
+	.incbin "baserom.gba", 0x006424b0, 0x00003b08
+	.section .unidentified.08645fb8,"a"
+	.global Field_Map071
+Field_Map071:
+	.incbin "baserom.gba", 0x00645fb8, 0x00003d10
+	.section .unidentified.08649cc8,"a"
+	.global Field_Map072
+Field_Map072:
+	.incbin "baserom.gba", 0x00649cc8, 0x00004060
+	.section .unidentified.0864dd28,"a"
+	.global Field_Map073
+Field_Map073:
+	.incbin "baserom.gba", 0x0064dd28, 0x00002288
+	.section .unidentified.08654a20,"a"
+	.global Field_Map074
+Field_Map074:
+	.incbin "baserom.gba", 0x00654a20, 0x00001d1c
+	.section .unidentified.086568d4,"a"
+	.global Field_Map075
+Field_Map075:
+	.incbin "baserom.gba", 0x006568d4, 0x00001fa4
+	.section .unidentified.086610b0,"a"
+	.global Field_Map076
+Field_Map076:
+	.incbin "baserom.gba", 0x006610b0, 0x00002b6c
+	.section .unidentified.08666130,"a"
+	.global Field_Map077
+Field_Map077:
+	.incbin "baserom.gba", 0x00666130, 0x000017dc
+	.section .unidentified.08667ac0,"a"
+	.global Field_Map078
+Field_Map078:
+	.incbin "baserom.gba", 0x00667ac0, 0x00001574
+	.section .unidentified.08669034,"a"
+	.global Field_Map079
+Field_Map079:
+	.incbin "baserom.gba", 0x00669034, 0x000029d0
+	.section .unidentified.0866ba04,"a"
+	.global Field_Map080
+Field_Map080:
+	.incbin "baserom.gba", 0x0066ba04, 0x000022c8
+	.section .unidentified.0866dccc,"a"
+	.global Field_Map081
+Field_Map081:
+	.incbin "baserom.gba", 0x0066dccc, 0x000015d8
+	.section .unidentified.0866f2a4,"a"
+	.global Field_Map082
+Field_Map082:
+	.incbin "baserom.gba", 0x0066f2a4, 0x000020c0
+	.section .unidentified.08671364,"a"
+	.global Field_Map083
+Field_Map083:
+	.incbin "baserom.gba", 0x00671364, 0x0000232c
+	.section .unidentified.08673690,"a"
+	.global Field_Map084
+Field_Map084:
+	.incbin "baserom.gba", 0x00673690, 0x00002c24
+	.section .unidentified.086762b4,"a"
+	.global Field_Map085
+Field_Map085:
+	.incbin "baserom.gba", 0x006762b4, 0x00001488
+	.section .unidentified.0867773c,"a"
+	.global Field_Map086
+Field_Map086:
+	.incbin "baserom.gba", 0x0067773c, 0x00000d24
+	.section .unidentified.086785c0,"a"
+	.global Field_Map087
+Field_Map087:
+	.incbin "baserom.gba", 0x006785c0, 0x0000193c
+	.section .unidentified.08679efc,"a"
+	.global Field_Map088
+Field_Map088:
+	.incbin "baserom.gba", 0x00679efc, 0x00001e1c
+	.section .unidentified.0867be7c,"a"
+	.global Field_Map089
+Field_Map089:
+	.incbin "baserom.gba", 0x0067be7c, 0x000034c4
+	.section .unidentified.0867f340,"a"
+	.global Field_Map090
+Field_Map090:
+	.incbin "baserom.gba", 0x0067f340, 0x00002820
+	.section .unidentified.086882a8,"a"
+	.global Field_Map091
+Field_Map091:
+	.incbin "baserom.gba", 0x006882a8, 0x000024e0
+	.section .unidentified.0868a788,"a"
+	.global Field_Map092
+Field_Map092:
+	.incbin "baserom.gba", 0x0068a788, 0x000028e8
+	.section .unidentified.0868d070,"a"
+	.global Field_Map093
+Field_Map093:
+	.incbin "baserom.gba", 0x0068d070, 0x00001fa0
+	.section .unidentified.08695d1c,"a"
+	.global Field_Map094
+Field_Map094:
+	.incbin "baserom.gba", 0x00695d1c, 0x00002e1c
+	.section .unidentified.0869ffb0,"a"
+	.global Field_Map095
+Field_Map095:
+	.incbin "baserom.gba", 0x0069ffb0, 0x00000dfc
+	.section .unidentified.086a0dac,"a"
+	.global Field_Map096
+Field_Map096:
+	.incbin "baserom.gba", 0x006a0dac, 0x00001178
+	.section .unidentified.086a1f24,"a"
+	.global Field_Map097
+Field_Map097:
+	.incbin "baserom.gba", 0x006a1f24, 0x00001dc4
+	.section .unidentified.086a3e6c,"a"
+	.global Field_Map098
+Field_Map098:
+	.incbin "baserom.gba", 0x006a3e6c, 0x00001fc8
+	.section .unidentified.086a83c0,"a"
+	.global Field_Map099
+Field_Map099:
+	.incbin "baserom.gba", 0x006a83c0, 0x000026bc
+	.section .unidentified.086aac40,"a"
+	.global Field_Map100
+Field_Map100:
+	.incbin "baserom.gba", 0x006aac40, 0x00000f34
+	.section .unidentified.086abcc0,"a"
+	.global Field_Map101
+Field_Map101:
+	.incbin "baserom.gba", 0x006abcc0, 0x00001f68
+	.section .unidentified.086b4d80,"a"
+	.global Field_Map102
+Field_Map102:
+	.incbin "baserom.gba", 0x006b4d80, 0x00000e08
+	.section .unidentified.086b70a0,"a"
+	.global Field_Map103
+Field_Map103:
+	.incbin "baserom.gba", 0x006b70a0, 0x0000119c
+	.section .unidentified.086bf154,"a"
+	.global Field_Map104
+Field_Map104:
+	.incbin "baserom.gba", 0x006bf154, 0x00000aec
+	.section .unidentified.086bfe14,"a"
+	.global Field_Map105
+Field_Map105:
+	.incbin "baserom.gba", 0x006bfe14, 0x00001358
+	.section .unidentified.086c56b8,"a"
+	.global Field_Map106
+Field_Map106:
+	.incbin "baserom.gba", 0x006c56b8, 0x00001d80
+	.section .unidentified.086c75e0,"a"
+	.global Field_Map107
+Field_Map107:
+	.incbin "baserom.gba", 0x006c75e0, 0x000021b8
+	.section .unidentified.086c992c,"a"
+	.global Field_Map108
+Field_Map108:
+	.incbin "baserom.gba", 0x006c992c, 0x000011e8
+	.section .unidentified.086cf47c,"a"
+	.global Field_Map109
+Field_Map109:
+	.incbin "baserom.gba", 0x006cf47c, 0x00000cd4
+	.section .unidentified.086d02d0,"a"
+	.global Field_Map110
+Field_Map110:
+	.incbin "baserom.gba", 0x006d02d0, 0x000018b8
+	.section .unidentified.086d1d0c,"a"
+	.global Field_Map111
+Field_Map111:
+	.incbin "baserom.gba", 0x006d1d0c, 0x00001a90
+	.section .unidentified.086d3918,"a"
+	.global Field_Map112
+Field_Map112:
+	.incbin "baserom.gba", 0x006d3918, 0x00001d3c
+	.section .unidentified.086d58f8,"a"
+	.global Field_Map113
+Field_Map113:
+	.incbin "baserom.gba", 0x006d58f8, 0x00001ea4
+	.section .unidentified.086d7924,"a"
+	.global Field_Map114
+Field_Map114:
+	.incbin "baserom.gba", 0x006d7924, 0x00000f5c
+	.section .unidentified.086d8a18,"a"
+	.global Field_Map115
+Field_Map115:
+	.incbin "baserom.gba", 0x006d8a18, 0x0000110c
+	.section .unidentified.086d9ce0,"a"
+	.global Field_Map116
+Field_Map116:
+	.incbin "baserom.gba", 0x006d9ce0, 0x00002aa4
+	.section .unidentified.086dc8f8,"a"
+	.global Field_Map117
+Field_Map117:
+	.incbin "baserom.gba", 0x006dc8f8, 0x000013e8
+	.section .unidentified.086dde98,"a"
+	.global Field_Map118
+Field_Map118:
+	.incbin "baserom.gba", 0x006dde98, 0x00002928
+	.section .unidentified.086e0968,"a"
+	.global Field_Map119
+Field_Map119:
+	.incbin "baserom.gba", 0x006e0968, 0x000023fc
+	.section .unidentified.086e2ef4,"a"
+	.global Field_Map120
+Field_Map120:
+	.incbin "baserom.gba", 0x006e2ef4, 0x00003280
+	.section .unidentified.086e6354,"a"
+	.global Field_Map121
+Field_Map121:
+	.incbin "baserom.gba", 0x006e6354, 0x00000f0c
+	.section .unidentified.086e7260,"a"
+	.global Field_Map122
+Field_Map122:
+	.incbin "baserom.gba", 0x006e7260, 0x00001688
+	.section .unidentified.086e8a78,"a"
+	.global Field_Map123
+Field_Map123:
+	.incbin "baserom.gba", 0x006e8a78, 0x00002a70
+	.section .unidentified.086eb670,"a"
+	.global Field_Map124
+Field_Map124:
+	.incbin "baserom.gba", 0x006eb670, 0x00000b4c
+	.section .unidentified.086f21ac,"a"
+	.global Field_Map125
+Field_Map125:
+	.incbin "baserom.gba", 0x006f21ac, 0x00001544
+	.section .unidentified.086f387c,"a"
+	.global Field_Map126
+Field_Map126:
+	.incbin "baserom.gba", 0x006f387c, 0x000010dc
+	.section .unidentified.086f4ae8,"a"
+	.global Field_Map127
+Field_Map127:
+	.incbin "baserom.gba", 0x006f4ae8, 0x00001b04
+	.section .unidentified.086fdf50,"a"
+	.global Field_Map128
+Field_Map128:
+	.incbin "baserom.gba", 0x006fdf50, 0x000020a8
+	.section .unidentified.08707960,"a"
+	.global Field_Map129
+Field_Map129:
+	.incbin "baserom.gba", 0x00707960, 0x00001a94
+	.section .unidentified.0871086c,"a"
+	.global Field_Map130
+Field_Map130:
+	.incbin "baserom.gba", 0x0071086c, 0x00001230
+	.section .unidentified.08711bf8,"a"
+	.global Field_Map131
+Field_Map131:
+	.incbin "baserom.gba", 0x00711bf8, 0x00000fa8
+	.section .unidentified.08712ba0,"a"
+	.global Field_Map132
+Field_Map132:
+	.incbin "baserom.gba", 0x00712ba0, 0x0000167c
+	.section .unidentified.0871421c,"a"
+	.global Field_Map133
+Field_Map133:
+	.incbin "baserom.gba", 0x0071421c, 0x00000ed8
+	.section .unidentified.08715260,"a"
+	.global Field_Map134
+Field_Map134:
+	.incbin "baserom.gba", 0x00715260, 0x000019b8
+	.section .unidentified.08716c18,"a"
+	.global Field_Map135
+Field_Map135:
+	.incbin "baserom.gba", 0x00716c18, 0x00000f74
+	.section .unidentified.08718e8c,"a"
+	.global Field_Map136
+Field_Map136:
+	.incbin "baserom.gba", 0x00718e8c, 0x0000164c
+	.section .unidentified.0871a618,"a"
+	.global Field_Map137
+Field_Map137:
+	.incbin "baserom.gba", 0x0071a618, 0x00001dbc
+	.section .unidentified.0871c3d4,"a"
+	.global Field_Map138
+Field_Map138:
+	.incbin "baserom.gba", 0x0071c3d4, 0x00001348
+	.section .unidentified.0871d898,"a"
+	.global Field_Map139
+Field_Map139:
+	.incbin "baserom.gba", 0x0071d898, 0x0000277c
+	.section .unidentified.087201ac,"a"
+	.global Field_Map140
+Field_Map140:
+	.incbin "baserom.gba", 0x007201ac, 0x000029ec
+	.section .unidentified.08722b98,"a"
+	.global Field_Map141
+Field_Map141:
+	.incbin "baserom.gba", 0x00722b98, 0x000013ec
+	.section .unidentified.08723f84,"a"
+	.global Field_Map142
+Field_Map142:
+	.incbin "baserom.gba", 0x00723f84, 0x00001508
+	.section .unidentified.0872548c,"a"
+	.global Field_Map143
+Field_Map143:
+	.incbin "baserom.gba", 0x0072548c, 0x00003ec0
+	.section .unidentified.0872950c,"a"
+	.global Field_Map144
+Field_Map144:
+	.incbin "baserom.gba", 0x0072950c, 0x00001170
+	.section .unidentified.0872a7d4,"a"
+	.global Field_Map145
+Field_Map145:
+	.incbin "baserom.gba", 0x0072a7d4, 0x000010a0
+	.section .unidentified.0872e3a4,"a"
+	.global Field_Map146
+Field_Map146:
+	.incbin "baserom.gba", 0x0072e3a4, 0x000012ec
+	.section .unidentified.0872f690,"a"
+	.global Field_Map147
+Field_Map147:
+	.incbin "baserom.gba", 0x0072f690, 0x00002240
+	.section .unidentified.087319c8,"a"
+	.global Field_Map148
+Field_Map148:
+	.incbin "baserom.gba", 0x007319c8, 0x00002a70
+	.section .unidentified.08734438,"a"
+	.global Field_Map149
+Field_Map149:
+	.incbin "baserom.gba", 0x00734438, 0x000018d8
+	.section .unidentified.08735e84,"a"
+	.global Field_Map150
+Field_Map150:
+	.incbin "baserom.gba", 0x00735e84, 0x00001b68
+	.section .unidentified.0873f32c,"a"
+	.global Field_Map151
+Field_Map151:
+	.incbin "baserom.gba", 0x0073f32c, 0x000026ac
+	.section .unidentified.08748b44,"a"
+	.global Field_Map152
+Field_Map152:
+	.incbin "baserom.gba", 0x00748b44, 0x000019c0
+	.section .unidentified.0874a678,"a"
+	.global Field_Map153
+Field_Map153:
+	.incbin "baserom.gba", 0x0074a678, 0x00001770
+	.section .unidentified.0874bde8,"a"
+	.global Field_Map154
+Field_Map154:
+	.incbin "baserom.gba", 0x0074bde8, 0x0000189c
+	.section .unidentified.0874d83c,"a"
+	.global Field_Map155
+Field_Map155:
+	.incbin "baserom.gba", 0x0074d83c, 0x00001870
+	.section .unidentified.0874f22c,"a"
+	.global Field_Map156
+Field_Map156:
+	.incbin "baserom.gba", 0x0074f22c, 0x0000192c
+	.section .unidentified.08750b58,"a"
+	.global Field_Map157
+Field_Map157:
+	.incbin "baserom.gba", 0x00750b58, 0x00001edc
+	.section .unidentified.08752d30,"a"
+	.global Field_Map158
+Field_Map158:
+	.incbin "baserom.gba", 0x00752d30, 0x00000c40
+	.section .unidentified.08753b18,"a"
+	.global Field_Map159
+Field_Map159:
+	.incbin "baserom.gba", 0x00753b18, 0x00002040
+	.section .unidentified.08755c3c,"a"
+	.global Field_Map160
+Field_Map160:
+	.incbin "baserom.gba", 0x00755c3c, 0x00002d18
+	.section .unidentified.08758b3c,"a"
+	.global Field_Map161
+Field_Map161:
+	.incbin "baserom.gba", 0x00758b3c, 0x000025fc
+	.section .unidentified.0875b138,"a"
+	.global Field_Map162
+Field_Map162:
+	.incbin "baserom.gba", 0x0075b138, 0x00000ca0
+	.section .unidentified.087604e4,"a"
+	.global Field_Map163
+Field_Map163:
+	.incbin "baserom.gba", 0x007604e4, 0x00001bd4
+	.section .unidentified.08762228,"a"
+	.global Field_Map164
+Field_Map164:
+	.incbin "baserom.gba", 0x00762228, 0x00001940
+	.section .unidentified.08763cc4,"a"
+	.global Field_Map165
+Field_Map165:
+	.incbin "baserom.gba", 0x00763cc4, 0x000014dc
+	.section .unidentified.087651a0,"a"
+	.global Field_Map166
+Field_Map166:
+	.incbin "baserom.gba", 0x007651a0, 0x00001550
+	.section .unidentified.087666f0,"a"
+	.global Field_Map167
+Field_Map167:
+	.incbin "baserom.gba", 0x007666f0, 0x00001ec4
+	.section .unidentified.087685b4,"a"
+	.global Field_Map168
+Field_Map168:
+	.incbin "baserom.gba", 0x007685b4, 0x00001954
+	.section .unidentified.0876a00c,"a"
+	.global Field_Map169
+Field_Map169:
+	.incbin "baserom.gba", 0x0076a00c, 0x00000a1c
+	.section .unidentified.0876f3bc,"a"
+	.global Field_Map170
+Field_Map170:
+	.incbin "baserom.gba", 0x0076f3bc, 0x00000f94
+	.section .unidentified.08773af0,"a"
+	.global Field_Map171
+Field_Map171:
+	.incbin "baserom.gba", 0x00773af0, 0x00001190
+	.section .unidentified.08774e48,"a"
+	.global Field_Map172
+Field_Map172:
+	.incbin "baserom.gba", 0x00774e48, 0x0000034c
+	.section .unidentified.087756b0,"a"
+	.global Field_Map173
+Field_Map173:
+	.incbin "baserom.gba", 0x007756b0, 0x0000034c
+	.section .unidentified.08775f18,"a"
+	.global Field_Map174
+Field_Map174:
+	.incbin "baserom.gba", 0x00775f18, 0x0000034c
+	.section .unidentified.08776780,"a"
+	.global Field_Map175
+Field_Map175:
+	.incbin "baserom.gba", 0x00776780, 0x0000034c
+	.section .unidentified.08776fe8,"a"
+	.global Field_Map176
+Field_Map176:
+	.incbin "baserom.gba", 0x00776fe8, 0x0000034c
+	.section .unidentified.08777850,"a"
+	.global Field_Map177
+Field_Map177:
+	.incbin "baserom.gba", 0x00777850, 0x0000034c
+	.section .unidentified.087780b8,"a"
+	.global Field_Map178
+Field_Map178:
+	.incbin "baserom.gba", 0x007780b8, 0x0000034c
+	.section .unidentified.08778920,"a"
+	.global Field_Map179
+Field_Map179:
+	.incbin "baserom.gba", 0x00778920, 0x0000034c

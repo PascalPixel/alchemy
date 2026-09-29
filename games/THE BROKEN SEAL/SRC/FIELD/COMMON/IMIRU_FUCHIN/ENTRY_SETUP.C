@@ -21,9 +21,9 @@ void ImiruFuchin_ApplyEntrySetup(void)
             OverlayObject_CreateAndInitialize(0xbc0000, 0, 0x1c40000, 223);
         }
     } else if (gGameState.scene == (s32)&SceneId_ImiruFuchin7) {
-        /* One zero clears the flag and both of actor 8's words, and the
-         * variable is reused for the tracking work below: the reference keeps
-         * the zero and then the work in the same register. */
+        /* FAKEMATCH: one zero clears the flag and both of actor 8's words,
+         * and the variable is reused for the tracking work below, so the zero
+         * and then the work share one register. */
         value = 0;
         actor = (u8 *)Actor_Get(8);
         ImiruFuchin_TrackLeader = value;

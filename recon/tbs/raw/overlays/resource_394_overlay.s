@@ -1445,98 +1445,6 @@ Func_02000e64:
 	.2byte 0xffef
 	.2byte 0xff3f
 	.2byte 0x0000
-	.section .text.x02008f34,"ax",%progbits
-	.p2align 2
-	.global Func_02000f34
-	.thumb_func
-Func_02000f34:
-	ldr r2, [pc, #12]
-	ldr r3, [pc, #16]
-	ldr r0, [r2]
-	ldr r1, [pc, #16]
-	ldr r2, [pc, #16]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	bx lr
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x020092d0
-	.4byte 0x840000e0
-	.global Func_02000f54
-	.thumb_func
-Func_02000f54:
-	ldr r2, [pc, #12]
-	ldr r3, [pc, #16]
-	ldr r0, [r2]
-	ldr r1, [pc, #16]
-	ldr r2, [pc, #16]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	bx lr
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x020099d0
-	.4byte 0x840000e0
-	.global Func_02000f74
-	.thumb_func
-Func_02000f74:
-	push {lr}
-	ldr r3, [pc, #44]
-	ldr r4, [r3]
-	movs r0, #160
-	ldr r3, [pc, #40]
-	lsls r0, r0, #19
-	adds r1, r4, #0
-	ldr r2, [pc, #40]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r1, r4, r2
-	ldr r0, [pc, #32]
-	ldr r2, [pc, #24]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl 0x0200910c
-	pop {r0}
-	bx r0
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x84000070
-	.4byte 0x05000200
-	.global Func_02000fb4
-	.thumb_func
-Func_02000fb4:
-	push {lr}
-	ldr r3, [pc, #40]
-	ldr r1, [r3]
-	cmp r0, #0
-	beq .L_02000fb4_0
-	ldr r3, [pc, #36]
-	ldr r0, [pc, #36]
-	b .L_02000fb4_1
-.L_02000fb4_0:
-	ldr r3, [pc, #28]
-	ldr r0, [pc, #36]
-.L_02000fb4_1:
-	ldr r2, [pc, #36]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	movs r0, #128
-	lsls r0, r0, #9
-	movs r1, #0
-	bl 0x02009104
-	bl 0x02008f74
-	pop {r0}
-	bx r0
-	.4byte 0x03001ed0
-	.4byte 0x040000d4
-	.4byte 0x020099d0
-	.4byte 0x020092d0
-	.4byte 0x840000e0
 	.section .rodata,"a",%progbits
 	.4byte 0x000b00cd
 	.4byte 0x00010009
@@ -1641,3 +1549,11 @@ Func_02000fb4:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.section .bss,"aw",%nobits
+	.space 24
+	.global KorimaPalette_First
+KorimaPalette_First:
+	.space 1792
+	.global KorimaPalette_Second
+KorimaPalette_Second:
+	.space 896

@@ -1,5 +1,7 @@
 #include "TYPES.H"
 extern u8 gMenuCtrlWork[];
+/* The game state, read here as bytes: the byte at 498 is the retry flag. */
+extern u8 gGameState[];
 
 u8 * Engine_ActorGet();
 void Engine_ActorSetAnimation();
@@ -9,13 +11,11 @@ void Engine_ActorSetSpriteFlags();
 void Engine_ObjectSetAnimation();
 void Engine_TaskWait();
 
-
-extern u8 Korosseo_LinkedZero[];
+/* The competitor's starting position and facing, kept in the overlay's
+ * variables while a round runs. */
 extern s32 Korosseo_CompetitorStartX;
 extern s32 Korosseo_CompetitorStartZ;
 extern s32 Korosseo_CompetitorStartAngle;
-extern u8 gGameStateBytes[];
-extern u8 gGameStateRows[][2];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -28,17 +28,24 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 }
 
 /* Colosso: put the competitor back at its stored start position and facing
- * after a round, replaying the fall animation unless the retry flag is set. */
+ * after a round, replaying the fall animation unless the retry flag is set.
+ * The same function sits in each of the three Colosso trial overlays. */
 void Korosseo_RestoreCompetitor(s32 a0)
 {
     u8 *rec7;
     u8 *p7;
     s32 zero;
+    /* FAKEMATCH: a one-halfword aggregate holds the zero stored at +34, so
+     * it loads as a halfword pool constant whose short range places the
+     * literal pool before the epilogue. */
+    struct Half {
+        u16 v;
+    } fall;
 
-    p7 = *(s32 *)gMenuCtrlWork;
+    p7 = *(u8 **)gMenuCtrlWork;
     rec7 = Engine_ActorGet(a0);
-    if (gGameStateRows[249][0] == 1) {
-        gGameStateRows[249][0] = 0;
+    if (gGameState[498] == 1) {
+        gGameState[498] = 0;
         Engine_ActorSetAnimation(a0, 1);
     } else {
         Call3(Engine_ActorFaceDirection, a0, 0x4000, 30);
@@ -55,15 +62,9 @@ void Korosseo_RestoreCompetitor(s32 a0)
     *(s32 *)((s32)rec7 + 64) = -0x80000000;
     *(s32 *)((s32)rec7 + 36) = zero;
     *(s32 *)((s32)rec7 + 44) = zero;
-    {
-        /* FAKEMATCH: the zero at +34 is a halfword pool constant through a link
-         * symbol; its short pool range places the literal pool before the
-         * epilogue. */
-        s32 z = (u16)(u32)Korosseo_LinkedZero;
-
-        rec7[85] = 3;
-        rec7[34] = z;
-    }
+    fall.v = 0;
+    rec7[85] = 3;
+    rec7[34] = fall.v;
     *(s32 *)((s32)rec7 + 12) = zero;
     *(s32 *)((s32)rec7 + 20) = zero;
     Engine_ActorSetSpriteFlags((s32)rec7, 1);

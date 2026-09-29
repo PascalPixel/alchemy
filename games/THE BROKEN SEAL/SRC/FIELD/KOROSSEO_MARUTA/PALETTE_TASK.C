@@ -5,43 +5,43 @@ void ColossoLogRollingStage_StartPaletteTask(u32 first_value, u32 second_value, 
 {
     ColossoLogRollingStage_EnsurePaletteHandle();
 
-    gColossoPaletteFirst = (u16)first_value;
-    gColossoPaletteSecond = (u16)second_value;
-    gColossoPaletteMode = (u16)(mode & 3);
-    gColossoPaletteStep = 0;
-    gColossoPaletteFlags = 0;
+    Korosseo_MarkerX = (u16)first_value;
+    Korosseo_MarkerY = (u16)second_value;
+    Korosseo_MarkerPriority = (u16)(mode & 3);
+    Korosseo_MarkerBlink = 0;
+    Korosseo_MarkerSteps = 0;
 
     {
         s32 budget = 0xc80;
-        s32 task = (s32)ColossoLogRollingStage_PaletteTask;
+        s32 task = (s32)Korosseo_UpdateMarker;
         Engine_TaskAddCallback(task, budget);
     }
 }
 
 void ColossoLogRollingStage_StartPaletteTaskFromState(u32 first_value, u32 second_value, u32 mode)
 {
-    gColossoPaletteNextFirst = (u16)first_value;
-    gColossoPaletteNextSecond = (u16)second_value;
-    gColossoPaletteSavedFirst = gColossoPaletteFirst;
-    gColossoPaletteSavedSecond = gColossoPaletteSecond;
-    gColossoPaletteFlags = (u16)mode;
-    gColossoPaletteProgress = 0;
+    Korosseo_MarkerEndX = (u16)first_value;
+    Korosseo_MarkerEndY = (u16)second_value;
+    Korosseo_MarkerStartX = Korosseo_MarkerX;
+    Korosseo_MarkerStartY = Korosseo_MarkerY;
+    Korosseo_MarkerSteps = (u16)mode;
+    Korosseo_MarkerStep = 0;
 
     {
         s32 budget = 0xc80;
-        s32 task = (s32)ColossoLogRollingStage_PaletteTask;
+        s32 task = (s32)Korosseo_UpdateMarker;
         Engine_TaskAddCallback(task, budget);
     }
 }
 
 void ColossoLogRollingStage_StopPaletteTask(void)
 {
-    extern void ColossoLogRollingStage_PaletteTask(void);
+    extern void Korosseo_UpdateMarker(void);
     extern void Resource_ResetEntry(s32 slot);
 
-    Engine_TaskRemoveCallback(ColossoLogRollingStage_PaletteTask);
-    Resource_ResetEntry(gColossoPaletteHandle);
-    gColossoPaletteHandle = -1;
+    Engine_TaskRemoveCallback(Korosseo_UpdateMarker);
+    Resource_ResetEntry(Korosseo_MarkerSlot);
+    Korosseo_MarkerSlot = -1;
 }
 
 void ColossoLogRollingStage_PositionScaledObject(s32 id, s32 x, s32 z)

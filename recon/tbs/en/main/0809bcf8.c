@@ -31,10 +31,11 @@
    2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes, --function
    Map_UpdateWorldMapMarkers): 37,258 candidates, none below the draft's
    score 270, 16,782 level with it. Seven of its ten differences are names:
-   the three ROM tables need labels, Func_08015060 is UiWindow_Clear,
-   Func_080153c0 has no label, 0x99b is an unnamed message and RegIme is
-   REG_IME; the rest is the two marker byte accesses one slot apart and one
-   register. */
+   the three ROM tables need labels, Func_08015060 carries two build names
+   (UiWindow_Clear and RenderOutput_PrepareForRedrawFar), Func_080153c0 has
+   no label, the 0x99b message is MsgDebugEntryName in the catalogs and
+   RegIme is REG_IME; the rest is the two marker byte accesses one slot
+   apart and one register. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "PARTY_STATE.H"

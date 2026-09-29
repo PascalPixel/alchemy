@@ -23,6 +23,15 @@
  * and retains a different spill layout. This is a broad residual, not just
  * register choice. Stop after three structural hypotheses; no adoption,
  * declaration/operand permutation sweep, compiler change or byte credit.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 20,552
+ * candidates; the best scored 6049 against 8034 (85 register-only, 29
+ * stack-only, 30 operand, 36 reordered, 13 inserted, 14 deleted) after 52
+ * rewrites (reorder independent statements, swap commutative operands,
+ * reorder local declarations, test truth or compare with zero), none of
+ * them kept. Statement moves and operand swaps across the function; its
+ * resource numbers are pooled link-time Value_ symbols (0x79 and 0x8f are
+ * not even in CONSTANTS.LD, and as plain numbers they would become movs),
+ * which block adoption in any case.
  */
 
 typedef void (*WordCopy)(void *, const void *, s32);

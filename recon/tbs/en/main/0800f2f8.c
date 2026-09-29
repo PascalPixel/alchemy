@@ -39,6 +39,13 @@
  * named-table ownership, not exactness: frame/slots, loop condition,
  * chained multiply and tail pool remain. H1 is committed at e2dc4bd31.
  * Two hypotheses used; preserve the third for genuinely new evidence.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 24,282
+ * candidates; the best scored 1585 against 2854 (32 register-only, 20
+ * stack-only, 6 operand, 6 reordered, 4 inserted, 5 deleted) after 43
+ * rewrites (introduce a temporary, swap commutative operands, reorder local
+ * declarations, reorder independent statements), none of them kept.
+ * Temporaries and declaration moves make up most of its 43 rewrites;
+ * stack-slot use (20 stack-only) is unchanged.
  */
 #include "TYPES.H"
 #include "OBJECT_RUNTIME.H"

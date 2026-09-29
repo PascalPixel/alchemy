@@ -643,7 +643,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GAME/PARTY/SET_FLAG32_AND_REFRESH_MEMBERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/REFRESH_RATIOS_ON_FLAG.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/RATIOS.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/RATIOS_SECOND_INPUT.o"(.text)
+        "*/games/COMMON/SRC/GAME/CHARACTER/RATIOS_SECOND_INPUT.o"(.text)
         "*/recon/tbs/raw/080783a2.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/CHARACTER/VALUES.o"(.text)
         "*/recon/tbs/raw/08078412.o"(.text .rodata .data .padding)

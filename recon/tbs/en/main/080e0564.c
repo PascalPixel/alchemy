@@ -1,3 +1,14 @@
+/* Draft, complete main:080e0564 [080e0564,080e08c0), 860 bytes.
+ * Commit 914176340 matched this owner byte for byte with the spray pool
+ * written as the literal EWRAM address 0x02010000. Literal RAM addresses
+ * are not allowed, and the pool through its linker-placed name,
+ * gMapCellBuffer, does not match: 876/860 bytes. GCC 2.96 folds a constant
+ * pool base plus the variant offset into one pool word (0x02010018), but
+ * with a symbol it loads gMapCellBuffer and adds 24 in the loop setup, and
+ * the extra register shifts the allocation of the frame, start and spout
+ * loops. The same happens in REEL_INIT_TITLE.C. Needs a named form of the
+ * pool that the compiler folds like a constant, or Pascal's ruling on it.
+ */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -8,6 +19,7 @@
 #include "B5_CONTEXT.H"
 
 extern u8 gBattleFxWork[];
+extern struct EffectStep gMapCellBuffer[];
 extern u16 ParticleStreams_CellOffsets[];
 extern u8 Value_0000006f;
 extern u8 Value_00000073;
@@ -24,7 +36,6 @@ void ObjectGroup_TickMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
 #define HI(v) (((s16 *)&(v))[1])
-#define SPRAY ((struct EffectStep *)0x02010000)
 
 /* Battle effect: a swinging beam sweeps across the field for 80 frames
    while ten spouts start four frames apart from frame 16, each rising 12
@@ -76,7 +87,7 @@ void BattleFx_RunSpoutBursts(struct BattleEffectArgument *object)
         spout->y = 104;
     }
     for (i = 0; i != 512; i++)
-        SPRAY[i].variant = -1;
+        gMapCellBuffer[i].variant = -1;
     Audio_PlayCue(141);
     for (frame = 0, angle = 0x8000; frame != 96; frame++) {
         if (frame <= 79) {
@@ -90,7 +101,7 @@ void BattleFx_RunSpoutBursts(struct BattleEffectArgument *object)
             if (frame >= start) {
                 draw[0](canvas, (u8 *)work + 0x9e0, spout->x - 17, spout->y - 32, 34, 65);
                 if (frame == start) {
-                    for (j = 0, drop = &SPRAY[i * 32]; j != 16; j++) {
+                    for (j = 0, drop = &gMapCellBuffer[i * 32]; j != 16; j++) {
                         spin = (Random16() & 0x7fff) + 0x4000;
                         speed = (Random16() & 0x1ff) + 256;
                         drop->x = spout->x << 16;
@@ -112,12 +123,12 @@ void BattleFx_RunSpoutBursts(struct BattleEffectArgument *object)
             }
         }
         for (i = 0; i != 512; i++) {
-            if (SPRAY[i].variant != -1) {
-                size = SPRAY[i].variant / 16 + 2;
+            if (gMapCellBuffer[i].variant != -1) {
+                size = gMapCellBuffer[i].variant / 16 + 2;
                 draw[1](canvas, sheet + ParticleStreams_CellOffsets[size - 1],
-                    HI(SPRAY[i].x) - size / 2, HI(SPRAY[i].y) - size, size, size * 2);
-                EffectStep_AdvanceWithGravity2D(&SPRAY[i], 62, 0x2000);
-                SPRAY[i].variant--;
+                    HI(gMapCellBuffer[i].x) - size / 2, HI(gMapCellBuffer[i].y) - size, size, size * 2);
+                EffectStep_AdvanceWithGravity2D(&gMapCellBuffer[i], 62, 0x2000);
+                gMapCellBuffer[i].variant--;
             }
         }
         Camera_ApplyShake(4, 4);

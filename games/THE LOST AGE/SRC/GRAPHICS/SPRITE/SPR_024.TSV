@@ -1,0 +1,14 @@
+anim	00 07 f1 00
+anim	00 79 03 07 00 47 0c 79 00 3d 03 07 fd 00
+anim	1e 09 0f 0a 12 09 15 09 18 0a 1b 09 fd 00
+anim	06 15 fe 01
+anim	09 08 00 07 0c 08 00 07 09 08 00 07 0c 08 00 0b fe 01
+anim	09 06 00 06 0c 06 00 06 fd 00
+anim	03 06 f1 00
+same	SPR_024	6
+same	SPR_024	6
+same	SPR_024	6
+same	SPR_024	6
+same	SPR_024	6
+same	SPR_024	6
+same	SPR_024	6

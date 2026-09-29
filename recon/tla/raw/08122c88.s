@@ -403,7 +403,7 @@ Func_08122c88:
 	ldr	r0, [r6, #0]
 	bl	0x0811f030
 	ldr	r0, [r7, r5]
-	bl	Func_0811b6a4
+	bl	BattlePres_SetActorModeAndAction
 	b.n	.L_08122ff0
 	lsls	r3, r6, #2
 	adds	r3, #64

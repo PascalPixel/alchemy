@@ -262,7 +262,7 @@ Func_0811b75c:
 	strb	r2, [r6, #26]
 .L_0811b94e:
 	ldr	r0, [sp, #8]
-	bl	Func_0811b6a4
+	bl	BattlePres_SetActorModeAndAction
 .L_0811b954:
 	ldr	r3, [sp, #4]
 	movs	r1, #1
@@ -305,7 +305,7 @@ Func_0811b75c:
 	cmp	r3, #0
 	beq.n	.L_0811b9a8
 	adds	r0, r5, #0
-	bl	Func_0811b6a4
+	bl	BattlePres_SetActorModeAndAction
 .L_0811b9a8:
 	movs	r1, #1
 	add	fp, r1

@@ -240,7 +240,7 @@ Func_08040a48:
 .L_08040c26:
 	adds	r0, r7, #0
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	bl	0x080409dc
 	movs	r0, #1
 	bl	0x08013560
@@ -488,7 +488,7 @@ Func_08040a48:
 .L_08040e42:
 	mov	r0, r8
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	bl	.L_08040cb0
 	movs	r0, #1
 	bl	0x08013560

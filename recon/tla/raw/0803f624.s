@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f624
+	.global UiTextResource_Initialize
 	.thumb_func
-Func_0803f624:
+UiTextResource_Initialize:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}

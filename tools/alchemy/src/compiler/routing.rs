@@ -462,7 +462,7 @@ mod target_tests {
             agbcc_flash_cflags()
         );
         for source in [
-            "SOUND/CGB_UPDATE_CHANNELS.C",
+            "games/COMMON/SRC/SOUND/CGB_UPDATE_CHANNELS.C",
             "games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
         ] {
             assert_eq!(

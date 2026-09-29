@@ -26,7 +26,7 @@ Func_080464dc:
 	cmp	r0, #0
 	beq.n	.L_0804650e
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0804650e:
 	ldr	r2, [sp, #60]
 	cmp	r2, #0
@@ -808,7 +808,7 @@ Func_080464dc:
 	cmp	r0, #0
 	beq.n	.L_08046b90
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r3, [sp, #92]
 	str	r3, [r5, #68]
 .L_08046b90:
@@ -4218,12 +4218,12 @@ Func_080464dc:
 	bl	Func_08041b68
 	movs	r1, #1
 	ldr	r0, [sp, #136]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r5, #192
 	ldr	r0, [sp, #128]
 	movs	r1, #1
 	lsls	r5, r5, #18
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r3, [r5, #36]
 	adds	r5, #228
 	adds	r3, #65
@@ -4488,7 +4488,7 @@ Func_080464dc:
 	beq.n	.L_08048878
 	ldr	r0, [sp, #44]
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r3, #42
 	str	r3, [sp, #0]
 	movs	r0, #0
@@ -4550,7 +4550,7 @@ Func_080464dc:
 	beq.n	.L_080489ac
 	adds	r0, r3, #0
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #0
 	str	r0, [sp, #68]
 	str	r0, [sp, #32]
@@ -4590,7 +4590,7 @@ Func_080464dc:
 	beq.n	.L_080489ac
 	adds	r0, r1, #0
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r2, #0
 	str	r2, [sp, #68]
 	str	r2, [sp, #32]
@@ -4660,7 +4660,7 @@ Func_080464dc:
 	strb	r3, [r2, #6]
 	ldr	r0, [sp, #44]
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r3, #42
 	str	r3, [sp, #0]
 	movs	r1, #4
@@ -5584,13 +5584,13 @@ Func_080464dc:
 	bl	0x08014274
 	movs	r1, #1
 	ldr	r0, [sp, #44]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #1
 	ldr	r0, [sp, #68]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #1
 	mov	r0, r9
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	bl	Func_08041b68
 	movs	r0, #0
 	bl	Func_08041c0c
@@ -6685,13 +6685,13 @@ Func_080464dc:
 	bl	0x08014274
 	movs	r1, #1
 	ldr	r0, [sp, #56]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #1
 	ldr	r0, [sp, #60]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #1
 	ldr	r0, [sp, #76]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	adds	r0, r6, #0

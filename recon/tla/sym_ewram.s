@@ -70,3 +70,9 @@ gFlashSavedIme:
 	.space 0x000000f6
 	.global gScrollTarget
 gScrollTarget:
+	.space 0x00008ade
+	.global gMapCellBuffer
+gMapCellBuffer:
+	.space 0x00010000
+	.global gMapBlocks
+gMapBlocks:

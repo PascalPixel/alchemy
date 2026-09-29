@@ -78,7 +78,7 @@ Func_0803ce64:
 	bne.n	.L_0803cf0c
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	b.n	.L_0803cf52
 .L_0803cf06:
 	movs	r0, #1
@@ -91,7 +91,7 @@ Func_0803ce64:
 	beq.n	.L_0803cf34
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	b.n	.L_0803cf28
 .L_0803cf22:
 	movs	r0, #1
@@ -105,7 +105,7 @@ Func_0803ce64:
 .L_0803cf34:
 	adds	r0, r5, #0
 	movs	r1, #1
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0803cf3c:
 	movs	r3, #152
 	lsls	r3, r3, #5

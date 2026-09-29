@@ -944,7 +944,7 @@ Func_08042690:
 	ldr	r3, [r3, #64]
 	movs	r1, #1
 	ldr	r0, [r3, #0]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #64
 	bl	Runtime_ReleaseSlot
 	pop	{pc}

@@ -150,6 +150,9 @@ Func_0811bd10:
 	movs	r0, r0
 	.2byte 0x0354
 	.2byte 0x0300
+	.global GetBattleObjectSlot
+	.thumb_func
+GetBattleObjectSlot:
 	push	{lr}
 	movs	r3, #192
 	lsls	r3, r3, #18

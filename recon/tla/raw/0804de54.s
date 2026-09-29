@@ -49,6 +49,9 @@ Func_0804de54:
 .L_0804de9c:
 	add	sp, #8
 	pop	{r5, r6, pc}
+	.global Menu_DrawFlagBitTable
+	.thumb_func
+Menu_DrawFlagBitTable:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -142,6 +145,9 @@ Func_0804de54:
 	.4byte 0x0805f8dc
 	.2byte 0xf8d8
 	.2byte 0x0805
+	.global Menu_HandleFlagGridInput
+	.thumb_func
+Menu_HandleFlagGridInput:
 	push	{r5, r6, lr}
 	ldr	r6, [pc, #308]
 	adds	r5, r2, #0

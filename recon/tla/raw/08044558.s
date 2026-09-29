@@ -600,10 +600,10 @@ Func_08044558:
 .L_08044a0c:
 	mov	r0, sl
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #44]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r0, [sp, #48]
 	bl	0x0803d450
 	movs	r0, #1

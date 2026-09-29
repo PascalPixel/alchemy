@@ -218,7 +218,7 @@ Func_0803d2d0:
 .L_0803d47c:
 	adds	r0, r5, #0
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	b.n	.L_0803d4b8
 .L_0803d486:
 	movs	r2, #152

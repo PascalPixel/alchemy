@@ -622,7 +622,7 @@ Func_08043bec:
 	bl	0x080f8080
 	movs	r1, #2
 	ldr	r0, [sp, #24]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #0
 	str	r1, [sp, #24]
 	b.n	.L_0804410a
@@ -644,13 +644,13 @@ Func_08043bec:
 	bl	0x08043b34
 	movs	r1, #2
 	ldr	r0, [sp, #24]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #28]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #32]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #0
 	str	r1, [sp, #24]
 	str	r1, [sp, #28]
@@ -893,16 +893,16 @@ Func_08043bec:
 	bl	0x08043b34
 	movs	r1, #2
 	ldr	r0, [sp, #24]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #28]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #32]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	mov	r0, r9
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	bl	0x080439d8
 	movs	r0, #220
 	bl	Runtime_ReleaseSlot

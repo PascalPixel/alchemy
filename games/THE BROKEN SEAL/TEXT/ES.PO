@@ -20831,7 +20831,7 @@ msgctxt "MsgKorimaQuiet"
 msgid "05205"
 msgstr "Qué silencio...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaMatterIvan"
 msgid "05206"
 msgstr "¿Qué ocurre, {actor_name:3}?{end_wait}"
 
@@ -20863,7 +20863,7 @@ msgctxt "MsgKorimaWhatIsIt"
 msgid "05213"
 msgstr "¿Qué ocurre ahora, {actor_name:3}?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaSparklyStuffOnGround"
 msgid "05214"
 msgstr "Esa cosa brillante{line_break}del suelo...{line_break}¿Qué es?{end_wait}"
 
@@ -21167,11 +21167,11 @@ msgctxt "message"
 msgid "05289"
 msgstr "Idos ahora...{line_break}antes de que el{line_break}bosque muera.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaHealingWatersMercuryLighthouseMight"
 msgid "05290"
 msgstr "Las aguas curativas{line_break}del Faro de Mercurio{line_break}podrían salvar a Tret...{page_break}Pero hace mucho que{line_break}la fuente se secó.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaSilence"
 msgid "05291"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 
@@ -21183,7 +21183,7 @@ msgctxt "message"
 msgid "05293"
 msgstr "¡Yo controlo el{line_break}reino de Tret!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaControlTretsHeartShallNot"
 msgid "05294"
 msgstr "¡Controlo el corazón{line_break}de Tret! ¡No dejaré{line_break}que le hagáis nada!{end_wait}"
 
@@ -21191,7 +21191,7 @@ msgctxt "message"
 msgid "05295"
 msgstr "¡Tret, el bosque y la{line_break}aldea de Kolima, todos{line_break}se pudrirán conmigo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToretoHmHrooom"
 msgid "05296"
 msgstr "Hu{pause_20_skippable} ¡¡HUUUUMMM!!{end_wait}"
 
@@ -21211,7 +21211,7 @@ msgctxt "message"
 msgid "05300"
 msgstr "¡Aquí, os convertiréis en{line_break}árboles, y os pudriréis con{line_break}el resto de todos nosotros!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToretoMmmmm"
 msgid "05301"
 msgstr "Vaya...{pause_20_skippable} Mmmmm...{end_wait}"
 
@@ -21251,7 +21251,7 @@ msgctxt "message"
 msgid "05310"
 msgstr "¿Por qué no me{line_break}dejáis morir?{line_break}¿Necesitáis algo?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgToretoDoingNowsNot"
 msgid "05311"
 msgstr "¿Qué estás haciendo,{line_break}{actor_name:1}? ¡No es el momento{line_break}de perder el tiempo!{end_wait}"
 
@@ -21259,7 +21259,7 @@ msgctxt "message"
 msgid "05312"
 msgstr "Exacto, {actor_name:1}...{pause_20_skippable}{page_break}¡Tenemos que salvar a{line_break}la gente de Kolima!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgToretoTurnedPeopleKolima"
 msgid "05313"
 msgstr "¿Convertí{pause_20_skippable} a toda la gente{line_break}de Kolima en árboles?{end_wait}"
 
@@ -21307,19 +21307,19 @@ msgctxt "message"
 msgid "05324"
 msgstr "Rápido, {actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaSilence2"
 msgid "05325"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaPeopleKolimaForgiveMe"
 msgid "05326"
 msgstr "Gente de Kolima...{line_break}Perdonadme...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWaterHermesSeepedIntoTret"
 msgid "05327"
 msgstr "El Agua Milagrosa se{line_break}filtró por la corteza.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaFeelGreatPowerSpreadingThrough"
 msgid "05328"
 msgstr "Siento un gran poder{line_break}que se extiende en mí...{end_wait}"
 
@@ -21371,7 +21371,7 @@ msgctxt "message"
 msgid "05340"
 msgstr "Cierto...{line_break}Debo darme prisa.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaShouldDoPeopleKolimaCursed"
 msgid "05341"
 msgstr "Eso debería bastar.{pause_20_skippable}{line_break}La gente de Kolima ya{line_break}no está maldita.{end_wait}"
 
@@ -21395,7 +21395,7 @@ msgctxt "message"
 msgid "05346"
 msgstr "Ya sé que no quieres{line_break}creerlo, pero no hay{line_break}otra explicación...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWasIndeedAngryPeopleHad"
 msgid "05347"
 msgstr "Realmente estaba molesto{line_break}porque la gente había{line_break}contaminado mi bosque...{page_break}¡Incluso habían levantado{line_break}sus hachas contra mí!{end_wait}"
 
@@ -21491,7 +21491,7 @@ msgctxt "message"
 msgid "05370"
 msgstr "Buena decisión... Sería{line_break}una locura arriesgar{line_break}más vuestras vidas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaOweGreatDebtHaveSaved"
 msgid "05371"
 msgstr "Estoy en deuda con vosotros.{line_break}Habéis salvado Kolima,{line_break}al bosque y a mí mismo.{end_wait}"
 
@@ -21503,23 +21503,23 @@ msgctxt "message"
 msgid "05373"
 msgstr "¿Te sorprendiste, {actor_name:1}?{line_break}Los árboles nos hemos{line_break}hecho muy poderosos.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaNowHaveSuchPowerAxe"
 msgid "05374"
 msgstr "Ahora que tengo este{line_break}poder, ningún hacha{line_break}volverá a tocarme.{page_break}Partid sin preocupación.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaForestKolimaAlive"
 msgid "05375"
 msgstr "El Bosque de Kolima{line_break}vuelve a tener vida,{line_break}gracias a ti...{page_break}Protegeremos el bosque{line_break}a partir de ahora.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaKnowCannotStopButPlease"
 msgid "05376"
 msgstr "Sé que no puedo deteneros{line_break}pero, por favor, tened{line_break}cuidado más allá del río.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaMustHorribleBeyondRiverAm"
 msgid "05377"
 msgstr "Debe de ser horrible lo que{line_break}hay más allá del río...{page_break}Estoy muy preocupada{line_break}por ti y por tus amigos,{line_break}{actor_name:1}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWho"
 msgid "05378"
 msgstr "¿Quiénes sois...?{end_wait}"
 
@@ -21539,7 +21539,7 @@ msgctxt "message"
 msgid "05382"
 msgstr "Tret morirá pronto y{line_break}sin él, nosotros también{line_break}nos marchitaremos.{page_break}Huid ahora, antes de que{line_break}el bosque desaparezca...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaLeaveBeforeForest"
 msgid "05383"
 msgstr "Huid ahora, antes de que{line_break}el bosque se destruya...{end_wait}"
 
@@ -21551,7 +21551,7 @@ msgctxt "message"
 msgid "05385"
 msgstr "El letrero dice: \"¡No{line_break}puedes leer el letrero{line_break}por detrás!\".{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFieldFlippedSwitch"
 msgid "05386"
 msgstr "{protagonist_name} movió{line_break}la palanca.{end_wait}"
 
@@ -22015,7 +22015,7 @@ msgctxt "message"
 msgid "05501"
 msgstr "¡La Adepta {actor_name:4} se{line_break}unió a tu equipo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriLighthouseAlreadyLit"
 msgid "05502"
 msgstr "¡Es demasiado tarde!{line_break}¡Han encendido el{line_break}faro!{end_wait}"
 
@@ -22239,7 +22239,7 @@ msgctxt "message"
 msgid "05557"
 msgstr "Tengo que acabar pronto con{line_break}todo esto... ¡Venga, estúpidos!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriGot"
 msgid "05558"
 msgstr "¡{actor_name:1}, ya es nuestro!{end_wait}"
 
@@ -22615,7 +22615,7 @@ msgctxt "message"
 msgid "05651"
 msgstr "¡Nunca creí en esas{line_break}historias, pero aquí{line_break}está la prueba!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriWhoHonorsHeart"
 msgid "05652"
 msgstr "Aquel que honre el{line_break}corazón de la diosa estará{line_break}en el centro de todo,{page_break}como un cisne en el{line_break}centro de un lago{line_break}tranquilo.{end_wait}"
 
@@ -23107,7 +23107,7 @@ msgctxt "message"
 msgid "05774"
 msgstr "¿Cómo se supone que voy{line_break}a crecer si no como?{page_break}¡Si no me va a alimentar,{line_break}tampoco voy a obedecerle!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaFuchinTempleOnOtherSide"
 msgid "05775"
 msgstr "El Templo Fuchin está al{line_break}otro lado del río.{line_break}Es muy famoso.{page_break}Deberíais visitarlo{line_break}si tenéis algo de{line_break}tiempo libre.{end_wait}"
 
@@ -23115,7 +23115,7 @@ msgctxt "message"
 msgid "05776"
 msgstr "Se dice que el Maestro{line_break}Nyunpa del Templo Fuchin{line_break}es un poco extraño...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaGrandBridgeAcrossRiverPride"
 msgid "05777"
 msgstr "El gran puente que{line_break}cruza el río es el{line_break}orgullo de Kolima.{end_wait}"
 
@@ -23123,7 +23123,7 @@ msgctxt "message"
 msgid "05778"
 msgstr "Es una pena que tuviéramos{line_break}que cortar tantos árboles{line_break}para construir ese puente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaWhenWasTreeLearnedAppreciate"
 msgid "05779"
 msgstr "Cuando era árbol,{line_break}aprendí a apreciar{line_break}al sol.{end_wait}"
 
@@ -23147,7 +23147,7 @@ msgctxt "message"
 msgid "05784"
 msgstr "Si el árbol fue el único que{line_break}causó todo esto, entonces{line_break}he fallado en mi tarea.{page_break}Tendría que haberles{line_break}detenido cuando iban{line_break}a cortar el árbol.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorimaTheySayMccoyHaltedConstruction"
 msgid "05785"
 msgstr "Dicen que McCoy detuvo la{line_break}construcción del palacio.{page_break}Sin trabajo, todos los{line_break}leñadores que vinieron a{line_break}hacer el agosto se marcharán.{end_wait}"
 
@@ -23991,7 +23991,7 @@ msgctxt "message"
 msgid "05995"
 msgstr "No lo comprenderán,{line_break}pero es una gozada{line_break}cruzar este puente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianHowDidGetHereBridge"
 msgid "05996"
 msgstr "¿Cómo habéis llegado hasta aquí?{line_break}¿Han abierto el puente otra vez?{end_now}"
 
@@ -24031,7 +24031,7 @@ msgctxt "message"
 msgid "06005"
 msgstr "Nyunpa no ha comido durante{line_break}días... Se va a quedar en{line_break}nada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianIsntNobleHimTrySave"
 msgid "06006"
 msgstr "¿No es noble por su parte{line_break}intentar salvar al mundo{line_break}convirtiéndose en un iluminado?{end_now}"
 
@@ -24075,7 +24075,7 @@ msgctxt "message"
 msgid "06016"
 msgstr ".{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable} .{pause_20_skippable}.{pause_20_skippable}.{pause_20_skippable}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMmmmWhoWhoSpeaksMy"
 msgid "06017"
 msgstr "Mmmm... ¿Quién eres?{line_break}¿Quién le habla a mi mente?{end_wait}"
 
@@ -24095,7 +24095,7 @@ msgctxt "message"
 msgid "06021"
 msgstr "¡Lo sabía!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianFollowThemDoNot"
 msgid "06022"
 msgstr "Estás persiguiéndoles,{pause_20_skippable}{pause_20_skippable}{line_break}¿cierto?{end_now}"
 
@@ -24123,15 +24123,15 @@ msgctxt "message"
 msgid "06028"
 msgstr "¿Aceptáis la prueba?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianThenCannotTellGiveUp"
 msgid "06029"
 msgstr "Entonces no os lo puedo decir.{line_break}Daos por vencidos y regresad{line_break}a donde procedéis.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMustSurviveTestGrottoBefore"
 msgid "06030"
 msgstr "Debéis sobrevivir a la{line_break}prueba de la gruta antes{line_break}de poder atravesar{page_break}el Bosque de Mogall.{line_break}¿Aceptáis la prueba?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianDoNotWorryWillPermitted"
 msgid "06031"
 msgstr "No os preocupéis. Os{line_break}será permitido el{line_break}acceso a la gruta.{end_wait}"
 
@@ -24147,7 +24147,7 @@ msgctxt "message"
 msgid "06034"
 msgstr "Hablad con el monje{line_break}que está frente a las{line_break}cataratas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianEnjoyReadingMindsOthersDo"
 msgid "06035"
 msgstr "Disfrutas leyendo{line_break}las mentes de{line_break}otros, ¿no?{end_now}"
 
@@ -24159,7 +24159,7 @@ msgctxt "message"
 msgid "06037"
 msgstr "Eso es bueno. Disfruta{line_break}leyendo las mentes de los{line_break}demás mientras puedas.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianAlreadyHeardTest"
 msgid "06038"
 msgstr "Acabo de enterarme de lo{line_break}de la prueba del Maestro{line_break}Nyunpa. Podéis entrar.{end_wait}"
 
@@ -24171,7 +24171,7 @@ msgctxt "message"
 msgid "06040"
 msgstr "¿Podrán guerreros tan{line_break}jóvenes resistir la{line_break}prueba de la gruta?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianYoungMasterDidCompleteTest"
 msgid "06041"
 msgstr "Joven maestro, ¿has{line_break}finalizado la prueba?{end_now}"
 
@@ -24199,7 +24199,7 @@ msgctxt "message"
 msgid "06047"
 msgstr "Los guerreros han{line_break}dominado los secretos{line_break}del Templo Fuchin.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianExcellentRobin"
 msgid "06048"
 msgstr "¡Excelente, {actor_name:1}!{end_wait}"
 
@@ -24239,11 +24239,11 @@ msgctxt "message"
 msgid "06057"
 msgstr "¡Ja, ja! Te pica la{line_break}curiosidad, ¿no?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianCanReadMindsKnowCurious"
 msgid "06058"
 msgstr "Puedo leer la mente, ya{line_break}sabes.{pause_20_skippable} Te pica la curiosidad,{line_break}¿verdad?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShianMonstersWaitInHidingWould"
 msgid "06059"
 msgstr "Los monstruos que se{line_break}ocultan se mostrarán.{page_break}Y tú intentarás{line_break}derrotarles, ¿no?{end_now}"
 
@@ -24295,7 +24295,7 @@ msgctxt "message"
 msgid "06071"
 msgstr "Al final, el Maestro Nyunpa{line_break}se ha consumido.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianNowHeTrulyBeyondWorlds"
 msgid "06072"
 msgstr "Ahora, está más allá{line_break}de este mundo.{line_break}¿Estará cuidando de nosotros?{end_now}"
 
@@ -24331,11 +24331,11 @@ msgctxt "message"
 msgid "06080"
 msgstr "... ... ... ... ...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianRobinAmCountingOnBring"
 msgid "06081"
 msgstr "{actor_name:1}...{pause_20_skippable} ¿Eres tú...?{pause_20_skippable}{line_break}Cuento...{pause_20_skippable} cuento contigo...{page_break}para traer la paz...{pause_20_skippable}{line_break}al mundo...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianDontTryHard"
 msgid "06082"
 msgstr "No tienes que ser tan{line_break}duro.{pause_20_skippable} Te pica la curiosidad,{line_break}¿cierto?{end_now}"
 
@@ -24611,7 +24611,7 @@ msgctxt "message"
 msgid "06150"
 msgstr "Cuando llevas un tiempo{line_break}en Xian, empiezas a hablar{line_break}de forma extraña.{page_break}Me hago un lío...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMasterFehsSchoolCameWatch"
 msgid "06151"
 msgstr "Ésta es la escuela{line_break}del Maestro Feh...{line_break}¿Viniste a mirar?{end_now}"
 
@@ -24631,7 +24631,7 @@ msgctxt "message"
 msgid "06155"
 msgstr "Quiero aprender, por eso{line_break}me entreno. Los puñetazos{line_break}rápidos son muy buenos.{page_break}El Maestro Feh es{line_break}muy bueno.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianFlexibilityJumpingVeryImportantIn"
 msgid "06156"
 msgstr "La flexibilidad y el{line_break}salto son muy importantes{line_break}en el kung fu.{end_wait}"
 
@@ -24643,7 +24643,7 @@ msgctxt "message"
 msgid "06158"
 msgstr "Uno no se hace fuerte{line_break}sólo escuchando.{line_break}Yo aprendo mirando.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMasterFehVeryBusyDo"
 msgid "06159"
 msgstr "El Maestro Feh está muy{line_break}ocupado. ¿Sigues queriendo{line_break}verle?{end_now}"
 
@@ -24695,11 +24695,11 @@ msgctxt "message"
 msgid "06171"
 msgstr "¡Cómo! ¡¿Qué ha pasado?!{line_break}¡El tronco cayó solo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianCannotPushHands"
 msgid "06172"
 msgstr "No puedes empujarlo con{line_break}las manos. Usa el Chi. {end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianDidDoWarrior"
 msgid "06173"
 msgstr "¿Qué has hecho,{line_break}guerrero?{end_wait}"
 
@@ -24903,7 +24903,7 @@ msgctxt "message"
 msgid "06223"
 msgstr "Estoy asombrado de que este{line_break}guerrero pueda usar Chi.{page_break}¿Qué dirá el Maestro{line_break}Feh cuando lo vea?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWarriorWillShowMeYour"
 msgid "06224"
 msgstr "Guerrero, ¿quieres{line_break}mostrarme tu Chi?{end_now}"
 
@@ -24951,7 +24951,7 @@ msgctxt "message"
 msgid "06235"
 msgstr "Guerrero, no ocultes tu Chi{line_break}al Maestro Feh. ¡Creerá{line_break}que soy un mentiroso!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianLookTreeFell"
 msgid "06236"
 msgstr "¡Mirad! El tronco se cayó.{end_wait}"
 
@@ -24987,7 +24987,7 @@ msgctxt "message"
 msgid "06244"
 msgstr "¡Casi! Guerrero, usa{line_break}el Chi desde la línea.{line_break}Inténtalo de nuevo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianYaTreeFell"
 msgid "06245"
 msgstr "¡Eh! ¡El tronco se cayó!{end_wait}"
 
@@ -25095,7 +25095,7 @@ msgctxt "message"
 msgid "06271"
 msgstr "Concentra la energía en{line_break}las manos{pause_20_skippable} y libérala como{line_break}Chi.{page_break}Es lo que el Maestro Feh{line_break}enseña. Pero es difícil.{page_break}El Maestro Hsu fue al{line_break}Templo Lama. Allí, aprende{line_break}de la Maestra Hama.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianLamaTempleFarWestIn"
 msgid "06272"
 msgstr "El Templo Lama está lejos{line_break}hacia el oeste. Está en el{line_break}Desierto de Lamakan.{page_break}El Maestro Hsu fue a{line_break}entrenarse. Voverá{line_break}fortalecido.{end_wait}"
 
@@ -25151,15 +25151,15 @@ msgctxt "message"
 msgid "06285"
 msgstr "¿De verdad puede hacerlo{line_break}un guerrero tan joven? Es{line_break}difícil de creer...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianGreatWarriorTrain"
 msgid "06286"
 msgstr "Eres un guerrero increíble.{line_break}Debo entrenarme como tú{line_break}te has entrenado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianItIsLocked"
 msgid "06287"
 msgstr "Está cerrado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWarriorsCannotUse"
 msgid "06288"
 msgstr "Los guerreros no pueden usar...{line_break}Espera.{pause_20_skippable} Eso es diferente del Chi.{end_wait}"
 
@@ -25907,7 +25907,7 @@ msgctxt "message"
 msgid "06474"
 msgstr "El Chi es una parte del{line_break}poder de la Maestra Hama...{line_break}Ella es el verdadero sabio.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMasterHamaMeditatingPleaseExtremely"
 msgid "06475"
 msgstr "La Maestra Hama está{line_break}meditando. Por favor,{line_break}guardad silencio.{end_wait}"
 
@@ -26623,7 +26623,7 @@ msgctxt "message"
 msgid "06653"
 msgstr "¡Si no encontramos pronto{line_break}un oasis, me voy a desmayar{line_break}de la deshidratación!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianImTravelingAroundWorldSpread"
 msgid "06654"
 msgstr "Estoy viajando por todo{line_break}el mundo para fomentar{line_break}la buena voluntad.{end_wait}"
 
@@ -26863,7 +26863,7 @@ msgctxt "message"
 msgid "06713"
 msgstr "Las rocas sorprendieron a{line_break}Hsu. El kung fu nunca{line_break}debería ser sorprendido.{page_break}Tenemos que practicar más.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWaterMonstersFloodedAltinDid"
 msgid "06714"
 msgstr "Los monstruos de agua{line_break}inundaron Altin. ¿Acabaste{line_break}con ellos, guerrero?{end_now}"
 
@@ -26875,7 +26875,7 @@ msgctxt "message"
 msgid "06716"
 msgstr "Vaya... ¿no eres el{line_break}poderoso guerrero del{line_break}que hablaba Feizhi?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianHsuDidNotPracticeJumping"
 msgid "06717"
 msgstr "Hsu no ha practicado{line_break}lo suficiente el salto.{page_break}Podría haber evitado{line_break}las rocas saltando.{end_wait}"
 

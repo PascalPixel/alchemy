@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgShianLookTreeFell[];
 
 void Engine_ActorFaceActor();
 void Engine_EventWait();
@@ -39,7 +40,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
     f(a0, a1, a2);
 }
 
-/* Xian: everyone turns to actor 19 and talks it through (message 0x187a
+/* Xian: everyone turns to actor 19 and talks it through (MsgShianLookTreeFell
  * onward), actor 15 steps forward, actor 19 is lifted into place with cue
  * 124, and flag 0x301 is set. */
 void ShianJiin_RunGatheringScene(void)
@@ -55,7 +56,7 @@ void ShianJiin_RunGatheringScene(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(15, 2);
     Engine_EventWait(20);
-    Call1(Engine_EventSetMessage, 0x187a);
+    Call1(Engine_EventSetMessage, (s32)MsgShianLookTreeFell);
     Engine_EventShowMessageAndWait(15, 0, 20);
     Call3((void (*)())Engine_EventShowMessageAndWait, 16, 0, 20);
     Call3(Engine_ActorShowEmote, 18, 0x105, 60);

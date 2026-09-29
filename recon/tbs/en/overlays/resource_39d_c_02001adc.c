@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgMakyuriGot[];
 
 /* AUDITED GENERATED CALL SCRIPT for RunEventScript04: 319 calls, 0 loops, 6 memory operations.
  * Recovered from the complete decoded owner. Calls, arguments, control flow,
@@ -337,7 +338,7 @@ void RunEventScript04(void)
     Func_0200531c(1, 2);
     Func_020052aa(20);
     p24 = Func_0200536c(1, 0, 20);
-    Func_02005352(5588);
+    Func_02005352((s32)MsgMakyuriGot);
     Func_02005374(1, 0, 20);
     Func_02005388(0, 32768, 20);
     p28 = Func_02005340(0, 3);

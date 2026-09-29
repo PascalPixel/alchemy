@@ -2,14 +2,6 @@
 #define MAKYURI_CHOJO_AERIE_H
 extern struct EventWork *gEventWork;
 
-#if defined(TBS_EDITION_JA)
-#define MSG_LIGHTHOUSE_ALREADY_LIT 0x1725
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define MSG_LIGHTHOUSE_ALREADY_LIT 0x157e
-#else
-#define MSG_LIGHTHOUSE_ALREADY_LIT 0x159c
-#endif
-
 extern u8 *gWork;
 
 #define FIELD(base, type, offset) (*(type)((u8 *)(base) + (offset)))

@@ -2,6 +2,13 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "TEMPLE.H"
+extern u8 MsgShianDidDoWarrior[];
+extern u8 MsgShianImTravelingAroundWorldSpread[];
+extern u8 MsgShianItIsLocked[];
+extern u8 MsgShianRobinAmCountingOnBring[];
+extern u8 MsgShianWarriorWillShowMeYour[];
+extern u8 MsgShianWaterMonstersFloodedAltinDid[];
+extern u8 MsgShianYaTreeFell[];
 
 void FieldScene_DispatchApproachByFacing(void)
 {
@@ -110,7 +117,7 @@ void FieldScene_RunSecondEnsembleBeat(void)
     Actor_ShowEmote(15, 128 << 1, 0);
     Actor_ShowEmote(16, 128 << 1, 0);
     Event_Wait(60);
-    Event_SetMessage(MSG_DID_DO_WARRIOR);
+    Event_SetMessage((s32)MsgShianDidDoWarrior);
     Event_ShowMessageAndWait(13, 0, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, 13, 0);
     Actor_RunRepeatedMotion(15, 1);
@@ -383,7 +390,7 @@ void FieldScene_RunSkippableStoryBeat(void)
     u8 *workspace;
 
     Event_Begin();
-    Event_SetMessage(MSG_WARRIOR_WILL_SHOW_ME_YOUR);
+    Event_SetMessage((s32)MsgShianWarriorWillShowMeYour);
     Event_OpenMessage(18, 0);
 
     if (Event_ChooseYesNo(0, 0) == 0) {
@@ -420,7 +427,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
     Camera_SetSpeed(0x8000, 0x1000);
     Camera_MoveTo(0xe80000, -1, 0xc80000, 1);
     Camera_WaitForMove();
-    Event_SetMessage(MSG_YA_TREE_FELL);
+    Event_SetMessage((s32)MsgShianYaTreeFell);
     Actor_SetSpeed(10, 0xcccc, 0x6666);
     Actor_SetSpeed(12, 0xcccc, 0x6666);
     Actor_WalkTo(10, 152, 200);
@@ -611,7 +618,7 @@ void FieldScene_RunEnsembleStoryBeat(void)
 void FieldScene_ShowDialogue1A58(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_WATER_MONSTERS_FLOODED_ALTIN_DID);
+    Event_SetMessage((s32)MsgShianWaterMonstersFloodedAltinDid);
     Event_AskYesNo(11, 0);
     Event_End();
 }
@@ -620,7 +627,7 @@ void StartSchoolDoorEvent(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(2202) == 0 && GameFlag_IsSet(2197) == 0) {
-        Message_ShowCentered(MSG_IT_IS_LOCKED, 1);
+        Message_ShowCentered((s32)MsgShianItIsLocked, 1);
         Event_End();
     } else {
         Audio_PlayCue(158);
@@ -647,7 +654,7 @@ void FieldScene_DispatchByRange(void)
     if (biased <= 0x3ffe) {
         Sanctum_Open(13);
     } else {
-        Event_SetMessage(MSG_IM_TRAVELING_AROUND_WORLD_SPREAD);
+        Event_SetMessage((s32)MsgShianImTravelingAroundWorldSpread);
         Event_ShowMessage(13, 0);
     }
 
@@ -658,7 +665,7 @@ void FieldScene_ShowDialogue17DF(void)
 {
     Event_Begin();
     Actor_RunRepeatedMotion(8, 2);
-    Event_SetMessage(MSG_ROBIN_AM_COUNTING_ON_BRING);
+    Event_SetMessage((s32)MsgShianRobinAmCountingOnBring);
     Event_ShowMessage(8, 0);
     Event_End();
 }

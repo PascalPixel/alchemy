@@ -1,9 +1,13 @@
-/* resource_39e:0200902c..02009160 (308 bytes with pool), still linked from
- * the listing. Remaining difference: message 0x183a is loaded once and its
- * followers derived as base + n, as a link-time value is; an integer message
- * is propagated into separate constants (153 of 308 bytes differ). */
+/* Draft of resource_39e 0x0200902c (ShianJiin_RunMasterScene): it matches the
+ * ROM byte for byte now that the messages it loads from the literal pool have
+ * catalogue names (MsgShianCannotPushHands, MsgShianGreatWarriorTrain,
+ * MsgShianWarriorsCannotUse). The listing keeps these rows until the draft is
+ * adopted. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgShianCannotPushHands[];
+extern u8 MsgShianGreatWarriorTrain[];
+extern u8 MsgShianWarriorsCannotUse[];
 
 static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 {
@@ -19,14 +23,14 @@ void ShianJiin_RunMasterScene(s32 mode)
 
     Call3((void (*)())Engine_ActorSetSpeed, 15, 0xcccc, 0x6666);
     Engine_EventWait(60);
-    msg = 0x183a;
+    msg = (s32)MsgShianCannotPushHands;
     Engine_EventSetMessage(msg);
     if (mode == 0) {
         Engine_EventSetMessage(msg - 1);
         Call3((void (*)())Engine_ActorShowEmote, 15, 0x101, 60);
         Engine_EventShowMessageAndWait(15, 0, 20);
         Engine_ActorRunRepeatedMotion(15, 2);
-        Engine_EventSetMessage(0x18ae);
+        Engine_EventSetMessage((s32)MsgShianWarriorsCannotUse);
         Engine_EventShowMessageAndWait(15, 0, 20);
         Engine_ActorSetAnimationAndWait(15, 4);
         Engine_EventWait(20);
@@ -35,7 +39,7 @@ void ShianJiin_RunMasterScene(s32 mode)
         Engine_EventWait(20);
     }
     if (mode == 2) {
-        Engine_EventSetMessage(0x18ac);
+        Engine_EventSetMessage((s32)MsgShianGreatWarriorTrain);
         Engine_ActorRunRepeatedMotion(15, 2);
         Engine_EventWait(20);
     }

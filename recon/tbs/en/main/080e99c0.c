@@ -5,6 +5,7 @@
  * than a Value_ address: 7751. */
 /* 2026-09-29: callees carry the build's names; alchemy permute scores 8151,
  * from 8331. */
+#include "RESOURCE_IDS.H"
 #include "EFFECT_STEP.H"
 #include "IWRAM_CALL.H"
 #include "BATTLE_EFX.H"
@@ -126,8 +127,6 @@
 
 
 extern char Value_00000056;
-extern char Value_00000073;
-extern char Value_0000007d;
 extern char Value_00000085;
 extern char Value_000000c0;
 extern char Value_000000c4;
@@ -220,8 +219,8 @@ void Unnamed_080e99c0(void *object)
 
     Resource_LoadAndDecompress((s32)&Value_00000056, (u8 *)work + 20000, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000085, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_0000007d, (u8 *)work + (221 << 4), 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000073, sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, (u8 *)work + (221 << 4), 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sheet, 0, 0);
 
     *(s32 *)((u8 *)work + (239 << 7)) = 2;
     *(s32 *)((u8 *)work + 0x7784) = 75;

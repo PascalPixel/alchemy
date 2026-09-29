@@ -10,8 +10,8 @@
  * scores 2688, from 2728. */
 /*
  * BattleTarget_SelectForAction draft: 1864 of 1864 bytes, 81.0% aligned
- * similarity. The normal-order scan tests turn_order->normal[target_index]
- * and reads the unit through slot = &turn_order->normal[target_index],
+ * similarity. The normal-order scan tests turn_order->party_units[target_index]
+ * and reads the unit through slot = &turn_order->party_units[target_index],
  * which gives the ROM pre-check ([turn_order, #88]), the in-place walk of
  * turn_order + 88 and both ldrsh loads. The 0x100 mark goes through a
  * one-halfword struct set beside its use, so loop.c hoists it as a HImode
@@ -231,7 +231,7 @@ s32 BattleTarget_SelectForAction(
     u16 order_positions[6];
     s32 unit_ids[6];
     s32 target_positions[6];
-    struct BattleTurnOrder *turn_order;
+    struct BattleSession *turn_order;
     struct BattleUnit *unit;
     struct BattleUnit *next_unit;
     s32 candidate_count;
@@ -250,7 +250,7 @@ s32 BattleTarget_SelectForAction(
     s16 *slot;
     struct TargetMark mark;
 
-    turn_order = BATTLE_TURN_ORDER;
+    turn_order = gBattleWork;
     target_count = 0;
     candidate_count = 0;
 
@@ -267,8 +267,8 @@ s32 BattleTarget_SelectForAction(
         }
 
         target_index = 0;
-        while (turn_order->normal[target_index] != 255) {
-            slot = &turn_order->normal[target_index];
+        while (turn_order->party_units[target_index] != 255) {
+            slot = &turn_order->party_units[target_index];
             unit_id = *slot;
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
@@ -285,8 +285,8 @@ s32 BattleTarget_SelectForAction(
 
 scan_mirrored_order:
         target_index = 0;
-        while (turn_order->mirrored[target_index] != 255) {
-            unit_id = turn_order->mirrored[target_index];
+        while (turn_order->enemy_units[target_index] != 255) {
+            unit_id = turn_order->enemy_units[target_index];
             if (unit_id != 254) {
                 if (action->target_mode != 4 || unit_id == actor_id) {
                     unit_ids[candidate_count] = unit_id;

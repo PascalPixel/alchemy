@@ -1,10 +1,10 @@
-/* Draft, not exact (2026-09-29, Mercury): score 465, only the anchor reload
-   differs. OAM attribute bitfields give the ROM's word masks (0xfffffe00,
-   0x1ff) and a one-halfword struct keeps the zero a pool constant
-   (FAKEMATCH). The ROM reloads cursor->anchor after the attribute store,
-   which only a store in alias set 0 forces: a char store does it here, but
-   pointer or char members in an attribute union, a char first field and a
-   void pointer in the sprite do not. */
+/* Draft, not exact (2026-09-29, Mercury): the code is exact; only the
+   literal pool order differs. The ROM pools 0xffff, 0, 0x1ff, 0xfffffe00;
+   this emits 0, 0x1ff, 0xffff, 0xfffffe00. The one-halfword zero and the
+   bitfield mask are pooled when their loads are expanded, the u32 mask
+   only at reload; a one-halfword or one-word mask, an early x & mask and
+   either statement order keep 0xffff behind them. A volatile view of
+   the anchor rereads it for the y half, as the ROM does (FAKEMATCH). */
 #include "TYPES.H"
 #include "SHOP.H"
 
@@ -47,9 +47,13 @@ void ShopCursor_SetPositionImmediate(struct ShopCursor *cursor, s32 x, s32 y)
     cursor->x = x;
     cursor->active = zero.v;
     sprite->oam.x = x & mask;
-    sprite = (struct ShopCursorSprite *)cursor->anchor;
-    cursor->target_y = y;
-    cursor->y = y;
-    sprite->y = y;
-    sprite->oam.y = y & mask;
+    {
+        struct ShopCursorSprite *again;
+
+        again = *(struct ShopCursorSprite * volatile *)&cursor->anchor;
+        cursor->target_y = y;
+        cursor->y = y;
+        again->y = y;
+        again->oam.y = y & mask;
+    }
 }

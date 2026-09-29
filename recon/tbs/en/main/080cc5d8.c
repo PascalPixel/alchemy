@@ -8,6 +8,7 @@
    rewrites, pointer and temporary spellings that cannot be written back to
    this macro form. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 
 /*
@@ -66,7 +67,6 @@ extern u8 Value_00000046;
 extern u8 Value_00000047;
 extern u8 Value_00000048;
 extern u8 Value_00000057;
-extern u8 Value_00000076;
 
 void *Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void BattleFx_BeginCanvasLayer(s32 mode);
@@ -115,7 +115,7 @@ void Func_080cc5d8(void *object)
     M2C_FIELD((void *)0x04000020, u16 *, 0) = 0x100;
 
     Resource_LoadAndDecompress((s32)&Value_00000045, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000076, trail_source, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, trail_source, 0, 0);
 
     switch (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0)) {
     case 0:

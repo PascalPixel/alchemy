@@ -188,3 +188,8 @@ a verified build.
   workaround until ☀️ is 100%.
 - 2026-09-29: workers may edit and delete lines in recon/ listings and linker
   files when adopting a matched function.
+- 2026-09-29: a rule that explains nearly all of ⚓️'s 2,000 constant-building
+  functions is solid evidence TLA was made with a modified 2.96: implement it
+  as native-sounding gcc flags (`-mthumb-split-constants`, TLA game code only).
+- 2026-09-30: fix the agscc nondeterminism by hashing symbols by name and
+  labels by number.

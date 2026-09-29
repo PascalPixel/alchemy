@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_EFX.H"
@@ -47,7 +48,6 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 
-extern u8 Value_0000007d;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
@@ -97,7 +97,7 @@ void Unnamed_080cb1a4(void *object_param)
     canvas = *cursor;
     M2C_FIELD(work, void **, 0x7828) = object_param;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&Value_0000007d, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
 
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
     M2C_FIELD(work, s32 *, 0x7780) = 2;

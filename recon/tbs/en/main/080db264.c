@@ -5,6 +5,7 @@
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 extern u8 Value_00007828;
 extern u8 Value_00000100;
 extern u8 Value_0000060e;
@@ -41,8 +42,6 @@ typedef s32 (*CopyFn)(void *, const void *, s32);
 
 extern u16 ParticleStreams_CellOffsets[];
 extern u8 Data_080eeadc[];
-extern u8 Value_000000c4;
-extern u8 Value_00000073;
 
 s32 BattleFx_BeginTiledCanvas(s32);
 s32 Random16(void);
@@ -103,8 +102,8 @@ void Unnamed_080db264(void *object)
     rectangles[0] = (DrawFn)((void **)0x03001e50)[46];
     BattleEffect_LoadWork(47, 7, 7, 7, 3);
     rectangles[1] = (DrawFn)((void **)0x03001e50)[47];
-    Resource_LoadAndDecompress((s32)&Value_000000c4, (u8 *)work + 0x60e, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000073, source, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, (u8 *)work + 0x60e, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
 
     if (FIELD(FIELD(work, void *, 0x7828), s32, 24) == 2) {
         if (FIELD(FIELD(work, void *, 0x7828), s32, 4) == 1)

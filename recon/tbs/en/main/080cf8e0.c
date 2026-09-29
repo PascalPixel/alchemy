@@ -4,6 +4,7 @@
 /* 2026-09-29: callees carry the build's names; alchemy permute scores
  * 16680, from 16860. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -146,7 +147,6 @@ extern u8 gWorkSlot[];
 extern u8 Value_00000059;
 extern u8 Value_00000077;
 extern u8 Value_0000008d;
-extern u8 Value_0000009e;
 extern u8 Value_0000009f;
 extern u8 Value_000000a0;
 extern u8 Value_000000bf;
@@ -214,7 +214,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
     palette = (u8 *)Resource_GetTableEntry((s32)&Value_000000bf);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     Resource_DecodeType01(palette + 128, work);
-    palette = (u8 *)Resource_GetTableEntry((s32)&Value_0000009e);
+    palette = (u8 *)Resource_GetTableEntry((s32)&ResourceId_SmokeSheet);
     ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     Resource_DecodeType01(palette + 128, work->sprites + 16000);
 

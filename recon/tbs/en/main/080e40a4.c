@@ -2,6 +2,7 @@
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 extern u8 Value_00001f80;
 extern u8 Value_00007780;
 extern u8 Value_00007784;
@@ -152,8 +153,6 @@ extern u16 BattleFx6_FlareCells[];
    than materializing with a mov. */
 extern u8 Value_00000049;
 extern u8 Value_0000004a;
-extern u8 Value_00000076;
-extern u8 Value_0000008e;
 
 /* 28-byte records at work + 0x7080, reused by both phases: the first
    phase treats the first word as a shrinking radius and words 3..5 as
@@ -276,13 +275,13 @@ void BattlePres_RunRingAndSparkScene(void *object)
 
     if (M2C_FIELD(STATE, s32 *, 8) > 7) {
         _call_via_r3((void *)0x05000000,
-            Resource_GetTableEntry((s32)&Value_0000008e), 128, (CopyFn)0x03001388);
+            Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSmallSheet), 128, (CopyFn)0x03001388);
     }
 
     BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     WaitFrames(1);
-    Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesD, sprite_src, 0, 0);
 
     BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);

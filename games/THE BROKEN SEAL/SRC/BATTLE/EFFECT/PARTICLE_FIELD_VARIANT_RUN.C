@@ -1,44 +1,10 @@
-/* 2026-09-29: score 200 (2 register-only, 3 reordered), from 460. Two
- * changes got it there: the map cell buffer is reached through the checked
- * constant entry Ram_MapCellBuffer, as Camelot's code did, and the
- * resource numbers are ResourceId_ names. Three of them need their rows
- * named in DIRECTORY.S when this is adopted: 0x99 YellowOrbSheet, 0xbd
- * BlueBurstSheet, 0xc2 FirePillarSheetB. What remains is the frame
- * counter's register at the loop end and where the buffer base loads;
- * 400,000 permuter candidates and the counter's type and comparison forms
- * did not move it. */
-/* alchemy permute: BattleFx_RunParticleFieldVariant against recon/tbs/raw/080dfa48.s: score 200 (2 register-only, 3 reordered).
-   Job 11, iteration 13399; rewrites: 2x reorder independent statements, 1x introduce a temporary. */
-/* Draft: complete 916-byte owner and literal pool; candidate 916 bytes,
-   39 differing halfwords (35 aligned edits). Three distinct projection
-   buffers, shared rectangle return type, typed work/target records and
-   pre-projection particle lifetime recovered. Remaining differences are
-   spill slots, initial particle/actor registers and scheduling. Allocator
-   inspected; bounded initialization-order hypothesis regressed.
-   Separate camera ownership added a literal and reached 88 aligned edits;
-   a persistent local layer record reached 944 bytes / 224 edits, and
-   per-loop counters reached 912 bytes / 105 edits. Keep the derived camera
-   cell and shared counter lifetime until new producer evidence appears.
-   2026-09-29 stock agscc, as BattleFx_RunParticleFieldVariant with the
-   buffer named gMapCellBuffer, the word copy through Iwram_CopyWords and
-   resources 0x99, 0xbd and 0xc2 as link-time values: 916 of 916 bytes,
-   13 differing lines, 12 aligned edits. Declaring the blitter pair and
-   camera before the sheet gives the reference's spill slots; the seeding
-   and drawing loops each index their own particle pointer by the counter,
-   which gives the seed pointer r5, the actor r6 and the reference's
-   preheader order. Left: the buffer's pool load is scheduled two
-   instructions early before the tile-row packing call and in the ring
-   draw. With the literal address instead of the name (a probe, not a
-   candidate) the ring draw matches and only the packing call's load
-   stays early, so the ring difference is the name compiling as a symbol
-   rather than a constant. Needs Graphics_PackTileRows' real interface
-   or argument form, and a ruling on the fixed EWRAM buffer.
-   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): best 340 against
-   460 by moving the frame count's increment ahead of the ring draw and a
-   declaration; not kept, because the draft stays blocked either way: its
-   seven resource numbers are CONSTANTS.LD Value_ symbols (0x73, 0x99, 0xbd
-   and the four palettes), 140 of the 340 points. The rest is two registers
-   and three reorders. */
+/* BattleFx_RunParticleFieldVariant: draw the target's two panels, then a
+   64-particle burst and expanding rings from the map cell buffer, in one of
+   four palettes. The buffer is the checked constant Ram_MapCellBuffer,
+   held in a local, so each use reloads it from the pool as the ROM does.
+   FAKEMATCH: the blitter pair and camera are declared before the sheet,
+   and the permuter's reorder of two independent statements is kept, to
+   give the ROM's spill slots and preheader order. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "IWRAM_CALL.H"
@@ -47,6 +13,7 @@
 #include "B5_CONTEXT.H"
 #include "MOTION_OBJECT.H"
 #include "BATTLE_PRESENTATION.H"
+#include "RAM_BUFFER.H"
 
 struct ParticleTarget {
     u32 reserved_00;
@@ -75,7 +42,6 @@ struct ParticleRuntime {
 };
 
 extern struct ParticleRuntime gBattleFxWork;
-extern u8 gMapCellBuffer[];
 extern BattleEffectDrawRectangle gWorkSlot[];
 extern u16 ParticleStreams_CellOffsets[];
 #include "RESOURCE_IDS.H"
@@ -117,7 +83,9 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
     s32 size;
     s32 offset;
     s32 palette;
+    u8 *cells;
 
+    cells = Ram_MapCellBuffer;
     cache = (void **)&gBattleFxWork;
     cursor = cache;
     work = *cursor++;
@@ -137,7 +105,7 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
     rectangle[1] = gWorkSlot[47];
     Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
     Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
-    Graphics_PackTileRows(work, gMapCellBuffer, 40, 288);
+    Graphics_PackTileRows(work, cells, 40, 288);
     Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work, 1, 1);
     switch (variant) {
     case 0:
@@ -172,8 +140,7 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
         step->variant = cnt / 2 + 16;
     }
     EffectPosition_ApplyAlternateStepAndYOffset(work->target->target_id, &origin);
-    frame = 0;
-    do {
+    for (frame = 0; frame != 60; frame++) {
         if (frame <= 14) {
             EffectPosition_ApplyAlternateStepAndYOffset(work->target->object_id, &screen);
             rectangle[0](canvas, work, screen.x / 2 - 16, screen.y - 48, 40, 32);
@@ -186,10 +153,9 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
             work->flash = 8;
         }
         offset = frame - 8;
-        frame++;
         if ((u32)offset <= 11) {
             s32 ring = offset / 2;
-            rectangle[0](canvas, gMapCellBuffer + ring * 0x3c0, origin.x / 2 - 16, screen.y - 40, 20, 48);
+            rectangle[0](canvas, cells + ring * 0x3c0, origin.x / 2 - 16, screen.y - 40, 20, 48);
         }
         if ((u32)offset <= 55) {
             Render_ResetTransformState();
@@ -212,7 +178,7 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
         ObjectGroup_TickMemberTimers();
         work->dirty = 1;
         WaitFrames(1);
-    } while (frame != 60);
+    }
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);

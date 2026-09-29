@@ -1,26 +1,6 @@
-/* Draft, not exact: complete 160-byte owner [0801faa8, 0801fb48).
-   Positive error magnitudes and shared negation recover the missing movs 9
-   and shared negs. A narrow result adds two sign-extension instructions
-   and gives 164 bytes.
-   2026-09-29: callees, save globals and the two message symbols the text
-   build defines carry the build's names; the IWRAM copier is reached from
-   the bank's first routine as the item menu reaches it. The copy source,
-   0x020004e4, has no EWRAM label yet: gSaveStamp below needs one in
-   recon/tbs/sym_ewram.s (inside gPlayerObjectId's span) before adoption.
-   Allocation: with one result variable (7 references over 84 insns) the
-   result outranks the slot address (4 over 54, doubled for its constant
-   equivalence) and takes r6. Splitting the positive error code into its
-   own variable gives the reference's slot r6 / result r7, and alchemy
-   permute scores 35: 15 for the error code in r6 instead of r7, 20 for the
-   missing gSaveStamp label. Writing the codes as -9/-2/-3 also gives the
-   reference allocation, but move2add then rewrites -9 as subs r7, #9 from
-   the known zero. Ten minutes of permutation from here: none below 35.
-   2026-09-29 (Venus): with gSaveStamp split out of gPlayerObjectId
-   (0x5a in) the draft scores 15, only the error code in r6. One result
-   variable (9 and 3 negated at the shared label) scores 55, a pure r6/r7
-   swap with the slot address, also with a local slot pointer; -9 folds to
-   subs from the known zero; reusing value or found as the code scores
-   over 1000. Two minutes of permutation each found nothing lower. */
+/* SaveState_ProcessSelectedSlot: rewrite the selected save slot with the
+   current save stamp, reporting a missing backup chip or a failed read or
+   write as a negative code. */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "RUNTIME_MEM.H"
@@ -46,7 +26,8 @@ s32 SaveState_ProcessSelectedSlot(void)
     s32 value;
     s32 result;
     s32 found;
-    s32 error;
+    /* FAKEMATCH: keeps the error code in r7 */
+    register s32 error asm("r7");
 
     buffer = Runtime_BumpAllocateAlternatePool(0x1000);
     result = 0;

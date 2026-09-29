@@ -2,12 +2,10 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "EVENT_RUNTIME.H"
+extern u8 MsgKuupuappuImSurrounded[];
+extern u8 MsgKuupuappuNowIvan[];
+extern u8 MsgKuupuappuTheresNowhereRun[];
 
-enum SelectActorPairMessage {
-    MSG_THERES_NOWHERE_RUN = 0x12a3,
-    MSG_IM_SURROUNDED = 0x12a4,
-    MSG_NOW_IVAN = 0x12a5
-};
 
 extern struct EventRuntime *Data_03001ebc;
 
@@ -18,6 +16,8 @@ void SceneState_SetValue2ThenFinish();
 u8 *Object_GetById();
 void KuupuappuHeya_RunScene021C8();
 void Engine_ScheduleCallback();
+void KuupuappuHeya_UpdateActorStops(void);
+void SceneActor_FaceActors24And25TowardActorZero(void);
 
 /* Constant-bearing scene calls use shared inline argument helpers. */
 
@@ -56,7 +56,7 @@ void FieldScene_SelectActorPair(void)
 
     work = (u8 *)Data_03001ebc;
     Event_Begin();
-    Call1(Scheduler_RemoveCallback, 0x200c8c9);
+    Call1(Scheduler_RemoveCallback, (s32)KuupuappuHeya_UpdateActorStops);
     GameFlag_Clear(0x107);
     GameFlag_Clear(0x250);
     Actor_SetAnimation(24, 1);
@@ -73,7 +73,7 @@ void FieldScene_SelectActorPair(void)
     switch (*(s16 *)(((s32)work + 0x182))) {
     case 202:
     case 203:
-        Event_SetMessage(MSG_IM_SURROUNDED);
+        Event_SetMessage((s32)MsgKuupuappuImSurrounded);
         Actor_SetAttachedEffect(25, 0x102);
         Actor_RunRepeatedMotion(25, 2);
         SceneActor_SetModeZeroAndValue(25, 20);
@@ -83,7 +83,7 @@ void FieldScene_SelectActorPair(void)
         }
         /* fall through */
     case 201:
-        Event_SetMessage(MSG_THERES_NOWHERE_RUN);
+        Event_SetMessage((s32)MsgKuupuappuTheresNowhereRun);
         Actor_SetAttachedEffect(24, 0x102);
         Actor_RunRepeatedMotion(24, 2);
         actor = 24;
@@ -95,7 +95,7 @@ void FieldScene_SelectActorPair(void)
     Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_NOW_IVAN);
+    Event_SetMessage((s32)MsgKuupuappuNowIvan);
     SceneActor_SetModeZeroAndValue(1, 20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);
@@ -143,7 +143,7 @@ void FieldScene_SelectActorPair(void)
 
         *(u16 *)((s32)record + 100) = shown;
     }
-    Call2(Engine_ScheduleCallback, 0x200aba1, 0xc80);
+    Call2(Engine_ScheduleCallback, (s32)SceneActor_FaceActors24And25TowardActorZero, 0xc80);
     Data_03001ebc->value_1c0 = 0x209;
     Event_End();
 }

@@ -35,6 +35,7 @@
 #include "TYPES.H"
 #include "VINASU.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgVinasuLongLastTime[];
 
 void Scene_SetPresentationActorState(s32 actor, s32 active);
 void Main_0808a0b0(s32 actor, const u8 *actions);
@@ -182,7 +183,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_ActorSetPosition(18, 0, 0);
     selector_4013 = 0x4013;
     Call1(Engine_AudioPlayCue, 0x121);
-    Call1(Engine_EventSetMessage, 0x2757);
+    Call1(Engine_EventSetMessage, (s32)MsgVinasuLongLastTime);
     VinasuChojo_ShowMessage(selector_4013);
     Engine_ActorFaceDirection(0, 0x8000, 0);
     Engine_ActorFaceDirection(1, 0x8000, 0);

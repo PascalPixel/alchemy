@@ -1,4 +1,5 @@
 #include "STAGED_MOTION.H"
+extern u8 MsgHaidiaIUsedToPlayHere[];
 
 /* Sets up actors 12, 13, 14 and 20 with shared data and movement/speed
  * parameters, then drives actor 11 through a further sequence of moves. */
@@ -30,7 +31,7 @@ void FieldScene_RunCompanionActorSequence(void)
     Actor_ShowEmote(ACTOR_D, 0x100, 40);
     Actor_RunRepeatedMotion(ACTOR_D, 2);
     Actor_FaceDirection(ACTOR_D, 0xd000, 10);
-    Event_SetMessage(MSG_I_USED_TO_PLAY_HERE_WITH_GARCIA);
+    Event_SetMessage((s32)MsgHaidiaIUsedToPlayHere);
     Event_ShowMessageAndWait(ACTOR_D, 0, 40);
     Actor_FaceActor(ACTOR_D, ACTOR_PARTY_LEADER, 20);
     Event_ShowMessage(ACTOR_D, 0);

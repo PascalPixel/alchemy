@@ -5,11 +5,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-enum PoseMessage {
-    MSG_HOW_DID_SEARCH_FOR_SHEBA = 0x2850,
-    MSG_DO_NOT_WORRY_ABOUT_SHEBA = 0x2861,
-    MSG_PLEASE_WAIT_FOR_ME_OUTSIDE = 0x288b
-};
 
 /* The scene tables of the Lalivero house and sanctum, in the overlay's data.
  * The sanctum and the house share one overlay; flag 0x9a7 selects the later

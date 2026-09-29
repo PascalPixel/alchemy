@@ -1,10 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgSoruLooksLikeTheyveSpottedUs[];
+extern u8 MsgSoruWhyDenyDont[];
 
-enum ElementalStarDemandMessage {
-    MSG_LOOKS_LIKE_THEYVE_SPOTTED_US = 0x107d
-};
 
 
 void Event_SayThenWait();
@@ -47,9 +46,9 @@ static __inline__ void SkipMessage(s32 amount)
     gEventWork->message += amount;
 }
 
-/* The demand for the Elemental Stars. Its dialogue starts at message 0x107d
+/* The demand for the Elemental Stars. Its dialogue starts at MsgSoruLooksLikeTheyveSpottedUs
  * while the actors move into place; a nonzero answer to the prompt skips one
- * reply, and the dialogue then continues from message 0x108d. */
+ * reply, and the dialogue then continues from MsgSoruWhyDenyDont. */
 void FieldScene_RunElementalStarDemand(void)
 {
     u8 *field_85;
@@ -61,7 +60,7 @@ void FieldScene_RunElementalStarDemand(void)
 
     Engine_AudioPlayCue(61);
     Engine_ActorSetAnimation(10, 4);
-    Event_SetMessage(MSG_LOOKS_LIKE_THEYVE_SPOTTED_US);
+    Event_SetMessage((s32)MsgSoruLooksLikeTheyveSpottedUs);
     Event_SayThenWait(10, 10);
     Engine_ActorSetAnimation(11, 4);
     Event_SayThenWait(11, 30);
@@ -197,7 +196,7 @@ void FieldScene_RunElementalStarDemand(void)
     Engine_EventWait(20);
     Engine_ActorRunRepeatedMotion(10, 2);
     Actor_FaceDirection(10, 0xb000, 10);
-    Call1(Engine_EventSetMessage, 0x108d);
+    Call1(Engine_EventSetMessage, (s32)MsgSoruWhyDenyDont);
     Event_SayThenWait(10, 20);
     Call3(Engine_ActorFaceDirection, 5, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 9, 0x3000, 10);

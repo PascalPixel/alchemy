@@ -142,6 +142,14 @@ void FieldScene_RunSequenceA(void)
 }
 
 #include "OBJECT_RUNTIME.H"
+extern u8 MsgKorimaHesAsStumpedAsWe[];
+extern u8 MsgKorimaKnowThoseFieldsWere[];
+extern u8 MsgKorimaQuiet[];
+extern u8 MsgKorimaThatsReliefRobinThoughtYoud[];
+extern u8 MsgKorimaWasOurPsynergy[];
+extern u8 MsgKorimaWatchOutItsHappeningAgain[];
+extern u8 MsgKorimaWhatIsIt[];
+extern u8 MsgKorimaYoureRobinThereIsntMuch[];
 
 void Object_RefreshSelectorById();
 void FieldScene_RunPairedStepA();
@@ -266,7 +274,7 @@ void FieldScene_RunExtendedActorSequence(void)
     }
     Event_Wait(40);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
-    Event_SetMessage(0x1473);
+    Event_SetMessage((s32)MsgKorimaQuiet);
     FieldScene_RunPairedStepA(1, 20);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_GERALD, 0);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
@@ -367,7 +375,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
     FieldScene_RunPairedStepB(0, 0x6000, 10);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_SetMessage(0x147b);
+    Event_SetMessage((s32)MsgKorimaWhatIsIt);
     FieldScene_RunPairedStepA(1, 10);
     FieldScene_RunPairedStepB(2, 0xc000, 20);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
@@ -574,14 +582,14 @@ void FieldScene_RunExtendedActorSequence(void)
     if (KorimaMura_LayoutFlag != 0) {
         Actor_RunRepeatedMotion(ACTOR_MIA, 2);
         Event_Wait(10);
-        Event_SetMessage(0x1488);
+        Event_SetMessage((s32)MsgKorimaKnowThoseFieldsWere);
         FieldScene_RunPairedStepA(3, 40);
     }
     Actor_StartRepeatedMotion(ACTOR_GERALD, 1);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 0);
     Event_Wait(80);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-    Event_SetMessage(0x1489);
+    Event_SetMessage((s32)MsgKorimaWasOurPsynergy);
     FieldScene_RunPairedStepA(2, 40);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 3);
     Event_Wait(40);
@@ -764,7 +772,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(60);
     FieldScene_RunPairedStepB(2, 0xc000, 10);
-    Event_SetMessage(0x149d);
+    Event_SetMessage((s32)MsgKorimaWatchOutItsHappeningAgain);
     FieldScene_RunPairedStepA(2, 10);
     FieldScene_RunPairedStepB(1, 0xc000, 10);
     FieldScene_RunPairedStepB(0, 0xc000, 10);
@@ -948,7 +956,7 @@ void FieldScene_RunExtendedActorSequence(void)
             Actor_ShowEmote(ACTOR_IVAN, 0x102, 0);
             Actor_ShowEmote(ACTOR_MIA, 0x102, 40);
             FieldScene_RunPairedStepB(1, 0x4000, 20);
-            Event_SetMessage(0x14b4);
+            Event_SetMessage((s32)MsgKorimaHesAsStumpedAsWe);
             FieldScene_RunPairedStepA(1, 20);
             Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
             FieldScene_RunPairedStepA(2, 20);
@@ -959,7 +967,7 @@ void FieldScene_RunExtendedActorSequence(void)
         Event_Wait(20);
         Actor_SetAnimationAndWait(ACTOR_GERALD, 3);
         Event_Wait(10);
-        Event_SetMessage(0x14b6);
+        Event_SetMessage((s32)MsgKorimaYoureRobinThereIsntMuch);
         FieldScene_RunPairedStepA(1, 10);
         Actor_FaceDirection(ACTOR_GERALD, 0x4000, 0);
         FieldScene_RunPairedStepB(0, 0x6000, 20);
@@ -1020,7 +1028,7 @@ void FieldScene_RunExtendedActorSequence(void)
     Actor_ShowEmote(ACTOR_IVAN, 0x105, 0);
     Event_Wait(40);
     Actor_SetAnimationAndWait(ACTOR_IVAN, 3);
-    Event_SetMessage(0x14bf);
+    Event_SetMessage((s32)MsgKorimaThatsReliefRobinThoughtYoud);
     FieldScene_RunPairedStepA(2, 20);
     if (KorimaMura_LayoutFlag != 0) {
         FieldScene_RunPairedStepB(3, 0, 10);

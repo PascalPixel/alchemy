@@ -64,6 +64,10 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "INVENTORY.H"
+extern u8 MsgTorebiCoins[];
+extern u8 MsgTorebiThrow[];
+extern u8 MsgTorebiToss[];
+extern u8 MsgTorebiWonNumberCoin[];
 
 void Main_0808a460(void);
 s32 Main_08015010(s32 x, s32 y, s32 width, s32 height, s32 flags);
@@ -92,10 +96,7 @@ extern union GameStateRows Data_02000240_t;
 extern u16 Data_0200a00c[];
 extern s32 Data_02009fd0[];
 extern volatile u32 Data_03001c94;
-/* Message 3651, as a link-time value; the prompts that follow it are derived from it. */
-extern u8 Value_00000e43[];
-extern u8 Value_00000e49[];
-extern u8 Value_00000e4c[];
+/* MsgTorebiThrow, as a link-time value; the prompts that follow it are derived from it. */
 
 s32 TorebiIzumi_RunSpringGame(void)
 {
@@ -115,7 +116,7 @@ s32 TorebiIzumi_RunSpringGame(void)
 
     Engine_EventBegin();
     Main_0808a460();
-    message = (s32)Value_00000e43;
+    message = (s32)MsgTorebiThrow;
     state = &Data_02000240_t;
 ask:
     coins = state->words[4];
@@ -123,7 +124,7 @@ ask:
     Engine_EventSetMessage(message);
     Event_OpenMessage(-1, 0);
     window = Main_08015010(0, 0, 17, 4, 2);
-    text = (s32)Value_00000e49;
+    text = (s32)MsgTorebiCoins;
     Main_08015080(text, window, 0, 0);
     Main_080150b0(coins, 6, window, 72, 0);
     Main_08015080(text + 1, window, 0, 8);
@@ -166,7 +167,7 @@ check_room:
     }
 play:
     window = Main_08015010(20, 15, 9, 4, 2);
-    text = (s32)Value_00000e4c;
+    text = (s32)MsgTorebiToss;
     Main_08015080(text, window, 0, 0);
     Main_08015080(text + 1, window, 0, 8);
     Engine_TaskWait(5);
@@ -198,7 +199,7 @@ close:
             Party_AdjustSixDigitCounterA(Data_0200a00c[result]);
             Engine_AudioPlayCue(91);
             Main_08015120(Data_0200a00c[result], 5);
-            Engine_EventSetMessage(3654);
+            Engine_EventSetMessage((s32)MsgTorebiWonNumberCoin);
             Call2((void (*)())Engine_EventShowMessage, -1, 0);
         } else {
             Engine_AudioPlayCue(113);

@@ -1,17 +1,28 @@
 #include "NIWA.H"
+extern u8 MsgBiribinoDoThinkCanBecomeAs[];
+extern u8 MsgBiribinoTellingMeImResponsibleFor[];
+extern u8 MsgBiribinoHaveYouSeenBarricadeWe[];
 
-void SceneDialogue_RunActor10Message13c3(void)
+void SceneDialogue_AskAboutBarricade(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_TELLING_ME_IM_RESPONSIBLE_FOR);
+    Event_SetMessage((s32)MsgBiribinoHaveYouSeenBarricadeWe);
+    Event_AskYesNo(9, 0);
+    Event_End();
+}
+
+void SceneDialogue_AskIfResponsible(void)
+{
+    Event_Begin();
+    Event_SetMessage((s32)MsgBiribinoTellingMeImResponsibleFor);
     Event_AskYesNo(10, 0);
     Event_End();
 }
 
-void SceneDialogue_RunActor11Message1751(void)
+void SceneDialogue_AskIfFineWarrior(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DO_THINK_CAN_BECOME_AS);
+    Event_SetMessage((s32)MsgBiribinoDoThinkCanBecomeAs);
     Event_AskYesNo(11, 0);
     Event_End();
 }

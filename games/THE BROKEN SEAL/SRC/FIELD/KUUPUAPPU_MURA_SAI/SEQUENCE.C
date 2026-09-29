@@ -6,6 +6,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgFieldPeeredWell[];
+extern u8 MsgKuupuappuCanHearWaterRumblingDown[];
+extern u8 MsgKuupuappuRuffRrruff2[];
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -314,7 +317,7 @@ void ActorPresentation_SetAlternatePairedSceneCells(void)
 void FieldScene_RunActorEighteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1342);
+    Event_SetMessage((s32)MsgKuupuappuRuffRrruff2);
     Actor_SetAnimation(18, 0);
     Actor_FaceEachOther(18, ACTOR_PARTY_LEADER, 0);
     Event_Wait(2);
@@ -331,8 +334,8 @@ void FieldScene_RunActorEighteenDialogue(void)
 void SceneState_SetFlag947AndValue29dc(void)
 {
     Event_Begin();
-    Message_ShowCentered(0x947, 1);
-    Message_ShowCentered(0x29dc, 1);
+    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
+    Message_ShowCentered((s32)MsgKuupuappuCanHearWaterRumblingDown, 1);
     Event_End();
 }
 

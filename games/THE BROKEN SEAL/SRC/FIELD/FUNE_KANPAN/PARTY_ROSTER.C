@@ -1,5 +1,13 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgFuneDontRowAnymore[];
+extern u8 MsgFuneMadeFinallyLucky[];
+extern u8 MsgFuneMakeOldMan[];
+extern u8 MsgFuneOhhhHaventWorkout[];
+extern u8 MsgFuneOtherPassengersAlready[];
+extern u8 MsgFuneRowingShipMore[];
+extern u8 MsgFuneThanksHardWork[];
+extern u8 MsgFuneTotallyLostOcean[];
 
 s32 SceneState_FindFirstSetFlagOfGroup(s32 index);
 void FieldScene_RunScene3af_02000bb8(void);
@@ -163,33 +171,33 @@ scene:
         switch (category[index]) {
         case 0:
             Call3(Engine_ActorShowEmote, actor, 129 << 1, 60);
-            Engine_EventSetMessage(0x1ee7);
+            Engine_EventSetMessage((s32)MsgFuneMadeFinallyLucky);
             break;
         case 1:
             FieldScene_CallPairWith10(actor, 208 << 8);
             Call3(Engine_ActorShowEmote, actor, 129 << 1, 60);
-            Engine_EventSetMessage(0x1ee8);
+            Engine_EventSetMessage((s32)MsgFuneOtherPassengersAlready);
             break;
         case 2:
             Call3(Engine_ActorShowEmote, actor, 0x105, 60);
-            Engine_EventSetMessage(0x1ee9);
+            Engine_EventSetMessage((s32)MsgFuneDontRowAnymore);
             break;
         case 3:
             Call2(Engine_ActorRunRepeatedMotion, actor, 1);
-            Engine_EventSetMessage(0x1eea);
+            Engine_EventSetMessage((s32)MsgFuneOhhhHaventWorkout);
             break;
         case 10:
             Call2(Engine_ActorSetAnimationAndWait, actor, 3);
-            Engine_EventSetMessage(0x1eeb);
+            Engine_EventSetMessage((s32)MsgFuneRowingShipMore);
             break;
         case 11:
             Call2(Engine_ActorSetAnimation, actor, 4);
-            Engine_EventSetMessage(0x1eec);
+            Engine_EventSetMessage((s32)MsgFuneTotallyLostOcean);
             break;
         case 20:
             Call2(Engine_ActorSetAnimationAndWait, actor, 4);
             Call3(Engine_ActorShowEmote, actor, 0x107, 40);
-            Engine_EventSetMessage(0x1eed);
+            Engine_EventSetMessage((s32)MsgFuneMakeOldMan);
             break;
         default:
             break;
@@ -209,7 +217,7 @@ scene:
     Call3(Engine_ActorSetSpeed, 0, 0xcccc, 0x6666);
     Call3(Engine_ActorWalkToAndWait, 0, 216, 150 << 2);
     Call3(Engine_ActorWalkToAndWait, 0, 190, 153 << 2);
-    Engine_EventSetMessage(0x1eee);
+    Engine_EventSetMessage((s32)MsgFuneThanksHardWork);
     FieldScene_RunStepThen10(20);
     Call3(Engine_ActorFaceDirection, 0, 192 << 8, 0);
 

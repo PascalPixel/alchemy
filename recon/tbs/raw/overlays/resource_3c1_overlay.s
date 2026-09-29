@@ -1,73 +1,8 @@
 .syntax unified
 	.thumb
-	.section .text.x02008068,"ax",%progbits
-	.global Func_02000068
-	.thumb_func
-Func_02000068:
-	push {r5, r6, lr}
-	ldr r5, [pc, #64]
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl 0x020082c0
-	movs r1, #0
-	adds r0, r6, #0
-	bl 0x020082c8
-	movs r0, #0
-	movs r1, #0
-	bl 0x020082b0
-	cmp r0, #0
-	bne .L_02000068_0
-	movs r0, #10
-	bl 0x020082a8
-	adds r0, r5, #1
-	bl 0x020082c0
-	b .L_02000068_1
-.L_02000068_0:
-	adds r0, r5, #2
-	bl 0x020082c0
-.L_02000068_1:
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x020082d0
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x000025b8
-	.global Func_020000b0
-	.thumb_func
-Func_020000b0:
-	push {r5, r6, lr}
-	ldr r5, [pc, #64]
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl 0x020082c0
-	movs r1, #0
-	adds r0, r6, #0
-	bl 0x020082c8
-	movs r0, #0
-	movs r1, #0
-	bl 0x020082b0
-	cmp r0, #0
-	bne .L_020000b0_0
-	movs r0, #10
-	bl 0x020082a8
-	adds r0, r5, #1
-	bl 0x020082c0
-	b .L_020000b0_1
-.L_020000b0_0:
-	adds r0, r5, #2
-	bl 0x020082c0
-.L_020000b0_1:
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x020082d0
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x000025dc
 	.section .rodata,"a",%progbits
+	.global SuharaMura_Scripts
+SuharaMura_Scripts:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -122,6 +57,8 @@ Func_020000b0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global SuharaMura_Messages
+SuharaMura_Messages:
 	.4byte 0x000000a7
 	.4byte 0x001010a8
 	.4byte 0x002020a8
@@ -132,6 +69,8 @@ Func_020000b0:
 	.4byte 0x00b38002
 	.4byte 0x00c39002
 	.4byte 0x000001ff
+	.global SuharaMura_Actors
+SuharaMura_Actors:
 	.4byte 0xffff006c
 	.4byte 0x00000002
 	.4byte 0x00680000
@@ -192,6 +131,8 @@ Func_020000b0:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global SuharaMura_ActorsFlag96f
+SuharaMura_ActorsFlag96f:
 	.4byte 0xffff006c
 	.4byte 0x00000002
 	.4byte 0x00680000
@@ -260,17 +201,24 @@ SuharaMura_CellAnimationOrigins:
 	.4byte 0x00100005
 	.4byte 0x000f000d
 	.4byte 0x00100012
+	.global SuharaMura_CellSteps0
+SuharaMura_CellSteps0:
 	.4byte 0x00000019
 	.4byte 0x00020001
 	.4byte 0x001a0008
 	.4byte 0x00010000
 	.4byte 0x00010002
-	.4byte 0x001affff
+	.2byte 0xffff
+	.global SuharaMura_CellSteps1
+SuharaMura_CellSteps1:
+	.2byte 0x001a
 	.4byte 0x00020002
 	.4byte 0x00080002
 	.4byte 0x0002001c
 	.4byte 0x00020002
 	.4byte 0xffff0001
+	.global SuharaMura_Extras
+SuharaMura_Extras:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte 0x02008121
@@ -352,6 +300,8 @@ SuharaMura_CellAnimationOrigins:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global SuharaMura_ExtrasFlag96f
+SuharaMura_ExtrasFlag96f:
 	.4byte 0x0000c602
 	.4byte 0xffff0001
 	.4byte 0x02008121

@@ -1,4 +1,6 @@
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaDoorWontOpen[];
+extern u8 MsgHaidiaSChestValuables[];
 
 void SceneState_SetValue140Mode0(void)
 {
@@ -44,6 +46,13 @@ void SceneState_SetValueEe4(void)
 {
 
     Event_Begin();
-    Message_ShowCentered(MSG_THE_DOOR_WONT_OPEN, 1);
+    Message_ShowCentered((s32)MsgHaidiaDoorWontOpen, 1);
+    Event_End();
+}
+
+void FieldScene_ShowChestValuables(void)
+{
+    Event_Begin();
+    Message_ShowCentered((s32)MsgHaidiaSChestValuables, 1);
     Event_End();
 }

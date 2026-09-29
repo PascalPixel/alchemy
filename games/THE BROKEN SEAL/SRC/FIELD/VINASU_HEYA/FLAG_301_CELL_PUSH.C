@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 gVinasuPushScript[];
+extern u8 gVinasuPushCells[];
 
 s32 Engine_ActorGet();
 void Engine_EventBegin();
@@ -133,11 +135,11 @@ void VinasuHeya_RunCellPushScene(void)
                     record[35] = (u8)(value | 2);
                 }
                 Value3(Engine_ActorSetPosition, 10, 0x3280000, 0x2d80000);
-                Call2(Engine_ActorEnableActionCallback, 10, 0x200d3c4);
+                Call2(Engine_ActorEnableActionCallback, 10, (s32)gVinasuPushScript);
                 Engine_ActorStartAction(10);
                 Engine_EventWait(30);
                 Engine_AudioPlayCue(158);
-                Call3(Engine_MapAnimateCells, 0x200dce8, 110, 41);
+                Call3(Engine_MapAnimateCells, (s32)gVinasuPushCells, 110, 41);
                 Call6(Engine_MapCopyCellAttributes, 46, 41, 1, 1, p9, 42);
                 Call1(Engine_GameFlagSet, 0x301);
             }

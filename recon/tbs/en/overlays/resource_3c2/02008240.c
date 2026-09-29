@@ -4,6 +4,7 @@
  * while this C holds values across calls and saves r5-r11 (894 bytes differ
  * from +0x0). The _1 call names are provisional. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/SUHARA_HEYA/SUHARA.H"
+extern u8 MsgSuharaIodem[];
 
 /*
  * Runs the primary script for this scene: a long fixed sequence driving
@@ -24,7 +25,7 @@ void Scene_RunPrimaryScript(void)
     Motion_RealignToTrackedObjectAndArmCallback_1(19, 0, -16, 49152);
     Motion_CommitPos_1(19);
     Object_CommitPositionThenWaitIfModeZero_1();
-    SceneWork_SetStepValue_1(9707);
+    SceneWork_SetStepValue_1((s32)MsgSuharaIodem);
     Battle_WaitMode0_1(10);
     Motion_SetVarCbObj_1(20, 2);
     Battle_WaitMode0_2(20);

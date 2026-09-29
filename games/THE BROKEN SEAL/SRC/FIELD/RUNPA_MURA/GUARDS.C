@@ -1,13 +1,22 @@
 #include "VILLAGE.H"
+extern u8 MsgRunpaLeftGuardGlimpsedMerchant[];
+extern u8 MsgRunpaLeftGuardDismissesThought[];
+extern u8 MsgRunpaLeftGuardRecognizesHammet[];
+extern u8 MsgRunpaLeftGuardThoughts[];
+extern u8 MsgRunpaRightGuardBoasts[];
+extern u8 MsgRunpaRightGuardFeelsCreepy[];
+extern u8 MsgRunpaRightGuardWondersHow[];
+extern u8 MsgRunpaYoudShadowSneak[];
+extern u8 MsgRunpaRightGuardReopenedThoughts[];
 
 void RightGuard_Talk(void)
 {
     if (gGameState.cloaked != 0) {
-        Event_SetMessage(MSG_RIGHT_GUARD_FEELS_CREEPY);
+        Event_SetMessage((s32)MsgRunpaRightGuardFeelsCreepy);
     } else if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
-        Event_SetMessage(MSG_RIGHT_GUARD_WONDERS_HOW);
+        Event_SetMessage((s32)MsgRunpaRightGuardWondersHow);
     } else {
-        Event_SetMessage(MSG_RIGHT_GUARD_BOASTS);
+        Event_SetMessage((s32)MsgRunpaRightGuardBoasts);
     }
     Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }
@@ -25,17 +34,26 @@ void LeftGuard_MindRead(void)
             Psynergy_Cancel();
             Actor_FaceActor(ACTOR_LEFT_GUARD, ACTOR_PARTY_LEADER, 0);
             Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 1, 60);
-            Event_SetMessage(MSG_LEFT_GUARD_RECOGNIZES_HAMMET
-                             + RECOGNITION_SEEN_THAT_MAN);
+            Event_SetMessage((s32)MsgRunpaLeftGuardRecognizesHammet);
             GameFlag_Set(FLAG_GATE_GUARD_SAW_HAMMET);
         } else {
-            Event_SetMessage(MSG_LEFT_GUARD_GLIMPSED_MERCHANT);
+            Event_SetMessage((s32)MsgRunpaLeftGuardGlimpsedMerchant);
         }
         Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
         Actor_StartRepeatedMotion(ACTOR_LEFT_GUARD, 1);
-        Event_SetMessage(MSG_LEFT_GUARD_RECOGNIZES_HAMMET + RECOGNITION_IMPOSSIBLE);
+        Event_SetMessage((s32)MsgRunpaLeftGuardDismissesThought);
     } else {
-        Event_SetMessage(MSG_LEFT_GUARD_THOUGHTS);
+        Event_SetMessage((s32)MsgRunpaLeftGuardThoughts);
     }
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
+}
+
+void RightGuard_MindRead(void)
+{
+    if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) != 0) {
+        Event_SetMessage((s32)MsgRunpaRightGuardReopenedThoughts);
+    } else {
+        Event_SetMessage((s32)MsgRunpaYoudShadowSneak);
+    }
+    Event_ShowMessage(ACTOR_RIGHT_GUARD, 0);
 }

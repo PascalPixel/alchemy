@@ -1,39 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020080c4,"ax",%progbits
-	.global Func_020000c4
-	.thumb_func
-Func_020000c4:
-	push {r5, r6, lr}
-	ldr r5, [pc, #64]
-	adds r6, r0, #0
-	adds r0, r5, #0
-	bl 0x020095c8
-	movs r1, #0
-	adds r0, r6, #0
-	bl 0x020095d0
-	movs r0, #0
-	movs r1, #0
-	bl 0x02009548
-	cmp r0, #0
-	bne .L_020000c4_0
-	movs r0, #10
-	bl 0x02009528
-	adds r0, r5, #1
-	bl 0x020095c8
-	b .L_020000c4_1
-.L_020000c4_0:
-	adds r0, r5, #2
-	bl 0x020095c8
-.L_020000c4_1:
-	adds r0, r6, #0
-	movs r1, #0
-	bl 0x020095d8
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x000028be
 	.section .rodata,"a",%progbits
 	.global RariberoMachi_LamentActions
 RariberoMachi_LamentActions:

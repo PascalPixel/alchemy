@@ -118,8 +118,14 @@ Engine_EventEnd:
 	.thumb_func
 Event_CallWithLastActiveObjectId:
 	overlay_veneer Event_CallWithLastActiveObjectIdFar
+	.global Event_PrepareObjectAndApplyValue
+	.thumb_func
+Event_PrepareObjectAndApplyValue:
 	overlay_veneer Event_PrepareObjectAndApplyValueFar
 	overlay_veneer Party_RemoveOwnerRestoredFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
@@ -209,6 +215,9 @@ Engine_ActorSetChildValue:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func
@@ -218,6 +227,9 @@ Engine_EventShowMessage:
 	.thumb_func
 Engine_EventShowMessageAndWait:
 	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	.global Engine_EventAskYesNo
+	.thumb_func
+Engine_EventAskYesNo:
 	overlay_veneer BattleEventRuntime_ProcessActionFar
 	.global Engine_ActorFaceDirection
 	.thumb_func

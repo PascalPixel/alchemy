@@ -7,7 +7,8 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/RECORD_COUNT.o"(.text)
-        "*/resource_3cd_overlay.o"(.text.x020080ec)
+        "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL_PANEL.o"(.text)
+        "*/resource_3cd_overlay.o"(.text.x02008214)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/SETUP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/IMPORT.o"(.text)
         "*/resource_3cd_overlay.o"(.rodata)

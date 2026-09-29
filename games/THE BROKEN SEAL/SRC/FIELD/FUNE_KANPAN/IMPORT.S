@@ -242,6 +242,9 @@ Engine_EventShowMessage:
 	.thumb_func
 Engine_EventShowMessageAndWait:
 	overlay_veneer BattlePres_RunActionThenWaitIfModeZeroFar
+	.global Engine_EventAskYesNo
+	.thumb_func
+Engine_EventAskYesNo:
 	overlay_veneer BattleEventRuntime_ProcessActionFar
 	.global Engine_ActorFaceDirection
 	.thumb_func
@@ -259,6 +262,9 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
 	overlay_veneer ObjectVisual_CopyAttributesFar
 	.global Engine_CameraFollowActor

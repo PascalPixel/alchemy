@@ -22,7 +22,7 @@ s32 BiribinoKyuden_ApplyEntryState(s32 a0, s32 a1)
             goto L_02000758;
         }
         if (gGameState.entrance == 29) {
-            FieldScene_RunLongBranchingChoreography();
+            Kyuden_RunKolimaRequest();
             goto L_02000888;
         }
         if (gGameState.entrance != 9) {

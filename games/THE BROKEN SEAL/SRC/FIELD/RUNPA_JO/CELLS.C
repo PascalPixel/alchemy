@@ -1,6 +1,7 @@
 /* The Lunpa fortress: the other supports, the cell doors, the guards' items
  * and the cell key. */
 #include "FORTRESS.H"
+extern u8 MsgFieldDoorTightlyLocked[];
 
 void FieldScene_UpdateObjectPairB(void)
 {
@@ -78,13 +79,13 @@ void FieldScene_UpdateObjectPairC(void)
 void CellDoor_Touch(void)
 {
     if (PartyInventory_FindOwner(ITEM_CELL_KEY) == -1) {
-        Message_ShowCentered(0x953, 1);
+        Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
     }
 }
 
 void LockedDoor_Touch(void)
 {
-    Message_ShowCentered(0x953, 1);
+    Message_ShowCentered((s32)MsgFieldDoorTightlyLocked, 1);
 }
 
 void Actor8_Interact(void)

@@ -1,28 +1,12 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 FuneKanpan_LeadActionsA[];
+extern u8 FuneKanpan_LeadActionsB[];
+extern u8 FuneKanpan_LeadActionsC[];
 extern u8 FuneKanpan_CrewScript[];
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 u8 *Object_GetById();
-
-enum MultiEncounterMessage {
-    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
-    MSG_TOLD_WERE_LEAVING_SOON_SET = 0x1d36,
-    MSG_IF_WE_DONT_LEAVE_SOON = 0x1d37,
-    MSG_SOMEBODY_STOP_THEM = 0x1d6f,
-    MSG_THEY_CANT_PLANNING_MUTINY = 0x1d70,
-    MSG_DIDNT_DO_ANYTHING = 0x1d8d,
-    MSG_NOW_WE_HAVE_PROTECT_SHIP = 0x1e08,
-    MSG_HAVE_MAKE_THEM_PROMISE_HELP = 0x1e09,
-    MSG_PREPARATIONS_READY = 0x1e39,
-    MSG_AYE_CAPTAIN_SEA_MONSTERS = 0x1e41,
-    MSG_THANK_ROBIN_DID_GOOD_AGAINST = 0x1ee1,
-    MSG_CAN_SEE_LAND = 0x1ee5,
-    MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT = 0x1f53,
-    MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR = 0x1f55,
-    MSG_SEE_YOURE_GOING_GO_FOR = 0x1f5b,
-    MSG_HOW_WAS_ROBIN_DID_EXPLORE = 0x1f69
-};
 
 union Slot {
     s32 w;
@@ -176,7 +160,7 @@ void FieldScene_RunScene3af_0200185c(void)
         record[89] = value | bits;
     }
     Actor_SetSpeed(22, 0x9999, 0x4ccc);
-    Actor_EnableActionCallback(22, 0x200c58c);
+    Actor_EnableActionCallback(22, FuneKanpan_LeadActionsA);
     {
         u8 *record = Object_GetById(21);
 
@@ -184,7 +168,7 @@ void FieldScene_RunScene3af_0200185c(void)
         record[89] = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
-    Actor_EnableActionCallback(21, 0x200c628);
+    Actor_EnableActionCallback(21, FuneKanpan_LeadActionsB);
     if (GameFlag_IsSet(0x109) != 0) {
         FieldScene_RunScene3af_02004218();
     }
@@ -207,7 +191,7 @@ void FieldScene_RunScene3af_02001920(void)
 
         *(u16 *)(record + 6) = shown;
     }
-    Actor_EnableActionCallback(22, 0x200c980);
+    Actor_EnableActionCallback(22, FuneKanpan_LeadActionsC);
     {
         u8 *record = Object_GetById(21);
         u8 bits = 128;
@@ -216,7 +200,7 @@ void FieldScene_RunScene3af_02001920(void)
         record[89] = bits;
     }
     Actor_SetSpeed(21, 0xcccc, 0x6666);
-    Actor_EnableActionCallback(21, 0x200c628);
+    Actor_EnableActionCallback(21, FuneKanpan_LeadActionsB);
     if (GameFlag_IsSet(0x109) != 0) {
         FieldScene_RunScene3af_02004218();
     }

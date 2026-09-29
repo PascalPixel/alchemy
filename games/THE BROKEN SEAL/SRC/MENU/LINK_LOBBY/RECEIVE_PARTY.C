@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SERIAL_RUNTIME.H"
+extern u8 MsgEnemyLabel[];
 extern u8 gLinkStatus[];
 
 s32 Runtime_BumpAllocateAlternatePool(u32 size);
@@ -66,7 +67,7 @@ test1:
         result++;
     }
     Engine_TaskWait(2);
-    Call2(Ui_AdjustValueWithoutLimit, 0x80c, buf);
+    Call2(Ui_AdjustValueWithoutLimit, (s32)MsgEnemyLabel, buf);
     i = 0;
     if (buf[i] != 0) {
         do {

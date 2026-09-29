@@ -1,4 +1,6 @@
 #include "HAIDIA_BABI.H"
+extern u8 MsgHaidiaHeyBoy[];
+extern u8 MsgHaidiaTheMaskedManWasGarcia[];
 
 /* The events hook, the villagers' scenes and the house's exits. */
 
@@ -33,7 +35,7 @@ void HaidiaBabi_RunHeyBoyScene(void)
     Event_Begin();
     Actor_StartRepeatedMotion(16, 2);
     Event_Wait(30);
-    Event_SetMessage(MSG_HEY_BOY);
+    Event_SetMessage((s32)MsgHaidiaHeyBoy);
     Actor_FaceEachOther(ACTOR_PARTY_LEADER, 16, 10);
     Event_ShowMessageAndWait(16, 0, 6);
     Actor_ShowEmote(16, 0x102, 0);
@@ -57,7 +59,7 @@ void SceneDialogue_RunActorFourteenDialogue11AA(void)
 
     Event_Begin();
     Actor_FaceActor(0xE, ACTOR_PARTY_LEADER, 0xA);
-    Event_SetMessage(MSG_THE_MASKED_MAN_WAS_GARCIA);
+    Event_SetMessage((s32)MsgHaidiaTheMaskedManWasGarcia);
     Event_OpenMessage(0xE, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_ShowMessage(0xE, 0);

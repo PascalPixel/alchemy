@@ -3,50 +3,22 @@
 #include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
+extern u8 MsgFuneAnotherMonsterIsntFirstClass[];
+extern u8 MsgFuneBoatsRockingMuchImCertain[];
+extern u8 MsgFuneDontCareTakesJustHurry[];
+extern u8 MsgFuneGoodShipHasArrivedSafely[];
+extern u8 MsgFuneHadIdeaThereWereMany[];
+extern u8 MsgFuneHateArguing[];
+extern u8 MsgFuneHowManyMonstersOutThere[];
+extern u8 MsgFuneIfThoseMonstersComeBack[];
+extern u8 MsgFuneImSpreadingGoodwillWhereverTravel[];
+extern u8 MsgFuneMonstersEverywhereImStuckRowing[];
+extern u8 MsgFuneShipStartingListIfWe[];
+extern u8 MsgFuneShipsCrewReadyAnything[];
+extern u8 MsgFuneShipsCrewReadyForAnything[];
+extern u8 MsgFuneThingHasKajaHisMen[];
+extern u8 MsgFuneWereSurroundedByMonstersStill[];
 
-enum ExtendedChoreographyMessage {
-    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
-    MSG_ITS_TOO_LATE_HIRE_MERCENARIES = 0x1d30,
-    MSG_BUT_WE_CANT_SEND_SHIP = 0x1d31,
-    MSG_LONGER_WE_SIT_HERE_MORE = 0x1d4e,
-    MSG_IF_WE_ARENT_GOING_SET = 0x1d56,
-    MSG_NOW_WANT_SEE_CAPTAIN_TOO = 0x1d91,
-    MSG_YOURE_TRYING_LAUNCH_SHIP = 0x1d93,
-    MSG_BAD_LUCK_LOSING_MY_LUCKY = 0x1dcd,
-    MSG_IF_SHIP_FROM_TOLBI_HAD = 0x1dd4,
-    MSG_ITS_MY_LUCKY_ANCHOR = 0x1ddb,
-    MSG_WE_DONT_KNOW_MIGHT_HAPPEN = 0x1e06,
-    MSG_THESE_PROUD_WARRIORS_NOT_GOING = 0x1e13,
-    MSG_OUR_REPLACEMENT_NEVER_ARRIVED_BUT = 0x1e27,
-    MSG_CAST_OFF = 0x1e3b,
-    MSG_ROW_THOSE_OARS = 0x1e3c,
-    MSG_WERE_OFF = 0x1e3d,
-    MSG_IM_TURNING = 0x1e43,
-    MSG_HEY_ARE_YOU_OK = 0x1e6e,
-    MSG_OHHHH_NOOOO_GOING_MAKE_ME = 0x1e81,
-    MSG_HA_HA_HA_ROWING_FEEL = 0x1e84,
-    MSG_GIVES_ME_CHILLS_THINK_COULD = 0x1ea1,
-    MSG_ROBIN_YOUVE_GOT_GOOD_EYE = 0x1ea2,
-    MSG_HO_HO_PERSON_GOING_GET = 0x1ea6,
-    MSG_OARSMAN_WAS_INJURED = 0x1eb2,
-    MSG_WONDER_WHATS_WRONG_SHIP_SHOULDNT = 0x1ec1,
-    MSG_THING_HAS_KAJA_HIS_MEN = 0x1ece,
-    MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING = 0x1ecf,
-    MSG_SHIP_STARTING_LIST_IF_WE = 0x1ed0,
-    MSG_HOW_MANY_MONSTERS_OUT_THERE = 0x1ed1,
-    MSG_ANOTHER_MONSTER_ISNT_FIRST_CLASS = 0x1ed2,
-    MSG_DONT_CARE_TAKES_JUST_HURRY = 0x1edb,
-    MSG_IF_THOSE_MONSTERS_COME_BACK = 0x1edc,
-    MSG_BOATS_ROCKING_MUCH_IM_CERTAIN = 0x1edd,
-    MSG_HAD_IDEA_THERE_WERE_MANY = 0x1ede,
-    MSG_WERE_SURROUNDED_BY_MONSTERS_STILL = 0x1edf,
-    MSG_HATE_ARGUING = 0x1f48,
-    MSG_SORRY_EVERYONE_BUT_WE_NEED = 0x1f78,
-    MSG_IM_SPREADING_GOODWILL_WHEREVER_TRAVEL = 0x1f7b,
-    MSG_SHIPS_CREW_READY_FOR_ANYTHING = 0x1f7d,
-    MSG_SHIPS_CREW_READY_FOR_ANYTHING_2 = 0x1f7f,
-    MSG_GOOD_SHIP_HAS_ARRIVED_SAFELY = 0x1f81
-};
 
 struct SceneActor {
     u8 pad00[99];
@@ -153,9 +125,9 @@ s32 SceneState_ApplyLevelFromFlags(void)
 void SceneDialogue_ShowLine1ECETo1ED0(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92c)) Event_SetMessage(MSG_THING_HAS_KAJA_HIS_MEN);
-    else if (GameFlag_IsSet(0x935)) Event_SetMessage(MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING);
-    else Event_SetMessage(MSG_SHIP_STARTING_LIST_IF_WE);
+    if (GameFlag_IsSet(0x92c)) Event_SetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (GameFlag_IsSet(0x935)) Event_SetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    else Event_SetMessage((s32)MsgFuneShipStartingListIfWe);
     Event_ShowMessage(0x12, 0); Event_End();
 }
 
@@ -164,9 +136,9 @@ void SceneDialogue_ShowLine1ECETo1ED0(void)
 void SceneDialogue_RunActor19TwoFlagLineA(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92d)) Event_SetMessage(MSG_THING_HAS_KAJA_HIS_MEN);
-    else if (GameFlag_IsSet(0x936)) Event_SetMessage(MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING);
-    else Event_SetMessage(MSG_SHIP_STARTING_LIST_IF_WE);
+    if (GameFlag_IsSet(0x92d)) Event_SetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (GameFlag_IsSet(0x936)) Event_SetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    else Event_SetMessage((s32)MsgFuneShipStartingListIfWe);
     Event_ShowMessage(0x13, 0); Event_End();
 }
 
@@ -175,9 +147,9 @@ void SceneDialogue_RunActor19TwoFlagLineA(void)
 void SceneDialogue_RunActor20TwoFlagLine(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92e)) Event_SetMessage(MSG_THING_HAS_KAJA_HIS_MEN);
-    else if (GameFlag_IsSet(0x937)) Event_SetMessage(MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING);
-    else Event_SetMessage(MSG_SHIP_STARTING_LIST_IF_WE);
+    if (GameFlag_IsSet(0x92e)) Event_SetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (GameFlag_IsSet(0x937)) Event_SetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    else Event_SetMessage((s32)MsgFuneShipStartingListIfWe);
     Event_ShowMessage(0x14, 0); Event_End();
 }
 
@@ -185,8 +157,8 @@ void SceneDialogue_RunActor20TwoFlagLine(void)
 void SceneDialogue_ShowLine1ED1Or1ED2(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92f)) Event_SetMessage(MSG_HOW_MANY_MONSTERS_OUT_THERE);
-    else Event_SetMessage(MSG_ANOTHER_MONSTER_ISNT_FIRST_CLASS);
+    if (GameFlag_IsSet(0x92f)) Event_SetMessage((s32)MsgFuneHowManyMonstersOutThere);
+    else Event_SetMessage((s32)MsgFuneAnotherMonsterIsntFirstClass);
     Event_ShowMessage(21, 0); Event_End();
 }
 
@@ -194,9 +166,9 @@ void SceneDialogue_ShowLine1ED1Or1ED2(void)
 void SceneDialogue_RunActor22TwoFlagLine(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x930)) Event_SetMessage(MSG_THING_HAS_KAJA_HIS_MEN);
-    else if (GameFlag_IsSet(0x939)) Event_SetMessage(MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING);
-    else Event_SetMessage(MSG_SHIP_STARTING_LIST_IF_WE);
+    if (GameFlag_IsSet(0x930)) Event_SetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (GameFlag_IsSet(0x939)) Event_SetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    else Event_SetMessage((s32)MsgFuneShipStartingListIfWe);
     Event_ShowMessage(22, 0); Event_End();
 }
 
@@ -204,9 +176,9 @@ void SceneDialogue_RunActor22TwoFlagLine(void)
 void SceneDialogue_RunActor23BranchedDialogue(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x931)) Event_SetMessage(MSG_THING_HAS_KAJA_HIS_MEN);
-    else if (GameFlag_IsSet(0x93a)) Event_SetMessage(MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING);
-    else Event_SetMessage(MSG_SHIP_STARTING_LIST_IF_WE);
+    if (GameFlag_IsSet(0x931)) Event_SetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (GameFlag_IsSet(0x93a)) Event_SetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    else Event_SetMessage((s32)MsgFuneShipStartingListIfWe);
     Event_ShowMessage(23, 0); Event_End();
 }
 
@@ -214,9 +186,9 @@ void SceneDialogue_RunActor23BranchedDialogue(void)
 void SceneDialogue_RunActor24BranchedDialogue(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x932)) Event_SetMessage(MSG_THING_HAS_KAJA_HIS_MEN);
-    else if (GameFlag_IsSet(0x93b)) Event_SetMessage(MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING);
-    else Event_SetMessage(MSG_SHIP_STARTING_LIST_IF_WE);
+    if (GameFlag_IsSet(0x932)) Event_SetMessage((s32)MsgFuneThingHasKajaHisMen);
+    else if (GameFlag_IsSet(0x93b)) Event_SetMessage((s32)MsgFuneMonstersEverywhereImStuckRowing);
+    else Event_SetMessage((s32)MsgFuneShipStartingListIfWe);
     Event_ShowMessage(24, 0); Event_End();
 }
 
@@ -224,8 +196,8 @@ void SceneDialogue_RunActor24BranchedDialogue(void)
 void SceneDialogue_RunActor25FlaggedLine(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x933)) Event_SetMessage(MSG_HOW_MANY_MONSTERS_OUT_THERE);
-    else Event_SetMessage(MSG_ANOTHER_MONSTER_ISNT_FIRST_CLASS);
+    if (GameFlag_IsSet(0x933)) Event_SetMessage((s32)MsgFuneHowManyMonstersOutThere);
+    else Event_SetMessage((s32)MsgFuneAnotherMonsterIsntFirstClass);
     Event_ShowMessage(25, 0); Event_End();
 }
 
@@ -233,9 +205,9 @@ void SceneDialogue_RunActor25FlaggedLine(void)
 void SceneDialogue_RunActor18TwoFlagLine(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92c)) Event_SetMessage(MSG_DONT_CARE_TAKES_JUST_HURRY);
-    else if (GameFlag_IsSet(0x935)) Event_SetMessage(MSG_IF_THOSE_MONSTERS_COME_BACK);
-    else Event_SetMessage(MSG_BOATS_ROCKING_MUCH_IM_CERTAIN);
+    if (GameFlag_IsSet(0x92c)) Event_SetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (GameFlag_IsSet(0x935)) Event_SetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    else Event_SetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
     Event_ShowMessage(18, 0); Event_End();
 }
 
@@ -243,9 +215,9 @@ void SceneDialogue_RunActor18TwoFlagLine(void)
 void SceneDialogue_RunActor19TwoFlagLineB(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92d)) Event_SetMessage(MSG_DONT_CARE_TAKES_JUST_HURRY);
-    else if (GameFlag_IsSet(0x936)) Event_SetMessage(MSG_IF_THOSE_MONSTERS_COME_BACK);
-    else Event_SetMessage(MSG_BOATS_ROCKING_MUCH_IM_CERTAIN);
+    if (GameFlag_IsSet(0x92d)) Event_SetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (GameFlag_IsSet(0x936)) Event_SetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    else Event_SetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
     Event_ShowMessage(19, 0); Event_End();
 }
 
@@ -253,9 +225,9 @@ void SceneDialogue_RunActor19TwoFlagLineB(void)
 void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92e)) Event_SetMessage(MSG_DONT_CARE_TAKES_JUST_HURRY);
-    else if (GameFlag_IsSet(0x937)) Event_SetMessage(MSG_IF_THOSE_MONSTERS_COME_BACK);
-    else Event_SetMessage(MSG_BOATS_ROCKING_MUCH_IM_CERTAIN);
+    if (GameFlag_IsSet(0x92e)) Event_SetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (GameFlag_IsSet(0x937)) Event_SetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    else Event_SetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
     Event_ShowMessage(20, 0); Event_End();
 }
 
@@ -263,8 +235,8 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor20(void)
 void SceneDialogue_RunActor21FlaggedLine(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x92f)) Event_SetMessage(MSG_HAD_IDEA_THERE_WERE_MANY);
-    else Event_SetMessage(MSG_WERE_SURROUNDED_BY_MONSTERS_STILL);
+    if (GameFlag_IsSet(0x92f)) Event_SetMessage((s32)MsgFuneHadIdeaThereWereMany);
+    else Event_SetMessage((s32)MsgFuneWereSurroundedByMonstersStill);
     Event_ShowMessage(21, 0); Event_End();
 }
 
@@ -272,9 +244,9 @@ void SceneDialogue_RunActor21FlaggedLine(void)
 void SceneDialogue_RunActor22BranchedDialogue(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x930)) Event_SetMessage(MSG_DONT_CARE_TAKES_JUST_HURRY);
-    else if (GameFlag_IsSet(0x939)) Event_SetMessage(MSG_IF_THOSE_MONSTERS_COME_BACK);
-    else Event_SetMessage(MSG_BOATS_ROCKING_MUCH_IM_CERTAIN);
+    if (GameFlag_IsSet(0x930)) Event_SetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (GameFlag_IsSet(0x939)) Event_SetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    else Event_SetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
     Event_ShowMessage(22, 0); Event_End();
 }
 
@@ -282,9 +254,9 @@ void SceneDialogue_RunActor22BranchedDialogue(void)
 void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x931)) Event_SetMessage(MSG_DONT_CARE_TAKES_JUST_HURRY);
-    else if (GameFlag_IsSet(0x93a)) Event_SetMessage(MSG_IF_THOSE_MONSTERS_COME_BACK);
-    else Event_SetMessage(MSG_BOATS_ROCKING_MUCH_IM_CERTAIN);
+    if (GameFlag_IsSet(0x931)) Event_SetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (GameFlag_IsSet(0x93a)) Event_SetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    else Event_SetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
     Event_ShowMessage(23, 0); Event_End();
 }
 
@@ -292,9 +264,9 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor23(void)
 void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x932)) Event_SetMessage(MSG_DONT_CARE_TAKES_JUST_HURRY);
-    else if (GameFlag_IsSet(0x93b)) Event_SetMessage(MSG_IF_THOSE_MONSTERS_COME_BACK);
-    else Event_SetMessage(MSG_BOATS_ROCKING_MUCH_IM_CERTAIN);
+    if (GameFlag_IsSet(0x932)) Event_SetMessage((s32)MsgFuneDontCareTakesJustHurry);
+    else if (GameFlag_IsSet(0x93b)) Event_SetMessage((s32)MsgFuneIfThoseMonstersComeBack);
+    else Event_SetMessage((s32)MsgFuneBoatsRockingMuchImCertain);
     Event_ShowMessage(24, 0); Event_End();
 }
 
@@ -302,8 +274,8 @@ void SceneDialogue_ShowLine1EDBTo1EDDActor24(void)
 void SceneDialogue_ShowLine1EDEOr1EDF(void)
 {
     Event_Begin();
-    if (GameFlag_IsSet(0x933)) Event_SetMessage(MSG_HAD_IDEA_THERE_WERE_MANY);
-    else Event_SetMessage(MSG_WERE_SURROUNDED_BY_MONSTERS_STILL);
+    if (GameFlag_IsSet(0x933)) Event_SetMessage((s32)MsgFuneHadIdeaThereWereMany);
+    else Event_SetMessage((s32)MsgFuneWereSurroundedByMonstersStill);
     Event_ShowMessage(25, 0); Event_End();
 }
 
@@ -347,15 +319,15 @@ void FieldScene_RunScene3b1SequenceC(void)
     } else {
         Event_Begin();
         if (GameFlag_IsSet(0x93e) != 0) {
-            Event_SetMessage(MSG_GOOD_SHIP_HAS_ARRIVED_SAFELY);
+            Event_SetMessage((s32)MsgFuneGoodShipHasArrivedSafely);
         } else if (GameFlag_IsSet(0x8a0) != 0) {
-            Event_SetMessage(MSG_HATE_ARGUING);
+            Event_SetMessage((s32)MsgFuneHateArguing);
         } else if (GameFlag_IsSet(0x928) != 0) {
-            Event_SetMessage(MSG_SHIPS_CREW_READY_FOR_ANYTHING_2);
+            Event_SetMessage((s32)MsgFuneShipsCrewReadyAnything);
         } else if (GameFlag_IsSet(0x925) != 0) {
-            Event_SetMessage(MSG_SHIPS_CREW_READY_FOR_ANYTHING);
+            Event_SetMessage((s32)MsgFuneShipsCrewReadyForAnything);
         } else {
-            Event_SetMessage(MSG_IM_SPREADING_GOODWILL_WHEREVER_TRAVEL);
+            Event_SetMessage((s32)MsgFuneImSpreadingGoodwillWhereverTravel);
         }
         if (GameFlag_IsSet(0x928) != 0 && GameFlag_IsSet(0x93e) == 0) {
             Event_ShowMessage(17, 0);

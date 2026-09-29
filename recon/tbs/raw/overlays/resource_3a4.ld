@@ -14,7 +14,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SET_PIECE.o"(.text)
         "*/resource_3a4_overlay.o"(.text.x02008d2c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SHARED.o"(.text)
-        "*/resource_3a4_overlay.o"(.text.x02009398)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/FALLING_ROCKS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/GET_EVENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/TIMED_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/MULTI_PHASE.o"(.text)

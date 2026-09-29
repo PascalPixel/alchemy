@@ -2,6 +2,8 @@
 #include "INVENTORY.H"
 #include "DMA.H"
 #include "TEXT_RENDER_RUNTIME.H"
+extern u8 MsgItemName[];
+extern u8 MsgItemPlainName[];
 
 struct ItemDefinition;
 struct ItemDefinition *Engine_DebugGetItem(s32 item);
@@ -53,8 +55,8 @@ void DebugMenu_SelectItem(void)
                 index = item & 0x1ff;
                 UiText_DrawStringInWindowFar(gDebugItemCapacityLabel, window, 0, 32);
                 Engine_DebugGetItem(index);
-                UiText_DrawCharacterAtOffset(index + 0x182, window, 120, 0);
-                Engine_DebugDrawTextResource(index + 0x75, window, 0, 16);
+                UiText_DrawCharacterAtOffset(index + (s32)MsgItemName, window, 120, 0);
+                Engine_DebugDrawTextResource(index + (s32)MsgItemPlainName, window, 0, 16);
                 Engine_DebugRedrawWindow(details);
                 Engine_DebugDrawItemDetails(details, item);
             } else {

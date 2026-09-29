@@ -37,9 +37,9 @@
  * same complete binary. Keep the original typed initializer. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgWorldMapMatter[];
 
 /* Absolute dialogue ID shared by the prompt and its completion flag. */
-extern u8 Data_00002644[];
 
 
 void Func_02005422();
@@ -247,7 +247,7 @@ void Scene_RunActorPresentation(void)
     }
     Call3(Func_02006e20, *(s32 *)base6_200e79c, 0x100, 0);
     Func_02006dd8(*(s32 *)base6_200e79c, 2);
-    base10_2644 = (s32)Data_00002644;
+    base10_2644 = (s32)MsgWorldMapMatter;
     Func_02006e02(base10_2644);
     Func_02006e24(*(s32 *)base6_200e79c, 0, 80);
     if (obj != 0) {

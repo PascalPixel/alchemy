@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/SLOTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/STEP_EMBERS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/TIMER.o"(.text)
-        "*/resource_381_overlay.o"(.text.x02009410)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/COLLAPSE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/ARCS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/EFFECT_PAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA/STEPS.o"(.text)

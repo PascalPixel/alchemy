@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgKorosseoMainThingStage[];
+extern u8 MsgKorosseoStageDubbedMini[];
 
 void Korosseo_FinishSoloRound();
 void Engine_EventBegin();
@@ -72,7 +74,7 @@ void KorosseoKabe_RunStageIntro(s32 a0)
         Engine_EventBegin();
         rec = Value2(KorosseoKabe_RunStateInteraction, a0, 1);
         if (rec == 0) {
-            Call1(Engine_EventSetMessage, 0x209e);
+            Call1(Engine_EventSetMessage, (s32)MsgKorosseoStageDubbedMini);
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
             Call4(Engine_CameraMoveTo, 0x4c80000, -1, 0xb80000, 1);
             Engine_CameraWaitForMove();
@@ -97,7 +99,7 @@ void KorosseoKabe_RunStageIntro(s32 a0)
             KorosseoKabe_ShowFollowUpPrompt(a0, 1);
         } else {
             if (rec == 1) {
-                Call1(Engine_EventSetMessage, 0x209d);
+                Call1(Engine_EventSetMessage, (s32)MsgKorosseoMainThingStage);
                 Engine_EventShowMessage(a0, 0);
             }
         }

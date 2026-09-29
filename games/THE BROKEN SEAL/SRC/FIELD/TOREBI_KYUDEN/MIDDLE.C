@@ -2,6 +2,8 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "KYUDEN.H"
+extern u8 MsgTorebiCantFightBecauseLittleIndigestion[];
+extern u8 MsgTorebiEvenIfEscapedBabiPalace[];
 
 void RunMiddleAuxiliarySequence(s32 a)
 {
@@ -12,7 +14,7 @@ void RunMiddleAuxiliarySequence(s32 a)
     Event_Begin();
     q = TorebiKyuden_MiddleActionScript;
     Actor_EnableActionCallback(a, q);
-    Event_SetMessage(MSG_CANT_FIGHT_BECAUSE_LITTLE_INDIGESTION);
+    Event_SetMessage((s32)MsgTorebiCantFightBecauseLittleIndigestion);
     Event_ShowMessage(a, 0);
     Actor_Stop(a);
     *(s32 *)(obj + 28) = 0x10000;
@@ -44,7 +46,7 @@ void RunMiddleAuxiliarySequence(s32 a)
 void FieldScene_RunScene3b8_0200049c(s32 unused0, s32 a1)
 {
     Event_Begin();
-    Event_SetMessage(MSG_EVEN_IF_ESCAPED_BABI_PALACE);
+    Event_SetMessage((s32)MsgTorebiEvenIfEscapedBabiPalace);
     Event_ShowMessage(a1, 0);
     if (GameFlag_IsSet(0x968) == 0) {
         GameFlag_Set(0x968);

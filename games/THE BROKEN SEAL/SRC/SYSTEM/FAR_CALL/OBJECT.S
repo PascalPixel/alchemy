@@ -38,7 +38,7 @@ Event_CallWithLastActiveObjectIdFar:
 	.global Func_0808a038
 	.thumb_func
 Func_0808a038:
-	overlay_veneer Func_0808b868
+	overlay_veneer Scene_AssignViewFlags
 	.global Func_0808a040
 	.thumb_func
 Func_0808a040:

@@ -56,6 +56,8 @@ Data_08007c10:
 	.section .unidentified.08007c64,"a"
 	.incbin "baserom.gba", 0x00007c64, 0x0000139c
 	.section .unidentified.080092b8,"a"
+	.global ResourceSlot_ConversionTables
+ResourceSlot_ConversionTables:
 	.incbin "baserom.gba", 0x000092b8, 0x00000500
 	.global Runtime_ByteRemapTable
 Runtime_ByteRemapTable:
@@ -64,6 +66,8 @@ Runtime_ByteRemapTable:
 	.global Object_ShadowTiles
 Object_ShadowTiles:
 	.incbin "baserom.gba", 0x00012f20, 0x00000080
+	.global ResourceSlot_NumberTable
+ResourceSlot_NumberTable:
 	.incbin "baserom.gba", 0x00012fa0, 0x000001ac
 	.global Map_TileDissolveOrder
 Map_TileDissolveOrder:

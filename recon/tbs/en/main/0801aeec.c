@@ -14,6 +14,18 @@
  * The exact Render_PlaceSpritePartPair family's u16 y:8/attribute bitfields
  * also emit the identical candidate here; field storage width is not the
  * remaining cause.
+ * 2026-09-29 (alchemy permute scorer): 75, 11 register-only rows plus the
+ * unlabelled left-marker tiles (was 525). Plain constants replace the link
+ * symbols: GameFlag_IsSet(0x103) loads 0x103 from the pool by itself, and
+ * the offset's decrement is the reference's halfword add of 0xffff. The
+ * frame tick and the right-marker tiles are the linked gFrameTick and
+ * Menu_CursorObjectTiles; the left tiles are the last 0x400 bytes of the
+ * Data_08032224 scaffold block and need their own label there. A search
+ * then found the x mask set after the entry pointer and the frame address
+ * in its own local. Remaining: the node offset (index * 52) is in r1 and
+ * the node's x in r2 where the reference has r2 and r1; a node pointer, a
+ * local x, mask types and statement orders do not swap them, and a further
+ * 400-second search (34,000 candidates) found nothing below 75.
  */
 #include "TYPES.H"
 
@@ -49,28 +61,28 @@ struct MenuSelection {
     u8 unknown_68[0x27a];
     u16 mode;
 };
-extern u32 Data_03001800;
-extern u8 Data_080342f8[], Data_08033ef8[];
-extern u8 Value_00000103[], Value_0000ffff[];
-extern s32 GameFlag_TestFar(s32 flag);
+extern u32 gFrameTick;
+extern u8 Menu_CursorObjectTiles[], Data_08033ef8[];
+extern s32 GameFlag_IsSet(s32 flag);
 extern void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 extern s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 
 void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
 {
-    u32 frame = (Data_03001800 >> 2) & 7;
+    u32 frame = (gFrameTick >> 2) & 7;
     struct SlotEntry *entry;
     u8 *frames;
     u32 x_mask;
+    u8 *tmp;
 
     if (state->nodes[index].active == 0)
         return;
-    x_mask = 0x1ff;
     entry = &state->nodes[index].entry;
+    x_mask = 0x1ff;
     entry->x = state->nodes[index].x & x_mask;
     entry->y = state->nodes[index].y;
     if (index != 0) {
-        frames = Data_080342f8;
+        frames = Menu_CursorObjectTiles;
         if (state->nodes[1].offset != 0)
             entry->x = (entry->x + state->nodes[1].offset) & x_mask;
     } else {
@@ -78,9 +90,9 @@ void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
         if (state->nodes[0].offset != 0)
             entry->x = (entry->x - state->nodes[0].offset) & x_mask;
     }
-    entry->tile = VramBlock_LoadCached(state->nodes[index].handle, 128,
-                                     frames + frame * 128);
-    if (GameFlag_TestFar((s32)Value_00000103)) {
+    tmp = frames + frame * 128;
+    entry->tile = VramBlock_LoadCached(state->nodes[index].handle, 128, tmp);
+    if (GameFlag_IsSet(0x103)) {
         if (state->mode == 1)
             entry->mode = 1;
         else
@@ -88,5 +100,5 @@ void MenuSelection_DrawSideMarker(struct MenuSelection *state, s32 index)
     }
     Runtime_PushSlotEntry((s32 *)entry, 238);
     if (state->nodes[index].offset != 0)
-        state->nodes[index].offset += (s32)Value_0000ffff;
+        state->nodes[index].offset--;
 }

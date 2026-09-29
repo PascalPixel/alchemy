@@ -15,6 +15,14 @@
  * coordinate array and prompt pointer 280/96, with a union view 266/103;
  * sibling loop/register model and a halfword X view 260/89 (retained).
  * All three structural hypotheses stopped; no C credit claimed.
+ * 2026-09-29 (alchemy permute scorer): the draft scored 2925 (27
+ * register-only, 14 operand, 11 reordered, 4 inserted, 14 deleted). This
+ * body is the permuter's best after a 300-second search (39,000
+ * candidates): 1770 (26 register-only, 6 operand, 16 reordered, 1 inserted,
+ * 4 deleted). It moves the y store after the resource load, reads X through
+ * a halfword pointer into a local and builds the sprite y in a u32 local;
+ * several of its 75 rewrites (register locals, (*p).member, the empty for
+ * loop) are noise, hence its FAKEMATCH tag.
  * Func_080153f0 remains the existing unnamed Ui_GetTableWordZero veneer;
  * other calls use registered names. No new aliases or compiler changes.
  * Reproduce with the scoring unit retained at d51144bd1; it owns the full
@@ -66,29 +74,38 @@ void Runtime_PushSlotEntry(s32 *entry, s32 priority);
 /* FAKEMATCH: the unused result retains the reference's value-return epilogue. */
 s32 Unnamed_080bb7c0(s32 x, s32 y)
 {
+    /* FAKEMATCH: permuter found a cast to the operand's own type, a cast of a cast or (*p).member */
     s32 pos[2];
-    union BattlePromptEntry entry;
     union BattlePromptEntry *prompt;
-    s32 sprite;
-    s32 tiles = Func_080153f0(0);
+    register s32 sprite;
+    register union BattlePromptEntry entry;
+    register s32 tiles = Func_080153f0(0);
+    u16 *tmp;
+    u32 tmp2;
+    s32 tmp4;
+    u16 tmp3;
 
-    pos[0] = x;
-    pos[1] = y;
-    while (!UiWork_IsCompleteFar())
-        WaitFrames(1);
+    *pos = x;
+    for (; !UiWork_IsCompleteFar(); WaitFrames(1)) {
+    }
     prompt = &entry;
     sprite = Resource_LoadIntoFreeSlot(0x80);
+    pos[1] = y;
 loop:
     QueueIoWriteDelay10(0x0400004a, 4);
+    tmp4 = 16;
+    tmp = (u16 *)pos;
     QueueIoWriteDelay6(0x0400004a, 16);
-    ((struct PromptBlendRegister *)0x04000052)->value = 16;
-    prompt->words[1] = 0x40000000;
-    prompt->words[2] = 0;
-    prompt->sprite.tile = Resource_GetBuffer(sprite, tiles);
-    prompt->sprite.x = ((Data_03001e40 & 4) >> 1) + *(u16 *)pos + 0xfffc;
-    prompt->sprite.y = pos[1] - ((Data_03001e40 & 4) >> 2) + 248;
+    (*(struct PromptBlendRegister *)0x04000052).value = tmp4;
+    prompt[0].words[1] = 0x40000000;
+    *&prompt->words[2] = 0;
+    (*prompt).sprite.tile = Resource_GetBuffer(sprite, tiles);
+    tmp3 = *tmp;
+    prompt->sprite.x = tmp3 + 0xfffc + ((4 & Data_03001e40) >> 1);
+    tmp2 = pos[1] - ((Data_03001e40 & 4) >> 2) + 248;
+    prompt->sprite.y = tmp2;
     Runtime_PushSlotEntry(prompt->words, 240);
-    if (!(Data_03001c94 & 0x303)) {
+    if (!((0x303 & Data_03001c94) != 0)) {
         WaitFrames(1);
         goto loop;
     }

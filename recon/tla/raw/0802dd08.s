@@ -314,7 +314,7 @@ Func_0802dd08:
 .L_0802df8c:
 	movs	r1, #0
 	ldrsh	r0, [r2, r1]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #4]
 	cmp	r3, #20
 	bne.n	.L_0802dfac
@@ -332,7 +332,7 @@ Func_0802dd08:
 .L_0802dfb0:
 	movs	r1, #0
 	ldrsh	r0, [r7, r1]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #4]
 	movs	r5, #0
 	cmp	r3, #20

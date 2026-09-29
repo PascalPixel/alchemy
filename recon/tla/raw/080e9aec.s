@@ -46,7 +46,7 @@ Func_080e9aec:
 	bl	Resource_GetTableEntry
 	mov	r1, r8
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #4
 	mov	r2, r8

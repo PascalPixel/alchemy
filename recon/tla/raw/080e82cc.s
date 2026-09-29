@@ -135,7 +135,7 @@ Func_080e82cc:
 	bl	Resource_GetTableEntry
 	ldr	r1, [sp, #48]
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #1
 	ldr	r2, [sp, #48]
@@ -460,7 +460,7 @@ Func_080e82cc:
 	bl	Resource_GetTableEntry
 	ldr	r1, [sp, #48]
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #2
 	ldr	r2, [sp, #48]
@@ -684,7 +684,7 @@ Func_080e82cc:
 	bl	Resource_GetTableEntry
 	mov	r1, sl
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #1
 	mov	r2, sl

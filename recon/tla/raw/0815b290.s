@@ -17,7 +17,7 @@ Func_0815b290:
 	adds	r7, r3, #0
 	mov	fp, r0
 	mov	r8, r1
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r6, [r3, #16]

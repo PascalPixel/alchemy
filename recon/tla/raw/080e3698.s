@@ -1198,7 +1198,7 @@ Func_080e3698:
 	bl	Resource_GetTableEntry
 	mov	r1, r8
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r5, #128
 	lsls	r5, r5, #5
 	adds	r1, r5, #0
@@ -1259,7 +1259,7 @@ Func_080e3698:
 	bl	Resource_GetTableEntry
 	mov	r1, r8
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #4
 	mov	r2, r8

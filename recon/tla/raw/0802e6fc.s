@@ -27,7 +27,7 @@ Func_0802e6fc:
 	ldrsh	r0, [r5, r3]
 	str	r1, [sp, #4]
 	str	r4, [sp, #0]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r0, #5]
 	ldr	r1, [sp, #4]
 	ldr	r4, [sp, #0]

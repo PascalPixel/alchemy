@@ -30,9 +30,9 @@ Func_08022d1c:
 	movs	r2, #0
 	mov	r8, r2
 	mov	sl, r0
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	adds	r7, r0, #0
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r3, #192
 	lsls	r3, r3, #18
 	ldr	r5, [r3, #16]
@@ -232,45 +232,3 @@ Func_08022d1c:
 .L_08022ed4:
 	add	sp, #4
 	pop	{r5, r6, r7, pc}
-	push	{r5, r6, r7, lr}
-	adds	r6, r1, #0
-	adds	r5, r2, #0
-	bl	Func_08021918
-	ldrb	r3, [r0, #5]
-	movs	r7, #0
-	cmp	r6, r3
-	bcc.n	.L_08022eee
-	movs	r0, #0
-	b.n	.L_08022f20
-.L_08022eee:
-	ldr	r2, [r0, #16]
-	lsls	r3, r6, #2
-	ldr	r0, [r3, r2]
-.L_08022ef4:
-	ldrb	r2, [r0, #0]
-	ldrb	r3, [r0, #1]
-	adds	r0, #2
-	cmp	r2, #254
-	beq.n	.L_08022f1e
-	cmp	r2, #241
-	beq.n	.L_08022f1e
-	cmp	r2, #253
-	beq.n	.L_08022f1e
-	cmp	r2, #239
-	beq.n	.L_08022f1e
-	cmp	r2, #245
-	beq.n	.L_08022f16
-	cmp	r2, #255
-	beq.n	.L_08022f16
-	cmp	r2, #238
-	bhi.n	.L_08022ef4
-.L_08022f16:
-	subs	r5, #1
-	adds	r7, r7, r3
-	cmp	r5, #0
-	bne.n	.L_08022ef4
-.L_08022f1e:
-	adds	r0, r7, #0
-.L_08022f20:
-	pop	{r5, r6, r7, pc}
-	.2byte 0x0000

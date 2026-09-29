@@ -122,7 +122,7 @@ Func_081080a8:
 	adds	r3, r5, r2
 	strb	r0, [r3, #0]
 	bl	0x080f8048
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #236
@@ -131,7 +131,7 @@ Func_081080a8:
 	ldr	r2, [pc, #136]
 	movs	r1, #128
 	bl	Func_08108b34
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #238
@@ -140,7 +140,7 @@ Func_081080a8:
 	ldr	r2, [pc, #116]
 	movs	r1, #128
 	bl	Func_08108b34
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #158
 	lsls	r2, r2, #3
 	adds	r3, r5, r2
@@ -148,7 +148,7 @@ Func_081080a8:
 	ldr	r2, [pc, #100]
 	movs	r1, #128
 	bl	Func_08108b34
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #242
@@ -157,7 +157,7 @@ Func_081080a8:
 	ldr	r2, [pc, #84]
 	movs	r1, #128
 	bl	Func_08108b34
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #128
 	lsls	r2, r2, #3
 	adds	r2, #246
@@ -166,7 +166,7 @@ Func_081080a8:
 	ldr	r2, [pc, #64]
 	movs	r1, #128
 	bl	Func_08108b34
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r3, #128
 	lsls	r3, r3, #3
 	adds	r3, #244

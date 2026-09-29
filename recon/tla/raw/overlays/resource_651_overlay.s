@@ -1,17 +1,5 @@
 .syntax unified
 	.thumb
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	ldr	r0, [pc, #0]
-	bx	lr
-	.2byte 0x8fb8
-	.2byte 0x0200
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	movs	r0, #0
-	bx	lr
 	.global Func_02000044
 	.thumb_func
 Func_02000044:
@@ -193,74 +181,8 @@ Func_02000128:
 	.4byte 0x00001712
 	.2byte 0x1715
 	.2byte 0x0000
-	push	{r5, lr}
-	bl 0x02008c58
-	movs	r0, #0
-	bl 0x02008d40
-	ldr	r5, [pc, #68]
-	adds	r0, r5, #0
-	bl 0x02008ce0
-	movs	r1, #0
-	movs	r0, #9
-	bl 0x02008ce8
-	bl 0x02008d60
-	movs	r1, #0
-	bl 0x02008c68
-	cmp	r0, #0
-	bne.n	.L_02000210
-	movs	r0, #10
-	bl 0x02008c50
-	adds	r0, r5, #1
-	bl 0x02008ce0
-	b.n	.L_0200021c
-.L_02000210:
-	movs	r0, #20
-	bl 0x02008c50
-	adds	r0, r5, #2
-	bl 0x02008ce0
-.L_0200021c:
-	movs	r0, #9
-	movs	r1, #0
-	bl 0x02008cf0
-	bl 0x02008c60
-	pop	{r5, pc}
-	.2byte 0x0000
-	.2byte 0x1716
-	.2byte 0x0000
-	push	{r5, lr}
-	bl 0x02008c58
-	movs	r0, #0
-	bl 0x02008d40
-	ldr	r5, [pc, #68]
-	adds	r0, r5, #0
-	bl 0x02008ce0
-	movs	r1, #0
-	movs	r0, #9
-	bl 0x02008ce8
-	bl 0x02008d60
-	movs	r1, #0
-	bl 0x02008c68
-	cmp	r0, #0
-	bne.n	.L_02000268
-	movs	r0, #10
-	bl 0x02008c50
-	adds	r0, r5, #1
-	bl 0x02008ce0
-	b.n	.L_02000274
-.L_02000268:
-	movs	r0, #20
-	bl 0x02008c50
-	adds	r0, r5, #2
-	bl 0x02008ce0
-.L_02000274:
-	movs	r0, #9
-	movs	r1, #0
-	bl 0x02008cf0
-	bl 0x02008c60
-	pop	{r5, pc}
-	.2byte 0x0000
-	.2byte 0x1720
-	.2byte 0x0000
+	.section .text.x02008288,"ax",%progbits
+	.balign 4
 	push	{r5, lr}
 	ldr	r3, [pc, #52]
 	movs	r2, #133
@@ -303,40 +225,8 @@ Func_02000128:
 	.2byte 0x0000
 	.2byte 0x174b
 	.2byte 0x0000
-	push	{r5, lr}
-	bl 0x02008c58
-	movs	r0, #0
-	bl 0x02008d40
-	ldr	r5, [pc, #68]
-	adds	r0, r5, #0
-	bl 0x02008ce0
-	movs	r1, #0
-	movs	r0, #12
-	bl 0x02008ce8
-	bl 0x02008d60
-	movs	r1, #0
-	bl 0x02008c68
-	cmp	r0, #0
-	bne.n	.L_02000320
-	movs	r0, #10
-	bl 0x02008c50
-	adds	r0, r5, #1
-	bl 0x02008ce0
-	b.n	.L_0200032c
-.L_02000320:
-	movs	r0, #20
-	bl 0x02008c50
-	adds	r0, r5, #2
-	bl 0x02008ce0
-.L_0200032c:
-	movs	r0, #12
-	movs	r1, #0
-	bl 0x02008cf0
-	bl 0x02008c60
-	pop	{r5, pc}
-	.2byte 0x0000
-	.2byte 0x17e8
-	.2byte 0x0000
+	.section .text.x02008340,"ax",%progbits
+	.balign 4
 	push	{r5, lr}
 	ldr	r3, [pc, #52]
 	movs	r2, #133
@@ -1425,6 +1315,8 @@ Func_02000b44:
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
 	.4byte 0x00000011
+	.global gDeriMuraEntrances
+gDeriMuraEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000152

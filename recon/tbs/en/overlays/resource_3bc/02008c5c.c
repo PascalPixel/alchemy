@@ -1,3 +1,11 @@
+/* NONMATCHING: resource_3bc at 0x02008c5c (276 bytes with its pool),
+ * KorosseoMaruta_RunStageStart, stays listing. It was
+ * FIELD/KOROSSEO_MARUTA/STAGE_START.C.
+ *
+ * Remaining difference: it loads 0x91 once from its pool into r5 for two
+ * calls, as a link-time symbol does; a plain constant is moved into each
+ * argument register.
+ */
 #include "TYPES.H"
 
 extern u8 Data_00000091[];

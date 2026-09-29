@@ -1,28 +1,27 @@
+/* NONMATCHING: Korosseo_UpdateMarker, resource_3ba at 0x0200abec (316
+ * bytes with both literal pools); twins resource_3bb:0x0200ae84 and
+ * resource_3bc:0x0200b91c. Interpolates and blinks the Colosso marker
+ * through the OAM queue.
+ *
+ * 2026-09-29 (round 3): 316/316 bytes, 10 differing halfwords, all in the
+ * first (y) interpolation; the head, the second interpolation, both pools,
+ * the OAM word and the tail are exact. Remaining: the reference keeps the
+ * y start pointer in r1 and reads its unsigned view after the subtraction
+ * (end in r2, diff tied to it), where this source reads the unsigned view
+ * first with the pointer in r2; every spelling of the first channel tried
+ * (pointer variables in any order, the sum on either side, a separate
+ * difference) compiles to the same allocation. What moved it here from
+ * 126 halfwords:
+ * - the zero stores are plain halfword stores, which agscc loads from a
+ *   halfword pool constant (short range) and which place the pool before
+ *   the tail as the reference does; no link symbol stands in for 0;
+ * - the OAM record pointer is read first, then the tile, then the steps;
+ * - each channel is one expression, start + (end - start) * step / total;
+ * - the size bit sits in a local, so the priority is or'ed in after it.
+ * Earlier attempts (H1..H3, Astra, Sol) are in this file's history. */
 #include "TYPES.H"
 
-/* Unit bindings for scoring (declare as absolute_symbols of a unit on
- * resource_3ba:02002bec):
- *   __divsi3 = 0x0200bb00 (thumb)
- *   Engine_OamSubmitRecord = 0x0200bb90 (thumb)
- *   Korosseo_LinkedZero = 0x00000000 (data)
- *   gOamTiles = 0x03001b10 (data)
- *   Korosseo_MarkerIndex = 0x0200c6a6 (data)
- *   Korosseo_MarkerSteps = 0x0200c78c (data)
- *   Korosseo_MarkerStep = 0x0200c750 (data)
- *   Korosseo_MarkerY = 0x0200c7f4 (data)
- *   Korosseo_MarkerStartY = 0x0200c7a4 (data)
- *   Korosseo_MarkerEndY = 0x0200c760 (data)
- *   Korosseo_MarkerX = 0x0200c780 (data)
- *   Korosseo_MarkerStartX = 0x0200c7bc (data)
- *   Korosseo_MarkerEndX = 0x0200c800 (data)
- *   Korosseo_MarkerBlink = 0x0200c774 (data)
- *   Korosseo_MarkerPriority = 0x0200c758 (data)
- *   Korosseo_MarkerOam = 0x0200c7b0 (data)
- */
-
 void Engine_OamSubmitRecord(s32 *record, s32 priority);
-
-extern u8 Korosseo_LinkedZero[];
 
 struct OamTile {
     u16 attr;
@@ -49,110 +48,39 @@ extern s16 Korosseo_MarkerBlink;
 extern s16 Korosseo_MarkerPriority;
 extern s32 Korosseo_MarkerOam[3];
 
-/* NONMATCHING: restored candidate 312, reference 316 bytes, 126 differing
- * halfwords / 65 aligned edits (2026-09-27). H1 is at db4d7dc54;
- * rejected H2 is preserved at 0447a6b86. Owner extent is
- * resource_3ba:[02002bec,02002d28), including both literal pools.
- * Interpolates and blinks the Colosso marker through the OAM queue.
- * Typed table, reused destination pointer, advancing OAM pointer and reused
- * base reduced the earlier 96-edit draft. Remaining: interpolation multiply
- * operand and pointer-load order, priority/zero pool placement, four bytes
- * short. The signed/unsigned union and allocator-guided declaration reorder
- * did not change bytes; a one-pass setup block worsened the score to 66 edits.
- * Complete byte comparison proves only call relocations and local pool
- * addresses differ in resource_3bb:02002e84 and resource_3bc:0200391c.
- * They are not adopted from this draft.
- * 2026-09-27 H1: ordinary signed / with __divsi3 bound to the same
- * 0200bb00 veneer, following the 396:02001244 compiler-division witness
- * and exact COMMON/EFFECT/SPAWN.C. Complete output is byte-identical to
- * baseline (cmp checked): 312/316, 126 halfwords, 65 aligned edits.
- * Both products still form in r0 without the reference step copy;
- * neither coordinate pointer schedule nor priority pool moves. No credit.
- * Initializer 02d8c confirms the existing start/end/step ownership; exact
- * TITLE/SPRITE_ROW.C confirms three advancing OAM word writes.
- * H2: own veneer 080001e8 targets exact Runtime_PushSlotEntry (08003dec),
- * which overwrites word 0 with the previous queue head. Exact projected
- * sprite consumers confirm the 12-byte node boundary. Giving the marker
- * an explicit next pointer plus two payload words reaches the right size
- * but loses both advancing stores, trades queue/duration fp-r9 roles and
- * leaves priority in the wrong pool. Interpolation is unchanged. Reject
- * this model despite its size: 316/316, 126 halfwords / 74 aligned edits.
- * Restored H1's advancing word writes; its output is byte-identical.
- * Two family hypotheses closed; no twins propagated and no DONE gained.
- * Sol H3: calculate each interpolation product before reading its unsigned
- * base. Full output remains byte-identical: 312/316 bytes, 126 halfwords,
- * 65 aligned edits. RTL already ties the product to diff pseudo 37, whose
- * division-result move gives r0 preference; local/global allocation keeps
- * it in r0 and step pseudo 34 in r5. The reference instead copies step to
- * r0 before both multiplies. Moving this product alone cannot change that
- * interference. No adoption; close this statement-boundary axis.
- * Astra 2026-09-27: an inline interpolation initializer with separate
- * delta, step, unsigned base and duration inputs gives 316/316 bytes,
- * 113 halfwords / 73 edits. It restores a multiply input copy but copies
- * delta, not step, and swaps the saved step/base roles. Both coordinate
- * pointer schedules and the priority pool still differ. The full extent
- * alone is not a match; keep the stronger advancing-write baseline.
- * Transferring ROOM_VIS.C's initialized signed 16-bit record to the step
- * then produces the original binary exactly (312/316, 126/65). Its delay
- * of a signed conversion does not alter this multiply's destination. */
 void Korosseo_UpdateMarker(void)
 {
     s32 tile;
     s32 total;
     s32 step;
-    s32 base;
     s32 *oam;
-    s32 diff;
-    s32 zero;
     s16 *steps;
-    s16 *pos;
     s32 *dst;
     s32 x;
     s32 y;
-    s32 word;
-    union MarkerCoordinate *start;
-    s16 *end;
-    s16 *priority;
 
+    oam = Korosseo_MarkerOam;
     tile = gOamTiles[Korosseo_MarkerIndex].tile >> 5;
     steps = &Korosseo_MarkerSteps;
     total = *steps;
-    oam = Korosseo_MarkerOam;
     if (total != 0) {
         step = ++Korosseo_MarkerStep;
-        pos = &Korosseo_MarkerY;
-        start = &Korosseo_MarkerStartY;
-        end = &Korosseo_MarkerEndY;
-        diff = *end - start->signed_value;
-        diff = step * diff;
-        base = start->value;
-        base += diff / total;
-        *pos = base;
-        pos = &Korosseo_MarkerX;
-        end = &Korosseo_MarkerEndX;
-        start = &Korosseo_MarkerStartX;
-        diff = *end - start->signed_value;
-        diff = step * diff;
-        base = start->value;
-        base += diff / total;
-        *pos = base;
-        if (step >= total) {
-            zero = (u16)(u32)Korosseo_LinkedZero;
-            *steps = zero;
-        }
-        zero = (u16)(u32)Korosseo_LinkedZero;
-        Korosseo_MarkerBlink = zero;
+        Korosseo_MarkerY = Korosseo_MarkerStartY.value
+            + (Korosseo_MarkerEndY - Korosseo_MarkerStartY.signed_value) * step / total;
+        Korosseo_MarkerX = Korosseo_MarkerStartX.value
+            + (Korosseo_MarkerEndX - Korosseo_MarkerStartX.signed_value) * step / total;
+        if (step >= total)
+            *steps = 0;
+        Korosseo_MarkerBlink = 0;
     }
     if (++Korosseo_MarkerBlink <= 13) {
+        s32 size = 0x40000000;
+
         y = Korosseo_MarkerY;
         x = Korosseo_MarkerX;
         dst = oam;
         *dst++ = 0;
-        priority = &Korosseo_MarkerPriority;
-        word = (x - 8) | ((y - 8) << 16);
-        word |= 0x40000000;
-        word |= *priority << 28;
-        *dst++ = word;
+        *dst++ = (x - 8) | ((y - 8) << 16) | size | (Korosseo_MarkerPriority << 28);
         *dst = tile | 0x400;
         Engine_OamSubmitRecord(oam, 255);
     } else if (Korosseo_MarkerBlink > 19) {

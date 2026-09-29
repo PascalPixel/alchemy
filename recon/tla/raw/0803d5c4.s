@@ -367,6 +367,9 @@ Func_0803d5c4:
 	.4byte 0x0804e740
 	.2byte 0xe7dc
 	.2byte 0x0804
+	.global UiIcon_CopyResourceToSlot
+	.thumb_func
+UiIcon_CopyResourceToSlot:
 	push	{r5, r6, lr}
 	mov	r6, sl
 	mov	r5, r8

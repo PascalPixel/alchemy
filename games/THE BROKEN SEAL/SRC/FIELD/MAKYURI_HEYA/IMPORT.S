@@ -241,6 +241,9 @@ Engine_ActorStartRepeatedMotion:
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global BattleFx_RunRisingObjectSequence
+	.thumb_func
+BattleFx_RunRisingObjectSequence:
 	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Engine_ActorFaceEachOther

@@ -20,7 +20,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/DESCENT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ACTOR_TRANSITION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/WALK_BY_FACING.o"(.text)
-        "*/resource_39e_overlay.o"(.text.x0200902c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/MASTER_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/GATHERING_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/SHIAN_JIIN/ENSEMBLE.o"(.text)
         "*/resource_39e_overlay.o"(.text.x0200a574)

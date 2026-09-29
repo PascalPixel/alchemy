@@ -548,7 +548,7 @@ gKareiTorebiEvents1:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte SceneDialogue_ShowLine1CF8
+	.4byte KareiTorebi_AskGoToTolbi
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001cfb
@@ -654,13 +654,13 @@ gKareiTorebiEvents3:
 	.4byte FieldScene_RunScene3ae_02000144
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte SceneDialogue_RunActor8Message1f09
+	.4byte KareiTorebi_TalkScaryTrip
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001f0c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte SceneDialogue_RunActor10Message1f15
+	.4byte KareiTorebi_TalkSeasickTourists
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte FieldScene_RunScene3ae_020006c8

@@ -29551,7 +29551,7 @@ msgctxt "message"
 msgid "07385"
 msgstr "Devo imparare a controllare{line_break}il mio temperamento.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoToTolbi"
 msgid "07386"
 msgstr "Volete{pause_20_skippable} andare{line_break}a Tolbi?{end_now}"
 
@@ -29571,11 +29571,11 @@ msgctxt "message"
 msgid "07390"
 msgstr "La Strada della Seta è{line_break}chiusa poco più{line_break}avanti.{page_break}Tutti quelli che provano{line_break}a proseguire ritornano{line_break}presto indietro.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiGoingTakeShip"
 msgid "07391"
 msgstr "Prendete{line_break}la nave?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgKareiPassMessageDaughter"
 msgid "07392"
 msgstr "Quando attraccate a Tolbi,{line_break}potete riferire per favore{line_break}un messaggio a mia figlia?{page_break}Sua mamma le manda a dire che{line_break}non può andarla a trovare{line_break}perché i biglietti sono cari.{end_wait}"
 
@@ -29599,7 +29599,7 @@ msgctxt "message"
 msgid "07397"
 msgstr "Abbiamo aspettato per un{line_break}anno questo evento, e guarda{line_break}cosa va a succedere!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLookingForTickets"
 msgid "07398"
 msgstr "Volete i biglietti{line_break}per la nave?{end_now}"
 
@@ -29627,7 +29627,7 @@ msgctxt "message"
 msgid "07404"
 msgstr "Bene, ecco i vostri{line_break}biglietti.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHandInTicketPlank"
 msgid "07405"
 msgstr "Consegnate il biglietto{line_break}salendo sulla nave.{end_wait}"
 
@@ -29683,7 +29683,7 @@ msgctxt "message"
 msgid "07418"
 msgstr "Grazie.{line_break}Salite a bordo, salperemo{line_break}fra poco.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiAfterHandingOverTicket"
 msgid "07419"
 msgstr "Dopo aver consegnato il{line_break}biglietto potete{line_break}salire a bordo.{end_wait}"
 
@@ -29691,7 +29691,7 @@ msgctxt "message"
 msgid "07420"
 msgstr "Stiamo per salpare:{line_break}attendete{line_break}a bordo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHaveTicketsGiveHim"
 msgid "07421"
 msgstr "Se avete i biglietti,{line_break}consegnateglieli e{line_break}salite a bordo.{end_wait}"
 
@@ -29707,7 +29707,7 @@ msgctxt "message"
 msgid "07424"
 msgstr "L'altra nave non è ancora{line_break}arrivata, quindi non possiamo{line_break}ancora salpare.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiBoardWaitSetSail"
 msgid "07425"
 msgstr "Salite a bordo e attendete{line_break}la partenza.{end_wait}"
 
@@ -31667,7 +31667,7 @@ msgctxt "message"
 msgid "07914"
 msgstr "Visto? La nostra nave ha{line_break}resistito agli attacchi ed{line_break}è arrivata sana e salva.{page_break}Questo dimostra che{line_break}l'ancora portafortuna{line_break}è davvero efficace!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHearScaryTrip"
 msgid "07915"
 msgstr "Ho sentito che avete fatto un{line_break}viaggio orribile: v'hanno{line_break}persino attaccato i mostri!{end_now}"
 
@@ -31715,7 +31715,7 @@ msgctxt "message"
 msgid "07926"
 msgstr "Dovremo dormire per{line_break}terra finché la nave{line_break}non riparte?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTouristsLookUpset"
 msgid "07927"
 msgstr "I turisti non sembrano tanto{line_break}contenti. Hanno sofferto{line_break}il mal di mare?{end_now}"
 
@@ -31727,7 +31727,7 @@ msgctxt "message"
 msgid "07929"
 msgstr "La nave è stata attaccata{line_break}dai mostri? Stava davvero per{line_break}affondare? Ma non mi dire...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiSilkRoadBlocked"
 msgid "07930"
 msgstr "La Strada della Seta è{line_break}bloccata, quindi pensavo che{line_break}i miei genitori venissero{page_break}in nave... Ma non{line_break}li vedo...{end_wait}"
 
@@ -31743,7 +31743,7 @@ msgctxt "message"
 msgid "07933"
 msgstr "Spero solo che non{line_break}sia accaduto loro{line_break}nulla di grave...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiThanksMessageParents"
 msgid "07934"
 msgstr "Grazie per avermi{line_break}riferito il messaggio{line_break}dei miei genitori.{end_wait}"
 
@@ -32179,7 +32179,7 @@ msgctxt "message"
 msgid "08042"
 msgstr "Non vorrei che fossero stati{line_break}tutti presi dai mostri.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiIncredibleOcean"
 msgid "08043"
 msgstr "Incredibile! Allora è{line_break}questo l'oceano{line_break}di cui parlava Kraden!{end_wait}"
 
@@ -36667,7 +36667,7 @@ msgctxt "message"
 msgid "09164"
 msgstr "Il Mare di Karagol{line_break}è così blu,{line_break}così romantico!{page_break}Quando lo guardo mi{line_break}commuovo sempre...{line_break}{text_effect:4}Sniff...{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiReturnedTicketCost"
 msgid "09165"
 msgstr "Ti ho restituito{line_break}il prezzo del biglietto,{line_break}cos'altro vuoi?{end_wait}"
 

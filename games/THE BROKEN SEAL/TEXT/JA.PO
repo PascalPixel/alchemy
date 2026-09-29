@@ -31243,7 +31243,7 @@ msgctxt "message"
 msgid "07808"
 msgstr "もう おさけをのむのは{line_break}やめた方が いいかなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoToTolbi"
 msgid "07809"
 msgstr "あんた{pause_20_skippable} トレビの町に{line_break}行きたいのかい?{end_now}"
 
@@ -31263,11 +31263,11 @@ msgctxt "message"
 msgid "07813"
 msgstr "シルク道は すぐ この先で{line_break}とおれなくなっているんだ{page_break}みんな たしかめに行っては{line_break}あきらめて もどってくるよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiGoingTakeShip"
 msgid "07814"
 msgstr "あなた 船にのります?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgKareiPassMessageDaughter"
 msgid "07815"
 msgstr "船で むこうについたら{line_break}むすめに 伝えて下さい{page_break}母は チケット代が たかすぎて{line_break}そちらに行けないと・・・。{end_wait}"
 
@@ -31291,7 +31291,7 @@ msgctxt "message"
 msgid "07820"
 msgstr "1年をかけた けいかくなのに{line_break}こんなことで行けないなんて{line_break}まったく なさけないわ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLookingForTickets"
 msgid "07821"
 msgstr "船の チケットを{line_break}おもとめですか?{end_now}"
 
@@ -31319,7 +31319,7 @@ msgctxt "message"
 msgid "07827"
 msgstr "それではチケットを{line_break}おうけとり下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHandInTicketPlank"
 msgid "07828"
 msgstr "チケットは 船の入口で{line_break}おわたし下さい。{end_wait}"
 
@@ -31375,7 +31375,7 @@ msgctxt "message"
 msgid "07841"
 msgstr "ありがとう ございます{line_break}どうぞ 船にのって{line_break}しゅっこうをおまち下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiAfterHandingOverTicket"
 msgid "07842"
 msgstr "チケットをわたしたら{line_break}船に のることができます。{end_wait}"
 
@@ -31383,7 +31383,7 @@ msgctxt "message"
 msgid "07843"
 msgstr "もう しゅっこうですから{line_break}船で おまち下さい。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHaveTicketsGiveHim"
 msgid "07844"
 msgstr "チケットをもってるなら{line_break}はやく わたしちゃって{line_break}船に のって下さい。{end_wait}"
 
@@ -31399,7 +31399,7 @@ msgctxt "message"
 msgid "07847"
 msgstr "こうたいの 船が{line_break}まだ きていないから{line_break}しゅっこうは まだだな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiBoardWaitSetSail"
 msgid "07848"
 msgstr "どうぞ 船にのって{line_break}しゅっこうをおまち下さい。{end_wait}"
 
@@ -33359,7 +33359,7 @@ msgctxt "message"
 msgid "08337"
 msgstr "モンスターが あいてでも{line_break}この船は しずまずに{line_break}たどりつくことができました{page_break}やはり イカリのおきものの{line_break}こうかは ぜつだいですな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHearScaryTrip"
 msgid "08338"
 msgstr "モンスターに おそわれ{line_break}あぶなかったそうだな?{end_now}"
 
@@ -33407,7 +33407,7 @@ msgctxt "message"
 msgid "08349"
 msgstr "もしかして 船が出るまで{line_break}あたしら こんなトコで{line_break}ねるんじゃなかろうね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTouristsLookUpset"
 msgid "08350"
 msgstr "ツアーの人たち{line_break}げっそりしてたけど{line_break}船よいでもしたか?{end_now}"
 
@@ -33419,7 +33419,7 @@ msgctxt "message"
 msgid "08352"
 msgstr "えっ モンスターにおそわれ{line_break}船が もうちょっとで{line_break}ちんぼつするところだったの!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiSilkRoadBlocked"
 msgid "08353"
 msgstr "シルク道が とおれないから{line_break}父と母は 船にのって{line_break}やってくるとおもったの{page_break}だけど この船にも{line_break}のってなかったわ・・・。{end_wait}"
 
@@ -33435,7 +33435,7 @@ msgctxt "message"
 msgid "08356"
 msgstr "えっ そうじゃないの・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiThanksMessageParents"
 msgid "08357"
 msgstr "母からの でんごんを{line_break}伝えてくれて ありがとう。{end_wait}"
 
@@ -33871,7 +33871,7 @@ msgctxt "message"
 msgid "08465"
 msgstr "みんな モンスターに{line_break}やられちゃったのかなぁ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiIncredibleOcean"
 msgid "08466"
 msgstr "すっげー これが{line_break}スクレータのいってた{line_break}海ってやつか!{end_wait}"
 
@@ -38359,7 +38359,7 @@ msgctxt "message"
 msgid "09587"
 msgstr "マリンブルーのカラゴル海は{line_break}見てるだけでロマンチックね{page_break}わかいころの わたしを{line_break}おもいだしてしまって{line_break}とてもセンチメンタルよ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiReturnedTicketCost"
 msgid "09588"
 msgstr "かえりの チケット代は{line_break}おかえししましたでしょ{line_break}それで ゆるして下さい。{end_wait}"
 

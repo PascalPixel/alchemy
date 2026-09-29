@@ -1,34 +1,10 @@
-use crate::coverage::model::{Category, Tile, UNIDENTIFIED};
+use crate::coverage::model::Tile;
 
-pub(crate) const DISPLAY_CATEGORIES: [(Category, &str); 5] = [
-    (Category::Unknown, UNIDENTIFIED),
-    (Category::DraftC, "Drafted"),
-    (Category::ProvenAsm, "Assembly"),
-    (Category::ProvenC, "C"),
-    (Category::AssetData, "Data"),
-];
-
-pub(crate) fn display_bytes(categories: &[i64; 6], category: Category) -> i64 {
-    categories[category as usize]
-        + if category == Category::ProvenAsm {
-            categories[Category::DraftAsm as usize]
-        } else {
-            0
-        }
-}
-
-// The file-type palette of the figure: each kind of file has
-// its own clear pastel on the teal chart (the chrome is in `palette`); assembly and executable code sit in teal.
-pub(crate) const UNKNOWN: &str = "#d9d9d4";
-pub(crate) const C_TEAL: &str = "#326b7d";
-const DRAFTED: &str = "#96c8c9";
-pub(crate) const ASSEMBLY: &str = "#6cafb2";
-pub(crate) const DRAFT_ASSEMBLY: &str = "#b4ccd2";
-const TEXT_CYAN: &str = "#85cbd2";
-/// C source and its headers in rose-greys, drafts paler; sprite sheets purple,
-/// stills blue, maps green; registries a quiet lavender. Translation text (a
-/// grey that recedes into the chart) and the frozen compression answers are
-/// calm so the code and art lead the eye.
+// The file-type palette of the figure: each kind of file has its own clear
+// pastel on the teal chart (the chrome is in `palette`). C source and its
+// headers are rose-greys, drafts paler; sprite sheets purple, stills blue,
+// maps green; translation text a teal that recedes into the chart, so the
+// code and art lead the eye.
 const SOURCE_ROSE: &str = "#c4b4b7";
 const DRAFT_ROSE: &str = "#e2d6d7";
 const HEADER_ROSE: &str = "#a8959a";
@@ -36,125 +12,42 @@ const SPRITE_PURPLE: &str = "#b5a0de";
 const IMAGE_BLUE: &str = "#8fb7ec";
 const MAP_GREEN: &str = "#b5cc82";
 const TABLE_LAVENDER: &str = "#9aa4c2";
-const REGISTRY_LAVENDER: &str = "#bcc1d4";
-const TRANSLATION_GREY: &str = "#8eaab0";
-const ANSWER_TAUPE: &str = "#a0968d";
+const DRAFT_GREY: &str = "#8eaab0";
+const TRANSLATION_TEAL: &str = "#6cafb2";
 const MIDI_GREEN: &str = "#81d6b2";
 const PCM_ORANGE: &str = "#efbb82";
 const OTHER_TAN: &str = "#bda995";
-const HEADER_GOLD: &str = "#eadb83";
-const SOUND_TYPES: [(&str, &str); 5] = [
-    ("MIDI music", MIDI_GREEN),
-    ("SFX", "#f29b91"),
-    ("PCM samples", PCM_ORANGE),
-    ("Tables", "#9aa4c2"),
-    ("Sound sequences", "#a8d4bc"),
-];
-/// Sound assets are the sequence and PCM kinds plus every table described
-/// under the sound directory (engine data, the sound table, residual headers).
-fn is_sound(tile: &Tile) -> bool {
-    matches!(
-        tile.group.as_deref(),
-        Some("golden-sun-sound-sequence" | "golden-sun-pcm-wave")
-    ) || tile.source.as_deref().is_some_and(|source| {
-        source.starts_with("games/THE BROKEN SEAL/SOUND/")
-            || source.starts_with("games/THE LOST AGE/SOUND/")
-    })
-}
-fn sound_type(tile: &Tile) -> usize {
-    match (tile.group.as_deref(), tile.subgroup.as_deref()) {
-        (Some("golden-sun-sound-sequence"), Some("music")) => 0,
-        (Some("golden-sun-sound-sequence"), Some("sfx")) => 1,
-        (Some("golden-sun-pcm-wave"), _) => 2,
-        (Some("golden-sun-sound-sequence"), _) => 4,
-        _ if is_sound(tile) => 3,
-        _ => 4,
-    }
-}
-pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
-    let group = tile.group.as_deref().unwrap_or("");
-    if let Some(extension) = group.strip_prefix("file:") {
-        return file_style(extension, tile.source.as_deref().unwrap_or(""));
-    }
-    let kind = group.strip_prefix("indexed-").unwrap_or(group);
-    let source = tile.source.as_deref().unwrap_or("");
-    if kind == "golden-sun-pcm-wave" {
-        return SOUND_TYPES[2];
-    }
-    if is_sound(tile) || kind.contains("sound") || kind.contains("audio") || kind.contains("music")
-    {
-        return SOUND_TYPES[sound_type(tile)];
-    }
-    if kind.starts_with("golden-sun-map-")
-        || source.contains("/maps/")
-        || source.contains("/map_resource_")
-    {
-        return ("Maps", "#b5cc82");
-    }
-    match kind {
-        "golden-sun-thumb-overlay" => ("Code overlays", "#78afb7"),
-        "gba-tilemap16" => ("Tile maps", "#b5cc82"),
-        "mixed-data" | "components" => ("Mixed data", "#c4b4b7"),
-        "golden-sun-general-lz" | "golden-sun-kind2-lz" => ("Compressed data", "#c4b4b7"),
-        "u8-array" | "s8-array" | "le-u16-array" | "le-u32-array" | "be-s16-array" => {
-            ("Tables", "#9aa4c2")
-        }
-        "1bpp-tiles" | "1bpp-rows" => ("Images", "#8fb7ec"),
-        "golden-sun-static-sprite-series" | "golden-sun-character-graphics" | "zero-skip-bytes" => {
-            ("Sprite sheets", "#b5a0de")
-        }
-        "gba-4bpp-tiles" | "gba-8bpp-tiles" | "golden-sun-delta7-still" => ("Images", "#8fb7ec"),
-        "compressed-resource" => ("Compressed data", "#c4b4b7"),
-        "gba-palette" | "gba-palette-rgba" | "bgr555-banks" => ("Palettes", "#e8a6d3"),
-        "golden-sun-kana-glyph-bank" | "golden-sun-namae-nyuuryoku" => ("Fonts", HEADER_GOLD),
-        "golden-sun-message-archive" | "golden-sun-staff-roll" => ("Text", TEXT_CYAN),
-        _ if source.contains("/fonts_") || source.contains("/GRAPHICS/FONT/") => {
-            ("Fonts", HEADER_GOLD)
-        }
-        _ if source.to_ascii_lowercase().ends_with(".png") => ("Images", "#8fb7ec"),
-        "typed-table" | "record-table" | "pointer-table" => ("Tables", "#9aa4c2"),
-        "gba-cartridge-header-standard-fields" => ("ROM header", HEADER_GOLD),
-        "byte-fill" => ("Padding", "#bda995"),
-        _ => (UNIDENTIFIED, UNKNOWN),
-    }
-}
+/// Library or handwritten assembly its header credits, a deeper teal.
+const CREDITED_ASSEMBLY: &str = "#4f94a0";
+/// Uncredited assembly: C that is not written yet (AGENTS.md rule 3).
+pub(crate) const NOT_YET_C: &str = "Not yet C";
+
 /// A tracked file's kind from its extension and the module that holds it:
 /// accepted C lives in SRC, complete but nonexact drafts in the
-/// `recon/<game>` scaffolding; data takes the colour of what it describes.
-fn file_style(extension: &str, source: &str) -> (&'static str, &'static str) {
-    let recon = source.starts_with("recon/");
-    let data = matches!(extension, "json" | "tsv" | "bin" | "png");
-    let name = source_name(source);
-    match extension {
-        "c" if recon => ("Drafted C", TRANSLATION_GREY),
+/// `recon/<game>` scaffolding; images take the colour of what they show.
+pub(crate) fn content_style(tile: &Tile) -> (&'static str, &'static str) {
+    let source = tile.source.as_deref().unwrap_or("");
+    match tile.extension.as_str() {
+        "c" if source.starts_with("recon/") => ("Drafted C", DRAFT_GREY),
         "c" => ("C", SOURCE_ROSE),
         "h" | "inc" => ("Headers", HEADER_ROSE),
         "s-credited" => ("Assembly", CREDITED_ASSEMBLY),
         "s" => (NOT_YET_C, DRAFT_ROSE),
         "wav" => ("WAV audio", PCM_ORANGE),
         "mid" => ("MIDI music", MIDI_GREEN),
-        "po" | "md" | "txt" => ("Translations", ASSEMBLY),
-        "tokens" => (COMPRESSION_ANSWERS, ANSWER_TAUPE),
-        _ if data && name.starts_with("COMPRESSION.") => (COMPRESSION_ANSWERS, ANSWER_TAUPE),
-        _ if data && recon => ("Registries", REGISTRY_LAVENDER),
-        _ if data && source.contains("/GRAPHICS/CHARACTER/") => ("Sprite sheets", SPRITE_PURPLE),
-        _ if data && source.contains("/GRAPHICS/") => ("Images", IMAGE_BLUE),
-        _ if data && source.contains("/FIELD/") => ("Maps", MAP_GREEN),
+        "po" => ("Translations", TRANSLATION_TEAL),
+        "png" if source.contains("/GRAPHICS/CHARACTER/") => ("Sprite sheets", SPRITE_PURPLE),
+        "png" if source.contains("/GRAPHICS/") => ("Images", IMAGE_BLUE),
+        "png" if source.contains("/FIELD/") => ("Maps", MAP_GREEN),
         "png" => ("Images", IMAGE_BLUE),
-        _ if data => ("Tables", TABLE_LAVENDER),
+        "tsv" => ("Tables", TABLE_LAVENDER),
         _ => ("Other files", OTHER_TAN),
     }
 }
 /// Kinds drawn without a label on each file: the translation catalogs, read
-/// as one box per game under its TEXT heading, and the frozen compression
-/// answers, which wait to be replaced by encoder options.
-const COMPRESSION_ANSWERS: &str = "Compression answers";
-/// Uncredited assembly: C that is not written yet (AGENTS.md rule 5).
-pub(crate) const NOT_YET_C: &str = "Not yet C";
-/// Library or handwritten assembly its header credits, a deeper teal.
-const CREDITED_ASSEMBLY: &str = "#4f94a0";
+/// as one box per game under its TEXT heading.
 pub(crate) fn quiet(tile: &Tile) -> bool {
-    matches!(content_style(tile).0, "Translations" | COMPRESSION_ANSWERS)
+    content_style(tile).0 == "Translations"
 }
 /// The content types of a tile's files and their bytes, largest first.
 pub(crate) fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)> {
@@ -176,21 +69,6 @@ pub(crate) fn content_mix(tile: &Tile) -> Vec<(&'static str, &'static str, i64)>
     mix.sort_by(|a, b| b.2.cmp(&a.2).then(a.0.cmp(b.0)));
     mix
 }
-#[test]
-fn indexed_formats_have_colors_without_claiming_reconstructed_assets() {
-    for (kind, name) in [
-        ("golden-sun-pcm-wave", "PCM samples"),
-        ("gba-4bpp-tiles", "Images"),
-        ("golden-sun-map-container", "Maps"),
-        ("golden-sun-static-sprite-series", "Sprite sheets"),
-    ] {
-        let tile = Tile {
-            group: Some(format!("indexed-{kind}")),
-            ..Tile::default()
-        };
-        assert_eq!(content_style(&tile).0, name);
-    }
-}
 pub(crate) fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
     tiles
         .iter()
@@ -203,36 +81,16 @@ pub(crate) fn leaves<'a>(tiles: &[&'a Tile]) -> Vec<&'a Tile> {
         })
         .collect()
 }
-/// One vocabulary, palette and byte total for the HTML and README legends.
+/// One vocabulary, palette and byte total for the legend.
 pub(crate) fn legend_items(tiles: &[&Tile]) -> Vec<(&'static str, &'static str, i64)> {
-    let tiles = leaves(tiles);
-    let mut items = Vec::new();
-    for (category, name) in DISPLAY_CATEGORIES {
-        if category == Category::AssetData {
-            continue;
-        }
-        let bytes = tiles
-            .iter()
-            .map(|tile| display_bytes(&tile.categories, category))
-            .sum();
-        if bytes > 0 {
-            items.push((name, color(category), bytes));
-        }
+    let mut kinds = std::collections::BTreeMap::new();
+    for tile in leaves(tiles) {
+        *kinds.entry(content_style(tile)).or_insert(0) += tile.bytes;
     }
-    let mut data = std::collections::BTreeMap::new();
-    for tile in tiles {
-        if tile.categories[Category::AssetData as usize] == tile.bytes {
-            *data.entry(content_style(tile)).or_insert(0) += tile.bytes;
-        }
-    }
-    for ((name, swatch), bytes) in data {
-        if let Some(item) = items.iter_mut().find(|item| item.0 == name) {
-            item.2 += bytes;
-        } else {
-            items.push((name, swatch, bytes));
-        }
-    }
-    items
+    kinds
+        .into_iter()
+        .map(|((name, swatch), bytes)| (name, swatch, bytes))
+        .collect()
 }
 // Keep single-child directories: their path is part of the displayed hierarchy.
 pub(crate) fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
@@ -293,38 +151,21 @@ pub(crate) fn directories(tiles: Vec<Tile>, base: &str) -> Vec<Tile> {
     }
     out
 }
-/// A folder tile holding `children`, its bytes and categories their sums.
+/// A folder tile holding `children`, its bytes their sum.
 fn source_container(source: String, children: Vec<Tile>) -> Tile {
-    let mut tile = Tile {
+    Tile {
         label: source_name(&source).into(),
-        group: children.first().and_then(|child| child.group.clone()),
+        bytes: children.iter().map(|child| child.bytes).sum(),
+        extension: String::new(),
         source: Some(source),
         children,
-        ..Tile::default()
-    };
-    for child in &tile.children {
-        tile.bytes += child.bytes;
-        for (total, bytes) in tile.categories.iter_mut().zip(child.categories) {
-            *total += bytes;
-        }
     }
-    tile
 }
 pub(crate) fn source_name(source: &str) -> &str {
     let trimmed = source.trim_end_matches('/');
     trimmed.rsplit('/').next().unwrap_or(trimmed)
 }
 
-pub(crate) fn color(category: Category) -> &'static str {
-    match category {
-        Category::Unknown => UNKNOWN,
-        Category::DraftAsm => DRAFT_ASSEMBLY,
-        Category::DraftC => DRAFTED,
-        Category::ProvenAsm => ASSEMBLY,
-        Category::ProvenC => C_TEAL,
-        Category::AssetData => "#92a8ac",
-    }
-}
 pub(crate) fn tracked_only(repository: &std::path::Path, tiles: Vec<Tile>) -> Vec<Tile> {
     let Ok(output) = std::process::Command::new("git")
         .args(["ls-files", "-z", "--", "games", "recon"])
@@ -350,7 +191,7 @@ fn published_view_leaves_out_untracked_private_inputs() {
     let dir = temp.path().join("games/test");
     std::fs::create_dir_all(&dir).unwrap();
     std::fs::write(dir.join("MAP.BIN"), [0u8; 123]).unwrap();
-    std::fs::write(dir.join("MAP.JSON"), [0u8; 45]).unwrap();
+    std::fs::write(dir.join("MAP.S"), [0u8; 45]).unwrap();
     let git = |args: &[&str]| {
         assert!(std::process::Command::new("git")
             .args(args)
@@ -360,13 +201,12 @@ fn published_view_leaves_out_untracked_private_inputs() {
             .success());
     };
     git(&["init", "--quiet"]);
-    git(&["add", "games/test/MAP.JSON"]);
+    git(&["add", "games/test/MAP.S"]);
     let tiles = tracked_only(temp.path(), disk_tiles(temp.path()));
     assert_eq!(tiles.len(), 1);
-    assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.JSON"));
+    assert_eq!(tiles[0].source.as_deref(), Some("games/test/MAP.S"));
 }
 
-/// reconstruction scaffolding kept beside them under `recon/`.
 /// Whether an assembly module's header credits it (`@ credit: library|
 /// handwritten — <object>`).
 fn credited(path: &std::path::Path) -> bool {
@@ -380,6 +220,8 @@ fn credited(path: &std::path::Path) -> bool {
             || line.trim_start().starts_with("@ credit: handwritten")
     })
 }
+/// Every nonempty file of the Camelot-shaped trees and the reconstruction
+/// scaffolding kept beside them under `recon/`.
 pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
     ["games", "recon"]
         .into_iter()
@@ -411,10 +253,9 @@ pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
             Some(Tile {
                 label: entry.file_name().to_string_lossy().into(),
                 bytes,
-                categories: [0, 0, 0, 0, 0, bytes],
+                extension,
                 source: Some(source),
-                group: Some(format!("file:{extension}")),
-                ..Tile::default()
+                children: Vec::new(),
             })
         })
         .collect()
@@ -422,15 +263,15 @@ pub(crate) fn disk_tiles(repository: &std::path::Path) -> Vec<Tile> {
 
 #[cfg(test)]
 mod tests {
-    use super::{content_style, directories, leaves, sound_type, SOUND_TYPES};
-    use crate::coverage::model::{Category, Tile};
+    use super::{content_style, directories, leaves};
+    use crate::coverage::model::Tile;
 
     #[test]
     fn all_directories_wrap_files_without_duplicating_bytes() {
         let tile = Tile {
             source: Some("games/THE BROKEN SEAL/SRC/battle/effects/fire.c".into()),
             bytes: 100,
-            categories: [100, 0, 0, 0, 0, 0],
+            extension: "c".into(),
             ..Tile::default()
         };
         let other = tile.clone();
@@ -446,7 +287,6 @@ mod tests {
             assert_eq!(node.source.as_deref(), Some(path));
             assert_eq!(node.children.len(), 1);
             assert_eq!(node.bytes, 200);
-            assert_eq!(node.categories, [200, 0, 0, 0, 0, 0]);
             node = &node.children[0];
         }
         assert_eq!(node.label, "fire.c");
@@ -463,23 +303,9 @@ mod tests {
     }
 
     #[test]
-    fn content_colors_use_types_not_the_card_theme() {
-        let mut tile = Tile {
-            group: Some("golden-sun-static-sprite-series".into()),
-            ..Tile::default()
-        };
-        let sprites = content_style(&tile);
-        tile.group = Some("golden-sun-map-metatiles".into());
-        let maps = content_style(&tile);
-        tile.group = Some("gba-palette".into());
-        assert_ne!(sprites.1, maps.1);
-        assert_ne!(maps.1, content_style(&tile).1);
-    }
-
-    #[test]
     fn requested_file_palette_is_explicit() {
         let tile = |extension: &str| Tile {
-            group: Some(format!("file:{extension}")),
+            extension: extension.into(),
             ..Tile::default()
         };
         assert_eq!(content_style(&tile("s")), ("Not yet C", super::DRAFT_ROSE));
@@ -492,13 +318,10 @@ mod tests {
             source: Some("recon/tbs/en/main/08006878.c".into()),
             ..tile("c")
         };
-        assert_eq!(
-            content_style(&draft),
-            ("Drafted C", super::TRANSLATION_GREY)
-        );
+        assert_eq!(content_style(&draft), ("Drafted C", super::DRAFT_GREY));
         assert_eq!(
             content_style(&tile("po")),
-            ("Translations", super::ASSEMBLY)
+            ("Translations", super::TRANSLATION_TEAL)
         );
         let placed = |source: &str, extension: &str| Tile {
             source: Some(source.into()),
@@ -506,24 +329,16 @@ mod tests {
         };
         for (source, extension, kind) in [
             (
-                "games/X/SRC/GRAPHICS/CHARACTER/COMMON.JSON",
-                "json",
+                "games/X/SRC/GRAPHICS/CHARACTER/HERO.PNG",
+                "png",
                 "Sprite sheets",
             ),
-            ("games/X/SRC/GRAPHICS/COMMON/STILL.JSON", "json", "Images"),
-            ("games/X/SRC/FIELD/AREA/AREA.JSON", "json", "Maps"),
-            ("games/X/SRC/GAME/DATABASES.JSON", "json", "Tables"),
-            ("recon/tbs/source-paths.json", "json", "Registries"),
-            (
-                "games/X/SRC/GRAPHICS/COMMON/COMPRESSION.TOKENS",
-                "tokens",
-                "Compression answers",
-            ),
-            (
-                "games/X/SRC/GRAPHICS/COMMON/COMPRESSION.JSON",
-                "json",
-                "Compression answers",
-            ),
+            ("games/X/SRC/GRAPHICS/FONT/GLYPHS.PNG", "png", "Images"),
+            ("games/X/SRC/FIELD/AREA/AREA.PNG", "png", "Maps"),
+            ("games/X/TEXT/STAFF_ROLL.PNG", "png", "Images"),
+            ("recon/tbs/metrics/history.tsv", "tsv", "Tables"),
+            ("games/X/SRC/FIELD/AREA/FIELD_DATA.INC", "inc", "Headers"),
+            ("games/X/SRC/FIELD/AREA/OVERLAY.LD", "ld", "Other files"),
         ] {
             assert_eq!(
                 content_style(&placed(source, extension)).0,
@@ -532,7 +347,7 @@ mod tests {
             );
         }
         assert!(super::quiet(&placed("games/X/TEXT/DE.PO", "po")));
-        assert!(!super::quiet(&placed("games/X/SRC/FIELD/A/A.JSON", "json")));
+        assert!(!super::quiet(&placed("games/X/SRC/FIELD/A/A.S", "s")));
         assert_eq!(
             content_style(&tile("mid")),
             ("MIDI music", super::MIDI_GREEN)
@@ -549,18 +364,16 @@ mod tests {
         let file = |name: &str, extension: &str, bytes| Tile {
             label: name.into(),
             bytes,
-            categories: [0, 0, 0, 0, 0, bytes],
+            extension: extension.into(),
             source: Some(format!("games/X/SRC/FIELD/AREA/{name}")),
-            group: Some(format!("file:{extension}")),
-            ..Tile::default()
+            children: Vec::new(),
         };
         let folder = Tile {
             bytes: 120,
-            categories: [0, 0, 0, 0, 0, 120],
             children: vec![
-                file("ENTRY.INC", "inc", 5),
-                file("IMPORT.INC", "inc", 5),
-                file("AREA.JSON", "json", 40),
+                file("ENTRY.S", "s-credited", 5),
+                file("IMPORT.S", "s-credited", 5),
+                file("AREA.PNG", "png", 40),
                 file("SCENE.C", "c", 70),
             ],
             ..Tile::default()
@@ -570,72 +383,24 @@ mod tests {
             vec![
                 ("C", super::SOURCE_ROSE, 70),
                 ("Maps", super::MAP_GREEN, 40),
-                ("Headers", super::HEADER_ROSE, 10)
+                ("Assembly", super::CREDITED_ASSEMBLY, 10)
             ]
         );
-        assert_eq!(super::color(Category::DraftC), super::DRAFTED);
-        assert_eq!(super::color(Category::ProvenAsm), super::ASSEMBLY);
-        assert_eq!(super::color(Category::ProvenC), super::C_TEAL);
     }
     #[test]
-    fn unidentified_has_one_shared_legend_entry_and_tables_have_a_type() {
-        let tile = |bytes, categories, group: &str| Tile {
+    fn the_legend_totals_each_kind_once() {
+        let tile = |bytes, extension: &str| Tile {
             bytes,
-            categories,
-            group: Some(group.into()),
+            extension: extension.into(),
             ..Tile::default()
         };
-        let tiles = vec![
-            tile(10, [0, 0, 10, 0, 0, 0], ""),
-            tile(20, [0, 0, 0, 0, 0, 20], "unreconstructed-data"),
-            tile(70, [0, 0, 0, 0, 0, 70], "typed-table"),
-        ];
+        let tiles = vec![tile(10, "s"), tile(20, "s"), tile(70, "tsv")];
         assert_eq!(
             super::legend_items(&tiles.iter().collect::<Vec<_>>()),
             vec![
-                ("Unidentified", super::UNKNOWN, 30),
-                ("Tables", "#9aa4c2", 70),
+                (super::NOT_YET_C, super::DRAFT_ROSE, 30),
+                ("Tables", super::TABLE_LAVENDER, 70),
             ]
         );
-        for kind in [
-            "",
-            "unreconstructed-data",
-            "unclassified",
-            "new-unknown-format",
-        ] {
-            assert_eq!(
-                content_style(&tile(1, [0, 0, 0, 0, 0, 1], kind)),
-                ("Unidentified", super::UNKNOWN)
-            );
-        }
-    }
-
-    #[test]
-    fn midi_sequence_roles_get_distinct_colors() {
-        let mut tile = Tile {
-            group: Some("golden-sun-sound-sequence".into()),
-            ..Tile::default()
-        };
-        for (class, expected) in [(Some("music"), 0), (Some("sfx"), 1), (None, 4)] {
-            tile.subgroup = class.map(String::from);
-            assert_eq!(sound_type(&tile), expected);
-        }
-        assert_ne!(SOUND_TYPES[0].1, SOUND_TYPES[1].1);
-    }
-
-    #[test]
-    fn known_rom_index_formats_have_identified_content_types() {
-        for kind in [
-            "golden-sun-sound-sequence",
-            "golden-sun-thumb-overlay",
-            "golden-sun-character-graphics",
-            "zero-skip-bytes",
-        ] {
-            let tile = Tile {
-                group: Some(kind.into()),
-                ..Tile::default()
-            };
-            assert_ne!(content_style(&tile).0, super::UNIDENTIFIED, "{kind}");
-        }
     }
 }

@@ -1,17 +1,16 @@
-//! The README's two figures, drawn in whole game pixels from the tracked
-//! glyph sheet and written at `FIGURE_SCALE`: PROGRESS_CHART.png, each
+//! The README's two figures, drawn in whole game pixels with the lettering
+//! defined in `letters` and written at `FIGURE_SCALE`: PROGRESS_CHART.png, each
 //! game's DONE by calendar day, and PROGRESS.png, the map of tracked files.
 //! Both are drawn in Weyard UI (`palette`) and are opaque but for the four
 //! cut corner pixels of their frames, so they read the same on light and
 //! dark pages.
 use super::boxtree::{
-    color, content_mix, content_style, directories, disk_tiles, display_bytes, legend_items, quiet,
-    source_name, tracked_only, DISPLAY_CATEGORIES,
+    content_mix, directories, disk_tiles, legend_items, quiet, source_name, tracked_only,
 };
 use super::history::{day_number, percent, UNTAGGED};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
-use super::model::{treemap, Category, Rect, Tile};
+use super::model::{treemap, Rect, Tile};
 use super::palette::{BAND, BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
 use super::raster::{Canvas, Relief};
 use super::sessions::{family, Family};
@@ -555,25 +554,9 @@ fn draw(
 }
 /// A tile's fill: its kinds stacked by bytes, the largest share at the bottom.
 fn stack(canvas: &mut Canvas, tile: &Tile, body: Box) {
-    let parts = if tile.categories[Category::AssetData as usize] == tile.bytes {
-        content_mix(tile)
-            .into_iter()
-            .map(|(_, swatch, bytes)| (swatch, bytes))
-            .collect::<Vec<_>>()
-    } else {
-        DISPLAY_CATEGORIES
-            .iter()
-            .map(|(category, _)| {
-                let swatch = if *category == Category::AssetData {
-                    content_style(tile).1
-                } else {
-                    color(*category)
-                };
-                (swatch, display_bytes(&tile.categories, *category))
-            })
-            .filter(|(_, bytes)| *bytes > 0)
-            .collect()
-    };
+    let parts = content_mix(tile)
+        .into_iter()
+        .map(|(_, swatch, bytes)| (swatch, bytes));
     let total = tile.bytes.max(1) as f64;
     let mut below = 0.0;
     let bottom = body.1 + body.3;
@@ -662,11 +645,7 @@ mod tests {
             label: source.rsplit('/').next().unwrap().into(),
             source: Some(source.into()),
             bytes,
-            categories: [0, 0, 0, 0, 0, bytes],
-            group: Some(format!(
-                "file:{}",
-                source.rsplit('.').next().unwrap().to_lowercase()
-            )),
+            extension: source.rsplit('.').next().unwrap().to_lowercase(),
             ..Tile::default()
         };
         let canvas = map_of(

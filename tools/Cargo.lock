@@ -590,7 +590,6 @@ name = "psynergy"
 version = "0.1.0"
 dependencies = [
  "png",
- "regex",
  "rusqlite",
  "tempfile",
 ]

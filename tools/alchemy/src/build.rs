@@ -21,8 +21,6 @@ pub fn entry(args: &[String]) -> ExitCode {
     match command {
         "native" => crate::result(crate::compiler::native::run(&rest)),
         "runtime" => crate::result(crate::compiler::runtime::entry(&rest)),
-        "assets" => crate::build_assets::entry(&rest),
-        "allocator" => crate::allocator::entry(&rest),
         "compilers" if rest == ["--help"] || rest == ["-h"] => {
             println!(
                 "usage: alchemy build compilers\nBuilds pinned compiler sources without installing or admitting executables.\nUse alchemy bootstrap --from BUNDLE to install an approved distribution."

@@ -373,6 +373,15 @@ pub fn gba_tiles_from_png(data: &[u8], bpp: GbaBpp) -> Result<Vec<u8>, AssetErro
     gba_graphics_from_png(data, bpp, true).map(|(tiles, _, _, _)| tiles)
 }
 
+/// Convert an opaque indexed PNG palette to little-endian, 15-bit BGR555 words.
+pub fn bgr555_palette_from_png(data: &[u8]) -> Result<Vec<u8>, AssetError> {
+    let image = indexed_png(data)?;
+    if image.has_transparency {
+        return err("GBA BGR555 palettes cannot represent transparent PNG entries");
+    }
+    bgr555_palette(&image)
+}
+
 fn palette_rgb(palette: &[u8], bpp: GbaBpp) -> Result<Vec<u8>, AssetError> {
     if palette.is_empty() || !palette.len().is_multiple_of(2) {
         return err("BGR555 palette must contain a nonempty whole number of words");
@@ -519,13 +528,10 @@ mod tile_tests {
         for (bpp, width, height) in [(GbaBpp::Bpp4, 16, 16), (GbaBpp::Bpp8, 8, 16)] {
             let source = fixture_png(bpp, width, height);
             let tiles = gba_tiles_from_png(&source, bpp).unwrap();
-            let palette = bgr555_palette(&indexed_png(&source).unwrap()).unwrap();
+            let palette = bgr555_palette_from_png(&source).unwrap();
             let output = png_from_gba_tiles(&tiles, &palette, bpp, width / 8).unwrap();
             assert_eq!(gba_tiles_from_png(&output, bpp).unwrap(), tiles);
-            assert_eq!(
-                bgr555_palette(&indexed_png(&output).unwrap()).unwrap(),
-                palette
-            );
+            assert_eq!(bgr555_palette_from_png(&output).unwrap(), palette);
         }
     }
 
@@ -555,6 +561,7 @@ mod tile_tests {
             .unwrap();
         assert!(indexed_png(&source).unwrap().has_transparency);
         assert!(gba_tiles_from_png(&source, GbaBpp::Bpp4).is_err());
+        assert!(bgr555_palette_from_png(&source).is_err());
         assert!(gba_graphics(&source, GbaBpp::Bpp4).is_ok());
     }
 }

@@ -1,8 +1,10 @@
-use crate::overlay::assembly::ROM_BASE;
 use crate::targets::DecompTarget;
-use psynergy::assets::lz::{GeneralToken, PaletteGroup};
 use std::path::Path;
 
+/// Where the cartridge ROM is mapped.
+const ROM_BASE: i64 = 0x0800_0000;
+/// Where a decoded overlay image's resource coordinates start.
+pub const OVERLAY_BASE: i64 = 0x0200_0000;
 /// The loader bound on one decoded resource.
 const DECODED_LIMIT: u64 = 0x10_0000;
 /// `ldr r4, [pc, #0]; bx r4`, the first word of every overlay veneer.
@@ -10,13 +12,6 @@ pub const VENEER: [u8; 4] = [0x00, 0x4c, 0x20, 0x47];
 
 pub struct CanonicalRom(Vec<u8>, usize);
 impl CanonicalRom {
-    /// The production default target's ROM (`tbs-en`).
-    pub fn load(root: &Path) -> Result<Self, String> {
-        Self::load_target(
-            root,
-            crate::targets::target_for(crate::targets::DEFAULT_TARGET),
-        )
-    }
     /// Any registered target's ROM, located through its resource-directory self-pointer.
     pub fn load_target(root: &Path, target: DecompTarget) -> Result<Self, String> {
         Self::from_file(&root.join(target.rom), target)
@@ -38,10 +33,6 @@ impl CanonicalRom {
     pub fn overlay(&self, overlay: &str) -> Result<Vec<u8>, String> {
         decode_overlay(&self.0, self.1, overlay)
     }
-    /// One resource's compressed stream, decoded with its token trace.
-    pub fn stream(&self, resource: usize) -> Result<Stream, String> {
-        decode_stream(&self.0, self.1, resource)
-    }
     /// The ROM bytes the directory points into.
     pub fn bytes(&self) -> &[u8] {
         &self.0
@@ -53,51 +44,12 @@ impl CanonicalRom {
     pub fn overlay_resources(&self, entry_veneers: usize) -> Vec<usize> {
         (0..directory_length(&self.0, self.1))
             .filter(|resource| {
-                decode_stream(&self.0, self.1, *resource).is_ok_and(|stream| {
-                    stream.decoded.len().is_multiple_of(2)
-                        && leading_entry_veneers(&stream.decoded) == entry_veneers
+                decode_stream(&self.0, self.1, *resource).is_ok_and(|decoded| {
+                    decoded.len().is_multiple_of(2)
+                        && leading_entry_veneers(&decoded) == entry_veneers
                 })
             })
             .collect()
-    }
-}
-/// The general-LZ token plan or the palette-LZ group plan of one stream.
-pub enum Trace {
-    General(Vec<GeneralToken>),
-    Palette(Vec<PaletteGroup>),
-}
-pub struct Stream {
-    pub resource: usize,
-    /// ROM offset of the stream, and of the next resource or, for the
-    /// directory's last resource, of the end of its exact encoding.
-    pub start: usize,
-    pub end: usize,
-    /// Whether a following resource bounds the stream, so the bytes between
-    /// the encoding and that resource belong to this stream's plan.
-    pub bounded: bool,
-    pub decoded: Vec<u8>,
-    pub trace: Trace,
-}
-impl Stream {
-    /// The exact encoding of the traced plan, tag byte included, without
-    /// any trailing alignment bytes the ROM places before the next resource.
-    pub fn encoded(&self) -> Result<Vec<u8>, String> {
-        match &self.trace {
-            Trace::General(tokens) => psynergy::assets::lz::encode_general(&self.decoded, tokens),
-            Trace::Palette(groups) => psynergy::assets::lz::encode_palette(&self.decoded, groups)
-                .map(|mut body| {
-                    body.insert(0, 1);
-                    body
-                }),
-        }
-        .map_err(|error| error.0)
-    }
-    /// The stream's leading tag byte: 0 general-LZ, 1 palette-LZ.
-    pub fn tag(&self) -> u8 {
-        match self.trace {
-            Trace::General(_) => 0,
-            Trace::Palette(_) => 1,
-        }
     }
 }
 /// Count of leading `ldr r4, [pc, #0]; bx r4; .4byte 0x02xxxxxx` entry veneers.
@@ -145,39 +97,23 @@ pub fn resource_id(overlay: &str) -> Result<usize, String> {
         .and_then(|value| usize::from_str_radix(value, 16).ok())
         .ok_or_else(|| format!("invalid overlay name {overlay:?}"))
 }
-fn decode_stream(rom: &[u8], table: usize, resource: usize) -> Result<Stream, String> {
+/// One resource's decoded bytes, read up to the next resource or the ROM's end.
+fn decode_stream(rom: &[u8], table: usize, resource: usize) -> Result<Vec<u8>, String> {
     let start = resource_pointer(rom, table, resource)?;
-    let next = resource_pointer(rom, table, resource + 1)
+    let limit = resource_pointer(rom, table, resource + 1)
         .ok()
-        .filter(|end| *end > start);
-    let limit = next.unwrap_or(rom.len());
-    let (decoded, trace) = match rom[start] {
-        0 => psynergy::assets::lz::decode_general_trace(rom, start, limit, DECODED_LIMIT)
-            .map(|(decoded, _, tokens)| (decoded, Trace::General(tokens))),
-        1 => psynergy::assets::lz::decode_palette_trace(rom, start + 1, limit, DECODED_LIMIT)
-            .map(|(decoded, _, groups)| (decoded, Trace::Palette(groups))),
+        .filter(|end| *end > start)
+        .unwrap_or(rom.len());
+    match rom[start] {
+        0 => psynergy::assets::lz::decode_general(rom, start, limit, DECODED_LIMIT),
+        1 => psynergy::assets::lz::decode_palette(rom, start + 1, limit, DECODED_LIMIT),
         tag => return Err(format!("resource {resource:03x} has tag {tag}")),
     }
-    .map_err(|error| error.0)?;
-    let mut stream = Stream {
-        resource,
-        start,
-        end: limit,
-        bounded: next.is_some(),
-        decoded,
-        trace,
-    };
-    if !stream.bounded {
-        // The general decoder reads whole words; the stream is its encoding.
-        stream.end = start + stream.encoded()?.len();
-    }
-    Ok(stream)
+    .map(|(decoded, _)| decoded)
+    .map_err(|error| error.0)
 }
 pub fn decode_overlay(rom: &[u8], table: usize, overlay: &str) -> Result<Vec<u8>, String> {
-    decode_stream(rom, table, resource_id(overlay)?).map(|stream| stream.decoded)
-}
-pub fn canonical_overlay(root: &Path, overlay: &str) -> Result<Vec<u8>, String> {
-    CanonicalRom::load(root)?.overlay(overlay)
+    decode_stream(rom, table, resource_id(overlay)?)
 }
 /// One decoded overlay resource from any registered target's ROM.
 pub fn canonical_overlay_for(

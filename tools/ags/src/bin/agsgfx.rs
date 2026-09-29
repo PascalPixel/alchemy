@@ -14,6 +14,7 @@ use std::process::ExitCode;
 const USAGE: &str = "usage: agsgfx INPUT OUTPUT [options]
   X.png  -> Y.4bpp | Y.8bpp    tiles, row-major or by metatile (-mwidth N -mheight N)
   X.png  -> Y.gbapal           the PNG's palette as little-endian BGR555
+  X.png  -> Y.bitmap[.lz|.mtf] any build recipe, as the build makes it (see ags::resource)
   X.4bpp | X.8bpp -> Y.png     tiles back to an indexed PNG (--palette P.gbapal|P.png --width TILES)
   X.bitmap -> Y.png            a linear 8-bit bitmap to an indexed PNG (--palette P --width PIXELS)
   X      -> Y.lz               compress (--lz general|palette|tagged|mtf4; the LZ kinds
@@ -100,6 +101,7 @@ fn run(args: &[String]) -> Result<(), String> {
             )?
         }
         ("png", "gbapal") => bgr555_palette_from_png(&data).map_err(|error| error.0)?,
+        ("png", _) => ags::resource::build_file(output, &data)?,
         ("4bpp" | "8bpp", "png") => {
             let path = option(options, "--palette").ok_or("needs --palette")?;
             let palette = fs::read(&path).map_err(|error| format!("{path}: {error}"))?;

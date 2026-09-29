@@ -115,6 +115,7 @@ extern char SceneId_TakaraShima5;
 extern char SceneId_TakaraShima6;
 extern char SceneId_TakaraShima14;
 extern char SceneId_TorebiHeya;
+extern char SceneId_TorebiIzumi1;
 
 extern char SceneId_ArutamiraDou1;
 extern char SceneId_ArutamiraDou2;

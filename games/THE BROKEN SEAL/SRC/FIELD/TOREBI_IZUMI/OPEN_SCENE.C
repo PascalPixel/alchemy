@@ -9,7 +9,7 @@ extern u8 MsgTorebiYaWonNumber[];
 extern u8 Data_03001d18[];
 
 void SceneState_InitFourActorRecordsAndInstallTask(void);
-void Main_08015120(s32 value, s32 digits);
+void UiWork_PushValueSlot(s32 value, s32 digits);
 void Main_080b0060(void);
 void TorebiIzumi_OfferLuckyWheels(s32 mode);
 s32 SceneDialogue_PickTopicVariantId(s32 topic);
@@ -89,12 +89,12 @@ s32 TorebiIzumi_OpenScene(void)
                 }
                 Engine_EventWait(20);
                 Engine_EventSetMessage((s32)MsgTorebiYaWonNumber);
-                Main_08015120(diff, 5);
+                UiWork_PushValueSlot(diff, 5);
                 Engine_EventShowMessage(9, 0);
                 Main_080b0060();
             } else if (diff < 0) {
                 Engine_EventSetMessage((s32)MsgTorebiYaLostNumber);
-                Main_08015120(-diff, 5);
+                UiWork_PushValueSlot(-diff, 5);
                 Engine_EventShowMessage(9, 0);
             }
             Engine_EventEnd();
@@ -118,7 +118,7 @@ s32 TorebiIzumi_OpenScene(void)
                             Engine_EventSetMessage((s32)MsgTorebiWonItemGo2);
                         }
                         item = SceneDialogue_PickTopicVariantId(list[i]);
-                        Main_08015120(item, 2);
+                        UiWork_PushValueSlot(item, 2);
                         Engine_EventShowMessage(8, 0);
                         Engine_ItemShowFound(item, 3);
                         Engine_PartyGiveItem(item, 0);

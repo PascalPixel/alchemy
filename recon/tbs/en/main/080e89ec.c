@@ -245,7 +245,7 @@ loop_24:
 block_35:
         temp_fp_275->field_0036 = var_r3_306;
     }
-    Func_080b5028(0, 0, 0, 0x64);
+    BattlePres_SetupTransitionSceneFar(0, 0, 0, 0x64);
     if (frame <= 0x11) {
         temp_r0_331 = Math_Div(frame, 3);
         draw_width = (u32) absolute_080ede9f[temp_r0_331];

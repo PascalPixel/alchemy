@@ -137,12 +137,12 @@ s32 DjinnMenu_DrawStatPreview(M2C_UNK arg0, s32 arg1, s32 arg2, s32 arg3, s32 ar
         break;
     case 1:
         sp28 &= 0x1F;
-        Func_080771b8(sp38, sp2C, sp28);
+        Djinn_DeactivateFar(sp38, sp2C, sp28);
         break;
     case 2:
         if (sp24 != 0) {
             sp28 &= 0x1F;
-            Func_080771b8(sp38, sp2C);
+            Djinn_DeactivateFar(sp38, sp2C);
         }
         temp_r5_264 = 0x1F & sp1C;
         Djinn_AddToOwnerFar(sp38, sp20, temp_r5_264);

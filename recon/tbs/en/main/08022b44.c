@@ -118,9 +118,9 @@ extern u8 Data_080313a4[];
 extern u8 Data_08031424[];
 s32 UiText_FormatNumberToHalfwords(s16 *out, s32 value);
 s32 DjinnMenu_ListChangedDjinn(u8 *oldGrid, u8 *newGrid, u16 *out, s32 *gained, s32 *lost);
-s32 Func_08077208(s32 owner, s32 col, s32 row);
+s32 Djinn_IsActiveFar(s32 owner, s32 col, s32 row);
 void Djinn_ActivateFar(s32 owner, s32 col, s32 row);
-void Func_080771b8(s32 owner, s32 col, s32 row);
+void Djinn_DeactivateFar(s32 owner, s32 col, s32 row);
 
 s32 FixedPoint_Ratio(s32 numerator, s32 denominator);
 void *Runtime_BumpAllocate(s32 size);
@@ -201,8 +201,8 @@ struct RenderInput *DjinnMenu_ShowChangePreview(
     /* Apply the pending change to the live record, then recompute. */
     col = (code >> 8) & 15;
     row = code & 255;
-    if (Func_08077208(owner, col, row) != 0)
-        Func_080771b8(owner, col, row);
+    if (Djinn_IsActiveFar(owner, col, row) != 0)
+        Djinn_DeactivateFar(owner, col, row);
     else
         Djinn_ActivateFar(owner, col, row);
     BattleUnit_Recalculate(owner);

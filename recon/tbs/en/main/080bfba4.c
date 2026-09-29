@@ -46,7 +46,7 @@ struct DjinnRecoveryTable *Trade_GetOfferStateFar(s32 side);
 struct BattleUnit *Owner_GetStateFar(s32 unit_id);
 void BattleUnit_Recalculate(s32 unit_id);
 s32 Owner_AdjustFirstValueFar(s32 unit_id, s32 amount);
-void Func_080771b8(s32 unit_id, s32 element, s32 index);
+void Djinn_DeactivateFar(s32 unit_id, s32 element, s32 index);
 void *Runtime_BumpAllocateAlternatePool(s32 size);
 void Sys_Free(void *block);
 s32 Math_Div(s32 numerator, s32 denominator);
@@ -86,7 +86,7 @@ s32 BattleUnit_ProcessTurnEnd(struct BattlePlan *plan)
         entry = list->entries;
         do {
             if (entry->unit_id == id && entry->turns == -1) {
-                Func_080771b8(id, entry->element, entry->index);
+                Djinn_DeactivateFar(id, entry->element, entry->index);
             }
             i++;
             entry++;

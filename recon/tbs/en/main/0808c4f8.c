@@ -22,8 +22,8 @@
  *     separately for the same reason.
  *   - actor: work's actor table entry selected by Data_02000434.
  *   - mode: 3 when g+0x1DA holds 1, otherwise 2.  Stored to work+0x19E and
- *     passed to Func_08009078; it also picks between Func_08009130/38 and
- *     Map_ApplyWorkOriginAndSpanFar and, in the tail, between Func_080090a8 and Func_080090a0.
+ *     passed to ObjectSystem_InitializeFar; it also picks between Map_UpdateCurrentTileBlockFar/38 and
+ *     Map_ApplyWorkOriginAndSpanFar and, in the tail, between ObjectDispatch_InitFromTable3Far and ObjectDispatch_InitFromTable2Far.
  *   - result: the returned value.  0 normally, the code a handler posted at
  *     work+0x170 when one is pending, or 999 on the path that ends the battle
  *     from the -1 request.
@@ -49,27 +49,27 @@ void Runtime_ReleaseHeapBlock();
 void WaitFrames();
 void Scheduler_ResetTaskTable();
 s32 _call_via_r0();
-void Func_08009078();
+void ObjectSystem_InitializeFar();
 void Object_SetMode();
-void Func_080090a0();
-void Func_080090a8();
-void Func_080090b0();
-void Func_080090b8();
-void Func_08009110();
-void Func_08009118();
+void ObjectDispatch_InitFromTable2Far();
+void ObjectDispatch_InitFromTable3Far();
+void ObjectDispatch_InitFromTable1Far();
+void ObjectDispatch_InitFromTable0Far();
+void Map_LoadLayeredSceneFar();
+void Map_InitializePerspectiveSceneFar();
 void Map_ApplyWorkOriginAndSpanFar();
-void Func_08009130();
-void Func_08009138();
+void Map_UpdateCurrentTileBlockFar();
+void WorldMap_LoadGraphicsFar();
 void Object_ResetMotion();
 void FarCall_WindowTable();
 void UiText_ShowPositionedMessageAndWaitFar();
 void UiWork_PushValueSlotFar();
-void Func_080151e8();
+void Menu_RunTopSelectionFar();
 void UiTimedNotice_CreateFar();
 void UiTimedNotice_CloseIfActiveFar();
-void Func_08015288();
-void Func_08015290();
-void Func_08015370();
+void Menu_RunSelectionFar();
+void Menu_RunSelectionWithCursorObjectFar();
+void Menu_RunWorkspaceResultLoopFar();
 s32 Math_Div();
 void *Owner_GetStateFar();
 s32 GameFlag_TestFar();
@@ -115,7 +115,7 @@ void BattleFx_ScheduleCallbackWhenValue24cSet();
 void Map_ShowWorldMap();
 void BattleFx_RunVisibilityTransition();
 void Audio_PlayCue();
-s32 Func_080f9070();
+s32 AudioCommand_GetSecondaryStateByteFar();
 
 extern u8 gGameState[];
 extern u16 Data_02000402;
@@ -171,17 +171,17 @@ s32 Func_0808c4f8(void)
     Djinn_ResolvePendingEvent(0);
 
     if (FIELD_AT_OFFSET(g, s16 *, 0x1DA) == 1) {
-        Func_08009118();
+        Map_InitializePerspectiveSceneFar();
         FIELD_AT_OFFSET(g, u8 *, 0x224) = 1;
         mode = 3;
         BattleFx_SelectLocationRule(0);
     } else {
-        Func_08009110();
+        Map_LoadLayeredSceneFar();
         mode = 2;
         BattleFx_SelectLocationRule(1);
     }
     FIELD_AT_OFFSET(work, s16 *, 0x19E) = mode;
-    Func_08009078(mode);
+    ObjectSystem_InitializeFar(mode);
     FarCall_WindowTable();
     BattleFx_ResetCounters();
     FIELD_AT_OFFSET(work, s32 *, 0x10) =
@@ -196,8 +196,8 @@ s32 Func_0808c4f8(void)
         FieldObject_PlaceSceneActors();
     }
     if (mode == 3) {
-        Func_08009130();
-        Func_08009138(FIELD_AT_OFFSET(g, s32 *, 0x1DC),
+        Map_UpdateCurrentTileBlockFar();
+        WorldMap_LoadGraphicsFar(FIELD_AT_OFFSET(g, s32 *, 0x1DC),
                       FIELD_AT_OFFSET(g, s32 *, 0x1E4));
     } else {
         Map_ApplyWorkOriginAndSpanFar();
@@ -401,12 +401,12 @@ s32 Func_0808c4f8(void)
                 GameFlag_Set(0x106);
                 if (gDebugMode != 0 && (gKeysHeld & 2) != 0
                     && (gKeysHeld & 4) != 0) {
-                    Func_08015290();
+                    Menu_RunSelectionWithCursorObjectFar();
                 } else if (GameFlag_IsSet(0x107) != 0) {
                     FIELD_AT_OFFSET(work, u16 *, 0x182) = 250;
                 } else {
                     FIELD_AT_OFFSET(work, u16 *, 0xCC0) = 0;
-                    Func_080151e8();
+                    Menu_RunTopSelectionFar();
                     FIELD_AT_OFFSET(work, u16 *, 0xCC0) = 1;
                 }
                 Battle_ClearObjectFlag5bWhenMode3();
@@ -444,7 +444,7 @@ s32 Func_0808c4f8(void)
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_Set(0x106);
                 if (gDebugMode != 0 && (gKeysHeld & 2) != 0) {
-                    Func_08015288();
+                    Menu_RunSelectionFar();
                 } else if (gDebugMode != 0 && (gKeysHeld & 0x200) != 0) {
                     Debug_RunPaletteEditor();
                 } else if (GameFlag_IsSet(0x107) != 0) {
@@ -452,7 +452,7 @@ s32 Func_0808c4f8(void)
                 } else {
                     Battle_ResetEffectCounter();
                     UiTimedNotice_CloseIfActiveFar();
-                    FIELD_AT_OFFSET(g, u16 *, 0x21E) = Func_080f9070();
+                    FIELD_AT_OFFSET(g, u16 *, 0x21E) = AudioCommand_GetSecondaryStateByteFar();
                     if (GameFlag_IsSet(0x17E) == 0) {
                         obj = gMenuCtrlWork;
                         pos = ResourceBlockOwners;
@@ -469,7 +469,7 @@ s32 Func_0808c4f8(void)
                             FIELD_AT_OFFSET(obj, u16 *, 4) = 1;
                             WaitFrames(1);
                         }
-                        Func_08015370(0);
+                        Menu_RunWorkspaceResultLoopFar(0);
                         FIELD_AT_OFFSET(obj, u16 *, 4) = 0;
                     } else {
                         UiText_DrawMessage(0xC2F, 1);
@@ -486,13 +486,13 @@ s32 Func_0808c4f8(void)
         if (actor != NULL) {
             v = FIELD_AT_OFFSET(g, u8 *, 0x1F2);
             if (v == 2) {
-                Func_080090b8(actor);
+                ObjectDispatch_InitFromTable0Far(actor);
             } else if (v == 1) {
-                Func_080090b0(actor);
+                ObjectDispatch_InitFromTable1Far(actor);
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x19E) == 3) {
-                Func_080090a8(actor);
+                ObjectDispatch_InitFromTable3Far(actor);
             } else {
-                Func_080090a0(actor);
+                ObjectDispatch_InitFromTable2Far(actor);
             }
         }
         do {

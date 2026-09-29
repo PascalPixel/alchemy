@@ -97,7 +97,7 @@ void WaitFrames(s32 arg0);
 s32 Scheduler_AddOrUpdateCallback(s32 entry, s32 arg1);
 void Scheduler_RemoveCallback(s32 entry);
 s32 Random16(void);
-void Func_080b5028(s32 a, s32 b, s32 c, s32 d);
+void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void BattlePresentation_ConfigurePaletteFadeFar(s32 a, s32 b, s32 c);
 void BattleBackground_LoadFar(s32 a, s32 b, s32 c);
 void Runtime_ApplyValueToWork7818(void);
@@ -191,7 +191,7 @@ void BattleEffect_RunTileAndPaletteAnimation(void *arg0) {
     gBgScroll[3] = 0x20;
     BattlePresentation_ConfigurePaletteFadeFar(1, M2C_FIELD(sys, u16 *, 0x648), 0);
     *(u16 *)0x0400000c = 0x784;
-    Func_080b5028(0, 0, 0, 0x64);
+    BattlePres_SetupTransitionSceneFar(0, 0, 0, 0x64);
     idx = 0;
     ctl->field_000c = 0;
     *(s32 *)0x04000028 = 0;

@@ -76,7 +76,7 @@ s32 Trig_Cos(s32 angle);
 s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void BattleEventRuntime_BeginPhaseFar(s32 id);
-void Func_080b5028(s32 a, s32 b, s32 c, s32 d);
+void BattlePres_SetupTransitionSceneFar(s32 a, s32 b, s32 c, s32 d);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
@@ -177,7 +177,7 @@ void Unnamed_080da6cc(void *object)
                 BattleEventRuntime_BeginPhaseFar(133);
             }
 
-            Func_080b5028(0, 0, 0, 100);
+            BattlePres_SetupTransitionSceneFar(0, 0, 0, 100);
             Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing2);
 

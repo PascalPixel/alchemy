@@ -179,7 +179,7 @@ struct Member {
     s32 z;
 };
 
-void Func_080b5030(s32 a, s32 b, s32 c);
+void BattlePres_SetupTransitionAtPairMidpointFar(s32 a, s32 b, s32 c);
 void WaitFrames(s32 frames);
 void BattleFx_SetupCanvasTileMap(void);
 void Resource_LoadAndDecompress(s32 id, void *target, s32 flag_a, s32 flag_b);  /* load_and_decompress */
@@ -201,7 +201,7 @@ void BattleMotion_ApplyVariantMotionFar(s32 member, s32 kind);
 void Graphics_PrepareTransferInIwramWork(void *a, void *b);                              /* Graphics_PrepareTransferInIwramWork */
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);                  /* advance_with_gravity_3d */
 void Runtime_ReleaseHeapBlock(s32 id);                                        /* Runtime_ReleaseHeapBlock */
-void Func_080b5048(s32 cue, s32 level);
+void BattlePresentation_SetPaletteLevelFar(s32 cue, s32 level);
 void BattleFx_SetTransitionFlagAndDisplay(void);                                          /* BattleFx_SetTransitionFlagAndDisplay */
 
 void BattlePres_RunRingAndSparkScene(void *object)
@@ -248,7 +248,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     }
 
     STATE = object;
-    Func_080b5030(
+    BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(object, s32 *, 8), M2C_FIELD(object, s32 *, 12), 130);
     WaitFrames(1);
     BattleFx_SetupCanvasTileMap();
@@ -264,12 +264,12 @@ void BattlePres_RunRingAndSparkScene(void *object)
     blit[0] = (BlitFn)gWorkSlot[46];
     blit[1] = (BlitFn)gWorkSlot[47];
 
-    Func_080b5030(
+    BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&Value_00000049, work, 1, 0);
 
-    Func_080b5030(
+    BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&Value_0000004a, (void *)0x02010000, 1, 1);
@@ -279,12 +279,12 @@ void BattlePres_RunRingAndSparkScene(void *object)
             Resource_GetTableEntry((s32)&Value_0000008e), 128, (CopyFn)0x03001388);
     }
 
-    Func_080b5030(
+    BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     WaitFrames(1);
     Resource_LoadAndDecompress((s32)&Value_00000076, sprite_src, 0, 0);
 
-    Func_080b5030(
+    BattlePres_SetupTransitionAtPairMidpointFar(
         M2C_FIELD(STATE, s32 *, 8), M2C_FIELD(STATE, s32 *, 12), 130);
     WaitFrames(1);
     M2C_FIELD(work, s32 *, 0x7780) = 1;
@@ -331,7 +331,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
 
         frame = 0;
         do {
-            Func_080b5030(M2C_FIELD(STATE, s32 *, 8),
+            BattlePres_SetupTransitionAtPairMidpointFar(M2C_FIELD(STATE, s32 *, 8),
                 M2C_FIELD(STATE, s32 *, 12), 130);
             p = (struct Particle *)(work + 0x7080);
             i = 0;
@@ -477,7 +477,7 @@ void BattlePres_RunRingAndSparkScene(void *object)
     cue = (const u16 *)((u8 *)*(void **)0x03001E74 + 1608);
     i = 0;
     do {
-        Func_080b5048(*cue, 6 - i);
+        BattlePresentation_SetPaletteLevelFar(*cue, 6 - i);
         WaitFrames(1);
         i++;
     } while (i != 7);

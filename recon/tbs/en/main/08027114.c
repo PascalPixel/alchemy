@@ -185,12 +185,12 @@ s32 BattleMenu_RunActionSelection(s32 actor, u16 *list, s32 count);
 s32 ItemList_SelectEntry(s32 actor, u16 *list);
 void Sys_Free(void *block);
 struct DjinnDefinition *SummonDefinition_Get(s32 id);
-s32 Func_080771e8(s32 element, s32 index);
-s32 Func_08077208(s32 actor, s32 element, s32 index);
-s32 Func_080b5090(s32 mode, void *block);
+s32 Djinn_GetDefinitionHeaderFar(s32 element, s32 index);
+s32 Djinn_IsActiveFar(s32 actor, s32 element, s32 index);
+s32 BattleParty_ListActorIdsFar(s32 mode, void *block);
 void Camera_ConfigureSceneFar(s32 offset);
 void BattlePres_SetActorModesFar(u16 *header, s32 mode);
-void Func_080b5130(s32 mode, u8 *cost);
+void BattlePlacement_CountValidEntriesFar(s32 mode, u8 *cost);
 
 s32 Battle_CollectPartyCommands(struct BattleCommandEntry *out, u16 *in, s32 count)
 {
@@ -342,7 +342,7 @@ handshake_done:
             } else {
                 sel = 1;
             }
-            handle = Func_080b5090(sel, block);
+            handle = BattleParty_ListActorIdsFar(sel, block);
             WaitFrames(1);
             Ui_RunOwnerStatusScreen(block, handle, *(u16 *)block);
             Sys_Free(block);
@@ -376,7 +376,7 @@ handshake_done:
         for (;;) {
             /* Carry the previous member's element budget into this round. */
             if (i == 0) {
-                Func_080b5130(0, state->cost[0]);
+                BattlePlacement_CountValidEntriesFar(0, state->cost[0]);
             } else {
                 for (k = 0; k < 4; k++) {
                     state->cost[i][k] = state->cost[i - 1][k];
@@ -412,7 +412,7 @@ mark_visible:
             WaitFrames(1);
             if (mode == -2) {
                 block = Runtime_BumpAllocate(12);
-                handle = Func_080b5090(1, block);
+                handle = BattleParty_ListActorIdsFar(1, block);
                 state->entryActive[2] = 0;
                 WaitFrames(1);
                 Ui_RunOwnerStatusScreen(block, handle, actorId);
@@ -667,8 +667,8 @@ summon_menu:
                 gLinkCountdownWork->result[i] = res;
                 element = (res >> 8) & 15;
                 index = res & 255;
-                if (Func_08077208(actorId, element, index) != 0) {
-                    ability = Ability_GetData(Func_080771e8(element, index));
+                if (Djinn_IsActiveFar(actorId, element, index) != 0) {
+                    ability = Ability_GetData(Djinn_GetDefinitionHeaderFar(element, index));
                     cost = ability[8];
                     win = UiWindow_Create(11, 17, 10, 3, 6);
                     slot = state->entries[0];

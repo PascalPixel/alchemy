@@ -6,7 +6,7 @@
 
 extern char Value_00000ae0;
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
-s32 Func_08015108(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
+s32 UiText_GetResourceDimensionsFar(s32 message, s32 *left, s32 *top, s32 *width, s32 *height);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
 void UiText_DrawStringAtOffsetFar(void *text, s32 window, s32 x, s32 y);
 void *Owner_GetStateFar(s32 owner);
@@ -14,7 +14,7 @@ void UiWork_SetParamNibbleFar(s32 value);
 
 static __inline__ void MeasureShortcut(u16 shortcut, s32 *left, s32 *top, s32 *width, s32 *height)
 {
-    Func_08015108((shortcut & 0x3ff) + 0x333, left, top, width, height);
+    UiText_GetResourceDimensionsFar((shortcut & 0x3ff) + 0x333, left, top, width, height);
 }
 
 static __inline__ void PushShortcut(u16 shortcut)

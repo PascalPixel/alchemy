@@ -44,7 +44,7 @@
  * again unconditionally; that pair is reproduced literally.
  *
  * The frame loop runs 32 frames.  Frame 5 passes one of two ids (134 or
- * 133) to BattleEventRuntime_BeginPhaseFar, selected by Func_080b5058 applied to the actor
+ * 133) to BattleEventRuntime_BeginPhaseFar, selected by Summon_IsEntrySecondaryFlaggedFar applied to the actor
  * record's byte at 296; neither callee has a resolved project name, so
  * calling them a cue is a guess.  Frame 4 calls BattleMotion_ApplyVariantMotionFar on the
  * actor with kind 0.  Every frame re-resolves the state's own
@@ -219,7 +219,7 @@ void Render_ResetTransformState(void);                            /* Render_Rese
 void Graphics_PrepareTransferInIwramWork(void *a, void *b);                /* Graphics_PrepareTransferInIwramWork */
 void Render_ProjectPoint(const struct Spark *position, s32 *out);
 void *Owner_GetStateFar(s32 id);                         /* Runtime_GetObject */
-s32 Func_080b5058(s32 id);
+s32 Summon_IsEntrySecondaryFlaggedFar(s32 id);
 s32 Battle_GetObjectTableValueFar(s32 id);
 void BattleMotion_ApplyVariantMotionFar(s32 member, s32 kind);
 struct Member **GetBattleObjectSlotFar(s32 member);
@@ -368,7 +368,7 @@ void BattlePres_RunBeamSequence(void *object)
     i = 0;
     do {
         if (i == 5) {
-            if (Func_080b5058(M2C_FIELD(record, u8 *, 296)) != 0) {
+            if (Summon_IsEntrySecondaryFlaggedFar(M2C_FIELD(record, u8 *, 296)) != 0) {
                 BattleEventRuntime_BeginPhaseFar(134);
             } else {
                 BattleEventRuntime_BeginPhaseFar(133);

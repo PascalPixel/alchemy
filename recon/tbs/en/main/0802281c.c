@@ -17,14 +17,14 @@
  * into a u16 inside the inner loop, kept here, keeps that load in the loop
  * and takes the score from 1647 to 1290 (13 register-only, 5 operand, 5
  * reordered, 4 inserted, 4 deleted); the same local read before the inner
- * loop lets it be reduced again (2485). Func_080b5090 has no label in the
+ * loop lets it be reduced again (2485). BattleParty_ListActorIdsFar has no label in the
  * build.
  */
 #include "TYPES.H"
 
 extern u8 *gBattleWork;
 
-s32 Func_080b5090(s32 side, s32 group);
+s32 BattleParty_ListActorIdsFar(s32 side, s32 group);
 void Ui_SetRectHighlight(s32 x, s32 y, s32 width, s32 height, s32 alt);
 
 s32 BattleLayout_HighlightPartyPanels(u16 *ids)
@@ -34,7 +34,7 @@ s32 BattleLayout_HighlightPartyPanels(u16 *ids)
     s32 i;
     s32 j;
 
-    count = Func_080b5090(1, 0);
+    count = BattleParty_ListActorIdsFar(1, 0);
     Ui_SetRectHighlight(29 - count * 6, 0, 25, 5, 15);
     for (i = 0; i < 4 && ids[i] != 0xff; i++) {
         for (j = 0; j < 4; j++) {

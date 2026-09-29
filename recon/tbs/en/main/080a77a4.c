@@ -1,3 +1,12 @@
+/* 2026-09-29 alchemy permute: score 1330 to 1005 on the permuter's scorer
+   (0 is exact); remaining 13 register-only, 2 operand, 2 inserted, 7
+   deleted. Kept rewrites: 6x swap commutative operands, 3x reorder
+   independent statements, 2x reorder local declarations, 1x introduce a
+   temporary, 1x toggle register, 1x test truth or compare with zero.
+   FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* Draft, not exact (2026-09-26): complete extent [080a77a4, 080a7850),
    172 bytes including the interior pool and final alignment halfword.
    Caller CharacterSelector_Run consumes -1 or the stored chosen member;
@@ -52,28 +61,30 @@ void WaitFrames(s32 frames);
 
 s32 CharacterMenu_SelectOwner(s32 slot)
 {
-    register struct OwnerSelectMenu *menu;
     register s32 index;
+    register struct OwnerSelectMenu *menu;
     s32 result;
-    register s32 owner_offset;
     register s32 cursor_offset;
+    register s32 owner_offset;
     struct OwnerCursor *cursor;
+    s32 tmp;
 
-    owner_offset = slot + 28;
-    cursor_offset = slot * 4;
-    menu = gMenuWork;
     result = 0;
+    menu = gMenuWork;
+    tmp = slot * 4;
+    cursor_offset = tmp;
+    owner_offset = slot + 28;
     {
         s32 off = cursor_offset + 20;
-        cursor = *(struct OwnerCursor **)((u8 *)menu + off);
+        cursor = *(struct OwnerCursor **)(off + (u8 *)menu);
     }
     cursor->state = 1;
     cursor->frame = result;
     index = *(s8 *)((u8 *)menu + owner_offset);
     RenderOutput_RedrawSavedRectFar(menu->window);
-    if (GameFlag_TestFar(0x172))
+    if (GameFlag_TestFar(0x172) != 0)
         UiWindow_DrawDividerLineFar(menu->window, 9, 1, 9, 3);
-    if (index == -1)
+    if (-1 == index)
         *(s8 *)((u8 *)menu + owner_offset) = 0;
     else
         UiMenu_SlideCursor(index * 24 - 10, 16);
@@ -82,8 +93,8 @@ s32 CharacterMenu_SelectOwner(s32 slot)
     else
         result = CharacterSelector_RunRearrange();
     {
-        s32 off = cursor_offset + 20;
-        UiIcon_PrepareObject(*(struct OwnerCursor **)((u8 *)menu + off));
+        register s32 off = 20 + cursor_offset;
+        UiIcon_PrepareObject(*(struct OwnerCursor **)(off + (u8 *)menu));
     }
     WaitFrames(1);
     return result;

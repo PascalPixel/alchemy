@@ -102,6 +102,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Object_GetById
 	.thumb_func
@@ -160,6 +163,9 @@ Engine_ObjectSetPalette:
 	.thumb_func
 Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventOpenMessage
+	.thumb_func
+Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
 	.global Engine_EventShowMessage
 	.thumb_func

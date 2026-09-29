@@ -1,267 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008040,"ax",%progbits
-	.balign 4
-	.global Func_02000040
-	.thumb_func
-Func_02000040:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000040_0
-	ldr r0, [pc, #36]
-	b .L_02000040_1
-.L_02000040_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000040_2
-	ldr r0, [pc, #36]
-	b .L_02000040_1
-.L_02000040_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000040_3
-	ldr r0, [pc, #32]
-	b .L_02000040_1
-.L_02000040_3:
-	ldr r0, [pc, #32]
-.L_02000040_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000006b
-	.4byte 0x02009738
-	.4byte 0x00000070
-	.4byte 0x020097c8
-	.4byte 0x0000006c
-	.4byte 0x02009840
-	.4byte 0x02009708
-	.section .text.x020080a0,"ax",%progbits
-	.balign 4
-	.global Func_020000a0
-	.thumb_func
-Func_020000a0:
-	push {lr}
-	ldr r3, [pc, #108]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #100]
-	cmp r2, r3
-	bne .L_020000a0_0
-	ldr r0, [pc, #96]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_020000a0_1
-	ldr r0, [pc, #92]
-	b .L_020000a0_2
-.L_020000a0_1:
-	ldr r0, [pc, #92]
-	b .L_020000a0_2
-.L_020000a0_0:
-	ldr r3, [pc, #92]
-	cmp r2, r3
-	bne .L_020000a0_3
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_020000a0_4
-	ldr r0, [pc, #76]
-	b .L_020000a0_2
-.L_020000a0_4:
-	ldr r0, [pc, #76]
-	b .L_020000a0_2
-.L_020000a0_3:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_020000a0_5
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_020000a0_6
-	ldr r0, [pc, #64]
-	b .L_020000a0_2
-.L_020000a0_6:
-	ldr r0, [pc, #32]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_020000a0_7
-	ldr r0, [pc, #52]
-	b .L_020000a0_2
-.L_020000a0_7:
-	ldr r0, [pc, #52]
-	b .L_020000a0_2
-.L_020000a0_5:
-	ldr r0, [pc, #52]
-.L_020000a0_2:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000006b
-	.4byte 0x0000093e
-	.4byte 0x02009ba4
-	.4byte 0x02009acc
-	.4byte 0x00000070
-	.4byte 0x020099c4
-	.4byte 0x020098ec
-	.4byte 0x0000006c
-	.4byte 0x02009dcc
-	.4byte 0x02009d24
-	.4byte 0x02009c7c
-	.4byte 0x020098d4
-	.section .text.x0200819c,"ax",%progbits
-	.balign 4
-	.global Func_0200019c
-	.thumb_func
-Func_0200019c:
-	push {lr}
-	ldr r3, [pc, #108]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #100]
-	cmp r2, r3
-	bne .L_0200019c_0
-	ldr r0, [pc, #96]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_0200019c_1
-	ldr r0, [pc, #92]
-	b .L_0200019c_2
-.L_0200019c_1:
-	ldr r0, [pc, #92]
-	b .L_0200019c_2
-.L_0200019c_0:
-	ldr r3, [pc, #92]
-	cmp r2, r3
-	bne .L_0200019c_3
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_0200019c_4
-	ldr r0, [pc, #76]
-	b .L_0200019c_2
-.L_0200019c_4:
-	ldr r0, [pc, #76]
-	b .L_0200019c_2
-.L_0200019c_3:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_0200019c_5
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_0200019c_6
-	ldr r0, [pc, #64]
-	b .L_0200019c_2
-.L_0200019c_6:
-	ldr r0, [pc, #32]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_0200019c_7
-	ldr r0, [pc, #52]
-	b .L_0200019c_2
-.L_0200019c_7:
-	ldr r0, [pc, #52]
-	b .L_0200019c_2
-.L_0200019c_5:
-	ldr r0, [pc, #52]
-.L_0200019c_2:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000006b
-	.4byte 0x0000093e
-	.4byte 0x02009fa0
-	.4byte 0x02009e80
-	.4byte 0x00000070
-	.4byte 0x0200a120
-	.4byte 0x0200a018
-	.4byte 0x0000006c
-	.4byte 0x0200a390
-	.4byte 0x0200a30c
-	.4byte 0x0200a24c
-	.4byte 0x02009e74
-	.section .text.x020087dc,"ax",%progbits
-	.balign 4
-	.global Func_020007dc
-	.thumb_func
-Func_020007dc:
-	push {lr}
-	bl 0x02009580
-	movs r0, #158
-	bl 0x020096b0
-	movs r1, #128
-	movs r2, #128
-	lsls r2, r2, #7
-	movs r0, #0
-	lsls r1, r1, #8
-	bl 0x020095a8
-	movs r1, #3
-	movs r0, #0
-	bl 0x02009648
-	ldr r3, [pc, #88]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_020007dc_0
-	movs r1, #152
-	movs r2, #174
-	movs r0, #0
-	lsls r1, r1, #1
-	lsls r2, r2, #3
-	bl 0x020095c0
-	ldr r0, [pc, #64]
-	movs r1, #78
-	movs r2, #86
-	bl 0x02009500
-	b .L_020007dc_1
-.L_020007dc_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_020007dc_1
-	movs r0, #0
-	movs r1, #248
-	movs r2, #192
-	bl 0x020095c0
-	ldr r0, [pc, #44]
-	movs r1, #74
-	movs r2, #9
-	bl 0x02009500
-.L_020007dc_1:
-	movs r0, #16
-	bl 0x02009578
-	movs r0, #3
-	bl 0x02009670
-	bl 0x02009588
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
-	.4byte 0x0000006b
-	.4byte 0x020096b8
-	.4byte 0x00000070
-	.4byte 0x020096ce
 	.section .text.x02008328,"ax",%progbits
 	.balign 4
 	.global Func_02000328
@@ -427,62 +165,18 @@ Func_02000328:
 	.4byte 0x000008a5
 	.4byte 0x03001ebc
 	.4byte 0x000008a7
-	.section .text.x0200886c,"ax",%progbits
-	.balign 4
-	.global Func_0200086c
-	.thumb_func
-Func_0200086c:
-	push {r5, lr}
-	ldr r5, [pc, #76]
-	movs r1, #225
-	lsls r1, r1, #1
-	adds r3, r5, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #90
-	bne .L_0200086c_0
-	movs r0, #149
-	lsls r0, r0, #4
-	bl 0x02009558
-.L_0200086c_0:
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r5, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_0200086c_1
-	bl 0x020088cc
-	b .L_0200086c_2
-.L_0200086c_1:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_0200086c_3
-	bl 0x02008958
-	b .L_0200086c_2
-.L_0200086c_3:
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_0200086c_2
-	bl 0x02008ad4
-.L_0200086c_2:
-	movs r0, #0
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000006b
-	.4byte 0x00000070
-	.4byte 0x0000006c
 	.section .rodata.part1,"a",%progbits
+	.global KareiTorebi_LeaveCells1
+KareiTorebi_LeaveCells1:
 	.4byte 0x00540062
 	.4byte 0x00020002
 	.4byte 0x00620005
 	.4byte 0x00020052
 	.4byte 0x00050002
-	.4byte 0x005cffff
+	.2byte 0xffff
+	.global KareiTorebi_LeaveCells3
+KareiTorebi_LeaveCells3:
+	.2byte 0x005c
 	.4byte 0x00020009
 	.4byte 0x00050002
 	.4byte 0x0007005c
@@ -497,6 +191,8 @@ Func_0200086c:
 	.4byte 0x00000008
 	.4byte 0x00000000
 	.4byte 0x00000010
+	.global gKareiTorebiEntrancesOther
+gKareiTorebiEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000080
 	.4byte 0x40000080
@@ -509,6 +205,8 @@ Func_0200086c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEntrances1
+gKareiTorebiEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000f8
 	.4byte 0x40000558
@@ -545,6 +243,8 @@ Func_0200086c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEntrances3
+gKareiTorebiEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x00000188
 	.4byte 0x80000128
@@ -575,6 +275,8 @@ Func_0200086c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEntrances2
+gKareiTorebiEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x00000060
 	.4byte 0xc00000f8
@@ -614,12 +316,16 @@ KareiTorebi_SceneTable:
 	.4byte 0x0010306b
 	.4byte 0x00203070
 	.4byte 0x000001ff
+	.global gKareiTorebiPlacementsOther
+gKareiTorebiPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiPlacements3
+gKareiTorebiPlacements3:
 	.4byte 0xffff0092
 	.4byte 0x00000001
 	.4byte 0x01980000
@@ -674,6 +380,8 @@ KareiTorebi_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiPlacements3Flag950
+gKareiTorebiPlacements3Flag950:
 	.4byte 0xffff0092
 	.4byte 0x00000001
 	.4byte 0x01980000
@@ -740,6 +448,8 @@ KareiTorebi_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiPlacements1
+gKareiTorebiPlacements1:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0xffc00000
@@ -794,6 +504,8 @@ KareiTorebi_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiPlacements1Flag93e
+gKareiTorebiPlacements1Flag93e:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0xffc00000
@@ -848,6 +560,8 @@ KareiTorebi_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiPlacements2
+gKareiTorebiPlacements2:
 	.4byte 0xffff006a
 	.4byte 0x00000001
 	.4byte 0x00980000
@@ -890,6 +604,8 @@ KareiTorebi_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiPlacements2Flag93e
+gKareiTorebiPlacements2Flag93e:
 	.4byte 0xffff006a
 	.4byte 0x00000001
 	.4byte 0x00980000
@@ -932,6 +648,8 @@ KareiTorebi_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiPlacements2Flag950
+gKareiTorebiPlacements2Flag950:
 	.4byte 0xffff006a
 	.4byte 0x00000001
 	.4byte 0x00980000
@@ -974,9 +692,13 @@ KareiTorebi_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEventsOther
+gKareiTorebiEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEvents1
+gKareiTorebiEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1049,6 +771,8 @@ KareiTorebi_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEvents1Flag93e
+gKareiTorebiEvents1Flag93e:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1079,6 +803,8 @@ KareiTorebi_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEvents3
+gKareiTorebiEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1145,6 +871,8 @@ KareiTorebi_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEvents3Flag950
+gKareiTorebiEvents3Flag950:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1220,6 +948,8 @@ KareiTorebi_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEvents2
+gKareiTorebiEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1268,6 +998,8 @@ KareiTorebi_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEvents2Flag93e
+gKareiTorebiEvents2Flag93e:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1301,6 +1033,8 @@ KareiTorebi_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gKareiTorebiEvents2Flag950
+gKareiTorebiEvents2Flag950:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

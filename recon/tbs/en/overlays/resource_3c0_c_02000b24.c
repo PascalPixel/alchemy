@@ -24,7 +24,7 @@ void Engine_Import0808a250(s32 actor, s32 mode);
 
 extern u8 Data_000000a4[];
 extern u8 Data_000000a5[];
-extern u8 gGameState[];
+extern u8 Data_02000240[];
 union GameStateRows {
     u8 bytes[512][2];
     s16 halves[512][1];

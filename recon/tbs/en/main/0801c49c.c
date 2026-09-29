@@ -198,8 +198,8 @@ void Debug_SelectAbilityPair(void)
         } else {
             goto loop;
         }
-        gGameState.psynergy_shortcuts[0] = (list[first].owner << 10) | list[first].ability;
-        gGameState.psynergy_shortcuts[1] = (list[second].owner << 10) | list[second].ability;
+        Data_02000240.psynergy_shortcuts[0] = (list[first].owner << 10) | list[first].ability;
+        Data_02000240.psynergy_shortcuts[1] = (list[second].owner << 10) | list[second].ability;
         UiWork_Finalize(win, 1);
         UiWork_Finalize(title, 1);
         UiWork_Finalize(info, 1);

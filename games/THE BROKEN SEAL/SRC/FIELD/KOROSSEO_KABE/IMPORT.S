@@ -50,13 +50,13 @@ Runtime_ReleaseHeapBlock:
 	.thumb_func
 Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
-	.global Sys_Free
+	.global Runtime_BumpFree
 	.thumb_func
-Sys_Free:
+Runtime_BumpFree:
 	overlay_veneer Sys_FreeFar
-	.global Engine_ResourceDecodeType01
+	.global Resource_DecodeType01
 	.thumb_func
-Engine_ResourceDecodeType01:
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
 	.global Resource_ResetEntry
 	.thumb_func

@@ -73,10 +73,10 @@ VramBlock_LoadCached:
 	.thumb_func
 Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
-	.global Resource_FindFreeEntryFar
+	.global Resource_FindFreeEntry
 	.thumb_func
-Resource_FindFreeEntryFar:
-	overlay_veneer Func_080001d0
+Resource_FindFreeEntry:
+	overlay_veneer Resource_FindFreeEntryFar
 	.global AffineMatrix_BuildForEffect
 	.thumb_func
 AffineMatrix_BuildForEffect:

@@ -16,13 +16,13 @@ fn tile_bytes(bpp: GbaBpp) -> usize {
 }
 
 /// An indexed image's palette indices, row by row, one byte each.
-pub(crate) fn indices(image: &IndexedImage) -> Vec<u8> {
+pub fn indices(image: &IndexedImage) -> Vec<u8> {
     image.pixels.iter().map(|pixel| *pixel as u8).collect()
 }
 
 /// A rectangle of pixels.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct Rect {
+pub struct Rect {
     pub x: usize,
     pub y: usize,
     pub width: usize,
@@ -30,12 +30,7 @@ pub(crate) struct Rect {
 }
 
 /// The pixels of `rect`, row by row, from pixels `width` wide and `height` high.
-pub(crate) fn section(
-    pixels: &[u8],
-    width: usize,
-    height: usize,
-    rect: Rect,
-) -> Result<Vec<u8>, String> {
+pub fn section(pixels: &[u8], width: usize, height: usize, rect: Rect) -> Result<Vec<u8>, String> {
     if rect.width == 0
         || rect.height == 0
         || rect.x.checked_add(rect.width).is_none_or(|end| end > width)
@@ -58,7 +53,7 @@ pub(crate) fn section(
 /// Frames of `frame_width` by `frame_height` pixels, `columns` to a row,
 /// numbered left to right and top to bottom.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct Atlas {
+pub struct Atlas {
     pub frame_width: usize,
     pub frame_height: usize,
     pub columns: usize,
@@ -66,7 +61,7 @@ pub(crate) struct Atlas {
 
 impl Atlas {
     /// How many frame slots an image of `width` by `height` holds.
-    pub(crate) fn slots(&self, width: usize, height: usize) -> Result<usize, String> {
+    pub fn slots(&self, width: usize, height: usize) -> Result<usize, String> {
         if self.frame_width == 0
             || self.frame_height == 0
             || self.columns == 0
@@ -79,7 +74,7 @@ impl Atlas {
     }
     /// The pixels of each frame in `selected`, row by row, from pixels of
     /// `depth` bytes each.
-    pub(crate) fn frames(
+    pub fn frames(
         &self,
         pixels: &[u8],
         width: usize,
@@ -114,7 +109,7 @@ impl Atlas {
 /// tiles run left to right, top to bottom; with one, each of its first
 /// `frames` frames (whole tiles each) contributes its own tiles in that
 /// order before the next frame's.
-pub(crate) fn tiles(
+pub fn tiles(
     pixels: &[u8],
     width: usize,
     height: usize,
@@ -171,8 +166,41 @@ pub(crate) fn tiles(
     Ok(data)
 }
 
+/// Pack pixels into tiles metatile by metatile, as pret's gbagfx does with
+/// -mwidth and -mheight: the sheet is cut row by row into metatiles of
+/// `meta_width` by `meta_height` tiles, and each metatile's tiles run left
+/// to right, top to bottom, before the next metatile's. A one-by-one
+/// metatile is the plain row-major order.
+pub fn metatiles(
+    pixels: &[u8],
+    width: usize,
+    height: usize,
+    bpp: GbaBpp,
+    meta_width: usize,
+    meta_height: usize,
+) -> Result<Vec<u8>, String> {
+    if meta_width == 0 || meta_height == 0 {
+        return Err("metatile dimensions must be positive".into());
+    }
+    let (cell_width, cell_height) = (meta_width * 8, meta_height * 8);
+    if width % cell_width != 0 || height % cell_height != 0 || pixels.len() != width * height {
+        return Err("the image is not whole metatiles".into());
+    }
+    let mut data = Vec::with_capacity(pixels.len());
+    for my in (0..height).step_by(cell_height) {
+        for mx in (0..width).step_by(cell_width) {
+            let mut cell = Vec::with_capacity(cell_width * cell_height);
+            for row in 0..cell_height {
+                cell.extend_from_slice(&pixels[(my + row) * width + mx..][..cell_width]);
+            }
+            data.extend(tiles(&cell, cell_width, cell_height, bpp, None)?);
+        }
+    }
+    Ok(data)
+}
+
 /// `count` tiles from tile `first` of packed tiles.
-pub(crate) fn tile_range(
+pub fn tile_range(
     tiles: &[u8],
     bpp: GbaBpp,
     first: usize,
@@ -195,7 +223,7 @@ pub(crate) fn tile_range(
 
 /// `data` up to its stored `size`: a canvas drawn larger than the stored
 /// data must be blank past it.
-pub(crate) fn stored_extent(mut data: Vec<u8>, size: usize) -> Result<Vec<u8>, String> {
+pub fn stored_extent(mut data: Vec<u8>, size: usize) -> Result<Vec<u8>, String> {
     if size > data.len() || data[size..].iter().any(|byte| *byte != 0) {
         return Err("canvas carries data beyond its stored extent".into());
     }
@@ -206,7 +234,7 @@ pub(crate) fn stored_extent(mut data: Vec<u8>, size: usize) -> Result<Vec<u8>, S
 /// One sheet of a 4bpp object bank: an indexed image whose 8x8 cells its
 /// tilemap places. Each tilemap entry gives the cell's tile slot, its
 /// palette bank and its flips.
-pub(crate) struct ObjectSheet<'a> {
+pub struct ObjectSheet<'a> {
     pub pixels: &'a [u8],
     pub width: usize,
     pub height: usize,
@@ -235,7 +263,7 @@ fn flip_tile(pixels: &[u8], hflip: bool, vflip: bool) -> Vec<u8> {
 /// packed `fallback` tiles. Every cell's pixels must lie in its palette bank,
 /// and a slot placed twice must hold the same tile. With
 /// `require_blank_fallback` a placed slot must be blank in the fallback.
-pub(crate) fn object_bank(
+pub fn object_bank(
     fallback: Vec<u8>,
     sheets: &[ObjectSheet],
     require_blank_fallback: bool,
@@ -310,7 +338,7 @@ pub(crate) fn object_bank(
 
 /// The rows of a 1bpp glyph frame `width` pixels wide as integers, pixel x
 /// at bit `width - 1 - x`. Rows from `rows` down must be blank.
-pub(crate) fn glyph_rows(frame: &[u8], width: usize, rows: usize) -> Result<Vec<u32>, String> {
+pub fn glyph_rows(frame: &[u8], width: usize, rows: usize) -> Result<Vec<u32>, String> {
     if !(1..=32).contains(&width) || frame.len() % width != 0 || rows > frame.len() / width {
         return Err("glyph rows exceed their frame".into());
     }
@@ -331,7 +359,7 @@ pub(crate) fn glyph_rows(frame: &[u8], width: usize, rows: usize) -> Result<Vec<
 
 /// Colours as little-endian BGR555 words; every channel must be a multiple
 /// of eight.
-pub(crate) fn bgr555(colors: &[[u8; 3]]) -> Result<Vec<u8>, String> {
+pub fn bgr555(colors: &[[u8; 3]]) -> Result<Vec<u8>, String> {
     let mut output = Vec::with_capacity(colors.len() * 2);
     for [red, green, blue] in colors {
         if red & 7 != 0 || green & 7 != 0 || blue & 7 != 0 {
@@ -347,7 +375,7 @@ pub(crate) fn bgr555(colors: &[[u8; 3]]) -> Result<Vec<u8>, String> {
 /// word-aligned, null-terminated directory of their addresses. `label`
 /// names the bank's start; the directory's words are that label plus each
 /// frame's offset, which the linker resolves.
-pub(crate) fn zero_skip_bank(label: &str, frames: &[Vec<u8>]) -> Result<Data, String> {
+pub fn zero_skip_bank(label: &str, frames: &[Vec<u8>]) -> Result<Data, String> {
     if frames.is_empty() {
         return Err("sprite bank needs frames".into());
     }
@@ -366,6 +394,30 @@ pub(crate) fn zero_skip_bank(label: &str, frames: &[Vec<u8>]) -> Result<Data, St
     }
     data.bytes.extend([0; 4]);
     Ok(data)
+}
+
+#[cfg(test)]
+mod metatile_tests {
+    use super::*;
+
+    #[test]
+    fn metatiles_group_each_frame_tiles_before_the_next() {
+        // A 32x8 sheet, four tiles numbered by their pixel value, cut into
+        // 2x1 metatiles: tiles 0,1 then 2,3, the same as row-major here; a
+        // 16x16 sheet cut into 1x2 metatiles takes tile 0, tile 2, tile 1, tile 3.
+        let mut pixels = vec![0u8; 16 * 16];
+        for y in 0..16 {
+            for x in 0..16 {
+                pixels[y * 16 + x] = (y / 8 * 2 + x / 8) as u8;
+            }
+        }
+        let packed = metatiles(&pixels, 16, 16, GbaBpp::Bpp8, 1, 2).unwrap();
+        let order: Vec<u8> = packed.chunks(64).map(|tile| tile[0]).collect();
+        assert_eq!(order, [0, 2, 1, 3]);
+        let plain = metatiles(&pixels, 16, 16, GbaBpp::Bpp8, 1, 1).unwrap();
+        assert_eq!(plain, tiles(&pixels, 16, 16, GbaBpp::Bpp8, None).unwrap());
+        assert!(metatiles(&pixels, 16, 16, GbaBpp::Bpp8, 3, 1).is_err());
+    }
 }
 
 #[cfg(test)]

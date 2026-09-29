@@ -296,7 +296,7 @@ fn sequence_fields(source: &Value) -> Result<(), String> {
 /// `align` segments in order. The header's label is exported; the tone bank
 /// it names is linked from elsewhere, and every other symbol (tracks, jump,
 /// repeat and pattern targets) must be a label the sequence defines.
-pub(crate) fn build_sequence_source(source: &Value) -> Result<Data, String> {
+pub fn build_sequence_source(source: &Value) -> Result<Data, String> {
     sequence_fields(source)?;
     let layout = source["layout"]
         .as_array()
@@ -953,7 +953,7 @@ fn read_midi_stream(
 /// The engine sequence a sequence MIDI encodes, as mid2agb converts one: its
 /// conductor track carries the layout skeleton and bar lines, and track `n`
 /// holds the events of the skeleton's `n`th stream.
-pub(crate) fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
+pub fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
     let midi = read_sequence_midi(midi)?;
     let skeleton = midi
         .skeleton
@@ -989,7 +989,7 @@ pub(crate) fn build_midi_sequence(midi: &[u8]) -> Result<Data, String> {
 /// The assembler source `build rom` assembles for a sequence MIDI, as pret's
 /// mid2agb writes one song's: the sequence in `.rodata`, its header label
 /// exported and every address word a label the linker resolves.
-pub(crate) fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
+pub fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
     Ok(format!(
         "\t.section .rodata\n{}",
         build_midi_sequence(midi)?.source()?
@@ -1000,7 +1000,7 @@ pub(crate) fn sequence_assembly(midi: &[u8]) -> Result<String, String> {
 /// signature, in `ADOPTION_BARS` order, under which the converter reads every
 /// stream of the layout back exactly; without one, adoption refuses and names
 /// the first difference. Nothing here reads a ROM: both inputs are editable.
-pub(crate) fn adopt_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
+pub fn adopt_midi(source: &Value, midi: &[u8]) -> Result<Vec<u8>, String> {
     sequence_fields(source)?;
     let source_layout = source
         .get("layout")
@@ -1333,7 +1333,7 @@ fn midi_adoption_records_the_meter_and_refuses_unreproducible_streams() {
 /// The engine's PCM wave record of a WAV: control word (forward loop flag),
 /// pitch at middle C in 1/1024 Hz, loop start, last sample index, then the
 /// signed samples, zero padded to a word.
-pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
+pub fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
     let wave = psynergy::assets::wav::read_pcm8(wav).map_err(|e| e.to_string())?;
     let last_sample = u32::try_from(
         wave.samples
@@ -1373,7 +1373,7 @@ pub(crate) fn build_pcm_record(wav: &[u8]) -> Result<Vec<u8>, String> {
 /// The bytes a sound data source reads for one editable input, as pret's
 /// wav2agb builds `.bin` files from `.wav`: a WAV's PCM wave record, or the
 /// sixteen bytes of a `.PCM4` CGB wave RAM pattern (32 four-bit samples).
-pub(crate) fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
+pub fn build_sound_file(name: &str, input: &[u8]) -> Result<Vec<u8>, String> {
     let extension = name.rsplit_once('.').map_or("", |(_, suffix)| suffix);
     if extension.eq_ignore_ascii_case("wav") {
         build_pcm_record(input)

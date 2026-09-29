@@ -46,14 +46,14 @@ impl Ring {
 /// 4,092-byte window and the format's largest distance, 4,095. These are
 /// encoder options, kept beside the inputs that use them.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct LzMachine {
+pub struct LzMachine {
     general: Ring,
     palette: Ring,
 }
 impl LzMachine {
     /// A machine from its settings: the general ring, and how far the palette
     /// ring reads ahead.
-    pub(crate) const fn new(
+    pub const fn new(
         window: usize,
         read_ahead: usize,
         max_distance: usize,
@@ -195,7 +195,7 @@ fn lzss(decoded: &[u8], ring: Ring, palette: bool) -> Vec<Token> {
 }
 
 /// General LZ, tagged 0.
-pub(crate) fn compress_general(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, String> {
+pub fn compress_general(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, String> {
     let tokens = lzss(decoded, machine.general, false)
         .into_iter()
         .map(|token| match token {
@@ -211,7 +211,7 @@ pub(crate) fn compress_general(decoded: &[u8], machine: &LzMachine) -> Result<Ve
 
 /// Palette LZ without its tag: groups of eight operations and a terminator, a
 /// group of eight literals written as a zero-flag block.
-pub(crate) fn compress_palette(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, String> {
+pub fn compress_palette(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, String> {
     let mut operations = lzss(decoded, machine.palette, true)
         .into_iter()
         .map(|token| match token {
@@ -237,10 +237,7 @@ pub(crate) fn compress_palette(decoded: &[u8], machine: &LzMachine) -> Result<Ve
 }
 
 /// Palette LZ, tagged 1.
-pub(crate) fn compress_tagged_palette(
-    decoded: &[u8],
-    machine: &LzMachine,
-) -> Result<Vec<u8>, String> {
+pub fn compress_tagged_palette(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, String> {
     let mut stream = vec![1];
     stream.extend(compress_palette(decoded, machine)?);
     Ok(stream)
@@ -249,7 +246,7 @@ pub(crate) fn compress_tagged_palette(
 /// A tagged resource stream, as the packer wrote every code overlay: the
 /// smaller of the general and tagged palette encodings, the palette one on
 /// ties.
-pub(crate) fn compress_tagged(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, String> {
+pub fn compress_tagged(decoded: &[u8], machine: &LzMachine) -> Result<Vec<u8>, String> {
     let general = compress_general(decoded, machine)?;
     let palette = compress_tagged_palette(decoded, machine)?;
     Ok(if palette.len() <= general.len() {
@@ -296,23 +293,20 @@ fn mtf4_tokens(decoded: &[u8]) -> Vec<Mtf4LzToken> {
 }
 
 /// A tag-2 tile stream.
-pub(crate) fn compress_mtf4(decoded: &[u8]) -> Result<Vec<u8>, String> {
+pub fn compress_mtf4(decoded: &[u8]) -> Result<Vec<u8>, String> {
     encode_mtf4_lz(decoded, &mtf4_tokens(decoded)).map_err(|error| error.to_string())
 }
 
 /// One arena stream, whose copies read from `arena`, the bytes before it in
 /// its container.
-pub(crate) fn compress_arena(decoded: &[u8], arena: &[u8]) -> Result<Vec<u8>, String> {
+pub fn compress_arena(decoded: &[u8], arena: &[u8]) -> Result<Vec<u8>, String> {
     psynergy::assets::lz::compress_arena(decoded, arena).map_err(|error| error.to_string())
 }
 
 /// A container of arena streams, one per frame: each stream reads the
 /// streams before it as its arena and is padded with zeros to `alignment`.
 /// An empty frame is a bare split halfword.
-pub(crate) fn compress_arena_sequence(
-    frames: &[Vec<u8>],
-    alignment: usize,
-) -> Result<Vec<u8>, String> {
+pub fn compress_arena_sequence(frames: &[Vec<u8>], alignment: usize) -> Result<Vec<u8>, String> {
     if alignment == 0 {
         return Err("stream alignment must be positive".into());
     }

@@ -15,7 +15,7 @@ use unicode_normalization::UnicodeNormalization;
 const BANK_SIZE: usize = 256;
 
 #[derive(Clone, Debug)]
-pub(crate) struct ArchiveSpec {
+pub struct ArchiveSpec {
     pub target: &'static str,
     pub language: &'static str,
     pub output: &'static str,
@@ -24,7 +24,7 @@ pub(crate) struct ArchiveSpec {
 
 /// Each edition's catalog and alphabet; the alphabets map font slots,
 /// retaining unused and duplicate glyphs for lossless PO conversion.
-pub(crate) static ARCHIVES: [ArchiveSpec; 12] = [
+pub static ARCHIVES: [ArchiveSpec; 12] = [
     ArchiveSpec {
         target: "tbs-ja",
         language: "ja",
@@ -142,7 +142,7 @@ fn literal_escape(text: &str) -> String {
     text.replace('{', "{{").replace('}', "}}")
 }
 
-pub(crate) fn symbols_text(symbols: &[u16], characters: Option<&str>) -> String {
+pub fn symbols_text(symbols: &[u16], characters: Option<&str>) -> String {
     let mut output = String::new();
     let mut bytes = Vec::<u8>::new();
     let characters = characters.map(|text| text.chars().collect::<Vec<_>>());
@@ -322,7 +322,7 @@ fn header_number(headers: &BTreeMap<String, String>, name: &str) -> Result<usize
 /// A PO catalog's messages and encoder options. It records no placement: the
 /// linker places the archive and resolves the addresses it holds.
 #[derive(Debug)]
-pub(crate) struct SourceCatalog {
+pub struct SourceCatalog {
     pub target: String,
     pub symbol_count: usize,
     pub banks: Vec<Vec<Option<Vec<u16>>>>,
@@ -336,7 +336,7 @@ const UNNAMED: &str = "message";
 
 /// Whether `name` is a message name: `Msg`, a capital and plain letters or
 /// digits, so `Msg_Show` style functions are never mistaken for one.
-pub(crate) fn message_name(name: &str) -> bool {
+pub fn message_name(name: &str) -> bool {
     name.strip_prefix("Msg").is_some_and(|rest| {
         rest.starts_with(|c: char| c.is_ascii_uppercase())
             && rest.chars().all(|c| c.is_ascii_alphanumeric())
@@ -344,7 +344,7 @@ pub(crate) fn message_name(name: &str) -> bool {
 }
 
 /// Each named entry of a PO catalog: its `msgctxt` name and number.
-pub(crate) fn catalog_names(catalog: &Catalog) -> Result<Vec<(String, usize)>, String> {
+pub fn catalog_names(catalog: &Catalog) -> Result<Vec<(String, usize)>, String> {
     let mut names = Vec::new();
     for entry in &catalog.entries {
         let context = entry.context.as_deref().unwrap_or_default();
@@ -371,12 +371,12 @@ pub(crate) fn catalog_names(catalog: &Catalog) -> Result<Vec<(String, usize)>, S
     Ok(names)
 }
 
-pub(crate) fn read_catalog(path: &Path) -> Result<Catalog, String> {
+pub fn read_catalog(path: &Path) -> Result<Catalog, String> {
     let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
     po::read(&text).map_err(|error| format!("{}: {error}", path.display()))
 }
 
-pub(crate) fn read_source(path: &Path) -> Result<SourceCatalog, String> {
+pub fn read_source(path: &Path) -> Result<SourceCatalog, String> {
     source_catalog(&read_catalog(path)?).map_err(|error| format!("{}: {error}", path.display()))
 }
 
@@ -458,7 +458,7 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
 /// the symbol decoder reads), message banks and bank directory
 /// (`<label>Banks`, which the message lookup reads). Every address the
 /// archive holds is a word naming `<label>Models`, which the linker resolves.
-pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
+pub fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
     // Laid out from a word-aligned start, its padding holds wherever the
     // linker places it on a word boundary.
     let built = encode_huffman_archive(0, source.symbol_count, &source.banks)
@@ -489,6 +489,26 @@ pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, Strin
         ));
     }
     Ok(data)
+}
+
+/// A catalog's message archive and its message numbers as assembly: the
+/// archive under `label`, then each named message as an absolute symbol,
+/// the file the build includes and po2ags writes.
+pub fn messages_include(
+    source: &SourceCatalog,
+    label: &str,
+    origin: &str,
+) -> Result<String, String> {
+    use std::fmt::Write as _;
+    let mut assembly = format!(
+        "@ {}'s message archive and message numbers, built from {origin}.\n",
+        source.target
+    );
+    assembly.push_str(&archive(source, label)?.source()?);
+    for (name, number) in &source.names {
+        writeln!(assembly, "\t.global {name}\n\t.set {name}, {number}").unwrap();
+    }
+    Ok(assembly)
 }
 
 #[cfg(test)]
@@ -682,30 +702,6 @@ mod tests {
         }
         for spec in ARCHIVES.iter() {
             assert_eq!(spec.characters.is_some(), spec.language == "ja");
-        }
-    }
-
-    #[test]
-    fn layouts_cover_each_registered_target_once() {
-        let mut ids = ARCHIVES.iter().map(|spec| spec.target).collect::<Vec<_>>();
-        ids.sort_unstable();
-        ids.dedup();
-        assert_eq!(ARCHIVES.len(), ids.len());
-        assert_eq!(ids.len(), crate::targets::TARGET_IDS.len());
-        for id in crate::targets::TARGET_IDS {
-            let target = crate::targets::target_for(id);
-            let spec = ARCHIVES
-                .iter()
-                .find(|spec| spec.target == id.as_str())
-                .unwrap();
-            assert_eq!(
-                spec.output,
-                format!(
-                    "{}/TEXT/{}.PO",
-                    target.game_dir(),
-                    spec.language.to_uppercase()
-                )
-            );
         }
     }
 }

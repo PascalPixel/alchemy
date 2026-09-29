@@ -8,6 +8,7 @@ fdeflate = "0.3"
 png = "0.17"
 zopfli = { version = "0.8", default-features = false, features = ["std", "zlib"] }
 psynergy = { path = "../psynergy" }
+ags = { path = "../ags" }
 regex = "1"
 fs2 = "0.4"
 libc = "0.2"

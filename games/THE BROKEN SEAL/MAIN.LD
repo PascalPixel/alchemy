@@ -525,7 +525,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/WINDOW/SET_TILE_ATTRIBUTE_BIT_RECT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TEXT/FORMAT_PLAY_TIME.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/SUMMARY.o"(.text)
-        "*/recon/tbs/raw/0801f818.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/BUILD_SUMMARY_HEADER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/WRITE_PAIR.o"(.text)
         "*/recon/tbs/raw/0801faa8.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE_CONFIRM_AND_PROCESS_SELECTED_SLOT.o"(.text)

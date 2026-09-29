@@ -1,28 +1,17 @@
-/* Draft of resource_3b5 0x02008980 (FieldScene_RunPrimarySequence): it
- * matches the ROM byte for byte now that the message it loads from the
- * literal pool has a catalogue name (MsgTorebiSeenAnyoneWho). The listing
- * keeps these rows until the draft is adopted. */
 #include "MACHI.H"
 extern u8 MsgTorebiSeenAnyoneWho[];
 
-/*
- * Set up objects 29, 30 and 32, branch on a query result to run one of two
- * near-identical sequences for objects 29, 30 and 20 with different
- * positions, sizes and speeds, then finish with shared placement calls.
- */
 void FieldScene_RunPrimarySequence(void)
 {
-
-    u32 i;
     s32 object32_id;
-    s32 list_00001fb6;
+    s32 base;
 
     Engine_EventBegin();
     Call4(Engine_CameraMoveTo, -1, -1, -1, 0);
     Call3(Engine_ActorSetSpeed, 29, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 30, 0x10000, 0x8000);
-    list_00001fb6 = (s32)MsgTorebiSeenAnyoneWho;
-    Engine_EventSetMessage(list_00001fb6);
+    base = (s32)MsgTorebiSeenAnyoneWho;
+    Engine_EventSetMessage(base);
     Call3(Engine_ActorSetPosition, 29, 0x480000, 0xd00000);
     Call3(Engine_ActorSetPosition, 30, 0x380000, 0xd00000);
     Engine_ActorSetChildValue(32, 15);
@@ -48,7 +37,7 @@ void FieldScene_RunPrimarySequence(void)
     Event_OpenMessage(29, 0); /* main:0808a178 */
     Engine_EventWait(25);
     Value4(UiWindow_CreateWithSideObject, 52, 0, 12, 7); /* main:080150f8 */
-    UiText_OpenMessageWindow((list_00001fb6 + 3), 11, 12, 2);
+    UiText_OpenMessageWindow((base + 3), 11, 12, 2);
     SCENE_OBJECT_ID = 32;
     if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) { /* object_id 0, force 0 */
         Engine_EventWait(20);

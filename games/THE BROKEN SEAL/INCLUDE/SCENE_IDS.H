@@ -8,6 +8,7 @@
  * loads the number from the literal pool as the game does. A switch cannot
  * use one as a case label.
  */
+extern char SceneId_Title;
 extern char SceneId_WorldMap;
 extern char SceneId_SoruIriguchi1;
 extern char SceneId_SoruIriguchi2;

@@ -1,30 +1,8 @@
-/* Draft, not exact (2026-09-24): 380 of 380 bytes, 8 differing halfwords
-   (was 189 at 372). Once a palette blend is running, add the step table
-   into the working colours (or, on the last step, copy the targets in and
-   stop), pack the working colours into the back palette buffer, flip
-   buffers and queue both halves for the next frame. The green and blue
-   masks are u16 values of link symbols (halfword pool constants, which
-   place the pool before the pack loop), and the queue writes use the IO
-   write queue idiom of SYSTEM/IO_WRITE_QUEUE.C with function-level queue
-   and IME pointers. Residual: in the pack loop preheader the reference sets
-   the count before the source pointer, and it computes the first queued
-   address ahead of the IME pointer load and keeps the saved IME word in r1
-   (here r7). */
-/* 2026-09-29 (alchemy permute scorer): 120, two reordered instructions
-   (was 250 with three unresolved names). The masks need no link symbols:
-   written as plain 0x3e0 and 0x1f inside the packing expression, GCC
-   narrows those ANDs to halfwords and loads both constants from the pool
-   before the loop, exactly as the reference does. The IO write queue is now
-   SYSTEM/IO_WRITE_QUEUE.C's own idiom (the IME pointer set inside the
-   do-while, as there; it carries that file's FAKEMATCH reasons), the copy
-   goes through a local Iwram_CopyWords pointer, and the work pointer is the
-   linked Data_03001ed0. Remaining: in the pack loop preheader the reference
-   sets the count (movs r0, #224 / lsls r0, #1) before the source pointer's
-   lsls/adds; here the scheduler places the count after. Up-count, down-count
-   (do-while, for, while), pointer walks, struct and flat indexing, statement
-   and declaration orders were tried: the down-count spellings fix the count
-   but then put the source pointer ahead of the hoisted 0x7c00 (180 to 210).
-   Two searches (70,000 candidates) found nothing below 120. */
+/* Battle palette blend, run each frame by the scheduler once
+   BattleEffect_InitializeBuffers has set it up: add the step table into the
+   working colours (on the last step, copy the targets in and stop), pack them
+   into the back palette buffer, flip buffers and queue both halves.
+   The packing loop follows GRAPHICS/PALETTE/TITLE_UPDATE_FADE.C. */
 #include "TYPES.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
@@ -59,7 +37,7 @@ typedef s32 (*CopyWordsFn)(void *destination, const void *source, s32 size);
         *ime = saved;                                                       \
     }
 
-void Func_080908e0(void)
+void BattlePalette_UpdateBlend(void)
 {
     u8 *p = Data_03001ed0;
     u16 *add = (u16 *)(p + 0x1880);
@@ -87,11 +65,15 @@ void Func_080908e0(void)
     }
 
     {
-        s16 (*in)[3] = (s16 (*)[3])(p + 0x380);
-        u16 *out = (u16 *)(p + (1 ^ p[0x2a00]) * 0x380 + 0x2300);
+        u16 *packed = (u16 *)(p + (1 ^ p[0x2a00]) * 0x380 + 0x2300);
+        s32 blue = 0x7c00;
+        u16 *current;
 
-        for (i = 0; i < 0x1c0; i++) {
-            *out++ = (in[i][0] & 0x7c00) | ((in[i][1] >> 5) & 0x3e0) | ((in[i][2] >> 10) & 0x1f);
+        i = 0x1c0;
+        current = (u16 *)(p + 0x380);
+        for (; i != 0; i--) {
+            *packed++ = (current[0] & blue) | (((s16)current[1] >> 5) & 0x3e0) | (((s16)current[2] >> 10) & 0x1f);
+            current += 3;
         }
     }
 

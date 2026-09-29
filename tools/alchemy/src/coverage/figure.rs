@@ -82,7 +82,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         canvas.mark(key_x, 6, key, ink, SHADOW);
         key_x -= 12;
     }
-    let stricter = "Credit corrections";
+    let stricter = "Overhauls";
     key_x -= letters.width(stricter) as i32;
     canvas.text(letters, key_x, 6, stricter, INK, Some(SHADOW));
     canvas.fill(key_x - 14, 9, 10, 10, BAND);
@@ -669,7 +669,10 @@ mod tests {
             rgb(FACE),
             crate::coverage::palette::LIGHT_OPACITY,
         );
-        let step = crate::coverage::palette::CORNER - 1;
+        let corner = crate::coverage::palette::CORNER;
+        let step = (0..)
+            .find(|&a| !crate::coverage::palette::cut(a, 0, corner))
+            .unwrap();
         assert_eq!(canvas.get(0, 0), None);
         assert_eq!(canvas.get(step - 1, 0), None);
         assert_eq!(canvas.get(step, 0), Some(light));

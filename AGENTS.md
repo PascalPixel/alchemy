@@ -21,7 +21,8 @@ corrections separately. Timebox work that cannot move this number.
 1. Count a function only when its complete extent, including its literal pool,
    compiles exactly and the ROM remains byte-identical.
 2. Tagged `/* FAKEMATCH: reason */` C counts. Never patch compiler output or use
-   inline assembly in game C except the reviewed `Dma_Set` and `Iwram_*` macros.
+   inline assembly in game C except the reviewed `Dma_Set` and `Iwram_*` macros
+   and `/* CAMELOT_ASM: proof */` statements Camelot very likely wrote in C.
 3. Uncredited disassembly is `not-yet-c`. Only proven library, handwritten and
    veneer modules count as assembly; difficulty never changes that classification.
 4. Commit each adoption and attempt; keep near misses as drafts with the
@@ -177,3 +178,5 @@ a verified build.
   palette into the ROM from the PNG, as pret's grey images with their own palettes do.
 - 2026-09-29: gates: asset recipes may carry the sprite shape, one of the 12
   hardware sizes, in their file name, as pret's gbagfx takes -mwidth/-mheight.
+- 2026-09-29: inline assembly is allowed with proof that Camelot very likely
+  had it in their own C files, tagged `/* CAMELOT_ASM: proof */`.

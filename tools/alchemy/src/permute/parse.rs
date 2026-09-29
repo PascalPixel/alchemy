@@ -319,12 +319,17 @@ impl<'a> Parser<'a> {
     }
 
     /// Declarator tokens up to `,`, `;`, `=`, `:` or a function body; the
-    /// name is the first identifier that is not a qualifier.
+    /// name is the first identifier that is not a qualifier and not inside a
+    /// parameter list, so `(*)(s32)` in a cast stays abstract.
     fn declarator(&mut self, abstract_allowed: bool) -> Result<Declarator> {
         let mut before = Vec::new();
         let mut after = Vec::new();
         let mut name = None;
         let mut depth = 0usize;
+        // For each open bracket, whether it opens a parameter list: a `(`
+        // after a name or a closing bracket.
+        let mut parameters: Vec<bool> = Vec::new();
+        let mut previous: Option<Tok> = None;
         loop {
             let tok = match self.peek() {
                 Some(tok) => tok.clone(),
@@ -333,8 +338,20 @@ impl<'a> Parser<'a> {
             match &tok {
                 Tok::Punct(p) if depth == 0 && matches!(*p, "," | ";" | "=" | ":" | "{") => break,
                 Tok::Punct(")") if depth == 0 => break,
-                Tok::Punct(p) if matches!(*p, "(" | "[") => depth += 1,
-                Tok::Punct(p) if matches!(*p, ")" | "]") => depth -= 1,
+                Tok::Punct(p) if matches!(*p, "(" | "[") => {
+                    depth += 1;
+                    parameters.push(
+                        *p == "("
+                            && matches!(
+                                &previous,
+                                Some(Tok::Ident(_)) | Some(Tok::Punct(")")) | Some(Tok::Punct("]"))
+                            ),
+                    );
+                }
+                Tok::Punct(p) if matches!(*p, ")" | "]") => {
+                    depth -= 1;
+                    parameters.pop();
+                }
                 _ => {}
             }
             self.next()?;
@@ -344,8 +361,12 @@ impl<'a> Parser<'a> {
                 self.skip_attribute()?;
                 continue;
             }
+            previous = Some(tok.clone());
+            let in_parameters = parameters.iter().any(|&list| list);
             match (&tok, &name) {
-                (Tok::Ident(word), None) if !QUALIFIERS.contains(&word.as_str()) => {
+                (Tok::Ident(word), None)
+                    if !QUALIFIERS.contains(&word.as_str()) && !in_parameters =>
+                {
                     name = Some(word.clone())
                 }
                 (_, None) => before.push(text),
@@ -1064,6 +1085,31 @@ mod tests {
         for name in ["gHead", "Get", "Helper", "gCount", "gOther"] {
             assert!(unit.globals.contains_key(name), "{name}");
         }
+    }
+
+    #[test]
+    fn function_pointer_casts_stay_abstract() {
+        let body = parse_body(
+            "d = ((s32 (*)(s32))0x030001d8)(v);\nf((void (**)(void))0x030000f4);\n{ s32 (*fn)(s32 a) = 0; }",
+            &["s32"],
+        )
+        .unwrap();
+        let function = Function {
+            name: "F".into(),
+            header: "void F(void)".into(),
+            params: Vec::new(),
+            body,
+        };
+        let printed = function.print();
+        assert!(
+            printed.contains("((s32 (*)(s32))0x030001d8)(v);"),
+            "{printed}"
+        );
+        assert!(
+            printed.contains("f((void (**)(void))0x030000f4);"),
+            "{printed}"
+        );
+        assert!(printed.contains("s32 (*fn)(s32 a) = 0;"), "{printed}");
     }
 
     #[test]

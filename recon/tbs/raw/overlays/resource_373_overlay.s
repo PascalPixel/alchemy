@@ -1747,6 +1747,8 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffe0
 	.4byte 0x00000008
 	.4byte 0x00000020
+	.global gHaidiaMuraActor22Actions
+gHaidiaMuraActor22Actions:
 	.4byte 0x00000015
 	.4byte 0x0000000f
 	.4byte 0x00008000
@@ -2990,6 +2992,8 @@ gHaidiaMuraEvents3:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gHaidiaMuraCellAnimC
+gHaidiaMuraCellAnimC:
 	.4byte 0x00620000
 	.4byte 0x00020002
 	.4byte 0x00020002
@@ -3011,12 +3015,17 @@ gHaidiaMuraCellAnimB:
 	.4byte 0x00040002
 	.4byte 0x00020062
 	.4byte 0x00020002
-	.4byte 0x0004ffff
+	.2byte 0xffff
+	.global gHaidiaMuraCellAnimD
+gHaidiaMuraCellAnimD:
+	.2byte 0x0004
 	.4byte 0x00020060
 	.4byte 0x00020002
 	.4byte 0x00600004
 	.4byte 0x00020002
 	.4byte 0xffff0002
+	.global gHaidiaMuraLeaderWalkActions
+gHaidiaMuraLeaderWalkActions:
 	.4byte 0x0000001c
 	.4byte 0x00000005
 	.4byte 0x00000003
@@ -3037,6 +3046,8 @@ gHaidiaMuraCellAnimB:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gHaidiaMuraActor22WalkActions
+gHaidiaMuraActor22WalkActions:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003

@@ -21,7 +21,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/SET_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SOLO_ROUND.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RUN_PARTY.o"(.text)
-        "*/resource_3ba_overlay.o"(.text.x02009d64)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/FINALS_PROMPT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RUN_MIDDLE.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x0200a124)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/MODE_TASK.o"(.text)

@@ -155,6 +155,9 @@ UiWork_PushValueSlot:
 	.thumb_func
 ItemIcon_LoadTilesFar:
 	overlay_veneer Ui_PrepareTransferForItemFar
+	.global PartyTalkMenu_Choose
+	.thumb_func
+PartyTalkMenu_Choose:
 	overlay_veneer PartyTalkMenu_ChooseFar
 	.global Resource_LoadFixedBlockBIntoFreeSlot
 	.thumb_func
@@ -369,6 +372,9 @@ Engine_EventWaitForScreen:
 	.thumb_func
 ObjectTable_GetFar:
 	overlay_veneer Func_0808a400
+	.global Battle_ResetEffectCounter
+	.thumb_func
+Battle_ResetEffectCounter:
 	overlay_veneer Battle_ResetEffectCounterFar
 	.global Audio_PlayCueFromEventWork
 	.thumb_func

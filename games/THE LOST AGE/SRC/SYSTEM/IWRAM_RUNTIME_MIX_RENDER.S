@@ -137,4 +137,4 @@ AlchemyUncreditedEnd_0800141c:
 AlchemyUncredited_0800149c:
 	.4byte	0
 AlchemyUncreditedEnd_0800149c:
-	.4byte	0x03006fc0
+	.4byte	IwramSoundMixWorkspace

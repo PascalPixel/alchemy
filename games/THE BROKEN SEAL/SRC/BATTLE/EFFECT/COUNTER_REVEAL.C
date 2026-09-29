@@ -5,6 +5,7 @@
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
 
 extern u8 gBattleFxWork[];
@@ -90,7 +91,7 @@ void BattleFx_RunCounterReveal(void *object)
     status = Iwram_CopyWords((void *)0x05000000, palette, 128);
     palette = (u8 *)palette + 128;
     status = Resource_DecodeType01(palette, work);
-    sprite_vram = (void *)0x02010000;
+    sprite_vram = Ram_MapCellBuffer;
     palette = Resource_GetTableEntry((s32)&ResourceId_RedCrescentSheetA);
     palette = (u8 *)palette + 128;
     status = Resource_DecodeType01(palette, sprite_vram);

@@ -54,16 +54,9 @@ typedef struct {
 
 extern u8 ArutamiraDou_SceneTableA[];
 extern u8 ArutamiraDou_SceneTableB[];
-extern u8 Data_0200c688[];
-extern u8 Data_0200c724[];
-extern u8 Data_0200c76c[];
-extern u8 Data_0200c808[];
-extern u8 Data_0200c850[];
-extern u8 Data_0200c5e0[];
-extern u8 Data_02001004;
-extern u16 *Data_0200bf6c;
-extern s8 Data_02001002;
-extern u8 Data_02008ee1;
+/* The actor wheel's work, past the overlay's image; the scene start clears
+   it. */
+extern u16 *ArutamiraDou_ClearTarget;
 
 void BattleFx_SetPhaseRequest(s32, s32);
 void Battle_ResetEffectCounter();
@@ -72,6 +65,7 @@ void Audio_PlayCueFromEventWork();
 void ArutamiraDou_SettleActorOnCell(void);
 void DisplayTransition_InitializeBattleEffectState(s32);
 void ArutamiraDou_ApplyFadeBlend(void);
+void ArutamiraDou_SetFadeLevel(s32 level);
 s32 Object_CheckMovementCollision(Ent *, Vec *);
 void Vector_AddPolarOffset(s32 first, s32 second, s32 *position);
 s32 BattleFx_HasReachedTarget(void *object);

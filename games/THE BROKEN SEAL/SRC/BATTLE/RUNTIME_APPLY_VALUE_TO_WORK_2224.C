@@ -2,6 +2,7 @@
  * Apply a value to the battle work record at 0x02002224.
  */
 #include "TYPES.H"
+#include "SERIAL_RUNTIME.H"
 extern u8 IwramClearWords[];
 
 /*
@@ -21,7 +22,7 @@ char Battle_ApplyValueToWork2224(s16 arg2)
 {
   s16 val;
   s16 val2;
-  _call_via_r3(0x02002224, 0x10, val, (u32)IwramClearWords);
+  _call_via_r3((s32)gSerialTransfer.reserved, 0x10, val, (u32)IwramClearWords);
   val2 = arg2;
   val = val2;
 }

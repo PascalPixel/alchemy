@@ -22619,7 +22619,7 @@ msgctxt "MsgMakyuriWhoHonorsHeart"
 msgid "05652"
 msgstr "Der das Herz der Göttin{line_break}ehrt, soll inmitten von{line_break}allem stehen,{page_break}wie ein Schwan auf einem{line_break}Teich, von Wellen{line_break}gesäumt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgMakyuriHonorsGoddessRainbows"
 msgid "05653"
 msgstr "Der die Göttin der{line_break}Regenbögen ehrt, soll{line_break}auf Schwingen silberner{page_break}Grazie in den Himmel{line_break}geführt werden.{end_wait}"
 
@@ -29551,7 +29551,7 @@ msgctxt "message"
 msgid "07385"
 msgstr "Ich muss lernen, mein{line_break}Temperament zu zügeln.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoToTolbi"
 msgid "07386"
 msgstr "Möchtest du{pause_20_skippable} nach{line_break}Tolbi gehen?{end_now}"
 
@@ -29571,11 +29571,11 @@ msgctxt "message"
 msgid "07390"
 msgstr "Auf der Seidenstraße kommt{line_break}man nicht weiter als bis{line_break}hierher.{page_break}Bis jetzt mussten alle,{line_break}die es versucht haben,{line_break}wieder umkehren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiGoingTakeShip"
 msgid "07391"
 msgstr "Werdet ihr das Schiff{line_break}nehmen?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgKareiPassMessageDaughter"
 msgid "07392"
 msgstr "Würdet ihr meiner Tochter{line_break}eine Nachricht überbringen,{line_break}wenn ihr in Tolbi seid?{page_break}Sagt ihr, dass die Tickets{line_break}zu teuer sind und ich nicht{line_break}zu ihr kommen kann.{end_wait}"
 
@@ -29599,7 +29599,7 @@ msgctxt "message"
 msgid "07397"
 msgstr "Wir planen diese Reise{line_break}schon seit einem Jahr{line_break}und jetzt DAS!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLookingForTickets"
 msgid "07398"
 msgstr "Seid ihr auf der Suche{line_break}nach Schiffs-Tickets?{end_now}"
 
@@ -29627,7 +29627,7 @@ msgctxt "message"
 msgid "07404"
 msgstr "Gut, hier ist dann euer{line_break}Ticket.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHandInTicketPlank"
 msgid "07405"
 msgstr "Zeigt das Ticket an der{line_break}Gangway vor.{end_wait}"
 
@@ -29671,7 +29671,7 @@ msgctxt "message"
 msgid "07415"
 msgstr "Der Kapitän ist guter{line_break}Dinge. Deshalb hat er{line_break}das Schiff geöffnet.{page_break}Alles läuft großartig!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTicketsPlease"
 msgid "07416"
 msgstr "Tickets, bitte! Bitte{line_break}halten Sie Ihre Tickets{line_break}bereit!{end_wait}"
 
@@ -29683,7 +29683,7 @@ msgctxt "message"
 msgid "07418"
 msgstr "Vielen Dank. Bitte kommt{line_break}an Bord, damit wir Segel{line_break}setzen können.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiAfterHandingOverTicket"
 msgid "07419"
 msgstr "Ihr dürft an Bord gehen,{line_break}sobald ich das Ticket{line_break}gesehen habe.{end_wait}"
 
@@ -29691,7 +29691,7 @@ msgctxt "message"
 msgid "07420"
 msgstr "Wir werden in Kürze Segel{line_break}setzen. Bitte wartet an{line_break}Bord.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHaveTicketsGiveHim"
 msgid "07421"
 msgstr "Wenn ihr Tickets habt,{line_break}zeigt sie bitte vor und{line_break}geht an Bord.{end_wait}"
 
@@ -29707,11 +29707,11 @@ msgctxt "message"
 msgid "07424"
 msgstr "Das Ersatzschiff ist noch{line_break}nicht angekommen, daher{line_break}können wir noch immer{page_break}nicht Segel setzen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiBoardWaitSetSail"
 msgid "07425"
 msgstr "Bitte geht an Bord und{line_break}wartet, bis wir ablegen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoAshore"
 msgid "07426"
 msgstr "Wollt ihr an Land gehen?{end_now}"
 
@@ -29723,7 +29723,7 @@ msgctxt "message"
 msgid "07428"
 msgstr "Wir werden bald Segel{line_break}setzen, also geht bitte{line_break}an Bord.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiFinishedOutHereBoardShip"
 msgid "07429"
 msgstr "Wenn ihr fertig seid,{line_break}geht bitte wieder an{line_break}Bord.{end_wait}"
 
@@ -31667,7 +31667,7 @@ msgctxt "message"
 msgid "07914"
 msgstr "Seht ihr? Unser Schiff hat{line_break}den Angriff überstanden{line_break}und ist sicher angekommen.{page_break}Das beweist, wie zuverlässig{line_break}dieser Glücksbringer ist!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHearScaryTrip"
 msgid "07915"
 msgstr "Ich hörte, ihr hattet{line_break}eine schlimme Überfahrt.{page_break}Ihr wurdet sogar von{line_break}Monstern angegriffen!{end_now}"
 
@@ -31715,7 +31715,7 @@ msgctxt "message"
 msgid "07926"
 msgstr "Sollen wir etwa auf dem{line_break}Boden schlafen, bis sie{line_break}wieder in See stechen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTouristsLookUpset"
 msgid "07927"
 msgstr "Die Touristen scheinen{line_break}aufgeregt zu sein. Sind{line_break}sie seekrank geworden?{end_now}"
 
@@ -31727,7 +31727,7 @@ msgctxt "message"
 msgid "07929"
 msgstr "Das Schiff wurde von{line_break}Monstern angegriffen? Es{line_break}wäre beinahe gesunken?{page_break}Wow!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiSilkRoadBlocked"
 msgid "07930"
 msgstr "Die Seidenstraße war{line_break}blockiert. Daher dachte{line_break}ich, meine Eltern würden{page_break}per Schiff kommen. Aber{line_break}ich kann sie nirgendwo{line_break}sehen.{end_wait}"
 
@@ -31743,7 +31743,7 @@ msgctxt "message"
 msgid "07933"
 msgstr "Oh, ich hoffe nur, dass{line_break}ihnen nichts zugestoßen{line_break}ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiThanksMessageParents"
 msgid "07934"
 msgstr "Danke, dass ihr mir die{line_break}Nachricht von meinen{line_break}Eltern überbracht habt.{end_wait}"
 
@@ -32179,7 +32179,7 @@ msgctxt "message"
 msgid "08042"
 msgstr "Ich frage mich, ob alle{line_break}von den Monster gefressen{line_break}worden sind.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiIncredibleOcean"
 msgid "08043"
 msgstr "Unglaublich! Das ist also{line_break}der Ozean, von dem Kraden{line_break}gesprochen hat!{end_wait}"
 
@@ -36667,7 +36667,7 @@ msgctxt "message"
 msgid "09164"
 msgstr "Das azurblaue Meer von{line_break}Karagol ist ein so{line_break}romantischer Anblick!{page_break}Wenn ich es sehe, werde{line_break}ich immer so sentimental.{line_break}{text_effect:4}Schnüff...{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiReturnedTicketCost"
 msgid "09165"
 msgstr "Ich habe die Kosten für das{line_break}Ticket zurückerstattet.{line_break}Belassen wir es dabei.{end_wait}"
 

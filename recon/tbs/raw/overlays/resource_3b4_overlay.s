@@ -1,190 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020089f0,"ax",%progbits
-	.p2align 2
-	.global Func_020009f0
-	.thumb_func
-Func_020009f0:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020009f0_0
-	ldr r0, [pc, #36]
-	b .L_020009f0_1
-.L_020009f0_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020009f0_2
-	ldr r0, [pc, #36]
-	b .L_020009f0_1
-.L_020009f0_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020009f0_3
-	ldr r0, [pc, #32]
-	b .L_020009f0_1
-.L_020009f0_3:
-	ldr r0, [pc, #32]
-.L_020009f0_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000075
-	.4byte 0x0200a898
-	.4byte 0x00000076
-	.4byte 0x0200a8e0
-	.4byte 0x00000078
-	.4byte 0x0200a928
-	.4byte 0x0200a868
-	.section .text.x02008a50,"ax",%progbits
-	.p2align 2
-	.global Func_02000a50
-	.thumb_func
-Func_02000a50:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000a50_0
-	ldr r0, [pc, #36]
-	b 0x02008a7e
-.L_02000a50_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne 0x02008a72
-.L_02000a6e:
-	ldr r0, [pc, #36]
-	b .L_02000a6e_0
-	.2byte 0x4b09
-	.2byte 0x429a
-	.2byte 0xd101
-	.2byte 0x4808
-	.2byte 0xe000
-	.2byte 0x4808
-.L_02000a6e_0:
-	pop {r1}
-.L_02000a80:
-	bx r1
-	.2byte 0x0000
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x0075
-	.2byte 0x0000
-	.2byte 0xa9b0
-	.2byte 0x0200
-	.2byte 0x0076
-	.2byte 0x0000
-	.2byte 0xaa40
-	.2byte 0x0200
-	.2byte 0x0078
-	.2byte 0x0000
-	.2byte 0xaad0
-	.2byte 0x0200
-	.2byte 0xa998
-	.2byte 0x0200
-	.section .text.x02008ee0,"ax",%progbits
-	.p2align 2
-	.global Func_02000ee0
-	.thumb_func
-Func_02000ee0:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000ee0_0
-	ldr r0, [pc, #36]
-	b .L_02000ee0_1
-.L_02000ee0_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000ee0_2
-	ldr r0, [pc, #36]
-	b .L_02000ee0_1
-.L_02000ee0_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000ee0_3
-	ldr r0, [pc, #32]
-	b .L_02000ee0_1
-.L_02000ee0_3:
-	ldr r0, [pc, #32]
-.L_02000ee0_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000075
-	.4byte 0x0200abb4
-	.4byte 0x00000076
-	.4byte 0x0200acb0
-	.4byte 0x00000078
-	.4byte 0x0200adac
-	.4byte 0x0200aba8
-	.section .text.x02009f78,"ax",%progbits
-	.p2align 2
-	.global Func_02001f78
-	.thumb_func
-Func_02001f78:
-	push {r5, lr}
-	ldr r3, [pc, #72]
-	movs r2, #224
-	ldr r1, [r3]
-	movs r3, #129
-	lsls r2, r2, #1
-	lsls r3, r3, #2
-	str r3, [r1, r2]
-	ldr r3, [pc, #60]
-	adds r5, r3, r2
-	movs r3, #0
-	ldrsh r2, [r5, r3]
-	ldr r3, [pc, #56]
-	ldrh r1, [r5]
-	cmp r2, r3
-	bne .L_02001f78_0
-	bl 0x0200a188
-	ldrh r1, [r5]
-.L_02001f78_0:
-	lsls r3, r1, #16
-	ldr r2, [pc, #44]
-	asrs r3, r3, #16
-	cmp r3, r2
-	bne .L_02001f78_1
-	bl 0x0200a290
-	ldrh r1, [r5]
-.L_02001f78_1:
-	lsls r3, r1, #16
-	ldr r2, [pc, #32]
-	asrs r3, r3, #16
-	cmp r3, r2
-	bne .L_02001f78_2
-	bl 0x0200a334
-.L_02001f78_2:
-	movs r0, #0
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x00000075
-	.4byte 0x00000076
-	.4byte 0x00000078
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.global StagedActor_DirectionSteps
@@ -330,6 +145,8 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000338
 	.4byte 0x00000378
 	.4byte 0x00000348
+	.global gTakaraAshibaEntrancesOther
+gTakaraAshibaEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000078
 	.4byte 0x40000098
@@ -342,6 +159,8 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaEntrances1
+gTakaraAshibaEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x000000c8
 	.4byte 0xc00003c8
@@ -360,6 +179,8 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaEntrances2
+gTakaraAshibaEntrances2:
 	.4byte 0xffff0001
 	.4byte 0x000000c8
 	.4byte 0xc0000198
@@ -378,6 +199,8 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaEntrances3
+gTakaraAshibaEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x00000308
 	.4byte 0xc00003b8
@@ -406,12 +229,16 @@ StagedActor_FootprintBounds:
 	.4byte 0x00103083
 	.4byte 0x00204083
 	.4byte 0x000001ff
+	.global gTakaraAshibaPlacementsOther
+gTakaraAshibaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaPlacements1
+gTakaraAshibaPlacements1:
 	.4byte 0xffff0016
 	.4byte 0x00000001
 	.4byte 0x00500000
@@ -448,6 +275,8 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaPlacements2
+gTakaraAshibaPlacements2:
 	.4byte 0xffff01f4
 	.4byte 0x00000001
 	.4byte 0x01680000
@@ -484,6 +313,8 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaPlacements3
+gTakaraAshibaPlacements3:
 	.4byte 0xffff00d3
 	.4byte 0x00000001
 	.4byte 0x02680000
@@ -538,9 +369,13 @@ StagedActor_FootprintBounds:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaEventsOther
+gTakaraAshibaEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaEvents1
+gTakaraAshibaEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -604,6 +439,8 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaEvents2
+gTakaraAshibaEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -667,6 +504,8 @@ StagedActor_FootprintBounds:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gTakaraAshibaEvents3
+gTakaraAshibaEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

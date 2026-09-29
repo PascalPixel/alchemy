@@ -76,7 +76,7 @@
  * wrappers erased it through void function pointers. Transfer the canonical
  * Task_AddCallback/Task_RemoveCallback interface used by exact
  * VINASU_CHOJO/SCRIPTED_PRESENTATION.C, binding this overlay's exact
- * SceneEffect_UpdateStateMachine (02000f94, runtime 02008f94).
+ * ArutamiraDou_SpinActorWheel (02000f94, runtime 02008f94).
  * One trial: 876/392/182, candidate binary identical to the retained baseline.
  * Full normalized diff confirms the 12-byte frame versus reference 4,
  * next-state spills, work-store ordering and angle lifetime remain unchanged.
@@ -99,10 +99,10 @@ enum { WORK_SHOWN, WORK_DELAY, WORK_UNUSED, WORK_ANGLE, WORK_SIZE, WORK_PHASE };
 
 extern struct PuzzleState Data_02001001;
 extern u8 Data_02001000;
-extern struct PuzzleWork *Data_0200bf6c;
+extern struct PuzzleWork *ArutamiraDou_ClearTarget;
 
 void SceneActor_SetPositionFromTransformedBase(s32 id, s32 x, s32 angle);
-void SceneEffect_UpdateStateMachine(void);
+void ArutamiraDou_SpinActorWheel(void);
 void ArutamiraDou_ReleaseWallBurst(void);
 s32 Main_030003ac(s32 dividend, s32 divisor);
 void Engine_EventResetEffectCounter(void);
@@ -143,7 +143,7 @@ void FieldScene_RunStatefulSequence(s32 action)
     }
     state = Data_02001001.state;
     {
-        struct PuzzleWork *work = Data_0200bf6c;
+        struct PuzzleWork *work = ArutamiraDou_ClearTarget;
 
         next = Data_02001001.next;
         previous = (u8)Data_02001001.next;
@@ -164,7 +164,7 @@ void FieldScene_RunStatefulSequence(s32 action)
             state = 2;
             Engine_AudioPlayCue(110);
             Engine_TaskWait(30);
-            action = Data_0200bf6c->values[WORK_ANGLE];
+            action = ArutamiraDou_ClearTarget->values[WORK_ANGLE];
             for (i = 0; i <= 4; i++) {
                 s32 id = i + 11;
 
@@ -226,32 +226,32 @@ void FieldScene_RunStatefulSequence(s32 action)
         choice = Main_030003ac((s8)(((u32)(Engine_RandomNext() << 2) >> 16)
                                 + previous + 1) + 5, 5);
         *(s8 *)&Data_02001001.next = choice;
-        work = Data_0200bf6c;
+        work = ArutamiraDou_ClearTarget;
         work->values[WORK_SHOWN] = 0;
         work->values[WORK_DELAY] = 0;
         work->values[WORK_SIZE] = 0x200;
         work->values[WORK_PHASE] = 0x3000;
         completed = count;
-        Task_AddCallback(SceneEffect_UpdateStateMachine, TASK_PRIORITY_SCENE);
+        Task_AddCallback(ArutamiraDou_SpinActorWheel, TASK_PRIORITY_SCENE);
         if (completed <= 2) {
-            while (Data_0200bf6c->values[WORK_SHOWN] != 99)
+            while (ArutamiraDou_ClearTarget->values[WORK_SHOWN] != 99)
                 Engine_TaskWait(1);
             Engine_TaskWait(10);
             Engine_AudioPlayCue(110);
         } else {
             Data_02001001.state = 99;
-            while (Data_0200bf6c->values[WORK_SHOWN] != 2)
+            while (ArutamiraDou_ClearTarget->values[WORK_SHOWN] != 2)
                 Engine_TaskWait(1);
-            work = Data_0200bf6c;
+            work = ArutamiraDou_ClearTarget;
             work->values[WORK_SHOWN] = 2;
             work->values[WORK_DELAY] = 0;
             Call3(Engine_WorkSetValuesIfNonNegative, 0x20000, 0x20000, 0x10000);
             Engine_EventWait(20);
             Call3(Engine_WorkSetValuesIfNonNegative, 0x40000, 0x40000, 0x10000);
-            Data_0200bf6c->values[WORK_SHOWN] = 99;
+            ArutamiraDou_ClearTarget->values[WORK_SHOWN] = 99;
             Engine_AudioPlayCue(190);
             x = 0x180000;
-            action = Data_0200bf6c->values[WORK_ANGLE];
+            action = ArutamiraDou_ClearTarget->values[WORK_ANGLE];
             do {
                 for (i = 0; i <= 4; i++) {
                     s32 id = i + 11;
@@ -271,6 +271,6 @@ void FieldScene_RunStatefulSequence(s32 action)
             ArutamiraDou_ReleaseWallBurst();
             Engine_AudioPlayCue(80);
         }
-        Task_RemoveCallback(SceneEffect_UpdateStateMachine);
+        Task_RemoveCallback(ArutamiraDou_SpinActorWheel);
     }
 }

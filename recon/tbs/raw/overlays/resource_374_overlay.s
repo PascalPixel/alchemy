@@ -1,324 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02009274,"ax",%progbits
-	.global FieldScene_RunGroupChoreography
-	.thumb_func
-FieldScene_RunGroupChoreography:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	movs r1, #15
-	movs r0, #25
-	bl 0x0200a754
-	movs r0, #25
-	bl 0x0200a6c4
-	movs r1, #0
-	bl 0x0200a654
-	ldr r2, [pc, #716]
-	movs r1, #0
-	movs r0, #25
-	bl 0x0200a714
-	movs r0, #1
-	bl 0x0200a5ec
-	ldr r0, [pc, #704]
-	movs r1, #0
-	bl 0x0200a774
-	movs r1, #128
-	movs r0, #23
-	lsls r1, r1, #1
-	movs r2, #0
-	bl 0x0200a79c
-	movs r1, #128
-	movs r0, #24
-	lsls r1, r1, #1
-	movs r2, #40
-	bl 0x0200a79c
-	movs r0, #25
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200a714
-	movs r1, #160
-	movs r0, #23
-	lsls r1, r1, #7
-	movs r2, #0
-	bl 0x0200a78c
-	movs r2, #160
-	lsls r2, r2, #7
-	mov r8, r2
-	mov r1, r8
-	movs r2, #40
-	movs r0, #24
-	bl 0x0200a2e0
-	movs r0, #192
-	movs r1, #192
-	lsls r0, r0, #9
-	lsls r1, r1, #6
-	bl 0x0200a7ac
-	movs r0, #178
-	movs r1, #176
-	movs r3, #1
-	lsls r1, r1, #16
-	ldr r2, [pc, #616]
-	lsls r0, r0, #15
-	bl 0x0200a7b4
-	bl 0x0200a7bc
-	movs r0, #40
-	bl 0x0200a694
-	movs r1, #224
-	movs r0, #23
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x0200a78c
-	movs r1, #224
-	movs r2, #40
-	lsls r1, r1, #7
-	movs r0, #24
-	bl 0x0200a2e0
-	ldr r0, [pc, #580]
-	ldr r1, [pc, #580]
-	bl 0x0200a7ac
-	movs r0, #200
-	movs r1, #144
-	movs r3, #1
-	lsls r0, r0, #15
-	lsls r1, r1, #16
-	ldr r2, [pc, #568]
-	bl 0x0200a7b4
-	movs r1, #128
-	movs r2, #128
-	movs r0, #23
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200a6cc
-	movs r1, #128
-	movs r2, #128
-	movs r0, #24
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200a6cc
-	movs r1, #105
-	ldr r2, [pc, #536]
-	movs r0, #23
-	bl 0x0200a6fc
-	movs r0, #10
-	bl 0x0200a694
-	ldr r2, [pc, #524]
-	movs r1, #124
-	movs r0, #24
-	bl 0x0200a6fc
-	movs r0, #23
-	bl 0x0200a70c
-	movs r0, #23
-	movs r1, #1
-	bl 0x0200a71c
-	mov r1, r8
-	movs r2, #0
-	movs r0, #23
-	bl 0x0200a78c
-	movs r0, #24
-	bl 0x0200a70c
-	movs r0, #24
-	movs r1, #1
-	bl 0x0200a71c
-	movs r2, #0
-	mov r1, r8
-	movs r0, #24
-	bl 0x0200a78c
-	movs r1, #0
-	movs r0, #25
-	bl 0x0200a754
-	movs r0, #25
-	bl 0x0200a6c4
-	movs r1, #1
-	bl 0x0200a654
-	movs r0, #25
-	movs r1, #0
-	ldr r2, [pc, #416]
-	bl 0x0200a714
-	movs r0, #25
-	ldr r1, [pc, #436]
-	ldr r2, [pc, #440]
-	bl 0x0200a6cc
-	ldr r2, [pc, #436]
-	movs r1, #37
-	movs r0, #25
-	bl 0x0200a704
-	movs r0, #20
-	bl 0x0200a694
-	movs r0, #23
-	movs r1, #3
-	bl 0x0200a724
-	movs r5, #208
-	movs r1, #0
-	movs r0, #23
-	bl 0x0200a76c
-	lsls r5, r5, #8
-	movs r0, #25
-	ldr r1, [pc, #404]
-	movs r2, #0
-	bl 0x0200a79c
-	movs r2, #10
-	adds r1, r5, #0
-	movs r0, #0
-	bl 0x0200a2e0
-	movs r1, #0
-	movs r0, #0
-	bl 0x0200a6bc
-	movs r6, #128
-	movs r0, #40
-	bl 0x0200a694
-	lsls r6, r6, #8
-	movs r0, #23
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200a78c
-	movs r2, #20
-	adds r1, r6, #0
-	movs r0, #24
-	bl 0x0200a2e0
-	movs r0, #25
-	movs r1, #2
-	bl 0x0200a73c
-	ldr r0, [pc, #304]
-	movs r1, #10
-	bl 0x0200a2c8
-	ldr r2, [pc, #336]
-	movs r0, #0
-	ldr r1, [pc, #336]
-	bl 0x0200a75c
-	movs r0, #25
-	movs r1, #93
-	ldr r2, [pc, #328]
-	bl 0x0200a704
-	movs r2, #40
-	adds r1, r5, #0
-	movs r0, #25
-	bl 0x0200a2e0
-	movs r1, #20
-	movs r0, #25
-	bl 0x0200a2c8
-	movs r0, #0
-	bl 0x0200a6e4
-	movs r0, #23
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200a78c
-	movs r2, #15
-	adds r1, r6, #0
-	movs r0, #24
-	bl 0x0200a2e0
-	movs r0, #23
-	movs r1, #3
-	bl 0x0200a71c
-	movs r0, #24
-	movs r1, #3
-	bl 0x0200a724
-	mov r1, r8
-	movs r0, #23
-	movs r2, #0
-	bl 0x0200a78c
-	movs r2, #30
-	mov r1, r8
-	movs r0, #24
-	bl 0x0200a2e0
-	movs r0, #24
-	movs r1, #4
-	bl 0x0200a724
-	ldr r0, [pc, #240]
-	movs r1, #0
-	bl 0x0200a774
-	adds r1, r5, #0
-	movs r0, #0
-	movs r2, #30
-	bl 0x0200a2e0
-	movs r1, #128
-	movs r2, #40
-	lsls r1, r1, #7
-	movs r0, #0
-	bl 0x0200a2e0
-	movs r0, #23
-	movs r1, #2
-	bl 0x0200a73c
-	movs r0, #23
-	movs r1, #3
-	bl 0x0200a724
-	movs r0, #23
-	movs r1, #20
-	bl 0x0200a2c8
-	movs r1, #129
-	movs r0, #0
-	lsls r1, r1, #1
-	bl 0x0200a7a4
-	movs r1, #129
-	lsls r1, r1, #1
-	movs r0, #25
-	bl 0x0200a7a4
-	movs r0, #80
-	bl 0x0200a694
-	ldr r1, [pc, #164]
-	movs r0, #24
-	bl 0x0200a6d4
-	movs r0, #6
-	bl 0x0200a694
-	ldr r1, [pc, #152]
-	movs r0, #23
-	bl 0x0200a6d4
-	movs r0, #20
-	bl 0x0200a694
-	ldr r1, [pc, #144]
-	movs r0, #0
-	bl 0x0200a6d4
-	movs r0, #6
-	bl 0x0200a694
-	ldr r1, [pc, #132]
-	movs r0, #25
-	bl 0x0200a6ec
-	ldr r3, [pc, #128]
-	ldr r2, [pc, #132]
-	adds r3, r3, r2
-	movs r2, #2
-	strb r2, [r3]
-	ldr r5, [pc, #128]
-	movs r1, #19
-	adds r0, r5, #0
-	bl 0x0200a7dc
-	adds r0, r5, #0
-	movs r1, #19
-	bl 0x0200a7e4
-	movs r0, #12
-	movs r1, #4
-	bl 0x0200a7d4
-	movs r0, #141
-	lsls r0, r0, #1
-	bl 0x0200a67c
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x014b0000
-	.4byte 0x00001019
-	.4byte 0x01390000
-	.4byte 0x0000cccc
-	.4byte 0x00001999
-	.4byte 0x014d0000
-	.4byte 0x00000149
-	.4byte 0x00013333
-	.4byte 0x00009999
-	.4byte 0x00000153
-	.4byte 0x00000101
-	.4byte 0x0200ac00
-	.4byte 0x00010019
-	.4byte 0x00000169
-	.4byte 0x00002018
-	.4byte 0x0200a8e8
-	.4byte 0x0200a940
-	.4byte 0x0200a998
-	.4byte 0x0200a9f0
-	.4byte 0x02000240
-	.4byte 0x0000022b
-	.4byte 0x00000005
 	.section .rodata,"a",%progbits
 	.4byte 0x01000000
 	.4byte 0x02020101
@@ -359,6 +40,8 @@ Data_0200a874:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaIe_Actor24Actions
+HaidiaIe_Actor24Actions:
 	.4byte 0x00000015
 	.4byte 0x0000000f
 	.4byte 0x00020000
@@ -381,6 +64,8 @@ Data_0200a874:
 	.4byte 0x00000000
 	.4byte 0x0000000a
 	.4byte 0x00000010
+	.global HaidiaIe_Actor23Actions
+HaidiaIe_Actor23Actions:
 	.4byte 0x00000015
 	.4byte 0x0000000f
 	.4byte 0x00020000
@@ -403,6 +88,8 @@ Data_0200a874:
 	.4byte 0x00000000
 	.4byte 0x0000000a
 	.4byte 0x00000010
+	.global HaidiaIe_LeaderActions
+HaidiaIe_LeaderActions:
 	.4byte 0x00000015
 	.4byte 0x0000000f
 	.4byte 0x00020000
@@ -425,6 +112,8 @@ Data_0200a874:
 	.4byte 0x00000000
 	.4byte 0x0000000a
 	.4byte 0x00000010
+	.global HaidiaIe_Actor25Actions
+HaidiaIe_Actor25Actions:
 	.4byte 0x00000015
 	.4byte 0x0000000f
 	.4byte 0x00020000

@@ -124,7 +124,7 @@ IwramSoundMixEntry:
 	ldrb	r0, [r4, #1]
 	add	r1, pc, #8
 	bx	r1
-	.4byte	0x03006fc0
+	.4byte	IwramSoundMixWorkspace
 AlchemyUncredited_08000e34:
 	.4byte	0x00000000
 AlchemyUncreditedEnd_08000e34:

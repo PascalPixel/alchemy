@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SCENE_IDS.H"
 extern u8 TakaraShima_EntranceCells[];
 
 s32 Engine_GameFlagIsSet();
@@ -11,9 +12,6 @@ void Engine_AudioPlayCue();
 void Engine_EventRequestExit();
 
 
-/* FAKEMATCH: ids the reference loads from the literal pool rather than
- * building inline are spelled as link symbols at those values. */
-extern u8 Value_0000007e[];
 extern s16 gGameState[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -40,11 +38,11 @@ static __inline__ void Call11(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a
  * title card; later visits animate the entrance cells and leave. */
 void TakaraShima_RunAreaEntry(void)
 {
-    if (Engine_GameFlagIsSet(gGameState[224][0] + (0x8c8 - (s32)Value_0000007e)) == 0) {
+    if (Engine_GameFlagIsSet(gGameState[224][0] + (0x8c8 - (s32)&SceneId_TakaraShima6)) == 0) {
         Engine_EventBegin();
         Party_SetFields1ceAnd1d0(gGameState[224][0], 5);
         ((u8 *)gGameState)[0x22b] = 3;
-        switch (gGameState[224][0] - (s32)Value_0000007e) {
+        switch (gGameState[224][0] - (s32)&SceneId_TakaraShima6) {
         case 0:
             BattleFx_SetWeightedResult(63, 0);
             break;

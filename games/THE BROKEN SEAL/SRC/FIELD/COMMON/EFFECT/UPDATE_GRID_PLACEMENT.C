@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 #define TILE_HI(ptr, offset) (*(s16 *)((u8 *)(ptr) + (offset) + 2))
 
@@ -27,8 +28,8 @@ struct GridTileCell_08093e28 {
 
 extern s32 gGameState[];
 /* The two tile-kind planes are addressed as fixed EWRAM tables. */
-#define TILE_CELLS ((struct GridTileCell_08093e28 *)0x02010000)
-#define TILE_CELLS_TARGET ((struct GridTileCell_08093e28 *)0x02010200)
+#define TILE_CELLS ((struct GridTileCell_08093e28 *)Ram_MapCellBuffer)
+#define TILE_CELLS_TARGET ((struct GridTileCell_08093e28 *)(Ram_MapCellBuffer + 0x200))
 
 #define ACTIVE_FLAG (((u8 *)gGameState)[498])
 

@@ -36,6 +36,9 @@ Engine_ObjectCreate:
 	.thumb_func
 Map_GetTerrainHeightFar:
 	overlay_veneer Func_080091a8
+	.global Engine_MapCopyCells
+	.thumb_func
+Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
 	.global Map_CopyCellAttributeRect
 	.thumb_func

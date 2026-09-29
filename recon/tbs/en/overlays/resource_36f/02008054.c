@@ -1,21 +1,24 @@
 /* Draft of the title overlay's remaining code, resource_36f: Title_Run at
- * 0x02008054, Title_LoadSprites at 0x020081c0 and Title_LoadBackground at
- * 0x02008454, written for MENU/TITLE beside REVEAL.C (TITLE.H). The listing
- * keeps these rows. Compiled with stand-in symbols for the numbers below,
- * every other instruction and literal matches, except where noted.
+ * 0x02008054 and Title_LoadBackground at 0x02008454, written for MENU/TITLE
+ * beside REVEAL.C and SPRITES.C (TITLE.H). The listing keeps these rows.
+ * Compiled with stand-in symbols for the numbers below, every other
+ * instruction and literal matches, except where noted.
  * Remaining differences:
- * - Title_Run: the ROM loads the scenes it sends the party to (0 from the
- *   splash, 1 from the intro and the menu, 4 for a new game) and the hook
- *   number 0xb from its literal pool, as link-time scene and hook numbers
- *   would; the plain numbers below compile to immediate moves. Its imports
- *   0x080f0000, 0x080f2000 and 0x080f2020 are the main image's unnamed far
- *   veneers into the scroll and palette modules.
- * - Title_LoadSprites: the ROM loads its resource number 0x1c from its
- *   literal pool, as a link-time resource number would.
+ * - Title_Run: the ROM loads the scenes it sends the party to from its
+ *   literal pool: rows 0, 1 and 4 of the scene table, which the rule would
+ *   name SceneId_Title, SceneId_Clear (named) and SceneId_HaidiaMura. It
+ *   also loads 0xb for RuntimeDispatch_NoOpHook, the resource module's
+ *   empty hook, which is resource row 11, the palette far-call bank whose
+ *   entries it calls next; spelling it as that row is a judgement this
+ *   draft has not made. Its imports 0x080f0000, 0x080f2000 and 0x080f2020
+ *   are the main image's unnamed far veneers into the scroll and palette
+ *   modules, whose overlay veneers need names first.
  * - Title_LoadBackground: the ROM loads its resource number 0x1a from its
- *   literal pool, as a link-time resource number would; and it reloads
+ *   literal pool, as ResourceId_ row 0x1a would; and it reloads
  *   gMapCellBuffer from the pool after the decode call, where this C keeps
- *   the address in r5 across it (0x2e..0x44 and the pool order after). */
+ *   the address in r5 across it (0x2e..0x44 and the pool order after): the
+ *   game addressed the map cell buffer as a constant, which waits for fixed
+ *   RAM buffers to be checked entries. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
@@ -132,25 +135,6 @@ s32 Title_Run(void)
     Engine_EventWait(60);
     Engine_AudioPlayCue(19);
     return 0;
-}
-
-/* Decode the title sprites' tiles and palette and load the tiles into the
- * title's VRAM block, finding one the first time. */
-void Title_LoadSprites(s32 unused)
-{
-    u8 *buffer;
-    volatile u32 *dma;
-
-    buffer = Runtime_BumpAllocateAlternatePool(0x520);
-    if (gTitleVramBlock == -1)
-        gTitleVramBlock = Resource_FindFreeEntry();
-    Resource_DecodeType01(Resource_GetTableEntry(0x1c), buffer);
-    Dma_Set(buffer, (void *)0x050003e0, 0x84000008, DMA3);
-    Call3((void (*)())VramBlock_LoadCached, gTitleVramBlock, 0x500, (s32)(buffer + 32));
-    dma = DMA3;
-    while (dma[2] & 0x80000000)
-        ;
-    Sys_Free(buffer);
 }
 
 /* Load the title background: palette, tiles and a 30 x 20 map counting up

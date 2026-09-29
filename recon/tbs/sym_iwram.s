@@ -60,7 +60,10 @@ Data_03001b10:
 ResourceTableEntries:
 	.global gVramBlockCache
 gVramBlockCache:
-	.space 0x00000184
+	.space 0x00000180
+	.global gDecodeFillByte
+gDecodeFillByte:
+	.space 0x00000004
 	.global Data_03001c94
 Data_03001c94:
 	.global gKeyState
@@ -99,7 +102,10 @@ Data_03001cc0:
 	.space 0x00000004
 	.global gTransformStackDepth
 gTransformStackDepth:
-	.space 0x00000008
+	.space 0x00000004
+	.global gSleepRequested
+gSleepRequested:
+	.space 0x00000004
 	.global Data_03001ccc
 Data_03001ccc:
 	.space 0x00000008

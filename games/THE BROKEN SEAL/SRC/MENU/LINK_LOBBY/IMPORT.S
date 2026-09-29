@@ -32,6 +32,9 @@ SerialRuntime_Initialize:
 	.thumb_func
 SerialRuntime_RemoveIrqHandlers:
 	overlay_veneer SerialRuntime_RemoveIrqHandlersFar
+	.global Sound_LoadPresetParameters
+	.thumb_func
+Sound_LoadPresetParameters:
 	overlay_veneer Sound_LoadPresetParametersFar
 	overlay_veneer SerialRuntime_BeginTransferAFar
 	.global SerialRuntime_BeginTransferB
@@ -144,6 +147,9 @@ Engine_EventOpenMessage:
 	.thumb_func
 Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
+	.global Event_SetPairWork1c0
+	.thumb_func
+Event_SetPairWork1c0:
 	overlay_veneer Event_SetPairWork1c0Far
 	overlay_veneer BattleFx_SetWeightedResultFar
 	overlay_veneer Party_SetFields1ceAnd1d0Far

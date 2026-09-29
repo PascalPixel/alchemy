@@ -224,7 +224,7 @@ void FieldScene_RunScene3b4_02000ccc(void)
         Actor_FaceDirection(15, 0xc000, 20);
         Actor_SetAttachedEffect(15, 0x100);
         record = Engine_GetTriggerActor(15);
-        *(s32 *)(record + 108) = 0x2008aa9;
+        *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
         Event_End();
     }
 }

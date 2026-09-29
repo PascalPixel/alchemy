@@ -96,127 +96,6 @@ KorimaMagari_DrawPanel:
 	.4byte 0x02020004
 	.2byte 0x2840
 	.2byte 0x0600
-	.section .text.x02008980,"ax",%progbits
-	.p2align 2
-	.global Func_02000980
-	.thumb_func
-Func_02000980:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	ldr r3, [pc, #168]
-	ldr r1, [pc, #172]
-	ldr r2, [pc, #172]
-	mov r8, r3
-	ldr r7, [pc, #172]
-	str r2, [r1]
-	adds r3, r2, #2
-	mov r10, r1
-	adds r2, #4
-	mov r1, r8
-	sub sp, #8
-	str r3, [r1]
-	str r2, [r7]
-	movs r6, #0
-	movs r5, #64
-	movs r0, #32
-	movs r1, #0
-	movs r2, #64
-	movs r3, #32
-	str r6, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x0200906c
-	movs r0, #0
-	movs r1, #0
-	movs r2, #32
-	movs r3, #32
-	str r6, [sp, #0]
-	str r5, [sp, #4]
-	bl 0x02009074
-	movs r3, #32
-	movs r0, #32
-	movs r1, #0
-	movs r2, #32
-	str r6, [sp, #0]
-	str r3, [sp, #4]
-	bl 0x02009074
-	ldr r0, [pc, #108]
-	bl 0x0200908c
-	cmp r0, #0
-	bne .L_02000980_0
-	ldr r3, [pc, #100]
-	ldr r0, [pc, #104]
-	ldr r1, [r7]
-	ldr r2, [pc, #104]
-	stmia r3!, {r0, r1, r2}
-	subs r3, #12
-	mov r2, r10
-	ldr r3, [r2]
-	strh r6, [r3]
-	mov r3, r8
-	ldr r2, [r3]
-	ldr r3, [pc, #56]
-	strh r3, [r2]
-.L_02000980_0:
-	ldr r0, [r7]
-	bl 0x02008a90
-	movs r1, #255
-	ldr r0, [pc, #72]
-	bl 0x02008b3c
-	bl 0x02008194
-	movs r1, #0
-	movs r0, #9
-	bl 0x020090dc
-	movs r0, #9
-	bl 0x020090ac
-	adds r0, #85
-	strb r6, [r0]
-	movs r0, #10
-	bl 0x020090ac
-	movs r3, #8
-	strh r3, [r0, #32]
-	movs r3, #192
-	lsls r3, r3, #8
-	str r3, [r0, #24]
-	b .L_02000980_1
-	.4byte 0x00000001
-	.4byte 0x020092c8
-	.4byte 0x020092c4
-	.4byte 0x02001000
-	.4byte 0x020092c0
-	.4byte 0x00000109
-	.4byte 0x040000d4
-	.4byte 0x0200911c
-	.4byte 0x84000012
-.L_02000980_1:
-	str r3, [r0, #28]
-	ldr r3, [pc, #48]
-	movs r1, #224
-	ldr r3, [r3]
-	lsls r1, r1, #1
-	movs r2, #129
-	adds r3, r3, r1
-	lsls r2, r2, #2
-	str r2, [r3]
-	ldr r0, [pc, #36]
-	bl 0x0200908c
-	cmp r0, #0
-	bne .L_02000980_2
-	movs r0, #4
-	bl 0x02008e64
-.L_02000980_2:
-	movs r0, #0
-	sub sp, #-8
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x00000845
 	.section .text.x02008c2c,"ax",%progbits
 	.global Scene_PushBlockAlongRun
 	.thumb_func
@@ -486,6 +365,8 @@ Scene_PushBlockAlongRun:
 	.2byte 0x916c
 	.2byte 0x0200
 	.section .rodata,"a",%progbits
+	.global KorimaMagari_DefaultRecords
+KorimaMagari_DefaultRecords:
 	.4byte 0x000b00cd
 	.4byte 0x00010009
 	.4byte 0x00000000

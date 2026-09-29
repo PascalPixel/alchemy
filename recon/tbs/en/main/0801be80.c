@@ -1,3 +1,10 @@
+/* 2026-09-29: eight minutes of permutation: 4760 -> 2865. The natural form
+ * kept here scores 2885 (105 register-only, 11 operand, 10 reordered, 8
+ * inserted, 7 deleted): cnt starts at zero in its declaration and is
+ * cleared again after the index is formed and after the node search, and
+ * the resource-reset walk is a while loop. The candidate's extra 20 came
+ * from a dead assignment of the path head before its own for loop, not
+ * kept. */
 /* Draft, not exact (2026-09-25): 580 of 580 bytes, 268 differing halfwords.
    Menu_PushSelectedNode: walks to the node under the cursor, slides the other
    nodes onto it and releases their resources, keeps it as the only node,
@@ -82,11 +89,11 @@ struct PushNode *Resource_FindFreeTransferEntry(s32 kind);
 
 u32 Menu_PushSelectedNode(struct PushMenu *state)
 {
-    struct PushNode *node;
     struct PushNode *other;
+    struct PushNode *node;
     struct PushNode *last;
+    u32 cnt = 0;
     u32 index;
-    u32 cnt;
 
     index = state->top + state->cursor;
     cnt = 0;
@@ -101,6 +108,7 @@ u32 Menu_PushSelectedNode(struct PushMenu *state)
     Resource_ResetPendingTransfer();
     for (node = state->nodes; node != NULL && state->cursor != cnt; cnt++)
         node = node->next;
+    cnt = 0;
     node->home_x = node->x;
     node->home_y = node->y;
     for (other = state->nodes; other != NULL; other = other->next) {
@@ -110,12 +118,13 @@ u32 Menu_PushSelectedNode(struct PushMenu *state)
         }
     }
     WaitFrames(2);
-    cnt = 0;
-    for (other = state->nodes; other != NULL; other = other->next) {
+    other = state->nodes;
+    while (other != NULL) {
         if (other != node) {
             Resource_ResetEntry(other->id);
             other->active = cnt;
         }
+        other = other->next;
     }
     state->nodes = node;
     node->prev = NULL;
@@ -128,8 +137,8 @@ u32 Menu_PushSelectedNode(struct PushMenu *state)
     }
     state->path_top[cnt] = state->top;
     state->path_cursor[cnt] = state->cursor;
-    cnt = 0;
     node->step = (node->target_x - node->x) >> 1;
+    cnt = 0;
     state->unk_39a = cnt;
     state->cursor |= 0x80;
     WaitFrames(2);

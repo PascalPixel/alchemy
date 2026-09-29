@@ -90,10 +90,6 @@ impl DecompTarget {
             .strip_suffix("/SRC")
             .expect("source_dir ends with /SRC")
     }
-    /// The game's shared `overlay_veneer` macro, included by every overlay.
-    pub fn overlay_macro(&self) -> String {
-        format!("{}/SYSTEM/OVERLAY.INC", self.source_dir)
-    }
 }
 
 const PRODUCTS: [(CompilerTarget, u64, &str, &str, usize); 2] = [
@@ -170,7 +166,6 @@ fn self_test() -> Result<String, String> {
             || !target.asm_dir.starts_with(recon)
             || !outputs.insert(target.output_dir)
             || !target.game_dir().starts_with(root.trim_end_matches('/'))
-            || !target.overlay_macro().starts_with(root)
         {
             return Err(format!("{id} does not have isolated relative paths"));
         }
@@ -188,13 +183,9 @@ mod tests {
     use super::*;
 
     #[test]
-    fn games_name_their_roots_macro_and_entry_veneers() {
+    fn games_name_their_roots_and_entry_veneers() {
         let tla = target_for(DecompTargetId::TlaEn);
         assert_eq!(tla.game_dir(), "games/THE LOST AGE");
-        assert_eq!(
-            tla.overlay_macro(),
-            "games/THE LOST AGE/SRC/SYSTEM/OVERLAY.INC"
-        );
         assert_eq!(tla.overlay_entry_veneers, 7);
         assert_eq!(target_for(DEFAULT_TARGET).overlay_entry_veneers, 6);
     }

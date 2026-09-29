@@ -1202,9 +1202,8 @@ BattleFx_IceBlockSheet:
 	.incbin "baserom.gba", 0x0040a88b, 0x00000001
 	.section .unidentified.0840c681,"a"
 	.incbin "baserom.gba", 0x0040c681, 0x00000003
-	.global BattleFx_VortexSheet
-BattleFx_VortexSheet:
-	.incbin "baserom.gba", 0x0040c684, 0x00000914
+	.section .unidentified.0840cf96,"a"
+	.incbin "baserom.gba", 0x0040cf96, 0x00000002
 	.section .unidentified.0840eaca,"a"
 	.incbin "baserom.gba", 0x0040eaca, 0x00000002
 	.section .unidentified.0840fb19,"a"

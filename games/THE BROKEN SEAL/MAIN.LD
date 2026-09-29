@@ -2287,6 +2287,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/VIOLET_PALETTE_D.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/BLUE_BEAM.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.0840c681)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/VORTEX.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.0840cf96)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/TORNADO.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.0840eaca)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/CRYSTAL.o"(.rodata)

@@ -5,6 +5,8 @@ SECTIONS
     .rom :
     {
         "*/recon/tla/es/rom.o"(.rom.00000000)
+        "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
+        "*/recon/tla/es/rom.o"(.rom.0005c360)
         "*/games/COMMON/SRC/GRAPHICS/UI/WINDOW_TILES.o"(.rodata)
         "*/games/COMMON/SRC/GRAPHICS/UI/SMALL_FONT.o"(.rodata)
         "*/recon/tla/es/rom.o"(.rom.006848d0)

@@ -15,13 +15,13 @@
  * expands outward, and once a cell's distance crosses a threshold it pops
  * into a batch of the kind's debris count, added to a persistent 512-slot
  * fixed-point particle pool at 0x02010140 that every frame ages, draws and
- * hands to Func_080e3908 for physics -- independent of the ring loop
+ * hands to EffectStep_AdvanceWithGravity2D for physics -- independent of the ring loop
  * itself and still running on frames where the kind's ring count is zero.
  *
  * Shaped from an m2c decompile of the target's own retained assembly
  * (recon/tbs/raw/080c972c.s) rather than the member_orbit template, since
  * the two functions share only field offsets and callees, not structure.
- * `Func_080072f4` is not a real symbol: it is the r4 entry of the
+ * `_call_via_r4` is not a real symbol: it is the r4 entry of the
  * _call_via_rN trampoline bundle at recon/tbs/raw/080072e4.s
  * (0x080072e4 + 4*4), so every call through it is modeled as a direct call
  * through the DrawRectangleFn cached from BattleEffect_LoadWork's heap slot
@@ -56,16 +56,16 @@
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattlePres_ConfigureEffectDisplay(void);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 u32 Random16(void);
-void Func_080b50e8(s32 cue);
-void Func_080f9010(s32 cue);
+void BattleEventRuntime_BeginPhaseFar(s32 cue);
+void Audio_PlayCue(s32 cue);
 void ObjectGroup_UpdateMembers(s32 actor, s32 b, s32 c, s32 d, s32 e);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
@@ -198,7 +198,7 @@ void Func_080c972c(void *object) {
             var_r1_221 += 1;
         } while (var_i != 0xA0);
     }
-    Func_080041d8((void *)0x080C91A5, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080C91A5, 0x480);
     temp_r1_268 = M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18);
     if (temp_r1_268 == 0) {
         M2C_FIELD(temp_r1_17, s32 *, 0x7780) = 1;
@@ -212,7 +212,7 @@ void Func_080c972c(void *object) {
             M2C_FIELD(temp_r1_17, s32 *, 0x7784) = 0x4B;
         }
     }
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
     sp18 = 0;
     if (Data_080ededc[(M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18) * 4) + 3] == 0) {
 
@@ -220,7 +220,7 @@ void Func_080c972c(void *object) {
 loop_33:
         var_i = 0;
         if (sp18 == (Data_080ededc[(M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18) * 4) + 3] - 0x40)) {
-            Func_080b50e8(0x84);
+            BattleEventRuntime_BeginPhaseFar(0x84);
         }
         if (Data_080ededc[M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18) * 4] == 0) {
 
@@ -268,7 +268,7 @@ loop_38:
                         } while (var_r4_412 != Data_080ededc[(M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18) * 4) + 1]);
                     }
                     if (!(3 & var_i)) {
-                        Func_080f9010(0x84);
+                        Audio_PlayCue(0x84);
                     }
                     var_r4_503 = 0;
                     if (M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x14) != 0) {
@@ -328,8 +328,8 @@ loop_38:
     }
     Scheduler_RemoveCallback((void *)0x080C91A5);
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     BattleFx_EndCanvasLayer();
     BattlePres_ConfigureEffectDisplay();
 }

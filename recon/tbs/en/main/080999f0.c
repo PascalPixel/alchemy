@@ -44,28 +44,28 @@ struct Effect05State {
     s8 alternate;
 };
 
-extern struct Effect05State *Data_03001f30;
+extern struct Effect05State *gEffectWork;
 s32 Math_Div(s32, s32);
 void WaitFrames(s32);
 s32 Random16(void);
 void Vector_AddPolarOffset(s32, s32, struct Vec3 *);
-void Func_08009080(struct EffectObject *, s32);
-void Func_080090d0(struct EffectObject *);
-s32 Func_080091a8(s32, s32, s32);
+void Object_SetMode(struct EffectObject *, s32);
+void Object_Destroy(struct EffectObject *);
+s32 Map_GetTerrainHeightFar(s32, s32, s32);
 void Animation_ApplyChildValuesFar(struct EffectObject *, s32);
 struct EffectObject *Object_Spawn(s32, s32, s32, s32);
 void BattleEffect_InitializeSharedScene(void);
 void BattleFx_PrepareBufferInterpolation(void);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 
 static inline s32 Interpolate(s32 start, s32 end, s32 step)
 {
     return start + Math_Div(step * (end - start), 10);
 }
 
-void Func_080999f0(void)
+void RunBattleEffect05(void)
 {
-    struct Effect05State *state = Data_03001f30;
+    struct Effect05State *state = gEffectWork;
     struct EffectTarget *target = state->target;
     struct EffectObject *main;
     struct Vec3 spawn;
@@ -80,12 +80,12 @@ void Func_080999f0(void)
     if (main == 0)
         return;
     BattleEffect_InitializeSharedScene();
-    Func_080f9010(0x8a);
+    Audio_PlayCue(0x8a);
     if (state->initialized == 0) {
         state->x = target->position.x;
         state->z = target->position.z;
         Vector_AddPolarOffset(0x100000, state->angle, (struct Vec3 *)&state->x);
-        state->y = Func_080091a8(0, state->x, state->z);
+        state->y = Map_GetTerrainHeightFar(0, state->x, state->z);
     }
     start.x = target->position.x;
     start.y = target->position.y + 0x100000;
@@ -128,7 +128,7 @@ void Func_080999f0(void)
                 particle->callback = (void *)0x08099921;
                 particle->mode = 2;
             }
-            Func_080f9010(0x84);
+            Audio_PlayCue(0x84);
             WaitFrames(6);
         }
         WaitFrames(10);
@@ -145,7 +145,7 @@ void Func_080999f0(void)
                 particle->callback = (void *)0x080999a9;
                 particle->mode = 0;
                 particle->child[9] = (particle->child[9] & ~12) | 8;
-                Func_08009080(particle, 8);
+                Object_SetMode(particle, 8);
                 Animation_ApplyChildValuesFar(particle, 7);
             }
             WaitFrames(6);
@@ -163,6 +163,6 @@ void Func_080999f0(void)
         main->scale_y = scale;
         WaitFrames(1);
     }
-    Func_080090d0(main);
+    Object_Destroy(main);
     BattleFx_PrepareBufferInterpolation();
 }

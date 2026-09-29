@@ -5,12 +5,12 @@
 extern u8 gWindowWork[];
 
 /*
- * UiText_BuildRenderEntries (Func_08018038)
+ * UiText_BuildRenderEntries (UiText_BuildRenderEntries)
  *
  * 会話用スクリプトを描画待ち行列へ展開する。
  *
  * Reads a message script one byte at a time through the stream reader opened
- * by Func_08019bac and appends render entries to the 512-halfword ring at
+ * by UiText_LookupMessage and appends render entries to the 512-halfword ring at
  * work + RENDER_ENTRY_TBL_OFS.  Codes 0x20 and above are glyphs and are stored
  * directly; codes below 0x20 are control codes that either stop the scan,
  * splice in a looked-up name or number, or emit a fixed pair of entries.
@@ -31,7 +31,7 @@ extern u8 gWindowWork[];
  * spelling device: the reference tests the value explicitly (movs r2, #1 /
  * negs r2, r2 / cmp r7, r2 at 0x0801830e) before falling through to the
  * default, so the source it was compiled from named -1 as a case of its own.
- * The likeliest reading is an end-of-stream sentinel from Func_08007308 that
+ * The likeliest reading is an end-of-stream sentinel from _call_via_r9 that
  * the code below deliberately ignores, but that is inference.
  *
  * Known divergence from the reference: at the stream-open call the reference
@@ -69,19 +69,19 @@ extern u8 gWindowWork[];
    no header alias for it yet, so declare the alias beside the prototype. */
 
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
-void Func_08002dd8(s32 kind);
-s32 Func_08007308(s32 *st);
+void Runtime_ReleaseHeapBlock(s32 kind);
+s32 _call_via_r9(s32 *st);
 void UiText_LookupMessage(s32 *st, s32 script);
 u8 *Text_FormatNumber(u8 *buf, s32 input, s32 width);
-u32 Func_08017e88(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
+u32 UiText_AppendArticleName(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
                   s32 *suffix);
 void UiText_DecodeMessage(s32 res, u16 *dst, s32 cnt);
 s32 UiRender_LookupNamedValue(s32 kind, s32 clear);
 void UiWork_ClearValueNameTables(void);
 u8 *Runtime_GetObject(s32 no);
-s32 Func_0808a5d0(s32 no, s32 kind);
+s32 BattleFx_FindConditionResourceFar(s32 no, s32 kind);
 
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 
 u32 UiText_BuildRenderEntries(s32 script, s32 clear)
 {
@@ -137,7 +137,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
 
         do {
             prev = ch;
-            ch = (u32)Func_08007308(st);
+            ch = (u32)_call_via_r9(st);
             if (ch > 255)
                 ch = 64;
 
@@ -146,7 +146,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 if (ch < 32) {
                     switch (ch) {
                     case 19:
-                        Func_08007308(st);
+                        _call_via_r9(st);
                         UiRender_LookupNamedValue(3, clear);
                         break;
                     case 0:
@@ -158,7 +158,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         UiRender_LookupNamedValue(5, clear);
                         break;
                     case 20:
-                        Func_08007308(st);
+                        _call_via_r9(st);
                         UiRender_LookupNamedValue(2, clear);
                         break;
                     case 21:
@@ -169,16 +169,16 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 8:
                     case 9:
-                        Func_08007308(st);
+                        _call_via_r9(st);
                         break;
                     case 17:
-                        Func_08007308(st);
+                        _call_via_r9(st);
                         break;
                     case 18:
-                        Func_08007308(st);
+                        _call_via_r9(st);
                         break;
                     case 29:
-                        Func_08007308(st);
+                        _call_via_r9(st);
                         break;
                     case 1:
                         running = 0;
@@ -242,7 +242,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                     case 29:
                         entry[pos] = (u16)ch;
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
-                        entry[pos] = (u16)(Func_08007308(st) + 0xFFFF);
+                        entry[pos] = (u16)(_call_via_r9(st) + 0xFFFF);
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         break;
                     case 22:
@@ -262,20 +262,20 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         }
                         break;
                     case 19:
-                        no = Func_08007308(st) - 1;
+                        no = _call_via_r9(st) - 1;
                         UiText_DecodeMessage(
                             UiRender_LookupNamedValue(3, clear) + 0x741,
                             name, 24);
-                        pos = Func_08017e88(0, name, pos, entry, no, plural,
+                        pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 20:
-                        no = Func_08007308(st) - 1;
+                        no = _call_via_r9(st) - 1;
                         UiText_DecodeMessage(
                             (UiRender_LookupNamedValue(2, clear) &
                              RENDER_ENTRY_MASK) + 0x182,
                             name, 24);
-                        pos = Func_08017e88(0, name, pos, entry, no, plural,
+                        pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 21:
@@ -291,7 +291,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 23:
                         UiText_DecodeMessage(
-                            Func_0808a5d0(
+                            BattleFx_FindConditionResourceFar(
                                 UiRender_LookupNamedValue(6, clear), 1) +
                                 RENDER_RESOURCE_BASE,
                             name, 24);
@@ -304,7 +304,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 16:
                         src = Runtime_GetObject(
-                            *(s32 *)(Data_02000240 + 500));
+                            *(s32 *)(gGameState + 500));
                         dst = name;
                         no = 0;
                         do {
@@ -313,11 +313,11 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                             src++;
                             dst++;
                         } while (no <= 14);
-                        pos = Func_08017e88(0, name, pos, entry, 0, 0,
+                        pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0,
                                             &suffix);
                         break;
                     case 18:
-                        no = Func_08007308(st) - 1;
+                        no = _call_via_r9(st) - 1;
                         src = Runtime_GetObject(
                             UiRender_LookupNamedValue(1, clear));
                         dst = name;
@@ -328,11 +328,11 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                             src++;
                             dst++;
                         } while (off <= 14);
-                        pos = Func_08017e88(0, name, pos, entry, no, plural,
+                        pos = UiText_AppendArticleName(0, name, pos, entry, no, plural,
                                             &suffix);
                         break;
                     case 17:
-                        no = Func_08007308(st) - 1;
+                        no = _call_via_r9(st) - 1;
                         src = Runtime_GetObject(no);
                         dst = name;
                         no = 0;
@@ -342,11 +342,11 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                             src++;
                             dst++;
                         } while (no <= 14);
-                        pos = Func_08017e88(0, name, pos, entry, 0, 0,
+                        pos = UiText_AppendArticleName(0, name, pos, entry, 0, 0,
                                             &suffix);
                         break;
                     case 26:
-                        no = (Func_08007308(st) - 1) * 2;
+                        no = (_call_via_r9(st) - 1) * 2;
                         entry[pos] = (u16)(no + 128);
                         pos = (pos + 1) & RENDER_ENTRY_MASK;
                         entry[pos] = (u16)(no + 129);

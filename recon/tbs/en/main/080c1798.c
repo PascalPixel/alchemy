@@ -19,15 +19,15 @@ struct EffectTask {
     s16 actor_id;
 };
 
-extern u8 *Data_03001e74;
-extern u8 *Data_03001eec;
-extern struct DmaQueue Data_03001e50;
+extern u8 *gBattleWork;
+extern u8 *gBattleFxWork;
+extern struct DmaQueue gWorkSlot;
 void WaitFrames(s32);
 void QueueIoWriteDelay2(u32, u32);
 void _call_via_r3(void *, s32);
 void BattleMotion_ProjectScaledPosition(s32, struct ScreenPosition *);
 void BattlePresentation_ConfigurePaletteFade(s32, u16, s32);
-void Func_080c1470(s32);
+void BattleFx_InitializeStarField(s32);
 void Graphics_ResetVramBlockAndReleaseHeapBlocks(s32);
 void Graphics_ScaleRgb555Clamped(void *, void *, s32, s32);
 void Func_080c9020(void);
@@ -40,8 +40,8 @@ static inline void QueueObjectUpdate(void *destination)
     volatile u16 *ime = (u16 *)0x04000208;
     u16 saved = *ime;
     *ime = (u16)(u32)ime;
-    if (Data_03001e50.count <= 31) {
-        struct DmaRequest *request = &Data_03001e50.requests[Data_03001e50.count++];
+    if (gWorkSlot.count <= 31) {
+        struct DmaRequest *request = &gWorkSlot.requests[gWorkSlot.count++];
         request->destination = destination;
         request->control = 0x84000002;
         request->trigger = 0x84000002;
@@ -49,13 +49,13 @@ static inline void QueueObjectUpdate(void *destination)
     *ime = saved;
 }
 
-void Func_080c1798(s32 actor, s32 value, s32 mode, s32 parameter)
+void BattleFx_PlayUnitElementEffect(s32 actor, s32 value, s32 mode, s32 parameter)
 {
     struct EffectTask task_a;
     struct EffectTask task_b;
     struct ScreenPosition position_a;
     struct ScreenPosition position_b;
-    u8 *battle = Data_03001e74;
+    u8 *battle = gBattleWork;
     s32 i;
 
     WaitFrames(1);
@@ -75,9 +75,9 @@ void Func_080c1798(s32 actor, s32 value, s32 mode, s32 parameter)
     {
         s32 fade = 0;
         QueueIoWriteDelay2(0x04000050, 0x1088);
-        Func_080c1470(value);
+        BattleFx_InitializeStarField(value);
         for (i = 0; i <= 44; i++, fade += 0x444) {
-            u8 *object = Data_03001eec + 156;
+            u8 *object = gBattleFxWork + 156;
             if (i <= 24) {
                 s32 intensity = 0x10000 - fade;
                 FIELD(battle, s32, 0x644) = intensity;
@@ -96,7 +96,7 @@ void Func_080c1798(s32 actor, s32 value, s32 mode, s32 parameter)
     case 1:
         Func_080c9038(value);
         for (i = 39; i >= 0; i--) {
-            u8 *object = Data_03001eec;
+            u8 *object = gBattleFxWork;
             BattleMotion_ProjectScaledPosition(actor, &position_b);
             FIELD(object, s32, 0x13c4) = (64 - position_b.x) << 8;
             FIELD(object, s32, 0x13c8) = (64 - position_b.y) << 8;

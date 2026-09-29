@@ -27,7 +27,7 @@ struct UiGlyph {
 void UiGlyph_DecodeWithHeapRoutines(struct UiGlyph *glyph, s32 overlay);
 
 extern struct UiGlyph *gGlyphWork;
-extern const void *const Data_08029a10[];
+extern const void *const UiIcon_FramePointerTable[];
 extern const void *const Data_08029acc[];
 extern const void *const Data_08029b68[];
 extern const void *const UiIcon_ItemIconPointers[];
@@ -53,7 +53,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers)
     if (glyph == NULL)
         return -1;
     if (layers & ICON_CURSED) {
-        glyph->source = Data_08029a10[2];
+        glyph->source = UiIcon_FramePointerTable[2];
         glyph->width = 2;
         glyph->height = 2;
         UiGlyph_DecodeWithHeapRoutines(glyph, 0);

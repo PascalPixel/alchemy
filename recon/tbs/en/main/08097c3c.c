@@ -45,10 +45,10 @@ struct PreviewWork {
     u8 unknown_40[4];
     u8 saved_animation;
 };
-extern struct PreviewWork *Data_03001f30;
-extern u32 Data_03001ae8;
-extern u32 Data_03001e40;
-extern u32 Data_03001c94;
+extern struct PreviewWork *gEffectWork;
+extern u32 gKeysHeld;
+extern u32 gFrameCount;
+extern u32 gKeyState;
 extern const u8 Data_0809f0bc[];
 extern const u8 Data_0809f118[];
 extern const u8 Value_00006666;
@@ -73,14 +73,14 @@ void *Object_GetById(u32);
 void Audio_PlayCue(s32);
 void Animation_ApplyChildValuesFar(void *, s32);
 void EffectRuntime_StopCurrentObject(void);
-void Func_080981b0(void *);
+void UpdateRisingParticleBurst(void *);
 
 struct PreviewPositions {
     s32 nearby[3];
     s32 pos[3];
 };
 
-void Func_08097c3c(void)
+void FunctionHead_08097c3c(void)
 {
     struct PreviewPositions positions;
     s32 lift;
@@ -109,7 +109,7 @@ void Func_08097c3c(void)
     register u8 *tmp;
     s32 *tmp2;
 
-    work = Data_03001f30;
+    work = gEffectWork;
     parent = work->parent;
     actor = work->actor;
     lift = 0x100000;
@@ -147,7 +147,7 @@ void Func_08097c3c(void)
     goto wait;
 select:
     /* FAKEMATCH: retain the observed input word ignored by the callee. */
-    direction = BattleFx_GetCycledTableWord(Data_03001ae8);
+    direction = BattleFx_GetCycledTableWord(gKeysHeld);
     if ((s32)&Value_0000ffff == direction) {
         s32 *tmp8;
         positions.pos[0] = actor->object.x;
@@ -195,7 +195,7 @@ select:
         goto move_parent;
 blocked:
     Object_SetMode(preview, 4);
-    if ((Data_03001e40 & 15) == 0)
+    if ((gFrameCount & 15) == 0)
         Audio_PlayCue(114);
     goto wait;
 move_parent:
@@ -236,7 +236,7 @@ move:
     goto finish;
 wait:
     WaitFrames(1);
-    keys = (s32)&Value_00000303 & Data_03001c94;
+    keys = (s32)&Value_00000303 & gKeyState;
     if (0 == keys)
         goto select;
 finish:
@@ -249,5 +249,5 @@ finish:
         hit->object.action_flags |= 1;
     }
     BattleFx_PrepareBufferInterpolation();
-    Func_080981b0(preview);
+    UpdateRisingParticleBurst(preview);
 }

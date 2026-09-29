@@ -39,8 +39,8 @@ struct MapPosition {
    the Func_080134fc function-pointer table); the ADDRESS (not the value)
    of the matching 0202c001 byte is handed to the handler, so the handler
    reads whatever it needs from that second table itself. */
-extern u8 Data_0202c000[];
-extern u8 Data_0202c001[];
+extern u8 gMapCollision[];
+extern u8 gMapCollision[];
 typedef s32 (*TerrainHeightFn)(u8 *, s32, s32);
 extern TerrainHeightFn Data_080134fc[];
 
@@ -78,9 +78,9 @@ s32 Func_080120dc(struct MapObject *object, struct MapPosition *position)
         return 2;
 
     idx = cell[3] << 2;
-    kind = Data_0202c000[idx];
+    kind = gMapCollision[idx];
 
-    height = Data_080134fc[kind & 15](&Data_0202c001[idx], x & 15, z & 15);
+    height = Data_080134fc[kind & 15](&gMapCollision[idx], x & 15, z & 15);
 
     delta = height - object->height;
     if (delta > 0x80000)

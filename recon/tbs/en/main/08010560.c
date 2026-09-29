@@ -17,11 +17,11 @@
  * 1620-1790. */
 #include "TYPES.H"
 
-void Func_08010424(s32 source_x, s32 source_y, s32 destination_x,
+void Map_CopyMetatileIndicesRect(s32 source_x, s32 source_y, s32 destination_x,
                    u32 destination_y, s32 height, s32 width);
 void WaitFrames(s32 delay);
 
-void Func_08010560(u16 *command, s32 destination_x, u32 destination_y)
+void Map_PlayMetatileCopySequence(u16 *command, s32 destination_x, u32 destination_y)
 {
     u16 source = *command;
 
@@ -34,7 +34,7 @@ void Func_08010560(u16 *command, s32 destination_x, u32 destination_y)
             s32 width = args[2];
             s32 delay = args[3];
 
-            Func_08010424(source, (u16)source_y,
+            Map_CopyMetatileIndicesRect(source, (u16)source_y,
                           destination_x, destination_y,
                           (u16)height, (u16)width);
             command += 5;

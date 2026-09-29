@@ -38,7 +38,7 @@ struct MenuOwnerEntry {
 #define SLOT_ICON2(i)   (base[(i) * 0x40 + 0x1075])
 #define SLOT_COUNT(i,k) (((s8 *)base)[(i) * 0x40 + 0x1068 + (k)])
 
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 extern u8 Value_00000000;
 extern u8 Value_00000001;
 extern u8 Value_00000002;
@@ -222,7 +222,7 @@ loop:
                 win3 = 0;
             }
         } else {
-            PaletteGlow_Update(Data_02000240[0x205], Data_02000240[0x206]);
+            PaletteGlow_Update(gGameState[0x205], gGameState[0x206]);
             Menu_ClearSecondObjectRowAndScheduleUpdate();
             Menu_ClearFirstObjectRowAndScheduleUpdate();
             UiWork_Finalize(win3, 2);
@@ -284,7 +284,7 @@ teardown:
     UiWork_Finalize(win, 2);
     Scheduler_ScheduleCallbackA();
     Runtime_ReleaseHeapBlock(55);
-    PaletteGlow_Update(Data_02000240[0x205], Data_02000240[0x206]);
+    PaletteGlow_Update(gGameState[0x205], gGameState[0x206]);
     WaitFrames(1);
 
 done:

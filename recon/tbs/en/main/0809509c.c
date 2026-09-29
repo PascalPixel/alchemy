@@ -9,7 +9,7 @@
    (a comma expression or an inline fill with the value as a parameter
    still stores first); matching needs a reviewed fill form, not a spelling.
    2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes, --function
-   Func_0809509c): 30,255 candidates, none below the draft (225 once the
+   Unnamed_0809509c): 30,255 candidates, none below the draft (225 once the
    sparkle callback is named); every spelling still builds the fill zero
    before the reviewed Dma_Set loads its registers. */
 /* Draft, not exact (2026-09-26): 11 differing halfwords (194 bytes plus
@@ -54,7 +54,7 @@ struct FieldView {
     s32 *leader;
 };
 
-extern struct FieldView *Data_03001e70;
+extern struct FieldView *gMapWork;
 extern const u8 Data_080a00b8[];
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Resource_DecodeByteLz(const void *source, void *destination);
@@ -74,7 +74,7 @@ static __inline__ void ClearDustWork(struct DustWork *work)
     Dma_Set(&zero, work, 0x85000104, (volatile u32 *)0x040000d4);
 }
 
-void Func_0809509c(void)
+void Unnamed_0809509c(void)
 {
     struct DustWork *work = Runtime_AllocateBlock(29, 0x410);
     struct DustParticle *p = work->particles;
@@ -92,7 +92,7 @@ void Func_0809509c(void)
     clear = 0;
 loop:
     {
-        struct FieldView *view = Data_03001e70;
+        struct FieldView *view = gMapWork;
         s32 *leader;
         union DustWord *attr = &p->link;
         s32 x;

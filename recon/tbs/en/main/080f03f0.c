@@ -31,7 +31,7 @@
 extern u8 Data_03001d18;
 extern u8 Data_03001f58;
 extern u8 Data_03001ac4;
-extern u8 Data_03001d08;
+extern u8 gOptionMirror;
 extern const u32 DisplayScroll_SlideResources[];
 
 void Scheduler_ResetTaskTable(void);
@@ -62,7 +62,7 @@ s32 DisplayScroll_RunSlideshow(void)
     Data_03001f58 = 0;
     tmp4 = (void *)0x0600f800;
     Data_03001ac4 = 0;
-    Data_03001d08 = 0;
+    gOptionMirror = 0;
     Scheduler_ResetTaskTable();
     tmp2 = (s32)DisplayScroll_StepPositionEveryFourFrames;
     Scheduler_AddOrUpdateCallback(tmp2, 0x480);

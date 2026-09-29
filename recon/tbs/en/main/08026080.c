@@ -112,12 +112,12 @@ struct BattleGlobals {
     struct SessionState *session;    /* 0x03001f34 */
 };
 
-extern struct BattleGlobals Data_03001e74;
+extern struct BattleGlobals gBattleWork;
 /*
  * Read twice inside one frame (0x080263aa and 0x080263cc) without CSE, so it
  * is volatile; the ">> 2" at 0x080263ae is "lsrs", so it is unsigned.
  */
-extern volatile u32 Data_03001e40;
+extern volatile u32 gFrameCount;
 
 s32 Resource_LoadIntoFreeSlot(s32 id);
 s32 Resource_GetBuffer(s32 slot, s32 source);
@@ -143,10 +143,10 @@ void Ui_ClearVramBlock(void);
 void Resource_ResetEntry(s32 slot);
 void WaitFrames(s32 frames);
 void Audio_PlayCue(s32 cue);
-extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001b04;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
-s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
+s32 BattleTarget_RunSelection(s32 preferred, s32 mode, u32 spread, u32 kind)
 {
     u16 ids[8];
     struct DisplayEntry entries[6];
@@ -195,7 +195,7 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     u8 *pp;
     u8 *pc;
 
-    runtime = Data_03001e74.runtime;
+    runtime = gBattleWork.runtime;
     cnt = 0;
     redraw = 0xFFFF;
     slotId = Resource_LoadIntoFreeSlot(256);
@@ -204,9 +204,9 @@ s32 Func_08026080(s32 preferred, s32 mode, u32 spread, u32 kind)
     if (spread == 0)
         spread = 1;
     if (mode == 2 || mode == 4)
-        Data_03001e74.session->slide_offset = -2;
+        gBattleWork.session->slide_offset = -2;
     else
-        Data_03001e74.session->slide_offset = 16;
+        gBattleWork.session->slide_offset = 16;
 
     for (i = 5; i >= 0; i--)
         tbl[i].flags = 0;
@@ -325,8 +325,8 @@ step_back:
         M2C_FIELD(head, s32 *, 4) = 0x40002000;
         M2C_FIELD(head, s32 *, 8) = pending;
         head->tile = Resource_GetBuffer(
-            slotId, (((Data_03001e40 >> 2) & 31) << 8) + 0x080346F8);
-        i = Trig_Sin(Data_03001e40 << 12);
+            slotId, (((gFrameCount >> 2) & 31) << 8) + 0x080346F8);
+        i = Trig_Sin(gFrameCount << 12);
         if (i < 0)
             i += 0x7FFF;
         pos.y += i >> 15;
@@ -586,7 +586,7 @@ draw_name:
             goto frame_tail;
         unit = Owner_GetStateFar(ids[cursor]);
         Func_080b50b8(ids[cursor], &namePos);
-        namePos.y += Trig_Sin(Data_03001e40 << 12) / 32768;
+        namePos.y += Trig_Sin(gFrameCount << 12) / 32768;
         if (unit->class_id == 125 || unit->class_id == 122) {
             width = 0x80E;
             if (unit->class_id == 125)
@@ -618,7 +618,7 @@ frame_end:
             for (i = 1; i < cnt; i++, entry++) {
                 slot = &tbl[selSlot[i]];
                 Func_080b50b8(selIds[i], &targetPos);
-                targetPos.y += Trig_Sin(Data_03001e40 << 12) / 32768;
+                targetPos.y += Trig_Sin(gFrameCount << 12) / 32768;
                 *entry = *head;
                 if (slot->flags & 1) {
                     targetPos.x = (targetPos.x + slot->x) / 2;
@@ -644,17 +644,17 @@ frame_end:
             }
         }
 
-        pressed = Data_03001c94;
-        repeat = Data_03001b04;
-        if (Data_03001e74.session->auto_enabled != 0) {
+        pressed = gKeyState;
+        repeat = gKeysRepeat;
+        if (gBattleWork.session->auto_enabled != 0) {
             pressed = 0;
             repeat = 0;
-            if (Data_03001e74.session->auto_delay == 0) {
-                Data_03001e74.session->auto_delay = 60;
+            if (gBattleWork.session->auto_delay == 0) {
+                gBattleWork.session->auto_delay = 60;
                 pressed = 1;
                 repeat = 1;
             } else {
-                Data_03001e74.session->auto_delay--;
+                gBattleWork.session->auto_delay--;
             }
         }
         if (pressed & 1) {
@@ -694,7 +694,7 @@ frame_end:
                 redraw |= 1;
             }
         }
-        if (Data_03001e74.session->timer == 0 || (pressed & 2)) {
+        if (gBattleWork.session->timer == 0 || (pressed & 2)) {
             Audio_PlayCue(113);
             cursor = -1;
             break;
@@ -710,7 +710,7 @@ frame_end:
         UiWork_Finalize(infoWin, 1);
     UiWork_Finalize(window, 1);
     BattlePres_SetActorModesFar(ids, 0);
-    Data_03001e74.session->slide_offset = 0;
+    gBattleWork.session->slide_offset = 0;
     WaitFrames(1);
     return cursor;
 }

@@ -89,7 +89,7 @@ struct LuckyDiceScroll {
 
 extern volatile u32 gKeysHeld;
 extern volatile u32 gKeysRepeat;
-extern struct LuckyDiceParty Data_02000240;
+extern struct LuckyDiceParty gGameState;
 extern struct LuckyDiceScroll gBgScroll;
 extern u8 Data_03001d18;
 extern u8 Data_080f53fc[];
@@ -121,7 +121,7 @@ void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(void *work, void *transfer);
 s32 Render_ProjectPoint(void *point, s32 *out);
 u32 Math_ModU(u32 numerator, u32 denominator);
-void Func_08015000(void);
+void FarCall_WindowTable(void);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void UiWork_FinalizeFar(s32 window, s32 mode);
 void Party_AdjustSixDigitCounterAFar(s32 amount);
@@ -282,11 +282,11 @@ void LuckyDice_Run(void)
     work->die[1].y = 0x600000;
     work->die[1].z = -0xa00000;
 
-    Func_08015000();
+    FarCall_WindowTable();
     window = UiWindow_CreateFar(18, 0, 12, 3, 6);
     sprites->coins_window = window;
     UiText_DrawCharacterAtOffsetFar(0x906, window, 48, 0);
-    UiText_DrawNumberInWindowFar(Data_02000240.coins, 6, sprites->coins_window, 0, 0);
+    UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
     window = UiWindow_CreateFar(22, 16, 8, 4, 6);
     sprites->help_window = window;
     UiText_DrawCharacterAtOffsetFar(0x910, window, 0, 0);
@@ -389,7 +389,7 @@ void LuckyDice_Run(void)
             if (counter == 0) {
                 winnings = 0;
                 UiText_DrawNumberInWindowFar(0, digits, sprites->winnings_window, 40, 0);
-                UiText_DrawNumberInWindowFar(Data_02000240.coins, 6, sprites->coins_window, 0, 0);
+                UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
             }
             if (counter == 15) {
                 state = 0;
@@ -427,7 +427,7 @@ void LuckyDice_Run(void)
             if (work->die[1].y > 0xa00000) {
                 work->die[1].y = 0xa00000;
             }
-            if (Data_02000240.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
+            if (gGameState.coins < (u32)(Party_GetAverageLevelFar() * 10)) {
                 UiWork_FinalizeFar(sprites->help_window, 1);
                 break;
             }
@@ -441,11 +441,11 @@ void LuckyDice_Run(void)
                 UiWork_FinalizeFar(sprites->help_window, 1);
                 state = 1;
                 bet = Party_GetAverageLevelFar() * 10;
-                if ((u32)bet > Data_02000240.coins) {
-                    bet = Data_02000240.coins;
+                if ((u32)bet > gGameState.coins) {
+                    bet = gGameState.coins;
                 }
                 Party_AdjustSixDigitCounterAFar(-bet);
-                UiText_DrawNumberInWindowFar(Data_02000240.coins, 6, sprites->coins_window, 0, 0);
+                UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
                 die = work->die;
                 for (i = 0; i != 2; i++) {
                     if (i > 1) {
@@ -658,7 +658,7 @@ void LuckyDice_Run(void)
                     } else {
                         winnings = bet * 5;
                     }
-                    UiText_DrawNumberInWindowFar(Data_02000240.coins, 6, sprites->coins_window, 0, 0);
+                    UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
                     Audio_PlayCue(93);
                 } else {
                     pairs = 0;
@@ -672,19 +672,19 @@ void LuckyDice_Run(void)
                     }
                     if (pairs == 1) {
                         winnings = bet;
-                        UiText_DrawNumberInWindowFar(Data_02000240.coins, 6, sprites->coins_window, 0, 0);
+                        UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
                         kind = 3;
                     }
                     if (pairs == 2) {
                         winnings = bet * 2;
-                        UiText_DrawNumberInWindowFar(Data_02000240.coins, 6, sprites->coins_window, 0, 0);
+                        UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
                         flash[Random16() & 1] = 60;
                         kind = 2;
                         Audio_PlayCue(91);
                     }
                     if (pairs == 3) {
                         winnings = bet * 3;
-                        UiText_DrawNumberInWindowFar(Data_02000240.coins, 6, sprites->coins_window, 0, 0);
+                        UiText_DrawNumberInWindowFar(gGameState.coins, 6, sprites->coins_window, 0, 0);
                         flash[Random16() & 1] = 60;
                         kind = 1;
                         Audio_PlayCue(92);

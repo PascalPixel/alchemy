@@ -103,7 +103,7 @@ u32 *Trade_AddOfferFar(u32, u32, u32);
 s32 Djinn_TransferFar(s32, s32, s32, s32);
 void Menu_SetFirstObjectRowCoordinates(s32);
 s32 Func_080ab314(void);
-s32 Func_080ab5e4(s32);
+s32 DjinnMenu_SelectDjinn(s32);
 s32 Menu_OpenBackdropScreen(void);
 s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
 s32 OwnerAction_RunCompareLoop(s32);
@@ -172,7 +172,7 @@ s32 Unnamed_080aa768(void)
         case 2:
             Menu_SetFirstObjectRowCoordinates(0);
             FourObjectMotion_SetSlotPosition(1, 0, 200, 0);
-            result = Func_080ab5e4(0);
+            result = DjinnMenu_SelectDjinn(0);
             state = 15;
             if (result == 10)
                 break;
@@ -203,7 +203,7 @@ s32 Unnamed_080aa768(void)
             state = 0;
             if (menu->count == 0)
                 break;
-            result = Func_080ab5e4(1);
+            result = DjinnMenu_SelectDjinn(1);
             if (result == -2)
                 done = 1;
             state = 4;
@@ -217,7 +217,7 @@ s32 Unnamed_080aa768(void)
             menu->owner = menu->owners[menu->column[0]];
             menu->source_owner = menu->owners[menu->column[0]];
             FourObjectMotion_SetSlotPosition(0, menu->column[0] * 56 + 48, 54, 0);
-            tmp2 = Func_080ab5e4(1);
+            tmp2 = DjinnMenu_SelectDjinn(1);
             tmp = tmp2;
             result = tmp;
             i = 0;

@@ -28,12 +28,12 @@ extern u8 gMapCellBuffer[];
  * meaning of the 0x080ede48 sprite-size table. Names are reading aids.
  *
  * Call bindings used here, from the owner's own resolved call sites:
- *   Func_080041d8 Scheduler_AddOrUpdateCallback   Func_08004278 Scheduler_RemoveCallback
- *   Func_08004458 random_16                       Func_08002dd8 Runtime_ReleaseHeapBlock
- *   Func_080dbb24 BattleFx_SpawnObjects       Func_080d6750 BattleFx_SelectLivingTargets
- *   Resource_LoadAndDecompress load_and_decompress             Func_080e3980 apply_alternate_step_and_y_offset
- *   Func_080d6888 update_members                  Func_080e155c Camera_ApplyShake
- *   Func_080cd52c ObjectGroup_TickMemberTimers
+ *   Scheduler_AddOrUpdateCallback Scheduler_AddOrUpdateCallback   Scheduler_RemoveCallback Scheduler_RemoveCallback
+ *   Random16 random_16                       Runtime_ReleaseHeapBlock Runtime_ReleaseHeapBlock
+ *   BattleFx_SpawnObjects BattleFx_SpawnObjects       BattleFx_SelectLivingTargets BattleFx_SelectLivingTargets
+ *   Resource_LoadAndDecompress load_and_decompress             EffectPosition_ApplyAlternateStepAndYOffset apply_alternate_step_and_y_offset
+ *   ObjectGroup_UpdateMembers update_members                  Camera_ApplyShake Camera_ApplyShake
+ *   ObjectGroup_TickMemberTimers ObjectGroup_TickMemberTimers
  *
  * Indirect calls: the cached word at gWorkSlot[46] is a six
  * argument rectangle blitter. Every retained call site branches through the
@@ -105,7 +105,7 @@ extern u8 Value_00000095;
 extern u8 Value_000000ca;
 extern u8 Value_000000f0;
 
-void Func_080eb754(s32 arg0) {
+void Unnamed_080eb754(s32 arg0) {
     void **cursor;
     u8 place[0x10];  /* object placement record, first loop */
     struct EffectPosition mpos;
@@ -159,7 +159,7 @@ void Func_080eb754(s32 arg0) {
     M2C_FIELD((void *)0x05000000, s16 *, 0) = (s16) (s32) &Value_00000000;
     M2C_FIELD((void *)0x05000000, s16 *, 2) = (s16) (s32) &Value_00000000;
     work->transfer_mode = 0;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     Unnamed_080cd104(1, 0);
     BattleFx_SpawnObjects(9, 0x175, 1);
     gProjection[4] = 0xF0;
@@ -189,7 +189,7 @@ void Func_080eb754(s32 arg0) {
         sp[k].x = (s32) ((Random16() & 0x1F) + 0x10);
         sp[k].y = (s32) (((Random16() & 0x1F) + 0x30) << 0x10);
         sp[k].vy = (s32) (((Random16() & 0x1F) - 0x10) << 0x10);
-        sp[k].life = (s32) (Func_08002304(Random16(), 0x30) + 2);
+        sp[k].life = (s32) (Math_ModU(Random16(), 0x30) + 2);
     }
 
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 3);
@@ -199,19 +199,19 @@ void Func_080eb754(s32 arg0) {
     for (frame = 0; frame != 0x78; frame++) {
         wave = 0;
         if (frame == 0) {
-            Func_080f9010(0x88);
+            Audio_PlayCue(0x88);
         }
         if (frame == 0x1A) {
-            Func_080f9010(0x8D);
+            Audio_PlayCue(0x8D);
         }
         if (frame == 0x28) {
-            Func_080f9010(0x9A);
+            Audio_PlayCue(0x9A);
         }
         if (frame == 0x48) {
-            Func_080f9010(0x9A);
+            Audio_PlayCue(0x9A);
         }
         if (frame == 0x68) {
-            Func_080f9010(0x9A);
+            Audio_PlayCue(0x9A);
         }
         if ((*(s32 *)gKeysRepeat & 3) != 0) {
             if (frame > 0x10) {
@@ -279,7 +279,7 @@ void Func_080eb754(s32 arg0) {
                 for (k = 0; k != num; k++) {
                     ang = k << 0xA;
                     lo = ((s32) ((radius_x + 8) * Trig_Sin(ang)) >> 0x10) + grow;
-                    hi = ((s32) (radius_y * Func_0800231c(ang)) >> 0x10) + 0x40;
+                    hi = ((s32) (radius_y * Trig_Cos(ang)) >> 0x10) + 0x40;
                     blit(dest,
                          (void *) (sheet + *(u16 *)(0x080EDE48 + (idx - 2))),
                          (lo + 0x60) - half, hi - cnt, cnt, idx);
@@ -297,7 +297,7 @@ void Func_080eb754(s32 arg0) {
             sp = (struct ScenePoint *)((s8 *)work + SPARK_POOL);
             for (k = 0; k != 0x30; k++) {
                 if (sp->life == 0) {
-                    lo = Func_080022fc(k, 3) + 1;
+                    lo = Math_Mod(k, 3) + 1;
                     hi = lo * 2;
                     blit(dest,
                          (void *) (sheet + *(u16 *)(0x080EDE48 + (hi - 2))),
@@ -408,13 +408,13 @@ void Func_080eb754(s32 arg0) {
         }
         if (frame == 8) {
             M2C_FIELD(work, s32 *, 0x77A8) = frame;
-            Func_080f9010(0x91);
+            Audio_PlayCue(0x91);
         }
         if (frame == 0xB) {
-            Func_080f9010(0x91);
+            Audio_PlayCue(0x91);
         }
         if (frame == 0x2E) {
-            Func_080f9010(0x89);
+            Audio_PlayCue(0x89);
         }
         m = 0;
         if (EFFECT_ARGUMENT(work)->count != 0) {
@@ -439,9 +439,9 @@ void Func_080eb754(s32 arg0) {
                             sp->life = (s32) ((0xF & Random16()) + 8);
                             sp++;
                         }
-                        Func_080b5088(
+                        BattleMotion_ApplyVariantMotionFar(
                             EFFECT_ARGUMENT(work)->actors[(slot - 0x24) >> 1], 1);
-                        Func_080f9010(0x86);
+                        Audio_PlayCue(0x86);
                     }
                 }
                 pool_ofs += 0x380;
@@ -462,7 +462,7 @@ void Func_080eb754(s32 arg0) {
             sp++;
         }
         if (frame == 0x30) {
-            Func_080f9010(0x88);
+            Audio_PlayCue(0x88);
         }
         if (frame > 0x28) {
             ((struct BattleEffectWork *)work)->transfer_mode = 0;
@@ -497,12 +497,12 @@ void Func_080eb754(s32 arg0) {
         slide += 0xC;
     }
 
-    Func_080b50e8(0x86);
+    BattleEventRuntime_BeginPhaseFar(0x86);
     objs = (s32 *)((s8 *)work + OBJECT_LIST);
     for (k = 0; k != 9; k++) {
         ResourceObject_ReleaseFar(*objs++);
     }
     Scheduler_RemoveCallback(0x080CD261);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2E);
     BattleFx_EndCanvasLayer();
 }

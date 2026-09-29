@@ -112,7 +112,7 @@ union RowCounter {
     u32 value : 16;
 };
 
-extern struct VramBlock Data_03001b10[];
+extern struct VramBlock gVramBlockCache[];
 extern s16 BabiFune_FadeSlot;
 extern union RowCounter BabiFune_FadeStep;
 extern u32 Data_02009af8[];
@@ -132,7 +132,7 @@ void Local_020011c4(void)
     u32 remaining;
 
     count = &BabiFune_FadeStep;
-    tile = Data_03001b10[BabiFune_FadeSlot].offset >> 5;
+    tile = gVramBlockCache[BabiFune_FadeSlot].offset >> 5;
     w = Data_02009af8;
     active = count->signed_value;
     remaining = count->value;

@@ -72,15 +72,15 @@ void BattlePresentation_RunUnitTransition(
         u16 unit = visible_units[index];
         if (unit != 0xfe) {
             if (unit == primary_unit) {
-                Func_08009080(primary_record, 3);
+                Object_SetMode(primary_record, 3);
             } else if ((opposing_unit <= 7) != (unit <= 7)) {
                 BattlePres_SetActorRecordMode(unit, 1);
             }
         }
     }
 
-    Func_080f9010(0x9a);
-    Func_080c1798(FIELD32(context, 8), selection->presentation_data, 0, 0);
+    Audio_PlayCue(0x9a);
+    BattleFx_PlayUnitElementEffect(FIELD32(context, 8), selection->presentation_data, 0, 0);
     if (mode & 1) {
         BattlePres_SetActorRecordMode(primary_unit, 1);
     }
@@ -112,7 +112,7 @@ void BattlePresentation_RunUnitTransition(
             }
         }
         visible_units[kept_count] = 0xff;
-        Func_080b7b6c(visible_units, 0);
+        BattleActor_SpawnObjectsForList(visible_units, 0);
 
         for (index = 0; index < selection->unit_count; index++) {
             visible_units[index] = selection->units[index];
@@ -141,7 +141,7 @@ void BattlePresentation_RunUnitTransition(
             FIELD32(context, 4) ^= 1;
         }
 
-        Func_080041d8(0x080bd899, 0xc80);
+        Scheduler_AddOrUpdateCallback(0x080bd899, 0xc80);
         if (selection->flags & 0x8000) {
             BattleFx_InitializeModeFar(context);
         } else if (selection->flags & 0x4000) {

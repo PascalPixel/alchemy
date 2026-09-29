@@ -7,12 +7,12 @@
  * main/080e7404.c, 080d82b0.c and games/THE BROKEN SEAL/src/battle/effects/
  * member_orbit/run.c.  Unlike member_orbit (single object argument), this
  * owner takes a second explicit `mode` argument that both selects the
- * Func_08002f40 palette resource (via the established Value_ literal-pool
+ * Resource_GetTableEntry palette resource (via the established Value_ literal-pool
  * trick) and gates several halving/branch decisions throughout the frame
  * loop.
  *
  * Semantic summary: opens display kinds 46 and 47 (draw-rectangle blit
- * routines cached in Data_03001e50[]), copies a palette through the
+ * routines cached in gWorkSlot[]), copies a palette through the
  * generic word-copy helper (_call_via_r3 taking the 0x03001388 word-copy
  * routine as a trailing callback argument -- _call_via_r3 is the r3 slot
  * of the _call_via_rN trampoline at recon/tbs/raw/080072e4.s, modeled as a
@@ -21,10 +21,10 @@
  * 0x02010000 from one party member's position, then runs 128 frames.
  * Each frame redraws the first 128 particles whose staggered reveal
  * window is open and whose phase field is non-negative, projecting each
- * through Func_080e3944 and blitting through the kind-46 routine (also a
+ * through EffectPosition_ApplyBaseAndYOffset and blitting through the kind-46 routine (also a
  * genuinely traced function pointer, the r4 slot of the same trampoline).
  * Mode 1 additionally nudges each drawn particle vertically by +-8192 and
- * drives Func_080d6888 portrait callouts differently than mode 0.
+ * drives ObjectGroup_UpdateMembers portrait callouts differently than mode 0.
  * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
  * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores 3,733
  * with 1 symbols the linked build does not define, too far for a 10-minute
@@ -35,7 +35,7 @@
 
 typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern const u16 ParticleStreams_CellOffsets[];
 extern u8 Value_00000073;
 extern u8 Value_0000007b;
@@ -44,25 +44,25 @@ extern u8 Value_0000007c;
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void **GetBattleObjectSlotFar(s32 member_id);
 u32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(const void *source, void *screen);
 void EffectStep_AdvanceWithGravity3D(void *particle, s32 a, s32 b);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
-void Func_080ca1fc(void *object, s32 mode)
+void BattleFx_RunParticlePool(void *object, s32 mode)
 {
     void **heap_cache;
     void **cursor;
@@ -99,9 +99,9 @@ void Func_080ca1fc(void *object, s32 mode)
     }
 
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    draw_rectangle_fn = (DrawRectangleFn)Data_03001e50[46];
+    draw_rectangle_fn = (DrawRectangleFn)gWorkSlot[46];
     status = BattleEffect_LoadWork(47, 7, 7, 11, 2);
-    second_blit_kind = Data_03001e50[47];
+    second_blit_kind = gWorkSlot[47];
 
     Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
 
@@ -111,7 +111,7 @@ void Func_080ca1fc(void *object, s32 mode)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     member_object = *GetBattleObjectSlotFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 8));
@@ -136,7 +136,7 @@ void Func_080ca1fc(void *object, s32 mode)
         M2C_FIELD(particle, s32 *, 0xC) = (sin_val * radius) >> 8;
         M2C_FIELD(particle, s32 *, 0x10) =
             ((s32)(Random16() & 0xFF) - 32) << 9;
-        cos_val = Func_0800231c((s32)angle);
+        cos_val = Trig_Cos((s32)angle);
         M2C_FIELD(particle, s32 *, 0x14) = -(cos_val * radius * 2) >> 8;
         M2C_FIELD(particle, s32 *, 0x18) =
             (s32)(Random16() & 0x1F) + 48;
@@ -237,7 +237,7 @@ void Func_080ca1fc(void *object, s32 mode)
                     if (outer == stagger) {
                         s32 member_id;
 
-                        Func_080b50e8(-1);
+                        BattleEventRuntime_BeginPhaseFar(-1);
                         member_id = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s16 *,
                             member_id_offset);
@@ -262,8 +262,8 @@ void Func_080ca1fc(void *object, s32 mode)
                     if (outer == stagger) {
                         s32 member_id;
 
-                        Func_080f9010(126);
-                        Func_080b50e8(-1);
+                        Audio_PlayCue(126);
+                        BattleEventRuntime_BeginPhaseFar(-1);
                         member_id = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s16 *,
                             member_id_offset);
@@ -286,7 +286,7 @@ void Func_080ca1fc(void *object, s32 mode)
     } while (outer != 128);
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

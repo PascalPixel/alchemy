@@ -1,7 +1,7 @@
 /* 2026-09-29: eight minutes of permutation found 1640; the cleaned natural
  * form kept here scores 1660 (26 register-only, 8 operand, 9 reordered, 1
  * inserted, 7 deleted), from 2385 (alchemy permute --function
- * Func_0800615c). What moved it: the channel flags are read into a local
+ * SerialRuntime_CollectReceivedPayloads). What moved it: the channel flags are read into a local
  * before channel_state[1] and the runtime flags are cleared, and stored
  * into channel_state[0] after; the destination is set before the current
  * mask is cleared, and the locals are declared in a different order. */
@@ -27,7 +27,7 @@ static __inline__ void Serial_SetIme(s32 value)
     REG_IME = value;
 }
 
-u8 Func_0800615c(void *payload)
+u8 SerialRuntime_CollectReceivedPayloads(void *payload)
 {
     struct SerialRuntime *state;
     u32 channel_state[2];

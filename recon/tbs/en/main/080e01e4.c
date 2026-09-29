@@ -69,7 +69,7 @@ extern u8 Value_00000089;
 
 /* Eight falling sprites emit thirty-two gravity particles on reaching the
  * lower edge. EffectStep.variant is the remaining particle lifetime here. */
-void Func_080e01e4(struct BattleEffectArgument *effect)
+void Unnamed_080e01e4(struct BattleEffectArgument *effect)
 {
     struct BattleEffectWork *work;
     void *canvas;

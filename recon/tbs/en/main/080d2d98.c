@@ -25,12 +25,12 @@
  * objects are spawned.  The run is then 124 frames long; pressing a button
  * (bits 0..1 of the pad word at 0x03001b04) fast-forwards frames 33..97 to
  * frame 98.  Each frame:
- *   - a damped focus point is integrated and published through Func_080e6d3c;
+ *   - a damped focus point is integrated and published through BattleFx_PlaceFormationObjects;
  *     x decays toward 120<<16 with a restoring push, y just decays;
  *   - frame 28 seeds up to 256 embers on a ring around (32<<16, 96<<16), and
  *     frames 32..79 top the pool up by sixteen embers per frame;
- *   - one-shot sounds fire on frames 0, 32 and 80 (Func_080f9010) and on
- *     frame 120 (Func_080b50e8);
+ *   - one-shot sounds fire on frames 0, 32 and 80 (Audio_PlayCue) and on
+ *     frame 120 (BattleEventRuntime_BeginPhaseFar);
  *   - frames 32..79 draw three growing columns from the byte pairs at
  *     Data_080ee1ac: a fixed 104-tall body and a span-tall foot whose height
  *     is (frame*16 - 256 + 25*i)/104;
@@ -41,10 +41,10 @@
  *     gravity (per-lane from Data_080ee1b4 until frame 80, a fixed -0x8000
  *     afterwards) and 62/64 drag, and retired once it falls past y=104;
  *   - from frame 30, while frame <= 79, every listed party member is driven
- *     through Func_080d6888 on the frames where frame/12 is 0 or 6.
+ *     through ObjectGroup_UpdateMembers on the frames where frame/12 is 0 or 6.
  * Afterwards the callback is removed, heap kinds 46/47 are released, the
- * focus point is handed to Func_080e6eac and the twelve spawned objects are
- * released through Func_08009038.
+ * focus point is handed to Unnamed_080e6eac and the twelve spawned objects are
+ * released through ResourceObject_ReleaseFar.
  *
  * Uncertain, and left as read from the reference:
  *   - the sixteen particle records seeded at work+0x7320 are never read here;
@@ -54,7 +54,7 @@
  *     particles[24], which is why the array is indexed rather than given its
  *     own name.
  *   - Particle.unk_08 and Particle.unk_14 are never touched by this owner.
- *   - Data_080ede48 (sprite offsets by size), Data_080ee1ac (column screen
+ *   - ParticleStreams_CellOffsets (sprite offsets by size), Data_080ee1ac (column screen
  *     slots) and Data_080ee1b4 (four gravity lanes) are only known from their
  *     use here, so the names stay address-derived.
  *   - the two constants written into the member object at offsets 40 and 72
@@ -135,13 +135,13 @@ s32 Random16(void);
 void BattleFx_SelectLivingTargets(void *argument);
 void WaitFrames(s32 frames);
 void BattleFx_SpawnObjects(s32 entry_count, s32 kind, s32 variant);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 x, s32 y);
-void Func_080e6eac(s32 channel, s32 x, s32 y);
+void Unnamed_080e6eac(s32 channel, s32 x, s32 y);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
-s32 Func_080022fc(s32 numerator, s32 denominator);
+s32 Trig_Cos(s32 angle);
+s32 Math_Mod(s32 numerator, s32 denominator);
 void **GetBattleObjectSlotFar(s32 member_id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 void Runtime_ReleaseHeapBlock(s32 id);
@@ -223,7 +223,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
             }
         }
         if (frame == 120)
-            Func_080b50e8(134);
+            BattleEventRuntime_BeginPhaseFar(134);
         if (frame <= 15)
             rise += 2;
         if (frame <= 99) {
@@ -248,7 +248,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                     particle->x =
                         ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                     particle->y =
-                        ((Func_0800231c(angle) * radius) >> 2) + 0x600000;
+                        ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
                     particle->vx = ((Random16() & 63) - 32) << 14;
                     particle->vy = (-(Random16() & 63) - 8) << 13;
                     particle->life = 0;
@@ -271,7 +271,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                     particle->x =
                         ((Trig_Sin(angle) * radius) >> 3) + 0x200000;
                     particle->y =
-                        ((Func_0800231c(angle) * radius) >> 2) + 0x600000;
+                        ((Trig_Cos(angle) * radius) >> 2) + 0x600000;
                     particle->vx = ((Random16() & 63) - 32) << 14;
                     particle->vy = (-(Random16() & 63) - 8) << 13;
                     particle->life = 0;
@@ -284,11 +284,11 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
         }
 
         if (frame == 0)
-            Func_080f9010(164);
+            Audio_PlayCue(164);
         if (frame == 32)
-            Func_080f9010(145);
+            Audio_PlayCue(145);
         if (frame == 80)
-            Func_080f9010(144);
+            Audio_PlayCue(144);
 
         if ((u32)phase <= 47) {
             tbl = Data_080ee1ac;
@@ -296,7 +296,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
             for (i = 0; i != 3; i++) {
                 s32 foot;
 
-                foot = Func_080022fc(span, 104);
+                foot = Math_Mod(span, 104);
                 ((DrawRectangleFn)rectangle[0])(
                     canvas, work->column_tiles,
                     tbl[0] - 17, (tbl[1] - foot) - 104, 34, 104);
@@ -321,7 +321,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
             if (particle->life >= 0) {
                 s32 size;
 
-                size = Func_080022fc(i, 3) + 2;
+                size = Math_Mod(i, 3) + 2;
                 if (particle->vy > 0)
                     size += 2;
                 if (frame > 68) {
@@ -374,7 +374,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
                     if (frame > 29) {
                         s32 step;
 
-                        step = Func_080022fc(frame, 12);
+                        step = Math_Mod(frame, 12);
                         if (step == 0) {
                             void *member;
 
@@ -405,7 +405,7 @@ void BattleEffect_RunEmberColumns(struct EffectArgument *object)
     Scheduler_RemoveCallback((void *)0x080CD261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);
-    Func_080e6eac(1, pos_x, pos_y);
+    Unnamed_080e6eac(1, pos_x, pos_y);
     cursor = work->objects;
     for (i = 0; i != 12; i++) {
         ResourceObject_ReleaseFar(*cursor++);

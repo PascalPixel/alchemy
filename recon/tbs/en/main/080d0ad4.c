@@ -39,7 +39,7 @@ typedef void (*BattleEffectDrawFn)(
 extern u8 Value_00000073;
 extern u8 Value_00000076;
 extern u8 Value_00000079;
-extern void *Data_03001e50[];
+extern void *gWorkSlot[];
 extern const u16 BattleFx6_FlareCells[];
 
 struct BattleEffectWorkGlobals {
@@ -55,7 +55,7 @@ struct BattleEffectVectorWork {
     s32 output[3];
 };
 
-s32 Func_080d0ad4(s32 actor) {
+s32 Unnamed_080d0ad4(s32 actor) {
     s32 sp8;
     s32 spC;
     s32 sp10;
@@ -120,7 +120,7 @@ s32 Func_080d0ad4(s32 actor) {
         temp_r2_18 + 0x1000);
     M2C_FIELD(sp44, s32 *, 0x7780) = 3;
     M2C_FIELD(sp44, s32 *, 0x7784) = 0x04040404;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     sp24 = vector_work.output;
     EffectPosition_ApplyStepAndYOffset(
         M2C_FIELD(*temp_r5_28, s16 *, 0x24),
@@ -128,14 +128,14 @@ s32 Func_080d0ad4(s32 actor) {
     temp_r3_103 = 0x40 - *sp24;
     sp28 = temp_r3_103;
     *(s32 *)0x04000028 = temp_r3_103 << 8;
-    Func_080f9010(0x8E);
+    Audio_PlayCue(0x8E);
     sp3C = 0;
     if ((M2C_FIELD(*temp_r5_28, s32 *, 0x14) * 0x14) == -0x48) {
 
     } else {
 loop_3:
         if (sp3C == 0x40) {
-            Func_080b50e8(0);
+            BattleEventRuntime_BeginPhaseFar(0);
         }
         if (sp3C == 0x2E) {
             temp_r3_135 = M2C_FIELD(sp44, void **, 0x7828);
@@ -143,9 +143,9 @@ loop_3:
         }
         Graphics_UpdatePhasePalette(sp3C, 0xAAAB, 0x5555, 0);
         BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
-        sp34 = (BattleEffectDrawFn)Data_03001e50[46];
+        sp34 = (BattleEffectDrawFn)gWorkSlot[46];
         BattleEffect_LoadWork(0x2F, 7, 7, 7, 2);
-        sp38 = (BattleEffectDrawFn)Data_03001e50[47];
+        sp38 = (BattleEffectDrawFn)gWorkSlot[47];
         if ((sp3C > 0x10) && !(0xF & sp3C)) {
             M2C_FIELD(sp44, s32 *, 0x7784) = (s32) (M2C_FIELD(sp44, s32 *, 0x7784) + 0x01010101);
         }
@@ -203,7 +203,7 @@ loop_11:
                     sp20 = sp44 + ((var_r7_304 + sp1C) * 0x1C) + 0x7080;
                     sp18 = temp_r7_314;
                     var_r2_331 = var_fp_191;
-                    temp_r9_332 = sp44 + ((Func_080022fc(temp_r7_314, 3) + sp1C) * 0x1C) + 0x7080;
+                    temp_r9_332 = sp44 + ((Math_Mod(temp_r7_314, 3) + sp1C) * 0x1C) + 0x7080;
                     if (var_r2_331 < 0) {
                         var_r2_331 += 0xF;
                     }
@@ -250,8 +250,8 @@ loop_23:
         if (temp_r5_429 != 1) {
             goto loop_11;
         }
-        Func_08002dd8(0x2F);
-        Func_08002dd8(0x2E);
+        Runtime_ReleaseHeapBlock(0x2F);
+        Runtime_ReleaseHeapBlock(0x2E);
         M2C_FIELD(sp44, s32 *, 0x7824) = temp_r5_429;
         WaitFrames(1);
         sp3C += 1;

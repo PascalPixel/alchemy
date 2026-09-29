@@ -80,7 +80,7 @@ void Main_0808a368();
 void Main_0808a370();
 void Main_080f9010();
 
-extern u8 Data_03001e70[];
+extern u8 gMapWork[];
 struct RampWork {
     u8 unknown_00[0x1c0];
     s32 blend_config;
@@ -99,7 +99,7 @@ struct RampStatus {
     u16 enabled;
 };
 
-extern struct RampRoots Data_03001ebc;
+extern struct RampRoots gEventWork;
 extern u8 Data_02009cec[];
 extern u8 Data_02009bb4[];
 extern u8 Data_02009b78[];
@@ -153,7 +153,7 @@ void FieldScene_RunPaletteRampSequence(void)
     sprite->priority = 1;
     Call2(Main_0808a098, 10, (s32)Data_02009cec);
     {
-        struct RampWork *scene = Data_03001ebc.scene;
+        struct RampWork *scene = gEventWork.scene;
 
         scene->blend_config = 513;
     }
@@ -175,7 +175,7 @@ void FieldScene_RunPaletteRampSequence(void)
         SetBlendAlpha(value);
     } while (0);
     Main_0808a2c8();
-    Data_03001ebc.work->enabled = 1;
+    gEventWork.work->enabled = 1;
     Main_0808a2d8();
     Call1(Main_080000c0, 30);
     Call2(Main_0808a200, 8, 1);
@@ -251,7 +251,7 @@ ramp:
     Call2(Main_0808a098, 8, (s32)Data_02009ca4);
     Call2(Main_0808a0b0, 0, (s32)Data_02009ca4);
     {
-        struct RampWork *scene = Data_03001ebc.scene;
+        struct RampWork *scene = gEventWork.scene;
 
         scene->blend_config = 256;
         scene->blend_frames = 32;

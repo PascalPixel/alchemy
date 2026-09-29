@@ -28,11 +28,11 @@
  * halves while fp <= 0x51, scrolls a four-row band in (fp - 0xc <= 0x4b) and
  * back out again (fp - 0xa0 <= 0x17), draws the two foreground panels while
  * fp - 0x58 <= 0x47, steps and draws the drops once past fp 0x57, spawns and
- * steps the sparks through Func_08009008, pokes every real party member,
+ * steps the sparks through Object_ApplyProjectedPlacementFar, pokes every real party member,
  * applies the camera shake, ticks the object group and waits one frame.
  *
- * Neither `_call_via_r3` nor `Func_080072f4`, `Func_080072fc`,
- * `Func_08007304` and `Func_0800730c` is a real function symbol: they are
+ * Neither `_call_via_r3` nor `_call_via_r4`, `_call_via_r6`,
+ * `_call_via_r8` and `_call_via_sl` is a real function symbol: they are
  * entries 3, 4, 6, 8 and 10 of the `_call_via_rN` trampoline bundle at
  * recon/tbs/raw/080072e4.s, four bytes per slot from base 0x080072e4, i.e.
  * indirect calls through whatever pointer the compiler kept in that slot.
@@ -86,7 +86,7 @@ struct Pair {
     s32 field_0004;
 };
 
-/* Four s32 words handed to Func_08009008 as the spawn transform. */
+/* Four s32 words handed to Object_ApplyProjectedPlacementFar as the spawn transform. */
 struct Transform {
     s32 field_0000;
     s32 field_0004;
@@ -121,8 +121,8 @@ extern u8 Value_0000007b;
 extern u8 Value_0000007c;
 
 /* heap_cache[7] and heap_cache[8] reached through the 0x03001e50 base. */
-extern void *Data_03001e50[];
-extern void *Data_03001eec[];
+extern void *gWorkSlot[];
+extern void *gBattleFxWork[];
 
 extern struct Pair Data_080edab0;
 extern u16 ParticleStreams_CellOffsets[];
@@ -136,28 +136,28 @@ extern u8 Data_080eedac[];
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
-void *Func_08009030(s32 kind);
-void Func_08009020(void *object, s32 index);
+void *ResourceObject_CreateFar(s32 kind);
+void AnimationObjects_SelectAnimationFar(void *object, s32 index);
 void Object_ApplyProjectedPlacementFar(
     void *object, struct Transform *transform, struct Pair *pair, s32 mode);
 void ResourceObject_ReleaseFar(void *object);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 u32 Random16(void);
-s32 Func_08002304(s32 value, s32 range);
+s32 Math_ModU(s32 value, s32 range);
 s32 Math_Div(s32 value, s32 shift);
-s32 Func_080022fc(s32 value, s32 divisor);
-void Func_080f9010(s32 id);
-void Func_080b50e8(s32 id);
-void Func_080b5088(s32 member, s32 kind);
+s32 Math_Mod(s32 value, s32 divisor);
+void Audio_PlayCue(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void BattleMotion_ApplyVariantMotionFar(s32 member, s32 kind);
 void ObjectGroup_UpdateMembers(s32 member, s32 a, s32 b, s32 index, s32 e);
 void Camera_ApplyShake(s32 x, s32 y);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void BattleFx_EndCanvasLayer(void);
 
-void Func_080e302c(void *object)
+void Unnamed_080e302c(void *object)
 {
     void **heap;
     void **cursor;
@@ -206,7 +206,7 @@ void Func_080e302c(void *object)
     u32 packed;
     void *node;
 
-    heap = Data_03001eec;
+    heap = gBattleFxWork;
     cursor = heap;
     work = (u8 *)*cursor++;
     draw_target = *cursor;
@@ -357,7 +357,7 @@ void Func_080e302c(void *object)
     slot = 0x77D8;
     i = 0;
     do {
-        node = Func_08009030(0x186);
+        node = ResourceObject_CreateFar(0x186);
         M2C_FIELD(work, void **, slot) = node;
         if (node != NULL) {
             M2C_FIELD(node, u8 *, 0x26) = 0;
@@ -365,7 +365,7 @@ void Func_080e302c(void *object)
             if (i < 0) {
                 idx = i + 3;
             }
-            Func_08009020(node, idx >> 2);
+            AnimationObjects_SelectAnimationFar(node, idx >> 2);
             node = M2C_FIELD(work, void **, slot);
             flags = M2C_FIELD(node, u8 *, 9);
             M2C_FIELD(node, u8 *, 9) = (flags & ~0xC) | 4;
@@ -375,7 +375,7 @@ void Func_080e302c(void *object)
     } while (i != 0xB);
 
     BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
-    blit_a = (BlitFn)Data_03001e50[46];
+    blit_a = (BlitFn)gWorkSlot[46];
     BattleEffect_LoadWork(0x2F, 7, 7, 7, 2);
 
     reg = (u16 *)0x04000050;
@@ -383,9 +383,9 @@ void Func_080e302c(void *object)
     *reg = 0x1010;
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
-    blit_b = (BlitFn)Data_03001e50[47];
+    blit_b = (BlitFn)gWorkSlot[47];
     M2C_FIELD(work, s32 *, 0x7784) = 0x4B;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     sparks = (struct Spark *)(work + 0x7198);
     spark = sparks;
@@ -432,16 +432,16 @@ void Func_080e302c(void *object)
     fp = 0;
     do {
         if (fp == 0) {
-            Func_080f9010(0xD4);
+            Audio_PlayCue(0xD4);
         }
         if (fp == 0x28) {
-            Func_080f9010(0x8D);
+            Audio_PlayCue(0x8D);
         }
         if (fp == 0x60) {
-            Func_080f9010(0x91);
+            Audio_PlayCue(0x91);
         }
         if (fp == 0x78) {
-            Func_080b50e8(0x86);
+            BattleEventRuntime_BeginPhaseFar(0x86);
         }
 
         /* The two curtain halves, until they have finished parting. */
@@ -588,7 +588,7 @@ void Func_080e302c(void *object)
                             (s32)(0x02000000 - (spark->height << 0x10));
                         transform.field_0008 = 0x02000000;
 
-                        idx = Func_080022fc((fp / 2) + i, 0xB);
+                        idx = Math_Mod((fp / 2) + i, 0xB);
                         timer = -1;
                         if (idx != -1) {
                             Object_ApplyProjectedPlacementFar(
@@ -611,13 +611,13 @@ void Func_080e302c(void *object)
                                         (s32)((7 & Random16()) + 8);
                                     spread = M2C_FIELD(STATE, s32 *, 0x18);
                                     if (spread == 0) {
-                                        pos = Func_08002304(
+                                        pos = Math_ModU(
                                             Random16(), 0x60) + 0x2A;
                                     } else if (spread == 1) {
-                                        pos = Func_08002304(
+                                        pos = Math_ModU(
                                             Random16(), 0x70) + 0x22;
                                     } else {
-                                        pos = Func_08002304(
+                                        pos = Math_ModU(
                                             Random16(), 0xA0) + 0xA;
                                     }
                                     spark->pos = pos;
@@ -640,12 +640,12 @@ void Func_080e302c(void *object)
                 off = 0x24;
                 do {
                     if (fp > 0x55) {
-                        if (Func_080022fc(fp, 0xC) == 0) {
+                        if (Math_Mod(fp, 0xC) == 0) {
                             ObjectGroup_UpdateMembers(
                                 M2C_FIELD(STATE, s16 *, off), 7, 5, j, 6);
                         }
                         if (!(fp & 3)) {
-                            Func_080b5088(M2C_FIELD(STATE, s16 *, off), 5);
+                            BattleMotion_ApplyVariantMotionFar(M2C_FIELD(STATE, s16 *, off), 5);
                         }
                     }
                     j++;
@@ -667,8 +667,8 @@ void Func_080e302c(void *object)
     } while (fp != 0xC0);
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
 
     cursor = (void **)(work + 0x77D8);
     i = 0;

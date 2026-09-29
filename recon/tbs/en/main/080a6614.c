@@ -31,33 +31,33 @@ s32 Func_080a6614(s32 window)
     s32 left;
     s32 wide;
 
-    if (Data_02000240.psynergy_shortcuts[0] != 0 &&
-        Data_02000240.psynergy_shortcuts[1] != 0)
+    if (gGameState.psynergy_shortcuts[0] != 0 &&
+        gGameState.psynergy_shortcuts[1] != 0)
         UiText_DrawCharacterAtOffsetFar(0xae4, window, 0, -8);
     else
         UiText_DrawCharacterAtOffsetFar((s32)&Value_00000ae0, window, 0, -8);
-    MeasureShortcut(Data_02000240.psynergy_shortcuts[0], &left, &top, &width, &height);
+    MeasureShortcut(gGameState.psynergy_shortcuts[0], &left, &top, &width, &height);
     wide = 1;
     if ((u32)width <= 10)
         wide = 0;
-    if (Data_02000240.psynergy_shortcuts[0] != 0) {
-        PushShortcut(Data_02000240.psynergy_shortcuts[0]);
+    if (gGameState.psynergy_shortcuts[0] != 0) {
+        PushShortcut(gGameState.psynergy_shortcuts[0]);
         UiText_DrawCharacterAtOffsetFar(0xae7, window, 0, 0);
         if (wide == 0)
-            UiText_DrawStringAtOffsetFar(Owner_GetStateFar(Data_02000240.psynergy_shortcuts[0] >> 10),
+            UiText_DrawStringAtOffsetFar(Owner_GetStateFar(gGameState.psynergy_shortcuts[0] >> 10),
                                          window, 80, 0);
     } else {
         UiText_DrawCharacterAtOffsetFar(0xae5, window, 0, 0);
     }
-    MeasureShortcut(Data_02000240.psynergy_shortcuts[1], &left, &top, &width, &height);
+    MeasureShortcut(gGameState.psynergy_shortcuts[1], &left, &top, &width, &height);
     wide = 1;
     if ((u32)width <= 10)
         wide = 0;
-    if (Data_02000240.psynergy_shortcuts[1] != 0) {
-        PushShortcut(Data_02000240.psynergy_shortcuts[1]);
+    if (gGameState.psynergy_shortcuts[1] != 0) {
+        PushShortcut(gGameState.psynergy_shortcuts[1]);
         UiText_DrawCharacterAtOffsetFar(0xae8, window, 0, 8);
         if (wide == 0)
-            UiText_DrawStringAtOffsetFar(Owner_GetStateFar(Data_02000240.psynergy_shortcuts[1] >> 10),
+            UiText_DrawStringAtOffsetFar(Owner_GetStateFar(gGameState.psynergy_shortcuts[1] >> 10),
                                          window, 80, 8);
         UiWork_SetParamNibbleFar(15);
     } else {

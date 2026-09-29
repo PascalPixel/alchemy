@@ -46,8 +46,8 @@ struct MotionEntry { u8 reserved_00[39]; u8 count; void *children[1]; };
 struct MotionChild { u8 reserved_00[5]; u8 value; };
 extern struct BattlePresentationTransition *gTransitionWork;
 extern u8 *gBattleWork;
-s32 Func_080041d8(void *, s32);
-void Func_08009080(void *, s32);
+s32 Scheduler_AddOrUpdateCallback(void *, s32);
+void Object_SetMode(void *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
 void UiWindow_DrawPartyStatusContentsFar(s32);
 void Actor_ResetMotionAtAnchor(s32);
@@ -60,7 +60,7 @@ void BattleFx_PlayUnitElementEffect(s32, s32, s32, s32);
 void BattlePres_RunWithZeroArguments(void);
 void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
 void Func_080c9018(struct PresentationWork *);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 
 s32 Func_080ba978(struct PresentationInput *input, s32 flags)
 {
@@ -107,9 +107,9 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
     BattlePres_SetActorModes(0, 0);
     UiWindow_DrawPartyStatusContentsFar(gBattleWork[65] & ~1);
     object = GetBattleObjectSlot(work.primary_id)->object;
-    Func_08009080(object, 3);
+    Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
-    Func_080f9010(0x9a);
+    Audio_PlayCue(0x9a);
     if (flags & 2)
         BattleFx_PlayUnitElementEffect(work.primary_id, input->coordinate, 1, 0);
     else if (!i)
@@ -138,7 +138,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         BattleEv_DispatchQueued();
         BattlePres_RunWithZeroArguments();
     } else {
-        Func_080041d8((void *)0x080bd899, 0xc80);
+        Scheduler_AddOrUpdateCallback((void *)0x080bd899, 0xc80);
         if (work.flags) {
             if (input->flags & 0x4000)
                 BattleFx_DispatchByIdRangeFar(&work);
@@ -148,7 +148,7 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
             BattlePres_RunWithZeroArguments();
         }
         BattleEventRuntime_WaitForReady();
-        Func_08009080(object, 1);
+        Object_SetMode(object, 1);
         for (i = 0; i != work.entry_count; i++)
             Actor_ResetMotionAtAnchor(work.members[i]);
     }

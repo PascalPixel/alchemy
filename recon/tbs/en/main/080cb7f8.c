@@ -44,21 +44,21 @@ extern u8 Data_00000070[];
 extern u8 Data_00000076[];
 extern u8 Data_00000100[];
 extern u8 Data_00001000[];
-s32 Func_080022fc();
-s32 Func_0800231c();
+s32 Math_Mod();
+s32 Trig_Cos();
 s32 Trig_Sin();
-void Func_08002dd8();
+void Runtime_ReleaseHeapBlock();
 s32 Resource_GetTableEntry();
 void WaitFrames();
-s32 Func_080041d8();
+s32 Scheduler_AddOrUpdateCallback();
 void Scheduler_RemoveCallback();
 s32 Random16();
 s32 Runtime_AllocateHeapBlock();
 void Render_ResetTransformState();
 void Graphics_PrepareTransferInIwramWork();
 void _call_via_r3();
-void Func_080072f4();
-void Func_080072fc();
+void _call_via_r4();
+void _call_via_r6();
 void GetBattleObjectSlotFar();
 void ObjectGroup_TickMemberTimers();
 void BattleFx_BeginCanvasLayer();
@@ -66,7 +66,7 @@ void BattleFx_EndCanvasLayer();
 void ObjectGroup_UpdateMembers();
 s32 EffectPosition_ApplyBaseAndYOffset();
 void EffectPosition_ApplyAlternateStepAndYOffset();
-void Func_080f9010();
+void Audio_PlayCue();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -103,7 +103,7 @@ static __inline__ void Call7(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5, a6);
 }
 
-void Func_080cb7f8(s32 a0)
+void Unnamed_080cb7f8(s32 a0)
 {
     u32 i;
     s32 p11;
@@ -189,7 +189,7 @@ void Func_080cb7f8(s32 a0)
     } while (v8 != 128);
     *(s32 *)(0x7780 + r9) = 2;
     ((s32 *)(0x7784 + r9))[0] = 75;
-    Value2(Func_080041d8, 0x80cd261, 0x480);
+    Value2(Scheduler_AddOrUpdateCallback, 0x80cd261, 0x480);
     BattleEffect_LoadWork(46, 7, 7, 3, 3);
     blit[0] = *(DrawRectangle *)0x03001f08;
     v3 = ((s32 *)(*(s32 *)(0x7828 + r9) + 24))[0] + 1;
@@ -201,7 +201,7 @@ void Func_080cb7f8(s32 a0)
     if (*(s32 *)(*(s32 *)(0x7828 + r9) + 24) > 4) {
         ((s32 *)(*(s32 *)(0x7828 + r9) + 24))[0] = 4;
     }
-    Func_080f9010(212);
+    Audio_PlayCue(212);
     slot8 = (s32)pos.target;
     slot12 = slot20 + 12;
     none = 0;
@@ -232,9 +232,9 @@ L_080cb982:
         ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 3, 2);
         blit[1] = ((DrawRectangle *)0x03001f0c)[0];
         blit[1]((void *)slot36, (void *)(r9 + ((((p8 - (p11 << 2)) << 4) + (p8 - (p11 << 2))) << 6)), 47, *(s32 *)(slot8 + 4) - 64, 17, 64);
-        rec = Value2(Func_080022fc, p4b / 4, 3);
+        rec = Value2(Math_Mod, p4b / 4, 3);
         blit[1]((void *)slot36, (void *)((((rec << 7) + rec) << 3) + r9 + 0x1100), 40, *(s32 *)(slot8 + 4) - 36, 24, 43);
-        Func_08002dd8(47);
+        Runtime_ReleaseHeapBlock(47);
         ((void (*)())BattleEffect_LoadWork)(47, 7, 7, 7, 2);
         tmp3 = (DrawRectangle *)0x03001f0c;
         tmp8 = (s32)((s32)p11 << 2);
@@ -243,7 +243,7 @@ L_080cb982:
         blit[1]((void *)slot36, (void *)(((((p8 - (p11 << 2)) << 4) + (p8 - (p11 << 2))) << 6) + r9), 64, *(s32 *)(slot8 + 4) - 64, 17, 64);
         v6 = (s32)blit[1];
         blit[1]((void *)slot36, (void *)((((rec << 7) + rec) << 3) + r9 + 0x1100), 64, *(s32 *)(slot8 + 4) - 36, 24, 43);
-        Func_08002dd8(47);
+        Runtime_ReleaseHeapBlock(47);
     }
     GetBattleObjectSlotFar(*(s32 *)(*(s32 *)slot16 + 8));
     base5_2010000 = 0x2010000;
@@ -258,7 +258,7 @@ L_080cb982:
             s32 tmp;
             record = Trig_Sin(*(s32 *)base5_2010000);
             pos.world[0] = (*(s32 *)(base5_2010000 + 8) * record) >> 4;
-            record = Func_0800231c(*(s32 *)base5_2010000);
+            record = Trig_Cos(*(s32 *)base5_2010000);
             pos.world[2] = -((*(s32 *)(base5_2010000 + 8) * record) >> 4);
             pos.world[1] = *(s32 *)(base5_2010000 + 4);
             *(s32 *)base5_2010000 += 0x400;
@@ -283,13 +283,13 @@ L_080cb982:
     if (p4c != 56) {
         goto L_080cb982;
     }
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     Call1(Scheduler_RemoveCallback, 0x80cd261);
     BattleFx_EndCanvasLayer();
-    Func_08002dd8(41);
-    Func_08002dd8(40);
+    Runtime_ReleaseHeapBlock(41);
+    Runtime_ReleaseHeapBlock(40);
     tmp6 = (s32)pos.screen;
-    Func_08002dd8(39);
+    Runtime_ReleaseHeapBlock(39);
     p10 = tmp6;
     v10 = p10;
     p11b = (s32)pos.world;

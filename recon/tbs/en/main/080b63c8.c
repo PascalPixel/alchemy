@@ -78,14 +78,14 @@ struct BattleEncounterWork {
     ((cell) = 0, Dma_Set(&(cell), (dest), DMA_FILL32 | ((bytes) >> 2),        \
                          (volatile u32 *)(dma)))
 
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 
 /* The relocated IWRAM block clear this owner reaches through __call_via_r3. */
 typedef void (*BlockClearProc)(void *dst, s32 len);
 
 #define IWRAM_BLOCK_CLEAR ((BlockClearProc)0x03000164)
 
-void *Func_080048f4(s32 tag, s32 size);
+void *Runtime_AllocateBlock(s32 tag, s32 size);
 void Scheduler_ResetTaskTable(void);
 void Render_ResetTransformState(void);
 void GameFlag_SetBitFar(s32 id);
@@ -98,7 +98,7 @@ void WaitFrames(s32 frames);
 s32 GameFlag_GetByteFar(s32 id);
 void BattleParty_AssignMemberSlots(void);
 s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
-void Func_080f9010(s32 cue);
+void Audio_PlayCue(s32 cue);
 void Sound_LoadPresetParameters(s32 value);
 void BattleParty_CollectUnitList(void);
 void BattleUnit_RefreshPlacement(void);
@@ -134,11 +134,11 @@ void BattleMotion_DestroyAllSlotObjects(void);
 s32 UiText_OpenMessageWindowFar(s32 id, s32 a, s32 b, s32 c);
 s32 UiWork_IsCompleteFar(void);
 void UiWork_FinalizeFar(s32 handle, s32 mode);
-void Func_080bb7c0(s32 a, s32 b);
+void Unnamed_080bb7c0(s32 a, s32 b);
 void Battle_ApplyValueToWork2224(void);
 void BattleUnit_AssignFar(s32 a, s32 b, s32 c);
 void UiWork_ClearValueNameTablesFar(void);
-void Func_08015120(s32 a, s32 b);
+void UiWork_PushValueSlotFar(s32 a, s32 b);
 void UiText_ShowMessageAndWaitCoreFar(s32 id);
 void BattlePresentation_WaitForAdvance(void);
 void Battle_AwardSpoils(void);
@@ -174,11 +174,11 @@ s32 Battle_RunEncounter(s32 arg)
     s16 cue;
     u32 fill;
 
-    scene = (struct BattleSceneWork *)Func_080048f4(12, 76);
-    work = (struct BattleEncounterWork *)Func_080048f4(9, 0x82c);
-    buf = (u8 *)Func_080048f4(54, 0x7c8);
-    timer = (struct BattleTimerWork *)Func_080048f4(44, 32);
-    Func_080048f4(11, 0x280);
+    scene = (struct BattleSceneWork *)Runtime_AllocateBlock(12, 76);
+    work = (struct BattleEncounterWork *)Runtime_AllocateBlock(9, 0x82c);
+    buf = (u8 *)Runtime_AllocateBlock(54, 0x7c8);
+    timer = (struct BattleTimerWork *)Runtime_AllocateBlock(44, 32);
+    Runtime_AllocateBlock(11, 0x280);
     cam = &scene->sub_0c;
     /* __call_via_r3 -> the IWRAM block clear at 0x03000164. */
     IWRAM_BLOCK_CLEAR(buf, 0x7c8);
@@ -198,11 +198,11 @@ s32 Battle_RunEncounter(s32 arg)
     Dma3Fill(dma, fill, work, 0x82c);
     work->field_54 = -1;
     work->field_00 = arg;
-    dst = (u8 *)Func_080048f4(37, 12);
+    dst = (u8 *)Runtime_AllocateBlock(37, 12);
     Dma3Fill(dma, fill, dst, 12);
     work->field_648 = (u16)Func_0808a4a0();
-    Func_080048f4(4, 0xe00);
-    Func_080048f4(3, 0x600);
+    Runtime_AllocateBlock(4, 0xe00);
+    Runtime_AllocateBlock(3, 0x600);
     Func_08009078(4);
     if (GameFlag_TestFar(0x16e) != 0)
         Func_08015008(1);
@@ -222,7 +222,7 @@ s32 Battle_RunEncounter(s32 arg)
 
     if (GameFlag_TestFar(0x16c) != 0) {
         work->field_44 = 1;
-        Data_02000240[0x22b] = 4;
+        gGameState[0x22b] = 4;
     }
     if (work->field_44 != 0) {
         *(s32 *)0x020023a8 = 0;
@@ -253,17 +253,17 @@ s32 Battle_RunEncounter(s32 arg)
 
     {
         off = 494;
-        cue = *(s16 *)(Data_02000240 + off);
+        cue = *(s16 *)(gGameState + off);
     }
     if (cue != 0) {
-        Func_080f9010(cue);
+        Audio_PlayCue(cue);
         if (GameFlag_TestFar(0x16c) != 0) {
-            Func_080f9010(55);
+            Audio_PlayCue(55);
             Sound_LoadPresetParameters(4);
         }
     } else {
-        Func_080f9010(51);
-        Func_080f9010(76);
+        Audio_PlayCue(51);
+        Audio_PlayCue(76);
     }
 
     BattleParty_CollectUnitList();
@@ -288,7 +288,7 @@ s32 Battle_RunEncounter(s32 arg)
     work->field_45 = 0;
     if (GameFlag_TestFar(0x16e) != 0) {
         work->field_45 = 1;
-    } else if (Data_02000240[0x22b] == 0) {
+    } else if (gGameState[0x22b] == 0) {
         if ((BattleRandom16Far() & 15) == 0)
             work->field_45 = 1;
         else if ((BattleRandom16Far() & 31) == 0)
@@ -372,7 +372,7 @@ s32 Battle_RunEncounter(s32 arg)
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
         handle = UiText_OpenMessageWindowFar(0xc48, 10, 4, 1);
-        Func_080bb7c0(92, 24);
+        Unnamed_080bb7c0(92, 24);
         UiWork_FinalizeFar(handle, 1);
         WaitFrames(1);
     }
@@ -381,20 +381,20 @@ resolved:
     Battle_ApplyValueToWork2224();
     if (GameFlag_TestFar(0x16e) == 0) {
         if (work->field_44 != 0)
-            Func_080f9010(58);
+            Audio_PlayCue(58);
         if (work->field_538 != 0) {
-            Func_080f9010(58);
+            Audio_PlayCue(58);
             if (work->field_3e <= 1) {
                 BattleUnit_AssignFar(128, work->msg_ids[work->field_3c], 26);
                 UiWork_ClearValueNameTablesFar();
-                Func_08015120(128, 1);
+                UiWork_PushValueSlotFar(128, 1);
                 UiText_ShowMessageAndWaitCoreFar(work->field_3e + 0x838);
                 BattlePresentation_WaitForAdvance();
             }
         }
         Battle_AwardSpoils();
     }
-    Func_080f9010(17);
+    Audio_PlayCue(17);
     Blend_SetDarkenTarget16(30);
     Blend_WaitForTransition();
     ret = work->field_538;
@@ -410,24 +410,24 @@ aborted:
 
 party_lost:
     Battle_ApplyValueToWork2224();
-    Func_080f9010(59);
+    Audio_PlayCue(59);
     UiWork_ClearValueNameTablesFar();
     off = 504;
-    src = Data_02000240 + off;
-    Func_08015120(*src, 1);
+    src = gGameState + off;
+    UiWork_PushValueSlotFar(*src, 1);
     if (BattleParty_PrepareActiveOwners(0) == 1)
         UiText_ShowMessageAndWaitCoreFar(0x83d);
     else
         UiText_ShowMessageAndWaitCoreFar(0x837);
     BattlePresentation_WaitForAdvance();
-    Func_080f9010(17);
+    Audio_PlayCue(17);
     Blend_SetDarkenTarget16(30);
     ret = -1;
     Blend_WaitForTransition();
     goto finished;
 
 interrupted:
-    Func_080f9010(17);
+    Audio_PlayCue(17);
     Blend_SetDarkenTarget16(30);
     Blend_WaitForTransition();
     ret = 0x3e7;
@@ -436,7 +436,7 @@ finished:
     BattleParty_ResetActiveRuntimeFields();
     Battle_ReservedNoOpF674();
     BattlePlacement_UpdateTimedEntries();
-    Data_02000240[0x22b] = 0;
+    gGameState[0x22b] = 0;
     Scheduler_RemoveCallback(0x080b7739);
     Runtime_ReleaseHeapBlock10();
     return ret;

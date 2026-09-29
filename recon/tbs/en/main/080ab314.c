@@ -72,7 +72,7 @@ extern char Value_00000c32;
 void RenderOutput_ClearListFar(s32 window);
 void UiWindow_Clear(s32 window);
 void Func_080152a8(void);
-void Func_08015078(s32 message, s32 window, s32 x, s32 y);
+void UiText_DrawMessageAt(s32 message, s32 window, s32 x, s32 y);
 s32 Func_080153f8(s32 window, s32 message);
 void UiWindow_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette);
 void UiWindow_ApplyRectAtObjectOrigin(s32 window, s32 x, s32 y, s32 width, s32 height, s32 palette);
@@ -128,7 +128,7 @@ s32 Func_080ab314(void)
     } while (cnt <= 6);
     do {
         UiWindow_Clear(win_a);
-        Func_08015078(selection + (s32)&Value_00000c32, win_a, 0, 0);
+        UiText_DrawMessageAt(selection + (s32)&Value_00000c32, win_a, 0, 0);
         slot = (struct ChooserMessage **)Func_080153f8(win_b, selection + 0xc39);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
         Menu_DrawAtWindowOffset((void *)list, 0, selection, 6, 1, 14);

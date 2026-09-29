@@ -29,7 +29,7 @@ extern s32 Data_03001af8;
  * 9 = cancelled through UiWork_CheckCancelByModeInput, 0 = still running.
  *
  * Uncertain: the three parallel byte tables at 0x08073808 / +3 / +6 are all
- * indexed by the settings byte at Data_02000240[0x20C] (message speed), but
+ * indexed by the settings byte at gGameState[0x20C] (message speed), but
  * only their roles here are evidenced - repeat budget, inter-character delay
  * and sound-cue cooldown. Three render-state offsets used here have no name
  * in tbs_edition.h yet - the halfwords at 0x12B6 and 0x12F6 and the byte at
@@ -46,7 +46,7 @@ extern s32 Data_03001af8;
  * every dependent scratch register shifts with them.
  *
  * Four smaller differences are measured but unexplained:
- *   - The reference splits (Data_02000240 + 0x20C) into a pooled symbol plus
+ *   - The reference splits (gGameState + 0x20C) into a pooled symbol plus
  *     a runtime 0x20C (movs #131, lsls #2) at all three use sites; GCC folds
  *     the equivalent here into one pooled address.
  *   - The reference reloads *ADDR_03001AE8 just after the prologue and
@@ -157,7 +157,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
     s32 zero;
 
     base = gWindowWork;
-    cnt = ((u8 *)SPEED_STEPS_TBL)[((u8 *)&Data_02000240)[0x20C]];
+    cnt = ((u8 *)SPEED_STEPS_TBL)[((u8 *)&gGameState)[0x20C]];
     if (base[RENDER_MENU_STATE_OFS] != 0) {
         speed = *(u16 *)0x03001CD0;
         if (speed < 0)
@@ -376,7 +376,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
             gx = (ch->pos_x + 128) / 256;
             gy = (ch->pos_y + 128) / 256;
             cue_wait =
-                ((u8 *)SPEED_CUE_WAIT_TBL)[((u8 *)&Data_02000240)[0x20C]];
+                ((u8 *)SPEED_CUE_WAIT_TBL)[((u8 *)&gGameState)[0x20C]];
             if (base[RENDER_MODE_OFS] != 0)
                 gx += 8;
             ofs = ((ch->pc + 1) & RENDER_ENTRY_MASK) * 2
@@ -401,7 +401,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
             }
             tmp = UiText_DrawGlyph(pane, code, gx, gy, 0);
             ch->delay =
-                ((u8 *)SPEED_DELAY_TBL)[((u8 *)&Data_02000240)[0x20C]];
+                ((u8 *)SPEED_DELAY_TBL)[((u8 *)&gGameState)[0x20C]];
             if (tmp != 0) {
                 if (*(u16 *)(base + RENDER_RESULT_OFS) != 0) {
                     if (*(u16 *)(base + RENDER_CUE_WAIT_OFS) != 0) {

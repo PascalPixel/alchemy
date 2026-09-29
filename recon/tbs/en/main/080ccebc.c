@@ -26,17 +26,17 @@ extern u8 Value_00000059;
 
 void BattleFx_BeginCanvasLayer(s32);
 s32 BattleFx_EndCanvasLayer(void);
-s32 Func_080041d8(s32, s32);
+s32 Scheduler_AddOrUpdateCallback(s32, s32);
 void Scheduler_RemoveCallback(s32);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 void WaitFrames(s32);
-void Func_08002dd8(s32);
-void Func_080b50e8(s32);
+void Runtime_ReleaseHeapBlock(s32);
+void BattleEventRuntime_BeginPhaseFar(s32);
 void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
 void ObjectGroup_TickMemberTimers(void);
 void EffectPosition_ApplyStepAndYOffset(s32, struct EffectPosition *);
 
-void Func_080ccebc(void *arg0)
+void Unnamed_080ccebc(void *arg0)
 {
     u32 *cell = (u32 *)0x03001ef0;
     struct BattleEffectWork *base = (struct BattleEffectWork *)*(cell - 1);
@@ -65,8 +65,8 @@ void Func_080ccebc(void *arg0)
     Resource_LoadAndDecompress((s32)tmp3, base, 1, 1);
     base->transfer_mode = 1;
     base->transfer_value = 0;
-    Func_080041d8(0x080cd261, 0x480);
-    Func_080f9010(0x8f);
+    Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
+    Audio_PlayCue(0x8f);
     frame = 0;
     flash = 1;
     shade = 32;
@@ -79,23 +79,23 @@ next_frame:
         BattleEffect_LoadWork(0x2e, 7, 7, 3, flash);
         (*(DrawRectangleFn *)0x03001F08)(second, (void *)base, 33, 41, shade, shade);
         do {
-            Func_08002dd8(0x2e);
+            Runtime_ReleaseHeapBlock(0x2e);
         } while (0);
         /* FAKEMATCH */
         BattleEffect_LoadWork(0x2e, 7, 7, 7, flash);
         (*(DrawRectangleFn *)0x03001F08)(second, (void *)base, 64, 41, shade, shade);
         do {
-            Func_08002dd8(0x2e);
+            Runtime_ReleaseHeapBlock(0x2e);
         } while (0);
         /* FAKEMATCH */
         BattleEffect_LoadWork(0x2e, 7, 7, 11, (s32)flash);
         (*(DrawRectangleFn *)0x03001F08)(second, (void *)base, 33, 72, shade, shade);
-        Func_08002dd8(0x2e);
+        Runtime_ReleaseHeapBlock(0x2e);
         BattleEffect_LoadWork(0x2e, 7, 7, 15, flash);
         ((DrawRectangleFn *)0x03001F08)[0](second, (void *)base, 64, 72, shade, shade);
-        Func_08002dd8(0x2e);
+        Runtime_ReleaseHeapBlock(0x2e);
         if (frame == 32)
-            Func_080b50e8(0x8f);
+            BattleEventRuntime_BeginPhaseFar(0x8f);
         i = 0;
         if (((struct BattleEffectArgument *)base->effect)->count) {
             s32 offset = 36;

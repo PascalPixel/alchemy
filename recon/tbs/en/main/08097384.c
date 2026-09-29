@@ -23,6 +23,6 @@ void BattleEffect_InitializeSharedScene(void)
     if (GameFlag_TestFar(0x14e)) selection = 6;
     if (GameFlag_TestFar(0x14f)) selection = 7;
 
-    Func_08091200(((u32 *)0x080a0108)[selection], 1);
-    Func_08091254(8);
+    BattleFx_ApplyColorToTargetBuffer(((u32 *)0x080a0108)[selection], 1);
+    BattleFx_StartBufferInterpolation(8);
 }

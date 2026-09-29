@@ -17,7 +17,7 @@ extern u8 MsgItemName[];
 extern u8 MsgConfirmDrop[];
 extern u8 MsgYes[];
 
-s32 Func_080022fc(s32, s32);
+s32 Math_Mod(s32, s32);
 void WaitFrames(s32 frames);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
 void UiWork_FinalizeFar(s32, s32);
@@ -59,7 +59,7 @@ s32 Func_080a524c(s32 a0)
         }
         if (changed) {
             changed = 0;
-            sel = Func_080022fc(sel + 2, 2);
+            sel = Math_Mod(sel + 2, 2);
         }
         if (gKeyState & 1) {
             Audio_PlayCue(112);

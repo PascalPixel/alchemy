@@ -14,14 +14,14 @@
 #include "RENDER_INPUT.H"
 #include "DMA.H"
 
-extern u8 *Data_03001e8c;
+extern u8 *gWindowWork;
 extern u32 Data_0600001c[];
 s32 Runtime_GetLowTableAddress(void);
 
 /* FAKEMATCH: leave the last pixel value live in r0 at the return. */
 s32 UiWindow_DrawStatusBarTiles(struct RenderInput *window, s32 x, s32 y, s32 value)
 {
-    u8 *base = Data_03001e8c;
+    u8 *base = gWindowWork;
     s32 filled = value;
     s32 tile;
 

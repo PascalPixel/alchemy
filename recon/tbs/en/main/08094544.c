@@ -45,16 +45,16 @@ extern struct ScrollWork *gHBlankScrollWork;
 void DisplayScroll_BuildAndSwapHBlankPage(void)
 {
     register struct ScrollWork *work = gHBlankScrollWork;
-    u16 y0 = (s16)Data_03001ad0[3].y;
-    u16 y1 = (Data_03001ad0 + 2)->y;
-    u16 x0 = (s16)Data_03001ad0[3].x;
-    u16 x2 = (s16)Data_03001ad0[1].x;
+    u16 y0 = (s16)gBgScroll[3].y;
+    u16 y1 = (gBgScroll + 2)->y;
+    u16 x0 = (s16)gBgScroll[3].x;
+    u16 x2 = (s16)gBgScroll[1].x;
     s32 step;
     register struct BgScroll *row;
-    u16 x1 = (s16)Data_03001ad0[2].x;
+    u16 x1 = (s16)gBgScroll[2].x;
     s32 phase;
     s32 amp;
-    register u16 y2 = (s16)Data_03001ad0[1].y;
+    register u16 y2 = (s16)gBgScroll[1].y;
     s32 i;
     u16 d;
 

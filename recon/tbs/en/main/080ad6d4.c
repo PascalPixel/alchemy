@@ -43,10 +43,10 @@ extern u8 gWindowWork[];
 
 #define VRAM_STRIP 0x060052c0
 
-extern u8 Data_02000240[];
+extern u8 gGameState[];
 extern u8 Menu_BackdropFrameTile[];
-extern volatile u32 Data_03001c94;
-extern volatile u32 Data_03001b04;
+extern volatile u32 gKeyState;
+extern volatile u32 gKeysRepeat;
 
 void *Runtime_GetObject(s32);
 s16 *Runtime_BumpAllocateAlternatePool(s32);
@@ -80,17 +80,17 @@ s32 FourObjectMotion_SetSlotPosition(s32, s32, s32, s32);
 void Sys_Free(void *);
 s32 Trig_Sin(s32);
 void _call_via_r3(s32, s32, s32, s32);
-void Func_080072f4(s32, s32, s32);
-void Func_080072f8(s32, s32, s32);
+void _call_via_r4(s32, s32, s32);
+void _call_via_r5(s32, s32, s32);
 void UiWindow_ClearInteriorTilesFar(s32, s32, s32, s32, s32);
 void RenderOutput_ClearListFar(s32);
 void Func_080152a8(void);
 void Djinn_AddToOwnerFar(s32, s32, s32);
-void Func_080771b0(s32, s32, s32);
+void Djinn_ActivateFar(s32, s32, s32);
 void Func_080771b8(s32, s32, s32);
 void Menu_UpdateEntryObjectTransforms(void);
-void Func_080a1ac0(s32, s32);
-s32 Func_080acab8(s32, s32, s32, u8, s32, s32, s32, s32, s32);
+void UiMenu_SlideCursor(s32, s32);
+s32 DjinnMenu_DrawStatPreview(s32, s32, s32, u8, s32, s32, s32, s32, s32);
 
 s32 OwnerAction_RunCompareLoop(u32 mode)
 {
@@ -175,28 +175,28 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
             second_flag = (u16)(FIELD_AT_OFFSET(state, u16, 0x17a) & 0x8000);
             Djinn_AddToOwnerFar(first_id, second_pal, second_bank);
             if (second_flag != 0) {
-                Func_080771b0(first_id, second_pal, second_bank);
+                Djinn_ActivateFar(first_id, second_pal, second_bank);
             }
         }
         BattleUnit_Recalculate(first_id);
         count[0] = OwnerAction_DiffSlots(
             (u8 *)unit_copy + 88, unit + 88, diff_work, &out_b, &out_a);
-        Func_080072f8((s32)unit, (s32)unit_copy, 0x14c);
+        _call_via_r5((s32)unit, (s32)unit_copy, 0x14c);
 
         second_id = FIELD_AT_OFFSET(state, u8, 0x21b);
         unit = Runtime_GetObject(second_id);
-        Func_080072f8((s32)unit_copy, (s32)unit, 0x14c);
+        _call_via_r5((s32)unit_copy, (s32)unit, 0x14c);
         if (mode == 0) {
             Func_080771b8(second_id, second_pal, second_bank);
         }
         Djinn_AddToOwnerFar(second_id, first_pal, first_bank);
         if (first_flag != 0) {
-            Func_080771b0(second_id, first_pal, first_bank);
+            Djinn_ActivateFar(second_id, first_pal, first_bank);
         }
         BattleUnit_Recalculate(second_id);
         count[1] = OwnerAction_DiffSlots(
             (u8 *)unit_copy + 88, unit + 88, diff_work, &out_b, &out_a);
-        Func_080072f8((s32)unit, (s32)unit_copy, 0x14c);
+        _call_via_r5((s32)unit, (s32)unit_copy, 0x14c);
         Sys_Free(unit_copy);
         Sys_Free(diff_work);
     } else if (mode - 2 <= 1) {
@@ -222,12 +222,12 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
         _call_via_r3((s32)unit_copy, (s32)unit, 0x14c, IWRAM_WORD_COPY);
         Func_080771b8(first_id, first_pal, first_bank);
         if (apply_second != 0) {
-            Func_080771b0(first_id, first_pal, first_bank);
+            Djinn_ActivateFar(first_id, first_pal, first_bank);
         }
         BattleUnit_Recalculate(first_id);
         count[0] = OwnerAction_DiffSlots(
             (u8 *)unit_copy + 88, unit + 88, diff_work, &out_b, &out_a);
-        Func_080072f4((s32)unit, (s32)unit_copy, 0x14c);
+        _call_via_r4((s32)unit, (s32)unit_copy, 0x14c);
         count[1] = count[0];
         page = 0;
         Sys_Free(unit_copy);
@@ -309,8 +309,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
     for (;;) {
         render = *(u8 **)gWindowWork;
         scene = FIELD_AT_OFFSET(state, u8 *, 0x184);
-        input_edge = Data_03001c94;
-        input_held = Data_03001b04;
+        input_edge = gKeyState;
+        input_held = gKeysRepeat;
 
         if (FIELD_AT_OFFSET(scene, s32, 0x212c) != 0) {
             /* A scripted phase owns the screen: input is suppressed and the
@@ -339,8 +339,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     _call_via_r3((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
                     work = UiWork_Create(0xc43, 8, 0, 1);
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 1;
-                    Func_080a1ac0(2, 96);
-                    Data_02000240[0x20c] = 1;
+                    UiMenu_SlideCursor(2, 96);
+                    gGameState[0x20c] = 1;
                     while (UiWork_IsCompleteFar() == 0) {
                         WaitFrames(1);
                     }
@@ -359,8 +359,8 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     _call_via_r3((s32)saved, (s32)render, 0x200, IWRAM_WORD_COPY);
                     work = UiWork_Create(0xc42, 8, 0, 1);
                     FIELD_AT_OFFSET(FIELD_AT_OFFSET(state, void *, 0x14), u8, 5) = 1;
-                    Func_080a1ac0(106, 56);
-                    Data_02000240[0x20c] = 1;
+                    UiMenu_SlideCursor(106, 56);
+                    gGameState[0x20c] = 1;
                     while (UiWork_IsCompleteFar() == 0) {
                         WaitFrames(1);
                     }
@@ -415,18 +415,18 @@ s32 OwnerAction_RunCompareLoop(u32 mode)
                     entry = 1;
                     swap = 0;
                 }
-                Func_080acab8(FIELD_AT_OFFSET(state, s32, 0x24), 0, 0,
+                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x24), 0, 0,
                     FIELD_AT_OFFSET(state, u8, 0x258), page, swap, entry, page, 1);
-                Func_080acab8(FIELD_AT_OFFSET(state, s32, 0x34), 0, 0,
+                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x34), 0, 0,
                     FIELD_AT_OFFSET(state, u8, 0x258), page, swap, entry,
                     cursor[0] + 1, 1);
             } else if (page == 1) {
                 if (mode == 1) {
                     entry = 4;
                 }
-                Func_080acab8(FIELD_AT_OFFSET(state, s32, 0x24), 0, 0,
+                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x24), 0, 0,
                     FIELD_AT_OFFSET(state, u8, 0x21b), page, 0, entry, 0, 0);
-                Func_080acab8(FIELD_AT_OFFSET(state, s32, 0x34), 0, 0,
+                DjinnMenu_DrawStatPreview(FIELD_AT_OFFSET(state, s32, 0x34), 0, 0,
                     FIELD_AT_OFFSET(state, u8, 0x21b), page, 0, entry,
                     cursor[1] + 1, 0);
             } else {

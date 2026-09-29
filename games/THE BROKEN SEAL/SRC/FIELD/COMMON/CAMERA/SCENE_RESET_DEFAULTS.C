@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 void Render_ResetTransformState(void);
 void SceneTransform_ApplyPosition(void *);
@@ -68,11 +69,11 @@ void Camera_ResetSceneDefaults(void)
     local.first = 0;
     local.second = 0;
     local.third = state->field20;
-    ((void (*)(struct SceneCameraTransfer *, struct SceneCameraState *))0x03000250)(&local, state);
+    Iwram_TransformVector((s32 *)&local, (s32 *)state);
 
     param1 = 250;
     param1 = param1 << 16;
-    result = ((u32 (*)(u32, u32))0x0300013c)(param1, 192 << 8);
+    result = Iwram_RatioMulQ14(param1, 192 << 8);
 
     param1 = 250;
     param1 = param1 << 16;

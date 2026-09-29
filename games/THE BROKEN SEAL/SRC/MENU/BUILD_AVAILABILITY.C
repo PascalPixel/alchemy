@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "MENU_RESULT.H"
 #include "TBS_EDITION.H"
 #include "SCENE.H"
@@ -105,16 +106,12 @@ struct TileMask {
     u32 word1;
 };
 
-typedef void (*FillProc)(void *dst, s32 size, u32 word);
-
 static __inline__ u32 XorWord(u32 word, u32 mask)
 {
     return word ^ mask;
 }
 
 extern const struct TileMask Data_080af23c[];
-
-#define FillWords ((FillProc)0x03000168)
 
 void Menu_BuildPatternTiles(void)
 {
@@ -127,7 +124,7 @@ void Menu_BuildPatternTiles(void)
             u32 *tile = vram + set * 0x60 + n * 0x10;
             s32 x;
 
-            FillWords(tile, 64, 0x44444444);
+            Iwram_FillWords(tile, 64, 0x44444444);
             for (x = 1; x <= 7; x++) {
                 s32 mi = n;
 

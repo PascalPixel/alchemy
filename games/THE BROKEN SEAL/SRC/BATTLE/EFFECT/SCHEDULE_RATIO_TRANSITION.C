@@ -1,17 +1,12 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 extern u8 Data_03001e70[];
 
 /*
  * Record a ratio-driven transition on the battle effect work block and
  * schedule its callback.
- *
- * The ratio helper is reached through a call-via-register veneer, so it is a
- * typed indirect call rather than a call to a function at the branch target.
- * It takes exactly two arguments, numerator and denominator; r2 is never set
- * at the call site, so a third argument must not be added.
  */
-typedef s32 (*ArmRatio)(s32 numerator, s32 denominator);
 
 struct Work_080936a0 {
     u8 filler0[848];
@@ -35,7 +30,7 @@ void BattleFx_ScheduleRatioTransition(s32 arg0, s32 arg1)
     if (*(s16 *)(handle + 414) != 3)
         return;
     {
-        ArmRatio ratio = (ArmRatio)0x0300013c;
+        s32 (*ratio)(s32, s32) = Iwram_RatioMulQ14;
         result = ratio(arg0, 0x10000);
     }
     state->previous = state->current;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "BATTLE_PRESENTATION.H"
 
@@ -25,7 +26,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     s32 render_bounds[3];
     s32 measured_bounds[3];
     s32 source_bounds[3];
-    u32 (*blend)(u32, u32);
+    s32 (*blend)(s32, s32);
     s32 alpha;
     s32 half;
     s32 width;
@@ -39,7 +40,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     source_bounds[1] = 0;
     source_bounds[2] = 0;
 
-    blend = (u32 (*)(u32, u32))0x0300013c;
+    blend = Iwram_RatioMulQ14;
     result = blend(span, alpha);
     Camera_StoreSceneParameters(span, result, span * 2);
     Render_ResetTransformState();
@@ -49,7 +50,7 @@ void BattlePres_SetupTransitionSceneAtDepth(s32 x, s32 depth, s32 y)
     render_bounds[0] = 0;
     render_bounds[1] = 0;
     render_bounds[2] = scene->distance;
-    ((void (*)())0x03000250)(render_bounds, scene);
+    Iwram_TransformVector(render_bounds, (s32 *)scene);
     hud[3] = 120;
     hud[4] = 120;
     Render_ResetTransformState();

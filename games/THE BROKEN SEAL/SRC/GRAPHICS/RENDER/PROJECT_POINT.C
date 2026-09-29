@@ -20,7 +20,7 @@ s32 Render_ProjectPoint(s32 *point, s32 *screen)
     s32 scale;
     s32 result;
 
-    ((void (*)(s32 *, s32 *))0x03000250)(point, screen);
+    Iwram_TransformVector(point, screen);
     projection = &gProjection;
     depth = -screen[2];
     result = 0;
@@ -29,7 +29,7 @@ s32 Render_ProjectPoint(s32 *point, s32 *screen)
         if (projection->focal != 0) {
             u32 shifted = (u32)depth >> 11;
 
-            scale = ((s32 (*)(s32, u32))0x030003f0)(projection->focal << 5, shifted);
+            scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
         } else {
             scale = 0x151eb;
         }

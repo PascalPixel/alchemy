@@ -335,7 +335,6 @@ extern u8 gMapCellBuffer[];
 extern u32 gFrameCount;
 extern u8 gVinasuHeyaPrimaryTable[];
 
-typedef s32(*IwramSqrt020002f0)(s32);
 void Engine_ObjectCommitPosition();
 void VinasuHeya_SettlePushedBlocks(void);
 void VinasuHeya_StepActorWithDust();

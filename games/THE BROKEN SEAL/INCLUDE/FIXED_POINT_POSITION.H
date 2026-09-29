@@ -10,9 +10,6 @@ struct FixedPointPosition {
     s32 z;
 };
 
-/* The resident integer-square-root routine used by small code overlays. */
-typedef s32 (*IwramIntegerSquareRoot)(s32 value);
-
 #define FIXED_POINT_POSITION_OFFSET(field) \
     ((u32)&(((struct FixedPointPosition *)0)->field))
 typedef char FixedPointPosition_size[

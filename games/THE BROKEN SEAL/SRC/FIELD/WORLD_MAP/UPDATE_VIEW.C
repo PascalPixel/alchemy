@@ -132,14 +132,14 @@ void WorldMap_UpdateView(void)
     local.first = 0;
     local.second = 0;
     local.third = height + 0x10000;
-    ((void (*)(struct WorldTransfer *, u8 *))0x03000250)(&local, cam);
+    Iwram_TransformVector((s32 *)&local, (s32 *)cam);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(cam, pos);
     if (Data_03001af4 != view->pitch) {
         s32 c = Trig_Cos(view->pitch);
         s32 s = Trig_Sin(view->pitch);
 
-        WorldMap_BuildScanlineTable(((s32 (*)(s32, s32))0x0300013c)(c, s), pos, map);
+        WorldMap_BuildScanlineTable(Iwram_RatioMulQ14(c, s), pos, map);
         Data_03001f60 = 0;
         Data_03001af4 = view->pitch;
     }

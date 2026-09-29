@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "FIXED_MATH.H"
 
 extern const u16 Math_ArcTanTable[];
@@ -107,7 +108,7 @@ s32 Math_IntegerSqrt(s32 value)
 
 s32 FixedSqrt(s32 value)
 {
-    s32 (*root)(s32) = (s32 (*)(s32))0x030001d8;
+    s32 (*root)(s32) = Iwram_Sqrt;
 
     return (s32)((u32)root(value) << 8);
 }

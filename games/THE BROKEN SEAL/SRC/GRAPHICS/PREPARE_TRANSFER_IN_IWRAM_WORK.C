@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
 s32 Trig_Sin(s32);
@@ -14,20 +15,16 @@ void Graphics_PrepareTransferInIwramWork(s32 src, s32 dst)
 }
 
 /* graphics/prepare_transfer_and_run.c */
-typedef void (*WorkFunc)(void *);
-
 void Graphics_PrepareTransferAndRun(void *src, void *dst)
 {
     u8 work[48];
 
     Graphics_PrepareTransfer(src, dst, work);
-    ((WorkFunc)0x030002c0)(work);
+    Iwram_TransformMatrix((s32 *)work);
 }
 
 /* camera/scene/set_angle_parameters.c */
 /* camera/scene/set_angle_parameters.c */
-typedef s32 (*CameraWorkFn)(s32, s32);
-
 struct CameraWork {
     s32 result;
     s32 param1;
@@ -42,7 +39,7 @@ void Camera_SetAngleParameters(u32 value, s32 param1, s32 param2)
 
     half = (s32)(value + (value >> 31)) >> 1;
     first = Trig_Sin(half);
-    result = ((CameraWorkFn)0x0300013C)(
+    result = Iwram_RatioMulQ14(
         first,
         Trig_Cos(half)* 0x50
     );

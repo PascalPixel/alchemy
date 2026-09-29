@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SCENE.H"
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_RunTwoResource(s32, s32);
@@ -14,8 +15,6 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
  * fields, then schedule two frame callbacks.  The work-block offsets are
  * taken by position and are not verified.
  */
-
-typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 
 /*
  * Value_ symbols name a small resource id the reference loads from its
@@ -67,7 +66,7 @@ void BattlePresentation_PrepareScene(s32 kind)
         break;
     }
     palette = Resource_GetTableEntry(id);
-    ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
+    Iwram_CopyWords((void *)0x05000000, palette, 128);
     *(s32 *)(work + 0x778c) = 0;
     *(s32 *)(work + 0x7780) = 3;
     *(s32 *)(work + 0x7784) = 0x06060606;
@@ -78,7 +77,6 @@ void BattlePresentation_PrepareScene(s32 kind)
 /* battle/effects/runtime/misc/schedule_callbacks_and_release_blocks.c */
 extern void Scheduler_RemoveCallback(void (*)(void));
 
-typedef void (*Transfer)(void *, s32);
 extern u8 Palette_StepFadeTransfer;
 
 void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
@@ -86,7 +84,7 @@ void BattleFx_ScheduleCallbacksAndReleaseBlocks(void)
     Scheduler_RemoveCallback((void (*)(void))&BattlePresentation_DrawStreaks);
     Scheduler_RemoveCallback((void (*)(void))&BattlePresentation_ProcessPendingGraphicsTransfer);
     {
-        Transfer transfer = (Transfer)0x03000164;
+        s32 (*transfer)(void *, s32) = Iwram_ClearWords;
 
         transfer((void *)0x06004000, 0x4000);
     }

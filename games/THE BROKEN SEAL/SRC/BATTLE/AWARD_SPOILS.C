@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 /* Hands out the battle spoils: experience to every living party member,
    with the level-up, newly learned Psynergy and stat-gain messages each
@@ -38,9 +39,6 @@ void Party_AdjustSixDigitCounterAFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
 s32 PartyInventory_AddFar(s32 item);
 
-/* The word-copy entry the runtime publishes in IWRAM. */
-typedef s32 (*WordCopyFn)(void *destination, const void *source, s32 size);
-
 extern u8 *gBattleWork;
 extern u8 Value_000008a0[];
 
@@ -79,7 +77,7 @@ void Battle_AwardSpoils(void)
         unit_id = list[i];
         unit = Owner_GetStateFar(unit_id);
         unit->experience += spoils->experience;
-        while (((WordCopyFn)0x03001388)(backup, unit, sizeof(struct SpoilsUnit)),
+        while (Iwram_CopyWords(backup, unit, sizeof(struct SpoilsUnit)),
             Func_080770b8(unit_id, gains) != 0) {
             Audio_PlayCue(0x59);
             UiWork_ClearValueNameTablesFar();

@@ -116,7 +116,6 @@ extern Spr *Data_0200e6e8;
 s32 IwramUnsignedRemainder(s32, s32);
 void OverlayObject_SetValue1(void *, s32);
 void SceneActor_ParkRecord(u8 *record);
-typedef s32(*IwramIntegerSquareRoot)(s32);
 s32 Object_CheckMovementCollision();
 void Vector_AddPolarOffset();
 void SceneActor_SetByte55ForActorZeroAnd12To17();

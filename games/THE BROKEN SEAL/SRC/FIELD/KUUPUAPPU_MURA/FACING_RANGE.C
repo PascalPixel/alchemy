@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIXED_POINT_POSITION.H"
+#include "IWRAM_CALL.H"
 
 /*
  * Whether an actor should turn toward a target: the target is within range
@@ -33,7 +34,7 @@ s32 SceneActor_GetPositionDistance(s32 *a, s32 *b)
     s32 dysq = dy *dy;
     s32 dzsq = dz *dz;
 
-    return ((IwramIntegerSquareRoot) 0x030001D8)(dxsq + dysq + dzsq);
+    return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
 s32 SceneActor_CheckFacingAndRange(struct SceneActor *actor, struct SceneActor *target,

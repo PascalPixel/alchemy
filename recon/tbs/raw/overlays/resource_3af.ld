@@ -41,6 +41,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SELECT_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_BANDS.o"(.text)
         "*/resource_3af_overlay.o"(.text.x0200b5ec)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/INIT_ACTOR_SLOTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/APPLY_FIVE.o"(.text)
         "*/resource_3af_overlay.o"(.text.x0200ba0c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/RUN_THREE.o"(.text)

@@ -2266,6 +2266,7 @@ SECTIONS
         "*/recon/tla/unidentified.o"(.unidentified.08953b92)
         "*/games/COMMON/SRC/GRAPHICS/SHOP/CURSOR.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.0895b758)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/UI/ICONS.o"(.rodata)
         "*/games/THE LOST AGE/SRC/GRAPHICS/UI/COMMAND_ICONS.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08967f12)
         "*/games/THE LOST AGE/SRC/GRAPHICS/MONSTER/BLUE_DEVIL.o"(.rodata)

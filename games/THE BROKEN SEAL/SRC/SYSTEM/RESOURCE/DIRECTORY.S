@@ -26,7 +26,7 @@ Resource_DirectoryTable:
 	resource , FarCall_ShopTable
 	resource , FarCall_BattleTable
 	resource , FarCall_ScrollTable
-	resource , FarCall_PaletteTable
+	resource PaletteFarCalls, FarCall_PaletteTable
 	resource , FarCall_EffectTable
 	resource , FarCall_BlankRunTable
 	resource , FarCall_BlankLoadTable

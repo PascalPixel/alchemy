@@ -1,29 +1,12 @@
-/* Draft of the title overlay's remaining code, resource_36f: Title_Run at
- * 0x02008054 and Title_LoadBackground at 0x02008454, written for MENU/TITLE
- * beside REVEAL.C and SPRITES.C (TITLE.H). The listing keeps these rows.
- * Compiled with stand-in symbols for the numbers below, every other
- * instruction and literal matches, except where noted.
- * Remaining differences:
- * - Title_Run: the ROM loads the scenes it sends the party to from its
- *   literal pool: rows 0, 1 and 4 of the scene table, which the rule would
- *   name SceneId_Title, SceneId_Clear (named) and SceneId_HaidiaMura. It
- *   also loads 0xb for RuntimeDispatch_NoOpHook, the resource module's
- *   empty hook, which is resource row 11, the palette far-call bank whose
- *   entries it calls next; spelling it as that row is a judgement this
- *   draft has not made. Its imports 0x080f0000, 0x080f2000 and 0x080f2020
- *   are the main image's unnamed far veneers into the scroll and palette
- *   modules, whose overlay veneers need names first.
- * - Title_LoadBackground: the ROM loads its resource number 0x1a from its
- *   literal pool, as ResourceId_ row 0x1a would; and it reloads
- *   gMapCellBuffer from the pool after the decode call, where this C keeps
- *   the address in r5 across it (0x2e..0x44 and the pool order after): the
- *   game addressed the map cell buffer as a constant, which waits for fixed
- *   RAM buffers to be checked entries.
- *   Venus 2026-09-29: with ResourceId_GoldenSunLogo (row 0x1a) and the
- *   checked entry Ram_MapCellBuffer, everything up to the decode call
- *   matches, but GCC still shares the constant buffer address in r5 across
- *   the decode call; the ROM loads it from the same pool word twice.
- *   Permuter best 340 (150 s), still sharing it. */
+/* Draft of Title_LoadBackground, resource_36f at 0x02008454, written for
+ * MENU/TITLE beside REVEAL.C and SPRITES.C (TITLE.H). The listing keeps its
+ * rows; Title_Run links as MENU/TITLE/RUN.C.
+ * Remaining difference: the ROM loads its resource number 0x1a from its
+ * literal pool, as ResourceId_GoldenSunLogo does, and it reloads the map
+ * cell buffer's address from the pool after the decode call, where GCC keeps
+ * it in r5 across the call (0x2e..0x44 and the pool order after), with the
+ * label or with the checked entry Ram_MapCellBuffer alike. CLEAR's
+ * background loader in overlay 370 has the same difference. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "DMA.H"
@@ -63,84 +46,6 @@ s32 Resource_DecodeType01(const void *source, void *destination);
 s32 VramBlock_LoadCached(s32 block, s32 size, const void *data);
 
 #define DMA3 ((volatile u32 *)0x040000d4)
-
-/* FAKEMATCH: calling through the inline passes each constant straight into
- * its argument register instead of precomputing it. */
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
-s32 Title_Run(void)
-{
-    s32 wait;
-
-    if (gGameState.entrance == 10) {
-        Engine_ActorGet(gGameState.selected_actor)->motion_flags = 0;
-        Engine_AudioPlayCue(75);
-        Title_RevealScreen(0);
-        Engine_TaskWait(120);
-        wait = 0;
-        if (gKeyState == 0) {
-            do {
-                Engine_TaskWait(1);
-                if (++wait > 3599)
-                    break;
-            } while (gKeyState == 0);
-        }
-        Event_SetPairWork1c0(0, 2);
-        return 0;
-    }
-    if (gGameState.entrance == 9) {
-        Engine_AudioPlayCue(67);
-        Func_080f0000(0);
-        Engine_AudioPlayCue(17);
-        Blend_SetDarkenTarget16(60);
-        Blend_WaitForTransition();
-        Engine_EventWait(240);
-        Engine_AudioPlayCue(19);
-        Event_SetPairWork1c0(1, 2);
-        return 0;
-    }
-    RuntimeDispatch_NoOpHook(0xb);
-    if (gGameState.entrance == 2) {
-    menu:
-        Engine_AudioPlayCue(19);
-        Title_ShowSplashScreen(0);
-        Func_080f2020(0);
-        if (SaveState_ScanRecordFlags() <= 0)
-            goto chosen;
-        Engine_AudioPlayCue(70);
-        if (Func_080f2000(1) != 0)
-            goto chosen;
-        Engine_AudioPlayCue(17);
-        Blend_SetDarkenTarget16(30);
-        Blend_WaitForTransition();
-        wait = 0;
-        if (gKeysHeld == 0) {
-            do {
-                Engine_TaskWait(1);
-                if (++wait > 119)
-                    break;
-            } while (gKeysHeld == 0);
-        }
-        goto menu;
-    chosen:
-        Event_SetPairWork1c0(1, 1);
-    } else {
-        Engine_AudioPlayCue(64);
-        Func_080f2000(0);
-        Party_ApplyStatePreset();
-        Event_SetPairWork1c0(4, 16);
-        Engine_AudioPlayCue(17);
-    }
-    Engine_AudioPlayCue(17);
-    Blend_SetDarkenTarget16(30);
-    Blend_WaitForTransition();
-    Engine_EventWait(60);
-    Engine_AudioPlayCue(19);
-    return 0;
-}
 
 /* Load the title background: palette, tiles and a 30 x 20 map counting up
  * from tile 0x1a0, then clear the scroll registers. */

@@ -367,25 +367,22 @@ mod target_tests {
     }
     #[test]
     fn natural_paths_route_the_same_whole_file_and_respect_game_boundaries() {
-        let source = "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C";
-        for path in [
-            source.to_string(),
-            format!("./{source}"),
-            root().join(source).to_string_lossy().into_owned(),
-            "SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C".into(),
-            "SYSTEM/SAVE/IDENTIFY_FLASH.C".into(),
-        ] {
-            assert_eq!(
-                family_for_source(CompilerTarget::Tbs, &path),
-                CompilerFamily::AgbccFlash
-            );
+        // The flash library is shared from COMMON, so both games route it.
+        let source = "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C";
+        for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+            for path in [
+                source.to_string(),
+                format!("./{source}"),
+                root().join(source).to_string_lossy().into_owned(),
+            ] {
+                assert_eq!(family_for_source(target, &path), CompilerFamily::AgbccFlash);
+            }
         }
         assert_eq!(
-            family_for_source(CompilerTarget::Tla, source),
-            CompilerFamily::Game
-        );
-        assert_eq!(
-            family_for_source(CompilerTarget::Tla, "SYSTEM/SAVE/IDENTIFY_FLASH.C"),
+            family_for_source(
+                CompilerTarget::Tbs,
+                "games/THE LOST AGE/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C"
+            ),
             CompilerFamily::Game
         );
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
@@ -411,12 +408,15 @@ mod target_tests {
     #[test]
     fn agbcc_families_keep_their_flag_sets() {
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Tbs, "SYSTEM/SAVE/IDENTIFY_FLASH.C"),
+            cflags_for_target_source(
+                CompilerTarget::Tbs,
+                "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C"
+            ),
             agbcc_flash_cflags()
         );
         for source in [
             "SOUND/CGB_UPDATE_CHANNELS.C",
-            "SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
         ] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, source),

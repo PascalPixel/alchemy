@@ -5,7 +5,7 @@
 //! its tIME chunk (the only standard chunk the publication check lets a date
 //! ride in).
 use super::letters::Letters;
-use super::palette::{corner_for, cut, DARK, LIGHT, LIGHT_OPACITY};
+use super::palette::{corner_for, cut, DARK, LIGHT, LIGHT_OPACITY, SHADOW};
 
 pub(crate) type Rgb = [u8; 3];
 
@@ -100,11 +100,12 @@ impl Canvas {
             }
         }
     }
-    /// Lay `color` on one pixel, at `LIGHT_OPACITY` when it is `LIGHT`.
+    /// Lay `color` on one pixel, at `LIGHT_OPACITY` when it is a bevel or
+    /// shadow colour (`LIGHT`, `DARK` or `SHADOW`).
     fn bevel_pixel(&mut self, x: i32, y: i32, color: &str) {
         let ink = rgb(color);
         if let Some(slot) = self.at(x, y) {
-            *slot = Some(match (color == LIGHT, *slot) {
+            *slot = Some(match ([LIGHT, DARK, SHADOW].contains(&color), *slot) {
                 (true, Some(beneath)) => blend(ink, beneath, LIGHT_OPACITY),
                 _ => ink,
             });
@@ -138,7 +139,7 @@ impl Canvas {
         let edge = |across: i32, down: i32| {
             let near = |offset: i32, span: i32| offset.min(span - 1 - offset);
             let (a, d) = (near(across, width), near(down, height));
-            !cut(a, d, corner) && (a == 0 || d == 0 || (a + d == corner - 1))
+            !cut(a, d, corner) && (cut(a - 1, d, corner) || cut(a, d - 1, corner))
         };
         for down in 0..height {
             for across in 0..width {
@@ -204,7 +205,7 @@ impl Canvas {
                 for row in 0..letters.cell.1 {
                     for column in 0..letters.cell.0 {
                         if letters.ink(frame, column, row) {
-                            self.fill(at + column as i32 + dx, top + row as i32, 1, 1, ink);
+                            self.bevel_pixel(at + column as i32 + dx, top + row as i32, ink);
                         }
                     }
                 }
@@ -220,7 +221,7 @@ impl Canvas {
             for (row, line) in super::letters::mark(name).iter().enumerate() {
                 for (column, pixel) in line.chars().enumerate() {
                     if pixel == '#' {
-                        self.fill(x + column as i32 + dx, y + row as i32 + dx, 1, 1, ink);
+                        self.bevel_pixel(x + column as i32 + dx, y + row as i32 + dx, ink);
                     }
                 }
             }
@@ -422,7 +423,7 @@ mod tests {
             assert_eq!(canvas.get(x, y), Some(face), "{x},{y}");
         }
         // The light edge is LIGHT_OPACITY light over the well it covers;
-        // the dark edge owns the mixed corners and stays opaque.
+        // the dark edge owns the mixed corners, just as translucent.
         let (o, rest) = (LIGHT_OPACITY, 100 - LIGHT_OPACITY);
         let over_well = blend(light, rgb(WELL), o);
         assert_eq!(
@@ -438,13 +439,16 @@ mod tests {
             assert_eq!(canvas.get(x, y), Some(over_well), "{x},{y}");
         }
         for (x, y) in [(9, 3), (9, 6), (3, 7), (8, 7)] {
-            assert_eq!(canvas.get(x, y), Some(dark), "{x},{y}");
+            assert_eq!(canvas.get(x, y), Some(blend(dark, rgb(WELL), o)), "{x},{y}");
         }
         assert_eq!(canvas.get(3, 3), Some(rgb(WELL)));
         // A sunken frame puts its light, still translucent, on the other sides.
         canvas.bevel(2, 2, 8, 6, Relief::Sunken);
-        assert_eq!(canvas.get(9, 3), Some(blend(light, dark, o)));
-        assert_eq!(canvas.get(3, 2), Some(dark));
+        assert_eq!(
+            canvas.get(9, 3),
+            Some(blend(light, blend(dark, rgb(WELL), o), o))
+        );
+        assert_eq!(canvas.get(3, 2), Some(blend(dark, over_well, o)));
         // Cleared corners are transparent in the PNG and in its decoding.
         canvas.clear_corners(0, 0, 12, 10);
         assert_eq!(canvas.get(0, 0), None);

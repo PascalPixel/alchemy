@@ -3,7 +3,7 @@
 
 extern u16 Data_02004c00;
 extern s16 Data_02004c04;
-extern u32 *Data_02004c0c;
+extern u32 *gFlashNumRemainingBytes;
 extern u32 gFrameTick;
 
 /* Lay the 16 x 6 grid of wide text objects over the scroll position: each
@@ -16,7 +16,7 @@ void DisplayScroll_UpdateObjects(void)
     u32 frame = Data_02004c00;
     u32 fine = frame & 7;
     s32 tile = (((s16)frame / 8) & 0x1f) * 3 * 8;
-    u32 *entry = Data_02004c0c + 48;
+    u32 *entry = gFlashNumRemainingBytes + 48;
     s32 row;
 
     for (row = 0; row <= 15; row++) {
@@ -33,7 +33,7 @@ void DisplayScroll_UpdateObjects(void)
                 tile = 0;
         }
     }
-    Dma_Set(Data_02004c0c, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
+    Dma_Set(gFlashNumRemainingBytes, (void *)0x07000000, 0x84000100, (volatile u32 *)0x040000d4);
     if (Data_02004c04 == 0 && (gFrameTick & 3) == 0)
         Data_02004c00++;
 }

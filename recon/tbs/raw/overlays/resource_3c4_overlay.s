@@ -1,36 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {r5, lr}
-	ldmia r0!, {r5}
-	ldmia r1!, {r3}
-	ldmia r0!, {r4}
-	subs r5, r5, r3
-	ldmia r1!, {r3}
-	ldr r2, [r1]
-	subs r4, r4, r3
-	ldr r3, [r0]
-	subs r3, r3, r2
-	asrs r5, r5, #16
-	asrs r4, r4, #16
-	asrs r3, r3, #16
-	adds r0, r5, #0
-	muls r0, r5
-	adds r2, r4, #0
-	muls r2, r4
-	adds r1, r3, #0
-	muls r1, r3
-	adds r0, r0, r2
-	adds r3, r1, #0
-	adds r0, r0, r3
-	ldr r3, [pc, #8]
-	bl 0x0200b1c0
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x030001d8
+	.section .text.x0200806c,"ax",%progbits
 	.global Func_0200006c
 	.thumb_func
 Func_0200006c:

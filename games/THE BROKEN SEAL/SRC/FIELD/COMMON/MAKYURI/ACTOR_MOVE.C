@@ -1,24 +1,17 @@
-/* NONMATCHING (address-bound): Makyuri_RunActorMove, resource_39b at
- * 0x0200a030 (832 bytes with its pool); twin resource_39c:0x0200d5c0.
- * Formerly FIELD/COMMON/MAKYURI/ACTOR_MOVE.C, which no script linked.
- *
- * Remaining difference: 828 of 832 bytes, 267 differing halfwords. The only
- * cause is the map cell buffer at 0x02010000: spelled as the integer that
- * MAP_CELLS once was, this source is byte-identical to both copies. Through
- * the symbol gMapCellBuffer, agscc loads the base from the constant pool,
- * CSE orders it second in the cell address sums and the allocation and pool
- * layout move. The reference therefore used the address as a compile-time
- * number; it links once the map cell buffer has an honest link-time number
- * (literal RAM addresses stay out of maintained C). */
+/* Mercury Lighthouse: the leader hops one cell toward the held direction
+ * over the water pillars. The same function sits in the entrance and the
+ * rooms overlays. */
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "TYPES.H"
 #include "FIELD_EFFECT.H"
 #include "IWRAM_CALL.H"
-extern u8 gMapCellBuffer[];
+#include "RAM_BUFFER.H"
 
-void Field_OffsetPosition(s32 radius, s32 angle, union FieldCoordinate *pos);
+void Vector_AddPolarOffset(s32 radius, s32 angle, union FieldCoordinate *pos);
 s32 Object_CheckMovementCollision(struct FieldActor *actor, union FieldCoordinate *pos);
-s32 AnimationObjects_SelectAnimationFar(struct FieldSprite *sprite, s32 animation);
-void Makyuri_SpawnMoveEffect(struct FieldActor *actor);
+s32 AnimationObjects_SelectAnimation(struct FieldSprite *sprite, s32 animation);
+void OverlayObject_SpawnKind24AtObject(struct FieldActor *actor);
+void Object_SetPosition(struct FieldActor *object, s32 fixed_x, s32 fixed_y, s32 fixed_z);
 
 /* One cell of the height map: the third byte is the cell's floor level. */
 struct MapCell {
@@ -33,10 +26,10 @@ struct EventActors {
 };
 
 extern s16 Makyuri_MoveAngles[];
-extern const s32 Makyuri_StartMoveScript[];
-extern const s32 Makyuri_EndMoveScript[];
-extern u32 Makyuri_ContinueInput;
-extern u32 Makyuri_DirectionState;
+extern const s32 Makyuri_RampScript[];
+extern const s32 Makyuri_ScaleCounterScript[];
+extern u32 gKeyState;
+extern u32 gKeysHeld;
 
 struct PushState {
     s32 count;
@@ -48,7 +41,7 @@ struct PushState {
     struct FieldActor *effect;
 };
 
-#define MAP_CELLS ((struct MapCell *)gMapCellBuffer)
+#define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
 /* FAKEMATCH: the inline boundary rematerializes pos for the collision call. */
 static __inline__ s32 CheckMove(struct FieldActor *actor, union FieldCoordinate *pos)
@@ -79,14 +72,14 @@ void Makyuri_RunActorMove(void)
     actor = ((struct EventActors *)work)->actors[gGameState.selected_actor];
     flags = &actor->motion_flags;
     saved = *flags;
-    angle = (u16)Makyuri_MoveAngles[(Makyuri_DirectionState >> 4) & 15];
-    if (Makyuri_MoveAngles[(Makyuri_DirectionState >> 4) & 15] == -1)
+    angle = (u16)Makyuri_MoveAngles[(gKeysHeld >> 4) & 15];
+    if (Makyuri_MoveAngles[(gKeysHeld >> 4) & 15] == -1)
         return;
     pos[0].fixed = (actor->x.fixed & -0x100000) + 0x80000;
     pos[1].fixed = *(s32 *)((u8 *)actor + 20);
     pos[2].fixed = (actor->z.fixed & -0x100000) + 0x80000;
     from = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
-    Field_OffsetPosition(0x200000, angle, pos);
+    Vector_AddPolarOffset(0x200000, angle, pos);
     to = &MAP_CELLS[(pos[2].fixed / 0x100000 << 7) + pos[0].fixed / 0x100000];
     if (from->level != state->level && to->level == state->level && state->count == 0)
         return;
@@ -97,7 +90,7 @@ void Makyuri_RunActorMove(void)
     obj = state->effect;
     if (obj != NULL) {
         ((union FieldObject *)obj)->effect.spin = 0;
-        Engine_ObjectSetScript(obj, Makyuri_EndMoveScript);
+        Engine_ObjectSetScript(obj, Makyuri_ScaleCounterScript);
         Engine_ObjectSetAnimation(obj, 7);
         state->effect = NULL;
     }
@@ -107,15 +100,15 @@ void Makyuri_RunActorMove(void)
         if (obj != NULL) {
             sprite = obj->sprite;
             *(s32 *)((u8 *)obj + 20) = *(s32 *)((u8 *)source + 20);
-            Engine_ObjectSetScript(obj, Makyuri_StartMoveScript);
+            Engine_ObjectSetScript(obj, Makyuri_RampScript);
             obj->motion_flags = 0;
             ((union FieldObject *)obj)->effect.spin = 0;
             obj->priority_flags = 2;
             obj->speed = 0x40000;
             obj->acceleration = 0x20000;
-            Engine_ObjectSetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
+            Object_SetPosition(obj, pos[0].fixed, pos[1].fixed, pos[2].fixed);
             if (sprite != NULL) {
-                AnimationObjects_SelectAnimationFar(sprite, 6);
+                AnimationObjects_SelectAnimation(sprite, 6);
                 zero = 0;
                 ((u8 *)sprite)[38] = zero;
             }
@@ -132,35 +125,35 @@ void Makyuri_RunActorMove(void)
         }
     }
     Engine_ObjectSetAnimation(actor, 6);
-    Engine_TaskWait(3);
-    Engine_AudioPlayCue(152);
+    WaitFrames(3);
+    Audio_PlayCue(152);
     Engine_ObjectSetAnimation(actor, 7);
     actor->speed = 0x30000;
     actor->acceleration = 0x20000;
     actor->velocity_y = 0x40000;
     *flags &= 0x7e;
     Engine_ActorSetSpriteFlags(actor, 0);
-    Engine_ObjectMotionSetPositionAndCommit(0, pos[0].part.pixel, pos[2].part.pixel);
+    Engine_ActorMoveToAndWait(0, pos[0].part.pixel, pos[2].part.pixel);
     Engine_ObjectSetAnimation(actor, 6);
-    Engine_TaskWait(2);
+    WaitFrames(2);
     if (to->level != state->level)
         Engine_ActorSetSpriteFlags(actor, 1);
     else
-        Engine_AudioPlayCue(215);
-    Engine_TaskWait(1);
+        Audio_PlayCue(215);
+    WaitFrames(1);
     *flags = saved;
     if (to->level == state->level && state->effect == NULL) {
         Engine_ObjectSetAnimation(actor, 18);
-        Engine_AudioPlayCue(241);
+        Audio_PlayCue(241);
         for (i = 0;; i++) {
             if ((i & 15) == 0)
-                Makyuri_SpawnMoveEffect(actor);
-            if (i > 31 && Makyuri_ContinueInput != 0)
+                OverlayObject_SpawnKind24AtObject(actor);
+            if (i > 31 && gKeyState != 0)
                 break;
-            Engine_TaskWait(1);
+            WaitFrames(1);
         }
-        Engine_AudioPlayCue(0x120);
-        Engine_TaskWait(1);
+        Audio_PlayCue(0x120);
+        WaitFrames(1);
         actor->x.fixed = state->target_x;
         actor->z.fixed = state->target_z;
         Engine_ActorSetSpriteFlags(actor, 1);

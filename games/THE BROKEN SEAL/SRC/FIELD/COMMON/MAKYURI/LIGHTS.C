@@ -1,21 +1,5 @@
-/* NONMATCHING (address-bound): Makyuri_SpawnLightObjects, resource_39b at
- * 0x02009a3c (396 bytes with its pool and alignment); twin
- * resource_39c:0x0200cfcc. Formerly FIELD/COMMON/MAKYURI/LIGHT_OBJECTS.C,
- * which no script linked.
- *
- * Remaining difference: 394 of 394 code bytes, 5 differing halfwords, all
- * in the cell address sum and the state pointer's scratch copy: the
- * reference adds the index to the base (adds r2, r2, r3) and copies the
- * state into r0, this source the base to the index into r3 with the state
- * copy in r2. Spelled with the map cell buffer as the integer 0x02010000
- * the source is byte-identical to both copies: agscc then folds the
- * address into the add as a constant, while the symbol gMapCellBuffer comes
- * from the constant pool and CSE orders it second. Declaring the buffer as
- * a typed array, a local base pointer, or the base assigned before the add
- * (4 halfwords: the sum then forms in sl) did not reproduce it. It links
- * once the map cell buffer has an honest link-time number. */
 #include "DMA.H"
-extern u8 gMapCellBuffer[];
+#include "RAM_BUFFER.H"
 
 struct MakyuriActor {
     u8 pad00[8];
@@ -68,14 +52,14 @@ struct MakyuriCell {
 };
 
 extern s32 gGameState[];
-extern u8 Makyuri_LowerLightScript[];
-extern u8 Makyuri_UpperLightScript[];
-struct MakyuriLights **Runtime_AllocateBlockFar(s32 slot, s32 size);
-s32 GameFlag_TestFar(s32 flag);
-struct MakyuriActor *ObjectTable_GetFar(s32 id);
-struct MakyuriObject *Object_CreateFar(s32 kind, s32 x, s32 y, s32 z);
-void Makyuri_ObjectSetScript(struct MakyuriObject *obj, void *script);
-void AnimationObjects_SelectAnimationFar(struct MakyuriAnim *anim, s32 animation);
+extern u8 Makyuri_PillarScript[];
+extern u8 Makyuri_RampScript[];
+struct MakyuriLights **Runtime_AllocateBlock(s32 slot, s32 size);
+s32 Engine_GameFlagIsSet(s32 flag);
+struct MakyuriActor *ObjectTable_Get(s32 id);
+struct MakyuriObject *Engine_ObjectCreate(s32 kind, s32 x, s32 y, s32 z);
+void Engine_ObjectSetScript(struct MakyuriObject *obj, void *script);
+void AnimationObjects_SelectAnimation(struct MakyuriAnim *anim, s32 animation);
 
 /* Mercury Lighthouse: remember the light state in heap block 35. Before
  * flag 0x109 the state is cleared and keeps only its region; after it, the
@@ -91,29 +75,29 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
     s32 flag;
     volatile u32 cleared;
 
-    *Runtime_AllocateBlockFar(35, 4) = st;
-    flag = GameFlag_TestFar(0x109);
+    *Runtime_AllocateBlock(35, 4) = st;
+    flag = Engine_GameFlagIsSet(0x109);
     if (flag == 0) {
         cleared = flag;
         Dma_Set((const void *)&cleared, st, 0x85000007, (volatile u32 *)0x040000d4);
         st->region = region;
         return;
     }
-    actor = ObjectTable_GetFar(gGameState[125]);
+    actor = ObjectTable_Get(gGameState[125]);
     z = actor->z;
-    cell = (struct MakyuriCell *)gMapCellBuffer + ((z / 0x100000) << 7) + actor->x / 0x100000;
+    cell = (struct MakyuriCell *)Ram_MapCellBuffer + ((z / 0x100000) << 7) + actor->x / 0x100000;
     if (st->lit != 0 && st->lower != 0) {
-        obj = Object_CreateFar(26, actor->x, actor->y + 0x180000, z);
+        obj = Engine_ObjectCreate(26, actor->x, actor->y + 0x180000, z);
         if (obj == 0)
             goto upper;
         obj->layer = actor->layer;
         anim = obj->anim;
-        Makyuri_ObjectSetScript(obj, Makyuri_LowerLightScript);
+        Engine_ObjectSetScript(obj, Makyuri_PillarScript);
         obj->owner = actor;
         obj->state = 4;
         obj->y += -0x8000;
         if (anim != 0) {
-            AnimationObjects_SelectAnimationFar(anim, 6 - st->lit);
+            AnimationObjects_SelectAnimation(anim, 6 - st->lit);
             anim->frame = 0;
             anim->mode = 1;
         }
@@ -123,18 +107,18 @@ void Makyuri_SpawnLightObjects(s32 region, struct MakyuriLights *st)
     }
 upper:
     if (cell->region == region && st->upper != 0) {
-        obj = Object_CreateFar(26, actor->x, actor->y, actor->z);
+        obj = Engine_ObjectCreate(26, actor->x, actor->y, actor->z);
         if (obj == 0)
             return;
         obj->layer = actor->layer;
         anim = obj->anim;
-        Makyuri_ObjectSetScript(obj, Makyuri_UpperLightScript);
+        Engine_ObjectSetScript(obj, Makyuri_RampScript);
         obj->state = 0;
         obj->timer = 0;
         obj->shape = 2;
         obj->scale = 0x40000;
         if (anim != 0) {
-            AnimationObjects_SelectAnimationFar(anim, 6);
+            AnimationObjects_SelectAnimation(anim, 6);
             /* FAKEMATCH: a one-halfword aggregate holds the zero frame, a
              * halfword pool constant whose short pool range dumps the
              * literal pool before the tail. */

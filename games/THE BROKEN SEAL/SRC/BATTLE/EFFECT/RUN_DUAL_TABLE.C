@@ -3,7 +3,7 @@
    records at work + 0x7080 (x, y, height limit, start frame), then for each
    frame grows every started column upward, drawing it with the two
    alternating rectangle blitters. Four frames after a column starts it cues
-   the effect targets and drops a spark into the 512-slot pool at 0x02010000;
+   the effect targets and drops a spark into gMapCellBuffer's 512-slot pool;
    the sparks are drawn and aged every frame. A sibling of MEMBER_ORBIT.C.
 
    Shape notes, measured against the ROM:
@@ -33,7 +33,7 @@ struct DualColumn {
     s32 start;
 };
 
-/* One slot of the 512-entry spark pool at 0x02010000; age -1 is free. */
+/* One slot of the 512-entry spark pool in gMapCellBuffer; age -1 is free. */
 struct DualSpark {
     s32 x;
     s32 y;
@@ -170,7 +170,7 @@ void BattleFx_RunDualTable(void *object, s32 arg1)
 
     sp20 = Data_080eeb5e[work->effect->table] * 4 + 0x38;
 
-    slot_cursor = (u8 *)0x02010018;
+    slot_cursor = gMapCellBuffer + 0x18;
     i = 0;
     do {
         i += 1;

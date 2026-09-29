@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "SERIAL_RUNTIME.H"
 #include "SCENE.H"
 #include "BATTLE_PARTY.H"
 #include "BATTLE_RUNTIME.H"
@@ -21,7 +22,6 @@ struct LinkWork {
 
 #define LINK_WORK (*(struct LinkWork **)gBattleWork)
 #define LINK_REC (u32)gLinkPeerSignatures
-#define LINK_LOCAL ((u16 *)0x02002224)
 #define LINK_STAT (*(u16 *)gLinkStatus)
 
 s32 BattlePres_WaitSync(void)
@@ -41,7 +41,7 @@ s32 BattlePres_WaitSync(void)
         side += other;
         side <<= 3;
         peer = (u16 *)(LINK_REC + side);
-        sync = LINK_LOCAL;
+        sync = (u16 *)gSerialTransfer.reserved;
         if (work->paused == 0) {
             sync[0] = 'E';
             sync[1] = 'X';

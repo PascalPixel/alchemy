@@ -18,7 +18,7 @@ void Render_ResetTransformState(void);
 void SceneTransform_ApplyRoll(s32 angle);
 void SceneTransform_ApplyPitch(s32 angle);
 void SceneTransform_ApplyYaw(s32 angle);
-void Func_080cde90(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
+void BattleFx_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color);
 
 struct Streak {
     s32 head;
@@ -84,9 +84,9 @@ void BattlePresentation_DrawStreaks(void)
             if (streak->tail < 0)
                 streak->tail = 0;
             fade = -streak->tail / 2;
-            Func_080cde90(tail.x - 1, tail.y, head.x - 1, head.y, fade + 48);
-            Func_080cde90(tail.x, tail.y - 1, head.x, head.y - 1, fade + 48);
-            Func_080cde90(tail.x, tail.y, head.x, head.y, fade + 56);
+            BattleFx_DrawClippedCanvasLine(tail.x - 1, tail.y, head.x - 1, head.y, fade + 48);
+            BattleFx_DrawClippedCanvasLine(tail.x, tail.y - 1, head.x, head.y - 1, fade + 48);
+            BattleFx_DrawClippedCanvasLine(tail.x, tail.y, head.x, head.y, fade + 56);
         }
     }
     *(s32 *)(work + 0x7824) = 1;

@@ -331,153 +331,6 @@ Scene_DoraSendsRobinToThePlaza:
 	.4byte 0x0000012f
 	.4byte 0x0000087b
 	.4byte 0x00000205
-	.section .text.x02009828,"ax",%progbits
-	.balign 4
-	.global Func_02001828
-	.thumb_func
-Func_02001828:
-	.global FieldScene_RunScene372SequenceE
-	.thumb_func
-FieldScene_RunScene372SequenceE:
-	push {r5, r6, lr}
-	ldr r0, [pc, #328]
-	bl 0x0200c6dc
-	cmp r0, #0
-	beq .L_02001828_0
-	b .L_02001828_1
-.L_02001828_0:
-	bl 0x0200c6fc
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r0, #22
-	bl 0x0200c814
-	ldr r5, [pc, #304]
-	adds r0, r5, #0
-	bl 0x0200c7d4
-	movs r0, #22
-	movs r1, #0
-	bl 0x0200c7e4
-	movs r1, #128
-	movs r0, #0
-	lsls r1, r1, #1
-	movs r2, #20
-	bl 0x0200c80c
-	movs r1, #128
-	movs r2, #0
-	movs r0, #0
-	lsls r1, r1, #7
-	bl 0x0200c7fc
-	ldr r0, [pc, #268]
-	ldr r1, [pc, #272]
-	bl 0x0200c81c
-	movs r0, #128
-	movs r1, #1
-	movs r2, #147
-	movs r3, #1
-	lsls r0, r0, #17
-	negs r1, r1
-	lsls r2, r2, #18
-	bl 0x0200c824
-	movs r1, #128
-	movs r2, #128
-	lsls r2, r2, #9
-	movs r0, #22
-	lsls r1, r1, #10
-	bl 0x0200c73c
-	ldr r1, [pc, #236]
-	movs r0, #22
-	bl 0x0200c75c
-	movs r2, #0
-	movs r1, #22
-	movs r0, #0
-	bl 0x0200c7c4
-	movs r0, #30
-	bl 0x0200c6f4
-	ldr r1, [pc, #216]
-	movs r0, #22
-	bl 0x0200c744
-	movs r1, #0
-	movs r0, #22
-	bl 0x0200c7e4
-	movs r0, #22
-	bl 0x0200c72c
-	movs r6, #128
-	lsls r6, r6, #9
-	movs r1, #1
-	str r6, [r0, #28]
-	movs r0, #22
-	bl 0x0200c7b4
-	movs r0, #20
-	bl 0x0200c6f4
-	movs r1, #0
-	movs r0, #22
-	bl 0x0200c7f4
-	movs r0, #40
-	bl 0x0200c6f4
-	adds r5, #5
-	movs r1, #1
-	movs r0, #22
-	bl 0x0200c7b4
-	adds r0, r5, #0
-	bl 0x0200c7d4
-	movs r2, #20
-	movs r0, #22
-	movs r1, #0
-	bl 0x0200c7ec
-	movs r0, #0
-	movs r1, #3
-	bl 0x0200c79c
-	movs r0, #22
-	movs r1, #3
-	bl 0x0200c79c
-	movs r0, #22
-	movs r1, #0
-	bl 0x0200c7e4
-	movs r2, #128
-	movs r0, #22
-	adds r1, r6, #0
-	lsls r2, r2, #8
-	bl 0x0200c73c
-	movs r0, #22
-	movs r1, #2
-	bl 0x0200c794
-	movs r0, #0
-	bl 0x0200c72c
-	cmp r0, #0
-	beq .L_02001828_2
-	movs r3, #10
-	ldrsh r1, [r0, r3]
-	movs r3, #18
-	ldrsh r2, [r0, r3]
-	movs r0, #22
-	bl 0x0200c764
-.L_02001828_2:
-	movs r0, #22
-	bl 0x0200c784
-	movs r2, #0
-	movs r0, #22
-	movs r1, #0
-	bl 0x0200c78c
-	movs r0, #1
-	movs r1, #1
-	bl 0x0200c714
-	movs r0, #21
-	movs r1, #3
-	bl 0x0200c794
-	ldr r0, [pc, #16]
-	bl 0x0200c6e4
-	bl 0x0200c704
-.L_02001828_1:
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00000837
-	.4byte 0x00000e74
-	.4byte 0x00006666
-	.4byte 0x00000ccc
-	.4byte 0x0200c934
-	.4byte 0x0200c984
 	.section .text.x0200a180,"ax",%progbits
 	.balign 4
 	.global Func_02002180
@@ -2800,6 +2653,8 @@ HaidiaArashi_ActorTwentyScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorTwentyTwoScriptA
+HaidiaArashi_ActorTwentyTwoScriptA:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -2820,6 +2675,8 @@ HaidiaArashi_ActorTwentyScript:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global HaidiaArashi_ActorTwentyTwoScriptB
+HaidiaArashi_ActorTwentyTwoScriptB:
 	.4byte 0x80010000
 	.4byte 0x00000016
 	.4byte 0x00000009

@@ -4,9 +4,14 @@
  * and MIDDLE.C, stay listing.
  *
  * Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines (Func_0200760c,
- * Func_0200741c, Func_0200747e, Value_0000008f, Value_00000090,
- * Func_020074d2).
+ * match the ROM, but both functions compare gGameState.scene with the scene
+ * numbers 0x8f and 0x90, which the ROM loads from the literal pool as
+ * link-time symbols; this draft spells them Value_0000008f and
+ * Value_00000090, which no link may define. It waits for scene-number
+ * sources. Its calls reach 3bc's import veneers: Func_0200760c the unlabelled
+ * Battle_ResetEffectCounterFar veneer, Func_0200741c and Func_020074d2
+ * UiText_DrawQuantity, and Func_0200747e the unlabelled
+ * PartyTalkMenu_ChooseFar veneer.
  */
 /* The per-site declarations this draft needs (formerly SITES.H). */
 /* Draft scaffolding for the resource_3bc drafts beside this file: the

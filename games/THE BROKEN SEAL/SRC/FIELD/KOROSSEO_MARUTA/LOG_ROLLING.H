@@ -177,6 +177,9 @@ static __inline__ s32 Value0(s32 (*f)())
 
 extern u8 gColossoMultiPhaseData[];
 
+/* COMMON/KOROSSEO/SOLO_COMPETITOR.C: enter one competitor's trial. */
+void Korosseo_SelectSoloCompetitor(s32 competitor);
+
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {

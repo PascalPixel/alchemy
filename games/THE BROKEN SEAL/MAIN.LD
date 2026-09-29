@@ -1623,7 +1623,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/BLANK_DISPLAY_AND_RUN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/CAMERA/SCENE_RESET_DEFAULTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/LIB/FIXED_8.o"(.text)
-        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/SCALE_RGB555_BUFFER.o"(.text)
+        "*/games/COMMON/SRC/GRAPHICS/PALETTE/SCALE_RGB555_BUFFER.o"(.text)
         "*/recon/tbs/raw/080f4168.o"(.text .rodata .data .padding)
         "*/recon/tbs/unidentified.o"(.unidentified.080f53dc)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/BLANK_LOAD.o"(.text .rodata .data .padding)

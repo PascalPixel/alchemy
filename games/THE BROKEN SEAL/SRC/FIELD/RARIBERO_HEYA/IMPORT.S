@@ -142,6 +142,9 @@ Motion_LaunchFromFocusedObject:
 	.thumb_func
 Engine_ActorWalkByAndWait:
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	.global Engine_ActorSetActionCallback
+	.thumb_func
+Engine_ActorSetActionCallback:
 	overlay_veneer ObjectMotion_SetActionCallbackFar
 	.global Shop_Run
 	.thumb_func

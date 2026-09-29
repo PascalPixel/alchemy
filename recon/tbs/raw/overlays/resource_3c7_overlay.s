@@ -1,299 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x0200804c,"ax",%progbits
-	.balign 4
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_0200004c_0
-	ldr r0, [pc, #16]
-	b .L_0200004c_1
-.L_0200004c_0:
-	ldr r0, [pc, #16]
-.L_0200004c_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b3
-	.4byte 0x02009690
-	.4byte 0x020096b0
-	.section .text.x02008084,"ax",%progbits
-	.balign 4
-	.global Func_02000084
-	.thumb_func
-Func_02000084:
-	push {lr}
-	ldr r3, [pc, #40]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	bne .L_02000084_0
-	ldr r0, [pc, #28]
-	bl 0x020091dc
-	cmp r0, #0
-	beq .L_02000084_1
-	ldr r0, [pc, #24]
-	b .L_02000084_2
-.L_02000084_1:
-	ldr r0, [pc, #24]
-	b .L_02000084_2
-.L_02000084_0:
-	ldr r0, [pc, #24]
-.L_02000084_2:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000b4
-	.4byte 0x000009a7
-	.4byte 0x02009974
-	.4byte 0x0200989c
-	.4byte 0x02009734
-	.section .text.x020084b0,"ax",%progbits
-	.balign 4
-	.global Func_020004b0
-	.thumb_func
-Func_020004b0:
-	push {lr}
-	ldr r3, [pc, #56]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #48]
-	cmp r2, r3
-	bne .L_020004b0_0
-	ldr r0, [pc, #44]
-	bl 0x020091dc
-	cmp r0, #0
-	beq .L_020004b0_1
-	ldr r0, [pc, #40]
-	b .L_020004b0_2
-.L_020004b0_1:
-	ldr r0, [pc, #40]
-	b .L_020004b0_2
-.L_020004b0_0:
-	ldr r0, [pc, #28]
-	bl 0x020091dc
-	cmp r0, #0
-	beq .L_020004b0_3
-	ldr r0, [pc, #28]
-	b .L_020004b0_2
-.L_020004b0_3:
-	ldr r0, [pc, #28]
-.L_020004b0_2:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b4
-	.4byte 0x000009a7
-	.4byte 0x0200a010
-	.4byte 0x02009eb4
-	.4byte 0x02009ca4
-	.4byte 0x02009a94
-	.section .text.x0200904c,"ax",%progbits
-	.global Func_0200104c
-	.thumb_func
-Func_0200104c:
-	push {r5, r6, r7, lr}
-	mov r7, r11
-	mov r6, r10
-	mov r5, r9
-	push {r5, r6, r7}
-	mov r7, r8
-	push {r7}
-	ldr r7, [pc, #356]
-	movs r1, #225
-	lsls r1, r1, #1
-	adds r1, r1, r7
-	movs r2, #0
-	ldrsh r3, [r1, r2]
-	mov r11, r1
-	cmp r3, #90
-	bne .L_0200104c_0
-	ldr r0, [pc, #340]
-	bl 0x020091e4
-.L_0200104c_0:
-	ldr r3, [pc, #340]
-	movs r2, #224
-	ldr r1, [r3]
-	ldr r3, [pc, #336]
-	lsls r2, r2, #1
-	str r3, [r1, r2]
-	ldrsh r3, [r7, r2]
-	mov r9, r3
-	ldr r3, [pc, #332]
-	cmp r9, r3
-	bne .L_0200104c_1
-	movs r0, #20
-	bl 0x02009214
-	movs r2, #0
-	mov r10, r2
-	adds r3, r0, #0
-	adds r3, #35
-	mov r1, r10
-	strb r1, [r3]
-	adds r2, r0, #0
-	adds r2, #89
-	ldrb r3, [r2]
-	movs r6, #4
-	orrs r3, r6
-	strb r3, [r2]
-	ldr r1, [r0, #80]
-	movs r5, #13
-	ldrb r2, [r1, #9]
-	negs r5, r5
-	adds r3, r5, #0
-	ands r3, r2
-	movs r2, #8
-	mov r8, r2
-	mov r2, r8
-	orrs r3, r2
-	strb r3, [r1, #9]
-	movs r0, #18
-	bl 0x02009214
-	adds r3, r0, #0
-	adds r3, #35
-	mov r1, r10
-	strb r1, [r3]
-	adds r2, r0, #0
-	adds r2, #89
-	ldrb r3, [r2]
-	orrs r3, r6
-	strb r3, [r2]
-	ldr r1, [r0, #80]
-	ldrb r2, [r1, #9]
-	adds r3, r5, #0
-	ands r3, r2
-	mov r2, r8
-	orrs r3, r2
-	strb r3, [r1, #9]
-	movs r0, #19
-	bl 0x02009214
-	adds r2, r0, #0
-	adds r2, #89
-	ldrb r3, [r2]
-	orrs r6, r3
-	adds r3, r0, #0
-	adds r3, #35
-	mov r1, r10
-	strb r6, [r2]
-	strb r1, [r3]
-	ldr r2, [r0, #80]
-	ldrb r3, [r2, #9]
-	ands r5, r3
-	mov r3, r8
-	orrs r5, r3
-	strb r5, [r2, #9]
-	movs r1, #6
-	movs r0, #15
-	bl 0x0200924c
-	mov r3, r11
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	cmp r2, #12
-	bne .L_0200104c_1
-	movs r1, #226
-	lsls r1, r1, #1
-	adds r3, r7, r1
-	mov r1, r9
-	strh r1, [r3]
-	movs r1, #227
-	lsls r1, r1, #1
-	adds r3, r7, r1
-	strh r2, [r3]
-.L_0200104c_1:
-	ldr r5, [pc, #148]
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r5, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #156]
-	cmp r2, r3
-	bne .L_0200104c_2
-	movs r0, #13
-	bl 0x02009214
-	movs r2, #89
-	adds r2, r2, r0
-	mov r12, r2
-	ldrb r2, [r2]
-	movs r3, #4
-	orrs r3, r2
-	mov r2, r12
-	strb r3, [r2]
-	adds r3, r0, #0
-	movs r1, #0
-	adds r3, #35
-	strb r1, [r3]
-	ldr r1, [r0, #80]
-	movs r3, #13
-	ldrb r2, [r1, #9]
-	negs r3, r3
-	ands r3, r2
-	movs r2, #8
-	orrs r3, r2
-	movs r0, #192
-	strb r3, [r1, #9]
-	lsls r0, r0, #2
-	bl 0x020091dc
-	cmp r0, #0
-	beq .L_0200104c_3
-	ldr r1, [pc, #96]
-	movs r0, #14
-	bl 0x02009224
-.L_0200104c_3:
-	movs r3, #225
-	lsls r3, r3, #1
-	adds r5, r5, r3
-	movs r1, #0
-	ldrsh r3, [r5, r1]
-	cmp r3, #99
-	bne .L_0200104c_2
-	bl 0x02008508
-	movs r0, #12
-	bl 0x02009214
-	movs r1, #6
-	bl 0x020092ec
-	movs r0, #11
-	bl 0x02009214
-	movs r1, #6
-	bl 0x020092ec
-	movs r3, #21
-	strh r3, [r5]
-.L_0200104c_2:
-	movs r0, #0
-	pop {r3, r5, r6, r7}
-	mov r8, r3
-	mov r9, r5
-	mov r10, r6
-	mov r11, r7
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000009a7
-	.4byte 0x03001ebc
-	.4byte 0x00000209
-	.4byte 0x000000b3
-	.4byte 0x000000b4
-	.4byte 0x02009314
 	.section .rodata,"a",%progbits
 	.global gRariberoPoseAction
 gRariberoPoseAction:
@@ -522,6 +228,8 @@ gRariberoEntrances:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoSanctumRegions
+gRariberoSanctumRegions:
 	.4byte 0x001c00c4
 	.4byte 0x00cc0253
 	.4byte 0x025b0024
@@ -530,6 +238,8 @@ gRariberoEntrances:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoRegions
+gRariberoRegions:
 	.4byte 0x001c00d4
 	.4byte 0x00dc0053
 	.4byte 0x005b0024
@@ -565,6 +275,8 @@ gRariberoExits:
 	.4byte 0x01e010b2
 	.4byte 0x01f010bc
 	.4byte 0x000001ff
+	.global gRariberoPlacements
+gRariberoPlacements:
 	.4byte 0xffff006c
 	.4byte 0x00000002
 	.4byte 0x00b00000
@@ -655,6 +367,8 @@ gRariberoExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoHeyaPlacements
+gRariberoHeyaPlacements:
 	.4byte 0xffff0073
 	.4byte 0x00000001
 	.4byte 0x00a80000
@@ -709,6 +423,8 @@ gRariberoExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoHeyaPlacements9a7
+gRariberoHeyaPlacements9a7:
 	.4byte 0xffff0073
 	.4byte 0x00000001
 	.4byte 0x00a80000
@@ -781,6 +497,8 @@ gRariberoExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoEvents
+gRariberoEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte 0x0200848d
@@ -913,6 +631,8 @@ gRariberoExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoEvents9a7
+gRariberoEvents9a7:
 	.4byte 0x00000002
 	.4byte 0xffff0001
 	.4byte 0x0200848d
@@ -1045,6 +765,8 @@ gRariberoExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoHeyaEvents
+gRariberoHeyaEvents:
 	.4byte 0x00000002
 	.4byte 0xffff0015
 	.4byte 0x0200848d
@@ -1132,6 +854,8 @@ gRariberoExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRariberoHeyaEvents9a7
+gRariberoHeyaEvents9a7:
 	.4byte 0x00000002
 	.4byte 0xffff0015
 	.4byte 0x0200848d

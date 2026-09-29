@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "CALLBACK_SCHEDULER.H"
 
@@ -92,7 +93,6 @@ extern const u8 Data_080ee2ae[];
 /* Value_ symbols carry a resource number the reference loads from its pool
    rather than materializing with a mov. */
 extern u8 Value_0000008d;
-extern u8 Value_0000009e;
 extern u8 Value_000000a0;
 extern u8 Value_000000a3;
 extern u8 Value_000000aa;
@@ -100,7 +100,6 @@ extern u8 Value_000000b7;
 extern u8 Value_000000bb;
 extern u8 Value_000000c0;
 extern u8 Value_000000cd;
-extern u8 Value_000000ce;
 
 /* Callees the project has not named yet keep their address spelling; the
    names in comments are the ones `alchemy inspect` resolves. */
@@ -215,7 +214,7 @@ void BattleFx_RenderMode(void *object, u32 kind)
     count = 16;
     WORK_EFX = (Efx *)object;
     BattleFx_BeginCanvasLayer(0);
-    Resource_LoadAndDecompress((s32)&Value_0000009e, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SmokeSheet, work, 1, 1);
 
     if (kind == 0) {
         resource_id = (s32)&Value_000000a0;
@@ -247,7 +246,7 @@ void BattleFx_RenderMode(void *object, u32 kind)
         Resource_LoadAndDecompress((s32)&Value_000000aa, work, 1, 1);
     }
     if (kind == 3) {
-        Resource_LoadAndDecompress((s32)&Value_000000ce, (s8 *)work + (150 << 6), 1, 0);
+        Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, (s8 *)work + (150 << 6), 1, 0);
     }
 
     p = (Particle *)0x02010000;

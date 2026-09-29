@@ -16,15 +16,7 @@
  * down-counter and table offset. Remaining: the running index is not kept
  * in r9 from entry, and the frame is 84 bytes instead of 80. */
 #include "TYPES.H"
-
-struct PlacementWork {
-    u8 reserved_000[0x66];
-    s16 units[6];                   /* 0x66 */
-    u8 reserved_072[0x26a];
-    u8 order[14];                   /* 0x2dc */
-};
-
-extern struct PlacementWork *gBattleWork;
+#include "BATTLE_WORK.H"
 extern const s8 BattlePlacement_StepPairs[];
 s32 BattleParty_PrepareActiveOwners(u16 *ids);
 void *GetBattleObjectSlot(s32 owner);
@@ -35,7 +27,7 @@ void BattleUnit_RefreshPlacement(void)
 {
     u16 ids[14];
     register s32 x[6];
-    struct PlacementWork *battle = gBattleWork;
+    struct BattleSession *battle = gBattleWork;
     s32 z[6];
     s32 i = 0;
     s32 count;
@@ -49,10 +41,10 @@ void BattleUnit_RefreshPlacement(void)
     tmp = BattleParty_PrepareActiveOwners(ids);
     count = tmp;
     for (n = 13; n >= 0; n--)
-        battle->order[n] = 255;
+        battle->placement[n] = 255;
     n = 13;
     while (n >= 8) {
-        *(battle->order + n) = n;
+        *(battle->placement + n) = n;
         n--;
     }
     if (count > 0) {
@@ -63,7 +55,7 @@ void BattleUnit_RefreshPlacement(void)
             do {
                 s32 id = *cursor++;
                 s32 tmp2;
-                battle->order[id] = i;
+                battle->placement[id] = i;
                 tmp2 = i + 1;
                 BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, BattlePlacement_StepPairs[pos], BattlePlacement_StepPairs[1 + pos]);
                 i = tmp2;
@@ -74,13 +66,13 @@ void BattleUnit_RefreshPlacement(void)
             } while (1 != 0);
         }
     }
-    for (i = 0; 6 > i && 0xff != battle->units[i]; ++i)
-        ids[i] = battle->units[i];
+    for (i = 0; 6 > i && 0xff != battle->enemy_units[i]; ++i)
+        ids[i] = battle->enemy_units[i];
     count = i;
     Summon_LayoutPositions(ids, count, x, z);
     i = 0;
     while (count > i) {
-        s32 id = battle->units[i];
+        s32 id = battle->enemy_units[i];
         if (id != 0xfe)
             BattlePresentation_SpawnActorObject(GetBattleObjectSlot(id), id, x[i], z[i]);
         i += 1;

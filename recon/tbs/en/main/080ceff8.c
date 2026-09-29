@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFX.H"
 
@@ -49,7 +50,6 @@ typedef void (*WordCopy)(void *dest, const void *src, s32 words);
 
 extern void *gWorkSlot[];
 extern u8 Value_0000007b;
-extern u8 Value_0000008d;
 extern u8 Value_00000068;
 extern u8 Value_000000cc;
 
@@ -94,7 +94,7 @@ void BattleFx_RunFortyEightFrameEffect(void *object, s32 mode)
     palette = Resource_GetTableEntry((s32)&Value_0000007b);
     ((WordCopy)0x03001388)((void *)0x05000000, palette, 128);
     Resource_DecodeType01((u8 *)palette + 128, work);
-    palette = Resource_GetTableEntry((s32)&Value_0000008d);
+    palette = Resource_GetTableEntry((s32)&ResourceId_MarsDjinnSheet);
     ((WordCopy)0x03001388)((void *)0x05000000, palette, 128);
     if (mode == 2) {
         palette = Resource_GetTableEntry((s32)&Value_00000068);

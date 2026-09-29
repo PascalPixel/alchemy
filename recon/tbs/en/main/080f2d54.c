@@ -20,9 +20,9 @@
    Fresh retained baseline is 356 / 33 / 27. Independent reset-zero lifetime
    alone does not recover the resource/cursor ownership; no adoption.
    2026-09-29 stock agscc, the decode buffer through its linker-placed
-   name gMapCellBuffer (literal RAM addresses are no longer allowed):
+   name Ram_MapCellBuffer (literal RAM addresses are no longer allowed):
    Title_ShowAnimatedSplash, 356 of 356 bytes, 49 differing lines, 52
-   aligned edits. Passing gMapCellBuffer to the decoder and then copying
+   aligned edits. Passing Ram_MapCellBuffer to the decoder and then copying
    it keeps the reference's buffer copy (r5 to the cursor) but loads the
    symbol after the entry call; assigning it to a variable before the call
    hoists the load like the reference but GCC then propagates the symbol
@@ -33,6 +33,7 @@
 #include "SYSTEM.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 
 struct BgScroll {
     s16 x;
@@ -40,7 +41,6 @@ struct BgScroll {
 };
 
 extern u8 Data_03001d18;
-extern u8 gMapCellBuffer[];
 extern struct BgScroll gBgScroll[4];
 extern u32 gFrameCount;
 extern volatile u32 gKeyState;
@@ -75,8 +75,8 @@ s32 Title_ShowAnimatedSplash(void)
     *(volatile u16 *)0x04000000 = 0x1440;
     scroll = gBgScroll;
     scroll[2].y = zero;
-    Resource_DecodeType01(Resource_GetTableEntry(resource), gMapCellBuffer);
-    buffer = gMapCellBuffer;
+    Resource_DecodeType01(Resource_GetTableEntry(resource), Ram_MapCellBuffer);
+    buffer = Ram_MapCellBuffer;
     Dma_Set(buffer, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
     buffer += 0x1c0;
     Dma_Set(buffer, (void *)0x06003000, 0x84000200, (volatile u32 *)0x040000d4);

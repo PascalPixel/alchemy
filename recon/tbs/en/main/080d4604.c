@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 
@@ -50,10 +51,7 @@ typedef s32 (*FillWordsFn)(void *dest, s32 bytes, s32 value);
 /* Small absolute link-time constants: every retained Resource_GetTableEntry /
    Resource_LoadAndDecompress call site loads its resource id from a literal pool rather
    than an immediate, which an ordinary integer literal cannot produce. */
-extern u8 Value_0000007d;
-extern u8 Value_00000073;
 extern u8 Value_00000087;
-extern u8 Value_000000c4;
 
 /* Heap-block address cache; gWorkSlot[kind] holds that kind's block. */
 extern void *gWorkSlot[];
@@ -156,14 +154,14 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
     rectangle_slot = rectangle;
     rectangle_slot[1] = second;
 
-    Resource_LoadAndDecompress((s32)&Value_0000007d, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000073, extra, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_FlashBurstSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra, 0, 0);
 
     if (kind == 1) {
         palette = Resource_GetTableEntry((s32)&Value_00000087);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     } else if (kind == 2) {
-        palette = Resource_GetTableEntry((s32)&Value_000000c4);
+        palette = Resource_GetTableEntry((s32)&ResourceId_LightningBoltSheet);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     }
     (void)status;

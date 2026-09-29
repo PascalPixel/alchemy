@@ -11,6 +11,7 @@
    and scheduling; no programmer would write them, so they stay tagged
    until a natural spelling replaces them. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "SYSTEM.H"
@@ -46,7 +47,6 @@ void WaitFrames(s32 frames);
 void Camera_ApplyShake(s32 a, s32 b);
 extern u16 Data_080edebe[];
 
-extern u8 Value_00000073, Value_000000ce, Value_000000c4;
 extern u8 Data_080eebd6[];      /* per-group [4] byte table: gate/count selectors */
 extern u8 Data_080edeca[];      /* per-mask byte table (announce geometry A) */
 extern u8 Data_080eded0[];      /* per-mask byte table (announce geometry B) */
@@ -87,9 +87,9 @@ void Region_080ddde0(struct BattleEffectArgument *table_param)
     (void)BattleEffect_LoadWork(46, 7, 7, 3, 2);
     tmp3 = (u8 *)heap_cache;
     draw_cb_46 = *(DrawRectangleFn *)(tmp3 + 28);
-    Resource_LoadAndDecompress((s32)&Value_000000ce, work, 1, 0);
-    Resource_LoadAndDecompress((s32)&Value_000000c4, (u8 *)work + 0xc56, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_TornadoSheet, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LightningBoltSheet, (u8 *)work + 0xc56, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra_target, 0, 0);
     {
         s32 *slot;
         cnt = 0;

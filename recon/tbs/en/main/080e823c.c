@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFFECT_WORK.H"
 #include "BATTLE_EFX.H"
 
@@ -77,8 +78,6 @@ typedef struct {
 
 extern u8 Value_00000000;
 extern u8 Value_0000003c;
-extern u8 Value_00000073;
-extern u8 Value_000000c0;
 
 extern s32 Data_080edac8[2];
 extern u16 ParticleStreams_CellOffsets[];
@@ -201,8 +200,8 @@ void BattleEffect_RunCirclingFallingScene(void *object)
     WaitFrames(1);
     BattleBackground_LoadFar(1, (s32)&Value_0000003c, 0);
     Unnamed_080cd104(1, 1);
-    Resource_LoadAndDecompress((s32)&Value_00000073, sprite_sheet, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_000000c0, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprite_sheet, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, work, 1, 1);
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;
     *(u16 *)0x04000052 = 0x1010;

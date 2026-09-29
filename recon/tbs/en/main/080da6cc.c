@@ -2,6 +2,7 @@
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 extern u8 Value_00007828;
 extern u8 Value_00001010;
 extern u8 Value_000077ac;
@@ -64,8 +65,6 @@ extern const u8 Data_080eea44[];
 extern const u8 Data_080eea4a[];
 extern const u8 Data_080eea50[];
 extern const u16 Data_080eea56[];
-extern u8 Value_000000b4;
-extern u8 Value_00000073;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void **GetBattleObjectSlotFar(s32 member_id);
@@ -120,8 +119,8 @@ void Unnamed_080da6cc(void *object)
     } else {
         BattleFx_BeginCanvasLayer(0);
     }
-    Resource_LoadAndDecompress((s32) &Value_000000b4, work, 1, 1);
-    Resource_LoadAndDecompress((s32) &Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32) &ResourceId_EmberStreakSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32) &ResourceId_ParticleSpritesA, extra_target, 0, 0);
     status = BattleEffect_LoadWork(46, 7, 7, 3, 3);
     rectangle[0] = *(void **) (gWorkSlot + 46 * 4);
     status = BattleEffect_LoadWork(47, 7, 7, 3, 2);

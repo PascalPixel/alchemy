@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RESOURCE_IDS.H"
 #include "BATTLE_EFX.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
@@ -76,8 +77,6 @@ void WaitFrames(s32 frames);
 
 extern const u16 ParticleStreams_CellOffsets[];
 extern const s32 Data_080ee9f8[];
-extern u8 Value_00000073;
-extern u8 Value_000000b9;
 
 void Unnamed_080d82b0(void *object)
 {
@@ -106,9 +105,9 @@ void Unnamed_080d82b0(void *object)
     facing = *(s32 *)((u8 *)heap_cache - 108);
     work->effect = object;
     BattleFx_BeginCanvasLayer(1);
-    Resource_LoadAndDecompress((s32)&Value_00000073, extra_target, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, extra_target, 0, 0);
     ((WordCopyFn)0x03001388)(
-        (void *)0x05000000, Resource_GetTableEntry((s32)&Value_000000b9), 128);
+        (void *)0x05000000, Resource_GetTableEntry((s32)&ResourceId_IceBlockSheet), 128);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     draw_rectangle_fn = *(DrawRectangleFn *)((u8 *)heap_cache + 28);
 

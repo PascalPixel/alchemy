@@ -349,12 +349,12 @@ loop_55:
 loop_72:
             temp_r3_656 = sp3C * 8;
             temp_r5_657 = *GetBattleObjectSlotFar(*(s16 *)((u8 *)M2C_FIELD(sp48, void **, 0x7828) + sp10));
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(sp24, sp20);
             M2C_FIELD(sp1C, u32 **, 0) = M2C_FIELD(temp_r5_657, u32 **, 8);
             M2C_FIELD(sp1C, s32 *, 4) = 0x280000;
             M2C_FIELD(sp1C, s32 *, 8) = (s32) M2C_FIELD(temp_r5_657, s32 *, 0x10);
-            Func_08004cb4(sp1C);
+            SceneTransform_ApplyPosition(sp1C);
             if (var_fp_449 == (temp_r3_656 + 0x14)) {
                 Func_080f9010(0x7E);
             }
@@ -368,20 +368,20 @@ loop_72:
                 switch (arg1) {                     /* switch 2; irregular */
                 case 1:                             /* switch 2 */
                     temp_r5_708 = var_fp_449 << 9;
-                    Func_08004bd4(temp_r5_708);
-                    Func_08004c6c(temp_r5_708);
+                    SceneTransform_ApplyPitch(temp_r5_708);
+                    SceneTransform_ApplyRoll(temp_r5_708);
                     break;
                 case 2:                             /* switch 2 */
-                    Func_08004c1c((var_fp_449 - (sp3C * 0x28)) << 9);
+                    SceneTransform_ApplyYaw((var_fp_449 - (sp3C * 0x28)) << 9);
                     break;
                 case 0:                             /* switch 2 */
                 case 6:                             /* switch 2 */
                 case 3:                             /* switch 2 */
-                    Func_08004c1c(sp14);
+                    SceneTransform_ApplyYaw(sp14);
                     break;
                 default:                            /* switch 2 */
-                    Func_08004c1c(sp14);
-                    Func_08004bd4(sp14);
+                    SceneTransform_ApplyYaw(sp14);
+                    SceneTransform_ApplyPitch(sp14);
                     break;
                 }
                 var_r8_743 = 0;

@@ -35,13 +35,13 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 s32 Func_080041d8(s32 callback, s32 interval);
 void Scheduler_RemoveCallback(s32 callback);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyBaseAndYOffset(const void *src, void *dest);
 s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
-void Func_08004cb4(void *record);
+void SceneTransform_ApplyPosition(void *record);
 void BattleFx_FetchRectangleBlitters(s32 flag, DrawRectangleFn *out_pair);
 u32 Random16(void);
 s32 Func_080022fc(s32 a, s32 b);
@@ -216,16 +216,16 @@ s32 RunPaletteRampEffect(s32 effect, s32 mode)
                     member_object = *GetBattleObjectSlotFar(member_id);
 
                     if (local_frame > 0) {
-                        Func_080049ac();
+                        Render_ResetTransformState();
                         Graphics_PrepareTransferInIwramWork(facing, facing_end);
 
                         rec[0] = M2C_FIELD(member_object, s32 *, 8);
                         rec[1] = 160 << 13;
                         rec[2] = M2C_FIELD(member_object, s32 *, 16);
 
-                        Func_080049ac();
+                        Render_ResetTransformState();
                         Graphics_PrepareTransferInIwramWork(facing, facing_end);
-                        Func_08004cb4(rec);
+                        SceneTransform_ApplyPosition(rec);
 
                         zero_vec[0] = 0;
                         zero_vec[1] = 0;

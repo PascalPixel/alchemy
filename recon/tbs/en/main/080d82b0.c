@@ -55,7 +55,7 @@ typedef void (*WordCopyFn)(void *dest, void *src, s32 size);
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
 s32 Func_080b5070(s32 member_id);
@@ -120,7 +120,7 @@ void Func_080d82b0(void *object)
         pool_cursor += 7;
     } while (pool_index != 1024);
 
-    Func_080049ac();
+    Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
     target = work->effect;

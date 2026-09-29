@@ -54,7 +54,7 @@ s32 Func_080041d8();
 void Scheduler_RemoveCallback();
 s32 Random16();
 s32 Runtime_AllocateHeapBlock();
-void Func_080049ac();
+void Render_ResetTransformState();
 void Graphics_PrepareTransferInIwramWork();
 void _call_via_r3();
 void Func_080072f4();
@@ -247,7 +247,7 @@ L_080cb982:
     }
     GetBattleObjectSlotFar(*(s32 *)(*(s32 *)slot16 + 8));
     base5_2010000 = 0x2010000;
-    Func_080049ac();
+    Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork(slot20, slot12);
     none = 0;
     v8 = none;

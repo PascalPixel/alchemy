@@ -173,7 +173,7 @@ s32 GameFlag_IsSet(s32 flag);
 s32 Item_ClassifyUseAbility(s32 actor, s32 item);
 s32 BattleTarget_RunSelection(s32 actor, s32 a, s32 b, s32 kind);
 s32 Random16(void);
-void Func_08018efc(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
+void UiWindow_PutGlyph(struct UiWindowWork *win, s32 id, s32 pos, s32 arg3, s32 arg4);
 s32 Ui_Place(s32, s16 *, s32);
 s32 Ui_SetMode(s16 *, s32, s32, s32);
 s32 Func_08021e6c(s32 mode);
@@ -768,7 +768,7 @@ djinn_menu:
                 for (k = 0; k <= 3; k++) {
                     if (djinn->cost[k] != 0) {
                         UiWindow_SetTilemapEntry(win, k + 20481, k * 2 + 13, 0, 0);
-                        Func_08018efc(win, djinn->cost[k] + 48, k * 2 + 14, 0, 0);
+                        UiWindow_PutGlyph(win, djinn->cost[k] + 48, k * 2 + 14, 0, 0);
                     }
                 }
                 if (ok != 0) {

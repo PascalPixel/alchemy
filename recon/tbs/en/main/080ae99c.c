@@ -1,3 +1,5 @@
+/* 2026-09-29 (Mars): two independent ifs on variant give the same 10
+ * halfwords; a default load overridden when variant != 0 gives 34. */
 /* main:080ae99c, complete 84-byte owner through 080ae9f0, pools included.
  * Current (2026-09-29): the baseline's u32 resource again, with the build's
  * names (UiIcon_CreateStatChangeArrow, gMenuWork): 84/84 bytes, alchemy

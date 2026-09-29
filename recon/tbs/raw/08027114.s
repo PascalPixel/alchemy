@@ -1162,7 +1162,7 @@ Func_08027114:
 	adds	r1, #48
 	mov	r0, fp
 	movs	r3, #0
-	bl	Func_08018efc
+	bl	UiWindow_PutGlyph
 	ldr	r4, [sp, #4]
 	adds	r5, #2
 .L_08027aae:

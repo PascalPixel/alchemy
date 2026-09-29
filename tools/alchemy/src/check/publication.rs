@@ -1415,7 +1415,7 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
         "games/COMMON holds only shared SRC/<module>/ sources and inputs and INCLUDE/<module>/*.H",
     )
 }
-const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, C drafts under an edition and metrics/history.tsv";
+const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, an edition's assembly scaffold and MAIN.LD, C drafts under an edition and metrics/history.tsv";
 /// `recon/` fails closed as `games/` does: pret's scaffolding forms and the
 /// published progress history, nothing else. No JSON or TSV ledger, however
 /// it is named, may come back beside the scaffolding.
@@ -1440,6 +1440,9 @@ fn recon_path_reason(path: &str) -> Option<&'static str> {
             [g, "raw", leaf] => game(g) && named(leaf, &["s", "S"]),
             [g, "raw", "overlays", leaf] => game(g) && named(leaf, &["s", "ld"]),
             ["tbs", "metrics", "history.tsv"] => true,
+            // An edition's own scaffold and the linker script that places it.
+            [g, e, "MAIN.LD"] => game(g) && edition(e),
+            [g, e, leaf] if named(leaf, &["s"]) => game(g) && edition(e),
             [g, e, .., leaf] => game(g) && edition(e) && named(leaf, &["c", "h"]),
             _ => false,
         };
@@ -2931,6 +2934,8 @@ fn self_test(root: &Path) -> Result<(), String> {
         "recon/tbs/en/overlays/resource_372/scene.c",
         "recon/tla/de/main/08001234.c",
         "recon/tbs/ja/main/.gitkeep",
+        "recon/tbs/ja/MAIN.LD",
+        "recon/tla/de/rom.s",
         "recon/tbs/metrics/history.tsv",
     ] {
         if let Some(reason) = publication_path_reason(path).or_else(|| native_path_reason(path)) {

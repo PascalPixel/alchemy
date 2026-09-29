@@ -155,7 +155,11 @@ pub(crate) fn link(
         if let Some(pass) = &symbols {
             same_addresses(root, pass, &elf)?;
         }
-        checked_entries(root, target, &elf)?;
+        // Every build that links game code checks its fixed addresses; a
+        // build that is still only the original ROM places none of them.
+        if links_game_code(&sources) {
+            checked_entries(root, target, &elf)?;
+        }
     }
     if let Err(error) = linked {
         if !keep_going || !elf.is_file() {
@@ -179,6 +183,11 @@ pub(crate) fn link(
         map,
         image,
     })
+}
+
+/// Whether any linked object is built from `games/`.
+fn links_game_code(sources: &[PathBuf]) -> bool {
+    sources.iter().any(|source| source.starts_with("games"))
 }
 
 /// The linker command for the whole image.
@@ -1274,6 +1283,17 @@ mod tests {
         store_thumb_calls(&mut noise);
         patch_thumb_calls(&mut noise);
         assert_eq!(noise, original);
+    }
+
+    #[test]
+    fn fixed_addresses_are_checked_whenever_game_code_links() {
+        let baserom_only = [PathBuf::from("recon/tbs/ja/rom.s")];
+        assert!(!links_game_code(&baserom_only));
+        let with_game = [
+            PathBuf::from("recon/tbs/ja/rom.s"),
+            PathBuf::from("games/COMMON/SRC/GRAPHICS/FONT/TEXT.S"),
+        ];
+        assert!(links_game_code(&with_game));
     }
 
     #[test]

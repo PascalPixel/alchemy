@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgRunpaDodonpaNeverIntention[];
 
 /* AUDITED GENERATED CALL SCRIPT for RunEventScript01: 222 calls, 0 loops, 0 memory operations.
  * Recovered from the complete decoded owner. Calls, arguments, control flow,
@@ -232,7 +233,7 @@ void RunEventScript01(void)
     Func_02002478(2, 3);
     Func_0200241e(30);
     Func_020024da(12, 258, 70);
-    base = 9494;
+    base = (s32)MsgRunpaDodonpaNeverIntention;
     Func_020024ba(base);
     Func_020024d2(12, 0);
     Func_020024a2(13, 3);

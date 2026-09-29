@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgShianHooWhaaaHachaaa[];
+extern u8 MsgShianKungFuStrong[];
 
 void Engine_EventBegin();
 s32 Engine_GameFlagIsSet();
@@ -92,12 +94,12 @@ void ShianMura_RunNpcMeetScene(void)
     if (flag != 0) {
         Engine_ActorFaceActor(14, 0, 0);
         Engine_EventWait(10);
-        Call1(Engine_EventSetMessage, 0x17f4);
+        Call1(Engine_EventSetMessage, (s32)MsgShianKungFuStrong);
         Engine_EventShowMessage(14, 0);
         Engine_ActorFaceDirection(14, 0, 10);
         Engine_EventEnd();
     } else {
-        Call1(Engine_EventSetMessage, 0x17f2);
+        Call1(Engine_EventSetMessage, (s32)MsgShianHooWhaaaHachaaa);
         Engine_EventShowMessage(14, 0);
         Engine_ActorRunRepeatedMotion(0, 2);
         *(u8 *)(Engine_ActorGet(0) + 90) &= 254;

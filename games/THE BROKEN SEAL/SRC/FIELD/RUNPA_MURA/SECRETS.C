@@ -1,4 +1,6 @@
 #include "VILLAGE.H"
+extern u8 MsgFieldPeeredWell[];
+extern u8 MsgRunpaWellFrogs[];
 
 void FloatingNut_Catch(void)
 {
@@ -103,7 +105,7 @@ void Reveal_HideSecrets(void)
 void Well_Search(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_WELL_PEERED_INTO, 1);
-    Message_ShowCentered(MSG_WELL_FROGS, 1);
+    Message_ShowCentered((s32)MsgFieldPeeredWell, 1);
+    Message_ShowCentered((s32)MsgRunpaWellFrogs, 1);
     Event_End();
 }

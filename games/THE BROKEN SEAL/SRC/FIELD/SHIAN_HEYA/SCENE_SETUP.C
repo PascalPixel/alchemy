@@ -1,15 +1,13 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgShianWarriorWelcome[];
 
 /*
  * The Xian room's entry: the warrior's welcome, the scene table for the
  * entrance, and the objects the entrance sets up.
  */
 
-enum SceneSetupMessage {
-    MSG_WARRIOR_WELCOME = 0x1a64
-};
 
 /* The scene's tables, in the overlay's read-only data. */
 extern u8 ShianHeya_SceneTable3[];
@@ -22,7 +20,7 @@ void SceneDialogue_RunActor9MotionDialogue(void)
     void Event_SetMessage(s32);
 
     Event_Begin();
-    Event_SetMessage(MSG_WARRIOR_WELCOME);
+    Event_SetMessage((s32)MsgShianWarriorWelcome);
     Event_ShowMessageAndWait(9, 0, 20);
     Actor_FaceActor(9, 10, 0);
     Event_Wait(60);

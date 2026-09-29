@@ -1,4 +1,5 @@
 #include "VILLAGE.H"
+extern u8 MsgRunpaGuardForbidsReturn[];
 
 void Gateway_Reopen(void)
 {
@@ -122,7 +123,7 @@ void Party_ThrownOut(void)
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
     Task_RemoveCallback(Leader_KickUpDust);
     Event_Wait(50);
-    Event_SetMessage(MSG_GUARD_FORBIDS_RETURN);
+    Event_SetMessage((s32)MsgRunpaGuardForbidsReturn);
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
     Actor_Get(ACTOR_LEFT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_Get(ACTOR_RIGHT_GUARD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;

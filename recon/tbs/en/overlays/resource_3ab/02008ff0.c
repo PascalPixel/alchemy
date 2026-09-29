@@ -1,9 +1,8 @@
 /* Draft of resource_3ab 0x02008ff0..0x0200918c (412 bytes with pool),
- * Guards_CatchParty; the listing keeps the rows. Remaining difference: the
- * reference loads the first catch line 0x2409 into its register after the
- * emote call, as a link-time message symbol is loaded; the constant is
- * scheduled earlier (10 bytes differ from +0x4e, same size). */
+ * Guards_CatchParty; the listing keeps the rows. Remaining difference: its messages have catalogue names now; 1 halfword
+ * still differs from the ROM. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_MURA/VILLAGE.H"
+extern u8 MsgRunpaGuardsCatchParty[];
 
 /*
  * The guards challenge the party they have spotted, then march it back
@@ -26,7 +25,7 @@ void Guards_CatchParty(void)
     Actor_StartRepeatedMotion(ACTOR_RIGHT_GUARD, 1);
     Event_Wait(20);
     Actor_ShowEmote(ACTOR_LEFT_GUARD, EMOTE_IN_FRONT | 2, 60);
-    warning = MSG_GUARDS_CATCH_PARTY;
+    warning = (s32)MsgRunpaGuardsCatchParty;
     Event_SetMessage(warning + CATCH_LEFT_GUARD_CHALLENGES);
     Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);

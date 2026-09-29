@@ -8,26 +8,18 @@
 #define SCENE_FIELD_1C0 (*(s32 *)(*(u8 **)Data_03001ebc + 0x1c0))
 
 #include "RESOURCE_3A8_EFFECT.H"
+extern u8 MsgKareiCameKalayBecauseDidntLike[];
+extern u8 MsgKareiDidFindNeededInWeapon[];
+extern u8 MsgKareiDoWantGoCaveUp[];
+extern u8 MsgKareiLadyLayanaSharedInLord[];
+extern u8 MsgKareiLayanaWasVeryHardOn[];
+extern u8 MsgKareiLordHammetSellsHisBest[];
 
 enum {
     /* Message 0x182 + 181. */
     ITEM_NUT = 181
 };
 
-enum StagedGroupMessage {
-    MSG_ROBIN_PEERED_INTO = 0x947,
-    MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE = 0x1a7c,
-    MSG_WHY_WE_STOPPING_AT_PLACE = 0x1a92,
-    MSG_THATS_WE_CANT_WAIT_ANY = 0x1ab2,
-    MSG_LORD_HAMMET_SELLS_HIS_BEST = 0x1acf,
-    MSG_DID_FIND_NEEDED_IN_WEAPON = 0x1ad1,
-    MSG_LADY_LAYANA_SHARED_IN_LORD = 0x1ad5,
-    MSG_LORD_HAMMETS_PALACE_LORD_AWAY = 0x1b05,
-    MSG_WEVE_ARRIVED_HAMMET = 0x256f,
-    MSG_DO_WANT_GO_CAVE_UP = 0x2584,
-    MSG_LAYANA_WAS_VERY_HARD_ON = 0x25b3,
-    MSG_VERY_CLEAN_MAINTAINED = 0x29df
-};
 
 struct Obj {
     u8 filler00[6];
@@ -137,7 +129,7 @@ typedef struct OrbitingSceneObject {
 void SceneDialogue_RunActorNineteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_CAME_KALAY_BECAUSE_DIDNT_LIKE);
+    Event_SetMessage((s32)MsgKareiCameKalayBecauseDidntLike);
     Event_AskYesNo(19, 0);
     Event_End();
 }
@@ -156,7 +148,7 @@ void FieldScene_RunSlotZeroFacingSequence(void)
         Event_Begin();
         Actor_FaceEachOther(ACTOR_PARTY_LEADER, 8, 0);
         Event_Wait(10);
-        Event_SetMessage(MSG_DO_WANT_GO_CAVE_UP);
+        Event_SetMessage((s32)MsgKareiDoWantGoCaveUp);
         Event_OpenMessage(8, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Actor_SetAnimationAndWait(8, 4);
@@ -174,7 +166,7 @@ void FieldScene_RunSlotZeroFacingSequence(void)
 void SceneDialogue_RunActorTenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_LAYANA_WAS_VERY_HARD_ON);
+    Event_SetMessage((s32)MsgKareiLayanaWasVeryHardOn);
     Event_AskYesNo(10, 0);
     Event_End();
 }
@@ -190,7 +182,7 @@ void SceneState_BranchOnSlotZeroFacing(void)
         Shop_Open(22, 22);
     } else {
         Event_Begin();
-        Event_SetMessage(MSG_LORD_HAMMET_SELLS_HIS_BEST);
+        Event_SetMessage((s32)MsgKareiLordHammetSellsHisBest);
         Event_ShowMessage(22, 0);
         Event_End();
     }
@@ -207,7 +199,7 @@ void SceneDialogue_RunActorTwentyThreeByLeaderHeading(void)
         Shop_Open(23, 23);
     } else {
         Event_Begin();
-        Event_SetMessage(MSG_DID_FIND_NEEDED_IN_WEAPON);
+        Event_SetMessage((s32)MsgKareiDidFindNeededInWeapon);
         Event_AskYesNo(23, 0);
         Event_End();
     }
@@ -224,7 +216,7 @@ void FieldScene_RunActorTwentyFourAngleDialogue(void)
         Shop_Open(24, 24);
     } else {
         Event_Begin();
-        Event_SetMessage(MSG_LADY_LAYANA_SHARED_IN_LORD);
+        Event_SetMessage((s32)MsgKareiLadyLayanaSharedInLord);
         Event_ShowMessage(24, 0);
         Event_End();
     }

@@ -1,14 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKareiItsIvanHisCompanionsPerfect[];
+extern u8 MsgKareiWhenHeardWereBackIvan[];
 
-enum PartyEventsMessage {
-    MSG_WHEN_HEARD_WERE_BACK_IVAN = 0x1b21,
-    MSG_LORD_HAMMET_WILL_RELEASED_SOON = 0x1b83,
-    MSG_HAS_LEGACY_LORD_HAMMETS_SILK = 0x1b88,
-    MSG_ROBIN_SNEAKED_INTO_LUNPA_THATS = 0x1b91,
-    MSG_ITS_IVAN_HIS_COMPANIONS_PERFECT = 0x2588
-};
 
 extern u8 KareiKyuden_PartyActions[];
 
@@ -259,7 +254,7 @@ void RunEventScript01(void)
     ColorBuffer_Interpolate(40);
     Task_Wait(60);
     Actor_ShowEmote(8, 0x105, 60);
-    Event_SetMessage(MSG_WHEN_HEARD_WERE_BACK_IVAN);
+    Event_SetMessage((s32)MsgKareiWhenHeardWereBackIvan);
     Event_ShowMessageAndWait(8, 0, 10);
     Actor_RunRepeatedMotion(10, 2);
     Event_ShowMessageAndWait(10, 0, 10);
@@ -717,7 +712,7 @@ void Scene_RunPartySequence(void)
     SceneChannel_ConfigureUniformAndHandoff(10);
     Actor_ShowEmote(9, v5, 20);
     Actor_FaceDirection(9, 0x5000, 20);
-    Event_SetMessage(MSG_ITS_IVAN_HIS_COMPANIONS_PERFECT);
+    Event_SetMessage((s32)MsgKareiItsIvanHisCompanionsPerfect);
     Event_ShowMessageAndWait(0x2009, 0, 10);
     Actor_ShowEmote(8, v5, 20);
     Actor_FaceDirection(8, 0x3000, 20);

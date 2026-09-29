@@ -8,6 +8,8 @@ SECTIONS
         "*/games/COMMON/SRC/GRAPHICS/UI/SMALL_FONT.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/INTRO_SUN.o"(.rodata)
         "*/recon/tbs/ja/rom.o"(.rom.0031b9e7)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/SCREEN.o"(.rodata)
+        "*/recon/tbs/ja/rom.o"(.rom.00322693)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/NINTENDO_SPLASH.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/CAMELOT_LOGO.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/GOLDEN_SUN.o"(.rodata)

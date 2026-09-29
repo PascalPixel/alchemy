@@ -13,9 +13,7 @@ struct BattleEffect16GlobalState {
 
 extern struct BattleEffect16GlobalState gGameState;
 extern u32 gFrameCount;
-extern u8 Value_00000001;
 s32 Math_ModU(u32, s32);
-void BattleFx_SpawnDescendingArcParticles(void *);
 
 void BattleFx_UpdateEffect16State(void)
 {
@@ -44,23 +42,4 @@ void BattleFx_UpdateEffect16State(void)
 write_value:
         *state_byte = state_value;
     }
-}
-
-void BattleFx_UpdatePairedArcSpawner(void *arg0)
-{
-    s16 field64;
-    s16 counter;
-
-    field64 = *(s16 *)((u8 *)arg0 + 0x64);
-    counter = (*(u16 *)((u8 *)arg0 + 0x66))++;
-
-    if (gGameState.value_1da == (s32)&Value_00000001) {
-        if (Math_Mod(counter, 7) == 0)
-            BattleFx_SpawnDescendingArcParticles(arg0);
-    } else if (Math_Mod(counter, 5) == 0) {
-        BattleFx_SpawnDescendingArcParticles(arg0);
-    }
-
-    if (field64 == 1)
-        *(u16 *)((u8 *)arg0 + 6) += 0xC00;
 }

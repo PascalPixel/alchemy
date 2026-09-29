@@ -2,32 +2,32 @@
 
 void FieldScene_RunIndexedStep0(void)
 {
-    SceneState_SetByte1004AndRunWhenIdle(0);
+    ArutamiraDou_SetFadeLevel(0);
 }
 
 void FieldScene_RunIndexedStep1(void)
 {
-    SceneState_SetByte1004AndRunWhenIdle(1);
+    ArutamiraDou_SetFadeLevel(1);
 }
 
 void FieldScene_RunIndexedStep2(void)
 {
-    SceneState_SetByte1004AndRunWhenIdle(2);
+    ArutamiraDou_SetFadeLevel(2);
 }
 
 void FieldScene_RunIndexedStep3(void)
 {
-    SceneState_SetByte1004AndRunWhenIdle(3);
+    ArutamiraDou_SetFadeLevel(3);
 }
 
 void FieldScene_RunIndexedStep4(void)
 {
-    SceneState_SetByte1004AndRunWhenIdle(4);
+    ArutamiraDou_SetFadeLevel(4);
 }
 
 void FieldScene_RunIndexedStep5(void)
 {
-    SceneState_SetByte1004AndRunWhenIdle(5);
+    ArutamiraDou_SetFadeLevel(5);
 }
 
 void SceneEffect_SetupBlendByFlag201(void)

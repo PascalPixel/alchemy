@@ -1,0 +1,7 @@
+control	0x3f42
+level	0xf05	21
+level	0xf05	20
+level	0xf04	22
+level	0xf05	20
+jump	0
+end

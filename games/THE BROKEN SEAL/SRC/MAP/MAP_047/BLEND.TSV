@@ -1,0 +1,4 @@
+control	0x3f42
+level	0xc04	43200
+jump	0
+end

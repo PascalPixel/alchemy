@@ -1,4 +1,6 @@
 #include "HEYA.H"
+extern u8 MsgRariberoDoNotWorryAboutSheba[];
+extern u8 MsgRariberoHowDidSearchForSheba[];
 
 void FieldScene_RunPrimaryScript(void)
 {
@@ -10,7 +12,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 49152, 0);
     Actor_FaceDirection(11, 0, 0);
     Value3(Engine_ActorFaceDirection, 12, 32768, 0);
-    Event_SetMessage(MSG_HOW_DID_SEARCH_FOR_SHEBA);
+    Event_SetMessage((s32)MsgRariberoHowDidSearchForSheba);
     Value0(Engine_EventOpenScreen);
     Value0(Engine_EventWaitForScreen);
     Value1(Engine_EventWait, 10);
@@ -101,7 +103,7 @@ void FieldScene_RunPrimaryScript(void)
     Actor_FaceActor(ACTOR_IVAN, ACTOR_PARTY_LEADER, 30);
     Event_OpenMessage(8194, 0);
     }
-    Event_SetMessage(MSG_DO_NOT_WORRY_ABOUT_SHEBA);
+    Event_SetMessage((s32)MsgRariberoDoNotWorryAboutSheba);
     Value1(Engine_EventWait, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 16384, 0);
     Actor_FaceActor(ACTOR_GERALD, ACTOR_PARTY_LEADER, 20);

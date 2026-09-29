@@ -1,12 +1,21 @@
 /* Draft of resource_381 0x02009410 (Scene_RunExtendedEffectPresentation and what follows it in this file),
  * from games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA (FUNKA.H). Remaining
- * difference: it loads message 0x10f8 from its literal pool and derives the
- * following lines from it, as a link-time message value would. The scene's
- * variables past the image now have names (FUNKA.H), which this draft does
- * not use yet. The listing keeps these rows. */
+ * difference: its messages have catalogue names now and its bytes match the
+ * ROM, but its calls still carry names the overlay's imports do not define,
+ * and the scene's variables past the image now have names (FUNKA.H), which
+ * this draft does not use yet. The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgSoruCannotResist[];
+extern u8 MsgSoruFriendsGone[];
+extern u8 MsgSoruOverHere[];
+extern u8 MsgSoruQuitActingTough[];
+extern u8 MsgSoruReturnStarToBag[];
+extern u8 MsgSoruThanksALot[];
+extern u8 MsgSoruTheyllBeSafe[];
+extern u8 MsgSoruThisIsTerrible[];
+extern u8 MsgSoruWellTurnedBadly[];
 
 /*
  * The Elemental Star chamber collapses around the party leader and Gerald.
@@ -33,19 +42,7 @@ enum {
     FLAG_STAR_ROOM_COLLAPSED = 0x83f
 };
 
-enum {
-    MSG_FRIENDS_GONE = 0x10fb,
-    MSG_THANKS_A_LOT = 0x10fd,
-    MSG_THEYLL_BE_SAFE = 0x10fe,
-    MSG_THIS_IS_TERRIBLE = 0x10ff,
-    MSG_QUIT_ACTING_TOUGH = 0x1103,
-    MSG_OVER_HERE = 0x1104,
-    MSG_CANNOT_RESIST = 0x110c,
-    MSG_RETURN_STAR_TO_BAG = 0x110d
-};
 
-/* "This turned out badly", followed by the two answers to it. */
-extern u8 SceneMessage_ActorOneChoiceBase;
 
 struct QuakeWork {
     u8 unknown_000[0x40c];
@@ -169,14 +166,14 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(60);
 
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_SetMessage((s32)&SceneMessage_ActorOneChoiceBase);
+    Event_SetMessage((s32)MsgSoruWellTurnedBadly);
     Event_OpenMessage(ACTOR_GERALD, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Actor_SetAnimationAndWait(ACTOR_GERALD, ANIM_NOD);
-        Event_SetMessage((s32)&SceneMessage_ActorOneChoiceBase + 1);
+        Event_SetMessage((s32)MsgSoruWellTurnedBadly + 1);
     } else {
         Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
-        Event_SetMessage((s32)&SceneMessage_ActorOneChoiceBase + 2);
+        Event_SetMessage((s32)MsgSoruWellTurnedBadly + 2);
     }
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 60);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
@@ -184,7 +181,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Engine_ObjectMotionLaunch(ACTOR_GERALD, 2, 0);
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(40);
-    Event_SetMessage(MSG_FRIENDS_GONE);
+    Event_SetMessage((s32)MsgSoruFriendsGone);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
     Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 2, 0);
     Event_Wait(10);
@@ -205,7 +202,7 @@ void Scene_RunExtendedEffectPresentation(void)
         Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
         Event_Wait(10);
         Actor_SetAnimation(ACTOR_GERALD, ANIM_SHAKE_HEAD);
-        Event_SetMessage(MSG_THANKS_A_LOT);
+        Event_SetMessage((s32)MsgSoruThanksALot);
     } else {
         Event_Wait(10);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
@@ -215,7 +212,7 @@ void Scene_RunExtendedEffectPresentation(void)
         Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
         Event_Wait(10);
         Actor_SetAnimation(ACTOR_GERALD, ANIM_SHAKE_HEAD);
-        Event_SetMessage(MSG_THEYLL_BE_SAFE);
+        Event_SetMessage((s32)MsgSoruTheyllBeSafe);
     }
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 40);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -251,7 +248,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Camera_WaitForMove();
     Event_Wait(20);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
-    Event_SetMessage(MSG_THIS_IS_TERRIBLE);
+    Event_SetMessage((s32)MsgSoruThisIsTerrible);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 20);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(40);
@@ -308,7 +305,7 @@ void Scene_RunExtendedEffectPresentation(void)
         Actor_FaceDirection(ACTOR_GERALD, FACING_EAST + FACING_STEP, 0);
         Event_Wait(10);
         Actor_SetAnimation(ACTOR_GERALD, ANIM_SHAKE_HEAD);
-        Event_SetMessage(MSG_QUIT_ACTING_TOUGH);
+        Event_SetMessage((s32)MsgSoruQuitActingTough);
     }
     Event_Wait(20);
     Event_ShowMessage(ACTOR_GERALD, 0);
@@ -341,7 +338,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(4);
     Engine_ObjectMotionSetPositionAndReset(ACTOR_GERALD, 231, 175);
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
-    Event_SetMessage(MSG_OVER_HERE);
+    Event_SetMessage((s32)MsgSoruOverHere);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Event_Wait(40);
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 1, 0);
@@ -482,7 +479,7 @@ void Scene_RunExtendedEffectPresentation(void)
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_Wait(40);
     } else {
-        Message_ShowCentered(MSG_CANNOT_RESIST, 1);
+        Message_ShowCentered((s32)MsgSoruCannotResist, 1);
         Event_Wait(40);
     }
 
@@ -522,7 +519,7 @@ void Scene_RunExtendedEffectPresentation(void)
     }
     Actor_SetChildValue(ACTOR_WISE_ONE, 0);
     Scene_RunVariantStep(0, 20, 0);
-    Event_SetMessage(MSG_RETURN_STAR_TO_BAG);
+    Event_SetMessage((s32)MsgSoruReturnStarToBag);
     Event_ShowMessageAndWait(ACTOR_WISE_ONE, 0, 20);
     if (star != NULL) {
         Engine_ObjectDispatchRelease(star);

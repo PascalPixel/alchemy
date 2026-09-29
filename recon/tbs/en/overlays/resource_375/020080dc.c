@@ -1,8 +1,8 @@
 /* Draft of resource_375 0x020080dc (Scene_RunActorTwelveDialogue), from
- * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference:
- * the ROM loads message 0xf76 from the literal pool and derives the
- * following lines from it, as a link-time message value would; C constants
- * are each built or loaded on their own. The listing keeps these rows. */
+ * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Engine_ActorFaceActor,
+ * Engine_EventOpenMessage, Engine_EventChooseYesNo,
+ * Engine_ActorStartRepeatedMotion). The listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -28,32 +28,15 @@ enum CottageFlag {
 #define NULL ((void *)0)
 
 #include "FACING_OBJECT.H"
+extern u8 MsgHaidiaHearAwfulGrowls[];
+extern u8 MsgHaidiaIllClimbTheFenceSomeday[];
 
-enum CottageMessage {
-    MSG_SATUROS_GO = 0xf98,
-    MSG_SUKURETA_OH_ROBIN = 0xfa6,
-    MSG_SUKURETA_I_WAITED_YEARS_FOR_THE_SANCTUM = 0xfb1,
-    MSG_JASMINE_THEY_MIGHT_BE_THIEVES = 0xfb2,
-    MSG_SUKURETA_WE_ONLY_CHECK_THE_MOUNTAIN = 0xfbd,
-    MSG_SUKURETA_WE_ONLY_CHECK_MT_ALEPH = 0xfbe,
-    MSG_JASMINE_OUR_SECRET = 0xfc2,
-    MSG_GERALD_YOU_CAN_HANDLE_THE_DANGER = 0xfc6,
-    MSG_GERALD_ILL_TAKE_OVER_IF_NERVOUS = 0xfc9,
-    MSG_SUKURETA_OUR_BEST_BET = 0xfcc,
-    MSG_ILL_CLIMB_THE_FENCE_SOMEDAY = 0x11c4,
-    MSG_MEMORIES_OF_THIS_COTTAGE = 0x1c96
-};
 
 extern u8 Data_0200a028[];
 extern u8 Data_02009fb0[];
 extern u8 Data_02009efc[];
-extern u8 LinkedMessage_YouCannotEnterMtAleph[];
-extern u8 LinkedMessage_FineIfTheyDontSeeUs[];
 extern u8 Data_03001ebc[];
 extern u8 Data_0200a0ac[];
-extern u8 Value_00000f76;
-extern u8 LinkedMessage_TheyKnowLittleOfTheSanctum[];
-extern u8 LinkedMessage_YoureTheOnesSneakingAround[];
 extern u8 Data_02009ce0[];
 
 s32 CalculateFacingAngle(s32, s32);
@@ -266,10 +249,10 @@ void Scene_RunActorTwelveDialogue(void)
 
     Event_Begin();
     if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-        Event_SetMessage(MSG_ILL_CLIMB_THE_FENCE_SOMEDAY);
+        Event_SetMessage((s32)MsgHaidiaIllClimbTheFenceSomeday);
         Event_ShowMessage(12, 0);
     } else {
-        base = (s32)&Value_00000f76;
+        base = (s32)MsgHaidiaHearAwfulGrowls;
         Event_SetMessage(base);
         Actor_FaceActor(12, ACTOR_PARTY_LEADER, 10);
         Actor_RunRepeatedMotion(12, 2);

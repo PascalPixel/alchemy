@@ -15,14 +15,11 @@
 #define RESOURCE_3BC_SITES_H
 
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING.H"
+extern u8 MsgKorosseoRobinGotItem[];
 
 extern void Func_02004d72(void);       /* site 0x20024e4 -> Func_0200288c veneer */
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
-extern u8 LinkedMessage_StageFirstFinalsMatch;
-extern u8 LinkedMessage_StageSecondFinalsMatch;
-extern u8 LinkedMessage_StageThirdFinalsMatch;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern void Func_020062e0(s32 mode);          /* Func_02002e54 veneer #1 */
 extern void Func_02006324(s32 mode);          /* Func_02002e54 veneer #2 */
 extern s32 Func_02008092(void);               /* Func_080f9048 veneer (loop check) */
@@ -130,7 +127,6 @@ void Func_020059ee_arrival();
 s32 Func_02005a00_arrival();
 void Func_02005a0c_arrival();
 void Func_02005a5c_arrival();
-extern u8 Data_00002073[];
 void Func_02004c6a_head();
 void Func_02004c8a_head();
 void Func_02004cae_head();
@@ -463,7 +459,7 @@ s32 ColossoLogRollingStage_PositionActiveActor(s32 first_handle, s32 second_hand
 
     shared = Data_02000240;
     Func_0200882c_a(*(s32 *)(shared + 500), 1);
-    Message_ShowCentered(MSG_ROBIN_GOT, 3);
+    Message_ShowCentered((s32)MsgKorosseoRobinGotItem, 3);
     Func_020087ca(record);
 
     return flag;

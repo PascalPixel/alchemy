@@ -24,12 +24,6 @@ enum CollapseActor {
 
 #include "FACING_OBJECT.H"
 
-enum CollapseMessage {
-    MSG_JASMINE_WHAT_HAPPENED = 0x10cd,
-    MSG_I_KNOW_ITS_A_ROCK = 0x10d6,
-    MSG_SOMEONE_IS_LIFTING_IT = 0x10d7,
-    MSG_SUKURETA_COULD_THAT_BE_THE_WISE_ONE = 0x10d8
-};
 
 
 typedef struct {

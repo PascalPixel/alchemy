@@ -1,10 +1,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKorosseoFansJustCallWall[];
+extern u8 MsgKorosseoScalingWallQuickly[];
 
-enum LiftedActorCoordinatorMessage {
-    MSG_FANS_JUST_CALL_WALL = 0x20aa
-};
 
 
 void Korosseo_FinishSoloRound();
@@ -73,7 +72,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
     Engine_EventBegin();
     path = KorosseoKabe_RunStateInteraction(scene, 4);
     if (path == 0) {
-        Event_SetMessage(MSG_FANS_JUST_CALL_WALL);
+        Event_SetMessage((s32)MsgKorosseoFansJustCallWall);
         Call2(Engine_CameraSetSpeed, 196608, 24576);
         Call4(Engine_CameraMoveTo, 35127296, -1, 15728640, 1);
         Engine_CameraWaitForMove();
@@ -109,7 +108,7 @@ void FieldScene_RunLiftedActorCoordinator(s32 scene)
         Engine_CameraFollowActor(0, 0);
         KorosseoKabe_ShowFollowUpPrompt(scene, 4);
     } else if (path == 1) {
-        Call1(Engine_EventSetMessage, 8361);
+        Call1(Engine_EventSetMessage, (s32)MsgKorosseoScalingWallQuickly);
         Engine_EventShowMessage(scene, 0);
     }
     Value3(FieldScene_RunMiddleSequence, path, scene, 4);

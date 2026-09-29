@@ -3,13 +3,15 @@
  * and ACTOR_EIGHT_MESSAGE.C, stays listing. It was
  * FIELD/COMMON/HAIDIA_BABI/EVENT_SCRIPT_01.C.
  *
- * Remaining difference: the reference loads message 0x1c6f once from its
- * pool into r5 and shows the later line as r5 + 3, as a link-time message
- * symbol does; a plain constant is folded, so the second line takes its own
- * pool word and r5 is never saved (the push and every later pool offset
- * differ). The main image has no name for the message.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_ActorSetDestination, Main_08009190, Main_08009188,
+ * Engine_UiWorkWaitThenFinalizeCapacity,
+ * Engine_ObjectMotionSetPositionAndCommit).
  */
 #include "TYPES.H"
+extern u8 MsgHaidiaCoughCoughWho[];
+extern u8 MsgHaidiaWhoToldIll[];
 extern struct EventWork *gEventWork;
 
 void Engine_EventBegin();
@@ -76,7 +78,7 @@ void HaidiaBabi_RunEventScript01(void)
     Call3(Engine_ActorWalkToAndWait, 0, 0x239, 0x189);
     Call3(Engine_ActorFaceDirection, 0, 0x4000, 40);
     Engine_ActorStartRepeatedMotion(8, 2);
-    Call1(Engine_EventSetMessage, 0x1c66);
+    Call1(Engine_EventSetMessage, (s32)MsgHaidiaCoughCoughWho);
     Engine_EventShowMessageAndWait(8, 0, 80);
     Call3(Engine_ActorShowEmote, 8, 0x101, 60);
     Engine_ActorStartRepeatedMotion(8, 1);
@@ -117,7 +119,7 @@ void HaidiaBabi_RunEventScript01(void)
     Engine_EventWait(20);
     Engine_EventShowMessage(8, 0);
     Call3(Engine_ActorShowEmote, 8, 0x107, 60);
-    base5_1c6f = 0x1c6f;
+    base5_1c6f = (s32)MsgHaidiaWhoToldIll;
     Engine_EventSetMessage(base5_1c6f);
     Value2(Engine_EventOpenMessage, 8, 0);
     if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 1) {

@@ -1,4 +1,5 @@
 #include "SHIAN.H"
+extern u8 MsgShianWarriorsFromSchoolStrongWarriors[];
 
 /*
  * The 28-byte owner includes its one pool word: 0x17f7 is an identifier
@@ -8,7 +9,7 @@
 void SceneEffect_RunActorSceneMessage(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_WARRIORS_FROM_SCHOOL_STRONG_WARRIORS);
+    Event_SetMessage((s32)MsgShianWarriorsFromSchoolStrongWarriors);
     Event_AskYesNo(17, 0);
     Event_End();
 }

@@ -1,4 +1,7 @@
 #include "HEYA.H"
+extern u8 MsgToretoDoingNowsNot[];
+extern u8 MsgToretoMmmmm[];
+extern u8 MsgToretoTurnedPeopleKolima[];
 
 void FieldScene_RunFourActorEncounter(void)
 {
@@ -59,7 +62,7 @@ void FieldScene_RunFourActorEncounter(void)
     Task_Wait(4);
     Map_CopyCells(26, 35, 1, 4, v5, 40);
     Task_Wait(80);
-    Event_SetMessage(0x14d3);
+    Event_SetMessage((s32)MsgToretoMmmmm);
     Event_ShowMessageAndWait(0x8009, 0, 20);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     Actor_StartRepeatedMotion(ACTOR_GERALD, 2);
@@ -120,7 +123,7 @@ void FieldScene_RunFourActorEncounter(void)
     if (Event_ChooseYesNo(0, 0) != 0) {
         Actor_ShowEmote(ACTOR_GERALD, 0x103, 20);
         Actor_SetAnimation(ACTOR_GERALD, 4);
-        Event_SetMessage(0x14dd);
+        Event_SetMessage((s32)MsgToretoDoingNowsNot);
         Event_ShowMessage(0x8001, 0);
         Actor_ShowEmote(ACTOR_IVAN, 0x103, 10);
         Actor_SetAnimation(ACTOR_IVAN, 3);
@@ -128,7 +131,7 @@ void FieldScene_RunFourActorEncounter(void)
     }
     Event_Wait(20);
     ToretoHeya_PlayGesture(4);
-    Event_SetMessage(0x14df);
+    Event_SetMessage((s32)MsgToretoTurnedPeopleKolima);
     Event_ShowMessageAndWait(0x8009, 0, 20);
     Event_ShowMessageAndWait(0x8009, 0, 10);
     ToretoHeya_PlayGesture(0);

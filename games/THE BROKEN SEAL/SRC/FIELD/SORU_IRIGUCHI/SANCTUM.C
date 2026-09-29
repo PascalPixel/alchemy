@@ -1,4 +1,5 @@
 #include "SORU.H"
+extern u8 MsgSoruSukuretaFirstTimeAtSol[];
 
 void Scene_EnterSolSanctum(void)
 {
@@ -47,7 +48,7 @@ void Scene_EnterSolSanctum(void)
     Actor_FaceDirection(ACTOR_SUKURETA, 0x5000, 40);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
     Actor_Jump(ACTOR_SUKURETA, 4, 20);
-    Event_SetMessage(MSG_SUKURETA_FIRST_TIME_AT_SOL_SANCTUM);
+    Event_SetMessage((s32)MsgSoruSukuretaFirstTimeAtSol);
     Event_AskYesNo(0x4008, 0);
     Event_Wait(20);
     Camera_MoveTo(0x4c80000, -1, 0x940000, 1);

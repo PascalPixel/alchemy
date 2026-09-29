@@ -186,33 +186,18 @@ static __inline__ s32 Value4(s32 (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
  */
 
 #include "TYPES.H"
+extern u8 MsgShindenAmStartingFeelOnlyBeginning[];
+extern u8 MsgShindenCameXianFromVeryDistant[];
+extern u8 MsgShindenCurseMayOverButWe[];
+extern u8 MsgShindenMayWrongButLatelyThere[];
+extern u8 MsgShindenMyControlOverPsynergyHas[];
+extern u8 MsgShindenPathSolSanctumStillClosed[];
+extern u8 MsgShindenSavedAltinFromMonstersClearly[];
+extern u8 MsgShindenWasAfterEerieNightWhen[];
+extern u8 MsgShindenWasHandFateReturnedGold[];
+extern u8 MsgShindenWeWillHelpAnytimeAs[];
+extern u8 MsgShindenWieldersPsynergyCalledAdeptsAdepts[];
 
-enum FacingGatedMessage {
-    MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS = 0x1035,
-    MSG_WE_HAD_IDEA_TRUE_SANCTUM = 0x1138,
-    MSG_ROBIN_WILL_ACCEPT_RESPONSIBILITY_FOR = 0x1162,
-    MSG_ARE_YOU_SURE = 0x1164,
-    MSG_ONCE_STEP_OUTSIDE_VILLAGE_CANNOT = 0x116c,
-    MSG_ACCEPT_ROBIN_CANT_MEAN = 0x1171,
-    MSG_MY_CONTROL_OVER_PSYNERGY_HAS = 0x119d,
-    MSG_DO_FEEL_ANY_CHANGE_IN = 0x119f,
-    MSG_WE_WILL_HELP_ANYTIME_AS = 0x1288,
-    MSG_HEALER_MUST_WORRIED_ABOUT_NEVER = 0x1289,
-    MSG_WONDER_IF_EVER_SEE_OUR = 0x128b,
-    MSG_WAS_HAND_FATE_RETURNED_GOLD = 0x1376,
-    MSG_WHEN_STRAY_FROM_YOUR_WORLDLY = 0x1377,
-    MSG_CHILD_HAS_AWAKENED_OUR_TEACHINGS = 0x1379,
-    MSG_AM_STARTING_FEEL_ONLY_BEGINNING = 0x1408,
-    MSG_CURSE_MAY_OVER_BUT_WE = 0x171c,
-    MSG_CAME_XIAN_FROM_VERY_DISTANT = 0x1823,
-    MSG_WAS_AFTER_EERIE_NIGHT_WHEN = 0x190a,
-    MSG_SAVED_ALTIN_FROM_MONSTERS_CLEARLY = 0x1951,
-    MSG_PATH_SOL_SANCTUM_STILL_CLOSED = 0x1bfc,
-    MSG_ROBIN_YOUR_NEW_FRIENDS_ADEPTS = 0x1bfd,
-    MSG_MAY_WRONG_BUT_LATELY_THERE = 0x1ce8,
-    MSG_POLISHED_GOLD_STATUE_RETURNED_US = 0x1ce9,
-    MSG_DIRTY_GOLDEN_STATUE_CLEANED_UP = 0x1ceb
-};
 
 void FieldScene_RunSupplementalSequenceOne(void);
 
@@ -248,11 +233,11 @@ void FieldScene_RunActorEightFacingDialogue(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x87a) != 0)
-        Event_SetMessage(MSG_PATH_SOL_SANCTUM_STILL_CLOSED);
+        Event_SetMessage((s32)MsgShindenPathSolSanctumStillClosed);
     else if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0)
-        Event_SetMessage(MSG_MY_CONTROL_OVER_PSYNERGY_HAS);
+        Event_SetMessage((s32)MsgShindenMyControlOverPsynergyHas);
     else
-        Event_SetMessage(MSG_WIELDERS_PSYNERGY_CALLED_ADEPTS_ADEPTS);
+        Event_SetMessage((s32)MsgShindenWieldersPsynergyCalledAdeptsAdepts);
     Event_ShowMessage(8, 0);
     Event_End();
 }
@@ -276,13 +261,13 @@ void FieldScene_DispatchBySceneId(void)
     case 10:
     case 12:
         if (GameFlag_IsSet(0x855) != 0) {
-            Event_SetMessage(MSG_WAS_HAND_FATE_RETURNED_GOLD);
+            Event_SetMessage((s32)MsgShindenWasHandFateReturnedGold);
         } else {
-            Event_SetMessage(MSG_WE_WILL_HELP_ANYTIME_AS);
+            Event_SetMessage((s32)MsgShindenWeWillHelpAnytimeAs);
         }
         break;
     case 11:
-        Event_SetMessage(MSG_MAY_WRONG_BUT_LATELY_THERE);
+        Event_SetMessage((s32)MsgShindenMayWrongButLatelyThere);
         break;
     case 20:
     case 21:
@@ -307,9 +292,9 @@ void SceneDialogue_RunActorEightFlaggedDialogue(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x845) != 0)
-        Event_SetMessage(MSG_CURSE_MAY_OVER_BUT_WE);
+        Event_SetMessage((s32)MsgShindenCurseMayOverButWe);
     else
-        Event_SetMessage(MSG_AM_STARTING_FEEL_ONLY_BEGINNING);
+        Event_SetMessage((s32)MsgShindenAmStartingFeelOnlyBeginning);
     Event_ShowMessage(8, 0);
     Event_End();
 }
@@ -322,9 +307,9 @@ void SceneDialogue_RunActorEightFollowupDialogue(void)
     }
 
     Event_Begin();
-    Event_SetMessage(MSG_WAS_AFTER_EERIE_NIGHT_WHEN);
+    Event_SetMessage((s32)MsgShindenWasAfterEerieNightWhen);
     if (GameFlag_IsSet(0x909) != 0)
-        Event_SetMessage(MSG_SAVED_ALTIN_FROM_MONSTERS_CLEARLY);
+        Event_SetMessage((s32)MsgShindenSavedAltinFromMonstersClearly);
     Event_ShowMessage(8, 0);
     Event_End();
 }
@@ -337,7 +322,7 @@ void SceneDialogue_RunActorEightDialogue(void)
     }
 
     Event_Begin();
-    Event_SetMessage(MSG_CAME_XIAN_FROM_VERY_DISTANT);
+    Event_SetMessage((s32)MsgShindenCameXianFromVeryDistant);
     Event_ShowMessage(8, 0);
     Event_End();
 }

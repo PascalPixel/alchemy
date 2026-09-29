@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgFuneArrgh[];
+extern u8 MsgFuneNoUseLate[];
 extern struct EventWork *gEventWork;
 
 /* Audited 49-call script for the complete 0x02001db0 owner.
@@ -87,7 +89,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Call3(ObjectMotion_SetPositionAndReset, 21, 196, 678);
     Call3(ObjectMotion_SetPositionAndReset, 21, 182, 654);
     Motion_SetVarCbAndRefresh(21, 2);
-    Call1(Event_SetValue1d8, 7748);
+    Call1(Event_SetValue1d8, (s32)MsgFuneNoUseLate);
     Call1(FieldScene_RunStepThen10, 40981);
     Call3(ObjectMotion_SetSpeedParameters, 0, 157286, 78643);
     Call3(ObjectMotion_ResetAndSetPosition, 0, 154, 609);
@@ -128,7 +130,7 @@ void FieldScene_RunShipDeckEventScript(void)
     Battle_WaitMode0(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    Call3(UiText_ShowCenteredMessage, 7749, 1, 0);
+    Call3(UiText_ShowCenteredMessage, (s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Event_SetValue170(12);
 }

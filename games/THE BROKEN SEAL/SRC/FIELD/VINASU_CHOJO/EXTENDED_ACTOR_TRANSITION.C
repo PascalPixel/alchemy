@@ -2,10 +2,9 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "STAGED_ACTOR.H"
+extern u8 MsgVinasuDespiteLongTiring[];
+extern u8 MsgVinasuWhyHappeningProtectVenusLighthouse[];
 
-enum ExtendedActorTransitionMessage {
-    MSG_WHY_HAPPENING_PROTECT_VENUS_LIGHTHOUSE = 0x282e
-};
 
 
 struct SceneWork {
@@ -60,7 +59,7 @@ void Scene_RunExtendedActorTransition(void)
     struct SceneWork *work;
 
     step_pending = 0;
-    Event_SetMessage(MSG_WHY_HAPPENING_PROTECT_VENUS_LIGHTHOUSE);
+    Event_SetMessage((s32)MsgVinasuWhyHappeningProtectVenusLighthouse);
     Actor_SetAttachedEffect(21, 0x102);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x2015, 0, 20);
@@ -375,7 +374,7 @@ void Scene_RunExtendedActorTransition(void)
     Graphics_EnableObjLayerAndCallbacks();
     *(u16 *)((*(s32 *)cell + 0x12f4)) = none;
     *(u16 *)((*(s32 *)cell + 0x12f6)) = none;
-    Call3(UiText_ShowCenteredMessage, 0x284f, 0, 0);
+    Call3(UiText_ShowCenteredMessage, (s32)MsgVinasuDespiteLongTiring, 0, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Event_Wait(80);
 }

@@ -1,9 +1,7 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgRariberoImSorry[];
 
-enum PoseSequenceMessage {
-    MSG_IM_SORRY = 0x26ec
-};
 
 
 extern const u8 gRariberoPoseAction[];
@@ -21,7 +19,7 @@ void RariberoScene_PlayPoseSequence(void)
     GameFlag_Set(0x300);
     Event_Begin();
     Engine_ResetSceneEffectCounter();
-    Event_SetMessage(MSG_IM_SORRY);
+    Event_SetMessage((s32)MsgRariberoImSorry);
     Event_Wait(50);
     Actor_ShowEmote(14, 0x102, 50);
     Actor_FaceActor(14, ACTOR_PARTY_LEADER, 20);

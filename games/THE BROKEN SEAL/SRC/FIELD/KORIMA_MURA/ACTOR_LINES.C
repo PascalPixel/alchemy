@@ -9,6 +9,7 @@
 #define NULL ((void *)0)
 
 #include "KORIMA_MURA.H"
+extern u8 MsgKorimaToldHolyTrees[];
 
 struct Obj {
     s32 f00, f04, f08, f0c, f10, f14, f18, f1c;
@@ -89,7 +90,7 @@ void FieldScene_RunActor16MessageBranch(void)
     if (v >= 0xa001 && v <= 0xdfff) {
         Sanctum_Open(16);
     } else {
-        Event_SetMessage(0x16b3);
+        Event_SetMessage((s32)MsgKorimaToldHolyTrees);
         Event_AskYesNo(16, 0);
     }
     Event_End();

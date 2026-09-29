@@ -1,11 +1,9 @@
-/* Draft of resource_37f 0x02008420 (FieldScene_RunSupplementalSequenceTwo),
- * from games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENARIO_DISPATCH.C.
- * Remaining difference: message 0x1032 is kept in r6 for both messages; the
- * ROM loads it from the pool after the wait that precedes the first message,
- * where this C hoists the load above the cell copy and its argument stores
- * (the first scheduling pass moves the constant across the calls). Every
- * other instruction matches. The listing keeps these rows. */
+/* Draft of resource_37f 0x02008420 (FieldScene_RunSupplementalSequenceTwo):
+ * it matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgSoruSetSmallGem). The listing keeps
+ * these rows until the draft is adopted. */
 #include "SORU.H"
+extern u8 MsgSoruSetSmallGem[];
 
 void FieldScene_RunSupplementalSequenceTwo(void)
 {
@@ -23,7 +21,7 @@ void FieldScene_RunSupplementalSequenceTwo(void)
             Value0(Engine_MapRedraw);
             Value1(Engine_EventWait, 40);
             /* The message number is too wide for an immediate. */
-            byte_pair_addr = 0x1032;
+            byte_pair_addr = (s32)MsgSoruSetSmallGem;
             Value2(Engine_MessageShowCentered, byte_pair_addr, 1);
             Event_Wait(20);
             Value1(Engine_AudioPlayCue, 183);

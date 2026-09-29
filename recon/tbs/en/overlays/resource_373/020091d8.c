@@ -1,9 +1,9 @@
-/* Draft of resource_373 0x020091d8..0x02009244 (108 bytes with pool),
- * FieldScene_RunScene373SequenceD; the listing keeps the rows. Remaining
- * difference: the reference keeps message 0xf4d in a saved register loaded
- * after the preceding calls, as a link-time message symbol is loaded; the
- * constant is loaded from the pool earlier (14 bytes differ, same size). */
+/* Draft of resource_373 0x020091d8 (FieldScene_RunScene373SequenceD): it
+ * matches the ROM byte for byte now that the message it loads from the
+ * literal pool has a catalogue name (MsgHaidiaRrruffRrrruff). The listing
+ * keeps these rows until the draft is adopted. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_MURA/STAGED_MOTION.H"
+extern u8 MsgHaidiaRrruffRrrruff[];
 
 void FieldScene_RunScene373SequenceD(void)
 {
@@ -14,7 +14,7 @@ void FieldScene_RunScene373SequenceD(void)
     if (GameFlag_IsSet(0x808) == 0) {
         Event_Begin();
         Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
-        base5_f4d = MSG_RRRUFF_RRRRUFF;
+        base5_f4d = (s32)MsgHaidiaRrruffRrrruff;
         Event_SetMessage(base5_f4d);
         Event_ShowMessageAndWait(15, 0, 2);
         Event_ShowMessageAndWait(16, 0, 2);

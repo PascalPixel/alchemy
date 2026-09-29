@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgKorosseoAreaCalledPipeworks[];
+extern u8 MsgKorosseoObjectiveMakeGood[];
 
 /* Unit bindings for scoring (declare as absolute_symbols of a unit on
  * resource_3ba:020013e4):
@@ -119,7 +121,7 @@ void Korosseo_RunPromptMotionSequence(s32 a0)
         rec4 = Value2(SceneDialogue_RunFlagGatedPromptInteraction, a0, 2);
         if (rec4 != 0) {
         } else {
-            Call1(Engine_EventSetMessage, 0x2090);
+            Call1(Engine_EventSetMessage, (s32)MsgKorosseoAreaCalledPipeworks);
             Call2(Engine_CameraSetSpeed, 0x30000, 0x6000);
             Call4(Engine_CameraMoveTo, 0x2500000, -1, 0x780000, 1);
             Engine_CameraWaitForMove();
@@ -174,7 +176,7 @@ void Korosseo_RunPromptMotionSequence(s32 a0)
             goto L_020015b0;
         }
         if (rec4 == 1) {
-            Call1(Engine_EventSetMessage, 0x208f);
+            Call1(Engine_EventSetMessage, (s32)MsgKorosseoObjectiveMakeGood);
             Engine_EventShowMessage(a0, 0);
         }
         L_020015b0:;

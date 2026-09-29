@@ -1,4 +1,8 @@
 #include "SUHARA.H"
+extern u8 MsgSuharaBusyEverSince[];
+extern u8 MsgSuharaGetSickThinkingAboutLalivero[];
+extern u8 MsgSuharaSighNothinMaybe[];
+extern u8 MsgSuharaWonderWhySandstorms[];
 
 void Dialogue_HandleFacingBranch(s32 no)
 {
@@ -6,10 +10,10 @@ void Dialogue_HandleFacingBranch(s32 no)
     if (facing == 0xc000) {
         Inn_CheckIn(10, no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
-        Engine_EventSetMessage(0x2620);
+        Engine_EventSetMessage((s32)MsgSuharaBusyEverSince);
         Engine_EventShowMessage(no, 0);
     } else {
-        Engine_EventSetMessage(0x25d1);
+        Engine_EventSetMessage((s32)MsgSuharaSighNothinMaybe);
         Engine_EventShowMessage(no, 0);
     }
 }
@@ -20,10 +24,10 @@ void Dialogue_HandleFacingAction(s32 no)
     if (facing == 0xc000) {
         Shop_ConfirmAct(no);
     } else if (Engine_GameFlagIsSet(0x96f)) {
-        Engine_EventSetMessage(0x262c);
+        Engine_EventSetMessage((s32)MsgSuharaWonderWhySandstorms);
         Engine_EventShowMessage(no, 0);
     } else {
-        Event_SetMessage(MSG_GET_SICK_THINKING_ABOUT_LALIVERO);
+        Event_SetMessage((s32)MsgSuharaGetSickThinkingAboutLalivero);
         Engine_EventShowMessage(no, 0);
     }
 }

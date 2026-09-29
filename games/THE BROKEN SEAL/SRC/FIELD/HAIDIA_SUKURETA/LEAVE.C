@@ -1,4 +1,5 @@
 #include "SUKURETA.H"
+extern u8 MsgHaidiaSukuretaOurBestBet[];
 
 void Scene_LeaveForMtAleph(void)
 {
@@ -24,7 +25,7 @@ void Scene_LeaveForMtAleph(void)
     Actor_WalkToAndWait(ACTOR_SUKURETA, 230, 232);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
-    Event_SetMessage(MSG_SUKURETA_OUR_BEST_BET);
+    Event_SetMessage((s32)MsgHaidiaSukuretaOurBestBet);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);

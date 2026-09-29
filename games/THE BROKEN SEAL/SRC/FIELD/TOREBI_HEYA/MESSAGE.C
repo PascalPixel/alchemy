@@ -1,5 +1,8 @@
 /* The facing message. */
 #include "TOREBI.H"
+extern u8 MsgTorebiMissFinalsTolbis[];
+extern u8 MsgTorebiShipsArentGoing[];
+extern u8 MsgTorebiWasteStuckHereWhenSuch[];
 
 void SceneDialogue_RunFacingMessage(s32 no)
 {
@@ -10,13 +13,13 @@ void SceneDialogue_RunFacingMessage(s32 no)
         Sanctum_Open(no);
     } else {
         if (GameFlag_IsSet(0x950) != 0) {
-            Scene_Call1(Engine_EventSetMessage, 0x23bf);
+            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiShipsArentGoing);
             Event_ShowMessage(no, 0);
         } else if (GameFlag_IsSet(0x962) != 0) {
-            Scene_Call1(Engine_EventSetMessage, 0x2231);
+            Scene_Call1(Engine_EventSetMessage, (s32)MsgTorebiMissFinalsTolbis);
             Event_ShowMessage(no, 0);
         } else {
-            Event_SetMessage(MSG_WASTE_STUCK_HERE_WHEN_SUCH);
+            Event_SetMessage((s32)MsgTorebiWasteStuckHereWhenSuch);
             Event_ShowMessage(no, 0);
         }
     }

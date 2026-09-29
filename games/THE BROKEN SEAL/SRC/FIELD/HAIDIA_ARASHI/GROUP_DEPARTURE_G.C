@@ -1,4 +1,7 @@
 #include "GROUP_DEPARTURE.H"
+extern u8 MsgHaidiaICantMoveGetHelp[];
+extern u8 MsgHaidiaIllGo[];
+extern u8 MsgHaidiaRobin[];
 
 void ActorPresentation_SelectActorTwentySevenState(void)
 {
@@ -37,7 +40,7 @@ void FieldScene_RunScene372_02003e48(void)
         }
         Actor_RunRepeatedMotion(8, 2);
         Event_Wait(20);
-        Event_SetMessage(MSG_I_CANT_MOVE_GET_HELP);
+        Event_SetMessage((s32)MsgHaidiaICantMoveGetHelp);
         Event_ShowMessage(8, 0);
         Value2(Engine_ActorEnableActionCallback, 8, (s32)HaidiaArashi_ActorEightScript);
         Actor_SetAnimation(8, 6);
@@ -52,7 +55,7 @@ void FieldScene_RunScene372_02003e48(void)
             Actor_SetAnimation(8, 8);
         }
         Event_Wait(20);
-        Event_SetMessage(MSG_ILL_GO);
+        Event_SetMessage((s32)MsgHaidiaIllGo);
         Event_ShowMessageAndWait(8, 0, 20);
         Actor_SetAnimation(8, 1);
         Actor_Jump(8, 4, 0);
@@ -92,7 +95,7 @@ void FieldScene_ConfigureActorTwentyTwoScene(void)
     Actor_Get(ACTOR_ID)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
     Actor_SetPosition(ACTOR_ID, 0xf90000, 0x4d80000);
     Task_Wait(1);
-    Event_SetMessage(MSG_ROBIN);
+    Event_SetMessage((s32)MsgHaidiaRobin);
     Event_ShowMessage(0x1016, 0);
     Actor_SetPosition(ACTOR_ID, 0xac0000, 0x4fe0000);
     Task_Wait(1);

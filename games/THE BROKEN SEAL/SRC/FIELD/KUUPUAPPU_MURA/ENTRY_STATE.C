@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgKuupuappuWelcomeBackTwo[];
 
 s32 Engine_GameFlagIsSet();
 void Engine_EventRequestExit();
@@ -108,7 +109,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_EventWaitForScreen();
                     Engine_EventWait(30);
                     Engine_ActorRunRepeatedMotion(2, 2);
-                    Call1(Engine_EventSetMessage, 0x1328);
+                    Call1(Engine_EventSetMessage, (s32)MsgKuupuappuWelcomeBackTwo);
                     Engine_EventShowMessageAndWait(2, 0, 20);
                     Engine_ActorSetAnimationAndWait(0, 3);
                     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);
@@ -139,7 +140,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
                     Engine_EventWaitForScreen();
                     Engine_EventWait(30);
                     Engine_ActorRunRepeatedMotion(2, 2);
-                    Call1(Engine_EventSetMessage, 0x1328);
+                    Call1(Engine_EventSetMessage, (s32)MsgKuupuappuWelcomeBackTwo);
                     Engine_EventShowMessageAndWait(2, 0, 20);
                     Engine_ActorSetAnimationAndWait(0, 3);
                     Call3(Engine_ActorSetSpeed, 2, 0xcccc, 0x6666);

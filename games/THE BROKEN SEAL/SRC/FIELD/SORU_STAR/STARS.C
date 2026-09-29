@@ -1,5 +1,6 @@
 /* Handing over the stars, the Jupiter star and the paired actors. */
 #include "STAR.H"
+extern u8 MsgSoruJupiterStarBagged[];
 
 
 void Scene_HandOverStars(void)
@@ -86,7 +87,7 @@ void Scene_BagJupiterStar(void)
     obj = Value4(Scene_PresentItem, 223, 0xe80000, 0x100000, 0x1d00000);
     Event_Wait(40);
     UiWork_PushValueSlotFar(obj, 1);
-    Message_ShowCentered(MSG_JUPITER_STAR_BAGGED, 1);
+    Message_ShowCentered((s32)MsgSoruJupiterStarBagged, 1);
 }
 
 /* Runs a sequence of position/scale/timing calls for actor pair 0 and 1,

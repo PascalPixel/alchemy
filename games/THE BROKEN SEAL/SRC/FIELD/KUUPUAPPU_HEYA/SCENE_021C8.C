@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgKuupuappuLearn[];
+extern u8 MsgKuupuappuLeave[];
 extern struct EventWork *gEventWork;
 
 void Engine_AudioPlaySceneCue();
@@ -114,7 +116,7 @@ void KuupuappuHeya_RunScene021C8(void)
     Engine_EventWait(40);
     Engine_ActorRunRepeatedMotion(1, 1);
     Engine_EventWait(10);
-    Call1(Engine_EventSetMessage, 0x12ae);
+    Call1(Engine_EventSetMessage, (s32)MsgKuupuappuLearn);
     SceneActor_SetModeZeroAndValue(1, 20);
     SceneEffect_ApplyThreeValuesAndFinish(2, 3, 20);
     SceneActor_SetModeZeroAndValue(2, 20);
@@ -169,7 +171,7 @@ void KuupuappuHeya_RunScene021C8(void)
         }
     }
     if (v5 == 0) {
-        Call1(Engine_EventSetMessage, 0x12bc);
+        Call1(Engine_EventSetMessage, (s32)MsgKuupuappuLeave);
         SceneActor_SetModeZeroAndValue(1, 20);
         SceneActor_SetPairZeroAndValue(1, 0, 20);
         SceneActor_SetModeZeroAndValue(1, 20);

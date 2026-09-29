@@ -32,6 +32,7 @@
  * exact. No counter type, declaration-order or fixed-register changes. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgFuneArrgh[];
 extern u8 FuneKanpan_CrewScript[];
 
 extern u8 FuneKanpan_DeckActionsA[];
@@ -216,7 +217,7 @@ void FieldScene_RunActorSequence(void)
     Engine_EventWait(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    Call3(UiText_ShowCenteredMessage, 0x1e45, 1, 0);
+    Call3(UiText_ShowCenteredMessage, (s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventRequestExit(14);
 }

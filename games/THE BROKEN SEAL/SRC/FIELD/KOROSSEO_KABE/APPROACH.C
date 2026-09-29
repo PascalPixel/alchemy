@@ -1,4 +1,5 @@
 #include "TASK.H"
+extern u8 MsgKorosseoRobinGotItem[];
 
 /* The game state's cells, read here as words. */
 extern s32 gCell[];
@@ -105,7 +106,7 @@ s32 FieldScene_RunFlag211ApproachScene(s32 handleA, s32 handleB)
 
     shared = (u8 *)gCell;
     UiWork_PushValueSlot(*(s32 *)(shared + 500), 1);
-    Message_ShowCentered(SCENE_TEXT_VALUE, 3);
+    Message_ShowCentered((s32)MsgKorosseoRobinGotItem, 3);
     ObjectDispatch_WaitForValue16(record);
 
     return flag;

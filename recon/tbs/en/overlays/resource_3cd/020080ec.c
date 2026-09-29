@@ -1,10 +1,12 @@
 /* Draft of FieldScene_RunCountAdjustPanel, resource_3cd at 0x020080ec (was
  * part of DEBUG/ITEM_LEVEL/RECORD_COUNT.C).
- * Remaining difference: the ROM loads the message base 0xc20 from its
- * literal pool, as a link-time value; the C constant compiles to a move and
- * shift.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (UiText_DrawResource,
+ * RenderOutput_RedrawSavedRect, UiText_DrawStringAtOffset,
+ * UiText_DrawNumberInWindow, Engine_AudioPlayCue, Engine_TaskWait, ...).
  * The listing keeps these rows. */
 #include "../../../../../games/THE BROKEN SEAL/SRC/DEBUG/ITEM_LEVEL/LEVEL.H"
+extern u8 MsgDebugRaiseEveryonesLevel[];
 
 extern s32 gGameStateWords[];
 extern u8 gItemLevelIcon[];
@@ -36,7 +38,7 @@ void FieldScene_RunCountAdjustPanel(void)
     record = Owner_GetState(work[125]);
     win = UiWindow_Create(0, 0, 30, 9, 2);
 
-    msg = 0xc20;
+    msg = (s32)MsgDebugRaiseEveryonesLevel;
     UiText_DrawResource(msg, win, 0, 0);
     UiText_DrawResource(msg + 1, win, 0, 16);
     msg += 2;

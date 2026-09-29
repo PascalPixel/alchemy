@@ -1,4 +1,9 @@
 #include "MENU_TEST.H"
+extern u8 MsgDebugBodyTornApart[];
+extern u8 MsgDebugGotDjinni[];
+extern u8 MsgDebugGotItem[];
+extern u8 MsgDebugGotSturdyEquipment[];
+extern u8 MsgDebugWentLevel[];
 
 void SceneState_ApplyOne(void)
 {
@@ -39,7 +44,7 @@ void FieldScene_ApplyTable9684ValueToFourSlots(void)
 {
     s32 *p;
 
-    Call2(UiText_ShowPositionedMessageAndWait, 0xc1a, 1);
+    Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgDebugWentLevel, 1);
     p = (s32 *)MenuTest_SlotOffsets;
     Party_AdvanceOwnerCountToTarget(0, *p);
     Value2(Party_AdvanceOwnerCountToTarget, 1, *p);
@@ -57,7 +62,7 @@ void FieldScene_GrantItemListToSlots(void)
     u32 tmp;
     s32 slot;
 
-    Call2(UiText_ShowPositionedMessageAndWait, 0xc1e, 1);
+    Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgDebugGotItem, 1);
     Value2(Inventory_AddItem, 0, 187);
     Value2(Inventory_AddItem, 0, 187);
     Value2(Inventory_AddItem, 0, 187);
@@ -258,7 +263,7 @@ void FieldScene_GrantItemListToSlots(void)
 void CommandTable_ConfigureCommandGroups(void)
 {
     u8 buf[256];
-    UiText_ShowPositionedMessageAndWait(0xc1d, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotDjinni, 1);
     Djinn_AddToOwner(0, 0, 0);
     Djinn_AddToOwner(0, 0, 1);
     Djinn_AddToOwner(0, 0, 2);
@@ -324,7 +329,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
     u32 i;
     s32 record;
 
-    Call2(UiText_ShowPositionedMessageAndWait, 0xc1b, 1);
+    Call2(UiText_ShowPositionedMessageAndWait, (s32)MsgDebugBodyTornApart, 1);
     Value2(Owner_AdjustFirstValue, 0, -100);
     Value2(Owner_AdjustFirstValue, 1, -100);
     Value2(Owner_AdjustFirstValue, 2, -33);
@@ -348,7 +353,7 @@ void FieldScene_ApplySlotOffsetsAndFlags(void)
 
 void FieldScene_AssignCodeSetAToSlots(void)
 {
-    UiText_ShowPositionedMessageAndWait(0xc1f, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotSturdyEquipment, 1);
     Inventory_AddItem(0, 85);
     Inventory_AddItem(0, 84);
     Inventory_AddItem(0, 124);

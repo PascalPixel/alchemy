@@ -1,4 +1,11 @@
 #include "HAIDIA_BABI.H"
+extern u8 MsgHaidiaCameBack2[];
+extern u8 MsgHaidiaDoraWasStruckWithIllness[];
+extern u8 MsgHaidiaDoraWouldntLetHimStay[];
+extern u8 MsgHaidiaHomeJustToStay[];
+extern u8 MsgHaidiaTheThreeTravelersSeemOdd[];
+extern u8 MsgHaidiaTheVisitorsCausedTheEruption[];
+extern u8 MsgHaidiaYouveGrownSoMuch[];
 
 /* The innkeeper's and the villagers' talk about the house. */
 
@@ -17,18 +24,18 @@ void HaidiaBabi_RunInnkeeperTalk(void)
             Actor_RunRepeatedMotion(13, 2);
             Actor_FaceActor(13, ACTOR_PARTY_LEADER, 10);
             if (GameFlag_IsSet(0x300) == 0) {
-                Event_SetMessage(MSG_YOU_CAME_BACK);
+                Event_SetMessage((s32)MsgHaidiaCameBack2);
                 Event_ShowMessage(13, 0);
                 GameFlag_Set(0x300);
             }
-            Event_SetMessage(MSG_HOME_JUST_TO_STAY);
+            Event_SetMessage((s32)MsgHaidiaHomeJustToStay);
             Event_AskYesNo(13, 0);
             Actor_FaceDirection(13, 0x9000, 10);
         } else {
             if (GameFlag_IsSet(FLAG_PARTY_LEFT_VALE) != 0) {
-                Event_SetMessage(MSG_THE_VISITORS_CAUSED_THE_ERUPTION);
+                Event_SetMessage((s32)MsgHaidiaTheVisitorsCausedTheEruption);
             } else {
-                Event_SetMessage(MSG_THE_THREE_TRAVELERS_SEEM_ODD);
+                Event_SetMessage((s32)MsgHaidiaTheThreeTravelersSeemOdd);
             }
             Event_ShowMessage(13, 0);
         }
@@ -40,7 +47,7 @@ void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 {
     Event_Begin();
     Actor_FaceActor(0x10, ACTOR_PARTY_LEADER, 0xA);
-    Event_SetMessage(MSG_YOUVE_GROWN_SO_MUCH);
+    Event_SetMessage((s32)MsgHaidiaYouveGrownSoMuch);
     Event_ShowMessage(0x10, 0);
     Actor_FaceDirection(0x10, 0xB000, 0xA);
     GameFlag_Set(0x301);
@@ -50,7 +57,7 @@ void SceneDialogue_ShowLine1C13WithActor16Steps(void)
 void SceneDialogue_RunActorThirteenDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DORA_WOULDNT_LET_HIM_STAY);
+    Event_SetMessage((s32)MsgHaidiaDoraWouldntLetHimStay);
     Event_ShowMessage(0xD, 0);
     GameFlag_Set(0x81C);
     Event_End();
@@ -59,7 +66,7 @@ void SceneDialogue_RunActorThirteenDialogue(void)
 void SceneDialogue_RunActor16LineAndFlag81c(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_DORA_WAS_STRUCK_WITH_ILLNESS);
+    Event_SetMessage((s32)MsgHaidiaDoraWasStruckWithIllness);
     Event_ShowMessage(0x10, 0);
     GameFlag_Set(0x81C);
     Event_End();

@@ -1,10 +1,9 @@
-/* Draft of RunActorScriptedSequenceB, resource_3bf at 0x02009c4c, built with
- * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: a message number held across calls is a C constant,
- * which GCC's second scheduling pass hoists above the calls before its first
- * use; the ROM loads it after them, as it would a link-time value.
- * The listing keeps these rows. */
+/* Draft of resource_3bf 0x02009c4c (RunActorScriptedSequenceB): it matches
+ * the ROM byte for byte now that the message it loads from the literal pool
+ * has a catalogue name (MsgRunpaIntruder). The listing keeps these rows until
+ * the draft is adopted. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaIntruder[];
 
 /*
  * The resource run is taken as the address of 0x241e rather than as
@@ -16,7 +15,7 @@ void RunActorScriptedSequenceB(s32 handle)
     u8 *id;
 
     Actor_RunRepeatedMotion(handle, 1);
-    id = 0x241e;
+    id = (s32)MsgRunpaIntruder;
     Event_SetMessage((s32)id);
     Event_ShowMessage(handle, 0);
     Actor_ShowEmoteAt(handle);

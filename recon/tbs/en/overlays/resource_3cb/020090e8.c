@@ -1,9 +1,12 @@
-/* Draft of LinkLobby_TalkAlternating, resource_3cb at 0x020090e8 (was
- * MENU/LINK_LOBBY/ALTERNATE_TALK.C).
- * Remaining difference: each branch's message number is a C constant GCC
- * hoists above its test; the ROM loads it after, as a link-time value.
- * The listing keeps these rows. */
+/* Draft of resource_3cb 0x020090e8 (LinkLobby_TalkAlternating): it matches
+ * the ROM byte for byte now that the messages it loads from the literal pool
+ * have catalogue names (MsgLobbyChangeOrderParty,
+ * MsgLobbyThreeAlliesFightLinked, MsgLobbyThreeAlliesFightLinkedFinals). The
+ * listing keeps these rows until the draft is adopted. */
 #include "TYPES.H"
+extern u8 MsgLobbyChangeOrderParty[];
+extern u8 MsgLobbyThreeAlliesFightLinked[];
+extern u8 MsgLobbyThreeAlliesFightLinkedFinals[];
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -47,12 +50,12 @@ s32 LinkLobby_TalkAlternating(s32 actor)
     Engine_ActorFaceActor(actor, gGameState.words[125], 0);
     if (!Value1(Engine_GameFlagIsSet, 0x204)) {
         if (Party_CountActiveOwners() <= 3)
-            message = 0x298d;
+            message = (s32)MsgLobbyThreeAlliesFightLinkedFinals;
         else
-            message = 0x298c;
+            message = (s32)MsgLobbyThreeAlliesFightLinked;
         Call1(Engine_GameFlagSet, 0x204);
     } else {
-        message = 0x298e;
+        message = (s32)MsgLobbyChangeOrderParty;
         Call1(Engine_GameFlagClear, 0x204);
     }
     Engine_EventSetMessage(message);

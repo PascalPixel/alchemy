@@ -1,9 +1,11 @@
 /* Draft of resource_3ad 0x02008828..0x020091b8 (2448 bytes with pool),
- * Reunion_Converse; the listing keeps the rows. Remaining difference: the
- * reference loads the first messages of its conversations (0x2516, 0x253f)
- * from its literal pool as link-time values; the integer messages are
- * scheduled differently (2452 bytes, 329 differ from +0xd8). */
+ * Reunion_Converse; the listing keeps the rows. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Engine_EventBegin,
+ * Engine_ActorSetPosition, Engine_ActorFaceDirection,
+ * Engine_CameraFollowActor, Engine_MapRedraw, Engine_EventOpenScreen, ...). */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/CAVE.H"
+extern u8 MsgRunpaBunza[];
+extern u8 MsgRunpaDodonpaNeverIntention[];
 
 /* Everyone gathers by the cave mouth and talks over how Hammet was saved. */
 void Reunion_Converse(void)
@@ -36,7 +38,7 @@ void Reunion_Converse(void)
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_BUNZA, EMOTE_IN_FRONT | 2, 70);
-    reunion = 0x2516;
+    reunion = (s32)MsgRunpaDodonpaNeverIntention;
     Event_SetMessage(reunion + REUNION_BUNZA_ASKS_ABOUT_RELEASE);
     Event_ShowMessage(ACTOR_BUNZA, 0);
     Actor_SetAnimationAndWait(ACTOR_HAMMET, ANIM_NOD);
@@ -251,7 +253,7 @@ void Reunion_Converse(void)
     Actor_FaceActor(ACTOR_IVAN, ACTOR_BUNZA, 0);
     Actor_FaceActor(ACTOR_HAMMET, ACTOR_BUNZA, 0);
     Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | 1, 60);
-    plan = 0x253f;
+    plan = (s32)MsgRunpaBunza;
     Event_SetMessage(plan + PLAN_HAMMET_ASKS_PLAN);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMET, 0);
     Event_Wait(20);

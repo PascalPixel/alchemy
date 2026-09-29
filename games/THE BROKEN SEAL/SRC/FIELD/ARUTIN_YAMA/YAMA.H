@@ -17,9 +17,7 @@ enum {
 };
 
 enum SetPieceMessage {
-    MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
-    MSG_WE_DID_ROBIN_WE_BEAT = 0x190c,
-    MSG_GUARDIAN_STATUES_WERE_CREATED_LONG = 0x1910
+    MSG_ROBIN_FLIPPED_SWITCH = 0x1528
 };
 
 struct Frame {

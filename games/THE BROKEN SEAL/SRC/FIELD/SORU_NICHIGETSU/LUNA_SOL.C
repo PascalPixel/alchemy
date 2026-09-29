@@ -1,4 +1,9 @@
 #include "SANCTUM.H"
+extern u8 MsgSoruLookSymbolFloor[];
+extern u8 MsgSoruThePictureOfLunaChanged[];
+extern u8 MsgSoruWhatsHappening[];
+extern u8 MsgSoruWhatsHappeningAtTheTrap[];
+extern u8 MsgSoruYouFoundIt[];
 
 void UpdateStatueLight1(void)
 {
@@ -195,7 +200,7 @@ void Scene_SpringStatueTrap(void)
 
     Event_Begin();
     FieldScene_PrepareStatueTransition();
-    Event_SetMessage(MSG_WHATS_HAPPENING_AT_THE_TRAP);
+    Event_SetMessage((s32)MsgSoruWhatsHappeningAtTheTrap);
     SetInitialScale(ACTOR_SUKURETA, 0x4000, 20);
     SetInitialDirection(ACTOR_SUKURETA, 256, 0);
     Actor_Jump(ACTOR_SUKURETA, 6, 30);
@@ -265,7 +270,7 @@ void FieldScene_RunClosingSequence(void)
     SoruNichigetsu_Light2Timer = 0;
     SoruNichigetsu_Light3Timer = 0;
     SoruNichigetsu_Light4Timer = 0;
-    Event_SetMessage(MSG_WHATS_HAPPENING);
+    Event_SetMessage((s32)MsgSoruWhatsHappening);
     Actor_FaceDirection(ACTOR_SUKURETA, 16384, 20);
     Actor_ShowEmote(ACTOR_SUKURETA, 256, 0);
     Actor_Jump(ACTOR_SUKURETA, 6, 30);
@@ -424,7 +429,7 @@ void FieldScene_RunFlaggedSequence(void)
     Event_Wait(6);
     if (GameFlag_IsSet(2082) == 0) {
         base = 32784;
-        Event_SetMessage(MSG_YOU_FOUND_IT);
+        Event_SetMessage((s32)MsgSoruYouFoundIt);
         SetSolShindenActorStep(base, 6);
         Actor_SetAnimationAndWait(ACTOR_SUKURETA, 3);
         SetSolShindenActorStep(base, 6);
@@ -449,7 +454,7 @@ void Scene_ChangeLunaPictureToSol(void)
             Actor_SetPosition(ACTOR_SUKURETA, 0x2410000, 0x930000);
             Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 1);
             Camera_MoveTo(0x23e0000, -1, 0xb80000, 1);
-            Event_SetMessage(MSG_THE_PICTURE_OF_LUNA_CHANGED_TO_SOL);
+            Event_SetMessage((s32)MsgSoruThePictureOfLunaChanged);
             Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x240, 232);
             Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
             Camera_WaitForMove();
@@ -505,13 +510,7 @@ void FieldScene_RunActorPositionTransition(void)
     Call3(Engine_ActorWalkToAndWait, 16, 0x188, 168);
     Call3(Engine_ActorFaceDirection, 16, 0x8000, 30);
     Engine_ActorSetAnimation(16, 1);
-#if defined(TBS_EDITION_JA)
-    Event_SetMessage(0x11b4);
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-    Event_SetMessage(0x100d);
-#else
-    Event_SetMessage(0x102b);
-#endif
+    Event_SetMessage((s32)MsgSoruLookSymbolFloor);
     Engine_ActorJump(16, 4, 30);
     SetSolShindenActorStep(16, 6);
     Engine_ActorRunRepeatedMotion(0, 2);

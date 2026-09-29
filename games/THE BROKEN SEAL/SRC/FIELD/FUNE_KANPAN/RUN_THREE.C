@@ -1,36 +1,20 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgFuneRobinDontTalkLikeShouldnt[];
+extern u8 MsgFuneRobinTalkedPassengersDidntTour[];
+extern u8 MsgFuneSeeYoureGoingGoFor[];
 /* FAKEMATCH: calls that cast Object_GetById to another return type keep their original register order. */
 s32 Object_GetById();
 
 #define ACTOR_FLAGS_OFFSET 90
 
-enum MultiEncounterMessage {
-    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
-    MSG_TOLD_WERE_LEAVING_SOON_SET = 0x1d36,
-    MSG_IF_WE_DONT_LEAVE_SOON = 0x1d37,
-    MSG_SOMEBODY_STOP_THEM = 0x1d6f,
-    MSG_THEY_CANT_PLANNING_MUTINY = 0x1d70,
-    MSG_DIDNT_DO_ANYTHING = 0x1d8d,
-    MSG_NOW_WE_HAVE_PROTECT_SHIP = 0x1e08,
-    MSG_HAVE_MAKE_THEM_PROMISE_HELP = 0x1e09,
-    MSG_PREPARATIONS_READY = 0x1e39,
-    MSG_AYE_CAPTAIN_SEA_MONSTERS = 0x1e41,
-    MSG_THANK_ROBIN_DID_GOOD_AGAINST = 0x1ee1,
-    MSG_CAN_SEE_LAND = 0x1ee5,
-    MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT = 0x1f53,
-    MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR = 0x1f55,
-    MSG_SEE_YOURE_GOING_GO_FOR = 0x1f5b,
-    MSG_HOW_WAS_ROBIN_DID_EXPLORE = 0x1f69
-};
 
 union Slot {
     s32 w;
     s16 h[2];
 };
 
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
 
 s32 BuildMotionCountdown(s32, s16);
 
@@ -164,7 +148,7 @@ void FieldScene_RunThreeActorEncounter(void)
     Actor_FaceDirection(ACTOR_IVAN, 0x8000, 0);
     Value2(FieldScene_CallPairWith10, 3, 0x8000);
     FieldScene_CallPairWith10(22, 0);
-    Event_SetMessage(MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR);
+    Event_SetMessage((s32)MsgFuneRobinTalkedPassengersDidntTour);
     Call1(FieldScene_RunStepThen10, 22);
     Value2(FieldScene_CallPairWith10, 21, 0xd000);
     Event_ShowMessageAndWait(21, 0, 40);
@@ -185,14 +169,14 @@ void FieldScene_RunThreeActorEncounter(void)
         L_02003dfa:;
         if (Event_ChooseYesNo(0, 0) == 1) {
             Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-            Event_SetMessage(MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT);
+            Event_SetMessage((s32)MsgFuneRobinDontTalkLikeShouldnt);
             Event_OpenMessage(ACTOR_IVAN, 0);
             goto L_02003dfa;
         }
     }
     Event_Wait(20);
     Actor_SetAnimationAndWait(22, 3);
-    Event_SetMessage(MSG_SEE_YOURE_GOING_GO_FOR);
+    Event_SetMessage((s32)MsgFuneSeeYoureGoingGoFor);
     FieldScene_RunStepThen10(22);
     Actor_SetSpeed(22, 0x10000, 0x8000);
     Actor_SetSpeed(21, 0x10000, 0x8000);

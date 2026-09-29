@@ -79,15 +79,15 @@ end:
 
 void SceneState_ApplyBlockC9b(void)
 {
-    CommandTable_RunDirectionalInput((s32)&Value_00000c9b, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    CommandTable_RunDirectionalInput((s32)MsgWeaponShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockCc6(void)
 {
-    CommandTable_RunDirectionalInput((s32)&Value_00000cc6, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    CommandTable_RunDirectionalInput((s32)MsgArmorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
 }
 
 void SceneState_ApplyBlockCf1(void)
 {
-    CommandTable_RunDirectionalInput((s32)&Value_00000cf1, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    CommandTable_RunDirectionalInput((s32)MsgItemShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
 }

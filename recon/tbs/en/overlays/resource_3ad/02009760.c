@@ -1,9 +1,11 @@
 /* Draft of resource_3ad 0x02009760..0x02009a0c (684 bytes with pool),
- * Party_RidesWagon; the listing keeps the rows. Remaining difference: the
- * reference loads message 0x2558 from its literal pool as a link-time value;
- * the integer message is scheduled differently (684 bytes, 10 differ from
- * +0x2). */
+ * Party_RidesWagon; the listing keeps the rows. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_ActorFaceDirection, Engine_ActorSetAnimationAndWait,
+ * Engine_EventWait, Engine_ActorSetDestinationOffset,
+ * Engine_ActorWaitForMove, Engine_ActorWalkTo, ...). */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/CAVE.H"
+extern u8 MsgRunpaDontUnfinishedBusiness[];
 
 /*
  * Everyone heads for the wagon: Hammet and Bunza lead, the party falls in
@@ -15,7 +17,7 @@ void Party_RidesWagon(void)
     s32 departure;
 
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTH + FACING_STEP, 0);
-    departure = 0x2558;
+    departure = (s32)MsgRunpaDontUnfinishedBusiness;
     Event_SetMessage(departure + DEPARTURE_GERALD_HEADS_FOR_KALAY);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);

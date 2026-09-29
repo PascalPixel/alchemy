@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgKuupuappuThankHelpBelieve[];
 
 void SceneActor_SetModeZeroAndValue();
 void FieldScene_RunSplitTripleSteps();
@@ -63,8 +64,8 @@ void Scene_JoinRodSearch(void)
     *(u8 *)(Engine_ActorGet(2) + 91) = 0;
     Engine_ActorJump(2, 4, 0);
     Engine_EventWait(40);
-    mes = 0x125f;
-    Engine_EventSetMessage(0x125f);
+    mes = (s32)MsgKuupuappuThankHelpBelieve;
+    Engine_EventSetMessage((s32)MsgKuupuappuThankHelpBelieve);
     Engine_EventWait(20);
     SceneActor_SetModeZeroAndValue(2, 20);
     Call3(Engine_ActorShowEmote, 2, 0x101, 0);

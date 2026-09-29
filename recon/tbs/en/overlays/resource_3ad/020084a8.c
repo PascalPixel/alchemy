@@ -1,9 +1,11 @@
 /* Draft of resource_3ad 0x020084a8..0x02008828 (896 bytes with pool),
- * Reunion_Begin; the listing keeps the rows. Remaining difference: the
- * reference loads the first messages of its conversations (0x250d, 0x2512)
- * from its literal pool as link-time values; the integer messages are
- * scheduled differently (904 bytes, 231 differ from +0xc). */
+ * Reunion_Begin; the listing keeps the rows. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Engine_EventBegin,
+ * Engine_ActorSetPosition, Engine_ActorSetSpeed, Engine_ActorWalkTo,
+ * Engine_ActorWaitForMove, Engine_ActorFaceDirection, ...). */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/CAVE.H"
+extern u8 MsgRunpaMoment[];
+extern u8 MsgRunpaThinkSawSomeone[];
 
 /*
  * Once Hammet is free, Bunza steps out from where he hid, Hammet and the
@@ -63,7 +65,7 @@ void Reunion_Begin(void)
         Event_Wait(30);
 
         Actor_RunRepeatedMotion(ACTOR_GERALD, 1);
-        sighting = 0x250d;
+        sighting = (s32)MsgRunpaThinkSawSomeone;
         Event_SetMessage(sighting + SIGHTING_GERALD_SAW_SOMEONE);
         Event_ShowMessage(ACTOR_GERALD, 0);
         Event_Wait(30);
@@ -88,7 +90,7 @@ void Reunion_Begin(void)
         }
 
         Actor_ShowEmote(ACTOR_HAMMET, EMOTE_IN_FRONT | 0, 70);
-        recognition = 0x2512;
+        recognition = (s32)MsgRunpaMoment;
         Event_SetMessage(recognition + RECOGNITION_HAMMET_CALLS_OUT);
         Event_ShowMessage(ACTOR_HAMMET, 0);
         Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);

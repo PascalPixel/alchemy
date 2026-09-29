@@ -1,10 +1,12 @@
 /* Draft of RunActor9ScriptedSequence, resource_3bf at 0x02009ab0, built with
  * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: a message number held across calls is a C constant,
- * which GCC's second scheduling pass hoists above the calls before its first
- * use; the ROM loads it after them, as it would a link-time value.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_ActorEnableActionCallback, Engine_EventRequestExit,
+ * Engine_EventCloseScreen).
  * The listing keeps these rows. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaWho2[];
 
 void RunActor9ScriptedSequence(void)
 {
@@ -15,7 +17,7 @@ void RunActor9ScriptedSequence(void)
     Actor_SetAnimation(9, 0);
     Actor_EnableActionCallback(ACTOR_PARTY_LEADER, 1);
     {
-        u8 *t = 0x240d;
+        u8 *t = (s32)MsgRunpaWho2;
 
         Event_SetMessage((s32)t);
         Event_ShowMessage(9, 0);

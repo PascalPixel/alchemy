@@ -1,4 +1,5 @@
 #include "MENU_TEST.H"
+extern u8 MsgDebugGotTreasure[];
 
 void SceneState_RunCall1c00(void)
 {
@@ -8,7 +9,7 @@ void SceneState_RunCall1c00(void)
 
 void FieldScene_AssignCodeSetBToSlots(void)
 {
-    UiText_ShowPositionedMessageAndWait(0xc1c, 1);
+    UiText_ShowPositionedMessageAndWait((s32)MsgDebugGotTreasure, 1);
     Inventory_AddItem(0, 0xb8);
     Inventory_AddItem(0, 0xcc);
     Inventory_AddItem(0, 0xdc);

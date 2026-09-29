@@ -1,13 +1,13 @@
-/* Draft of ConfigureSceneActor13, resource_3bf at 0x0200cba4, built with
- * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: the ROM loads message 0x2440 from its literal pool, as a
- * link-time value; as a C constant GCC builds it with mov and lsl.
- * The listing keeps these rows. */
+/* Draft of resource_3bf 0x0200cba4 (ConfigureSceneActor13): it matches the
+ * ROM byte for byte now that the message it loads from the literal pool has a
+ * catalogue name (MsgRunpaRightRightGive). The listing keeps these rows until
+ * the draft is adopted. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaRightRightGive[];
 
 void ConfigureSceneActor13(void)
 {
     Actor_RunRepeatedMotion(13, 2);
-    Event_SetMessage(0x2440);
+    Event_SetMessage((s32)MsgRunpaRightRightGive);
     Event_ShowMessage(13, 0);
 }

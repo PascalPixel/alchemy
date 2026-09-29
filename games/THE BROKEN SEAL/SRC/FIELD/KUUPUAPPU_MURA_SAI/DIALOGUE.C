@@ -6,6 +6,12 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKuupuappuGreatEverythingSolved[];
+extern u8 MsgKuupuappuGuysCheckJail[];
+extern u8 MsgKuupuappuOnceDodonpaTook[];
+extern u8 MsgKuupuappuTalkingMayorStrong[];
+extern u8 MsgKuupuappuWarriorsWhoCaptured[];
+extern u8 MsgKuupuappuWishVaultsElders[];
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -232,7 +238,7 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
     facing0 = (s16)actor->facing;
     actor->state_flags |= 2;
     Event_Begin();
-    Event_SetMessage(0x1cb4);
+    Event_SetMessage((s32)MsgKuupuappuWishVaultsElders);
     Actor_SetAnimation(15, 0);
     Actor_FaceEachOther(15, ACTOR_PARTY_LEADER, 2);
     Event_ShowMessageAndWait(15, 0, 10);
@@ -245,7 +251,7 @@ void SceneDialogue_RunActorFifteenFacingPreservedDialogue(void)
 void SceneDialogue_RunActor16CountedDialogue(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1cb5);
+    Event_SetMessage((s32)MsgKuupuappuGuysCheckJail);
     Actor_FaceEachOther(16, ACTOR_PARTY_LEADER, 2);
     Event_OpenMessage(16, 0);
     if (Event_ChooseYesNo(0, 0) != 0) {
@@ -263,14 +269,14 @@ void SceneDialogue_RunActorEightTimedDialogue(void)
     Event_Wait(20);
     Actor_FaceActor(8, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x305);
-    Event_SetMessage(0x1cab);
+    Event_SetMessage((s32)MsgKuupuappuWarriorsWhoCaptured);
     Event_ShowMessageAndWait(8, 0, 20);
     Event_End();
 }
 
 void SceneDialogue_RunActor11AcceptanceDialogue(void)
 {
-    Event_SetMessage(0x1cbd);
+    Event_SetMessage((s32)MsgKuupuappuOnceDodonpaTook);
     ((struct Actor_02000754 *)Actor_Get(11))->accepted = 1;
     ActorPresentation_RunActorModeOneThenZero(11);
     ((struct Actor_02000754 *)Actor_Get(11))->accepted = 0;
@@ -284,14 +290,14 @@ void SceneDialogue_RunActor12TimedTwoFlagScene(void)
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 20);
     GameFlag_Set(0x306);
     GameFlag_Set(0x868);
-    Event_SetMessage(0x1caf);
+    Event_SetMessage((s32)MsgKuupuappuTalkingMayorStrong);
     Event_ShowMessageAndWait(12, 0, 20);
     Event_End();
 }
 
 void ActorPresentation_RunActor13AcceptanceDialogue(void)
 {
-    Event_SetMessage(0x1cbf);
+    Event_SetMessage((s32)MsgKuupuappuGreatEverythingSolved);
     ((struct Actor_020007d4 *)Actor_Get(13))->accepted = 1;
     ActorPresentation_RunActorModeOneThenZero(13);
     ((struct Actor_020007d4 *)Actor_Get(13))->accepted = 0;

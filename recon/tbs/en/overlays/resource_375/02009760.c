@@ -1,11 +1,12 @@
 /* Draft of resource_375 0x02009760 (HaidiaSukureta_RunActorSequence), from
- * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference:
- * the ROM loads message 0xe85 from the literal pool and derives the
- * following lines from it, as a link-time message value would; its imports
- * still carry their old call-site names. The listing keeps these rows. */
+ * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_SUKURETA. Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines (Engine_ActorStop,
+ * Engine_EventOpenMessage, Engine_UiWorkWaitThenFinalizeCapacity,
+ * Engine_ActorFaceActor, Main_0808a168, Main_0808a0b0, ...). The listing keeps these rows. */
 #include "TYPES.H"
+extern u8 MsgHaidiaRockslideDestroyedFence[];
+extern u8 MsgHaidiaSaveYourselves[];
 
-extern u8 Data_00000e85[];
 extern u8 Data_02009ce0[];
 
 s32 Engine_GameFlagIsSet();
@@ -84,16 +85,14 @@ void HaidiaSukureta_RunActorSequence(void)
         if (Value1(Engine_GameFlagIsSet, 0x82f) != 0) {
             Engine_EventBegin();
             ((void (*)())Engine_ActorRunRepeatedMotion)(11, 2);
-            Call1(Engine_EventSetMessage, 0xe8b);
+            Call1(Engine_EventSetMessage, (s32)MsgHaidiaSaveYourselves);
             Engine_EventShowMessage(11, 0);
             Engine_EventEnd();
         } else {
             Engine_EventBegin();
             Engine_ActorStop(11);
             Engine_ActorRunRepeatedMotion(11, 1);
-            /* FAKEMATCH: message 0xe85 comes from a link symbol so GCC keeps the
-             * message base in one register instead of folding each offset. */
-            base5_e85 = (s32)Data_00000e85;
+            base5_e85 = (s32)MsgHaidiaRockslideDestroyedFence;
             Engine_EventSetMessage(base5_e85);
             Engine_EventShowMessageAndWait(11, 0, 20);
             Call3(Engine_ActorShowEmote, 0, 0x100, 30);

@@ -1,6 +1,9 @@
 #include "TYPES.H"
 
-extern u8 Data_00000e70[];
+extern u8 MsgHaidiaKnowRightOk[];
+extern u8 MsgHaidiaRightDitchStuff[];
+extern u8 MsgHaidiaRockHitsLose[];
+extern u8 MsgHaidiaThinkForgetThings[];
 void Func_02005e66();
 s32 Func_02005e7c();
 void Func_02005e90();
@@ -61,10 +64,10 @@ void HaidiaArashi_RunCallOutSequence(void)
     Func_02005f12(0, 22, 0);
     v5 = 0;
     if (Value2(Func_02005e7c, 0, 0) == 0) {
-        Call1(Func_02005f36, 0xee5);
+        Call1(Func_02005f36, (s32)MsgHaidiaThinkForgetThings);
         v5 = 1;
     } else {
-        Call1(Func_02005f40, 0xee6);
+        Call1(Func_02005f40, (s32)MsgHaidiaRockHitsLose);
     }
     Func_02005e66(20);
     Func_02005f68(22, 0, 40);
@@ -76,10 +79,10 @@ void HaidiaArashi_RunCallOutSequence(void)
     Func_02005ea0(20);
     Func_02005f50(22, 3);
     if (v5 != 0) {
-        /* FAKEMATCH: 0xe70 comes from the literal pool through a link symbol. */
-        Func_02005f92((s32)Data_00000e70);
+
+        Func_02005f92((s32)MsgHaidiaKnowRightOk);
     } else {
-        Call1(Func_02005f9a_b, 0xee7);
+        Call1(Func_02005f9a_b, (s32)MsgHaidiaRightDitchStuff);
     }
     Func_02005fb2(22, 0);
     Func_02005f6a(22, 2);

@@ -1,13 +1,13 @@
-/* Draft of resource_3ce 0x020081b8 (SceneState_ApplyBlockD77), built with
- * games/THE BROKEN SEAL/SRC/DEBUG/MENU_TEST/MENU_TEST.H.
- * Remaining difference: none in its bytes, but the ROM loads message 0xd77 from the literal pool as a link-time value, and no source defines it.
- * The listing keeps these rows. */
+/* Draft of resource_3ce 0x020081b8 (SceneState_ApplyBlockD77): it matches the
+ * ROM byte for byte now that the messages it loads from the literal pool have
+ * catalogue names (MsgArmorShopWelcome, MsgWarriorArmorShopWelcome,
+ * MsgWeaponShopWelcome). The listing keeps these rows until the draft is
+ * adopted. */
 #include "MENU_TEST.H"
 
-extern u8 Value_00000d77;
-s32 Func_02000240();
+extern u8 MsgWarriorArmorShopWelcome[];
 
 void SceneState_ApplyBlockD77(void)
 {
-    Func_02000240((s32)&Value_00000d77, (s32)&Value_00000cc6 - (s32)&Value_00000c9b);
+    CommandTable_RunDirectionalInput((s32)MsgWarriorArmorShopWelcome, (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome);
 }

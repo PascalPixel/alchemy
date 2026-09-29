@@ -7,13 +7,13 @@
  * still spells by address need the names of the veneers they reach before
  * adopting. */
 #include "TASK.H"
+extern u8 MsgKorosseoStageFirstFinalsMatch[];
+extern u8 MsgKorosseoStageSecondFinalsMatch[];
+extern u8 MsgKorosseoStageThirdFinalsMatch[];
+extern u8 MsgKorosseoWouldYouLikeHearDescription[];
 
 extern u8 Value_0000008f;
 extern u8 Value_00000090;
-extern u8 Value_00002076;
-extern u8 Value_00002078;
-extern u8 Value_0000207a;
-extern u8 LinkedMessage_WouldYouLikeHearDescription;
 extern s16 SceneStateHalfwords[];
 void Func_02006084(void);
 void Func_02005ebc(s32, s32);
@@ -31,11 +31,11 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
     Func_02005ebc(b, 5);
     v = SceneStateHalfwords[224];
     if (v == (s32)&Value_0000008f) {
-        id = (s32)&Value_00002076;
+        id = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (v == (s32)&Value_00000090) {
-        id = (s32)&Value_00002078;
+        id = (s32)MsgKorosseoStageSecondFinalsMatch;
     } else {
-        id = (s32)&Value_0000207a;
+        id = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Event_SetMessage(id);
     Event_ShowMessage(a, 0);
@@ -53,7 +53,7 @@ s32 KorosseoKabe_RunStateInteraction(s32 a, s32 b)
         return r;
     }
     GameFlag_Set(b + 520);
-    Event_SetMessage((s32)&LinkedMessage_WouldYouLikeHearDescription);
+    Event_SetMessage((s32)MsgKorosseoWouldYouLikeHearDescription);
     Event_OpenMessage(a, 0);
     return Event_ChooseYesNo(0, 0);
 }
@@ -67,11 +67,11 @@ void KorosseoKabe_ShowFollowUpPrompt(s32 a, s32 b)
     Func_02005f72(b, 5);
     v = SceneStateHalfwords[224];
     if (v == (s32)&Value_0000008f) {
-        id = (s32)&Value_00002076;
+        id = (s32)MsgKorosseoStageFirstFinalsMatch;
     } else if (v == (s32)&Value_00000090) {
-        id = (s32)&Value_00002078;
+        id = (s32)MsgKorosseoStageSecondFinalsMatch;
     } else {
-        id = (s32)&Value_0000207a;
+        id = (s32)MsgKorosseoStageThirdFinalsMatch;
     }
     Event_SetMessage(id + 1);
     Event_ShowMessage(a, 0);

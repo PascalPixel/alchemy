@@ -1,10 +1,15 @@
 /* Draft of FieldScene_RunMainScriptSequence, resource_3bf at 0x0200b054, built with
  * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: a message number held across calls is a C constant,
- * which GCC's second scheduling pass hoists above the calls before its first
- * use; the ROM loads it after them, as it would a link-time value.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_ActorStartRepeatedMotion, Engine_EventOpenMessage,
+ * Engine_EventChooseYesNo, Engine_CameraMoveTo,
+ * Engine_ActorSetAttachedEffect, Engine_EventCloseScreen, ...).
  * The listing keeps these rows. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaAbleGet[];
+extern u8 MsgRunpaDad[];
+extern u8 MsgRunpaUhnnGetOff[];
 
 /* Long fixed sequence of setup, positioning, and per-actor animation calls
  * against actor slots 0-3, 11-15, driven by three script line tables, with
@@ -47,7 +52,7 @@ void FieldScene_RunMainScriptSequence(void)
     Event_Wait(120);
     /* Script line bases are overlay data symbols: an integer base would be
      * constant-propagated into every offset instead of staying in r5. */
-    script_a = 0x2481;
+    script_a = (s32)MsgRunpaUhnnGetOff;
     Event_SetMessage(script_a);
     Event_ShowMessage(13, 0);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
@@ -228,7 +233,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_FaceDirection(ACTOR_MIA, 0x4000, 0);
     Event_Wait(30);
     Event_Wait(60);
-    script_b = 0x248e;
+    script_b = (s32)MsgRunpaAbleGet;
     Event_SetMessage(script_b);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_SetAnimation(13, 6);
@@ -386,7 +391,7 @@ void FieldScene_RunMainScriptSequence(void)
     Actor_StartRepeatedMotion(13, 1);
     Event_Wait(60);
     Audio_PlayCue(8);
-    script_c = 0x24a6;
+    script_c = (s32)MsgRunpaDad;
     Event_SetMessage(script_c);
     Event_ShowMessage(13, 0);
     Actor_WalkTo(14, 0x1c8, 0x118);

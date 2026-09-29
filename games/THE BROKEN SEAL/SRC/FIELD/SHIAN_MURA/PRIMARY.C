@@ -1,4 +1,7 @@
 #include "SHIAN.H"
+extern u8 MsgShianDoingMadeMeSpillMy[];
+extern u8 MsgShianNowMustGetWaterAgain[];
+extern u8 MsgShianYoungWarriorsVeryGallantCame[];
 
 u8 *SceneEffect_GetPrimaryData(void)
 {
@@ -25,7 +28,7 @@ s32 SceneEffect_PrepareState(void)
 void SceneEffect_ShowActorSetupMessage(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_YOUNG_WARRIORS_VERY_GALLANT_CAME);
+    Event_SetMessage((s32)MsgShianYoungWarriorsVeryGallantCame);
     Event_AskYesNo(9, 0);
     Event_End();
 }
@@ -60,7 +63,7 @@ void FieldScene_RunPrimarySequence(void)
     p5 = *(u16 *)((s32)record + 6);
     Actor_FaceActor(18, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
-    Event_SetMessage(MSG_NOW_MUST_GET_WATER_AGAIN);
+    Event_SetMessage((s32)MsgShianNowMustGetWaterAgain);
     if (GameFlag_IsSet(0x200) == 0) {
         bump_step(1);
         Event_ShowMessage(18, 0);
@@ -140,7 +143,7 @@ void FieldScene_RunPrimarySequence(void)
     Actor_ShowEmote(18, 0x103, 0);
     Actor_StartRepeatedMotion(18, 2);
     Event_Wait(70);
-    Event_SetMessage(MSG_DOING_MADE_ME_SPILL_MY);
+    Event_SetMessage((s32)MsgShianDoingMadeMeSpillMy);
     Event_ShowMessageAndWait(18, 0, 20);
     BattleFx_PlayQueuedSound();
     record = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);

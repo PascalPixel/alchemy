@@ -7,28 +7,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-enum TaskMessage {
-    MSG_WOULD_LIKE_FRIEND_CHEER_FOR = 0x207d,
-    MSG_IF_KNOW_WHO_WANT_CHEER = 0x207e,
-    MSG_ROBIN_WILL_CHEER_FOR_WAY = 0x207f,
-    MSG_DO_YOUR_BEST = 0x2083,
-    MSG_UNFORTUNATELY_WE_HAVE_FULL_HOUSE = 0x2084,
-    MSG_MATCH_ABOUT_BEGIN_PLEASE_TAKE = 0x2085,
-    MSG_OPERATOR_LIFTS_WILL_CHEER_FOR = 0x20a1,
-    MSG_SHIFTING_FLOOR_STAGE = 0x20a2,
-    MSG_HERE_YOUR_OBJECTIVE_RIDE_LOGS = 0x20a5,
-    MSG_LOG_ROLLING_STAGE = 0x20a6,
-    MSG_ROBIN_DID_GET_GOOD_LOOK = 0x20e5,
-    MSG_WAIT_SHOULDNT_DECIDE_WHERE_BEST = 0x20e8
-};
-
-#if defined(TBS_EDITION_JA)
-#define SCENE_TEXT_VALUE 0x98f
-#elif defined(TBS_EDITION_DE) || defined(TBS_EDITION_ES) || defined(TBS_EDITION_FR) || defined(TBS_EDITION_IT)
-#define SCENE_TEXT_VALUE 0xa5a
-#else
-#define SCENE_TEXT_VALUE 0x96a
-#endif
 
 /* The engine's work blocks, one pointer per slot; slot 59 holds the stage's
  * descriptor. */

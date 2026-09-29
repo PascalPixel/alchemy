@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgHaidiaNotSneakingUpMtAleph[];
 
 /* Audited retained supplemental scene body.
  * The complete production span preserves 37 calls, 0 loop(s), and 5 explicit memory operation(s).
@@ -80,7 +81,7 @@ void Scene_RunSupplementalSequenceOne(void)
     Func_02007496(22, 16384, 20);
     Func_0200744e(22, 2);
     Func_020073ac(20);
-    Func_02007482(4046);
+    Func_02007482((s32)MsgHaidiaNotSneakingUpMtAleph);
     Func_020074aa(22, 0);
     p34 = Func_020073f0(22);
     *(s32 *)(p34 + 108) = 33609517;

@@ -3,64 +3,25 @@
 #include "FIELD_SCENE.H"
 
 #include "STAGED_ACTOR.H"
+extern u8 MsgFuneBadLuckLosingMyLucky[];
+extern u8 MsgFuneButWeCantSendShip[];
+extern u8 MsgFuneHaHaHaChosenOarsman[];
+extern u8 MsgFuneIfShipFromTolbiHad[];
+extern u8 MsgFuneItsTooLateHireMercenaries[];
+extern u8 MsgFuneJokingWantRow[];
+extern u8 MsgFuneLongerWeSitHereMore[];
+extern u8 MsgFuneLooksLikeYouveBeenChosen[];
+extern u8 MsgFuneNoooooNotGoing[];
+extern u8 MsgFuneNowWantSeeCaptainToo[];
+extern u8 MsgFuneOarsmanWasInjured[];
+extern u8 MsgFuneTheresWholeBunchReallyMuscular[];
+extern u8 MsgFuneTheseProudWarriorsNotGoing[];
+extern u8 MsgFuneWeDontKnowMightHappen[];
+extern u8 MsgFuneYouCameAskCaptainSet[];
+extern u8 MsgFuneYouGoingRow[];
 
 /* Message ids. */
-enum {
-    LinkedMessage_DontFeelDontTalkMe = 0x1f47,
-    LinkedMessage_YouFinallyPickedSomeoneDidnt = 0x1ea0,
-    LinkedMessage_IfYouveChosenOarsmanLets = 0x1ea4,
-    LinkedMessage_YouveBeenChosenAsOarsman = 0x1ea5,
-    LinkedMessage_YouCameAskCaptainSet = 0x1dd1,
-    LinkedMessage_YouGoingRow = 0x1e19,
-    LinkedMessage_TheresWholeBunchReallyMuscular = 0x1d50,
-    LinkedMessage_LooksLikeYouveBeenChosen = 0x1e9e,
-    LinkedMessage_HaHaHaChosenOarsman = 0x1e9f,
-    LinkedMessage_ThatsWhoYouPickedOarsman = 0x1ea3
-};
 
-enum ExtendedChoreographyMessage {
-    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
-    MSG_ITS_TOO_LATE_HIRE_MERCENARIES = 0x1d30,
-    MSG_BUT_WE_CANT_SEND_SHIP = 0x1d31,
-    MSG_LONGER_WE_SIT_HERE_MORE = 0x1d4e,
-    MSG_IF_WE_ARENT_GOING_SET = 0x1d56,
-    MSG_NOW_WANT_SEE_CAPTAIN_TOO = 0x1d91,
-    MSG_YOURE_TRYING_LAUNCH_SHIP = 0x1d93,
-    MSG_BAD_LUCK_LOSING_MY_LUCKY = 0x1dcd,
-    MSG_IF_SHIP_FROM_TOLBI_HAD = 0x1dd4,
-    MSG_ITS_MY_LUCKY_ANCHOR = 0x1ddb,
-    MSG_WE_DONT_KNOW_MIGHT_HAPPEN = 0x1e06,
-    MSG_THESE_PROUD_WARRIORS_NOT_GOING = 0x1e13,
-    MSG_OUR_REPLACEMENT_NEVER_ARRIVED_BUT = 0x1e27,
-    MSG_CAST_OFF = 0x1e3b,
-    MSG_ROW_THOSE_OARS = 0x1e3c,
-    MSG_WERE_OFF = 0x1e3d,
-    MSG_IM_TURNING = 0x1e43,
-    MSG_HEY_ARE_YOU_OK = 0x1e6e,
-    MSG_OHHHH_NOOOO_GOING_MAKE_ME = 0x1e81,
-    MSG_HA_HA_HA_ROWING_FEEL = 0x1e84,
-    MSG_GIVES_ME_CHILLS_THINK_COULD = 0x1ea1,
-    MSG_ROBIN_YOUVE_GOT_GOOD_EYE = 0x1ea2,
-    MSG_HO_HO_PERSON_GOING_GET = 0x1ea6,
-    MSG_OARSMAN_WAS_INJURED = 0x1eb2,
-    MSG_WONDER_WHATS_WRONG_SHIP_SHOULDNT = 0x1ec1,
-    MSG_THING_HAS_KAJA_HIS_MEN = 0x1ece,
-    MSG_MONSTERS_EVERYWHERE_IM_STUCK_ROWING = 0x1ecf,
-    MSG_SHIP_STARTING_LIST_IF_WE = 0x1ed0,
-    MSG_HOW_MANY_MONSTERS_OUT_THERE = 0x1ed1,
-    MSG_ANOTHER_MONSTER_ISNT_FIRST_CLASS = 0x1ed2,
-    MSG_DONT_CARE_TAKES_JUST_HURRY = 0x1edb,
-    MSG_IF_THOSE_MONSTERS_COME_BACK = 0x1edc,
-    MSG_BOATS_ROCKING_MUCH_IM_CERTAIN = 0x1edd,
-    MSG_HAD_IDEA_THERE_WERE_MANY = 0x1ede,
-    MSG_WERE_SURROUNDED_BY_MONSTERS_STILL = 0x1edf,
-    MSG_HATE_ARGUING = 0x1f48,
-    MSG_SORRY_EVERYONE_BUT_WE_NEED = 0x1f78,
-    MSG_IM_SPREADING_GOODWILL_WHEREVER_TRAVEL = 0x1f7b,
-    MSG_SHIPS_CREW_READY_FOR_ANYTHING = 0x1f7d,
-    MSG_SHIPS_CREW_READY_FOR_ANYTHING_2 = 0x1f7f,
-    MSG_GOOD_SHIP_HAS_ARRIVED_SAFELY = 0x1f81
-};
 
 struct SceneActor {
     u8 pad00[99];
@@ -204,11 +165,11 @@ void FieldScene_RunScene3b1_02000670(void)
     Event_Begin();
     Battle_ResetEffectCounterFar();
     if (GameFlag_IsSet(0x921) != 0) {
-        Event_SetMessage(MSG_IF_SHIP_FROM_TOLBI_HAD);
+        Event_SetMessage((s32)MsgFuneIfShipFromTolbiHad);
         Event_ShowMessage(10, 0);
     } else {
         if (GameFlag_IsSet(0x922) != 0) {
-            Event_SetMessage(MSG_NOW_WANT_SEE_CAPTAIN_TOO);
+            Event_SetMessage((s32)MsgFuneNowWantSeeCaptainToo);
             Event_OpenMessage(10, 0);
             if (Event_ChooseYesNo(0, 0) == 0) {
                 FieldScene_RunExtendedActorChoreography();
@@ -218,7 +179,7 @@ void FieldScene_RunScene3b1_02000670(void)
             Event_ShowMessage(10, 0);
             Actor_FaceDirection(10, 0xd000, 0);
         } else {
-            Event_SetMessage(MSG_BUT_WE_CANT_SEND_SHIP);
+            Event_SetMessage((s32)MsgFuneButWeCantSendShip);
             Event_ShowMessage(10, 0);
         }
     }
@@ -229,7 +190,7 @@ void FieldScene_RunScene3b1_02000670(void)
 void SceneDialogue_RunActor12Line(void)
 {
     Event_Begin();
-    Event_SetMessage(LinkedMessage_YouCameAskCaptainSet);
+    Event_SetMessage((s32)MsgFuneYouCameAskCaptainSet);
     Event_AskYesNo(12, 0);
     Event_End();
 }
@@ -238,23 +199,23 @@ void FieldScene_RunScene3b1_02000728(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x928) != 0) {
-        Event_SetMessage(MSG_OARSMAN_WAS_INJURED);
+        Event_SetMessage((s32)MsgFuneOarsmanWasInjured);
         FieldScene_RunStepThen10(8);
         Actor_FaceDirection(8, 0xd000, 60);
         Actor_SetAnimationAndWait(8, 4);
         FieldScene_RunStepThen10(8);
         Actor_SetAnimationAndWait(8, 3);
     } else if (GameFlag_IsSet(0x925) != 0) {
-        Event_SetMessage(MSG_WE_DONT_KNOW_MIGHT_HAPPEN);
+        Event_SetMessage((s32)MsgFuneWeDontKnowMightHappen);
         Event_ShowMessage(8, 0);
     } else if (GameFlag_IsSet(0x921) != 0) {
-        Event_SetMessage(MSG_BAD_LUCK_LOSING_MY_LUCKY);
+        Event_SetMessage((s32)MsgFuneBadLuckLosingMyLucky);
         Event_ShowMessage(8, 0);
         if (GameFlag_IsSet(0x925) == 0 && GameFlag_IsSet(0x924) != 0) {
             gEventWork->unknown_172 = 1;
         }
     } else {
-        Event_SetMessage(MSG_ITS_TOO_LATE_HIRE_MERCENARIES);
+        Event_SetMessage((s32)MsgFuneItsTooLateHireMercenaries);
         Event_ShowMessage(8, 0);
     }
     Event_End();
@@ -268,7 +229,7 @@ void FieldScene_RunScene3b1_020007f8(void)
     Event_Begin();
     if (GameFlag_IsSet(0x925) != 0) {
         Actor_StartRepeatedMotion(8, 2);
-        Event_SetMessage(MSG_THESE_PROUD_WARRIORS_NOT_GOING);
+        Event_SetMessage((s32)MsgFuneTheseProudWarriorsNotGoing);
         FieldScene_RunStepThen10(8);
         Actor_FaceActor(8, ACTOR_PARTY_LEADER, 10);
         Event_OpenMessage(8, 0);
@@ -283,7 +244,7 @@ void FieldScene_RunScene3b1_020007f8(void)
         Event_ShowMessage(8, 0);
         Actor_FaceDirection(8, 0x3000, 0);
     } else {
-        Event_SetMessage(MSG_LONGER_WE_SIT_HERE_MORE);
+        Event_SetMessage((s32)MsgFuneLongerWeSitHereMore);
         Event_ShowMessage(8, 0);
     }
     L_0200088e:;
@@ -294,10 +255,10 @@ void SceneDialogue_ShowLine1E19Or1D50(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(0x925) != 0) {
-        Event_SetMessage(LinkedMessage_YouGoingRow);
+        Event_SetMessage((s32)MsgFuneYouGoingRow);
         Event_AskYesNo(10, 0);
     } else {
-        Event_SetMessage(LinkedMessage_TheresWholeBunchReallyMuscular);
+        Event_SetMessage((s32)MsgFuneTheresWholeBunchReallyMuscular);
         Event_ShowMessage(10, 0);
     }
     Event_End();
@@ -341,7 +302,7 @@ void SceneState_RunFlagBranchedActor8Setup(void)
 
         Event_Begin();
         FuneHeya_TurnActorToOpenSide(obj);
-        Event_SetMessage(LinkedMessage_LooksLikeYouveBeenChosen);
+        Event_SetMessage((s32)MsgFuneLooksLikeYouveBeenChosen);
         FieldScene_RunStepThen10(8);
         Actor_SetAnimation(obj, 2);
         p = Object_GetByIdFar(0);
@@ -352,13 +313,13 @@ void SceneState_RunFlagBranchedActor8Setup(void)
         Actor_SetPosition(obj, 0, 0);
         Event_End();
     } else if (GameFlag_IsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(8, 0x1e78, 0x990);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x990);
     } else if (GameFlag_IsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(8, 0x1e78, 0x917);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x917);
     } else if (GameFlag_IsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(8, 0x1e78, 0x935);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x935);
     } else {
-        FieldScene_RunPrimarySequence(8, 0x1e78, 0x92c);
+        FieldScene_RunPrimarySequence(8, (s32)MsgFuneNoooooNotGoing, 0x92c);
     }
 }
 
@@ -370,7 +331,7 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
 
         Event_Begin();
         FuneHeya_TurnActorToOpenSide(o);
-        Event_SetMessage(LinkedMessage_HaHaHaChosenOarsman);
+        Event_SetMessage((s32)MsgFuneHaHaHaChosenOarsman);
         FieldScene_RunStepThen10(10);
         Actor_SetAnimation(o, 2);
         p = Object_GetByIdFar(0);
@@ -381,12 +342,12 @@ void SceneDialogue_RunActorTenFlaggedDialogue(void)
         Actor_SetPosition(o, 0, 0);
         Event_End();
     } else if (GameFlag_IsSet(0x92b) != 0) {
-        FieldScene_RunPrimarySequence(10, 0x1e7b, 0x992);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x992);
     } else if (GameFlag_IsSet(0x92a) != 0) {
-        FieldScene_RunPrimarySequence(10, 0x1e7b, 0x919);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x919);
     } else if (GameFlag_IsSet(0x929) != 0) {
-        FieldScene_RunPrimarySequence(10, 0x1e7b, 0x937);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x937);
     } else {
-        FieldScene_RunPrimarySequence(10, 0x1e7b, 0x92e);
+        FieldScene_RunPrimarySequence(10, (s32)MsgFuneJokingWantRow, 0x92e);
     }
 }

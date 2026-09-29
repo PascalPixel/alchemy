@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgSoruSukuretaYouFoundIt[];
 /*
  * The statue hall of Sol Sanctum, after Robin drops the statue into the
  * hole it opened. Sukureta comes down to look, Gerald and Jasmine tell him
@@ -13,19 +14,6 @@ enum StatueHallActor {
 };
 
 /* Each line follows the one before; only the first is set. */
-enum StatueHallMessage {
-    MSG_SUKURETA_YOU_FOUND_IT = 0x101a,
-    MSG_JASMINE_SUKURETA,
-    MSG_SUKURETA_EXCELLENT_WORK,
-    MSG_SUKURETA_WHERE_DID_THE_HOLE_COME_FROM,
-    MSG_GERALD_BEAMS_OF_LIGHT_OPENED_IT,
-    MSG_JASMINE_THEN_THE_STATUE_DROPPED,
-    MSG_SUKURETA_GOOD_WORK_EVERYONE,
-    MSG_SUKURETA_THE_PUZZLE_WAS_THE_TRAP,
-    MSG_SUKURETA_THE_STATUE_DISARMED_IT,
-    MSG_SUKURETA_WE_SHOULD_BE_ALL_RIGHT,
-    MSG_SUKURETA_I_WILL_WATCH_FROM_LUNA
-};
 
 void Event_SayThenWait(s32 speaker, s32 frames);
 /* Call sites spelled through these wrappers pass their constants straight
@@ -70,7 +58,7 @@ void FieldScene_SetupStagedActors(void)
     Event_Wait(20);
     Actor_SetPosition(ACTOR_SUKURETA, 0x2400000, 0xe80000);
     Event_Wait(1);
-    Event_SetMessage(MSG_SUKURETA_YOU_FOUND_IT);
+    Event_SetMessage((s32)MsgSoruSukuretaYouFoundIt);
     Event_SayThenWait(ACTOR_SUKURETA, 6);
     Actor_SetPosition(ACTOR_SUKURETA, 0x2400000, 0x1180000);
     Camera_SetSpeed(0xcccc, 0x1999);

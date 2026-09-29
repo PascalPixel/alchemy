@@ -1,5 +1,7 @@
 /* Draft of FieldScene_RunScene3be_02000fd0, resource_3be at 0x02008fd0 (split from FIELD/KARAGORU_DOU/STAGED_PAIR.C).
- * Remaining difference: it loads constants through address-derived symbols (Value_/Data_0000/LinkedMessage_ names) that no link defines, so the overlay keeps its listing rows. */
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_EventOpenMessage, Engine_EventChooseYesNo). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -8,13 +10,8 @@
 
 #include "STAGED_ACTOR_PAIR_SCENE.H"
 #include "STAGED_ACTOR.H"
+extern u8 MsgKaragoruDoYouWishCrossInto[];
 
-enum StagedPairMessage {
-    MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
-    MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
-    MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
-    MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
-};
 
 struct EffectRecord {
     u8 pad[9];
@@ -61,7 +58,6 @@ extern u8 Data_02009bcc[];
 extern u8 Data_02009c80[];
 extern u8 Data_02009ce0[];
 extern s16 Data_02000240_t[][1];
-extern u8 LinkedMessage_DoYouWishCrossInto[];
 
 s32 *Func_02002698();
 
@@ -111,7 +107,7 @@ void FieldScene_RunScene3be_02000fd0(void)
     s32 record;
     s32 base5_23cc;
 
-    base5_23cc = (s32)LinkedMessage_DoYouWishCrossInto;
+    base5_23cc = (s32)MsgKaragoruDoYouWishCrossInto;
     Event_SetMessage(base5_23cc);
     Event_OpenMessage(8, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {

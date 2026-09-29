@@ -1,9 +1,10 @@
-/* Draft of LinkLobby_TalkToAttendant, resource_3cb at 0x0200906c (was
- * MENU/LINK_LOBBY/ATTENDANT_TALK.C).
- * Remaining difference: each branch's message number is a C constant GCC
- * hoists above its test; the ROM loads it after, as a link-time value.
- * The listing keeps these rows. */
+/* Draft of resource_3cb 0x0200906c (LinkLobby_TalkToAttendant): it matches
+ * the ROM byte for byte now that the messages it loads from the literal pool
+ * have catalogue names (MsgLobbyBattleArenaOld, MsgLobbyThreeAlliesFight).
+ * The listing keeps these rows until the draft is adopted. */
 #include "TYPES.H"
+extern u8 MsgLobbyBattleArenaOld[];
+extern u8 MsgLobbyThreeAlliesFight[];
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -37,11 +38,11 @@ s32 LinkLobby_TalkToAttendant(s32 actor)
         message = 0x2985;
         break;
     case 13:
-        message = 0x297f;
+        message = (s32)MsgLobbyThreeAlliesFight;
         break;
     case 14:
     default:
-        message = 0x2982;
+        message = (s32)MsgLobbyBattleArenaOld;
         break;
     }
     Engine_ActorFaceActor(actor, gGameState.words[125], 0);

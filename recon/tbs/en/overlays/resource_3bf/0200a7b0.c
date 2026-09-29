@@ -4,8 +4,10 @@
  * ROM loads scene 0xa3 from its literal pool as a link-time value.
  * The listing keeps these rows. */
 #include "FORTRESS.H"
+extern u8 MsgRunpaBackMoreGuess[];
+extern u8 MsgRunpaDodonpaPulledLever[];
+extern u8 MsgRunpaTimeEat[];
 
-extern u8 LinkedMessage_DodonpaPulledLever;
 void Func_020057ec();
 s32 Func_02007e76();
 s32 Func_0200804e();
@@ -47,7 +49,7 @@ void PlayStoryScene(void)
         Actor_FaceDirection(ACTOR_MIA, 16384, 0);
         Actor_SetPosition(13, 29884416, 20971520);
         Value2(Engine_CameraSetSpeed, 131072, 16384);
-        text_line = 0x247d;
+        text_line = (s32)MsgRunpaBackMoreGuess;
         Event_SetMessage(text_line);
         Event_ShowMessage(13, 0);
         Value3(Engine_ActorWalkTo, 13, 458, 272);
@@ -84,7 +86,7 @@ void PlayStoryScene(void)
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
         Audio_PlayCue(17);
         Event_Wait(30);
-        text_line = 0x2464;
+        text_line = (s32)MsgRunpaTimeEat;
         Event_SetMessage(text_line);
         Event_ShowMessage(12, 0);
         Actor_FaceEachOther(ACTOR_PARTY_LEADER, 12, 0);
@@ -256,7 +258,7 @@ void PlayStoryScene(void)
         Actor_WaitForMove(13);
         Event_Wait(60);
         Audio_PlayCue(155);
-        Message_ShowCentered((s32)&LinkedMessage_DodonpaPulledLever, 1);
+        Message_ShowCentered((s32)MsgRunpaDodonpaPulledLever, 1);
         Actor_SetDestinationOffset(13, 8, -8);
         Actor_FaceActor(13, 11, 0);
         FieldScene_RunScene3bf_020025f8();

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgKuupuappuWontGoAway[];
 extern struct EventWork *gEventWork;
 
 extern u8 Data_00000015[];
@@ -92,7 +93,7 @@ void KuupuappuHeya_RunVaultEvent(void)
     *(s32 *)((*(s32 *)base5_3001ebc + 0x1c8)) = 32;
     Func_02007458();
     Func_02007bce(60);
-    Call1(Func_02007cac, 0x12e1);
+    Call1(Func_02007cac, (s32)MsgKuupuappuWontGoAway);
     Func_02007c9c(11, 1);
     Func_02007be2(20);
     Func_020074a2(11, 30);

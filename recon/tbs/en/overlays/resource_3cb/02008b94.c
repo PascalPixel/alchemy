@@ -1,13 +1,16 @@
 /* Draft of LinkLobby_RunBattleApplication, resource_3cb at 0x02008b94 (was
  * MENU/LINK_LOBBY/APPLY.C).
- * Remaining difference: the message base 0x2930 held across calls is loaded
- * at a different point, as a link-time value would be.
+ * Remaining difference: its messages have catalogue names now and its bytes
+ * match the ROM, but it names symbols no link defines
+ * (Engine_UiWorkWaitThenFinalizeCapacity, Engine_GameFlagWriteValue).
  * The listing keeps these rows. */
 /* Handle battle applications and reopen the lobby attendant's dialogue.
  * Reconstructed from the complete own-ROM owner and registered draft;
  * exact 468-byte extent, including literal pool (2026-09-26). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgLobbyOpponentArrived[];
+extern u8 MsgLobbyPleaseSpeakWhen[];
 
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
@@ -44,7 +47,7 @@ s32 LinkLobby_RunBattleApplication(void)
     s32 msg;
     s32 line;
 
-    msg = 0x2930;
+    msg = (s32)MsgLobbyPleaseSpeakWhen;
     Engine_EventBegin();
     Engine_ActorFaceActor(8, (*(union GameStateRows *)&gGameState).words[125], 0);
     if (LinkLobby_PeerSlotMatches(0) == 0) {
@@ -81,7 +84,7 @@ s32 LinkLobby_RunBattleApplication(void)
     } else {
         if (Value1(Engine_GameFlagIsSet, 0x173)) {
             LinkLobby_WriteSlotValue(0);
-            Engine_EventSetMessage(0x293d);
+            Engine_EventSetMessage((s32)MsgLobbyOpponentArrived);
             Engine_EventOpenMessage(8, 0);
             Engine_GameFlagClear(0x202);
             Call1(Engine_GameFlagClear, 0x173);

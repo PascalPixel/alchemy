@@ -1,6 +1,0 @@
-#ifndef GUARD_SAVE_STATE_FAMILY_H
-#define GUARD_SAVE_STATE_FAMILY_H
-
-#include "SAVE_STATE.H"
-
-#endif

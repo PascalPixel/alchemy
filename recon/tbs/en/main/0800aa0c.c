@@ -28,7 +28,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
-#include "video_dma_family.h"
 extern u8 gMenuCtrlWork[];
 extern u8 gWorkSlot[];
 

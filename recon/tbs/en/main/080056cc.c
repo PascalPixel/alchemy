@@ -11,7 +11,7 @@
  * identifier at line 44 of the scratch copy), so alchemy permute could not
  * score it.
  */
-#include "save_state_family.h"
+#include "SAVE_STATE.H"
 
 s32 SaveState_InitializeWorkspace(void)
 {

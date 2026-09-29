@@ -1,0 +1,247 @@
+@ The two voice banks the sequences select from, music and sound effects,
+@ as struct SoundVoice (AUDIO_ENGINE_TYPES.H): kind, base key, length, pan
+@ or sweep, target and the attack, decay, sustain and release envelope. A
+@ sampled or synthesised voice (kind bits 0-2 clear) and a CGB wave voice
+@ (kind 3) name the wave they play; the other CGB voices hold a duty or
+@ noise setting. The music bank's last voice is its drum kit (kind 0x80),
+@ whose table is indexed by key and whose voices follow the bank.
+	.macro voice kind:req, key:req, length:req, pan:req, target:req, attack:req, decay:req, sustain:req, release:req
+	.byte \kind, \key, \length, \pan
+	.4byte \target
+	.byte \attack, \decay, \sustain, \release
+	.endm
+
+	.section .rodata
+	.balign 4
+	.global Sound_BgmVoices
+Sound_BgmVoices:
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave00, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave01, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave02, 255, 0, 255, 165
+	voice 0x0b, 60, 0, 0, Sound_CgbWave8, 0, 2, 3, 3
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave03, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_Wave04, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_Wave05, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_Wave06, 255, 0, 255, 216
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave07, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave08, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave09, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave10, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave11, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_Wave12, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave13, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 85, 165, 193, 178
+	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 85, 165, 193, 178
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 85, 165, 193, 178
+	voice 0x00, 60, 0, 0, Sound_SynthSaw, 85, 165, 167, 178
+	voice 0x00, 60, 0, 0, Sound_SynthTriangle, 85, 127, 218, 165
+	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 22, 165, 193, 195
+	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 22, 165, 193, 195
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 22, 165, 193, 195
+	voice 0x00, 60, 0, 0, Sound_SynthSaw, 22, 165, 167, 195
+	voice 0x00, 60, 0, 0, Sound_SynthTriangle, 22, 127, 218, 195
+	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 255, 235, 90, 178
+	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 255, 235, 90, 178
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 255, 235, 90, 178
+	voice 0x00, 60, 0, 0, Sound_SynthSaw, 255, 235, 103, 178
+	voice 0x00, 60, 0, 0, Sound_SynthTriangle, 255, 235, 103, 165
+	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 255, 127, 90, 165
+	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 255, 127, 90, 165
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 255, 127, 90, 165
+	voice 0x00, 60, 0, 0, Sound_SynthSaw, 255, 127, 90, 165
+	voice 0x00, 60, 0, 0, Sound_SynthTriangle, 255, 127, 103, 165
+	voice 0x09, 60, 0, 0, 3, 0, 1, 7, 0
+	voice 0x0a, 60, 0, 0, 3, 0, 1, 7, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x80, 0, 0, 0, Sound_DrumVoices - 36 * 12, 0, 0, 0, 0
+	@ The drum kit's voices, from key 36.
+Sound_DrumVoices:
+	voice 0x08, 60, 0, 192, Sound_Wave14, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave14, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave15, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave15, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave15, 255, 0, 255, 216
+	voice 0x00, 55, 0, 160, Sound_Wave16, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave17, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
+	voice 0x00, 65, 0, 224, Sound_Wave16, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave18, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave18, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_Wave19, 255, 0, 255, 216
+
+	.global Sound_SeVoices
+Sound_SeVoices:
+	voice 0x09, 60, 0, 0, 2, 0, 4, 0, 4
+	voice 0x09, 60, 0, 0, 2, 0, 4, 0, 2
+	voice 0x09, 60, 0, 0, 2, 0, 4, 0, 0
+	voice 0x09, 60, 0, 0, 2, 0, 7, 15, 7
+	voice 0x0a, 60, 0, 0, 2, 0, 4, 0, 4
+	voice 0x0a, 60, 0, 0, 2, 0, 4, 0, 2
+	voice 0x0a, 60, 0, 0, 2, 0, 4, 0, 0
+	voice 0x0a, 60, 0, 0, 2, 0, 7, 15, 7
+	voice 0x09, 60, 0, 0, 3, 0, 1, 9, 4
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x09, 60, 0, 0, 3, 0, 4, 0, 4
+	voice 0x09, 60, 0, 0, 3, 0, 4, 0, 2
+	voice 0x09, 60, 0, 0, 3, 0, 4, 0, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x0c, 60, 0, 0, 0, 0, 4, 0, 4
+	voice 0x0c, 60, 0, 0, 0, 0, 4, 0, 2
+	voice 0x0c, 60, 0, 0, 0, 0, 4, 0, 0
+	voice 0x0c, 60, 0, 0, 0, 0, 7, 15, 7
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x0c, 60, 0, 0, 1, 0, 4, 0, 4
+	voice 0x0c, 60, 0, 0, 1, 0, 4, 0, 2
+	voice 0x0c, 60, 0, 0, 1, 0, 4, 0, 0
+	voice 0x0c, 60, 0, 0, 1, 0, 7, 15, 7
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x0c, 60, 0, 0, 1, 0, 4, 0, 4
+	voice 0x0c, 60, 0, 0, 1, 0, 4, 0, 2
+	voice 0x0c, 60, 0, 0, 1, 0, 4, 0, 0
+	voice 0x0c, 60, 0, 0, 0, 2, 0, 15, 2
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x09, 60, 0, 0, 2, 1, 6, 0, 6
+	voice 0x0b, 60, 0, 0, Sound_CgbWave7, 0, 4, 0, 2
+	voice 0x0c, 60, 0, 0, 0, 2, 7, 10, 7
+	voice 0x0c, 60, 0, 0, 0, 0, 7, 4, 3
+	voice 0x0c, 60, 0, 0, 0, 5, 2, 6, 6
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave20, 255, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_Wave21, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_Wave22, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_Wave23, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_Wave24, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_Wave25, 255, 0, 255, 188
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_Wave26, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_Wave27, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_Wave28, 255, 188, 154, 226
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 232
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 195
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 0
+	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 64, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 64, 232, 0, 232
+	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 64, 232, 0, 195
+	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 64, 232, 0, 0
+	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 64, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 64, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_Wave29, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_Wave30, 255, 242, 28, 165
+	voice 0x00, 60, 0, 0, Sound_Wave31, 255, 0, 255, 226
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x09, 60, 0, 0, 0, 0, 6, 0, 3

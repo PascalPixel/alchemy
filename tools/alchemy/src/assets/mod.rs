@@ -5,9 +5,11 @@
 //! and none takes an address: data that points at other data is emitted as
 //! `asm::Data` whose address words name labels the linker resolves.
 //!
-//! `build rom` compresses code overlays with `lz` today; the graphics, table,
-//! sound and text encoders wait for the build rules that link their inputs,
-//! and until then only their tests reach them.
+//! `build rom` compresses code overlays with `lz`, converts each sequence MIDI
+//! a linker script names into assembly with `sound`, and writes the sound
+//! files a game's data sources read from their WAV and PCM4 inputs. The
+//! graphics, table and text encoders wait for the build rules that link their
+//! inputs, and until then only their tests reach them.
 #![allow(dead_code)]
 pub(crate) mod asm;
 pub(crate) mod graphics;

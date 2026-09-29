@@ -7,7 +7,7 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_0200035c
+	overlay_veneer MakyuriChojo_ApplyEntryState
 	overlay_veneer SceneData_GetTableB938
 	overlay_veneer SceneData_GetTableb9c8
 	overlay_veneer SceneData_GetTableB9d4AfterStateCheck

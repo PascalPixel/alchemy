@@ -11,6 +11,9 @@
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
@@ -65,6 +68,9 @@ Engine_WorkSetValuesIfNonNegative:
 	.thumb_func
 Engine_MapRenderWaitForValues:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
 	.global Engine_GameFlagSet
 	.thumb_func

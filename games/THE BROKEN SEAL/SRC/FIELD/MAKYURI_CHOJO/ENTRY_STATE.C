@@ -1,19 +1,11 @@
-/* resource_39d:0200835c..0200856c (528 bytes with pool), still linked from
- * the listing. Remaining difference: the scene tests load their scene from
- * the literal pool, a link-time value; integer scenes are immediates (520
- * bytes, 288 differ). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 
 s32 FindNearestF2Actor(void);
 void FieldScene_RunFourActorPresentation(void);
 void RunScene59Sequence(void);
-
-union GameStateRows {
-    u8 bytes[512][2];
-    s16 halves[512][1];
-    s32 words[256];
-};
+void Func_020034bc(void);
 
 struct MapLayer {
     u8 unknown_00[12];
@@ -26,14 +18,15 @@ struct MapWork {
     struct MapLayer layers[8];
 };
 
-extern union GameStateRows Data_02000240_t;
+/* The map work, read here as its layers. */
+extern void *gMapWork;
 
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);
 }
 
-/* Mercury Lighthouse aerie entry: set the entrance selector and, in area 0x3a, raise the sprite priorities, lift actors 14-19 and set up the scene for the entrance. */
+/* Mercury Lighthouse aerie entry: set the entrance selector and, in the aerie's first scene, raise the sprite priorities, lift actors 14-19 and set up the scene for the entrance. */
 s32 MakyuriChojo_ApplyEntryState(void)
 {
     u32 i;
@@ -42,9 +35,9 @@ s32 MakyuriChojo_ApplyEntryState(void)
 
     Engine_GameFlagSet(0x111);
     gEventWork->start_transition = 0x204;
-    if (Data_02000240_t.halves[224][0] == 0x3a) {
+    if (gGameState.scene == (s32)&SceneId_MakyuriChojo1) {
     Engine_GameFlagSet(0x144);
-    Engine_TaskAddCallback((void (*)(void))0x200b4bd, 0xc80);
+    Engine_TaskAddCallback(Func_020034bc, 0xc80);
     Engine_ActorSetSpritePriority(0, 1);
     Engine_ActorSetSpritePriority(1, 1);
     Engine_ActorSetSpritePriority(2, 1);
@@ -77,14 +70,14 @@ s32 MakyuriChojo_ApplyEntryState(void)
     SetOverlayObjectMode(Engine_ActorGet(13), 0);
     Engine_ActorGet(12)->scale_x = -0x10000;
     Engine_ActorGet(13)->scale_x = -0x10000;
-    if (Data_02000240_t.halves[225][0] == 1) {
+    if (gGameState.entrance == 1) {
         if (!Engine_GameFlagIsSet(0x109)) {
             FieldScene_RunFourActorPresentation();
         }
-    } else if (Data_02000240_t.halves[225][0] == 2) {
+    } else if (gGameState.entrance == 2) {
         if (!Engine_GameFlagIsSet(0x251)) {
             {
-                struct MapLayer *layer = &(*(struct MapWork **)0x03001e70)->layers[7];
+                struct MapLayer *layer = &((struct MapWork *)gMapWork)->layers[7];
 
                 layer->y = 0x4000000;
             }
@@ -96,7 +89,7 @@ s32 MakyuriChojo_ApplyEntryState(void)
                 RunScene59Sequence();
             }
         }
-    } else if (Data_02000240_t.halves[225][0] == 5) {
+    } else if (gGameState.entrance == 5) {
         Engine_GameFlagSet(0x251);
     }
     }

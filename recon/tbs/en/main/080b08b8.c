@@ -1,3 +1,11 @@
+/* 2026-09-29 alchemy permute: score 1535 to 1400 on the permuter's scorer
+   (0 is exact); remaining 18 register-only, 5 reordered, 8 inserted, 2
+   deleted. Kept rewrites: 2x introduce a temporary, 1x reorder independent
+   statements, 1x add a same-width cast, 1x test truth or compare with
+   zero. FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* 2026-09-29 alchemy permute: score 2325 to 1535 on the permuter's scorer
    (0 is exact); remaining 14 register-only, 1 operand, 4 reordered, 10
    inserted, 2 deleted. Kept rewrites: 10x change loop form, 9x swap
@@ -47,12 +55,14 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     s8 tmp;
     s8 tmp4;
     s32 tmp2;
+    s8 tmp3;
 
-    if (cursor == 0)
+    if (!cursor)
         return;
     (u8)(kind = cursor->kind);
     if (kind == 0)
         return;
+    active = cursor->active;
     if (0 != 1) {
         do {
             anchor = cursor[0].anchor;
@@ -61,15 +71,17 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
         } while (1 != 0);
     }
     /* FAKEMATCH */
-    active = cursor->active;
     tmp2 = active + 1;
     xStart = cursor->x;
     active = tmp2;
     (u32)(dx = cursor->target_x - xStart);
-    cursor->active = active;
+    tmp3 = (s8)active;
+    cursor->active = tmp3;
     tmp = active;
     while (1) {
-        x = cursor->x + FixedPoint_Ratio(dx * (s8)active, kind);
+        s8 tmp5;
+        tmp5 = (s8)active;
+        x = cursor->x + FixedPoint_Ratio(dx * tmp5, kind);
         if (!(0 != 0))
             break;
     }

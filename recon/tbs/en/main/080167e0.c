@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 1050 to 1005 on the permuter's scorer
+   (0 is exact); remaining 10 register-only, 7 operand, 5 reordered, 2
+   inserted, 3 deleted. Kept rewrites: 7x swap commutative operands, 7x
+   reorder independent statements, 4x change loop form, 3x split or join a
+   compound assignment, 2x reorder local declarations, 2x introduce a
+   temporary, 2x add a same-width cast, 2x pointer arithmetic or indexing,
+   2x toggle register, 1x remove a temporary, 1x drop a same-width cast, 1x
+   test truth or compare with zero. FAKEMATCH: the permuter's temporaries,
+   register hints and swapped operand orders below only steer allocation
+   and scheduling; no programmer would write them, so they stay tagged
+   until a natural spelling replaces them. */
 /* 2026-09-29 alchemy permute: score 1360 to 1050 on the permuter's scorer
    (0 is exact); remaining 11 register-only, 6 operand, 6 reordered, 2
    inserted, 3 deleted. Kept rewrites: 14x swap commutative operands, 12x
@@ -31,40 +42,42 @@ void UiWork_ShiftPanelRowsLeft(s32 step)
     u32 *source;
     s32 size;
     u32 *destination;
+    register u8 *tmp4;
     register s32 n;
-    u8 *tmp4;
     s32 shift;
-    u8 *tmp9;
     u32 *tmp2;
 
     destination = (u32 *)0x06002520;
-    shift = 6 * step;
+    shift = step * 6;
     tmp4 = (u8 *)destination;
-    size = shift * 4;
-    tmp9 = &tmp4[size];
-    source = (u32 *)tmp9;
+    size = 4 * shift;
+    source = (u32 *)&tmp4[size];
     n = 29;
     tmp2 = (u32 *)0x06002500;
     row = tmp2;
-    if (0 <= n) {
-        while (1 != 0) {
-            u32 *tmp;
-            u32 *tmp5;
+    if (n >= 0) {
+        while (1) {
+            register u32 *tmp;
             u32 *tmp3;
+            u32 *tmp5;
             s32 tmp6;
             u32 *tmp7;
-            (u32)(tmp6 = 32 - shift);
-            Dma_Set(source, destination, (24 - shift) | 0x84000000, (volatile u32 *)0x040000d4);
+            u32 tmp8;
+            s32 tmp10;
+            tmp10 = (u32)32;
+            tmp8 = 0x84000000 | (24 - shift);
+            (u32)(tmp6 = tmp10 - shift);
+            Dma_Set(source, destination, tmp8, (volatile u32 *)0x040000d4);
+            source = 32 + source;
             tmp3 = &row[tmp6];
-            tmp5 = 32 + row;
             tmp = tmp3;
             tmp7 = 32 + destination;
-            source = source + 32;
+            tmp5 = row + 32;
             FillWords(tmp, size, 0);
+            --n;
             row = tmp5;
-            n--;
             destination = tmp7;
-            if (n < 0)
+            if (0 > n)
                 break;
         }
     }

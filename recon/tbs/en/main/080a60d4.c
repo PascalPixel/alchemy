@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 825 to 715 on the permuter's scorer (0
+   is exact); remaining 21 register-only, 4 operand, 2 reordered, 1
+   inserted, 3 deleted. Kept rewrites: 5x swap commutative operands, 5x
+   reorder local declarations, 4x add a same-width cast, 3x introduce a
+   temporary, 2x remove a temporary, 2x split or join a compound
+   assignment, 1x change loop form, 1x pointer arithmetic or indexing.
+   FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* 2026-09-29 alchemy permute: score 1251 to 825 (with the build's names) on the permuter's scorer
    (0 is exact); remaining 20 register-only, 4 operand, 4 reordered, 1
    inserted, 3 deleted. Kept rewrites: 2x reorder independent statements,
@@ -81,11 +91,11 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
     s32 pending;
     s32 result;
     struct OwnerInventoryState *owner;
-    s32 shown;
     s32 window;
+    s32 shown;
     s32 i;
-    u16 *actions;
     s8 action_count;
+    u16 *actions;
 
     menu = gMenuWork;
     selection = menu->selection;
@@ -102,10 +112,11 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
         menu->shortcut_icon->state = 13;
     }
     while (!GameFlag_TestFar(0x150)) {
+        s32 tmp2;
         if (pending) {
             pending = 0;
-            selection = Math_Mod(selection + count, count);
-            window = menu->status_window;
+            selection = Math_Mod(count + selection, count);
+            window = (s32)menu->status_window;
             owner = Owner_GetStateFar(owner_ids[selection]);
             PsynergyMenu_RefreshOwnerPsynergy(owner_ids[selection]);
             Menu_DrawOwnerStatusPanel(window, owner_ids[selection], 0, 0);
@@ -113,13 +124,15 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             PsynergyMenu_CallIconRoutineWithValue(menu, owner_ids[selection]);
             i = 3;
             if (i >= 0) {
-                do {
+                while (1) {
                     menu->row_positions[i] = (s32)&Value_0000001e;
-                    i--;
-                } while (i >= 0);
+                    --i;
+                    if (i < 0)
+                        break;
+                }
             }
             menu->row_positions[selection] = (s32)&Value_0000001a;
-            if (!GameFlag_TestFar(0x151) && !shown) {
+            if (!GameFlag_TestFar(0x151) && (u32)!shown) {
                 RenderOutput_ClearListFar(menu->info_window);
                 RenderOutput_RedrawSavedRectFar(menu->info_window);
                 UiText_DrawWorkValueWithLabel(menu->info_window);
@@ -129,8 +142,9 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             }
         }
         UiMenu_PositionCursor(selection * 24 - 10, 16);
-        WaitFrames(1);
-        if (gKeyState & 1) {
+        tmp2 = (s32)1;
+        WaitFrames(tmp2);
+        if (gKeyState & (u32)1) {
             if (menu->psynergy_count) {
                 Audio_PlayCue(112);
                 result = owner_ids[selection];
@@ -149,7 +163,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             tmp = PsynergyMenu_CollectActions(owner, actions, 1);
             Runtime_BumpFree(actions);
             action_count = tmp;
-            if (action_count == 0) {
+            if (0 == action_count) {
                 menu->shortcut = action_count;
                 Audio_PlayCue(114);
             } else {
@@ -157,7 +171,7 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
                 break;
             }
         }
-        if (gKeyState & 2) {
+        if (2 & gKeyState) {
             Audio_PlayCue(113);
             result = -1;
             break;
@@ -170,11 +184,11 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
         if (gKeysRepeat & 16) {
             Audio_PlayCue(111);
             pending = 1;
-            selection++;
+            selection += 1;
         }
     }
     menu->selection = selection;
     menu->selected_owner = owner_ids[selection];
-    (*menu).owner = owner_ids[selection];
+    menu[0].owner = owner_ids[selection];
     return result;
 }

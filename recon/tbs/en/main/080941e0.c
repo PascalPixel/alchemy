@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 1270 to 925 on the permuter's scorer
+   (0 is exact); remaining 29 register-only, 8 operand, 2 reordered, 4
+   inserted, 1 deleted. Kept rewrites: 3x reorder independent statements,
+   2x swap commutative operands, 2x introduce a temporary, 2x add a
+   same-width cast, 2x split or join a compound assignment, 1x reorder
+   local declarations, 1x remove a temporary, 1x drop a same-width cast, 1x
+   change loop form, 1x toggle register. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
 /* 2026-09-29 alchemy permute: score 2300 to 1270 on the permuter's scorer
    (0 is exact); remaining 25 register-only, 11 operand, 2 reordered, 7
    inserted, 1 deleted. Kept rewrites: 7x swap commutative operands, 6x
@@ -36,7 +46,7 @@ void WaitFrames(s32);
 
 void Func_080941e0(void)
 {
-    struct SceneColorWork *work;
+    register struct SceneColorWork *work;
 
     work = Data_03001ebc;
     Audio_PlayCue(Data_02000240[247]);
@@ -48,36 +58,40 @@ void Func_080941e0(void)
         Func_080901c0((s32)&Value_00000401, 16);
         work->step = 0;
         WaitFrames(16);
-        blue = 30;
+        blue = (u32)30;
         green = 960;
         red = 0x7800;
-        for (cnt = 0; cnt < 16; (u32)cnt++) {
-            *(volatile u16 *)0x050001e6 = red | blue | green;
+        cnt = 0;
+        while (cnt < 16) {
+            s32 tmp3;
+            tmp3 = red | blue;
+            *(volatile u16 *)0x050001e6 = tmp3 | green;
             WaitFrames(1);
             green -= 64;
-            red -= 0x800;
+            red = red - 0x800;
             blue -= 2;
+            (u32)cnt++;
         }
     } else {
-        s32 red, green, blue, cnt;
         u32 tmp2;
+        s32 red, green, blue, cnt;
         tmp2 = (u32)0x7fff;
         *(volatile u16 *)0x05000000 = tmp2;
-        red = 0x7800;
         Func_080901c0((s32)&Value_00000207, 16);
         work->step = 0;
         WaitFrames(16);
         green = 960;
+        red = 0x7800;
         blue = 30;
         cnt = 15;
         do {
             s32 tmp;
-            *(volatile u16 *)0x05000000 = red | (blue | green);
-            WaitFrames(1);
             tmp = green - 64;
-            green = tmp;
-            red -= 0x800;
+            *(volatile u16 *)0x05000000 = red | green | blue;
+            WaitFrames(1);
+            red = red - 0x800;
             (u32)(blue = blue - (s32)2);
+            green = tmp;
             cnt--;
         } while (cnt >= 0);
     }

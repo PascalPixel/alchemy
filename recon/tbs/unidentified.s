@@ -170,7 +170,10 @@ RenderResource_PairSourceTable:
 UiText_SecondGlyphs:
 	.incbin "baserom.gba", 0x00031e24, 0x00000400
 	.section .unidentified.08033e24,"a"
-	.incbin "baserom.gba", 0x00033e24, 0x000004d4
+	.incbin "baserom.gba", 0x00033e24, 0x000000d4
+	.global Menu_CursorLeftObjectTiles
+Menu_CursorLeftObjectTiles:
+	.incbin "baserom.gba", 0x00033ef8, 0x00000400
 	.global Menu_CursorObjectTiles
 Menu_CursorObjectTiles:
 	.incbin "baserom.gba", 0x000342f8, 0x00000400

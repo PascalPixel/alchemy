@@ -1,3 +1,11 @@
+/* 2026-09-29 alchemy permute: score 200 on the permuter's scorer (1
+   inserted, 1 deleted), unchanged after 56,705 candidates in 10 minutes.
+   The cse dump confirms the cause in the header: cse folds pass = result
+   to the constant (a constant costs 0 against 1 for a pseudo, so it is not
+   a tie), and the post-reload cselib pass does not turn it
+   back into the copy (a high-to-low move costs 4). A do-while with the
+   counter tested at the bottom and a chained initialisation of both give
+   the same or worse. */
 /* Draft, not exact (2026-09-24, names updated 2026-09-28): 256 of 256 bytes,
    1 differing halfword. The reference copies the zero result into the pass
    counter (mov r4, sl) where this spelling materialises movs #0: cse.c picks

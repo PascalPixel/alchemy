@@ -1,3 +1,9 @@
+/* 2026-09-29 alchemy permute: score 365 on the permuter's scorer after
+   spelling the build's names (from 425; 24 register-only, 3 operand, 3
+   reordered), unchanged after 38,888 candidates in 10 minutes. The
+   operands are two branch targets and one register-derived compare; the
+   rest is the r8/sl swap of the list cursor and slot pointer described
+   below. */
 /* Draft, not exact (2026-09-25): 596 of 596 bytes, 29 differing halfwords.
    Written from the listing. What made it line up: the col/row/id list
    walked as a while loop that reads the next pair at its end, the slot

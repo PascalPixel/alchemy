@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 80 on the permuter's scorer after
+   spelling the build's names (from 120): 20 is the listing's numeric call
+   target 0x08077300, which the linked build names
+   Runtime_GetBuildStampTimeFar (the scorer cannot resolve an absolute
+   listing symbol, make compare would), and 60 is the one reordered movs
+   r1, #242. 43,347 candidates in 10 minutes found nothing lower. In the
+   sched2 trace the frame load outranks the loop bound on the ready list
+   once its address load has issued (its store follows at load latency 2),
+   so it issues next; the reference's order needs the bound to rank at
+   least as high there. */
 /* Draft, not exact (2026-09-26): 412 of 412 bytes, 2 differing halfwords.
    A separate inline checksum helper, both with a local accumulator and
    with the initial accumulator passed in, sinks the zero initialization

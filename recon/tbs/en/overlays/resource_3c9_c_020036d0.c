@@ -11,6 +11,16 @@
  * including the pooled zero kept in r8 for sprite->flags. Tried: inline and
  * direct create and script calls, Call2 and Value4 wrappers, if/else, goto
  * and do-while forms, sprite load order, and 50k permuter candidates.
+ * 2026-09-29 (Mars): -dg shows the copy (set r0 r7) survives local-alloc
+ * and dies in greg: reload_cse's cselib still knows r0 == r7 from the
+ * `adds r7, r0, #0`. The game's copy needs r0 unknown there, as a CODE_LABEL
+ * between copy and use gives (UiText_PrepareMessageWork keeps the same copy
+ * after its have_work join). A label kept alive by a static &&label table
+ * restores exactly `ldr r1; adds r0, r7, #0; ldr r6` but emits rodata, so it
+ * is not admissible; unused labels, (void)&&label, a dead label-address
+ * local, switch, while/break and goto forms are all deleted before reload.
+ * A long long return cast also restores the copy but spills through the
+ * stack. Next idea: a real join label reached from a path jump2 removes.
  */
 #include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/CHOJO.H"
 

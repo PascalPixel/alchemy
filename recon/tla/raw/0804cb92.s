@@ -696,6 +696,9 @@ Func_0804cb92:
 	.4byte 0xffffe2fe
 	.2byte 0xf5fe
 	.2byte 0xffff
+	.global AffineEffect_InitializeWork
+	.thumb_func
+AffineEffect_InitializeWork:
 	.2byte 0xb520
 	movs	r1, #152
 	movs	r0, #232
@@ -724,6 +727,9 @@ Func_0804cb92:
 	pop	{r5, pc}
 	.2byte 0xcda9
 	.2byte 0x0804
+	.global Menu_EndResourceSelection
+	.thumb_func
+Menu_EndResourceSelection:
 	push	{r5, r6, r7, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -764,6 +770,9 @@ Func_0804cb92:
 	movs	r0, r0
 	.2byte 0xcda9
 	.2byte 0x0804
+	.global Menu_RunResourceSelectionLoop
+	.thumb_func
+Menu_RunResourceSelectionLoop:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -1033,6 +1042,9 @@ Func_0804cb92:
 	pop	{r5, r6, pc}
 	.2byte 0x01d7
 	.2byte 0x0000
+	.global Menu_AppendResourceEntry
+	.thumb_func
+Menu_AppendResourceEntry:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r8
@@ -1078,6 +1090,9 @@ Func_0804cb92:
 	mov	r8, r3
 	mov	sl, r5
 	pop	{r5, r6, r7, pc}
+	.global Menu_CenterResourceEntries
+	.thumb_func
+Menu_CenterResourceEntries:
 	push	{r5, r6, r7, lr}
 	mov	r7, sl
 	mov	r6, r9

@@ -171,8 +171,8 @@ Resource_DirectoryTable:
 	resource , Summon_CrimsonBeastTiles
 	resource , Summon_RedSlashTiles
 	resource , Summon_RedCrescentTiles
-	resource , Resource_Data09E
-	resource , Resource_Data09F
+	resource , Summon_WhiteArrowsTiles
+	resource , Summon_WhiteWispsTiles
 	resource , Summon_ForestCanopyTiles
 	resource , Summon_BronzeAutomatonTiles
 	resource , Summon_ColourNoiseTiles

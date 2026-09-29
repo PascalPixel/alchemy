@@ -21,7 +21,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/SECOND_ARRIVAL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/STAGE_INTRO.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/ACTOR_MOTION.o"(.text)
-        "*/resource_3bc_overlay.o"(.text.x0200a640)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SOLO_COMPETITOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/OBSTACLE.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x0200a88c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/SAVED_POSITIONS.o"(.text)

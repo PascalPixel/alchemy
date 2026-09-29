@@ -17,7 +17,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/STAGE_INTRO.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x020093e4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RUN_SCENE3BA.o"(.text)
-        "*/resource_3ba_overlay.o"(.text.x02009910)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SOLO_COMPETITOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/SET_STATE.o"(.text)
         "*/resource_3ba_overlay.o"(.text.x02009b5c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_KAWA/RUN_PARTY.o"(.text)

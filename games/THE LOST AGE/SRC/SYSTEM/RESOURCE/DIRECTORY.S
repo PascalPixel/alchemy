@@ -33,7 +33,7 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall010
 	resource , Resource_Data012
 	resource , Ui_WindowTiles
-	resource , Resource_Data014
+	resource , UiText_SmallFont
 	resource , Resource_Data015
 	resource , Title_ScreenPicture
 	resource , Resource_Data017
@@ -275,7 +275,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data103
 	resource , Resource_Data104
 	resource , BattleFx_CloudPuffSheet
-	resource , Resource_Data106
+	resource , BattleFx_TileAnimationMask
 	resource , Resource_Data107
 	resource , BattleFx_VioletPaletteA
 	resource , BattleFx_RedPaletteA
@@ -301,7 +301,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_YellowSparkSheet
 	resource , Resource_Data11E
 	resource , BattleFx_ShurikenSheet
-	resource , Resource_Data120
+	resource , BattleFx_FlareSheet
 	resource , Resource_Data121
 	resource , BattleFx_VioletPaletteB
 	resource , BattleFx_FireSwirlSheet
@@ -418,8 +418,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data192
 	resource , Resource_Data193
 	resource , BattleFx_LightningPillarSheet
-	resource , Resource_Data195
-	resource , Resource_Data196
+	resource , BattleFx_StagedParticlePath
+	resource , BattleFx_DualStreamPath
 	resource , Resource_Data197
 	resource , Resource_Data198
 	resource , Resource_Data199

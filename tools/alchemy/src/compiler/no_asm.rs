@@ -1,12 +1,10 @@
-//! Ordinary-C policy shared by candidate and production verification.
+//! Ordinary-C policy of production verification.
 
-use crate::compiler::plan::direct_preprocessor_command;
 use regex::{Captures, Regex};
 use sha2::{Digest, Sha256};
 use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 use std::sync::OnceLock;
 
 // Reviewed shared machine-interface bodies are admitted only by exact token
@@ -269,33 +267,6 @@ pub fn source_files(directory: &Path) -> io::Result<Vec<PathBuf>> {
     }
     files.sort();
     Ok(files)
-}
-
-/// Preprocess one source and report forbidden constructs from its expansion as
-/// `token:line:expanded`.
-pub fn expanded_forbidden(root: &Path, source: &Path) -> Result<String, String> {
-    let work = tempfile::tempdir().map_err(|error| error.to_string())?;
-    let output = work.path().join("ordinary.i");
-    let command =
-        direct_preprocessor_command(&source.to_string_lossy(), &output.to_string_lossy())?;
-    let program = command
-        .first()
-        .ok_or_else(|| "empty preprocessor command".to_string())?;
-    let status = Command::new(program)
-        .args(&command[1..])
-        .current_dir(root)
-        .output()
-        .map_err(|error| format!("{program}: {error}"))?;
-    if !status.status.success() {
-        let detail = String::from_utf8_lossy(&status.stderr);
-        return Err(format!("{program} failed: {}", detail.trim()));
-    }
-    let text = fs::read_to_string(&output).map_err(|error| error.to_string())?;
-    Ok(find_preprocessed(&output.to_string_lossy(), &text)
-        .into_iter()
-        .map(|finding| format!("{}:{}:expanded", finding.token, finding.line))
-        .collect::<Vec<_>>()
-        .join(","))
 }
 
 pub fn self_test() -> Result<(), String> {

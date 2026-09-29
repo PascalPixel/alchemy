@@ -77,14 +77,11 @@ mod tests {
     use crate::coverage::progress::GameDone;
     use serde_json::json;
     #[test]
-    #[ignore = "publication rendering reads the font from the approved local ROM"]
+    #[ignore = "slow: writes and compresses both figures twice"]
     fn figures_are_redrawn_with_each_count_and_match_the_readme() {
         use super::{check_figures, figure, figure_date_current, history, write_figures};
         let root = tempfile::tempdir().unwrap();
         let root = root.path();
-        let rom = "roms/tbs-en.gba";
-        std::fs::create_dir_all(root.join(rom).parent().unwrap()).unwrap();
-        std::fs::copy(crate::coverage::tree::root().join(rom), root.join(rom)).unwrap();
         std::fs::create_dir_all(history::path(root).parent().unwrap()).unwrap();
         std::fs::write(
             history::path(root),
@@ -167,7 +164,7 @@ fn render_figures(
     root: &Path,
     history: &serde_json::Value,
 ) -> Result<(raster::Canvas, raster::Canvas), String> {
-    let letters = letters::Letters::menu(root)?;
+    let letters = letters::Letters::face();
     let chart = figure::chart(&letters, &history::as_drawn(history));
     Ok((chart, figure::map(&letters, root)))
 }

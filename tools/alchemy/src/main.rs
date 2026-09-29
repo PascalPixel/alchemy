@@ -1,23 +1,19 @@
 use std::process::ExitCode;
 
-mod allocator;
+mod assets;
 mod bootstrap;
 mod build;
-mod build_assets;
 mod build_rom;
-mod candidate;
 mod check;
 mod compiler;
 mod coverage;
 mod disasm;
 mod format;
-mod generated_files;
 mod overlay;
 mod parallel;
 mod raw;
 mod recovery;
 mod targets;
-mod text_catalog;
 mod verify;
 
 const USAGE: &str = "usage: alchemy <command> [args]\n\

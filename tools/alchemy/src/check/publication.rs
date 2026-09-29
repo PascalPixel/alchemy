@@ -71,7 +71,7 @@ const NUMERIC_ELEMENTS_MAX: usize = 2_048;
 /// Byte values one flat JSON array may hold before only a named typed table
 /// explains it; the tracked tree peaks at 518 in `action_modes`.
 const JSON_BYTE_ARRAY_MIN: usize = 256;
-/// Element types of a typed table segment, as `build_assets::typed_table` reads them.
+/// Element types of a typed table segment, as `assets::table::typed_table` reads them.
 const TYPED_ELEMENTS: &[&str] = &[
     "u8",
     "s8",
@@ -381,15 +381,6 @@ fn upstream_documents(root: &Path, path: &Path) -> bool {
                 && path.join("bfd").is_dir()
         })
 }
-/// These are raw .text section bytes produced by score/allocator.rs, not notes.
-fn allocator_section(path: &Path) -> bool {
-    path.parent()
-        .and_then(Path::file_name)
-        .is_some_and(|name| name == "allocator-order")
-        && path
-            .file_name()
-            .is_some_and(|name| name == "normal.text" || name == "diagnostic.text")
-}
 fn check_documents(root: &Path) -> Result<(), String> {
     let mut pending = vec![root.to_path_buf()];
     let mut rejected = Vec::new();
@@ -410,7 +401,6 @@ fn check_documents(root: &Path) -> Result<(), String> {
                 .to_string_lossy();
             if !listed(extension(&relative), DOCUMENT_EXTENSIONS)
                 || (matches!(relative.as_ref(), "README.md" | "AGENTS.md") && kind.is_file())
-                || (relative.starts_with("out/") && allocator_section(&path))
             {
                 continue;
             }
@@ -574,6 +564,16 @@ fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
             .collect(),
     )
 }
+/// An indexed PNG of any size as its packed palette indices, row by row.
+fn packed_indices(data: &[u8]) -> Option<Vec<u8>> {
+    let mut reader = png::Decoder::new(std::io::Cursor::new(data))
+        .read_info()
+        .ok()?;
+    let mut pixels = vec![0; reader.output_buffer_size()];
+    let frame = reader.next_frame(&mut pixels).ok()?;
+    pixels.truncate(frame.buffer_size());
+    Some(pixels)
+}
 /// A palette of more than ink and paper whose every colour is grey: a dump
 /// drawn without the asset's real palette.
 fn grey_sheet(data: &[u8]) -> bool {
@@ -721,11 +721,19 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
         return None;
     }
     // The README figures are generated, but held to the indexed build-input
-    // standard: palette pixels and standard chunks, no text payloads.
+    // standard: palette pixels and standard chunks, no text payloads. Only
+    // their size is exempt from the tile grid; like any other PNG they carry a
+    // real palette and never draw the cartridge logo.
     if matches!(path, "PROGRESS.png" | "PROGRESS_CHART.png") {
-        return exact_indexed_stream(data)
-            .is_none()
-            .then_some("README figure is not an exact indexed PNG");
+        if exact_indexed_stream(data).is_none() {
+            return Some("README figure is not an exact indexed PNG");
+        }
+        if grey_sheet(data) {
+            return Some(GREY_SHEET);
+        }
+        return logo
+            .is_some_and(|logo| packed_indices(data).is_none_or(|pixels| contains(&pixels, logo)))
+            .then_some(LOGO_REASON);
     }
     let components: Vec<_> = path.split('/').collect();
     let (area, rest) = match components.as_slice() {
@@ -1122,7 +1130,13 @@ fn calculated_bookkeeping(value: &serde_json::Value) -> bool {
                     && object.contains_key("size"))
                 || (object.contains_key("start")
                     && object.contains_key("end")
-                    && (object.contains_key("source") || object.contains_key("owner")))
+                    && ["source", "owner", "kind"]
+                        .iter()
+                        .any(|key| object.contains_key(*key)))
+                || (object.contains_key("entry")
+                    && ["span_bytes", "span", "size", "extent"]
+                        .iter()
+                        .any(|key| object.contains_key(*key)))
                 || object
                     .get("owners")
                     .is_some_and(|owners| owners.is_array() || owners.is_object())
@@ -1133,16 +1147,15 @@ fn calculated_bookkeeping(value: &serde_json::Value) -> bool {
         }
         Value::Array(rows) => rows.iter().any(calculated_bookkeeping),
         Value::String(text) => serialized_listing(text),
+        // A cartridge address stays one when it is written in decimal.
+        Value::Number(number) => number
+            .as_u64()
+            .is_some_and(|value| (0x0800_0000..0x0a00_0000).contains(&value)),
         _ => false,
     }
 }
 
-fn calculated_bookkeeping_reason(path: &str, text: &str) -> Option<&'static str> {
-    // Historical progress is an intentional publication record. Its content
-    // still passes every payload, source and conflict check below.
-    if path == "recon/tbs/metrics/history.json" {
-        return None;
-    }
+fn calculated_bookkeeping_reason(text: &str) -> Option<&'static str> {
     if let Ok(value) = serde_json::from_str(text) {
         return calculated_bookkeeping(&value).then_some(GENERATED_REASON);
     }
@@ -1401,7 +1414,7 @@ fn publication_data_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Opti
         .or_else(|| data_uri_reason(text))
         .or_else(|| encoded_reason(text, !table))
         .or_else(|| json_byte_dump_reason(path, text))
-        .or_else(|| calculated_bookkeeping_reason(path, text))
+        .or_else(|| calculated_bookkeeping_reason(text))
         .or_else(|| included_bytes_reason(path, text))
         .or_else(|| attributes_reason(path, text))
         .or_else(|| runtime_definition_reason(path, text))
@@ -1650,8 +1663,38 @@ fn shared_root_reason(path: &str) -> Option<&'static str> {
     (!(source || interface))
         .then_some("games/COMMON holds only shared SRC/<module>/*.C and INCLUDE/<module>/*.H")
 }
+const RECON_REASON: &str = "recon/<game> holds only raw disassembly and its linker scripts, the top-level assembly scaffolding, C drafts under an edition and metrics/history.tsv";
+/// `recon/` fails closed as `games/` does: pret's scaffolding forms and the
+/// published progress history, nothing else. No JSON or TSV ledger, however
+/// it is named, may come back beside the scaffolding.
+fn recon_path_reason(path: &str) -> Option<&'static str> {
+    let components: Vec<_> = path.split('/').collect();
+    let [top, rest @ ..] = components.as_slice() else {
+        return None;
+    };
+    if !top.eq_ignore_ascii_case("recon") {
+        return None;
+    }
+    let game = |name: &str| matches!(name, "tbs" | "tla");
+    let edition = |name: &str| name.len() == 2 && name.bytes().all(|b| b.is_ascii_lowercase());
+    let named = |leaf: &str, extensions: &[&str]| {
+        leaf.rsplit_once('.')
+            .is_some_and(|(stem, suffix)| !stem.is_empty() && extensions.contains(&suffix))
+    };
+    let scaffolding = *top == "recon"
+        && match rest {
+            [g, .., ".gitkeep"] => game(g),
+            [g, leaf] => game(g) && named(leaf, &["s"]),
+            [g, "raw", leaf] => game(g) && named(leaf, &["s", "S"]),
+            [g, "raw", "overlays", leaf] => game(g) && named(leaf, &["s", "ld"]),
+            ["tbs", "metrics", "history.tsv"] => true,
+            [g, e, .., leaf] => game(g) && edition(e) && named(leaf, &["c", "h"]),
+            _ => false,
+        };
+    (!scaffolding).then_some(RECON_REASON)
+}
 fn native_path_reason(path: &str) -> Option<&'static str> {
-    if let Some(reason) = shared_root_reason(path) {
+    if let Some(reason) = shared_root_reason(path).or_else(|| recon_path_reason(path)) {
         return Some(reason);
     }
     let components: Vec<_> = path.split('/').collect();
@@ -2973,7 +3016,7 @@ fn text_fixtures() -> Vec<Fixture> {
             license,
         ),
         (
-            "recon/tbs/notes.json",
+            "tools/alchemy/notes.json",
             text(unified),
             patch,
         ),
@@ -3146,7 +3189,7 @@ fn json_fixtures() -> Vec<Fixture> {
         (RUNTIME, table(vec![stream]), dump),
         (RUNTIME, table(vec![fill]), dump),
         (RUNTIME, table(vec![envelope]), None),
-        ("recon/tbs/package.json", document(package), dump),
+        ("tools/alchemy/package.json", document(package), dump),
         ("tools/alchemy/src/rom.json", document(bytes(256)), dump),
         (
             DATABASE,
@@ -3216,6 +3259,50 @@ fn self_test(root: &Path) -> Result<(), String> {
     ] {
         if publication_path_reason(path).is_none() {
             return Err(format!("private path accepted: {path}"));
+        }
+    }
+    // Every removed recon ledger stays out under its own name, and so does
+    // any other file beside pret's scaffolding.
+    for game in ["tbs", "tla"] {
+        for ledger in [
+            "compiler-runtime.json",
+            "text.json",
+            "locations.tsv",
+            "metrics/history.json",
+            "metrics/executable.json",
+            "semantic/overlay-assembly.json",
+            "semantic/regions.json",
+            "graphics-review.json",
+            "raw/regions.json",
+            "raw/overlays/resource_380.tsv",
+            "en/main/owners.json",
+            "RAW/08000000.s",
+        ] {
+            let path = format!("recon/{game}/{ledger}");
+            if publication_path_reason(&path)
+                .or_else(|| native_path_reason(&path))
+                .is_none()
+            {
+                return Err(format!("recon ledger accepted: {path}"));
+            }
+        }
+    }
+    for path in [
+        "recon/tbs/overlays.s",
+        "recon/tla/sym_ewram.s",
+        "recon/tbs/raw/08000000.s",
+        "recon/tbs/raw/080022ec.S",
+        "recon/tla/raw/overlays/resource_64e_overlay.s",
+        "recon/tla/raw/overlays/resource_64e.ld",
+        "recon/tbs/en/main/08006878.c",
+        "recon/tbs/en/main/draft.h",
+        "recon/tbs/en/overlays/resource_372/scene.c",
+        "recon/tla/de/main/08001234.c",
+        "recon/tbs/ja/main/.gitkeep",
+        "recon/tbs/metrics/history.tsv",
+    ] {
+        if let Some(reason) = publication_path_reason(path).or_else(|| native_path_reason(path)) {
+            return Err(format!("recon scaffolding rejected: {path}: {reason}"));
         }
     }
     for path in [
@@ -3422,6 +3509,9 @@ mod tests {
             json!({"symbols":[{"name":"Field_Event", "address":"0x08000100"}]}),
             json!({"decoded_size":32,"encoded_size":16}),
             json!({"tables":{"0x08000100":{"name":"action_modes","element":"u8","values":[1,2]}}}),
+            json!({"manual_regions":[{"overlay":"resource_380","entry":"0x02000030","span_bytes":8}]}),
+            json!({"regions":[{"overlay":"resource_374","start":"0x02001010","end":"0x02001030","kind":"scene"}]}),
+            json!({"archive":{"contexts":0x0803_0000, "glyphs":[0x0803_2470]}}),
         ] {
             let data = value.to_string();
             for path in [
@@ -3534,12 +3624,12 @@ mod tests {
             root,
             &[("games/X/SRC/START.C", b"void Start(void) {}\n".to_vec())],
         );
-        let path = root.join("recon/tbs/renamed.inc");
+        let path = root.join("recon/tbs/raw/renamed.s");
         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
         std::fs::write(&path, "{\"payload_sha256\":\"synthetic\"}\n").unwrap();
         git(
             root,
-            &["add", "recon/tbs/renamed.inc"],
+            &["add", "recon/tbs/raw/renamed.s"],
             "publication fixture",
         )
         .unwrap();
@@ -3764,7 +3854,6 @@ mod tests {
             "upstream",
         )
         .unwrap();
-        std::fs::write(root.join("out/allocator-order/normal.text"), [0u8, 1]).unwrap();
         std::fs::write(root.join("worktrees/scene/.git"), "gitdir: ../../.git\n").unwrap();
         assert!(check_documents(root).is_ok());
         for name in [
@@ -3775,6 +3864,7 @@ mod tests {
             "out/notes.mdown",
             "out/notes.rest",
             "out/notes.adoc",
+            "out/allocator-order/normal.text",
             "tools/out/compiler-build/notes.md",
             "TODO.md",
             "CONTRIBUTING.md",
@@ -3924,6 +4014,18 @@ mod tests {
             publication_data_reason(path, &png, Some(&logo)),
             Some(LOGO_REASON)
         );
+        // The README figures get no pass from the logo or grey-sheet checks.
+        for figure in ["PROGRESS.png", "PROGRESS_CHART.png"] {
+            assert_eq!(publication_data_reason(figure, &png, None), None);
+            assert_eq!(
+                publication_data_reason(figure, &png, Some(&logo)),
+                Some(LOGO_REASON)
+            );
+            assert_eq!(
+                publication_data_reason(figure, &grey_fixture(4), None),
+                Some(GREY_SHEET)
+            );
+        }
     }
     #[test]
     fn exact_inflation_refuses_surplus_and_trailing_streams() {

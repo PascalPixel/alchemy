@@ -161,16 +161,6 @@ pub fn source_to_assembly_plan(options: &SourceToAssemblyPlanOptions) -> Result<
     }
     Ok(steps)
 }
-/// Direct hot-search preprocessing, defaulting the reported GCC minor to 96.
-pub fn direct_preprocessor_command(input: &str, output: &str) -> Result<Vec<String>> {
-    direct_preprocessor_command_for_target_with_minor_and_flags(
-        CompilerTarget::Tbs,
-        input,
-        output,
-        96,
-        &[],
-    )
-}
 fn direct_preprocessor_command_for_target_with_minor_and_flags(
     target: CompilerTarget,
     input: &str,

@@ -1,7 +1,7 @@
 //! Fail-closed publication checks for staged changes, outgoing history and
 //! whole tracked trees. Only what pret would commit passes: editable build
 //! inputs, source and tooling, never presentation material made from the game.
-use psynergy::assets::image::{indexed_png, PNG_SIGNATURE};
+use psynergy::assets::image::{indexed_bitmap_png, PNG_SIGNATURE};
 use psynergy::assets::midi::{midi_events, EventBody, MidiEvent};
 use psynergy::assets::wav::wav_pcm8;
 use std::collections::BTreeSet;
@@ -578,7 +578,8 @@ fn inflate_exact(stream: &[u8], size: usize) -> Option<Vec<u8>> {
 /// scanlines, and pixels the asset build reads.
 fn indexed_png_bytes(data: &[u8]) -> Option<Vec<u8>> {
     exact_indexed_stream(data)?;
-    let image = indexed_png(data).ok()?;
+    // A tile sheet or a linear bitmap: bitmaps may be any size.
+    let image = indexed_bitmap_png(data).ok()?;
     let depth = data[24];
     Some(
         image

@@ -11,7 +11,7 @@
 //! - or `.mtf`: the tag-2 tile compressor.
 use crate::graphics::{indices, metatiles};
 use crate::lz::{compress_mtf4, compress_tagged, LzMachine};
-use psynergy::assets::image::{bgr555_palette_from_png, indexed_png, GbaBpp};
+use psynergy::assets::image::{bgr555_palette_of, indexed_bitmap_png, GbaBpp};
 
 /// The resource packer's compressor, as the streams in both games show: the
 /// general ring's window, read-ahead and reach, and the palette ring's
@@ -41,12 +41,10 @@ pub fn build_file(built: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         [form, codec] => (*form, Some(*codec)),
         _ => return Err(format!("{built}: expected STEM.FORM or STEM.FORM.CODEC")),
     };
-    let image = indexed_png(png).map_err(|error| format!("{built}: {}", error.0))?;
+    let image = indexed_bitmap_png(png).map_err(|error| format!("{built}: {}", error.0))?;
     let (width, height) = (image.width as usize, image.height as usize);
     let pixels = match form {
-        "gbapal" => {
-            bgr555_palette_from_png(png).map_err(|error| format!("{built}: {}", error.0))?
-        }
+        "gbapal" => bgr555_palette_of(&image).map_err(|error| format!("{built}: {}", error.0))?,
         "bitmap" => indices(&image),
         "4bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp4, 1, 1)?,
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
@@ -63,7 +61,7 @@ pub fn build_file(built: &str, png: &[u8]) -> Result<Vec<u8>, String> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use psynergy::assets::image::png_from_gba_tiles;
+    use psynergy::assets::image::{png_from_bitmap, png_from_gba_tiles};
 
     #[test]
     fn names_read_their_image_and_follow_their_recipe() {
@@ -84,5 +82,9 @@ mod tests {
         assert!(packed[0] <= 1);
         assert_eq!(build_file("A.4bpp.mtf", &png).unwrap()[0], 2);
         assert!(build_file("A.4bpp.zip", &png).is_err());
+        // A bitmap may be any size; tiles need whole tiles.
+        let odd = png_from_bitmap(&[3; 60], &palette, 12).unwrap();
+        assert_eq!(build_file("A.bitmap", &odd).unwrap().len(), 60);
+        assert!(build_file("A.4bpp", &odd).is_err());
     }
 }

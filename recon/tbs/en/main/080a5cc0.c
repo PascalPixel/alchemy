@@ -1,6 +1,12 @@
 /* 2026-09-29: the two do-while(0) FAKEMATCH wrappers are no longer needed
  * (1855 -> 1775 without them) and callees carry the build's names; alchemy
- * permute scores 1575. */
+ * permute scores 1575. Eight minutes of permutation from there found 650
+ * with two natural changes: case 4 clears self_flag before reading the
+ * action, and its final test puts the success branch first. Message 0xbef
+ * is the text build's MsgItemUseResult: 610. Seven more message numbers
+ * (0xae2..0xaf1) are still Value_ symbols and cost 140 of that. The rest:
+ * the 0x174 halfword clear swaps r2/r3, and the reference forms r7 + 0x268
+ * from its own constant where this adds 80 to a neighbouring offset. */
 /* NONMATCHING, 2026-09-26: 794/800 bytes, 323 differing halfwords, 98
  * aligned edits (previously 800/800, 239/120). Shared return types audited.
  * ROM corrections: case 0 clears the halfword at 0x174, not selected_action
@@ -64,7 +70,7 @@ extern char Value_00000aea;
 extern char Value_00000aeb;
 extern char Value_00000af0;
 extern char Value_00000af1;
-extern char Value_00000bef;
+extern char MsgItemUseResult;
 
 void Func_080030f8(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
@@ -191,8 +197,8 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
             break;
 
         case 4:
-            raw = work->selected_action;
             self_flag = 0;
+            raw = work->selected_action;
             result = BattleEffect_ApplyToTargets(
                 raw, work->item_owner, work->target_owner, 0);
             if (work->target_owner == 9) {
@@ -209,16 +215,20 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
                 Ability_PlayUseAnimation(work->selected_action & 0x3fff);
                 RenderOutput_ClearListFar(work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    work->message_offset + (s32)&Value_00000bef, 0, -1);
+                    work->message_offset + (s32)&MsgItemUseResult, 0, -1);
             } else {
                 Audio_PlayCue(114);
                 RenderOutput_ClearListFar(work->info_window);
                 InventoryMenu_ShowModalMessage(
-                    work->message_offset + (s32)&Value_00000bef,
+                    work->message_offset + (s32)&MsgItemUseResult,
                     result,
                     result);
             }
-            if (result == -1) {
+            if (result != -1) {
+                result = 1;
+                work->flags_220 |= 1;
+                state = 1;
+            } else {
                 work->completion_flag = 1;
                 if (self_flag == 9) {
                     work->flags_220 |= 1;
@@ -226,10 +236,6 @@ s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
                 } else {
                     state = 3;
                 }
-            } else {
-                result = 1;
-                work->flags_220 |= 1;
-                state = 1;
             }
             break;
 

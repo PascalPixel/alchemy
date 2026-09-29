@@ -1,3 +1,10 @@
+/* 2026-09-29: eight minutes of permutation found 1640; the cleaned natural
+ * form kept here scores 1660 (26 register-only, 8 operand, 9 reordered, 1
+ * inserted, 7 deleted), from 2385 (alchemy permute --function
+ * Func_0800615c). What moved it: the channel flags are read into a local
+ * before channel_state[1] and the runtime flags are cleared, and stored
+ * into channel_state[0] after; the destination is set before the current
+ * mask is cleared, and the locals are declared in a different order. */
 /* Not-yet-C, complete 228-byte receive collector and pool.
  * Dma_Set recovers the stmia block; mask update follows that transfer.
  * Walking the checksum pointer and reloading the packet from pp for its
@@ -24,12 +31,12 @@ u8 Func_0800615c(void *payload)
 {
     struct SerialRuntime *state;
     u32 channel_state[2];
-    s32 channel;
-    u16 **ready_ptr;
     u16 **pp;
+    u16 **ready_ptr;
+    s32 channel;
     u8 *dst;
+    u32 flags;
 
-    channel_state[1] = 0;
     Serial_SetIme(0);
     state = SERIAL_RUNTIME;
     ready_ptr = state->ready_buffer;
@@ -40,23 +47,24 @@ u8 Func_0800615c(void *payload)
         ready_ptr[4] = *ready_ptr;
         *ready_ptr++ = swap;
     } while (--channel >= 0);
-    channel_state[0] = *(u32 *)SERIAL_RUNTIME->channel_flags;
+    flags = *(u32 *)SERIAL_RUNTIME->channel_flags;
+    channel_state[1] = 0;
     *(u32 *)SERIAL_RUNTIME->channel_flags = 0;
+    channel_state[0] = flags;
     Serial_SetIme(1);
-    SERIAL_RUNTIME->current_mask = 0;
-
-    pp = state->pending_buffer;
     dst = (u8 *)payload;
+    SERIAL_RUNTIME->current_mask = 0;
+    pp = state->pending_buffer;
     for (channel = 0; channel <= 1; channel++) {
+        s32 checksum;
         u16 *packet;
         u32 index;
-        s32 checksum;
 
         packet = *pp;
         checksum = 0;
         for (index = 0; index <= 13; index++)
             checksum += *packet++;
-        if (((u8 *)&channel_state[0])[channel] == 1 && (s16)checksum == -1) {
+        if (((u8 *)channel_state)[channel] == 1 && (s16)checksum == -1) {
             Dma_Set(*pp + 2, dst, 0x84000006, (volatile u32 *)DMA3);
             SERIAL_RUNTIME->current_mask |= 1 << channel;
         }

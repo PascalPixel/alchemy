@@ -41727,7 +41727,7 @@ msgctxt "message"
 msgid "10429"
 msgstr "Where could {actor_name:7} be{line_break}now? I'm so worried.{end_wait}"
 
-msgctxt "MsgRariberoCue28be"
+msgctxt "MsgRariberoLeavingLalivero"
 msgid "10430"
 msgstr "Are you leaving{line_break}Lalivero?{end_now}"
 

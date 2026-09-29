@@ -1,32 +1,15 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgFuneAyeCaptainSeaMonsters[];
+extern u8 MsgFunePreparationsReady[];
 
-enum MultiEncounterMessage {
-    MSG_WONDER_COULD_HAVE_HAPPENED = 0x1d26,
-    MSG_TOLD_WERE_LEAVING_SOON_SET = 0x1d36,
-    MSG_IF_WE_DONT_LEAVE_SOON = 0x1d37,
-    MSG_SOMEBODY_STOP_THEM = 0x1d6f,
-    MSG_THEY_CANT_PLANNING_MUTINY = 0x1d70,
-    MSG_DIDNT_DO_ANYTHING = 0x1d8d,
-    MSG_NOW_WE_HAVE_PROTECT_SHIP = 0x1e08,
-    MSG_HAVE_MAKE_THEM_PROMISE_HELP = 0x1e09,
-    MSG_PREPARATIONS_READY = 0x1e39,
-    MSG_AYE_CAPTAIN_SEA_MONSTERS = 0x1e41,
-    MSG_THANK_ROBIN_DID_GOOD_AGAINST = 0x1ee1,
-    MSG_CAN_SEE_LAND = 0x1ee5,
-    MSG_ROBIN_DONT_TALK_LIKE_SHOULDNT = 0x1f53,
-    MSG_ROBIN_TALKED_PASSENGERS_DIDNT_TOUR = 0x1f55,
-    MSG_SEE_YOURE_GOING_GO_FOR = 0x1f5b,
-    MSG_HOW_WAS_ROBIN_DID_EXPLORE = 0x1f69
-};
 
 union Slot {
     s32 w;
     s16 h[2];
 };
 
-extern u8 LinkedMessage_TheresNothingWeCanDo[];
 extern u8 FuneKanpan_CrewScript[];
 
 s32 BuildMotionCountdown(s32, s16);
@@ -218,7 +201,7 @@ void FieldScene_RunScene3af_02001c14(s32 a0, s32 a1)
     Call2(FieldScene_CallPairWith10, a1, 0x5000);
     Actor_Jump(a1, 4, 40);
     Actor_StartRepeatedMotion(a1, 2);
-    Event_SetMessage(MSG_PREPARATIONS_READY);
+    Event_SetMessage((s32)MsgFunePreparationsReady);
     Event_ShowMessageAndWait(a1, 0, 20);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 2);
     Event_CloseScreen();
@@ -240,7 +223,7 @@ void FieldScene_RunActorTwentyDialogueSequence(void)
     Event_WaitForScreen();
     Event_Wait(20);
     Actor_RunRepeatedMotion(20, 1);
-    Event_SetMessage(MSG_AYE_CAPTAIN_SEA_MONSTERS);
+    Event_SetMessage((s32)MsgFuneAyeCaptainSeaMonsters);
     Event_ShowMessageAndWait(20, 0, 10);
     FieldScene_CallPairWith10(22, 0x5000);
     Actor_Jump(22, 4, 20);

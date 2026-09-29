@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern u8 MsgFuneArrgh[];
 extern struct EventWork *gEventWork;
 extern u8 FuneKanpan_CrewScript[];
 
@@ -170,7 +171,7 @@ void FuneKanpan_RunDeckCrewScene(void)
     Engine_EventWait(10);
     Graphics_EnableObjLayerAndCallbacks();
     Ui_SetRenderResultFromObject(21);
-    Call3(UiText_ShowCenteredMessage, 0x1e45, 1, 0);
+    Call3(UiText_ShowCenteredMessage, (s32)MsgFuneArrgh, 1, 0);
     ObjectDispatch_StopCallbacksAndHideLayers();
     Engine_EventRequestExit(13);
 }

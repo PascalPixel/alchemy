@@ -1,10 +1,21 @@
 #include "VILLAGE.H"
+extern u8 MsgRunpaEastGuardAsksIfFrom[];
+extern u8 MsgRunpaEastGuardDemandsAuthorization[];
+extern u8 MsgRunpaEastGuardFearsBlame[];
+extern u8 MsgRunpaEastGuardThinksMerchantHarmless[];
+extern u8 MsgRunpaEastGuardTrustsCaveGate[];
+extern u8 MsgRunpaVillagerAAsksHowLong[];
+extern u8 MsgRunpaVillagerBShivers[];
+extern u8 MsgRunpaVillagerCAsksAboutKidnapping[];
+extern u8 MsgRunpaVillagerDAsksAboutCommotion[];
+extern u8 MsgRunpaVillagerGAsksAboutDonpa[];
+extern u8 MsgRunpaWestGuardAsksAboutEntering[];
 
 void WestGuard_Talk(void)
 {
     Event_Begin();
     Actor_ShowEmote(ACTOR_WEST_GUARD, EMOTE_IN_FRONT | 2, 60);
-    Event_SetMessage(MSG_WEST_GUARD_ASKS_ABOUT_ENTERING);
+    Event_SetMessage((s32)MsgRunpaWestGuardAsksAboutEntering);
     Event_AskYesNo(ACTOR_WEST_GUARD, 0);
     Event_End();
 }
@@ -17,10 +28,10 @@ void EastGuard_Talk(void)
 {
     Event_Begin();
     if (GameFlag_IsSet(FLAG_GUARDS_SUSPECT_KALAY) == 0) {
-        Event_SetMessage(MSG_EAST_GUARD_DEMANDS_AUTHORIZATION);
+        Event_SetMessage((s32)MsgRunpaEastGuardDemandsAuthorization);
         Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
-        Event_SetMessage(MSG_EAST_GUARD_ASKS_IF_FROM_KALAY);
+        Event_SetMessage((s32)MsgRunpaEastGuardAsksIfFrom);
         Event_OpenMessage(ACTOR_EAST_GUARD, 0);
         if (Event_ChooseYesNo(ACTOR_PARTY_LEADER, 0) == 0) {
             gEventWork->message++;
@@ -41,14 +52,14 @@ void EastGuard_MindRead(void)
     if (GameFlag_IsSet(FLAG_LUNPA_TRADE_REOPENED) == 0) {
         thoughts = GameFlag_IsSet(FLAG_GUARDS_SUSPECT_KALAY);
         if (thoughts == 0) {
-            thoughts = MSG_EAST_GUARD_FEARS_BLAME;
+            thoughts = (s32)MsgRunpaEastGuardFearsBlame;
         } else {
-            thoughts = MSG_EAST_GUARD_TRUSTS_CAVE_GATE;
+            thoughts = (s32)MsgRunpaEastGuardTrustsCaveGate;
         }
         Event_SetMessage(thoughts);
         Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     } else {
-        Event_SetMessage(MSG_EAST_GUARD_THINKS_MERCHANT_HARMLESS);
+        Event_SetMessage((s32)MsgRunpaEastGuardThinksMerchantHarmless);
         Event_ShowMessage(ACTOR_EAST_GUARD, 0);
     }
 }
@@ -56,7 +67,7 @@ void EastGuard_MindRead(void)
 void VillagerA_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_VILLAGER_A_ASKS_HOW_LONG);
+    Event_SetMessage((s32)MsgRunpaVillagerAAsksHowLong);
     Event_AskYesNo(ACTOR_VILLAGER_A, 0);
     Event_End();
 }
@@ -64,7 +75,7 @@ void VillagerA_Talk(void)
 void VillagerC_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_VILLAGER_C_ASKS_ABOUT_KIDNAPPING);
+    Event_SetMessage((s32)MsgRunpaVillagerCAsksAboutKidnapping);
     Event_AskYesNo(ACTOR_VILLAGER_C, 0);
     Event_End();
 }
@@ -72,7 +83,7 @@ void VillagerC_Talk(void)
 void VillagerG_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_VILLAGER_G_ASKS_ABOUT_DONPA);
+    Event_SetMessage((s32)MsgRunpaVillagerGAsksAboutDonpa);
     Event_AskYesNo(ACTOR_VILLAGER_G, 0);
     Event_End();
 }
@@ -81,7 +92,7 @@ void VillagerB_Shivers(void)
 {
     Event_Begin();
     Actor_RunRepeatedMotion(ACTOR_VILLAGER_B, 3);
-    Event_SetMessage(MSG_VILLAGER_B_SHIVERS);
+    Event_SetMessage((s32)MsgRunpaVillagerBShivers);
     Event_ShowMessage(ACTOR_VILLAGER_B, 0);
     Event_End();
 }
@@ -89,7 +100,7 @@ void VillagerB_Shivers(void)
 void VillagerD_Talk(void)
 {
     Event_Begin();
-    Event_SetMessage(MSG_VILLAGER_D_ASKS_ABOUT_COMMOTION);
+    Event_SetMessage((s32)MsgRunpaVillagerDAsksAboutCommotion);
     Event_AskYesNo(ACTOR_VILLAGER_D, 0);
     Event_End();
 }

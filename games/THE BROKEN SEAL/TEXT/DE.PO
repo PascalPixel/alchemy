@@ -24367,7 +24367,7 @@ msgctxt "message"
 msgid "06089"
 msgstr "Dies ist Xian. Reisende sind{line_break}hier herzlich willkommen.{line_break}Entspannt euch! Bleibt lange!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianYoungWarriorsVeryGallantCame"
 msgid "06090"
 msgstr "Junge Krieger,{line_break}sehr galant!{page_break}Ihr kamt durch den{line_break}Wald von Mogall?{end_now}"
 
@@ -24407,7 +24407,7 @@ msgctxt "message"
 msgid "06099"
 msgstr "Meine Kleider sind nicht{line_break}aus Seide. Seide ist sehr{line_break}teuer.{page_break}Nur die Reichen tragen sie.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianHooWhaaaHachaaa"
 msgid "06100"
 msgstr "Hoo-whaaa...{line_break}Hachaaa!{end_wait}"
 
@@ -24415,7 +24415,7 @@ msgctxt "message"
 msgid "06101"
 msgstr "Hehehe!!!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianKungFuStrong"
 msgid "06102"
 msgstr "Mein Kung Fu ist stark.{page_break}Wenn ihr Meister Fehs{line_break}Schule jeden Tag besucht,{line_break}werdet ihr auch stark!{end_wait}"
 
@@ -24427,7 +24427,7 @@ msgctxt "message"
 msgid "06104"
 msgstr "Dies ist ein Maulbeer-{line_break}Baum-Hain.{page_break}Wenn es Zeit zur Ernte{line_break}ist, kommt ganz Xian{line_break}zusammen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWarriorsFromSchoolStrongWarriors"
 msgid "06105"
 msgstr "Ihr seid die Krieger{line_break}aus der Schule! Seid{line_break}ihr starke Krieger?{end_now}"
 
@@ -24439,11 +24439,11 @@ msgctxt "message"
 msgid "06107"
 msgstr "Ihr seid schwache Krieger!{line_break}Nur wenige Krieger würden{line_break}sich selbst schwach nennen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianDoingMadeMeSpillMy"
 msgid "06108"
 msgstr "Was macht ihr denn? Jetzt{line_break}habe ich mein Wasser{line_break}verschüttet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianNowMustGetWaterAgain"
 msgid "06109"
 msgstr "Jetzt muss ich nochmals{line_break}welches holen. Autsch,{line_break}mein armer Rücken.{end_wait}"
 
@@ -24451,7 +24451,7 @@ msgctxt "message"
 msgid "06110"
 msgstr "Sprecht nicht mit mir,{line_break}sonst verschütte ich{line_break}mein Wasser.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWhaWhaHappened"
 msgid "06111"
 msgstr "Wa{pause_20_skippable}-Wa{pause_20_skippable}-Was ist geschehen?{line_break}Der Baum ist gerade{line_break}eben gesprungen!{end_wait}"
 
@@ -24555,7 +24555,7 @@ msgctxt "message"
 msgid "06136"
 msgstr "Minenarbeit ist sehr{line_break}anstrengend. Man braucht{line_break}viel Kraft dazu.{page_break}Besonders für Frauen ist{line_break}sie umso härter.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianXianHasMartialArtsBut"
 msgid "06137"
 msgstr "Xian ist die Heimat der{line_break}Kampfkunst, aber Kung Fu{line_break}ist nicht genug.{page_break}Die Leute sind besorgt,{line_break}daher kann man in Xian{line_break}auch Waffen kaufen.{end_wait}"
 
@@ -24563,7 +24563,7 @@ msgctxt "message"
 msgid "06138"
 msgstr "Manche sagen, dass es{line_break}feige ist, mit Waffen zu{line_break}kämpfen.{page_break}Ich sage, das ist nicht{line_break}wahr!{page_break}Es gibt viele verschiedene{line_break}Kämpfer und viele Arten{line_break}des Kampfes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianMartialArtistsCantUseHeavy"
 msgid "06139"
 msgstr "Kung Fu-Kämpfer können keine{line_break}schwere Rüstung tragen, da{line_break}sie sich sonst nicht mehr{page_break}schnell bewegen können.{line_break}Dies gilt aber nicht für{line_break}Krieger.{end_wait}"
 
@@ -24571,7 +24571,7 @@ msgctxt "message"
 msgid "06140"
 msgstr "Bei Kämpfen unter Kriegern{line_break}kämpft man mit Waffen.{page_break}Bei Kämpfen mit Kung Fu-{line_break}Meistern steht Ausweichen{line_break}im Vordergrund.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianXiansSpecialArmorNotSuited"
 msgid "06141"
 msgstr "Die speziellen Rüstungen{line_break}aus Xian sind für Krieger{line_break}nicht geeignet.{page_break}Ihr solltet besser normale{line_break}Rüstungen kaufen.{end_wait}"
 
@@ -24579,7 +24579,7 @@ msgctxt "message"
 msgid "06142"
 msgstr "Xian ist ein Dorf der{line_break}Handwerker. Hier kauft man{line_break}keine Gegenstände,{page_break}hier stellt man sie her.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWarriorsShouldLearnAboutTowns"
 msgid "06143"
 msgstr "Krieger sollten sich{line_break}über die Städte, die sie{line_break}besuchen, informieren.{page_break}Nur zu reisen und zu{line_break}kämpfen macht doch{line_break}keinen Spaß.{end_wait}"
 
@@ -25187,7 +25187,7 @@ msgctxt "message"
 msgid "06294"
 msgstr "Du bist sehr hartnäckig,{line_break}Krieger. Ich möchte nur{line_break}nach Westen gehen.{page_break}Also werden wir zusammen{line_break}dorthin gehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaYahhSilkRoadBouldersBlock"
 msgid "06295"
 msgstr "Yaah! Die Seidenstraße!{line_break}Felsen blockieren die Straße!{end_wait}"
 
@@ -25203,7 +25203,7 @@ msgctxt "message"
 msgid "06298"
 msgstr "Es hat keinen Sinn. Ich{line_break}kann Hsus Stimme nicht{line_break}hören.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaDoDoWarriorShouldReturn"
 msgid "06299"
 msgstr "Was soll ich tun?{line_break}Krieger, soll ich nach{line_break}Xian zurückkehren?{end_now}"
 
@@ -25219,7 +25219,7 @@ msgctxt "message"
 msgid "06302"
 msgstr "Hsu ist in Gefahr.{line_break}Ich kann es fühlen. Ich{line_break}muss ihn schnell finden!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinYourFirstTimeVisitAltin"
 msgid "06303"
 msgstr "Bist du zum ersten Mal{line_break}in Altin?{end_now}"
 
@@ -25259,7 +25259,7 @@ msgctxt "message"
 msgid "06312"
 msgstr "Altin litt immer unter{line_break}Wassermangel und jetzt{line_break}ist alles überflutet.{page_break}Wenn es um Wasser geht,{line_break}haben wir wohl nur Pech.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinWeCantDrinkWaterMonsters"
 msgid "06313"
 msgstr "Wir können das Wasser, das{line_break}diese Monster speien, nicht{line_break}trinken.{page_break}Das ist ja eklig! Warum{line_break}erschlägt denn niemand{line_break}diese Viecher?{end_wait}"
 
@@ -25331,7 +25331,7 @@ msgctxt "message"
 msgid "06330"
 msgstr "Ein Schlag ist nicht{line_break}genug! Stoß! Stoß! Haken!{line_break}Dann folgt ein Uppercut!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinTryingFindYourWayWest"
 msgid "06331"
 msgstr "Versucht ihr, westlich{line_break}durch die Berge zu{line_break}kommen?{end_now}"
 
@@ -25363,7 +25363,7 @@ msgctxt "message"
 msgid "06338"
 msgstr "Ich habe gehört, jemand{line_break}hat die Wasser-Bestien{line_break}getötet.{page_break}Deshalb bin ich wieder{line_break}zurückgekehrt.{page_break}Es ist nirgends schöner{line_break}als zu Hause!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinDefeatedThoseMonstersDidnt"
 msgid "06339"
 msgstr "Du hast diese Monster{line_break}besiegt, nicht wahr?{end_now}"
 
@@ -25387,7 +25387,7 @@ msgctxt "message"
 msgid "06344"
 msgstr "Mami und Papi wissen{line_break}etwas über den Grund{line_break}der Mine.{page_break}Ich wünschte, sie würden{line_break}mir sagen, was es ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinDoWantWeapons"
 msgid "06345"
 msgstr "Sucht ihr nach Waffen?{end_now}"
 
@@ -25399,7 +25399,7 @@ msgctxt "message"
 msgid "06347"
 msgstr "Ihr würdet das nicht sagen,{line_break}wenn ihr meine Waffen{line_break}gesehen hättet!{page_break}Ich wünschte, ich könnte{line_break}sie euch zeigen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinThankGoodnessWaterHasReceded"
 msgid "06348"
 msgstr "Dem Himmel sei Dank!{line_break}Das Wasser ist zurück-{line_break}gegangen.{page_break}Ich kann den Laden wieder{line_break}eröffnen.{end_wait}"
 
@@ -25411,11 +25411,11 @@ msgctxt "message"
 msgid "06350"
 msgstr "Nur ein Händler kennt{line_break}die Freude, wieder Handel{line_break}betreiben zu können.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinMyStoreSubmergedWantSell"
 msgid "06351"
 msgstr "Mein Laden ist abgesoffen.{line_break}Ich möchte gerne Rüstungen{line_break}verkaufen, aber leider...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinItsGreatCanSellArmor"
 msgid "06352"
 msgstr "Es ist großartig, dass{line_break}ich nun wieder Rüstungen{line_break}verkaufen kann!{end_wait}"
 
@@ -25427,11 +25427,11 @@ msgctxt "message"
 msgid "06354"
 msgstr "Wir haben alle Rüstungen{line_break}getrocknet und aufpoliert!{page_break}Es sollte kein Rostfleck{line_break}mehr zu sehen sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinWillDoIfMyMerchandise"
 msgid "06355"
 msgstr "Oh, nein! Was soll ich tun,{line_break}wenn alle meine Waren{line_break}aufgeweicht sind?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinNoneMyGoodsWereDamaged"
 msgid "06356"
 msgstr "Keine meiner Waren wurde{line_break}beschädigt. Von jetzt an{line_break}bin ich wieder im Geschäft!{end_wait}"
 
@@ -25443,7 +25443,7 @@ msgctxt "message"
 msgid "06358"
 msgstr "Ein paar Sachen sind feucht,{page_break}aber die Qualität sollte{line_break}unverändert sein. Ihr{line_break}könnt sie bedenkenlos kaufen.{page_break}Vielleicht hänge ich ein{line_break}Schild an die Tür, damit{line_break}das jeder mitkriegt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinWeGotLittleDampBut"
 msgid "06359"
 msgstr "Es ist zwar ein bisschen{line_break}feucht, aber ansonsten ist{line_break}alles in Ordnung.{page_break}Wir haben nochmal Schwein{line_break}gehabt.{end_now}"
 
@@ -25535,7 +25535,7 @@ msgctxt "message"
 msgid "06381"
 msgstr "Bitte rettet all die{line_break}hilflosen Menschen in{line_break}Altin!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinWeDidRobinWeBeat"
 msgid "06382"
 msgstr "Wir haben es geschafft,{line_break}{actor_name:1}!{page_break}Wir haben die letzte{line_break}Wasser-Bestie besiegt!{end_wait}"
 
@@ -25551,7 +25551,7 @@ msgctxt "message"
 msgid "06385"
 msgstr "Oh, ich bin mir sicher,{line_break}dass ihr so etwas ständig{line_break}zu sehen bekommt.{page_break}Trotzdem ist es eigenartig,{line_break}dass der Grund der Mine{line_break}aus Stein-Reliefs besteht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinGuardianStatuesWereCreatedLong"
 msgid "06386"
 msgstr "Die Wächter-Statuen wurden{line_break}vor langer Zeit erschaffen.{end_wait}"
 
@@ -25583,7 +25583,7 @@ msgctxt "message"
 msgid "06393"
 msgstr "Danke, dass du die{line_break}Statuen in der Mine{line_break}besiegt hast.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinDidSeeWaterGushingOut"
 msgid "06394"
 msgstr "Ist Wasser aus den Körpern{line_break}dieser Kreaturen gespritzt,{line_break}als du sie erschlagen hast?{end_now}"
 
@@ -25611,7 +25611,7 @@ msgctxt "message"
 msgid "06400"
 msgstr "Dem Himmel sei Dank,{line_break}das Dorf wurde von dem{line_break}Wasser befreit.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinOnesWhoDefeatedWaterBeasts"
 msgid "06401"
 msgstr "Seid ihr diejenigen, die{line_break}die Wasser-Bestien besiegt{line_break}haben?{end_now}"
 
@@ -25631,7 +25631,7 @@ msgctxt "message"
 msgid "06405"
 msgstr "Diese Kreaturen waren{line_break}also wirklich die{line_break}Wächter-Statuen?{page_break}Was für eine Überraschung!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinTrueFoundAncientRuinsIn"
 msgid "06406"
 msgstr "Ist es wahr, dass ihr{line_break}tief in der Mine auf alte{line_break}Ruinen gestoßen seid?{end_now}"
 
@@ -25687,7 +25687,7 @@ msgctxt "message"
 msgid "06419"
 msgstr "Ich hörte, dass die{line_break}Seidenstraße blockiert ist.{page_break}Zumindest sagte das dieses{line_break}Mädchen aus Xian.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinGirlFromXianWasAsking"
 msgid "06420"
 msgstr "Ein Mädchen aus Xian{line_break}hat nach jungen Kriegern{line_break}gefragt.{page_break}Könnte sie vielleicht{line_break}euch gemeint haben?{end_now}"
 
@@ -25747,7 +25747,7 @@ msgctxt "message"
 msgid "06434"
 msgstr "Ich frage mich, ob Mami{line_break}und Papi von dem Monument{line_break}in der Mine wussten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinYoullHaveFindPassageIn"
 msgid "06435"
 msgstr "Wenn die Seidenstraße{line_break}blockiert ist, müsst ihr{line_break}den Pfad in den Minen{page_break}finden, der nach Westen{line_break}führt.{end_wait}"
 
@@ -25755,7 +25755,7 @@ msgctxt "message"
 msgid "06436"
 msgstr "Ich hörte, es soll in den{line_break}Minen einen Pfad geben, der{line_break}nach Westen führt.{page_break}Aber ich kenne niemanden,{line_break}der ihn schon gefunden hat.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinHowAboutArentImpressedBy"
 msgid "06437"
 msgstr "Na, wie ist es? Seid ihr{line_break}von unserer Auswahl an{line_break}Rüstungen nicht beeindruckt?{end_wait}"
 
@@ -25763,7 +25763,7 @@ msgctxt "message"
 msgid "06438"
 msgstr "Nun, wenn ihr beeindruckt{line_break}seid, solltet ihr etwas{line_break}kaufen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinGirlFromXianBoughtLot"
 msgid "06439"
 msgstr "Das Mädchen aus Xian hat{line_break}jede Menge eingekauft.{page_break}Ob sie wohl auf eine{line_break}Reise gehen will?{end_wait}"
 
@@ -25771,7 +25771,7 @@ msgctxt "message"
 msgid "06440"
 msgstr "Das Mädchen aus Xian hat{line_break}alle Waren gekauft, die{line_break}unter Wasser waren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinThereSmallTempleWestAltin"
 msgid "06441"
 msgstr "Westlich der Mine von Altin{line_break}steht ein kleiner Tempel.{page_break}Vielleicht haben sie dort{line_break}Probleme mit dem Wasser{line_break}aus der Mine.{end_wait}"
 
@@ -25783,7 +25783,7 @@ msgctxt "message"
 msgid "06443"
 msgstr "Westlich der Berge ist{line_break}es sehr, sehr heiß!{line_break}Geradezu erschöpfend heiß!{page_break}Es ist gut, scharfes Essen{line_break}zu euch zu nehmen. Das{line_break}hilft euch, die Hitze{page_break}leichter zu ertragen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinThereFewBeastsInMine"
 msgid "06444"
 msgstr "Es gibt noch immer einige{line_break}Monster in der Mine, aber{line_break}sie sind doch ganz tief{page_break}im Inneren, oder?{end_now}"
 
@@ -25819,7 +25819,7 @@ msgctxt "message"
 msgid "06452"
 msgstr "Das allmächtige Schicksal{line_break}muss mein Flehen erhört{line_break}haben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgArutinWatchFallingRocks"
 msgid "06453"
 msgstr "Vorsicht{em_dash}Steinschlag!{page_break}Schlagt nicht gegen die{line_break}Wand! Es könnten Felsen{line_break}herabfallen!{end_wait}"
 
@@ -25831,7 +25831,7 @@ msgctxt "message"
 msgid "06455"
 msgstr "Ich habe kein gutes{line_break}Gefühl! Lauf, {actor_name:1}!{line_break}Jetzt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaHeWhoHasPowerSee"
 msgid "06456"
 msgstr "Der mit der Kraft, zu sehen,{line_break}was nicht gesehen werden{line_break}kann,{page_break}soll die Wahrheit schauen.{page_break}So steht es an der Wand{line_break}geschrieben.{end_wait}"
 
@@ -25839,7 +25839,7 @@ msgctxt "message"
 msgid "06457"
 msgstr "Dies ist der Lama-Tempel.{line_break}Seid willkommen, Reisende.{page_break}Voraus liegt die Wüste von{line_break}Lamakan, ein sehr heißer{line_break}Landstrich.{page_break}Ruht euch gut aus, bevor{line_break}ihr weitergeht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaYoungWarriorsDoComeFrom"
 msgid "06458"
 msgstr "Junge Krieger, kommt ihr{line_break}aus dem Osten?{end_now}"
 
@@ -25859,7 +25859,7 @@ msgctxt "message"
 msgid "06462"
 msgstr "Dann ist es gut, dass{line_break}ihr hierher gekommen seid.{page_break}Fehs Kung Fu ist gut für{line_break}Krieger, die eine höhere{line_break}Stufe erreichen wollen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaDoKnowMeditation"
 msgid "06463"
 msgstr "Wisst ihr, was{line_break}Meditation ist?{end_now}"
 
@@ -25875,7 +25875,7 @@ msgctxt "message"
 msgid "06466"
 msgstr "Du, der du zu mir sprichst!{line_break}Ich fühle große Unsicherheit{line_break}und Angst in dir.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaDidKnowMasterHamaGreatest"
 msgid "06467"
 msgstr "Wusstet ihr, das Meisterin{line_break}Hama die größte Meisterin{line_break}des Chi ist?{end_now}"
 
@@ -26315,7 +26315,7 @@ msgctxt "message"
 msgid "06576"
 msgstr "Oh, es tut mir Leid.{line_break}Lasst uns gehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaHsuOkay"
 msgid "06577"
 msgstr "Hsu, bist du in Ordnung?{end_wait}"
 
@@ -26359,7 +26359,7 @@ msgctxt "message"
 msgid "06587"
 msgstr "Ich möchte schreien.{line_break}Aber Feizhi mag es nicht,{line_break}wenn ich das tue.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaRobinDidLiftBoulder"
 msgid "06588"
 msgstr "{actor_name:1}, hast du den{line_break}Felsen bewegt?{end_wait}"
 
@@ -26419,7 +26419,7 @@ msgctxt "message"
 msgid "06602"
 msgstr "Ausgezeichnet! Wenn die{line_break}Seidenstraße blockiert{line_break}bleibt,{page_break}werden alle leiden{line_break}müssen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaAdeptsLetMeThankAgain"
 msgid "06603"
 msgstr "Adepten, lasst mich euch{line_break}nochmals danken. Ich bin{line_break}euch wirklich dankbar!{end_wait}"
 
@@ -26583,7 +26583,7 @@ msgctxt "message"
 msgid "06643"
 msgstr "Ich kann eure Zukunft{line_break}nicht klar erkennen.{page_break}Vermutlich, weil ich ihr{line_break}nicht unvoreingenommen{line_break}gegenüberstehe...{page_break}...Sowohl eurer Zukunft,{line_break}als auch euch selbst.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaNorthAltinMineWestLama"
 msgid "06644"
 msgstr "Norden: Mine von Altin{line_break}Westen: Lama-Tempel{end_wait}"
 
@@ -26631,7 +26631,7 @@ msgctxt "message"
 msgid "06655"
 msgstr "Wenn ich schon hier bin,{line_break}möchte ich die Geheimnisse{line_break}des Fuchin-Tempel erfahren.{page_break}Aber das wird nicht{line_break}geschehen, bevor ich{line_break}mich nicht intensivem{page_break}Training unterziehe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgYamaAmTravelingAroundWorldSpread"
 msgid "06656"
 msgstr "Ich reise um die Welt,{line_break}um Güte zu predigen.{end_wait}"
 
@@ -26743,7 +26743,7 @@ msgctxt "message"
 msgid "06683"
 msgstr "Händler verkaufen Seide. Es{line_break}ist wie ein Karneval. Das{line_break}sollte man nicht verpassen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianSomethingWrongOnSilkRoad"
 msgid "06684"
 msgstr "Gibt es Probleme auf der{line_break}Seidenstraße? Vielleicht{line_break}auch in der Wüste?{end_now}"
 
@@ -26767,7 +26767,7 @@ msgctxt "message"
 msgid "06689"
 msgstr "Die Wüste war immer sehr{line_break}heiß. Doch jetzt ist sie{line_break}noch heißer!{page_break}Niemand kommt da lebend{line_break}durch!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianDidMonstersInAltinSpit"
 msgid "06690"
 msgstr "Haben die Monster in{line_break}Altin Wasser gespien?{end_now}"
 
@@ -26791,7 +26791,7 @@ msgctxt "message"
 msgid "06695"
 msgstr "Wasser-Monster? Wie{line_break}schrecklich für Altin.{page_break}Aber Meister Feh ist in{line_break}Xian. Er wird sie besiegen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianHsusInjuryTaughtGoodLesson"
 msgid "06696"
 msgstr "Hsus Verletzung war eine{line_break}gute Lektion für ihn.{page_break}Selbst Kung Fu kann nichts{line_break}gegen Felsen ausrichten.{end_wait}"
 
@@ -26799,7 +26799,7 @@ msgctxt "message"
 msgid "06697"
 msgstr "Hsu wurde von großen{line_break}Felsen verletzt. Aber{line_break}es ist nichts Ernsthaftes.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianKungFuMakesQuickDoes"
 msgid "06698"
 msgstr "Kung Fu macht dich schnell{line_break}wie ein Blitz!{page_break}Trotzdem konnte Hsu den{line_break}Felsen nicht entkommen.{end_wait}"
 
@@ -26807,7 +26807,7 @@ msgctxt "message"
 msgid "06699"
 msgstr "Wir sollten auch Rüstungen{line_break}an Kung Fu-Meister verkaufen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianDoPlanCrossDesertWarrior"
 msgid "06700"
 msgstr "Hast du vor, die Wüste{line_break}zu durchqueren, Krieger?{end_now}"
 
@@ -26823,7 +26823,7 @@ msgctxt "message"
 msgid "06703"
 msgstr "In der Hitze verliert man{line_break}Kraft. Benutzt meine Waren,{line_break}um bei Kräften zu bleiben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWeHaveFewCustomersThese"
 msgid "06704"
 msgstr "In letzter Zeit haben wir{line_break}nur wenig Kundschaft.{page_break}Wenn die Seidenstraße{line_break}blockiert ist, kommt{line_break}niemand hierher.{end_wait}"
 
@@ -26911,7 +26911,7 @@ msgctxt "message"
 msgid "06725"
 msgstr "Meister Feh macht sich{line_break}große Sorgen um die Zwei.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgShianWarriorWelcome"
 msgid "06726"
 msgstr "Oh, Krieger! Willkommen!{end_wait}"
 
@@ -27007,7 +27007,7 @@ msgctxt "message"
 msgid "06749"
 msgstr "Lord Hammets Gespür fürs{line_break}Geschäft hat Tolbi als{line_break}Handelsstadt etabliert.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiCameKalayBecauseDidntLike"
 msgid "06750"
 msgstr "Ich kam nach Kalay, weil{line_break}mir Tolbi nicht gefällt.{line_break}Willst du wissen, wieso?{end_now}"
 
@@ -27083,7 +27083,7 @@ msgctxt "message"
 msgid "06768"
 msgstr "Momentan kursieren so{line_break}viele Gerüchte. Niemand{line_break}kennt die Wahrheit!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiCanLiveInPeaceIn"
 msgid "06769"
 msgstr "Solange du nach dem{line_break}Prinzip der Güte lebst,{page_break}kannst du in Kalay in{line_break}Frieden existieren.{end_wait}"
 
@@ -27091,11 +27091,11 @@ msgctxt "message"
 msgid "06770"
 msgstr "Ich kam hierher, um Güte{line_break}zu verbreiten.{page_break}Aber Lord Hammet scheint{line_break}schon vor mir dafür gesorgt{line_break}zu haben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiOkListeningLets"
 msgid "06771"
 msgstr "O.K.!{pause_20_skippable} Hören auch alle zu?{line_break}Wir halten hier mal an!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWhyWeStoppingAtPlace"
 msgid "06772"
 msgstr "Warum bleiben wir{line_break}ausgerechnet hier{line_break}stehen?{end_wait}"
 
@@ -27143,7 +27143,7 @@ msgctxt "message"
 msgid "06783"
 msgstr "Also gut, beeilt euch{line_break}und zählt durch!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiShortOnePerson"
 msgid "06784"
 msgstr "Oh-oh... Uns fehlt eine{line_break}Person... Wo kann der{line_break}Kerl nur sein?{end_wait}"
 
@@ -27159,7 +27159,7 @@ msgctxt "message"
 msgid "06787"
 msgstr "Hey! Was ist los? Warum{line_break}rennen die Führer ständig{line_break}vor und zurück?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiDecideEnteringColosso"
 msgid "06788"
 msgstr "Wir müssen entscheiden,{line_break}ob wir an Colosso teil-{line_break}nehmen, sobald wir in{page_break}Tolbi angekommen sind.{end_wait}"
 
@@ -27223,7 +27223,7 @@ msgctxt "message"
 msgid "06803"
 msgstr "Vielleicht sollte ich{line_break}nochmals im Gasthof nach{line_break}ihm suchen. Was soll ich tun?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiThatsWeCantWaitAny"
 msgid "06804"
 msgstr "Jetzt reicht's!{pause_20_skippable} Wir können{line_break}nicht länger warten!{end_wait}"
 
@@ -27339,7 +27339,7 @@ msgctxt "message"
 msgid "06832"
 msgstr "Mein Sohn ist sehr knauserig,{line_break}wenn es um Geld geht, selbst{line_break}bei mir.{page_break}Es ist so, als würde ich{line_break}mit einem Händler leben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLordHammetSellsHisBest"
 msgid "06833"
 msgstr "Lord Hammet verkauft all{line_break}seine besten Waffen an{line_break}einem anderen Ort.{page_break}Diese Waffen sind zwar{line_break}gut, aber nicht das Beste,{line_break}was Kalay zu bieten hat.{end_wait}"
 
@@ -27347,7 +27347,7 @@ msgctxt "message"
 msgid "06834"
 msgstr "Wir könnten mehr Geld{line_break}machen, wenn er mehr der{line_break}guten Waffen hier ließe.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiDidFindNeededInWeapon"
 msgid "06835"
 msgstr "Habt ihr im Waffenladen{line_break}gefunden, was ihr gesucht{line_break}habt?{end_now}"
 
@@ -27363,7 +27363,7 @@ msgctxt "message"
 msgid "06838"
 msgstr "Waffen und Rüstungen aus{line_break}Tolbi mögen zwar stärker{line_break}sein, aber unsere haben Seele!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLadyLayanaSharedInLord"
 msgid "06839"
 msgstr "Lady Layana teilte die{line_break}Sorgen von Lord Hammet,{line_break}als er Kalay erbaute.{page_break}Ihre Liebe für diese{line_break}Stadt trug zu deren{line_break}Erblühen bei.{end_wait}"
 
@@ -27371,7 +27371,7 @@ msgctxt "message"
 msgid "06840"
 msgstr "Die Aquädukte in Hammets{line_break}Palast sind ein weiterer{line_break}Grund, warum Kalay erblühte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiGoingTolbiAlso"
 msgid "06841"
 msgstr "Wollt ihr auch nach{line_break}Tolbi gehen?{end_now}"
 
@@ -27395,7 +27395,7 @@ msgctxt "message"
 msgid "06846"
 msgstr "Die Colosso-Gladiatoren sind{line_break}allesamt starke, muskulöse{line_break}Männer!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiPleaseFinishEatingIfTaking"
 msgid "06847"
 msgstr "Wenn du an der Tour{line_break}teilnimmst, beende bitte{line_break}schnell deine Mahlzeit.{page_break}Wir werden bald abreisen!{end_wait}"
 
@@ -27419,7 +27419,7 @@ msgctxt "message"
 msgid "06852"
 msgstr "Wollt ihr nicht auch zu{line_break}Colosso? Ihr seht wie{line_break}Krieger aus!{page_break}Alle Krieger träumen davon,{line_break}bei Colosso Ruhm und Ehre{line_break}zu erlangen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiDoKnowAboutContinentSouth"
 msgid "06853"
 msgstr "Wisst ihr über den Kontinent{line_break}südlich von Tolbi Bescheid?{end_now}"
 
@@ -27515,7 +27515,7 @@ msgctxt "message"
 msgid "06876"
 msgstr "Wir sind die stärksten{line_break}aller Krieger. Wir werden{line_break}niemals verlieren.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiOurInnFeelsEmptyNow"
 msgid "06877"
 msgstr "Die Colosso-Reisegruppe{line_break}ist abgereist. Jetzt ist{line_break}unser Gasthof so leer.{end_wait}"
 
@@ -27555,7 +27555,7 @@ msgctxt "message"
 msgid "06886"
 msgstr "Ich hatte solche Angst davor,{line_break}von Gondowan, wo sich Lalivero{line_break}befindet, nach Angara zu{page_break}kommen. Aber langsam beginne{line_break}ich mich richtig frei zu{line_break}fühlen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLordHammetsPalaceLordAway"
 msgid "06887"
 msgstr "Dies ist Lord Hammets Palast.{line_break}Der Lord ist nicht anwesend.{line_break}Bitte geht wieder.{end_wait}"
 
@@ -27667,7 +27667,7 @@ msgctxt "message"
 msgid "06914"
 msgstr "Lady Layana wird froh{line_break}sein, deine Geschichte{line_break}zu hören.{page_break}Bitte komm mit mir und{line_break}erzähle ihr alles.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWhenHeardWereBackIvan"
 msgid "06915"
 msgstr "Als ich hörte, dass du{line_break}zurück bist, {actor_name:3},{line_break}wagte ich zu hoffen, dass{page_break}Lord Hammet mit dir gekommen{line_break}wäre.{end_wait}"
 
@@ -28059,7 +28059,7 @@ msgctxt "message"
 msgid "07012"
 msgstr "Die Bewohner der Stadt{line_break}wissen noch nichts von{line_break}Lord Hammets Verbleib, oder?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLordHammetWillReleasedSoon"
 msgid "07013"
 msgstr "Lord Hammet ist doch bald{line_break}wieder frei, oder?{end_now}"
 
@@ -28079,7 +28079,7 @@ msgctxt "message"
 msgid "07017"
 msgstr "Händler sind durch die{line_break}Gesetze Angaras geschützt.{page_break}Dodonpa muss wahrlich böse{line_break}sein, diese Gesetze zu{line_break}brechen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHasLegacyLordHammetsSilk"
 msgid "07018"
 msgstr "Ist die Ära von Lord Hammets{line_break}Seidenhandel zu einem Ende{line_break}gekommen?{end_now}"
 
@@ -28115,7 +28115,7 @@ msgctxt "message"
 msgid "07026"
 msgstr "Lord Hammet ist eine lebende{line_break}Legende unter den Händlern.{page_break}Ohne ihn kann Kalay nicht{line_break}überleben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiRobinSneakedIntoLunpaThats"
 msgid "07027"
 msgstr "{actor_name:1}{pause_20_skippable}, du hast dich{line_break}nach Lunpa geschlichen? Das{line_break}ist viel zu gefährlich!{end_wait}"
 
@@ -28159,7 +28159,7 @@ msgctxt "message"
 msgid "07037"
 msgstr "Die Leute im Gasthof{line_break}waren Touristen, die{line_break}Colosso besuchen wollten.{page_break}Der ganze Wirbel wegen{line_break}eines Turniers in Tolbi!{line_break}Ich verstehe das nicht.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWestGuardAsksAboutEntering"
 msgid "07038"
 msgstr "Was ist mit euch?{line_break}Wollt ihr Lunpa betreten?{end_now}"
 
@@ -28171,7 +28171,7 @@ msgctxt "message"
 msgid "07040"
 msgstr "Ihr seid den ganzen Weg{line_break}hierher gekommen, um{line_break}nichts zu tun?{page_break}Das ergibt doch keinen Sinn.{line_break}Lunpa ist kein Ort für Leute{line_break}wie euch.{page_break}Geht zurück, von wo ihr{line_break}gekommen seid!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaEastGuardAsksIfFrom"
 msgid "07041"
 msgstr "Ihr seid nicht aus Kalay,{pause_20_skippable}{line_break}oder?{end_now}"
 
@@ -28195,11 +28195,11 @@ msgctxt "message"
 msgid "07046"
 msgstr "Ob diese Leute wohl versuchen{line_break}werden, durch die Höhle im{line_break}Westen in die Stadt zu kommen?{page_break}Naja, das Tor dort ist ohnehin{line_break}zu schwer für sie. Da muss{line_break}ich mir keine Gedanken machen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaEastGuardTrustsCaveGate"
 msgid "07047"
 msgstr "Selbst wenn sie die Höhle{line_break}betreten, gelangen sie{line_break}nicht in die Stadt.{page_break}Das Tor in der Höhle kann{line_break}nur von innen geöffnet{line_break}werden.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaVillagerAAsksHowLong"
 msgid "07048"
 msgstr "Bist du schon lange in{line_break}Lunpa?{end_now}"
 
@@ -28215,7 +28215,7 @@ msgctxt "message"
 msgid "07051"
 msgstr "Seit die Karawane gekommen{line_break}ist, haben wir keine Freiheit{line_break}mehr.{page_break}Wir dürfen die Stadt nicht{line_break}verlassen und niemand darf{line_break}herein. Ich hasse es!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaVillagerCAsksAboutKidnapping"
 msgid "07052"
 msgstr "Ist es wahr, dass Dodonpa{line_break}Hammet entführt hat und{line_break}Lösegeld für ihn verlangt?{end_now}"
 
@@ -28239,7 +28239,7 @@ msgctxt "message"
 msgid "07057"
 msgstr "Donpa weiß nicht, was{line_break}Dodonpa anstellt.{page_break}Würde Donpa von Dodonpas{line_break}üblen Taten erfahren,{line_break}würde sich diese Stadt ändern.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaVillagerGAsksAboutDonpa"
 msgid "07058"
 msgstr "Ihr wollt zu Donpa?{end_now}"
 
@@ -28259,11 +28259,11 @@ msgctxt "message"
 msgid "07062"
 msgstr "Kommt nicht näher.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaLeftGuardResentsDodonpa"
 msgid "07063"
 msgstr "Wie kann Dodonpa nur{line_break}so hinterhältig sein?{page_break}Kaum zu glauben, dass{line_break}er der Sohn von Donpa{line_break}ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaRightGuardBoasts"
 msgid "07064"
 msgstr "Während ich Wache stehe,{line_break}kommt nicht mal eine{line_break}Maus in die Festung!{end_wait}"
 
@@ -28299,11 +28299,11 @@ msgctxt "message"
 msgid "07072"
 msgstr "Der Koch hat gemeint, dass{line_break}die Festung total unheimlich{line_break}sei.{page_break}Er will nie wieder dorthin!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaLeftGuardThoughts"
 msgid "07073"
 msgstr "Dodonpa ist ein Genie!{line_break}Hammet nicht freizulassen{line_break}ist so schlau!{page_break}Hammet dazu zu benutzen,{line_break}Geld von Kalay zu erpressen,{line_break}ist eine großartige Idee!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaYoudShadowSneak"
 msgid "07074"
 msgstr "Man muss schon ein{line_break}Schatten sein, um an{line_break}mir vorbeizukommen.{end_wait}"
 
@@ -28355,19 +28355,19 @@ msgctxt "message"
 msgid "07086"
 msgstr "Babi, was soll das{line_break}überhaupt für ein{line_break}Name sein?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWeaponMerchantSealed"
 msgid "07087"
 msgstr "Die Stadt ist abgeriegelt.{line_break}Daher können wir keinen{line_break}Handel betreiben.{page_break}Mein Geschäft ist{line_break}Dodonpa völlig egal.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaArmorMerchantSealed"
 msgid "07088"
 msgstr "Sobald die Stadt wieder{line_break}geöffnet wird, verkaufe ich{line_break}dir alles, was du willst.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaItemMerchantSealed"
 msgid "07089"
 msgstr "Sie verfügen über ein großes{line_break}Lager, daher können sie{line_break}noch existieren.{page_break}Aber trotzdem tut es mir Leid,{line_break}dass sie so viele Geschäfts-{line_break}einbußen hinnehmen müssen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaInnkeeperOffersOwnHome"
 msgid "07090"
 msgstr "Wollt ihr in meinem Haus{line_break}übernachten?{end_now}"
 
@@ -28387,7 +28387,7 @@ msgctxt "message"
 msgid "07094"
 msgstr "Ganz egal, wie sehr wir{line_break}putzen und warten, es{line_break}werden keine Kunden kommen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaChefOffersStory"
 msgid "07095"
 msgstr "Soll ich euch davon erzählen,{line_break}wie ich Essen in die Festung{line_break}bringen musste?{end_now}"
 
@@ -28411,11 +28411,11 @@ msgctxt "message"
 msgid "07100"
 msgstr "Wenn es so weitergeht,{line_break}werde ich demnächst{line_break}gefeuert.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaChefThinksOfPrisoner"
 msgid "07101"
 msgstr "Der arme Mann, den sie im{line_break}Kerker eingeschlossen haben,{line_break}tut mir sehr Leid.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaTemplePriestSealed"
 msgid "07102"
 msgstr "Ich finde, dass Dodonpa{line_break}ein schrecklicher Mann ist.{page_break}Aber es ist nicht fair, ganz{line_break}Lunpa dafür zu verurteilen.{line_break}Man muss sich auch um die{page_break}Bewohner sorgen.{end_wait}"
 
@@ -28423,23 +28423,23 @@ msgctxt "message"
 msgid "07103"
 msgstr "Wir können Lunpa nicht{line_break}verlassen. Nicht, solange{line_break}Dodonpas Leute Wache stehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWeaponMerchantSealedThoughts"
 msgid "07104"
 msgstr "Wenn sich die Dinge nicht{line_break}bald ändern, muss ich{line_break}diesen Laden schließen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaArmorMerchantSealedThoughts"
 msgid "07105"
 msgstr "Ich hätte mein Lager{line_break}erweitern sollen,{page_break}als ich noch die{line_break}Gelegenheit dazu hatte.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaItemMerchantSealedThoughts"
 msgid "07106"
 msgstr "Ich habe mir ein großes{line_break}Lager angelegt, aber{line_break}langsam gehen mir{page_break}die Waren aus.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaEastGuardDemandsAuthorization"
 msgid "07107"
 msgstr "Dies ist Lunpa. Ohne die{line_break}Erlaubnis von Dodonpa{line_break}ist der Zutritt verboten.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaEastGuardFearsBlame"
 msgid "07108"
 msgstr "Wenn Leute von außerhalb{line_break}in der Stadt Ärger machen,{page_break}wird Dodonpa uns dafür{line_break}zur Verantwortung ziehen.{end_wait}"
 
@@ -29735,7 +29735,7 @@ msgctxt "message"
 msgid "07431"
 msgstr "Das Ersatzschiff aus Tolbi{line_break}hätte schon längst hier{line_break}sein müssen.{page_break}Glaubt ihr, dass etwas{line_break}passiert ist, während sie{line_break}auf dem Meer waren?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneWonderCouldHaveHappened"
 msgid "07432"
 msgstr "Ich frage mich, was wohl{line_break}geschehen sein könnte.{end_wait}"
 
@@ -29799,11 +29799,11 @@ msgctxt "message"
 msgid "07447"
 msgstr "Wenn wir jetzt nicht ablegen,{line_break}würdest du damit eingestehen,{line_break}dass du Angst hast, Kaja.{page_break}Das lasse ich nicht zu.{line_break}Ich werde das nicht zulassen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneToldWereLeavingSoonSet"
 msgid "07448"
 msgstr "Ich sagte euch, dass wir{line_break}bald ablegen werden.{page_break}Wir setzen Segel, sobald{line_break}das Ersatzschiff da ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneIfWeDontLeaveSoon"
 msgid "07449"
 msgstr "Wenn wir nicht bald{line_break}ablegen, beginnt Colosso{line_break}noch ohne uns!{page_break}Werdet ihr dafür die{line_break}Verantwortung übernehmen?{end_wait}"
 
@@ -29839,7 +29839,7 @@ msgctxt "message"
 msgid "07457"
 msgstr "Das Meer von Karagol ist heute{line_break}sehr neblig. Vielleicht fühle{line_break}ich mich deshalb nicht wohl.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneTheresNothingWeCanDo"
 msgid "07458"
 msgstr "Es gibt nichts, was wir{line_break}tun können. Lasst uns{line_break}Segel setzen.{end_wait}"
 
@@ -30027,11 +30027,11 @@ msgctxt "message"
 msgid "07504"
 msgstr "Ich will keine Gewalt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneSomebodyStopThem"
 msgid "07505"
 msgstr "Jemand muss sie aufhalten!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneTheyCantPlanningMutiny"
 msgid "07506"
 msgstr "Hoffentlich planen sie{line_break}keine Meuterei!{end_wait}"
 
@@ -30147,7 +30147,7 @@ msgctxt "message"
 msgid "07534"
 msgstr "Haha! Wenn ihr nach Tolbi{line_break}wollt, dann rauf aufs Schiff!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneDidntDoAnything"
 msgid "07535"
 msgstr "Ich hab gar nichts getan.{end_wait}"
 
@@ -30639,11 +30639,11 @@ msgctxt "message"
 msgid "07657"
 msgstr "Solange wir den Anker{line_break}haben, haben wir nichts{line_break}zu befürchten!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneNowWeHaveProtectShip"
 msgid "07658"
 msgstr "Jetzt, da ihr das Schiff{line_break}beschützt, werden wir{line_break}auch bald ablegen.{page_break}Aber die anderen Passagiere{line_break}zum Rudern zu bewegen, wird{line_break}nicht so leicht sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHaveMakeThemPromiseHelp"
 msgid "07659"
 msgstr "Wir müssen ihnen das{line_break}Versprechen abringen, für{line_break}uns zu rudern, bevor wir{page_break}Segel setzen können.{line_break}Hoffentlich kommt es gar{line_break}nicht erst so weit.{end_wait}"
 
@@ -30835,7 +30835,7 @@ msgctxt "message"
 msgid "07706"
 msgstr "Ich bin davon überzeugt,{line_break}dass alle ihr Bestes{line_break}geben werden!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFunePreparationsReady"
 msgid "07707"
 msgstr "Vorbereitungen...{pause_20_skippable} Fertig!{end_wait}"
 
@@ -30867,7 +30867,7 @@ msgctxt "message"
 msgid "07714"
 msgstr "Monster?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneAyeCaptainSeaMonsters"
 msgid "07715"
 msgstr "Aye, Kapitän!{line_break}Seemonster!{end_wait}"
 
@@ -30879,11 +30879,11 @@ msgctxt "message"
 msgid "07717"
 msgstr "Alles klar, ich weiche aus!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneNoUseLate"
 msgid "07718"
 msgstr "Es hat keinen Zweck!{line_break}Es ist zu spät!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneArrgh"
 msgid "07719"
 msgstr "{text_effect:4}Arrgh!{end_wait}"
 
@@ -31507,7 +31507,7 @@ msgctxt "message"
 msgid "07874"
 msgstr "Ob wir weiterrudern müssen,{line_break}wenn sie mit dieser Bestie{line_break}fertig sind?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneThankRobinDidGoodAgainst"
 msgid "07875"
 msgstr "Danke, {actor_name:1}.{line_break}Du hast dich gut gegen{line_break}diesen Kraken behauptet.{end_wait}"
 
@@ -31523,7 +31523,7 @@ msgctxt "message"
 msgid "07878"
 msgstr "Land in Sicht!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneCanSeeLand"
 msgid "07879"
 msgstr "Hey,{pause_20_skippable} ich kann Land sehen!{end_wait}"
 
@@ -31531,35 +31531,35 @@ msgctxt "message"
 msgid "07880"
 msgstr "Sieht so aus, als hätten{line_break}wir es geschafft!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneMadeFinallyLucky"
 msgid "07881"
 msgstr "Wir haben es geschafft?{pause_20_skippable}{line_break}Endlich! Wir können froh{line_break}sein,{page_break}dass wir all die Angriffe{line_break}heil überstanden haben!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneOtherPassengersAlready"
 msgid "07882"
 msgstr "Die anderen Passagiere sind{line_break}schon von Bord gegangen.{page_break}Sie haben sich nicht mal{line_break}verabschiedet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneDontRowAnymore"
 msgid "07883"
 msgstr "Wir müssen nicht mehr{line_break}rudern? Oh, was für eine{line_break}Erleichterung!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneOhhhHaventWorkout"
 msgid "07884"
 msgstr "Oooh! Ich habe mich schon{line_break}seit Jahren nicht mehr so{line_break}angestrengt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneRowingShipMore"
 msgid "07885"
 msgstr "Das Schiff zu rudern war{line_break}lustiger, als ich es mir{line_break}vorgestellt habe!{page_break}Ich bin dabei richtig{line_break}kräftig geworden!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneTotallyLostOcean"
 msgid "07886"
 msgstr "Was für ein Reinfall! Ich{line_break}war auf einer Kreuzfahrt{line_break}und konnte nicht mal den{page_break}Blick über das Meer{line_break}genießen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneMakeOldMan"
 msgid "07887"
 msgstr "Zuerst zwingt ihr einen{line_break}alten Mann dazu, ein Schiff{line_break}zu rudern{page_break}und dann treibt ihr ihn{line_break}auch noch an Land? Das ist{line_break}ja ganz schön unverfroren!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneThanksHardWork"
 msgid "07888"
 msgstr "Danke für eure schwere{line_break}Arbeit.{end_wait}"
 
@@ -31631,7 +31631,7 @@ msgctxt "message"
 msgid "07905"
 msgstr "Ihr sucht nach Sean und{line_break}Ouranos? Sie sind mit der{line_break}Reisegruppe nach Tolbi{page_break}aufgebrochen. Ich glaube,{line_break}sie wollen zu Colosso.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHeadedColosso"
 msgid "07906"
 msgstr "Seid ihr auch zu{line_break}Colosso unterwegs?{end_now}"
 
@@ -31771,7 +31771,7 @@ msgctxt "message"
 msgid "07940"
 msgstr "Ihr habt das Meer nur wegen{line_break}Colosso überquert? Das war{line_break}ein riskantes Unterfangen!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneFinallyReachedTolbi"
 msgid "07941"
 msgstr "Hmm... {pause_20_skippable}Also haben wir{line_break}endlich Tolbi erreicht.{end_wait}"
 
@@ -31963,7 +31963,7 @@ msgctxt "message"
 msgid "07988"
 msgstr "In einer perfekten Welt{line_break}würde es keine Monster{line_break}geben, die nur darauf{page_break}warten, mir eins auf die{line_break}Nase zu geben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneRobinDontTalkLikeShouldnt"
 msgid "07989"
 msgstr "{protagonist_name}, sag doch{line_break}so etwas nicht!{pause_20_skippable} Sollten{line_break}wir ihnen nicht zuhören?{end_now}"
 
@@ -31971,7 +31971,7 @@ msgctxt "message"
 msgid "07990"
 msgstr "Kaja und der Kapitän sind{line_break}Profis.{page_break}Wir sollten ihnen vertrauen{line_break}und abwarten, wie sie es{line_break}gesagt haben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneRobinTalkedPassengersDidntTour"
 msgid "07991"
 msgstr "{actor_name:1}, du hast{line_break}doch mit den Passagieren{line_break}gesprochen, oder?{page_break}Die Reisegruppe streitet{line_break}gerade darüber, ob sie{line_break}das Schiff verlassen{page_break}soll oder nicht.{end_wait}"
 
@@ -31995,7 +31995,7 @@ msgctxt "message"
 msgid "07996"
 msgstr "Es ist sicher spannend,{line_break}die Insel zu erforschen.{line_break}Was meinst du, {actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFuneSeeYoureGoingGoFor"
 msgid "07997"
 msgstr "Ihr wollt also für mich{line_break}gehen?{page_break}Es wird sich sicher niemand{line_break}beschweren, wenn wir die{line_break}Insel erforschen.{end_wait}"
 
@@ -32051,7 +32051,7 @@ msgctxt "message"
 msgid "08010"
 msgstr "Die Windrichtung und die{line_break}Flut... Wir müssen nahe{line_break}bei Tolbi sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFuneHowWasRobinDidExplore"
 msgid "08011"
 msgstr "Wie war es, {actor_name:1}?{pause_20_skippable}{line_break}Hast du die Insel{line_break}durchkämmt?{end_now}"
 
@@ -36787,7 +36787,7 @@ msgctxt "message"
 msgid "09194"
 msgstr "Ob es Großmutter wohl{line_break}gut geht?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGuardsCatchParty"
 msgid "09195"
 msgstr "Hey, hey! Wer seid ihr?{end_wait}"
 
@@ -36815,15 +36815,15 @@ msgctxt "message"
 msgid "09201"
 msgstr "Egal! Ihr seid in{line_break}drei Sekunden von hier{line_break}verschwunden!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGuardForbidsReturn"
 msgid "09202"
 msgstr "Und kommt bloß nicht{line_break}wieder!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaLeftGuardHearsSomeone"
 msgid "09203"
 msgstr "Wie? Ich könnte schwören,{line_break}dass ich gerade jemanden{line_break}gehört habe!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaRightGuardFeelsCreepy"
 msgid "09204"
 msgstr "Bist du verrückt? Dieser{line_break}Ort {text_effect:2}ist{reset_text_style} unheimlich!{line_break}Ich fühle mich nicht wohl!{end_wait}"
 
@@ -37579,7 +37579,7 @@ msgctxt "message"
 msgid "09392"
 msgstr "Ich habe es kapiert! Ich{line_break}werde nie wieder böse sein!{line_break}Lasst mich endlich raus!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGeraldRefusesToReturn"
 msgid "09393"
 msgstr "{actor_name:1}! Sei nicht dumm!{line_break}Wir können da nicht mehr{line_break}hineingehen!{end_wait}"
 
@@ -37587,7 +37587,7 @@ msgctxt "message"
 msgid "09394"
 msgstr "Ein großes Kontingent von{line_break}Dodonpas Leuten hat die{line_break}Festung verlassen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaVillagerBShivers"
 msgid "09395"
 msgstr "Es ist kälter geworden...{line_break}Nur hier zu stehen lässt{line_break}mich erzittern.{end_wait}"
 
@@ -37595,7 +37595,7 @@ msgctxt "message"
 msgid "09396"
 msgstr "Man sagt, es sollen{line_break}Eindringlinge in der{line_break}Festung sein.{page_break}Allein schon der Versuch,{line_break}hier einzudringen, ist{line_break}irgendwie beeindruckend!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaVillagerDAsksAboutCommotion"
 msgid "09397"
 msgstr "Wollt ihr wissen, was den{line_break}Aufruhr in der Festung{line_break}verursacht hat?{end_now}"
 
@@ -37623,19 +37623,19 @@ msgctxt "message"
 msgid "09403"
 msgstr "Die Festung wurde stets{line_break}streng bewacht.{page_break}Wer waren diese Leute nur,{line_break}die sich hineingeschlichen{line_break}haben?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGuardsWarnPartyAway"
 msgid "09404"
 msgstr "Kommt der Festung keinen{line_break}Schritt näher!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaLeftGuardRecognizesHammet"
 msgid "09405"
 msgstr "Der Mann, der da bei{line_break}euch ist... Ich habe ihn{line_break}schon mal gesehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaLeftGuardDismissesThought"
 msgid "09406"
 msgstr "Ach, das ist unmöglich.{line_break}Ich muss ihn wohl mit{line_break}jemandem verwechselt haben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaRightGuardWondersHow"
 msgid "09407"
 msgstr "Wie sind die Krieger aus{line_break}Kalay in die Festung{line_break}eingedrungen?{page_break}Oh, Mann! Dafür haben wir{line_break}eine ordentliche Abreibung{line_break}bekommen!{end_wait}"
 
@@ -37675,11 +37675,11 @@ msgctxt "message"
 msgid "09416"
 msgstr "Das ist der einzige Weg{line_break}in die Festung hinein,{line_break}oder aus ihr heraus.{page_break}Ich kann mir nicht vor-{line_break}stellen, wie jemand{line_break}ungesehen hinein- oder{page_break}herauskommt.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaLeftGuardGlimpsedMerchant"
 msgid "09417"
 msgstr "Hmmm. Der Kerl, den sie{line_break}da dabeihaben, sieht aus{line_break}wie dieser Händler.{page_break}Aber ich sah ihn nur kurz,{line_break}daher bin ich nicht sicher.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaRightGuardReopenedThoughts"
 msgid "09418"
 msgstr "Ich verstehe es nicht. Wir{line_break}haben die ganze Zeit über{line_break}Wache geschoben!{page_break}Niemand ist an uns{line_break}vorbeigekommen!{end_wait}"
 
@@ -37731,31 +37731,31 @@ msgctxt "message"
 msgid "09430"
 msgstr "Große Fluten ereignen{line_break}sich nicht alle Tage!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWeaponMerchantReopened"
 msgid "09431"
 msgstr "Das Ende ist nah! Wir sind{line_break}dem Untergang geweiht! An{line_break}die Waffen! An die Waffen!{page_break}Wenn sie weg sind, sind sie{line_break}weg. Also kauft, solange{line_break}ihr noch könnt!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWeaponMerchantReopenedThoughts"
 msgid "09432"
 msgstr "So viele Waffen! Aber ich{line_break}bezweifle, dass Dodonpas{line_break}Leute damit umgehen können.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaArmorMerchantReopened"
 msgid "09433"
 msgstr "Was denkt ihr? Ich habe{line_break}ein paar unglaubliche{line_break}Angebote hier. Greift zu!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaArmorMerchantReopenedThoughts"
 msgid "09434"
 msgstr "Sobald ich diese Rüstungen{line_break}verkauft habe, mache ich{line_break}den Laden zu.{page_break}Irgendwie ist das schade.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaItemMerchantReopened"
 msgid "09435"
 msgstr "Die Waffen- und Rüstungs-{line_break}händler sehen verzweifelt{line_break}aus.{page_break}Die Waren, die sie jetzt{line_break}verkaufen, sind alles, was{line_break}noch auf Lager ist.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaIsntWeaponsVendors"
 msgid "09436"
 msgstr "Nicht nur das Sortiment{line_break}der Waffenhändler wird{line_break}kleiner.{page_break}Wir sind auch beinahe{line_break}ausverkauft!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaInnkeeperOffersRoom"
 msgid "09437"
 msgstr "Möchtet ihr hier{line_break}übernachten?{end_now}"
 
@@ -37767,7 +37767,7 @@ msgctxt "message"
 msgid "09439"
 msgstr "Nun, wie es euch beliebt.{page_break}Ihr seid uns jederzeit{line_break}willkommen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaInnClerkAsksAboutGuest"
 msgid "09440"
 msgstr "Seid ihr Donpas Gäste?{end_now}"
 
@@ -37803,7 +37803,7 @@ msgctxt "message"
 msgid "09448"
 msgstr "Ich hörte, Donpa sei krank.{line_break}Aber er schien in sehr{line_break}guter Form zu sein.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaTemplePriestReopened"
 msgid "09449"
 msgstr "Einige von Dodonpas{line_break}Leuten sind vor kurzem{line_break}abgezogen.{page_break}Ich frage mich, welche{line_break}bösen Absichten sie wieder{line_break}im Schilde führen.{end_wait}"
 
@@ -37823,11 +37823,11 @@ msgctxt "message"
 msgid "09453"
 msgstr "Diese Leute können nicht{line_break}diejenigen sein, die sich{line_break}in die Festung geschlichen{page_break}haben. Dieser müde Haufen?{line_break}Auf keinen Fall!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaEastGuardThinksMerchantHarmless"
 msgid "09454"
 msgstr "Dieser Händler wollte{line_break}undbedingt in der Stadt{line_break}Handel treiben.{page_break}Ich bin mir sicher, er{line_break}treibt sich hier noch{line_break}irgendwo herum.{page_break}Aber ich bezweifle, dass{line_break}er Ärger machen wird.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaThinkSawSomeone"
 msgid "09455"
 msgstr "Ich glaube, ich habe{line_break}gerade jemanden gesehen.{end_wait}"
 
@@ -37847,7 +37847,7 @@ msgctxt "message"
 msgid "09459"
 msgstr "Wie? Ihr glaubt, da ist{line_break}noch jemand da draußen?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaMoment"
 msgid "09460"
 msgstr "Einen Moment!{end_wait}"
 
@@ -37863,7 +37863,7 @@ msgctxt "message"
 msgid "09463"
 msgstr "Das ist Hammet!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDodonpaNeverIntention"
 msgid "09464"
 msgstr "Also hatte Dodonpa nie{line_break}die Absicht, Hammet{line_break}freizulassen?{end_wait}"
 
@@ -38027,7 +38027,7 @@ msgctxt "message"
 msgid "09504"
 msgstr "Gegen alle anzutreten ist{line_break}noch tollkühner, als in{line_break}die Festung einzudringen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaBunza"
 msgid "09505"
 msgstr "Was sollen wir dann tun,{line_break}Bunza?{end_wait}"
 
@@ -38059,7 +38059,7 @@ msgctxt "message"
 msgid "09512"
 msgstr "Genau, {actor_name:2}.{page_break}Also werden sie mich nicht{line_break}verdächtigen, mit der Sache{line_break}zu tun zu haben.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaLetsTakeWagon"
 msgid "09513"
 msgstr "Dann lasst uns auf dem{line_break}Wagen nach Kalay fahren!{end_wait}"
 
@@ -38067,15 +38067,15 @@ msgctxt "message"
 msgid "09514"
 msgstr "Sollen wir auch auf{line_break}dem Wagen fahren?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGeraldAsksIfNotRiding"
 msgid "09515"
 msgstr "Wie? Du willst nicht auf{line_break}Bunzas Wagen fahren?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaMiaAsksIfRidingAfter"
 msgid "09516"
 msgstr "Also, was? Hast du deine{line_break}Meinung geändert? Du willst{line_break}nicht auf dem Wagen fahren?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaTotallyConfusedChanged"
 msgid "09517"
 msgstr "Ich bin jetzt völlig ver-{line_break}wirrt! Du hast deine Meinung{line_break}schon wieder geändert?{end_wait}"
 
@@ -38083,11 +38083,11 @@ msgctxt "message"
 msgid "09518"
 msgstr "Hör auf, unsere Zeit zu{line_break}verschwenden! Fahren wir{line_break}jetzt auf dem Wagen?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGeraldAsksAboutUnfinishedBusiness"
 msgid "09519"
 msgstr "Hast du in Lunpa noch{line_break}etwas zu erledigen?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaInsistStick"
 msgid "09520"
 msgstr "Wenn du darauf bestehst,{line_break}bleibe ich bei dir.{end_wait}"
 
@@ -38123,11 +38123,11 @@ msgctxt "message"
 msgid "09528"
 msgstr "Nun, dann mal los,{line_break}{actor_name:1}! Lass uns{line_break}gehen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaBunzaAsksAboutUnfinishedBusiness"
 msgid "09529"
 msgstr "Habt ihr noch etwas{line_break}zu erledigen?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaDontUnfinishedBusiness"
 msgid "09530"
 msgstr "Wenn wir nichts zu erledigen{line_break}haben, dann lasst uns nach{line_break}Kalay gehen!{end_wait}"
 
@@ -38143,15 +38143,15 @@ msgctxt "message"
 msgid "09533"
 msgstr "Worauf warten wir dann{line_break}noch?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGeraldAsksAboutThingsTo"
 msgid "09534"
 msgstr "Heißt das, du hast in{line_break}Lunpa noch etwas zu tun?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaGeraldChecksNothingLeft"
 msgid "09535"
 msgstr "Mach mir keine Angst! Du{line_break}hast doch gar nichts mehr{line_break}zu tun, oder?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRunpaMeaningWontRide"
 msgid "09536"
 msgstr "Du meinst, du wirst nicht{line_break}auf dem Wagen mitfahren?{end_wait}"
 
@@ -38219,7 +38219,7 @@ msgctxt "message"
 msgid "09552"
 msgstr "Der Schlüssel passt nicht.{line_break}Vielleicht hat Donpa die{line_break}Schlösser auswechseln lassen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWeveArrivedHammet"
 msgid "09553"
 msgstr "Wir sind angekommen, Hammet.{end_wait}"
 
@@ -38303,7 +38303,7 @@ msgctxt "message"
 msgid "09573"
 msgstr "In diesem Fall reisen wir{line_break}natürlich gerne auf dem{line_break}Wagen.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiDoWantGoCaveUp"
 msgid "09574"
 msgstr "Willst du die Höhle{line_break}betreten?{end_now}"
 
@@ -38319,7 +38319,7 @@ msgctxt "message"
 msgid "09577"
 msgstr "Hammet und Lady Layana{line_break}haben angeordnet, dass{line_break}hier niemand durch darf.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiItsIvanHisCompanionsPerfect"
 msgid "09578"
 msgstr "So! {pause_20_skippable}Es sind {actor_name:3}{line_break}und seine Freunde!{line_break}Perfektes Timing!{end_wait}"
 
@@ -38491,7 +38491,7 @@ msgctxt "message"
 msgid "09620"
 msgstr "Der Schlüssel zur geheimen{line_break}Passage ist auch der Schlüssel{line_break}zu Hammets Schatzkammer.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLayanaWasVeryHardOn"
 msgid "09621"
 msgstr "Layana war zu euch allen{line_break}sehr streng, nicht wahr?{end_now}"
 
@@ -39227,7 +39227,7 @@ msgctxt "message"
 msgid "09804"
 msgstr "Ich dachte, ich sei tot!{line_break}Ich kann mich glücklich{line_break}schätzen, am Leben zu sein!{page_break}Diese merkwürdigen Leute{line_break}mit den wilden Haaren...{page_break}Ihre Kräfte waren zu viel{line_break}für uns.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaTravelingPriest"
 msgid "09805"
 msgstr "Ich bin durch die Lande{line_break}gereist und habe die{line_break}Güte gepredigt.{end_wait}"
 
@@ -42763,7 +42763,7 @@ msgctxt "MsgBiribinoUponCloserInspectionSeemsDried"
 msgid "10688"
 msgstr "Es scheint, als wäre der{line_break}Brunnen ausgetrocknet.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiVeryCleanMaintained"
 msgid "10689"
 msgstr "Ein sehr sauberer,{line_break}gut gewarteter Brunnen.{end_wait}"
 
@@ -42771,7 +42771,7 @@ msgctxt "message"
 msgid "10690"
 msgstr "Er ist voller frischem,{line_break}klarem Wasser.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgRunpaWellFrogs"
 msgid "10691"
 msgstr "Du kannst das Quaken{line_break}von Fröschen vernehmen.{end_wait}"
 

@@ -1,4 +1,6 @@
 #include "VILLAGE.H"
+extern u8 MsgRunpaGeraldRefusesToReturn[];
+extern u8 MsgRunpaGuardsWarnPartyAway[];
 
 /* After the escape, walking up to the fortress raises Gerald's objection. */
 void Party_WatchForFortress(void)
@@ -15,7 +17,7 @@ void Gerald_RefusesToReturn(void)
 {
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-    Event_SetMessage(MSG_GERALD_REFUSES_TO_RETURN);
+    Event_SetMessage((s32)MsgRunpaGeraldRefusesToReturn);
     Event_ShowMessage(ACTOR_GERALD, 0);
     Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2, 100);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
@@ -157,7 +159,7 @@ void Guards_BlockGate(void)
         Actor_Stop(ACTOR_RIGHT_GUARD);
         Actor_SetAnimation(ACTOR_RIGHT_GUARD, 0);
         Actor_FaceDirection(ACTOR_RIGHT_GUARD, FACING_SOUTH + FACING_STEP, 0);
-        Event_SetMessage(MSG_GUARDS_WARN_PARTY_AWAY);
+        Event_SetMessage((s32)MsgRunpaGuardsWarnPartyAway);
         Event_ShowMessage(ACTOR_LEFT_GUARD, 0);
         GameFlag_Set(FLAG_GATE_GUARDS_BLOCKING);
         Map_CopyCellAttributes(6, 11, 1, 1, 7, 11);

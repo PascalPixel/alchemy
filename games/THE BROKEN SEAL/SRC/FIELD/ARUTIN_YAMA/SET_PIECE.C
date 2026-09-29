@@ -1,4 +1,5 @@
 #include "YAMA.H"
+extern u8 MsgFieldFlippedSwitch[];
 
 /* A scene number the main image supplies as a link-time value. */
 extern u8 Value_00000051;
@@ -336,7 +337,7 @@ void FieldScene_RunScene3a4SequenceB(void)
 void FieldScene_RunValue1528Scene(void)
 {
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
+    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     FieldScene_RunScene3a4SequenceB();
     Task_Wait(20);
@@ -367,7 +368,7 @@ void FieldScene_RunLine1528Sequence(void)
     extern u8 ArutinYama_RiseTimer[];
 
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
+    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     FieldScene_RunScene3a4SequenceA();
     Task_Wait(20);
@@ -383,7 +384,7 @@ void FieldScene_RunScene3a4SequenceC(void)
     s32 record;
 
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
+    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     if (GameFlag_IsSet(0x326) != 0) {
         Map_CopyCellAttributes(15, 93, 1, 1, 16, 92);
@@ -407,7 +408,7 @@ void FieldScene_RunScene3a4SequenceD(void)
     s32 record;
 
     Event_Begin();
-    Message_ShowCentered(MSG_ROBIN_FLIPPED_SWITCH, 1);
+    Message_ShowCentered((s32)MsgFieldFlippedSwitch, 1);
     Audio_PlayCue(125);
     if (GameFlag_IsSet(0x327) != 0) {
         Map_CopyCellAttributes(28, 82, 1, 1, 29, 81);

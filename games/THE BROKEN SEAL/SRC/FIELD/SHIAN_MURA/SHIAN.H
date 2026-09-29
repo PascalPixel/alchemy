@@ -7,12 +7,6 @@
 #include "SCENE_EFFECT_SEQUENCE.H"
 #include "IWRAM_CALL.H"
 
-enum SpawnSequenceMessage {
-    MSG_YOUNG_WARRIORS_VERY_GALLANT_CAME = 0x17e8,
-    MSG_WARRIORS_FROM_SCHOOL_STRONG_WARRIORS = 0x17f7,
-    MSG_DOING_MADE_ME_SPILL_MY = 0x17fa,
-    MSG_NOW_MUST_GET_WATER_AGAIN = 0x17fb
-};
 
 /* Shared 22-byte head leaf proved identical for this overlay family. */
 struct EffectRecord {

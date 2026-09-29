@@ -1,32 +1,33 @@
-@ Field_Map276: a field map of 3 layers.
+@ Field_Map276: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map276
 Field_Map276:
-	map_header 0x0, 0xcc, 0x50, 3, 3, 2, 0, 2, 2, 0x0, 0x0
-	map_layer 12, 12, -258, 3855, 0x5000
-	map_layer 16, 16, 0, -1, 0xa000
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map276, .LField_Map276_1
-	map_block Field_Map276, .LField_Map276_2
-	map_block Field_Map276, .LField_Map276_3
-	map_block Field_Map276, .LField_Map276_4
+	map_header 0, 0, 204, 80, 3, 3, 2, 0, 2, 2, 0, 0
+	map_layer 0, 0, 12, 12, -2, -2, 0xf, 0xf
+	map_layer 0, 80, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 160, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map276, .LField_Map276_METATILES
+	map_block Field_Map276, .LField_Map276_SHAPES
+	map_block Field_Map276, .LField_Map276_GRID
+	map_block Field_Map276, .LField_Map276_SHAPE_GRID
+	map_block Field_Map276, .LField_Map276_ANIMATION
 	map_block Field_Map276
-	map_block Field_Map276, .LField_Map276_6
-	.incbin "MAP/MAP_276/CELLS.delta1.lz"
+	map_block Field_Map276, .LField_Map276_SCENE
+.LField_Map276_METATILES:
+	.incbin "MAP/MAP_276/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map276_1:
-	.incbin "MAP/MAP_276/SLOT_1.bin.lz"
+.LField_Map276_SHAPES:
+	.incbin "MAP/MAP_276/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map276_2:
-	.incbin "MAP/MAP_276/SLOT_2.bin.lz"
+.LField_Map276_GRID:
+	.incbin "MAP/MAP_276/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map276_3:
-	.incbin "MAP/MAP_276/SLOT_3.bin.lz"
+.LField_Map276_SHAPE_GRID:
+	.incbin "MAP/MAP_276/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map276_4:
-	.incbin "MAP/MAP_276/SLOT_4.bin.lz"
+.LField_Map276_ANIMATION:
+	.incbin "MAP/MAP_263/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map276_6:
-	.incbin "MAP/MAP_276/SLOT_6.bin.lz"
+.LField_Map276_SCENE:
+	.incbin "MAP/MAP_276/SCENE.parts.lz"

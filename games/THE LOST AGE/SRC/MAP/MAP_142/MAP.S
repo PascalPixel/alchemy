@@ -1,35 +1,36 @@
-@ Field_Map142: a field map of 3 layers.
+@ Field_Map142: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map142
 Field_Map142:
-	map_header 0x0, 0x5a, 0x64, 3, 2, 1, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x6400
-	map_layer 16, 16, 0, -1, 0x64
-	map_layer 16, 16, 514, 3855, 0x40
-	.2byte 0x0
-	map_block Field_Map142, .LField_Map142_1
-	map_block Field_Map142, .LField_Map142_2
-	map_block Field_Map142, .LField_Map142_3
-	map_block Field_Map142, .LField_Map142_4
-	map_block Field_Map142, .LField_Map142_5
-	map_block Field_Map142, .LField_Map142_6
-	.incbin "MAP/MAP_142/CELLS.delta2.lz"
+	map_header 0, 0, 90, 100, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 100, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 100, 0, 16, 16, 2, 2, 0xf, 0xf
+	map_block Field_Map142, .LField_Map142_METATILES
+	map_block Field_Map142, .LField_Map142_SHAPES
+	map_block Field_Map142, .LField_Map142_GRID
+	map_block Field_Map142, .LField_Map142_SHAPE_GRID
+	map_block Field_Map142, .LField_Map142_ANIMATION
+	map_block Field_Map142, .LField_Map142_BLEND
+	map_block Field_Map142, .LField_Map142_SCENE
+.LField_Map142_METATILES:
+	.incbin "MAP/MAP_142/METATILES.delta2.lz"
 	.balign 4, 0
-.LField_Map142_1:
-	.incbin "MAP/MAP_142/SLOT_1.bin.lz"
+.LField_Map142_SHAPES:
+	.incbin "MAP/MAP_142/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map142_2:
-	.incbin "MAP/MAP_142/SLOT_2.bin.lz"
+.LField_Map142_GRID:
+	.incbin "MAP/MAP_142/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map142_3:
-	.incbin "MAP/MAP_142/SLOT_3.bin.lz"
+.LField_Map142_SHAPE_GRID:
+	.incbin "MAP/MAP_142/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map142_4:
-	.incbin "MAP/MAP_142/SLOT_4.bin.lz"
+.LField_Map142_ANIMATION:
+	.incbin "MAP/MAP_142/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map142_5:
-	.incbin "MAP/MAP_142/SLOT_5.bin.lz"
+.LField_Map142_BLEND:
+	.incbin "MAP/MAP_060/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map142_6:
-	.incbin "MAP/MAP_142/SLOT_6.bin.lz"
+.LField_Map142_SCENE:
+	.incbin "MAP/MAP_142/SCENE.parts.lz"

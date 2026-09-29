@@ -35,12 +35,12 @@ Resource_DirectoryTable:
 	resource , FarCall_ResourceTable
 	resource , FarCall_ResourceTable
 	resource WindowTiles, Ui_WindowTiles
-	resource , UiText_GlyphData
+	resource , UiText_SmallFont
 	resource , Title_IntroGraphicsA
 	resource , Title_IntroGraphicsB
 	resource , Title_IntroGraphicsC
 	resource NintendoLogo, Title_NintendoLogo
-	resource , Title_IntroTiles
+	resource , Title_CamelotLogo
 	resource GoldenSunLogo, Title_GoldenSunLogo
 	resource WorldMapPicture, Field_WorldMapPicture
 	resource IntroTilesB, Title_IntroTilesB
@@ -81,8 +81,8 @@ Resource_DirectoryTable:
 	resource , Slots_Screen
 	resource , Slots_Icons
 	resource , Slots_Jackpot
-	resource , LuckyDice_GraphicsA
-	resource , LuckyDice_GraphicsB
+	resource , LuckyDice_Board
+	resource , LuckyDice_Sprites
 	resource , BattleFx_TileAnimationMask
 	resource , BattleFx_CyanSparkSheet
 	resource , BattleFx_VioletPaletteA
@@ -225,12 +225,12 @@ Resource_DirectoryTable:
 	resource CrystalSheet, BattleFx_CrystalSheet
 	resource , BattleFx_WaterSparkleSheet
 	resource , BattleFx_LightningPillarSheet
-	resource , BattleFx_StagedParticleData
-	resource , BattleFx_DualStreamData
+	resource , BattleFx_StagedParticlePath
+	resource , BattleFx_DualStreamPath
 	resource , Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
-	resource , Field_PerspectiveDataB
-	resource , Field_PerspectiveDataC
+	resource , Field_DefaultMapAnimation
+	resource , Field_DefaultMetatileAttributes
 	resource , WorldMap_PaletteA
 	resource , WorldMap_TilesA
 	resource , WorldMap_TilesB
@@ -243,10 +243,10 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesH
 	resource , WorldMap_TilesI
 	resource , WorldMap_TilesJ
-	resource , Graphics_PictureA
-	resource PictureB, Graphics_PictureB
-	resource PictureC, Graphics_PictureC
-	resource TilesK, Graphics_TilesK
+	resource , Korosseo_RivalPathA
+	resource RivalPathB, Korosseo_RivalPathB
+	resource RivalPathC, Korosseo_RivalPathC
+	resource Lettering, Korosseo_Lettering
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC

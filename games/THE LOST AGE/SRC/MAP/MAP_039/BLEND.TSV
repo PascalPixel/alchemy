@@ -1,0 +1,4 @@
+control	0x3f42
+level	0xd05	65535
+jump	0
+end

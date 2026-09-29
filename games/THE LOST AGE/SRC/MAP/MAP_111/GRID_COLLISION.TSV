@@ -1,0 +1,9 @@
+cell:u8	grid:128x128	fill:0	at:24,12
+00 ff ff 0a ff ff
+00 ff ff 0a ff ff 00 00 00 00 00 0b
+00 ff ff 00 ff ff 00 00 00 00 00 0b
+
+
+ff 00 00 01
+00 00 01 ff 01
+00 00 00 01

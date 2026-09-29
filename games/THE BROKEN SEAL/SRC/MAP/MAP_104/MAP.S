@@ -1,28 +1,29 @@
-@ Field_Map104: a field map of 3 layers.
+@ Field_Map104: a field map.
 	.include "games/THE BROKEN SEAL/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map104
 Field_Map104:
-	map_header 0x0, 0x2e, 0x2e, 3, 1, 2, 0, 2, 2, 0x0, 0x5c00
-	map_layer 6, 6, 0, -1, 0x2e00
-	map_layer 16, 16, 0, -1, 0x0
-	map_layer 16, 16, 0, -1, 0x3c
-	.2byte 0x0
-	map_block Field_Map104, .LField_Map104_1
-	map_block Field_Map104, .LField_Map104_2
-	map_block Field_Map104, .LField_Map104_3
+	map_header 0, 0, 46, 46, 3, 1, 2, 0, 2, 2, 0, 0
+	map_layer 0, 92, 6, 6, 0, 0, 0xff, 0xff
+	map_layer 0, 46, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map104, .LField_Map104_METATILES
+	map_block Field_Map104, .LField_Map104_SHAPES
+	map_block Field_Map104, .LField_Map104_GRID
+	map_block Field_Map104, .LField_Map104_ANIMATION
 	map_block Field_Map104
-	map_block Field_Map104, .LField_Map104_5
-	.incbin "MAP/MAP_104/CELLS.delta1.lz"
+	map_block Field_Map104, .LField_Map104_MARKERS
+.LField_Map104_METATILES:
+	.incbin "MAP/MAP_104/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map104_1:
-	.incbin "MAP/MAP_104/SLOT_1.bin.lz"
+.LField_Map104_SHAPES:
+	.incbin "MAP/MAP_104/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map104_2:
-	.incbin "MAP/MAP_104/SLOT_2.bin.lz"
+.LField_Map104_GRID:
+	.incbin "MAP/MAP_104/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map104_3:
-	.incbin "MAP/MAP_104/SLOT_3.bin.lz"
+.LField_Map104_ANIMATION:
+	.incbin "MAP/MAP_104/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map104_5:
-	.incbin "MAP/MAP_104/SLOT_5.bin"
+.LField_Map104_MARKERS:
+	.incbin "MAP/MAP_000/MARKERS.table"

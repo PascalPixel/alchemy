@@ -1,35 +1,36 @@
-@ Field_Map020: a field map of 3 layers.
+@ Field_Map020: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map020
 Field_Map020:
-	map_header 0x0, 0x80, 0x80, 3, 2, 1, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x80
-	map_layer 16, 16, 0, -1, 0x8000
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map020, .LField_Map020_1
-	map_block Field_Map020, .LField_Map020_2
-	map_block Field_Map020, .LField_Map020_3
-	map_block Field_Map020, .LField_Map020_4
-	map_block Field_Map020, .LField_Map020_5
-	map_block Field_Map020, .LField_Map020_6
-	.incbin "MAP/MAP_020/CELLS.delta1.lz"
+	map_header 0, 0, 128, 128, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map020, .LField_Map020_METATILES
+	map_block Field_Map020, .LField_Map020_SHAPES
+	map_block Field_Map020, .LField_Map020_GRID
+	map_block Field_Map020, .LField_Map020_SHAPE_GRID
+	map_block Field_Map020, .LField_Map020_ANIMATION
+	map_block Field_Map020, .LField_Map020_BLEND
+	map_block Field_Map020, .LField_Map020_SCENE
+.LField_Map020_METATILES:
+	.incbin "MAP/MAP_020/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map020_1:
-	.incbin "MAP/MAP_020/SLOT_1.bin.lz"
+.LField_Map020_SHAPES:
+	.incbin "MAP/MAP_020/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map020_2:
-	.incbin "MAP/MAP_020/SLOT_2.bin.lz"
+.LField_Map020_GRID:
+	.incbin "MAP/MAP_020/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map020_3:
-	.incbin "MAP/MAP_020/SLOT_3.bin.lz"
+.LField_Map020_SHAPE_GRID:
+	.incbin "MAP/MAP_020/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map020_4:
-	.incbin "MAP/MAP_020/SLOT_4.bin.lz"
+.LField_Map020_ANIMATION:
+	.incbin "MAP/MAP_012/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map020_5:
-	.incbin "MAP/MAP_020/SLOT_5.bin.lz"
+.LField_Map020_BLEND:
+	.incbin "MAP/MAP_020/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map020_6:
-	.incbin "MAP/MAP_020/SLOT_6.bin.lz"
+.LField_Map020_SCENE:
+	.incbin "MAP/MAP_020/SCENE.parts.lz"

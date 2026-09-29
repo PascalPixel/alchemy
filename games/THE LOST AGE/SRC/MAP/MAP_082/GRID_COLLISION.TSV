@@ -1,0 +1,88 @@
+cell:u8	grid:128x128	fill:0	at:1,4
+00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff
+00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff ff
+00 00 00 00 00 00 00 00 00 00 ff 00 00 ff 00 00 00 ff 00 00 ff
+00 00 00 00 ff ff ff ff ff ff ff 00 00 00 00 1e 00 00 00 00 ff ff ff ff ff ff ff ff ff
+00 00 00 ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff
+00 00 ff ff 51 ff 50 ff 51 ff 00 00 00 ff 00 00 00 ff 00 00 00 ff 51 ff 50 ff 51 ff ff
+00 ff ff ff ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff ff ff
+ff ff 51 ff 50 ff ff ff ff ff ff 00 00 00 00 00 00 00 00 00 ff ff ff ff ff ff 50 ff 51 ff ff
+ff ff ff ff ff 00 00 00 00 00 ff 00 ff 00 00 00 00 00 ff 00 ff 00 00 00 00 ff ff ff ff ff ff
+ff ff 50 ff ff 00 00 00 00 00 ff 00 00 00 ff 00 ff 00 00 00 ff 00 00 00 00 ff ff ff 50 ff ff
+ff ff ff ff 00 00 00 00 00 00 ff ff ff ff 00 00 00 ff ff ff ff 00 00 00 00 ff ff ff ff ff ff
+ff ff 51 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 51 ff ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 50 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff 50 ff ff ff 00 ff 00 ff ff ff ff ff ff ff ff ff ff ff ff ff 00 ff fe ff ff ff 50 ff ff
+ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff 50 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff 00 00 ff 5a ff ff ff 5a ff 00 00 ff ff ff ff ff 00 00 ff 5a ff ff ff 5a ff 00 00 ff ff
+00 ff ff ff ff ff ff ff ff ff ff ff ff ff ff 50 ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+00 00 ff ff ff ff 00 ff 00 ff ff ff 50 ff ff ff ff ff 51 ff ff ff 00 ff 00 ff ff ff ff ff
+00 00 00 00 00 ff ff ff ff ff ff ff ff ff ff 50 ff ff ff ff ff ff ff ff ff ff
+00 00 00 00 00 ff ff ff ff ff ff ff 51 ff ff ff ff ff 50 ff ff ff ff 00 ff
+00 00 00 00 00 ff 00 00 00 ff ff ff ff ff ff 50 ff ff ff ff ff
+00 00 00 00 00 ff 00 00 0c ff 51 ff 50 ff ff ff ff ff 51 ff ff
+00 00 00 00 00 ff 00 00 00 ff ff ff ff ff 00 00 00 ff ff ff ff
+00 00 00 00 00 ff ff ff ff ff ff ff ff ff 00 00 00 ff 50 ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 ff 00 00 00 ff ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff 00 ff ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff 01 ff
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 ff ff ff
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 07
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 06
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 05
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 04
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 03
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 02
+
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01

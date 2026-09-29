@@ -1,31 +1,32 @@
-@ Field_Map114: a field map of 3 layers.
+@ Field_Map114: a field map.
 	.include "games/THE BROKEN SEAL/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map114
 Field_Map114:
-	map_header 0x0, 0x48, 0x5e, 3, 2, 1, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x6000
-	map_layer 16, 16, 0, -1, 0x50
-	map_layer 16, 16, 0, -1, 0x3c
-	.2byte 0x0
-	map_block Field_Map114, .LField_Map114_1
-	map_block Field_Map114, .LField_Map114_2
-	map_block Field_Map114, .LField_Map114_3
-	map_block Field_Map114, .LField_Map114_4
-	map_block Field_Map114, .LField_Map114_5
-	.incbin "MAP/MAP_114/CELLS.delta2.lz"
+	map_header 0, 0, 72, 94, 3, 2, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 96, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 80, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map114, .LField_Map114_METATILES
+	map_block Field_Map114, .LField_Map114_SHAPES
+	map_block Field_Map114, .LField_Map114_GRID
+	map_block Field_Map114, .LField_Map114_ANIMATION
+	map_block Field_Map114, .LField_Map114_BLEND
+	map_block Field_Map114, .LField_Map114_MARKERS
+.LField_Map114_METATILES:
+	.incbin "MAP/MAP_114/METATILES.delta2.lz"
 	.balign 4, 0
-.LField_Map114_1:
-	.incbin "MAP/MAP_114/SLOT_1.bin.lz"
+.LField_Map114_SHAPES:
+	.incbin "MAP/MAP_114/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map114_2:
-	.incbin "MAP/MAP_114/SLOT_2.bin.lz"
+.LField_Map114_GRID:
+	.incbin "MAP/MAP_114/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map114_3:
-	.incbin "MAP/MAP_114/SLOT_3.bin.lz"
+.LField_Map114_ANIMATION:
+	.incbin "MAP/MAP_033/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map114_4:
-	.incbin "MAP/MAP_114/SLOT_4.bin.lz"
+.LField_Map114_BLEND:
+	.incbin "MAP/MAP_114/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map114_5:
-	.incbin "MAP/MAP_114/SLOT_5.bin"
+.LField_Map114_MARKERS:
+	.incbin "MAP/MAP_114/MARKERS.table"

@@ -32,10 +32,10 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall010
 	resource , Resource_FarCall010
 	resource , Resource_Data012
-	resource , Resource_Data013
-	resource , Resource_Data014
+	resource , Ui_WindowTiles
+	resource , UiText_SmallFont
 	resource , Resource_Data015
-	resource , Resource_Data016
+	resource , Title_ScreenPicture
 	resource , Resource_Data017
 	resource , Resource_Data018
 	resource , Resource_Data019
@@ -47,7 +47,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data01F
 	resource , Resource_Data020
 	resource , Resource_Data021
-	resource , Resource_Data022
+	resource , Title_LogoOnBlackPicture
 	resource , Resource_Data023
 	resource , Resource_Data024
 	resource , Resource_Data025
@@ -128,67 +128,67 @@ Resource_DirectoryTable:
 	resource , Battle_SerpentStarsBBackdrop
 	resource , Battle_SunbeamCloudsBackdrop
 	resource , Battle_RedHazeBackdrop
-	resource , Resource_Data073
-	resource , Resource_Data074
-	resource , Resource_Data075
+	resource , Battle_DesertBackdrop
+	resource , Battle_DuskCloudsBackdrop
+	resource , Battle_AerialViewBackdrop
 	resource , Battle_SunsetBackdrop
 	resource , Battle_StarfieldFlareBackdrop
 	resource , Battle_EarthHorizonBackdrop
-	resource , Resource_Data079
-	resource , Resource_Data07A
-	resource , Resource_Data07B
-	resource , Resource_Data07C
-	resource , Resource_Data07D
-	resource , Resource_Data07E
-	resource , Resource_Data07F
-	resource , Resource_Data080
-	resource , Resource_Data081
-	resource , Resource_Data082
-	resource , Resource_Data083
-	resource , Resource_Data084
-	resource , Resource_Data085
-	resource , Resource_Data086
+	resource , Ending_CliffDayPicture
+	resource , Ending_CliffSunsetPicture
+	resource , Ending_VillagersPictureA
+	resource , Ending_VillagersPictureB
+	resource , Ending_EmbracePicture
+	resource , Ending_ReunionPicture
+	resource , Ending_SunsetPlainPicture
+	resource , Ending_TheEndPicture
+	resource , Slots_FramePicture
+	resource , Slots_Icons
+	resource , Slots_JackpotBanner
+	resource , Slots_TablePicture
+	resource , Slots_DomePicture
+	resource , Slots_Sprites
 	resource , Resource_Data087
-	resource , Resource_Data088
-	resource , Resource_Data089
-	resource , Resource_Data08A
-	resource , Resource_Data08B
-	resource , Resource_Data08C
-	resource , Resource_Data08D
-	resource , Resource_Data08E
-	resource , Resource_Data08F
-	resource , Resource_Data090
-	resource , Resource_Data091
-	resource , Resource_Data092
-	resource , Resource_Data093
-	resource , Resource_Data094
-	resource , Resource_Data095
-	resource , Resource_Data096
-	resource , Resource_Data097
-	resource , Resource_Data098
-	resource , Resource_Data099
-	resource , Resource_Data09A
-	resource , Resource_Data09B
-	resource , Resource_Data09C
-	resource , Resource_Data09D
-	resource , Resource_Data09E
-	resource , Resource_Data09F
-	resource , Resource_Data0A0
-	resource , Resource_Data0A1
-	resource , Resource_Data0A2
-	resource , Resource_Data0A3
-	resource , Resource_Data0A4
-	resource , Resource_Data0A5
-	resource , Resource_Data0A6
-	resource , Resource_Data0A7
-	resource , Resource_Data0A8
-	resource , Resource_Data0A9
-	resource , Resource_Data0AA
-	resource , Resource_Data0AB
-	resource , Resource_Data0AC
-	resource , Resource_Data0AD
-	resource , Resource_Data0AE
-	resource , Resource_Data0AF
+	resource , Slots_YouWinBanner
+	resource , Slots_YouLoseBanner
+	resource , Slots_HigherBanner
+	resource , Slots_LowerBanner
+	resource , Slots_DoubleUpBanner
+	resource , Slots_CashOutBanner
+	resource , Slots_PinkDigits
+	resource , Slots_OrangeDigits
+	resource , Slots_GreenDigits
+	resource , Slots_TimesSign
+	resource , Slots_SmallDoubleUpBanner
+	resource , Slots_OnePairBanner
+	resource , Slots_TwoPairBanner
+	resource , Slots_TripleBanner
+	resource , Slots_PerfectBanner
+	resource , Slots_FinalGameBanner
+	resource , Summon_GreenHairedMaidenTiles
+	resource , Summon_SeaSerpentTiles
+	resource , Summon_PinkCloudTiles
+	resource , Summon_CrimsonBeastTiles
+	resource , Summon_RedSlashTiles
+	resource , Summon_RedCrescentTiles
+	resource , Summon_WhiteArrowsTiles
+	resource , Summon_WhiteWispsTiles
+	resource , Summon_ForestCanopyTiles
+	resource , Summon_BronzeAutomatonTiles
+	resource , Summon_ColourNoiseTiles
+	resource , Summon_GoldenDragonHeadTiles
+	resource , Summon_GoldenDragonTiles
+	resource , Summon_RobedGoddessTiles
+	resource , Summon_LeafWarriorTiles
+	resource , Summon_BellMaidenTiles
+	resource , Summon_WingedKnightATiles
+	resource , Summon_WingedKnightBTiles
+	resource , Summon_WingedKnightCTiles
+	resource , Summon_ChainedDemonTiles
+	resource , Summon_PurpleArmourTiles
+	resource , Summon_WhiteSpikesTiles
+	resource , Summon_GoldenScalesTiles
+	resource , BattleFx_GlowOrbSetSheet
 	resource , Resource_Data0B0
 	resource , Resource_Data0B1
 	resource , Resource_Data0B2
@@ -243,7 +243,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_SheepCardSheet
 	resource , BattleFx_SkeletonCardSheet
 	resource , BattleFx_SwordCardSheet
-	resource , BattleFx_BoulderSheet
+	resource , BattleFx_BoulderPicture
 	resource , BattleFx_BladeSheet
 	resource , BattleFx_ClawSlashSheet
 	resource , Resource_Data0E9
@@ -275,7 +275,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data103
 	resource , Resource_Data104
 	resource , BattleFx_CloudPuffSheet
-	resource , Resource_Data106
+	resource , BattleFx_TileAnimationMask
 	resource , Resource_Data107
 	resource , BattleFx_VioletPaletteA
 	resource , BattleFx_RedPaletteA
@@ -283,7 +283,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_GreyCrescentSheet
 	resource , BattleFx_StarCrescentSheet
 	resource , BattleFx_RevealMaskA
-	resource , Resource_Data10E
+	resource , BattleFx_RevealMaskB
 	resource , BattleFx_RevealMaskC
 	resource , BattleFx_RevealMaskD
 	resource , BattleFx_RevealMaskE
@@ -298,13 +298,13 @@ Resource_DirectoryTable:
 	resource , Resource_Data11A
 	resource , BattleFx_SpiderWebSheet
 	resource , BattleFx_VioletLightningSheetA
-	resource , Resource_Data11D
+	resource , BattleFx_YellowSparkSheet
 	resource , Resource_Data11E
 	resource , BattleFx_ShurikenSheet
-	resource , Resource_Data120
+	resource , BattleFx_FlareSheet
 	resource , Resource_Data121
 	resource , BattleFx_VioletPaletteB
-	resource , Resource_Data123
+	resource , BattleFx_FireSwirlSheet
 	resource , BattleFx_VioletLightningSheetB
 	resource , BattleFx_FireBurstSheet
 	resource , BattleFx_BlueCrescentSheet
@@ -312,12 +312,12 @@ Resource_DirectoryTable:
 	resource , BattleFx_VioletMoteSheet
 	resource , BattleFx_FireballSheet
 	resource , Resource_Data12A
-	resource , Resource_Data12B
+	resource , BattleFx_SlashSheet
 	resource , BattleFx_WaveSheet
 	resource , Resource_Data12D
 	resource , BattleFx_PinkStarSheet
 	resource , Resource_Data12F
-	resource , Resource_Data130
+	resource , BattleFx_BlueFlameSheet
 	resource , BattleFx_ExplosionSheet
 	resource , BattleFx_MagentaSwirlSheet
 	resource , BattleFx_MagentaTailSheet
@@ -329,24 +329,24 @@ Resource_DirectoryTable:
 	resource , BattleFx_CrossedDaggersSheet
 	resource , BattleFx_RuneSheet
 	resource , BattleFx_FlameColumnSheet
-	resource , Resource_Data13C
+	resource , BattleFx_EarthWallSheet
 	resource , BattleFx_OrangePaletteA
 	resource , BattleFx_FlashBurstSheet
-	resource , Resource_Data13F
+	resource , BattleFx_ThornSheet
 	resource , BattleFx_CometSheetA
 	resource , BattleFx_CometSheetB
 	resource , BattleFx_CometSheetC
 	resource , Resource_Data143
-	resource , Resource_Data144
-	resource , Resource_Data145
+	resource , BattleFx_GreenPillarSheet
+	resource , BattleFx_VineSheet
 	resource , Resource_Data146
 	resource , BattleFx_RedPaletteB
 	resource , BattleFx_OrangePaletteB
 	resource , BattleFx_EffectPalette02
 	resource , BattleFx_EffectPalette03
-	resource , Resource_Data14B
+	resource , BattleFx_VioletCometSheet
 	resource , BattleFx_FlameballSheet
-	resource , Resource_Data14D
+	resource , BattleFx_BoulderSheet
 	resource , BattleFx_RockWallSheet
 	resource , Resource_Data14F
 	resource , BattleFx_MarsDjinnSheet
@@ -379,8 +379,8 @@ Resource_DirectoryTable:
 	resource , BattleFx_GreenVineSheet
 	resource , Resource_Data16C
 	resource , BattleFx_SkullSheet
-	resource , Resource_Data16E
-	resource , Resource_Data16F
+	resource , BattleFx_HeartSheet
+	resource , BattleFx_CounterRevealSheet
 	resource , Resource_Data170
 	resource , Resource_Data171
 	resource , BattleFx_RedCrescentSheetB
@@ -418,104 +418,104 @@ Resource_DirectoryTable:
 	resource , Resource_Data192
 	resource , Resource_Data193
 	resource , BattleFx_LightningPillarSheet
-	resource , Resource_Data195
-	resource , Resource_Data196
+	resource , BattleFx_StagedParticlePath
+	resource , BattleFx_DualStreamPath
 	resource , Resource_Data197
 	resource , Resource_Data198
 	resource , Resource_Data199
-	resource , Resource_Data19A
+	resource , WorldMap_PaletteA
 	resource , Resource_Data19B
 	resource , Resource_Data19C
-	resource , Resource_Data19D
-	resource , Resource_Data19E
-	resource , Resource_Data19F
-	resource , Resource_Data1A0
-	resource , Resource_Data1A1
-	resource , Resource_Data1A2
-	resource , Resource_Data1A3
+	resource , WorldMap_TilesA1
+	resource , WorldMap_TilesA2
+	resource , WorldMap_TilesA3
+	resource , WorldMap_TilesA4
+	resource , WorldMap_TilesA5
+	resource , WorldMap_TilesA6
+	resource , WorldMap_PaletteB
 	resource , Resource_Data1A4
 	resource , Resource_Data1A5
-	resource , Resource_Data1A6
-	resource , Resource_Data1A7
-	resource , Resource_Data1A8
-	resource , Resource_Data1A9
-	resource , Resource_Data1AA
-	resource , Resource_Data1AB
-	resource , Resource_Data1AC
+	resource , WorldMap_TilesB1
+	resource , WorldMap_TilesB2
+	resource , WorldMap_TilesB3
+	resource , WorldMap_TilesB4
+	resource , WorldMap_TilesB5
+	resource , WorldMap_TilesB6
+	resource , WorldMap_PaletteC
 	resource , Resource_Data1AD
 	resource , Resource_Data1AE
-	resource , Resource_Data1AF
-	resource , Resource_Data1B0
-	resource , Resource_Data1B1
-	resource , Resource_Data1B2
-	resource , Resource_Data1B3
-	resource , Resource_Data1B4
-	resource , Resource_Data1B5
+	resource , WorldMap_TilesC1
+	resource , WorldMap_TilesC2
+	resource , WorldMap_TilesC3
+	resource , WorldMap_TilesC4
+	resource , WorldMap_TilesC5
+	resource , WorldMap_TilesC6
+	resource , WorldMap_PaletteD
 	resource , Resource_Data1B6
 	resource , Resource_Data1B7
-	resource , Resource_Data1B8
-	resource , Resource_Data1B9
-	resource , Resource_Data1BA
-	resource , Resource_Data1BB
-	resource , Resource_Data1BC
-	resource , Resource_Data1BD
+	resource , WorldMap_TilesD1
+	resource , WorldMap_TilesD2
+	resource , WorldMap_TilesD3
+	resource , WorldMap_TilesD4
+	resource , WorldMap_TilesD5
+	resource , WorldMap_TilesD6
 	resource , Resource_Data1BE
-	resource , Resource_Data1BF
+	resource , Field_WhirlwindMap
 	resource , Resource_Data1C0
-	resource , Resource_Data1C1
-	resource , Resource_Data1C2
-	resource , Resource_Data1C3
-	resource , Resource_Data1C4
-	resource , Resource_Data1C5
-	resource , Resource_Data1C6
-	resource , Resource_Data1C7
-	resource , Resource_Data1C8
-	resource , Resource_Data1C9
-	resource , Resource_Data1CA
-	resource , Resource_Data1CB
-	resource , Resource_Data1CC
-	resource , Resource_Data1CD
-	resource , Resource_Data1CE
-	resource , Resource_Data1CF
-	resource , Resource_Data1D0
-	resource , Resource_Data1D1
-	resource , Resource_Data1D2
-	resource , Resource_Data1D3
-	resource , Resource_Data1D4
+	resource , Field_LightningMap
+	resource , Field_WalkPathA
+	resource , Field_WalkPathB
+	resource , Field_WalkPathC
+	resource , Field_WalkPathD
+	resource , Field_WalkPathE
+	resource , Field_WalkPathF
+	resource , Field_WalkPathG
+	resource , Field_WalkPathH
+	resource , Field_WalkPathI
+	resource , Field_WalkPathJ
+	resource , Lettering_Banner
+	resource , Shop_CursorFrameA
+	resource , Shop_CursorFrameB
+	resource , Shop_CursorFrameC
+	resource , Shop_CursorFrameD
+	resource , Shop_CursorFrameE
+	resource , Shop_CursorFrameF
+	resource , Shop_CursorFrameG
+	resource , Shop_CursorFrameH
 	resource , Resource_Data1D5
-	resource , Resource_Data1D6
-	resource , Resource_Data1D7
+	resource , Ui_Icons
+	resource , Ui_CommandIcons
 	resource , Resource_Data1D8
 	resource , Resource_Data1D9
 	resource , Resource_Data1DA
 	resource , Resource_Data1DB
-	resource , Resource_Data1DC
-	resource , Resource_Data1DD
-	resource , Resource_Data1DE
-	resource , Resource_Data1DF
-	resource , Resource_Data1E0
-	resource , Resource_Data1E1
-	resource , Resource_Data1E2
+	resource , FieldFx_RedFlameBurst
+	resource , FieldFx_VioletFlameBurst
+	resource , FieldFx_YellowFlameBurst
+	resource , FieldFx_BlueFlameBurst
+	resource , FieldFx_Leaves
+	resource , FieldFx_DustPuffA
+	resource , FieldFx_DustPuffB
 	resource , Resource_Data1E3
-	resource , Resource_Data1E4
-	resource , Resource_Data1E5
-	resource , Resource_Data1E6
-	resource , Resource_Data1E7
+	resource , FieldFx_GoldStar
+	resource , FieldFx_GoldCrystal
+	resource , FieldFx_FlamingArrow
+	resource , FieldFx_BowDraw
 	resource , Resource_Data1E8
 	resource , Resource_Data1E9
-	resource , Resource_Data1EA
-	resource , Resource_Data1EB
-	resource , Resource_Data1EC
+	resource , FieldFx_SparkleFade
+	resource , FieldFx_StarSparkleFade
+	resource , FieldFx_WhitePuff
 	resource , Resource_Data1ED
 	resource , Resource_Data1EE
-	resource , Resource_Data1EF
-	resource , Resource_Data1F0
-	resource , Resource_Data1F1
-	resource , Resource_Data1F2
-	resource , Resource_Data1F3
-	resource , Resource_Data1F4
-	resource , Resource_Data1F5
-	resource , Resource_Data1F6
+	resource , FieldFx_ColouredOrbs
+	resource , FieldFx_FallingRock
+	resource , FieldFx_WaterSplash
+	resource , FieldFx_IceShard
+	resource , FieldFx_WhiteSparkle
+	resource , FieldFx_Runes
+	resource , FieldFx_Pebbles
+	resource , FieldFx_GoldenTrident
 	resource , Resource_Data1F7
 	resource , Resource_Data1F8
 	resource , Resource_Data1F9

@@ -1,0 +1,31 @@
+cell:u8	grid:128x128	fill:0	at:6,6
+00 fb fb fb fb fb fb fb fb fb fb fb 00 00 00 fb fb fb fb fb fb
+00 fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+00 fb fb 00 00 00 00 00 00 00 fb fb fb fb fb fb fb
+00 fb
+00 fb
+fb fb fb
+fb fb fb 00 00 00 00 00 14 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fb
+fb fb fb fb 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 64 00 00 00 fb fb
+fb fb fb fb 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 00 00 00 00 fb fb
+fb fb fb 00 00 fb fb fb fb fb fb 00 fb 00 15 00 00 00 00 00 00 00 fb fb fb
+fb fb 00 00 00 00 00 00 00 fb 00 fb
+fb 00 00 00 00 00 00 00 00 00 fb fb
+00 00 00 00 00 00 00 00 00 00 fb fb fb
+00 00 00 00 00 00 00 00 00 fb 00 fb 00 00 00 00 00 00 fb fb fb fb fb fb fb
+00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb
+00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 fb fb fb fb fb fb 00 fb fb fb fb fb fb fb
+00 00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 fb 00 00 fb fb 00 00 00 fb fb fb 00 fb fb
+00 00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 fb fb fb 00 00 00 00 00 00 fb 00 00 00 fb
+00 00 00 00 00 00 00 00 00 00 fb fb 00 00 00 00 fb fb fb 00 00 00 00 00 00 00 00 00 00 fb
+00 00 fb 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 fb fb 00 00 00 00 00 00 00 fb 00 fb fb
+00 00 fb 00 00 00 00 00 00 00 fb fb 00 00 00 00 00 00 fb 00 00 00 00 00 00 00 fb fb fb fb
+00 00 fb fb 00 00 00 00 00 fb fb fb 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb
+00 00 fb fb fb fb fb fb fb fb fb fb 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb
+00 00 fb fb fb fb fb fb fb fb fb fb 00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb
+00 00 00 fb fb fb fb fb fb fb fb fb fb 00 00 00 00 00 00 00 00 00 fb fb fb fb fb
+00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb 00 00 00 00 00 00 00 fb fb fb fb
+00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb 00 00 00 00 00 fb fb fb fb fb
+00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+00 00 00 00 00 00 00 00 00 00 00 00 00 fb fb fb fb fb fb fb fb fb fb fb fb

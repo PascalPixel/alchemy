@@ -1,0 +1,15 @@
+cell:u8	grid:128x128	fill:0	at:5,5
+00 00 00 00 00 00 ff ff ff ff
+00 00 00 00 ff ff 00 00 00 ff ff ff
+00 00 ff ff 00 00 00 00 00 00 00 ff ff
+ff ff 00 00 00 00 ff ff ff 00 00 00 00 ff ff
+ff 00 00 00 00 ff ff ff ff ff 00 00 00 00 ff
+ff 00 00 00 ff ff ff ff ff ff ff 00 00 00 ff
+ff 00 00 00 ff ff ff ff ff ff ff 00 00 00 ff
+ff 00 00 00 00 ff ff ff ff ff 00 00 00 00 ff
+00 00 00 00 00 00 ff ff ff
+
+
+
+
+00 00 00 00 00 00 00 01

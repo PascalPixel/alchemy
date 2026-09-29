@@ -1,31 +1,32 @@
-@ Field_Map089: a field map of 3 layers.
+@ Field_Map089: a field map.
 	.include "games/THE BROKEN SEAL/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map089
 Field_Map089:
-	map_header 0x0, 0x37, 0x44, 3, 1, 2, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x7800
-	map_layer 16, 16, 0, -1, 0x78
-	map_layer 16, 16, 0, -1, 0x3c
-	.2byte 0x0
-	map_block Field_Map089, .LField_Map089_1
-	map_block Field_Map089, .LField_Map089_2
-	map_block Field_Map089, .LField_Map089_3
-	map_block Field_Map089, .LField_Map089_4
-	map_block Field_Map089, .LField_Map089_5
-	.incbin "MAP/MAP_089/CELLS.delta0.lz"
+	map_header 0, 0, 55, 68, 3, 1, 2, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 120, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 120, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map089, .LField_Map089_METATILES
+	map_block Field_Map089, .LField_Map089_SHAPES
+	map_block Field_Map089, .LField_Map089_GRID
+	map_block Field_Map089, .LField_Map089_ANIMATION
+	map_block Field_Map089, .LField_Map089_BLEND
+	map_block Field_Map089, .LField_Map089_MARKERS
+.LField_Map089_METATILES:
+	.incbin "MAP/MAP_089/METATILES.delta0.lz"
 	.balign 4, 0
-.LField_Map089_1:
-	.incbin "MAP/MAP_089/SLOT_1.bin.lz"
+.LField_Map089_SHAPES:
+	.incbin "MAP/MAP_089/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map089_2:
-	.incbin "MAP/MAP_089/SLOT_2.bin.lz"
+.LField_Map089_GRID:
+	.incbin "MAP/MAP_089/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map089_3:
-	.incbin "MAP/MAP_089/SLOT_3.bin.lz"
+.LField_Map089_ANIMATION:
+	.incbin "MAP/MAP_028/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map089_4:
-	.incbin "MAP/MAP_089/SLOT_4.bin.lz"
+.LField_Map089_BLEND:
+	.incbin "MAP/MAP_020/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map089_5:
-	.incbin "MAP/MAP_089/SLOT_5.bin"
+.LField_Map089_MARKERS:
+	.incbin "MAP/MAP_089/MARKERS.table"

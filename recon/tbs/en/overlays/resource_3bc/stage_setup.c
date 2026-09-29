@@ -243,7 +243,7 @@ s32 StageSetup_BuildAndDispatch(void)
         Object_LinkObjectAndSetCallback(1, 0);
         Object_LinkObjectAndSetCallback(2, 0);
         Object_LinkObjectAndSetCallback(3, 0);
-        ColossoLogRollingStage_InitializeSceneControl((s32)&ResourceId_PictureC);
+        ColossoLogRollingStage_InitializeSceneControl((s32)&ResourceId_RivalPathC);
         break;
 
     case 2:

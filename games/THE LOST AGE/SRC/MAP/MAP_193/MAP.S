@@ -1,35 +1,36 @@
-@ Field_Map193: a field map of 3 layers.
+@ Field_Map193: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map193
 Field_Map193:
-	map_header 0x0, 0x1e, 0x16, 3, 1, 2, 1, 1, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x80
-	map_layer 16, 16, 0, -1, 0x8400
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map193, .LField_Map193_1
-	map_block Field_Map193, .LField_Map193_2
-	map_block Field_Map193, .LField_Map193_3
-	map_block Field_Map193, .LField_Map193_4
-	map_block Field_Map193, .LField_Map193_5
-	map_block Field_Map193, .LField_Map193_6
-	.incbin "MAP/MAP_193/CELLS.delta1.lz"
+	map_header 0, 0, 30, 22, 3, 1, 2, 1, 1, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 132, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map193, .LField_Map193_METATILES
+	map_block Field_Map193, .LField_Map193_SHAPES
+	map_block Field_Map193, .LField_Map193_GRID
+	map_block Field_Map193, .LField_Map193_SHAPE_GRID
+	map_block Field_Map193, .LField_Map193_ANIMATION
+	map_block Field_Map193, .LField_Map193_BLEND
+	map_block Field_Map193, .LField_Map193_SCENE
+.LField_Map193_METATILES:
+	.incbin "MAP/MAP_193/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map193_1:
-	.incbin "MAP/MAP_193/SLOT_1.bin.lz"
+.LField_Map193_SHAPES:
+	.incbin "MAP/MAP_193/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map193_2:
-	.incbin "MAP/MAP_193/SLOT_2.bin.lz"
+.LField_Map193_GRID:
+	.incbin "MAP/MAP_193/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map193_3:
-	.incbin "MAP/MAP_193/SLOT_3.bin.lz"
+.LField_Map193_SHAPE_GRID:
+	.incbin "MAP/MAP_193/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map193_4:
-	.incbin "MAP/MAP_193/SLOT_4.bin.lz"
+.LField_Map193_ANIMATION:
+	.incbin "MAP/MAP_193/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map193_5:
-	.incbin "MAP/MAP_193/SLOT_5.bin.lz"
+.LField_Map193_BLEND:
+	.incbin "MAP/MAP_001/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map193_6:
-	.incbin "MAP/MAP_193/SLOT_6.bin.lz"
+.LField_Map193_SCENE:
+	.incbin "MAP/MAP_193/SCENE.parts.lz"

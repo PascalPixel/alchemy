@@ -1,35 +1,36 @@
-@ Field_Map291: a field map of 3 layers.
+@ Field_Map291: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map291
 Field_Map291:
-	map_header 0x0, 0x64, 0x40, 3, 1, 3, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x64
-	map_layer 16, 16, 0, -1, 0x4000
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map291, .LField_Map291_1
-	map_block Field_Map291, .LField_Map291_2
-	map_block Field_Map291, .LField_Map291_3
-	map_block Field_Map291, .LField_Map291_4
-	map_block Field_Map291, .LField_Map291_5
-	map_block Field_Map291, .LField_Map291_6
-	.incbin "MAP/MAP_291/CELLS.delta1.lz"
+	map_header 0, 0, 100, 64, 3, 1, 3, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 100, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 64, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map291, .LField_Map291_METATILES
+	map_block Field_Map291, .LField_Map291_SHAPES
+	map_block Field_Map291, .LField_Map291_GRID
+	map_block Field_Map291, .LField_Map291_SHAPE_GRID
+	map_block Field_Map291, .LField_Map291_ANIMATION
+	map_block Field_Map291, .LField_Map291_BLEND
+	map_block Field_Map291, .LField_Map291_SCENE
+.LField_Map291_METATILES:
+	.incbin "MAP/MAP_291/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map291_1:
-	.incbin "MAP/MAP_291/SLOT_1.bin.lz"
+.LField_Map291_SHAPES:
+	.incbin "MAP/MAP_291/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map291_2:
-	.incbin "MAP/MAP_291/SLOT_2.bin.lz"
+.LField_Map291_GRID:
+	.incbin "MAP/MAP_291/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map291_3:
-	.incbin "MAP/MAP_291/SLOT_3.bin.lz"
+.LField_Map291_SHAPE_GRID:
+	.incbin "MAP/MAP_291/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map291_4:
-	.incbin "MAP/MAP_291/SLOT_4.bin.lz"
+.LField_Map291_ANIMATION:
+	.incbin "MAP/MAP_012/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map291_5:
-	.incbin "MAP/MAP_291/SLOT_5.bin.lz"
+.LField_Map291_BLEND:
+	.incbin "MAP/MAP_001/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map291_6:
-	.incbin "MAP/MAP_291/SLOT_6.bin.lz"
+.LField_Map291_SCENE:
+	.incbin "MAP/MAP_000/SCENE.parts.lz"

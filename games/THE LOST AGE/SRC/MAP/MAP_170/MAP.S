@@ -1,35 +1,36 @@
-@ Field_Map170: a field map of 3 layers.
+@ Field_Map170: a field map.
 	.include "games/THE LOST AGE/SRC/MAP/MAP.INC"
 	.section .rodata
 	.global Field_Map170
 Field_Map170:
-	map_header 0x0, 0x82, 0x70, 3, 1, 1, 0, 2, 2, 0x0, 0x0
-	map_layer 16, 16, 0, -1, 0x80
-	map_layer 16, 16, 0, -1, 0x8000
-	map_layer 16, 16, 0, -1, 0x40
-	.2byte 0x0
-	map_block Field_Map170, .LField_Map170_1
-	map_block Field_Map170, .LField_Map170_2
-	map_block Field_Map170, .LField_Map170_3
-	map_block Field_Map170, .LField_Map170_4
-	map_block Field_Map170, .LField_Map170_5
-	map_block Field_Map170, .LField_Map170_6
-	.incbin "MAP/MAP_170/CELLS.delta1.lz"
+	map_header 0, 0, 130, 112, 3, 1, 1, 0, 2, 2, 0, 0
+	map_layer 0, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 128, 0, 16, 16, 0, 0, 0xff, 0xff
+	map_layer 0, 128, 16, 16, 0, 0, 0xff, 0xff
+	map_block Field_Map170, .LField_Map170_METATILES
+	map_block Field_Map170, .LField_Map170_SHAPES
+	map_block Field_Map170, .LField_Map170_GRID
+	map_block Field_Map170, .LField_Map170_SHAPE_GRID
+	map_block Field_Map170, .LField_Map170_ANIMATION
+	map_block Field_Map170, .LField_Map170_BLEND
+	map_block Field_Map170, .LField_Map170_SCENE
+.LField_Map170_METATILES:
+	.incbin "MAP/MAP_170/METATILES.delta1.lz"
 	.balign 4, 0
-.LField_Map170_1:
-	.incbin "MAP/MAP_170/SLOT_1.bin.lz"
+.LField_Map170_SHAPES:
+	.incbin "MAP/MAP_170/SHAPES.table.lz"
 	.balign 4, 0
-.LField_Map170_2:
-	.incbin "MAP/MAP_170/SLOT_2.bin.lz"
+.LField_Map170_GRID:
+	.incbin "MAP/MAP_170/GRID.parts.lz"
 	.balign 4, 0
-.LField_Map170_3:
-	.incbin "MAP/MAP_170/SLOT_3.bin.lz"
+.LField_Map170_SHAPE_GRID:
+	.incbin "MAP/MAP_170/SHAPE_GRID.plane.lz"
 	.balign 4, 0
-.LField_Map170_4:
-	.incbin "MAP/MAP_170/SLOT_4.bin.lz"
+.LField_Map170_ANIMATION:
+	.incbin "MAP/MAP_170/ANIMATION.script.lz"
 	.balign 4, 0
-.LField_Map170_5:
-	.incbin "MAP/MAP_170/SLOT_5.bin.lz"
+.LField_Map170_BLEND:
+	.incbin "MAP/MAP_168/BLEND.script.lz"
 	.balign 4, 0
-.LField_Map170_6:
-	.incbin "MAP/MAP_170/SLOT_6.bin.lz"
+.LField_Map170_SCENE:
+	.incbin "MAP/MAP_170/SCENE.parts.lz"

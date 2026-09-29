@@ -1,0 +1,11 @@
+cell:u8	grid:128x128	fill:0	at:11,11
+00 ff ff ff 00 00 00 ff ff ff
+00 ff ff ff 00 00 00 ff ff ff
+00 ff ff ff 00 00 00 ff ff ff
+00 ff ff ff 00 00 00 ff ff ff
+00 ff ff ff 00 00 00 ff ff ff
+00 ff ff ff 00 00 00 ff ff ff
+00 ff ff ff 00 00 00 ff ff ff
+00 ff ff ff 00 00 00 ff fd ff
+ff ff fd ff 00 00 00 00 fd
+00 00 fd

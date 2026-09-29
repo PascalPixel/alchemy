@@ -383,9 +383,9 @@ fn check_documents(root: &Path) -> Result<(), String> {
 /// `.incbin "SOUND/SAMPLE/WAVE_00.PCM8.bin"` from `WAVE_00.PCM8.WAV`, as
 /// pret's data files read the `.bin` files wav2agb makes. In a game's asset
 /// sources under `SRC`: a file the build makes from the like-named indexed
-/// PNG or identified BIN, named by its recipe,
+/// PNG, table or identified BIN, named by its recipe,
 /// `.incbin "GRAPHICS/FX/STAR.bitmap.lz"` from `SRC/GRAPHICS/FX/STAR.PNG` or
-/// `.incbin "MAP/M/CELLS.delta1.lz"` from `SRC/MAP/M/CELLS.BIN`, as pret's
+/// `.incbin "MAP/M/METATILES.delta1.lz"` from `SRC/MAP/M/METATILES.TSV`, as pret's
 /// data files read the `.4bpp.lz` files gbagfx makes.
 fn incbin(path: &str, data: &[u8]) -> bool {
     let base_rom = regex::Regex::new(
@@ -398,7 +398,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012]|font|frames|icons|parts)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
+        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012]|blocks|script|font|frames|glyphs|icons4?|parts|plane|table)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
     )
     .expect("built graphics pattern");
     let scaffolding = path.starts_with("recon/");
@@ -698,6 +698,33 @@ fn placement_reason(text: &str) -> Option<&'static str> {
     (address || placement)
         .then_some("MIDI records a ROM address or placement; the build supplies it")
 }
+/// Whether the build writes this PNG's palette into the ROM: a source beside
+/// it includes its `.gbapal` recipe. Such a palette is proven by the
+/// byte-for-byte build, so it may be grey (Pascal, 2026-09-29), as pret keeps
+/// grey images whose palettes the game stores.
+fn palette_built(path: &str) -> bool {
+    let file = Path::new(path);
+    let (Some(directory), Some(stem)) = (file.parent(), file.file_stem().and_then(|s| s.to_str()))
+    else {
+        return false;
+    };
+    let Some(source_root) = path.find("/SRC/").map(|at| &path[..at + 5]) else {
+        return false;
+    };
+    let relative = directory
+        .to_string_lossy()
+        .strip_prefix(source_root)
+        .map(|rest| format!("{rest}/{stem}.gbapal"))
+        .unwrap_or_default();
+    let Ok(entries) = std::fs::read_dir(directory) else {
+        return false;
+    };
+    entries.flatten().any(|entry| {
+        entry.path().extension().is_some_and(|ext| ext == "S")
+            && std::fs::read_to_string(entry.path())
+                .is_ok_and(|text| text.contains(&format!("\"{relative}")))
+    })
+}
 /// The binary build inputs a game may track, each parsed exactly as the asset
 /// build reads it; everything else is text.
 fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'static str> {
@@ -732,7 +759,7 @@ fn binary_reason(path: &str, data: &[u8], logo: Option<&[u8]>) -> Option<&'stati
             None => {
                 Some("PNG is not an exact indexed build input: standard chunks, one exact stream")
             }
-            Some(_) if grey_sheet(data) => Some(GREY_SHEET),
+            Some(_) if grey_sheet(data) && !palette_built(path) => Some(GREY_SHEET),
             Some(pixels) => logo
                 .is_some_and(|logo| contains(&pixels, logo))
                 .then_some(LOGO_REASON),
@@ -3106,7 +3133,7 @@ mod tests {
     fn asset_sources_may_incbin_only_the_graphics_files_the_build_makes() {
         let sheet = b"BattleFx_Star:\n\t.incbin \"GRAPHICS/FX/STAR.gbapal\"\n\t.incbin \"GRAPHICS/FX/STAR.bitmap.lz\"\n";
         let tiles =
-            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"MAP/M/CELLS.delta1.lz\"\n\t.incbin \"MAP/M/END.bin\"\n";
+            b"\t.incbin \"GRAPHICS/FX/STAR.4bpp.mtf\"\n\t.incbin \"GRAPHICS/FX/STAR.8bpp\"\n\t.incbin \"MAP/M/METATILES.delta1.lz\"\n\t.incbin \"MAP/M/ANIMATION.script.lz\"\n\t.incbin \"MAP/M/END.bin\"\n\t.incbin \"MAP/M/PATH.table.lz\"\n\t.incbin \"GRAPHICS/FX/FONT.glyphs\"\n\t.incbin \"GRAPHICS/UI/ICONS/ICONS.icons4\"\n\t.incbin \"MAP/WORLD/BLOCKS.blocks\"\n";
         for path in [
             "games/THE BROKEN SEAL/SRC/GRAPHICS/FX/STAR.S",
             "games/THE LOST AGE/SRC/BATTLE/EFFECT/STAR.S",
@@ -3123,6 +3150,8 @@ mod tests {
             (star, b".incbin \"GRAPHICS/FX/STAR.raw\"\n"),
             (star, b".incbin \"GRAPHICS/FX/STAR.4bpp.zip\"\n"),
             (star, b".incbin \"MAP/M/CELLS.delta3.lz\"\n"),
+            (star, b".incbin \"GRAPHICS/UI/ICONS.icons5\"\n"),
+            (star, b".incbin \"MAP/WORLD/BLOCKS.block\"\n"),
             (star, b".incbin \"TEXT/M/CELLS.bin\"\n"),
             (star, b".incbin \"GRAPHICS/FX/star.4bpp\"\n"),
             (star, b".incbin \"GRAPHICS/../../roms/tbs-en.4bpp\"\n"),
@@ -3558,6 +3587,27 @@ mod tests {
         std::fs::remove_file(root.join("CLAUDE.md")).unwrap();
         std::os::unix::fs::symlink("AGENTS.md", root.join("CLAUDE.md")).unwrap();
         assert!(check_documents(root).unwrap_err().contains("CLAUDE.md"));
+    }
+    #[test]
+    fn a_grey_palette_passes_only_when_the_build_writes_it() {
+        let temp = tempfile::tempdir().unwrap();
+        let directory = temp.path().join("games/X/SRC/GRAPHICS");
+        std::fs::create_dir_all(&directory).unwrap();
+        let png = directory.join("LOGO.PNG");
+        let path = png.to_string_lossy().into_owned();
+        assert!(!palette_built(&path));
+        std::fs::write(
+            directory.join("OTHER.S"),
+            "\t.incbin \"GRAPHICS/OTHER.gbapal\"\n",
+        )
+        .unwrap();
+        assert!(!palette_built(&path));
+        std::fs::write(
+            directory.join("LOGO.S"),
+            "\t.incbin \"GRAPHICS/LOGO.gbapal\"\n",
+        )
+        .unwrap();
+        assert!(palette_built(&path));
     }
     #[test]
     fn encoded_measures_whole_texts_and_spares_identifiers_and_digests() {

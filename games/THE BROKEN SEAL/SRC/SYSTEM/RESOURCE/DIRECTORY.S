@@ -40,7 +40,7 @@ Resource_DirectoryTable:
 	resource , Title_IntroGraphicsB
 	resource , Title_IntroGraphicsC
 	resource NintendoLogo, Title_NintendoLogo
-	resource , Title_CamelotLogo
+	resource CamelotLogo, Title_CamelotLogo
 	resource GoldenSunLogo, Title_GoldenSunLogo
 	resource WorldMapPicture, Field_WorldMapPicture
 	resource IntroTilesB, Title_IntroTilesB

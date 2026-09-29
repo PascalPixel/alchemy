@@ -1,28 +1,38 @@
-/*
- * Draft: overlay 38f (KORIMA_MURA) at 0x02008694, the scene initialiser,
- * between OBJECT_SPREAD_SCENE.C and EXTENDED_SEQUENCE.C; its rows stay in
- * the listing.
- *
- * Remaining difference: the game compares the scene number against pool
- * words (0x27, 0x26) where these constants compile to immediate compares.
- */
+#include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+#include "KORIMA_MURA.H"
 
-s32 FieldScene_SetupEntryBySelector(void)
+extern u8 KorimaMura_EntryActions[];
+extern u8 KorimaMura_EntryScript[];
+
+void FieldScene_RunFlag845And847Branches(void);
+void FieldScene_RunExtendedActorSequence(void);
+void Event_CallWithLastActiveObjectId(u8 *script);
+
+/*
+ * Kori's scene start: the third scene runs its flag branches and the second
+ * opens with the window transition. The village itself hides actors 23 to
+ * 26 behind their entry actions, keeps the plaza closed until flag 0x845,
+ * and once flag 0x843 is set sends the party's companions and the villagers
+ * away and runs the entry script.
+ */
+s32 Scene_Initialize(void)
 {
-    s16 step;
+    s16 scene;
     u32 actor;
     u8 *tbl;
     s32 x;
     s32 y;
 
-    step = gGameState.scene;
+    scene = gGameState.scene;
 
-    if (step == 0x27) {
+    if (scene == (s32)&SceneId_KorimaMura3) {
         FieldScene_RunFlag845And847Branches();
         return 0;
     }
 
-    if (step == 0x26) {
+    if (scene == (s32)&SceneId_KorimaMura2) {
         *(s32 *)(gWork + 0x1c0) = 0x204;
         return 0;
     }

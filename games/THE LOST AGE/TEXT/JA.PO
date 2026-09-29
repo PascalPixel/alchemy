@@ -24723,7 +24723,7 @@ msgctxt "message"
 msgid "06178"
 msgstr "さあ ハラもへったじゃろ{line_break}さっそく 大陸に上陸じゃ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriBeenBefore"
 msgid "06179"
 msgstr "あんたたち 見ないかおだが{line_break}デリィは はじめてかい?{end_now}"
 
@@ -24735,11 +24735,11 @@ msgctxt "message"
 msgid "06181"
 msgstr "ふうん・・・デリィ村に{line_break}なんども きたわりには{line_break}見おぼえがないなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWaveNoInjuries"
 msgid "06182"
 msgstr "村が つなみにおそわれたのに{line_break}大したひがいもないなんて・・・{line_break}やっぱり これはきせきだよ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriIndraMoved"
 msgid "06183"
 msgstr "つなみが おきた時・・・{line_break}大陸が南へ動かなかった?{end_now}"
 
@@ -24779,7 +24779,7 @@ msgctxt "message"
 msgid "06192"
 msgstr "村は つなみからたすかったが{line_break}船は みんなやられちまった{line_break}もう りょうに出られないぜ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriWantBoat"
 msgid "06193"
 msgstr "えっ 船がほしいって?{end_now}"
 
@@ -24947,11 +24947,11 @@ msgctxt "message"
 msgid "06234"
 msgstr "あんた たびの戦士らしいが{line_break}どこから きなさった{page_break}なにもないインドラ大陸に{line_break}わざわざ やってくるとは{line_break}ずいぶん ものずきだね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaScamps"
 msgid "06235"
 msgstr "たびの戦士が やってきたと{line_break}いたずらふたりぐみが知ったら{line_break}たいへんだろうなあ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiWorry"
 msgid "06236"
 msgstr "ペチャロとクプル・・・{line_break}見あたらないんですってね{page_break}わたし あのふたりとは{line_break}とても なかよしだから{line_break}しんぱいしているのよ。{end_wait}"
 
@@ -25579,7 +25579,7 @@ msgctxt "message"
 msgid "06392"
 msgstr "海も おだやかになって{line_break}もう つなみのしんぱいは{line_break}しなくてよくなったわね。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHurtHip"
 msgid "06393"
 msgstr "ワシが こしをうったのは{line_break}つなみをおそれたからだと{line_break}あんた おもってるじゃろ?{end_now}"
 
@@ -25891,11 +25891,11 @@ msgctxt "message"
 msgid "06470"
 msgstr "デリィ村は 人はすくなくても{line_break}けっこう ひろいしさ・・・{line_break}めいろみたいだろ{page_break}オレでも まよっちゃう時が{line_break}あるぐらいだもんな・・・。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriHeyaMazeTreasure"
 msgid "06471"
 msgstr "こんなに めいろみたいだから{line_break}かいぞくの宝がねむる村なんて{line_break}よばれちゃうのかもしれないな。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDeriTaviRikiHome"
 msgid "06472"
 msgstr "ペチャロとクプルのふたりが{line_break}ぶじに もどってきたのよ{page_break}いえに かえる前に・・・{line_break}かおを出して行くなんて{line_break}やっぱり いい子たちだわ。{end_wait}"
 

@@ -32,8 +32,8 @@ Resource_DirectoryTable:
 	resource , Resource_FarCall010
 	resource , Resource_FarCall010
 	resource , Resource_Data012
-	resource , Resource_Data013
-	resource , Resource_Data014
+	resource , Ui_WindowTiles
+	resource , UiText_SmallFont
 	resource , Resource_Data015
 	resource , Title_ScreenPicture
 	resource , Resource_Data017
@@ -188,7 +188,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data0AC
 	resource , Resource_Data0AD
 	resource , Resource_Data0AE
-	resource , Resource_Data0AF
+	resource , BattleFx_GlowOrbSetSheet
 	resource , Resource_Data0B0
 	resource , Resource_Data0B1
 	resource , Resource_Data0B2
@@ -275,7 +275,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data103
 	resource , Resource_Data104
 	resource , BattleFx_CloudPuffSheet
-	resource , Resource_Data106
+	resource , BattleFx_TileAnimationMask
 	resource , Resource_Data107
 	resource , BattleFx_VioletPaletteA
 	resource , BattleFx_RedPaletteA
@@ -301,7 +301,7 @@ Resource_DirectoryTable:
 	resource , BattleFx_YellowSparkSheet
 	resource , Resource_Data11E
 	resource , BattleFx_ShurikenSheet
-	resource , Resource_Data120
+	resource , BattleFx_FlareSheet
 	resource , Resource_Data121
 	resource , BattleFx_VioletPaletteB
 	resource , BattleFx_FireSwirlSheet
@@ -418,8 +418,8 @@ Resource_DirectoryTable:
 	resource , Resource_Data192
 	resource , Resource_Data193
 	resource , BattleFx_LightningPillarSheet
-	resource , Resource_Data195
-	resource , Resource_Data196
+	resource , BattleFx_StagedParticlePath
+	resource , BattleFx_DualStreamPath
 	resource , Resource_Data197
 	resource , Resource_Data198
 	resource , Resource_Data199
@@ -463,27 +463,27 @@ Resource_DirectoryTable:
 	resource , Resource_Data1BF
 	resource , Resource_Data1C0
 	resource , Resource_Data1C1
-	resource , Resource_Data1C2
-	resource , Resource_Data1C3
-	resource , Resource_Data1C4
-	resource , Resource_Data1C5
-	resource , Resource_Data1C6
-	resource , Resource_Data1C7
-	resource , Resource_Data1C8
-	resource , Resource_Data1C9
-	resource , Resource_Data1CA
-	resource , Resource_Data1CB
+	resource , Field_WalkPathA
+	resource , Field_WalkPathB
+	resource , Field_WalkPathC
+	resource , Field_WalkPathD
+	resource , Field_WalkPathE
+	resource , Field_WalkPathF
+	resource , Field_WalkPathG
+	resource , Field_WalkPathH
+	resource , Field_WalkPathI
+	resource , Field_WalkPathJ
 	resource , Resource_Data1CC
-	resource , Resource_Data1CD
-	resource , Resource_Data1CE
-	resource , Resource_Data1CF
-	resource , Resource_Data1D0
-	resource , Resource_Data1D1
-	resource , Resource_Data1D2
-	resource , Resource_Data1D3
-	resource , Resource_Data1D4
+	resource , Shop_CursorFrameA
+	resource , Shop_CursorFrameB
+	resource , Shop_CursorFrameC
+	resource , Shop_CursorFrameD
+	resource , Shop_CursorFrameE
+	resource , Shop_CursorFrameF
+	resource , Shop_CursorFrameG
+	resource , Shop_CursorFrameH
 	resource , Resource_Data1D5
-	resource , Resource_Data1D6
+	resource , Ui_Icons
 	resource , Ui_CommandIcons
 	resource , Resource_Data1D8
 	resource , Resource_Data1D9

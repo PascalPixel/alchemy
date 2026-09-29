@@ -782,162 +782,6 @@ Korosseo_LoadPortrait:
 	.4byte 0x040000d4
 	.4byte 0x050003e0
 	.4byte 0x84000008
-	.section .text.x0200a6a8,"ax",%progbits
-	.global Func_020026a8
-	.thumb_func
-Func_020026a8:
-	.global SceneData_SelectBlockAndResetCounters
-	.thumb_func
-SceneData_SelectBlockAndResetCounters:
-	push {r5, r6, lr}
-	ldr r3, [pc, #48]
-	adds r5, r0, #0
-	adds r6, r1, #0
-	ldr r2, [pc, #44]
-	strh r5, [r3]
-	movs r1, #200
-	lsls r3, r6, #4
-	lsls r1, r1, #4
-	strh r3, [r2]
-	ldr r0, [pc, #36]
-	bl 0x0200bb10
-	ldr r1, [pc, #36]
-	cmp r5, #2
-	bne .L_020026a8_0
-	ldr r1, [pc, #32]
-.L_020026a8_0:
-	cmp r5, #4
-	bne .L_020026a8_1
-	ldr r1, [pc, #32]
-.L_020026a8_1:
-	cmp r5, #3
-	bne .L_020026a8_2
-	cmp r6, #0
-	beq .L_020026a8_3
-	ldr r1, [pc, #24]
-	b .L_020026a8_2
-	.4byte 0x0200c790
-	.4byte 0x0200c764
-	.4byte 0x0200a1b9
-	.4byte 0x0200c57e
-	.4byte 0x0200be4e
-	.4byte 0x0200c5aa
-	.4byte 0x0200be76
-.L_020026a8_3:
-	ldr r1, [pc, #28]
-.L_020026a8_2:
-	ldr r2, [pc, #24]
-	ldr r3, [pc, #28]
-	strh r2, [r3]
-	ldr r3, [pc, #28]
-	str r1, [r3]
-	ldr r3, [pc, #28]
-	strh r2, [r3]
-	ldr r3, [pc, #28]
-	strh r2, [r3]
-	ldr r2, [pc, #28]
-	movs r3, #0
-	str r3, [r2]
-	b .L_020026a8_4
-	.4byte 0x00000000
-	.4byte 0x0200c628
-	.4byte 0x0200c79c
-	.4byte 0x0200c7a0
-	.4byte 0x0200c7f8
-	.4byte 0x0200c76c
-	.4byte 0x0200c770
-.L_020026a8_4:
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.section .text.x0200ad28,"ax",%progbits
-	.global Func_02002d28
-	.thumb_func
-Func_02002d28:
-	.global SceneState_StoreParamsAndInitTable
-	.thumb_func
-SceneState_StoreParamsAndInitTable:
-	push {r5, r6, lr}
-	mov r6, r8
-	push {r6}
-	adds r6, r0, #0
-	mov r8, r1
-	adds r5, r2, #0
-	bl 0x0200abcc
-	ldr r3, [pc, #44]
-	strh r6, [r3]
-	ldr r3, [pc, #44]
-	mov r2, r8
-	strh r2, [r3]
-	ldr r3, [pc, #28]
-	ldr r2, [pc, #40]
-	ands r5, r3
-	strh r5, [r2]
-	ldr r3, [pc, #40]
-	ldr r2, [pc, #20]
-	strh r2, [r3]
-	ldr r3, [pc, #36]
-	movs r1, #200
-	strh r2, [r3]
-	lsls r1, r1, #4
-	ldr r0, [pc, #32]
-	bl 0x0200bb10
-	b .L_02002d28_0
-	.4byte 0x00000003
-	.4byte 0x00000000
-	.4byte 0x0200c7f4
-	.4byte 0x0200c780
-	.4byte 0x0200c758
-	.4byte 0x0200c774
-	.4byte 0x0200c78c
-	.4byte 0x0200abed
-.L_02002d28_0:
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6}
-.L_02002d86:
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.global SceneState_InitTableWordsAndLoad3200
-	.thumb_func
-SceneState_InitTableWordsAndLoad3200:
-	push {lr}
-	ldr r3, [pc, #52]
-	strh r0, [r3]
-	ldr r3, [pc, #52]
-	strh r1, [r3]
-	ldr r3, [pc, #52]
-	ldr r1, [pc, #52]
-	ldrh r3, [r3]
-	strh r3, [r1]
-	ldr r3, [pc, #52]
-	ldr r1, [pc, #52]
-	ldrh r3, [r3]
-	strh r3, [r1]
-	ldr r3, [pc, #52]
-	strh r2, [r3]
-	ldr r2, [pc, #52]
-	ldr r3, [pc, #16]
-	movs r1, #200
-	strh r3, [r2]
-	lsls r1, r1, #4
-	ldr r0, [pc, #44]
-	bl 0x0200bb10
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00000000
-	.4byte 0x0200c760
-	.4byte 0x0200c800
-	.4byte 0x0200c7f4
-	.4byte 0x0200c7a4
-	.4byte 0x0200c780
-	.4byte 0x0200c7bc
-	.4byte 0x0200c78c
-	.4byte 0x0200c750
-	.4byte 0x0200abed
 	.section .text.x0200b3a0,"ax",%progbits
 	.p2align 2
 	.global Scene_RunScene3baSequenceA
@@ -1421,7 +1265,10 @@ Scene_RunScene3baSequenceA:
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x20202000
 	.4byte 0x40404060
-	.4byte 0x10000080
+	.2byte 0x0080
+	.global KorosseoKawa_ModeRecordTwo
+KorosseoKawa_ModeRecordTwo:
+	.2byte 0x1000
 	.4byte 0x00010200
 	.4byte 0x00002000
 	.4byte 0x10000001
@@ -1920,7 +1767,10 @@ KorosseoKawa_RoundSpans:
 	.4byte 0x3000003c
 	.4byte 0x00140800
 	.4byte 0x003c7fff
-	.4byte 0x1000ffff
+	.2byte 0xffff
+	.global KorosseoKawa_ModeRecordFour
+KorosseoKawa_ModeRecordFour:
+	.2byte 0x1000
 	.4byte 0x00010200
 	.4byte 0x00002000
 	.4byte 0x10000001

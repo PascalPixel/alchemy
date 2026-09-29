@@ -6,6 +6,10 @@
 //! - `.gbapal`: the image's palette as little-endian BGR555.
 //! - `.bitmap`: the pixels row by row, one palette index per byte.
 //! - `.4bpp`, `.8bpp`: the pixels as GBA tiles, row-major.
+//! - `.4bppWxH`, `.8bppWxH`: the pixels as GBA tiles cut into metatiles of
+//!   one OBJ shape, W by H pixels, as pret's gbagfx -mwidth and -mheight:
+//!   each metatile's tiles row-major before the next one's. A sheet of 1D
+//!   sprites is drawn this way so each sprite reads whole.
 //! - `.glyphs`: 1-bit glyphs. The image is one glyph, 8 pixels, wide with its
 //!   glyphs stacked; each row is a byte, its leftmost pixel in bit 0 and any
 //!   non-zero index inked.
@@ -523,6 +527,18 @@ fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Resul
     Ok(output)
 }
 
+/// The OBJ shape `WxH` in pixels names, in tiles: one of the twelve.
+fn obj_shape(name: &str) -> Option<(usize, usize)> {
+    let (wide, high) = name.split_once('x')?;
+    let shape = (
+        wide.parse::<usize>().ok()? / 8,
+        high.parse::<usize>().ok()? / 8,
+    );
+    (psynergy::assets::image::OBJ_SHAPES.contains(&shape)
+        && format!("{}x{}", shape.0 * 8, shape.1 * 8) == name)
+        .then_some(shape)
+}
+
 fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
     let image = indexed_bitmap_png(png).map_err(|error| format!("{built}: {}", error.0))?;
     let (width, height) = (image.width as usize, image.height as usize);
@@ -531,6 +547,16 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "bitmap" => indices(&image),
         "4bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp4, 1, 1)?,
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
+        form if form.starts_with("4bpp") || form.starts_with("8bpp") => {
+            let bpp = if form.starts_with('4') {
+                GbaBpp::Bpp4
+            } else {
+                GbaBpp::Bpp8
+            };
+            let (wide, high) = obj_shape(&form[4..])
+                .ok_or_else(|| format!("{built}: .{form} names no OBJ shape"))?;
+            metatiles(&indices(&image), width, height, bpp, wide, high)?
+        }
         "frames" => sprite_bank(built, &indices(&image), width, height)?,
         "icons" => icon_bank(built, &indices(&image), width, height)?,
         "glyphs" if width == 8 => indices(&image)
@@ -550,6 +576,34 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
 mod tests {
     use super::*;
     use psynergy::assets::image::{png_from_bitmap, png_from_gba_tiles};
+
+    #[test]
+    fn metatile_forms_cut_the_sheet_into_their_obj_shape() {
+        // A 16x16 sheet whose four tiles are filled 1, 2, 3 and 4 row-major.
+        let pixels: Vec<u8> = (0..256)
+            .map(|i| 1 + (i % 16 / 8 + i / 128 * 2) as u8)
+            .collect();
+        let palette = [0u8; 32];
+        let sheet = png_from_bitmap(&pixels, &palette, 16).unwrap();
+        let first = |built: Vec<u8>| {
+            built
+                .chunks(32)
+                .map(|tile| tile[0] & 15)
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(first(build_file("T.4bpp", &sheet).unwrap()), [1, 2, 3, 4]);
+        assert_eq!(
+            first(build_file("T.4bpp8x16", &sheet).unwrap()),
+            [1, 3, 2, 4]
+        );
+        assert_eq!(
+            first(build_file("T.4bpp16x16", &sheet).unwrap()),
+            [1, 2, 3, 4]
+        );
+        assert!(build_file("T.4bpp24x8", &sheet).is_err());
+        assert!(build_file("T.4bpp32x32", &sheet).is_err());
+        assert!(build_file("T.4bpp08x16", &sheet).is_err());
+    }
 
     #[test]
     fn names_read_their_image_and_follow_their_recipe() {

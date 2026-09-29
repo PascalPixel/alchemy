@@ -467,36 +467,251 @@ pub fn png_from_bitmap(pixels: &[u8], palette: &[u8], width: usize) -> Result<Ve
     )
 }
 
-/// The sheet width, in tiles, at which neighbouring tile edges agree most:
-/// pictures drawn across several tiles line up again when the rows are as wide
-/// as the artist drew them. Only widths that divide the tile count are tried.
-pub fn tile_sheet_width(tiles: &[u8], bpp: GbaBpp) -> usize {
+/// The GBA's twelve OBJ shapes in tiles, wide by high, plain tiles first.
+pub const OBJ_SHAPES: [(usize, usize); 12] = [
+    (1, 1),
+    (2, 2),
+    (4, 4),
+    (8, 8),
+    (2, 1),
+    (4, 1),
+    (4, 2),
+    (8, 4),
+    (1, 2),
+    (1, 4),
+    (2, 4),
+    (4, 8),
+];
+
+/// How a tile sheet is drawn: tiles grouped in metatiles `meta` wide by
+/// high, each metatile's tiles row-major before the next one's (pret's
+/// gbagfx -mwidth/-mheight), laid out `tiles_wide` tiles to a row.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct TileLayout {
+    pub meta: (usize, usize),
+    pub tiles_wide: usize,
+}
+
+/// Reorder metatiled tiles into plain row-major tiles as `layout` draws them.
+pub fn tiles_from_metatiles(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> Vec<u8> {
+    let size = bpp.tile_bytes();
+    let (mw, mh) = layout.meta;
+    let count = tiles.len() / size;
+    let metas_wide = (layout.tiles_wide / mw).max(1);
+    (0..count)
+        .map(|index| {
+            let (x, y) = (index % layout.tiles_wide, index / layout.tiles_wide);
+            let meta = y / mh * metas_wide + x / mw;
+            meta * mw * mh + y % mh * mw + x % mw
+        })
+        .flat_map(|source| tiles[source * size..][..size].iter().copied())
+        .collect()
+}
+
+/// The layout at which neighbouring tile edges agree most: pictures drawn
+/// across several tiles, or cut into OBJ-shaped metatiles one after another,
+/// line up again when drawn as the artist drew them. Every OBJ shape and
+/// every sheet width of whole metatiles that divides the tile count is
+/// tried; a seam counts where either side is inked and agrees where both
+/// are, and a metatile shape must beat the plain sheet clearly to be chosen.
+pub fn tile_sheet_layout(tiles: &[u8], bpp: GbaBpp) -> TileLayout {
+    tile_sheet_layout_of(tiles, bpp, &OBJ_SHAPES)
+}
+
+/// The best layout of `tiles` among metatiles of the given `shapes`.
+fn tile_sheet_layout_of(tiles: &[u8], bpp: GbaBpp, shapes: &[(usize, usize)]) -> TileLayout {
+    let count = tiles.len() / bpp.tile_bytes();
+    let pixel = |tiles: &[u8], tile: usize, x: usize, y: usize| match bpp {
+        GbaBpp::Bpp4 => (tiles[tile * 32 + y * 4 + x / 2] >> (x % 2 * 4)) & 0x0f,
+        GbaBpp::Bpp8 => tiles[tile * 64 + y * 8 + x],
+    };
+    let score = |layout: TileLayout| {
+        let sheet = tiles_from_metatiles(tiles, bpp, layout);
+        let wide = layout.tiles_wide;
+        let (mut same, mut total) = (0usize, 0usize);
+        let mut seam = |a: u8, b: u8| {
+            if a != 0 || b != 0 {
+                total += 1;
+                same += usize::from(a != 0 && b != 0);
+            }
+        };
+        for tile in 0..count {
+            for edge in 0..8 {
+                if tile % wide + 1 < wide {
+                    seam(
+                        pixel(&sheet, tile, 7, edge),
+                        pixel(&sheet, tile + 1, 0, edge),
+                    );
+                }
+                if tile + wide < count {
+                    seam(
+                        pixel(&sheet, tile, edge, 7),
+                        pixel(&sheet, tile + wide, edge, 0),
+                    );
+                }
+            }
+        }
+        (same as f64 + 1.0) / (total as f64 + 2.0)
+    };
+    let first = shapes.first().copied().unwrap_or((1, 1));
+    let plain = TileLayout {
+        meta: first,
+        tiles_wide: if first == (1, 1) {
+            count.clamp(1, 32)
+        } else {
+            first.0
+        },
+    };
+    let mut best = (plain, -1.0, -1.0);
+    for &(mw, mh) in shapes {
+        if count % (mw * mh) != 0 {
+            continue;
+        }
+        let metas = count / (mw * mh);
+        for metas_wide in (1..=metas).filter(|wide| metas % wide == 0 && wide * mw <= 64) {
+            // One metatile column is the plain sheet of that width.
+            if metas_wide == 1 && (mw, mh) != (1, 1) && shapes.len() > 1
+                || metas_wide * mw < 2 && count > 1
+            {
+                continue;
+            }
+            let layout = TileLayout {
+                meta: (mw, mh),
+                tiles_wide: metas_wide * mw,
+            };
+            let value = score(layout);
+            let margin = if (mw, mh) == (1, 1) || metas_wide == 1 {
+                0.0
+            } else {
+                0.05
+            };
+            if value - margin > best.1 {
+                best = (layout, value - margin, value);
+            }
+        }
+    }
+    best.0
+}
+
+/// The price of one more picture, in seams: enough that a picture is not
+/// shattered into small pieces whose seams show nothing.
+const PICTURE_PRICE: i64 = 24;
+
+/// The most sprites of one shape a picture sets side by side.
+const PICTURE_SPRITES: usize = 8;
+
+/// One run of pictures in a sprite stream: `count` tiles from tile `first`,
+/// drawn as `layout`, each picture a row of sprites `layout.tiles_wide`
+/// tiles wide and the pictures stacked.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct SpriteRun {
+    pub first: usize,
+    pub count: usize,
+    pub layout: TileLayout,
+}
+
+/// Cut a stream of 1D-mapped OBJ tiles into consecutive pictures, each a
+/// row of up to eight sprites of one of the twelve OBJ shapes, each sprite
+/// starting at a multiple of its own size. Dynamic programming over the tile
+/// index picks the pictures whose inked seams agree most in total (a
+/// disagreeing seam counts against), less a small price per picture.
+/// Neighbouring pictures of one shape join a run.
+pub fn sprite_runs(tiles: &[u8], bpp: GbaBpp) -> Vec<SpriteRun> {
     let count = tiles.len() / bpp.tile_bytes();
     let pixel = |tile: usize, x: usize, y: usize| match bpp {
         GbaBpp::Bpp4 => (tiles[tile * 32 + y * 4 + x / 2] >> (x % 2 * 4)) & 0x0f,
         GbaBpp::Bpp8 => tiles[tile * 64 + y * 8 + x],
     };
-    let mut best = (count.clamp(1, 32), -1.0);
-    for wide in (2..=count.min(64)).filter(|wide| count % wide == 0) {
-        let (mut same, mut total) = (0usize, 0usize);
-        for tile in 0..count {
-            for edge in 0..8 {
-                if tile % wide + 1 < wide {
-                    total += 1;
-                    same += usize::from(pixel(tile, 7, edge) == pixel(tile + 1, 0, edge));
-                }
-                if tile + wide < count {
-                    total += 1;
-                    same += usize::from(pixel(tile, edge, 7) == pixel(tile + wide, edge, 0));
+    let picture = |first: usize, (mw, mh): (usize, usize), sprites: usize| {
+        let wide = mw * sprites;
+        let at = |x: usize, y: usize| first + x / mw * mw * mh + y * mw + x % mw;
+        let mut value = -PICTURE_PRICE;
+        let mut seam = |a: u8, b: u8| {
+            if a != 0 || b != 0 {
+                value += if a != 0 && b != 0 { 1 } else { -1 };
+            }
+        };
+        for y in 0..mh {
+            for x in 0..wide {
+                for edge in 0..8 {
+                    if x + 1 < wide {
+                        seam(pixel(at(x, y), 7, edge), pixel(at(x + 1, y), 0, edge));
+                    }
+                    if y + 1 < mh {
+                        seam(pixel(at(x, y), edge, 7), pixel(at(x, y + 1), edge, 0));
+                    }
                 }
             }
         }
-        let score = same as f64 / total.max(1) as f64;
-        if score > best.1 {
-            best = (wide, score);
+        value
+    };
+    // best[end]: the best score of the first `end` tiles, and its last picture.
+    let mut best: Vec<Option<(i64, (usize, usize), usize)>> = vec![None; count + 1];
+    best[0] = Some((0, (1, 1), 0));
+    for end in 1..=count {
+        for &(mw, mh) in &OBJ_SHAPES {
+            let size = mw * mh;
+            for sprites in 1..=PICTURE_SPRITES {
+                let Some(start) = end.checked_sub(size * sprites) else {
+                    break;
+                };
+                let Some((before, ..)) = best[start] else {
+                    continue;
+                };
+                let value = before + picture(start, (mw, mh), sprites);
+                if best[end].is_none_or(|(known, ..)| value > known) {
+                    best[end] = Some((value, (mw, mh), sprites));
+                }
+            }
         }
     }
-    best.0
+    let mut pictures = Vec::new();
+    let mut end = count;
+    while end > 0 {
+        let (_, meta, sprites) = best[end].expect("every tile count is whole 8x8 sprites");
+        end -= meta.0 * meta.1 * sprites;
+        pictures.push((end, meta, sprites));
+    }
+    pictures.reverse();
+    // Neighbouring pictures of one sprite shape join a run, kept at their
+    // width when they share one, else read left to right in one row of at
+    // most 64 tiles, else drawn at the run's best width.
+    let mut groups: Vec<(usize, usize, (usize, usize), Vec<usize>)> = Vec::new();
+    for (first, meta, sprites) in pictures {
+        let tiles_in = meta.0 * meta.1 * sprites;
+        match groups.last_mut() {
+            Some(group) if group.2 == meta => {
+                group.1 += tiles_in;
+                group.3.push(meta.0 * sprites);
+            }
+            _ => groups.push((first, tiles_in, meta, vec![meta.0 * sprites])),
+        }
+    }
+    let size = bpp.tile_bytes();
+    groups
+        .into_iter()
+        .map(|(first, count, meta, widths)| {
+            let row = count / meta.1;
+            let tiles_wide = if widths
+                .iter()
+                .all(|wide| *wide == widths[0] && *wide > meta.0)
+            {
+                widths[0]
+            } else if row <= 64 {
+                row
+            } else {
+                tile_sheet_layout_of(&tiles[first * size..(first + count) * size], bpp, &[meta])
+                    .tiles_wide
+            };
+            // One sprite wide, or of 8x8 sprites, is a plain sheet.
+            let meta = if tiles_wide == meta.0 { (1, 1) } else { meta };
+            SpriteRun {
+                first,
+                count,
+                layout: TileLayout { meta, tiles_wide },
+            }
+        })
+        .collect()
 }
 
 pub fn png_from_gba_tiles(
@@ -602,20 +817,102 @@ mod tile_tests {
     }
 
     #[test]
-    fn tile_sheet_width_finds_the_width_pictures_were_drawn_at() {
-        // A 32x24 diagonal pattern cut into twelve 4bpp tiles, 4 tiles wide.
-        let pixel = |tile: usize, x: usize, y: usize| {
-            ((tile % 4 * 8 + x + tile / 4 * 8 + y) / 3 % 16) as u8
-        };
-        let tiles: Vec<u8> = (0..12)
-            .flat_map(|tile| {
-                (0..32).map(move |byte| {
-                    pixel(tile, byte % 4 * 2, byte / 4)
-                        | pixel(tile, byte % 4 * 2 + 1, byte / 4) << 4
-                })
-            })
-            .collect();
-        assert_eq!(tile_sheet_width(&tiles, GbaBpp::Bpp4), 4);
+    fn tile_sheet_layout_finds_the_width_pictures_were_drawn_at() {
+        // An oval 32x24, twelve tiles 4 wide, stored row-major.
+        let tiles = sprite_tiles(oval(32, 24), 4, 3, (1, 1));
+        assert_eq!(
+            tile_sheet_layout(&tiles, GbaBpp::Bpp4),
+            TileLayout {
+                meta: (1, 1),
+                tiles_wide: 4
+            }
+        );
+        // An oval 128x32 cut into 32x16 sprites draws as metatiles.
+        let tiles = sprite_tiles(oval(128, 32), 16, 4, (4, 2));
+        assert_eq!(
+            tile_sheet_layout(&tiles, GbaBpp::Bpp4),
+            TileLayout {
+                meta: (4, 2),
+                tiles_wide: 16
+            }
+        );
+    }
+
+    /// An inked oval filling a picture `wide` by `high` pixels, shaded
+    /// by column.
+    fn oval(wide: usize, high: usize) -> impl Fn(usize, usize) -> u8 {
+        move |x, y| {
+            let (dx, dy) = (
+                2 * x as i64 + 1 - wide as i64,
+                2 * y as i64 + 1 - high as i64,
+            );
+            let (wide2, high2) = ((wide * wide) as i64, (high * high) as i64);
+            let inside = dx * dx * high2 + dy * dy * wide2 < wide2 * high2;
+            u8::from(inside) * (1 + (x / 16) as u8 % 7)
+        }
+    }
+
+    /// 4bpp tiles of a picture `wide` by `high` tiles, cut into 1D sprites
+    /// of `shape` one after another, as OBJ tiles are stored.
+    fn sprite_tiles(
+        pixel: impl Fn(usize, usize) -> u8,
+        wide: usize,
+        high: usize,
+        (mw, mh): (usize, usize),
+    ) -> Vec<u8> {
+        let mut tiles = Vec::new();
+        for my in (0..high).step_by(mh) {
+            for mx in (0..wide).step_by(mw) {
+                for ty in my..my + mh {
+                    for tx in mx..mx + mw {
+                        for y in 0..8 {
+                            for x in (0..8).step_by(2) {
+                                let (px, py) = (tx * 8 + x, ty * 8 + y);
+                                tiles.push(pixel(px, py) | pixel(px + 1, py) << 4);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        tiles
+    }
+
+    #[test]
+    fn sprite_runs_find_the_obj_shapes_a_word_was_cut_into() {
+        // A 128x16 oval cut into four 32x16 sprites, then a 32x32 disc: the
+        // oval reads in one row, the disc whole.
+        let word = oval(128, 16);
+        let mut tiles = sprite_tiles(&word, 16, 2, (4, 2));
+        tiles.extend(sprite_tiles(oval(32, 32), 4, 4, (4, 4)));
+        let runs = sprite_runs(&tiles, GbaBpp::Bpp4);
+        assert_eq!(
+            runs,
+            [
+                SpriteRun {
+                    first: 0,
+                    count: 32,
+                    layout: TileLayout {
+                        meta: (4, 2),
+                        tiles_wide: 16
+                    }
+                },
+                SpriteRun {
+                    first: 32,
+                    count: 16,
+                    layout: TileLayout {
+                        meta: (1, 1),
+                        tiles_wide: 4
+                    }
+                },
+            ]
+        );
+        // Redrawn by its layout, the word is its picture again, row-major.
+        let plain = sprite_tiles(word, 16, 2, (1, 1));
+        assert_eq!(
+            tiles_from_metatiles(&tiles[..32 * 32], GbaBpp::Bpp4, runs[0].layout),
+            plain
+        );
     }
 
     #[test]

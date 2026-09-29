@@ -173,3 +173,5 @@ a verified build.
   JSON by name or content.
 - 2026-09-29: a PNG may carry an all-grey palette when the build writes that
   palette into the ROM from the PNG, as pret's grey images with their own palettes do.
+- 2026-09-29: gates: asset recipes may carry the sprite shape, one of the 12
+  hardware sizes, in their file name, as pret's gbagfx takes -mwidth/-mheight.

@@ -4,4 +4,4 @@
 	.global Slots_CashOutBanner
 Slots_CashOutBanner:
 	.incbin "GRAPHICS/SLOTS/CASH_OUT.gbapal"
-	.incbin "GRAPHICS/SLOTS/CASH_OUT.4bpp.lz"
+	.incbin "GRAPHICS/SLOTS/CASH_OUT.4bpp32x32.lz"

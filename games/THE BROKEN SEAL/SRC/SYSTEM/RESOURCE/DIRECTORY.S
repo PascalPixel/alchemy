@@ -311,584 +311,584 @@ Resource_DirectoryTable:
 	resource , Resource_Data125
 	resource , Resource_Data126
 	resource , Resource_Data127
-	resource , Resource_Data128
+	resource , Field_Map001
 	resource , Resource_Data129
 	resource , Resource_Data12A
 	resource , Resource_Data12B
 	resource , Resource_Data12C
 	resource , Resource_Data12D
-	resource , Resource_Data12E
+	resource , Field_Map000
 	resource , Tileset_Set00Palette
 	resource , Tileset_Set00TilesA
 	resource , Tileset_Set00TilesB
 	resource , Tileset_Set00TilesC
 	resource , Tileset_Set00TilesD
-	resource , Resource_Data134
+	resource , Field_Map002
 	resource , Tileset_Set01Palette
 	resource , Tileset_Set01TilesA
 	resource , Tileset_Set01TilesB
 	resource , Tileset_Set01TilesC
 	resource , Tileset_Set01TilesD
-	resource , Resource_Data13A
+	resource , Field_Map003
 	resource , Tileset_Set02Palette
 	resource , Tileset_Set02TilesA
 	resource , Tileset_Set02TilesB
 	resource , Tileset_Set02TilesC
 	resource , Tileset_Set02TilesD
-	resource , Resource_Data140
+	resource , Field_Map004
 	resource , Tileset_Set03Palette
 	resource , Tileset_Set03TilesA
 	resource , Tileset_Set03TilesB
 	resource , Tileset_Set03TilesC
 	resource , Tileset_Set03TilesD
-	resource , Resource_Data146
+	resource , Field_Map005
 	resource , Tileset_Set04Palette
 	resource , Tileset_Set04TilesA
 	resource , Tileset_Set04TilesB
 	resource , Tileset_Set04TilesC
 	resource , Tileset_Set04TilesD
-	resource , Resource_Data14C
+	resource , Field_Map006
 	resource , Tileset_Set05Palette
 	resource , Tileset_Set05TilesA
 	resource , Tileset_Set05TilesB
 	resource , Tileset_Set05TilesC
 	resource , Tileset_Set05TilesD
-	resource , Resource_Data152
+	resource , Field_Map007
 	resource , Tileset_Set06Palette
 	resource , Tileset_Set06TilesA
 	resource , Tileset_Set06TilesB
 	resource , Tileset_Set06TilesC
 	resource , Tileset_Set06TilesD
-	resource , Resource_Data158
+	resource , Field_Map008
 	resource , Tileset_Set07Palette
 	resource , Tileset_Set07TilesA
 	resource , Tileset_Set07TilesB
 	resource , Tileset_Set07TilesC
 	resource , Tileset_Set07TilesD
-	resource , Resource_Data15E
+	resource , Field_Map009
 	resource , Tileset_Set08Palette
 	resource , Tileset_Set08TilesA
 	resource , Tileset_Set08TilesB
 	resource , Tileset_Set08TilesC
 	resource , Tileset_Set08TilesD
-	resource , Resource_Data164
+	resource , Field_Map010
 	resource , Tileset_Set09Palette
 	resource , Tileset_Set09TilesA
 	resource , Tileset_Set09TilesB
 	resource , Tileset_Set09TilesC
-	resource , Resource_Data169
+	resource , Field_Map011
 	resource , Tileset_Set10Palette
 	resource , Tileset_Set10TilesA
 	resource , Tileset_Set10TilesB
 	resource , Tileset_Set10TilesC
 	resource , Tileset_Set10TilesD
-	resource , Resource_Data16F
-	resource , Resource_Data170
+	resource , Field_Map012
+	resource , Field_Map013
 	resource , Tileset_Set11Palette
 	resource , Tileset_Set11TilesA
 	resource , Tileset_Set11TilesB
 	resource , Tileset_Set11TilesC
 	resource , Tileset_Set11TilesD
-	resource , Resource_Data176
+	resource , Field_Map014
 	resource , Tileset_Set12Palette
 	resource , Tileset_Set12TilesA
 	resource , Tileset_Set12TilesB
 	resource , Tileset_Set12TilesC
 	resource , Tileset_Set12TilesD
-	resource , Resource_Data17C
+	resource , Field_Map015
 	resource , Tileset_Set13Palette
 	resource , Tileset_Set13TilesA
 	resource , Tileset_Set13TilesB
 	resource , Tileset_Set13TilesC
 	resource , Tileset_Set13TilesD
-	resource , Resource_Data182
+	resource , Field_Map016
 	resource , Tileset_Palette00
-	resource , Resource_Data184
+	resource , Field_Map017
 	resource , Tileset_Set14Palette
 	resource , Tileset_Set14TilesA
 	resource , Tileset_Set14TilesB
 	resource , Tileset_Set14TilesC
 	resource , Tileset_Set14TilesD
-	resource , Resource_Data18A
+	resource , Field_Map018
 	resource , Tileset_Set15Palette
 	resource , Tileset_Set15TilesA
 	resource , Tileset_Set15TilesB
 	resource , Tileset_Set15TilesC
 	resource , Tileset_Set15TilesD
-	resource , Resource_Data190
+	resource , Field_Map019
 	resource , Tileset_Set16Palette
 	resource , Tileset_Set16TilesA
 	resource , Tileset_Set16TilesB
 	resource , Tileset_Set16TilesC
 	resource , Tileset_Set16TilesD
-	resource , Resource_Data196
+	resource , Field_Map020
 	resource , Tileset_Set17Palette
 	resource , Tileset_Set17TilesA
 	resource , Tileset_Set17TilesB
 	resource , Tileset_Set17TilesC
 	resource , Tileset_Set17TilesD
-	resource , Resource_Data19C
+	resource , Field_Map021
 	resource , Tileset_Set18Palette
 	resource , Tileset_Set18TilesA
 	resource , Tileset_Set18TilesB
 	resource , Tileset_Set18TilesC
 	resource , Tileset_Set18TilesD
-	resource , Resource_Data1A2
+	resource , Field_Map022
 	resource , Tileset_Set19Palette
 	resource , Tileset_Set19TilesA
 	resource , Tileset_Set19TilesB
 	resource , Tileset_Set19TilesC
 	resource , Tileset_Set19TilesD
-	resource , Resource_Data1A8
-	resource , Resource_Data1A9
-	resource , Resource_Data1AA
+	resource , Field_Map023
+	resource , Field_Map024
+	resource , Field_Map025
 	resource , Tileset_Set20Palette
 	resource , Tileset_Set20TilesA
 	resource , Tileset_Set20TilesB
 	resource , Tileset_Set20TilesC
 	resource , Tileset_Set20TilesD
-	resource , Resource_Data1B0
-	resource , Resource_Data1B1
-	resource , Resource_Data1B2
+	resource , Field_Map026
+	resource , Field_Map027
+	resource , Field_Map028
 	resource , Tileset_Set21Palette
 	resource , Tileset_Set21TilesA
 	resource , Tileset_Set21TilesB
 	resource , Tileset_Set21TilesC
 	resource , Resource_Data1B7
-	resource , Resource_Data1B8
+	resource , Field_Map029
 	resource , Tileset_Set22Palette
 	resource , Tileset_Set22TilesA
 	resource , Tileset_Set22TilesB
 	resource , Tileset_Set22TilesC
-	resource , Resource_Data1BD
-	resource , Resource_Data1BE
+	resource , Field_Map030
+	resource , Field_Map031
 	resource , Tileset_Set23Palette
 	resource , Tileset_Set23TilesA
 	resource , Tileset_Set23TilesB
 	resource , Tileset_Set23TilesC
 	resource , Tileset_Set23TilesD
-	resource , Resource_Data1C4
+	resource , Field_Map032
 	resource , Tileset_Set24Palette
 	resource , Tileset_Set24TilesA
 	resource , Tileset_Set24TilesB
-	resource , Resource_Data1C8
+	resource , Field_Map033
 	resource , Tileset_Set25Palette
 	resource , Tileset_Set25TilesA
-	resource , Resource_Data1CB
+	resource , Field_Map034
 	resource , Tileset_Set26Palette
 	resource , Tileset_Set26TilesA
 	resource , Tileset_Set26TilesB
 	resource , Tileset_Set26TilesC
-	resource , Resource_Data1D0
+	resource , Field_Map035
 	resource , Tileset_Set27Palette
 	resource , Tileset_Set27TilesA
 	resource , Tileset_Set27TilesB
 	resource , Tileset_Set27TilesC
 	resource , Tileset_Set27TilesD
-	resource , Resource_Data1D6
+	resource , Field_Map036
 	resource , Tileset_Set28Palette
 	resource , Tileset_Set28TilesA
 	resource , Tileset_Set28TilesB
 	resource , Resource_Data1DA
 	resource , Tileset_Set28TilesD
-	resource , Resource_Data1DC
+	resource , Field_Map037
 	resource , Tileset_Set29Palette
 	resource , Tileset_Set29TilesA
 	resource , Tileset_Set29TilesB
 	resource , Tileset_Set29TilesC
 	resource , Tileset_Set29TilesD
-	resource , Resource_Data1E2
+	resource , Field_Map038
 	resource , Tileset_Set30Palette
 	resource , Tileset_Set30TilesA
-	resource , Resource_Data1E5
+	resource , Field_Map039
 	resource , Tileset_Set31Palette
 	resource , Tileset_Set31TilesA
 	resource , Tileset_Set31TilesB
 	resource , Tileset_Set31TilesC
 	resource , Tileset_Set31TilesD
-	resource , Resource_Data1EB
+	resource , Field_Map040
 	resource , Tileset_Palette01
-	resource , Resource_Data1ED
+	resource , Field_Map041
 	resource , Tileset_Set32Palette
 	resource , Tileset_Set32TilesA
 	resource , Tileset_Set32TilesB
 	resource , Tileset_Set32TilesC
 	resource , Tileset_Set32TilesD
-	resource , Resource_Data1F3
+	resource , Field_Map042
 	resource , Tileset_Set33Palette
 	resource , Tileset_Set33TilesA
-	resource , Resource_Data1F6
+	resource , Field_Map043
 	resource , Tileset_Palette02
-	resource , Resource_Data1F8
+	resource , Field_Map044
 	resource , Tileset_Set34Palette
 	resource , Tileset_Set34TilesA
 	resource , Tileset_Set34TilesB
 	resource , Tileset_Set34TilesC
 	resource , Tileset_Set34TilesD
-	resource , Resource_Data1FE
+	resource , Field_Map045
 	resource , Tileset_Set35Palette
 	resource , Tileset_Set35TilesA
 	resource , Tileset_Set35TilesB
 	resource , Tileset_Set35TilesC
 	resource , Tileset_Set35TilesD
-	resource , Resource_Data204
+	resource , Field_Map046
 	resource , Tileset_Set36Palette
 	resource , Tileset_Set36TilesA
 	resource , Tileset_Set36TilesB
 	resource , Tileset_Set36TilesC
 	resource , Tileset_Set36TilesD
-	resource , Resource_Data20A
+	resource , Field_Map047
 	resource , Tileset_Set37Palette
 	resource , Tileset_Set37TilesA
 	resource , Tileset_Set37TilesB
 	resource , Tileset_Set37TilesC
 	resource , Tileset_Set37TilesD
-	resource , Resource_Data210
+	resource , Field_Map048
 	resource , Tileset_Set38Palette
 	resource , Tileset_Set38TilesA
-	resource , Resource_Data213
+	resource , Field_Map049
 	resource , Tileset_Set39Palette
 	resource , Tileset_Set39TilesA
-	resource , Resource_Data216
+	resource , Field_Map050
 	resource , Tileset_Set40Palette
 	resource , Tileset_Set40TilesA
-	resource , Resource_Data219
+	resource , Field_Map051
 	resource , Tileset_Set41Palette
 	resource , Tileset_Set41TilesA
 	resource , Tileset_Set41TilesB
 	resource , Tileset_Set41TilesC
 	resource , Tileset_Set41TilesD
-	resource , Resource_Data21F
+	resource , Field_Map052
 	resource , Tileset_Set42Palette
 	resource , Resource_Data221
 	resource , Tileset_Set42TilesB
 	resource , Tileset_Set42TilesC
 	resource , Tileset_Set42TilesD
-	resource , Resource_Data225
-	resource , Resource_Data226
+	resource , Field_Map053
+	resource , Field_Map054
 	resource , Tileset_Set43Palette
 	resource , Tileset_Set43TilesA
 	resource , Tileset_Set43TilesB
 	resource , Tileset_Set43TilesC
 	resource , Tileset_Set43TilesD
-	resource , Resource_Data22C
-	resource , Resource_Data22D
-	resource , Resource_Data22E
-	resource , Resource_Data22F
-	resource , Resource_Data230
-	resource , Resource_Data231
+	resource , Field_Map055
+	resource , Field_Map056
+	resource , Field_Map057
+	resource , Field_Map058
+	resource , Field_Map059
+	resource , Field_Map060
 	resource , Tileset_Set44Palette
 	resource , Tileset_Set44TilesA
-	resource , Resource_Data234
+	resource , Field_Map061
 	resource , Tileset_Set45Palette
 	resource , Tileset_Set45TilesA
 	resource , Tileset_Set45TilesB
 	resource , Tileset_Set45TilesC
 	resource , Tileset_Set45TilesD
-	resource , Resource_Data23A
+	resource , Field_Map062
 	resource , Tileset_Palette03
-	resource , Resource_Data23C
-	resource , Resource_Data23D
-	resource , Resource_Data23E
-	resource , Resource_Data23F
-	resource , Resource_Data240
-	resource , Resource_Data241
+	resource , Field_Map063
+	resource , Field_Map064
+	resource , Field_Map065
+	resource , Field_Map066
+	resource , Field_Map067
+	resource , Field_Map068
 	resource , Tileset_Set46Palette
 	resource , Tileset_Set46TilesA
 	resource , Tileset_Set46TilesB
 	resource , Tileset_Set46TilesC
 	resource , Tileset_Set46TilesD
-	resource , Resource_Data247
-	resource , Resource_Data248
-	resource , Resource_Data249
-	resource , Resource_Data24A
-	resource , Resource_Data24B
+	resource , Field_Map069
+	resource , Field_Map070
+	resource , Field_Map071
+	resource , Field_Map072
+	resource , Field_Map073
 	resource , Tileset_Set47Palette
 	resource , Tileset_Set47TilesA
 	resource , Tileset_Set47TilesB
 	resource , Tileset_Set47TilesC
 	resource , Tileset_Set47TilesD
-	resource , Resource_Data251
+	resource , Field_Map074
 	resource , Tileset_Palette04
-	resource , Resource_Data253
+	resource , Field_Map075
 	resource , Tileset_Set48Palette
 	resource , Tileset_Set48TilesA
 	resource , Tileset_Set48TilesB
 	resource , Tileset_Set48TilesC
 	resource , Tileset_Set48TilesD
-	resource , Resource_Data259
+	resource , Field_Map076
 	resource , Tileset_Set49Palette
 	resource , Tileset_Set49TilesA
-	resource , Resource_Data25C
+	resource , Field_Map077
 	resource , Tileset_Palette05
-	resource , Resource_Data25E
-	resource , Resource_Data25F
-	resource , Resource_Data260
-	resource , Resource_Data261
-	resource , Resource_Data262
-	resource , Resource_Data263
-	resource , Resource_Data264
-	resource , Resource_Data265
-	resource , Resource_Data266
+	resource , Field_Map078
+	resource , Field_Map079
+	resource , Field_Map080
+	resource , Field_Map081
+	resource , Field_Map082
+	resource , Field_Map083
+	resource , Field_Map084
+	resource , Field_Map085
+	resource , Field_Map086
 	resource , Tileset_Palette06
-	resource , Resource_Data268
-	resource , Resource_Data269
+	resource , Field_Map087
+	resource , Field_Map088
 	resource , Tileset_Palette07
-	resource , Resource_Data26B
-	resource , Resource_Data26C
+	resource , Field_Map089
+	resource , Field_Map090
 	resource , Tileset_Set50Palette
 	resource , Tileset_Set50TilesA
 	resource , Tileset_Set50TilesB
 	resource , Tileset_Set50TilesC
 	resource , Tileset_Set50TilesD
-	resource , Resource_Data272
-	resource , Resource_Data273
-	resource , Resource_Data274
+	resource , Field_Map091
+	resource , Field_Map092
+	resource , Field_Map093
 	resource , Tileset_Set51Palette
 	resource , Tileset_Set51TilesA
 	resource , Tileset_Set51TilesB
 	resource , Tileset_Set51TilesC
 	resource , Tileset_Set51TilesD
-	resource , Resource_Data27A
+	resource , Field_Map094
 	resource , Tileset_Set52Palette
 	resource , Tileset_Set52TilesA
 	resource , Tileset_Set52TilesB
 	resource , Tileset_Set52TilesC
 	resource , Tileset_Set52TilesD
-	resource , Resource_Data280
-	resource , Resource_Data281
-	resource , Resource_Data282
+	resource , Field_Map095
+	resource , Field_Map096
+	resource , Field_Map097
 	resource , Tileset_Palette08
-	resource , Resource_Data284
+	resource , Field_Map098
 	resource , Tileset_Set53Palette
 	resource , Tileset_Set53TilesA
 	resource , Tileset_Set53TilesB
-	resource , Resource_Data288
+	resource , Field_Map099
 	resource , Tileset_Palette09
-	resource , Resource_Data28A
+	resource , Field_Map100
 	resource , Tileset_Palette10
-	resource , Resource_Data28C
+	resource , Field_Map101
 	resource , Tileset_Set54Palette
 	resource , Tileset_Set54TilesA
 	resource , Tileset_Set54TilesB
 	resource , Tileset_Set54TilesC
-	resource , Resource_Data291
+	resource , Field_Map102
 	resource , Tileset_Set55Palette
 	resource , Tileset_Set55TilesA
-	resource , Resource_Data294
+	resource , Field_Map103
 	resource , Tileset_Set56Palette
 	resource , Tileset_Set56TilesA
 	resource , Tileset_Set56TilesB
 	resource , Tileset_Set56TilesC
 	resource , Tileset_Set56TilesD
-	resource , Resource_Data29A
+	resource , Field_Map104
 	resource , Tileset_Palette11
-	resource , Resource_Data29C
+	resource , Field_Map105
 	resource , Tileset_Set57Palette
 	resource , Tileset_Set57TilesA
 	resource , Tileset_Set57TilesB
 	resource , Tileset_Set57TilesC
 	resource , Tileset_Set57TilesD
-	resource , Resource_Data2A2
+	resource , Field_Map106
 	resource , Tileset_Palette12
-	resource , Resource_Data2A4
+	resource , Field_Map107
 	resource , Tileset_Palette13
-	resource , Resource_Data2A6
+	resource , Field_Map108
 	resource , Tileset_Set58Palette
 	resource , Tileset_Set58TilesA
 	resource , Tileset_Set58TilesB
 	resource , Tileset_Set58TilesC
 	resource , Tileset_Set58TilesD
-	resource , Resource_Data2AC
+	resource , Field_Map109
 	resource , Tileset_Palette14
-	resource , Resource_Data2AE
+	resource , Field_Map110
 	resource , Tileset_Palette15
-	resource , Resource_Data2B0
+	resource , Field_Map111
 	resource , Tileset_Palette16
-	resource , Resource_Data2B2
+	resource , Field_Map112
 	resource , Tileset_Palette17
 	resource , Tileset_Palette18
-	resource , Resource_Data2B5
+	resource , Field_Map113
 	resource , Tileset_Palette19
-	resource , Resource_Data2B7
+	resource , Field_Map114
 	resource , Tileset_Palette20
-	resource , Resource_Data2B9
+	resource , Field_Map115
 	resource , Tileset_Palette21
-	resource , Resource_Data2BB
+	resource , Field_Map116
 	resource , Tileset_Palette22
-	resource , Resource_Data2BD
+	resource , Field_Map117
 	resource , Tileset_Palette23
-	resource , Resource_Data2BF
+	resource , Field_Map118
 	resource , Tileset_Palette24
-	resource , Resource_Data2C1
+	resource , Field_Map119
 	resource , Tileset_Palette25
-	resource , Resource_Data2C3
+	resource , Field_Map120
 	resource , Tileset_Palette26
-	resource , Resource_Data2C5
-	resource , Resource_Data2C6
+	resource , Field_Map121
+	resource , Field_Map122
 	resource , Tileset_Palette27
-	resource , Resource_Data2C8
+	resource , Field_Map123
 	resource , Tileset_Palette28
-	resource , Resource_Data2CA
+	resource , Field_Map124
 	resource , Tileset_Set59Palette
 	resource , Tileset_Set59TilesA
 	resource , Tileset_Set59TilesB
 	resource , Tileset_Set59TilesC
 	resource , Tileset_Set59TilesD
-	resource , Resource_Data2D0
+	resource , Field_Map125
 	resource , Tileset_Palette29
-	resource , Resource_Data2D2
+	resource , Field_Map126
 	resource , Tileset_Palette30
-	resource , Resource_Data2D4
+	resource , Field_Map127
 	resource , Tileset_Set60Palette
 	resource , Tileset_Set60TilesA
 	resource , Tileset_Set60TilesB
 	resource , Tileset_Set60TilesC
 	resource , Tileset_Set60TilesD
-	resource , Resource_Data2DA
+	resource , Field_Map128
 	resource , Tileset_Set61Palette
 	resource , Tileset_Set61TilesA
 	resource , Tileset_Set61TilesB
 	resource , Tileset_Set61TilesC
 	resource , Tileset_Set61TilesD
-	resource , Resource_Data2E0
+	resource , Field_Map129
 	resource , Tileset_Set62Palette
 	resource , Tileset_Set62TilesA
 	resource , Tileset_Set62TilesB
 	resource , Tileset_Set62TilesC
 	resource , Tileset_Set62TilesD
-	resource , Resource_Data2E6
+	resource , Field_Map130
 	resource , Tileset_Palette31
-	resource , Resource_Data2E8
-	resource , Resource_Data2E9
-	resource , Resource_Data2EA
+	resource , Field_Map131
+	resource , Field_Map132
+	resource , Field_Map133
 	resource , Tileset_Palette32
-	resource , Resource_Data2EC
-	resource , Resource_Data2ED
+	resource , Field_Map134
+	resource , Field_Map135
 	resource , Resource_Data2EE
 	resource , Tileset_Palette33
-	resource , Resource_Data2F0
+	resource , Field_Map136
 	resource , Tileset_Palette34
-	resource , Resource_Data2F2
-	resource , Resource_Data2F3
+	resource , Field_Map137
+	resource , Field_Map138
 	resource , Tileset_Palette35
-	resource , Resource_Data2F5
+	resource , Field_Map139
 	resource , Tileset_Palette36
-	resource , Resource_Data2F7
-	resource , Resource_Data2F8
-	resource , Resource_Data2F9
-	resource , Resource_Data2FA
+	resource , Field_Map140
+	resource , Field_Map141
+	resource , Field_Map142
+	resource , Field_Map143
 	resource , Tileset_Palette37
-	resource , Resource_Data2FC
+	resource , Field_Map144
 	resource , Tileset_Palette38
-	resource , Resource_Data2FE
+	resource , Field_Map145
 	resource , Tileset_Set63Palette
 	resource , Tileset_Set63TilesA
-	resource , Resource_Data301
-	resource , Resource_Data302
+	resource , Field_Map146
+	resource , Field_Map147
 	resource , Tileset_Palette39
-	resource , Resource_Data304
-	resource , Resource_Data305
+	resource , Field_Map148
+	resource , Field_Map149
 	resource , Tileset_Palette40
-	resource , Resource_Data307
+	resource , Field_Map150
 	resource , Tileset_Set64Palette
 	resource , Tileset_Set64TilesA
 	resource , Tileset_Set64TilesB
 	resource , Tileset_Set64TilesC
 	resource , Tileset_Set64TilesD
-	resource , Resource_Data30D
+	resource , Field_Map151
 	resource , Tileset_Set65Palette
 	resource , Tileset_Set65TilesA
 	resource , Tileset_Set65TilesB
 	resource , Tileset_Set65TilesC
 	resource , Tileset_Set65TilesD
-	resource , Resource_Data313
+	resource , Field_Map152
 	resource , Tileset_Palette41
-	resource , Resource_Data315
-	resource , Resource_Data316
+	resource , Field_Map153
+	resource , Field_Map154
 	resource , Tileset_Palette42
-	resource , Resource_Data318
+	resource , Field_Map155
 	resource , Tileset_Palette43
-	resource , Resource_Data31A
-	resource , Resource_Data31B
+	resource , Field_Map156
+	resource , Field_Map157
 	resource , Tileset_Palette44
 	resource , Tileset_Palette45
-	resource , Resource_Data31E
+	resource , Field_Map158
 	resource , Tileset_Palette46
-	resource , Resource_Data320
+	resource , Field_Map159
 	resource , Tileset_Palette47
-	resource , Resource_Data322
+	resource , Field_Map160
 	resource , Tileset_Palette48
-	resource , Resource_Data324
-	resource , Resource_Data325
+	resource , Field_Map161
+	resource , Field_Map162
 	resource , Resource_Data326
 	resource , Tileset_Palette49
-	resource , Resource_Data328
+	resource , Field_Map163
 	resource , Tileset_Palette50
-	resource , Resource_Data32A
+	resource , Field_Map164
 	resource , Tileset_Palette51
-	resource , Resource_Data32C
-	resource , Resource_Data32D
-	resource , Resource_Data32E
-	resource , Resource_Data32F
+	resource , Field_Map165
+	resource , Field_Map166
+	resource , Field_Map167
+	resource , Field_Map168
 	resource , Tileset_Palette52
-	resource , Resource_Data331
+	resource , Field_Map169
 	resource , Tileset_Set66Palette
 	resource , Tileset_Set66TilesA
 	resource , Tileset_Set66TilesB
 	resource , Tileset_Set66TilesC
 	resource , Tileset_Set66TilesD
-	resource , Resource_Data337
+	resource , Field_Map170
 	resource , Tileset_Set67Palette
 	resource , Tileset_Set67TilesA
 	resource , Tileset_Set67TilesB
 	resource , Tileset_Set67TilesC
 	resource , Tileset_Set67TilesD
-	resource , Resource_Data33D
+	resource , Field_Map171
 	resource , Tileset_Palette53
-	resource , Resource_Data33F
+	resource , Field_Map172
 	resource , Resource_Data340
 	resource , Resource_Data341
 	resource , Resource_Data342
 	resource , Resource_Data343
 	resource , Resource_Data344
-	resource , Resource_Data345
+	resource , Field_Map173
 	resource , Resource_Data346
 	resource , Resource_Data347
 	resource , Resource_Data348
 	resource , Resource_Data349
 	resource , Resource_Data34A
-	resource , Resource_Data34B
+	resource , Field_Map174
 	resource , Resource_Data34C
 	resource , Resource_Data34D
 	resource , Resource_Data34E
 	resource , Resource_Data34F
 	resource , Resource_Data350
-	resource , Resource_Data351
+	resource , Field_Map175
 	resource , Resource_Data352
 	resource , Resource_Data353
 	resource , Resource_Data354
 	resource , Resource_Data355
 	resource , Resource_Data356
-	resource , Resource_Data357
+	resource , Field_Map176
 	resource , Resource_Data358
 	resource , Resource_Data359
 	resource , Resource_Data35A
 	resource , Resource_Data35B
 	resource , Resource_Data35C
-	resource , Resource_Data35D
+	resource , Field_Map177
 	resource , Resource_Data35E
 	resource , Resource_Data35F
 	resource , Resource_Data360
 	resource , Resource_Data361
 	resource , Resource_Data362
-	resource , Resource_Data363
+	resource , Field_Map178
 	resource , Resource_Data364
 	resource , Resource_Data365
 	resource , Resource_Data366
 	resource , Resource_Data367
 	resource , Resource_Data368
-	resource , Resource_Data369
+	resource , Field_Map179
 	resource , Resource_Data36A
 	resource , Resource_Data36B
 	resource , Resource_Data36C

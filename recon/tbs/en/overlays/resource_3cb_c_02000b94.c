@@ -4,6 +4,8 @@
  * Production registration and integration verification remain. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgLobbyOpponentArrived[];
+extern u8 MsgLobbyPleaseSpeakWhen[];
 
 s32 Local_0200008c(s32 mode);
 void Local_02000128(s32 mode);
@@ -17,7 +19,6 @@ union GameStateRows {
 };
 
 extern union GameStateRows Data_02000240_t;
-extern u8 Data_00002930;
 
 /* FAKEMATCH: Inline typed calls keep flag constants local to each call. */
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
@@ -42,7 +43,7 @@ s32 Func_02000b94(void)
     s32 msg;
     s32 line;
 
-    msg = (s32)&Data_00002930;
+    msg = (s32)MsgLobbyPleaseSpeakWhen;
     Engine_EventBegin();
     Engine_ActorFaceActor(8, Data_02000240_t.words[125], 0);
     if (Local_0200008c(0) == 0) {
@@ -79,7 +80,7 @@ s32 Func_02000b94(void)
     } else {
         if (Value1(Engine_GameFlagIsSet, 0x173)) {
             Local_02000128(0);
-            Engine_EventSetMessage(0x293d);
+            Engine_EventSetMessage((s32)MsgLobbyOpponentArrived);
             Engine_EventOpenMessage(8, 0);
             Engine_GameFlagClear(0x202);
             Call1(Engine_GameFlagClear, 0x173);

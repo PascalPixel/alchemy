@@ -7,6 +7,7 @@
  * hand-write from inspect --asm. Recon scripted_actor_presentation.c fails
  * xgcc. */
 #include "TYPES.H"
+extern u8 MsgVinasuLongLastTime[];
 
 /* Literal pool, read from the ROM:
  *   0x02000a6c: 0x00000000  constant; Value_00000000 if the pool must hold it
@@ -248,7 +249,7 @@ void Scene_RunScriptedActorPresentation(void)
     Engine_ActorSetPosition(18, 0, 0);
     base6_4013 = 0x4013;
     Call1(Engine_AudioPlayCue, 0x121);
-    Call1(Engine_EventSetMessage, 0x2757);
+    Call1(Engine_EventSetMessage, (s32)MsgVinasuLongLastTime);
     State_ApplyArgMode0AndSet10(base6_4013);
     Engine_ObjectMotionArmCallback(0, 0x8000, 0);
     Engine_ObjectMotionArmCallback(1, 0x8000, 0);

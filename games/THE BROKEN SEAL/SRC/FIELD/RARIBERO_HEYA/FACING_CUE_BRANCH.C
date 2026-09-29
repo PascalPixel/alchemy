@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgRariberoDidntKnowTime[];
+extern u8 MsgRariberoWantStayLet[];
 
 /*
  * Raribero house: a face-toward cue branch. If the party faces the door
@@ -20,10 +22,10 @@ void Dialogue_HandleFacingCueBranch(s32 no)
     if (party_facing == 0xc000) {
         Inn_CheckIn(11, no);
     } else if (Engine_GameFlagIsSet(0x9a7)) {
-        Engine_EventSetMessage(0x28f6);
+        Engine_EventSetMessage((s32)MsgRariberoDidntKnowTime);
         Engine_EventShowMessage(no, 0);
     } else {
-        Engine_EventSetMessage(0x26eb);
+        Engine_EventSetMessage((s32)MsgRariberoWantStayLet);
         Engine_EventShowMessage(no, 0);
     }
 }

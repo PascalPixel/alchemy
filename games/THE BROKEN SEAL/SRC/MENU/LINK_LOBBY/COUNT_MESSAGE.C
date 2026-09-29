@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgLobbyCantWaitSee[];
+extern u8 MsgLobbyWonNumberConsecutive[];
 
 extern u8 gGameState[];
 
@@ -25,9 +27,9 @@ s32 LinkLobby_ShowCountMessage(s32 id)
     Call3(Engine_ActorFaceActor, id, *(s32 *)(gs + 500), 0);
     if (*(u16 *)(gs + 680) != 0) {
         UiText_DrawQuantity(*(u16 *)(gs + 680), 5);
-        Engine_EventSetMessage(0x298a);
+        Engine_EventSetMessage((s32)MsgLobbyWonNumberConsecutive);
     } else {
-        Engine_EventSetMessage(0x298b);
+        Engine_EventSetMessage((s32)MsgLobbyCantWaitSee);
     }
     Engine_EventOpenMessage(id, 0);
     return Engine_EventEnd();

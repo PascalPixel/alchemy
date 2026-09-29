@@ -15,11 +15,7 @@
 extern u8 gEffectWork[];
 
 enum BranchingEventMessage {
-    MSG_ROBIN_FLIPPED_SWITCH = 0x1528,
-    MSG_SEEMS_LOCKED = 0x2693,
-    MSG_YOURE_SURE_THEY_WENT_THROUGH = 0x2702,
-    MSG_THE_DOOR = 0x272f,
-    MSG_TRUTH_DOOR_OPEN_THOSE_SEEING = 0x2756
+    MSG_ROBIN_FLIPPED_SWITCH = 0x1528
 };
 
 struct LevelCheckRecord {

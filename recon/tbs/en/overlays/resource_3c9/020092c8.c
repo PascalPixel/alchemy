@@ -1,19 +1,17 @@
 /* Draft of resource_3c9 0x020092c8 (Scene_RunActorEntrySequence), from
- * games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO. Remaining difference: the
- * ROM loads message 0x27ba and actor 0xbb from the literal pool where the
- * code needs them, as link-time values would, and forms 0x27bb by adding
- * one; C constants are folded or built with movs instead. The listing keeps
+ * games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO. Remaining difference: its messages have catalogue names now; 1 halfword
+ * still differs from the ROM, and it names symbols no link defines
+ * (Battle_GetWorkObject1e0, Engine_ScheduleCallback,
+ * Engine_UiWorkWaitThenFinalizeCapacity, Value_000000bb). The listing keeps
  * these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
-
-enum ActorEntrySequenceMessage {
-    MSG_ROBIN = 0x278e
-};
+extern u8 MsgVinasuRobin[];
+extern u8 MsgVinasuRobinHandedOverShamansRod[];
 
 
-extern u8 LinkedMessage_RobinHandedOverShamansRod[];
+
 
 extern u8 Value_000000bb[];
 
@@ -95,7 +93,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x154, 184);
     VinasuChojo_FaceActor(0, 0x8000);
     Actor_RunRepeatedMotion(21, 1);
-    Event_SetMessage(MSG_ROBIN);
+    Event_SetMessage((s32)MsgVinasuRobin);
     Call1(VinasuChojo_ShowMessage, 0x9015);
     *(u8 *)(Battle_GetWorkObject1e0() + 85) = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
@@ -378,7 +376,7 @@ void Scene_RunActorEntrySequence(void)
      * written. The reference loads this constant from the pool after the two
      * preceding calls, which the integer spelling does not reproduce.
      */
-    message = (s32)LinkedMessage_RobinHandedOverShamansRod;
+    message = (s32)MsgVinasuRobinHandedOverShamansRod;
     Message_ShowCentered(message, 1);
     Actor_WalkToAndWait(21, 0x136, 192);
     Engine_ActorFaceDirection(19, 0x8000, 0);

@@ -6,7 +6,7 @@ void RamakanSabaku_ClaimSandEffectVram();
 void Engine_TaskAddCallback();
 void Engine_MapCopyCells();
 void BattleFx_SetQueuedSoundAndPlay();
-void Func_02000cd0(void);
+void RamakanSabaku_RaiseQuarterTriggers(void);
 void RamakanSabaku_ApplyEntryState();
 
 extern u16 gGameState[][2];
@@ -39,7 +39,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
     } else {
         *(s32 *)((*(s32 *)&gEventWork + 0x1c0)) = 0x100;
         RamakanSabaku_ClaimSandEffectVram();
-        Call2(Engine_TaskAddCallback, (s32)Func_02000cd0, 0xc80);
+        Call2(Engine_TaskAddCallback, (s32)RamakanSabaku_RaiseQuarterTriggers, 0xc80);
         if ((s16)gGameState[112][0] == (s32)&SceneId_RamakanSabaku1) {
             Call6(Engine_MapCopyCells, 22, 7, 4, 2, 64, 126);
             Call6(Engine_MapCopyCells, 8, 10, 4, 2, 68, 126);
@@ -49,7 +49,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
             Call6(Engine_MapCopyCells, 14, 55, 4, 2, 84, 126);
         } else {
             if ((s16)gGameState[112][0] != (s32)&SceneId_RamakanSabaku2) {
-                goto L_020017fe;
+                goto third_area;
             }
             Call6(Engine_MapCopyCells, 42, 5, 4, 2, 64, 126);
             Call6(Engine_MapCopyCells, 20, 11, 4, 2, 68, 126);
@@ -66,8 +66,8 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
             Call6(Engine_MapCopyCells, 27, 55, 4, 2, 112, 126);
             Call6(Engine_MapCopyCells, 43, 56, 4, 2, 116, 126);
         }
-        goto L_02001842;
-        L_020017fe:;
+        goto apply_entry_state;
+        third_area:;
         if ((s16)gGameState[112][0] == (s32)&SceneId_RamakanSabaku3) {
             v5 = 124;
             BattleFx_SetQueuedSoundAndPlay(169);
@@ -75,7 +75,7 @@ s32 RamakanSabaku_EnterArea(s32 a0, s32 a1)
             Call6(Engine_MapCopyCells, 6, 18, 4, 4, 68, v5);
             Call6(Engine_MapCopyCells, 10, 21, 4, 4, 72, v5);
         }
-        L_02001842:;
+        apply_entry_state:;
         RamakanSabaku_ApplyEntryState();
     }
     return 0;

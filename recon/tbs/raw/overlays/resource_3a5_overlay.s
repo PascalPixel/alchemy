@@ -2,9 +2,9 @@
 	.thumb
 	.section .text.x02008cd0,"ax",%progbits
 	.balign 4
-	.global Func_02000cd0
+	.global RamakanSabaku_RaiseQuarterTriggers
 	.thumb_func
-Func_02000cd0:
+RamakanSabaku_RaiseQuarterTriggers:
 	push	{r5, r6, lr}
 	ldr	r0, [pc, #268]
 	ldr	r3, [pc, #268]

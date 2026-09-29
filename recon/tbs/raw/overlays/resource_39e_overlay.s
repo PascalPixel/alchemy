@@ -130,9 +130,9 @@ Func_0200102c:
 	.4byte 0x000018ac
 	.section .text.x0200a7ec,"ax",%progbits
 	.balign 4
-	.global FieldScene_RunScene39e_020027ec
+	.global ShianJiin_RunPraiseEvent
 	.thumb_func
-FieldScene_RunScene39e_020027ec:
+ShianJiin_RunPraiseEvent:
 	push {r5, lr}
 	bl 0x0200c3dc
 	movs r1, #128

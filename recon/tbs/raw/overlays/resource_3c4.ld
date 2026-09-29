@@ -18,7 +18,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/WAIT.o"(.text)
         "*/resource_3c4_overlay.o"(.text.x020090c2)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/RADIAL.o"(.text)
-        "*/resource_3c4_overlay.o"(.text.x02009270)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/SCENE_TABLES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/TABLES.o"(.text)
         "*/resource_3c4_overlay.o"(.text.x02009318)
         "*/games/THE BROKEN SEAL/SRC/FIELD/BABI_CHIKA/POINT.o"(.text)

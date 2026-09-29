@@ -559,6 +559,9 @@ Object_ReplaceResourceEntryFar:
 	.global Func_0808a4a0
 	.thumb_func
 Func_0808a4a0:
+	.global Event_GetSpecialValueFar
+	.thumb_func
+Event_GetSpecialValueFar:
 	overlay_veneer Event_GetSpecialValue
 	overlay_veneer BattleFx_StartItemBreak
 	overlay_veneer BattleFx_SnapScaleToFull

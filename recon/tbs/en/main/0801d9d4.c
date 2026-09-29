@@ -12,7 +12,7 @@
    2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): best 995 against
    1370 after 25 rewrites, mostly operand swaps and casts; not kept. The
    three pooled message ids (Value_00000c23/c25/c27) block adoption whatever
-   the spelling. The build names Data_03001f54 gDebugMode and Data_080367dc
+   the spelling. The build names gDebugMode gDebugMode and Menu_WorkspaceIconFrames
    Menu_WorkspaceIconFrames, but the renamed draft does not compile against
    the declarations here, so it keeps the old spellings. */
 #include "TYPES.H"
@@ -33,7 +33,7 @@ void UiWindow_DrawDividerLine(struct RenderInput *, s32, s32, s32, s32);
 void UiText_DrawResource(s32, struct RenderInput *, s32, s32);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32, s32, const void *);
-void Func_080b0038(void *, s32, s32);
+void ShopCursor_SetPositionImmediateFar(void *, s32, s32);
 void *RenderOutput_CreateFrame(s32, s32, struct RenderInput *, s32, s32);
 
 struct RenderInput *Menu_CreateWorkspaceWindows(void)
@@ -98,7 +98,7 @@ struct RenderInput *Menu_CreateWorkspaceWindows(void)
         VramBlock_LoadCached(slot, 128, (void *)0x080310a4);
         work->options.cursor.output = RenderOutput_Create(slot, 0x40000000, window, 0, 0);
         y = window->y * 8 + 16;
-        Func_080b0038(&work->options.cursor, window->x * 8, y);
+        ShopCursor_SetPositionImmediateFar(&work->options.cursor, window->x * 8, y);
     }
     y = -4;
     if (rows > 0) {

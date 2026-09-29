@@ -2,23 +2,23 @@
 #include "BATTLE_EFX.H"
 
 extern u8 Data_00000058[];
-extern u8 Data_000000b4[];
+extern u8 ResourceId_EmberStreakSheet[];
 extern u8 Data_00001000[];
 s32 Math_Div();
-s32 Func_080022fc();
+s32 Math_Mod();
 s32 Trig_Sin();
-void Func_08002dd8();
+void Runtime_ReleaseHeapBlock();
 s32 Resource_GetTableEntry();
 void WaitFrames();
-s32 Func_080041d8();
+s32 Scheduler_AddOrUpdateCallback();
 void Scheduler_RemoveCallback();
 void Render_ResetTransformState();
 void Graphics_PrepareTransferInIwramWork();
 void _call_via_r3();
-s32 Func_080072f4();
-void Func_080b5088();
+s32 _call_via_r4();
+void BattleMotion_ApplyVariantMotionFar();
 s32 GetBattleObjectSlotFar();
-void Func_080b50e8();
+void BattleEventRuntime_BeginPhaseFar();
 void ObjectGroup_TickMemberTimers();
 void BattleFx_BeginCanvasLayer();
 void BattleFx_EndCanvasLayer();
@@ -26,7 +26,7 @@ void ObjectGroup_UpdateMembers();
 void Camera_ApplyShake();
 void EffectStep_AdvanceWithGravity3D();
 void EffectPosition_ApplyBaseAndYOffset();
-void Func_080f9010();
+void Audio_PlayCue();
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -58,7 +58,7 @@ static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4
     f(a0, a1, a2, a3, a4, a5);
 }
 
-void Func_080c9ca8(s32 a0, s32 a1)
+void BattleFx_RunFiveMode(s32 a0, s32 a1)
 {
     u32 i;
     s32 p10;
@@ -127,11 +127,11 @@ void Func_080c9ca8(s32 a0, s32 a1)
     if ((u32)slot68 <= 4) {
     } else {
     }
-    record = Value1(Resource_GetTableEntry, (s32)Data_000000b4);
+    record = Value1(Resource_GetTableEntry, (s32)ResourceId_EmberStreakSheet);
     Call4(_call_via_r3, 0x5000000, record, 128, 0x3001388);
     *(s32 *)((slot64 + 0x7780)) = 2;
     *(s32 *)((slot64 + 0x7784)) = 50;
-    Value2(Func_080041d8, 0x80cd261, 0x480);
+    Value2(Scheduler_AddOrUpdateCallback, 0x80cd261, 0x480);
     record = GetBattleObjectSlotFar(*(s32 *)(*(s32 *)((slot64 + 0x7828)) + 8));
     p10 = *(s32 *)(record);
     slot40 = (((((*(s32 *)(*(s32 *)((slot64 + 0x7828)) + 20) * 3) << 1) + (*(s32 *)(*(s32 *)((slot64 + 0x7828)) + 20) * 3)) << 1) + 48);
@@ -220,12 +220,12 @@ void Func_080c9ca8(s32 a0, s32 a1)
                         v2 = 5;
                     }
                     if (*(s8 *)(0x080edee8 + slot32) != 0) {
-                        value = Value2(Func_080022fc, ((((u32)v10 >> 31) + v10) >> 1), 3);
-                        Call6(Func_080072f4, slot60, (slot64 + ((((((v2 << 1) + v2) << 3) + v2) << 5) + (((((value << 2) + value) << 4) - ((value << 2) + value)) << 6))), (v7 - 10), (*(s32 *)(slot72 + 4) - 40), 20, 40);
-                        Call6(Func_080072f4, slot60, (slot64 + ((((((v2 << 1) + v2) << 3) + v2) << 5) + (((((value << 2) + value) << 4) - ((value << 2) + value)) << 6))), (*(s32 *)(slot72) - 10), *(s32 *)(slot72 + 4), 20, 40);
+                        value = Value2(Math_Mod, ((((u32)v10 >> 31) + v10) >> 1), 3);
+                        Call6(_call_via_r4, slot60, (slot64 + ((((((v2 << 1) + v2) << 3) + v2) << 5) + (((((value << 2) + value) << 4) - ((value << 2) + value)) << 6))), (v7 - 10), (*(s32 *)(slot72 + 4) - 40), 20, 40);
+                        Call6(_call_via_r4, slot60, (slot64 + ((((((v2 << 1) + v2) << 3) + v2) << 5) + (((((value << 2) + value) << 4) - ((value << 2) + value)) << 6))), (*(s32 *)(slot72) - 10), *(s32 *)(slot72 + 4), 20, 40);
                     } else {
-                        (void)Func_080072f4(slot60, ((slot64 + (((((v2 << 1) + v2) << 3) + v2) << 5)) + 0x2580), (v7 - 10), (*(s32 *)(slot72 + 4) - 40), 20, 40);
-                        Call6(Func_080072f4, slot60, ((slot64 + (((((v2 << 1) + v2) << 3) + v2) << 5)) + 0x2580), (*(s32 *)(slot72) - 10), *(s32 *)(slot72 + 4), 20, 40);
+                        (void)_call_via_r4(slot60, ((slot64 + (((((v2 << 1) + v2) << 3) + v2) << 5)) + 0x2580), (v7 - 10), (*(s32 *)(slot72 + 4) - 40), 20, 40);
+                        Call6(_call_via_r4, slot60, ((slot64 + (((((v2 << 1) + v2) << 3) + v2) << 5)) + 0x2580), (*(s32 *)(slot72) - 10), *(s32 *)(slot72 + 4), 20, 40);
                     }
                     EffectStep_AdvanceWithGravity3D(p8b, 64, 0);
                     *(s32 *)(p8b + 24) += 1;
@@ -257,9 +257,9 @@ void Func_080c9ca8(s32 a0, s32 a1)
                 }
                 if (*(s8 *)(0x080edee8 + (slot32 + 1)) != 0) {
                     if (v10 == (slot12 + 24)) {
-                        Func_080f9010(133);
+                        Audio_PlayCue(133);
                         if (slot56 == 0) {
-                            Call1(Func_080b50e8, -1);
+                            Call1(BattleEventRuntime_BeginPhaseFar, -1);
                         }
                         ObjectGroup_UpdateMembers(*(s16 *)(*(s32 *)(slot36) + slot20), 7, 5, slot56, 8);
                     }
@@ -270,7 +270,7 @@ void Func_080c9ca8(s32 a0, s32 a1)
                 if (*(s8 *)(0x080edee8 + (slot32 + 2)) != -1) {
                     if (v10 == (slot12 + 24)) {
                         *(s32 *)((slot64 + 0x77a8)) = 4;
-                        Func_080b5088(*(s16 *)(*(s32 *)(slot36) + slot20));
+                        BattleMotion_ApplyVariantMotionFar(*(s16 *)(*(s32 *)(slot36) + slot20));
                     }
                 }
             }
@@ -293,8 +293,8 @@ void Func_080c9ca8(s32 a0, s32 a1)
         }
     }
     Call1(Scheduler_RemoveCallback, 0x80cd261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
     p9c = ((s32)p5 + 0x140000);
     v9 = p9c;

@@ -12,7 +12,7 @@
  * recon/tbs/en/dossiers.json#main:080dc1ec: a `bl` into
  * recon/tbs/raw/080072e4.s's r4 veneer is an indirect call through a
  * DrawRectangleFn value carried in r4, not a call to a real function named
- * "Func_080072f4".
+ * "_call_via_r4".
  *
  * Unlike the template, this owner keeps a third heap_cache slot
  * (heap_cache[2], "sprite_sheet") alongside work/canvas, runs an inner
@@ -41,18 +41,18 @@ extern u16 ParticleStreams_CellOffsets[];
 void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 void _call_via_r3(s32 a, s32 b, s32 c, s32 target);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 s32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
-void Func_080b5088(s32 member_id, s32 a);
+s32 Trig_Cos(s32 angle);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 a);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 s32 BattleFx_EndCanvasLayer(void);
@@ -108,7 +108,7 @@ void Func_080d41a4(void *object)
     }
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 50;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
     count = Data_080ee25e[M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18)];
     count8 = count * 8;
     for (frame = 0; frame != (count8 - count) + 48; frame++) {
@@ -131,14 +131,14 @@ void Func_080d41a4(void *object)
             }
         }
         if (frame == 32) {
-            Func_080b50e8(0x86);
+            BattleEventRuntime_BeginPhaseFar(0x86);
         }
         for (j = 0; j != count; j++) {
             s32 base;
 
             base = j * 8;
             if (frame == base) {
-                Func_080f9010(0x86);
+                Audio_PlayCue(0x86);
                 _call_via_r3((s32)canvas, 0x4000, 0x10101010, 0x03000168);
             }
             if (frame < base) {
@@ -198,7 +198,7 @@ void Func_080d41a4(void *object)
                         M2C_FIELD(particle, s32 *, 0xC) =
                             (speed32 * Trig_Sin(angle)) >> 7;
                         M2C_FIELD(particle, s32 *, 0x10) =
-                            -((speed32 * Func_0800231c(angle)) * 2) >> 7;
+                            -((speed32 * Trig_Cos(angle)) * 2) >> 7;
                         M2C_FIELD(particle, s32 *, 0x18) =
                             (Random16() & 7) + 32;
                         spawned++;
@@ -228,7 +228,7 @@ void Func_080d41a4(void *object)
 
                     id_offset = 36;
                     for (k = 0; k != member_count; k++) {
-                        Func_080b5088(
+                        BattleMotion_ApplyVariantMotionFar(
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828),
                                 s16 *, id_offset),
                             1);
@@ -290,7 +290,7 @@ void Func_080d41a4(void *object)
         WaitFrames(1);
     }
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

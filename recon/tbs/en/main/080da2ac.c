@@ -29,11 +29,11 @@ extern const Bounds4 Data_080eda88;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
-s32 Func_080041d8(void *callback, s32 interval);
-void Func_080f9010(s32 id);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
+void Audio_PlayCue(s32 id);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void Func_080b50e8(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void **GetBattleObjectSlotFar(s32 member_id);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 s32 Trig_Sin(s32 angle);
@@ -42,7 +42,7 @@ void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
 void Scheduler_RemoveCallback(void *callback);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 void Func_080da2ac(void *object)
@@ -125,12 +125,12 @@ void Func_080da2ac(void *object)
 
     M2C_FIELD(work, s32 *, 0x7780) = 1;
     M2C_FIELD(work, s32 *, 0x7784) = 0;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     *(Bounds4 *)bounds = Data_080eda88;
     bounds_ptr = bounds;
     M2C_FIELD(work, s32 *, 0x77A8) = 0x80;
-    Func_080f9010(141);
+    Audio_PlayCue(141);
 
     variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
     count = Data_080eea38[variant * 3];
@@ -144,7 +144,7 @@ void Func_080da2ac(void *object)
 
             variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
             if (frame == Data_080eea38[variant * 3] - 16) {
-                Func_080b50e8(133);
+                BattleEventRuntime_BeginPhaseFar(133);
             }
 
             lower_x = 0;
@@ -285,6 +285,6 @@ void Func_080da2ac(void *object)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

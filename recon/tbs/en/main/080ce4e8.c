@@ -10,7 +10,7 @@ typedef s32 (*MagnitudeFn)(s32 squared_distance);
 extern u8 Value_000000a9;
 extern u8 Value_000000bb;
 
-s32 Func_080ce4e8(s32 actor) {
+s32 Unnamed_080ce4e8(s32 actor) {
     s32 sp8;
     s32 spC;
     s32 sp10;
@@ -62,11 +62,11 @@ s32 Func_080ce4e8(s32 actor) {
     sp20 = *(u32 *)0x03001F08;
     BattleEffect_LoadWork(0x2F, 7, 7, 3, 3);
     sp24 = *(u32 *)0x03001F0C;
-    Func_080041d8(0x080DBB9D, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080DBB9D, 0x480);
     M2C_FIELD(temp_sl_23, s32 *, 0x7780) = 3;
     M2C_FIELD(temp_sl_23, s32 *, 0x7784) = 0x04040404;
     var_r5_84 = (u8 *)0x02010000;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     var_r4_87 = 0;
     do {
         sp8 = var_r4_87;
@@ -78,7 +78,7 @@ s32 Func_080ce4e8(s32 actor) {
             (Random16() - 0x7F) << 0xF;
         var_r5_84 += 0x1C;
     } while (var_r4_87 != 0x200);
-    Func_080f9010(0x8E);
+    Audio_PlayCue(0x8E);
     sp28 = 0;
     if ((M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 0x14) << 5) == -0x60) {
 
@@ -86,7 +86,7 @@ s32 Func_080ce4e8(s32 actor) {
 loop_4:
         sp1C = *(s32 *)0x03001E80;
         if (sp28 == 0x60) {
-            Func_080b50e8(0);
+            BattleEventRuntime_BeginPhaseFar(0);
         }
         var_r6_142 = temp_sl_23 + 0x6980;
         if (M2C_FIELD(M2C_FIELD(temp_sl_23, void **, 0x7828), s32 *, 4) == 0) {
@@ -155,7 +155,7 @@ loop_15:
                             ((DrawRectangleFn)sp24)(
                                 (void *)sp2C,
                                 (u8 *)temp_sl_23
-                                    + Func_080022fc(sp8, 3) * 0x240,
+                                    + Math_Mod(sp8, 3) * 0x240,
                                 temp_r5_298 - 0xC, sp3C[1] - 0xC,
                                 0x18, 0x18);
                             temp_r5_318 = M2C_FIELD(var_r6_262, s32 *, 0);
@@ -190,7 +190,7 @@ loop_15:
     }
     Scheduler_RemoveCallback(0x080CD261);
     Scheduler_RemoveCallback(0x080DBB9D);
-    Func_08002dd8(0x2F);
-    Func_08002dd8(0x2E);
+    Runtime_ReleaseHeapBlock(0x2F);
+    Runtime_ReleaseHeapBlock(0x2E);
     return BattleFx_EndCanvasLayer();
 }

@@ -1,3 +1,9 @@
+/* Layout (folded from the retired 0x080e4e0c slice draft): the per-kind
+ * scene setup at 0x080e4e0c ends in the 34-way switch; its table fills
+ * 0x080e53f4..0x080e547c, then come ten 8-byte case stubs, a 14-word
+ * literal pool at 0x080e54cc, three more stubs and the default arm at
+ * 0x080e551a. 0x080e657c and 0x080e65f8 are tail blocks this routine
+ * reaches by bl, not separate functions. */
 /* 2026-09-29 (Mars, later): setting the kind 31 height before the first
  * load gives 48 r9 and 2 sl as the reference does; 183 lines remain, about
  * 98 of them the reference's jump-table words, so roughly 85 real. Kind 31

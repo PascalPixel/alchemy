@@ -62,7 +62,7 @@ struct PositionWork {
     struct FixedPointPosition *pos;
 };
 
-extern struct MapWork *Data_03001e70;
+extern struct MapWork *gMapWork;
 extern s32 Data_020097e8;
 extern s32 Data_020097ec;
 extern s32 BabiFune_Count;
@@ -102,7 +102,7 @@ void BabiFune_UpdateWaves(void)
     s32 bob;
     s32 x, z;
 
-    map = Data_03001e70;
+    map = gMapWork;
     if (Data_020097e8 != 0) {
         bob = Iwram_MulQ16(Engine_MathSin(Data_020097ec << 9), 3);
         /* FAKEMATCH: explicit halfword accesses retain truncation before I/O. */

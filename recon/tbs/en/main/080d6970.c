@@ -50,31 +50,31 @@ typedef void (*FillFn)(void *dest, s32 size, s32 value);
 void BattleFx_SpawnObjects(s32 count, s32 kind, s32 variant);
 u32 Random16(void);
 void BattleFx_BeginCanvasLayer(s32 mode);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void BattleFx_SelectLivingTargets(void *object);
 void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
-void Func_080f9010(s32 id);
-void Func_080b5088(s32 member_id, s32 unk);
+void Audio_PlayCue(s32 id);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 unk);
 void BattleFx_PlaceFormationObjects(s32 channel, s32 a, s32 b);
-void Func_080e6eac(s32 channel, s32 a, s32 b);
+void Unnamed_080e6eac(s32 channel, s32 a, s32 b);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080022fc(s32 numerator, s32 denominator);
-s32 Func_08002304(s32 numerator, s32 denominator);
-s32 Func_0800231c(s32 angle);
+s32 Math_Mod(s32 numerator, s32 denominator);
+s32 Math_ModU(s32 numerator, s32 denominator);
+s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
-void Func_08009020(void *object, s32 value);
+void AnimationObjects_SelectAnimationFar(void *object, s32 value);
 void ResourceObject_ReleaseFar(void *object);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 count, s32 flags);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 void **GetBattleObjectSlotFar(s32 member_id);
 void *GetMotionRecordFar(void *object, s32 index);
-void Func_080b50e8(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
 s32 BattleFx_EndCanvasLayer(void);
 
@@ -99,7 +99,7 @@ extern u8 Value_000000c0;
 extern u8 Value_00000100;
 extern u8 Value_00000177;
 
-void Func_080d6970(void *object)
+void BattleEffect_RunDitherDissolveScene(void *object)
 {
     s32 record[3];
     s32 screen[3];
@@ -182,7 +182,7 @@ void Func_080d6970(void *object)
 
     M2C_FIELD(work, s32 *, 0x7780) = 1;
     M2C_FIELD(work, s32 *, 0x7784) = 0;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
     M2C_FIELD((void *)0x04000028, s32 *, 0) = -0x2000;
 
     {
@@ -270,14 +270,14 @@ void Func_080d6970(void *object)
             s32 member;
 
             M2C_FIELD(work, s32 *, 0x77A8) = 8;
-            Func_080f9010(157);
+            Audio_PlayCue(157);
             member = 0;
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
                 s32 id_ofs;
 
                 id_ofs = 36;
                 do {
-                    Func_080b5088(
+                    BattleMotion_ApplyVariantMotionFar(
                         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
                             id_ofs), 6);
                     member++;
@@ -287,10 +287,10 @@ void Func_080d6970(void *object)
             }
         }
         if (t == 72) {
-            Func_080f9010(136);
+            Audio_PlayCue(136);
         }
         if (t == 140) {
-            Func_080f9010(156);
+            Audio_PlayCue(156);
         }
 
         fade_step += 0x4000;
@@ -303,10 +303,10 @@ void Func_080d6970(void *object)
         if ((u32)(t - 48) <= 48U) {
             s32 cell;
 
-            cell = Func_080022fc(Math_Div(t - 48, 24), 3);
-            Func_08009020(M2C_FIELD(work, void **, 0x77E4),
+            cell = Math_Mod(Math_Div(t - 48, 24), 3);
+            AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E4),
                 Data_080ee910[cell * 2]);
-            Func_08009020(M2C_FIELD(work, void **, 0x77E8),
+            AnimationObjects_SelectAnimationFar(M2C_FIELD(work, void **, 0x77E8),
                 Data_080ee910[cell * 2 + 1]);
         }
 
@@ -326,7 +326,7 @@ void Func_080d6970(void *object)
                         u32 w;
                         u32 h;
 
-                        cell = Func_080022fc((t + i) / 4, 5);
+                        cell = Math_Mod((t + i) / 4, 5);
                         w = Data_080ee920[cell];
                         h = Data_080ee925[cell];
                         rect[0](canvas,
@@ -348,7 +348,7 @@ void Func_080d6970(void *object)
             drop = (s32 *)((u8 *)work + 0x7240);
             i = 0;
             do {
-                drop[0] = Func_08002304(Random16(), 96) << 16;
+                drop[0] = Math_ModU(Random16(), 96) << 16;
                 drop[1] = ((Random16() & 7) + 88) << 16;
                 drop[3] = ((s32)(Random16() & 255) - 128) << 11;
                 drop[4] = -(s32)(Random16() & 255) << 11;
@@ -421,7 +421,7 @@ void Func_080d6970(void *object)
                         s32 h;
 
                         y = ((ring[1] - scroll) & 0x7F) - 16;
-                        cell = Func_080022fc(k, 3);
+                        cell = Math_Mod(k, 3);
                         w = Data_080ee930[cell];
                         h = w;
                         if (y + h > ring[1]) {
@@ -452,7 +452,7 @@ void Func_080d6970(void *object)
                     u32 w;
                     u32 h;
 
-                    cell = Func_080022fc(i, 5);
+                    cell = Math_Mod(i, 5);
                     w = Data_080ee93e[cell];
                     h = Data_080ee943[cell];
                     rect[0](canvas, (u8 *)work + Data_080ee934[cell],
@@ -463,7 +463,7 @@ void Func_080d6970(void *object)
                     spark[1] = y;
                     spark[4] = spark[4] + 0x4000;
                     if ((u32)y > 0x780000U && t <= 159) {
-                        spark[0] = Func_08002304(Random16(), 96) << 16;
+                        spark[0] = Math_ModU(Random16(), 96) << 16;
                         spark[1] = ((Random16() & 7) + 88) << 16;
                         spark[3] = ((s32)(Random16() & 255) - 128) << 11;
                         spark[4] = -(s32)(Random16() & 255) << 11;
@@ -658,7 +658,7 @@ void Func_080d6970(void *object)
                         M2C_FIELD(body, s32 *, 72) = 0;
                         i = 0;
                         while ((sub = GetMotionRecordFar(holder[0], i)) != 0) {
-                            Func_08009020(sub, 5);
+                            AnimationObjects_SelectAnimationFar(sub, 5);
                             i++;
                         }
                     }
@@ -692,7 +692,7 @@ void Func_080d6970(void *object)
                         ObjectGroup_UpdateMembers(
                             M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *,
                                 id_ofs), 7, -1, member, 8);
-                        Func_080f9010(134);
+                        Audio_PlayCue(134);
                         M2C_FIELD(work, s32 *, 0x77A8) = 8;
                     }
                     member++;
@@ -707,8 +707,8 @@ void Func_080d6970(void *object)
             s32 status;
             s32 member;
 
-            Func_08002dd8(47);
-            Func_08002dd8(46);
+            Runtime_ReleaseHeapBlock(47);
+            Runtime_ReleaseHeapBlock(46);
             Resource_LoadAndDecompress((s32) &Value_00000098, work, 1, 0);
             Resource_LoadAndDecompress((s32) &Value_000000c0, (u8 *)work + 0x1680, 1, 1);
             status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
@@ -720,7 +720,7 @@ void Func_080d6970(void *object)
             M2C_FIELD((void *)0x04000028, s32 *, 0) = 0;
             M2C_FIELD(work, s32 *, 0x7780) = 2;
             M2C_FIELD(work, s32 *, 0x7784) = 75;
-            Func_080041d8((void *)0x080CD261, 0x480);
+            Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
             member = 0;
             if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 20) != 0) {
                 do {
@@ -742,7 +742,7 @@ void Func_080d6970(void *object)
                         angle = i * 13108;
                         ring[3] = Trig_Sin(angle) << 2;
                         ring[4] = (s32)(Random16() & 0x7FFF) + 0x10000;
-                        ring[5] = Func_0800231c(angle) << 2;
+                        ring[5] = Trig_Cos(angle) << 2;
                         ring[6] = 0;
                         i++;
                         ring += 7;
@@ -836,10 +836,10 @@ void Func_080d6970(void *object)
     } while (t != 366);
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Func_080b50e8(134);
-    Func_080e6eac(2, 0x800000, fade);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleEventRuntime_BeginPhaseFar(134);
+    Unnamed_080e6eac(2, 0x800000, fade);
     {
         void **cursor;
         s32 i;

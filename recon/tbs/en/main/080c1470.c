@@ -86,7 +86,7 @@ void *Runtime_AllocateBlock(s32 slot, s32 size);
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 u8 *Resource_GetTableEntry(s32 index);
 s32 Resource_DecodeType01(const void *source, void *destination);
-s32 Func_080c9000(s32, s32, s32, s32, s32);
+s32 FarCall_EffectTable(s32, s32, s32, s32, s32);
 
 void BattleFx_InitializeStarField(s32 mode)
 {
@@ -169,8 +169,8 @@ void BattleFx_InitializeStarField(s32 mode)
     bg->pb = 0;
     bg->pc = 0;
     bg->pd = 0x100;
-    Func_080c9000(46, 7, 7, 3, 3);
-    Func_080c9000(47, 7, 7, 3, 2);
+    FarCall_EffectTable(46, 7, 7, 3, 3);
+    FarCall_EffectTable(47, 7, 7, 3, 2);
     Scheduler_AddOrUpdateCallback(0x080c11ed, 0xc80);
     Scheduler_AddOrUpdateCallback(0x080c1439, 0xc80);
 }

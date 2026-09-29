@@ -220,4 +220,4 @@ void Func_02000754(void)
 
 #include "TYPES.H"
 
-extern u8 *Data_03001ebc;
+extern u8 *gEventWork;

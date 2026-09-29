@@ -86,7 +86,7 @@ extern void *RenderOutput_AcquireFree(void);
 extern void RenderOutput_AppendToList(void *window, void *output);
 extern s32 Resource_FindFreeEntry(void);
 extern s32 UiText_RenderGlyphPair(s32 character, struct UiGlyphMetrics *metrics);
-extern s32 Func_080072fc(void *window, s32 character, s32 x, s32 y, u8 *resource);
+extern s32 _call_via_r6(void *window, s32 character, s32 x, s32 y, u8 *resource);
 
 s32 UiText_DrawGlyph(
     struct UiTextWindow *window,
@@ -129,7 +129,7 @@ s32 UiText_DrawGlyph(
         size = 0x318;
         buffer = Runtime_BumpAllocate(size);
         Dma_Set((void *)0x080155d0, buffer, 0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
-        result = Func_080072fc(window, glyph, saved_x, saved_y, resource);
+        result = _call_via_r6(window, glyph, saved_x, saved_y, resource);
         Runtime_BumpFree(buffer);
         return result;
     }

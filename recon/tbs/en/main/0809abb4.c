@@ -44,17 +44,17 @@ struct BattleEffectMotionState {
 extern struct BattleEffectMotionState *gEffectWork;
 
 struct BattleEffectMotionObject *Object_Spawn(s32, s32, s32, s32);
-void Func_08009080(struct BattleEffectMotionObject *, s32);
+void Object_SetMode(struct BattleEffectMotionObject *, s32);
 void BattleEffect_InitializeSharedScene(void);
 s32 Math_Div(s32, s32);
 void WaitFrames(s32);
-void Func_080f9010(s32);
+void Audio_PlayCue(s32);
 void Camera_WorldToScreen(s32 *);
 u32 Random16(void);
 void Vector_AddPolarOffset(s32, u32, s32 *);
 void EffectSlot_Initialize(struct EffectSlot *, s32, s32, s32);
 void ObjectGroup_SetChildValueUnlessFifteenFar(struct BattleEffectMotionObject *, s32);
-void Func_080090d0(struct BattleEffectMotionObject *);
+void Object_Destroy(struct BattleEffectMotionObject *);
 void BattleFx_UpdateRadialCamera(struct EffectSlot *);
 void BattleFx_PrepareBufferInterpolation(void);
 
@@ -81,7 +81,7 @@ void BattleEffect_RunFallbackObjectTransition(void)
     state->y = target->y;
     object = Object_Spawn(0xfa, 0, 0, 0);
     step = 0;
-    Func_08009080(object, 0);
+    Object_SetMode(object, 0);
     if (object == 0)
         return;
 
@@ -109,14 +109,14 @@ Interpolate:
         goto Interpolate;
 
     WaitFrames(5);
-    Func_08009080(object, 1);
-    Func_080f9010(0x6c);
+    Object_SetMode(object, 1);
+    Audio_PlayCue(0x6c);
     WaitFrames(10);
-    Func_080f9010(0x6c);
+    Audio_PlayCue(0x6c);
     WaitFrames(10);
-    Func_080f9010(0x6c);
+    Audio_PlayCue(0x6c);
     WaitFrames(10);
-    Func_080f9010(0x6d);
+    Audio_PlayCue(0x6d);
 
     record = &state->records[0];
     index = 15;
@@ -137,7 +137,7 @@ Interpolate:
     position.y = object->y + 0x80000;
     position.z = object->z;
     WaitFrames(8);
-    Func_080090d0(object);
+    Object_Destroy(object);
     WaitFrames(4);
     WaitFrames(30);
     BattleFx_PrepareBufferInterpolation();

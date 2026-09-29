@@ -57,7 +57,7 @@ struct Scroll {
 };
 
 extern volatile struct Scroll gBgScroll;
-extern u32 Data_03001c94;
+extern u32 gKeyState;
 extern u8 Data_03001d18;
 extern u8 Data_03001f58;
 extern const u8 Data_080f39b1[];
@@ -141,7 +141,7 @@ s32 Func_080f26ec(s32 sprites)
     scroll = (volatile u16 *)0x03001ad0;
     for (;;) {
         frame = work->frame;
-        if ((u32)(frame - 21) <= 217 && (Data_03001c94 & 9) != 0) {
+        if ((u32)(frame - 21) <= 217 && (gKeyState & 9) != 0) {
             work->state = 1;
             work->frame = 239;
             frame = 239;
@@ -273,7 +273,7 @@ s32 Func_080f26ec(s32 sprites)
             level = Data_080f39b1[phase];
             *(volatile u16 *)0x04000052 = ((16 - level) << 8) + level;
         }
-        if ((Data_03001c94 & 9) != 0) {
+        if ((gKeyState & 9) != 0) {
             result = 1;
             break;
         }

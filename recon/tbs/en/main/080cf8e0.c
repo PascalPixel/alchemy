@@ -137,9 +137,9 @@ struct EffectRuntime {
     struct EffectArgument *argument;   /* 0x7828 */
 };
 
-/* Heap-allocation cache: Data_03001e50[kind] holds kind's block address.
+/* Heap-allocation cache: gWorkSlot[kind] holds kind's block address.
    This owner reads kinds 46 and 47 through it. */
-extern u8 Data_03001e50[];
+extern u8 gWorkSlot[];
 
 /* Value_ symbols carry a resource id the reference loads from its literal
    pool rather than materializing with a mov. */
@@ -266,7 +266,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
 
     if (object->direction == 0) {
         BattleEffect_LoadWork(46, 7, 7, 3, 2);
-        state = Data_03001e50;
+        state = gWorkSlot;
         rectangle[0] = *(void **)(state + 184);
         if (Data_080ee0b6[variant * 2] == 0)
             BattleEffect_LoadWork(47, 7, 7, 3, 3);
@@ -274,7 +274,7 @@ void BattleFx_RunSevenMode(struct EffectArgument *object, s32 variant)
             BattleEffect_LoadWork(47, 7, 7, 7, 2);
     } else {
         BattleEffect_LoadWork(46, 7, 7, 7, 2);
-        state = Data_03001e50;
+        state = gWorkSlot;
         rectangle[0] = *(void **)(state + 184);
         if (Data_080ee0b6[variant * 2] == 0)
             BattleEffect_LoadWork(47, 7, 7, 3, 3);

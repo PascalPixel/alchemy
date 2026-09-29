@@ -18,7 +18,7 @@
  * neighbour and the closest sibling), 080e2538.c, 080e823c.c and 080eb754.c
  * for the shared prologue, the Value_XXXXXXXX effect-id idiom, the
  * heap[7]/heap[8] blitter publication through BattleEffect_LoadWork and the
- * Data_080ede48 sprite-cell table this owner reuses.
+ * ParticleStreams_CellOffsets sprite-cell table this owner reuses.
  *
  * The owner is one 102-frame animation pass, one frame per iteration, with
  * WaitFrames(1) as the frame barrier.  Before the pass it seeds three
@@ -48,7 +48,7 @@
  * sixteen records per frame over frames 32..63), scrolls a 34x104 strip
  * through a wrapping pair of blits, steps and draws the dust with per-lane
  * gravity from Data_080eef18, slides a 36-wide panel down the screen with
- * bottom clipping, steps and draws the 340 sparks with Func_080e3908, and
+ * bottom clipping, steps and draws the 340 sparks with EffectStep_AdvanceWithGravity2D, and
  * finally shakes the camera and ticks the object group.
  *
  * `_call_via_r3`, `_call_via_r4`, `_call_via_r6` and `_call_via_r9` are
@@ -73,13 +73,13 @@
  *     emitted twice under two separate guards;
  *   - the dust step at frames <= 71 open-codes exactly the body of
  *     EffectStep_AdvanceWithGravity2D with damping 62 instead of calling it,
- *     while the spark step at frames > 59 calls Func_080e3908 with damping
+ *     while the spark step at frames > 59 calls EffectStep_AdvanceWithGravity2D with damping
  *     64;
  *   - frames 32..63 run the seed scan and the strip blit under two separate
  *     evaluations of the same `(u32)(frame - 32) <= 31` guard.
  *
  * Uncertain: the role of the halfword read at object + 0x24 (an actor id fed
- * to Func_080e3980, ObjectGroup_UpdateMembers and BattleMotion_ApplyVariantMotionFar) and of the count at
+ * to EffectPosition_ApplyAlternateStepAndYOffset, ObjectGroup_UpdateMembers and BattleMotion_ApplyVariantMotionFar) and of the count at
  * object + 0x14; whether the two high-half reads spelled
  * `*(s16 *)((u8 *)&rec + 2)` here were a union member in the original rather
  * than the `>> 16` the spark loop uses for the same datum; and whether the
@@ -141,7 +141,7 @@ s32 Math_Mod(s32 a, s32 b);
 s32 Trig_Cos(s32 angle);
 s32 Trig_Sin(s32 angle);
 /* Runtime_ReleaseHeapBlock */
-void Func_08002dd8(s32 kind);
+void Runtime_ReleaseHeapBlock(s32 kind);
 void WaitFrames(s32 frames);
 /* Scheduler_AddOrUpdateCallback */
 /* Scheduler_RemoveCallback */
@@ -167,7 +167,7 @@ void EffectPosition_ApplyAlternateStepAndYOffset(s32 actor, struct EffectPositio
 void BattleFx_StepPaletteToResource(s32 id);
 void Audio_PlayCue(s32 cue);
 
-void Func_080e99c0(void *object)
+void Unnamed_080e99c0(void *object)
 {
     void **heap;
     void **p;
@@ -225,7 +225,7 @@ void Func_080e99c0(void *object)
 
     *(s32 *)((u8 *)work + (239 << 7)) = 2;
     *(s32 *)((u8 *)work + 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 144 << 3);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 144 << 3);
 
     /* Sixteen drawn billboards (the table holds more) at work + 0x7080. */
     i = 0;
@@ -489,7 +489,7 @@ void Func_080e99c0(void *object)
     } while (frame != 102);
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

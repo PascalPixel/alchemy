@@ -33,7 +33,7 @@ void Runtime_BumpFree(void *block);
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_SetBitFar(s32 flag);
 
-s32 Func_080f07f0(u8 *text, s32 slot, s32 align)
+s32 Unnamed_080f07f0(u8 *text, s32 slot, s32 align)
 {
     u8 *buf = Runtime_BumpAllocateAlternatePool(0x900);
     u32 tile[8];

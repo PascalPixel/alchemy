@@ -41,7 +41,7 @@ struct BattleScreen {
 };
 
 extern u8 Value_00000230;
-extern void *Data_03001f00[];
+extern void *gTransitionWork[];
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 void Graphics_ScaleRgb555Clamped(u16 *src, void *dst, s32 scale, s32 count);
@@ -51,16 +51,16 @@ void Scheduler_AddOrUpdateCallback(void *callback, s32 order);
 
 void Func_080c08ec(s32 mode, s32 resource, s32 level)
 {
-    struct BattleBgState *state = Data_03001f00[0];
+    struct BattleBgState *state = gTransitionWork[0];
     u8 *data = GetResource(resource);
-    struct BattleScreen *screen = Data_03001f00[-35];
+    struct BattleScreen *screen = gTransitionWork[-35];
     u32 size = (u32)&Value_00000230;
     void *table;
 
     table = Runtime_AllocateHeapBlock(49, size);
     size >>= 2;
     Dma_Set((void *)0x080b5138, table, 0x84000000 | size, (volatile u32 *)0x040000d4);
-    ((DecodeFn)Data_03001f00[5])(data + 0x100, (void *)0x06008000);
+    ((DecodeFn)gTransitionWork[5])(data + 0x100, (void *)0x06008000);
     Runtime_ReleaseHeapBlock(49);
     Dma_Set(data, screen->palette, 0x84000040, (volatile u32 *)0x040000d4);
     if (level >= 0) {

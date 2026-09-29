@@ -14,8 +14,8 @@ struct SceneState {
     s16 transition;
 };
 
-extern struct SceneWork *Data_03001ebc;
-extern struct SceneState Data_02000240;
+extern struct SceneWork *gEventWork;
+extern struct SceneState gGameState;
 void Func_0200302c();
 void Func_0200308c();
 void Func_02003094();
@@ -31,7 +31,7 @@ void Func_02003144();
 void Func_0200315c();
 void Func_0200316c();
 void Func_0200319c();
-void Func_020023a0();
+void gLinkExchangeState();
 void Func_02002410();
 void Func_02002480();
 void Func_0200252c();
@@ -59,14 +59,14 @@ s32 FieldScene_InitializeActorGroups(void)
     s32 tileY;
     s32 tileRow;
 
-    Data_03001ebc->request = 0x204;
-    if (Data_02000240.scene == scene || Data_02000240.scene == alternateScene) {
+    gEventWork->request = 0x204;
+    if (gGameState.scene == scene || gGameState.scene == alternateScene) {
         Func_0200319c(0);
-        Data_02000240.transition = 1;
-        Data_02000240.nextScene = scene;
+        gGameState.transition = 1;
+        gGameState.nextScene = scene;
     }
-    if (Data_02000240.scene == scene) {
-        switch (Data_02000240.phase) {
+    if (gGameState.scene == scene) {
+        switch (gGameState.phase) {
         case 1: case 2:
             if (Func_020030d4(0x982)) {
                 Call6(Func_0200308c, 121, 4, 74, 9, 5, 8);
@@ -90,7 +90,7 @@ s32 FieldScene_InitializeActorGroups(void)
             Call6(Func_0200308c, 18, 83, 13, 79, 3, 2);
             break;
         case 3: case 4:
-            Func_020023a0();
+            gLinkExchangeState();
             Func_0200310c(8)[85] = 0;
             Func_0200310c(9)[85] = 0;
             actor = Func_0200310c(8); Func_020030ac(actor, 0);
@@ -171,11 +171,11 @@ s32 FieldScene_InitializeActorGroups(void)
             break;
         }
     } else {
-        switch (Data_02000240.phase) {
+        switch (gGameState.phase) {
         case 0: break;
         case 1: case 2: case 3:
-            Data_02000240.transition = 1;
-            Data_02000240.nextScene = 0xb0;
+            gGameState.transition = 1;
+            gGameState.nextScene = 0xb0;
             Func_020030e4(0x12f);
             Func_0200315c(17, 6);
             Func_0200315c(18, 6);
@@ -228,7 +228,7 @@ s32 FieldScene_InitializeActorGroups(void)
                 *(u16 *)(Func_0200310c(12) + 100) = zero;
                 *(u16 *)(Func_0200310c(13) + 100) = zero;
                 *(u16 *)(Func_0200310c(14) + 100) = zero;
-                if (Data_02000240.phase != 5) break;
+                if (gGameState.phase != 5) break;
                 *(s32 *)(Func_0200310c(10) + 12) = -0x200000;
                 *(s32 *)(Func_0200310c(11) + 12) = -0x400000;
                 actorControl = 2;

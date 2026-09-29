@@ -29,7 +29,7 @@
  * use-type still loses the reference copy and second-branch zero extension.
  * No matching-C credit claimed.
  * 2026-09-29: callees carry the build's names; alchemy permute (with
- * --function Func_080ba6ac) scores 2480, from 2700. Func_080c9018 stays
+ * --function Func_080ba6ac) scores 2480, from 2700. BattleFx_DispatchModeFar stays
  * unresolved: the BattleFx_DispatchMode veneer in SYSTEM/FAR_CALL/EFFECT.S
  * has no label yet.
  * Eight minutes of permutation then found 2120: the queued-command scan as a
@@ -81,10 +81,10 @@ struct PresentationBattleWork {
     s32 palette_scale;
 };
 
-extern s32 *Data_03001f00;
+extern s32 *gTransitionWork;
 extern struct PresentationBattleWork *Data_03001e74;
 void BattleEvent_Playback(void);
-void Func_08009080(struct MotionObject *, s32);
+void Object_SetMode(struct MotionObject *, s32);
 void ObjectDispatch_ApplyValueToChildrenFar(struct MotionObject *, s32);
 s32 Inventory_RemoveFar(s32, s32);
 s32 Inventory_BreakFar(s32, s32);
@@ -96,7 +96,7 @@ s32 BattleEventRuntime_WaitForReady(void);
 void BattlePres_SetActorModes(u16 *, s32);
 s32 Graphics_ScaleRgb555Clamped(u16 *, u16 *, s32, s32);
 void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
-void Func_080c9018(struct PresentationWork *);
+void BattleFx_DispatchModeFar(struct PresentationWork *);
 
 s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
                   struct BattleCommandRequest *selection)
@@ -110,7 +110,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     struct BattleUnit *unit;
     u8 kind;
 
-    s32 *transition = Data_03001f00;
+    s32 *transition = gTransitionWork;
     s32 facing = -0x2000;
     if (saved_input->actor_id <= 4)
         facing = 0x2000;
@@ -119,7 +119,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     BattlePres_BuildTargetList(saved_input, &work);
     BattlePres_SetActorModes(0, 0);
     object = GetBattleObjectSlot(work.field_08)->object;
-    Func_08009080(object, 3);
+    Object_SetMode(object, 3);
     ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     if (saved_input->target_ids[0] <= 7)
         work.field_04 = 1;
@@ -157,12 +157,12 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         if (saved_input->presentation_flags & 0x4000)
             BattleFx_DispatchByIdRangeFar(&work);
         else
-            Func_080c9018(&work);
+            BattleFx_DispatchModeFar(&work);
     } else {
         WaitFrames(60);
     }
     BattleEventRuntime_WaitForReady();
-    Func_08009080(object, 1);
+    Object_SetMode(object, 1);
     for (i = 0; i != work.count; i++)
         Actor_ResetMotionAtAnchor(work.table[i]);
 

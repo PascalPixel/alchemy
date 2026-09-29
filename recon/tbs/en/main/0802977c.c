@@ -20,8 +20,8 @@ struct GlyphWork {
     u16 slot;
 };
 
-extern struct GlyphWork *Data_03001e8c;
-extern volatile u32 Data_03001b04;
+extern struct GlyphWork *gWindowWork;
+extern volatile u32 gKeysRepeat;
 extern struct DebugEntry SideObject_CharacterIdMap[], SideObject_ActorKindIdMap[];
 extern u8 Value_00000dd2[];
 
@@ -49,7 +49,7 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     s32 tile;
     s32 slot;
 
-    work = Data_03001e8c;
+    work = gWindowWork;
     redraw = 1;
     portrait = UiWindow_CreateWithSideObject(0, 0, 10, 5);
     window = UiWindow_Create(10, 10, 14, 3, 2);
@@ -60,25 +60,25 @@ s32 DebugMenu_BrowseEntryGlyphs(void)
     total = count + i;
 
 next_frame:
-        if (Data_03001b04 & 0x20) {
+        if (gKeysRepeat & 0x20) {
             redraw = 1;
             index--;
         }
-        if (Data_03001b04 & 0x10) {
+        if (gKeysRepeat & 0x10) {
             redraw = 1;
             index++;
         }
-        if (Data_03001b04 & 0x200) {
+        if (gKeysRepeat & 0x200) {
             redraw = 1;
             index -= 10;
         }
-        if (Data_03001b04 & 0x100) {
+        if (gKeysRepeat & 0x100) {
             redraw = 1;
             index += 10;
         }
-        if (Data_03001b04 & 1)
+        if (gKeysRepeat & 1)
             goto close;
-        if (Data_03001b04 & 2)
+        if (gKeysRepeat & 2)
             goto close;
         if (redraw) {
             redraw = 0;

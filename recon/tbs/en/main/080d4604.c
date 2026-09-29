@@ -6,19 +6,19 @@
  * Draft for the battle-presentation sub-effect at 0x080d4604 (1764 bytes).
  *
  * Same 0x03001eec "battle work" subsystem family as
- * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (Func_080ce85c, exact) and
+ * games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/MEMBER_ORBIT.C (BattleFx_RunMemberOrbit, exact) and
  * the measured drafts recon/tbs/en/main/080dfe2c.c and 080d4ce8.c: the
  * heap_cache/cursor prologue, the M2C_FIELD field-offset idiom, the
  * DrawRectangleFn typedef, the work+0x7828 effect-state republication, the
- * work+0x7780 / 0x7784 / 0x7824 / 0x77a8 stores, the Func_080041d8 /
- * Func_08004278 0x080CD261 callback pair and the Func_080e155c /
- * Func_080cd52c / WaitFrames frame tail are all shared with them.  Every
+ * work+0x7780 / 0x7784 / 0x7824 / 0x77a8 stores, the Scheduler_AddOrUpdateCallback /
+ * Scheduler_RemoveCallback 0x080CD261 callback pair and the Camera_ApplyShake /
+ * ObjectGroup_TickMemberTimers / WaitFrames frame tail are all shared with them.  Every
  * constant, offset and branch below was read from this owner's own reference
  * disassembly (recon/tbs/raw/080d4604.s), not carried over from a template.
  *
  * Behaviour: the owner takes the effect-state object plus a small `kind`
  * selector.  kind 0 and 1 use fixed anchor coordinates; any other kind
- * projects the state's field_08 through Func_080e396c and derives them.  It
+ * projects the state's field_08 through EffectPosition_ApplyStepAndYOffset and derives them.  It
  * then sets a BG control word, prepares the two generated rectangle-blit
  * routines (heap kinds 46 and 47), loads two resources, optionally copies a
  * kind-specific palette, and seeds a per-group ring of sixteen 28-byte
@@ -28,11 +28,11 @@
  * indexed by the state's field_18; that same table row supplies a per-group
  * horizontal offset.  The frame loop then runs groups * 8 + 56 frames,
  * drawing the ring records, ageing them, and advancing and drawing the
- * particles with Func_080e3908 gravity.
+ * particles with EffectStep_AdvanceWithGravity2D gravity.
  *
  * Uncertain / unresolved:
  *   - Names of the 0x080ee262 row fields are behavioural, not recovered.
- *   - Data_080ee294 (u8) and Data_080ede48 (u16) are indexed lookup tables
+ *   - Data_080ee294 (u8) and ParticleStreams_CellOffsets (u16) are indexed lookup tables
  *     whose contents were not decoded here; only their access widths and
  *     index expressions are evidenced.
  *   - Spark fields 8 and 20 are never touched by this owner; they are named
@@ -47,7 +47,7 @@
 typedef s32 (*WordCopyFn)(void *dest, const void *src, s32 words);
 typedef s32 (*FillWordsFn)(void *dest, s32 bytes, s32 value);
 
-/* Small absolute link-time constants: every retained Func_08002f40 /
+/* Small absolute link-time constants: every retained Resource_GetTableEntry /
    Resource_LoadAndDecompress call site loads its resource id from a literal pool rather
    than an immediate, which an ordinary integer literal cannot produce. */
 extern u8 Value_0000007d;
@@ -55,8 +55,8 @@ extern u8 Value_00000073;
 extern u8 Value_00000087;
 extern u8 Value_000000c4;
 
-/* Heap-block address cache; Data_03001e50[kind] holds that kind's block. */
-extern void *Data_03001e50[];
+/* Heap-block address cache; gWorkSlot[kind] holds that kind's block. */
+extern void *gWorkSlot[];
 
 extern const u16 ParticleStreams_CellOffsets[];
 extern const u8 Data_080ee294[];
@@ -91,19 +91,19 @@ void BattleFx_BeginCanvasLayer(s32 mode);
 void *Resource_GetTableEntry(s32 id);
 s32 Random16(void);
 s32 Trig_Sin(s32 angle);
-s32 Func_0800231c(s32 angle);
+s32 Trig_Cos(s32 angle);
 s32 Math_Div(s32 numerator, s32 denominator);
-s32 Func_080041d8(void *callback, s32 interval);
+s32 Scheduler_AddOrUpdateCallback(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_080b50e8(s32 id);
-void Func_080f9010(s32 id);
+void BattleEventRuntime_BeginPhaseFar(s32 id);
+void Audio_PlayCue(s32 id);
 void EffectStep_AdvanceWithGravity2D(void *particle, s32 step, s32 gravity);
 void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080b5088(s32 member_id, s32 b);
+void BattleMotion_ApplyVariantMotionFar(s32 member_id, s32 b);
 void Camera_ApplyShake(s32 a, s32 b);
 void ObjectGroup_TickMemberTimers(void);
 void WaitFrames(s32 frames);
-void Func_08002dd8(s32 id);
+void Runtime_ReleaseHeapBlock(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
 
 void BattleFx_RunSparkGroups(void *object, s32 kind)
@@ -150,9 +150,9 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
 
     M2C_FIELD((void *)0x04000052, u16 *, 0) = 0x1010;
     status = BattleEffect_LoadWork(46, 7, 7, 3, 2);
-    rectangle[0] = (DrawRectangleFn)Data_03001e50[46];
+    rectangle[0] = (DrawRectangleFn)gWorkSlot[46];
     status = BattleEffect_LoadWork(47, 7, 7, 3, 3);
-    second = (DrawRectangleFn)Data_03001e50[47];
+    second = (DrawRectangleFn)gWorkSlot[47];
     rectangle_slot = rectangle;
     rectangle_slot[1] = second;
 
@@ -182,7 +182,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                 radius = i * 2;
                 angle = Random16() & 0xFFFF;
                 ring->x = radius * Trig_Sin(angle);
-                ring->y = -(radius * Func_0800231c(angle));
+                ring->y = -(radius * Trig_Cos(angle));
                 ring->timer = (i / 2) + 25;
                 ring++;
             }
@@ -215,7 +215,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                     spark->x = x << 16;
                     spark->y = y_fixed;
                     spark->vx = (magnitude * Trig_Sin(angle)) >> 6;
-                    spark->vy = -((magnitude * Func_0800231c(angle)) << 1) >> 6;
+                    spark->vy = -((magnitude * Trig_Cos(angle)) << 1) >> 6;
                     i++;
                     spark->timer = (Random16() & 7) + 32;
                 } while (i != SPARK_PATTERN_COUNT(WORK_EFX->variant));
@@ -228,7 +228,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
 
     M2C_FIELD(work, s32 *, 0x7780) = 2;
     M2C_FIELD(work, s32 *, 0x7784) = 75;
-    Func_080041d8((void *)0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback((void *)0x080CD261, 0x480);
 
     for (frame = 0;
             frame != (SPARK_PATTERN_GROUPS(WORK_EFX->variant) << 3) + 56;
@@ -252,14 +252,14 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
 
         if (kind == 1 || kind == 2) {
             if (frame == 2) {
-                Func_080b50e8(145);
+                BattleEventRuntime_BeginPhaseFar(145);
             }
         } else {
             if (frame == 2) {
-                Func_080f9010(145);
+                Audio_PlayCue(145);
             }
             if (frame == 24) {
-                Func_080b50e8(134);
+                BattleEventRuntime_BeginPhaseFar(134);
             }
         }
 
@@ -376,7 +376,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
                     do {
                         if (frame == start + 6) {
                             ObjectGroup_UpdateMembers(WORK_EFX->actors[i], 7, 5, i, 10);
-                            Func_080b5088(WORK_EFX->actors[i], 4);
+                            BattleMotion_ApplyVariantMotionFar(WORK_EFX->actors[i], 4);
                         }
                         i++;
                     } while (i != WORK_EFX->count);
@@ -394,7 +394,7 @@ void BattleFx_RunSparkGroups(void *object, s32 kind)
     }
 
     Scheduler_RemoveCallback((void *)0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
     BattleFx_EndCanvasLayer();
 }

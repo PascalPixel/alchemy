@@ -24,7 +24,13 @@ Func_080b5010:
 	.global Func_080b5028
 	.thumb_func
 Func_080b5028:
+	.global BattlePres_SetupTransitionSceneFar
+	.thumb_func
+BattlePres_SetupTransitionSceneFar:
 	overlay_veneer BattlePres_SetupTransitionScene
+	.global BattlePres_SetupTransitionAtPairMidpointFar
+	.thumb_func
+BattlePres_SetupTransitionAtPairMidpointFar:
 	overlay_veneer BattlePres_SetupTransitionAtPairMidpoint
 	.global BattlePresentation_ConfigurePaletteFadeFar
 	.thumb_func
@@ -37,11 +43,17 @@ BattleBackground_LoadFar:
 	.global Func_080b5048
 	.thumb_func
 Func_080b5048:
+	.global BattlePresentation_SetPaletteLevelFar
+	.thumb_func
+BattlePresentation_SetPaletteLevelFar:
 	overlay_veneer BattlePresentation_SetPaletteLevel
 	overlay_veneer Summon_GetEntryByte4
 	.global Func_080b5058
 	.thumb_func
 Func_080b5058:
+	.global Summon_IsEntrySecondaryFlaggedFar
+	.thumb_func
+Summon_IsEntrySecondaryFlaggedFar:
 	overlay_veneer Summon_IsEntrySecondaryFlagged
 	overlay_veneer Battle_GetEntryField2HighBits
 	overlay_veneer Summon_IsEntryFlagged
@@ -62,11 +74,17 @@ BattleMotion_ApproachTargetFar:
 BattleMotion_ApplyVariantMotionFar:
 Func_080b5088:
 	overlay_veneer BattleMotion_ApplyVariantMotion
+	.global BattleParty_ListActorIdsFar
+	.thumb_func
+BattleParty_ListActorIdsFar:
 	overlay_veneer BattleParty_ListActorIds
 	.global GetBattleObjectSlotFar
 	.thumb_func
 GetBattleObjectSlotFar:
 	overlay_veneer GetBattleObjectSlot
+	.global Battle_RunEncounterFar
+	.thumb_func
+Battle_RunEncounterFar:
 	overlay_veneer Battle_RunEncounter
 	.global BattleMotion_ProjectPositionFar
 	.thumb_func
@@ -76,6 +94,9 @@ BattleMotion_ProjectPositionFar:
 	.thumb_func
 BattleMotion_ProjectScaledPositionFar:
 	overlay_veneer BattleMotion_ProjectScaledPosition
+	.global BattleMotion_ProjectConditionalPositionFar
+	.thumb_func
+BattleMotion_ProjectConditionalPositionFar:
 	overlay_veneer BattleMotion_ProjectConditionalPosition
 	overlay_veneer BattleParty_ListLivingUnits
 	.global BattleParty_PrepareActiveOwnersFar
@@ -110,6 +131,9 @@ Graphics_ScaleRgb555ClampedFar:
 	.global Func_080b50f8
 	.thumb_func
 Func_080b50f8:
+	.global BattlePlacement_UpdateTimedEntriesFar
+	.thumb_func
+BattlePlacement_UpdateTimedEntriesFar:
 	overlay_veneer BattlePlacement_UpdateTimedEntries
 	.global BattleMotion_GetSlotField14Far
 	.thumb_func
@@ -134,4 +158,7 @@ Func_080b5118:
 	.thumb_func
 Func_080b5128:
 	overlay_veneer Unnamed_080bb7c0
+	.global BattlePlacement_CountValidEntriesFar
+	.thumb_func
+BattlePlacement_CountValidEntriesFar:
 	overlay_veneer BattlePlacement_CountValidEntries

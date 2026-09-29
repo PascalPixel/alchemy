@@ -15,7 +15,7 @@ void ShopCursor_AdvanceFar(union MenuCursor *cursor);
 void Shop_SetCursorFar(union MenuCursor *cursor, s32 x, s32 y, s32 speed);
 void ShopCursor_SetPositionImmediateFar(union MenuCursor *cursor, s32 x, s32 y);
 
-extern u8 Value_00002080[];
+extern u8 MsgTalkChoice[];
 extern u8 Data_080310a4[];
 
 extern volatile u32 Data_03001b04;
@@ -34,9 +34,9 @@ s32 PartyTalkMenu_Choose(void)
 
     moved = 1;
     window = UiWindow_Create(7, 13, 18, 7, 2);
-    UiText_DrawCharacterAtOffset((s32)Value_00002080, window, 8, 0);
-    UiText_DrawCharacterAtOffset((s32)Value_00002080 + 1, window, 8, 16);
-    UiText_DrawCharacterAtOffset((s32)Value_00002080 + 2, window, 8, 32);
+    UiText_DrawCharacterAtOffset((s32)MsgTalkChoice, window, 8, 0);
+    UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 1, window, 8, 16);
+    UiText_DrawCharacterAtOffset((s32)MsgTalkChoice + 2, window, 8, 32);
     slot = Resource_FindFreeEntry();
     row = 0;
     if (slot < 96) {

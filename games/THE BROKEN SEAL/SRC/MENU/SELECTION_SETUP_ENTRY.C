@@ -37,7 +37,7 @@ void UiIcon_BuildItemIconTiles(u32 glyph, s32 includeBase, s32 *sourceIndex,
                    s32 *result, s32 reuseSource);
 void Ability_LoadGlyph(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4);
 
-extern u8 Value_0000001f;
+extern u8 MsgCommandName;
 extern u8 MsgItemName;
 extern u8 MsgAbilityName;
 
@@ -61,7 +61,7 @@ void MenuSelection_SetupEntry(u32 kind, s32 base, struct ListNode *node, s32 reu
         if (reuse != 0)
             src = node->src;
         Ui_BuildPairedPatternsToSlot(base, 0, &src, &tile, reuse);
-        node->end = base + (s32)&Value_0000001f;
+        node->end = base + (s32)&MsgCommandName;
         break;
     case 2:
         if (reuse != 0)

@@ -1,7 +1,7 @@
 #include "TYPES.H"
 
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
-extern u8 Data_00000b20[];
+extern u8 MsgAgilityLabel[];
 void UiText_DrawCharacterAtOffsetFar();
 void UiText_DrawNumberAtOffsetFar();
 void UiIcon_CreateStatChangeArrow();
@@ -45,7 +45,7 @@ void UiText_DrawStatComparison(s32 alt, s32 base, s32 work)
             UiIcon_CreateStatChangeArrow(work, 44, 52, 1);
         }
     }
-    UiText_DrawCharacterAtOffsetFar((s32)Data_00000b20, work, 0, 64);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgAgilityLabel, work, 0, 64);
     UiText_DrawNumberAtOffsetFar(*(u16 *)(base + 64), 3, work, 16, 72);
     if (*(u16 *)(p + 64) != *(u16 *)(base + 64)) {
         UiText_DrawNumberAtOffsetFar(*(u16 *)(p + 64), 3, work, 64, 72);

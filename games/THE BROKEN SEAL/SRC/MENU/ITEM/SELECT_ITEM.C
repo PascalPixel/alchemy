@@ -42,7 +42,7 @@ struct ItemListWork {
 extern struct ItemListWork *gMenuWork;
 
 /* "{L}-{R}:Switch characters", then "{A}:Status". */
-extern u8 Value_00000b06;
+extern u8 MsgSwitchCharacterHelp;
 
 
 #define KEY_A 1
@@ -106,8 +106,8 @@ s32 ItemMenu_SelectItem(void)
     }
 
     Scheduler_RemoveCallback(Menu_UpdateEntryObjectTransforms);
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06, menu->field_024, 64, -24);
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b06 + 3, menu->field_024, 0, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp, menu->field_024, 64, -24);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgSwitchCharacterHelp + 3, menu->field_024, 0, -24);
     ItemMenu_PosCategory();
     WaitFrames(1);
     Menu_SpawnIconEntries(menu, menu->icon_list);

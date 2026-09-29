@@ -27,10 +27,10 @@ struct DjinnListMenu {
 extern struct DjinnListMenu *gMenuWork;
 extern u8 *gWindowWork;
 extern volatile u32 gKeyState;
-extern u8 Value_00000b17[];
-extern u8 Value_00000b18[];
+extern u8 MsgReturnHelp[];
+extern u8 MsgCurrentDjinn[];
 extern u8 Value_00001001[];
-extern u8 Value_0000045f[];
+extern u8 MsgDjinnName[];
 
 void ItemMenu_ResetCategory(void);
 void Audio_PlayCue(s32 cue);
@@ -52,7 +52,7 @@ s32 DjinnMenu_ShowCurrentList(void)
     ItemMenu_ResetCategory();
     Audio_PlayCue(112);
     RenderOutput_RedrawSavedRectFar(menu->help_window);
-    UiText_DrawCharacterAtOffsetFar((s32)Value_00000b17, menu->help_window, 0, 16);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgReturnHelp, menu->help_window, 0, 16);
     menu->cursor->state = 13;
     menu->second_cursor->state = 13;
     WaitFrames(1);
@@ -68,7 +68,7 @@ s32 DjinnMenu_ShowCurrentList(void)
     }
     RenderOutput_RedrawSavedRectFar(window);
     UiWindow_DrawDividerLineFar(window, 0, 11, 28, 11);
-    Func_08015078((s32)Value_00000b18, menu->help_window, -96, 132);
+    Func_08015078((s32)MsgCurrentDjinn, menu->help_window, -96, 132);
     for (row = 0; row < 4; row++) {
         for (col = 0; col < 7; col++) {
             s32 id = row * 20 + col;
@@ -76,7 +76,7 @@ s32 DjinnMenu_ShowCurrentList(void)
             if (GameFlag_TestFar(48 + id)) {
                 UiWindow_SetTilemapEntryFar(window, (s32)Value_00001001 + row,
                     row * 7 + 1, col + 3, 0);
-                UiText_DrawCharacterAtOffsetFar((s32)Value_0000045f + id,
+                UiText_DrawCharacterAtOffsetFar((s32)MsgDjinnName + id,
                     window, row * 56 + 16, col * 8 + 24);
             }
         }

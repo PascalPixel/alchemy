@@ -738,7 +738,7 @@ DjinnMenu_ShowChangePreview:
 	.align	2, 0
 .L58:
 	.word	16383
-	.word	Value_00000333
+	.word	MsgAbilityName
 	.word	61471
 	.word	61470
 	.word	2978

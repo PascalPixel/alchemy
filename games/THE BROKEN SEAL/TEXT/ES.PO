@@ -43,23 +43,23 @@ msgctxt "message"
 msgid "00008"
 msgstr "No puedes continuar tu{line_break}aventura con esta partida.{page_break}Elige cuidadosamente{line_break}dónde ubicarla.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgStatusLabel"
 msgid "00009"
 msgstr "Tiempo jugado:"
 
-msgctxt "message"
+msgctxt "MsgNoBackupMemory"
 msgid "00010"
 msgstr "No se ha detectado la{line_break}{text_color:5}memoria interna{reset_text_style}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaveFailed"
 msgid "00011"
 msgstr "{text_color:5}No se pudo guardar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLoadFailed"
 msgid "00012"
 msgstr "{text_color:5}No se pudo cargar.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgEraseFailed"
 msgid "00013"
 msgstr "{text_color:5}No se pudo borrar.{end_wait}"
 
@@ -87,7 +87,7 @@ msgctxt "message"
 msgid "00019"
 msgstr "¿Qué partida quieres borrar?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgOverwriteConfirm"
 msgid "00020"
 msgstr "¿Sobrescribir esta partida?{end_now}"
 
@@ -95,23 +95,23 @@ msgctxt "message"
 msgid "00021"
 msgstr "¿Quieres sobrescribir la{line_break}partida con la que empezaste?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgEraseConfirm"
 msgid "00022"
 msgstr "¿Quieres borrarla?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgGameSaved"
 msgid "00023"
 msgstr "Partida guardada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileErased"
 msgid "00024"
 msgstr "Partida borrada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgFileCopied"
 msgid "00025"
 msgstr "Partida copiada.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSaving"
 msgid "00026"
 msgstr "Guardando...{end_now}"
 
@@ -127,11 +127,11 @@ msgctxt "message"
 msgid "00029"
 msgstr "{argument_actor_name:1} y {argument_actor_name:1} se{line_break}unieron a tu equipo.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityLearned"
 msgid "00030"
 msgstr "{argument_actor_name:1} aprendió{line_break}{argument_ability_name}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCommandName"
 msgid "00031"
 msgstr "Atacar"
 
@@ -327,11 +327,11 @@ msgctxt "message"
 msgid "00079"
 msgstr "Bronce"
 
-msgctxt "message"
+msgctxt "MsgItemNotHeld"
 msgid "00080"
 msgstr "No lo tienes."
 
-msgctxt "message"
+msgctxt "MsgAbilityNotKnown"
 msgid "00081"
 msgstr "No lo sabes."
 
@@ -351,7 +351,7 @@ msgctxt "message"
 msgid "00085"
 msgstr "Nadie lo conoce."
 
-msgctxt "message"
+msgctxt "MsgCharacterName"
 msgid "00086"
 msgstr "Hans"
 
@@ -387,7 +387,7 @@ msgctxt "message"
 msgid "00094"
 msgstr "¿Quieres guardar?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItemPlainName"
 msgid "00095"
 msgstr "?"
 
@@ -1463,7 +1463,7 @@ msgctxt "message"
 msgid "00363"
 msgstr "Anillo. Cura el envenenamiento."
 
-msgctxt "message"
+msgctxt "MsgItemName"
 msgid "00364"
 msgstr "???"
 
@@ -4271,7 +4271,7 @@ msgctxt "message"
 msgid "01065"
 msgstr "Djinn Júpiter"
 
-msgctxt "message"
+msgctxt "MsgAbilityName"
 msgid "01066"
 msgstr "Nada"
 
@@ -5471,7 +5471,7 @@ msgctxt "message"
 msgid "01365"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgDjinnName"
 msgid "01366"
 msgstr "Sílex"
 
@@ -6347,7 +6347,7 @@ msgctxt "message"
 msgid "01584"
 msgstr "Masacrar"
 
-msgctxt "message"
+msgctxt "MsgAbilityDescription"
 msgid "01585"
 msgstr "?"
 
@@ -8423,7 +8423,7 @@ msgctxt "message"
 msgid "02103"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgClassName"
 msgid "02104"
 msgstr "PNC"
 
@@ -9235,11 +9235,11 @@ msgctxt "message"
 msgid "02306"
 msgstr "Flameadora"
 
-msgctxt "message"
+msgctxt "MsgEnemyLabel"
 msgid "02307"
 msgstr "Enem."
 
-msgctxt "message"
+msgctxt "MsgWaitingForOpponent"
 msgid "02308"
 msgstr "Esperando el turno del oponente."
 
@@ -9251,23 +9251,23 @@ msgctxt "message"
 msgid "02310"
 msgstr "Desconocida"
 
-msgctxt "message"
+msgctxt "MsgEnemyAppeared"
 msgid "02311"
 msgstr "¡{argument_actor_name:1} apareció!"
 
-msgctxt "message"
+msgctxt "MsgLastEnemyAppeared"
 msgid "02312"
 msgstr "¡{argument_actor_name:1} apareció!"
 
-msgctxt "message"
+msgctxt "MsgPartyStrikesFirst"
 msgid "02313"
 msgstr "¡El equipo de {argument_actor_name:1} ataca primero!"
 
-msgctxt "message"
+msgctxt "MsgPartySurprised"
 msgid "02314"
 msgstr "¡Equipo {argument_actor_name:1} fue sorprendido!"
 
-msgctxt "message"
+msgctxt "MsgActorAttacks"
 msgid "02315"
 msgstr "¡{argument_actor_name:1} ataca!"
 
@@ -9275,7 +9275,7 @@ msgctxt "message"
 msgid "02316"
 msgstr "{argument_class_name:1}"
 
-msgctxt "message"
+msgctxt "MsgActorDefends"
 msgid "02317"
 msgstr "{argument_actor_name:1} está defendiéndose."
 
@@ -9303,11 +9303,11 @@ msgctxt "message"
 msgid "02323"
 msgstr "¡{argument_item_name:2} se rompió!"
 
-msgctxt "message"
+msgctxt "MsgHpRecover"
 msgid "02324"
 msgstr "¡{argument_actor_name:1} recupera {argument_signed_number} PV!"
 
-msgctxt "message"
+msgctxt "MsgPpRecover"
 msgid "02325"
 msgstr "¡{argument_actor_name:1} recupera {argument_signed_number} PP!"
 
@@ -9315,35 +9315,35 @@ msgctxt "message"
 msgid "02326"
 msgstr "¡{argument_actor_name:1} vuelve al combate!"
 
-msgctxt "message"
+msgctxt "MsgHpFull"
 msgid "02327"
 msgstr "¡PV de {argument_actor_name:1} al máximo!"
 
-msgctxt "message"
+msgctxt "MsgPpFull"
 msgid "02328"
 msgstr "¡PP de {argument_actor_name:1} al máximo!"
 
-msgctxt "message"
+msgctxt "MsgCritical"
 msgid "02329"
 msgstr "¡Golpe crítico!"
 
-msgctxt "message"
+msgctxt "MsgBitterBlow"
 msgid "02330"
 msgstr "¡Un golpe amargo!"
 
-msgctxt "message"
+msgctxt "MsgFelled"
 msgid "02331"
 msgstr "¡Acabaste con {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgGoesDown"
 msgid "02332"
 msgstr "{argument_actor_name:1} ha caído..."
 
-msgctxt "message"
+msgctxt "MsgDmgE"
 msgid "02333"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PV!"
 
-msgctxt "message"
+msgctxt "MsgDmgP"
 msgid "02334"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PV!"
 
@@ -9351,11 +9351,11 @@ msgctxt "message"
 msgid "02335"
 msgstr "¡La Muerte llama a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgPpLossE"
 msgid "02336"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PP!"
 
-msgctxt "message"
+msgctxt "MsgPpLossP"
 msgid "02337"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PP!"
 
@@ -9383,7 +9383,7 @@ msgctxt "message"
 msgid "02343"
 msgstr "{argument_actor_name:1} pierde {argument_signed_number} PV."
 
-msgctxt "message"
+msgctxt "MsgDmgEmphE"
 msgid "02344"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PV!"
 
@@ -9395,7 +9395,7 @@ msgctxt "message"
 msgid "02346"
 msgstr "{argument_actor_name:1} pierde {argument_signed_number} PV."
 
-msgctxt "message"
+msgctxt "MsgDmgEmphP"
 msgid "02347"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PV!"
 
@@ -9411,7 +9411,7 @@ msgctxt "message"
 msgid "02350"
 msgstr "¡El equipo de {argument_actor_name:1} cayó!"
 
-msgctxt "message"
+msgctxt "MsgDowned"
 msgid "02351"
 msgstr "¡{argument_actor_name:1} ha sido derrotado!"
 
@@ -9419,15 +9419,15 @@ msgctxt "message"
 msgid "02352"
 msgstr "¡El equipo de {argument_actor_name:1} cayó!"
 
-msgctxt "message"
+msgctxt "MsgExpGained"
 msgid "02353"
 msgstr "Recibes {argument_signed_number} punto{control:13} de experiencia. {pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgCoinsGained"
 msgid "02354"
 msgstr "Recibes {argument_signed_number} moneda{control:13}."
 
-msgctxt "message"
+msgctxt "MsgItemGained"
 msgid "02355"
 msgstr "Recibes {argument_item_name:10}."
 
@@ -9455,15 +9455,15 @@ msgctxt "message"
 msgid "02361"
 msgstr "¡{argument_actor_name:1} invocó {argument_ability_name} pero{line_break}no tiene suficientes Djinn preparados!"
 
-msgctxt "message"
+msgctxt "MsgPartyFlees"
 msgid "02362"
 msgstr "¡{protagonist_name} y sus amigos huyen!"
 
-msgctxt "message"
+msgctxt "MsgCannotEscape"
 msgid "02363"
 msgstr "¡Pero no hay escapatoria!"
 
-msgctxt "message"
+msgctxt "MsgNoTimeToRun"
 msgid "02364"
 msgstr "¡Éste no es momento para escapar!"
 
@@ -9487,11 +9487,11 @@ msgctxt "message"
 msgid "02369"
 msgstr "¡{argument_actor_name:1} pierde {argument_signed_number} PV!"
 
-msgctxt "message"
+msgctxt "MsgCurseDamage"
 msgid "02370"
 msgstr "¡El hechizo quita {argument_signed_number} PV a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgSpiritDrain"
 msgid "02371"
 msgstr "¡El espíritu de {argument_actor_name:1} fue drenado!"
 
@@ -9503,15 +9503,15 @@ msgctxt "message"
 msgid "02373"
 msgstr "{argument_actor_name:1} cayó."
 
-msgctxt "message"
+msgctxt "MsgKoDown"
 msgid "02374"
 msgstr "¡{argument_actor_name:1} ha caído!"
 
-msgctxt "message"
+msgctxt "MsgSuffocate"
 msgid "02375"
 msgstr "¡{argument_actor_name:1} perdió las fuerzas!"
 
-msgctxt "message"
+msgctxt "MsgPoisonDamage"
 msgid "02376"
 msgstr "¡El veneno quita {argument_signed_number} PV a {argument_actor_name:1}!"
 
@@ -9523,7 +9523,7 @@ msgctxt "message"
 msgid "02378"
 msgstr "¡{argument_actor_name:1} esquiva el golpe!"
 
-msgctxt "message"
+msgctxt "MsgNoEffect"
 msgid "02379"
 msgstr "¡Pero no funciona con {argument_actor_name:1}!"
 
@@ -9563,67 +9563,67 @@ msgctxt "message"
 msgid "02388"
 msgstr "¡Drena {argument_signed_number} PV más!"
 
-msgctxt "message"
+msgctxt "MsgLeechGain"
 msgid "02389"
 msgstr "¡Recupera {argument_signed_number} PP más!"
 
-msgctxt "message"
+msgctxt "MsgLeechTake"
 msgid "02390"
 msgstr "¡Sustrae {argument_signed_number} PP más!"
 
-msgctxt "message"
+msgctxt "MsgAtkDown"
 msgid "02391"
 msgstr "¡Ataque de {argument_actor_name:1} baja {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAtkUp"
 msgid "02392"
 msgstr "¡Ataque de {argument_actor_name:1} sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgDefDown"
 msgid "02393"
 msgstr "¡Defensa de {argument_actor_name:1} baja {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgDefUp"
 msgid "02394"
 msgstr "¡Defensa de {argument_actor_name:1} sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgRevived"
 msgid "02395"
 msgstr "¡{argument_actor_name:1} ha resucitado!"
 
-msgctxt "message"
+msgctxt "MsgResDown"
 msgid "02396"
 msgstr "¡Resistencia de {argument_actor_name:1} baja {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgResUp"
 msgid "02397"
 msgstr "¡Resistencia de {argument_actor_name:1} sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgPoisoned"
 msgid "02398"
 msgstr "¡El veneno afectó a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgDelusion"
 msgid "02399"
 msgstr "¡{argument_actor_name:1} está delirando!"
 
-msgctxt "message"
+msgctxt "MsgConfused"
 msgid "02400"
 msgstr "¡La confusión afecta a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgCharmed"
 msgid "02401"
 msgstr "¡El corazón de {argument_actor_name:1} ha sido robado!"
 
-msgctxt "message"
+msgctxt "MsgStunned"
 msgid "02402"
 msgstr "¡La parálisis afecta a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgAsleep"
 msgid "02403"
 msgstr "¡{argument_actor_name:1} se durmió!"
 
-msgctxt "message"
+msgctxt "MsgPsyBlock"
 msgid "02404"
 msgstr "¡{argument_actor_name:1} no puede usar Psinergía!"
 
@@ -9631,11 +9631,11 @@ msgctxt "message"
 msgid "02405"
 msgstr "¡{argument_actor_name:1} sufre una maldición!"
 
-msgctxt "message"
+msgctxt "MsgRefrain"
 msgid "02406"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgReflect"
 msgid "02407"
 msgstr "¡Reflejo afecta a {argument_actor_name:1}!"
 
@@ -9643,35 +9643,35 @@ msgctxt "message"
 msgid "02408"
 msgstr "¡Afectó a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgEvilSpirit"
 msgid "02409"
 msgstr "¡Un espíritu posee a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgDeathCurse"
 msgid "02410"
 msgstr "¡La Muerte abraza a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgVenom"
 msgid "02411"
 msgstr "¡Un veneno letal ataca a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgDeathCount"
 msgid "02412"
 msgstr "¡La Muerte llama a {argument_actor_name:1}! {argument_signed_number}..."
 
-msgctxt "message"
+msgctxt "MsgPsySeal"
 msgid "02413"
 msgstr "¡{argument_actor_name:1} no puede usar Psinergía!"
 
-msgctxt "message"
+msgctxt "MsgAgiUp"
 msgid "02414"
 msgstr "¡Agilidad de {argument_actor_name:1} sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAgiDown"
 msgid "02415"
 msgstr "¡Agilidad de {argument_actor_name:1} baja {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgEarthPowerUp"
 msgid "02416"
 msgstr "¡Poder Tierra de {argument_actor_name:1} sube {argument_signed_number}!"
 
@@ -9687,15 +9687,15 @@ msgctxt "message"
 msgid "02419"
 msgstr "¡Poder Viento de {argument_actor_name:1} sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgReadies"
 msgid "02420"
 msgstr "¡{argument_actor_name:1} se prepara para la acción!"
 
-msgctxt "message"
+msgctxt "MsgChallenge"
 msgid "02421"
 msgstr "¡{argument_actor_name:1} acepta el desafío!"
 
-msgctxt "message"
+msgctxt "MsgImmobile"
 msgid "02422"
 msgstr "¡{argument_actor_name:1} no puede moverse!"
 
@@ -9703,19 +9703,19 @@ msgctxt "message"
 msgid "02423"
 msgstr "¡{argument_actor_name:1} no puede moverse!"
 
-msgctxt "message"
+msgctxt "MsgAura"
 msgid "02424"
 msgstr "¡Un aura protectora rodea a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgAura2"
 msgid "02425"
 msgstr "¡Un aura protectora rodea a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgWakes"
 msgid "02426"
 msgstr "¡{argument_actor_name:1} despierta del sueño!"
 
-msgctxt "message"
+msgctxt "MsgCurePoison"
 msgid "02427"
 msgstr "¡Se extrajo el veneno de {argument_actor_name:1}!"
 
@@ -9723,43 +9723,43 @@ msgctxt "message"
 msgid "02428"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgResNormal"
 msgid "02429"
 msgstr "¡Resistencia de {argument_actor_name:1} restablecida!"
 
-msgctxt "message"
+msgctxt "MsgAtkNormal"
 msgid "02430"
 msgstr "¡Ataque de {argument_actor_name:1} restablecido!"
 
-msgctxt "message"
+msgctxt "MsgDefNormal"
 msgid "02431"
 msgstr "¡Defensa de {argument_actor_name:1} restablecida!"
 
-msgctxt "message"
+msgctxt "MsgAgiNormal"
 msgid "02432"
 msgstr "¡Agilidad de {argument_actor_name:1} restablecida!"
 
-msgctxt "message"
+msgctxt "MsgConscious"
 msgid "02433"
 msgstr "¡{argument_actor_name:1} recobra la consciencia!"
 
-msgctxt "message"
+msgctxt "MsgCureDelusion"
 msgid "02434"
 msgstr "¡{argument_actor_name:1} ve claramente de nuevo!"
 
-msgctxt "message"
+msgctxt "MsgCureSeal"
 msgid "02435"
 msgstr "¡Psinergía de {argument_actor_name:1} liberada!"
 
-msgctxt "message"
+msgctxt "MsgCureStun"
 msgid "02436"
 msgstr "¡La parálisis ya no afecta a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgConscious2"
 msgid "02437"
 msgstr "¡{argument_actor_name:1} recobra la consciencia!"
 
-msgctxt "message"
+msgctxt "MsgCureSpirit"
 msgid "02438"
 msgstr "¡La Muerte deja a {argument_actor_name:1}!"
 
@@ -9767,11 +9767,11 @@ msgctxt "message"
 msgid "02439"
 msgstr "¡Cuerpo de {argument_actor_name:1} restablecido!"
 
-msgctxt "message"
+msgctxt "MsgRefrainEnd"
 msgid "02440"
 msgstr "¡Contención ya no afecta a {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgReflectEnd"
 msgid "02441"
 msgstr "¡Reflejo ya no afecta a {argument_actor_name:1}!"
 
@@ -9779,7 +9779,7 @@ msgctxt "message"
 msgid "02442"
 msgstr "¡{argument_actor_name:1} recupera la consciencia!"
 
-msgctxt "message"
+msgctxt "MsgCureCurse"
 msgid "02443"
 msgstr "¡{argument_actor_name:1} se deshizo de la Muerte!"
 
@@ -9787,11 +9787,11 @@ msgctxt "message"
 msgid "02444"
 msgstr "¡{argument_actor_name:1} vuelve a la normalidad!"
 
-msgctxt "message"
+msgctxt "MsgBuffsReset"
 msgid "02445"
 msgstr "¡Fuerza de {argument_actor_name:1} restablecida!"
 
-msgctxt "message"
+msgctxt "MsgDjinnSet"
 msgid "02446"
 msgstr "¡{argument_ability_name} se asigna a {argument_actor_name:1}!"
 
@@ -9803,35 +9803,35 @@ msgctxt "message"
 msgid "02448"
 msgstr "Listo para invocar."
 
-msgctxt "message"
+msgctxt "MsgLevelUp"
 msgid "02449"
 msgstr "¡{argument_actor_name:1} ya es {argument_class_name:1} de n. {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAbilityMastered"
 msgid "02450"
 msgstr "¡Aprende {argument_ability_name} del {argument_class_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgMaxHpRises"
 msgid "02451"
 msgstr "¡Su máximo de PV sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgMaxPpRises"
 msgid "02452"
 msgstr "¡Su máximo de PP sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAttackRises"
 msgid "02453"
 msgstr "¡Su ataque sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgDefenseRises"
 msgid "02454"
 msgstr "¡Su defensa sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgAgilityRises"
 msgid "02455"
 msgstr "¡Su agilidad sube {argument_signed_number}!"
 
-msgctxt "message"
+msgctxt "MsgLuckRises"
 msgid "02456"
 msgstr "¡Su suerte sube {argument_signed_number}!"
 
@@ -10159,19 +10159,19 @@ msgctxt "message"
 msgid "02537"
 msgstr "¡{argument_actor_name:1} emite ondas ultrasónicas!"
 
-msgctxt "message"
+msgctxt "MsgSplitOff"
 msgid "02538"
 msgstr "¡Se divide en {argument_actor_name:1}!"
 
-msgctxt "message"
+msgctxt "MsgSplitFail"
 msgid "02539"
 msgstr "¡No pudo dividirse!"
 
-msgctxt "message"
+msgctxt "MsgAppears"
 msgid "02540"
 msgstr "¡¡{argument_actor_name:1} apareció!!"
 
-msgctxt "message"
+msgctxt "MsgNoOneCame"
 msgid "02541"
 msgstr "¡Pero no vino nadie!"
 
@@ -10303,19 +10303,19 @@ msgctxt "message"
 msgid "02573"
 msgstr "{argument_ability_name}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNotEnoughPp"
 msgid "02574"
 msgstr "{argument_ability_name}...{page_break}No tienes suficientes PP.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgNothingHappened"
 msgid "02575"
 msgstr "¡¡¡{argument_ability_name}!!!{page_break}No pasó nada...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgUseAbilityConfirm"
 msgid "02576"
 msgstr "¿Usar {argument_ability_name}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDoesNotWorkHere"
 msgid "02577"
 msgstr "{argument_ability_name}...{page_break}Aquí no funciona.{end_wait}"
 
@@ -10323,7 +10323,7 @@ msgctxt "message"
 msgid "02578"
 msgstr "Los monstruos atacarán{line_break}con menos frecuencia.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityWoreOff"
 msgid "02579"
 msgstr "Cesó el efecto de {argument_ability_name}.{end_wait}"
 
@@ -10331,15 +10331,15 @@ msgctxt "message"
 msgid "02580"
 msgstr "¿Usar {argument_item_name:2}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgItemWoreOff"
 msgid "02581"
 msgstr "Cesó el efecto de {argument_item_name:2}.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgAbilityAnnounce"
 msgid "02582"
 msgstr "{argument_ability_name}{pause_20_skippable}"
 
-msgctxt "message"
+msgctxt "MsgNothingHappens"
 msgid "02583"
 msgstr "Pero no ocurre nada.{end_wait}"
 
@@ -10683,7 +10683,7 @@ msgctxt "message"
 msgid "02668"
 msgstr "¡{argument_item_name:2} vale mucho!{line_break}¡Tiene que ser para ti!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryMore"
 msgid "02669"
 msgstr "El equipo de {protagonist_name} no puede{line_break}llevar más {argument_item_name:5}.{page_break}"
 
@@ -10715,7 +10715,7 @@ msgctxt "message"
 msgid "02676"
 msgstr "Situación actual"
 
-msgctxt "message"
+msgctxt "MsgNotOnMap"
 msgid "02677"
 msgstr "Este lugar no parece{line_break}estar en el mapa...{pause_120_skippable}"
 
@@ -10787,7 +10787,7 @@ msgctxt "message"
 msgid "02694"
 msgstr "¿Qué Psinergía?"
 
-msgctxt "message"
+msgctxt "MsgBecameCursed"
 msgid "02695"
 msgstr "¡Te han maldecido!{end_wait}"
 
@@ -10815,15 +10815,15 @@ msgctxt "message"
 msgid "02701"
 msgstr "¿Equipar?"
 
-msgctxt "message"
+msgctxt "MsgItemMenuEmpty"
 msgid "02702"
 msgstr "No tienes objetos."
 
-msgctxt "message"
+msgctxt "MsgWhoseItem"
 msgid "02703"
 msgstr "Elige personaje."
 
-msgctxt "message"
+msgctxt "MsgWhichItem"
 msgid "02704"
 msgstr "Elige un objeto."
 
@@ -10831,15 +10831,15 @@ msgctxt "message"
 msgid "02705"
 msgstr "¿Qué quieres hacer?"
 
-msgctxt "message"
+msgctxt "MsgUseOnWhom"
 msgid "02706"
 msgstr "¿Sobre quién?"
 
-msgctxt "message"
+msgctxt "MsgGiveToWhom"
 msgid "02707"
 msgstr "¿A quién?"
 
-msgctxt "message"
+msgctxt "MsgSwapForWhat"
 msgid "02708"
 msgstr "¿A cambio de qué?"
 
@@ -10855,7 +10855,7 @@ msgctxt "message"
 msgid "02711"
 msgstr "Asignaciones"
 
-msgctxt "message"
+msgctxt "MsgShortcutHelp"
 msgid "02712"
 msgstr "{button_icon:3}{button_icon:4}:Asignar Psi."
 
@@ -10903,7 +10903,7 @@ msgctxt "message"
 msgid "02723"
 msgstr "Necesita más PP."
 
-msgctxt "message"
+msgctxt "MsgPsynergyPp"
 msgid "02724"
 msgstr "PP"
 
@@ -10911,7 +10911,7 @@ msgctxt "message"
 msgid "02725"
 msgstr "Sus PV están al máximo."
 
-msgctxt "message"
+msgctxt "MsgNoPsynergy"
 msgid "02726"
 msgstr "No tiene Psinergía."
 
@@ -10923,7 +10923,7 @@ msgctxt "message"
 msgid "02728"
 msgstr "{button_icon:3}:¿Qué Psinergía?"
 
-msgctxt "message"
+msgctxt "MsgPsynergyMenuEmpty"
 msgid "02729"
 msgstr "Sin Psinergía."
 
@@ -10943,11 +10943,11 @@ msgctxt "message"
 msgid "02733"
 msgstr "Djinn / Cambiar"
 
-msgctxt "message"
+msgctxt "MsgStatLabel"
 msgid "02734"
 msgstr "Ataque"
 
-msgctxt "message"
+msgctxt "MsgDefenseLabel"
 msgid "02735"
 msgstr "Defensa"
 
@@ -10979,7 +10979,7 @@ msgctxt "message"
 msgid "02742"
 msgstr "Resist."
 
-msgctxt "message"
+msgctxt "MsgExpToNextLevel"
 msgid "02743"
 msgstr "Exp. para sig. nv."
 
@@ -11003,7 +11003,7 @@ msgctxt "message"
 msgid "02748"
 msgstr "Psinergía de Clase"
 
-msgctxt "message"
+msgctxt "MsgSwitchCharacterHelp"
 msgid "02749"
 msgstr "{button_icon:3}-{button_icon:4}:Cambiar personaje"
 
@@ -11023,7 +11023,7 @@ msgctxt "message"
 msgid "02753"
 msgstr "{button_icon:1}:Detalles"
 
-msgctxt "message"
+msgctxt "MsgCoinsLabel"
 msgid "02754"
 msgstr "Monedas"
 
@@ -11035,31 +11035,31 @@ msgctxt "message"
 msgid "02756"
 msgstr "{button_icon:3}-{button_icon:4}:Recolocar"
 
-msgctxt "message"
+msgctxt "MsgExpLabel"
 msgid "02757"
 msgstr "Exp."
 
-msgctxt "message"
+msgctxt "MsgUsableInBattle"
 msgid "02758"
 msgstr "Usado en la batalla."
 
-msgctxt "message"
+msgctxt "MsgUsableInField"
 msgid "02759"
 msgstr "Usado en pueblos/mazmorras."
 
-msgctxt "message"
+msgctxt "MsgUsableAnywhere"
 msgid "02760"
 msgstr "Usado en pueblos/mazmorras/batalla."
 
-msgctxt "message"
+msgctxt "MsgDjinnListHelp"
 msgid "02761"
 msgstr "{button_icon:6}:Lista de Djinn"
 
-msgctxt "message"
+msgctxt "MsgReturnHelp"
 msgid "02762"
 msgstr "{button_icon:6}:Volver"
 
-msgctxt "message"
+msgctxt "MsgCurrentDjinn"
 msgid "02763"
 msgstr "Djinn actuales"
 
@@ -11075,7 +11075,7 @@ msgctxt "message"
 msgid "02766"
 msgstr "Número disponible"
 
-msgctxt "message"
+msgctxt "MsgPanelStatLabel"
 msgid "02767"
 msgstr "Ataque"
 
@@ -11091,23 +11091,23 @@ msgctxt "message"
 msgid "02770"
 msgstr "Suerte"
 
-msgctxt "message"
+msgctxt "MsgAgilityLabel"
 msgid "02771"
 msgstr "Agilidad"
 
-msgctxt "message"
+msgctxt "MsgCannotEquip"
 msgid "02772"
 msgstr "No equipable."
 
-msgctxt "message"
+msgctxt "MsgWillLearn"
 msgid "02773"
 msgstr "Aprenderá"
 
-msgctxt "message"
+msgctxt "MsgLearned"
 msgid "02774"
 msgstr "Aprendió"
 
-msgctxt "message"
+msgctxt "MsgEquipSlotLabels"
 msgid "02775"
 msgstr "Arma"
 
@@ -11151,15 +11151,15 @@ msgctxt "message"
 msgid "02785"
 msgstr "Salir"
 
-msgctxt "message"
+msgctxt "MsgInStock"
 msgid "02786"
 msgstr "disponible(s)."
 
-msgctxt "message"
+msgctxt "MsgTradeForWhat"
 msgid "02787"
 msgstr "¿Cambiar por qué?"
 
-msgctxt "message"
+msgctxt "MsgNoneInStock"
 msgid "02788"
 msgstr "No tiene."
 
@@ -11167,7 +11167,7 @@ msgctxt "message"
 msgid "02789"
 msgstr "No puedes dártelo a ti mismo."
 
-msgctxt "message"
+msgctxt "MsgItemCommandUse"
 msgid "02790"
 msgstr "Usar"
 
@@ -11199,7 +11199,7 @@ msgctxt "message"
 msgid "02797"
 msgstr "?"
 
-msgctxt "message"
+msgctxt "MsgEquipEffectName"
 msgid "02798"
 msgstr "Sin efecto"
 
@@ -11359,7 +11359,7 @@ msgctxt "message"
 msgid "02837"
 msgstr "Varios usos."
 
-msgctxt "message"
+msgctxt "MsgSingleUse"
 msgid "02838"
 msgstr "Un solo uso."
 
@@ -11367,7 +11367,7 @@ msgctxt "message"
 msgid "02839"
 msgstr "Se rompe al usarse."
 
-msgctxt "message"
+msgctxt "MsgBestowsPsynergy"
 msgid "02840"
 msgstr "Confiere Psinergía."
 
@@ -11383,11 +11383,11 @@ msgctxt "message"
 msgid "02843"
 msgstr "No puede quitarse."
 
-msgctxt "message"
+msgctxt "MsgRareItem"
 msgid "02844"
 msgstr "Un objeto extraño."
 
-msgctxt "message"
+msgctxt "MsgImportantItem"
 msgid "02845"
 msgstr "Un objeto importante."
 
@@ -11395,19 +11395,19 @@ msgctxt "message"
 msgid "02846"
 msgstr "Se pueden llevar hasta 30."
 
-msgctxt "message"
+msgctxt "MsgDetailsUnknown"
 msgid "02847"
 msgstr "Detalles desconocidos."
 
-msgctxt "message"
+msgctxt "MsgEquipEffectHeading"
 msgid "02848"
 msgstr "Efecto al equiparse:"
 
-msgctxt "message"
+msgctxt "MsgUsesHeading"
 msgid "02849"
 msgstr "Número de usos:"
 
-msgctxt "message"
+msgctxt "MsgNumberHeading"
 msgid "02850"
 msgstr "Cantidad:"
 
@@ -11415,7 +11415,7 @@ msgctxt "message"
 msgid "02851"
 msgstr "Tiene {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgMightBreak"
 msgid "02852"
 msgstr "Puede romperse si"
 
@@ -11423,7 +11423,7 @@ msgctxt "message"
 msgid "02853"
 msgstr "se usa en la batalla."
 
-msgctxt "message"
+msgctxt "MsgBrokenNotice"
 msgid "02854"
 msgstr "Está inservible, así"
 
@@ -11435,7 +11435,7 @@ msgctxt "message"
 msgid "02856"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgItemCursed"
 msgid "02857"
 msgstr "El objeto está maldito."
 
@@ -11459,11 +11459,11 @@ msgctxt "message"
 msgid "02862"
 msgstr "Sin atributos."
 
-msgctxt "message"
+msgctxt "MsgEquippedIt"
 msgid "02863"
 msgstr "Equipado."
 
-msgctxt "message"
+msgctxt "MsgDroppedIt"
 msgid "02864"
 msgstr "Tirado."
 
@@ -11471,19 +11471,19 @@ msgctxt "message"
 msgid "02865"
 msgstr "Será cambiado por algo."
 
-msgctxt "message"
+msgctxt "MsgGiven"
 msgid "02866"
 msgstr "Entregado."
 
-msgctxt "message"
+msgctxt "MsgRemoved"
 msgid "02867"
 msgstr "Quitado."
 
-msgctxt "message"
+msgctxt "MsgTraded"
 msgid "02868"
 msgstr "Cambiado."
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveItem"
 msgid "02869"
 msgstr "¡No puedes!"
 
@@ -11491,19 +11491,19 @@ msgctxt "message"
 msgid "02870"
 msgstr "¡Pers. maldito!"
 
-msgctxt "message"
+msgctxt "MsgCannotTrade"
 msgid "02871"
 msgstr "¡No puedes!"
 
-msgctxt "message"
+msgctxt "MsgCannotHoldMore"
 msgid "02872"
 msgstr "¡Tiene muchos!"
 
-msgctxt "message"
+msgctxt "MsgItemBroke"
 msgid "02873"
 msgstr "¡Se rompió!"
 
-msgctxt "message"
+msgctxt "MsgArrangeItemsHelp"
 msgid "02874"
 msgstr "{button_icon:3}+{button_icon:1}:Colocar objetos"
 
@@ -11511,7 +11511,7 @@ msgctxt "message"
 msgid "02875"
 msgstr "{button_icon:4}:Ver equipamiento"
 
-msgctxt "message"
+msgctxt "MsgChangeCharacterHelp"
 msgid "02876"
 msgstr "{button_icon:3}{button_icon:4}:Cambiar Perso."
 
@@ -11819,23 +11819,23 @@ msgctxt "message"
 msgid "02952"
 msgstr "Cayó"
 
-msgctxt "message"
+msgctxt "MsgPoisonLabel"
 msgid "02953"
 msgstr "Ven."
 
-msgctxt "message"
+msgctxt "MsgVenomLabel"
 msgid "02954"
 msgstr "Para."
 
-msgctxt "message"
+msgctxt "MsgCurseLabel"
 msgid "02955"
 msgstr "Mald."
 
-msgctxt "message"
+msgctxt "MsgHauntLabel"
 msgid "02956"
 msgstr "Pos."
 
-msgctxt "message"
+msgctxt "MsgStatusNormal"
 msgid "02957"
 msgstr "El estado es normal."
 
@@ -11843,7 +11843,7 @@ msgctxt "message"
 msgid "02958"
 msgstr "Sigue trabajando."
 
-msgctxt "message"
+msgctxt "MsgStatusAdvice"
 msgid "02959"
 msgstr "Ha caído. Revívelo en un Templo"
 
@@ -11883,7 +11883,7 @@ msgctxt "message"
 msgid "02968"
 msgstr "Exorcízalo en un Templo."
 
-msgctxt "message"
+msgctxt "MsgProgressHelp"
 msgid "02969"
 msgstr "El nombre y el nivel. Los puntos{line_break}de experiencia suben el nivel."
 
@@ -11919,7 +11919,7 @@ msgctxt "message"
 msgid "02977"
 msgstr "Sus puntos de experiencia."
 
-msgctxt "message"
+msgctxt "MsgItemUseResult"
 msgid "02978"
 msgstr "¡Recuperó todos los PV!"
 
@@ -12007,7 +12007,7 @@ msgctxt "message"
 msgid "02999"
 msgstr "¡Su defensa creció!"
 
-msgctxt "message"
+msgctxt "MsgChooseCharacter"
 msgid "03000"
 msgstr "Elige a un personaje"
 
@@ -12015,7 +12015,7 @@ msgctxt "message"
 msgid "03001"
 msgstr "{button_icon:1}:Decidir"
 
-msgctxt "message"
+msgctxt "MsgWindowColorLabel"
 msgid "03002"
 msgstr "Color de la ventana"
 
@@ -12027,7 +12027,7 @@ msgctxt "message"
 msgid "03004"
 msgstr "Velocidad del texto"
 
-msgctxt "message"
+msgctxt "MsgMessageSpeedSetting"
 msgid "03005"
 msgstr "Lento"
 
@@ -12039,7 +12039,7 @@ msgctxt "message"
 msgid "03007"
 msgstr "Rápido"
 
-msgctxt "message"
+msgctxt "MsgMessageSpeedLabel"
 msgid "03008"
 msgstr "Velocidad"
 
@@ -12047,11 +12047,11 @@ msgctxt "message"
 msgid "03009"
 msgstr "del texto"
 
-msgctxt "message"
+msgctxt "MsgSpeechLabel"
 msgid "03010"
 msgstr "Voces"
 
-msgctxt "message"
+msgctxt "MsgSpeechSetting"
 msgid "03011"
 msgstr "No"
 
@@ -12059,11 +12059,11 @@ msgctxt "message"
 msgid "03012"
 msgstr "Sí"
 
-msgctxt "message"
+msgctxt "MsgAutoSleepLabel"
 msgid "03013"
 msgstr "Salvapantallas"
 
-msgctxt "message"
+msgctxt "MsgAutoSleepSetting"
 msgid "03014"
 msgstr "No"
 
@@ -12071,7 +12071,7 @@ msgctxt "message"
 msgid "03015"
 msgstr "Sí"
 
-msgctxt "message"
+msgctxt "MsgOptionHelp"
 msgid "03016"
 msgstr "Cambia el color de la ventana."
 
@@ -12155,7 +12155,7 @@ msgctxt "message"
 msgid "03036"
 msgstr "Empezar partida"
 
-msgctxt "message"
+msgctxt "MsgSleepMode"
 msgid "03037"
 msgstr "Salvapantallas activándose.{line_break}Pulsa {button_icon:3}+{button_icon:4} para desactivarlo.{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}{pause_20_skippable}"
 
@@ -12163,7 +12163,7 @@ msgctxt "message"
 msgid "03038"
 msgstr "El menú de pausa no{line_break}está disponible aquí.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgDebugEntryName"
 msgid "03039"
 msgstr "Pantalla de título"
 
@@ -12855,7 +12855,7 @@ msgctxt "message"
 msgid "03211"
 msgstr "Me uniré a vosotros{line_break}entonces. ¡Muchas gracias!{page_break}Por favor, usadnos{line_break}sabiamente.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgPasswordTransferHelp"
 msgid "03212"
 msgstr "Usa una contraseña para"
 
@@ -12863,7 +12863,7 @@ msgctxt "message"
 msgid "03213"
 msgstr "transferir una partida."
 
-msgctxt "message"
+msgctxt "MsgCableTransferHelp"
 msgid "03214"
 msgstr "Conecta dos Game Boy Advance"
 
@@ -12875,11 +12875,11 @@ msgctxt "message"
 msgid "03216"
 msgstr "Transfiere tu partida guardada."
 
-msgctxt "message"
+msgctxt "MsgTransferMethod"
 msgid "03217"
 msgstr "Transferencia"
 
-msgctxt "message"
+msgctxt "MsgPasswordSelection"
 msgid "03218"
 msgstr "Elige contraseña"
 
@@ -12895,7 +12895,7 @@ msgctxt "message"
 msgid "03221"
 msgstr "del nivel que elijas:"
 
-msgctxt "message"
+msgctxt "MsgPasswordLevel"
 msgid "03222"
 msgstr "Nivel"
 
@@ -12947,7 +12947,7 @@ msgctxt "message"
 msgid "03234"
 msgstr "Error de comunicación"
 
-msgctxt "message"
+msgctxt "MsgCoins"
 msgid "03235"
 msgstr "Mon."
 
@@ -12955,11 +12955,11 @@ msgctxt "message"
 msgid "03236"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgYourCoins"
 msgid "03237"
 msgstr "Tus monedas:"
 
-msgctxt "message"
+msgctxt "MsgPrice"
 msgid "03238"
 msgstr "Vale"
 
@@ -12967,7 +12967,7 @@ msgctxt "message"
 msgid "03239"
 msgstr "="
 
-msgctxt "message"
+msgctxt "MsgPriceHeading"
 msgid "03240"
 msgstr "Vale"
 
@@ -12975,39 +12975,39 @@ msgctxt "message"
 msgid "03241"
 msgstr "No equipable."
 
-msgctxt "message"
+msgctxt "MsgShopNoneInStock"
 msgid "03242"
 msgstr "Agotado."
 
-msgctxt "message"
+msgctxt "MsgYouHave"
 msgid "03243"
 msgstr "Tiene {argument_signed_number}."
 
-msgctxt "message"
+msgctxt "MsgNoItems"
 msgid "03244"
 msgstr "No tiene."
 
-msgctxt "message"
+msgctxt "MsgCannotBuyThat"
 msgid "03245"
 msgstr "No compramos."
 
-msgctxt "message"
+msgctxt "MsgNotBroken"
 msgid "03246"
 msgstr "Sin desperfectos."
 
-msgctxt "message"
+msgctxt "MsgCannotDrop"
 msgid "03247"
 msgstr "No puede tirarse."
 
-msgctxt "message"
+msgctxt "MsgCannotRemove"
 msgid "03248"
 msgstr "No puede quitarse."
 
-msgctxt "message"
+msgctxt "MsgCannotDropIt"
 msgid "03249"
 msgstr "¡No puedes tirarlo!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotRemoveIt"
 msgid "03250"
 msgstr "¡No sale!{end_wait}"
 
@@ -13023,7 +13023,7 @@ msgctxt "message"
 msgid "03253"
 msgstr "AGI."
 
-msgctxt "message"
+msgctxt "MsgWeaponShopWelcome"
 msgid "03254"
 msgstr "¡Bienvenido!{line_break}Echa un vistazo a{line_break}nuestras armas.{end_now}"
 
@@ -13035,7 +13035,7 @@ msgctxt "message"
 msgid "03256"
 msgstr "¿Quién va a llevarlo?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgPackFull"
 msgid "03257"
 msgstr "No puedes llevar más{line_break}objetos, {argument_actor_name:1}.{line_break}¿A quién se lo das?{end_now}"
 
@@ -13043,35 +13043,35 @@ msgctxt "message"
 msgid "03258"
 msgstr "{argument_actor_name:1}, no puedes equiparlo.{line_break}Aun así, ¿lo quieres?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToBuy"
 msgid "03259"
 msgstr "¿Qué cantidad quieres?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgHereYouGo"
 msgid "03260"
 msgstr "¡Pues aquí tienes!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgEquipNowPrompt"
 msgid "03261"
 msgstr "¿Quieres equiparlo{line_break}ahora, {argument_actor_name:1}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgLookBolder"
 msgid "03262"
 msgstr "¡Ahora pareces más fuerte!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgAnythingElse"
 msgid "03263"
 msgstr "¿Algo más?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgShopFarewell"
 msgid "03264"
 msgstr "Vuelve cuando quieras.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgCannotCarryItem"
 msgid "03265"
 msgstr "No puedes llevar más{line_break}objetos como éste, {argument_actor_name:1}.{line_break}¿Quién lo llevará?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWhatWouldYouLike"
 msgid "03266"
 msgstr "¿Qué deseas?{end_now}"
 
@@ -13079,91 +13079,91 @@ msgctxt "message"
 msgid "03267"
 msgstr "¿Algo más?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgWhatToSell"
 msgid "03268"
 msgstr "¿Qué deseas vender?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSellAnythingElse"
 msgid "03269"
 msgstr "¿Deseas vender{line_break}algo más?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotSellEquipped"
 msgid "03270"
 msgstr "No puedes quitarte{line_break}{argument_item_name:2}.{line_break}Vuelve cuando lo consigas.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgWeDoNotBuy"
 msgid "03271"
 msgstr "Lo siento, pero no{line_break}compramos de eso.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgHowManyToSell"
 msgid "03272"
 msgstr "¿Qué cantidad vendes?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSellOffer"
 msgid "03273"
 msgstr "Te ofrezco {argument_signed_number} moneda{control:13}{line_break}por {argument_item_name:2}.{end_now}"
 
-msgctxt "message"
+msgctxt "MsgRareSellOffer"
 msgid "03274"
 msgstr "¡Qué objeto tan raro!{line_break}¡Te doy {argument_signed_number} moneda{control:13}!{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSellTotal"
 msgid "03275"
 msgstr "Te ofrezco {argument_signed_number} moneda{control:13},{line_break}¿qué te parece?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDamagedSellOffer"
 msgid "03276"
 msgstr "{argument_item_name:10}{line_break}con algunos defectos...{page_break}¿te valen {argument_signed_number} moneda{control:13}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgOldItemSellOffer"
 msgid "03277"
 msgstr "¿Te valen {argument_signed_number} moneda{control:13}{line_break}por {argument_item_name:2}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDeal"
 msgid "03278"
 msgstr "¡Vale! ¡Trato hecho!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgChangedMind"
 msgid "03279"
 msgstr "¿Qué? ¿Has cambiado de{line_break}parecer? Pues, peor para ti.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgSold"
 msgid "03280"
 msgstr "¡Muy bien! ¡Lo compraré!{line_break}Aquí tienes las monedas.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgKeepIt"
 msgid "03281"
 msgstr "No quieres vender, ¿no?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgOutOfStock"
 msgid "03282"
 msgstr "Lo siento, pero se{line_break}agotaron. Volved más{line_break}tarde, ¿vale?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgConnoisseur"
 msgid "03283"
 msgstr "Tienes que ser un experto{line_break}si estás interesado en esto.{page_break}¿Qué deseas?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgFixDamaged"
 msgid "03284"
 msgstr "Tienes que reparar las{line_break}armas dañadas antes de{line_break}que se rompan.{page_break}¿Qué necesitas reparar?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgCannotRepairKind"
 msgid "03285"
 msgstr "Lo siento, pero no reparo{line_break}{argument_item_name:5}.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgNotDamaged"
 msgid "03286"
 msgstr "¿Mmm? {argument_item_name:2}{line_break}no tiene ni un rasguño.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgCursedWontComeOff"
 msgid "03287"
 msgstr "{argument_item_name:2} no sale.{line_break}Vuelve cuando puedas{line_break}quitarte el objeto.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgNotEnoughMoney"
 msgid "03288"
 msgstr "Oh, oh. Parece que{line_break}no tienes mucho{line_break}dinero...{page_break}"
 
-msgctxt "message"
+msgctxt "MsgShopRepairConfirm"
 msgid "03289"
 msgstr "Repararé {argument_item_name:2}{line_break}por {argument_signed_number} moneda{control:13}, ¿vale?{end_now}"
 
@@ -13179,11 +13179,11 @@ msgctxt "message"
 msgid "03292"
 msgstr "He reparado{line_break}{argument_item_name:2}. Toma.{page_break}"
 
-msgctxt "message"
+msgctxt "MsgRepairAnythingElse"
 msgid "03293"
 msgstr "¿Necesitas reparar{line_break}algo más?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgTokenGift"
 msgid "03294"
 msgstr "Acepta {argument_item_name:10}{line_break}como muestra de mi{line_break}agradecimiento.{page_break}"
 
@@ -13191,11 +13191,11 @@ msgctxt "message"
 msgid "03295"
 msgstr "¿Quién va a llevar{line_break}{argument_item_name:2}?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgDontWantIt"
 msgid "03296"
 msgstr "¿Qué? ¿No lo quieres?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgArmorShopWelcome"
 msgid "03297"
 msgstr "Pregúntame lo que{line_break}sea sobre equipamiento.{end_now}"
 
@@ -13367,7 +13367,7 @@ msgctxt "message"
 msgid "03339"
 msgstr "¡Vaya! ¿No lo necesitas?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgItemShopWelcome"
 msgid "03340"
 msgstr "¡Bienvenido! Tenemos{line_break}el equipo que necesitas.{end_now}"
 
@@ -13539,7 +13539,7 @@ msgctxt "message"
 msgid "03382"
 msgstr "¿No lo necesitas?{page_break}"
 
-msgctxt "message"
+msgctxt "MsgInnWelcome"
 msgid "03383"
 msgstr "Bienvenidos a la posada.{page_break}¿Queréis pasar la noche?{line_break}Cuesta {argument_signed_number} moneda{control:13}.{end_now}"
 
@@ -13559,19 +13559,19 @@ msgctxt "message"
 msgid "03387"
 msgstr "¿Habéis descansado?{line_break}¡Tened un buen viaje!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgSanctumWelcome"
 msgid "03388"
 msgstr "Bienvenidos, agotados{line_break}aventureros. ¿Buscáis{line_break}alguna cura?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSanctumMoreAid"
 msgid "03389"
 msgstr "¿Necesitáis alguna{line_break}otra cura?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgSanctumFarewell"
 msgid "03390"
 msgstr "Volved cuando necesitéis{line_break}alguna otra cura.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgReviveService"
 msgid "03391"
 msgstr "Mmm... Caíste en la{line_break}batalla y necesitas{line_break}resucitar, ¿no?{page_break}"
 
@@ -13579,11 +13579,11 @@ msgctxt "message"
 msgid "03392"
 msgstr "No temas. Ninguno de tus{line_break}compañeros está derrotado.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgWhoToRevive"
 msgid "03393"
 msgstr "¿A quién debo resucitar?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgReviveDonation"
 msgid "03394"
 msgstr "Para poder resucitar a{line_break}{argument_actor_name:1} tienes que donar{line_break}{argument_signed_number} moneda{control:13}, ¿vale?{end_now}"
 
@@ -13603,15 +13603,15 @@ msgctxt "message"
 msgid "03398"
 msgstr "¡{argument_actor_name:1} resucitó!{page_break}"
 
-msgctxt "message"
+msgctxt "MsgReviveCost"
 msgid "03399"
 msgstr "Cuesta {argument_signed_number} moneda{control:13}."
 
-msgctxt "message"
+msgctxt "MsgNoHealingNeeded"
 msgid "03400"
 msgstr "No necesita cura."
 
-msgctxt "message"
+msgctxt "MsgCurePoisonService"
 msgid "03401"
 msgstr "Mmm... ¿Así que{line_break}necesitas un antídoto{line_break}para curar el veneno?{page_break}"
 
@@ -13651,7 +13651,7 @@ msgctxt "message"
 msgid "03410"
 msgstr "No tiene veneno."
 
-msgctxt "message"
+msgctxt "MsgExorcismService"
 msgid "03411"
 msgstr "¿Quieres que espante{line_break}a los malos espíritus?{page_break}"
 
@@ -13691,7 +13691,7 @@ msgctxt "message"
 msgid "03420"
 msgstr "El aliado no está poseído."
 
-msgctxt "message"
+msgctxt "MsgRemoveCurseService"
 msgid "03421"
 msgstr "Mmm... Así que queréis{line_break}despojaros de los objetos{line_break}malditos, ¿no?{page_break}"
 
@@ -13731,7 +13731,7 @@ msgctxt "message"
 msgid "03430"
 msgstr "Este aliado no está maldito."
 
-msgctxt "message"
+msgctxt "MsgWarriorShopWelcome"
 msgid "03431"
 msgstr "Necesitas armas,{line_break}guerrero. Mira las{line_break}nuestras.{end_now}"
 
@@ -33167,7 +33167,7 @@ msgctxt "message"
 msgid "08289"
 msgstr "¿Te va a apoyar{line_break}{argument_actor_name:1}? Por aquí,{line_break}por favor.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgTalkChoice"
 msgid "08290"
 msgstr "Descripción"
 
@@ -42815,7 +42815,7 @@ msgctxt "message"
 msgid "10701"
 msgstr "Together"
 
-msgctxt "message"
+msgctxt "MsgDebugCategoryName"
 msgid "10702"
 msgstr "TITLE"
 

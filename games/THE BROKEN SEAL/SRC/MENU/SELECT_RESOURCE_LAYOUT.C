@@ -9,7 +9,8 @@ struct ResourceMenuWork {
 };
 extern struct ResourceMenuWork *Data_03001f38;
 extern const u8 Value_0000ffff;
-extern const u8 Value_00000c76;
+extern u8 MsgTransferMethod[];
+extern u8 MsgPasswordSelection[];
 void *AffineEffect_InitializeWork(void);
 void Menu_AppendResourceEntry(s32);
 void Menu_CenterResourceEntries(s32, s32, s32);
@@ -45,10 +46,10 @@ s32 Menu_SelectResourceLayout(s32 mode)
     }
     Menu_CenterResourceEntries(17, 7, 0);
     if (mode != 0) {
-        Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, (s32)&Value_00000c76);
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeLabel, 0xc76);
         work->selection = (s32)&Value_0000ffff;
         window = UiWindow_Create(7, 0, 17, 4, 2);
-        msg = 0xc77;
+        msg = (s32)MsgPasswordSelection;
         upper = &work->upper_window;
         *upper = window;
         UiText_DrawResource(msg, window, 0, 4);
@@ -59,12 +60,12 @@ s32 Menu_SelectResourceLayout(s32 mode)
         msg += 3;
         UiText_DrawResource(msg, work->lower_window, 8, 22);
     } else {
-        Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, (s32)&Value_00000c76);
+        Scheduler_AddOrUpdateCallback(Menu_DrawModeIndicator, 0xc76);
         work->selection = (s32)&Value_0000ffff;
         window = UiWindow_Create(6, 0, 18, 4, 2);
         upper = &work->upper_window;
         *upper = window;
-        UiText_DrawResource(0xc76, window, 2, 4);
+        UiText_DrawResource((s32)MsgTransferMethod, window, 2, 4);
         work->lower_window = UiWindow_Create(1, 5, 28, 7, 2);
     }
     result = Menu_RunResourceSelectionLoop(0);

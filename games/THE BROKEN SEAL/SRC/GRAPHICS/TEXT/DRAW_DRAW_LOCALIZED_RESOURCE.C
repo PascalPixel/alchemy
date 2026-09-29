@@ -10,6 +10,8 @@
 s32 UiText_CopyMessageString(s32, s16 *, s32);
 s32 UiText_RenderWideStringAtOffset(s16 *, s32, s32, s32);
 
+extern u8 MsgWaitingForOpponent[];
+
 extern s32 UiText_DrawLocalizedResource80d(void)
     __attribute__((alias("Nested_080270d8.0")));
 
@@ -23,7 +25,7 @@ static __inline__ s32 Scope_080270d8(void)
         s16 data[64];
 
         (void)&padding;
-        UiText_CopyMessageString(0x80D, data, 0x34);
+        UiText_CopyMessageString((s32)MsgWaitingForOpponent, data, 0x34);
         return UiText_RenderWideStringAtOffset(data, *(s32 *)(context + 0x44), 0, 4);
     }
 

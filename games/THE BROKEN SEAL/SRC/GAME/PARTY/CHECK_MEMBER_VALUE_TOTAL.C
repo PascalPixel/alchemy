@@ -2,7 +2,7 @@
 #include "SCENE.H"
 
 extern u8 gGameState[];
-extern u8 Value_0000097d;
+extern u8 MsgCannotCarryMore;
 
 extern void UiWork_PushValueSlotFar(s32, s32);
 extern void UiText_ShowPositionedMessageAndWaitFar(void *, s32);
@@ -32,9 +32,9 @@ s32 Party_CheckMemberValueTotal(s32 id)
 
     if (sum >= count * 30) {
         UiWork_PushValueSlotFar(id, 2);
-        UiText_ShowPositionedMessageAndWaitFar(&Value_0000097d, 1);
+        UiText_ShowPositionedMessageAndWaitFar(&MsgCannotCarryMore, 1);
         UiWork_PushValueSlotFar(id, 2);
-        UiText_ShowPositionedMessageAndWaitFar(&Value_0000097d + 1, 1);
+        UiText_ShowPositionedMessageAndWaitFar(&MsgCannotCarryMore + 1, 1);
         return -1;
     }
     return 0;

@@ -1,8 +1,8 @@
 #include "TYPES.H"
 
 /* Main-image symbols: every pool word inside the ROM or the work RAM. */
-extern u8 Data_00000182[];
-extern u8 Data_00000af7[];
+extern u8 MsgItemName[];
+extern u8 MsgStatLabel[];
 extern u8 gMenuWork[];
 void UiWindow_ClearInteriorTilesFar();
 void UiText_DrawCharacterAtOffsetFar();
@@ -63,7 +63,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
         if ((u32)v10 > base6_0) {
             v5 = ((s32)(((s32)p8 << 1) + p9) + 0x1c8);
             do {
-                UiText_DrawCharacterAtOffsetFar(((0x1ff & *(u16 *)(v5)) + (s32)Data_00000182), a0, 128, ((base6_0 << 4) + 8));
+                UiText_DrawCharacterAtOffsetFar(((0x1ff & *(u16 *)(v5)) + (s32)MsgItemName), a0, 128, ((base6_0 << 4) + 8));
                 base6_0 = ((u32)((base6_0 + 1) << 24) >> 24);
                 v5 = (v5 + 2);
             } while ((u32)v10 > base6_0);
@@ -71,7 +71,7 @@ s32 Shop_DrawItemPage(s32 a0, s32 a1, s32 a2)
         }
     }
     UiText_DrawStringAtOffsetFar(rec5, a0, 40, 0);
-    base5_af7 = (s32)Data_00000af7;
+    base5_af7 = (s32)MsgStatLabel;
     UiText_DrawCharacterAtOffsetFar(base5_af7, a0, 32, 16);
     UiText_DrawCharacterAtOffsetFar((base5_af7 + 1), a0, 32, 24);
     UiText_DrawNumberInWindowFar(*(u16 *)(rec5 + 60), 3, a0, 80, 16);

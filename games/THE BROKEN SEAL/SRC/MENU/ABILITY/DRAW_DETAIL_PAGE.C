@@ -3,7 +3,7 @@
 #include "UI.H"
 
 extern void *gMenuWork;
-extern u8 Value_0000053a;
+extern u8 MsgAbilityDescription;
 
 s32 GameFlag_TestFar(s32 flag);
 void GameFlag_ClearBitFar(s32 flag);
@@ -32,7 +32,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 arg0, s32 arg1, void *state)
         combined = *(s32 *)(state + 24);
         off = combined * 2 + 456;
         if (*(u16 *)((char *)menu + off) != 0) {
-            s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&Value_0000053a;
+            s32 masked = (*(u16 *)((char *)menu + off) & 0x1ff) + (s32)&MsgAbilityDescription;
             UiText_DrawCharacterAtOffsetFar(masked, *(s32 *)(menu + 44), 0, 0);
         }
     } else {

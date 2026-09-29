@@ -4,6 +4,9 @@
 void UiText_DrawCharacterAtOffsetFar(s32 message, s32 window, s32 x, s32 y);
 void UiText_DrawNumberInWindowFar(s32 value, s32 digits, s32 window, s32 x, s32 y);
 extern u8 MsgItemName;
+extern u8 MsgCannotBuyThat[];
+extern u8 MsgNotBroken[];
+extern u8 MsgPrice[];
 
 /* Draws an item's name in the window and, on the line below, "Price" with
  * the price and "Coins". With no price, mode 1 shows "We can't buy that."
@@ -16,10 +19,10 @@ void Shop_DrawItemPrice(s32 window, s32 item, s32 price, s32 price_mode)
         goto done;
     goto draw;
 cannot_buy:
-    UiText_DrawCharacterAtOffsetFar(0xc92, window, 0, 8);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgCannotBuyThat, window, 0, 8);
     goto done;
 show_price:
-    message = 0xc8b;
+    message = (s32)MsgPrice;
     UiText_DrawCharacterAtOffsetFar(message, window, 0, 8);
     message -= 3;
     UiText_DrawNumberInWindowFar(price, 5, window, 0x20, 8);
@@ -34,7 +37,7 @@ draw:
     case 1:
         goto cannot_buy;
     case 2:
-        UiText_DrawCharacterAtOffsetFar(0xc93, window, 0, 8);
+        UiText_DrawCharacterAtOffsetFar((s32)MsgNotBroken, window, 0, 8);
         break;
     default:
         goto show_price;

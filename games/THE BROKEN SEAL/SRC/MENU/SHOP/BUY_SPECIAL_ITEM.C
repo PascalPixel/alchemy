@@ -19,7 +19,11 @@ struct SpecialItemState {
 };
 
 extern const s16 Shop_SpecialItemPrices[];
-extern u8 Value_00000cc3[];
+extern u8 MsgTokenGift[];
+extern u8 MsgPackFull[];
+extern u8 MsgCannotCarryItem[];
+extern u8 MsgHereYouGo[];
+extern u8 MsgDontWantIt[];
 
 s32 Math_Mod(s32 value, s32 divisor);
 void UiWork_PushValueSlotFar(s32 value, s32 slot);
@@ -55,7 +59,7 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
         return;
     shop->selected_item = SPECIAL_ITEM;
     UiWork_PushValueSlotFar(SPECIAL_ITEM, 2);
-    message = (s32)Value_00000cc3;
+    message = (s32)MsgTokenGift;
     UiMessage_ShowAndRestoreState(message);
     UiWork_PushValueSlotFar(shop->selected_item, 2);
     UiMessage_ShowAndRestoreState(message + 1);
@@ -79,21 +83,21 @@ void Shop_BuySpecialItem(void *window, s32 item_window)
                 UiWork_PushValueSlotFar(unit_id, 1);
                 UiWork_PushValueSlotFar(shop->selected_item, 2);
                 if (Inventory_CountFar(unit_id) == 15)
-                    UiMessage_ShowAndWait(0xc9e);
+                    UiMessage_ShowAndWait((s32)MsgPackFull);
                 else
-                    UiMessage_ShowAndWait(0xca6);
+                    UiMessage_ShowAndWait((s32)MsgCannotCarryItem);
                 continue;
             }
             Inventory_RemoveFar(unit_id, slot);
             Audio_PlayCue(0x65);
-            UiMessage_ShowAndRestoreState(0xca1);
+            UiMessage_ShowAndRestoreState((s32)MsgHereYouGo);
             Inventory_AddItemFar(unit_id, shop->selected_item);
             Party_AdjustSixDigitCounterBFar(-price);
             Func_080772a0(1);
             goto done;
         }
         if ((gKeyState & 2) != 0) {
-            UiMessage_ShowAndRestoreState(0xcc5);
+            UiMessage_ShowAndRestoreState((s32)MsgDontWantIt);
             Audio_PlayCue(0x71);
             goto done;
         }

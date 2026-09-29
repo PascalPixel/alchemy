@@ -5,6 +5,8 @@ SECTIONS
     .rom :
     {
         "*/recon/tla/ja/rom.o"(.rom.00000000)
+        "*/games/COMMON/SRC/GRAPHICS/FONT/TEXT.o"(.rodata)
+        "*/recon/tla/ja/rom.o"(.rom.0005cdcc)
         "*/games/THE LOST AGE/SOUND/VOICES.o"(.rodata)
         "*/recon/tla/ja/rom.o"(.rom.001c43b0)
         "*/games/THE LOST AGE/SOUND/CGB_WAVES.o"(.rodata)

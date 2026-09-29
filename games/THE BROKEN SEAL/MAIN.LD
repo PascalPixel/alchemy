@@ -969,6 +969,8 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/MAP/SHOW_WORLD_MAP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/EFFECT/VISIBILITY_TRANSITION.o"(.text)
         "*/recon/tbs/unidentified.o"(.unidentified.0809c410)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SCENES.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.0809f7f0)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/FAR_CALL/MENU.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SCHEDULER/DISABLE_OVERLAY_CALLBACKS_WITH_FLAGS.o"(.text)
         "*/recon/tbs/raw/080a106e.o"(.text .rodata .data .padding)

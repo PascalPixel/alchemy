@@ -2,6 +2,7 @@
 #define ALCHEMY_FIELD_SCENE_H
 
 #include "LAYOUT_GUARD.H"
+#include "SCENE_IDS.H"
 
 /*
  * The tables a field scene hands to the map engine. The engine asks for

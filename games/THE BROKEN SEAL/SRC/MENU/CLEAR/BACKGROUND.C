@@ -1,18 +1,23 @@
-/* resource_370 0x02008054..0x02008154 Clear_LoadBackground (256 bytes with
- * pool), formerly MENU/CLEAR/BG_SETUP.C; the listing keeps the rows.
- * The resource it loads is row 0x1a of the resource directory, now
- * ResourceId_GoldenSunLogo, and the scroll buffer is gBgScroll. Remaining
- * difference: GCC keeps gMapCellBuffer in r5 across the decode call where
- * the reference reloads it from the pool (260 bytes against 256, 76
- * halfwords differ). */
+/* The clear screen's background: the Golden Sun logo's palette, tiles and a
+ * 30 x 20 map counting up from tile 0x1a0, then cleared scroll registers.
+ * The cell buffer is the fixed RAM buffer, reloaded for each use. */
 #include "TYPES.H"
 #include "DMA.H"
+#include "RAM_BUFFER.H"
 #include "FIELD_EVENT.H"
-extern struct MapRenderWork *gMapWork;
-extern u8 gMapCellBuffer[];
-
 #include "RESOURCE_IDS.H"
+
+extern struct MapRenderWork *gMapWork;
 extern u16 gBgScroll[];
+
+void Resource_DecodeType01(const u8 *source, void *destination);
+
+/* FAKEMATCH: an inline call wrapper keeps the decode's source in r4 and
+   reloads the cell buffer's address after it, as the game does. */
+static __inline__ void DecodeBackground(const u8 *res)
+{
+    Resource_DecodeType01(res, (void *)Ram_MapCellBuffer);
+}
 
 struct ClearWork {
     u8 unknown_00[20];
@@ -24,10 +29,6 @@ struct ScrollPair {
     u16 y;
 };
 
-static __inline__ void DecodeBackground(const u8 *res)
-{
-    Engine_ResourceDecodeType01(res, (void *)gMapCellBuffer);
-}
 
 #define DMA3 ((volatile u32 *)0x040000d4)
 
@@ -54,7 +55,7 @@ void Clear_LoadBackground(void)
     Dma_Set(res, (void *)0x05000000, 0x84000070, DMA3);
     res += 0x1c0;
     DecodeBackground(res);
-    Dma_Set((void *)gMapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
+    Dma_Set((void *)Ram_MapCellBuffer, (void *)0x06006800, 0x84002580, DMA3);
     map = (u16 *)0x06003000;
     tile = 0x1a0;
     y = 0;

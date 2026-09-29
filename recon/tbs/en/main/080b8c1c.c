@@ -3,7 +3,12 @@
  * stack-only, 16 operand, 10 reordered, 10 inserted, 15 deleted). The
  * veneers at 080c9018 and 080c9020 (BattleFx_DispatchMode and 080cb7f8 in
  * SYSTEM/FAR_CALL/EFFECT.S) have no labels yet, so those calls stay as
- * Func_ names and fixed penalties. */
+ * Func_ names and fixed penalties.
+ * Eight minutes of permutation then found 1963 (42 register-only, 3
+ * stack-only, 8 operand, 11 reordered, 2 inserted, 7 deleted), minimized to
+ * natural code: the child count minus one is kept in a local before the
+ * child-value loop tests it, the motion is reached in one expression, and
+ * the value offset advances before the unit index. */
 #include "TYPES.H"
 
 struct BattlePresentationTransition {
@@ -119,21 +124,21 @@ s32 BattlePres_RunUnitAction(s16 *action)
     if (work.unit_count != 0) {
         s32 value_offset = 0;
         do {
-            struct BattleMotionActor *actor;
             struct MotionEntry *motion;
             s32 j;
+            s32 last;
 
-            actor = GetBattleObjectSlot(work.units[i])->actor;
-            motion = actor->motion;
+            motion = GetBattleObjectSlot(work.units[i])->actor->motion;
             j = 0;
-            if (motion->child_count - 1 != 0) {
+            last = motion->child_count - 1;
+            if (last != 0) {
                 do {
                     work.child_values[value_offset + j] = motion->children[j]->value;
                     j++;
                 } while (j != motion->child_count - 1);
             }
-            i++;
             value_offset += 4;
+            i++;
         } while (i != work.unit_count);
     }
 

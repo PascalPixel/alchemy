@@ -32,6 +32,10 @@
  * --function Func_080ba6ac) scores 2480, from 2700. Func_080c9018 stays
  * unresolved: the BattleFx_DispatchMode veneer in SYSTEM/FAR_CALL/EFFECT.S
  * has no label yet.
+ * Eight minutes of permutation then found 2120: the queued-command scan as a
+ * do-while that advances row before testing the command (2155 alone), the
+ * fade loop as a while with its steps at the end, and the item read through
+ * a u16 view with the use type assigned in the test.
  */
 #include "TYPES.H"
 #include "BATTLE_COMMAND.H"
@@ -138,7 +142,8 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
     Scheduler_AddOrUpdateCallback((s32)BattleEvent_Playback, 0xc80);
     if (work.field_00 != 0) {
         s32 fade = 0;
-        for (i = 0; i <= 19; i++, fade += 0x444) {
+        i = 0;
+        while (i <= 19) {
             struct PresentationBattleWork *battle = Data_03001e74;
             if (i <= 19) {
                 s32 value = 0x10000 - fade;
@@ -146,6 +151,8 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
                 Graphics_ScaleRgb555Clamped(battle->palette, (u16 *)0x050000c0, value, 0x80);
             }
             WaitFrames(1);
+            i++;
+            fade += 0x444;
         }
         if (saved_input->presentation_flags & 0x4000)
             BattleFx_DispatchByIdRangeFar(&work);
@@ -160,16 +167,17 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
         Actor_ResetMotionAtAnchor(work.table[i]);
 
     unit = Owner_GetStateFar(saved_selection->actor_id);
-    ability = unit->inventory[saved_selection->parameter];
-    kind = Item_Get(ability)->use_type;
-    if (kind == 1) {
+    ability = ((u16 *)unit->inventory)[saved_selection->parameter];
+    if ((kind = Item_Get(ability)->use_type) == 1) {
         s32 result = Inventory_RemoveFar(saved_selection->actor_id, saved_selection->parameter);
         s32 index = saved_selection->parameter;
         if (result == 2) {
             struct PresentationBattleWork *battle = Data_03001e74;
             u32 row;
-            for (row = 0; row <= 19; row++) {
+            row = 0;
+            do {
                 struct QueuedItemAction *command = &battle->actions[row];
+                row++;
                 if (QueuedCommand_GetKind(&command->dispatch) == 2 &&
                     command->actor_id == saved_selection->actor_id) {
                     s16 current = command->parameter;
@@ -178,7 +186,7 @@ s32 Func_080ba6ac(struct BattlePlan *input, s32 unused,
                     else if (current > index)
                         command->parameter--;
                 }
-            }
+            } while (row <= 19);
         }
     } else if ((u8)kind == 2) {
         if ((BattleRandom16Far() & 7) == 0) {

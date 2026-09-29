@@ -1,3 +1,6 @@
+/* 2026-09-29: the two do-while(0) FAKEMATCH wrappers are no longer needed
+ * (1855 -> 1775 without them) and callees carry the build's names; alchemy
+ * permute scores 1575. */
 /* NONMATCHING, 2026-09-26: 794/800 bytes, 323 differing halfwords, 98
  * aligned edits (previously 800/800, 239/120). Shared return types audited.
  * ROM corrections: case 0 clears the halfword at 0x174, not selected_action
@@ -65,16 +68,16 @@ extern char Value_00000bef;
 
 void Func_080030f8(s32 frames);
 void ItemMenu_DrawMsg(s32 unused, s32 message);
-s32 Func_080a602c(s32 unused);
+s32 PsynergyMenu_SelectPartySlot(s32 unused);
 void ItemMenu_PosCategory(void);
-void Func_080a112c(s32 window, s32 owner, s32 unused0, s32 unused1);
-s32 Func_080a6ccc(s32 unused);
+void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 unused0, s32 unused1);
+s32 PsynergyMenu_RunList(s32 unused);
 s32 PsynergyMenu_SetShortcut(s32 owner, s32 psynergy, s32 shortcut);
-s32 Func_08015278(s32 window);
+s32 RenderOutput_ClearListFar(s32 window);
 s32 InventoryMenu_ShowModalMessage(s32 message, s32 arg1, s32 arg2);
-s32 Func_080a63e4(s32 unused);
+s32 PsynergyMenu_SelectTarget(s32 unused);
 s32 PsynergyMenu_ClassifySelectedPsynergy(void);
-s32 Func_080a9f10(s32 action, s32 owner, s32 target, s32 flags);
+s32 BattleEffect_ApplyToTargets(s32 action, s32 owner, s32 target, s32 flags);
 void Ability_PlayUseAnimation();
 void Func_080f9010(s32 cue);
 
@@ -88,7 +91,7 @@ void Func_080f9010(s32 cue);
  * a clean finish (state 2's default) the acting owner and the selected
  * action id are written back through the two out-parameters.
  */
-s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
+s32 Menu_ResolveSelectedAction(s32 *out_owner, s32 unused, s32 *out_action)
 {
     struct MenuActionWork *work;
     s32 result;
@@ -110,11 +113,11 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
         case 0:
             work->field_174 = 0;
             ItemMenu_DrawMsg(0, (s32)&Value_00000ae9);
-            if (Func_080a602c(0) == -1) {
+            if (PsynergyMenu_SelectPartySlot(0) == -1) {
                 done = 1;
                 result = -1;
             }
-            Func_08015270(work->info_window);
+            RenderOutput_RedrawSavedRectFar(work->info_window);
             state = 1;
             break;
 
@@ -135,22 +138,22 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
                     break;
                 }
                 ItemMenu_PosCategory();
-                Func_080a112c(work->field_024, work->item_owner, 0, 0);
-                selection = Func_080a6ccc(0);
+                Menu_DrawOwnerStatusPanel(work->field_024, work->item_owner, 0, 0);
+                selection = PsynergyMenu_RunList(0);
                 state = 0;
                 if (selection != -1) {
-                    do { state = 2; } while (0); /* FAKEMATCH */
+                    state = 2;
                     if (work->mode != 0) {
                         if (work->mode == 1) {
                             PsynergyMenu_SetShortcut(
                                 work->item_owner, selection, 0);
-                            Func_08015278(work->info_window);
+                            RenderOutput_ClearListFar(work->info_window);
                             InventoryMenu_ShowModalMessage(
                                 (s32)&Value_00000ae2, -1, -1);
                         } else {
                             PsynergyMenu_SetShortcut(
                                 work->item_owner, selection, 1);
-                            Func_08015278(work->info_window);
+                            RenderOutput_ClearListFar(work->info_window);
                             InventoryMenu_ShowModalMessage(
                                 (s32)&Value_00000ae3, -1, -1);
                         }
@@ -161,8 +164,8 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
             break;
 
         case 3:
-            do { ItemMenu_DrawMsg(0, (s32)&Value_00000aeb); } while (0); /* FAKEMATCH */
-            self_flag = Func_080a63e4(0);
+            ItemMenu_DrawMsg(0, (s32)&Value_00000aeb);
+            self_flag = PsynergyMenu_SelectTarget(0);
             state = 4;
             if (self_flag == -1) {
                 work->flags_220 |= 1;
@@ -190,7 +193,7 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
         case 4:
             raw = work->selected_action;
             self_flag = 0;
-            result = Func_080a9f10(
+            result = BattleEffect_ApplyToTargets(
                 raw, work->item_owner, work->target_owner, 0);
             if (work->target_owner == 9) {
                 work->target_owner = work->item_owner;
@@ -202,14 +205,14 @@ s32 Func_080a5cc0(s32 *out_owner, s32 unused, s32 *out_action)
             }
             BattleUnit_Recalculate(work->item_owner);
             if (result != -1) {
-                Func_080a112c(work->field_024, work->target_owner, 0, 0);
+                Menu_DrawOwnerStatusPanel(work->field_024, work->target_owner, 0, 0);
                 Ability_PlayUseAnimation(work->selected_action & 0x3fff);
-                Func_08015278(work->info_window);
+                RenderOutput_ClearListFar(work->info_window);
                 InventoryMenu_ShowModalMessage(
                     work->message_offset + (s32)&Value_00000bef, 0, -1);
             } else {
                 Audio_PlayCue(114);
-                Func_08015278(work->info_window);
+                RenderOutput_ClearListFar(work->info_window);
                 InventoryMenu_ShowModalMessage(
                     work->message_offset + (s32)&Value_00000bef,
                     result,

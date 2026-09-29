@@ -1,8 +1,3 @@
-/* Draft of resource_38e 0x020085dc (BiribinoNiwa_RunGardenScene), from
- * games/THE BROKEN SEAL/SRC/FIELD/BIRIBINO_NIWA. Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines (Engine_CameraMoveTo,
- * Engine_MapRedraw, Engine_EventOpenScreen, Engine_CameraSetSpeed,
- * Engine_UiWorkWaitThenFinalizeCapacity, Engine_ActorSetAttachedEffect, ...). The listing keeps these rows. */
 #include "TYPES.H"
 extern u8 MsgBiribinoNotTrueWitnesses[];
 extern u8 MsgBiribinoOhItS[];
@@ -25,7 +20,7 @@ void Engine_EventSetMessage();
 void Engine_EventShowMessageAndWait();
 void Engine_ActorRunRepeatedMotion();
 void Engine_EventOpenMessage();
-s32 Engine_UiWorkWaitThenFinalizeCapacity();
+s32 Engine_EventChooseYesNo();
 void Engine_EventWait();
 void Engine_ActorSetAnimation();
 void Engine_ActorSetAnimationAndWait();
@@ -33,14 +28,12 @@ void Engine_ActorSetAttachedEffect();
 s32 Engine_GameFlagIsSet();
 u8 * Engine_ActorGet();
 void Engine_ActorWalkTo();
-void FieldScene_SetupWithDescriptor8BD4();
+void FieldScene_OpenGate();
 void Engine_ActorWaitForMove();
 void Engine_EventCloseScreen();
 void Engine_EventWaitForScreen();
 void Engine_EventRequestExit();
 void Engine_EventEnd();
-
-
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -115,7 +108,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Value2(Engine_EventOpenMessage, 12, 0);
     Call3(Engine_ActorFaceDirection, 0, 0xe000, 0);
     for (;;) {
-        if (!(Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) != 0)) break;
+        if (!(Value2(Engine_EventChooseYesNo, 0, 0) != 0)) break;
         Call3(Engine_ActorShowEmote, 12, 0x100, 60);
         Call1(Engine_EventSetMessage, (s32)MsgBiribinoNotTrueWitnesses);
         Engine_EventShowMessageAndWait(12, 0, 10);
@@ -154,7 +147,7 @@ void BiribinoNiwa_RunGardenScene(void)
     Call3(Engine_ActorWalkTo, 11, 0x148, 0x106);
     Call3(Engine_ActorWalkToAndWait, 0, 0x148, 0x116);
     Engine_ActorSetAnimation(11, 1);
-    FieldScene_SetupWithDescriptor8BD4();
+    FieldScene_OpenGate();
     Engine_EventWait(40);
     Call3(Engine_ActorWalkTo, 0, 0x148, 242);
     Call3(Engine_ActorWalkToAndWait, 11, 0x148, 242);

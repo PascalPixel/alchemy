@@ -38,6 +38,9 @@ Engine_HeapRelease:
 	.thumb_func
 Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Engine_MapAnimateCells
 	.thumb_func
@@ -95,6 +98,9 @@ Engine_ActorGet:
 	.thumb_func
 Engine_ActorSetSpeed:
 	overlay_veneer ObjectMotion_SetSpeedParametersFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global Engine_ActorWalkToAndWait
 	.thumb_func
@@ -104,6 +110,9 @@ Engine_ActorWalkToAndWait:
 	.thumb_func
 Engine_ActorCenterAndWalk:
 	overlay_veneer ObjectMotion_SnapHeadingAndOffsetFar
+	.global Engine_ActorWaitForMove
+	.thumb_func
+Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
 	.global Engine_ActorSetPosition
 	.thumb_func
@@ -157,15 +166,33 @@ Engine_ActorFaceDirection:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	.global Engine_CameraSetSpeed
+	.thumb_func
+Engine_CameraSetSpeed:
 	overlay_veneer ObjectTable_AllocateAndSetObjectSpeedFar
+	.global Engine_CameraMoveTo
+	.thumb_func
+Engine_CameraMoveTo:
 	overlay_veneer Motion_CamBoundsFar
 	.global Engine_EventRequestExit
 	.thumb_func
 Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
+	.global Engine_EventOpenScreen
+	.thumb_func
+Engine_EventOpenScreen:
 	overlay_veneer Event_SetStatus1c6Far
+	.global Engine_EventCloseScreen
+	.thumb_func
+Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
+	.global Engine_EventWaitForScreen
+	.thumb_func
+Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.global Engine_ItemShowFound
 	.thumb_func

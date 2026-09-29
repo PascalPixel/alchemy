@@ -1,3 +1,9 @@
+/* Draft of resource_3a6 0x02009984 (HaidiaDou_ApplyEntryState), formerly
+ * games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_DOU/ENTRY_STATE.C.
+ * Remaining difference: the ROM loads scenes 0x5e and 0x5f from the literal
+ * pool, as link-time scene symbols would; C builds those constants with
+ * movs. The Data_ spellings below are the old address-named forms. The
+ * listing keeps these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

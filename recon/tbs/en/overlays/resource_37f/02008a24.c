@@ -1,3 +1,9 @@
+/* Draft of resource_37f 0x02008a24 (FieldScene_RunSceneEntryHook), formerly
+ * games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENE_ENTRY_HOOK.C.
+ * Remaining difference: the ROM loads retreat scene 0x10 from the literal
+ * pool, as a link-time scene symbol would; C builds the constant with movs.
+ * Its calls still carry per-site listing names. The listing keeps these
+ * rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

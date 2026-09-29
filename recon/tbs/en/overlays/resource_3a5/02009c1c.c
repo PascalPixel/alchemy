@@ -1,3 +1,10 @@
+/* Draft of resource_3a5 0x02009c1c (RamakanSabaku_ClaimSandEffectVram), formerly
+ * games/THE BROKEN SEAL/SRC/FIELD/RAMAKAN_SABAKU/SAND_SETUP.C.
+ * Remaining difference: none in its instructions, but it stores to the
+ * overlay work past its image (0x0200a6d0, 0x0200a730, 0x0200b030) and to
+ * the last words of its data, which have no definitions yet; the literal
+ * addresses below must become those definitions before this links. The
+ * listing keeps these rows. */
 #include "TYPES.H"
 
 s32 Main_080001a8();

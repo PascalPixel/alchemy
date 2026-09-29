@@ -406,6 +406,8 @@ Func_020011b0:
 	.4byte 0x00000022
 	.4byte 0x02008031
 	.4byte 0x00000010
+	.global YamaRama_HsuAction
+YamaRama_HsuAction:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -441,6 +443,8 @@ Func_020011b0:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global YamaRama_LeaderAction
+YamaRama_LeaderAction:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -500,7 +504,10 @@ YamaRama_BoulderCells:
 	.4byte 0x003f0005
 	.4byte 0x0003002e
 	.4byte 0x00050002
-	.4byte 0x0042ffff
+	.2byte 0xffff
+	.global YamaRama_BoulderCellsBack
+YamaRama_BoulderCellsBack:
+	.2byte 0x0042
 	.4byte 0x0003002e
 	.4byte 0x00050002
 	.4byte 0x002e0045

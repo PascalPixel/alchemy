@@ -1,14 +1,4 @@
-/* NONMATCHING: resource_3b0 0x02008564, Scene_RunFourActorStagingSequence,
- * formerly FIELD/FUNE_HOBASHIRA/FOUR_ACTOR_STAGING.C (2026-09-28).
- * Saves the camera pair into 0x02009930/0x02009938 in the overlay's work RAM
- * past the image, which nothing names; its other references resolve (veneer
- * Event_CallWithLastActiveObjectId, tables at image offsets 0x16f4, 0x139c and
- * 0x1314, and OverlayObject_Add160ToFields18And1c). Remaining: the work RAM
- * names. */
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
-
-void Main_0808a030(s32 value);
+#include "FUNE.H"
 
 /* The IWRAM field globals: the map work first, the event work at +0x4c. */
 struct FieldGlobals {
@@ -17,22 +7,15 @@ struct FieldGlobals {
     struct EventWork *event;
 };
 
-extern struct FieldGlobals Data_03001e70;
-extern s32 Data_02009938[2];
-extern s32 Data_02009930[2];
-extern u8 Value_020096f4;
-extern u8 Value_0200939c;
-extern u8 Value_02009314;
-extern u8 Value_020080a5;
+extern struct FieldGlobals gMapWork;
 
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-
+/* Places the staging objects and starts the lookout's actions, saves the
+ * camera position as the origin actor 9's camera-following actions measure
+ * from, grows actors 10 to 12 in and walks them to their places, then the
+ * lookout walks and leaps before the scene exits. */
 void Scene_RunFourActorStagingSequence(void)
 {
-    s32 *placement = *Data_03001e70.map;
+    s32 *placement = *gMapWork.map;
     struct FieldActor *actor;
     struct EventWork **event;
     s32 x;
@@ -41,24 +24,24 @@ void Scene_RunFourActorStagingSequence(void)
     s32 update;
 
     Engine_EventBegin();
-    Main_0808a030((s32)&Value_020096f4);
+    Event_CallWithLastActiveObjectId((s32)FuneHobashira_StagingObjects);
     Engine_TaskWait(1);
     Engine_ActorSetChildValue(0, 15);
     Engine_ActorSetSpriteFlags(Engine_ActorGet(0), 0);
-    Engine_ActorEnableActionCallback(8, &Value_0200939c);
-    event = &Data_03001e70.event;
+    Engine_ActorEnableActionCallback(8, FuneHobashira_LookoutActions);
+    event = &gMapWork.event;
     (*event)->start_transition = 0x203;
     Engine_EventOpenScreen();
     Engine_EventWaitForScreen();
     Engine_EventWait(20);
-    Data_02009938[0] = *placement++;
-    Data_02009938[1] = *placement;
+    FuneHobashira_CameraOrigin[0] = *placement++;
+    FuneHobashira_CameraOrigin[1] = *placement;
     Call3((void (*)())Engine_ActorSetPosition, 9, 0x500000, 0xd20000);
     x = 0x500000;
     Engine_ActorGet(9)->motion_flags = zero;
-    Data_02009930[0] = x;
-    Data_02009930[1] = zero;
-    Engine_ActorEnableActionCallback(9, &Value_02009314);
+    FuneHobashira_CameraCenter[0] = x;
+    FuneHobashira_CameraCenter[1] = zero;
+    Engine_ActorEnableActionCallback(9, FuneHobashira_FollowCameraActions);
     Engine_EventWait(20);
     Engine_AudioPlayCue(29);
     Engine_GameFlagSet(0x8f0);
@@ -79,7 +62,7 @@ void Scene_RunFourActorStagingSequence(void)
     Engine_ActorSetChildValue(12, 3);
     actor = Engine_ActorGet(10);
     scale = 0x8000;
-    update = (s32)&Value_020080a5;
+    update = (s32)OverlayObject_Add160ToFields18And1c;
     actor->scale_y = scale;
     actor->scale_x = scale;
     actor->update = (void (*)(union FieldObject *))update;

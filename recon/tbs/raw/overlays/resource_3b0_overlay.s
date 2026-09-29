@@ -1,48 +1,11 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {r5, lr}
-	ldr r3, [pc, #60]
-	ldr r3, [r3]
-	ldr r3, [r3]
-	ldr r4, [pc, #56]
-	ldmia r3!, {r1}
-	ldr r5, [pc, #56]
-	ldr r2, [r3]
-	ldr r3, [r4]
-	subs r1, r1, r3
-	ldr r3, [r5]
-	adds r3, r3, r1
-	str r3, [r0, #8]
-	ldr r3, [r4, #4]
-	subs r2, r2, r3
-	lsrs r3, r2, #31
-	adds r2, r2, r3
-	ldr r3, [r5, #4]
-	asrs r2, r2, #1
-	adds r3, r3, r2
-	str r3, [r0, #12]
-	ldr r2, [r0, #80]
-	movs r1, #192
-	ldrh r3, [r2, #30]
-	lsls r1, r1, #3
-	adds r3, r3, r1
-	strh r3, [r2, #30]
-	movs r0, #0
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001e70
-	.4byte 0x02009938
-	.4byte 0x02009930
 	.section .text.x02008240,"ax",%progbits
+	.balign 4
 	.p2align 2
-	.global Func_02000240
+	.global FuneHobashira_ApplyEntryState
 	.thumb_func
-Func_02000240:
+FuneHobashira_ApplyEntryState:
 	push {r5, lr}
 	movs r0, #162
 	lsls r0, r0, #1
@@ -244,241 +207,12 @@ Func_02000240:
 	.4byte 0x00000109
 	.2byte 0x006f
 	.2byte 0x0000
-	.section .text.x02008564,"ax",%progbits
-	.p2align 2
-	.global Func_02000564
-	.thumb_func
-Func_02000564:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	ldr r1, [pc, #508]
-	ldr r3, [r1]
-	mov r8, r1
-	ldr r5, [r3]
-	bl 0x02009214
-	ldr r0, [pc, #500]
-	bl 0x02009224
-	movs r0, #1
-	bl 0x020091b4
-	movs r1, #15
-	movs r0, #0
-	bl 0x02009284
-	movs r0, #0
-	bl 0x02009234
-	movs r1, #0
-	bl 0x020091f4
-	movs r0, #8
-	ldr r1, [pc, #472]
-	bl 0x02009244
-	movs r2, #76
-	add r8, r2
-	mov r3, r8
-	ldr r2, [r3]
-	movs r1, #224
-	ldr r3, [pc, #460]
-	lsls r1, r1, #1
-	str r3, [r2, r1]
-	mov r10, r1
-	bl 0x020092ec
-	bl 0x020092fc
-	movs r0, #20
-	bl 0x0200920c
-	ldmia r5!, {r3}
-	ldr r2, [pc, #440]
-	str r3, [r2]
-	ldr r3, [r5]
-	movs r1, #160
-	str r3, [r2, #4]
-	movs r2, #210
-	lsls r2, r2, #16
-	lsls r1, r1, #15
-	movs r0, #9
-	bl 0x02009264
-	movs r0, #9
-	bl 0x02009234
-	movs r5, #160
-	ldr r3, [pc, #412]
-	lsls r5, r5, #15
-	movs r6, #0
-	adds r0, #85
-	ldr r1, [pc, #408]
-	strb r6, [r0]
-	str r5, [r3]
-	str r6, [r3, #4]
-	movs r0, #9
-	bl 0x02009244
-	movs r0, #20
-	bl 0x0200920c
-	movs r0, #29
-	bl 0x0200930c
-	movs r0, #143
-	lsls r0, r0, #4
-	bl 0x02009204
-	movs r0, #8
-	bl 0x0200924c
-	movs r0, #1
-	bl 0x020091b4
-	movs r1, #128
-	movs r0, #8
-	lsls r1, r1, #1
-	movs r2, #0
-	bl 0x020092ac
-	movs r1, #176
-	lsls r1, r1, #8
-	movs r2, #0
-	movs r0, #8
-	bl 0x0200929c
-	ldr r0, [pc, #344]
-	bl 0x0200928c
-	movs r0, #8
-	movs r1, #0
-	movs r2, #10
-	bl 0x02009294
-	movs r2, #210
-	adds r1, r5, #0
-	movs r0, #10
-	lsls r2, r2, #16
-	bl 0x02009264
-	movs r2, #210
-	adds r1, r5, #0
-	movs r0, #11
-	lsls r2, r2, #16
-	bl 0x02009264
-	movs r2, #210
-	lsls r2, r2, #16
-	adds r1, r5, #0
-	movs r0, #12
-	bl 0x02009264
-	movs r0, #10
-	movs r1, #3
-	bl 0x020092a4
-	movs r0, #11
-	movs r1, #3
-	bl 0x020092a4
-	movs r0, #12
-	movs r1, #3
-	bl 0x020092a4
-	movs r0, #10
-	movs r1, #3
-	bl 0x02009284
-	movs r0, #11
-	movs r1, #3
-	bl 0x02009284
-	movs r1, #3
-	movs r0, #12
-	bl 0x02009284
-	movs r0, #10
-	bl 0x02009234
-	movs r5, #128
-	ldr r6, [pc, #240]
-	lsls r5, r5, #8
-	str r5, [r0, #28]
-	str r5, [r0, #24]
-	str r6, [r0, #108]
-	movs r0, #11
-	bl 0x02009234
-	str r5, [r0, #28]
-	str r5, [r0, #24]
-	str r6, [r0, #108]
-	movs r0, #12
-	bl 0x02009234
-	str r5, [r0, #28]
-	str r5, [r0, #24]
-	str r6, [r0, #108]
-	movs r0, #1
-	bl 0x020091b4
-	movs r0, #10
-	ldr r1, [pc, #200]
-	ldr r2, [pc, #204]
-	bl 0x0200923c
-	movs r0, #11
-	ldr r1, [pc, #200]
-	ldr r2, [pc, #200]
-	bl 0x0200923c
-	movs r0, #12
-	ldr r1, [pc, #196]
-	ldr r2, [pc, #200]
-	bl 0x0200923c
-	movs r0, #10
-	movs r1, #128
-	ldr r2, [pc, #192]
-	bl 0x02009254
-	movs r2, #165
-	movs r0, #11
-	movs r1, #136
-	lsls r2, r2, #1
-	bl 0x02009254
-	movs r2, #170
-	lsls r2, r2, #1
-	movs r1, #156
-	movs r0, #12
-	bl 0x02009254
-	movs r0, #60
-	bl 0x0200920c
-	movs r0, #8
-	movs r1, #2
-	bl 0x0200927c
-	movs r2, #172
-	movs r0, #8
-	movs r1, #164
-	lsls r2, r2, #1
-	bl 0x0200925c
-	movs r0, #8
-	movs r1, #4
-	movs r2, #10
-	bl 0x0200926c
-	movs r2, #40
-	movs r0, #8
-	movs r1, #6
-	bl 0x0200926c
-	movs r0, #8
-	movs r1, #3
-	bl 0x02009274
-	movs r0, #8
-	movs r1, #0
-	movs r2, #20
-	bl 0x02009294
-	mov r3, r8
-	ldr r2, [r3]
-	ldr r3, [pc, #100]
-	mov r1, r10
-	str r3, [r2, r1]
-	bl 0x020092f4
-	bl 0x020092fc
-	movs r0, #11
-	bl 0x020092d4
-	bl 0x0200921c
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001e70
-	.4byte 0x020096f4
-	.4byte 0x0200939c
-	.4byte 0x00000203
-	.4byte 0x02009938
-	.4byte 0x02009930
-	.4byte 0x02009314
-	.4byte 0x00001e3e
-	.4byte 0x020080a5
-	.4byte 0x0000851e
-	.4byte 0x0000428f
-	.4byte 0x00007333
-	.4byte 0x00003999
-	.4byte 0x00009999
-	.4byte 0x00004ccc
-	.4byte 0x00000159
-	.4byte 0x00000202
 	.section .text.x02008e78,"ax",%progbits
+	.balign 4
 	.p2align 2
-	.global Func_02000e78
+	.global FieldScene_RunSevenActorEnsemble
 	.thumb_func
-Func_02000e78:
+FieldScene_RunSevenActorEnsemble:
 	push {r5, r6, lr}
 	bl 0x02009214
 	movs r1, #15
@@ -686,72 +420,9 @@ Func_02000e78:
 	.4byte 0x00000202
 	.4byte 0x02000240
 	.4byte 0x0000006f
-	.global Func_020010a0
-	.thumb_func
-Func_020010a0:
-	push {r5, r6, lr}
-	mov r6, r10
-	mov r5, r8
-	push {r5, r6}
-	ldr r3, [pc, #108]
-	ldr r6, [pc, #112]
-	ldr r3, [r3]
-	ldr r0, [r6]
-	ldr r5, [r3]
-	bl 0x020091d4
-	ldr r2, [pc, #104]
-	mov r10, r0
-	ldr r0, [r2]
-	mov r8, r2
-	bl 0x020091cc
-	ldr r3, [r5]
-	add r3, r10
-	stmia r5!, {r3}
-	ldr r3, [r5]
-	lsls r0, r0, #2
-	adds r3, r3, r0
-	str r3, [r5]
-	ldr r2, [pc, #80]
-	ldr r3, [r2]
-	add r3, r10
-	str r3, [r2]
-	ldr r2, [pc, #76]
-	ldr r3, [r2]
-	adds r3, r3, r0
-	str r3, [r2]
-	bl 0x020091c4
-	lsls r3, r0, #1
-	adds r3, r3, r0
-	ldr r2, [r6]
-	lsls r3, r3, #7
-	lsrs r3, r3, #16
-	adds r2, r2, r3
-	str r2, [r6]
-	bl 0x020091c4
-	mov r2, r8
-	ldr r3, [r2]
-	lsls r0, r0, #9
-	ldrh r2, [r6]
-	lsrs r0, r0, #16
-	ldr r1, [pc, #40]
-	adds r3, r3, r0
-	str r2, [r6]
-	ands r3, r1
-	mov r2, r8
-	str r3, [r2]
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.4byte 0x03001e70
-	.4byte 0x02009940
-	.4byte 0x02009928
-	.4byte 0x02009924
-	.4byte 0x02009920
-	.4byte 0x0000ffff
 	.section .rodata,"a",%progbits
+	.global FuneHobashira_FollowCameraActions
+FuneHobashira_FollowCameraActions:
 	.4byte 0x00000016
 	.4byte 0x00000009
 	.4byte 0x00000800
@@ -786,12 +457,16 @@ Func_020010a0:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global FuneHobashira_LookoutActions
+FuneHobashira_LookoutActions:
 	.4byte 0x00000022
 	.4byte 0x0200807d
 	.global FuneHobashira_DriftActions
 FuneHobashira_DriftActions:
 	.4byte 0x00000022
 	.4byte 0x020080c1
+	.global FuneHobashira_WaveActions
+FuneHobashira_WaveActions:
 	.4byte 0x00000015
 	.4byte 0x00000009
 	.4byte 0x00010000
@@ -1010,6 +685,8 @@ FuneHobashira_SceneTableD:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global FuneHobashira_StagingObjects
+FuneHobashira_StagingObjects:
 	.4byte 0xffff011e
 	.4byte 0x00000007
 	.4byte 0x00000000
@@ -1040,6 +717,8 @@ FuneHobashira_SceneTableD:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global FuneHobashira_EnsembleObjects
+FuneHobashira_EnsembleObjects:
 	.4byte 0xffff009b
 	.4byte 0x00000007
 	.4byte 0x00900000
@@ -1094,6 +773,8 @@ FuneHobashira_SceneTableD:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global FuneHobashira_LandingObjects
+FuneHobashira_LandingObjects:
 	.4byte 0xffff00c5
 	.4byte 0x00000007
 	.4byte 0x00000000

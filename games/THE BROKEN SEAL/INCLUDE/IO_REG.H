@@ -6,6 +6,14 @@
 /* Game Boy Advance I/O registers at their hardware addresses, named as the
    public hardware documentation names them. */
 
+#define REG_DISPCNT (*(volatile u16 *)0x04000000)
+#define REG_VCOUNT (*(volatile u16 *)0x04000006)
+
+#define REG_DMA3 ((volatile u32 *)0x040000d4)
+
+/* The first backdrop colour of the palette RAM. */
+#define PLTT_BACKDROP (*(volatile u16 *)0x05000000)
+
 #define REG_TM3CNT (*(volatile u32 *)0x0400010c)
 #define REG_TM3CNT_H (*(volatile u16 *)0x0400010e)
 

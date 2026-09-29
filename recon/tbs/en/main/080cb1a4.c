@@ -52,7 +52,7 @@ extern u8 Value_0000007d;
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 s32 Func_080b5070(s32 member_id);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
@@ -140,7 +140,7 @@ void Func_080cb1a4(void *object_param)
         s32 facing;
 
         facing = *(s32 *)0x03001E80;
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
         if (frame == 0) {
@@ -170,7 +170,7 @@ void Func_080cb1a4(void *object_param)
             Object_SetPosition(object, 0, 0, object->z);
         }
 
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
 
         record_ptr[0] = object->x;

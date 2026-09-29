@@ -175,10 +175,10 @@ void Func_080dc968(void *arg0) {
         var_r5_252 = gMapCellBuffer + (sp2C * 0x2A0);
 loop_4:
         *(s32 *)var_r5_252 = (0xF & Random16()) + 0x30;
-        Func_080049ac();
-        Func_08004c6c(Random16());
-        Func_08004bd4(Random16());
-        Func_08004c1c(Random16());
+        Render_ResetTransformState();
+        SceneTransform_ApplyRoll(Random16());
+        SceneTransform_ApplyPitch(Random16());
+        SceneTransform_ApplyYaw(Random16());
         Graphics_SaveTransferWork(var_r6_247);
         var_r9_242 += 1;
         var_r5_252 += 0x1C;

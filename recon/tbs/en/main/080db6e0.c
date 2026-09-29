@@ -64,7 +64,7 @@ s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
 void EffectStep_AdvanceWithGravity3D(void *record, s32 a, s32 b);
@@ -191,7 +191,7 @@ void Func_080db6e0(void *object, s32 variant)
     frame = 0;
     while (frame != table[total_idx]) {
         facing = *(s32 *)0x03001E80;
-        Func_080049ac();
+        Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         if (frame == 2) {
             Func_080f9010(144);

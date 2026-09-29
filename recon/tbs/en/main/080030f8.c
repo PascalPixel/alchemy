@@ -1,0 +1,232 @@
+/* Draft, not exact (2026-09-29): WaitFrames, 403 of 403 instructions in
+   order; the one remaining difference is the outer soft reset's entry
+   address, which local allocation puts in r1 where the ROM has r0. The
+   debug-pause reset (inside the pause loop, hoisted to r8) matches.
+   What lined up: sl as a register variable the end's sp read keeps live,
+   so i and frames spill; a bare asm (no outputs, no clobbers) for the
+   second sp write, which flushes CSE and reloads gSavedStackSize's
+   address; the do/while (0) register-write macro, whose loop notes keep
+   sched2 from moving pool loads across the stores; volatile idle, combo,
+   sleep and key-repeat counters, which the ROM re-reads after each store;
+   and the soft reset as one inline with the entry address in a local.
+   Tried for r0: the reset pointer as a block, function-scope, register or
+   parameter local, before or after the flag and magic stores, the whole
+   check inlined, an absolute magic word, extra do/while (0) barriers: all
+   stay in r1. */
+#include "TYPES.H"
+#include "DMA.H"
+#include "IO_REG.H"
+
+void Runtime_InvokeCallbacksByKey(s32 key);
+u8 *Runtime_AllocateHeapBlock(s32, s32);
+void Runtime_CopyAndCallRoutine(void *argument);
+void Runtime_ReleaseHeapBlock(s32 slot);
+void Graphics_ResetFrameState(void);
+s32 SerialRuntime_PollStatus(void);
+void Input_UpdateKeyRepeatAndDirection(void);
+void Func_08006868(void);
+void Func_08006870(void);
+
+extern u32 gSavedStackSize;
+extern u8 gSavedStack[];
+extern u8 gSchedulerStatus;
+extern u8 Data_03001e44;
+extern u8 Data_03001f58;
+extern u16 Data_03001ccc;
+extern u16 gLagFramesShown;
+extern u32 gCpuLoadTimer;
+extern u32 gCpuLoadPeak;
+extern volatile u8 Data_03001ca0;
+extern u8 gOptionMirror;
+extern u32 gKeysHeld;
+extern volatile u32 gKeysRepeat;
+extern volatile u16 gPostLoadCounter;
+extern volatile u8 gSleepRequested;
+extern volatile u16 gSleepComboFrames;
+extern u8 gDebugMode;
+extern u8 gDebugPaused;
+extern volatile u16 Data_03001d28;
+extern u8 Data_03001cb8;
+extern u32 Data_03007800;
+extern u32 gFrameCount;
+extern u32 gLoadedStateWord;
+extern u16 gSerialExchangeActive;
+extern u8 gSerialRuntime[];
+extern u16 gSleepActive;
+
+/* FAKEMATCH: halfword register writes pass through a u16 argument, so the
+   ROM keeps each value in a register (movs, not a pooled halfword) and
+   zero-extends the saved signed ones */
+#define Io_Write16(v, reg)                                                     \
+    do {                                                                       \
+        u32 value_ = (u16)(v);                                                 \
+        *(reg) = value_;                                                       \
+    } while (0)
+
+static __inline__ void System_SoftReset(void)
+{
+    void (*reset)(void) = (void (*)(void))0x08000000;
+
+    Data_03007800 = 0x19670704;
+    Io_Write16(0, &REG_IME);
+    reset();
+}
+
+struct DmaChannel {
+    u32 source;
+    u32 destination;
+    u32 control;
+};
+
+#define STACK_TOP 0x03007a00
+
+#define VBlankIntrWait()                                                       \
+    {                                                                          \
+        Data_03001d28 &= ~1;                                                   \
+        do {                                                                   \
+            /* CAMELOT_ASM: Halt, which no C compiles to */                    \
+            __asm__ volatile("swi 2");                                         \
+        } while (!(Data_03001d28 & 1));                                        \
+    }
+
+void WaitFrames(s32 frames)
+{
+    u32 i;
+    /* CAMELOT_ASM: the saved stack pointer stays in sl */
+    register u8 *base __asm__("sl");
+    u32 size;
+    u32 line;
+    s32 j;
+    s16 dispcnt;
+    s16 backdrop;
+
+    /* CAMELOT_ASM: reads the stack pointer */
+    __asm__ volatile("mov %0, sp" : "=r"(base));
+    if ((u32)base < STACK_TOP) {
+        gSavedStackSize = STACK_TOP - (u32)base;
+        Dma_Set(base, gSavedStack, (gSavedStackSize >> 2) | 0x84000000, REG_DMA3);
+        /* CAMELOT_ASM: moves the stack pointer */
+        __asm__ volatile("mov sp, %0" : : "r"(STACK_TOP));
+    }
+    for (i = 0; i < frames; i++) {
+        gSchedulerStatus = 1;
+        Runtime_InvokeCallbacksByKey(0xc80);
+        gSchedulerStatus = 0;
+        Runtime_CopyAndCallRoutine(Runtime_AllocateHeapBlock(52, 0x400));
+        Data_03001e44 = 1;
+        if (Data_03001f58) {
+            line = *(u16 *)0x04000006;
+            if (line >= 160)
+                line -= 160;
+            else
+                line += 68;
+            line += (Data_03001ccc - 1) << 8;
+            if (gCpuLoadTimer == 0)
+                gCpuLoadPeak = 0;
+            else
+                gCpuLoadTimer--;
+            if (gCpuLoadPeak < line) {
+                gCpuLoadPeak = line;
+                gCpuLoadTimer = 30;
+            }
+        }
+        if (Data_03001ca0 == 0) {
+            if (gOptionMirror) {
+                if (gKeysHeld)
+                    gPostLoadCounter = 0;
+                else {
+                    gPostLoadCounter++;
+                    if (gPostLoadCounter > 0x2a30)
+                        gSleepRequested = 1;
+                }
+            }
+            if (gKeysHeld == 0x300) {
+                gSleepComboFrames++;
+                if (gSleepComboFrames >= 180) {
+                    gSleepComboFrames = 0;
+                    gSleepRequested = 1;
+                }
+            } else {
+                gSleepComboFrames = 0;
+            }
+        }
+        if (gDebugMode) {
+            for (;;) {
+                if (gDebugPaused) {
+                    if (gKeysRepeat & 7)
+                        break;
+                    if (gKeysHeld & 0xf0)
+                        break;
+                    if (gKeysRepeat & 8) {
+                        gDebugPaused = 0;
+                        break;
+                    }
+                } else {
+                    if (gKeysHeld != 12)
+                        break;
+                    gDebugPaused = 1;
+                }
+                VBlankIntrWait();
+                Input_UpdateKeyRepeatAndDirection();
+                if (Data_03001cb8) {
+                    Data_03001cb8 = 0;
+                    System_SoftReset();
+                }
+            }
+        }
+        gLagFramesShown = Data_03001ccc;
+        Data_03001ccc = 0;
+        VBlankIntrWait();
+        Runtime_ReleaseHeapBlock(52);
+        Graphics_ResetFrameState();
+        gFrameCount++;
+        gLoadedStateWord++;
+        Input_UpdateKeyRepeatAndDirection();
+        if (gSerialExchangeActive) {
+            SerialRuntime_PollStatus();
+            if (gSerialRuntime[0])
+                gSerialRuntime[8] = 1;
+        }
+        if (gSleepRequested && Data_03001ca0 == 0) {
+            dispcnt = REG_DISPCNT;
+            backdrop = PLTT_BACKDROP;
+            if (gSleepRequested == 1) {
+                Io_Write16(0, &REG_DISPCNT);
+                Io_Write16(0x7fff, &PLTT_BACKDROP);
+                for (j = 0; j < 60; j++)
+                    VBlankIntrWait();
+                gSleepActive = 1;
+                Io_Write16(0xc300, &REG_KEYCNT);
+                Func_08006868();
+                /* CAMELOT_ASM: Stop, which no C compiles to */
+                __asm__ volatile("swi 3");
+                Func_08006870();
+                Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
+                gSleepActive = 0;
+                Io_Write16(dispcnt, &REG_DISPCNT);
+                Io_Write16(backdrop, &PLTT_BACKDROP);
+                for (j = 0; j < 10; j++)
+                    VBlankIntrWait();
+                gSleepRequested = 0;
+                gPostLoadCounter = 0;
+            } else {
+                gSleepRequested--;
+            }
+        }
+        if (Data_03001cb8) {
+            Data_03001cb8 = 0;
+            System_SoftReset();
+        }
+    }
+    if (gSavedStackSize) {
+        /* CAMELOT_ASM: reads the stack pointer */
+        __asm__ volatile("mov %0, sp" : "+r"(base) : : "memory");
+        base -= gSavedStackSize;
+        /* CAMELOT_ASM: moves the stack pointer */
+        __asm__ volatile("mov sp, %0" : : "r"(base));
+        Dma_Set(gSavedStack, base, (gSavedStackSize >> 2) | 0x84000000, REG_DMA3);
+        while (((volatile struct DmaChannel *)REG_DMA3)->control & 0x80000000)
+            ;
+        gSavedStackSize = 0;
+    }
+}

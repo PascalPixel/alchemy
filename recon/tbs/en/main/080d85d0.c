@@ -46,7 +46,7 @@ s32 Func_080041d8(void *callback, s32 interval);
 void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
 s32 BattleFx_EndCanvasLayer(void);
-void Func_080049ac(void);
+void Render_ResetTransformState(void);
 void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void **GetBattleObjectSlotFar(s32 member_id);
 s32 Func_080b5070(s32 member_id);
@@ -167,7 +167,7 @@ s32 Func_080d85d0(void *object)
             if (fp == 64) {
                 Func_080b50e8(133);
             }
-            Func_080049ac();
+            Render_ResetTransformState();
             Graphics_PrepareTransferInIwramWork(facing, facing + 12);
             if (fp == 40) {
                 ObjectGroup_UpdateMembers(member_id, 7, -1, -1, 0);

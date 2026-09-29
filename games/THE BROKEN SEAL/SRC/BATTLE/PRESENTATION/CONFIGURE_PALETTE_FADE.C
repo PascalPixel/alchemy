@@ -1,33 +1,33 @@
-/* Draft, not exact (2026-09-24): 308 of 308 bytes, 12 differing halfwords
-   (was 178 at 360). BattlePresentation_ConfigurePaletteFade: the queued BG
-   control write is the IO write queue idiom of SYSTEM/IO_WRITE_QUEUE.C
-   (FAKEMATCH one-pass loops, u16 count store), and the green and blue masks
-   are a u16 held from the 0x1f link symbol, a halfword pool constant whose
-   60-byte reach places the literal pool inside the fade loop as the
-   reference does. Residual: register choice in the fade loop (the reference
-   has the mask in r7, the index in r6, the source offset in r0 and the
-   destination in r4).
-   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 17,525
-   candidates, none below the draft (115 once the tile builders are named).
-   The pooled 0x1f mask stays a link-time symbol (Value_0000001f), which
-   blocks adoption. */
+/* BattlePresentation_ConfigurePaletteFade: start the H-blank scroll
+   callback on first use and record the mode; mode 1 also queues a BG2
+   control write. Copy the backdrop palette, then either copy the battle
+   palette to BG palette 6 or darken each channel by fade into it, and
+   rebuild the tile table and tilemap.
+   FAKEMATCH: the IME save sits in one-pass loops, as in the IO write
+   queue, and the green and blue mask is a one-halfword struct, which keeps
+   it a pool constant held across the fade loop as in the ROM. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
 
-extern volatile u16 RegIme;
-extern u8 Value_0000001f;
+extern u8 gTransitionWork[];
+extern void *gBattleWork;
 
-s32 Func_080041d8(u32 callback, s32 interval);
+struct Half {
+    u16 v;
+};
+
+s32 Engine_ScheduleCallback(void (*callback)(void), s32 priority);
+void BattlePres_UpdateHBlankScroll(void);
 void Graphics_BuildSequentialTileTable(void *);
 void BattlePresentation_BuildTilemap(void *);
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
-    s32 *transition = *(s32 **)0x03001f00;
+    s32 *transition = *(s32 **)gTransitionWork;
 
     if (transition[2] == 0) {
-        Func_080041d8(0x080c0131, 0x4ff);
+        Engine_ScheduleCallback(BattlePres_UpdateHBlankScroll, 0x4ff);
     }
     transition[2] = mode;
 
@@ -40,7 +40,7 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         q = &gIoWriteQueue;
         do {
             do {
-                ime = &RegIme;
+                ime = (volatile u16 *)0x04000208;
                 saved = *ime;
             } while (0);
             *ime = (u16)ime;
@@ -60,17 +60,18 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
     *(u16 *)0x050000bc = *(u16 *)0x050001e8;
 
     if (fade == 0x80) {
-        Dma_Set(*(u8 **)0x03001e74 + 0x544, (void *)0x050000c0, 0x80000080, (volatile u32 *)0x040000d4);
+        Dma_Set((u8 *)gBattleWork + 0x544, (void *)0x050000c0, 0x80000080, (volatile u32 *)0x040000d4);
     } else if (fade != 0) {
-        u16 *source = (u16 *)(*(u8 **)0x03001e74 + 0x544);
+        u16 *source = (u16 *)((u8 *)gBattleWork + 0x544);
         u16 *destination = (u16 *)0x050000c0;
         s32 i;
-        u16 mask = (u16)(s32)&Value_0000001f;
+        struct Half mask;
 
+        mask.v = 0x1f;
         for (i = 0; i != 128; i++) {
             s32 red = source[i] & 31;
-            s32 green = (source[i] >> 5) & mask;
-            s32 blue = (source[i] >> 10) & mask;
+            s32 green = (source[i] >> 5) & mask.v;
+            s32 blue = (source[i] >> 10) & mask.v;
 
             if (red > fade) {
                 red -= fade;

@@ -21,7 +21,6 @@ SECTIONS
         "*/resource_3c0_overlay.o"(.text.x02008b24)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/DROP_AND_LEAVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/PALETTE.o"(.text)
-        "*/resource_3c0_overlay.o"(.text.x02008d24)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/ENCOUNTER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/GET_EVENTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_SABAKU/SCENE_SCRIPT.o"(.text)

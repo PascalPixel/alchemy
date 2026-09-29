@@ -3,4 +3,8 @@
 	.section .rodata
 	.global Korosseo_Lettering
 Korosseo_Lettering:
+	.ifdef TBS_EDITION_JA
+	.incbin "GRAPHICS/KOROSSEO/LETTERING_JA.parts.lz"
+	.else
 	.incbin "GRAPHICS/KOROSSEO/LETTERING.parts.lz"
+	.endif

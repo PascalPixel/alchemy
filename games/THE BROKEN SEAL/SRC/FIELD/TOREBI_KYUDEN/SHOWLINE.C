@@ -6,7 +6,7 @@ extern u8 MsgTorebiBabiWaitingForAtColosseum[];
 extern u8 MsgTorebiRobinIdReallyLikeThank[];
 extern u8 MsgTorebiWarriorsWhoStayed[];
 
-void SceneDialogue_ShowLine2239Or223A(void)
+void SceneDialogue_ThankForSavingBabi(void)
 {
     u32 i;
     s32 record;
@@ -21,7 +21,7 @@ void SceneDialogue_ShowLine2239Or223A(void)
     }
 }
 
-void SceneDialogue_ShowMessage22a3Branch(s32 a)
+void SceneDialogue_AskIfLeavingPalace(s32 a)
 {
     s32 k = (s32)MsgTorebiWarriorsWhoStayed;
 

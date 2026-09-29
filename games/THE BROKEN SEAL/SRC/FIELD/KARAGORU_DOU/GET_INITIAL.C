@@ -5,13 +5,6 @@
 #include "STAGED_ACTOR_PAIR_SCENE.H"
 #include "STAGED_ACTOR.H"
 
-enum StagedPairMessage {
-    MSG_WARRIORS_HAVE_BEEN_FIGHTING_WHILE = 0x23d2,
-    MSG_WE_MISSED_COLOSSO_BECAUSE_WE = 0x23d5,
-    MSG_IVE_BEEN_WAITING_FOR_ROBIN = 0x23d9,
-    MSG_WHY_GOING_BACK_ROBIN_DO = 0x23da
-};
-
 struct EffectRecord {
     u8 pad[9];
     u8 flags_lo : 2;

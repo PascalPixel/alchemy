@@ -5,10 +5,6 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 
-enum MotionParticleMessage {
-    MSG_DO_WANT_WEAPONS = 0x18e7
-};
-
 
 
 struct Slot02000338 {

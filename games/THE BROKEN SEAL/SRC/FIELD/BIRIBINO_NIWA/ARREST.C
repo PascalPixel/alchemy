@@ -71,7 +71,7 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
 }
 
 /* McCoy's Palace garden: the party walks in and actors 11 and 12 talk it
- * over (messages 0x1720 onward) until the choice is made, then the scene
+ * over until the choice is made, then the scene
  * plays out by flag 0x84a and leaves. */
 void BiribinoNiwa_RunGardenScene(void)
 {

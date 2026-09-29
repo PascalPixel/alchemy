@@ -8,10 +8,6 @@
 #include "COLOSSO_LOG_ROLLING_STAGE.H"
 extern u8 gKeysHeld[];
 
-enum LogRollingMessage {
-    MSG_ROBIN_GOT = 0x96a
-};
-
 extern u8 gColossoHexChars[];
 
 typedef struct ActorSpriteRef {

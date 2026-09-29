@@ -48,7 +48,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 void HaidiaBabi_RunActorEightMessageScene(void)
 {
     s32 record;
-    s32 base5_1c79;
+    s32 dream;
 
     Engine_EventBegin();
     if (Value1(Engine_GameFlagIsSet, 0x203) != 0) {
@@ -60,11 +60,11 @@ void HaidiaBabi_RunActorEightMessageScene(void)
         Engine_ActorRunRepeatedMotion(8, 2);
         Engine_EventWait(40);
         do {
-            base5_1c79 = (s32)MsgHaidiaUnnOhhKyle;
+            dream = (s32)MsgHaidiaUnnOhhKyle;
         } while (0); /* FAKEMATCH: the wrap keeps the message id load after the wait. */
-        Engine_EventSetMessage(base5_1c79);
+        Engine_EventSetMessage(dream);
         Engine_EventShowMessageAndWait(8, 0, 40);
-        Engine_MessageShowCentered((base5_1c79 + 1), 1);
+        Engine_MessageShowCentered((dream + 1), 1);
     }
     Engine_EventEnd();
 }

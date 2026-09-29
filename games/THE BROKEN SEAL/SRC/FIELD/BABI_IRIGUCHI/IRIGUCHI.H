@@ -14,10 +14,6 @@
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
 extern u8 gEffectWork[];
 
-enum BranchingEventMessage {
-    MSG_ROBIN_FLIPPED_SWITCH = 0x1528
-};
-
 struct LevelCheckRecord {
     u8 unknown_00[12];
     s32 y;                          /* +0x0c */

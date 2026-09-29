@@ -43,7 +43,7 @@ void Scene_PlanSanctumVisit(void)
 {
     u8 *record;
     s32 x, y;
-    s32 base5_fbf;
+    s32 sneak;
 
     if (GameFlag_IsSet(FLAG_SANCTUM_VISIT_PLANNED) != 0) {
     } else {
@@ -187,15 +187,15 @@ void Scene_PlanSanctumVisit(void)
             Event_SetMessage((s32)MsgHaidiaSukuretaWeOnlyCheckMt);
         }
         Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 20);
-        base5_fbf = (s32)MsgHaidiaFineIfTheyDontSee;
-        Event_SetMessage(base5_fbf);
+        sneak = (s32)MsgHaidiaFineIfTheyDontSee;
+        Event_SetMessage(sneak);
         Actor_FaceDirection(ACTOR_GERALD, 0, 10);
         Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
         Event_OpenMessage(ACTOR_GERALD, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
-            Event_SetMessage((base5_fbf + 1));
+            Event_SetMessage((sneak + 1));
         } else {
-            Event_SetMessage((base5_fbf + 2));
+            Event_SetMessage((sneak + 2));
         }
         Event_ShowMessageAndWait(ACTOR_GERALD, 0, 6);
         Event_SetMessage((s32)MsgHaidiaJasmineOurSecret);

@@ -68,13 +68,16 @@ void FieldScene_SetFlag987AtActorTwelveTile(void)
     Event_End();
 }
 
-void SceneDialogue_RunLine2682(void)
+#if defined(TBS_EDITION_EN)
+/* Only the English edition reads the words carved into the relief. */
+void SceneDialogue_ReadRelief(void)
 {
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Message_ShowCentered((s32)MsgVinasuThereWordsCarvedIntoRelief, 1);
     Event_End();
 }
+#endif
 
 void SceneState_ApplySixRectsAfter161(void)
 {

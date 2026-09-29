@@ -10,6 +10,9 @@
  */
 extern char SceneId_WorldMap;
 extern char SceneId_ArutinYama5;
+extern char SceneId_KuupuappuDou1;
+extern char SceneId_KuupuappuDou2;
+extern char SceneId_KuupuappuDou3;
 extern char SceneId_FuneHeya;
 extern char SceneId_BabiChika1;
 

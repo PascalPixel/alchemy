@@ -22,7 +22,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/RUN_OPENING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/SPAWN_PUFFS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/INIT_SLOTS10.o"(.text)
-        "*/resource_3a7_overlay.o"(.text.x02008ca0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/ENTRY_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KUUPUAPPU_DOU/IMPORT.o"(.text)
         "*/resource_3a7_overlay.o"(.rodata)
     }

@@ -1,539 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008d4c,"ax",%progbits
-	.balign 4
-	.global Func_02000d4c
-	.thumb_func
-Func_02000d4c:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	sub sp, #68
-	bl 0x0200ae38
-	movs r0, #1
-	movs r1, #1
-	movs r2, #1
-	negs r1, r1
-	negs r2, r2
-	movs r3, #0
-	negs r0, r0
-	bl 0x0200af20
-	bl 0x0200adb0
-	movs r0, #1
-	bl 0x0200ad80
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #130
-	lsls r3, r3, #16
-	str r3, [r0, #12]
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #128
-	lsls r3, r3, #8
-	str r3, [r0, #72]
-	movs r0, #0
-	bl 0x0200ae50
-	movs r5, #0
-	str r5, [r0, #68]
-	movs r0, #0
-	bl 0x0200ae50
-	adds r0, #85
-	strb r5, [r0]
-	bl 0x0200af50
-	bl 0x0200af60
-	movs r0, #30
-	bl 0x0200ae30
-	movs r0, #204
-	bl 0x0200af90
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #3
-	adds r0, #85
-	strb r3, [r0]
-	movs r0, #24
-	bl 0x0200ae30
-	movs r0, #0
-	bl 0x0200ae50
-	mov r10, r0
-	add r0, sp, #28
-	movs r3, #7
-	str r3, [r0, #4]
-	ldr r3, [pc, #192]
-	str r3, [r0, #36]
-	ldr r3, [pc, #192]
-	str r3, [r0, #8]
-	str r3, [r0, #12]
-	mov r8, r0
-	movs r7, #0
-	add r6, sp, #16
-.L_02000d4c_0:
-	lsls r5, r7, #12
-	adds r0, r5, #0
-	bl 0x0200ad90
-	movs r3, #0
-	str r0, [r6]
-	adds r0, r5, #0
-	str r3, [r6, #4]
-	bl 0x0200ad88
-	ldr r3, [r6]
-	lsrs r2, r3, #31
-	adds r2, r3, r2
-	asrs r2, r2, #1
-	adds r3, r3, r2
-	str r0, [r6, #8]
-	str r3, [r6]
-	mov r2, r10
-	ldr r5, [r2, #8]
-	ldr r1, [r2, #12]
-	ldr r4, [r6, #4]
-	ldr r2, [r2, #16]
-	str r0, [sp, #4]
-	ldr r0, [pc, #136]
-	str r4, [sp, #0]
-	str r0, [sp, #8]
-	mov r4, r8
-	adds r0, r5, #0
-	adds r7, #1
-	str r4, [sp, #12]
-	bl 0x02008ae8
-	cmp r7, #16
-	bls .L_02000d4c_0
-	movs r0, #188
-	bl 0x0200af90
-	movs r0, #0
-	ldr r1, [pc, #112]
-	bl 0x0200af08
-	movs r0, #0
-	movs r1, #22
-	bl 0x0200ae90
-	movs r0, #160
-	movs r1, #160
-	movs r2, #128
-	lsls r0, r0, #11
-	lsls r1, r1, #11
-	lsls r2, r2, #9
-	bl 0x0200ae00
-	movs r0, #1
-	movs r1, #1
-	ldr r2, [pc, #80]
-	negs r0, r0
-	negs r1, r1
-	bl 0x0200ae00
-	bl 0x0200ae08
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r0, #0
-	bl 0x0200af08
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #128
-	lsls r3, r3, #9
-	str r3, [r0, #72]
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #128
-	lsls r3, r3, #7
-	str r3, [r0, #68]
-	bl 0x0200ae40
-	sub sp, #-68
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02008cf1
-	.4byte 0x0000cccc
-	.4byte 0x01090001
-	.4byte 0x00000101
-	.4byte 0x0000e666
-	.global Func_02000eac
-	.thumb_func
-Func_02000eac:
-	push {r5, r6, lr}
-	adds r6, r0, #0
-	bl 0x0200ae38
-	movs r0, #1
-	movs r1, #1
-	movs r2, #1
-	negs r2, r2
-	negs r1, r1
-	movs r3, #0
-	negs r0, r0
-	bl 0x0200af20
-	bl 0x0200adb0
-	movs r0, #1
-	bl 0x0200ad80
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #130
-	lsls r3, r3, #16
-	str r3, [r0, #12]
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #128
-	lsls r3, r3, #7
-	str r3, [r0, #72]
-	movs r0, #0
-	bl 0x0200ae50
-	movs r5, #0
-	str r5, [r0, #68]
-	movs r0, #0
-	bl 0x0200ae50
-	adds r0, #85
-	strb r5, [r0]
-	movs r0, #0
-	bl 0x0200ae50
-	movs r1, #0
-	bl 0x0200adf0
-	bl 0x0200af50
-	bl 0x0200af60
-	movs r0, #10
-	bl 0x0200ae30
-	movs r0, #204
-	bl 0x0200af90
-	movs r0, #0
-	bl 0x0200ae50
-	movs r3, #3
-	adds r0, #85
-	strb r3, [r0]
-	movs r0, #0
-	bl 0x0200ae50
-	ldr r3, [pc, #36]
-	str r3, [r0, #40]
-	movs r0, #0
-	bl 0x0200ae50
-	bl 0x02008cd0
-	movs r1, #15
-	movs r0, #0
-	bl 0x0200aec8
-	adds r0, r6, #0
-	bl 0x0200af30
-	bl 0x0200ae40
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.4byte 0xfffb0000
-	.global SceneData_SelectByRuntimeSelector
-	.thumb_func
-SceneData_SelectByRuntimeSelector:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000f58_0
-	ldr r0, [pc, #36]
-	b .L_02000f58_1
-.L_02000f58_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000f58_2
-	ldr r0, [pc, #36]
-	b .L_02000f58_1
-.L_02000f58_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000f58_3
-	ldr r0, [pc, #32]
-	b .L_02000f58_1
-.L_02000f58_3:
-	ldr r0, [pc, #32]
-.L_02000f58_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b0
-	.4byte 0x0200b270
-	.4byte 0x000000af
-	.4byte 0x0200b330
-	.4byte 0x000000ae
-	.4byte 0x0200b4f8
-	.4byte 0x0200b558
-	.global SceneData_SelectTableB5b8ByState
-	.thumb_func
-SceneData_SelectTableB5b8ByState:
-	push {lr}
-	ldr r3, [pc, #24]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #16]
-	movs r0, #0
-	cmp r2, r3
-	bne .L_02000fac_0
-	ldr r0, [pc, #12]
-.L_02000fac_0:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000b0
-	.4byte 0x0200b5b8
-	.section .text.x02008fdc,"ax",%progbits
-	.balign 4
-	.global SceneData_SelectDataByRuntimeSelector
-	.thumb_func
-SceneData_SelectDataByRuntimeSelector:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000fdc_0
-	ldr r0, [pc, #36]
-	b .L_02000fdc_1
-.L_02000fdc_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000fdc_2
-	ldr r0, [pc, #36]
-	b .L_02000fdc_1
-.L_02000fdc_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000fdc_3
-	ldr r0, [pc, #32]
-	b .L_02000fdc_1
-.L_02000fdc_3:
-	ldr r0, [pc, #32]
-.L_02000fdc_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b0
-	.4byte 0x0200b694
-	.4byte 0x000000af
-	.4byte 0x0200b754
-	.4byte 0x000000ae
-	.4byte 0x0200b784
-	.4byte 0x0200b88c
-	.section .text.x0200a4d0,"ax",%progbits
-	.balign 4
-	.global Func_020024d0
-	.thumb_func
-Func_020024d0:
-	push {lr}
-	ldr r0, [pc, #108]
-	sub sp, #8
-	bl 0x0200ae18
-	cmp r0, #0
-	bne .L_020024d0_0
-	ldr r0, [pc, #96]
-	bl 0x0200ae20
-	movs r0, #157
-	bl 0x0200af90
-	bl 0x0200ae38
-	movs r1, #140
-	movs r0, #8
-	lsls r1, r1, #1
-	movs r2, #240
-	bl 0x0200ae60
-	movs r1, #164
-	lsls r1, r1, #1
-	movs r2, #240
-	movs r0, #9
-	bl 0x0200ae60
-	movs r0, #8
-	bl 0x0200ae80
-	movs r0, #9
-	bl 0x0200ae80
-	movs r3, #17
-	movs r2, #14
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #81
-	movs r1, #14
-	movs r2, #4
-	movs r3, #1
-	bl 0x0200add8
-	bl 0x0200ae40
-	ldr r0, [pc, #24]
-	bl 0x0200ae18
-	cmp r0, #0
-	bne .L_020024d0_0
-	bl 0x02009b10
-.L_020024d0_0:
-	sub sp, #-8
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00000985
-	.4byte 0x00000989
-	.global FieldScene_RunScene3c5_02002548
-	.thumb_func
-FieldScene_RunScene3c5_02002548:
-	push {lr}
-	ldr r0, [pc, #116]
-	sub sp, #8
-	bl 0x0200ae18
-	cmp r0, #0
-	beq .L_02002548_0
-	ldr r0, [pc, #104]
-	bl 0x0200ae28
-	movs r0, #157
-	bl 0x0200af90
-	bl 0x0200ae38
-	movs r1, #148
-	movs r0, #8
-	lsls r1, r1, #1
-	movs r2, #240
-	bl 0x0200ae60
-	movs r1, #156
-	lsls r1, r1, #1
-	movs r2, #240
-	movs r0, #9
-	bl 0x0200ae60
-	movs r0, #8
-	bl 0x0200ae80
-	movs r0, #9
-	bl 0x0200ae80
-	movs r3, #17
-	movs r2, #14
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #0
-	movs r1, #14
-	movs r2, #4
-	movs r3, #1
-	bl 0x0200add8
-	bl 0x0200ae40
-	ldr r0, [pc, #32]
-	bl 0x0200ae18
-	cmp r0, #0
-	beq .L_02002548_1
-	ldr r0, [pc, #20]
-	bl 0x0200ae28
-	b .L_02002548_0
-.L_02002548_1:
-	ldr r0, [pc, #12]
-	bl 0x0200ae20
-.L_02002548_0:
-	sub sp, #-8
-	pop {r0}
-	bx r0
-	.4byte 0x00000985
-	.4byte 0x00000301
-	.global Func_020025c8
-	.thumb_func
-Func_020025c8:
-	push {r5, r6, lr}
-	ldr r3, [pc, #128]
-	sub sp, #8
-	ldr r5, [r3]
-	bl 0x0200ae38
-	ldr r2, [pc, #120]
-	adds r5, r5, r2
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #0
-	beq .L_020025c8_0
-	ldr r0, [pc, #112]
-	bl 0x0200ae18
-	cmp r0, #0
-	bne .L_020025c8_1
-	movs r1, #1
-	ldr r0, [pc, #104]
-	bl 0x0200ae10
-	movs r0, #155
-	bl 0x0200af90
-	movs r5, #17
-	movs r1, #78
-	movs r2, #1
-	movs r3, #2
-	movs r6, #78
-	movs r0, #35
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200ade0
-	movs r0, #10
-	bl 0x0200ae30
-	movs r0, #34
-	movs r1, #78
-	movs r2, #1
-	movs r3, #2
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200ade0
-	movs r0, #10
-	bl 0x0200ae30
-	bl 0x0200a4d0
-	b .L_020025c8_1
-.L_020025c8_0:
-	ldr r0, [pc, #44]
-	bl 0x0200aed8
-	movs r0, #1
-	negs r0, r0
-	movs r1, #0
-	bl 0x0200aee8
-.L_020025c8_1:
-	bl 0x0200ae40
-	sub sp, #-8
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x00000cb8
-	.4byte 0x00000985
-	.4byte 0x00001528
-	.4byte 0x00002756
-	.section .text.x0200a7a0,"ax",%progbits
-	.balign 4
-	.global SceneData_SelectTableB91cByRuntimeSelector
-	.thumb_func
-SceneData_SelectTableB91cByRuntimeSelector:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020027a0_0
-	ldr r0, [pc, #36]
-	b .L_020027a0_1
-.L_020027a0_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020027a0_2
-	ldr r0, [pc, #36]
-	b .L_020027a0_1
-.L_020027a0_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020027a0_3
-	ldr r0, [pc, #32]
-	b .L_020027a0_1
-.L_020027a0_3:
-	ldr r0, [pc, #32]
-.L_020027a0_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b0
-	.4byte 0x0200b91c
-	.4byte 0x000000af
-	.4byte 0x0200b9e8
-	.4byte 0x000000ae
-	.4byte 0x0200bac0
-	.4byte 0x0200bc28
 	.section .text.x0200a8a0,"ax",%progbits
 	.balign 4
 	.global BabiIriguchi_SetupScene
@@ -1231,6 +697,8 @@ gEffectScripts:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0xc0010000
+	.global gBabiIriguchiEntrances3
+gBabiIriguchiEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x00000088
 	.4byte 0x40000178
@@ -1279,6 +747,8 @@ gEffectScripts:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiEntrances2
+gBabiIriguchiEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x00000088
 	.4byte 0x40000178
@@ -1393,6 +863,8 @@ gEffectScripts:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiEntrances1
+gBabiIriguchiEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x000000f8
 	.4byte 0x40000078
@@ -1417,6 +889,8 @@ gEffectScripts:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiEntrancesOther
+gBabiIriguchiEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x00000148
 	.4byte 0xc00000f0
@@ -1441,6 +915,8 @@ gEffectScripts:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiRegions3
+gBabiIriguchiRegions3:
 	.4byte 0xffec0060
 	.4byte 0x00700140
 	.4byte 0x0150fffc
@@ -1498,6 +974,8 @@ gBabiIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiPlacements3
+gBabiIriguchiPlacements3:
 	.4byte 0xffff00fd
 	.4byte 0x00000007
 	.4byte 0x00580000
@@ -1546,6 +1024,8 @@ gBabiIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiPlacements2
+gBabiIriguchiPlacements2:
 	.4byte 0x0072005d
 	.4byte 0x00000001
 	.4byte 0x01d80000
@@ -1558,6 +1038,8 @@ gBabiIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiPlacements1
+gBabiIriguchiPlacements1:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0xffc00000
@@ -1624,6 +1106,8 @@ gBabiIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiPlacementsOther
+gBabiIriguchiPlacementsOther:
 	.4byte 0xffff0072
 	.4byte 0x00000002
 	.4byte 0x00800000
@@ -1660,6 +1144,8 @@ gBabiIriguchiExits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiEvents3
+gBabiIriguchiEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1711,6 +1197,8 @@ gBabiIriguchiExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiEvents2
+gBabiIriguchiEvents2:
 	.4byte 0x00000031
 	.4byte 0xffff0005
 	.4byte 0x00000001
@@ -1765,6 +1253,8 @@ gBabiIriguchiExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiEvents1
+gBabiIriguchiEvents1:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1855,6 +1345,8 @@ gBabiIriguchiExits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiIriguchiEventsOther
+gBabiIriguchiEventsOther:
 	.4byte 0x00000202
 	.4byte 0xffff0032
 	.4byte 0x0200a6fd

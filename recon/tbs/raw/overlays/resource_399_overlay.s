@@ -1,117 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008130,"ax",%progbits
-	.balign 4
-	.global Func_02000130
-	.thumb_func
-Func_02000130:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_02000130_0
-	ldr r0, [pc, #16]
-	b .L_02000130_1
-.L_02000130_0:
-	ldr r0, [pc, #16]
-.L_02000130_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000033
-	.4byte 0x0200a8a0
-	.4byte 0x0200a798
-	.section .text.x0200816c,"ax",%progbits
-	.balign 4
-	.global Func_0200016c
-	.thumb_func
-Func_0200016c:
-	push {r5, lr}
-	ldr r3, [pc, #88]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_0200016c_0
-	ldr r5, [pc, #76]
-	adds r0, r5, #0
-	bl 0x0200a240
-	ldr r0, [pc, #72]
-	bl 0x0200a210
-	cmp r0, #0
-	beq .L_0200016c_1
-	movs r3, #131
-	lsls r3, r3, #1
-	adds r2, r5, r3
-	movs r3, #0
-	strb r3, [r2]
-	movs r3, #182
-	lsls r3, r3, #16
-	str r3, [r5, #80]
-	movs r3, #141
-	lsls r3, r3, #18
-	str r3, [r5, #88]
-	movs r3, #2
-	str r3, [r5, #76]
-.L_0200016c_1:
-	adds r0, r5, #0
-	b .L_0200016c_2
-.L_0200016c_0:
-	ldr r0, [pc, #32]
-	bl 0x0200a210
-	cmp r0, #0
-	beq .L_0200016c_3
-	ldr r0, [pc, #28]
-	b .L_0200016c_2
-.L_0200016c_3:
-	ldr r0, [pc, #28]
-.L_0200016c_2:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000033
-	.4byte 0x0200aad0
-	.4byte 0x00000881
-	.4byte 0x0200aa58
-	.4byte 0x0200a9e0
-	.section .text.x020081ec,"ax",%progbits
-	.balign 4
-	.global Func_020001ec
-	.thumb_func
-Func_020001ec:
-	push {lr}
-	ldr r3, [pc, #28]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #20]
-	cmp r2, r3
-	bne .L_020001ec_0
-	ldr r0, [pc, #16]
-	b .L_020001ec_1
-.L_020001ec_0:
-	ldr r0, [pc, #16]
-.L_020001ec_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000033
-	.4byte 0x0200adb8
-	.4byte 0x0200ac80
 	.section .text.x020095b4,"ax",%progbits
 	.align 2
 	.global ImiruMura_SwayAndSpark
@@ -483,6 +371,8 @@ ImiruMura_PrimaryScript2:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gImiruMuraEntrancesOther
+gImiruMuraEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x0000017c
 	.4byte 0x400001b1
@@ -549,6 +439,8 @@ ImiruMura_PrimaryScript2:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruMuraEntrances2
+gImiruMuraEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x00000088
 	.4byte 0xc00000f8
@@ -631,6 +523,8 @@ ImiruMura_SceneTable:
 	.4byte 0x00708032
 	.4byte 0x00806033
 	.4byte 0x000001ff
+	.global gImiruMuraPlacements
+gImiruMuraPlacements:
 	.4byte 0xffff006c
 	.4byte 0x0200a450
 	.4byte 0x00630000
@@ -661,6 +555,8 @@ ImiruMura_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruMuraPlacementsFlag881
+gImiruMuraPlacementsFlag881:
 	.4byte 0xffff006c
 	.4byte 0x00000001
 	.4byte 0x00630000
@@ -691,6 +587,8 @@ ImiruMura_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruMuraPlacements2
+gImiruMuraPlacements2:
 	.4byte 0x0000006f
 	.4byte 0x00000001
 	.4byte 0x006f0000
@@ -799,6 +697,8 @@ ImiruMura_SceneTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruMuraEventsOther
+gImiruMuraEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff003c
 	.4byte 0x0000000b
@@ -877,6 +777,8 @@ ImiruMura_SceneTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gImiruMuraEvents2
+gImiruMuraEvents2:
 	.4byte 0x00000000
 	.4byte 0x082c0008
 	.4byte 0x00001532

@@ -1,5 +1,14 @@
 /* main:080ae99c, complete 84-byte owner through 080ae9f0, pools included.
- * Current: 88/84 bytes, 37 differing halfwords, 15 aligned edits; not exact.
+ * Current (2026-09-29): the baseline's u32 resource again, with the build's
+ * names (UiIcon_CreateStatChangeArrow, gMenuWork): 84/84 bytes, alchemy
+ * permute score 100 (7 register-only, 1 moved), against 640 for H3 below.
+ * The reference's shape needs variant to be a global pseudo: local-alloc
+ * ties a block-local variant to its incoming r3 (copy suggestion first),
+ * so the menu-cell address takes r2 and evicts y to r4. The reference
+ * evicts variant to r5 and keeps the address and data in r3. A ternary,
+ * a switch, an offset local, a pointer bump, per-arm loads and a (u16)
+ * argument cast do not make variant live past block 0. Ten minutes of
+ * permutation (42,708 candidates): none below 100.
  * Own-ROM caller UiText_DrawStatComparison passes (window, x, y, variant).
  * RenderOutput_CreateFar takes (resource, flags, window, x, y), as its exact
  * implementation and the exact shop drawing family establish.
@@ -49,7 +58,7 @@ struct ArrowResources {
     u16 resource[2];
 };
 
-extern struct ArrowResources *Data_03001f2c;
+extern struct ArrowResources *gMenuWork;
 
 struct MarkerObject {
     u8 pad00[4];
@@ -62,11 +71,11 @@ struct MarkerObject {
 struct MarkerObject *RenderOutput_CreateFar(s32 resource, s32 flags,
     struct RenderInput *window, s32 x, s32 y);
 
-s32 Func_080ae99c(struct RenderInput *window, s32 x, s32 y, s32 variant)
+s32 UiIcon_CreateStatChangeArrow(struct RenderInput *window, s32 x, s32 y, s32 variant)
 {
     struct MarkerObject *object;
-    u16 resource;
-    struct ArrowResources *data = Data_03001f2c;
+    u32 resource;
+    struct ArrowResources *data = gMenuWork;
 
     if (variant == 0)
         resource = data->resource[0];

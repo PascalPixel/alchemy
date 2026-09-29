@@ -1,3 +1,5 @@
+/* 2026-09-29: Owner_GetRecordFar carries the build's name; alchemy permute
+ * scores 2688, from 2728. */
 /*
  * BattleTarget_SelectForAction draft: 1864 of 1864 bytes, 81.0% aligned
  * similarity. The normal-order scan tests turn_order->normal[target_index]
@@ -33,7 +35,7 @@ struct BattleAiProfile {
     s8 target_strategy;
 };
 
-struct BattleAiProfile *Func_08077198(s32 class_id);
+struct BattleAiProfile *Owner_GetRecordFar(s32 class_id);
 u32 Random16(void);
 
 #define COUNT_PARTIAL_CURES(unit, count)                                      \
@@ -309,7 +311,7 @@ scan_complete:
 
     if (action->target_mode == 1
         && action->range == 1
-        && Func_08077198(Owner_GetStateFar(actor_id)->class_id)
+        && Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
                 ->target_strategy != 2
         && (u32)((action->target_flags & 0x0f) - 3) <= 2) {
         selected = -1;
@@ -321,7 +323,7 @@ scan_complete:
                  inner_index++) {
                 unit = Owner_GetStateFar(unit_ids[inner_index]);
                 next_unit = Owner_GetStateFar(unit_ids[inner_index + 1]);
-                if (Func_08077198(Owner_GetStateFar(actor_id)->class_id)
+                if (Owner_GetRecordFar(Owner_GetStateFar(actor_id)->class_id)
                         ->target_strategy == 0) {
                     value = unit->hp;
                     next_value = next_unit->hp;

@@ -1,3 +1,5 @@
+/* 2026-09-29: callees carry the build's names; alchemy permute (--function
+ * Func_0808d9a4) scores 3650, from 4630. */
 #include "TYPES.H"
 
 /* NONMATCHING: 1044-byte complete extent. The old draft mistook the
@@ -14,38 +16,38 @@ extern u8 Data_00000970[];
 extern u8 Data_00001000[];
 extern u8 Data_02000240[];
 extern u16 Data_02000240_t[][2];
-void Func_080030f8();
-void Func_08009080();
-void Func_080090d0();
-s32 Func_08015040();
-void Func_08015120();
+void WaitFrames();
+void Engine_ObjectSetAnimation();
+void ObjectDispatch_ReleaseFar();
+s32 UiText_ShowPositionedMessageAndWaitFar();
+void UiWork_PushValueSlotFar();
 void Func_08015128();
 void Func_08015138();
 s32 PartyInventory_AddFar();
 s32 GameFlag_TestFar();
-void Func_080770c8();
-void Func_080770d0();
-void Func_08077230();
-s32 Func_0808b05c();
-void Func_0808b320();
-void Func_0808c2dc();
-s32 Func_0808d428();
-s32 Func_0808d48c();
-void Func_0808ec50();
-void Func_0808ec8c();
-void Func_0808ece0();
-void Func_0808ed1c();
-s32 Func_0808ed4c();
-void Func_0808ed78();
-s32 Func_0808ef70();
-void Func_0808f0c8();
-void Func_0808f0d8();
-void Func_0809163c();
-void Func_08091660();
-void Func_080916b0();
-void Func_08091750();
-void Func_0809202c();
-void Func_080f9010();
+void GameFlag_SetBitFar();
+void GameFlag_ClearBitFar();
+void Party_AdjustSixDigitCounterAFar();
+s32 BattleFx_GetWeightedResult();
+void BattleFx_SelectBattleCue();
+void BattleParty_ApplyDrain();
+s32 GameFlag_IsConditionActive();
+s32 BattleFx_FindDescriptor();
+void EffectRuntime_SetMode5AndPlayCue();
+void EffectRuntime_SetMode7AndLaunch();
+void EffectRuntime_SetMode4AndPlayCue();
+void EffectRuntime_SetMode2();
+s32 EffectRuntime_GetCurrentObject();
+void EffectRuntime_ClearCurrentFlags();
+s32 BattleFx_StartRandomParticleEmitter();
+void Object_DestroyIfPresent();
+void EffectRuntime_PrepareRisingObject();
+void Battle_WaitMode0();
+void Battle_InitializeRenderObject();
+void Battle_Reset();
+void BattleFx_FinishAction();
+void BattleFx_PlayQueuedSound();
+void Audio_PlayCue();
 
 struct ActionDescriptor {
     s32 flags;
@@ -107,12 +109,12 @@ s32 Func_0808d9a4(s32 a0)
     p6 = *(s32 *)((s16 *)Data_02000240 + 250);
     i = p8 - 242;
     if (i <= 5) {
-        Func_08091660();
+        Battle_InitializeRenderObject();
         p8b = *(u8 *)(0x0809e680 + i);
-        ((void (*)())Func_08015040)((0x928 + p8b), 1);
-        ((void (*)())Func_08015040)((0x948 + p8b), 1);
+        ((void (*)())UiText_ShowPositionedMessageAndWaitFar)((0x928 + p8b), 1);
+        ((void (*)())UiText_ShowPositionedMessageAndWaitFar)((0x948 + p8b), 1);
     } else {
-        rec = (struct ActionDescriptor *)Value2(Func_0808d48c, 3, p8);
+        rec = (struct ActionDescriptor *)Value2(BattleFx_FindDescriptor, 3, p8);
         if (rec == 0) {
         } else {
             v5 = ((rec->flags >> 4) & 31);
@@ -121,37 +123,37 @@ s32 Func_0808d9a4(s32 a0)
                 if (v5 == 0) {
                     goto L_0808da2c;
                 }
-                Func_08091660();
-                Value2(Func_08015040, (v5 + 0x928), 1);
-                Call1(Func_080770c8, 0x142);
+                Battle_InitializeRenderObject();
+                Value2(UiText_ShowPositionedMessageAndWaitFar, (v5 + 0x928), 1);
+                Call1(GameFlag_SetBitFar, 0x142);
             } else {
                 L_0808da2c:;
-                Call1(Func_080770d0, 0x142);
+                Call1(GameFlag_ClearBitFar, 0x142);
             }
             if ((0xf000000 & (s32)rec->action.raw) == 0) {
                 if ((-0x100000 & (s32)rec->action.raw) != 0x400000) {
                     goto L_0808da9a;
                 }
             } else {
-                if (Value1(Func_0808d428, p10) != 0) {
+                if (Value1(GameFlag_IsConditionActive, p10) != 0) {
                     rec->action.callback(
                         *(s32 *)((s16 *)Data_02000240 + 250));
                 }
                 if (Value1(GameFlag_TestFar, 0x142) == 0) {
                     goto L_0808dd6a;
                 }
-                ((void (*)())Func_08015040)((v5 + 0x948), 1);
+                ((void (*)())UiText_ShowPositionedMessageAndWaitFar)((v5 + 0x948), 1);
                 goto L_0808dd6a;
             }
-            if (Value1(Func_0808d428, p10) != 0) {
-                ((void (*)())Func_08015040)(rec->action.message, 1);
+            if (Value1(GameFlag_IsConditionActive, p10) != 0) {
+                ((void (*)())UiText_ShowPositionedMessageAndWaitFar)(rec->action.message, 1);
             } else {
-                ((void (*)())Func_08015040)(0x976, 1);
+                ((void (*)())UiText_ShowPositionedMessageAndWaitFar)(0x976, 1);
             }
             goto L_0808dd6a;
             L_0808da9a:;
-            Func_080916b0();
-            if (Value1(Func_0808d428, p10) == 0) {
+            Battle_Reset();
+            if (Value1(GameFlag_IsConditionActive, p10) == 0) {
             } else {
                 v2 = 1;
                 if ((0xf0000 & (s32)rec->action.raw) == 0x10000) {
@@ -163,119 +165,119 @@ s32 Func_0808d9a4(s32 a0)
                 if (v2 == 0) {
                 } else {
                     if ((rec->flags & 0x1ff) == 19) {
-                        Func_0808ece0(p8);
+                        EffectRuntime_SetMode4AndPlayCue(p8);
                     }
                     if ((-0x100000 & (s32)rec->action.raw) == 0x300000) {
                         if ((rec->flags & 0x1ff) == 19) {
-                            Func_0808ed1c(p8);
+                            EffectRuntime_SetMode2(p8);
                         }
-                        rec8 = Value1(Func_0808ed4c, p8);
-                        Func_0808f0d8();
-                        Func_080f9010(83);
-                        Func_08015120(rec->action.message, 5);
-                        Value2(Func_08015040, (s32)Data_00000970, 3);
-                        Call2(Func_0808c2dc, 0x3e7, 0);
+                        rec8 = Value1(EffectRuntime_GetCurrentObject, p8);
+                        EffectRuntime_PrepareRisingObject();
+                        Audio_PlayCue(83);
+                        UiWork_PushValueSlotFar(rec->action.message, 5);
+                        Value2(UiText_ShowPositionedMessageAndWaitFar, (s32)Data_00000970, 3);
+                        Call2(BattleParty_ApplyDrain, 0x3e7, 0);
                         Func_08015128(1);
-                        Func_080f9010(126);
-                        ((void (*)())Func_08015040)(((s32)Data_00000970 + 1), 1);
+                        Audio_PlayCue(126);
+                        ((void (*)())UiText_ShowPositionedMessageAndWaitFar)(((s32)Data_00000970 + 1), 1);
                         Func_08015138();
-                        Func_08009080(rec8, 2);
-                        Func_080f9010(246);
-                        Func_0809163c(30);
-                        ((void (*)())Func_08015040)(((s32)Data_00000970 + 2), 1);
-                        Func_0808ed78(p8);
+                        Engine_ObjectSetAnimation(rec8, 2);
+                        Audio_PlayCue(246);
+                        Battle_WaitMode0(30);
+                        ((void (*)())UiText_ShowPositionedMessageAndWaitFar)(((s32)Data_00000970 + 2), 1);
+                        EffectRuntime_ClearCurrentFlags(p8);
                         if (p10 == -1) {
                             goto L_0808dd50;
                         }
-                        Func_080770c8(p10);
+                        GameFlag_SetBitFar(p10);
                         goto L_0808dd50;
                     }
                     v10 = p10;
                     if ((-0x100000 & (s32)rec->action.raw) == 0x500000) {
                         p5 = *(s32 *)0x03001ebc;
                         if ((rec->flags & 0x1ff) == 19) {
-                            Func_0808ec8c(p8);
+                            EffectRuntime_SetMode7AndLaunch(p8);
                         }
                         if (p10 != -1) {
                             p10b = ((s32)p10 | (s32)Data_00001000);
                             Data_02000240_t[141][0] = p10b;
                         }
-                        record = Value2(Func_0808b05c, 99, rec->action.message);
+                        record = Value2(BattleFx_GetWeightedResult, 99, rec->action.message);
                         *(u16 *)(((s32)p5 + 0x17c)) = record;
                         base2_2000240 = (s32)Data_02000240;
                         *(u8 *)((base2_2000240 + 0x22b)) = 2;
-                        Func_0808b320(99, rec->action.message);
-                        Func_080f9010(*(s16 *)(0x200042e));
+                        BattleFx_SelectBattleCue(99, rec->action.message);
+                        Audio_PlayCue(*(s16 *)(0x200042e));
                         goto L_0808dd3e;
                         v10 = p10b;
                     }
                     if ((-0x100000 & (s32)rec->action.raw) == 0x200000) {
-                        rec7 = Func_0808ef70(*(s32 *)0x02000434, 0);
-                        Func_080030f8(30);
+                        rec7 = BattleFx_StartRandomParticleEmitter(*(s32 *)0x02000434, 0);
+                        WaitFrames(30);
                         if ((rec->flags & 0x1ff) == 19) {
-                            Func_0808ed1c(p8);
+                            EffectRuntime_SetMode2(p8);
                         }
-                        Func_0808f0d8(rec7);
-                        Func_080f9010(83);
-                        Func_08015120(rec->action.message, 5);
-                        Call2(Func_08015040, 0x969, 3);
-                        Func_08077230(rec->action.message);
+                        EffectRuntime_PrepareRisingObject(rec7);
+                        Audio_PlayCue(83);
+                        UiWork_PushValueSlotFar(rec->action.message, 5);
+                        Call2(UiText_ShowPositionedMessageAndWaitFar, 0x969, 3);
+                        Party_AdjustSixDigitCounterAFar(rec->action.message);
                         if (v10 != -1) {
-                            Func_080770c8(v10);
+                            GameFlag_SetBitFar(v10);
                         }
-                        Func_080090d0(rec7);
+                        ObjectDispatch_ReleaseFar(rec7);
                         goto L_0808dd50;
                     }
-                    rec3 = Value2(Func_0808ef70, *(s32 *)0x02000434, ((s32)rec->action.raw & 0xfff));
-                    Func_080030f8(30);
+                    rec3 = Value2(BattleFx_StartRandomParticleEmitter, *(s32 *)0x02000434, ((s32)rec->action.raw & 0xfff));
+                    WaitFrames(30);
                     rec8 = PartyInventory_AddFar(rec->action.message);
                     v5 = 0xffff;
                     if (rec8 == -1) {
-                        Func_08015120(((s32)rec->action.raw & 0xfff), 2);
+                        UiWork_PushValueSlotFar(((s32)rec->action.raw & 0xfff), 2);
                         base5_968 = 0x968;
                         v5 = (base5_968 + 4);
-                        Value2(Func_08015040, base5_968, 1);
-                        ((void (*)())Func_08015040)((base5_968 + 4), 1);
-                        Func_0808f0c8(rec3);
+                        Value2(UiText_ShowPositionedMessageAndWaitFar, base5_968, 1);
+                        ((void (*)())UiText_ShowPositionedMessageAndWaitFar)((base5_968 + 4), 1);
+                        Object_DestroyIfPresent(rec3);
                         if ((rec->flags & 0x1ff) != 19) {
                             goto L_0808dd50;
                         }
-                        Func_0808ec50(p8);
+                        EffectRuntime_SetMode5AndPlayCue(p8);
                         goto L_0808dd50;
                     }
                     if ((rec->flags & 0x1ff) == 19) {
-                        Func_0808ed1c(p8);
+                        EffectRuntime_SetMode2(p8);
                     }
-                    Func_0808f0d8(rec3);
-                    Func_080f9010(83);
-                    Func_08015120(((s32)rec->action.raw & v5), 2);
+                    EffectRuntime_PrepareRisingObject(rec3);
+                    Audio_PlayCue(83);
+                    UiWork_PushValueSlotFar(((s32)rec->action.raw & v5), 2);
                     if (rec8 == *(s32 *)0x02000434) {
-                        Call2(Func_08015040, 0x96a, 3);
+                        Call2(UiText_ShowPositionedMessageAndWaitFar, 0x96a, 3);
                     } else {
-                        Func_08015120(rec8, 1);
-                        Call2(Func_08015040, 0x96b, 3);
+                        UiWork_PushValueSlotFar(rec8, 1);
+                        Call2(UiText_ShowPositionedMessageAndWaitFar, 0x96b, 3);
                     }
                     if (v10 != -1) {
-                        Func_080770c8(v10);
+                        GameFlag_SetBitFar(v10);
                     }
-                    Func_080090d0(rec3);
+                    ObjectDispatch_ReleaseFar(rec3);
                     goto L_0808dd50;
                 }
                 L_0808dd3e:;
-                Call2(Func_08015040, 0x973, 1);
+                Call2(UiText_ShowPositionedMessageAndWaitFar, 0x973, 1);
                 goto L_0808dd50;
                 v5 = 0x2000240;
             }
-            ((void (*)())Func_08015040)((v5 + 0x948), 1);
+            ((void (*)())UiText_ShowPositionedMessageAndWaitFar)((v5 + 0x948), 1);
             L_0808dd50:;
-            Func_08091750();
-            Func_0809202c();
+            BattleFx_FinishAction();
+            BattleFx_PlayQueuedSound();
             goto L_0808dd6a;
         }
-        Call2(Func_08015040, 0x92d, 1);
-        Call2(Func_08015040, 0x94d, 1);
+        Call2(UiText_ShowPositionedMessageAndWaitFar, 0x92d, 1);
+        Call2(UiText_ShowPositionedMessageAndWaitFar, 0x94d, 1);
         L_0808dd6a:;
-        Call1(Func_080770d0, 0x142);
+        Call1(GameFlag_ClearBitFar, 0x142);
     }
     return 0;
 }

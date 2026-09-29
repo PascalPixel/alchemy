@@ -1,3 +1,5 @@
+/* 2026-09-29: Resource_LoadPairedBlocks carries the build's name; alchemy
+ * permute (--function RunAssetSelectionScreen) scores 1530, from 1550. */
 /* NONMATCHING: 428/432 bytes, 195 differing halfwords, 137 aligned edits.
  * The proven menu copy/fill interface recovers per-call VRAM loads, but
  * keeps backup in r6 and hoists a zero into fp; not an exact model. */
@@ -81,7 +83,7 @@ void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32);
 s32 Party_ListActiveOwnersFar(void *session);
 void ItemMenu_Init(s32, s32, s32, s32);
-void Func_080a5534(void);
+void Resource_LoadPairedBlocks(void);
 void Palette_LightenBankHighlight(s32);
 void Link_DrawShiftedTilePairFar(void *address);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
@@ -123,7 +125,7 @@ s32 RunAssetSelectionScreen(void)
     UiWindow_InitializeWork(0);
     screen->session_mode = Party_ListActiveOwnersFar(screen->session);
     ItemMenu_Init(0, 3, 0, 7);
-    Func_080a5534();
+    Resource_LoadPairedBlocks();
     Palette_LightenBankHighlight(14);
     Link_DrawShiftedTilePairFar((void *)0x06002500);
     screen->window = UiWindow_CreateFar(13, 0, 17, 3, 2);

@@ -461,7 +461,7 @@
 	.section .rom.0095a192, "a"
 	.incbin "baserom.gba", 0x95a192, 0x2
 	.section .rom.0095a4bd, "a"
-	.incbin "baserom.gba", 0x95a4bd, 0xe6b
+	.incbin "baserom.gba", 0x95a4bd, 0x3
 	.section .rom.0095bb28, "a"
 	.incbin "baserom.gba", 0x95bb28, 0x400
 	.section .rom.009682e2, "a"

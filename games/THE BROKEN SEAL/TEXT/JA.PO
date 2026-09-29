@@ -34895,7 +34895,7 @@ msgctxt "message"
 msgid "08721"
 msgstr "それでは はりきってどうぞ!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKorosseoCheeringChoices"
 msgid "08722"
 msgstr "おわり"
 

@@ -10,6 +10,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/TABLES.o"(.text)
         "*/resource_3b7_overlay.o"(.text.x02008044)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/QUESTIONS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/WALK_TO_SPRING.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/TOREBI_IZUMI/RULES.o"(.text)
         "*/resource_3b7_overlay.o"(.text.x020081a8)

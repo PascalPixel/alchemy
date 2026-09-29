@@ -10,9 +10,10 @@
 #include "../../INCLUDE/BATTLE_SUMMON.H"
 #include "../../INCLUDE/BATTLE_TYPES.H"
 #include "../../INCLUDE/BATTLE_WORK.H"
+#include "../../INCLUDE/MOTION_OBJECT.H"
 #include "../../INCLUDE/RUNTIME_1E74.H"
 #include "../../INCLUDE/RUNTIME_MEM.H"
-void *GetBattleObjectSlot(s32 unit);
+
 void BattlePresentation_SpawnActorObject(void *object, s32 unit, s32 x, s32 y);
 void BattleActor_CommitPlacement(void);
 s32 BattleParty_ListPresentEnemies(s16 *entries);
@@ -35,9 +36,6 @@ void UiWindow_DrawPartyStatusContentsFar(s32 mode);
             bonus = power - target->elements[range].resist;                    \
     }
 
-#define BytePtr(p) ((u8 *)(p))
-#define ELEM_AT(unit, range) (*(s16 *)((u8 *)(unit) + 38 + (range) * 2 * 2))
-struct AffinityPair { s16 low; s16 high; };
 
 #define TEXT_SIDE(player, enemy)                                               \
 {                                                                              \
@@ -89,7 +87,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     s32 actor_id;
     s32 action_id;
     s32 bonus;
-    void *work;
+    struct BattleSession *work;
     s32 half;
     s32 adjust;
     s32 dealt;
@@ -152,22 +150,22 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
 
     /* 属性相性。テーブルを二方向に走査して符号を決める。 */
     if (range != 4) {
-        s16 *tbl;
+        struct BattleElementLevel *levels;
         s32 i;
 
-        value = ELEM_AT(target, range);
-        tbl = (s16 *)((u8 *)target + 36);
+        value = target->element_levels[range].level;
+        levels = target->element_levels;
         i = 0;
-        if (value >= tbl[1]) {
-            s16 *p;
+        if (value >= levels[0].level) {
+            struct BattleElementLevel *p;
 
-            p = tbl;
+            p = levels;
             do {
                 i++;
-                p += 2;
+                p++;
                 if (i > 3)
                     break;
-            } while (value >= p[1]);
+            } while (value >= p->level);
         }
         if (i == 4)
             affinity = -1;
@@ -176,13 +174,15 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
         {
             s32 off;
 
+            /* FAKEMATCH: a byte offset held in a temporary makes the second
+               scan reload the first level, as the ROM does. */
             off = 2;
-            if (value <= *(s16 *)(BytePtr(tbl) + off)) {
+            if (value <= *(s16 *)((u8 *)levels + off)) {
                 do {
                     i++;
                     if (i > 3)
                         break;
-                } while (value <= ((struct AffinityPair *)((u8 *)target + 36))[i].high);
+                } while (value <= target->element_levels[i].level);
             }
         }
         if (i == 4)
@@ -193,10 +193,7 @@ s32 Battle_ResolveTargetAction(struct BattlePlan *plan, s32 slot)
     if ((u32)plan->range_index <= 3) {
         cmd = &plan->command;
         if (*cmd != 2) {
-            s32 off;
-
-            off = plan->range_index * 4 + 72;
-            power = *(s16 *)((u8 *)actor + off);
+            power = actor->elements[plan->range_index].power;
             goto after_power;
         }
     } else
@@ -207,12 +204,7 @@ after_power:
     if (plan->command == 5 && (u32)plan->range_index <= 3 && affinity > 0) {
         s32 chance;
 
-        {
-            s32 off;
-
-            off = plan->range_index * 4 + 72;
-            chance = power - ((s16 *)((u8 *)target + off))[1];
-        }
+        chance = power - target->elements[plan->range_index].resist;
         chance += 30;
         chance *= 0x28f;
         if (chance > (BattleRandom16Far() & 0xffff))
@@ -239,7 +231,7 @@ after_power:
         st = actor->class_id;
         rec = Summon_FindSlot();
         if (action->effect == EFX_STANDBY_WORK)
-            st = BattleFormation_SelectRandomAvailableMember(*(s32 *)work);
+            st = BattleFormation_SelectRandomAvailableMember(work->enemy_group);
         if (hit != 0 && Summon_ClassValid(st) != 0 && rec >= 0) {
             s32 ch;
             s16 *slots;
@@ -249,7 +241,9 @@ after_power:
             if (ch & 0x8000)
                 Summon_ResetCharge(st);
             BattleUnit_AssignFar(rec, st, ch & 0x7fff);
-            slots = (s16 *)(BytePtr(work) + 2);
+            /* FAKEMATCH: the enemy list is reached by byte offsets from a
+               base 50 entries before it, as the ROM addresses it. */
+            slots = work->enemy_units - 50;
             {
                 s32 off;
                 s32 i;
@@ -259,8 +253,8 @@ after_power:
                 off = 100;
                 i = 0;
                 jsave = 0;
-                if (*(s16 *)(BytePtr(slots) + off) == 254) {
-                    *(s16 *)(BytePtr(slots) + off) = rec;
+                if (*(s16 *)((u8 *)slots + off) == 254) {
+                    *(s16 *)((u8 *)slots + off) = rec;
                 } else {
                     s32 woff;
                     s32 next;
@@ -294,20 +288,11 @@ after_power:
             }
             Summon_Refresh();
             {
-                s32 x;
-                s32 y;
+                struct BattleObjectSlot *object;
 
-                /* The slot cursor is dead here; its word now carries the object. */
-                cursor = (s32)GetBattleObjectSlot(rec);
-                x = *(s32 *)(cursor + 12);
-                if (x < 0)
-                    x += 0xffff;
-                y = *(s32 *)(cursor + 16);
-                x >>= 16;
-                if (y < 0)
-                    y += 0xffff;
-                y >>= 16;
-                BattlePresentation_SpawnActorObject((void *)cursor, rec, x, y);
+                object = GetBattleObjectSlot(rec);
+                BattlePresentation_SpawnActorObject(object, rec,
+                    object->anchor_x / 0x10000, object->anchor_z / 0x10000);
             }
             BattleActor_CommitPlacement();
             {
@@ -346,8 +331,10 @@ after_power:
             s32 hidx;
 
             hit = 0;
-            hidx = 748;
-            if (*(s16 *)(BytePtr(work) + hidx) == target_id) {
+            /* FAKEMATCH: the first record's offset is held in a temporary
+               and added to the work pointer, as the ROM addresses it. */
+            hidx = (u8 *)&work->actions[0].unit_id - (u8 *)work;
+            if (*(s16 *)((u8 *)work + hidx) == target_id) {
                 hit = 1;
                 goto hit_effect_done;
             } else {
@@ -356,10 +343,7 @@ after_power:
                 scan_next:
                     n++;
                     if ((u32)n <= 19) {
-                        s32 idx;
-
-                        idx = ((n << 1) << 3) + 748;
-                        if (*(s16 *)(BytePtr(work) + idx) == target_id)
+                        if (work->actions[n].unit_id == target_id)
                             hit = 1;
                         else
                             goto scan_next;
@@ -436,7 +420,7 @@ after_power:
                         dmg = dmg * 5 / 4;
                     else
                         dmg = dmg * 3 / 2;
-                    dmg += (u8)Math_DivU(((u8 *)target)[15], 5) + 6;
+                    dmg += (u8)Math_DivU(target->level, 5) + 6;
                     if (pass == 0) {
                         BattleEv_Push(BATTLE_EVENT_MARK, 0);
                         {
@@ -499,13 +483,7 @@ after_power:
             if (action->power == 0)
                 break;
             pp = target->pp;
-            if (range != 4) {
-                s32 off;
-
-                off = range * 4;
-                off = off + 72;
-                bonus = power - ((s16 *)((u8 *)target + off))[1];
-            }
+            TAKE_BONUS();
             dmg = action->power;
             dmg = Battle_CalcPower(dmg, bonus, 256);
             dmg = Math_Div(dmg * PpLossFalloff[offset], 100);
@@ -856,7 +834,6 @@ pp_store:
 
     case EFX_HEAL_60:
     case EFX_HEAL_30:
-
     {
         s32 old;
         s32 maxu;
@@ -864,7 +841,9 @@ pp_store:
         s32 heal;
         u16 *stat_ptr;
 
-
+        /* FAKEMATCH: walking a pointer down from hp to max_hp reads each
+           stat twice, unsigned and signed, as the ROM does; plain field
+           reads share one load. */
         stat_ptr = (u16 *)&target->hp;
         old = *stat_ptr--;
         heal = *(s16 *)(stat_ptr + 1);
@@ -1265,7 +1244,7 @@ pp_store:
         BattleEv_Push(BATTLE_EVENT_TEXT, (s32)&MsgChallenge);
         target->battle_end_state = 1;
         if ((u32)target_id <= 7)
-            ((u8 *)work)[67] |= 2;
+            work->flags_043 |= 2;
         break;
 
     case EFX_IMMOBILIZE:
@@ -1320,7 +1299,7 @@ done:
     }
     Sys_Free(copy);
     Owner_RecalculateStatsFar(target_id);
-    UiWindow_DrawPartyStatusContentsFar(((u8 *)gBattleWork)[65]);
+    UiWindow_DrawPartyStatusContentsFar(((struct BattleSession *)gBattleWork)->party_status_mode);
     if (target->hp != 0)
         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (actor->evil_spirit != 0

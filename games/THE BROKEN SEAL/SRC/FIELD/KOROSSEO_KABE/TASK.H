@@ -134,7 +134,7 @@ extern u32 KorosseoKabe_DirectionSteps[];
 extern s32 KorosseoKabe_ApproachScript[];
 extern s32 KorosseoKabe_SpectatorPhase;
 extern u32 KorosseoKabe_SpectatorTimer;
-extern s16 KorosseoKabe_CursorSlot;
+extern s16 Korosseo_MarkerSlot;
 extern struct ModeRecord KorosseoKabe_ModeRecordDefault;
 extern struct ModeRecord KorosseoKabe_ModeRecordTwo;
 extern struct ModeRecord KorosseoKabe_ModeRecordThree;
@@ -147,16 +147,16 @@ extern s32 Korosseo_ModeTaskScript;
 extern u16 Korosseo_ModeMoveTarget;
 extern u16 Korosseo_ModeMoveDuration;
 extern s32 Korosseo_ModeTaskPosition;
-extern u16 KorosseoKabe_MarkerX;
-extern u16 KorosseoKabe_MarkerY;
-extern u16 KorosseoKabe_MarkerStyle;
-extern u16 KorosseoKabe_MarkerFrame;
-extern u16 KorosseoKabe_MarkerDuration;
-extern u16 KorosseoKabe_MarkerTargetX;
-extern u16 KorosseoKabe_MarkerTargetY;
-extern u16 KorosseoKabe_MarkerStartX;
-extern u16 KorosseoKabe_MarkerStartY;
-extern u16 KorosseoKabe_MarkerElapsed;
+extern u16 Korosseo_MarkerX;
+extern u16 Korosseo_MarkerY;
+extern u16 Korosseo_MarkerPriority;
+extern u16 Korosseo_MarkerBlink;
+extern u16 Korosseo_MarkerSteps;
+extern u16 Korosseo_MarkerEndX;
+extern u16 Korosseo_MarkerEndY;
+extern u16 Korosseo_MarkerStartX;
+extern u16 Korosseo_MarkerStartY;
+extern u16 Korosseo_MarkerStep;
 
 /* Import veneers, named by the main-image code each one reaches.
  * Old-style declarations: arities vary between call sites in this overlay. */

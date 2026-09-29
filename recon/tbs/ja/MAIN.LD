@@ -616,7 +616,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/KOROSSEO/LETTERING.o"(.rodata)
         "*/recon/tbs/ja/rom.o"(.rom.0042d1e2)
         "*/games/COMMON/SRC/GRAPHICS/SHOP/CURSOR.o"(.rodata)
-        "*/recon/tbs/ja/rom.o"(.rom.0042d9e4)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/ICONS.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/UI/COMMAND_ICONS.o"(.rodata)
         "*/recon/tbs/ja/rom.o"(.rom.00436e66)
         "*/games/COMMON/SRC/GRAPHICS/MONSTER/AXE_GOBLIN.o"(.rodata)

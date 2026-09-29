@@ -1,18 +1,13 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "INVENTORY.H"
+#include "BATTLE_WORK.H"
 
 /* Hands out the battle spoils: experience to every living party member,
    with the level-up, newly learned Psynergy and stat-gain messages each
    level brings, then the coins, then the most valuable dropped item that
    still fits in someone's bag. */
 
-struct BattleSpoils {
-    s32 coins;
-    s32 experience;
-    u8 unk_08[4];
-    u16 items[4];
-};
 
 struct SpoilsUnit {
     u8 unk_000[15];
@@ -39,7 +34,7 @@ void Party_AdjustSixDigitCounterAFar(s32 amount);
 s32 Item_EncodeBankedId(s32 item);
 s32 PartyInventory_AddFar(s32 item);
 
-extern u8 *gBattleWork;
+
 extern u8 MsgAgilityRises[];
 extern u8 MsgExpGained[];
 extern u8 MsgLevelUp[];
@@ -74,7 +69,7 @@ void Battle_AwardSpoils(void)
     s16 gains[8];
     u16 units[8];
 
-    spoils = (struct BattleSpoils *)(gBattleWork + 0x530);
+    spoils = &gBattleWork->spoils;
     if (spoils->experience != 0) {
         UiWork_PushValueSlotFar(spoils->experience, 5);
         UiText_ShowMessageAndWaitCoreFar((s32)MsgExpGained);

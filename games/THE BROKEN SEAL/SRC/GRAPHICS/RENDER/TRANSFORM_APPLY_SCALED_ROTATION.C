@@ -33,5 +33,5 @@ void SceneTransform_ApplyScaledRotation(s32 *angles, s32 *position, s32 *scale)
     m[9] = position[0];
     m[10] = position[1];
     m[11] = position[2];
-    ((void (*)(s32 *))0x030002c0)(m);
+    Iwram_TransformMatrix(m);
 }

@@ -1,4 +1,5 @@
 #include "ENTRY_SETUP.H"
+#include "IWRAM_CALL.H"
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
 {
@@ -9,7 +10,7 @@ s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b)
     s32 dysq = dy *dy;
     s32 dzsq = dz *dz;
 
-    return ((IwramSqrt020002f0) 0x030001D8)(dxsq + dysq + dzsq);
+    return Iwram_Sqrt(dxsq + dysq + dzsq);
 }
 
 /*

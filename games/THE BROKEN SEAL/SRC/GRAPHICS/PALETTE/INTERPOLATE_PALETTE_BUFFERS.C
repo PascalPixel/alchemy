@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n)
 {
@@ -8,7 +9,7 @@ void Graphics_InterpolatePaletteBuffers(s16 *a, s16 *b, s16 *dst, s32 n)
     s32 (*divide)(s32, s32);
 
     if (n > 0) {
-        divide = (s32 (*)(s32, s32))0x03000380;
+        divide = Iwram_SignedDivide;
         index = 0x5FF;
         do {
             first = *a;

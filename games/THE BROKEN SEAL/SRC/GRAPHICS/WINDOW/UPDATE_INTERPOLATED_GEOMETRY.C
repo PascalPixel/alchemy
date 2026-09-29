@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 #define FIELD(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
 #define WINDOW_WIDTH(window) FIELD(window, u16, 0x08)
@@ -17,8 +18,6 @@ struct UiWindowInterpolationScratch {
     s32 scaled_duration;
     s32 result;
 };
-
-typedef s32 (*UiWindowScaleFunction)(s32, s32);
 
 void UiWindow_DrawFrame(s32, s32, s32, s32);
 
@@ -40,14 +39,14 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
         (s32)((u32)(frame *WINDOW_WIDTH(window)) << 16);
     scratch.scaled_duration = (s32)((u32)duration << 17);
     scratch.result =
-        ((UiWindowScaleFunction)0x0300013c)(
+        Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     x = (scratch.result >> 16) + WINDOW_X(window);
 
     scratch.scaled_part =
         (s32)(((u32)remaining *WINDOW_WIDTH(window)) << 16);
     scratch.result =
-        ((UiWindowScaleFunction)0x0300013c)(
+        Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     width = scratch.result >> 15;
 
@@ -55,14 +54,14 @@ void UiWindow_UpdateInterpolatedGeometry(void *window, s32 save_position)
         (s32)((u32)(frame *WINDOW_HEIGHT(window)) << 16);
     scratch.scaled_duration = (s32)((u32)WINDOW_DURATION(window) << 17);
     scratch.result =
-        ((UiWindowScaleFunction)0x0300013c)(
+        Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     y = (scratch.result >> 16) + WINDOW_Y(window);
 
     scratch.scaled_part =
         (s32)(((u32)remaining *WINDOW_HEIGHT(window)) << 16);
     scratch.result =
-        ((UiWindowScaleFunction)0x0300013c)(
+        Iwram_RatioMulQ14(
             scratch.scaled_duration, scratch.scaled_part);
     height = scratch.result >> 15;
 

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
 extern u8 Data_03001e8c[];
@@ -34,11 +35,11 @@ void UiWork_DrawByAttributes(void *arg0)
     if (8 & attr) {
         if (0x20 & attr) {
             UiWindow_DrawFrame(v0, v1, v2, v3);
-            fill = (UiFillFn)0x03000168;
+            fill = (UiFillFn)Iwram_FillWords;
             dst = 0x06002500;
             fill(dst, 0xF00, 0x44444444);
         } else {
-            fill = (UiFillFn)0x03000168;
+            fill = (UiFillFn)Iwram_FillWords;
             dst = 0x06002500;
             fill(dst, 0xF00, 0);
         }

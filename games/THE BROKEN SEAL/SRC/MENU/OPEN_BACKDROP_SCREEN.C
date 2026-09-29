@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "DMA.H"
 #include "SYSTEM.H"
 
@@ -46,12 +47,12 @@ s32 Menu_OpenBackdropScreen(void)
 
     UiWindow_UpdateOrCreate(&work->window, 0, 5, 30, 15, 2);
     WaitFrames(1);
-    CopyWords((WordCopyFn)0x03001388, backdrop->tiles, (void *)0x06004000, 0x2000);
-    CopyWords((WordCopyFn)0x03001388, backdrop->palette, (void *)0x05000080, 128);
-    FillWords((WordFillFn)0x03000168, (void *)0x06004000, 0x2000, 0x33333333);
-    FillWords((WordFillFn)0x03000168, (void *)0x05000080, 128, 0x55555555);
+    CopyWords(Iwram_CopyWords, backdrop->tiles, (void *)0x06004000, 0x2000);
+    CopyWords(Iwram_CopyWords, backdrop->palette, (void *)0x05000080, 128);
+    FillWords(Iwram_FillWords, (void *)0x06004000, 0x2000, 0x33333333);
+    FillWords(Iwram_FillWords, (void *)0x05000080, 128, 0x55555555);
     Func_080153d8((void *)0x06005000);
-    CopyWords((WordCopyFn)0x03001388, (void *)0x060052c0, (void *)0x080af26c, 32);
+    CopyWords(Iwram_CopyWords, (void *)0x060052c0, (void *)0x080af26c, 32);
     Dma_Set(Runtime_GetLowTableAddress(), (void *)0x050000a0, 0x80000010,
             (volatile u32 *)0x040000d4);
     *(volatile u16 *)0x050000bc = *(volatile u16 *)0x050001e8;

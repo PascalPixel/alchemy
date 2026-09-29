@@ -37,7 +37,6 @@ extern struct WorkSlots Data_03001e50;
 extern s32 Data_080c3604[];
 extern u8 Data_080c3620[];
 extern s32 Data_080c3628[];
-#define Spark_RatioQ14 ((s32 (*)(s32, s32))0x0300013c)
 
 s32 FixedSqrt(s32 value);
 u32 Random16(void);
@@ -88,7 +87,7 @@ s32 BattleFx_UpdateStarField(void)
             if (dist <= 0xfff) {
                 spark->life = 0;
             } else {
-                scale = Spark_RatioQ14(dist, 0x10000);
+                scale = Iwram_RatioMulQ14(dist, 0x10000);
                 spark->life--;
                 pos = spark->pos;
                 for (k = 2; k >= 0; k--) {

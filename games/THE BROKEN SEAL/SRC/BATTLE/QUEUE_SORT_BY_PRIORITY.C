@@ -5,6 +5,7 @@
 #include "BATTLE_RUNTIME.H"
 #include "BATTLE_TYPES.H"
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 
 struct BattleQueueEntry {
     s16 owner_id;
@@ -17,12 +18,10 @@ struct BattleQueueEntry {
 
 s32 Func_080771e8(s32 group, s32 index);
 
-typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
-
 static __inline__ void CopyWords(
     void *destination, const void *source, s32 size)
 {
-    ((WordCopy)0x03001388)(destination, source, size);
+    Iwram_CopyWords(destination, source, size);
 }
 
 void BattleQueue_SortByPriority(struct BattleQueueEntry *entries, s32 count)

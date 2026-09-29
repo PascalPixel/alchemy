@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "SYSTEM.H"
 
 /* Convert the tiled background through a blue palette ramp. Each screen
@@ -6,7 +7,7 @@
  * The second palette bank preserves the converted pixels after the sweep.
  */
 
-typedef void *(*WordCopy)(void *, const void *, s32);
+typedef s32 (*WordCopy)(void *, const void *, s32);
 static __inline__ void CopyWords(WordCopy copy, void *destination,
                                  const void *source, s32 size)
 {
@@ -34,7 +35,7 @@ void Graphics_ConvertBackgroundToBlueRamp(void)
     delays = *(u8 **)(gWorkSlot + 41 * 4);
     end = 0;
     speed = 16;
-    CopyWords((WordCopy)0x03001388, PIXEL_BUFFER, (void *)0x06008000, 0x7800);
+    CopyWords(Iwram_CopyWords, PIXEL_BUFFER, (void *)0x06008000, 0x7800);
     delay_mask = 63;
     p = delays;
     do {
@@ -66,7 +67,7 @@ next_pixel:
             } while (x != 256);
             row++;
         }
-        ((WordCopy)0x03001388)((void *)0x06008000, PIXEL_BUFFER, 0x7800);
+        Iwram_CopyWords((void *)0x06008000, PIXEL_BUFFER, 0x7800);
         WaitFrames(1);
         if (end > 248) break;
         i++;
@@ -84,6 +85,6 @@ next_pixel:
         PIXEL_BUFFER[i] += 64;
         i++;
     } while (i != 0x7800);
-    CopyWords((WordCopy)0x03001388, (void *)0x06008000, PIXEL_BUFFER, 0x7800);
+    CopyWords(Iwram_CopyWords, (void *)0x06008000, PIXEL_BUFFER, 0x7800);
     WaitFrames(1);
 }

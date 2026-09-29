@@ -132,7 +132,6 @@ extern const u16 KuupuappuMuraSai_Scene9Cells[];
 extern const u16 KuupuappuMuraSai_Scene10Cells[];
 extern const u16 KuupuappuMuraSai_Scene12Cells[];
 
-typedef s32(*IwramIntegerSquareRoot)(s32);
 s32 SceneActor_GetPositionDistance(s32 *, s32 *);
 u32 ArcTan2(s32, s32);
 s32 PartyInventory_FindOwner(s32 item);

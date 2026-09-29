@@ -11,6 +11,7 @@
    after the queue pointer so the queue literal loads ahead of the store
    before it. */
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
 
@@ -37,8 +38,6 @@ struct Cells03001ce0 {
     s32 unk10;
 };
 extern struct Cells03001ce0 gProjection;
-
-typedef s32 (*FillWordsFn)(void *destination, s32 size);
 
 #define QUEUE_DISPLAY_CONTROL(control) {                                    \
         volatile u16 *ime;                                                  \
@@ -79,7 +78,7 @@ void BattleFx_EndCanvasLayer(void)
     gProjection.unk00[3] = 120;
     gProjection.unk10 = 120;
     *(volatile u16 *)0x0400000c = 0x787;
-    ((FillWordsFn)0x03000164)((void *)0x06004000, 0x4000);
+    Iwram_ClearWords((void *)0x06004000, 0x4000);
     Scheduler_RemoveCallback((s32)Palette_StepFadeTransfer);
     scroll->unk06 = 32;
     QUEUE_DISPLAY_CONTROL(0x7341);

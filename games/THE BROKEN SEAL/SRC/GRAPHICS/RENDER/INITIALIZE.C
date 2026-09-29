@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "DMA.H"
+#include "IWRAM_CALL.H"
 
 extern u8 *Runtime_AllocateBlock(s32, u32);
 extern void UiWork_InitFreeList(void);
@@ -21,8 +22,7 @@ void UiWork_Initialize(s32 kind)
         Dma_Set((void *)(0x06000010 + src * 32),
                 (void *)(0x06000000 + dst * 32),
                 0x80000008, (volatile u32 *)0x040000d4);
-        return ((s32 (*)(void *, s32))0x03000164)
-            ((void *)(0x0600000c + dst * 32), 20);
+        return Iwram_ClearWords((void *)(0x0600000c + dst * 32), 20);
     }
 
     work = Runtime_AllocateBlock(15, 0x12fc);

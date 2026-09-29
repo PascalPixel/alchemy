@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "IWRAM_CALL.H"
 #include "GLOBAL_CELLS.H"
 #include "BATTLE_PRESENTATION.H"
 
@@ -74,7 +75,7 @@ void BattlePresentation_UpdateCamera(void)
     local.x = 0;
     local.y = 0;
     local.z = state->distance;
-    ((void (*)(struct SceneCameraTransfer *, struct BattleCamera *))0x03000250)(&local, state);
+    Iwram_TransformVector(&local.x, (s32 *)state);
 
     if (transition->flag == 0) {
         BattleCamera_SetRange(0x780000, 0x780000, 0, 0, 0x10000);

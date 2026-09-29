@@ -170,8 +170,6 @@ void MakyuriChojo_LowerCollectedActors();
  * drives handles 1-3 through a sequence of timed calls, some of which use
  * the two s16 fields read back from an actor slot record. */
 
-typedef s32(*IwramIntegerSquareRoot)(s32);
-
 typedef struct {
     u8 pad_to_kind[0x28];
     s16 *kind;

@@ -35,9 +35,9 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/PARTY_ROSTER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/FIND_FIRST.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ROCK.o"(.text)
-        "*/resource_3af_overlay.o"(.text.x0200b284)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/INIT_SLOTS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ACTIVATE_SLOT.o"(.text)
-        "*/resource_3af_overlay.o"(.text.x0200b3b8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_MODES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SELECT_TABLE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_BANDS.o"(.text)
         "*/resource_3af_overlay.o"(.text.x0200b5ec)
@@ -52,6 +52,8 @@ SECTIONS
     .bss ALIGN(16) (NOLOAD) :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/ROCK.o"(.data .bss COMMON)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/SLOT_MODES.o"(COMMON)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/FUNE_KANPAN/INIT_SLOTS.o"(COMMON)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
 }

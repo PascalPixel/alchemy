@@ -3,7 +3,6 @@
    defines: scene numbers are the rows of FIELD/SCENES.S and resource
    numbers the rows of SYSTEM/RESOURCE/DIRECTORY.S. */
 Data_0000001f = 0x0000001f;
-Value_0000007e = 0x0000007e;
 Value_00000925 = 0x00000925;
 /* Routines copied to RAM as one block across several modules: the length
    of each copy runs from its entry to the end label of its last module. */

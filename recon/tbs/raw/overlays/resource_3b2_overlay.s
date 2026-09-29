@@ -1,474 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008cc4,"ax",%progbits
-	.align 2
-	.global Func_02000cc4
-	.thumb_func
-Func_02000cc4:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000cc4_0
-	ldr r0, [pc, #56]
-	b .L_02000cc4_1
-.L_02000cc4_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000cc4_2
-	ldr r0, [pc, #56]
-	b .L_02000cc4_1
-.L_02000cc4_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000cc4_3
-	ldr r0, [pc, #52]
-	b .L_02000cc4_1
-.L_02000cc4_3:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000cc4_4
-	ldr r0, [pc, #52]
-	b .L_02000cc4_1
-.L_02000cc4_4:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000cc4_5
-	ldr r0, [pc, #48]
-	b .L_02000cc4_1
-.L_02000cc4_5:
-	ldr r0, [pc, #48]
-.L_02000cc4_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000071
-	.4byte 0x0200b310
-	.4byte 0x00000072
-	.4byte 0x0200b358
-	.4byte 0x0000007b
-	.4byte 0x0200b3a0
-	.4byte 0x0000007c
-	.4byte 0x0200b400
-	.4byte 0x0000007d
-	.4byte 0x0200b448
-	.4byte 0x0200b478
-	.section .text.x02008d48,"ax",%progbits
-	.align 2
-	.global Func_02000d48
-	.thumb_func
-Func_02000d48:
-	push {lr}
-	ldr r3, [pc, #52]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #44]
-	cmp r2, r3
-	bne .L_02000d48_0
-	ldr r0, [pc, #40]
-	b .L_02000d48_1
-.L_02000d48_0:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000d48_2
-	ldr r0, [pc, #40]
-	b .L_02000d48_1
-.L_02000d48_2:
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bgt .L_02000d48_3
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	blt .L_02000d48_3
-	ldr r0, [pc, #36]
-	b .L_02000d48_1
-.L_02000d48_3:
-	ldr r0, [pc, #36]
-.L_02000d48_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000071
-	.4byte 0x0200b610
-	.4byte 0x0000007b
-	.4byte 0x0200b718
-	.4byte 0x00000086
-	.4byte 0x0000007e
-	.4byte 0x0200b850
-	.4byte 0x0200b5f8
-	.section .text.x02008ec4,"ax",%progbits
-	.align 2
-	.global Func_02000ec4
-	.thumb_func
-Func_02000ec4:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000ec4_0
-	ldr r0, [pc, #56]
-	b .L_02000ec4_1
-.L_02000ec4_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000ec4_2
-	ldr r0, [pc, #56]
-	b .L_02000ec4_1
-.L_02000ec4_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000ec4_3
-	ldr r0, [pc, #52]
-	b .L_02000ec4_1
-.L_02000ec4_3:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000ec4_4
-	ldr r0, [pc, #52]
-	b .L_02000ec4_1
-.L_02000ec4_4:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000ec4_5
-	ldr r0, [pc, #48]
-	b .L_02000ec4_1
-.L_02000ec4_5:
-	ldr r0, [pc, #48]
-.L_02000ec4_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000071
-	.4byte 0x0200b904
-	.4byte 0x00000072
-	.4byte 0x0200b8e0
-	.4byte 0x0000007b
-	.4byte 0x0200b9f4
-	.4byte 0x0000007c
-	.4byte 0x0200bd48
-	.4byte 0x0000007d
-	.4byte 0x0200bd6c
-	.4byte 0x0200b880
-	.section .text.x02008f70,"ax",%progbits
-	.align 2
-	.global Func_02000f70
-	.thumb_func
-Func_02000f70:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	ldr r3, [pc, #612]
-	movs r2, #224
-	ldr r1, [r3]
-	movs r3, #129
-	lsls r2, r2, #1
-	lsls r3, r3, #2
-	ldr r6, [pc, #604]
-	str r3, [r1, r2]
-	adds r2, r2, r6
-	movs r1, #0
-	ldrsh r7, [r2, r1]
-	ldr r3, [pc, #596]
-	sub sp, #8
-	mov r8, r2
-	cmp r7, r3
-	bne .L_02000f70_0
-	bl 0x0200991c
-	b .L_02000f70_1
-.L_02000f70_0:
-	ldr r3, [pc, #584]
-	cmp r7, r3
-	bne .L_02000f70_2
-	ldr r0, [pc, #584]
-	bl 0x0200b058
-	cmp r0, #0
-	bne .L_02000f70_3
-	movs r3, #13
-	str r3, [sp, #0]
-	movs r5, #40
-	movs r0, #0
-	movs r1, #3
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #4]
-	bl 0x0200b028
-	movs r3, #15
-	str r3, [sp, #0]
-	movs r0, #0
-	movs r1, #2
-	movs r2, #1
-	movs r3, #1
-	str r5, [sp, #4]
-	bl 0x0200b028
-	movs r1, #216
-	movs r2, #162
-	movs r0, #101
-	lsls r1, r1, #16
-	lsls r2, r2, #18
-	bl 0x0200b108
-.L_02000f70_3:
-	mov r1, r8
-	movs r2, #0
-	ldrsh r3, [r1, r2]
-	cmp r3, r7
-	bne .L_02000f70_2
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r6, r2
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #5
-	beq .L_02000f70_4
-	ldr r0, [pc, #500]
-	bl 0x0200b058
-	cmp r0, #0
-	bne .L_02000f70_4
-	b .L_02000f70_1
-.L_02000f70_4:
-	ldr r0, [pc, #488]
-	bl 0x0200b060
-	movs r3, #13
-	movs r2, #30
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #0
-	movs r1, #1
-	movs r2, #1
-	movs r3, #1
-	bl 0x0200b028
-	movs r1, #216
-	movs r2, #244
-	movs r0, #100
-	lsls r1, r1, #16
-	lsls r2, r2, #17
-	bl 0x0200b108
-	b .L_02000f70_1
-.L_02000f70_2:
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r6, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #440]
-	cmp r2, r3
-	beq .L_02000f70_5
-	b .L_02000f70_6
-.L_02000f70_5:
-	bl 0x0200967c
-	movs r0, #8
-	bl 0x0200b088
-	movs r3, #129
-	lsls r3, r3, #16
-	str r3, [r0, #56]
-	movs r0, #9
-	bl 0x020088c0
-	movs r0, #10
-	bl 0x020088c0
-	movs r0, #144
-	lsls r0, r0, #2
-	bl 0x0200b058
-	cmp r0, #0
-	beq .L_02000f70_7
-	movs r0, #11
-	bl 0x0200b088
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02000f70_8
-	adds r2, r5, #0
-	adds r2, #89
-	movs r3, #0
-	movs r1, #4
-	strb r3, [r2]
-	bl 0x0200aff8
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x0200b038
-.L_02000f70_8:
-	movs r1, #152
-	movs r2, #184
-	movs r0, #0
-	lsls r1, r1, #17
-	lsls r2, r2, #17
-	movs r3, #253
-	bl 0x0200b048
-.L_02000f70_7:
-	ldr r0, [pc, #348]
-	bl 0x0200b058
-	cmp r0, #0
-	beq .L_02000f70_9
-	movs r0, #12
-	bl 0x0200b088
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02000f70_10
-	adds r2, r5, #0
-	adds r2, #89
-	movs r3, #0
-	movs r1, #4
-	strb r3, [r2]
-	bl 0x0200aff8
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x0200b038
-.L_02000f70_10:
-	movs r1, #160
-	movs r2, #184
-	movs r0, #0
-	lsls r1, r1, #15
-	lsls r2, r2, #17
-	movs r3, #253
-	bl 0x0200b048
-.L_02000f70_9:
-	ldr r0, [pc, #292]
-	bl 0x0200b058
-	cmp r0, #0
-	beq .L_02000f70_11
-	movs r0, #13
-	bl 0x0200b088
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02000f70_12
-	adds r2, r5, #0
-	adds r2, #89
-	movs r3, #0
-	movs r1, #4
-	strb r3, [r2]
-	bl 0x0200aff8
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x0200b038
-.L_02000f70_12:
-	movs r1, #192
-	movs r2, #168
-	movs r0, #0
-	lsls r1, r1, #15
-	lsls r2, r2, #17
-	movs r3, #253
-	bl 0x0200b048
-.L_02000f70_11:
-	ldr r0, [pc, #236]
-	bl 0x0200b058
-	cmp r0, #0
-	beq .L_02000f70_13
-	movs r0, #14
-	bl 0x0200b088
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02000f70_14
-	adds r2, r5, #0
-	adds r2, #89
-	movs r3, #0
-	movs r1, #4
-	strb r3, [r2]
-	bl 0x0200aff8
-	adds r0, r5, #0
-	movs r1, #0
-	bl 0x0200b038
-.L_02000f70_14:
-	movs r1, #144
-	movs r2, #160
-	movs r0, #0
-	lsls r1, r1, #16
-	lsls r2, r2, #17
-	movs r3, #253
-	bl 0x0200b048
-	movs r1, #188
-	movs r2, #160
-	movs r0, #0
-	lsls r1, r1, #18
-	lsls r2, r2, #17
-	movs r3, #253
-	bl 0x0200b048
-.L_02000f70_13:
-	ldr r0, [pc, #164]
-	bl 0x0200b058
-	cmp r0, #0
-	bne .L_02000f70_1
-	movs r0, #8
-	bl 0x0200aed8
-	b .L_02000f70_1
-.L_02000f70_6:
-	ldr r5, [pc, #148]
-	cmp r2, r5
-	bne .L_02000f70_15
-	ldr r0, [pc, #148]
-	bl 0x0200b058
-	cmp r0, #0
-	bne .L_02000f70_15
-	movs r3, #37
-	movs r2, #10
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #0
-	movs r1, #0
-	movs r2, #1
-	movs r3, #1
-	bl 0x0200b028
-	movs r1, #150
-	movs r2, #168
-	movs r0, #100
-	lsls r1, r1, #18
-	lsls r2, r2, #16
-	bl 0x0200b108
-.L_02000f70_15:
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r6, r2
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	cmp r2, r5
-	blt .L_02000f70_1
-	ldr r3, [pc, #92]
-	cmp r2, r3
-	bgt .L_02000f70_1
-	bl 0x02009214
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r6, r2
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #5
-	bne .L_02000f70_1
-	bl 0x02009494
-.L_02000f70_1:
-	movs r0, #0
-	sub sp, #-8
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x0000007b
-	.4byte 0x0000007d
-	.4byte 0x00000ef7
-	.4byte 0x000008d1
-	.4byte 0x00000071
-	.4byte 0x00000241
-	.4byte 0x00000242
-	.4byte 0x00000243
-	.4byte 0x00000fd7
-	.4byte 0x0000007e
-	.4byte 0x00000ef4
-	.4byte 0x00000086
-@ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.global StagedActor_DirectionSteps
 StagedActor_DirectionSteps:
@@ -589,8 +120,8 @@ gEffectScripts:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable01
-TakaraShima_SceneTable01:
+	.global gTakaraShimaEntrances1
+gTakaraShimaEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x00000118
 	.4byte 0xc0000220
@@ -609,8 +140,8 @@ TakaraShima_SceneTable01:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable02
-TakaraShima_SceneTable02:
+	.global gTakaraShimaEntrances2
+gTakaraShimaEntrances2:
 	.4byte 0xffff0001
 	.4byte 0x00000138
 	.4byte 0xc0000208
@@ -629,8 +160,8 @@ TakaraShima_SceneTable02:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable03
-TakaraShima_SceneTable03:
+	.global gTakaraShimaEntrances3
+gTakaraShimaEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x00000138
 	.4byte 0xc0000198
@@ -655,8 +186,8 @@ TakaraShima_SceneTable03:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable04
-TakaraShima_SceneTable04:
+	.global gTakaraShimaEntrances4
+gTakaraShimaEntrances4:
 	.4byte 0xffff0001
 	.4byte 0x000000b8
 	.4byte 0x80000088
@@ -675,8 +206,8 @@ TakaraShima_SceneTable04:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable05
-TakaraShima_SceneTable05:
+	.global gTakaraShimaEntrances5
+gTakaraShimaEntrances5:
 	.4byte 0xffff0001
 	.4byte 0x00000138
 	.4byte 0x80000290
@@ -689,8 +220,8 @@ TakaraShima_SceneTable05:
 	.4byte 0xffff0000
 	.4byte 0xffffffff
 	.4byte 0x0000ffff
-	.global TakaraShima_SceneTable06
-TakaraShima_SceneTable06:
+	.global gTakaraShimaEntrancesOther
+gTakaraShimaEntrancesOther:
 	.4byte 0xffff0001
 	.4byte 0x00000348
 	.4byte 0x800000b0
@@ -727,8 +258,8 @@ TakaraShima_SceneTable06:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable17
-TakaraShima_SceneTable17:
+	.global gTakaraShimaExits
+gTakaraShimaExits:
 	.4byte 0x00000071
 	.4byte 0x0014c002
 	.4byte 0x00201072
@@ -789,16 +320,16 @@ TakaraShima_SceneTable17:
 	.4byte 0x0030107b
 	.4byte 0x0040207b
 	.4byte 0x000001ff
-	.global TakaraShima_SceneTable07
-TakaraShima_SceneTable07:
+	.global gTakaraShimaPlacementsOther
+gTakaraShimaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable08
-TakaraShima_SceneTable08:
+	.global gTakaraShimaPlacements1
+gTakaraShimaPlacements1:
 	.4byte 0x0fd70016
 	.4byte 0x00000007
 	.4byte 0x01580000
@@ -865,8 +396,8 @@ TakaraShima_SceneTable08:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable09
-TakaraShima_SceneTable09:
+	.global gTakaraShimaPlacements3
+gTakaraShimaPlacements3:
 	.4byte 0xffff00ec
 	.4byte 0x00000007
 	.4byte 0x01980000
@@ -945,8 +476,8 @@ TakaraShima_SceneTable09:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable10
-TakaraShima_SceneTable10:
+	.global gTakaraShimaPlacements6To14
+gTakaraShimaPlacements6To14:
 	.4byte 0xffff00d3
 	.4byte 0x00000001
 	.4byte 0x02780000
@@ -959,8 +490,8 @@ TakaraShima_SceneTable10:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable11
-TakaraShima_SceneTable11:
+	.global gTakaraShimaEventsOther
+gTakaraShimaEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -985,8 +516,8 @@ TakaraShima_SceneTable11:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable12
-TakaraShima_SceneTable12:
+	.global gTakaraShimaEvents2
+gTakaraShimaEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -996,8 +527,8 @@ TakaraShima_SceneTable12:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable13
-TakaraShima_SceneTable13:
+	.global gTakaraShimaEvents1
+gTakaraShimaEvents1:
 	.4byte 0x00009415
 	.4byte 0x0fd70008
 	.4byte 0x02008f3d
@@ -1058,8 +589,8 @@ TakaraShima_SceneTable13:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable14
-TakaraShima_SceneTable14:
+	.global gTakaraShimaEvents3
+gTakaraShimaEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1273,8 +804,8 @@ TakaraShima_SceneTable14:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable15
-TakaraShima_SceneTable15:
+	.global gTakaraShimaEvents4
+gTakaraShimaEvents4:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1284,8 +815,8 @@ TakaraShima_SceneTable15:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
-	.global TakaraShima_SceneTable16
-TakaraShima_SceneTable16:
+	.global gTakaraShimaEvents5
+gTakaraShimaEvents5:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

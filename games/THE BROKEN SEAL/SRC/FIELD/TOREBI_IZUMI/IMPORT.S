@@ -54,6 +54,9 @@ Engine_GameFlagSet:
 	overlay_veneer Party_GetAverageLevelFar
 	overlay_veneer PartyInventory_CountItemFar
 	overlay_veneer PartyInventory_CountFreeSlotsFar
+	.global Engine_EventWait
+	.thumb_func
+Engine_EventWait:
 	overlay_veneer Battle_WaitMode0Far
 	.global Engine_EventBegin
 	.thumb_func
@@ -64,6 +67,9 @@ Engine_EventBegin:
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
 	overlay_veneer PartyInventory_GiveItemFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func
@@ -87,6 +93,9 @@ Engine_EventSetMessage:
 	.thumb_func
 Engine_EventOpenMessage:
 	overlay_veneer UiText_OpenMessageAtObjectFar
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
 	.global Engine_ActorFaceDirection
 	.thumb_func

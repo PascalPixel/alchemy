@@ -14,7 +14,7 @@ extern u8 *gWindowWork;
 /* Draws a wide string one glyph tile per column; 3 starts a new row, the
    other control codes skip their operands. */
 
-s32 Func_08018efc(void *window, u32 c, s32 x, s32 y, s32 flags);
+s32 UiWindow_PutGlyph(void *window, u32 c, s32 x, s32 y, s32 flags);
 
 void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
 {
@@ -53,7 +53,7 @@ void UiText_RenderWideStringInWindow(s16 *text, void *window, s32 x, s32 y)
                 break;
             }
         } else {
-            Func_08018efc(window, c, x, y, 0);
+            UiWindow_PutGlyph(window, c, x, y, 0);
             if ((u16)(c - 0xde) > 1)
                 x++;
         }

@@ -77,7 +77,7 @@ void Ui_FillVramBlockPattern(void);
 s32 UiText_CopyMessageString(s32 message, s16 *text, s32 size);
 void UiText_RenderWideStringAtOffset(s16 *, struct SummonWindow *, s32, s32);
 void UiWindow_SetTilemapEntry(struct SummonWindow *, s32, s32, s32, s32);
-void Func_08018efc(struct SummonWindow *, s32, s32, s32, s32);
+void UiWindow_PutGlyph(struct SummonWindow *, s32, s32, s32, s32);
 void Ability_LoadGlyph(s32, s32, s32 *, s32 *, s32);
 void UiWork_SetParamNibble(s32 colour);
 void UiText_DrawCharacterAtOffset(s32, struct SummonWindow *, s32, s32);
@@ -214,7 +214,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                     col = 1;
                     for (element = 0; element <= 3; element++) {
                         UiWindow_SetTilemapEntry(counts, element + (s32)&Value_00005001, element * 2, 0, 0);
-                        Func_08018efc(counts, standby[element] + 48, col, 0, 0);
+                        UiWindow_PutGlyph(counts, standby[element] + 48, col, 0, 0);
                         col += 2;
                     }
                 }
@@ -246,7 +246,7 @@ s32 Func_08024934(s32 unused0, s32 unused1, const u8 *standby)
                         for (element = 0; element <= 3; element++) {
                             if (*required != 0) {
                                 UiWindow_SetTilemapEntry(window, element + (s32)&Value_00005001, col, index * 2, 0);
-                                Func_08018efc(window, *required + 48, col + 1, index * 2, 0);
+                                UiWindow_PutGlyph(window, *required + 48, col + 1, index * 2, 0);
                                 col += 2;
                             }
                             required++;

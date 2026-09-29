@@ -1372,7 +1372,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/FADE_ALPHA_IN.o"(.text)
         "*/recon/tbs/raw/080c0ea6.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/DISPLAY/SET_CONTROL.o"(.text)
-        "*/recon/tbs/raw/080c0eb8.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/INIT_TRANSITION_ENTRIES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/BATTLE/PRESENTATION/DIV16.o"(.text)
         "*/recon/tbs/raw/080c0eea.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/DEBUG/ADJUST_VALUE_WITH_BUTTONS.o"(.text)

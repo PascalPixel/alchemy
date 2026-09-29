@@ -15,7 +15,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/PUSH_BLOCK.o"(.text)
         "*/resource_37f_overlay.o"(.text.x020088f4)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/ENTRY_STATE.o"(.text)
-        "*/resource_37f_overlay.o"(.text.x02008a24)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SCENE_ENTRY_HOOK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/SANCTUM.o"(.text)
         "*/resource_37f_overlay.o"(.text.x02008f8c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SORU_IRIGUCHI/FORMATION.o"(.text)

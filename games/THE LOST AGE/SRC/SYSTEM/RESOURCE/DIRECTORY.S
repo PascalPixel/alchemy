@@ -165,29 +165,29 @@ Resource_DirectoryTable:
 	resource , Slots_TripleBanner
 	resource , Slots_PerfectBanner
 	resource , Slots_FinalGameBanner
-	resource , Resource_Data098
-	resource , Resource_Data099
-	resource , Resource_Data09A
-	resource , Resource_Data09B
-	resource , Resource_Data09C
-	resource , Resource_Data09D
+	resource , Summon_GreenHairedMaidenTiles
+	resource , Summon_SeaSerpentTiles
+	resource , Summon_PinkCloudTiles
+	resource , Summon_CrimsonBeastTiles
+	resource , Summon_RedSlashTiles
+	resource , Summon_RedCrescentTiles
 	resource , Resource_Data09E
 	resource , Resource_Data09F
-	resource , Resource_Data0A0
-	resource , Resource_Data0A1
-	resource , Resource_Data0A2
-	resource , Resource_Data0A3
-	resource , Resource_Data0A4
-	resource , Resource_Data0A5
-	resource , Resource_Data0A6
-	resource , Resource_Data0A7
-	resource , Resource_Data0A8
-	resource , Resource_Data0A9
-	resource , Resource_Data0AA
-	resource , Resource_Data0AB
-	resource , Resource_Data0AC
-	resource , Resource_Data0AD
-	resource , Resource_Data0AE
+	resource , Summon_ForestCanopyTiles
+	resource , Summon_BronzeAutomatonTiles
+	resource , Summon_ColourNoiseTiles
+	resource , Summon_GoldenDragonHeadTiles
+	resource , Summon_GoldenDragonTiles
+	resource , Summon_RobedGoddessTiles
+	resource , Summon_LeafWarriorTiles
+	resource , Summon_BellMaidenTiles
+	resource , Summon_WingedKnightATiles
+	resource , Summon_WingedKnightBTiles
+	resource , Summon_WingedKnightCTiles
+	resource , Summon_ChainedDemonTiles
+	resource , Summon_PurpleArmourTiles
+	resource , Summon_WhiteSpikesTiles
+	resource , Summon_GoldenScalesTiles
 	resource , BattleFx_GlowOrbSetSheet
 	resource , Resource_Data0B0
 	resource , Resource_Data0B1

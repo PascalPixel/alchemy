@@ -2,6 +2,8 @@
  * MENU/LINK_LOBBY/PROGRESS_TALK.C).
  * Remaining difference: its messages have catalogue names now; 40 halfwords
  * still differ from the ROM.
+ * psynergy editions (2026-09-29): all seven 0x29xx pool words differ between
+ * editions and are message ids; 0x305 and 0x02000240 are the same everywhere.
  * The listing keeps these rows. */
 #include "TYPES.H"
 extern u8 MsgLobbyTryingGetAway[];

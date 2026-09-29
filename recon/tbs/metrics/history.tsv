@@ -53,27 +53,27 @@ date	tbs_done	tbs_executable	tbs_percent	tla_done	tla_executable	tla_percent	mod
 2026-09-03	-	-	66.99	-	-	-	Fable 5.1=5	-
 2026-09-04	-	-	70.59	-	-	-	Fable 5.1=15;Opus 5=2;Sonnet 5=4	-
 2026-09-05	-	-	73.07	-	-	-	Fable 5.1=49;Opus 5=5;Sol 5.6=23;Sonnet 5=1	-
-2026-09-06	-	-	67.95	-	-	-	Astra 6=1;Sol 5.6=8	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-07	-	-	67.32	-	-	-	Astra 6=2;Fable 5.1=34;Sol 5.6=53	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-08	-	-	67.64	-	-	-	Sol 5.6=74	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-09	-	-	43.56	-	-	-	Astra 6=1;Opus 5=14;Sol 5.6=8	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-10	-	-	50.42	-	-	-	Fable 5.1=142;Opus 5=91;Sonnet 5=14	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-11	-	-	50.64	-	-	-	Fable 5.1=5;Grok=19	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-12	-	-	50.64	-	-	-	Grok=193;Sol 5.6=9	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-13	-	-	50.97	-	-	-	Astra 6=16;Luna 5.6=2;Sol 5.6=81	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-14	-	-	51.51	-	-	-	Astra 6=12;Sol 5.6=7	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-15	-	-	51.63	-	-	-	Astra 6=2;Luna 5.6=29;Sol 5.6=10	Overhaul: credit audit, compiler routing and source layout rebuilt
-2026-09-16	-	-	56.08	-	-	-	Opus 5=19;Sol 5.6=3	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-17	-	-	56.19	-	-	-	Astra 6=3;Opus 5=23	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-18	-	-	55.96	-	-	0.2	Astra 6=5;Sol 5.6=1	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-19	-	-	57.16	-	-	0.52	Astra 6=3;Luna 5.6=3;Sol 5.6=3	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-20	-	-	57.51	-	-	0.52	Astra 6=3;Luna 5.6=24;Opus 4.8=4;Terra 5.6=1	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-21	-	-	55.48	-	-	0.52	Luna 5.6=18;Opus 4.8=18	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-22	-	-	-	-	-	-	Luna 5.6=31;Opus 5.5=45;Sol 5.6=1;Terra 5.6=1	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-23	-	-	57.37	-	-	2.14	Opus 5.5=92	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-24	967498	1375934	-	42186	1975640	-	Opus 5.5=1253	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-25	-	-	-	-	-	-	-	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-26	1002076	1375934	-	42332	1975640	-	Astra 6=191;Opus 5.5=5;Sol 5.6=52;Sol 6=218	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-27	1013342	1375934	-	42338	1975640	-	Astra 6=398;GPT-6=1;Sol 6=171	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-28	735686	1369624	-	99838	1972424	-	Astra 6=17;Opus 5.5=304;Sol 6=10	Overhaul: oracle-leakage rebuild; sources, assets and scaffolding reworked, DONE re-measured from linked source only
-2026-09-29	1036100	1373046	-	102598	1972424	-	Opus 5.5=646;Untagged=13	-
+2026-09-06	-	-	67.95	-	-	-	Astra 6=1;Sol 5.6=8	Overhaul: tooling consolidated and unsupported credit withdrawn
+2026-09-07	-	-	67.32	-	-	-	Astra 6=2;Fable 5.1=34;Sol 5.6=53	Overhaul: tooling consolidated and unsupported credit withdrawn
+2026-09-08	-	-	67.64	-	-	-	Sol 5.6=74	Overhaul: tooling consolidated and unsupported credit withdrawn
+2026-09-09	-	-	43.56	-	-	-	Astra 6=1;Opus 5=14;Sol 5.6=8	Overhaul: tooling consolidated and unsupported credit withdrawn
+2026-09-10	-	-	50.42	-	-	-	Fable 5.1=142;Opus 5=91;Sonnet 5=14	-
+2026-09-11	-	-	50.64	-	-	-	Fable 5.1=5;Grok=19	-
+2026-09-12	-	-	50.64	-	-	-	Grok=193;Sol 5.6=9	-
+2026-09-13	-	-	50.97	-	-	-	Astra 6=16;Luna 5.6=2;Sol 5.6=81	-
+2026-09-14	-	-	51.51	-	-	-	Astra 6=12;Sol 5.6=7	-
+2026-09-15	-	-	51.63	-	-	-	Astra 6=2;Luna 5.6=29;Sol 5.6=10	-
+2026-09-16	-	-	56.08	-	-	-	Opus 5=19;Sol 5.6=3	-
+2026-09-17	-	-	56.19	-	-	-	Astra 6=3;Opus 5=23	Overhaul: source folders, layout and scoring unified
+2026-09-18	-	-	55.96	-	-	0.2	Astra 6=5;Sol 5.6=1	Overhaul: source folders, layout and scoring unified
+2026-09-19	-	-	57.16	-	-	0.52	Astra 6=3;Luna 5.6=3;Sol 5.6=3	-
+2026-09-20	-	-	57.51	-	-	0.52	Astra 6=3;Luna 5.6=24;Opus 4.8=4;Terra 5.6=1	-
+2026-09-21	-	-	55.48	-	-	0.52	Luna 5.6=18;Opus 4.8=18	Overhaul: scheduling tricks withdrawn
+2026-09-22	-	-	-	-	-	-	Luna 5.6=31;Opus 5.5=45;Sol 5.6=1;Terra 5.6=1	-
+2026-09-23	-	-	57.37	-	-	2.14	Opus 5.5=92	-
+2026-09-24	967498	1375934	-	42186	1975640	-	Opus 5.5=1253	-
+2026-09-25	-	-	-	-	-	-	-	-
+2026-09-26	1002076	1375934	-	42332	1975640	-	Astra 6=191;Opus 5.5=5;Sol 5.6=52;Sol 6=218	-
+2026-09-27	1013342	1375934	-	42338	1975640	-	Astra 6=398;GPT-6=1;Sol 6=171	-
+2026-09-28	735686	1369624	-	99838	1972424	-	Astra 6=17;Opus 5.5=304;Sol 6=10	Overhaul: oracle-leakage rebuild; DONE counts only linked source
+2026-09-29	1036100	1373046	-	102598	1972424	-	Opus 5.5=653;Untagged=14	-

@@ -1021,16 +1021,10 @@ Title_IntroTilesB:
 	.incbin "baserom.gba", 0x003afaaa, 0x00000002
 	.section .unidentified.083be3f2,"a"
 	.incbin "baserom.gba", 0x003be3f2, 0x00000002
-	.section .unidentified.083c3574,"a"
-	.global BattleFx_ParticleSequenceDataA
-BattleFx_ParticleSequenceDataA:
-	.incbin "baserom.gba", 0x003c3574, 0x00000784
-	.global BattleFx_ParticleSequenceDataB
-BattleFx_ParticleSequenceDataB:
-	.incbin "baserom.gba", 0x003c3cf8, 0x00001334
-	.global BattleFx_ParticleSequenceDataC
-BattleFx_ParticleSequenceDataC:
-	.incbin "baserom.gba", 0x003c502c, 0x0000064c
+	.section .unidentified.083c3cf5,"a"
+	.incbin "baserom.gba", 0x003c3cf5, 0x00000003
+	.section .unidentified.083c5677,"a"
+	.incbin "baserom.gba", 0x003c5677, 0x00000001
 	.global LuckyDice_GraphicsA
 LuckyDice_GraphicsA:
 	.incbin "baserom.gba", 0x003c5678, 0x00002e20

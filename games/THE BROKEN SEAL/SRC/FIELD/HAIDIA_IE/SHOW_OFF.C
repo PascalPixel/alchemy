@@ -43,7 +43,7 @@ void Villager_ShowOffPsynergy(void)
         SceneState_ApplyPair140And0();
         shakes = 0;
         for (i = 0; i < 40; i++) {
-            OverlayObject_UpdateOnFrameBit1(((s32 (*)())Engine_ActorGet)(17));
+            OverlayObject_UpdateOnFrameBit1((s32)Engine_ActorGet(17));
             Task_Wait(1);
         }
         Value2(Engine_ScheduleCallback, (s32)FieldScene_RunStep17, 0xc80);

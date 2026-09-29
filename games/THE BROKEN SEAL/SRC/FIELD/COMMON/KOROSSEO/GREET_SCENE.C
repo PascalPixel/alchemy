@@ -55,7 +55,7 @@ void Korosseo_RunGreetScene(s32 a0)
     s32 record;
     s32 v6;
 
-    record = Engine_ActorGet();
+    record = Engine_ActorGet(a0);
     p9 = *(s16 *)(record + 10);
     p10 = *(s16 *)(record + 18);
     Engine_EventBegin();
@@ -64,11 +64,13 @@ void Korosseo_RunGreetScene(s32 a0)
     Call3(Engine_ActorSetSpeed, 1, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 2, 0x10000, 0x8000);
     Call3(Engine_ActorSetSpeed, 3, 0x10000, 0x8000);
-    Call3((void (*)())Engine_ActorSetPosition, 0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x300000));
+    Call3((void (*)())Engine_ActorSetPosition, 0, (p9 << 16), ((p10 << 16) - 0x300000));
     Engine_ActorSetPosition(1, (p9 << 16) - 0x100000, (p10 << 16) - 0x280000);
     Engine_ActorSetPosition(2, (p9 << 16) + 0x100000, (p10 << 16) - 0x280000);
-    Value3(Engine_ActorSetPosition, 3, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x200000));
-    Engine_ActorSetPosition(a0, ((s32)p9 << 16), ((s32)((s32)p10 << 16) + -0x500000));
+    Value3(Engine_ActorSetPosition, 3, (p9 << 16), ((p10 << 16) - 0x200000));
+    Engine_ActorSetPosition(a0, (p9 << 16), ((p10 << 16) - 0x500000));
+    /* FAKEMATCH: the facing is built from a parked local, which keeps its
+     * constant in the register the reference holds it in for both uses. */
     v6 = 192;
     record = Engine_ActorGet(0);
     *(u16 *)(record + 6) = (v6 << 8);

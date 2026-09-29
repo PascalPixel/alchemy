@@ -40,7 +40,7 @@ s32 LinkLobby_RunBattleApplication(void)
 
     msg = (s32)MsgLobbyPleaseSpeakWhen;
     Engine_EventBegin();
-    Engine_ActorFaceActor(8, (*(union GameStateRows *)&gGameState).words[125], 0);
+    Engine_ActorFaceActor(8, gGameState.selected_actor, 0);
     if (LinkLobby_PeerSlotMatches(0) == 0) {
         Engine_TaskWait(1);
     }

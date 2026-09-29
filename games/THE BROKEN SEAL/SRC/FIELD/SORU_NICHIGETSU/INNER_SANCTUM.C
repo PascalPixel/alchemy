@@ -176,8 +176,6 @@ void Scene_EnterInnerSanctum(void)
     u32 i;
     s32 record;
     s32 request;
-    s32 base5_4010;
-    s32 base5_4010_2;
 
     Event_SetMessage((s32)MsgSoruWhRoom);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -201,21 +199,19 @@ void Scene_EnterInnerSanctum(void)
     Camera_MoveTo(0x1ec0000, -1, 0xa80000, 1);
     Camera_WaitForMove();
     Event_Wait(20);
-    base5_4010 = 0x4010;
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 20);
-    SetSolShindenActorStep(base5_4010, 6);
+    SetSolShindenActorStep(0x4010, 6);
     Actor_FaceDirection(ACTOR_SUKURETA, 0, 60);
     Actor_RunRepeatedMotion(ACTOR_SUKURETA, 2);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
-    Event_OpenMessage(base5_4010, 0);
+    Event_OpenMessage(0x4010, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_SetMessage((s32)MsgSoruLunaSolRooms);
     } else {
         Event_SetMessage((s32)MsgSoruRoomLunaOne);
     }
-    base5_4010_2 = 0x4010;
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 10);
-    SetSolShindenActorStep(base5_4010_2, 10);
+    SetSolShindenActorStep(0x4010, 10);
     request = (s32)MsgSoruMeanLookFarther;
     Event_SetMessage(request);
     Actor_FaceDirection(ACTOR_SUKURETA, 0, 40);
@@ -223,7 +219,7 @@ void Scene_EnterInnerSanctum(void)
     Actor_SetAnimationAndWait(ACTOR_SUKURETA, 4);
     Actor_FaceDirection(ACTOR_SUKURETA, 0x3000, 10);
     Actor_SetAnimation(ACTOR_SUKURETA, 4);
-    Event_OpenMessage(base5_4010_2, 0);
+    Event_OpenMessage(0x4010, 0);
     if (Event_ChooseYesNo(0, 0) == 0) {
         Event_SetMessage((request + 1));
         GameFlag_Set(FLAG_ROBIN_SEARCHING_FOR_SUKURETA);
@@ -244,20 +240,6 @@ void UpdateStatueTrapActor(void)
     EntA *scene_actor;
     EntA *target_actor;
     EntB *target_position;
-    s32 g1 = 0x810;
-    s32 g2 = 0x810;
-    s32 g3 = 0x810;
-    s32 g4 = 0x810;
-    s32 s1 = 0x10000;
-    s32 s2 = 0x8000;
-    s32 s3 = 0x20000;
-    s32 s4 = 0x10000;
-    s32 s5 = 0x4000;
-    s32 d1 = 0x120;
-    s32 d2 = 0x120;
-    s32 d3 = 0x120;
-    s32 d4 = 0x120;
-    s32 d5 = 0xc000;
 
     scene_actor = Engine_ActorGet(16);
     if (GameFlag_IsSet(0x809) == 0) {
@@ -273,29 +255,31 @@ void UpdateStatueTrapActor(void)
     Event_Begin();
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 0);
     Event_SetMessage((s32)MsgSoruWayLeadsOutSanctum);
-    if (GameFlag_IsSet(g1)!= 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+    if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         target_actor = Engine_ActorGet(0);
         if (target_actor != 0) {
             Actor_SetPosition(ACTOR_SUKURETA, target_actor->unk8, target_actor->unk10);
         }
         Event_Wait(4);
-        Actor_SetSpeed(ACTOR_SUKURETA, s1, s2);
-    } else if (GameFlag_IsSet(g2) != 0 || scene_actor->unk8 > 0x1540000) {
+        Actor_SetSpeed(ACTOR_SUKURETA, 0x10000, 0x8000);
+    } else if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
         Actor_SetPosition(ACTOR_SUKURETA, 0x1880000, 0xa80000);
         Event_Wait(4);
-        Actor_SetSpeed(ACTOR_SUKURETA, s3, s4);
+        Actor_SetSpeed(ACTOR_SUKURETA, 0x20000, 0x10000);
     }
-    if (GameFlag_IsSet(g3) != 0 || scene_actor->unk8 > 0x1540000) {
-        Actor_WalkToAndWait(ACTOR_SUKURETA, d1, 0xe8);
+    if (GameFlag_IsSet(0x810) != 0 || scene_actor->unk8 > 0x1540000) {
+        Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
     } else {
+        /* FAKEMATCH: the reference tests the entered flag here and drops
+         * the result; no use of it is recovered. */
         GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);
     }
-    Actor_WalkToAndWait(ACTOR_SUKURETA, d2, 0xe8);
-    Actor_FaceDirection(ACTOR_PARTY_LEADER, d5, 0);
-    Actor_FaceDirection(ACTOR_SUKURETA, s5, 10);
+    Actor_WalkToAndWait(ACTOR_SUKURETA, 0x120, 0xe8);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(ACTOR_SUKURETA, 0x4000, 10);
     Event_ShowMessageAndWait(ACTOR_SUKURETA, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, 3);
-    if (GameFlag_IsSet(g4)!= 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
+    if (GameFlag_IsSet(0x810) != 0 || GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED) == 0) {
         Actor_SetAnimation(ACTOR_SUKURETA, 2);
         target_position = Engine_ActorGet(0);
         if (target_position != 0) {
@@ -303,9 +287,9 @@ void UpdateStatueTrapActor(void)
         }
         Actor_WaitForMove(ACTOR_SUKURETA);
         Actor_SetPosition(ACTOR_SUKURETA, 0, 0);
-        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, d3, 0xe8);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x120, 0xe8);
     } else {
-        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, d4, 0xf8);
+        Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x120, 0xf8);
     }
     Event_End();
 }

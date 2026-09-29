@@ -23,7 +23,7 @@ void FieldScene_RunOpeningSequenceSecond(void)
         Event_ShowMessage(8, 0);
         Event_End();
     }
-    *(u32 *)(*(u8 **)&gEventWork + 456) = 16;
+    *(u32 *)((u8 *)gEventWork + 456) = 16;
     Value1((s32 (*)())Engine_AudioPlayCue, 123);
     Event_RequestExit(14);
 }

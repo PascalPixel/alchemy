@@ -51,7 +51,6 @@ void FieldScene_RunPositionTransferPresentation(void)
 {
     s32 record;
     s32 message;
-    s32 actions;
 
     ConfigureSceneMotionFlags(0x1b80000, -1, 0xb00000, 0x1000001);
     Actor_SetPosition(ACTOR_PARTY_LEADER, 0x1b80000, 0x860000);
@@ -102,10 +101,9 @@ void FieldScene_RunPositionTransferPresentation(void)
     FieldScene_RunStepThen10(8);
     Actor_FaceDirection(8, 0, 20);
     Call4(ConfigureSceneMotionFlags, 0x1b80000, -1, 0x860000, 0x10000000);
-    actions = (s32)FuneHeya_ProgressTableA;
-    Actor_EnableActionCallback(ACTOR_GERALD, actions);
-    Value2(Engine_ActorEnableActionCallback, 2, actions);
-    Object_SetActionCallbackAndRefreshById(3, actions);
+    Actor_EnableActionCallback(ACTOR_GERALD, (s32)FuneHeya_ProgressTableA);
+    Value2(Engine_ActorEnableActionCallback, 2, (s32)FuneHeya_ProgressTableA);
+    Object_SetActionCallbackAndRefreshById(3, (s32)FuneHeya_ProgressTableA);
     Event_Wait(40);
     GameFlag_Set(0x301);
     FieldScene_RunSceneStep(23, 0, 0);

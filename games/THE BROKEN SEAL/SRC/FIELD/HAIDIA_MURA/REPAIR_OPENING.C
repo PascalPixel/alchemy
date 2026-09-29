@@ -5,16 +5,16 @@ extern u8 MsgHaidiaRepairCaption[];
 void FieldScene_RunLargeStagingSequence(void)
 {
     u32 i;
+    /* FAKEMATCH: rec's dead zero initialiser, and k, none2 and facing below,
+     * park values in locals only to keep the reference's register
+     * assignment; folding any of them into its uses changes it. */
     s32 rec = 0;
     s32 rec3;
     u8 *rec8;
     u8 *record;
     s32 none2;
-    s32 action;
     s32 msg;
-    s32 callback_a;
     s32 k;
-    s32 callback_b;
     s32 facing;
 
     rec3 = Value1(Engine_ActorGet, ACTOR_PARTY_LEADER);
@@ -48,12 +48,11 @@ void FieldScene_RunLargeStagingSequence(void)
     *(s32 *)(rec + 8) = k;
     Actor_SetSpriteFlags(rec, 0);
     record = Engine_ActorGet(11);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Actor_SetSpriteFlags((struct FieldActor *)record, 0);
     record = Engine_ActorGet(12);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Actor_SetSpriteFlags((struct FieldActor *)record, 0);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    action = (s32)gLeaderHammerAction;
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, action);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, (s32)gLeaderHammerAction);
     Graphics_EnableObjLayerAndCallbacks();
     msg = (s32)MsgHaidiaRepairCaption;
     UiText_ShowCenteredMessage(msg, 0, 0);
@@ -113,7 +112,7 @@ void FieldScene_RunLargeStagingSequence(void)
     Event_Wait(40);
     Event_ShowMessageAndWait(0x100a, 0, 40);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 11);
-    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, action);
+    Actor_EnableActionCallback(ACTOR_PARTY_LEADER, (s32)gLeaderHammerAction);
     Camera_FollowActor(ACTOR_JASMINE, 1);
     Camera_WaitForMove();
     Event_Wait(40);
@@ -150,36 +149,35 @@ void FieldScene_RunLargeStagingSequence(void)
         Task_Wait(1);
     }
     Actor_SetSpritePriority(ACTOR_GERALD, 1);
-    callback_a = (s32)SceneState_SetValue1ThenCall;
-    Call2(Engine_TaskAddCallback, callback_a, 0xc80);
-    callback_b = (s32)FieldScene_RunStep9;
-    Value2(Engine_TaskAddCallback, callback_b, 0xc80);
+    Call2(Engine_TaskAddCallback, (s32)SceneState_SetValue1ThenCall, 0xc80);
+    Value2(Engine_TaskAddCallback, (s32)FieldScene_RunStep9, 0xc80);
     record = Engine_ActorGet(14);
-    Actor_SetSpriteFlags((s32)record, 0);
+    Actor_SetSpriteFlags((struct FieldActor *)record, 0);
     none2 = 0;
     rec8[85] = none2;
-    *(s32 *)((s32)rec8 + 8) = 0x1ac0000;
-    *(s32 *)((s32)rec8 + 12) = 0xd00000;
-    *(s32 *)((s32)rec8 + 16) = 0x2480000;
+    *(s32 *)(rec8 + 8) = 0x1ac0000;
+    *(s32 *)(rec8 + 12) = 0xd00000;
+    *(s32 *)(rec8 + 16) = 0x2480000;
     facing = 0x8000;
-    *(u16 *)((s32)rec8 + 6) = facing;
-    *(s32 *)((s32)rec8 + 108) = (s32)Effect_ConfigureSpawnedParticle;
+    *(u16 *)(rec8 + 6) = facing;
+    *(s32 *)(rec8 + 108) = (s32)Effect_ConfigureSpawnedParticle;
     Event_Wait(4);
     Actor_SetSpeed(14, 0x20000, 0x20000);
     Call4(Object_SetPosition, (s32)rec8, 0x1980000, 0xd00000, 0x2480000);
     Event_Wait(40);
     Actor_SetSpeed(9, 0x2666, 0x1333);
     Actor_SetSpeed(14, 0x2666, 0x1333);
+    /* FAKEMATCH: the reference looks actor 9 up here and drops the result. */
     Engine_ActorGet(9);
     Call4(Object_SetPosition, (s32)rec8, 0x1880000, 0xd00000, 0x2480000);
     Actor_MoveToAndWait(9, 0x17a, 0x248);
     Event_Wait(20);
     Event_ShowMessageAndWait(0x2005, 0, 10);
-    *(s32 *)((s32)rec8 + 108) = none2;
+    *(s32 *)(rec8 + 108) = none2;
     Actor_SetSpritePriority(ACTOR_GERALD, 2);
     Actor_Get(ACTOR_GERALD)->priority_flags |= ACTOR_PRIORITY_AUTOMATIC;
-    Scheduler_RemoveCallback(callback_a);
-    Scheduler_RemoveCallback(callback_b);
+    Scheduler_RemoveCallback((s32)SceneState_SetValue1ThenCall);
+    Scheduler_RemoveCallback((s32)FieldScene_RunStep9);
     Task_Wait(1);
     Actor_SetChildValue(ACTOR_GERALD, 0);
     Actor_SetChildValue(9, 0);

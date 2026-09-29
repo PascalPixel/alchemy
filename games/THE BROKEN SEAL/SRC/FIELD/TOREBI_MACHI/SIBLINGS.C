@@ -20,6 +20,8 @@ void FieldScene_RunSupplementalSequenceTwo(void)
     s16 facing;
     s32 msg;
 
+    /* FAKEMATCH: the event work is read into a local before the actor
+     * lookup, where the reference loads it. */
     work = gEventWork;
     actor = Engine_ActorGet(16);
     facing = actor->facing;
@@ -60,6 +62,8 @@ void FieldScene_RunSiblingsTalk(void)
     s16 facing;
     s32 msg;
 
+    /* FAKEMATCH: the event work is read into a local before the actor
+     * lookup, where the reference loads it. */
     work = gEventWork;
     actor = Engine_ActorGet(17);
     facing = actor->facing;

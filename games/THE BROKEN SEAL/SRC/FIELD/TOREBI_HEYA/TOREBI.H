@@ -22,11 +22,6 @@ extern struct Ent Data_02009dcc[];
 
 /* Contiguous unnamed leaf-owner run for resource_3b6. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 /* The scene step counter at 0x1d8 of the shared scene work record. */
 
 /* 0x02000d6a serves two imports: the one-argument message at +0x04 and the
@@ -36,7 +31,12 @@ extern struct Ent Data_02009dcc[];
 /* Pool-forced message base: a SYMBOL_REF gcc cannot fold, so the two
  * sibling ids stay `adds r0, r5, #1` / `#2` off one pooled word. */
 
-/* Old-style declarations: interfaces vary by call site across this overlay. */
+/* FAKEMATCH: call sites spelled through these wrappers, the SceneInit_
+ * and Scene_ ones included, pass their constants straight into the
+ * argument registers; a direct call precomputes a costly constant into a
+ * pseudo that the compiler then shares with later uses in the block. A
+ * value-returning call also sets r0 last of its arguments. The old-style
+ * declarations vary by call site across this overlay. */
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);

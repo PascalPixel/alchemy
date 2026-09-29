@@ -2,6 +2,7 @@
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "RAM_BUFFER.H"
 
 extern u8 gBattleFxWork[];
 void ColorBuffer_BackupAndHalve(const void *source, void *destination, s32 size);
@@ -30,7 +31,7 @@ void BattleFx_FlushPendingGraphicsTransfer(void)
 
     heap_cache = (void **)gBattleFxWork;
     work = heap_cache[0];
-    source = (void *)0x02010000;
+    source = Ram_MapCellBuffer;
     if (work->transfer_pending != 1)
         return;
 

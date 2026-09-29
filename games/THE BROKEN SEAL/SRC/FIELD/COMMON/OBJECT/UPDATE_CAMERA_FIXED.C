@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
+extern const s32 Camera_FixedViewMatrix[];
 
 /* The fixed-camera variant of the field object pass: it aims the view from
    the camera eye toward its target, then walks the object table from the
@@ -97,7 +98,7 @@ void ObjectSystem_UpdateCameraFixed(void)
     Render_ResetTransformState();
     if (GameFlag_TestFar(0x16b)) {
         angle += 0xffffe000;
-        Iwram_TransformMatrix((const s32 *)0x08013190);
+        Iwram_TransformMatrix(Camera_FixedViewMatrix);
         Graphics_PrepareTransferAndRun(eye, target);
     } else {
         Graphics_PrepareTransferInIwramWork(eye, target);

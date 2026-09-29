@@ -1,5 +1,7 @@
 #include "TYPES.H"
 #include "MAP.H"
+#include "RAM_BUFFER.H"
+extern u8 gMapCellBuffer[];
 
 /* Decodes the tilemap staged at 0x02010000 (mode byte at +1) into
    gMapBlocks: a plain halfword copy, a byte-planar delta, or a halfword
@@ -12,12 +14,12 @@ void Tilemap_DecodeStagedBuffer(s32 size)
     s32 index;
     u32 temp;
 
-    source = (u16 *)0x02010002;
+    source = (u16 *)(Ram_MapCellBuffer + 2);
     destination = (u16 *)gMapBlocks;
     temp = size - 1;
     count = (s32)(temp + (temp >> 31)) >> 1;
     if (size & 1) {
-        switch (*(u8 *)0x02010001) {
+        switch (((u8 *)gMapCellBuffer)[1]) {
         case 0: {
             index = 0;
             if (index < count) {
@@ -38,7 +40,7 @@ void Tilemap_DecodeStagedBuffer(s32 size)
             u8 *left;
             u8 *right;
             previous = 0;
-            left = (u8 *)0x02010002;
+            left = Ram_MapCellBuffer + 2;
             index = 0;
             right = left;
             right += count;

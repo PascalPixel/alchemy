@@ -103,9 +103,9 @@ AlchemyUncreditedEnd_080018b4:
 .L_080019d4:
 	pop	{r5, r6, r7, r8, r9, sl, fp, lr}
 	bx	lr
-	.4byte	0x030011b0
-	.4byte	0x030011fc
-	.4byte	0x03001248
-	.4byte	0x02003010
-	.4byte	0x020054d0
-	.4byte	0x03000260
+	.4byte	gOamBucketMasks + 32	@ past its eight words, walked downwards
+	.4byte	gObjAffineCount
+	.4byte	gOamUsage
+	.4byte	gOamBuckets
+	.4byte	gObjAffineMatrices
+	.4byte	IwramFillWords

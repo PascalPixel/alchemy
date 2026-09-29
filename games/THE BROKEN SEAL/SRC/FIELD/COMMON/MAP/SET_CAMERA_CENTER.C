@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "MAP_SCROLL.H"
+#include "RAM_BUFFER.H"
 
 static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
 {
@@ -8,12 +9,12 @@ static __inline__ void CopyCell(u32 *map, u8 *base, u32 rowmod, u32 colmod)
     u8 *dest;
     u32 index = (*map << 20) >> 19;
 
-    tiles = (u32 *)0x02020000;
+    tiles = (u32 *)Ram_MapBlocks;
     tiles += index;
     /* FAKEMATCH: integer address addition preserves the add operand order. */
     dest = (u8 *)((rowmod + colmod) * 2 + (u32)base);
     *(u32 *)dest = *tiles;
-    tiles = (u32 *)0x02020004;
+    tiles = (u32 *)(Ram_MapBlocks + 4);
     tiles += index;
     *(u32 *)(dest + 64) = *tiles;
 }
@@ -66,7 +67,7 @@ void Map_SetCameraCenter(s32 x, s32 y)
                 col = (x / 2) & 127;
                 colmod = x & 30;
                 for (j = 0; j <= 15; j++) {
-                    u32 *map = (u32 *)0x02010000;
+                    u32 *map = (u32 *)Ram_MapCellBuffer;
                     map += row + col;
                     CopyCell(map, dest, rowmod, colmod);
                     col = (col + 1) & 127;

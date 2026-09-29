@@ -4,6 +4,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 extern u8 gBattleFxWork[];
 extern u8 gCameraWork[];
 
@@ -54,7 +55,7 @@ void BattleFx_RunSwirlingStars(void *object)
     Resource_LoadAndDecompress((s32)&ResourceId_StarDotSheet, work, 1, 1);
     BattleFx_FetchRectangleBlitters(work->effect->side ^ 1, (u32 *)draw);
     for (i = 0; i != 256; i++) {
-        star = &((struct EffectStep *)0x02010000)[i];
+        star = &((struct EffectStep *)Ram_MapCellBuffer)[i];
         star->x = ((Random16() & 0xff) - 127) << 16;
         star->y = ((Random16() & 0xff) - 127) << 16;
         star->z = ((Random16() & 0xff) - 127) << 16;
@@ -76,7 +77,7 @@ void BattleFx_RunSwirlingStars(void *object)
         Render_ResetTransformState();
         Graphics_PrepareTransferInIwramWork(facing, facing + 12);
         SceneTransform_ApplyPosition(record);
-        star = (struct EffectStep *)0x02010000;
+        star = (struct EffectStep *)Ram_MapCellBuffer;
         for (i = 0; i != 64; i++, star++) {
             if (frame > i / 4 && star->variant == 0) {
                 s32 size;

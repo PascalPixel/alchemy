@@ -1,9 +1,10 @@
 #include "TYPES.H"
+extern u8 gSceneState[];
 
 /* Set the blend mode, then the blend weights for the current fade level. */
 void ArutamiraDou_ApplyFadeBlend(void)
 {
-    s8 level = *(s8 *)0x02001004;
+    s8 level = *(s8 *)(gSceneState + 4);
 
     /* FAKEMATCH: the do-while wrap keeps the level's sign extension after
      * the BLDCNT store. */

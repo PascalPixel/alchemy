@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern const u8 Menu_HexDigitsString[];
 
 extern const u8 Menu_ColonString[];
 
@@ -16,7 +17,7 @@ void Menu_DrawFlagBitTable(s32 window, s32 start_flag)
     char bits[17];
 
     RenderOutput_PrepareForRedraw();
-    UiText_DrawStringInWindow(0x0803742c, window, 48, 0);
+    UiText_DrawStringInWindow((s32)Menu_HexDigitsString, window, 48, 0);
 
     flag = start_flag << 8;
     for (row = 0; row != 16; row++) {

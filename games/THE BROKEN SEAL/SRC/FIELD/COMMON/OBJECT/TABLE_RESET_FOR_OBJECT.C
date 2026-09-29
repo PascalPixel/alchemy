@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "RAM_BUFFER.H"
 
 /* Rebuild the object table for a new scene: copy the player template, spawn
  * the leader and the scene's own objects, put the leader on a ladder when
@@ -65,7 +66,7 @@ struct MapCell {
     u8 unknown_3;
 };
 
-#define MAP_CELLS ((struct MapCell *)0x02010000)
+#define MAP_CELLS ((struct MapCell *)Ram_MapCellBuffer)
 
 struct ResourceMetadata {
     u8 unknown_0[5];

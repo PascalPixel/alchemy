@@ -2,7 +2,7 @@
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
 #include "GLOBAL_CELLS.H"
-#include "TBS_EDITION.H"
+#include "RAM_BUFFER.H"
 extern u8 Data_03001e70[];
 
 /* display/state/clear_flags.c */
@@ -27,14 +27,6 @@ void DisplayState_ClearFlags(s32 clear_0800, s32 clear_0400, s32 clear_0200)
 /* display/transition/update.c */
 /* Signed division runs from IWRAM through the register-call veneer. */
 
-#if defined(TBS_EDITION_DE)
-#define STATE_CELL_ADDR 0x03001EDC
-#define DISPLAY_CELL_ADDR 0x03001E80
-#else
-#define STATE_CELL_ADDR 0x03001ECC
-#define DISPLAY_CELL_ADDR 0x03001E70
-#endif
-
 struct DisplayTransitionState {
     u8 pad_000[0x52a];
     u16 transition_value;
@@ -56,9 +48,9 @@ extern s32 Scheduler_RemoveCallback(void (*)(void));
 void DisplayTransition_Update(void)
 {
     struct DisplayTransitionState *state =
-        *(struct DisplayTransitionState **)STATE_CELL_ADDR;
+        *(struct DisplayTransitionState **)Ram_DisplayWork;
     struct DisplayTransitionRegisters *display =
-        *(struct DisplayTransitionRegisters **)DISPLAY_CELL_ADDR;
+        *(struct DisplayTransitionRegisters **)Ram_MapWork;
     s8 *duration = &state->transition_duration;
     u32 display_value;
 

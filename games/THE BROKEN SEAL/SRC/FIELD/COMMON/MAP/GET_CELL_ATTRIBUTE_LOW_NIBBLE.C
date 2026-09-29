@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
+#include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
 extern u8 Data_03001e70[];
 
@@ -23,5 +24,5 @@ s32 Map_GetCellAttributeLowNibble(s32 index, s32 x, s32 y)
     row = y / 16;
     map += (col + (row << 7)) * 4;
     attr = map[3];
-    return *(u8 *)(0x0202c000 + attr * 4) & 15;
+    return *(Ram_MapCollision + attr * 4) & 15;
 }

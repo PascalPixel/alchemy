@@ -1,13 +1,7 @@
 #include "RENDER_INPUT.H"
 #include "TYPES.H"
-#include "TBS_EDITION.H"
+#include "RAM_BUFFER.H"
 #include "RESOURCE.H"
-
-#if defined(TBS_EDITION_DE)
-#define TABLE_ADDR 0x03001B20
-#else
-#define TABLE_ADDR 0x03001B10
-#endif
 
 void *RenderOutput_AcquireFree(void);
 void Resource_ResetEntry(u32);
@@ -41,7 +35,7 @@ struct RenderOutput *RenderOutput_Create(
     /* Xをbit16～24、Yをbit0～7へ置き、arg1のフラグを重ねる。 */
     output->packed = (x << 16) | y | arg1;
     output->table.value =
-        ((struct TableEntry *)TABLE_ADDR)[arg0].value >> 5;
+        ((struct TableEntry *)Ram_VramBlockCache)[arg0].value >> 5;
     output->sentinel = 0xff;
     output->zero = 0;
     output->x = x;

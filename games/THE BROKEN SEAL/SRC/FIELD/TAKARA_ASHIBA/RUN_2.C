@@ -4,6 +4,12 @@
 
 #include "STAGED_ACTOR.H"
 #include "SELECT_OVERLAY_DATA_BY_RUNTIME_SELECTOR.H"
+s32 SceneActor_FaceTowardActorZero();
+void SceneActor_PublishMarkerBySlotZeroHeight(void);
+void ActorPresentation_PlaceActorFourteenOnActorNine(void);
+void TakaraAshiba_RaiseTriggerOnStand(void);
+void SceneState_TriggerColumnTen(void);
+void SceneState_TriggerColumnNineteen(void);
 /* FAKEMATCH: calls that cast Engine_ScheduleCallback to another return type keep their original register order. */
 s32 Engine_ScheduleCallback();
 
@@ -171,9 +177,9 @@ void FieldScene_RunScene3b4_02002290(void)
     *(s32 *)(record + 24) = 0xb333;
     record = Engine_GetTriggerActor(12);
     *(s32 *)(record + 24) = 0xb333;
-    Call2(Engine_ScheduleCallback, 0x20097ad, 0xc80);
-    Value2(Engine_ScheduleCallback, 0x200941d, 0xc80);
-    Value2(Engine_ScheduleCallback, 0x2009309, 0xc80);
+    Call2(Engine_ScheduleCallback, (s32)SceneState_TriggerColumnNineteen, 0xc80);
+    Value2(Engine_ScheduleCallback, (s32)SceneState_TriggerColumnTen, 0xc80);
+    Value2(Engine_ScheduleCallback, (s32)TakaraAshiba_RaiseTriggerOnStand, 0xc80);
     {
         u16 t;
         t = 0x3f42;
@@ -188,8 +194,8 @@ void FieldScene_RunScene3b4_02002334(void)
     s32 record;
 
     *(u8 *)(Object_GetById(14) + 85) = 0;
-    Call2(Engine_ScheduleCallback, 0x2009e95, 0xc80);
-    Value2(Engine_ScheduleCallback, 0x2009edd, 0xc80);
+    Call2(Engine_ScheduleCallback, (s32)ActorPresentation_PlaceActorFourteenOnActorNine, 0xc80);
+    Value2(Engine_ScheduleCallback, (s32)SceneActor_PublishMarkerBySlotZeroHeight, 0xc80);
     MapObject_SetPosition(107, 0, 0);
     if (GameFlag_IsSet(0xed9) != 0) {
         Actor_SetAnimation(14, 2);
@@ -211,7 +217,7 @@ void FieldScene_RunScene3b4_02002334(void)
         if (GameFlag_IsSet(0x9ca) != 0) {
             Actor_SetPosition(15, 0x3580000, 0x3380000);
             record = Engine_GetTriggerActor(15);
-            *(s32 *)(record + 108) = 0x2008aa9;
+            *(s32 *)(record + 108) = (s32)SceneActor_FaceTowardActorZero;
         } else if (GameFlag_IsSet(0x9c9) != 0) {
             Actor_SetPosition(15, 0x3780000, 0x2980000);
             record = Value1(Engine_GetTriggerActor, 15);

@@ -2,6 +2,7 @@
 #include "SYSTEM.H"
 #include "DMA.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 
 struct BgScroll {
     s16 x;
@@ -50,8 +51,8 @@ s32 Title_ShowSplashScreen(s32 mode)
     gBgScroll[2].y = result;
     data = Resource_GetTableEntry(resource);
     Dma_Set(data, (void *)0x05000000, 0x84000070, (volatile u32 *)0x040000d4);
-    Resource_DecodeType01(data + 448, (void *)0x02010000);
-    Dma_Set((void *)0x02010000, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
+    Resource_DecodeType01(data + 448, Ram_MapCellBuffer);
+    Dma_Set(Ram_MapCellBuffer, (void *)0x06004000, 0x84002580, (volatile u32 *)0x040000d4);
     tile = 256;
     map = (u16 *)0x06003000;
     y = 0;

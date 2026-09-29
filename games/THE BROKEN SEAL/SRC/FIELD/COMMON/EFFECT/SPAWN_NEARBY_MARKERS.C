@@ -1,4 +1,5 @@
 #include "TYPES.H"
+extern const u8 BattleFx_MarkerParticleScript[];
 void BattleFx_SpawnRandomParticleAtPosition();
 extern struct MapRenderWork *gMapWork;
 
@@ -89,7 +90,7 @@ void FieldEffect_SpawnNearbyMarkers(void)
                                variable, which keeps both in r5. */
                             actor = (struct FieldActor *)Object_CreateFar(22, (x << 20) + 0x80000, 0, (z << 20) + 0x80000);
                             if (actor != 0) {
-                                ObjectDispatch_InitializeFar((s32)actor, 0x0809e8a0);
+                                ObjectDispatch_InitializeFar((s32)actor, (s32)BattleFx_MarkerParticleScript);
                                 ObjectDispatch_SetSingleChildField26Far((s32)actor, 0);
                                 *(s32 *)((u8 *)actor + 108) = (s32)BattleFx_SpawnRandomParticleAtPosition;
                             }

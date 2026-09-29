@@ -1,10 +1,12 @@
 /* Draft of WorldMap_MeetVenusDjinni, resource_371 at 0x02009ca4 (FIELD/WORLD_MAP/VENUS_DJINNI.C).
- * Remaining difference (18 instructions): the two all-zero Djinni calls after
- * the leader-position join load r0 first where the ROM loads r1, r2, r0; the
- * scale-up loop counts 16..1 with bne where the ROM counts 15..0 with bge (the
- * i = 0 at the top keeps the ROM's zero in r5 but hides the loop's start
- * value); the rise to 0x100000 builds its argument earlier; the Ability
- * message's jump and message load r0 first; path B's walk loads x before z.
+ * Remaining difference (score 3120 against the listing's bare addresses, 8
+ * register-only, 2 reordered): the two all-zero Djinni calls after the
+ * leader-position join load r0 first where the ROM loads r1, r2, r0; GCC
+ * orders arguments that way when r0 still holds a live value at the call.
+ * The Ability message's jump (r2, r0, r1) and message (r1, r0) likewise; the
+ * rise to 0x100000 builds its argument earlier; path B's walk loads x before
+ * z. The scale-up loop now counts 15..0 with bge as the ROM does. Calling
+ * Engine_ActorJump directly or passing a zero variable changes nothing.
  * Linking it needs the IMPORT.S labels it calls, which are committed. */
 /* The world map's Venus Djinni: on the first meeting it joins Isaac, grows
  * from a speck and explains itself, asking until the party agrees to listen;
@@ -74,7 +76,7 @@ void WorldMap_MeetVenusDjinni(void)
         djinni->velocity_y = 0;
         *(s32 *)djinni->unknown_14 = 0;
         Engine_ObjectSetPosition(djinni, 0x15d00000, 0, 0x5300000);
-        for (i = 0; i < 16; i++) {
+        for (i = 15; i >= 0; i--) {
             djinni->scale_x += 0x800;
             djinni->scale_y += 0x800;
             Task_Wait(1);

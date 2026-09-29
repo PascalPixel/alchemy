@@ -1,148 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008030,"ax",%progbits
-	.balign 4
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02000030_0
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02000030_2
-	ldr r0, [pc, #24]
-	b .L_02000030_1
-.L_02000030_2:
-	ldr r0, [pc, #24]
-.L_02000030_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000013
-	.4byte 0x02009d04
-	.4byte 0x00000010
-	.4byte 0x02009d64
-	.4byte 0x02009cd4
-	.section .text.x0200807c,"ax",%progbits
-	.balign 4
-	.global Func_0200007c
-	.thumb_func
-Func_0200007c:
-	push {r5, lr}
-	ldr r1, [pc, #76]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_0200007c_0
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #11
-	blt .L_0200007c_1
-	cmp r3, #13
-	ble .L_0200007c_2
-	cmp r3, #16
-	bgt .L_0200007c_1
-	ldr r0, [pc, #44]
-	b .L_0200007c_3
-.L_0200007c_2:
-	ldr r0, [pc, #44]
-	b .L_0200007c_3
-.L_0200007c_1:
-	ldr r5, [pc, #44]
-	adds r0, r5, #0
-	bl 0x02009bbc
-	adds r0, r5, #0
-	b .L_0200007c_3
-.L_0200007c_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_0200007c_4
-	ldr r0, [pc, #32]
-	b .L_0200007c_3
-.L_0200007c_4:
-	ldr r0, [pc, #32]
-.L_0200007c_3:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x00000010
-	.4byte 0x0200a1b8
-	.4byte 0x0200a050
-	.4byte 0x02009fd8
-	.4byte 0x00000013
-	.4byte 0x0200a2a8
-	.4byte 0x02009fc0
-	.global Func_020000ec
-	.thumb_func
-Func_020000ec:
-	push {lr}
-	ldr r1, [pc, #68]
-	movs r0, #224
-	lsls r0, r0, #1
-	adds r3, r1, r0
-	movs r0, #0
-	ldrsh r2, [r3, r0]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_020000ec_0
-	ldr r0, [pc, #56]
-	b .L_020000ec_1
-.L_020000ec_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_020000ec_2
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r1, r2
-	movs r0, #0
-	ldrsh r3, [r3, r0]
-	cmp r3, #11
-	blt .L_020000ec_3
-	cmp r3, #13
-	ble .L_020000ec_4
-	cmp r3, #16
-	bgt .L_020000ec_3
-	ldr r0, [pc, #32]
-	b .L_020000ec_1
-.L_020000ec_4:
-	ldr r0, [pc, #32]
-	b .L_020000ec_1
-.L_020000ec_3:
-	ldr r0, [pc, #32]
-	b .L_020000ec_1
-.L_020000ec_2:
-	ldr r0, [pc, #32]
-.L_020000ec_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000013
-	.4byte 0x0200a2e4
-	.4byte 0x00000010
-	.4byte 0x0200a524
-	.4byte 0x0200a41c
-	.4byte 0x0200a32c
-	.4byte 0x0200a2d8
 	.section .text.x02008420,"ax",%progbits
 	.balign 4
 	.global Func_02000420
@@ -281,37 +138,6 @@ Func_02000420:
 	.4byte 0x00001032
 	.4byte 0x0000e666
 	.4byte 0x00000143
-	.section .text.x020088f4,"ax",%progbits
-	.balign 4
-	.align 2
-	.global Func_020008f4
-	.thumb_func
-Func_020008f4:
-	push {lr}
-	ldr r3, [pc, #40]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	bne .L_020008f4_0
-	bl 0x0200892c
-	b .L_020008f4_1
-.L_020008f4_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_020008f4_1
-	bl 0x02008a24
-.L_020008f4_1:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000013
-	.4byte 0x00000010
 	.section .text.x02008f8c,"ax",%progbits
 	.balign 4
 	.global Func_02000f8c
@@ -989,6 +815,8 @@ Func_02000f8c:
 	.4byte 0x00000804
 	.4byte 0x0000012f
 	.section .rodata.part1,"a",%progbits
+	.global gSoruIriguchiEntrancesOther
+gSoruIriguchiEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1001,6 +829,8 @@ Func_02000f8c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEntrances2
+gSoruIriguchiEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1025,6 +855,8 @@ Func_02000f8c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEntrances1
+gSoruIriguchiEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -1178,12 +1010,16 @@ SoruIriguchi_Exits:
 	.4byte 0x1100100b
 	.4byte 0xffffffff
 	.4byte 0x000001ff
+	.global gSoruIriguchiPlacementsOther
+gSoruIriguchiPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements1
+gSoruIriguchiPlacements1:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1214,6 +1050,8 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements1Entrances11To13
+gSoruIriguchiPlacements1Entrances11To13:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1304,6 +1142,8 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements1Entrances14To16
+gSoruIriguchiPlacements1Entrances14To16:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1364,6 +1204,8 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiPlacements2
+gSoruIriguchiPlacements2:
 	.4byte 0xffff007a
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -1376,9 +1218,13 @@ SoruIriguchi_Exits:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEventsOther
+gSoruIriguchiEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents2
+gSoruIriguchiEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1397,6 +1243,8 @@ SoruIriguchi_Exits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents1
+gSoruIriguchiEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1457,6 +1305,8 @@ SoruIriguchi_Exits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents1Entrances11To13
+gSoruIriguchiEvents1Entrances11To13:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -1523,6 +1373,8 @@ SoruIriguchi_Exits:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gSoruIriguchiEvents1Entrances14To16
+gSoruIriguchiEvents1Entrances14To16:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

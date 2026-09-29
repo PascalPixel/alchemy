@@ -3,4 +3,4 @@
  * edition's own source before the draft can compile. The owner keeps its one
  * name, Battle_ResolveTargetAction; this edition's link places it. */
 #define TLA_EDITION_IT
-#include "../../ja/main/08120450.c"
+#include "../../en/main/08120454.c"

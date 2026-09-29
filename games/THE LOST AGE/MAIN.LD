@@ -962,6 +962,8 @@ SECTIONS
         "*/games/THE LOST AGE/SRC/BATTLE/EVENT_QUEUE_SET_FLAG_BIT0.o"(.text)
         "*/recon/tla/raw/081201c4.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/081203c8.o"(.text .rodata .data .padding)
+        "*/recon/tla/raw/08120454.o"(.text .rodata .data .padding)
+        "*/recon/tla/raw/081224c0.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08122514.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08122c18.o"(.text .rodata .data .padding)
         "*/recon/tla/raw/08122c4c.o"(.text .rodata .data .padding)

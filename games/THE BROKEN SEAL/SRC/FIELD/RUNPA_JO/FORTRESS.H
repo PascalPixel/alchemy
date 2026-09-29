@@ -125,15 +125,8 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
-s32 SelectPrimarySceneData(void);
 
 s32 GetEmptySceneData(void);
-
-s32 SelectSecondarySceneData(void);
-
-s32 SelectTertiarySceneData(void);
-
-s32 SelectQuaternarySceneData(void);
 
 void ConfigureSceneActor12(void);
 
@@ -337,6 +330,8 @@ union DispatcherEventWork {
     u32 words[0x1c4 / 4];
 };
 
+/* FAKEMATCH: calls spelled through these wrappers set up their arguments in
+ * the scene start's order; direct calls schedule the constants differently. */
 static __inline__ void Scene_Call1(void (*func)(u32), u32 value)
 {
     func(value);

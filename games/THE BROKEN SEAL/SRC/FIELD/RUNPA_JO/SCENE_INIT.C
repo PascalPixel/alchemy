@@ -1,8 +1,7 @@
-/* Draft of FieldScene_DispatchActorUpdate, resource_3bf at 0x0200cda0, built with
- * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: the ROM loads the scene numbers 0xa1-0xa3 it compares
- * from its literal pool, as link-time values; GCC compares immediates.
- * The listing keeps these rows. */
+/* The fortress scene start: pick the random guard, then set up each floor.
+ * The second installs its tasks and actors, the third restores what the
+ * party changed, and the fourth stages its actors by the entrance the party
+ * came through. */
 #include "FORTRESS.H"
 
 s32 FieldScene_DispatchActorUpdate(void)
@@ -10,15 +9,15 @@ s32 FieldScene_DispatchActorUpdate(void)
     struct ObjectRuntime *actor;
 
     gRunpaJoRandomPick = (u32)Random_Next() * 7 >> 16;
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == 0xa1) {
+    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo1) {
         Scene_Call1(Map_SetWorkFlagBits9To11, 0xe00);
         FieldScene_InstallSceneTasks();
     }
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == 0xa1)
+    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo2)
         FieldScene_SetupActorsForScene();
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == 0xa2)
+    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo3)
         FieldScene_RestoreActorsFromFlags();
-    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == 0xa3) {
+    if ((s16)(*(union DispatcherEventWork *)&gGameState).pair.first == (s32)&SceneId_RunpaJo4) {
         ((struct DispatcherEventRuntime*)gEventWork)->value_1c0 = 0x204;
         Engine_ActorSetSpriteFlags(Object_GetById(12), 0);
         Engine_ActorFaceDirection(12, 0, 0);

@@ -1,187 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x020089dc,"ax",%progbits
-	.p2align 2
-	.global SelectPrimarySceneData
-	.thumb_func
-SelectPrimarySceneData:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_020009dc_0
-	ldr r0, [pc, #36]
-	b .L_020009dc_1
-.L_020009dc_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020009dc_2
-	ldr r0, [pc, #36]
-	b .L_020009dc_1
-.L_020009dc_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_020009dc_3
-	ldr r0, [pc, #32]
-	b .L_020009dc_1
-.L_020009dc_3:
-	ldr r0, [pc, #32]
-.L_020009dc_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000a0
-	.4byte 0x0200e2a4
-	.4byte 0x000000a1
-	.4byte 0x0200e4b4
-	.4byte 0x000000a2
-	.4byte 0x0200e754
-	.4byte 0x0200e814
-	.section .text.x02008a34,"ax",%progbits
-	.p2align 2
-	.global SelectSecondarySceneData
-	.thumb_func
-SelectSecondarySceneData:
-	push {lr}
-	ldr r3, [pc, #44]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000a34_0
-	ldr r0, [pc, #32]
-	b .L_02000a34_1
-.L_02000a34_0:
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	beq .L_02000a34_2
-	ldr r3, [pc, #32]
-	cmp r2, r3
-	bne .L_02000a34_3
-.L_02000a34_2:
-	ldr r0, [pc, #28]
-	b .L_02000a34_1
-.L_02000a34_3:
-	ldr r0, [pc, #28]
-.L_02000a34_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000a1
-	.4byte 0x0200e910
-	.4byte 0x000000a2
-	.4byte 0x000000a3
-	.4byte 0x0200e97c
-	.4byte 0x0200e8a4
-.L_02000a80:
-	.global SelectTertiarySceneData
-	.thumb_func
-SelectTertiarySceneData:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000a80_0
-	ldr r0, [pc, #56]
-	b .L_02000a80_1
-.L_02000a80_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000a80_2
-	ldr r0, [pc, #56]
-	b .L_02000a80_1
-.L_02000a80_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000a80_3
-	ldr r0, [pc, #52]
-	b .L_02000a80_1
-.L_02000a80_3:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000a80_4
-	ldr r0, [pc, #52]
-	b .L_02000a80_1
-.L_02000a80_4:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000a80_5
-	ldr r0, [pc, #48]
-	b .L_02000a80_1
-.L_02000a80_5:
-	ldr r0, [pc, #48]
-.L_02000a80_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000006a
-	.4byte 0x0200e9d0
-	.4byte 0x000000a2
-	.4byte 0x0200ee08
-	.4byte 0x000000a1
-	.4byte 0x0200ec28
-	.4byte 0x000000a0
-	.4byte 0x0200eac0
-	.4byte 0x000000a3
-	.4byte 0x0200ee98
-	.4byte 0x0200e9b8
-	.global SelectQuaternarySceneData
-	.thumb_func
-SelectQuaternarySceneData:
-	push {lr}
-	ldr r3, [pc, #48]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #40]
-	cmp r2, r3
-	bne .L_02000af8_0
-	ldr r0, [pc, #36]
-	b .L_02000af8_1
-.L_02000af8_0:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000af8_2
-	ldr r0, [pc, #36]
-	b .L_02000af8_1
-.L_02000af8_2:
-	ldr r3, [pc, #36]
-	cmp r2, r3
-	bne .L_02000af8_3
-	ldr r0, [pc, #32]
-	b .L_02000af8_1
-.L_02000af8_3:
-	ldr r0, [pc, #32]
-.L_02000af8_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000a0
-	.4byte 0x0200eff4
-	.4byte 0x000000a1
-	.4byte 0x0200f258
-	.4byte 0x000000a2
-	.4byte 0x0200f528
-	.4byte 0x0200f63c
 	.section .text.x02009150,"ax",%progbits
 	.p2align 2
 	.global FieldScene_UpdateActorPairInteraction
@@ -1488,213 +1306,6 @@ PlayStoryScene:
 	.4byte 0x0000022b
 	.4byte 0x000000a3
 .L_02003054:
-	.section .text.x0200cda0,"ax",%progbits
-	.p2align 2
-	.global FieldScene_DispatchActorUpdate
-	.thumb_func
-FieldScene_DispatchActorUpdate:
-	push {r5, r6, r7, lr}
-	ldr r5, [pc, #408]
-	bl 0x0200d5a0
-	lsls r3, r0, #3
-	subs r3, r3, r0
-	lsrs r3, r3, #16
-	ldr r7, [pc, #400]
-	movs r1, #224
-	str r3, [r5]
-	lsls r1, r1, #1
-	adds r5, r7, r1
-	movs r3, #0
-	ldrsh r2, [r5, r3]
-	ldr r3, [pc, #388]
-	ldrh r1, [r5]
-	cmp r2, r3
-	bne .L_02004da0_0
-	movs r0, #224
-	lsls r0, r0, #4
-	bl 0x0200d5f8
-	bl 0x0200cf60
-	ldrh r1, [r5]
-.L_02004da0_0:
-	lsls r3, r1, #16
-	ldr r2, [pc, #368]
-	asrs r3, r3, #16
-	cmp r3, r2
-	bne .L_02004da0_1
-	bl 0x0200d0e4
-	ldrh r1, [r5]
-.L_02004da0_1:
-	lsls r3, r1, #16
-	ldr r2, [pc, #356]
-	asrs r3, r3, #16
-	cmp r3, r2
-	bne .L_02004da0_2
-	bl 0x0200d324
-	ldrh r1, [r5]
-.L_02004da0_2:
-	lsls r3, r1, #16
-	ldr r2, [pc, #344]
-	asrs r3, r3, #16
-	cmp r3, r2
-	beq .L_02004da0_3
-	b 0x0200cf32
-.L_02004da0_3:
-	ldr r3, [pc, #340]
-	movs r1, #224
-	ldr r3, [r3]
-	lsls r1, r1, #1
-	movs r2, #129
-	adds r3, r3, r1
-	lsls r2, r2, #2
-	str r2, [r3]
-	movs r0, #12
-	bl 0x0200d650
-	movs r1, #0
-	bl 0x0200d5e8
-	movs r2, #0
-	movs r0, #12
-	movs r1, #0
-	bl 0x0200d708
-	movs r0, #12
-	movs r1, #0
-	bl 0x0200d6a8
-	bl 0x0200d520
-	movs r0, #8
-	bl 0x0200d650
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02004da0_4
-	movs r1, #0
-	bl 0x0200d5e8
-.L_02004da0_4:
-	adds r3, r5, #0
-	adds r3, #35
-	movs r6, #2
-	strb r6, [r3]
-	movs r0, #9
-	bl 0x0200d650
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02004da0_5
-	movs r1, #0
-	bl 0x0200d5e8
-.L_02004da0_5:
-	adds r3, r5, #0
-	adds r3, #35
-	strb r6, [r3]
-	movs r0, #10
-	bl 0x0200d650
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02004da0_6
-	movs r1, #0
-	bl 0x0200d5e8
-.L_02004da0_6:
-	adds r3, r5, #0
-	adds r3, #35
-	movs r0, #224
-	strb r6, [r3]
-	lsls r0, r0, #4
-	bl 0x0200d5f8
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r5, r7, r2
-	movs r1, #0
-	ldrsh r3, [r5, r1]
-	ldrh r2, [r5]
-	cmp r3, #4
-	bne .L_02004da0_7
-	movs r0, #192
-	lsls r0, r0, #4
-	bl 0x0200d5f8
-	bl 0x0200b054
-	ldrh r2, [r5]
-.L_02004da0_7:
-	lsls r3, r2, #16
-	movs r2, #192
-	lsls r2, r2, #10
-	cmp r3, r2
-	bne 0x0200cf14
-	movs r0, #192
-	lsls r0, r0, #4
-	bl 0x0200d5f8
-	ldr r0, [pc, #164]
-	bl 0x0200d610
-	cmp r0, #0
-	beq 0x0200cf14
-	movs r0, #12
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200d6a0
-	movs r1, #216
-	movs r2, #172
-	movs r0, #16
-	lsls r1, r1, #17
-	lsls r2, r2, #17
-	bl 0x0200d6a0
-	movs r1, #160
-	movs r0, #16
-	lsls r1, r1, #7
-	movs r2, #0
-	bl 0x0200d708
-	movs r1, #228
-	movs r2, #144
-	movs r0, #13
-	lsls r1, r1, #17
-	lsls r2, r2, #17
-	bl 0x0200d6a0
-	movs r1, #160
-	movs r0, #13
-	lsls r1, r1, #7
-	movs r2, #0
-	bl 0x0200d708
-	movs r1, #228
-	movs r2, #160
-	lsls r1, r1, #17
-	movs r0, #17
-.L_02004f02:
-	lsls r2, r2, #17
-	bl 0x0200d6a0
-	movs r0, #17
-	bl 0x0200d650
-	movs r1, #0
-	bl 0x0200d5e8
-	movs r0, #15
-	bl 0x0200d650
-	adds r5, r0, #0
-	cmp r5, #0
-	beq .L_02004f02_0
-	movs r1, #0
-	bl 0x0200d5e8
-.L_02004f02_0:
-	adds r2, r5, #0
-	movs r3, #2
-	adds r2, #35
-	strb r3, [r2]
-	ldr r3, [pc, #44]
-	str r3, [r5, #24]
-	movs r0, #0
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.2byte 0xdfa4
-	.2byte 0x0200
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x00a0
-	.2byte 0x0000
-	.2byte 0x00a1
-	.2byte 0x0000
-	.2byte 0x00a2
-	.2byte 0x0000
-	.2byte 0x00a3
-	.2byte 0x0000
-	.2byte 0x1ebc
-	.2byte 0x0300
-	.2byte 0x0941
-	.2byte 0x0000
-	.4byte 0x0000cccc
 	.section .rodata.part1,"a",%progbits
 	push {r4, r5, r6, r7, lr}
 	mov r7, r11
@@ -2855,6 +2466,8 @@ gRunpaJoRandomPick:
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
+	.global gRunpaJoEntrances1
+gRunpaJoEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc0000278
@@ -2987,6 +2600,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoEntrances2
+gRunpaJoEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc0000278
@@ -3155,6 +2770,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoEntrances3
+gRunpaJoEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc0000278
@@ -3203,6 +2820,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoEntrancesOther
+gRunpaJoEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a8
 	.4byte 0xc0000278
@@ -3239,6 +2858,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoExitsOther
+gRunpaJoExitsOther:
 	.4byte 0x0000006a
 	.4byte 0x00131002
 	.4byte 0x00203068
@@ -3266,6 +2887,8 @@ gRunpaJoRandomPick:
 	.4byte 0x0130f0a0
 	.4byte 0x014120a0
 	.4byte 0x000001ff
+	.global gRunpaJoExits2
+gRunpaJoExits2:
 	.4byte 0x000000a1
 	.4byte 0x03c0409f
 	.4byte 0x001080a0
@@ -3293,6 +2916,8 @@ gRunpaJoRandomPick:
 	.4byte 0x017180a1
 	.4byte 0x018170a1
 	.4byte 0x000001ff
+	.global gRunpaJoExits3And4
+gRunpaJoExits3And4:
 	.4byte 0x000000a2
 	.4byte 0x0010b0a0
 	.4byte 0x002030a2
@@ -3308,12 +2933,16 @@ gRunpaJoRandomPick:
 	.4byte 0x0040309f
 	.4byte 0x03c0409f
 	.4byte 0x000001ff
+	.global gRunpaJoPlacementsOther
+gRunpaJoPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoPlacementsRunpaDou
+gRunpaJoPlacementsRunpaDou:
 	.4byte 0xffff00e3
 	.4byte 0x00000001
 	.4byte 0x00b80000
@@ -3374,6 +3003,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoPlacements1
+gRunpaJoPlacements1:
 	.4byte 0xffff0014
 	.4byte 0x00000001
 	.4byte 0x00000000
@@ -3464,6 +3095,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoPlacements2
+gRunpaJoPlacements2:
 	.4byte 0xffff00f5
 	.4byte 0x00000001
 	.4byte 0x01080000
@@ -3584,6 +3217,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoPlacements3
+gRunpaJoPlacements3:
 	.4byte 0xffff00f8
 	.4byte 0x00000001
 	.4byte 0x01180000
@@ -3620,6 +3255,8 @@ gRunpaJoRandomPick:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoPlacements4
+gRunpaJoPlacements4:
 	.4byte 0xffff0016
 	.4byte 0x00000001
 	.4byte 0x00380000
@@ -3707,6 +3344,8 @@ gRunpaJoRandomPick:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoEvents1
+gRunpaJoEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -3860,6 +3499,8 @@ gRunpaJoRandomPick:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoEvents2
+gRunpaJoEvents2:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -4040,6 +3681,8 @@ gRunpaJoRandomPick:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoEvents3
+gRunpaJoEvents3:
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -4109,6 +3752,8 @@ gRunpaJoRandomPick:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gRunpaJoEventsOther
+gRunpaJoEventsOther:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001

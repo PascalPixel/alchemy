@@ -241,8 +241,10 @@ after_power:
             if (ch & 0x8000)
                 Summon_ResetCharge(st);
             BattleUnit_AssignFar(rec, st, ch & 0x7fff);
-            /* FAKEMATCH: the enemy list is reached by byte offsets from a
-               base 50 entries before it, as the ROM addresses it. */
+            /* FAKEMATCH: the insert walks byte offsets from 100 off a base
+               two bytes into the work, the split GCC makes of the list's
+               offset 102; indexing the list directly gives the same
+               addresses but allocates the loop differently. */
             slots = work->enemy_units - 50;
             {
                 s32 off;

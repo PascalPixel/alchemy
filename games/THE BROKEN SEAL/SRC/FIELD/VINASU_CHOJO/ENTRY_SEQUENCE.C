@@ -1,9 +1,3 @@
-/* Draft of resource_3c9 0x020092c8 (Scene_RunActorEntrySequence), from
- * games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO. Remaining difference: its messages have catalogue names now; 1 halfword
- * still differs from the ROM, and it names symbols no link defines
- * (Battle_GetWorkObject1e0, Engine_ScheduleCallback,
- * Engine_UiWorkWaitThenFinalizeCapacity, Value_000000bb). The listing keeps
- * these rows. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -11,14 +5,6 @@ extern u8 MsgVinasuRobin[];
 extern u8 MsgVinasuRobinHandedOverShamansRod[];
 
 
-
-
-extern u8 Value_000000bb[];
-
-/* Complete scene owner 020012c8..020020db. The object effect loop runs
- * forty frames; flag-dependent branches preserve the shared step increments.
- * Calls bind to original-site-resolved loader runtime addresses. */
-extern u8 Data_02000240[];
 extern const s32 SceneAction_EntryGroup[];
 extern const s32 SceneAction_EntryPair[];
 void BattleFx_SetWeightedResult();
@@ -29,12 +15,13 @@ s32 PartyInventory_Remove();
 s32 PartyInventory_FindOwner();
 void FieldScene_ForwardValue81fc();
 s32 Scheduler_RemoveCallback();
-s32 Engine_ScheduleCallback();
 void VinasuChojo_ShowMessage();
 void VinasuChojo_FaceActor();
-u8 *Battle_GetWorkObject1e0();
 void FieldScene_RunStep6(void);
 
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants
+   straight into the argument registers, and a value-returning call sets r0
+   last of its arguments; a direct call builds the constants first. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -65,6 +52,9 @@ static __inline__ void Call4(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3)
     f(a0, a1, a2, a3);
 }
 
+/* The party reaches the summit: Robin speaks, the others gather, and the
+   summit's scene is recorded in two scene and entrance pairs of the game
+   state, with entrances 2 and 9. */
 void Scene_RunActorEntrySequence(void)
 {
     s32 itemOwner;
@@ -86,7 +76,7 @@ void Scene_RunActorEntrySequence(void)
 
     Event_Begin();
     hidden = 0;
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = hidden;
+    Engine_EventGetViewCenter()->motion_flags = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x14c0000, 0x200000, 0xb40000, 1);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x10000, 0x8000);
@@ -95,7 +85,7 @@ void Scene_RunActorEntrySequence(void)
     Actor_RunRepeatedMotion(21, 1);
     Event_SetMessage((s32)MsgVinasuRobin);
     Call1(VinasuChojo_ShowMessage, 0x9015);
-    *(u8 *)(Battle_GetWorkObject1e0() + 85) = hidden;
+    Engine_EventGetViewCenter()->motion_flags = hidden;
     Camera_SetSpeed(0xcccc, 0x1999);
     Camera_MoveTo(0x1300000, 0x200000, 0xb40000, 1);
     Actor_SetSpeed(ACTOR_GERALD, 0x10000, 0x8000);
@@ -211,7 +201,7 @@ void Scene_RunActorEntrySequence(void)
         Task_Wait(1);
     } while ((u32)frame <= 39);
     effectCallback = (s32)FieldScene_RunStep6;
-    Value2(Engine_ScheduleCallback, effectCallback, 0xc80);
+    Value2(Engine_TaskAddCallback, effectCallback, 0xc80);
     Event_Wait(80);
     Call3(Engine_ActorFaceDirection, 0, 0xa000, 0);
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
@@ -289,7 +279,7 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xe000, 0);
-    if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 0) {
+    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
         Event_Wait(20);
         Actor_SetAnimationAndWait(20, 3);
         advanceStep = 1;
@@ -311,7 +301,7 @@ void Scene_RunActorEntrySequence(void)
     Call3(Engine_ActorFaceDirection, 1, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 2, 0xc000, 0);
     Call3(Engine_ActorFaceDirection, 3, 0xe000, 0);
-    if (Value2(Engine_UiWorkWaitThenFinalizeCapacity, 0, 0) == 0) {
+    if (Value2(Engine_EventChooseYesNo, 0, 0) == 0) {
         Event_Wait(20);
         Actor_SetAnimation(ACTOR_IVAN, 3);
         advanceStep = 1;
@@ -368,14 +358,8 @@ void Scene_RunActorEntrySequence(void)
     Actor_WalkToAndWait(21, 0x148, 186);
     Event_Wait(20);
     Actor_RunRepeatedMotion(21, 2);
-    /*
-     * Spelled as the address of a Value_ symbol rather than the integer
-     * 0x27ba. A CONST_INT that fits an immediate is materialised with mov,
-     * and one that does not is still free to be hoisted and shared; a
-     * SYMBOL_REF has to come from the literal pool and stays where it is
-     * written. The reference loads this constant from the pool after the two
-     * preceding calls, which the integer spelling does not reproduce.
-     */
+    /* The message is a link-time name, loaded from the literal pool after
+       the two preceding calls, as the game loads it. */
     message = (s32)MsgVinasuRobinHandedOverShamansRod;
     Message_ShowCentered(message, 1);
     Actor_WalkToAndWait(21, 0x136, 192);
@@ -511,11 +495,11 @@ void Scene_RunActorEntrySequence(void)
     /* These tables are shared by the final actor-action assignments. */
     /* FAKEMATCH: an empty do-while around these statements; it only changes instruction scheduling. */
     do {
-        sharedData = (s32)Data_02000240;
+        sharedData = (s32)&gGameState;
         *(u8 *)((sharedData + 0x22b)) = 3;
     } while (0);
     {
-        s32 actor = (s32)Value_000000bb;
+        s32 actor = (s32)&SceneId_VinasuChojo;
 
         /*
          * Through Call2 rather than called directly: the wrapper's parameter

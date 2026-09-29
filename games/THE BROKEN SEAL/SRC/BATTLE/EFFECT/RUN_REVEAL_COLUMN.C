@@ -26,7 +26,7 @@ void ObjectGroup_TickMemberTimers(void);
 void Audio_PlayCue(s32 cue);
 
 /* Battle effect: load one of three column pictures (by variant) into the
-   work canvas and the map cell buffer, move the actor towards its
+   work canvas and gMapCellBuffer, move the actor towards its
    target, then for 21 frames blit the four 120x120 quarters in turn, flood
    the canvas with colour 0x3f for frames 16..19, start event phase 134 at
    frame 18 and shake the target at frame 20, with the camera shaking

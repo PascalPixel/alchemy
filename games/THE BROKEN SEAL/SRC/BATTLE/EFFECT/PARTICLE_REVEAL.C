@@ -53,8 +53,8 @@ typedef struct {
     s32 unk18;
 } Particle;
 
-/* Fixed EWRAM scratch block holding the effect's particle records. */
-#define PARTICLE_POOL ((Particle *)0x02010000)
+/* The EWRAM scratch buffer holds the effect's particle records. */
+extern Particle gMapCellBuffer[];
 #define PARTICLE_COUNT 64
 
 extern u8 Value_0000006e;
@@ -122,14 +122,14 @@ void BattleFx_RunParticleReveal(void *object)
 
         angle = (Random16() & 0x7FFF) + 0x4000;
         amp = (Random16() & 0x1FF) + 0x80;
-        PARTICLE_POOL[i].x =
+        gMapCellBuffer[i].x =
             ((spawn[0] / 2 + (Random16() & 0xF)) - 8) << 16;
-        PARTICLE_POOL[i].y = (spawn[1] + 8) << 16;
-        PARTICLE_POOL[i].vx = (Trig_Sin(angle) * amp) >> 9;
-        PARTICLE_POOL[i].vy = (Trig_Cos(angle) * amp) >> 6;
-        PARTICLE_POOL[i].rot = Random16() & 0x7F;
-        PARTICLE_POOL[i].unk14 = Random16() & 0x7F;
-        PARTICLE_POOL[i].unk18 = (Random16() & 0xF) + 32;
+        gMapCellBuffer[i].y = (spawn[1] + 8) << 16;
+        gMapCellBuffer[i].vx = (Trig_Sin(angle) * amp) >> 9;
+        gMapCellBuffer[i].vy = (Trig_Cos(angle) * amp) >> 6;
+        gMapCellBuffer[i].rot = Random16() & 0x7F;
+        gMapCellBuffer[i].unk14 = Random16() & 0x7F;
+        gMapCellBuffer[i].unk18 = (Random16() & 0xF) + 32;
     }
 
     for (frame = 0; frame != 64; frame++) {
@@ -159,7 +159,7 @@ void BattleFx_RunParticleReveal(void *object)
             }
         }
 
-        for (i = 0, p = PARTICLE_POOL; i != PARTICLE_COUNT; i++, p++) {
+        for (i = 0, p = gMapCellBuffer; i != PARTICLE_COUNT; i++, p++) {
             if (frame >= i / 4 + 4) {
                 s32 index;
                 s32 w;

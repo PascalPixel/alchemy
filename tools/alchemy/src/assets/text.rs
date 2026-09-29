@@ -326,12 +326,58 @@ pub(crate) struct SourceCatalog {
     pub target: String,
     pub symbol_count: usize,
     pub banks: Vec<Vec<Option<Vec<u16>>>>,
+    /// Each message the code names, `Msg<Name>`, with its number: the
+    /// message's position in the catalog, which differs between editions.
+    pub names: Vec<(String, usize)>,
+}
+
+/// The context of every message the code does not name.
+const UNNAMED: &str = "message";
+
+/// Whether `name` is a message name: `Msg`, a capital and plain letters or
+/// digits, so `Msg_Show` style functions are never mistaken for one.
+pub(crate) fn message_name(name: &str) -> bool {
+    name.strip_prefix("Msg").is_some_and(|rest| {
+        rest.starts_with(|c: char| c.is_ascii_uppercase())
+            && rest.chars().all(|c| c.is_ascii_alphanumeric())
+    })
+}
+
+/// Each named entry of a PO catalog: its `msgctxt` name and number.
+pub(crate) fn catalog_names(catalog: &Catalog) -> Result<Vec<(String, usize)>, String> {
+    let mut names = Vec::new();
+    for entry in &catalog.entries {
+        let context = entry.context.as_deref().unwrap_or_default();
+        if context == UNNAMED {
+            continue;
+        }
+        if !message_name(context) {
+            return Err(format!(
+                "PO entry {} context {context:?} is neither {UNNAMED} nor a Msg name",
+                entry.id
+            ));
+        }
+        let number = entry
+            .id
+            .parse::<usize>()
+            .map_err(|_| format!("PO message key {} is invalid", entry.id))?;
+        names.push((context.to_owned(), number));
+    }
+    let mut sorted: Vec<&str> = names.iter().map(|(name, _)| name.as_str()).collect();
+    sorted.sort_unstable();
+    if let Some(pair) = sorted.windows(2).find(|pair| pair[0] == pair[1]) {
+        return Err(format!("{} names two messages", pair[0]));
+    }
+    Ok(names)
+}
+
+pub(crate) fn read_catalog(path: &Path) -> Result<Catalog, String> {
+    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
+    po::read(&text).map_err(|error| format!("{}: {error}", path.display()))
 }
 
 pub(crate) fn read_source(path: &Path) -> Result<SourceCatalog, String> {
-    let text = fs::read_to_string(path).map_err(|error| format!("{}: {error}", path.display()))?;
-    let catalog = po::read(&text).map_err(|error| error.to_string())?;
-    source_catalog(&catalog)
+    source_catalog(&read_catalog(path)?).map_err(|error| format!("{}: {error}", path.display()))
 }
 
 fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
@@ -365,11 +411,9 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
     if !(1..=65536).contains(&message_count) || !(1..=4096).contains(&symbol_count) {
         return Err("PO message count or alphabet is outside archive limits".into());
     }
+    let names = catalog_names(catalog)?;
     let mut messages = vec![None; message_count];
     for entry in &catalog.entries {
-        if entry.context.as_deref() != Some("message") {
-            return Err("PO entry context must be message".into());
-        }
         let key = entry
             .id
             .parse::<usize>()
@@ -405,13 +449,15 @@ fn source_catalog(catalog: &Catalog) -> Result<SourceCatalog, String> {
         target: target.to_owned(),
         symbol_count,
         banks,
+        names,
     })
 }
 
-/// The catalog's message archive labelled `label`, word aligned: its context
-/// models, offset table, context directory (labelled `label_Contexts`),
-/// message banks and bank directory (labelled `label_Banks`). Every address
-/// the archive holds is a word naming `label`, which the linker resolves.
+/// The catalog's message archive, word aligned: its context models (labelled
+/// `<label>Models`), offset table, context directory (`<label>Contexts`, which
+/// the symbol decoder reads), message banks and bank directory
+/// (`<label>Banks`, which the message lookup reads). Every address the
+/// archive holds is a word naming `<label>Models`, which the linker resolves.
 pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, String> {
     // Laid out from a word-aligned start, its padding holds wherever the
     // linker places it on a word boundary.
@@ -419,10 +465,11 @@ pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, Strin
         .map_err(|error| error.to_string())?;
     let mut data = Data::from_bytes(built.bytes);
     data.align = 4;
+    let models = format!("{label}Models");
     for (name, offset) in [
-        (label.to_owned(), 0),
-        (format!("{label}_Contexts"), built.context_directory),
-        (format!("{label}_Banks"), built.directory),
+        (models.clone(), 0),
+        (format!("{label}Contexts"), built.context_directory),
+        (format!("{label}Banks"), built.directory),
     ] {
         data.labels.push(Label {
             name,
@@ -436,7 +483,7 @@ pub(crate) fn archive(source: &SourceCatalog, label: &str) -> Result<Data, Strin
         data.pointers.push((
             site,
             Pointer {
-                symbol: label.to_owned(),
+                symbol: models.clone(),
                 addend: i64::from(word),
             },
         ));
@@ -483,15 +530,16 @@ mod tests {
     fn source_messages_derive_the_complete_archive_layout() {
         let catalog = small_catalog();
         let source = source_catalog(&catalog).unwrap();
-        let archive = archive(&source, "Messages").unwrap();
+        let archive = archive(&source, "Message").unwrap();
         assert_eq!(
             source.banks.iter().map(Vec::len).sum::<usize>(),
             catalog.entries.len()
         );
         assert_eq!(archive.align, 4);
         let text = archive.source().unwrap();
+        assert!(text.starts_with("\t.balign 4\n\t.global MessageModels\nMessageModels:\n"));
         assert!(
-            text.contains("\t.global Messages_Contexts\nMessages_Contexts:\n\t.4byte Messages\n")
+            text.contains("\t.global MessageContexts\nMessageContexts:\n\t.4byte MessageModels\n")
         );
         // Linked on any word boundary, the archive reads back every message.
         let base = ROM_BASE + 0x44;
@@ -509,8 +557,8 @@ mod tests {
         let mut reader = MessageReader::new(
             &rom,
             ROM_BASE,
-            label("Messages_Contexts"),
-            label("Messages_Banks"),
+            label("MessageContexts"),
+            label("MessageBanks"),
             source.symbol_count,
         )
         .unwrap();
@@ -538,6 +586,25 @@ mod tests {
         catalog.entries[2].id = "2".into();
         catalog.entries[2].value = "not null".into();
         assert!(source_catalog(&catalog).is_err());
+    }
+
+    #[test]
+    fn named_messages_take_their_number_from_the_catalog() {
+        let mut catalog = small_catalog();
+        catalog.entries[1].context = Some("MsgSunRises".into());
+        let source = source_catalog(&catalog).unwrap();
+        assert_eq!(source.names, [("MsgSunRises".to_owned(), 1)]);
+        // A name is a Msg identifier, and names one message only.
+        for context in ["Msg_Show", "sunrise", "MsgSun Rises", "Msg"] {
+            catalog.entries[1].context = Some(context.into());
+            assert!(source_catalog(&catalog).is_err(), "{context}");
+        }
+        catalog.entries[0].context = Some("MsgSunRises".into());
+        catalog.entries[1].context = Some("MsgSunRises".into());
+        assert!(source_catalog(&catalog)
+            .unwrap_err()
+            .contains("names two messages"));
+        assert!(message_name("MsgHpRecover2") && !message_name("Msg_ShowAndWait"));
     }
 
     #[test]

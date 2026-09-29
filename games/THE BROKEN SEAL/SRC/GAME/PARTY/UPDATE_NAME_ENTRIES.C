@@ -21,7 +21,7 @@ void WaitFrames(s32);
 u8 *Runtime_GetObject(s32);
 void *Trade_GetOfferStateFar(s32);
 
-extern char Value_0000080c;
+extern char MsgEnemyLabel;
 
 s32 UpdateNameEntries(void)
 {
@@ -46,7 +46,7 @@ s32 UpdateNameEntries(void)
             named_count += 1;
         }
         WaitFrames(2);
-        Party_Apply((s32)&Value_0000080c, name_text);
+        Party_Apply((s32)&MsgEnemyLabel, name_text);
         i = 0;
         if (name_text[i] != 0) {
             do {

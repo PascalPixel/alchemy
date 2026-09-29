@@ -153,7 +153,19 @@ LAYOUT_SIZE_GUARD(
     struct ShopPartyState,
     0x14);
 
-#define SHOP_PARTY_STATE (*(struct ShopPartyState *)0x02000240)
+/* The shop's 16 by 16 cursor sprites: the pointing hand, the gem, the small
+   and large up and down arrows. */
+extern const u8 Shop_HandTiles[];
+extern const u8 Shop_GemTiles[];
+extern const u8 Shop_SmallDownArrowTiles[];
+extern const u8 Shop_SmallUpArrowTiles[];
+extern const u8 Shop_UpArrowTiles[];
+extern const u8 Shop_DownArrowTiles[];
+
+/* The blank price and quantity strips of eight tiles that the digits are
+   drawn over. */
+extern const u8 Shop_PriceTiles[];
+extern const u8 Shop_QuantityTiles[];
 
 void Shop_SetCursor(
     struct ShopCursor *cursor,

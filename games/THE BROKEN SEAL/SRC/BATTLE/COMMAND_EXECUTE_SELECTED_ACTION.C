@@ -15,7 +15,10 @@ struct BattleCommandRuntime {
  * a cast below.
  */
 extern struct BattleRuntime *gEventWork;
-extern u8 Value_00000920;
+extern u8 MsgUseAbilityConfirm;
+extern u8 MsgNothingHappened[];
+extern u8 MsgDoesNotWorkHere[];
+extern u8 MsgNotEnoughPp[];
 /*
  * Returns u8 * to match the prototype shared with the other callers; the raw
  * pointer is cast to the local action-definition view below.
@@ -70,19 +73,19 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     if (actor == 15) actor = 0;
 
     if (GameFlag_TestFar(0x17e)) {
-        UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(actionId, 4); UiText_ShowPositionedMessageAndWaitFar(0x91f, 1);
+        UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(actionId, 4); UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappened, 1);
         return 0;
     }
     if (runtime->battle_mode == 3 && actionId == 0x90) {
-        UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(0x90, 4); UiText_ShowPositionedMessageAndWaitFar(0x91f, 1);
+        UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(0x90, 4); UiText_ShowPositionedMessageAndWaitFar((s32)MsgNothingHappened, 1);
         return 0;
     }
     if (actionId == 0x95) {
         if (GameFlag_TestFar(0x144)) {
-            UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(0x95, 4); UiText_ShowPositionedMessageAndWaitFar(0x921, 1);
+            UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(0x95, 4); UiText_ShowPositionedMessageAndWaitFar((s32)MsgDoesNotWorkHere, 1);
             return 0;
         }
-        UiWork_PushValueSlotFar(0x95, 4); UiText_ShowPositionedMessageAndWaitFar((s32)&Value_00000920, 13);
+        UiWork_PushValueSlotFar(0x95, 4); UiText_ShowPositionedMessageAndWaitFar((s32)&MsgUseAbilityConfirm, 13);
         status = Object_CallSpawnRoutineAtOrigin(1); UiWork_FinalizePendingCoreFar();
         if (status != 0) return 0;
         {
@@ -101,7 +104,7 @@ s32 BattleCommand_ExecuteSelectedAction(u32 encodedAction)
     if (actor <= 7) {
         cost = ((struct BattleActionDefinition *)(void *)BattleAction_Get(actionId))->pp_cost;
         if (((struct BattleUnitRecord *)Owner_GetStateFar(actor))->pp < cost) {
-            UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(actionId, 4); UiText_ShowPositionedMessageAndWaitFar(0x91e, 1);
+            UiWork_PushValueSlotFar(actor, 1); UiWork_PushValueSlotFar(actionId, 4); UiText_ShowPositionedMessageAndWaitFar((s32)MsgNotEnoughPp, 1);
             if (specialResult)runtime->result_code = 0;
             return 0;
         }

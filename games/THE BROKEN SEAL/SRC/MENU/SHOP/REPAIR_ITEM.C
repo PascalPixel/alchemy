@@ -1,4 +1,5 @@
 #include "SHOP.H"
+#include "PARTY_STATE.H"
 #include "BATTLE_RUNTIME.H"
 extern struct ShopRuntime *gMenuWork;
 extern u8 Data_03001f2c[];
@@ -9,6 +10,10 @@ extern u8 Data_03001f2c[];
    the mended item. */
 
 extern u8 MsgShopRepairConfirm[];
+extern u8 MsgCannotRepairKind[];
+extern u8 MsgNotDamaged[];
+extern u8 MsgCursedWontComeOff[];
+extern u8 MsgNotEnoughMoney[];
 
 
 struct ItemDefinition *Item_Get(s32 item);
@@ -37,21 +42,21 @@ void Shop_RepairItem(s32 unit_id, s32 slot)
     kind = item->use_type;
     if (kind != 2) {
         UiWork_PushValueSlotFar(item_id, 2);
-        UiMessage_ShowAndRestoreState(0xcba);
+        UiMessage_ShowAndRestoreState((s32)MsgCannotRepairKind);
         return;
     }
     if (!(unit->inventory[slot] & 0x400)) {
         UiWork_PushValueSlotFar(item_id, 2);
-        UiMessage_ShowAndRestoreState(0xcbb);
+        UiMessage_ShowAndRestoreState((s32)MsgNotDamaged);
         return;
     }
     if ((unit->inventory[slot] & 0x200) && (kind & item->flags)) {
         UiWork_PushValueSlotFar(item_id, 2);
-        UiMessage_ShowAndRestoreState(0xcbc);
+        UiMessage_ShowAndRestoreState((s32)MsgCursedWontComeOff);
         return;
     }
-    if (price > SHOP_PARTY_STATE.money) {
-        UiMessage_ShowAndRestoreState(0xcbd);
+    if (price > gGameState.money) {
+        UiMessage_ShowAndRestoreState((s32)MsgNotEnoughMoney);
         return;
     }
     UiWork_PushValueSlotFar(item_id, 2);

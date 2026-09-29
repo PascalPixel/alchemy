@@ -80,7 +80,7 @@ void Audio_PlayCue(s32 cue);
 #define KEY_L 0x200
 
 extern u32 gFrameCount;
-extern u8 Value_00000b89;
+extern u8 MsgChangeCharacterHelp;
 
 u8 ItemMenu_Collect(struct BattleUnit *owner, u16 *items, s32 mode);
 void ItemMenu_DrawIcons(u16 *items, s32 style);
@@ -145,7 +145,7 @@ s32 ItemMenu_RunList(s32 pane)
                     WaitFrames(1);
                     ItemMenu_DrawNamePage(window, 0, &state);
                     if (pane == 0) {
-                        UiText_DrawCharacterAtOffsetFar((s32)&Value_00000b89, window, 0, 88);
+                        UiText_DrawCharacterAtOffsetFar((s32)&MsgChangeCharacterHelp, window, 0, 88);
                     }
                     redraw = 0;
                 }

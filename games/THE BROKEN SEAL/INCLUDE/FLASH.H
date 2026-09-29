@@ -26,4 +26,8 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size);
 s32 Flash_VerifySector(u16 sector, s32 source);
 
+/* The copy of ReadFlashByte that CopyFlashReadRoutineToRam places in RAM,
+   which WaitForFlashWrite polls while the chip is busy. */
+extern u8 (*gFlashReadRoutine)(u8 *source);
+
 #endif

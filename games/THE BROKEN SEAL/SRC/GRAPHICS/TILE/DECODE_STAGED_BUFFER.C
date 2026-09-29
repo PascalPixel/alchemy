@@ -1,7 +1,8 @@
 #include "TYPES.H"
+#include "MAP.H"
 
 /* Decodes the tilemap staged at 0x02010000 (mode byte at +1) into
-   0x02020000: a plain halfword copy, a byte-planar delta, or a halfword
+   gMapBlocks: a plain halfword copy, a byte-planar delta, or a halfword
    delta. */
 void Tilemap_DecodeStagedBuffer(s32 size)
 {
@@ -12,7 +13,7 @@ void Tilemap_DecodeStagedBuffer(s32 size)
     u32 temp;
 
     source = (u16 *)0x02010002;
-    destination = (u16 *)0x02020000;
+    destination = (u16 *)gMapBlocks;
     temp = size - 1;
     count = (s32)(temp + (temp >> 31)) >> 1;
     if (size & 1) {

@@ -27,7 +27,7 @@ void UiText_RenderWideStringAtOffsetFar(void *buffer, void *destination, s32 off
 void Runtime_BumpFree(void *buffer);
 
 /* The message id base is a link-time symbol, loaded from the literal pool. */
-extern u8 Value_00000be6;
+extern u8 MsgProgressHelp;
 
 
 void StatusMenu_ShowOwnerProgressMessage(
@@ -55,7 +55,7 @@ void StatusMenu_ShowOwnerProgressMessage(
     }
 
     buffer = Runtime_BumpAllocate(0x100);
-    UiText_CopyMessageStringFar(message_variant + (s32)&Value_00000be6, buffer, 0x80);
+    UiText_CopyMessageStringFar(message_variant + (s32)&MsgProgressHelp, buffer, 0x80);
     UiText_RenderWideStringAtOffsetFar(buffer, destination, 0, -1);
     Runtime_BumpFree(buffer);
 }

@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "SYSTEM.H"
+#include "OBJECT_EFX.H"
 
 struct BattleEffectScene {
     u8 reserved_00[4];
@@ -55,7 +56,7 @@ void BattleEffect_RunTargetedItemBreak(void)
 
     BattleEffect_InitializeSharedScene();
     *(void **)((u8 *)main_object + 0x68) = child;
-    ObjectDispatch_InitializeFar(main_object, (const void *)0x0809f0bc);
+    ObjectDispatch_InitializeFar(main_object, BattleFx_CommonParticleScript + 12);
 
     x = scene->x;
     position[0] = x;

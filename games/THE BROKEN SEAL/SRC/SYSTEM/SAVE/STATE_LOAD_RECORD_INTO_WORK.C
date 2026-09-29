@@ -13,7 +13,7 @@ s32 SaveMenu_SelectSlot(s16, s32);
 s32 SaveState_ReadRecordPayload(s32, void *);
 
 extern char MsgNoBackupMemory;
-extern char Value_0000000c;
+extern char MsgLoadFailed;
 extern char gSaveBuffer;
 extern s16 gSaveSlot;
 extern struct State_080208e4 gGameState;
@@ -43,7 +43,7 @@ s32 SaveState_LoadRecordIntoWork(s32 arg)
             base = (char *)base + 0x1000;
             err |= SaveState_ReadRecordPayload(value + 3, base);
             if (err != 0) {
-                UiText_ShowPositionedMessageAndWait((s32)&Value_0000000c, 1);
+                UiText_ShowPositionedMessageAndWait((s32)&MsgLoadFailed, 1);
                 ret = -2;
             } else {
                 gLoadedStateWord = gGameState.value;

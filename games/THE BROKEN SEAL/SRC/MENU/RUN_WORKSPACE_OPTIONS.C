@@ -6,10 +6,10 @@ extern volatile u32 Data_03001c94;
 extern volatile u32 Data_03001b04;
 extern u8 Data_03001ca0;
 extern u8 Data_03001d08;
-extern u8 Value_00000c0a;
-extern u8 Value_00000c10;
-extern u8 Value_00000c13;
-extern u8 Value_00000c15;
+extern u8 MsgMessageSpeedSetting;
+extern u8 MsgSpeechSetting;
+extern u8 MsgAutoSleepSetting;
+extern u8 MsgOptionHelp;
 extern u8 Data_02000240[];
 extern s8 Data_080367c9[];
 extern s8 Data_080367cc[];
@@ -116,13 +116,13 @@ s32 Menu_RunWorkspaceOptions(void)
             y = icon->y * 8 + 20;
             Shop_SetCursorFar(&work->marker[1], x, y, 1);
 
-            x = work->option[2] + (s32)&Value_00000c0a;
+            x = work->option[2] + (s32)&MsgMessageSpeedSetting;
             UiWindow_ClearInteriorTiles(icon, 160, 40, 200, 48);
             UiText_DrawCharacterAtOffset(x, icon, 160, 40);
-            x = work->option[3] + (s32)&Value_00000c10;
+            x = work->option[3] + (s32)&MsgSpeechSetting;
             UiWindow_ClearInteriorTiles(icon, 160, 64, 184, 72);
             UiText_DrawCharacterAtOffset(x, icon, 160, 64);
-            x = work->option[4] + (s32)&Value_00000c13;
+            x = work->option[4] + (s32)&MsgAutoSleepSetting;
             UiWindow_ClearInteriorTiles(icon, 160, 88, 184, 96);
             UiText_DrawCharacterAtOffset(x, icon, 160, 88);
             PaletteGlow_Update(*pA, *pB);
@@ -133,7 +133,7 @@ s32 Menu_RunWorkspaceOptions(void)
                 y += 8;
             Shop_SetCursorFar(&work->cursor, x, y, 3);
             RenderOutput_ClearList(win);
-            UiText_DrawResource(page + (s32)&Value_00000c15, win, 0, 0);
+            UiText_DrawResource(page + (s32)&MsgOptionHelp, win, 0, 0);
         }
         Ui_ApplyTableOffsetToPair(pair);
         WaitFrames(1);

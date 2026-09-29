@@ -11,10 +11,10 @@ extern u8 Data_03001f2c[];
 /* ui/message/show_and_wait.c */
 void UiWork_FinalizePendingCoreFar(void);
 void UiText_OpenMessageWindowFar(s32, s32, s32, s32);
-extern u8 Value_00000c9b[];
-extern u8 Value_00000cc6[];
-extern u8 Value_00000cf1[];
-extern u8 gVal4[];
+extern u8 MsgWeaponShopWelcome[];
+extern u8 MsgArmorShopWelcome[];
+extern u8 MsgItemShopWelcome[];
+extern u8 MsgWarriorShopWelcome[];
 
 void UiMessage_ShowAndWait(s32 arg0)
 {
@@ -26,11 +26,11 @@ void UiMessage_ShowAndWait(s32 arg0)
     UiWork_FinalizePendingCoreFar();
     mode = *(s8 *)((u8 *)state + 0x3a9);
     if (mode == 2)
-        result += Value_00000cc6 - Value_00000c9b;
+        result += MsgArmorShopWelcome - MsgWeaponShopWelcome;
     if (mode == 0)
-        result += Value_00000cf1 - Value_00000c9b;
+        result += MsgItemShopWelcome - MsgWeaponShopWelcome;
     if (*(s8 *)&state[235] != 0)
-        result += gVal4 - Value_00000c9b;
+        result += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
     UiText_OpenMessageWindowFar(result, 5, 0, (value << 16) | 0x22);
     while (UiWork_IsCompleteFar() == 0)
         WaitFrames(1);
@@ -56,14 +56,14 @@ void UiMessage_ShowAndRestoreState(s32 message_id)
     variant = BattleFx_GetResourceIdFar(FIELD_AT_OFFSET(state, u16 *, 0x3A4));
     mode = FIELD_AT_OFFSET(state, s8 *, 0x3A9);
     if (mode == 2) {
-        no += (s32)Value_00000cc6 - (s32)Value_00000c9b;
+        no += (s32)MsgArmorShopWelcome - (s32)MsgWeaponShopWelcome;
     }
     if (mode == 0) {
-        no += (s32)Value_00000cf1 - (s32)Value_00000c9b;
+        no += (s32)MsgItemShopWelcome - (s32)MsgWeaponShopWelcome;
     }
     flag = FIELD_AT_OFFSET(state, u8 *, 0x3AC);
     if (flag != 0) {
-        no += (s32)gVal4 - (s32)Value_00000c9b;
+        no += (s32)MsgWarriorShopWelcome - (s32)MsgWeaponShopWelcome;
     }
     (*slot)[5] = 0xDU;
     UiWork_FinalizePendingCoreFar();

@@ -2,9 +2,11 @@
 #include "FIXED_MATH.H"
 #include "RESOURCE.H"
 #include "UI.H"
+#include "SHOP.H"
 
 extern u8 gKeyState[];
 extern u8 gKeysRepeat[];
+extern u8 MsgCoins[];
 
 struct UiSprite {
     u8 unknown_00[24];
@@ -72,7 +74,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                 if (changed) {
                     changed = 0;
                     count = Math_Mod(count + maximum, maximum);
-                    Dma_Set((const void *)0x080b3f80, buffer, 0x84000040, (volatile u32 *)0x040000d4);
+                    Dma_Set(Shop_QuantityTiles, buffer, 0x84000040, (volatile u32 *)0x040000d4);
                     Shop_FillSelector(30, 14, buffer);
                     Shop_FillSelector(minimum + maximum, 0, buffer);
                     Shop_FillSelector(minimum + count + 1, 10, buffer);
@@ -81,7 +83,7 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price)
                     result = count + 1;
                     UiText_DrawNumberInWindowFar(result, 2, window, 72, 0);
                     UiText_DrawNumberInWindowFar(price * result, 6, window, 88, 0);
-                    UiText_DrawCharacterAtOffsetFar(0xc88, window, 136, 0);
+                    UiText_DrawCharacterAtOffsetFar((s32)MsgCoins, window, 136, 0);
                 }
                 WaitFrames(1);
             }

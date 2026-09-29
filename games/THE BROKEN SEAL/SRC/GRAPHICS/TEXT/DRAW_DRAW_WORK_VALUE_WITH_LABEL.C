@@ -11,11 +11,12 @@ struct SharedWork080a23c0 {
 
 extern void UiText_DrawCharacterAtOffsetFar(s32, s32, s32, s32);
 extern struct SharedWork080a23c0 gGameState;
+extern u8 MsgCoinsLabel[];
 
 void UiText_DrawWorkValueWithLabel(s32 work)
 {
     UiText_DrawNumberAtOffsetFar(gGameState.resource, 7, work, 8, 0);
-    UiText_DrawCharacterAtOffsetFar(0xB0B, work, 0x40, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)MsgCoinsLabel, work, 0x40, 0);
 }
 
 /* ui/window/set_bounds.c */

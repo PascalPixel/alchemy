@@ -9,7 +9,8 @@
 	.arm
 
 @ 三行の単位変換係数と平行移動成分。
-.L_unit_matrix:
+	.global gTransform
+gTransform:
 	.4byte 0x00010000, 0, 0, 0
 	.4byte 0x00010000, 0, 0, 0
 	.4byte 0x00010000, 0, 0, 0

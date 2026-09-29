@@ -29,7 +29,7 @@ struct PsynergyOwnerMenu {
     u16 frame;
 };
 
-extern u8 Value_00000c05;
+extern u8 MsgChooseCharacter;
 
 void *Owner_GetStateFar(s32 owner);
 void RenderOutput_RedrawSavedRectFar(s32 window);
@@ -59,8 +59,8 @@ s32 PsynergyMenu_SelectOwner(void)
 
     Owner_GetStateFar(menu->character_ids[selection]);
     RenderOutput_RedrawSavedRectFar(menu->selector_window);
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c05, menu->selector_window, 0, 0);
-    UiText_DrawCharacterAtOffsetFar((s32)&Value_00000c05 + 1, menu->selector_window, 0, 16);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgChooseCharacter, menu->selector_window, 0, 0);
+    UiText_DrawCharacterAtOffsetFar((s32)&MsgChooseCharacter + 1, menu->selector_window, 0, 16);
     for (;;) {
         if (pending) {
             pending = 0;

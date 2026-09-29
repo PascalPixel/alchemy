@@ -39,8 +39,11 @@ struct SaveWorkspace {
 
 #define DMA3 ((volatile struct DmaRegisters *)0x040000d4)
 #define DMA3_BUSY 0x80000000
-#define SAVE_HEADER_TEMPLATE ((const struct SaveSlotHeader *)0x080079b8)
-#define SAVE_SIGNATURE ((const u8 *)0x080079b0)
+
+/* The signature a save slot's header starts with, and the eight bytes of
+   signature and record byte that each written slot's header starts from. */
+extern const u8 Save_Signature[];
+extern const u8 Save_HeaderTemplate[];
 
 #define START_DMA(source_, destination_, control_) \
     Dma_Set((const void *)(source_), (void *)(destination_), (control_), (volatile u32 *)0x040000d4)
@@ -51,6 +54,10 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel)
 }
 
 #define WAIT_DMA() WaitDma(DMA3)
+
+/* Set by the save scan when a slot's summary marks it for sending and R
+   and Left are held; the title menu then offers Send. */
+extern s16 gTitleSendOptionEnabled;
 
 void *Func_080048f4(s32 kind, s32 size);
 s32 Func_080030f8(s32 frames);

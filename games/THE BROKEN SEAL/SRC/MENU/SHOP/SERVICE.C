@@ -14,10 +14,10 @@ struct ShopServiceWork {
 u8 *Owner_GetStateFar(s32);
 extern struct ShopServiceWork *gMenuWork;
 s32 Shop_CanServe(s32 selection, s32 variant);
-extern u8 Value_00000d24;
-extern u8 Value_00000d2e;
-extern u8 Value_00000d38;
-extern u8 Value_00000d42;
+extern u8 MsgReviveService;
+extern u8 MsgCurePoisonService;
+extern u8 MsgExorcismService;
+extern u8 MsgRemoveCurseService;
 s32 BattleFx_GetResourceIdFar(u16);
 void UiWork_FinalizePendingCoreFar(void);
 s32 Shop_MsgByMode(s32 value);
@@ -82,13 +82,13 @@ s32 Shop_MsgByMode(s32 value)
     s8 mode = gMenuWork->mode;
 
     if (mode == 1) {
-        value += (u32)&Value_00000d2e - (u32)&Value_00000d24;
+        value += (u32)&MsgCurePoisonService - (u32)&MsgReviveService;
     }
     if (mode == 2) {
-        value += (u32)&Value_00000d38 - (u32)&Value_00000d24;
+        value += (u32)&MsgExorcismService - (u32)&MsgReviveService;
     }
     if (mode == 3) {
-        value += (u32)&Value_00000d42 - (u32)&Value_00000d24;
+        value += (u32)&MsgRemoveCurseService - (u32)&MsgReviveService;
     }
     return value;
 }

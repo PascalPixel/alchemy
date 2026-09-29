@@ -117,7 +117,7 @@ Func_0803f82c:
 	adds	r3, r1, r2
 	ldr	r0, [r3, #0]
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r0, [pc, #8]
 	bl	Func_08014644
 .L_0803f934:
@@ -139,7 +139,7 @@ Func_0803f82c:
 	cmp	r3, #0
 	beq.n	.L_0803f962
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r0, [pc, #4]
 	bl	Func_08014644
 .L_0803f962:
@@ -717,7 +717,7 @@ Func_0803f82c:
 	adds	r7, #12
 	adds	r2, r7, #0
 	bl	0x08108048
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_0803feec
@@ -817,7 +817,7 @@ Func_0803f82c:
 	orrs	r3, r5
 	strb	r3, [r4, #25]
 .L_0803feec:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_0803ff6a
@@ -876,7 +876,7 @@ Func_0803f82c:
 	adds	r2, r7, #0
 	bl	0x08108048
 .L_0803ff6a:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_0803ffea
@@ -1508,10 +1508,10 @@ Func_0803f82c:
 .L_080404a0:
 	ldr	r0, [sp, #16]
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	mov	r0, r8
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	cmp	r6, #0
 	bne.n	.L_08040574
 	ldr	r5, [pc, #176]

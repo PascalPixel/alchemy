@@ -117,7 +117,7 @@ Func_08044a58:
 .L_08044b4c:
 	mov	r0, r9
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	ldr	r0, [sp, #16]
@@ -238,7 +238,7 @@ Func_08044a58:
 .L_08044c56:
 	mov	r0, r8
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	ldr	r0, [sp, #12]
@@ -376,7 +376,7 @@ Func_08044a58:
 .L_08044d90:
 	movs	r1, #2
 	mov	r0, r9
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	ldr	r0, [sp, #20]
@@ -466,7 +466,7 @@ Func_08044a58:
 .L_08044e58:
 	mov	r0, r9
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	movs	r3, #0
@@ -554,7 +554,7 @@ Func_08044a58:
 	beq.n	.L_08044f06
 	mov	r0, r9
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r0, #1
 	bl	0x08013560
 	ldr	r0, [sp, #4]
@@ -614,7 +614,7 @@ Func_08044a58:
 	mov	r9, r1
 	adds	r6, r2, #0
 	mov	sl, r3
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r7, r0, #0
 	movs	r0, #0
 	cmp	r7, #95

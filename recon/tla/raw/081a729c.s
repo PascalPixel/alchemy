@@ -143,7 +143,7 @@ Func_081a729c:
 	adds	r5, #16
 	movs	r7, #0
 .L_081a73c8:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	lsls	r2, r7, #8
 	lsrs	r2, r2, #1
 	adds	r2, r6, r2

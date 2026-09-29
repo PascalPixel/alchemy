@@ -1,0 +1,81 @@
+/* Clamp the second input to 0..limitY and store it, then refresh both
+   output ratios (input << 14 over its limit, clamped to 0..0x4000, and at
+   least 1 while the input is nonzero). The first-input sibling is
+   Owner_UpdateRatioPair in RATIOS.C. */
+#include "TYPES.H"
+
+struct OwnerRatioPairState {
+    u8 padding0[20];
+    s16 outputX;
+    s16 outputY;
+    u8 padding1[28];
+    s16 limitX;
+    s16 limitY;
+    s16 inputX;
+    s16 inputY;
+};
+
+s32 Math_Div(s32, s32);
+
+void Owner_UpdateSecondInputAndRatios(
+    struct OwnerRatioPairState *state, s32 input)
+{
+    s32 clamped;
+    s32 value;
+
+    if (input > state->limitY) {
+        clamped = state->limitY;
+    } else {
+        clamped = 0;
+        if (input >= 0) {
+            clamped = input;
+        }
+    }
+    /* FAKEMATCH: a one-pass loop around the store orders it before the
+       ratio inputs are read, as in the ROM. */
+    do {
+        state->inputY = clamped;
+    } while (0);
+    value = state->inputX;
+    value <<= 14;
+    value = Math_Div(value, state->limitX);
+
+    {
+        s32 output = 0x4000;
+
+        if (value <= output) {
+            output = 0;
+            if (value >= 0) {
+                output = value;
+            }
+        }
+        state->outputX = output;
+        if ((output << 16) == 0 && state->inputX != 0) {
+            state->outputX = 1;
+        }
+    }
+
+    {
+        s32 numerator;
+        s32 divisor;
+
+        numerator = state->inputY;
+        divisor = state->limitY;
+        value = Math_Div(numerator << 14, divisor);
+    }
+    {
+        s32 output = 0x4000;
+
+        if (value <= output) {
+            output = 0;
+            if (value >= 0) {
+                output = value;
+            }
+        }
+        state->outputY = output;
+        if ((output << 16) == 0 && state->inputY != 0) {
+            state->outputY = 1;
+        }
+    }
+}
+

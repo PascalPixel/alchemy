@@ -39,7 +39,7 @@ Func_080ebf68:
 	movs	r5, #0
 	str	r5, [sp, #12]
 	str	r5, [sp, #8]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #192
 	lsls	r2, r2, #3
 	adds	r2, #68

@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803f624
+	.global UiTextResource_Initialize
 	.thumb_func
-Func_0803f624:
+UiTextResource_Initialize:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}
@@ -10,7 +10,7 @@ Func_0803f624:
 	adds	r5, r0, #0
 	mov	r8, r3
 	adds	r6, r1, #0
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	mov	r2, r8
 	str	r0, [r6, #0]
 	movs	r1, #128

@@ -205,6 +205,9 @@ Func_080133c4:
 	.4byte 0x03007ff0
 	.2byte 0x0d40
 	.2byte 0x0300
+	.global WaitFrames
+	.thumb_func
+WaitFrames:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl

@@ -621,7 +621,7 @@ Func_081a133c:
 .L_081a1830:
 	push	{r5, r6, r7, lr}
 	sub	sp, #4
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	movs	r0, #144
 	lsls	r0, r0, #1

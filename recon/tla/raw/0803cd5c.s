@@ -135,7 +135,7 @@ Func_0803cd5c:
 	ands	r1, r2
 	lsls	r1, r1, #16
 	lsrs	r1, r1, #16
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0803ce52:
 	adds	r6, #1
 	adds	r5, #40

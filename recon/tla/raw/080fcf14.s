@@ -1437,7 +1437,7 @@ Func_080fcf14:
 	movs	r1, #2
 	mov	r2, r8
 	str	r5, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	movs	r0, #15
 	bl	0x080380b8
 	mov	r3, r9

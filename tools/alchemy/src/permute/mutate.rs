@@ -41,6 +41,7 @@ pub enum Kind {
     ReorderStatements,
     ReorderDeclarations,
     IntroduceTemporary,
+    ShareTemporary,
     RemoveTemporary,
     AddCast,
     DropCast,
@@ -54,11 +55,12 @@ pub enum Kind {
 }
 
 impl Kind {
-    pub const ALL: [(Kind, u64); 14] = [
+    pub const ALL: [(Kind, u64); 15] = [
         (Kind::SwapOperands, 10),
         (Kind::ReorderStatements, 10),
         (Kind::ReorderDeclarations, 8),
         (Kind::IntroduceTemporary, 8),
+        (Kind::ShareTemporary, 4),
         (Kind::RemoveTemporary, 6),
         (Kind::AddCast, 5),
         (Kind::DropCast, 4),
@@ -77,6 +79,7 @@ impl Kind {
             Kind::ReorderStatements => "reorder independent statements",
             Kind::ReorderDeclarations => "reorder local declarations",
             Kind::IntroduceTemporary => "introduce a temporary",
+            Kind::ShareTemporary => "share one temporary between two statements",
             Kind::RemoveTemporary => "remove a temporary",
             Kind::AddCast => "add a same-width cast",
             Kind::DropCast => "drop a same-width cast",
@@ -133,6 +136,7 @@ pub fn apply(kind: Kind, function: &mut Function, env: &Env, rng: &mut Rng) -> b
             block_mutation(function, env, rng, &declaration_sites, &declaration_apply)
         }
         Kind::IntroduceTemporary => introduce_temporary(function, env, rng),
+        Kind::ShareTemporary => share_temporary(function, env, rng),
         Kind::RemoveTemporary => remove_temporary(function, env, rng),
         Kind::LoopForm => block_mutation(function, env, rng, &loop_sites, &loop_apply),
         Kind::ConditionAssignment => {
@@ -1305,6 +1309,100 @@ fn introduce_temporary(function: &mut Function, env: &Env, rng: &mut Rng) -> boo
     done
 }
 
+/// Hoist two same-typed subexpressions of two statements in one block into
+/// one temporary assigned just before each, as a programmer reuses a scratch
+/// variable. Its two lifetimes never overlap, but they are one variable to
+/// the compiler, and local allocation then cannot tie either value to the
+/// register of an operand that dies computing it.
+fn share_temporary(function: &mut Function, env: &Env, rng: &mut Rng) -> bool {
+    // Every hoistable site, by block, statement and ordinal, with its type.
+    let mut sites: Vec<(usize, usize, usize, String)> = Vec::new();
+    let mut block = 0;
+    walk_blocks(&mut function.body, &mut |stmts| {
+        let start = leading_declarations(stmts);
+        for index in start..stmts.len() {
+            let mut ordinal = 0;
+            hoistable(&mut stmts[index], env, &mut |expr| {
+                if let Some(spelling) = env
+                    .type_of(expr)
+                    .map(|ty| ty.decay())
+                    .and_then(|ty| env.spell(&ty))
+                {
+                    sites.push((block, index, ordinal, spelling));
+                }
+                ordinal += 1;
+                false
+            });
+        }
+        block += 1;
+        false
+    });
+    let mut pairs = Vec::new();
+    for (first, a) in sites.iter().enumerate() {
+        for b in &sites[first + 1..] {
+            if a.0 == b.0 && a.1 < b.1 && a.3 == b.3 {
+                pairs.push((a.clone(), b.clone()));
+            }
+        }
+    }
+    if pairs.is_empty() {
+        return false;
+    }
+    let (first, second) = pairs.swap_remove(rng.below(pairs.len()));
+    let name = fresh_name(function, env);
+    let mut block = 0;
+    let mut done = false;
+    walk_blocks(&mut function.body, &mut |stmts| {
+        if block != first.0 {
+            block += 1;
+            return false;
+        }
+        let start = leading_declarations(stmts);
+        let mut shared = stmts.clone();
+        // The later statement first, so the earlier one keeps its index.
+        for (index, ordinal) in [(second.1, second.2), (first.1, first.2)] {
+            let mut skip = ordinal;
+            let mut hoisted = None;
+            hoistable(&mut shared[index], env, &mut |expr| {
+                if skip > 0 {
+                    skip -= 1;
+                    return false;
+                }
+                hoisted = Some(std::mem::replace(expr, Expr::ident(&name)));
+                true
+            });
+            let Some(value) = hoisted else {
+                return true;
+            };
+            shared.insert(
+                index,
+                Stmt::Expr(Expr::Assign(
+                    None,
+                    Box::new(Expr::ident(&name)),
+                    Box::new(value),
+                )),
+            );
+        }
+        *stmts = shared;
+        let (specs, stars) = split_spelling(&first.3);
+        stmts.insert(
+            start,
+            Stmt::Decl(Decl {
+                specs,
+                items: vec![Declarator {
+                    before: vec!["*".to_string(); stars],
+                    name: name.clone(),
+                    after: Vec::new(),
+                    init: None,
+                }],
+            }),
+        );
+        done = true;
+        true
+    });
+    done
+}
+
 fn split_spelling(spelling: &str) -> (Vec<String>, usize) {
     let stars = spelling.matches('*').count();
     let specs = spelling
@@ -2351,6 +2449,25 @@ mod tests {
             found,
             vec!["if (Rand() == 3) return 1; return 0;".to_string()]
         );
+    }
+
+    #[test]
+    fn one_temporary_serves_two_statements() {
+        let found = outcomes(
+            Kind::ShareTemporary,
+            "Use(a + 49);\nUse(a + 32);\nreturn 0;",
+        );
+        assert_eq!(
+            found,
+            vec!["s32 tmp; tmp = a + 49; Use(tmp); tmp = a + 32; Use(tmp); return 0;".to_string()]
+        );
+        // Only values of one type share it, and only across statements.
+        assert!(outcomes(
+            Kind::ShareTemporary,
+            "gX = gUnit->hp;\nUse(a + 1);\nreturn 0;"
+        )
+        .is_empty());
+        assert!(outcomes(Kind::ShareTemporary, "Use((a + 1) * (b + 1));\nreturn 0;").is_empty());
     }
 
     #[test]

@@ -57,8 +57,9 @@ inserted or deleted instruction; 0 only for identical code.\n\
   --sample N        print N single rewrites of the draft as diffs and stop\n\
 \n\
 Rewrites: swap or regroup commutative operands; reorder independent\n\
-statements and local declarations; introduce or remove a temporary; add or\n\
-drop same-width integer casts; for, while and do-while loop forms; pointer\n\
+statements and local declarations; introduce or remove a temporary, or\n\
+share one between two statements; add or drop same-width integer casts;\n\
+for, while and do-while loop forms; pointer\n\
 arithmetic versus indexing; split or join compound assignments; move an\n\
 assignment into or out of a condition; the register keyword; invert an\n\
 if/else; test a truth value or compare it with zero. A written candidate\n\

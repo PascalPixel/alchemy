@@ -259,6 +259,9 @@ Engine_ActorSetAttachedEffect:
 	.thumb_func
 Engine_CameraFollowActor:
 	overlay_veneer Object_AttachWorkTargetToObjectFar
+	.global Engine_CameraMoveTo
+	.thumb_func
+Engine_CameraMoveTo:
 	overlay_veneer Motion_CamBoundsFar
 	.global Engine_CameraWaitForMove
 	.thumb_func

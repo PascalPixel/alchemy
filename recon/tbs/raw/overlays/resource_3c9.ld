@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/MOVE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/EFFECT/SPAWN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SETUP.o"(.text)
-        "*/resource_3c9_overlay.o"(.text.x020088b4)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/PRESENTATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/SCENE_A.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/ENTRY_SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/VINASU_CHOJO/EFFECTS.o"(.text)

@@ -14,6 +14,12 @@
  * baseline. It rotates the range check to the loop tail and still keeps
  * the map in r5; this does not explain the reference's separate ip/r7
  * lifetimes. Preserve the original control flow until new evidence does.
+ * 2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes, then seed 11, 3
+ * jobs, 10 minutes): declaring pos before tbl, kept here with the block map
+ * under its build name ResourceBlockOwners, takes the score from 605 to 335
+ * (19 register-only, 2 operand, 2 deleted); nothing in 25,591 further
+ * candidates goes below it. The map still sits in r5 with a copy in ip,
+ * where the reference holds it in ip and r7.
  */
 
 struct ResourceTableEntry {
@@ -21,7 +27,7 @@ struct ResourceTableEntry {
     u16 block;
 };
 
-extern u8 Data_03001810[512];
+extern u8 ResourceBlockOwners[512];
 extern struct ResourceTableEntry Data_03001b10[96];
 
 s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
@@ -34,9 +40,9 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
         return -1;
     }
     {
-        u8 *map = Data_03001810;
-        struct ResourceTableEntry *tbl = Data_03001b10;
+        u8 *map = ResourceBlockOwners;
         s32 pos = 0;
+        struct ResourceTableEntry *tbl = Data_03001b10;
         u32 end;
         u32 i;
         u8 *scan;
@@ -46,13 +52,13 @@ next_run:
         if (pos >= 512) {
             goto done;
         }
-        if (Data_03001810[pos] != 0xff) {
+        if (ResourceBlockOwners[pos] != 0xff) {
             goto occupied;
         }
         result = pos;
         end = result + blocks;
         if (pos < end) {
-            scan = Data_03001810 + result;
+            scan = ResourceBlockOwners + result;
             do {
                 if (*scan++ != 0xff) {
                     goto occupied;
@@ -61,7 +67,7 @@ next_run:
             } while (pos < end);
         }
         for (i = 0; i < blocks; i++) {
-            Data_03001810[result + i] = id;
+            ResourceBlockOwners[result + i] = id;
         }
         goto found;
 occupied:

@@ -10,6 +10,14 @@
  * (308 bytes / 54 edits); a one-element link array changes nothing there.
  * Stop the storage axis before more layout permutations.
  * FAKEMATCH: the initial null window also supplies the shared integer zero.
+ * 2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 59,349
+ * candidates, none below the draft's score 200 (4 operand, 2 reordered),
+ * 36,959 level with it. The 0x980 pool word is message 2432 (the Venus
+ * Djinni joining line) plus the element, so it is a message symbol that the
+ * catalogs have not named yet; a plain 0x980 becomes movs/lsls (score 555).
+ * Data_080371fe needs its own ROM label. Setting the display pointer from
+ * &buf, writing the flags through buf, a record pointer, display[0] or a
+ * pointer set inside the if all keep the r7+4/r7+8 stores.
  */
 #include "TYPES.H"
 struct MessageWindow;

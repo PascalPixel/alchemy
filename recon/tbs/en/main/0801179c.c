@@ -14,7 +14,17 @@
    unchanged liveness and allocation. The timer decrement shares pseudo
    47 with the command sentinel. A script wrapper has no demonstrated
    ownership lever here, so no wrapper or declaration/width sweep was
-   attempted. Retain this address clarification and stop this axis. */
+   attempted. Retain this address clarification and stop this axis.
+   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 31,884
+   candidates, none below the draft's score 260 (4 operand, 3 reordered),
+   22,654 level with it. The build names the EWRAM buffers gMapWork,
+   gDecodeBuffer and gMapBlocks, but every spelling of the two sources
+   through those names (symbol plus op * 32, op * 32 plus symbol, array
+   element, word array) scores 490: the named base allocates the script
+   registers differently from the literal the draft uses, so the draft's
+   literal EWRAM addresses, which block adoption, are also what matches
+   here. Inner while, while (timer == 0) and early-continue loop forms score
+   990 to 1685. */
 
 #include "TYPES.H"
 #include "DMA.H"

@@ -101,7 +101,7 @@ Func_08042e28:
 	bl	Func_081c0040
 	adds	r0, r5, #0
 	movs	r1, #0
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	adds	r0, r5, #0
 	pop	{r5, pc}
 	push	{r5, r6, lr}

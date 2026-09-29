@@ -25,7 +25,7 @@ Func_080227e0:
 	lsls	r3, r6, #3
 	adds	r5, r5, r3
 	str	r4, [sp, #0]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	ldr	r4, [sp, #0]
 	ldr	r2, [pc, #164]
 	lsls	r3, r6, #12
@@ -166,7 +166,7 @@ InitializeAnimationObjects:
 	str	r3, [sp, #4]
 	movs	r3, #0
 	ldrsh	r0, [r6, r3]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	adds	r5, r0, #0
 	ldrb	r2, [r5, #0]
 	ldr	r1, [sp, #0]
@@ -224,7 +224,7 @@ InitializeAnimationObjects:
 	beq.n	.L_080229aa
 	movs	r3, #0
 	ldrsh	r0, [r5, r3]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	adds	r6, r0, #0
 	ldrb	r3, [r6, #0]
 	cmp	r3, #0
@@ -289,7 +289,7 @@ ResourceMetadata_Register:
 	adds	r3, #40
 	mov	r0, r8
 	str	r5, [r6, r3]
-	bl	Func_08021918
+	bl	Resource_GetMetadataRecordFar
 	ldrb	r3, [r6, #27]
 	cmp	r3, #0
 	bne.n	.L_08022a10

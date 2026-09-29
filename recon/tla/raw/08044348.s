@@ -153,7 +153,7 @@ Func_08044348:
 	.2byte 0xefff
 	.2byte 0xffff
 	push	{r5, lr}
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	ldr	r2, [pc, #12]
 	movs	r1, #128
 	adds	r5, r0, #0

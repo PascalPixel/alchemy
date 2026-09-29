@@ -99,7 +99,7 @@ Func_080f8658:
 	movs	r3, #16
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #60]
 	ldrh	r3, [r5, #60]
@@ -110,7 +110,7 @@ Func_080f8658:
 	adds	r2, r6, #0
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #60]
 	ldrh	r3, [r5, #60]
@@ -140,7 +140,7 @@ Func_080f8658:
 	movs	r3, #16
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #62]
 	ldrh	r3, [r5, #62]
@@ -151,7 +151,7 @@ Func_080f8658:
 	adds	r2, r6, #0
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #62]
 	ldrh	r3, [r5, #62]
@@ -186,7 +186,7 @@ Func_080f8658:
 	movs	r1, #3
 	movs	r3, #16
 	adds	r5, #64
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	ldrh	r2, [r5, #0]
 	ldrh	r3, [r7, #0]
 	cmp	r2, r3
@@ -197,7 +197,7 @@ Func_080f8658:
 	adds	r2, r6, #0
 	movs	r3, #64
 	movs	r1, #3
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	ldrh	r2, [r5, #0]
 	ldrh	r3, [r7, #0]
 	cmp	r2, r3
@@ -234,7 +234,7 @@ Func_080f8658:
 	mov	r8, r0
 	mov	sl, r1
 	adds	r7, r2, #0
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	movs	r6, #0
 	cmp	r5, #0
@@ -340,7 +340,7 @@ Func_080f8658:
 	subs	r3, #255
 	strb	r6, [r7, #29]
 	strb	r3, [r2, #15]
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_080f8960
@@ -363,7 +363,7 @@ Func_080f8658:
 	adds	r3, r7, r2
 	str	r0, [r3, #0]
 .L_080f8960:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r6, r0, #0
 	cmp	r6, #95
 	bgt.n	.L_080f8990

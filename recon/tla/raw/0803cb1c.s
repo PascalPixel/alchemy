@@ -25,7 +25,7 @@ Func_0803cb1c:
 	cmp	r3, #0
 	beq.n	.L_0803cb4a
 	movs	r1, #0
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0803cb4a:
 	adds	r6, #1
 	adds	r5, #40
@@ -68,7 +68,7 @@ Func_0803cb1c:
 	beq.n	.L_0803cb98
 	adds	r0, r7, #0
 	movs	r1, #0
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 .L_0803cb98:
 	adds	r7, #36
 	adds	r6, #1

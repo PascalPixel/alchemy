@@ -190,7 +190,7 @@ Func_080f9224:
 	adds	r2, r5, #0
 	movs	r1, #7
 	movs	r3, #8
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	ldr	r0, [pc, #16]
 	adds	r1, r5, #0
 	movs	r2, #64

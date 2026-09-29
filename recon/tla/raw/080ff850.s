@@ -485,7 +485,7 @@ Func_080ff850:
 	mov	r2, r8
 	movs	r3, #176
 	str	r5, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	ldrb	r4, [r6, #8]
 	cmp	r4, #255
 	bne.n	.L_080ffc30

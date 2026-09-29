@@ -840,7 +840,7 @@ Func_08103218:
 	mov	r2, r9
 	adds	r3, #88
 	str	r5, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	ldr	r0, [sp, #8]
 	movs	r1, #128
 	lsls	r1, r1, #17

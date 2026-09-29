@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_0803d4e4
+	.global Ui_BuildPairedPatternsToSlot
 	.thumb_func
-Func_0803d4e4:
+Ui_BuildPairedPatternsToSlot:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -60,7 +60,7 @@ Func_0803d4e4:
 	ldr	r3, [sp, #36]
 	cmp	r3, #0
 	bne.n	.L_0803d564
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	mov	r2, fp
 	str	r0, [r2, #0]
 .L_0803d564:

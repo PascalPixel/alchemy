@@ -76,7 +76,7 @@ Func_080e8d80:
 	adds	r7, #84
 	adds	r1, r7, #0
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #64
 	adds	r2, r7, #0
 	str	r0, [sp, #36]
@@ -791,7 +791,7 @@ Func_080e8d80:
 	adds	r1, r2, #0
 	str	r2, [sp, #20]
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #3
 	ldr	r2, [sp, #20]

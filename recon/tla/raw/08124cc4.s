@@ -661,7 +661,7 @@ Func_08124cc4:
 	adds	r0, r6, #0
 	bl	0x08038120
 	adds	r0, r6, #0
-	bl	Func_0811b6a4
+	bl	BattlePres_SetActorModeAndAction
 	ldr	r0, [pc, #252]
 	bl	0x080381c8
 	bl	Func_0811ff08
@@ -679,7 +679,7 @@ Func_08124cc4:
 	adds	r0, r6, #0
 	bl	0x08038120
 	adds	r0, r6, #0
-	bl	Func_0811b6a4
+	bl	BattlePres_SetActorModeAndAction
 	ldr	r0, [pc, #208]
 	bl	0x080381c8
 	bl	Func_0811ff08

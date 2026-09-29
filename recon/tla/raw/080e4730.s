@@ -44,7 +44,7 @@ Func_080e4730:
 	bl	Resource_GetTableEntry
 	mov	r1, sl
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r5, #128
 	lsls	r5, r5, #4
 	adds	r1, r5, #0
@@ -165,7 +165,7 @@ Func_080e4730:
 	ldr	r0, [r1, #80]
 	movs	r1, #15
 	bl	0x08020288
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r2, #0
 	adds	r1, r5, #0
 	str	r0, [sp, #32]
@@ -431,7 +431,7 @@ Func_080e4730:
 	bl	Resource_GetTableEntry
 	mov	r1, r9
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r5, #128
 	lsls	r5, r5, #4
 	adds	r1, r5, #0
@@ -541,7 +541,7 @@ Func_080e4730:
 	adds	r2, r5, #0
 	mov	r1, r9
 	bl	0x080e43a4
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r1, r5, #0
 	movs	r2, #0
 	str	r0, [sp, #36]
@@ -2003,7 +2003,7 @@ Func_080e4730:
 	adds	r3, #252
 	strb	r3, [r2, #0]
 .L_080e57e8:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #64
 	ldr	r2, [pc, #608]
 	str	r0, [sp, #16]
@@ -2114,7 +2114,7 @@ Func_080e4730:
 	bl	Resource_GetTableEntry
 	mov	r1, r9
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	mov	r2, r9
 	lsls	r1, r1, #3
@@ -3004,7 +3004,7 @@ Func_080e4730:
 	bl	Resource_GetTableEntry
 	ldr	r1, [sp, #28]
 	bl	0x0801587c
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	movs	r1, #128
 	lsls	r1, r1, #1
 	ldr	r2, [sp, #28]

@@ -108,7 +108,7 @@ Func_08044558:
 	bl	Func_080444e8
 	movs	r1, #5
 	mov	r8, r1
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	movs	r7, #18
 	cmp	r5, #95
@@ -145,7 +145,7 @@ Func_08044558:
 	adds	r0, #68
 	str	r0, [sp, #12]
 .L_08044686:
-	bl	Func_080143ac
+	bl	Resource_FindFreeEntry
 	adds	r5, r0, #0
 	cmp	r5, #95
 	bgt.n	.L_08044704
@@ -600,10 +600,10 @@ Func_08044558:
 .L_08044a0c:
 	mov	r0, sl
 	movs	r1, #2
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	movs	r1, #2
 	ldr	r0, [sp, #44]
-	bl	Func_0803939c
+	bl	UiWork_Finalize
 	ldr	r0, [sp, #48]
 	bl	0x0803d450
 	movs	r0, #1

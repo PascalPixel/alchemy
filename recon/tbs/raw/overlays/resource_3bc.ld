@@ -10,7 +10,6 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/HOOKS.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x0200804c)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/LOG_ROLLING.o"(.text)
-        "*/resource_3bc_overlay.o"(.text.x02008a84)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/ACTIVE_ACTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/COMPETITOR_TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/STAGE_START.o"(.text)

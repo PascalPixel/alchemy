@@ -1,0 +1,4 @@
+control	0x3f42
+level	0x10	52501
+jump	0
+end

@@ -2004,6 +2004,7 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.083249e7)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/SCREEN.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.0832b0a6)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/NINTENDO_SPLASH.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/CAMELOT_LOGO.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083357f1)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/TITLE/GOLDEN_SUN.o"(.rodata)

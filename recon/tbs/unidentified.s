@@ -968,9 +968,6 @@ Resource_BuildStamp:
 	.global Title_IntroGraphicsC
 Title_IntroGraphicsC:
 	.incbin "baserom.gba", 0x0032b0a8, 0x000086f8
-	.global Title_NintendoLogo
-Title_NintendoLogo:
-	.incbin "baserom.gba", 0x003337a0, 0x00000828
 	.section .unidentified.083357f1,"a"
 	.incbin "baserom.gba", 0x003357f1, 0x00000003
 	.section .unidentified.08337101,"a"

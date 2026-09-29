@@ -1,3 +1,7 @@
+/* 2026-09-29: five minutes of permutation reached 6941 from 8151 through 88
+ * rewrites, mostly operand swaps, casts and temporaries; that candidate is
+ * not kept, since the draft is far from exact and blocked by Value_
+ * resource numbers anyway. */
 /* 2026-09-29: callees carry the build's names; alchemy permute scores 8151,
  * from 8331. */
 #include "EFFECT_STEP.H"

@@ -1,26 +1,26 @@
-/*
- * Draft: overlay 385 (KUUPUAPPU_MURA_SAI) at 0x02008804, between
- * DIALOGUE.C and SCENE_STEP.C; its rows stay in the listing.
- *
- * Remaining difference: the game loads the flag bit 2 as a pool word before
- * the halfword or; a constant bit compiles to a halfword pool load or a move
- * (2 halfwords differ). The message it loads from the pool is
- * MsgKuupuappuWatchingGuysMakes, which the draft now names.
- */
-
+/* Talking to actor 14: the first talk until flag 0x307 is set, then the line
+ * about feeling brave. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
 extern u8 MsgKuupuappuWatchingGuysMakes[];
+
+struct SceneActor {
+    u8 unk_00[6];
+    u16 facing;
+    u8 unk_08[92];
+    u16 state_flags;
+};
 
 void ActorPresentation_RunActorModeOneThenZero(s32 actor);
 void SceneDialogue_RunActorFourteenFlagDialogue(void);
 
-void FieldScene_RunSupplementalSequenceOne(void)
+void KuupuappuMuraSai_RunActor14Talk(void)
 {
     {
-        u16 *flags = (u16 *)((u8 *)Actor_Get(14) + 100);
+        struct SceneActor *actor = (struct SceneActor *)Actor_Get(14);
 
-        *flags |= 2;
+        actor->state_flags |= 2;
     }
     Event_Begin();
     if (GameFlag_IsSet(0x307) != 0) {

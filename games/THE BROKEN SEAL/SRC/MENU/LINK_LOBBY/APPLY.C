@@ -1,12 +1,4 @@
-/* Draft of LinkLobby_RunBattleApplication, resource_3cb at 0x02008b94 (was
- * MENU/LINK_LOBBY/APPLY.C).
- * Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines
- * (Engine_UiWorkWaitThenFinalizeCapacity, Engine_GameFlagWriteValue).
- * The listing keeps these rows. */
-/* Handle battle applications and reopen the lobby attendant's dialogue.
- * Reconstructed from the complete own-ROM owner and registered draft;
- * exact 468-byte extent, including literal pool (2026-09-26). */
+/* Handle battle applications and reopen the lobby attendant's dialogue. */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 extern u8 MsgLobbyOpponentArrived[];
@@ -15,14 +7,13 @@ extern u8 MsgLobbyPleaseSpeakWhen[];
 s32 LinkLobby_PeerSlotMatches(s32 slot);
 void LinkLobby_WriteSlotValue(s32 slot);
 u32 State_RunQueryWithInterruptMasterSaved(void);
-void Engine_GameFlagWriteValue(s32 counter, s32 value);
+u32 GameFlag_SetByte(u32 flag, u8 value);
 
 union GameStateRows {
     u8 bytes[512][2];
     s16 halves[512][1];
     s32 words[256];
 };
-
 
 /* FAKEMATCH: Typed inline calls preserve call-local constants and argument order. */
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
@@ -59,9 +50,9 @@ s32 LinkLobby_RunBattleApplication(void)
         if (!Value1(Engine_GameFlagIsSet, 0x173)) {
             Engine_EventSetMessage(msg + 5);
             Engine_EventOpenMessage(8, 0);
-            answer = Engine_UiWorkWaitThenFinalizeCapacity(0, 0);
+            answer = Engine_EventChooseYesNo(0, 0);
             if (answer == 0) {
-                Engine_GameFlagWriteValue(1000, 0);
+                GameFlag_SetByte(1000, 0);
                 Engine_GameFlagSet(0x173);
                 Engine_GameFlagClear(0x172);
                 Engine_GameFlagClear(0x16c);
@@ -108,7 +99,7 @@ open_message:
                 Engine_EventSetMessage(msg + 1);
             }
             Engine_EventOpenMessage(8, 0);
-            if (Engine_UiWorkWaitThenFinalizeCapacity(0, 0) == 0) {
+            if (Engine_EventChooseYesNo(0, 0) == 0) {
                 if (LinkLobby_PeerSlotMatches(0)) {
                     Engine_GameFlagSet(0x16c);
                     Engine_GameFlagSet(0x172);

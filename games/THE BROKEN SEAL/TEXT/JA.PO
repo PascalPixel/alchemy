@@ -44095,7 +44095,7 @@ msgctxt "message"
 msgid "11021"
 msgstr "どうしたんじゃ? あんたたち{line_break}もっともっと がんばりなされ。{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyTravelingWarrior"
 msgid "11022"
 msgstr "わたしは さすらいの戦士{line_break}さいきょうの戦士めざして{line_break}ここに やってきたのだ{page_break}しかし ここのモンスターは{line_break}まあ なんというか・・・{line_break}なかなか てごわいな。{end_wait}"
 

@@ -37,6 +37,10 @@
  *   - Data_080ee958 / Data_080ee966 are read at the fixed byte offset 12
  *     (element 6); the reference keeps that offset in a register, so the
  *     original may have indexed them with a variable not recovered here.
+ * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+ * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores
+ * 38,392 with 38 symbols the linked build does not define, too far for a
+ * 10-minute search, so none was run.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))

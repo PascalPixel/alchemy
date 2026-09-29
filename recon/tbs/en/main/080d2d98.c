@@ -79,6 +79,10 @@
  * then rectangle_slot[slot]): that spelling costs four more bytes and scores
  * 702/499 instead of 622/479, so the reference's register-offset load is not
  * reached by naming the index either.
+ * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+ * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores 6,830
+ * with 16 symbols the linked build does not define, too far for a 10-minute
+ * search, so none was run.
  */
 
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))

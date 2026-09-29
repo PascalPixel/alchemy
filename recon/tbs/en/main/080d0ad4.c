@@ -1,6 +1,10 @@
 /* Draft, not exact (2026-09-24): candidate=1036 reference=1036 differing_halfwords=418. Constants the reference loads from
    the literal pool are spelled as link-time Value_ symbols, which restores
-   the reference size; wraps marked FAKEMATCH only move scheduling. */
+   the reference size; wraps marked FAKEMATCH only move scheduling.
+   2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+   M2C_FIELD takes a type as a macro argument. Preprocessed, it scores 6,142
+   with 18 symbols the linked build does not define, too far for a 10-minute
+   search, so none was run. */
 #include "TYPES.H"
 extern u8 Value_00007828;
 extern u8 Value_00000100;

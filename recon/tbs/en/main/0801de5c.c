@@ -5,6 +5,10 @@
  * into a temporary 4bpp tile buffer, allocates available render tile slots,
  * and copies the resulting eight tile rows to VRAM.  The unrelated battle
  * template selected by coarse aggregate similarity was not used.
+ * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+ * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores
+ * 13,177 with 3 symbols the linked build does not define, too far for a
+ * 10-minute search, so none was run.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))

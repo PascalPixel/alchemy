@@ -7,7 +7,7 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/INTERIORS.o"(.text)
-        "*/resource_3ac_overlay.o"(.text.x020081d8)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/MERCHANT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/SHOPS.o"(.text)
         "*/resource_3ac_overlay.o"(.text.x020083dc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/PRIEST.o"(.text)

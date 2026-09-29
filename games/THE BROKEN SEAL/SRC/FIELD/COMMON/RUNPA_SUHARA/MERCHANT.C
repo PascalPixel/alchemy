@@ -1,12 +1,8 @@
-/* Draft of resource_3ac 0x020081d8 (ItemMerchant_ReadMind): it matches the
- * ROM byte for byte now that the messages it loads from the literal pool have
- * catalogue names (MsgRunpaIsntWeaponsVendors,
- * MsgRunpaItemMerchantSealedThoughts). The listing keeps these rows until the
- * draft is adopted. */
+/* The item merchant's thoughts when read with Psynergy: one line before
+ * Lunpa's trade reopens and one after. */
 #include "INTERIORS.H"
 extern u8 MsgRunpaIsntWeaponsVendors[];
 extern u8 MsgRunpaItemMerchantSealedThoughts[];
-
 
 void ItemMerchant_ReadMind(void)
 {
@@ -22,4 +18,3 @@ void ItemMerchant_ReadMind(void)
         Event_End();
     }
 }
-

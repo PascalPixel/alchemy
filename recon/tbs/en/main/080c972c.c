@@ -54,19 +54,19 @@
     (*(type_ptr)((u8 *)(expr) + (offset)))
 
 
-void Func_080cd594(s32 mode);
-void Func_080c9048(void);
+void BattleFx_BeginCanvasLayer(s32 mode);
+void BattlePres_ConfigureEffectDisplay(void);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
-u32 Func_08004458(void);
+void Scheduler_RemoveCallback(void *callback);
+u32 Random16(void);
 void Func_080b50e8(s32 cue);
 void Func_080f9010(s32 cue);
-void Func_080d6888(s32 actor, s32 b, s32 c, s32 d, s32 e);
-void Func_080e3908(void *particle, s32 a, s32 b);
-void Func_080cd52c(void);
+void ObjectGroup_UpdateMembers(s32 actor, s32 b, s32 c, s32 d, s32 e);
+void EffectStep_AdvanceWithGravity2D(void *particle, s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 /* Value_ symbols carry a literal the reference loads from its pool rather
    than materializing with a mov; the family already uses this spelling in
@@ -82,7 +82,7 @@ extern const u8 Data_080ededc[];
 
 /* Sprite offset within the work block, keyed by clamped particle age
    (1..6), read as the byte pair at age*2-2. */
-extern const u16 Data_080ede5c[];
+extern const u16 BattleFx6_FlareCells[];
 
 void Func_080c972c(void *object) {
     void *temp_r2_115;
@@ -132,11 +132,11 @@ void Func_080c972c(void *object) {
     temp_r1_17 = *cursor++;
     sp1C = *cursor;
     M2C_FIELD(temp_r1_17, void **, 0x7828) = object;
-    Func_080cd594(0x2001);
+    BattleFx_BeginCanvasLayer(0x2001);
     *(s16 *)0x04000020 = 0x100;
     Resource_LoadAndDecompress((s32)&Value_000000cc, (u8 *)temp_r1_17 + 0x604, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000076, temp_r1_17, 0, 0);
-    Func_080c9048();
+    BattlePres_ConfigureEffectDisplay();
     *(s16 *)0x04000050 = 0x3F44;
     *(s16 *)0x04000048 = 0x3337;
     BattleEffect_LoadWork(0x2E, 7, 7, 2, 2);
@@ -153,7 +153,7 @@ void Func_080c972c(void *object) {
     var_i = 0;
     var_r5_108 = (u8 *)temp_r1_17 + 0x7080;
     do {
-        temp_r0_112 = Func_08004458() & 0x3F;
+        temp_r0_112 = Random16() & 0x3F;
         temp_r2_115 = M2C_FIELD(temp_r1_17, void **, 0x7828);
         temp_r1_124 = 0 - ((var_i * Data_080ededc[(M2C_FIELD(temp_r2_115, s32 *, 0x18) * 4) + 2]) + 0x10);
         if (M2C_FIELD(temp_r2_115, s32 *, 4) == 1) {
@@ -257,13 +257,13 @@ loop_38:
                             temp_r6_437 = (u8 *)temp_r3_436 + 0x02010140;
                             M2C_FIELD(temp_r6_437, s32 *, 0) = (s32) ((temp_r6_355 + 0xC) << 0x10);
                             M2C_FIELD(temp_r6_437, s32 *, 4) = (s32) (temp_r5_360 << 0x10);
-                            M2C_FIELD(temp_r6_437, s32 *, 0xC) = (s32) (((Func_08004458() & 0xFF) - 0x80) << 9);
+                            M2C_FIELD(temp_r6_437, s32 *, 0xC) = (s32) (((Random16() & 0xFF) - 0x80) << 9);
                             if (M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18) == 2) {
-                                M2C_FIELD(temp_r6_437, s32 *, 0x10) = (s32) (((0x1FF & Func_08004458()) + 0xFFFFFE80) << 0xA);
+                                M2C_FIELD(temp_r6_437, s32 *, 0x10) = (s32) (((0x1FF & Random16()) + 0xFFFFFE80) << 0xA);
                             } else {
-                                    M2C_FIELD(temp_r6_437, s32 *, 0x10) = (s32) (((Func_08004458() & 0xFF) - 0xFF) << 0xA);
+                                    M2C_FIELD(temp_r6_437, s32 *, 0x10) = (s32) (((Random16() & 0xFF) - 0xFF) << 0xA);
                             }
-                            M2C_FIELD(temp_r6_437, s32 *, 0x18) = (s32) ((0xF & Func_08004458()) + 0x10);
+                            M2C_FIELD(temp_r6_437, s32 *, 0x18) = (s32) ((0xF & Random16()) + 0x10);
                             var_r4_412 += 1;
                         } while (var_r4_412 != Data_080ededc[(M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x18) * 4) + 1]);
                     }
@@ -274,7 +274,7 @@ loop_38:
                     if (M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x14) != 0) {
                         var_r6_507 = 0x24;
                         do {
-                            Func_080d6888((s32) M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s16 *, var_r6_507), 7, 5, var_r4_503, 2);
+                            ObjectGroup_UpdateMembers((s32) M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s16 *, var_r6_507), 7, 5, var_r4_503, 2);
                             var_r4_503 += 1;
                             var_r6_507 += 2;
                         } while (var_r4_503 != M2C_FIELD(M2C_FIELD(temp_r1_17, void **, 0x7828), s32 *, 0x14));
@@ -309,15 +309,15 @@ loop_38:
                     var_r4_585 = 6;
                 }
                 temp_r0_590 = var_r4_585 * 2;
-                temp_r6_437 = (void *) ((const u8 *)Data_080ede5c + temp_r0_590 - 2);
+                temp_r6_437 = (void *) ((const u8 *)BattleFx6_FlareCells + temp_r0_590 - 2);
                 sp14(sp1C, *(const u16 *)temp_r6_437 + (u8 *)temp_r1_17, M2C_FIELD(var_r5_577, s16 *, 2) - var_r4_585, M2C_FIELD(var_r5_577, s16 *, 6) - var_r4_585, temp_r0_590, temp_r0_590);
-                Func_080e3908(var_r5_577, 0x3C, 0x2000);
+                EffectStep_AdvanceWithGravity2D(var_r5_577, 0x3C, 0x2000);
                 M2C_FIELD(var_r5_577, s32 *, 0x18) = (s32) (M2C_FIELD(var_r5_577, s32 *, 0x18) - 1);
             }
             var_i += 1;
             var_r5_577 = (u8 *)var_r5_577 + 0x1C;
         } while (var_i != 0x200);
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         M2C_FIELD(temp_r1_17, s32 *, 0x7824) = 1;
         Func_080030f8(1);
         temp_r1_629 = sp18 + 1;
@@ -326,10 +326,10 @@ loop_38:
             goto loop_33;
         }
     }
-    Func_08004278((void *)0x080C91A5);
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080C91A5);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(0x2F);
     Func_08002dd8(0x2E);
-    Func_080cdbc0();
-    Func_080c9048();
+    BattleFx_EndCanvasLayer();
+    BattlePres_ConfigureEffectDisplay();
 }

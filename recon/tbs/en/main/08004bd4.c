@@ -7,7 +7,7 @@
 
 void SceneTransform_ApplyPitch(s32 angle)
 {
-    s32 sine = Func_08002322(angle);
+    s32 sine = Trig_Sin(angle);
     s32 cosine = Func_0800231c(angle);
     s32 transform[12];
 

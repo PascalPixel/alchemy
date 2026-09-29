@@ -60,7 +60,7 @@ void EffectStep_AdvanceWithGravity2D(struct EffectStep *step, s32 damping, s32 g
 void Camera_ApplyShake(s32 mask, u32 range);
 void ObjectGroup_TickMemberTimers(void);
 
-extern const u16 Data_080ede48[];
+extern const u16 ParticleStreams_CellOffsets[];
 extern u8 Value_00000073;
 extern u8 Value_00000090;
 extern u8 Value_00000089;
@@ -190,7 +190,7 @@ void Func_080e01e4(struct BattleEffectArgument *effect)
             if (particle->variant != -1) {
                 s32 size;
                 size = particle->variant / 16 + 1;
-                draw[1](canvas, (u8 *)sheet + Data_080ede48[size - 1], ((s16 *)&particle->x)[1] - size / 2, ((s16 *)&particle->y)[1] - size, size, size * 2);
+                draw[1](canvas, (u8 *)sheet + ParticleStreams_CellOffsets[size - 1], ((s16 *)&particle->x)[1] - size / 2, ((s16 *)&particle->y)[1] - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(particle, 62, 0x2000);
                 particle->variant--;
             }

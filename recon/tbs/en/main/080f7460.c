@@ -56,31 +56,31 @@ extern u8 Value_000000b4;
 extern u8 Value_000000bf;
 extern u8 Value_000000f0;
 
-void *Func_080048b0(s32 id, s32 size);
+void *Runtime_AllocateHeapBlock(s32 id, s32 size);
 void *Func_080048f4(s32 id, s32 size);
-void Func_08002f3c(s32 id);
-void Func_080040e8(void);
-void *Func_08002f40(s32 id);
-u32 Func_08005340(const void *source, void *destination);
+void RuntimeDispatch_NoOpHook(s32 id);
+void Scheduler_ResetTaskTable(void);
+void *Resource_GetTableEntry(s32 id);
+u32 Resource_DecodeType01(const void *source, void *destination);
 void _call_via_r3(void *dest, s32 size, s32 source, void *state);
 void Func_08015000(void);
-void Func_080f731c(void);
-u32 Func_08004458(void);
+void ReelGame_InitTitle(void);
+u32 Random16(void);
 s32 Func_08002304(s32 value, s32 divisor);
 s32 Func_080022fc(s32 value, s32 divisor);
 s32 Math_Div(s32 value, s32 divisor);
-s32 Func_08002322(s32 angle);
+s32 Trig_Sin(s32 angle);
 s32 Func_0800231c(s32 angle);
 s32 Func_080c9000(s32 id, s32 a, s32 b, s32 c, s32 d);
-s32 Func_080f6038(u16 *source, u16 *destination, s32 scale, s32 count);
-s32 Func_080772e0(s32 id);
-void *Func_08015010(s32 kind, s32 x, s32 y, s32 width, s32 height);
+s32 Graphics_ScaleRgb555(u16 *source, u16 *destination, s32 scale, s32 count);
+s32 PartyInventory_CountItemFar(s32 id);
+void *UiWindow_CreateFar(s32 kind, s32 x, s32 y, s32 width, s32 height);
 void Func_08015080(s32 text, void *window, s32 x, s32 y);
-void Func_080f6148(void);
-void Func_080f61e8(s32 id);
-void Func_080f62b8(s32 a, s32 b, s32 c, s32 d, s32 e);
+void Palette_DarkenSceneStep(void);
+void Palette_StepTowardResource(s32 id);
+void BattleFx_DrawCanvasLine(s32 a, s32 b, s32 c, s32 d, s32 e);
 s32 Func_080041d8(void *callback, s32 interval);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
 void Func_080030f8(s32 frames);
 
@@ -122,17 +122,17 @@ void Scene_RunParticleSequence(void)
     s32 scale;
     u8 *flagBase;
 
-    sprites = (u8 *)Func_080048b0(41, 0x60E);
-    canvas = (u8 *)Func_080048b0(40, 0x8000);
+    sprites = (u8 *)Runtime_AllocateHeapBlock(41, 0x60E);
+    canvas = (u8 *)Runtime_AllocateHeapBlock(40, 0x8000);
     work = (u8 *)Func_080048f4(39, 0x782C);
     state = (u8 *)Func_080048f4(45, 0x61C);
     tiles = (u8 *)0x02010000;
     flagBase = Data_0200024c;
-    Func_08002f3c((s32)&Value_0000000c);
+    RuntimeDispatch_NoOpHook((s32)&Value_0000000c);
     flagBase[288] = 0xFF;
     M2C_FIELD(state, u16 *, 0xA2) = 0;
     M2C_FIELD(state, s32 *, 0x98) = 1;
-    Func_080040e8();
+    Scheduler_ResetTaskTable();
 
     /* Screen block 5: a 20 x 32 name table whose interior rectangle is
        one shared tile and whose remaining cells run consecutively. */
@@ -153,12 +153,12 @@ void Scene_RunParticleSequence(void)
         }
     }
 
-    Func_08005340(Func_08002f40((s32)&Value_00000076), sprites);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_00000076), sprites);
 
-    resource = (u8 *)Func_08002f40((s32)&Value_0000003f);
+    resource = (u8 *)Resource_GetTableEntry((s32)&Value_0000003f);
     Dma_Set(resource, (void *)0x05000140, 0x84000008,
         (volatile u32 *)0x040000d4);
-    Func_08005340(resource + 32, tiles);
+    Resource_DecodeType01(resource + 32, tiles);
 
     /* Move the decompressed 8bpp tiles into the character block, leaving
        out the cells the shared interior tile already covers. */
@@ -222,27 +222,27 @@ void Scene_RunParticleSequence(void)
     M2C_FIELD(work, s32 *, 0x778C) = 0;
     M2C_FIELD(state, s32 *, 0xA8) = 0;
 
-    resource = (u8 *)Func_08002f40((s32)&Value_0000008f);
+    resource = (u8 *)Resource_GetTableEntry((s32)&Value_0000008f);
     Dma_Set(resource, (void *)0x05000000, 0x84000020,
         (volatile u32 *)0x040000d4);
     *(vu16 *)0x05000080 = 0x2F8B;
     *(vu16 *)0x05000082 = 0x5BF6;
 
-    resource = (u8 *)Func_08002f40((s32)&Value_00000040);
+    resource = (u8 *)Resource_GetTableEntry((s32)&Value_00000040);
     Dma_Set(resource, (void *)0x05000200, 0x84000078,
         (volatile u32 *)0x040000d4);
-    Func_08005340(resource + 480, tiles);
+    Resource_DecodeType01(resource + 480, tiles);
     Dma_Set(tiles, (void *)0x06010000, 0x84001B30,
         (volatile u32 *)0x040000d4);
 
-    resource = (u8 *)Func_08002f40((s32)&Value_00000041);
+    resource = (u8 *)Resource_GetTableEntry((s32)&Value_00000041);
     Dma_Set(resource, (void *)0x050003E0, 0x84000008,
         (volatile u32 *)0x040000d4);
-    Func_08005340(resource + 32, tiles);
+    Resource_DecodeType01(resource + 32, tiles);
     Dma_Set(tiles, (void *)0x06016E00, 0x84000480,
         (volatile u32 *)0x040000d4);
     Func_08015000();
-    Func_080f731c();
+    ReelGame_InitTitle();
 
     /* Seed the five records: 21 cells of 0..4 each. */
     entry = (SceneEntry *)state;
@@ -251,7 +251,7 @@ void Scene_RunParticleSequence(void)
         entry->unk19 = 0;
         entry->unk1a = 0xFF;
         for (j = 0; j != 21; j++) {
-            entry->cells[j] = (u8)Func_08002304((s32)Func_08004458(), 5);
+            entry->cells[j] = (u8)Func_08002304((s32)Random16(), 5);
         }
         entry++;
     }
@@ -261,7 +261,7 @@ void Scene_RunParticleSequence(void)
     entry = (SceneEntry *)state;
     for (i = 0; i != 5; i++) {
         for (j = 0; j != 8; j++) {
-            pick[j] = Func_08002304((s32)Func_08004458(), 21);
+            pick[j] = Func_08002304((s32)Random16(), 21);
             for (k = 0; k != j; k++) {
                 if (pick[j] == pick[k]) {
                     j--;
@@ -291,16 +291,16 @@ void Scene_RunParticleSequence(void)
         (volatile u32 *)0x040000d4);
     Dma_Set((void *)0x05000200, shade, 0x84000080,
         (volatile u32 *)0x040000d4);
-    Func_080f6038(shade, (u16 *)0x05000200, 0, 256);
-    Func_080f6038((u16 *)work, (u16 *)0x05000000, 0, 256);
+    Graphics_ScaleRgb555(shade, (u16 *)0x05000200, 0, 256);
+    Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, 0, 256);
     *(vu16 *)0x04000000 = 0x3740;
 
-    if (Func_080772e0(228) == 1) {
-        window = Func_08015010(6, 16, 18, 3, 6);
+    if (PartyInventory_CountItemFar(228) == 1) {
+        window = UiWindow_CreateFar(6, 16, 18, 3, 6);
         M2C_FIELD(state, void **, 0x4C8) = window;
         Func_08015080(0x909, window, 0, 0);
     } else {
-        window = Func_08015010(2, 16, 26, 4, 6);
+        window = UiWindow_CreateFar(2, 16, 26, 4, 6);
         M2C_FIELD(state, void **, 0x4C8) = window;
         Func_08015080(0x908, window, 0, 0);
         Func_08015080(0x909, M2C_FIELD(state, void **, 0x4C8), 0, 8);
@@ -313,40 +313,40 @@ void Scene_RunParticleSequence(void)
     frame = 0;
     while (M2C_FIELD(state, s32 *, 0x8C) != 10) {
         if (frame <= 16) {
-            Func_080f6038(shade, (u16 *)0x05000200,
+            Graphics_ScaleRgb555(shade, (u16 *)0x05000200,
                 frame << 12, 256);
-            Func_080f6038((u16 *)work, (u16 *)0x05000000, frame << 12, 256);
+            Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, frame << 12, 256);
         }
 
         if (M2C_FIELD(state, s32 *, 0x8C) == 3) {
             phase = Func_080022fc(frame, 80);
             if (phase <= 15) {
-                Func_080f61e8((s32)&Value_00000091);
+                Palette_StepTowardResource((s32)&Value_00000091);
             } else if (phase <= 31) {
-                Func_080f61e8((s32)&Value_00000093);
+                Palette_StepTowardResource((s32)&Value_00000093);
             } else if (phase <= 47) {
-                Func_080f61e8((s32)&Value_000000b4);
+                Palette_StepTowardResource((s32)&Value_000000b4);
             } else if (phase <= 63) {
-                Func_080f61e8((s32)&Value_000000a0);
+                Palette_StepTowardResource((s32)&Value_000000a0);
             } else {
-                Func_080f61e8((s32)&Value_0000008f);
+                Palette_StepTowardResource((s32)&Value_0000008f);
             }
 
             if (M2C_FIELD(state, s32 *, 0xA8) <= 15) {
-                Func_080f6148();
+                Palette_DarkenSceneStep();
             }
             if (M2C_FIELD(state, s32 *, 0xA8) > 16 && (frame & 7) == 0) {
-                x = (s32)(((Func_08004458() & 0x7F) + 56) << 16);
-                y = (s32)(((Func_08004458() & 0x1F) + 48) << 16);
+                x = (s32)(((Random16() & 0x7F) + 56) << 16);
+                y = (s32)(((Random16() & 0x1F) + 48) << 16);
                 particle = (Particle *)tiles + ((frame / 8) & 3) * 256;
                 for (i = 0; i != 256; i++) {
-                    speed = (s32)(Func_08004458() & 0xFF) + 64;
-                    angle = (s32)(Func_08004458() & 0xFFFF);
+                    speed = (s32)(Random16() & 0xFF) + 64;
+                    angle = (s32)(Random16() & 0xFFFF);
                     particle->x = x;
                     particle->y = y;
-                    particle->vx = (speed * Func_08002322(angle)) >> 6;
+                    particle->vx = (speed * Trig_Sin(angle)) >> 6;
                     particle->vy = (-(speed * Func_0800231c(angle))) >> 6;
-                    particle->life = (s32)(Func_08004458() & 0xF) + 16;
+                    particle->life = (s32)(Random16() & 0xF) + 16;
                     particle++;
                 }
             }
@@ -406,25 +406,25 @@ void Scene_RunParticleSequence(void)
             for (k = 0; k != 3; k++) {
                 rank = 65 - (k != 1);
                 if (flags[1] != 0) {
-                    Func_080f62b8(20, k + 19, 200, k + 19, rank);
+                    BattleFx_DrawCanvasLine(20, k + 19, 200, k + 19, rank);
                 }
                 if (flags[2] != 0) {
-                    Func_080f62b8(28, k + 35, 200, k + 35, rank);
+                    BattleFx_DrawCanvasLine(28, k + 35, 200, k + 35, rank);
                 }
                 if (flags[3] != 0) {
-                    Func_080f62b8(20, k + 51, 200, k + 51, rank);
+                    BattleFx_DrawCanvasLine(20, k + 51, 200, k + 51, rank);
                 }
                 if (flags[4] != 0) {
-                    Func_080f62b8(28, k + 67, 200, k + 67, rank);
+                    BattleFx_DrawCanvasLine(28, k + 67, 200, k + 67, rank);
                 }
                 if (flags[5] != 0) {
-                    Func_080f62b8(20, k + 83, 200, k + 83, rank);
+                    BattleFx_DrawCanvasLine(20, k + 83, 200, k + 83, rank);
                 }
                 if (flags[0] != 0) {
-                    Func_080f62b8(28, k + 5, 200, k + 91, rank);
+                    BattleFx_DrawCanvasLine(28, k + 5, 200, k + 91, rank);
                 }
                 if (flags[6] != 0) {
-                    Func_080f62b8(28, k + 97, 200, k + 11, rank);
+                    BattleFx_DrawCanvasLine(28, k + 97, 200, k + 11, rank);
                 }
             }
         }
@@ -436,15 +436,15 @@ void Scene_RunParticleSequence(void)
 
     for (i = 0; i != 17; i++) {
         scale = 0x10000 - (i << 12);
-        Func_080f6038(shade, (u16 *)0x05000200, scale, 256);
-        Func_080f6038((u16 *)work, (u16 *)0x05000000, scale, 256);
+        Graphics_ScaleRgb555(shade, (u16 *)0x05000200, scale, 256);
+        Graphics_ScaleRgb555((u16 *)work, (u16 *)0x05000000, scale, 256);
         Func_080030f8(1);
     }
 
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_08004278((void *)0x080F60A1);
-    Func_08004278((void *)0x080F6441);
+    Scheduler_RemoveCallback((void *)0x080F60A1);
+    Scheduler_RemoveCallback((void *)0x080F6441);
     Func_08002dd8(45);
     Func_08002dd8(40);
     Func_08002dd8(39);

@@ -35,20 +35,20 @@ extern u8 Value_00000071;
 extern u8 Value_00000072;
 extern u8 Value_000000a0;
 
-void Func_080cd594(s32);
-void *Func_08002f40(s32);
+void BattleFx_BeginCanvasLayer(s32);
+void *Resource_GetTableEntry(s32);
 s32 Func_080041d8(s32, s32);
-void Func_080e396c(s32, struct EffectPosition *);
+void EffectPosition_ApplyStepAndYOffset(s32, struct EffectPosition *);
 void Func_080b50e8(s32);
 void Func_080b5088(s32, s32);
 void Func_080f9010(s32);
-void Func_080d6888(s32, s32, s32, s32, s32);
-void Func_080e155c(s32, u32);
-void Func_080cd52c(void);
+void ObjectGroup_UpdateMembers(s32, s32, s32, s32, s32);
+void Camera_ApplyShake(s32, u32);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32);
-void Func_08004278(s32);
+void Scheduler_RemoveCallback(s32);
 void Func_08002dd8(s32);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 /* Five per-cell tables, six entries each (cell 0-5): source byte offset,
    an X value indexed by a second field-derived row, a width, a signed Y
@@ -81,7 +81,7 @@ void Func_080ccc38(void *param0, s32 mode)
     work = (u8 *)*entry++;
     dst = (void *)*entry;
     M2C_FIELD(work, void **, 0x7828) = param0;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
 
     tag = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4);
@@ -95,7 +95,7 @@ void Func_080ccc38(void *param0, s32 mode)
     Resource_LoadAndDecompress((s32)&Value_00000072, (void *)0x02010000, 1, 0);
 
     if (mode == 0) {
-        palette = Func_08002f40((s32)&Value_000000a0);
+        palette = Resource_GetTableEntry((s32)&Value_000000a0);
         status = ((WordCopyFn)0x03001388)((void *)0x05000000, palette, 128);
     }
 
@@ -103,10 +103,10 @@ void Func_080ccc38(void *param0, s32 mode)
     M2C_FIELD(work, s32 *, 0x7784) = 75;
     Func_080041d8(0x080cd261, 0x480);
 
-    ctx = Func_080b5098(
+    ctx = GetBattleObjectSlotFar(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36));
     object = ctx->object;
-    Func_080e396c(
+    EffectPosition_ApplyStepAndYOffset(
         M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36), &position);
     if (M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 4) != 0) {
         M2C_FIELD((void *)0x04000028, s32 *, 0) = (112 - position.x) << 8;
@@ -149,7 +149,7 @@ void Func_080ccc38(void *param0, s32 mode)
                     1);
             } else {
                 Func_080f9010(134);
-                Func_080d6888(
+                ObjectGroup_UpdateMembers(
                     M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s16 *, 36),
                     7, 5, 0, 4);
             }
@@ -168,13 +168,13 @@ void Func_080ccc38(void *param0, s32 mode)
             }
         }
 
-        Func_080e155c(8, 8);
-        Func_080cd52c();
+        Camera_ApplyShake(8, 8);
+        ObjectGroup_TickMemberTimers();
         M2C_FIELD(work, s32 *, 0x7824) = 1;
         Func_080030f8(1);
     }
 
-    Func_08004278(0x080cd261);
+    Scheduler_RemoveCallback(0x080cd261);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

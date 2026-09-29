@@ -83,8 +83,8 @@ struct OwnerState {
     s16 hp;                     /* 0x38 */
 };
 
-extern volatile u8 Data_03001f54;
-extern u8 Data_03001810[];
+extern volatile u8 gDebugMode;
+extern u8 ResourceBlockOwners[];
 extern volatile u32 Data_03001ae8;
 extern struct PlayerState Data_02000240;
 extern s16 Data_08013254[];
@@ -131,12 +131,12 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
 
     blocked = 0;
     handled = 0;
-    if (Data_03001f54 != 0 && GameFlag_TestFar(350) != 0) {
+    if (gDebugMode != 0 && GameFlag_TestFar(350) != 0) {
         u8 *p;
         s32 count;
         s32 n;
         count = 0;
-        p = Data_03001810;
+        p = ResourceBlockOwners;
         n = 512;
         while (1) {
             u8 v;
@@ -151,7 +151,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
         if (count - 136 < 0)
             Audio_PlayCue(135);
     }
-    if (Data_03001f54 != 0) {
+    if (gDebugMode != 0) {
         s32 mask;
         mask = 0x200;
         if (Data_03001ae8 & mask) {
@@ -204,7 +204,7 @@ s32 FieldObject_UpdatePlayerControl(struct FieldActor *actor)
     blocked = 0;
     tmp = (u16)((u32)angle >> 16);
     Vector_AddPolarOffset(0x80000, tmp, posA);
-    if (Data_03001f54 != 0) {
+    if (gDebugMode != 0) {
         facing = angle >> 16;
         if (Data_03001ae8 & 0x200)
             goto tail;

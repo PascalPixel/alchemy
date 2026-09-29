@@ -23,13 +23,13 @@ extern u8 *Data_03001e74;
 extern u8 *Data_03001eec;
 extern struct DmaQueue Data_03001e50;
 void WaitFrames(s32);
-void Func_0800387c(u32, u32);
+void QueueIoWriteDelay2(u32, u32);
 void _call_via_r3(void *, s32);
-void Func_080b845c(s32, struct ScreenPosition *);
+void BattleMotion_ProjectScaledPosition(s32, struct ScreenPosition *);
 void Func_080c0774(s32, u16, s32);
 void Func_080c1470(s32);
-void Func_080c16d0(s32);
-void Func_080c1724(void *, void *, s32, s32);
+void Graphics_ResetVramBlockAndReleaseHeapBlocks(s32);
+void Graphics_ScaleRgb555Clamped(void *, void *, s32, s32);
 void Func_080c9020(void);
 void Func_080c9030(void);
 void Func_080c9038(s32);
@@ -61,9 +61,9 @@ void Func_080c1798(s32 actor, s32 value, s32 mode, s32 parameter)
     WaitFrames(1);
     Func_080c0774(1, FIELD(battle, u16, 0x648), 0);
     _call_via_r3((void *)0x03000164, 0x4000);
-    Func_0800387c(0x04000000, 0x3741);
-    Func_0800387c(0x0400000c, 0x3741);
-    Func_0800387c(0x3741, 0x0400000c);
+    QueueIoWriteDelay2(0x04000000, 0x3741);
+    QueueIoWriteDelay2(0x0400000c, 0x3741);
+    QueueIoWriteDelay2(0x3741, 0x0400000c);
     WaitFrames(1);
     *(volatile u16 *)0x04000040 = 0xf0;
     *(volatile u16 *)0x04000044 = 0x3f44;
@@ -74,30 +74,30 @@ void Func_080c1798(s32 actor, s32 value, s32 mode, s32 parameter)
     case 0:
     {
         s32 fade = 0;
-        Func_0800387c(0x04000050, 0x1088);
+        QueueIoWriteDelay2(0x04000050, 0x1088);
         Func_080c1470(value);
         for (i = 0; i <= 44; i++, fade += 0x444) {
             u8 *object = Data_03001eec + 156;
             if (i <= 24) {
                 s32 intensity = 0x10000 - fade;
                 FIELD(battle, s32, 0x644) = intensity;
-                Func_080c1724(battle + 0x544, (void *)0x050000c0, intensity, 0x80);
+                Graphics_ScaleRgb555Clamped(battle + 0x544, (void *)0x050000c0, intensity, 0x80);
             }
-            Func_080b845c(actor, &position_a);
+            BattleMotion_ProjectScaledPosition(actor, &position_a);
             FIELD(object, s32, 0x13c4) = (64 - position_a.x) << 8;
             FIELD(object, s32, 0x13c8) = (64 - position_a.y) << 8;
             QueueObjectUpdate(object + 0x13c4);
             FIELD(object, s32, 0x13cc) = 1;
             WaitFrames(1);
         }
-        Func_080c16d0(value);
+        Graphics_ResetVramBlockAndReleaseHeapBlocks(value);
         break;
     }
     case 1:
         Func_080c9038(value);
         for (i = 39; i >= 0; i--) {
             u8 *object = Data_03001eec;
-            Func_080b845c(actor, &position_b);
+            BattleMotion_ProjectScaledPosition(actor, &position_b);
             FIELD(object, s32, 0x13c4) = (64 - position_b.x) << 8;
             FIELD(object, s32, 0x13c8) = (64 - position_b.y) << 8;
             QueueObjectUpdate(object + 0x13c4);

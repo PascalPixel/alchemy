@@ -55,7 +55,7 @@ void BattleCommand_SelectAutomatic(
     attempt = 0;
     allow_item = 1;
     keep_going = 1;
-    if (actor->class_bonus_disabled != 0)
+    if (actor->class_index != 0)
         return;
     if (retry_mode != 0 && request->command != 4)
         return;

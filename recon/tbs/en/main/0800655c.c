@@ -63,7 +63,7 @@ void SerialRuntime_StepBlockTransfer(void)
     dest = SERIAL_ACTIVE_B;
     if (dest != 0) {
         if (own->flags == 1 && (u8)(peer->peer_flags - 1) <= 1) {
-            if (peer->sequence == (SERIAL_RESULT & 0x7f)) {
+            if (peer->sequence == (gSerialBlockSequence & 0x7f)) {
                 own->sequence = 0;
                 kind = peer->peer_flags;
                 switch (kind) {
@@ -81,17 +81,17 @@ void SerialRuntime_StepBlockTransfer(void)
                     own->sequence = one;
                     break;
                 }
-                SERIAL_RESULT = (SERIAL_RESULT + 1) & 0x7f;
-            } else if (SERIAL_RESULT & 0x80) {
+                gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
+            } else if (gSerialBlockSequence & 0x80) {
                 if (own->sequence & 0x80) {
                     own->sequence = one;
                 } else if (own->sequence == 1) {
                     own->sequence = 0;
-                    SERIAL_RESULT &= 0x7f;
+                    gSerialBlockSequence &= 0x7f;
                 }
             } else {
-                own->sequence = SERIAL_RESULT | 0x80;
-                SERIAL_RESULT |= 0x80;
+                own->sequence = gSerialBlockSequence | 0x80;
+                gSerialBlockSequence |= 0x80;
             }
         } else {
             own->sequence = 0;
@@ -103,11 +103,11 @@ void SerialRuntime_StepBlockTransfer(void)
         kind = peer->flags;
         if (kind == 1) {
             if (peer->sequence & 0x80) {
-                gap = (SERIAL_RESULT - peer->sequence) & 0x7f;
+                gap = (gSerialBlockSequence - peer->sequence) & 0x7f;
                 SERIAL_ACTIVE_A = src - gap * 20;
                 SERIAL_VALUE_A += gap * 20;
-                SERIAL_RESULT -= gap;
-                SERIAL_RESULT &= 0x7f;
+                gSerialBlockSequence -= gap;
+                gSerialBlockSequence &= 0x7f;
             }
             if (SERIAL_VALUE_A != 0) {
                 Dma_Set((void *)SERIAL_ACTIVE_A, own->data, 0x84000005, (volatile u32 *)0x040000d4);
@@ -116,9 +116,9 @@ void SerialRuntime_StepBlockTransfer(void)
                     own->peer_flags = 1;
                 else
                     own->peer_flags = 2;
-                own->sequence = SERIAL_RESULT & 0x7f;
+                own->sequence = gSerialBlockSequence & 0x7f;
                 SERIAL_ACTIVE_A += 20;
-                SERIAL_RESULT = (SERIAL_RESULT + 1) & 0x7f;
+                gSerialBlockSequence = (gSerialBlockSequence + 1) & 0x7f;
             }
         }
         if (own->peer_flags == 2 && peer->flags == 2) {

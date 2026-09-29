@@ -13,27 +13,27 @@
  * This draft is incomplete; production retains the full assembly owner.
  */
 
-extern s32 Func_080b9a44(s16 arg0);
-extern void Func_080bdfec(void);                 /* BattleEventRuntime_Reset */
-extern void Func_08015118(void);
+extern s32 Battle_GetTaggedSlotValue(s16 arg0);
+extern void BattleEventRuntime_Reset(void);                 /* BattleEventRuntime_Reset */
+extern void UiWork_ClearValueNameTablesFar(void);
 extern void Func_08015120(s16 value, s16 mode);  /* UiText_DrawQuantity */
-extern void Func_080151c8(void *text);           /* UiText_ShowMessageAndWait */
+extern void UiText_ShowMessageAndWaitCoreFar(void *text);           /* UiText_ShowMessageAndWait */
 extern s32 BattleRandom16Far(void);
 extern s32 Func_080771b0(s16 id, s8 a, u8 b);
-extern void Func_080771c0(s16 id, s8 a, u8 b);
-extern s32 Func_080771c8(s16 id, s8 a, u8 b);
+extern void Trade_RemoveOfferFar(s16 id, s8 a, u8 b);
+extern s32 Trade_AddOfferFar(s16 id, s8 a, u8 b);
 extern s32 SummonDefinition_Get(s16 id);
 extern s32 Func_080771e8(s8 a, u8 b);
 extern s32 Func_08077208(s16 id, s8 a, u8 b);
-extern s32 Func_08077210(s16 id, s8 a, u8 b);
-extern void *Func_080b7dd0(s16 id);              /* GetBattleObjectSlot */
+extern s32 Trade_CanOfferDjinnFar(s16 id, s8 a, u8 b);
+extern void *GetBattleObjectSlot(s16 id);              /* GetBattleObjectSlot */
 extern void Func_08009080(void *obj, s32 mode);  /* Object_SetMode */
-extern void Func_08009088(void *obj, s32 action);/* Object_SetAction */
+extern void ObjectDispatch_ApplyValueToChildrenFar(void *obj, s32 action);/* Object_SetAction */
 extern void Func_080f9010(s32 cue);              /* Audio_PlayCue */
-extern void Func_080bd808(s32 phase);            /* BattleEventRuntime_SchedulePhase */
-extern void Func_080be02c(void);                 /* BattleEventRuntime_WaitForReady */
+extern void BattleEventRuntime_SchedulePhase(s32 phase);            /* BattleEventRuntime_SchedulePhase */
+extern void BattleEventRuntime_WaitForReady(void);                 /* BattleEventRuntime_WaitForReady */
 extern s32 Func_080c1798(s16 id, s8 a, s32 mode, s32 arg3);
-extern void Func_080c10e8(s32 a, s32 b);
+extern void BattlePres_SetActorModes(s32 a, s32 b);
 extern void Func_080030f8(s32 frames);           /* WaitFrames */
 extern struct BattleTurnOrder *Data_03001e74;
 extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
@@ -41,16 +41,16 @@ extern s16 Func_08077160(void *actor);   /* was declared (s16 id)->void; ground
                                            * actor and its r0 return value is
                                            * used directly as abilityId */
 extern s32 Func_08077078(void *actor, s32 flag);
-extern void Func_080bb8d8(void);
+extern void BattleEv_SetRuntimeField8(void);
 extern s32 GameFlag_TestFar(s32 flagId);            /* GameFlag_IsSet */
 extern s32 Func_08077170(s16 id);
-extern s32 Func_080c23e8(u8 value);
+extern s32 Battle_GetEntryField2LowBits(u8 value);
 extern s32 Func_080771a0_rng(void);
 extern void Func_080bb65c(void);
 extern void Func_080bf1d4(void); /* unreachable; long-branch veneer target only, never a real call site */
 extern void Math_Div(s32 a, s32 b);         /* FixedPoint_Ratio */
 extern void Func_080772f8(s16 id);
-extern s32 Func_080bd3c8(s16 id);
+extern s32 Ability_CheckStatusOrSpecialId(s16 id);
 extern s32 Battle_HitCheck(s16 id, u8 a, u8 b, u8 c, s32 mode);
 
 /*
@@ -199,7 +199,7 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
             plan->target_count = count;
             if(count <= 0) {
                 Func_08015120(*(s16 *)req,1);
-                Func_080151c8((void *)0x816);
+                UiText_ShowMessageAndWaitCoreFar((void *)0x816);
                 if (*(s8 *)((u8 *)actor+0x12b) == 0) ((u8 *)actor)[0x12b] = 1;
                 return -1;
             }
@@ -208,8 +208,8 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
 
     actor = Owner_GetStateFar(*(s16 *)(req + 0));
     battle = Data_03001e74;
-    targetPowerBase = Func_080b9a44(*(s16 *)(req + 10));
-    Func_080bdfec();
+    targetPowerBase = Battle_GetTaggedSlotValue(*(s16 *)(req + 10));
+    BattleEventRuntime_Reset();
 
     tgt[0] = (u8)*(u16 *)(req + 0);
     *(u32 *)(tgt + 96) = 0;
@@ -218,35 +218,35 @@ s32 BattleCommand_BuildPlan(struct BattleCommandRequest *request, struct BattleP
     *(u32 *)(tgt + 92) = 0;
     *(u32 *)(tgt + 80) = 4;
 
-    Func_08015118();
+    UiWork_ClearValueNameTablesFar();
 
     if (*(s16 *)((u8 *)actor + 56) == 0) {
         goto L_080bec5c;
     }
 
-    Func_08015118();
+    UiWork_ClearValueNameTablesFar();
 
     if (((u8 *)actor)[ACTOR_FAINT_FLAG_OFF]) {
         ((u8 *)actor)[ACTOR_FAINT_FLAG_OFF] = 0;
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(ACTOR_FAINT_MSG);
+        UiText_ShowMessageAndWaitCoreFar(ACTOR_FAINT_MSG);
         goto L_080bec8a;
     }
     if (((u8 *)actor)[ACTOR_SILENCE_FLAG_OFF]) {
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(ACTOR_SILENCE_MSG);
+        UiText_ShowMessageAndWaitCoreFar(ACTOR_SILENCE_MSG);
         goto L_080bec8a;
     }
     if (((u8 *)actor)[ACTOR_SEAL_FLAG_OFF]) {
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(ACTOR_SEAL_MSG);
+        UiText_ShowMessageAndWaitCoreFar(ACTOR_SEAL_MSG);
         goto L_080bec8a;
     }
     if (((u8 *)actor)[ACTOR_STATUSFLAG_OFF] & 1) {
         if (*(s16 *)(req + 6) != 3) {
             if ((BattleRandom16Far() & 3) == 0) {
                 Func_08015120(*(s16 *)(req + 0), 1);
-                Func_080151c8(ACTOR_STATUSFLAG_MSG);
+                UiText_ShowMessageAndWaitCoreFar(ACTOR_STATUSFLAG_MSG);
                 goto L_080bec8a;
             }
         }
@@ -329,10 +329,10 @@ L_080be700:
     {
         u16 reqId = *(u16 *)(req + 0);
         if (reqId > 7) {
-            Func_080151c8(TEXT_REQID_HIGH);
+            UiText_ShowMessageAndWaitCoreFar(TEXT_REQID_HIGH);
         } else {
             Func_08015120((s16)reqId, 1);
-            Func_080151c8(TEXT_REQID_LOW);
+            UiText_ShowMessageAndWaitCoreFar(TEXT_REQID_LOW);
         }
         Func_080bb65c();
         *(s32 *)(tgt + 84) = 7;
@@ -360,8 +360,8 @@ L_080be76c:
     Func_08077078(actor, 1);
     Func_08015120(*(s16 *)(req + 0), 2);
     textPtr = TEXT_TIER0_MSG1;
-    Func_080151c8(textPtr);
-    Func_080bb8d8();
+    UiText_ShowMessageAndWaitCoreFar(textPtr);
+    BattleEv_SetRuntimeField8();
     Func_08015120(abilityId, 4);
     textPtr = TEXT_TIER0_MSG2;
     goto L_080be7ca;
@@ -376,7 +376,7 @@ L_080be7d0:
     }
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
-    Func_080151c8(TEXT_TIER1_MSG);
+    UiText_ShowMessageAndWaitCoreFar(TEXT_TIER1_MSG);
     {
         s32 costOk = 1;
         if (*(s16 *)((u8 *)actor + 58) < *(u8 *)((u8 *)abilityData + 9)) {
@@ -410,7 +410,7 @@ L_080be888:
         s16 slotIdx = *(s16 *)(req + 8);
         if (slotIdx < 0) {
             Func_08015120(*(s16 *)(req + 0), 1);
-            Func_080151c8(TEXT_TIER2_NOSLOT_MSG);
+            UiText_ShowMessageAndWaitCoreFar(TEXT_TIER2_NOSLOT_MSG);
             goto L_080bec8a;
         }
         {
@@ -439,7 +439,7 @@ L_080be8dc:
         req = req; /* r1 = req (already held) */
 L_080be8e0:
         Func_08015120(*(s16 *)(req + 0), 1);
-        Func_080151c8(TEXT_TIER2_NOABILITY_MSG);
+        UiText_ShowMessageAndWaitCoreFar(TEXT_TIER2_NOABILITY_MSG);
         /*
          * Ground-truth fix (this pass): `ldr r4,[sp,#12]` (actor), not
          * r10 (req) -- ACTOR_ITEM_USED_FLAG_OFF, formerly misnamed
@@ -473,7 +473,7 @@ L_080be908:
     /* ---- case tier==3 and tier==7 (shared), address 0x080be96e ---- */
 L_080be96e:
     Func_08015120(*(s16 *)(req + 0), 1);
-    Func_080151c8(TEXT_TIER3_MSG);
+    UiText_ShowMessageAndWaitCoreFar(TEXT_TIER3_MSG);
     goto L_080bec8a;
 
     /* ---- case tier==4, address 0x080be984 ---- */
@@ -551,7 +551,7 @@ L_080be984:
 
     /* ---- shared exit: address 0x080be7ca, reached from cases 0/2/4 ---- */
 L_080be7ca:
-    Func_080151c8(textPtr);
+    UiText_ShowMessageAndWaitCoreFar(textPtr);
     goto L_080bee00;
 
     /* ---- Region_080beb08: case tier==5, address 0x080beb08 ---- */
@@ -568,38 +568,38 @@ L_080beb08:
     goto L_080bec90;
 
 L_080beb48:
-    if (Func_08077210(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
+    if (Trade_CanOfferDjinnFar(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                        (u8)*(u16 *)(req + 8)) == 0) {
         goto L_080bec62;
     }
 
     BattleAction_Get(abilityId);
-    Func_080c10e8(0, 0);
+    BattlePres_SetActorModes(0, 0);
     Func_080771b0(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
-    Func_080771c0(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
+    Trade_RemoveOfferFar(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
     BattleUnit_Recalculate(*(s16 *)(req + 0));
-    Func_080bdfec();
-    Func_080bd808(30);
-    Func_080bbabc(0, *(s16 *)(req + 0));
-    Func_080bbabc(3, 0 /* packed sub-kind table index, TBD */);
-    Func_080bbabc(14, 175);
-    Func_080bbabc(10, 0);
-    Func_080bbabc(4, (s32)TEXT_TIER5_CUE_MSG);
-    Func_080bbabc(11, *(s16 *)(req + 0));
+    BattleEventRuntime_Reset();
+    BattleEventRuntime_SchedulePhase(30);
+    BattleEv_Push(0, *(s16 *)(req + 0));
+    BattleEv_Push(3, 0 /* packed sub-kind table index, TBD */);
+    BattleEv_Push(14, 175);
+    BattleEv_Push(10, 0);
+    BattleEv_Push(4, (s32)TEXT_TIER5_CUE_MSG);
+    BattleEv_Push(11, *(s16 *)(req + 0));
     Func_080f9010(212);
-    Func_08009080(Func_080b7dd0(*(s16 *)(req + 0)), 3);
-    Func_08009088(Func_080b7dd0(*(s16 *)(req + 0)), 32);
+    Func_08009080(GetBattleObjectSlot(*(s16 *)(req + 0)), 3);
+    ObjectDispatch_ApplyValueToChildrenFar(GetBattleObjectSlot(*(s16 *)(req + 0)), 32);
     Func_080c1798(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK, 3, 0);
-    Func_080be02c();
+    BattleEventRuntime_WaitForReady();
     goto L_080bf1d6_shared;
 
 L_080bec62:
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
     Func_080f9010(114);
-    Func_080151c8(TEXT_TIER5_BUSY_MSG);
+    UiText_ShowMessageAndWaitCoreFar(TEXT_TIER5_BUSY_MSG);
     Func_080030f8(60);
     goto L_080bf1d6_shared;
 
@@ -608,12 +608,12 @@ L_080bec90:
     if (lookupResult == -1) {
         goto L_080bf1d6_shared;
     }
-    Func_080771c8(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
+    Trade_AddOfferFar(*(s16 *)(req + 0), (s8)(*(u16 *)(req + 8) >> 8) & SUBKIND_MASK,
                   (u8)*(u16 *)(req + 8));
     abilityData = BattleAction_Get(abilityId);
     Func_08015120(*(s16 *)(req + 0), 1);
     Func_08015120(abilityId, 4);
-    Func_080151c8(TEXT_TIER6_MSG);
+    UiText_ShowMessageAndWaitCoreFar(TEXT_TIER6_MSG);
     *(u32 *)(tgt + 80) = *((u8 *)abilityData + 2);
     goto L_080bee00;
 
@@ -658,7 +658,7 @@ L_080bee08:
     *(s32 *)(tgt + 80) = Func_08077170(*(s16 *)(req + 0));
     *(s32 *)(tgt + 84) = 2;
     if (((u8 *)actor)[297] != 0) {
-        *(s32 *)(tgt + 88) = 0x4000 | Func_080c23e8(*((u8 *)actor + 296));
+        *(s32 *)(tgt + 88) = 0x4000 | Battle_GetEntryField2LowBits(*((u8 *)actor + 296));
         goto L_080beea8;
     }
     *(u32 *)(tgt + 88) = 0;
@@ -682,7 +682,7 @@ L_080beea6:
      * per-case assignment before falling into this shared label. */
 L_080beea8:
     Func_08015120(*(s16 *)(req + 0), 1);
-    Func_080151c8(TEXT_TIER5_STATUS_MSG);
+    UiText_ShowMessageAndWaitCoreFar(TEXT_TIER5_STATUS_MSG);
 
     /*
      * ---- L_080beef4 / L_080beebe / L_080beee0 / L_080bef28: status-cure
@@ -862,7 +862,7 @@ L_080bf0f8:
             }
         }
         if (!wroteStatus) {
-            if (Func_080bd3c8(abilityId) != 0) {
+            if (Ability_CheckStatusOrSpecialId(abilityId) != 0) {
                 statusCode = 3;
             } else if (*(u32 *)(tgt + 88) != 0) {
                 if (((u8 *)req)[297] != 0) {

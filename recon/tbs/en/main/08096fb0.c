@@ -65,7 +65,7 @@ extern const u8 Data_0809c410[];
 
 void *Runtime_AllocateHeapBlock(s32 slot, s32 size);
 struct BattleActionData *BattleAction_Get(s32 action);
-s32 Func_08096c24(void);
+s32 ResourceTable_CountFreeBlocks(void);
 void BattleFx_SetupObjectPair(s32 first, s32 second);
 s32 Resource_FindFreeEntry(void);
 s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
@@ -94,7 +94,7 @@ void BattleFx_LoadActionEffectResources(s32 action, s32 mode)
     running = scene->running;
     if (running != 0)
         return;
-    work->free_blocks = 0x200 - Func_08096c24();
+    work->free_blocks = 0x200 - ResourceTable_CountFreeBlocks();
     work->mode = mode;
     work->visible = 1;
     work->enabled = 1;

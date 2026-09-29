@@ -28,7 +28,7 @@ extern struct FieldPartyState Data_02000240;
 
 s32 GameFlag_TestFar(s32 flag);
 u8 *Owner_GetStateFar(s32 unit);
-s32 Func_080772c8(void);
+s32 Party_GetAverageLevelFar(void);
 u32 Random16(void);
 void BattleFx_SelectBattleCue(s32 zone);
 
@@ -63,7 +63,7 @@ s32 Func_0808ae74(s32 zone, s32 steps)
         if (*(s32 *)(Owner_GetStateFar(5) + 292) > 130)
             goto none;
     }
-    level = Func_080772c8() - entry->level;
+    level = Party_GetAverageLevelFar() - entry->level;
     if (level < 0)
         level = 0;
     if (level > 5)

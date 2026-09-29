@@ -23,10 +23,10 @@ extern u8 Value_00007824;
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 
 typedef s32 (*WordCopy)(void *destination, const void *source, s32 size);
-void *Func_08002f40(s32 resource);
-u32 Func_08005340(const void *source, void *destination);
-void **Func_080b5098(s32 member_id);
-void Func_080e396c(s32 member_id, struct EffectPosition *result);
+void *Resource_GetTableEntry(s32 resource);
+u32 Resource_DecodeType01(const void *source, void *destination);
+void **GetBattleObjectSlotFar(s32 member_id);
+void EffectPosition_ApplyStepAndYOffset(s32 member_id, struct EffectPosition *result);
 
 typedef void (*BattleEffectDrawFn)(
     void *destination,
@@ -40,7 +40,7 @@ extern u8 Value_00000073;
 extern u8 Value_00000076;
 extern u8 Value_00000079;
 extern void *Data_03001e50[];
-extern const u16 Data_080ede5c[];
+extern const u16 BattleFx6_FlareCells[];
 
 struct BattleEffectWorkGlobals {
     void *work;
@@ -107,22 +107,22 @@ s32 Func_080d0ad4(s32 actor) {
     temp_r5_28 = temp_r2_18 + 0x7828;
     sp2C = *(s32 *)((u8 *)globals - 108);
     M2C_FIELD(temp_r2_18, s32 *, 0x7828) = actor;
-    Func_080cd594(0);
+    BattleFx_BeginCanvasLayer(0);
     *(u16 *)0x04000020 = 0x100;
-    palette = Func_08002f40((s32)&Value_00000079);
+    palette = Resource_GetTableEntry((s32)&Value_00000079);
     ((WordCopy)0x03001388)((void *)0x05000000, palette, 0x80);
-    Func_08005340(palette + 0x80, sp44);
-    Func_08005340(
-        Func_08002f40((s32)&Value_00000073),
+    Resource_DecodeType01(palette + 0x80, sp44);
+    Resource_DecodeType01(
+        Resource_GetTableEntry((s32)&Value_00000073),
         temp_r6_25);
-    Func_08005340(
-        Func_08002f40((s32)&Value_00000076),
+    Resource_DecodeType01(
+        Resource_GetTableEntry((s32)&Value_00000076),
         temp_r2_18 + 0x1000);
     M2C_FIELD(sp44, s32 *, 0x7780) = 3;
     M2C_FIELD(sp44, s32 *, 0x7784) = 0x04040404;
     Func_080041d8(0x080CD261, 0x480);
     sp24 = vector_work.output;
-    Func_080e396c(
+    EffectPosition_ApplyStepAndYOffset(
         M2C_FIELD(*temp_r5_28, s16 *, 0x24),
         (struct EffectPosition *)vector_work.output);
     temp_r3_103 = 0x40 - *sp24;
@@ -139,9 +139,9 @@ loop_3:
         }
         if (sp3C == 0x2E) {
             temp_r3_135 = M2C_FIELD(sp44, void **, 0x7828);
-            Func_080b5078(M2C_FIELD(temp_r3_135, s32 *, 8), M2C_FIELD(temp_r3_135, s16 *, 0x24), 0x10, 0);
+            BattleMotion_ApproachTargetFar(M2C_FIELD(temp_r3_135, s32 *, 8), M2C_FIELD(temp_r3_135, s16 *, 0x24), 0x10, 0);
         }
-        Func_080d40ec(sp3C, 0xAAAB, 0x5555, 0);
+        Graphics_UpdatePhasePalette(sp3C, 0xAAAB, 0x5555, 0);
         BattleEffect_LoadWork(0x2E, 7, 7, 3, 2);
         sp34 = (BattleEffectDrawFn)Data_03001e50[46];
         BattleEffect_LoadWork(0x2F, 7, 7, 7, 2);
@@ -154,18 +154,18 @@ loop_3:
         spC = sp3C * 0x600;
         var_fp_191 = sp3C;
 loop_11:
-        temp_r6_203 = *Func_080b5098(M2C_FIELD(
+        temp_r6_203 = *GetBattleObjectSlotFar(M2C_FIELD(
             M2C_FIELD(sp44, void **, 0x7828), s16 *,
             (sp30 * 2) + 0x24));
         if ((u32) var_fp_191 > 0x5FU) {
 
         } else {
             Func_080049ac();
-            Func_080051d8(sp2C, sp2C + 0xC);
+            Graphics_PrepareTransferInIwramWork(sp2C, sp2C + 0xC);
             vector_work.position[0] = M2C_FIELD(temp_r6_203, s32 *, 8);
             vector_work.position[1] = M2C_FIELD(temp_r6_203, s32 *, 0xC);
             vector_work.position[2] = M2C_FIELD(temp_r6_203, s32 *, 0x10);
-            Func_080e3944(vector_work.position, vector_work.projected);
+            EffectPosition_ApplyBaseAndYOffset(vector_work.position, vector_work.projected);
             vector_work.projected[0] = *sp24 + sp28;
             vector_work.projected[1] -= 0x18;
             if (var_fp_191 > 0x43) {
@@ -182,12 +182,12 @@ loop_11:
                         vector_work.modulation[0] = temp_r1_252;
                         vector_work.modulation[1] = temp_r1_252;
                         vector_work.modulation[2] = temp_r1_252;
-                        Func_08004cf0(vector_work.modulation);
+                        SceneTransform_ApplyScale(vector_work.modulation);
                         Func_08004c6c(temp_r3_257);
                         Func_08004c1c(temp_r3_257);
                     }
                     Func_08004c6c(sp14);
-                    Func_080e3944((s32 *)0x080EE134, vector_work.position);
+                    EffectPosition_ApplyBaseAndYOffset((s32 *)0x080EE134, vector_work.position);
                     M2C_FIELD(var_r5_253, s32 *, 0xC) =
                         vector_work.position[0] + vector_work.projected[0];
                     M2C_FIELD(var_r5_253, s32 *, 0x10) =
@@ -218,7 +218,7 @@ loop_23:
                     temp_r3_376 = (temp_r5_357 + Math_Div(var_r8_341 * (M2C_FIELD(temp_r9_332, s32 *, 0x10) - temp_r5_357), 0x18)) - var_r4_339;
                     sp34(sp40,
                         (u8 *)sp44
-                            + Data_080ede5c[var_r4_339 - 1]
+                            + BattleFx6_FlareCells[var_r4_339 - 1]
                             + 0x1000,
                         temp_r6_359 - var_r4_339,
                         temp_r3_376,
@@ -259,6 +259,6 @@ loop_23:
             goto loop_3;
         }
     }
-    Func_08004278(0x080CD261);
-    return Func_080cdbc0();
+    Scheduler_RemoveCallback(0x080CD261);
+    return BattleFx_EndCanvasLayer();
 }

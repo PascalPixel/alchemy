@@ -27,23 +27,23 @@ extern u8 Value_0000008b;
 extern const u8 Data_080eea38[];
 extern const Bounds4 Data_080eda88;
 
-void Func_080cd594(s32 mode);
+void BattleFx_BeginCanvasLayer(s32 mode);
 void _call_via_r3(void *dest, void *src, s32 size, WordCopyFn copier);
 s32 Func_080041d8(void *callback, s32 interval);
 void Func_080f9010(s32 id);
 void Func_080049ac(void);
-void Func_080051d8(s32 a, s32 b);
+void Graphics_PrepareTransferInIwramWork(s32 a, s32 b);
 void Func_080b50e8(s32 id);
-void **Func_080b5098(s32 member_id);
-void Func_080e3944(void *source, void *screen);
-s32 Func_08002322(s32 angle);
-void Func_080d6888(s32 member_id, s32 b, s32 c, s32 d, s32 e);
-void Func_080e155c(s32 a, s32 b);
-void Func_080cd52c(void);
+void **GetBattleObjectSlotFar(s32 member_id);
+void EffectPosition_ApplyBaseAndYOffset(void *source, void *screen);
+s32 Trig_Sin(s32 angle);
+void ObjectGroup_UpdateMembers(s32 member_id, s32 b, s32 c, s32 d, s32 e);
+void Camera_ApplyShake(s32 a, s32 b);
+void ObjectGroup_TickMemberTimers(void);
 void Func_080030f8(s32 frames);
-void Func_08004278(void *callback);
+void Scheduler_RemoveCallback(void *callback);
 void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+s32 BattleFx_EndCanvasLayer(void);
 
 void Func_080da2ac(void *object)
 {
@@ -76,7 +76,7 @@ void Func_080da2ac(void *object)
     draw_destination = *cursor;
     facing = *(s32 *)((u8 *)heap_cache - 108);
     M2C_FIELD(work, void **, 0x7828) = object;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     M2C_FIELD((void *)0x04000020, s16 *, 0) = 0x100;
     M2C_FIELD((void *)0x04000020, s16 *, 0x30) = 0;
     Resource_LoadAndDecompress((s32)&Value_0000008b, (u8 *)work + 0x1E00, 1, 1);
@@ -140,7 +140,7 @@ void Func_080da2ac(void *object)
 
         do {
             Func_080049ac();
-            Func_080051d8(facing, b_arg);
+            Graphics_PrepareTransferInIwramWork(facing, b_arg);
 
             variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
             if (frame == Data_080eea38[variant * 3] - 16) {
@@ -167,7 +167,7 @@ void Func_080da2ac(void *object)
                         s32 min_y;
 
                         half_size = (*(s32 *)((u8 *)bounds_ptr + band)
-                            * Func_08002322((frame - limit) << 10)) >> 16;
+                            * Trig_Sin((frame - limit) << 10)) >> 16;
                         if (half_size < 0) {
                             half_size = -half_size;
                         }
@@ -198,14 +198,14 @@ void Func_080da2ac(void *object)
                                 member_id = M2C_FIELD(
                                     M2C_FIELD(work, void **, 0x7828),
                                     s16 *, member_id_offset);
-                                member_object = *Func_080b5098(member_id);
+                                member_object = *GetBattleObjectSlotFar(member_id);
                                 position[0] = M2C_FIELD(
                                     member_object, s32 *, 8);
                                 position[1] = M2C_FIELD(
                                     member_object, s32 *, 12);
                                 position[2] = M2C_FIELD(
                                     member_object, s32 *, 16);
-                                Func_080e3944(position, screen);
+                                EffectPosition_ApplyBaseAndYOffset(position, screen);
                                 screen[0] += y_offset;
                                 if (screen[0] >= lower_bound + 8
                                         && screen[0] <= upper_bound
@@ -219,7 +219,7 @@ void Func_080da2ac(void *object)
                                     member_id = M2C_FIELD(
                                         M2C_FIELD(work, void **, 0x7828),
                                         s16 *, member_id_offset);
-                                    Func_080d6888(member_id, 0, 5, -1, 0);
+                                    ObjectGroup_UpdateMembers(member_id, 0, 5, -1, 0);
                                 }
                                 member_id_offset += 2;
                                 i++;
@@ -254,14 +254,14 @@ void Func_080da2ac(void *object)
                     member_id = M2C_FIELD(
                         M2C_FIELD(work, void **, 0x7828), s16 *,
                         member_id_offset);
-                    member_object = *Func_080b5098(member_id);
+                    member_object = *GetBattleObjectSlotFar(member_id);
                     if (record[6] == 0 && M2C_FIELD(member_object, s32 *, 12) <= 0
                             && M2C_FIELD(member_object, s32 *, 0x28) < 0) {
                         record[6] = 1;
                         member_id = M2C_FIELD(
                             M2C_FIELD(work, void **, 0x7828), s16 *,
                             member_id_offset);
-                        Func_080d6888(member_id, 7, 5, i, 5);
+                        ObjectGroup_UpdateMembers(member_id, 7, 5, i, 5);
                     }
                     member_id_offset += 2;
                     record += 7;
@@ -272,10 +272,10 @@ void Func_080da2ac(void *object)
             }
 
             variant = M2C_FIELD(M2C_FIELD(work, void **, 0x7828), s32 *, 0x18);
-            Func_080e155c(
+            Camera_ApplyShake(
                 Data_080eea38[variant * 3 + 2],
                 Data_080eea38[variant * 3 + 2]);
-            Func_080cd52c();
+            ObjectGroup_TickMemberTimers();
             M2C_FIELD(work, s32 *, 0x7824) = 1;
             Func_080030f8(1);
             frame++;
@@ -284,7 +284,7 @@ void Func_080da2ac(void *object)
         } while (frame != Data_080eea38[variant * 3]);
     }
 
-    Func_08004278((void *)0x080CD261);
+    Scheduler_RemoveCallback((void *)0x080CD261);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
 }

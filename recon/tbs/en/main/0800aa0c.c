@@ -29,6 +29,8 @@
 #include "GLOBAL_CELLS.H"
 #include "DMA.H"
 #include "video_dma_family.h"
+extern u8 gMenuCtrlWork[];
+extern u8 gWorkSlot[];
 
 /* Builds and uploads one composite animation frame. */
 
@@ -96,7 +98,7 @@ s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 u32 Runtime_BumpAllocate(s32 size);
 void Sys_Free(void *allocation);
 void Runtime_ReleaseHeapBlock(s32 id);
-u32 Func_08005340(const void *source, void *destination);
+u32 Resource_DecodeType01(const void *source, void *destination);
 u8 *Resource_DecompressLz(const u8 *source, u8 *destination);
 s32 VramBlock_LoadCached(u32 slot, u32 size, const void *source);
 void Animation_SetWorkEntry(void *work, s32 no);
@@ -135,15 +137,15 @@ s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
     u8 fill;
 
     changed = 0;
-    ctx = *(struct ComposeContext **)Data_03001e68_a;
+    ctx = *(struct ComposeContext **)gMenuCtrlWork;
     held = 1;
-    draw = *(DrawFn *)&Data_03001e68_a[184];
+    draw = *(DrawFn *)&gMenuCtrlWork[184];
     if (draw == 0) {
         block = (void *)Runtime_AllocateHeapBlock(52, (s32)Data_000002c4);
         Dma_Set(Render_DecodeFrame, block,
                 (((u32)Data_08009d9c - (u32)Render_DecodeFrame) >> 2) | 0x84000000,
                 (volatile u32 *)0x040000d4);
-        draw = *(DrawFn *)&Data_03001e68_a[184];
+        draw = *(DrawFn *)&gMenuCtrlWork[184];
         held = 0;
     }
 
@@ -290,7 +292,7 @@ s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
         for (i = 0; i < n; i++) {
             e = obj->entries[(u8)order[i]];
             if (e->mode == 1) {
-                Func_08005340(e->frames[e->frame], buf);
+                Resource_DecodeType01(e->frames[e->frame], buf);
             } else if (e->mode == 3) {
                 if (e->param != 0) {
                     tmp = (u8 *)Runtime_BumpAllocate(0x400);
@@ -346,7 +348,7 @@ s32 Func_0800aa0c(struct AnimationObject *obj, s16 dir)
         }
 
         tile = VramBlock_LoadCached(obj->slot, size, 0);
-        upload = ((UploadFn *)Data_03001e50_a)[53];
+        upload = ((UploadFn *)gWorkSlot)[53];
         upload(buf, obj->width, obj->height,
                (void *)(0x06010000 + (tile << 5)));
         obj->tile = (u16)((tile & 0x3ff) | (obj->tile & 0xfffffc00));

@@ -42,11 +42,11 @@ s32 Func_080056cc(void)
         work->occupied[index] = 0;
         work->record_id[index] = 0x10;
         work->sequence[index] = empty;
-        status = Func_080058ac(index);
+        status = SaveState_ReadSlotAndCheckChecksum(index);
         START_DMA(&work->slot, &header, 0x84000004);
         WAIT_DMA();
 
-        if (Func_08005c08(header.signature, (u8 *)SAVE_SIGNATURE, 7) != 0)
+        if (SaveState_CompareBytes(header.signature, (u8 *)Save_Signature, 7) != 0)
             continue;
         work->sequence[index] = header.sequence;
         if (header.record_id > 15 || status != 0)

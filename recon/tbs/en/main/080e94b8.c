@@ -10,26 +10,26 @@ extern u8 Data_0000007d[];
 extern u8 Data_000000c0[];
 s32 Math_Div();
 s32 Func_0800231c();
-s32 Func_08002322();
+s32 Trig_Sin();
 void Func_08002dd8();
 void Func_080030f8();
 void Func_080041d8();
-void Func_08004278();
-u32 Func_08004458(void);
+void Scheduler_RemoveCallback();
+u32 Random16(void);
 void Func_080072f4();
 void Func_08009080(s32 object, s32 mode);
-void Func_08009088(s32 object, s32 value);
+void ObjectDispatch_ApplyValueToChildrenFar(s32 object, s32 value);
 void Func_080b5088();
-s32 Func_080b5098();
+s32 GetBattleObjectSlotFar();
 void Func_080b50e8();
-void Func_080cd52c();
-void Func_080cd594();
-void Func_080cdbc0();
-void Func_080cef64();
-void Func_080d6888();
-void Func_080e155c();
-void Func_080e3908();
-void Func_080e46f0();
+void ObjectGroup_TickMemberTimers();
+void BattleFx_BeginCanvasLayer();
+void BattleFx_EndCanvasLayer();
+void BattleFx_FetchRectangleBlitters();
+void ObjectGroup_UpdateMembers();
+void Camera_ApplyShake();
+void EffectStep_AdvanceWithGravity2D();
+void BattleFx_StepPaletteToResource();
 void Func_080f9010();
 
 /* Call sites spelled through these wrappers pass their constants straight
@@ -104,16 +104,16 @@ void Func_080e94b8(s32 a0)
     slot40 = *(s32 *)(0x3001eec + 4);
     slot32 = *(s32 *)0x03001ef4;
     p11 = v0;
-    record = Func_080b5098(*(s32 *)(a0 + 8));
+    record = GetBattleObjectSlotFar(*(s32 *)(a0 + 8));
     slot28 = *(s32 *)(record);
     *(s32 *)(a0 + 24) = 1;
     *(s32 *)((0x7828 + p11)) = a0;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(u16 *)0x04000052 = 0x1010;
     slot24 = (r13 + 44);
-    Func_080cef64(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4));
+    BattleFx_FetchRectangleBlitters(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4));
     Func_08009080(slot28, 2);
-    Func_08009088(slot28, 48);
+    ObjectDispatch_ApplyValueToChildrenFar(slot28, 48);
     Resource_LoadAndDecompress((s32)Data_00000055, p11, 1, 1);
     Resource_LoadAndDecompress((s32)Data_0000007d, (0x2000 + p11), 1, 0);
     Resource_LoadAndDecompress((s32)Data_00000073, slot32, 0, 0);
@@ -126,9 +126,9 @@ void Func_080e94b8(s32 a0)
         v7 = (0x7080 + v8);
         v10 = none;
         for (i = 0; (i >> 16) != 16; i += 0x10000) {
-            rec7 = Func_08004458();
+            rec7 = Random16();
             a0 = (rec7 & 0xffff);
-            record = Func_08002322((rec7 & 0xffff));
+            record = Trig_Sin((rec7 & 0xffff));
             *(s32 *)(v7) = ((v10 << 1) * record);
             record = Func_0800231c((rec7 & 0xffff));
             *(s32 *)(v7 + 4) = -((v10 << 1) * record);
@@ -140,15 +140,15 @@ void Func_080e94b8(s32 a0)
         v7 = ((((v9 << 3) - v9) << 2) + 0x2010000);
         v10 = none;
         do {
-            record = Func_08004458();
-            rec8 = Func_08004458();
+            record = Random16();
+            rec8 = Random16();
             *(s32 *)(v7) = (*(u8 *)(0x080eef06 + (s32)(slot36 + (s32)((s32)(*(s32 *)(*(s32 *)((0x7828 + p11)) + 4) << 1) + *(s32 *)(*(s32 *)((0x7828 + p11)) + 4)))) << 16);
             *(s32 *)(v7 + 4) = 0x580000;
-            record = Func_08002322((rec8 & 0xffff));
+            record = Trig_Sin((rec8 & 0xffff));
             *(s32 *)(v7 + 12) = ((((0x1ff & record) + 32) * record) >> 6);
             record = Func_0800231c((rec8 & 0xffff));
             *(s32 *)(v7 + 16) = (-((((0x1ff & record) + 32) * record) << 1) >> 6);
-            record = Func_08004458();
+            record = Random16();
             *(s32 *)(v7 + 24) = ((7 & record) + 32);
             v10 = (v10 + 1);
             v3 = 0x154;
@@ -214,7 +214,7 @@ void Func_080e94b8(s32 a0)
         }
     }
     if (v9 > 16) {
-        Func_080e46f0((s32)Data_000000c0);
+        BattleFx_StepPaletteToResource((s32)Data_000000c0);
     }
     slot36 = 0;
     slot20 = 22;
@@ -253,7 +253,7 @@ void Func_080e94b8(s32 a0)
         v10 = none;
         do {
             if (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) > 0) {
-                Call3(Func_080e3908, (((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000), 64, 0x1000);
+                Call3(EffectStep_AdvanceWithGravity2D, (((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000), 64, 0x1000);
                 v3 = (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) - 1);
                 *(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) = (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 24) - 1);
                 if (*(s32 *)((((((((slot16 + (slot16 << 4)) << 2) + v10) << 3) - (((slot16 + (slot16 << 4)) << 2) + v10)) << 2) + 0x2010000) + 4) > 0x6c0000) {
@@ -281,7 +281,7 @@ void Func_080e94b8(s32 a0)
         do {
             if (v9 == p8c) {
                 v2 = 5;
-                Func_080d6888(*(s16 *)(*(s32 *)(((s32)p11 + v2)) + base6_24), 7, v2, v10, 10);
+                ObjectGroup_UpdateMembers(*(s16 *)(*(s32 *)(((s32)p11 + v2)) + base6_24), 7, v2, v10, 10);
                 Func_080b5088(*(s16 *)(*(s32 *)(((s32)p11 + v2)) + base6_24), 4);
             }
             v2 = 0x7828;
@@ -298,20 +298,20 @@ void Func_080e94b8(s32 a0)
     if (slot36 != 2) {
         goto L_080e9742;
     }
-    Func_080e155c(16, 16);
+    Camera_ApplyShake(16, 16);
     v5 = 1;
-    Func_080cd52c();
+    ObjectGroup_TickMemberTimers();
     *(s32 *)((0x7824 + p11)) = v5;
     Func_080030f8(1);
     v9 = (v9 + 1);
     if (v9 != 80) {
         goto L_080e965c;
     }
-    Func_08009088(slot28, 16);
-    Call1(Func_08004278, 0x80cd261);
+    ObjectDispatch_ApplyValueToChildrenFar(slot28, 16);
+    Call1(Scheduler_RemoveCallback, 0x80cd261);
     Func_08002dd8(47);
     Func_08002dd8(46);
-    Func_080cdbc0();
+    BattleFx_EndCanvasLayer();
     p9b = v5;
     v9 = p9b;
     p10 = base6_24;

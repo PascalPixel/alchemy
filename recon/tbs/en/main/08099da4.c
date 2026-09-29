@@ -46,7 +46,7 @@ void Func_08099da4(void) {
     if (temp_r7_20 == NULL) {
         return;
     }
-    Func_08097384();
+    BattleEffect_InitializeSharedScene();
     M2C_FIELD(sp1C, void **, 0x68) = temp_r7_20;
     Func_08009098(sp1C, 0x0809F0BC);
     temp_r0_33 = M2C_FIELD(temp_r3_16, s32 *, 4);
@@ -55,12 +55,12 @@ void Func_08099da4(void) {
     M2C_FIELD(&sp20, s32 *, 4) = temp_r1_40;
     temp_r2_44 = M2C_FIELD(temp_r3_16, s32 *, 0xC);
     M2C_FIELD(&sp20, s32 *, 8) = temp_r2_44;
-    temp_r0_52 = Func_0809a3c4(temp_r0_33 + 0x200000, temp_r1_40, temp_r2_44, 0x8000);
+    temp_r0_52 = BattleFx_SpawnItemBreakMode1(temp_r0_33 + 0x200000, temp_r1_40, temp_r2_44, 0x8000);
     sp14 = temp_r0_52;
-    temp_r0_63 = Func_0809a3c4(M2C_FIELD(&sp20, s32 *, 0) + 0xFFE00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8), 0);
+    temp_r0_63 = BattleFx_SpawnItemBreakMode1(M2C_FIELD(&sp20, s32 *, 0) + 0xFFE00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8), 0);
     sp18 = temp_r0_63;
     if ((sp14 == NULL) || (temp_r0_63 == NULL)) {
-        Func_0809748c();
+        BattleFx_PrepareBufferInterpolation();
         return;
     }
     Func_080030f8(0xF);
@@ -105,7 +105,7 @@ void Func_08099da4(void) {
 loop_18:
     Func_080030f8(1);
     if (!(*(s32 *)0x03001C94 & 0x303)) {
-        temp_r6_207 = Func_08097b54(*(s32 *)0x03001AE8);
+        temp_r6_207 = BattleFx_GetCycledTableWord(*(s32 *)0x03001AE8);
         if (temp_r6_207 == 0xFFFF) {
             temp_r1_211 = M2C_FIELD(temp_r7_20, s32 *, 8);
             M2C_FIELD(&sp20, s32 *, 0) = temp_r1_211;
@@ -120,7 +120,7 @@ loop_18:
         M2C_FIELD(&sp20, s32 *, 0) = (s32) M2C_FIELD(temp_r7_20, s32 *, 8);
         M2C_FIELD(&sp20, s32 *, 4) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0xC) + 0x100000);
         M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x10);
-        Func_0800447c(0x20000, temp_r6_207, &sp20);
+        Vector_AddPolarOffset(0x20000, temp_r6_207, &sp20);
         Func_08009150(sp14, M2C_FIELD(&sp20, s32 *, 0) + 0x100000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
         Func_08009150(sp18, M2C_FIELD(&sp20, s32 *, 0) + 0xFFF00000, M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
         Func_08009158(sp14);
@@ -128,8 +128,8 @@ loop_18:
         M2C_FIELD(&sp20, s32 *, 0) = (s32) M2C_FIELD(temp_r7_20, s32 *, 8);
         M2C_FIELD(&sp20, s32 *, 4) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x14);
         M2C_FIELD(&sp20, s32 *, 8) = (s32) M2C_FIELD(temp_r7_20, s32 *, 0x10);
-        Func_0800447c(0x100000, temp_r6_207, &sp20);
-        temp_r0_277 = Func_08009250(temp_r7_20, &sp20);
+        Vector_AddPolarOffset(0x100000, temp_r6_207, &sp20);
+        temp_r0_277 = ScriptObject_CheckOverlapFar(temp_r7_20, &sp20);
         if ((temp_r0_277 != 0) || (M2C_FIELD(temp_r7_20, s32 *, 0x14) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0x14) + 0x100000), temp_r0_288 = Func_080091d8(temp_r7_20, &sp20), M2C_FIELD(temp_r7_20, s32 *, 0x14) = (s32) (M2C_FIELD(temp_r7_20, s32 *, 0x14) + 0xFFF00000), (temp_r0_288 > 0))) {
             Func_08009080(sp14, 4);
             Func_08009080(sp18, 4);
@@ -163,7 +163,7 @@ loop_18:
     }
     Func_08009080(sp14, 4);
     Func_08009080(sp18, 4);
-    Func_08004278(0x08099D19);
+    Scheduler_RemoveCallback(0x08099D19);
     Func_080f9010(0x87);
     Func_080030f8(0xF);
     Func_080f9010(0x87);
@@ -174,24 +174,24 @@ loop_18:
     sp4 = &sp0 + 0x2C;
     var_r8_440 = 0x13;
     do {
-        temp_r0_447 = Func_08096c80(0x11D, M2C_FIELD(&sp20, s32 *, 0), M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
+        temp_r0_447 = Object_Spawn(0x11D, M2C_FIELD(&sp20, s32 *, 0), M2C_FIELD(&sp20, s32 *, 4), M2C_FIELD(&sp20, s32 *, 8));
         *sp4 = temp_r0_447;
         sp4 += 4;
         if (temp_r0_447 != NULL) {
             Func_08009098(temp_r0_447, 0x0809F0D4);
-            temp_r0_457 = Func_08004458();
+            temp_r0_457 = Random16();
             M2C_FIELD(temp_r0_447, s32 *, 0x34) = 0x20000;
             M2C_FIELD(temp_r0_447, s32 *, 0x30) = (s32) (temp_r0_457 + 0x20000);
             M2C_FIELD(temp_r0_447, s8 *, 0x55) = 0;
-            temp_r5_472 = (Func_08004458() * 0x18) + 0x80000;
-            Func_08096bec(temp_r0_447, temp_r5_472, Func_08004458());
+            temp_r5_472 = (Random16() * 0x18) + 0x80000;
+            Motion_SetTargetPositionFromMagnitudeAngle(temp_r0_447, temp_r5_472, Random16());
         }
         var_r8_440 -= 1;
     } while (var_r8_440 >= 0);
     Func_080f9010(0x83);
     Func_080090d0(sp14);
     Func_080090d0(sp18);
-    Func_08009240(temp_r7_20, M2C_FIELD(temp_r3_16, u8 *, 0x44));
+    Animation_ApplyChildValuesFar(temp_r7_20, M2C_FIELD(temp_r3_16, u8 *, 0x44));
     Func_08009098(temp_r7_20, M2C_FIELD(temp_r3_16, s32 *, 0x3C));
     M2C_FIELD(temp_r7_20, s32 *, 0x6C) = (s32) M2C_FIELD(temp_r3_16, s32 *, 0x38);
     *sp10 = 3;
@@ -199,7 +199,7 @@ loop_18:
     M2C_FIELD(temp_r7_20, s32 *, 0x44) = 0x3333;
     *spC = 0;
     M2C_FIELD(sp1C, s32 *, 0x6C) = 0;
-    Func_08009240(sp1C, 0U);
+    Animation_ApplyChildValuesFar(sp1C, 0U);
     if ((s8) M2C_FIELD(temp_r3_16, u8 *, 0x34) != 0) {
         var_r8_528 = 0;
         if ((s32) M2C_FIELD(temp_r7_20, s32 *, 0x28) >= 0) {
@@ -224,10 +224,10 @@ loop_29:
                 }
             }
         }
-        Func_0809a6b8(temp_r7_20);
-        Func_0809748c();
+        BattleFx_SpawnRadialParticleRing(temp_r7_20);
+        BattleFx_PrepareBufferInterpolation();
         Func_080030f8(0x1E);
         return;
     }
-    Func_0809748c();
+    BattleFx_PrepareBufferInterpolation();
 }

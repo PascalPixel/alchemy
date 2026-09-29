@@ -67,24 +67,24 @@
 
 void *Runtime_AllocateHeapBlock(s32 id, s32 size);
 
-extern const u32 Data_080edcc4[];
-extern const u32 Data_080ede48[];
+extern const u32 SentouKouka_Gousei[];
+extern const u32 ParticleStreams_CellOffsets[];
 extern const u16 Data_080ef034[];
-extern const u32 Data_080edaf0[];
-extern const u32 Data_080edaf8[];
-extern const u32 Data_080edb00[];
-extern const u32 Data_080edb10[];
-extern const u32 Data_080edb20[];
-extern const u32 Data_080edb84[];
-extern const u32 Data_080edbe8[];
-extern const u32 Data_080edbf8[];
-extern const u32 Data_080edc08[];
-extern const u32 Data_080edc48[];
-extern const u32 Data_080edc88[];
-extern const u32 Data_080edca0[];
-extern const u32 Data_080edcb8[];
-extern const u32 Data_080eefa4[];
-extern const u32 Data_080eefdc[];
+extern const u32 SentouKouka_YomiGyaku[];
+extern const u32 SentouKouka_YomiJun[];
+extern const u32 SentouKouka_NuriJun[];
+extern const u32 SentouKouka_NuriGyaku[];
+extern const u32 SentouKouka_Nuri8Jun[];
+extern const u32 SentouKouka_Nuri8Gyaku[];
+extern const u32 SentouKouka_HikakuJun[];
+extern const u32 SentouKouka_HikakuGyaku[];
+extern const u32 SentouKouka_Hikaku4Jun[];
+extern const u32 SentouKouka_Hikaku4Gyaku[];
+extern const u32 SentouKouka_KasanJun[];
+extern const u32 SentouKouka_KasanGyaku[];
+extern const u32 SentouKouka_Mask[];
+extern const u32 SentouKouka_IroJun[];
+extern const u32 SentouKouka_IroGyaku[];
 
 s32 BattleEffect_LoadWork(s32 id, s32 a, s32 b, s32 flags, u32 mode)
 {
@@ -195,14 +195,14 @@ s32 BattleEffect_LoadWork(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     n += 8;
 
     dst = (u32 *)Runtime_AllocateHeapBlock(id, n << 2);
-    src = Data_080edcc4;
+    src = SentouKouka_Gousei;
 
     /* Entry sequence. */
     Dma_Set(src, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
     dst += 3;
     src += 3;
     if (mode == 3) {
-        Dma_Set(Data_080edcb8, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
+        Dma_Set(SentouKouka_Mask, dst, DMA_WORDS(3), (volatile u32 *)0x040000d4);
         dst += 3;
     }
 
@@ -304,19 +304,19 @@ s32 BattleEffect_LoadWork(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     mark = dst;
     switch (mode) {
     case 1:
-        Dma_Set((flags & 4) != 0 ? Data_080edb10 : Data_080edb00, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_NuriGyaku : SentouKouka_NuriJun, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 2:
-        Dma_Set((flags & 4) != 0 ? Data_080edbf8 : Data_080edbe8, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_HikakuGyaku : SentouKouka_HikakuJun, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 3:
-        Dma_Set((flags & 4) != 0 ? Data_080edca0 : Data_080edc88, dst, DMA_WORDS(6), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_KasanGyaku : SentouKouka_KasanJun, dst, DMA_WORDS(6), (volatile u32 *)0x040000d4);
         dst += 6;
         break;
     default:
-        Dma_Set((flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_YomiGyaku : SentouKouka_YomiJun, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
         dst += 2;
         break;
     }
@@ -341,24 +341,24 @@ s32 BattleEffect_LoadWork(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     mark_g = dst;
     switch (mode) {
     case 1:
-        Dma_Set((flags & 4) != 0 ? Data_080edb84 : Data_080edb20, dst, DMA_WORDS(25), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_Nuri8Gyaku : SentouKouka_Nuri8Jun, dst, DMA_WORDS(25), (volatile u32 *)0x040000d4);
         dst += 25;
         break;
     case 2:
-        Dma_Set((flags & 4) != 0 ? Data_080edc48 : Data_080edc08, dst, DMA_WORDS(16), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_Hikaku4Gyaku : SentouKouka_Hikaku4Jun, dst, DMA_WORDS(16), (volatile u32 *)0x040000d4);
         dst += 16;
-        Dma_Set((flags & 4) != 0 ? Data_080edc48 : Data_080edc08, dst, DMA_WORDS(16), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_Hikaku4Gyaku : SentouKouka_Hikaku4Jun, dst, DMA_WORDS(16), (volatile u32 *)0x040000d4);
         dst += 16;
         break;
     case 3:
-        Dma_Set((flags & 4) != 0 ? Data_080eefdc : Data_080eefa4, dst, DMA_WORDS(14), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_IroGyaku : SentouKouka_IroJun, dst, DMA_WORDS(14), (volatile u32 *)0x040000d4);
         dst += 14;
-        Dma_Set((flags & 4) != 0 ? Data_080eefdc : Data_080eefa4, dst, DMA_WORDS(14), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_IroGyaku : SentouKouka_IroJun, dst, DMA_WORDS(14), (volatile u32 *)0x040000d4);
         dst += 14;
         break;
     default:
         for (i = 0; i <= 7; i++) {
-            Dma_Set((flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
+            Dma_Set((flags & 4) != 0 ? SentouKouka_YomiGyaku : SentouKouka_YomiJun, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
             dst += 2;
         }
         break;
@@ -387,19 +387,19 @@ s32 BattleEffect_LoadWork(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     mark = dst;
     switch (mode) {
     case 1:
-        Dma_Set((flags & 4) != 0 ? Data_080edb10 : Data_080edb00, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_NuriGyaku : SentouKouka_NuriJun, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 2:
-        Dma_Set((flags & 4) != 0 ? Data_080edbf8 : Data_080edbe8, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_HikakuGyaku : SentouKouka_HikakuJun, dst, DMA_WORDS(4), (volatile u32 *)0x040000d4);
         dst += 4;
         break;
     case 3:
-        Dma_Set((flags & 4) != 0 ? Data_080edca0 : Data_080edc88, dst, DMA_WORDS(6), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_KasanGyaku : SentouKouka_KasanJun, dst, DMA_WORDS(6), (volatile u32 *)0x040000d4);
         dst += 6;
         break;
     default:
-        Dma_Set((flags & 4) != 0 ? Data_080edaf0 : Data_080edaf8, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
+        Dma_Set((flags & 4) != 0 ? SentouKouka_YomiGyaku : SentouKouka_YomiJun, dst, DMA_WORDS(2), (volatile u32 *)0x040000d4);
         dst += 2;
         break;
     }
@@ -422,5 +422,5 @@ s32 BattleEffect_LoadWork(s32 id, s32 a, s32 b, s32 flags, u32 mode)
     *dst++ = *src++;
     *dst = *src++;
 
-    return src == Data_080ede48;
+    return src == ParticleStreams_CellOffsets;
 }

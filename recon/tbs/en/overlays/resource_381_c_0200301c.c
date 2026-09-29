@@ -9,7 +9,7 @@
 
 void *Engine_AllocateBlock(s32 id, s32 size);
 s32 Engine_RandomNext(void);
-s32 Local_020033d4(s32 num, s32 den);
+s32 IwramUnsignedDivide(s32 num, s32 den);
 s32 Engine_MathSin(s32 angle);
 s32 Engine_MathCos(s32 angle);
 
@@ -49,8 +49,8 @@ struct SoruRingWork {
 extern u8 Data_0200ba0c[][3];
 extern u8 Data_0200ba2a[][3];
 extern s8 Data_0200ba48[][3];
-extern s32 Data_0200ba68[];
-extern s32 Data_0200ba90[];
+extern s32 Soru_RingOffsetX[];
+extern s32 Soru_RingOffsetZ[];
 
 void SoruFunka_Func0200301c(void)
 {
@@ -93,11 +93,11 @@ void SoruFunka_Func0200301c(void)
                 timer = 3;
                 if (hold == 0) {
                     scale += speed;
-                    if (scale >= Data_0200ba68[i]) {
-                        speed = -Data_0200ba90[i];
+                    if (scale >= Soru_RingOffsetX[i]) {
+                        speed = -Soru_RingOffsetZ[i];
                     } else if (scale <= 0x1999) {
                         scale = 0x1999;
-                        speed = Data_0200ba90[i];
+                        speed = Soru_RingOffsetZ[i];
                         x = obj->x;
                         y = obj->y;
                         z = obj->z;
@@ -113,9 +113,9 @@ void SoruFunka_Func0200301c(void)
                 rx = (u32)(Data_0200ba0c[i][0] * Engine_RandomNext()) >> 16;
                 ry = (u32)(Data_0200ba0c[i][1] * Engine_RandomNext()) >> 16;
                 rz = (u32)(Data_0200ba0c[i][2] * Engine_RandomNext()) >> 16;
-                dx = rx != 0 ? Local_020033d4(rx << 16, 1000) : 0;
-                dy = ry != 0 ? Local_020033d4(ry << 16, 1000) : 0;
-                dz = rz != 0 ? Local_020033d4(rz << 16, 1000) : 0;
+                dx = rx != 0 ? IwramUnsignedDivide(rx << 16, 1000) : 0;
+                dy = ry != 0 ? IwramUnsignedDivide(ry << 16, 1000) : 0;
+                dz = rz != 0 ? IwramUnsignedDivide(rz << 16, 1000) : 0;
 
                 if (Data_0200ba48[i][0] == 1)
                     ax += dx;

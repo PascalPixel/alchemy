@@ -66,7 +66,7 @@ void Func_08015040();
 void Func_08015120();
 void Func_080151e8();
 void UiTimedNotice_CreateFar();
-void Func_08015208();
+void UiTimedNotice_CloseIfActiveFar();
 void Func_08015288();
 void Func_08015290();
 void Func_08015370();
@@ -76,19 +76,19 @@ s32 GameFlag_TestFar();
 void Func_080770c8();
 void Func_080770d0();
 void Func_080772f0();
-void Func_0808ace0();
+void BattleFx_SelectLocationRule();
 void Party_ResolveTablePair();
-void Func_0808b674();
-void Func_0808ba38();
+void ObjectTable_ResetForObject();
+void ObjectTable_Snapshot();
 void Func_0808bb2c();
 void Func_0808bc44();
 s32 Func_0808bc9c();
-void Func_0808bec0();
+void Field_ProcessStep();
 void Battle_SetObjectFlag5bWhenMode3();
 void Battle_ClearObjectFlag5bWhenMode3();
-s32 Func_0808ce74();
-void Func_0808cf78();
-void Func_0808d0c8();
+s32 Object_GetTriggerTileAheadOfCurrent();
+void BattleMap_ApplyEntranceView();
+void Debug_RunPaletteEditor();
 s32 BattleFx_FindDescriptorWithOverride();
 void BattleFx_RunDescriptorAction();
 void BattleFx_RunKind6DescriptorAction();
@@ -101,7 +101,7 @@ void Func_0808e23c();
 void BattleCommand_ExecuteSelectedAction();
 void Func_0808e9c0();
 void Func_0808fefc();
-void Func_080901c0();
+void DisplayTransition_Finish();
 void BattleEffect_InitializeBuffers();
 void Func_08091200();
 void Func_08091660();
@@ -109,10 +109,10 @@ s32 Party_CheckMemberValueTotal();
 void Func_08091a58();
 void Func_080941e0();
 s32 ObjectEffect_RunPendingFlagEvent();
-void Func_08095680();
-void Func_08095778();
+void FieldObject_PlaceSceneActors();
+void Djinn_ResolvePendingEvent();
 void BattleFx_ScheduleCallbackWhenValue24cSet();
-void Func_0809c138();
+void Map_ShowWorldMap();
 void Func_0809c3a4();
 void Func_080f9010();
 s32 Func_080f9070();
@@ -122,11 +122,11 @@ extern u16 Data_02000402;
 extern u16 Data_0200042c;
 extern s32 Data_02000434;
 extern s32 Data_02000478;
-extern u8 Data_02008000[];
-extern u8 Data_03001810[];
+extern u8 gOverlayArea[];
+extern u8 ResourceBlockOwners[];
 extern volatile u32 Data_03001ae8;
 extern void *Data_03001e68;
-extern volatile u8 Data_03001f54;
+extern volatile u8 gDebugMode;
 
 s32 Func_0808c4f8(void)
 {
@@ -148,7 +148,7 @@ s32 Func_0808c4f8(void)
     u32 i;
 
     g = Data_02000240;
-    ov = Data_02008000;
+    ov = gOverlayArea;
     work = Runtime_AllocateBlock(0x1B, 0xCCC);
     result = 0;
 
@@ -168,17 +168,17 @@ s32 Func_0808c4f8(void)
     FIELD_AT_OFFSET(g, s16 *, 0x1D4) = -1;
 
     Scheduler_ResetTaskTable();
-    Func_08095778(0);
+    Djinn_ResolvePendingEvent(0);
 
     if (FIELD_AT_OFFSET(g, s16 *, 0x1DA) == 1) {
         Func_08009118();
         FIELD_AT_OFFSET(g, u8 *, 0x224) = 1;
         mode = 3;
-        Func_0808ace0(0);
+        BattleFx_SelectLocationRule(0);
     } else {
         Func_08009110();
         mode = 2;
-        Func_0808ace0(1);
+        BattleFx_SelectLocationRule(1);
     }
     FIELD_AT_OFFSET(work, s16 *, 0x19E) = mode;
     Func_08009078(mode);
@@ -186,14 +186,14 @@ s32 Func_0808c4f8(void)
     BattleFx_ResetCounters();
     FIELD_AT_OFFSET(work, s32 *, 0x10) =
         Func_080072e4(FIELD_AT_OFFSET(ov, s32 *, 36));
-    Func_0808cf78();
+    BattleMap_ApplyEntranceView();
     Func_080072e4(FIELD_AT_OFFSET(ov, s32 *, 28));
-    Func_0808b674();
+    ObjectTable_ResetForObject();
     if (GameFlag_IsSet(0x109) != 0) {
         Func_0808bb2c();
     }
     if (FIELD_AT_OFFSET(g, s16 *, 0x234) != 0) {
-        Func_08095680();
+        FieldObject_PlaceSceneActors();
     }
     if (mode == 3) {
         Func_08009130();
@@ -250,7 +250,7 @@ s32 Func_0808c4f8(void)
             UiTimedNotice_CreateFar(FIELD_AT_OFFSET(g, s16 *, 0x1C0));
         }
         if (FIELD_AT_OFFSET(g, s16 *, 0x234) != 0) {
-            Func_08095778(FIELD_AT_OFFSET(g, s16 *, 0x234), 1);
+            Djinn_ResolvePendingEvent(FIELD_AT_OFFSET(g, s16 *, 0x234), 1);
             FIELD_AT_OFFSET(g, u16 *, 0x234) = 0;
         }
         if (FIELD_AT_OFFSET(g, u16 *, 0x23C) != 0) {
@@ -345,7 +345,7 @@ s32 Func_0808c4f8(void)
                     Battle_ClearObjectFlag5bWhenMode3();
                 } else if (sel == -888) {
                     Battle_InitializeRenderObject();
-                    Func_0809c138(0x1B);
+                    Map_ShowWorldMap(0x1B);
                 } else if (sel == -889) {
                     Battle_InitializeRenderObject();
                     BattleFx_RunVisibilityTransition();
@@ -356,7 +356,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(work, u16 *, 0x182) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x17C) != 0) {
                 Battle_InitializeRenderObject();
-                Func_0808ba38();
+                ObjectTable_Snapshot();
                 FIELD_AT_OFFSET(g, u16 *, 0x21E) = 0xFFFF;
                 FIELD_AT_OFFSET(g, u16 *, 0x1C0) = 510;
                 Data_02000402 = FIELD_AT_OFFSET(work, u16 *, 0x17C);
@@ -374,7 +374,7 @@ s32 Func_0808c4f8(void)
                 Battle_DispatchInputEvent(FIELD_AT_OFFSET(work, s16 *, 0x16E));
                 FIELD_AT_OFFSET(work, u16 *, 0x16E) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x174) != 0) {
-                Func_08015208();
+                UiTimedNotice_CloseIfActiveFar();
                 v = BattleEffect_SelectNearbyObject(Data_02000434);
                 ok = 0;
                 if (v != -1) {
@@ -384,7 +384,7 @@ s32 Func_0808c4f8(void)
                     FIELD_AT_OFFSET(work, u16 *, 0x178) = v | 0x1000;
                     FIELD_AT_OFFSET(work, u16 *, 0x172) = 0;
                 } else {
-                    v = Func_0808ce74();
+                    v = Object_GetTriggerTileAheadOfCurrent();
                     if (v != 0) {
                         FIELD_AT_OFFSET(work, u16 *, 0x17A) = v;
                         FIELD_AT_OFFSET(work, u16 *, 0x172) = 0;
@@ -394,12 +394,12 @@ s32 Func_0808c4f8(void)
                 }
                 FIELD_AT_OFFSET(work, u16 *, 0x174) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x172) != 0) {
-                Func_08015208();
+                UiTimedNotice_CloseIfActiveFar();
                 Battle_InitializeRenderObject();
                 Audio_PlayCue(111);
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_Set(0x106);
-                if (Data_03001f54 != 0 && (Data_03001ae8 & 2) != 0
+                if (gDebugMode != 0 && (Data_03001ae8 & 2) != 0
                     && (Data_03001ae8 & 4) != 0) {
                     Func_08015290();
                 } else if (GameFlag_IsSet(0x107) != 0) {
@@ -425,7 +425,7 @@ s32 Func_0808c4f8(void)
                 Battle_ClearObjectFlag5bWhenMode3();
                 FIELD_AT_OFFSET(work, u16 *, 0x17A) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x17E) != 0) {
-                Func_08015208();
+                UiTimedNotice_CloseIfActiveFar();
                 Battle_SetObjectFlag5bWhenMode3();
                 BattleCommand_ExecuteSelectedAction(
                     FIELD_AT_OFFSET(work, s16 *, 0x17E));
@@ -443,19 +443,19 @@ s32 Func_0808c4f8(void)
                 Battle_InitializeRenderObject();
                 Battle_SetObjectFlag5bWhenMode3();
                 GameFlag_Set(0x106);
-                if (Data_03001f54 != 0 && (Data_03001ae8 & 2) != 0) {
+                if (gDebugMode != 0 && (Data_03001ae8 & 2) != 0) {
                     Func_08015288();
-                } else if (Data_03001f54 != 0 && (Data_03001ae8 & 0x200) != 0) {
-                    Func_0808d0c8();
+                } else if (gDebugMode != 0 && (Data_03001ae8 & 0x200) != 0) {
+                    Debug_RunPaletteEditor();
                 } else if (GameFlag_IsSet(0x107) != 0) {
                     FIELD_AT_OFFSET(work, u16 *, 0x182) = 250;
                 } else {
                     Battle_ResetEffectCounter();
-                    Func_08015208();
+                    UiTimedNotice_CloseIfActiveFar();
                     FIELD_AT_OFFSET(g, u16 *, 0x21E) = Func_080f9070();
                     if (GameFlag_IsSet(0x17E) == 0) {
                         obj = Data_03001e68;
-                        pos = Data_03001810;
+                        pos = ResourceBlockOwners;
                         cnt = 0;
                         n = 512;
                         do {
@@ -498,8 +498,8 @@ s32 Func_0808c4f8(void)
         do {
             WaitFrames(1);
             actor = FIELD_AT_OFFSET(work, void **, 20 + Data_02000434 * 4);
-            if (Data_03001f54 == 0 || GameFlag_IsSet(0x163) == 0) {
-                Func_0808bec0(FIELD_AT_OFFSET(actor, u8 *, 34),
+            if (gDebugMode == 0 || GameFlag_IsSet(0x163) == 0) {
+                Field_ProcessStep(FIELD_AT_OFFSET(actor, u8 *, 34),
                               FIELD_AT_OFFSET(actor, s32 *, 8),
                               FIELD_AT_OFFSET(actor, s32 *, 12),
                               FIELD_AT_OFFSET(actor, s32 *, 16));
@@ -509,7 +509,7 @@ s32 Func_0808c4f8(void)
 
 done:
     if (FIELD_AT_OFFSET(work, u16 *, 0x1C6) != 0) {
-        Func_080901c0(FIELD_AT_OFFSET(work, s32 *, 0x1C0),
+        DisplayTransition_Finish(FIELD_AT_OFFSET(work, s32 *, 0x1C0),
                       FIELD_AT_OFFSET(work, s32 *, 0x1C8));
         FIELD_AT_OFFSET(work, u16 *, 0x1C6) = 0;
         WaitFrames(FIELD_AT_OFFSET(work, s32 *, 0x1C8));

@@ -2,6 +2,7 @@
 #include "DMA.H"
 #include "GLOBAL_CELLS.H"
 #include "TBS_EDITION.H"
+extern u8 gWindowWork[];
 
 /*
  * UiText_BuildRenderEntries (Func_08018038)
@@ -70,11 +71,11 @@
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
 void Func_08002dd8(s32 kind);
 s32 Func_08007308(s32 *st);
-void Func_08019bac(s32 *st, s32 script);
+void UiText_LookupMessage(s32 *st, s32 script);
 u8 *Text_FormatNumber(u8 *buf, s32 input, s32 width);
 u32 Func_08017e88(s32 mode, u16 *name, u32 pos, u16 *entry, s32 no, s32 plural,
                   s32 *suffix);
-void Func_080196c4(s32 res, u16 *dst, s32 cnt);
+void UiText_DecodeMessage(s32 res, u16 *dst, s32 cnt);
 s32 UiRender_LookupNamedValue(s32 kind, s32 clear);
 void UiWork_ClearValueNameTables(void);
 u8 *Runtime_GetObject(s32 no);
@@ -110,7 +111,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
     u8 numbuf[16];
     u16 name[24];
 
-    work = *(u8 **)ADDR_03001E8C;
+    work = *(u8 **)gWindowWork;
     start = *(u16 *)(work + RENDER_ENTRY_COUNT_OFS);
     entry = (u16 *)(work + RENDER_ENTRY_TBL_OFS);
     pos = start;
@@ -132,7 +133,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                 DMA_ENABLE | (TEXT_WORK_SIZE >> 2),
                 (volatile u32 *)DMA3_REGS);
 
-        Func_08019bac(st, script);
+        UiText_LookupMessage(st, script);
 
         do {
             prev = ch;
@@ -262,7 +263,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 19:
                         no = Func_08007308(st) - 1;
-                        Func_080196c4(
+                        UiText_DecodeMessage(
                             UiRender_LookupNamedValue(3, clear) + 0x741,
                             name, 24);
                         pos = Func_08017e88(0, name, pos, entry, no, plural,
@@ -270,7 +271,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         break;
                     case 20:
                         no = Func_08007308(st) - 1;
-                        Func_080196c4(
+                        UiText_DecodeMessage(
                             (UiRender_LookupNamedValue(2, clear) &
                              RENDER_ENTRY_MASK) + 0x182,
                             name, 24);
@@ -278,7 +279,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                                             &suffix);
                         break;
                     case 21:
-                        Func_080196c4(
+                        UiText_DecodeMessage(
                             UiRender_LookupNamedValue(4, clear) + 0x333,
                             name, 24);
                         dst = name;
@@ -289,7 +290,7 @@ u32 UiText_BuildRenderEntries(s32 script, s32 clear)
                         }
                         break;
                     case 23:
-                        Func_080196c4(
+                        UiText_DecodeMessage(
                             Func_0808a5d0(
                                 UiRender_LookupNamedValue(6, clear), 1) +
                                 RENDER_RESOURCE_BASE,

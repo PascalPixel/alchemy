@@ -1,3 +1,14 @@
+/* 2026-09-29: score 200 (2 register-only, 3 reordered), from 460. Two
+ * changes got it there: the map cell buffer is reached through the checked
+ * constant entry Ram_MapCellBuffer, as Camelot's code did, and the
+ * resource numbers are ResourceId_ names. Three of them need their rows
+ * named in DIRECTORY.S when this is adopted: 0x99 YellowOrbSheet, 0xbd
+ * BlueBurstSheet, 0xc2 FirePillarSheetB. What remains is the frame
+ * counter's register at the loop end and where the buffer base loads;
+ * 400,000 permuter candidates and the counter's type and comparison forms
+ * did not move it. */
+/* alchemy permute: BattleFx_RunParticleFieldVariant against recon/tbs/raw/080dfa48.s: score 200 (2 register-only, 3 reordered).
+   Job 11, iteration 13399; rewrites: 2x reorder independent statements, 1x introduce a temporary. */
 /* Draft: complete 916-byte owner and literal pool; candidate 916 bytes,
    39 differing halfwords (35 aligned edits). Three distinct projection
    buffers, shared rectangle return type, typed work/target records and
@@ -67,8 +78,7 @@ extern struct ParticleRuntime gBattleFxWork;
 extern u8 gMapCellBuffer[];
 extern BattleEffectDrawRectangle gWorkSlot[];
 extern u16 ParticleStreams_CellOffsets[];
-extern char Value_00000073, Value_00000099, Value_000000bd;
-extern char Value_000000c2, Value_000000b9, Value_000000bb, Value_000000c0;
+#include "RESOURCE_IDS.H"
 void BattleFx_BeginCanvasLayer(s32 mode);
 void Graphics_PackTileRows(void *source, void *destination, s32 width, s32 rows);
 struct B5Context *GetBattleObjectSlotFar(s32 id);
@@ -125,15 +135,23 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
     }
     rectangle[0] = gWorkSlot[46];
     rectangle[1] = gWorkSlot[47];
-    Resource_LoadAndDecompress((s32)&Value_00000073, source, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000099, work, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, source, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_YellowOrbSheet, work, 1, 0);
     Graphics_PackTileRows(work, gMapCellBuffer, 40, 288);
-    Resource_LoadAndDecompress((s32)&Value_000000bd, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlueBurstSheet, work, 1, 1);
     switch (variant) {
-    case 0: palette = (s32)&Value_000000c2; break;
-    case 1: palette = (s32)&Value_000000b9; break;
-    case 2: palette = (s32)&Value_000000bb; break;
-    default: palette = (s32)&Value_000000c0; break;
+    case 0:
+        palette = (s32)&ResourceId_FirePillarSheetB;
+        break;
+    case 1:
+        palette = (s32)&ResourceId_IceBlockSheet;
+        break;
+    case 2:
+        palette = (s32)&ResourceId_PinkBurstSheet;
+        break;
+    default:
+        palette = (s32)&ResourceId_BlastSheet;
+        break;
     }
     Iwram_CopyWords((void *)0x05000000, Resource_GetTableEntry(palette), 128);
     work->phase = 2;
@@ -168,10 +186,10 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
             work->flash = 8;
         }
         offset = frame - 8;
+        frame++;
         if ((u32)offset <= 11) {
             s32 ring = offset / 2;
-            rectangle[0](canvas, gMapCellBuffer + ring * 0x3c0,
-                origin.x / 2 - 16, screen.y - 40, 20, 48);
+            rectangle[0](canvas, gMapCellBuffer + ring * 0x3c0, origin.x / 2 - 16, screen.y - 40, 20, 48);
         }
         if ((u32)offset <= 55) {
             Render_ResetTransformState();
@@ -184,8 +202,7 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
                     size >>= 4;
                     size += 2;
                     projected.x >>= 1;
-                    rectangle[0](canvas, source + ParticleStreams_CellOffsets[size - 1],
-                        projected.x - size / 2, projected.y - size, size, size * 2);
+                    rectangle[0](canvas, source + ParticleStreams_CellOffsets[size - 1], projected.x - size / 2, projected.y - size, size, size * 2);
                     EffectStep_AdvanceWithGravity3D(particle, 60, -0x200);
                     particle->variant--;
                 }
@@ -195,7 +212,6 @@ void BattleFx_RunParticleFieldVariant(struct ParticleTarget *object, s32 variant
         ObjectGroup_TickMemberTimers();
         work->dirty = 1;
         WaitFrames(1);
-        frame++;
     } while (frame != 60);
     Scheduler_RemoveCallback(BattlePresentation_ProcessPendingGraphicsTransfer);
     Runtime_ReleaseHeapBlock(47);

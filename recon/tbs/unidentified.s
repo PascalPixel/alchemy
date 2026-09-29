@@ -1025,9 +1025,7 @@ Title_IntroTilesB:
 	.global BattleFx_ParticleSequenceDataA
 BattleFx_ParticleSequenceDataA:
 	.incbin "baserom.gba", 0x003c3574, 0x00000784
-	.global BattleFx_ParticleSequenceDataB
-BattleFx_ParticleSequenceDataB:
-	.incbin "baserom.gba", 0x003c3cf8, 0x00001334
+	.section .unidentified.083c502c,"a"
 	.global BattleFx_ParticleSequenceDataC
 BattleFx_ParticleSequenceDataC:
 	.incbin "baserom.gba", 0x003c502c, 0x0000064c

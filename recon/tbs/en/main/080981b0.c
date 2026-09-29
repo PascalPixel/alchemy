@@ -1,3 +1,7 @@
+/* 2026-09-29: the fragment script is BattleFx_FragmentScript and the setter
+ * Engine_ObjectSetScript, so the draft compiles again; alchemy permute
+ * scores 660 (8 register-only, 1 operand for the Value_ constant, 4
+ * inserted, 2 deleted). */
 /* Draft, not exact (2026-09-26): 232 of 228 bytes, 66 differing halfwords.
    Complete rising-burst owner, including padding and its literal pool.
    Symbol constants recover the scale decrement and animation-id loads.
@@ -39,7 +43,7 @@ void Audio_PlayCue(s32 sound);
 void WaitFrames(s32 frames);
 struct ParticleInstance *Object_Spawn(
     s32 kind, s32 x, s32 y, s32 z);
-void Object_SetCallback(struct ParticleInstance *particle, const void *callback);
+void Engine_ObjectSetScript(struct ParticleInstance *particle, const void *callback);
 u32 Random16(void);
 /* LCG: seed = seed * 0x41c64e6d + 0x3039, returns bits 8-23. */
 void Motion_SetTargetPositionFromMagnitudeAngle(
@@ -75,7 +79,7 @@ void Func_080981b0(struct ParticleBurstEffect *effect)
             s32 random;
             s32 speed;
 
-            Object_SetCallback(particle, &Data_0809f0d4);
+            Engine_ObjectSetScript(particle, &BattleFx_FragmentScript);
             scale = Random16();
             particle->base_scale = base_scale;
             scale += particle->base_scale;

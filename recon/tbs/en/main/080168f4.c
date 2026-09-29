@@ -1,7 +1,14 @@
+/* 2026-09-29: the removed ADDR_ macros are now gWindowWork, gKeysHeld and
+ * Data_03001af8 and callees carry the build's names, so the draft compiles
+ * again; alchemy permute scores 8560 (the residual below still holds). */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #include "GLOBAL_PROGRESS.H"
 #include "TBS_EDITION.H"
+
+extern u8 *gWindowWork;
+extern s32 gKeysHeld;
+extern s32 Data_03001af8;
 
 /*
  * Message-script step for one render channel.
@@ -103,11 +110,11 @@ struct RenderChannel {
     u16 skip;           /* 0x24 */
 };
 
-void Func_080167e0(s32 mode);
+void UiWork_ShiftPanelRowsLeft(s32 mode);
 void UiWork_ResetChannelTransition(void *channel);
 void RenderOutput_PrepareForRedraw(void *work);
 void UiWindow_EraseBorderRect(s32 x, s32 y, s32 width, s32 height);
-void Func_080170f8(s32 x, s32 y, s32 width, s32 height);
+void UiWindow_DrawFrame(s32 x, s32 y, s32 width, s32 height);
 void UiWindow_FitOnScreen(
     s32 no,
     s32 *px,
@@ -119,9 +126,9 @@ void UiWindow_FitOnScreen(
 void UiWork_CopyParamsToRenderWork(void *channel);
 s32 UiWork_CheckCancelByInput(void *channel);
 s32 UiWork_CheckCancelByModeInput(void *channel);
-void Func_08003f3c(s32 cue);
+void Resource_ResetEntry(s32 cue);
 void Audio_PlayCue(s32 cue);
-s32 Func_08018cac(void *work, s32 code, s32 x, s32 y, s32 mode);
+s32 UiText_DrawGlyph(void *work, s32 code, s32 x, s32 y, s32 mode);
 
 s32 UiWork_StepChannelScript(struct RenderChannel *ch)
 {
@@ -146,7 +153,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
     s32 old_h;
     s32 zero;
 
-    base = *(u8 **)ADDR_03001E8C;
+    base = gWindowWork;
     cnt = ((u8 *)SPEED_STEPS_TBL)[((u8 *)&Data_02000240)[0x20C]];
     if (base[RENDER_MENU_STATE_OFS] != 0) {
         speed = *(u16 *)0x03001CD0;
@@ -158,11 +165,11 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
     }
 
     if (ch->pause != 0) {
-        Func_080167e0(1);
+        UiWork_ShiftPanelRowsLeft(1);
         ch->pause--;
         return 0;
     }
-    if (*(s32 *)ADDR_03001AE8 == 0) {
+    if (gKeysHeld == 0) {
         if (ch->delay != 0) {
             ch->delay--;
             return 0;
@@ -199,7 +206,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
         case 1:
             /* Page break: wait for input, then refit the window. */
             if (base[RENDER_MODE_OFS] != 0 && ch->wait < 0x384)
-                *(s32 *)ADDR_03001AF8 = 0;
+                Data_03001af8 = 0;
             ch->wait = 0x397;
             if (UiWork_CheckCancelByModeInput(ch) == 0) {
                 pane = ch->work;
@@ -209,7 +216,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
                     break;
                 if (base[RENDER_PROMPT_OFS] != 0)
                     break;
-                Func_08018cac(
+                UiText_DrawGlyph(
                     pane,
                     1,
                     pane->width * 4 - 8,
@@ -258,19 +265,19 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
                     pane->width = w;
                     pane->height = h;
                 }
-                Func_080170f8(pane->x, pane->y, pane->width, pane->height);
+                UiWindow_DrawFrame(pane->x, pane->y, pane->width, pane->height);
             }
             ch->pos_x = ch->origin_x;
             ch->pos_y = 0;
             ch->line = 0;
-            Func_08003f3c(*(u16 *)(base + RENDER_CUE_ID_OFS));
+            Resource_ResetEntry(*(u16 *)(base + RENDER_CUE_ID_OFS));
             *(u16 *)(base + RENDER_CUE_ID_OFS) = 99;
             break;
 
         case 2:
             /* Wait for input, report a cancel to the caller. */
             if (base[RENDER_MODE_OFS] != 0 && ch->wait < 0x384)
-                *(s32 *)ADDR_03001AF8 = 0;
+                Data_03001af8 = 0;
             if (UiWork_CheckCancelByModeInput(ch) != 0)
                 return 9;
             ch->wait = 0x397;
@@ -389,7 +396,7 @@ s32 UiWork_StepChannelScript(struct RenderChannel *ch)
                     ch->pc = (ch->pc + 1) & RENDER_ENTRY_MASK;
                 }
             }
-            tmp = Func_08018cac(pane, code, gx, gy, 0);
+            tmp = UiText_DrawGlyph(pane, code, gx, gy, 0);
             ch->delay =
                 ((u8 *)SPEED_DELAY_TBL)[((u8 *)&Data_02000240)[0x20C]];
             if (tmp != 0) {

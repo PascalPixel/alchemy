@@ -19,7 +19,7 @@
  * before byte member stores, keeps the runtime in ip throughout, and still
  * coalesces the initial packet-table reload. Whole-runtime volatility does
  * not describe this collector's access boundaries; baseline retained. */
-#include "serial_runtime_family.h"
+#include "SERIAL_RUNTIME.H"
 #include "DMA.H"
 
 static __inline__ void Serial_SetIme(s32 value)

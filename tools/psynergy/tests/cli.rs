@@ -99,6 +99,7 @@ fn help_is_available_at_both_entry_points() {
         vec!["--help"],
         vec!["decompile", "--help"],
         vec!["disassemble", "--help"],
+        vec!["convert", "--help"],
     ] {
         let output = command(std::path::Path::new("."))
             .args(args)
@@ -231,4 +232,27 @@ fn project_commands_are_not_portable_aliases() {
             "{name}"
         );
     }
+}
+
+#[test]
+fn conversion_runs_without_a_project_and_refuses_overwrite() {
+    let dir = tempfile::tempdir().unwrap();
+    fs::write(dir.path().join("words.tsv"), "0x1234\n65535\n").unwrap();
+    let args = ["convert", "words2bin", "words.tsv", "data.bin"];
+    let first = command(dir.path()).args(args).output().unwrap();
+    assert!(
+        first.status.success(),
+        "{}",
+        String::from_utf8_lossy(&first.stderr)
+    );
+    assert_eq!(
+        fs::read(dir.path().join("data.bin")).unwrap(),
+        [0x34, 0x12, 0xff, 0xff]
+    );
+    let again = command(dir.path()).args(args).output().unwrap();
+    assert_eq!(again.status.code(), Some(2));
+    assert_eq!(
+        fs::read(dir.path().join("data.bin")).unwrap(),
+        [0x34, 0x12, 0xff, 0xff]
+    );
 }

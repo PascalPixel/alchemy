@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+#include "SCENE_IDS.H"
 
 extern u8 Data_0200e088[];
 extern u8 Data_0200e130[];
@@ -7,9 +8,6 @@ void SceneEffect_SpawnParticlesAboveActor();
 void Func_020056a0();
 extern u8 Data_0200e0d0[];
 extern u8 Data_0200e0f4[];
-/* FAKEMATCH: the reference loads 2 from the literal pool; a link symbol at
- * that value reproduces the load. */
-extern u8 Value_00000002[];
 void Engine_EventWait();
 void VinasuChojo_ShowMessage();
 void Scheduler_RemoveCallback();
@@ -264,7 +262,7 @@ void VinasuChojo_RunActorTransition(void)
     Engine_EventWait(30);
     Call1(Engine_GameFlagSet, 0x11a);
     ObjectTable_Snapshot();
-    Event_SetPairWork1c0((s32)Value_00000002, 91);
+    Event_SetPairWork1c0((s32)&SceneId_WorldMap, 91);
     { s32 white = 0x7fff; *(u16 *)0x05000000 = white; }
     *(s32 *)((*(s32 *)&gEventWork + 0x1c8)) = 1;
     Engine_EventCloseScreen();

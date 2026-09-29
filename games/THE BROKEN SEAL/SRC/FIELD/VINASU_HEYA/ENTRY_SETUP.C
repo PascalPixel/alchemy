@@ -316,14 +316,16 @@ void FieldScene_RunOpeningAuxiliarySequence(void)
     }
 }
 
+extern u8 *gActorEffectWork;
+
 void SceneState_StoreLookupZeroToWord24(void)
 {
-    *(s32 *)(*(u8 **)0x03001ee0 + 24) = Actor_Get(ACTOR_PARTY_LEADER);
+    *(s32 *)(gActorEffectWork + 24) = Actor_Get(ACTOR_PARTY_LEADER);
 }
 
 void SceneState_ClearWorkspaceWord24(void)
 {
-    *(s32 *)(*(u8 **)0x03001ee0 + 24) = 0;
+    *(s32 *)(gActorEffectWork + 24) = 0;
 }
 
 s32 SceneActor_SetFlagBitByRelativeDepth(struct Actor_020008c8 *actor)

@@ -10,6 +10,6 @@
 	overlay_veneer BiribinoKyuden_ApplyEntryState
 	overlay_veneer SceneData_GetScriptTable
 	overlay_veneer SceneData_GetMessageTable
-	overlay_veneer Func_0200009c
-	overlay_veneer Func_02000100
+	overlay_veneer Scene_GetPlacements
+	overlay_veneer Scene_GetEvents
 	overlay_veneer SceneData_ReturnZero

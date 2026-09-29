@@ -15,6 +15,9 @@ Engine_MathDivide:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
@@ -61,6 +64,9 @@ Engine_MapAnimateCells:
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
+	.global Engine_MapCopyCells
+	.thumb_func
+Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
 	.global Engine_MapCopyCellAttributes
 	.thumb_func
@@ -184,6 +190,9 @@ Battle_GetWorkObject1e0:
 	.thumb_func
 Engine_MapObjectSetPosition:
 	overlay_veneer EffectRuntime_SetCurrentPositionFar
+	.global BattleFx_StartFadeOverlay
+	.thumb_func
+BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	overlay_veneer BattleFx_PlayQueuedSoundFar
 	.global Engine_AudioPlayCue

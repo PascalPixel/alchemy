@@ -1,136 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008e04,"ax",%progbits
-	.balign 4
-	.global Func_02000e04
-	.thumb_func
-Func_02000e04:
-	push {lr}
-	ldr r3, [pc, #68]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02000e04_0
-	ldr r0, [pc, #56]
-	b .L_02000e04_1
-.L_02000e04_0:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000e04_2
-	ldr r0, [pc, #56]
-	b .L_02000e04_1
-.L_02000e04_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02000e04_3
-	ldr r0, [pc, #52]
-	b .L_02000e04_1
-.L_02000e04_3:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000e04_4
-	ldr r0, [pc, #52]
-	b .L_02000e04_1
-.L_02000e04_4:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02000e04_5
-	ldr r0, [pc, #48]
-	b .L_02000e04_1
-.L_02000e04_5:
-	ldr r0, [pc, #48]
-.L_02000e04_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b5
-	.4byte 0x0200dd68
-	.4byte 0x000000b7
-	.4byte 0x0200e020
-	.4byte 0x000000b8
-	.4byte 0x0200e230
-	.4byte 0x000000b9
-	.4byte 0x0200e350
-	.4byte 0x000000ba
-	.4byte 0x0200e548
-	.4byte 0x0200ddc8
-	.section .text.x02008e88,"ax",%progbits
-	.balign 4
-	.global Func_02000e88
-	.thumb_func
-Func_02000e88:
-	push {r5, lr}
-	ldr r3, [pc, #88]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #80]
-	cmp r2, r3
-	bne .L_02000e88_0
-	ldr r0, [pc, #76]
-	b .L_02000e88_1
-.L_02000e88_0:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000e88_2
-	ldr r5, [pc, #76]
-	b .L_02000e88_3
-.L_02000e88_2:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02000e88_4
-	ldr r5, [pc, #72]
-	b .L_02000e88_3
-.L_02000e88_4:
-	ldr r3, [pc, #72]
-	cmp r2, r3
-	bne .L_02000e88_5
-	ldr r5, [pc, #72]
-	b .L_02000e88_3
-.L_02000e88_5:
-	ldr r3, [pc, #72]
-	cmp r2, r3
-	bne .L_02000e88_6
-	ldr r5, [pc, #68]
-	b .L_02000e88_3
-.L_02000e88_6:
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02000e88_7
-	ldr r5, [pc, #68]
-.L_02000e88_3:
-	adds r0, r5, #0
-	bl 0x0200cea4
-	adds r0, r5, #0
-	b .L_02000e88_1
-.L_02000e88_7:
-	ldr r0, [pc, #60]
-.L_02000e88_1:
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x000000b5
-	.4byte 0x0200e904
-	.4byte 0x000000b6
-	.4byte 0x0200e9c4
-	.4byte 0x000000b7
-	.4byte 0x0200eb74
-	.4byte 0x000000b8
-	.4byte 0x0200ec04
-	.4byte 0x000000b9
-	.4byte 0x0200ec64
-	.4byte 0x000000ba
-	.4byte 0x0200ecf4
-	.4byte 0x0200e8ec
 	.section .text.x0200a47c,"ax",%progbits
 	.balign 4
 	.2byte 0xb5e0
@@ -175,7 +44,7 @@ Func_02000e88:
 	cmp	r7, #0
 	bne.n	.L_0200250a
 	adds	r0, r6, #0
-	bl 0x0200894c
+	bl OverlayObject_WaitUntilIdle
 	adds	r0, r5, #0
 	bl 0x0200ce7c
 	adds	r1, r6, #0
@@ -227,18 +96,18 @@ Func_02000e88:
 	lsls	r2, r2, #16
 	movs	r3, #253
 	ldr	r0, [r6, #8]
-	bl 0x02008058
+	bl OverlayObject_SpawnWithMode14
 	str	r0, [sp, #16]
 	movs	r2, #240
 	ldr	r0, [r6, #8]
 	movs	r1, #0
 	lsls	r2, r2, #16
 	movs	r3, #253
-	bl 0x02008058
+	bl OverlayObject_SpawnWithMode14
 	str	r0, [sp, #12]
 .L_0200255a:
 	adds	r0, r6, #0
-	bl 0x0200894c
+	bl OverlayObject_WaitUntilIdle
 	movs	r1, #0
 	movs	r2, #0
 	mov	r0, fp
@@ -389,7 +258,7 @@ Func_02000e88:
 	ldr	r3, [pc, #72]
 	str	r3, [r0, #108]
 	movs	r0, #40
-	bl 0x0200a2c8
+	bl VinasuHeya_LowerFloatingBlocks
 	adds	r0, r5, #0
 	bl 0x0200ceac
 	adds	r0, #35
@@ -598,7 +467,7 @@ Scene_RunScene3c8SequenceA:
 	ldr	r2, [r2, #16]
 	adds	r2, r2, r3
 	movs	r3, #20
-	bl 0x02008098
+	bl OverlayObject_PrepareObjectWithCommand15
 	movs	r1, #3
 	str	r0, [sp, #12]
 	movs	r0, #0
@@ -660,7 +529,7 @@ Scene_RunScene3c8SequenceA:
 	movs	r3, #1
 	bl 0x0200ce34
 	mov	r0, r8
-	bl 0x0200894c
+	bl OverlayObject_WaitUntilIdle
 	movs	r0, #188
 	bl 0x0200cffc
 	mov	r3, r8
@@ -784,7 +653,7 @@ Scene_RunScene3c8SequenceA:
 	ldr	r2, [pc, #212]
 	lsls	r1, r1, #2
 	movs	r0, #136
-	bl 0x02008c5c
+	bl SceneEffect_SpawnEffect284AtCell
 	adds	r6, r0, #0
 	movs	r0, #30
 	bl 0x0200ce8c
@@ -889,79 +758,6 @@ Scene_RunScene3c8SequenceA:
 	.4byte 0x0200dac8
 	.2byte 0xdd3c
 	.2byte 0x0200
-	.section .text.x0200af8c,"ax",%progbits
-	.balign 4
-	.global Func_02002f8c
-	.thumb_func
-Func_02002f8c:
-	push {lr}
-	ldr r3, [pc, #72]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #64]
-	cmp r2, r3
-	bne .L_02002f8c_0
-	ldr r0, [pc, #60]
-	b 0x0200afd4
-.L_02002f8c_0:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	beq 0x0200afd2
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02002f8c_1
-	ldr r0, [pc, #56]
-	b 0x0200afd4
-.L_02002f8c_1:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne .L_02002f8c_2
-	ldr r0, [pc, #56]
-	b 0x0200afd4
-.L_02002f8c_2:
-	ldr r3, [pc, #56]
-	cmp r2, r3
-	bne 0x0200afc8
-.L_02002fc4:
-	ldr r0, [pc, #52]
-	b .L_02002fc4_0
-	.2byte 0x4b0d
-	.2byte 0x429a
-	.2byte 0xd101
-	.2byte 0x480d
-	.2byte 0xe000
-	.2byte 0x480d
-.L_02002fc4_0:
-	pop {r1}
-	bx r1
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x00b5
-	.2byte 0x0000
-	.2byte 0xee44
-	.2byte 0x0200
-	.2byte 0x00b6
-	.2byte 0x0000
-	.2byte 0x00b7
-	.2byte 0x0000
-	.2byte 0xf120
-	.2byte 0x0200
-	.2byte 0x00b8
-	.2byte 0x0000
-	.2byte 0xf300
-	.2byte 0x0200
-	.2byte 0x00b9
-	.2byte 0x0000
-	.4byte 0x0200f3b4
-	.2byte 0x00ba
-	.2byte 0x0000
-	.2byte 0xf4f8
-	.2byte 0x0200
-	.2byte 0xef1c
-	.2byte 0x0200
 	.section .text.x0200b068,"ax",%progbits
 	.balign 4
 	.global Func_02003068
@@ -981,7 +777,7 @@ Func_02003068:
 	bl 0x0200ce74
 	cmp	r0, #0
 	beq.n	.L_0200308c
-	bl 0x02008558
+	bl SceneActor_ApplySlotsMatchingKind212
 .L_0200308c:
 	movs	r0, #136
 	lsls	r0, r0, #1
@@ -1007,7 +803,7 @@ Func_02003068:
 	cmp	r0, #0
 	bne.n	.L_020030c6
 	movs	r0, #8
-	bl 0x0200b00c
+	bl SceneActor_ClearActorModeAndSetState5
 	b.n	.L_020030da
 .L_020030c6:
 	movs	r3, #7
@@ -1021,23 +817,23 @@ Func_02003068:
 	bl 0x0200ce34
 .L_020030da:
 	movs	r0, #9
-	bl 0x0200b00c
+	bl SceneActor_ClearActorModeAndSetState5
 	movs	r0, #10
-	bl 0x0200b00c
+	bl SceneActor_ClearActorModeAndSetState5
 	movs	r0, #11
-	bl 0x0200b00c
+	bl SceneActor_ClearActorModeAndSetState5
 	movs	r1, #2
 	movs	r0, #11
 	bl 0x0200cf64
 	movs	r0, #12
-	bl 0x0200b00c
+	bl SceneActor_ClearActorModeAndSetState5
 	movs	r0, #12
 	movs	r1, #2
 	bl 0x0200cf64
 	movs	r0, #13
-	bl 0x0200b00c
+	bl SceneActor_ClearActorModeAndSetState5
 	movs	r0, #14
-	bl 0x0200b00c
+	bl SceneActor_ClearActorModeAndSetState5
 	bl 0x0200bfa6
 .L_02003112:
 	ldr	r3, [pc, #848]
@@ -1284,7 +1080,7 @@ Func_02003068:
 	beq.n	.L_02003446
 	bl 0x0200bfa6
 .L_02003446:
-	bl 0x020089c8
+	bl FieldScene_RunSupplementalSequenceOne
 	bl 0x0200bfa6
 	movs	r0, r0
 	lsls	r1, r1, #4
@@ -1321,13 +1117,13 @@ Func_02003068:
 	movs	r0, #11
 	bl 0x0200ceac
 	adds	r7, r0, #0
-	bl 0x020099c0
+	bl SceneActor_ApplyPositionsOfActors11And12
 	ldr	r3, [r7, #8]
 	asrs	r3, r3, #20
 	cmp	r3, #8
 	bne.n	.L_020034a6
 	adds	r0, r7, #0
-	bl 0x02009a14
+	bl SceneState_MarkActorAndApplyRectAtTile
 .L_020034a6:
 	movs	r0, #12
 	bl 0x0200ceac
@@ -1336,7 +1132,7 @@ Func_02003068:
 	asrs	r3, r3, #20
 	cmp	r3, #7
 	bne.n	.L_020034ba
-	bl 0x02009a14
+	bl SceneState_MarkActorAndApplyRectAtTile
 .L_020034ba:
 	ldr	r5, [pc, #880]
 	movs	r0, #206
@@ -1344,14 +1140,14 @@ Func_02003068:
 	adds	r2, r5, #0
 	movs	r3, #223
 	lsls	r0, r0, #16
-	bl 0x02008058
+	bl OverlayObject_SpawnWithMode14
 	movs	r0, #210
 	lsls	r0, r0, #16
 .L_020034ce:
 	movs	r1, #0
 	adds	r2, r5, #0
 	movs	r3, #223
-	bl 0x02008058
+	bl OverlayObject_SpawnWithMode14
 	bl 0x0200bfa6
 	movs	r0, #0
 	bl 0x0200cfdc
@@ -1382,7 +1178,7 @@ Func_02003068:
 	adds	r3, #85
 	strb	r6, [r3, #0]
 	str	r5, [r7, #108]
-	bl 0x020098f8
+	bl FieldScene_PlaceAndPinSlots8To10
 .L_02003520:
 	bl 0x0200bfa6
 	movs	r0, #170
@@ -1629,7 +1425,7 @@ Func_02003068:
 	.4byte 0xfef4f000
 	.4byte 0x0000e3bd
 	.4byte 0x01c10000
-	.4byte 0x020088c9
+	.4byte SceneActor_SetFlagBitByRelativeDepth
 	.2byte 0x00b8
 	.2byte 0x0000
 	push	{r3, r4, r6, r7, lr}
@@ -1722,14 +1518,14 @@ Func_02003068:
 	ldrsh	r3, [r3, r1]
 	cmp	r3, #11
 	bne.n	.L_02003904
-	bl 0x020087d8
+	bl FieldScene_RunOpeningAuxiliarySequence
 	b.n	.L_02003fa6
 .L_02003904:
 	cmp	r3, #20
 	beq.n	.L_0200390a
 	b.n	.L_02003fa6
 .L_0200390a:
-	bl 0x0200c7c0
+	bl Scene_RunEastParticleWaveSequence
 	b.n	.L_02003fa6
 	.4byte 0xff62f7fc
 	.4byte 0x2008e1b7
@@ -1886,14 +1682,14 @@ Func_02003068:
 	.4byte 0xd9e52d03
 	.4byte 0x0000e233
 	.4byte 0x00000306
-	.4byte 0x0200c5f1
+	.4byte SceneState_CallWith432And32
 	.4byte 0x00000307
-	.4byte 0x0200c601
+	.4byte FieldScene_CallWith560And44
 	.4byte 0x02000240
 	.4byte 0x00000302
 	.4byte 0xfff00000
 	.4byte 0x02d70000
-	.4byte 0x02008b99
+	.4byte SceneEffect_SpawnRandomizedParticleEveryFourFrames
 	.4byte 0x000000ba
 	.4byte 0x0200ba9c
 	.4byte 0x00000109
@@ -2186,7 +1982,7 @@ Func_02003068:
 	.4byte 0x00000306
 	.4byte 0x00000307
 	.4byte 0x02000240
-	.4byte 0x0200b051
+	.4byte SceneState_ApplyStepToSlots15To18
 	.4byte 0xfff00000
 	.2byte 0x8b99
 	.2byte 0x0200
@@ -2287,7 +2083,7 @@ Func_02003068:
 	movs	r3, #0
 	str	r7, [sp, #0]
 	str	r7, [sp, #4]
-	bl 0x02008118
+	bl Effect_Spawn
 	movs	r2, #128
 	lsls	r2, r2, #11
 	adds	r6, #1
@@ -2419,7 +2215,7 @@ Func_02003068:
 	movs	r1, #0
 	str	r7, [sp, #0]
 	str	r7, [sp, #4]
-	bl 0x02008118
+	bl Effect_Spawn
 .L_020044a8:
 	movs	r3, #128
 	lsls	r3, r3, #11
@@ -2537,7 +2333,7 @@ VinasuHeya_SpawnRandomParticles:
 	movs	r1, #0
 	movs	r3, #0
 	str	r6, [sp, #0]
-	bl 0x02008118
+	bl Effect_Spawn
 	b.n	.L_020045d6
 .L_020045aa:
 	bl 0x0200cdb4
@@ -2560,7 +2356,7 @@ VinasuHeya_SpawnRandomParticles:
 	movs	r3, #0
 	str	r5, [sp, #0]
 	str	r5, [sp, #4]
-	bl 0x02008118
+	bl Effect_Spawn
 .L_020045d6:
 	add	sp, #56
 	pop	{r3, r5}
@@ -2588,7 +2384,7 @@ VinasuHeya_SpawnRandomParticles:
 	ldr	r3, [r5, #16]
 	movs	r1, #0
 	str	r3, [r0, #8]
-	bl 0x0200832c
+	bl SceneData_FindSlotAtPosition
 	adds	r7, r0, #0
 	ldr	r6, [r7, #80]
 	ldr	r3, [r6, #40]
@@ -2928,19 +2724,19 @@ gEffectScripts:
 	.4byte 0x00000027
 	.4byte 0x00000001
 	.4byte 0x00000022
-	.4byte 0x02008595
+	.4byte OverlayObject_ApplyLowNibbleOfField100
 	.4byte 0x00000010
 	.4byte 0x00000015
 	.4byte 0x00000023
 	.4byte 0x00002126
 	.4byte 0x00000022
-	.4byte 0x02008595
+	.4byte OverlayObject_ApplyLowNibbleOfField100
 	.4byte 0x00000010
 	.4byte 0x0000001c
 	.4byte 0x0000000c
 	.4byte 0x00000015
 	.4byte 0x00000026
-	.4byte 0x020085ad
+	.4byte OverlayObject_UpdateEveryFourFrames
 	.4byte 0x80010000
 	.4byte 0x00000015
 	.4byte 0x00000009
@@ -2978,7 +2774,7 @@ gEffectScripts:
 	.4byte 0x0000001e
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02008691
+	.4byte OverlayObject_ApplyZero
 	.4byte 0x00000010
 	.global gVinasuSprayScript
 gVinasuSprayScript:
@@ -3045,7 +2841,7 @@ gVinasuSprayScript:
 	.4byte 0x00000008
 	.4byte 0x00000010
 	.4byte 0x00000022
-	.4byte 0x02008691
+	.4byte OverlayObject_ApplyZero
 	.4byte 0x0000001c
 	.4byte 0x00000007
 	.4byte 0x00000015
@@ -3053,7 +2849,7 @@ gVinasuSprayScript:
 	.4byte 0x00010000
 	.4byte 0x00000015
 	.4byte 0x00000026
-	.4byte 0x02008b99
+	.4byte SceneEffect_SpawnRandomizedParticleEveryFourFrames
 	.4byte 0x00000003
 	.4byte 0x02f80000
 	.4byte 0x00000000
@@ -3668,6 +3464,8 @@ gVinasuSettleCells:
 	.4byte 0x00010038
 	.4byte 0x00060002
 	.4byte 0x0000ffff
+	.global gVinasuHeyaEntrances1
+gVinasuHeyaEntrances1:
 	.4byte 0xffff0001
 	.4byte 0x00000028
 	.4byte 0x00000108
@@ -3692,6 +3490,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrancesOther
+gVinasuHeyaEntrancesOther:
 	.4byte 0xffff0001
 	.4byte 0x00000078
 	.4byte 0xc00000c8
@@ -3842,6 +3642,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances3
+gVinasuHeyaEntrances3:
 	.4byte 0xffff0001
 	.4byte 0x000001c8
 	.4byte 0x40000228
@@ -3974,6 +3776,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances4
+gVinasuHeyaEntrances4:
 	.4byte 0xffff0001
 	.4byte 0x00000068
 	.4byte 0x40000078
@@ -4046,6 +3850,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances5
+gVinasuHeyaEntrances5:
 	.4byte 0xffff0001
 	.4byte 0x00000088
 	.4byte 0x40000088
@@ -4172,6 +3978,8 @@ gVinasuSettleCells:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEntrances6
+gVinasuHeyaEntrances6:
 	.4byte 0xffff0001
 	.4byte 0x00000078
 	.4byte 0x400000f8
@@ -4407,12 +4215,16 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x014140ba
 	.4byte 0x015010bb
 	.4byte 0x000001ff
+	.global gVinasuHeyaPlacementsOther
+gVinasuHeyaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements1
+gVinasuHeyaPlacements1:
 	.4byte 0x09810098
 	.4byte 0x00000001
 	.4byte 0x00800000
@@ -4461,6 +4273,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements2
+gVinasuHeyaPlacements2:
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00080000
@@ -4569,6 +4383,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements3
+gVinasuHeyaPlacements3:
 	.4byte 0x000000fd
 	.4byte 0x0200d204
 	.4byte 0x00f80000
@@ -4605,6 +4421,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements4
+gVinasuHeyaPlacements4:
 	.4byte 0x000001f4
 	.4byte 0x0200d1e0
 	.4byte 0x03280000
@@ -4629,6 +4447,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements5
+gVinasuHeyaPlacements5:
 	.4byte 0x000001f4
 	.4byte 0x0200d1e0
 	.4byte 0x03780000
@@ -4665,6 +4485,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaPlacements6
+gVinasuHeyaPlacements6:
 	.4byte 0x00000101
 	.4byte 0x00000007
 	.4byte 0x00680000
@@ -4749,6 +4571,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents1
+gVinasuHeyaEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -4760,7 +4584,7 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000003
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte 0x02008f39
+	.4byte FieldScene_RunActorEightTenStepLoop
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x0000266e
@@ -4769,7 +4593,7 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x0000266f
 	.4byte 0x00000000
 	.4byte 0xffff000b
-	.4byte 0x02008fbd
+	.4byte SceneDialogue_RunActorElevenDialogue
 	.4byte 0x00000000
 	.4byte 0xffff000c
 	.4byte 0x00002672
@@ -4781,7 +4605,7 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00002674
 	.4byte 0x00008d15
 	.4byte 0xffff0408
-	.4byte 0x02008f39
+	.4byte FieldScene_RunActorEightTenStepLoop
 	.4byte 0x00008d15
 	.4byte 0xffff0009
 	.4byte 0x00002675
@@ -4803,6 +4627,8 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents2
+gVinasuHeyaEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -4877,13 +4703,13 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000020
 	.4byte 0x00000002
 	.4byte 0x0200002d
-	.4byte 0x02009151
+	.4byte FieldScene_RunLeaderSurpriseApproach
 	.4byte 0x00000002
 	.4byte 0xffff002e
-	.4byte 0x020096a5
+	.4byte VinasuHeya_UpdateFloorSwitch
 	.4byte 0x00000202
 	.4byte 0xffff0032
-	.4byte 0x02009629
+	.4byte FieldScene_RunFiveCallSequence
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x0000267b
@@ -4892,7 +4718,7 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x0000267c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02009781
+	.4byte FieldScene_SetupActorTenCamera
 	.4byte 0x00008d15
 	.4byte 0xffff0008
 	.4byte 0x0000267f
@@ -4904,10 +4730,10 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00002681
 	.4byte 0x00000003
 	.4byte 0xffff0023
-	.4byte 0x02009025
+	.4byte SceneDialogue_RunLine2682
 	.4byte 0x00000003
 	.4byte 0xffff0029
-	.4byte 0x02009219
+	.4byte FieldScene_RunStatueDialogueSequence
 	.4byte 0x00000013
 	.4byte 0x0f370064
 	.4byte 0x001000a1
@@ -4916,22 +4742,24 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x001000ce
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x020094f5
+	.4byte FieldScene_RunFlag986ActorOneScene
 	.4byte 0x00008c15
 	.4byte 0x0200000d
-	.4byte 0x02009645
+	.4byte SceneState_RunActor13AtColumn42Setup
 	.4byte 0x00009315
 	.4byte 0xffff000c
-	.4byte 0x02008ff1
+	.4byte FieldScene_SetFlag987AtActorTwelveTile
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x020090cd
+	.4byte SceneState_ApplySixRectsAfterFlag161
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02009049
+	.4byte SceneState_ApplySixRectsAfter161
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents3
+gVinasuHeyaEvents3:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -4991,25 +4819,25 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000013
 	.4byte 0x00000002
 	.4byte 0xffff001e
-	.4byte 0x0200bffd
+	.4byte SceneState_PassRange0To1
 	.4byte 0x00000002
 	.4byte 0xffff0023
-	.4byte 0x02009809
+	.4byte Scene_RunActorLeapSequence
 	.4byte 0x00000202
 	.4byte 0xffff001f
-	.4byte 0x0200996d
+	.4byte SceneState_ApplyRectAt19_44AndRunThree
 	.4byte 0x00000202
 	.4byte 0xffff0020
-	.4byte 0x0200996d
+	.4byte SceneState_ApplyRectAt19_44AndRunThree
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte 0x020088b9
+	.4byte SceneState_ClearWorkspaceWord24
 	.4byte 0x00000002
 	.4byte 0xffff0020
-	.4byte 0x020088a1
+	.4byte SceneState_StoreLookupZeroToWord24
 	.4byte 0x00000202
 	.4byte 0xffff002d
-	.4byte 0x020099f1
+	.4byte FieldScene_RunGuardedThreeStepSetup
 	.4byte 0x00000013
 	.4byte 0x0f340064
 	.4byte 0x001000a2
@@ -5018,46 +4846,48 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00300000
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x020098f9
+	.4byte FieldScene_PlaceAndPinSlots8To10
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x020098f9
+	.4byte FieldScene_PlaceAndPinSlots8To10
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x020098f9
+	.4byte FieldScene_PlaceAndPinSlots8To10
 	.4byte 0x10008c15
 	.4byte 0xffff000b
-	.4byte 0x0200999d
+	.4byte SceneActor_ApplyKind45AtActorsElevenAndTwelve
 	.4byte 0x10008c15
 	.4byte 0xffff000c
-	.4byte 0x0200999d
+	.4byte SceneActor_ApplyKind45AtActorsElevenAndTwelve
 	.4byte 0x10009315
 	.4byte 0xffff000b
-	.4byte 0x0200999d
+	.4byte SceneActor_ApplyKind45AtActorsElevenAndTwelve
 	.4byte 0x10009315
 	.4byte 0xffff000c
-	.4byte 0x0200999d
+	.4byte SceneActor_ApplyKind45AtActorsElevenAndTwelve
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x020099c1
+	.4byte SceneActor_ApplyPositionsOfActors11And12
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x020099c1
+	.4byte SceneActor_ApplyPositionsOfActors11And12
 	.4byte 0x00009315
 	.4byte 0xffff000b
-	.4byte 0x02009a9d
+	.4byte SceneActor_UpdateSlots11And12ByTile
 	.4byte 0x00009315
 	.4byte 0xffff000c
-	.4byte 0x02009a9d
+	.4byte SceneActor_UpdateSlots11And12ByTile
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents4
+gVinasuHeyaEvents4:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x0000c602
 	.4byte 0xffff0002
-	.4byte 0x02008755
+	.4byte SceneEffect_RunObjectZeroColorSequence
 	.4byte 0x00000001
 	.4byte 0xffff0003
 	.4byte 0x00000003
@@ -5084,19 +4914,21 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x0000000a
 	.4byte 0x00000002
 	.4byte 0xffff0023
-	.4byte 0x02009af1
+	.4byte VinasuHeya_ShiftBridge
 	.4byte 0x00000202
 	.4byte 0x03010024
-	.4byte 0x02009f29
+	.4byte FieldScene_RunGuardedRectStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte 0x02008f1d
+	.4byte SceneState_SetFlag953
 	.4byte 0x00008c15
 	.4byte 0x03010009
-	.4byte 0x02009d49
+	.4byte VinasuHeya_RunCellPushScene
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents5
+gVinasuHeyaEvents5:
 	.4byte 0x00000021
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -5108,10 +4940,10 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000003
 	.4byte 0x0000c602
 	.4byte 0xffff0004
-	.4byte 0x02008755
+	.4byte SceneEffect_RunObjectZeroColorSequence
 	.4byte 0x0000c602
 	.4byte 0xffff0005
-	.4byte 0x02008755
+	.4byte SceneEffect_RunObjectZeroColorSequence
 	.4byte 0x00000001
 	.4byte 0xffff0006
 	.4byte 0x00000006
@@ -5129,7 +4961,7 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x0000000a
 	.4byte 0x0000c602
 	.4byte 0xffff000b
-	.4byte 0x02008755
+	.4byte SceneEffect_RunObjectZeroColorSequence
 	.4byte 0x00000021
 	.4byte 0xffff000c
 	.4byte 0x0000000c
@@ -5153,31 +4985,33 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000012
 	.4byte 0x00000002
 	.4byte 0xffff001e
-	.4byte 0x0200bffd
+	.4byte SceneState_PassRange0To1
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x0200bffd
+	.4byte SceneState_PassRange0To1
 	.4byte 0x00000202
 	.4byte 0xffff0023
-	.4byte 0x0200a26d
+	.4byte SceneState_RunConditionalStep
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte 0x02008f1d
+	.4byte SceneState_SetFlag953
 	.4byte 0x00000013
 	.4byte 0x0f350064
 	.4byte 0x00100052
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x02009f61
+	.4byte VinasuHeya_SettlePushedBlocks
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x02009f61
+	.4byte VinasuHeya_SettlePushedBlocks
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x02009f61
+	.4byte VinasuHeya_SettlePushedBlocks
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gVinasuHeyaEvents6
+gVinasuHeyaEvents6:
 	.4byte 0x00000031
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -5231,49 +5065,49 @@ gVinasuHeyaPrimaryTable:
 	.4byte 0x00000011
 	.4byte 0x00004602
 	.4byte 0xffff0012
-	.4byte 0x0200af31
+	.4byte FieldScene_RunApproachAndSpawnEffect
 	.4byte 0x00000202
 	.4byte 0xffff0023
-	.4byte 0x0200a6e5
+	.4byte FieldScene_RunThreeCallSequence
 	.4byte 0x00008602
 	.4byte 0xffff0024
-	.4byte 0x02008cc9
+	.4byte SceneActor_TryMoveActorZeroTwoTilesAhead
 	.4byte 0x00000602
 	.4byte 0xffff0024
-	.4byte 0x02008cc9
+	.4byte SceneActor_TryMoveActorZeroTwoTilesAhead
 	.4byte 0x00000202
 	.4byte 0xffff0024
-	.4byte 0x0200a6e5
+	.4byte FieldScene_RunThreeCallSequence
 	.4byte 0x00000602
 	.4byte 0xffff0025
-	.4byte 0x02008cc9
+	.4byte SceneActor_TryMoveActorZeroTwoTilesAhead
 	.4byte 0x00000202
 	.4byte 0xffff0025
-	.4byte 0x0200a6e5
+	.4byte FieldScene_RunThreeCallSequence
 	.4byte 0x00000002
 	.4byte 0xffff0028
-	.4byte 0x0200a6f9
+	.4byte VinasuHeya_RetractBridge
 	.4byte 0x00000002
 	.4byte 0xffff0029
-	.4byte 0x0200a90d
+	.4byte VinasuHeya_ExtendBridge
 	.4byte 0x00000002
 	.4byte 0xffff001e
-	.4byte 0x0200bffd
+	.4byte SceneState_PassRange0To1
 	.4byte 0x00000002
 	.4byte 0xffff001f
-	.4byte 0x0200bfe5
+	.4byte SceneState_PassZeroAndMinusOneRecord
 	.4byte 0x00000002
 	.4byte 0xffff0020
-	.4byte 0x0200c015
+	.4byte SceneState_PassRangeNeg1To0
 	.4byte 0x00000002
 	.4byte 0xffff0021
-	.4byte 0x0200c031
+	.4byte SceneState_CallHandlerWithFlagPair
 	.4byte 0x00000202
 	.4byte 0xffff002d
-	.4byte 0x0200aee5
+	.4byte FieldScene_DrawTilesWhenCheckClear
 	.4byte 0x00000003
 	.4byte 0xffff0019
-	.4byte 0x02008f1d
+	.4byte SceneState_SetFlag953
 	.4byte 0x00000013
 	.4byte 0x0f360064
 	.4byte 0x00100009

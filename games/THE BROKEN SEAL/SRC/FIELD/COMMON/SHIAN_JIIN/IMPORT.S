@@ -94,6 +94,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global FieldScene_PrepareActors
+	.thumb_func
+FieldScene_PrepareActors:
 	overlay_veneer Func_0808a038
 	.global Engine_EventChooseYesNo
 	.thumb_func
@@ -279,6 +282,9 @@ Engine_PsynergyLowerHands:
 	.thumb_func
 Engine_PsynergyRaiseHands:
 	overlay_veneer EventObject_InitializeFar
+	.global BattleFx_SetQueuedSoundAndPlay
+	.thumb_func
+BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global BattleFx_PlayQueuedSoundFar
 	.thumb_func

@@ -1,233 +1,6 @@
 .syntax unified
 	.thumb
-	.section .text.x020080e4,"ax",%progbits
-	.balign 4
-	.global Func_020000e4
-	.thumb_func
-Func_020000e4:
-	push {lr}
-	ldr r3, [pc, #128]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #120]
-	cmp r2, r3
-	bne .L_020000e4_0
-	ldr r0, [pc, #116]
-	b .L_020000e4_1
-.L_020000e4_0:
-	ldr r3, [pc, #116]
-	cmp r2, r3
-	bne .L_020000e4_2
-	ldr r0, [pc, #116]
-	b .L_020000e4_1
-.L_020000e4_2:
-	ldr r3, [pc, #116]
-	cmp r2, r3
-	bne .L_020000e4_3
-	ldr r0, [pc, #112]
-	b .L_020000e4_1
-.L_020000e4_3:
-	ldr r3, [pc, #112]
-	cmp r2, r3
-	bne .L_020000e4_4
-	ldr r0, [pc, #112]
-	b .L_020000e4_1
-.L_020000e4_4:
-	ldr r3, [pc, #112]
-	cmp r2, r3
-	bne .L_020000e4_5
-	ldr r0, [pc, #108]
-	b .L_020000e4_1
-.L_020000e4_5:
-	ldr r3, [pc, #108]
-	cmp r2, r3
-	bne .L_020000e4_6
-	ldr r0, [pc, #108]
-	b .L_020000e4_1
-.L_020000e4_6:
-	ldr r3, [pc, #108]
-	cmp r2, r3
-	bne .L_020000e4_7
-	ldr r0, [pc, #104]
-	b .L_020000e4_1
-.L_020000e4_7:
-	ldr r3, [pc, #104]
-	cmp r2, r3
-	bne .L_020000e4_8
-	ldr r0, [pc, #104]
-	b .L_020000e4_1
-.L_020000e4_8:
-	ldr r3, [pc, #104]
-	cmp r2, r3
-	bne .L_020000e4_9
-	ldr r0, [pc, #100]
-	b .L_020000e4_1
-.L_020000e4_9:
-	ldr r3, [pc, #100]
-	cmp r2, r3
-	bne .L_020000e4_10
-	ldr r0, [pc, #100]
-	b .L_020000e4_1
-.L_020000e4_10:
-	ldr r3, [pc, #100]
-	cmp r2, r3
-	bne .L_020000e4_11
-	ldr r0, [pc, #96]
-	b .L_020000e4_1
-.L_020000e4_11:
-	ldr r0, [pc, #96]
-.L_020000e4_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000004d
-	.4byte 0x0200c194
-	.4byte 0x0000004e
-	.4byte 0x0200c20c
-	.4byte 0x0000004f
-	.4byte 0x0200c26c
-	.4byte 0x00000050
-	.4byte 0x0200c314
-	.4byte 0x00000051
-	.4byte 0x0200c3ec
-	.4byte 0x00000052
-	.4byte 0x0200c464
-	.4byte 0x00000053
-	.4byte 0x0200c524
-	.4byte 0x00000054
-	.4byte 0x0200c59c
-	.4byte 0x00000055
-	.4byte 0x0200c644
-	.4byte 0x00000056
-	.4byte 0x0200c704
-	.4byte 0x00000057
-	.4byte 0x0200c77c
-	.4byte 0x0200c164
-	.global Func_020001c8
-	.thumb_func
-Func_020001c8:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_020001c8_0
-	ldr r0, [pc, #24]
-	b .L_020001c8_1
-.L_020001c8_0:
-	ldr r3, [pc, #24]
-	movs r0, #0
-	cmp r2, r3
-	bne .L_020001c8_1
-	ldr r0, [pc, #20]
-.L_020001c8_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x00000055
-	.4byte 0x0200c80c
-	.4byte 0x00000056
-	.4byte 0x0200c83c
-	.section .text.x0200820c,"ax",%progbits
-	.balign 4
-	.global Func_0200020c
-	.thumb_func
-Func_0200020c:
-	push {lr}
-	ldr r3, [pc, #108]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #100]
-	cmp r2, r3
-	bne .L_0200020c_0
-	ldr r0, [pc, #96]
-	b .L_0200020c_1
-.L_0200020c_0:
-	ldr r3, [pc, #96]
-	cmp r2, r3
-	bne .L_0200020c_2
-	ldr r0, [pc, #96]
-	b .L_0200020c_1
-.L_0200020c_2:
-	ldr r3, [pc, #96]
-	cmp r2, r3
-	bne .L_0200020c_3
-	ldr r0, [pc, #92]
-	b .L_0200020c_1
-.L_0200020c_3:
-	ldr r3, [pc, #92]
-	cmp r2, r3
-	bne .L_0200020c_4
-	ldr r0, [pc, #92]
-	b .L_0200020c_1
-.L_0200020c_4:
-	ldr r3, [pc, #92]
-	cmp r2, r3
-	bne .L_0200020c_5
-	ldr r0, [pc, #88]
-	b .L_0200020c_1
-.L_0200020c_5:
-	ldr r3, [pc, #88]
-	cmp r2, r3
-	bne .L_0200020c_6
-	ldr r0, [pc, #88]
-	b .L_0200020c_1
-.L_0200020c_6:
-	ldr r3, [pc, #88]
-	cmp r2, r3
-	bne .L_0200020c_7
-	ldr r0, [pc, #84]
-	b .L_0200020c_1
-.L_0200020c_7:
-	ldr r3, [pc, #84]
-	cmp r2, r3
-	bne .L_0200020c_8
-	ldr r0, [pc, #84]
-	b .L_0200020c_1
-.L_0200020c_8:
-	ldr r3, [pc, #84]
-	cmp r2, r3
-	bne .L_0200020c_9
-	ldr r0, [pc, #80]
-	b .L_0200020c_1
-.L_0200020c_9:
-	ldr r0, [pc, #80]
-.L_0200020c_1:
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x02000240
-	.4byte 0x0000004d
-	.4byte 0x0200c940
-	.4byte 0x0000004f
-	.4byte 0x0200c9a0
-	.4byte 0x00000051
-	.4byte 0x0200ca00
-	.4byte 0x00000052
-	.4byte 0x0200ca60
-	.4byte 0x00000053
-	.4byte 0x0200caa8
-	.4byte 0x00000054
-	.4byte 0x0200cb68
-	.4byte 0x00000055
-	.4byte 0x0200cb98
-	.4byte 0x00000056
-	.4byte 0x0200cc40
-	.4byte 0x00000057
-	.4byte 0x0200ccd0
-	.4byte 0x0200c928
+	.section .text.x020082cc,"ax",%progbits
 	push	{r5, r6, r7, lr}
 	adds	r7, r0, #0
 	movs	r0, #0
@@ -295,7 +68,7 @@ Func_0200020c:
 	bl 0x0200bd20
 	adds	r0, r7, #0
 	movs	r1, #0
-	bl 0x0200b850
+	bl ArutinYama_RunRollingObject
 	movs	r0, #20
 	bl 0x0200ba78
 	bl 0x0200bd18
@@ -306,46 +79,6 @@ Func_0200020c:
 	.4byte 0x00033333
 	.2byte 0x9999
 	.2byte 0x0001
-	.global Func_02000388
-	.thumb_func
-Func_02000388:
-	push {lr}
-	ldr r3, [pc, #28]
-	ldr r2, [pc, #28]
-	adds r3, r3, r2
-	movs r2, #3
-	strb r2, [r3]
-	ldr r0, [pc, #24]
-	movs r1, #99
-	bl 0x0200bca8
-	movs r0, #53
-	movs r1, #2
-	bl 0x0200bc98
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
-	.4byte 0x0000022b
-	.4byte 0x0000004d
-	.global Func_020003b4
-	.thumb_func
-Func_020003b4:
-	push {lr}
-	ldr r3, [pc, #28]
-	ldr r2, [pc, #28]
-	adds r3, r3, r2
-	movs r2, #3
-	strb r2, [r3]
-	ldr r0, [pc, #24]
-	movs r1, #99
-	bl 0x0200bca8
-	movs r0, #53
-	movs r1, #2
-	bl 0x0200bc98
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
-	.4byte 0x0000022b
-	.4byte 0x0000004f
 	.section .text.x02008d2c,"ax",%progbits
 	.balign 4
 	push	{r5, r6, r7, lr}
@@ -515,7 +248,7 @@ Func_020003b4:
 	negs	r0, r0
 	bl 0x0200bb38
 	movs	r0, #5
-	bl 0x02008ec0
+	bl FieldScene_RunSharedSetPiece
 	bl 0x0200bb78
 	add	sp, #4
 	pop	{r3, r5, r6, r7}
@@ -815,7 +548,7 @@ Func_02001398:
 	movs r0, #40
 	bl 0x0200bb68
 	movs r0, #10
-	bl 0x02008ec0
+	bl FieldScene_RunSharedSetPiece
 	bl 0x0200bb78
 	pop {r5, r6}
 	pop {r0}
@@ -842,119 +575,6 @@ Func_02001398:
 	.2byte 0x0101
 	.2byte 0x0000
 	.4byte 0x00000312
-	.global Func_02001678
-	.thumb_func
-Func_02001678:
-	push {lr}
-	ldr r3, [pc, #140]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #132]
-	cmp r2, r3
-	bne .L_02001678_0
-	ldr r0, [pc, #128]
-	bl 0x0200bb50
-	cmp r0, #0
-	beq .L_02001678_1
-	ldr r0, [pc, #124]
-	b .L_02001678_2
-.L_02001678_1:
-	ldr r0, [pc, #124]
-	b .L_02001678_2
-.L_02001678_0:
-	ldr r3, [pc, #124]
-	cmp r2, r3
-	bne .L_02001678_3
-	ldr r0, [pc, #120]
-	b .L_02001678_2
-.L_02001678_3:
-	ldr r3, [pc, #120]
-	cmp r2, r3
-	bne .L_02001678_4
-	ldr r0, [pc, #120]
-	b .L_02001678_2
-.L_02001678_4:
-	ldr r3, [pc, #120]
-	cmp r2, r3
-	bne .L_02001678_5
-	ldr r0, [pc, #116]
-	b .L_02001678_2
-.L_02001678_5:
-	ldr r3, [pc, #116]
-	cmp r2, r3
-	bne .L_02001678_6
-	ldr r0, [pc, #116]
-	b .L_02001678_2
-.L_02001678_6:
-	ldr r3, [pc, #116]
-	cmp r2, r3
-	bne .L_02001678_7
-	ldr r0, [pc, #112]
-	b .L_02001678_2
-.L_02001678_7:
-	ldr r3, [pc, #112]
-	cmp r2, r3
-	bne .L_02001678_8
-	ldr r0, [pc, #112]
-	b .L_02001678_2
-.L_02001678_8:
-	ldr r3, [pc, #112]
-	cmp r2, r3
-	bne .L_02001678_9
-	ldr r0, [pc, #108]
-	b .L_02001678_2
-.L_02001678_9:
-	ldr r3, [pc, #108]
-	cmp r2, r3
-	bne .L_02001678_10
-	ldr r0, [pc, #108]
-	b .L_02001678_2
-.L_02001678_10:
-	ldr r3, [pc, #108]
-	cmp r2, r3
-	bne .L_02001678_11
-	ldr r0, [pc, #104]
-	b .L_02001678_2
-.L_02001678_11:
-	ldr r3, [pc, #104]
-	cmp r2, r3
-	bne .L_02001678_12
-	ldr r0, [pc, #104]
-	b .L_02001678_2
-.L_02001678_12:
-	ldr r0, [pc, #104]
-.L_02001678_2:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x0000004d
-	.4byte 0x000008fd
-	.4byte 0x0200cd6c
-	.4byte 0x0200cd24
-	.4byte 0x0000004e
-	.4byte 0x0200cd9c
-	.4byte 0x0000004f
-	.4byte 0x0200cdc0
-	.4byte 0x00000050
-	.4byte 0x0200ce5c
-	.4byte 0x00000051
-	.4byte 0x0200cebc
-	.4byte 0x00000052
-	.4byte 0x0200cf34
-	.4byte 0x00000053
-	.4byte 0x0200cfb8
-	.4byte 0x00000054
-	.4byte 0x0200d06c
-	.4byte 0x00000055
-	.4byte 0x0200d0cc
-	.4byte 0x00000056
-	.4byte 0x0200d12c
-	.4byte 0x00000057
-	.4byte 0x0200d150
-	.4byte 0x0200cd18
 	.section .text.x02009d0c,"ax",%progbits
 	.balign 4
 	push	{r5, r6, r7, lr}
@@ -1050,7 +670,7 @@ Func_02001678:
 	.4byte 0x01170000
 	.4byte 0x0000cccc
 	.4byte 0x00001999
-	.4byte 0x02009771
+	.4byte SceneMotion_UpdateTimedActor
 	.4byte 0x00006666
 	.4byte 0x00013333
 	.2byte 0x9999
@@ -1224,7 +844,7 @@ Func_02001678:
 	movs	r3, #0
 	lsls	r0, r0, #16
 	movs	r1, #0
-	bl 0x0200abb0
+	bl SceneState_StoreParamsAndInstallTask
 	movs	r0, #60
 	bl 0x0200bb68
 	ldr	r2, [pc, #96]
@@ -1273,86 +893,6 @@ Func_02001678:
 	.4byte 0x0004cccc
 	.2byte 0x0905
 	.2byte 0x0000
-	.global Func_02002020
-	.thumb_func
-Func_02002020:
-	push {lr}
-	ldr r3, [pc, #128]
-	movs r2, #224
-	ldr r1, [r3]
-	movs r3, #129
-	lsls r2, r2, #1
-	lsls r3, r3, #2
-	str r3, [r1, r2]
-	ldr r3, [pc, #116]
-	ldrsh r2, [r3, r2]
-	ldr r3, [pc, #116]
-	cmp r2, r3
-	bne .L_02002020_0
-	bl 0x0200a0d0
-	b .L_02002020_1
-.L_02002020_0:
-	ldr r3, [pc, #108]
-	cmp r2, r3
-	bne .L_02002020_2
-	bl 0x0200a310
-	b .L_02002020_1
-.L_02002020_2:
-	ldr r3, [pc, #100]
-	cmp r2, r3
-	bne .L_02002020_3
-	bl 0x0200a428
-	b .L_02002020_1
-.L_02002020_3:
-	ldr r3, [pc, #92]
-	cmp r2, r3
-	bne .L_02002020_4
-	bl 0x0200a490
-	b .L_02002020_1
-.L_02002020_4:
-	ldr r3, [pc, #84]
-	cmp r2, r3
-	bne .L_02002020_5
-	bl 0x0200a5c0
-	b .L_02002020_1
-.L_02002020_5:
-	ldr r3, [pc, #76]
-	cmp r2, r3
-	bne .L_02002020_6
-	bl 0x0200a6c0
-	b .L_02002020_1
-.L_02002020_6:
-	ldr r3, [pc, #68]
-	cmp r2, r3
-	bne .L_02002020_7
-	bl 0x0200a804
-	b .L_02002020_1
-.L_02002020_7:
-	ldr r3, [pc, #60]
-	cmp r2, r3
-	bne .L_02002020_8
-	bl 0x0200a934
-	b .L_02002020_1
-.L_02002020_8:
-	ldr r3, [pc, #52]
-	cmp r2, r3
-	bne .L_02002020_1
-	bl 0x0200a9dc
-.L_02002020_1:
-	movs r0, #0
-	pop {r1}
-	bx r1
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x0000004d
-	.4byte 0x0000004f
-	.4byte 0x00000050
-	.4byte 0x00000051
-	.4byte 0x00000052
-	.4byte 0x00000053
-	.4byte 0x00000055
-	.4byte 0x00000056
-	.4byte 0x00000057
 	.section .text.x0200af10,"ax",%progbits
 	.balign 4
 	.global Func_02002f10
@@ -1442,7 +982,7 @@ Func_02002f10:
 	.4byte 0x00009999
 	.4byte 0x00001333
 	.4byte 0x00004ccc
-	.4byte 0x0200aeed
+	.4byte SceneAudio_PlayCue183EverySixtyTicks
 	.4byte 0x00001999
 	.4byte 0x00000ccc
 	.4byte 0x02000240
@@ -1659,7 +1199,7 @@ ArutinYama_PaletteScript:
 	.global ArutinYama_ActorScript
 ArutinYama_ActorScript:
 	.4byte 0x00000022
-	.4byte 0x02008041
+	.4byte OverlayObject_UpdateFacingTowardTarget
 	.4byte 0x0000000c
 	.4byte 0x0000ffff
 	.4byte 0x00000000
@@ -1853,7 +1393,7 @@ ArutinYama_LeaderRideScript:
 	.global ArutinYama_SparkScript
 ArutinYama_SparkScript:
 	.4byte 0x00000022
-	.4byte 0x020080bd
+	.4byte OverlayObject_IntegrateAndDamp
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x0000000c
@@ -1944,6 +1484,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gArutinYamaEntrancesOther
+gArutinYamaEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -1956,6 +1498,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances1
+gArutinYamaEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -1986,6 +1530,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances2
+gArutinYamaEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2010,6 +1556,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances3
+gArutinYamaEntrances3:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2052,6 +1600,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances4
+gArutinYamaEntrances4:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2106,6 +1656,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances5
+gArutinYamaEntrances5:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2136,6 +1688,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances6
+gArutinYamaEntrances6:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2184,6 +1738,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances7
+gArutinYamaEntrances7:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2214,6 +1770,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances8
+gArutinYamaEntrances8:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2256,6 +1814,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances9
+gArutinYamaEntrances9:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2304,6 +1864,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances10
+gArutinYamaEntrances10:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2334,6 +1896,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEntrances11
+gArutinYamaEntrances11:
 	.4byte 0xffff0000
 	.4byte 0x000000a0
 	.4byte 0x400000a0
@@ -2370,6 +1934,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaRegions9
+gArutinYamaRegions9:
 	.4byte 0xff960316
 	.4byte 0x031a023f
 	.4byte 0x0243ff9a
@@ -2382,6 +1948,8 @@ ArutinYama_PartyScript:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaRegions10
+gArutinYamaRegions10:
 	.4byte 0x00260054
 	.4byte 0x005c01a4
 	.4byte 0x01ac002e
@@ -2443,12 +2011,16 @@ ArutinYama_StatueTable:
 	.4byte 0x00302057
 	.4byte 0x00434002
 	.4byte 0x000001ff
+	.global gArutinYamaPlacementsOther
+gArutinYamaPlacementsOther:
 	.4byte 0x0000ffff
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements1
+gArutinYamaPlacements1:
 	.4byte 0xffff00e3
 	.4byte 0x00000001
 	.4byte 0x00980000
@@ -2473,6 +2045,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements3
+gArutinYamaPlacements3:
 	.4byte 0xffff00e7
 	.4byte 0x00000001
 	.4byte 0x00d80000
@@ -2497,6 +2071,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements5
+gArutinYamaPlacements5:
 	.4byte 0xffff00e7
 	.4byte 0x00000001
 	.4byte 0x02180000
@@ -2521,6 +2097,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements6
+gArutinYamaPlacements6:
 	.4byte 0xffff00e7
 	.4byte 0x00000001
 	.4byte 0x02c80000
@@ -2539,6 +2117,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements7
+gArutinYamaPlacements7:
 	.4byte 0xffff00e7
 	.4byte 0x00000001
 	.4byte 0x01080000
@@ -2587,6 +2167,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements8
+gArutinYamaPlacements8:
 	.4byte 0xffff0127
 	.4byte 0x00000001
 	.4byte 0x02180000
@@ -2599,6 +2181,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements9
+gArutinYamaPlacements9:
 	.4byte 0xffff00c8
 	.4byte 0x00000001
 	.4byte 0x03100000
@@ -2641,6 +2225,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements10
+gArutinYamaPlacements10:
 	.4byte 0xffff00c7
 	.4byte 0x00000001
 	.4byte 0x01480000
@@ -2677,6 +2263,8 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaPlacements11
+gArutinYamaPlacements11:
 	.4byte 0xffff0127
 	.4byte 0x00000001
 	.4byte 0x01380000
@@ -2695,24 +2283,28 @@ ArutinYama_StatueTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEventsOther
+gArutinYamaEventsOther:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents1
+gArutinYamaEvents1:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00000002
 	.4byte 0x0904000a
-	.4byte 0x02009839
+	.4byte FieldScene_BuildMultiPhasePresentation
 	.4byte 0x00000002
 	.4byte 0x0905000b
 	.4byte 0x02009d0d
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x02008389
+	.4byte SceneState_SetWorkByte22bTo3
 	.4byte 0x00008d15
 	.4byte 0xffff040a
-	.4byte 0x02008389
+	.4byte SceneState_SetWorkByte22bTo3
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -2723,13 +2315,15 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0x00000001
 	.4byte 0x00001815
 	.4byte 0x02000008
-	.4byte 0x0200847d
+	.4byte ActorPresentation_SetCellAndLowerActorEight
 	.4byte 0x00001815
 	.4byte 0x02010009
-	.4byte 0x020084cd
+	.4byte SceneState_ApplyRectAndSetActor9Byte55
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents2
+gArutinYamaEvents2:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2739,6 +2333,8 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents3
+gArutinYamaEvents3:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2753,16 +2349,16 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0x020082cd
 	.4byte 0x00000000
 	.4byte 0xffff0009
-	.4byte 0x020083b5
+	.4byte SceneState_SetByte22bTo3
 	.4byte 0x00008d15
 	.4byte 0xffff0409
-	.4byte 0x020083b5
+	.4byte SceneState_SetByte22bTo3
 	.4byte 0x00008f15
 	.4byte 0xffff000a
 	.4byte 0x00000000
 	.4byte 0x00000003
 	.4byte 0xffff0053
-	.4byte 0x02008a65
+	.4byte FieldScene_RunValue1528Scene
 	.4byte 0x00000013
 	.4byte 0x0f760064
 	.4byte 0x001000c0
@@ -2778,6 +2374,8 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents4
+gArutinYamaEvents4:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2802,24 +2400,26 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents5
+gArutinYamaEvents5:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
 	.4byte 0x00001815
 	.4byte 0x02000009
-	.4byte 0x0200855d
+	.4byte SceneActor_RaiseSlot9StepB
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte 0x020083e1
+	.4byte SceneState_SetByte22bTo3AndSend51
 	.4byte 0x00008d15
 	.4byte 0xffff040a
-	.4byte 0x020083e1
+	.4byte SceneState_SetByte22bTo3AndSend51
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x020082cd
 	.4byte 0x00000003
 	.4byte 0xffff0032
-	.4byte 0x02008b0d
+	.4byte FieldScene_RunLine1528Sequence
 	.4byte 0x00002413
 	.4byte 0x0f770064
 	.4byte 0x0010007b
@@ -2832,6 +2432,8 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents6
+gArutinYamaEvents6:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2852,19 +2454,21 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0x00000006
 	.4byte 0x00001815
 	.4byte 0x02000009
-	.4byte 0x020085ad
+	.4byte SceneState_ApplyRectAndLowerActor9
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x020082cd
 	.4byte 0x00000003
 	.4byte 0xffff0032
-	.4byte 0x02008b3d
+	.4byte FieldScene_RunScene3a4SequenceC
 	.4byte 0x00000013
 	.4byte 0x0ef20064
 	.4byte 0x00500002
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents7
+gArutinYamaEvents7:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2879,37 +2483,39 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0x001000ba
 	.4byte 0x00000000
 	.4byte 0xffff000e
-	.4byte 0x02008031
+	.4byte SceneState_SetValue14Mode23
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x020082cd
 	.4byte 0x00000003
 	.4byte 0xffff0032
-	.4byte 0x02008bd9
+	.4byte FieldScene_RunScene3a4SequenceD
 	.4byte 0x00000002
 	.4byte 0xffff000a
-	.4byte 0x02008c75
+	.4byte SceneActor_SetActor10Byte23To3
 	.4byte 0x00000002
 	.4byte 0xffff000b
-	.4byte 0x02008c89
+	.4byte SceneActor_SetActor10Byte23To1
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x0200840d
+	.4byte SceneActor_UpdateSlot10ByTileX
 	.4byte 0x00000602
 	.4byte 0xffff000c
-	.4byte 0x02008c9d
+	.4byte FieldScene_RunScene3a4_02000c9c
 	.4byte 0x00001815
 	.4byte 0x02000009
-	.4byte 0x0200850d
+	.4byte SceneActor_RaiseSlot9StepA
 	.4byte 0x00001815
 	.4byte 0x0201000b
-	.4byte 0x020085fd
+	.4byte SceneActor_RaiseSlot11AndSetFlag201
 	.4byte 0x00001815
 	.4byte 0x0204000c
-	.4byte 0x02008651
+	.4byte SceneActor_AdjustSlot12AndSetFlag204
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents8
+gArutinYamaEvents8:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2934,6 +2540,8 @@ ArutinYama_OpenedAreaScript:
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gArutinYamaEvents9
+gArutinYamaEvents9:
 	.4byte 0x00000001
 	.4byte 0xffff0001
 	.4byte 0x00000001
@@ -2974,6 +2582,8 @@ ArutinYama_OpenedAreaScript:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gArutinYamaEvents10
+gArutinYamaEvents10:
 	movs	r2, r0
 	movs	r0, r0
 	movs	r2, r1
@@ -2992,6 +2602,8 @@ ArutinYama_OpenedAreaScript:
 	.2byte 0x0000
 	.2byte 0x0000
 	.2byte 0x0000
+	.global gArutinYamaEvents11
+gArutinYamaEvents11:
 	movs	r1, r0
 	movs	r0, r0
 	movs	r1, r0

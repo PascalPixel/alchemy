@@ -1,6 +1,6 @@
-/* Named link-time values the C loads from literal pools: message, resource,
-   scene and selector numbers still spelled as symbols until their
-   generators own them. */
+/* Numbers the C loads from literal pools that no table or catalogue names
+   yet. Each leaves when its last user switches to the name its owner
+   defines: scene numbers are the rows of FIELD/SCENES.S. */
 Value_00000002 = 0x00000002;
 Value_00000013 = 0x00000013;
 Value_0000001b = 0x0000001b;
@@ -73,7 +73,6 @@ Value_00000050 = 0x00000050;
 Value_00000075 = 0x00000075;
 Value_00000182 = 0x00000182;
 gVal4 = 0x00000d4c;
-Value_00000051 = 0x00000051;
 Value_00000c9b = 0x00000c9b;
 Value_00000cc6 = 0x00000cc6;
 Value_00000cf1 = 0x00000cf1;

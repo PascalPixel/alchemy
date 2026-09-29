@@ -1322,7 +1322,7 @@ Func_020008c0:
 	str	r3, [sp, #12]
 	adds	r3, r5, #0
 	str	r4, [sp, #4]
-	bl 0x02008ae8
+	bl Effect_Spawn
 .L_020011a6:
 	adds	r7, #1
 	cmp	r7, #7
@@ -1341,66 +1341,12 @@ Func_020008c0:
 	pop	{r5, r6, r7}
 	pop	{r0}
 	bx	r0
-	.4byte 0x02009069
+	.4byte Effect_AdvanceMotion
 	.4byte 0xfffe0000
 	.4byte 0x00003332
 	.4byte 0xffff8003
 	.2byte 0x0001
 	.2byte 0x0100
-	.section .text.x02009270,"ax",%progbits
-	.global Func_02001270
-	.thumb_func
-Func_02001270:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02001270_0
-	ldr r0, [pc, #24]
-	b .L_02001270_1
-.L_02001270_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02001270_2
-	ldr r0, [pc, #24]
-	b .L_02001270_1
-.L_02001270_2:
-	ldr r0, [pc, #24]
-.L_02001270_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000ac
-	.4byte 0x0200b474
-	.4byte 0x000000ad
-	.4byte 0x0200b654
-	.4byte 0x0200b42c
-	.global Func_020012b0
-	.thumb_func
-Func_020012b0:
-	push {lr}
-	ldr r3, [pc, #24]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #16]
-	movs r0, #0
-	cmp r2, r3
-	bne .L_020012b0_0
-	ldr r0, [pc, #12]
-.L_020012b0_0:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000ad
-	.4byte 0x0200b81c
 	.section .text.x02009318,"ax",%progbits
 	.global Func_02001318
 	.thumb_func
@@ -1418,7 +1364,7 @@ Func_02001318:
 	movs r3, #5
 	bl 0x0200b09c
 	bl 0x020080c4
-	bl 0x0200a3a0
+	bl FieldScene_PlaceAndPinSlots8And9
 	bl 0x0200b0fc
 	sub sp, #-8
 	pop {r0}
@@ -1441,7 +1387,7 @@ Func_02001374:
 	movs r3, #5
 	bl 0x0200b09c
 	bl 0x020080c4
-	bl 0x0200a410
+	bl FieldScene_PlaceAndPinSlots10And11
 	bl 0x0200b0fc
 	sub sp, #-8
 	pop {r0}
@@ -1476,1321 +1422,13 @@ Func_020013e0:
 	str r5, [sp, #0]
 	bl 0x0200b09c
 	bl 0x020080c4
-	bl 0x0200a480
+	bl FieldScene_RunScene3c4_02002480
 	bl 0x0200b0fc
 	sub sp, #-8
 	pop {r5}
 	pop {r0}
 	bx r0
 	.2byte 0x0000
-	.section .text.x0200a59c,"ax",%progbits
-	.global Func_0200259c
-	.thumb_func
-Func_0200259c:
-	push {r5, r6, r7, lr}
-	mov r7, r8
-	push {r7}
-	ldr r3, [pc, #972]
-	movs r2, #224
-	ldr r1, [r3]
-	movs r3, #129
-	lsls r2, r2, #1
-	lsls r3, r3, #2
-	str r3, [r1, r2]
-	ldr r5, [pc, #960]
-	ldr r6, [pc, #964]
-	ldrsh r2, [r5, r2]
-	sub sp, #8
-	cmp r2, r6
-	beq .L_0200259c_0
-	ldr r3, [pc, #956]
-	cmp r2, r3
-	bne .L_0200259c_1
-.L_0200259c_0:
-	movs r0, #0
-	bl 0x0200b19c
-	ldr r2, [pc, #948]
-	movs r1, #144
-	adds r3, r5, r2
-	lsls r1, r1, #2
-	movs r2, #1
-	strh r2, [r3]
-	adds r3, r5, r1
-	strh r6, [r3]
-.L_0200259c_1:
-	movs r2, #224
-	lsls r2, r2, #1
-	adds r3, r5, r2
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, r6
-	beq .L_0200259c_2
-	b .L_0200259c_3
-.L_0200259c_2:
-	adds r2, #2
-	adds r3, r5, r2
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	subs r2, r3, #1
-	cmp r2, #12
-	bls .L_0200259c_4
-	bl 0x0200afda
-.L_0200259c_4:
-	lsls r3, r2, #2
-	ldr r2, [pc, #900]
-	ldr r3, [r3, r2]
-	mov pc, r3
-	movs r0, r0
-	add r6, pc, #224
-	lsls r0, r0, #8
-	add r6, pc, #224
-	lsls r0, r0, #8
-	add r7, pc, #56
-	lsls r0, r0, #8
-	add r7, pc, #56
-	lsls r0, r0, #8
-	add r7, pc, #312
-	lsls r0, r0, #8
-	add r7, pc, #312
-	lsls r0, r0, #8
-	add r7, pc, #312
-	lsls r0, r0, #8
-	add r7, pc, #584
-	lsls r0, r0, #8
-	add r7, pc, #584
-	lsls r0, r0, #8
-	add r7, pc, #840
-	lsls r0, r0, #8
-	add r7, pc, #840
-	lsls r0, r0, #8
-	add r1, sp, #672
-	lsls r0, r0, #8
-	add r1, sp, #672
-	lsls r0, r0, #8
-	ldr r0, [pc, #844]
-	bl 0x0200b0d4
-	cmp r0, #0
-	beq .L_0200259c_5
-	movs r3, #5
-	movs r2, #8
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #121
-	movs r1, #4
-	movs r2, #74
-	movs r3, #9
-	bl 0x0200b08c
-	movs r5, #3
-	movs r6, #2
-	movs r0, #18
-	movs r1, #83
-	movs r2, #9
-	movs r3, #73
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	movs r0, #18
-	movs r1, #81
-	movs r2, #9
-	movs r3, #75
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	movs r0, #18
-	movs r1, #83
-	movs r2, #9
-	movs r3, #77
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	movs r0, #18
-	movs r1, #83
-	movs r2, #9
-	movs r3, #79
-	b .L_0200259c_6
-.L_0200259c_5:
-	ldr r0, [pc, #756]
-	bl 0x0200b0d4
-	cmp r0, #0
-	bne .L_0200259c_7
-	bl 0x0200afda
-.L_0200259c_7:
-	movs r3, #5
-	movs r2, #8
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #121
-	movs r1, #13
-	movs r2, #74
-	movs r3, #9
-	bl 0x0200b08c
-	movs r5, #3
-	movs r6, #2
-	movs r0, #18
-	movs r1, #85
-	movs r2, #11
-	movs r3, #74
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	movs r0, #18
-	movs r1, #83
-	movs r2, #13
-	movs r3, #75
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	movs r0, #18
-	movs r1, #85
-	movs r2, #11
-	movs r3, #76
-.L_0200259c_6:
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	movs r0, #18
-	movs r1, #83
-	movs r2, #11
-	movs r3, #78
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	movs r0, #18
-	movs r1, #83
-	movs r2, #13
-	movs r3, #79
-	str r5, [sp, #0]
-	str r6, [sp, #4]
-	bl 0x0200b08c
-	bl 0x0200afda
-	bl 0x0200a3a0
-	movs r0, #8
-	bl 0x0200b10c
-	movs r5, #0
-	adds r0, #85
-	strb r5, [r0]
-	movs r0, #9
-	bl 0x0200b10c
-	adds r0, #85
-	strb r5, [r0]
-	movs r0, #8
-	bl 0x0200b10c
-	movs r1, #0
-	bl 0x0200b0ac
-	movs r0, #9
-	bl 0x0200b10c
-	movs r1, #0
-	bl 0x0200b0ac
-	movs r0, #8
-	bl 0x0200b10c
-	ldr r5, [pc, #584]
-	str r5, [r0, #108]
-	movs r0, #9
-	b .L_0200259c_8
-	.2byte 0x488e
-	.2byte 0xf000
-	.2byte 0xfcc0
-	.2byte 0x2800
-	.2byte 0xd009
-	.2byte 0x231e
-	.2byte 0x2208
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x2017
-	.2byte 0x2111
-	.2byte 0x2201
-	.2byte 0x2302
-	.2byte 0xf000
-	.2byte 0xfc94
-	.2byte 0x4887
-	.2byte 0xf000
-	.2byte 0xfcb1
-	.2byte 0x2800
-	.2byte 0xd101
-	.2byte 0xf000
-	.2byte 0xfc30
-	.2byte 0x2320
-	.2byte 0x220a
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x2017
-	.2byte 0x2111
-	.2byte 0x2201
-	.2byte 0x2302
-	.2byte 0xf000
-	.2byte 0xfc83
-	.2byte 0xf000
-	.2byte 0xfc24
-	.2byte 0xf7ff
-	.2byte 0xfe3d
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfcb8
-	.2byte 0x2500
-	.2byte 0x3055
-	.2byte 0x7005
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfcb2
-	.2byte 0x3055
-	.2byte 0x7005
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfcad
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfc7a
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfca7
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfc74
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfca1
-	.2byte 0x4d71
-	.2byte 0x66c5
-	.2byte 0x200b
-	.2byte 0xe125
-	.2byte 0x2012
-	.2byte 0xf000
-	.2byte 0xfc9a
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfc67
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xfc94
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfc61
-	.2byte 0x2102
-	.2byte 0x2012
-	.2byte 0xf000
-	.2byte 0xfca9
-	.2byte 0x2014
-	.2byte 0xf000
-	.2byte 0xfc8a
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfc57
-	.2byte 0x2015
-	.2byte 0xf000
-	.2byte 0xfc84
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfc51
-	.2byte 0x2014
-	.2byte 0x210f
-	.2byte 0xf000
-	.2byte 0xfca5
-	.2byte 0x2015
-	.2byte 0x210f
-	.2byte 0xf000
-	.2byte 0xfca1
-	.2byte 0x485e
-	.2byte 0xf000
-	.2byte 0xfc5a
-	.2byte 0x2800
-	.2byte 0xd03b
-	.2byte 0x2301
-	.2byte 0x2203
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x203b
-	.2byte 0x2108
-	.2byte 0x2231
-	.2byte 0x2308
-	.2byte 0xf000
-	.2byte 0xfc2a
-	.2byte 0x2331
-	.2byte 0x9300
-	.2byte 0x2108
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x2508
-	.2byte 0x2033
-	.2byte 0x9501
-	.2byte 0xf000
-	.2byte 0xfc28
-	.2byte 0x2012
-	.2byte 0xf000
-	.2byte 0xfc5d
-	.2byte 0x3023
-	.2byte 0x7802
-	.2byte 0x2302
-	.2byte 0x4313
-	.2byte 0x7003
-	.2byte 0x2103
-	.2byte 0x2012
-	.2byte 0xf000
-	.2byte 0xfc70
-	.2byte 0x232e
-	.2byte 0x9300
-	.2byte 0x202d
-	.2byte 0x2301
-	.2byte 0x2104
-	.2byte 0x2201
-	.2byte 0x9501
-	.2byte 0xf000
-	.2byte 0xfc13
-	.2byte 0x21ba
-	.2byte 0x2288
-	.2byte 0x0489
-	.2byte 0x0412
-	.2byte 0x2012
-	.2byte 0xf000
-	.2byte 0xfc5c
-	.2byte 0x2012
-	.2byte 0xf000
-	.2byte 0xfc41
-	.2byte 0x4b43
-	.2byte 0x21ba
-	.2byte 0x2288
-	.2byte 0x60c3
-	.2byte 0x0489
-	.2byte 0x2014
-	.2byte 0x0412
-	.2byte 0xf000
-	.2byte 0xfc50
-	.2byte 0x2080
-	.2byte 0x0080
-	.2byte 0xf000
-	.2byte 0xfc18
-	.2byte 0x2800
-	.2byte 0xd007
-	.2byte 0x2014
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfc56
-	.2byte 0x2014
-	.2byte 0x2105
-	.2byte 0xf000
-	.2byte 0xfc46
-	.2byte 0x4838
-	.2byte 0xf000
-	.2byte 0xfc0b
-	.2byte 0x2800
-	.2byte 0xd003
-	.2byte 0x2013
-	.2byte 0x2102
-	.2byte 0xf000
-	.2byte 0xfc3d
-	.2byte 0x4835
-	.2byte 0xf000
-	.2byte 0xfc02
-	.2byte 0x2800
-	.2byte 0xd03e
-	.2byte 0x2301
-	.2byte 0x2203
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x203b
-	.2byte 0x2108
-	.2byte 0x222d
-	.2byte 0x230e
-	.2byte 0xf000
-	.2byte 0xfbd2
-	.2byte 0x232d
-	.2byte 0x9300
-	.2byte 0x2108
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x250e
-	.2byte 0x2033
-	.2byte 0x9501
-	.2byte 0xf000
-	.2byte 0xfbd0
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xfc05
-	.2byte 0x3023
-	.2byte 0x7802
-	.2byte 0x2302
-	.2byte 0x4313
-	.2byte 0x7003
-	.2byte 0x2103
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xfc18
-	.2byte 0x2330
-	.2byte 0x9300
-	.2byte 0x202d
-	.2byte 0x2301
-	.2byte 0x2104
-	.2byte 0x2201
-	.2byte 0x9501
-	.2byte 0xf000
-	.2byte 0xfbbb
-	.2byte 0x21c2
-	.2byte 0x22e8
-	.2byte 0x0489
-	.2byte 0x0412
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xfc04
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xfbe9
-	.2byte 0x4b17
-	.2byte 0x21c2
-	.2byte 0x22e8
-	.2byte 0x60c3
-	.2byte 0x0489
-	.2byte 0x2015
-	.2byte 0x0412
-	.2byte 0xf000
-	.2byte 0xfbf8
-	.2byte 0x4813
-	.2byte 0xf000
-	.2byte 0xfbc5
-	.2byte 0x4814
-	.2byte 0xf000
-	.2byte 0xfbbe
-	.2byte 0x2800
-	.2byte 0xd100
-	.2byte 0xe33d
-	.2byte 0x2015
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfbfb
-	.2byte 0x2015
-	.2byte 0x2105
-	.2byte 0xf000
-	.2byte 0xfbeb
-	.2byte 0xe334
-	.4byte 0x03001ebc
-	.4byte 0x02000240
-	.4byte 0x000000ac
-	.4byte 0x000000ad
-	.4byte 0x00000242
-	.4byte 0x0200a604
-	.4byte 0x00000982
-	.4byte 0x00000983
-	.4byte 0x02008ec9
-	.2byte 0x0971
-	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0xfff0
-	.2byte 0x0202
-	.2byte 0x0000
-	.2byte 0x0972
-	.2byte 0x0000
-	.2byte 0x0201
-	.2byte 0x0000
-	.2byte 0xf7ff
-	.2byte 0xfd6a
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfbad
-	.2byte 0x2500
-	.2byte 0x3055
-	.2byte 0x7005
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xfba7
-	.2byte 0x3055
-	.2byte 0x7005
-	.2byte 0x200f
-	.2byte 0xf000
-	.2byte 0xfba2
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfb6f
-	.2byte 0x2010
-	.2byte 0xf000
-	.2byte 0xfb9c
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfb69
-	.2byte 0x2011
-	.2byte 0xf000
-	.2byte 0xfb96
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfb63
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfb90
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfb5d
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xfb8a
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfb57
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xfb84
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfb51
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfb7e
-	.2byte 0x4d5e
-	.2byte 0x66c5
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xfb79
-	.2byte 0x66c5
-	.2byte 0x200e
-.L_0200259c_8:
-	bl 0x0200b10c
-	movs r1, #200
-	str r5, [r0, #108]
-	lsls r1, r1, #4
-	ldr r0, [pc, #356]
-	bl 0x0200b02c
-	b .L_0200259c_9
-.L_0200259c_3:
-	movs r2, #225
-	lsls r2, r2, #1
-	adds r3, r5, r2
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	cmp r3, #17
-	bls .L_0200259c_10
-	b .L_0200259c_9
-.L_0200259c_10:
-	ldr r2, [pc, #336]
-	lsls r3, r3, #2
-	ldr r3, [r3, r2]
-	mov pc, r3
-	add r7, sp, #872
-	lsls r0, r0, #8
-	add r2, sp, #576
-	lsls r0, r0, #8
-	add r2, sp, #576
-	lsls r0, r0, #8
-	add r2, sp, #576
-	lsls r0, r0, #8
-	add r3, sp, #688
-	lsls r0, r0, #8
-	add r3, sp, #688
-	lsls r0, r0, #8
-	add r2, sp, #952
-	lsls r0, r0, #8
-	add r2, sp, #952
-	lsls r0, r0, #8
-	add r5, sp, #712
-	lsls r0, r0, #8
-	add r5, sp, #712
-	lsls r0, r0, #8
-	add r5, sp, #712
-	lsls r0, r0, #8
-	add r5, sp, #712
-	lsls r0, r0, #8
-	add r5, sp, #984
-	lsls r0, r0, #8
-	add r6, sp, #104
-	lsls r0, r0, #8
-	add r6, sp, #104
-	lsls r0, r0, #8
-	add r7, sp, #872
-	lsls r0, r0, #8
-	add r7, sp, #872
-	lsls r0, r0, #8
-	add r7, sp, #776
-	lsls r0, r0, #8
-	ldr r3, [pc, #260]
-	movs r1, #144
-	adds r2, r5, r3
-	movs r3, #1
-	strh r3, [r2]
-	lsls r1, r1, #2
-	ldr r2, [pc, #252]
-	adds r3, r5, r1
-	strh r2, [r3]
-	ldr r0, [pc, #252]
-	bl 0x0200b0e4
-	movs r0, #17
-	movs r1, #6
-	bl 0x0200b15c
-	movs r0, #18
-	movs r1, #6
-	bl 0x0200b15c
-	ldr r0, [pc, #232]
-	bl 0x0200b0d4
-	cmp r0, #0
-	beq .L_0200259c_11
-	movs r1, #182
-	movs r2, #156
-	movs r0, #17
-	lsls r1, r1, #18
-	lsls r2, r2, #17
-	bl 0x0200b13c
-.L_0200259c_11:
-	ldr r0, [pc, #212]
-	bl 0x0200b0d4
-	cmp r0, #0
-	beq .L_0200259c_12
-	movs r1, #186
-	movs r2, #156
-	movs r0, #18
-	lsls r1, r1, #18
-	lsls r2, r2, #17
-	bl 0x0200b13c
-.L_0200259c_12:
-	bl 0x0200a52c
-	b .L_0200259c_9
-	.2byte 0x2101
-	.2byte 0x2008
-	.2byte 0xf000
-	.2byte 0xfb3b
-	.2byte 0x2008
-	.2byte 0xf000
-	.2byte 0xfb08
-	.2byte 0x2500
-	.2byte 0x3055
-	.2byte 0x7005
-	.2byte 0x2008
-	.2byte 0xf000
-	.2byte 0xfb02
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfacf
-	.2byte 0x2009
-	.2byte 0x2101
-	.2byte 0xf000
-	.2byte 0xfb2b
-	.2byte 0x210f
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xfb1f
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xfaf4
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfac1
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xfaee
-	.2byte 0x3055
-	.2byte 0x7005
-	.2byte 0x2081
-	.2byte 0x0080
-	.2byte 0xf000
-	.2byte 0xfacc
-	.2byte 0x2800
-	.2byte 0xd100
-	.2byte 0xe24b
-	.2byte 0x2009
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfb09
-	.2byte 0x2105
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xfaf9
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xfada
-	.2byte 0x6885
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xfad6
-	.2byte 0x6903
-	.2byte 0x151b
-	.2byte 0x9301
-	.2byte 0x2108
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x152d
-	.2byte 0x201a
-	.2byte 0x9500
-	.2byte 0xf000
-	.2byte 0xfa93
-	.2byte 0x2009
-	.2byte 0xf000
-	.2byte 0xfac8
-	.2byte 0x4d03
-	.2byte 0x66c5
-	.2byte 0x2008
-	.2byte 0xf000
-	.2byte 0xfac3
-	.2byte 0x66c5
-	.2byte 0xe227
-	.2byte 0x0000
-	.2byte 0x8ec9
-	.2byte 0x0200
-	.4byte 0x02008e21
-	.4byte 0x0200aa48
-	.4byte 0x00000242
-	.4byte 0x000000b0
-	.4byte 0x0000012f
-	.4byte 0x00000974
-	.4byte 0x00000975
-	.2byte 0x4838
-	.2byte 0xf000
-	.2byte 0xfa91
-	.2byte 0x1c07
-	.2byte 0x2f00
-	.2byte 0xd000
-	.2byte 0xe0f7
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfaa6
-	.2byte 0x3055
-	.2byte 0x7007
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfaa1
-	.2byte 0x3055
-	.2byte 0x7007
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfa9c
-	.2byte 0x4d2f
-	.2byte 0x60c5
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfa97
-	.2byte 0x60c5
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfa93
-	.2byte 0x2202
-	.2byte 0x3023
-	.2byte 0x7803
-	.2byte 0x4690
-	.2byte 0x4641
-	.2byte 0x430b
-	.2byte 0x7003
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfa89
-	.2byte 0x3023
-	.2byte 0x7803
-	.2byte 0x4642
-	.2byte 0x4313
-	.2byte 0x7003
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfa81
-	.2byte 0x3059
-	.2byte 0x7802
-	.2byte 0x25fe
-	.2byte 0x1c2b
-	.2byte 0x4013
-	.2byte 0x7003
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfa78
-	.2byte 0x3059
-	.2byte 0x7803
-	.2byte 0x401d
-	.2byte 0x7005
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfa71
-	.2byte 0x2503
-	.2byte 0x3064
-	.2byte 0x8005
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfa6b
-	.2byte 0x3064
-	.2byte 0x8005
-	.2byte 0x2101
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfa95
-	.2byte 0x2101
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfa91
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfa5e
-	.2byte 0x4e0e
-	.2byte 0x3055
-	.2byte 0x7006
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xfa58
-	.2byte 0x3055
-	.2byte 0x7006
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xfa53
-	.2byte 0x3055
-	.2byte 0x7006
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfa4e
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfa1b
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xfa48
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xfa15
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xfa42
-	.2byte 0x2100
-	.2byte 0xe005
-	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0x0109
-	.2byte 0x0000
-	.2byte 0x0000
-	.2byte 0xffd0
-	.2byte 0xf000
-	.2byte 0xfa08
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfa35
-	.2byte 0x3064
-	.2byte 0x8007
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xfa30
-	.2byte 0x3064
-	.2byte 0x8007
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xfa2b
-	.2byte 0x4bcc
-	.2byte 0x21e1
-	.2byte 0x0049
-	.2byte 0x185b
-	.2byte 0x2200
-	.2byte 0x5e9b
-	.2byte 0x3064
-	.2byte 0x8007
-	.2byte 0x2b05
-	.2byte 0xd000
-	.2byte 0xe186
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfa1d
-	.2byte 0x4bc6
-	.2byte 0x60c3
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfa18
-	.2byte 0x4bc4
-	.2byte 0x60c3
-	.2byte 0x200a
-	.2byte 0xf000
-	.2byte 0xfa13
-	.2byte 0x2302
-	.2byte 0x3064
-	.2byte 0x8003
-	.2byte 0x200b
-	.2byte 0xf000
-	.2byte 0xfa0d
-	.2byte 0x2304
-	.2byte 0x3064
-	.2byte 0x21c8
-	.2byte 0x2298
-	.2byte 0x0409
-	.2byte 0x0412
-	.2byte 0x8003
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfa1b
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xfa00
-	.2byte 0x230b
-	.2byte 0x3064
-	.2byte 0x8003
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xf9fa
-	.2byte 0x4db6
-	.2byte 0x66c5
-	.2byte 0x200c
-	.2byte 0xf000
-	.2byte 0xf9f5
-	.2byte 0x3023
-	.2byte 0x7803
-	.2byte 0x4641
-	.2byte 0x430b
-	.2byte 0x2298
-	.2byte 0x21c8
-	.2byte 0x0409
-	.2byte 0x0412
-	.2byte 0x7003
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xfa01
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xf9e6
-	.2byte 0x230c
-	.2byte 0x3064
-	.2byte 0x8003
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xf9e0
-	.2byte 0x66c5
-	.2byte 0x200d
-	.2byte 0xf000
-	.2byte 0xf9dc
-	.2byte 0x3023
-	.2byte 0x7803
-	.2byte 0x4642
-	.2byte 0x4313
-	.2byte 0x2188
-	.2byte 0x2298
-	.2byte 0x0412
-	.2byte 0x0409
-	.2byte 0x7003
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xf9e8
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xf9cd
-	.2byte 0x230a
-	.2byte 0x3064
-	.2byte 0x8003
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xf9c7
-	.2byte 0x66c5
-	.2byte 0x200e
-	.2byte 0xf000
-	.2byte 0xf9c3
-	.2byte 0x3023
-	.2byte 0x7803
-	.2byte 0x4641
-	.2byte 0x430b
-	.2byte 0x7003
-	.2byte 0x2002
-	.2byte 0xf000
-	.2byte 0xf9ab
-	.2byte 0x2080
-	.2byte 0x0080
-	.2byte 0xf000
-	.2byte 0xf99f
-	.2byte 0x4896
-	.2byte 0xf000
-	.2byte 0xf99c
-	.2byte 0x4895
-	.2byte 0xf000
-	.2byte 0xf999
-	.2byte 0x2000
-	.2byte 0xf7fe
-	.2byte 0xfe86
-	.2byte 0xe113
-	.2byte 0x4893
-	.2byte 0xf000
-	.2byte 0xf98e
-	.2byte 0x2800
-	.2byte 0xd009
-	.2byte 0x2310
-	.2byte 0x221e
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x200a
-	.2byte 0x211e
-	.2byte 0x2201
-	.2byte 0x2302
-	.2byte 0xf000
-	.2byte 0xf962
-	.2byte 0x488c
-	.2byte 0xf000
-	.2byte 0xf97f
-	.2byte 0x2800
-	.2byte 0xd009
-	.2byte 0x2316
-	.2byte 0x221e
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x200a
-	.2byte 0x211e
-	.2byte 0x2201
-	.2byte 0x2302
-	.2byte 0xf000
-	.2byte 0xf953
-	.2byte 0x4886
-	.2byte 0xf000
-	.2byte 0xf974
-	.2byte 0xe0f1
-	.2byte 0x2308
-	.2byte 0x2271
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x2008
-	.2byte 0x2131
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0xf000
-	.2byte 0xf949
-	.2byte 0xf7ff
-	.2byte 0xf8e7
-	.2byte 0x21c8
-	.2byte 0x487e
-	.2byte 0x0109
-	.2byte 0xf000
-	.2byte 0xf90a
-	.2byte 0xe0df
-	.2byte 0x2001
-	.2byte 0xf000
-	.2byte 0xf966
-	.2byte 0x487b
-	.2byte 0xf000
-	.2byte 0xf957
-	.2byte 0x2800
-	.2byte 0xd02c
-	.2byte 0x2320
-	.2byte 0x222e
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x2302
-	.2byte 0x2018
-	.2byte 0x213b
-	.2byte 0x2201
-	.2byte 0xf000
-	.2byte 0xf92b
-	.2byte 0x21cc
-	.2byte 0x22c6
-	.2byte 0x2013
-	.2byte 0x0449
-	.2byte 0x0492
-	.2byte 0xf000
-	.2byte 0xf978
-	.2byte 0x21bc
-	.2byte 0x22c6
-	.2byte 0x2014
-	.2byte 0x0449
-	.2byte 0x0492
-	.2byte 0xf000
-	.2byte 0xf971
-	.2byte 0x21cc
-	.2byte 0x22be
-	.2byte 0x2015
-	.2byte 0x0449
-	.2byte 0x0492
-	.2byte 0xf000
-	.2byte 0xf96a
-	.2byte 0x21bc
-	.2byte 0x22be
-	.2byte 0x2016
-	.2byte 0x0449
-	.2byte 0x0492
-	.2byte 0xf000
-	.2byte 0xf963
-	.2byte 0x21c4
-	.2byte 0x22c2
-	.2byte 0x2017
-	.2byte 0x0449
-	.2byte 0x0492
-	.2byte 0xf000
-	.2byte 0xf95c
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xf941
-	.2byte 0x3055
-	.2byte 0x7802
-	.2byte 0x25fe
-	.2byte 0x1c2b
-	.2byte 0x4013
-	.2byte 0x7003
-	.2byte 0x2014
-	.2byte 0xf000
-	.2byte 0xf938
-	.2byte 0x3055
-	.2byte 0x7802
-	.2byte 0x1c2b
-	.2byte 0x4013
-	.2byte 0x7003
-	.2byte 0x2015
-	.2byte 0xf000
-	.2byte 0xf930
-	.2byte 0x3055
-	.2byte 0x7802
-	.2byte 0x1c2b
-	.2byte 0x4013
-	.2byte 0x7003
-	.2byte 0x2016
-	.2byte 0xf000
-	.2byte 0xf928
-	.2byte 0x3055
-	.2byte 0x7802
-	.2byte 0x1c2b
-	.2byte 0x4013
-	.2byte 0x7003
-	.2byte 0x2017
-	.2byte 0xf000
-	.2byte 0xf920
-	.2byte 0x3055
-	.2byte 0x7803
-	.2byte 0x401d
-	.2byte 0x7005
-	.2byte 0x2104
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xf940
-	.2byte 0x2014
-	.2byte 0x2101
-	.2byte 0xf000
-	.2byte 0xf93c
-	.2byte 0x2015
-	.2byte 0x2104
-	.2byte 0xf000
-	.2byte 0xf938
-	.2byte 0x2016
-	.2byte 0x210a
-	.2byte 0xf000
-	.2byte 0xf934
-	.2byte 0x2017
-	.2byte 0x2100
-	.2byte 0xf000
-	.2byte 0xf930
-	.2byte 0x2013
-	.2byte 0x2102
-	.2byte 0xf000
-	.2byte 0xf920
-	.2byte 0x2102
-	.2byte 0x2017
-	.2byte 0xf000
-	.2byte 0xf91c
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xf8fd
-	.2byte 0x6885
-	.2byte 0x2013
-	.2byte 0xf000
-	.2byte 0xf8f9
-	.2byte 0x6903
-	.2byte 0x151b
-	.2byte 0x9301
-	.2byte 0x2138
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x152d
-	.2byte 0x2014
-	.2byte 0x9500
-	.2byte 0xf000
-	.2byte 0xf8b6
-	.2byte 0x2014
-	.2byte 0xf000
-	.2byte 0xf8eb
-	.2byte 0x6885
-	.2byte 0x2014
-	.2byte 0xf000
-	.2byte 0xf8e7
-	.2byte 0x6903
-	.2byte 0x151b
-	.2byte 0x9301
-	.2byte 0x2138
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x152d
-	.2byte 0x2014
-	.2byte 0x9500
-	.2byte 0xf000
-	.2byte 0xf8a4
-	.2byte 0x2015
-	.2byte 0xf000
-	.2byte 0xf8d9
-	.2byte 0x6885
-	.2byte 0x2015
-	.2byte 0xf000
-	.2byte 0xf8d5
-	.2byte 0x6903
-	.2byte 0x151b
-	.2byte 0x9301
-	.2byte 0x2138
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x152d
-	.2byte 0x2014
-	.2byte 0x9500
-	.2byte 0xf000
-	.2byte 0xf892
-	.2byte 0x2016
-	.2byte 0xf000
-	.2byte 0xf8c7
-	.2byte 0x6885
-	.2byte 0x2016
-	.2byte 0xf000
-	.2byte 0xf8c3
-	.2byte 0x6903
-	.2byte 0x151b
-	.2byte 0x9301
-	.2byte 0x2138
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x152d
-	.2byte 0x2014
-	.2byte 0x9500
-	.2byte 0xf000
-	.2byte 0xf880
-	.2byte 0x2017
-	.2byte 0xf000
-	.2byte 0xf8b5
-	.2byte 0x6885
-	.2byte 0x2017
-	.2byte 0xf000
-	.2byte 0xf8b1
-	.2byte 0x6903
-	.2byte 0x151b
-	.2byte 0x152d
-	.2byte 0x9301
-	.2byte 0x2014
-	.2byte 0x2138
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0x9500
-	.2byte 0xf000
-	.2byte 0xf86e
-	.2byte 0xe00b
-	.2byte 0x2331
-	.2byte 0x226b
-	.2byte 0x9300
-	.2byte 0x9201
-	.2byte 0x2031
-	.2byte 0x212b
-	.2byte 0x2201
-	.2byte 0x2301
-	.2byte 0xf000
-	.2byte 0xf863
-	.2byte 0xf7ff
-	.2byte 0xf801
-.L_0200259c_9:
-	movs r0, #0
-	sub sp, #-8
-	pop {r3}
-	mov r8, r3
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0240
-	.2byte 0x0200
-	.2byte 0x0000
-	.2byte 0xffe0
-	.2byte 0x0000
-	.2byte 0xffc0
-	.2byte 0x9a99
-	.2byte 0x0200
-	.2byte 0x0201
-	.2byte 0x0000
-	.2byte 0x0202
-	.2byte 0x0000
-	.2byte 0x0982
-	.2byte 0x0000
-	.2byte 0x0983
-	.2byte 0x0000
-	.2byte 0x0973
-	.2byte 0x0000
-	.2byte 0x8e21
-	.2byte 0x0200
-	.2byte 0x0984
-	.2byte 0x0000
-@ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00100000
 	.4byte 0x00100000
@@ -2904,7 +1542,7 @@ gEffectScripts:
 	.4byte 0x0000001e
 	.4byte 0x00000000
 	.4byte 0x00000022
-	.4byte 0x02008cc1
+	.4byte SceneState_ApplyArgMode0AndReturnZero
 	.4byte 0x00000010
 	.4byte 0x00000015
 	.4byte 0x0000000a
@@ -2914,7 +1552,7 @@ gEffectScripts:
 	.4byte 0x00000023
 	.4byte 0x00000015
 	.4byte 0x00000026
-	.4byte 0x02008f4d
+	.4byte BabiChika_UpdateFlickerEffect
 	.4byte 0x00000000
 	.4byte 0x00000082
 	.4byte 0x00000015
@@ -2943,6 +1581,8 @@ Data_0200b40c:
 	.4byte 0x003b001e
 	.4byte 0x00020001
 	.4byte 0xffff0004
+	.global gBabiChikaEntrancesOther
+gBabiChikaEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000002e8
 	.4byte 0x40000068
@@ -2961,6 +1601,8 @@ Data_0200b40c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiChikaEntrances1
+gBabiChikaEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000002e8
 	.4byte 0x40000068
@@ -3081,6 +1723,8 @@ Data_0200b40c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiChikaEntrances2
+gBabiChikaEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -3195,6 +1839,8 @@ Data_0200b40c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiChikaRegions2
+gBabiChikaRegions2:
 	.4byte 0x00100270
 	.4byte 0x02800150
 	.4byte 0x01600020
@@ -3511,10 +2157,10 @@ Data_0200bc0c:
 	.4byte 0x00000012
 	.4byte 0x00004602
 	.4byte 0xffff0017
-	.4byte 0x020093a5
+	.4byte FieldScene_RunStepWith6
 	.4byte 0x00008602
 	.4byte 0xffff0017
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000202
 	.4byte 0xffff0018
 	.4byte 0x02009319
@@ -3526,118 +2172,118 @@ Data_0200bc0c:
 	.4byte 0x02009375
 	.4byte 0x00004602
 	.4byte 0xffff001b
-	.4byte 0x020093a5
+	.4byte FieldScene_RunStepWith6
 	.4byte 0x00000602
 	.4byte 0xffff001b
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00008602
 	.4byte 0xffff0032
-	.4byte 0x02009511
+	.4byte SceneState_RunUnlessActorZeroAtTile32x50
 	.4byte 0x00000602
 	.4byte 0xffff0032
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x0000c602
 	.4byte 0xffff0032
-	.4byte 0x02009531
+	.4byte SceneState_RunUnlessActorZeroAt30_52
 	.4byte 0x00004602
 	.4byte 0xffff0032
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x00004602
 	.4byte 0xffff001c
-	.4byte 0x02009425
+	.4byte SceneActor_CheckTwoUnitsAboveActorZero
 	.4byte 0x00000202
 	.4byte 0xffff001c
 	.4byte 0x020093e1
 	.4byte 0x00000202
 	.4byte 0x0971001d
-	.4byte 0x020096f5
+	.4byte FieldScene_RunFourCallSequenceB
 	.4byte 0x00000602
 	.4byte 0x0200001d
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00004602
 	.4byte 0x0200001d
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x0000c602
 	.4byte 0x0200001d
-	.4byte 0x02008df5
+	.4byte SceneActor_PassActorZeroOffsetPoint
 	.4byte 0x00008602
 	.4byte 0x0200001f
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000602
 	.4byte 0xffff001f
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00000202
 	.4byte 0x0972001e
-	.4byte 0x020098f9
+	.4byte FieldScene_RunFourStepSequenceA
 	.4byte 0x00008602
 	.4byte 0x0201001e
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00004602
 	.4byte 0x0201001e
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x0000c602
 	.4byte 0x0201001e
-	.4byte 0x02008df5
+	.4byte SceneActor_PassActorZeroOffsetPoint
 	.4byte 0x00000602
 	.4byte 0x02020020
-	.4byte 0x020098f9
+	.4byte FieldScene_RunFourStepSequenceA
 	.4byte 0x00000602
 	.4byte 0x02010020
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00008602
 	.4byte 0xffff0020
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000003
 	.4byte 0xffff0028
-	.4byte 0x02009971
+	.4byte SceneDialogue_RunFlag982Or983Dialogue
 	.4byte 0x00008c15
 	.4byte 0xffff0008
-	.4byte 0x0200a3a1
+	.4byte FieldScene_PlaceAndPinSlots8And9
 	.4byte 0x00008c15
 	.4byte 0xffff0009
-	.4byte 0x0200a3a1
+	.4byte FieldScene_PlaceAndPinSlots8And9
 	.4byte 0x00008c15
 	.4byte 0xffff000a
-	.4byte 0x0200a411
+	.4byte FieldScene_PlaceAndPinSlots10And11
 	.4byte 0x00008c15
 	.4byte 0xffff000b
-	.4byte 0x0200a411
+	.4byte FieldScene_PlaceAndPinSlots10And11
 	.4byte 0x00008c15
 	.4byte 0xffff000c
-	.4byte 0x0200a481
+	.4byte FieldScene_RunScene3c4_02002480
 	.4byte 0x00008c15
 	.4byte 0xffff000d
-	.4byte 0x0200a481
+	.4byte FieldScene_RunScene3c4_02002480
 	.4byte 0x00008c15
 	.4byte 0xffff000e
-	.4byte 0x0200a481
+	.4byte FieldScene_RunScene3c4_02002480
 	.4byte 0x00004e15
 	.4byte 0x0200000f
-	.4byte 0x02009459
+	.4byte SceneActor_MirrorFlag201IntoSlot14
 	.4byte 0x00004e15
 	.4byte 0x02010010
-	.4byte 0x020094ad
+	.4byte SceneActor_SetActor14Field98ByFlag200
 	.4byte 0x00004e15
 	.4byte 0x09700011
-	.4byte 0x02009501
+	.4byte SceneState_ApplyFlag970
 	.4byte 0x00008c15
 	.4byte 0x09710012
-	.4byte 0x02009551
+	.4byte FieldScene_RunSupplementalSequenceTwo
 	.4byte 0x00001815
 	.4byte 0x02000014
-	.4byte 0x0200970d
+	.4byte ActorPresentation_ConfigureActorTwentyAndFlag200
 	.4byte 0x00008c15
 	.4byte 0x09720013
-	.4byte 0x02009745
+	.4byte FieldScene_RunSupplementalSequenceOne
 	.4byte 0x00001815
 	.4byte 0x02010015
-	.4byte 0x02009939
+	.4byte SceneActor_ConfigureSlot21AndSetFlag201
 	.4byte 0x10002115
 	.4byte 0x02020013
-	.4byte 0x02009911
+	.4byte FieldScene_SetActor19TableB3B8
 	.4byte 0x00002115
 	.4byte 0x02020013
-	.4byte 0x02009925
+	.4byte SceneState_SetValue202ThenCall
 	.4byte 0xffffffff
 	.4byte 0x00000000
 	.4byte 0x00000000
@@ -3687,46 +2333,46 @@ Data_0200bef4:
 	.4byte 0x0000000e
 	.4byte 0x00000202
 	.4byte 0xffff0019
-	.4byte 0x020099cd
+	.4byte FieldScene_RunFourStepSequenceB
 	.4byte 0x00004602
 	.4byte 0xffff001a
-	.4byte 0x020093a5
+	.4byte FieldScene_RunStepWith6
 	.4byte 0x00008602
 	.4byte 0xffff001a
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00004602
 	.4byte 0xffff001b
 	.4byte 0x020090c5
 	.4byte 0x00000202
 	.4byte 0xffff001c
-	.4byte 0x02009f5d
+	.4byte FieldScene_RunThreeStepSequence
 	.4byte 0x00000602
 	.4byte 0xffff001e
-	.4byte 0x020093b5
+	.4byte SceneActor_PassPointTwoRightOfActorZero
 	.4byte 0x00008602
 	.4byte 0xffff001e
-	.4byte 0x02009349
+	.4byte SceneActor_ApplyPointLeftOfActorZero
 	.4byte 0x00000202
 	.4byte 0xffff001e
-	.4byte 0x02009f5d
+	.4byte FieldScene_RunThreeStepSequence
 	.4byte 0x00000602
 	.4byte 0xffff001d
-	.4byte 0x02009fc5
+	.4byte FieldScene_RunFourCallSequence
 	.4byte 0x00004602
 	.4byte 0xffff001d
-	.4byte 0x02008dc9
+	.4byte SceneActor_PassRaisedPointOfActorZero
 	.4byte 0x0000c602
 	.4byte 0xffff001d
-	.4byte 0x02008df5
+	.4byte SceneActor_PassActorZeroOffsetPoint
 	.4byte 0x00000202
 	.4byte 0xffff0029
-	.4byte 0x0200a301
+	.4byte FieldScene_RunLayoutAt83By45
 	.4byte 0x00000003
 	.4byte 0xffff0014
-	.4byte 0x0200a355
+	.4byte FieldScene_RunScriptedStep953
 	.4byte 0x00000003
 	.4byte 0xffff002a
-	.4byte 0x0200a331
+	.4byte SceneState_SetValue268bInScene
 	.4byte 0x00000013
 	.4byte 0x0f320064
 	.4byte 0x00100071
@@ -3735,13 +2381,13 @@ Data_0200bef4:
 	.4byte 0x00100054
 	.4byte 0x00008c15
 	.4byte 0x02040008
-	.4byte 0x020099bd
+	.4byte FieldScene_RunTwoStepSequence
 	.4byte 0x10002115
 	.4byte 0x02030008
-	.4byte 0x020099e5
+	.4byte SceneActor_InstallSlotNineHandler
 	.4byte 0x00001815
 	.4byte 0x02040009
-	.4byte 0x02009a11
+	.4byte SceneActor_SetupSlotNineAndInstallHandler
 	.4byte 0x00008c15
 	.4byte 0xffff000c
 	.4byte 0x00000000
@@ -3753,40 +2399,40 @@ Data_0200bef4:
 	.4byte 0x00000000
 	.4byte 0x00009315
 	.4byte 0xffff000c
-	.4byte 0x02009d05
+	.4byte FieldScene_RunMiddleSequence
 	.4byte 0x00009315
 	.4byte 0xffff000d
-	.4byte 0x02009d05
+	.4byte FieldScene_RunMiddleSequence
 	.4byte 0x00009315
 	.4byte 0xffff000e
-	.4byte 0x02009d05
+	.4byte FieldScene_RunMiddleSequence
 	.4byte 0x50009085
 	.4byte 0xffff0000
-	.4byte 0x0200a041
+	.4byte FieldScene_RunLateSequenceSecond
 	.4byte 0x40009085
 	.4byte 0xffff0000
-	.4byte 0x02009fdd
+	.4byte FieldScene_RunLateSequenceHead
 	.4byte 0x00008c15
 	.4byte 0xffff0011
-	.4byte 0x02009f71
+	.4byte SceneState_SetSlot17And18Selectors
 	.4byte 0x00008c15
 	.4byte 0xffff0012
-	.4byte 0x02009f71
+	.4byte SceneState_SetSlot17And18Selectors
 	.4byte 0x00008c15
 	.4byte 0xffff0013
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0014
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0015
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0016
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008c15
 	.4byte 0xffff0017
-	.4byte 0x0200a0a5
+	.4byte FieldScene_RunScene3c4SequenceA
 	.4byte 0x00008d15
 	.4byte 0xffff0013
 	.4byte 0x0000268c

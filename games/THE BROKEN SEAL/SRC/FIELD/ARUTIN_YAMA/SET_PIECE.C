@@ -1,14 +1,23 @@
 #include "YAMA.H"
 
-/* A scene number the main image supplies as a link-time value. */
-extern u8 Value_00000051;
+void SceneState_SetWorkByte22bTo3(void)
+{
+    gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+    Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama1, 99);
+    BattleFx_SetWeightedResult(53, 2);
+}
+
+void SceneState_SetByte22bTo3(void)
+{
+    gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+    Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama3, 99);
+    BattleFx_SetWeightedResult(53, 2);
+}
 
 void SceneState_SetByte22bTo3AndSend51(void)
 {
-    extern u8 Data_02000240[];
-
-    Data_02000240[0x22b] = 3;
-    Party_SetFields1ceAnd1d0((s32)&Value_00000051, 99);
+    gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
+    Party_SetFields1ceAnd1d0((s32)&SceneId_ArutinYama5, 99);
     BattleFx_SetWeightedResult(53, 2);
 }
 

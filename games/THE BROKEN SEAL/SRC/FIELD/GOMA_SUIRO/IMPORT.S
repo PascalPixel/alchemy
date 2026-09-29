@@ -54,11 +54,17 @@ Runtime_SetWorkTripleIfNonNegative:
 	.thumb_func
 Map_WaitWorkValuesBelow256:
 	overlay_veneer Map_WaitWorkValuesBelow256Far
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
 	.global GameFlag_SetBit
 	.thumb_func
 GameFlag_SetBit:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
 	.global Engine_ActorGet
 	.thumb_func
@@ -76,6 +82,9 @@ ObjectMotion_ResetAndSetPosition:
 	.thumb_func
 ObjectMotion_CommitCurrentPositionAndActivate:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Object_SetModeById
 	.thumb_func

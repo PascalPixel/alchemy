@@ -14,6 +14,9 @@ Engine_MathModulo:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
@@ -51,6 +54,9 @@ Engine_ObjectCreate:
 	.thumb_func
 Engine_ObjectDispatchRelease:
 	overlay_veneer ObjectDispatch_ReleaseFar
+	.global Engine_MapRedraw
+	.thumb_func
+Engine_MapRedraw:
 	overlay_veneer Map_ApplyWorkOriginAndSpanFar
 	.global Engine_ObjectSetPosition
 	.thumb_func
@@ -64,6 +70,9 @@ Engine_ObjectCommitPosition:
 	.thumb_func
 Engine_MapAnimateCells:
 	overlay_veneer Map_PlayMetatileCopySequenceFar
+	.global Engine_MapCopyCellsTo
+	.thumb_func
+Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
 	.global Map_GetTerrainHeight
 	.thumb_func
@@ -105,6 +114,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global FieldScene_PrepareActors
+	.thumb_func
+FieldScene_PrepareActors:
 	overlay_veneer Func_0808a038
 	.global Engine_ActorGet
 	.thumb_func
@@ -186,6 +198,9 @@ Engine_ActorRunRepeatedMotion:
 	.thumb_func
 Engine_ActorFaceActor:
 	overlay_veneer ObjectMotion_SetAngleTowardFar
+	.global Engine_ActorSetChildValue
+	.thumb_func
+Engine_ActorSetChildValue:
 	overlay_veneer ObjectGroup_ConfigureChildValueFar
 	.global Engine_ObjectSetPalette
 	.thumb_func

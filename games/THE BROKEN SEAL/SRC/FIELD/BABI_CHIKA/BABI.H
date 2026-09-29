@@ -201,7 +201,6 @@ typedef struct Slot_020023a0 {
     s32 row;               /* +16, 12.20 fixed point */
 } Slot_020023a0;
 
-extern u8 Value_000000ac;
 extern u8 Data_0200b8f4[];
 extern u8 Data_0200ba74[];
 extern u8 Data_0200bc0c[];

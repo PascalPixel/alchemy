@@ -14,6 +14,9 @@ IwramSignedDivideEntry:
 	.thumb_func
 Engine_TaskWait:
 	overlay_veneer WaitFramesFar
+	.global Engine_TaskAddCallback
+	.thumb_func
+Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
@@ -51,8 +54,17 @@ Engine_ObjectSetPosition:
 	.thumb_func
 Engine_ObjectCommitPosition:
 	overlay_veneer Script_WaitForEventTimeoutFar
+	.global Engine_MapCopyCells
+	.thumb_func
+Engine_MapCopyCells:
 	overlay_veneer Map_CopyMetatileCellsRectFar
+	.global Engine_MapCopyCellAttributes
+	.thumb_func
+Engine_MapCopyCellAttributes:
 	overlay_veneer Map_CopyCellAttributeRectFar
+	.global Engine_MapCopyCellsLayered
+	.thumb_func
+Engine_MapCopyCellsLayered:
 	overlay_veneer Func_080091c8
 	.global Object_CheckMovementCollision
 	.thumb_func
@@ -74,6 +86,9 @@ Engine_GameFlagIsSet:
 	.thumb_func
 Engine_GameFlagSet:
 	overlay_veneer GameFlag_SetBitFar
+	.global Engine_GameFlagClear
+	.thumb_func
+Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
 	.global Engine_EventWait
 	.thumb_func
@@ -111,6 +126,9 @@ Engine_ActorSetDestinationOffset:
 	.thumb_func
 Engine_ActorWaitForMove:
 	overlay_veneer ObjectMotion_CommitCurrentPositionAndActivateFar
+	.global Engine_ActorSetPosition
+	.thumb_func
+Engine_ActorSetPosition:
 	overlay_veneer ObjectMotion_SetHorizontalPositionWithTerrainFar
 	.global Engine_ActorSetAnimation
 	.thumb_func
@@ -160,15 +178,33 @@ Engine_EventRequestExit:
 	.thumb_func
 BattleFx_SetWeightedResult:
 	overlay_veneer BattleFx_SetWeightedResultFar
+	.global Party_SetFields1ceAnd1d0
+	.thumb_func
+Party_SetFields1ceAnd1d0:
 	overlay_veneer Party_SetFields1ceAnd1d0Far
+	.global Engine_DisplayScrollStartHBlankDma
+	.thumb_func
+Engine_DisplayScrollStartHBlankDma:
 	overlay_veneer DisplayScroll_InitializeHBlankDmaFar
+	.global DisplayScroll_DisarmHBlankDma
+	.thumb_func
+DisplayScroll_DisarmHBlankDma:
 	overlay_veneer DisplayScroll_DisarmHBlankDmaFar
+	.global Engine_MapObjectSetPosition
+	.thumb_func
+Engine_MapObjectSetPosition:
 	overlay_veneer EffectRuntime_SetCurrentPositionFar
+	.global BattleFx_EmitRandomParticle
+	.thumb_func
+BattleFx_EmitRandomParticle:
 	overlay_veneer BattleFx_EmitRandomParticleFar
 	.global BattleFx_RunPageEffectForSlot
 	.thumb_func
 BattleFx_RunPageEffectForSlot:
 	overlay_veneer BattleFx_RunPageEffectForSlotFar
+	.global BattleFx_SetQueuedSoundAndPlay
+	.thumb_func
+BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global Engine_AudioPlayCue
 	.thumb_func

@@ -365,9 +365,8 @@ BattleFx_BurstParticleObjectScript:
 	.global BattleFx_RandomChildValues
 BattleFx_RandomChildValues:
 	.incbin "baserom.gba", 0x0009f160, 0x00000048
-	.global Field_SceneTable
-Field_SceneTable:
-	.incbin "baserom.gba", 0x0009f1a8, 0x00000668
+	.section .unidentified.0809f7f0,"a"
+	.incbin "baserom.gba", 0x0009f7f0, 0x00000020
 	.global Data_0809f810
 Data_0809f810:
 	.incbin "baserom.gba", 0x0009f810, 0x000003bc

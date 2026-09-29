@@ -277,7 +277,7 @@ mod tests {
     fn diagnostics_preserve_canonical_flags_and_reject_codegen_overrides() {
         for source in [
             "games/THE BROKEN SEAL/SRC/MENU/INPUT_CANCEL_SOUND_TICK.C",
-            "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
         ] {
             let mut options = SourceToAssemblyPlanOptions::new(
                 CompilerTarget::Tbs,
@@ -319,7 +319,7 @@ mod tests {
     fn edition_define_stays_in_old_agbcc_preprocessor_step() {
         let mut options = SourceToAssemblyPlanOptions::new(
             CompilerTarget::Tbs,
-            "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C",
             "candidate.c",
             "candidate.s",
         );

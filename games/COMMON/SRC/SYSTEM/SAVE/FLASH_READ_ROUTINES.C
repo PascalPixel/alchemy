@@ -4,7 +4,7 @@ extern u8 *gFlash;
 extern volatile u8 gFlashTimerNum;
 extern u8 gFlashTimeoutFlag;
 extern u16 *volatile gFlashTimerReg;
-extern volatile u16 Data_02004c2c;
+extern volatile u16 gFlashSavedIme;
 
 void StopFlashTimer(void)
 {
@@ -20,7 +20,7 @@ void StopFlashTimer(void)
 
     *(volatile u16 *)0x04000208 = 0;
     *(volatile u16 *)0x04000200 &= ~(u16)(8 << gFlashTimerNum);
-    *(volatile u16 *)0x04000208 = Data_02004c2c;
+    *(volatile u16 *)0x04000208 = gFlashSavedIme;
 }
 
 u8 ReadFlashByte(u8 *value)

@@ -11,7 +11,7 @@ struct FlashChipType {
 
 typedef void (*FlashReadCore)(u32 source, u8 *destination, s32 size);
 
-extern const struct FlashChipType Data_08007abc;
+extern const struct FlashChipType Flash_ChipUnknown;
 
 /* Copies the byte read loop into a stack buffer, since it must run outside
    the cartridge bus, and reads size bytes from offset in sector. */
@@ -33,5 +33,5 @@ void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size)
         count--;
     }
     core = (FlashReadCore)((u8 *)code + 1);
-    core((u32)((u8 *)0x0e000000 + (sector << Data_08007abc.sector_shift) + offset), destination, size);
+    core((u32)((u8 *)0x0e000000 + (sector << Flash_ChipUnknown.sector_shift) + offset), destination, size);
 }

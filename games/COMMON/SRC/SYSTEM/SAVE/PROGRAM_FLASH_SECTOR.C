@@ -9,7 +9,7 @@ struct FlashChipInfo {
 };
 
 extern struct FlashChipInfo *gFlash;
-extern u16 Data_02004c0c;
+extern u16 gFlashNumRemainingBytes;
 
 u16 ProgramFlashSector(u16 sector, u8 *source)
 {
@@ -28,17 +28,17 @@ u16 ProgramFlashSector(u16 sector, u8 *source)
     *(volatile u16 *)0x04000204 =
         (*(volatile u16 *)0x04000204 & 0xFFFC) |
         gFlash->control;
-    Data_02004c0c =
+    gFlashNumRemainingBytes =
         gFlash->size;
     destination = (u8 *)(
         (sector << gFlash->shift) +
         0x0E000000);
 
-    while (Data_02004c0c != 0) {
+    while (gFlashNumRemainingBytes != 0) {
         result = ProgramFlashByte(source, destination);
         if (result != 0)
             break;
-        Data_02004c0c -= 1;
+        gFlashNumRemainingBytes -= 1;
         source++;
         destination++;
     }

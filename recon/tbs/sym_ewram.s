@@ -165,8 +165,8 @@ Flash_Layout:
 	.global gFlash
 gFlash:
 	.space 0x00000004
-	.global Data_02004c0c
-Data_02004c0c:
+	.global gFlashNumRemainingBytes
+gFlashNumRemainingBytes:
 	.space 0x00000004
 	.global Flash_Handler1
 Flash_Handler1:
@@ -196,8 +196,8 @@ gFlashTimeoutFlag:
 	.global gFlashTimerReg
 gFlashTimerReg:
 	.space 0x00000004
-	.global Data_02004c2c
-Data_02004c2c:
+	.global gFlashSavedIme
+gFlashSavedIme:
 	.space 0x000033d4
 	.global gOverlayArea
 gOverlayArea:

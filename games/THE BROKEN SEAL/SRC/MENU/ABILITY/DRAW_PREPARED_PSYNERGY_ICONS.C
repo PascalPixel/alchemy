@@ -12,6 +12,11 @@ void PsynergyMenu_DrawPreparedPsynergyIcons(s32 unused, s32 owner_id)
     PsynergyMenu_DrawPsynergyIcons(menu->psynergies);
 }
 
-void PsynergyMenu_ReservedNoOp939C(void)
+void PsynergyMenu_PreparedIconsNoOp(void)
+{
+}
+
+/* A second empty routine; nothing in the ROM refers to either. */
+void PsynergyMenu_PreparedIconsSecondNoOp(void)
 {
 }

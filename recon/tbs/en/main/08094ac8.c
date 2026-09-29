@@ -1,3 +1,6 @@
+/* 2026-09-29 alchemy permute: score 882 on the permuter's scorer,
+   unchanged after 13,842 candidates in 5 minutes; Data_0809ff58 still
+   needs its own label in the data before adoption. */
 /* Draft, not exact (2026-09-24): 74 differing halfwords, 238 of 244 bytes.
    Residual: the loop zero lands in r6 where the reference gives the three
    leading particle words a walking pointer in r6 and holds the zero in r4,

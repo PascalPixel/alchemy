@@ -2,7 +2,13 @@
    41 differing halfwords. The reference reads two uninitialised locals
    (caller r6 and r8 through r7) for the window position and keeps the event
    work in r8; here both undefined locals share one register and the work
-   pointer takes r6. */
+   pointer takes r6.
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 38,068
+   candidates, none below the draft's 1765. Clamping the two uninitialised
+   coordinates in place instead of through copies scores 2980. GCC gives
+   uninitialised locals that are never set one shared register; the
+   reference's separate r6 and r7 need locals that are set somewhere, and
+   nothing here sets them. */
 #include "TYPES.H"
 #include "SYSTEM.H"
 

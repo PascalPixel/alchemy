@@ -38,6 +38,15 @@
  * Budget exhausted: one complete model plus two structural follow-ups.
  * Keep this typed lifetime evidence; do not count any part as DONE. A later
  * attempt needs a new source-ownership hypothesis, not a spelling sweep.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 27,992
+ * candidates; the best scored 1737 against 5242 (14 register-only, 7
+ * stack-only, 8 operand, 8 reordered, 4 inserted, 6 deleted) after 125
+ * rewrites (reorder independent statements, introduce a temporary, swap
+ * commutative operands, reorder local declarations), none of them kept. The
+ * rewrites (forty-two temporaries, register keywords, statement moves
+ * through the item loop) are search artefacts, so the draft keeps its
+ * spelling; the size of the drop says the item loop's statement order and
+ * temporaries carry most of the difference.
  */
 #include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"

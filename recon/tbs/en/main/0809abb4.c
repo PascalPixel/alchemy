@@ -7,7 +7,6 @@
  */
 #include "TYPES.H"
 #include "EFFECT_0809B11C.H"
-extern u8 Value_0000011d;
 
 struct MotionPosition {
     s32 x;
@@ -120,7 +119,7 @@ Interpolate:
         position.z = object->z;
         Camera_WorldToScreen(&position.x);
         Vector_AddPolarOffset(0x40000, Random16(), &position.x);
-        EffectSlot_Initialize(record, (s32)&Value_0000011d, position.x, position.z);
+        EffectSlot_Initialize(record, 0x11d, position.x, position.z);
         EffectSlot_SetCallback(record, BattleFx_UpdateRadialCamera);
         ObjectGroup_SetChildValueUnlessFifteenFar(record->object, 7);
         record++;

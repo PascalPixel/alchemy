@@ -1,3 +1,9 @@
+/* 2026-09-29: eight minutes of permutation (alchemy permute --symbol
+ * Func_080f2d54): 910 -> 765 by setting the zero before the
+ * display-register writes. Remaining: the extra saved r7 and the
+ * buffer/cursor ownership described below, plus the resource number 0x19,
+ * still a Value_ symbol (a plain 0x19 gives 980). A second 8-minute run
+ * from 765 with another seed found nothing lower. */
 /* Draft, not exact (2026-09-24): 33 differing halfwords, 356 of 356 bytes.
    Control flow, pools and stores match. Residual is allocation: the
    reference keeps the resource id and then the decode buffer in r6 (a
@@ -64,10 +70,10 @@ s32 Title_ShowAnimatedSplash(void)
     Blend_SetDarkenTarget16(1);
     Bg0_ClearTilemap();
     WaitFrames(1);
+    zero = 0;
     *(volatile u16 *)0x0400000c = 0x685;
     *(volatile u16 *)0x04000000 = 0x1440;
     scroll = gBgScroll;
-    zero = 0;
     scroll[2].y = zero;
     Resource_DecodeType01(Resource_GetTableEntry(resource), gMapCellBuffer);
     buffer = gMapCellBuffer;

@@ -1,3 +1,14 @@
+/* Draft, not exact. 2026-09-29: callees carry the build's names where the
+ * build has them; alchemy permute scores 3632 (37 register-only, 2
+ * stack-only, 16 operand, 10 reordered, 10 inserted, 15 deleted). The
+ * veneers at 080c9018 and 080c9020 (BattleFx_DispatchMode and 080cb7f8 in
+ * SYSTEM/FAR_CALL/EFFECT.S) have no labels yet, so those calls stay as
+ * Func_ names and fixed penalties.
+ * Eight minutes of permutation then found 1963 (42 register-only, 3
+ * stack-only, 8 operand, 11 reordered, 2 inserted, 7 deleted), minimized to
+ * natural code: the child count minus one is kept in a local before the
+ * child-value loop tests it, the motion is reached in one expression, and
+ * the value offset advances before the unit index. */
 #include "TYPES.H"
 
 struct BattlePresentationTransition {
@@ -44,10 +55,10 @@ extern u8 *Data_03001e74;
 void WaitFrames(s32 frames);
 s32 BattleObject_IsValidId(s32 object_id);
 s32 BattleParty_ListLivingUnits(s32 side_mask, s16 *unit_ids);
-void Func_08015130(s32 mode);
+void UiWindow_DrawPartyStatusContentsFar(s32 mode);
 struct BattleMotionSlot *GetBattleObjectSlot(s32 unit_id);
 void Func_08009080(void *actor, s32 mode);
-void Func_08009088(void *actor, s32 mode);
+void ObjectDispatch_ApplyValueToChildrenFar(void *actor, s32 mode);
 void Func_080c9020(struct BattlePresentationWork *work);
 void Func_080c9018(struct BattlePresentationWork *work);
 void Actor_ResetMotionAtAnchor(s32 unit_id);
@@ -92,11 +103,11 @@ s32 BattlePres_RunUnitAction(s16 *action)
         side_mask = 1;
     }
     work.unit_count = BattleParty_ListLivingUnits(side_mask, unit_list);
-    Func_08015130(Data_03001e74[65] & ~1);
+    UiWindow_DrawPartyStatusContentsFar(Data_03001e74[65] & ~1);
 
     primary_actor = GetBattleObjectSlot(work.primary_unit)->actor;
     Func_08009080(primary_actor, 3);
-    Func_08009088(primary_actor, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(primary_actor, 16);
 
     if ((u16)saved_action[5] <= 7) {
         final_count = 1;
@@ -113,21 +124,21 @@ s32 BattlePres_RunUnitAction(s16 *action)
     if (work.unit_count != 0) {
         s32 value_offset = 0;
         do {
-            struct BattleMotionActor *actor;
             struct MotionEntry *motion;
             s32 j;
+            s32 last;
 
-            actor = GetBattleObjectSlot(work.units[i])->actor;
-            motion = actor->motion;
+            motion = GetBattleObjectSlot(work.units[i])->actor->motion;
             j = 0;
-            if (motion->child_count - 1 != 0) {
+            last = motion->child_count - 1;
+            if (last != 0) {
                 do {
                     work.child_values[value_offset + j] = motion->children[j]->value;
                     j++;
                 } while (j != motion->child_count - 1);
             }
-            i++;
             value_offset += 4;
+            i++;
         } while (i != work.unit_count);
     }
 

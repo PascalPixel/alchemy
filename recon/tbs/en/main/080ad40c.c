@@ -10,6 +10,19 @@
  * and motion pseudo 112 occupies r9. Reference keeps vertical in sl, origin
  * at sp+4 and motion in fp/r4; flag/phase and request stores also reorder.
  * Stop: three structural hypotheses exhausted; not-yet-c, no adoption.
+ * 2026-09-29 alchemy permute (8 minutes, 31,727 candidates): 1178 -> 335,
+ * 11 register-only, 1 operand, 1 reordered, 2 deleted. Minimized to one
+ * change: the row's y is read once into row_y for both the request and the
+ * limit. That relieves the loop's registers, so vertical, origin and
+ * motion land as in the reference, but the reference reads positions_y a
+ * second time for the limit, after the request[3] store (the two missing
+ * instructions); every re-reading spelling falls back to 1178.
+ * A second 8-minute run from 335 found 290: a zero local, set before the
+ * request and stored into request[3], fixes the loop tail's reload
+ * registers. Remaining: only the re-read (2 register-only, 1 operand,
+ * 1 reordered, 2 deleted). With the re-read the positions cursor carries
+ * two more references, outranks the other induction variables and the two
+ * stack-held cursors swap slots (1178 again, zero local or not).
  */
 #include "FOUR_OBJECT_MOTION.H"
 #include "FIXED_MATH.H"
@@ -37,6 +50,10 @@ void FourObjectMotion_UpdateBottomRow(void)
             u32 y = (241u << 17) - ((u32)(s32)work->vertical_origins[i] << 16);
             s32 phase;
             s32 limit;
+            s32 row_y;
+            /* FAKEMATCH: a zero local set before the request, as the
+               reference's allocation needs. */
+            u32 zero;
 
             ((struct MenuMotionFlags *)(obj + 9))->flags &= -13;
             phase = work->phases[i];
@@ -48,11 +65,13 @@ void FourObjectMotion_UpdateBottomRow(void)
                 motion[1] = motion[0];
                 work->phases[i] = motion[0];
             }
+            zero = 0;
             request[0] = (u32)(s32)work->positions_x[i] << 16;
             request[1] = y;
-            request[2] = ((u32)(s32)work->positions_y[i] << 16) + y;
-            request[3] = 0;
-            limit = work->positions_y[i] < 0 ? 0x8000 : 0x4000;
+            row_y = work->positions_y[i];
+            request[2] = ((u32)row_y << 16) + y;
+            request[3] = zero;
+            limit = row_y < 0 ? 0x8000 : 0x4000;
             Object_ApplyProjectedPlacementFar(obj, request, motion, limit);
         }
         i++;

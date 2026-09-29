@@ -906,6 +906,25 @@ mod tests {
     }
 
     #[test]
+    fn absolute_link_time_values_resolve_as_numbers() {
+        // The text build defines message numbers as absolute symbols; a
+        // candidate's pool word against one is the listing's plain number.
+        let work = tempfile::tempdir().unwrap();
+        let listing = work.path().join("VALUES.s");
+        std::fs::write(
+            &listing,
+            "\t.global MsgExample\n\t.set MsgExample, 10\n\t.text\n\t.global Fn\nFn:\n\t.4byte 0\n",
+        )
+        .unwrap();
+        let object = assemble(&listing, &work.path().join("out"), work.path()).unwrap();
+        let path = work.path().join("VALUES.o");
+        std::fs::write(&path, object).unwrap();
+        let symbols = Symbols::load(&path).unwrap();
+        assert_eq!(symbols.get("MsgExample"), Some(10));
+        assert_eq!(symbols.get("Fn"), Some(0));
+    }
+
+    #[test]
     fn line_diff_marks_moved_lines() {
         assert_eq!(
             line_diff("a\nb\nc\n", "b\na\nc\n"),

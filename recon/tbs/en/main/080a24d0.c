@@ -1,3 +1,12 @@
+/* 2026-09-29: eight minutes of permutation (--function
+ * RunAssetSelectionScreen): 1530 -> 820 (11 register-only, 6 operand, 4
+ * reordered, 2 inserted, 2 deleted) by taking the address of the
+ * Value_00000001 symbol before the list clear and storing it after. A plain
+ * 1, in any local type, gives 1570: the reference loads that 1 from the
+ * pool before the call, as a link-time value does, so this draft stays
+ * blocked on it. */
+/* 2026-09-29: Resource_LoadPairedBlocks carries the build's name; alchemy
+ * permute (--function RunAssetSelectionScreen) scores 1530, from 1550. */
 /* NONMATCHING: 428/432 bytes, 195 differing halfwords, 137 aligned edits.
  * The proven menu copy/fill interface recovers per-call VRAM loads, but
  * keeps backup in r6 and hoists a zero into fp; not an exact model. */
@@ -81,7 +90,7 @@ void WaitFrames(s32 frames);
 void UiWindow_InitializeWork(s32);
 s32 Party_ListActiveOwnersFar(void *session);
 void ItemMenu_Init(s32, s32, s32, s32);
-void Func_080a5534(void);
+void Resource_LoadPairedBlocks(void);
 void Palette_LightenBankHighlight(s32);
 void Link_DrawShiftedTilePairFar(void *address);
 s32 UiWindow_CreateFar(s32, s32, s32, s32, s32);
@@ -113,6 +122,7 @@ s32 RunAssetSelectionScreen(void)
     s32 result;
     s32 size;
     CopyFn copy;
+    u8 *busy;
 
     size = 0x2000;
     backup = Runtime_BumpAllocateAlternatePool(size);
@@ -123,7 +133,7 @@ s32 RunAssetSelectionScreen(void)
     UiWindow_InitializeWork(0);
     screen->session_mode = Party_ListActiveOwnersFar(screen->session);
     ItemMenu_Init(0, 3, 0, 7);
-    Func_080a5534();
+    Resource_LoadPairedBlocks();
     Palette_LightenBankHighlight(14);
     Link_DrawShiftedTilePairFar((void *)0x06002500);
     screen->window = UiWindow_CreateFar(13, 0, 17, 3, 2);
@@ -135,20 +145,17 @@ s32 RunAssetSelectionScreen(void)
     Menu_CancelSoundReset();
     result = ItemMenu_RunCommands(&category, &value, &index);
     Menu_EnsureCancelSound();
-
     if (result == 1) {
         u8 *selection = (&Data_03001e68)->selection_state;
-
         u16 packed = (category << 10) | (index & 0x1ff);
         s32 style;
-
         *(u16 *)(selection + 0x180) = packed;
         style = screen->selection_style;
         *(u16 *)(selection + 0x19a) = style;
     }
-
+    busy = &Value_00000001;
     RenderOutput_ClearListFar(screen->resource_handle);
-    (&Data_03001e68)->process_state[0xea6] = (s32)&Value_00000001;
+    (&Data_03001e68)->process_state[0xea6] = (s32)busy;
     ItemMenu_Close();
     UiWindow_DrawFrameFar(0, 0, 30, 20);
     Menu_ResetTwoResourceEntries();

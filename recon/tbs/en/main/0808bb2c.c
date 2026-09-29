@@ -4,9 +4,19 @@
    both bitfields. Remaining: global allocation puts count on the stack and
    the frame cursor in sl where the ROM keeps count in r9, the bank cursor
    in fp and the two frame cursors on the stack; declaration order was
-   swept (77 is the best of 120 orders). */
+   swept (77 is the best of 120 orders).
+   2026-09-29 alchemy permute (8 minutes): 1760 -> 1496, minimized to two
+   natural changes: count is declared after copy, and the cursors advance
+   next_frames, frames, copy, banks. The selected actor is now
+   gGameState.current_owner and the callee and cells carry the build's
+   names; that costs one more moved instruction (1521: 39 register-only,
+   1 stack-only, 1 operand, 16 reordered, 2 inserted, 1 deleted). The
+   allocation above is unchanged in kind. The index and frame tables are
+   still reached relative to Data_02001124 (32 bytes before it, and past
+   its 32 objects), which needs one named snapshot record before adoption. */
 #include "TYPES.H"
 #include "DMA.H"
+#include "PARTY_STATE.H"
 
 /*
  * Puts back the objects ObjectTable_Snapshot saved: copies each saved
@@ -56,19 +66,19 @@ struct RestoreMapWork {
 };
 
 extern struct RestoreObject Data_02001124[32];
-extern s32 Data_02000434;
-extern struct RestoreWork *Data_03001ebc;
-extern struct RestoreMapWork *Data_03001e70;
+
+extern struct RestoreWork *gEventWork;
+extern struct RestoreMapWork *gMapWork;
 
 struct RestoreObject *ObjectTable_Get(s32 index);
 void Object_SetMode(struct RestoreObject *object, s32 mode);
 void ObjectDispatch_SetSingleChildField26Far(struct RestoreObject *object, s32 value);
-void Func_08009140(struct RestoreObject *object);
+void Object_ResetMotion(struct RestoreObject *object);
 
 void ObjectTable_Restore(void)
 {
-    s32 count = 0;
     struct RestoreObject *copy = Data_02001124;
+    s32 count = 0;
     u8 *indices = (u8 *)Data_02001124 - 32;
     u8 *frames = (u8 *)&Data_02001124[32];
     u8 *next_frames = frames + 32;
@@ -94,19 +104,19 @@ void ObjectTable_Restore(void)
             sprite->bank = bank;
             sprite->shadow_bank = bank;
             object->sprite = sprite;
-            if (index == Data_02000434) {
-                camera = Data_03001ebc->camera;
-                view = Data_03001e70->view;
+            if (index == gGameState.current_owner) {
+                camera = gEventWork->camera;
+                view = gMapWork->view;
                 y = object->y;
                 camera->target_y = y;
                 camera->y = y;
                 view->y = y;
-                Func_08009140(object);
+                Object_ResetMotion(object);
             }
         }
-        copy++;
-        frames++;
         next_frames++;
+        frames++;
+        copy++;
         banks++;
         if (++count > 31)
             break;

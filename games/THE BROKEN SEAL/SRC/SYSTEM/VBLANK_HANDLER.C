@@ -2,7 +2,7 @@
 #include "DMA.H"
 #include "SERIAL_RUNTIME.H"
 
-extern u16 Data_03001cb0;            /* link active */
+extern u16 gSerialExchangeActive;    /* VBlank runs the link exchange */
 extern u16 Data_03001f64;            /* link exchange status */
 extern u8 Data_03001e44;             /* display registers pending */
 extern u8 Data_03001d18;             /* OAM buffer pending */
@@ -42,7 +42,7 @@ void System_VBlankHandler(void)
         dma0[5] &= 0x7fff;
         dma0[5];
     }
-    if (Data_03001cb0 != 0) {
+    if (gSerialExchangeActive != 0) {
         u16 *status = &Data_03001f64;
         *status = SerialRuntime_ExchangePayloads((void *)&gSerialTransfer, (void *)gSerialPeerPayloads);
         SerialRuntime_StepBlockTransfer();

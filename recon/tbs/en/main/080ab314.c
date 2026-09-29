@@ -18,6 +18,14 @@
  * frame 32 and the first 101 instructions exact. These two real interface
  * corrections do not explain the six residual runs. Stop this axis; no
  * statement or declaration sweep and no matching-C credit.
+ * 2026-09-29: globals and UiWindow_Clear carry the build's names; alchemy
+ * permute scores 345 (15 register-only, 4 operand, 3 reordered). Three of
+ * the operands are fixed: the build names no veneer at 080153f8 (its
+ * UiText_OpenEntryMessage stub in SYSTEM/FAR_CALL/WINDOW.S has no label),
+ * and messages 0xc30/0xc32 are Value_ symbols; as plain literals CSE
+ * shares them differently (1125), so they need the text build's names.
+ * Blocked for adoption as well: the text work is read through the menu
+ * cell minus 0xa0, a cross-object offset.
  */
 #include "TYPES.H"
 #include "SYSTEM.H"
@@ -55,14 +63,14 @@ struct ChooserMessage {
     u16 count;
 };
 
-extern struct ChooserMenu *Data_03001f2c;
-extern struct ChooserTextWork *Data_03001e8c;
-extern volatile u32 Data_03001b04;
-extern volatile u32 Data_03001c94;
+extern struct ChooserMenu *gMenuWork;
+extern struct ChooserTextWork *gWindowWork;
+extern volatile u32 gKeysRepeat;
+extern volatile u32 gKeyState;
 extern char Value_00000c30;
 extern char Value_00000c32;
 void RenderOutput_ClearListFar(s32 window);
-void Func_08015060(s32 window);
+void UiWindow_Clear(s32 window);
 void Func_080152a8(void);
 void Func_08015078(s32 message, s32 window, s32 x, s32 y);
 s32 Func_080153f8(s32 window, s32 message);
@@ -93,15 +101,15 @@ s32 Func_080ab314(void)
     s32 cnt;
     s32 list_message;
 
-    menu = Data_03001f2c;
+    menu = gMenuWork;
     /* Adjacent runtime cells hold the text work and current menu work. */
-    work = *(struct ChooserTextWork **)((u8 *)&Data_03001f2c - 0xa0);
+    work = *(struct ChooserTextWork **)((u8 *)&gMenuWork - 0xa0);
     result = 0;
     previous = 0;
     selection = 0;
     RenderOutput_ClearListFar(menu->option_window);
     WaitFrames(1);
-    Func_08015060(menu->message_window);
+    UiWindow_Clear(menu->message_window);
     message = (s32)&Value_00000c30;
     UiText_DrawCharacterAtOffsetFar(message, menu->message_window, 0, 0);
     message++;
@@ -119,7 +127,7 @@ s32 Func_080ab314(void)
         cnt++;
     } while (cnt <= 6);
     do {
-        Func_08015060(win_a);
+        UiWindow_Clear(win_a);
         Func_08015078(selection + (s32)&Value_00000c32, win_a, 0, 0);
         slot = (struct ChooserMessage **)Func_080153f8(win_b, selection + 0xc39);
         Menu_DrawAtWindowOffset((void *)list, 0, previous, 6, 1, 15);
@@ -128,25 +136,25 @@ s32 Func_080ab314(void)
         for (;;) {
             UiMenu_PositionCursor(-12, (((struct ChooserWindow *)list)->row + selection) * 8 + 8);
             WaitFrames(1);
-            if (Data_03001b04 & 0x90) {
+            if (gKeysRepeat & 0x90) {
                 selection++;
                 selection = Menu_GetModuloOfSum(selection, 7);
                 Audio_PlayCue(111);
                 break;
-            } else if (Data_03001b04 & 0x60) {
+            } else if (gKeysRepeat & 0x60) {
                 selection--;
                 selection = Menu_GetModuloOfSum(selection, 7);
                 Audio_PlayCue(111);
                 break;
-            } else if (Data_03001c94 & 8) {
+            } else if (gKeyState & 8) {
                 Audio_PlayCue(113);
                 result = -2;
                 break;
-            } else if (Data_03001c94 & 6) {
+            } else if (gKeyState & 6) {
                 Audio_PlayCue(113);
                 result = -1;
                 break;
-            } else if (Data_03001c94 & 1) {
+            } else if (gKeyState & 1) {
                 if (UiWork_IsCompleteFar()) {
                     selection++;
                     selection = Menu_GetModuloOfSum(selection, 7);
@@ -161,8 +169,8 @@ s32 Func_080ab314(void)
             Resource_ResetEntry(work->resource);
             work->resource = 99;
         }
-        Data_03001e8c->text_busy = 0;
-        Func_08015060(win_b);
+        gWindowWork->text_busy = 0;
+        UiWindow_Clear(win_b);
         {
             struct ChooserMessage *entry = *slot;
             /* FAKEMATCH: source swap compensates the scheduler's tied
@@ -173,7 +181,7 @@ s32 Func_080ab314(void)
         }
         *slot = 0;
     } while (result == 0);
-    Data_03001e8c->menu_busy = 1;
+    gWindowWork->menu_busy = 1;
     RenderOutput_ClearListFar(win_a);
     RenderOutput_ClearListFar(win_b);
     WaitFrames(1);
@@ -182,10 +190,10 @@ s32 Func_080ab314(void)
     UiWork_FinalizeFar(win_b, 1);
     Func_080152a8();
     if (result == -2) {
-        Func_08015060(menu->message_window);
-        Func_08015060(menu->option_window);
-        Func_08015060(menu->owner_window);
-        Data_03001e8c->menu_busy = 0;
+        UiWindow_Clear(menu->message_window);
+        UiWindow_Clear(menu->option_window);
+        UiWindow_Clear(menu->owner_window);
+        gWindowWork->menu_busy = 0;
     }
     Scheduler_AddOrUpdateCallback(Menu_UpdateEntryObjectTransforms, 0xc80);
     return result;

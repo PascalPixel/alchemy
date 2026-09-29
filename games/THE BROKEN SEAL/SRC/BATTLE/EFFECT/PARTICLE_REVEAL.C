@@ -3,6 +3,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 
 extern u8 gBattleFxWork[];
 
@@ -36,11 +37,9 @@ void BattlePresentation_ProcessPendingGraphicsTransfer(void);
  * `routine[]`, a two-entry DrawRectangleFn array BattleFx_FetchRectangleBlitters fills.
  *
  * All three Resource_LoadAndDecompress id arguments are loaded from the reference's
- * literal pool rather than built with a `movs` immediate, matching the
- * already-adopted Value_ idiom (puff_arc/run.c's Value_000000b4,
- * 080e01e4.c's Value_00000073/00000090/00000089): `(s32)&Value_XXXXXXXX`
- * forces the same pool load even though the values (0x6e, 0xb8, 0x92) would
- * otherwise fit an 8-bit `movs` immediate.
+ * literal pool rather than built with a `movs` immediate: each is a row of
+ * the resource directory, and `(s32)&ResourceId_X` forces the same pool load
+ * even though the row numbers would otherwise fit an 8-bit `movs` immediate.
  */
 
 typedef struct {
@@ -57,9 +56,6 @@ typedef struct {
 extern Particle gMapCellBuffer[];
 #define PARTICLE_COUNT 64
 
-extern u8 Value_0000006e;
-extern u8 Value_000000b8;
-extern u8 Value_00000092;
 extern u8 ParticleReveal_CellWidths[];
 extern u8 ParticleReveal_CellHeights[];
 extern u16 ParticleReveal_CellSourceOffsets[];
@@ -102,7 +98,7 @@ void BattleFx_RunParticleReveal(void *object)
         &screen_x, &screen_y);
     BattleFx_FetchRectangleBlitters(
         (*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (4))), routine);
-    Resource_LoadAndDecompress((s32)&Value_0000006e, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_WaterSpraySheet, work, 1, 1);
     (*(s32 *)((u8 *)(work) + (0x7780))) = 2;
     (*(s32 *)((u8 *)(work) + (0x7784))) = 75;
     {
@@ -137,8 +133,8 @@ void BattleFx_RunParticleReveal(void *object)
             (*(s16 *)((u8 *)((void *)0x04000052) + (0))) = (64 - frame) | 0x1000;
         }
         if (frame == 1) {
-            Resource_LoadAndDecompress((s32)&Value_000000b8, (u8 *)work + 0x400, 1, 1);
-            Resource_LoadAndDecompress((s32)&Value_00000092, (u8 *)work + 0x65C0, 1, 0);
+            Resource_LoadAndDecompress((s32)&ResourceId_IceChipSheet, (u8 *)work + 0x400, 1, 1);
+            Resource_LoadAndDecompress((s32)&ResourceId_MercuryDjinnSmallSheet, (u8 *)work + 0x65C0, 1, 0);
         }
 
         if ((*(s32 *)((u8 *)((*(void **)((u8 *)(work) + (0x7828)))) + (0x1C))) == 1) {

@@ -12,6 +12,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "IO_WRITE_QUEUE.H"
 #include "IO_REG.H"
+#include "RESOURCE_IDS.H"
 void Map_UpdateWorldMapMarkers(void);
 extern u8 gMapCellBuffer[];
 
@@ -40,7 +41,6 @@ struct FieldState {
 };
 
 extern u8 gWorkSlot[];
-extern u8 Value_0000001b[];
 extern u8 MsgNotOnMap[];
 extern u32 gKeysRepeat;
 
@@ -62,7 +62,7 @@ void Map_ShowWorldMap(void)
     struct MapWork *map = *(struct MapWork **)(gWorkSlot + 8 * 4);
     struct FieldState *field = Runtime_AllocateBlock(27, 0xccc);
     struct MenuControl *menu = *(struct MenuControl **)(gWorkSlot + 6 * 4);
-    s32 resource = (s32)Value_0000001b;
+    s32 resource = (s32)&ResourceId_WorldMapPicture;
     struct MapLayerEntry *layer;
     u8 saved_flags[16];
     s32 i;

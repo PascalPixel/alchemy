@@ -1,13 +1,3 @@
-/* Draft of BattleFx_RunRisingBurst (0x080ed104, 772 bytes): this C matched
- * byte for byte through the value-named symbols Value_00000051,
- * Value_00000073 and Value_000000c0, which it passes as resource numbers:
- * the ROM loads each from the literal pool, which GCC 2.96 does only for a
- * link-time symbol. Value_00000051 and Value_000000c0 are no longer defined
- * anywhere, so the draft does not link; it waits for resource numbers to
- * have an honest, linker-computed definition. 0x51 is a resource here, not a
- * scene: it must not take the address of SceneId_ArutinYama5, the scene row
- * that happens to share its value. */
-
 #include "TYPES.H"
 #include "SYSTEM.H"
 #include "FIXED_MATH.H"
@@ -16,14 +6,11 @@
 #include "EFFECT_STEP.H"
 #include "CALLBACK_SCHEDULER.H"
 #include "B5_CONTEXT.H"
+#include "RESOURCE_IDS.H"
 
 extern u8 gBattleFxWork[];
 extern const u16 RisingBurst_SparkCells[];
 extern const u16 RisingBurst_SparkSizes[];
-/* Resource numbers 0x51, 0x73 and 0xc0, waiting for resource names. */
-extern u8 Value_00000051;
-extern u8 Value_00000073;
-extern u8 Value_000000c0;
 
 void BattleFx_BeginCanvasLayer(s32 mode);
 void BattleFx_EndCanvasLayer(void);
@@ -39,18 +26,19 @@ void ObjectGroup_TickMemberTimers(void);
 #define HI(v) (((s16 *)&(v))[1])
 
 /* Battle effect: sixteen sparks burst up from the target while the loaded
-   pillar blitter draws two columns beside it from frame 8, growing for a
-   while and then sinking again; at frame 10 the event phase starts and the
-   target reacts. A spark appears every other frame, shrinks through seven
-   cells as it ages and falls under gravity. The pillar blitter is kept in
-   draw[0] as well as called through its heap cell. */
+   pillar blitter draws two columns of the lime column sheet beside it from
+   frame 8, growing for a while and then sinking again; at frame 10 the event
+   phase starts and the target reacts. A spark appears every other frame,
+   shrinks through seven cells of the blast sheet as it ages and falls under
+   gravity. The pillar blitter is kept in draw[0] as well as called through
+   its heap cell. */
 void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
 {
     void **heap_cache;
     void **cursor;
     struct BattleEffectWork *work;
     void *canvas;
-    void *pillars;
+    void *sprites;
     DrawRectangleFn draw[2];
     struct EffectPosition position;
     struct EffectStep *spark;
@@ -71,12 +59,12 @@ void BattleFx_RunRisingBurst(struct BattleEffectArgument *object)
     work = *cursor++;
     canvas = *cursor;
     work->effect = object;
-    pillars = heap_cache[2];
+    sprites = heap_cache[2];
     BattleFx_BeginCanvasLayer(0);
     *(volatile u16 *)0x04000020 = 0x100;
-    Resource_LoadAndDecompress((s32)&Value_00000073, pillars, 0, 0);
-    Resource_LoadAndDecompress((s32)&Value_00000051, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_000000c0, (u8 *)work + 0x460, 1, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_ParticleSpritesA, sprites, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_LimeColumnSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_BlastSheet, (u8 *)work + 0x460, 1, 0);
     BattleFx_FetchRectangleBlitters(work->effect->side, draw);
     work->transfer_mode = 2;
     work->transfer_value = 75;

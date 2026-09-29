@@ -8,6 +8,7 @@
 #include "CALLBACK_SCHEDULER.H"
 #include "EFFECT_STEP.H"
 #include "FIXED_MATH.H"
+#include "RESOURCE_IDS.H"
 extern u8 gMapCellBuffer[];
 
 void BattlePresentation_ProcessPendingGraphicsTransfer(void);
@@ -52,9 +53,6 @@ struct Cells03001ce0 {
 };
 extern struct Cells03001ce0 gProjection;
 
-extern u8 Value_0000003b;
-extern u8 Value_000000b9;
-extern u8 Value_000000ba;
 
 typedef struct Scale {
     s32 x;
@@ -141,8 +139,8 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     *(u16 *)0x04000048 = 0x2137;
     Unnamed_080cd104(1, 0);
     *(u16 *)0x04000040 = 0xf0f0;
-    Resource_LoadAndDecompress((s32)&Value_000000b9, work, 1, 1);
-    Resource_LoadAndDecompress((s32)&Value_000000ba, aux, 0, 0);
+    Resource_LoadAndDecompress((s32)&ResourceId_IceBlockSheet, work, 1, 1);
+    Resource_LoadAndDecompress((s32)&ResourceId_SparkleDots, aux, 0, 0);
     BattleEffect_LoadWork(46, 7, 7, 3, 2);
     blit46 = (DrawRectangle)cache[46 - 40];
     BattleEffect_LoadWork(47, 7, 7, 3, 1);
@@ -150,7 +148,7 @@ void BattleFx_InitializeMode10(struct BattleEffectArgument *efx)
     gProjection.unk10 = 240;
     BattleFx_SelectLivingTargets((s32)work->effect);
     WaitFrames(1);
-    BattleBackground_LoadFar(1, (s32)&Value_0000003b, 0);
+    BattleBackground_LoadFar(1, (s32)&ResourceId_VioletSkyBackdrop, 0);
     BattleFx_SpawnObjects(9, 0x174, 1);
     *(u16 *)0x04000000 = 0x7741;
     *(u16 *)0x04000020 = 0x80;

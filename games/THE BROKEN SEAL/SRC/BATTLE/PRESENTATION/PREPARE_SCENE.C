@@ -1,6 +1,7 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "SCENE.H"
+#include "RESOURCE_IDS.H"
 void BattleFx_BeginCanvasLayer(s32 mode);
 s32 BattleFx_RunTwoResource(s32, s32);
 s32 Runtime_AllocateHeapBlock(s32 kind, s32 size);
@@ -17,7 +18,7 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
  */
 
 /*
- * Value_ symbols name a small resource id the reference loads from its
+ * ResourceId_ rows are small resource numbers the reference loads from its
  * literal pool rather than materializing, so they must not be folded into
  * constants.  Battle_Apply is declared as returning s32 although the result
  * is unused: the value-returning call form keeps the call the last setter of
@@ -25,11 +26,6 @@ s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 order);
  * argument's shift.
  */
 
-extern u8 Value_000000c8;
-extern u8 Value_000000cf;
-extern u8 Value_000000b4;
-extern u8 Value_000000cb;
-extern u8 Value_000000be;
 
 void *Resource_GetTableEntry(s32 id);
 void BattlePresentation_DrawStreaks(void);
@@ -49,20 +45,20 @@ void BattlePresentation_PrepareScene(s32 kind)
     *(s16 *)0x04000052 = 0x1010;
     switch (kind) {
     case 0:
-        id = (s32)&Value_000000c8;
+        id = (s32)&ResourceId_YellowPaletteB;
         break;
     case 1:
-        id = (s32)&Value_000000cf;
+        id = (s32)&ResourceId_CrystalSheet;
         break;
     case 2:
-        id = (s32)&Value_000000b4;
+        id = (s32)&ResourceId_EmberStreakSheet;
         break;
     case 3:
-        id = (s32)&Value_000000cb;
+        id = (s32)&ResourceId_VioletPaletteD;
         break;
     case 4:
     default:
-        id = (s32)&Value_000000be;
+        id = (s32)&ResourceId_DustPuffSheet;
         break;
     }
     palette = Resource_GetTableEntry(id);

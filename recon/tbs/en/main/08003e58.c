@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#include "VRAM_BLOCK.H"
 
 /*
  * Nonmatching: 26 halfword edits. Block layout, branches and the pool match.
@@ -14,21 +15,24 @@
  * baseline. It rotates the range check to the loop tail and still keeps
  * the map in r5; this does not explain the reference's separate ip/r7
  * lifetimes. Preserve the original control flow until new evidence does.
- * 2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes, then seed 11, 3
- * jobs, 10 minutes): declaring pos before tbl, kept here with the block map
- * under its build name ResourceBlockOwners, takes the score from 605 to 335
- * (19 register-only, 2 operand, 2 deleted); nothing in 25,591 further
- * candidates goes below it. The map still sits in r5 with a copy in ip,
- * where the reference holds it in ip and r7.
+ * 2026-09-29 slice 4: 40 against 605, only two preheader moves apart.
+ * The run is a real for (;;) loop, so loop.c hoists the two table addresses
+ * into ip and lr; the map pointer is a local set at the top of each pass,
+ * so CSE knows it is the table's address and adds the scan offset first
+ * (adds r2, r0, r7) as the reference does, and loop.c hoists it too, where
+ * cse2 turns it into the r7 copy of ip. The check and scan read the map,
+ * the fill and the occupied-run lookup the named arrays (ResourceBlockOwners,
+ * gVramBlockCache); end is blocks + result. Left: the reference moves lr
+ * before copying ip into r7, which needs the lookup table's address hoisted
+ * before the map's; setting a table local first at the top of the loop does
+ * that but turns the lookup into [index, base] and swaps r6/r7 (55).
+ * alchemy permute (seeds 1 and 11 from the old goto loop, 20 minutes)
+ * reached 335; the for (;;) form and its spellings came from targeted
+ * variants, and a third search from this form (seed 61, 4 jobs, 10
+ * minutes, 23,563 candidates) found nothing below 40.
  */
 
-struct ResourceTableEntry {
-    u16 size;
-    u16 block;
-};
-
 extern u8 ResourceBlockOwners[512];
-extern struct ResourceTableEntry Data_03001b10[96];
 
 s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
 {
@@ -40,39 +44,39 @@ s32 ResourceTable_AllocateBlocks(u32 id, u32 size)
         return -1;
     }
     {
-        u8 *map = ResourceBlockOwners;
         s32 pos = 0;
-        struct ResourceTableEntry *tbl = Data_03001b10;
         u32 end;
         u32 i;
         u8 *scan;
 
-next_run:
-        result = -1;
-        if (pos >= 512) {
-            goto done;
-        }
-        if (ResourceBlockOwners[pos] != 0xff) {
-            goto occupied;
-        }
-        result = pos;
-        end = result + blocks;
-        if (pos < end) {
-            scan = ResourceBlockOwners + result;
-            do {
-                if (*scan++ != 0xff) {
-                    goto occupied;
-                }
-                pos++;
-            } while (pos < end);
-        }
-        for (i = 0; i < blocks; i++) {
-            ResourceBlockOwners[result + i] = id;
-        }
-        goto found;
+        for (;;) {
+            u8 *map = ResourceBlockOwners;
+
+            result = -1;
+            if (pos >= 512) {
+                goto done;
+            }
+            if (map[pos] != 0xff) {
+                goto occupied;
+            }
+            result = pos;
+            end = blocks + result;
+            if (pos < end) {
+                scan = &map[result];
+                do {
+                    if (*scan++ != 0xff) {
+                        goto occupied;
+                    }
+                    pos++;
+                } while (pos < end);
+            }
+            for (i = 0; i < blocks; i++) {
+                ResourceBlockOwners[result + i] = id;
+            }
+            goto found;
 occupied:
-        pos += tbl[map[pos]].size >> 6;
-        goto next_run;
+            pos += gVramBlockCache[ResourceBlockOwners[pos]].size >> 6;
+        }
 found:
         result <<= 6;
 done:

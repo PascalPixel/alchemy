@@ -25,7 +25,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/APPLY_VALUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/PARTY_HAS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/NO_OP.o"(.text)
-        "*/resource_3cb_overlay.o"(.text.x02008f8c)
+        "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/TALK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/START_EXCHANGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/ATTENDANT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/LINK_LOBBY/COUNT_MESSAGE.o"(.text)

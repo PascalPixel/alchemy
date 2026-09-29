@@ -40,6 +40,7 @@ SECTIONS
         "*/resource_3bc_overlay.o"(.text.x0200bddc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/SCENE_DESCRIPTOR.o"(.text)
         "*/resource_3bc_overlay.o"(.text.x0200c57c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/COMMON/KOROSSEO/SCENE_STATE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/PUSH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KOROSSEO_MARUTA/IMPORT.o"(.text)
         *libgcc.a:_call_via_rX.o(.text)

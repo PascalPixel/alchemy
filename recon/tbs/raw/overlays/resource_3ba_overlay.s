@@ -3267,16 +3267,6 @@ Func_0200384c:
 	.4byte 0x00000109
 	.4byte 0x00000c85
 	.4byte 0x0200b1c1
-	.global Func_020038a0
-	.thumb_func
-Func_020038a0:
-	ldr r3, [pc, #8]
-	ldr r3, [r3]
-	adds r3, #220
-	strh r0, [r3]
-	bx lr
-	.2byte 0x0000
-	.4byte 0x03001f3c
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x20202000

@@ -1,10 +1,7 @@
-/* NONMATCHING: 292 bytes, candidate 292, 41 differing halfwords, 26 halfword edits.
- * Fresh reconstruction from the complete listing (2026-09-25). A routine-last
- * transform wrapper restores the view-pointer spill and the high-register roles.
- * WALL: Stack-slot order and the squared-distance call sequence still differ.
- */
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
+
+/* field/common/map/build_scanline_table.c */
 
 struct Projection {
     s32 focal;
@@ -24,25 +21,18 @@ struct ScanlineRow {
 
 extern struct Projection gProjection;
 
-typedef s32 (*RatioFn)(s32 numerator, s32 denominator);
-typedef s32 (*SqrtFn)(s32 value);
-typedef void (*TransformFn)(s32 *source, s32 *destination);
+typedef void (*TransformFn)(const s32 *source, s32 *destination);
 
-static __inline__ void Transform(s32 *source, s32 *destination, TransformFn routine)
+/* The routine is the last argument, so its address is loaded before the
+   vectors, as at Iwram_Call2's call sites. */
+static __inline__ void Transform(const s32 *source, s32 *destination, TransformFn routine)
 {
     routine(source, destination);
 }
 
-static __inline__ s32 DivideQ16(s32 numerator, s32 denominator)
-{
-    return ((RatioFn)0x0300013c)(numerator, denominator);
-}
-
-static __inline__ s32 SqrtInteger(s32 value)
-{
-    return ((SqrtFn)0x030001d8)(value);
-}
-
+/* Fill the world map's 160 scanline rows from the camera's view of the
+   ground plane at POSITION: a line that meets the plane gets a scale and a
+   signed ground distance, any other line zeros. */
 void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct ScanlineRow *row)
 {
     s32 ground[3];
@@ -58,29 +48,32 @@ void WorldMap_BuildScanlineTable(s32 depth, s32 *position, struct ScanlineRow *r
     s32 y;
     s32 diagonal;
     s32 vertical;
+    s32 zero;
+    s32 horizontal;
 
+    zero = 0;
     ground[0] = position[0];
-    ground[1] = 0;
+    ground[1] = zero;
     ground[2] = position[2];
-    Transform(ground, viewed, (TransformFn)0x03000250);
+    Transform(ground, viewed, Iwram_TransformVector);
     view = viewed;
     horizon = view[1] - Iwram_MulQ16(view[2], depth);
     focus = -gProjection.focal;
     for (line = 0; line < 160; line++) {
-        distance = DivideQ16(focus, (gProjection.center_y - line) << 16);
+        distance = Iwram_RatioMulQ14(focus, (gProjection.center_y - line) << 16);
         difference = distance - depth;
         if (difference == 0)
             difference = 1;
-        scale = DivideQ16(difference, horizon);
+        scale = Iwram_RatioMulQ14(difference, horizon);
         if (scale < 0) {
             diagonal = Iwram_MulQ16(-scale, 0x8000);
-            row->x = DivideQ16(gProjection.focal, diagonal);
+            row->x = Iwram_RatioMulQ14(gProjection.focal, diagonal);
             diagonal = Iwram_MulQ16(scale, distance);
-            x = (view[2] - scale) >> 4;
+            horizontal = (view[2] - scale) >> 4;
             vertical = (diagonal - view[1]) >> 4;
-            x = Iwram_MulQ16(x, x);
+            x = Iwram_MulQ16(horizontal, horizontal);
             y = Iwram_MulQ16(vertical, vertical);
-            y = SqrtInteger(x + y) << 12;
+            y = Iwram_Sqrt(x + y) << 12;
             if (vertical < 0)
                 y = -y;
             row->y = Iwram_MulQ16(y, 0x8000);

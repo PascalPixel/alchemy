@@ -1111,7 +1111,7 @@ SECTIONS
         "*/recon/tbs/raw/080a9f10.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/INVOKE_USE_ANIMATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/GAME/ITEM/PLAY_USE_ANIMATION.o"(.text)
-        "*/recon/tbs/raw/080aa56c.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/MENU/ITEM/RUN.o"(.text)
         "*/recon/tbs/raw/080aa768.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/PALETTE/ADJUST_BANK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/MENU/OPEN_BACKDROP_SCREEN.o"(.text)

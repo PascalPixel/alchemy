@@ -31,10 +31,10 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/FOUR_STEPS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/BLOCK_FLAGS.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/THREE_BRANCH.o"(.text)
-        "*/resource_39c_overlay.o"(.text.x0200a844)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/FADE_TO_WHITE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/COLUMN_CHOREOGRAPHY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/ROTATE_PALETTE.o"(.text)
-        "*/resource_39c_overlay.o"(.text.x0200ae08)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/FADE_TO_BLACK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/ACTOR_SINK.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RANDOM_EFFECT_SEQUENCE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/SCRIPTED_STEPS.o"(.text)
@@ -43,6 +43,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/OPEN_STAIR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/SPAWN_BURSTS.o"(.text)
         "*/resource_39c_overlay.o"(.text.x0200bd20)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RIDE_LIFT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/CAST_PSYNERGY.o"(.text)
         "*/resource_39c_overlay.o"(.text.x0200cfcc)
         "*/games/THE BROKEN SEAL/SRC/FIELD/MAKYURI_HEYA/RISE_EFFECT.o"(.text)
@@ -58,7 +59,8 @@ SECTIONS
         "*/resource_39c_overlay.o"(.rodata.part1)
     }
     /DISCARD/ : { *(.ARM.attributes) *(.comment) *(.note*) }
-    /* The compiler calls its division helper by its ABI name; here it is the
-       overlay's veneer into the resident IWRAM divider, as in MAIN.LD. */
+    /* The compiler calls its division helpers by their ABI names; here they
+       are the overlay's veneers into the resident IWRAM routines, as in
+       MAIN.LD. */
     __divsi3 = IwramSignedDivideEntry;
 }

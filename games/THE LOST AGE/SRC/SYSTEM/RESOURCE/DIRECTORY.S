@@ -643,7 +643,7 @@ Resource_DirectoryTable:
 	resource , Tileset_Set00Palette
 	resource , Tileset_Set00TilesA
 	resource , Tileset_Set00TilesB
-	resource , Tileset_Set00TilesC
+	resource , Resource_Data276
 	resource , Tileset_Set00TilesD
 	resource , Resource_Data278
 	resource , Tileset_Set01Palette
@@ -985,7 +985,7 @@ Resource_DirectoryTable:
 	resource , Field_Map101
 	resource , Tileset_Set50Palette
 	resource , Tileset_Set50TilesA
-	resource , Tileset_Set50TilesB
+	resource , Resource_Data3CC
 	resource , Tileset_Set50TilesC
 	resource , Tileset_Set50TilesD
 	resource , Field_Map102
@@ -1216,7 +1216,7 @@ Resource_DirectoryTable:
 	resource , Field_Map174
 	resource , Tileset_Set79Palette
 	resource , Tileset_Set79TilesA
-	resource , Tileset_Set79TilesB
+	resource , Resource_Data4B3
 	resource , Tileset_Set79TilesC
 	resource , Tileset_Set79TilesD
 	resource , Field_Map175

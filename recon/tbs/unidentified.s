@@ -985,14 +985,8 @@ Sound_PlayerSlots:
 	.incbin "baserom.gba", 0x000fc624, 0x00000060
 	.section .unidentified.08184698,"a"
 	.incbin "baserom.gba", 0x00184698, 0x00000968
-	.section .unidentified.08185024,"a"
-	.global Character_DescriptorTable
-Character_DescriptorTable:
-	.incbin "baserom.gba", 0x00185024, 0x00003aa8
-	.section .unidentified.08188adc,"a"
-	.incbin "baserom.gba", 0x00188adc, 0x00000d10
-	.section .unidentified.08189814,"a"
-	.incbin "baserom.gba", 0x00189814, 0x001967ec
+	.section .unidentified.0831efd8,"a"
+	.incbin "baserom.gba", 0x0031efd8, 0x00001028
 	.section .unidentified.083203c8,"a"
 	.global Resource_BuildStamp
 Resource_BuildStamp:

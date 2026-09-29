@@ -13,11 +13,7 @@ anim	f0 11 39 08 3a 10 f1 00
 anim	f0 11 38 07 f1 00
 anim	f0 11 3a 09 39 05 f1 00
 anim	3c 05 41 19 46 09 46 10 f1 00
-same	SPR_005	14
-same	SPR_005	14
-same	SPR_005	14
 anim	f0 11 3b 10 f1 00
-same	SPR_005	15
 anim	3c 05 41 19 f1 00
 anim	41 03 46 09 46 10 f1 00
 anim	5c 1f f1 00
@@ -29,3 +25,4 @@ anim	f0 11 7f 18 80 0f 81 0c 80 10 fd 00
 anim	f0 11 5b 07 f1 00
 anim	f0 11 82 18 fd 00
 anim	32 05 19 05 1e 05 23 05 28 05 2d 05 fd 00
+animations	0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 14 14 14 15 15 16 17 18 19 20 21 22 23 24 25 26

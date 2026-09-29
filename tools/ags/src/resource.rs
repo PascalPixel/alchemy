@@ -61,6 +61,8 @@
 //!
 //! - `.sprites`: the bank as assembler source, which a data source
 //!   `.include`s; its lists name the labels of the frames and scripts.
+//! - `.spriteblocks`: the same, laid out sprite by sprite in the order
+//!   `LAYOUT.TSV` beside it gives.
 //!
 //! A picture made of several reads its part list `STEM.TSV`:
 //!
@@ -116,6 +118,7 @@ fn data_form(form: &str) -> bool {
             | "blocks"
             | "script"
             | "sprites"
+            | "spriteblocks"
     )
 }
 
@@ -170,6 +173,7 @@ pub fn build_file_with(
             "sprites" => crate::sprite::bank(built, input, sibling)?
                 .source()?
                 .into_bytes(),
+            "spriteblocks" => crate::sprite::blocks_source(built, input, sibling)?.into_bytes(),
             _ => encode_tilemap_delta(&table(built, input)?, form.as_bytes()[5] - b'0')
                 .map_err(|error| format!("{built}: {}", error.0))?,
         }

@@ -1,0 +1,9 @@
+anim	00 0a f1 00
+anim	0a 0a fd 00
+anim	0a 07 0b 07 0c 07 0d 07 fd 00
+anim	0a 07 0d 07 0c 07 0b 07 fd 00
+anim	00 0d 01 0e 02 14 01 10 fd 00
+anim	00 07 04 07 05 07 06 07 fd 00
+anim	00 07 06 07 05 07 04 07 fd 00
+anim	01 02 03 0a 02 04 01 05 fe 04
+anim	07 01 08 04 09 05 07 05 02 03 fe 04

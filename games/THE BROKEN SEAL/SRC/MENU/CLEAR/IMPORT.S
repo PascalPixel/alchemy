@@ -76,4 +76,7 @@ Engine_GameFlagIsSet:
 	overlay_veneer Event_ClearStatus1c6Far
 	overlay_veneer Event_WaitValue1c8FramesFar
 	overlay_veneer Object_CallSpawnRoutineAtOriginFar
+	.global Engine_AudioPlayCue
+	.thumb_func
+Engine_AudioPlayCue:
 	overlay_veneer AudioCommand_PlayFar

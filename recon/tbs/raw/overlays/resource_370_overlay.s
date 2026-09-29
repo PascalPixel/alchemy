@@ -115,127 +115,6 @@ Func_02000054:
 	.4byte 0x84000004
 	.4byte 0x03001e70
 	.4byte 0x02000240
-	.section .text.x020081fc,"ax",%progbits
-	.p2align 2
-	.global Func_020001fc
-	.thumb_func
-Func_020001fc:
-	push {r5, r6, r7, lr}
-	ldr r1, [pc, #96]
-	movs r2, #0
-	ldrsh r3, [r1, r2]
-	mov r12, r1
-	cmp r3, #0
-	bne .L_020001fc_0
-	ldr r5, [pc, #88]
-	movs r3, #0
-	ldrsh r4, [r5, r3]
-	cmp r4, #0
-	beq .L_020001fc_1
-	ldr r3, [pc, #80]
-	ldr r3, [r3]
-	cmp r3, #0
-	bne .L_020001fc_0
-	strh r3, [r5]
-	b .L_020001fc_0
-.L_020001fc_1:
-	ldr r6, [pc, #68]
-	ldr r3, [r6]
-	cmp r3, #0
-	beq .L_020001fc_0
-	ldr r1, [pc, #64]
-	movs r2, #0
-	ldrsh r3, [r1, r2]
-	ldr r7, [pc, #64]
-	lsls r3, r3, #1
-	ldrh r2, [r7, r3]
-	ldr r3, [r6]
-	ldrh r0, [r1]
-	cmp r3, r2
-	bne .L_020001fc_2
-	ldr r2, [pc, #28]
-	adds r3, r0, #1
-	strh r3, [r1]
-	strh r2, [r5]
-	lsls r3, r3, #16
-	asrs r3, r3, #15
-	ldrh r3, [r7, r3]
-	cmp r3, #0
-	bne .L_020001fc_0
-	mov r3, r12
-	strh r2, [r3]
-	movs r0, #110
-	bl 0x020094cc
-	b .L_020001fc_0
-	.2byte 0x0000
-	.4byte 0x00000001
-	.4byte 0x020096b2
-	.4byte 0x020096ba
-	.4byte 0x03001ae8
-	.4byte 0x020096b6
-	.4byte 0x020094d4
-.L_020001fc_2:
-	strh r4, [r1]
-.L_020001fc_0:
-	ldr r1, [pc, #96]
-	movs r2, #0
-	ldrsh r3, [r1, r2]
-	mov r12, r1
-	cmp r3, #0
-	bne .L_020001fc_3
-	ldr r5, [pc, #88]
-	movs r3, #0
-	ldrsh r4, [r5, r3]
-	cmp r4, #0
-	beq .L_020001fc_4
-	ldr r3, [pc, #80]
-	ldr r3, [r3]
-	cmp r3, #0
-	bne .L_020001fc_3
-	strh r3, [r5]
-	b .L_020001fc_3
-.L_020001fc_4:
-	ldr r6, [pc, #68]
-	ldr r3, [r6]
-	cmp r3, #0
-	beq .L_020001fc_3
-	ldr r1, [pc, #64]
-	movs r2, #0
-	ldrsh r3, [r1, r2]
-	ldr r7, [pc, #64]
-	lsls r3, r3, #1
-	ldrh r2, [r7, r3]
-	ldr r3, [r6]
-	ldrh r0, [r1]
-	cmp r3, r2
-	bne .L_020001fc_5
-	ldr r2, [pc, #28]
-	adds r3, r0, #1
-	strh r3, [r1]
-	strh r2, [r5]
-	lsls r3, r3, #16
-	asrs r3, r3, #15
-	ldrh r3, [r7, r3]
-	cmp r3, #0
-	bne .L_020001fc_3
-	mov r3, r12
-	strh r2, [r3]
-	movs r0, #110
-	bl 0x020094cc
-	b .L_020001fc_3
-	.2byte 0x0000
-	.4byte 0x00000001
-	.4byte 0x020096b4
-	.4byte 0x020096bc
-	.4byte 0x03001ae8
-	.4byte 0x020096b8
-	.4byte 0x020094dc
-.L_020001fc_5:
-	strh r4, [r1]
-.L_020001fc_3:
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
 	.section .text.x020083cc,"ax",%progbits
 	.global Func_020003cc
 	.thumb_func
@@ -1846,16 +1725,13 @@ Func_020003cc:
 	.2byte 0x0240
 	.2byte 0x0200
 	.section .rodata,"a",%progbits
-	.4byte 0x00040004
-	.4byte 0x00000004
-	.4byte 0x00800040
-	.4byte 0x00800040
-	.4byte 0x00100020
-	.4byte 0x00100020
-	.4byte 0x00100040
-	.4byte 0x00200080
-	.4byte 0x00040040
-	.4byte 0x00000000
+	.global Clear_CodeSequence
+Clear_CodeSequence:
+	.2byte 0x0004, 0x0004, 0x0004, 0x0000
+	.global Clear_ExtraCodeSequence
+Clear_ExtraCodeSequence:
+	.2byte 0x0040, 0x0080, 0x0040, 0x0080, 0x0020, 0x0010, 0x0020, 0x0010
+	.2byte 0x0040, 0x0010, 0x0080, 0x0020, 0x0040, 0x0004, 0x0000, 0x0000
 	.4byte 0x8fc22100
 	.4byte 0x250d09f0
 	.4byte 0x3f08b7c2
@@ -1975,10 +1851,26 @@ Clear_EffectTable:
 	.4byte 0x00000000
 	.global Clear_BlendFrame
 Clear_BlendFrame:
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
-	.4byte 0x00000000
+	.2byte 0x0000
+	.global Clear_CodeUnlocked
+Clear_CodeUnlocked:
+	.2byte 0x0000
+	.global Clear_ExtraCodeUnlocked
+Clear_ExtraCodeUnlocked:
+	.2byte 0x0000
+	.global Clear_CodeProgress
+Clear_CodeProgress:
+	.2byte 0x0000
+	.global Clear_ExtraCodeProgress
+Clear_ExtraCodeProgress:
+	.2byte 0x0000
+	.global Clear_CodeHeld
+Clear_CodeHeld:
+	.2byte 0x0000
+	.global Clear_ExtraCodeHeld
+Clear_ExtraCodeHeld:
+	.2byte 0x0000
+	.2byte 0x0000
 	.4byte 0x00000000
 	.4byte 0x00000001
 	.4byte 0x00000002

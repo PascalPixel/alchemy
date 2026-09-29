@@ -2,6 +2,7 @@
 #include "DMA.H"
 #include "MAP.H"
 #include "RESOURCE_IDS.H"
+#include "RAM_BUFFER.H"
 extern u8 gMapCellBuffer[];
 extern u8 Data_03001cfc[];
 
@@ -42,9 +43,9 @@ void Map_LoadAreaGraphics(void)
     *(s16 *)buffer = value;
     Dma_Set(buffer, BG_PALETTE, 0x84000070, (volatile u32 *)0x040000d4);
     Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[1]), (void *)gBgTileBuffer);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), (void *)0x0203a000);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), (void *)0x0203c000);
-    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), (void *)0x0203e000);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[2]), Ram_BgTileBuffer + 0x2000);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[3]), Ram_BgTileBuffer + 0x4000);
+    Resource_DecodeType01((const void *)Resource_GetTableEntry(resources[4]), Ram_BgTileBuffer + 0x6000);
     *(s32 *)((u32)&Data_03001cfc) = (s32)Map_ShowBg1FromBuffer;
     ((struct MapWindow *)state)->top = 0;
     ((struct MapWindow *)state)->bottom = 159;

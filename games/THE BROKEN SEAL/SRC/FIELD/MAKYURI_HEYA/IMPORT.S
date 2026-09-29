@@ -92,6 +92,9 @@ Engine_MapAnimateCells:
 	.thumb_func
 Engine_MapCopyCellsTo:
 	overlay_veneer Map_CopyMetatileIndicesRectFar
+	.global DisplayBlend_DisableRunScript
+	.thumb_func
+DisplayBlend_DisableRunScript:
 	overlay_veneer DisplayBlend_DisableRunScriptFar
 	.global DisplayBlend_EnableRunScript
 	.thumb_func
@@ -129,6 +132,9 @@ Engine_MessageShowCentered:
 	.thumb_func
 UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
+	.global UiText_ShowCenteredMessage
+	.thumb_func
+UiText_ShowCenteredMessage:
 	overlay_veneer UiText_ShowCenteredMessageFar
 	.global Owner_GetState
 	.thumb_func
@@ -241,6 +247,9 @@ Engine_ActorStartRepeatedMotion:
 	.thumb_func
 Engine_ActorRunRepeatedMotion:
 	overlay_veneer Motion_SetVarCbAndRefreshFar
+	.global BattleFx_RunRisingObjectSequence
+	.thumb_func
+BattleFx_RunRisingObjectSequence:
 	overlay_veneer BattleFx_RunRisingObjectSequenceFar
 	overlay_veneer ObjectMotion_SetAngleTowardFar
 	.global Engine_ActorFaceEachOther
@@ -291,6 +300,9 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Engine_EventGetViewCenter
+	.thumb_func
+Engine_EventGetViewCenter:
 	overlay_veneer Battle_GetWorkObject1e0Far
 	.global Engine_EventRequestExit
 	.thumb_func
@@ -329,6 +341,9 @@ Engine_EventWaitForScreen:
 Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
 	overlay_veneer ObjectTable_GetFar
+	.global BattleFx_StartFadeOverlay
+	.thumb_func
+BattleFx_StartFadeOverlay:
 	overlay_veneer BattleFx_StartFadeOverlayFar
 	.global Engine_PsynergyPlayEffect
 	.thumb_func
@@ -354,6 +369,9 @@ Engine_PsynergyRaiseHands:
 	.thumb_func
 Engine_ActorWalkByAndWait:
 	overlay_veneer ObjectMotion_CommitPositionAndActivateFar
+	.global BattleFx_SetQueuedSoundAndPlay
+	.thumb_func
+BattleFx_SetQueuedSoundAndPlay:
 	overlay_veneer BattleFx_SetQueuedSoundAndPlayFar
 	.global BattleFx_PlayQueuedSound
 	.thumb_func

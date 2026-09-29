@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "EFFECT_STEP.H"
+#include "RAM_BUFFER.H"
 
 extern u8 gBattleFxWork[];
 
@@ -48,7 +49,7 @@ void BattlePresentation_DrawStreaks(void)
     frame = (*(s32 *)(work + 0x778c))++;
     if (frame == 0) {
         for (i = 0; i != 256; i++) {
-            struct Streak *seed = &((struct Streak *)0x02010000)[i];
+            struct Streak *seed = &((struct Streak *)Ram_MapCellBuffer)[i];
             s32 r = Random16() & 15;
 
             seed->head = r + 48;
@@ -62,7 +63,7 @@ void BattlePresentation_DrawStreaks(void)
     point.z = 0;
     i = 0;
     for (; i != 64; i++) {
-        streak = &((struct Streak *)0x02010000)[i];
+        streak = &((struct Streak *)Ram_MapCellBuffer)[i];
         if (frame > i / 4 && streak->head > 0) {
             s32 fade;
 

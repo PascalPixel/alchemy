@@ -292,4 +292,4 @@ AlchemyUncredited_080fa162:
 	.2byte	0x0000
 AlchemyUncreditedEnd_080fa162:
 	.4byte	0x03007ff0
-	.4byte	0x080fba14
+	.4byte	Sound_ClockLengths

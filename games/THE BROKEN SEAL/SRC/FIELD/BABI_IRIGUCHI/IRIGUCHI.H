@@ -1,6 +1,9 @@
 #ifndef IRIGUCHI_H
 #define IRIGUCHI_H
 
+/* The staged-actor code linked here names the imports by the main image's
+   names; the entrance's scenes reach them by the same names. */
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
@@ -62,6 +65,10 @@ struct Obj {
 
 /* The entrance's exits, in the overlay's data. */
 extern u8 gBabiIriguchiExits[];
+
+/* DOOR.C: the door of truth's two leaves slide apart or together. */
+void BabiIriguchi_OpenTruthDoor(void);
+void BabiIriguchi_CloseTruthDoor(void);
 
 /* The occupant one square ahead of an actor. */
 struct LevelCheckRecord *BabiIriguchi_FindActorAhead();
@@ -139,7 +146,7 @@ static __inline__ s32 Iriguchi_Divide(s32 dividend, s32 divisor)
 
 /* Contiguous unnamed leaf-owner run for resource_3c5. */
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
  * into a pseudo that the compiler then shares with later uses in the block.
  * A value-returning call also sets r0 last of its arguments. */

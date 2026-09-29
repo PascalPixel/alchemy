@@ -132,6 +132,9 @@ ObjectMotion_SetSpeedParameters:
 	.thumb_func
 Engine_ActorEnableActionCallback:
 	overlay_veneer ObjectMotion_EnableActionAndSetCallbackFar
+	.global Engine_ActorMoveToAndWait
+	.thumb_func
+Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func

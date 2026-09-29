@@ -1,7 +1,7 @@
 #include "TYPES.H"
+#include "SCENE_IDS.H"
 
 extern s16 gGameState[];
-extern u8 Value_0000007e;
 
 u8 *Engine_ActorGet();
 u8 *Engine_GameFlagIsSet();
@@ -29,7 +29,7 @@ void FieldScene_HandleEscapeColumn(void)
         s32 off = 448;
         slot = (s16 *) ((u8 *) gGameState + off);
     }
-    if (Engine_GameFlagIsSet(*slot + (0x8d2 - (s32) &Value_0000007e)) != 0) {
+    if (Engine_GameFlagIsSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6)) != 0) {
         return;                             /* handled by 0x02001214 instead */
     }
 
@@ -54,5 +54,5 @@ void FieldScene_HandleEscapeColumn(void)
 
     Engine_MapCopyCellAttributes(42, 10, 1, 1, column, 10);
 
-    Engine_GameFlagSet(*slot + (0x8d2 - (s32) &Value_0000007e));
+    Engine_GameFlagSet(*slot + (0x8d2 - (s32)&SceneId_TakaraShima6));
 }

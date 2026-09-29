@@ -5,14 +5,14 @@ SECTIONS
     .text 0x2008000 :
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/ENTRY.o"(.text)
-        "*/resource_3b9_overlay.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/GET_ENTRANCES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/TABLES.o"(.text)
-        "*/resource_3b9_overlay.o"(.text.x0200807c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/GET_TABLES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/DIALOGUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/BRANCHING_ACTOR_PRESENTATION.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/GATHER_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/STAGING.o"(.text)
-        "*/resource_3b9_overlay.o"(.text.x02009a14)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/SCENE_INIT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/SELECTOR.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/KORASHIAMU_IRIGUCHI/IMPORT.o"(.text)
         "*/resource_3b9_overlay.o"(.rodata)

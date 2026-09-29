@@ -7,7 +7,13 @@ GameFlagBytes:
 	.space 0x00000200
 	.global gPartyState
 gPartyState:
-	.space 0x00005610
+	.space 0x00002dd0
+	.global gOamBuckets
+gOamBuckets:
+	.space 0x000024c0
+	.global gObjAffineMatrices
+gObjAffineMatrices:
+	.space 0x00000380
 	.global Sound_Work
 Sound_Work:
 	.space 0x00000fb0

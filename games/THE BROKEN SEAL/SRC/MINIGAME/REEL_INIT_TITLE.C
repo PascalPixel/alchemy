@@ -3,6 +3,7 @@
 #include "UI.H"
 #include "EFFECT_STEP.H"
 #include "BATTLE_EFFECT_WORK.H"
+#include "RAM_BUFFER.H"
 
 /* The reel game's state block, the seventh heap-cache cell. */
 struct ReelWork {
@@ -42,7 +43,7 @@ void ReelGame_InitTitle(void)
     work = ((struct BattleEffectWork **)gBattleFxWork)[0];
     left = 0;
     for (i = 0; i != 0x800; i++)
-        ((struct EffectStep *)0x02010000)[i].variant = 0;
+        ((struct EffectStep *)Ram_MapCellBuffer)[i].variant = 0;
 
     letter = work->particles;
     y = -0x200000;

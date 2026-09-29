@@ -1,5 +1,8 @@
 #include "KAREI.H"
 
+extern u8 MsgKareiIncredibleOcean[];
+extern u8 MsgKareiReturnedTicketCost[];
+
 void SceneState_SetRuntimeWord448To521AndSend303(void)
 {
     u8 *state = Data_03001ebc;
@@ -59,7 +62,7 @@ void FieldScene_RunScene3aeSequenceA(void)
     Actor_WaitForMove(ACTOR_GERALD);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Event_Wait(20);
-    Event_SetMessage(0x1f89);
+    Event_SetMessage((s32)MsgKareiIncredibleOcean);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xa000, 0);
     Actor_SetSpeed(ACTOR_GERALD, 0x19999, 0xcccc);
     Actor_WalkToAndWait(ACTOR_GERALD, 232, 0x590);
@@ -149,7 +152,7 @@ void FieldScene_RunScene3aeSequenceB(void)
     GameFlag_Set(0x8ab);
     Event_Begin();
     Battle_ResetEffectCounter();
-    Event_SetMessage(0x23eb);
+    Event_SetMessage((s32)MsgKareiReturnedTicketCost);
     record = ((u8 *)Engine_ActorGet(11));
     none = 0;
     record[35] = none;

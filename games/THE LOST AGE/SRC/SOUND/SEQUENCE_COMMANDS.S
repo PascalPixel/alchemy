@@ -42,7 +42,7 @@ AlchemyUncreditedEnd_081c1732:
 .L_081c1748:
 	pop	{r0}
 	bx	lr
-	.4byte	0x081c343c
+	.4byte	Sound_CommandTableTemplate
 .L_081c1750:
 	ldr	r2, [r1, #64]
 .L_081c1752:

@@ -18,6 +18,9 @@ Engine_TaskAddCallback:
 	.thumb_func
 Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
+	.global Engine_RandomNext
+	.thumb_func
+Engine_RandomNext:
 	overlay_veneer Random16Far
 	.global Object_SetMode
 	.thumb_func

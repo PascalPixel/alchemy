@@ -58,6 +58,9 @@ Resource_DecodeType01:
 	overlay_veneer Owner_GetStateFar
 	overlay_veneer Func_08077018
 	overlay_veneer GameState_InitDefaultsFar
+	.global Engine_GameFlagIsSet
+	.thumb_func
+Engine_GameFlagIsSet:
 	overlay_veneer GameFlag_TestFar
 	overlay_veneer GameFlag_SetBitFar
 	overlay_veneer GameFlag_ClearBitFar

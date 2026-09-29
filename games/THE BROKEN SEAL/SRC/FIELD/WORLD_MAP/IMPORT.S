@@ -87,7 +87,13 @@ Engine_ObjectDispatchRelease:
 Engine_ObjectSetPosition:
 	overlay_veneer Object_SetMoveTargetFar
 	overlay_veneer Script_WaitForEventTimeoutFar
+	.global Map_LoadDefaultCellsAndUpdateBlock
+	.thumb_func
+Map_LoadDefaultCellsAndUpdateBlock:
 	overlay_veneer Map_LoadDefaultCellsAndUpdateBlockFar
+	.global Map_SetWindowCellTile
+	.thumb_func
+Map_SetWindowCellTile:
 	overlay_veneer Map_SetWindowCellTileFar
 	.global Engine_ActorSetSpriteFlags
 	.thumb_func
@@ -111,6 +117,9 @@ Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
 	overlay_veneer UiWork_PushValueSlotFar
 	overlay_veneer ItemIcon_LoadTilesFar
+	.global PaletteGlow_Update
+	.thumb_func
+PaletteGlow_Update:
 	overlay_veneer PaletteGlow_UpdateFar
 	.global Menu_AnimateSelectionToEntry
 	.thumb_func
@@ -139,6 +148,9 @@ GameFlag_SetByte:
 	overlay_veneer Djinn_AddToOwnerFar
 	overlay_veneer Trade_AddOfferFar
 	overlay_veneer Owner_RefreshActiveRatiosFar
+	.global PartyInventory_Discard
+	.thumb_func
+PartyInventory_Discard:
 	overlay_veneer PartyInventory_DiscardFar
 	.global Engine_EventWait
 	.thumb_func
@@ -152,6 +164,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global Engine_PartyGiveItem
+	.thumb_func
+Engine_PartyGiveItem:
 	overlay_veneer PartyInventory_GiveItemFar
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
@@ -183,6 +198,9 @@ Engine_ActorSetDestination:
 	.thumb_func
 Engine_ActorMoveToAndWait:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
+	.global Engine_ActorWalkTo
+	.thumb_func
+Engine_ActorWalkTo:
 	overlay_veneer ObjectMotion_ResetAndSetPositionInMode2Far
 	.global Engine_ActorWalkToAndWait
 	.thumb_func
@@ -249,6 +267,9 @@ Engine_EventShowMessageAndWait:
 	.thumb_func
 Engine_ActorFaceDirection:
 	overlay_veneer ObjectMotion_ArmCallbackFar
+	.global Engine_EventShowTwoMessagesAndWait
+	.thumb_func
+Engine_EventShowTwoMessagesAndWait:
 	overlay_veneer Battle_ShowPairedUnitWorkAndWaitFar
 	.global Engine_ActorShowEmote
 	.thumb_func
@@ -274,6 +295,9 @@ Engine_CameraMoveTo:
 	.thumb_func
 Engine_CameraWaitForMove:
 	overlay_veneer BattleFx_CommitObjectPositionAndWaitFar
+	.global Event_SetPairWork1c0
+	.thumb_func
+Event_SetPairWork1c0:
 	overlay_veneer Event_SetPairWork1c0Far
 	.global Engine_EventRequestExit
 	.thumb_func
@@ -311,6 +335,9 @@ Engine_EventCloseScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Engine_ItemShowFound
+	.thumb_func
+Engine_ItemShowFound:
 	overlay_veneer BattleFx_StartEffectObject22Far
 	.global Battle_SetObjectFlag5bWhenMode3
 	.thumb_func

@@ -10,6 +10,6 @@
 	overlay_veneer Func_020001d8
 	overlay_veneer SceneData_GetSceneTableA
 	overlay_veneer SceneData_GetSceneTableB
-	overlay_veneer Func_02000044
-	overlay_veneer Func_020001a8
+	overlay_veneer Scene_GetPlacements
+	overlay_veneer Scene_GetEvents
 	overlay_veneer SceneData_ReturnZero

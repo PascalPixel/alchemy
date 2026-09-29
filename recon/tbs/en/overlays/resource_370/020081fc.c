@@ -4,7 +4,10 @@
  * the constant 1 from its literal pool, as a link-time symbol does, which
  * this draft spells as the equate Value_00000001; a plain 1 compiles to
  * movs. Data_03001ae8 is gKeysHeld, and the code sequences and six state
- * halfwords need labels in the overlay's data before adopting. */
+ * halfwords need labels in the overlay's data before adopting. The pool
+ * word is 1 in all six editions, so it is no message number; nothing in the
+ * scene or resource tables explains a 1 stored as the codes' unlocked and
+ * held flags, and no name is chosen for its value alone (2026-09-29). */
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 

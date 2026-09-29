@@ -7,9 +7,11 @@ SECTIONS
     {
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/ENTRY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/ACTOR_VALUE.o"(.text)
-        "*/resource_3c3_overlay.o"(.text.x02008040)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/GET_ENTRANCES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/TABLES.o"(.text)
-        "*/resource_3c3_overlay.o"(.text.x0200808c)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/GET_PLACEMENTS.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/GET_EVENTS.o"(.text)
+        "*/resource_3c3_overlay.o"(.text.x02008124)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/GATE_SCENES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/SUHARA_GATE/IMPORT.o"(.text)
         "*/resource_3c3_overlay.o"(.rodata)

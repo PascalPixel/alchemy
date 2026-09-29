@@ -38,7 +38,13 @@ UiText_DrawNumberInWindow:
 	.thumb_func
 UiWork_PushValueSlot:
 	overlay_veneer UiWork_PushValueSlotFar
+	.global Inventory_Find
+	.thumb_func
+Inventory_Find:
 	overlay_veneer Inventory_FindFar
+	.global PartyInventory_FindOwner
+	.thumb_func
+PartyInventory_FindOwner:
 	overlay_veneer PartyInventory_FindOwnerFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -56,6 +62,9 @@ Engine_GameFlagClear:
 	.thumb_func
 Party_AdjustSixDigitCounterA:
 	overlay_veneer Party_AdjustSixDigitCounterAFar
+	.global Inventory_Discard
+	.thumb_func
+Inventory_Discard:
 	overlay_veneer Inventory_DiscardFar
 	.global Engine_EventWait
 	.thumb_func

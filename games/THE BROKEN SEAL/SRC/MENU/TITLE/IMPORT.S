@@ -14,15 +14,33 @@ Engine_TaskWait:
 	.thumb_func
 Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Runtime_BumpAllocateAlternatePool
+	.thumb_func
+Runtime_BumpAllocateAlternatePool:
 	overlay_veneer Runtime_BumpAllocateAlternatePoolFar
+	.global Sys_Free
+	.thumb_func
+Sys_Free:
 	overlay_veneer Sys_FreeFar
+	.global Resource_DecodeType01
+	.thumb_func
+Resource_DecodeType01:
 	overlay_veneer Resource_DecodeType01Far
+	.global VramBlock_LoadCached
+	.thumb_func
+VramBlock_LoadCached:
 	overlay_veneer VramBlock_LoadCachedFar
+	.global Resource_FindFreeEntry
+	.thumb_func
+Resource_FindFreeEntry:
 	overlay_veneer Resource_FindFreeEntryFar
 	.global Runtime_PushSlotEntry
 	.thumb_func
 Runtime_PushSlotEntry:
 	overlay_veneer Runtime_PushSlotEntryFar
+	.global Resource_GetTableEntry
+	.thumb_func
+Resource_GetTableEntry:
 	overlay_veneer Resource_GetTableEntryFar
 	overlay_veneer RuntimeDispatch_NoOpHookFar
 	overlay_veneer Blend_SetDarkenTarget16Far

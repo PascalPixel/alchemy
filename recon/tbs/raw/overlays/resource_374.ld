@@ -11,7 +11,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/STONE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/HELP_ADVICE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/RESTORE.o"(.text)
-        "*/resource_374_overlay.o"(.text.x02009274)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/GROUP_CHOREOGRAPHY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/SCENES.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_IE/IMPORT.o"(.text)
         "*/resource_374_overlay.o"(.rodata)

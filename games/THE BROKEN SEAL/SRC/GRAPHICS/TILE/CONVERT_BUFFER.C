@@ -1,6 +1,8 @@
 #include "TYPES.H"
 #include "IWRAM_CALL.H"
 #include "DMA.H"
+#include "RAM_BUFFER.H"
+extern u8 gMapCellBuffer[];
 
 extern const u8 Func_0800a37c[];
 
@@ -30,7 +32,7 @@ void Tilemap_ConvertBuffer(void)
        transfer that uses it */
     do {
         saved = (u8 *)Runtime_BumpAllocateAlternatePool(size);
-        CopyWords(saved, (const void *)0x02010000, size);
+        CopyWords(saved, Ram_MapCellBuffer, size);
     } while (0);
     {
         u32 code_size = (u32)Tile_ConvertMapCodeSize;
@@ -41,7 +43,7 @@ void Tilemap_ConvertBuffer(void)
                     (volatile u32 *)0x040000d4);
         } while (0);
     }
-    routine((void *)0x02018000, (const void *)0x02010000, saved);
+    routine((gMapCellBuffer + 0x8000), Ram_MapCellBuffer, saved);
     Runtime_BumpFree(routine);
     Runtime_BumpFree(saved);
 }

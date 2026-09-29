@@ -1,4 +1,5 @@
 #include "MAP.H"
+#include "RAM_BUFFER.H"
 
 extern struct MapState *gMapWork;
 
@@ -42,7 +43,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
         ((u32)(x_step / 4) & 1);
 
     tile = *(u8 *)(0x06005000 + cell);
-    packed_pixels = *(u8 *)(0x0202c800 + ((u32)tile << 3) + pixel_offset);
+    packed_pixels = *(Ram_MapCollision + 0x800 + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
         if ((u32)x_step & 2)
             result = packed_pixels >> 4;
@@ -54,7 +55,7 @@ s32 GetWorldMapCollision(struct WorldPosition *position)
 
     /* 前面が空なら背面マップを調べる。 */
     tile = *(u8 *)(0x06004000 + cell);
-    packed_pixels = *(u8 *)(0x0202c000 + ((u32)tile << 3) + pixel_offset);
+    packed_pixels = *(Ram_MapCollision + ((u32)tile << 3) + pixel_offset);
     if (packed_pixels != 0) {
         if ((u32)x_step & 2)
             result = packed_pixels >> 4;

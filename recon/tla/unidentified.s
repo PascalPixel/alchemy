@@ -96,7 +96,10 @@ Data_08128844:
 	.section .unidentified.081ba30c,"a"
 	.incbin "baserom.gba", 0x001ba30c, 0x00005cf4
 	.section .unidentified.081c342e,"a"
-	.incbin "baserom.gba", 0x001c342e, 0x0000009e
+	.incbin "baserom.gba", 0x001c342e, 0x0000000e
+	.global Sound_CommandTableTemplate
+Sound_CommandTableTemplate:
+	.incbin "baserom.gba", 0x001c343c, 0x00000090
 	.global Sound_PcmPitchCodes
 Sound_PcmPitchCodes:
 	.incbin "baserom.gba", 0x001c34cc, 0x000000b4
@@ -114,7 +117,10 @@ Sound_CgbFrequencySteps:
 	.incbin "baserom.gba", 0x001c364c, 0x00000018
 	.global Sound_NoisePitchCodes
 Sound_NoisePitchCodes:
-	.incbin "baserom.gba", 0x001c3664, 0x00000080
+	.incbin "baserom.gba", 0x001c3664, 0x0000004c
+	.global Sound_ClockLengths
+Sound_ClockLengths:
+	.incbin "baserom.gba", 0x001c36b0, 0x00000034
 	.global Sound_ExtendedCommandTable
 Sound_ExtendedCommandTable:
 	.incbin "baserom.gba", 0x001c36e4, 0x00000030

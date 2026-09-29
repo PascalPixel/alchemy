@@ -18,6 +18,9 @@ Engine_TaskWait:
 	.thumb_func
 Engine_TaskAddCallback:
 	overlay_veneer Scheduler_AddOrUpdateCallbackFar
+	.global Engine_TaskRemoveCallback
+	.thumb_func
+Engine_TaskRemoveCallback:
 	overlay_veneer Scheduler_RemoveCallbackFar
 	.global Engine_RandomNext
 	.thumb_func
@@ -157,19 +160,34 @@ Engine_ActorShowEmote:
 	.thumb_func
 Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
+	.global Engine_CameraMoveTo
+	.thumb_func
+Engine_CameraMoveTo:
 	overlay_veneer Motion_CamBoundsFar
+	.global Event_SetPairWork1c0
+	.thumb_func
+Event_SetPairWork1c0:
 	overlay_veneer Event_SetPairWork1c0Far
 	overlay_veneer BattleFx_SetWeightedResultFar
 	.global BattleFx_SetPhaseRequest
 	.thumb_func
 BattleFx_SetPhaseRequest:
 	overlay_veneer BattleFx_SetPhaseRequestFar
+	.global Engine_EventCloseScreen
+	.thumb_func
+Engine_EventCloseScreen:
 	overlay_veneer Event_ClearStatus1c6Far
+	.global Engine_EventWaitForScreen
+	.thumb_func
+Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
 	.global Engine_MapObjectSetPosition
 	.thumb_func
 Engine_MapObjectSetPosition:
 	overlay_veneer EffectRuntime_SetCurrentPositionFar
+	.global BattleFx_EmitRandomParticle
+	.thumb_func
+BattleFx_EmitRandomParticle:
 	overlay_veneer BattleFx_EmitRandomParticleFar
 	.global QueueSceneSound
 	.thumb_func

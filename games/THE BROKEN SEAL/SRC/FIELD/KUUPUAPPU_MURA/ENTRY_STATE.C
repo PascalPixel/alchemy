@@ -1,4 +1,6 @@
 #include "TYPES.H"
+s32 ActorPresentation_UpdateEntityFromLeader();
+s32 SceneActor_UpdateProximityToLeader();
 extern u8 MsgKuupuappuWelcomeBackTwo[];
 
 s32 Engine_GameFlagIsSet();
@@ -72,13 +74,13 @@ s32 KuupuappuMura_RestoreEntryState(void)
     zero = 0;
     record = Engine_ActorGet(14);
     *(u16 *)(record + 100) = v7;
-    *(s32 *)(record + 108) = 0x2008315;
+    *(s32 *)(record + 108) = (s32)SceneActor_UpdateProximityToLeader;
     record = Value1(Engine_ActorGet, 15);
     *(u16 *)(record + 100) = zero;
     /* FAKEMATCH: the empty loop keeps the halfword store ahead of the
      * script-pointer store, as in the reference schedule. */
     do { } while (0);
-    *(s32 *)(record + 108) = 0x2008315;
+    *(s32 *)(record + 108) = (s32)SceneActor_UpdateProximityToLeader;
     if (Value1(Engine_GameFlagIsSet, 0x858) != 0) {
         Call3(Engine_ActorSetPosition, 19, 0xd80000, 0x1880000);
     }
@@ -86,7 +88,7 @@ s32 KuupuappuMura_RestoreEntryState(void)
     if (Value1(Engine_GameFlagIsSet, 0x855) == 0) {
         if ((v7 & rec7) != 0) {
             record = Engine_ActorGet(21);
-            *(s32 *)(record + 108) = 0x20083ad;
+            *(s32 *)(record + 108) = (s32)ActorPresentation_UpdateEntityFromLeader;
         }
     }
     if (gGameState[225] <= 2) {

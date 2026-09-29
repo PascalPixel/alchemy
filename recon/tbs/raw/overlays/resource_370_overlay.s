@@ -236,45 +236,7 @@ Func_020001fc:
 	pop {r5, r6, r7}
 	pop {r0}
 	bx r0
-	.section .text.x02008384,"ax",%progbits
-	.p2align 2
-	.global Func_02000384
-	.thumb_func
-Func_02000384:
-	push {lr}
-	movs r0, #162
-	lsls r0, r0, #1
-	bl 0x02009454
-	cmp r0, #0
-	bne .L_02000384_0
-	movs r0, #0
-	b .L_02000384_1
-.L_02000384_0:
-	ldr r1, [pc, #40]
-	ldr r2, [pc, #40]
-	adds r3, r2, r1
-	movs r1, #0
-	ldrsh r3, [r3, r1]
-	movs r0, #0
-	cmp r3, #2
-	beq .L_02000384_1
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r2, r1
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	ldr r2, [pc, #20]
-	eors r3, r2
-	negs r0, r3
-	orrs r0, r3
-	lsrs r0, r0, #31
-	negs r0, r0
-.L_02000384_1:
-	pop {r1}
-	bx r1
-	.4byte 0x0000023e
-	.4byte 0x02000240
-	.4byte 0x00000002
+	.section .text.x020083cc,"ax",%progbits
 	.global Func_020003cc
 	.thumb_func
 Func_020003cc:

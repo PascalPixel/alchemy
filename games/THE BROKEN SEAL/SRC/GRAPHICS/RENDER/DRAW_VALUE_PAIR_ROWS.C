@@ -1,4 +1,7 @@
 #include "TYPES.H"
+extern const u8 Ui_PpString[];
+extern const u8 Ui_SlashString[];
+extern const u8 Ui_HpString[];
 
 void UiText_DrawStringAtOffsetFar(s32 image, s32 layer, s32 x, s32 y);
 void UiText_DrawStringInWindowFar(s32 image, s32 layer, s32 x, s32 y);
@@ -9,8 +12,8 @@ void Ui_DrawValuePairRows(void *obj, s32 layer)
 {
     s16 val;
 
-    UiText_DrawStringAtOffsetFar(0x080af210, layer, 0, 40);
-    UiText_DrawStringInWindowFar(0x080af214, layer, 48, 40);
+    UiText_DrawStringAtOffsetFar((s32)Ui_HpString, layer, 0, 40);
+    UiText_DrawStringInWindowFar((s32)Ui_SlashString, layer, 48, 40);
     val = *(s16 *)((u8 *)obj + 52);
     UiText_DrawNumberRightAlignedFar(val, layer, 88, 40);
     val = *(s16 *)((u8 *)obj + 56);
@@ -22,8 +25,8 @@ void Ui_DrawValuePairRows(void *obj, s32 layer)
     }
     UiText_DrawNumberRightAlignedFar(val, layer, 48, 40);
     UiWork_SetParamNibbleFar(15);
-    UiText_DrawStringAtOffsetFar(0x080af218, layer, 0, 48);
-    UiText_DrawStringInWindowFar(0x080af214, layer, 48, 48);
+    UiText_DrawStringAtOffsetFar((s32)Ui_PpString, layer, 0, 48);
+    UiText_DrawStringInWindowFar((s32)Ui_SlashString, layer, 48, 48);
     val = *(s16 *)((u8 *)obj + 58);
     UiText_DrawNumberRightAlignedFar(val, layer, 48, 48);
     val = *(s16 *)((u8 *)obj + 54);

@@ -296,7 +296,6 @@ typedef struct OrbitingSceneObject {
     u8 padding_62[10];
     u32 callback;
 } OrbitingSceneObject;
-extern u8 Value_0000007e;
 union GameStateRows {
     s16 halves[512][1];
 };
@@ -310,7 +309,7 @@ void FieldScene_RunScene3b2SequenceA(void)
     s32 record;
 
     rec8 = Actor_Get(8);
-    rec7 = GameFlag_IsSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8d2 - (s32)&Value_0000007e)));
+    rec7 = GameFlag_IsSet((((union GameStateRows *)&gGameState)->halves[224][0] + (0x8d2 - (s32)&SceneId_TakaraShima6)));
     if (rec7 != 0) {
         Actor_SetPosition(8, 0x28a0000, 0xa80000);
         *(volatile s32 *)((s32)rec8 + 12) = -0x200000;

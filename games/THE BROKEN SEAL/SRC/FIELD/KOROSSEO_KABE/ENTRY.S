@@ -7,7 +7,7 @@
 	.thumb
 	.include "games/THE BROKEN SEAL/SRC/SYSTEM/OVERLAY.INC"
 	.balign 4
-	overlay_veneer Func_02000bd4
+	overlay_veneer KorosseoKabe_ApplyEntryState
 	overlay_veneer Scene_GetEntrances
 	overlay_veneer Scene_GetExits
 	overlay_veneer Scene_GetPlacements

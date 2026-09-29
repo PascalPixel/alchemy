@@ -1,125 +1,73 @@
 #include "TYPES.H"
+#include "FIELD_EVENT.H"
+#include "FIELD_SCENE.H"
+
 extern u8 MsgKuupuappuWontGoAway[];
-extern struct EventWork *gEventWork;
 
-extern u8 Data_00000015[];
-extern u8 Data_02000240[];
-void Func_02007458();
-void Func_020074a2();
-void Func_020074f2();
-void Func_0200750e();
-void Func_0200751c();
-void Func_02007538();
-void Func_0200756c();
-void Func_02007ae8();
-void Func_02007b3a();
-void Func_02007b8e();
-void Func_02007b9c();
-void Func_02007baa();
-void Func_02007bce();
-void Func_02007bdc();
-void Func_02007be2();
-void Func_02007bea();
-void Func_02007bf8();
-void Func_02007c16();
-void Func_02007c22();
-void Func_02007c2e();
-void Func_02007c5e();
-void Func_02007c62();
-void Func_02007c64();
-void Func_02007c70();
-void Func_02007c7c();
-void Func_02007c9c();
-void Func_02007caa();
-void Func_02007cac();
-void Func_02007cb2();
-void Func_02007cba();
-void Func_02007cc6();
-void Func_02007cce();
-void Func_02007ce8();
-void Func_02007d34();
-void Func_02007d40();
-void Func_02007d4c();
-void Func_02007d5c();
-void Func_02007dc6();
-void Func_02007dd6();
-void Func_02007dd8();
+void SceneState_SetWord1c0To209AndRun(void);
+void SceneActor_SetModeZeroAndValue(s32 actor, s32 frames);
+void SceneActor_SetPairZeroAndValue(s32 actor, s32 other, s32 frames);
+void SceneEffect_ApplyThreeValuesAndFinish(s32 actor, s32 animation, s32 frames);
+void Party_SetFields1ceAnd1d0(s32 scene, s32 entrance);
+void Event_SetPair1d4(s32 scene, s32 entrance);
+void BattleFx_SetWeightedResult(s32 first, s32 second);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
-static __inline__ void Call1(void (*f)(), s32 a0)
-{
-    f(a0);
-}
-
-static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
-{
-    f(a0, a1, a2);
-}
-void Func_02007bf8_a();
-void Func_02007bf8_b();
-
+/* The Vault house scene in which the three villagers will not go away:
+   they and the party are placed and turned, the screen opens, the three
+   argue in turn, and the scene closes back into the same house, entrance
+   17, with entrance 16 kept as the one to return to. */
 void KuupuappuHeya_RunVaultEvent(void)
 {
-    s32 record;
-    s32 base5_3001ebc;
-    s32 base3_2000240;
+    u8 *state;
 
-    Call3(Func_02007b8e, 10, 0x3180000, 0x1a00000);
-    Call3(Func_02007b9c, 11, 0x3200000, 0x1900000);
-    Call3(Func_02007baa, 12, 0x3080000, 0x1a00000);
-    Call3(Func_02007c16, 10, 0x3000, 0);
-    Call3(Func_02007c22, 11, 0x3000, 0);
-    Call3(Func_02007c2e, 12, 0x3000, 0);
-    Call3(Func_02007bdc, 0, 0x3180000, 0x1b80000);
-    Call3(Func_02007bea, 1, 0x3280000, 0x1b00000);
-    Call3(Func_02007bf8_a, 2, 0x3180000, 0x1c80000);
-    Call3(Func_02007c64, 0, 0xc000, 0);
-    Call3(Func_02007c70, 1, 0xb000, 0);
-    Call3(Func_02007c7c, 2, 0xb000, 0);
-    /* FAKEMATCH: the do/while orders this call against the store below. */
+    Actor_SetPosition(10, 0x3180000, 0x1a00000);
+    Actor_SetPosition(11, 0x3200000, 0x1900000);
+    Actor_SetPosition(12, 0x3080000, 0x1a00000);
+    Actor_FaceDirection(10, 0x3000, 0);
+    Actor_FaceDirection(11, 0x3000, 0);
+    Actor_FaceDirection(12, 0x3000, 0);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0x3180000, 0x1b80000);
+    Actor_SetPosition(1, 0x3280000, 0x1b00000);
+    Actor_SetPosition(2, 0x3180000, 0x1c80000);
+    Actor_FaceDirection(ACTOR_PARTY_LEADER, 0xc000, 0);
+    Actor_FaceDirection(1, 0xb000, 0);
+    Actor_FaceDirection(2, 0xb000, 0);
+    Actor_FaceActor(8, 10, 0);
+    gEventWork->start_transition = 0x209;
+    Camera_FollowActor(0, 0);
+    Camera_WaitForMove();
+    Map_Redraw();
+    Task_Wait(1);
+    gEventWork->transition_frames = 32;
+    SceneState_SetWord1c0To209AndRun();
+    Event_Wait(60);
+    Event_SetMessage((s32)MsgKuupuappuWontGoAway);
+    Actor_RunRepeatedMotion(11, 1);
+    Event_Wait(20);
+    SceneActor_SetModeZeroAndValue(11, 30);
+    Actor_RunRepeatedMotion(12, 1);
+    Event_Wait(20);
+    Event_ShowMessage(12, 0);
+    SceneActor_SetPairZeroAndValue(10, 11, 30);
+    Actor_SetAnimation(10, 3);
+    SceneEffect_ApplyThreeValuesAndFinish(11, 3, 30);
+    SceneActor_SetPairZeroAndValue(10, 12, 30);
+    Actor_SetAnimation(10, 3);
+    SceneEffect_ApplyThreeValuesAndFinish(12, 3, 40);
+    Actor_FaceDirection(10, 0x3000, 0);
+    Actor_FaceDirection(11, 0x3000, 0);
+    Actor_FaceDirection(12, 0x3000, 0);
+    Event_Wait(20);
+    SceneEffect_ApplyThreeValuesAndFinish(10, 4, 20);
+    Event_ShowMessage(10, 0);
+    gEventWork->start_transition = 0x200;
+    Party_SetFields1ceAnd1d0((s32)&SceneId_KuupuappuHeya, 17);
+    Event_SetPair1d4((s32)&SceneId_KuupuappuHeya, 16);
+    state = (u8 *)&gGameState;
+    /* FAKEMATCH: the do-while puts the state's address in a block of its
+       own, so it is loaded ahead of the byte's offset. */
     do {
-        Func_02007c5e(8, 10, 0);
-    } while (0);
-    base5_3001ebc = (u32)&gEventWork;
-    *(s32 *)(*(s32 *)base5_3001ebc + 0x1c0) = 0x209;
-    Func_02007cba(0, 0);
-    Func_02007cce();
-    Func_02007b3a();
-    Func_02007ae8(1);
-    *(s32 *)((*(s32 *)base5_3001ebc + 0x1c8)) = 32;
-    Func_02007458();
-    Func_02007bce(60);
-    Call1(Func_02007cac, (s32)MsgKuupuappuWontGoAway);
-    Func_02007c9c(11, 1);
-    Func_02007be2(20);
-    Func_020074a2(11, 30);
-    Func_02007cb2(12, 1);
-    Func_02007bf8_b(20);
-    Func_02007ce8(12, 0);
-    Func_020074f2(10, 11, 30);
-    Func_02007caa(10, 3);
-    Func_0200751c(11, 3, 30);
-    Func_0200750e(10, 12, 30);
-    Func_02007cc6(10, 3);
-    Func_02007538(12, 3, 40);
-    Call3(Func_02007d34, 10, 0x3000, 0);
-    Call3(Func_02007d40, 11, 0x3000, 0);
-    Call3(Func_02007d4c, 12, 0x3000, 0);
-    Func_02007c62(20);
-    Func_0200756c(10, 4, 20);
-    Func_02007d5c(10, 0);
-    *(s32 *)(*(s32 *)base5_3001ebc + 0x1c0) = 0x200;
-    Func_02007dc6((s32)Data_00000015, 17);
-    /* FAKEMATCH: 0x15 comes from the literal pool through a link symbol,
-     * and the do/while keeps the flag store before the last call. */
-    Func_02007dd6((s32)Data_00000015, 16);
-    base3_2000240 = (s32)Data_02000240;
-    do {
-        *(u8 *)((base3_2000240 + 0x22b)) = 3;
-        Func_02007dd8(12, 5);
+        state[0x22b] = 3;
+        BattleFx_SetWeightedResult(12, 5);
     } while (0);
 }

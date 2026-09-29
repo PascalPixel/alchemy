@@ -1,0 +1,124 @@
+#include "STORY.H"
+extern u8 MsgWorldMapSukuretaHowLongWillIsland[];
+
+extern u8 gPresentGuide9[];
+extern u8 gPresentGuide8[];
+extern u8 gPresentGuide5[];
+
+/* Entrance 80's scene: Jasmine and Sukureta talk on the world map until
+   actor 9 arrives and guides them off; it ends by sending the game to the
+   title scene's entrance 10. */
+void FieldScene_RunActorPresentationSequence(void)
+{
+    u8 *state = (u8 *)&gGameState;
+
+    PaletteGlow_Update(state[0x205], state[0x206]);
+    Event_Begin();
+    BattleFx_ScheduleRatioTransition(0x10000, 0x12c);
+    Camera_MoveTo(-1, -1, -1, 0);
+    Actor_SetAnimation(ACTOR_JASMINE, 19);
+    Actor_SetAnimation(8, 5);
+    Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
+    Task_Wait(1);
+    BattleFx_ScheduleRatioTransition(0x18000, 16);
+    gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+    ColorBuffer_ApplyTarget(0x10003, 1);
+    *(s32 *)((u8 *)gEventWork + 0x1c8) = 16;
+    Event_OpenScreen();
+    Event_WaitForDisplayField358Clear();
+    Battle_SetObjectFlag5bWhenMode3();
+    Event_Wait(40);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
+    Event_Wait(20);
+    Event_SetMessage((s32)MsgWorldMapSukuretaHowLongWillIsland);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Actor_RunRepeatedMotion(8, 2);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(8, 0, 20);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x107, 20);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Actor_ShowEmote(8, 0x105, 80);
+    Event_ShowMessageAndWait(8, 0, 10);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Actor_ShowEmote(8, 0x105, 100);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x105, 40);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 20);
+    Event_ShowMessageAndWait(8, 0, 10);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x102, 20);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 10);
+    Actor_SetAttachedEffect(8, 0x102);
+    Event_Wait(80);
+    Event_ShowMessageAndWait(8, 0, 20);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x105, 80);
+    Event_ShowMessageAndWait(8, 0, 120);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 1);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 40);
+    Event_ShowMessageAndWait(8, 0, 20);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x105, 40);
+    Event_ShowMessageAndWait(ACTOR_JASMINE, 0, 120);
+    Actor_SetSpeed(9, 0x6666, 0x3333);
+    Actor_SetPosition(9, 0x1ddc0000, 0xd840000);
+    Actor_WalkToAndWait(9, 0x1d94, 0xd8c);
+    Actor_WalkToAndWait(9, 0x1d88, 0xda0);
+    Event_Wait(20);
+    Event_ShowMessageAndWait(0x6009, 0, 20);
+    Actor_ShowEmote(8, 0x101, 0);
+    Actor_ShowEmote(ACTOR_JASMINE, 0x101, 60);
+    Actor_SetAnimationAndWait(9, 3);
+    Event_ShowMessage(0x6009, 0);
+    Map_LoadDefaultCellsAndUpdateBlock();
+    Event_Wait(20);
+    Actor_EnableActionCallback(9, gPresentGuide9);
+    Event_Wait(80);
+    Actor_SetAnimation(8, 1);
+    Actor_Jump(8, 4, 40);
+    Actor_SetAnimation(ACTOR_JASMINE, 1);
+    Actor_Jump(ACTOR_JASMINE, 4, 60);
+    Actor_FaceDirection(8, 0x3000, 0);
+    Actor_FaceDirection(ACTOR_JASMINE, 0xb000, 40);
+    Actor_SetSpeed(8, 0x9999, 0x4ccc);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x9999, 0x4ccc);
+    Actor_EnableActionCallback(8, gPresentGuide8);
+    Event_Wait(20);
+    Camera_SetSpeed(0xb333, 0x1666);
+    Camera_MoveTo(0x1e380000, -1, 0xdc80000, 1);
+    Engine_ActorEnableActionCallback(5, gPresentGuide5);
+    do {
+        Actor_SetAnimation(10, 6);
+        Actor_SetAnimation(6, 8);
+        Task_Wait(1);
+    } while (*(s16 *)((u8 *)Engine_ActorGet(5) + 100) == 0);
+    Event_Wait(20);
+    Actor_FaceDirection(9, 0x8000, 20);
+    Actor_SetAttachedEffect(8, 0x102);
+    Actor_SetAttachedEffect(ACTOR_JASMINE, 0x102);
+    Event_Wait(40);
+    Battle_SetObjectFlag5bWhenMode3();
+    Call11(Engine_EventShowTwoMessagesAndWait, 5, 7, 13, 2, 12, 8, 9, 4, 4, 3, 0);
+    Event_Wait(20);
+    Map_LoadDefaultCellsAndUpdateBlock();
+    Camera_SetSpeed(0x10000, 0x2000);
+    Camera_MoveTo(0x1e580000, -1, 0xdc80000, 1);
+    Actor_FaceDirection(9, 0x3000, 0);
+    Actor_SetSpeed(8, 0x19999, 0xcccc);
+    Actor_SetSpeed(ACTOR_JASMINE, 0x19999, 0xcccc);
+    Actor_WalkTo(8, 0x1e7c, 0xdb8);
+    Actor_WalkToAndWait(ACTOR_JASMINE, 0x1e6c, 0xdd8);
+    Actor_SetAnimation(8, 1);
+    Battle_SetObjectFlag5bWhenMode3();
+    Event_Wait(80);
+    Actor_RunRepeatedMotion(8, 1);
+    Event_ShowMessageAndWait(8, 0, 20);
+    Actor_RunRepeatedMotion(ACTOR_JASMINE, 2);
+    Event_ShowMessageAndWait(0x1005, 0, 40);
+    Actor_FaceDirection(8, 0x8000, 20);
+    Actor_StartRepeatedMotion(8, 2);
+    Event_ShowMessageAndWait(8, 0, 60);
+    Map_LoadDefaultCellsAndUpdateBlock();
+    Audio_PlayCue(17);
+    ColorBuffer_ApplyTarget(0, 0);
+    ColorBuffer_Interpolate(120);
+    Task_Wait(120);
+    Event_SetPairWork1c0((s32)&SceneId_Title, 10);
+}

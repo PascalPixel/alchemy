@@ -214,4 +214,4 @@ AlchemyUncreditedEnd_0813b9a0:
 	stm	r4, {r5, r6}
 	pop	{r5, r6, r7, r8, r9, sl, fp}
 	bx	lr
-	.4byte	0x0300049c
+	.4byte	gTransformTranslation

@@ -1,170 +1,5 @@
 .syntax unified
 	.thumb
-	.section .text.x02008328,"ax",%progbits
-	.balign 4
-	.global Func_02000328
-	.thumb_func
-Func_02000328:
-	push {r5, r6, lr}
-	movs r0, #0
-	bl 0x020095a0
-	movs r2, #128
-	ldrh r3, [r0, #6]
-	lsls r2, r2, #6
-	adds r3, r3, r2
-	ldr r2, [pc, #44]
-	ands r3, r2
-	lsls r3, r3, #16
-	asrs r5, r3, #16
-	bl 0x02009580
-	ldr r0, [pc, #36]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_02000328_0
-	ldr r0, [pc, #32]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_02000328_1
-	ldr r0, [pc, #24]
-	bl 0x02009618
-	movs r0, #12
-	movs r1, #0
-	bl 0x02009620
-	b .L_02000328_2
-	.4byte 0xffffc000
-	.4byte 0x000008a7
-	.4byte 0x000008a9
-	.4byte 0x00001d23
-.L_02000328_1:
-	ldr r5, [pc, #292]
-	adds r0, r5, #0
-	bl 0x02009618
-	movs r1, #0
-	movs r0, #12
-	bl 0x02009620
-	movs r0, #0
-	movs r1, #0
-	bl 0x02009598
-	cmp r0, #0
-	bne .L_02000328_3
-	movs r0, #10
-	bl 0x02009578
-	adds r0, r5, #1
-	bl 0x02009618
-	movs r0, #12
-	movs r1, #0
-	bl 0x02009628
-	movs r2, #161
-	movs r0, #12
-	movs r1, #88
-	lsls r2, r2, #3
-	bl 0x020095c8
-	movs r1, #128
-	movs r0, #12
-	lsls r1, r1, #7
-	movs r2, #0
-	bl 0x02009640
-	movs r0, #20
-	bl 0x02009578
-	ldr r0, [pc, #220]
-	bl 0x02009558
-	b .L_02000328_2
-.L_02000328_3:
-	adds r0, r5, #2
-	bl 0x02009618
-	movs r0, #12
-	movs r1, #0
-	bl 0x02009628
-	b .L_02000328_2
-.L_02000328_0:
-	movs r2, #128
-	lsls r3, r5, #16
-	lsls r2, r2, #24
-	cmp r3, r2
-	bne .L_02000328_4
-	ldr r0, [pc, #188]
-	bl 0x02009618
-	movs r0, #12
-	movs r1, #0
-	bl 0x02009628
-	ldr r0, [pc, #180]
-	bl 0x02009550
-	cmp r0, #0
-	beq .L_02000328_5
-	movs r0, #235
-	bl 0x02009548
-	movs r1, #235
-	adds r5, r0, #0
-	bl 0x02009540
-	movs r1, #3
-	adds r6, r0, #0
-	movs r0, #12
-	bl 0x020095e8
-	movs r2, #161
-	movs r0, #12
-	movs r1, #88
-	lsls r2, r2, #3
-	bl 0x020095c8
-	movs r1, #128
-	movs r0, #12
-	lsls r1, r1, #7
-	movs r2, #0
-	bl 0x02009640
-	ldr r3, [pc, #124]
-	ldr r2, [r3]
-	movs r3, #236
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	movs r0, #12
-	movs r1, #0
-	bl 0x02009628
-	adds r1, r6, #0
-	adds r0, r5, #0
-	bl 0x02009570
-	ldr r0, [pc, #96]
-	bl 0x02009558
-	movs r0, #0
-	bl 0x020095a0
-	movs r2, #10
-	ldrsh r1, [r0, r2]
-	movs r2, #163
-	movs r0, #0
-	lsls r2, r2, #3
-	bl 0x020095c8
-	movs r2, #163
-	movs r0, #0
-	movs r1, #72
-	lsls r2, r2, #3
-	bl 0x020095c8
-	movs r2, #163
-	movs r0, #12
-	movs r1, #88
-	lsls r2, r2, #3
-	bl 0x020095c8
-	movs r0, #12
-	movs r1, #0
-	movs r2, #0
-	bl 0x02009640
-	b .L_02000328_2
-.L_02000328_5:
-	movs r0, #12
-	movs r1, #0
-	bl 0x02009628
-.L_02000328_2:
-	bl 0x02009588
-.L_02000328_4:
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.4byte 0x00001d20
-	.4byte 0x000008a9
-	.4byte 0x00001d16
-	.4byte 0x000008a5
-	.4byte 0x03001ebc
-	.4byte 0x000008a7
 	.section .rodata.part1,"a",%progbits
 	.global KareiTorebi_LeaveCells1
 KareiTorebi_LeaveCells1:
@@ -713,7 +548,7 @@ gKareiTorebiEvents1:
 	.4byte 0x00000004
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte SceneDialogue_ShowLine1CF8
+	.4byte KareiTorebi_AskGoToTolbi
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001cfb
@@ -819,13 +654,13 @@ gKareiTorebiEvents3:
 	.4byte FieldScene_RunScene3ae_02000144
 	.4byte 0x00000000
 	.4byte 0xffff0008
-	.4byte SceneDialogue_RunActor8Message1f09
+	.4byte KareiTorebi_TalkScaryTrip
 	.4byte 0x00000000
 	.4byte 0xffff0009
 	.4byte 0x00001f0c
 	.4byte 0x00000000
 	.4byte 0xffff000a
-	.4byte SceneDialogue_RunActor10Message1f15
+	.4byte KareiTorebi_TalkSeasickTourists
 	.4byte 0x00000000
 	.4byte 0xffff000b
 	.4byte FieldScene_RunScene3ae_020006c8

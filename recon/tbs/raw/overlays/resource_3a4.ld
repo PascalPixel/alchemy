@@ -32,7 +32,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/MARKER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/SETTLE_MOUNT.o"(.text)
         "*/resource_3a4_overlay.o"(.text.x0200b5a8)
-        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/TURN_B.o"(.text)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/TURN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/CUE288.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLL_STEP.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/ARUTIN_YAMA/ROLL_OBJECT.o"(.text)

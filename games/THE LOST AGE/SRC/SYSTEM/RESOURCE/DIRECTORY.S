@@ -195,71 +195,71 @@ Resource_DirectoryTable:
 	resource , Resource_Data0B3
 	resource , Resource_Data0B4
 	resource , Resource_Data0B5
-	resource , Resource_Data0B6
-	resource , Resource_Data0B7
+	resource , BattleFx_CharmRingSheet
+	resource , BattleFx_WhirlBeamSheet
 	resource , Resource_Data0B8
 	resource , Resource_Data0B9
 	resource , Resource_Data0BA
 	resource , Resource_Data0BB
-	resource , Resource_Data0BC
-	resource , Resource_Data0BD
-	resource , Resource_Data0BE
-	resource , Resource_Data0BF
-	resource , Resource_Data0C0
+	resource , BattleFx_ThinBoltSheet
+	resource , BattleFx_BoltSheet
+	resource , BattleFx_CurseSealSheet
+	resource , BattleFx_CrackedTextureSheet
+	resource , BattleFx_CrossTextureSheet
 	resource , Resource_Data0C1
 	resource , Resource_Data0C2
 	resource , Resource_Data0C3
 	resource , Resource_Data0C4
-	resource , Resource_Data0C5
-	resource , Resource_Data0C6
-	resource , Resource_Data0C7
+	resource , BattleFx_PetalSheet
+	resource , BattleFx_CrescentRowSheet
+	resource , BattleFx_RuneCircleSheet
 	resource , Resource_Data0C8
 	resource , Resource_Data0C9
 	resource , Resource_Data0CA
 	resource , Resource_Data0CB
-	resource , Resource_Data0CC
-	resource , Resource_Data0CD
+	resource , BattleFx_CloudSwirlSheet
+	resource , BattleFx_DustBlobSheet
 	resource , Resource_Data0CE
 	resource , Resource_Data0CF
 	resource , Resource_Data0D0
-	resource , Resource_Data0D1
+	resource , BattleFx_FeatherSheet
 	resource , Resource_Data0D2
 	resource , Resource_Data0D3
-	resource , Resource_Data0D4
-	resource , Resource_Data0D5
-	resource , Resource_Data0D6
+	resource , BattleFx_LightBurstSheet
+	resource , BattleFx_StarCrossSheet
+	resource , BattleFx_CornerGlowSheet
 	resource , Resource_Data0D7
 	resource , Resource_Data0D8
-	resource , Resource_Data0D9
+	resource , BattleFx_ImpFaceSheet
 	resource , Resource_Data0DA
-	resource , Resource_Data0DB
+	resource , BattleFx_GreatSwordSheet
 	resource , Resource_Data0DC
 	resource , Resource_Data0DD
-	resource , Resource_Data0DE
-	resource , Resource_Data0DF
-	resource , Resource_Data0E0
-	resource , Resource_Data0E1
-	resource , Resource_Data0E2
-	resource , Resource_Data0E3
-	resource , Resource_Data0E4
-	resource , Resource_Data0E5
-	resource , Resource_Data0E6
-	resource , Resource_Data0E7
-	resource , Resource_Data0E8
+	resource , BattleFx_SunCardSheet
+	resource , BattleFx_VineCardSheet
+	resource , BattleFx_DragonCardSheet
+	resource , BattleFx_BoltCardSheet
+	resource , BattleFx_ButterflyCardSheet
+	resource , BattleFx_SheepCardSheet
+	resource , BattleFx_SkeletonCardSheet
+	resource , BattleFx_SwordCardSheet
+	resource , BattleFx_BoulderSheet
+	resource , BattleFx_BladeSheet
+	resource , BattleFx_ClawSlashSheet
 	resource , Resource_Data0E9
-	resource , Resource_Data0EA
-	resource , Resource_Data0EB
-	resource , Resource_Data0EC
-	resource , Resource_Data0ED
+	resource , BattleFx_CrystalSheet
+	resource , BattleFx_SmallFlameSheet
+	resource , BattleFx_CornerRuneASheet
+	resource , BattleFx_CornerRuneBSheet
 	resource , Resource_Data0EE
 	resource , Resource_Data0EF
 	resource , Resource_Data0F0
 	resource , Resource_Data0F1
 	resource , Resource_Data0F2
 	resource , Resource_Data0F3
-	resource , Resource_Data0F4
+	resource , BattleFx_SmokeBandSheet
 	resource , Resource_Data0F5
-	resource , Resource_Data0F6
+	resource , BattleFx_DustCloudSheet
 	resource , Resource_Data0F7
 	resource , Resource_Data0F8
 	resource , Resource_Data0F9
@@ -267,75 +267,75 @@ Resource_DirectoryTable:
 	resource , Resource_Data0FB
 	resource , Resource_Data0FC
 	resource , Resource_Data0FD
-	resource , Resource_Data0FE
+	resource , BattleFx_ArcFragmentsSheet
 	resource , Resource_Data0FF
-	resource , Resource_Data100
+	resource , BattleFx_AxeSheet
 	resource , Resource_Data101
 	resource , Resource_Data102
 	resource , Resource_Data103
 	resource , Resource_Data104
-	resource , Resource_Data105
+	resource , BattleFx_CloudPuffSheet
 	resource , Resource_Data106
 	resource , Resource_Data107
 	resource , Resource_Data108
 	resource , Resource_Data109
 	resource , Resource_Data10A
-	resource , Resource_Data10B
-	resource , Resource_Data10C
-	resource , Resource_Data10D
+	resource , BattleFx_GreyCrescentSheet
+	resource , BattleFx_StarCrescentSheet
+	resource , BattleFx_RevealMaskA
 	resource , Resource_Data10E
-	resource , Resource_Data10F
-	resource , Resource_Data110
-	resource , Resource_Data111
-	resource , Resource_Data112
-	resource , Resource_Data113
-	resource , Resource_Data114
-	resource , Resource_Data115
-	resource , Resource_Data116
-	resource , Resource_Data117
-	resource , Resource_Data118
+	resource , BattleFx_RevealMaskC
+	resource , BattleFx_RevealMaskD
+	resource , BattleFx_RevealMaskE
+	resource , BattleFx_RevealMaskF
+	resource , BattleFx_LimeColumnSheet
+	resource , BattleFx_RainSheet
+	resource , BattleFx_FlameSheetA
+	resource , BattleFx_DemonFaceSheet
+	resource , BattleFx_FlameBladeSheet
+	resource , BattleFx_SwordSheet
 	resource , Resource_Data119
 	resource , Resource_Data11A
-	resource , Resource_Data11B
-	resource , Resource_Data11C
+	resource , BattleFx_SpiderWebSheet
+	resource , BattleFx_VioletLightningSheetA
 	resource , Resource_Data11D
 	resource , Resource_Data11E
-	resource , Resource_Data11F
+	resource , BattleFx_ShurikenSheet
 	resource , Resource_Data120
 	resource , Resource_Data121
 	resource , Resource_Data122
 	resource , Resource_Data123
-	resource , Resource_Data124
-	resource , Resource_Data125
-	resource , Resource_Data126
+	resource , BattleFx_VioletLightningSheetB
+	resource , BattleFx_FireBurstSheet
+	resource , BattleFx_BlueCrescentSheet
 	resource , Resource_Data127
-	resource , Resource_Data128
-	resource , Resource_Data129
+	resource , BattleFx_VioletMoteSheet
+	resource , BattleFx_FireballSheet
 	resource , Resource_Data12A
 	resource , Resource_Data12B
-	resource , Resource_Data12C
+	resource , BattleFx_WaveSheet
 	resource , Resource_Data12D
-	resource , Resource_Data12E
+	resource , BattleFx_PinkStarSheet
 	resource , Resource_Data12F
 	resource , Resource_Data130
-	resource , Resource_Data131
-	resource , Resource_Data132
-	resource , Resource_Data133
+	resource , BattleFx_ExplosionSheet
+	resource , BattleFx_MagentaSwirlSheet
+	resource , BattleFx_MagentaTailSheet
 	resource , Resource_Data134
 	resource , Resource_Data135
 	resource , Resource_Data136
 	resource , Resource_Data137
 	resource , Resource_Data138
-	resource , Resource_Data139
-	resource , Resource_Data13A
-	resource , Resource_Data13B
+	resource , BattleFx_CrossedDaggersSheet
+	resource , BattleFx_RuneSheet
+	resource , BattleFx_FlameColumnSheet
 	resource , Resource_Data13C
 	resource , Resource_Data13D
-	resource , Resource_Data13E
+	resource , BattleFx_FlashBurstSheet
 	resource , Resource_Data13F
-	resource , Resource_Data140
-	resource , Resource_Data141
-	resource , Resource_Data142
+	resource , BattleFx_CometSheetA
+	resource , BattleFx_CometSheetB
+	resource , BattleFx_CometSheetC
 	resource , Resource_Data143
 	resource , Resource_Data144
 	resource , Resource_Data145
@@ -345,26 +345,26 @@ Resource_DirectoryTable:
 	resource , Resource_Data149
 	resource , Resource_Data14A
 	resource , Resource_Data14B
-	resource , Resource_Data14C
+	resource , BattleFx_FlameballSheet
 	resource , Resource_Data14D
-	resource , Resource_Data14E
+	resource , BattleFx_RockWallSheet
 	resource , Resource_Data14F
-	resource , Resource_Data150
-	resource , Resource_Data151
-	resource , Resource_Data152
-	resource , Resource_Data153
-	resource , Resource_Data154
-	resource , Resource_Data155
-	resource , Resource_Data156
-	resource , Resource_Data157
-	resource , Resource_Data158
-	resource , Resource_Data159
+	resource , BattleFx_MarsDjinnSheet
+	resource , BattleFx_MarsDjinnSmallSheet
+	resource , BattleFx_JupiterDjinnSheet
+	resource , BattleFx_JupiterDjinnSmallSheet
+	resource , BattleFx_MercuryDjinnSheet
+	resource , BattleFx_MercuryDjinnSmallSheet
+	resource , BattleFx_VenusDjinnSheet
+	resource , BattleFx_VenusDjinnSmallSheet
+	resource , BattleFx_FireBlobSheet
+	resource , BattleFx_FireStreakSheet
 	resource , Resource_Data15A
-	resource , Resource_Data15B
-	resource , Resource_Data15C
-	resource , Resource_Data15D
-	resource , Resource_Data15E
-	resource , Resource_Data15F
+	resource , BattleFx_YellowRingSheet
+	resource , BattleFx_YellowOrbSheet
+	resource , BattleFx_BubbleSheet
+	resource , BattleFx_ShieldSheet
+	resource , BattleFx_DaggerSheet
 	resource , Resource_Data160
 	resource , Resource_Data161
 	resource , Resource_Data162
@@ -375,37 +375,37 @@ Resource_DirectoryTable:
 	resource , Resource_Data167
 	resource , Resource_Data168
 	resource , Resource_Data169
-	resource , Resource_Data16A
-	resource , Resource_Data16B
+	resource , BattleFx_WispSheet
+	resource , BattleFx_GreenVineSheet
 	resource , Resource_Data16C
-	resource , Resource_Data16D
+	resource , BattleFx_SkullSheet
 	resource , Resource_Data16E
 	resource , Resource_Data16F
 	resource , Resource_Data170
 	resource , Resource_Data171
-	resource , Resource_Data172
-	resource , Resource_Data173
-	resource , Resource_Data174
-	resource , Resource_Data175
+	resource , BattleFx_RedCrescentSheetB
+	resource , BattleFx_SpiralSheet
+	resource , BattleFx_VioletStreakSheet
+	resource , BattleFx_CrescentMoonSheet
 	resource , Resource_Data176
 	resource , Resource_Data177
 	resource , Resource_Data178
-	resource , Resource_Data179
-	resource , Resource_Data17A
-	resource , Resource_Data17B
+	resource , BattleFx_BlueArcSheetA
+	resource , BattleFx_BlueArcSheetB
+	resource , BattleFx_GlowOrbSheet
 	resource , Resource_Data17C
 	resource , Resource_Data17D
 	resource , Resource_Data17E
-	resource , Resource_Data17F
-	resource , Resource_Data180
+	resource , BattleFx_PinkBurstSheet
+	resource , BattleFx_LightFanSheet
 	resource , Resource_Data181
-	resource , Resource_Data182
+	resource , BattleFx_DustPuffSheet
 	resource , Resource_Data183
 	resource , Resource_Data184
-	resource , Resource_Data185
-	resource , Resource_Data186
-	resource , Resource_Data187
-	resource , Resource_Data188
+	resource , BattleFx_FlameSheetB
+	resource , BattleFx_FirePillarSheetB
+	resource , BattleFx_RockSpireSheet
+	resource , BattleFx_LightningBoltSheet
 	resource , Resource_Data189
 	resource , Resource_Data18A
 	resource , Resource_Data18B
@@ -414,10 +414,10 @@ Resource_DirectoryTable:
 	resource , Resource_Data18E
 	resource , Resource_Data18F
 	resource , Resource_Data190
-	resource , Resource_Data191
+	resource , BattleFx_VortexSheet
 	resource , Resource_Data192
 	resource , Resource_Data193
-	resource , Resource_Data194
+	resource , BattleFx_LightningPillarSheet
 	resource , Resource_Data195
 	resource , Resource_Data196
 	resource , Resource_Data197

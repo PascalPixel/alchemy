@@ -308,121 +308,6 @@
 	.4byte 0x0000cccc
 	.2byte 0x6666
 	.2byte 0x0000
-	.section .text.x02008840,"ax",%progbits
-	.p2align 2
-	.global KorosseoKawa_RunStageStart
-	.thumb_func
-KorosseoKawa_RunStageStart:
-	push {r5, r6, lr}
-	bl 0x0200af90
-	bl 0x0200bca0
-	movs r1, #127
-	movs r0, #120
-	bl 0x0200b0ac
-	adds r6, r0, #0
-	bl 0x0200afa0
-	movs r5, #9
-.L_02000840_0:
-	movs r0, #8
-	subs r5, #1
-	bl 0x0200bcd0
-	cmp r5, #0
-	bge .L_02000840_0
-	movs r1, #128
-	movs r2, #128
-	movs r0, #8
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200bcc8
-	movs r1, #165
-	movs r0, #8
-	lsls r1, r1, #3
-	movs r2, #192
-	bl 0x0200bce0
-	movs r1, #128
-	movs r2, #128
-	movs r0, #0
-	lsls r1, r1, #9
-	lsls r2, r2, #8
-	bl 0x0200bcc8
-	movs r1, #161
-	movs r2, #192
-	movs r0, #0
-	lsls r1, r1, #3
-	bl 0x0200bce8
-	movs r0, #8
-	movs r1, #1
-	bl 0x0200bd00
-	movs r2, #0
-	movs r1, #8
-	movs r0, #0
-	bl 0x0200bd28
-	movs r0, #10
-	bl 0x0200bc98
-	movs r0, #8
-	movs r1, #3
-	bl 0x0200bd00
-	movs r1, #3
-	movs r0, #0
-	bl 0x0200bd08
-	movs r0, #20
-	bl 0x0200bc98
-	movs r1, #128
-	movs r2, #128
-	movs r0, #0
-	lsls r1, r1, #10
-	lsls r2, r2, #9
-	bl 0x0200bcc8
-	movs r1, #128
-	movs r2, #128
-	movs r0, #8
-	lsls r1, r1, #10
-	lsls r2, r2, #9
-	bl 0x0200bcc8
-	movs r1, #162
-	movs r0, #0
-	lsls r1, r1, #3
-	movs r2, #192
-	bl 0x0200bce0
-	movs r1, #164
-	movs r2, #192
-	movs r0, #8
-	lsls r1, r1, #3
-	bl 0x0200bce8
-	movs r0, #0
-	movs r1, #16
-	bl 0x0200bd00
-	movs r1, #9
-	movs r0, #8
-	bl 0x0200bd00
-	movs r0, #10
-	bl 0x0200bc98
-	movs r1, #0
-	subs r1, r1, r6
-	adds r1, #1
-	movs r0, #72
-	bl 0x0200bd90
-	ldr r3, [pc, #40]
-	ldr r2, [pc, #40]
-	adds r3, r3, r2
-	movs r2, #3
-	strb r2, [r3]
-	ldr r5, [pc, #36]
-	movs r1, #4
-	adds r0, r5, #0
-	bl 0x0200bd98
-	adds r0, r5, #0
-	movs r1, #5
-	bl 0x0200bda0
-	movs r0, #141
-	lsls r0, r0, #1
-	bl 0x0200bc60
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.4byte 0x02000240
-	.4byte 0x0000022b
-	.4byte 0x0000008f
 	.section .text.x02008a3c,"ax",%progbits
 	.p2align 2
 	.global Func_02000a3c
@@ -1053,37 +938,6 @@ SceneState_InitTableWordsAndLoad3200:
 	.4byte 0x0200c78c
 	.4byte 0x0200c750
 	.4byte 0x0200abed
-	.section .text.x0200af94,"ax",%progbits
-	.p2align 2
-	.global Func_02002f94
-	.thumb_func
-Func_02002f94:
-	ldr r2, [pc, #4]
-	movs r3, #9
-	strh r3, [r2]
-	bx lr
-	.4byte 0x02001000
-	.global Func_02002fa0
-	.thumb_func
-Func_02002fa0:
-	push {r5, lr}
-	ldr r5, [pc, #28]
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #9
-	beq .L_02002fa0_0
-.L_02002fa0_1:
-	movs r0, #1
-	bl 0x0200bb08
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #9
-	bne .L_02002fa0_1
-.L_02002fa0_0:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x02001000
 	.section .text.x0200b3a0,"ax",%progbits
 	.p2align 2
 	.global Scene_RunScene3baSequenceA
@@ -1564,46 +1418,6 @@ Scene_RunScene3baSequenceA:
 	.4byte 0x0200bf14
 	.2byte 0x1e40
 	.2byte 0x0300
-	.section .text.x0200b84c,"ax",%progbits
-	.p2align 2
-	.global Func_0200384c
-	.thumb_func
-Func_0200384c:
-	push {r5, r6, lr}
-	ldr r3, [pc, #60]
-	ldr r6, [r3]
-	ldr r5, [pc, #60]
-	bl 0x0200bb98
-	adds r1, r6, #0
-	adds r1, #240
-	bl 0x0200bb60
-	ldr r0, [pc, #48]
-	bl 0x0200bc58
-	cmp r0, #0
-	bne .L_0200384c_0
-	movs r3, #1
-	strh r3, [r5]
-	strh r3, [r5, #2]
-	adds r3, r6, #0
-	adds r3, #224
-	ldrh r3, [r3]
-	strh r0, [r5, #8]
-	strh r3, [r5, #4]
-	strh r0, [r5, #6]
-.L_0200384c_0:
-	ldr r1, [pc, #24]
-	ldr r0, [pc, #28]
-	bl 0x0200bb10
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001f3c
-	.4byte 0x02001000
-	.4byte 0x00000109
-	.4byte 0x00000c85
-	.4byte 0x0200b1c1
-@ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x20202000
 	.4byte 0x40404060

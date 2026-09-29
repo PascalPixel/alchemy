@@ -53,7 +53,7 @@ struct EventObject {
     s16 cell_z;                 /* 0x66 */
 };
 
-extern u8 *Data_03001ebc;
+extern u8 *gEventWork;
 
 s32 GameFlag_IsConditionActive(s32 condition);
 s32 Party_RemapCharacterIdByFlags(s32 id);
@@ -61,7 +61,7 @@ struct EventObject *ObjectTable_Get(s32 index);
 struct EventObject *Object_CreateFar(s32 character, s32 x, s32 y, s32 z);
 void Resource_ResetEntry(s32 entry);
 s32 GameFlag_TestFar(s32 flag);
-void Func_08009228(struct EventObject *object, s32 value);
+void ObjectDispatch_RegisterChildMetadataFar(struct EventObject *object, s32 value);
 void Object_SetPositionAndResetMotionFar(struct EventObject *object, s32 x, s32 y, s32 z);
 void Object_SetMode(struct EventObject *object, s32 mode);
 u32 Random16(void);
@@ -86,7 +86,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
     s32 condition;
     u8 resource;
 
-    tables = (struct EventObjectEntry **)Data_03001ebc;
+    tables = (struct EventObjectEntry **)gEventWork;
     for (i = 0; i < 4; i++) {
         if (tables[i] == entry)
             break;
@@ -122,7 +122,7 @@ void Event_SpawnObjectTable(struct EventObjectEntry *entry, s32 slot)
                 }
             }
             if (GameFlag_TestFar(33) && (u32)(character - 18) <= 1)
-                Func_08009228(object, 226);
+                ObjectDispatch_RegisterChildMetadataFar(object, 226);
         } else if (!GameFlag_TestFar(0x109)) {
             Object_SetPositionAndResetMotionFar(object, entry->x, entry->y, entry->z);
         }

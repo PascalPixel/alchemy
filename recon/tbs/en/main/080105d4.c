@@ -1,3 +1,13 @@
+/* 2026-09-29 alchemy permute: score 2602 to 2055 on the permuter's scorer
+   (0 is exact); remaining 28 register-only, 11 operand, 17 reordered, 3
+   inserted, 3 deleted. Kept rewrites: 7x reorder independent statements,
+   4x reorder local declarations, 3x add a same-width cast, 3x change loop
+   form, 2x swap commutative operands, 2x drop a same-width cast, 1x
+   introduce a temporary, 1x remove a temporary, 1x move an assignment into
+   or out of a condition, 1x toggle register. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
 /* Not-yet-C: complete 304-byte owner. Width/height are arguments three/four;
  * destination x/y are five/six. Copies complete cells, then draws low 12 bits.
  * Reusing the neighbouring renderer's scoped CopyCell recovers the 36-byte
@@ -28,10 +38,10 @@ static __inline__ void CopyCell(u32 cell, u32 offset)
 void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
     s32 width, s32 height, s32 dst_x, s32 dst_y)
 {
-    u32 *src = (u32 *)0x02010000 + (src_y * 128 + src_x);
+    u32 *src = (u32 *)0x02010000 + ((u32)src_y * 128 + src_x);
     u32 *dst = (u32 *)0x02010000 + (dst_y * 128 + dst_x);
-    struct MapLayerScroll *layer = Data_03001e70->layers;
     struct TilePos tile[3];
+    register struct MapLayerScroll *layer = Data_03001e70->layers;
     struct TilePos *pos = tile;
     s32 i;
     s32 y;
@@ -43,26 +53,33 @@ void Map_CopyMetatileCellsRect(s32 src_x, s32 src_y,
         layer++;
         pos++;
     }
-    for (y = dst_y; y < dst_y + height; y++) {
-        for (x = dst_x; x < dst_x + width; x++) {
-            u32 cell = *src++;
-            u32 offset;
-
-            *dst++ = cell;
-            cell &= 0xfff;
-            offset = (((y & 15) << 5) + (x & 15)) * 4;
-            pos = tile;
-            for (i = 0; i < 3; i++) {
-                if (pos->x <= x && pos->x + 16 > x &&
-                    pos->y <= y && pos->y + 12 > y) {
-                    CopyCell(cell, offset);
-                    break;
-                }
-                offset += 0x800;
-                pos++;
+    y = dst_y;
+    if (y < height + dst_y) {
+        while (1) {
+            if ((x = dst_x) < dst_x + width) {
+                do {
+                    u32 offset;
+                    u32 cell = *src++;
+                    pos = tile;
+                    *dst++ = cell;
+                    offset = 4 * (((y & 15) << 5) + (x & 15));
+                    cell &= 0xfff;
+                    for (i = 0; i < 3; i++) {
+                        if (pos->x <= x && pos->x + 16 > x && pos->y <= y && pos->y + 12 > y) {
+                            CopyCell(cell, offset);
+                            break;
+                        }
+                        offset += 0x800;
+                        pos++;
+                    }
+                    x++;
+                } while (x < dst_x + width);
             }
+            src += 128 - width;
+            dst += 128 - width;
+            y++;
+            if (y >= height + dst_y)
+                break;
         }
-        src += 128 - width;
-        dst += 128 - width;
     }
 }

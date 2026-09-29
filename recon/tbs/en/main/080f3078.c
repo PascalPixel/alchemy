@@ -1,3 +1,15 @@
+/* 2026-09-29 alchemy permute: score 14624 to 11152 on the permuter's
+   scorer (0 is exact); remaining 278 register-only, 22 stack-only, 50
+   operand, 51 reordered, 30 inserted, 25 deleted. Kept rewrites: 26x swap
+   commutative operands, 25x reorder independent statements, 20x reorder
+   local declarations, 15x introduce a temporary, 10x add a same-width
+   cast, 10x pointer arithmetic or indexing, 10x split or join a compound
+   assignment, 9x change loop form, 8x remove a temporary, 6x drop a
+   same-width cast, 5x move an assignment into or out of a condition, 4x
+   toggle register, 3x test truth or compare with zero. FAKEMATCH: the
+   permuter's temporaries, register hints and swapped operand orders below
+   only steer allocation and scheduling; no programmer would write them, so
+   they stay tagged until a natural spelling replaces them. */
 /* Draft, not exact (2026-09-24): candidate=1796 reference=1796 differing_halfwords=796. Constants the reference loads from
    the literal pool are spelled as link-time Value_ symbols, which restores
    the reference size; wraps marked FAKEMATCH only move scheduling. */
@@ -82,47 +94,49 @@ extern const u16 Data_080f3a6e[];
 
 void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
 {
-    DivideFunc divide;
     const u16 *tbl;
-    u16 *out;
-    u32 cnt;
+    register u16 *out;
+    DivideFunc divide;
+    register u32 cnt;
+    register s32 r;
     u32 i;
     u32 c;
-    s32 r;
-    s32 g;
-    s32 b;
-    s32 v;
+    register s32 g;
     u32 tint_r;
+    s32 b;
     u32 tint_g;
     u32 tint_b;
+    s32 v;
 
     cnt = 512;
     if (mode == 0x8000) {
-        mode = src[0];
+        (s32)(mode = src[0]);
     }
     if (half == 1) {
         cnt = 256;
     } else if (half == 2) {
         dst += 768;
+        src = src + 256;
         cnt = 256;
-        src += 256;
     }
-
     if (mode < 0x8000) {
-        *dst++ = mode & 0x7c00;
-        *dst++ = (mode & (s32)&Value_000003e0) << 5;
+        u32 tmp8;
+        *dst++ = mode & (u32)0x7c00;
+        dst++[0] = (mode & (s32)&Value_000003e0) << 5;
         *dst++ = (mode & 0x001f) << 10;
-        StartDmaTransfer(dst - 3, dst, (((cnt - 1) * 6) >> 1) | 0x80000000);
-    } else if (mode < 0x100000) {
+        tmp8 = ((cnt - 1) * 6) >> 1;
+        StartDmaTransfer(dst - 3, dst, tmp8 | 0x80000000);
+    } else if (0x100000 > mode) {
         switch (mode) {
+            u16 *tmp7;
         case 0x10001:
             divide = (DivideFunc)0x03000380;
             out = dst;
             for (i = 0; i < cnt; i++) {
+                u32 tmp2;
                 c = *src++;
-                v = divide(((c << 11) & 0xf800) + ((c << 7) & 0x1f000) +
-                               (c & 0x7c00),
-                           7);
+                tmp2 = 0x1f000 & (c << 7);
+                v = divide((0xf800 & (c << 11)) + tmp2 + (0x7c00 & c), 7);
                 out[0] = v;
                 out[1] = v;
                 out[2] = v;
@@ -133,28 +147,29 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             divide = (DivideFunc)0x03000380;
             tbl = Data_080f3a2e;
             for (i = 0; i < cnt; i++) {
+                u32 tmp3;
                 c = *src++;
-                v = divide((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31), 10);
+                tmp3 = c & 31;
+                v = divide((31 & (c >> 10)) + (((c >> 5) & 31) + tmp3), 10);
                 r = v * 4 + 5;
-                g = v * 3 + 5;
-                b = v * 3 + 5;
-                if (r < 8) {
-                    r = 8;
-                }
-                if (g < 8) {
+                b = 5 + v * 3;
+                if (8 > (g = (u32)(3 * v + 5))) {
                     g = 8;
                 }
                 if (b < 8) {
                     b = 8;
                 }
+                if (r < 8) {
+                    r = 8;
+                }
                 if (r > 28) {
                     r = 28;
                 }
-                if (g > 28) {
-                    g = 28;
-                }
                 if (b > 28) {
                     b = 28;
+                }
+                if (g > 28) {
+                    g = 28;
                 }
                 *dst++ = tbl[b];
                 *dst++ = tbl[g];
@@ -162,35 +177,40 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             }
             break;
         case 0x10003:
-            for (i = 0; i < cnt; i++) {
-                c = *src++;
-                r = c & 31;
-                g = (c >> 5) & 31;
-                b = (c >> 10) & 31;
-                r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
-                g = Graphics_ClampRgb555Channel(g - Math_Div(g, 3) + 4);
-                b = Graphics_ClampRgb555Channel(b - 6);
-                dst[0] = Data_080f3a6e[b];
-                dst[1] = Data_080f3a2e[g];
-                dst[2] = Data_080f39ee[r];
-                dst += 3;
+            i = 0;
+            if (i < cnt) {
+                do {
+                    c = *src++;
+                    r = c & 31;
+                    r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
+                    g = (c >> 5) & 31;
+                    b = (c >> 10) & 31;
+                    g = Graphics_ClampRgb555Channel(4 + (g - Math_Div(g, 3)));
+                    b = Graphics_ClampRgb555Channel(b - 6);
+                    dst[0] = Data_080f3a6e[b];
+                    dst[1] = *(Data_080f3a2e + g);
+                    dst[2] = Data_080f39ee[r];
+                    dst += 3;
+                    ++i;
+                } while (i < cnt);
             }
             break;
         case 0x10004:
+            i = 0;
             tbl = Data_080f39ee;
-            for (i = 0; i < cnt; i++) {
-                c = *src++;
+            while (i < cnt) {
+                c = src++[0];
                 r = c & 31;
                 g = (c >> 5) & 31;
-                b = (c >> 10) & 31;
+                b = 31 & (c >> 10);
                 if (r < 10) {
                     r = 10;
                 }
+                if (16 > b) {
+                    b = 16;
+                }
                 if (g < 16) {
                     g = 16;
-                }
-                if (b < 16) {
-                    b = 16;
                 }
                 if (r > 28) {
                     r = 28;
@@ -207,53 +227,62 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
                 *dst++ = tbl[b];
                 *dst++ = tbl[g];
                 *dst++ = tbl[r];
+                i++;
             }
             break;
         case 0x10005:
-            tbl = Data_080f3a6e;
-            for (i = 0; i < cnt; i++) {
+            tmp7 = Data_080f3a6e;
+            i = 0;
+            tbl = tmp7;
+            for (; i < cnt; dst += 3) {
+                i++;
                 c = *src++;
                 r = c & 31;
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
-                v = Graphics_ClampRgb555Channel(Math_Div(r + g + b, 3));
+                v = Graphics_ClampRgb555Channel(Math_Div(r + (g + b), 3));
                 r = Graphics_ClampRgb555Channel((r >> 1) + v);
                 g = Graphics_ClampRgb555Channel((g >> 1) + v);
                 b = Graphics_ClampRgb555Channel((b >> 1) + v);
                 dst[0] = tbl[b];
-                dst[1] = tbl[g];
+                dst[1] = *&tbl[g];
                 dst[2] = tbl[r];
-                dst += 3;
             }
             break;
         case 0x10006:
-            for (i = 0; i < cnt; i++) {
+            i = 0;
+            while (i < cnt) {
                 c = *src++;
                 r = c & 31;
                 g = (c >> 5) & 31;
                 b = (c >> 10) & 31;
-                r = Graphics_ClampRgb555Channel(r + ((g >> 3) + (b >> 3)));
+                r = Graphics_ClampRgb555Channel(r + ((b >> 3) + (g >> 3)));
                 g = g - Math_Div(g, 3);
                 b = b - Math_Div(b, 3);
-                dst[0] = Data_080f39ee[b];
+                *dst = Data_080f39ee[b];
                 dst[1] = Data_080f39ee[g];
-                dst[2] = Data_080f3a2e[r];
-                dst += 3;
+                dst[2] = *(Data_080f3a2e + r);
+                dst = 3 + dst;
+                i++;
             }
             break;
         case 0x10007:
-            for (i = 0; i < cnt; i++) {
-                c = *src++;
-                r = c & 31;
-                g = (c >> 5) & 31;
-                b = (c >> 10) & 31;
-                r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
-                g = Graphics_ClampRgb555Channel(g - Math_Div(g, 3) + 4);
-                b = Graphics_ClampRgb555Channel(b - 6);
-                dst[0] = Data_080f3a6e[b];
-                dst[1] = Data_080f3a2e[g];
-                dst[2] = Data_080f39ee[r];
-                dst += 3;
+            i = 0;
+            if (i < cnt) {
+                do {
+                    c = *src++;
+                    r = c & 31;
+                    r = Graphics_ClampRgb555Channel(r - ((u32)r >> 1) + 6);
+                    g = (c >> 5) & 31;
+                    b = (c >> 10) & 31;
+                    g = Graphics_ClampRgb555Channel(4 + (g - Math_Div(g, 3)));
+                    b = Graphics_ClampRgb555Channel(b - 6);
+                    dst[0] = Data_080f3a6e[b];
+                    dst[1] = ((u16 *)Data_080f3a2e)[g];
+                    dst[2] = Data_080f39ee[r];
+                    dst = dst + 3;
+                    i++;
+                } while (i < cnt);
             }
             break;
         default:
@@ -261,25 +290,25 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             for (i = 0; i < cnt; i++) {
                 c = *src++;
                 out[0] = c & 0x7c00;
-                out[1] = (c & 0x03e0) << 5;
-                out[2] = (c & 0x001f) << 10;
+                *(out + 1) = (c & 0x03e0) << 5;
+                out[2] = (0x001f & c) << 10;
                 out += 3;
             }
             break;
         }
-    } else if ((mode & 0x200000) != 0) {
+    } else if ((s32)(mode & 0x200000) != 0) {
         divide = (DivideFunc)0x03000380;
-        tint_r = mode & 31;
+        tint_r = 31 & mode;
         tint_g = (mode >> 5) & 31;
-        tint_b = (mode >> 10) & 31;
+        tint_b = 31 & (mode >> 10);
         for (i = 0; i < cnt; i++) {
+            u8 *tmp5;
             c = *src++;
-            v = divide(((c << 11) & 0xf800) + ((c << 7) & 0x1f000) +
-                           (c & (s32)&Value_00007c00),
-                       96);
-            r = tint_r * v;
-            g = tint_g * v;
+            tmp5 = &Value_00007c00;
+            v = divide(((c << 11) & 0xf800) + (((c << 7) & 0x1f000) + (c & (s32)tmp5)), 96);
             b = tint_b * v;
+            g = tint_g * v;
+            r = v * tint_r;
             r = Graphics_ClampRgb555Component(r);
             g = Graphics_ClampRgb555Component(g);
             b = Graphics_ClampRgb555Component(b);
@@ -289,36 +318,41 @@ void Graphics_TransformPaletteBuffer(u32 mode, u16 *src, u16 *dst, s32 half)
             dst += 3;
         }
     } else if ((mode & 0x400000) != 0) {
+        tbl = Data_080f39ee;
         divide = (DivideFunc)0x03000380;
         tint_r = mode & 31;
         tint_g = (mode >> 5) & 31;
         tint_b = (mode >> 10) & 31;
-        tbl = Data_080f39ee;
-        for (i = 0; i < cnt; i++) {
-            c = *src++;
-            v = divide((((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4),
-                       tint_r + tint_g + tint_b);
-            r = Iwram_MulQ16(((tint_r * v) >> 4) << 16, (s32)(tint_r << 16) >> 4);
-            g = Iwram_MulQ16(((tint_g * v) >> 4) << 16, (s32)(tint_g << 16) >> 4);
+        i = 0;
+        while (i < cnt) {
+            s32 tmp;
+            s32 tmp4;
+            c = src++[0];
+            v = divide(((c & 31) + ((c >> 5) & 31) + ((c >> 10) & 31)) << 4, tint_r + tint_g + tint_b);
+            r = Iwram_MulQ16(((v * tint_r) >> 4) << 16, (s32)(tint_r << 16) >> 4);
+            g = Iwram_MulQ16(((v * tint_g) >> 4) << 16, (s32)(tint_g << 16) >> 4);
             b = Iwram_MulQ16(((tint_b * v) >> 4) << 16, (s32)(tint_b << 16) >> 4);
-            r = Graphics_ClampRgb555Channel((u32)r >> 16);
+            tmp4 = Graphics_ClampRgb555Channel((u32)r >> 16);
             g = Graphics_ClampRgb555Channel((u32)g >> 16);
-            b = Graphics_ClampRgb555Channel((u32)b >> 16);
+            tmp = Graphics_ClampRgb555Channel((u32)b >> 16);
+            b = tmp;
             *dst++ = tbl[b];
+            r = tmp4;
             *dst++ = tbl[g];
             *dst++ = tbl[r];
+            i++;
         }
-    } else if ((mode & 0x800000) != 0) {
+    } else if (mode & 0x800000) {
         out = dst;
         for (i = 0; i < cnt; i++) {
             c = *src++;
             out[0] = c & 0x7c00;
             out[1] = (c & 0x03e0) << 5;
-            out[2] = (c & 0x001f) << 10;
+            *(out + 2) = (0x001f & c) << 10;
             out += 3;
         }
     } else {
-        if (half == 2) {
+        if (2 == half) {
             mode += (s32)&Value_00000600;
         }
         StartDmaTransfer((const void *)mode, dst, ((cnt * 6) >> 2) | 0x84000000);

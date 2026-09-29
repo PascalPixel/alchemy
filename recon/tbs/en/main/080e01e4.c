@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 5112 to 3649 on the permuter's scorer
+   (0 is exact); remaining 55 register-only, 4 stack-only, 20 operand, 23
+   reordered, 7 inserted, 8 deleted. Kept rewrites: 14x swap commutative
+   operands, 9x reorder independent statements, 7x add a same-width cast,
+   5x drop a same-width cast, 4x reorder local declarations, 4x introduce a
+   temporary, 4x remove a temporary, 4x split or join a compound
+   assignment, 4x test truth or compare with zero, 3x change loop form, 1x
+   pointer arithmetic or indexing. FAKEMATCH: the permuter's temporaries,
+   register hints and swapped operand orders below only steer allocation
+   and scheduling; no programmer would write them, so they stay tagged
+   until a natural spelling replaces them. */
 /* Draft, complete main:080e01e4 [080e01e4,080e0524), 832 bytes.
  * Baseline: 836/832 bytes, 390 differing halfwords, 235 aligned edits,
  * different topology, frame 40. Prior explicit variant-motion 6 retained.
@@ -64,144 +75,136 @@ void Func_080e01e4(struct BattleEffectArgument *effect)
     void *canvas;
     void *sheet;
     void **heap_cache;
-    void **cursor;
     DrawRectangle callbacks[2];
+    void **cursor;
     DrawRectangle *draw;
     struct EffectStep *ring;
     struct EffectStep *particle;
-    s32 i;
     s32 member;
+    s32 i;
     s32 frame;
-    s32 angle;
     s32 member_offset;
+    s32 angle;
 
     heap_cache = (void **)0x03001eec;
     cursor = heap_cache;
     work = *cursor++;
-    canvas = *cursor;
+    canvas = cursor[0];
     sheet = heap_cache[2];
     work->effect = effect;
     BattleFx_BeginCanvasLayer(0);
     *(s16 *)0x04000052 = 0x1010;
     draw = callbacks;
-    BattleFx_FetchRectangleBlitters(0, (u32 *)draw);
+    BattleFx_FetchRectangleBlitters((s32)0, (u32 *)draw);
     Resource_LoadAndDecompress((s32)&Value_00000073, sheet, 0, 0);
     Resource_LoadAndDecompress((s32)&Value_00000090, work, 1, 1);
     Resource_LoadAndDecompress((s32)&Value_00000089, (u8 *)work + 0x320, 1, 0);
     work->transfer_mode = 2;
     work->transfer_value = 75;
     Scheduler_AddOrUpdateCallback(0x080cd261, 0x480);
-
-    ring = (struct EffectStep *)((u8 *)work + 0x7080);
-    for (i = 0; i != 32; i++) {
-        ring->x = (Random16() & 63) + 64;
-        ring->y = (Random16() & 63) - 80;
-        ring++;
+    i = 0;
+    ring = (struct EffectStep *)(0x7080 + (u8 *)work);
+    if (i != 32) {
+        do {
+            ring->x = (Random16() & 63) + 64;
+            i++;
+            ring->y = (Random16() & 63) - 80;
+            ring += 1;
+        } while (i != 32);
     }
     {
         s32 *life;
-
-        life = (s32 *)0x02010018;
         i = 0;
+        life = (s32 *)0x02010018;
         do {
             i++;
             *life = -1;
             life += sizeof(struct EffectStep) / sizeof(s32);
-        } while (i != 512);
+        } while (512 != i);
     }
-
     Audio_PlayCue(171);
     angle = 0x8000;
     frame = 0;
-    do {
+    while (1) {
+        member = 0;
         if (frame == 56)
             BattleEventRuntime_BeginPhaseFar(133);
-
         if (frame <= 95) {
             s32 sine;
-            s32 cosine;
-            s32 scale;
             s32 x;
-            s32 y;
-
+            s32 scale;
+            s32 tmp;
+            s32 tmp2;
             sine = Trig_Sin(angle);
             scale = 64 - frame * 2;
-            x = ((scale * sine) >> 17) + 86;
-            cosine = Trig_Cos(angle);
-            y = ((scale * cosine) >> 16) + 28;
-            callbacks[0](canvas, work, x, y, 20, 40);
+            tmp2 = sine * scale;
+            x = 86 + (tmp2 >> 17);
+            tmp = Trig_Cos(angle);
+            callbacks[0](canvas, work, x, 28 + ((tmp * scale) >> 16), 20, 40);
         }
-
-        ring = (struct EffectStep *)((u8 *)work + 0x7080);
         member_offset = 0;
-        member = 0;
+        ring = (struct EffectStep *)((u8 *)work + 0x7080);
         do {
-            if (frame >= member * 4 + 8 && ring->y <= 95) {
-                callbacks[0](canvas, (u8 *)work + 0x320,
-                    ring->x - 20, ring->y - 32, 40, 64);
+            if (frame >= member * 4 + 8 && 95 >= ring->y) {
+                callbacks[0](canvas, 0x320 + (u8 *)work, ring->x - 20, ring->y - 32, 40, 64);
                 ring->x -= 6;
                 ring->y += 12;
                 if (ring->y > 95) {
                     s32 burst;
-
                     particle = (struct EffectStep *)(0x02010000 + member_offset);
                     burst = 0;
-                    do {
+                    while (1 != 0) {
                         s32 direction;
                         s32 speed;
-
                         direction = Random16() & 0xffff;
                         speed = (Random16() & 0x1ff) + 256;
                         particle->x = ring->x << 16;
                         particle->y = ring->y << 16;
-                        particle->velocity_x = (speed * Trig_Sin(direction)) >> 7;
-                        particle->velocity_y = (speed * Trig_Cos(direction)) >> 6;
+                        burst++;
+                        particle->velocity_x = (Trig_Sin(direction) * speed) >> 7;
+                        particle->velocity_y = (Trig_Cos(direction) * speed) >> 6;
                         particle->variant = (Random16() & 15) + 32;
                         particle++;
-                        burst++;
-                    } while (burst != 32);
+                        if (32 == burst)
+                            break;
+                    }
                     Audio_PlayCue(133);
                     *(s32 *)((u8 *)work + 0x77a8) = 4;
-                    if (WORK_EFX->count != 0) {
+                    if (WORK_EFX->count) {
                         s32 actor;
-
                         actor = 0;
                         do {
-                            ObjectGroup_UpdateMembers(WORK_EFX->actors[actor],
-                                7, 5, actor, 6);
+                            ObjectGroup_UpdateMembers(WORK_EFX->actors[actor], 7, 5, actor, 6);
                             BattleMotion_ApplyVariantMotionFar(WORK_EFX->actors[actor], 6);
                             actor++;
                         } while (actor != WORK_EFX->count);
                     }
                 }
             }
-            member++;
-            member_offset += 32 * sizeof(struct EffectStep);
             ring++;
+            member_offset += sizeof(struct EffectStep) * 32;
+            member++;
         } while (member != 8);
-
         particle = (struct EffectStep *)0x02010000;
-        for (i = 0; i != 512; i++) {
+        for (i = 0; i != 512; ++i) {
             if (particle->variant != -1) {
                 s32 size;
-
                 size = particle->variant / 16 + 1;
-                draw[1](canvas, (u8 *)sheet + Data_080ede48[size - 1],
-                    ((s16 *)&particle->x)[1] - size / 2,
-                    ((s16 *)&particle->y)[1] - size, size, size * 2);
+                draw[1](canvas, (u8 *)sheet + Data_080ede48[size - 1], ((s16 *)&particle->x)[1] - size / 2, ((s16 *)&particle->y)[1] - size, size, size * 2);
                 EffectStep_AdvanceWithGravity2D(particle, 62, 0x2000);
                 particle->variant--;
             }
-            particle++;
+            ++particle;
         }
         Camera_ApplyShake(4, 4);
         ObjectGroup_TickMemberTimers();
         work->transfer_pending = 1;
         WaitFrames(1);
-        frame++;
+        frame += 1;
         angle -= 0x800;
-    } while (frame != 96);
-
+        if ((u32)frame == 96)
+            break;
+    }
     Scheduler_RemoveCallback(0x080cd261);
     Runtime_ReleaseHeapBlock(47);
     Runtime_ReleaseHeapBlock(46);

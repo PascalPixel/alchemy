@@ -1,3 +1,12 @@
+/* 2026-09-29 alchemy permute: score 775 to 435 on the permuter's scorer (0
+   is exact); remaining 20 register-only, 1 operand, 5 reordered, all the
+   cursor pointer in r5 where the reference has r7 and px in r7 where it
+   has r5. Kept, after reverting every permuter rewrite that did not pay:
+   the step count declared after the coordinates, the cursor y offset and
+   the x offset spelled as additions, y offset after the clamp, the y clamp
+   through a halfword copy (tagged), and the steps divided by the step
+   count itself, which is the __divsi3 call the reference makes with 2 (a
+   constant divisor would become shifts). */
 /* 2026-09-28: 264/264 bytes, 34 aligned edits (was 40). Reading the cursor
  * y into py before its eight-pixel pull-back, and again after it, gives the
  * reference's single y load kept in r6 for the test and the slide. The
@@ -71,7 +80,6 @@ struct CursorWork {
 
 extern struct CursorWork *gMenuWork;
 
-s32 Math_Div(s32 numerator, s32 denominator);
 void WaitFrames(s32 frames);
 
 void UiMenu_SlideCursor(s32 x, s32 y)
@@ -79,11 +87,12 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     struct CursorWork *work = gMenuWork;
     struct CursorIcon *cursor;
     struct CursorWindow *window;
-    s32 cnt;
     s32 px;
     s32 py;
+    s32 cnt;
     s32 dx;
     s32 dy;
+    u16 cursor_y;
 
     cnt = 2;
     if (work->skip_slide != 0) {
@@ -93,20 +102,21 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     }
     cursor = work->cursor;
     cursor->x = cursor->attributes.x + 64;
-    cursor->y = cursor->attributes.y + 64;
-    x += 64;
-    y += 64;
+    cursor->y = 64 + cursor->attributes.y;
+    x = x + 64;
     if (cursor->x - 8 > 0) {
         cursor->x -= 8;
     }
+    cursor_y = cursor->y;
+    /* FAKEMATCH: the halfword copy and the unsigned pull-back only keep the reference allocation. */
+    if ((py = cursor_y) - 8 > 0)
+        cursor->y = (u32)py - 8;
     py = cursor->y;
-    if (py - 8 > 0)
-        cursor->y = py - 8;
-    py = cursor->y;
+    y += 64;
     px = cursor->x << 4;
-    dx = Math_Div((x << 4) - px + 1, 2);
+    dx = ((x << 4) - px + 1) / cnt;
     py <<= 4;
-    dy = Math_Div((y << 4) - py + 1, 2);
+    dy = ((y << 4) - py + 1) / cnt;
     do {
         window = work->window;
         px += dx;

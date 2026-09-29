@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 4740 to 4352 on the permuter's scorer
+   (0 is exact); remaining 47 register-only, 17 stack-only, 8 operand, 18
+   reordered, 15 inserted, 13 deleted. Kept rewrites: 8x swap commutative
+   operands, 7x reorder local declarations, 6x introduce a temporary, 4x
+   reorder independent statements, 3x remove a temporary, 2x add a
+   same-width cast, 2x pointer arithmetic or indexing, 2x split or join a
+   compound assignment, 1x drop a same-width cast, 1x toggle register, 1x
+   test truth or compare with zero. FAKEMATCH: the permuter's temporaries,
+   register hints and swapped operand orders below only steer allocation
+   and scheduling; no programmer would write them, so they stay tagged
+   until a natural spelling replaces them. */
 /* Draft, not exact (2026-09-27): 864 of 864 bytes, 303 differing halfwords,
    165 aligned edits. Baseline was 848 bytes / 321 halfwords / 193 edits.
    Written from the listing: every call, message, key test and the exit
@@ -76,18 +87,18 @@ void UiWork_Finalize(struct RenderInput *win, s32 release);
    chosen pair as (owner << 10) | ability. */
 void Debug_SelectAbilityPair(void)
 {
-    struct AbilityPair *list;
     struct RenderInput *win;
-    struct RenderInput *title;
-    struct RenderInput *info;
+    struct AbilityPair *list;
     struct RenderOutput *cursor;
+    register struct RenderInput *title;
+    struct RenderInput *info;
     struct BattleAction *action;
-    s32 row;
     s32 redraw;
+    s32 row;
     u32 count;
     s32 slot;
-    u32 ability;
     u32 second;
+    u32 ability;
     u32 first;
 
     cursor = NULL;
@@ -104,83 +115,89 @@ void Debug_SelectAbilityPair(void)
     second = 0;
     first = 0;
     count = Object_CollectResources(list);
-    if (count != 0) {
-        Func_0801c8a0(&first, &second, list);
+    if (count) {
+        u32 *tmp3;
+        tmp3 = &second;
+        Func_0801c8a0(&first, tmp3, list);
         win = UiWindow_Create(4, 6, 20, 7, 2);
         title = UiWindow_Create(4, 3, 20, 3, 2);
         info = UiWindow_Create(4, 14, 20, 5, 2);
         slot = Resource_FindFreeEntry();
         if (slot != 0) {
-            VramBlock_LoadCached(slot, 0x80, (const void *)0x080310a4);
+            void *tmp;
+            tmp = (const void *)0x080310a4;
+            VramBlock_LoadCached(slot, 0x80, tmp);
             cursor = RenderOutput_Create(slot, 0x40000000, win, 0, 0);
         }
         UiText_DrawCharacterAtOffset(0xb19, title, 16, 0);
     loop:
-            if (redraw) {
-                redraw = 0;
-                first = Math_ModU(first + count, count);
-                second = Math_ModU(second + count, count);
-                row = (row + 2) % 2;
-                slot = (row << 4) + (win->y << 3) + 28;
-                cursor->y = slot;
-                *(u8 *)&cursor->packed = slot;
-                RenderOutput_RedrawSavedRect(win);
-                UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
-                UiText_DrawCharacterAtOffset((s32)Value_00000b1e, win, 48, 0);
-                UiText_DrawCharacterAtOffset(list[first].ability + 0x333, win, 56, 16);
-                UiText_DrawCharacterAtOffset(list[second].ability + 0x333, win, 56, 32);
-                UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 2), win, 16, 16);
-                UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 1), win, 16, 32);
-                UiText_DrawCharacterAtOffset(list[first].owner + (s32)Value_00000066, win, 104, 16);
-                UiText_DrawCharacterAtOffset(list[second].owner + (s32)Value_00000066, win, 104, 32);
-                RenderOutput_RedrawSavedRect(info);
-                UiText_DrawCharacterAtOffset(0xaec, info, 0, 16);
-                if (row != 0) {
-                    action = BattleAction_Get(list[second].ability);
-                    ability = list[second].ability;
-                } else {
-                    action = BattleAction_Get(list[first].ability);
-                    ability = list[first].ability;
-                }
-                UiText_DrawNumberAtOffset(action->pp_cost, 2, info, 64, 16);
-                UiText_DrawCharacterAtOffset(ability + 0x53a, info, 0, 0);
-            }
-            WaitFrames(1);
-            if (Data_03001b04 & 0x20) {
-                Audio_PlayCue(0x6f);
-                if (row != 0)
-                    second--;
-                else
-                    first--;
-                redraw = 1;
-            }
-            if (Data_03001b04 & 0x10) {
-                Audio_PlayCue(0x6f);
-                if (row != 0)
-                    second++;
-                else
-                    first++;
-                redraw = 1;
-            }
-            if (Data_03001b04 & 0x40) {
-                Audio_PlayCue(0x6f);
-                row--;
-                redraw = 1;
-            }
-            if (Data_03001b04 & 0x80) {
-                Audio_PlayCue(0x6f);
-                row++;
-                redraw = 1;
-            }
-            if (Data_03001c94 & 1) {
-                Audio_PlayCue(0x70);
-            } else if (Data_03001c94 & 2) {
-                Audio_PlayCue(0x71);
-            } else if (Data_03001c94 & 8) {
-                Audio_PlayCue(0x71);
+        if (redraw) {
+            s32 tmp2;
+            redraw = 0;
+            first = Math_ModU(first + count, count);
+            second = Math_ModU(second + count, count);
+            tmp2 = (row + 2) % 2;
+            row = tmp2;
+            slot = (row << 4) + (win->y << 3) + 28;
+            cursor->y = slot;
+            *(u8 *)&cursor->packed = slot;
+            RenderOutput_RedrawSavedRect(win);
+            UiWindow_DrawDividerLine(win, 1, 2, 17, 2);
+            UiText_DrawCharacterAtOffset((s32)Value_00000b1e, win, 48, 0);
+            UiText_DrawCharacterAtOffset(0x333 + list[first].ability, win, 56, 16);
+            UiText_DrawCharacterAtOffset(list[second].ability + 0x333, win, 56, 32);
+            UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 2), win, 16, 16);
+            UiText_DrawCharacterAtOffset((s32)(Value_00000b1e - 1), win, 16, 32);
+            UiText_DrawCharacterAtOffset(list[first].owner + (s32)Value_00000066, win, 104, 16);
+            UiText_DrawCharacterAtOffset(list[second].owner + (s32)Value_00000066, win, 104, 32);
+            RenderOutput_RedrawSavedRect(info);
+            UiText_DrawCharacterAtOffset(0xaec, info, 0, 16);
+            if (0 != row) {
+                action = BattleAction_Get(list[second].ability);
+                ability = list[second].ability;
             } else {
-                goto loop;
+                action = BattleAction_Get(list[first].ability);
+                ability = list[first].ability;
             }
+            UiText_DrawNumberAtOffset(action->pp_cost, 2, info, 64, 16);
+            UiText_DrawCharacterAtOffset(0x53a + ability, info, 0, 0);
+        }
+        WaitFrames(1);
+        if (Data_03001b04 & 0x20) {
+            Audio_PlayCue(0x6f);
+            if (row != 0)
+                second--;
+            else
+                first--;
+            redraw = 1;
+        }
+        if (Data_03001b04 & 0x10) {
+            Audio_PlayCue(0x6f);
+            if (row != 0)
+                second++;
+            else
+                first++;
+            redraw = 1;
+        }
+        if (Data_03001b04 & 0x40) {
+            Audio_PlayCue(0x6f);
+            row--;
+            redraw = 1;
+        }
+        if (Data_03001b04 & 0x80) {
+            Audio_PlayCue((s32)0x6f);
+            row++;
+            redraw = 1;
+        }
+        if (Data_03001c94 & 1) {
+            Audio_PlayCue(0x70);
+        } else if (Data_03001c94 & 2) {
+            Audio_PlayCue(0x71);
+        } else if (Data_03001c94 & 8) {
+            Audio_PlayCue(0x71);
+        } else {
+            goto loop;
+        }
         Data_02000240.psynergy_shortcuts[0] = (list[first].owner << 10) | list[first].ability;
         Data_02000240.psynergy_shortcuts[1] = (list[second].owner << 10) | list[second].ability;
         UiWork_Finalize(win, 1);

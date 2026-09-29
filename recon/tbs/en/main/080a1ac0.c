@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 775 to 435 on the permuter's scorer (0
+   is exact); remaining 20 register-only, 1 operand, 5 reordered. Kept
+   rewrites: 4x reorder independent statements, 4x introduce a temporary,
+   3x reorder local declarations, 3x change loop form, 3x move an
+   assignment into or out of a condition, 2x remove a temporary, 2x add a
+   same-width cast, 2x split or join a compound assignment, 1x swap
+   commutative operands, 1x drop a same-width cast, 1x toggle register.
+   FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* 2026-09-28: 264/264 bytes, 34 aligned edits (was 40). Reading the cursor
  * y into py before its eight-pixel pull-back, and again after it, gives the
  * reference's single y load kept in r6 for the test and the slide. The
@@ -79,11 +90,13 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     struct CursorWork *work = gMenuWork;
     struct CursorIcon *cursor;
     struct CursorWindow *window;
-    s32 cnt;
-    s32 px;
+    register s32 px;
     s32 py;
+    s32 cnt;
     s32 dx;
     s32 dy;
+    s32 tmp;
+    u16 tmp2;
 
     cnt = 2;
     if (work->skip_slide != 0) {
@@ -93,30 +106,31 @@ void UiMenu_SlideCursor(s32 x, s32 y)
     }
     cursor = work->cursor;
     cursor->x = cursor->attributes.x + 64;
-    cursor->y = cursor->attributes.y + 64;
-    x += 64;
-    y += 64;
+    cursor->y = 64 + cursor->attributes.y;
+    x = x + 64;
     if (cursor->x - 8 > 0) {
         cursor->x -= 8;
     }
+    tmp2 = cursor->y;
+    if ((py = tmp2) - 8 > 0)
+        cursor->y = (u32)py - 8;
     py = cursor->y;
-    if (py - 8 > 0)
-        cursor->y = py - 8;
-    py = cursor->y;
+    y += 64;
     px = cursor->x << 4;
     dx = Math_Div((x << 4) - px + 1, 2);
     py <<= 4;
-    dy = Math_Div((y << 4) - py + 1, 2);
-    do {
+    tmp = (y << 4) - py + 1;
+    dy = Math_Div(tmp, 2);
+    while (1) {
         window = work->window;
         px += dx;
-        cursor->attributes.x = cursor->x =
-            (px >> 4) + (window->tile_x << 3) - 56;
+        cursor->attributes.x = cursor->x = (px >> 4) + (window->tile_x << 3) - 56;
         py += dy;
-        cursor->attributes.y = cursor->y =
-            (py >> 4) + (window->tile_y << 3) - 56;
-        cnt--;
+        cursor->attributes.y = cursor->y = (py >> 4) + (window->tile_y << 3) - 56;
+        cnt -= 1;
         if (cnt != 0)
             WaitFrames(1);
-    } while (cnt != 0);
+        if (cnt == 0)
+            break;
+    }
 }

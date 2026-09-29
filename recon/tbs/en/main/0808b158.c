@@ -1,3 +1,7 @@
+/* 2026-09-29 alchemy permute: score 770 to 585 on the permuter's scorer (0
+   is exact); remaining 7 register-only, 5 operand, 4 reordered, 2
+   inserted. Kept rewrites: 1x reorder local declarations, 1x invert an
+   if/else. */
 /* NONMATCHING: complete 128-byte owner [0808b158,0808b1d8) with its pool;
  * 128 of 128 bytes, 21 differing halfwords (2026-09-28).
  *
@@ -31,27 +35,25 @@ s32 BattleFx_GetResourceGroup(s32 effect_id);
 
 void *BattleFx_FindConditionResource(s32 effect_id, s32 condition)
 {
-    const struct BattleResourceCondition *entry =
-        (const struct BattleResourceCondition *)(Scene_InteractionRuleTable + 0x3e8);
-    s32 group = BattleFx_GetResourceGroup(effect_id);
+    const struct BattleResourceCondition *entry = (const struct BattleResourceCondition *)(Scene_InteractionRuleTable + 0x3e8);
     void *resource = 0;
+    s32 group = BattleFx_GetResourceGroup(effect_id);
 
     while (entry->id != -1) {
-        if (entry->use_effect_id) {
+        if (!entry->use_effect_id) {
+            if (entry->id != group) {
+                goto next;
+            }
+        } else {
             if (entry->id != effect_id)
                 goto next;
-        } else if (entry->id != group) {
-            goto next;
         }
-
         if (entry->condition == -1 || entry->condition == condition) {
             resource = entry->resource;
             break;
         }
-
-next:
+    next:
         entry++;
     }
-
     return resource;
 }

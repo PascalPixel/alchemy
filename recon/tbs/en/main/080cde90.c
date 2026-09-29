@@ -1,3 +1,10 @@
+/* 2026-09-29 alchemy permute: score 360 to 250 on the permuter's scorer (0
+   is exact); remaining 24 register-only, 2 reordered. Kept rewrites: 2x
+   reorder independent statements, 2x introduce a temporary, 1x change loop
+   form. FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* Draft, not exact (2026-09-28): 420 of 420 bytes, 38 differing halfwords.
  * Draws a line into the 8bpp tiled canvas (16 tiles wide) at *0x03001EF0
  * with an 8.8 fraction, clamping y to 0..127 after the deltas are taken;
@@ -28,8 +35,8 @@ void Func_080cde90(u32 x0, s32 y0, u32 x1, s32 y1, s32 color)
 
     dx = x1 - x0;
     dy = y1 - y0;
-    buf = *(u8 **)0x03001ef0;
     frac = 0x80;
+    buf = *(u8 **)0x03001ef0;
     if (y0 < 0)
         y0 = 0;
     if (y0 > 127)
@@ -39,12 +46,18 @@ void Func_080cde90(u32 x0, s32 y0, u32 x1, s32 y1, s32 color)
     if (y1 > 127)
         y1 = 127;
     if ((dx < 0 ? -dx : dx) < (dy < 0 ? -dy : dy)) {
+        s32 tmp;
         if (dy < 0) {
-            t = x0; x0 = x1; x1 = t;
-            t = y0; y0 = y1; y1 = t;
+            t = x0;
+            x0 = x1;
+            x1 = t;
+            t = y0;
+            y0 = y1;
             dx = x1 - x0;
+            y1 = t;
         }
-        step = ((s32)(x1 - x0) < 0 ? (s32)(x0 - x1) : (s32)(x1 - x0)) * 256 / (y1 - y0 < 0 ? y0 - y1 : y1 - y0);
+        tmp = y1 - y0;
+        step = ((s32)(x1 - x0) < 0 ? (s32)(x0 - x1) : (s32)(x1 - x0)) * 256 / (tmp < 0 ? y0 - y1 : y1 - y0);
         x = x0;
         for (y = y0; y != y1; y++) {
             off = ((((y >> 3) << 4) + (x >> 3)) << 3) + (y & 7);
@@ -62,15 +75,22 @@ void Func_080cde90(u32 x0, s32 y0, u32 x1, s32 y1, s32 color)
         }
     } else {
         if (dx < 0) {
-            t = x0; x0 = x1; x1 = t;
-            t = y0; y0 = y1; y1 = t;
+            t = x0;
+            x0 = x1;
+            x1 = t;
+            t = y0;
+            y0 = y1;
+            y1 = t;
             dy = y1 - y0;
             dx = x1 - x0;
         }
         step = (y1 - y0 < 0 ? y0 - y1 : y1 - y0) * 256 / ((s32)(x1 - x0) < 0 ? (s32)(x0 - x1) : (s32)(x1 - x0));
         y = y0;
-        for (x = x0; x != x1; x++) {
-            off = ((((y >> 3) << 4) + (x >> 3)) << 3) + (y & 7);
+        x = x0;
+        while (x != x1) {
+            u32 tmp2;
+            tmp2 = x >> 3;
+            off = ((((y >> 3) << 4) + tmp2) << 3) + (y & 7);
             off = (off << 3) + (x & 7);
             if (buf[off] < color)
                 buf[off] = color;
@@ -82,6 +102,7 @@ void Func_080cde90(u32 x0, s32 y0, u32 x1, s32 y1, s32 color)
                     y--;
                 frac &= ~0x100;
             }
+            x++;
         }
     }
 }

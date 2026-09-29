@@ -1,3 +1,14 @@
+/* 2026-09-29 alchemy permute: score 2325 to 1535 on the permuter's scorer
+   (0 is exact); remaining 14 register-only, 1 operand, 4 reordered, 10
+   inserted, 2 deleted. Kept rewrites: 10x change loop form, 9x swap
+   commutative operands, 6x add a same-width cast, 5x reorder independent
+   statements, 5x introduce a temporary, 4x reorder local declarations, 4x
+   drop a same-width cast, 2x remove a temporary, 2x pointer arithmetic or
+   indexing, 2x toggle register, 2x test truth or compare with zero, 1x
+   split or join a compound assignment. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
 /* Draft, not exact (2026-09-24): 61 differing halfwords at equal size (was 4 bytes short); the reference loads the zero it stores into kind and active from the literal pool.
    Typed sprite fields, widened coordinates, and linked pool masks remove
    the macro but emit 144 bytes (58–64 edits); shortening the zero pulls the
@@ -27,38 +38,57 @@ void ShopCursor_Advance(struct ShopCursor *cursor)
     s8 kind;
     u8 active;
     struct ShopCursorAnchor *anchor;
-    s16 xStart;
     s16 yStart;
-    s32 dx;
+    s16 xStart;
+    register s32 dx;
     s32 dy;
     u16 x;
     u16 y;
+    s8 tmp;
+    s8 tmp4;
+    s32 tmp2;
 
     if (cursor == 0)
         return;
-    kind = cursor->kind;
+    (u8)(kind = cursor->kind);
     if (kind == 0)
         return;
-
-    do { anchor = cursor->anchor; } while (0); /* FAKEMATCH */
+    if (0 != 1) {
+        do {
+            anchor = cursor[0].anchor;
+            if (!0)
+                break;
+        } while (1 != 0);
+    }
+    /* FAKEMATCH */
     active = cursor->active;
-    active += 1;
+    tmp2 = active + 1;
     xStart = cursor->x;
-    dx = cursor->target_x - xStart;
+    active = tmp2;
+    (u32)(dx = cursor->target_x - xStart);
     cursor->active = active;
-    do { x = cursor->x + FixedPoint_Ratio((s8)active * dx, kind); } while (0); /* FAKEMATCH */
+    tmp = active;
+    while (1) {
+        x = cursor->x + FixedPoint_Ratio(dx * (s8)active, kind);
+        if (!(0 != 0))
+            break;
+    }
+    /* FAKEMATCH */
     anchor->x = x;
-    M2C_FIELD(anchor, u16, 0x16) =
-        (M2C_FIELD(anchor, u16, 0x16) & 0xfe00) | (x & 0x1ff);
-
+    M2C_FIELD(anchor, u16, 0x16) = (0x1ff & x) | (M2C_FIELD(anchor, u16, 0x16) & 0xfe00);
     yStart = cursor->y;
     dy = cursor->target_y - yStart;
-    y = cursor->y + FixedPoint_Ratio((s8)active * dy, kind);
+    y = cursor->y + FixedPoint_Ratio(dy * tmp, kind);
     anchor->y = y;
-    M2C_FIELD(anchor, s8, 0x14) = (s8)y;
-
+    tmp4 = (s8)y;
+    M2C_FIELD(anchor, s8, 0x14) = tmp4;
     if ((s8)active == kind) {
-        do { cursor->kind = 0; } while (0); /* FAKEMATCH */
+        while (1) {
+            cursor->kind = (u32)0;
+            if (!0)
+                break;
+        }
+        /* FAKEMATCH */
         cursor->active = 0;
     }
 }

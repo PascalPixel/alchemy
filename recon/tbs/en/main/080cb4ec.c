@@ -20,10 +20,10 @@
  * (0x080d9fc8, the closest structural template, score 8362/10000) and
  * games/THE BROKEN SEAL/src/battle/effects/member_orbit (0x080ce85c). This owner is
  * 780 bytes against the template's 644: it shares the template's overall
- * shape (WORK_EFX republish, Func_080cd594, two BattleEffect_LoadWork heap-kind
+ * shape (WORK_EFX republish, BattleFx_BeginCanvasLayer, two BattleEffect_LoadWork heap-kind
  * loads, Resource_LoadAndDecompress, a fixed-length outer frame loop, the
  * Scheduler_AddOrUpdateCallback/RemoveCallback bracket at 0x080CD261, and
- * the Func_08002dd8(47)/Func_08002dd8(46) unload order also seen in
+ * the Runtime_ReleaseHeapBlock(47)/Runtime_ReleaseHeapBlock(46) unload order also seen in
  * member_orbit) but replaces the template's 9-puff sine/cosine arc with a
  * 64-particle randomized field seeded by Random16()/UnsignedModulo, and
  * replaces the template's single draw callback with member_orbit's
@@ -39,24 +39,24 @@
  */
 
 
-void Func_080cd594(s32 mode);
-s32 Func_080041d8(s32 callback, s32 interval);
-void Func_08004278(s32 callback);
-void Func_080f9010(s32 cue);
+void BattleFx_BeginCanvasLayer(s32 mode);
+s32 Scheduler_AddOrUpdateCallback(s32 callback, s32 interval);
+void Scheduler_RemoveCallback(s32 callback);
+void Audio_PlayCue(s32 cue);
 void EffectPosition_ApplyStepAndYOffset(
     s32 actor, struct EffectPosition *position);
-u32 Func_08004458(void);
-s32 Func_08002304(u32 value, s32 modulus);
-void Func_080d6888(s32 a, s32 b, s32 c, s32 d, s32 e);
+u32 Random16(void);
+s32 Math_ModU(u32 value, s32 modulus);
+void ObjectGroup_UpdateMembers(s32 a, s32 b, s32 c, s32 d, s32 e);
 void Camera_ApplyShake(s32 a, u32 b);
-void Func_080cd52c(void);
-void Func_080030f8(s32 frames);
-void Func_08002dd8(s32 id);
-s32 Func_080cdbc0(void);
+void ObjectGroup_TickMemberTimers(void);
+void WaitFrames(s32 frames);
+void Runtime_ReleaseHeapBlock(s32 id);
+s32 BattleFx_EndCanvasLayer(void);
 
 /* Size/offset table for the four |drift bucket| classes (0..3): source data
    offset within the work block, width, and height. This owner's own table,
-   distinct from puff_arc's Data_080ede9f/Data_080edea5/Data_080edeb2. */
+   distinct from puff_arc's PuffArc_CellWidths/PuffArc_CellHeights/PuffArc_CellSourceOffsets. */
 extern const u16 Data_080edf88[4];
 extern const u8 Data_080edf7f[4];
 extern const u8 Data_080edf83[4];
@@ -98,7 +98,7 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
     work = *cursor++;
     canvas = *cursor;
     WORK_EFX = efx;
-    Func_080cd594(1);
+    BattleFx_BeginCanvasLayer(1);
     *(s16 *)0x04000020 = 0x0100;
     *(s16 *)0x04000052 = 0x1000;
     BattleEffect_LoadWork(46, 7, 7, 3, 1);
@@ -109,7 +109,7 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
     Resource_LoadAndDecompress((void *)0x78, work, 1, 1);
     *(s32 *)(work + 0x7780) = 1;
     *(s32 *)(work + 0x7784) = 0;
-    Func_080041d8(0x080CD261, 0x480);
+    Scheduler_AddOrUpdateCallback(0x080CD261, 0x480);
     EffectPosition_ApplyStepAndYOffset(WORK_EFX->actors[0], &pos);
     *(s32 *)0x04000028 = (0x40 - pos.x) << 8;
 
@@ -119,7 +119,7 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
         do {
             s32 v;
 
-            v = Func_08002304(Func_08004458(), 0x60) + 16;
+            v = Math_ModU(Random16(), 0x60) + 16;
             p->pos_x = v;
             p->pos_y = (24 - (i / 4)) << 16;
             if (v <= 0x2B) {
@@ -148,7 +148,7 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
         } while (i != 64);
     }
 
-    Func_080f9010(0xD4);
+    Audio_PlayCue(0xD4);
     frame = 0;
     do {
         if (frame <= 0x10) {
@@ -208,21 +208,21 @@ void Func_080cb4ec(struct BattleEffectArgument *efx)
         } while (i != -1);
 
         if (((u32)(frame - 0x17) <= 0x40) && !(3 & frame)) {
-            Func_080d6888(WORK_EFX->actors[0], 7, 5, 0, 2);
+            ObjectGroup_UpdateMembers(WORK_EFX->actors[0], 7, 5, 0, 2);
             *(s32 *)(work + 0x77A8) = 1;
             if (!(7 & frame)) {
-                Func_080f9010(0x85);
+                Audio_PlayCue(0x85);
             }
         }
         Camera_ApplyShake(8, 8);
-        Func_080cd52c();
+        ObjectGroup_TickMemberTimers();
         *(s32 *)(work + 0x7824) = 1;
-        Func_080030f8(1);
+        WaitFrames(1);
         frame += 1;
     } while (frame != 0x78);
 
-    Func_08004278(0x080CD261);
-    Func_08002dd8(47);
-    Func_08002dd8(46);
-    Func_080cdbc0();
+    Scheduler_RemoveCallback(0x080CD261);
+    Runtime_ReleaseHeapBlock(47);
+    Runtime_ReleaseHeapBlock(46);
+    BattleFx_EndCanvasLayer();
 }

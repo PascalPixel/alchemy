@@ -25,7 +25,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/SEQUENCE_TAIL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/CHALLENGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/INSPECT.o"(.text)
-        "*/resource_3bf_overlay.o"(.text.x0200a7b0)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/STORY.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/RESCUE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/ACTOR21.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/VARIANTS.o"(.text)

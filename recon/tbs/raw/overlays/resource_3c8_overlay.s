@@ -2936,6 +2936,8 @@ gEffectScripts:
 	.4byte 0x00000022
 	.4byte 0x02008595
 	.4byte 0x00000010
+	.global gVinasuLeaderApproachScript
+gVinasuLeaderApproachScript:
 	.4byte 0x0000001c
 	.4byte 0x0000000c
 	.4byte 0x00000015
@@ -3044,6 +3046,8 @@ gVinasuSprayScript:
 	.4byte 0x0000001c
 	.4byte 0x00000008
 	.4byte 0x00000010
+	.global gVinasuPushScript
+gVinasuPushScript:
 	.4byte 0x00000022
 	.4byte 0x02008691
 	.4byte 0x0000001c
@@ -3633,6 +3637,8 @@ gVinasuSettleScriptB:
 	.4byte 0x00000028
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global gVinasuPushCells
+gVinasuPushCells:
 	.4byte 0x0032007c
 	.4byte 0x00020001
 	.4byte 0x007c0006

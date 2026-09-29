@@ -13,7 +13,12 @@
    9/7 bitfield (4-byte elements under ARM struct rounding) and a volatile
    table (60 bytes) do not close it. The table itself (0x080c593c) sits 4
    bytes into BattlePres_ActorObjectScript in unidentified.s and needs its
-   own label before adoption. */
+   own label before adoption.
+   2026-09-29 alchemy permute (seed 1, 8 jobs, 5 minutes): 177,561 candidates,
+   none below the draft's score (register-only swap plus the unlabelled
+   table), 114,673 level with it. No operand swap, temporary, cast, pointer
+   or index spelling, statement order or loop form in its rewrite set moves
+   the reload to [table, index]. */
 #include "TYPES.H"
 #include "GLOBAL_CELLS.H"
 #undef Resource_FindFreeSlot

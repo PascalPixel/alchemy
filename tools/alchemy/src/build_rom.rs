@@ -748,13 +748,15 @@ fn build_sound_files(
 const OVERLAY_MACHINE: LzMachine = ags::resource::PACKER;
 
 /// The resource files an assembly source reads with
-/// `.incbin "GRAPHICS/..."`, each named by its recipe.
+/// `.incbin "GRAPHICS/..."`, or as assembler source with `.include`, each
+/// named by its recipe.
 fn graphics_files(root: &Path, source: &Path) -> Vec<String> {
     let Ok(text) = fs::read_to_string(root.join(source)) else {
         return Vec::new();
     };
-    let pattern = regex::Regex::new(r#"(?m)^\s*\.incbin\s+"((?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#)
-        .expect("static pattern");
+    let pattern =
+        regex::Regex::new(r#"(?m)^\s*\.(?:incbin|include)\s+"((?:GRAPHICS|MAP)/[A-Za-z0-9_./]+)""#)
+            .expect("static pattern");
     pattern
         .captures_iter(&text)
         .map(|capture| capture[1].to_owned())

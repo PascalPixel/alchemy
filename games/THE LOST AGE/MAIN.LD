@@ -1849,6 +1849,8 @@ SECTIONS
         "*/games/THE LOST AGE/SOUND/SEQUENCE/BGM_754.o"(.rodata)
         "*/games/THE LOST AGE/SOUND/SEQUENCE/BGM_799.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.082f9030)
+        "*/games/THE LOST AGE/SRC/GRAPHICS/SPRITE/SPRITES.o"(.rodata)
+        "*/recon/tla/unidentified.o"(.unidentified.086322b2)
         "*/games/THE LOST AGE/SRC/SYSTEM/RESOURCE/DIRECTORY.o"(.rodata)
         "*/recon/tla/unidentified.o"(.unidentified.08682000)
         "*/games/COMMON/SRC/GRAPHICS/UI/WINDOW_TILES.o"(.rodata)

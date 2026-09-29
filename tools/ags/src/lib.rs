@@ -13,4 +13,5 @@ pub mod graphics;
 pub mod lz;
 pub mod resource;
 pub mod sound;
+pub mod sprite;
 pub mod text;

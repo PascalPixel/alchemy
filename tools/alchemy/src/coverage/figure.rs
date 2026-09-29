@@ -11,7 +11,7 @@ use super::history::{day_number, Day, History, Measure, UNTAGGED};
 use super::jsnum::commas;
 use super::letters::{Letters, LINE};
 use super::model::{treemap, Rect, Tile};
-use super::palette::{BAND, BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
+use super::palette::{BAND, BAND_OPACITY, BLUE, DARK, FACE, GOLD, GRID, INK, MUTED, SHADOW, WELL};
 use super::raster::{Canvas, Relief};
 use super::sessions::{family, Family};
 use std::path::Path;
@@ -85,7 +85,7 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
     let stricter = "Overhauls";
     key_x -= letters.width(stricter) as i32;
     canvas.text(letters, key_x, 6, stricter, INK, Some(SHADOW));
-    canvas.fill(key_x - 14, 9, 10, 10, BAND);
+    canvas.shade(key_x - 14, 9, 10, 10, BAND, BAND_OPACITY);
     debug_assert!(
         masthead_end + 12 <= key_x - 14,
         "the chart's top line overflows"
@@ -129,8 +129,8 @@ pub(crate) fn chart(letters: &Letters, history: &History) -> Canvas {
         if let Some(day) = day_number(date) {
             // The band covers the step into the stricter day.
             let (from, to) = (x_of(day - 1) + 1, x_of(day) + 1);
-            canvas.fill(from, top + 1, to - from, plot_h - 2, BAND);
-            canvas.fill(from, top - 4, to - from, 3, BAND);
+            canvas.shade(from, top + 1, to - from, plot_h - 2, BAND, BAND_OPACITY);
+            canvas.shade(from, top - 4, to - from, 3, BAND, BAND_OPACITY);
         }
     }
     for quarter in 0..=4 {

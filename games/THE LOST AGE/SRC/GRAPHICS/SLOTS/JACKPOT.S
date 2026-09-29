@@ -3,5 +3,5 @@
 	.section .rodata
 	.global Slots_JackpotBanner
 Slots_JackpotBanner:
-	.incbin "GRAPHICS/SLOTS/JACKPOT.gbapal"
-	.incbin "GRAPHICS/SLOTS/JACKPOT.4bpp.lz"
+	.incbin "GRAPHICS/SLOTS/JACKPOT_1.gbapal"
+	.incbin "GRAPHICS/SLOTS/JACKPOT.parts.lz"

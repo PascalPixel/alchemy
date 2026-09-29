@@ -4,4 +4,4 @@
 	.global Slots_TimesSign
 Slots_TimesSign:
 	.incbin "GRAPHICS/SLOTS/TIMES_SIGN.gbapal"
-	.incbin "GRAPHICS/SLOTS/TIMES_SIGN.4bpp.lz"
+	.incbin "GRAPHICS/SLOTS/TIMES_SIGN.4bpp16x16.lz"

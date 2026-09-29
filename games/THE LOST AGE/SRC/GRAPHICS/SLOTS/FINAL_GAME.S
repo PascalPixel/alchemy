@@ -4,4 +4,4 @@
 	.global Slots_FinalGameBanner
 Slots_FinalGameBanner:
 	.incbin "GRAPHICS/SLOTS/FINAL_GAME.gbapal"
-	.incbin "GRAPHICS/SLOTS/FINAL_GAME.4bpp.lz"
+	.incbin "GRAPHICS/SLOTS/FINAL_GAME.4bpp16x16.lz"

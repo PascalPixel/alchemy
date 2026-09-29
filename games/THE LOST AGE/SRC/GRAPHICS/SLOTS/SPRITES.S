@@ -3,5 +3,5 @@
 	.section .rodata
 	.global Slots_Sprites
 Slots_Sprites:
-	.incbin "GRAPHICS/SLOTS/SPRITES.gbapal"
-	.incbin "GRAPHICS/SLOTS/SPRITES.8bpp.lz"
+	.incbin "GRAPHICS/SLOTS/SPRITES_1.gbapal"
+	.incbin "GRAPHICS/SLOTS/SPRITES.parts.lz"

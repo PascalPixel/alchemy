@@ -75,11 +75,12 @@ struct PerspectiveVector {
     s32 z;
 };
 
-extern u8 Value_000000d4;
-extern u8 Value_00000284;
-extern u8 Value_000000d5;
-extern u8 Value_000000d6;
-extern u8 Value_000000d7;
+extern char ResourceId_PerspectiveDataA;
+extern char ResourceId_DefaultMapCells;
+extern char ResourceId_DefaultMapAnimation;
+extern char ResourceId_DefaultMetatileAttributes;
+void Transform_UpdateVertices(void);
+extern u8 Transform_UpdateVerticesSize;
 extern u32 Data_03001ce0[];
 extern u32 Data_03001f60;
 extern u32 Data_03001af4;
@@ -155,14 +156,14 @@ s32 Map_InitializePerspectiveScene(void)
     work->limit_x = 0x1fe00000;
     work->limit_y = 0x1fe00000;
     work->frame = 0;
-    work->tiles = Resource_GetTableEntry((s32)&Value_000000d4);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_000000d6), (void *)0x0202d000);
+    work->tiles = Resource_GetTableEntry((s32)&ResourceId_PerspectiveDataA);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapAnimation), (void *)0x0202d000);
     MapAnimation_StartChannels((void *)0x0202d000);
     Io_Set16(0x3f9e, (u16 *)0x04000050);
     Io_Set16(0x1010, (u16 *)0x04000052);
     *(u16 *)0x04000054 = 0;
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_000000d5), (void *)0x02010000);
-    Resource_DecodeType01(Resource_GetTableEntry((s32)&Value_000000d7), (void *)0x0202c000);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMapCells), (void *)0x02010000);
+    Resource_DecodeType01(Resource_GetTableEntry((s32)&ResourceId_DefaultMetatileAttributes), (void *)0x0202c000);
     work->fade = 0x1f00;
     work->fade_step = 0x80;
     Io_Set16(0xa80a, (u16 *)0x0400000e);
@@ -212,8 +213,8 @@ s32 Map_InitializePerspectiveScene(void)
               (s32 (*)(struct PerspectiveVector *, struct PerspectiveCamera *))0x03000250);
     Render_ResetTransformState();
     Graphics_PrepareTransferInIwramWork((s32)camera, (s32)position);
-    size = (s32)&Value_00000284;
-    Dma_Set((void *)0x0800a0f8, (void *)Runtime_AllocateHeapBlock(46, size),
+    size = (s32)&Transform_UpdateVerticesSize;
+    Dma_Set((void *)Transform_UpdateVertices, (void *)Runtime_AllocateHeapBlock(46, size),
             0x84000000 | (size >> 2), (volatile u32 *)0x040000d4);
     WorldMap_BuildScanlineTable(((RatioFn)0x0300013c)(Trig_Cos(*pitch), Trig_Sin(*pitch)),
                   position, tiles);

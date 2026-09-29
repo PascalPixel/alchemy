@@ -9883,7 +9883,7 @@ msgctxt "message"
 msgid "02468"
 msgstr "{argument_actor_name:234} これ以上{line_break}{argument_item_name:134} もてない・・・{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgVenusDjinnJoined"
 msgid "02469"
 msgstr "{argument_actor_name:234} ヴィーナスのジン{line_break}{text_color:5}{argument_ability_name}{text_color:16}を ゲットした{end_wait}"
 

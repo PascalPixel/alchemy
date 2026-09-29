@@ -11,4 +11,8 @@ u32 Random16(void);
 void *Runtime_AllocateBlock(s32 slot, s32 size);
 void Runtime_ReleaseHeapBlock(s32 slot);
 
+/* Set while WaitFrames holds the console in sleep, waiting for L and R to
+   wake it; the key interrupt is armed again only when it is clear. */
+extern volatile u16 gSleepActive;
+
 #endif

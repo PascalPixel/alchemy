@@ -225,12 +225,12 @@ Resource_DirectoryTable:
 	resource CrystalSheet, BattleFx_CrystalSheet
 	resource , BattleFx_WaterSparkleSheet
 	resource , BattleFx_LightningPillarSheet
-	resource , BattleFx_StagedParticleData
-	resource , BattleFx_DualStreamData
+	resource , BattleFx_StagedParticlePath
+	resource , BattleFx_DualStreamPath
 	resource , Field_PerspectiveDataA
 	resource DefaultMapCells, Field_DefaultMapCells
-	resource , Field_PerspectiveDataB
-	resource , Field_PerspectiveDataC
+	resource , Field_DefaultMapAnimation
+	resource , Field_DefaultMetatileAttributes
 	resource , WorldMap_PaletteA
 	resource , WorldMap_TilesA
 	resource , WorldMap_TilesB
@@ -243,9 +243,9 @@ Resource_DirectoryTable:
 	resource , WorldMap_TilesH
 	resource , WorldMap_TilesI
 	resource , WorldMap_TilesJ
-	resource , Graphics_PictureA
-	resource PictureB, Graphics_PictureB
-	resource , Graphics_PictureC
+	resource , Korosseo_RivalPathA
+	resource RivalPathB, Korosseo_RivalPathB
+	resource , Korosseo_RivalPathC
 	resource , Graphics_TilesK
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB

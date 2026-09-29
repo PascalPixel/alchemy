@@ -44,3 +44,7 @@ pub static AGBCC_FLASH_SOURCES: &[&str] = &[
     "games/COMMON/SRC/SYSTEM/SAVE/VERIFY_FLASH_SECTOR.C",
     "games/THE LOST AGE/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C",
 ];
+
+// Resident ARM routines, built with pret's agbcc_arm (Pascal, 2026-09-29):
+// only that compiler divides with the ROM's cmp/addlt, as agscc cannot.
+pub static AGBCC_ARM_SOURCES: &[&str] = &[];

@@ -66,6 +66,15 @@
  * into a temporary before the decay call both closed real structure, and
  * three further splits of the shared loop counter made the allocation worse
  * and were reverted.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 18,111
+ * candidates; the best scored 4016 against 4540 (105 register-only, 21
+ * stack-only, 38 operand, 8 reordered, 9 inserted, 13 deleted) after 51
+ * rewrites (swap commutative operands, change loop form, introduce a
+ * temporary, pointer arithmetic or indexing), none of them kept. Loop-form
+ * changes and operand swaps across the function; its resource numbers are
+ * pooled link-time Value_ symbols (six of the ten not in CONSTANTS.LD, all
+ * small enough to become movs as plain numbers), which block adoption in
+ * any case.
  */
 
 typedef void (*WordCopyFn)(void *dest, const void *src, s32 size);

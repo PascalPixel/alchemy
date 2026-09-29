@@ -19,6 +19,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_E.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_K.o"(.text)
         "*/resource_372_overlay.o"(.text.x0200a180)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/RIVER_SEARCH.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/GROUP_DEPARTURE_I.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/HAIDIA_ARASHI/STORM_SCENE_02DEC.o"(.text)
         "*/resource_372_overlay.o"(.text.x0200b1ac)

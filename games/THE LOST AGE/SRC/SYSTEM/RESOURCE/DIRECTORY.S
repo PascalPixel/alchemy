@@ -484,7 +484,7 @@ Resource_DirectoryTable:
 	resource , Resource_Data1D4
 	resource , Resource_Data1D5
 	resource , Resource_Data1D6
-	resource , Resource_Data1D7
+	resource , Ui_CommandIcons
 	resource , Resource_Data1D8
 	resource , Resource_Data1D9
 	resource , Resource_Data1DA

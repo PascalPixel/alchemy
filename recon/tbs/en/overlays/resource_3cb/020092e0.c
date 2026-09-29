@@ -2,6 +2,9 @@
  * MENU/LINK_LOBBY/ROUND.C).
  * Remaining difference: the ROM loads 0x4b and 0x4c from its literal pool as
  * link-time values, and it reads words just past the loaded image.
+ * psynergy editions (2026-09-29): 0x54, 0x41, 0x4c and 0x4b are the same in all
+ * six tbs editions, so they are plain numbers, not ids; the message numbers
+ * and 03001ebc, 03001d08 are the words that differ.
  * The listing keeps these rows. */
 /* Apply the link round's result, update records, and reopen lobby dialogue.
  * Reconstructed from this owner's complete own-ROM listing and registered

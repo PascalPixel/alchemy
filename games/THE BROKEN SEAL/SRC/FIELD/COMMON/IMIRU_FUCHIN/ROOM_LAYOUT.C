@@ -1,12 +1,6 @@
-/* NONMATCHING: resource_39a at 0x02009948 (236 bytes with its pool),
- * ImiruFuchin_ApplyRoomLayout, stays listing. It was
- * FIELD/COMMON/IMIRU_FUCHIN/ROOM_LAYOUT.C.
- *
- * Remaining difference: the reference loads the scene numbers from its literal
- * pool and compares registers, as link-time scene symbols do; plain constants
- * compile to cmp with an immediate. The tables keep their listing addresses.
- */
 #include "TYPES.H"
+#include "SCENE_IDS.H"
+#include "FIELD_EVENT.H"
 
 void Engine_MapCopyCellAttributes();
 void DialogueLayout_ConfigureGroupOne();
@@ -14,13 +8,7 @@ void DialogueLayout_ConfigureGroupTwo();
 void DialogueLayout_ConfigureGroupThree();
 void FieldScene_RunFlagBranchedLayoutSteps();
 
-
-extern u8 Data_0000003e[];
-extern u8 Data_0000003f[];
-extern u8 Data_00000040[];
-extern u8 Data_00000041[];
 extern u8 Data_02000240[];
-extern s16 Data_02000240_t[][1];
 
 /* Call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a direct call precomputes a costly constant
@@ -37,24 +25,24 @@ void ImiruFuchin_ApplyRoomLayout(void)
     u32 i;
     s32 record;
 
-    if (Data_02000240_t[224][0] == (s32)Data_0000003e) {
+    if (gGameState.scene == (s32)&SceneId_ImiruFuchin2) {
         Call6(Engine_MapCopyCellAttributes, 8, 29, 15, 5, 8, 42);
         DialogueLayout_ConfigureGroupOne();
     } else {
-        if (Data_02000240_t[224][0] == (s32)Data_0000003f) {
+        if (gGameState.scene == (s32)&SceneId_ImiruFuchin3) {
             Call6(Engine_MapCopyCellAttributes, 12, 8, 10, 18, 0, 28);
             DialogueLayout_ConfigureGroupTwo();
         } else {
-            if (Data_02000240_t[224][0] == (s32)Data_00000040) {
-                if (Data_02000240_t[225][0] == 1) {
+            if (gGameState.scene == (s32)&SceneId_ImiruFuchin4) {
+                if (gGameState.entrance == 1) {
                     goto L_020019c6;
                 }
                 Call6(Engine_MapCopyCellAttributes, 12, 21, 9, 16, 12, 3);
                 DialogueLayout_ConfigureGroupThree();
             } else {
                 L_020019c6:;
-                if (Data_02000240_t[224][0] == (s32)Data_00000041) {
-                    if (Data_02000240_t[225][0] == 1 || Data_02000240_t[225][0] == 2) {
+                if (gGameState.scene == (s32)&SceneId_ImiruFuchin5) {
+                    if (gGameState.entrance == 1 || gGameState.entrance == 2) {
                         Call6(Engine_MapCopyCellAttributes, 14, 10, 9, 8, 22, 20);
                     } else {
                         Call6(Engine_MapCopyCellAttributes, 7, 45, 11, 4, 20, 45);

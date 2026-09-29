@@ -1,106 +1,7 @@
 .syntax unified
 	.thumb
-	.section .text.x02008d58,"ax",%progbits
-	.p2align 2
-	.global Func_02000d58
-	.thumb_func
-Func_02000d58:
-	push {r5, r6, r7, lr}
-	sub sp, #4
-	ldr r3, [pc, #36]
-	mov r5, sp
-	adds r5, #2
-	strh r3, [r5]
-	ldr r3, [pc, #32]
-	movs r1, #5
-	ldr r0, [r3]
-	bl 0x0200d974
-	cmp r0, #0
-	bne .L_02000d58_0
-	ldr r3, [pc, #24]
-	ldr r2, [r3]
-	movs r1, #31
-	adds r2, #4
-	ands r2, r1
-	str r2, [r3]
-	movs r6, #0
-	adds r7, r5, #0
-	b .L_02000d58_1
-	.4byte 0x00000000
-	.4byte 0x03001e40
-	.4byte 0x0200e004
-.L_02000d58_1:
-	movs r3, #110
-	subs r3, r3, r6
-	movs r2, #160
-	lsls r2, r2, #19
-	lsls r3, r3, #1
-	adds r3, r3, r2
-	ldrh r2, [r3]
-	movs r3, #31
-	ands r3, r2
-	strh r3, [r7]
-	ldrh r5, [r7]
-	cmp r6, #2
-	bhi .L_02000d58_2
-	lsls r0, r5, #2
-	movs r1, #10
-	bl 0x0200d96c
-	subs r5, r5, r0
-.L_02000d58_2:
-	movs r2, #111
-	subs r2, r2, r6
-	movs r3, #160
-	lsls r3, r3, #19
-	lsls r2, r2, #1
-	adds r2, r2, r3
-	ldr r3, [pc, #40]
-	ldr r3, [r3]
-	lsls r1, r3, #10
-	ldr r3, [pc, #40]
-	ldr r3, [r3]
-	lsls r3, r3, #5
-	orrs r1, r3
-	orrs r5, r1
-	adds r6, #1
-	strh r5, [r2]
-	cmp r6, #5
-	bls .L_02000d58_1
-	ldr r3, [pc, #24]
-	ldr r3, [r3]
-	ldr r2, [pc, #24]
-	orrs r3, r1
-	strh r3, [r2]
-.L_02000d58_0:
-	sub sp, #-4
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0200e00c
-	.4byte 0x0200e008
-	.4byte 0x0200e004
-	.4byte 0x050000d2
-	.global Func_02000dfc
-	.thumb_func
-Func_02000dfc:
-	push {lr}
-	ldr r1, [pc, #8]
-	ldr r3, [pc, #8]
-	movs r2, #0
-	b .L_02000dfc_0
-	.2byte 0x0000
-	.4byte 0x00000000
-	.4byte 0x050000de
-.L_02000dfc_0:
-	adds r2, #1
-	strh r1, [r3]
-	subs r3, #2
-	cmp r2, #6
-	bls .L_02000dfc_0
-	pop {r0}
-	bx r0
-	.2byte 0x0000
+	.section .text.x02008e20,"ax",%progbits
+	.balign 4
 	.global Func_02000e20
 	.thumb_func
 Func_02000e20:
@@ -3714,8 +3615,14 @@ MakyuriHeya_PushScriptC:
 	.4byte 0x00000022
 	.4byte 0x0200a2ed
 	.4byte 0x00000010
+	.global gPaletteCycleRed
+gPaletteCycleRed:
 	.4byte 0x00000000
+	.global gPaletteCycleGreen
+gPaletteCycleGreen:
 	.4byte 0x00000000
+	.global gPaletteCycleBlue
+gPaletteCycleBlue:
 	.4byte 0x00000000
 	.global MakyuriHeya_GateCells
 MakyuriHeya_GateCells:

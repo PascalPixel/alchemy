@@ -10,10 +10,16 @@ Func_080ad0c0:
 	.global Func_080ad0c8
 	.thumb_func
 Func_080ad0c8:
+	.global Owner_AdjustSecondValueFar
+	.thumb_func
+Owner_AdjustSecondValueFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xebd1
 	.2byte 0x080a
+	.global Owner_RecalculateRatiosFar
+	.thumb_func
+Owner_RecalculateRatiosFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xea31
@@ -26,6 +32,9 @@ Func_080ad0c8:
 	bx	r4
 	.2byte 0xeb1d
 	.2byte 0x080a
+	.global BattleUnit_AssignFar
+	.thumb_func
+BattleUnit_AssignFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0xfbed
@@ -66,18 +75,30 @@ Func_080ad110:
 	bx	r4
 	.2byte 0x0435
 	.2byte 0x080b
+	.global Battle_HitCheck
+	.thumb_func
+Battle_HitCheck:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x075d
 	.2byte 0x080b
+	.global Battle_CalcAttack
+	.thumb_func
+Battle_CalcAttack:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x03ad
 	.2byte 0x080b
+	.global Battle_CalcPower
+	.thumb_func
+Battle_CalcPower:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x03e1
 	.2byte 0x080b
+	.global Battle_CalcRestore
+	.thumb_func
+Battle_CalcRestore:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x0409
@@ -86,6 +107,9 @@ Func_080ad110:
 	bx	r4
 	.2byte 0xd3a9
 	.2byte 0x080a
+	.global BattleRandom16Far
+	.thumb_func
+BattleRandom16Far:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x0379

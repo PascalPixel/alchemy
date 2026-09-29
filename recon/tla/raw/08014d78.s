@@ -3,6 +3,9 @@
 	.global Func_08014d78
 	.thumb_func
 Func_08014d78:
+	.global Runtime_BumpAllocate
+	.thumb_func
+Runtime_BumpAllocate:
 	push	{lr}
 	movs	r1, #192
 	lsls	r1, r1, #18

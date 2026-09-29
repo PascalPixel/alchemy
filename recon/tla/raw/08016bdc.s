@@ -132,6 +132,9 @@ OwnerState_Get:
 	.4byte 0x02000520
 	.2byte 0x5a00
 	.2byte 0xffff
+	.global GameFlag_TestFar
+	.thumb_func
+GameFlag_TestFar:
 	.2byte 0x0503
 	movs	r2, #7
 	ands	r2, r0

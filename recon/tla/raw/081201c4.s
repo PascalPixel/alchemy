@@ -180,6 +180,9 @@ Func_081201c4:
 	pop	{r5, r6, r7, pc}
 	.2byte 0x01f8
 	.2byte 0x0812
+	.global BattleEv_Push
+	.thumb_func
+BattleEv_Push:
 	push	{r5, lr}
 	movs	r3, #192
 	lsls	r3, r3, #18
@@ -200,6 +203,9 @@ Func_081201c4:
 	str	r1, [r5, r3]
 	str	r2, [r4, #0]
 	pop	{r5, pc}
+	.global BattleFx_CanAffectDefeatedUnit
+	.thumb_func
+BattleFx_CanAffectDefeatedUnit:
 	push	{lr}
 	cmp	r0, #60
 	beq.n	.L_081203a0

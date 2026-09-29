@@ -49,6 +49,10 @@ pub fn bundle_for(_target: CompilerTarget) -> PathBuf {
 pub fn agbcc_driver() -> PathBuf {
     bundle().join("agbcc").join("old_agbcc")
 }
+/// pret's ARM compiler, agbcc/gcc_arm from the approved agbcc source.
+pub fn agbcc_arm_driver() -> PathBuf {
+    bundle().join("agbcc").join("agbcc_arm")
+}
 /// Modern syntax support with the historical integer/soft-float object ABI.
 // GAS marks softfpa objects as VFP; explicit FPA with soft-float retains
 // the historical integer/soft-float ABI used by the compiler objects.
@@ -69,19 +73,17 @@ pub fn assembly_command(source: &str, object: &str) -> Vec<String> {
     .collect()
 }
 /// Unmodified GCC/agbcc output uses era GAS alignment semantics.
-pub fn compiler_assembly_command(source: &str, object: &str) -> Vec<String> {
+/// ARM compiler output assembles without `-mthumb`.
+pub fn compiler_assembly_command(source: &str, object: &str, arm: bool) -> Vec<String> {
     let mut command = vec![bundle().join("as").to_string_lossy().into_owned()];
+    command.push("-marm7tdmi".to_string());
+    if !arm {
+        command.push("-mthumb".to_string());
+    }
     command.extend(
-        [
-            "-marm7tdmi",
-            "-mthumb",
-            "-mthumb-interwork",
-            "-o",
-            object,
-            source,
-        ]
-        .iter()
-        .map(|s| (*s).to_string()),
+        ["-mthumb-interwork", "-o", object, source]
+            .iter()
+            .map(|s| (*s).to_string()),
     );
     command
 }
@@ -119,6 +121,8 @@ pub enum CompilerFamily {
     Agbcc,
     /// The flash library, built with agbcc at -O.
     AgbccFlash,
+    /// Resident ARM routines, built with pret's agbcc_arm.
+    AgbccArm,
 }
 pub(crate) fn include_flag(target: CompilerTarget) -> String {
     format!(
@@ -162,6 +166,19 @@ pub fn agbcc_cflags() -> Vec<String> {
         .iter()
         .map(|s| (*s).to_string())
         .collect()
+}
+/// The ARM routines' agbcc_arm flags: interworking, at -O2, with no frame
+/// pointer and r4 free, as the ROM's ARM code has them.
+pub fn agbcc_arm_cflags() -> Vec<String> {
+    [
+        "-O2",
+        "-mthumb-interwork",
+        "-fomit-frame-pointer",
+        "-fcall-used-r4",
+    ]
+    .iter()
+    .map(|s| (*s).to_string())
+    .collect()
 }
 /// The flash library's agbcc flags: the library family's set at -O.
 pub fn agbcc_flash_cflags() -> Vec<String> {
@@ -231,18 +248,25 @@ pub fn family_for_source(target: CompilerTarget, source: &str) -> CompilerFamily
     if has(AGBCC_FLASH_SOURCES, &source) {
         return CompilerFamily::AgbccFlash;
     }
+    if has(AGBCC_ARM_SOURCES, &source) {
+        return CompilerFamily::AgbccArm;
+    }
     CompilerFamily::Game
 }
 pub fn uses_agbcc_compiler(target: CompilerTarget, source: &str) -> bool {
     matches!(
         family_for_source(target, source),
-        CompilerFamily::Agbcc | CompilerFamily::AgbccFlash
+        CompilerFamily::Agbcc | CompilerFamily::AgbccFlash | CompilerFamily::AgbccArm
     )
+}
+pub fn is_arm(target: CompilerTarget, source: &str) -> bool {
+    family_for_source(target, source) == CompilerFamily::AgbccArm
 }
 pub fn cflags_for_target_source(target: CompilerTarget, source: &str) -> Vec<String> {
     match (family_for_source(target, source), target) {
         (CompilerFamily::Agbcc, _) => agbcc_cflags(),
         (CompilerFamily::AgbccFlash, _) => agbcc_flash_cflags(),
+        (CompilerFamily::AgbccArm, _) => agbcc_arm_cflags(),
         (CompilerFamily::Game, CompilerTarget::Tbs) => cflags(),
         (CompilerFamily::Game, CompilerTarget::Tla) => base_cflags(CompilerTarget::Tla),
     }
@@ -367,25 +391,22 @@ mod target_tests {
     }
     #[test]
     fn natural_paths_route_the_same_whole_file_and_respect_game_boundaries() {
-        let source = "games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C";
-        for path in [
-            source.to_string(),
-            format!("./{source}"),
-            root().join(source).to_string_lossy().into_owned(),
-            "SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C".into(),
-            "SYSTEM/SAVE/IDENTIFY_FLASH.C".into(),
-        ] {
-            assert_eq!(
-                family_for_source(CompilerTarget::Tbs, &path),
-                CompilerFamily::AgbccFlash
-            );
+        // The flash library is shared from COMMON, so both games route it.
+        let source = "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C";
+        for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
+            for path in [
+                source.to_string(),
+                format!("./{source}"),
+                root().join(source).to_string_lossy().into_owned(),
+            ] {
+                assert_eq!(family_for_source(target, &path), CompilerFamily::AgbccFlash);
+            }
         }
         assert_eq!(
-            family_for_source(CompilerTarget::Tla, source),
-            CompilerFamily::Game
-        );
-        assert_eq!(
-            family_for_source(CompilerTarget::Tla, "SYSTEM/SAVE/IDENTIFY_FLASH.C"),
+            family_for_source(
+                CompilerTarget::Tbs,
+                "games/THE LOST AGE/SRC/SYSTEM/SAVE/FLASH_VERIFY_CALLBACK.C"
+            ),
             CompilerFamily::Game
         );
         for target in [CompilerTarget::Tbs, CompilerTarget::Tla] {
@@ -409,14 +430,40 @@ mod target_tests {
         }
     }
     #[test]
+    fn arm_routines_use_agbcc_arm_and_assemble_as_arm() {
+        assert_eq!(
+            agbcc_arm_cflags(),
+            [
+                "-O2",
+                "-mthumb-interwork",
+                "-fomit-frame-pointer",
+                "-fcall-used-r4"
+            ]
+        );
+        assert!(agbcc_arm_driver().ends_with("agbcc/agbcc_arm"));
+        let arm = compiler_assembly_command("a.s", "a.o", true);
+        let thumb = compiler_assembly_command("a.s", "a.o", false);
+        assert!(!arm.contains(&"-mthumb".to_string()));
+        assert!(thumb.contains(&"-mthumb".to_string()));
+        for source in AGBCC_ARM_SOURCES {
+            assert_eq!(
+                family_for_source(CompilerTarget::Tbs, source),
+                CompilerFamily::AgbccArm
+            );
+        }
+    }
+    #[test]
     fn agbcc_families_keep_their_flag_sets() {
         assert_eq!(
-            cflags_for_target_source(CompilerTarget::Tbs, "SYSTEM/SAVE/IDENTIFY_FLASH.C"),
+            cflags_for_target_source(
+                CompilerTarget::Tbs,
+                "games/COMMON/SRC/SYSTEM/SAVE/IDENTIFY_FLASH.C"
+            ),
             agbcc_flash_cflags()
         );
         for source in [
             "SOUND/CGB_UPDATE_CHANNELS.C",
-            "SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
+            "games/COMMON/SRC/SYSTEM/SAVE/FLASH_ERASE_VERIFY.C",
         ] {
             assert_eq!(
                 cflags_for_target_source(CompilerTarget::Tbs, source),

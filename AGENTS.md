@@ -180,3 +180,6 @@ a verified build.
   hardware sizes, in their file name, as pret's gbagfx takes -mwidth/-mheight.
 - 2026-09-29: inline assembly is allowed with proof that Camelot very likely
   had it in their own C files, tagged `/* CAMELOT_ASM: proof */`.
+- 2026-09-29: gates: make land compares all twelve editions.
+- 2026-09-29: build ARM files with pret's agbcc_arm from the approved da598c1
+  source, with -fomit-frame-pointer, and record its digest.

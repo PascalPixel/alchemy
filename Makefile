@@ -78,6 +78,7 @@ compilers: compiler-sources
 compiler-sources: compiler-source-check
 	sh agscc/build.sh
 	$(MAKE) -C agbcc/gcc old -j1
+	cd agbcc/gcc_arm && ./configure --target=arm-elf --host=i386-linux-gnu && $(MAKE) cc1 && mv cc1 ../agbcc_arm
 
 compiler-source-check:
 	@set -e; for repo in agbcc agscc; do \
@@ -109,8 +110,9 @@ compare-all: compare compare-tla
 # as pret's early builds linked a version through baserom.gba.
 EDITIONS := tbs-ja tbs-de tbs-es tbs-fr tbs-it tla-ja tla-de tla-es tla-fr tla-it
 COMPARE_EDITIONS := $(addprefix compare-,$(EDITIONS))
-.PHONY: compare-editions $(COMPARE_EDITIONS)
-compare-editions: compare-all $(COMPARE_EDITIONS)
+.PHONY: compare-editions compare-other-editions $(COMPARE_EDITIONS)
+compare-editions: compare-all compare-other-editions
+compare-other-editions: $(COMPARE_EDITIONS)
 $(COMPARE_EDITIONS): compare-%:
 	$(BUILD) rom --target $*
 	@grep -F ' out/$*/' rom.sha1 | $(SHA1) -

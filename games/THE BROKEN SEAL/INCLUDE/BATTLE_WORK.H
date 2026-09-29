@@ -63,7 +63,9 @@ struct BattleSession {
     u8 unknown_053[5];
     s16 party_units[7];             /* 0x058 */
     s16 enemy_units[7];             /* 0x066 */
-    u8 unknown_074[0x278];
+    u8 unknown_074[0x268];
+    u8 placement[14];               /* 0x2dc, standing place per unit */
+    u8 unknown_2ea[2];
     struct BattleActionRecord actions[20]; /* 0x2ec */
     u8 unknown_42c[0x104];
     struct BattleSpoils spoils;     /* 0x530 */

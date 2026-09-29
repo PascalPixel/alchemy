@@ -6,6 +6,10 @@
 //! - `.gbapal`: the image's palette as little-endian BGR555.
 //! - `.bitmap`: the pixels row by row, one palette index per byte.
 //! - `.4bpp`, `.8bpp`: the pixels as GBA tiles, row-major.
+//! - `.icons`: an icon bank. The image is one 32x32 icon wide with its icons
+//!   stacked. The bank is a table of each icon's halfword offset, then each
+//!   icon as 8-bit tiles in the packer's palette LZ without its tag,
+//!   its stream zero-padded to a multiple of 32 bytes.
 //! - `.frames`: a sprite bank. The image is one square frame wide with its
 //!   frames stacked, a front and a back pose in turn. The bank is a table of
 //!   each frame's offset in that order, ending 0, then the back frames and
@@ -200,6 +204,23 @@ fn font(built: &str, png: &[u8], table: &[u8]) -> Result<Vec<u8>, String> {
     Ok(output)
 }
 
+/// An icon bank of 32x32 icons stacked in one column.
+fn icon_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
+    if width != 32 || !height.is_multiple_of(32) {
+        return Err(format!("{built}: icons are 32 pixels square, stacked"));
+    }
+    let count = height / 32;
+    let mut output = vec![0u8; 2 * count];
+    for (index, icon) in pixels.chunks(32 * 32).enumerate() {
+        let at = u16::try_from(output.len()).map_err(|_| format!("{built}: bank too large"))?;
+        output[2 * index..2 * index + 2].copy_from_slice(&at.to_le_bytes());
+        let mut stream = compress_palette(&metatiles(icon, 32, 32, GbaBpp::Bpp8, 1, 1)?, &PACKER)?;
+        stream.resize(stream.len().next_multiple_of(32), 0);
+        output.extend(stream);
+    }
+    Ok(output)
+}
+
 /// A sprite bank of square frames stacked in one column.
 fn sprite_bank(built: &str, pixels: &[u8], width: usize, height: usize) -> Result<Vec<u8>, String> {
     if width == 0 || !height.is_multiple_of(width) {
@@ -235,6 +256,7 @@ fn image_form(built: &str, form: &str, png: &[u8]) -> Result<Vec<u8>, String> {
         "4bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp4, 1, 1)?,
         "8bpp" => metatiles(&indices(&image), width, height, GbaBpp::Bpp8, 1, 1)?,
         "frames" => sprite_bank(built, &indices(&image), width, height)?,
+        "icons" => icon_bank(built, &indices(&image), width, height)?,
         other => return Err(format!("{built}: unknown form .{other}")),
     })
 }
@@ -275,6 +297,19 @@ mod tests {
         .unwrap();
         assert_eq!(built, [8, 0, 0, 0, 1, 0x80, 0, 0]);
         assert!(build_file("F.font", &sheet).is_err());
+        // An icon bank: a halfword offset per icon, streams padded to 32 bytes.
+        let icons = build_file(
+            "I.icons",
+            &png_from_bitmap(&[1; 32 * 64], &[0, 0, 1, 0], 32).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(&icons[..4], [4, 0, 36, 0]);
+        assert_eq!((icons.len() - 4) % 32, 0);
+        assert!(build_file(
+            "I.icons",
+            &png_from_bitmap(&[0; 16 * 32], &[0, 0], 16).unwrap()
+        )
+        .is_err());
         // Parts join in list order.
         let joined = build_file_with("P.parts", b"A\tbitmap\nB\tbitmap\n", &|name| {
             Ok(match name {

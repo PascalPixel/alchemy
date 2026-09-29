@@ -42523,7 +42523,7 @@ msgctxt "message"
 msgid "10628"
 msgstr "What happened, you guys?{line_break}Try harder.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgLobbyTravelingWarrior"
 msgid "10629"
 msgstr "I am a traveling warrior.{line_break}I came here to become{line_break}stronger...{page_break}Listen to me on{line_break}this: Don't underestimate{line_break}the monsters here...{end_wait}"
 

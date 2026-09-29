@@ -100,6 +100,9 @@ Engine_GameFlagSet:
 Engine_GameFlagClear:
 	overlay_veneer GameFlag_ClearBitFar
 	overlay_veneer GameFlag_GetByteFar
+	.global GameFlag_SetByte
+	.thumb_func
+GameFlag_SetByte:
 	overlay_veneer GameFlag_SetByteFar
 	.global Party_CountActiveOwners
 	.thumb_func
@@ -114,6 +117,9 @@ Engine_EventBegin:
 	.thumb_func
 Engine_EventEnd:
 	overlay_veneer BattleFx_FinishActionFar
+	.global Engine_EventChooseYesNo
+	.thumb_func
+Engine_EventChooseYesNo:
 	overlay_veneer Inventory_PromptAndSetObjectModeFar
 	.global Engine_ActorGet
 	.thumb_func

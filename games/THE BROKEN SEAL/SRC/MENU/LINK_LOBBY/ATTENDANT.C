@@ -1,12 +1,10 @@
-/* Draft of resource_3cb 0x020090e8 (LinkLobby_TalkAlternating): it matches
- * the ROM byte for byte now that the messages it loads from the literal pool
- * have catalogue names (MsgLobbyChangeOrderParty,
- * MsgLobbyThreeAlliesFightLinked, MsgLobbyThreeAlliesFightLinkedFinals). The
- * listing keeps these rows until the draft is adopted. */
 #include "TYPES.H"
+extern u8 MsgLobbyBattleArenaOld[];
 extern u8 MsgLobbyChangeOrderParty[];
+extern u8 MsgLobbyThreeAlliesFight[];
 extern u8 MsgLobbyThreeAlliesFightLinked[];
 extern u8 MsgLobbyThreeAlliesFightLinkedFinals[];
+extern u8 MsgLobbyTravelingWarrior[];
 
 union GameStateRows {
     u8 bytes[512][2];
@@ -26,6 +24,8 @@ s32 Engine_EventEnd(void);
 
 extern union GameStateRows gGameState;
 
+/* FAKEMATCH: calls spelled through these wrappers pass their constants
+ * straight into the argument registers. */
 static __inline__ s32 Value1(s32 (*f)(s32), s32 a0)
 {
     return f(a0);
@@ -41,7 +41,36 @@ static __inline__ s32 Call2(s32 (*f)(s32, s32), s32 a0, s32 a1)
     return f(a0, a1);
 }
 
-/* A lobby actor who alternates lines: face the selected subject; with flag 0x204 clear, set it and say line 0x298d (Party_CountActiveOwners at most 3) or 0x298c; otherwise clear it and say 0x298e. */
+/* The three lobby regulars face the leader and speak a line that moves on
+ * with the lobby's progress flags. */
+s32 LinkLobby_TalkToAttendant(s32 actor)
+{
+    s32 message;
+    s32 step = 0;
+
+    Engine_EventBegin();
+    switch (actor) {
+    case 12:
+        message = (s32)MsgLobbyTravelingWarrior;
+        break;
+    case 13:
+        message = (s32)MsgLobbyThreeAlliesFight;
+        break;
+    case 14:
+    default:
+        message = (s32)MsgLobbyBattleArenaOld;
+        break;
+    }
+    Engine_ActorFaceActor(actor, gGameState.words[125], 0);
+    if (Engine_GameFlagIsSet(0x304))
+        step = 2 - (Engine_GameFlagIsSet(0x305) != 0);
+    Engine_EventSetMessage(message + step);
+    Call2(Engine_EventOpenMessage, actor, 0);
+    return Engine_EventEnd();
+}
+
+/* The attendant alternates between explaining linked finals and the party
+ * order. */
 s32 LinkLobby_TalkAlternating(s32 actor)
 {
     s32 message;

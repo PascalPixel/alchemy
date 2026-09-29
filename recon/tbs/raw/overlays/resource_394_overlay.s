@@ -1210,3 +1210,10 @@ KorimaPalette_First:
 	.global KorimaPalette_Second
 KorimaPalette_Second:
 	.space 896
+	.space 896
+	.global KorimaMagari_ShakeScroll
+KorimaMagari_ShakeScroll:
+	.space 12
+	.global KorimaMagari_ShakeChance
+KorimaMagari_ShakeChance:
+	.space 4

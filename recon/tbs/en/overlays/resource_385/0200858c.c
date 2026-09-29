@@ -2,14 +2,14 @@
  * Draft: overlay 385 (KUUPUAPPU_MURA_SAI) at 0x0200858c, between
  * MOTION_EVENT.C and DIALOGUE.C; its rows stay in the listing.
  *
- * Remaining difference: the game keeps message 0x1cb1 in r7 and shows
- * 0x1cb3 as r7 + 2, so the message base is not a constant to the compiler.
- * A constant base, a local, a u16 local and an inline parameter all fold
- * the second message into its own pool word, twelve bytes shorter.
+ * Remaining difference: its messages have catalogue names now; 46 halfwords
+ * still differ from the ROM, and it names symbols no link defines
+ * (ACTOR_PARTY_LEADER); it also lacks declarations it needs to compile.
  */
 
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgKuupuappuWarriorGuy[];
 
 struct SceneActor {
     u8 unk_00[6];
@@ -41,7 +41,7 @@ void SceneDialogue_RunActorFourteenFlagDialogue(void)
 
     actor->state_flags |= 2;
     Event_Begin();
-    text = 0x1cb1;
+    text = (s32)MsgKuupuappuWarriorGuy;
     Event_SetMessage(text);
     Actor_SetAnimation(14, 0);
     Actor_FaceEachOther(14, ACTOR_PARTY_LEADER, 2);

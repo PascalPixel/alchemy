@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgBiribinoMatter[];
+extern u8 MsgBiribinoTooYoungForTheJob[];
 
 /* AUDITED GENERATED CALL SCRIPT for FieldScene_RunMultiStageActorSequence:
  * 232 calls, one polling loop, and all explicit actor and workspace effects.
@@ -275,7 +277,7 @@ void FieldScene_RunMultiStageActorSequence(void)
         Func_02002e70(20);
         Func_02002f18(18, 3);
         Func_02002e7e(10);
-        Func_02002f54(5175);
+        Func_02002f54((s32)MsgBiribinoMatter);
         Func_02002f76(8210, 0, 10);
         Func_02002f4e(19, 2);
         Func_02002f88(19, 0, 20);
@@ -353,7 +355,7 @@ void FieldScene_RunMultiStageActorSequence(void)
         Func_02003206(2, 40960, 0);
         if (Func_0200313e(0, 0) == 0) {
         } else {
-            Func_020031f2(5184);
+            Func_020031f2((s32)MsgBiribinoTooYoungForTheJob);
             Func_02003214(8210, 0, 10);
             Func_0200327e(19, 12288, 0);
             Func_0200322e(18, 4);

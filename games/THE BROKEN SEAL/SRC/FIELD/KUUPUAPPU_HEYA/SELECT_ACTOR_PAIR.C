@@ -2,12 +2,10 @@
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
 #include "EVENT_RUNTIME.H"
+extern u8 MsgKuupuappuImSurrounded[];
+extern u8 MsgKuupuappuNowIvan[];
+extern u8 MsgKuupuappuTheresNowhereRun[];
 
-enum SelectActorPairMessage {
-    MSG_THERES_NOWHERE_RUN = 0x12a3,
-    MSG_IM_SURROUNDED = 0x12a4,
-    MSG_NOW_IVAN = 0x12a5
-};
 
 extern struct EventRuntime *Data_03001ebc;
 
@@ -73,7 +71,7 @@ void FieldScene_SelectActorPair(void)
     switch (*(s16 *)(((s32)work + 0x182))) {
     case 202:
     case 203:
-        Event_SetMessage(MSG_IM_SURROUNDED);
+        Event_SetMessage((s32)MsgKuupuappuImSurrounded);
         Actor_SetAttachedEffect(25, 0x102);
         Actor_RunRepeatedMotion(25, 2);
         SceneActor_SetModeZeroAndValue(25, 20);
@@ -83,7 +81,7 @@ void FieldScene_SelectActorPair(void)
         }
         /* fall through */
     case 201:
-        Event_SetMessage(MSG_THERES_NOWHERE_RUN);
+        Event_SetMessage((s32)MsgKuupuappuTheresNowhereRun);
         Actor_SetAttachedEffect(24, 0x102);
         Actor_RunRepeatedMotion(24, 2);
         actor = 24;
@@ -95,7 +93,7 @@ void FieldScene_SelectActorPair(void)
     Actor_FaceActor(ACTOR_GERALD, ACTOR_IVAN, 0);
     Actor_RunRepeatedMotion(ACTOR_GERALD, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_NOW_IVAN);
+    Event_SetMessage((s32)MsgKuupuappuNowIvan);
     SceneActor_SetModeZeroAndValue(1, 20);
     Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
     Event_Wait(20);

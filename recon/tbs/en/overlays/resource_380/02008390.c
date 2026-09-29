@@ -1,12 +1,10 @@
-/* Draft of resource_380 0x02008390 (Scene_BagVenusStar), from
- * games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/VENUS.C. Remaining difference:
- * the ROM loads message 0x1075 from the literal pool after the preceding
- * call and derives 0x1074 from it, as a link-time message value would; the
- * C constant is loaded before the call instead. The listing keeps these
- * rows. */
+/* Draft of resource_380 0x02008390 (Scene_BagVenusStar): it matches the ROM
+ * byte for byte now that the message it loads from the literal pool has a
+ * catalogue name (MsgSoruVenusStarBagged). The listing keeps these rows until
+ * the draft is adopted. */
 #include "TYPES.H"
+extern u8 MsgSoruVenusStarBagged[];
 
-enum { MSG_VENUS_STAR_BAGGED = 0x1075 };
 
 /* The party bags the Venus Star while its chamber changes around them. */
 
@@ -149,7 +147,7 @@ void Scene_BagVenusStar(void)
     obj = Value4(Scene_PresentItem, 220, 0x2c80000, 0x100000, 0x1d00000);
     Engine_EventWait(40);
     UiWork_PushValueSlotFar(obj, 1);
-    mes = MSG_VENUS_STAR_BAGGED;
+    mes = (s32)MsgSoruVenusStarBagged;
     Value2(Engine_MessageShowCentered, mes, 1);
     Call3(Engine_ActorFaceDirection, 9, 0x2000, 0);
     Call3(Engine_ActorFaceDirection, 5, 0x2000, 20);

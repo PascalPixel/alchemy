@@ -1,5 +1,6 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
+extern u8 MsgKuupuappuUhnnUhnn[];
 
 s32 Engine_GameFlagIsSet();
 void Engine_ActorSetPosition();
@@ -155,7 +156,7 @@ s32 KuupuappuHeya_ApplyEntryState(void)
         Call2((void (*)())Engine_ActorSetAnimation, 8, 7);
         SceneState_SetWord1c0To209AndRun();
         Engine_AudioPlayCue(17);
-        Engine_EventSetMessage(0x12c3);
+        Engine_EventSetMessage((s32)MsgKuupuappuUhnnUhnn);
         Call2((void (*)())SceneActor_SetModeZeroAndValue, 8, 10);
         Engine_EventEnd();
         break;

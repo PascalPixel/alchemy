@@ -1,11 +1,13 @@
-/* Draft of resource_380 0x02009d04 (Scene_AlexTakesStars), built with
- * games/THE BROKEN SEAL/SRC/FIELD/SORU_STAR/STAR.H. Remaining difference:
- * the ROM loads message 0x10b6 once from the literal pool into r6 and forms
- * 0x10ba and 0x10bb by adding to it, as a link-time message value would;
- * the C constant folds each sum into its own pool constant (4 bytes
- * longer, with the neighbouring register choices shifted). The listing
- * keeps these rows. */
+/* Draft of resource_380 0x02009d04 (Scene_AlexTakesStars): it matches the ROM
+ * byte for byte now that the messages it loads from the literal pool have
+ * catalogue names (MsgSoruDontWantAnything, MsgSoruDoubtHowFeel,
+ * MsgSoruPermitRelieveElemental, MsgSoruThankCooperation). The listing keeps
+ * these rows until the draft is adopted. */
 #include "STAR.H"
+extern u8 MsgSoruDontWantAnything[];
+extern u8 MsgSoruDoubtHowFeel[];
+extern u8 MsgSoruPermitRelieveElemental[];
+extern u8 MsgSoruThankCooperation[];
 
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
@@ -34,7 +36,7 @@ void Scene_AlexTakesStars(void)
     Actor_FaceDirection(ACTOR_ALEX, 0x5000, 10);
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     Event_Wait(20);
-    Event_SetMessage(MSG_ALEX_ASKS_FOR_STARS);
+    Event_SetMessage((s32)MsgSoruPermitRelieveElemental);
     Event_ShowMessage(ACTOR_ALEX, 0);
     Actor_SetPosition(ACTOR_SATUROS, 0x1d50000, 0x15c0000);
     Event_Wait(20);
@@ -49,7 +51,7 @@ void Scene_AlexTakesStars(void)
     Actor_WalkToAndWait(ACTOR_GERALD, 0x185, 0x1d4);
     Actor_FaceDirection(ACTOR_GERALD, 0xd000, 60);
     Event_SayThenWait(1, 20);
-    UiText_ShowCenteredMessage(MSG_ALEX_ASKS_FOR_STARS + 4, 1, 10);
+    UiText_ShowCenteredMessage((s32)MsgSoruPermitRelieveElemental + 4, 1, 10);
     Actor_SetSpeed(ACTOR_GERALD, 0x8000, 0x4000);
     rec = Value1(Engine_ActorGet, ACTOR_GERALD);
     rec[90] &= 254;
@@ -59,7 +61,7 @@ void Scene_AlexTakesStars(void)
     SetFlagBits(&rec[90], 1);
     Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
     Event_Wait(10);
-    Event_SetMessage(MSG_ALEX_ASKS_FOR_STARS + 5);
+    Event_SetMessage((s32)MsgSoruPermitRelieveElemental + 5);
     Event_SayThenWait(14, 20);
     Actor_ShowEmote(ACTOR_GERALD, 0x101, 60);
     Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
@@ -111,14 +113,14 @@ void Scene_AlexTakesStars(void)
     if (Event_ChooseYesNo(1, 0) != 0) {
         Event_Wait(10);
         Value2(Engine_ActorSetAnimationAndWait, 14, 4);
-        Event_SetMessage(MSG_ALEX_YOUR_FRIENDS);
+        Event_SetMessage((s32)MsgSoruDontWantAnything);
         Event_OpenMessage(ACTOR_ALEX, 0);
         if (Event_ChooseYesNo(1, 0) == 0) {
             do {
                 Event_Wait(20);
                 Value2(Engine_ActorSetAnimationAndWait, 14, 4);
                 Event_Wait(10);
-                Event_SetMessage(MSG_ALEX_I_ASK_AGAIN);
+                Event_SetMessage((s32)MsgSoruDoubtHowFeel);
                 Event_OpenMessage(ACTOR_ALEX, 0);
             } while (Event_ChooseYesNo(1, 0) == 0);
         }
@@ -126,7 +128,7 @@ void Scene_AlexTakesStars(void)
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
     Event_Wait(20);
-    Event_SetMessage(MSG_ALEX_THANK_YOU);
+    Event_SetMessage((s32)MsgSoruThankCooperation);
     Event_SayThenWait(14, 30);
     Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
     Event_Wait(10);

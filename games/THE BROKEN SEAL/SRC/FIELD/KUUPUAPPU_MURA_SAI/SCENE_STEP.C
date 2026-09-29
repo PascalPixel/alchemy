@@ -6,6 +6,9 @@
 #include "TYPES.H"
 #include "FIELD_EVENT.H"
 #include "FIELD_SCENE.H"
+extern u8 MsgKuupuappuGrownUpsAlways[];
+extern u8 MsgKuupuappuGuysCheckJail[];
+extern u8 MsgKuupuappuNotLikeEasy[];
 
 #define NULL ((void *)0)
 #define FIELD_AT_OFFSET(base, type, offset) (*(type *)((u8 *)(base) + (offset)))
@@ -228,7 +231,7 @@ void SceneDialogue_RunActorFifteenDialogue(void)
         actor->state_flags |= 2;
     }
     Event_Begin();
-    Event_SetMessage(0x1cc1);
+    Event_SetMessage((s32)MsgKuupuappuGrownUpsAlways);
     ActorPresentation_RunActorModeOneThenZero(15);
     Event_End();
     {
@@ -252,7 +255,7 @@ void FieldScene_RunScene385SequenceA(void)
         Actor_SetAnimation(16, 1);
         Call2((void (*)())Engine_ActorRunRepeatedMotion, 16, 1);
         Event_Wait(20);
-        Event_SetMessage(0x1cb5);
+        Event_SetMessage((s32)MsgKuupuappuGuysCheckJail);
         Call3((void (*)())Engine_ActorFaceEachOther, 16, 0, 2);
         Event_OpenMessage(16, 0);
         if (Event_ChooseYesNo(0, 0) != 0) {
@@ -264,7 +267,7 @@ void FieldScene_RunScene385SequenceA(void)
         Call0(Engine_EventEnd);
         GameFlag_Set(0x308);
     } else {
-        Event_SetMessage(0x1cc2);
+        Event_SetMessage((s32)MsgKuupuappuNotLikeEasy);
         *((u8 *)Actor_Get(16) + 91) = 1;
         ActorPresentation_RunActorModeOneThenZero(16);
         v5 = 0;

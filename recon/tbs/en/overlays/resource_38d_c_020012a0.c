@@ -1,4 +1,6 @@
 #include "TYPES.H"
+extern u8 MsgBiribinoComeSaidYoud[];
+extern u8 MsgBiribinoWellSGoing[];
 
 /* AUDITED GENERATED CALL SCRIPT for RunEventScript01: 126 calls, 1 loops, 0 memory operations.
  * Recovered from the complete decoded owner. Calls, arguments, control flow,
@@ -129,7 +131,7 @@ void RunEventScript01(void)
     s32 i1;
 
     for (i1 = 0; i1 != 0; i1++) {
-        Func_020037e0(5198);
+        Func_020037e0((s32)MsgBiribinoComeSaidYoud);
         Func_020037f0(16385, 0);
         Func_02003748(0, 0);
     }
@@ -141,7 +143,7 @@ void RunEventScript01(void)
     Func_0200385e(2, 261, 60);
     Func_02003862(2, 32768, 10);
     Func_02003812(2, 4);
-    Func_02003848(5199);
+    Func_02003848((s32)MsgBiribinoWellSGoing);
     Func_0200386a(16386, 0, 20);
     Func_02003842(18, 1);
     Func_0200388e(18, 20480, 10);

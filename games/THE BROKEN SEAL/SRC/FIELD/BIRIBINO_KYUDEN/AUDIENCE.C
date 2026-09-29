@@ -1,4 +1,9 @@
 #include "KYUDEN.H"
+extern u8 MsgBiribinoHumblyThank[];
+extern u8 MsgBiribinoNaeYehDinnaeNeedTae[];
+extern u8 MsgBiribinoNameSorryRejected[];
+extern u8 MsgBiribinoWasButWorriedYehMight[];
+extern u8 MsgBiribinoWeveBroughtWarriorsMilord[];
 
 void FieldScene_RunPalaceGreeting(void)
 {
@@ -25,7 +30,7 @@ void FieldScene_RunPalaceGreeting(void)
     Map_SetLayerEntryFlag(2);
     Event_Wait(20);
     Actor_RunRepeatedMotion(19, 2);
-    Call1(Engine_EventSetMessage, 0x145e);
+    Call1(Engine_EventSetMessage, (s32)MsgBiribinoNameSorryRejected);
     Engine_EventShowMessageAndWait(19, 0, 10);
     Call3(Engine_ActorShowEmote, 0, 0x100, 40);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 0x108, 0x294);
@@ -108,7 +113,7 @@ void RunEventScript02(void)
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Event_Wait(20);
     Actor_RunRepeatedMotion(19, 2);
-    Event_SetMessage(MSG_WEVE_BROUGHT_WARRIORS_MILORD);
+    Event_SetMessage((s32)MsgBiribinoWeveBroughtWarriorsMilord);
 
     flag = 1;
     if (GameFlag_IsSet(0x84f) == 0) {
@@ -228,15 +233,15 @@ void RunEventScript02(void)
     Event_OpenMessage(0x2012, 0);
     ConfigurePrimarySceneChannels();
     if (Event_ChooseYesNo(0, 0) == 0) {
-        Event_SetMessage(MSG_HUMBLY_THANK);
+        Event_SetMessage((s32)MsgBiribinoHumblyThank);
     } else {
-        Event_SetMessage(MSG_NAE_YEH_DINNAE_NEED_TAE);
+        Event_SetMessage((s32)MsgBiribinoNaeYehDinnaeNeedTae);
     }
 
     ConfigureSecondarySceneChannels();
     Event_ShowMessageAndWait(0x2012, 0, 20);
     Actor_RunRepeatedMotion(19, 1);
-    Event_SetMessage(MSG_WAS_BUT_WORRIED_YEH_MIGHT);
+    Event_SetMessage((s32)MsgBiribinoWasButWorriedYehMight);
     Event_ShowMessageAndWait(19, 0, 10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, 0x6000, 0);
     Actor_FaceDirection(ACTOR_GERALD, 0xe000, 0);

@@ -1,20 +1,13 @@
-/* Draft of FieldScene_RunSupplementalSequenceOne, resource_3bf at 0x02009e94, built with
- * games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/FORTRESS.H.
- * Remaining difference: its messages have catalogue names now; 8 halfwords
- * still differ from the ROM, and it names symbols no link defines
- * (Party_SetFields1ceAnd1d0).
- * The listing keeps these rows. */
+/* Lunpa fortress: the guards challenge the party ("Who are you!?"),
+ * talk it over and send the party back out to the fortress's second scene
+ * at entrance 31. */
 #include "FORTRESS.H"
+#include "SCENE_IDS.H"
 extern u8 MsgRunpaWho3[];
 
-/* Runs a scripted beat on the objects indexed 12, 13 and 14, stepping
- * through the entries at 0x2438 as it goes, then sets the scene
- * phase word and a status byte at +0x22b of the record at gGameState
- * before handing off to the next step. */
-void FieldScene_RunSupplementalSequenceOne(void)
+void RunpaJo_RunGuardChallenge(void)
 {
-
-    s32 sequence_2438;
+    s32 line;
 
     Actor_SetAnimation(ACTOR_PARTY_LEADER, 1);
     Actor_SetAnimation(12, 1);
@@ -24,8 +17,8 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Actor_ShowEmote(12, 0x100, 0);
     Event_Wait(30);
     Actor_FaceActor(12, ACTOR_PARTY_LEADER, 0);
-    sequence_2438 = (s32)MsgRunpaWho3;
-    Event_SetMessage(sequence_2438);
+    line = (s32)MsgRunpaWho3;
+    Event_SetMessage(line);
     Event_ShowMessage(12, 0);
     Actor_ShowEmote(13, 0x100, 0);
     Actor_ShowEmote(14, 0x100, 0);
@@ -35,25 +28,25 @@ void FieldScene_RunSupplementalSequenceOne(void)
     Event_Wait(65);
     Actor_FaceDirection(13, 0x5000, 0);
     Actor_FaceDirection(14, 0xd000, 0);
-    Event_SetMessage((sequence_2438 + 1));
+    Event_SetMessage((line + 1));
     Event_ShowMessage(13, 0);
     Actor_SetAnimationAndWait(14, 3);
-    Event_SetMessage((sequence_2438 + 2));
+    Event_SetMessage((line + 2));
     Event_ShowMessage(14, 0);
-    Event_SetMessage((sequence_2438 + 3));
+    Event_SetMessage((line + 3));
     Event_ShowMessage(12, 0);
     Actor_RunRepeatedMotion(13, 1);
-    Event_SetMessage((sequence_2438 + 4));
+    Event_SetMessage((line + 4));
     Event_ShowMessage(13, 0);
     Actor_SetAnimationAndWait(14, 3);
-    Event_SetMessage((sequence_2438 + 5));
+    Event_SetMessage((line + 5));
     Event_ShowMessage(14, 0);
     Actor_SetAnimationAndWait(14, 3);
     Event_Wait(60);
     Actor_FaceActor(13, ACTOR_PARTY_LEADER, 0);
     Actor_FaceActor(14, ACTOR_PARTY_LEADER, 0);
     Event_Wait(70);
-    Actor_WalkTo(12, 0x2a0, 88); /* object_id 12, x 0x2a0, z 88 */
+    Actor_WalkTo(12, 0x2a0, 88);
     Actor_WaitForMove(12);
 #if !defined(TBS_EDITION_JA)
     /* The localized sequence adds this turn after actor 12 is placed. */
@@ -61,15 +54,15 @@ void FieldScene_RunSupplementalSequenceOne(void)
 #endif
     Actor_SetAnimationAndWait(12, 3);
     Event_Wait(30);
-    Event_SetMessage((sequence_2438 + 6));
+    Event_SetMessage((line + 6));
     Event_ShowMessage(12, 0);
     gEventWork->start_transition = SCENE_TRANSITION(TRANSITION_WINDOW, 0);
-    Party_SetFields1ceAnd1d0(0xa1, 31);
+    Party_SetFields1ceAnd1d0((s32)&SceneId_RunpaJo2, 31);
     gGameState.unknown_1f8[0x22b - 0x1f8] = 3;
     BattleFx_SetWeightedResult(98, 3);
     Actor_SetPosition(12, 0, 0);
     Actor_SetPosition(13, 0, 0);
     Actor_SetPosition(14, 0, 0);
     Event_End();
-    GameFlag_Set(0x94a); /* main:080770c8 */
+    GameFlag_Set(0x94a);
 }

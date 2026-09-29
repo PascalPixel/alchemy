@@ -23,7 +23,7 @@ SECTIONS
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/CAUGHT.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/TURN.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/GUARD_LINES.o"(.text)
-        "*/resource_3bf_overlay.o"(.text.x02009e94)
+        "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/WHO_SCENE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/SEQUENCE_TAIL.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/CHALLENGE.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/FIELD/RUNPA_JO/INSPECT.o"(.text)

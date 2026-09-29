@@ -398,7 +398,7 @@ fn incbin(path: &str, data: &[u8]) -> bool {
         regex::Regex::new(r#"^\s*\.incbin\s+"SOUND(?:/[A-Z0-9_]+)+(?:\.[A-Z0-9]+)?\.bin"\s*$"#)
             .expect("built sound pattern");
     let built_graphics = regex::Regex::new(
-        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012]|font|frames|parts)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
+        r#"^\s*\.incbin\s+"(?:GRAPHICS|MAP)(?:/[A-Z0-9_]+)+\.(?:gbapal|bitmap|4bpp|8bpp|bin|delta[012]|font|frames|icons|parts)(?:\.(?:lz|plz|mtf|d7))?"\s*$"#,
     )
     .expect("built graphics pattern");
     let scaffolding = path.starts_with("recon/");

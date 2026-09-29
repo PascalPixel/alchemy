@@ -8,31 +8,73 @@
 	.balign 4
 	overlay_veneer IwramSignedRemainder
 	overlay_veneer WaitFramesFar
+	.global UiWindow_Create
+	.thumb_func
+UiWindow_Create:
 	overlay_veneer UiWindow_CreateFar
 	overlay_veneer UiWork_FinalizeFar
 	overlay_veneer UiText_DrawResourceFar
 	overlay_veneer UiText_DrawCharacterAtOffsetFar
 	overlay_veneer UiText_DrawStringAtOffsetFar
+	.global UiText_DrawStringInWindow
+	.thumb_func
+UiText_DrawStringInWindow:
 	overlay_veneer UiText_DrawStringInWindowFar
 	overlay_veneer UiText_DrawNumberAtOffsetFar
 	overlay_veneer UiText_DrawNumberInWindowFar
 	overlay_veneer RenderOutput_RedrawSavedRectFar
 	overlay_veneer RenderOutput_ClearListFar
+	.global DebugMenu_BrowseIcons
+	.thumb_func
+DebugMenu_BrowseIcons:
 	overlay_veneer DebugMenu_BrowseIconsFar
+	.global DebugMenu_BrowseEntryGlyphs
+	.thumb_func
+DebugMenu_BrowseEntryGlyphs:
 	overlay_veneer DebugMenu_BrowseEntryGlyphsFar
+	.global Owner_GetState
+	.thumb_func
+Owner_GetState:
 	overlay_veneer Owner_GetStateFar
+	.global Owner_RecalculateStats
+	.thumb_func
+Owner_RecalculateStats:
 	overlay_veneer Owner_RecalculateStatsFar
 	overlay_veneer Func_08077018
 	overlay_veneer PartyInventory_AddFar
 	overlay_veneer Func_08077080
+	.global Party_ListActiveOwners
+	.thumb_func
+Party_ListActiveOwners:
 	overlay_veneer Party_ListActiveOwnersFar
+	.global Party_AdvanceOwnerCountToTarget
+	.thumb_func
+Party_AdvanceOwnerCountToTarget:
 	overlay_veneer Party_AdvanceOwnerCountToTargetFar
 	overlay_veneer PartyInventory_HasSpaceFar
+	.global Engine_ActorGet
+	.thumb_func
+Engine_ActorGet:
 	overlay_veneer Object_GetByIdFar
+	.global Engine_ActorSetAnimation
+	.thumb_func
+Engine_ActorSetAnimation:
 	overlay_veneer Object_SetModeByIdFar
+	.global Engine_EventSetMessage
+	.thumb_func
+Engine_EventSetMessage:
 	overlay_veneer Event_SetValue1d8Far
+	.global Engine_EventShowMessage
+	.thumb_func
+Engine_EventShowMessage:
 	overlay_veneer BattleEv_RunWaitFar
+	.global Engine_ActorShowEmote
+	.thumb_func
+Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
 	overlay_veneer ItemMenu_DrawItemDetailsFar
 	overlay_veneer AudioCommand_PlayFar

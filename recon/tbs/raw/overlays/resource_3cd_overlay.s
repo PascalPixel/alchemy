@@ -1,110 +1,6 @@
 .syntax unified
 	.thumb
-	.global Func_02000030
-	.thumb_func
-Func_02000030:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008964
-	.global Func_02000038
-	.thumb_func
-Func_02000038:
-	movs r0, #0
-	bx lr
-	.global Func_0200003c
-	.thumb_func
-Func_0200003c:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008994
-	.global Func_02000044
-	.thumb_func
-Func_02000044:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008998
-	.global Func_0200004c
-	.thumb_func
-Func_0200004c:
-	push {lr}
-	ldr r0, [pc, #28]
-	bl 0x020088a0
-	movs r1, #129
-	movs r0, #13
-	lsls r1, r1, #1
-	movs r2, #0
-	bl 0x020088b0
-	movs r0, #13
-	movs r1, #0
-	bl 0x020088a8
-	pop {r0}
-	bx r0
-	.4byte 0x000023cd
-	.global Func_02000070
-	.thumb_func
-Func_02000070:
-	push {lr}
-	ldr r1, [pc, #28]
-	movs r2, #0
-	movs r0, #13
-	bl 0x020088b0
-	ldr r0, [pc, #20]
-	bl 0x020088a0
-	movs r0, #13
-	movs r1, #0
-	bl 0x020088a8
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x00000105
-	.4byte 0x000023cd
-	.global Func_02000098
-	.thumb_func
-Func_02000098:
-	ldr r0, [pc, #0]
-	bx lr
-	.4byte 0x02008a58
-	.global Func_020000a0
-	.thumb_func
-Func_020000a0:
-	push {r5, r6, lr}
-	adds r5, r0, #0
-	adds r6, r1, #0
-	bl 0x02008850
-	ldrb r1, [r0, #15]
-	adds r0, r5, #0
-	adds r1, r1, r6
-	bl 0x02008880
-	adds r0, r5, #0
-	bl 0x02008858
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.global Func_020000c0
-	.thumb_func
-Func_020000c0:
-	push {r5, r6, r7, lr}
-	sub sp, #32
-	adds r7, r0, #0
-	mov r0, sp
-	bl 0x02008878
-	cmp r0, #0
-	ble .L_020000c0_0
-	mov r6, sp
-	adds r5, r0, #0
-.L_020000c0_1:
-	ldrh r0, [r6]
-	adds r1, r7, #0
-	subs r5, #1
-	adds r6, #2
-	bl 0x020080a0
-	cmp r5, #0
-	bne .L_020000c0_1
-.L_020000c0_0:
-	sub sp, #-32
-	pop {r5, r6, r7}
-	pop {r0}
-	bx r0
+	.section .text.x020080ec,"ax",%progbits
 	.global Func_020000ec
 	.thumb_func
 Func_020000ec:
@@ -810,122 +706,6 @@ Func_020000ec:
 	.4byte 0x0000010d
 	.2byte 0x010f
 	.2byte 0x0000
-	.global Func_020006f8
-	.thumb_func
-Func_020006f8:
-	push {lr}
-	ldr r3, [pc, #28]
-	ldr r1, [r3]
-	movs r3, #224
-	lsls r3, r3, #1
-	adds r2, r1, r3
-	adds r3, #65
-	str r3, [r2]
-	subs r3, #57
-	adds r2, r1, r3
-	movs r3, #24
-	str r3, [r2]
-	bl 0x020088b8
-	pop {r0}
-	bx r0
-	.4byte 0x03001ebc
-	.global Func_0200071c
-	.thumb_func
-Func_0200071c:
-	push {r5, lr}
-	ldr r3, [pc, #64]
-	ldr r1, [r3]
-	movs r3, #224
-	lsls r3, r3, #1
-	adds r2, r1, r3
-	adds r3, #68
-	str r3, [r2]
-	subs r3, #60
-	adds r2, r1, r3
-	movs r3, #24
-	str r3, [r2]
-	movs r0, #11
-	bl 0x02008890
-	ldr r5, [pc, #40]
-	str r5, [r0, #28]
-	movs r0, #11
-	bl 0x02008890
-	movs r1, #5
-	str r5, [r0, #24]
-	movs r0, #13
-	bl 0x02008898
-	movs r0, #14
-	movs r1, #2
-	bl 0x02008898
-	movs r0, #0
-	pop {r5}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.4byte 0x00019999
-	.global Func_02000768
-	.thumb_func
-Func_02000768:
-	push {r5, lr}
-	sub sp, #36
-	movs r3, #2
-	str r3, [sp, #0]
-	movs r1, #13
-	movs r2, #30
-	movs r3, #6
-	movs r0, #0
-	bl 0x020087f0
-	adds r5, r0, #0
-	adds r1, r5, #0
-	ldr r0, [pc, #40]
-	movs r2, #0
-	movs r3, #0
-	bl 0x02008818
-	adds r1, r5, #0
-	ldr r0, [pc, #32]
-	movs r2, #0
-	movs r3, #8
-	bl 0x02008818
-	ldr r0, [pc, #28]
-	adds r1, r5, #0
-	movs r2, #0
-	movs r3, #16
-	bl 0x02008818
-	sub sp, #-36
-	pop {r5}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x02008920
-	.4byte 0x0200893c
-	.4byte 0x02008958
-	.global Func_020007b8
-	.thumb_func
-Func_020007b8:
-	ldr r3, [pc, #8]
-	ldr r3, [r3]
-	movs r2, #1
-	adds r3, #53
-	strb r2, [r3]
-	bx lr
-	.4byte 0x03001f30
-	.global Func_020007c8
-	.thumb_func
-Func_020007c8:
-	push {lr}
-	bl 0x02008840
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.global Func_020007d4
-	.thumb_func
-Func_020007d4:
-	push {lr}
-	bl 0x02008848
-	pop {r1}
-	bx r1
-	.2byte 0x0000
 	.section .rodata,"a",%progbits
 	.4byte 0x0000764c
 	.4byte 0x6d657449
@@ -947,6 +727,8 @@ Func_020007d4:
 	.4byte 0x65523a42
 	.4byte 0x6e727574
 	.4byte 0x00000000
+	.global gItemLevelGlyphsUpper
+gItemLevelGlyphsUpper:
 	.4byte 0x20422041
 	.4byte 0x20442043
 	.4byte 0x20462045
@@ -954,6 +736,8 @@ Func_020007d4:
 	.4byte 0x204b204a
 	.4byte 0x204d204c
 	.4byte 0x004f204e
+	.global gItemLevelGlyphsLower
+gItemLevelGlyphsLower:
 	.4byte 0x20512050
 	.4byte 0x20532052
 	.4byte 0x20552054
@@ -961,9 +745,13 @@ Func_020007d4:
 	.4byte 0x20592058
 	.4byte 0x2061205a
 	.4byte 0x00632062
+	.global gItemLevelGlyphsMarks
+gItemLevelGlyphsMarks:
 	.4byte 0x203f2021
 	.4byte 0x20242023
 	.4byte 0x00000025
+	.global gItemLevelEntrances
+gItemLevelEntrances:
 	.4byte 0xffff0000
 	.4byte 0x00000338
 	.4byte 0xc0000360
@@ -976,7 +764,11 @@ Func_020007d4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gItemLevelExits
+gItemLevelExits:
 	.4byte 0x000001ff
+	.global gItemLevelPlacements
+gItemLevelPlacements:
 	.4byte 0xffff01f4
 	.4byte 0x00000001
 	.4byte 0x03180000
@@ -1025,6 +817,8 @@ Func_020007d4:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gItemLevelEvents
+gItemLevelEvents:
 	.4byte 0x00000000
 	.4byte 0xffff0008
 	.4byte 0x02008215

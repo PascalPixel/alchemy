@@ -1294,167 +1294,7 @@ Korosseo_LoadPortrait:
 	.4byte 0x040000d4
 	.4byte 0x050003e0
 	.4byte 0x84000008
-	.section .text.x0200bcc4,"ax",%progbits
-	.balign 4
-	.global ColossoLogRollingStage_SetBalanceStateReady
-	.thumb_func
-ColossoLogRollingStage_SetBalanceStateReady:
-	ldr r2, [pc, #4]
-	movs r3, #9
-	strh r3, [r2]
-	bx lr
-	.4byte 0x02001000
-	.global ColossoLogRollingStage_WaitForBalanceState
-	.thumb_func
-ColossoLogRollingStage_WaitForBalanceState:
-	push {r5, lr}
-	ldr r5, [pc, #28]
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #9
-	beq .L_02003cd0_0
-.L_02003cd0_1:
-	movs r0, #1
-	bl 0x0200c840
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #9
-	bne .L_02003cd0_1
-.L_02003cd0_0:
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x02001000
-	.section .text.x0200bddc,"ax",%progbits
-	.balign 4
-	.global ColossoLogRollingStage_PositionActiveActor
-	.thumb_func
-ColossoLogRollingStage_PositionActiveActor:
-	push {r5, r6, r7, lr}
-	mov r7, r10
-	mov r6, r8
-	push {r6, r7}
-	ldr r3, [pc, #236]
-	mov r10, r0
-	ldr r0, [pc, #236]
-	mov r8, r1
-	ldr r5, [r3]
-	bl 0x0200c9b0
-	ldr r3, [pc, #232]
-	adds r7, r0, #0
-	movs r0, #250
-	lsls r0, r0, #1
-	adds r3, r3, r0
-	ldr r0, [r3]
-	bl 0x0200ca18
-	adds r3, r5, #0
-	adds r6, r0, #0
-	adds r3, #232
-	ldr r2, [r3]
-	movs r0, #192
-	ldr r3, [r6, #8]
-	lsls r0, r0, #12
-	adds r1, r2, r0
-	cmp r2, r3
-	blt .L_02003ddc_0
-	ldr r3, [pc, #200]
-	adds r1, r2, r3
-.L_02003ddc_0:
-	cmp r7, #0
-	beq .L_02003ddc_1
-	adds r3, r5, #0
-	adds r3, #236
-	ldr r3, [r3]
-	movs r0, #128
-	lsls r0, r0, #13
-	adds r4, r3, r0
-	adds r3, r5, #0
-	adds r3, #228
-	b .L_02003ddc_2
-.L_02003ddc_1:
-	adds r3, r5, #0
-	adds r3, #236
-	ldr r3, [r3]
-	ldr r2, [pc, #172]
-	adds r4, r3, r2
-	adds r3, r5, #0
-	adds r3, #226
-.L_02003ddc_2:
-	ldrh r3, [r3]
-	adds r5, r6, #0
-	adds r5, #100
-	strh r3, [r5]
-	movs r3, #128
-	lsls r3, r3, #7
-	str r3, [r6, #52]
-	movs r3, #128
-	lsls r3, r3, #9
-	movs r2, #0
-	str r3, [r6, #48]
-	adds r0, r6, #0
-	adds r3, r4, #0
-	bl 0x0200c910
-	ldr r0, [pc, #120]
-	bl 0x0200c9b8
-	adds r0, r6, #0
-	ldr r1, [pc, #128]
-	bl 0x0200c8e8
-	movs r0, #0
-	ldrsh r3, [r5, r0]
-	cmp r3, #0
-	beq .L_02003ddc_3
-.L_02003ddc_4:
-	movs r0, #1
-	bl 0x0200c840
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #0
-	bne .L_02003ddc_4
-.L_02003ddc_3:
-	cmp r7, #0
-	bne .L_02003ddc_5
-	mov r1, r10
-	movs r0, #0
-	bl 0x0200ae18
-	mov r0, r10
-	movs r1, #2
-	bl 0x0200c978
-	b .L_02003ddc_6
-.L_02003ddc_5:
-	mov r1, r8
-	movs r0, #0
-	bl 0x0200ae18
-	mov r0, r8
-	movs r1, #2
-	bl 0x0200c978
-.L_02003ddc_6:
-	ldr r3, [pc, #52]
-	movs r0, #250
-	lsls r0, r0, #1
-	adds r3, r3, r0
-	ldr r0, [r3]
-	movs r1, #1
-	bl 0x0200c978
-	movs r1, #3
-	ldr r0, [pc, #48]
-	bl 0x0200c970
-	adds r0, r6, #0
-	bl 0x0200c908
-	adds r0, r7, #0
-	pop {r3, r5}
-	mov r8, r3
-	mov r10, r5
-	pop {r5, r6, r7}
-	pop {r1}
-	bx r1
-	.2byte 0x0000
-	.4byte 0x03001f3c
-	.4byte 0x00000211
-	.4byte 0x02000240
-	.4byte 0xfff40000
-	.4byte 0xfff00000
-	.4byte 0x0200db24
-	.4byte 0x0000096a
+	.section .text.x0200bef0,"ax",%progbits
 	.global Korosseo_UpdatePathRival
 	.thumb_func
 Korosseo_UpdatePathRival:
@@ -2165,45 +2005,6 @@ FieldScene_RunScene3bcSequenceB:
 	.4byte 0x0200cd80
 	.2byte 0x1e40
 	.2byte 0x0300
-	.section .text.x0200c57c,"ax",%progbits
-	.balign 4
-	.global ColossoLogRollingStage_InitializeSceneControl
-	.thumb_func
-ColossoLogRollingStage_InitializeSceneControl:
-	push {r5, r6, lr}
-	ldr r3, [pc, #60]
-	ldr r6, [r3]
-	ldr r5, [pc, #60]
-	bl 0x0200c8d0
-	adds r1, r6, #0
-	adds r1, #240
-	bl 0x0200c898
-	ldr r0, [pc, #48]
-	bl 0x0200c9b0
-	cmp r0, #0
-	bne .L_0200457c_0
-	movs r3, #1
-	strh r3, [r5]
-	strh r3, [r5, #2]
-	adds r3, r6, #0
-	adds r3, #224
-	ldrh r3, [r3]
-	strh r0, [r5, #8]
-	strh r3, [r5, #4]
-	strh r0, [r5, #6]
-.L_0200457c_0:
-	ldr r1, [pc, #24]
-	ldr r0, [pc, #28]
-	bl 0x0200c848
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x03001f3c
-	.4byte 0x02001000
-	.4byte 0x00000109
-	.4byte 0x00000c85
-	.4byte 0x0200bef1
 @ The compiler library links here from its licensed container.
 	.section .rodata.part1,"a",%progbits
 	.4byte 0x00000015
@@ -3237,6 +3038,8 @@ Korosseo_MarkerSlot:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KorosseoMaruta_PlaceScript
+KorosseoMaruta_PlaceScript:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000001

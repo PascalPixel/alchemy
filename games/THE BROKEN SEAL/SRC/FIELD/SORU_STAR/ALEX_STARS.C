@@ -1,14 +1,8 @@
-/* Draft of resource_380 0x02009d04 (Scene_AlexTakesStars): it matches the ROM
- * byte for byte now that the messages it loads from the literal pool have
- * catalogue names (MsgSoruDontWantAnything, MsgSoruDoubtHowFeel,
- * MsgSoruPermitRelieveElemental, MsgSoruThankCooperation). The listing keeps
- * these rows until the draft is adopted. */
 #include "STAR.H"
 extern u8 MsgSoruDontWantAnything[];
 extern u8 MsgSoruDoubtHowFeel[];
 extern u8 MsgSoruPermitRelieveElemental[];
 extern u8 MsgSoruThankCooperation[];
-
 
 static __inline__ void SetFlagBits(u8 *flags, u8 bits)
 {

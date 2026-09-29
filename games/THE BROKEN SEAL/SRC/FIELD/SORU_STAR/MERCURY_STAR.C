@@ -1,7 +1,3 @@
-/* Draft of resource_380 0x020086f4 (Scene_BagMercuryStar): it matches the ROM
- * byte for byte now that the message it loads from the literal pool has a
- * catalogue name (MsgSoruPutMercuryStar). The listing keeps these rows until
- * the draft is adopted. */
 #include "STAR.H"
 extern u8 MsgSoruPutMercuryStar[];
 
@@ -33,7 +29,7 @@ void Scene_BagMercuryStar(void)
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Event_Wait(20);
     Audio_PlayCue(144);
-    Engine_MapAnimateCells(0x200d088, 84, 4);
+    Engine_MapAnimateCells(SoruStar_StarCells, 84, 4);
     Map_CopyCellAttributes(0, 0, 1, 1, 29, 4);
     Map_CopyCellsTo(87, 42, 29, 6, 1, 2);
     Event_Wait(40);
@@ -43,7 +39,7 @@ void Scene_BagMercuryStar(void)
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Event_Wait(20);
     Audio_PlayCue(144);
-    Engine_MapAnimateCells(0x200d088, 76, 21);
+    Engine_MapAnimateCells(SoruStar_StarCells, 76, 21);
     Map_CopyCellAttributes(0, 0, 1, 1, 21, 21);
     Map_CopyCellsTo(87, 42, 21, 23, 1, 2);
     Event_Wait(40);
@@ -54,7 +50,7 @@ void Scene_BagMercuryStar(void)
     Work_SetValuesIfNonNegative(0x10000, 0x20000, 0x10000);
     Event_Wait(20);
     Audio_PlayCue(144);
-    Engine_MapAnimateCells(0x200d088, 76, 29);
+    Engine_MapAnimateCells(SoruStar_StarCells, 76, 29);
     Map_CopyCellAttributes(0, 0, 1, 1, 21, 29);
     Map_CopyCellsTo(87, 42, 21, 31, 1, 2);
     Event_Wait(40);

@@ -1,10 +1,6 @@
-/* Draft of resource_380 0x02008390 (Scene_BagVenusStar): it matches the ROM
- * byte for byte now that the message it loads from the literal pool has a
- * catalogue name (MsgSoruVenusStarBagged). The listing keeps these rows until
- * the draft is adopted. */
 #include "TYPES.H"
 extern u8 MsgSoruVenusStarBagged[];
-
+extern u16 SoruStar_StarCells[];
 
 /* The party bags the Venus Star while its chamber changes around them. */
 
@@ -103,7 +99,7 @@ void Scene_BagVenusStar(void)
     Engine_EventWait(20);
     Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x20000, 0x10000);
     Engine_AudioPlayCue(144);
-    Engine_MapAnimateCells(0x200d088, 96, 29);
+    Engine_MapAnimateCells(SoruStar_StarCells, 96, 29);
     Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 1, 41, 29);
     Call6(Engine_MapCopyCellsTo, 87, 42, 41, 31, 1, 2);
     Engine_EventWait(40);
@@ -114,7 +110,7 @@ void Scene_BagVenusStar(void)
     Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
     Engine_AudioPlayCue(144);
-    Engine_MapAnimateCells(0x200d088, 74, 29);
+    Engine_MapAnimateCells(SoruStar_StarCells, 74, 29);
     Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 1, 19, 29);
     Call6(Engine_MapCopyCellsTo, 87, 42, 19, 31, 1, 2);
     Engine_EventWait(40);
@@ -124,7 +120,7 @@ void Scene_BagVenusStar(void)
     Call3(Engine_WorkSetValuesIfNonNegative, 0x10000, 0x20000, 0x10000);
     Engine_EventWait(20);
     Engine_AudioPlayCue(144);
-    Engine_MapAnimateCells(0x200d088, 96, 10);
+    Engine_MapAnimateCells(SoruStar_StarCells, 96, 10);
     Call6(Engine_MapCopyCellAttributes, 0, 0, 1, 1, 41, 10);
     Call6(Engine_MapCopyCellsTo, 87, 42, 41, 12, 1, 2);
     Engine_EventWait(40);

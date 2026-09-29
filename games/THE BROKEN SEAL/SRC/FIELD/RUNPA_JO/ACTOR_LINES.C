@@ -1,7 +1,15 @@
-/* The Lunpa fortress: two actors' lines. */
+/* The Lunpa fortress: three actors' lines. */
 #include "FORTRESS.H"
 extern u8 MsgRunpaGuysTougherThought[];
 extern u8 MsgRunpaKnowWhereDodonpa[];
+extern u8 MsgRunpaRightRightGive[];
+
+void ConfigureSceneActor13(void)
+{
+    Actor_RunRepeatedMotion(13, 2);
+    Event_SetMessage((s32)MsgRunpaRightRightGive);
+    Event_ShowMessage(13, 0);
+}
 
 void ConfigureSceneActor12Variant(void)
 {

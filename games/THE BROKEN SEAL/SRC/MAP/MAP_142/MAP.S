@@ -17,16 +17,16 @@ Field_Map142:
 	.incbin "MAP/MAP_142/METATILES.delta2.lz"
 	.balign 4, 0
 .LField_Map142_SHAPES:
-	.incbin "MAP/MAP_142/SHAPES.table.lz"
+	.incbin "MAP/MAP_062/SHAPES.table.lz"
 	.balign 4, 0
 .LField_Map142_GRID:
 	.incbin "MAP/MAP_142/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map142_ANIMATION:
-	.incbin "MAP/MAP_142/ANIMATION.script.lz"
+	.incbin "MAP/MAP_029/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map142_BLEND:
-	.incbin "MAP/MAP_142/BLEND.script.lz"
+	.incbin "MAP/MAP_139/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map142_MARKERS:
 	.incbin "MAP/MAP_142/MARKERS.table"

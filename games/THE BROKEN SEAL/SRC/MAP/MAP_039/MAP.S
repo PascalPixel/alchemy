@@ -29,4 +29,4 @@ Field_Map039:
 	.incbin "MAP/MAP_039/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map039_MARKERS:
-	.incbin "MAP/MAP_039/MARKERS.table"
+	.incbin "MAP/MAP_000/MARKERS.table"

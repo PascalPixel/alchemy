@@ -24,13 +24,13 @@ Field_Map064:
 	.incbin "MAP/MAP_064/GRID.parts.lz"
 	.balign 4, 0
 .LField_Map064_SHAPE_GRID:
-	.incbin "MAP/MAP_064/SHAPE_GRID.table.lz"
+	.incbin "MAP/MAP_064/SHAPE_GRID.plane.lz"
 	.balign 4, 0
 .LField_Map064_ANIMATION:
-	.incbin "MAP/MAP_064/ANIMATION.script.lz"
+	.incbin "MAP/MAP_062/ANIMATION.script.lz"
 	.balign 4, 0
 .LField_Map064_BLEND:
-	.incbin "MAP/MAP_064/BLEND.script.lz"
+	.incbin "MAP/MAP_060/BLEND.script.lz"
 	.balign 4, 0
 .LField_Map064_SCENE:
 	.incbin "MAP/MAP_064/SCENE.parts.lz"

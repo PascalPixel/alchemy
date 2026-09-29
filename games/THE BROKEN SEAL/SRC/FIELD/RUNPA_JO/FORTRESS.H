@@ -228,7 +228,7 @@ void InspectOrdinaryObject(void);
 
 void InspectEmptyChest(void);
 
-void FieldScene_RunSupplementalSequenceOne(void);
+void RunpaJo_RunGuardChallenge(void);
 
 void FieldScene_RunSequenceTail(void);
 

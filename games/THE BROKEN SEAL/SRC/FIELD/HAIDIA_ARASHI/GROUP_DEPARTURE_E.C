@@ -29,7 +29,7 @@ void FieldScene_RunScene372SequenceE(void)
         Event_ShowMessage(22, 0);
         v6 = 128;
         record = Actor_Get(22);
-        *(volatile s32 *)(record + 28) = (v6 << 9);
+        *(s32 *)(record + 28) = v6 << 9;
         Actor_RunRepeatedMotion(22, 1);
         Event_Wait(20);
         Event_AskYesNo(22, 0);

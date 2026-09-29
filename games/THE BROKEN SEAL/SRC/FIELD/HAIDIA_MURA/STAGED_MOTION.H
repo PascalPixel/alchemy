@@ -215,12 +215,12 @@ s32 SceneEffect_UpdateOrbitPosition(s32 *p);
 
 /* Shared data used for actors A, B, C. */
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void Effect_UpdateParticlePosition(s32 *particle, s32 delta_x, s32 delta_z);
 
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants
+ * straight into the argument registers; a direct call precomputes a costly
+ * constant into a pseudo that the compiler then shares with later uses in
+ * the block. A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);

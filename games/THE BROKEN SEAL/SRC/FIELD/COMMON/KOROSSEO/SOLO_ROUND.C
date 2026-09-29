@@ -21,7 +21,7 @@ void Engine_EventEnd();
 /* The game state, read here as words: word 125 holds the solo competitor. */
 extern s32 gGameState[];
 
-/* Call sites spelled through these wrappers pass their constants straight
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants straight
  * into the argument registers; a value-returning call also sets r0 last of
  * its arguments. */
 static __inline__ void Call2(void (*f)(), s32 a0, s32 a1) { f(a0, a1); }

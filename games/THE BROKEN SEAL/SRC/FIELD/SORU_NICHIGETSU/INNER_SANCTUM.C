@@ -258,8 +258,6 @@ void UpdateStatueTrapActor(void)
     s32 d3 = 0x120;
     s32 d4 = 0x120;
     s32 d5 = 0xc000;
-    s32 h1;
-    s32 h2;
 
     scene_actor = Engine_ActorGet(16);
     if (GameFlag_IsSet(0x809) == 0) {
@@ -282,20 +280,12 @@ void UpdateStatueTrapActor(void)
         }
         Event_Wait(4);
         Actor_SetSpeed(ACTOR_SUKURETA, s1, s2);
-    } else {
-        if (GameFlag_IsSet(g2)!= 0) goto do1;
-        h1 = 0x1540000;
-        if (scene_actor->unk8 > h1) {
-do1:
-            Actor_SetPosition(ACTOR_SUKURETA, 0x1880000, 0xa80000);
-            Event_Wait(4);
-            Actor_SetSpeed(ACTOR_SUKURETA, s3, s4);
-        }
+    } else if (GameFlag_IsSet(g2) != 0 || scene_actor->unk8 > 0x1540000) {
+        Actor_SetPosition(ACTOR_SUKURETA, 0x1880000, 0xa80000);
+        Event_Wait(4);
+        Actor_SetSpeed(ACTOR_SUKURETA, s3, s4);
     }
-    if (GameFlag_IsSet(g3)!= 0) goto do2;
-    h2 = 0x1540000;
-    if (scene_actor->unk8 > h2) {
-do2:
+    if (GameFlag_IsSet(g3) != 0 || scene_actor->unk8 > 0x1540000) {
         Actor_WalkToAndWait(ACTOR_SUKURETA, d1, 0xe8);
     } else {
         GameFlag_IsSet(FLAG_INNER_SANCTUM_ENTERED);

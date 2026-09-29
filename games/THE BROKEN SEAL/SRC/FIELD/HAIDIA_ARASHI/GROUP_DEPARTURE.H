@@ -158,12 +158,12 @@ void OverlayObject_UpdateRandomSlotByFrame(s32 obj);
 
 void BattleEffect_CleanupSceneObjects(void);
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
 void SceneActor_RunActor22PlacementSequence(s32 x, s32 y);
 
+/* FAKEMATCH: call sites spelled through these wrappers pass their constants
+ * straight into the argument registers; a direct call precomputes a costly
+ * constant into a pseudo that the compiler then shares with later uses in
+ * the block. A value-returning call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);

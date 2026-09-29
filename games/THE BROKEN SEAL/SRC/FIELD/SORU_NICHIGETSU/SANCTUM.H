@@ -33,15 +33,15 @@ enum InnerSanctumFlag {
 void SetSolShindenActorStep();
 void SetSolShindenActorStep();
 
-/* Call sites spelled through these wrappers pass their constants straight
- * into the argument registers; a direct call precomputes a costly constant
- * into a pseudo that the compiler then shares with later uses in the block.
- * A value-returning call also sets r0 last of its arguments. */
-
 s32 CheckAllStatueLights(void);
 
 void SetSolShindenActorStep(s32 actor_step, s32 wait_frames);
 
+/* FAKEMATCH: call sites spelled through these wrappers, and the three
+ * further groups below, pass their constants straight into the argument
+ * registers; a direct call precomputes a costly constant into a pseudo that
+ * the compiler then shares with later uses in the block. A value-returning
+ * call also sets r0 last of its arguments. */
 static __inline__ void Call1(void (*f)(), s32 a0)
 {
     f(a0);
@@ -134,6 +134,7 @@ static __inline__ void Call3(void (*f)(), s32 a0, s32 a1, s32 a2)
 
 /* The sixteen colliding sites reach these main-image services directly. */
 
+/* FAKEMATCH: call wrappers, for the reason given with the first group. */
 static __inline__ s32 Value1(s32 (*f)(), s32 a0)
 {
     return f(a0);
@@ -214,6 +215,7 @@ void SetSolShindenActorStep();
 void SetSolShindenActorStep();
 void SetSolShindenActorStep();
 
+/* FAKEMATCH: call wrapper, for the reason given with the first group. */
 static __inline__ s32 Value0(s32 (*f)())
 {
     return f();
@@ -278,6 +280,7 @@ void UpdateStatueLight2(void);
 void UpdateStatueLight3(void);
 void UpdateStatueLight4(void);
 
+/* FAKEMATCH: call wrapper, for the reason given with the first group. */
 static __inline__ void Call6(void (*f)(), s32 a0, s32 a1, s32 a2, s32 a3, s32 a4, s32 a5)
 {
     f(a0, a1, a2, a3, a4, a5);

@@ -155,7 +155,10 @@ RomBytes_080317e4:
 	.incbin "baserom.gba", 0x000317e4, 0x00000080
 	.global RenderResource_PairSourceTable
 RenderResource_PairSourceTable:
-	.incbin "baserom.gba", 0x00031864, 0x000009c0
+	.incbin "baserom.gba", 0x00031864, 0x000005c0
+	.global UiText_SecondGlyphs
+UiText_SecondGlyphs:
+	.incbin "baserom.gba", 0x00031e24, 0x00000400
 	.global Data_08032224
 Data_08032224:
 	.incbin "baserom.gba", 0x00032224, 0x000020d4

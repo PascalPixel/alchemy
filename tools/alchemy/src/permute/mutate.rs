@@ -41,6 +41,7 @@ pub enum Kind {
     ReorderStatements,
     ReorderDeclarations,
     IntroduceTemporary,
+    ShareTemporary,
     RemoveTemporary,
     AddCast,
     DropCast,
@@ -54,11 +55,12 @@ pub enum Kind {
 }
 
 impl Kind {
-    pub const ALL: [(Kind, u64); 14] = [
+    pub const ALL: [(Kind, u64); 15] = [
         (Kind::SwapOperands, 10),
         (Kind::ReorderStatements, 10),
         (Kind::ReorderDeclarations, 8),
         (Kind::IntroduceTemporary, 8),
+        (Kind::ShareTemporary, 4),
         (Kind::RemoveTemporary, 6),
         (Kind::AddCast, 5),
         (Kind::DropCast, 4),
@@ -77,13 +79,14 @@ impl Kind {
             Kind::ReorderStatements => "reorder independent statements",
             Kind::ReorderDeclarations => "reorder local declarations",
             Kind::IntroduceTemporary => "introduce a temporary",
+            Kind::ShareTemporary => "share one temporary between two statements",
             Kind::RemoveTemporary => "remove a temporary",
             Kind::AddCast => "add a same-width cast",
             Kind::DropCast => "drop a same-width cast",
             Kind::LoopForm => "change loop form",
             Kind::PointerIndex => "pointer arithmetic or indexing",
             Kind::CompoundAssignment => "split or join a compound assignment",
-            Kind::ConditionAssignment => "move an assignment into or out of a condition",
+            Kind::ConditionAssignment => "move an assignment into or out of a condition or call",
             Kind::Register => "toggle register",
             Kind::InvertIf => "invert an if/else",
             Kind::ZeroTest => "test truth or compare with zero",
@@ -133,6 +136,7 @@ pub fn apply(kind: Kind, function: &mut Function, env: &Env, rng: &mut Rng) -> b
             block_mutation(function, env, rng, &declaration_sites, &declaration_apply)
         }
         Kind::IntroduceTemporary => introduce_temporary(function, env, rng),
+        Kind::ShareTemporary => share_temporary(function, env, rng),
         Kind::RemoveTemporary => remove_temporary(function, env, rng),
         Kind::LoopForm => block_mutation(function, env, rng, &loop_sites, &loop_apply),
         Kind::ConditionAssignment => {
@@ -1305,6 +1309,100 @@ fn introduce_temporary(function: &mut Function, env: &Env, rng: &mut Rng) -> boo
     done
 }
 
+/// Hoist two same-typed subexpressions of two statements in one block into
+/// one temporary assigned just before each, as a programmer reuses a scratch
+/// variable. Its two lifetimes never overlap, but they are one variable to
+/// the compiler, and local allocation then cannot tie either value to the
+/// register of an operand that dies computing it.
+fn share_temporary(function: &mut Function, env: &Env, rng: &mut Rng) -> bool {
+    // Every hoistable site, by block, statement and ordinal, with its type.
+    let mut sites: Vec<(usize, usize, usize, String)> = Vec::new();
+    let mut block = 0;
+    walk_blocks(&mut function.body, &mut |stmts| {
+        let start = leading_declarations(stmts);
+        for index in start..stmts.len() {
+            let mut ordinal = 0;
+            hoistable(&mut stmts[index], env, &mut |expr| {
+                if let Some(spelling) = env
+                    .type_of(expr)
+                    .map(|ty| ty.decay())
+                    .and_then(|ty| env.spell(&ty))
+                {
+                    sites.push((block, index, ordinal, spelling));
+                }
+                ordinal += 1;
+                false
+            });
+        }
+        block += 1;
+        false
+    });
+    let mut pairs = Vec::new();
+    for (first, a) in sites.iter().enumerate() {
+        for b in &sites[first + 1..] {
+            if a.0 == b.0 && a.1 < b.1 && a.3 == b.3 {
+                pairs.push((a.clone(), b.clone()));
+            }
+        }
+    }
+    if pairs.is_empty() {
+        return false;
+    }
+    let (first, second) = pairs.swap_remove(rng.below(pairs.len()));
+    let name = fresh_name(function, env);
+    let mut block = 0;
+    let mut done = false;
+    walk_blocks(&mut function.body, &mut |stmts| {
+        if block != first.0 {
+            block += 1;
+            return false;
+        }
+        let start = leading_declarations(stmts);
+        let mut shared = stmts.clone();
+        // The later statement first, so the earlier one keeps its index.
+        for (index, ordinal) in [(second.1, second.2), (first.1, first.2)] {
+            let mut skip = ordinal;
+            let mut hoisted = None;
+            hoistable(&mut shared[index], env, &mut |expr| {
+                if skip > 0 {
+                    skip -= 1;
+                    return false;
+                }
+                hoisted = Some(std::mem::replace(expr, Expr::ident(&name)));
+                true
+            });
+            let Some(value) = hoisted else {
+                return true;
+            };
+            shared.insert(
+                index,
+                Stmt::Expr(Expr::Assign(
+                    None,
+                    Box::new(Expr::ident(&name)),
+                    Box::new(value),
+                )),
+            );
+        }
+        *stmts = shared;
+        let (specs, stars) = split_spelling(&first.3);
+        stmts.insert(
+            start,
+            Stmt::Decl(Decl {
+                specs,
+                items: vec![Declarator {
+                    before: vec!["*".to_string(); stars],
+                    name: name.clone(),
+                    after: Vec::new(),
+                    init: None,
+                }],
+            }),
+        );
+        done = true;
+        true
+    });
+    done
+}
+
 fn split_spelling(spelling: &str) -> (Vec<String>, usize) {
     let stars = spelling.matches('*').count();
     let specs = spelling
@@ -1727,6 +1825,15 @@ fn break_tail(items: &[Stmt]) -> Option<(usize, &Expr)> {
     }
 }
 
+/// Whether `expr` names a variable the body block declares: moving it
+/// between the body and the loop header would change what it refers to.
+fn names_body_local(items: &[Stmt], expr: &Expr) -> bool {
+    items.iter().any(|item| match item {
+        Stmt::Decl(decl) => decl.items.iter().any(|item| expr.mentions(&item.name) > 0),
+        _ => false,
+    })
+}
+
 fn loop_sites(stmts: &[Stmt], env: &Env) -> Vec<LoopSite> {
     let mut sites = Vec::new();
     for (index, stmt) in stmts.iter().enumerate() {
@@ -1744,15 +1851,22 @@ fn loop_sites(stmts: &[Stmt], env: &Env) -> Vec<LoopSite> {
                 }
                 let items = block_items_of(body);
                 if !has_continue(body)
-                    && last_code(&items).is_some_and(|last| matches!(items[last], Stmt::Expr(_)))
+                    && last_code(&items).is_some_and(|last| {
+                        matches!(&items[last], Stmt::Expr(step) if !names_body_local(&items, step))
+                    })
                 {
                     sites.push(LoopSite::WhileToFor(index));
                 }
-                if is_true(cond) && !has_continue(body) && break_tail(&items).is_some() {
+                if is_true(cond)
+                    && !has_continue(body)
+                    && break_tail(&items).is_some_and(|(_, exit)| !names_body_local(&items, exit))
+                {
                     sites.push(LoopSite::BreakToDo(index));
                 }
             }
-            Stmt::DoWhile(body, _) if !has_continue(body) => {
+            Stmt::DoWhile(body, cond)
+                if !has_continue(body) && !names_body_local(&block_items_of(body), cond) =>
+            {
                 sites.push(LoopSite::DoToBreak(index));
             }
             _ => {}
@@ -1896,9 +2010,20 @@ enum ConditionSite {
     OutOf(usize),
 }
 
+/// A call statement, or the assignment of a call's result: its arguments
+/// can take an assignment the way a condition can.
+fn call_statement(expr: &Expr) -> bool {
+    match expr {
+        Expr::Call(..) => true,
+        Expr::Assign(_, _, value) => matches!(value.as_ref(), Expr::Call(..)),
+        _ => false,
+    }
+}
+
 fn condition_of(stmt: &Stmt) -> Option<&Expr> {
     match stmt {
         Stmt::If(cond, ..) | Stmt::Switch(cond, _) => Some(cond),
+        Stmt::Expr(expr) if call_statement(expr) => Some(expr),
         _ => None,
     }
 }
@@ -1906,8 +2031,28 @@ fn condition_of(stmt: &Stmt) -> Option<&Expr> {
 fn condition_of_mut(stmt: &mut Stmt) -> Option<&mut Expr> {
     match stmt {
         Stmt::If(cond, ..) | Stmt::Switch(cond, _) => Some(cond),
+        Stmt::Expr(expr) if call_statement(expr) => Some(expr),
         _ => None,
     }
+}
+
+/// Where an assignment can sit embedded: a condition, or a call. A call's
+/// result assignment is the statement itself, so only its call counts.
+fn embedding_of(stmt: &Stmt) -> Option<&Expr> {
+    match condition_of(stmt)? {
+        Expr::Assign(_, _, value) if matches!(stmt, Stmt::Expr(_)) => Some(value),
+        cond => Some(cond),
+    }
+}
+
+fn embedding_of_mut(stmt: &mut Stmt) -> Option<&mut Expr> {
+    if matches!(stmt, Stmt::Expr(Expr::Assign(..))) {
+        let Some(Expr::Assign(_, _, value)) = condition_of_mut(stmt) else {
+            return None;
+        };
+        return Some(value);
+    }
+    condition_of_mut(stmt)
 }
 
 /// The only unguarded, evaluated occurrence of `name` in `cond`.
@@ -1977,7 +2122,7 @@ fn condition_sites(stmts: &[Stmt], env: &Env) -> Vec<ConditionSite> {
                 }
             }
         }
-        if let Some(cond) = condition_of(&stmts[index]) {
+        if let Some(cond) = embedding_of(&stmts[index]) {
             if let Some((name, value)) = embedded_assignment(cond, env) {
                 let mut copy = cond.clone();
                 let mut replaced = false;
@@ -2022,12 +2167,12 @@ fn condition_apply(stmts: &mut Vec<Stmt>, site: ConditionSite, env: &Env, _: &mu
         }
         ConditionSite::OutOf(index) => {
             let Some((name, value)) =
-                condition_of(&stmts[index]).and_then(|cond| embedded_assignment(cond, env))
+                embedding_of(&stmts[index]).and_then(|cond| embedded_assignment(cond, env))
             else {
                 return false;
             };
             let assignment = Expr::Assign(None, Box::new(Expr::ident(&name)), Box::new(value));
-            let Some(cond) = condition_of_mut(&mut stmts[index]) else {
+            let Some(cond) = embedding_of_mut(&mut stmts[index]) else {
                 return false;
             };
             let mut replaced = false;
@@ -2130,7 +2275,7 @@ mod tests {
     use super::super::parse::{locate, scan_unit};
     use super::*;
 
-    const HEADER: &str = "typedef signed char s8;\ntypedef unsigned char u8;\ntypedef signed short s16;\ntypedef unsigned short u16;\ntypedef signed int s32;\ntypedef unsigned int u32;\nstruct Unit { u16 hp; u16 max; u8 flags; };\nextern struct Unit *gUnit;\nextern s32 gX;\nextern s32 gY;\nextern u16 gTable[8];\ns32 Rand(void);\nvoid Use(s32);\n";
+    const HEADER: &str = "typedef signed char s8;\ntypedef unsigned char u8;\ntypedef signed short s16;\ntypedef unsigned short u16;\ntypedef signed int s32;\ntypedef unsigned int u32;\nstruct Unit { u16 hp; u16 max; u8 flags; };\nextern struct Unit *gUnit;\nextern s32 gX;\nextern s32 gY;\nextern u16 gTable[8];\ns32 Rand(void);\nvoid Use(s32);\ns32 Use2(s32);\n";
 
     fn load(body: &str) -> (Function, Env) {
         let source = format!("{HEADER}s32 F(s32 a, s32 b)\n{{\n{body}\n}}\n");
@@ -2354,6 +2499,25 @@ mod tests {
     }
 
     #[test]
+    fn one_temporary_serves_two_statements() {
+        let found = outcomes(
+            Kind::ShareTemporary,
+            "Use(a + 49);\nUse(a + 32);\nreturn 0;",
+        );
+        assert_eq!(
+            found,
+            vec!["s32 tmp; tmp = a + 49; Use(tmp); tmp = a + 32; Use(tmp); return 0;".to_string()]
+        );
+        // Only values of one type share it, and only across statements.
+        assert!(outcomes(
+            Kind::ShareTemporary,
+            "gX = gUnit->hp;\nUse(a + 1);\nreturn 0;"
+        )
+        .is_empty());
+        assert!(outcomes(Kind::ShareTemporary, "Use((a + 1) * (b + 1));\nreturn 0;").is_empty());
+    }
+
+    #[test]
     fn same_width_casts_respect_how_the_value_is_used() {
         let found = outcomes(Kind::AddCast, "gTable[0] = gUnit->hp;\nreturn 0;");
         assert!(
@@ -2451,6 +2615,29 @@ mod tests {
             found.contains(&"do { a++; } while (a < b); return a;".to_string()),
             "{found:?}"
         );
+        // A test or step naming a body local cannot leave the body, and a
+        // condition cannot move in where a body local would capture it.
+        let found = outcomes(
+            Kind::LoopForm,
+            "while (1) { s32 t; t = Rand(); if (t) break; }\nreturn 0;",
+        );
+        assert!(
+            !found.iter().any(|body| body.starts_with("do")),
+            "{found:?}"
+        );
+        let found = outcomes(
+            Kind::LoopForm,
+            "while (b) { s32 t; t = Rand(); Use(t); t++; }\nreturn 0;",
+        );
+        assert!(
+            !found.iter().any(|body| body.starts_with("for")),
+            "{found:?}"
+        );
+        assert!(outcomes(
+            Kind::LoopForm,
+            "do { s32 a; a = Rand(); Use(a); } while (a);\nreturn 0;"
+        )
+        .is_empty());
     }
 
     #[test]
@@ -2527,6 +2714,22 @@ mod tests {
             "s32 x;\nx = Rand();\nif (x == x + 1) return 1;\nreturn 0;"
         )
         .is_empty());
+        // A call's argument takes the assignment as a condition does.
+        let found = outcomes(
+            Kind::ConditionAssignment,
+            "s32 x;\nx = a + 1;\nUse(x);\nreturn x;",
+        );
+        assert_eq!(found, vec!["s32 x; Use(x = a + 1); return x;".to_string()]);
+        let found = outcomes(
+            Kind::ConditionAssignment,
+            "s32 x;\ngX = Use2(x = a + 1);\nreturn x;",
+        );
+        assert_eq!(
+            found,
+            vec!["s32 x; x = a + 1; gX = Use2(x); return x;".to_string()]
+        );
+        // The result assignment of a call is the statement, not embedded.
+        assert!(outcomes(Kind::ConditionAssignment, "gX = Rand();\nreturn 0;").is_empty());
     }
 
     #[test]

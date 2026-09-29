@@ -7,7 +7,13 @@
    (lsls/asrs) into the same stack slot as the first heading, and the second
    loop keeps its heading in r7 and position pointer in r5; here the heading
    is zero-extended into r9 (u16/s16/s32 locals, a separate s16 local, an
-   inline helper and & 0xffff all tried). */
+   inline helper and & 0xffff all tried).
+   2026-09-29: alchemy permute took the score from 1322 to 965 (25
+   register-only, 1 operand, 5 reordered, 1 inserted, 4 deleted) in six
+   minutes: args declared after base, the heading read before the leash is
+   squared, the last leash test summed dz first, and a flag local for the
+   eighth-turn probe (tagged; without it the score is 1100). The home
+   heading still zero-extends into r9. */
 #include "SCRIPT_OBJECT_RUNTIME.H"
 #include "IWRAM_CALL.H"
 
@@ -38,8 +44,8 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
 {
     struct WanderPosition pos;
     struct WanderPosition probe;
-    const s32 *args;
     s32 base;
+    const s32 *args;
     s32 range;
     s32 limit;
     s32 radius;
@@ -48,14 +54,15 @@ s32 ScriptObject_WanderNearHome(struct ScriptObjectRuntime *object)
     s32 tries;
     s32 dx;
     s32 dz;
+    s32 blocked;
 
     args = &object->script[(s16)object->script_cursor + 1];
     base = *args++;
     range = *args++;
     limit = *args / 0x10000;
+    angle = (s16)object->script_value;
     limit = limit * limit;
     tries = 0;
-    angle = (s16)object->script_value;
     dx = object->x / 0x10000 - object->home_x;
     dz = object->z / 0x10000 - object->home_z;
     if (dx * dx + dz * dz > limit)
@@ -89,7 +96,8 @@ roam:
     probe.y = object->y;
     probe.z = object->z;
     Vector_AddPolarOffset(radius, heading + 0x2000, &probe);
-    if (Func_080120dc(object, &probe) != 0)
+    blocked = Func_080120dc(object, &probe) != 0; /* FAKEMATCH: a flag local reallocates the probes. */
+    if (blocked)
         goto roam;
     probe.x = object->x;
     probe.y = object->y;
@@ -111,7 +119,7 @@ roam:
         goto roam;
     dx = pos.x / 0x10000 - object->home_x;
     dz = pos.z / 0x10000 - object->home_z;
-    if (dx * dx + dz * dz > limit)
+    if (dz * dz + dx * dx > limit)
         goto roam;
     object->flags_59 |= 2;
     Object_SetMoveTarget(object, pos.x, pos.y, pos.z);

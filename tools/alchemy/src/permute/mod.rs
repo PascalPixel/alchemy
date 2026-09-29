@@ -57,11 +57,12 @@ inserted or deleted instruction; 0 only for identical code.\n\
   --sample N        print N single rewrites of the draft as diffs and stop\n\
 \n\
 Rewrites: swap or regroup commutative operands; reorder independent\n\
-statements and local declarations; introduce or remove a temporary; add or\n\
-drop same-width integer casts; for, while and do-while loop forms; pointer\n\
-arithmetic versus indexing; split or join compound assignments; move an\n\
-assignment into or out of a condition; the register keyword; invert an\n\
-if/else; test a truth value or compare it with zero. A written candidate\n\
+statements and local declarations; introduce or remove a temporary, or\n\
+share one between two statements; add or drop same-width integer casts;\n\
+for, while and do-while loop forms; pointer arithmetic versus indexing;\n\
+split or join compound assignments; move an assignment into or out of a\n\
+condition or a call's arguments; the register keyword; invert an if/else;\n\
+test a truth value or compare it with zero. A written candidate\n\
 with constructs no programmer would write carries a FAKEMATCH tag.";
 
 pub fn run(arguments: &[String]) -> Result<(), String> {
@@ -145,7 +146,7 @@ pub fn run(arguments: &[String]) -> Result<(), String> {
             );
         },
     );
-    let best = &outcome.best;
+    let best = &problem.minimized(&base, &outcome.best, &scratch.path().join("minimize"));
     println!(
         "best: score {}{}",
         best.score.summary(),
@@ -410,6 +411,52 @@ impl Problem {
         text
     }
 
+    /// The best candidate without the rewrites that only rode along: every
+    /// changed region of its text that can go back to the draft's spelling
+    /// without raising the score does, and the rest is parsed again.
+    pub fn minimized(&self, base: &Found, best: &Found, directory: &Path) -> Found {
+        if best.kinds.is_empty() {
+            return best.clone();
+        }
+        let before = base.function.print();
+        let after = best.function.print();
+        let splice = |text: &str| {
+            let mut source = String::with_capacity(self.draft.len() + 256);
+            source.push_str(&self.draft[..self.span.0]);
+            source.push_str(text.trim_end());
+            source.push_str(&self.draft[self.span.1..]);
+            source
+        };
+        let (text, kept, regions) = minimize(&before, &after, &mut |text: &str| {
+            self.evaluate(&splice(text), directory)
+                .ok()
+                .map(|score| score.total)
+        });
+        if kept == regions {
+            return best.clone();
+        }
+        let source = splice(&text);
+        let Ok(located) = locate(&source, Some(&self.name), &self.unit.typedef_names()) else {
+            return best.clone();
+        };
+        let Ok(score) = self.evaluate(&self.source(&located.function), directory) else {
+            return best.clone();
+        };
+        if score.total > best.score.total {
+            return best.clone();
+        }
+        println!("minimized: kept {kept} of {regions} changed regions");
+        let env = self.env(&located.function);
+        Found {
+            unnatural: unnatural(&located.function, &env),
+            function: located.function,
+            score,
+            kinds: best.kinds.clone(),
+            job: best.job,
+            iteration: best.iteration,
+        }
+    }
+
     pub fn evaluate(&self, text: &str, directory: &Path) -> Result<Score, String> {
         let object = self.toolchain.compile(text, directory)?;
         let candidate = routine(&object, &self.name, &self.symbols, None)?;
@@ -666,6 +713,80 @@ fn rewrites(kinds: &[Kind]) -> String {
         .join(", ")
 }
 
+/// The changed regions between two texts' lines: each replaces
+/// `old[start..end]` with `new[from..to]`, as (start, end, from, to).
+fn regions(old: &[&str], new: &[&str]) -> Vec<(usize, usize, usize, usize)> {
+    let mut out = Vec::new();
+    let (mut i, mut j) = (0, 0);
+    for (a, b) in score::align(old, new)
+        .into_iter()
+        .chain(std::iter::once((old.len(), new.len())))
+    {
+        if a > i || b > j {
+            out.push((i, a, j, b));
+        }
+        i = a + 1;
+        j = b + 1;
+    }
+    out
+}
+
+/// Put each changed region of `after` back to its spelling in `before`
+/// while `score` (lower is better; `None` when the text does not compile)
+/// does not rise, over two passes. Returns the text, the regions kept and
+/// the regions there were.
+fn minimize(
+    before: &str,
+    after: &str,
+    score: &mut dyn FnMut(&str) -> Option<u64>,
+) -> (String, usize, usize) {
+    let old: Vec<&str> = before.lines().collect();
+    let new: Vec<&str> = after.lines().collect();
+    let parts = regions(&old, &new);
+    let build = |keep: &[bool]| {
+        let mut lines: Vec<&str> = Vec::new();
+        let mut at = 0;
+        for (part, &(start, end, from, to)) in parts.iter().enumerate() {
+            lines.extend_from_slice(&old[at..start]);
+            if keep[part] {
+                lines.extend_from_slice(&new[from..to]);
+            } else {
+                lines.extend_from_slice(&old[start..end]);
+            }
+            at = end;
+        }
+        lines.extend_from_slice(&old[at..]);
+        let mut text = lines.join("\n");
+        text.push('\n');
+        text
+    };
+    let mut keep = vec![true; parts.len()];
+    let Some(mut total) = score(&build(&keep)) else {
+        return (after.to_string(), parts.len(), parts.len());
+    };
+    for _ in 0..2 {
+        let mut dropped = false;
+        for part in 0..parts.len() {
+            if !keep[part] {
+                continue;
+            }
+            keep[part] = false;
+            match score(&build(&keep)) {
+                Some(next) if next <= total => {
+                    total = next;
+                    dropped = true;
+                }
+                _ => keep[part] = true,
+            }
+        }
+        if !dropped {
+            break;
+        }
+    }
+    let kept = keep.iter().filter(|keep| **keep).count();
+    (build(&keep), kept, parts.len())
+}
+
 /// A line diff of two function texts, `-` for the draft and `+` for the
 /// candidate, with two lines of context and `@@` between distant changes.
 fn line_diff(before: &str, after: &str) -> String {
@@ -757,10 +878,31 @@ mod tests {
             (again.best.job, again.best.iteration),
             (first.best.job, first.best.iteration)
         );
+        // Minimizing keeps the match and the reordering it needs.
+        let minimized = problem.minimized(&base, &first.best, &scratch.join("minimize"));
+        assert!(minimized.score.exact, "{:?}", minimized.score);
+        assert!(problem
+            .source(&minimized.function)
+            .contains("    gY = b;\n    gX = a + 1;\n"));
         let written = problem.written(&first.best, &base);
         assert!(written.starts_with("/* alchemy permute: Store_Pair against "));
         assert!(written.contains("score 0 (exact)"));
         assert!(!written.contains("FAKEMATCH"));
+    }
+
+    #[test]
+    fn minimizing_reverts_regions_the_score_does_not_need() {
+        // Only the B matters; D rode along, and reverting E breaks the build.
+        let mut score = |text: &str| -> Option<u64> {
+            if !text.contains("E") {
+                return None;
+            }
+            Some(if text.contains("B") { 0 } else { 10 })
+        };
+        let (text, kept, regions) =
+            minimize("a\nb\nc\nd\nx\ne\n", "a\nB\nc\nD\nx\nE\n", &mut score);
+        assert_eq!(text, "a\nB\nc\nd\nx\nE\n");
+        assert_eq!((kept, regions), (2, 3));
     }
 
     #[test]

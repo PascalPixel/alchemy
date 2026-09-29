@@ -129,7 +129,7 @@ SECTIONS
         "*/recon/tbs/raw/0800580e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/SAVE/STATE.o"(.text)
         "*/recon/tbs/raw/08005d0e.o"(.text .rodata .data .padding)
-        "*/recon/tbs/raw/08005d10.o"(.text .rodata .data .padding)
+        "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_INITIALIZE.o"(.text)
         "*/recon/tbs/raw/08005e6e.o"(.text .rodata .data .padding)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_ENABLE_TRANSFER_TIMER.o"(.text)
         "*/games/THE BROKEN SEAL/SRC/SYSTEM/LINK/SERIAL_DISABLE_SERIAL_TRANSFER.o"(.text)

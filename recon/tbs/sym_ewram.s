@@ -67,7 +67,10 @@ gSerialReceivedSize:
 	.space 0x00000008
 	.global gSerialRuntime
 gSerialRuntime:
-	.space 0x00000164
+	.space 0x00000160
+	.global gLinkExchangeState
+gLinkExchangeState:
+	.space 0x00000004
 	.global gSerialBlockSequence
 gSerialBlockSequence:
 	.space 0x00000004

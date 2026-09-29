@@ -19,7 +19,7 @@ s32 BattleTarget_SelectRandomPosition(s32 require_living_unit)
     s32 offset;
 
     count = 0;
-    order = (struct SlotArray *)BATTLE_TURN_ORDER;
+    order = (struct SlotArray *)gBattleWork;
 
     if (require_living_unit != 0) {
         for (;;) {

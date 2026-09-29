@@ -36,12 +36,6 @@ struct BattlePendingActions {
     s32 entry_count;                /* 0x108 */
 };
 
-/* Normal and mirrored seven-unit turn orders, each terminated by 255. */
-struct BattleTurnOrder {
-    u8 unknown_00[0x58];
-    s16 normal[7];                  /* 0x58 */
-    s16 mirrored[7];                /* 0x66 */
-};
 
 LAYOUT_SIZE_GUARD(
     BattleCommandRequest_Size,
@@ -74,23 +68,7 @@ LAYOUT_OFFSET_GUARD(
     struct BattlePendingActions,
     entry_count,
     0x108);
-LAYOUT_SIZE_GUARD(
-    BattleTurnOrder_Size,
-    struct BattleTurnOrder,
-    0x74);
-LAYOUT_OFFSET_GUARD(
-    BattleTurnOrder_Normal,
-    struct BattleTurnOrder,
-    normal,
-    0x58);
-LAYOUT_OFFSET_GUARD(
-    BattleTurnOrder_Mirrored,
-    struct BattleTurnOrder,
-    mirrored,
-    0x66);
 
-#define BATTLE_TURN_ORDER \
-    (*(struct BattleTurnOrder **)&gBattleWork)
 #define BATTLE_AUTO_MODE    (*(volatile u8 *)gDebugMode)
 #define BATTLE_OPTIONS      (*(volatile u32 *)gKeysHeld)
 

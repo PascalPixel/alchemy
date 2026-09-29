@@ -1,12 +1,5 @@
-/* Draft of resource_381 0x02009410 (Scene_RunExtendedEffectPresentation and what follows it in this file),
- * from games/THE BROKEN SEAL/SRC/FIELD/SORU_FUNKA (FUNKA.H). Remaining
- * difference: its messages have catalogue names now and its bytes match the
- * ROM, but its calls still carry names the overlay's imports do not define,
- * and the scene's variables past the image now have names (FUNKA.H), which
- * this draft does not use yet. The listing keeps these rows. */
-#include "TYPES.H"
-#include "FIELD_EVENT.H"
-#include "FIELD_SCENE.H"
+/* The star chamber's collapse and escape (Scene_RunExtendedEffectPresentation). */
+#include "FUNKA.H"
 extern u8 MsgSoruCannotResist[];
 extern u8 MsgSoruFriendsGone[];
 extern u8 MsgSoruOverHere[];
@@ -25,14 +18,14 @@ extern u8 MsgSoruWellTurnedBadly[];
 
 enum {
     ACTOR_WISE_ONE = 15,
-    /* The actors Scene_UpdateFallingRocks moves. */
+    /* The actors SoruFunka_StepEmbers moves. */
     ACTOR_FIRST_ROCK = 16,
     ROCK_COUNT = 16
 };
 
 enum {
     OBJECT_ELEMENTAL_STAR = 22,
-    /* Message 0x182 + 222. */
+    /* Its name is MsgItemName + 222. */
     ITEM_MARS_STAR = 222
 };
 
@@ -42,31 +35,10 @@ enum {
     FLAG_STAR_ROOM_COLLAPSED = 0x83f
 };
 
-
-
 struct QuakeWork {
     u8 unknown_000[0x40c];
     s32 unknown_40c;
 };
-
-extern struct QuakeWork *gQuakeWork;
-extern s32 gRockfallFrameMask;
-
-void State_UpdateRandomTimerLevel(void);
-void Scene_UpdateFallingRocks(void);
-void Actor_MoveTo232_125AndFace4000(s32 actor);
-void State_ConfigureEightCornerRegions(void);
-void Scene_RunVariantStep(s32 variant, s32 frames, s32 wait);
-void Scene_RunStepByRuntimeBits(struct FieldActor *actor);
-void State_SetValue140Mode0(void);
-void State_ApplyRectsByCondition(s32 lit);
-void State_ApplyRectPairByFlag(s32 lit);
-void Scene_RunRandomHalfBranch(void);
-void Scene_RunLateRandomHalfBranch(void);
-void Scene_RunActor15TwoStep(void);
-void Scene_RunFourWayEffectSequence(s32 corner);
-void Actor_PlaceAtTileAndRunSteps(s32 x, s32 z);
-void Scene_CallHelper6620(void);
 
 void Scene_RunExtendedEffectPresentation(void)
 {
@@ -85,27 +57,27 @@ void Scene_RunExtendedEffectPresentation(void)
     u32 cnt;
     s32 wait;
 
-    quake = gQuakeWork;
+    quake = (struct QuakeWork *)gParticleWork[0];
     wise_one = Actor_Get(ACTOR_WISE_ONE);
-    Task_RemoveCallback(State_UpdateRandomTimerLevel);
-    gRockfallFrameMask = 3;
+    Task_RemoveCallback(SceneState_UpdateRandomTimerLevel);
+    gEmberMask = 3;
     Event_Wait(80);
     Audio_PlayCue(17);
     ColorBuffer_ApplyTarget(0x7fff, 0);
     ColorBuffer_Interpolate(40);
     Event_Wait(40);
-    Task_RemoveCallback(Scene_UpdateFallingRocks);
+    Task_RemoveCallback(SoruFunka_StepEmbers);
     for (i = 0; i < ROCK_COUNT; i++) {
         Actor_SetPosition(ACTOR_FIRST_ROCK + i, 0, 0);
     }
     Task_Wait(1);
     Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
-    Actor_MoveTo232_125AndFace4000(ACTOR_PARTY_LEADER);
-    Actor_MoveTo232_125AndFace4000(ACTOR_GERALD);
+    SceneActor_MoveTo232_125AndFace4000(ACTOR_PARTY_LEADER);
+    SceneActor_MoveTo232_125AndFace4000(ACTOR_GERALD);
     quake->unknown_40c = 0;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(80);
-    State_ConfigureEightCornerRegions();
+    SceneState_ConfigureEightCornerRegions();
     center = Event_GetViewCenter();
     center->motion_flags = 0;
     center->x.fixed = PIXELS(231);
@@ -142,8 +114,8 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
     Actor_Get(ACTOR_PARTY_LEADER)->sprite->rotation = 0;
     Actor_Get(ACTOR_GERALD)->sprite->rotation = 0;
-    Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 6, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GERALD, 6, 0);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
+    Engine_ActorJump(ACTOR_GERALD, 6, 0);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 246, 150);
     Engine_ObjectMotionSetPositionAndCommit(ACTOR_GERALD, 220, 150);
     Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 2);
@@ -178,12 +150,12 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 60);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST + FACING_STEP, 0);
     Event_Wait(40);
-    Engine_ObjectMotionLaunch(ACTOR_GERALD, 2, 0);
+    Engine_ActorJump(ACTOR_GERALD, 2, 0);
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT | 2, 0);
     Event_Wait(40);
     Event_SetMessage((s32)MsgSoruFriendsGone);
     Event_ShowMessageAndWait(ACTOR_GERALD, 0, 10);
-    Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 2, 0);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
     Event_Wait(10);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
     Event_Wait(60);
@@ -265,15 +237,15 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(10);
 
     Audio_PlayCue(23);
-    Scene_RunVariantStep(1, 4, 0);
+    FieldScene_RunVariantStep(1, 4, 0);
     quake->unknown_40c = 0;
     Work_SetValuesIfNonNegative(0x50000, 0x50000, 0x10000);
     Event_Wait(10);
-    Scene_RunVariantStep(0, 40, 0);
+    FieldScene_RunVariantStep(0, 40, 0);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x20000, 0x10000);
     Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
-    Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 6, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GERALD, 6, 0);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
+    Engine_ActorJump(ACTOR_GERALD, 6, 0);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 243, 144);
     Actor_SetDestination(ACTOR_GERALD, 202, 144);
     Actor_WaitForMove(ACTOR_PARTY_LEADER);
@@ -287,7 +259,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0x6666, 0x3333);
     Actor_SetSpeed(ACTOR_GERALD, 0x6666, 0x3333);
     Actor_WalkTo(ACTOR_GERALD, 220, 150);
-    Engine_ObjectMotionSetPositionAndReset(ACTOR_PARTY_LEADER, 246, 150);
+    Engine_ActorWalkToAndWait(ACTOR_PARTY_LEADER, 246, 150);
     Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 0);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHWEST + FACING_STEP, 0);
@@ -327,16 +299,16 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(20);
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | 2);
     Event_Wait(20);
-    Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 2, 0);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 2, 0);
     Event_Wait(10);
-    Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 4, 0);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
     Event_Wait(30);
     Actor_ShowEmote(ACTOR_GERALD, EMOTE_IN_FRONT, 0);
     Actor_SetAnimation(ACTOR_GERALD, ANIM_STAND);
     Event_Wait(40);
     Actor_FaceDirection(ACTOR_GERALD, FACING_SOUTHEAST, 0);
     Event_Wait(4);
-    Engine_ObjectMotionSetPositionAndReset(ACTOR_GERALD, 231, 175);
+    Engine_ActorWalkToAndWait(ACTOR_GERALD, 231, 175);
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHEAST, 0);
     Event_SetMessage((s32)MsgSoruOverHere);
     Event_ShowMessage(ACTOR_GERALD, 0);
@@ -349,7 +321,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetAttachedEffect(ACTOR_GERALD, EMOTE_IN_FRONT | 2);
     Event_Wait(40);
 
-    Scene_RunVariantStep(1, 20, 0);
+    FieldScene_RunVariantStep(1, 20, 0);
     quake->unknown_40c = 0;
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Event_Wait(40);
@@ -368,7 +340,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(100);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(20);
-    Scene_RunVariantStep(1, 10, 0);
+    FieldScene_RunVariantStep(1, 10, 0);
     quake->unknown_40c = 0;
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     Event_Wait(20);
@@ -376,12 +348,12 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetSpeed(ACTOR_GERALD, 0x20000, 0x10000);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
     Actor_Get(ACTOR_GERALD)->unknown_5a &= ~1;
-    Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 4, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GERALD, 4, 0);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 4, 0);
+    Engine_ActorJump(ACTOR_GERALD, 4, 0);
     Actor_SetDestination(ACTOR_PARTY_LEADER, 256, 150);
     Actor_SetDestination(ACTOR_GERALD, 231, 180);
     Actor_WaitForMove(ACTOR_GERALD);
-    Scene_RunVariantStep(0, 40, 0);
+    FieldScene_RunVariantStep(0, 40, 0);
     Event_Wait(20);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a |= 1;
     Actor_Get(ACTOR_GERALD)->unknown_5a |= 1;
@@ -402,7 +374,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(10);
 
     Audio_PlayCue(107);
-    Task_AddCallback(Scene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
     Event_Wait(10);
     Actor_ShowEmote(ACTOR_WISE_ONE, EMOTE_IN_FRONT, 0);
     Event_Wait(40);
@@ -417,32 +389,32 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_ApplyTarget(0x20119e, 1);
     ColorBuffer_Interpolate(20);
     Event_Wait(20);
-    State_SetValue140Mode0();
+    SceneState_SetValue140Mode0();
     Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
     for (cnt = 0; cnt < 40; cnt++) {
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
     }
-    Task_AddCallback(Scene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
     ColorBuffer_ApplyTarget(0x10000, 1);
     ColorBuffer_Interpolate(60);
     Event_Wait(30);
     Audio_PlayCue(0x121);
-    Task_RemoveCallback(Scene_RunRandomHalfBranch);
+    Task_RemoveCallback(FieldScene_RunRandomHalfBranch);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     wait = 16;
     while (wait--) {
-        State_ApplyRectsByCondition(0);
+        SceneState_ApplyRectsByCondition(0);
         Task_Wait(wait);
-        State_ApplyRectsByCondition(1);
+        SceneState_ApplyRectsByCondition(1);
         Task_Wait(wait);
     }
-    State_ApplyRectsByCondition(0);
+    SceneState_ApplyRectsByCondition(0);
     quake->unknown_40c = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Engine_MapWaitWorkValuesBelow256();
+    Engine_MapRenderWaitForValues();
     Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 3);
-    Task_RemoveCallback(Scene_RunActor15TwoStep);
+    Task_RemoveCallback(FieldScene_RunActor15TwoStep);
     Task_Wait(1);
     Actor_SetChildValue(ACTOR_WISE_ONE, 0);
     Event_Wait(60);
@@ -470,7 +442,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST + FACING_STEP, 0);
     Camera_MoveTo(PIXELS(224), -1, PIXELS(158), 1);
     Camera_WaitForMove();
-    Scene_RunFourWayEffectSequence(0);
+    FieldScene_RunFourWayEffectSequence(0);
     Actor_RunRepeatedMotion(ACTOR_WISE_ONE, 2);
     Event_Wait(20);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
@@ -502,23 +474,23 @@ void Scene_RunExtendedEffectPresentation(void)
         Engine_RunRisingObjectSequence(star, 3);
         Actor_SetAnimation(ACTOR_PARTY_LEADER, 28);
     }
-    Scene_RunVariantStep(1, 20, 0);
+    FieldScene_RunVariantStep(1, 20, 0);
     for (cnt = 0; cnt < 24; cnt++) {
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
         star->scale_x = 0x6666;
         star->scale_y = 0x6666;
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
         star->scale_x = 0x10000;
         star->scale_y = 0x10000;
     }
     Actor_SetChildValue(ACTOR_WISE_ONE, 0);
-    Scene_RunVariantStep(0, 20, 0);
+    FieldScene_RunVariantStep(0, 20, 0);
     Event_SetMessage((s32)MsgSoruReturnStarToBag);
     Event_ShowMessageAndWait(ACTOR_WISE_ONE, 0, 20);
     if (star != NULL) {
@@ -533,14 +505,14 @@ void Scene_RunExtendedEffectPresentation(void)
 
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
     Camera_SetSpeed(0x40000, 0x8000);
-    Actor_PlaceAtTileAndRunSteps(232, 464);
-    Scene_RunFourWayEffectSequence(1);
+    SceneActor_PlaceAtTileAndRunSteps(232, 464);
+    FieldScene_RunFourWayEffectSequence(1);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
-    Actor_PlaceAtTileAndRunSteps(711, 144);
-    Scene_RunFourWayEffectSequence(2);
+    SceneActor_PlaceAtTileAndRunSteps(711, 144);
+    FieldScene_RunFourWayEffectSequence(2);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
-    Actor_PlaceAtTileAndRunSteps(711, 464);
-    Scene_RunFourWayEffectSequence(3);
+    SceneActor_PlaceAtTileAndRunSteps(711, 464);
+    FieldScene_RunFourWayEffectSequence(3);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_EAST + FACING_STEP, 0);
     Actor_SetPosition(ACTOR_GERALD, PIXELS(582), PIXELS(345));
@@ -549,7 +521,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_SetPosition(ACTOR_GERALD, PIXELS(231), PIXELS(180));
     Actor_FaceDirection(ACTOR_GERALD, FACING_NORTHWEST + FACING_STEP, 0);
     Task_Wait(20);
-    Actor_PlaceAtTileAndRunSteps(219, 171);
+    SceneActor_PlaceAtTileAndRunSteps(219, 171);
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(10);
     Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -565,12 +537,12 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_Interpolate(20);
     Event_Wait(20);
     Audio_PlayCue(107);
-    Task_AddCallback(Scene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
     Event_Wait(20);
     Camera_SetSpeed(0x10000, 0x2000);
     Camera_MoveTo(PIXELS(184), -1, PIXELS(132), 1);
-    Engine_ObjectMotionLaunch(ACTOR_PARTY_LEADER, 6, 0);
-    Engine_ObjectMotionLaunch(ACTOR_GERALD, 6, 0);
+    Engine_ActorJump(ACTOR_PARTY_LEADER, 6, 0);
+    Engine_ActorJump(ACTOR_GERALD, 6, 0);
     Actor_Get(ACTOR_PARTY_LEADER)->unknown_5a &= ~1;
     Actor_Get(ACTOR_GERALD)->unknown_5a &= ~1;
     Actor_SetDestination(ACTOR_PARTY_LEADER, 245, 145);
@@ -585,27 +557,27 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
     for (cnt = 0; cnt < 40; cnt++) {
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
     }
-    Task_AddCallback(Scene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
     ColorBuffer_ApplyTarget(0x10000, 1);
     ColorBuffer_Interpolate(60);
     Event_Wait(30);
     Audio_PlayCue(0x121);
-    Task_RemoveCallback(Scene_RunLateRandomHalfBranch);
+    Task_RemoveCallback(FieldScene_RunLateRandomHalfBranch);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     wait = 8;
     while (wait--) {
-        State_ApplyRectPairByFlag(0);
+        SceneState_ApplyRectPairByFlag(0);
         Task_Wait(wait);
-        State_ApplyRectPairByFlag(1);
+        SceneState_ApplyRectPairByFlag(1);
         Task_Wait(wait);
     }
-    State_ApplyRectPairByFlag(0);
+    SceneState_ApplyRectPairByFlag(0);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 3);
-    Task_RemoveCallback(Scene_RunActor15TwoStep);
+    Task_RemoveCallback(FieldScene_RunActor15TwoStep);
     Task_Wait(1);
     Actor_SetChildValue(ACTOR_WISE_ONE, 0);
     Event_Wait(60);
@@ -615,31 +587,31 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_Interpolate(20);
     Event_Wait(20);
     Audio_PlayCue(107);
-    Task_AddCallback(Scene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunRandomHalfBranch, TASK_PRIORITY_SCENE);
     Event_Wait(40);
     Engine_ObjectMotionSetPositionAndCommit(ACTOR_WISE_ONE, 127, 110);
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 2);
     for (cnt = 0; cnt < 40; cnt++) {
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
     }
-    Task_AddCallback(Scene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
     ColorBuffer_ApplyTarget(0x10000, 1);
     ColorBuffer_Interpolate(60);
     Audio_PlayCue(0x121);
     Event_Wait(30);
-    Task_RemoveCallback(Scene_RunRandomHalfBranch);
+    Task_RemoveCallback(FieldScene_RunRandomHalfBranch);
     Work_SetValuesIfNonNegative(0x20000, 0x20000, 0x10000);
     wait = 8;
     while (wait--) {
-        State_ApplyRectsByCondition(0);
+        SceneState_ApplyRectsByCondition(0);
         Task_Wait(wait);
-        State_ApplyRectsByCondition(1);
+        SceneState_ApplyRectsByCondition(1);
         Task_Wait(wait);
     }
-    State_ApplyRectsByCondition(0);
+    SceneState_ApplyRectsByCondition(0);
     Work_SetValuesIfNonNegative(0x10000, 0x10000, 0x10000);
     Audio_PlayCue(107);
     Audio_PlayCue(63);
@@ -648,9 +620,9 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_Interpolate(20);
     Event_Wait(20);
     Audio_PlayCue(107);
-    Task_AddCallback(Scene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunLateRandomHalfBranch, TASK_PRIORITY_SCENE);
     Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 3);
-    Task_RemoveCallback(Scene_RunActor15TwoStep);
+    Task_RemoveCallback(FieldScene_RunActor15TwoStep);
     Task_Wait(1);
     Actor_SetChildValue(ACTOR_WISE_ONE, 0);
     Event_Wait(60);
@@ -658,7 +630,7 @@ void Scene_RunExtendedEffectPresentation(void)
     Actor_FaceDirection(ACTOR_WISE_ONE, FACING_SOUTH, 0);
     Event_Wait(10);
     Actor_SetAnimationAndWait(ACTOR_WISE_ONE, 3);
-    Task_RemoveCallback(Scene_RunActor15TwoStep);
+    Task_RemoveCallback(FieldScene_RunActor15TwoStep);
     Task_Wait(1);
     Actor_SetChildValue(ACTOR_WISE_ONE, 0);
     Audio_PlayCue(141);
@@ -676,10 +648,10 @@ void Scene_RunExtendedEffectPresentation(void)
     Event_ShowMessage(ACTOR_WISE_ONE, 0);
     Event_Wait(20);
     for (cnt = 0; cnt < 40; cnt++) {
-        Scene_RunStepByRuntimeBits(wise_one);
+        FieldScene_RunStepByRuntimeBits((s32)wise_one);
         Task_Wait(1);
     }
-    Task_AddCallback(Scene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
+    Task_AddCallback(FieldScene_RunActor15TwoStep, TASK_PRIORITY_SCENE);
     Event_Wait(20);
     ColorBuffer_ApplyTarget(0x7fff, 2);
     ColorBuffer_Interpolate(60);
@@ -687,11 +659,11 @@ void Scene_RunExtendedEffectPresentation(void)
     ColorBuffer_ApplyTarget(0x7fff, 1);
     ColorBuffer_Interpolate(60);
     Task_Wait(60);
-    Task_RemoveCallback(Scene_RunActor15TwoStep);
+    Task_RemoveCallback(FieldScene_RunActor15TwoStep);
     quake->unknown_40c = 1;
     Work_SetValuesIfNonNegative(-1, -1, 0xe666);
-    Engine_MapWaitWorkValuesBelow256();
-    Scene_CallHelper6620();
+    Engine_MapRenderWaitForValues();
+    FieldScene_CallHelper6620();
     GameFlag_Set(FLAG_SOL_SANCTUM_ERUPTED);
     GameFlag_Set(FLAG_STAR_ROOM_COLLAPSED);
     Event_RequestExit(5);

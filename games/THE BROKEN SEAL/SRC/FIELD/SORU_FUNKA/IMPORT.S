@@ -38,16 +38,25 @@ Engine_MathSin:
 	.thumb_func
 Engine_MathCos:
 	overlay_veneer Trig_CosFar
+	.global Engine_HeapAllocate
+	.thumb_func
+Engine_HeapAllocate:
 	overlay_veneer Runtime_AllocateHeapBlockFar
 	.global Engine_AllocateBlock
 	.thumb_func
 Engine_AllocateBlock:
 	overlay_veneer Runtime_AllocateBlockFar
+	.global Engine_HeapRelease
+	.thumb_func
+Engine_HeapRelease:
 	overlay_veneer Runtime_ReleaseHeapBlockFar
 	.global Resource_ResetEntry
 	.thumb_func
 Resource_ResetEntry:
 	overlay_veneer Resource_ResetEntryFar
+	.global Engine_VramLoad
+	.thumb_func
+Engine_VramLoad:
 	overlay_veneer VramBlock_LoadCachedFar
 	.global AnimationObjects_SelectAnimation
 	.thumb_func
@@ -105,7 +114,13 @@ Engine_MapRenderWaitForValues:
 	.thumb_func
 Engine_ObjectSetPartPalettes:
 	overlay_veneer Animation_ApplyChildValuesFar
+	.global Engine_MessageShowCentered
+	.thumb_func
+Engine_MessageShowCentered:
 	overlay_veneer UiText_ShowPositionedMessageAndWaitFar
+	.global Engine_ItemLoadIcon
+	.thumb_func
+Engine_ItemLoadIcon:
 	overlay_veneer ItemIcon_LoadTilesFar
 	.global Engine_GameFlagIsSet
 	.thumb_func
@@ -147,7 +162,13 @@ Engine_ActorSetSpeed:
 	.thumb_func
 Engine_ActorStop:
 	overlay_veneer ObjectMotion_EnableActionAndResetMotionFar
+	.global Engine_ActorSetDestination
+	.thumb_func
+Engine_ActorSetDestination:
 	overlay_veneer ObjectMotion_ResetAndSetPositionFar
+	.global Engine_ObjectMotionSetPositionAndCommit
+	.thumb_func
+Engine_ObjectMotionSetPositionAndCommit:
 	overlay_veneer ObjectMotion_SetPositionAndCommitFar
 	.global Engine_ActorWalkTo
 	.thumb_func
@@ -225,6 +246,9 @@ Engine_ActorSetSpritePriority:
 	.thumb_func
 Engine_ActorShowEmote:
 	overlay_veneer BattleFx_SpawnLinkedFar
+	.global Engine_ActorSetAttachedEffect
+	.thumb_func
+Engine_ActorSetAttachedEffect:
 	overlay_veneer BattleFx_ConfigureLinkedObjectFar
 	.global Engine_CameraSetSpeed
 	.thumb_func
@@ -242,6 +266,9 @@ Engine_CameraWaitForMove:
 	.thumb_func
 Engine_EventGetViewCenter:
 	overlay_veneer Battle_GetWorkObject1e0Far
+	.global Engine_EventRequestExit
+	.thumb_func
+Engine_EventRequestExit:
 	overlay_veneer Event_SetValue170Far
 	.global Unnamed_0809509c
 	.thumb_func
@@ -263,6 +290,9 @@ Engine_EventOpenScreen:
 	.thumb_func
 Engine_EventWaitForScreen:
 	overlay_veneer Event_WaitValue1c8FramesFar
+	.global Engine_RunRisingObjectSequence
+	.thumb_func
+Engine_RunRisingObjectSequence:
 	overlay_veneer EffectRuntime_RunRisingObjectSequenceFar
 	.global Engine_PsynergyBegin
 	.thumb_func

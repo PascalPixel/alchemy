@@ -111,6 +111,18 @@ s32 Engine_TaskAddCallback(void (*)(), s32);
 void FieldScene_RunVariantStep();
 void Unnamed_0809509c(void);
 void SceneState_ForwardByRuntimeWordBits(s32 object);
+void SceneActor_MoveTo232_125AndFace4000(s32 no);
+void SceneState_ApplyRectsByCondition(s32 a);
+void SceneState_ApplyRectPairByFlag(s32 a);
+void FieldScene_RunRandomHalfBranch(void);
+void FieldScene_RunLateRandomHalfBranch(void);
+void FieldScene_RunFourWayEffectSequence(u32 mode);
+void SceneActor_PlaceAtTileAndRunSteps(s32 a, s32 b);
+void SceneState_ConfigureEightCornerRegions(void);
+void FieldScene_RunStepByRuntimeBits(s32 a);
+void SceneState_SetValue140Mode0(void);
+void FieldScene_CallHelper6620(void);
+void FieldScene_RunActor15TwoStep(void);
 void BattleEffect_CleanupSceneObjects(void);
 
 /*

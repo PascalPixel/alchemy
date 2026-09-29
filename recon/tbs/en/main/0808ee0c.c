@@ -1,3 +1,18 @@
+/*
+ * main:0808ee0c BattleFx_EmitRandomParticle - draft; the range links as
+ * disassembly (recon/tbs/raw/0808ee0c.s).
+ *
+ * Moves the effect's particle object onto the first of up to ten emitter
+ * entries it lies within 0x80000 of, then sends it off 0x140000 along the
+ * angle from that entry.
+ *
+ * Remaining: the reference loads -0x80000 from the literal pool once before
+ * the loop and keeps it in lr for both relative offsets. Written as the
+ * constant below, GCC folds it into each use and reloads it from the pool
+ * inside the loop, which moves every later register; a do/while loop in
+ * place of the goto changes the loop layout instead. The unit matched only
+ * while the number was a link-time symbol named after itself.
+ */
 #include "EFFECT_RUNTIME.H"
 #include "OBJECT_LOOKUP.H"
 #include "GLOBAL_CELLS.H"
@@ -15,7 +30,6 @@ struct GlobalData {
 };
 
 extern struct GlobalData gGameState;
-extern char Value_fff80000;
 
 void BattleFx_EmitRandomParticle(void)
 {
@@ -40,7 +54,7 @@ void BattleFx_EmitRandomParticle(void)
     if (entry[4] != 0) {
         object_x = FIELD(object, s32, 8);
         object_y = FIELD(object, s32, 0x10);
-        negative_center = (s32)&Value_fff80000;
+        negative_center = -0x80000;
         maximum = 0x1ffffe;
         center = 128;
         center <<= 12;

@@ -1,12 +1,9 @@
-/* Draft of resource_3ac 0x020083dc (Scene_Initialize), from
- * games/THE BROKEN SEAL/SRC/FIELD/COMMON/RUNPA_SUHARA/INTERIORS.C.
- * Remaining difference: the ROM loads scene 0x69 from the literal pool, as a
- * link-time scene symbol would; C builds it with movs. The listing keeps
- * these rows. */
 #include "INTERIORS.H"
+#include "SCENE_IDS.H"
 
-extern u8 LinkedScene_RunpaSuhara;
-
+/* Lunpa's interiors open with the window transition. Entering from the
+   Suhara gate house clears the location-name flag and saves these rooms and
+   that entrance; the three shop counters' sprite flags are cleared. */
 s32 Scene_Initialize(void)
 {
     s16 entrance;
@@ -15,7 +12,7 @@ s32 Scene_Initialize(void)
     entrance = gGameState.entrance;
     if (entrance == ROOM_SUHARA_GATE_HOUSE) {
         GameFlag_Clear(FLAG_SHOW_LOCATION_NAME);
-        gGameState.saved_scene = (s32)&LinkedScene_RunpaSuhara;
+        gGameState.saved_scene = (s32)&SceneId_RunpaSuhara;
         gGameState.saved_entrance = entrance;
     }
     Actor_SetSpriteFlags(Actor_Get(ACTOR_WEAPON_COUNTER), 0);

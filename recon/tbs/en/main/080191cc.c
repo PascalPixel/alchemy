@@ -38,6 +38,15 @@
  * Budget exhausted: one complete model plus two structural follow-ups.
  * Keep this typed lifetime evidence; do not count any part as DONE. A later
  * attempt needs a new source-ownership hypothesis, not a spelling sweep.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): 27,992
+ * candidates; the best scored 1737 against 5242 (14 register-only, 7
+ * stack-only, 8 operand, 8 reordered, 4 inserted, 6 deleted) after 125
+ * rewrites (reorder independent statements, introduce a temporary, swap
+ * commutative operands, reorder local declarations), none of them kept. The
+ * rewrites (forty-two temporaries, register keywords, statement moves
+ * through the item loop) are search artefacts, so the draft keeps its
+ * spelling; the size of the drop says the item loop's statement order and
+ * temporaries carry most of the difference.
  */
 #include "RENDER_INPUT.H"
 #include "FIXED_MATH.H"
@@ -120,8 +129,8 @@ typedef char UiAnimatedItem_sprite[
     (u32)&((struct UiAnimatedItem *)0)->sprite == 16 ? 1 : -1];
 typedef char UiEffect_size[sizeof(struct UiEffect) == 8 ? 1 : -1];
 
-extern struct UiAnimationWork *Data_03001e8c;
-extern u32 Data_03001800;
+extern struct UiAnimationWork *gWindowWork;
+extern u32 gFrameTick;
 extern const u8 Data_080368d4[];
 extern const u8 Data_08033e60[];
 extern const u8 Data_08033eb0[];
@@ -136,7 +145,7 @@ void Runtime_PushSlotEntry(s32 *entry, s32 slot);
 
 void UiWork_AnimateSpriteSlots(void)
 {
-    struct UiAnimationWork *work = Data_03001e8c;
+    struct UiAnimationWork *work = gWindowWork;
     struct UiAnimationSlot *slot = work->slots;
     s32 no;
     struct UiEffect effect;
@@ -148,7 +157,7 @@ void UiWork_AnimateSpriteSlots(void)
         if (!(slot->flags & 1))
             continue;
         item = slot->head;
-        phase = (Data_03001800 >> 2) & 7;
+        phase = (gFrameTick >> 2) & 7;
         while (item != NULL) {
             union UiSprite *sprite = &item->sprite;
             if (slot->mode == 4) {
@@ -176,14 +185,14 @@ void UiWork_AnimateSpriteSlots(void)
                     sprite->bytes.flags = flags;
                     y = *(u8 *)&item->y;
                     table = Data_08033e60;
-                    step = Math_ModU(Data_03001800, 80);
+                    step = Math_ModU(gFrameTick, 80);
                     sprite->fields.y = y + table[step] + 2;
                     sprite->bytes.flags = flags & ~3;
                     sprite->bytes.x_high = x_high & ~62;
                 }
                 break;
             case 5:
-                if (Data_03001800 & 1) {
+                if (gFrameTick & 1) {
                     u32 a, b;
                     a = Random16();
                     b = Random16();
@@ -219,7 +228,7 @@ void UiWork_AnimateSpriteSlots(void)
                 sprite->fields.y = *(u8 *)&item->y - (Trig_Cos(effect.angle + 0x6800) >> 14) - 2;
                 break;
             case 4:
-                if (Data_03001800 & 1)
+                if (gFrameTick & 1)
                     item->frame++;
                 sprite->fields.x = item->x +
                     (s8)Data_08033eb0[(u16)Math_ModU(item->frame, 20) * 2];
@@ -274,7 +283,7 @@ void UiWork_AnimateSpriteSlots(void)
                 Runtime_PushSlotEntry(&sprite->fields.next, item->priority);
             }
             item = item->next;
-            phase = (Data_03001800 >> 2) & 7;
+            phase = (gFrameTick >> 2) & 7;
         }
     }
 }

@@ -25,6 +25,10 @@
  * genuinely traced function pointer, the r4 slot of the same trampoline).
  * Mode 1 additionally nudges each drawn particle vertically by +-8192 and
  * drives Func_080d6888 portrait callouts differently than mode 0.
+ * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+ * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores 3,733
+ * with 1 symbols the linked build does not define, too far for a 10-minute
+ * search, so none was run.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((u8 *)(expr) + (offset)))

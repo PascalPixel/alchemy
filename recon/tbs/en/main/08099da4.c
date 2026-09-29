@@ -1,6 +1,10 @@
 #include "TYPES.H"
 
-/* Only the m2c spellings this draft actually uses. */
+/* Only the m2c spellings this draft actually uses.
+   2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+   M2C_FIELD takes a type as a macro argument. Preprocessed, it scores
+   16,590 with 15 symbols the linked build does not define, too far for a
+   10-minute search, so none was run. */
 typedef s32 M2C_UNK;
 #define M2C_FIELD(expr, type_ptr, offset) (*(type_ptr)((s8 *)(expr) + (offset)))
 

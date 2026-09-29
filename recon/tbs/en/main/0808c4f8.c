@@ -95,7 +95,7 @@ void BattleFx_RunKind6DescriptorAction();
 void BattleAction_RunDescriptor();
 void Battle_DispatchInputEvent();
 void Func_0808d9a4();
-s32 Func_0808ddec();
+s32 BattleEffect_SelectNearbyObject();
 void Battle_ResetEffectCounter();
 void Func_0808e23c();
 void BattleCommand_ExecuteSelectedAction();
@@ -375,7 +375,7 @@ s32 Func_0808c4f8(void)
                 FIELD_AT_OFFSET(work, u16 *, 0x16E) = 0;
             } else if (FIELD_AT_OFFSET(work, s16 *, 0x174) != 0) {
                 Func_08015208();
-                v = Func_0808ddec(Data_02000434);
+                v = BattleEffect_SelectNearbyObject(Data_02000434);
                 ok = 0;
                 if (v != -1) {
                     ok = BattleFx_FindDescriptorWithOverride() != 0;

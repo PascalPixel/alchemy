@@ -6,7 +6,11 @@
    60-byte reach places the literal pool inside the fade loop as the
    reference does. Residual: register choice in the fade loop (the reference
    has the mask in r7, the index in r6, the source offset in r0 and the
-   destination in r4). */
+   destination in r4).
+   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 17,525
+   candidates, none below the draft (115 once the tile builders are named).
+   The pooled 0x1f mask stays a link-time symbol (Value_0000001f), which
+   blocks adoption. */
 #include "TYPES.H"
 #include "DMA.H"
 #include "IO_WRITE_QUEUE.H"
@@ -15,8 +19,8 @@ extern volatile u16 RegIme;
 extern u8 Value_0000001f;
 
 s32 Func_080041d8(u32 callback, s32 interval);
-void Func_080c0098(void *);
-void Func_080c00d8(void *);
+void Graphics_BuildSequentialTileTable(void *);
+void BattlePresentation_BuildTilemap(void *);
 
 void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
 {
@@ -87,6 +91,6 @@ void BattlePresentation_ConfigurePaletteFade(s32 mode, u16 value, s32 fade)
         }
     }
 
-    Func_080c0098((void *)0x06003800);
-    Func_080c00d8((void *)0x0600f800);
+    Graphics_BuildSequentialTileTable((void *)0x06003800);
+    BattlePresentation_BuildTilemap((void *)0x0600f800);
 }

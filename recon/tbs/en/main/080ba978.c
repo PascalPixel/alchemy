@@ -17,6 +17,11 @@
  * still keeps r8 instead of the reference r6 and spills the wrong loop role.
  * Stop after the single structural followup: no established closing path.
  * No matching-C credit claimed.
+ * 2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes): testing the
+ * primary side as > 7 with the far target first, kept here, gives 1690
+ * against 1930 (after names first); the search's 1660 also assigned the
+ * script test to an unused local, which is not kept. The first divergence
+ * is still the target angle branch.
  */
 #include "TYPES.H"
 #include "MOTION_OBJECT.H"
@@ -39,28 +44,28 @@ struct PresentationWork {
 };
 struct MotionEntry { u8 reserved_00[39]; u8 count; void *children[1]; };
 struct MotionChild { u8 reserved_00[5]; u8 value; };
-extern struct BattlePresentationTransition *Data_03001f00;
-extern u8 *Data_03001e74;
+extern struct BattlePresentationTransition *gTransitionWork;
+extern u8 *gBattleWork;
 s32 Func_080041d8(void *, s32);
 void Func_08009080(void *, s32);
-void Func_08009088(void *, s32);
-void Func_08015130(s32);
-void Func_080b8000(s32);
-s32 Func_080b9d34(void *, struct PresentationWork *);
-u32 Func_080bb938(void);
-u32 Func_080bbabc(u32, u32);
-void Func_080be02c(void);
-void Func_080c10e8(u16 *, s32);
-void Func_080c1798(s32, s32, s32, s32);
-void Func_080c1a14(void);
-void Func_080c9008(struct PresentationWork *);
+void ObjectDispatch_ApplyValueToChildrenFar(void *, s32);
+void UiWindow_DrawPartyStatusContentsFar(s32);
+void Actor_ResetMotionAtAnchor(s32);
+s32 BattlePres_BuildTargetList(void *, struct PresentationWork *);
+u32 BattleEv_DispatchQueued(void);
+u32 BattleEv_Push(u32, u32);
+void BattleEventRuntime_WaitForReady(void);
+void BattlePres_SetActorModes(u16 *, s32);
+void BattleFx_PlayUnitElementEffect(s32, s32, s32, s32);
+void BattlePres_RunWithZeroArguments(void);
+void BattleFx_DispatchByIdRangeFar(struct PresentationWork *);
 void Func_080c9018(struct PresentationWork *);
 void Func_080f9010(s32);
 
 s32 Func_080ba978(struct PresentationInput *input, s32 flags)
 {
     struct PresentationWork work;
-    struct BattlePresentationTransition *transition = Data_03001f00;
+    struct BattlePresentationTransition *transition = gTransitionWork;
     struct MotionObject *object;
     s32 i;
 
@@ -76,10 +81,10 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         if (input->primary > 7)
             current = angle + 0x1800;
         current = (s16)current;
-        if (input->primary <= 7)
-            target = 0x2000;
-        else
+        if (input->primary > 7)
             target = -0x2000;
+        else
+            target = 0x2000;
         current += (target - current) * 3 / 4;
         if (input->secondary <= 7)
             same_team = input->primary <= 7;
@@ -95,20 +100,20 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
         transition->frames = 60;
     }
 
-    Func_080b9d34(input, &work);
+    BattlePres_BuildTargetList(input, &work);
     i = flags & 1;
     if (i)
         work.scripted = 1;
-    Func_080c10e8(0, 0);
-    Func_08015130(Data_03001e74[65] & ~1);
+    BattlePres_SetActorModes(0, 0);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork[65] & ~1);
     object = GetBattleObjectSlot(work.primary_id)->object;
     Func_08009080(object, 3);
-    Func_08009088(object, 16);
+    ObjectDispatch_ApplyValueToChildrenFar(object, 16);
     Func_080f9010(0x9a);
     if (flags & 2)
-        Func_080c1798(work.primary_id, input->coordinate, 1, 0);
+        BattleFx_PlayUnitElementEffect(work.primary_id, input->coordinate, 1, 0);
     else if (!i)
-        Func_080c1798(work.primary_id, input->coordinate, 0, 0);
+        BattleFx_PlayUnitElementEffect(work.primary_id, input->coordinate, 0, 0);
     if (input->secondary <= 7)
         work.secondary_is_low_id = 1;
     else
@@ -125,27 +130,27 @@ s32 Func_080ba978(struct PresentationInput *input, s32 flags)
     }
     if (input->script != 0) {
         if (input->script == 1) {
-            Func_080bbabc(0, input->primary);
-            Func_080bbabc(4, 0x856);
+            BattleEv_Push(0, input->primary);
+            BattleEv_Push(4, 0x856);
         } else {
-            Func_080bbabc(4, 0x855);
+            BattleEv_Push(4, 0x855);
         }
-        Func_080bb938();
-        Func_080c1a14();
+        BattleEv_DispatchQueued();
+        BattlePres_RunWithZeroArguments();
     } else {
         Func_080041d8((void *)0x080bd899, 0xc80);
         if (work.flags) {
             if (input->flags & 0x4000)
-                Func_080c9008(&work);
+                BattleFx_DispatchByIdRangeFar(&work);
             else
                 Func_080c9018(&work);
         } else {
-            Func_080c1a14();
+            BattlePres_RunWithZeroArguments();
         }
-        Func_080be02c();
+        BattleEventRuntime_WaitForReady();
         Func_08009080(object, 1);
         for (i = 0; i != work.entry_count; i++)
-            Func_080b8000(work.members[i]);
+            Actor_ResetMotionAtAnchor(work.members[i]);
     }
     return 0;
 }

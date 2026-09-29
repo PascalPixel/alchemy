@@ -47,7 +47,7 @@ extern struct ObjectSpriteList *gMenuCtrlWork;
 extern const u32 ObjectDispatch_DefaultScript[];
 
 struct FieldObject *ObjectDispatch_FindFreeObject(void);
-void *Func_0800bc70(s32 id);
+void *ResourceObject_Create(s32 id);
 struct AnimationMetadata *Resource_GetMetadataRecordFar(s32 id);
 void Object_SetPositionAndResetMotion(struct FieldObject *object, s32 x, s32 y, s32 z);
 
@@ -68,7 +68,7 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
         object->radius = 16;
         switch (kind) {
         case 0:
-            sprite = Func_0800bc70(id);
+            sprite = ResourceObject_Create(id);
             if (sprite != NULL) {
                 object->animation_kind = 1;
                 object->animation = sprite;
@@ -83,7 +83,7 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
             zero = 0;
             object->animation = entry;
             Dma_Set(&zero, entry, 0x85000004, (volatile u32 *)0x040000d4);
-            sprite = Func_0800bc70(id);
+            sprite = ResourceObject_Create(id);
             if (sprite != NULL) {
                 /* FAKEMATCH: stored as a plain halfword, outside the object
                    record's alias set, so the entry copy schedules above it
@@ -91,7 +91,7 @@ struct FieldObject *Func_0800c150(s32 id, s32 x, s32 y, s32 z)
                 *(u16 *)&object->radius = Resource_GetMetadataRecordFar(id)->radius >> 1;
                 *entry++ = (u32)sprite;
             }
-            sprite = Func_0800bc70(id + 1);
+            sprite = ResourceObject_Create(id + 1);
             if (sprite != NULL)
                 *entry = (u32)sprite;
             break;

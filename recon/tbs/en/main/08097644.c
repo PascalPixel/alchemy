@@ -3,7 +3,12 @@
    so its short-reach pool constant splits the literal pool where the ROM
    has it. Remaining: the reference uses r4 for most short-lived constants
    and hi-register copies (r0 here), loads 0x28b from the pool instead of
-   deriving it from 0x28d, and is 4 bytes longer. */
+   deriving it from 0x28d, and is 4 bytes longer.
+   2026-09-29 alchemy permute (seed 1, 4 jobs, 10 minutes): 17,340
+   candidates; adding the target's height after its metadata offset for the
+   second vector, kept here, gives 615 (32 register-only, 4 reordered, 1
+   inserted, 1 deleted). The reference's r4 constants and its pooled 0x28b
+   remain. */
 #include "TYPES.H"
 
 struct FxVector {
@@ -52,8 +57,8 @@ struct WaveFxWork {
     u8 counter;
 };
 
-extern struct WaveFxWork *Data_03001ea8;
-extern u8 Data_00000000[];
+extern struct WaveFxWork *gBattleBgFxWork;
+extern u8 Sound_MaxLines[];
 
 u32 Math_DivU(u32 numerator, u32 denominator);
 s32 Trig_Sin(s32 angle);
@@ -72,7 +77,7 @@ void BattleFx_SetCallbackWhenTargetUnset(void);
 
 void Func_08097644(void)
 {
-    struct WaveFxWork *work = Data_03001ea8;
+    struct WaveFxWork *work = gBattleBgFxWork;
     u16 *line;
     u32 i;
     struct FxObject *source;
@@ -111,7 +116,7 @@ void Func_08097644(void)
             from.z = source->z;
             to.x = target->x;
             meta = Resource_GetMetadataRecordFar(*BattleAction_FindDescriptor(work->target_id));
-            to.y = target->y + (meta[8] << 16) - 0x20000;
+            to.y = (meta[8] << 16) + target->y - 0x20000;
             to.z = target->z;
             object = Object_CreateFar(0x119, to.x);
             if (object != 0) {

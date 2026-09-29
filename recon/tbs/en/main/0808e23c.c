@@ -73,7 +73,7 @@ void UiWork_PushValueSlotFar(s32 value, s32 mode);
 void UiText_ShowPositionedMessageAndWaitFar(s32 message, s32 mode);
 s32 Object_CallSpawnRoutineAtOrigin(s32 mode);
 void UiWork_FinalizePendingCoreFar(void);
-s32 Func_0808ddec(s32 object_id);
+s32 BattleEffect_SelectNearbyObject(s32 object_id);
 void Battle_Reset(void);
 void Event_SetValue1d8(s32 effect_id);
 /* FAKEMATCH: retain the ROM caller's r1=0; the registered callee has one argument. */
@@ -159,7 +159,7 @@ s32 BattleCommand_ExecuteSelectedItem(s32 arg, s32 slot)
             UiText_ShowPositionedMessageAndWaitFar(0x91c, 1);
         }
         if (event->effect.id < 0x10000) {
-            s32 objref = Func_0808ddec(Data_02000240.object_id);
+            s32 objref = BattleEffect_SelectNearbyObject(Data_02000240.object_id);
             Battle_Reset();
             Event_SetValue1d8(event->effect.id);
             BattleEv_RunWait(objref, 0);

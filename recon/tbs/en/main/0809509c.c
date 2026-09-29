@@ -7,7 +7,11 @@
    word is stored: the source this came from stored the value after setting
    the channel and count registers. The reviewed Dma_Set cannot order it so
    (a comma expression or an inline fill with the value as a parameter
-   still stores first); matching needs a reviewed fill form, not a spelling. */
+   still stores first); matching needs a reviewed fill form, not a spelling.
+   2026-09-29 alchemy permute (seed 1, 3 jobs, 10 minutes, --function
+   Func_0809509c): 30,255 candidates, none below the draft (225 once the
+   sparkle callback is named); every spelling still builds the fill zero
+   before the reviewed Dma_Set loads its registers. */
 /* Draft, not exact (2026-09-26): 11 differing halfwords (194 bytes plus
    the 2-byte pad). Writing the timer as (i & 15) + 1 with a literal lets
    GCC pool the halfword 15 in the first slot and reload it per iteration,
@@ -59,7 +63,7 @@ s32 VramBlock_LoadCached(s32 slot, s32 size, const void *source);
 void Runtime_ReleaseHeapBlock(s32 slot);
 s32 Scheduler_AddOrUpdateCallback(void (*callback)(void), s32 priority);
 s32 Map_GetTerrainHeightFar(s32 layer, s32 x, s32 z);
-void Func_08094e7c(void);
+void FieldEffect_UpdateSparkles(void);
 
 static __inline__ void ClearDustWork(struct DustWork *work)
 {
@@ -109,5 +113,5 @@ loop:
     p++;
     if (i < 32)
         goto loop;
-    Scheduler_AddOrUpdateCallback(Func_08094e7c, 0xc80);
+    Scheduler_AddOrUpdateCallback(FieldEffect_UpdateSparkles, 0xc80);
 }

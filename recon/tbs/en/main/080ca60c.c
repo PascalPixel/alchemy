@@ -50,6 +50,10 @@
  * different stack slots, which then perturbs the local instruction order.
  * The five parameter/local slots the prologue writes (96, 92, 80, 76 and the
  * arrays) already agree.
+ * 2026-09-29 slice 4: alchemy permute cannot parse this draft, because
+ * M2C_FIELD takes a type as a macro argument. Preprocessed, it scores
+ * 17,152 with 39 symbols the linked build does not define, too far for a
+ * 10-minute search, so none was run.
  */
 #define M2C_FIELD(expr, type_ptr, offset) \
     (*(type_ptr)((s8 *)(expr) + (offset)))

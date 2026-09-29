@@ -729,7 +729,22 @@ PuffArc_CellBiasY:
 	.incbin "baserom.gba", 0x000edeab, 0x00000007
 	.global PuffArc_CellSourceOffsets
 PuffArc_CellSourceOffsets:
-	.incbin "baserom.gba", 0x000edeb2, 0x0000025a
+	.incbin "baserom.gba", 0x000edeb2, 0x000001b2
+	.global TwoResource_CellWidths
+TwoResource_CellWidths:
+	.incbin "baserom.gba", 0x000ee064, 0x00000006
+	.global TwoResource_CellHeights
+TwoResource_CellHeights:
+	.incbin "baserom.gba", 0x000ee06a, 0x00000006
+	.global TwoResource_CellSourceOffsets
+TwoResource_CellSourceOffsets:
+	.incbin "baserom.gba", 0x000ee070, 0x0000000c
+	.global TwoResource_CellX
+TwoResource_CellX:
+	.incbin "baserom.gba", 0x000ee07c, 0x0000000c
+	.global TwoResource_CellBiasY
+TwoResource_CellBiasY:
+	.incbin "baserom.gba", 0x000ee088, 0x00000084
 	.global CounterReveal_PanelX
 CounterReveal_PanelX:
 	.incbin "baserom.gba", 0x000ee10c, 0x0000000e

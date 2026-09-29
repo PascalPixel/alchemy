@@ -234,6 +234,6 @@ void FieldScene_RunSteps107And250(void)
 {
     GameFlag_Set(0x107);
     GameFlag_Set(0x250);
-    FieldScene_RunScene383_02004b2c();
+    KuupuappuHeya_StartActorStops();
 }
-void FieldScene_RunScene383_02004b2c(void);
+void KuupuappuHeya_StartActorStops(void);

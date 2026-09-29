@@ -3,6 +3,9 @@
 	.global Func_0811be68
 	.thumb_func
 Func_0811be68:
+	.global Actor_ResetMotionAtAnchor
+	.thumb_func
+Actor_ResetMotionAtAnchor:
 	push	{r5, r6, lr}
 	bl	0x0811be3c
 	adds	r6, r0, #0

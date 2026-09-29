@@ -43,6 +43,9 @@ Func_08038120:
 	bx	r4
 	.2byte 0x2691
 	.2byte 0x0804
+	.global UiWindow_DrawPartyStatusContentsFar
+	.thumb_func
+UiWindow_DrawPartyStatusContentsFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x297d

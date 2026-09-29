@@ -1,3 +1,7 @@
+/* 2026-09-29: the two callbacks are the build's
+   BattleFx_UpdatePairedArcSpawner and BattleFx_UpdateEffect16State rather
+   than literal Thumb addresses, 810 to 750. The VRAM source 0x0809c510
+   still needs its own label in the data before adoption. */
 /* 2026-09-29 alchemy permute: score 1180 to 810 on the permuter's scorer
    (0 is exact); remaining 2 register-only, 2 operand, 9 reordered, 1
    inserted, 1 deleted. Kept rewrites: 3x swap commutative operands, 2x
@@ -35,6 +39,8 @@ extern s32 GameFlag_TestFar(s32);
 extern void Audio_PlayCue(s32);
 
 extern u8 *gEffectWork;
+void BattleFx_UpdateEffect16State(void);
+void BattleFx_UpdatePairedArcSpawner(void);
 extern u8 gGameState[];
 
 void RunBattleEffect16(void)
@@ -68,7 +74,7 @@ void RunBattleEffect16(void)
         index = 146;
         *(s8 *)&((s32 *)gGameState)[index] = GameFlag_TestFar(0x145);
         Animation_ApplyChildValuesFar(object, zero);
-        *(void **)(object + 108) = (void *)0x0809b5dd;
+        *(void **)(object + 108) = BattleFx_UpdatePairedArcSpawner;
         *(s16 *)(object + 100) = zero;
         tmp2 = object + 102;
         *(s16 *)tmp2 = zero;
@@ -92,11 +98,11 @@ void RunBattleEffect16(void)
     }
     *(void **)(object + 108) = 0;
     *(u16 *)(object + 6) = saved;
-    Scheduler_AddOrUpdateCallback((const void *)0x0809b589, 0xc80);
+    Scheduler_AddOrUpdateCallback(BattleFx_UpdateEffect16State, 0xc80);
     WaitFrames(15);
     Audio_PlayCue(0xae);
     WaitFrames(55);
-    Scheduler_RemoveCallback((const void *)0x0809b589);
+    Scheduler_RemoveCallback(BattleFx_UpdateEffect16State);
     index = 147;
     if (((s16 *)gGameState)[index * 2]) {
         ObjectDispatch_SetSingleChildField26Far(object, 2);

@@ -2048,6 +2048,8 @@ SECTIONS
         "*/recon/tbs/unidentified.o"(.unidentified.083be3f2)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BACKDROP/AERIAL_VIEW.o"(.rodata)
         "*/recon/tbs/unidentified.o"(.unidentified.083c3574)
+        "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/PARTICLES.o"(.rodata)
+        "*/recon/tbs/unidentified.o"(.unidentified.083c502c)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/VIOLET_PALETTE_A.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/RED_PALETTE_A.o"(.rodata)
         "*/games/THE BROKEN SEAL/SRC/GRAPHICS/BATTLE_FX/YELLOW_PALETTE_A.o"(.rodata)

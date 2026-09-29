@@ -79,7 +79,7 @@ Resource_DirectoryTable:
 	resource StormCloudBackdrop, Battle_StormCloudBackdrop
 	resource , Battle_AerialViewBackdrop
 	resource , BattleFx_ParticleSequenceDataA
-	resource , BattleFx_ParticleSequenceDataB
+	resource , BattleFx_ParticleSheet
 	resource , BattleFx_ParticleSequenceDataC
 	resource , LuckyDice_GraphicsA
 	resource , LuckyDice_GraphicsB

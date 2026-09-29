@@ -1299,7 +1299,7 @@ done:
     }
     Sys_Free(copy);
     Owner_RecalculateStatsFar(target_id);
-    UiWindow_DrawPartyStatusContentsFar(((struct BattleSession *)gBattleWork)->party_status_mode);
+    UiWindow_DrawPartyStatusContentsFar(gBattleWork->party_status_mode);
     if (target->hp != 0)
         BattleEv_Push(BATTLE_EVENT_ACTOR_FINISH, target_id);
     if (actor->evil_spirit != 0

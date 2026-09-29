@@ -5,7 +5,7 @@ extern FlashWaitProc Flash_Handler3;
 
 u16 EraseAtmelFlashSector(u16 sector)
 {
-    u8 *info = Data_08007c10;
+    u8 *info = Flash_ChipAtmelLayout;
     u8 *cursor;
     u16 saved;
     s32 count;

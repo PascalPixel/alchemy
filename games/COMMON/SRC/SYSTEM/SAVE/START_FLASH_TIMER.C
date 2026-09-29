@@ -1,7 +1,7 @@
 #include "FLASH.H"
 
 extern u16 *Flash_Handler4;
-extern u16 Data_02004c2c;
+extern u16 gFlashSavedIme;
 extern volatile u8 gFlashTimerNum;
 extern u8 gFlashTimeoutFlag;
 extern u16 gFlashTimerCount;
@@ -15,7 +15,7 @@ void StartFlashTimer(u8 index)
     u16 *limit = (u16 *)((u8 *)Flash_Handler4 + index * 6);
     u16 *timer;
 
-    Data_02004c2c = *(volatile u16 *)0x04000208;
+    gFlashSavedIme = *(volatile u16 *)0x04000208;
     *(volatile u16 *)0x04000208 = 0;
     *(volatile u16 *)0x04000200 |= 8 << gFlashTimerNum;
     *(volatile u16 *)0x04000208 = 1;

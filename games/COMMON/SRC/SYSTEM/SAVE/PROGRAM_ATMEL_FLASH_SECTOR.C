@@ -6,7 +6,7 @@ struct Config_080071a8 {
     u8 shift;
 };
 
-extern struct Config_080071a8 Data_08007c10;
+extern struct Config_080071a8 Flash_ChipAtmelLayout;
 
 typedef u16 (*FlashWaitProc)(s32 mode, volatile u8 *address, u8 expected);
 
@@ -22,14 +22,14 @@ u16 ProgramAtmelFlashSector(u32 slot, const u8 *source)
     input = source;
     slot = (u16)slot;
     destination = (volatile u8 *)(
-        0x0e000000 + (slot << Data_08007c10.shift));
+        0x0e000000 + (slot << Flash_ChipAtmelLayout.shift));
     saved_ime = *(volatile u16 *)0x04000208;
     *(volatile u16 *)0x04000208 = 0;
     *(volatile u8 *)0x0e005555 = 0xaa;
     *(volatile u8 *)0x0e002aaa = 0x55;
     *(volatile u8 *)0x0e005555 = 0xa0;
 
-    remaining = Data_08007c10.size;
+    remaining = Flash_ChipAtmelLayout.size;
     if (remaining != 0) {
         do {
             *destination++ = *input++;

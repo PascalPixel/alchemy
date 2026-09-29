@@ -1,3 +1,12 @@
+/* 2026-09-29 alchemy permute: score 1251 to 825 (with the build's names) on the permuter's scorer
+   (0 is exact); remaining 20 register-only, 4 operand, 4 reordered, 1
+   inserted, 3 deleted. Kept rewrites: 2x reorder independent statements,
+   1x introduce a temporary, 1x drop a same-width cast, 1x change loop
+   form, 1x pointer arithmetic or indexing, 1x test truth or compare with
+   zero. FAKEMATCH: the permuter's temporaries, register hints and swapped
+   operand orders below only steer allocation and scheduling; no programmer
+   would write them, so they stay tagged until a natural spelling replaces
+   them. */
 /* Draft: main:080a60d4, complete 688-byte owner.
  * Candidate 676 bytes; 106 aligned halfword edits remain.
  * Recovered the missing shortcut allocation, feedback and row-position
@@ -51,8 +60,8 @@ s32 Math_Mod(s32 numerator, s32 denominator);
 void PsynergyMenu_RefreshOwnerPsynergy(s32 owner);
 void Menu_DrawOwnerStatusPanel(s32 window, s32 owner, s32 slot, s32 mode);
 s32 Func_080a6614(s32 window, s32 owner);
-void Func_080a1804(struct PsynergyOwnerMenu *menu, s32 owner);
-void Func_080a23c0(s32 window);
+void PsynergyMenu_CallIconRoutineWithValue(struct PsynergyOwnerMenu *menu, s32 owner);
+void UiText_DrawWorkValueWithLabel(s32 window);
 void RenderOutput_ClearListFar(s32 window);
 void RenderOutput_RedrawSavedRectFar(s32 window);
 void GameFlag_ClearBitFar(s32 flag);
@@ -79,8 +88,8 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
     s8 action_count;
 
     menu = gMenuWork;
-    count = menu->count;
     selection = menu->selection;
+    count = menu->count;
     pending = 1;
     result = 0;
     shown = 0;
@@ -101,14 +110,19 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             PsynergyMenu_RefreshOwnerPsynergy(owner_ids[selection]);
             Menu_DrawOwnerStatusPanel(window, owner_ids[selection], 0, 0);
             Func_080a6614(menu->shortcut_window, owner_ids[selection]);
-            Func_080a1804(menu, owner_ids[selection]);
-            for (i = 3; i >= 0; i--)
-                menu->row_positions[i] = (s32)&Value_0000001e;
+            PsynergyMenu_CallIconRoutineWithValue(menu, owner_ids[selection]);
+            i = 3;
+            if (i >= 0) {
+                do {
+                    menu->row_positions[i] = (s32)&Value_0000001e;
+                    i--;
+                } while (i >= 0);
+            }
             menu->row_positions[selection] = (s32)&Value_0000001a;
             if (!GameFlag_TestFar(0x151) && !shown) {
                 RenderOutput_ClearListFar(menu->info_window);
                 RenderOutput_RedrawSavedRectFar(menu->info_window);
-                Func_080a23c0(menu->info_window);
+                UiText_DrawWorkValueWithLabel(menu->info_window);
                 shown = 1;
             } else {
                 GameFlag_ClearBitFar(0x151);
@@ -125,14 +139,16 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
             Audio_PlayCue(114);
         }
         if ((gKeysHeld & 0x200) || (gKeyState & 0x100)) {
+            u8 tmp;
             result = owner_ids[selection];
-            if (gKeyState & 0x200)
+            if ((gKeyState & 0x200) != 0)
                 menu->shortcut = 1;
             else
                 menu->shortcut = 2;
             actions = Runtime_BumpAllocate(64);
-            action_count = (u8)PsynergyMenu_CollectActions(owner, actions, 1);
+            tmp = PsynergyMenu_CollectActions(owner, actions, 1);
             Runtime_BumpFree(actions);
+            action_count = tmp;
             if (action_count == 0) {
                 menu->shortcut = action_count;
                 Audio_PlayCue(114);
@@ -159,6 +175,6 @@ s32 PsynergyMenu_SetupActionIcons(u16 *owner_ids)
     }
     menu->selection = selection;
     menu->selected_owner = owner_ids[selection];
-    menu->owner = owner_ids[selection];
+    (*menu).owner = owner_ids[selection];
     return result;
 }

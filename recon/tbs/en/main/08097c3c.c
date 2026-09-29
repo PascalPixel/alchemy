@@ -1,3 +1,15 @@
+/* 2026-09-29 alchemy permute: score 9221 to 6210 on the permuter's scorer
+   (0 is exact); remaining 92 register-only, 5 stack-only, 41 operand, 16
+   reordered, 24 inserted, 15 deleted. Kept rewrites: 18x reorder
+   independent statements, 17x introduce a temporary, 16x swap commutative
+   operands, 14x reorder local declarations, 14x pointer arithmetic or
+   indexing, 12x move an assignment into or out of a condition, 12x test
+   truth or compare with zero, 10x split or join a compound assignment, 9x
+   remove a temporary, 8x toggle register, 7x drop a same-width cast, 6x
+   add a same-width cast. FAKEMATCH: the permuter's temporaries, register
+   hints and swapped operand orders below only steer allocation and
+   scheduling; no programmer would write them, so they stay tagged until a
+   natural spelling replaces them. */
 /* Draft main:08097c3c, whole 836 bytes including alignment and 12 pool words.
  * Hypothesis 3: paired coordinate buffers, independent scalar ownership,
  * shared lift magnitude, and linked-parent-success fallthrough. Candidate
@@ -73,28 +85,34 @@ void Func_08097c3c(void)
     struct PreviewPositions positions;
     s32 lift;
     struct PreviewWork *work;
-    union PreviewObject *parent;
     union PreviewObject *actor;
+    union PreviewObject *parent;
     union PreviewObject *preview;
-    union PreviewObject *hit;
-    u8 *flags;
     s32 moved_parent;
-    s32 angle;
-    u32 direction;
-    s32 keys;
+    u8 *flags;
+    union PreviewObject *hit;
     s32 saved_x;
-    s32 saved_z;
+    s32 angle;
+    register s32 keys;
     s32 parent_x;
-    s32 parent_z;
+    u32 direction;
     s32 rate;
-    s32 step;
+    register s32 saved_z;
     s32 x;
-    s32 z;
+    s32 parent_z;
+    register s32 z;
+    u8 *tmp5;
+    s32 tmp7;
+    s32 *tmp4;
+    s32 *tmp6;
+    struct ObjectRuntime *tmp9;
+    register u8 *tmp;
+    s32 *tmp2;
 
-    lift = 0x100000;
     work = Data_03001f30;
     parent = work->parent;
     actor = work->actor;
+    lift = 0x100000;
     angle = work->direction + 0x8000;
     moved_parent = 0;
     if (actor == 0)
@@ -103,16 +121,19 @@ void Func_08097c3c(void)
     parent->object.linked_object = &actor->object;
     ObjectDispatch_InitializeFar(parent, Data_0809f0bc);
     preview = BattleFx_StartItemBreak(parent);
-    if (preview == 0) {
+    if (!(preview != 0)) {
         BattleFx_PrepareBufferInterpolation();
         return;
     }
-    preview->object.linked_object = &actor->object;
+    tmp9 = &actor->object;
+    preview->object.linked_object = tmp9;
     positions.pos[0] = actor->object.x;
     positions.pos[1] = actor->object.y + lift;
     positions.pos[2] = actor->object.z;
     Vector_AddPolarOffset(lift, angle, positions.pos);
-    Object_SetPosition(preview, positions.pos[0], positions.pos[1], positions.pos[2]);
+    tmp4 = positions.pos;
+    tmp6 = positions.pos;
+    Object_SetPosition(preview, *positions.pos, tmp6[1], *(tmp4 + 2));
     BattleFx_SnapScaleToFull(preview);
     preview->object.speed_limit = 0x40000;
     preview->object.acceleration = 0x8000;
@@ -124,16 +145,17 @@ void Func_08097c3c(void)
     actor->object.action_flags = *(u8 *)&moved_parent;
     actor->object.terrain_id = 2;
     goto wait;
-
 select:
     /* FAKEMATCH: retain the observed input word ignored by the callee. */
-    direction = (u16)BattleFx_GetCycledTableWord(Data_03001ae8);
-    if (direction == (s32)&Value_0000ffff) {
+    direction = BattleFx_GetCycledTableWord(Data_03001ae8);
+    if ((s32)&Value_0000ffff == direction) {
+        s32 *tmp8;
         positions.pos[0] = actor->object.x;
-        positions.pos[1] = actor->object.y + lift;
+        *(positions.pos + 1) = actor->object.y + lift;
         positions.pos[2] = actor->object.z;
         Vector_AddPolarOffset(lift, angle, positions.pos);
-        Object_SetPosition(preview, positions.pos[0], positions.pos[1], positions.pos[2]);
+        tmp8 = positions.pos;
+        Object_SetPosition(preview, tmp8[0], positions.pos[1], positions.pos[2]);
         Object_SetMode(preview, 1);
         preview->object.velocity_x = keys;
         preview->object.velocity_y = keys;
@@ -147,9 +169,9 @@ select:
     Vector_AddPolarOffset(0x20000, direction, positions.pos);
     Object_SetPosition(preview, positions.pos[0], positions.pos[1], positions.pos[2]);
     Object_CommitPosition(preview);
-    positions.pos[0] = actor->object.x;
-    positions.pos[1] = actor->object.y;
-    positions.pos[2] = actor->object.z;
+    *((u32)0 + positions.pos) = actor->object.x;
+    ((s32 *)positions.pos)[1] = (*actor).object.y;
+    ((s32 *)positions.pos)[2] = actor->object.z;
     Vector_AddPolarOffset(lift, direction, positions.pos);
     positions.nearby[0] = actor->object.x;
     positions.nearby[1] = actor->object.y;
@@ -157,54 +179,54 @@ select:
     Vector_AddPolarOffset(0x200000, direction, positions.nearby);
     if (Object_CheckMovementCollision(actor, positions.pos) > 0)
         goto blocked;
-    hit = Func_080092a0(actor, positions.pos);
-    if (hit == 0)
+    if ((hit = Func_080092a0(actor, positions.pos)) == 0)
         goto move;
-    if (hit != parent)
+    tmp7 = hit != parent;
+    if (tmp7)
         goto blocked;
     parent_x = parent->object.x & -lift;
-    parent_z = parent->object.z & -lift;
-    if (parent_x == (positions.pos[0] & -lift)
-            && parent_z == (positions.pos[2] & -lift))
+    parent_z = -lift & parent->object.z;
+    if (parent_x == (positions.pos[0] & -lift) && parent_z == (*(positions.pos + 2) & -lift))
         goto blocked;
-    x = positions.nearby[0];
     z = positions.nearby[2];
-    if (parent_x != (x & -lift) || parent_z != (z & -lift))
+    if (parent_x != (-lift & (x = *positions.nearby)) || parent_z != (z & -lift))
         goto move;
     if (Func_080092a8(parent->object.terrain_id, x, z) == 0)
         goto move_parent;
-
 blocked:
     Object_SetMode(preview, 4);
     if ((Data_03001e40 & 15) == 0)
         Audio_PlayCue(114);
     goto wait;
-
 move_parent:
     moved_parent = 1;
 move:
     Audio_PlayCue(175);
+    saved_z = ((s32 *)positions.pos)[2];
+    tmp = &Value_00003333;
+    tmp5 = tmp;
     saved_x = positions.pos[0];
-    saved_z = positions.pos[2];
-    step = (u16)(angle - direction) >> 14;
-    Object_SetMode(preview, Data_0809f118[step]);
+    Object_SetMode(preview, Data_0809f118[(u16)(angle - direction) >> 14]);
     WaitFrames(15);
+    rate = (s32)tmp5;
     actor->object.movement_state = 0;
-    rate = (s32)&Value_00003333;
     actor->object.speed_limit = rate;
-    actor->object.acceleration = rate;
-    Object_SetPosition(actor, positions.pos[0], positions.pos[1], positions.pos[2]);
+    actor[0].object.acceleration = rate;
+    Object_SetPosition(actor, positions.pos[0], positions.pos[1], ((s32 *)positions.pos)[2]);
     *flags = 0;
     preview->object.speed_limit = rate;
     preview->object.acceleration = rate;
-    Vector_AddPolarOffset(lift, direction, positions.pos);
+    tmp2 = positions.pos;
+    Vector_AddPolarOffset(lift, direction, tmp2);
     Object_SetPosition(preview, positions.pos[0], positions.pos[1] + lift, positions.pos[2]);
-    if (moved_parent == 1) {
+    if (1 == moved_parent) {
+        s32 tmp3;
         hit = Object_GetById(work->parent_id);
         hit->object.action_flags &= 254;
         parent->object.speed_limit = rate;
         parent->object.acceleration = rate;
-        Object_SetPosition(parent, positions.nearby[0], positions.nearby[1], positions.nearby[2]);
+        tmp3 = *(positions.nearby + 1);
+        Object_SetPosition(parent, positions.nearby[0], tmp3, positions.nearby[2]);
     }
     Object_CommitPosition(actor);
     actor->object.x = saved_x;
@@ -212,16 +234,15 @@ move:
     actor->object.velocity_x = 0;
     actor->object.velocity_z = 0;
     goto finish;
-
 wait:
     WaitFrames(1);
-    keys = Data_03001c94 & (s32)&Value_00000303;
-    if (keys == 0)
+    keys = (s32)&Value_00000303 & Data_03001c94;
+    if (0 == keys)
         goto select;
 finish:
     Animation_ApplyChildValuesFar(actor, work->saved_animation);
     ObjectDispatch_InitializeFar(actor, work->saved_script);
-    actor->effect.update = work->saved_update;
+    actor[0].effect.update = work->saved_update;
     EffectRuntime_StopCurrentObject();
     if (moved_parent == 1) {
         hit = Object_GetById(work->parent_id);

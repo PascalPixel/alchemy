@@ -1,3 +1,12 @@
+/* 2026-09-29 alchemy permute: score 2985 to 675 on the permuter's scorer
+   (0 is exact); remaining 15 register-only, 5 operand, 8 reordered. Kept
+   rewrites: 5x swap commutative operands, 4x reorder independent
+   statements, 2x introduce a temporary, 2x add a same-width cast, 2x drop
+   a same-width cast, 2x toggle register, 1x reorder local declarations, 1x
+   move an assignment into or out of a condition. FAKEMATCH: the permuter's
+   temporaries, register hints and swapped operand orders below only steer
+   allocation and scheduling; no programmer would write them, so they stay
+   tagged until a natural spelling replaces them. */
 /* Not-yet-C, complete 344-byte pair-joined message and pool.
  * The lookup result is passed directly to Localization_LookupEntryId in both
  * call chains; the former no-argument declaration dropped this dependency.
@@ -25,7 +34,7 @@ struct JoinedMessageWork {
     u16 second_count;
 };
 
-extern struct JoinedMessageWork *Data_03001e8c;
+extern struct JoinedMessageWork *gWindowWork;
 extern const u8 Value_0000001d;
 
 s32 UiWindow_Create(s32, s32, s32, s32, s32);
@@ -44,31 +53,35 @@ s32 AudioCommand_GetStateByteFar(void);
 void UiWork_Finalize(s32, s32);
 s32 Resource_ResetEntry(s32);
 
-void Party_ShowPairJoinedMessage(s32 msg0, s32 msg1) {
+void Party_ShowPairJoinedMessage(s32 msg0, s32 msg1)
+{
     s32 spC;
-    s32 sp10;
+    register s32 sp10;
     s32 sp14;
     struct JoinedMessageBox second;
-    struct JoinedMessageBox first;
     s32 window;
+    struct JoinedMessageBox first;
     struct JoinedMessageWork *base;
     struct JoinedMessageBox *box1;
     struct JoinedMessageBox *box2;
     u32 zero;
+    s32 tmp;
+    register s32 tmp2;
 
-    base = Data_03001e8c;
     box1 = &first;
+    base = gWindowWork;
     window = 0;
-    window = UiWindow_Create(1, 1, 0x1C, 5, window);
-    if (window != 0) {
-        zero = 0;
+    tmp2 = UiWindow_Create(1, 1, 0x1C, 5, window);
+    tmp = tmp2;
+    if ((window = tmp) != 0) {
         UiWindow_DrawDividerLine(window, 8, 0, 4, 4);
+        zero = 0;
         base->message_mode = 1;
         UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(msg0)), 0, &sp14, &sp10, 0xE, zero);
         first.flags = zero;
         first.position = 0x800C000C;
-        first.tiles = sp10 | 0xE000;
         box2 = &second;
+        first.tiles = sp10 | 0xE000;
         UiGlyph_LoadEntryWithPalette(Localization_LookupEntryId(Party_LookupCharacterValueByFlag32(msg1)), 0, &spC, &sp10, 0xF, zero);
         second.flags = zero;
         second.position = 0x802C000C;
@@ -84,7 +97,7 @@ void Party_ShowPairJoinedMessage(s32 msg0, s32 msg1) {
         Runtime_PushSlotEntry(box2, 0xFA);
         WaitFrames(1);
         if (AudioCommand_GetStateByteFar() != 0) {
-            if (!(*(s32 *)0x03001C94 & 0x303)) {
+            if (!(0x303 & *(s32 *)0x03001C94)) {
                 goto loop_2;
             }
         }

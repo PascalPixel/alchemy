@@ -29671,7 +29671,7 @@ msgctxt "message"
 msgid "07415"
 msgstr "I need to learn to{line_break}control my temper.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiWantGoToTolbi"
 msgid "07416"
 msgstr "Do you{pause_20_skippable} want{line_break}to go to Tolbi?{end_now}"
 
@@ -29691,11 +29691,11 @@ msgctxt "message"
 msgid "07420"
 msgstr "You can't take Silk{line_break}Road much further{line_break}than this.{page_break}Everyone who goes to{line_break}check gives up and{line_break}comes back.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiGoingTakeShip"
 msgid "07421"
 msgstr "Are you going to{line_break}take the ship?{end_now}"
 
-msgctxt "message"
+msgctxt "MsgKareiPassMessageDaughter"
 msgid "07422"
 msgstr "When you reach Tolbi,{line_break}please pass a message{line_break}to my daughter.{page_break}Her mother says that{line_break}tickets are too expensive{line_break}and she can't go there.{end_wait}"
 
@@ -29719,7 +29719,7 @@ msgctxt "message"
 msgid "07427"
 msgstr "We've spent a year{line_break}planning this trip,{line_break}and now this happens.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiLookingForTickets"
 msgid "07428"
 msgstr "Are you looking for{line_break}tickets for boarding?{end_now}"
 
@@ -29747,7 +29747,7 @@ msgctxt "message"
 msgid "07434"
 msgstr "All right then, please{line_break}take your ticket.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHandInTicketPlank"
 msgid "07435"
 msgstr "Hand in your ticket{line_break}at the ship's plank.{end_wait}"
 
@@ -29803,7 +29803,7 @@ msgctxt "message"
 msgid "07448"
 msgstr "Thank you very much.{line_break}Please board the ship,{line_break}and we'll set sail soon.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiAfterHandingOverTicket"
 msgid "07449"
 msgstr "After handing over your{line_break}ticket, you may board the{line_break}ship.{end_wait}"
 
@@ -29811,7 +29811,7 @@ msgctxt "message"
 msgid "07450"
 msgstr "We will be setting sail{line_break}shortly; please wait on{line_break}board.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHaveTicketsGiveHim"
 msgid "07451"
 msgstr "If you have tickets,{line_break}please give them to him{line_break}and board the ship.{end_wait}"
 
@@ -29827,7 +29827,7 @@ msgctxt "message"
 msgid "07454"
 msgstr "The replacement ship{line_break}hasn't arrived, so we{line_break}still can't set sail.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiBoardWaitSetSail"
 msgid "07455"
 msgstr "Please board the ship and{line_break}wait to set sail.{end_wait}"
 
@@ -31787,7 +31787,7 @@ msgctxt "message"
 msgid "07944"
 msgstr "See? Our ship survived{line_break}an attack and crossed{line_break}the sea safely.{page_break}It just proves how{line_break}effective that lucky{line_break}anchor really is!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiHearScaryTrip"
 msgid "07945"
 msgstr "I hear you had a scary{line_break}trip. You even got{line_break}attacked by a monster!{end_now}"
 
@@ -31835,7 +31835,7 @@ msgctxt "message"
 msgid "07956"
 msgstr "Are we supposed to{line_break}sleep on the floor until{line_break}they set sail again?{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiTouristsLookUpset"
 msgid "07957"
 msgstr "The tourists look a{line_break}little upset. Did they{line_break}get seasick?{end_now}"
 
@@ -31847,7 +31847,7 @@ msgctxt "message"
 msgid "07959"
 msgstr "The ship was attacked by{line_break}monsters? It came within{line_break}inches of sinking? Wow!{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiSilkRoadBlocked"
 msgid "07960"
 msgstr "Silk Road was blocked,{line_break}so I thought my parents{line_break}might come by ship.{page_break}I don't see them{line_break}anywhere, though...{end_wait}"
 
@@ -31863,7 +31863,7 @@ msgctxt "message"
 msgid "07963"
 msgstr "Oh... I hope nothing{line_break}awful's happened to{line_break}them...{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiThanksMessageParents"
 msgid "07964"
 msgstr "Thank you for giving{line_break}me the message{line_break}from my parents.{end_wait}"
 
@@ -32299,7 +32299,7 @@ msgctxt "message"
 msgid "08072"
 msgstr "I wonder if monsters{line_break}got everyone.{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiIncredibleOcean"
 msgid "08073"
 msgstr "Incredible! So this is the{line_break}ocean Kraden was talking{line_break}about!{end_wait}"
 
@@ -36787,7 +36787,7 @@ msgctxt "message"
 msgid "09194"
 msgstr "The marine-blue Karagol{line_break}Sea is such a romantic{line_break}sight to behold!{page_break}It really takes me back,{line_break}and I get all sentimental.{line_break}{text_effect:4}Sniff...{reset_text_style}{end_wait}"
 
-msgctxt "message"
+msgctxt "MsgKareiReturnedTicketCost"
 msgid "09195"
 msgstr "I returned the cost of{line_break}your ticket to you.{line_break}Let's leave it at that.{end_wait}"
 

@@ -1,9 +1,14 @@
 #include "KAREI.H"
 
-void SceneDialogue_ShowLine1CF8(void)
+extern u8 MsgKareiFinishedOutHereBoardShip[];
+extern u8 MsgKareiGoingTakeShip[];
+extern u8 MsgKareiPassMessageDaughter[];
+extern u8 MsgKareiWantGoToTolbi[];
+
+void KareiTorebi_AskGoToTolbi(void)
 {
     Event_Begin();
-    Event_SetMessage(0x1CF8);
+    Event_SetMessage((s32)MsgKareiWantGoToTolbi);
     Event_AskYesNo(8, 0);
     Event_End();
 }
@@ -15,7 +20,7 @@ void FieldScene_RunScene3ae_02000260(void)
 
     Event_Begin();
     if (GameFlag_IsSet(0x8a6) == 0) {
-        Event_SetMessage(0x1cfd);
+        Event_SetMessage((s32)MsgKareiGoingTakeShip);
         Event_OpenMessage(11, 0);
         if (Event_ChooseYesNo(0, 0) == 0) {
             Event_ShowMessage(11, 0);
@@ -25,7 +30,7 @@ void FieldScene_RunScene3ae_02000260(void)
         bump_step(1);
         Event_ShowMessage(11, 0);
     } else {
-        Event_SetMessage(0x1cfe);
+        Event_SetMessage((s32)MsgKareiPassMessageDaughter);
         Event_ShowMessage(11, 0);
     }
     L_020002c2:;
@@ -41,7 +46,7 @@ void FieldScene_RunScene3ae_020002dc(void)
     Event_Begin();
     if (GameFlag_IsSet(0x8a7) != 0) {
         if (GameFlag_IsSet(0x8a9) != 0) {
-            Event_SetMessage(0x1d23);
+            Event_SetMessage((s32)MsgKareiFinishedOutHereBoardShip);
             Event_OpenMessage(12, 0);
             Actor_FaceDirection(12, 0x4000, 0);
         }

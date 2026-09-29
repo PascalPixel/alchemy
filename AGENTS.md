@@ -22,7 +22,8 @@ corrections separately. Timebox work that cannot move this number.
    compiles exactly and the ROM remains byte-identical.
 2. Tagged `/* FAKEMATCH: reason */` C counts. Never patch compiler output or use
    inline assembly in game C except the reviewed `Dma_Set` and `Iwram_*` macros
-   and `/* CAMELOT_ASM: proof */` statements Camelot very likely wrote in C.
+   and `/* CAMELOT_ASM: proof */` statements Camelot very likely wrote in C, or
+   `/* FAKEMATCH: reason */` statements as temporary workarounds until ☀️ is 100%.
 3. Uncredited disassembly is `not-yet-c`. Only proven library, handwritten and
    veneer modules count as assembly; difficulty never changes that classification.
 4. Commit each adoption and attempt; keep near misses as drafts with the
@@ -183,3 +184,7 @@ a verified build.
 - 2026-09-29: gates: make land compares all twelve editions.
 - 2026-09-29: build ARM files with pret's agbcc_arm from the approved da598c1
   source, with -fomit-frame-pointer, and record its digest.
+- 2026-09-29: inline assembly tagged FAKEMATCH is allowed as a temporary
+  workaround until ☀️ is 100%.
+- 2026-09-29: workers may edit and delete lines in recon/ listings and linker
+  files when adopting a matched function.

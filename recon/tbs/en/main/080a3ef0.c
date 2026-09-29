@@ -1,21 +1,24 @@
-/* Draft: main:080a3ef0, complete 444-byte extent.
- * Remaining: 22 halfwords differ solely in swapped r8/sl assignments
- * for the holder/saved-record and status-style lifetimes. */
+/* Draft: main:080a3ef0, complete 444-byte extent (2026-09-29).
+ * The record copies now go through the checked Iwram_CopyWords entry
+ * instead of a four-argument _call_via_r3 spelling; every copy call matches
+ * (26 aligned edits, was 22 with the old spelling).
+ * Remaining: r8 and sl are swapped. The ROM keeps owner (then the saved
+ * record) in r8 and the style in sl; here style takes r8. Global allocation
+ * priorities from the lreg dump: style 19 refs over 246 insns (0.309),
+ * owner 4 over 28 (0.286), slot 9 over 103 (0.262), saved 8 over 92
+ * (0.261), so style is allocated first. The ROM order needs style below
+ * slot: fewer style references or a longer style lifetime. A permuter found
+ * 11 edits only by moving the case-6 style update after its draw call,
+ * which changes behaviour, so it was rejected. */
 #include "TYPES.H"
 #include "ITEM.H"
 #include "OWNER_STATE.H"
+#include "IWRAM_CALL.H"
 
 struct EquipPreviewMenu {
     u8 reserved_000[0x24];
     s32 status_window;
 };
-
-extern u8 Data_03001388[];
-s32 _call_via_r3(void *dst, const void *src, s32 size, void *copy);
-static __inline__ s32 CopyWords(void *dst, const void *src, s32 size)
-{
-    return _call_via_r3(dst, src, size, Data_03001388);
-}
 
 extern struct EquipPreviewMenu *gMenuWork;
 struct OwnerInventoryState *Owner_GetStateFar(s32 owner);
@@ -56,7 +59,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
         } else {
             state = Owner_GetStateFar(target);
             saved = Runtime_BumpAllocate(0x14c);
-            CopyWords(saved, state, 0x14c);
+            Iwram_CopyWords(saved, state, 0x14c);
             equipped = Inventory_RemoveFirstUnflagged(target);
             if (equipped != 0) {
                 item &= ~0x200;
@@ -70,7 +73,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
             } else {
                 Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
             }
-            CopyWords(state, saved, 0x14c);
+            Iwram_CopyWords(state, saved, 0x14c);
             Runtime_BumpFree(saved);
         }
         break;
@@ -81,7 +84,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
         } else {
             state = Owner_GetStateFar(target);
             saved = Runtime_BumpAllocate(0x14c);
-            CopyWords(saved, state, 0x14c);
+            Iwram_CopyWords(saved, state, 0x14c);
             equipped = Inventory_RemoveFirstUnflagged(target);
             if (equipped != 0) {
                 equipped = Inventory_AddItemFar(target, item);
@@ -94,7 +97,7 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target)
             } else {
                 Menu_DrawOwnerStatusPanel(menu->status_window, target, slot, style);
             }
-            CopyWords(state, saved, 0x14c);
+            Iwram_CopyWords(state, saved, 0x14c);
             Runtime_BumpFree(saved);
         }
         break;

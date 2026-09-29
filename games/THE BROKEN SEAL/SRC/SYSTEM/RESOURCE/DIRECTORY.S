@@ -246,7 +246,7 @@ Resource_DirectoryTable:
 	resource , Korosseo_RivalPathA
 	resource RivalPathB, Korosseo_RivalPathB
 	resource , Korosseo_RivalPathC
-	resource , Graphics_TilesK
+	resource , Korosseo_Lettering
 	resource ShopCursorFrames, Shop_CursorFrameA
 	resource , Shop_CursorFrameB
 	resource , Shop_CursorFrameC

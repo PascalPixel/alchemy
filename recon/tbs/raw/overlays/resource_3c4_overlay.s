@@ -1622,60 +1622,6 @@ Func_02000ae8:
 	.4byte 0xffff8003
 	.2byte 0x0001
 	.2byte 0x0100
-	.section .text.x02009270,"ax",%progbits
-	.global Func_02001270
-	.thumb_func
-Func_02001270:
-	push {lr}
-	ldr r3, [pc, #36]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #28]
-	cmp r2, r3
-	bne .L_02001270_0
-	ldr r0, [pc, #24]
-	b .L_02001270_1
-.L_02001270_0:
-	ldr r3, [pc, #24]
-	cmp r2, r3
-	bne .L_02001270_2
-	ldr r0, [pc, #24]
-	b .L_02001270_1
-.L_02001270_2:
-	ldr r0, [pc, #24]
-.L_02001270_1:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000ac
-	.4byte 0x0200b474
-	.4byte 0x000000ad
-	.4byte 0x0200b654
-	.4byte 0x0200b42c
-	.global Func_020012b0
-	.thumb_func
-Func_020012b0:
-	push {lr}
-	ldr r3, [pc, #24]
-	movs r1, #224
-	lsls r1, r1, #1
-	adds r3, r3, r1
-	movs r1, #0
-	ldrsh r2, [r3, r1]
-	ldr r3, [pc, #16]
-	movs r0, #0
-	cmp r2, r3
-	bne .L_020012b0_0
-	ldr r0, [pc, #12]
-.L_020012b0_0:
-	pop {r1}
-	bx r1
-	.4byte 0x02000240
-	.4byte 0x000000ad
-	.4byte 0x0200b81c
 	.section .text.x02009318,"ax",%progbits
 	.global Func_02001318
 	.thumb_func
@@ -1908,6 +1854,8 @@ Data_0200b40c:
 	.4byte 0x003b001e
 	.4byte 0x00020001
 	.4byte 0xffff0004
+	.global gBabiChikaEntrancesOther
+gBabiChikaEntrancesOther:
 	.4byte 0xffff0000
 	.4byte 0x000002e8
 	.4byte 0x40000068
@@ -1926,6 +1874,8 @@ Data_0200b40c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiChikaEntrances1
+gBabiChikaEntrances1:
 	.4byte 0xffff0000
 	.4byte 0x000002e8
 	.4byte 0x40000068
@@ -2046,6 +1996,8 @@ Data_0200b40c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiChikaEntrances2
+gBabiChikaEntrances2:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -2160,6 +2112,8 @@ Data_0200b40c:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global gBabiChikaRegions2
+gBabiChikaRegions2:
 	.4byte 0x00100270
 	.4byte 0x02800150
 	.4byte 0x01600020

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "FIELD_EFFECT.H"
 
@@ -10,9 +11,9 @@ s32 BabiChika_UpdateFlickerEffect(struct FieldActor *object)
     s32 z;
 
     if (gFrameCount & 2)
-        Engine_ObjectSetAnimation(object, 1);
+        Object_SetMode(object, 1);
     else
-        Engine_ObjectSetAnimation(object, 2);
+        Object_SetMode(object, 2);
     if (gFrameCount & 3)
         return 0;
     options.start_scale_x = 0x4ccc;

@@ -6,10 +6,10 @@ s32 SceneActor_CopyActor8PositionWhenAtRow10(Record *record)
     Record *ref = Actor_Get(ACTOR_PARTY_LEADER);
 
     if (ref->w12 > (s32)0xffd00000
-        && (((Record* (*)())Engine_ActorGet)(8)->w16 >> 20) == 10) {
-        record->w8 = ((Record* (*)())Engine_ActorGet)(8)->w8;
+        && (((Record* (*)())Object_GetById)(8)->w16 >> 20) == 10) {
+        record->w8 = ((Record* (*)())Object_GetById)(8)->w8;
         record->w12 = (s32)0xffe00000;
-        record->w16 = ((Record* (*)())Engine_ActorGet)(8)->w16;
+        record->w16 = ((Record* (*)())Object_GetById)(8)->w16;
     } else {
         record->w8 = 0;
         record->w12 = 0;

@@ -1,4 +1,5 @@
 #include "TYPES.H"
+#define FIELD_STAGED_ACTOR_IMPORTS
 #include "FIELD_EVENT.H"
 #include "SCENE_IDS.H"
 
@@ -17,7 +18,7 @@ void BabiChika_UpdateTrackedActor(void)
     u8 *work;
     s32 limit;
 
-    actor = (u8 *)Engine_ActorGet(0);
+    actor = (u8 *)Object_GetById(0);
     work = gActorEffectWork;
     limit = 0;
     if (gGameState.scene == (s32)&SceneId_BabiChika1) {

@@ -155,7 +155,7 @@ Func_08012518:
 	lsls	r3, r5, #12
 	adds	r0, r0, r5
 	adds	r0, r0, r3
-	bl	Func_0800bc70
+	bl	ResourceObject_Create
 	movs	r3, #8
 	ldrsh	r1, [r6, r3]
 	adds	r5, r0, #0

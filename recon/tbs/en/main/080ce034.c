@@ -17,8 +17,8 @@
 #include "types.h"
 #include "BATTLE_EFX.H"
 
-extern u8 Data_00000073[];
-extern u8 Data_0000007d[];
+extern u8 ResourceId_ParticleSpritesA[];
+extern u8 ResourceId_FlashBurstSheet[];
 extern u8 Data_00000089[];
 s32 Trig_Cos();
 s32 Trig_Sin();
@@ -127,9 +127,9 @@ void Unnamed_080ce034(s32 a0)
     slot28 = ((s32 *)(base6_3001eec + 8))[0];
     *(s32 *)(slot36 + 0x7828) = a0;
     BattleFx_BeginCanvasLayer(0);
-    record = Resource_GetTableEntry((s32)Data_00000073);
+    record = Resource_GetTableEntry((s32)ResourceId_ParticleSpritesA);
     ((void (*)())Resource_DecodeType01)(record, slot28);
-    rec7 = Value1(Resource_GetTableEntry, (s32)Data_0000007d);
+    rec7 = Value1(Resource_GetTableEntry, (s32)ResourceId_FlashBurstSheet);
     tmp10 = (s32)0x3001388;
     Call4(_call_via_r3, 0x5000000, rec7, 128, tmp10);
     Value2(Resource_DecodeType01, rec7 + 128, slot36);

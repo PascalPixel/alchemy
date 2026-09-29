@@ -7,7 +7,7 @@
 #include "types.h"
 #include "BATTLE_EFX.H"
 
-extern u8 Data_00000094[];
+extern u8 ResourceId_VenusDjinnSmallSheet[];
 extern u8 Data_000000a7[];
 s32 Math_ModU();
 s32 Trig_Cos();
@@ -114,7 +114,7 @@ void Func_080e1040(s32 a0, s32 a1)
     }
     slot32 = *(s32 *)0x03001f08;
     Resource_LoadAndDecompress((s32)Data_000000a7, p9, 1, 0);
-    Resource_LoadAndDecompress((s32)Data_00000094, (0x65c0 + p9), 1, 1);
+    Resource_LoadAndDecompress((s32)ResourceId_VenusDjinnSmallSheet, (0x65c0 + p9), 1, 1);
     *(s32 *)((0x7780 + p9)) = 2;
     *(s32 *)((0x7784 + p9)) = 75;
     Call2(Scheduler_AddOrUpdateCallback, 0x80cd261, 0x480);

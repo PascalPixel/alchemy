@@ -281,7 +281,7 @@ pub enum GbaBpp {
 }
 
 impl GbaBpp {
-    fn tile_bytes(self) -> usize {
+    pub fn tile_bytes(self) -> usize {
         match self {
             Self::Bpp4 => 32,
             Self::Bpp8 => 64,
@@ -518,41 +518,65 @@ pub fn tile_sheet_layout(tiles: &[u8], bpp: GbaBpp) -> TileLayout {
     tile_sheet_layout_of(tiles, bpp, &OBJ_SHAPES)
 }
 
-/// The best layout of `tiles` among metatiles of the given `shapes`.
-fn tile_sheet_layout_of(tiles: &[u8], bpp: GbaBpp, shapes: &[(usize, usize)]) -> TileLayout {
+/// How well neighbouring tile edges agree when `tiles` are drawn as
+/// `layout`: the share of inked seams inked on both sides, smoothed so a
+/// blank sheet scores one half.
+pub fn tile_sheet_score(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> f64 {
+    let (same, total) = tile_sheet_seams(tiles, bpp, layout);
+    (same as f64 + 1.0) / (total as f64 + 2.0)
+}
+
+/// The same score for a stream drawn as its sprite runs, each run its own
+/// picture: seams are counted within runs only.
+pub fn sprite_runs_score(tiles: &[u8], bpp: GbaBpp, runs: &[SpriteRun]) -> f64 {
+    let size = bpp.tile_bytes();
+    let (same, total) = runs.iter().fold((0, 0), |(same, total), run| {
+        let part = &tiles[run.first * size..(run.first + run.count) * size];
+        let (s, t) = tile_sheet_seams(part, bpp, run.layout);
+        (same + s, total + t)
+    });
+    (same as f64 + 1.0) / (total as f64 + 2.0)
+}
+
+/// Inked seams inked on both sides, and all inked seams, of `layout`.
+fn tile_sheet_seams(tiles: &[u8], bpp: GbaBpp, layout: TileLayout) -> (usize, usize) {
     let count = tiles.len() / bpp.tile_bytes();
     let pixel = |tiles: &[u8], tile: usize, x: usize, y: usize| match bpp {
         GbaBpp::Bpp4 => (tiles[tile * 32 + y * 4 + x / 2] >> (x % 2 * 4)) & 0x0f,
         GbaBpp::Bpp8 => tiles[tile * 64 + y * 8 + x],
     };
-    let score = |layout: TileLayout| {
-        let sheet = tiles_from_metatiles(tiles, bpp, layout);
-        let wide = layout.tiles_wide;
-        let (mut same, mut total) = (0usize, 0usize);
-        let mut seam = |a: u8, b: u8| {
-            if a != 0 || b != 0 {
-                total += 1;
-                same += usize::from(a != 0 && b != 0);
+    let sheet = tiles_from_metatiles(tiles, bpp, layout);
+    let wide = layout.tiles_wide.max(1);
+    let (mut same, mut total) = (0usize, 0usize);
+    let mut seam = |a: u8, b: u8| {
+        if a != 0 || b != 0 {
+            total += 1;
+            same += usize::from(a != 0 && b != 0);
+        }
+    };
+    for tile in 0..count {
+        for edge in 0..8 {
+            if tile % wide + 1 < wide && tile + 1 < count {
+                seam(
+                    pixel(&sheet, tile, 7, edge),
+                    pixel(&sheet, tile + 1, 0, edge),
+                );
             }
-        };
-        for tile in 0..count {
-            for edge in 0..8 {
-                if tile % wide + 1 < wide {
-                    seam(
-                        pixel(&sheet, tile, 7, edge),
-                        pixel(&sheet, tile + 1, 0, edge),
-                    );
-                }
-                if tile + wide < count {
-                    seam(
-                        pixel(&sheet, tile, edge, 7),
-                        pixel(&sheet, tile + wide, edge, 0),
-                    );
-                }
+            if tile + wide < count {
+                seam(
+                    pixel(&sheet, tile, edge, 7),
+                    pixel(&sheet, tile + wide, edge, 0),
+                );
             }
         }
-        (same as f64 + 1.0) / (total as f64 + 2.0)
-    };
+    }
+    (same, total)
+}
+
+/// The best layout of `tiles` among metatiles of the given `shapes`.
+fn tile_sheet_layout_of(tiles: &[u8], bpp: GbaBpp, shapes: &[(usize, usize)]) -> TileLayout {
+    let count = tiles.len() / bpp.tile_bytes();
+    let score = |layout: TileLayout| tile_sheet_score(tiles, bpp, layout);
     let first = shapes.first().copied().unwrap_or((1, 1));
     let plain = TileLayout {
         meta: first,

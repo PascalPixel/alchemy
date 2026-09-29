@@ -31,50 +31,6 @@ Func_02000048:
 	.4byte 0x02000240
 	.4byte 0x0200dcc8
 	.4byte 0x0200dab8
-	.section .text.x0200813c,"ax",%progbits
-	.p2align 2
-	.global Func_0200013c
-	.thumb_func
-Func_0200013c:
-	push {r5, lr}
-	movs r0, #0
-	bl 0x0200cd7c
-	ldrh r5, [r0, #6]
-	bl 0x0200cd44
-	ldr r3, [pc, #60]
-	adds r5, r5, r3
-	ldr r3, [pc, #60]
-	cmp r5, r3
-	bhi .L_0200013c_0
-	movs r0, #4
-	movs r1, #19
-	bl 0x0200cf0c
-	b .L_0200013c_1
-.L_0200013c_0:
-	ldr r0, [pc, #48]
-	bl 0x0200cd14
-	cmp r0, #0
-	bne .L_0200013c_2
-	ldr r0, [pc, #40]
-	bl 0x0200ce14
-	b .L_0200013c_3
-.L_0200013c_2:
-	ldr r0, [pc, #36]
-	bl 0x0200ce14
-.L_0200013c_3:
-	movs r0, #19
-	movs r1, #0
-	bl 0x0200ce24
-.L_0200013c_1:
-	bl 0x0200cd4c
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0xffff5fff
-	.4byte 0x00003ffe
-	.4byte 0x00000855
-	.4byte 0x00001280
-	.4byte 0x00001370
 	.section .text.x02008310,"ax",%progbits
 	.p2align 2
 	.global Func_02000310
@@ -213,113 +169,6 @@ Func_02000310:
 	.4byte 0x0200e4d8
 	.4byte 0xffff9fff
 	.2byte 0xffff
-	.2byte 0x0000
-	.section .text.x0200882c,"ax",%progbits
-	.p2align 2
-	.global Func_0200082c
-	.thumb_func
-Func_0200082c:
-	push {r5, lr}
-	bl 0x0200cd44
-.L_02000832:
-	ldr r0, [pc, #216]
-	bl 0x0200cd14
-	cmp r0, #0
-	bne 0x020088ca
-	ldr r5, [pc, #208]
-	adds r0, r5, #0
-	bl 0x0200ce14
-	movs r0, #16
-.L_02000846:
-	movs r1, #20
-	bl 0x0200c5f4
-	movs r2, #20
-	movs r0, #16
-	movs r1, #3
-	bl 0x0200c63c
-	movs r0, #16
-	movs r1, #30
-	bl 0x0200c5f4
-	movs r2, #0
-	movs r1, #0
-	movs r0, #16
-	bl 0x0200ce2c
-	movs r0, #30
-.L_0200086a:
-	bl 0x0200cd3c
-	movs r1, #2
-	movs r0, #16
-	bl 0x0200cdfc
-	movs r0, #30
-	bl 0x0200cd3c
-	movs r0, #0
-	movs r1, #16
-	movs r2, #20
-	bl 0x0200c624
-	movs r2, #20
-	movs r0, #16
-	movs r1, #3
-	bl 0x0200c63c
-	ldr r3, [pc, #128]
-	ldr r2, [r3]
-	movs r3, #236
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-	bl 0x0200cd34
-.L_020008a4:
-	cmp r0, #0
-	bne .L_020008a4_0
-	adds r0, r5, #3
-	bl 0x0200ce14
-	movs r0, #16
-	movs r1, #20
-	bl 0x0200c5f4
-	bl 0x0200cd4c
-	b 0x02008906
-.L_020008a4_0:
-	ldr r0, [pc, #76]
-	bl 0x0200cd1c
-	movs r0, #189
-	movs r1, #0
-	bl 0x0200cd6c
-	ldr r0, [pc, #76]
-	bl 0x0200ce14
-.L_020008d0:
-	movs r1, #0
-	movs r0, #16
-	bl 0x0200ce1c
-	movs r0, #20
-	bl 0x0200cd3c
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200cd74
-	cmp r0, #0
-	beq .L_020008d0_0
-	ldr r3, [pc, #40]
-	ldr r2, [r3]
-	movs r3, #236
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-.L_020008d0_0:
-	movs r0, #16
-	movs r1, #0
-	bl 0x0200ce24
-	bl 0x0200cd4c
-	pop {r5}
-	pop {r0}
-	bx r0
-	.2byte 0x0857
-	.2byte 0x0000
-	.2byte 0x1360
-	.2byte 0x0000
-	.4byte 0x03001ebc
-	.2byte 0x1364
 	.2byte 0x0000
 	.section .text.x02009348,"ax",%progbits
 	.p2align 2
@@ -951,429 +800,6 @@ Func_02001348:
 	.4byte 0x00000015
 	.4byte 0x02000240
 	.4byte 0x0000022b
-	.section .text.x020099e4,"ax",%progbits
-	.p2align 2
-	.global Func_020019e4
-	.thumb_func
-Func_020019e4:
-	push {lr}
-	movs r1, #128
-	movs r2, #128
-	movs r0, #0
-	lsls r1, r1, #8
-	lsls r2, r2, #7
-	bl 0x0200cd84
-	movs r1, #186
-	movs r2, #204
-	movs r0, #0
-	lsls r1, r1, #2
-	lsls r2, r2, #1
-	bl 0x0200cdb4
-	ldr r0, [pc, #60]
-	bl 0x0200cd14
-	cmp r0, #0
-	bne .L_020019e4_0
-	bl 0x0200cd44
-	ldr r0, [pc, #48]
-	bl 0x0200ce14
-	movs r0, #8
-	movs r1, #0
-	bl 0x0200ce24
-	bl 0x0200cd4c
-.L_020019e4_0:
-	ldr r3, [pc, #36]
-	movs r2, #228
-	ldr r3, [r3]
-	lsls r2, r2, #1
-	adds r3, r3, r2
-	movs r2, #16
-	str r2, [r3]
-	movs r0, #123
-	bl 0x0200cf24
-	movs r0, #14
-	bl 0x0200ce6c
-	pop {r0}
-	bx r0
-	.4byte 0x00000854
-	.4byte 0x000012c3
-	.4byte 0x03001ebc
-	.section .text.x02009ba0,"ax",%progbits
-	.p2align 2
-	.global Func_02001ba0
-	.thumb_func
-Func_02001ba0:
-	push {r5, r6, lr}
-	movs r0, #24
-	sub sp, #8
-	bl 0x0200cd7c
-	adds r5, r0, #0
-	movs r0, #25
-	bl 0x0200cd7c
-	adds r6, r0, #0
-	bl 0x0200cd44
-	ldr r0, [pc, #644]
-	bl 0x0200cc7c
-	movs r0, #192
-	lsls r0, r0, #2
-	adds r5, #100
-	bl 0x0200cd24
-	movs r2, #0
-	ldrsh r3, [r5, r2]
-	cmp r3, #3
-	bgt .L_02001ba0_0
-	ldr r1, [pc, #624]
-	movs r0, #24
-	bl 0x0200cd8c
-	b .L_02001ba0_1
-.L_02001ba0_0:
-	ldr r1, [pc, #620]
-	movs r0, #24
-	bl 0x0200cd8c
-.L_02001ba0_1:
-	adds r3, r6, #0
-	adds r3, #100
-	movs r2, #0
-	ldrsh r3, [r3, r2]
-	cmp r3, #2
-	bgt .L_02001ba0_2
-	ldr r1, [pc, #604]
-	movs r0, #25
-	bl 0x0200cd8c
-	b .L_02001ba0_3
-.L_02001ba0_2:
-	ldr r1, [pc, #588]
-	movs r0, #25
-	bl 0x0200cd8c
-.L_02001ba0_3:
-	movs r0, #0
-	ldr r1, [pc, #588]
-	ldr r2, [pc, #588]
-	bl 0x0200cd84
-	movs r0, #1
-	ldr r1, [pc, #576]
-	ldr r2, [pc, #580]
-	bl 0x0200cd84
-	movs r0, #2
-	ldr r1, [pc, #568]
-	ldr r2, [pc, #568]
-	bl 0x0200cd84
-	movs r2, #182
-	movs r0, #0
-	movs r1, #248
-	lsls r2, r2, #2
-	bl 0x0200cdb4
-	movs r1, #248
-	movs r2, #182
-	movs r0, #2
-	lsls r1, r1, #16
-	lsls r2, r2, #18
-	bl 0x0200cdcc
-	movs r1, #248
-	movs r2, #182
-	movs r0, #1
-	lsls r1, r1, #16
-	lsls r2, r2, #18
-	bl 0x0200cdcc
-	movs r1, #132
-	movs r2, #186
-	movs r0, #2
-	lsls r1, r1, #1
-	lsls r2, r2, #2
-	bl 0x0200cdac
-	movs r2, #186
-	movs r1, #232
-	lsls r2, r2, #2
-	movs r0, #1
-	bl 0x0200cdb4
-	movs r0, #2
-	bl 0x0200cdc4
-	movs r1, #128
-	movs r0, #0
-	lsls r1, r1, #7
-	movs r2, #0
-	bl 0x0200ce2c
-	movs r0, #1
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200ce04
-	movs r2, #30
-	movs r0, #2
-	movs r1, #0
-	bl 0x0200c60c
-	movs r1, #1
-	movs r0, #2
-	bl 0x0200cdfc
-	ldr r5, [pc, #456]
-	adds r0, r5, #0
-	bl 0x0200ce14
-	movs r0, #2
-	movs r1, #0
-	bl 0x0200ce24
-	movs r0, #0
-	movs r1, #2
-	movs r2, #0
-	bl 0x0200ce04
-	movs r2, #20
-	movs r0, #1
-	movs r1, #2
-	bl 0x0200c60c
-	movs r0, #0
-	movs r1, #3
-	bl 0x0200cdd4
-	movs r0, #1
-	movs r1, #3
-	movs r2, #20
-	bl 0x0200c63c
-	movs r0, #0
-	movs r1, #1
-	movs r2, #10
-	bl 0x0200c624
-	movs r1, #0
-	movs r0, #1
-	bl 0x0200ce1c
-	movs r0, #0
-	movs r1, #0
-	bl 0x0200cd74
-	cmp r0, #0
-	beq .L_02001ba0_4
-	ldr r3, [pc, #376]
-	ldr r2, [r3]
-	movs r3, #236
-	lsls r3, r3, #1
-	adds r2, r2, r3
-	ldrh r3, [r2]
-	adds r3, #1
-	strh r3, [r2]
-.L_02001ba0_4:
-	movs r1, #30
-	movs r0, #1
-	bl 0x0200c5f4
-	adds r0, r5, #4
-	bl 0x0200ce14
-	movs r0, #0
-	movs r1, #2
-	movs r2, #0
-	bl 0x0200ce04
-	movs r0, #1
-	movs r1, #2
-	movs r2, #50
-	bl 0x0200c60c
-	movs r1, #128
-	lsls r1, r1, #1
-	movs r2, #0
-	movs r0, #2
-	bl 0x0200ce3c
-	movs r0, #60
-	bl 0x0200cd3c
-	movs r0, #0
-	movs r1, #1
-	movs r2, #50
-	bl 0x0200c624
-	movs r0, #0
-	movs r1, #2
-	movs r2, #0
-	bl 0x0200ce04
-	movs r0, #1
-	movs r1, #2
-	movs r2, #30
-	bl 0x0200c60c
-	movs r2, #10
-	movs r0, #2
-	movs r1, #3
-	bl 0x0200c63c
-	movs r0, #2
-	movs r1, #20
-	bl 0x0200c5f4
-	movs r1, #129
-	movs r0, #0
-	lsls r1, r1, #1
-	movs r2, #0
-	bl 0x0200ce3c
-	movs r1, #129
-	lsls r1, r1, #1
-	movs r2, #0
-	movs r0, #1
-	bl 0x0200ce3c
-	movs r0, #60
-	bl 0x0200cd3c
-	movs r2, #20
-	movs r0, #2
-	movs r1, #3
-	bl 0x0200c63c
-	movs r1, #30
-	movs r0, #2
-	bl 0x0200c5f4
-	ldr r0, [pc, #216]
-	bl 0x0200ce14
-	movs r0, #1
-	movs r1, #0
-	bl 0x0200ce24
-	movs r1, #128
-	movs r2, #0
-	lsls r1, r1, #7
-	movs r0, #0
-	bl 0x0200ce2c
-	movs r0, #40
-	bl 0x0200cd3c
-	movs r0, #0
-	movs r1, #3
-	bl 0x0200cdd4
-	movs r0, #1
-	movs r1, #3
-	bl 0x0200cdd4
-	movs r0, #2
-	movs r1, #3
-	movs r2, #50
-	bl 0x0200c63c
-	movs r2, #182
-	movs r0, #2
-	movs r1, #248
-	lsls r2, r2, #2
-	bl 0x0200cdac
-	movs r2, #182
-	movs r0, #1
-	movs r1, #248
-	lsls r2, r2, #2
-	bl 0x0200cdb4
-	movs r0, #1
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200cdcc
-	movs r0, #2
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200cdcc
-	movs r1, #208
-	movs r2, #174
-	movs r0, #24
-	lsls r1, r1, #15
-	lsls r2, r2, #18
-	bl 0x0200cdcc
-	movs r1, #240
-	movs r2, #174
-	movs r0, #25
-	lsls r1, r1, #15
-	lsls r2, r2, #18
-	bl 0x0200cdcc
-	movs r0, #24
-	movs r1, #0
-	movs r2, #0
-	bl 0x0200ce2c
-	movs r1, #128
-	movs r0, #25
-	lsls r1, r1, #8
-	movs r2, #0
-	bl 0x0200ce2c
-	movs r3, #14
-	movs r2, #44
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #14
-	movs r1, #50
-	movs r2, #3
-	movs r3, #1
-	bl 0x0200cce4
-	bl 0x0200cd4c
-	sub sp, #-8
-	pop {r5, r6}
-	pop {r0}
-	bx r0
-	.2byte 0x0000
-	.4byte 0x0200aba1
-	.4byte 0x0200d678
-	.4byte 0x0200d650
-	.4byte 0x0200d768
-	.4byte 0x0000cccc
-	.4byte 0x00006666
-	.4byte 0x00001299
-	.4byte 0x03001ebc
-	.4byte 0x0000129f
-	.section .text.x02009e80,"ax",%progbits
-	.p2align 2
-	.global Func_02001e80
-	.thumb_func
-Func_02001e80:
-	push {lr}
-	movs r0, #30
-	sub sp, #8
-	bl 0x0200cd3c
-	movs r1, #1
-	movs r0, #24
-	bl 0x0200cdfc
-	movs r0, #20
-	bl 0x0200cd3c
-	ldr r0, [pc, #168]
-	bl 0x0200ce14
-	movs r0, #24
-	movs r1, #20
-	bl 0x0200c5f4
-	movs r2, #20
-	movs r0, #25
-	movs r1, #0
-	bl 0x0200ce2c
-	movs r1, #129
-	movs r0, #25
-	lsls r1, r1, #1
-	bl 0x0200ce44
-	movs r0, #25
-	movs r1, #2
-	bl 0x0200cdfc
-	movs r0, #25
-	movs r1, #20
-	bl 0x0200c5f4
-	movs r1, #4
-	movs r0, #24
-	bl 0x0200cddc
-	movs r0, #20
-	bl 0x0200cd3c
-	movs r0, #24
-	movs r1, #20
-	bl 0x0200c5f4
-	movs r1, #128
-	movs r2, #128
-	movs r0, #24
-	lsls r1, r1, #11
-	lsls r2, r2, #10
-	bl 0x0200cd84
-	movs r1, #224
-	movs r2, #224
-	lsls r2, r2, #9
-	movs r0, #25
-	lsls r1, r1, #10
-	bl 0x0200cd84
-	ldr r1, [pc, #72]
-	movs r0, #25
-	bl 0x0200cd8c
-	ldr r1, [pc, #68]
-	movs r0, #24
-	bl 0x0200cd8c
-	movs r0, #24
-	bl 0x0200cd94
-	movs r0, #24
-	bl 0x0200cd7c
-	movs r3, #1
-	adds r0, #100
-	strh r3, [r0]
-	movs r0, #25
-	bl 0x0200cd7c
-	movs r3, #3
-	adds r0, #100
-	strh r3, [r0]
-	movs r2, #44
-	movs r3, #14
-	str r3, [sp, #0]
-	str r2, [sp, #4]
-	movs r0, #14
-	movs r1, #48
-	movs r2, #4
-	movs r3, #1
-	bl 0x0200cce4
-	sub sp, #-8
-	pop {r0}
-	bx r0
-	.4byte 0x000012a0
-	.4byte 0x0200d830
-	.4byte 0x0200d560
 	.section .text.x0200adb4,"ax",%progbits
 	.p2align 2
 	.global Func_02002db4
@@ -3104,6 +2530,9 @@ RunDialoguePromptScene:
 	.4byte 0x00000209
 	.section .text.x0200c8c8,"ax",%progbits
 	.p2align 2
+	.global KuupuappuHeya_UpdateActorStops
+	.thumb_func
+KuupuappuHeya_UpdateActorStops:
 	push	{r5, r6, r7, lr}
 	mov	r7, fp
 	mov	r6, sl
@@ -3920,6 +3349,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptA
+KuupuappuHeya_PairScriptA:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -3930,6 +3361,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptB
+KuupuappuHeya_PairScriptB:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -3950,6 +3383,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptC
+KuupuappuHeya_PairScriptC:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -3960,6 +3395,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptD
+KuupuappuHeya_PairScriptD:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -3970,6 +3407,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptE
+KuupuappuHeya_PairScriptE:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -3990,6 +3429,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptF
+KuupuappuHeya_PairScriptF:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4000,6 +3441,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptG
+KuupuappuHeya_PairScriptG:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4020,6 +3463,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptH
+KuupuappuHeya_PairScriptH:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4030,6 +3475,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptI
+KuupuappuHeya_PairScriptI:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4040,6 +3487,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptJ
+KuupuappuHeya_PairScriptJ:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4060,6 +3509,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptK
+KuupuappuHeya_PairScriptK:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4075,6 +3526,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptL
+KuupuappuHeya_PairScriptL:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4085,6 +3538,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptM
+KuupuappuHeya_PairScriptM:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4100,6 +3555,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptN
+KuupuappuHeya_PairScriptN:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4110,6 +3567,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptO
+KuupuappuHeya_PairScriptO:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4120,6 +3579,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptP
+KuupuappuHeya_PairScriptP:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4135,6 +3596,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptQ
+KuupuappuHeya_PairScriptQ:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4145,6 +3608,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_PairScriptR
+KuupuappuHeya_PairScriptR:
 	.4byte 0x0000001c
 	.4byte 0x00000002
 	.4byte 0x00000003
@@ -4160,6 +3625,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x0000001c
 	.4byte 0x00000001
 	.4byte 0x00000010
+	.global KuupuappuHeya_Scripts
+KuupuappuHeya_Scripts:
 	.4byte 0xffff0000
 	.4byte 0x000000ac
 	.4byte 0x40000095
@@ -4250,6 +3717,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global KuupuappuHeya_Regions
+KuupuappuHeya_Regions:
 	.4byte 0x0021027f
 	.4byte 0x02910197
 	.4byte 0x01a90033
@@ -4258,6 +3727,8 @@ KuupuappuHeya_ActionTable:
 	.4byte 0x00000000
 	.4byte 0x00000000
 	.4byte 0x00000000
+	.global KuupuappuHeya_Messages
+KuupuappuHeya_Messages:
 	.4byte 0x00000015
 	.4byte 0x00505014
 	.4byte 0x00606014

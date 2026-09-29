@@ -484,3 +484,18 @@ void ColossoLogRollingStage_ConfigureSceneEventEffect(void)
     Engine_ObjectSetScript(effect, (s32)gColossoSceneEventEffect);
     Engine_GameFlagSet(0x363);
 }
+
+/* Pause object 28, raise flag 0x361, then wait until the scene task reports
+ * status 1 or 3 before dropping it from the task list. */
+void ColossoLogRollingStage_WaitForSceneEventTask(void)
+{
+    extern void BattleEffect_PauseObject(s32);
+
+    BattleEffect_PauseObject(28);
+    Engine_GameFlagSet(0x361);
+    Engine_TaskWait(10);
+    while (gColossoSceneTaskStatus != 1 && gColossoSceneTaskStatus != 3)
+        Engine_TaskWait(1);
+    Engine_TaskWait(1);
+    Engine_TaskRemoveCallback(ColossoLogRollingStage_SceneTask);
+}

@@ -159,44 +159,6 @@ ColossoLogRollingStage_SceneTask:
 	.4byte 0x0031ffff
 	.2byte 0xfffe
 	.2byte 0x0013
-	.section .text.x02008a84,"ax",%progbits
-	.balign 4
-	.global ColossoLogRollingStage_WaitForSceneEventTask
-	.thumb_func
-ColossoLogRollingStage_WaitForSceneEventTask:
-	push {r5, lr}
-	movs r0, #28
-	bl 0x0200cb90
-	ldr r0, [pc, #56]
-	bl 0x0200c9b8
-	movs r0, #10
-	bl 0x0200c840
-	ldr r2, [pc, #48]
-	ldr r3, [r2]
-	cmp r3, #1
-	beq .L_02000a84_0
-	cmp r3, #3
-	beq .L_02000a84_0
-	adds r5, r2, #0
-.L_02000a84_1:
-	movs r0, #1
-	bl 0x0200c840
-	ldr r3, [r5]
-	cmp r3, #1
-	beq .L_02000a84_0
-	cmp r3, #3
-	bne .L_02000a84_1
-.L_02000a84_0:
-	movs r0, #1
-	bl 0x0200c840
-	ldr r0, [pc, #16]
-	bl 0x0200c850
-	pop {r5}
-	pop {r0}
-	bx r0
-	.4byte 0x00000361
-	.4byte 0x0200d480
-	.4byte 0x0200804d
 	.section .text.x0200c0d0,"ax",%progbits
 	.global FieldScene_RunScene3bcSequenceB
 	.thumb_func

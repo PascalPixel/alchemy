@@ -1,9 +1,5 @@
-/* Draft of resource_3ad 0x02009394..0x0200941c (136 bytes with pool),
- * Bunza_CannotWait; the listing keeps the rows. Remaining difference: its messages have catalogue names now and its bytes
- * match the ROM, but it names symbols no link defines (Engine_ActorShowEmote,
- * Engine_ActorFaceDirection, Engine_EventWait,
- * Engine_ActorSetAnimationAndWait). */
-#include "../../../../../games/THE BROKEN SEAL/SRC/FIELD/RUNPA_DOU/CAVE.H"
+/* Bunza will not wait for the party any longer. */
+#include "CAVE.H"
 extern u8 MsgRunpaMeaningWontRide[];
 
 /* Bunza cannot wait any longer, and Mia asks whether the party stays. */

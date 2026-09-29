@@ -1,7 +1,8 @@
 /* 2026-09-29: the two callbacks are the build's
    BattleFx_UpdatePairedArcSpawner and BattleFx_UpdateEffect16State rather
-   than literal Thumb addresses, 810 to 750. The VRAM source 0x0809c510
-   still needs its own label in the data before adoption. */
+   than literal Thumb addresses, 810 to 750. The VRAM source is now the
+   labelled BattleFx_ArcSparkTiles; 16 scheduling halfwords remain (the
+   opening resource store and the pulse-loop constants). */
 /* 2026-09-29 alchemy permute: score 1180 to 810 on the permuter's scorer
    (0 is exact); remaining 2 register-only, 2 operand, 9 reordered, 1
    inserted, 1 deleted. Kept rewrites: 3x swap commutative operands, 2x
@@ -38,6 +39,7 @@ extern void UiText_DrawMessage(s32, s32);
 extern s32 GameFlag_TestFar(s32);
 extern void Audio_PlayCue(s32);
 
+extern const u8 BattleFx_ArcSparkTiles[];
 extern u8 *gEffectWork;
 void BattleFx_UpdateEffect16State(void);
 void BattleFx_UpdatePairedArcSpawner(void);
@@ -68,7 +70,7 @@ void RunBattleEffect16(void)
         u8 *tmp2;
         tmp = (s16 *)(0x71a + scene);
         *tmp = value;
-        VramBlock_LoadCached((s16)value, 0x100, (const void *)0x0809c510);
+        VramBlock_LoadCached((s16)value, 0x100, BattleFx_ArcSparkTiles);
         index = 145;
         ((s32 *)gGameState)[index] = 0x09600000;
         index = 146;

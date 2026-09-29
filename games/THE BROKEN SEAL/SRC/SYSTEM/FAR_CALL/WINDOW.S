@@ -424,6 +424,9 @@ Func_080153b8:
 	.thumb_func
 Resource_LoadFixedBlockBIntoFreeSlotFar:
 	overlay_veneer Resource_LoadFixedBlockBIntoFreeSlot
+	.global UiText_MeasureResourceEntriesFar
+	.thumb_func
+UiText_MeasureResourceEntriesFar:
 	overlay_veneer UiText_MeasureResourceEntries
 	.global UiWindow_SetPaletteBitRectFar
 	.thumb_func

@@ -99,7 +99,7 @@ Func_080f8658:
 	movs	r3, #16
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #60]
 	ldrh	r3, [r5, #60]
@@ -110,7 +110,7 @@ Func_080f8658:
 	adds	r2, r6, #0
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #60]
 	ldrh	r3, [r5, #60]
@@ -140,7 +140,7 @@ Func_080f8658:
 	movs	r3, #16
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #62]
 	ldrh	r3, [r5, #62]
@@ -151,7 +151,7 @@ Func_080f8658:
 	adds	r2, r6, #0
 	movs	r1, #3
 	str	r7, [sp, #0]
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	mov	r3, r8
 	ldrh	r2, [r3, #62]
 	ldrh	r3, [r5, #62]
@@ -186,7 +186,7 @@ Func_080f8658:
 	movs	r1, #3
 	movs	r3, #16
 	adds	r5, #64
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	ldrh	r2, [r5, #0]
 	ldrh	r3, [r7, #0]
 	cmp	r2, r3
@@ -197,7 +197,7 @@ Func_080f8658:
 	adds	r2, r6, #0
 	movs	r3, #64
 	movs	r1, #3
-	bl	Func_080380a8
+	bl	UiText_DrawNumberAtOffsetFar
 	ldrh	r2, [r5, #0]
 	ldrh	r3, [r7, #0]
 	cmp	r2, r3

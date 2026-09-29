@@ -29,6 +29,9 @@ Func_080454a0:
 	pop	{r3}
 	mov	r8, r3
 	pop	{r5, r6, pc}
+	.global Resource_LoadIndexedEntryToBuffer
+	.thumb_func
+Resource_LoadIndexedEntryToBuffer:
 	push	{r5, r6, lr}
 	mov	r6, r8
 	push	{r6}

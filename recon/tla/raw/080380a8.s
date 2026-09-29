@@ -1,8 +1,8 @@
 .syntax unified
 	.thumb
-	.global Func_080380a8
+	.global UiText_DrawNumberAtOffsetFar
 	.thumb_func
-Func_080380a8:
+UiText_DrawNumberAtOffsetFar:
 	ldr	r4, [pc, #0]
 	bx	r4
 	.2byte 0x2215

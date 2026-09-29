@@ -20,3 +20,4 @@ s32 Ui_CreateOutputFromResourceSlot(
         RenderOutput_Create(slot, 0x40000000, input, arg1, arg2);
     }
 }
+

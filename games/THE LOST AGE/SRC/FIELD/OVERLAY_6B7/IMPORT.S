@@ -15,7 +15,7 @@
 	overlay_veneer Func_08038080
 	overlay_veneer Func_08038090
 	overlay_veneer Func_08038098
-	overlay_veneer Func_080380a8
+	overlay_veneer UiText_DrawNumberAtOffsetFar
 	overlay_veneer Func_080380b0
 	overlay_veneer Func_08038120
 	overlay_veneer Func_08038260
